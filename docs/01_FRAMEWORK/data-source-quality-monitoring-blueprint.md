@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Data Source Quality Monitoring蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Source Quality Monitoring蓝图设计相关内容
 
@@ -32,11 +32,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **目标**: 构建专业级数据源质量监控体系，对标Two Sigma、Citadel数据质量标准
 
@@ -396,7 +396,7 @@ class DataSourceQualityMonitor:
 
     """数据源质量监控器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -410,11 +410,11 @@ class DataSourceQualityMonitor:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self._initialize_expectation_suites()
 
-    
+
 
     def _initialize_expectation_suites(self):
 
@@ -424,7 +424,7 @@ class DataSourceQualityMonitor:
 
         stock_suite = gx.ExpectationSuite(name="stock_data_quality")
 
-        
+
 
         # 价格范围期望
 
@@ -484,7 +484,7 @@ class DataSourceQualityMonitor:
 
         )
 
-        
+
 
         # 成交量期望
 
@@ -502,7 +502,7 @@ class DataSourceQualityMonitor:
 
         )
 
-        
+
 
         # 完整性期望
 
@@ -526,7 +526,7 @@ class DataSourceQualityMonitor:
 
         )
 
-        
+
 
         # 唯一性期望
 
@@ -540,13 +540,13 @@ class DataSourceQualityMonitor:
 
         )
 
-        
+
 
         self.expectation_suites["stock"] = stock_suite
 
         self.context.add_expectation_suite(expectation_suite=stock_suite)
 
-    
+
 
     def validate_data_source(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -576,13 +576,13 @@ class DataSourceQualityMonitor:
 
             )
 
-            
+
 
             # 执行验证
 
             results = validator.validate()
 
-            
+
 
             # 生成质量报告
 
@@ -610,7 +610,7 @@ class DataSourceQualityMonitor:
 
             }
 
-            
+
 
             # 添加详细结果
 
@@ -628,11 +628,11 @@ class DataSourceQualityMonitor:
 
                 })
 
-            
+
 
             return quality_report
 
-            
+
 
         except Exception as e:
 
@@ -650,7 +650,7 @@ class DataSourceQualityMonitor:
 
             }
 
-    
+
 
     def check_data_completeness(self, df: pd.DataFrame, date_column: str = "date") -> Dict:
 
@@ -664,7 +664,7 @@ class DataSourceQualityMonitor:
 
             dates = pd.to_datetime(df_sorted[date_column])
 
-            
+
 
             # 计算缺失日期
 
@@ -672,7 +672,7 @@ class DataSourceQualityMonitor:
 
             missing_dates = date_range.difference(dates)
 
-            
+
 
             completeness_report = {
 
@@ -696,11 +696,11 @@ class DataSourceQualityMonitor:
 
             }
 
-            
+
 
             return completeness_report
 
-            
+
 
         except Exception as e:
 
@@ -708,7 +708,7 @@ class DataSourceQualityMonitor:
 
             return {"error": str(e)}
 
-    
+
 
     def check_data_accuracy(self, df: pd.DataFrame) -> Dict:
 
@@ -718,7 +718,7 @@ class DataSourceQualityMonitor:
 
             accuracy_issues = []
 
-            
+
 
             # 检查价格逻辑
 
@@ -726,19 +726,19 @@ class DataSourceQualityMonitor:
 
                 accuracy_issues.append("存在最高价低于最低价的记录")
 
-            
+
 
             if (df['close'] > df['high']).any():
 
                 accuracy_issues.append("存在收盘价高于最高价的记录")
 
-            
+
 
             if (df['close'] < df['low']).any():
 
                 accuracy_issues.append("存在收盘价低于最低价的记录")
 
-            
+
 
             # 检查成交量
 
@@ -746,7 +746,7 @@ class DataSourceQualityMonitor:
 
                 accuracy_issues.append("存在负成交量的记录")
 
-            
+
 
             # 检查价格跳跃
 
@@ -758,7 +758,7 @@ class DataSourceQualityMonitor:
 
                 accuracy_issues.append(f"存在{len(abnormal_changes)}个异常价格变动记录")
 
-            
+
 
             accuracy_report = {
 
@@ -772,11 +772,11 @@ class DataSourceQualityMonitor:
 
             }
 
-            
+
 
             return accuracy_report
 
-            
+
 
         except Exception as e:
 
@@ -784,11 +784,11 @@ class DataSourceQualityMonitor:
 
             return {"error": str(e)}
 
-    
 
-    def generate_quality_score(self, validation_result: Dict, 
 
-                               completeness_result: Dict, 
+    def generate_quality_score(self, validation_result: Dict,
+
+                               completeness_result: Dict,
 
                                accuracy_result: Dict) -> Dict:
 
@@ -804,7 +804,7 @@ class DataSourceQualityMonitor:
 
             accuracy_score = accuracy_result.get("accuracy_rate", 0)
 
-            
+
 
             # 综合质量评分 (加权平均)
 
@@ -818,7 +818,7 @@ class DataSourceQualityMonitor:
 
             )
 
-            
+
 
             quality_score = {
 
@@ -836,11 +836,11 @@ class DataSourceQualityMonitor:
 
             }
 
-            
+
 
             return quality_score
 
-            
+
 
         except Exception as e:
 
@@ -848,7 +848,7 @@ class DataSourceQualityMonitor:
 
             return {"error": str(e)}
 
-    
+
 
     def _get_quality_grade(self, score: float) -> str:
 
@@ -906,7 +906,7 @@ class DataSourceHealthMonitor:
 
     """数据源健康监控"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -920,7 +920,7 @@ class DataSourceHealthMonitor:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def check_data_source_health(self, source_name: str) -> Dict:
 
@@ -930,7 +930,7 @@ class DataSourceHealthMonitor:
 
             source_config = self.data_sources.get(source_name, {})
 
-            
+
 
             health_check = {
 
@@ -946,13 +946,13 @@ class DataSourceHealthMonitor:
 
             }
 
-            
+
 
             # 测试连接
 
             start_time = time.time()
 
-            
+
 
             if source_name == "tushare":
 
@@ -966,29 +966,29 @@ class DataSourceHealthMonitor:
 
                 status = self._check_generic_health(source_config)
 
-            
+
 
             end_time = time.time()
 
             response_time = end_time - start_time
 
-            
+
 
             health_check["status"] = status
 
             health_check["response_time"] = response_time
 
-            
+
 
             # 更新健康状态
 
             self.health_status[source_name] = health_check
 
-            
+
 
             return health_check
 
-            
+
 
         except Exception as e:
 
@@ -1006,7 +1006,7 @@ class DataSourceHealthMonitor:
 
             }
 
-    
+
 
     def _check_tushare_health(self, config: Dict) -> str:
 
@@ -1018,13 +1018,13 @@ class DataSourceHealthMonitor:
 
             pro = ts.pro_api(config.get("token"))
 
-            
+
 
             # 测试获取数据
 
             df = pro.daily(ts_code="000001.SZ", start_date="20240101", end_date="20240110")
 
-            
+
 
             if df is not None and len(df) > 0:
 
@@ -1034,7 +1034,7 @@ class DataSourceHealthMonitor:
 
                 return "degraded"
 
-                
+
 
         except Exception as e:
 
@@ -1042,7 +1042,7 @@ class DataSourceHealthMonitor:
 
             return "error"
 
-    
+
 
     def _check_akshare_health(self, config: Dict) -> str:
 
@@ -1052,13 +1052,13 @@ class DataSourceHealthMonitor:
 
             import akshare as ak
 
-            
+
 
             # 测试获取数据
 
             df = ak.stock_zh_a_hist(symbol="000001", period="daily", start_date="20240101", end_date="20240110")
 
-            
+
 
             if df is not None and len(df) > 0:
 
@@ -1068,7 +1068,7 @@ class DataSourceHealthMonitor:
 
                 return "degraded"
 
-                
+
 
         except Exception as e:
 
@@ -1076,7 +1076,7 @@ class DataSourceHealthMonitor:
 
             return "error"
 
-    
+
 
     def _check_generic_health(self, config: Dict) -> str:
 
@@ -1090,11 +1090,11 @@ class DataSourceHealthMonitor:
 
                 return "unknown"
 
-            
+
 
             response = requests.get(url, timeout=5)
 
-            
+
 
             if response.status_code == 200:
 
@@ -1104,7 +1104,7 @@ class DataSourceHealthMonitor:
 
                 return "degraded"
 
-                
+
 
         except Exception as e:
 
@@ -1112,7 +1112,7 @@ class DataSourceHealthMonitor:
 
             return "error"
 
-    
+
 
     def monitor_performance(self, source_name: str, duration: int = 60) -> Dict:
 
@@ -1132,13 +1132,13 @@ class DataSourceHealthMonitor:
 
             }
 
-            
+
 
             for i in range(duration):
 
                 health = self.check_data_source_health(source_name)
 
-                
+
 
                 metrics["samples"].append({
 
@@ -1150,17 +1150,17 @@ class DataSourceHealthMonitor:
 
                 })
 
-                
+
 
                 time.sleep(1)
 
-            
+
 
             # 计算性能指标
 
             response_times = [s["response_time"] for s in metrics["samples"] if s["response_time"]]
 
-            
+
 
             if response_times:
 
@@ -1176,17 +1176,17 @@ class DataSourceHealthMonitor:
 
                 }
 
-            
+
 
             # 更新性能指标
 
             self.performance_metrics[source_name] = metrics
 
-            
+
 
             return metrics
 
-            
+
 
         except Exception as e:
 
@@ -1194,7 +1194,7 @@ class DataSourceHealthMonitor:
 
             return {"error": str(e)}
 
-    
+
 
     def get_health_summary(self) -> Dict:
 
@@ -1212,13 +1212,13 @@ class DataSourceHealthMonitor:
 
             }
 
-            
+
 
             healthy_count = 0
 
             total_count = len(self.health_status)
 
-            
+
 
             for source_name, health in self.health_status.items():
 
@@ -1232,13 +1232,13 @@ class DataSourceHealthMonitor:
 
                 }
 
-                
+
 
                 if health["status"] == "healthy":
 
                     healthy_count += 1
 
-            
+
 
             if total_count > 0:
 
@@ -1254,11 +1254,11 @@ class DataSourceHealthMonitor:
 
                     summary["overall_health"] = "critical"
 
-            
+
 
             return summary
 
-            
+
 
         except Exception as e:
 
@@ -1298,7 +1298,7 @@ class AnomalyDetector:
 
     """异常检测器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1308,7 +1308,7 @@ class AnomalyDetector:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def detect_anomalies(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -1318,7 +1318,7 @@ class AnomalyDetector:
 
             anomalies = []
 
-            
+
 
             # 检测缺失数据
 
@@ -1326,7 +1326,7 @@ class AnomalyDetector:
 
             anomalies.extend(missing_anomalies)
 
-            
+
 
             # 检测异常数据
 
@@ -1334,7 +1334,7 @@ class AnomalyDetector:
 
             anomalies.extend(abnormal_anomalies)
 
-            
+
 
             # 检测数据延迟
 
@@ -1342,7 +1342,7 @@ class AnomalyDetector:
 
             anomalies.extend(delay_anomalies)
 
-            
+
 
             # 检测数据冲突
 
@@ -1350,7 +1350,7 @@ class AnomalyDetector:
 
             anomalies.extend(conflict_anomalies)
 
-            
+
 
             anomaly_report = {
 
@@ -1366,11 +1366,11 @@ class AnomalyDetector:
 
             }
 
-            
+
 
             return anomaly_report
 
-            
+
 
         except Exception as e:
 
@@ -1378,7 +1378,7 @@ class AnomalyDetector:
 
             return {"error": str(e)}
 
-    
+
 
     def _detect_missing_data(self, df: pd.DataFrame, source_name: str) -> List[Dict]:
 
@@ -1386,7 +1386,7 @@ class AnomalyDetector:
 
         anomalies = []
 
-        
+
 
         # 检查列缺失
 
@@ -1396,7 +1396,7 @@ class AnomalyDetector:
 
             missing_rate = missing_count / len(df)
 
-            
+
 
             if missing_rate > 0.05:  # 缺失率超过5%
 
@@ -1416,11 +1416,11 @@ class AnomalyDetector:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _detect_abnormal_data(self, df: pd.DataFrame, source_name: str) -> List[Dict]:
 
@@ -1428,7 +1428,7 @@ class AnomalyDetector:
 
         anomalies = []
 
-        
+
 
         # 检查价格异常
 
@@ -1438,7 +1438,7 @@ class AnomalyDetector:
 
             abnormal_changes = price_change[abs(price_change) > 0.3]
 
-            
+
 
             if len(abnormal_changes) > 0:
 
@@ -1456,7 +1456,7 @@ class AnomalyDetector:
 
                 })
 
-        
+
 
         # 检查成交量异常
 
@@ -1468,7 +1468,7 @@ class AnomalyDetector:
 
             abnormal_volumes = df[df['volume'] > volume_mean + 3 * volume_std]
 
-            
+
 
             if len(abnormal_volumes) > 0:
 
@@ -1486,11 +1486,11 @@ class AnomalyDetector:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _detect_data_delay(self, df: pd.DataFrame, source_name: str) -> List[Dict]:
 
@@ -1498,7 +1498,7 @@ class AnomalyDetector:
 
         anomalies = []
 
-        
+
 
         if 'date' in df.columns:
 
@@ -1508,7 +1508,7 @@ class AnomalyDetector:
 
             delay_days = (current_date - latest_date).days
 
-            
+
 
             if delay_days > 1:
 
@@ -1526,11 +1526,11 @@ class AnomalyDetector:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _detect_data_conflict(self, df: pd.DataFrame, source_name: str) -> List[Dict]:
 
@@ -1538,7 +1538,7 @@ class AnomalyDetector:
 
         anomalies = []
 
-        
+
 
         # 检查价格逻辑冲突
 
@@ -1554,7 +1554,7 @@ class AnomalyDetector:
 
             ]
 
-            
+
 
             if len(conflicts) > 0:
 
@@ -1570,11 +1570,11 @@ class AnomalyDetector:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _calculate_severity(self, anomalies: List[Dict]) -> str:
 
@@ -1584,13 +1584,13 @@ class AnomalyDetector:
 
             return "none"
 
-        
+
 
         high_count = len([a for a in anomalies if a.get("severity") == "high"])
 
         medium_count = len([a for a in anomalies if a.get("severity") == "medium"])
 
-        
+
 
         if high_count > 0:
 
@@ -1616,7 +1616,7 @@ class AlertManager:
 
     """告警管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1626,7 +1626,7 @@ class AlertManager:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def send_alert(self, anomaly_report: Dict, channels: List[str] = None):
 
@@ -1636,7 +1636,7 @@ class AlertManager:
 
             channels = list(self.alert_channels.keys())
 
-        
+
 
         for channel in channels:
 
@@ -1658,13 +1658,13 @@ class AlertManager:
 
                     self._log_alert(anomaly_report)
 
-                    
+
 
             except Exception as e:
 
                 self.logger.error(f"发送告警失败 ({channel}): {e}")
 
-    
+
 
     def _send_email_alert(self, anomaly_report: Dict):
 
@@ -1672,7 +1672,7 @@ class AlertManager:
 
         email_config = self.alert_channels.get("email", {})
 
-        
+
 
         msg = MIMEMultipart()
 
@@ -1682,7 +1682,7 @@ class AlertManager:
 
         msg['Subject'] = f"[数据质量告警] {anomaly_report['source_name']} - {anomaly_report['severity']}"
 
-        
+
 
         body = f"""
 
@@ -1700,17 +1700,17 @@ class AlertManager:
 
 """
 
-        
+
 
         for anomaly in anomaly_report['anomalies']:
 
             body += f"\n- {anomaly['message']}"
 
-        
+
 
         msg.attach(MIMEText(body, 'plain'))
 
-        
+
 
         # 发送邮件
 
@@ -1722,7 +1722,7 @@ class AlertManager:
 
             server.send_message(msg)
 
-    
+
 
     def _send_dingtalk_alert(self, anomaly_report: Dict):
 
@@ -1730,13 +1730,13 @@ class AlertManager:
 
         webhook = self.alert_channels.get("dingtalk", {}).get("webhook")
 
-        
+
 
         if not webhook:
 
             return
 
-        
+
 
         message = {
 
@@ -1750,11 +1750,11 @@ class AlertManager:
 
         }
 
-        
+
 
         requests.post(webhook, json=message)
 
-    
+
 
     def _send_wechat_alert(self, anomaly_report: Dict):
 
@@ -1762,13 +1762,13 @@ class AlertManager:
 
         webhook = self.alert_channels.get("wechat", {}).get("webhook")
 
-        
+
 
         if not webhook:
 
             return
 
-        
+
 
         message = {
 
@@ -1782,11 +1782,11 @@ class AlertManager:
 
         }
 
-        
+
 
         requests.post(webhook, json=message)
 
-    
+
 
     def _log_alert(self, anomaly_report: Dict):
 
@@ -1862,7 +1862,7 @@ data_sources:
 
     enabled: true
 
-    
+
 
   akshare:
 
@@ -1870,7 +1870,7 @@ data_sources:
 
     enabled: true
 
-    
+
 
   eastmoney:
 
@@ -1908,7 +1908,7 @@ alert_channels:
 
     password: "your_password"
 
-    
+
 
   dingtalk:
 
@@ -1916,7 +1916,7 @@ alert_channels:
 
     webhook: "https://oapi.dingtalk.com/robot/send?access_token=your_token"
 
-    
+
 
   log:
 
@@ -1956,7 +1956,7 @@ class DataQualityMonitoringSystem:
 
     """数据质量监控系统"""
 
-    
+
 
     def __init__(self, config_path: str):
 
@@ -1964,7 +1964,7 @@ class DataQualityMonitoringSystem:
 
             self.config = yaml.safe_load(f)
 
-        
+
 
         self.quality_monitor = DataSourceQualityMonitor(self.config)
 
@@ -1974,7 +1974,7 @@ class DataQualityMonitoringSystem:
 
         self.alert_manager = AlertManager(self.config)
 
-    
+
 
     def run_quality_check(self, source_name: str, df):
 
@@ -1984,25 +1984,25 @@ class DataQualityMonitoringSystem:
 
         health = self.health_monitor.check_data_source_health(source_name)
 
-        
+
 
         # 2. 数据质量验证
 
         validation = self.quality_monitor.validate_data_source(df, source_name)
 
-        
+
 
         # 3. 数据完整性检查
 
         completeness = self.quality_monitor.check_data_completeness(df)
 
-        
+
 
         # 4. 数据准确性检查
 
         accuracy = self.quality_monitor.check_data_accuracy(df)
 
-        
+
 
         # 5. 生成质量评分
 
@@ -2012,13 +2012,13 @@ class DataQualityMonitoringSystem:
 
         )
 
-        
+
 
         # 6. 异常检测
 
         anomalies = self.anomaly_detector.detect_anomalies(df, source_name)
 
-        
+
 
         # 7. 发送告警
 
@@ -2026,7 +2026,7 @@ class DataQualityMonitoringSystem:
 
             self.alert_manager.send_alert(anomalies)
 
-        
+
 
         return {
 
@@ -2044,7 +2044,7 @@ class DataQualityMonitoringSystem:
 
         }
 
-    
+
 
     def start_monitoring(self):
 
@@ -2056,7 +2056,7 @@ class DataQualityMonitoringSystem:
 
         schedule.every(1).days.do(self._daily_report)
 
-        
+
 
         while True:
 
@@ -2064,7 +2064,7 @@ class DataQualityMonitoringSystem:
 
             time.sleep(60)
 
-    
+
 
     def _periodic_check(self):
 
@@ -2076,19 +2076,19 @@ class DataQualityMonitoringSystem:
 
             df = self._fetch_data(source_name)
 
-            
+
 
             # 运行质量检查
 
             result = self.run_quality_check(source_name, df)
 
-            
+
 
             # 记录结果
 
             self._log_result(result)
 
-    
+
 
     def _daily_report(self):
 
@@ -2493,4 +2493,3 @@ python src/data_quality/monitor.py
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

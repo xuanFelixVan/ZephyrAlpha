@@ -30,7 +30,7 @@ responsibility_boundary: ''
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -620,7 +620,7 @@ class DataSourceAuditor:
 
 
 
-        
+
 
 
 
@@ -632,7 +632,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -668,7 +668,7 @@ class DataSourceAuditor:
 
 
 
-        
+
 
 
 
@@ -728,7 +728,7 @@ class DataSourceAuditor:
 
 
 
-        
+
 
 
 
@@ -740,7 +740,7 @@ class DataSourceAuditor:
 
 
 
-        
+
 
 
 
@@ -752,7 +752,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -764,7 +764,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -830,7 +830,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -842,7 +842,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -896,7 +896,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -908,7 +908,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -944,7 +944,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -956,7 +956,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -980,7 +980,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -992,7 +992,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1016,7 +1016,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -1028,7 +1028,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1052,7 +1052,7 @@ class DataSourceAuditor:
 
 
 
-    
+
 
 
 
@@ -1064,7 +1064,7 @@ class DataSourceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1430,7 +1430,7 @@ class InferenceAuditor:
 
 
 
-        
+
 
 
 
@@ -1442,7 +1442,7 @@ class InferenceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1562,7 +1562,7 @@ class InferenceAuditor:
 
 
 
-        
+
 
 
 
@@ -1574,7 +1574,7 @@ class InferenceAuditor:
 
 
 
-        
+
 
 
 
@@ -1586,7 +1586,7 @@ class InferenceAuditor:
 
 
 
-    
+
 
 
 
@@ -1598,7 +1598,7 @@ class InferenceAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2084,7 +2084,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2096,7 +2096,7 @@ class DecisionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2204,7 +2204,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2216,7 +2216,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2228,7 +2228,7 @@ class DecisionAuditor:
 
 
 
-    
+
 
 
 
@@ -2240,7 +2240,7 @@ class DecisionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2276,7 +2276,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2294,7 +2294,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2312,7 +2312,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2330,7 +2330,7 @@ class DecisionAuditor:
 
 
 
-        
+
 
 
 
@@ -2774,7 +2774,7 @@ class ExecutionAuditor:
 
 
 
-        
+
 
 
 
@@ -2786,7 +2786,7 @@ class ExecutionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2870,7 +2870,7 @@ class ExecutionAuditor:
 
 
 
-        
+
 
 
 
@@ -2882,7 +2882,7 @@ class ExecutionAuditor:
 
 
 
-        
+
 
 
 
@@ -2894,7 +2894,7 @@ class ExecutionAuditor:
 
 
 
-    
+
 
 
 
@@ -2906,7 +2906,7 @@ class ExecutionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2984,7 +2984,7 @@ class ExecutionAuditor:
 
 
 
-    
+
 
 
 
@@ -2996,7 +2996,7 @@ class ExecutionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3074,7 +3074,7 @@ class ExecutionAuditor:
 
 
 
-    
+
 
 
 
@@ -3086,7 +3086,7 @@ class ExecutionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3152,7 +3152,7 @@ class ExecutionAuditor:
 
 
 
-    
+
 
 
 
@@ -3164,7 +3164,7 @@ class ExecutionAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3548,7 +3548,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3560,7 +3560,7 @@ class OutcomeAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3644,7 +3644,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3686,7 +3686,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3764,7 +3764,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3776,7 +3776,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3788,7 +3788,7 @@ class OutcomeAuditor:
 
 
 
-    
+
 
 
 
@@ -3800,7 +3800,7 @@ class OutcomeAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3842,7 +3842,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3860,7 +3860,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3878,7 +3878,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3896,7 +3896,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3908,7 +3908,7 @@ class OutcomeAuditor:
 
 
 
-    
+
 
 
 
@@ -3920,7 +3920,7 @@ class OutcomeAuditor:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3962,7 +3962,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3980,7 +3980,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -3998,7 +3998,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -4016,7 +4016,7 @@ class OutcomeAuditor:
 
 
 
-        
+
 
 
 
@@ -4322,7 +4322,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4334,7 +4334,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4364,7 +4364,7 @@ class DecisionTracer:
 
 
 
-            (d for d in decision if d.decision_id == decision_id), 
+            (d for d in decision if d.decision_id == decision_id),
 
 
 
@@ -4382,7 +4382,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4400,7 +4400,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4436,7 +4436,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4490,7 +4490,7 @@ class DecisionTracer:
 
 
 
-    
+
 
 
 
@@ -4502,7 +4502,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4598,7 +4598,7 @@ class DecisionTracer:
 
 
 
-    
+
 
 
 
@@ -4610,7 +4610,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4712,7 +4712,7 @@ class DecisionTracer:
 
 
 
-    
+
 
 
 
@@ -4724,7 +4724,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4796,7 +4796,7 @@ class DecisionTracer:
 
 
 
-    
+
 
 
 
@@ -4808,7 +4808,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4832,13 +4832,13 @@ class DecisionTracer:
 
 
 
-            (e for e in self.execution_auditor.execution_records 
+            (e for e in self.execution_auditor.execution_records
 
 
 
 
 
-             if e.decision_id == decision_id), 
+             if e.decision_id == decision_id),
 
 
 
@@ -4856,7 +4856,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4874,7 +4874,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -4940,7 +4940,7 @@ class DecisionTracer:
 
 
 
-    
+
 
 
 
@@ -4952,7 +4952,7 @@ class DecisionTracer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -4976,13 +4976,13 @@ class DecisionTracer:
 
 
 
-            (o for o in self.outcome_auditor.outcome_records 
+            (o for o in self.outcome_auditor.outcome_records
 
 
 
 
 
-             if o.decision_id == decision_id), 
+             if o.decision_id == decision_id),
 
 
 
@@ -5000,7 +5000,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -5018,7 +5018,7 @@ class DecisionTracer:
 
 
 
-        
+
 
 
 
@@ -5853,8 +5853,3 @@ class DecisionTracer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-

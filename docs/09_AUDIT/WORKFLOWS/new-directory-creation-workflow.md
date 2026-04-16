@@ -12,9 +12,9 @@ layer: layer_09
 
 # 新目录创建工作流程 (SOP)
 
-**文档编号**: NEW_DIR_WORKFLOW_001  
-**版本**: 1.0.0  
-**责任层级**: Layer 09 - 审计与质量  
+**文档编号**: NEW_DIR_WORKFLOW_001
+**版本**: 1.0.0
+**责任层级**: Layer 09 - 审计与质量
 **适用对象**: 所有需要创建新文档目录的人员/AI Agent
 
 ```
@@ -266,5 +266,5 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/01_TIME_SERIES/01_DAILY/01_ADJUSTED/INDEX.
 ```---
 ```
 
-**最后更新**: 2026-04-13  
+**最后更新**: 2026-04-13
 **维护责任人**: 文档治理委员会

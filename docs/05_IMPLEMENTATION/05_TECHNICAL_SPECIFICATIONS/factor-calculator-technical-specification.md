@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -527,7 +527,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -563,7 +563,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -973,7 +973,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1051,7 +1051,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1111,7 +1111,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1159,7 +1159,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1201,7 +1201,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1249,7 +1249,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1291,7 +1291,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1333,7 +1333,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1375,7 +1375,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -1817,7 +1817,7 @@ def build_dependency_graph(
 
 
 
-    self, 
+    self,
 
 
 
@@ -1847,7 +1847,7 @@ def build_dependency_graph(
 
 
 
-    
+
 
 
 
@@ -1877,7 +1877,7 @@ def build_dependency_graph(
 
 
 
-    
+
 
 
 
@@ -1925,7 +1925,7 @@ def build_dependency_graph(
 
 
 
-    
+
 
 
 
@@ -1943,7 +1943,7 @@ def build_dependency_graph(
 
 
 
-    
+
 
 
 
@@ -1985,7 +1985,7 @@ def optimize_calculation_order(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2015,7 +2015,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2045,7 +2045,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2075,7 +2075,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2099,7 +2099,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2117,7 +2117,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2141,7 +2141,7 @@ def optimize_calculation_order(
 
 
 
-        
+
 
 
 
@@ -2171,7 +2171,7 @@ def optimize_calculation_order(
 
 
 
-    
+
 
 
 
@@ -2213,7 +2213,7 @@ def parse_expression(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2243,7 +2243,7 @@ def parse_expression(
 
 
 
-    
+
 
 
 
@@ -2273,7 +2273,7 @@ def parse_expression(
 
 
 
-    
+
 
 
 
@@ -2571,7 +2571,7 @@ def test_factor_calculator_integration():
 
 
 
-    
+
 
 
 
@@ -2619,7 +2619,7 @@ def test_factor_calculator_integration():
 
 
 
-    
+
 
 
 
@@ -2631,7 +2631,7 @@ def test_factor_calculator_integration():
 
 
 
-    
+
 
 
 
@@ -3071,7 +3071,7 @@ factor_calculator:
 
 
 
-  
+
 
 
 
@@ -3095,7 +3095,7 @@ factor_calculator:
 
 
 
-  
+
 
 
 
@@ -3222,8 +3222,3 @@ factor_calculator:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人
-
-
-
-
-

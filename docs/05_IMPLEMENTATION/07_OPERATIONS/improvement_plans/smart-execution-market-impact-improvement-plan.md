@@ -32,7 +32,7 @@ implementation_status: ﻟ؟۰ﮒﮒﭘﮒ؟
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -706,7 +706,7 @@ class TWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -722,7 +722,7 @@ class TWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -738,7 +738,7 @@ class TWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -834,7 +834,7 @@ class VWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -846,7 +846,7 @@ class VWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -862,7 +862,7 @@ class VWAPExecutor:
 
 
 
-    
+
 
 
 
@@ -1044,7 +1044,7 @@ class LinearImpactModel:
 
 
 
-    
+
 
 
 
@@ -1060,7 +1060,7 @@ class LinearImpactModel:
 
 
 
-        
+
 
 
 
@@ -1076,7 +1076,7 @@ class LinearImpactModel:
 
 
 
-            
+
 
 
 
@@ -1096,7 +1096,7 @@ class LinearImpactModel:
 
 
 
-        return impact * 10000  # ﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﭦﺅﺟ?    
+        return impact * 10000  # ﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﭦﺅﺟ?
 
 
 
@@ -1112,7 +1112,7 @@ class LinearImpactModel:
 
 
 
-        
+
 
 
 
@@ -1726,7 +1726,7 @@ class LinearImpactModel:
 
 
 
-   
+
 
 
 
@@ -1797,6 +1797,3 @@ class LinearImpactModel:
 
 
 **ﮔﮔ۰۲ﻝﭨﮔ**
-
-
-

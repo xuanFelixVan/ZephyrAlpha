@@ -20,7 +20,7 @@ layer: layer_05
 
 # QMT客户端稳定性应对方?
 > **核心职责**: 文档内容说明
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -163,7 +163,7 @@ class HealthCheckResult:
 
 class QMTHealthChecker:
     """QMT健康检查器"""
-    
+
     def __init__(
         self,
         check_interval: int = 60,
@@ -176,22 +176,22 @@ class QMTHealthChecker:
         self.consecutive_failures = 0
         self._running = False
         self._thread: Optional[threading.Thread] = None
-        
+
     def start(self):
         """启动健康检?""
         if self._running:
             return
-        
+
         self._running = True
         self._thread = threading.Thread(target=self._health_check_loop, daemon=True)
         self._thread.start()
-    
+
     def stop(self):
         """停止健康检?""
         self._running = False
         if self._thread:
             self._thread.join(timeout=5.0)
-    
+
     def _health_check_loop(self):
         """健康检查循?""
         while self._running:
@@ -202,50 +202,50 @@ class QMTHealthChecker:
             except Exception as e:
                 self.logger.error(f"健康检查异? {e}")
                 time.sleep(self.check_interval)
-    
+
     def perform_health_check(self) -> HealthCheckResult:
         """执行健康检?""
         issues = []
         details = {}
-        
+
         try:
             start_time = time.time()
-            
+
             data = xtdata.get_full_tick(['000001.SZ'])
-            
+
             response_time = time.time() - start_time
             details['response_time'] = response_time
-            
+
             if response_time > self.timeout:
                 issues.append(f"响应时间过长: {response_time:.2f}?)
-            
+
             if not data:
                 issues.append("无法获取行情数据")
-            
+
             cpu_percent = psutil.cpu_percent(interval=1)
             memory_percent = psutil.virtual_memory().percent
-            
+
             details['cpu_percent'] = cpu_percent
             details['memory_percent'] = memory_percent
-            
+
             if cpu_percent > 80:
                 issues.append(f"CPU使用率过? {cpu_percent}%")
-            
+
             if memory_percent > 80:
                 issues.append(f"内存使用率过? {memory_percent}%")
-            
+
             if issues:
                 status = HealthStatus.DEGRADED if len(issues) <= 2 else HealthStatus.UNHEALTHY
             else:
                 status = HealthStatus.HEALTHY
-            
+
             return HealthCheckResult(
                 status=status,
                 timestamp=time.time(),
                 details=details,
                 issues=issues
             )
-            
+
         except Exception as e:
             issues.append(f"健康检查失? {str(e)}")
             return HealthCheckResult(
@@ -254,17 +254,17 @@ class QMTHealthChecker:
                 details=details,
                 issues=issues
             )
-    
+
     def _handle_check_result(self, result: HealthCheckResult):
         """处理检查结?""
         if result.status == HealthStatus.HEALTHY:
             self.consecutive_failures = 0
         elif result.status == HealthStatus.UNHEALTHY:
             self.consecutive_failures += 1
-            
+
             if self.consecutive_failures >= self.max_failures:
                 self._trigger_recovery()
-    
+
     def _trigger_recovery(self):
         """触发恢复机制"""
         self.logger.warning("连续健康检查失败，触发恢复机制")
@@ -300,43 +300,43 @@ class ReconnectConfig:
 
 class QMTAutoReconnector:
     """QMT自动重连?""
-    
+
     def __init__(self, config: ReconnectConfig):
         self.config = config
         self.retry_count = 0
         self.last_reconnect_time: Optional[float] = None
         self._reconnect_handlers: list[Callable] = []
-    
+
     def register_reconnect_handler(self, handler: Callable):
         """注册重连处理?""
         self._reconnect_handlers.append(handler)
-    
+
     def handle_disconnect(self, error: Exception):
         """处理连接断开"""
         self.logger.error(f"QMT连接断开: {error}")
-        
+
         self.retry_count = 0
         self._attempt_reconnect()
-    
+
     def _attempt_reconnect(self):
         """尝试重连"""
         if self.retry_count >= self.config.max_retries:
             self.logger.error(f"重连失败次数超过最大限? {self.config.max_retries}")
             self._trigger_fallback()
             return
-        
+
         delay = self._calculate_delay()
-        
+
         self.logger.info(
             f"尝试第{self.retry_count + 1}次重连，"
             f"延迟{delay:.2f}?.."
         )
-        
+
         time.sleep(delay)
-        
+
         try:
             success = self._reconnect()
-            
+
             if success:
                 self.logger.info("重连成功")
                 self.retry_count = 0
@@ -345,23 +345,23 @@ class QMTAutoReconnector:
             else:
                 self.retry_count += 1
                 self._attempt_reconnect()
-                
+
         except Exception as e:
             self.logger.error(f"重连异常: {e}")
             self.retry_count += 1
             self._attempt_reconnect()
-    
+
     def _calculate_delay(self) -> float:
         """计算重连延迟（指数退?+ 随机抖动?""
         delay = min(
             self.config.base_delay * (self.config.exponential_base ** self.retry_count),
             self.config.max_delay
         )
-        
+
         jitter = random.uniform(0, delay * self.config.jitter)
-        
+
         return delay + jitter
-    
+
     def _reconnect(self) -> bool:
         """执行重连"""
         try:
@@ -369,7 +369,7 @@ class QMTAutoReconnector:
             return data is not None
         except:
             return False
-    
+
     def _notify_handlers(self, success: bool):
         """通知重连处理?""
         for handler in self._reconnect_handlers:
@@ -377,7 +377,7 @@ class QMTAutoReconnector:
                 handler(success)
             except Exception as e:
                 self.logger.error(f"重连处理器执行失? {e}")
-    
+
     def _trigger_fallback(self):
         """触发降级策略"""
         self.logger.warning("重连失败，触发降级策?)
@@ -410,19 +410,19 @@ class FallbackLevel(Enum):
 
 class QMTFallbackHandler:
     """QMT降级处理?""
-    
+
     def __init__(self, cache_client, backup_data_sources: Dict[str, Any]):
         self.cache_client = cache_client
         self.backup_data_sources = backup_data_sources
         self.current_level = FallbackLevel.NORMAL
         self.fallback_start_time: Optional[float] = None
-    
+
     def handle_fallback(self, context: Dict[str, Any]):
         """处理降级"""
         self.logger.warning(f"触发降级处理: {context}")
-        
+
         self.fallback_start_time = time.time()
-        
+
         if self._try_backup_source():
             self.current_level = FallbackLevel.BACKUP_SOURCE
             self.logger.info("切换到备用数据源成功")
@@ -432,7 +432,7 @@ class QMTFallbackHandler:
         else:
             self.current_level = FallbackLevel.MINIMAL
             self.logger.error("降级到最小服?)
-    
+
     def get_data_with_fallback(
         self,
         stock_codes: list,
@@ -446,16 +446,16 @@ class QMTFallbackHandler:
                 self.logger.error(f"QMT数据获取失败: {e}")
                 self.handle_fallback({'error': str(e)})
                 return self.get_data_with_fallback(stock_codes, data_type)
-        
+
         elif self.current_level == FallbackLevel.BACKUP_SOURCE:
             return self._get_from_backup(stock_codes, data_type)
-        
+
         elif self.current_level == FallbackLevel.CACHE_ONLY:
             return self._get_from_cache(stock_codes, data_type)
-        
+
         else:
             return None
-    
+
     def _try_backup_source(self) -> bool:
         """尝试切换到备用数据源"""
         for source_name, source_client in self.backup_data_sources.items():
@@ -466,9 +466,9 @@ class QMTFallbackHandler:
                     return True
             except Exception as e:
                 self.logger.warning(f"备用数据?{source_name} 不可? {e}")
-        
+
         return False
-    
+
     def _try_cache(self) -> bool:
         """尝试使用缓存"""
         try:
@@ -478,9 +478,9 @@ class QMTFallbackHandler:
                 return True
         except Exception as e:
             self.logger.warning(f"缓存不可? {e}")
-        
+
         return False
-    
+
     def _get_from_qmt(self, stock_codes: list, data_type: str) -> Any:
         """从QMT获取数据"""
         if data_type == 'quote':
@@ -489,7 +489,7 @@ class QMTFallbackHandler:
             return xtdata.get_market_data_ex([], stock_codes, period='1d')
         else:
             raise ValueError(f"不支持的数据类型: {data_type}")
-    
+
     def _get_from_backup(self, stock_codes: list, data_type: str) -> Any:
         """从备用数据源获取数据"""
         for source_client in self.backup_data_sources.values():
@@ -500,14 +500,14 @@ class QMTFallbackHandler:
                     return source_client.get_market_data(stock_codes)
             except Exception as e:
                 self.logger.error(f"备用数据源获取失? {e}")
-        
+
         return None
-    
+
     def _get_from_cache(self, stock_codes: list, data_type: str) -> Any:
         """从缓存获取数?""
         cache_key = f"{data_type}_{','.join(stock_codes)}"
         return self.cache_client.get(cache_key)
-    
+
     def restore_normal_service(self):
         """恢复正常服务"""
         if self.current_level != FallbackLevel.NORMAL:
@@ -534,7 +534,7 @@ from pathlib import Path
 
 class QMTDaemonProcess:
     """QMT守护进程"""
-    
+
     def __init__(
         self,
         qmt_client_path: str,
@@ -550,26 +550,26 @@ class QMTDaemonProcess:
         self.last_restart_time: Optional[float] = None
         self._running = False
         self._process: Optional[subprocess.Popen] = None
-    
+
     def start(self):
         """启动守护进程"""
         if self._running:
             return
-        
+
         self._running = True
-        
+
         self._start_qmt_client()
-        
+
         self._start_monitoring()
-    
+
     def stop(self):
         """停止守护进程"""
         self._running = False
-        
+
         if self._process:
             self._process.terminate()
             self._process.wait(timeout=10)
-    
+
     def _start_qmt_client(self):
         """启动QMT客户?""
         try:
@@ -581,7 +581,7 @@ class QMTDaemonProcess:
             self.logger.info(f"QMT客户端已启动，PID: {self._process.pid}")
         except Exception as e:
             self.logger.error(f"启动QMT客户端失? {e}")
-    
+
     def _start_monitoring(self):
         """启动监控线程"""
         def monitor_loop():
@@ -592,40 +592,40 @@ class QMTDaemonProcess:
                 except Exception as e:
                     self.logger.error(f"监控异常: {e}")
                     time.sleep(self.check_interval)
-        
+
         import threading
         thread = threading.Thread(target=monitor_loop, daemon=True)
         thread.start()
-    
+
     def _check_process(self):
         """检查进程状?""
         if not self._process:
             self._handle_process_crash()
             return
-        
+
         if self._process.poll() is not None:
             self.logger.warning(f"QMT客户端进程已退出，退出码: {self._process.returncode}")
             self._handle_process_crash()
-    
+
     def _handle_process_crash(self):
         """处理进程崩溃"""
         current_time = time.time()
-        
+
         if self.last_restart_time and (current_time - self.last_restart_time) < self.restart_cooldown:
             self.restart_count += 1
         else:
             self.restart_count = 1
-        
+
         if self.restart_count > self.max_restart_times:
             self.logger.error(f"重启次数超过限制: {self.max_restart_times}")
             self._trigger_alert()
             return
-        
+
         self.logger.info(f"尝试重启QMT客户端（第{self.restart_count}次）")
-        
+
         self._start_qmt_client()
         self.last_restart_time = current_time
-    
+
     def _trigger_alert(self):
         """触发告警"""
         self.logger.critical("QMT客户端频繁崩溃，需要人工介?)
@@ -633,7 +633,7 @@ class QMTDaemonProcess:
             'restart_count': self.restart_count,
             'timestamp': time.time()
         })
-    
+
     def get_process_status(self) -> Dict[str, Any]:
         """获取进程状?""
         if not self._process:
@@ -643,7 +643,7 @@ class QMTDaemonProcess:
                 'cpu_percent': 0,
                 'memory_percent': 0
             }
-        
+
         try:
             process = psutil.Process(self._process.pid)
             return {
@@ -681,11 +681,11 @@ class QMTDaemonProcess:
 ```python
 class QMTAlertManager:
     """QMT告警管理?""
-    
+
     def __init__(self, alert_channels: Dict[str, Any]):
         self.alert_channels = alert_channels
         self.alert_history = []
-    
+
     def send_alert(self, level: str, message: str, context: Dict[str, Any]):
         """发送告?""
         alert = {
@@ -694,9 +694,9 @@ class QMTAlertManager:
             'context': context,
             'timestamp': time.time()
         }
-        
+
         self.alert_history.append(alert)
-        
+
         for channel_name, channel in self.alert_channels.items():
             try:
                 channel.send(alert)
@@ -785,26 +785,26 @@ qmt_stability:
     interval: 60
     timeout: 5.0
     max_failures: 3
-  
+
   auto_reconnect:
     enabled: true
     max_retries: 5
     base_delay: 1.0
     max_delay: 60.0
-  
+
   fallback:
     enabled: true
     backup_sources:
       - ifind
       - baostock
     cache_ttl: 300
-  
+
   daemon:
     enabled: true
     check_interval: 30
     max_restart_times: 5
     restart_cooldown: 300
-  
+
   monitoring:
     enabled: true
     metrics:
@@ -812,7 +812,7 @@ qmt_stability:
       - response_time
       - cpu_percent
       - memory_percent
-    
+
   alert:
     enabled: true
     channels:

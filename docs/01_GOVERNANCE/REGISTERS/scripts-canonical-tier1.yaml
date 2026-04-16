@@ -1,11 +1,11 @@
-# Tier-1 治理脚本登记（30 个 CLI 入口）
-# 说明：仓库 scripts/ 下物理 .py 文件多于 30；本表为「日常治理/CI/预提交」优先入口，
+# Tier-1 治理脚本登记（31 个 CLI 入口）
+# 说明：仓库 scripts/ 下物理 .py 文件多于 31；本表为「日常治理/CI/预提交」优先入口，
 #       避免重复造轮子。合并记录：dedupe_archive_only_module_ids 已并入 dedupe_archive_module_ids。
 # last_updated: 2026-04-16
 
 schema_version: "1.0"
 tier: 1
-count: 30
+count: 31
 
 scripts:
   # audit/

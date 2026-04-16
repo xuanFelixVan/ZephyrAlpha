@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -485,7 +485,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -521,7 +521,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -907,7 +907,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -931,7 +931,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -943,19 +943,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        method: str = "zscore", 
+        method: str = "zscore",
 
 
 
@@ -985,7 +985,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -997,19 +997,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        train_data: pd.DataFrame, 
+        train_data: pd.DataFrame,
 
 
 
 
 
-        method: str = "zscore", 
+        method: str = "zscore",
 
 
 
@@ -1039,7 +1039,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1051,13 +1051,13 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
@@ -1087,7 +1087,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1099,13 +1099,13 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        normalized_data: pd.DataFrame, 
+        normalized_data: pd.DataFrame,
 
 
 
@@ -1135,7 +1135,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1147,19 +1147,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        axis: int = 0, 
+        axis: int = 0,
 
 
 
@@ -1189,7 +1189,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1201,19 +1201,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        feature_range: Tuple[float, float] = (0, 1), 
+        feature_range: Tuple[float, float] = (0, 1),
 
 
 
@@ -1243,7 +1243,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1255,19 +1255,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        quantile_range: Tuple[float, float] = (0.25, 0.75), 
+        quantile_range: Tuple[float, float] = (0.25, 0.75),
 
 
 
@@ -1297,7 +1297,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1309,19 +1309,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        base: float = np.e, 
+        base: float = np.e,
 
 
 
@@ -1351,7 +1351,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1363,19 +1363,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        window: int = 20, 
+        window: int = 20,
 
 
 
@@ -1405,7 +1405,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1417,19 +1417,19 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
 
 
-        date_col: str = "date", 
+        date_col: str = "date",
 
 
 
@@ -1459,7 +1459,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1471,7 +1471,7 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1501,7 +1501,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1513,13 +1513,13 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        normalizer: FittedNormalizer, 
+        normalizer: FittedNormalizer,
 
 
 
@@ -1549,7 +1549,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1573,7 +1573,7 @@ class DataNormalizer:
 
 
 
-    
+
 
 
 
@@ -1585,13 +1585,13 @@ class DataNormalizer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
@@ -2039,19 +2039,19 @@ def zscore_normalize(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
 
 
-    axis: int = 0, 
+    axis: int = 0,
 
 
 
@@ -2081,7 +2081,7 @@ def zscore_normalize(
 
 
 
-    
+
 
 
 
@@ -2105,7 +2105,7 @@ def zscore_normalize(
 
 
 
-    
+
 
 
 
@@ -2171,13 +2171,13 @@ def minmax_normalize(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
@@ -2207,7 +2207,7 @@ def minmax_normalize(
 
 
 
-    
+
 
 
 
@@ -2225,7 +2225,7 @@ def minmax_normalize(
 
 
 
-    
+
 
 
 
@@ -2297,13 +2297,13 @@ def robust_normalize(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
@@ -2333,7 +2333,7 @@ def robust_normalize(
 
 
 
-    
+
 
 
 
@@ -2357,7 +2357,7 @@ def robust_normalize(
 
 
 
-    
+
 
 
 
@@ -2435,13 +2435,13 @@ def rolling_normalize(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
@@ -2471,7 +2471,7 @@ def rolling_normalize(
 
 
 
-    
+
 
 
 
@@ -2489,7 +2489,7 @@ def rolling_normalize(
 
 
 
-    
+
 
 
 
@@ -2781,7 +2781,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2811,7 +2811,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2823,7 +2823,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2841,7 +2841,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2871,7 +2871,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2883,7 +2883,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -2895,7 +2895,7 @@ def test_normalizer_integration():
 
 
 
-    
+
 
 
 
@@ -3317,7 +3317,7 @@ data_normalizer:
 
 
 
-  
+
 
 
 
@@ -3347,7 +3347,7 @@ data_normalizer:
 
 
 
-    
+
 
 
 
@@ -3365,7 +3365,7 @@ data_normalizer:
 
 
 
-    
+
 
 
 
@@ -3383,7 +3383,7 @@ data_normalizer:
 
 
 
-    
+
 
 
 
@@ -3407,7 +3407,7 @@ data_normalizer:
 
 
 
-  
+
 
 
 
@@ -3437,7 +3437,7 @@ data_normalizer:
 
 
 
-  
+
 
 
 
@@ -3570,8 +3570,3 @@ data_normalizer:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据预处理层负责?
-
-
-
-
-

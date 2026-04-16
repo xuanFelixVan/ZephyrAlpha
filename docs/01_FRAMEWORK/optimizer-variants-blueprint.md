@@ -55,7 +55,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -475,7 +475,7 @@ class OptimizerFactory:
 
 
 
-    
+
 
 
 
@@ -571,7 +571,7 @@ class OptimizerFactory:
 
 
 
-        """创建优化?        
+        """创建优化?
 
 
 
@@ -619,7 +619,7 @@ class OptimizerFactory:
 
 
 
-            
+
 
 
 
@@ -1101,7 +1101,7 @@ optimizer = Lion(
 
 
 
-    model.parameters(), 
+    model.parameters(),
 
 
 
@@ -1113,7 +1113,7 @@ optimizer = Lion(
 
 
 
-    lr=1e-4, 
+    lr=1e-4,
 
 
 
@@ -1257,7 +1257,7 @@ optimizer = bnb.optim.AdamW8bit(
 
 
 
-    model.parameters(), 
+    model.parameters(),
 
 
 
@@ -1840,14 +1840,3 @@ optimizer = bnb.optim.AdamW8bit(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

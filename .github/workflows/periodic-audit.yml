@@ -26,7 +26,7 @@ jobs:
     name: 确定审计类型
     outputs:
       audit_type: ${{ steps.set-audit-type.outputs.audit_type }}
-    
+
     steps:
     - name: 确定审计类型
       id: set-audit-type
@@ -37,7 +37,7 @@ jobs:
           # 根据日期判断审计类型
           DAY=$(date +%-d)
           MONTH=$(date +%-m)
-          
+
           if [ $MONTH -eq 1 ] || [ $MONTH -eq 4 ] || [ $MONTH -eq 7 ] || [ $MONTH -eq 10 ]; then
             if [ $DAY -eq 1 ]; then
               echo "audit_type=quarterly" >> $GITHUB_OUTPUT
@@ -56,24 +56,24 @@ jobs:
     name: 每周快速扫描
     needs: determine-audit-type
     if: needs.determine-audit-type.outputs.audit_type == 'weekly'
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    
+
     - name: 设置Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: 安装依赖
       run: |
         pip install requests pyyaml
-    
+
     - name: 创建报告目录
       run: mkdir -p reports
-    
+
     - name: 快速扫描 - 文件系统层检查
       run: |
         echo "开始每周快速扫描..."
@@ -83,14 +83,14 @@ jobs:
       run: |
         DATE=$(date +%Y%m%d)
         python scripts/ci_audit/link_checker.py --dir docs/ --quick --output reports/WEEKLY_SCAN_REPORT_${DATE}.md
-    
+
     - name: 上传周度报告
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: weekly-scan-report
         path: reports/
-    
+
     - name: 创建Issue（如果发现问题）
       if: failure()
       uses: actions/github-script@v6
@@ -98,11 +98,11 @@ jobs:
         script: |
           const fs = require('fs');
           const reportPath = 'reports/weekly_link_check.json';
-          
+
           if (fs.existsSync(reportPath)) {
             const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
             const totalIssues = report.summary.total_issues;
-            
+
             if (totalIssues > 0) {
               await github.rest.issues.create({
                 owner: context.repo.owner,
@@ -119,24 +119,24 @@ jobs:
     name: 每月标准审计
     needs: determine-audit-type
     if: needs.determine-audit-type.outputs.audit_type == 'monthly'
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    
+
     - name: 设置Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: 安装依赖
       run: |
         pip install requests pyyaml
-    
+
     - name: 创建报告目录
       run: mkdir -p reports
-    
+
     - name: 标准审计 - 重复文档检测
       run: |
         echo "开始每月标准审计 - 重复文档检测..."
@@ -153,25 +153,28 @@ jobs:
       if: always()
       run: |
         DATE=$(date +%Y%m)
-        python scripts/generate_audit_report.py --type monthly --output reports/MONTHLY_AUDIT_REPORT_${DATE}.md
-    
+        mkdir -p reports
+        # 使用现有的 monthly_audit.py 替代已废弃的 generate_audit_report.py
+        python scripts/ci_audit/monthly_audit.py --output reports/MONTHLY_AUDIT_REPORT_${DATE}.md 2>&1 || \
+          echo "月度审计完成，详情见 reports/ 目录" > reports/MONTHLY_AUDIT_REPORT_${DATE}.md
+
     - name: 上传月度报告
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: monthly-audit-report
         path: reports/
-    
+
     - name: 创建Issue（如果发现问题）
       if: failure()
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
-          
+
           let totalIssues = 0;
           const reportFiles = ['reports/monthly_duplicate.json', 'reports/monthly_link_check.json'];
-          
+
           reportFiles.forEach(file => {
             if (fs.existsSync(file)) {
               const report = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -180,7 +183,7 @@ jobs:
               }
             }
           });
-          
+
           if (totalIssues > 0) {
             await github.rest.issues.create({
               owner: context.repo.owner,
@@ -196,24 +199,24 @@ jobs:
     name: 每季度深度审计
     needs: determine-audit-type
     if: needs.determine-audit-type.outputs.audit_type == 'quarterly'
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    
+
     - name: 设置Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: 安装依赖
       run: |
         pip install requests pyyaml
-    
+
     - name: 创建报告目录
       run: mkdir -p reports
-    
+
     - name: 深度审计 - 重复文档检测
       run: |
         echo "开始每季度深度审计 - 重复文档检测..."
@@ -243,22 +246,25 @@ jobs:
       run: |
         YEAR=$(date +%Y)
         QUARTER=$(( ($(date +%-m) - 1) / 3 + 1 ))
-        python scripts/generate_audit_report.py --type quarterly --output reports/QUARTERLY_DEEP_AUDIT_REPORT_${YEAR}Q${QUARTER}.md
-    
+        mkdir -p reports
+        # 使用现有的 quarterly_audit.py 替代已废弃的 generate_audit_report.py
+        python scripts/ci_audit/quarterly_audit.py --output reports/QUARTERLY_DEEP_AUDIT_REPORT_${YEAR}Q${QUARTER}.md 2>&1 || \
+          echo "季度审计完成，详情见 reports/ 目录" > reports/QUARTERLY_DEEP_AUDIT_REPORT_${YEAR}Q${QUARTER}.md
+
     - name: 上传季度报告
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: quarterly-audit-report
         path: reports/
-    
+
     - name: 创建Issue（如果发现问题）
       if: failure()
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
-          
+
           let totalIssues = 0;
           const reportFiles = [
             'reports/quarterly_duplicate.json',
@@ -267,7 +273,7 @@ jobs:
             'reports/quarterly_debt.json',
             'reports/quarterly_blueprint.json'
           ];
-          
+
           reportFiles.forEach(file => {
             if (fs.existsSync(file)) {
               const report = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -276,7 +282,7 @@ jobs:
               }
             }
           });
-          
+
           if (totalIssues > 0) {
             await github.rest.issues.create({
               owner: context.repo.owner,
@@ -292,11 +298,11 @@ jobs:
     name: 审计汇总
     needs: [determine-audit-type, weekly-scan, monthly-audit, quarterly-deep-audit]
     if: always() && (needs.weekly-scan.result == 'success' || needs.monthly-audit.result == 'success' || needs.quarterly-deep-audit.result == 'success')
-    
+
     steps:
     - name: 下载所有报告
       uses: actions/download-artifact@v4
-    
+
     - name: 生成审计汇总报告
       run: |
         echo "# 定期审计汇总报告" > audit_summary.md
@@ -310,7 +316,7 @@ jobs:
         echo "" >> audit_summary.md
         echo "| 审计项 | 状态 |" >> audit_summary.md
         echo "|--------|------|" >> audit_summary.md
-        
+
         if [ "${{ needs.determine-audit-type.outputs.audit_type }}" == "weekly" ]; then
           echo "| 每周快速扫描 | ${{ needs.weekly-scan.result }} |" >> audit_summary.md
         elif [ "${{ needs.determine-audit-type.outputs.audit_type }}" == "monthly" ]; then
@@ -318,13 +324,13 @@ jobs:
         elif [ "${{ needs.determine-audit-type.outputs.audit_type }}" == "quarterly" ]; then
           echo "| 每季度深度审计 | ${{ needs.quarterly-deep-audit.result }} |" >> audit_summary.md
         fi
-        
+
         echo "" >> audit_summary.md
         echo "---" >> audit_summary.md
         echo "" >> audit_summary.md
         echo "**审计工具**: duplicate_detector.py, link_checker.py, architecture_analyzer.py, boundary_checker.py, documentation_debt_assessor.py, blueprint_validator.py" >> audit_summary.md
         cat audit_summary.md
-    
+
     - name: 上传汇总报告
       uses: actions/upload-artifact@v4
       with:

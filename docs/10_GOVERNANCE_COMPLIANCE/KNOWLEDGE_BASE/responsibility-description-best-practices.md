@@ -1110,4 +1110,3 @@ python scripts/responsibility_format_validator.py
 **维护者**: 首席文档架构师
 
 **状态**: ✅ 活跃
-

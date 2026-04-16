@@ -41,7 +41,7 @@ def check_yaml_validity(content: str) -> tuple:
     match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
     if not match:
         return False, "无法找到YAML frontmatter"
-    
+
     try:
         yaml_content = match.group(1)
         data = yaml.safe_load(yaml_content)
@@ -58,21 +58,21 @@ def check_yaml_validity(content: str) -> tuple:
 def validate_file(file_path: Path) -> list:
     """验证单个文件"""
     errors = []
-    
+
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
     except Exception as e:
         return [f"无法读取文件: {e}"]
-    
+
     # 检查双YAML
     if check_double_yaml(content):
         errors.append("❌ 双YAML frontmatter")
-    
+
     # 检查双module_id
     if check_double_module_id(content):
         errors.append("❌ 双module_id")
-    
+
     # 检查YAML有效性
     valid, error_msg = check_yaml_validity(content)
     if not valid:
@@ -82,13 +82,13 @@ def validate_file(file_path: Path) -> list:
         missing = check_frontmatter_fields(content)
         if missing:
             errors.append(f"❌ 缺少字段: {', '.join(missing)}")
-    
+
     return errors
 
 def main():
     """主函数 - 检查暂存文件"""
     import subprocess
-    
+
     # 获取暂存的 .md 文件
     try:
         result = subprocess.run(
@@ -102,19 +102,19 @@ def main():
     except Exception:
         print("⚠️  无法获取git暂存文件列表")
         return 0
-    
+
     if not staged_files:
         return 0
-    
+
     print("🔍 真源卫兵检查中...")
     print(f"   检查 {len(staged_files)} 个文件\n")
-    
+
     has_error = False
     for rel_path in staged_files:
         file_path = Path(__file__).resolve().parents[2] / rel_path
         if not file_path.exists():
             continue
-        
+
         errors = validate_file(file_path)
         if errors:
             has_error = True
@@ -122,7 +122,7 @@ def main():
             for error in errors:
                 print(f"   {error}")
             print()
-    
+
     if has_error:
         print("=" * 60)
         print("❌ 真源卫兵拦截了提交!")

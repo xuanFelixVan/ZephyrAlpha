@@ -36,7 +36,7 @@ applicable_modules: null
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -124,13 +124,13 @@ class MultimodalSentimentAnalyzer:
 
     """多模态情感分析器
 
-    
+
 
     支持文本、图像、音频、视频的多模态情感分
 
     """
 
-    
+
 
     def __init__(
 
@@ -152,7 +152,7 @@ class MultimodalSentimentAnalyzer:
 
         """初始化多模态情感分析器
 
-        
+
 
         Args:
 
@@ -172,7 +172,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_text(
 
@@ -186,7 +186,7 @@ class MultimodalSentimentAnalyzer:
 
         """分析文本情感
 
-        
+
 
         Args:
 
@@ -194,7 +194,7 @@ class MultimodalSentimentAnalyzer:
 
             return_features: 是否返回特征向量
 
-            
+
 
         Returns:
 
@@ -204,7 +204,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_image(
 
@@ -218,7 +218,7 @@ class MultimodalSentimentAnalyzer:
 
         """分析图像情感
 
-        
+
 
         Args:
 
@@ -226,7 +226,7 @@ class MultimodalSentimentAnalyzer:
 
             return_features: 是否返回特征向量
 
-            
+
 
         Returns:
 
@@ -236,7 +236,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_audio(
 
@@ -250,7 +250,7 @@ class MultimodalSentimentAnalyzer:
 
         """分析音频情感
 
-        
+
 
         Args:
 
@@ -258,7 +258,7 @@ class MultimodalSentimentAnalyzer:
 
             return_features: 是否返回特征向量
 
-            
+
 
         Returns:
 
@@ -268,7 +268,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_video(
 
@@ -282,7 +282,7 @@ class MultimodalSentimentAnalyzer:
 
         """分析视频情感
 
-        
+
 
         Args:
 
@@ -290,7 +290,7 @@ class MultimodalSentimentAnalyzer:
 
             return_features: 是否返回特征向量
 
-            
+
 
         Returns:
 
@@ -300,7 +300,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_multimodal(
 
@@ -320,7 +320,7 @@ class MultimodalSentimentAnalyzer:
 
         """多模态情感分
 
-        
+
 
         Args:
 
@@ -334,7 +334,7 @@ class MultimodalSentimentAnalyzer:
 
             weights: 各模态权重（可选）
 
-            
+
 
         Returns:
 
@@ -344,7 +344,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def extract_features(
 
@@ -358,7 +358,7 @@ class MultimodalSentimentAnalyzer:
 
         """提取特征向量
 
-        
+
 
         Args:
 
@@ -366,7 +366,7 @@ class MultimodalSentimentAnalyzer:
 
             content: 内容
 
-            
+
 
         Returns:
 
@@ -376,7 +376,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def fuse_features(
 
@@ -390,7 +390,7 @@ class MultimodalSentimentAnalyzer:
 
         """融合特征向量
 
-        
+
 
         Args:
 
@@ -398,7 +398,7 @@ class MultimodalSentimentAnalyzer:
 
             strategy: 融合策略（可选）
 
-            
+
 
         Returns:
 
@@ -408,13 +408,13 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def get_model_info(self) -> Dict[str, Any]:
 
         """获取模型信息
 
-        
+
 
         Returns:
 
@@ -424,7 +424,7 @@ class MultimodalSentimentAnalyzer:
 
         pass
 
-    
+
 
     def benchmark(
 
@@ -438,7 +438,7 @@ class MultimodalSentimentAnalyzer:
 
         """性能基准测试
 
-        
+
 
         Args:
 
@@ -446,7 +446,7 @@ class MultimodalSentimentAnalyzer:
 
             num_runs: 运行次数
 
-            
+
 
         Returns:
 
@@ -692,13 +692,13 @@ class ImageSentimentAnalyzer:
 
     """图像情感分析
 
-    
+
 
     使用视觉模型分析图像情感
 
     """
 
-    
+
 
     def __init__(
 
@@ -712,7 +712,7 @@ class ImageSentimentAnalyzer:
 
         """初始化图像情感分析器
 
-        
+
 
         Args:
 
@@ -724,7 +724,7 @@ class ImageSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze(
 
@@ -738,7 +738,7 @@ class ImageSentimentAnalyzer:
 
         """分析图像情感
 
-        
+
 
         Args:
 
@@ -746,7 +746,7 @@ class ImageSentimentAnalyzer:
 
             return_features: 是否返回特征
 
-            
+
 
         Returns:
 
@@ -756,7 +756,7 @@ class ImageSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_batch(
 
@@ -770,7 +770,7 @@ class ImageSentimentAnalyzer:
 
         """批量分析图像情感
 
-        
+
 
         Args:
 
@@ -778,7 +778,7 @@ class ImageSentimentAnalyzer:
 
             return_features: 是否返回特征
 
-            
+
 
         Returns:
 
@@ -788,7 +788,7 @@ class ImageSentimentAnalyzer:
 
         pass
 
-    
+
 
     def detect_objects(
 
@@ -802,7 +802,7 @@ class ImageSentimentAnalyzer:
 
         """检测图像中的对
 
-        
+
 
         Args:
 
@@ -810,7 +810,7 @@ class ImageSentimentAnalyzer:
 
             confidence_threshold: 置信度阈
 
-            
+
 
         Returns:
 
@@ -820,7 +820,7 @@ class ImageSentimentAnalyzer:
 
         pass
 
-    
+
 
     def extract_colors(
 
@@ -834,7 +834,7 @@ class ImageSentimentAnalyzer:
 
         """提取图像主要颜色
 
-        
+
 
         Args:
 
@@ -842,7 +842,7 @@ class ImageSentimentAnalyzer:
 
             num_colors: 颜色数量
 
-            
+
 
         Returns:
 
@@ -1022,13 +1022,13 @@ class AudioSentimentAnalyzer:
 
     """音频情感分析
 
-    
+
 
     使用音频模型分析语音情感
 
     """
 
-    
+
 
     def __init__(
 
@@ -1042,7 +1042,7 @@ class AudioSentimentAnalyzer:
 
         """初始化音频情感分析器
 
-        
+
 
         Args:
 
@@ -1054,7 +1054,7 @@ class AudioSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze(
 
@@ -1068,7 +1068,7 @@ class AudioSentimentAnalyzer:
 
         """分析音频情感
 
-        
+
 
         Args:
 
@@ -1076,7 +1076,7 @@ class AudioSentimentAnalyzer:
 
             return_features: 是否返回特征
 
-            
+
 
         Returns:
 
@@ -1086,7 +1086,7 @@ class AudioSentimentAnalyzer:
 
         pass
 
-    
+
 
     def transcribe(
 
@@ -1098,13 +1098,13 @@ class AudioSentimentAnalyzer:
 
         """语音识别
 
-        
+
 
         Args:
 
             audio_path: 音频路径
 
-            
+
 
         Returns:
 
@@ -1114,7 +1114,7 @@ class AudioSentimentAnalyzer:
 
         pass
 
-    
+
 
     def extract_audio_features(
 
@@ -1126,13 +1126,13 @@ class AudioSentimentAnalyzer:
 
         """提取音频特征
 
-        
+
 
         Args:
 
             audio_path: 音频路径
 
-            
+
 
         Returns:
 
@@ -1142,7 +1142,7 @@ class AudioSentimentAnalyzer:
 
         pass
 
-    
+
 
     def detect_speaker_emotion(
 
@@ -1154,13 +1154,13 @@ class AudioSentimentAnalyzer:
 
         """检测说话人情感
 
-        
+
 
         Args:
 
             audio_path: 音频路径
 
-            
+
 
         Returns:
 
@@ -1358,13 +1358,13 @@ class AIResearchAssistant:
 
     """AI研究助手
 
-    
+
 
     提供智能研究支持、知识管理、报告生成等功能
 
     """
 
-    
+
 
     def __init__(
 
@@ -1380,7 +1380,7 @@ class AIResearchAssistant:
 
         """初始化AI研究助手
 
-        
+
 
         Args:
 
@@ -1394,7 +1394,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def ask(
 
@@ -1410,7 +1410,7 @@ class AIResearchAssistant:
 
         """提问
 
-        
+
 
         Args:
 
@@ -1420,7 +1420,7 @@ class AIResearchAssistant:
 
             use_knowledge_base: 是否使用知识
 
-            
+
 
         Returns:
 
@@ -1430,7 +1430,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def research(
 
@@ -1446,7 +1446,7 @@ class AIResearchAssistant:
 
         """研究主题
 
-        
+
 
         Args:
 
@@ -1456,7 +1456,7 @@ class AIResearchAssistant:
 
             sources: 数据源列表（可选）
 
-            
+
 
         Returns:
 
@@ -1466,7 +1466,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def generate_report(
 
@@ -1484,7 +1484,7 @@ class AIResearchAssistant:
 
         """生成报告
 
-        
+
 
         Args:
 
@@ -1496,7 +1496,7 @@ class AIResearchAssistant:
 
             include_charts: 是否包含图表
 
-            
+
 
         Returns:
 
@@ -1506,7 +1506,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def analyze_trend(
 
@@ -1524,7 +1524,7 @@ class AIResearchAssistant:
 
         """分析趋势
 
-        
+
 
         Args:
 
@@ -1536,7 +1536,7 @@ class AIResearchAssistant:
 
             analysis_type: 分析类型 (basic, comprehensive, advanced)
 
-            
+
 
         Returns:
 
@@ -1546,7 +1546,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def compare_entities(
 
@@ -1562,7 +1562,7 @@ class AIResearchAssistant:
 
         """比较实体
 
-        
+
 
         Args:
 
@@ -1572,7 +1572,7 @@ class AIResearchAssistant:
 
             time_range: 时间范围（可选）
 
-            
+
 
         Returns:
 
@@ -1582,7 +1582,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def suggest_actions(
 
@@ -1596,7 +1596,7 @@ class AIResearchAssistant:
 
         """建议行动
 
-        
+
 
         Args:
 
@@ -1604,7 +1604,7 @@ class AIResearchAssistant:
 
             goal: 目标
 
-            
+
 
         Returns:
 
@@ -1614,7 +1614,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def learn(
 
@@ -1630,7 +1630,7 @@ class AIResearchAssistant:
 
         """学习新知
 
-        
+
 
         Args:
 
@@ -1640,7 +1640,7 @@ class AIResearchAssistant:
 
             tags: 标签（可选）
 
-            
+
 
         Returns:
 
@@ -1650,7 +1650,7 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def recall(
 
@@ -1664,7 +1664,7 @@ class AIResearchAssistant:
 
         """回忆知识
 
-        
+
 
         Args:
 
@@ -1672,7 +1672,7 @@ class AIResearchAssistant:
 
             top_k: 返回数量
 
-            
+
 
         Returns:
 
@@ -1682,13 +1682,13 @@ class AIResearchAssistant:
 
         pass
 
-    
+
 
     def get_memory_stats(self) -> Dict[str, Any]:
 
         """获取记忆统计
 
-        
+
 
         Returns:
 
@@ -1990,13 +1990,13 @@ class KnowledgeManager:
 
     """知识管理
 
-    
+
 
     管理知识库的存储、检索、更新和版本控制
 
     """
 
-    
+
 
     def __init__(
 
@@ -2012,7 +2012,7 @@ class KnowledgeManager:
 
         """初始化知识管理器
 
-        
+
 
         Args:
 
@@ -2026,7 +2026,7 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def add_knowledge(
 
@@ -2044,7 +2044,7 @@ class KnowledgeManager:
 
         """添加知识
 
-        
+
 
         Args:
 
@@ -2056,7 +2056,7 @@ class KnowledgeManager:
 
             tags: 标签（可选）
 
-            
+
 
         Returns:
 
@@ -2066,7 +2066,7 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def search(
 
@@ -2082,7 +2082,7 @@ class KnowledgeManager:
 
         """搜索知识
 
-        
+
 
         Args:
 
@@ -2092,7 +2092,7 @@ class KnowledgeManager:
 
             filters: 过滤条件（可选）
 
-            
+
 
         Returns:
 
@@ -2102,7 +2102,7 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def update_knowledge(
 
@@ -2120,7 +2120,7 @@ class KnowledgeManager:
 
         """更新知识
 
-        
+
 
         Args:
 
@@ -2132,7 +2132,7 @@ class KnowledgeManager:
 
             tags: 标签（可选）
 
-            
+
 
         Returns:
 
@@ -2142,19 +2142,19 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def delete_knowledge(self, knowledge_id: str) -> bool:
 
         """删除知识
 
-        
+
 
         Args:
 
             knowledge_id: 知识ID
 
-            
+
 
         Returns:
 
@@ -2164,19 +2164,19 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def get_knowledge(self, knowledge_id: str) -> Optional[Dict[str, Any]]:
 
         """获取知识
 
-        
+
 
         Args:
 
             knowledge_id: 知识ID
 
-            
+
 
         Returns:
 
@@ -2186,13 +2186,13 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def get_categories(self) -> List[str]:
 
         """获取所有分
 
-        
+
 
         Returns:
 
@@ -2202,13 +2202,13 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def get_tags(self) -> List[str]:
 
         """获取所有标
 
-        
+
 
         Returns:
 
@@ -2218,7 +2218,7 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def export_knowledge(
 
@@ -2232,7 +2232,7 @@ class KnowledgeManager:
 
         """导出知识
 
-        
+
 
         Args:
 
@@ -2240,7 +2240,7 @@ class KnowledgeManager:
 
             format: 格式 (json, csv, markdown)
 
-            
+
 
         Returns:
 
@@ -2250,7 +2250,7 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def import_knowledge(
 
@@ -2264,7 +2264,7 @@ class KnowledgeManager:
 
         """导入知识
 
-        
+
 
         Args:
 
@@ -2272,7 +2272,7 @@ class KnowledgeManager:
 
             format: 格式 (json, csv, markdown)
 
-            
+
 
         Returns:
 
@@ -2282,13 +2282,13 @@ class KnowledgeManager:
 
         pass
 
-    
+
 
     def get_statistics(self) -> Dict[str, Any]:
 
         """获取统计信息
 
-        
+
 
         Returns:
 
@@ -2716,11 +2716,11 @@ GET    /knowledge/stats             # 获取统计
 
 开
 
-  
+
 
 接收多模态输
 
-  
+
 
 [输入类型?]
 
@@ -2732,7 +2732,7 @@ GET    /knowledge/stats             # 获取统计
 
   └─ 视频 视频预处视频情感分析 视频特征提取
 
-      
+
 
   特征融合
 
@@ -2744,11 +2744,11 @@ GET    /knowledge/stats             # 获取统计
 
         └─ gated 门控融合
 
-      
+
 
   融合情感预测
 
-      
+
 
   结果整合
 
@@ -2758,11 +2758,11 @@ GET    /knowledge/stats             # 获取统计
 
       └─ 贡献度分
 
-          
+
 
       返回结果
 
-          
+
 
         结束
 
@@ -2778,11 +2778,11 @@ GET    /knowledge/stats             # 获取统计
 
 开
 
-  
+
 
 接收用户请求
 
-  
+
 
 [请求类型?]
 
@@ -2794,7 +2794,7 @@ GET    /knowledge/stats             # 获取统计
 
   └─ 建议 分析上下识别目标 生成方案 优先级排
 
-      
+
 
   学习反馈
 
@@ -2804,11 +2804,11 @@ GET    /knowledge/stats             # 获取统计
 
       └─ 知识更新
 
-          
+
 
       更新记忆
 
-          
+
 
         结束
 
@@ -2916,7 +2916,7 @@ models:
 
     max_length: 512
 
-    
+
 
   image:
 
@@ -2926,7 +2926,7 @@ models:
 
     image_size: 224
 
-    
+
 
   audio:
 
@@ -2936,7 +2936,7 @@ models:
 
     sample_rate: 16000
 
-    
+
 
   video:
 
@@ -2946,7 +2946,7 @@ models:
 
     num_frames: 16
 
-    
+
 
 # 融合配置
 
@@ -2964,7 +2964,7 @@ fusion:
 
     video: 0.2
 
-    
+
 
 # 性能配置
 
@@ -3004,7 +3004,7 @@ llm:
 
   api_key: "${OPENAI_API_KEY}"
 
-  
+
 
 # 知识库配
 
@@ -3020,7 +3020,7 @@ knowledge_base:
 
   chunk_overlap: 50
 
-  
+
 
 # 记忆配置
 
@@ -3032,7 +3032,7 @@ memory:
 
   retention_days: 30
 
-  
+
 
 # 研究配置
 
@@ -3052,7 +3052,7 @@ research:
 
   max_sources: 10
 
-  
+
 
 # 报告配置
 
@@ -3077,4 +3077,3 @@ report:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-

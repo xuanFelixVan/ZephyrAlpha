@@ -202,13 +202,13 @@ class ConstraintConflictResolver:
 
         }
 
-    
+
 
     def detect_conflicts(self, constraints, n_assets):
 
         conflicts = []
 
-        
+
 
         for i, c1 in enumerate(constraints):
 
@@ -232,7 +232,7 @@ class ConstraintConflictResolver:
 
                     })
 
-        
+
 
         feasibility = self._check_feasibility(constraints, n_assets)
 
@@ -248,11 +248,11 @@ class ConstraintConflictResolver:
 
             })
 
-        
+
 
         return conflicts
 
-    
+
 
     def _check_pairwise_conflict(self, c1, c2, n_assets):
 
@@ -270,7 +270,7 @@ class ConstraintConflictResolver:
 
                 }
 
-        
+
 
         if c1['type'] == 'max_weight' and c2['type'] == 'min_weight':
 
@@ -286,7 +286,7 @@ class ConstraintConflictResolver:
 
                 }
 
-        
+
 
         if c1['type'] == 'sector_max' and c2['type'] == 'sector_min':
 
@@ -302,11 +302,11 @@ class ConstraintConflictResolver:
 
                 }
 
-        
+
 
         return None
 
-    
+
 
     def _check_feasibility(self, constraints, n_assets):
 
@@ -314,17 +314,17 @@ class ConstraintConflictResolver:
 
             w = cp.Variable(n_assets)
 
-            
+
 
             constraint_list = []
 
-            
+
 
             constraint_list.append(cp.sum(w) == 1)
 
             constraint_list.append(w >= 0)
 
-            
+
 
             for c in constraints:
 
@@ -342,7 +342,7 @@ class ConstraintConflictResolver:
 
                     constraint_list.append(sector_weights <= c['value'])
 
-            
+
 
             objective = cp.Minimize(0)
 
@@ -350,7 +350,7 @@ class ConstraintConflictResolver:
 
             problem.solve()
 
-            
+
 
             if problem.status == 'infeasible':
 
@@ -382,9 +382,9 @@ class ConstraintConflictResolver:
 
             }
 
-    
 
-    def resolve_conflicts(self, constraints, conflicts, n_assets, 
+
+    def resolve_conflicts(self, constraints, conflicts, n_assets,
 
                          priority_rules=None):
 
@@ -392,13 +392,13 @@ class ConstraintConflictResolver:
 
             priority_rules = self._default_priority_rules()
 
-        
+
 
         resolved_constraints = constraints.copy()
 
         resolutions = []
 
-        
+
 
         for conflict in conflicts:
 
@@ -414,7 +414,7 @@ class ConstraintConflictResolver:
 
                 resolved_constraints = resolution['modified_constraints']
 
-            
+
 
             elif conflict['type'] == 'contradictory':
 
@@ -432,7 +432,7 @@ class ConstraintConflictResolver:
 
                 )
 
-        
+
 
         return {
 
@@ -446,7 +446,7 @@ class ConstraintConflictResolver:
 
         }
 
-    
+
 
     def _default_priority_rules(self):
 
@@ -468,13 +468,13 @@ class ConstraintConflictResolver:
 
         }
 
-    
+
 
     def _resolve_infeasibility(self, constraints, n_assets, priority_rules):
 
         relaxed_constraints = []
 
-        
+
 
         for c in constraints:
 
@@ -498,11 +498,11 @@ class ConstraintConflictResolver:
 
                 relaxed_constraints.append(c)
 
-        
+
 
         feasibility = self._check_feasibility(relaxed_constraints, n_assets)
 
-        
+
 
         if feasibility['feasible']:
 
@@ -528,7 +528,7 @@ class ConstraintConflictResolver:
 
             )
 
-            
+
 
             for i in range(len(low_priority_constraints)):
 
@@ -536,7 +536,7 @@ class ConstraintConflictResolver:
 
                 feasibility = self._check_feasibility(test_constraints, n_assets)
 
-                
+
 
                 if feasibility['feasible']:
 
@@ -554,7 +554,7 @@ class ConstraintConflictResolver:
 
                     }
 
-            
+
 
             return {
 
@@ -566,7 +566,7 @@ class ConstraintConflictResolver:
 
             }
 
-    
+
 
     def _resolve_contradiction(self, conflict, priority_rules):
 
@@ -574,13 +574,13 @@ class ConstraintConflictResolver:
 
         c2 = conflict['constraint2']
 
-        
+
 
         p1 = priority_rules.get(c1['type'], 0)
 
         p2 = priority_rules.get(c2['type'], 0)
 
-        
+
 
         if p1 >= p2:
 
@@ -594,7 +594,7 @@ class ConstraintConflictResolver:
 
             remove = c1
 
-        
+
 
         return {
 
@@ -610,13 +610,13 @@ class ConstraintConflictResolver:
 
         }
 
-    
+
 
     def _apply_resolution(self, constraints, resolution):
 
         if resolution['type'] == 'priority_selection':
 
-            return [c for c in constraints 
+            return [c for c in constraints
 
                    if c != resolution['remove_constraint']]
 
@@ -624,7 +624,7 @@ class ConstraintConflictResolver:
 
             return constraints
 
-    
+
 
     def _verify_resolution(self, constraints, n_assets):
 
@@ -632,13 +632,13 @@ class ConstraintConflictResolver:
 
         return feasibility['feasible']
 
-    
+
 
     def generate_resolution_suggestions(self, constraints, n_assets):
 
         conflicts = self.detect_conflicts(constraints, n_assets)
 
-        
+
 
         if not conflicts:
 
@@ -650,15 +650,15 @@ class ConstraintConflictResolver:
 
             }
 
-        
+
 
         resolution = self.resolve_conflicts(constraints, conflicts, n_assets)
 
-        
+
 
         suggestions = []
 
-        
+
 
         for conflict in conflicts:
 
@@ -674,7 +674,7 @@ class ConstraintConflictResolver:
 
                 })
 
-        
+
 
         if resolution['success']:
 
@@ -688,7 +688,7 @@ class ConstraintConflictResolver:
 
             })
 
-        
+
 
         return {
 
@@ -967,4 +967,3 @@ class Resolution:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

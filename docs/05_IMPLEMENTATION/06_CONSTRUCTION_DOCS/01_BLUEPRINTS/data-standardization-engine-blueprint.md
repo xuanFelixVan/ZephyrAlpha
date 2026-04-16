@@ -215,7 +215,7 @@ class NamingStandardizer:
 
     """命名标准化器"""
 
-    
+
 
     FIELD_MAPPING = {
 
@@ -233,7 +233,7 @@ class NamingStandardizer:
 
     }
 
-    
+
 
     @classmethod
 
@@ -245,7 +245,7 @@ class NamingStandardizer:
 
             return cls.FIELD_MAPPING[name]
 
-        
+
 
         name = name.lower()
 
@@ -255,11 +255,11 @@ class NamingStandardizer:
 
         name = name.strip('_')
 
-        
+
 
         return name
 
-    
+
 
     @classmethod
 
@@ -299,7 +299,7 @@ class FormatStandardizer:
 
     """格式标准化器"""
 
-    
+
 
     @staticmethod
 
@@ -309,7 +309,7 @@ class FormatStandardizer:
 
             return value.strftime(format)
 
-        
+
 
         if isinstance(value, str):
 
@@ -325,11 +325,11 @@ for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
 
                     continue
 
-        
+
 
         return value
 
-    
+
 
     @staticmethod
 
@@ -337,7 +337,7 @@ for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
 
         symbol = symbol.upper().strip()
 
-        
+
 
         if symbol.isdigit():
 
@@ -349,11 +349,11 @@ for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
 
                 return f"{symbol}.SZ"
 
-        
+
 
         return symbol
 
-    
+
 
     @staticmethod
 
@@ -363,7 +363,7 @@ for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
 
             value = value.replace(',', '')
 
-        
+
 
         return Decimal(str(value)).quantize(Decimal('0.0001'))
 
@@ -403,13 +403,13 @@ class ValidationRule:
 
 class DataValidator:
 
-    
+
 
     def __init__(self):
 
         self.rules: List[ValidationRule] = []
 
-    
+
 
     def add_rule(self, rule: ValidationRule):
 
@@ -417,7 +417,7 @@ class DataValidator:
 
         self.rules.append(rule)
 
-    
+
 
     def validate(self, df: pd.DataFrame) -> dict:
 
@@ -433,7 +433,7 @@ class DataValidator:
 
         }
 
-        
+
 
         for rule in self.rules:
 
@@ -441,7 +441,7 @@ class DataValidator:
 
                 continue
 
-            
+
 
             errors = self._apply_rule(df, rule)
 
@@ -451,11 +451,11 @@ class DataValidator:
 
                 results["errors"].extend(errors)
 
-        
+
 
         return results
 
-    
+
 
     def _apply_rule(self, df: pd.DataFrame, rule: ValidationRule) -> List[str]:
 
@@ -463,7 +463,7 @@ class DataValidator:
 
         errors = []
 
-        
+
 
         if rule.rule_type == "not_null":
 
@@ -471,7 +471,7 @@ class DataValidator:
 
             if null_count > 0:
 
-        
+
 
         elif rule.rule_type == "range":
 
@@ -479,7 +479,7 @@ class DataValidator:
 
             max_val = rule.params.get("max")
 
-            
+
 
             if min_val is not None:
 
@@ -487,7 +487,7 @@ class DataValidator:
 
                 if len(invalid) > 0:
 
-            
+
 
             if max_val is not None:
 
@@ -495,7 +495,7 @@ class DataValidator:
 
                 if len(invalid) > 0:
 
-        
+
 
         elif rule.rule_type == "unique":
 
@@ -503,7 +503,7 @@ class DataValidator:
 
             if len(duplicates) > 0:
 
-        
+
 
         return errors
 
@@ -517,7 +517,7 @@ class DataValidator:
 
 class StandardizationPipeline:
 
-    
+
 
     def __init__(self):
 
@@ -527,13 +527,13 @@ class StandardizationPipeline:
 
         self.validator = DataValidator()
 
-    
+
 
     def process(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
 
         df = self.naming_standardizer.standardize_dataframe(df)
 
-        
+
 
         for field, format_type in config.get("format_rules", {}).items():
 
@@ -551,7 +551,7 @@ class StandardizationPipeline:
 
                     df[field] = df[field].apply(self.format_standardizer.standardize_price)
 
-        
+
 
         validation_result = self.validator.validate(df)
 
@@ -559,7 +559,7 @@ class StandardizationPipeline:
 
             raise ValueError(f"数据验证失败: {validation_result['errors']}")
 
-        
+
 
         return df
 
@@ -596,10 +596,3 @@ class StandardizationPipeline:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

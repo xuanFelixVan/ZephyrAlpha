@@ -10,7 +10,7 @@ last_updated: 2026-04-07
 owner: 首席蓝图架构师
 standard_type: 高层架构蓝图
 priority: P2
-responsibility_boundary: 
+responsibility_boundary:
 ---
 
 ## 1. 概述
@@ -117,7 +117,7 @@ class TrustedExecutionEnvironment:
 
 
 
-    
+
 
 
 
@@ -141,7 +141,7 @@ class TrustedExecutionEnvironment:
 
 
 
-        
+
 
 
 
@@ -161,7 +161,7 @@ class TrustedExecutionEnvironment:
 
 
 
-    
+
 
 
 
@@ -181,7 +181,7 @@ class TrustedExecutionEnvironment:
 
 
 
-        """创建安全?        
+        """创建安全?
 
 
 
@@ -193,7 +193,7 @@ class TrustedExecutionEnvironment:
 
 
 
-            
+
 
 
 
@@ -213,7 +213,7 @@ class TrustedExecutionEnvironment:
 
 
 
-    
+
 
 
 
@@ -237,7 +237,7 @@ class TrustedExecutionEnvironment:
 
 
 
-        
+
 
 
 
@@ -249,7 +249,7 @@ class TrustedExecutionEnvironment:
 
 
 
-            
+
 
 
 
@@ -646,6 +646,3 @@ occlum run /bin/python model_inference.py
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-

@@ -54,7 +54,7 @@ class OptimizedWeeklyAuditor:
                 "compliance_rate": 0.0
             }
         }
-        
+
         self.yaml_pattern = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
         self.required_fields = [
             "module_id", "version", "status", "created_date",
@@ -62,45 +62,45 @@ class OptimizedWeeklyAuditor:
             "standard_type", "applicable_scope", "compliance_level",
             "parent_document"
         ]
-    
+
     def get_recently_modified_docs(self, days: int = 7) -> List[Path]:
         recently_modified = []
         cutoff_time = datetime.now() - timedelta(days=days)
-        
+
         all_md_files = list(self.docs_root.rglob("*.md"))
-        
+
         for md_file in all_md_files:
             if md_file.name.startswith("."):
                 continue
-            
+
             try:
                 mtime = datetime.fromtimestamp(md_file.stat().st_mtime)
                 if mtime > cutoff_time:
                     recently_modified.append(md_file)
             except Exception as e:
                 pass
-        
+
         return recently_modified
-    
+
     def extract_yaml_header(self, content: str) -> Optional[Dict]:
         match = self.yaml_pattern.match(content)
-        
+
         if match:
             yaml_content = match.group(1)
             yaml_dict = {}
-            
+
             for line in yaml_content.split('\n'):
                 if ':' in line:
                     key, value = line.split(':', 1)
                     yaml_dict[key.strip()] = value.strip()
-            
+
             return yaml_dict
-        
+
         return None
-    
+
     def check_yaml_completeness(self, yaml_dict: Dict, doc_path: Path) -> List[Dict]:
         issues = []
-        
+
         for field in self.required_fields:
             if field not in yaml_dict or not yaml_dict[field]:
                 issues.append({
@@ -108,12 +108,12 @@ class OptimizedWeeklyAuditor:
                     "field": field,
                     "issue": "缺失或为空"
                 })
-        
+
         return issues
-    
+
     def check_responsibility_clarity(self, yaml_dict: Dict, doc_path: Path) -> List[Dict]:
         issues = []
-        
+
         if "responsibility" not in yaml_dict:
             issues.append({
                 "doc": str(doc_path.relative_to(self.project_root)),
@@ -127,12 +127,12 @@ class OptimizedWeeklyAuditor:
                     "issue": "职责描述过短",
                     "responsibility": responsibility
                 })
-        
+
         return issues
-    
+
     def check_layer_attribution(self, yaml_dict: Dict, doc_path: Path) -> List[Dict]:
         issues = []
-        
+
         if "layer" not in yaml_dict:
             issues.append({
                 "doc": str(doc_path.relative_to(self.project_root)),
@@ -146,9 +146,9 @@ class OptimizedWeeklyAuditor:
                     "issue": "layer字段格式不正确",
                     "layer": layer
                 })
-        
+
         return issues
-    
+
     def audit_document(self, doc_path: Path) -> Dict:
         try:
             with open(doc_path, 'r', encoding='utf-8') as f:
@@ -163,20 +163,20 @@ class OptimizedWeeklyAuditor:
                     "status": "error",
                     "message": f"编码错误: {str(e)}"
                 }
-        
+
         yaml_dict = self.extract_yaml_header(content)
-        
+
         if not yaml_dict:
             return {
                 "doc": str(doc_path.relative_to(self.project_root)),
                 "status": "error",
                 "message": "未找到YAML头部"
             }
-        
+
         yaml_issues = self.check_yaml_completeness(yaml_dict, doc_path)
         responsibility_issues = self.check_responsibility_clarity(yaml_dict, doc_path)
         layer_issues = self.check_layer_attribution(yaml_dict, doc_path)
-        
+
         return {
             "doc": str(doc_path.relative_to(self.project_root)),
             "status": "success",
@@ -184,7 +184,7 @@ class OptimizedWeeklyAuditor:
             "responsibility_issues": responsibility_issues,
             "layer_issues": layer_issues
         }
-    
+
     def run(self):
         print("=" * 80)
         print("优化版每周文档治理审计")
@@ -192,58 +192,58 @@ class OptimizedWeeklyAuditor:
         print(f"审计时间: {self.audit_time.strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"审计范围: 最近7天修改的文档")
         print("-" * 80)
-        
+
         start_time = time.time()
         self.audit_results['performance_metrics']['start_time'] = start_time
-        
+
         recently_modified = self.get_recently_modified_docs(days=7)
-        
+
         print(f"\n发现 {len(recently_modified)} 个最近修改的文档")
         print("-" * 80)
-        
+
         with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = {executor.submit(self.audit_document, doc_path): doc_path 
+            futures = {executor.submit(self.audit_document, doc_path): doc_path
                       for doc_path in recently_modified}
-            
+
             for i, future in enumerate(as_completed(futures), 1):
                 result = future.result()
-                
+
                 if i % 10 == 0:
                     print(f"进度: [{i}/{len(recently_modified)}]")
-                
+
                 if result['status'] == 'success':
                     self.audit_results['modified_docs'].append(result)
-                    
+
                     if result['yaml_issues']:
                         self.audit_results['yaml_issues'].extend(result['yaml_issues'])
-                    
+
                     if result['responsibility_issues']:
                         self.audit_results['responsibility_issues'].extend(result['responsibility_issues'])
-                    
+
                     if result['layer_issues']:
                         self.audit_results['layer_issues'].extend(result['layer_issues'])
-        
+
         end_time = time.time()
         duration = end_time - start_time
-        
+
         self.audit_results['performance_metrics']['end_time'] = end_time
         self.audit_results['performance_metrics']['duration'] = round(duration, 2)
-        
+
         total_issues = (
             len(self.audit_results['yaml_issues']) +
             len(self.audit_results['responsibility_issues']) +
             len(self.audit_results['layer_issues'])
         )
-        
+
         self.audit_results['summary']['total_checked'] = len(recently_modified)
         self.audit_results['summary']['total_issues'] = total_issues
-        
+
         if len(recently_modified) > 0:
             compliance_rate = (len(recently_modified) - total_issues) / len(recently_modified) * 100
             self.audit_results['summary']['compliance_rate'] = round(compliance_rate, 2)
             docs_per_second = len(recently_modified) / duration
             self.audit_results['performance_metrics']['docs_per_second'] = round(docs_per_second, 2)
-        
+
         print("\n" + "=" * 80)
         print("审计完成统计")
         print("=" * 80)
@@ -253,11 +253,11 @@ class OptimizedWeeklyAuditor:
         print(f"\n性能指标:")
         print(f"审计耗时: {duration:.2f}秒")
         print(f"处理速度: {self.audit_results['performance_metrics']['docs_per_second']} 文档/秒")
-        
+
         report_path = self.project_root / "docs" / "09_AUDIT" / "STATE" / f"weekly_audit_optimized_{self.audit_time.strftime('%Y%m%d')}.json"
         with open(report_path, 'w', encoding='utf-8') as f:
             json.dump(self.audit_results, f, ensure_ascii=False, indent=2)
-        
+
         print(f"\n审计报告已保存至: {report_path}")
         print("=" * 80)
 

@@ -38,7 +38,7 @@ implementation_status: 待实现
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -552,7 +552,7 @@ class NotificationMessage:
 
 
 
-    
+
 
 
 
@@ -648,7 +648,7 @@ class NotificationResult:
 
 
 
-    
+
 
 
 
@@ -720,7 +720,7 @@ class NotificationSystemAPI:
 
 
 
-    
+
 
 
 
@@ -738,7 +738,7 @@ class NotificationSystemAPI:
 
 
 
-    
+
 
 
 
@@ -774,7 +774,7 @@ class NotificationSystemAPI:
 
 
 
-        
+
 
 
 
@@ -792,7 +792,7 @@ class NotificationSystemAPI:
 
 
 
-            
+
 
 
 
@@ -822,7 +822,7 @@ class NotificationSystemAPI:
 
 
 
-    
+
 
 
 
@@ -858,7 +858,7 @@ class NotificationSystemAPI:
 
 
 
-        
+
 
 
 
@@ -876,7 +876,7 @@ class NotificationSystemAPI:
 
 
 
-            
+
 
 
 
@@ -906,7 +906,7 @@ class NotificationSystemAPI:
 
 
 
-    
+
 
 
 
@@ -936,7 +936,7 @@ class NotificationSystemAPI:
 
 
 
-        """获取通知?        
+        """获取通知?
 
 
 
@@ -954,7 +954,7 @@ class NotificationSystemAPI:
 
 
 
-            
+
 
 
 
@@ -1026,7 +1026,7 @@ class NotificationTemplateAPI:
 
 
 
-    
+
 
 
 
@@ -1044,7 +1044,7 @@ class NotificationTemplateAPI:
 
 
 
-    
+
 
 
 
@@ -1098,7 +1098,7 @@ class NotificationTemplateAPI:
 
 
 
-        
+
 
 
 
@@ -1134,7 +1134,7 @@ class NotificationTemplateAPI:
 
 
 
-            
+
 
 
 
@@ -1164,7 +1164,7 @@ class NotificationTemplateAPI:
 
 
 
-    
+
 
 
 
@@ -1206,7 +1206,7 @@ class NotificationTemplateAPI:
 
 
 
-        
+
 
 
 
@@ -1230,7 +1230,7 @@ class NotificationTemplateAPI:
 
 
 
-            
+
 
 
 
@@ -1302,7 +1302,7 @@ class NotificationRuleAPI:
 
 
 
-    
+
 
 
 
@@ -1320,7 +1320,7 @@ class NotificationRuleAPI:
 
 
 
-    
+
 
 
 
@@ -1380,7 +1380,7 @@ class NotificationRuleAPI:
 
 
 
-        
+
 
 
 
@@ -1416,7 +1416,7 @@ class NotificationRuleAPI:
 
 
 
-            
+
 
 
 
@@ -1446,7 +1446,7 @@ class NotificationRuleAPI:
 
 
 
-    
+
 
 
 
@@ -1482,7 +1482,7 @@ class NotificationRuleAPI:
 
 
 
-        
+
 
 
 
@@ -1500,7 +1500,7 @@ class NotificationRuleAPI:
 
 
 
-            
+
 
 
 
@@ -1620,7 +1620,7 @@ class NotificationSecurity:
 
 
 
-    
+
 
 
 
@@ -1638,7 +1638,7 @@ class NotificationSecurity:
 
 
 
-    
+
 
 
 
@@ -1656,7 +1656,7 @@ class NotificationSecurity:
 
 
 
-        """验证接收?        
+        """验证接收?
 
 
 
@@ -1674,7 +1674,7 @@ class NotificationSecurity:
 
 
 
-    
+
 
 
 
@@ -1698,7 +1698,7 @@ class NotificationSecurity:
 
 
 
-        
+
 
 
 
@@ -1794,7 +1794,7 @@ class NotificationTemplate:
 
 
 
-    
+
 
 
 
@@ -1872,7 +1872,7 @@ class NotificationRule:
 
 
 
-    
+
 
 
 
@@ -1956,7 +1956,7 @@ class NotificationHistory:
 
 
 
-    
+
 
 
 
@@ -2328,7 +2328,7 @@ class NotificationRouter:
 
 
 
-    """通知路由?    
+    """通知路由?
 
 
 
@@ -2346,7 +2346,7 @@ class NotificationRouter:
 
 
 
-    
+
 
 
 
@@ -2388,13 +2388,13 @@ class NotificationRouter:
 
 
 
-        
 
 
 
 
 
-        算法复杂? O(n), n为规则数据        
+
+        算法复杂? O(n), n为规则数据
 
 
 
@@ -2418,7 +2418,7 @@ class NotificationRouter:
 
 
 
-            
+
 
 
 
@@ -2448,7 +2448,7 @@ class NotificationRouter:
 
 
 
-        
+
 
 
 
@@ -2484,7 +2484,7 @@ class NotificationRouter:
 
 
 
-        
+
 
 
 
@@ -2532,7 +2532,7 @@ class TemplateRenderer:
 
 
 
-    """模板渲染?    
+    """模板渲染?
 
 
 
@@ -2550,7 +2550,7 @@ class TemplateRenderer:
 
 
 
-    
+
 
 
 
@@ -2592,7 +2592,7 @@ class TemplateRenderer:
 
 
 
-        
+
 
 
 
@@ -2616,7 +2616,7 @@ class TemplateRenderer:
 
 
 
-            
+
 
 
 
@@ -2652,7 +2652,7 @@ class TemplateRenderer:
 
 
 
-        
+
 
 
 
@@ -2664,7 +2664,7 @@ class TemplateRenderer:
 
 
 
-    
+
 
 
 
@@ -2676,7 +2676,7 @@ class TemplateRenderer:
 
 
 
-        """渲染字符?        
+        """渲染字符?
 
 
 
@@ -2694,7 +2694,7 @@ class TemplateRenderer:
 
 
 
-            
+
 
 
 
@@ -2982,7 +2982,7 @@ class TestNotificationIntegration:
 
 
 
-    
+
 
 
 
@@ -3006,7 +3006,7 @@ class TestNotificationIntegration:
 
 
 
-        
+
 
 
 
@@ -3018,7 +3018,7 @@ class TestNotificationIntegration:
 
 
 
-        
+
 
 
 
@@ -3643,8 +3643,3 @@ class TestNotificationIntegration:
 
 
 **文档?*: ?已完?**下一?*: 生成技术评审报?
-
-
-
-
-

@@ -59,7 +59,7 @@ related_documents:
 
 > **核心职责**: Strategy Lifecycle Ai蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Strategy Lifecycle Ai蓝图设计相关内容
 
@@ -209,7 +209,7 @@ class StageCriteria:
 
     """阶段判定标准"""
 
-    
+
 
     emerging_criteria = {
 
@@ -217,7 +217,7 @@ class StageCriteria:
 
     }
 
-    
+
 
     growing_criteria = {
 
@@ -227,7 +227,7 @@ class StageCriteria:
 
     }
 
-    
+
 
     mature_criteria = {
 
@@ -237,7 +237,7 @@ class StageCriteria:
 
     }
 
-    
+
 
     declining_criteria = {
 
@@ -251,13 +251,13 @@ class StageCriteria:
 
 class StageIdentifier:
 
-    
+
 
     def __init__(self):
 
         self.criteria = StageCriteria()
 
-        
+
 
     def identify_stage(self, strategy_id: str) -> StrategyStage:
 
@@ -267,11 +267,11 @@ class StageIdentifier:
 
         strategy_data = self._get_strategy_data(strategy_id)
 
-        
+
 
         metrics = self._calculate_metrics(strategy_data)
 
-        
+
 
         # 3. 判定阶段
 
@@ -295,7 +295,7 @@ class StageIdentifier:
 
             return StrategyStage.RETIRED
 
-    
+
 
     def _calculate_metrics(self, strategy_data: Dict) -> Dict:
 
@@ -313,7 +313,7 @@ class StageIdentifier:
 
         }
 
-    
+
 
     def _calculate_confidence(self, strategy_data: Dict) -> float:
 
@@ -325,7 +325,7 @@ class StageIdentifier:
 
         consistency = self._calculate_consistency(strategy_data)
 
-        
+
 
         confidence = (
 
@@ -337,7 +337,7 @@ class StageIdentifier:
 
         )
 
-        
+
 
         return confidence
 
@@ -359,7 +359,7 @@ class EmergingStageManager:
 
     """萌芽期管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -367,7 +367,7 @@ class EmergingStageManager:
 
         self.prioritizer = StrategyPrioritizer()
 
-        
+
 
     def manage_emerging_stage(self, strategy_id: str):
 
@@ -375,11 +375,11 @@ class EmergingStageManager:
 
         validation_result = self.validator.validate_strategy_idea(strategy_id)
 
-        
+
 
         feasibility = self._assess_feasibility(strategy_id)
 
-        
+
 
 # 3.
 
@@ -393,7 +393,7 @@ class EmergingStageManager:
 
         )
 
-        
+
 
         if validation_result.passed and feasibility.score > 0.6:
 
@@ -403,7 +403,7 @@ class EmergingStageManager:
 
             self._reject_strategy(strategy_id, validation_result, feasibility)
 
-        
+
 
         return EmergingStageReport(
 
@@ -419,21 +419,21 @@ class EmergingStageManager:
 
         )
 
-    
+
 
     def _assess_feasibility(self, strategy_id: str) -> FeasibilityAssessment:
 
         data_feasibility = self._check_data_availability(strategy_id)
 
-        
+
 
         tech_feasibility = self._check_technical_feasibility(strategy_id)
 
-        
+
 
         risk_feasibility = self._check_risk_feasibility(strategy_id)
 
-        
+
 
         # 4. 综合评分
 
@@ -447,7 +447,7 @@ class EmergingStageManager:
 
         )
 
-        
+
 
         return FeasibilityAssessment(
 
@@ -479,7 +479,7 @@ class GrowingStageManager:
 
     """成长期管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -489,7 +489,7 @@ class GrowingStageManager:
 
         self.risk_controller = RiskController()
 
-        
+
 
     def manage_growing_stage(self, strategy_id: str):
 
@@ -497,7 +497,7 @@ class GrowingStageManager:
 
         performance = self.tracker.track_performance(strategy_id)
 
-        
+
 
 # 2.
 
@@ -511,7 +511,7 @@ class GrowingStageManager:
 
         )
 
-        
+
 
         # 3. 风险控制
 
@@ -523,7 +523,7 @@ class GrowingStageManager:
 
         )
 
-        
+
 
         if performance.sharpe_ratio > 1.5 and performance.confidence > 0.7:
 
@@ -533,7 +533,7 @@ class GrowingStageManager:
 
             self._demote_to_declining(strategy_id)
 
-        
+
 
         return GrowingStageReport(
 
@@ -549,7 +549,7 @@ class GrowingStageManager:
 
         )
 
-    
+
 
     def track_performance(self, strategy_id: str) -> PerformanceMetrics:
 
@@ -559,25 +559,25 @@ class GrowingStageManager:
 
         returns = self._calculate_returns(strategy_id)
 
-        
+
 
         # 2. 风险指标
 
         risks = self._calculate_risks(strategy_id)
 
-        
+
 
         # 3. 效率指标
 
         efficiency = self._calculate_efficiency(strategy_id)
 
-        
+
 
         # 4. 综合评分
 
         score = self._calculate_composite_score(returns, risks, efficiency)
 
-        
+
 
         return PerformanceMetrics(
 
@@ -609,7 +609,7 @@ class MatureStageManager:
 
     """成熟期管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -619,7 +619,7 @@ class MatureStageManager:
 
         self.weight_adjuster = WeightAdjuster()
 
-        
+
 
     def manage_mature_stage(self, strategy_id: str):
 
@@ -627,13 +627,13 @@ class MatureStageManager:
 
         performance = self.monitor.monitor_performance(strategy_id)
 
-        
+
 
         # 2. 参数优化
 
         optimization = self.optimizer.optimize_parameters(strategy_id)
 
-        
+
 
         # 3. 权重调整
 
@@ -645,13 +645,13 @@ class MatureStageManager:
 
         )
 
-        
+
 
         if performance.sharpe_ratio < 1.0 or performance.decline_rate > 0.3:
 
             self._demote_to_declining(strategy_id)
 
-        
+
 
         return MatureStageReport(
 
@@ -685,7 +685,7 @@ class DecliningStageManager:
 
     """衰退期管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -695,13 +695,13 @@ class DecliningStageManager:
 
         self.executor = RetirementExecutor()
 
-        
+
 
     def manage_declining_stage(self, strategy_id: str):
 
         failure_analysis = self.detector.detect_failure(strategy_id)
 
-        
+
 
         retirement_assessment = self.evaluator.assess_retirement(
 
@@ -711,7 +711,7 @@ class DecliningStageManager:
 
         )
 
-        
+
 
         # 3. 降权处理
 
@@ -719,13 +719,13 @@ class DecliningStageManager:
 
             self._reduce_strategy_weight(strategy_id, retirement_assessment.reduction_ratio)
 
-        
+
 
         if retirement_assessment.should_retire:
 
             self.executor.execute_retirement(strategy_id)
 
-        
+
 
         return DecliningStageReport(
 
@@ -745,21 +745,21 @@ class FailureDetector:
 
     """策略失效检测器"""
 
-    
+
 
     def detect_failure(self, strategy_id: str) -> FailureAnalysis:
 
         performance_failure = self._detect_performance_failure(strategy_id)
 
-        
+
 
         market_failure = self._detect_market_failure(strategy_id)
 
-        
+
 
         risk_failure = self._detect_risk_failure(strategy_id)
 
-        
+
 
         # 4. 综合失效判定
 
@@ -773,7 +773,7 @@ class FailureDetector:
 
         )
 
-        
+
 
         return FailureAnalysis(
 
@@ -789,7 +789,7 @@ class FailureDetector:
 
         )
 
-    
+
 
     def _detect_performance_failure(self, strategy_id: str) -> PerformanceFailure:
 
@@ -799,7 +799,7 @@ class FailureDetector:
 
         performance_history = self._get_performance_history(strategy_id)
 
-        
+
 
 度
 
@@ -809,13 +809,13 @@ class FailureDetector:
 
         decline_rate = (historical_sharpe - recent_sharpe) / historical_sharpe
 
-        
+
 
         # 判定是否失效
 
         is_failed = decline_rate > 0.3 or recent_sharpe < 0.5
 
-        
+
 
         return PerformanceFailure(
 
@@ -847,7 +847,7 @@ class StrategyPoolManager:
 
     """策略池管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -857,7 +857,7 @@ class StrategyPoolManager:
 
         self.correlation_controller = CorrelationController()
 
-        
+
 
     def manage_pool(self):
 
@@ -865,23 +865,23 @@ class StrategyPoolManager:
 
         capacity_status = self.capacity_controller.check_capacity()
 
-        
+
 
         diversity_status = self.diversity_manager.manage_diversity()
 
-        
+
 
 # 3.
 
         correlation_status = self.correlation_controller.control_correlation()
 
-        
+
 
         if capacity_status.need_optimization:
 
             self._optimize_pool(capacity_status, diversity_status, correlation_status)
 
-        
+
 
         return PoolManagementReport(
 
@@ -901,7 +901,7 @@ class DiversityManager:
 
     """策略多样性管理器"""
 
-    
+
 
     def manage_diversity(self) -> DiversityStatus:
 
@@ -909,19 +909,19 @@ class DiversityManager:
 
         type_distribution = self._analyze_type_distribution()
 
-        
+
 
         # 2. 策略风格分布
 
         style_distribution = self._analyze_style_distribution()
 
-        
+
 
         # 3. 策略时间框架分布
 
         timeframe_distribution = self._analyze_timeframe_distribution()
 
-        
+
 
         diversity_score = self._calculate_diversity_score(
 
@@ -933,11 +933,11 @@ class DiversityManager:
 
         )
 
-        
+
 
         recommendations = self._generate_recommendations(diversity_score)
 
-        
+
 
         return DiversityStatus(
 
@@ -997,25 +997,25 @@ class StrategyLifecycleRecord:
 
     last_updated: datetime
 
-    
+
 
     # 阶段历史
 
     stage_history: List[Dict]
 
-    
+
 
     # 性能指标
 
     performance_metrics: Dict
 
-    
+
 
     # 管理决策
 
     management_decisions: List[Dict]
 
-    
+
 
     retirement_info: Optional[Dict]
 
@@ -1145,7 +1145,7 @@ class StrategyLifecycleTextInterface:
 
     """策略生命周期文字交互接口"""
 
-    
+
 
     def get_lifecycle_status(self, strategy_id: str = None):
 
@@ -1161,7 +1161,7 @@ class StrategyLifecycleTextInterface:
 
             return self._format_all_status(all_status)
 
-    
+
 
     def check_strategies_health(self):
 
@@ -1169,7 +1169,7 @@ class StrategyLifecycleTextInterface:
 
         return self._format_health_report(health_report)
 
-    
+
 
     def recommend_retirement(self):
 
@@ -1351,7 +1351,7 @@ class StrategyLifecycleTextInterface:
 
 - **技术规格书**: 待创建
 
-- **职责**: 
+- **职责**:
 
 - **状态**: Active
 
@@ -1390,4 +1390,3 @@ class StrategyLifecycleTextInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

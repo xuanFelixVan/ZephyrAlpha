@@ -78,7 +78,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 行为模拟系统- 多层次集成架构方案
 
 
@@ -125,26 +125,26 @@ Layer 0: 数据源层
 ```python
 class InstitutionalActivityFactor(BaseFactor):
     """主力动向因子
-    
+
     索引: FACTOR.INSTITUTIONAL.001
     Layer: Layer 2 (Alpha因子层
-    数据来自 Layer 2.5 主力智能体输出    
+    数据来自 Layer 2.5 主力智能体输出
     因子构成:
     1. 资金流向强度 (CapitalFlowIntensity)
     2. 订单簿不平衡度(OrderBookImbalance)
     3. 主力持仓变化 (InstitutionalHoldingChange)
     4. 操盘阶段识别 (ManipulationPhase)
     """
-    
+
     def __init__(self, institutional_agent: InstitutionalAgent):
         self.agent = institutional_agent
-        
+
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算主力动向因子
-        
+
 :
-            data: 
-含价格、成交量、订单簿等数据            
+            data:
+含价格、成交量、订单簿等数据
         输出:
             pd.Series: 主力动向因子（范围[-1, 1]）
             - 绝对值越大，强度越大
@@ -155,33 +155,33 @@ class InstitutionalActivityFactor(BaseFactor):
             trade_flow=data['trade_flow'],
             liquidity=data['liquidity']
         )
-        
+
         # 2. 计算资金流向强度
         capital_flow_intensity = self._calculate_capital_flow_intensity(
             microstructure.trade_flow
         )
-        
+
         # 3. 计算订单簿不平衡度        order_book_imbalance = self._calculate_order_book_imbalance(
             microstructure.order_book
         )
-        
+
         # 4. 计算主力持仓变化
         holding_change = self._calculate_holding_change(
             data['institutional_holdings']
         )
-        
+
         # 5. 识别操盘阶段
         manipulation_phase = self.agent._identify_manipulation_phase(
             microstructure
         )
-        
+
         # 6. 合成最终因子        factor_value = (
             0.3 * capital_flow_intensity +
             0.3 * order_book_imbalance +
             0.2 * holding_change +
             0.2 * manipulation_phase
         )
-        
+
         return factor_value
 ```
 
@@ -190,23 +190,23 @@ class InstitutionalActivityFactor(BaseFactor):
 ```python
 class RetailSentimentFactor(BaseFactor):
 情情情情绪因子
-    
+
     索引: FACTOR.RETAIL.001
     Layer: Layer 2 (Alpha因子层
-    数据来自 Layer 2.5 散户智能体输出    
+    数据来自 Layer 2.5 散户智能体输出
     因子构成:
 绪指数 (MarketSentimentIndex)
     2. 羊群效应强度 (HerdingIntensity)
     3. 散户持仓变化 (RetailHoldingChange)
     4. 追涨杀跌程度(ChaseTrendDegree)
     """
-    
+
     def __init__(self, retail_agent: RetailAgent):
         self.agent = retail_agent
-        
+
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 情情情情绪因子
-        
+
         输出:
 情情情绪因子（范围[-1, 1]）
 绪乐观(可能见顶)
@@ -218,29 +218,29 @@ class RetailSentimentFactor(BaseFactor):
             social_media=data['social_media'],
             market_data=data['prices']
         )
-        
+
         # 2. 计算羊群效应强度
         herding_intensity = self.agent.herding_model.evaluate(
             market_state=data,
             sentiment_score=sentiment_score
         )
-        
+
         # 3. 计算散户持仓变化
         holding_change = self._calculate_holding_change(
             data['retail_holdings']
         )
-        
+
         # 4. 计算追涨杀跌流程        chase_trend_degree = self._calculate_chase_trend_degree(
             data['prices'], data['retail_holdings']
         )
-        
+
         # 5. 合成最终因子        factor_value = (
             0.4 * sentiment_score +
             0.3 * herding_intensity +
             0.2 * holding_change +
             0.1 * chase_trend_degree
         )
-        
+
         return factor_value
 ```
 
@@ -249,24 +249,24 @@ class RetailSentimentFactor(BaseFactor):
 ```python
 class PolicySignalFactor(BaseFactor):
     """政策信号因子
-    
+
     索引: FACTOR.POLICY.001
     Layer: Layer 2 (Alpha因子层
     数据来自 Layer 2.5 国家队智能体输出
-    
+
     因子构成:
     1. 政策支持强度(PolicySupportLevel)
     2. 市场稳定性(MarketStability)
     3. 国家队持仓变化(NationalTeamHoldingChange)
     4. 干预概率 (InterventionProbability)
     """
-    
+
     def __init__(self, national_team_agent: NationalTeamAgent):
         self.agent = national_team_agent
-        
+
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算政策信号因子
-        
+
         输出:
             pd.Series: 政策信号因子（范围[-1, 1]）
         """
@@ -274,41 +274,41 @@ class PolicySignalFactor(BaseFactor):
             news_data=data['news'],
             macro_data=data['macro_indicators']
         )
-        
+
         # 2. 评估市场稳定性        stability_score = self.agent.market_stability_monitor.evaluate(
             price_data=data['prices'],
             volatility=data['volatility'],
             sentiment=data['sentiment']
         )
-        
+
         # 3. 计算国家队持仓变化        holding_change = self._calculate_holding_change(
             data['national_team_holdings']
         )
-        
+
         # 4. 计算干预概率
         intervention_probability = self.agent._calculate_intervention_probability(
             policy_signals, stability_score
         )
-        
+
         # 5. 合成最终因子        factor_value = (
             0.4 * policy_signals.composite_score +
             0.3 * stability_score +
             0.2 * holding_change +
             0.1 * intervention_probability
         )
-        
+
         return factor_value
 ```
 
 #### 2.2.2 因子库集成
 ```python
 class AgentBasedFactorLibrary:
-    """基于智能体的因子库    
+    """基于智能体的因子库
     索引: FACTOR.LIBRARY.AGENT.001
     Layer: Layer 2 (Alpha因子层
     职责: 管理和计算所有智能体生成的因子    """
-    
-    def __init__(self, 
+
+    def __init__(self,
                  national_team_agent: NationalTeamAgent,
                  institutional_agent: InstitutionalAgent,
                  retail_agent: RetailAgent):
@@ -317,48 +317,48 @@ class AgentBasedFactorLibrary:
             'institutional': institutional_agent,
             'retail': retail_agent
         }
-        
+
         # 初始化因子        self.factors = {
             'policy_signal': PolicySignalFactor(national_team_agent),
             'institutional_activity': InstitutionalActivityFactor(institutional_agent),
             'retail_sentiment': RetailSentimentFactor(retail_agent)
         }
-        
+
     def calculate_all_factors(self, data: pd.DataFrame) -> pd.DataFrame:
         """计算所有智能体因子
-        
+
         输出:
-            pd.DataFrame: 
+            pd.DataFrame:
 含所有因子值的DataFrame
         """
         factor_values = {}
-        
+
         for factor_name, factor in self.factors.items():
             try:
                 factor_values[factor_name] = factor.calculate(data)
             except Exception as e:
                 logger.error(f"Failed to calculate factor {factor_name}: {e}")
                 factor_values[factor_name] = np.nan
-        
+
         return pd.DataFrame(factor_values)
-    
-    def integrate_with_existing_factors(self, 
+
+    def integrate_with_existing_factors(self,
                                        agent_factors: pd.DataFrame,
                                        existing_factors: pd.DataFrame) -> pd.DataFrame:
         """将智能体因子与现有因子库集成
-        
+
         集成方式:
         1. 直接拼接 (新增3个因子列)
         3. 因子标准化(统一量纲)
         """
         # 1. 直接拼接
         integrated_factors = pd.concat([existing_factors, agent_factors], axis=1)
-        
+
         if self.config.orthogonalize:
             integrated_factors = self._orthogonalize_factors(integrated_factors)
-        
+
         # 3. 因子标准化        integrated_factors = self._standardize_factors(integrated_factors)
-        
+
         return integrated_factors
 ```
 
@@ -368,18 +368,18 @@ class AgentBasedFactorLibrary:
 #### 2.3.1 信号生成器
 ```python
 class AgentBasedSignalGenerator:
-    """基于智能体的信号生成器    
+    """基于智能体的信号生成器
     索引: SIGNAL.GENERATOR.AGENT.001
     Layer: Layer 5 (策略执行层
     职责: 将智能体决策转换为交易信号    """
-    
+
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
         self.signal_combiner = SignalCombiner()
-        
+
     def generate_signals(self, market_state: MarketState) -> TradingSignals:
         """生成交易信号
-        
+
         流程:
         1. 各智能体独立生成决策
         2. 市场模拟引擎模拟博弈
@@ -389,34 +389,34 @@ class AgentBasedSignalGenerator:
         for agent_name, agent in self.agents.items():
             decision = agent.generate_trading_decision(market_state)
             agent_decisions[agent_name] = decision
-        
+
         if self.config.enable_simulation:
             simulation_result = self._simulate_market(agent_decisions, market_state)
             market_impact = simulation_result.market_impact
         else:
             market_impact = None
-        
+
         # 3. 信号合成器整合信号        final_signals = self.signal_combiner.combine(
             agent_decisions=agent_decisions,
             market_impact=market_impact,
             risk_budget=self.config.risk_budget
         )
-        
+
         return final_signals
 
 
 class SignalCombiner:
-    """信号合成器    
+    """信号合成器
     索引: SIGNAL.COMBINER.001
     职责: 整合多个智能体的信号
     """
-    
+
     def combine(self,
                agent_decisions: Dict[str, AgentDecision],
                market_impact: Optional[float] = None,
                risk_budget: Optional[Dict] = None) -> TradingSignals:
         """合成信号
-        
+
         合成策略:
         1. 加权平均 (根据智能体置信度加权)
         2. 市场冲击调整 (考虑市场冲击成本)
@@ -430,27 +430,27 @@ class SignalCombiner:
                 'confidence': decision.confidence,
                 'target_stocks': decision.target_stocks
             }
-        
+
         # 2. 加权平均合成
         combined_signal = self._weighted_average_combine(signals)
-        
+
         # 3. 市场冲击调整
         if market_impact is not None:
             combined_signal = self._adjust_for_market_impact(
                 combined_signal, market_impact
             )
-        
+
         # 4. 风险预算约束
         if risk_budget is not None:
             combined_signal = self._apply_risk_budget(
                 combined_signal, risk_budget
             )
-        
+
         return combined_signal
-    
+
     def _weighted_average_combine(self, signals: Dict) -> TradingSignals:
         """加权平均合成
-        
+
         权重计算:
         - 国家权重 = 置信度 * 0.3（长期稳定）
         - 主力权重 = 置信度 * 0.5（市场主导）
@@ -458,7 +458,7 @@ class SignalCombiner:
         """
         total_weight = 0
         weighted_position = {}
-        
+
         for agent_name, signal in signals.items():
             # 根据智能体类型设置基础权重
             if agent_name == 'national_team':
@@ -470,20 +470,20 @@ class SignalCombiner:
                 signal['position_size'] = -signal['position_size']  # 反转
             else:
                 base_weight = 0.1
-            
+
             # 计算最终权重            weight = base_weight * signal['confidence']
             total_weight += weight
-            
+
             # 加权累加
             for stock, size in signal['position_size'].items():
                 if stock not in weighted_position:
                     weighted_position[stock] = 0
                 weighted_position[stock] += weight * size
-        
+
         # 归一化        if total_weight > 0:
             for stock in weighted_position:
                 weighted_position[stock] /= total_weight
-        
+
         return TradingSignals(
             action='BUY' if sum(weighted_position.values()) > 0 else 'SELL',
             position_size=weighted_position,
@@ -496,54 +496,54 @@ class SignalCombiner:
 ```python
 class StrategyWithAgentSignals(BaseStrategy):
     """集成智能体信号的策略基类
-    
+
     索引: STRATEGY.AGENT.001
     Layer: Layer 5 (策略执行层
-    
+
     使用方式:
     1. 继承此类
     2. 在generate_signals方法中使用agent_signals
     """
-    
-    def __init__(self, 
+
+    def __init__(self,
                  config: StrategyConfig,
                  agent_signal_generator: AgentBasedSignalGenerator):
         super().__init__(config)
         self.agent_signal_generator = agent_signal_generator
-        
+
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """生成交易信号
-        
+
         流程:
         1. 获取传统因子信号
         2. 获取智能体信号        3. 融合两类信号
         4. 返回最终信号        """
         # 1. 获取传统因子信号
         traditional_signals = self._generate_traditional_signals(data)
-        
+
         # 2. 获取智能体信号        market_state = self._build_market_state(data)
         agent_signals = self.agent_signal_generator.generate_signals(market_state)
-        
+
         # 3. 融合信号
         final_signals = self._fuse_signals(traditional_signals, agent_signals)
-        
+
         return final_signals
-    
-    def _fuse_signals(self, 
+
+    def _fuse_signals(self,
                      traditional_signals: List[Signal],
                      agent_signals: TradingSignals) -> List[Signal]:
         """融合传统信号和智能体信号
-        
+
         融合策略:
         1. 信号方向一致：增强信号强度
         2. 信号方向冲突：降低信号强度或放弃该信号        3. 智能体信号独立：作为新信号添加        """
         fused_signals = []
-        
+
         for trad_signal in traditional_signals:
             # 检查智能体是否有相同股票的信号
             if trad_signal.symbol in agent_signals.position_size:
                 agent_position = agent_signals.position_size[trad_signal.symbol]
-                
+
                 # 信号方向一致                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
                    (trad_signal.direction == 'SELL' and agent_position < 0):
                     # 增强信号强度
@@ -562,12 +562,12 @@ class StrategyWithAgentSignals(BaseStrategy):
                         strength=trad_signal.strength * 0.5,
                         reason=f"Traditional + Agent signal conflict"
                     )
-                
+
                 fused_signals.append(fused_signal)
             else:
                 # 传统信号独立
                 fused_signals.append(trad_signal)
-        
+
         # 添加智能体独立信号        for symbol, position in agent_signals.position_size.items():
             if not any(s.symbol == symbol for s in fused_signals):
                 fused_signals.append(Signal(
@@ -576,7 +576,7 @@ class StrategyWithAgentSignals(BaseStrategy):
                     strength=abs(position),
                     reason=f"Agent signal only"
                 ))
-        
+
         return fused_signals
 ```
 
@@ -588,18 +588,18 @@ class StrategyWithAgentSignals(BaseStrategy):
 ```python
 class MultiAgentVotingSystem:
     """多智能体投票系统
-    
+
     索引: VOTING.AGENT.001
     Layer: Layer 6 (组合优化层
     职责: 通过投票机制整合智能体决策    """
-    
+
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
-        
-    def vote_on_portfolio(self, 
+
+    def vote_on_portfolio(self,
                          market_state: MarketState,
                          current_portfolio: Portfolio) -> PortfolioDecision:
-        """对组合调整进行投票"""        
+        """对组合调整进行投票"""
         投票机制:
         1. 各智能体独立投票
         2. 根据投票结果计算权重
@@ -613,23 +613,23 @@ class MultiAgentVotingSystem:
                 'decision': decision,
                 'voting_power': self._calculate_voting_power(agent_name, decision)
             }
-        
+
         # 2. 根据投票结果计算权重
         target_weights = self._calculate_target_weights(votes)
-        
+
         # 3. 考虑风险预算约束
         target_weights = self._apply_risk_budget(target_weights, current_portfolio)
-        
+
         # 4. 返回最终组合决策        return PortfolioDecision(
             target_weights=target_weights,
             rebalance_reasons=self._generate_rebalance_reasons(votes),
             confidence=self._calculate_confidence(votes),
             timestamp=datetime.now()
         )
-    
+
     def _calculate_voting_power(self, agent_name: str, decision: AgentDecision) -> float:
         """计算投票权重
-        
+
         投票权重因素:
         1. 智能体类型权重（国家 0.3，主力 0.5，散户 0.2）
         2. 决策置信号(0-1)
@@ -641,68 +641,68 @@ class MultiAgentVotingSystem:
             'institutional': 0.5,
             'retail': 0.2
         }
-        
+
         base_weight = base_weights.get(agent_name, 0.1)
-        
+
         # 置信度调整        confidence_adjusted = base_weight * decision.confidence
-        
+
         # 历史准确率调整（如果可用）
         historical_accuracy = self._get_historical_accuracy(agent_name)
         final_weight = confidence_adjusted * historical_accuracy
-        
+
         return final_weight
-    
+
     def _calculate_target_weights(self, votes: Dict) -> Dict[str, float]:
         """根据投票结果计算目标权重
-        
+
         计算方法:
 权重范围（0-100%）
         """
         stock_weights = {}
         total_voting_power = 0
-        
+
         # 累加投票权重
         for agent_name, vote in votes.items():
             decision = vote['decision']
             voting_power = vote['voting_power']
-            
+
             for stock, position in decision.position_size.items():
                 if stock not in stock_weights:
                     stock_weights[stock] = 0
-                
+
                 # 散户作为反向指标
                 if agent_name == 'retail':
                     stock_weights[stock] -= voting_power * position
                 else:
                     stock_weights[stock] += voting_power * position
-            
+
             total_voting_power += voting_power
-        
+
         # 归一化        if total_voting_power > 0:
             for stock in stock_weights:
                 stock_weights[stock] /= total_voting_power
-        
+
         # 应用权重限制
         max_weight = 0.2
         for stock in stock_weights:
             if abs(stock_weights[stock]) > max_weight:
                 stock_weights[stock] = max_weight if stock_weights[stock] > 0 else -max_weight
-        
+
         return stock_weights
 ```
 
 #### 2.4.2 与现有组合优化集成
 ```python
 class PortfolioOptimizerWithAgents:
-    """集成智能体的组合优化层    
+    """集成智能体的组合优化层
     索引: OPTIMIZER.PORTFOLIO.AGENT.001
     Layer: Layer 6 (组合优化层
-    
+
     集成方式:
     2. 因子模型作为收益预测
     3. 风险模型作为风险约束
     4. 优化求解最终权重    """
-    
+
     def __init__(self,
                  voting_system: MultiAgentVotingSystem,
                  factor_model: FactorModel,
@@ -710,94 +710,94 @@ class PortfolioOptimizerWithAgents:
         self.voting_system = voting_system
         self.factor_model = factor_model
         self.risk_model = risk_model
-        
+
     def optimize(self,
                 market_state: MarketState,
                 current_portfolio: Portfolio) -> PortfolioDecision:
         """优化组合
-        
+
         优化流程:
         3. 风险模型计算风险
         4. 优化求解最终权重        """
             market_state, current_portfolio
         )
         prior_weights = voting_result.target_weights
-        
+
         # 2. 因子模型预测收益
         expected_returns = self.factor_model.predict_returns(
             market_state.factors
         )
-        
+
         # 3. 风险模型计算风险
         risk_matrix = self.risk_model.calculate_risk_matrix(
             market_state.prices
         )
-        
+
         # 4. 优化求解最终权重        optimal_weights = self._solve_optimization(
             prior_weights=prior_weights,
             expected_returns=expected_returns,
             risk_matrix=risk_matrix,
             constraints=self._build_constraints(current_portfolio)
         )
-        
+
         return PortfolioDecision(
             target_weights=optimal_weights,
             rebalance_reasons=voting_result.rebalance_reasons,
             confidence=voting_result.confidence,
             timestamp=datetime.now()
         )
-    
+
     def _solve_optimization(self,
                            prior_weights: Dict[str, float],
                            expected_returns: pd.Series,
                            risk_matrix: pd.DataFrame,
                            constraints: Dict) -> Dict[str, float]:
         """求解优化问题
-        
+
         优化目标:
 max: w' -  * w'w -  * ||w - w_prior||^2
-        
-        
+
+
         - w: 组合权重
         - μ: 预期收益
         - λ: 风险厌恶系数
 - :
         """
         import cvxpy as cp
-        
+
         # 构建优化变量
         stocks = list(expected_returns.index)
         n = len(stocks)
         w = cp.Variable(n)
-        
+
         # 构建目标函数
         mu = expected_returns.values
         Sigma = risk_matrix.values
         w_prior = np.array([prior_weights.get(stock, 0) for stock in stocks])
-        
+
         # 目标函数
         lambda_risk = self.config.risk_aversion  # 风险厌恶系数
-        gamma_prior = self.config.prior_deviation_penalty  # 
-        
+        gamma_prior = self.config.prior_deviation_penalty  #
+
         objective = cp.Maximize(
-            mu @ w - 
-            lambda_risk * cp.quad_form(w, Sigma) - 
+            mu @ w -
+            lambda_risk * cp.quad_form(w, Sigma) -
             gamma_prior * cp.norm(w - w_prior, 2)**2
         )
-        
+
         # 约束条件
         constraints_list = [
             cp.sum(w) == 1,  # 权重和为1
-        
+
         # 求解
         problem = cp.Problem(objective, constraints_list)
         problem.solve()
-        
+
         # 返回结果
         optimal_weights = {}
         for i, stock in enumerate(stocks):
             optimal_weights[stock] = w.value[i]
-        
+
         return optimal_weights
 ```
 
@@ -883,7 +883,7 @@ max: w' -  * w'w -  * ||w - w_prior||^2
    - 与现有组合优化器集成
    - 提升决策质量
 
-### 
+###
 
 之间的交互
 - **灵活可扩展性**: 可单独或组合使用各层输出
@@ -957,5 +957,3 @@ max: w' -  * w'w -  * ||w - w_prior||^2
 ## 已知限制
 
 - 参与者行为模型高度依赖数据与假设，初期覆盖有限；实施阶段需通过契约真源扩展模型族与校准流程，并明确适用场景边界。
-
-

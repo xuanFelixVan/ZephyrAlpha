@@ -276,7 +276,7 @@ def ic_decay_analysis(factor, returns, max_periods=20):
 
     IC衰减分析: 计算因子对不同持有期的IC
 
-    
+
 
     IC(t) = corr(factor, returns_t)
 
@@ -332,13 +332,13 @@ def fit_decay_curve(ic_series):
 
     s0, decay_rate = params
 
-    
+
 
     # 计算半衰期
 
     half_life = np.log(2) / decay_rate
 
-    
+
 
     return {
 
@@ -368,7 +368,7 @@ def optimal_holding_period(ic_series, transaction_cost=0.001):
 
     最优持有期计算
 
-    
+
 
     考虑IC衰减和交易成本
 
@@ -510,7 +510,7 @@ class SignalDecayResult:
 
     factor_name: str           # 因子名称
 
-    
+
 
     # IC衰减
 
@@ -520,7 +520,7 @@ class SignalDecayResult:
 
     ic_half_life: float        # IC半衰期
 
-    
+
 
     # 衰减曲线
 
@@ -530,7 +530,7 @@ class SignalDecayResult:
 
     fit_r_squared: float       # 拟合优度
 
-    
+
 
     # 最优持有期
 
@@ -538,7 +538,7 @@ class SignalDecayResult:
 
     net_ic_at_optimal: float   # 最优持有期净IC
 
-    
+
 
     # 信号评估
 
@@ -659,4 +659,3 @@ class SignalDecayResult:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

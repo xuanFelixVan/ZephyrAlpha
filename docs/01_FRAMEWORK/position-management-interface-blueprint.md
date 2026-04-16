@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Position Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Position Management Interface蓝图设计相关内容
 
@@ -86,7 +86,7 @@ class PositionManagementInterface:
 
     """持仓管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -96,7 +96,7 @@ class PositionManagementInterface:
 
         self.position_count = 15
 
-    
+
 
     def render_overview(self):
 
@@ -104,29 +104,29 @@ class PositionManagementInterface:
 
         st.subheader("📊 持仓概览")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
             st.metric("总资产", f"{self.total_assets:,.2f}")
 
-        
+
 
         with col2:
 
             st.metric("总盈亏", f"{self.total_pnl:,.2f}")
 
-        
+
 
         with col3:
 
             st.metric("持仓数量", f"{self.position_count}只")
 
-        
+
 
         with col4:
 
@@ -191,4 +191,3 @@ class PositionManagementInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -270,13 +270,13 @@ class MarginCalculator:
 
         self.exchange_margins = {}  # 交易所保证金标准
 
-    
+
 
     def calculate_initial_margin(self, position: Position) -> float:
 
         return position.quantity * position.contract_size * self.exchange_margins[position.symbol]
 
-    
+
 
     def calculate_maintenance_margin(self, position: Position) -> float:
 
@@ -298,7 +298,7 @@ class MarginMonitor:
 
         self.calculator = MarginCalculator()
 
-    
+
 
     def monitor(self, account: Account) -> MarginStatus:
 
@@ -340,7 +340,7 @@ class MarginAlertService:
 
         }
 
-    
+
 
     def check_alert(self, margin_status: MarginStatus) -> Optional[Alert]:
 
@@ -442,9 +442,8 @@ class MarginAlertService:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

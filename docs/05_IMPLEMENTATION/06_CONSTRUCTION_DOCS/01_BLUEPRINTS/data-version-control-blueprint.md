@@ -24,7 +24,7 @@ layer: layer_05
 # 数据版本控制蓝图
 
 > **核心职责**: 数据版本控制，管理数据集版本，支持数据回溯和审计
-> **职责边界**: 
+> **职责边界**:
 > ...
 ## 设计目标
 
@@ -81,7 +81,7 @@ layer: layer_05
 
 
 > 核心职责: 数据版本控制，管理数据集版本，支持数据回溯和审计
-> 职责边界: 
+> 职责边界:
 
 
 ## 一、设计背景与目标
@@ -134,17 +134,17 @@ class VersionTag:
     created_at: datetime = field(default_factory=datetime.now)
 
 class VersionManager:
-    
+
     def __init__(self):
         self.versions: Dict[str, DataVersion] = {}
         self.tags: Dict[str, VersionTag] = {}
         self.branches: Dict[str, str] = {"main": "latest"}
-    
+
     def create_version(self, table_name: str, commit_message: str,
                        author: str, metadata: Dict[str, Any] = None) -> DataVersion:
         """创建版本"""
         version_number = self._get_next_version_number(table_name)
-        
+
         version = DataVersion(
             version_id=f"{table_name}_v{version_number}",
             table_name=table_name,
@@ -153,19 +153,19 @@ class VersionManager:
             author=author,
             metadata=metadata or {}
         )
-        
+
         self.versions[version.version_id] = version
         return version
-    
+
     def _get_next_version_number(self, table_name: str) -> int:
         """获取下一个版本号"""
         table_versions = [v for v in self.versions.values() if v.table_name == table_name]
-        
+
         if not table_versions:
             return 1
-        
+
         return max(v.version_number for v in table_versions) + 1
-    
+
     def create_tag(self, tag_name: str, version_id: str,
                    description: str) -> VersionTag:
         """创建标签"""
@@ -174,22 +174,22 @@ class VersionManager:
             version_id=version_id,
             description=description
         )
-        
+
         self.tags[tag_name] = tag
         return tag
-    
+
     def get_version(self, version_id: str) -> Optional[DataVersion]:
         """获取版本"""
         return self.versions.get(version_id)
-    
+
     def get_version_by_tag(self, tag_name: str) -> Optional[DataVersion]:
         """通过标签获取版本"""
         tag = self.tags.get(tag_name)
         if not tag:
             return None
-        
+
         return self.versions.get(tag.version_id)
-    
+
     def list_versions(self, table_name: str = None) -> List[DataVersion]:
         """列出版本"""
         if table_name:
@@ -215,28 +215,28 @@ class DataChange:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class ChangeTracker:
-    
+
     def __init__(self):
         self.changes: List[DataChange] = []
-    
+
     def detect_changes(self, old_df: pd.DataFrame,
                        new_df: pd.DataFrame) -> DataChange:
         row_count_change = len(new_df) - len(old_df)
-        
+
         old_columns = set(old_df.columns)
         new_columns = set(new_df.columns)
-        
+
         added_columns = new_columns - old_columns
         removed_columns = old_columns - new_columns
         column_changes = list(added_columns | removed_columns)
-        
+
         if row_count_change > 0:
             change_type = "insert"
         elif row_count_change < 0:
             change_type = "delete"
         else:
             change_type = "update"
-        
+
         return DataChange(
             change_id=f"change_{datetime.now().timestamp()}",
             version_id="",
@@ -248,15 +248,15 @@ class ChangeTracker:
                 "removed_columns": list(removed_columns)
             }
         )
-    
+
     def compare_versions(self, version1: DataVersion,
                          version2: DataVersion) -> Dict[str, Any]:
         """对比版本"""
         df1 = self._load_version_data(version1)
         df2 = self._load_version_data(version2)
-        
+
         change = self.detect_changes(df1, df2)
-        
+
         return {
             "version1": version1.version_id,
             "version2": version2.version_id,
@@ -265,24 +265,24 @@ class ChangeTracker:
             "column_changes": change.column_changes,
             "details": change.details
         }
-    
+
     def _load_version_data(self, version: DataVersion) -> pd.DataFrame:
         """加载版本数据"""
         # 实现版本数据加载逻辑
         return pd.DataFrame()
-    
+
     def get_change_history(self, table_name: str,
                            start_time: datetime = None,
                            end_time: datetime = None) -> List[DataChange]:
         """获取变更历史"""
         filtered_changes = self.changes
-        
+
         if start_time:
             filtered_changes = [c for c in filtered_changes if c.detected_at >= start_time]
-        
+
         if end_time:
             filtered_changes = [c for c in filtered_changes if c.detected_at <= end_time]
-        
+
         return filtered_changes
 ```
 
@@ -297,48 +297,48 @@ logger = logging.getLogger(__name__)
 
 class VersionRollbackEngine:
     """版本回滚引擎"""
-    
+
     def __init__(self, version_manager: VersionManager):
         self.version_manager = version_manager
-    
+
     def rollback_to_version(self, table_name: str,
                             version_id: str) -> bool:
         version = self.version_manager.get_version(version_id)
-        
+
         if not version:
             logger.error(f"Version {version_id} not found")
             return False
-        
+
         if version.table_name != table_name:
             logger.error(f"Version {version_id} does not belong to table {table_name}")
             return False
-        
+
         try:
             version_data = self._load_version_data(version)
-            
+
             self._apply_version_data(table_name, version_data)
-            
+
             logger.info(f"Successfully rolled back table {table_name} to version {version_id}")
             return True
         except Exception as e:
             logger.error(f"Failed to rollback to version {version_id}: {e}")
             return False
-    
+
     def rollback_to_tag(self, table_name: str,
                         tag_name: str) -> bool:
         version = self.version_manager.get_version_by_tag(tag_name)
-        
+
         if not version:
             logger.error(f"Tag {tag_name} not found")
             return False
-        
+
         return self.rollback_to_version(table_name, version.version_id)
-    
+
     def _load_version_data(self, version: DataVersion) -> pd.DataFrame:
         """加载版本数据"""
         # 实现版本数据加载逻辑
         return pd.DataFrame()
-    
+
     def _apply_version_data(self, table_name: str, data: pd.DataFrame):
         """应用版本数据"""
         # 实现版本数据应用逻辑
@@ -399,7 +399,7 @@ services:
       - LAKEFS_AUTH_ENCRYPT_SECRET_KEY=secret
     volumes:
       - lakefs-data:/data
-  
+
   postgres:
     image: postgres:15
     environment:
@@ -416,7 +416,7 @@ volumes:
 
 
 
-## 
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -433,7 +433,7 @@ volumes:
 
 
 
-## 
+##
 
 - 实时数据湖蓝图
 - 数据生命周期管理蓝图
@@ -467,7 +467,7 @@ graph LR
     U0["DATA CATALOG BL"] --> B
     B["DATA VERSION CO"]
     B --> D0["DATA GOVERNANCE"]
-    
+
     style B fill:#ff6b6b
     style U0 fill:#4ecdc4
     style D0 fill:#45b7d1
@@ -501,6 +501,3 @@ graph LR
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-

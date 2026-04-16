@@ -14,7 +14,7 @@ compliance_level: 初始设计
 
 > 清风量化交易系统 v5.2 - Web管理界面API接口规范
 > **索引**: `DESIGN_005`
-> **关联文档**: 
+> **关联文档**:
 > - [Web管理界面架构设计](T.06.UI001.web_management_interface_architecture_design.md)
 > - [前端组件结构图](前端组件结构图.md)
 > - [系统API设计规范](../../docs/05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
@@ -758,7 +758,7 @@ class Trade(BaseModel):
     strategy_id: Optional[str] = None
     account_id: Optional[str] = None
     order_id: Optional[str] = None
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -814,7 +814,7 @@ class EngineConfig(BaseModel):
     max_position: Optional[float] = None
     max_order_size: Optional[float] = None
     risk_limits: Dict[str, Any] = {}
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -862,7 +862,7 @@ def test_login_success(client: TestClient):
         "username": "admin",
         "password": "password123"
     })
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["code"] == 0
@@ -875,7 +875,7 @@ def test_login_failure(client: TestClient):
         "username": "admin",
         "password": "wrong_password"
     })
-    
+
     assert response.status_code == 401
     data = response.json()
     assert data["code"] == 2
@@ -892,7 +892,7 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
         "page": 1,
         "page_size": 10
     }, headers=auth_headers)
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["code"] == 0
@@ -964,8 +964,8 @@ logging.basicConfig(
 )
 
 # 结构化日志
-logger.add("logs/api.log", 
-           rotation="100 MB", 
+logger.add("logs/api.log",
+           rotation="100 MB",
            retention="30 days",
            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
            serialize=True)  # 输出JSON格式
@@ -1004,7 +1004,7 @@ async def rate_limit_middleware(request: Request, call_next):
         await limiter.check(request, "100/minute")
     else:
         await limiter.check(request, "1000/minute")
-    
+
     response = await call_next(request)
     return response
 ```
@@ -1032,8 +1032,8 @@ async def rate_limit_middleware(request: Request, call_next):
 
 ```---
 
-**文档版本**: 1.0.0  
-**最后更新**: 2026-04-02  
-**维护者**: 首席蓝图架构师  
-**索引**: `DESIGN_005`  
+**文档版本**: 1.0.0
+**最后更新**: 2026-04-02
+**维护者**: 首席蓝图架构师
+**索引**: `DESIGN_005`
 **状态**: ✅ 设计完成，待评审

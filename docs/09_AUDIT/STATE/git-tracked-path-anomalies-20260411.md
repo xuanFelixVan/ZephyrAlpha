@@ -21,9 +21,9 @@ responsibility: STATE
 
 ## 结论（先看这段）
 
-1. **`review_materials_package` 下含中文文件名的路径**：在 Git **索引与工作区**中一般为 **正常 UTF-8**；**并非**必须 `git mv` 才能「修复索引」。  
-2. PowerShell / 终端在**默认** `core.quotePath` 下，`git ls-files` 对非 ASCII 可能输出 **双引号 + `\nnn` 八进制转义**——这是 **CLI 显示层**行为，不是第二套路径。  
-3. **整仓统计、rollup、重复扫描**等自动化应使用 **`git -c core.quotePath=false ls-files`**（Python 侧加 `encoding="utf-8"`），或使用 **`git ls-files -z` + UTF-8 解码**（本仓库 `scan_index_health.py` 已用 `-z`）。**2026-04-11** 起 `export_repo_directory_rollup.py`、`scan_*`、`sample_docs_nav_coverage.py`、`generate_architecture_service_catalog.py` 等已统一 `quotePath=false`。  
+1. **`review_materials_package` 下含中文文件名的路径**：在 Git **索引与工作区**中一般为 **正常 UTF-8**；**并非**必须 `git mv` 才能「修复索引」。
+2. PowerShell / 终端在**默认** `core.quotePath` 下，`git ls-files` 对非 ASCII 可能输出 **双引号 + `\nnn` 八进制转义**——这是 **CLI 显示层**行为，不是第二套路径。
+3. **整仓统计、rollup、重复扫描**等自动化应使用 **`git -c core.quotePath=false ls-files`**（Python 侧加 `encoding="utf-8"`），或使用 **`git ls-files -z` + UTF-8 解码**（本仓库 `scan_index_health.py` 已用 `-z`）。**2026-04-11** 起 `export_repo_directory_rollup.py`、`scan_*`、`sample_docs_nav_coverage.py`、`generate_architecture_service_catalog.py` 等已统一 `quotePath=false`。
 4. 若历史平面清单（如 `REPO_GIT_TRACKED_FILES_20260410.txt`）前几行出现引号形式，属**导出命令未关 quotePath**；请改用 `REPO_GIT_TRACKED_FILES_20260411.txt` 或按 REPO_WIDE §1 推荐 one-liner 重导。
 
 ## 复现「带引号」输出（仓库根 · PowerShell）

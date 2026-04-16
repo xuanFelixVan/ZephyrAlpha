@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 风险平价策略详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：风险平价优化、风险预算分配、风险贡献计算
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 实现风险平价策略，使各资产的风险贡献相等
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 风险贡献计算：需要准确计算边际风险贡献
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 收敛性问题：优化算法可能不收敛
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供风险分散的组合配置
 
@@ -172,7 +172,7 @@ implementation_status: 待实施
 
 - **职责范围**: 风险贡献计算、风险平价优化、风险预算分配
 
-- **上下层接口**: 
+- **上下层接口**:
 
   - 上层依赖: Layer 5 交易成本层
 
@@ -280,13 +280,13 @@ class RiskContributionCalculator:
 
     """风险贡献计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate(
 
@@ -304,19 +304,19 @@ class RiskContributionCalculator:
 
         portfolio_risk = np.sqrt(weights @ covariance_matrix @ weights)
 
-        
+
 
         marginal_risk = covariance_matrix @ weights / portfolio_risk
 
-        
+
 
         risk_contributions = weights * marginal_risk
 
-        
+
 
         percentage_contributions = risk_contributions / portfolio_risk
 
-        
+
 
         results = []
 
@@ -336,15 +336,15 @@ class RiskContributionCalculator:
 
             ))
 
-        
+
 
         self.logger.info(f"风险贡献计算完成，组合风险={portfolio_risk:.6f}")
 
-        
+
 
         return results
 
-    
+
 
     def calculate_portfolio_risk(
 
@@ -368,7 +368,7 @@ class RiskBudgetOptimizer:
 
     """风险预算优化器"""
 
-    
+
 
     def __init__(self, config: RiskParityConfig):
 
@@ -376,7 +376,7 @@ class RiskBudgetOptimizer:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def optimize(
 
@@ -392,7 +392,7 @@ class RiskBudgetOptimizer:
 
         执行风险预算优化
 
-        
+
 
         参数:
 
@@ -400,7 +400,7 @@ class RiskBudgetOptimizer:
 
             asset_names: 资产名称列表
 
-            
+
 
         返回:
 
@@ -410,7 +410,7 @@ class RiskBudgetOptimizer:
 
         n_assets = len(asset_names)
 
-        
+
 
         if self.config.risk_budget:
 
@@ -428,7 +428,7 @@ class RiskBudgetOptimizer:
 
             target_budget = np.ones(n_assets) / n_assets
 
-        
+
 
         if self.config.method == "scipy":
 
@@ -446,15 +446,15 @@ class RiskBudgetOptimizer:
 
             )
 
-        
+
 
         self.logger.info(f"风险预算优化完成，收敛={converged}，迭代={iterations}")
 
-        
+
 
         return weights, converged, iterations
 
-    
+
 
     def _scipy_optimize(
 
@@ -470,11 +470,11 @@ class RiskBudgetOptimizer:
 
         from scipy.optimize import minimize
 
-        
+
 
         n_assets = covariance_matrix.shape[0]
 
-        
+
 
         def objective(w):
 
@@ -486,11 +486,11 @@ class RiskBudgetOptimizer:
 
             target_contrib = target_budget * portfolio_risk
 
-            
+
 
             return np.sum((risk_contrib - target_contrib) ** 2)
 
-        
+
 
         constraints = [
 
@@ -500,11 +500,11 @@ class RiskBudgetOptimizer:
 
         bounds = [(0.0, 1.0) for _ in range(n_assets)]
 
-        
+
 
         initial_weights = np.ones(n_assets) / n_assets
 
-        
+
 
         result = minimize(
 
@@ -528,11 +528,11 @@ class RiskBudgetOptimizer:
 
         )
 
-        
+
 
         return result.x, result.success, result.nit
 
-    
+
 
     def _closed_form_optimize(
 
@@ -546,13 +546,13 @@ class RiskBudgetOptimizer:
 
         n_assets = covariance_matrix.shape[0]
 
-        
+
 
         inv_vol = 1.0 / np.sqrt(np.diag(covariance_matrix))
 
         weights = inv_vol / inv_vol.sum()
 
-        
+
 
         return weights, True, 1
 
@@ -564,25 +564,25 @@ class RiskParityOptimizer:
 
     """风险平价优化器主类"""
 
-    
+
 
     def __init__(self, config: RiskParityConfig):
 
         self.config = config
 
-        
+
 
         self.risk_contribution_calculator = RiskContributionCalculator()
 
-        
+
 
         self.risk_budget_optimizer = RiskBudgetOptimizer(config)
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def optimize(
 
@@ -598,7 +598,7 @@ class RiskParityOptimizer:
 
         执行风险平价优化
 
-        
+
 
         参数:
 
@@ -606,7 +606,7 @@ class RiskParityOptimizer:
 
             asset_names: 资产名称列表
 
-            
+
 
         返回:
 
@@ -616,7 +616,7 @@ class RiskParityOptimizer:
 
         start_time = datetime.now()
 
-        
+
 
         weights, converged, iterations = self.risk_budget_optimizer.optimize(
 
@@ -624,7 +624,7 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         risk_contributions = self.risk_contribution_calculator.calculate(
 
@@ -632,7 +632,7 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         portfolio_risk = self.risk_contribution_calculator.calculate_portfolio_risk(
 
@@ -640,13 +640,13 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         end_time = datetime.now()
 
         optimization_time = (end_time - start_time).total_seconds()
 
-        
+
 
         result = RiskParityResult(
 
@@ -666,11 +666,11 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         self.logger.info(f"风险平价优化完成，耗时{optimization_time:.2f}秒")
 
-        
+
 
         return result
 
@@ -712,7 +712,7 @@ class RiskParityOptimizer:
 
 算法名称: 风险贡献计算
 
-数学公式: 
+数学公式:
 
 RC_i = w_i * (∂σ_p / ∂w_i) = w_i * (Σw)_i / σ_p
 
@@ -744,7 +744,7 @@ RC_i = w_i * (∂σ_p / ∂w_i) = w_i * (Σw)_i / σ_p
 
 算法名称: 风险平价优化
 
-数学公式: 
+数学公式:
 
 min: Σ(RC_i - b_i * σ_p)
 
@@ -863,4 +863,3 @@ s.t.: Σw_i = 1
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

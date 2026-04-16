@@ -37,7 +37,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -97,7 +97,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **ﮔﮔﺁﻝ?*: 
+- **ﮔﮔﺁﻝ?*:
 
 
 
@@ -117,7 +117,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **ﻠ۱ﮔﻛﭨ?*: 
+- **ﻠ۱ﮔﻛﭨ?*:
 
 
 
@@ -355,7 +355,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*:
 
 
 
@@ -379,7 +379,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -793,7 +793,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -813,7 +813,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -833,7 +833,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -901,7 +901,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -965,7 +965,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1021,7 +1021,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1033,7 +1033,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1041,7 +1041,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -1053,7 +1053,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1077,7 +1077,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1145,7 +1145,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1157,7 +1157,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -1169,7 +1169,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1193,7 +1193,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1257,7 +1257,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1269,7 +1269,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -1281,7 +1281,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1305,7 +1305,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1361,7 +1361,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1373,7 +1373,7 @@ class AuditDatabase:
 
 
 
-    
+
 
 
 
@@ -1405,7 +1405,7 @@ class AuditDatabase:
 
 
 
-        
+
 
 
 
@@ -1425,7 +1425,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -1449,7 +1449,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1461,7 +1461,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1477,7 +1477,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1493,7 +1493,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1509,7 +1509,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1521,7 +1521,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1529,7 +1529,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1593,7 +1593,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1617,7 +1617,7 @@ class OrderAuditor:
 
 
 
-    
+
 
 
 
@@ -1633,7 +1633,7 @@ class OrderAuditor:
 
 
 
-    
+
 
 
 
@@ -1665,7 +1665,7 @@ class OrderAuditor:
 
 
 
-        
+
 
 
 
@@ -1685,7 +1685,7 @@ class OrderAuditor:
 
 
 
-            
+
 
 
 
@@ -1753,7 +1753,7 @@ class OrderAuditor:
 
 
 
-        
+
 
 
 
@@ -1761,7 +1761,7 @@ class OrderAuditor:
 
 
 
-        
+
 
 
 
@@ -1769,7 +1769,7 @@ class OrderAuditor:
 
 
 
-        
+
 
 
 
@@ -1793,7 +1793,7 @@ class TradeAuditor:
 
 
 
-    
+
 
 
 
@@ -1809,7 +1809,7 @@ class TradeAuditor:
 
 
 
-    
+
 
 
 
@@ -1837,7 +1837,7 @@ class TradeAuditor:
 
 
 
-        
+
 
 
 
@@ -1853,7 +1853,7 @@ class TradeAuditor:
 
 
 
-            
+
 
 
 
@@ -1917,7 +1917,7 @@ class TradeAuditor:
 
 
 
-        
+
 
 
 
@@ -1925,7 +1925,7 @@ class TradeAuditor:
 
 
 
-        
+
 
 
 
@@ -1933,7 +1933,7 @@ class TradeAuditor:
 
 
 
-        
+
 
 
 
@@ -1957,7 +1957,7 @@ class PositionAuditor:
 
 
 
-    
+
 
 
 
@@ -1973,7 +1973,7 @@ class PositionAuditor:
 
 
 
-    
+
 
 
 
@@ -2001,7 +2001,7 @@ class PositionAuditor:
 
 
 
-        
+
 
 
 
@@ -2017,7 +2017,7 @@ class PositionAuditor:
 
 
 
-            
+
 
 
 
@@ -2073,7 +2073,7 @@ class PositionAuditor:
 
 
 
-        
+
 
 
 
@@ -2081,7 +2081,7 @@ class PositionAuditor:
 
 
 
-        
+
 
 
 
@@ -2089,7 +2089,7 @@ class PositionAuditor:
 
 
 
-        
+
 
 
 
@@ -2113,7 +2113,7 @@ class RiskMonitor:
 
 
 
-    
+
 
 
 
@@ -2129,7 +2129,7 @@ class RiskMonitor:
 
 
 
-    
+
 
 
 
@@ -2153,7 +2153,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2165,7 +2165,7 @@ class RiskMonitor:
 
 
 
-            
+
 
 
 
@@ -2185,7 +2185,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2205,7 +2205,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2229,7 +2229,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2237,7 +2237,7 @@ class RiskMonitor:
 
 
 
-    
+
 
 
 
@@ -2261,7 +2261,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2273,7 +2273,7 @@ class RiskMonitor:
 
 
 
-            
+
 
 
 
@@ -2293,7 +2293,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2313,7 +2313,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2333,7 +2333,7 @@ class RiskMonitor:
 
 
 
-        
+
 
 
 
@@ -2357,7 +2357,7 @@ class AuditReporter:
 
 
 
-    
+
 
 
 
@@ -2373,7 +2373,7 @@ class AuditReporter:
 
 
 
-    
+
 
 
 
@@ -2397,7 +2397,7 @@ class AuditReporter:
 
 
 
-        
+
 
 
 
@@ -2409,7 +2409,7 @@ class AuditReporter:
 
 
 
-            
+
 
 
 
@@ -2433,7 +2433,7 @@ class AuditReporter:
 
 
 
-        
+
 
 
 
@@ -2441,7 +2441,7 @@ class AuditReporter:
 
 
 
-        
+
 
 
 
@@ -2477,7 +2477,7 @@ class AuditReporter:
 
 
 
-        
+
 
 
 
@@ -2501,7 +2501,7 @@ class TradeAuditorMain:
 
 
 
-    
+
 
 
 
@@ -2513,7 +2513,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2521,7 +2521,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2545,7 +2545,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2553,7 +2553,7 @@ class TradeAuditorMain:
 
 
 
-    
+
 
 
 
@@ -2581,7 +2581,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2597,7 +2597,7 @@ class TradeAuditorMain:
 
 
 
-            
+
 
 
 
@@ -2617,7 +2617,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2625,7 +2625,7 @@ class TradeAuditorMain:
 
 
 
-    
+
 
 
 
@@ -2653,7 +2653,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2669,7 +2669,7 @@ class TradeAuditorMain:
 
 
 
-            
+
 
 
 
@@ -2689,7 +2689,7 @@ class TradeAuditorMain:
 
 
 
-    
+
 
 
 
@@ -2717,7 +2717,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2733,7 +2733,7 @@ class TradeAuditorMain:
 
 
 
-            
+
 
 
 
@@ -2753,7 +2753,7 @@ class TradeAuditorMain:
 
 
 
-    
+
 
 
 
@@ -2777,7 +2777,7 @@ class TradeAuditorMain:
 
 
 
-        
+
 
 
 
@@ -2789,7 +2789,7 @@ class TradeAuditorMain:
 
 
 
-            
+
 
 
 
@@ -3141,7 +3141,7 @@ def audit_order(
 
 
 
-    
+
 
 
 
@@ -3165,7 +3165,7 @@ def audit_order(
 
 
 
-    
+
 
 
 
@@ -3181,7 +3181,7 @@ def audit_order(
 
 
 
-    
+
 
 
 
@@ -3229,7 +3229,7 @@ def monitor_order_risk(
 
 
 
-    
+
 
 
 
@@ -3249,7 +3249,7 @@ def monitor_order_risk(
 
 
 
-    
+
 
 
 
@@ -3265,7 +3265,7 @@ def monitor_order_risk(
 
 
 
-    
+
 
 
 
@@ -3285,7 +3285,7 @@ def monitor_order_risk(
 
 
 
-    
+
 
 
 
@@ -3309,7 +3309,7 @@ def monitor_order_risk(
 
 
 
-    
+
 
 
 
@@ -3485,7 +3485,7 @@ def test_trade_auditor_integration():
 
 
 
-    
+
 
 
 
@@ -3493,7 +3493,7 @@ def test_trade_auditor_integration():
 
 
 
-    
+
 
 
 
@@ -3533,7 +3533,7 @@ def test_trade_auditor_integration():
 
 
 
-    
+
 
 
 
@@ -3541,7 +3541,7 @@ def test_trade_auditor_integration():
 
 
 
-    
+
 
 
 
@@ -3801,7 +3801,7 @@ trade_auditor:
 
 
 
-  
+
 
 
 
@@ -3825,7 +3825,7 @@ trade_auditor:
 
 
 
-  
+
 
 
 
@@ -3906,6 +3906,3 @@ trade_auditor:
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
-
-
-

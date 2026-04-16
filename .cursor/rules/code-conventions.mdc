@@ -3,8 +3,24 @@
 ## 施工前必读（每次开始代码施工前执行）
 
 1. 读 `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` — 确认当前 Phase 和任务
-2. 读对应的施工图文档（`docs/04_CONSTRUCTION/PLANS/CONSTRUCTION_PLAN_*.md`）
-3. 确认目标模块的蓝图（`docs/01_FRAMEWORK/` 中的对应蓝图文件，按 module_id 或文件名查找）
+2. 读对应的施工图文档（`docs/04_CONSTRUCTION/PLANS/construction-plan-*.md`，历史遗留 L00 为 `CONSTRUCTION_PLAN_L00_DATA_SOURCE.md`）
+3. 确认目标模块的蓝图（优先查 `docs/03_BLUEPRINTS/L{XX}_*/`，过渡期也查 `docs/01_FRAMEWORK/`，按 module_id 或文件名查找）
+
+## 施工图必须包含的 7 个章节（验收标准）
+
+在编写或审核施工图时，必须验证以下 7 个章节均存在且内容完整：
+
+| 章节序号 | 章节名称 | 必含内容 |
+|---------|---------|---------|
+| 1 | **前置条件** | 依赖蓝图路径、输入数据契约、运行环境要求 |
+| 2 | **模块分解** | 3-8 个可独立施工单元，含模块 ID、名称、职责 |
+| 3 | **公共 API** | Python 函数签名（含 type hints）、异常类型、返回值说明 |
+| 4 | **数据流** | 可 Mermaid 图示，覆盖输入→处理→输出全链路 |
+| 5 | **测试** | 每模块至少 3 条 P0 用例思路（含边界/异常场景） |
+| 6 | **技术选型与 TDR 引用** | 引用已决策的 ADR 编号；待决策项标注为 TBD + ADR ID |
+| 7 | **已知风险与缓解** | 至少 2 条风险，含缓解策略 |
+
+> **验收门禁**：施工图缺少任何一个章节，视为 Draft 状态，不得进入 Phase 3 实施。
 
 ## 施工后必做（每次完成一个模块后执行）
 

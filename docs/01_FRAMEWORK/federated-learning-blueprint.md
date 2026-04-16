@@ -47,7 +47,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -729,7 +729,7 @@ class FederatedLearning:
 
 
 
-    
+
 
 
 
@@ -813,7 +813,7 @@ class FederatedLearning:
 
 
 
-        """初始化联邦学习系统        
+        """初始化联邦学习系统
 
 
 
@@ -885,7 +885,7 @@ class FederatedLearning:
 
 
 
-    
+
 
 
 
@@ -957,7 +957,7 @@ class FederatedLearning:
 
 
 
-        
+
 
 
 
@@ -1017,7 +1017,7 @@ class FederatedLearning:
 
 
 
-    
+
 
 
 
@@ -1101,7 +1101,7 @@ class FederatedLearning:
 
 
 
-        """客户端本地训?        
+        """客户端本地训?
 
 
 
@@ -1161,7 +1161,7 @@ class FederatedLearning:
 
 
 
-            
+
 
 
 
@@ -1221,7 +1221,7 @@ class FederatedLearning:
 
 
 
-    
+
 
 
 
@@ -1281,7 +1281,7 @@ class FederatedLearning:
 
 
 
-        """聚合客户端更新        
+        """聚合客户端更新
 
 
 
@@ -1305,7 +1305,7 @@ class FederatedLearning:
 
 
 
-            client_updates: 客户端更新列?            
+            client_updates: 客户端更新列?
 
 
 
@@ -2074,14 +2074,3 @@ pycryptodome>=3.19.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

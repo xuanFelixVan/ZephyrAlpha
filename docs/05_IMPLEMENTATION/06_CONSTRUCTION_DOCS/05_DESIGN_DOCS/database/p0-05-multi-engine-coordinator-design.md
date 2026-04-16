@@ -138,7 +138,7 @@ class SagaStep:
 
 
 
-    
+
 
 
 
@@ -214,7 +214,7 @@ class SagaStep:
 
 
 
-    
+
 
 
 
@@ -234,7 +234,7 @@ class SagaStep:
 
 
 
-        
+
 
 
 
@@ -262,7 +262,7 @@ class SagaStep:
 
 
 
-            
+
 
 
 
@@ -278,7 +278,7 @@ class SagaStep:
 
 
 
-            
+
 
 
 
@@ -318,7 +318,7 @@ self.error = f"ﮔ۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
 
 
 
-    
+
 
 
 
@@ -334,7 +334,7 @@ self.error = f"ﮔ۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
 
 
 
-        
+
 
 
 
@@ -362,7 +362,7 @@ self.error = f"ﮔ۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
 
 
 
-            
+
 
 
 
@@ -402,7 +402,7 @@ class Saga:
 
 
 
-    
+
 
 
 
@@ -442,7 +442,7 @@ class Saga:
 
 
 
-    
+
 
 
 
@@ -458,7 +458,7 @@ class Saga:
 
 
 
-    
+
 
 
 
@@ -478,7 +478,7 @@ class Saga:
 
 
 
-        
+
 
 
 
@@ -498,7 +498,7 @@ class Saga:
 
 
 
-                
+
 
 
 
@@ -510,7 +510,7 @@ class Saga:
 
 
 
-                
+
 
 
 
@@ -526,7 +526,7 @@ class Saga:
 
 
 
-            
+
 
 
 
@@ -546,7 +546,7 @@ class Saga:
 
 
 
-        
+
 
 
 
@@ -570,7 +570,7 @@ class Saga:
 
 
 
-    
+
 
 
 
@@ -590,7 +590,7 @@ class Saga:
 
 
 
-        
+
 
 
 
@@ -610,7 +610,7 @@ class Saga:
 
 
 
-                
+
 
 
 
@@ -626,7 +626,7 @@ class Saga:
 
 
 
-                    
+
 
 
 
@@ -638,7 +638,7 @@ print(f"ﮔ۴ﻠ۹۳ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {step.step_name}")
 
 
 
-            
+
 
 
 
@@ -654,7 +654,7 @@ print(f"ﮔ۴ﻠ۹۳ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {step.step_name}")
 
 
 
-        
+
 
 
 
@@ -724,7 +724,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -772,7 +772,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -800,7 +800,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -836,7 +836,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -872,7 +872,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -908,7 +908,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -944,7 +944,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -968,7 +968,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -988,7 +988,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -996,7 +996,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -1012,7 +1012,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1024,7 +1024,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1048,7 +1048,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -1064,7 +1064,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1076,7 +1076,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1084,7 +1084,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -1100,7 +1100,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1132,7 +1132,7 @@ class OrderSaga:
 
 
 
-            
+
 
 
 
@@ -1180,7 +1180,7 @@ class OrderSaga:
 
 
 
-            
+
 
 
 
@@ -1200,7 +1200,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -1216,7 +1216,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1272,7 +1272,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1280,7 +1280,7 @@ class OrderSaga:
 
 
 
-    
+
 
 
 
@@ -1296,7 +1296,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1308,7 +1308,7 @@ class OrderSaga:
 
 
 
-        
+
 
 
 
@@ -1320,7 +1320,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1364,7 +1364,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1376,7 +1376,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1396,7 +1396,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-    
+
 
 
 
@@ -1416,7 +1416,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1428,7 +1428,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1440,7 +1440,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1452,7 +1452,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1460,7 +1460,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-    
+
 
 
 
@@ -1476,7 +1476,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1488,7 +1488,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1500,7 +1500,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1580,7 +1580,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1596,7 +1596,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-    
+
 
 
 
@@ -1616,7 +1616,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1688,7 +1688,7 @@ raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
 
 
 
-        
+
 
 
 
@@ -1758,7 +1758,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -1774,7 +1774,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -1794,7 +1794,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -1806,7 +1806,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -1818,7 +1818,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -1826,7 +1826,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -1850,7 +1850,7 @@ class SagaCoordinator:
 
 
 
-            
+
 
 
 
@@ -1878,7 +1878,7 @@ class SagaCoordinator:
 
 
 
-            
+
 
 
 
@@ -1894,7 +1894,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -1906,7 +1906,7 @@ class SagaCoordinator:
 
 
 
-            
+
 
 
 
@@ -1934,7 +1934,7 @@ class SagaCoordinator:
 
 
 
-            
+
 
 
 
@@ -1950,7 +1950,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -2010,7 +2010,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2022,7 +2022,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2034,7 +2034,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2066,7 +2066,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -2082,7 +2082,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2094,7 +2094,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2114,7 +2114,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2126,7 +2126,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2154,7 +2154,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -2386,7 +2386,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2402,7 +2402,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2422,7 +2422,7 @@ class SagaRecoveryService:
 
 
 
-        
+
 
 
 
@@ -2434,7 +2434,7 @@ class SagaRecoveryService:
 
 
 
-        
+
 
 
 
@@ -2442,7 +2442,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2458,7 +2458,7 @@ class SagaRecoveryService:
 
 
 
-        
+
 
 
 
@@ -2470,7 +2470,7 @@ class SagaRecoveryService:
 
 
 
-        
+
 
 
 
@@ -2514,7 +2514,7 @@ class SagaRecoveryService:
 
 
 
-        
+
 
 
 
@@ -2522,7 +2522,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2542,7 +2542,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2562,7 +2562,7 @@ class SagaRecoveryService:
 
 
 
-    
+
 
 
 
@@ -2664,7 +2664,7 @@ class SagaMonitor:
 
 
 
-    
+
 
 
 
@@ -2704,7 +2704,7 @@ class SagaMonitor:
 
 
 
-    
+
 
 
 
@@ -2736,7 +2736,7 @@ class SagaMonitor:
 
 
 
-        
+
 
 
 
@@ -2764,7 +2764,7 @@ class SagaMonitor:
 
 
 
-        
+
 
 
 
@@ -2788,7 +2788,7 @@ class SagaMonitor:
 
 
 
-    
+
 
 
 
@@ -2846,11 +2846,8 @@ class SagaMonitor:
 
 
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 
 
 
 **ﻛﺕﻛﺕﮔ?*: P0-6 ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
-
-
-

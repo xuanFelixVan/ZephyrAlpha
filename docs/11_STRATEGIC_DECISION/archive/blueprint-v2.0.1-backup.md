@@ -48,7 +48,7 @@ implementation_status: 设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -520,7 +520,7 @@ class AssetAllocationEngine:
 
 
 
-    
+
 
 
 
@@ -544,13 +544,13 @@ class AssetAllocationEngine:
 
 
 
-        
 
 
 
 
 
-    def make_strategic_allocation(self, 
+
+    def make_strategic_allocation(self,
 
 
 
@@ -580,7 +580,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -592,7 +592,7 @@ class AssetAllocationEngine:
 
 
 
-        作为资产配置专家，请根据以下信息制定战略资产配置?        
+        作为资产配置专家，请根据以下信息制定战略资产配置?
 
 
 
@@ -610,7 +610,7 @@ class AssetAllocationEngine:
 
 
 
-        投资期限：{investment_horizon}?        
+        投资期限：{investment_horizon}?
 
 
 
@@ -646,7 +646,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -658,7 +658,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -676,7 +676,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -706,7 +706,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -742,13 +742,13 @@ class AssetAllocationEngine:
 
 
 
-    
 
 
 
 
 
-    def make_tactical_allocation(self, 
+
+    def make_tactical_allocation(self,
 
 
 
@@ -772,7 +772,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -802,7 +802,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -862,13 +862,13 @@ class AssetAllocationEngine:
 
 
 
-    
 
 
 
 
 
-    def make_dynamic_allocation(self, 
+
+    def make_dynamic_allocation(self,
 
 
 
@@ -892,7 +892,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -910,7 +910,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -928,7 +928,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -964,7 +964,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -976,7 +976,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -994,7 +994,7 @@ class AssetAllocationEngine:
 
 
 
-        
+
 
 
 
@@ -1120,7 +1120,7 @@ class EconomicRegimeDetector:
 
 
 
-    
+
 
 
 
@@ -1144,13 +1144,13 @@ class EconomicRegimeDetector:
 
 
 
-        
 
 
 
 
 
-    def detect_economic_regime(self, 
+
+    def detect_economic_regime(self,
 
 
 
@@ -1168,7 +1168,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1180,7 +1180,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1192,7 +1192,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1210,7 +1210,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1222,7 +1222,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1240,7 +1240,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1270,7 +1270,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1282,7 +1282,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1300,7 +1300,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1342,13 +1342,13 @@ class EconomicRegimeDetector:
 
 
 
-    
 
 
 
 
 
-    def detect_market_environment(self, 
+
+    def detect_market_environment(self,
 
 
 
@@ -1366,7 +1366,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1390,7 +1390,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1432,7 +1432,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1480,13 +1480,13 @@ class EconomicRegimeDetector:
 
 
 
-    
 
 
 
 
 
-    def detect_style_rotation(self, 
+
+    def detect_style_rotation(self,
 
 
 
@@ -1504,7 +1504,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1516,7 +1516,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1528,7 +1528,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1564,13 +1564,13 @@ class EconomicRegimeDetector:
 
 
 
-    
 
 
 
 
 
-    def predict_regime_change(self, 
+
+    def predict_regime_change(self,
 
 
 
@@ -1594,7 +1594,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1606,7 +1606,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1618,7 +1618,7 @@ class EconomicRegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1786,7 +1786,7 @@ class RiskBudgetAllocator:
 
 
 
-    
+
 
 
 
@@ -1810,13 +1810,13 @@ class RiskBudgetAllocator:
 
 
 
-        
 
 
 
 
 
-    def allocate_risk_budget(self, 
+
+    def allocate_risk_budget(self,
 
 
 
@@ -1840,7 +1840,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1852,7 +1852,7 @@ class RiskBudgetAllocator:
 
 
 
-        作为风险管理专家，请分配风险预算?        
+        作为风险管理专家，请分配风险预算?
 
 
 
@@ -1864,7 +1864,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1876,7 +1876,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1906,7 +1906,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1918,7 +1918,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1936,7 +1936,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -1972,13 +1972,13 @@ class RiskBudgetAllocator:
 
 
 
-    
 
 
 
 
 
-    def adjust_risk_budget(self, 
+
+    def adjust_risk_budget(self,
 
 
 
@@ -2002,7 +2002,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -2014,7 +2014,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -2038,7 +2038,7 @@ class RiskBudgetAllocator:
 
 
 
-        
+
 
 
 
@@ -2158,7 +2158,7 @@ class StrategyEvaluationEngine:
 
 
 
-    
+
 
 
 
@@ -2176,13 +2176,13 @@ class StrategyEvaluationEngine:
 
 
 
-        
 
 
 
 
 
-    def evaluate_strategy_performance(self, 
+
+    def evaluate_strategy_performance(self,
 
 
 
@@ -2206,7 +2206,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2260,7 +2260,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2296,13 +2296,13 @@ class StrategyEvaluationEngine:
 
 
 
-    
 
 
 
 
 
-    def evaluate_strategy_adaptability(self, 
+
+    def evaluate_strategy_adaptability(self,
 
 
 
@@ -2326,7 +2326,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2338,7 +2338,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2362,7 +2362,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2374,7 +2374,7 @@ class StrategyEvaluationEngine:
 
 
 
-        
+
 
 
 
@@ -2500,7 +2500,7 @@ class StrategicAdjustmentEngine:
 
 
 
-    
+
 
 
 
@@ -2518,13 +2518,13 @@ class StrategicAdjustmentEngine:
 
 
 
-        
 
 
 
 
 
-    def trigger_strategic_adjustment(self, 
+
+    def trigger_strategic_adjustment(self,
 
 
 
@@ -2548,7 +2548,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2560,7 +2560,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2596,7 +2596,7 @@ class StrategicAdjustmentEngine:
 
 
 
-            
+
 
 
 
@@ -2674,13 +2674,13 @@ class StrategicAdjustmentEngine:
 
 
 
-    
 
 
 
 
 
-    def generate_adjustment_plan(self, 
+
+    def generate_adjustment_plan(self,
 
 
 
@@ -2704,7 +2704,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2716,7 +2716,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        作为战略调整专家，请根据市场事件生成战略调整方案?        
+        作为战略调整专家，请根据市场事件生成战略调整方案?
 
 
 
@@ -2734,7 +2734,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2776,7 +2776,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2788,7 +2788,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -2806,7 +2806,7 @@ class StrategicAdjustmentEngine:
 
 
 
-        
+
 
 
 
@@ -4127,8 +4127,3 @@ class StrategySelection:
 
 
 **实施周期**: 2?**预期效果**: 战略决策准确率≥70%，达到专业机构战略决策能?
-
-
-
-
-

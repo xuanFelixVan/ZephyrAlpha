@@ -39,7 +39,7 @@ class StrategyResponse(StrategyBase):
     created_at: datetime = Field(..., description="创建时间")
     updated_at: datetime = Field(..., description="更新时间")
     status: str = Field(default="created", description="策略状态")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -68,15 +68,15 @@ async def list_strategies(
 ):
     """
     获取策略列表
-    
+
     支持分页和过滤
-    
+
     Args:
         skip: 跳过记录数
         limit: 返回记录数
         strategy_type: 策略类型过滤
         enabled: 启用状态过滤
-    
+
     Returns:
         List[StrategyResponse]: 策略列表
     """
@@ -104,7 +104,7 @@ async def list_strategies(
             status="running",
         ),
     ]
-    
+
     return strategies[skip:skip+limit]
 
 
@@ -112,19 +112,19 @@ async def list_strategies(
 async def get_strategy(strategy_id: str):
     """
     获取单个策略详情
-    
+
     Args:
         strategy_id: 策略ID
-    
+
     Returns:
         StrategyResponse: 策略详情
-    
+
     Raises:
         HTTPException: 策略不存在
     """
     if strategy_id != "strategy_001":
         raise HTTPException(status_code=404, detail="策略不存在")
-    
+
     return StrategyResponse(
         id=strategy_id,
         name="双均线策略",
@@ -142,10 +142,10 @@ async def get_strategy(strategy_id: str):
 async def create_strategy(strategy: StrategyCreate):
     """
     创建新策略
-    
+
     Args:
         strategy: 策略创建参数
-    
+
     Returns:
         StrategyResponse: 创建的策略
     """
@@ -166,20 +166,20 @@ async def create_strategy(strategy: StrategyCreate):
 async def update_strategy(strategy_id: str, strategy: StrategyUpdate):
     """
     更新策略
-    
+
     Args:
         strategy_id: 策略ID
         strategy: 策略更新参数
-    
+
     Returns:
         StrategyResponse: 更新后的策略
-    
+
     Raises:
         HTTPException: 策略不存在
     """
     if strategy_id != "strategy_001":
         raise HTTPException(status_code=404, detail="策略不存在")
-    
+
     return StrategyResponse(
         id=strategy_id,
         name=strategy.name or "双均线策略",
@@ -197,14 +197,14 @@ async def update_strategy(strategy_id: str, strategy: StrategyUpdate):
 async def delete_strategy(strategy_id: str):
     """
     删除策略
-    
+
     Args:
         strategy_id: 策略ID
-    
+
     Raises:
         HTTPException: 策略不存在
     """
     if strategy_id != "strategy_001":
         raise HTTPException(status_code=404, detail="策略不存在")
-    
+
     return None

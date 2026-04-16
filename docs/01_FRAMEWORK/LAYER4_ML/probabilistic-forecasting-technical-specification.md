@@ -279,7 +279,7 @@ implementation_status: 技术规格设计完整
 
 
 
-- **Layer归属**: Layer 4 - 机器学习?- **职责范围**: 概率预测、不确定性估计、置信区间、校准评?- **上下层接?*: 
+- **Layer归属**: Layer 4 - 机器学习?- **职责范围**: 概率预测、不确定性估计、置信区间、校准评?- **上下层接?*:
 
 
 
@@ -309,7 +309,7 @@ implementation_status: 技术规格设计完整
 
 
 
-- **核心职责**: 概率预测与不确定性量?- **职责边界**: 
+- **核心职责**: 概率预测与不确定性量?- **职责边界**:
 
 
 
@@ -801,7 +801,7 @@ class MonteCarloDropout:
 
 
 
-    """MC Dropout不确定性估?    
+    """MC Dropout不确定性估?
 
 
 
@@ -813,7 +813,7 @@ class MonteCarloDropout:
 
 
 
-    
+
 
 
 
@@ -873,7 +873,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -909,7 +909,7 @@ class MonteCarloDropout:
 
 
 
-    
+
 
 
 
@@ -945,7 +945,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -963,7 +963,7 @@ class MonteCarloDropout:
 
 
 
-            
+
 
 
 
@@ -999,7 +999,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1011,7 +1011,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1041,7 +1041,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1053,7 +1053,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1071,7 +1071,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1119,7 +1119,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1131,7 +1131,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1155,7 +1155,7 @@ class MonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -1227,7 +1227,7 @@ class MonteCarloDropout:
 
 
 
-    
+
 
 
 
@@ -1269,7 +1269,7 @@ class DeepEnsembles:
 
 
 
-    """深度集成不确定性估?    
+    """深度集成不确定性估?
 
 
 
@@ -1281,7 +1281,7 @@ class DeepEnsembles:
 
 
 
-    
+
 
 
 
@@ -1329,7 +1329,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1365,7 +1365,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1383,7 +1383,7 @@ class DeepEnsembles:
 
 
 
-            
+
 
 
 
@@ -1413,7 +1413,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1449,7 +1449,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1461,7 +1461,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1479,7 +1479,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1527,7 +1527,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1539,7 +1539,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1563,7 +1563,7 @@ class DeepEnsembles:
 
 
 
-        
+
 
 
 
@@ -1653,7 +1653,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    """贝叶斯神经网?    
+    """贝叶斯神经网?
 
 
 
@@ -1665,7 +1665,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1743,7 +1743,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1779,7 +1779,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1803,7 +1803,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-            
+
 
 
 
@@ -1881,7 +1881,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1941,7 +1941,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-            
+
 
 
 
@@ -1959,7 +1959,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2001,7 +2001,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2013,7 +2013,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2025,7 +2025,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2061,7 +2061,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2097,7 +2097,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2145,7 +2145,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2169,7 +2169,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2181,7 +2181,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2199,7 +2199,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2247,7 +2247,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2259,7 +2259,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2331,7 +2331,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2391,7 +2391,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2415,7 +2415,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2427,7 +2427,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2505,7 +2505,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-        
+
 
 
 
@@ -2517,7 +2517,7 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2619,7 +2619,7 @@ class QuantileRegression:
 
 
 
-    """分位数回?    
+    """分位数回?
 
 
 
@@ -2631,7 +2631,7 @@ class QuantileRegression:
 
 
 
-    
+
 
 
 
@@ -2679,7 +2679,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2769,7 +2769,7 @@ class QuantileRegression:
 
 
 
-    
+
 
 
 
@@ -2811,7 +2811,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2829,7 +2829,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2889,7 +2889,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2901,7 +2901,7 @@ class QuantileRegression:
 
 
 
-    
+
 
 
 
@@ -2943,7 +2943,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2967,7 +2967,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -2997,7 +2997,7 @@ class QuantileRegression:
 
 
 
-        
+
 
 
 
@@ -3087,7 +3087,7 @@ class ProbabilisticForecaster:
 
 
 
-    """概率预测试    
+    """概率预测试
 
 
 
@@ -3099,7 +3099,7 @@ class ProbabilisticForecaster:
 
 
 
-    
+
 
 
 
@@ -3141,7 +3141,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3189,7 +3189,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3333,7 +3333,7 @@ class ProbabilisticForecaster:
 
 
 
-    
+
 
 
 
@@ -3375,7 +3375,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3399,7 +3399,7 @@ class ProbabilisticForecaster:
 
 
 
-            
+
 
 
 
@@ -3435,7 +3435,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3447,7 +3447,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3465,7 +3465,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3483,7 +3483,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3501,7 +3501,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3519,7 +3519,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3531,7 +3531,7 @@ class ProbabilisticForecaster:
 
 
 
-    
+
 
 
 
@@ -3579,7 +3579,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3603,7 +3603,7 @@ class ProbabilisticForecaster:
 
 
 
-            
+
 
 
 
@@ -3633,7 +3633,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3651,7 +3651,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3675,7 +3675,7 @@ class ProbabilisticForecaster:
 
 
 
-            
+
 
 
 
@@ -3693,7 +3693,7 @@ class ProbabilisticForecaster:
 
 
 
-            
+
 
 
 
@@ -3711,7 +3711,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3729,7 +3729,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3747,7 +3747,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3759,7 +3759,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3825,7 +3825,7 @@ class ProbabilisticForecaster:
 
 
 
-    
+
 
 
 
@@ -3873,7 +3873,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3897,7 +3897,7 @@ class ProbabilisticForecaster:
 
 
 
-            
+
 
 
 
@@ -3927,7 +3927,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -3951,7 +3951,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -4137,7 +4137,7 @@ class ProbabilisticForecaster:
 
 
 
-        
+
 
 
 
@@ -4251,7 +4251,7 @@ class TestMonteCarloDropout:
 
 
 
-    
+
 
 
 
@@ -4305,7 +4305,7 @@ class TestMonteCarloDropout:
 
 
 
-            
+
 
 
 
@@ -4335,7 +4335,7 @@ class TestMonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -4347,7 +4347,7 @@ class TestMonteCarloDropout:
 
 
 
-    
+
 
 
 
@@ -4377,7 +4377,7 @@ class TestMonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -4389,7 +4389,7 @@ class TestMonteCarloDropout:
 
 
 
-        
+
 
 
 
@@ -4437,7 +4437,7 @@ class TestBayesianNeuralNetwork:
 
 
 
-    
+
 
 
 
@@ -4491,7 +4491,7 @@ class TestBayesianNeuralNetwork:
 
 
 
-        
+
 
 
 
@@ -4503,7 +4503,7 @@ class TestBayesianNeuralNetwork:
 
 
 
-        
+
 
 
 
@@ -4798,8 +4798,3 @@ class TestBayesianNeuralNetwork:
 
 
 **维护?*: 量化研究?
-
-
-
-
-

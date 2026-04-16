@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Data Quality Monitoring Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Quality Monitoring Interface蓝图设计相关内容
 
@@ -106,7 +106,7 @@ class DataQualityMonitoringInterface:
 
     """数据质量监控界面"""
 
-    
+
 
     def __init__(self):
 
@@ -122,7 +122,7 @@ class DataQualityMonitoringInterface:
 
         }
 
-    
+
 
     def render_overview(self):
 
@@ -130,29 +130,29 @@ class DataQualityMonitoringInterface:
 
         st.subheader("📊 数据质量概览")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
             st.metric("完整性", f"{self.quality_metrics['completeness']:.1%}")
 
-        
+
 
         with col2:
 
             st.metric("准确性", f"{self.quality_metrics['accuracy']:.1%}")
 
-        
+
 
         with col3:
 
             st.metric("及时性", f"{self.quality_metrics['timeliness']:.1%}")
 
-        
+
 
         with col4:
 
@@ -217,4 +217,3 @@ class DataQualityMonitoringInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

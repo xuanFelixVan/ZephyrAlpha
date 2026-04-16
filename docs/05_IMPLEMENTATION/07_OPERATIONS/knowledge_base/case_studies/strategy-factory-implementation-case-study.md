@@ -30,7 +30,7 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -46,11 +46,11 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 
 
 
-> **ﮔ۰ﻛﺝﻝﺎﭨﮒ**: ﮔﮒﮔ۰ﻛﺝ  
+> **ﮔ۰ﻛﺝﻝﺎﭨﮒ**: ﮔﮒﮔ۰ﻛﺝ
 
 
 
-> **ﮒ؟ﮔﺛﮔﭘﻠﺑ**: 2026-04-01 ﻟ?2026-04-02  
+> **ﮒ؟ﮔﺛﮔﭘﻠﺑ**: 2026-04-01 ﻟ?2026-04-02
 
 
 
@@ -262,7 +262,7 @@ class BaseStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -286,7 +286,7 @@ class BaseStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -306,7 +306,7 @@ class BaseStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -326,7 +326,7 @@ class BaseStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -422,7 +422,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -434,7 +434,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -466,7 +466,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -494,7 +494,7 @@ raise ValueError(f"ﻝﻝ۴ﻝﺎﭨﮒ {strategy_type} ﮒﺓﺎﮔﺏ۷ﮒ?)
 
 
 
-    
+
 
 
 
@@ -518,7 +518,7 @@ raise KeyError(f"ﻝﻝ۴ﻝﺎﭨﮒ {strategy_type} ﮔ۹ﮔﺏ۷ﮒ?)
 
 
 
-    
+
 
 
 
@@ -582,7 +582,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -598,7 +598,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -646,7 +646,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -662,7 +662,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -750,7 +750,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -766,7 +766,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -782,7 +782,7 @@ class StrategyLoader:
 
 
 
-        
+
 
 
 
@@ -790,11 +790,11 @@ class StrategyLoader:
 
 
 
-            if (inspect.isclass(obj) and 
+            if (inspect.isclass(obj) and
 
 
 
-                issubclass(obj, BaseStrategy) and 
+                issubclass(obj, BaseStrategy) and
 
 
 
@@ -806,7 +806,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -1498,15 +1498,12 @@ print(f"ﮒﻟﺛﺛﻝﻝ۴ﮔ۷۰ﮒ {module_name} ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 
 
 **ﻝﮔ؛**: v1.0
-
-
-

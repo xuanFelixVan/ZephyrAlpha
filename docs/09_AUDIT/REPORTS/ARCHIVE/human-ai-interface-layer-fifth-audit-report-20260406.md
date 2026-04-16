@@ -521,7 +521,7 @@ responsibility_boundary: |
 
   本文档负责人机交互层技术实现细节。
 
-  
+
 
   交易授权治理框架请参考：GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 
@@ -718,4 +718,3 @@ GRAFANA_MONITORING_BLUEPRINT.md: GRAFANA_MONITORING_BLUEPRINT_001
 **审计人员**: AI审计系统
 
 **下次审计建议**: 修复完成后进行复审计
-

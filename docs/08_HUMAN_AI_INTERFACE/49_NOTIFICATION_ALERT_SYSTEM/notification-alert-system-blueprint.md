@@ -186,7 +186,7 @@ layer: layer_08
 
 
 
-**主方案**: AlertManager + 钉钉机器人  
+**主方案**: AlertManager + 钉钉机器人
 
 **集成**: 集成到监控仪表板
 
@@ -360,7 +360,7 @@ async def wechat_webhook(request: Request):
 
     data = await request.json()
 
-    
+
 
     alerts = data.get('alerts', [])
 
@@ -372,7 +372,7 @@ async def wechat_webhook(request: Request):
 
         description = alert.get('annotations', {}).get('description')
 
-        
+
 
         webhook_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
 
@@ -382,7 +382,7 @@ async def wechat_webhook(request: Request):
 
             "markdown": {
 
-                "content": f"**{status.upper()}: {summary}**/n/n{description}"  
+                "content": f"**{status.upper()}: {summary}**/n/n{description}"
 
             }
 
@@ -390,7 +390,7 @@ async def wechat_webhook(request: Request):
 
         requests.post(webhook_url, json=message)
 
-    
+
 
     return {"status": "ok"}
 
@@ -434,7 +434,7 @@ def send_dingtalk_alert(message, webhook_url, secret):
 
     sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
 
-    
+
 
     url = f"{webhook_url}&timestamp={timestamp}&sign={sign}"
 
@@ -552,11 +552,10 @@ def send_dingtalk_alert(message, webhook_url, secret):
 
 
 
-**蓝图创建时间**: 2026-04-07  
+**蓝图创建时间**: 2026-04-07
 
-**蓝图版本**: 1.1.0  
+**蓝图版本**: 1.1.0
 
-**最后更新**: 2026-04-07（整合历史蓝图内容）  
+**最后更新**: 2026-04-07（整合历史蓝图内容）
 
 **内容来源**: 原有蓝图 + ALERTING_SYSTEM_BLUEPRINT.md
-

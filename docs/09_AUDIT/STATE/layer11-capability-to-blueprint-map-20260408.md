@@ -15,8 +15,8 @@ responsibility: "处理LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408相关业务"
 
 # Layer 11 能力项 ↔ 实施蓝图对照表
 
-> **依据**：`docs/01_FRAMEWORK/ARCHITECTURE.md` 中 **Layer 11: 战略决策** 模块表（约 22 行）。  
-> **主蓝图（框架层）**：STRATEGIC_DECISION_LAYER_BLUEPRINT.md  
+> **依据**：`docs/01_FRAMEWORK/ARCHITECTURE.md` 中 **Layer 11: 战略决策** 模块表（约 22 行）。
+> **主蓝图（框架层）**：STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 > **维护**：新增蓝图文件后在本表增补一行；原 TBD 项已用 **Draft 蓝图** 占位，实施期可扩展为完整规格。
 
 ## 对照表
@@ -47,8 +47,8 @@ responsibility: "处理LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408相关业务"
 
 ## 统计
 
-- **已链到具体 `.md` 文件**：**22 / 22** 行（含多链；原 3 项 TBD 已由 Draft 蓝图闭合）  
-- **TBD**：0  
+- **已链到具体 `.md` 文件**：**22 / 22** 行（含多链；原 3 项 TBD 已由 Draft 蓝图闭合）
+- **TBD**：0
 - **弱匹配 / 需拆篇**：无（宏观因子已挂 MACRO_FACTOR_SYSTEM_BLUEPRINT.md 为主入口）
 
 ## 相关登记

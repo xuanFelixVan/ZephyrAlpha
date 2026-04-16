@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -193,7 +193,7 @@ class MultiAssetAllocator:
 
 
 
-    多资产配置器核心?    
+    多资产配置器核心?
 
 
 
@@ -205,7 +205,7 @@ class MultiAssetAllocator:
 
 
 
-    
+
 
 
 
@@ -223,7 +223,7 @@ class MultiAssetAllocator:
 
 
 
-        初始化多资产配置?        
+        初始化多资产配置?
 
 
 
@@ -253,7 +253,7 @@ class MultiAssetAllocator:
 
 
 
-    
+
 
 
 
@@ -295,7 +295,7 @@ class MultiAssetAllocator:
 
 
 
-        
+
 
 
 
@@ -319,7 +319,7 @@ class MultiAssetAllocator:
 
 
 
-            correlation_matrix: 相关性矩?            
+            correlation_matrix: 相关性矩?
 
 
 
@@ -349,7 +349,7 @@ class MultiAssetAllocator:
 
 
 
-    
+
 
 
 
@@ -385,7 +385,7 @@ class MultiAssetAllocator:
 
 
 
-        
+
 
 
 
@@ -403,7 +403,7 @@ class MultiAssetAllocator:
 
 
 
-            covariance_matrix: 协方差矩?            
+            covariance_matrix: 协方差矩?
 
 
 
@@ -433,7 +433,7 @@ class MultiAssetAllocator:
 
 
 
-    
+
 
 
 
@@ -463,7 +463,7 @@ class MultiAssetAllocator:
 
 
 
-        全天候配?        
+        全天候配?
 
 
 
@@ -487,7 +487,7 @@ class MultiAssetAllocator:
 
 
 
-            
+
 
 
 
@@ -721,13 +721,13 @@ def risk_parity_allocation(
 
 
 
-    
 
 
 
 
 
-    目标: 每个资产的风险贡献相?    
+
+    目标: 每个资产的风险贡献相?
 
 
 
@@ -751,7 +751,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -769,7 +769,7 @@ def risk_parity_allocation(
 
 
 
-        
+
 
 
 
@@ -799,7 +799,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -835,7 +835,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -871,7 +871,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -889,7 +889,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -925,7 +925,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ def risk_parity_allocation(
 
 
 
-    
+
 
 
 
@@ -1015,7 +1015,7 @@ class TestMultiAssetAllocation:
 
 
 
-    
+
 
 
 
@@ -1039,7 +1039,7 @@ class TestMultiAssetAllocation:
 
 
 
-        
+
 
 
 
@@ -1057,7 +1057,7 @@ class TestMultiAssetAllocation:
 
 
 
-        
+
 
 
 
@@ -1081,7 +1081,7 @@ class TestMultiAssetAllocation:
 
 
 
-        
+
 
 
 
@@ -1105,7 +1105,7 @@ class TestMultiAssetAllocation:
 
 
 
-    
+
 
 
 
@@ -1135,7 +1135,7 @@ class TestMultiAssetAllocation:
 
 
 
-        
+
 
 
 
@@ -1165,7 +1165,7 @@ class TestMultiAssetAllocation:
 
 
 
-        
+
 
 
 
@@ -1268,8 +1268,3 @@ class TestMultiAssetAllocation:
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 实施开?
-
-
-
-
-

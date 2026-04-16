@@ -195,7 +195,7 @@ class AIConversationalInterface:
 
     """AI对话式交互界面"""
 
-    
+
 
     def __init__(self, api_key):
 
@@ -211,7 +211,7 @@ class AIConversationalInterface:
 
         )
 
-        
+
 
         # 初始化向量存储
 
@@ -223,7 +223,7 @@ class AIConversationalInterface:
 
         )
 
-        
+
 
         # 初始化对话记忆
 
@@ -235,7 +235,7 @@ class AIConversationalInterface:
 
         )
 
-        
+
 
         # 初始化对话链
 
@@ -249,7 +249,7 @@ class AIConversationalInterface:
 
         )
 
-        
+
 
     def chat(self, question):
 
@@ -257,13 +257,13 @@ class AIConversationalInterface:
 
         对话交互
 
-        
+
 
         Args:
 
             question: 用户问题
 
-            
+
 
         Returns:
 
@@ -275,7 +275,7 @@ class AIConversationalInterface:
 
         intent = self._identify_intent(question)
 
-        
+
 
         # 根据意图路由
 
@@ -299,7 +299,7 @@ class AIConversationalInterface:
 
             return self._general_qa(question)
 
-    
+
 
     def _identify_intent(self, question):
 
@@ -317,7 +317,7 @@ class AIConversationalInterface:
 
         }
 
-        
+
 
         for intent, words in keywords.items():
 
@@ -325,11 +325,11 @@ class AIConversationalInterface:
 
                 return intent
 
-        
+
 
         return 'general_qa'
 
-    
+
 
     def _query_position(self, question):
 
@@ -339,7 +339,7 @@ class AIConversationalInterface:
 
         positions = self._get_positions()
 
-        
+
 
         # 构建提示词
 
@@ -347,23 +347,23 @@ class AIConversationalInterface:
 
         用户问题: {question}
 
-        
+
 
         当前持仓数据:
 
         {positions}
 
-        
+
 
         请用自然语言回答用户的问题。
 
         """
 
-        
+
 
         return self.llm.predict(prompt)
 
-    
+
 
     def _explain_strategy(self, question):
 
@@ -373,7 +373,7 @@ class AIConversationalInterface:
 
         strategy_info = self._get_strategy_info()
 
-        
+
 
         # 构建提示词
 
@@ -381,23 +381,23 @@ class AIConversationalInterface:
 
         用户问题: {question}
 
-        
+
 
         策略信息:
 
         {strategy_info}
 
-        
+
 
         请详细解释策略的逻辑和决策原因。
 
         """
 
-        
+
 
         return self.llm.predict(prompt)
 
-    
+
 
     def _general_qa(self, question):
 
@@ -425,7 +425,7 @@ def render_conversational_interface():
 
     st.title("🤖 AI对话助手")
 
-    
+
 
     # 初始化对话历史
 
@@ -433,7 +433,7 @@ def render_conversational_interface():
 
         st.session_state.chat_history = []
 
-    
+
 
     # 显示对话历史
 
@@ -443,7 +443,7 @@ def render_conversational_interface():
 
             st.write(message['content'])
 
-    
+
 
     # 用户输入
 
@@ -461,7 +461,7 @@ def render_conversational_interface():
 
         })
 
-        
+
 
         # 获取AI回答
 
@@ -469,7 +469,7 @@ def render_conversational_interface():
 
         response = ai_interface.chat(prompt)
 
-        
+
 
         # 显示AI回答
 
@@ -728,4 +728,3 @@ retriever = vectorstore.as_retriever(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -33,7 +33,7 @@ applicable_scope: "ﮒ۷ﻝﺏﭨﻝﭨﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝ?compliance_l
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -765,7 +765,7 @@ class IInterfaceName(ABC):
 
 
 
-    
+
 
 
 
@@ -781,7 +781,7 @@ class IInterfaceName(ABC):
 
 
 
-    
+
 
 
 
@@ -793,7 +793,7 @@ class IInterfaceName(ABC):
 
 
 
-    
+
 
 
 
@@ -821,7 +821,7 @@ class IInterfaceName(ABC):
 
 
 
-    
+
 
 
 
@@ -853,7 +853,7 @@ class IInterfaceName(ABC):
 
 
 
-        
+
 
 
 
@@ -869,7 +869,7 @@ class IInterfaceName(ABC):
 
 
 
-            
+
 
 
 
@@ -877,7 +877,7 @@ class IInterfaceName(ABC):
 
 
 
-            ReturnType: ﻟﺟﮒﮒﺙﮔﺅﺟ?            
+            ReturnType: ﻟﺟﮒﮒﺙﮔﺅﺟ?
 
 
 
@@ -889,7 +889,7 @@ class IInterfaceName(ABC):
 
 
 
-            
+
 
 
 
@@ -1006,6 +1006,3 @@ class IInterfaceName(ABC):
 
 
 **ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-
-
-

@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Mobile Push Notification蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Mobile Push Notification蓝图设计相关内容
 
@@ -32,11 +32,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **目标**: 构建专业级多渠道移动端推送通知系统，确保关键信息实时触达
 
@@ -316,7 +316,7 @@ class Alert:
 
     fingerprint: str  # 用于去重
 
-    
+
 
     def to_dict(self) -> Dict:
 
@@ -374,13 +374,13 @@ class AlertProcessor:
 
         self.group_window = 60   # 1分钟分组窗口
 
-        
+
 
     def process_alert(self, alert: Alert) -> Optional[Dict]:
 
         """处理预警"""
 
-        
+
 
         # 1. 预警去重
 
@@ -388,13 +388,13 @@ class AlertProcessor:
 
             return None
 
-        
+
 
         # 2. 预警分组
 
         group_key = self._get_group_key(alert)
 
-        
+
 
         # 3. 预警抑制
 
@@ -402,19 +402,19 @@ class AlertProcessor:
 
             return None
 
-        
+
 
         # 4. 路由决策
 
         routing = self._determine_routing(alert)
 
-        
+
 
         # 5. 记录预警
 
         self._record_alert(alert, group_key)
 
-        
+
 
         return {
 
@@ -424,7 +424,7 @@ class AlertProcessor:
 
         }
 
-    
+
 
     def _is_duplicate(self, alert: Alert) -> bool:
 
@@ -440,7 +440,7 @@ class AlertProcessor:
 
         return False
 
-    
+
 
     def _get_group_key(self, alert: Alert) -> str:
 
@@ -448,7 +448,7 @@ class AlertProcessor:
 
         return f"alert:group:{alert.category.value}:{alert.severity.value}"
 
-    
+
 
     def _should_suppress(self, alert: Alert, group_key: str) -> bool:
 
@@ -458,13 +458,13 @@ class AlertProcessor:
 
             return False
 
-        
+
 
         count = self.redis.incr(group_key)
 
         self.redis.expire(group_key, self.group_window)
 
-        
+
 
         # P2预警每分钟最多推送3条
 
@@ -474,7 +474,7 @@ class AlertProcessor:
 
         return count > max_count
 
-    
+
 
     def _determine_routing(self, alert: Alert) -> Dict:
 
@@ -490,7 +490,7 @@ class AlertProcessor:
 
         }
 
-        
+
 
         # P0级预警：全渠道推送
 
@@ -500,7 +500,7 @@ class AlertProcessor:
 
             routing["receivers"] = ["all_admins"]
 
-        
+
 
         # P1级预警：主要渠道推送
 
@@ -510,7 +510,7 @@ class AlertProcessor:
 
             routing["receivers"] = ["risk_managers", "traders"]
 
-        
+
 
         # P2级预警：单一渠道推送
 
@@ -520,7 +520,7 @@ class AlertProcessor:
 
             routing["receivers"] = ["operators"]
 
-        
+
 
         # P3级预警：邮件推送
 
@@ -530,11 +530,11 @@ class AlertProcessor:
 
             routing["receivers"] = ["all_users"]
 
-        
+
 
         return routing
 
-    
+
 
     def _record_alert(self, alert: Alert, group_key: str):
 
@@ -574,7 +574,7 @@ class WeChatWorkBot:
 
         self.webhook_url = webhook_url
 
-    
+
 
     def send_markdown(self, content: str, mentioned_list: List[str] = None) -> bool:
 
@@ -594,7 +594,7 @@ class WeChatWorkBot:
 
         }
 
-        
+
 
         response = requests.post(
 
@@ -606,11 +606,11 @@ class WeChatWorkBot:
 
         )
 
-        
+
 
         return response.status_code == 200
 
-    
+
 
     def send_alert(self, alert: Alert) -> bool:
 
@@ -628,7 +628,7 @@ class WeChatWorkBot:
 
         }
 
-        
+
 
         content = f"""{severity_emoji[alert.severity]} **{alert.title}**
 
@@ -656,7 +656,7 @@ class WeChatWorkBot:
 
 """
 
-        
+
 
         return self.send_markdown(content)
 
@@ -692,7 +692,7 @@ class DingTalkBot:
 
         self.secret = secret
 
-    
+
 
     def _sign(self) -> tuple:
 
@@ -716,7 +716,7 @@ class DingTalkBot:
 
         return timestamp, sign
 
-    
+
 
     def send_markdown(self, title: str, text: str) -> bool:
 
@@ -730,7 +730,7 @@ class DingTalkBot:
 
             url = f"{url}&timestamp={timestamp}&sign={sign}"
 
-        
+
 
         data = {
 
@@ -746,13 +746,13 @@ class DingTalkBot:
 
         }
 
-        
+
 
         response = requests.post(url, json=data, timeout=10)
 
         return response.status_code == 200
 
-    
+
 
     def send_alert(self, alert: Alert) -> bool:
 
@@ -770,7 +770,7 @@ class DingTalkBot:
 
         }
 
-        
+
 
         text = f"""{severity_color[alert.severity]} {alert.title}
 
@@ -792,7 +792,7 @@ class DingTalkBot:
 
 """
 
-        
+
 
         return self.send_markdown(alert.title, text)
 
@@ -822,7 +822,7 @@ class TelegramBot:
 
         self.chat_id = chat_id
 
-    
+
 
     async def send_alert(self, alert: Alert) -> bool:
 
@@ -840,7 +840,7 @@ class TelegramBot:
 
         }
 
-        
+
 
         message = f"""{severity_emoji[alert.severity]} *{alert.title}*
 
@@ -866,7 +866,7 @@ _#ZephyrAlpha #QuantTrading_
 
 """
 
-        
+
 
         try:
 
@@ -914,7 +914,7 @@ class PushNotificationManager:
 
         self.channels = self._init_channels()
 
-        
+
 
     def _init_channels(self) -> Dict:
 
@@ -922,7 +922,7 @@ class PushNotificationManager:
 
         channels = {}
 
-        
+
 
         if "wechat" in self.config["channels"]:
 
@@ -932,7 +932,7 @@ class PushNotificationManager:
 
             )
 
-        
+
 
         if "dingtalk" in self.config["channels"]:
 
@@ -944,7 +944,7 @@ class PushNotificationManager:
 
             )
 
-        
+
 
         if "telegram" in self.config["channels"]:
 
@@ -956,11 +956,11 @@ class PushNotificationManager:
 
             )
 
-        
+
 
         return channels
 
-    
+
 
     async def push_alert(self, alert: Alert, routing: Dict) -> Dict:
 
@@ -968,7 +968,7 @@ class PushNotificationManager:
 
         results = {}
 
-        
+
 
         for channel_name in routing["channels"]:
 
@@ -976,7 +976,7 @@ class PushNotificationManager:
 
                 channel = self.channels[channel_name]
 
-                
+
 
                 try:
 
@@ -988,7 +988,7 @@ class PushNotificationManager:
 
                         success = channel.send_alert(alert)
 
-                    
+
 
                     results[channel_name] = {
 
@@ -1010,7 +1010,7 @@ class PushNotificationManager:
 
                     }
 
-        
+
 
         return results
 
@@ -1226,7 +1226,7 @@ channels:
 
     webhook_url: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
 
-    
+
 
   dingtalk:
 
@@ -1236,7 +1236,7 @@ channels:
 
     secret: "YOUR_SECRET"
 
-    
+
 
   telegram:
 
@@ -1246,7 +1246,7 @@ channels:
 
     chat_id: "YOUR_CHAT_ID"
 
-    
+
 
   email:
 
@@ -1260,7 +1260,7 @@ channels:
 
     password: "your_password"
 
-    
+
 
   sms:
 
@@ -1282,7 +1282,7 @@ routing:
 
     receivers: ["all_admins"]
 
-    
+
 
   P1:
 
@@ -1290,7 +1290,7 @@ routing:
 
     receivers: ["risk_managers", "traders"]
 
-    
+
 
   P2:
 
@@ -1298,7 +1298,7 @@ routing:
 
     receivers: ["operators"]
 
-    
+
 
   P3:
 
@@ -1312,7 +1312,7 @@ deduplication:
 
   window: 300  # 5分钟
 
-  
+
 
 suppression:
 
@@ -1485,4 +1485,3 @@ suppression:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

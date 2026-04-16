@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供统一的API入口，支持路由管理、限流熔断、认证授权、负载均衡
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：API路由、限流、认证、负载均衡
 
@@ -191,7 +191,7 @@ providers:
 
     exposedByDefault: false
 
-  
+
 
   file:
 
@@ -243,7 +243,7 @@ http:
 
         - strip-prefix
 
-    
+
 
     # 策略服务路由
 
@@ -261,7 +261,7 @@ http:
 
         - strip-prefix
 
-    
+
 
     # 回测服务路由
 
@@ -279,7 +279,7 @@ http:
 
         - strip-prefix
 
-  
+
 
   services:
 
@@ -297,7 +297,7 @@ http:
 
           interval: 10s
 
-    
+
 
     strategy-service:
 
@@ -313,7 +313,7 @@ http:
 
           interval: 10s
 
-    
+
 
     backtest-service:
 
@@ -329,7 +329,7 @@ http:
 
           interval: 10s
 
-  
+
 
   middlewares:
 
@@ -377,7 +377,7 @@ http:
 
             depth: 1
 
-    
+
 
     # 熔断配置
 
@@ -387,7 +387,7 @@ http:
 
         expression: "NetworkErrorRatio() > 0.3 || ResponseCodeRatio(500, 600, 0, 600) > 0.3"
 
-    
+
 
     # 重试配置
 
@@ -419,7 +419,7 @@ class RateLimiter:
 
     """限流器"""
 
-    
+
 
     def __init__(self, requests_per_minute: int = 100):
 
@@ -429,7 +429,7 @@ class RateLimiter:
 
         self.lock = threading.Lock()
 
-    
+
 
     def is_allowed(self, client_id: str) -> bool:
 
@@ -441,7 +441,7 @@ class RateLimiter:
 
             minute_ago = now - 60
 
-            
+
 
             self.requests[client_id] = [
 
@@ -449,19 +449,19 @@ class RateLimiter:
 
             ]
 
-            
+
 
             if len(self.requests[client_id]) >= self.requests_per_minute:
 
                 return False
 
-            
+
 
             self.requests[client_id].append(now)
 
             return True
 
-    
+
 
     def get_remaining(self, client_id: str) -> int:
 
@@ -473,7 +473,7 @@ class RateLimiter:
 
             minute_ago = now - 60
 
-            
+
 
             self.requests[client_id] = [
 
@@ -481,7 +481,7 @@ class RateLimiter:
 
             ]
 
-            
+
 
             return self.requests_per_minute - len(self.requests[client_id])
 
@@ -493,7 +493,7 @@ class CircuitBreaker:
 
     """熔断器"""
 
-    
+
 
     def __init__(
 
@@ -517,7 +517,7 @@ class CircuitBreaker:
 
         self.lock = threading.Lock()
 
-    
+
 
     def record_success(self, service: str):
 
@@ -529,7 +529,7 @@ class CircuitBreaker:
 
             self.state[service] = "closed"
 
-    
+
 
     def record_failure(self, service: str):
 
@@ -541,13 +541,13 @@ class CircuitBreaker:
 
             self.last_failure_time[service] = time.time()
 
-            
+
 
             if self.failures[service] >= self.failure_threshold:
 
                 self.state[service] = "open"
 
-    
+
 
     def is_allowed(self, service: str) -> bool:
 
@@ -559,7 +559,7 @@ class CircuitBreaker:
 
                 return True
 
-            
+
 
             if self.state[service] == "open":
 
@@ -571,7 +571,7 @@ class CircuitBreaker:
 
                 return False
 
-            
+
 
             return True
 
@@ -605,7 +605,7 @@ class AuthManager:
 
     """认证管理器"""
 
-    
+
 
     def __init__(self, secret_key: str, algorithm: str = "HS256"):
 
@@ -613,7 +613,7 @@ class AuthManager:
 
         self.algorithm = algorithm
 
-    
+
 
     def create_token(
 
@@ -641,11 +641,11 @@ class AuthManager:
 
         }
 
-        
+
 
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
 
-    
+
 
     def verify_token(self, token: str) -> Optional[dict]:
 
@@ -681,7 +681,7 @@ class Authorization:
 
     """授权管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -695,7 +695,7 @@ class Authorization:
 
         }
 
-    
+
 
     def check_permission(self, roles: list, required_permission: str) -> bool:
 
@@ -711,7 +711,7 @@ class Authorization:
 
         return False
 
-    
+
 
     def require_permission(self, permission: str):
 
@@ -727,7 +727,7 @@ class Authorization:
 
             payload = auth_manager.verify_token(credentials.credentials)
 
-            
+
 
             if not self.check_permission(payload["roles"], permission):
 
@@ -739,11 +739,11 @@ class Authorization:
 
                 )
 
-            
+
 
             return payload
 
-        
+
 
         return dependency
 
@@ -769,7 +769,7 @@ class ServiceDiscovery:
 
     """服务发现"""
 
-    
+
 
     def __init__(self):
 
@@ -781,7 +781,7 @@ class ServiceDiscovery:
 
         self.cache_ttl = 30
 
-    
+
 
     def discover_services(self) -> Dict[str, Dict]:
 
@@ -789,29 +789,29 @@ class ServiceDiscovery:
 
         now = time.time()
 
-        
+
 
         if now - self.last_update < self.cache_ttl:
 
             return self.services
 
-        
+
 
         self.services = {}
 
-        
+
 
         for container in self.client.containers.list():
 
             labels = container.labels
 
-            
+
 
             if "traefik.enable" in labels and labels["traefik.enable"] == "true":
 
                 service_name = labels.get("traefik.http.services.service", container.name)
 
-                
+
 
                 self.services[service_name] = {
 
@@ -827,13 +827,13 @@ class ServiceDiscovery:
 
                 }
 
-        
+
 
         self.last_update = now
 
         return self.services
 
-    
+
 
     def get_service_url(self, service_name: str) -> str:
 
@@ -841,7 +841,7 @@ class ServiceDiscovery:
 
         services = self.discover_services()
 
-        
+
 
         if service_name in services:
 
@@ -849,7 +849,7 @@ class ServiceDiscovery:
 
             ports = service.get("ports", {})
 
-            
+
 
             if ports:
 
@@ -857,11 +857,11 @@ class ServiceDiscovery:
 
                 return f"http://{service['name']}:{port}"
 
-        
+
 
         return None
 
-    
+
 
     def health_check(self, service_name: str) -> bool:
 
@@ -869,13 +869,13 @@ class ServiceDiscovery:
 
         services = self.discover_services()
 
-        
+
 
         if service_name in services:
 
             return services[service_name]["status"] == "running"
 
-        
+
 
         return False
 
@@ -931,7 +931,7 @@ services:
 
       - "traefik.http.routers.dashboard.service=api@internal"
 
-  
+
 
   data-service:
 
@@ -951,7 +951,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   strategy-service:
 
@@ -971,7 +971,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   backtest-service:
 
@@ -1250,4 +1250,3 @@ scrape_configs:
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

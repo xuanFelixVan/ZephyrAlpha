@@ -19,7 +19,7 @@ estimated_hours: 25
 
 > **核心职责**: 提供超参数优化的完整架构设计，实现自动调参、贝叶斯优化和分布式优化能力
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：超参数搜索、优化算法、实验管理
 
@@ -261,7 +261,7 @@ class HyperparameterOptimizer:
 
     """超参数优化器"""
 
-    
+
 
     def __init__(
 
@@ -281,19 +281,19 @@ class HyperparameterOptimizer:
 
         self.storage = storage
 
-        
+
 
         # 选择采样器
 
         self.sampler = self._get_sampler(sampler)
 
-        
+
 
         # 选择剪枝器
 
         self.pruner = self._get_pruner(pruner)
 
-        
+
 
     def _get_sampler(self, sampler: str):
 
@@ -313,7 +313,7 @@ class HyperparameterOptimizer:
 
         return samplers.get(sampler, TPESampler(seed=42))
 
-    
+
 
     def _get_pruner(self, pruner: str):
 
@@ -331,7 +331,7 @@ class HyperparameterOptimizer:
 
         return pruners.get(pruner, MedianPruner())
 
-    
+
 
     def create_study(self, direction: str = "maximize"):
 
@@ -353,7 +353,7 @@ class HyperparameterOptimizer:
 
         )
 
-    
+
 
     def optimize(
 
@@ -373,7 +373,7 @@ class HyperparameterOptimizer:
 
         study = self.create_study()
 
-        
+
 
         study.optimize(
 
@@ -389,7 +389,7 @@ class HyperparameterOptimizer:
 
         )
 
-        
+
 
         return study
 
@@ -407,7 +407,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
     """量化模型超参数优化器"""
 
-    
+
 
     def define_search_space(self, trial: optuna.Trial) -> Dict[str, Any]:
 
@@ -423,7 +423,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             ),
 
-            
+
 
             # 批次大小
 
@@ -433,7 +433,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             ),
 
-            
+
 
             # 隐藏层维度
 
@@ -443,19 +443,19 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             ),
 
-            
+
 
             # 层数
 
             "num_layers": trial.suggest_int("num_layers", 1, 4),
 
-            
+
 
             # Dropout
 
             "dropout": trial.suggest_float("dropout", 0.0, 0.5),
 
-            
+
 
             # 优化器
 
@@ -465,7 +465,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             ),
 
-            
+
 
             # 权重衰减
 
@@ -475,13 +475,13 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             ),
 
-            
+
 
             # 时序窗口
 
             "lookback_window": trial.suggest_int("lookback_window", 10, 100),
 
-            
+
 
             # 预测步长
 
@@ -489,11 +489,11 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
         }
 
-        
+
 
         return params
 
-    
+
 
     def objective(self, trial: optuna.Trial) -> float:
 
@@ -503,7 +503,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
         params = self.define_search_space(trial)
 
-        
+
 
         # 训练模型
 
@@ -513,13 +513,13 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             mlflow.log_params(params)
 
-            
+
 
             # 训练和验证
 
             model = self.train_model(params)
 
-            
+
 
             # 剪枝检查
 
@@ -529,7 +529,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
                 val_loss = self.validate_epoch(model, epoch)
 
-                
+
 
                 # 记录指标
 
@@ -537,13 +537,13 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
                 mlflow.log_metric("val_loss", val_loss, step=epoch)
 
-                
+
 
                 # 报告中间结果用于剪枝
 
                 trial.report(val_loss, epoch)
 
-                
+
 
                 # 检查是否应该剪枝
 
@@ -551,7 +551,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
                     raise optuna.TrialPruned()
 
-            
+
 
             # 最终评估
 
@@ -559,7 +559,7 @@ class QuantModelOptimizer(HyperparameterOptimizer):
 
             mlflow.log_metric("sharpe_ratio", sharpe_ratio)
 
-            
+
 
         return sharpe_ratio
 
@@ -585,7 +585,7 @@ class DistributedOptimizer:
 
     """分布式超参数优化器"""
 
-    
+
 
     def __init__(self, num_samples: int = 100, max_concurrent: int = 4):
 
@@ -593,7 +593,7 @@ class DistributedOptimizer:
 
         self.max_concurrent = max_concurrent
 
-        
+
 
     def define_config(self):
 
@@ -613,7 +613,7 @@ class DistributedOptimizer:
 
         }
 
-    
+
 
     def trainable(self, config):
 
@@ -621,13 +621,13 @@ class DistributedOptimizer:
 
         import torch
 
-        
+
 
         model = self.build_model(config)
 
         optimizer = self.get_optimizer(model, config)
 
-        
+
 
         for epoch in range(config["num_epochs"]):
 
@@ -635,7 +635,7 @@ class DistributedOptimizer:
 
             val_loss = self.validate_epoch(model, config)
 
-            
+
 
             # 报告结果
 
@@ -649,7 +649,7 @@ class DistributedOptimizer:
 
             )
 
-    
+
 
     def optimize(self):
 
@@ -671,7 +671,7 @@ class DistributedOptimizer:
 
         )
 
-        
+
 
         # 配置搜索算法
 
@@ -683,7 +683,7 @@ class DistributedOptimizer:
 
         )
 
-        
+
 
         # 执行优化
 
@@ -711,7 +711,7 @@ class DistributedOptimizer:
 
         )
 
-        
+
 
         return result
 
@@ -729,13 +729,13 @@ class MultiObjectiveOptimizer:
 
     """多目标优化器"""
 
-    
+
 
     def __init__(self, study_name: str):
 
         self.study_name = study_name
 
-        
+
 
     def create_multi_objective_study(self):
 
@@ -751,7 +751,7 @@ class MultiObjectiveOptimizer:
 
         )
 
-    
+
 
     def multi_objective_objective(self, trial: optuna.Trial):
 
@@ -759,11 +759,11 @@ class MultiObjectiveOptimizer:
 
         params = self.define_search_space(trial)
 
-        
+
 
         model = self.train_model(params)
 
-        
+
 
         # 计算多个目标
 
@@ -771,11 +771,11 @@ class MultiObjectiveOptimizer:
 
         risk = self.calculate_risk(model)
 
-        
+
 
         return returns, risk  # 返回多个目标值
 
-    
+
 
     def optimize(self, n_trials: int = 100):
 
@@ -783,7 +783,7 @@ class MultiObjectiveOptimizer:
 
         study = self.create_multi_objective_study()
 
-        
+
 
         study.optimize(
 
@@ -793,13 +793,13 @@ class MultiObjectiveOptimizer:
 
         )
 
-        
+
 
         # 获取Pareto前沿
 
         pareto_front = study.best_trials
 
-        
+
 
         return pareto_front
 
@@ -931,7 +931,7 @@ class MLflowOptunaCallback:
 
     """MLflow回调函数"""
 
-    
+
 
     def __call__(self, study, trial):
 
@@ -941,19 +941,19 @@ class MLflowOptunaCallback:
 
             mlflow.log_params(trial.params)
 
-            
+
 
             # 记录指标
 
             mlflow.log_metric("value", trial.value)
 
-            
+
 
             # 记录状态
 
             mlflow.set_tag("state", trial.state.name)
 
-            
+
 
             # 如果是最佳试验，记录标签
 
@@ -999,7 +999,7 @@ def define_search_space(trial: optuna.Trial):
 
     """完整的搜索空间定义示例"""
 
-    
+
 
     params = {
 
@@ -1011,13 +1011,13 @@ def define_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 整数参数
 
         "num_layers": trial.suggest_int("num_layers", 1, 6),
 
-        
+
 
         # 类别参数
 
@@ -1027,7 +1027,7 @@ def define_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 条件参数
 
@@ -1037,7 +1037,7 @@ def define_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 条件逻辑
 
@@ -1047,7 +1047,7 @@ def define_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 嵌套条件
 
@@ -1059,7 +1059,7 @@ def define_search_space(trial: optuna.Trial):
 
     }
 
-    
+
 
     return params
 
@@ -1077,7 +1077,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
     """量化模型专用搜索空间"""
 
-    
+
 
     return {
 
@@ -1089,7 +1089,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 时序参数
 
@@ -1097,7 +1097,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
         "prediction_horizon": trial.suggest_int("prediction_horizon", 1, 30),
 
-        
+
 
         # 特征参数
 
@@ -1109,7 +1109,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 训练参数
 
@@ -1125,7 +1125,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 正则化
 
@@ -1137,7 +1137,7 @@ def define_quant_search_space(trial: optuna.Trial):
 
         ),
 
-        
+
 
         # 损失函数
 
@@ -1173,7 +1173,7 @@ class EnsembleOptimizer:
 
     """集成模型优化器"""
 
-    
+
 
     def optimize_ensemble(self, trial: optuna.Trial):
 
@@ -1189,7 +1189,7 @@ class EnsembleOptimizer:
 
         )
 
-        
+
 
         # 为每个模型优化权重
 
@@ -1201,7 +1201,7 @@ class EnsembleOptimizer:
 
             weights.append(weight)
 
-        
+
 
         # 归一化权重
 
@@ -1209,13 +1209,13 @@ class EnsembleOptimizer:
 
         weights = [w / total_weight for w in weights]
 
-        
+
 
         # 训练集成模型
 
         ensemble = self.train_ensemble(model_types, weights)
 
-        
+
 
         return self.evaluate_ensemble(ensemble)
 
@@ -1235,23 +1235,23 @@ def constrained_objective(trial: optuna.Trial):
 
     params = define_search_space(trial)
 
-    
+
 
     model = train_model(params)
 
-    
+
 
     # 主目标
 
     sharpe_ratio = calculate_sharpe(model)
 
-    
+
 
     # 约束条件
 
     max_drawdown = calculate_max_drawdown(model)
 
-    
+
 
     # 如果约束不满足，返回惩罚值
 
@@ -1259,7 +1259,7 @@ def constrained_objective(trial: optuna.Trial):
 
         return -1e6  # 惩罚值
 
-    
+
 
     return sharpe_ratio
 
@@ -1424,4 +1424,3 @@ http://localhost:8080
 **创建日期**: 2026-04-07
 
 **维护者**: 系统架构师
-

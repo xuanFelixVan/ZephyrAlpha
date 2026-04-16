@@ -20,7 +20,7 @@ responsibility:
 
 > **核心职责**: 提供rl rebalancing system blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：RL调仓决策、动态优化组合权重
 
@@ -66,7 +66,7 @@ responsibility:
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为调仓决策的核心组件，实现智能调仓决策
 
@@ -182,7 +182,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
     """组合调仓环境
 
-    
+
 
     索引: RL_REBALANCING_001-M01
 
@@ -190,17 +190,17 @@ class PortfolioRebalancingEnv(gym.Env):
 
     输入: 市场数据、组合数据    输出: 状态、奖励、是否结束    """
 
-    
+
 
     def __init__(self, config: EnvConfig):
 
         super(PortfolioRebalancingEnv, self).__init__()
 
-        
+
 
         self.config = config
 
-        
+
 
         # 市场数据
 
@@ -208,7 +208,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         self.n_assets = config.n_assets
 
-        
+
 
         # 初始资金
 
@@ -216,13 +216,13 @@ class PortfolioRebalancingEnv(gym.Env):
 
         self.current_capital = self.initial_capital
 
-        
+
 
         # 交易成本
 
         self.transaction_cost = config.transaction_cost
 
-        
+
 
         # 状态空?        self.observation_space = spaces.Box(
 
@@ -236,7 +236,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         )
 
-        
+
 
         # 动作空间（连续：调仓权重?        self.action_space = spaces.Box(
 
@@ -250,19 +250,19 @@ class PortfolioRebalancingEnv(gym.Env):
 
         )
 
-        
+
 
         # 当前时间?        self.current_step = 0
 
         self.max_steps = len(self.market_data)
 
-        
+
 
         # 组合权重
 
         self.weights = np.ones(self.n_assets) / self.n_assets
 
-        
+
 
         # 历史记录
 
@@ -278,7 +278,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         }
 
-        
+
 
     def _get_state_dim(self) -> int:
 
@@ -286,11 +286,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         # 市场?+ 组合?+ 风险?+ 成本?        market_dim = self.n_assets * 10  # 价格、收益率、波动率?        portfolio_dim = self.n_assets * 2  # 权重、价值        risk_dim = 4  # VaR, CVaR, 回撤, 杠杆
 
-        cost_dim = 2  # 交易成本、滑?        
+        cost_dim = 2  # 交易成本、滑?
 
         return market_dim + portfolio_dim + risk_dim + cost_dim
 
-    
+
 
     def reset(self) -> np.ndarray:
 
@@ -302,7 +302,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         self.weights = np.ones(self.n_assets) / self.n_assets
 
-        
+
 
         self.history = {
 
@@ -316,21 +316,21 @@ class PortfolioRebalancingEnv(gym.Env):
 
         }
 
-        
+
 
         return self._get_state()
 
-    
+
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, Dict]:
 
         """执行动作
 
-        
+
 
         Args:
 
-            action: 调仓权重调整?1?之间?            
+            action: 调仓权重调整?1?之间?
 
         Returns:
 
@@ -344,11 +344,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         # 1. 解码动作（转换为权重调整?        weight_adjustment = action * 0.1  # 限制调整幅度
 
-        
+
 
         # 2. 计算新权限        new_weights = self.weights + weight_adjustment
 
-        new_weights = np.clip(new_weights, 0, 1)  # 不允许做?        new_weights = new_weights / new_weights.sum()  # 归一?        
+        new_weights = np.clip(new_weights, 0, 1)  # 不允许做?        new_weights = new_weights / new_weights.sum()  # 归一?
 
         # 3. 计算交易成本
 
@@ -356,13 +356,13 @@ class PortfolioRebalancingEnv(gym.Env):
 
         transaction_cost = turnover * self.transaction_cost * self.current_capital
 
-        
+
 
         # 4. 更新组合
 
         self.weights = new_weights
 
-        
+
 
         # 5. 计算收益
 
@@ -370,7 +370,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         portfolio_return = np.dot(self.weights, current_returns)
 
-        
+
 
         # 6. 更新资金
 
@@ -378,13 +378,13 @@ class PortfolioRebalancingEnv(gym.Env):
 
         self.current_capital -= transaction_cost
 
-        
+
 
         # 7. 计算奖励
 
         reward = self._calculate_reward(portfolio_return, transaction_cost)
 
-        
+
 
         # 8. 记录历史
 
@@ -396,11 +396,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         self.history['transaction_costs'].append(transaction_cost)
 
-        
+
 
         # 9. 更新时间?        self.current_step += 1
 
-        
+
 
         # 10. 判断是否结束
 
@@ -412,11 +412,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         )
 
-        
+
 
         # 11. 获取新状态        state = self._get_state()
 
-        
+
 
         # 12. 额外信息
 
@@ -432,11 +432,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         }
 
-        
+
 
         return state, reward, done, info
 
-    
+
 
     def _get_state(self) -> np.ndarray:
 
@@ -444,19 +444,19 @@ class PortfolioRebalancingEnv(gym.Env):
 
         # 市场?        market_state = self._get_market_state()
 
-        
+
 
         # 组合?        portfolio_state = self._get_portfolio_state()
 
-        
+
 
         # 风险?        risk_state = self._get_risk_state()
 
-        
+
 
         # 成本?        cost_state = self._get_cost_state()
 
-        
+
 
         # 合并?        state = np.concatenate([
 
@@ -470,11 +470,11 @@ class PortfolioRebalancingEnv(gym.Env):
 
         ])
 
-        
+
 
         return state.astype(np.float32)
 
-    
+
 
     def _get_market_state(self) -> np.ndarray:
 
@@ -482,13 +482,13 @@ class PortfolioRebalancingEnv(gym.Env):
 
         current_data = self.market_data.iloc[self.current_step]
 
-        
+
 
         # 价格相关
 
         prices = current_data[['close_' + str(i) for i in range(self.n_assets)]].values
 
-        
+
 
         # 收益?        if self.current_step > 0:
 
@@ -500,7 +500,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
             returns = np.zeros(self.n_assets)
 
-        
+
 
         # 波动率（简化：使用历史标准差）
 
@@ -514,7 +514,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
             volatility = np.zeros(self.n_assets)
 
-        
+
 
         # 趋势（简化：使用移动平均?        if self.current_step >= 20:
 
@@ -526,15 +526,15 @@ class PortfolioRebalancingEnv(gym.Env):
 
             trend = np.zeros(self.n_assets)
 
-        
+
 
         # 情绪（简化：随机生成?        sentiment = np.random.randn(self.n_assets) * 0.1
 
-        
+
 
         return np.concatenate([prices, returns, volatility, trend, sentiment])
 
-    
+
 
     def _get_portfolio_state(self) -> np.ndarray:
 
@@ -544,15 +544,15 @@ class PortfolioRebalancingEnv(gym.Env):
 
         weights = self.weights
 
-        
+
 
         # ?        values = weights * self.current_capital
 
-        
+
 
         return np.concatenate([weights, values])
 
-    
+
 
     def _get_risk_state(self) -> np.ndarray:
 
@@ -570,7 +570,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
             var = 0.0
 
-        
+
 
         # CVaR
 
@@ -584,7 +584,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
             cvar = 0.0
 
-        
+
 
         # 回撤
 
@@ -592,17 +592,17 @@ class PortfolioRebalancingEnv(gym.Env):
 
         drawdown = (peak - self.current_capital) / peak
 
-        
+
 
         # 杠杆（简化：假设无杠杆）
 
         leverage = 1.0
 
-        
+
 
         return np.array([var, cvar, drawdown, leverage])
 
-    
+
 
     def _get_cost_state(self) -> np.ndarray:
 
@@ -618,15 +618,15 @@ class PortfolioRebalancingEnv(gym.Env):
 
             avg_cost = 0.0
 
-        
+
 
         # 滑点（简化：假设为交易成本的10%?        slippage = avg_cost * 0.1
 
-        
+
 
         return np.array([avg_cost, slippage])
 
-    
+
 
     def _get_market_returns(self) -> np.ndarray:
 
@@ -636,33 +636,33 @@ class PortfolioRebalancingEnv(gym.Env):
 
             return np.zeros(self.n_assets)
 
-        
+
 
         current_prices = self.market_data.iloc[self.current_step][['close_' + str(i) for i in range(self.n_assets)]].values
 
         next_prices = self.market_data.iloc[self.current_step + 1][['close_' + str(i) for i in range(self.n_assets)]].values
 
-        
+
 
         returns = (next_prices - current_prices) / current_prices
 
-        
+
 
         return returns
 
-    
+
 
     def _calculate_reward(self, portfolio_return: float, transaction_cost: float) -> float:
 
         """计算奖励
 
-        
+
 
         Args:
 
             portfolio_return: 组合收益?            transaction_cost: 交易成本
 
-            
+
 
         Returns:
 
@@ -672,7 +672,7 @@ class PortfolioRebalancingEnv(gym.Env):
 
         return_reward = portfolio_return * 100  # 放大收益信号
 
-        
+
 
         # 风险惩罚（基于回撤）
 
@@ -684,21 +684,21 @@ class PortfolioRebalancingEnv(gym.Env):
 
             drawdown = (peak - self.current_capital) / peak
 
-        
+
 
         risk_penalty = drawdown * 50  # 惩罚回撤
 
-        
+
 
         # 成本惩罚
 
         cost_penalty = transaction_cost / self.initial_capital * 100
 
-        
+
 
         # 总奖?        reward = return_reward - risk_penalty - cost_penalty
 
-        
+
 
         return reward
 
@@ -726,7 +726,7 @@ import torch as th
 
 class PPORebalancingAgent:
 
-    """PPO调仓智能力    
+    """PPO调仓智能力
 
     索引: RL_REBALANCING_001-M02
 
@@ -738,7 +738,7 @@ class PPORebalancingAgent:
 
     """
 
-    
+
 
     def __init__(self, config: PPOConfig):
 
@@ -748,7 +748,7 @@ class PPORebalancingAgent:
 
         self.model = None
 
-        
+
 
     def build_model(self) -> PPO:
 
@@ -774,7 +774,7 @@ class PPORebalancingAgent:
 
         )
 
-        
+
 
         # 创建PPO模型
 
@@ -812,11 +812,11 @@ class PPORebalancingAgent:
 
         )
 
-        
+
 
         return self.model
 
-    
+
 
     def train(self, total_timesteps: int = 100000,
 
@@ -826,7 +826,7 @@ class PPORebalancingAgent:
 
         """训练模型
 
-        
+
 
         Args:
 
@@ -834,7 +834,7 @@ class PPORebalancingAgent:
 
             eval_freq: 评估频率
 
-            
+
 
         Returns:
 
@@ -846,7 +846,7 @@ class PPORebalancingAgent:
 
             self.build_model()
 
-        
+
 
         # 评估回调
 
@@ -872,7 +872,7 @@ class PPORebalancingAgent:
 
             callbacks.append(eval_callback)
 
-        
+
 
         # 训练
 
@@ -886,11 +886,11 @@ class PPORebalancingAgent:
 
         )
 
-        
+
 
         return self.model
 
-    
+
 
     def predict(self, observation: np.ndarray,
 
@@ -898,11 +898,11 @@ class PPORebalancingAgent:
 
         """预测动作
 
-        
+
 
         Args:
 
-            observation: 观测试            deterministic: 是否确定性策略            
+            observation: 观测试            deterministic: 是否确定性策略
 
         Returns:
 
@@ -914,15 +914,15 @@ class PPORebalancingAgent:
 
             raise ValueError("Model not trained yet. Call train() first.")
 
-        
+
 
         action, _ = self.model.predict(observation, deterministic=deterministic)
 
-        
+
 
         return action, None
 
-    
+
 
     def save(self, path: str):
 
@@ -932,7 +932,7 @@ class PPORebalancingAgent:
 
             self.model.save(path)
 
-    
+
 
     def load(self, path: str):
 
@@ -958,7 +958,7 @@ from stable_baselines3 import SAC
 
 class SACRebalancingAgent:
 
-    """SAC调仓智能力    
+    """SAC调仓智能力
 
     索引: RL_REBALANCING_001-M03
 
@@ -970,7 +970,7 @@ class SACRebalancingAgent:
 
     """
 
-    
+
 
     def __init__(self, config: SACConfig):
 
@@ -980,7 +980,7 @@ class SACRebalancingAgent:
 
         self.model = None
 
-        
+
 
     def build_model(self) -> SAC:
 
@@ -996,7 +996,7 @@ class SACRebalancingAgent:
 
         )
 
-        
+
 
         # 创建SAC模型
 
@@ -1036,11 +1036,11 @@ class SACRebalancingAgent:
 
         )
 
-        
+
 
         return self.model
 
-    
+
 
     def train(self, total_timesteps: int = 100000,
 
@@ -1054,7 +1054,7 @@ class SACRebalancingAgent:
 
             self.build_model()
 
-        
+
 
         # 评估回调
 
@@ -1080,7 +1080,7 @@ class SACRebalancingAgent:
 
             callbacks.append(eval_callback)
 
-        
+
 
         # 训练
 
@@ -1094,11 +1094,11 @@ class SACRebalancingAgent:
 
         )
 
-        
+
 
         return self.model
 
-    
+
 
     def predict(self, observation: np.ndarray,
 
@@ -1110,15 +1110,15 @@ class SACRebalancingAgent:
 
             raise ValueError("Model not trained yet. Call train() first.")
 
-        
+
 
         action, _ = self.model.predict(observation, deterministic=deterministic)
 
-        
+
 
         return action, None
 
-    
+
 
     def save(self, path: str):
 
@@ -1128,7 +1128,7 @@ class SACRebalancingAgent:
 
             self.model.save(path)
 
-    
+
 
     def load(self, path: str):
 
@@ -1148,13 +1148,13 @@ class SACRebalancingAgent:
 
 class DynamicRewardFunction:
 
-    """动态奖励函?    
+    """动态奖励函?
 
     索引: RL_REBALANCING_001-M04
 
     职责: 根据市场状态动态调整奖励函?    输入: 组合收益、风险、成本、市场状态    输出: 动态奖?    """
 
-    
+
 
     def __init__(self, config: RewardConfig):
 
@@ -1172,7 +1172,7 @@ class DynamicRewardFunction:
 
         }
 
-        
+
 
     def calculate_reward(self, portfolio_return: float,
 
@@ -1184,7 +1184,7 @@ class DynamicRewardFunction:
 
                         constraint_violations: int) -> float:
 
-        """计算动态奖?        
+        """计算动态奖?
 
         Args:
 
@@ -1194,7 +1194,7 @@ class DynamicRewardFunction:
 
             market_state: 市场状态（波动率、趋势等?            constraint_violations: 约束违反次数
 
-            
+
 
         Returns:
 
@@ -1202,31 +1202,31 @@ class DynamicRewardFunction:
 
         # 1. 根据市场状态调整权限        self._adjust_weights(market_state)
 
-        
+
 
         # 2. 计算收益奖励
 
         return_reward = self._calculate_return_reward(portfolio_return)
 
-        
+
 
         # 3. 计算风险惩罚
 
         risk_penalty = self._calculate_risk_penalty(risk_metrics)
 
-        
+
 
         # 4. 计算成本惩罚
 
         cost_penalty = self._calculate_cost_penalty(transaction_cost)
 
-        
+
 
         # 5. 计算约束惩罚
 
         constraint_penalty = self._calculate_constraint_penalty(constraint_violations)
 
-        
+
 
         # 6. 计算总奖?        total_reward = (
 
@@ -1240,11 +1240,11 @@ class DynamicRewardFunction:
 
         )
 
-        
+
 
         return total_reward
 
-    
+
 
     def _adjust_weights(self, market_state: Dict[str, float]):
 
@@ -1254,7 +1254,7 @@ class DynamicRewardFunction:
 
         trend = market_state.get('trend', 0.0)
 
-        
+
 
         # 高波动环境：增加风险权重
 
@@ -1266,7 +1266,7 @@ class DynamicRewardFunction:
 
             self.reward_weights['risk'] = 0.5
 
-        
+
 
         # 趋势市场：增加收益权限        if abs(trend) > 0.01:
 
@@ -1276,7 +1276,7 @@ class DynamicRewardFunction:
 
             self.reward_weights['return'] = 1.0
 
-    
+
 
     def _calculate_return_reward(self, portfolio_return: float) -> float:
 
@@ -1284,7 +1284,7 @@ class DynamicRewardFunction:
 
         # 风险调整收益（Sharpe-like?        return portfolio_return * 100
 
-    
+
 
     def _calculate_risk_penalty(self, risk_metrics: Dict[str, float]) -> float:
 
@@ -1296,7 +1296,7 @@ class DynamicRewardFunction:
 
         drawdown = risk_metrics.get('drawdown', 0.0)
 
-        
+
 
         # 综合风险惩罚
 
@@ -1310,11 +1310,11 @@ class DynamicRewardFunction:
 
         )
 
-        
+
 
         return risk_penalty
 
-    
+
 
     def _calculate_cost_penalty(self, transaction_cost: float) -> float:
 
@@ -1322,7 +1322,7 @@ class DynamicRewardFunction:
 
         # 成本惩罚（相对于初始资金?        return transaction_cost / self.config.initial_capital * 100
 
-    
+
 
     def _calculate_constraint_penalty(self, violations: int) -> float:
 
@@ -1356,7 +1356,7 @@ class HyperparameterOptimizer:
 
     """超参数优化器
 
-    
+
 
     索引: RL_REBALANCING_001-M05
 
@@ -1368,7 +1368,7 @@ class HyperparameterOptimizer:
 
     """
 
-    
+
 
     def __init__(self, config: OptimizerConfig):
 
@@ -1378,19 +1378,19 @@ class HyperparameterOptimizer:
 
         self.eval_env = config.eval_env
 
-        
+
 
     def optimize(self, n_trials: int = 50,
 
                 algorithm: str = 'PPO') -> Dict[str, Any]:
 
-        """优化超参?        
+        """优化超参?
 
         Args:
 
             n_trials: 试验次数
 
-            algorithm: 算法类型（PPO/SAC?            
+            algorithm: 算法类型（PPO/SAC?
 
         Returns:
 
@@ -1402,7 +1402,7 @@ class HyperparameterOptimizer:
 
         study = create_study(direction='maximize')
 
-        
+
 
         # 定义目标函数
 
@@ -1410,7 +1410,7 @@ class HyperparameterOptimizer:
 
             # 采样超参?            params = self._sample_params(trial, algorithm)
 
-            
+
 
             # 训练模型
 
@@ -1426,27 +1426,27 @@ class HyperparameterOptimizer:
 
                 raise ValueError(f"Unsupported algorithm: {algorithm}")
 
-            
+
 
             # 评估模型
 
             mean_reward = self._evaluate_model(model)
 
-            
+
 
             return mean_reward
 
-        
+
 
         # 运行优化
 
         study.optimize(objective, n_trials=n_trials)
 
-        
+
 
         # 返回最优参?        return study.best_params
 
-    
+
 
     def _sample_params(self, trial: Trial, algorithm: str) -> Dict[str, Any]:
 
@@ -1454,7 +1454,7 @@ class HyperparameterOptimizer:
 
         params = {}
 
-        
+
 
         # 通用参数
 
@@ -1464,7 +1464,7 @@ class HyperparameterOptimizer:
 
         params['gamma'] = trial.suggest_uniform('gamma', 0.9, 0.999)
 
-        
+
 
         # 算法特定参数
 
@@ -1480,7 +1480,7 @@ class HyperparameterOptimizer:
 
             params['gae_lambda'] = trial.suggest_uniform('gae_lambda', 0.9, 1.0)
 
-        
+
 
         elif algorithm == 'SAC':
 
@@ -1490,11 +1490,11 @@ class HyperparameterOptimizer:
 
             params['ent_coef'] = trial.suggest_categorical('ent_coef', ['auto', 0.01, 0.1])
 
-        
+
 
         return params
 
-    
+
 
     def _train_ppo(self, params: Dict[str, Any]) -> PPO:
 
@@ -1526,15 +1526,15 @@ class HyperparameterOptimizer:
 
         )
 
-        
+
 
         model.learn(total_timesteps=self.config.training_steps)
 
-        
+
 
         return model
 
-    
+
 
     def _train_sac(self, params: Dict[str, Any]) -> SAC:
 
@@ -1562,15 +1562,15 @@ class HyperparameterOptimizer:
 
         )
 
-        
+
 
         model.learn(total_timesteps=self.config.training_steps)
 
-        
+
 
         return model
 
-    
+
 
     def _evaluate_model(self, model, n_episodes: int = 10) -> float:
 
@@ -1578,7 +1578,7 @@ class HyperparameterOptimizer:
 
         total_rewards = []
 
-        
+
 
         for _ in range(n_episodes):
 
@@ -1588,7 +1588,7 @@ class HyperparameterOptimizer:
 
             episode_reward = 0
 
-            
+
 
             while not done:
 
@@ -1598,11 +1598,11 @@ class HyperparameterOptimizer:
 
                 episode_reward += reward
 
-            
+
 
             total_rewards.append(episode_reward)
 
-        
+
 
         return np.mean(total_rewards)
 
@@ -1752,7 +1752,7 @@ class IRLAgent(ABC):
 
     """强化学习智能体接口""
 
-    
+
 
     @abstractmethod
 
@@ -1762,7 +1762,7 @@ class IRLAgent(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1772,7 +1772,7 @@ class IRLAgent(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1782,7 +1782,7 @@ class IRLAgent(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1802,19 +1802,19 @@ class IRLAgent(ABC):
 
 class RLRebalancingSystem:
 
-    """强化学习调仓系统主接口    
+    """强化学习调仓系统主接口
 
     索引: RL_REBALANCING_001-MAIN
 
     职责: 协调环境构建、模型训练、模型评估、模型部?    """
 
-    
+
 
     def __init__(self, config: RLSystemConfig):
 
         self.config = config
 
-        
+
 
         # 构建环境
 
@@ -1822,7 +1822,7 @@ class RLRebalancingSystem:
 
         self.eval_env = PortfolioRebalancingEnv(config.eval_env_config)
 
-        
+
 
         # 构建智能力        if config.algorithm == 'PPO':
 
@@ -1836,19 +1836,19 @@ class RLRebalancingSystem:
 
             raise ValueError(f"Unsupported algorithm: {config.algorithm}")
 
-        
+
 
         # 奖励函数
 
         self.reward_function = DynamicRewardFunction(config.reward_config)
 
-        
+
 
         # 超参数优化器
 
         self.optimizer = HyperparameterOptimizer(config.optimizer_config)
 
-        
+
 
     def train_model(self, total_timesteps: int = 100000,
 
@@ -1856,7 +1856,7 @@ class RLRebalancingSystem:
 
         """训练模型
 
-        
+
 
         Args:
 
@@ -1874,7 +1874,7 @@ class RLRebalancingSystem:
 
             print(f"Best hyperparameters: {best_params}")
 
-        
+
 
         # 训练模型
 
@@ -1888,17 +1888,17 @@ class RLRebalancingSystem:
 
         )
 
-    
+
 
     def predict_action(self, observation: np.ndarray) -> np.ndarray:
 
         """预测动作
 
-        
+
 
         Args:
 
-            observation: 观测试            
+            observation: 观测试
 
         Returns:
 
@@ -1910,17 +1910,17 @@ class RLRebalancingSystem:
 
         return action
 
-    
+
 
     def evaluate_model(self, n_episodes: int = 10) -> Dict[str, float]:
 
         """评估模型
 
-        
+
 
         Args:
 
-            n_episodes: 评估回合?            
+            n_episodes: 评估回合?
 
         Returns:
 
@@ -1932,7 +1932,7 @@ class RLRebalancingSystem:
 
         portfolio_values = []
 
-        
+
 
         for _ in range(n_episodes):
 
@@ -1942,7 +1942,7 @@ class RLRebalancingSystem:
 
             episode_reward = 0
 
-            
+
 
             while not done:
 
@@ -1952,13 +1952,13 @@ class RLRebalancingSystem:
 
                 episode_reward += reward
 
-            
+
 
             total_rewards.append(episode_reward)
 
             portfolio_values.append(info['portfolio_value'])
 
-        
+
 
         return {
 
@@ -1972,7 +1972,7 @@ class RLRebalancingSystem:
 
         }
 
-    
+
 
     def save_model(self, path: str) -> None:
 
@@ -1980,7 +1980,7 @@ class RLRebalancingSystem:
 
         self.agent.save(path)
 
-    
+
 
     def load_model(self, path: str) -> None:
 
@@ -2248,7 +2248,7 @@ graph LR
 
     D[市场状态识别] --> B
 
-    
+
 
     B --> E[组合优化引擎]
 
@@ -2256,7 +2256,7 @@ graph LR
 
     B --> G[算法交易优化器]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -2373,4 +2373,3 @@ graph LR
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

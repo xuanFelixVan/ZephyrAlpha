@@ -36,7 +36,7 @@ priority: P0
 
 > **核心职责**: Qmt Executor蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Qmt Executor蓝图设计相关内容
 
@@ -160,7 +160,7 @@ priority: P0
 
 class QMTConnectionManager:
 
-    
+
 
     def __init__(self, config: QMTConfig):
 
@@ -172,7 +172,7 @@ class QMTConnectionManager:
 
         self.connected = False
 
-        
+
 
     def connect(self, account_id: str, password: str) -> bool:
 
@@ -180,7 +180,7 @@ class QMTConnectionManager:
 
         pass
 
-    
+
 
     def disconnect(self) -> None:
 
@@ -188,7 +188,7 @@ class QMTConnectionManager:
 
         pass
 
-    
+
 
     def reconnect(self) -> bool:
 
@@ -196,13 +196,13 @@ class QMTConnectionManager:
 
         pass
 
-    
+
 
     def is_connected(self) -> bool:
 
         pass
 
-    
+
 
     def start_heartbeat(self, interval: int = 30) -> None:
 
@@ -228,7 +228,7 @@ class QMTConnectionManager:
 
 class QMTOrderExecutor:
 
-    
+
 
     def __init__(self, connection_manager: QMTConnectionManager):
 
@@ -238,7 +238,7 @@ class QMTOrderExecutor:
 
         self.risk_checker = RiskChecker()
 
-        
+
 
     def execute_order(self, order: Order) -> ExecutionResult:
 
@@ -246,7 +246,7 @@ class QMTOrderExecutor:
 
         pass
 
-    
+
 
     def cancel_order(self, order_id: str) -> bool:
 
@@ -254,13 +254,13 @@ class QMTOrderExecutor:
 
         pass
 
-    
+
 
     def query_order(self, order_id: str) -> OrderStatus:
 
         pass
 
-    
+
 
     def _convert_order(self, unified_order: Order) -> QMTOrder:
 
@@ -300,19 +300,19 @@ class QMTDataAdapter:
 
 ?""
 
-    
+
 
     def __init__(self, config: QMTConfig):
 
         self.config = config
 
-        
+
 
     def get_market_data(
 
-        self, 
+        self,
 
-        symbol: str, 
+        symbol: str,
 
         period: str,
 
@@ -326,7 +326,7 @@ class QMTDataAdapter:
 
         pass
 
-    
+
 
     def get_realtime_quotes(self, symbols: List[str]) -> Dict:
 
@@ -334,11 +334,11 @@ class QMTDataAdapter:
 
         pass
 
-    
+
 
     def subscribe_quotes(
 
-        self, 
+        self,
 
         symbols: List[str],
 
@@ -352,7 +352,7 @@ class QMTDataAdapter:
 
         pass
 
-    
+
 
     def get_financial_data(
 
@@ -578,7 +578,7 @@ class QMTConfig:
 
 """QMT
 
-    
+
 
     def __init__(self):
 
@@ -586,7 +586,7 @@ class QMTConfig:
 
         self._load_env()
 
-    
+
 
     def _load_config(self):
 
@@ -598,7 +598,7 @@ class QMTConfig:
 
             self.config = yaml.safe_load(f)
 
-    
+
 
     def _load_env(self):
 
@@ -826,7 +826,7 @@ class QMTConfig:
 
 - **技术规格书**: 待创建
 
-- **职责**: Layer 5 ?compliance_level: 
+- **职责**: Layer 5 ?compliance_level:
 
 - **状态**: Active
 
@@ -865,4 +865,3 @@ class QMTConfig:
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
 
 ```
-

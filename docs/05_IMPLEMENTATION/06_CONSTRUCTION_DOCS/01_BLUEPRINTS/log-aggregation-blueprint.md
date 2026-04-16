@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供统一的日志收集、聚合、搜索和分析能力，支持系统监控和问题排查
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：日志收集、聚合、搜索、分析
 
@@ -207,7 +207,7 @@ class LokiLogHandler(logging.Handler):
 
     """Loki日志处理器"""
 
-    
+
 
     def __init__(
 
@@ -225,7 +225,7 @@ class LokiLogHandler(logging.Handler):
 
         self.labels = labels or {"service": "unknown"}
 
-    
+
 
     def emit(self, record: logging.LogRecord):
 
@@ -283,7 +283,7 @@ class LokiLogHandler(logging.Handler):
 
             }
 
-            
+
 
             requests.post(
 
@@ -307,7 +307,7 @@ class StructuredLogger:
 
     """结构化日志记录器"""
 
-    
+
 
     def __init__(self, service_name: str, loki_url: str = "http://loki:3100"):
 
@@ -315,7 +315,7 @@ class StructuredLogger:
 
         self.logger.setLevel(logging.DEBUG)
 
-        
+
 
         handler = LokiLogHandler(
 
@@ -327,7 +327,7 @@ class StructuredLogger:
 
         self.logger.addHandler(handler)
 
-    
+
 
     def info(self, message: str, **kwargs):
 
@@ -335,7 +335,7 @@ class StructuredLogger:
 
         self.logger.info(message, extra=kwargs)
 
-    
+
 
     def error(self, message: str, **kwargs):
 
@@ -343,7 +343,7 @@ class StructuredLogger:
 
         self.logger.error(message, extra=kwargs)
 
-    
+
 
     def warning(self, message: str, **kwargs):
 
@@ -351,7 +351,7 @@ class StructuredLogger:
 
         self.logger.warning(message, extra=kwargs)
 
-    
+
 
     def debug(self, message: str, **kwargs):
 
@@ -359,7 +359,7 @@ class StructuredLogger:
 
         self.logger.debug(message, extra=kwargs)
 
-    
+
 
     def log_trade(self, trade_data: Dict[str, Any]):
 
@@ -381,7 +381,7 @@ class StructuredLogger:
 
         )
 
-    
+
 
     def log_signal(self, signal_data: Dict[str, Any]):
 
@@ -423,13 +423,13 @@ class LogSearcher:
 
     """日志搜索器"""
 
-    
+
 
     def __init__(self, loki_url: str = "http://loki:3100"):
 
         self.loki_url = loki_url
 
-    
+
 
     def search(
 
@@ -455,7 +455,7 @@ class LogSearcher:
 
             end_time = datetime.now()
 
-        
+
 
         params = {
 
@@ -469,7 +469,7 @@ class LogSearcher:
 
         }
 
-        
+
 
         response = requests.get(
 
@@ -479,11 +479,11 @@ class LogSearcher:
 
         )
 
-        
+
 
         return self._parse_response(response.json())
 
-    
+
 
     def search_by_service(
 
@@ -503,7 +503,7 @@ class LogSearcher:
 
         return self.search(query, start_time, end_time)
 
-    
+
 
     def search_by_level(
 
@@ -523,7 +523,7 @@ class LogSearcher:
 
         return self.search(query, start_time, end_time)
 
-    
+
 
     def search_errors(
 
@@ -539,7 +539,7 @@ class LogSearcher:
 
         return self.search_by_level("ERROR", start_time, end_time)
 
-    
+
 
     def _parse_response(self, response: Dict) -> List[Dict[str, Any]]:
 
@@ -547,19 +547,19 @@ class LogSearcher:
 
         results = []
 
-        
+
 
         for stream in response.get("data", {}).get("result", []):
 
             labels = stream.get("stream", {})
 
-            
+
 
             for value in stream.get("values", []):
 
                 timestamp, log = value
 
-                
+
 
                 try:
 
@@ -569,7 +569,7 @@ class LogSearcher:
 
                     log_data = {"message": log}
 
-                
+
 
                 results.append({
 
@@ -581,7 +581,7 @@ class LogSearcher:
 
                 })
 
-        
+
 
         return results
 
@@ -607,13 +607,13 @@ class LogAnalyzer:
 
     """日志分析器"""
 
-    
+
 
     def __init__(self, searcher: LogSearcher):
 
         self.searcher = searcher
 
-    
+
 
     def analyze_error_patterns(
 
@@ -629,13 +629,13 @@ class LogAnalyzer:
 
         errors = self.searcher.search_errors(start_time, end_time)
 
-        
+
 
         error_messages = [e.get("message", "") for e in errors]
 
         error_counts = Counter(error_messages)
 
-        
+
 
         return {
 
@@ -651,7 +651,7 @@ class LogAnalyzer:
 
         }
 
-    
+
 
     def analyze_service_health(
 
@@ -673,13 +673,13 @@ class LogAnalyzer:
 
         )
 
-        
+
 
         levels = [l.get("level", "INFO") for l in logs]
 
         level_counts = Counter(levels)
 
-        
+
 
         return {
 
@@ -695,7 +695,7 @@ class LogAnalyzer:
 
         }
 
-    
+
 
     def analyze_trade_activity(
 
@@ -717,7 +717,7 @@ class LogAnalyzer:
 
         )
 
-        
+
 
         return {
 
@@ -731,7 +731,7 @@ class LogAnalyzer:
 
         }
 
-    
+
 
     def detect_anomalies(
 
@@ -749,7 +749,7 @@ class LogAnalyzer:
 
         start_time = end_time - timedelta(hours=window_hours)
 
-        
+
 
         current_errors = len(self.searcher.search_by_service(
 
@@ -757,7 +757,7 @@ class LogAnalyzer:
 
         ))
 
-        
+
 
         baseline_start = start_time - timedelta(hours=window_hours)
 
@@ -767,17 +767,17 @@ class LogAnalyzer:
 
         ))
 
-        
+
 
         anomalies = []
 
-        
+
 
         if baseline_errors > 0:
 
             error_increase = (current_errors - baseline_errors) / baseline_errors
 
-            
+
 
             if error_increase > 0.5:
 
@@ -797,11 +797,11 @@ class LogAnalyzer:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _group_by(self, items: List[Dict], key: str) -> Dict[str, int]:
 
@@ -809,7 +809,7 @@ class LogAnalyzer:
 
         return dict(Counter(item.get(key, "unknown") for item in items))
 
-    
+
 
     def _group_by_hour(self, items: List[Dict]) -> Dict[str, int]:
 
@@ -825,7 +825,7 @@ class LogAnalyzer:
 
                 hours.append(ts.strftime("%Y-%m-%d %H:00"))
 
-        
+
 
         return dict(Counter(hours))
 
@@ -851,7 +851,7 @@ class LogAlerter:
 
     """日志告警器"""
 
-    
+
 
     def __init__(self, searcher: LogSearcher):
 
@@ -861,7 +861,7 @@ class LogAlerter:
 
         self.running = False
 
-    
+
 
     def add_alert_rule(
 
@@ -897,7 +897,7 @@ class LogAlerter:
 
         })
 
-    
+
 
     def start_monitoring(self, interval_seconds: int = 60):
 
@@ -905,7 +905,7 @@ class LogAlerter:
 
         self.running = True
 
-        
+
 
         def monitor():
 
@@ -915,13 +915,13 @@ class LogAlerter:
 
                 time.sleep(interval_seconds)
 
-        
+
 
         thread = threading.Thread(target=monitor, daemon=True)
 
         thread.start()
 
-    
+
 
     def stop_monitoring(self):
 
@@ -929,7 +929,7 @@ class LogAlerter:
 
         self.running = False
 
-    
+
 
     def _check_rules(self):
 
@@ -941,7 +941,7 @@ class LogAlerter:
 
             start_time = end_time - timedelta(minutes=rule["window_minutes"])
 
-            
+
 
             results = self.searcher.search(
 
@@ -951,7 +951,7 @@ class LogAlerter:
 
             )
 
-            
+
 
             if len(results) >= rule["threshold"]:
 
@@ -959,7 +959,7 @@ class LogAlerter:
 
                    (datetime.now() - rule["last_triggered"]).total_seconds() > 300:
 
-                    
+
 
                     alert = {
 
@@ -975,7 +975,7 @@ class LogAlerter:
 
                     }
 
-                    
+
 
                     rule`"callback"`
 
@@ -1019,7 +1019,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   promtail:
 
@@ -1035,7 +1035,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   grafana:
 
@@ -1217,7 +1217,7 @@ scrape_configs:
 
           __path__: /var/log/*log
 
-  
+
 
   - job_name: docker
 
@@ -1514,4 +1514,3 @@ alerter.start_monitoring()
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

@@ -147,14 +147,14 @@ graph TB
 ```python
 class CailianNewsDataSource:
     """财联社新闻数据源"""
-    
+
     def __init__(self, config):
         self.api_url = "https://www.cls.cn/api/sw"
         self.headers = {
             'User-Agent': 'Mozilla/5.0',
             'Referer': 'https://www.cls.cn/'
         }
-        
+
     def get_realtime_news(self, limit=100):
         """获取实时新闻"""
         params = {
@@ -166,7 +166,7 @@ class CailianNewsDataSource:
         }
         response = requests.get(self.api_url, headers=self.headers, params=params)
         return self._parse_news(response.json())
-    
+
     def get_stock_news(self, stock_code, start_date, end_date):
 ```
 
@@ -178,7 +178,7 @@ class CailianNewsDataSource:
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| sentiment | float | 
+| sentiment | float |
 情感得分（-1~1） |
 | event_type | string | 事件类型 |
 
@@ -190,10 +190,10 @@ class CailianNewsDataSource:
 ```python
 class SinaFinanceDataSource:
     """新浪财经数据源"""
-    
+
     def __init__(self, config):
         self.api_url = "https://feed.mix.sina.com.cn/api/roll/get"
-        
+
     def get_news(self, page=1, page_size=50):
         """获取新闻列表"""
         params = {
@@ -216,10 +216,10 @@ class SinaFinanceDataSource:
 ```python
 class EastMoneyDataSource:
     """东方财富数据源"""
-    
+
     def __init__(self, config):
         self.api_url = "https://np-listapi.eastmoney.com/comm/web/getFastNewsList"
-        
+
     def get_news(self, page_index=1, page_size=50):
         """获取新闻列表"""
         params = {
@@ -247,14 +247,14 @@ class EastMoneyDataSource:
 ```python
 class WeiboDataSource:
     """微博数据源"""
-    
+
     def __init__(self, config):
         self.api_url = "https://m.weibo.cn/api/container/getIndex"
         self.headers = {
             'User-Agent': 'Mozilla/5.0',
             'Cookie': config.get('weibo_cookie')
         }
-        
+
     def search_stock_posts(self, stock_name, page=1):
         params = {
             'containerid': f'100103type=1&q={stock_name}',
@@ -263,7 +263,7 @@ class WeiboDataSource:
         }
         response = requests.get(self.api_url, headers=self.headers, params=params)
         return self._parse_posts(response.json())
-    
+
     def get_hot_topics(self):
         """获取热门话题"""
         params = {
@@ -283,7 +283,7 @@ class WeiboDataSource:
 | likes | int | 点赞数 |
 | comments | int | 评论数 |
 | reposts | int | 转发数 |
-| sentiment | float | 
+| sentiment | float |
 感得分 |
 
 
@@ -296,14 +296,14 @@ class WeiboDataSource:
 ```python
 class XueqiuDataSource:
     """雪球数据源"""
-    
+
     def __init__(self, config):
         self.base_url = "https://xueqiu.com"
         self.headers = {
             'User-Agent': 'Mozilla/5.0',
             'Cookie': config.get('xueqiu_cookie')
         }
-        
+
     def get_stock_posts(self, stock_code, page=1):
         url = f"{self.base_url}/query/v1/symbol/search/status.json"
         params = {
@@ -313,7 +313,7 @@ class XueqiuDataSource:
         }
         response = requests.get(url, headers=self.headers, params=params)
         return self._parse_posts(response.json())
-    
+
     def get_hot_stocks(self):
         """获取热门股票"""
         url = f"{self.base_url}/stock/pick_and_drop_list.json"
@@ -330,10 +330,10 @@ class XueqiuDataSource:
 ```python
 class GubaDataSource:
     """东方财富股吧数据源"""
-    
+
     def __init__(self, config):
         self.base_url = "https://guba.eastmoney.com"
-        
+
     def get_stock_posts(self, stock_code, page=1):
         """获取股票吧帖子"""
         url = f"{self.base_url}/list,{stock_code}.html"
@@ -358,16 +358,16 @@ class GubaDataSource:
 ```python
 class AnalystExpectationDataSource:
     """分析师预期数据源"""
-    
+
     def __init__(self, config):
         self.api_url = "https://data.eastmoney.com/dataapi/limit_up"
-        
+
     def get_analyst_rating(self, stock_code):
         """获取分析师评级"""
         url = f"https://data.eastmoney.com/report/info/{stock_code}.html"
         response = requests.get(url)
         return self._parse_rating(response.text)
-    
+
     def get_consensus_forecast(self, stock_code):
         """获取一致预期"""
         params = {
@@ -393,7 +393,7 @@ class AnalystExpectationDataSource:
 
 ## 三、NLP处理流程
 
-### 3.1 
+### 3.1
 情情情情感分析
 
 **技术方案**: GLM-4-Flash
@@ -402,24 +402,24 @@ class AnalystExpectationDataSource:
 class SentimentAnalyzer:
     """
 情情情情情感分析""
-    
+
     def __init__(self):
         self.model = "glm-4-flash"
         self.api_key = config.get('zhipu_api_key')
-        
+
     def analyze_sentiment(self, text):
 感"""
         prompt = f"""
 感得分：
         -1 表示极度负面，0 表示中性，1 表示极度正面
-        
+
 容：{text}
-        
-        
+
+
         response = self._call_api(prompt)
         sentiment_score = float(response.strip())
         return sentiment_score
-    
+
     def batch_analyze(self, texts):
 情情情情感分析"""
         results = []
@@ -440,18 +440,18 @@ class SentimentAnalyzer:
 ```python
 class EventExtractor:
     """事件提取""
-    
+
     def __init__(self):
         self.model = "glm-4-flash"
         self.event_types = [
         ]
-        
+
     def extract_events(self, text):
         """提取新闻事件"""
         prompt = f"""
-        
+
 容：{text}
-        
+
         请返回 JSON 格式：        {{
             "event_type": "事件类型",
             "event_summary": "事件摘要",
@@ -460,7 +460,7 @@ class EventExtractor:
 情感倾向（正面/负面/中性）"
         }}
         """
-        
+
         response = self._call_api(prompt)
         event_info = json.loads(response)
         return event_info
@@ -474,24 +474,24 @@ class EventExtractor:
 ```python
 class EntityRecognizer:
     """实体识别""
-    
+
     def __init__(self):
         self.stock_pattern = r'(SH\d{6}|SZ\d{6}|\d{6}\.(SH|SZ))'
-        
+
     def extract_stocks(self, text):
         """提取股票代码"""
         stock_codes = re.findall(self.stock_pattern, text)
-        
+
         prompt = f"""
-        
+
         文本：{text}
-        
+
         请只返回股票代码列表，格式：["代码1", "代码2"]
         """
-        
+
         response = self._call_api(prompt)
         stock_names = json.loads(response)
-        
+
         return list(set(stock_codes + stock_names))
 ```
 
@@ -508,23 +508,23 @@ class EntityRecognizer:
 def calculate_news_sentiment_factor(stock_code, date, window=7):
     """
 情情情情感因子
-    
+
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天）    
+        window: 时间窗口（天）
     Returns:
         因子值（-1~1）    """
     news_list = get_stock_news(stock_code, date-window, date)
-    
+
 情感得分    sentiments = [analyze_sentiment(news['content']) for news in news_list]
-    
+
     # 3. 加权平均（近期新闻权重更高）
     weights = np.exp(np.linspace(-1, 0, len(sentiments)))
     weights = weights / weights.sum()
-    
+
     factor_value = np.average(sentiments, weights=weights)
-    
+
     return factor_value
 ```
 
@@ -544,28 +544,28 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 def calculate_event_driven_factor(stock_code, date):
     """
     计算事件驱动因子
-    
+
     Args:
         stock_code: 股票代码
         date: 计算日期
-    
+
     Returns:
         因子值（事件影响得分）    """
     # 1. 获取近期重大事件
     events = get_recent_events(stock_code, date, days=30)
-    
+
     # 2. 计算事件影响得分
     impact_scores = []
     for event in events:
         # 根据事件类型和影响等级计算得分        base_score = EVENT_IMPACT_MAP[event['event_type']]
         level_multiplier = {'高': 1.0, '中': 0.6, '低': 0.3}[event['impact_level']]
-        
+
         score = base_score * level_multiplier * sentiment_multiplier
         impact_scores.append(score)
-    
+
     # 3. 加权平均（近期事件权重更高）
     factor_value = np.mean(impact_scores) if impact_scores else 0
-    
+
     return factor_value
 ```
 
@@ -583,23 +583,23 @@ def calculate_event_driven_factor(stock_code, date):
 def calculate_news_heat_factor(stock_code, date, window=7):
     """
     计算新闻热度因子
-    
+
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天）    
+        window: 时间窗口（天）
     Returns:
         因子值（热度得分）    """
     # 1. 获取过去window天的新闻数量
     news_count = count_stock_news(stock_code, date-window, date)
-    
-    
+
+
     # 3. 计算相对热度
     heat_score = (news_count - market_avg) / market_avg
-    
+
     # 4. 标准化到0-1
     factor_value = 1 / (1 + np.exp(-heat_score))
-    
+
     return factor_value
 ```
 
@@ -608,7 +608,7 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 
 
 
-### 4.2 
+### 4.2
 情情情情绪因子
 
 情情情情绪因子
@@ -619,24 +619,24 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 def calculate_market_sentiment_factor(date):
     """
 情情情情绪因子
-    
+
     Args:
         date: 计算日期
-    
+
     Returns:
 情绪得分    """
     # 1. 获取微博、雪球、股吧的热门讨论
     posts = get_hot_posts(date)
-    
+
 绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
-    
+
     # 3. 加权平均（按互动量加权）
     weights = [post['likes'] + post['comments'] + post['reposts'] for post in posts]
     weights = np.array(weights) / sum(weights)
-    
+
     factor_value = np.average(sentiments, weights=weights)
-    
+
     return factor_value
 ```
 
@@ -654,27 +654,27 @@ def calculate_market_sentiment_factor(date):
 def calculate_stock_sentiment_factor(stock_code, date, window=7):
     """
 情情情情绪因子
-    
+
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天）    
+        window: 时间窗口（天）
     Returns:
 情绪得分    """
     # 1. 获取社交媒体讨论
     posts = get_stock_posts(stock_code, date-window, date)
-    
+
 绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
-    
+
     # 3. 计算讨论热度
     engagement = sum([post['likes'] + post['comments'] + post['reposts'] for post in posts])
-    
+
 情绪与热度    avg_sentiment = np.mean(sentiments)
     heat_score = np.log1p(engagement)
-    
+
     factor_value = avg_sentiment * (1 + 0.1 * heat_score)
-    
+
     return factor_value
 ```
 
@@ -694,24 +694,24 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ```python
 def calculate_expectation_gap_factor(stock_code, date):
     """
-    计算分析师预期差异因子    
+    计算分析师预期差异因子
     Args:
         stock_code: 股票代码
         date: 计算日期
-    
+
     Returns:
         因子值（预期差异得分）    """
     # 1. 获取分析师一致预期    consensus = get_consensus_forecast(stock_code, date)
-    
+
     actual = get_actual_eps(stock_code, date)
-    
+
     # 3. 计算预期差异
     if consensus and actual:
         gap = (actual - consensus) / abs(consensus)
         factor_value = gap
     else:
         factor_value = 0
-    
+
     return factor_value
 ```
 
@@ -729,25 +729,25 @@ def calculate_expectation_gap_factor(stock_code, date):
 ```python
 def calculate_rating_change_factor(stock_code, date, window=30):
     """
-    计算分析师评级变化因子    
+    计算分析师评级变化因子
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天）    
+        window: 时间窗口（天）
     Returns:
         因子值（评级变化得分）    """
     # 1. 获取过去window天的评级变化
     ratings = get_rating_history(stock_code, date-window, date)
-    
+
     # 2. 计算评级变化
     if len(ratings) >= 2:
         latest_rating = rating_map.get(ratings[-1]['rating'], 0)
         previous_rating = rating_map.get(ratings[0]['rating'], 0)
-        
+
         factor_value = latest_rating - previous_rating
     else:
         factor_value = 0
-    
+
     return factor_value
 ```
 
@@ -758,7 +758,7 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 
 
 
-### 4.4 
+### 4.4
 #### 因子8: 社交媒体热度因子
 
 **计算方法**:
@@ -766,28 +766,28 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 def calculate_social_heat_factor(stock_code, date, window=7):
     """
     计算社交媒体热度因子
-    
+
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天）    
+        window: 时间窗口（天）
     Returns:
         因子值（热度得分）    """
     # 1. 获取社交媒体讨论帖    posts = get_stock_posts(stock_code, date-window, date)
-    
+
     # 2. 计算总互动量
     total_engagement = sum([
         post['likes'] + post['comments'] + post['reposts']
         for post in posts
     ])
-    
+
     # 3. 计算讨论量    post_count = len(posts)
-    
+
     # 4. 综合热度得分
     heat_score = np.log1p(total_engagement) + 0.5 * np.log1p(post_count)
-    
+
     # 5. 标准化    factor_value = heat_score / 10  # 简单标准化
-    
+
     return factor_value
 ```
 
@@ -892,22 +892,22 @@ from chromadb.config import Settings
 
 class VectorStore:
     """向量存储"""
-    
+
     def __init__(self):
         self.client = Client(Settings(
             chroma_db_impl="duckdb+parquet",
             persist_directory="./data/vector_db"
         ))
-        
+
         # 创建collection
         self.news_collection = self.client.get_or_create_collection("news_vectors")
         self.posts_collection = self.client.get_or_create_collection("posts_vectors")
-        
+
     def add_news(self, news_id, content, metadata):
         """添加新闻向量"""
         # 生成embedding
         embedding = self._generate_embedding(content)
-        
+
         # 存储向量
         self.news_collection.add(
             ids=[news_id],
@@ -915,22 +915,22 @@ class VectorStore:
             metadatas=[metadata],
             documents=[content]
         )
-        
+
     def search_similar_news(self, query, n_results=10):
         """搜索相似新闻"""
         query_embedding = self._generate_embedding(query)
-        
+
         results = self.news_collection.query(
             query_embeddings=[query_embedding],
             n_results=n_results
         )
-        
+
         return results
 ```
 
 
 
-## 
+##
 ### 6.1 时间规划
 
 | 阶段 | 时间 | 任务 | 交付物 |
@@ -1018,8 +1018,8 @@ class VectorStore:
 ### 10.1 已生成文档
 
 
-**蓝图版本**: v1.0  
-**创建日期**: 2026-04-02  
+**蓝图版本**: v1.0
+**创建日期**: 2026-04-02
 
 ## 变更历史
 
@@ -1056,7 +1056,7 @@ graph LR
     B["ALTERNATIVE DAT"]
     B --> D0["DATA QUALITY MO"]
     B --> D1["DATA CATALOG BL"]
-    
+
     style B fill:#ff6b6b
     style U0 fill:#4ecdc4
     style D0 fill:#45b7d1

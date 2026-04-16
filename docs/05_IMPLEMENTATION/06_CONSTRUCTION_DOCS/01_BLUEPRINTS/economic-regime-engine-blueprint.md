@@ -30,7 +30,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 > **核心职责**: Economic Regime Engine蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ...
 
@@ -146,7 +146,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 > 核心职责: Economic Regime Engine蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -174,7 +174,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -334,7 +334,7 @@ class EconomicRegimeEngine:
 
     """经济范式判断引擎主接口""
 
-    
+
 
     def get_current_regime(self) -> RegimeAnalysis:
 
@@ -342,15 +342,15 @@ class EconomicRegimeEngine:
 
         获取当前经济范式分析
 
-        
+
 
         Returns:
 
-            RegimeAnalysis: 
+            RegimeAnalysis:
 
         pass
 
-    
+
 
     def get_regime_probability(self) -> Dict[str, float]:
 
@@ -358,7 +358,7 @@ class EconomicRegimeEngine:
 
         获取范式概率分布
 
-        
+
 
         Returns:
 
@@ -366,7 +366,7 @@ class EconomicRegimeEngine:
 
         pass
 
-    
+
 
     def get_transition_warning(self) -> Optional[TransitionWarning]:
 
@@ -374,7 +374,7 @@ class EconomicRegimeEngine:
 
         获取范式转换预警
 
-        
+
 
         Returns:
 
@@ -384,13 +384,13 @@ class EconomicRegimeEngine:
 
         pass
 
-    
+
 
     def get_asset_allocation(self) -> Dict[str, float]:
 
         """
 
-        
+
 
         Returns:
 
@@ -414,7 +414,7 @@ economic_regime_engine:
 
     n_states: 4                    # 状态数    n_iterations: 100              # 训练迭代次数
 
-    covariance_type: 'full'        # 协方差类型    
+    covariance_type: 'full'        # 协方差类型
 
   # 数据采集参数
 
@@ -424,13 +424,13 @@ economic_regime_engine:
 
     backup_source: 'wind'          # 备用数据源    update_frequency: 'daily'      # 更新频率
 
-    
+
 
   # 预警参数
 
   warning:
 
-    
+
 
   allocation:
 
@@ -668,7 +668,7 @@ economic_regime_engine:
 
 |------|------|------|
 
-| **Economic Regime Engine** | 
+| **Economic Regime Engine** |
 
 
 
@@ -677,10 +677,3 @@ economic_regime_engine:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

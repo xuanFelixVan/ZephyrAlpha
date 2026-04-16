@@ -205,13 +205,13 @@ from datetime import datetime
 
 class DataPublisher:
 
-    
+
 
     def __init__(self, redis_client: redis.Redis):
 
         self.redis = redis_client
 
-    
+
 
     def publish_price(self, symbol: str, price_data: Dict):
 
@@ -233,7 +233,7 @@ class DataPublisher:
 
         return self.redis.xadd(stream_name, message)
 
-    
+
 
     def publish_factor(self, factor_id: str, factor_data: Dict):
 
@@ -253,7 +253,7 @@ class DataPublisher:
 
         return self.redis.xadd(stream_name, message)
 
-    
+
 
     def publish_event(self, event_type: str, event_data: Dict):
 
@@ -285,7 +285,7 @@ class DataPublisher:
 
 class SubscriptionManager:
 
-    
+
 
     def __init__(self, redis_client: redis.Redis):
 
@@ -293,7 +293,7 @@ class SubscriptionManager:
 
         self.subscriptions = {}
 
-    
+
 
     def subscribe(self, client_id: str, stream_type: str, stream_id: str):
 
@@ -301,11 +301,11 @@ class SubscriptionManager:
 
         stream_name = f"stream:{stream_type}:{stream_id}"
 
-        
+
 
         self.redis.sadd(key, stream_name)
 
-        
+
 
         if stream_name not in self.subscriptions:
 
@@ -313,11 +313,11 @@ class SubscriptionManager:
 
         self.subscriptions[stream_name].add(client_id)
 
-        
+
 
         return True
 
-    
+
 
     def unsubscribe(self, client_id: str, stream_type: str, stream_id: str):
 
@@ -327,21 +327,21 @@ class SubscriptionManager:
 
         stream_name = f"stream:{stream_type}:{stream_id}"
 
-        
+
 
         self.redis.srem(key, stream_name)
 
-        
+
 
         if stream_name in self.subscriptions:
 
             self.subscriptions[stream_name].discard(client_id)
 
-        
+
 
         return True
 
-    
+
 
     def get_subscriptions(self, client_id: str) -> List[str]:
 
@@ -365,7 +365,7 @@ from typing import Callable
 
 class DataConsumer:
 
-    
+
 
     def __init__(self, redis_client: redis.Redis, group_name: str, consumer_name: str):
 
@@ -377,7 +377,7 @@ class DataConsumer:
 
         self.running = False
 
-    
+
 
     async def consume(
 
@@ -401,11 +401,11 @@ class DataConsumer:
 
             pass
 
-        
+
 
         self.running = True
 
-        
+
 
         while self.running:
 
@@ -423,7 +423,7 @@ class DataConsumer:
 
             )
 
-            
+
 
             if messages:
 
@@ -441,7 +441,7 @@ class DataConsumer:
 
                             print(f"处理消息失败: {e}")
 
-    
+
 
     def stop(self):
 
@@ -469,13 +469,13 @@ import asyncio
 
 class WebSocketManager:
 
-    
+
 
     def __init__(self):
 
         self.connections: Dict[str, List[WebSocket]] = {}
 
-    
+
 
     async def connect(self, client_id: str, websocket: WebSocket):
 
@@ -489,7 +489,7 @@ class WebSocketManager:
 
         self.connections[client_id].append(websocket)
 
-    
+
 
     def disconnect(self, client_id: str, websocket: WebSocket):
 
@@ -499,7 +499,7 @@ class WebSocketManager:
 
             self.connections[client_id].remove(websocket)
 
-    
+
 
     async def broadcast(self, client_id: str, message: dict):
 
@@ -544,10 +544,3 @@ class WebSocketManager:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

@@ -26,7 +26,7 @@ responsibility:
 
 > **核心职责**: 合规知识库管理系统设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：合规知识库管理系统设计相关内容
 
@@ -306,7 +306,7 @@ class DocumentManager:
 
     """
 
-    
+
 
     def upload_document(self, file_path: str, metadata: dict):
 
@@ -314,7 +314,7 @@ class DocumentManager:
 
         上传法规文档
 
-        
+
 
         Args:
 
@@ -322,7 +322,7 @@ class DocumentManager:
 
             metadata: 文档元数据（法规名称、发布机构、生效日期等）
 
-        
+
 
         Returns:
 
@@ -332,7 +332,7 @@ class DocumentManager:
 
         pass
 
-    
+
 
     def parse_document(self, document_id: str):
 
@@ -340,7 +340,7 @@ class DocumentManager:
 
         解析法规文档
 
-        
+
 
         - 自动提取文档结构（章节、条款）
 
@@ -352,7 +352,7 @@ class DocumentManager:
 
         pass
 
-    
+
 
     def version_control(self, document_id: str, new_version: str):
 
@@ -360,7 +360,7 @@ class DocumentManager:
 
         法规版本管理
 
-        
+
 
         - 保留历史版本
 
@@ -372,7 +372,7 @@ class DocumentManager:
 
         pass
 
-    
+
 
     def full_text_search(self, query: str, filters: dict):
 
@@ -380,7 +380,7 @@ class DocumentManager:
 
         全文检索
 
-        
+
 
         - 支持布尔查询
 
@@ -504,7 +504,7 @@ class ComplianceQueryEngine:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -516,7 +516,7 @@ class ComplianceQueryEngine:
 
         self.rag_pipeline = RagPipeline()
 
-    
+
 
     def natural_language_query(self, query: str):
 
@@ -524,7 +524,7 @@ class ComplianceQueryEngine:
 
         自然语言查询
 
-        
+
 
         示例查询：
 
@@ -534,7 +534,7 @@ class ComplianceQueryEngine:
 
         - "反洗钱监控的最佳实践是什么？"
 
-        
+
 
         Returns:
 
@@ -554,25 +554,25 @@ class ComplianceQueryEngine:
 
         query_embedding = self.embedding_model.encode(query)
 
-        
+
 
         # 2. 向量检索
 
         relevant_docs = self.vector_store.search(
 
-            query_embedding, 
+            query_embedding,
 
             top_k=5
 
         )
 
-        
+
 
         # 3. 构建上下文
 
         context = self._build_context(relevant_docs)
 
-        
+
 
         # 4. LLM生成答案
 
@@ -582,17 +582,17 @@ class ComplianceQueryEngine:
 
             基于以下合规文档回答问题：
 
-            
+
 
             上下文：
 
             {context}
 
-            
+
 
             问题：{query}
 
-            
+
 
             请提供准确、专业的答案，并标注引用来源。
 
@@ -600,7 +600,7 @@ class ComplianceQueryEngine:
 
         )
 
-        
+
 
         return {
 
@@ -612,7 +612,7 @@ class ComplianceQueryEngine:
 
         }
 
-    
+
 
     def semantic_search(self, query: str, top_k: int = 10):
 
@@ -620,7 +620,7 @@ class ComplianceQueryEngine:
 
         语义相似度搜索
 
-        
+
 
         - 基于向量相似度
 
@@ -632,7 +632,7 @@ class ComplianceQueryEngine:
 
         pass
 
-    
+
 
     def related_documents(self, document_id: str):
 
@@ -640,7 +640,7 @@ class ComplianceQueryEngine:
 
         法规关联推荐
 
-        
+
 
         - 基于引用关系
 
@@ -700,7 +700,7 @@ class ComplianceQueryEngine:
 
         - 数据隐私保护
 
-  
+
 
   合规案例库:
 
@@ -720,7 +720,7 @@ class ComplianceQueryEngine:
 
         - 风险事件案例
 
-  
+
 
   教训总结库:
 
@@ -840,7 +840,7 @@ CREATE TABLE compliance_cases (
 
         - 监管指引解读
 
-  
+
 
   专业课程:
 
@@ -868,7 +868,7 @@ CREATE TABLE compliance_cases (
 
         - AI合规实践
 
-  
+
 
   进阶课程:
 
@@ -916,7 +916,7 @@ class ComplianceKnowledgeGraph:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -926,7 +926,7 @@ class ComplianceKnowledgeGraph:
 
         self.relation_extractor = RelationExtractor()
 
-    
+
 
     def build_knowledge_graph(self, document_id: str):
 
@@ -934,7 +934,7 @@ class ComplianceKnowledgeGraph:
 
         从法规文档构建知识图谱
 
-        
+
 
         实体类型：
 
@@ -946,7 +946,7 @@ class ComplianceKnowledgeGraph:
 
         - 条款（法规条款、监管要求）
 
-        
+
 
         关系类型：
 
@@ -964,13 +964,13 @@ class ComplianceKnowledgeGraph:
 
         entities = self.ner_model.extract(document_id)
 
-        
+
 
         # 2. 提取关系
 
         relations = self.relation_extractor.extract(document_id, entities)
 
-        
+
 
         # 3. 存储到图数据库
 
@@ -978,7 +978,7 @@ class ComplianceKnowledgeGraph:
 
         self.graph_db.create_relationships(relations)
 
-    
+
 
     def query_knowledge_graph(self, query: str):
 
@@ -986,7 +986,7 @@ class ComplianceKnowledgeGraph:
 
         知识图谱查询
 
-        
+
 
         示例查询：
 
@@ -1000,7 +1000,7 @@ class ComplianceKnowledgeGraph:
 
         pass
 
-    
+
 
     def knowledge_reasoning(self, start_entity: str, end_entity: str):
 
@@ -1008,7 +1008,7 @@ class ComplianceKnowledgeGraph:
 
         知识推理
 
-        
+
 
         - 发现隐含关系
 
@@ -1118,7 +1118,7 @@ def query_compliance_knowledge(question: str):
 
     使用Claude Skills for GRC查询合规知识
 
-    
+
 
     支持的合规框架：
 
@@ -1152,11 +1152,11 @@ def query_compliance_knowledge(question: str):
 
                 作为合规专家，请回答以下问题：
 
-                
+
 
                 {question}
 
-                
+
 
                 请提供：
 
@@ -1174,7 +1174,7 @@ def query_compliance_knowledge(question: str):
 
     )
 
-    
+
 
     return response.content[0].text
 
@@ -1210,7 +1210,7 @@ class ComplianceRAGSystem:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -1240,7 +1240,7 @@ class ComplianceRAGSystem:
 
         )
 
-    
+
 
     def ingest_document(self, file_path: str):
 
@@ -1256,7 +1256,7 @@ class ComplianceRAGSystem:
 
         documents = loader.load()
 
-        
+
 
         # 2. 分割文档
 
@@ -1270,13 +1270,13 @@ class ComplianceRAGSystem:
 
         chunks = text_splitter.split_documents(documents)
 
-        
+
 
         # 3. 存储到向量数据库
 
         self.vectorstore.add_documents(chunks)
 
-    
+
 
     def query(self, question: str):
 
@@ -1501,4 +1501,3 @@ class ComplianceRAGSystem:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: 活跃
-

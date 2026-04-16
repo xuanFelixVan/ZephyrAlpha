@@ -29,7 +29,7 @@ responsibility: ''
 
 > **核心职责**: Kill Switch紧急停止系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Kill Switch紧急停止系统蓝图设计相关内容
 
@@ -631,7 +631,7 @@ class ZephyrKillSwitch(KillSwitch):
 
         self.recovery_manager = RecoveryManager(config)
 
-    
+
 
     async def on_trigger(self, condition):
 
@@ -641,7 +641,7 @@ class ZephyrKillSwitch(KillSwitch):
 
             await self.audit_logger.log_stop(condition)
 
-    
+
 
     async def on_recovery(self, condition):
 
@@ -683,7 +683,7 @@ kill_switch:
 
       action: pause_trading
 
-  
+
 
   execution:
 
@@ -693,7 +693,7 @@ kill_switch:
 
     save_timeout: 30s
 
-  
+
 
   recovery:
 
@@ -715,7 +715,7 @@ kill_switch:
 
         risk_level: high
 
-  
+
 
   notification:
 
@@ -777,7 +777,7 @@ alerts:
 
     message: "Kill Switch频繁触发，请检查系统状态"
 
-  
+
 
   - name: long_stop
 
@@ -787,7 +787,7 @@ alerts:
 
     message: "Kill Switch停止时间过长，请尽快恢复"
 
-  
+
 
   - name: recovery_failed
 
@@ -1000,4 +1000,3 @@ alerts:
 
 
 **版本**: v1.0.0 | **更新**: 2026-04-07 | **状态**: 蓝图设计完成
-

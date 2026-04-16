@@ -34,7 +34,7 @@ estimated_effort: 40h
 
 > **核心职责**: 蓝图设计和架构规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：蓝图设计和架构规划相关内容
 
@@ -266,7 +266,7 @@ class TwitterAdapter:
 
         self.scraper = TwitterScraper()
 
-    
+
 
     async def stream_tweets(self, keywords: List[str]):
 
@@ -274,7 +274,7 @@ class TwitterAdapter:
 
         pass
 
-    
+
 
     async def fetch_historical_tweets(self, query: str, start_time: datetime):
 
@@ -282,7 +282,7 @@ class TwitterAdapter:
 
         pass
 
-    
+
 
     async def get_user_info(self, user_id: str):
 
@@ -346,7 +346,7 @@ class RedditAdapter:
 
         )
 
-    
+
 
     async def fetch_subreddit_posts(self, subreddit: str, limit: int = 100):
 
@@ -354,7 +354,7 @@ class RedditAdapter:
 
         pass
 
-    
+
 
     async def fetch_post_comments(self, post_id: str):
 
@@ -362,7 +362,7 @@ class RedditAdapter:
 
         pass
 
-    
+
 
     async def search_posts(self, query: str, subreddit: str = None):
 
@@ -412,7 +412,7 @@ class FREDAdapter:
 
         self.fred = fredapi.Fred(api_key=api_key)
 
-    
+
 
     async def fetch_series(self, series_id: str, start_date: datetime = None):
 
@@ -420,7 +420,7 @@ class FREDAdapter:
 
         pass
 
-    
+
 
     async def search_series(self, search_text: str):
 
@@ -428,7 +428,7 @@ class FREDAdapter:
 
         pass
 
-    
+
 
     async def get_series_info(self, series_id: str):
 
@@ -484,7 +484,7 @@ class SECEdgarAdapter:
 
         self.base_url = "https://www.sec.gov/cgi-bin/browse-edgar"
 
-    
+
 
     async def fetch_filing(self, ticker: str, filing_type: str):
 
@@ -492,7 +492,7 @@ class SECEdgarAdapter:
 
         pass
 
-    
+
 
     async def fetch_company_info(self, ticker: str):
 
@@ -500,7 +500,7 @@ class SECEdgarAdapter:
 
         pass
 
-    
+
 
     async def fetch_insider_trades(self, ticker: str):
 
@@ -582,7 +582,7 @@ class DataSourceManager:
 
         self.priority_scheduler = PriorityScheduler()
 
-    
+
 
     def register_adapter(self, name: str, adapter: DataSourceAdapter):
 
@@ -590,7 +590,7 @@ class DataSourceManager:
 
         pass
 
-    
+
 
     async def collect_data(self, data_type: str, params: dict):
 
@@ -598,7 +598,7 @@ class DataSourceManager:
 
         pass
 
-    
+
 
     def monitor_health(self):
 
@@ -606,7 +606,7 @@ class DataSourceManager:
 
         pass
 
-    
+
 
     def failover(self, failed_source: str):
 
@@ -1135,4 +1135,3 @@ class DataSourceManager:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

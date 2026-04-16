@@ -40,7 +40,7 @@ class ComplianceCheck:
     limit_value: float
     status: ComplianceStatus
     description: str
-    
+
     def to_dict(self) -> Dict:
         return {
             'check_name': self.check_name,
@@ -58,20 +58,20 @@ class RegulatoryReport:
     report_id: str
     report_type: str
     timestamp: datetime
-    
+
     fund_name: str
     fund_size: float
     reporting_period: str
-    
+
     compliance_checks: List[ComplianceCheck]
     overall_status: ComplianceStatus
-    
+
     risk_exposure: Dict[str, float]
     investment_limits: Dict[str, float]
-    
+
     violations: List[str]
     corrective_actions: List[str]
-    
+
     def to_dict(self) -> Dict:
         return {
             'report_id': self.report_id,
@@ -91,10 +91,10 @@ class RegulatoryReport:
 
 class ComplianceChecker:
     """合规检查器"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        
+
         self.limits = {
             'single_stock_max': 0.10,
             'single_industry_max': 0.30,
@@ -102,7 +102,7 @@ class ComplianceChecker:
             'cash_min': 0.05,
             'leverage_max': 1.4
         }
-    
+
     def check_single_stock_limit(
         self,
         portfolio: pd.DataFrame
@@ -110,9 +110,9 @@ class ComplianceChecker:
         """检查单股权重限制"""
         total_value = portfolio['value'].sum()
         max_weight = (portfolio['value'] / total_value).max()
-        
+
         status = ComplianceStatus.COMPLIANT if max_weight <= self.limits['single_stock_max'] else ComplianceStatus.VIOLATION
-        
+
         return ComplianceCheck(
             check_name="单股权重限制",
             requirement="单股权重≤10%",
@@ -121,7 +121,7 @@ class ComplianceChecker:
             status=status,
             description=f"最大单股权重为{max_weight:.2%}"
         )
-    
+
     def check_industry_limit(
         self,
         portfolio: pd.DataFrame
@@ -136,13 +136,13 @@ class ComplianceChecker:
                 status=ComplianceStatus.COMPLIANT,
                 description="未提供行业分类数据"
             )
-        
+
         total_value = portfolio['value'].sum()
         industry_weights = portfolio.groupby('industry')['value'].sum() / total_value
         max_industry_weight = industry_weights.max()
-        
+
         status = ComplianceStatus.COMPLIANT if max_industry_weight <= self.limits['single_industry_max'] else ComplianceStatus.VIOLATION
-        
+
         return ComplianceCheck(
             check_name="行业权重限制",
             requirement="单一行业权重≤30%",
@@ -151,7 +151,7 @@ class ComplianceChecker:
             status=status,
             description=f"最大行业权重为{max_industry_weight:.2%}"
         )
-    
+
     def check_cash_requirement(
         self,
         portfolio: pd.DataFrame
@@ -160,9 +160,9 @@ class ComplianceChecker:
         total_value = portfolio['value'].sum()
         cash_value = portfolio[portfolio['asset_type'] == 'currency']['value'].sum() if 'asset_type' in portfolio.columns else 0
         cash_ratio = cash_value / total_value
-        
+
         status = ComplianceStatus.COMPLIANT if cash_ratio >= self.limits['cash_min'] else ComplianceStatus.WARNING
-        
+
         return ComplianceCheck(
             check_name="现金最低要求",
             requirement="现金比例≥5%",
@@ -175,13 +175,13 @@ class ComplianceChecker:
 
 class RegulatoryReporter:
     """监管合规报告器主类"""
-    
+
     def __init__(self, config: Optional[Dict] = None):
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
         self.compliance_checker = ComplianceChecker()
         self.report_counter = 0
-    
+
     def generate_regulatory_report(
         self,
         portfolio: pd.DataFrame,
@@ -191,33 +191,33 @@ class RegulatoryReporter:
         """生成监管合规报告"""
         self.report_counter += 1
         report_id = f"REG_RPT_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{self.report_counter:06d}"
-        
+
         compliance_checks = [
             self.compliance_checker.check_single_stock_limit(portfolio),
             self.compliance_checker.check_industry_limit(portfolio),
             self.compliance_checker.check_cash_requirement(portfolio)
         ]
-        
+
         overall_status = ComplianceStatus.COMPLIANT
         if any(c.status == ComplianceStatus.VIOLATION for c in compliance_checks):
             overall_status = ComplianceStatus.VIOLATION
         elif any(c.status == ComplianceStatus.WARNING for c in compliance_checks):
             overall_status = ComplianceStatus.WARNING
-        
+
         violations = [c.description for c in compliance_checks if c.status == ComplianceStatus.VIOLATION]
-        
+
         corrective_actions = []
         if violations:
             corrective_actions.append("立即调整投资组合以满足监管要求")
-        
+
         risk_exposure = {
             'market_risk': portfolio['value'].sum() * 0.15,
             'liquidity_risk': portfolio['value'].sum() * 0.05,
             'concentration_risk': portfolio['value'].sum() * 0.03
         }
-        
+
         investment_limits = self.compliance_checker.limits
-        
+
         return RegulatoryReport(
             report_id=report_id,
             report_type="季度监管合规报告",
@@ -232,7 +232,7 @@ class RegulatoryReporter:
             violations=violations,
             corrective_actions=corrective_actions
         )
-    
+
     def generate_report_markdown(self, report: RegulatoryReport) -> str:
         """生成Markdown报告"""
         md = []
@@ -242,31 +242,31 @@ class RegulatoryReporter:
         md.append(f"\n**报告期间**: {report.reporting_period}")
         md.append(f"\n**基金规模**: ¥{report.fund_size:,.2f}")
         md.append(f"\n**整体合规状态**: {report.overall_status.value.upper()}")
-        
+
         md.append(f"\n## 合规检查项")
         md.append(f"\n| 检查项 | 要求 | 实际值 | 状态 |")
         md.append(f"\n|-------|------|--------|------|")
         for check in report.compliance_checks:
             md.append(f"\n| {check.check_name} | {check.requirement} | {check.actual_value:.2%} | {check.status.value} |")
-        
+
         if report.violations:
             md.append(f"\n## 违规事项")
             for violation in report.violations:
                 md.append(f"\n- 🚨 {violation}")
-        
+
         if report.corrective_actions:
             md.append(f"\n## 整改措施")
             for action in report.corrective_actions:
                 md.append(f"\n- {action}")
-        
+
         return "\n".join(md)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    
+
     reporter = RegulatoryReporter()
-    
+
     portfolio_data = [
         {'asset_id': '600519.SH', 'asset_name': '贵州茅台', 'asset_type': 'equity', 'industry': '食品饮料', 'value': 800000},
         {'asset_id': '000858.SZ', 'asset_name': '五粮液', 'asset_type': 'equity', 'industry': '食品饮料', 'value': 600000},
@@ -275,8 +275,8 @@ if __name__ == "__main__":
         {'asset_id': 'CASH_001', 'asset_name': '现金', 'asset_type': 'currency', 'industry': '现金', 'value': 200000},
     ]
     portfolio = pd.DataFrame(portfolio_data)
-    
+
     report = reporter.generate_regulatory_report(portfolio)
-    
+
     markdown_report = reporter.generate_report_markdown(report)
     print(markdown_report)

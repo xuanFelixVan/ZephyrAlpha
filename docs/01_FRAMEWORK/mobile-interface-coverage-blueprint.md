@@ -27,7 +27,7 @@ responsibility: ''
 
 > **核心职责**: Mobile Interface Coverage蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Mobile Interface Coverage蓝图设计相关内容
 
@@ -221,7 +221,7 @@ class MobileInterfaceBot:
 
     """移动端Telegram Bot"""
 
-    
+
 
     def __init__(self, token):
 
@@ -229,7 +229,7 @@ class MobileInterfaceBot:
 
         self.dispatcher = self.updater.dispatcher
 
-        
+
 
         # 注册命令处理器
 
@@ -243,7 +243,7 @@ class MobileInterfaceBot:
 
         self.dispatcher.add_handler(CallbackQueryHandler(self.button_callback))
 
-        
+
 
     def start(self, update: Update, context: CallbackContext):
 
@@ -261,11 +261,11 @@ class MobileInterfaceBot:
 
         ]
 
-        
+
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        
+
 
         update.message.reply_text(
 
@@ -277,7 +277,7 @@ class MobileInterfaceBot:
 
         )
 
-    
+
 
     def query_position(self, update: Update, context: CallbackContext):
 
@@ -287,7 +287,7 @@ class MobileInterfaceBot:
 
         positions = self._get_positions()
 
-        
+
 
         message = "📊 当前持仓:\n\n"
 
@@ -297,11 +297,11 @@ class MobileInterfaceBot:
 
             message += f"  盈亏: {pos['pnl']:,.2f} ({pos['pnl_pct']:.2f}%)\n\n"
 
-        
+
 
         update.message.reply_text(message)
 
-    
+
 
     def query_risk(self, update: Update, context: CallbackContext):
 
@@ -311,7 +311,7 @@ class MobileInterfaceBot:
 
         risk_data = self._get_risk_data()
 
-        
+
 
         message = "⚠️ 风险监控:\n\n"
 
@@ -323,11 +323,11 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
         message += f"• 夏普比率: {risk_data['sharpe']:.2f}\n"
 
-        
+
 
         update.message.reply_text(message)
 
-    
+
 
     def approve_trade(self, update: Update, context: CallbackContext):
 
@@ -337,7 +337,7 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
         pending_trades = self._get_pending_trades()
 
-        
+
 
         if not pending_trades:
 
@@ -345,13 +345,13 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
             return
 
-        
+
 
         # 显示第一笔待审批交易
 
         trade = pending_trades[0]
 
-        
+
 
         keyboard = [
 
@@ -365,11 +365,11 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
         ]
 
-        
+
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        
+
 
         message = f"📋 待审批交易:\n\n"
 
@@ -383,11 +383,11 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
         message += f"• 原因: {trade['reason']}\n"
 
-        
+
 
         update.message.reply_text(message, reply_markup=reply_markup)
 
-    
+
 
     def button_callback(self, update: Update, context: CallbackContext):
 
@@ -397,11 +397,11 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
         query.answer()
 
-        
+
 
         data = query.data
 
-        
+
 
         if data == 'position':
 
@@ -431,7 +431,7 @@ message += f"• ES (95%): {risk_data['es']:,.2f}\n"
 
             query.edit_message_text(text=f"❌ 交易 {trade_id} 已拒绝！")
 
-    
+
 
     def run(self):
 
@@ -473,7 +473,7 @@ def render_mobile_interface():
 
     )
 
-    
+
 
     # 移动端CSS优化
 
@@ -505,7 +505,7 @@ def render_mobile_interface():
 
     }
 
-    
+
 
     /* 按钮优化 */
 
@@ -523,19 +523,19 @@ def render_mobile_interface():
 
     """, unsafe_allow_html=True)
 
-    
+
 
     # 标题
 
     st.title("📊 清风量化")
 
-    
+
 
     # 快捷功能按钮
 
     col1, col2 = st.columns(2)
 
-    
+
 
     with col1:
 
@@ -543,7 +543,7 @@ def render_mobile_interface():
 
             st.session_state['view'] = 'position'
 
-    
+
 
     with col2:
 
@@ -551,7 +551,7 @@ def render_mobile_interface():
 
             st.session_state['view'] = 'risk'
 
-    
+
 
     # 根据选择显示内容
 
@@ -573,31 +573,31 @@ def render_position_view():
 
     st.subheader("📊 当前持仓")
 
-    
+
 
     # 持仓概览
 
     col1, col2, col3 = st.columns(3)
 
-    
+
 
     with col1:
 
         st.metric("总资产", "1,050,000")
 
-    
+
 
     with col2:
 
         st.metric("总盈亏", "50,000", "+5.0%")
 
-    
+
 
     with col3:
 
         st.metric("持仓数", "15只")
 
-    
+
 
     # 持仓列表
 
@@ -826,4 +826,3 @@ def is_mobile():
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     print("=" * 50)
     print("ZephyrAlpha量化交易系统 API")
     print("=" * 50)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     print()
     print("=" * 50)
     print()
-    
+
     uvicorn.run(
         "src.api.main:app",
         host="0.0.0.0",

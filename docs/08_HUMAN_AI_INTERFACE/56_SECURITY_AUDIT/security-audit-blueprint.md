@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: SonarQube + Trivy  
+**主方案**: SonarQube + Trivy
 
 **集成**: 集成到CI/CD流程
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

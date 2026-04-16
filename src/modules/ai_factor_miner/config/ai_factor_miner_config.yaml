@@ -8,7 +8,7 @@ AI因子挖掘模块配置文件
 ai_factor_miner:
   enabled: true
   mode: "production"  # development | production
-  
+
   # 深度学习引擎配置
   deep_learning:
     model_type: "lstm"  # lstm | transformer | gnn
@@ -20,23 +20,23 @@ ai_factor_miner:
     epochs: 100
     early_stopping_patience: 10
     lookback_window: 20
-    
+
     # LSTM特定配置
     lstm:
       bidirectional: false
       attention: true
-      
+
     # Transformer特定配置
     transformer:
       nhead: 8
       dim_feedforward: 512
       num_encoder_layers: 3
-      
+
     # GNN特定配置
     gnn:
       hidden_channels: 64
       num_layers: 3
-      
+
   # 强化学习引擎配置
   reinforcement_learning:
     algorithm: "ppo"  # dqn | ppo | a2c
@@ -44,13 +44,13 @@ ai_factor_miner:
     gamma: 0.99
     buffer_size: 100000
     batch_size: 64
-    
+
     # DQN特定配置
     dqn:
       target_update_freq: 1000
       exploration_fraction: 0.1
       exploration_final_eps: 0.01
-      
+
     # PPO特定配置
     ppo:
       n_steps: 2048
@@ -58,13 +58,13 @@ ai_factor_miner:
       gae_lambda: 0.95
       clip_range: 0.2
       ent_coef: 0.01
-      
+
     # A2C特定配置
     a2c:
       n_steps: 5
       vf_coef: 0.5
       ent_coef: 0.01
-      
+
   # 遗传算法引擎配置
   genetic_algorithm:
     population_size: 1000
@@ -76,14 +76,14 @@ ai_factor_miner:
     max_complexity: 50
     max_samples: 0.9
     stopping_criteria: 0.01
-    
+
     # 函数集配置
     function_set:
       arithmetic: ["add", "sub", "mul", "div", "sqrt", "log", "abs", "neg", "inv"]
       trigonometric: ["sin", "cos", "tan"]
-      custom: ["returns", "volatility", "zscore", "rank", "delay", 
+      custom: ["returns", "volatility", "zscore", "rank", "delay",
                "ts_mean", "ts_std", "ts_corr", "ts_max", "ts_min"]
-               
+
   # 因子评估配置
   evaluation:
     ic_threshold: 0.03
@@ -91,7 +91,7 @@ ai_factor_miner:
     correlation_threshold: 0.5
     stability_threshold: 0.6
     min_sample_size: 1000
-    
+
     # 评估指标
     metrics:
       - ic_mean
@@ -101,7 +101,7 @@ ai_factor_miner:
       - ic_p_value
       - stability_score
       - monotonicity_score
-      
+
   # 因子注册配置
   registry:
     db_path: "data/factors/factor_registry.db"
@@ -111,7 +111,7 @@ ai_factor_miner:
       - "testing"
       - "active"
       - "deprecated"
-      
+
   # 因子筛选配置
   filtering:
     min_ic: 0.03
@@ -120,7 +120,7 @@ ai_factor_miner:
     min_unique_values: 100
     correlation_threshold: 0.8
     max_factors_per_method: 10
-    
+
   # 性能配置
   performance:
     n_jobs: -1  # 使用所有CPU核心
@@ -129,14 +129,14 @@ ai_factor_miner:
     memory_limit: "16GB"
     gpu_enabled: true
     gpu_device: "cuda:0"
-    
+
   # 监控配置
   monitoring:
     metrics_logging: true
     factor_tracking: true
     performance_alert_threshold: 0.5
     log_level: "INFO"
-    
+
   # 存储配置
   storage:
     model_path: "models/ai_factor_miner/"

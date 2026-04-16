@@ -263,7 +263,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[风险贡献分析]
 
@@ -271,7 +271,7 @@ graph LR
 
     B --> G[压力测试系统]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -393,13 +393,13 @@ import pandas as pd
 
 class VaRESCalculator:
 
-    
+
 
     def __init__(self, confidence_level: float = 0.95):
 
         self.confidence_level = confidence_level
 
-        
+
 
     def historical_var(
 
@@ -415,7 +415,7 @@ class VaRESCalculator:
 
         return -np.percentile(returns, (1 - confidence) * 100)
 
-    
+
 
     def parametric_var(
 
@@ -435,7 +435,7 @@ class VaRESCalculator:
 
         return -(mu + z * sigma)
 
-    
+
 
     def historical_es(
 
@@ -455,7 +455,7 @@ class VaRESCalculator:
 
         return -np.mean(tail_returns) if len(tail_returns) > 0 else var
 
-    
+
 
     def parametric_es(
 
@@ -531,13 +531,13 @@ class VaRESCalculator:
 
 class HistoricalVaR:
 
-    
+
 
     def __init__(self, confidence_level: float = 0.95):
 
         self.confidence_level = confidence_level
 
-    
+
 
     def calculate_var(
 
@@ -553,11 +553,11 @@ class HistoricalVaR:
 
         计算历史模拟VaR
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -565,7 +565,7 @@ class HistoricalVaR:
 
         var_percentile = np.percentile(
 
-            returns, 
+            returns,
 
             (1 - self.confidence_level) * 100
 
@@ -573,11 +573,11 @@ class HistoricalVaR:
 
         var_value = -var_percentile * portfolio_value
 
-        
+
 
         return var_value, -var_percentile
 
-    
+
 
     def calculate_es(
 
@@ -593,11 +593,11 @@ class HistoricalVaR:
 
         计算历史模拟ES (Expected Shortfall)
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -611,11 +611,11 @@ class HistoricalVaR:
 
         )
 
-        
+
 
         tail_returns = returns[returns <= var_percentile]
 
-        
+
 
         if len(tail_returns) == 0:
 
@@ -625,11 +625,11 @@ class HistoricalVaR:
 
             es_percentile = np.mean(tail_returns)
 
-        
+
 
         es_value = -es_percentile * portfolio_value
 
-        
+
 
         return es_value, -es_percentile
 
@@ -659,7 +659,7 @@ class HistoricalVaR:
 
 class ParametricVaR:
 
-    
+
 
     def __init__(
 
@@ -675,7 +675,7 @@ class ParametricVaR:
 
         self.distribution = distribution
 
-    
+
 
     def calculate_var(
 
@@ -691,11 +691,11 @@ class ParametricVaR:
 
         计算参数法VaR
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -705,7 +705,7 @@ class ParametricVaR:
 
         sigma = np.std(returns, ddof=1)
 
-        
+
 
         if self.distribution == "normal":
 
@@ -717,17 +717,17 @@ class ParametricVaR:
 
             z_score = stats.t.ppf(self.confidence_level, df)
 
-        
+
 
         var_percentile = mu - z_score * sigma
 
         var_value = -var_percentile * portfolio_value
 
-        
+
 
         return var_value, -var_percentile
 
-    
+
 
     def calculate_es(
 
@@ -743,11 +743,11 @@ class ParametricVaR:
 
         计算参数法ES
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -757,7 +757,7 @@ class ParametricVaR:
 
         sigma = np.std(returns, ddof=1)
 
-        
+
 
         if self.distribution == "normal":
 
@@ -775,15 +775,15 @@ class ParametricVaR:
 
                            stats.t.pdf(z_score, df) / (1 - self.confidence_level)
 
-        
+
 
         es_value = -es_percentile * portfolio_value
 
-        
+
 
         return es_value, -es_percentile
 
-    
+
 
     def _estimate_degrees_of_freedom(
 
@@ -831,7 +831,7 @@ class ParametricVaR:
 
 class MonteCarloVaR:
 
-    
+
 
     def __init__(
 
@@ -851,7 +851,7 @@ class MonteCarloVaR:
 
         self.distribution = distribution
 
-    
+
 
     def calculate_var(
 
@@ -869,7 +869,7 @@ class MonteCarloVaR:
 
         计算蒙特卡洛VaR
 
-        
+
 
         参数:
 
@@ -877,7 +877,7 @@ class MonteCarloVaR:
 
             weights: 组合权重
 
-            
+
 
         返回:
 
@@ -887,15 +887,15 @@ class MonteCarloVaR:
 
         cov_matrix = returns.cov().values
 
-        
+
 
         simulated_returns = self._simulate_returns(mean_returns, cov_matrix)
 
-        
+
 
         portfolio_returns = simulated_returns @ weights
 
-        
+
 
         var_percentile = np.percentile(
 
@@ -907,11 +907,11 @@ class MonteCarloVaR:
 
         var_value = -var_percentile * portfolio_value
 
-        
+
 
         return var_value, -var_percentile
 
-    
+
 
     def calculate_es(
 
@@ -929,7 +929,7 @@ class MonteCarloVaR:
 
         计算蒙特卡洛ES
 
-        
+
 
         参数:
 
@@ -937,7 +937,7 @@ class MonteCarloVaR:
 
             weights: 组合权重
 
-            
+
 
         返回:
 
@@ -947,15 +947,15 @@ class MonteCarloVaR:
 
         cov_matrix = returns.cov().values
 
-        
+
 
         simulated_returns = self._simulate_returns(mean_returns, cov_matrix)
 
-        
+
 
         portfolio_returns = simulated_returns @ weights
 
-        
+
 
         var_percentile = np.percentile(
 
@@ -965,21 +965,21 @@ class MonteCarloVaR:
 
         )
 
-        
+
 
         tail_returns = portfolio_returns[portfolio_returns <= var_percentile]
 
         es_percentile = np.mean(tail_returns) if len(tail_returns) > 0 else var_percentile
 
-        
+
 
         es_value = -es_percentile * portfolio_value
 
-        
+
 
         return es_value, -es_percentile
 
-    
+
 
     def _simulate_returns(
 
@@ -993,11 +993,11 @@ class MonteCarloVaR:
 
         n_assets = len(mean)
 
-        
+
 
         L = np.linalg.cholesky(cov)
 
-        
+
 
         if self.distribution == "normal":
 
@@ -1009,11 +1009,11 @@ class MonteCarloVaR:
 
             z = np.random.standard_t(df, (self.n_simulations, n_assets))
 
-        
+
 
         simulated = z @ L.T + mean
 
-        
+
 
         return simulated
 
@@ -1055,7 +1055,7 @@ class MonteCarloVaR:
 
 class VaRESMonitor:
 
-    
+
 
     def __init__(
 
@@ -1077,7 +1077,7 @@ class VaRESMonitor:
 
         self.monte_carlo_var = MonteCarloVaR()
 
-    
+
 
     def calculate_all_metrics(
 
@@ -1091,13 +1091,13 @@ class VaRESMonitor:
 
         metrics = {}
 
-        
+
 
         for conf in self.confidence_levels:
 
             self.historical_var.confidence_level = conf
 
-            
+
 
             var_value, var_pct = self.historical_var.calculate_var(
 
@@ -1109,7 +1109,7 @@ class VaRESMonitor:
 
             metrics[f"var_{int(conf*100)}_pct"] = var_pct
 
-            
+
 
             es_value, es_pct = self.historical_var.calculate_es(
 
@@ -1121,7 +1121,7 @@ class VaRESMonitor:
 
             metrics[f"es_{int(conf*100)}_pct"] = es_pct
 
-        
+
 
         for period in self.holding_periods:
 
@@ -1133,11 +1133,11 @@ class VaRESMonitor:
 
                 metrics[f"var_{period}d_{int(conf*100)}_pct"] = var_nd
 
-        
+
 
         return metrics
 
-    
+
 
     def check_thresholds(
 
@@ -1153,7 +1153,7 @@ class VaRESMonitor:
 
         alerts = []
 
-        
+
 
         for metric_name, value in metrics.items():
 
@@ -1161,7 +1161,7 @@ class VaRESMonitor:
 
                 threshold = thresholds[metric_name]
 
-                
+
 
                 if value < threshold:
 
@@ -1177,7 +1177,7 @@ class VaRESMonitor:
 
                     })
 
-        
+
 
         return alerts
 
@@ -1193,13 +1193,13 @@ class VaRESMonitor:
 
 class VaRBacktester:
 
-    
+
 
     def __init__(self, confidence_level: float = 0.95):
 
         self.confidence_level = confidence_level
 
-    
+
 
     def kupiec_test(
 
@@ -1213,11 +1213,11 @@ class VaRBacktester:
 
         """
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -1231,7 +1231,7 @@ class VaRBacktester:
 
         p = 1 - self.confidence_level
 
-        
+
 
         if x == 0 or x == n:
 
@@ -1251,7 +1251,7 @@ class VaRBacktester:
 
             p_value = 1 - stats.chi2.cdf(lr_stat, 1)
 
-        
+
 
         return {
 
@@ -1275,7 +1275,7 @@ class VaRBacktester:
 
         }
 
-    
+
 
     def christoffersen_test(
 
@@ -1289,11 +1289,11 @@ class VaRBacktester:
 
         """
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -1303,7 +1303,7 @@ class VaRBacktester:
 
         breaches = (actual_returns < -var_estimates).astype(int)
 
-        
+
 
         n00 = np.sum((breaches[:-1] == 0) & (breaches[1:] == 0))
 
@@ -1313,7 +1313,7 @@ class VaRBacktester:
 
         n11 = np.sum((breaches[:-1] == 1) & (breaches[1:] == 1))
 
-        
+
 
         if n01 + n00 == 0 or n10 + n11 == 0:
 
@@ -1329,7 +1329,7 @@ class VaRBacktester:
 
             p = (n01 + n11) / (n00 + n01 + n10 + n11)
 
-            
+
 
             lr_stat = -2 * (
 
@@ -1343,7 +1343,7 @@ class VaRBacktester:
 
             p_value = 1 - stats.chi2.cdf(lr_stat, 1)
 
-        
+
 
         return {
 
@@ -1365,7 +1365,7 @@ class VaRBacktester:
 
         }
 
-    
+
 
     def generate_backtest_report(
 
@@ -1383,7 +1383,7 @@ class VaRBacktester:
 
         christoffersen_result = self.christoffersen_test(actual_returns, var_estimates)
 
-        
+
 
         return {
 
@@ -1421,7 +1421,7 @@ class VaRESMonitorDashboard:
 
     """VaR/ES实时监控面板"""
 
-    
+
 
     def __init__(self):
 
@@ -1429,7 +1429,7 @@ class VaRESMonitorDashboard:
 
         self.backtester = VaRBacktester()
 
-    
+
 
     def get_dashboard_metrics(
 
@@ -1447,7 +1447,7 @@ class VaRESMonitorDashboard:
 
         metrics = self.monitor.calculate_all_metrics(returns, portfolio_value)
 
-        
+
 
         thresholds = {
 
@@ -1461,11 +1461,11 @@ class VaRESMonitorDashboard:
 
         }
 
-        
+
 
         alerts = self.monitor.check_thresholds(metrics, thresholds)
 
-        
+
 
         return {
 
@@ -1481,7 +1481,7 @@ class VaRESMonitorDashboard:
 
         }
 
-    
+
 
     def _calculate_risk_level(
 
@@ -1497,7 +1497,7 @@ class VaRESMonitorDashboard:
 
         breach_count = 0
 
-        
+
 
         for metric_name, value in metrics.items():
 
@@ -1505,7 +1505,7 @@ class VaRESMonitorDashboard:
 
                 breach_count += 1
 
-        
+
 
         if breach_count >= 3:
 
@@ -1537,7 +1537,7 @@ class VaRESAPI:
 
     """VaR/ES API接口"""
 
-    
+
 
     @endpoint("/api/v1/var_es/calculate")
 
@@ -1553,7 +1553,7 @@ class VaRESAPI:
 
         """计算VaR和ES"""
 
-        
+
 
     @endpoint("/api/v1/var_es/backtest")
 
@@ -1571,7 +1571,7 @@ class VaRESAPI:
 
         """VaR回测验证"""
 
-        
+
 
     @endpoint("/api/v1/var_es/alerts")
 
@@ -1632,12 +1632,3 @@ class VaRESAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-
-
-

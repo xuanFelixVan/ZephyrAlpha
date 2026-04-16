@@ -50,7 +50,7 @@ priority: P1
 
 > **核心职责**: 投资政策声明(IPS)管理系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资政策声明(IPS)管理系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P1
 
 > **核心职责**: Ips Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Ips Management蓝图设计相关内容
 
@@ -530,7 +530,7 @@ class InvestmentObjectiveManager:
 
     """投资目标管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -538,7 +538,7 @@ class InvestmentObjectiveManager:
 
         self.risk_tolerance: Optional[RiskTolerance] = None
 
-    
+
 
     def set_return_objective(self, objective: ReturnObjective):
 
@@ -546,7 +546,7 @@ class InvestmentObjectiveManager:
 
         self.return_objectives.append(objective)
 
-    
+
 
     def set_risk_tolerance(self, tolerance: RiskTolerance):
 
@@ -554,7 +554,7 @@ class InvestmentObjectiveManager:
 
         self.risk_tolerance = tolerance
 
-    
+
 
     def get_primary_objective(self) -> Optional[ReturnObjective]:
 
@@ -566,9 +566,9 @@ class InvestmentObjectiveManager:
 
         return min(self.return_objectives, key=lambda x: x.priority)
 
-    
 
-    def assess_risk_profile(self, 
+
+    def assess_risk_profile(self,
 
                            answers: Dict[str, int]) -> RiskToleranceLevel:
 
@@ -578,7 +578,7 @@ class InvestmentObjectiveManager:
 
         avg_score = total_score / len(answers) if answers else 0
 
-        
+
 
         if avg_score < 1.5:
 
@@ -600,9 +600,9 @@ class InvestmentObjectiveManager:
 
             return RiskToleranceLevel.AGGRESSIVE
 
-    
 
-    def get_default_risk_params(self, 
+
+    def get_default_risk_params(self,
 
                                level: RiskToleranceLevel) -> Dict:
 
@@ -736,7 +736,7 @@ class InvestmentConstraintManager:
 
     """投资约束管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -746,7 +746,7 @@ class InvestmentConstraintManager:
 
         self.other_constraint: Optional[OtherConstraint] = None
 
-    
+
 
     def set_liquidity_constraint(self, constraint: LiquidityConstraint):
 
@@ -754,7 +754,7 @@ class InvestmentConstraintManager:
 
         self.liquidity_constraint = constraint
 
-    
+
 
     def set_time_horizon_constraint(self, constraint: TimeHorizonConstraint):
 
@@ -762,7 +762,7 @@ class InvestmentConstraintManager:
 
         self.time_horizon_constraint = constraint
 
-    
+
 
     def set_other_constraint(self, constraint: OtherConstraint):
 
@@ -770,9 +770,9 @@ class InvestmentConstraintManager:
 
         self.other_constraint = constraint
 
-    
 
-    def check_liquidity(self, 
+
+    def check_liquidity(self,
 
                        portfolio_value: float,
 
@@ -786,31 +786,31 @@ class InvestmentConstraintManager:
 
             return True, "无流动性约束"
 
-        
+
 
         cash_ratio = cash_position / portfolio_value
 
         illiquid_ratio = illiquid_position / portfolio_value
 
-        
+
 
         if cash_ratio < self.liquidity_constraint.min_cash_ratio:
 
             return False, f"现金比例{cash_ratio:.2%}低于最低要求{self.liquidity_constraint.min_cash_ratio:.2%}"
 
-        
+
 
         if illiquid_ratio > self.liquidity_constraint.max_illiquid_ratio:
 
             return False, f"非流动性资产比例{illiquid_ratio:.2%}超过上限{self.liquidity_constraint.max_illiquid_ratio:.2%}"
 
-        
+
 
         return True, "流动性约束满足"
 
-    
 
-    def check_exclusion(self, 
+
+    def check_exclusion(self,
 
                        stock_code: str,
 
@@ -822,19 +822,19 @@ class InvestmentConstraintManager:
 
             return True, "无排除约束"
 
-        
+
 
         if stock_code in self.other_constraint.excluded_stocks:
 
             return False, f"股票{stock_code}在排除列表中"
 
-        
+
 
         if sector in self.other_constraint.excluded_sectors:
 
             return False, f"行业{sector}在排除列表中"
 
-        
+
 
         return True, "排除约束满足"
 
@@ -888,7 +888,7 @@ class AssetAllocationPolicyManager:
 
     """资产配置政策管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -898,7 +898,7 @@ class AssetAllocationPolicyManager:
 
         self.tactical_deviation_limit: float = 0.10
 
-    
+
 
     def set_asset_policy(self, policy: AssetClassPolicy):
 
@@ -906,7 +906,7 @@ class AssetAllocationPolicyManager:
 
         self.asset_policies[policy.asset_class] = policy
 
-    
+
 
     def set_rebalance_policy(self, policy: RebalancePolicy):
 
@@ -914,7 +914,7 @@ class AssetAllocationPolicyManager:
 
         self.rebalance_policy = policy
 
-    
+
 
     def get_target_allocation(self) -> Dict[str, float]:
 
@@ -922,13 +922,13 @@ class AssetAllocationPolicyManager:
 
         return {
 
-            ac: policy.target_weight 
+            ac: policy.target_weight
 
             for ac, policy in self.asset_policies.items()
 
         }
 
-    
+
 
     def check_allocation_compliance(self,
 
@@ -938,13 +938,13 @@ class AssetAllocationPolicyManager:
 
         violations = []
 
-        
+
 
         for asset_class, policy in self.asset_policies.items():
 
             current = current_weights.get(asset_class, 0)
 
-            
+
 
             if current < policy.min_weight:
 
@@ -974,11 +974,11 @@ class AssetAllocationPolicyManager:
 
                 })
 
-        
+
 
         return violations
 
-    
+
 
     def need_rebalance(self,
 
@@ -990,7 +990,7 @@ class AssetAllocationPolicyManager:
 
             return False
 
-        
+
 
         for asset_class, policy in self.asset_policies.items():
 
@@ -998,13 +998,13 @@ class AssetAllocationPolicyManager:
 
             deviation = abs(current - policy.target_weight)
 
-            
+
 
             if deviation > policy.rebalance_threshold:
 
                 return True
 
-        
+
 
         return False
 
@@ -1056,7 +1056,7 @@ class RiskPolicyManager:
 
     """风险管理政策管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -1064,7 +1064,7 @@ class RiskPolicyManager:
 
         self.stop_loss_policy: Optional[StopLossPolicy] = None
 
-    
+
 
     def set_risk_limit(self, limit: RiskLimit):
 
@@ -1072,7 +1072,7 @@ class RiskPolicyManager:
 
         self.risk_limits[limit.limit_type] = limit
 
-    
+
 
     def set_stop_loss_policy(self, policy: StopLossPolicy):
 
@@ -1080,7 +1080,7 @@ class RiskPolicyManager:
 
         self.stop_loss_policy = policy
 
-    
+
 
     def check_position_limit(self,
 
@@ -1092,13 +1092,13 @@ class RiskPolicyManager:
 
         limit = self.risk_limits.get('single_stock')
 
-        
+
 
         if not limit:
 
             return True, "无持仓限额"
 
-        
+
 
         if weight > limit.limit_value:
 
@@ -1110,11 +1110,11 @@ class RiskPolicyManager:
 
                 return True, f"警告：权重{weight:.2%}超过软限额{limit.limit_value:.2%}"
 
-        
+
 
         return True, "持仓限额满足"
 
-    
+
 
     def check_sector_limit(self,
 
@@ -1126,13 +1126,13 @@ class RiskPolicyManager:
 
         limit = self.risk_limits.get('sector')
 
-        
+
 
         if not limit:
 
             return True, "无行业限额"
 
-        
+
 
         if sector_weight > limit.limit_value:
 
@@ -1140,11 +1140,11 @@ class RiskPolicyManager:
 
                 return False, f"行业{sector}权重{sector_weight:.2%}超过限额{limit.limit_value:.2%}"
 
-        
+
 
         return True, "行业限额满足"
 
-    
+
 
     def check_stop_loss(self,
 
@@ -1160,17 +1160,17 @@ class RiskPolicyManager:
 
             return False, "无止损政策"
 
-        
+
 
         loss_pct = (current_price - entry_price) / entry_price
 
-        
+
 
         if loss_pct < -self.stop_loss_policy.single_stock_stop:
 
             return True, f"触发止损：亏损{abs(loss_pct):.2%}超过止损线{self.stop_loss_policy.single_stock_stop:.2%}"
 
-        
+
 
         return False, "未触发止损"
 
@@ -1224,7 +1224,7 @@ class ReviewComplianceManager:
 
     """审查与合规管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -1232,7 +1232,7 @@ class ReviewComplianceManager:
 
         self.compliance_history: List[ComplianceResult] = []
 
-    
+
 
     def create_review_schedule(self, schedule: ReviewSchedule):
 
@@ -1240,7 +1240,7 @@ class ReviewComplianceManager:
 
         self.review_schedules.append(schedule)
 
-    
+
 
     def check_due_reviews(self) -> List[ReviewSchedule]:
 
@@ -1256,7 +1256,7 @@ class ReviewComplianceManager:
 
         ]
 
-    
+
 
     def comprehensive_compliance_check(self,
 
@@ -1276,7 +1276,7 @@ class ReviewComplianceManager:
 
         warnings = []
 
-        
+
 
         if objective_manager.risk_tolerance:
 
@@ -1294,7 +1294,7 @@ class ReviewComplianceManager:
 
                 })
 
-        
+
 
         if constraint_manager.liquidity_constraint:
 
@@ -1314,7 +1314,7 @@ class ReviewComplianceManager:
 
                 })
 
-        
+
 
         if allocation_manager.asset_policies:
 
@@ -1324,7 +1324,7 @@ class ReviewComplianceManager:
 
             violations.extend(allocation_violations)
 
-        
+
 
         if risk_manager.stop_loss_policy:
 
@@ -1342,7 +1342,7 @@ class ReviewComplianceManager:
 
                     warnings.append(f"{stock}: {msg}")
 
-        
+
 
         result = ComplianceResult(
 
@@ -1356,13 +1356,13 @@ class ReviewComplianceManager:
 
         )
 
-        
+
 
         self.compliance_history.append(result)
 
         return result
 
-    
+
 
     def generate_review_report(self,
 
@@ -1378,7 +1378,7 @@ class ReviewComplianceManager:
 
         report += f"审查日期: {datetime.now().strftime('%Y-%m-%d')}\n\n"
 
-        
+
 
         report += "合规状态:\n"
 
@@ -1390,7 +1390,7 @@ class ReviewComplianceManager:
 
             report += f"  ❌ 存在{len(compliance_result.violations)}项违规\n"
 
-        
+
 
         if compliance_result.violations:
 
@@ -1400,7 +1400,7 @@ class ReviewComplianceManager:
 
                 report += f"  - {v['type']}: {v}\n"
 
-        
+
 
         if compliance_result.warnings:
 
@@ -1410,7 +1410,7 @@ class ReviewComplianceManager:
 
                 report += f"  - {w}\n"
 
-        
+
 
         return report
 
@@ -1448,7 +1448,7 @@ class InvestmentPolicyStatement:
 
     last_updated: date
 
-    
+
 
     # 投资目标
 
@@ -1456,7 +1456,7 @@ class InvestmentPolicyStatement:
 
     risk_tolerance: RiskTolerance
 
-    
+
 
     # 投资约束
 
@@ -1466,7 +1466,7 @@ class InvestmentPolicyStatement:
 
     other_constraints: OtherConstraint
 
-    
+
 
     # 资产配置政策
 
@@ -1474,7 +1474,7 @@ class InvestmentPolicyStatement:
 
     rebalance_policy: RebalancePolicy
 
-    
+
 
     # 风险管理政策
 
@@ -1482,7 +1482,7 @@ class InvestmentPolicyStatement:
 
     stop_loss_policy: StopLossPolicy
 
-    
+
 
     # 审查安排
 
@@ -1490,7 +1490,7 @@ class InvestmentPolicyStatement:
 
     next_review_date: date
 
-    
+
 
     # 签署
 
@@ -1504,13 +1504,13 @@ class IPSGenerator:
 
     """IPS生成器"""
 
-    
+
 
     def __init__(self):
 
         self.ips_counter = 0
 
-    
+
 
     def generate_ips(self,
 
@@ -1528,7 +1528,7 @@ class IPSGenerator:
 
         self.ips_counter += 1
 
-        
+
 
         return InvestmentPolicyStatement(
 
@@ -1568,7 +1568,7 @@ class IPSGenerator:
 
         )
 
-    
+
 
     def export_ips_document(self, ips: InvestmentPolicyStatement) -> str:
 
@@ -1606,7 +1606,7 @@ class IPSGenerator:
 
             doc += f"   - {obj.objective_type.value}: {obj.target_return:.2%}\n"
 
-        
+
 
         doc += f"""
 
@@ -1652,7 +1652,7 @@ class IPSGenerator:
 
             doc += f"   {asset_class}: {policy.target_weight:.2%} ({policy.min_weight:.2%}-{policy.max_weight:.2%})\n"
 
-        
+
 
         doc += f"""
 
@@ -1670,7 +1670,7 @@ class IPSGenerator:
 
             doc += f"   - {limit_type}: {limit.limit_value:.2%}\n"
 
-        
+
 
         doc += f"""
 
@@ -1867,4 +1867,3 @@ class IPSGenerator:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

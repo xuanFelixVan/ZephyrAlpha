@@ -586,7 +586,7 @@ class SagaCoordinator:
 
 
 
-    
+
 
 
 
@@ -606,7 +606,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -626,7 +626,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -646,7 +646,7 @@ class SagaCoordinator:
 
 
 
-            
+
 
 
 
@@ -702,7 +702,7 @@ class SagaCoordinator:
 
 
 
-                    
+
 
 
 
@@ -710,7 +710,7 @@ class SagaCoordinator:
 
 
 
-                
+
 
 
 
@@ -726,7 +726,7 @@ class SagaCoordinator:
 
 
 
-                
+
 
 
 
@@ -742,7 +742,7 @@ class SagaCoordinator:
 
 
 
-        
+
 
 
 
@@ -790,7 +790,7 @@ class SagaParticipant:
 
 
 
-    
+
 
 
 
@@ -806,7 +806,7 @@ class SagaParticipant:
 
 
 
-        
+
 
 
 
@@ -834,7 +834,7 @@ class SagaParticipant:
 
 
 
-        
+
 
 
 
@@ -878,7 +878,7 @@ class SagaParticipant:
 
 
 
-                
+
 
 
 
@@ -894,7 +894,7 @@ class SagaParticipant:
 
 
 
-            
+
 
 
 
@@ -914,7 +914,7 @@ class SagaParticipant:
 
 
 
-            
+
 
 
 
@@ -938,7 +938,7 @@ return CompensationResult.skipped(f"ﻛﭦﮒ۰{tx_id}ﻛﺕﮒﮒ?)
 
 
 
-            
+
 
 
 
@@ -986,7 +986,7 @@ return CompensationResult.skipped(f"ﻛﭦﮒ۰{tx_id}ﻛﺕﮒﮒ?)
 
 
 
-                
+
 
 
 
@@ -998,7 +998,7 @@ return CompensationResult.skipped(f"ﻛﭦﮒ۰{tx_id}ﻛﺕﮒﮒ?)
 
 
 
-            
+
 
 
 
@@ -1168,7 +1168,7 @@ engine_id VARCHAR(32) NOT NULL,        -- ﮒﺙﮔﮔﻟﺁ
 
 
 
-    
+
 
 
 
@@ -1240,7 +1240,7 @@ CREATE TABLE consistency_snapshots (
 
 
 
-    
+
 
 
 
@@ -1718,7 +1718,7 @@ async def precheck_position_transfer(
 
 
 
-    
+
 
 
 
@@ -1786,7 +1786,7 @@ async def precheck_position_transfer(
 
 
 
-    
+
 
 
 
@@ -1826,7 +1826,7 @@ message="ﻝ؟ﮔﮒﺙﮔﮔﺁﮔﻟﺁ۴ﻟ۰ﻝ۴? if target_supported else 
 
 
 
-    
+
 
 
 
@@ -1858,7 +1858,7 @@ message="ﻝ؟ﮔﮒﺙﮔﮔﺁﮔﻟﺁ۴ﻟ۰ﻝ۴? if target_supported else 
 
 
 
-    
+
 
 
 
@@ -1946,7 +1946,7 @@ async def schedule_compensation(
 
 
 
-    
+
 
 
 
@@ -1958,7 +1958,7 @@ async def schedule_compensation(
 
 
 
-    
+
 
 
 
@@ -1994,7 +1994,7 @@ async def schedule_compensation(
 
 
 
-    
+
 
 
 
@@ -2006,7 +2006,7 @@ async def schedule_compensation(
 
 
 
-    
+
 
 
 
@@ -2030,7 +2030,7 @@ async def schedule_compensation(
 
 
 
-    
+
 
 
 
@@ -2092,7 +2092,7 @@ async def schedule_compensation(
 
 
 
-  
+
 
 
 
@@ -2112,7 +2112,7 @@ async def schedule_compensation(
 
 
 
-  
+
 
 
 
@@ -3187,6 +3187,3 @@ async def schedule_compensation(
 
 
 - ﻗ?ﻝ؛۵ﮒﻛﺕﻛﺕﮔﭦﮔﮔﮒ (ﻠ۱ﻟ؟۰ﮒﻟ۶ﻝﻗ۴95%)
-
-
-

@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Security蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Security蓝图设计相关内容
 
@@ -247,4 +247,3 @@ implementation_status: 设计阶段
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
-

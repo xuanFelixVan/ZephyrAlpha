@@ -78,7 +78,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 > 核心职责: Statistical Arbitrage Module蓝图设计
-> 职责边界: 
+> 职责边界:
 
 ## 2. 架构设计
 
@@ -90,16 +90,16 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 ```python
 class PairSelectionEngine:
 """
-    
+
     def __init__(self):
     def select_pairs(
-        self, 
+        self,
         price_data: pd.DataFrame,
         stock_pool: List[str]
     ) -> List[CandidatePair]:
         """
         选择候选股票对
-        
+
         步骤:
         Returns:
             List[CandidatePair]: 候选股票对列表
@@ -109,20 +109,20 @@ class PairSelectionEngine:
 
 class CointegrationAnalyzer:
     """协整分析器"""
-    
+
     def __init__(self):
-        self.adf_critical_value = 0.05  # ADF检验临界值 self.min_half_life = 5          # 最小半衰期（天）        self.max_half_life = 60         # 最大半衰期（天）        
+        self.adf_critical_value = 0.05  # ADF检验临界值 self.min_half_life = 5          # 最小半衰期（天）        self.max_half_life = 60         # 最大半衰期（天）
     def test_cointegration(
-        self, 
+        self,
         series_a: pd.Series,
         series_b: pd.Series
     ) -> CointegrationResult:
         """
-        协整检查        
+        协整检查
         使用 Engle-Granger 两步法：
-        1. 对价格序列进行线性回归        2. 对残差序列进行ADF检查        3. 计算半衰期        
+        1. 对价格序列进行线性回归        2. 对残差序列进行ADF检查        3. 计算半衰期
         Returns:
-            CointegrationResult: 
+            CointegrationResult:
         """
         pass
 ```
@@ -131,10 +131,10 @@ class CointegrationAnalyzer:
 ```python
 class SpreadTradingEngine:
     """价差交易引擎"""
-    
+
     def __init__(self):
         self.entry_zscore = 2.0   # 开仓 Z-score self.exit_zscore = 0.5    # 平仓 Z-score self.stop_loss = 0.05     # 止损比例
-        
+
     def generate_signal(
         self,
         price_a: pd.Series,
@@ -143,31 +143,31 @@ class SpreadTradingEngine:
     ) -> TradingSignal:
         """
         生成交易信号
-        
+
         基于 Z-score 的价差交易策略：
         1. 计算价差: spread = price_a - hedge_ratio * price_b
         2. 计算Z-score: z = (spread - mean) / std
         3. 生成信号:
            - z > 2: 做空价差（做空A，做多B）           - z < -2: 做多价差（做多A，做空B）           - |z| < 0.5: 平仓
-        
+
         Returns:
-            TradingSignal: 
+            TradingSignal:
 包含信号类型、Z-score、仓位比例        """
         pass
 
 
 class SignalQualityFilter:
     """信号质量过滤器"""
-    
+
     def __init__(self):
         self.min_signal_strength = 0.5  # 最小信号强度        self.max_signals_per_day = 20   # 每日最大信号数
-        
+
     def filter_signals(
-        self, 
+        self,
         signals: List[TradingSignal]
     ) -> List[TradingSignal]:
         """
-        过滤低质量信号        
+        过滤低质量信号
         过滤标准:
         1. 信号强度（Z-score绝对值）
         """
@@ -178,37 +178,37 @@ class SignalQualityFilter:
 ```python
 class MarketNeutralPortfolioConstructor:
     """市场中性组合构建器"""
-    
+
     def __init__(self):
-        self.industry_neutral = True   # 行业中性        self.style_neutral = True      # 风格中性        self.max_leverage = 2.0        # 最大杠杆        
+        self.industry_neutral = True   # 行业中性        self.style_neutral = True      # 风格中性        self.max_leverage = 2.0        # 最大杠杆
     def construct_portfolio(
         self,
         signals: List[TradingSignal],
         constraints: PortfolioConstraints
     ) -> PortfolioAllocation:
         """
-        构建市场中性组合        
+        构建市场中性组合
         步骤:
         1. 多空优化：优化多空头寸        2. 行业中性：确保行业暴露为零
         3. 风格中性：确保风格因子暴露为零
-        4. 杠杆控制：限制总杠杆        
+        4. 杠杆控制：限制总杠杆
         Returns:
-            PortfolioAllocation: 
+            PortfolioAllocation:
 包含多空头寸、净敞口、总敞口        """
         pass
 
 
 class IndustryNeutralizer:
     """行业中性化器"""
-    
+
     def neutralize(
-        self, 
+        self,
         allocation: PortfolioAllocation,
         industry_data: pd.DataFrame
     ) -> PortfolioAllocation:
         """
         行业中性化
-        
+
         确保组合在各行业的暴露为 0：
 w_long_i - w_short_i = 0 (for each industry)
         """
@@ -217,15 +217,15 @@ w_long_i - w_short_i = 0 (for each industry)
 
 class StyleNeutralizer:
     """风格中性化器"""
-    
+
     def neutralize(
-        self, 
+        self,
         allocation: PortfolioAllocation,
         style_factors: pd.DataFrame
     ) -> PortfolioAllocation:
         """
         风格中性化
-        
+
         确保组合在各风格因子的暴露为 0：
 w_i * factor_i = 0 (for each factor)
         """
@@ -236,15 +236,15 @@ w_i * factor_i = 0 (for each factor)
 ```python
 class RiskManager:
     """风险管理器"""
-    
+
     def __init__(self):
     def apply_risk_controls(
-        self, 
+        self,
         allocation: PortfolioAllocation
     ) -> PortfolioAllocation:
         """
         应用风险控制
-        
+
         控制措施:
         2. 总仓位限制        3. 止损机制
         4. 流动性约束        """
@@ -253,14 +253,14 @@ class RiskManager:
 
 class RealTimeMonitor:
     """实时监控器"""
-    
+
     def monitor_positions(
-        self, 
+        self,
         positions: Dict[str, Position]
     ) -> MonitoringReport:
         """
         实时监控持仓
-        
+
         监控指标:
         """
         pass
@@ -284,7 +284,7 @@ class RealTimeMonitor:
 4. 协整判断
    - 如果 ADF 检验 p < 0.05
    - 且半衰期在合理范围（5-60天）
-时间复杂度 O(T)，T 为时间序列长度  
+时间复杂度 O(T)，T 为时间序列长度
 空间复杂度 O(T)
 ```
 
@@ -311,7 +311,7 @@ class RealTimeMonitor:
 4. 计算仓位比例
    position_ratio = min(abs(z) / entry_zscore, 2.0)
 
-时间复杂度 O(T)  
+时间复杂度 O(T)
 空间复杂度 O(T)
 ```
 
@@ -365,18 +365,18 @@ class RealTimeMonitor:
 ```python
 class StatisticalArbitrageModule:
     """统计套利模块主接口""
-    
+
     def find_cointegrated_pairs(
-        self, 
+        self,
         price_data: pd.DataFrame,
         stock_pool: Optional[List[str]] = None
     ) -> List[CointegratedPair]:
         """
-        寻找协整股票对        
+        寻找协整股票对
         Returns:
             List[CointegratedPair]: 协整股票对列表        """
         pass
-    
+
     def generate_trading_signals(
         self,
         price_data: pd.DataFrame,
@@ -384,12 +384,12 @@ class StatisticalArbitrageModule:
     ) -> List[PairTradingSignal]:
         """
         生成交易信号
-        
+
         Returns:
             List[PairTradingSignal]: 交易信号列表
         """
         pass
-    
+
     def construct_neutral_portfolio(
         self,
         signals: List[PairTradingSignal],
@@ -397,12 +397,12 @@ class StatisticalArbitrageModule:
     ) -> PortfolioAllocation:
         """
         构建市场中性组合。
-        
+
         Returns:
             PortfolioAllocation: 组合配置结果
         """
         pass
-    
+
     def run_full_pipeline(
         self,
         price_data: pd.DataFrame,
@@ -410,7 +410,7 @@ class StatisticalArbitrageModule:
     ) -> Tuple[List[CointegratedPair], List[PairTradingSignal], PortfolioAllocation]:
         """
         运行完整流程（协整检验 → 信号 → 组合构建）。
-        
+
         Returns:
             协整对、信号与组合配置元组
         """
@@ -511,11 +511,11 @@ graph LR
     A[协整分析] --> B[统计套利模块]
     C[数据质量监控] --> B
     D[市场冲击模型] --> B
-    
+
     B --> E[组合优化引擎]
     B --> F[VaR/ES监控]
     B --> G[算法交易优化器]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -537,7 +537,7 @@ graph LR
 
 
 
-## 10. 
+## 10.
 
 |--------|------|--------|----------|
 | **M1:
@@ -582,7 +582,7 @@ graph LR
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Statistical Arbitrage Module** | 
+| **Statistical Arbitrage Module** |
 
 ### 12.3 版本管理
 

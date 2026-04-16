@@ -112,7 +112,7 @@ classDiagram
 
     }
 
-    
+
 
     class BaseRule {
 
@@ -132,7 +132,7 @@ classDiagram
 
     }
 
-    
+
 
     class T1Rule {
 
@@ -146,7 +146,7 @@ classDiagram
 
     }
 
-    
+
 
     class LimitUpDownRule {
 
@@ -160,7 +160,7 @@ classDiagram
 
     }
 
-    
+
 
     class TradingFeeRule {
 
@@ -178,7 +178,7 @@ classDiagram
 
     }
 
-    
+
 
     class RiskRule {
 
@@ -192,7 +192,7 @@ classDiagram
 
     }
 
-    
+
 
     AStockRuleEngine --> BaseRule : ﮒﮒ،
 
@@ -204,7 +204,7 @@ classDiagram
 
     BaseRule <|-- RiskRule : ﻝﭨ۶ﮔﺟ
 
-    
+
 
     class RuleResult {
 
@@ -220,7 +220,7 @@ classDiagram
 
     }
 
-    
+
 
     class FeeResult {
 
@@ -344,9 +344,9 @@ class BaseRule(ABC):
 
     """ﻟ۶ﮒﮒﭦﻝﺎﭨ"""
 
-    
 
-    def __init__(self, rule_id: str, rule_name: str, category: RuleCategory, 
+
+    def __init__(self, rule_id: str, rule_name: str, category: RuleCategory,
 
                  enabled: bool = True, config: Dict[str, Any] = None):
 
@@ -360,7 +360,7 @@ class BaseRule(ABC):
 
         self.config = config or {}
 
-    
+
 
     @abstractmethod
 
@@ -368,13 +368,13 @@ class BaseRule(ABC):
 
         """ﮔ۲ﮔ۴ﻟ۶ﮒ?
 
-        
+
 
         ﮒﮔﺍ:
 
 context: ﮔ۲ﮔ۴ﻛﺕﻛﺕﮔﺅﺙﮒﮒ،ﻟ؟۱ﮒﻙﮔﻛﭨﻙﮒﺕﮒﭦﮔﺍﮔ؟ﻝ
 
-            
+
 
         ﻟﺟﮒ:
 
@@ -384,7 +384,7 @@ context: ﮔ۲ﮔ۴ﻛﺕﻛﺕﮔﺅﺙﮒﮒ،ﻟ؟۱ﮒﻙﮔﻛﭨﻙﮒﺕ�
 
         pass
 
-    
+
 
     def get_description(self) -> str:
 
@@ -392,7 +392,7 @@ context: ﮔ۲ﮔ۴ﻛﺕﻛﺕﮔﺅﺙﮒﮒ،ﻟ؟۱ﮒﻙﮔﻛﭨﻙﮒﺕ�
 
         return f"{self.rule_name} ({self.rule_id})"
 
-    
+
 
     def enable(self):
 
@@ -400,7 +400,7 @@ context: ﮔ۲ﮔ۴ﻛﺕﻛﺕﮔﺅﺙﮒﮒ،ﻟ؟۱ﮒﻙﮔﻛﭨﻙﮒﺕ�
 
         self.enabled = True
 
-    
+
 
     def disable(self):
 
@@ -416,7 +416,7 @@ class AStockRuleEngine:
 
     """Aﻟ۰ﻟ۶ﮒﮒﺙﮔ?""
 
-    
+
 
     def __init__(self, config_path: str = None):
 
@@ -424,7 +424,7 @@ class AStockRuleEngine:
 
         self.rule_configs: List[Dict] = []
 
-        
+
 
         if config_path:
 
@@ -432,7 +432,7 @@ class AStockRuleEngine:
 
             self._initialize_rules()
 
-    
+
 
     def register_rule(self, rule: BaseRule):
 
@@ -440,13 +440,13 @@ class AStockRuleEngine:
 
         self.rule_registry[rule.rule_id] = rule
 
-    
+
 
     def check_order(self, order: Dict[str, Any], context: Dict[str, Any] = None) -> List[RuleResult]:
 
         """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶ﮔ?
 
-        
+
 
         ﮒﮔﺍ:
 
@@ -454,7 +454,7 @@ class AStockRuleEngine:
 
 context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒﭦﮔﺍﮔ؟ﻝﺅﺙ?
 
-            
+
 
         ﻟﺟﮒ:
 
@@ -470,7 +470,7 @@ context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒ�
 
             check_context.update(context)
 
-        
+
 
         for rule in self.rule_registry.values():
 
@@ -478,7 +478,7 @@ context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒ�
 
                 continue
 
-            
+
 
             # ﮒ۹ﮔ۲ﮔ۴ﻛﺕﻟ؟۱ﮒﻝﺕﮒﺏﻝﻟ۶ﮒ?
 
@@ -488,17 +488,17 @@ context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒ�
 
                 results.append(result)
 
-        
+
 
         return results
 
-    
+
 
     def calculate_fees(self, order: Dict[str, Any], market_data: Dict[str, Any] = None) -> FeeResult:
 
         """ﻟ؟۰ﻝ؟ﻛﭦ۳ﮔﻟﺑﺗﻝ۷
 
-        
+
 
         ﮒﮔﺍ:
 
@@ -506,7 +506,7 @@ context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒ�
 
 market_data: ﮒﺕﮒﭦﮔﺍﮔ؟ﺅﺙﻝ۷ﻛﭦﮔﭨﻝﺗﻟ؟۰ﻝ؟ﻝﺅﺙ?
 
-            
+
 
         ﻟﺟﮒ:
 
@@ -516,17 +516,17 @@ market_data: ﮒﺕﮒﭦﮔﺍﮔ؟ﺅﺙﻝ۷ﻛﭦﮔﭨﻝﺗﻟ؟۰ﻝ؟ﻝ
 
         # ﻟﺓﮒﻟﺑﺗﻝ۷ﻟ۶ﮒ
 
-        fee_rules = [r for r in self.rule_registry.values() 
+        fee_rules = [r for r in self.rule_registry.values()
 
                     if r.category == RuleCategory.FEE and r.enabled]
 
-        
+
 
         # ﻠﭨﻟ؟۳ﻟﺑﺗﻝ۷ﻝﭨﮔ
 
         fee_result = FeeResult()
 
-        
+
 
         # ﮒﭦﻝ۷ﮔﮔﻟﺑﺗﻝ۷ﻟ۶ﮒ?
 
@@ -546,25 +546,25 @@ market_data: ﮒﺕﮒﭦﮔﺍﮔ؟ﺅﺙﻝ۷ﻛﭦﮔﭨﻝﺗﻟ؟۰ﻝ؟ﻝ
 
                 fee_result.misc_fee += rule_fee_result.misc_fee
 
-        
+
 
         fee_result.total_fee = (
 
-            fee_result.commission + 
+            fee_result.commission +
 
-            fee_result.stamp_tax + 
+            fee_result.stamp_tax +
 
-            fee_result.transfer_fee + 
+            fee_result.transfer_fee +
 
             fee_result.misc_fee
 
         )
 
-        
+
 
         return fee_result
 
-    
+
 
     def load_config(self, config_path: str):
 
@@ -576,7 +576,7 @@ market_data: ﮒﺕﮒﭦﮔﺍﮔ؟ﺅﺙﻝ۷ﻛﭦﮔﭨﻝﺗﻟ؟۰ﻝ؟ﻝ
 
             self.rule_configs = yaml.safe_load(f)
 
-    
+
 
     def _initialize_rules(self):
 
@@ -620,7 +620,7 @@ class T1TradingSystem:
 
     }
 
-    
+
 
     def check_sell_permission(self, position, buy_date, current_date):
 
@@ -884,7 +884,7 @@ rules:
 
       check_method: "check_sell_permission"
 
-  
+
 
   - rule_id: "TRADE_002"
 
@@ -928,7 +928,7 @@ first_day: null  # ﮔﮔﭘ۷ﻟﺓﮒ
 
 precision: 0.01  # ﻛﭨﺓﮔﺙﻝﺎﺝﮒﭦ۵
 
-  
+
 
   - rule_id: "TRADE_003"
 
@@ -950,7 +950,7 @@ precision: 0.01  # ﻛﭨﺓﮔﺙﻝﺎﺝﮒﭦ۵
 
 delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
-  
+
 
   # ============ ﻟﺑﺗﻝ۷ﻟ۶ﮒ ============
 
@@ -976,7 +976,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       calculate_method: "percentage_with_min"
 
-  
+
 
   - rule_id: "FEE_002"
 
@@ -998,7 +998,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       exempt_categories: ["ETF", "ﮒﺛﮒ?]
 
-  
+
 
   - rule_id: "FEE_003"
 
@@ -1022,7 +1022,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       both_sides: true
 
-  
+
 
   - rule_id: "FEE_004"
 
@@ -1046,7 +1046,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       market_cap_weight: true
 
-  
+
 
   # ============ ﻠ۲ﻠ۸ﻟ۶ﮒ ============
 
@@ -1070,7 +1070,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       apply_to: ["Aﻟ?, "ﮔﺕﺁﻟ۰"]
 
-  
+
 
   - rule_id: "RISK_002"
 
@@ -1090,7 +1090,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       cash_reserve_ratio: 0.05  # ﻝﺍﻠﮒ۷ﮒ۳5%
 
-  
+
 
   - rule_id: "RISK_003"
 
@@ -1110,7 +1110,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       calculation_period: "daily"
 
-  
+
 
   # ============ ﮒﺕﮒﭦﻟ۶ﮒ ============
 
@@ -1152,7 +1152,7 @@ delisting_threshold: 3  # ﻟﺟﻝﭨ3ﮒﺗﺑﻛﭦﮔ?
 
       holidays: "config/holidays.yaml"
 
-  
+
 
   - rule_id: "MARKET_002"
 
@@ -1212,7 +1212,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
     """vn.pyﮔ۷۰ﮔﻛﭦ۳ﮔﻠﻠﮒ?""
 
-    
+
 
     def __init__(self, config: VnPyConfig):
 
@@ -1222,7 +1222,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
         self.rule_engine = AStockRuleEngine("config/rules/a_stock_rules.yaml")
 
-    
+
 
     def submit_order(self, order: UnifiedOrder) -> Result:
 
@@ -1232,17 +1232,17 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
         rule_results = self.rule_engine.check_order(order.to_dict())
 
-        
+
 
         # 2. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﻠﻟﺁﺁﻝﭦ۶ﮒ،ﻝﻟ۶ﮒﻟﺟﻟ۶?
 
-        critical_errors = [r for r in rule_results 
+        critical_errors = [r for r in rule_results
 
-                          if r.severity in [RuleSeverity.ERROR, RuleSeverity.CRITICAL] 
+                          if r.severity in [RuleSeverity.ERROR, RuleSeverity.CRITICAL]
 
                           and not r.passed]
 
-        
+
 
         if critical_errors:
 
@@ -1250,7 +1250,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
             return Result.error(f"ﻟ؟۱ﮒﻟﺟﮒﻟ۶ﮒ: {error_msg}")
 
-        
+
 
         # 3. ﻟ؟۰ﻝ؟ﻟﺑﺗﻝ۷
 
@@ -1258,7 +1258,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
         order.metadata['fees'] = fee_result
 
-        
+
 
         # 4. ﮔ۶ﻟ۰ﻟ؟۱ﮒ
 
@@ -1302,7 +1302,7 @@ class TestAStockRuleEngine:
 
     """Aﻟ۰ﻟ۶ﮒﮒﺙﮔﮔﭖﻟﺁ?""
 
-    
+
 
     def setup_method(self):
 
@@ -1312,7 +1312,7 @@ class TestAStockRuleEngine:
 
         self.engine.register_rule(LimitUpDownRule("TRADE_002", "ﮔﭘ۷ﻟﺓﮒﻟ۶ﮒ?, RuleCategory.TRADE))
 
-    
+
 
     def test_t1_rule_check(self):
 
@@ -1332,19 +1332,19 @@ class TestAStockRuleEngine:
 
         }
 
-        
+
 
         results = self.engine.check_order(order)
 
         t1_result = [r for r in results if r.rule_id == "TRADE_001"][0]
 
-        
+
 
         assert not t1_result.passed
 
         assert "T+1ﮒﭘﮒﭦ۵" in t1_result.message
 
-    
+
 
     def test_limit_up_rule_check(self):
 
@@ -1364,19 +1364,19 @@ class TestAStockRuleEngine:
 
         }
 
-        
+
 
         results = self.engine.check_order(order)
 
         limit_result = [r for r in results if r.rule_id == "TRADE_002"][0]
 
-        
+
 
         assert not limit_result.passed
 
         assert "ﮔﭘ۷ﮒ" in limit_result.message
 
-    
+
 
     def test_fee_calculation(self):
 
@@ -1394,11 +1394,11 @@ class TestAStockRuleEngine:
 
         }
 
-        
+
 
         fee_result = self.engine.calculate_fees(order)
 
-        
+
 
         assert fee_result.commission == max(100000 * 0.0003, 5.0)  # 30ﮒﮔﮔﻛﺛ?ﮒ?
 
@@ -1617,4 +1617,3 @@ class TestAStockRuleEngine:
 3. ﮒﺙﮒ۶ﮒﺙﮒﻠﭘﮔ؟ﭖﻛﭨﭨﮒ۰ﮒﻟ۶?
 
 4. ﮒﮒﭨﭦﮒﺙﮒﻝﺁﮒ۱ﮒﮔﮔﺁﮔﮒﮒ۳
-

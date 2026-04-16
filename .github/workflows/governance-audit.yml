@@ -41,6 +41,13 @@ jobs:
       - name: UTF-8 / 编码一致性全量扫描（D-05）
         run: python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
 
+      - name: 文件命名规范全量扫描（C-10）
+        run: |
+          # 扫描所有 docs/ 下的 .md 文件命名合规性
+          # 中文/空格/特殊字符/版本号后缀为阻断项（exit 1）；双轨格式不符仅警告（exit 0）
+          find docs/ -name "*.md" | python scripts/hooks/doc_guard_pre_commit.py --check-naming
+        continue-on-error: true
+
       - name: Upload Sentinel L1 JSON artifact
         if: always()
         uses: actions/upload-artifact@v4

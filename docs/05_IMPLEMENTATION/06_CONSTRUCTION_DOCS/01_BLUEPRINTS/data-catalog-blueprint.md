@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供统一的数据资产目录，支持数据发现、元数据管理、数据血缘可视化
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据目录、元数据管理、数据发现、数据血缘
 
@@ -141,7 +141,7 @@ class DataCatalog:
 
     """数据目录核心类"""
 
-    
+
 
     def __init__(self, server_url: str):
 
@@ -149,7 +149,7 @@ class DataCatalog:
 
         self.client = OpenMetadataClient(server_url)
 
-    
+
 
     def search_tables(self, query: str, filters: dict = None):
 
@@ -167,7 +167,7 @@ class DataCatalog:
 
         return results
 
-    
+
 
     def get_table_details(self, table_id: str):
 
@@ -203,7 +203,7 @@ class DataCatalog:
 
         }
 
-    
+
 
     def get_table_lineage(self, table_id: str):
 
@@ -233,13 +233,13 @@ class MetadataManager:
 
     """元数据管理器"""
 
-    
+
 
     def __init__(self, catalog: DataCatalog):
 
         self.catalog = catalog
 
-    
+
 
     def register_table(
 
@@ -281,11 +281,11 @@ class MetadataManager:
 
         }
 
-        
+
 
         return self.catalog.client.create_or_update_table(table_metadata)
 
-    
+
 
     def update_column_description(
 
@@ -311,7 +311,7 @@ class MetadataManager:
 
         )
 
-    
+
 
     def add_tag_to_table(self, table_id: str, tag_name: str):
 
@@ -341,13 +341,13 @@ class LineageTracker:
 
     """数据血缘追踪器"""
 
-    
+
 
     def __init__(self, catalog: DataCatalog):
 
         self.catalog = catalog
 
-    
+
 
     def add_lineage(
 
@@ -373,11 +373,11 @@ class LineageTracker:
 
         }
 
-        
+
 
         return self.catalog.client.add_lineage(lineage_edge)
 
-    
+
 
     def get_upstream_tables(self, table_id: str, depth: int = 5):
 
@@ -387,7 +387,7 @@ class LineageTracker:
 
         upstream = []
 
-        
+
 
         for node in lineage["upstream"]:
 
@@ -401,11 +401,11 @@ class LineageTracker:
 
                 })
 
-        
+
 
         return upstream
 
-    
+
 
     def get_downstream_tables(self, table_id: str, depth: int = 5):
 
@@ -415,7 +415,7 @@ class LineageTracker:
 
         downstream = []
 
-        
+
 
         for node in lineage["downstream"]:
 
@@ -429,11 +429,11 @@ class LineageTracker:
 
                 })
 
-        
+
 
         return downstream
 
-    
+
 
     def visualize_lineage(self, table_id: str):
 
@@ -443,11 +443,11 @@ class LineageTracker:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         G = nx.DiGraph()
 
-        
+
 
         def add_nodes(table_id, direction, depth=0):
 
@@ -455,7 +455,7 @@ class LineageTracker:
 
                 return
 
-            
+
 
             if direction == "upstream":
 
@@ -477,15 +477,15 @@ class LineageTracker:
 
                     add_nodes(node["table"]["id"], direction, depth + 1)
 
-        
+
 
         add_nodes(table_id, "upstream")
 
         add_nodes(table_id, "downstream")
 
-        
 
-        nx.draw(G, with_labels=True, node_color='lightblue', 
+
+        nx.draw(G, with_labels=True, node_color='lightblue',
 
                 node_size=1500, font_size=10)
 
@@ -505,13 +505,13 @@ class DataGovernance:
 
     """数据治理管理器"""
 
-    
+
 
     def __init__(self, catalog: DataCatalog):
 
         self.catalog = catalog
 
-    
+
 
     def classify_sensitive_data(self, table_id: str, column_name: str):
 
@@ -529,7 +529,7 @@ class DataGovernance:
 
         )
 
-    
+
 
     def set_data_retention_policy(
 
@@ -553,7 +553,7 @@ class DataGovernance:
 
         }
 
-        
+
 
         return self.catalog.client.set_custom_property(
 
@@ -565,7 +565,7 @@ class DataGovernance:
 
         )
 
-    
+
 
     def get_data_quality_score(self, table_id: str):
 
@@ -573,7 +573,7 @@ class DataGovernance:
 
         quality = self.catalog.client.get_data_quality(table_id)
 
-        
+
 
         return {
 
@@ -643,7 +643,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   openmetadata-ingestion:
 
@@ -659,7 +659,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   mysql:
 
@@ -681,7 +681,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   elasticsearch:
 
@@ -735,13 +735,13 @@ class EnhancedLineageTracker:
 
     """增强版血缘追踪器"""
 
-    
+
 
     def __init__(self, openmetadata_url: str):
 
         self.client = LineageClient(openmetadata_url)
 
-    
+
 
     def track_transformation(
 
@@ -769,7 +769,7 @@ class EnhancedLineageTracker:
 
         }
 
-        
+
 
         self.client.add_lineage(lineage)
 
@@ -789,7 +789,7 @@ class QualityAwareCatalog:
 
     """集成质量监控的数据目录"""
 
-    
+
 
     def __init__(self, catalog: DataCatalog, quality_monitor):
 
@@ -797,7 +797,7 @@ class QualityAwareCatalog:
 
         self.quality_monitor = quality_monitor
 
-    
+
 
     def get_table_with_quality(self, table_id: str):
 
@@ -807,7 +807,7 @@ class QualityAwareCatalog:
 
         quality = self.quality_monitor.get_latest_quality(table_id)
 
-        
+
 
         return {
 
@@ -964,4 +964,3 @@ class QualityAwareCatalog:
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

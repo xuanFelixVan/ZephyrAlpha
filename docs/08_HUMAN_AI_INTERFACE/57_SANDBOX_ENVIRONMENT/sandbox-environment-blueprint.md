@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: Docker + Kubernetes  
+**主方案**: Docker + Kubernetes
 
 **模拟交易**: 集成Backtrader
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

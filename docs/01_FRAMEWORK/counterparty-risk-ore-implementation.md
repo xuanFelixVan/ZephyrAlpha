@@ -557,7 +557,7 @@ ore:
 
   mode: "simulation"
 
-  
+
 
 database:
 
@@ -565,7 +565,7 @@ database:
 
   path: "./data/ore.db"
 
-  
+
 
 market_data:
 
@@ -579,7 +579,7 @@ market_data:
 
       interpolation: "Linear"
 
-      
+
 
   credit_curves:
 
@@ -589,7 +589,7 @@ market_data:
 
       day_counter: "Actual365Fixed"
 
-      
+
 
 simulation:
 
@@ -599,7 +599,7 @@ simulation:
 
   seed: 42
 
-  
+
 
 cva:
 
@@ -607,7 +607,7 @@ cva:
 
   discount_curve: "USD_LIBOR_3M"
 
-  
+
 
 reporting:
 
@@ -729,7 +729,7 @@ class CreditAssessmentEngine:
 
         self.lgd_model = self._load_lgd_model()
 
-        
+
 
     def assess_counterparty(
 
@@ -747,7 +747,7 @@ class CreditAssessmentEngine:
 
         risk_level = self._classify_risk_level(pd_estimate)
 
-        
+
 
         return CreditAssessmentResult(
 
@@ -773,7 +773,7 @@ class CreditAssessmentEngine:
 
         )
 
-    
+
 
     def _estimate_pd(self, counterparty: Counterparty) -> float:
 
@@ -781,25 +781,25 @@ class CreditAssessmentEngine:
 
             return counterparty.pd
 
-        
+
 
         base_pd = self.pd_model.get(counterparty.external_rating.value, 0.05)
 
-        
+
 
         industry_adjustment = self._get_industry_adjustment(counterparty.industry)
 
         country_adjustment = self._get_country_adjustment(counterparty.country)
 
-        
+
 
         adjusted_pd = base_pd * industry_adjustment * country_adjustment
 
-        
+
 
         return min(adjusted_pd, 1.0)
 
-    
+
 
     def _estimate_lgd(self, counterparty: Counterparty) -> float:
 
@@ -807,25 +807,25 @@ class CreditAssessmentEngine:
 
             return counterparty.lgd
 
-        
+
 
         base_lgd = 0.45
 
-        
+
 
         industry_adjustment = self._get_industry_lgd_adjustment(counterparty.industry)
 
         secured_adjustment = 0.8
 
-        
+
 
         adjusted_lgd = base_lgd * industry_adjustment * secured_adjustment
 
-        
+
 
         return min(adjusted_lgd, 1.0)
 
-    
+
 
     def _classify_risk_level(self, pd: float) -> str:
 
@@ -841,7 +841,7 @@ class CreditAssessmentEngine:
 
             return "High"
 
-    
+
 
     def _load_rating_mapping(self) -> Dict:
 
@@ -865,7 +865,7 @@ class CreditAssessmentEngine:
 
         }
 
-    
+
 
     def _load_pd_model(self) -> Dict:
 
@@ -889,7 +889,7 @@ class CreditAssessmentEngine:
 
         }
 
-    
+
 
     def _load_lgd_model(self) -> Dict:
 
@@ -913,7 +913,7 @@ class CreditAssessmentEngine:
 
         }
 
-    
+
 
     def _get_industry_adjustment(self, industry: str) -> float:
 
@@ -933,7 +933,7 @@ class CreditAssessmentEngine:
 
         return adjustments.get(industry, 1.0)
 
-    
+
 
     def _get_country_adjustment(self, country: str) -> float:
 
@@ -953,7 +953,7 @@ class CreditAssessmentEngine:
 
         return adjustments.get(country, 1.0)
 
-    
+
 
     def _get_industry_lgd_adjustment(self, industry: str) -> float:
 
@@ -1047,7 +1047,7 @@ class ExposureCalculator:
 
         self.time_steps = config.get('time_steps', 50)
 
-        
+
 
     def calculate_exposure(
 
@@ -1061,15 +1061,15 @@ class ExposureCalculator:
 
         current_exposure = self._calculate_current_exposure(trades)
 
-        
+
 
         pfe, epe, ene = self._simulate_future_exposure(trades, market_data)
 
-        
+
 
         peak_exposure = max(pfe)
 
-        
+
 
         return ExposureResult(
 
@@ -1089,7 +1089,7 @@ class ExposureCalculator:
 
         )
 
-    
+
 
     def _calculate_current_exposure(self, trades: List[Trade]) -> float:
 
@@ -1103,7 +1103,7 @@ class ExposureCalculator:
 
         return total_exposure
 
-    
+
 
     def _simulate_future_exposure(
 
@@ -1117,11 +1117,11 @@ class ExposureCalculator:
 
         time_grid = np.linspace(0, 1, self.time_steps)
 
-        
+
 
         exposures = np.zeros((self.simulation_samples, self.time_steps))
 
-        
+
 
         for i in range(self.simulation_samples):
 
@@ -1131,7 +1131,7 @@ class ExposureCalculator:
 
                 exposures[i, j] = max(simulated_value, 0)
 
-        
+
 
         pfe = np.max(exposures, axis=1)
 
@@ -1139,11 +1139,11 @@ class ExposureCalculator:
 
         ene = np.mean(-exposures)
 
-        
+
 
         return pfe, epe, ene
 
-    
+
 
     def _simulate_trade_value(
 
@@ -1159,7 +1159,7 @@ class ExposureCalculator:
 
         total_value = 0.0
 
-        
+
 
         for trade in trades:
 
@@ -1167,17 +1167,17 @@ class ExposureCalculator:
 
             time_factor = max(0, 1 - time / remaining_maturity) if remaining_maturity > 0 else 0
 
-            
+
 
             random_shock = np.random.normal(0, 0.1)
 
             simulated_value = trade.market_value * time_factor * (1 + random_shock)
 
-            
+
 
             total_value += simulated_value
 
-        
+
 
         return total_value
 
@@ -1229,7 +1229,7 @@ class CVACalculator:
 
         self.discount_rate = config.get('discount_rate', 0.05)
 
-        
+
 
     def calculate_cva(
 
@@ -1253,7 +1253,7 @@ class CVACalculator:
 
         )
 
-        
+
 
         dva = self._calculate_dva_value(
 
@@ -1265,7 +1265,7 @@ class CVACalculator:
 
         )
 
-        
+
 
         fva = self._calculate_fva_value(
 
@@ -1275,11 +1275,11 @@ class CVACalculator:
 
         )
 
-        
+
 
         xva = cva + dva + fva
 
-        
+
 
         return CVAResult(
 
@@ -1297,7 +1297,7 @@ class CVACalculator:
 
         )
 
-    
+
 
     def _calculate_cva_value(
 
@@ -1315,7 +1315,7 @@ class CVACalculator:
 
         return cva
 
-    
+
 
     def _calculate_dva_value(
 
@@ -1333,7 +1333,7 @@ class CVACalculator:
 
         return dva
 
-    
+
 
     def _calculate_fva_value(
 
@@ -1393,7 +1393,7 @@ class CounterpartyRiskReportGenerator:
 
         os.makedirs(self.output_dir, exist_ok=True)
 
-        
+
 
         template_dir = "./templates"
 
@@ -1401,7 +1401,7 @@ class CounterpartyRiskReportGenerator:
 
         self.env = Environment(loader=FileSystemLoader(template_dir))
 
-        
+
 
     def generate_credit_risk_report(
 
@@ -1431,7 +1431,7 @@ class CounterpartyRiskReportGenerator:
 
         } for ca in credit_assessments])
 
-        
+
 
         report_path = os.path.join(
 
@@ -1441,19 +1441,19 @@ class CounterpartyRiskReportGenerator:
 
         )
 
-        
+
 
         df.to_csv(report_path, index=False)
 
-        
+
 
         print(f"✅ 信用风险报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
-    
+
 
     def generate_exposure_report(
 
@@ -1481,7 +1481,7 @@ class CounterpartyRiskReportGenerator:
 
         } for er in exposure_results])
 
-        
+
 
         report_path = os.path.join(
 
@@ -1491,19 +1491,19 @@ class CounterpartyRiskReportGenerator:
 
         )
 
-        
+
 
         df.to_csv(report_path, index=False)
 
-        
+
 
         print(f"✅ 敞口报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
-    
+
 
     def generate_cva_report(
 
@@ -1529,7 +1529,7 @@ class CounterpartyRiskReportGenerator:
 
         } for cr in cva_results])
 
-        
+
 
         report_path = os.path.join(
 
@@ -1539,15 +1539,15 @@ class CounterpartyRiskReportGenerator:
 
         )
 
-        
+
 
         df.to_csv(report_path, index=False)
 
-        
+
 
         print(f"✅ CVA报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
@@ -1609,7 +1609,7 @@ class TestCreditAssessment:
 
         return CreditAssessmentEngine(config)
 
-    
+
 
     @pytest.fixture
 
@@ -1637,13 +1637,13 @@ class TestCreditAssessment:
 
         )
 
-    
+
 
     def test_assess_counterparty(self, credit_engine, sample_counterparty):
 
         result = credit_engine.assess_counterparty(sample_counterparty)
 
-        
+
 
         assert result.counterparty_id == "CP001"
 
@@ -1655,7 +1655,7 @@ class TestCreditAssessment:
 
         assert result.risk_level in ["Low", "Medium", "High"]
 
-        
+
 
         print(f"✅ 信用评估测试通过: PD={result.pd:.4%}, LGD={result.lgd:.4%}")
 
@@ -1677,7 +1677,7 @@ class TestExposureCalculation:
 
         return ExposureCalculator(config)
 
-    
+
 
     @pytest.fixture
 
@@ -1705,7 +1705,7 @@ class TestExposureCalculation:
 
         ]
 
-    
+
 
     def test_calculate_exposure(self, exposure_calculator, sample_trades):
 
@@ -1713,7 +1713,7 @@ class TestExposureCalculation:
 
         result = exposure_calculator.calculate_exposure(sample_trades, market_data)
 
-        
+
 
         assert result.current_exposure >= 0
 
@@ -1721,7 +1721,7 @@ class TestExposureCalculation:
 
         assert result.expected_positive_exposure >= 0
 
-        
+
 
         print(f"✅ 敞口计算测试通过: Current=${result.current_exposure:,.2f}")
 
@@ -1747,7 +1747,7 @@ class TestCVACalculation:
 
         return CVACalculator(config)
 
-    
+
 
     def test_calculate_cva(self, cva_calculator):
 
@@ -1755,7 +1755,7 @@ class TestCVACalculation:
 
         from src.counterparty_risk.exposure_calculation import ExposureResult
 
-        
+
 
         credit_assessment = CreditAssessmentResult(
 
@@ -1781,7 +1781,7 @@ class TestCVACalculation:
 
         )
 
-        
+
 
         exposure_result = ExposureResult(
 
@@ -1801,7 +1801,7 @@ class TestCVACalculation:
 
         )
 
-        
+
 
         market_data = {}
 
@@ -1815,7 +1815,7 @@ class TestCVACalculation:
 
         )
 
-        
+
 
         assert result.cva > 0
 
@@ -1825,7 +1825,7 @@ class TestCVACalculation:
 
         assert result.xva > 0
 
-        
+
 
         print(f"✅ CVA计算测试通过: CVA=${result.cva:,.2f}, XVA=${result.xva:,.2f}")
 
@@ -1911,13 +1911,13 @@ def main():
 
     print("="*80 + "\n")
 
-    
+
 
     print("步骤1: 初始化信用评估引擎")
 
     credit_engine = CreditAssessmentEngine({})
 
-    
+
 
     print("\n步骤2: 创建交易对手")
 
@@ -1943,7 +1943,7 @@ def main():
 
     )
 
-    
+
 
     print("\n步骤3: 执行信用评估")
 
@@ -1961,7 +1961,7 @@ def main():
 
     print(f"  - 风险等级: {credit_result.risk_level}")
 
-    
+
 
     print("\n步骤4: 初始化敞口计算器")
 
@@ -1973,7 +1973,7 @@ def main():
 
     })
 
-    
+
 
     print("\n步骤5: 创建交易")
 
@@ -2017,7 +2017,7 @@ def main():
 
     ]
 
-    
+
 
     print("\n步骤6: 计算敞口")
 
@@ -2033,7 +2033,7 @@ def main():
 
     print(f"  - 峰值敞口: ${exposure_result.peak_exposure:,.2f}")
 
-    
+
 
     print("\n步骤7: 初始化CVA计算器")
 
@@ -2049,7 +2049,7 @@ def main():
 
     })
 
-    
+
 
     print("\n步骤8: 计算CVA/DVA")
 
@@ -2071,7 +2071,7 @@ def main():
 
     print(f"  - XVA: ${cva_result.xva:,.2f}")
 
-    
+
 
     print("\n步骤9: 生成报告")
 
@@ -2081,7 +2081,7 @@ def main():
 
     })
 
-    
+
 
     credit_report = report_generator.generate_credit_risk_report([credit_result])
 
@@ -2089,7 +2089,7 @@ def main():
 
     cva_report = report_generator.generate_cva_report([cva_result])
 
-    
+
 
     print("\n" + "="*80)
 
@@ -2287,13 +2287,13 @@ docker-compose -f docker-compose.counterparty_risk.yml down
 
 
 
-✅ **开源项目集成**: 使用ORE开源引擎，避免自研开发  
+✅ **开源项目集成**: 使用ORE开源引擎，避免自研开发
 
-✅ **个人适配优化**: 单机部署、简化配置、AI辅助维护  
+✅ **个人适配优化**: 单机部署、简化配置、AI辅助维护
 
-✅ **专业标准对齐**: Basel III合规、SA-CCR标准  
+✅ **专业标准对齐**: Basel III合规、SA-CCR标准
 
-✅ **完整实施方案**: 包含代码示例、配置文件、测试脚本  
+✅ **完整实施方案**: 包含代码示例、配置文件、测试脚本
 
 
 
@@ -2346,4 +2346,3 @@ docker-compose -f docker-compose.counterparty_risk.yml down
 - [Basel III框架](https://www.bis.org/bcbs/basel3.htm)
 
 - [SA-CCR标准](https://www.bis.org/bcbs/publ/d352.htm)
-

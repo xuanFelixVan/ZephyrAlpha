@@ -105,7 +105,7 @@ layer: layer_06
 
 
 主观观点的组合优化
-> **职责边界**: 
+> **职责边界**:
 
 
 ## 1. 概述
@@ -114,7 +114,7 @@ layer: layer_06
 
 - 解决传统均值方差优化对预期收益率估计过于敏感的问题
 
-- 
+-
 - 降低因参数估计误差导致的优化偏差
 
 ### 1.2 版本信息
@@ -125,7 +125,7 @@ layer: layer_06
 | **创建日期** | 2026-04-06 |
 
 
-| 
+|
 |---------|---------|-----------|---------|
 | **输出目标** | 组合优化模块 | PORTFOLIO_OPTIMIZATION_001 | 提供优化后的组合权重 |
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
@@ -154,10 +154,10 @@ graph LR
     A[组合优化引擎] --> B[Black-Litterman模型]
     C[数据质量监控] --> B
     D[数据目录] --> B
-    
+
     B --> F[风险预算系统]
     B --> G[策略选择]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -188,7 +188,7 @@ graph TB
         E[策略信号] --> D
         F[风险模型] --> G[协方差矩阵估计器]
     end
-    
+
     subgraph "Black-Litterman核心引擎"
         B --> H[
         D --> I[观点矩阵构建]
@@ -197,13 +197,13 @@ graph TB
         J --> K
         G --> K
     end
-    
+
         K --> L[后验收益估计]
         L --> M[均值方差优化器]
         M --> N[约束处理器]
         N --> O[组合权重输出]
     end
-    
+
         O --> P[组合权重方案]
         O --> Q[风险归因报告]
         O --> R[观点影响分析]
@@ -234,15 +234,15 @@ from pypfopt import risk_models, expected_returns
 
 class BlackLittermanOptimizer:
     """
-    
+
     索引: BLACK_LITTERMAN_001-M01
     职责: 基于PyPortfolioOpt实现Black-Litterman组合优化
     输出: 优化后的组合权重
     """
-    
+
     def __init__(self, risk_free_rate: float = 0.02):
         self.risk_free_rate = risk_free_rate
-        
+
     def calculate_market_equilibrium_returns(
         self,
         market_prices: pd.DataFrame,
@@ -250,18 +250,18 @@ class BlackLittermanOptimizer:
         risk_aversion: float = 2.5
     ) -> pd.Series:
         """
-        
+
         Args:
             market_prices: 市场价格数据
             risk_aversion: 风险厌恶系数
-            
+
         Returns:
             市场均衡收益序列
         """
         S = risk_models.CovarianceShrinkage(market_prices).ledoit_wolf()
         pi = market_implied_prior_returns(market_caps, risk_aversion, S)
         return pi
-    
+
     def build_views_matrix(
         self,
         assets: list,
@@ -270,28 +270,28 @@ class BlackLittermanOptimizer:
     ) -> tuple:
         """
         构建观点矩阵
-        
+
         Args:
             assets: 资产列表
-            
+
         Returns:
             (P, Q, Omega): 观点矩阵、观点向量、置信度矩阵
         """
         n_assets = len(assets)
         n_views = len(views)
-        
+
         P = np.zeros((n_views, n_assets))
         Q = np.zeros(n_views)
         Omega = np.zeros((n_views, n_views))
-        
+
         for i, (asset, view) in enumerate(views.items()):
             asset_idx = assets.index(asset)
             P[i, asset_idx] = 1
             Q[i] = view
             Omega[i, i] = 1 / confidence[asset]
-            
+
         return P, Q, Omega
-    
+
     def optimize_portfolio(
         self,
         market_prices: pd.DataFrame,
@@ -302,45 +302,45 @@ class BlackLittermanOptimizer:
     ) -> dict:
         """
         执行Black-Litterman优化
-        
+
         Args:
             market_prices: 市场价格数据
 ?
             views: 主观观点
             risk_aversion: 风险厌恶系数
-            
+
         Returns:
         """
         assets = list(market_prices.columns)
-        
+
         pi = self.calculate_market_equilibrium_returns(
             market_prices, market_caps, risk_aversion
         )
-        
+
         S = risk_models.CovarianceShrinkage(market_prices).ledoit_wolf()
-        
+
         P, Q, Omega = self.build_views_matrix(assets, views, confidence)
-        
+
         bl = BlackLittermanModel(
-            S, 
-            pi=pi, 
-            P=P, 
-            Q=Q, 
+            S,
+            pi=pi,
+            P=P,
+            Q=Q,
             Omega=Omega,
             risk_aversion=risk_aversion
         )
-        
+
         bl_returns = bl.bl_returns()
         bl_cov = bl.bl_cov()
-        
+
         from pypfopt import EfficientFrontier
         ef = EfficientFrontier(bl_returns, bl_cov)
         weights = ef.max_sharpe()
-        
+
         cleaned_weights = ef.clean_weights()
-        
+
         performance = ef.portfolio_performance()
-        
+
         return {
             'weights': cleaned_weights,
             'expected_return': performance[0],
@@ -364,11 +364,11 @@ import riskfolio as rp
 
 class RiskfolioBlackLittermanOptimizer:
     """
-    
+
     索引: BLACK_LITTERMAN_001-M02
     职责: 使用Riskfolio-Lib实现Black-Litterman优化
     """
-    
+
     def optimize_with_riskfolio(
         self,
         returns: pd.DataFrame,
@@ -377,36 +377,36 @@ class RiskfolioBlackLittermanOptimizer:
     ) -> dict:
         """
         使用Riskfolio-Lib执行Black-Litterman优化
-        
+
         Args:
             views: 主观观点
-            
+
         Returns:
             优化结果
         """
         port = rp.Portfolio(returns=returns)
         port.assets_stats(method_mu='hist', method_cov='hist')
-        
+
         bl_mu, bl_cov = rp.black_litterman(
             returns,
             views=views,
             confidence=confidence
         )
-        
+
         port.mu = bl_mu
         port.cov = bl_cov
-        
+
         w = port.optimization(
             model='Classic',
             rm='MV',
             obj='Sharpe',
             rf=0.02
         )
-        
+
         return w
 ```
 
-### 3.2 
+### 3.2
 
 #### 3.2.1 市场均衡收益计算
 
@@ -430,19 +430,19 @@ def market_implied_prior_returns(
 ) -> np.ndarray:
     """
     计算市场隐含均衡收益
-    
+
     Args:
 ?
         risk_aversion: 风险厌恶系数
-        
+
     Returns:
         市场均衡收益向量
     """
     total_cap = sum(market_caps.values())
     market_weights = np.array([cap / total_cap for cap in market_caps.values()])
-    
+
     pi = risk_aversion * np.dot(cov_matrix, market_weights)
-    
+
     return pi
 ```
 
@@ -471,24 +471,24 @@ def black_litterman_formula(
     tau: float = 0.02
 ) -> tuple:
     """
-    
+
     Args:
         pi: 市场均衡收益
         P: 观点矩阵
         Q: 观点向量
         tau: 缩放因子
-        
+
     Returns:
     """
     tau_Sigma_inv = np.linalg.inv(tau * Sigma)
     Omega_inv = np.linalg.inv(Omega)
-    
+
     M = np.linalg.inv(tau_Sigma_inv + P.T @ Omega_inv @ P)
-    
+
     bl_return = M @ (tau_Sigma_inv @ pi + P.T @ Omega_inv @ Q)
-    
+
     bl_cov = Sigma + M
-    
+
     return bl_return, bl_cov
 ```
 
@@ -572,7 +572,7 @@ CREATE TABLE IF NOT EXISTS black_litterman_results (
 ```python
 class BlackLittermanAPI:
     """Black-Litterman API接口"""
-    
+
     @endpoint("/api/v1/black_litterman/optimize")
     async def optimize_portfolio(
         self,
@@ -580,15 +580,15 @@ class BlackLittermanAPI:
     ) -> OptimizationResponse:
         """
         执行Black-Litterman组合优化
-        
+
         Args:
             request: 优化请求
-            
+
         Returns:
             优化结果
         """
         pass
-    
+
     @endpoint("/api/v1/black_litterman/views")
     async def submit_views(
         self,
@@ -596,15 +596,15 @@ class BlackLittermanAPI:
     ) -> ViewResponse:
         """
         提交主观观点
-        
+
         Args:
             views: 观点列表
-            
+
         Returns:
             观点确认结果
         """
         pass
-    
+
     @endpoint("/api/v1/black_litterman/market_equilibrium")
     async def get_market_equilibrium(
         self,
@@ -612,10 +612,10 @@ class BlackLittermanAPI:
     ) -> EquilibriumResponse:
         """
         获取市场均衡收益
-        
+
         Args:
             assets: 资产列表
-            
+
         Returns:
             市场均衡收益数据
         """
@@ -751,7 +751,3 @@ class BlackLittermanAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-
-
-
-

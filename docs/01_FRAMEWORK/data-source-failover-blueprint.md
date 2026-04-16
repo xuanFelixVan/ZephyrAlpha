@@ -22,7 +22,7 @@ reference_models:
 
 > **核心职责**: Data Source Failover蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Source Failover蓝图设计相关内容
 
@@ -32,11 +32,11 @@ reference_models:
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **优先级**: P1级专业模块  
+> **优先级**: P1级专业模块
 
 > **实施周期**: 2周
 
@@ -304,7 +304,7 @@ class DataSourceFailoverManager:
 
     """数据源故障转移管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -326,7 +326,7 @@ class DataSourceFailoverManager:
 
         self.recovery_threshold = config.get('recovery_threshold', 2)
 
-        
+
 
         self.circuit_breakers: Dict[str, pybreaker.CircuitBreaker] = {}
 
@@ -336,23 +336,23 @@ class DataSourceFailoverManager:
 
         self.running = False
 
-        
+
 
         self._initialize_data_sources()
 
         self._initialize_circuit_breakers()
 
-    
+
 
     def _initialize_data_sources(self):
 
         """初始化数据源"""
 
-        
+
 
         sources_config = self.config.get('data_sources', [])
 
-        
+
 
         for source_config in sources_config:
 
@@ -372,23 +372,23 @@ class DataSourceFailoverManager:
 
             )
 
-            
+
 
             self.data_sources[source.source_id] = source
 
-        
+
 
         if self.data_sources:
 
             self.active_source_id = self._select_active_source()
 
-    
+
 
     def _initialize_circuit_breakers(self):
 
         """初始化熔断器"""
 
-        
+
 
         for source_id in self.data_sources:
 
@@ -400,19 +400,19 @@ class DataSourceFailoverManager:
 
             )
 
-    
+
 
     def start_health_check(self):
 
         """启动健康检查"""
 
-        
+
 
         if self.running:
 
             return
 
-        
+
 
         self.running = True
 
@@ -426,37 +426,37 @@ class DataSourceFailoverManager:
 
         self.health_check_thread.start()
 
-        
+
 
         logger.info("Health check thread started")
 
-    
+
 
     def stop_health_check(self):
 
         """停止健康检查"""
 
-        
+
 
         self.running = False
 
-        
+
 
         if self.health_check_thread:
 
             self.health_check_thread.join(timeout=5)
 
-        
+
 
         logger.info("Health check thread stopped")
 
-    
+
 
     def _health_check_loop(self):
 
         """健康检查循环"""
 
-        
+
 
         while self.running:
 
@@ -472,13 +472,13 @@ class DataSourceFailoverManager:
 
                 time.sleep(5)
 
-    
+
 
     def _check_all_sources(self):
 
         """检查所有数据源"""
 
-        
+
 
         for source_id, source in self.data_sources.items():
 
@@ -486,11 +486,11 @@ class DataSourceFailoverManager:
 
                 is_healthy = self._check_source_health(source)
 
-                
+
 
                 old_status = source.status
 
-                
+
 
                 if is_healthy:
 
@@ -506,17 +506,17 @@ class DataSourceFailoverManager:
 
                     source.failure_count += 1
 
-                    
+
 
                     if source.failure_count >= self.failure_threshold:
 
                         source.status = DataSourceStatus.UNHEALTHY
 
-                
+
 
                 source.last_check_time = datetime.now()
 
-                
+
 
                 if old_status != source.status:
 
@@ -534,31 +534,31 @@ class DataSourceFailoverManager:
 
                     )
 
-                    
+
 
                     if source_id == self.active_source_id and source.status == DataSourceStatus.UNHEALTHY:
 
                         self._perform_failover()
 
-            
+
 
             except Exception as e:
 
                 logger.error(f"Error checking source {source_id}: {e}")
 
-    
+
 
     def _check_source_health(self, source: DataSource) -> bool:
 
         """检查数据源健康状态"""
 
-        
+
 
         try:
 
             start_time = time.time()
 
-            
+
 
             response = requests.get(
 
@@ -568,11 +568,11 @@ class DataSourceFailoverManager:
 
             )
 
-            
+
 
             response_time = time.time() - start_time
 
-            
+
 
             source.avg_response_time = (
 
@@ -580,7 +580,7 @@ class DataSourceFailoverManager:
 
             )
 
-            
+
 
             if response.status_code == 200:
 
@@ -590,7 +590,7 @@ class DataSourceFailoverManager:
 
                 return False
 
-        
+
 
         except Exception as e:
 
@@ -598,13 +598,13 @@ class DataSourceFailoverManager:
 
             return False
 
-    
+
 
     def _select_active_source(self) -> Optional[str]:
 
         """选择活跃数据源"""
 
-        
+
 
         healthy_sources = [
 
@@ -614,7 +614,7 @@ class DataSourceFailoverManager:
 
         ]
 
-        
+
 
         if not healthy_sources:
 
@@ -622,7 +622,7 @@ class DataSourceFailoverManager:
 
             return None
 
-        
+
 
         if self.failover_strategy == FailoverStrategy.PRIORITY:
 
@@ -630,13 +630,13 @@ class DataSourceFailoverManager:
 
             return healthy_sources[0].source_id
 
-        
+
 
         elif self.failover_strategy == FailoverStrategy.ROUND_ROBIN:
 
             return healthy_sources[0].source_id
 
-        
+
 
         elif self.failover_strategy == FailoverStrategy.WEIGHTED:
 
@@ -646,7 +646,7 @@ class DataSourceFailoverManager:
 
             r = random.uniform(0, total_weight)
 
-            
+
 
             cumulative = 0
 
@@ -658,35 +658,35 @@ class DataSourceFailoverManager:
 
                     return source.source_id
 
-            
+
 
             return healthy_sources[0].source_id
 
-        
+
 
         return healthy_sources[0].source_id
 
-    
+
 
     def _perform_failover(self):
 
         """执行故障转移"""
 
-        
+
 
         old_active = self.active_source_id
 
-        
+
 
         new_active = self._select_active_source()
 
-        
+
 
         if new_active and new_active != old_active:
 
             self.active_source_id = new_active
 
-            
+
 
             self._record_failover_event(
 
@@ -702,7 +702,7 @@ class DataSourceFailoverManager:
 
             )
 
-            
+
 
             logger.warning(f"Failover: {old_active} -> {new_active}")
 
@@ -710,7 +710,7 @@ class DataSourceFailoverManager:
 
             logger.error("Failover failed: no healthy source available")
 
-    
+
 
     def _record_failover_event(self,
 
@@ -726,7 +726,7 @@ class DataSourceFailoverManager:
 
         """记录故障转移事件"""
 
-        
+
 
         event = FailoverEvent(
 
@@ -746,17 +746,17 @@ class DataSourceFailoverManager:
 
         )
 
-        
+
 
         self.event_queue.put(event)
 
-    
+
 
     def get_data(self, request: Dict) -> Optional[Dict]:
 
         """获取数据"""
 
-        
+
 
         if not self.active_source_id:
 
@@ -764,11 +764,11 @@ class DataSourceFailoverManager:
 
             return None
 
-        
+
 
         source = self.data_sources[self.active_source_id]
 
-        
+
 
         try:
 
@@ -784,7 +784,7 @@ class DataSourceFailoverManager:
 
                 )
 
-                
+
 
                 if response.status_code == 200:
 
@@ -796,7 +796,7 @@ class DataSourceFailoverManager:
 
                     return None
 
-        
+
 
         except pybreaker.CircuitBreakerError:
 
@@ -806,7 +806,7 @@ class DataSourceFailoverManager:
 
             return None
 
-        
+
 
         except Exception as e:
 
@@ -814,13 +814,13 @@ class DataSourceFailoverManager:
 
             return None
 
-    
+
 
     def get_failover_status(self) -> Dict:
 
         """获取故障转移状态"""
 
-        
+
 
         return {
 
@@ -850,19 +850,19 @@ class DataSourceFailoverManager:
 
         }
 
-    
+
 
     def _get_recent_events(self, limit: int = 10) -> List[Dict]:
 
         """获取最近事件"""
 
-        
+
 
         events = []
 
         temp_queue = Queue()
 
-        
+
 
         while not self.event_queue.empty() and len(events) < limit:
 
@@ -888,13 +888,13 @@ class DataSourceFailoverManager:
 
             temp_queue.put(event)
 
-        
+
 
         while not temp_queue.empty():
 
             self.event_queue.put(temp_queue.get())
 
-        
+
 
         return events
 
@@ -922,7 +922,7 @@ class DataSourceFailoverInterface:
 
     """数据源故障转移接口"""
 
-    
+
 
     def get_data(self, request: Dict) -> Optional[Dict]:
 
@@ -930,7 +930,7 @@ class DataSourceFailoverInterface:
 
         pass
 
-    
+
 
     def get_active_source(self) -> Optional[str]:
 
@@ -938,7 +938,7 @@ class DataSourceFailoverInterface:
 
         pass
 
-    
+
 
     def get_failover_status(self) -> Dict:
 
@@ -1036,7 +1036,7 @@ failover:
 
   recovery_threshold: 2
 
-  
+
 
 data_sources:
 
@@ -1050,7 +1050,7 @@ data_sources:
 
     weight: 1.0
 
-    
+
 
   - id: 'backup1'
 
@@ -1062,7 +1062,7 @@ data_sources:
 
     weight: 0.8
 
-    
+
 
   - id: 'backup2'
 
@@ -1143,4 +1143,3 @@ data_sources:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

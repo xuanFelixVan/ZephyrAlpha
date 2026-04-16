@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Stress Test Scenario Library蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Stress Test Scenario Library蓝图设计相关内容
 
@@ -344,19 +344,19 @@ class HistoricalScenarioLibrary:
 
     """历史危机场景库"""
 
-    
+
 
     def __init__(self):
 
         self.scenarios = self._load_historical_scenarios()
 
-        
+
 
     def _load_historical_scenarios(self) -> List[StressScenario]:
 
         """加载历史危机场景"""
 
-        
+
 
         scenarios = [
 
@@ -406,7 +406,7 @@ class HistoricalScenarioLibrary:
 
             ),
 
-            
+
 
             # 2020年新冠疫情冲击
 
@@ -454,7 +454,7 @@ class HistoricalScenarioLibrary:
 
             ),
 
-            
+
 
             # 2015年中国股灾
 
@@ -502,11 +502,11 @@ class HistoricalScenarioLibrary:
 
         ]
 
-        
+
 
         return scenarios
 
-    
+
 
     def get_scenario(self, scenario_id: str) -> Optional[StressScenario]:
 
@@ -520,9 +520,9 @@ class HistoricalScenarioLibrary:
 
         return None
 
-    
 
-    def list_scenarios(self, 
+
+    def list_scenarios(self,
 
                       crisis_type: Optional[CrisisType] = None) -> List[StressScenario]:
 
@@ -564,15 +564,15 @@ class HypotheticalScenarioGenerator:
 
     """假设极端场景生成器"""
 
-    
+
 
     def __init__(self, api_key: str):
 
         self.client = OpenAI(api_key=api_key)
 
-        
 
-    def generate_scenario(self, 
+
+    def generate_scenario(self,
 
                          scenario_description: str,
 
@@ -580,19 +580,19 @@ class HypotheticalScenarioGenerator:
 
         """AI辅助生成假设场景"""
 
-        
+
 
         prompt = f"""
 
         作为专业风险管理人员,请根据以下描述生成一个压力测试场景:
 
-        
+
 
         场景描述: {scenario_description}
 
         严重程度: {severity}
 
-        
+
 
         请提供以下信息:
 
@@ -604,13 +604,13 @@ class HypotheticalScenarioGenerator:
 
         4. 假设条件(流动性压力、交易对手风险、资金压力等)
 
-        
+
 
         请以JSON格式返回结果。
 
         """
 
-        
+
 
         response = self.client.chat.completions.create(
 
@@ -628,11 +628,11 @@ class HypotheticalScenarioGenerator:
 
         )
 
-        
+
 
         scenario_data = json.loads(response.choices[0].message.content)
 
-        
+
 
         scenario = StressScenario(
 
@@ -652,7 +652,7 @@ class HypotheticalScenarioGenerator:
 
             market_shocks=[
 
-                MarketShock(**shock) 
+                MarketShock(**shock)
 
                 for shock in scenario_data['market_shocks']
 
@@ -666,13 +666,13 @@ class HypotheticalScenarioGenerator:
 
         )
 
-        
+
 
         return scenario
 
-    
 
-    def generate_reverse_scenario(self, 
+
+    def generate_reverse_scenario(self,
 
                                  target_loss: float,
 
@@ -680,17 +680,17 @@ class HypotheticalScenarioGenerator:
 
         """反向压力测试场景生成"""
 
-        
+
 
         loss_percentage = target_loss / portfolio_value
 
-        
+
 
         prompt = f"""
 
         作为专业风险管理人员,请生成一个能够导致以下损失的反向压力测试场景:
 
-        
+
 
         目标损失: {target_loss:.2f}元
 
@@ -698,7 +698,7 @@ class HypotheticalScenarioGenerator:
 
         损失比例: {loss_percentage:.2%}
 
-        
+
 
         请设计一个极端但合理的市场场景,能够导致这样的损失。
 
@@ -706,7 +706,7 @@ class HypotheticalScenarioGenerator:
 
         """
 
-        
+
 
         response = self.client.chat.completions.create(
 
@@ -724,11 +724,11 @@ class HypotheticalScenarioGenerator:
 
         )
 
-        
+
 
         scenario_data = json.loads(response.choices[0].message.content)
 
-        
+
 
         scenario = StressScenario(
 
@@ -748,7 +748,7 @@ class HypotheticalScenarioGenerator:
 
             market_shocks=[
 
-                MarketShock(**shock) 
+                MarketShock(**shock)
 
                 for shock in scenario_data['market_shocks']
 
@@ -762,7 +762,7 @@ class HypotheticalScenarioGenerator:
 
         )
 
-        
+
 
         return scenario
 
@@ -796,15 +796,15 @@ class AutomatedStressTestEngine:
 
     """自动化压力测试引擎"""
 
-    
+
 
     def __init__(self, ore_config: Dict):
 
         self.ore_engine = OREngine(ore_config)
 
-        
 
-    def run_stress_test(self, 
+
+    def run_stress_test(self,
 
                        scenario: StressScenario,
 
@@ -812,7 +812,7 @@ class AutomatedStressTestEngine:
 
         """执行压力测试"""
 
-        
+
 
         market_data = self._apply_market_shocks(
 
@@ -820,7 +820,7 @@ class AutomatedStressTestEngine:
 
         )
 
-        
+
 
         stressed_portfolio = self.ore_engine.calculate(
 
@@ -832,17 +832,17 @@ class AutomatedStressTestEngine:
 
         )
 
-        
+
 
         risk_metrics = self._calculate_risk_metrics(
 
-            portfolio, 
+            portfolio,
 
             stressed_portfolio
 
         )
 
-        
+
 
         return {
 
@@ -880,9 +880,9 @@ class AutomatedStressTestEngine:
 
         }
 
-    
 
-    def run_batch_tests(self, 
+
+    def run_batch_tests(self,
 
                        scenarios: List[StressScenario],
 
@@ -890,7 +890,7 @@ class AutomatedStressTestEngine:
 
         """批量执行压力测试"""
 
-        
+
 
         results = []
 
@@ -900,13 +900,13 @@ class AutomatedStressTestEngine:
 
             results.append(result)
 
-        
+
 
         return results
 
-    
 
-    def schedule_periodic_tests(self, 
+
+    def schedule_periodic_tests(self,
 
                                scenarios: List[StressScenario],
 
@@ -916,15 +916,15 @@ class AutomatedStressTestEngine:
 
         """定期自动执行压力测试"""
 
-        
+
 
         from apscheduler.schedulers.background import BackgroundScheduler
 
-        
+
 
         scheduler = BackgroundScheduler()
 
-        
+
 
         def run_test():
 
@@ -934,7 +934,7 @@ class AutomatedStressTestEngine:
 
             self._generate_report(results)
 
-        
+
 
         if schedule == "daily":
 
@@ -948,27 +948,27 @@ class AutomatedStressTestEngine:
 
             scheduler.add_job(run_test, 'interval', months=1)
 
-        
+
 
         scheduler.start()
 
-        
+
 
         return scheduler
 
-    
 
-    def _apply_market_shocks(self, 
+
+    def _apply_market_shocks(self,
 
                             market_shocks: List[MarketShock]) -> MarketData:
 
         """应用市场冲击"""
 
-        
+
 
         market_data = MarketData()
 
-        
+
 
         for shock in market_shocks:
 
@@ -976,7 +976,7 @@ class AutomatedStressTestEngine:
 
                 market_data.apply_price_shock(
 
-                    shock.asset_class, 
+                    shock.asset_class,
 
                     shock.shock_magnitude
 
@@ -986,7 +986,7 @@ class AutomatedStressTestEngine:
 
                 market_data.apply_volatility_shock(
 
-                    shock.asset_class, 
+                    shock.asset_class,
 
                     shock.shock_magnitude
 
@@ -996,19 +996,19 @@ class AutomatedStressTestEngine:
 
                 market_data.apply_correlation_shock(
 
-                    shock.asset_class, 
+                    shock.asset_class,
 
                     shock.shock_magnitude
 
                 )
 
-        
+
 
         return market_data
 
-    
 
-    def _calculate_risk_metrics(self, 
+
+    def _calculate_risk_metrics(self,
 
                                original_portfolio: Portfolio,
 
@@ -1016,7 +1016,7 @@ class AutomatedStressTestEngine:
 
         """计算风险指标"""
 
-        
+
 
         return {
 
@@ -1028,7 +1028,7 @@ class AutomatedStressTestEngine:
 
             'max_drawdown': self._calculate_max_drawdown(
 
-                original_portfolio, 
+                original_portfolio,
 
                 stressed_portfolio
 
@@ -1184,23 +1184,23 @@ class OREIntegration:
 
     """ORE集成类"""
 
-    
+
 
     def __init__(self, ore_config_path: str):
 
         self.ore_engine = OREngine(ore_config_path)
 
-        
+
 
     def load_portfolio(self, portfolio_data: Dict) -> Portfolio:
 
         """加载投资组合"""
 
-        
+
 
         portfolio = Portfolio()
 
-        
+
 
         for position in portfolio_data['positions']:
 
@@ -1214,13 +1214,13 @@ class OREIntegration:
 
             )
 
-        
+
 
         return portfolio
 
-    
 
-    def calculate_var(self, 
+
+    def calculate_var(self,
 
                      portfolio: Portfolio,
 
@@ -1228,7 +1228,7 @@ class OREIntegration:
 
         """计算VaR"""
 
-        
+
 
         var_result = self.ore_engine.calculate_var(
 
@@ -1240,13 +1240,13 @@ class OREIntegration:
 
         )
 
-        
+
 
         return var_result.value_at_risk
 
-    
 
-    def calculate_expected_shortfall(self, 
+
+    def calculate_expected_shortfall(self,
 
                                     portfolio: Portfolio,
 
@@ -1254,7 +1254,7 @@ class OREIntegration:
 
         """计算期望损失"""
 
-        
+
 
         es_result = self.ore_engine.calculate_expected_shortfall(
 
@@ -1266,13 +1266,13 @@ class OREIntegration:
 
         )
 
-        
+
 
         return es_result.expected_shortfall
 
-    
 
-    def run_stress_scenario(self, 
+
+    def run_stress_scenario(self,
 
                            portfolio: Portfolio,
 
@@ -1280,7 +1280,7 @@ class OREIntegration:
 
         """执行压力场景"""
 
-        
+
 
         stressed_portfolio = self.ore_engine.apply_stress_scenario(
 
@@ -1290,7 +1290,7 @@ class OREIntegration:
 
         )
 
-        
+
 
         return {
 
@@ -1534,13 +1534,13 @@ class OREIntegration:
 
 
 
-✅ **极端情况应对能力** - 对标Bridgewater极端测试标准  
+✅ **极端情况应对能力** - 对标Bridgewater极端测试标准
 
-✅ **历史危机场景库** - 2008金融危机、2020疫情等真实场景  
+✅ **历史危机场景库** - 2008金融危机、2020疫情等真实场景
 
-✅ **AI辅助场景生成** - GLM-4-Flash智能生成假设场景  
+✅ **AI辅助场景生成** - GLM-4-Flash智能生成假设场景
 
-✅ **自动化压力测试** - 定期自动执行,无需人工干预  
+✅ **自动化压力测试** - 定期自动执行,无需人工干预
 
 
 
@@ -1589,4 +1589,3 @@ class OREIntegration:
 - [ORE官方文档](https://www.opensourcerisk.org/)
 
 - [Basel III压力测试标准](https://www.bis.org/bcbs/)
-

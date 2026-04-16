@@ -19,7 +19,7 @@ responsibility: ''
 ---
 # AI策略自动化集成蓝图
 > **核心职责**: 提供ai strategy automation blueprint的完整架构设计、技术选型和实施路径规划
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Ai Strategy Automation蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -111,15 +111,15 @@ Phase 5 (Month 9-10): 持续监控与迭代```
 **集成方案**?```python
 class AgentQuantQMTAdapter:
     """AgentQuant QMT 适配器"""
-    
+
     def __init__(self):
         self.data_cache = {}
-        
+
     def fetch_data(self, symbols: List[str], start_date: str, end_date: str):
         """从 QMT 获取数据（替代 yfinance）"""
-        
+
         all_data = {}
-        
+
         for symbol in symbols:
             try:
                 # 使用 QMT API 获取 K 线数据                data = xtdata.get_market_data_ex(
@@ -132,16 +132,16 @@ class AgentQuantQMTAdapter:
                     fill_data=True,
                     subscribe=False
                 )
-                
+
                 if symbol in data:
                     df = data[symbol]
                     df.columns = ['open', 'high', 'low', 'close', 'volume', 'amount']
                     df.index = pd.to_datetime(df.index, unit='ms')
                     all_data[symbol] = df
-                    
+
             except Exception as e:
                 logger.error(f"{symbol}: 获取失败 - {e}")
-        
+
         return all_data
 ```
 
@@ -172,20 +172,20 @@ class AgentQuantQMTAdapter:
 **集成方案**?```python
 class RDAgentFactorMiner:
     """RD-Agent 因子挖掘"""
-    
+
     def __init__(self):
         self.agent = RDAgent(
             llm_model="qwen-plus",
             task="factor_mining"
         )
-        
+
     def discover_factors(self, data_sources):
         """自动挖掘新因子"""
         factors = self.agent.run(
             data_sources=data_sources,
             target="alpha_factors"
         )
-        
+
         return factors
 ```
 
@@ -211,14 +211,14 @@ class RDAgentFactorMiner:
 **集成方案**?```python
 class TradingAgentsSupervisor:
     """TradingAgents 监督器"""
-    
+
     def __init__(self):
         self.graph = TradingAgentsGraph(
             llm_provider="dashscope",
             deep_think_llm="qwen-plus",
             quick_think_llm="qwen-turbo"
         )
-        
+
     def analyze_performance(self, backtest_result, market_context):
         """AI分析回测表现"""
         analysis = self.graph.propagate(
@@ -228,7 +228,7 @@ class TradingAgentsSupervisor:
                 "market_state": market_context
             }
         )
-        
+
         return PerformanceAnalysis(
             needs_optimization=analysis.needs_optimization,
             optimization_target=analysis.target,
@@ -284,22 +284,22 @@ class TradingAgentsSupervisor:
 **集成方案**?```python
 class FinRLBacktestAdapter:
     """FinRL-X 回测适配器""""
-    
+
     def __init__(self):
         self.engine = BacktestEngine()
-        
+
     def run_backtest(self, strategy, data):
         """适配策略接口"""
         # 转换策略格式
         finrl_strategy = self._convert_strategy(strategy)
-        
+
         # 运行回测
         result = self.engine.run(
             strategy=finrl_strategy,
             data=data,
             initial_capital=1000000
         )
-        
+
         return self._convert_result(result)
 ```
 
@@ -341,35 +341,35 @@ class FinRLBacktestAdapter:
 **集成方案**?```python
 class FinRobotStrategyGenerator:
     """FinRobot 策略生成器""""
-    
+
     def __init__(self, llm_config):
         self.strategist = AssistantAgent(
             name="Strategy_Developer",
             system_message="""
-            你是一位专业的量化策略开发专家            你的任务是根据用户想法生成可执行的BackTrader策略代码：            
+            你是一位专业的量化策略开发专家            你的任务是根据用户想法生成可执行的BackTrader策略代码：
             策略必须符合以下标准：            1. 使用BackTrader框架
             2. 包含完整的参数定义            3. 实现完整的买卖逻辑
             4. 包含风险控制（止损/止盈）            5. 代码符合Python规范
             """,
             llm_config=llm_config
         )
-        
+
     def generate_strategy(self, strategy_idea: str, parameters: dict):
         """生成策略代码"""
         prompt = f"""
-        请根据以下想法生成BackTrader策略代码：        
+        请根据以下想法生成BackTrader策略代码：
         策略想法: {strategy_idea}
         参数建议: {parameters}
-        
+
         请生成完整的策略代码，包括：
         1. 策略类定义        2. 参数定义
         3. __init__方法（指标计算）
         4. next方法（交易逻辑）        5. 风险控制逻辑
         """
-        
+
         # 发起对话生成代码
         code = self._generate_code_with_llm(prompt)
-        
+
         return code
 ```
 
@@ -510,22 +510,22 @@ class FinRobotStrategyGenerator:
 ```python
 class AIStrategyResearchPipeline:
     """AI 策略研究流水线""""
-    
+
     def __init__(self):
         self.factor_miner = RDAgentFactorMiner()
         self.idea_generator = AgentQuantEngine()
         self.code_generator = FinRobotStrategyGenerator()
         self.theory_validator = TheoryValidator()
-        
+
     def research_pipeline(self, market_state: MarketState):
         """完整的研究流程""""
-        
+
         # 1. RD-Agent: 自动挖掘新因子
         new_factors = self.factor_miner.discover_factors(
             data_sources=["news", "reports", "papers"],
             validation_method="statistical_significance"
         )
-        
+
         # 2. AgentQuant: 基于因子生成策略想法
         strategy_ideas = self.idea_generator.generate_ideas(
             factors=new_factors,
@@ -536,24 +536,24 @@ class AIStrategyResearchPipeline:
                 "min_win_rate": 0.55
             }
         )
-        
+
         # 3. FinRobot: 生成可执行代码
         strategy_code = self.code_generator.generate_code(
             idea=strategy_ideas[0],
             framework="backtrader",
             compliance_check=True
         )
-        
+
         # 4. 理论验证
         theory_validation = self.theory_validator.validate(
             strategy_code=strategy_code,
             factors=new_factors,
             economic_rationale=True
         )
-        
+
         if not theory_validation.passed:
             return self.research_pipeline(market_state)
-        
+
         return ValidatedStrategy(
             code=strategy_code,
             theory=theory_validation.report,
@@ -596,40 +596,40 @@ class AIStrategyResearchPipeline:
 ```python
 class ProfessionalBacktestPipeline:
     """专业机构级回测流水线"""
-    
+
     def __init__(self):
         self.in_sample_tester = InSampleBacktester()
         self.out_sample_tester = OutSampleBacktester()
         self.stress_tester = StressTester()
         self.sensitivity_analyzer = SensitivityAnalyzer()
-        
+
     def full_validation_pipeline(self, strategy):
         """完整的验证流程"""
-        
+
         # 1. 样本内回测（训练集）
         in_sample_result = self.in_sample_tester.test(
             strategy=strategy,
             period="2018-01-01:2022-12-31",
             metrics=["sharpe", "max_dd", "win_rate", "calmar"]
         )
-        
+
         if not self._check_in_sample_standards(in_sample_result):
             return ValidationResult(passed=False, reason="样本内表现不达标")
-        
+
         # 2. 样本外回测（测试集）
         out_sample_result = self.out_sample_tester.test(
             strategy=strategy,
             period="2023-01-01:2024-12-31",
             strict_mode=True
         )
-        
+
         performance_ratio = out_sample_result.sharpe / in_sample_result.sharpe
         if performance_ratio < 0.8:
             return ValidationResult(
                 passed=False,
                 reason=f"样本外表现仅为样本内的{performance_ratio:.1%}"
             )
-        
+
         # 3. Walk-Forward验证
         wf_result = self._walk_forward_validation(
             strategy=strategy,
@@ -637,10 +637,10 @@ class ProfessionalBacktestPipeline:
             test_window=63,
             n_splits=8
         )
-        
+
         if wf_result.consistency_score < 0.7:
             return ValidationResult(passed=False, reason="Walk-Forward验证一致性不一致)
-        
+
         # 4. 压力测试
         stress_result = self.stress_tester.test(
             strategy=strategy,
@@ -652,10 +652,10 @@ class ProfessionalBacktestPipeline:
                 "liquidity_crisis"
             ]
         )
-        
+
         if stress_result.max_dd_in_crisis > 0.25:
             return ValidationResult(passed=False, reason="极端市场下最大回撤超限)
-        
+
         # 5. 敏感性分析        sensitivity_result = self.sensitivity_analyzer.analyze(
             strategy=strategy,
             param_ranges={
@@ -664,10 +664,10 @@ class ProfessionalBacktestPipeline:
                 "stop_loss": (0.02, 0.10)
             }
         )
-        
+
         if sensitivity_result.stability_score < 0.6:
             return ValidationResult(passed=False, reason="参数敏感性过高)
-        
+
         return ValidationResult(
             passed=True,
             in_sample=in_sample_result,
@@ -717,15 +717,15 @@ class ProfessionalBacktestPipeline:
 ```python
 class PaperTradingAndSmallPositionTest:
     """模拟盘与小仓位测试""
-    
+
     def __init__(self):
         self.paper_trading_engine = PaperTradingEngine()
         self.small_position_executor = SmallPositionExecutor()
         self.performance_monitor = PerformanceMonitor()
-        
+
     def run_testing_pipeline(self, strategy):
         """模拟盘和小仓位测试流程"""
-        
+
         # === 第一阶段：模拟盘测试（1 个月）==
         paper_trading_result = self.paper_trading_engine.run(
             strategy=strategy,
@@ -735,14 +735,14 @@ class PaperTradingAndSmallPositionTest:
             simulate_slippage=True,
             simulate_impact=True
         )
-        
+
         if not self._check_paper_trading_standards(paper_trading_result):
             return TestResult(
                 passed=False,
                 stage="paper_trading",
                 reason="模拟盘表现不达标"
             )
-        
+
         # === 第二阶段：小仓位实盘测试（2 个月）==
         small_position_result = self.small_position_executor.run(
             strategy=strategy,
@@ -751,35 +751,35 @@ class PaperTradingAndSmallPositionTest:
             real_money=True,
             strict_risk_control=True
         )
-        
+
         if not self._check_small_position_standards(small_position_result):
             return TestResult(
                 passed=False,
                 stage="small_position",
                 reason="小仓位实盘表现不达标"
             )
-        
+
         # === 第三阶段：对比分析===
         comparison = self._compare_performance(
             backtest_result=strategy.backtest_result,
             paper_trading_result=paper_trading_result,
             small_position_result=small_position_result
         )
-        
+
         if comparison.consistency_score < 0.85:
             return TestResult(
                 passed=False,
                 stage="comparison",
                 reason="回测/模拟与实盘表现不一致
             )
-        
+
         return TestResult(
             passed=True,
             paper_trading=paper_trading_result,
             small_position=small_position_result,
             comparison=comparison
         )
-    
+
     def _check_paper_trading_standards(self, result):
         """模拟盘通过标准"""
         standards = {
@@ -790,9 +790,9 @@ class PaperTradingAndSmallPositionTest:
             "slippage_control": result.avg_slippage <= 0.002,
             "stability": result.monthly_returns_std <= 0.03
         }
-        
+
         return all(standards.values())
-    
+
     def _check_small_position_standards(self, result):
         """小仓位实盘通过标准"""
         standards = {
@@ -802,7 +802,7 @@ class PaperTradingAndSmallPositionTest:
             "psychological_test": result.no_manual_intervention,
             "consistency": result.performance_vs_paper_trading >= 0.90
         }
-        
+
         return all(standards.values())
 ```
 
@@ -839,34 +839,34 @@ class PaperTradingAndSmallPositionTest:
 ```python
 class StrategyDeploymentSystem:
     """策略部署系统"""
-    
+
     def __init__(self):
         self.deployment_engine = DeploymentEngine()
         self.risk_limit_setter = RiskLimitSetter()
         self.capital_allocator = CapitalAllocator()
-        
+
     def deploy_strategy(self, strategy, approval_decision):
         """部署策略到生产环境""
-        
+
         # 1. 设定风险限额
         risk_limits = self.risk_limit_setter.set_risk_limits(
             strategy=strategy,
             approval_result=approval_decision
         )
-        
+
         # 2. 资金分配
         capital_allocation = self.capital_allocator.allocate(
             strategy=strategy,
             portfolio_state=self._get_current_portfolio()
         )
-        
+
         # 3. 部署到生产环境        deployment_result = self.deployment_engine.deploy(
             strategy=strategy,
             risk_limits=risk_limits,
             capital_allocation=capital_allocation,
             execution_config=self._get_execution_config()
         )
-        
+
         return deployment_result
 ```
 
@@ -900,50 +900,50 @@ class StrategyDeploymentSystem:
 ```python
 class ContinuousMonitoringSystem:
     """持续监控系统"""
-    
+
     def __init__(self):
         self.performance_monitor = PerformanceMonitor()
         self.risk_monitor = RiskMonitor()
         self.anomaly_detector = AnomalyDetector()
         self.auto_optimizer = AutoOptimizer()
         self.exit_decision_engine = ExitDecisionEngine()
-        
+
     def monitor_and_iterate(self, strategy):
         """持续监控和迭代"""
-        
+
         while strategy.status == "active":
             # 1. 实时绩效监控
             performance_metrics = self.performance_monitor.get_real_time_metrics(strategy)
-            
+
             # 2. 风险监控
             risk_metrics = self.risk_monitor.get_real_time_risks(strategy)
-            
+
             # 3. 异常检?            anomalies = self.anomaly_detector.detect(
                 strategy,
                 performance_metrics,
                 risk_metrics
             )
-            
+
             # 4. 如果检测到异常，触发告?            if anomalies:
                 self._trigger_alert(strategy, anomalies)
-            
+
             # 5. 检查是否需要优化或退?            decision = self.exit_decision_engine.evaluate(
                 strategy=strategy,
                 performance=performance_metrics,
                 risk=risk_metrics,
                 anomalies=anomalies
             )
-            
+
             if decision.action == "optimize":
                 self._auto_optimize(strategy)
-                
+
             elif decision.action == "reduce_weight":
                 self._reduce_strategy_weight(strategy, decision.new_weight)
-                
+
             elif decision.action == "exit":
                 self._exit_strategy(strategy, decision.reason)
                 break
-            
+
             # 每日运行一次            time.sleep(24 * 3600)
 ```
 
@@ -969,26 +969,26 @@ class ContinuousMonitoringSystem:
 ```python
 class AIStrategyCommittee:
     """AI策略评审?- 个人开发者专属版"""
-    
+
     def __init__(self):
         self.ai_reviewers = {
             "quant_analyst": AIQuantAnalyst(),              # 量化分析?            "risk_manager": AIRiskManager(),                # 风险管理?            "performance_auditor": AIPerformanceAuditor(),  # 绩效审计?            "market_strategist": AIMarketStrategist()       # 市场策略?        }
         self.decision_threshold = 0.75
-        
+
     def review_strategy(self, strategy, stage):
         """AI评审团评审策?""
-        
+
         # 1. 各AI评审员独立评?        reviews = {}
         for reviewer_name, reviewer in self.ai_reviewers.items():
             review_result = reviewer.review(strategy, stage)
             reviews[reviewer_name] = review_result
-        
+
         # 2. 生成综合评审报告
         committee_report = self._generate_committee_report(reviews)
-        
+
         # 3. 计算综合评分
         overall_score = self._calculate_overall_score(reviews)
-        
+
         # 4. 生成决策建议
         if overall_score >= self.decision_threshold:
             recommendation = "建议通过"
@@ -999,7 +999,7 @@ class AIStrategyCommittee:
         else:
             recommendation = "建议拒绝"
             need_human_approval = True
-        
+
         return CommitteeDecision(
             overall_score=overall_score,
             recommendation=recommendation,
@@ -1014,10 +1014,10 @@ class AIStrategyCommittee:
 ```python
 class AIQuantAnalyst:
     """AI量化分析?- 评审策略逻辑"""
-    
+
     def review(self, strategy, stage):
         """评审策略的量化逻辑"""
-        
+
         review_points = {
             "strategy_logic": self._check_strategy_logic(strategy),
             "factor_validity": self._check_factor_validity(strategy),
@@ -1025,9 +1025,9 @@ class AIQuantAnalyst:
             "backtest_quality": self._check_backtest_quality(strategy),
             "economic_rationale": self._check_economic_rationale(strategy)
         }
-        
+
         score = sum(review_points.values()) / len(review_points)
-        
+
         return ReviewResult(
             reviewer="量化分析?,
             score=score,
@@ -1040,10 +1040,10 @@ class AIQuantAnalyst:
 ```python
 class AIRiskManager:
     """AI风险管理?- 评审风险控制"""
-    
+
     def review(self, strategy, stage):
         """评审策略的风险控?""
-        
+
         risk_checks = {
             "market_risk": self._check_market_risk(strategy),
             "liquidity_risk": self._check_liquidity_risk(strategy),
@@ -1051,9 +1051,9 @@ class AIRiskManager:
             "drawdown_control": self._check_drawdown_control(strategy),
             "position_sizing": self._check_position_sizing(strategy)
         }
-        
+
         score = sum(risk_checks.values()) / len(risk_checks)
-        
+
         return ReviewResult(
             reviewer="风险管理?,
             score=score,
@@ -1067,10 +1067,10 @@ class AIRiskManager:
 ```python
 class AIDecisionReport:
     """AI决策报告生成?""
-    
+
     def generate_report(self, strategy, decision_point, ai_reviews):
         """生成AI决策报告"""
-        
+
         report = f"""
 # 策略评审报告
 
@@ -1100,7 +1100,7 @@ class AIDecisionReport:
 ```---
 *本报告由AI评审团自动生成，仅供参考，最终决策权在您手中。
 """
-        
+
         return report
 ```
 
@@ -1110,7 +1110,7 @@ class AIDecisionReport:
 
 ## 五、优化审核流程与批量生产
 
-> **核心优化**: 基于个人开发者需求，最大化 AI 自动化程度，减少人工工作量。 
+> **核心优化**: 基于个人开发者需求，最大化 AI 自动化程度，减少人工工作量。
 > **优化结果**: AI自动化率从 90% 提升到 95%，人工审核节点从5个减少至3
 ### 5.1 审核流程优化总览
 
@@ -1139,33 +1139,33 @@ class AIDecisionReport:
 ```python
 class StrategyPoolAutoApproval:
     """策略入池自动审核系统"""
-    
+
     AUTO_APPROVAL_CRITERIA = {
         # 回测表现（权0%?        "sharpe_ratio": {"min": 1.5, "weight": 0.25},
         "max_drawdown": {"max": 0.15, "weight": 0.20},
         "annual_return": {"min": 0.20, "weight": 0.15},
-        
+
         # 风险控制（权5%?        "volatility": {"max": 0.25, "weight": 0.15},
         "var_95": {"max": 0.05, "weight": 0.10},
-        
+
         # 稳定性（权重15%?        "profit_consistency": {"min": 0.70, "weight": 0.10},
         "factor_decay": {"max": 0.30, "weight": 0.05},
     }
-    
+
     AUTO_APPROVAL_THRESHOLD = 0.80  # 综合评分 ≥ 0%自动通过
-    
+
     def auto_review(self, strategy):
         """自动审核策略入池"""
-        
+
         # 1. 计算各维度得?        scores = {}
         for criterion, config in self.AUTO_APPROVAL_CRITERIA.items():
             value = strategy.get_metric(criterion)
             score = self._calculate_score(value, config)
             scores[criterion] = score * config["weight"]
-        
+
         # 2. 计算综合评分
         overall_score = sum(scores.values())
-        
+
         # 3. 自动决策
         if overall_score >= self.AUTO_APPROVAL_THRESHOLD:
             return AutoApprovalDecision(
@@ -1209,31 +1209,31 @@ class StrategyPoolAutoApproval:
 ```python
 class SimulationToLiveAutoReview:
     """模拟盘转实盘自动审核系统"""
-    
+
     AUTO_PASS_CRITERIA = {
         # 模拟盘表现（权重50%?        "sim_sharpe_ratio": {"min": 1.2, "weight": 0.20},
         "sim_max_drawdown": {"max": 0.12, "weight": 0.20},
         "sim_return_consistency": {"min": 0.75, "weight": 0.10},
-        
+
         # 与回测对比（权重25%?        "backtest_sim_correlation": {"min": 0.70, "weight": 0.15},
         "performance_deviation": {"max": 0.20, "weight": 0.10},
-        
+
         # 风险控制（权5%?        "sim_volatility": {"max": 0.20, "weight": 0.10},
         "sim_var_95": {"max": 0.04, "weight": 0.10},
         "sim_profit_days_ratio": {"min": 0.55, "weight": 0.05},
     }
-    
+
     AUTO_PASS_THRESHOLD = 0.75      # 综合评分 ≥ 5%自动通过
     NEED_HUMAN_THRESHOLD = 0.60     # 综合评分 ≥ 0%需人工确认
-    
+
     def auto_review(self, simulation_result):
         """自动审核模拟盘结果"""
-        
+
         # 1. 计算综合评分
         overall_score = self._calculate_overall_score(simulation_result)
-        
+
         # 2. 检查风险预警        risk_alerts = self._check_risk_alerts(simulation_result)
-        
+
         # 3. 生成决策建议
         if overall_score >= self.AUTO_PASS_THRESHOLD and len(risk_alerts) == 0:
             # 高分 + 无风险预警，自动通过
@@ -1262,38 +1262,38 @@ class SimulationToLiveAutoReview:
                 alerts=risk_alerts,
                 auto_execute=True
             )
-    
+
     def _check_risk_alerts(self, simulation_result):
         """检查风险预警"""
         alerts = []
-        
+
         # 1. 市场环境预警
         if simulation_result.market_regime == "bull_market":
             alerts.append(RiskAlert(
                 level="warning",
                 message="⚠️ 模拟盘期间处于牛市环境，策略表现可能偏乐观。
             ))
-        
+
         # 2. 极端风险预警
         if simulation_result.extreme_loss_days > 3:
             alerts.append(RiskAlert(
                 level="danger",
                 message=f"🚨 模拟盘期间出现{simulation_result.extreme_loss_days}天极端亏损。
             ))
-        
+
         # 3. 策略相关性预警        if simulation_result.correlation_with_existing > 0.7:
             alerts.append(RiskAlert(
                 level="warning",
                 message=f"⚠️ 新策略与现有策略相关性{simulation_result.correlation_with_existing:.2f}，可能增加组合风险
             ))
-        
+
         # 4. 执行效率预警
         if simulation_result.execution_efficiency < 0.90:
             alerts.append(RiskAlert(
                 level="warning",
                 message=f"⚠️ 执行效率{simulation_result.execution_efficiency:.2%}偏低，可能存在滑点问题
             ))
-        
+
         return alerts
 ```
 
@@ -1317,30 +1317,30 @@ class SimulationToLiveAutoReview:
 ```python
 class SmallPositionToFullAutoReview:
     """小仓位转正式仓位自动审核系统"""
-    
+
     AUTO_PASS_CRITERIA = {
         # 实盘表现（权0%?        "realized_sharpe": {"min": 1.0, "weight": 0.20},
         "realized_max_dd": {"max": 0.15, "weight": 0.20},
         "realized_return": {"min": 0.15, "weight": 0.10},
-        
+
         # 与模拟盘对比（权0%?        "paper_live_correlation": {"min": 0.80, "weight": 0.15},
         "performance_consistency": {"min": 0.85, "weight": 0.15},
-        
+
         # 风险控制（权0%?        "execution_quality": {"min": 0.90, "weight": 0.10},
         "psychological_test": {"value": True, "weight": 0.10},
     }
-    
+
     AUTO_PASS_THRESHOLD = 0.75
     NEED_HUMAN_THRESHOLD = 0.60
-    
+
     def auto_review(self, small_position_result):
         """自动审核小仓位结?""
-        
+
         # 1. 计算综合评分
         overall_score = self._calculate_overall_score(small_position_result)
-        
+
         # 2. 检查风险预警        risk_alerts = self._check_risk_alerts(small_position_result)
-        
+
         # 3. 生成决策建议
         if overall_score >= self.AUTO_PASS_THRESHOLD and len(risk_alerts) == 0:
             return AutoReviewDecision(
@@ -1381,7 +1381,7 @@ class SmallPositionToFullAutoReview:
 ```python
 class StrategyAnomalyAutoHandler:
     """策略异常自动处理系统"""
-    
+
     ANOMALY_LEVELS = {
         "minor": {      # 轻度异常
             "trigger": "连续1周表现低于预?,
@@ -1404,12 +1404,12 @@ class StrategyAnomalyAutoHandler:
             "need_human": True
         }
     }
-    
+
     def handle_anomaly(self, strategy, anomaly_level):
         """自动处理策略异常"""
-        
+
         config = self.ANOMALY_LEVELS[anomaly_level]
-        
+
         # 1. 执行自动处理
         if config["auto_action"] == "参数微调":
             self._auto_tune_parameters(strategy)
@@ -1419,10 +1419,10 @@ class StrategyAnomalyAutoHandler:
             self._pause_strategy(strategy)
         elif config["auto_action"] == "紧急止?:
             self._emergency_stop(strategy)
-        
+
         # 2. 通知用户
         self._notify_user(strategy, anomaly_level, config["auto_action"])
-        
+
         # 3. 是否需要人工审?        if config["need_human"]:
             self._request_human_review(strategy, anomaly_level)
 ```
@@ -1443,21 +1443,21 @@ class StrategyAnomalyAutoHandler:
 ```python
 class MajorRiskEventAIAssistant:
     """重大风险事件AI辅助决策"""
-    
+
     def analyze_risk_event(self, event):
         """分析风险事件"""
-        
+
         # 1. 风险评估
         risk_assessment = self._assess_risk_level(event)
-        
+
         # 2. 影响分析
         impact_analysis = self._analyze_impact(event)
-        
+
         # 3. 处理建议
         recommendations = self._generate_recommendations(event, risk_assessment)
-        
+
         # 4. 紧急推?        self._urgent_notify_user(event, risk_assessment, recommendations)
-        
+
         return RiskEventAnalysis(
             risk_level=risk_assessment.level,
             impact=impact_analysis,
@@ -1478,22 +1478,22 @@ class MajorRiskEventAIAssistant:
 ```python
 class MultiStrategySimulationManager:
     """多策略模拟盘管理?""
-    
+
     def __init__(self, qmt_client):
         self.qmt = qmt_client
-        self.max_concurrent_strategies = 10  # 同时最0个策?        self.active_simulations = {}         # 活跃的模拟策?        
+        self.max_concurrent_strategies = 10  # 同时最0个策?        self.active_simulations = {}         # 活跃的模拟策?
     def start_simulation(self, strategy, initial_capital=100000):
         """启动策略模拟盘测?""
-        
+
         # 1. 检查容?        if len(self.active_simulations) >= self.max_concurrent_strategies:
             raise CapacityError("模拟盘容量已满，请等待其他策略完?)
-        
+
         # 2. 创建独立账户
         sim_account = self.qmt.create_simulation_account(
             account_id=f"SIM_{strategy.id}",
             initial_capital=initial_capital
         )
-        
+
         # 3. 启动策略
         simulation = StrategySimulation(
             strategy=strategy,
@@ -1501,11 +1501,11 @@ class MultiStrategySimulationManager:
             start_date=datetime.now(),
             status="running"
         )
-        
+
         self.active_simulations[strategy.id] = simulation
-        
+
         return simulation
-    
+
     def batch_start_simulations(self, strategies):
         """批量启动策略模拟盘测?""
         results = []
@@ -1513,19 +1513,19 @@ class MultiStrategySimulationManager:
             try:
                 sim = self.start_simulation(strategy)
                 results.append({
-                    "strategy": strategy.id, 
-                    "status": "started", 
+                    "strategy": strategy.id,
+                    "status": "started",
                     "simulation": sim
                 })
             except CapacityError as e:
                 results.append({
-                    "strategy": strategy.id, 
-                    "status": "failed", 
+                    "strategy": strategy.id,
+                    "status": "failed",
                     "error": str(e)
                 })
-        
+
         return results
-    
+
     def monitor_all_simulations(self):
         """监控所有模拟盘"""
         monitoring_report = {
@@ -1535,10 +1535,10 @@ class MultiStrategySimulationManager:
             "failed": 0,
             "details": []
         }
-        
+
         for strategy_id, simulation in self.active_simulations.items():
             status = self._check_simulation_status(simulation)
-            
+
             if status == "running":
                 monitoring_report["running"] += 1
             elif status == "completed":
@@ -1547,13 +1547,13 @@ class MultiStrategySimulationManager:
                 self._trigger_auto_review(simulation)
             elif status == "failed":
                 monitoring_report["failed"] += 1
-            
+
             monitoring_report["details"].append({
                 "strategy_id": strategy_id,
                 "status": status,
                 "performance": simulation.get_performance_summary()
             })
-        
+
         return monitoring_report
 ```
 
@@ -1562,16 +1562,16 @@ class MultiStrategySimulationManager:
 ```yaml
 # config/simulation.yaml
 simulation:
-  max_concurrent_strategies: 10      # 同时最0个策?  default_initial_capital: 100000    # 默认初始资金10  
+  max_concurrent_strategies: 10      # 同时最0个策?  default_initial_capital: 100000    # 默认初始资金10
   # 策略隔离配置
   isolation:
     account_isolation: true          # 账户隔离
     position_isolation: true         # 仓位隔离
     risk_isolation: true             # 风险隔离
-  
+
   # 测试周期
   test_period:
-    min_days: 20                     # 最少测0    recommended_days: 60             # 推荐测试60  
+    min_days: 20                     # 最少测0    recommended_days: 60             # 推荐测试60
   # 自动审核
   auto_review:
     enabled: true
@@ -1586,87 +1586,87 @@ simulation:
 ```python
 class StrategyProductionPipeline:
     """策略批量生产流水?""
-    
+
     def __init__(self):
         self.generator = AIStrategyGenerator()
         self.backtester = AIBacktester()
         self.pool_approver = StrategyPoolAutoApproval()
         self.simulation_manager = MultiStrategySimulationManager()
         self.live_approver = SimulationToLiveAutoReview()
-        
+
     def run_batch_production(self, batch_size=5):
         """运行批量生产"""
-        
+
         production_report = {
             "batch_id": f"BATCH_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             "start_time": datetime.now(),
             "strategies": []
         }
-        
+
         # Phase 1: AI生成策略
         print(f"🚀 开始批量生产，批次大小: {batch_size}")
         strategies = self.generator.generate_strategies(batch_size)
-        
+
         for strategy in strategies:
             strategy_report = {
                 "strategy_id": strategy.id,
                 "stages": {}
             }
-            
+
             # Phase 2: AI回测
             print(f"📊 回测策略 {strategy.id}...")
             backtest_result = self.backtester.backtest(strategy)
             strategy_report["stages"]["backtest"] = backtest_result.summary()
-            
+
             # Phase 3: 自动入池审核
             print(f"🔍 审核策略 {strategy.id} 入池...")
             pool_decision = self.pool_approver.auto_review(strategy)
             strategy_report["stages"]["pool_approval"] = pool_decision.summary()
-            
+
             if not pool_decision.approved:
                 # 自动拒绝，AI优化后重新提?                print(f"?策略 {strategy.id} 入池被拒，AI自动优化...")
                 optimized_strategy = self.generator.optimize_strategy(strategy)
                 # 重新回测和审计                continue
-            
+
             # Phase 4: 启动模拟盘测试            print(f"🎯 启动策略 {strategy.id} 模拟盘测?..")
             simulation = self.simulation_manager.start_simulation(strategy)
             strategy_report["stages"]["simulation"] = {
                 "status": "started",
                 "account_id": simulation.account.account_id
             }
-            
+
             production_report["strategies"].append(strategy_report)
-        
+
         production_report["end_time"] = datetime.now()
         production_report["duration"] = (
             production_report["end_time"] - production_report["start_time"]
         ).total_seconds()
-        
+
         return production_report
-    
+
     def monitor_batch_production(self):
         """监控批量生产进度"""
-        
+
         # 1. 监控所有模拟盘
         simulation_report = self.simulation_manager.monitor_all_simulations()
-        
+
         # 2. 检查是否有策略完成模拟盘测试        completed_simulations = [
-            sim for sim in simulation_report["details"] 
+            sim for sim in simulation_report["details"]
             if sim["status"] == "completed"
         ]
-        
+
         # 3. 自动审核完成的模拟盘
         for sim in completed_simulations:
             print(f"📋 审核模拟?{sim['strategy_id']}...")
             live_decision = self.live_approver.auto_review(sim)
-            
+
             if live_decision.auto_execute:
                 # 自动执行决策
                 self._execute_decision(live_decision)
             else:
                 # 需要人工审核，推送通知
                 self._request_human_review(live_decision)
-        
+
         return simulation_report
 ```
 
@@ -1676,12 +1676,12 @@ class StrategyProductionPipeline:
 # config/strategy_production_pipeline.yaml
 production_pipeline:
   # 批量生产配置
-  batch_size: 5                      # 每批生产5个策略  batch_frequency: "weekly"          # 每周生产一?  parallel_simulation: 10            # 同时模拟盘测0个策略  
+  batch_size: 5                      # 每批生产5个策略  batch_frequency: "weekly"          # 每周生产一?  parallel_simulation: 10            # 同时模拟盘测0个策略
   # 自动化流程  automation:
     strategy_generation: auto        # AI自动生成
     backtest: auto                   # AI自动回测
     pool_approval: auto              # AI自动入池审核 ?    simulation: auto                 # AI自动模拟盘测试    live_approval: semi_auto         # AI自动预警 + 人工确认 ⚠️
-  
+
   # 入池自动审核标准
   pool_auto_approval:
     threshold: 0.80                  # 综合评分 ≥ 0%自动通过
@@ -1689,18 +1689,18 @@ production_pipeline:
       sharpe_ratio: {min: 1.5, weight: 0.25}
       max_drawdown: {max: 0.15, weight: 0.20}
       annual_return: {min: 0.20, weight: 0.15}
-  
+
   # 模拟盘转实盘自动审核标准
   live_auto_approval:
     auto_pass_threshold: 0.75        # 综合评分 ≥ 5%自动通过
     need_human_threshold: 0.60       # 综合评分 ≥ 0%需人工确认
-    risk_alert_check: true           # 启用风险预警检查  
+    risk_alert_check: true           # 启用风险预警检查
   # 通知配置
   notifications:
     auto_pass: [email, wechat]       # 自动通过时通知
     need_human: [email, wechat, sms] # 需人工审核时紧急通知
     auto_reject: [email]             # 自动拒绝时通知
-  
+
   # 性能监控
   monitoring:
     daily_report: true               # 每日生成报告
@@ -1727,8 +1727,8 @@ production_pipeline:
 ```---
 
 ## 六、自然语言策略交互系统（NL Strategy Interface?
-> **核心?*: 让不会编程的用户通过自然语言对话完成所有策略操?> 
-> **适用场景**: 策略创建、策略修改、策略管理、策略查询、系统控?> 
+> **核心?*: 让不会编程的用户通过自然语言对话完成所有策略操?>
+> **适用场景**: 策略创建、策略修改、策略管理、策略查询、系统控?>
 > **架构定位**: 本模块是 Layer 11文字驱动层 的策略层专用实现
 
 ### 6.1 系统概述
@@ -1809,15 +1809,15 @@ production_pipeline:
 ```python
 class NLStrategyCreator:
     """自然语言策略创建?""
-    
+
     def __init__(self):
         self.llm_client = LLMClient(model="qwen-max")
         self.code_generator = FinRobotCodeGenerator()
         self.validator = StrategyValidator()
-        
+
     def create_strategy_from_nl(self, user_input: str):
         """从自然语言创建策略"""
-        
+
         # 1. 理解用户意图
         intent = self._parse_user_intent(user_input)
         # intent = {
@@ -1829,7 +1829,7 @@ class NLStrategyCreator:
         #     "entry_rule": "短期均线上穿长期均线",
         #     "exit_rule": "短期均线下穿长期均线"
         # }
-        
+
         # 2. 生成策略代码
         strategy_code = self.code_generator.generate(
             strategy_type=intent["strategy_type"],
@@ -1837,40 +1837,40 @@ class NLStrategyCreator:
             entry_rule=intent["entry_rule"],
             exit_rule=intent["exit_rule"]
         )
-        
+
         # 3. 验证策略代码
         validation_result = self.validator.validate(strategy_code)
-        
+
         if not validation_result.is_valid:
             # 自动修复问题
             strategy_code = self._auto_fix(strategy_code, validation_result.errors)
-        
+
         # 4. 创建策略实例
         strategy = self._create_strategy_instance(strategy_code, intent)
-        
+
         # 5. 生成策略说明
         strategy_description = self._generate_description(strategy)
-        
+
         return StrategyCreationResult(
             strategy=strategy,
             code=strategy_code,
             description=strategy_description,
             need_user_confirmation=True
         )
-    
+
     def _parse_user_intent(self, user_input: str):
         """解析用户意图"""
-        
+
         prompt = f"""
-        分析用户的策略需求，提取关键信息?        
+        分析用户的策略需求，提取关键信息?
         用户输入：{user_input}
-        
+
         请提取以下信息：
         1. 策略类型（如：均线交叉、动量策略、均值回归等?        2. 策略参数（如：均线周期、阈值等?        3. 入场规则
         4. 出场规则
-        5. 风控规则（如果有?        
+        5. 风控规则（如果有?
         以JSON格式返回?        """
-        
+
         response = self.llm_client.chat(prompt)
         return json.loads(response)
 ```
@@ -1879,25 +1879,25 @@ class NLStrategyCreator:
 ```python
 # 自动生成的策略代码class MAStrategy(BaseStrategy):
     """均线交叉策略 - 自动生成"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "MA_Cross_5_20"
         self.short_period = 5
         self.long_period = 20
-        
+
     def generate_signals(self, data):
         """生成交易信号"""
-        
+
         # 计算均线
         data['ma_short'] = data['close'].rolling(self.short_period).mean()
         data['ma_long'] = data['close'].rolling(self.long_period).mean()
-        
+
         # 生成信号
         data['signal'] = 0
         data.loc[data['ma_short'] > data['ma_long'], 'signal'] = 1  # 买入
         data.loc[data['ma_short'] < data['ma_long'], 'signal'] = -1  # 卖出
-        
+
         return data['signal']
 ```
 
@@ -1925,26 +1925,26 @@ class NLStrategyCreator:
 ```python
 class TemplateBasedCreator:
     """基于模板的策略创建器"""
-    
+
     def __init__(self):
         self.template_library = StrategyTemplateLibrary()
         self.adapter = AShareMarketAdapter()
-        
+
     def create_from_template(self, user_input: str):
         """基于模板创建策略"""
-        
+
         # 1. 识别模板
         template_name = self._identify_template(user_input)
         # template_name = "turtle_trading"
-        
+
         # 2. 加载模板
         template = self.template_library.get(template_name)
-        
+
         # 3. 适配A股市?        adapted_strategy = self.adapter.adapt(template, market="A?)
-        
+
         # 4. 生成说明
         adaptations = self._explain_adaptations(template, adapted_strategy)
-        
+
         return TemplateCreationResult(
             strategy=adapted_strategy,
             original_template=template,
@@ -1977,39 +1977,39 @@ class TemplateBasedCreator:
 ```python
 class NLStrategyModifier:
     """自然语言策略修改?""
-    
+
     def __init__(self):
         self.llm_client = LLMClient(model="qwen-max")
         self.strategy_registry = StrategyRegistry()
-        
+
     def modify_strategy(self, user_input: str):
         """修改策略"""
-        
+
         # 1. 识别目标策略
         strategy_name = self._identify_strategy(user_input)
         # strategy_name = "MA_Cross_5_20"
-        
+
         # 2. 解析修改意图
         modifications = self._parse_modifications(user_input)
         # modifications = {
         #     "short_period": 10,
         #     "long_period": 30
         # }
-        
+
         # 3. 加载策略
         strategy = self.strategy_registry.get(strategy_name)
-        
+
         # 4. 应用修改
         modified_strategy = self._apply_modifications(strategy, modifications)
-        
+
         # 5. 验证修改
         validation = self._validate_modification(strategy, modified_strategy)
-        
+
         # 6. 生成修改报告
         modification_report = self._generate_modification_report(
             strategy, modified_strategy, modifications
         )
-        
+
         return ModificationResult(
             original_strategy=strategy,
             modified_strategy=modified_strategy,
@@ -2043,7 +2043,7 @@ class NLStrategyModifier:
 ```python
 def modify_strategy_logic(self, user_input: str):
     """修改策略逻辑"""
-    
+
     # 1. 解析逻辑修改
     logic_modification = self._parse_logic_modification(user_input)
     # logic_modification = {
@@ -2052,12 +2052,12 @@ def modify_strategy_logic(self, user_input: str):
     #         "stop_loss_pct": 0.05
     #     }
     # }
-    
+
     # 2. 生成新代?    new_code = self._generate_logic_code(strategy, logic_modification)
-    
+
     # 3. 验证新逻辑
     validation = self._validate_logic(new_code)
-    
+
     return LogicModificationResult(
         new_code=new_code,
         modification_type="add_stop_loss",
@@ -2069,32 +2069,32 @@ def modify_strategy_logic(self, user_input: str):
 ```python
 class MAStrategyWithStopLoss(BaseStrategy):
     """均线交叉策略 + 止损"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "MA_Cross_10_30_SL5"
         self.short_period = 10
         self.long_period = 30
         self.stop_loss_pct = 0.05  # 新增止损参数
-        
+
     def generate_signals(self, data):
         """生成交易信号"""
-        
+
         # 计算均线
         data['ma_short'] = data['close'].rolling(self.short_period).mean()
         data['ma_long'] = data['close'].rolling(self.long_period).mean()
-        
+
         # 生成信号
         data['signal'] = 0
         data.loc[data['ma_short'] > data['ma_long'], 'signal'] = 1
         data.loc[data['ma_short'] < data['ma_long'], 'signal'] = -1
-        
+
         # 新增止损逻辑
         if self.position is not None:
             pnl_pct = (data['close'].iloc[-1] - self.entry_price) / self.entry_price
             if pnl_pct < -self.stop_loss_pct:
                 data['signal'].iloc[-1] = -1  # 止损卖出
-        
+
         return data['signal']
 ```
 
@@ -2125,28 +2125,28 @@ class MAStrategyWithStopLoss(BaseStrategy):
 ```python
 class NLStrategyManager:
     """自然语言策略管理?""
-    
+
     def __init__(self):
         self.strategy_pool = StrategyPool()
         self.simulation_manager = MultiStrategySimulationManager()
-        
+
     def deploy_strategy(self, user_input: str):
         """部署策略"""
-        
+
         # 1. 识别策略
         strategy_name = self._identify_strategy(user_input)
-        
+
         # 2. 识别部署目标
         deployment_target = self._parse_deployment_target(user_input)
         # deployment_target = "simulation"
-        
+
         # 3. 检查策略状?        strategy = self.strategy_pool.get(strategy_name)
         if not strategy.is_ready_for_deployment():
             return DeploymentResult(
                 success=False,
                 reason="策略未通过回测验证，无法上?
             )
-        
+
         # 4. 部署策略
         if deployment_target == "simulation":
             result = self.simulation_manager.start_simulation(
@@ -2155,7 +2155,7 @@ class NLStrategyManager:
             )
         elif deployment_target == "live":
             result = self._deploy_to_live(strategy)
-        
+
         return DeploymentResult(
             success=True,
             strategy=strategy,
@@ -2210,12 +2210,12 @@ class NLStrategyManager:
 ```python
 def adjust_strategy_weight(self, user_input: str):
     """调整策略权重"""
-    
+
     # 1. 解析调整意图
     strategy_name = self._identify_strategy(user_input)
     new_weight = self._parse_weight(user_input)
     # new_weight = 0.30
-    
+
     # 2. 检查权重总和
     current_weights = self._get_all_strategy_weights()
     if sum(current_weights.values()) + new_weight > 1.0:
@@ -2223,13 +2223,13 @@ def adjust_strategy_weight(self, user_input: str):
             success=False,
             reason="权重总和超过100%，请先降低其他策略权?
         )
-    
+
     # 3. 调整权重
     self.strategy_pool.adjust_weight(strategy_name, new_weight)
-    
+
     # 4. 重新分配资金
     self._reallocate_capital()
-    
+
     return WeightAdjustmentResult(
         success=True,
         strategy_name=strategy_name,
@@ -2335,28 +2335,28 @@ def adjust_strategy_weight(self, user_input: str):
       3. 需要添加止损吗?
 用户：短?日，长期20日，加一?%的止?
 系统：✅ 收到！正在创建策?..
-      
+
       策略名称：MA_Cross_5_20_SL5
       策略参数?        - 短期均线??        - 长期均线0        - 止损比例?%
-      
+
       是否立即回测?
 用户：是的，回测一?
-系统?回测完成?      
+系统?回测完成?
       回测期间023-01-01 2026-03-31
       年化收益5.3%
       最大回撤：-12.5%
       夏普比率?.45
       胜率8.3%
-      
-      表现评价：良??      
+
+      表现评价：良??
       是否需要：
       1. 优化策略参数?      2. 上架到模拟盘?      3. 查看详细报告?
 用户：上架到模拟?
 系统：✅ 策略已上架到模拟盘！
-      
+
       账户ID：SIM_MA_Cross_5_20_SL5_20260402
-      初始资金00,000      
-      我会持续监控策略表现，有重要情况会及时通知?      
+      初始资金00,000
+      我会持续监控策略表现，有重要情况会及时通知?
       还有什么需要帮助的吗？
 ```
 
@@ -2368,23 +2368,23 @@ def adjust_strategy_weight(self, user_input: str):
 ```python
 class IntelligentAssistant:
     """智能助手"""
-    
+
     def __init__(self):
         self.context_manager = ConversationContextManager()
         self.suggestion_engine = SuggestionEngine()
-        
+
     def provide_suggestions(self, user_input: str, context: dict):
         """提供智能建议"""
-        
+
         # 1. 分析上下?        current_state = self.context_manager.get_current_state()
-        
+
         # 2. 生成建议
         suggestions = self.suggestion_engine.generate(
             user_input=user_input,
             context=context,
             current_state=current_state
         )
-        
+
         return suggestions
 ```
 
@@ -2422,41 +2422,41 @@ D. 先看看再?
 ```python
 class NLStrategyInterface:
     """自然语言策略交互系统"""
-    
+
     def __init__(self):
         # NLU组件
         self.intent_recognizer = IntentRecognizer(model="qwen-max")
         self.entity_extractor = EntityExtractor(model="qwen-max")
         self.context_manager = ConversationContextManager()
-        
+
         # 对话管理组件
         self.dialogue_manager = DialogueManager()
         self.clarification_handler = ClarificationHandler()
-        
+
         # 策略操作组件
         self.strategy_creator = NLStrategyCreator()
         self.strategy_modifier = NLStrategyModifier()
         self.strategy_manager = NLStrategyManager()
         self.strategy_query = NLStrategyQuery()
-        
+
         # 执行组件
         self.code_generator = FinRobotCodeGenerator()
         self.backtester = AIBacktester()
         self.deployment_manager = DeploymentManager()
-        
+
     def process_user_input(self, user_input: str):
         """处理用户输入"""
-        
+
         # 1. 理解意图
         intent = self.intent_recognizer.recognize(user_input)
         # intent = "create_strategy" | "modify_strategy" | "deploy_strategy" | ...
-        
+
         # 2. 提取实体
         entities = self.entity_extractor.extract(user_input, intent)
         # entities = {"strategy_type": "均线交叉", "short_period": 5, ...}
-        
+
         # 3. 更新上下?        context = self.context_manager.update(user_input, intent, entities)
-        
+
         # 4. 执行操作
         if intent == "create_strategy":
             result = self.strategy_creator.create_strategy_from_nl(user_input)
@@ -2467,10 +2467,10 @@ class NLStrategyInterface:
         elif intent == "query_strategy":
             result = self.strategy_query.query(user_input)
         # ... 其他意图
-        
+
         # 5. 生成回复
         response = self._generate_response(result, context)
-        
+
         return response
 ```
 
@@ -2563,67 +2563,67 @@ from xtquant import xtdata, xttrader
 
 class QMTConnectionTest:
     """QMT连接测试"""
-    
+
     def __init__(self, account_id, password):
         self.account_id = account_id
         self.password = password
-        
+
     def test_connection(self):
         """测试QMT连接"""
-        
+
         print("=" * 60)
         print("开始测试QMT连接...")
         print("=" * 60)
-        
+
         # 1. 测试行情数据连接
         print("\n1. 测试行情数据连接...")
         try:
             trading_dates = xtdata.get_trading_dates('SH')
             print(f"?成功获取交易日历，共{len(trading_dates)}个交易日")
-            
+
             stock_list = xtdata.get_stock_list_in_sector('沪深A?)
             print(f"?成功获取股票列表，共{len(stock_list)}只股?)
-            
+
             stock_info = xtdata.get_instrument_detail("000001.SZ")
             print(f"?成功获取平安银行信息: {stock_info['InstrumentName']}")
-            
+
         except Exception as e:
             print(f"?行情数据连接失败: {e}")
             return False
-        
+
         # 2. 测试交易连接
         print("\n2. 测试交易连接...")
         try:
             session_id = xttrader.create_session()
             print(f"?成功创建交易会话: {session_id}")
-            
+
             connect_result = xttrader.connect(
                 session_id,
                 self.account_id,
                 self.password
             )
             print(f"?成功连接交易账户: {self.account_id}")
-            
+
             asset = xttrader.query_asset(session_id, self.account_id)
             print(f"?成功查询账户资产:")
             print(f"   总资? {asset.total_asset:.2f}")
             print(f"   可用资金: {asset.cash:.2f}")
             print(f"   ? {asset.market_value:.2f}")
-            
+
             positions = xttrader.query_stock_positions(session_id, self.account_id)
             print(f"?成功查询持仓，共{len(positions)}只股?)
-            
+
             xttrader.disconnect(session_id)
             print(f"?成功断开连接")
-            
+
         except Exception as e:
             print(f"?交易连接失败: {e}")
             return False
-        
+
         print("\n" + "=" * 60)
         print("?QMT连接测试全部通过高)
         print("=" * 60)
-        
+
         return True
 ```
 
@@ -2631,15 +2631,15 @@ class QMTConnectionTest:
 ```python
 class AgentQuantQMTAdapter:
     """AgentQuant QMT 适配器"""
-    
+
     def __init__(self):
         self.data_cache = {}
-        
+
     def fetch_data(self, symbols: List[str], start_date: str, end_date: str):
         """从QMT获取数据"""
-        
+
         all_data = {}
-        
+
         for symbol in symbols:
             try:
                 data = xtdata.get_market_data_ex(
@@ -2652,16 +2652,16 @@ class AgentQuantQMTAdapter:
                     fill_data=True,
                     subscribe=False
                 )
-                
+
                 if symbol in data:
                     df = data[symbol]
                     df.columns = ['open', 'high', 'low', 'close', 'volume', 'amount']
                     df.index = pd.to_datetime(df.index, unit='ms')
                     all_data[symbol] = df
-                    
+
             except Exception as e:
                 logger.error(f"{symbol}: 获取失败 - {e}")
-        
+
         return all_data
 ```
 

@@ -47,7 +47,7 @@ def main():
     impl_details = read_file('implementation_details.md')
     # 读取进度表格
     progress_table = read_file('progress_table.md')
-    
+
     # 提取实施策略部分（从 remaining-blueprints-implementation-plan.md）
     remaining = read_file('docs/11_STRATEGIC_DECISION/remaining-blueprints-implementation-plan.md')
     # 找到 "### 实施策略" 部分（注意前面可能有空行）
@@ -63,7 +63,7 @@ def main():
                     break
             impl_strategy = '\n'.join(lines[i:end])
             break
-    
+
     # 构建新内容
     # 我们保留 canonical 的 frontmatter 和前面的部分，直到“## 一、完整模块清单”
     # 在“## 一、完整模块清单”之后插入新章节
@@ -77,19 +77,19 @@ def main():
     if idx_module_list == -1:
         print("未找到模块清单章节")
         return
-    
+
     # 找到“## 二、缺失模块详细清单”的位置（可能不存在）
     idx_missing_list = -1
     for i in range(idx_module_list, len(lines_canonical)):
         if lines_canonical[i].strip() == '## 二、缺失模块详细清单':
             idx_missing_list = i
             break
-    
+
     # 构建新行的列表
     new_lines = []
     # 添加 frontmatter 和前面的内容，直到 idx_module_list（包括该行）
     new_lines.extend(lines_canonical[:idx_module_list])
-    
+
     # 添加“## 一、完整模块清单”及其内容，直到下一个章节
     # 确定模块清单章节的结束位置（下一个 '## ' 或文件结尾）
     module_end = len(lines_canonical)
@@ -98,14 +98,14 @@ def main():
             module_end = i
             break
     new_lines.extend(lines_canonical[idx_module_list:module_end])
-    
+
     # 插入新章节：实施策略
     if impl_strategy:
         new_lines.append('')
         new_lines.append('## 二、实施策略')
         new_lines.append('')
         new_lines.append(impl_strategy)
-    
+
     # 插入新章节：实施计划详情
     if impl_details:
         new_lines.append('')
@@ -114,14 +114,14 @@ def main():
         new_lines.append('以下为每个缺失蓝图的详细实施计划：')
         new_lines.append('')
         new_lines.append(impl_details)
-    
+
     # 插入新章节：进度跟踪表
     if progress_table:
         new_lines.append('')
         new_lines.append('## 四、进度跟踪表')
         new_lines.append('')
         new_lines.append(progress_table)
-    
+
     # 添加原有的“缺失模块详细清单”和后续章节（如果存在）
     if idx_missing_list != -1:
         # 找到“缺失模块详细清单”章节的结束位置（下一个 '## ' 或文件结尾）
@@ -143,12 +143,12 @@ def main():
         # 如果没有缺失清单章节，则添加剩余部分（从 module_end 开始）
         if module_end < len(lines_canonical):
             new_lines.extend(lines_canonical[module_end:])
-    
+
     # 写入新文件
     new_content = '\n'.join(new_lines)
     write_file('docs/11_STRATEGIC_DECISION/complete-blueprint-overview-merged.md', new_content)
     print("融合后的文档已保存到 complete-blueprint-overview-merged.md")
-    
+
     # 可选：备份原文件并替换
     # import shutil
     # shutil.copy2('docs/11_STRATEGIC_DECISION/complete-blueprint-overview.md', 'docs/11_STRATEGIC_DECISION/complete-blueprint-overview.md.backup')

@@ -18,9 +18,9 @@ responsibility:
 
 # 孤儿文件根治大师计划 - 执行指南
 
-> **状态**: 🟢 Phase 1-3 已完成  
-> **下一步**: Phase 4 - 永恒守护启动  
-> **执行时间**: 2026-04-13  
+> **状态**: 🟢 Phase 1-3 已完成
+> **下一步**: Phase 4 - 永恒守护启动
+> **执行时间**: 2026-04-13
 > **预期结果**: 孤儿率从97%降至<5%，系统永恒免疫
 
 ```
@@ -80,7 +80,7 @@ python scripts/index_compiler.py --recompile-all --output docs/09_AUDIT/STATE/in
   layer_10: 62 个文件
   layer_11: 20 个文件
   ...及其他层级
-  
+
 [孤儿率评估]
   编译前: 97.32%
   编译后: 91.79% ⬅️ 初步改善
@@ -88,7 +88,7 @@ python scripts/index_compiler.py --recompile-all --output docs/09_AUDIT/STATE/in
   解决方案: 需要继续Phase 3强制约束来阻止新的孤儿产生
 ```
 
-**报告位置**: 
+**报告位置**:
 - JSON报告: `docs/09_AUDIT/STATE/index_compilation_report.json`
 - 孤儿扫描: `docs/09_AUDIT/STATE/orphan_scan_result_20260413_121353.json`
 - 完整清单: `docs/09_AUDIT/STATE/orphan_governance_inventory_20260413_121353.md`
@@ -141,7 +141,7 @@ python scripts/index_compiler.py --recompile-all --output docs/09_AUDIT/STATE/in
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ 第1层: Pre-commit 强制入链守卫                           │
-│ ─────────────────────────────────────────────────────── 
+│ ───────────────────────────────────────────────────────
 │ 位置: 本地开发环境                                       │
 │ 时机: 提交时检查                                         │
 │ 功能: 阻止无入链的新文件提交                             │
@@ -152,7 +152,7 @@ python scripts/index_compiler.py --recompile-all --output docs/09_AUDIT/STATE/in
 
 ┌─────────────────────────────────────────────────────────┐
 │ 第2层: 编译时自动索引生成                               │
-│ ─────────────────────────────────────────────────────── 
+│ ───────────────────────────────────────────────────────
 │ 位置: 直接集成                                           │
 │ 时机: 任何INDEX.md缺失时                                │
 │ 功能: 扫描文件系统，自动生成索引                         │
@@ -161,7 +161,7 @@ python scripts/index_compiler.py --recompile-all --output docs/09_AUDIT/STATE/in
 
 ┌─────────────────────────────────────────────────────────┐
 │ 第3层: CI/CD 每小时永恒验证                             │
-│ ─────────────────────────────────────────────────────── 
+│ ───────────────────────────────────────────────────────
 │ 位置: GitHub Actions                                    │
 │ 时机: 定时(每小时) + 推送触发 + 手动触发               │
 │ 功能: 验证孤儿率 <5%                                    │

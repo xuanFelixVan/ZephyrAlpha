@@ -324,7 +324,7 @@ class ICCalculator:
 
         }
 
-        
+
 
     def calculate_ic(self, factor_values, forward_returns, method='spearman'):
 
@@ -332,7 +332,7 @@ class ICCalculator:
 
         计算IC值
 
-        
+
 
         Args:
 
@@ -342,7 +342,7 @@ class ICCalculator:
 
             method: IC计算方法
 
-            
+
 
         Returns:
 
@@ -354,7 +354,7 @@ class ICCalculator:
 
         return ic_func(factor_values, forward_returns)
 
-        
+
 
     def _spearman_ic(self, factor_values, forward_returns):
 
@@ -370,7 +370,7 @@ class ICCalculator:
 
         return pd.Series(ic_series, index=forward_returns.columns)
 
-        
+
 
     def _pearson_ic(self, factor_values, forward_returns):
 
@@ -386,7 +386,7 @@ class ICCalculator:
 
         return pd.Series(ic_series, index=forward_returns.columns)
 
-        
+
 
     def _rank_ic(self, factor_values, forward_returns):
 
@@ -406,7 +406,7 @@ class ICCalculator:
 
         return pd.Series(ic_series, index=forward_returns.columns)
 
-        
+
 
     def calculate_ic_ir(self, ic_series):
 
@@ -444,7 +444,7 @@ class FactorEffectivenessAnalyzer:
 
         self.alphalens_data = None
 
-        
+
 
     def prepare_data(self, factor_data, price_data, periods=(1, 5, 10, 20)):
 
@@ -452,7 +452,7 @@ class FactorEffectivenessAnalyzer:
 
         准备Alphalens数据
 
-        
+
 
         Args:
 
@@ -478,7 +478,7 @@ class FactorEffectivenessAnalyzer:
 
         return self.alphalens_data
 
-        
+
 
     def generate_tear_sheet(self):
 
@@ -490,7 +490,7 @@ class FactorEffectivenessAnalyzer:
 
         create_full_tear_sheet(self.alphalens_data)
 
-        
+
 
     def get_ic_summary(self):
 
@@ -536,7 +536,7 @@ class FactorDecayAnalyzer:
 
         self.decay_model = None
 
-        
+
 
     def exponential_decay(self, x, a, b, c):
 
@@ -544,7 +544,7 @@ class FactorDecayAnalyzer:
 
         return a * np.exp(-b * x) + c
 
-        
+
 
     def fit_decay_curve(self, ic_series):
 
@@ -552,13 +552,13 @@ class FactorDecayAnalyzer:
 
         拟合IC衰减曲线
 
-        
+
 
         Args:
 
             ic_series: IC序列 (periods,)
 
-            
+
 
         Returns:
 
@@ -570,7 +570,7 @@ class FactorDecayAnalyzer:
 
         y = np.abs(ic_series.values)
 
-        
+
 
         try:
 
@@ -586,13 +586,13 @@ class FactorDecayAnalyzer:
 
             )
 
-            
+
 
             y_fit = self.exponential_decay(x, *popt)
 
             r_squared = 1 - np.sum((y - y_fit)**2) / np.sum((y - y.mean())**2)
 
-            
+
 
             self.decay_model = {
 
@@ -606,7 +606,7 @@ class FactorDecayAnalyzer:
 
             }
 
-            
+
 
             return self.decay_model
 
@@ -616,7 +616,7 @@ class FactorDecayAnalyzer:
 
             return None
 
-            
+
 
     def calculate_half_life(self):
 
@@ -700,7 +700,7 @@ class FactorMonitoringRecord:
 
     alert_message: str
 
-    
+
 
 @dataclass
 
@@ -922,7 +922,7 @@ class IFactorMonitor(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -932,7 +932,7 @@ class IFactorMonitor(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -966,7 +966,7 @@ class IAlertSystem(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -1199,4 +1199,3 @@ stats = {
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

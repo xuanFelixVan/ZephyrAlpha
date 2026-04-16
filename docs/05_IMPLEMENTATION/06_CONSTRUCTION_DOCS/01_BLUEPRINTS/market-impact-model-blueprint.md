@@ -15,7 +15,7 @@ layer: layer_06
 
 # 市场冲击模型蓝图
 
-> **职责边界**: 
+> **职责边界**:
 
 
 ## 核心定位
@@ -86,7 +86,7 @@ layer: layer_06
 
 **模块类别**: 核心模块（P0级）
 
-**架构角色**: 
+**架构角色**:
 - 作为微观执行层的基础设施，为智能执行算法提供冲击预测
 
 
@@ -120,11 +120,11 @@ graph LR
     A[数据质量监控] --> B[市场冲击模型]
     C[数据目录] --> B
     D[组合优化引擎] --> B
-    
+
     B --> E[交易成本优化模型]
     B --> F[算法交易优化器]
     B --> G[智能订单路由]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -171,7 +171,7 @@ graph TB
 ```python
 class MarketImpactDataCollector:
     """市场冲击数据采集器"""
-    
+
     def __init__(self):
         self.data_sources = {
             'trades': TradeDataSource(),      # 交易数据
@@ -179,7 +179,7 @@ class MarketImpactDataCollector:
             'orders': OrderDataSource(),      # 订单数据
             'market': MarketDataSource()      # 市场数据
         }
-        
+
     def collect_impact_data(
         self,
         symbol: str,
@@ -188,10 +188,10 @@ class MarketImpactDataCollector:
     ) -> ImpactDataset:
         """
         采集市场冲击数据
-        
+
         数据维度:
 数据: 买卖价差、深度、波动率
-        3. 订单数据: 订单大小、订单类型、执行时机        4. 市场数据: ADV、市值、流动性指标        
+        3. 订单数据: 订单大小、订单类型、执行时机        4. 市场数据: ADV、市值、流动性指标
         输出:
         - ImpactDataset: 冲击数据集        """
         pass
@@ -201,14 +201,14 @@ class MarketImpactDataCollector:
 ```python
 class MarketImpactModelTrainer:
     """市场冲击模型训练器"""
-    
+
     def __init__(self):
         self.models = {
             'linear': LinearImpactModel(),           # 线性冲击模型
 +            'almgren_chriss': AlmgrenChrissModel(),  # Almgren-Chriss模型
             'ml': MachineLearningModel()             # 机器学习模型
         }
-        
+
     def train_model(
         self,
         data: ImpactDataset,
@@ -216,11 +216,11 @@ class MarketImpactModelTrainer:
     ) -> MarketImpactModel:
         """
         训练市场冲击模型
-        
+
         模型类型:
         1. 线性冲击模块 Impact = α * (Q/ADV)^β
 冲击
-        3. 机器学习模型: 基于特征的预测模块        
+        3. 机器学习模型: 基于特征的预测模块
         输出:
         - MarketImpactModel: 训练好的模型
         """
@@ -231,11 +231,11 @@ class MarketImpactModelTrainer:
 ```python
 class LinearImpactModel:
     """线性市场冲击模块""
-    
+
     def __init__(self):
         self.alpha = 0.1   # 冲击系数
         self.beta = 0.5    # 冲击指数
-        
+
     def predict_impact(
         self,
         order_size: float,
@@ -244,13 +244,13 @@ class LinearImpactModel:
     ) -> MarketImpact:
         """
         预测市场冲击
-        
+
         Impact = α * (Q/ADV)^β * σ
-        
+
         参数:
         - Q: 订单大小
         - ADV: 平均日成交量
-        - σ: 波动率        
+        - σ: 波动率
         输出:
         - MarketImpact: 冲击预测结果
           - temporary_impact: 临时冲击
@@ -258,7 +258,7 @@ class LinearImpactModel:
           - total_impact: 总冲击        """
         participation_rate = order_size / adv
         impact = self.alpha * (participation_rate ** self.beta) * volatility
-        
+
         return MarketImpact(
             temporary_impact=impact * 0.7,
             permanent_impact=impact * 0.3,
@@ -271,11 +271,11 @@ class LinearImpactModel:
 ```python
 class AlmgrenChrissModel:
     """Almgren-Chriss市场冲击模型"""
-    
+
     def __init__(self):
         self.sigma = 0.02      # 波动率        self.eta = 0.1         # 临时冲击系数
 冲击系数
-        
+
     def predict_impact(
         self,
         order_size: float,
@@ -284,24 +284,24 @@ class AlmgrenChrissModel:
     ) -> MarketImpact:
         """
         Almgren-Chriss模型预测
-        
+
         临时冲击: I_temp = η * (Q/ADV) / T
 冲击: I_perm = γ * (Q/ADV)
         总冲击 I_total = I_temp + I_perm
-        
+
         参数:
         - Q: 订单大小
         - T: 执行时间（天）        - ADV: 平均日成交量
-        
+
         输出:
         - MarketImpact: 冲击预测结果
         """
         trading_rate = order_size / (execution_time * adv)
-        
+
         temporary_impact = self.eta * trading_rate
         permanent_impact = self.gamma * (order_size / adv)
         total_impact = temporary_impact + permanent_impact
-        
+
         return MarketImpact(
             temporary_impact=temporary_impact,
             permanent_impact=permanent_impact,
@@ -326,10 +326,10 @@ def predict_market_impact(
 ) -> MarketImpactPrediction:
     """
     预测市场冲击
-    
+
     参数:
     - symbol: 股票代码
-    - order_size: 订单大小（股）    - execution_time: 执行时间（天）    - model_type: 模型类型（linear/almgren_chriss/ml）    
+    - order_size: 订单大小（股）    - execution_time: 执行时间（天）    - model_type: 模型类型（linear/almgren_chriss/ml）
     返回:
     - MarketImpactPrediction: 冲击预测结果
     pass
@@ -345,7 +345,7 @@ def optimize_execution_strategy(
 ) -> OptimalStrategy:
     """
     优化执行策略
-    
+
     参数:
     - symbol: 股票代码
     - order_size: 订单大小（股）    - max_time: 最大执行时间（天）
@@ -365,7 +365,7 @@ def monitor_realtime_impact(
 ) -> ImpactMonitorResult:
     """
     监控实时冲击
-    
+
     返回:
     - ImpactMonitorResult: 监控结果
       - predicted_impact: 预测冲击
@@ -492,15 +492,15 @@ def fit_linear_model(
     historical_data: pd.DataFrame
 ) -> Tuple[float, float]:
     """
-    拟合线性冲击模型参数    
+    拟合线性冲击模型参数
     方法: 最小二乘法
-    
+
     步骤:
     1. 计算参与率 PR = Q / ADV
 冲击: Impact = (执行价格 - 初始价格) / 初始价格
     3. 对数变换: log(Impact) = log(α) + β * log(PR)
     4. 线性回归拟合α和β
-    
+
     返回:
     - alpha: 冲击系数
     - beta: 冲击指数
@@ -541,18 +541,18 @@ def optimize_execution_time(
     risk_aversion: float
 ) -> float:
     """
-    求解最优执行时机    
+    求解最优执行时机
     目标函数:
 Minimize: E[Cost] +  * Var[Cost]
-    
-    
+
+
 - E[Cost] =  * (Q/ADV) / T +  * (Q/ADV)
     - Var[Cost] = σ^2 * T * (Q/ADV)^2
     - λ: 风险厌恶系数
-    
+
     求解:
     T* = sqrt(η * (Q/ADV) / (λ * σ^2 * (Q/ADV)^2))
-    
+
     返回:
     - optimal_time: 最优执行时间（天）
     """
@@ -599,15 +599,15 @@ Minimize: E[Cost] +  * Var[Cost]
 
 ```python
 class TestLinearImpactModel:
-    
+
     def test_impact_prediction(self):
         """测试冲击预测"""
         pass
-    
+
     def test_parameter_fitting(self):
         """测试参数拟合"""
         pass
-    
+
     def test_edge_cases(self):
 况"""
         pass
@@ -618,15 +618,15 @@ class TestLinearImpactModel:
 ```python
 class TestMarketImpactModel:
     """市场冲击模型集成测试"""
-    
+
     def test_end_to_end_prediction(self):
         """测试端到端预测"""
         pass
-    
+
     def test_model_update(self):
         """测试模型更新"""
         pass
-    
+
     def test_realtime_monitoring(self):
         """测试实时监控"""
         pass
@@ -743,7 +743,7 @@ class TestMarketImpactModel:
 
 
 
-**蓝图编写**: 首席架构师  
+**蓝图编写**: 首席架构师
 **蓝图日期**: 2026-04-02
 **蓝图状态**: 已完成
 
@@ -785,7 +785,7 @@ class TestMarketImpactModel:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Market Impact Model** | 
+| **Market Impact Model** |
 
 ### 12.3 版本管理
 

@@ -2,7 +2,7 @@ metrics:
   - id: ARC-HEALTH-001
     name: 架构腐化指数
     threshold: ≤0.15
-    measurement: 
+    measurement:
       script: scripts/architecture_analyzer.py
       interval: 3600
 triggers:

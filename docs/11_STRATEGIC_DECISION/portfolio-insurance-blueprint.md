@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 投资组合保险系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资组合保险系统蓝图设计相关内容
 
@@ -68,7 +68,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Portfolio Insurance蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Portfolio Insurance蓝图设计相关内容
 
@@ -134,11 +134,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 2个月  
+> **实施周期**: 2个月
 
 > **目标**: 构建专业级投资组合保险体系，保护下行风险的同时保留上行收益
 
@@ -442,7 +442,7 @@ class CPPIEngine:
 
     """CPPI引擎"""
 
-    
+
 
     def __init__(self, strategy: CPPIStrategy):
 
@@ -452,7 +452,7 @@ class CPPIEngine:
 
         self.current_state = CPPIState.NORMAL
 
-        
+
 
     def calculate_floor(self, portfolio_value: float) -> float:
 
@@ -462,7 +462,7 @@ class CPPIEngine:
 
         return max(self.floor, dynamic_floor)
 
-    
+
 
     def calculate_cushion(self, portfolio_value: float, floor: float) -> float:
 
@@ -470,7 +470,7 @@ class CPPIEngine:
 
         return portfolio_value - floor
 
-    
+
 
     def allocate_assets(self, portfolio_value: float) -> Dict:
 
@@ -480,7 +480,7 @@ class CPPIEngine:
 
         cushion = self.calculate_cushion(portfolio_value, floor)
 
-        
+
 
         risky_allocation = min(
 
@@ -490,21 +490,21 @@ class CPPIEngine:
 
         )
 
-        
+
 
         safe_allocation = portfolio_value - risky_allocation
 
-        
+
 
         risky_ratio = risky_allocation / portfolio_value
 
         safe_ratio = safe_allocation / portfolio_value
 
-        
+
 
         self._update_state(cushion, portfolio_value)
 
-        
+
 
         return {
 
@@ -528,7 +528,7 @@ class CPPIEngine:
 
         }
 
-    
+
 
     def _update_state(self, cushion: float, portfolio_value: float):
 
@@ -536,7 +536,7 @@ class CPPIEngine:
 
         cushion_ratio = cushion / portfolio_value
 
-        
+
 
         if cushion_ratio < 0.05:
 
@@ -554,9 +554,9 @@ class CPPIEngine:
 
             self.current_state = CPPIState.NORMAL
 
-    
 
-    def check_rebalance(self, 
+
+    def check_rebalance(self,
 
                        current_allocation: Dict,
 
@@ -572,9 +572,9 @@ class CPPIEngine:
 
         return risky_diff > self.strategy.rebalance_threshold
 
-    
 
-    def generate_rebalance_signal(self, 
+
+    def generate_rebalance_signal(self,
 
                                  current_allocation: Dict,
 
@@ -586,13 +586,13 @@ class CPPIEngine:
 
             return {'rebalance_needed': False}
 
-        
 
-        risky_trade = (target_allocation['risky_allocation'] - 
+
+        risky_trade = (target_allocation['risky_allocation'] -
 
                       current_allocation['risky_allocation'])
 
-        
+
 
         return {
 
@@ -696,7 +696,7 @@ Floor_t = Max(Floor_t-1, Portfolio_Value_t  Floor_Ratio)
 
 New_Floor = Max(Old_Floor, Portfolio_Value_t  Lock_Ratio)
 
-    
+
 
 风险资产配置:
 
@@ -742,7 +742,7 @@ class TIPPEngine:
 
     """TIPP引擎"""
 
-    
+
 
     def __init__(self, strategy: TIPPStrategy):
 
@@ -754,7 +754,7 @@ class TIPPEngine:
 
         self.locked_profits = 0.0
 
-        
+
 
     def update_floor(self, portfolio_value: float) -> float:
 
@@ -766,7 +766,7 @@ class TIPPEngine:
 
             self.locked_profits += profit * (1 - self.strategy.lock_ratio)
 
-            
+
 
             new_floor = portfolio_value * self.strategy.lock_ratio
 
@@ -774,11 +774,11 @@ class TIPPEngine:
 
             self.peak_value = portfolio_value
 
-        
+
 
         return self.floor
 
-    
+
 
     def allocate_assets(self, portfolio_value: float) -> Dict:
 
@@ -788,7 +788,7 @@ class TIPPEngine:
 
         cushion = portfolio_value - floor
 
-        
+
 
         risky_allocation = min(
 
@@ -798,11 +798,11 @@ class TIPPEngine:
 
         )
 
-        
+
 
         safe_allocation = portfolio_value - risky_allocation
 
-        
+
 
         return {
 
@@ -820,7 +820,7 @@ class TIPPEngine:
 
             'locked_profits': self.locked_profits,
 
-            'floor_growth': (floor / (self.strategy.initial_value * 
+            'floor_growth': (floor / (self.strategy.initial_value *
 
                                       self.strategy.floor_ratio) - 1),
 
@@ -920,15 +920,15 @@ class OBPIEngine:
 
     """OBPI引擎"""
 
-    
+
 
     def __init__(self, strategy: OBPIStrategy):
 
         self.strategy = strategy
 
-        
 
-    def black_scholes_put(self, 
+
+    def black_scholes_put(self,
 
                          S: float,    # 标的价格
 
@@ -950,7 +950,7 @@ class OBPIEngine:
 
         d2 = d1 - sigma * math.sqrt(T)
 
-        
+
 
         put_price = K * math.exp(-r * T) * norm.cdf(-d2) - \
 
@@ -958,9 +958,9 @@ class OBPIEngine:
 
         return put_price
 
-    
 
-    def calculate_hedge_cost(self, 
+
+    def calculate_hedge_cost(self,
 
                             current_price: float,
 
@@ -972,7 +972,7 @@ class OBPIEngine:
 
         T = self.strategy.time_to_expiry / 365.0
 
-        
+
 
         put_price = self.black_scholes_put(
 
@@ -988,11 +988,11 @@ class OBPIEngine:
 
         )
 
-        
+
 
         total_cost = put_price * self.strategy.hedge_ratio
 
-        
+
 
         return {
 
@@ -1010,9 +1010,9 @@ class OBPIEngine:
 
         }
 
-    
 
-    def optimize_hedge_strategy(self, 
+
+    def optimize_hedge_strategy(self,
 
                                current_price: float,
 
@@ -1026,13 +1026,13 @@ class OBPIEngine:
 
         hedge_ratios = [0.5, 0.7, 0.85, 1.0]
 
-        
+
 
         best_strategy = None
 
         best_cost_benefit = 0
 
-        
+
 
         for prot_ratio in protection_ratios:
 
@@ -1048,7 +1048,7 @@ class OBPIEngine:
 
                 )
 
-                
+
 
                 temp_engine = OBPIEngine(temp_strategy)
 
@@ -1058,7 +1058,7 @@ class OBPIEngine:
 
                 )
 
-                
+
 
                 if cost_info['total_cost'] <= risk_budget:
 
@@ -1066,7 +1066,7 @@ class OBPIEngine:
 
                     cost_benefit = protection_level / cost_info['cost_ratio']
 
-                    
+
 
                     if cost_benefit > best_cost_benefit:
 
@@ -1086,7 +1086,7 @@ class OBPIEngine:
 
                         }
 
-        
+
 
         return best_strategy
 
@@ -1114,7 +1114,7 @@ class InsuranceMonitor:
 
     """保险状态监控系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1130,7 +1130,7 @@ class InsuranceMonitor:
 
         }
 
-        
+
 
     def monitor_cppi_state(self, cppi_result: Dict) -> Dict:
 
@@ -1138,7 +1138,7 @@ class InsuranceMonitor:
 
         cushion_ratio = cppi_result['cushion'] / cppi_result['portfolio_value']
 
-        
+
 
         alerts = []
 
@@ -1166,7 +1166,7 @@ class InsuranceMonitor:
 
             })
 
-        
+
 
         return {
 
@@ -1180,9 +1180,9 @@ class InsuranceMonitor:
 
         }
 
-    
 
-    def calculate_insurance_effectiveness(self, 
+
+    def calculate_insurance_effectiveness(self,
 
                                          portfolio_returns: pd.Series,
 
@@ -1194,11 +1194,11 @@ class InsuranceMonitor:
 
         benchmark_dd = self._calculate_drawdown(benchmark_returns)
 
-        
+
 
         protection_effect = (benchmark_dd - portfolio_dd) / benchmark_dd
 
-        
+
 
         return {
 
@@ -1214,7 +1214,7 @@ class InsuranceMonitor:
 
         }
 
-    
+
 
     def _calculate_drawdown(self, returns: pd.Series) -> float:
 
@@ -1312,9 +1312,9 @@ class PortfolioInsuranceInterface:
 
     """投资组合保险接口"""
 
-    
 
-    def calculate_protection(self, 
+
+    def calculate_protection(self,
 
                             portfolio_value: float,
 
@@ -1324,9 +1324,9 @@ class PortfolioInsuranceInterface:
 
         pass
 
-    
 
-    def generate_adjustment_signal(self, 
+
+    def generate_adjustment_signal(self,
 
                                   current_state: InsuranceState,
 
@@ -1336,9 +1336,9 @@ class PortfolioInsuranceInterface:
 
         pass
 
-    
 
-    def evaluate_insurance_effect(self, 
+
+    def evaluate_insurance_effect(self,
 
                                  historical_data: pd.DataFrame) -> Dict:
 
@@ -1684,7 +1684,7 @@ Layer 7 AI报告
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
 **下一步**: 创建融资融券管理系统蓝图
 
@@ -1753,4 +1753,3 @@ Layer 7 AI报告
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

@@ -14,9 +14,9 @@ router = APIRouter()
 async def health_check():
     """
     系统健康检查
-    
+
     返回系统运行状态和各模块健康状态
-    
+
     Returns:
         Dict[str, Any]: 健康状态信息
     """
@@ -37,9 +37,9 @@ async def health_check():
 async def readiness_check():
     """
     就绪检查
-    
+
     检查系统是否准备好接收请求
-    
+
     Returns:
         Dict[str, Any]: 就绪状态
     """
@@ -58,9 +58,9 @@ async def readiness_check():
 async def liveness_check():
     """
     存活检查
-    
+
     检查系统是否存活
-    
+
     Returns:
         Dict[str, Any]: 存活状态
     """

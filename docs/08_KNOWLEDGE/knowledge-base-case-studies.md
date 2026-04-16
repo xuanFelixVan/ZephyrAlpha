@@ -220,7 +220,7 @@ data: ﮒﮒ،ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﻝﮔﺍﮔ?        window: ﮒ�
 
 
 
-    
+
 
 
 
@@ -228,7 +228,7 @@ data: ﮒﮒ،ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﻝﮔﺍﮔ?        window: ﮒ�
 
 
 
-    
+
 
 
 
@@ -240,7 +240,7 @@ data: ﮒﮒ،ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﻝﮔﺍﮔ?        window: ﮒ�
 
 
 
-    
+
 
 
 
@@ -462,7 +462,7 @@ def reduce_risk_exposure(portfolio: Portfolio, target_var: float) -> Portfolio:
 
 
 
-    
+
 
 
 
@@ -478,7 +478,7 @@ target_var: ﻝ؟ﮔVaR
 
 
 
-    
+
 
 
 
@@ -502,7 +502,7 @@ target_var: ﻝ؟ﮔVaR
 
 
 
-    
+
 
 
 
@@ -514,7 +514,7 @@ target_var: ﻝ؟ﮔVaR
 
 
 
-    
+
 
 
 
@@ -1944,7 +1944,7 @@ class FactorCache:
 
 
 
-    
+
 
 
 
@@ -2034,7 +2034,7 @@ class FactorCache:
 
 
 
-    
+
 
 
 
@@ -2339,6 +2339,3 @@ with self.lock:  # ﮒﻠ
 
 
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-02
-
-
-

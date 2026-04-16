@@ -50,7 +50,7 @@ priority: P2
 
 > **核心职责**: 税务管理系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：税务管理系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P2
 
 > **核心职责**: Tax Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Tax Management蓝图设计相关内容
 
@@ -430,7 +430,7 @@ class StampTaxCalculator:
 
     """印花税计算器"""
 
-    
+
 
     def __init__(self, config: TaxConfig):
 
@@ -438,7 +438,7 @@ class StampTaxCalculator:
 
         self.tax_records: List[TaxRecord] = []
 
-    
+
 
     def calculate_stamp_tax(self,
 
@@ -456,11 +456,11 @@ class StampTaxCalculator:
 
             tax = 0.0
 
-        
+
 
         return tax
 
-    
+
 
     def add_trade(self,
 
@@ -478,7 +478,7 @@ class StampTaxCalculator:
 
         tax_amount = self.calculate_stamp_tax(trade_amount, trade_type)
 
-        
+
 
         if tax_amount > 0:
 
@@ -502,7 +502,7 @@ class StampTaxCalculator:
 
             self.tax_records.append(record)
 
-    
+
 
     def get_annual_stamp_tax(self, year: int) -> float:
 
@@ -516,7 +516,7 @@ class StampTaxCalculator:
 
         )
 
-    
+
 
     def get_stamp_tax_report(self, year: int) -> pd.DataFrame:
 
@@ -524,7 +524,7 @@ class StampTaxCalculator:
 
         records = [r for r in self.tax_records if r.trade_date.year == year]
 
-        
+
 
         return pd.DataFrame([
 
@@ -550,13 +550,13 @@ class TradingFeeCalculator:
 
     """交易费用计算器"""
 
-    
+
 
     def __init__(self, config: TaxConfig):
 
         self.config = config
 
-    
+
 
     def calculate_commission(self, trade_amount: float) -> float:
 
@@ -566,9 +566,9 @@ class TradingFeeCalculator:
 
         return max(commission, self.config.min_commission)
 
-    
 
-    def calculate_transfer_fee(self, 
+
+    def calculate_transfer_fee(self,
 
                               trade_amount: float,
 
@@ -582,7 +582,7 @@ class TradingFeeCalculator:
 
         return 0.0
 
-    
+
 
     def calculate_exchange_fee(self, trade_amount: float) -> float:
 
@@ -590,7 +590,7 @@ class TradingFeeCalculator:
 
         return trade_amount * self.config.exchange_fee_rate
 
-    
+
 
     def calculate_total_fee(self,
 
@@ -682,7 +682,7 @@ class LotCostManager:
 
     """批次成本管理器"""
 
-    
+
 
     def __init__(self, fee_calculator: TradingFeeCalculator):
 
@@ -694,7 +694,7 @@ class LotCostManager:
 
         self.lot_counter = 0
 
-    
+
 
     def add_buy_trade(self,
 
@@ -712,7 +712,7 @@ class LotCostManager:
 
         self.lot_counter += 1
 
-        
+
 
         buy_amount = buy_price * quantity
 
@@ -720,11 +720,11 @@ class LotCostManager:
 
         total_fees = fees['commission'] + fees['transfer_fee'] + fees['exchange_fee']
 
-        
+
 
         cost_per_share = (buy_amount + total_fees) / quantity
 
-        
+
 
         lot = CostLot(
 
@@ -748,7 +748,7 @@ class LotCostManager:
 
         )
 
-        
+
 
         if stock_code not in self.lots:
 
@@ -756,7 +756,7 @@ class LotCostManager:
 
         self.lots[stock_code].append(lot)
 
-    
+
 
     def process_sell_trade(self,
 
@@ -778,7 +778,7 @@ class LotCostManager:
 
             return None
 
-        
+
 
         sell_amount = sell_price * quantity
 
@@ -786,13 +786,13 @@ class LotCostManager:
 
         total_sell_fees = sum(fees.values())
 
-        
+
 
         cost_amount = 0
 
         remaining_to_sell = quantity
 
-        
+
 
         lots = self.lots[stock_code]
 
@@ -808,7 +808,7 @@ class LotCostManager:
 
             lots_to_process = [lot for lot in lots if lot.remaining_quantity > 0]
 
-        
+
 
         for lot in lots_to_process:
 
@@ -816,7 +816,7 @@ class LotCostManager:
 
                 break
 
-            
+
 
             sell_from_lot = min(lot.remaining_quantity, remaining_to_sell)
 
@@ -826,7 +826,7 @@ class LotCostManager:
 
             remaining_to_sell -= sell_from_lot
 
-        
+
 
         net_sell_amount = sell_amount - total_sell_fees
 
@@ -834,7 +834,7 @@ class LotCostManager:
 
         pnl_pct = realized_pnl / cost_amount if cost_amount > 0 else 0
 
-        
+
 
         self.lot_counter += 1
 
@@ -860,13 +860,13 @@ class LotCostManager:
 
         )
 
-        
+
 
         self.realized_pnls.append(pnl_record)
 
         return pnl_record
 
-    
+
 
     def get_current_cost(self, stock_code: str) -> Dict:
 
@@ -876,23 +876,23 @@ class LotCostManager:
 
             return None
 
-        
+
 
         lots = [lot for lot in self.lots[stock_code] if lot.remaining_quantity > 0]
 
-        
+
 
         if not lots:
 
             return None
 
-        
+
 
         total_quantity = sum(lot.remaining_quantity for lot in lots)
 
         total_cost = sum(lot.remaining_quantity * lot.cost_per_share for lot in lots)
 
-        
+
 
         return {
 
@@ -908,7 +908,7 @@ class LotCostManager:
 
         }
 
-    
+
 
     def get_unrealized_pnl(self,
 
@@ -920,13 +920,13 @@ class LotCostManager:
 
         cost_info = self.get_current_cost(stock_code)
 
-        
+
 
         if not cost_info:
 
             return None
 
-        
+
 
         market_value = cost_info['total_quantity'] * current_price
 
@@ -934,7 +934,7 @@ class LotCostManager:
 
         pnl_pct = unrealized_pnl / cost_info['total_cost'] if cost_info['total_cost'] > 0 else 0
 
-        
+
 
         return {
 
@@ -954,7 +954,7 @@ class LotCostManager:
 
         }
 
-    
+
 
     def get_annual_realized_pnl(self, year: int) -> pd.DataFrame:
 
@@ -962,7 +962,7 @@ class LotCostManager:
 
         pnls = [p for p in self.realized_pnls if p.sell_date.year == year]
 
-        
+
 
         return pd.DataFrame([
 
@@ -1002,7 +1002,7 @@ class TaxReportGenerator:
 
     """税务报告生成器"""
 
-    
+
 
     def __init__(self,
 
@@ -1014,7 +1014,7 @@ class TaxReportGenerator:
 
         self.lot_cost_manager = lot_cost_manager
 
-    
+
 
     def generate_annual_report(self, year: int) -> str:
 
@@ -1024,17 +1024,17 @@ class TaxReportGenerator:
 
         report += "=" * 50 + "\n\n"
 
-        
+
 
         annual_stamp_tax = self.stamp_tax_calc.get_annual_stamp_tax(year)
 
         report += f"年度印花税: {annual_stamp_tax:,.2f}\n\n"
 
-        
+
 
         pnl_df = self.lot_cost_manager.get_annual_realized_pnl(year)
 
-        
+
 
         if not pnl_df.empty:
 
@@ -1044,7 +1044,7 @@ class TaxReportGenerator:
 
             total_trades = len(pnl_df)
 
-            
+
 
             report += "已实现盈亏统计:\n"
 
@@ -1054,7 +1054,7 @@ class TaxReportGenerator:
 
             report += f"  胜率: {winning_trades/total_trades:.1%}\n\n"
 
-        
+
 
         report += "注意事项:\n"
 
@@ -1064,11 +1064,11 @@ class TaxReportGenerator:
 
         report += "  3. 本报告仅供参考，不构成税务建议\n"
 
-        
+
 
         return report
 
-    
+
 
     def export_to_excel(self, year: int, file_path: str):
 
@@ -1082,7 +1082,7 @@ class TaxReportGenerator:
 
                 stamp_tax_df.to_excel(writer, sheet_name='印花税明细', index=False)
 
-            
+
 
             pnl_df = self.lot_cost_manager.get_annual_realized_pnl(year)
 
@@ -1267,4 +1267,3 @@ class TaxReportGenerator:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

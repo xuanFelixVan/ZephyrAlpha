@@ -22,7 +22,7 @@ responsibility: ''
 ---
 # 策略绩效归因系统蓝图
 > **核心职责**: Strategy Performance Attribution蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Strategy Performance Attribution蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -250,10 +250,10 @@ import pandas as pd
 
 class BrinsonAttribution:
     """Brinson归因模型"""
-    
+
     def __init__(self):
         pass
-        
+
     def calculate_attribution(self,
                              portfolio_returns: pd.DataFrame,
                              benchmark_returns: pd.DataFrame,
@@ -264,27 +264,27 @@ class BrinsonAttribution:
         allocation_effect = self._calculate_allocation_effect(
             portfolio_returns, benchmark_returns, portfolio_weights, benchmark_weights
         )
-        
+
         # 选择效应
         selection_effect = self._calculate_selection_effect(
             portfolio_returns, benchmark_returns, portfolio_weights, benchmark_weights
         )
-        
+
         # 交互效应
         interaction_effect = self._calculate_interaction_effect(
             portfolio_returns, benchmark_returns, portfolio_weights, benchmark_weights
         )
-        
+
         # 总效应
         total_effect = allocation_effect + selection_effect + interaction_effect
-        
+
         return {
             'allocation_effect': allocation_effect,
             'selection_effect': selection_effect,
             'interaction_effect': interaction_effect,
             'total_effect': total_effect
         }
-    
+
     def _calculate_allocation_effect(self,
                                     portfolio_returns: pd.DataFrame,
                                     benchmark_returns: pd.DataFrame,
@@ -292,14 +292,14 @@ class BrinsonAttribution:
                                     benchmark_weights: pd.DataFrame) -> float:
         """计算配置效应"""
         allocation_effect = 0.0
-        
+
         for category in portfolio_weights.columns:
             weight_diff = portfolio_weights[category] - benchmark_weights[category]
             benchmark_return = benchmark_returns[category]
             allocation_effect += weight_diff * benchmark_return
-        
+
         return allocation_effect
-    
+
     def _calculate_selection_effect(self,
                                    portfolio_returns: pd.DataFrame,
                                    benchmark_returns: pd.DataFrame,
@@ -307,14 +307,14 @@ class BrinsonAttribution:
                                    benchmark_weights: pd.DataFrame) -> float:
         """计算选择效应"""
         selection_effect = 0.0
-        
+
         for category in portfolio_weights.columns:
             return_diff = portfolio_returns[category] - benchmark_returns[category]
             benchmark_weight = benchmark_weights[category]
             selection_effect += return_diff * benchmark_weight
-        
+
         return selection_effect
-    
+
     def _calculate_interaction_effect(self,
                                      portfolio_returns: pd.DataFrame,
                                      benchmark_returns: pd.DataFrame,
@@ -322,12 +322,12 @@ class BrinsonAttribution:
                                      benchmark_weights: pd.DataFrame) -> float:
         """计算交互效应"""
         interaction_effect = 0.0
-        
+
         for category in portfolio_weights.columns:
             weight_diff = portfolio_weights[category] - benchmark_weights[category]
             return_diff = portfolio_returns[category] - benchmark_returns[category]
             interaction_effect += weight_diff * return_diff
-        
+
         return interaction_effect
 ```
 
@@ -354,35 +354,35 @@ from scipy import stats
 
 class FactorICAnalyzer:
     """因子IC分析器"""
-    
+
     def __init__(self):
         pass
-        
+
     def calculate_ic(self,
                     factor_values: pd.DataFrame,
                     forward_returns: pd.DataFrame) -> pd.Series:
         """计算因子IC"""
         ic_series = pd.Series(index=factor_values.index)
-        
+
         for date in factor_values.index:
             factor = factor_values.loc[date]
             returns = forward_returns.loc[date]
-            
+
             # 计算Rank IC
             ic = stats.spearmanr(factor, returns)[0]
             ic_series[date] = ic
-        
+
         return ic_series
-    
+
     def analyze_ic_performance(self, ic_series: pd.Series) -> Dict:
         """分析IC表现"""
         ic_mean = ic_series.mean()
         ic_std = ic_series.std()
         icir = ic_mean / ic_std if ic_std != 0 else 0
-        
+
         # IC衰减分析
         ic_decay = self._analyze_ic_decay(ic_series)
-        
+
         return {
             'ic_mean': ic_mean,
             'ic_std': ic_std,
@@ -390,16 +390,16 @@ class FactorICAnalyzer:
             'ic_decay': ic_decay,
             'ic_positive_ratio': (ic_series > 0).sum() / len(ic_series)
         }
-    
+
     def _analyze_ic_decay(self, ic_series: pd.Series) -> Dict:
         """分析IC衰减"""
         # 简化的IC衰减分析
         half_life = len(ic_series) // 2
         first_half_ic = ic_series[:half_life].mean()
         second_half_ic = ic_series[half_life:].mean()
-        
+
         decay_rate = (first_half_ic - second_half_ic) / first_half_ic if first_half_ic != 0 else 0
-        
+
         return {
             'first_half_ic': first_half_ic,
             'second_half_ic': second_half_ic,
@@ -427,20 +427,20 @@ import pandas as pd
 
 class PyfolioAttribution:
     """pyfolio绩效归因"""
-    
+
     def __init__(self):
         pass
-        
-    def analyze_performance(self, 
+
+    def analyze_performance(self,
                            returns: pd.Series,
                            benchmark_returns: pd.Series = None) -> Dict:
         """分析绩效"""
         # 生成pyfolio报告
         pf.create_full_tear_sheet(returns, benchmark_rets=benchmark_returns)
-        
+
         # 提取关键指标
         perf_stats = pf.timeseries.perf_stats(returns)
-        
+
         return {
             'annual_return': perf_stats['Annual return'],
             'annual_volatility': perf_stats['Annual volatility'],
@@ -465,10 +465,10 @@ import pandas as pd
 
 class EmpyricalAttribution:
     """empyrical绩效归因"""
-    
+
     def __init__(self):
         pass
-        
+
     def calculate_risk_metrics(self, returns: pd.Series) -> Dict:
         """计算风险指标"""
         return {
@@ -479,7 +479,7 @@ class EmpyricalAttribution:
             'calmar_ratio': ep.calmar_ratio(returns),
             'omega_ratio': ep.omega_ratio(returns)
         }
-    
+
     def calculate_return_metrics(self, returns: pd.Series) -> Dict:
         """计算收益指标"""
         return {
@@ -504,10 +504,10 @@ import pandas as pd
 
 class AlphalensAttribution:
     """alphalens因子归因"""
-    
+
     def __init__(self):
         pass
-        
+
     def analyze_factor(self,
                       factor_data: pd.DataFrame,
                       price_data: pd.DataFrame) -> Dict:
@@ -516,13 +516,13 @@ class AlphalensAttribution:
         factor_data = get_clean_factor_and_forward_returns(
             factor_data, price_data, quantiles=5
         )
-        
+
         # 生成因子分析报告
         alphalens.tears.create_full_tear_sheet(factor_data)
-        
+
         # 提取关键指标
         ic_data = alphalens.performance.factor_information_coefficient(factor_data)
-        
+
         return {
             'ic_mean': ic_data.mean(),
             'ic_std': ic_data.std(),
@@ -550,18 +550,18 @@ from langchain.prompts import PromptTemplate
 
 class AIAttributionAssistant:
     """AI绩效归因助手"""
-    
+
     def __init__(self, api_key: str):
         self.llm = OpenAI(api_key=api_key)
-        
+
     def analyze_attribution_anomaly(self, attribution_data: Dict) -> str:
         """分析归因异常"""
         prompt = PromptTemplate(
             template="""
             作为绩效归因专家，请分析以下归因结果是否异常：
-            
+
             归因数据：{attribution_data}
-            
+
             请提供：
             1. 是否存在异常
             2. 异常原因分析
@@ -569,17 +569,17 @@ class AIAttributionAssistant:
             """,
             input_variables=["attribution_data"]
         )
-        
+
         return self.llm(prompt.format(attribution_data=attribution_data))
-    
+
     def generate_optimization_suggestions(self, attribution_data: Dict) -> str:
         """生成优化建议"""
         prompt = PromptTemplate(
             template="""
             作为策略优化专家，请根据以下归因数据提供优化建议：
-            
+
             归因数据：{attribution_data}
-            
+
             请提供：
             1. 策略优势分析
             2. 策略劣势分析
@@ -588,7 +588,7 @@ class AIAttributionAssistant:
             """,
             input_variables=["attribution_data"]
         )
-        
+
         return self.llm(prompt.format(attribution_data=attribution_data))
 ```
 
@@ -637,7 +637,7 @@ class AIAttributionAssistant:
 ```python
 class AttributionAlertSystem:
     """绩效归因告警系统"""
-    
+
     def __init__(self):
         self.thresholds = {
             'sharpe_ratio_low': 0.5,
@@ -645,11 +645,11 @@ class AttributionAlertSystem:
             'max_drawdown_high': 0.2,
             'max_drawdown_medium': 0.1
         }
-        
+
     def check_alerts(self, attribution_data: Dict) -> List[Dict]:
         """检查告警"""
         alerts = []
-        
+
         if attribution_data['sharpe_ratio'] < self.thresholds['sharpe_ratio_low']:
             alerts.append({
                 'level': 'high',
@@ -660,7 +660,7 @@ class AttributionAlertSystem:
                 'level': 'medium',
                 'message': f"夏普比率偏低: {attribution_data['sharpe_ratio']:.2f}"
             })
-        
+
         if attribution_data['max_drawdown'] > self.thresholds['max_drawdown_high']:
             alerts.append({
                 'level': 'high',
@@ -671,7 +671,7 @@ class AttributionAlertSystem:
                 'level': 'medium',
                 'message': f"最大回撤偏大: {attribution_data['max_drawdown']:.2%}"
             })
-        
+
         return alerts
 ```
 

@@ -862,4 +862,3 @@ python scripts/yaml_validator.py --dir docs/05_IMPLEMENTATION
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-04-10
 
 ```
-

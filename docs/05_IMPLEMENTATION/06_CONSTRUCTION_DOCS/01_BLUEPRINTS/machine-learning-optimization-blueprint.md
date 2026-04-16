@@ -356,13 +356,13 @@ class MachineLearningOptimizer:
 
     机器学习优化器
 
-    
+
 
     提供机器学习风格的组合优化能力
 
     """
 
-    
+
 
     def __init__(self, model_type: str = "mean_risk"):
 
@@ -370,7 +370,7 @@ class MachineLearningOptimizer:
 
         初始化优化器
 
-        
+
 
         Args:
 
@@ -392,7 +392,7 @@ class MachineLearningOptimizer:
 
         self.best_params = None
 
-        
+
 
     def fit(
 
@@ -410,7 +410,7 @@ class MachineLearningOptimizer:
 
         训练模型
 
-        
+
 
         Args:
 
@@ -420,7 +420,7 @@ class MachineLearningOptimizer:
 
             objective: 优化目标
 
-        
+
 
         Returns:
 
@@ -430,7 +430,7 @@ class MachineLearningOptimizer:
 
         returns = prices_to_returns(prices)
 
-        
+
 
         if self.model_type == "mean_risk":
 
@@ -458,11 +458,11 @@ class MachineLearningOptimizer:
 
             self.model = HierarchicalRiskParity()
 
-        
+
 
         self.model.fit(returns)
 
-        
+
 
         return {
 
@@ -472,7 +472,7 @@ class MachineLearningOptimizer:
 
         }
 
-    
+
 
     def grid_search(
 
@@ -490,7 +490,7 @@ class MachineLearningOptimizer:
 
         网格搜索
 
-        
+
 
         Args:
 
@@ -500,7 +500,7 @@ class MachineLearningOptimizer:
 
             cv: 交叉验证折数
 
-        
+
 
         Returns:
 
@@ -510,7 +510,7 @@ class MachineLearningOptimizer:
 
         returns = prices_to_returns(prices)
 
-        
+
 
         grid_search = GridSearchCV(
 
@@ -524,17 +524,17 @@ class MachineLearningOptimizer:
 
         )
 
-        
+
 
         grid_search.fit(returns)
 
-        
+
 
         self.model = grid_search.best_estimator_
 
         self.best_params = grid_search.best_params_
 
-        
+
 
         return {
 
@@ -546,7 +546,7 @@ class MachineLearningOptimizer:
 
         }
 
-    
+
 
     def cross_validate(
 
@@ -566,7 +566,7 @@ class MachineLearningOptimizer:
 
         交叉验证
 
-        
+
 
         Args:
 
@@ -578,7 +578,7 @@ class MachineLearningOptimizer:
 
             test_size: 测试集大小
 
-        
+
 
         Returns:
 
@@ -588,11 +588,11 @@ class MachineLearningOptimizer:
 
         from skfolio.model_selection import WalkForward
 
-        
+
 
         returns = prices_to_returns(prices)
 
-        
+
 
         if cv_method == "walk_forward":
 
@@ -610,7 +610,7 @@ class MachineLearningOptimizer:
 
             cv = KFold(n_splits=5)
 
-        
+
 
         scores = cross_val_score(
 
@@ -624,7 +624,7 @@ class MachineLearningOptimizer:
 
         )
 
-        
+
 
         return {
 
@@ -636,7 +636,7 @@ class MachineLearningOptimizer:
 
         }
 
-    
+
 
     def predict(self, prices: pd.DataFrame) -> np.ndarray:
 
@@ -644,13 +644,13 @@ class MachineLearningOptimizer:
 
         预测权重
 
-        
+
 
         Args:
 
             prices: 价格数据
 
-        
+
 
         Returns:
 
@@ -660,13 +660,13 @@ class MachineLearningOptimizer:
 
         returns = prices_to_returns(prices)
 
-        
+
 
         if self.model is None:
 
             raise ValueError("Model not fitted yet")
 
-        
+
 
         return self.model.predict(returns)
 
@@ -690,13 +690,13 @@ class EnsembleOptimizer:
 
     集成优化器
 
-    
+
 
     使用集成方法组合多个优化模型
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -704,7 +704,7 @@ class EnsembleOptimizer:
 
         self.stacking_model = None
 
-    
+
 
     def add_model(self, model):
 
@@ -712,7 +712,7 @@ class EnsembleOptimizer:
 
         添加模型
 
-        
+
 
         Args:
 
@@ -722,7 +722,7 @@ class EnsembleOptimizer:
 
         self.models.append(model)
 
-    
+
 
     def fit_stacking(
 
@@ -738,7 +738,7 @@ class EnsembleOptimizer:
 
         训练堆叠模型
 
-        
+
 
         Args:
 
@@ -746,7 +746,7 @@ class EnsembleOptimizer:
 
             meta_learner: 元学习器
 
-        
+
 
         Returns:
 
@@ -756,7 +756,7 @@ class EnsembleOptimizer:
 
         returns = prices_to_returns(prices)
 
-        
+
 
         self.stacking_model = StackingOptimization(
 
@@ -766,11 +766,11 @@ class EnsembleOptimizer:
 
         )
 
-        
+
 
         self.stacking_model.fit(returns)
 
-        
+
 
         return {
 
@@ -802,13 +802,13 @@ class ModelSelector:
 
     模型选择器
 
-    
+
 
     自动选择最佳模型和参数
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -818,7 +818,7 @@ class ModelSelector:
 
         self.best_score = None
 
-    
+
 
     def auto_select(
 
@@ -836,7 +836,7 @@ class ModelSelector:
 
         自动选择模型
 
-        
+
 
         Args:
 
@@ -846,7 +846,7 @@ class ModelSelector:
 
             cv: 交叉验证折数
 
-        
+
 
         Returns:
 
@@ -856,7 +856,7 @@ class ModelSelector:
 
         returns = prices_to_returns(prices)
 
-        
+
 
         param_distributions = {
 
@@ -870,7 +870,7 @@ class ModelSelector:
 
         }
 
-        
+
 
         random_search = RandomizedSearchCV(
 
@@ -888,11 +888,11 @@ class ModelSelector:
 
         )
 
-        
+
 
         random_search.fit(returns)
 
-        
+
 
         self.best_model = random_search.best_estimator_
 
@@ -900,7 +900,7 @@ class ModelSelector:
 
         self.best_score = random_search.best_score_
 
-        
+
 
         return {
 
@@ -1048,7 +1048,7 @@ async def optimize_portfolio(request: OptimizationRequest):
 
         prices = pd.DataFrame(request.prices)
 
-        
+
 
         optimizer = MachineLearningOptimizer(
 
@@ -1056,7 +1056,7 @@ async def optimize_portfolio(request: OptimizationRequest):
 
         )
 
-        
+
 
         if request.enable_grid_search:
 
@@ -1080,7 +1080,7 @@ async def optimize_portfolio(request: OptimizationRequest):
 
             )
 
-        
+
 
         return OptimizationResponse(
 
@@ -1132,7 +1132,7 @@ def optimize_with_ml(
 
     使用机器学习方法优化组合
 
-    
+
 
     Args:
 
@@ -1148,7 +1148,7 @@ def optimize_with_ml(
 
         cv_method: 交叉验证方法
 
-    
+
 
     Returns:
 
@@ -1158,7 +1158,7 @@ def optimize_with_ml(
 
     optimizer = MachineLearningOptimizer(model_type=model_type)
 
-    
+
 
     result = optimizer.fit(
 
@@ -1170,7 +1170,7 @@ def optimize_with_ml(
 
     )
 
-    
+
 
     if enable_cv:
 
@@ -1184,7 +1184,7 @@ def optimize_with_ml(
 
         result['cv_scores'] = cv_result
 
-    
+
 
     return result
 
@@ -1322,17 +1322,17 @@ class TestMachineLearningOptimizer:
 
         n_periods = 252
 
-        
+
 
         returns = np.random.randn(n_periods, n_assets) * 0.02
 
         prices = 100 * np.exp(np.cumsum(returns, axis=0))
 
-        
+
 
         return pd.DataFrame(prices)
 
-    
+
 
     def test_mean_risk_optimization(self, sample_prices):
 
@@ -1342,7 +1342,7 @@ class TestMachineLearningOptimizer:
 
         result = optimizer.fit(sample_prices)
 
-        
+
 
         assert 'weights' in result
 
@@ -1350,7 +1350,7 @@ class TestMachineLearningOptimizer:
 
         assert abs(sum(result['weights']) - 1.0) < 1e-6
 
-    
+
 
     def test_grid_search(self, sample_prices):
 
@@ -1358,7 +1358,7 @@ class TestMachineLearningOptimizer:
 
         optimizer = MachineLearningOptimizer(model_type="mean_risk")
 
-        
+
 
         param_grid = {
 
@@ -1368,7 +1368,7 @@ class TestMachineLearningOptimizer:
 
         }
 
-        
+
 
         result = optimizer.grid_search(
 
@@ -1380,13 +1380,13 @@ class TestMachineLearningOptimizer:
 
         )
 
-        
+
 
         assert 'best_params' in result
 
         assert 'weights' in result
 
-    
+
 
     def test_cross_validation(self, sample_prices):
 
@@ -1396,7 +1396,7 @@ class TestMachineLearningOptimizer:
 
         optimizer.fit(sample_prices)
 
-        
+
 
         result = optimizer.cross_validate(
 
@@ -1410,7 +1410,7 @@ class TestMachineLearningOptimizer:
 
         )
 
-        
+
 
         assert 'mean_score' in result
 
@@ -1432,11 +1432,11 @@ def test_end_to_end_optimization():
 
     prices = load_test_data()
 
-    
+
 
     optimizer = MachineLearningOptimizer(model_type="mean_risk")
 
-    
+
 
     result = optimizer.fit(
 
@@ -1448,11 +1448,11 @@ def test_end_to_end_optimization():
 
     )
 
-    
+
 
     cv_result = optimizer.cross_validate(prices)
 
-    
+
 
     assert result['weights'] is not None
 
@@ -1508,7 +1508,7 @@ def parallel_grid_search(
 
     并行网格搜索
 
-    
+
 
     Args:
 
@@ -1518,7 +1518,7 @@ def parallel_grid_search(
 
         n_jobs: 并行任务数
 
-    
+
 
     Returns:
 
@@ -1528,7 +1528,7 @@ def parallel_grid_search(
 
     param_list = list(ParameterGrid(param_grid))
 
-    
+
 
     def fit_single(params):
 
@@ -1546,7 +1546,7 @@ def parallel_grid_search(
 
         }
 
-    
+
 
     results = Parallel(n_jobs=n_jobs)(
 
@@ -1554,11 +1554,11 @@ def parallel_grid_search(
 
     )
 
-    
+
 
     best_result = max(results, key=lambda x: x['score'])
 
-    
+
 
     return best_result
 
@@ -1687,4 +1687,3 @@ def parallel_grid_search(
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-08 | 初始版本创建 | 架构团队 |
-

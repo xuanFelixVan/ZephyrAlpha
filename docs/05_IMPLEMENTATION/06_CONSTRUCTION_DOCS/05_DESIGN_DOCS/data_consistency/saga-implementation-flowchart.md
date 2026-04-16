@@ -61,7 +61,7 @@ stateDiagram-v2
 
     [*] --> Pending : ﮒﮒﭨﭦﻛﭦﮒ۰
 
-    
+
 
     state Prechecking {
 
@@ -77,7 +77,7 @@ stateDiagram-v2
 
     }
 
-    
+
 
     Pending --> Prechecking : ﮒﺙﮒ۶ﻠ۱ﮔ۲ﮔ?
 
@@ -85,7 +85,7 @@ stateDiagram-v2
 
     Prechecking --> Failed : ﻠ۱ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ?
 
-    
+
 
     state Executing {
 
@@ -105,13 +105,13 @@ stateDiagram-v2
 
     }
 
-    
+
 
     Executing --> Completing : ﮔﮔﮒﻛﺕﮔﺗﮔ۶ﻟ۰ﮔﮒ
 
     Executing --> Compensating : ﻛﭨﭨﻛﺛﮒﻛﺕﮔﺗﮒ۳ﺎﻟﺑ?
 
-    
+
 
     state Compensating {
 
@@ -131,7 +131,7 @@ stateDiagram-v2
 
     }
 
-    
+
 
     Completing --> Completed : ﻝ۰؟ﻟ؟۳ﮒ؟ﮔ
 
@@ -139,7 +139,7 @@ stateDiagram-v2
 
     Compensating --> CompensationFailed : ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴
 
-    
+
 
     Completed --> [*] : ﻛﭦﮒ۰ﻝﭨﮔ
 
@@ -215,7 +215,7 @@ sequenceDiagram
 
     DB-->>C: ﻟﺟﮒﻛﭦﮒ۰ID
 
-    
+
 
     Note over C: 2. ﻠ۱ﮔ۲ﮔ۴ﻠﭘﮔ؟?
 
@@ -231,7 +231,7 @@ sequenceDiagram
 
     P3-->>C: ﻠ۱ﮔ۲ﮔ۴ﻠﻟﺟ
 
-    
+
 
     Note over C: 3. ﮔ۶ﻟ۰ﻠﭘﮔ؟ﭖ
 
@@ -239,7 +239,7 @@ sequenceDiagram
 
     Redis-->>C: ﻝ۰؟ﻟ؟۳
 
-    
+
 
     C->>P1: ﮔ۶ﻟ۰ﮔ؛ﮒﺍﻛﭦﮒ۰ (ﮒﺛﻛﭨ۳1)
 
@@ -249,7 +249,7 @@ sequenceDiagram
 
     C->>Redis: ﮒﮒﺕﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 
-    
+
 
     C->>P2: ﮔ۶ﻟ۰ﮔ؛ﮒﺍﻛﭦﮒ۰ (ﮒﺛﻛﭨ۳2)
 
@@ -259,7 +259,7 @@ sequenceDiagram
 
     C->>Redis: ﮒﮒﺕﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 
-    
+
 
     C->>P3: ﮔ۶ﻟ۰ﮔ؛ﮒﺍﻛﭦﮒ۰ (ﮒﺛﻛﭨ۳3)
 
@@ -269,7 +269,7 @@ sequenceDiagram
 
     C->>Redis: ﮒﮒﺕﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 4. ﮒ؟ﮔﻠﭘﮔ؟ﭖ
 
@@ -281,7 +281,7 @@ sequenceDiagram
 
     C->>Redis: ﮒﮒﺕﻛﭦﮒ۰ﮒ؟ﮔﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 5. ﮒ؟ﮔﻠﻝ۴
 
@@ -367,7 +367,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     DB-->>C: ﻟﺟﮒﻛﭦﮒ۰ID
 
-    
+
 
     C->>P1: ﻠ۱ﮔ۲ﮔ۴ﻟﺁﺓﮔﺎ?
 
@@ -381,11 +381,11 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     P3-->>C: ﻠ۱ﮔ۲ﮔ۴ﻠﻟﺟ
 
-    
+
 
     C->>Redis: ﮒﮒﺕﻛﭦﮒ۰ﮒﺙﮒ۶ﻛﭦﻛﭨ?
 
-    
+
 
     Note over C: 2. ﮔ۶ﻟ۰ﻠﭘﮔ؟ﭖﺅﺙﮒﻛﺕﮔﺗ1ﮔﮒﺅﺙ?
 
@@ -397,7 +397,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     C->>Redis: ﮒﮒﺕﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 3. ﮔ۶ﻟ۰ﻠﭘﮔ؟ﭖﺅﺙﮒﻛﺕﮔﺗ2ﮒ۳ﺎﻟﺑ۴ﺅﺙ?
 
@@ -407,7 +407,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     P2-->>C: ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ (ﻠﻟﺁﺁ: ﮔﻛﭨﻛﺕﻟﭘﺏ)
 
-    
+
 
     Note over C: 4. ﮒ۳ﺎﻟﺑ۴ﮔ۲ﮔﭖﻛﺕﻟ۰۴ﮒﺟﻟ۶۵ﮒ
 
@@ -415,7 +415,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     C->>Redis: ﮒﮒﺕﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴ﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 5. ﻟ۰۴ﮒﺟﻠﭘﮔ؟ﭖﺅﺙﻠﮒﭦﻟ۰۴ﮒﺟﺅﺙ?
 
@@ -429,7 +429,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     C->>Redis: ﮒﮒﺕﮒﻛﺕﮔ?ﻟ۰۴ﮒﺟﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 6. ﻟ۰۴ﮒﺟﮒ؟ﮔ
 
@@ -437,7 +437,7 @@ Note over C: 1. ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰ﮒﺙﮒ۶?
 
     C->>Redis: ﮒﮒﺕﻟ۰۴ﮒﺟﮒ؟ﮔﻛﭦﻛﭨﭘ
 
-    
+
 
     Note over C: 7. ﮒ۳ﺎﻟﺑ۴ﻠﻝ۴
 
@@ -507,33 +507,33 @@ flowchart TD
 
     CreateTransaction --> Precheck{ﻠ۱ﮔ۲ﮔ۴}
 
-    
+
 
     Precheck -->|ﻠﻟﺟ| Execute[ﮔ۶ﻟ۰ﮔ؛ﮒﺍﻛﭦﮒ۰]
 
     Precheck -->|ﮒ۳ﺎﻟﺑ۴| Fail1[ﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴]
 
-    
+
 
     Execute --> CheckResult{ﮔ۲ﮔ۴ﮔ۶ﻟ۰ﻝﭨﮔ}
 
-    
+
 
     CheckResult -->|ﮔﮒ| MoreParticipants{ﮔﺑﮒ۳ﮒﻛﺕﮔ?}
 
     CheckResult -->|ﮒ۳ﺎﻟﺑ۴| TriggerCompensation[ﻟ۶۵ﮒﻟ۰۴ﮒﺟ]
 
-    
+
 
     MoreParticipants -->|ﮔﺁ| Execute
 
     MoreParticipants -->|ﮒ۵| Confirm[ﻝ۰؟ﻟ؟۳ﻛﭦﮒ۰ﮒ؟ﮔ]
 
-    
+
 
     Confirm --> Complete[ﻛﭦﮒ۰ﮒ؟ﮔ]
 
-    
+
 
     TriggerCompensation --> ReverseOrder[ﻠﮒﭦﻟ۰۴ﮒﺟ]
 
@@ -541,19 +541,19 @@ flowchart TD
 
     Compensate --> CheckCompensation{ﻟ۰۴ﮒﺟﮔﮒ?}
 
-    
+
 
     CheckCompensation -->|ﮔﺁ| MoreToCompensate{ﮔﺑﮒ۳ﻠﻟ۰۴ﮒﺟ?}
 
     CheckCompensation -->|ﮒ۵| ManualIntervention[ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱]
 
-    
+
 
     MoreToCompensate -->|ﮔﺁ| Compensate
 
     MoreToCompensate -->|ﮒ۵| Fail2[ﻟ۰۴ﮒﺟﮒ؟ﮔﺅﺙﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴]
 
-    
+
 
     Fail1 --> End([ﻝﭨﮔ])
 
@@ -633,7 +633,7 @@ graph TD
 
     end
 
-    
+
 
     subgraph "ﻠﻠﮒ۷ﮒﺎ"
 
@@ -649,7 +649,7 @@ graph TD
 
     end
 
-    
+
 
     subgraph "Sagaﮒﺎ?
 
@@ -667,7 +667,7 @@ graph TD
 
     end
 
-    
+
 
 subgraph "ﮒﮒ۷ﮒﺎ?
 
@@ -677,7 +677,7 @@ subgraph "ﮒﮒ۷ﮒﺎ?
 
     end
 
-    
+
 
     subgraph "ﻝﮔ۶ﮒﺎ?
 
@@ -687,7 +687,7 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     end
 
-    
+
 
     E1 --> A1
 
@@ -699,7 +699,7 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     E5 --> A5
 
-    
+
 
     A1 --> P1
 
@@ -711,7 +711,7 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     A5 --> P5
 
-    
+
 
     P1 --> C
 
@@ -723,13 +723,13 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     P5 --> C
 
-    
+
 
     C --> DB
 
     C --> Redis
 
-    
+
 
     Redis --> P1
 
@@ -741,7 +741,7 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     Redis --> P5
 
-    
+
 
     DB --> Monitor
 
@@ -749,7 +749,7 @@ Alert[ﮒﻟ۵ﻝﺏﭨﻝﭨ]
 
     Monitor --> Alert
 
-    
+
 
     style C fill:#e1f5e1
 
@@ -807,31 +807,31 @@ flowchart TD
 
     Start([ﻛﭦﮒ۰ﮒﺙﮒ۶]) --> D1{ﻠ۱ﮔ۲ﮔ۴ﻠﻟﺟ?}
 
-    
+
 
     D1 -->|ﮔﺁ| D2{ﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﮔﮒ?}
 
     D1 -->|ﮒ۵| Fail1[ﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴]
 
-    
+
 
     D2 -->|ﮔﺁ| D3{ﮒﻛﺕﮔ?ﮔ۶ﻟ۰ﮔﮒ?}
 
     D2 -->|ﮒ۵| Comp1[ﻟ۰۴ﮒﺟﮒﻛﺕﮔ?]
 
-    
+
 
     D3 -->|ﮔﺁ| D4{ﮒﻛﺕﮔﺗNﮔ۶ﻟ۰ﮔﮒ?}
 
     D3 -->|ﮒ۵| Comp2[ﻟ۰۴ﮒﺟﮒﻛﺕﮔ?<br>ﻟ۰۴ﮒﺟﮒﻛﺕﮔ?]
 
-    
+
 
     D4 -->|ﮔﺁ| Success[ﻛﭦﮒ۰ﮔﮒ]
 
     D4 -->|ﮒ۵| CompN[ﻟ۰۴ﮒﺟﮒﻛﺕﮔﺗN<br>...<br>ﻟ۰۴ﮒﺟﮒﻛﺕﮔ?]
 
-    
+
 
     Comp1 --> Fail2[ﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴]
 
@@ -839,7 +839,7 @@ flowchart TD
 
     CompN --> FailN[ﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴]
 
-    
+
 
     Success --> End1([ﻝﭨﮔﮔﮒ])
 
@@ -893,11 +893,11 @@ flowchart TD
 
     Start([ﻠﻟﺁﺁﮒﻝ]) --> Detect[ﻠﻟﺁﺁﮔ۲ﮔﭖ]
 
-    
+
 
     Detect --> Classify{ﻠﻟﺁﺁﮒﻝﺎﭨ}
 
-    
+
 
     Classify -->|ﻠ۱ﮔ۲ﮔ۴ﻠﻟﺁﺁ| PrecheckError[ﻠ۱ﮔ۲ﮔ۴ﻠﻟﺁﺁﮒ۳ﻝ]
 
@@ -907,7 +907,7 @@ flowchart TD
 
     Classify -->|ﻝﺏﭨﻝﭨﻠﻟﺁﺁ| SystemError[ﻝﺏﭨﻝﭨﻠﻟﺁﺁﮒ۳ﻝ]
 
-    
+
 
     PrecheckError --> Log1[ﻟ؟ﺍﮒﺛﻠﻟﺁﺁﮔ۴ﮒﺟ]
 
@@ -917,7 +917,7 @@ flowchart TD
 
     Clean1 --> End1([ﮒ۳ﻝﮒ؟ﮔ])
 
-    
+
 
     ExecutionError --> Trigger[ﻟ۶۵ﮒﻟ۰۴ﮒﺟ]
 
@@ -929,7 +929,7 @@ flowchart TD
 
     Notify2 --> End2([ﮒ۳ﻝﮒ؟ﮔ])
 
-    
+
 
     CompensationError --> Retry{ﻠﻟﺁﮔ؛۰ﮔﺍ<3?}
 
@@ -943,7 +943,7 @@ Retry -->|ﮔﺁ| Wait[ﻝﮒﺝﻠﻟﺁ]
 
     Manual --> End3([ﮒ۳ﻝﮒ؟ﮔ])
 
-    
+
 
     SystemError --> Recover{ﮒﺁﻟ۹ﮒ۷ﮔ۱ﮒ۳?}
 
@@ -999,47 +999,47 @@ flowchart TD
 
     Start([ﻛﭦﮒ۰ﻟﺁﺓﮔﺎ]) --> BatchCheck{ﮔﺗﻠﮒ۳ﻝ?}
 
-    
+
 
     BatchCheck -->|ﮔﺁ| BatchProcess[ﮔﺗﻠﻛﭦﮒ۰ﮒ۳ﻝ]
 
     BatchCheck -->|ﮒ۵| SingleProcess[ﮒﻛﭦﮒ۰ﮒ۳ﻝ]
 
-    
+
 
 BatchProcess --> Split[ﮔﮒﻛﺕﭦﮒﻛﭦﮒ۰]
 
     Split --> Parallel{ﮒﺁﮒﺗﭘﻟ۰?}
 
-    
+
 
 Parallel -->|ﮔﺁ| ParallelExecute[ﮒﺗﭘﻟ۰ﮔ۶ﻟ۰ﮒﻛﭦﮒ۰]
 
 Parallel -->|ﮒ۵| SequenceExecute[ﻠ۰ﭦﮒﭦﮔ۶ﻟ۰ﮒﻛﭦﮒ۰]
 
-    
+
 
     ParallelExecute --> Merge[ﮒﮒﺗﭘﻝﭨﮔ]
 
     SequenceExecute --> Merge
 
-    
+
 
     Merge --> BatchComplete[ﮔﺗﻠﮒ؟ﮔ]
 
-    
+
 
 SingleProcess --> NormalFlow[ﮔ۲ﮒﺕﺕﮔﭖﻝ۷]
 
     NormalFlow --> SingleComplete[ﮒﻛﭦﮒ۰ﮒ؟ﮔ]
 
-    
+
 
     BatchComplete --> End1([ﮒ؟ﮔ])
 
     SingleComplete --> End2([ﮒ؟ﮔ])
 
-    
+
 
 subgraph "ﻛﺙﮒﻝﻝ۴"
 
@@ -1055,7 +1055,7 @@ O4[ﮒﺙﮔ۴IO]
 
     end
 
-    
+
 
     BatchProcess --> O1
 
@@ -1170,4 +1170,3 @@ O4[ﮒﺙﮔ۴IO]
 - ﻝﺙﻟﺝﮒﺓ۴ﮒﺓ: Markdown + ﻛﺕﻛﺕﮒﺝﻟ۰۷ﮒﺓ۴ﮒﺓ
 
 - ﻝﮔ؛ﮔ۶ﮒﭘ: Git + ﮔﮔ۰۲ﻝ؟۰ﻝﻝﺏﭨﻝﭨ
-

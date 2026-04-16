@@ -32,7 +32,7 @@ compliance_level: 专业机构标准
 ```mermaid
 stateDiagram-v2
     [*] --> Pending : 创建事务
-    
+
     state Prechecking {
         [*] --> CheckingResources : 检查资源
         CheckingResources --> CheckingConstraints : 资源充足
@@ -40,11 +40,11 @@ stateDiagram-v2
         CheckingResources --> PrecheckFailed : 资源不足
         CheckingConstraints --> PrecheckFailed : 约束违反
     }
-    
+
     Pending --> Prechecking : 开始预检查
     Prechecking --> Executing : 预检查通过
     Prechecking --> Failed : 预检查失败
-    
+
     state Executing {
         [*] --> ExecutingParticipant1 : 执行参与方1
         ExecutingParticipant1 --> ExecutingParticipant2 : 参与方1成功
@@ -54,10 +54,10 @@ stateDiagram-v2
         ExecutingParticipant2 --> Compensating : 参与方2失败
         ExecutingParticipantN --> Compensating : 参与方N失败
     }
-    
+
     Executing --> Completing : 所有参与方执行成功
     Executing --> Compensating : 任何参与方失败
-    
+
     state Compensating {
         [*] --> CompensatingParticipantN : 补偿参与方N
         CompensatingParticipantN --> CompensatingParticipantN1 : 补偿成功
@@ -67,11 +67,11 @@ stateDiagram-v2
         CompensatingParticipantN1 --> CompensationFailed : 补偿失败
         CompensatingParticipant1 --> CompensationFailed : 补偿失败
     }
-    
+
     Completing --> Completed : 确认完成
     Compensating --> Failed : 补偿完成
     Compensating --> CompensationFailed : 补偿失败
-    
+
     Completed --> [*] : 事务结束
     Failed --> [*] : 事务结束
     CompensationFailed --> [*] : 事务结束（需人工干预）
@@ -108,7 +108,7 @@ sequenceDiagram
     Note over C: 1. 事务启动
     C->>DB: 创建事务记录 (tx_id=tx_001)
     DB-->>C: 返回事务ID
-    
+
     Note over C: 2. 预检查阶段
     C->>P1: 预检查请求 (资源、约束)
     P1-->>C: 预检查通过
@@ -116,32 +116,32 @@ sequenceDiagram
     P2-->>C: 预检查通过
     C->>P3: 预检查请求
     P3-->>C: 预检查通过
-    
+
     Note over C: 3. 执行阶段
     C->>Redis: 发布事务开始事件
     Redis-->>C: 确认
-    
+
     C->>P1: 执行本地事务 (命令1)
     P1->>DB: 记录本地事务开始
     P1-->>C: 执行成功
     C->>Redis: 发布参与方1执行事件
-    
+
     C->>P2: 执行本地事务 (命令2)
     P2->>DB: 记录本地事务开始
     P2-->>C: 执行成功
     C->>Redis: 发布参与方2执行事件
-    
+
     C->>P3: 执行本地事务 (命令3)
     P3->>DB: 记录本地事务开始
     P3-->>C: 执行成功
     C->>Redis: 发布参与方3执行事件
-    
+
     Note over C: 4. 完成阶段
     C->>DB: 更新事务状态为completing
     C->>Redis: 发布所有参与方成功事件
     C->>DB: 更新事务状态为completed
     C->>Redis: 发布事务完成事件
-    
+
     Note over C: 5. 完成通知
     Redis-->>P1: 事务完成通知
     Redis-->>P2: 事务完成通知
@@ -183,42 +183,42 @@ sequenceDiagram
     Note over C: 1. 正常执行开始
     C->>DB: 创建事务记录 (tx_id=tx_002)
     DB-->>C: 返回事务ID
-    
+
     C->>P1: 预检查请求
     P1-->>C: 预检查通过
     C->>P2: 预检查请求
     P2-->>C: 预检查通过
     C->>P3: 预检查请求
     P3-->>C: 预检查通过
-    
+
     C->>Redis: 发布事务开始事件
-    
+
     Note over C: 2. 执行阶段（参与方1成功）
     C->>P1: 执行本地事务 (命令1)
     P1->>DB: 记录本地事务开始
     P1-->>C: 执行成功
     C->>Redis: 发布参与方1执行事件
-    
+
     Note over C: 3. 执行阶段（参与方2失败）
     C->>P2: 执行本地事务 (命令2)
     P2->>DB: 记录本地事务开始
     P2-->>C: 执行失败 (错误: 持仓不足)
-    
+
     Note over C: 4. 失败检测与补偿触发
     C->>DB: 更新事务状态为compensating
     C->>Redis: 发布事务失败事件
-    
+
     Note over C: 5. 补偿阶段（逆序补偿）
     C->>P1: 补偿事务请求 (tx_id=tx_002)
     P1->>DB: 读取本地事务记录
     P1->>DB: 执行补偿操作
     P1-->>C: 补偿成功
     C->>Redis: 发布参与方1补偿事件
-    
+
     Note over C: 6. 补偿完成
     C->>DB: 更新事务状态为failed
     C->>Redis: 发布补偿完成事件
-    
+
     Note over C: 7. 失败通知
     Redis-->>P2: 事务失败通知 (需人工检查)
     Redis-->>P3: 事务失败通知 (未执行)
@@ -252,30 +252,30 @@ sequenceDiagram
 flowchart TD
     Start([开始]) --> CreateTransaction[创建Saga事务]
     CreateTransaction --> Precheck{预检查}
-    
+
     Precheck -->|通过| Execute[执行本地事务]
     Precheck -->|失败| Fail1[事务失败]
-    
+
     Execute --> CheckResult{检查执行结果}
-    
+
     CheckResult -->|成功| MoreParticipants{更多参与方?}
     CheckResult -->|失败| TriggerCompensation[触发补偿]
-    
+
     MoreParticipants -->|是| Execute
     MoreParticipants -->|否| Confirm[确认事务完成]
-    
+
     Confirm --> Complete[事务完成]
-    
+
     TriggerCompensation --> ReverseOrder[逆序补偿]
     ReverseOrder --> Compensate[执行补偿]
     Compensate --> CheckCompensation{补偿成功?}
-    
+
     CheckCompensation -->|是| MoreToCompensate{更多需补偿?}
     CheckCompensation -->|否| ManualIntervention[人工干预]
-    
+
     MoreToCompensate -->|是| Compensate
     MoreToCompensate -->|否| Fail2[补偿完成，事务失败]
-    
+
     Fail1 --> End([结束])
     Complete --> End
     Fail2 --> End
@@ -314,7 +314,7 @@ graph TD
         E4[QMT引擎]
         E5[backtesting.py引擎]
     end
-    
+
     subgraph "适配器层"
         A1[vn.py适配器]
         A2[RQAlpha适配器]
@@ -322,7 +322,7 @@ graph TD
         A4[QMT适配器]
         A5[backtesting.py适配器]
     end
-    
+
     subgraph "Saga层"
         P1[Saga参与方1]
         P2[Saga参与方2]
@@ -331,48 +331,48 @@ graph TD
         P5[Saga参与方5]
         C[Saga协调器]
     end
-    
+
     subgraph "存储层"
         DB[PostgreSQL]
         Redis[Redis Streams]
     end
-    
+
     subgraph "监控层"
         Monitor[监控系统]
         Alert[告警系统]
     end
-    
+
     E1 --> A1
     E2 --> A2
     E3 --> A3
     E4 --> A4
     E5 --> A5
-    
+
     A1 --> P1
     A2 --> P2
     A3 --> P3
     A4 --> P4
     A5 --> P5
-    
+
     P1 --> C
     P2 --> C
     P3 --> C
     P4 --> C
     P5 --> C
-    
+
     C --> DB
     C --> Redis
-    
+
     Redis --> P1
     Redis --> P2
     Redis --> P3
     Redis --> P4
     Redis --> P5
-    
+
     DB --> Monitor
     Redis --> Monitor
     Monitor --> Alert
-    
+
     style C fill:#e1f5e1
     style DB fill:#f0f8ff
     style Redis fill:#fff0f5
@@ -400,23 +400,23 @@ graph TD
 ```mermaid
 flowchart TD
     Start([事务开始]) --> D1{预检查通过?}
-    
+
     D1 -->|是| D2{参与方1执行成功?}
     D1 -->|否| Fail1[事务失败]
-    
+
     D2 -->|是| D3{参与方2执行成功?}
     D2 -->|否| Comp1[补偿参与方1]
-    
+
     D3 -->|是| D4{参与方N执行成功?}
     D3 -->|否| Comp2[补偿参与方2<br>补偿参与方1]
-    
+
     D4 -->|是| Success[事务成功]
     D4 -->|否| CompN[补偿参与方N<br>...<br>补偿参与方1]
-    
+
     Comp1 --> Fail2[事务失败]
     Comp2 --> Fail3[事务失败]
     CompN --> FailN[事务失败]
-    
+
     Success --> End1([结束成功])
     Fail1 --> End2([结束失败])
     Fail2 --> End2
@@ -442,32 +442,32 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start([错误发生]) --> Detect[错误检测]
-    
+
     Detect --> Classify{错误分类}
-    
+
     Classify -->|预检查错误| PrecheckError[预检查错误处理]
     Classify -->|执行错误| ExecutionError[执行错误处理]
     Classify -->|补偿错误| CompensationError[补偿错误处理]
     Classify -->|系统错误| SystemError[系统错误处理]
-    
+
     PrecheckError --> Log1[记录错误日志]
     Log1 --> Notify1[通知调用方]
     Notify1 --> Clean1[清理临时资源]
     Clean1 --> End1([处理完成])
-    
+
     ExecutionError --> Trigger[触发补偿]
     Trigger --> ExecuteComp[执行补偿]
     ExecuteComp --> Log2[记录补偿日志]
     Log2 --> Notify2[通知相关方]
     Notify2 --> End2([处理完成])
-    
+
     CompensationError --> Retry{重试次数<3?}
     Retry -->|是| Wait[等待重试]
     Wait --> ExecuteComp
     Retry -->|否| Escalate[升级处理]
     Escalate --> Manual[人工干预]
     Manual --> End3([处理完成])
-    
+
     SystemError --> Recover{可自动恢复?}
     Recover -->|是| AutoRecover[自动恢复]
     AutoRecover --> End4([处理完成])
@@ -494,27 +494,27 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start([事务请求]) --> BatchCheck{批量处理?}
-    
+
     BatchCheck -->|是| BatchProcess[批量事务处理]
     BatchCheck -->|否| SingleProcess[单事务处理]
-    
+
     BatchProcess --> Split[拆分为子事务]
     Split --> Parallel{可并行?}
-    
+
     Parallel -->|是| ParallelExecute[并行执行子事务]
     Parallel -->|否| SequenceExecute[顺序执行子事务]
-    
+
     ParallelExecute --> Merge[合并结果]
     SequenceExecute --> Merge
-    
+
     Merge --> BatchComplete[批量完成]
-    
+
     SingleProcess --> NormalFlow[正常流程]
     NormalFlow --> SingleComplete[单事务完成]
-    
+
     BatchComplete --> End1([完成])
     SingleComplete --> End2([完成])
-    
+
     subgraph "优化策略"
         direction LR
         O1[批量处理]
@@ -522,7 +522,7 @@ flowchart TD
         O3[缓存优化]
         O4[异步IO]
     end
-    
+
     BatchProcess --> O1
     ParallelExecute --> O2
     Merge --> O3

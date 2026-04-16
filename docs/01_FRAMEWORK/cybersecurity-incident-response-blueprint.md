@@ -147,7 +147,7 @@ class IncidentResponseInterface:
 
         pass
 
-    
+
 
     def classify_incident(self, incident: SecurityIncident) -> IncidentClassification:
 
@@ -155,7 +155,7 @@ class IncidentResponseInterface:
 
         pass
 
-    
+
 
     def respond_incident(self, incident: SecurityIncident) -> ResponseAction:
 
@@ -163,7 +163,7 @@ class IncidentResponseInterface:
 
         pass
 
-    
+
 
     def get_threat_intelligence(self, indicator: str) -> ThreatIntelligence:
 
@@ -171,7 +171,7 @@ class IncidentResponseInterface:
 
         pass
 
-    
+
 
     def generate_incident_report(self, incident: SecurityIncident) -> IncidentReport:
 
@@ -337,7 +337,7 @@ class IncidentClassification:
 
         urgency_score = self.calculate_urgency_score(incident)
 
-        
+
 
         priority = self.calculate_priority(
 
@@ -349,7 +349,7 @@ class IncidentClassification:
 
         )
 
-        
+
 
         return IncidentClassification(
 
@@ -485,7 +485,7 @@ class SecurityIncident:
 
     timeline: List[IncidentEvent]
 
-    
+
 
 @dataclass
 
@@ -499,7 +499,7 @@ class IncidentClassification:
 
     priority: int
 
-    
+
 
 @dataclass
 
@@ -519,7 +519,7 @@ class ResponseAction:
 
     timestamp: datetime
 
-    
+
 
 @dataclass
 
@@ -1031,11 +1031,10 @@ analysis = api.analyze(
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

@@ -45,7 +45,7 @@ layer: layer_00
 
 > **核心职责**: 定义CI/CD集成方案，实现自动化审计集成到开发流程
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：CI/CD流程设计、集成点定义、配置示例
 
@@ -63,11 +63,11 @@ layer: layer_00
 
 
 
-**集成目标**: 将文档治理审计集成到CI/CD流程，确保文档质量持续提升  
+**集成目标**: 将文档治理审计集成到CI/CD流程，确保文档质量持续提升
 
-**集成范围**: 全系统文档治理  
+**集成范围**: 全系统文档治理
 
-**集成方式**: 多阶段检查，渐进式质量保障  
+**集成方式**: 多阶段检查，渐进式质量保障
 
 **集成效果**: 问题拦截率95%+，开发流程影响最小化
 
@@ -137,11 +137,11 @@ layer: layer_00
 
 
 
-**触发时机**: Git commit之前  
+**触发时机**: Git commit之前
 
-**检查内容**: 基本格式和规范  
+**检查内容**: 基本格式和规范
 
-**处理方式**: 自动修复或警告  
+**处理方式**: 自动修复或警告
 
 **执行时间**: <5秒
 
@@ -191,7 +191,7 @@ repos:
 
         stages: [commit]
 
-        
+
 
       - id: yaml-format-check
 
@@ -241,7 +241,7 @@ def check_yaml_format(file_path):
 
         content = f.read()
 
-    
+
 
     if not content.startswith('---'):
 
@@ -249,7 +249,7 @@ def check_yaml_format(file_path):
 
         return False
 
-    
+
 
     return True
 
@@ -261,7 +261,7 @@ def check_file_naming(file_path):
 
     file_name = os.path.basename(file_path)
 
-    
+
 
     # 检查中文
 
@@ -271,7 +271,7 @@ def check_file_naming(file_path):
 
         return False
 
-    
+
 
     # 检查空格
 
@@ -281,7 +281,7 @@ def check_file_naming(file_path):
 
         return False
 
-    
+
 
     return True
 
@@ -293,7 +293,7 @@ def main():
 
     files = sys.argv[1:]
 
-    
+
 
     all_passed = True
 
@@ -303,19 +303,19 @@ def main():
 
             continue
 
-        
+
 
         if not check_yaml_format(file_path):
 
             all_passed = False
 
-        
+
 
         if not check_file_naming(file_path):
 
             all_passed = False
 
-    
+
 
     if all_passed:
 
@@ -349,11 +349,11 @@ if __name__ == '__main__':
 
 
 
-**触发时机**: Git push之前  
+**触发时机**: Git push之前
 
-**检查内容**: 完整性和一致性  
+**检查内容**: 完整性和一致性
 
-**处理方式**: 阻断推送或警告  
+**处理方式**: 阻断推送或警告
 
 **执行时间**: <30秒
 
@@ -411,7 +411,7 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      
+
 
       - name: Set up Python
 
@@ -421,7 +421,7 @@ jobs:
 
           python-version: '3.9'
 
-      
+
 
       - name: Install dependencies
 
@@ -429,7 +429,7 @@ jobs:
 
           pip install -r requirements.txt
 
-      
+
 
       - name: Run document governance check
 
@@ -437,7 +437,7 @@ jobs:
 
           python scripts/pre_push_check.py
 
-      
+
 
       - name: Upload check results
 
@@ -487,13 +487,13 @@ def check_responsibility_description():
 
     missing_files = []
 
-    
+
 
     for root, dirs, files in os.walk(DOCS_DIR):
 
         dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'node_modules']]
 
-        
+
 
         for file in files:
 
@@ -501,23 +501,23 @@ def check_responsibility_description():
 
                 continue
 
-            
+
 
             file_path = os.path.join(root, file)
 
-            
+
 
             with open(file_path, 'r', encoding='utf-8-sig') as f:
 
                 content = f.read()
 
-            
+
 
             if '**核心职责**' not in content:
 
                 missing_files.append(file_path)
 
-    
+
 
     return missing_files
 
@@ -531,13 +531,13 @@ def check_module_id_uniqueness():
 
     duplicates = []
 
-    
+
 
     for root, dirs, files in os.walk(DOCS_DIR):
 
         dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'node_modules']]
 
-        
+
 
         for file in files:
 
@@ -545,17 +545,17 @@ def check_module_id_uniqueness():
 
                 continue
 
-            
+
 
             file_path = os.path.join(root, file)
 
-            
+
 
             with open(file_path, 'r', encoding='utf-8-sig') as f:
 
                 content = f.read()
 
-            
+
 
             match = re.search(r'module_id:\s*(.+)', content)
 
@@ -577,7 +577,7 @@ def check_module_id_uniqueness():
 
                     module_ids[module_id] = file_path
 
-    
+
 
     return duplicates
 
@@ -593,7 +593,7 @@ def main():
 
     print("=" * 80)
 
-    
+
 
     # 检查职责描述
 
@@ -615,7 +615,7 @@ def main():
 
         print("✅ 职责描述检查通过")
 
-    
+
 
     # 检查Module ID唯一性
 
@@ -637,7 +637,7 @@ def main():
 
         print("✅ Module ID唯一性检查通过")
 
-    
+
 
     print("\n" + "=" * 80)
 
@@ -669,11 +669,11 @@ if __name__ == '__main__':
 
 
 
-**触发时机**: 代码合并到主分支后  
+**触发时机**: 代码合并到主分支后
 
-**检查内容**: 全面深度审计  
+**检查内容**: 全面深度审计
 
-**处理方式**: 生成报告并通知  
+**处理方式**: 生成报告并通知
 
 **执行时间**: <5分钟
 
@@ -731,7 +731,7 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      
+
 
       - name: Set up Python
 
@@ -741,7 +741,7 @@ jobs:
 
           python-version: '3.9'
 
-      
+
 
       - name: Install dependencies
 
@@ -749,7 +749,7 @@ jobs:
 
           pip install -r requirements.txt
 
-      
+
 
       - name: Run comprehensive audit
 
@@ -757,7 +757,7 @@ jobs:
 
           python scripts/intelligent_audit_workflow.py
 
-      
+
 
       - name: Run early warning system
 
@@ -765,7 +765,7 @@ jobs:
 
           python scripts/early_warning_system.py
 
-      
+
 
       - name: Upload audit reports
 
@@ -777,7 +777,7 @@ jobs:
 
           path: docs/09_AUDIT/STATE/
 
-      
+
 
       - name: Notify team
 
@@ -910,4 +910,3 @@ jobs:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本，CI/CD集成指南 | DevOps团队 |
-

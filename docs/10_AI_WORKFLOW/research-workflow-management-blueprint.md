@@ -188,13 +188,13 @@ class ResearchWorkflowManager:
     def __init__(self, project_name):
         self.project_name = project_name
         self.mlflow_client = mlflow.tracking.MlflowClient()
-        
+
     def create_experiment(self, params):
         """创建研究实验"""
         with mlflow.start_run(run_name=self.project_name):
             mlflow.log_params(params)
             mlflow.log_artifact("README.md")
-            
+
     def run_experiment(self, entry_point="main"):
         """运行实验"""
         result = run(
@@ -203,7 +203,7 @@ class ResearchWorkflowManager:
             experiment_name=self.project_name
         )
         return result
-        
+
     def log_results(self, metrics, artifacts):
         """记录研究结果"""
         for key, value in metrics.items():
@@ -224,7 +224,7 @@ stages:
       - prepare.split_ratio
     outs:
       - data/processed/
-      
+
   train_model:
     cmd: python src/train_model.py
     deps:
@@ -234,7 +234,7 @@ stages:
       - train.learning_rate
     outs:
       - models/model.pkl
-      
+
   evaluate:
     cmd: python src/evaluate.py
     deps:
@@ -277,7 +277,7 @@ class ResearchProject:
     tags: list[str]
     mlflow_experiment_id: str
     dvc_commit_hash: str
-    
+
 @dataclass
 class ResearchResult:
     result_id: str
@@ -389,22 +389,22 @@ class IResearchProjectManager(ABC):
     def create_project(self, name: str, description: str) -> str:
         """创建研究项目"""
         pass
-        
+
     @abstractmethod
     def update_project(self, project_id: str, **kwargs) -> bool:
         """更新研究项目"""
         pass
-        
+
     @abstractmethod
     def get_project(self, project_id: str) -> ResearchProject:
         """获取研究项目"""
         pass
-        
+
     @abstractmethod
     def list_projects(self, status: ResearchStatus = None) -> list[ResearchProject]:
         """列出研究项目"""
         pass
-        
+
     @abstractmethod
     def archive_project(self, project_id: str) -> bool:
         """归档研究项目"""
@@ -419,17 +419,17 @@ class IExperimentManager(ABC):
     def create_experiment(self, project_id: str, params: dict) -> str:
         """创建实验"""
         pass
-        
+
     @abstractmethod
     def run_experiment(self, experiment_id: str) -> bool:
         """运行实验"""
         pass
-        
+
     @abstractmethod
     def log_metrics(self, experiment_id: str, metrics: dict) -> bool:
         """记录指标"""
         pass
-        
+
     @abstractmethod
     def log_artifacts(self, experiment_id: str, artifacts: list) -> bool:
         """记录产物"""

@@ -38,7 +38,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -238,7 +238,7 @@ class GradientAccumulator:
 
 
 
-    
+
 
 
 
@@ -286,7 +286,7 @@ class GradientAccumulator:
 
 
 
-        
+
 
 
 
@@ -326,7 +326,7 @@ class GradientAccumulator:
 
 
 
-    
+
 
 
 
@@ -374,7 +374,7 @@ class GradientAccumulator:
 
 
 
-        
+
 
 
 
@@ -398,7 +398,7 @@ class GradientAccumulator:
 
 
 
-            
+
 
 
 
@@ -640,7 +640,7 @@ for i, (inputs, labels) in enumerate(dataloader):
 
 
 
-    
+
 
 
 
@@ -672,7 +672,7 @@ for i, (inputs, labels) in enumerate(dataloader):
 
 
 
-    
+
 
 
 
@@ -1183,10 +1183,3 @@ training_args = TrainingArguments(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

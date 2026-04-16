@@ -19,7 +19,7 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
-## 1. 
+## 1.
 
 
 
@@ -55,7 +55,7 @@ class TimeframeCoordinator:
 
 
 
-    
+
 
 
 
@@ -83,7 +83,7 @@ class TimeframeCoordinator:
 
 
 
-    
+
 
 
 
@@ -122,6 +122,3 @@ class TimeframeCoordinator:
 
 
 **汾**: v1.0 | ****: 2026-04-03 | **״̬**: Final
-
-
-

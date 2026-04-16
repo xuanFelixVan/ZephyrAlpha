@@ -295,7 +295,7 @@ class IReportModule(ABC):
 
     """报告模块标准接口"""
 
-    
+
 
     @abstractmethod
 
@@ -305,7 +305,7 @@ class IReportModule(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -520,10 +520,3 @@ report = reporter.get_report_result(task_id)
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

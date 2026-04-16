@@ -100,12 +100,50 @@ customModes:
       docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md
       ```
 
-      ## 5. 文件操作安全门禁（删除前三问）
+      ## 5. 文件操作安全门禁
+
+      ### 5a. 删除前三问
 
       删除任何文件前必须回答：
       1. 是否在锚点列表中？→ 是则停止
       2. 是否已提取知识/价值？→ 否且含设计决策 → 先提取到 `docs/08_KNOWLEDGE/`
       3. 是否有其他文件引用？→ 是 → 先更新所有引用
+
+      ### 5b. 链接维护契约（删除/移动文件的强制步骤）
+
+      **删除文件时**，必须在同一 commit 内完成：
+      ```
+      rg "目标文件名" docs/ --include="*.md" -l  ← 找所有引用此文件的文档
+      # 逐一更新或移除这些引用
+      # 然后才删除文件
+      python scripts/audit/sentinel_l1_governance_scan.py  ← 确认断链增量合理
+      ```
+
+      **移动/归档文件时**，必须在同一 commit 内完成：
+      ```
+      git mv 旧路径 新路径
+      rg "旧文件名" docs/ --include="*.md" -l  ← 找所有引用旧路径的文档
+      # 批量替换旧路径为新路径
+      ```
+
+      **规划链接写法**：尚未创建的文件不得用普通 Markdown 链接引用，必须用注释：
+      ```markdown
+      <!-- PLANNED: ../04_CONSTRUCTION/PLANS/CONSTRUCTION_PLAN_L01.md -->
+      ```
+
+      ### 5c. 标准文档损坏时的修复规则
+
+      > 适用于 `docs/09_AUDIT/STANDARDS/` 等核心标准文档
+
+      **发现乱码时的唯一合法修复路径**：
+      1. `git checkout HEAD -- <file>` → 从 HEAD 恢复（首选）
+      2. 若 HEAD 也已损坏 → `git log --oneline -- <file>` 找干净版本 → `git show <commit>:<file> > temp.md` → 确认后替换
+      3. 若所有历史版本均已损坏 → 用健康同类文件为模板，按文件名/用途**人工重写全文**
+
+      **绝对禁止**：
+      - 在损坏文件上追加"修复块"或混合段落
+      - 手动逐字替换乱码字符
+      - 将损坏标准文档作为参考资料使用（内容不可信）
 
       ## 6. Git 操作规范
 
@@ -115,7 +153,83 @@ customModes:
       - **禁止** `git commit --no-verify`（绕过 pre-commit 钩子）
       - **禁止** `--force` 推送
 
-      ## 7. 会话结束强制协议
+      ## 7. 编码安全协议（⚠️ 关键：双编辑器乱码防护）
+
+      > **背景**：本项目曾多次出现 Trae ↔ Cursor 切换后文件末尾出现阿拉伯文/西里尔文/
+      > 希腊字母乱码。根因是：Trae 的 `files.autoGuessEncoding` 选项将 UTF-8 文件误判
+      > 为其他编码（GBK/Latin-1），保存时以错误编码写回，产生双重编码乱码。
+
+      ### 根因机制（必须理解）
+
+      ```
+      正常文件 (UTF-8)
+           ↓  Trae 以 GBK/Latin-1 错误解读
+      字节序列被重新解释 → 显示正常但字节已错误
+           ↓  Trae 保存
+      文件用 GBK 编码写入磁盘（或 UTF-8 写入但以 mojibake 形式）
+           ↓  Cursor 以 UTF-8 读取
+      出现乱码（末尾或中段出现阿拉伯/西里尔/波斯文字符）
+      ```
+
+      ### Trae 必须执行的三项设置检查
+
+      **每次打开项目时，Trae 必须确认以下设置**：
+
+      1. `files.autoGuessEncoding` = **false**（禁止自动猜测编码）
+      2. `files.encoding` = **utf8**（强制 UTF-8）
+      3. `files.defaultLanguage` = 不改变（保持原值）
+
+      验证命令（在 Trae 终端执行）：
+      ```
+      python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+      ```
+      若报告 0 个问题，继续工作；若有报告，先修复再开始编辑。
+
+      ### 切换编辑器的强制检查点
+
+      **从 Cursor 切换到 Trae 之前**：
+      1. 在 Cursor 中关闭所有已打开的文件
+      2. 执行 `git status` 确认没有未保存的暂存区变更
+      3. 完成上述后再打开 Trae
+
+      **在 Trae 中开始工作之前**：
+      1. 运行编码扫描：`python scripts/hooks/doc_guard_pre_commit.py --scan-encoding`
+      2. 若发现损坏文件，使用 `git checkout -- <file>` 从 git 历史恢复（**不要尝试手动修复乱码**）
+
+      **从 Trae 切换回 Cursor 之前**：
+      1. 在 Trae 中完成当前任务并关闭所有文件
+      2. 再次运行：`python scripts/hooks/doc_guard_pre_commit.py --scan-encoding`
+      3. 确认 0 个问题后再切换
+
+      ### 绝对禁止的操作
+
+      | 禁止操作 | 原因 | 替代方案 |
+      |---------|------|---------|
+      | Cursor 和 Trae 同时打开同一 `.md` 文件并编辑 | 两端写入冲突导致编码损坏 | 同一时刻只用一个编辑器打开文件 |
+      | 使用 PowerShell `echo` 或 `Out-File` 默认参数创建 `.md` | Windows 默认输出 UTF-16 LE 或 GBK | 用 Python 脚本创建：`Path(f).write_text(content, encoding='utf-8')` |
+      | 使用 `Set-Content` 不加 `-Encoding utf8` 写 `.md` | 默认 UTF-16 | 加 `-Encoding utf8` 参数 |
+      | 在 Python 脚本中 `open(f, 'w')` 不指定编码 | Windows 默认系统编码（GBK） | 必须写：`open(f, 'w', encoding='utf-8')` |
+      | 发现乱码后用文本编辑器逐字修改 | 会产生更多混合编码块 | `git checkout -- <file>` 还原整个文件 |
+
+      ### 发现编码损坏后的修复流程
+
+      ```
+      # Step 1：确认损坏范围
+      python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+
+      # Step 2：从 git 历史恢复干净版本（推荐）
+      git checkout HEAD -- <损坏文件路径>
+
+      # Step 3：若 HEAD 也已损坏，往前找干净版本
+      git log --oneline -- <损坏文件路径>
+      git show <干净commit>:<损坏文件路径> > 临时文件.md
+      # 人工对比确认内容后替换
+
+      # Step 4：确认修复
+      python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+      ```
+
+      ## 8. 会话结束强制协议
 
       每次会话结束前必须：
       1. 按 `docs/09_AUDIT/FORM_STANDARDS/session-log-template.md` 创建 Session Log

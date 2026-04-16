@@ -57,7 +57,7 @@ implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -651,7 +651,7 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -667,7 +667,7 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -675,7 +675,7 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 
 
 
-        ﻟﺟﮒﮒﺙﻟﺁﺑﮔ?    
+        ﻟﺟﮒﮒﺙﻟﺁﺑﮔ?
 
 
 
@@ -687,7 +687,7 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -927,11 +927,8 @@ src/strategy/factory.py
 
 
 
-**ﻝﮔ؛**: v1.0  
+**ﻝﮔ؛**: v1.0
 
 
 
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02
-
-
-

@@ -20,7 +20,7 @@ responsibility:
 
 
 
-> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「基准管理」能力；与 STRATEGIC_DECISION_LAYER_BLUEPRINT.md 战略卷对齐。  
+> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「基准管理」能力；与 STRATEGIC_DECISION_LAYER_BLUEPRINT.md 战略卷对齐。
 
 > **对照表**：LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
 
@@ -30,7 +30,7 @@ responsibility:
 
 
 
-- **负责**：基准指数/组合定义、成分与再平衡规则同步、TE 与信息比率监控、基准变更审批留痕。  
+- **负责**：基准指数/组合定义、成分与再平衡规则同步、TE 与信息比率监控、基准变更审批留痕。
 
 - **不负责**：单券择时信号（Layer 5）、组合优化求解细节（Layer 6，可与优化蓝图协作）。
 
@@ -88,9 +88,6 @@ responsibility:
 
 
 
-- PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md — 绩效评估口径  
+- PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md — 绩效评估口径
 
-- PORTFOLIO_ATTRIBUTION_BLUEPRINT.md — 归因与基准暴露  
-
-
-
+- PORTFOLIO_ATTRIBUTION_BLUEPRINT.md — 归因与基准暴露

@@ -99,9 +99,9 @@ status: "completed"
 
 **选项 A：继续 GH Wave 1（再试一次）**
 ```powershell
-git log --all --diff-filter=D --name-only --pretty=format:"" | 
-  ForEach-Object { if ($_.Trim() -match "audit_fix_backup" -and $_.Trim() -match "\.md$") { $_.Trim() } } | 
-  Sort-Object -Unique | 
+git log --all --diff-filter=D --name-only --pretty=format:"" |
+  ForEach-Object { if ($_.Trim() -match "audit_fix_backup" -and $_.Trim() -match "\.md$") { $_.Trim() } } |
+  Sort-Object -Unique |
   Select-Object -Skip 40 -First 20
 ```
 

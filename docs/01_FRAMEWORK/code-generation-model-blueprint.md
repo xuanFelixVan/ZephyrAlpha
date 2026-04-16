@@ -47,7 +47,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -621,7 +621,7 @@ class CodeGenerationModel:
 
 
 
-    
+
 
 
 
@@ -693,7 +693,7 @@ class CodeGenerationModel:
 
 
 
-        """初始化代码生成模块        
+        """初始化代码生成模块
 
 
 
@@ -753,7 +753,7 @@ class CodeGenerationModel:
 
 
 
-    
+
 
 
 
@@ -837,7 +837,7 @@ class CodeGenerationModel:
 
 
 
-        
+
 
 
 
@@ -873,7 +873,7 @@ class CodeGenerationModel:
 
 
 
-            context: 上下文代?            
+            context: 上下文代?
 
 
 
@@ -921,7 +921,7 @@ class CodeGenerationModel:
 
 
 
-    
+
 
 
 
@@ -1005,7 +1005,7 @@ class CodeGenerationModel:
 
 
 
-        
+
 
 
 
@@ -1053,7 +1053,7 @@ class CodeGenerationModel:
 
 
 
-            
+
 
 
 
@@ -1101,7 +1101,7 @@ class CodeGenerationModel:
 
 
 
-    
+
 
 
 
@@ -1173,7 +1173,7 @@ class CodeGenerationModel:
 
 
 
-        
+
 
 
 
@@ -1197,7 +1197,7 @@ class CodeGenerationModel:
 
 
 
-            code: 待测试代?            
+            code: 待测试代?
 
 
 
@@ -1257,7 +1257,7 @@ class CodeGenerationModel:
 
 
 
-    
+
 
 
 
@@ -1329,7 +1329,7 @@ class CodeGenerationModel:
 
 
 
-        
+
 
 
 
@@ -1353,7 +1353,7 @@ class CodeGenerationModel:
 
 
 
-            code: 待审查代?            
+            code: 待审查代?
 
 
 
@@ -1978,14 +1978,3 @@ class CodeGenerationModel:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

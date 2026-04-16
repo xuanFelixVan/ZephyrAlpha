@@ -21,11 +21,11 @@ responsibility: STATE
 
 ## 方法
 
-1. 对象：`git ls-files` 已跟踪、后缀属于 `{.md,.py,.yaml,.yml,.toml,.json,.env,.example,.txt,.ps1,.bat}` 的文件（各文件最多读取前 **128KiB** UTF-8，忽略解码错误）。  
-2. 正则（命中任一即计 1 次，按文件去重）：  
-   - `AKIA[0-9A-Z]{16}`（类 AWS Access Key ID）  
-   - `-----BEGIN … PRIVATE KEY-----`（类 PEM 私钥块）  
-   - `sk-[a-zA-Z0-9]{32,}`（类长 live secret 前缀）  
+1. 对象：`git ls-files` 已跟踪、后缀属于 `{.md,.py,.yaml,.yml,.toml,.json,.env,.example,.txt,.ps1,.bat}` 的文件（各文件最多读取前 **128KiB** UTF-8，忽略解码错误）。
+2. 正则（命中任一即计 1 次，按文件去重）：
+   - `AKIA[0-9A-Z]{16}`（类 AWS Access Key ID）
+   - `-----BEGIN … PRIVATE KEY-----`（类 PEM 私钥块）
+   - `sk-[a-zA-Z0-9]{32,}`（类长 live secret 前缀）
 
 ## 结果
 
@@ -37,7 +37,7 @@ responsibility: STATE
 ## 复跑（仓库根）
 
 ```powershell
-python -c "import re,subprocess; from pathlib import Path; root=Path('.'); files=subprocess.check_output(['git','ls-files'],text=True).splitlines(); pats=[(re.compile(r'AKIA[0-9A-Z]{16}'),'aws'),(re.compile(r'-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----'),'pem'),(re.compile(r'sk-[a-zA-Z0-9]{32,}'),'sk')]; suf=('.md','.py','.yaml','.yml','.toml','.json','.env','.example','.txt','.ps1','.bat'); hits=[]; 
+python -c "import re,subprocess; from pathlib import Path; root=Path('.'); files=subprocess.check_output(['git','ls-files'],text=True).splitlines(); pats=[(re.compile(r'AKIA[0-9A-Z]{16}'),'aws'),(re.compile(r'-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----'),'pem'),(re.compile(r'sk-[a-zA-Z0-9]{32,}'),'sk')]; suf=('.md','.py','.yaml','.yml','.toml','.json','.env','.example','.txt','.ps1','.bat'); hits=[];
 for f in files:
     if not f.endswith(suf): continue
     p=root/f

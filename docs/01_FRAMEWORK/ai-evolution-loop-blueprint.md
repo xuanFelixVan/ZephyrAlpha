@@ -30,7 +30,7 @@ responsibility_boundary: ''
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -764,7 +764,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -776,13 +776,13 @@ class ErrorIdentifier:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        prediction: Dict[str, Any], 
+        prediction: Dict[str, Any],
 
 
 
@@ -806,7 +806,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -896,7 +896,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -998,7 +998,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1010,7 +1010,7 @@ class ErrorIdentifier:
 
 
 
-    
+
 
 
 
@@ -1022,13 +1022,13 @@ class ErrorIdentifier:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        decision: Dict[str, Any], 
+        decision: Dict[str, Any],
 
 
 
@@ -1052,7 +1052,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1142,7 +1142,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1244,7 +1244,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1256,7 +1256,7 @@ class ErrorIdentifier:
 
 
 
-    
+
 
 
 
@@ -1268,7 +1268,7 @@ class ErrorIdentifier:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1292,7 +1292,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1364,7 +1364,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1436,7 +1436,7 @@ class ErrorIdentifier:
 
 
 
-        
+
 
 
 
@@ -1610,7 +1610,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1622,13 +1622,13 @@ class BiasAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        predictions: List[float], 
+        predictions: List[float],
 
 
 
@@ -1658,7 +1658,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1688,7 +1688,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1700,7 +1700,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1712,7 +1712,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1724,7 +1724,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1784,7 +1784,7 @@ class BiasAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1796,7 +1796,7 @@ class BiasAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1826,7 +1826,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1844,7 +1844,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1856,7 +1856,7 @@ class BiasAnalyzer:
 
 
 
-            recent_predictions, 
+            recent_predictions,
 
 
 
@@ -1874,7 +1874,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1886,7 +1886,7 @@ class BiasAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2222,7 +2222,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2234,7 +2234,7 @@ class RootCauseAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2300,7 +2300,7 @@ class RootCauseAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2312,7 +2312,7 @@ class RootCauseAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2348,7 +2348,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2360,7 +2360,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2402,7 +2402,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2444,7 +2444,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2486,7 +2486,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2552,7 +2552,7 @@ class RootCauseAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2606,7 +2606,7 @@ class RootCauseAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2618,7 +2618,7 @@ class RootCauseAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2684,7 +2684,7 @@ class RootCauseAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2696,7 +2696,7 @@ class RootCauseAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2762,7 +2762,7 @@ class RootCauseAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2774,7 +2774,7 @@ class RootCauseAnalyzer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -3158,7 +3158,7 @@ class RuleGenerator:
 
 
 
-        
+
 
 
 
@@ -3170,13 +3170,13 @@ class RuleGenerator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
@@ -3242,7 +3242,7 @@ class RuleGenerator:
 
 
 
-    
+
 
 
 
@@ -3254,13 +3254,13 @@ class RuleGenerator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
@@ -3284,7 +3284,7 @@ class RuleGenerator:
 
 
 
-        
+
 
 
 
@@ -3356,7 +3356,7 @@ class RuleGenerator:
 
 
 
-    
+
 
 
 
@@ -3368,13 +3368,13 @@ class RuleGenerator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
@@ -3404,7 +3404,7 @@ class RuleGenerator:
 
 
 
-        
+
 
 
 
@@ -3476,7 +3476,7 @@ class RuleGenerator:
 
 
 
-    
+
 
 
 
@@ -3488,13 +3488,13 @@ class RuleGenerator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
@@ -3518,7 +3518,7 @@ class RuleGenerator:
 
 
 
-        
+
 
 
 
@@ -3590,7 +3590,7 @@ class RuleGenerator:
 
 
 
-    
+
 
 
 
@@ -3602,13 +3602,13 @@ class RuleGenerator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
@@ -4052,7 +4052,7 @@ class KnowledgeExtractor:
 
 
 
-        
+
 
 
 
@@ -4064,19 +4064,19 @@ class KnowledgeExtractor:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
 
 
-        root_cause: RootCause, 
+        root_cause: RootCause,
 
 
 
@@ -4190,7 +4190,7 @@ class KnowledgeExtractor:
 
 
 
-    
+
 
 
 
@@ -4202,19 +4202,19 @@ class KnowledgeExtractor:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        error: AIError, 
+        error: AIError,
 
 
 
 
 
-        root_cause: RootCause, 
+        root_cause: RootCause,
 
 
 
@@ -4586,7 +4586,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4598,13 +4598,13 @@ class KnowledgeRetriever:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        query: Dict[str, Any], 
+        query: Dict[str, Any],
 
 
 
@@ -4628,7 +4628,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4658,7 +4658,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4670,7 +4670,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4682,7 +4682,7 @@ class KnowledgeRetriever:
 
 
 
-    
+
 
 
 
@@ -4694,13 +4694,13 @@ class KnowledgeRetriever:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        query: Dict[str, Any], 
+        query: Dict[str, Any],
 
 
 
@@ -4724,7 +4724,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4742,7 +4742,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4760,7 +4760,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4778,7 +4778,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -4790,7 +4790,7 @@ class KnowledgeRetriever:
 
 
 
-        
+
 
 
 
@@ -5084,7 +5084,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5096,7 +5096,7 @@ class ModelRetrainer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -5126,7 +5126,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5144,7 +5144,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5162,7 +5162,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5180,7 +5180,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5192,7 +5192,7 @@ class ModelRetrainer:
 
 
 
-    
+
 
 
 
@@ -5204,13 +5204,13 @@ class ModelRetrainer:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        trigger: RetrainingTrigger, 
+        trigger: RetrainingTrigger,
 
 
 
@@ -5240,7 +5240,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5300,7 +5300,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5312,7 +5312,7 @@ class ModelRetrainer:
 
 
 
-        
+
 
 
 
@@ -5324,7 +5324,7 @@ class ModelRetrainer:
 
 
 
-    
+
 
 
 
@@ -5336,7 +5336,7 @@ class ModelRetrainer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -5360,7 +5360,7 @@ class ModelRetrainer:
 
 
 
-    
+
 
 
 
@@ -5372,7 +5372,7 @@ class ModelRetrainer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -6393,8 +6393,3 @@ class ModelRetrainer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-

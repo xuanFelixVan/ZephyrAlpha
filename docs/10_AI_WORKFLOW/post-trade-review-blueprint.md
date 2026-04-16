@@ -148,91 +148,91 @@ Layer 7: AI报告(AI Reporting Layer)
 
 ┌─────────────────────────────────────────────────────────────
 
-                   复盘模块架构                              
+                   复盘模块架构
 
 ├─────────────────────────────────────────────────────────────
 
-                                                            
 
- ┌─────────────────────────────────────────────────────  
 
-          回测复盘(Backtest Review)                  
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 回测结果分析                                       
+          回测复盘(Backtest Review)
 
-  ├─ 交易明细分析                                       
+  ├─ 回测结果分析
 
-  ├─ 策略表现评估                                       
+  ├─ 交易明细分析
 
-  └─ 优化建议生成                                       
+  ├─ 策略表现评估
 
- └─────────────────────────────────────────────────────  
+  └─ 优化建议生成
 
-                                                          
+ └─────────────────────────────────────────────────────
 
- ┌─────────────────────────────────────────────────────  
 
-          实盘复盘(Live Trading Review)              
 
-  ├─ 实盘交易分析                                       
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 滑点成本分析                                       
+          实盘复盘(Live Trading Review)
 
-  ├─ 执行效率评估                                       
+  ├─ 实盘交易分析
 
-  └─ 实盘优化建议                                       
+  ├─ 滑点成本分析
 
- └─────────────────────────────────────────────────────  
+  ├─ 执行效率评估
 
-                                                          
+  └─ 实盘优化建议
 
- ┌─────────────────────────────────────────────────────  
+ └─────────────────────────────────────────────────────
 
-          因子复盘(Factor Review)                    
 
-  ├─ 因子表现分析                                       
 
-  ├─ IC值趋势分                                      
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 因子衰减分析                                       
+          因子复盘(Factor Review)
 
-  └─ 因子优化建议                                       
+  ├─ 因子表现分析
 
- └─────────────────────────────────────────────────────  
+  ├─ IC值趋势分
 
-                                                          
+  ├─ 因子衰减分析
 
- ┌─────────────────────────────────────────────────────  
+  └─ 因子优化建议
 
-          策略复盘(Strategy Review)                  
+ └─────────────────────────────────────────────────────
 
-  ├─ 策略表现分析                                       
 
-  ├─ 参数敏感性分                                    
 
-  ├─ 市场适应性分                                    
+ ┌─────────────────────────────────────────────────────
 
-  └─ 策略改进建议                                       
+          策略复盘(Strategy Review)
 
- └─────────────────────────────────────────────────────  
+  ├─ 策略表现分析
 
-                                                          
+  ├─ 参数敏感性分
 
- ┌─────────────────────────────────────────────────────  
+  ├─ 市场适应性分
 
-          风险复盘(Risk Review)                      
+  └─ 策略改进建议
 
-  ├─ 风险事件分析                                       
+ └─────────────────────────────────────────────────────
 
-  ├─ 回撤分析                                           
 
-  ├─ 风险因子识别                                       
 
-  └─ 风控优化建议                                       
+ ┌─────────────────────────────────────────────────────
 
- └─────────────────────────────────────────────────────  
+          风险复盘(Risk Review)
 
-                                                            
+  ├─ 风险事件分析
+
+  ├─ 回撤分析
+
+  ├─ 风险因子识别
+
+  └─ 风控优化建议
+
+ └─────────────────────────────────────────────────────
+
+
 
 └─────────────────────────────────────────────────────────────
 
@@ -248,7 +248,7 @@ Layer 7: AI报告(AI Reporting Layer)
 
 交易数据 数据清洗 指标计算 分析建模 报告生成 知识沉淀
 
-                                                           
+
 
     └────────────────── 策略优化 ←───────────────────────────
 
@@ -650,7 +650,7 @@ class PostTradeReviewer:
 
     """复盘系统"""
 
-    
+
 
     def __init__(self, db_path: str = "data/ai_workflow.db"):
 
@@ -658,7 +658,7 @@ class PostTradeReviewer:
 
         self._init_database()
 
-    
+
 
     def _init_database(self):
 
@@ -668,7 +668,7 @@ class PostTradeReviewer:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
@@ -706,7 +706,7 @@ class PostTradeReviewer:
 
         """)
 
-        
+
 
         cursor.execute("""
 
@@ -744,7 +744,7 @@ class PostTradeReviewer:
 
         """)
 
-        
+
 
         cursor.execute("""
 
@@ -772,43 +772,43 @@ class PostTradeReviewer:
 
         """)
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def review_backtest(self, backtest_result: dict) -> dict:
 
         """回测复盘"""
 
-        
+
 
         trades = backtest_result.get('trades', [])
 
         metrics = backtest_result.get('metrics', {})
 
-        
+
 
         good_trades = self._analyze_good_trades(trades)
 
         bad_trades = self._analyze_bad_trades(trades)
 
-        
+
 
         lessons = self._extract_lessons(good_trades, bad_trades)
 
-        
+
 
         improvements = self._generate_improvements(lessons)
 
-        
+
 
         review_id = f"review_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         review = {
 
@@ -842,53 +842,53 @@ class PostTradeReviewer:
 
         }
 
-        
+
 
         self._save_review(review)
 
-        
+
 
         return review
 
-    
+
 
     def review_live_trading(self, live_trading_data: dict) -> dict:
 
         """实盘复盘"""
 
-        
+
 
         trades = live_trading_data.get('trades', [])
 
         metrics = live_trading_data.get('metrics', {})
 
-        
+
 
         slippage_analysis = self._analyze_slippage(trades)
 
-        
+
 
         execution_analysis = self._analyze_execution(trades)
 
-        
+
 
         good_trades = self._analyze_good_trades(trades)
 
         bad_trades = self._analyze_bad_trades(trades)
 
-        
+
 
         lessons = self._extract_lessons(good_trades, bad_trades)
 
-        
+
 
         improvements = self._generate_improvements(lessons)
 
-        
+
 
         review_id = f"review_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         review = {
 
@@ -922,21 +922,21 @@ class PostTradeReviewer:
 
         }
 
-        
+
 
         self._save_review(review)
 
-        
+
 
         return review
 
-    
+
 
     def generate_review_report(self, review: dict) -> str:
 
         """生成复盘报告"""
 
-        
+
 
         report = f"""
 
@@ -1028,11 +1028,11 @@ class PostTradeReviewer:
 
         """
 
-        
+
 
         return report
 
-    
+
 
     def _analyze_good_trades(self, trades: list) -> list:
 
@@ -1040,13 +1040,13 @@ class PostTradeReviewer:
 
         good_trades = []
 
-        
+
 
         for trade in trades:
 
             pnl_pct = trade.get('pnl_pct', 0)
 
-            
+
 
             if pnl_pct > 0.02:
 
@@ -1066,11 +1066,11 @@ class PostTradeReviewer:
 
                 })
 
-        
+
 
         return sorted(good_trades, key=lambda x: x['pnl_pct'], reverse=True)
 
-    
+
 
     def _analyze_bad_trades(self, trades: list) -> list:
 
@@ -1078,13 +1078,13 @@ class PostTradeReviewer:
 
         bad_trades = []
 
-        
+
 
         for trade in trades:
 
             pnl_pct = trade.get('pnl_pct', 0)
 
-            
+
 
             if pnl_pct < -0.01:
 
@@ -1104,11 +1104,11 @@ class PostTradeReviewer:
 
                 })
 
-        
+
 
         return sorted(bad_trades, key=lambda x: x['pnl_pct'])
 
-    
+
 
     def _extract_lessons(self, good_trades: list, bad_trades: list) -> list:
 
@@ -1116,7 +1116,7 @@ class PostTradeReviewer:
 
         lessons = []
 
-        
+
 
         if good_trades:
 
@@ -1136,7 +1136,7 @@ class PostTradeReviewer:
 
             })
 
-        
+
 
         if bad_trades:
 
@@ -1156,11 +1156,11 @@ class PostTradeReviewer:
 
             })
 
-        
+
 
         return lessons
 
-    
+
 
     def _generate_improvements(self, lessons: list) -> list:
 
@@ -1168,7 +1168,7 @@ class PostTradeReviewer:
 
         improvements = []
 
-        
+
 
         for lesson in lessons:
 
@@ -1184,11 +1184,11 @@ class PostTradeReviewer:
 
                 })
 
-        
+
 
         return improvements
 
-    
+
 
     def _analyze_slippage(self, trades: list) -> dict:
 
@@ -1202,7 +1202,7 @@ class PostTradeReviewer:
 
         }
 
-    
+
 
     def _analyze_execution(self, trades: list) -> dict:
 
@@ -1216,7 +1216,7 @@ class PostTradeReviewer:
 
         }
 
-    
+
 
     def _save_review(self, review: dict):
 
@@ -1226,15 +1226,15 @@ class PostTradeReviewer:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            INSERT INTO post_trade_reviews 
+            INSERT INTO post_trade_reviews
 
-            (review_id, review_type, strategy_name, period_start, period_end, 
+            (review_id, review_type, strategy_name, period_start, period_end,
 
-             total_trades, win_rate, sharpe_ratio, max_drawdown, good_trades, 
+             total_trades, win_rate, sharpe_ratio, max_drawdown, good_trades,
 
              bad_trades, lessons_learned, improvements, created_at)
 
@@ -1254,13 +1254,13 @@ class PostTradeReviewer:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def _format_trades(self, trades: list) -> str:
 
@@ -1270,7 +1270,7 @@ class PostTradeReviewer:
 
             return "暂无数据"
 
-        
+
 
         formatted = []
 
@@ -1288,11 +1288,11 @@ class PostTradeReviewer:
 
             )
 
-        
+
 
         return "\n\n".join(formatted)
 
-    
+
 
     def _format_lessons(self, lessons: list) -> str:
 
@@ -1302,7 +1302,7 @@ class PostTradeReviewer:
 
             return "暂无数据"
 
-        
+
 
         formatted = []
 
@@ -1322,11 +1322,11 @@ class PostTradeReviewer:
 
             )
 
-        
+
 
         return "\n\n".join(formatted)
 
-    
+
 
     def _format_improvements(self, improvements: list) -> str:
 
@@ -1336,7 +1336,7 @@ class PostTradeReviewer:
 
             return "暂无数据"
 
-        
+
 
         formatted = []
 
@@ -1352,7 +1352,7 @@ class PostTradeReviewer:
 
             )
 
-        
+
 
         return "\n\n".join(formatted)
 
@@ -1571,4 +1571,3 @@ class PostTradeReviewer:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-

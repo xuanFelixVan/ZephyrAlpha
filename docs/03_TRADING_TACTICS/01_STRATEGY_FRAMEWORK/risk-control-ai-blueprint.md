@@ -61,7 +61,7 @@ related_documents:
 
 > **核心职责**: Risk Control Ai蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Risk Control Ai蓝图设计相关内容
 
@@ -205,7 +205,7 @@ class RiskAssessment:
 
 class PreTradeRiskController:
 
-    
+
 
     def __init__(self):
 
@@ -215,7 +215,7 @@ class PreTradeRiskController:
 
         self.market_risk_warner = MarketRiskWarner()
 
-        
+
 
     def assess_strategy_risk(self, strategy_id: str) -> RiskAssessment:
 
@@ -225,7 +225,7 @@ class PreTradeRiskController:
 
         strategy_data = self._get_strategy_data(strategy_id)
 
-        
+
 
         # 2. 计算风险因子
 
@@ -243,25 +243,25 @@ class PreTradeRiskController:
 
         }
 
-        
+
 
         # 3. 综合风险评分
 
         risk_score = self._calculate_risk_score(risk_factors)
 
-        
+
 
         # 4. 风险等级判定
 
         risk_level = self._determine_risk_level(risk_score)
 
-        
+
 
         # 5. 生成建议
 
         recommendations = self._generate_recommendations(risk_factors, risk_level)
 
-        
+
 
         return RiskAssessment(
 
@@ -277,7 +277,7 @@ class PreTradeRiskController:
 
         )
 
-    
+
 
     def allocate_position_risk_budget(
 
@@ -291,7 +291,7 @@ class PreTradeRiskController:
 
         total_risk_budget = portfolio_value * max_risk
 
-        
+
 
 
 
@@ -301,7 +301,7 @@ class PreTradeRiskController:
 
         total_sharpe = sum(sharpe_ratios)
 
-        
+
 
 # 3.
 
@@ -313,11 +313,11 @@ class PreTradeRiskController:
 
             risk_budgets[strategy.strategy_id] = budget
 
-        
+
 
         return risk_budgets
 
-    
+
 
     def warn_market_risk(self) -> MarketRiskWarning:
 
@@ -339,19 +339,19 @@ class PreTradeRiskController:
 
         }
 
-        
+
 
         # 2. 风险预警判定
 
         warning_level = self._determine_warning_level(market_indicators)
 
-        
+
 
         # 3. 生成预警信息
 
         warning_message = self._generate_warning_message(warning_level, market_indicators)
 
-        
+
 
         return MarketRiskWarning(
 
@@ -383,7 +383,7 @@ class PreTradeRiskController:
 
 class InTradeRiskController:
 
-    
+
 
     def __init__(self):
 
@@ -393,7 +393,7 @@ class InTradeRiskController:
 
         self.hedge_engine = HedgeEngine()
 
-        
+
 
     def monitor_realtime_risk(self, portfolio: Portfolio):
 
@@ -403,11 +403,11 @@ class InTradeRiskController:
 
         risk_metrics = self._calculate_realtime_risk_metrics(portfolio)
 
-        
+
 
         threshold_checks = self._check_risk_thresholds(risk_metrics)
 
-        
+
 
         # 3. 触发风险控制
 
@@ -415,19 +415,19 @@ class InTradeRiskController:
 
             self._trigger_var_control(portfolio)
 
-        
+
 
         if threshold_checks['drawdown_exceeded']:
 
             self._trigger_drawdown_control(portfolio)
 
-        
+
 
         if threshold_checks['concentration_exceeded']:
 
             self._trigger_concentration_control(portfolio)
 
-        
+
 
         return RealtimeRiskReport(
 
@@ -439,7 +439,7 @@ class InTradeRiskController:
 
         )
 
-    
+
 
     def execute_dynamic_stop_loss(
 
@@ -461,7 +461,7 @@ class InTradeRiskController:
 
         )
 
-        
+
 
         current_price = position.current_price
 
@@ -471,7 +471,7 @@ class InTradeRiskController:
 
             self._execute_stop_loss(position)
 
-            
+
 
             return StopLossExecution(
 
@@ -485,11 +485,11 @@ class InTradeRiskController:
 
             )
 
-        
+
 
         return None
 
-    
+
 
     def execute_risk_hedge(
 
@@ -505,11 +505,11 @@ class InTradeRiskController:
 
         hedge_requirement = self._calculate_hedge_requirement(portfolio)
 
-        
+
 
         hedge_instruments = self._select_hedge_instruments(hedge_requirement)
 
-        
+
 
         # 3. 执行对冲交易
 
@@ -521,7 +521,7 @@ class InTradeRiskController:
 
         )
 
-        
+
 
         return HedgeExecution(
 
@@ -539,7 +539,7 @@ class InTradeRiskController:
 
 class DynamicStopLoss:
 
-    
+
 
     def calculate_dynamic_stop_loss(
 
@@ -555,13 +555,13 @@ class DynamicStopLoss:
 
         base_stop_loss = position.entry_price * (1 - position.stop_loss_ratio)
 
-        
+
 
         volatility = market_state.volatility
 
         volatility_adjustment = volatility * 2  # 2倍波动率
 
-        
+
 
         if market_state.regime == 'high_volatility':
 
@@ -571,7 +571,7 @@ class DynamicStopLoss:
 
             market_adjustment = 0
 
-        
+
 
         dynamic_stop_loss = (
 
@@ -583,7 +583,7 @@ class DynamicStopLoss:
 
         )
 
-        
+
 
         return dynamic_stop_loss
 
@@ -605,7 +605,7 @@ class DynamicStopLoss:
 
 class PostTradeRiskController:
 
-    
+
 
     def __init__(self):
 
@@ -615,7 +615,7 @@ class PostTradeRiskController:
 
         self.knowledge_accumulator = RiskKnowledgeAccumulator()
 
-        
+
 
     def review_risk_event(self, event: RiskEvent):
 
@@ -625,25 +625,25 @@ class PostTradeRiskController:
 
         event_analysis = self._analyze_risk_event(event)
 
-        
+
 
         # 2. 根本原因分析
 
         root_cause = self._identify_root_cause(event)
 
-        
+
 
         # 3. 影响评估
 
         impact_assessment = self._assess_impact(event)
 
-        
+
 
         # 4. 改进建议
 
         improvements = self._generate_improvements(event_analysis, root_cause)
 
-        
+
 
         return RiskEventReview(
 
@@ -659,7 +659,7 @@ class PostTradeRiskController:
 
         )
 
-    
+
 
     def update_risk_model(self, event: RiskEvent):
 
@@ -667,17 +667,17 @@ class PostTradeRiskController:
 
         new_risk_factors = self._extract_risk_factors(event)
 
-        
+
 
         # 2. 更新风险模型参数
 
         self._update_model_parameters(new_risk_factors)
 
-        
+
 
         validation_result = self._validate_updated_model()
 
-        
+
 
         return RiskModelUpdate(
 
@@ -687,7 +687,7 @@ class PostTradeRiskController:
 
         )
 
-    
+
 
     def accumulate_risk_knowledge(self, event: RiskEvent):
 
@@ -697,19 +697,19 @@ class PostTradeRiskController:
 
         knowledge = self._extract_risk_knowledge(event)
 
-        
+
 
         # 2. 存储到知识库
 
         self._store_risk_knowledge(knowledge)
 
-        
+
 
         # 3. 更新风险规则
 
         self._update_risk_rules(knowledge)
 
-        
+
 
         return RiskKnowledgeAccumulation(
 
@@ -737,7 +737,7 @@ class PostTradeRiskController:
 
 class ExtremeRiskHandler:
 
-    
+
 
     def __init__(self):
 
@@ -747,7 +747,7 @@ class ExtremeRiskHandler:
 
         self.systemic_risk_handler = SystemicRiskHandler()
 
-        
+
 
     def handle_black_swan(self, event: BlackSwanEvent):
 
@@ -757,23 +757,23 @@ class ExtremeRiskHandler:
 
         event_type = self._identify_black_swan_type(event)
 
-        
+
 
         emergency_response = self._execute_emergency_response(event_type)
 
-        
+
 
         # 3. 风险隔离
 
         risk_isolation = self._isolate_risk(event)
 
-        
+
 
         # 4. 损失控制
 
         loss_control = self._control_losses(event)
 
-        
+
 
         return BlackSwanResponse(
 
@@ -787,25 +787,25 @@ class ExtremeRiskHandler:
 
         )
 
-    
+
 
     def handle_liquidity_crisis(self, crisis: LiquidityCrisis):
 
         liquidity_assessment = self._assess_liquidity_crisis(crisis)
 
-        
+
 
 ?
 
         liquidity_injection = self._inject_liquidity(crisis)
 
-        
+
 
         # 3. 仓位调整
 
         position_adjustment = self._adjust_positions_for_liquidity(crisis)
 
-        
+
 
         return LiquidityCrisisResponse(
 
@@ -817,13 +817,13 @@ class ExtremeRiskHandler:
 
         )
 
-    
+
 
     def handle_systemic_risk(self, risk: SystemicRisk):
 
         systemic_risk_level = self._identify_systemic_risk_level(risk)
 
-        
+
 
         if systemic_risk_level == 'high':
 
@@ -843,7 +843,7 @@ class ExtremeRiskHandler:
 
             response = self._maintain_positions()
 
-        
+
 
         return SystemicRiskResponse(
 
@@ -873,7 +873,7 @@ class IntelligentRiskWarning:
 
     """风险智能预警系统"""
 
-    
+
 
     def __init__(self):
 
@@ -883,7 +883,7 @@ class IntelligentRiskWarning:
 
         self.contagion_analyzer = RiskContagionAnalyzer()
 
-        
+
 
     def detect_risk_anomalies(self, risk_metrics: Dict):
 
@@ -891,7 +891,7 @@ class IntelligentRiskWarning:
 
         normal_ranges = self._calculate_normal_ranges(risk_metrics)
 
-        
+
 
         anomalies = []
 
@@ -899,7 +899,7 @@ class IntelligentRiskWarning:
 
             normal_range = normal_ranges[metric_name]
 
-            
+
 
             if metric_value < normal_range['lower'] or metric_value > normal_range['upper']:
 
@@ -921,7 +921,7 @@ class IntelligentRiskWarning:
 
                 })
 
-        
+
 
         return RiskAnomalyReport(
 
@@ -931,7 +931,7 @@ class IntelligentRiskWarning:
 
         )
 
-    
+
 
     def predict_risk_events(self, market_data: MarketData):
 
@@ -941,19 +941,19 @@ class IntelligentRiskWarning:
 
         features = self._extract_risk_features(market_data)
 
-        
+
 
         # 2. 模型预测
 
         predictions = self._predict_with_models(features)
 
-        
+
 
         # 3. 风险事件排序
 
         ranked_events = self._rank_risk_events(predictions)
 
-        
+
 
         return RiskEventPrediction(
 
@@ -965,7 +965,7 @@ class IntelligentRiskWarning:
 
         )
 
-    
+
 
     def analyze_risk_contagion(self, risk_event: RiskEvent):
 
@@ -975,19 +975,19 @@ class IntelligentRiskWarning:
 
         contagion_network = self._build_contagion_network(risk_event)
 
-        
+
 
         # 2. 识别传导路径
 
         contagion_paths = self._identify_contagion_paths(contagion_network)
 
-        
+
 
         # 3. 评估传导影响
 
         contagion_impact = self._assess_contagion_impact(contagion_paths)
 
-        
+
 
         return RiskContagionAnalysis(
 
@@ -1055,7 +1055,7 @@ class RiskEvent:
 
     timestamp: datetime
 
-    
+
 
 
 
@@ -1065,19 +1065,19 @@ class RiskEvent:
 
     affected_positions: List[str]
 
-    
+
 
     # 风险指标
 
     risk_metrics: Dict
 
-    
+
 
     # 应对措施
 
     response_actions: List[Dict]
 
-    
+
 
     # 事件结果
 
@@ -1097,7 +1097,7 @@ class RiskControlAction:
 
     timestamp: datetime
 
-    
+
 
 
 
@@ -1105,7 +1105,7 @@ class RiskControlAction:
 
     action_details: Dict
 
-    
+
 
     # 执行结果
 
@@ -1215,7 +1215,7 @@ class RiskControlTextInterface:
 
     """风险控制文字交互接口"""
 
-    
+
 
     def get_risk_status(self):
 
@@ -1223,7 +1223,7 @@ class RiskControlTextInterface:
 
         return self._format_risk_status(status)
 
-    
+
 
     def check_risk_warnings(self):
 
@@ -1231,7 +1231,7 @@ class RiskControlTextInterface:
 
         return self._format_risk_warnings(warnings)
 
-    
+
 
     def execute_risk_control(self, action: str):
 
@@ -1435,7 +1435,7 @@ class RiskControlTextInterface:
 
 - **技术规格书**: 待创建
 
-- **职责**: 
+- **职责**:
 
 - **状态**: Active
 
@@ -1474,4 +1474,3 @@ class RiskControlTextInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

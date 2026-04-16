@@ -54,7 +54,7 @@ applicable_scope: 全系统
 
 > **核心职责**: Critical Modules Implementation蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Critical Modules Implementation蓝图设计相关内容
 
@@ -252,7 +252,7 @@ class VaRCalculator:
 
     """VaR计算引擎
 
-    
+
 
     功能?        - 历史模拟法VaR
 
@@ -264,11 +264,11 @@ class VaRCalculator:
 
     """
 
-    
+
 
     def __init__(self, confidence_level: float = 0.95):
 
-        """初始化VaR计算?        
+        """初始化VaR计算?
 
         Args:
 
@@ -278,13 +278,13 @@ class VaRCalculator:
 
         self.confidence_level = confidence_level
 
-    
+
 
     def historical_var(self, returns: np.ndarray, portfolio_value: float) -> float:
 
         """历史模拟法计算VaR
 
-        
+
 
         Args:
 
@@ -298,21 +298,21 @@ class VaRCalculator:
 
         var_return = np.percentile(returns, var_percentile)
 
-        
+
 
         # 计算VaR（绝对金额）
 
         var = abs(var_return * portfolio_value)
 
-        
+
 
         return var
 
-    
 
-    def monte_carlo_var(self, 
 
-                       returns: np.ndarray, 
+    def monte_carlo_var(self,
+
+                       returns: np.ndarray,
 
                        portfolio_value: float,
 
@@ -322,11 +322,11 @@ class VaRCalculator:
 
         """蒙特卡洛法计算VaR
 
-        
+
 
         Args:
 
-            time_horizon: 时间跨度（天?            
+            time_horizon: 时间跨度（天?
 
         Returns:
 
@@ -336,11 +336,11 @@ class VaRCalculator:
 
         sigma = np.std(returns)
 
-        
+
 
         # 生成随机收益?        simulated_returns = np.random.normal(mu, sigma, num_simulations)
 
-        
+
 
         # 计算模拟收益率分位数
 
@@ -348,21 +348,21 @@ class VaRCalculator:
 
         var_return = np.percentile(simulated_returns, var_percentile)
 
-        
+
 
         # 计算VaR（绝对金额）
 
         var = abs(var_return * portfolio_value * np.sqrt(time_horizon))
 
-        
+
 
         return var
 
-    
 
-    def parametric_var(self, 
 
-                      returns: np.ndarray, 
+    def parametric_var(self,
+
+                      returns: np.ndarray,
 
                       portfolio_value: float,
 
@@ -370,7 +370,7 @@ class VaRCalculator:
 
         """参数法计算VaR（假设正态分布）
 
-        
+
 
         Args:
 
@@ -382,13 +382,13 @@ class VaRCalculator:
 
         sigma = np.std(returns)
 
-        
+
 
         # 计算Z分数
 
         z_score = stats.norm.ppf(1 - self.confidence_level)
 
-        
+
 
         # 计算VaR
 
@@ -396,15 +396,15 @@ class VaRCalculator:
 
         var = abs(var_return * portfolio_value * np.sqrt(time_horizon))
 
-        
+
 
         return var
 
-    
+
 
     def cvar(self, returns: np.ndarray, portfolio_value: float) -> float:
 
-        """计算CVaR（条件风险价值，Expected Shortfall?        
+        """计算CVaR（条件风险价值，Expected Shortfall?
 
         Args:
 
@@ -416,7 +416,7 @@ class VaRCalculator:
 
         var_return = np.percentile(returns, var_percentile)
 
-        
+
 
         # 计算CVaR（VaR以下的平均损失）
 
@@ -426,15 +426,15 @@ class VaRCalculator:
 
         cvar = abs(cvar_return * portfolio_value)
 
-        
+
 
 logger.info(f"CVaR: {cvar:.2f}
 
         return cvar
 
-    
 
-    def portfolio_var(self, 
+
+    def portfolio_var(self,
 
                      positions: Dict[str, float],
 
@@ -444,13 +444,13 @@ logger.info(f"CVaR: {cvar:.2f}
 
         """计算投资组合VaR
 
-        
+
 
         Args:
 
             returns_data: 收益率数据DataFrame
 
-            method: 计算方法?historical', 'monte_carlo', 'parametric'?            
+            method: 计算方法?historical', 'monte_carlo', 'parametric'?
 
         Returns:
 
@@ -464,7 +464,7 @@ logger.info(f"CVaR: {cvar:.2f}
 
         weights = {symbol: value / total_value for symbol, value in positions.items()}
 
-        
+
 
         # 计算投资组合收益?        portfolio_returns = np.zeros(len(returns_data))
 
@@ -474,7 +474,7 @@ logger.info(f"CVaR: {cvar:.2f}
 
                 portfolio_returns += returns_data[symbol].values * weight
 
-        
+
 
         # 计算VaR
 
@@ -494,7 +494,7 @@ logger.info(f"CVaR: {cvar:.2f}
 
             raise ValueError(f"不支持的VaR计算方法: {method}")
 
-        
+
 
         return var
 
@@ -508,17 +508,17 @@ if __name__ == "__main__":
 
     # 创建VaR计算?    var_calculator = VaRCalculator(confidence_level=0.95)
 
-    
+
 
     # 模拟历史收益率数?    np.random.seed(42)
 
     returns = np.random.normal(0.001, 0.02, 1000)  # 日均收益0.1%，标准差2%
 
-    
 
 
 
-    
+
+
 
     # 计算VaR
 
@@ -530,7 +530,7 @@ if __name__ == "__main__":
 
     cvar = var_calculator.cvar(returns, portfolio_value)
 
-    
+
 
     print(f"历史模拟法VaR: {historical_var:,.2f}?)
 
@@ -600,7 +600,7 @@ class GreeksCalculator:
 
 """
 
-    
+
 
     功能?        - Delta计算
 
@@ -614,15 +614,15 @@ class GreeksCalculator:
 
     """
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
 
-    def black_scholes_price(self, 
+
+    def black_scholes_price(self,
 
                            S: float,  # 标的资产价格
 
@@ -630,13 +630,13 @@ class GreeksCalculator:
 
         """Black-Scholes期权定价
 
-        
+
 
         Args:
 
             S: 标的资产价格
 
-            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型?call'?put'?            
+            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型?call'?put'?
 
         Returns:
 
@@ -648,7 +648,7 @@ class GreeksCalculator:
 
         d2 = d1 - sigma * np.sqrt(T)
 
-        
+
 
         if option_type == 'call':
 
@@ -658,29 +658,29 @@ class GreeksCalculator:
 
             price = K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1)
 
-        
+
 
         return price
 
-    
 
-    def delta(self, 
 
-             S: float, 
+    def delta(self,
 
-             K: float, 
+             S: float,
 
-             T: float, 
+             K: float,
 
-             r: float, 
+             T: float,
 
-             sigma: float, 
+             r: float,
+
+             sigma: float,
 
              option_type: str = 'call') -> float:
 
         """计算Delta
 
-        
+
 
         Args:
 
@@ -688,7 +688,7 @@ class GreeksCalculator:
 
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
 
-            
+
 
         Returns:
 
@@ -696,7 +696,7 @@ class GreeksCalculator:
 
         d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
 
-        
+
 
         if option_type == 'call':
 
@@ -706,35 +706,35 @@ class GreeksCalculator:
 
             delta = norm.cdf(d1) - 1
 
-        
+
 
         logger.info(f"Delta: {delta:.4f}")
 
         return delta
 
-    
 
-    def gamma(self, 
 
-             S: float, 
+    def gamma(self,
 
-             K: float, 
+             S: float,
 
-             T: float, 
+             K: float,
 
-             r: float, 
+             T: float,
+
+             r: float,
 
              sigma: float) -> float:
 
         """计算Gamma
 
-        
+
 
         Args:
 
             S: 标的资产价格
 
-            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            
+            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?
 
         Returns:
 
@@ -742,39 +742,39 @@ class GreeksCalculator:
 
         d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
 
-        
+
 
         gamma = norm.pdf(d1) / (S * sigma * np.sqrt(T))
 
-        
+
 
         logger.info(f"Gamma: {gamma:.4f}")
 
         return gamma
 
-    
 
-    def vega(self, 
 
-            S: float, 
+    def vega(self,
 
-            K: float, 
+            S: float,
 
-            T: float, 
+            K: float,
 
-            r: float, 
+            T: float,
+
+            r: float,
 
             sigma: float) -> float:
 
         """计算Vega
 
-        
+
 
         Args:
 
             S: 标的资产价格
 
-            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            
+            K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?
 
         Returns:
 
@@ -782,35 +782,35 @@ class GreeksCalculator:
 
         d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
 
-        
+
 
         vega = S * norm.pdf(d1) * np.sqrt(T)
 
-        
+
 
         logger.info(f"Vega: {vega:.4f}")
 
         return vega
 
-    
 
-    def theta(self, 
 
-             S: float, 
+    def theta(self,
 
-             K: float, 
+             S: float,
 
-             T: float, 
+             K: float,
 
-             r: float, 
+             T: float,
 
-             sigma: float, 
+             r: float,
+
+             sigma: float,
 
              option_type: str = 'call') -> float:
 
         """计算Theta
 
-        
+
 
         Args:
 
@@ -818,7 +818,7 @@ class GreeksCalculator:
 
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
 
-            
+
 
         Returns:
 
@@ -828,51 +828,51 @@ class GreeksCalculator:
 
         d2 = d1 - sigma * np.sqrt(T)
 
-        
+
 
         if option_type == 'call':
 
-            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) 
+            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T))
 
                     - r * K * np.exp(-r * T) * norm.cdf(d2))
 
         else:  # put
 
-            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) 
+            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T))
 
                     + r * K * np.exp(-r * T) * norm.cdf(-d2))
 
-        
+
 
         # 转换为每日Theta
 
         theta_daily = theta / 365
 
-        
+
 
         logger.info(f"Theta: {theta_daily:.4f}/?)
 
         return theta_daily
 
-    
 
-    def rho(self, 
 
-           S: float, 
+    def rho(self,
 
-           K: float, 
+           S: float,
 
-           T: float, 
+           K: float,
 
-           r: float, 
+           T: float,
 
-           sigma: float, 
+           r: float,
+
+           sigma: float,
 
            option_type: str = 'call') -> float:
 
         """计算Rho
 
-        
+
 
         Args:
 
@@ -880,7 +880,7 @@ class GreeksCalculator:
 
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
 
-            
+
 
         Returns:
 
@@ -888,7 +888,7 @@ class GreeksCalculator:
 
         d2 = (np.log(S / K) + (r - 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
 
-        
+
 
         if option_type == 'call':
 
@@ -898,25 +898,25 @@ class GreeksCalculator:
 
             rho = -K * T * np.exp(-r * T) * norm.cdf(-d2)
 
-        
+
 
         logger.info(f"Rho: {rho:.4f}")
 
         return rho
 
-    
 
-    def calculate_all_greeks(self, 
 
-                            S: float, 
+    def calculate_all_greeks(self,
 
-                            K: float, 
+                            S: float,
 
-                            T: float, 
+                            K: float,
 
-                            r: float, 
+                            T: float,
 
-                            sigma: float, 
+                            r: float,
+
+                            sigma: float,
 
                             option_type: str = 'call') -> Dict[str, float]:
 
@@ -928,7 +928,7 @@ class GreeksCalculator:
 
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
 
-            
+
 
         Returns:
 
@@ -950,7 +950,7 @@ Dict:
 
         }
 
-        
+
 
         return greeks
 
@@ -962,7 +962,7 @@ Dict:
 
 if __name__ == "__main__":
 
-    
+
 
     # 期权参数
 
@@ -972,11 +972,11 @@ if __name__ == "__main__":
 
     sigma = 0.2  # 波动?0%
 
-    
+
 
 ?    greeks = greeks_calculator.calculate_all_greeks(S, K, T, r, sigma, 'call')
 
-    
+
 
     print(f"\n期权参数:")
 
@@ -1058,7 +1058,7 @@ class StressTestEngine:
 
     """压力测试引擎
 
-    
+
 
 景压力测试
 
@@ -1070,7 +1070,7 @@ class StressTestEngine:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -1114,9 +1114,9 @@ class StressTestEngine:
 
         }
 
-    
 
-    def historical_stress_test(self, 
+
+    def historical_stress_test(self,
 
                               portfolio: Dict[str, float],
 
@@ -1126,7 +1126,7 @@ class StressTestEngine:
 
 景压力测试
 
-        
+
 
         Args:
 
@@ -1136,7 +1136,7 @@ scenario_name:
 
 景名称
 
-            
+
 
         Returns:
 
@@ -1150,17 +1150,17 @@ raise ValueError(f"
 
 景: {scenario_name}")
 
-        
+
 
         scenario = self.historical_scenarios[scenario_name]
 
-        
+
 
         # 计算各资产损?        losses = {}
 
         total_loss = 0
 
-        
+
 
         for asset_type, value in portfolio.items():
 
@@ -1176,13 +1176,13 @@ raise ValueError(f"
 
                 loss = 0
 
-            
+
 
             losses[asset_type] = loss
 
             total_loss += loss
 
-        
+
 
         result = {
 
@@ -1200,15 +1200,15 @@ raise ValueError(f"
 
         }
 
-        
+
 
         logger.info(f"压力测试结果: {scenario_name}, 总损? {total_loss:,.2f}?({result['loss_percentage']*100:.2f}%)")
 
         return result
 
-    
 
-    def hypothetical_stress_test(self, 
+
+    def hypothetical_stress_test(self,
 
                                 portfolio: Dict[str, float],
 
@@ -1218,7 +1218,7 @@ raise ValueError(f"
 
 景压力测试
 
-        
+
 
         Args:
 
@@ -1226,7 +1226,7 @@ raise ValueError(f"
 
 景，{资产类型: 收益率}
 
-            
+
 
         Returns:
 
@@ -1238,7 +1238,7 @@ raise ValueError(f"
 
         total_loss = 0
 
-        
+
 
         for asset_type, value in portfolio.items():
 
@@ -1250,13 +1250,13 @@ raise ValueError(f"
 
                 loss = 0
 
-            
+
 
             losses[asset_type] = loss
 
             total_loss += loss
 
-        
+
 
         result = {
 
@@ -1272,15 +1272,15 @@ raise ValueError(f"
 
         }
 
-        
+
 
         logger.info(f"自定义压力测试结? 总损? {total_loss:,.2f}?({result['loss_percentage']*100:.2f}%)")
 
         return result
 
-    
 
-    def sensitivity_analysis(self, 
+
+    def sensitivity_analysis(self,
 
                             portfolio: Dict[str, float],
 
@@ -1290,7 +1290,7 @@ raise ValueError(f"
 
                             steps: int = 10) -> pd.DataFrame:
 
-        """敏感性分?        
+        """敏感性分?
 
         Args:
 
@@ -1300,7 +1300,7 @@ raise ValueError(f"
 
             shock_range: 冲击范围（默?30%?30%?            steps: 分析步数
 
-            
+
 
         Returns:
 
@@ -1310,7 +1310,7 @@ raise ValueError(f"
 
         results = []
 
-        
+
 
         for factor in risk_factors:
 
@@ -1326,13 +1326,13 @@ raise ValueError(f"
 
                         shocked_portfolio[asset_type] = value
 
-                
+
 
                 total_value = sum(shocked_portfolio.values())
 
                 loss = total_value - sum(portfolio.values())
 
-                
+
 
                 results.append({
 
@@ -1348,7 +1348,7 @@ raise ValueError(f"
 
                 })
 
-        
+
 
         df = pd.DataFrame(results)
 
@@ -1356,17 +1356,17 @@ raise ValueError(f"
 
         return df
 
-    
+
 
     def run_all_historical_scenarios(self, portfolio: Dict[str, float]) -> Dict[str, Dict]:
 
-景压力测?        
+景压力测?
 
         Args:
 
             portfolio: 投资组合
 
-            
+
 
         Returns:
 
@@ -1378,31 +1378,31 @@ Dict:
 
         results = {}
 
-        
+
 
         for scenario_name in self.historical_scenarios.keys():
 
             results[scenario_name] = self.historical_stress_test(portfolio, scenario_name)
 
-        
+
 
 ?)
 
         return results
 
-    
+
 
     def generate_stress_test_report(self, results: Dict[str, Dict]) -> str:
 
         """生成压力测试报告
 
-        
+
 
         Args:
 
             results: 压力测试结果
 
-            
+
 
         Returns:
 
@@ -1420,7 +1420,7 @@ Dict:
 
         report.append("")
 
-        
+
 
         for scenario_name, result in results.items():
 
@@ -1444,7 +1444,7 @@ report.append(f"
 
             report.append("")
 
-        
+
 
         return "\n".join(report)
 
@@ -1460,7 +1460,7 @@ if __name__ == "__main__":
 
     stress_engine = StressTestEngine()
 
-    
+
 
     # 投资组合
 
@@ -1468,11 +1468,11 @@ if __name__ == "__main__":
 
         'stock_a': 500000,   # 股票A: 50?        'stock_b': 300000,   # 股票B: 30?        'bond': 200000       # 债券: 20?    }
 
-    
+
 
 景压力测?    results = stress_engine.run_all_historical_scenarios(portfolio)
 
-    
+
 
     # 生成报告
 
@@ -1480,11 +1480,11 @@ if __name__ == "__main__":
 
     print(report)
 
-    
+
 
     # 敏感性分?    sensitivity_df = stress_engine.sensitivity_analysis(
 
-        portfolio, 
+        portfolio,
 
         risk_factors=['stock'],
 
@@ -1564,17 +1564,17 @@ class RiskAlertSystem:
 
     """风险预警系统
 
-    
+
 
     功能?        - 实时风险监控
 
         - 风险限额检?        - 多级预警
 
-    
+
 
     def __init__(self, risk_limits: Dict[str, float]):
 
-        """初始化风险预警系?        
+        """初始化风险预警系?
 
         Args:
 
@@ -1596,17 +1596,17 @@ class RiskAlertSystem:
 
         self.alerts = []
 
-    
+
 
     def check_var_limit(self, current_var: float) -> Dict[str, Any]:
 
         """检查VaR限额
 
-        
+
 
         Args:
 
-            current_var: 当前VaR?            
+            current_var: 当前VaR?
 
         Returns:
 
@@ -1616,7 +1616,7 @@ class RiskAlertSystem:
 
         utilization = current_var / var_limit
 
-        
+
 
         if utilization >= 1.0:
 
@@ -1642,7 +1642,7 @@ message = f"VaR
 
             message = f"VaR正常: {utilization*100:.1f}%"
 
-        
+
 
         result = {
 
@@ -1662,13 +1662,13 @@ message = f"VaR
 
         }
 
-        
+
 
         logger.info(f"VaR检? {message}")
 
         return result
 
-    
+
 
     def check_greeks_limit(self, greeks: Dict[str, float]) -> List[Dict[str, Any]]:
 
@@ -1678,7 +1678,7 @@ message = f"VaR
 
 greeks:
 
-            
+
 
         Returns:
 
@@ -1686,7 +1686,7 @@ greeks:
 
         results = []
 
-        
+
 
         for greek, value in greeks.items():
 
@@ -1696,7 +1696,7 @@ greeks:
 
             utilization = abs(value) / limit
 
-            
+
 
             if utilization >= 1.0:
 
@@ -1722,7 +1722,7 @@ message = f"{greek.upper()}
 
                 message = f"{greek.upper()}正常: {utilization*100:.1f}%"
 
-            
+
 
             result = {
 
@@ -1742,19 +1742,19 @@ message = f"{greek.upper()}
 
             }
 
-            
+
 
             results.append(result)
 
             logger.info(f"{greek.upper()}检? {message}")
 
-        
+
 
         return results
 
-    
 
-    def generate_alert(self, 
+
+    def generate_alert(self,
 
                       risk_metrics: Dict[str, Any],
 
@@ -1762,13 +1762,13 @@ message = f"{greek.upper()}
 
         """生成风险预警
 
-        
+
 
         Args:
 
             risk_metrics: 风险指标
 
-            alert_level: 预警等级（可选，自动判断?            
+            alert_level: 预警等级（可选，自动判断?
 
         Returns:
 
@@ -1788,7 +1788,7 @@ message = f"{greek.upper()}
 
                     max_utilization = max(max_utilization, value)
 
-            
+
 
             if max_utilization >= 1.0:
 
@@ -1806,7 +1806,7 @@ message = f"{greek.upper()}
 
                 alert_level = RiskLevel.P3
 
-        
+
 
         alert = {
 
@@ -1822,23 +1822,23 @@ message = f"{greek.upper()}
 
         }
 
-        
+
 
         self.alerts.append(alert)
 
         logger.warning(f"风险预警 [{alert_level.value}]: {alert['message']}")
 
-        
+
 
         return alert
 
-    
+
 
     def _generate_alert_message(self, level: RiskLevel, metrics: Dict) -> str:
 
         """生成预警消息
 
-        
+
 
         Args:
 
@@ -1846,7 +1846,7 @@ message = f"{greek.upper()}
 
             metrics: 风险指标
 
-            
+
 
         Returns:
 
@@ -1870,17 +1870,17 @@ message = f"{greek.upper()}
 
             return f"【低风险】风险指标正?
 
-    
+
 
     def get_alerts_by_level(self, level: RiskLevel) -> List[Dict]:
 
-        """按等级获取预?        
+        """按等级获取预?
 
         Args:
 
             level: 预警等级
 
-            
+
 
         Returns:
 
@@ -1890,7 +1890,7 @@ message = f"{greek.upper()}
 
         return [alert for alert in self.alerts if alert['level'] == level.value]
 
-    
+
 
     def clear_alerts(self):
 
@@ -1924,13 +1924,13 @@ if __name__ == "__main__":
 
     }
 
-    
+
 
     # 创建风险预警系统
 
     alert_system = RiskAlertSystem(risk_limits)
 
-    
+
 
     # 检查VaR限额
 
@@ -1940,7 +1940,7 @@ if __name__ == "__main__":
 
     print(json.dumps(var_result, indent=2, ensure_ascii=False))
 
-    
+
 
 ?    greeks = {
 
@@ -1960,7 +1960,7 @@ print("\n
 
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
-    
+
 
     # 生成预警
 
@@ -2166,7 +2166,7 @@ class GlobalMarketDataEngine:
 
 """
 
-    
+
 
     功能力        - 港股市场数据
 
@@ -2180,7 +2180,7 @@ class GlobalMarketDataEngine:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -2188,19 +2188,19 @@ class GlobalMarketDataEngine:
 
         pass
 
-    
+
 
     def fetch_hk_stock_data(self, symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
 
         """获取港股数据
 
-        
+
 
         Args:
 
             start_date: 开始日?            end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -2214,13 +2214,13 @@ class GlobalMarketDataEngine:
 
             df = ak.stock_hk_daily(symbol=symbol, adjust="qfq")
 
-            
+
 
             # 过滤日期范围
 
             df = df[(df['日期'] >= start_date) & (df['日期'] <= end_date)]
 
-            
+
 
             # 统一列名
 
@@ -2240,7 +2240,7 @@ class GlobalMarketDataEngine:
 
             })
 
-            
+
 
             logger.info(f"获取港股数据成功: {symbol}, {len(df)}?)
 
@@ -2252,13 +2252,13 @@ class GlobalMarketDataEngine:
 
             return None
 
-    
+
 
     def fetch_us_stock_data(self, symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
 
         """获取美股数据
 
-        
+
 
         Args:
 
@@ -2266,7 +2266,7 @@ class GlobalMarketDataEngine:
 
             start_date: 开始日?            end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -2282,7 +2282,7 @@ class GlobalMarketDataEngine:
 
             df = ticker.history(start=start_date, end=end_date)
 
-            
+
 
             # 重置索引
 
@@ -2304,7 +2304,7 @@ class GlobalMarketDataEngine:
 
             })
 
-            
+
 
             logger.info(f"获取美股数据成功: {symbol}, {len(df)}?)
 
@@ -2316,7 +2316,7 @@ class GlobalMarketDataEngine:
 
             return None
 
-    
+
 
 #
 
@@ -2456,7 +2456,7 @@ class GlobalMarketDataEngine:
 
 
 
-含P0/P1/P2三级模块的详细实施方案，确保数据源层达到专业机构95%能力水平?> 
+含P0/P1/P2三级模块的详细实施方案，确保数据源层达到专业机构95%能力水平?>
 
 ```---
 
@@ -2521,4 +2521,3 @@ class GlobalMarketDataEngine:
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
 
 ```
-

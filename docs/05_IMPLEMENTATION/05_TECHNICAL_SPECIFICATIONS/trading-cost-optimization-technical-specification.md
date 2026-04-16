@@ -50,7 +50,7 @@ class TradingCostOptimizer:
 
 
 
-    
+
 
 
 
@@ -78,7 +78,7 @@ class TradingCostOptimizer:
 
 
 
-    
+
 
 
 
@@ -138,7 +138,7 @@ def almgren_chriss_impact(size: float, adv: float, sigma: float) -> float:
 
 
 
-    
+
 
 
 
@@ -181,6 +181,3 @@ def almgren_chriss_impact(size: float, adv: float, sigma: float) -> float:
 
 
 **ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final
-
-
-

@@ -38,7 +38,7 @@ def main():
             continue
         ok, msg = check_file(md)
         results.append((md, ok, msg))
-    
+
     # 分类统计
     total = len(results)
     valid = sum(1 for _, ok, _ in results if ok)
@@ -46,14 +46,14 @@ def main():
     missing_frontmatter = sum(1 for _, _, msg in results if '无 YAML frontmatter' in msg)
     missing_fields = sum(1 for _, _, msg in results if msg.startswith('缺失字段'))
     read_errors = sum(1 for _, _, msg in results if '读取失败' in msg)
-    
+
     print(f"\n检查完成:")
     print(f"  有效 frontmatter: {valid}")
     print(f"  无效 frontmatter: {invalid}")
     print(f"    无 YAML frontmatter: {missing_frontmatter}")
     print(f"    字段缺失: {missing_fields}")
     print(f"    读取错误: {read_errors}")
-    
+
     # 输出有问题的文件（最多20个）
     print("\n=== 问题文件列表 (最多20个) ===")
     count = 0
@@ -64,7 +64,7 @@ def main():
             if count >= 20:
                 print("... (更多文件未显示)")
                 break
-    
+
     # 保存完整结果到文件
     with open('frontmatter_audit_report.txt', 'w', encoding='utf-8') as f:
         f.write("前端元数据完整性审计报告\n")
@@ -74,7 +74,7 @@ def main():
             f.write(f"{status}: {path}\n")
             if not ok:
                 f.write(f"    原因: {msg}\n")
-    
+
     print(f"\n完整报告已保存到 frontmatter_audit_report.txt")
 
 if __name__ == '__main__':

@@ -563,7 +563,7 @@ with mlflow.start_run():
 
     model = train_factor_model(factors)
 
-    
+
 
     # 记录参数和指标
 
@@ -571,7 +571,7 @@ with mlflow.start_run():
 
     mlflow.log_metrics(metrics)
 
-    
+
 
     # 保存模型
 
@@ -1284,4 +1284,3 @@ report = dataset.get_expectation_suite()
 **最后更新**: 2026-04-08
 
 **状态**: ✅ 完成
-

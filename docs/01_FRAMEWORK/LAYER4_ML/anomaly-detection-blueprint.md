@@ -19,7 +19,7 @@ estimated_hours: 20
 
 > **核心职责**: 提供异常检测模型的完整架构设计，实现价格异常、交易异常和市场崩盘预警能力
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：异常检测模型架构、训练、部署
 
@@ -161,13 +161,13 @@ class AnomalyDetector:
 
     """异常检测器"""
 
-    
+
 
     def __init__(self, contamination: float = 0.1):
 
         self.contamination = contamination
 
-        
+
 
     def train_isolation_forest(self, X_train):
 
@@ -187,7 +187,7 @@ class AnomalyDetector:
 
         return model
 
-    
+
 
     def train_autoencoder(self, X_train):
 
@@ -209,7 +209,7 @@ class AnomalyDetector:
 
         return model
 
-    
+
 
     def train_vae(self, X_train):
 
@@ -227,7 +227,7 @@ class AnomalyDetector:
 
         return model
 
-    
+
 
     def detect_anomalies(self, model, X):
 
@@ -237,7 +237,7 @@ class AnomalyDetector:
 
         predictions = model.predict(X)
 
-        
+
 
         return {
 
@@ -263,7 +263,7 @@ class QuantAnomalyDetector:
 
     """量化异常检测器"""
 
-    
+
 
     def __init__(self):
 
@@ -271,7 +271,7 @@ class QuantAnomalyDetector:
 
         self.trade_detector = AnomalyDetector()
 
-        
+
 
     def detect_price_anomaly(self, price_data):
 
@@ -281,11 +281,11 @@ class QuantAnomalyDetector:
 
         result = self.price_detector.detect_anomalies(model, price_data)
 
-        
+
 
         return result
 
-    
+
 
     def detect_trade_anomaly(self, trade_data):
 
@@ -295,11 +295,11 @@ class QuantAnomalyDetector:
 
         result = self.trade_detector.detect_anomalies(model, trade_data)
 
-        
+
 
         return result
 
-    
+
 
     def detect_market_crash(self, market_data):
 
@@ -309,13 +309,13 @@ class QuantAnomalyDetector:
 
         result = self.price_detector.detect_anomalies(model, market_data)
 
-        
+
 
         if result["anomaly_ratio"] > 0.3:
 
             self.trigger_alert("市场崩盘风险")
 
-        
+
 
         return result
 
@@ -351,13 +351,13 @@ class AnomalyDetectionService:
 
     """异常检测服务"""
 
-    
+
 
     def __init__(self):
 
         self.model = bentoml.pytorch.get("anomaly_detector:latest").to_runner()
 
-        
+
 
     @bentoml.api
 
@@ -367,7 +367,7 @@ class AnomalyDetectionService:
 
         scores = self.model.run(data)
 
-        
+
 
         return {
 
@@ -412,4 +412,3 @@ class AnomalyDetectionService:
 **蓝图版本**: v1.0.0
 
 **创建日期**: 2026-04-07
-

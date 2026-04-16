@@ -209,7 +209,7 @@ data: ﻛﭨﺓﮔﺙﮔﺍﮔ؟ﺅﺙﮒﮒ?close'ﮒﺅﺙ
 
 
 
-        window: ﮒﻝﻝ۹ﮒ۲ﮔﺅﺙﻠﭨﻟ؟۳20ﻛﺕ۹ﻛﭦ۳ﮔﮔ۴ﺅﺙ?    
+        window: ﮒﻝﻝ۹ﮒ۲ﮔﺅﺙﻠﭨﻟ؟۳20ﻛﺕ۹ﻛﭦ۳ﮔﮔ۴ﺅﺙ?
 
 
 
@@ -221,7 +221,7 @@ data: ﻛﭨﺓﮔﺙﮔﺍﮔ؟ﺅﺙﮒﮒ?close'ﮒﺅﺙ
 
 
 
-    
+
 
 
 
@@ -545,7 +545,7 @@ def risk_adjusted_momentum(
 
 
 
-    
+
 
 
 
@@ -557,7 +557,7 @@ data: ﻛﭨﺓﮔﺙﮔﺍﮔ؟
 
 
 
-        return_window: ﮔﭘﻝﻝﻟ؟۰ﻝ؟ﻝ۹ﮒ?        vol_window: ﮔﺏ۱ﮒ۷ﻝﻟ؟۰ﻝ؟ﻝ۹ﮒ?    
+        return_window: ﮔﭘﻝﻝﻟ؟۰ﻝ؟ﻝ۹ﮒ?        vol_window: ﮔﺏ۱ﮒ۷ﻝﻟ؟۰ﻝ؟ﻝ۹ﮒ?
 
 
 
@@ -765,7 +765,7 @@ data: ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﮔﺍﮔ؟ﺅﺙﮒﮒ?close'ﮒ?volume'�
 
 
 
-        window: ﮒﻝﻝ۹ﮒ۲ﮔ?    
+        window: ﮒﻝﻝ۹ﮒ۲ﮔ?
 
 
 
@@ -801,7 +801,7 @@ data: ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﮔﺍﮔ؟ﺅﺙﮒﮒ?close'ﮒ?volume'�
 
 
 
-    
+
 
 
 
@@ -813,7 +813,7 @@ data: ﻛﭨﺓﮔﺙﮒﮔﻛﭦ۳ﻠﮔﺍﮔ؟ﺅﺙﮒﮒ?close'ﮒ?volume'�
 
 
 
-    
+
 
 
 
@@ -1005,7 +1005,7 @@ def earnings_revision_momentum(
 
 
 
-    
+
 
 
 
@@ -1021,7 +1021,7 @@ def earnings_revision_momentum(
 
 
 
-    
+
 
 
 
@@ -1049,7 +1049,7 @@ def earnings_revision_momentum(
 
 
 
-    
+
 
 
 
@@ -1065,7 +1065,7 @@ def earnings_revision_momentum(
 
 
 
-    
+
 
 
 
@@ -1073,7 +1073,7 @@ def earnings_revision_momentum(
 
 
 
-    
+
 
 
 
@@ -1426,6 +1426,3 @@ def earnings_revision_momentum(
 
 
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-03
-
-
-

@@ -249,9 +249,9 @@ SELECT pg_reload_conf();
 
 -- 查看慢查询
 
-SELECT * FROM pg_stat_statements 
+SELECT * FROM pg_stat_statements
 
-ORDER BY total_time DESC 
+ORDER BY total_time DESC
 
 LIMIT 10;
 
@@ -279,7 +279,7 @@ EXPLAIN ANALYZE SELECT * FROM factors WHERE name = 'momentum';
 
 -- 查看索引使用情况
 
-SELECT 
+SELECT
 
     schemaname,
 
@@ -301,7 +301,7 @@ ORDER BY idx_scan ASC;
 
 -- 查找缺失索引
 
-SELECT 
+SELECT
 
     schemaname,
 
@@ -349,7 +349,7 @@ SELECT count(*) FROM pg_stat_activity;
 
 -- 查看连接详情
 
-SELECT 
+SELECT
 
     pid,
 
@@ -373,11 +373,11 @@ WHERE state = 'active';
 
 -- 清理空闲连接
 
-SELECT pg_terminate_backend(pid) 
+SELECT pg_terminate_backend(pid)
 
-FROM pg_stat_activity 
+FROM pg_stat_activity
 
-WHERE state = 'idle' 
+WHERE state = 'idle'
 
   AND query_start < NOW() - INTERVAL '10 minutes';
 
@@ -593,7 +593,7 @@ def get_factor_with_cache(factor_id):
 
     cache_key = f"factor:{factor_id}"
 
-    
+
 
     # 尝试从缓存获取
 
@@ -603,13 +603,13 @@ def get_factor_with_cache(factor_id):
 
         return json.loads(cached)
 
-    
+
 
     # 从数据库获取
 
     factor = db.query(Factor).get(factor_id)
 
-    
+
 
     # 写入缓存
 
@@ -623,7 +623,7 @@ def get_factor_with_cache(factor_id):
 
     )
 
-    
+
 
     return factor
 
@@ -657,13 +657,13 @@ class CachedQuery(Query):
 
         cached = cache.get(cache_key)
 
-        
+
 
         if cached:
 
             return iter(cached)
 
-        
+
 
         result = list(super().__iter__())
 
@@ -783,7 +783,7 @@ CREATE INDEX CONCURRENTLY idx_factors_name_type ON factors(name, type);
 
 -- 部分索引
 
-CREATE INDEX CONCURRENTLY idx_factors_active ON factors(name) 
+CREATE INDEX CONCURRENTLY idx_factors_active ON factors(name)
 
 WHERE deleted_at IS NULL;
 
@@ -813,7 +813,7 @@ CREATE INDEX CONCURRENTLY idx_factors_lower_name ON factors(LOWER(name));
 
 -- 使用子查询
 
-SELECT * FROM factors 
+SELECT * FROM factors
 
 WHERE id IN (SELECT factor_id FROM portfolios WHERE user_id = 1);
 
@@ -865,9 +865,9 @@ SELECT * FROM factors ORDER BY id LIMIT 10 OFFSET 10000;
 
 -- 游标分页（性能好）
 
-SELECT * FROM factors 
+SELECT * FROM factors
 
-WHERE id > 10000 
+WHERE id > 10000
 
 ORDER BY id LIMIT 10;
 
@@ -1111,7 +1111,7 @@ http {
 
     keepalive_requests 100;
 
-    
+
 
     # 缓冲区优化
 
@@ -1121,7 +1121,7 @@ http {
 
     client_max_body_size 8m;
 
-    
+
 
     # 压缩
 
@@ -1209,23 +1209,23 @@ async def metrics_middleware(request, call_next):
 
     start_time = time.time()
 
-    
+
 
     REQUEST_COUNT.inc()
 
     ACTIVE_CONNECTIONS.inc()
 
-    
+
 
     response = await call_next(request)
 
-    
+
 
     REQUEST_LATENCY.observe(time.time() - start_time)
 
     ACTIVE_CONNECTIONS.dec()
 
-    
+
 
     return response
 
@@ -1249,7 +1249,7 @@ async def metrics_middleware(request, call_next):
 
 CREATE VIEW db_performance_metrics AS
 
-SELECT 
+SELECT
 
     (SELECT count(*) FROM pg_stat_activity) AS active_connections,
 
@@ -1291,7 +1291,7 @@ scrape_configs:
 
       - targets: ['localhost:9100']
 
-  
+
 
   - job_name: 'postgres'
 
@@ -1299,7 +1299,7 @@ scrape_configs:
 
       - targets: ['localhost:9187']
 
-  
+
 
   - job_name: 'redis'
 
@@ -1341,7 +1341,7 @@ class PerformanceTest(HttpUser):
 
     wait_time = between(1, 3)
 
-    
+
 
     @task
 
@@ -1349,7 +1349,7 @@ class PerformanceTest(HttpUser):
 
         self.client.get("/api/v1/factors")
 
-    
+
 
     @task
 
@@ -1426,4 +1426,3 @@ ab -n 10000 -c 100 http://localhost:8000/api/v1/factors
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

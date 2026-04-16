@@ -51,7 +51,7 @@ implementation_status: 设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -223,7 +223,7 @@ class PortfolioRebalancer:
 
 
 
-    组合再平衡器核心?    
+    组合再平衡器核心?
 
 
 
@@ -241,7 +241,7 @@ class PortfolioRebalancer:
 
 
 
-    
+
 
 
 
@@ -259,7 +259,7 @@ class PortfolioRebalancer:
 
 
 
-        初始化再平衡?        
+        初始化再平衡?
 
 
 
@@ -283,7 +283,7 @@ class PortfolioRebalancer:
 
 
 
-    
+
 
 
 
@@ -325,7 +325,7 @@ class PortfolioRebalancer:
 
 
 
-        
+
 
 
 
@@ -349,7 +349,7 @@ class PortfolioRebalancer:
 
 
 
-            market_state: 市场?            
+            market_state: 市场?
 
 
 
@@ -379,7 +379,7 @@ class PortfolioRebalancer:
 
 
 
-    
+
 
 
 
@@ -415,7 +415,7 @@ class PortfolioRebalancer:
 
 
 
-        优化再平衡方?        
+        优化再平衡方?
 
 
 
@@ -445,7 +445,7 @@ class PortfolioRebalancer:
 
 
 
-            
+
 
 
 
@@ -469,7 +469,7 @@ class PortfolioRebalancer:
 
 
 
-    
+
 
 
 
@@ -493,7 +493,7 @@ class PortfolioRebalancer:
 
 
 
-        执行再平?        
+        执行再平?
 
 
 
@@ -505,7 +505,7 @@ class PortfolioRebalancer:
 
 
 
-            plan: 再平衡计?            
+            plan: 再平衡计?
 
 
 
@@ -583,7 +583,7 @@ class RLRebalanceAgent:
 
 
 
-    
+
 
 
 
@@ -595,7 +595,7 @@ class RLRebalanceAgent:
 
 
 
-    
+
 
 
 
@@ -619,7 +619,7 @@ class RLRebalanceAgent:
 
 
 
-        
+
 
 
 
@@ -649,7 +649,7 @@ class RLRebalanceAgent:
 
 
 
-    
+
 
 
 
@@ -685,7 +685,7 @@ class RLRebalanceAgent:
 
 
 
-        
+
 
 
 
@@ -715,7 +715,7 @@ class RLRebalanceAgent:
 
 
 
-    
+
 
 
 
@@ -745,7 +745,7 @@ class RLRebalanceAgent:
 
 
 
-        
+
 
 
 
@@ -757,7 +757,7 @@ class RLRebalanceAgent:
 
 
 
-            observation: 观察?            
+            observation: 观察?
 
 
 
@@ -973,7 +973,7 @@ def should_rebalance(
 
 
 
-    再平衡决策算?    
+    再平衡决策算?
 
 
 
@@ -991,7 +991,7 @@ def should_rebalance(
 
 
 
-    
+
 
 
 
@@ -1015,7 +1015,7 @@ def should_rebalance(
 
 
 
-        threshold: ?        
+        threshold: ?
 
 
 
@@ -1057,7 +1057,7 @@ def should_rebalance(
 
 
 
-    
+
 
 
 
@@ -1075,7 +1075,7 @@ def should_rebalance(
 
 
 
-    
+
 
 
 
@@ -1105,7 +1105,7 @@ def should_rebalance(
 
 
 
-    
+
 
 
 
@@ -1135,7 +1135,7 @@ def should_rebalance(
 
 
 
-    
+
 
 
 
@@ -1195,7 +1195,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-    再平衡强化学习环?    
+    再平衡强化学习环?
 
 
 
@@ -1225,7 +1225,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-    
+
 
 
 
@@ -1243,7 +1243,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        初始化环?        
+        初始化环?
 
 
 
@@ -1273,7 +1273,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1303,7 +1303,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1333,7 +1333,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-    
+
 
 
 
@@ -1357,7 +1357,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1375,7 +1375,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-            
+
 
 
 
@@ -1423,7 +1423,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1441,7 +1441,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1459,7 +1459,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1471,7 +1471,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-    
+
 
 
 
@@ -1495,7 +1495,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1525,7 +1525,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1549,7 +1549,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1567,7 +1567,7 @@ class RebalanceEnv(gym.Env):
 
 
 
-        
+
 
 
 
@@ -1633,7 +1633,7 @@ class TestPortfolioRebalancing:
 
 
 
-    
+
 
 
 
@@ -1663,7 +1663,7 @@ class TestPortfolioRebalancing:
 
 
 
-        
+
 
 
 
@@ -1675,7 +1675,7 @@ class TestPortfolioRebalancing:
 
 
 
-        
+
 
 
 
@@ -1693,7 +1693,7 @@ class TestPortfolioRebalancing:
 
 
 
-    
+
 
 
 
@@ -1723,7 +1723,7 @@ class TestPortfolioRebalancing:
 
 
 
-        
+
 
 
 
@@ -1747,7 +1747,7 @@ class TestPortfolioRebalancing:
 
 
 
-        
+
 
 
 
@@ -1771,7 +1771,7 @@ class TestPortfolioRebalancing:
 
 
 
-        
+
 
 
 
@@ -1934,8 +1934,3 @@ torch>=2.0.0
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 实施开?
-
-
-
-
-

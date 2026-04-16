@@ -38,7 +38,7 @@ implementation_status: ﮔﮔﺁﻟ۶ﮔﺙﻟ؟ﺝﻟ؟۰ﮒ؟?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -200,7 +200,7 @@ implementation_status: ﮔﮔﺁﻟ۶ﮔﺙﻟ؟ﺝﻟ؟۰ﮒ؟?
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*:
 
 
 
@@ -220,7 +220,7 @@ implementation_status: ﮔﮔﺁﻟ۶ﮔﺙﻟ؟ﺝﻟ؟۰ﮒ؟?
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -596,7 +596,7 @@ class DataDriftDetectorAPI:
 
 
 
-    
+
 
 
 
@@ -632,7 +632,7 @@ class DataDriftDetectorAPI:
 
 
 
-        ﮔ۲ﮔﭖﻝﺗﮒﺝﮔﺙ?        
+        ﮔ۲ﮔﭖﻝﺗﮒﺝﮔﺙ?
 
 
 
@@ -652,7 +652,7 @@ class DataDriftDetectorAPI:
 
 
 
-            methods: ﮔ۲ﮔﭖﮔﺗﮔﺏﮒ?            
+            methods: ﮔ۲ﮔﭖﮔﺗﮔﺏﮒ?
 
 
 
@@ -668,7 +668,7 @@ class DataDriftDetectorAPI:
 
 
 
-    
+
 
 
 
@@ -700,7 +700,7 @@ class DataDriftDetectorAPI:
 
 
 
-        ﮔ۲ﮔﭖﮔ۵ﮒﺟﭖﮔﺙ?        
+        ﮔ۲ﮔﭖﮔ۵ﮒﺟﭖﮔﺙ?
 
 
 
@@ -720,7 +720,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-            
+
 
 
 
@@ -736,7 +736,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-    
+
 
 
 
@@ -764,7 +764,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-        ﮔ۲ﮔﭖﻠ۱ﮔﭖﮔﺙ?        
+        ﮔ۲ﮔﭖﻠ۱ﮔﭖﮔﺙ?
 
 
 
@@ -780,7 +780,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-            
+
 
 
 
@@ -796,7 +796,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-    
+
 
 
 
@@ -824,7 +824,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-        
+
 
 
 
@@ -836,7 +836,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-            
+
 
 
 
@@ -856,7 +856,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-    
+
 
 
 
@@ -888,7 +888,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-        
+
 
 
 
@@ -904,7 +904,7 @@ ground_truth: ﻝﮒ؟ﮔﻝﺝ
 
 
 
-            
+
 
 
 
@@ -1656,7 +1656,7 @@ class TestDataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -1672,7 +1672,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1712,7 +1712,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1736,7 +1736,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1748,7 +1748,7 @@ class TestDataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -1764,7 +1764,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1796,7 +1796,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1820,7 +1820,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1836,7 +1836,7 @@ class TestDataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -1852,7 +1852,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1868,7 +1868,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1876,7 +1876,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1900,7 +1900,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1908,7 +1908,7 @@ class TestDataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -1924,7 +1924,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1936,7 +1936,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1944,7 +1944,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -1952,7 +1952,7 @@ class TestDataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -1968,7 +1968,7 @@ class TestDataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -2645,6 +2645,3 @@ performance_benchmarks:
 
 
 **ﻝﭨﺑﮔ۳?*: AIﮒﺓ۴ﻝ۷?
-
-
-

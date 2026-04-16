@@ -35,7 +35,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -51,11 +51,11 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001  
+> **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001
 
 
 
-> **ﻝﮔ؛**: v1.0  
+> **ﻝﮔ؛**: v1.0
 
 
 
@@ -703,7 +703,7 @@ result = self.strategy_factory.create_strategy(
 
 
 
-    
+
 
 
 
@@ -723,7 +723,7 @@ config: ﻝﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-    
+
 
 
 
@@ -735,7 +735,7 @@ config: ﻝﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-    
+
 
 
 
@@ -795,7 +795,7 @@ def create_strategy(strategy_type, strategy_id, config=None):
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ registry: ﻝﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝﻝ۴ﮒ؟ﻛﺝﻝﺙ
 
 
 
-        _lock: ﻝﭦﺟﻝ۷ﻠ?    
+        _lock: ﻝﭦﺟﻝ۷ﻠ?
 
 
 
@@ -1049,7 +1049,7 @@ def create_strategy(
 
 
 
-    
+
 
 
 
@@ -1057,7 +1057,7 @@ def create_strategy(
 
 
 
-    
+
 
 
 
@@ -1191,7 +1191,7 @@ def get_strategy_factory():
 
 
 
-    
+
 
 
 
@@ -1339,7 +1339,7 @@ def process_data(data):
 
 
 
-    
+
 
 
 
@@ -1351,7 +1351,7 @@ def process_data(data):
 
 
 
-    
+
 
 
 
@@ -1613,15 +1613,12 @@ def process_data(data):
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 
 
 **ﻝﮔ؛**: v1.0
-
-
-

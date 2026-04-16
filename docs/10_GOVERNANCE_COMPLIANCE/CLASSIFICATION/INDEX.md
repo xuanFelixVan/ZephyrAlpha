@@ -39,7 +39,7 @@ layer: layer_00
 
 > **核心职责**: 提供CLASSIFICATION目录下的文档导航
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本索引负责：CLASSIFICATION目录下的文档导航
 
@@ -57,9 +57,9 @@ layer: layer_00
 
 
 
-**目录路径**: 10_GOVERNANCE_COMPLIANCE\CLASSIFICATION  
+**目录路径**: 10_GOVERNANCE_COMPLIANCE\CLASSIFICATION
 
-**文档数量**: 1个  
+**文档数量**: 1个
 
 **最后更新**: 2026-04-07 12:40:48
 
@@ -107,7 +107,6 @@ layer: layer_00
 
 
 
-**索引生成**: 文档治理优化系统  
+**索引生成**: 文档治理优化系统
 
 **下一步**: 定期更新索引，确保文档完整性
-

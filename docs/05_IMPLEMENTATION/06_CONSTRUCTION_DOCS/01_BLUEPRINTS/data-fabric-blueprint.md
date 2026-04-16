@@ -259,13 +259,13 @@ class DataSource:
 
 class DataIngestionManager:
 
-    
+
 
     def __init__(self):
 
         self.data_sources: Dict[str, DataSource] = {}
 
-    
+
 
     def register_source(self, source_config: Dict[str, Any]) -> DataSource:
 
@@ -283,13 +283,13 @@ class DataIngestionManager:
 
         )
 
-        
+
 
         self.data_sources[source.source_id] = source
 
         return source
 
-    
+
 
     def start_ingestion(self, source_id: str):
 
@@ -301,7 +301,7 @@ class DataIngestionManager:
 
             return False
 
-        
+
 
         # 根据采集类型启动采集
 
@@ -313,11 +313,11 @@ class DataIngestionManager:
 
             self._start_api_ingestion(source)
 
-        
+
 
         return True
 
-    
+
 
     def _start_cdc_ingestion(self, source: DataSource):
 
@@ -327,7 +327,7 @@ class DataIngestionManager:
 
         pass
 
-    
+
 
     def _start_api_ingestion(self, source: DataSource):
 
@@ -359,7 +359,7 @@ class DataStreamProcessor:
 
     """数据流处理器"""
 
-    
+
 
     def __init__(self, kafka_servers: List[str]):
 
@@ -371,13 +371,13 @@ class DataStreamProcessor:
 
         self.processors: Dict[str, Callable] = {}
 
-    
+
 
     def register_processor(self, topic: str, processor: Callable):
 
         self.processors[topic] = processor
 
-    
+
 
     def start_processing(self, input_topic: str, output_topic: str):
 
@@ -391,7 +391,7 @@ class DataStreamProcessor:
 
         )
 
-        
+
 
         producer = KafkaProducer(
 
@@ -401,11 +401,11 @@ class DataStreamProcessor:
 
         )
 
-        
+
 
         processor = self.processors.get(input_topic)
 
-        
+
 
         for message in consumer:
 
@@ -415,9 +415,9 @@ class DataStreamProcessor:
 
                 producer.send(output_topic, value=processed_data)
 
-    
 
-    def transform_data(self, data: Dict[str, Any], 
+
+    def transform_data(self, data: Dict[str, Any],
 
                        transform_rules: Dict[str, Any]) -> Dict[str, Any]:
 
@@ -425,7 +425,7 @@ class DataStreamProcessor:
 
         transformed_data = {}
 
-        
+
 
         for target_field, rule in transform_rules.items():
 
@@ -433,13 +433,13 @@ class DataStreamProcessor:
 
             transform_type = rule.get('transform_type')
 
-            
+
 
             if source_field in data:
 
                 value = data[source_field]
 
-                
+
 
                 if transform_type == 'uppercase':
 
@@ -457,7 +457,7 @@ class DataStreamProcessor:
 
                     transformed_data[target_field] = value
 
-        
+
 
         return transformed_data
 
@@ -489,13 +489,13 @@ class UnifiedDataAPI:
 
     """统一数据API"""
 
-    
+
 
     def __init__(self, redis_host: str, redis_port: int):
 
         self.redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
-    
+
 
     async def get_data(self, data_type: str, key: str) -> Optional[Dict[str, Any]]:
 
@@ -505,19 +505,19 @@ class UnifiedDataAPI:
 
         cached_data = self.redis_client.get(cache_key)
 
-        
+
 
         if cached_data:
 
             return json.loads(cached_data)
 
-        
+
 
         # 从数据源获取数据
 
         data = await self._fetch_from_source(data_type, key)
 
-        
+
 
         if data:
 
@@ -525,13 +525,13 @@ class UnifiedDataAPI:
 
             self.redis_client.setex(cache_key, 3600, json.dumps(data))
 
-        
+
 
         return data
 
-    
 
-    async def set_data(self, data_type: str, key: str, 
+
+    async def set_data(self, data_type: str, key: str,
 
                        data: Dict[str, Any], ttl: int = 3600):
 
@@ -541,9 +541,9 @@ class UnifiedDataAPI:
 
         self.redis_client.setex(cache_key, ttl, json.dumps(data))
 
-    
 
-    async def _fetch_from_source(self, data_type: str, 
+
+    async def _fetch_from_source(self, data_type: str,
 
                                   key: str) -> Optional[Dict[str, Any]]:
 
@@ -565,13 +565,13 @@ async def get_data(data_type: str, key: str):
 
     data = await api.get_data(data_type, key)
 
-    
+
 
     if not data:
 
         raise HTTPException(status_code=404, detail="Data not found")
 
-    
+
 
     return data
 
@@ -617,7 +617,7 @@ services:
 
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
 
-  
+
 
   zookeeper:
 
@@ -627,7 +627,7 @@ services:
 
       - ZOOKEEPER_CLIENT_PORT=2181
 
-  
+
 
   debezium:
 
@@ -649,7 +649,7 @@ services:
 
       - STATUS_STORAGE_TOPIC=my_connect_statuses
 
-  
+
 
   redis:
 
@@ -663,7 +663,7 @@ services:
 
       - redis-data:/data
 
-  
+
 
   api:
 
@@ -701,7 +701,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -733,7 +733,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -849,7 +849,7 @@ graph LR
 
     B --> D1["DATA OBSERVABIL"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -900,12 +900,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

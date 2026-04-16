@@ -314,7 +314,7 @@ class HistoricalReplayEngine:
 
         self.cerebro = bt.Cerebro()
 
-        
+
 
     def add_data(self, data_feed):
 
@@ -322,7 +322,7 @@ class HistoricalReplayEngine:
 
         self.cerebro.adddata(data_feed)
 
-        
+
 
     def add_strategy(self, strategy_class, **kwargs):
 
@@ -330,7 +330,7 @@ class HistoricalReplayEngine:
 
         self.cerebro.addstrategy(strategy_class, **kwargs)
 
-        
+
 
     def set_initial_cash(self, cash):
 
@@ -338,7 +338,7 @@ class HistoricalReplayEngine:
 
         self.cerebro.broker.setcash(cash)
 
-        
+
 
     def run_replay(self, start_date=None, end_date=None):
 
@@ -352,13 +352,13 @@ class HistoricalReplayEngine:
 
             self.cerebro.runend = end_date
 
-            
+
 
         results = self.cerebro.run()
 
         return results
 
-        
+
 
     def get_performance(self):
 
@@ -368,7 +368,7 @@ class HistoricalReplayEngine:
 
         initial_value = self.cerebro.broker.startingcash
 
-        
+
 
         return {
 
@@ -408,7 +408,7 @@ class DataReplayer:
 
         self.current_index = 0
 
-        
+
 
     def load_data(self, file_path, start_date=None, end_date=None):
 
@@ -416,7 +416,7 @@ class DataReplayer:
 
         data = pd.read_csv(file_path, parse_dates=['datetime'], index_col='datetime')
 
-        
+
 
         if start_date:
 
@@ -426,13 +426,13 @@ class DataReplayer:
 
             data = data[:end_date]
 
-            
+
 
         self.data = data
 
         return data
 
-        
+
 
     def replay(self, callback):
 
@@ -444,7 +444,7 @@ class DataReplayer:
 
             self.current_index += 1
 
-            
+
 
     def replay_range(self, start_idx, end_idx, callback):
 
@@ -458,7 +458,7 @@ class DataReplayer:
 
             callback(index, row)
 
-            
+
 
     def get_current_bar(self):
 
@@ -470,7 +470,7 @@ class DataReplayer:
 
         return None
 
-        
+
 
     def reset(self):
 
@@ -530,7 +530,7 @@ class EventEngine:
 
         self.event_queue = []
 
-        
+
 
     def register_handler(self, event_type: EventType, handler: Callable):
 
@@ -538,7 +538,7 @@ class EventEngine:
 
         self.handlers[event_type].append(handler)
 
-        
+
 
     def unregister_handler(self, event_type: EventType, handler: Callable):
 
@@ -548,7 +548,7 @@ class EventEngine:
 
             self.handlers[event_type].remove(handler)
 
-            
+
 
     def put_event(self, event: Event):
 
@@ -556,7 +556,7 @@ class EventEngine:
 
         self.event_queue.append(event)
 
-        
+
 
     def process_events(self):
 
@@ -568,7 +568,7 @@ class EventEngine:
 
             self._process_event(event)
 
-            
+
 
     def _process_event(self, event: Event):
 
@@ -602,7 +602,7 @@ class ScenarioReplayer:
 
         self.scenarios = {}
 
-        
+
 
     def define_scenario(self, scenario_id, start_date, end_date, description):
 
@@ -618,7 +618,7 @@ class ScenarioReplayer:
 
         }
 
-        
+
 
     def replay_scenario(self, scenario_id, data, strategy):
 
@@ -630,21 +630,21 @@ class ScenarioReplayer:
 
             raise ValueError(f"场景 {scenario_id} 不存在")
 
-            
+
 
         start_date = scenario['start_date']
 
         end_date = scenario['end_date']
 
-        
+
 
         scenario_data = data[start_date:end_date]
 
-        
+
 
         results = self._execute_strategy(scenario_data, strategy)
 
-        
+
 
         return {
 
@@ -660,7 +660,7 @@ class ScenarioReplayer:
 
         }
 
-        
+
 
     def _execute_strategy(self, data, strategy):
 
@@ -668,7 +668,7 @@ class ScenarioReplayer:
 
         return strategy.run(data)
 
-        
+
 
     def compare_scenarios(self, scenario_ids, data, strategy):
 
@@ -752,7 +752,7 @@ class ReplayRecord:
 
     completed_at: datetime
 
-    
+
 
 @dataclass
 
@@ -974,7 +974,7 @@ class IHistoricalReplayer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -984,7 +984,7 @@ class IHistoricalReplayer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -994,7 +994,7 @@ class IHistoricalReplayer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -1231,4 +1231,3 @@ pf.total_return()
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

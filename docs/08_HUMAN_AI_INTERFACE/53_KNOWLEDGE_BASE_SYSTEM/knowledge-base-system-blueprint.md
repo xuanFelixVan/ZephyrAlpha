@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: Wiki.js + Elasticsearch  
+**主方案**: Wiki.js + Elasticsearch
 
 **集成**: 与文档中心整合
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

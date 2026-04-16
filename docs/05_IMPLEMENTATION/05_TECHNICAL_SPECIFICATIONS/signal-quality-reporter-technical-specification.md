@@ -43,7 +43,7 @@ applicable_scope: Layer 7 AI报告?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1317,13 +1317,13 @@ capacity = base_capacity * (1 - crowding_score) * signal_strength * 10
 
 
 
-stability_score = volatility_score * 0.4 
+stability_score = volatility_score * 0.4
 
 
 
 
 
-                + autocorr_score * 0.3 
+                + autocorr_score * 0.3
 
 
 
@@ -1401,13 +1401,13 @@ stability_score = volatility_score * 0.4
 
 
 
-quality_score = decay_score * 0.4 
+quality_score = decay_score * 0.4
 
 
 
 
 
-              + crowding_score * 0.3 
+              + crowding_score * 0.3
 
 
 
@@ -2110,8 +2110,3 @@ quality_score = decay_score * 0.4
 
 
 **维护?*: 首席技术评审官
-
-
-
-
-

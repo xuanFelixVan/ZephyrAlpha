@@ -13,9 +13,9 @@ if ($inputText) {
         $request = $inputText | ConvertFrom-Json
         $method = $request.method
         $id = $request.id
-        
+
         Write-Host "[MCP] 收到请求: $method (ID: $id)" | Out-Null
-        
+
         if ($method -eq "tools/list") {
             # 返回工具列表
             $tools = @(
@@ -76,7 +76,7 @@ if ($inputText) {
                     }
                 }
             )
-            
+
             $response = @{
                 jsonrpc = "2.0"
                 id = $id
@@ -84,18 +84,18 @@ if ($inputText) {
                     tools = $tools
                 }
             }
-            
+
             $responseJson = $response | ConvertTo-Json -Depth 10
             Write-Host $responseJson
         }
         elseif ($method -eq "tools/call") {
             $toolName = $request.params.name
             Write-Host "[MCP] 调用工具: $toolName" | Out-Null
-            
+
             # 执行对应的工具
             $output = ""
             $errorOutput = ""
-            
+
             switch ($toolName) {
                 "bandit-security-scanner" {
                     $output = bandit -r src/ -f json 2>&1
@@ -122,23 +122,23 @@ if ($inputText) {
                     $errorOutput = "未知的工具: $toolName"
                 }
             }
-            
+
             $content = @()
-            
+
             if ($output) {
                 $content += @{
                     type = "text"
                     text = $output.ToString()
                 }
             }
-            
+
             if ($errorOutput) {
                 $content += @{
                     type = "text"
                     text = "错误: $errorOutput"
                 }
             }
-            
+
             $response = @{
                 jsonrpc = "2.0"
                 id = $id
@@ -146,7 +146,7 @@ if ($inputText) {
                     content = $content
                 }
             }
-            
+
             $responseJson = $response | ConvertTo-Json -Depth 10
             Write-Host $responseJson
         }
@@ -157,7 +157,7 @@ if ($inputText) {
                 id = $id
                 result = @{}
             }
-            
+
             $responseJson = $response | ConvertTo-Json -Depth 10
             Write-Host $responseJson
         }

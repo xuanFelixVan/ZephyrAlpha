@@ -162,7 +162,7 @@ class DataSourceCostOptimizer:
 
     """数据源成本优化器"""
 
-    
+
 
     def __init__(self):
 
@@ -170,7 +170,7 @@ class DataSourceCostOptimizer:
 
         self.optimization_rules = []
 
-        
+
 
     def monitor_api_calls(self, source_name, api_calls):
 
@@ -180,7 +180,7 @@ class DataSourceCostOptimizer:
 
         total_cost = api_calls * cost_per_call
 
-        
+
 
         self.cost_metrics[source_name] = {
 
@@ -192,11 +192,11 @@ class DataSourceCostOptimizer:
 
         }
 
-        
+
 
         return total_cost
 
-    
+
 
     def generate_optimization_suggestions(self):
 
@@ -204,7 +204,7 @@ class DataSourceCostOptimizer:
 
         suggestions = []
 
-        
+
 
         for source, metrics in self.cost_metrics.items():
 
@@ -220,7 +220,7 @@ class DataSourceCostOptimizer:
 
                 })
 
-        
+
 
         return suggestions
 
@@ -271,4 +271,3 @@ class DataSourceCostOptimizer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

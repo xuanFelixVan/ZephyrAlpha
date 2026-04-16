@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 成本感知再平衡详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：交易成本建模、成本优化再平衡、换手率控制
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 在再平衡过程中考虑交易成本，优化净收益
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 成本建模：需要准确估计交易成本
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 执行策略：最优执行路径设计
 
-- **预期收益**: 
+- **预期收益**:
 
   - 降低交易成本对收益的侵蚀
 
@@ -232,7 +232,7 @@ class TransactionCostEstimator:
 
     """交易成本估计器"""
 
-    
+
 
     def __init__(self, model: TransactionCostModel):
 
@@ -240,7 +240,7 @@ class TransactionCostEstimator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def estimate_cost(
 
@@ -258,7 +258,7 @@ class TransactionCostEstimator:
 
         估计交易成本
 
-        
+
 
         参数:
 
@@ -268,7 +268,7 @@ class TransactionCostEstimator:
 
             volumes: 成交量数组（可选）
 
-            
+
 
         返回:
 
@@ -278,15 +278,15 @@ class TransactionCostEstimator:
 
         n_assets = len(trade_amounts)
 
-        
+
 
         fixed_cost = self.model.fixed_cost * n_assets
 
-        
+
 
         proportional_cost = np.sum(np.abs(trade_amounts) * self.model.proportional_cost)
 
-        
+
 
         market_impact = 0.0
 
@@ -300,15 +300,15 @@ class TransactionCostEstimator:
 
             )
 
-        
+
 
         total_cost = fixed_cost + proportional_cost + market_impact
 
-        
+
 
         self.logger.info(f"交易成本估计完成，总成本={total_cost:.6f}")
 
-        
+
 
         return total_cost
 
@@ -320,7 +320,7 @@ class CostAwareOptimizer:
 
     """成本感知优化器"""
 
-    
+
 
     def __init__(
 
@@ -340,7 +340,7 @@ class CostAwareOptimizer:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def optimize(
 
@@ -362,7 +362,7 @@ class CostAwareOptimizer:
 
         执行成本感知优化
 
-        
+
 
         参数:
 
@@ -376,7 +376,7 @@ class CostAwareOptimizer:
 
             volumes: 成交量数组
 
-            
+
 
         返回:
 
@@ -386,11 +386,11 @@ class CostAwareOptimizer:
 
         trade_amounts = (target_weights - current_weights) * portfolio_value
 
-        
+
 
         estimated_cost = self.cost_estimator.estimate_cost(trade_amounts, prices, volumes)
 
-        
+
 
         if estimated_cost / portfolio_value > self.cost_threshold:
 
@@ -408,7 +408,7 @@ class CostAwareOptimizer:
 
             adjusted_weights = target_weights
 
-        
+
 
         expected_improvement = self._estimate_improvement(
 
@@ -416,15 +416,15 @@ class CostAwareOptimizer:
 
         )
 
-        
+
 
         net_benefit = expected_improvement - estimated_cost / portfolio_value
 
-        
+
 
         asset_names = [f"asset_{i}" for i in range(len(current_weights))]
 
-        
+
 
         result = RebalancingResult(
 
@@ -442,15 +442,15 @@ class CostAwareOptimizer:
 
         )
 
-        
+
 
         self.logger.info(f"成本感知优化完成，净收益={net_benefit:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def _adjust_for_cost(
 
@@ -474,7 +474,7 @@ class CostAwareOptimizer:
 
         trade_magnitudes = np.abs(target_weights - current_weights)
 
-        
+
 
         total_trade = np.sum(trade_magnitudes)
 
@@ -482,25 +482,25 @@ class CostAwareOptimizer:
 
             return current_weights
 
-        
+
 
         reduction_factor = self.cost_threshold / (total_trade * self.model.proportional_cost)
 
         reduction_factor = min(1.0, reduction_factor)
 
-        
+
 
         adjusted_weights = current_weights + trade_directions * trade_magnitudes * reduction_factor
 
-        
+
 
         adjusted_weights = adjusted_weights / adjusted_weights.sum()
 
-        
+
 
         return adjusted_weights
 
-    
+
 
     def _estimate_improvement(
 
@@ -524,13 +524,13 @@ class ExecutionStrategy:
 
     """执行策略"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def generate_schedule(
 
@@ -548,7 +548,7 @@ class ExecutionStrategy:
 
         生成执行计划
 
-        
+
 
         参数:
 
@@ -558,7 +558,7 @@ class ExecutionStrategy:
 
             strategy: 执行策略 (twap, vwap)
 
-            
+
 
         返回:
 
@@ -568,7 +568,7 @@ class ExecutionStrategy:
 
         schedule = []
 
-        
+
 
         if strategy == "twap":
 
@@ -584,11 +584,11 @@ class ExecutionStrategy:
 
                 schedule.append(period_trades)
 
-        
+
 
         self.logger.info(f"执行计划生成完成，{n_periods}个周期")
 
-        
+
 
         return schedule
 
@@ -600,7 +600,7 @@ class CostAwareRebalancer:
 
     """成本感知再平衡器主类"""
 
-    
+
 
     def __init__(
 
@@ -618,7 +618,7 @@ class CostAwareRebalancer:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def rebalance(
 
@@ -640,7 +640,7 @@ class CostAwareRebalancer:
 
         执行成本感知再平衡
 
-        
+
 
         参数:
 
@@ -654,7 +654,7 @@ class CostAwareRebalancer:
 
             volumes: 成交量数组
 
-            
+
 
         返回:
 
@@ -668,15 +668,15 @@ class CostAwareRebalancer:
 
         )
 
-        
+
 
         self.logger.info(f"成本感知再平衡完成，净收益={result.net_benefit:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def get_execution_schedule(
 
@@ -795,4 +795,3 @@ class CostAwareRebalancer:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

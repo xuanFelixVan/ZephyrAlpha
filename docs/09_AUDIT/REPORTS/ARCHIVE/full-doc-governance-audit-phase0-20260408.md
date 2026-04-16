@@ -223,11 +223,11 @@ git checkout audit/backup-20260408
 
 
 
-- [x] inventory 覆盖全部 `*.md`（CSV 2793 行 + 表头）  
+- [x] inventory 覆盖全部 `*.md`（CSV 2793 行 + 表头）
 
-- [x] Git 标签 `audit-snapshot-20260408` 已存在  
+- [x] Git 标签 `audit-snapshot-20260408` 已存在
 
-- [x] 《audit_scope》已声明  
+- [x] 《audit_scope》已声明
 
 
 
@@ -245,11 +245,11 @@ git checkout audit/backup-20260408
 
 
 
-1. **根目录 `05_IMPLEMENTATION/`** 与 **`docs/05_IMPLEMENTATION/`** 双轨并存 → 单一事实来源待收敛。  
+1. **根目录 `05_IMPLEMENTATION/`** 与 **`docs/05_IMPLEMENTATION/`** 双轨并存 → 单一事实来源待收敛。
 
-2. **根目录 `temp_*.md`** → 与正式蓝图关系待梳理（归位 / 删除 / 归档须先评估）。  
+2. **根目录 `temp_*.md`** → 与正式蓝图关系待梳理（归位 / 删除 / 归档须先评估）。
 
-3. **超大审计报告**（如 1.6MB 单文件）→ 重复真理与归档策略风险（与 `09_AUDIT`、`06_ARCHIVE` 对照）。  
+3. **超大审计报告**（如 1.6MB 单文件）→ 重复真理与归档策略风险（与 `09_AUDIT`、`06_ARCHIVE` 对照）。
 
 
 
@@ -267,9 +267,9 @@ git checkout audit/backup-20260408
 
 
 
-- **阶段 1**：对 `docs/INDEX.md` 与 `docs/` 一级子目录入口做死链与路径规范扫描（可调用 `scripts/` 内链接类工具）。  
+- **阶段 1**：对 `docs/INDEX.md` 与 `docs/` 一级子目录入口做死链与路径规范扫描（可调用 `scripts/` 内链接类工具）。
 
-- **阶段 2**：按 `FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md` 批次 **A1** 起，结合清单逐目录 Deep Audit。  
+- **阶段 2**：按 `FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md` 批次 **A1** 起，结合清单逐目录 Deep Audit。
 
 - **pre-commit**：建议单独排查 hook 失败原因，恢复后再关闭 `--no-verify`。
 
@@ -281,9 +281,8 @@ git checkout audit/backup-20260408
 
 
 
-**本阶段范围**：Git 基线、清单 CSV、统计与 audit_scope。  
+**本阶段范围**：Git 基线、清单 CSV、统计与 audit_scope。
 
-**本阶段结论**：基线已建立，可进入阶段 1～2；双轨目录与 temp 稿为优先治理项。  
+**本阶段结论**：基线已建立，可进入阶段 1～2；双轨目录与 temp 稿为优先治理项。
 
 **下阶段依赖**：维持标签 `audit-snapshot-20260408` 不变直至本轮审计整改结束或再打新标签。
-

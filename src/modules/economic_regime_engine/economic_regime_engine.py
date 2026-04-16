@@ -37,7 +37,7 @@ class RegimeAnalysis:
     risk_warnings: List[str]                     # 风险预警
     timestamp: datetime                          # 时间戳
     metadata: Dict[str, Any]                     # 元数据
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
         result = asdict(self)
@@ -61,7 +61,7 @@ class MacroIndicators:
     credit_growth: float     # 信贷增速
     industrial_output: float # 工业增加值
     timestamp: datetime      # 时间戳
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
         result = asdict(self)
@@ -71,130 +71,130 @@ class MacroIndicators:
 
 class FeatureEngineer:
     """特征工程器"""
-    
+
     def __init__(self, config: Dict[str, Any]):
         """
         初始化特征工程器
-        
+
         Args:
             config: 配置参数
         """
         self.logger = logging.getLogger(__name__)
         self.config = config
-        
+
     def extract_features(self, macro_data: MacroIndicators) -> pd.Series:
         """
         提取特征
-        
+
         Args:
             macro_data: 宏观经济指标
-            
+
         Returns:
             pd.Series: 特征向量
         """
         features = pd.Series()
-        
+
         features['growth_score'] = self._calculate_growth_score(macro_data)
         features['inflation_score'] = self._calculate_inflation_score(macro_data)
         features['monetary_score'] = self._calculate_monetary_score(macro_data)
         features['momentum_score'] = self._calculate_momentum_score(macro_data)
-        
+
         self.logger.info(f"特征提取完成: growth={features['growth_score']:.2f}, "
                          f"inflation={features['inflation_score']:.2f}")
-        
+
         return features
-    
+
     def _calculate_growth_score(self, macro_data: MacroIndicators) -> float:
         """计算增长评分"""
         indicators_config = self.config.get('indicators', {})
-        
+
         gdp_config = indicators_config.get('gdp_growth', {})
         gdp_score = self._normalize(
-            macro_data.gdp_growth, 
+            macro_data.gdp_growth,
             gdp_config.get('threshold_low', 5.0),
             gdp_config.get('threshold_high', 7.0)
         )
-        
+
         pmi_config = indicators_config.get('pmi', {})
         pmi_score = self._normalize(
-            macro_data.pmi, 
+            macro_data.pmi,
             pmi_config.get('threshold_low', 48.0),
             pmi_config.get('threshold_high', 52.0)
         )
-        
+
         industrial_config = indicators_config.get('industrial_output', {})
         industrial_score = self._normalize(
-            macro_data.industrial_output, 
+            macro_data.industrial_output,
             industrial_config.get('threshold_low', 5.0),
             industrial_config.get('threshold_high', 8.0)
         )
-        
+
         gdp_weight = gdp_config.get('weight', 0.5)
         pmi_weight = pmi_config.get('weight', 0.3)
         industrial_weight = industrial_config.get('weight', 0.2)
-        
-        return (gdp_score * gdp_weight + pmi_score * pmi_weight + 
+
+        return (gdp_score * gdp_weight + pmi_score * pmi_weight +
                 industrial_score * industrial_weight)
-    
+
     def _calculate_inflation_score(self, macro_data: MacroIndicators) -> float:
         """计算通胀评分"""
         indicators_config = self.config.get('indicators', {})
-        
+
         cpi_config = indicators_config.get('cpi', {})
         cpi_score = self._normalize(
-            macro_data.cpi, 
+            macro_data.cpi,
             cpi_config.get('threshold_low', 1.0),
             cpi_config.get('threshold_high', 3.0)
         )
-        
+
         ppi_config = indicators_config.get('ppi', {})
         ppi_score = self._normalize(
-            macro_data.ppi, 
+            macro_data.ppi,
             ppi_config.get('threshold_low', -2.0),
             ppi_config.get('threshold_high', 2.0)
         )
-        
+
         cpi_weight = cpi_config.get('weight', 0.7)
         ppi_weight = ppi_config.get('weight', 0.3)
-        
+
         return cpi_score * cpi_weight + ppi_score * ppi_weight
-    
+
     def _calculate_monetary_score(self, macro_data: MacroIndicators) -> float:
         """计算货币评分"""
         indicators_config = self.config.get('indicators', {})
-        
+
         m2_config = indicators_config.get('m2_growth', {})
         m2_score = self._normalize(
-            macro_data.m2_growth, 
+            macro_data.m2_growth,
             m2_config.get('threshold_low', 8.0),
             m2_config.get('threshold_high', 12.0)
         )
-        
+
         credit_config = indicators_config.get('credit_growth', {})
         credit_score = self._normalize(
-            macro_data.credit_growth, 
+            macro_data.credit_growth,
             credit_config.get('threshold_low', 10.0),
             credit_config.get('threshold_high', 15.0)
         )
-        
+
         m2_weight = m2_config.get('weight', 0.5)
         credit_weight = credit_config.get('weight', 0.5)
-        
+
         return m2_score * m2_weight + credit_score * credit_weight
-    
+
     def _calculate_momentum_score(self, macro_data: MacroIndicators) -> float:
         """计算动量评分（简化版本）"""
         return 0.5
-    
+
     def _normalize(self, value: float, low: float, high: float) -> float:
         """
         归一化到[0, 1]区间
-        
+
         Args:
             value: 原始值
             low: 下限
             high: 上限
-            
+
         Returns:
             float: 归一化后的值
         """
@@ -208,20 +208,20 @@ class FeatureEngineer:
 
 class ExpansionRegimeModel:
     """扩张期模型"""
-    
+
     def predict_probability(self, features: pd.Series) -> float:
         """
         预测扩张期概率
-        
+
         Args:
             features: 特征向量
-            
+
         Returns:
             float: 扩张期概率
         """
         growth_score = features['growth_score']
         inflation_score = features['inflation_score']
-        
+
         if growth_score > 0.6 and inflation_score < 0.4:
             return 0.8
         elif growth_score > 0.5 and inflation_score < 0.5:
@@ -232,20 +232,20 @@ class ExpansionRegimeModel:
 
 class StagflationRegimeModel:
     """滞胀期模型"""
-    
+
     def predict_probability(self, features: pd.Series) -> float:
         """
         预测滞胀期概率
-        
+
         Args:
             features: 特征向量
-            
+
         Returns:
             float: 滞胀期概率
         """
         growth_score = features['growth_score']
         inflation_score = features['inflation_score']
-        
+
         if growth_score < 0.4 and inflation_score > 0.6:
             return 0.8
         elif growth_score < 0.5 and inflation_score > 0.5:
@@ -256,20 +256,20 @@ class StagflationRegimeModel:
 
 class RecessionRegimeModel:
     """衰退期模型"""
-    
+
     def predict_probability(self, features: pd.Series) -> float:
         """
         预测衰退期概率
-        
+
         Args:
             features: 特征向量
-            
+
         Returns:
             float: 衰退期概率
         """
         growth_score = features['growth_score']
         inflation_score = features['inflation_score']
-        
+
         if growth_score < 0.4 and inflation_score < 0.4:
             return 0.8
         elif growth_score < 0.5 and inflation_score < 0.5:
@@ -280,20 +280,20 @@ class RecessionRegimeModel:
 
 class RecoveryRegimeModel:
     """复苏期模型"""
-    
+
     def predict_probability(self, features: pd.Series) -> float:
         """
         预测复苏期概率
-        
+
         Args:
             features: 特征向量
-            
+
         Returns:
             float: 复苏期概率
         """
         growth_score = features['growth_score']
         inflation_score = features['inflation_score']
-        
+
         if growth_score > 0.6 and inflation_score > 0.6:
             return 0.8
         elif growth_score > 0.5 and inflation_score > 0.5:
@@ -304,11 +304,11 @@ class RecoveryRegimeModel:
 
 class AssetAllocationAdvisor:
     """资产配置建议器"""
-    
+
     def __init__(self):
         """初始化资产配置建议器"""
         self.logger = logging.getLogger(__name__)
-        
+
         self.regime_asset_mapping = {
             EconomicRegime.EXPANSION: {
                 'equity': 0.60,      # 股票
@@ -335,32 +335,32 @@ class AssetAllocationAdvisor:
                 'cash': 0.05
             }
         }
-        
+
     def get_allocation_advice(self, regime: EconomicRegime) -> Dict[str, float]:
         """
         获取资产配置建议
-        
+
         Args:
             regime: 经济范式
-            
+
         Returns:
             Dict[str, float]: 资产配置建议
         """
         return self.regime_asset_mapping.get(
-            regime, 
+            regime,
             self.regime_asset_mapping[EconomicRegime.EXPANSION]
         )
-    
+
     def adjust_for_probability(
-        self, 
+        self,
         regime_probabilities: Dict[EconomicRegime, float]
     ) -> Dict[str, float]:
         """
         基于概率分布调整资产配置
-        
+
         Args:
             regime_probabilities: 范式概率分布
-            
+
         Returns:
             Dict[str, float]: 调整后的资产配置
         """
@@ -370,24 +370,24 @@ class AssetAllocationAdvisor:
             'commodities': 0.0,
             'cash': 0.0
         }
-        
+
         for regime, probability in regime_probabilities.items():
             regime_allocation = self.regime_asset_mapping[regime]
             for asset, weight in regime_allocation.items():
                 weighted_allocation[asset] += weight * probability
-        
+
         self.logger.info(f"资产配置建议: {weighted_allocation}")
-        
+
         return weighted_allocation
 
 
 class RiskWarner:
     """风险预警器"""
-    
+
     def __init__(self):
         """初始化风险预警器"""
         self.logger = logging.getLogger(__name__)
-        
+
         self.regime_risk_mapping = {
             EconomicRegime.EXPANSION: {
                 'level': '低风险',
@@ -417,86 +417,86 @@ class RiskWarner:
                 ]
             }
         }
-        
+
     def generate_warnings(
-        self, 
+        self,
         dominant_regime: EconomicRegime,
         regime_probabilities: Dict[EconomicRegime, float]
     ) -> List[str]:
         """
         生成风险预警
-        
+
         Args:
             dominant_regime: 主导范式
             regime_probabilities: 范式概率分布
-            
+
         Returns:
             List[str]: 风险预警列表
         """
         warnings = []
-        
+
         regime_info = self.regime_risk_mapping.get(
-            dominant_regime, 
+            dominant_regime,
             {'warnings': []}
         )
         warnings.extend(regime_info.get('warnings', []))
-        
+
         if regime_probabilities.get(EconomicRegime.STAGFLATION, 0) > 0.3:
             warnings.append('滞胀概率较高，建议密切关注通胀数据')
-        
+
         if regime_probabilities.get(EconomicRegime.RECESSION, 0) > 0.3:
             warnings.append('衰退概率较高，建议增加防御性资产')
-        
+
         self.logger.info(f"生成风险预警: {len(warnings)}条")
-        
+
         return warnings
 
 
 class EconomicRegimeEngine:
     """经济范式判断引擎"""
-    
+
     def __init__(self, config_path: Optional[str] = None):
         """
         初始化经济范式判断引擎
-        
+
         Args:
             config_path: 配置文件路径
         """
         self.logger = logging.getLogger(__name__)
         self.logger.info("初始化经济范式判断引擎")
-        
+
         self.config = self._load_config(config_path)
-        
+
         self.macro_indicators = {
             'growth': ['gdp_growth', 'industrial_output', 'pmi'],
             'inflation': ['cpi', 'ppi'],
             'monetary': ['m2_growth', 'interest_rate', 'credit_growth']
         }
-        
+
         self.regime_models = {
             EconomicRegime.EXPANSION: ExpansionRegimeModel(),
             EconomicRegime.STAGFLATION: StagflationRegimeModel(),
             EconomicRegime.RECESSION: RecessionRegimeModel(),
             EconomicRegime.RECOVERY: RecoveryRegimeModel()
         }
-        
+
         self.feature_engineer = FeatureEngineer(self.config)
         self.asset_allocator = AssetAllocationAdvisor()
         self.risk_warner = RiskWarner()
-        
+
     def _load_config(self, config_path: Optional[str]) -> Dict[str, Any]:
         """
         加载配置文件
-        
+
         Args:
             config_path: 配置文件路径
-            
+
         Returns:
             Dict[str, Any]: 配置参数
         """
         if config_path is None:
             config_path = Path(__file__).parent / 'config' / 'economic_regime_config.yaml'
-        
+
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
@@ -505,7 +505,7 @@ class EconomicRegimeEngine:
         except Exception as e:
             self.logger.warning(f"配置文件加载失败，使用默认配置: {e}")
             return self._get_default_config()
-    
+
     def _get_default_config(self) -> Dict[str, Any]:
         """获取默认配置"""
         return {
@@ -528,42 +528,42 @@ class EconomicRegimeEngine:
                 }
             }
         }
-        
+
     def analyze_current_regime(self, macro_data: Optional[MacroIndicators] = None) -> RegimeAnalysis:
         """
         分析当前经济范式
-        
+
         Args:
             macro_data: 宏观经济指标（可选，如果不提供则自动采集）
-            
+
         Returns:
             RegimeAnalysis: 范式分析结果
         """
         self.logger.info("开始分析当前经济范式")
-        
+
         if macro_data is None:
             macro_data = self._collect_macro_data()
-        
+
         features = self.feature_engineer.extract_features(macro_data)
-        
+
         regime_probabilities = {}
         for regime, model in self.regime_models.items():
             probability = model.predict_probability(features)
             regime_probabilities[regime] = probability
-        
+
         regime_probabilities = self._normalize_probabilities(regime_probabilities)
-        
+
         dominant_regime = max(regime_probabilities, key=regime_probabilities.get)
-        
+
         confidence = self._calculate_confidence(regime_probabilities)
-        
+
         asset_allocation = self.asset_allocator.adjust_for_probability(regime_probabilities)
-        
+
         risk_warnings = self.risk_warner.generate_warnings(
-            dominant_regime, 
+            dominant_regime,
             regime_probabilities
         )
-        
+
         analysis = RegimeAnalysis(
             dominant_regime=dominant_regime,
             probabilities=regime_probabilities,
@@ -574,51 +574,51 @@ class EconomicRegimeEngine:
             timestamp=datetime.now(),
             metadata={'features': features.to_dict()}
         )
-        
+
         self.logger.info(f"经济范式分析完成: {dominant_regime.value}, "
                         f"置信度={confidence:.2f}")
-        
+
         return analysis
-    
+
     def get_regime_probability(self) -> Dict[EconomicRegime, float]:
         """
         获取范式概率分布
-        
+
         Returns:
             Dict[EconomicRegime, float]: 范式概率分布
         """
         analysis = self.analyze_current_regime()
         return analysis.probabilities
-    
+
     def get_asset_allocation(self) -> Dict[str, float]:
         """
         获取资产配置建议
-        
+
         Returns:
             Dict[str, float]: 资产配置建议
         """
         analysis = self.analyze_current_regime()
         return analysis.recommended_assets
-    
+
     def get_risk_warnings(self) -> List[str]:
         """
         获取风险预警
-        
+
         Returns:
             List[str]: 风险预警列表
         """
         analysis = self.analyze_current_regime()
         return analysis.risk_warnings
-    
+
     def _collect_macro_data(self) -> MacroIndicators:
         """
         收集宏观经济数据（模拟数据）
-        
+
         Returns:
             MacroIndicators: 宏观经济指标
         """
         self.logger.info("收集宏观经济数据（使用模拟数据）")
-        
+
         return MacroIndicators(
             gdp_growth=6.5,
             cpi=2.3,
@@ -630,36 +630,36 @@ class EconomicRegimeEngine:
             industrial_output=6.8,
             timestamp=datetime.now()
         )
-    
+
     def _normalize_probabilities(
-        self, 
+        self,
         probabilities: Dict[EconomicRegime, float]
     ) -> Dict[EconomicRegime, float]:
         """
         归一化概率分布
-        
+
         Args:
             probabilities: 原始概率
-            
+
         Returns:
             Dict[EconomicRegime, float]: 归一化后的概率
         """
         total = sum(probabilities.values())
         if total == 0:
             return {regime: 0.25 for regime in EconomicRegime}
-        
+
         return {regime: prob / total for regime, prob in probabilities.items()}
-    
+
     def _calculate_confidence(
-        self, 
+        self,
         probabilities: Dict[EconomicRegime, float]
     ) -> float:
         """
         计算置信度
-        
+
         Args:
             probabilities: 概率分布
-            
+
         Returns:
             float: 置信度
         """
@@ -667,14 +667,14 @@ class EconomicRegimeEngine:
         if len(sorted_probs) < 2:
             return 0.0
         return sorted_probs[0] - sorted_probs[1]
-    
+
     def _assess_risk_level(self, regime: EconomicRegime) -> str:
         """
         评估风险等级
-        
+
         Args:
             regime: 经济范式
-            
+
         Returns:
             str: 风险等级
         """

@@ -207,7 +207,7 @@ graph TB
 
     end
 
-    
+
 
         B1[动量因子计算器]
 
@@ -225,7 +225,7 @@ graph TB
 
     end
 
-    
+
 
         C1[IC分析]
 
@@ -237,7 +237,7 @@ graph TB
 
     end
 
-    
+
 
         D1[因子库]
 
@@ -245,13 +245,13 @@ graph TB
 
     end
 
-    
+
 
         E1[多因子合成引擎]
 
     end
 
-    
+
 
     A1 --> B1
 
@@ -265,7 +265,7 @@ graph TB
 
     A4 --> B5
 
-    
+
 
     B1 --> C1
 
@@ -279,7 +279,7 @@ graph TB
 
     B6 --> C1
 
-    
+
 
     C1 --> C4
 
@@ -287,7 +287,7 @@ graph TB
 
     C3 --> C4
 
-    
+
 
     C4 --> D1
 
@@ -295,7 +295,7 @@ graph TB
 
     D1 --> D3
 
-    
+
 
     D1 --> E1
 
@@ -327,7 +327,7 @@ import numpy as np
 
 class AlphaFactor(ABC):
 
-    
+
 
     def __init__(self, factor_name: str, factor_category: str):
 
@@ -337,7 +337,7 @@ class AlphaFactor(ABC):
 
         self.lookback_period = 20
 
-        
+
 
     @abstractmethod
 
@@ -345,7 +345,7 @@ class AlphaFactor(ABC):
 
         pass
 
-    
+
 
     def get_factor_info(self) -> Dict[str, Any]:
 
@@ -369,13 +369,13 @@ class MomentumFactor(AlphaFactor):
 
     """动量因子"""
 
-    
+
 
     def __init__(self):
 
         super().__init__('Momentum', 'Momentum')
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -391,13 +391,13 @@ class MomentumFactor(AlphaFactor):
 
 class ValueFactor(AlphaFactor):
 
-    
+
 
     def __init__(self):
 
         super().__init__('Value', 'Value')
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -415,13 +415,13 @@ class QualityFactor(AlphaFactor):
 
     """质量因子"""
 
-    
+
 
     def __init__(self):
 
         super().__init__('Quality', 'Quality')
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -451,7 +451,7 @@ from scipy import stats
 
 class FactorEvaluator:
 
-    
+
 
     def evaluate(self,
 
@@ -463,7 +463,7 @@ class FactorEvaluator:
 
         ic = self._calculate_ic(factor_values, forward_returns)
 
-        
+
 
         # IC均值、IC标准差、ICIR
 
@@ -473,17 +473,17 @@ class FactorEvaluator:
 
         icir = ic_mean / ic_std if ic_std != 0 else 0
 
-        
+
 
         # 分组收益分析
 
         group_returns = self._calculate_group_returns(factor_values, forward_returns)
 
-        
+
 
         monotonicity = self._test_monotonicity(group_returns)
 
-        
+
 
         return {
 
@@ -501,7 +501,7 @@ class FactorEvaluator:
 
         }
 
-    
+
 
     def _calculate_ic(self,
 
@@ -515,7 +515,7 @@ class FactorEvaluator:
 
         return ic
 
-    
+
 
     def _calculate_group_returns(self,
 
@@ -531,17 +531,17 @@ class FactorEvaluator:
 
         group_labels = pd.cut(factor_rank, bins=n_groups, labels=False)
 
-        
+
 
         # 计算各组平均收益
 
         group_returns = forward_returns.groupby(group_labels).mean()
 
-        
+
 
         return group_returns
 
-    
+
 
     def _test_monotonicity(self, group_returns: pd.Series) -> float:
 
@@ -551,7 +551,7 @@ class FactorEvaluator:
 
         slope, _, r_value, _, _ = stats.linregress(x, group_returns.values)
 
-        
+
 
         return r_value ** 2
 
@@ -573,7 +573,7 @@ import pandas as pd
 
 class AlphaFactorFactory:
 
-    
+
 
     def __init__(self):
 
@@ -581,7 +581,7 @@ class AlphaFactorFactory:
 
         self.evaluator = FactorEvaluator()
 
-        
+
 
     def register_factor(self, factor: AlphaFactor) -> None:
 
@@ -589,23 +589,23 @@ class AlphaFactorFactory:
 
         self.factors[factor.factor_name] = factor
 
-        
+
 
     def calculate_all_factors(self, data: pd.DataFrame) -> pd.DataFrame:
 
         factor_values = pd.DataFrame(index=data.index)
 
-        
+
 
         for factor_name, factor in self.factors.items():
 
             factor_values[factor_name] = factor.calculate(data)
 
-        
+
 
         return factor_values
 
-    
+
 
     def evaluate_all_factors(self,
 
@@ -615,7 +615,7 @@ class AlphaFactorFactory:
 
         evaluation_results = {}
 
-        
+
 
         for factor_name in factor_values.columns:
 
@@ -627,11 +627,11 @@ class AlphaFactorFactory:
 
             )
 
-        
+
 
         return evaluation_results
 
-    
+
 
     def select_best_factors(self,
 
@@ -651,7 +651,7 @@ class AlphaFactorFactory:
 
         )
 
-        
+
 
         return [factor[0] for factor in sorted_factors[:top_n]]
 
@@ -814,10 +814,3 @@ class AlphaFactorFactory:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

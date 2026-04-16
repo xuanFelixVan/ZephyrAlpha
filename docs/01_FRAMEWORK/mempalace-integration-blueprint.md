@@ -36,7 +36,7 @@ responsibility:
 
 > **核心职责**: MemPalace集成蓝图设计与实施指导
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：MemPalace集成蓝图设计相关内容
 
@@ -128,7 +128,7 @@ Layer 8: 人机交互层
 
     └─ 依赖 ↓ MemPalace提供长期记忆
 
-    
+
 
 Layer 7.5: AI记忆层 (MemPalace) ⭐ 新增
 
@@ -140,7 +140,7 @@ Layer 7.5: AI记忆层 (MemPalace) ⭐ 新增
 
     └─ MCP工具集成（19个工具）
 
-    
+
 
 Layer 7: AI报告层
 
@@ -148,7 +148,7 @@ Layer 7: AI报告层
 
     └─ 依赖 ↑ MemPalace提供决策追溯
 
-    
+
 
 Layer 6: 组合优化层
 
@@ -156,7 +156,7 @@ Layer 6: 组合优化层
 
     └─ 依赖 ↑ MemPalace提供优化历史
 
-    
+
 
 Layer 5: 策略执行层
 
@@ -164,7 +164,7 @@ Layer 5: 策略执行层
 
     └─ 依赖 ↑ MemPalace提供策略记忆
 
-    
+
 
 Layer 4: 机器学习层
 
@@ -172,7 +172,7 @@ Layer 4: 机器学习层
 
     └─ 依赖 ↑ MemPalace提供实验历史
 
-    
+
 
 Layer 3: 舆情分析层
 
@@ -180,7 +180,7 @@ Layer 3: 舆情分析层
 
     └─ 依赖 ↑ MemPalace提供舆情记忆
 
-    
+
 
 Layer 2: Alpha因子层
 
@@ -188,13 +188,13 @@ Layer 2: Alpha因子层
 
     └─ 依赖 ↑ MemPalace提供因子历史
 
-    
+
 
 Layer 1: 数据预处理层
 
     └─ 数据清洗、标准化
 
-    
+
 
 Layer 0: 数据源层
 
@@ -204,7 +204,7 @@ Layer 0: 数据源层
 
 
 
-**架构位置**: 
+**架构位置**:
 
 - **核心定位**: Layer 7.5（介于Layer 7 AI报告层和Layer 8人机交互层之间）
 
@@ -1198,7 +1198,7 @@ class ZephyrAlphaMemorySystem:
 
     """清风量化AI记忆系统"""
 
-    
+
 
     def __init__(self, project_root: str = "d:\\ZephyrAlpha"):
 
@@ -1206,13 +1206,13 @@ class ZephyrAlphaMemorySystem:
 
         self.palace_path = self.project_root / ".mempalace" / "palace"
 
-        
+
 
         # 初始化MemPalace
 
         self.mempalace = MemPalace(palace_path=str(self.palace_path))
 
-        
+
 
         # 初始化短期记忆
 
@@ -1224,13 +1224,13 @@ class ZephyrAlphaMemorySystem:
 
         )
 
-        
+
 
         # 初始化宫殿结构
 
         self.palace_structure = self._create_palace_structure()
 
-        
+
 
         # 初始化数据库
 
@@ -1238,7 +1238,7 @@ class ZephyrAlphaMemorySystem:
 
         self._init_database()
 
-    
+
 
     def _create_palace_structure(self) -> PalaceStructure:
 
@@ -1328,7 +1328,7 @@ class ZephyrAlphaMemorySystem:
 
         return structure
 
-    
+
 
     def _init_database(self):
 
@@ -1338,7 +1338,7 @@ class ZephyrAlphaMemorySystem:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -1368,7 +1368,7 @@ class ZephyrAlphaMemorySystem:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
@@ -1376,7 +1376,7 @@ class ZephyrAlphaMemorySystem:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
@@ -1384,7 +1384,7 @@ class ZephyrAlphaMemorySystem:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
@@ -1392,13 +1392,13 @@ class ZephyrAlphaMemorySystem:
 
         ''')
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def store_memory(
 
@@ -1438,7 +1438,7 @@ class ZephyrAlphaMemorySystem:
 
         return memory_id
 
-    
+
 
     def retrieve_memories(
 
@@ -1470,7 +1470,7 @@ class ZephyrAlphaMemorySystem:
 
         return results
 
-    
+
 
     def wake_up(self) -> str:
 
@@ -1480,7 +1480,7 @@ class ZephyrAlphaMemorySystem:
 
         return wake_up_context
 
-    
+
 
     def get_memory_stats(self) -> Dict:
 
@@ -1498,7 +1498,7 @@ if __name__ == "__main__":
 
     memory_system = ZephyrAlphaMemorySystem()
 
-    
+
 
     # 存储策略决策记忆
 
@@ -1518,7 +1518,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     # 检索相关记忆
 
@@ -1532,7 +1532,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     # 加载关键记忆
 
@@ -1566,7 +1566,7 @@ class MemPalaceMCPServer:
 
     """MemPalace MCP服务器"""
 
-    
+
 
     def __init__(self):
 
@@ -1574,13 +1574,13 @@ class MemPalaceMCPServer:
 
         self.mp = mempalace.MemPalace()
 
-        
+
 
         # 注册19个MCP工具
 
         self._register_tools()
 
-    
+
 
     def _register_tools(self):
 
@@ -1698,7 +1698,7 @@ class MemPalaceMCPServer:
 
             ]
 
-        
+
 
         @self.server.call_tool()
 
@@ -1710,7 +1710,7 @@ class MemPalaceMCPServer:
 
                 return [TextContent(type="text", text=result)]
 
-            
+
 
             elif name == "mempalace_mine":
 
@@ -1724,7 +1724,7 @@ class MemPalaceMCPServer:
 
                 return [TextContent(type="text", text=str(result))]
 
-            
+
 
             elif name == "mempalace_search":
 
@@ -1742,7 +1742,7 @@ class MemPalaceMCPServer:
 
                 return [TextContent(type="text", text=str(results))]
 
-            
+
 
             elif name == "mempalace_wake_up":
 
@@ -1750,7 +1750,7 @@ class MemPalaceMCPServer:
 
                 return [TextContent(type="text", text=context)]
 
-            
+
 
             elif name == "mempalace_status":
 
@@ -1758,7 +1758,7 @@ class MemPalaceMCPServer:
 
                 return [TextContent(type="text", text=str(status))]
 
-            
+
 
             else:
 
@@ -2364,7 +2364,7 @@ class AlertConfig:
 
     """告警配置"""
 
-    
+
 
     # 通知方式
 
@@ -2378,7 +2378,7 @@ class AlertConfig:
 
     }
 
-    
+
 
     # 响应时间要求（分钟）
 
@@ -2392,7 +2392,7 @@ class AlertConfig:
 
     }
 
-    
+
 
     # 告警冷却时间（分钟）
 
@@ -2406,7 +2406,7 @@ class AlertConfig:
 
     }
 
-    
+
 
     # 告警升级规则
 
@@ -2474,7 +2474,7 @@ class MetricValue:
 
     timestamp: datetime
 
-    
+
 
     @property
 
@@ -2500,7 +2500,7 @@ class MemoryMonitor:
 
     """记忆系统监控器"""
 
-    
+
 
     def __init__(self, db_path: str):
 
@@ -2508,7 +2508,7 @@ class MemoryMonitor:
 
         self.metrics_history: List[MetricValue] = []
 
-    
+
 
     def check_storage_capacity(self) -> MetricValue:
 
@@ -2516,15 +2516,15 @@ class MemoryMonitor:
 
         total_size = sum(
 
-            f.stat().st_size 
+            f.stat().st_size
 
-            for f in self.db_path.rglob('*') 
+            for f in self.db_path.rglob('*')
 
             if f.is_file()
 
         )
 
-        
+
 
         metric = MetricValue(
 
@@ -2544,13 +2544,13 @@ class MemoryMonitor:
 
         )
 
-        
+
 
         self.metrics_history.append(metric)
 
         return metric
 
-    
+
 
     def check_retrieval_latency(self, query: str) -> MetricValue:
 
@@ -2560,7 +2560,7 @@ class MemoryMonitor:
 
         start_time = time.time()
 
-        
+
 
         # 执行检索
 
@@ -2580,11 +2580,11 @@ class MemoryMonitor:
 
         conn.close()
 
-        
+
 
         latency = (time.time() - start_time) * 1000  # ms
 
-        
+
 
         metric = MetricValue(
 
@@ -2604,13 +2604,13 @@ class MemoryMonitor:
 
         )
 
-        
+
 
         self.metrics_history.append(metric)
 
         return metric
 
-    
+
 
     def check_memory_usage(self) -> MetricValue:
 
@@ -2618,7 +2618,7 @@ class MemoryMonitor:
 
         memory_percent = psutil.virtual_memory().percent
 
-        
+
 
         metric = MetricValue(
 
@@ -2638,13 +2638,13 @@ class MemoryMonitor:
 
         )
 
-        
+
 
         self.metrics_history.append(metric)
 
         return metric
 
-    
+
 
     def check_cpu_usage(self) -> MetricValue:
 
@@ -2652,7 +2652,7 @@ class MemoryMonitor:
 
         cpu_percent = psutil.cpu_percent(interval=1)
 
-        
+
 
         metric = MetricValue(
 
@@ -2672,13 +2672,13 @@ class MemoryMonitor:
 
         )
 
-        
+
 
         self.metrics_history.append(metric)
 
         return metric
 
-    
+
 
     def generate_health_report(self) -> Dict:
 
@@ -2690,7 +2690,7 @@ class MemoryMonitor:
 
         cpu = self.check_cpu_usage()
 
-        
+
 
         return {
 
@@ -2736,7 +2736,7 @@ class MemoryMonitor:
 
         }
 
-    
+
 
     def _get_overall_status(self, metrics: List[MetricValue]) -> str:
 
@@ -2756,7 +2756,7 @@ class MemoryMonitor:
 
             return 'healthy'
 
-    
+
 
     def _generate_recommendations(self, metrics: List[MetricValue]) -> List[str]:
 
@@ -2764,7 +2764,7 @@ class MemoryMonitor:
 
         recommendations = []
 
-        
+
 
         for metric in metrics:
 
@@ -2796,7 +2796,7 @@ class MemoryMonitor:
 
                     recommendations.append("🟡 CPU使用率偏高，建议优化检索算法")
 
-        
+
 
         return recommendations
 
@@ -2806,7 +2806,7 @@ class AlertManager:
 
     """告警管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -2814,7 +2814,7 @@ class AlertManager:
 
         self.alert_history: List[Dict] = []
 
-    
+
 
     def trigger_alert(self, metric: MetricValue, level: str):
 
@@ -2822,7 +2822,7 @@ class AlertManager:
 
         alert_id = f"{metric.name}_{level}"
 
-        
+
 
         # 检查冷却时间
 
@@ -2836,7 +2836,7 @@ class AlertManager:
 
                 return
 
-        
+
 
         # 创建告警
 
@@ -2856,7 +2856,7 @@ class AlertManager:
 
         }
 
-        
+
 
         # 记录告警
 
@@ -2864,13 +2864,13 @@ class AlertManager:
 
         self.alert_history.append(alert)
 
-        
+
 
         # 发送通知
 
         self._send_notification(alert)
 
-    
+
 
     def _generate_alert_message(self, metric: MetricValue, level: str) -> str:
 
@@ -2878,7 +2878,7 @@ class AlertManager:
 
         level_emoji = {'P0': '🔴', 'P1': '🟡', 'P2': '🟢'}
 
-        
+
 
         return (
 
@@ -2894,7 +2894,7 @@ class AlertManager:
 
         )
 
-    
+
 
     def _send_notification(self, alert: Dict):
 
@@ -2902,7 +2902,7 @@ class AlertManager:
 
         methods = AlertConfig.NOTIFICATION_METHODS[alert['level']]
 
-        
+
 
         for method in methods:
 
@@ -2922,7 +2922,7 @@ class AlertManager:
 
                 self._write_log(alert)
 
-    
+
 
     def _send_popup(self, alert: Dict):
 
@@ -2934,7 +2934,7 @@ class AlertManager:
 
         print(f"{'='*60}\n")
 
-    
+
 
     def _send_email(self, alert: Dict):
 
@@ -2942,7 +2942,7 @@ class AlertManager:
 
         pass
 
-    
+
 
     def _send_sms(self, alert: Dict):
 
@@ -2950,7 +2950,7 @@ class AlertManager:
 
         pass
 
-    
+
 
     def _write_log(self, alert: Dict):
 
@@ -3050,7 +3050,7 @@ class AutoMaintenance:
 
     """自动化运维"""
 
-    
+
 
     def __init__(self, memory_system: ZephyrAlphaMemorySystem):
 
@@ -3060,7 +3060,7 @@ class AutoMaintenance:
 
         self.alert_manager = AlertManager()
 
-    
+
 
     def daily_cleanup(self):
 
@@ -3070,19 +3070,19 @@ class AutoMaintenance:
 
         self._cleanup_expired_memories()
 
-        
+
 
         # 2. 压缩碎片
 
         self._compress_fragments()
 
-        
+
 
         # 3. 优化索引
 
         self._optimize_indexes()
 
-        
+
 
         # 4. 生成健康报告
 
@@ -3090,7 +3090,7 @@ class AutoMaintenance:
 
         self._save_report(report)
 
-    
+
 
     def _cleanup_expired_memories(self):
 
@@ -3106,7 +3106,7 @@ class AutoMaintenance:
 
         )
 
-        
+
 
         # 中观策略层记忆保留2年
 
@@ -3118,7 +3118,7 @@ class AutoMaintenance:
 
         )
 
-        
+
 
         # 系统运维记忆保留1年
 
@@ -3130,7 +3130,7 @@ class AutoMaintenance:
 
         )
 
-    
+
 
     def _compress_fragments(self):
 
@@ -3138,7 +3138,7 @@ class AutoMaintenance:
 
         pass
 
-    
+
 
     def _optimize_indexes(self):
 
@@ -3146,7 +3146,7 @@ class AutoMaintenance:
 
         pass
 
-    
+
 
     def _save_report(self, report: Dict):
 
@@ -3353,4 +3353,3 @@ class AutoMaintenance:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-08 | **状态**: Active
-

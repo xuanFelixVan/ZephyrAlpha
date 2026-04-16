@@ -58,7 +58,7 @@ parent_document: ../README.md
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -804,7 +804,7 @@ class DocumentQualityGate:
 
 
 
-    
+
 
 
 
@@ -836,7 +836,7 @@ class DocumentQualityGate:
 
 
 
-    
+
 
 
 
@@ -864,7 +864,7 @@ class DocumentQualityGate:
 
 
 
-    
+
 
 
 
@@ -880,7 +880,7 @@ class DocumentQualityGate:
 
 
 
-            'module_id', 'version', 'status', 
+            'module_id', 'version', 'status',
 
 
 
@@ -892,7 +892,7 @@ class DocumentQualityGate:
 
 
 
-        
+
 
 
 
@@ -908,7 +908,7 @@ self.errors.append(f"ﻝﺙﭦﮒﺍﮒﺟﻠﮒﮔ؟ﭖ: {field}")
 
 
 
-        
+
 
 
 
@@ -916,7 +916,7 @@ self.errors.append(f"ﻝﺙﭦﮒﺍﮒﺟﻠﮒﮔ؟ﭖ: {field}")
 
 
 
-    
+
 
 
 
@@ -932,7 +932,7 @@ self.errors.append(f"ﻝﺙﭦﮒﺍﮒﺟﻠﮒﮔ؟ﭖ: {field}")
 
 
 
-        
+
 
 
 
@@ -956,7 +956,7 @@ self.warnings.append("ﮒﮒ۷ﮒ۳ﻛﺕ۹ﻛﺕﻝﭦ۶ﮔ?)
 
 
 
-        
+
 
 
 
@@ -972,7 +972,7 @@ self.warnings.append("ﻛﭦﻝﭦ۶ﮔﻠ۱ﮔﺍﻠﻛﺕﻟﭘﺏ")
 
 
 
-        
+
 
 
 
@@ -980,7 +980,7 @@ self.warnings.append("ﻛﭦﻝﭦ۶ﮔﻠ۱ﮔﺍﻠﻛﺕﻟﭘﺏ")
 
 
 
-    
+
 
 
 
@@ -1000,7 +1000,7 @@ self.warnings.append("ﻛﭦﻝﭦ۶ﮔﻠ۱ﮔﺍﻠﻛﺕﻟﭘﺏ")
 
 
 
-        
+
 
 
 
@@ -1016,7 +1016,7 @@ self.warnings.append("ﻛﭦﻝﭦ۶ﮔﻠ۱ﮔﺍﻠﻛﺕﻟﭘﺏ")
 
 
 
-            
+
 
 
 
@@ -1036,7 +1036,7 @@ self.errors.append(f"ﻠﺝﮔ۴ﮔﮔ: {link}")
 
 
 
-        
+
 
 
 
@@ -1044,7 +1044,7 @@ self.errors.append(f"ﻠﺝﮔ۴ﮔﮔ: {link}")
 
 
 
-    
+
 
 
 
@@ -1068,7 +1068,7 @@ self.errors.append(f"ﻠﺝﮔ۴ﮔﮔ: {link}")
 
 
 
-        
+
 
 
 
@@ -1092,7 +1092,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1108,7 +1108,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1120,7 +1120,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1488,11 +1488,11 @@ print(f"\nﻗﺅﺕ ﻟ۵ﮒ ({len(warnings)}):")
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02
 
 
 
@@ -1501,6 +1501,3 @@ print(f"\nﻗﺅﺕ ﻟ۵ﮒ ({len(warnings)}):")
 
 
 ```
-
-
-

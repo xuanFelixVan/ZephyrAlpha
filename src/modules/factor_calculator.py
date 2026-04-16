@@ -532,33 +532,33 @@ class FactorCalculator:
     def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
         """
         计算相对强弱指标 (Relative Strength Index, RSI)
-        
+
         RSI是衡量价格变动速度和变化的技术指标，范围0-100。
         通常RSI > 70视为超买，RSI < 30视为超卖。
-        
+
         算法说明:
             RSI = 100 - 100 / (1 + RS)
             RS = 平均上涨幅度 / 平均下跌幅度
             平均涨跌幅使用简单移动平均(SMA)计算
-        
+
         数学公式:
             U_t = max(P_t - P_{t-1}, 0)  # 上涨幅度
             D_t = max(P_{t-1} - P_t, 0)  # 下跌幅度
             RS_t = SMA(U, period) / SMA(D, period)
             RSI_t = 100 - 100 / (1 + RS_t)
-        
+
         参数:
             prices: 价格序列 (通常是收盘价)
             period: 计算周期，默认14天
-        
+
         返回:
             pd.Series: RSI值序列，范围0-100
-        
+
         示例:
             >>> rsi = calculator._calculate_rsi(df['close'], period=14)
             >>> overbought = rsi > 70  # 超买信号
             >>> oversold = rsi < 30     # 超卖信号
-        
+
         注意:
             - 前period个值为NaN（需要足够的历史数据）
             - 使用向量化实现，性能优于循环实现
@@ -580,45 +580,45 @@ class FactorCalculator:
     ) -> Dict[str, pd.Series]:
         """
         计算指数平滑异同移动平均线 (Moving Average Convergence Divergence, MACD)
-        
+
         MACD是趋势跟踪动量指标，由快线、慢线和柱状图组成。
         用于识别趋势方向、强度和转折点。
-        
+
         算法说明:
             MACD线 = 快速EMA - 慢速EMA
             信号线 = MACD线的EMA
             柱状图 = MACD线 - 信号线
-        
+
         数学公式:
             EMA_t = α * P_t + (1 - α) * EMA_{t-1}
             α = 2 / (period + 1)
             MACD = EMA(12) - EMA(26)
             Signal = EMA(MACD, 9)
             Histogram = MACD - Signal
-        
+
         参数:
             prices: 价格序列 (通常是收盘价)
             fast: 快速EMA周期，默认12
             slow: 慢速EMA周期，默认26
             signal: 信号线EMA周期，默认9
-        
+
         返回:
             Dict[str, pd.Series]: 包含三个键值对
                 - 'macd': MACD线 (快线-慢线)
                 - 'signal': 信号线 (MACD的EMA)
                 - 'histogram': 柱状图 (MACD-信号线)
-        
+
         示例:
             >>> macd_result = calculator._calculate_macd(df['close'])
             >>> macd_line = macd_result['macd']
             >>> signal_line = macd_result['signal']
             >>> golden_cross = (macd_line > signal_line) & (macd_line.shift(1) <= signal_line.shift(1))
-        
+
         交易信号:
             - 金叉: MACD线上穿信号线，买入信号
             - 死叉: MACD线下穿信号线，卖出信号
             - 柱状图: 正值表示多头，负值表示空头
-        
+
         注意:
             - 前slow-1个值为NaN（需要足够的历史数据）
             - 使用指数移动平均(EMA)，对近期价格赋予更高权重
@@ -639,17 +639,17 @@ class FactorCalculator:
     ) -> Dict[str, pd.Series]:
         """
         计算布林带 (Bollinger Bands)
-        
+
         布林带由三条轨道线组成，用于衡量价格的相对高低位置和波动率。
         价格通常在布林带内波动，突破上下轨可能预示趋势反转。
-        
+
         算法说明:
             中轨 = N日简单移动平均(SMA)
             上轨 = 中轨 + K倍标准差
             下轨 = 中轨 - K倍标准差
             带宽 = (上轨 - 下轨) / 中轨
             位置 = (价格 - 下轨) / (上轨 - 下轨)
-        
+
         数学公式:
             Middle_t = SMA(P, window)
             Std_t = StdDev(P, window)
@@ -657,12 +657,12 @@ class FactorCalculator:
             Lower_t = Middle_t - num_std * Std_t
             Width_t = (Upper_t - Lower_t) / Middle_t
             Position_t = (P_t - Lower_t) / (Upper_t - Lower_t)
-        
+
         参数:
             prices: 价格序列 (通常是收盘价)
             window: 移动平均窗口，默认20天
             num_std: 标准差倍数，默认2
-        
+
         返回:
             Dict[str, pd.Series]: 包含五个键值对
                 - 'bb_upper': 上轨
@@ -670,19 +670,19 @@ class FactorCalculator:
                 - 'bb_lower': 下轨
                 - 'bb_width': 带宽 (相对值)
                 - 'bb_position': 价格位置 (0-1之间，>1超买，<0超卖)
-        
+
         示例:
             >>> bb = calculator._calculate_bollinger_bands(df['close'])
             >>> overbought = df['close'] > bb['bb_upper']  # 超买
             >>> oversold = df['close'] < bb['bb_lower']    # 超卖
             >>> squeeze = bb['bb_width'] < bb['bb_width'].rolling(20).mean()  # 波动率收窄
-        
+
         交易信号:
             - 价格触及上轨: 可能超买，考虑卖出
             - 价格触及下轨: 可能超卖，考虑买入
             - 带宽收窄: 波动率降低，可能即将突破
             - 带宽扩大: 波动率增加，趋势确认
-        
+
         注意:
             - 前window-1个值为NaN（需要足够的历史数据）
             - 使用简单移动平均(SMA)和标准差
@@ -706,40 +706,40 @@ class FactorCalculator:
     def _calculate_atr(self, data: pd.DataFrame, period: int = 14) -> pd.Series:
         """
         计算平均真实波幅 (Average True Range, ATR)
-        
+
         ATR是衡量市场波动性的指标，由Wilder开发。
         不指示价格方向，只反映价格波动的剧烈程度。
         常用于止损设置、仓位管理和波动率调整。
-        
+
         算法说明:
             真实波幅(TR)取以下三者的最大值:
             1. 当日最高价 - 当日最低价
             2. |当日最高价 - 昨日收盘价|
             3. |当日最低价 - 昨日收盘价|
             ATR = TR的N日移动平均
-        
+
         数学公式:
             TR_t = max(H_t - L_t, |H_t - C_{t-1}|, |L_t - C_{t-1}|)
             ATR_t = SMA(TR, period)
-        
+
         参数:
             data: OHLCV数据，必须包含high, low, close列
             period: 计算周期，默认14天
-        
+
         返回:
             pd.Series: ATR值序列，单位与价格相同
-        
+
         示例:
             >>> atr = calculator._calculate_atr(df, period=14)
             >>> stop_loss = df['close'] - 2 * atr  # 2倍ATR止损
             >>> position_size = capital / (atr * multiplier)  # 波动率调整仓位
-        
+
         应用场景:
             - 止损设置: 价格 - N倍ATR
             - 仓位管理: 资金 / (ATR * 风险系数)
             - 波动率比较: ATR/价格 表示相对波动率
             - 趋势确认: ATR上升表示趋势增强
-        
+
         注意:
             - 前period个值为NaN（需要足够的历史数据）
             - ATR是绝对值，不同股票间不可直接比较
@@ -763,42 +763,42 @@ class FactorCalculator:
     ) -> Dict[str, pd.Series]:
         """
         计算随机指标 (Stochastic Oscillator)
-        
+
         随机指标是比较收盘价与价格区间的关系，用于识别超买超卖。
         由%K线(快线)和%D线(慢线)组成，范围0-100。
-        
+
         算法说明:
             %K = (收盘价 - N日最低价) / (N日最高价 - N日最低价) * 100
             %D = %K的M日移动平均
-        
+
         数学公式:
             L_t = min(Low, period)  # N日最低价
             H_t = max(High, period)  # N日最高价
             %K_t = (C_t - L_t) / (H_t - L_t) * 100
             %D_t = SMA(%K, smooth_period)
-        
+
         参数:
             data: OHLCV数据，必须包含high, low, close列
             period: 计算周期，默认14天
-        
+
         返回:
             Dict[str, pd.Series]: 包含两个键值对
                 - 'k': %K线 (快线)
                 - 'd': %D线 (慢线，%K的3日SMA)
-        
+
         示例:
             >>> stoch = calculator._calculate_stochastic(df, period=14)
             >>> overbought = stoch['k'] > 80  # 超买
             >>> oversold = stoch['k'] < 20     # 超卖
             >>> golden_cross = (stoch['k'] > stoch['d']) & (stoch['k'].shift(1) <= stoch['d'].shift(1))
-        
+
         交易信号:
             - %K > 80: 超买区域，可能回调
             - %K < 20: 超卖区域，可能反弹
             - %K上穿%D: 金叉，买入信号
             - %K下穿%D: 死叉，卖出信号
             - 背离: 价格创新高但%K未创新高，趋势反转信号
-        
+
         注意:
             - 前period个值为NaN（需要足够的历史数据）
             - %K线反应灵敏但噪音多，%D线更平滑

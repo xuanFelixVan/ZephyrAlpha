@@ -34,23 +34,23 @@ def ensure_subdirs(base_dir, subdirs):
 def classify_and_cleanup_state():
     print("Starting STATE/ cleanup and classification...")
     ensure_subdirs(STATE_DIR, STATE_SUBDIRS)
-    
+
     for item in os.listdir(STATE_DIR):
         item_path = os.path.join(STATE_DIR, item)
         if os.path.isdir(item_path) and item in STATE_SUBDIRS:
             continue
-            
+
         if os.path.isfile(item_path):
             age = get_file_age_days(item_path)
-            
+
             # 1. 分类
             target_subdir = None
             ttl = TTL_CONFIG["DEFAULT"]
-            
+
             if "overnight" in item.lower():
                 target_subdir = "OVERNIGHT"
                 ttl = TTL_CONFIG["OVERNIGHT"]
-            elif item in ("INDEX_HEALTH_ORPHAN_LATEST.json", "INDEX_HEALTH_ORPHAN_LATEST.md",
+            elif item in ("INDEX_HEALTH_ORPHAN_LATEST.json", "index-health-orphan-latest.md",
                           "SENTINEL_L1_SCAN_LATEST.json", "SENTINEL_L1_SCAN_LATEST.md"):
                 # LATEST 文件：覆盖写入模式，永不过期、永不移动
                 ttl = 9999
@@ -60,7 +60,7 @@ def classify_and_cleanup_state():
             elif "milestone" in item.lower() or "baseline" in item.lower():
                 target_subdir = "MILESTONE"
                 ttl = 9999 # 永久保留
-            
+
             # 2. 清理或移动
             if age > ttl and ttl != 9999:
                 print(f"Deleting expired STATE file: {item} (Age: {age:.1f} days, TTL: {ttl} days)")
@@ -73,18 +73,18 @@ def classify_and_cleanup_state():
 def classify_and_cleanup_reports():
     print("Starting REPORTS/ cleanup and classification...")
     ensure_subdirs(REPORTS_DIR, REPORTS_SUBDIRS)
-    
+
     for item in os.listdir(REPORTS_DIR):
         item_path = os.path.join(REPORTS_DIR, item)
         if os.path.isdir(item_path) and item in REPORTS_SUBDIRS:
             continue
-            
+
         if os.path.isfile(item_path):
             age = get_file_age_days(item_path)
-            
+
             # 1. 分类
             target_subdir = "ARCHIVE"
-            
+
             if "sentinel" in item.lower():
                 target_subdir = "GOVERNANCE"
             elif any(k in item.lower() for k in ["quality", "link", "duplicate", "structure"]):
@@ -95,7 +95,7 @@ def classify_and_cleanup_reports():
                 target_subdir = "INCIDENT"
             elif any(k in item.lower() for k in ["weekly", "monthly", "quarterly", "annual"]):
                 target_subdir = "PERIODIC"
-            
+
             # 2. 移动
             dest_path = os.path.join(REPORTS_DIR, target_subdir, item)
             print(f"Moving REPORT file: {item} -> {target_subdir}")

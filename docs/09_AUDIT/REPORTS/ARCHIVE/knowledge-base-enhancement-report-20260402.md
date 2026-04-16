@@ -1086,6 +1086,3 @@ knowledge_base/
 
 
 **ﮔ۴ﮒﻟﺑ۲ﻛﭨﭨﻛﭦ?*: Audit Sentinel
-
-
-

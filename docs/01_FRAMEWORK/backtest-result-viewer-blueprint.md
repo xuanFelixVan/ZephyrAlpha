@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Backtest Result Viewer蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Backtest Result Viewer蓝图设计相关内容
 
@@ -108,7 +108,7 @@ class BacktestResultViewer:
 
     """回测结果查看器"""
 
-    
+
 
     def __init__(self):
 
@@ -126,7 +126,7 @@ class BacktestResultViewer:
 
         }
 
-    
+
 
     def render_summary(self):
 
@@ -134,35 +134,35 @@ class BacktestResultViewer:
 
         st.subheader("📊 回测结果摘要")
 
-        
+
 
         col1, col2, col3, col4, col5 = st.columns(5)
 
-        
+
 
         with col1:
 
             st.metric("总收益", f"{self.backtest_results['total_return']:.1%}")
 
-        
+
 
         with col2:
 
             st.metric("年化收益", f"{self.backtest_results['annual_return']:.1%}")
 
-        
+
 
         with col3:
 
             st.metric("夏普比率", f"{self.backtest_results['sharpe_ratio']:.2f}")
 
-        
+
 
         with col4:
 
             st.metric("最大回撤", f"{self.backtest_results['max_drawdown']:.1%}")
 
-        
+
 
         with col5:
 
@@ -227,4 +227,3 @@ class BacktestResultViewer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供安全的密钥存储、管理和访问控制，保护API密钥、数据库密码等敏感信息
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：密钥存储、加密、轮换、访问控制
 
@@ -139,7 +139,7 @@ class SecretsManager:
 
     """密钥管理器"""
 
-    
+
 
     def __init__(self, client_id: str, client_secret: str, workspace_id: str):
 
@@ -153,7 +153,7 @@ class SecretsManager:
 
         )
 
-    
+
 
     def store_secret(
 
@@ -183,7 +183,7 @@ class SecretsManager:
 
         )
 
-        
+
 
         return {
 
@@ -197,7 +197,7 @@ class SecretsManager:
 
         }
 
-    
+
 
     def get_secret(self, key: str, environment: str = "dev"):
 
@@ -211,11 +211,11 @@ class SecretsManager:
 
         )
 
-        
+
 
         return secret.secret_value
 
-    
+
 
     def update_secret(
 
@@ -241,7 +241,7 @@ class SecretsManager:
 
         )
 
-        
+
 
         return {
 
@@ -255,7 +255,7 @@ class SecretsManager:
 
         }
 
-    
+
 
     def delete_secret(self, key: str, environment: str = "dev"):
 
@@ -291,7 +291,7 @@ class SecretRotation:
 
     """密钥轮换管理器"""
 
-    
+
 
     def __init__(self, secrets_manager: SecretsManager):
 
@@ -299,7 +299,7 @@ class SecretRotation:
 
         self.rotation_policies = {}
 
-    
+
 
     def set_rotation_policy(
 
@@ -329,7 +329,7 @@ class SecretRotation:
 
         }
 
-    
+
 
     def generate_random_secret(self, length: int = 32):
 
@@ -339,7 +339,7 @@ class SecretRotation:
 
         return ''.join(secrets.choice(alphabet) for _ in range(length))
 
-    
+
 
     def rotate_secret(self, key: str, environment: str = "dev"):
 
@@ -347,13 +347,13 @@ class SecretRotation:
 
         policy = self.rotation_policies.get(key)
 
-        
+
 
         if not policy:
 
             raise ValueError(f"No rotation policy for key: {key}")
 
-        
+
 
         if policy["auto_generate"]:
 
@@ -363,19 +363,19 @@ class SecretRotation:
 
             raise ValueError("Manual rotation required but no new value provided")
 
-        
+
 
         old_value = self.manager.get_secret(key, environment)
 
-        
+
 
         self.manager.update_secret(key, new_value, environment)
 
-        
+
 
         policy["last_rotation"] = datetime.now()
 
-        
+
 
         return {
 
@@ -389,7 +389,7 @@ class SecretRotation:
 
         }
 
-    
+
 
     def check_rotation_needed(self):
 
@@ -397,7 +397,7 @@ class SecretRotation:
 
         needs_rotation = []
 
-        
+
 
         for key, policy in self.rotation_policies.items():
 
@@ -407,7 +407,7 @@ class SecretRotation:
 
             ).days
 
-            
+
 
             if days_since_rotation >= policy["rotation_days"]:
 
@@ -419,7 +419,7 @@ class SecretRotation:
 
                 })
 
-        
+
 
         return needs_rotation
 
@@ -455,7 +455,7 @@ class AccessControl:
 
     """访问控制管理器"""
 
-    
+
 
     def __init__(self, secrets_manager: SecretsManager):
 
@@ -463,7 +463,7 @@ class AccessControl:
 
         self.policies: Dict[str, Dict] = {}
 
-    
+
 
     def create_policy(
 
@@ -495,13 +495,13 @@ class AccessControl:
 
         }
 
-        
+
 
         self.policies[policy_name] = policy
 
         return policy
 
-    
+
 
     def assign_policy_to_user(self, user_id: str, policy_name: str):
 
@@ -511,7 +511,7 @@ class AccessControl:
 
             raise ValueError(f"Policy {policy_name} not found")
 
-        
+
 
         return {
 
@@ -523,7 +523,7 @@ class AccessControl:
 
         }
 
-    
+
 
     def check_permission(
 
@@ -543,7 +543,7 @@ class AccessControl:
 
         user_policies = self._get_user_policies(user_id)
 
-        
+
 
         for policy in user_policies:
 
@@ -551,11 +551,11 @@ class AccessControl:
 
                 return True
 
-        
+
 
         return False
 
-    
+
 
     def _get_user_policies(self, user_id: str) -> List[Dict]:
 
@@ -563,7 +563,7 @@ class AccessControl:
 
         return list(self.policies.values())
 
-    
+
 
     def _matches_policy(
 
@@ -585,19 +585,19 @@ class AccessControl:
 
             return False
 
-        
+
 
         if permission.value not in policy["permissions"]:
 
             return False
 
-        
+
 
         if environment not in policy["environments"]:
 
             return False
 
-        
+
 
         return True
 
@@ -623,13 +623,13 @@ class AuditLogger:
 
     """审计日志记录器"""
 
-    
+
 
     def __init__(self, log_file: str = "secrets_audit.log"):
 
         self.log_file = log_file
 
-    
+
 
     def log_access(
 
@@ -669,13 +669,13 @@ class AuditLogger:
 
         }
 
-        
+
 
         with open(self.log_file, "a") as f:
 
             f.write(json.dumps(log_entry) + "\n")
 
-    
+
 
     def get_audit_trail(
 
@@ -695,7 +695,7 @@ class AuditLogger:
 
         audit_trail = []
 
-        
+
 
         with open(self.log_file, "r") as f:
 
@@ -703,19 +703,19 @@ class AuditLogger:
 
                 entry = json.loads(line.strip())
 
-                
+
 
                 if secret_key and entry["secret_key"] != secret_key:
 
                     continue
 
-                
+
 
                 if user_id and entry["user_id"] != user_id:
 
                     continue
 
-                
+
 
                 entry_time = datetime.fromisoformat(entry["timestamp"])
 
@@ -727,11 +727,11 @@ class AuditLogger:
 
                     continue
 
-                
+
 
                 audit_trail.append(entry)
 
-        
+
 
         return audit_trail
 
@@ -783,7 +783,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   postgres:
 
@@ -831,13 +831,13 @@ class SecureDataSourceManager:
 
     """安全数据源管理器"""
 
-    
+
 
     def __init__(self, secrets_manager: SecretsManager):
 
         self.secrets = secrets_manager
 
-    
+
 
     def get_database_connection(self, db_name: str):
 
@@ -845,7 +845,7 @@ class SecureDataSourceManager:
 
         password = self.secrets.get_secret(f"db_{db_name}_password")
 
-        
+
 
         return {
 
@@ -859,7 +859,7 @@ class SecureDataSourceManager:
 
         }
 
-    
+
 
     def get_api_credentials(self, api_name: str):
 
@@ -893,13 +893,13 @@ class EnvironmentInjector:
 
     """环境变量注入器"""
 
-    
+
 
     def __init__(self, secrets_manager: SecretsManager):
 
         self.secrets = secrets_manager
 
-    
+
 
     def inject_secrets_to_env(self, environment: str = "dev"):
 
@@ -907,13 +907,13 @@ class EnvironmentInjector:
 
         secrets = self.secrets.client.list_secrets(environment=environment)
 
-        
+
 
         for secret in secrets:
 
             os.environ[secret.name] = secret.secret_value
 
-    
+
 
     def load_to_dotenv(self, environment: str = "dev", output_file: str = ".env"):
 
@@ -921,7 +921,7 @@ class EnvironmentInjector:
 
         secrets = self.secrets.client.list_secrets(environment=environment)
 
-        
+
 
         with open(output_file, "w") as f:
 
@@ -963,7 +963,7 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      
+
 
       - name: Install Infisical CLI
 
@@ -973,7 +973,7 @@ jobs:
 
           sudo apt-get update && sudo apt-get install -y infisical
 
-      
+
 
       - name: Inject Secrets
 
@@ -989,7 +989,7 @@ jobs:
 
           infisical export --env=prod > .env
 
-      
+
 
       - name: Deploy
 
@@ -1214,4 +1214,3 @@ environment: "test"
 
 
 - 不同环境的权限模型与密钥后端实现差异较大；实施阶段需在契约真源或子契约中固化最小权限策略、轮换周期与回滚策略。
-

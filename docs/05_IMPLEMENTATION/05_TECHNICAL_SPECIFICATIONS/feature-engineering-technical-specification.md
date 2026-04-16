@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -527,7 +527,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -853,7 +853,7 @@ class FeatureEngineeringPipeline:
 
 
 
-    
+
 
 
 
@@ -901,7 +901,7 @@ class FeatureEngineeringPipeline:
 
 
 
-    
+
 
 
 
@@ -961,7 +961,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -979,7 +979,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1009,7 +1009,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1039,7 +1039,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1063,7 +1063,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1123,7 +1123,7 @@ class FeatureEngineeringPipeline:
 
 
 
-    
+
 
 
 
@@ -1153,7 +1153,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1171,7 +1171,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1189,7 +1189,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1201,7 +1201,7 @@ class FeatureEngineeringPipeline:
 
 
 
-    
+
 
 
 
@@ -1249,7 +1249,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1351,7 +1351,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1393,7 +1393,7 @@ class FeatureEngineeringPipeline:
 
 
 
-        
+
 
 
 
@@ -1429,7 +1429,7 @@ class FeatureSelector:
 
 
 
-    
+
 
 
 
@@ -1453,7 +1453,7 @@ class FeatureSelector:
 
 
 
-    
+
 
 
 
@@ -1507,7 +1507,7 @@ class FeatureSelector:
 
 
 
-        
+
 
 
 
@@ -1609,7 +1609,7 @@ class FeatureSelector:
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ class FeatureSelector:
 
 
 
-    
+
 
 
 
@@ -1681,7 +1681,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -1705,7 +1705,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -1753,7 +1753,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1765,7 +1765,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1783,7 +1783,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1801,7 +1801,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1819,7 +1819,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1831,7 +1831,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -1855,7 +1855,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1879,7 +1879,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1891,7 +1891,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -1927,7 +1927,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1939,7 +1939,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -1963,7 +1963,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1981,7 +1981,7 @@ class FeatureGenerator:
 
 
 
-        
+
 
 
 
@@ -1993,7 +1993,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -2017,7 +2017,7 @@ class FeatureGenerator:
 
 
 
-    
+
 
 
 
@@ -2065,7 +2065,7 @@ class FeatureTransformer:
 
 
 
-    
+
 
 
 
@@ -2089,7 +2089,7 @@ class FeatureTransformer:
 
 
 
-    
+
 
 
 
@@ -2137,7 +2137,7 @@ class FeatureTransformer:
 
 
 
-        
+
 
 
 
@@ -2149,7 +2149,7 @@ class FeatureTransformer:
 
 
 
-        
+
 
 
 
@@ -2191,7 +2191,7 @@ class FeatureTransformer:
 
 
 
-        
+
 
 
 
@@ -2233,7 +2233,7 @@ class FeatureTransformer:
 
 
 
-        
+
 
 
 
@@ -2245,7 +2245,7 @@ class FeatureTransformer:
 
 
 
-    
+
 
 
 
@@ -2293,7 +2293,7 @@ class FeatureEvaluator:
 
 
 
-    
+
 
 
 
@@ -2311,7 +2311,7 @@ class FeatureEvaluator:
 
 
 
-    
+
 
 
 
@@ -2359,7 +2359,7 @@ class FeatureEvaluator:
 
 
 
-        
+
 
 
 
@@ -2371,7 +2371,7 @@ class FeatureEvaluator:
 
 
 
-        
+
 
 
 
@@ -2945,7 +2945,7 @@ def select_features(
 
 
 
-    
+
 
 
 
@@ -2975,7 +2975,7 @@ def select_features(
 
 
 
-    
+
 
 
 
@@ -3077,7 +3077,7 @@ def select_features(
 
 
 
-    
+
 
 
 
@@ -3155,7 +3155,7 @@ def generate_statistical_features(
 
 
 
-    
+
 
 
 
@@ -3185,7 +3185,7 @@ def generate_statistical_features(
 
 
 
-    
+
 
 
 
@@ -3209,7 +3209,7 @@ def generate_statistical_features(
 
 
 
-    
+
 
 
 
@@ -3251,7 +3251,7 @@ def generate_statistical_features(
 
 
 
-        
+
 
 
 
@@ -3269,7 +3269,7 @@ def generate_statistical_features(
 
 
 
-    
+
 
 
 
@@ -3615,7 +3615,7 @@ def test_feature_engineering_pipeline_integration():
 
 
 
-    
+
 
 
 
@@ -3627,7 +3627,7 @@ def test_feature_engineering_pipeline_integration():
 
 
 
-    
+
 
 
 
@@ -3645,7 +3645,7 @@ def test_feature_engineering_pipeline_integration():
 
 
 
-    
+
 
 
 
@@ -3657,7 +3657,7 @@ def test_feature_engineering_pipeline_integration():
 
 
 
-    
+
 
 
 
@@ -4067,7 +4067,7 @@ feature_engineering:
 
 
 
-    
+
 
 
 
@@ -4115,7 +4115,7 @@ feature_engineering:
 
 
 
-    
+
 
 
 
@@ -4151,7 +4151,7 @@ feature_engineering:
 
 
 
-    
+
 
 
 
@@ -4290,8 +4290,3 @@ feature_engineering:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 机器学习层负责人
-
-
-
-
-

@@ -24,7 +24,7 @@ responsibility:
 
 > **核心职责**: 提供model registry blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Model Registry蓝图设计相关内容
 
@@ -354,7 +354,7 @@ class ModelRegistry:
 
     """模型注册中心"""
 
-    
+
 
     def __init__(self, registry_path: str = './model_registry'):
 
@@ -364,17 +364,17 @@ class ModelRegistry:
 
         self._init_registry()
 
-        
+
 
     def _init_registry(self):
 
         """初始化注册中心"""
 
-        
+
 
         os.makedirs(self.registry_path, exist_ok=True)
 
-        
+
 
         if not os.path.exists(self.models_db):
 
@@ -428,7 +428,7 @@ class ModelRegistry:
 
             conn.close()
 
-    
+
 
     def register_model(
 
@@ -446,11 +446,11 @@ class ModelRegistry:
 
         """注册模型"""
 
-        
+
 
         version = self._generate_version(model_name)
 
-        
+
 
         registry_model_path = os.path.join(
 
@@ -464,11 +464,11 @@ class ModelRegistry:
 
         os.makedirs(registry_model_path, exist_ok=True)
 
-        
+
 
         shutil.copytree(model_path, registry_model_path, dirs_exist_ok=True)
 
-        
+
 
         model_version = ModelVersion(
 
@@ -488,21 +488,21 @@ class ModelRegistry:
 
         )
 
-        
+
 
         self._save_version(model_version)
 
-        
+
 
         return model_version
 
-    
+
 
     def _generate_version(self, model_name: str) -> str:
 
         """生成版本号"""
 
-        
+
 
         import sqlite3
 
@@ -510,7 +510,7 @@ class ModelRegistry:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute(
 
@@ -524,17 +524,17 @@ class ModelRegistry:
 
         conn.close()
 
-        
+
 
         return f"v{count + 1}"
 
-    
+
 
     def _save_version(self, model_version: ModelVersion):
 
         """保存版本信息"""
 
-        
+
 
         import sqlite3
 
@@ -542,11 +542,11 @@ class ModelRegistry:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute(
 
-            '''INSERT OR REPLACE INTO versions 
+            '''INSERT OR REPLACE INTO versions
 
                (model_name, version, model_path, metadata, created_at, created_by, status)
 
@@ -572,11 +572,11 @@ class ModelRegistry:
 
         )
 
-        
+
 
         cursor.execute(
 
-            '''INSERT OR REPLACE INTO models 
+            '''INSERT OR REPLACE INTO models
 
                (model_name, description, created_at, updated_at)
 
@@ -596,13 +596,13 @@ class ModelRegistry:
 
         )
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def get_model_version(
 
@@ -616,7 +616,7 @@ class ModelRegistry:
 
         """获取模型版本"""
 
-        
+
 
         import sqlite3
 
@@ -624,15 +624,15 @@ class ModelRegistry:
 
         cursor = conn.cursor()
 
-        
+
 
         if version is None:
 
             cursor.execute(
 
-                '''SELECT * FROM versions 
+                '''SELECT * FROM versions
 
-                   WHERE model_name = ? 
+                   WHERE model_name = ?
 
                    ORDER BY created_at DESC LIMIT 1''',
 
@@ -650,13 +650,13 @@ class ModelRegistry:
 
             )
 
-        
+
 
         row = cursor.fetchone()
 
         conn.close()
 
-        
+
 
         if row:
 
@@ -678,11 +678,11 @@ class ModelRegistry:
 
             )
 
-        
+
 
         return None
 
-    
+
 
     def list_model_versions(
 
@@ -694,7 +694,7 @@ class ModelRegistry:
 
         """列出模型所有版本"""
 
-        
+
 
         import sqlite3
 
@@ -702,7 +702,7 @@ class ModelRegistry:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute(
 
@@ -712,13 +712,13 @@ class ModelRegistry:
 
         )
 
-        
+
 
         rows = cursor.fetchall()
 
         conn.close()
 
-        
+
 
         versions = []
 
@@ -742,7 +742,7 @@ class ModelRegistry:
 
             ))
 
-        
+
 
         return versions
 
@@ -1033,4 +1033,3 @@ class ModelDeployment:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

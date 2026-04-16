@@ -23,7 +23,7 @@ responsibility: ''
 
 > **核心职责**: Human Ai Integration蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Human Ai Integration蓝图设计相关内容
 
@@ -113,19 +113,19 @@ class StrategicDecisionInterface:
 
     """战略决策界面 - 宏观配置层专?""
 
-    
+
 
     def __init__(self):
 
         self.regime_dashboard = EconomicRegimeDashboard()      # 经济范式仪表?        self.allocation_visualizer = AllocationVisualizer()    # 资产配置可视?        self.rebalance_approver = RebalanceApprover()          # 调仓审批?        self.risk_budget_manager = RiskBudgetManager()         # 风险预算管理
 
-        
+
 
     def display_regime_analysis(self, regime_report: RegimeReport):
 
         """展示经济范式分析
 
-        
+
 
         界面元素:
 
@@ -151,13 +151,13 @@ class StrategicDecisionInterface:
 
         )
 
-        
+
 
     def approve_strategic_allocation(self, allocation: StrategicAllocation) -> Approval:
 
         """审批战略资产配置
 
-        
+
 
         决策流程:
 
@@ -185,7 +185,7 @@ class StrategicDecisionInterface:
 
         )
 
-        
+
 
         # 人类审批
 
@@ -199,7 +199,7 @@ class StrategicDecisionInterface:
 
         )
 
-        
+
 
         return approval
 
@@ -255,17 +255,17 @@ class StrategyManagementInterface:
 
     """策略管理界面 - 中观策略层专?""
 
-    
+
 
     def __init__(self):
 
         self.strategy_selector = StrategySelector()            # 策略选择?        self.signal_monitor = SignalMonitor()                  # 信号监控?        self.portfolio_optimizer = PortfolioOptimizerUI()      # 组合优化界面
 
-        self.risk_exposure_viewer = RiskExposureViewer()       # 风险暴露查看?        
+        self.risk_exposure_viewer = RiskExposureViewer()       # 风险暴露查看?
 
     def select_strategies(self, market_state: MarketState) -> SelectedStrategies:
 
-        """策略选择与权重分?        
+        """策略选择与权重分?
 
         决策流程:
 
@@ -279,13 +279,13 @@ class StrategyManagementInterface:
 
         # AI筛选策略        candidates = self.strategy_selector.filter_by_market_state(market_state)
 
-        
+
 
         # AI生成权重建议
 
         weighted_strategies = self.strategy_selector.optimize_weights(candidates)
 
-        
+
 
         # 人类审核确认
 
@@ -299,15 +299,15 @@ class StrategyManagementInterface:
 
         )
 
-        
+
 
         return human_confirmed
 
-        
+
 
     def monitor_daily_signals(self, signal_stream: SignalStream):
 
-        """监控日线信号?        
+        """监控日线信号?
 
         界面元素:
 
@@ -383,19 +383,19 @@ class ExecutionMonitoringInterface:
 
     """执行监控界面 - 微观执行层专?""
 
-    
+
 
     def __init__(self):
 
         self.execution_dashboard = ExecutionDashboard()        # 执行仪表?        self.algorithm_monitor = AlgorithmMonitor()            # 算法监控?        self.risk_hedger_ui = RiskHedgerUI()                  # 风险对冲界面
 
-        self.alert_manager = AlertManager()                    # 告警管理?        
+        self.alert_manager = AlertManager()                    # 告警管理?
 
     def monitor_realtime_execution(self, execution_stream: ExecutionStream):
 
         """监控实时执行
 
-        
+
 
         界面元素:
 
@@ -421,13 +421,13 @@ class ExecutionMonitoringInterface:
 
         )
 
-        
+
 
     def handle_execution_alert(self, alert: ExecutionAlert):
 
         """处理执行告警
 
-        
+
 
         告警类型:
 
@@ -503,7 +503,7 @@ class SystemGovernanceInterface:
 
     """系统治理界面 - 贯穿支撑系统专属"""
 
-    
+
 
     def __init__(self):
 
@@ -513,11 +513,11 @@ class SystemGovernanceInterface:
 
         self.human_ai_collaboration = HumanAICollaboration()    # 人机协作界面
 
-        
+
 
     def monitor_ai_governance(self, governance_report: GovernanceReport):
 
-        """监控AI治理?        
+        """监控AI治理?
 
         界面元素:
 
@@ -537,13 +537,13 @@ class SystemGovernanceInterface:
 
         )
 
-        
+
 
     def manage_human_ai_collaboration(self, collaboration_data: CollaborationData):
 
         """管理人机协作
 
-        
+
 
         管理内容:
 
@@ -603,17 +603,17 @@ class UnifiedInterfaceFramework:
 
     """统一界面框架 - 整合三级时间框架界面"""
 
-    
+
 
     def __init__(self):
 
         self.strategic_interface = StrategicDecisionInterface()      # 宏观配置层界?        self.tactical_interface = StrategyManagementInterface()      # 中观策略层界?        self.execution_interface = ExecutionMonitoringInterface()    # 微观执行层界?        self.governance_interface = SystemGovernanceInterface()      # 系统治理界面
 
-        
+
 
     def route_to_interface(self, decision_type: str, timeframe: str):
 
-        """路由到对应界?        
+        """路由到对应界?
 
         路由规则:
 
@@ -737,11 +737,11 @@ async def approve_decision(decision: DecisionRequest):
 
     """审批决策
 
-    
+
 
     API端点: POST /api/v1/decision/approve
 
-    
+
 
     优势:
 
@@ -767,7 +767,7 @@ async def approve_decision(decision: DecisionRequest):
 
             interface = SystemGovernanceInterface()
 
-        
+
 
         # 执行审批流程
 
@@ -781,7 +781,7 @@ async def approve_decision(decision: DecisionRequest):
 
         )
 
-        
+
 
         return DecisionResponse(
 
@@ -799,7 +799,7 @@ async def approve_decision(decision: DecisionRequest):
 
         )
 
-        
+
 
     except Exception as e:
 
@@ -811,11 +811,11 @@ async def approve_decision(decision: DecisionRequest):
 
 async def get_dashboard_data(decision_type: str):
 
-    """获取仪表盘数?    
+    """获取仪表盘数?
 
     API端点: GET /api/v1/interface/dashboard/{decision_type}
 
-    
+
 
     优势:
 
@@ -881,13 +881,13 @@ class ConnectionManager:
 
     """WebSocket连接管理?""
 
-    
+
 
     def __init__(self):
 
         self.active_connections: List[WebSocket] = []
 
-        
+
 
     async def connect(self, websocket: WebSocket):
 
@@ -897,7 +897,7 @@ class ConnectionManager:
 
         self.active_connections.append(websocket)
 
-        
+
 
     def disconnect(self, websocket: WebSocket):
 
@@ -905,7 +905,7 @@ class ConnectionManager:
 
         self.active_connections.remove(websocket)
 
-        
+
 
     async def broadcast(self, message: dict):
 
@@ -927,7 +927,7 @@ async def websocket_decision_endpoint(websocket: WebSocket, decision_type: str):
 
     """WebSocket决策端点
 
-    
+
 
     优势:
 
@@ -947,19 +947,19 @@ async def websocket_decision_endpoint(websocket: WebSocket, decision_type: str):
 
             message = json.loads(data)
 
-            
+
 
             # 处理决策消息
 
             result = process_decision_message(decision_type, message)
 
-            
+
 
             # 广播决策结果
 
             await manager.broadcast(result)
 
-            
+
 
     except WebSocketDisconnect:
 
@@ -997,7 +997,7 @@ async def quick_approve_decision(decision_id: str, approved: bool):
 
     """快速审批决策（移动端）
 
-    
+
 
     优势:
 
@@ -1011,17 +1011,17 @@ async def quick_approve_decision(decision_id: str, approved: bool):
 
     decision = get_decision_by_id(decision_id)
 
-    
+
 
     if not decision:
 
         raise HTTPException(status_code=404, detail="Decision not found")
 
-    
+
 
     # 快速审?    result = quick_approve(decision, approved)
 
-    
+
 
     # 推送通知
 
@@ -1035,7 +1035,7 @@ async def quick_approve_decision(decision_id: str, approved: bool):
 
     )
 
-    
+
 
     return result
 
@@ -1085,7 +1085,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
     """带合规检查的决策审批
 
-    
+
 
     流程:
 
@@ -1099,7 +1099,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
     compliance_result = await check_compliance(decision.context)
 
-    
+
 
     if not compliance_result.is_compliant:
 
@@ -1113,7 +1113,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
         }
 
-    
+
 
     # 继续正常审批流程
 
@@ -1230,4 +1230,3 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

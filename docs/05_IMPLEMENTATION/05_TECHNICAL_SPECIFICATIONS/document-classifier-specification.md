@@ -91,7 +91,7 @@ class DocumentClassifier:
 
 
 
-    
+
 
 
 
@@ -103,7 +103,7 @@ class DocumentClassifier:
 
 
 
-        
+
 
 
 
@@ -115,7 +115,7 @@ class DocumentClassifier:
 
 
 
-        
+
 
 
 
@@ -127,7 +127,7 @@ class DocumentClassifier:
 
 
 
-        
+
 
 
 
@@ -312,6 +312,3 @@ class DocumentClassifier:
 
 
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
-
-
-

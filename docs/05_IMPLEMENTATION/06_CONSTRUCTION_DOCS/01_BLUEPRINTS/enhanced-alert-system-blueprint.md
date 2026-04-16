@@ -29,7 +29,7 @@ compliance_level: 专业标准
 
 > **核心职责**: Enhanced Alert System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ...
 
@@ -143,7 +143,7 @@ compliance_level: 专业标准
 
 > 核心职责: Enhanced Alert System蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -257,7 +257,7 @@ class AlertAggregator:
 
     """告警聚合器"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -265,7 +265,7 @@ class AlertAggregator:
 
         初始化告警聚合器
 
-        
+
 
         Args:
 
@@ -281,27 +281,27 @@ config:
 
         self.config = config
 
-        
+
 
         # 聚合字段
 
         self.group_by = config.get('group_by', ['alertname', 'severity'])
 
-        
+
 
 时间（秒）        self.group_wait = config.get('group_wait', 30)
 
-        
+
 
         # 聚合间隔（秒）        self.group_interval = config.get('group_interval', 300)
 
-        
+
 
         # 聚合缓存
 
         self.aggregation_cache: Dict[str, AggregatedAlert] = {}
 
-        
+
 
     def aggregate_alert(
 
@@ -315,13 +315,13 @@ config:
 
         聚合告警
 
-        
+
 
         Args:
 
             alert: 告警
 
-            
+
 
         Returns:
 
@@ -331,7 +331,7 @@ config:
 
         # 生成聚合键        aggregation_key = self._generate_aggregation_key(alert)
 
-        
+
 
         # 检查是否已存在聚合
 
@@ -347,7 +347,7 @@ config:
 
             aggregated.alerts.append(alert)
 
-            
+
 
             # 检查是否达到聚合条件
 
@@ -381,11 +381,11 @@ config:
 
             )
 
-            
+
 
             self.aggregation_cache[aggregation_key] = aggregated
 
-            
+
 
             # 检查是否达到聚合条件
 
@@ -393,11 +393,11 @@ config:
 
                 return aggregated
 
-        
+
 
         return None
 
-    
+
 
     def _generate_aggregation_key(
 
@@ -409,13 +409,13 @@ config:
 
         """
 
-        生成聚合键        
+        生成聚合键
 
         Args:
 
             alert: 告警
 
-            
+
 
         Returns:
 
@@ -425,7 +425,7 @@ config:
 
         key_parts = []
 
-        
+
 
         for field in self.group_by:
 
@@ -441,11 +441,11 @@ config:
 
                 key_parts.append(alert.labels[field])
 
-        
+
 
         return '_'.join(key_parts)
 
-    
+
 
     def _should_send_aggregated_alert(
 
@@ -457,13 +457,13 @@ config:
 
         """
 
-        判断是否应该发送聚合告警        
+        判断是否应该发送聚合告警
 
         Args:
 
             aggregated: 聚合告警
 
-            
+
 
         Returns:
 
@@ -471,13 +471,13 @@ config:
 
         time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
 
-        
+
 
         if time_since_first >= self.group_wait:
 
             return True
 
-        
+
 
         # 检查聚合间隔        if aggregated.count > 1:
 
@@ -487,7 +487,7 @@ config:
 
                 return True
 
-        
+
 
         return False
 
@@ -509,7 +509,7 @@ class AlertInhibitor:
 
     """告警抑制器"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -517,7 +517,7 @@ class AlertInhibitor:
 
         初始化告警抑制器
 
-        
+
 
         Args:
 
@@ -529,13 +529,13 @@ config:
 
         self.config = config
 
-        
+
 
         # 抑制规则
 
         self.inhibit_rules = config.get('inhibit_rules', [])
 
-        
+
 
     def should_inhibit(
 
@@ -551,7 +551,7 @@ config:
 
         判断是否应该抑制告警
 
-        
+
 
         Args:
 
@@ -559,7 +559,7 @@ config:
 
             active_alerts: 活跃告警列表
 
-            
+
 
         Returns:
 
@@ -579,11 +579,11 @@ config:
 
                         return True
 
-        
+
 
         return False
 
-    
+
 
     def _match_source(
 
@@ -631,11 +631,11 @@ config:
 
                 return False
 
-        
+
 
         return True
 
-    
+
 
     def _match_target(
 
@@ -649,13 +649,13 @@ config:
 
         """
 
-        
+
 
         Args:
 
             alert: 告警
 
-            
+
 
         Returns:
 
@@ -685,13 +685,13 @@ class MultiChannelNotifier:
 
     """多渠道通知器"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
         """
 
-        初始化多渠道通知器        
+        初始化多渠道通知器
 
         Args:
 
@@ -705,7 +705,7 @@ config:
 
         self.config = config
 
-        
+
 
     def send_email(
 
@@ -723,13 +723,13 @@ config:
 
         发送邮件通知
 
-        
+
 
         Args:
 
             to_addresses: 收件人列表            subject: 邮件主题
 
-            
+
 
         Returns:
 
@@ -739,7 +739,7 @@ config:
 
         # 使用 SMTP 发送邮件        pass
 
-    
+
 
     def send_sms(
 
@@ -755,11 +755,11 @@ config:
 
         发送短信通知
 
-        
+
 
         Args:
 
-            
+
 
         Returns:
 
@@ -769,13 +769,13 @@ config:
 
         # 使用 Twilio API 发送短信        twilio_config = self.config.get('sms', {})
 
-        
+
 
         try:
 
             from twilio.rest import Client
 
-            
+
 
             client = Client(
 
@@ -785,7 +785,7 @@ config:
 
             )
 
-            
+
 
             for phone_number in phone_numbers:
 
@@ -799,7 +799,7 @@ config:
 
                 )
 
-            
+
 
             return True
 
@@ -809,7 +809,7 @@ config:
 
             return False
 
-    
+
 
     def send_slack(
 
@@ -825,13 +825,13 @@ config:
 
         发送Slack通知
 
-        
+
 
         Args:
 
             channel: Slack频道
 
-            
+
 
         Returns:
 
@@ -841,13 +841,13 @@ config:
 
         slack_config = self.config.get('slack', {})
 
-        
+
 
         try:
 
             webhook_url = slack_config['webhook_url']
 
-            
+
 
             payload = {
 
@@ -861,11 +861,11 @@ config:
 
             }
 
-            
+
 
             response = requests.post(webhook_url, json=payload)
 
-            
+
 
             return response.status_code == 200
 
@@ -875,7 +875,7 @@ config:
 
             return False
 
-    
+
 
     def send_webhook(
 
@@ -891,7 +891,7 @@ config:
 
         发送Webhook通知
 
-        
+
 
         Args:
 
@@ -899,7 +899,7 @@ config:
 
             payload: 请求数据
 
-            
+
 
         Returns:
 
@@ -911,7 +911,7 @@ config:
 
             response = requests.post(url, json=payload)
 
-            
+
 
             return response.status_code == 200
 
@@ -921,7 +921,7 @@ config:
 
             return False
 
-    
+
 
     def notify(
 
@@ -937,7 +937,7 @@ config:
 
         发送通知
 
-        
+
 
         Args:
 
@@ -945,7 +945,7 @@ config:
 
             channels: 通知渠道列表
 
-            
+
 
         Returns:
 
@@ -953,7 +953,7 @@ config:
 
         results = {}
 
-        
+
 
         for channel in channels:
 
@@ -971,7 +971,7 @@ config:
 
                 )
 
-            
+
 
             elif channel == 'sms':
 
@@ -985,7 +985,7 @@ config:
 
                 )
 
-            
+
 
             elif channel == 'slack':
 
@@ -999,7 +999,7 @@ config:
 
                 )
 
-            
+
 
             elif channel == 'webhook':
 
@@ -1025,7 +1025,7 @@ config:
 
                 )
 
-        
+
 
         return results
 
@@ -1147,7 +1147,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[自动化数据修复引擎]
 
@@ -1155,7 +1155,7 @@ graph LR
 
     B --> G[质量报告自动化]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1171,7 +1171,7 @@ graph LR
 
 
 
-## 
+##
 
 **版本历史**:
 
@@ -1215,7 +1215,7 @@ graph LR
 
 |------|------|------|
 
-| **Enhanced Alert System** | 
+| **Enhanced Alert System** |
 
 
 
@@ -1292,10 +1292,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供自动化的代码质量检查，确保代码符合规范、可维护、可读
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：代码质量检查、规范验证、复杂度分析
 
@@ -171,13 +171,13 @@ class CodeQualityChecker:
 
     """代码质量检查器"""
 
-    
+
 
     def __init__(self, project_path: str):
 
         self.project_path = project_path
 
-    
+
 
     def run_flake8(self) -> Dict[str, Any]:
 
@@ -193,11 +193,11 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         violations = json.loads(result.stdout) if result.stdout else []
 
-        
+
 
         return {
 
@@ -211,7 +211,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def run_pylint(self) -> Dict[str, Any]:
 
@@ -227,11 +227,11 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         issues = json.loads(result.stdout) if result.stdout else []
 
-        
+
 
         return {
 
@@ -247,7 +247,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def run_black_check(self) -> Dict[str, Any]:
 
@@ -263,7 +263,7 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         return {
 
@@ -275,7 +275,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def run_mypy(self) -> Dict[str, Any]:
 
@@ -291,11 +291,11 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         errors = self._parse_mypy_output(result.stdout)
 
-        
+
 
         return {
 
@@ -309,7 +309,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def calculate_complexity(self) -> Dict[str, Any]:
 
@@ -325,11 +325,11 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         complexity_data = json.loads(result.stdout) if result.stdout else {}
 
-        
+
 
         return {
 
@@ -341,7 +341,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def detect_duplicates(self) -> Dict[str, Any]:
 
@@ -357,11 +357,11 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         duplicates = json.loads(result.stdout) if result.stdout else {}
 
-        
+
 
         return {
 
@@ -373,7 +373,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def generate_quality_report(self) -> Dict[str, Any]:
 
@@ -391,7 +391,7 @@ class CodeQualityChecker:
 
         duplicate_results = self.detect_duplicates()
 
-        
+
 
         overall_score = self._calculate_overall_score(
 
@@ -409,7 +409,7 @@ class CodeQualityChecker:
 
         )
 
-        
+
 
         return {
 
@@ -439,7 +439,7 @@ class CodeQualityChecker:
 
         }
 
-    
+
 
     def _group_by(self, items: List[Dict], key: str) -> Dict[str, int]:
 
@@ -449,7 +449,7 @@ class CodeQualityChecker:
 
         return dict(Counter(item.get(key, "unknown") for item in items))
 
-    
+
 
     def _extract_score(self, output: str) -> float:
 
@@ -461,7 +461,7 @@ class CodeQualityChecker:
 
         return float(match.group(1)) if match else 0.0
 
-    
+
 
     def _extract_files(self, output: str) -> List[str]:
 
@@ -471,7 +471,7 @@ class CodeQualityChecker:
 
         return re.findall(r"would reformat (.+)", output)
 
-    
+
 
     def _parse_mypy_output(self, output: str) -> List[Dict]:
 
@@ -487,7 +487,7 @@ class CodeQualityChecker:
 
         return errors
 
-    
+
 
     def _calculate_avg_complexity(self, data: Dict) -> float:
 
@@ -497,7 +497,7 @@ class CodeQualityChecker:
 
             return 0.0
 
-        
+
 
         total = 0
 
@@ -511,11 +511,11 @@ class CodeQualityChecker:
 
                 count += 1
 
-        
+
 
         return total / count if count > 0 else 0.0
 
-    
+
 
     def _find_high_complexity(self, data: Dict, threshold: int) -> List[Dict]:
 
@@ -541,7 +541,7 @@ class CodeQualityChecker:
 
         return high_complexity
 
-    
+
 
     def _calculate_overall_score(self, *results) -> float:
 
@@ -549,19 +549,19 @@ class CodeQualityChecker:
 
         score = 100.0
 
-        
+
 
         flake8 = results[0]
 
         score -= min(flake8["total_violations"] * 0.5, 20)
 
-        
+
 
         pylint = results[1]
 
         score = (score + pylint["score"] * 10) / 2
 
-        
+
 
         black = results[2]
 
@@ -569,13 +569,13 @@ class CodeQualityChecker:
 
             score -= 5
 
-        
+
 
         mypy = results[3]
 
         score -= min(mypy["total_errors"] * 0.3, 15)
 
-        
+
 
         complexity = results[4]
 
@@ -583,17 +583,17 @@ class CodeQualityChecker:
 
             score -= (complexity["average_complexity"] - 10) * 2
 
-        
+
 
         duplicates = results[5]
 
         score -= duplicates["duplicate_percentage"] * 0.5
 
-        
+
 
         return max(0, min(100, score))
 
-    
+
 
     def _generate_recommendations(self, *results) -> List[str]:
 
@@ -601,7 +601,7 @@ class CodeQualityChecker:
 
         recommendations = []
 
-        
+
 
         flake8 = results[0]
 
@@ -609,7 +609,7 @@ class CodeQualityChecker:
 
             recommendations.append("修复flake8代码规范违规")
 
-        
+
 
         pylint = results[1]
 
@@ -617,7 +617,7 @@ class CodeQualityChecker:
 
             recommendations.append("改进代码质量，提升pylint评分")
 
-        
+
 
         complexity = results[2]
 
@@ -625,7 +625,7 @@ class CodeQualityChecker:
 
             recommendations.append("重构高复杂度代码，降低圈复杂度")
 
-        
+
 
         return recommendations
 
@@ -663,13 +663,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python
 
@@ -679,7 +679,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -689,31 +689,31 @@ jobs:
 
         pip install flake8 pylint black mypy radon jscpd
 
-    
+
 
     - name: Run flake8
 
       run: flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
-    
+
 
     - name: Run black check
 
       run: black --check src/
 
-    
+
 
     - name: Run mypy
 
       run: mypy src/ --ignore-missing-imports
 
-    
+
 
     - name: Run pylint
 
       run: pylint src/ --fail-under=8.0
 
-    
+
 
     - name: SonarCloud Scan
 
@@ -936,4 +936,3 @@ jscpd src/
 
 
 - 规则集字段字典、报告 schema 与事件载荷细化将在施工阶段固化到 `API_Contract.md` 子契约；本蓝图先确保边界、接口闭合点与验收闭环清晰。
-

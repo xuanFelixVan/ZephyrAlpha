@@ -24,7 +24,7 @@ compliance_level: 专业标准
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -600,7 +600,7 @@ graph LR
 
 
 
-    
+
 
 
 
@@ -616,7 +616,7 @@ graph LR
 
 
 
-    
+
 
 
 
@@ -688,7 +688,7 @@ class RiskContributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -720,7 +720,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -764,7 +764,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -772,7 +772,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -780,7 +780,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -788,7 +788,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -816,7 +816,7 @@ class RiskContributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -852,7 +852,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -876,7 +876,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -884,7 +884,7 @@ class RiskContributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -920,7 +920,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -932,7 +932,7 @@ class RiskContributionAnalyzer:
 
 
 
-            
+
 
 
 
@@ -956,7 +956,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -964,7 +964,7 @@ class RiskContributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1008,7 +1008,7 @@ class RiskContributionAPI:
 
 
 
-    
+
 
 
 
@@ -1036,7 +1036,7 @@ class RiskContributionAPI:
 
 
 
-        
+
 
 
 
@@ -1345,6 +1345,3 @@ class RiskContributionAPI:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态: Active
-
-
-

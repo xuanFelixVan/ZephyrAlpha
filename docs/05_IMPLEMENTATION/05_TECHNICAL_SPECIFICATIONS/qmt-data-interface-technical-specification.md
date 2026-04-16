@@ -46,7 +46,7 @@ implementation_status: 进行?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -988,7 +988,7 @@ def get_realtime_quotes(
 
 
 
-    
+
 
 
 
@@ -1012,7 +1012,7 @@ def get_realtime_quotes(
 
 
 
-    
+
 
 
 
@@ -1102,7 +1102,7 @@ def get_realtime_quotes(
 
 
 
-    
+
 
 
 
@@ -1354,7 +1354,7 @@ def get_historical_klines(
 
 
 
-    
+
 
 
 
@@ -1396,7 +1396,7 @@ def get_historical_klines(
 
 
 
-    
+
 
 
 
@@ -1474,7 +1474,7 @@ def get_historical_klines(
 
 
 
-    
+
 
 
 
@@ -1726,7 +1726,7 @@ def get_financial_statements(
 
 
 
-    
+
 
 
 
@@ -1768,7 +1768,7 @@ def get_financial_statements(
 
 
 
-    
+
 
 
 
@@ -1786,7 +1786,7 @@ def get_financial_statements(
 
 
 
-        
+
 
 
 
@@ -2032,7 +2032,7 @@ def place_order(
 
 
 
-    
+
 
 
 
@@ -2074,7 +2074,7 @@ def place_order(
 
 
 
-    
+
 
 
 
@@ -2146,7 +2146,7 @@ def place_order(
 
 
 
-    
+
 
 
 
@@ -2544,7 +2544,7 @@ class MarketData:
 
 
 
-    
+
 
 
 
@@ -2652,7 +2652,7 @@ class FinancialData:
 
 
 
-    
+
 
 
 
@@ -2682,7 +2682,7 @@ class FinancialData:
 
 
 
-    
+
 
 
 
@@ -2712,7 +2712,7 @@ class FinancialData:
 
 
 
-    
+
 
 
 
@@ -3518,7 +3518,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3536,7 +3536,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3584,7 +3584,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3626,7 +3626,7 @@ class QMTConnectionPool:
 
 
 
-        
+
 
 
 
@@ -3662,7 +3662,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3722,7 +3722,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3794,7 +3794,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -3836,7 +3836,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -4046,7 +4046,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4082,7 +4082,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4166,7 +4166,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4196,7 +4196,7 @@ class DataCacheManager:
 
 
 
-            
+
 
 
 
@@ -4220,7 +4220,7 @@ class DataCacheManager:
 
 
 
-            
+
 
 
 
@@ -4244,7 +4244,7 @@ class DataCacheManager:
 
 
 
-            
+
 
 
 
@@ -4262,7 +4262,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4484,7 +4484,7 @@ def retry_with_exponential_backoff(
 
 
 
-    
+
 
 
 
@@ -4514,7 +4514,7 @@ def retry_with_exponential_backoff(
 
 
 
-            
+
 
 
 
@@ -4550,7 +4550,7 @@ def retry_with_exponential_backoff(
 
 
 
-                    
+
 
 
 
@@ -4622,7 +4622,7 @@ def retry_with_exponential_backoff(
 
 
 
-            
+
 
 
 
@@ -4634,7 +4634,7 @@ def retry_with_exponential_backoff(
 
 
 
-        
+
 
 
 
@@ -4646,7 +4646,7 @@ def retry_with_exponential_backoff(
 
 
 
-    
+
 
 
 
@@ -5286,7 +5286,7 @@ class TestMarketDataAPI:
 
 
 
-    
+
 
 
 
@@ -5316,7 +5316,7 @@ class TestMarketDataAPI:
 
 
 
-    
+
 
 
 
@@ -5346,7 +5346,7 @@ class TestMarketDataAPI:
 
 
 
-        
+
 
 
 
@@ -5376,7 +5376,7 @@ class TestMarketDataAPI:
 
 
 
-    
+
 
 
 
@@ -5412,7 +5412,7 @@ class TestMarketDataAPI:
 
 
 
-    
+
 
 
 
@@ -5466,7 +5466,7 @@ class TestMarketDataAPI:
 
 
 
-        
+
 
 
 
@@ -5628,7 +5628,7 @@ class TestPerformance:
 
 
 
-    
+
 
 
 
@@ -5658,7 +5658,7 @@ class TestPerformance:
 
 
 
-        
+
 
 
 
@@ -5670,7 +5670,7 @@ class TestPerformance:
 
 
 
-        
+
 
 
 
@@ -5730,7 +5730,7 @@ class TestPerformance:
 
 
 
-        
+
 
 
 
@@ -5748,7 +5748,7 @@ class TestPerformance:
 
 
 
-        
+
 
 
 
@@ -5766,7 +5766,7 @@ class TestPerformance:
 
 
 
-        
+
 
 
 
@@ -6797,8 +6797,3 @@ class TestPerformance:
 
 
 **版本**: v1.0 | **创建**: 2026-04-02 | **?*: ?活跃 | **维护?*: 清风量化系统技术团?
-
-
-
-
-

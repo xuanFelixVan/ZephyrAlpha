@@ -64,13 +64,13 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 
 
-1. **唯一权威（canonical）**：同一主题只允许一个可对外引用的权威入口。  
+1. **唯一权威（canonical）**：同一主题只允许一个可对外引用的权威入口。
 
-2. **可追溯**：非 canonical 不直接删除，必须保留“指向 canonical 的重定向声明”。  
+2. **可追溯**：非 canonical 不直接删除，必须保留“指向 canonical 的重定向声明”。
 
-3. **入口收敛**：所有 `INDEX.md`/SITEMAP/导航页最终只指向 canonical。  
+3. **入口收敛**：所有 `INDEX.md`/SITEMAP/导航页最终只指向 canonical。
 
-4. **渐进收敛**：先“止血”（重定向 + 索引收敛），后“整形”（合并/重写/归档清理）。  
+4. **渐进收敛**：先“止血”（重定向 + 索引收敛），后“整形”（合并/重写/归档清理）。
 
 
 
@@ -78,13 +78,13 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 
 
-- **完全重复**：内容几乎一致，仅路径/版本/命名不同。  
+- **完全重复**：内容几乎一致，仅路径/版本/命名不同。
 
-- **部分重复**：主体相同，但各自夹带增量小节。  
+- **部分重复**：主体相同，但各自夹带增量小节。
 
-- **同题不同写法**：主题一致但结构不同，容易误判为两套机制（高风险）。  
+- **同题不同写法**：主题一致但结构不同，容易误判为两套机制（高风险）。
 
-- **重复但语境不同**：例如“蓝图”与“施工/技术规格”重叠，但服务阶段不同（允许存在，但需声明）。  
+- **重复但语境不同**：例如“蓝图”与“施工/技术规格”重叠，但服务阶段不同（允许存在，但需声明）。
 
 
 
@@ -92,15 +92,15 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 
 
-1. **权威栈位置优先**：`01_FRAMEWORK/` > 其他实施目录 > `06_ARCHIVE/`。  
+1. **权威栈位置优先**：`01_FRAMEWORK/` > 其他实施目录 > `06_ARCHIVE/`。
 
-2. **状态/版本优先**：`status: Active`、版本更高、更新时间更近。  
+2. **状态/版本优先**：`status: Active`、版本更高、更新时间更近。
 
-3. **可达性优先**：被入口索引引用、被引用更多者优先。  
+3. **可达性优先**：被入口索引引用、被引用更多者优先。
 
-4. **门禁完整度优先**：职责边界/契约/验收/限制更完整者优先。  
+4. **门禁完整度优先**：职责边界/契约/验收/限制更完整者优先。
 
-5. **命名与规范优先**：`module_id`、路径与命名更符合标准者优先。  
+5. **命名与规范优先**：`module_id`、路径与命名更符合标准者优先。
 
 
 
@@ -122,13 +122,13 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ```markdown
 
-> **状态**：Superseded（已被替代）  
+> **状态**：Superseded（已被替代）
 
-> **canonical**：`<relative_path_to_canonical.md>`（替换为可点击的相对路径链接）  
+> **canonical**：`<relative_path_to_canonical.md>`（替换为可点击的相对路径链接）
 
-> **原因**：重复/合并/迁移重叠  
+> **原因**：重复/合并/迁移重叠
 
-> **最后维护**：YYYY-MM-DD  
+> **最后维护**：YYYY-MM-DD
 
 > **备注**：本文件仅用于历史追溯，不再更新。
 
@@ -140,11 +140,11 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 
 
-- **完全重复**：保留 3–10 行摘要，其余可移除或整体迁入归档目录。  
+- **完全重复**：保留 3–10 行摘要，其余可移除或整体迁入归档目录。
 
-- **部分重复**：先把差异并入 canonical，再让非 canonical 只保留“差异摘要 + 指向 canonical”。  
+- **部分重复**：先把差异并入 canonical，再让非 canonical 只保留“差异摘要 + 指向 canonical”。
 
-- **同题不同写法**：以 canonical 为唯一入口重写整合；其余标记为历史版本。  
+- **同题不同写法**：以 canonical 为唯一入口重写整合；其余标记为历史版本。
 
 
 
@@ -152,7 +152,7 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 
 
-- 建议归档位置：`docs/06_ARCHIVE/`（尤其 `overlap_*`、迁移中间产物、旧版报告）。  
+- 建议归档位置：`docs/06_ARCHIVE/`（尤其 `overlap_*`、迁移中间产物、旧版报告）。
 
 - 建议追溯窗口：30/90/180 天（由 Owner 决策）。到期后可删除，但必须在索引记录处置日期与理由。
 
@@ -185,17 +185,17 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ### 2.1 孤儿（Orphan）
 
-- **严格孤儿**：没有任何其他 `docs` 内 Markdown 以相对链接指向该文件（**inbound = 0**）。  
+- **严格孤儿**：没有任何其他 `docs` 内 Markdown 以相对链接指向该文件（**inbound = 0**）。
 - **治理意义**：不一定是「垃圾」——可能是高价值但未挂入口；需 **分桶** 再动作。
 
 ### 2.2 重复与重叠
 
-- **重复（duplicate）**：同题多份、多版本并存，需要 **canonical 裁决**（见专门标准）。  
+- **重复（duplicate）**：同题多份、多版本并存，需要 **canonical 裁决**（见专门标准）。
 - **重叠（overlap）**：合并/迁移产生的副本或中间产物（常见命名 `overlap_*`），**默认非真源**，需 **canonical 指针** 与可追溯说明。
 
 ### 2.3 真源（canonical）
 
-- 每个主题 **对外只认一条权威正文**；索引与对外引用 **优先指向 canonical**。  
+- 每个主题 **对外只认一条权威正文**；索引与对外引用 **优先指向 canonical**。
 - 细则见：重复文档处理标准（canonical 裁决）。
 
 ```
@@ -204,10 +204,10 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ## 3. 总原则（机构常用）
 
-1. **先止血、后整形**：先保证 **可发现 + 不误导**（入口、非真源声明），再合并/重写/删除。  
-2. **单一真源**：重复类问题必须产出 **明确 canonical** 或经批准的 `TBD` + 台账。  
-3. **小批迭代**：按 **业务域/主题** 分批，每批可评审、可回滚、可跑门禁。  
-4. **台账优先**：裁决与处置写入 **台账或索引**，避免口头约定。  
+1. **先止血、后整形**：先保证 **可发现 + 不误导**（入口、非真源声明），再合并/重写/删除。
+2. **单一真源**：重复类问题必须产出 **明确 canonical** 或经批准的 `TBD` + 台账。
+3. **小批迭代**：按 **业务域/主题** 分批，每批可评审、可回滚、可跑门禁。
+4. **台账优先**：裁决与处置写入 **台账或索引**，避免口头约定。
 5. **自动化门禁**：合并前 **链接扫描**（如 L1）**无效链接为 0**（团队约定为准）。
 
 ```
@@ -218,7 +218,7 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ### 4.1 生成清单
 
-- 使用当前版本的 **严格孤儿报告** 与 **清单文本**（示例：`STRICT_ORPHAN_FILES_REPORT_20260408.md`、`STRICT_ORPHAN_FILES_LIST_20260408.txt`）。  
+- 使用当前版本的 **严格孤儿报告** 与 **清单文本**（示例：`STRICT_ORPHAN_FILES_REPORT_20260408.md`、`STRICT_ORPHAN_FILES_LIST_20260408.txt`）。
 - **周期**：里程碑或每月；重大合并/迁移后 **加跑一次**。
 
 ### 4.2 分桶（与报告一致）
@@ -231,8 +231,8 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ### 4.3 执行顺序（推荐）
 
-1. **业务主干目录优先**：`01_FRAMEWORK` → `03_TRADING_TACTICS` → `05_IMPLEMENTATION` → `09_AUDIT/REPORTS` 等（可按你们系统重要性调整）。  
-2. **每批体量**：单次 PR 建议 **20～50 条链接** 或 **单域一节**，避免大爆炸。  
+1. **业务主干目录优先**：`01_FRAMEWORK` → `03_TRADING_TACTICS` → `05_IMPLEMENTATION` → `09_AUDIT/REPORTS` 等（可按你们系统重要性调整）。
+2. **每批体量**：单次 PR 建议 **20～50 条链接** 或 **单域一节**，避免大爆炸。
 3. **验收**：本批涉及路径 **L1 无新增无效链接**；必要时抽样点击验证。
 
 ### 4.4 与「排除入口」的关系
@@ -251,12 +251,12 @@ responsibility: "处理DUPLICATE_DOCUMENT_HANDLING_STANDARD相关业务"
 
 ### 5.2 canonical 裁决
 
-- 遵循：重复文档处理标准 中的 **优先级与输出要求**。  
+- 遵循：重复文档处理标准 中的 **优先级与输出要求**。
 - **台账**：`docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`（或团队指定真源台账）。
 
 ### 5.3 非真源处置
 
-- **重复文档**：在非真源顶部增加 **Superseded + canonical 链接**（见上述标准模板）。  
+- **重复文档**：在非真源顶部增加 **Superseded + canonical 链接**（见上述标准模板）。
 - **overlap_***：使用 `OVERLAP_CANONICAL_POINTER_TEMPLATE.md` 或等价声明，填写 **`canonical_path`**（暂无则 `TBD` 并在台账备注）。
 
 ### 5.4 入口收敛

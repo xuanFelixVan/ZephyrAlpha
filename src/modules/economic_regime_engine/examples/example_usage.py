@@ -28,23 +28,23 @@ def example_basic_usage():
     print("\n" + "="*80)
     print("示例1: 基本使用 - 自动采集数据并分析经济范式")
     print("="*80 + "\n")
-    
+
     engine = EconomicRegimeEngine()
-    
+
     analysis = engine.analyze_current_regime()
-    
+
     print(f"主导经济范式: {analysis.dominant_regime.value}")
     print(f"置信度: {analysis.confidence:.2%}")
     print(f"风险等级: {analysis.risk_level}")
-    
+
     print("\n范式概率分布:")
     for regime, prob in analysis.probabilities.items():
         print(f"  {regime.value:15s}: {prob:.2%}")
-    
+
     print("\n推荐资产配置:")
     for asset, weight in analysis.recommended_assets.items():
         print(f"  {asset:15s}: {weight:.2%}")
-    
+
     if analysis.risk_warnings:
         print("\n风险预警:")
         for warning in analysis.risk_warnings:
@@ -56,9 +56,9 @@ def example_custom_macro_data():
     print("\n" + "="*80)
     print("示例2: 自定义宏观数据 - 使用特定经济指标进行分析")
     print("="*80 + "\n")
-    
+
     engine = EconomicRegimeEngine()
-    
+
     custom_macro_data = MacroIndicators(
         gdp_growth=5.5,          # GDP增长率 5.5%
         cpi=4.2,                 # CPI通胀率 4.2%
@@ -70,18 +70,18 @@ def example_custom_macro_data():
         industrial_output=5.0,   # 工业增加值 5.0%
         timestamp=datetime.now()
     )
-    
+
     print("输入宏观经济指标:")
     print(f"  GDP增长率: {custom_macro_data.gdp_growth}%")
     print(f"  CPI通胀率: {custom_macro_data.cpi}%")
     print(f"  PMI景气度: {custom_macro_data.pmi}")
-    
+
     analysis = engine.analyze_current_regime(custom_macro_data)
-    
+
     print(f"\n主导经济范式: {analysis.dominant_regime.value}")
     print(f"置信度: {analysis.confidence:.2%}")
     print(f"风险等级: {analysis.risk_level}")
-    
+
     print("\n范式概率分布:")
     for regime, prob in analysis.probabilities.items():
         print(f"  {regime.value:15s}: {prob:.2%}")
@@ -92,19 +92,19 @@ def example_get_specific_info():
     print("\n" + "="*80)
     print("示例3: 获取特定信息 - 分别获取概率、配置、预警")
     print("="*80 + "\n")
-    
+
     engine = EconomicRegimeEngine()
-    
+
     probabilities = engine.get_regime_probability()
     print("范式概率分布:")
     for regime, prob in probabilities.items():
         print(f"  {regime.value:15s}: {prob:.2%}")
-    
+
     allocation = engine.get_asset_allocation()
     print("\n资产配置建议:")
     for asset, weight in allocation.items():
         print(f"  {asset:15s}: {weight:.2%}")
-    
+
     warnings = engine.get_risk_warnings()
     if warnings:
         print("\n风险预警:")
@@ -119,9 +119,9 @@ def example_regime_scenarios():
     print("\n" + "="*80)
     print("示例4: 不同经济范式场景 - 模拟四种经济周期")
     print("="*80 + "\n")
-    
+
     engine = EconomicRegimeEngine()
-    
+
     scenarios = {
         "扩张期场景": MacroIndicators(
             gdp_growth=7.5, cpi=2.0, ppi=1.5, pmi=53.5,
@@ -144,13 +144,13 @@ def example_regime_scenarios():
             industrial_output=6.5, timestamp=datetime.now()
         )
     }
-    
+
     for scenario_name, macro_data in scenarios.items():
         print(f"\n{scenario_name}:")
         print(f"  GDP={macro_data.gdp_growth}%, CPI={macro_data.cpi}%, PMI={macro_data.pmi}")
-        
+
         analysis = engine.analyze_current_regime(macro_data)
-        
+
         print(f"  → 识别范式: {analysis.dominant_regime.value} (置信度: {analysis.confidence:.2%})")
         print(f"  → 风险等级: {analysis.risk_level}")
         print(f"  → 推荐配置: 股票{analysis.recommended_assets['equity']:.0%}, "
@@ -163,13 +163,13 @@ def example_export_results():
     print("\n" + "="*80)
     print("示例5: 导出结果 - 将分析结果转换为字典格式")
     print("="*80 + "\n")
-    
+
     engine = EconomicRegimeEngine()
-    
+
     analysis = engine.analyze_current_regime()
-    
+
     result_dict = analysis.to_dict()
-    
+
     import json
     print("分析结果（JSON格式）:")
     print(json.dumps(result_dict, indent=2, ensure_ascii=False))
@@ -179,13 +179,13 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("经济范式判断引擎使用示例")
     print("="*80)
-    
+
     example_basic_usage()
     example_custom_macro_data()
     example_get_specific_info()
     example_regime_scenarios()
     example_export_results()
-    
+
     print("\n" + "="*80)
     print("示例执行完成")
     print("="*80 + "\n")

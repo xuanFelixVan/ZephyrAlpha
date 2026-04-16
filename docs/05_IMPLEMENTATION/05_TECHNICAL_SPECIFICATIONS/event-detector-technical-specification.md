@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -455,7 +455,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -811,7 +811,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -835,7 +835,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -877,7 +877,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -919,7 +919,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -967,7 +967,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -1015,7 +1015,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -1057,7 +1057,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -1099,7 +1099,7 @@ class EventDetector:
 
 
 
-    
+
 
 
 
@@ -1159,7 +1159,7 @@ class EventClassifier:
 
 
 
-    
+
 
 
 
@@ -1357,7 +1357,7 @@ class EventClassifier:
 
 
 
-    
+
 
 
 
@@ -1381,7 +1381,7 @@ class EventClassifier:
 
 
 
-        
+
 
 
 
@@ -1405,7 +1405,7 @@ class EventClassifier:
 
 
 
-            
+
 
 
 
@@ -1429,7 +1429,7 @@ class EventClassifier:
 
 
 
-        
+
 
 
 
@@ -1961,7 +1961,7 @@ def classify_event(
 
 
 
-    self, 
+    self,
 
 
 
@@ -1991,7 +1991,7 @@ def classify_event(
 
 
 
-    
+
 
 
 
@@ -2021,7 +2021,7 @@ def classify_event(
 
 
 
-    
+
 
 
 
@@ -2057,7 +2057,7 @@ def classify_event(
 
 
 
-        
+
 
 
 
@@ -2081,7 +2081,7 @@ def classify_event(
 
 
 
-    
+
 
 
 
@@ -2123,13 +2123,13 @@ def extract_event_info(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    news_text: str, 
+    news_text: str,
 
 
 
@@ -2159,7 +2159,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2189,7 +2189,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2243,7 +2243,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2261,7 +2261,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2285,7 +2285,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2309,7 +2309,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2339,7 +2339,7 @@ def extract_event_info(
 
 
 
-    
+
 
 
 
@@ -2381,13 +2381,13 @@ def assess_event_impact(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    event: Event, 
+    event: Event,
 
 
 
@@ -2417,7 +2417,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2447,7 +2447,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2477,7 +2477,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2519,7 +2519,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2531,7 +2531,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2543,7 +2543,7 @@ def assess_event_impact(
 
 
 
-    
+
 
 
 
@@ -2799,7 +2799,7 @@ def test_event_detector_integration():
 
 
 
-    
+
 
 
 
@@ -2817,7 +2817,7 @@ def test_event_detector_integration():
 
 
 
-    
+
 
 
 
@@ -3245,7 +3245,7 @@ event_detector:
 
 
 
-  
+
 
 
 
@@ -3269,7 +3269,7 @@ event_detector:
 
 
 
-  
+
 
 
 
@@ -3390,8 +3390,3 @@ event_detector:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 舆情分析层负责人
-
-
-
-
-

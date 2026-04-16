@@ -19,7 +19,7 @@ compliance_level: 专业标准
 
 ## 说明
 
-本目录经 **2026-04-16 合并** 后固定为 **20 份**正式标准（原 34 份：主题合并与 v1 废止）。  
+本目录经 **2026-04-16 合并** 后固定为 **20 份**正式标准（原 34 份：主题合并与 v1 废止）。
 新增 `.md` 须在本文件登记（见 pre-commit：`check_standards_index_registration.py`）。
 
 ## 标准清单（20）
@@ -63,3 +63,9 @@ compliance_level: 专业标准
 | document-metadata-template.md, document-version-naming-standard.md | document-metadata-and-versioning-standard.md |
 | path-reference-standard.md, doc-reference-standard.md | path-and-reference-standard.md |
 | document-classification-exception-list.md | document-classification-standard.md |
+
+<!-- orphan-link -->
+- [doc-governance-system-plan](doc-governance-system-plan.md)
+
+<!-- orphan-link -->
+- [document-governance-process-standard](document-governance-process-standard.md)

@@ -276,7 +276,7 @@ class OrderEngine:
 
         self.router = OrderRouter()
 
-    
+
 
     def process_order(self, order: Order) -> List[SubOrder]:
 
@@ -306,7 +306,7 @@ class OrderRouter:
 
         self.routing_rules = {}
 
-    
+
 
     def route(self, sub_orders: List[SubOrder]) -> List[RoutedOrder]:
 
@@ -348,7 +348,7 @@ class OrderStateMachine:
 
     }
 
-    
+
 
     def transition(self, order: Order, new_state: str) -> bool:
 
@@ -494,9 +494,8 @@ class OrderStateMachine:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Data Exploration Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Exploration Interface蓝图设计相关内容
 
@@ -580,7 +580,7 @@ class DataExplorationInterface:
 
     """数据探索界面"""
 
-    
+
 
     def __init__(self):
 
@@ -588,7 +588,7 @@ class DataExplorationInterface:
 
         self.current_data = None
 
-    
+
 
     def render_data_source_selector(self):
 
@@ -596,11 +596,11 @@ class DataExplorationInterface:
 
         st.subheader("📊 数据源选择")
 
-        
+
 
         col1, col2, col3 = st.columns(3)
 
-        
+
 
         with col1:
 
@@ -612,7 +612,7 @@ class DataExplorationInterface:
 
             )
 
-        
+
 
         with col2:
 
@@ -620,7 +620,7 @@ class DataExplorationInterface:
 
             table_name = st.selectbox("数据表", tables)
 
-        
+
 
         with col3:
 
@@ -632,7 +632,7 @@ class DataExplorationInterface:
 
             )
 
-        
+
 
         if st.button("加载数据"):
 
@@ -640,11 +640,11 @@ class DataExplorationInterface:
 
             st.success(f"成功加载 {len(self.current_data)} 条数据")
 
-        
+
 
         return self.current_data
 
-    
+
 
     def render_data_browser(self, data):
 
@@ -652,7 +652,7 @@ class DataExplorationInterface:
 
         st.subheader("📋 数据浏览")
 
-        
+
 
         gb = GridOptionsBuilder.from_dataframe(data)
 
@@ -664,7 +664,7 @@ class DataExplorationInterface:
 
         gridOptions = gb.build()
 
-        
+
 
         AgGrid(
 
@@ -680,7 +680,7 @@ class DataExplorationInterface:
 
         )
 
-    
+
 
     def render_data_analysis(self, data):
 
@@ -688,11 +688,11 @@ class DataExplorationInterface:
 
         st.subheader("📈 数据分析")
 
-        
+
 
         tab1, tab2, tab3, tab4 = st.tabs(["分布分析", "趋势分析", "相关性分析", "异常检测"])
 
-        
+
 
         with tab1:
 
@@ -710,7 +710,7 @@ class DataExplorationInterface:
 
             self._render_anomaly_detection(data)
 
-    
+
 
     def render_data_quality(self, data):
 
@@ -718,11 +718,11 @@ class DataExplorationInterface:
 
         st.subheader("🔍 数据质量")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
@@ -730,7 +730,7 @@ class DataExplorationInterface:
 
             st.metric("完整性", f"{completeness:.1%}")
 
-        
+
 
         with col2:
 
@@ -738,7 +738,7 @@ class DataExplorationInterface:
 
             st.metric("重复率", f"{duplicates:.1%}")
 
-        
+
 
         with col3:
 
@@ -746,7 +746,7 @@ class DataExplorationInterface:
 
             st.metric("缺失行率", f"{null_rate:.1%}")
 
-        
+
 
         with col4:
 
@@ -754,7 +754,7 @@ class DataExplorationInterface:
 
             st.metric("质量评分", f"{quality_score:.1%}")
 
-    
+
 
     def render_data_export(self, data):
 
@@ -762,17 +762,17 @@ class DataExplorationInterface:
 
         st.subheader("💾 数据导出")
 
-        
+
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
             export_format = st.selectbox("导出格式", ["CSV", "Excel", "Parquet", "JSON"])
 
-        
+
 
         with col2:
 
@@ -786,13 +786,13 @@ class DataExplorationInterface:
 
             )
 
-        
+
 
         if st.button("导出数据"):
 
             export_data = data[export_columns]
 
-            
+
 
             if export_format == "CSV":
 
@@ -903,4 +903,3 @@ class DataExplorationInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

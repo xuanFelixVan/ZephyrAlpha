@@ -708,4 +708,3 @@ python scripts/document_quality_gate.py --changed
 **ﻝﮔﮔ۴ﮔ**: 2026-04-02
 
 **ﻝﭨﺑﮔ۳ﻟﺑ۲ﻛﭨﭨ?*: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
-

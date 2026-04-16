@@ -50,7 +50,7 @@ layer: Layer 2 (Alpha因子层)
 
 > **核心职责**: Personal Development蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Personal Development蓝图设计相关内容
 
@@ -196,13 +196,13 @@ class PersonalRealtimeFeed:
 
     """个人版实时数据流
 
-    
+
 
     特点?        - 轻量级：单机运行
 
 ?    """
 
-    
+
 
     def __init__(self, redis_host='localhost', redis_port=6379):
 
@@ -212,17 +212,17 @@ class PersonalRealtimeFeed:
 
         self.running = False
 
-    
+
 
     async def fetch_realtime_data(self, symbol: str) -> Dict[str, Any]:
 
-        """获取实时数据（AKShare?        
+        """获取实时数据（AKShare?
 
         Args:
 
             symbol: 股票代码，如 "000001"
 
-            
+
 
         Returns:
 
@@ -238,7 +238,7 @@ class PersonalRealtimeFeed:
 
             stock_data = df[df['代码'] == symbol].iloc[0]
 
-            
+
 
             return {
 
@@ -260,11 +260,11 @@ class PersonalRealtimeFeed:
 
             return None
 
-    
+
 
     async def push_data(self, websocket, symbol: str):
 
-        """推送实时数?        
+        """推送实时数?
 
         Args:
 
@@ -284,19 +284,19 @@ class PersonalRealtimeFeed:
 
                 self.redis_client.setex(f"realtime:{symbol}", 5, json.dumps(data))
 
-                
+
 
                 # 推送到客户?                await websocket.send(json.dumps(data))
 
-            
+
 
             await asyncio.sleep(3)
 
-    
+
 
     async def handle_client(self, websocket, path):
 
-        """处理客户端连?        
+        """处理客户端连?
 
         Args:
 
@@ -308,7 +308,7 @@ class PersonalRealtimeFeed:
 
         print(f"客户端连? {websocket.remote_address}")
 
-        
+
 
 请求
 
@@ -326,15 +326,15 @@ print(f"
 
 : {symbol}")
 
-                
+
 
                 # 开始推送数?                await self.push_data(websocket, symbol)
 
-    
+
 
     async def start(self, port=8765):
 
-        """启动WebSocket服务?        
+        """启动WebSocket服务?
 
         Args:
 
@@ -346,7 +346,7 @@ print(f"
 
         print(f"实时数据流服务器启动: ws://localhost:{port}")
 
-        
+
 
         async with websockets.serve(self.handle_client, "localhost", port):
 
@@ -354,7 +354,7 @@ await asyncio.Future()  #
 
 运行
 
-    
+
 
     def stop(self):
 
@@ -422,7 +422,7 @@ async def test_client():
 
         await websocket.send(json.dumps(subscribe_msg))
 
-        
+
 
         # 接收数据
 
@@ -502,7 +502,7 @@ import requests
 
 class PersonalQualityMonitor:
 
-    """个人版数据质量监?    
+    """个人版数据质量监?
 
     特点?        - 轻量级：基于统计方法
 
@@ -512,7 +512,7 @@ class PersonalQualityMonitor:
 
     """
 
-    
+
 
     def __init__(self, config: Dict[str, Any] = None):
 
@@ -524,7 +524,7 @@ class PersonalQualityMonitor:
 
         }
 
-    
+
 
     def check_missing_values(self, data: pd.DataFrame) -> Dict[str, Any]:
 
@@ -532,7 +532,7 @@ class PersonalQualityMonitor:
 
             data: 数据DataFrame
 
-            
+
 
         Returns:
 
@@ -542,7 +542,7 @@ class PersonalQualityMonitor:
 
         missing_fields = missing_ratio[missing_ratio > self.config['missing_threshold']]
 
-        
+
 
         return {
 
@@ -554,17 +554,17 @@ class PersonalQualityMonitor:
 
         }
 
-    
+
 
     def check_outliers(self, data: pd.DataFrame, columns: List[str]) -> Dict[str, Any]:
 
-        """检查异常值（Z-score方法?        
+        """检查异常值（Z-score方法?
 
         Args:
 
             data: 数据DataFrame
 
-            columns: 需要检查的?            
+            columns: 需要检查的?
 
         Returns:
 
@@ -588,7 +588,7 @@ class PersonalQualityMonitor:
 
                 }
 
-        
+
 
         return {
 
@@ -598,7 +598,7 @@ class PersonalQualityMonitor:
 
         }
 
-    
+
 
     def check_data_freshness(self, data: pd.DataFrame, timestamp_col: str) -> Dict[str, Any]:
 
@@ -606,7 +606,7 @@ class PersonalQualityMonitor:
 
             data: 数据DataFrame
 
-            timestamp_col: 时间戳列?            
+            timestamp_col: 时间戳列?
 
         Returns:
 
@@ -618,7 +618,7 @@ class PersonalQualityMonitor:
 
         delay = (current_time - latest_time).total_seconds()
 
-        
+
 
         return {
 
@@ -628,19 +628,19 @@ class PersonalQualityMonitor:
 
         }
 
-    
+
 
     def generate_quality_report(self, data: pd.DataFrame, columns: List[str], timestamp_col: str) -> Dict[str, Any]:
 
         """生成数据质量报告
 
-        
+
 
         Args:
 
             data: 数据DataFrame
 
-            columns: 需要检查的?            timestamp_col: 时间戳列?            
+            columns: 需要检查的?            timestamp_col: 时间戳列?
 
         Returns:
 
@@ -662,7 +662,7 @@ class PersonalQualityMonitor:
 
         }
 
-        
+
 
         # 计算总体评分
 
@@ -676,7 +676,7 @@ class PersonalQualityMonitor:
 
             scores.append(50)
 
-        
+
 
         if report['outlier_check']['status'] == 'PASS':
 
@@ -690,7 +690,7 @@ class PersonalQualityMonitor:
 
             scores.append(30)
 
-        
+
 
         if report['freshness_check']['status'] == 'PASS':
 
@@ -700,19 +700,19 @@ class PersonalQualityMonitor:
 
             scores.append(40)
 
-        
+
 
         report['overall_score'] = np.mean(scores)
 
-        
+
 
         return report
 
-    
+
 
     def send_alert(self, message: str):
 
-        """发送告?        
+        """发送告?
 
         Args:
 
@@ -726,7 +726,7 @@ class PersonalQualityMonitor:
 
             self._send_email_alert(message)
 
-        
+
 
         # 企业微信告警
 
@@ -734,7 +734,7 @@ class PersonalQualityMonitor:
 
             self._send_wechat_alert(message)
 
-    
+
 
     def _send_email_alert(self, message: str):
 
@@ -750,7 +750,7 @@ class PersonalQualityMonitor:
 
             msg['To'] = self.config['alert_email']
 
-            
+
 
             # 使用Gmail SMTP（需要开启应用专用密码）
 
@@ -760,7 +760,7 @@ class PersonalQualityMonitor:
 
                 server.send_message(msg)
 
-            
+
 
             print("邮件告警已发?)
 
@@ -768,7 +768,7 @@ class PersonalQualityMonitor:
 
             print(f"邮件发送失? {e}")
 
-    
+
 
     def _send_wechat_alert(self, message: str):
 
@@ -816,7 +816,7 @@ if __name__ == "__main__":
 
     })
 
-    
+
 
     # 模拟数据
 
@@ -830,7 +830,7 @@ if __name__ == "__main__":
 
     })
 
-    
+
 
     # 生成质量报告
 
@@ -844,13 +844,13 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     print("数据质量报告:")
 
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
-    
+
 
     # 发送告?    if report['overall_score'] < 80:
 
@@ -932,11 +932,11 @@ logger = logging.getLogger(__name__)
 
 class PersonalRedundancyManager:
 
-    """个人版数据冗余管?    
+    """个人版数据冗余管?
 
     特点?        - 双数据源：AKShare（主?+ Tushare（备?        - 自动切换：主数据源失败自动切换到备用
 
-    
+
 
     def __init__(self, tushare_token: str = None):
 
@@ -946,7 +946,7 @@ class PersonalRedundancyManager:
 
         self.current_source = self.primary_source
 
-        
+
 
         # 初始化Tushare（如果提供token?        if tushare_token:
 
@@ -958,11 +958,11 @@ class PersonalRedundancyManager:
 
             self.pro = None
 
-    
+
 
     def fetch_data_primary(self, symbol: str, start_date: str, end_date: str) -> Optional[pd.DataFrame]:
 
-        """从主数据源获取数据（AKShare?        
+        """从主数据源获取数据（AKShare?
 
         Args:
 
@@ -970,7 +970,7 @@ class PersonalRedundancyManager:
 
             start_date: 开始日?            end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -982,9 +982,9 @@ class PersonalRedundancyManager:
 
             logger.info(f"从AKShare获取数据: {symbol}")
 
-            df = ak.stock_zh_a_hist(symbol=symbol, period="daily", 
+            df = ak.stock_zh_a_hist(symbol=symbol, period="daily",
 
-                                    start_date=start_date, end_date=end_date, 
+                                    start_date=start_date, end_date=end_date,
 
                                     adjust="qfq")
 
@@ -1000,11 +1000,11 @@ class PersonalRedundancyManager:
 
             return None
 
-    
+
 
     def fetch_data_backup(self, symbol: str, start_date: str, end_date: str) -> Optional[pd.DataFrame]:
 
-        """从备用数据源获取数据（Tushare?        
+        """从备用数据源获取数据（Tushare?
 
         Args:
 
@@ -1012,7 +1012,7 @@ class PersonalRedundancyManager:
 
             start_date: 开始日?            end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -1026,7 +1026,7 @@ logger.warning("Tushare
 
             return None
 
-        
+
 
         try:
 
@@ -1046,11 +1046,11 @@ logger.warning("Tushare
 
             return None
 
-    
+
 
     def fetch_data_with_fallback(self, symbol: str, start_date: str, end_date: str, max_retries: int = 3) -> Optional[pd.DataFrame]:
 
-障切换?        
+障切换?
 
         Args:
 
@@ -1058,7 +1058,7 @@ logger.warning("Tushare
 
             start_date: 开始日?            end_date: 结束日期
 
-            max_retries: 最大重试次?            
+            max_retries: 最大重试次?
 
         Returns:
 
@@ -1078,19 +1078,19 @@ logger.warning("Tushare
 
                 return data
 
-            
+
 
             logger.warning(f"主数据源失败，重?{attempt + 1}/{max_retries}")
 
             time.sleep(1)
 
-        
+
 
         # 主数据源失败，切换到备用数据?        logger.warning("主数据源失败，切换到备用数据?)
 
         data = self.fetch_data_backup(symbol, start_date, end_date)
 
-        
+
 
         if data is not None and len(data) > 0:
 
@@ -1098,13 +1098,13 @@ logger.warning("Tushare
 
             return data
 
-        
+
 
         logger.error("所有数据源均失?)
 
         return None
 
-    
+
 
     def check_source_health(self) -> Dict[str, Any]:
 
@@ -1120,7 +1120,7 @@ logger.warning("Tushare
 
         }
 
-        
+
 
         # 检查主数据?        start_time = time.time()
 
@@ -1152,7 +1152,7 @@ logger.warning("Tushare
 
             }
 
-        
+
 
         # 检查备用数据源
 
@@ -1188,7 +1188,7 @@ logger.warning("Tushare
 
                 }
 
-        
+
 
         return health_report
 
@@ -1202,13 +1202,13 @@ if __name__ == "__main__":
 
     # 创建冗余管理?    manager = PersonalRedundancyManager(tushare_token='YOUR_TUSHARE_TOKEN')
 
-    
+
 
     print("数据源健康状?")
 
     print(json.dumps(health, indent=2, ensure_ascii=False))
 
-    
+
 
 障切换?    data = manager.fetch_data_with_fallback(
 
@@ -1220,7 +1220,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     if data is not None:
 
@@ -1318,13 +1318,13 @@ logger = logging.getLogger(__name__)
 
 class PersonalMacroEngine:
 
-    """个人版宏观经济数据引?    
+    """个人版宏观经济数据引?
 
 ?        -
 
         - 易扩展：模块化设计，方便添加新指?    """
 
-    
+
 
     def __init__(self, db_path: str = 'data/macro_data.db'):
 
@@ -1334,7 +1334,7 @@ class PersonalMacroEngine:
 
         self._create_tables()
 
-    
+
 
     def _create_tables(self):
 
@@ -1358,7 +1358,7 @@ class PersonalMacroEngine:
 
         );
 
-        
+
 
         CREATE TABLE IF NOT EXISTS macro_data (
 
@@ -1378,7 +1378,7 @@ class PersonalMacroEngine:
 
         );
 
-        
+
 
         CREATE INDEX IF NOT EXISTS idx_macro_data_code_date ON macro_data(indicator_code, date);
 
@@ -1388,13 +1388,13 @@ class PersonalMacroEngine:
 
         self.conn.commit()
 
-    
+
 
     def fetch_china_gdp(self) -> pd.DataFrame:
 
         """获取中国GDP数据
 
-        
+
 
         Returns:
 
@@ -1430,13 +1430,13 @@ df['unit'] = '
 
             return None
 
-    
+
 
     def fetch_china_cpi(self) -> pd.DataFrame:
 
         """获取中国CPI数据
 
-        
+
 
         Returns:
 
@@ -1470,13 +1470,13 @@ df['unit'] = '
 
             return None
 
-    
+
 
     def fetch_china_pmi(self) -> pd.DataFrame:
 
         """获取中国PMI数据
 
-        
+
 
         Returns:
 
@@ -1510,13 +1510,13 @@ df['unit'] = '
 
             return None
 
-    
+
 
     def save_to_db(self, df: pd.DataFrame, indicator_code: str):
 
         """保存数据到数据库
 
-        
+
 
         Args:
 
@@ -1546,11 +1546,11 @@ df['unit'] = '
 
             }
 
-            
+
 
             self.conn.execute("""
 
-                INSERT OR REPLACE INTO macro_indicators 
+                INSERT OR REPLACE INTO macro_indicators
 
                 (indicator_code, indicator_name, country, frequency, unit, last_updated)
 
@@ -1558,7 +1558,7 @@ df['unit'] = '
 
             """, indicator_info)
 
-            
+
 
             # 保存数据
 
@@ -1570,11 +1570,11 @@ df['unit'] = '
 
                     VALUES (?, ?, ?, ?, ?)
 
-                """, (indicator_code, row['date'], row['value'], row['source'], 
+                """, (indicator_code, row['date'], row['value'], row['source'],
 
                       datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
-            
+
 
             self.conn.commit()
 
@@ -1584,7 +1584,7 @@ df['unit'] = '
 
             logger.error(f"数据保存失败: {e}")
 
-    
+
 
     def update_all_indicators(self):
 
@@ -1592,7 +1592,7 @@ df['unit'] = '
 
         logger.info("开始更新宏观经济数?)
 
-        
+
 
         # 更新GDP
 
@@ -1602,7 +1602,7 @@ df['unit'] = '
 
             self.save_to_db(gdp_data, 'CN_GDP')
 
-        
+
 
         # 更新CPI
 
@@ -1612,7 +1612,7 @@ df['unit'] = '
 
             self.save_to_db(cpi_data, 'CN_CPI')
 
-        
+
 
         # 更新PMI
 
@@ -1622,17 +1622,17 @@ df['unit'] = '
 
             self.save_to_db(pmi_data, 'CN_PMI')
 
-        
+
 
         logger.info("宏观经济数据更新完成")
 
-    
+
 
     def get_indicator_data(self, indicator_code: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:
 
         """获取指标数据
 
-        
+
 
         Args:
 
@@ -1640,7 +1640,7 @@ df['unit'] = '
 
             start_date: 开始日?            end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -1652,7 +1652,7 @@ df['unit'] = '
 
         params = [indicator_code]
 
-        
+
 
         if start_date:
 
@@ -1660,7 +1660,7 @@ df['unit'] = '
 
             params.append(start_date)
 
-        
+
 
         if end_date:
 
@@ -1668,17 +1668,17 @@ df['unit'] = '
 
             params.append(end_date)
 
-        
+
 
         query += " ORDER BY date"
 
-        
+
 
         df = pd.read_sql_query(query, self.conn, params=params)
 
         return df
 
-    
+
 
     def close(self):
 
@@ -1698,11 +1698,11 @@ if __name__ == "__main__":
 
     engine = PersonalMacroEngine(db_path='data/macro_data.db')
 
-    
+
 
     # 更新所有指?    engine.update_all_indicators()
 
-    
+
 
     # 查询数据
 
@@ -1712,7 +1712,7 @@ if __name__ == "__main__":
 
     print(gdp_data.head())
 
-    
+
 
 #
 
@@ -1822,13 +1822,13 @@ class PersonalAIEngine:
 
     """个人版AI数据引擎
 
-    
+
 
     特点?        - 开源模型：使用HuggingFace开源模?        - CPU友好：无需GPU也能运行
 
         - 易扩展：模块化设计，方便添加新功?    """
 
-    
+
 
     def __init__(self, model_name: str = "bert-base-chinese"):
 
@@ -1838,7 +1838,7 @@ class PersonalAIEngine:
 
         self._load_model()
 
-    
+
 
     def _load_model(self):
 
@@ -1848,7 +1848,7 @@ class PersonalAIEngine:
 
             logger.info(f"加载模型: {self.model_name}")
 
-            
+
 
 感分析pipeline
 
@@ -1862,7 +1862,7 @@ class PersonalAIEngine:
 
             )
 
-            
+
 
             logger.info("模型加载成功")
 
@@ -1872,13 +1872,13 @@ class PersonalAIEngine:
 
             raise
 
-    
+
 
     def analyze_sentiment(self, text: str) -> Dict[str, Any]:
 
 感
 
-        
+
 
         Args:
 
@@ -1886,7 +1886,7 @@ text:
 
 容
 
-            
+
 
         Returns:
 
@@ -1916,19 +1916,19 @@ logger.error(f"
 
             return None
 
-    
+
 
     def analyze_news_batch(self, news_list: List[str]) -> List[Dict[str, Any]]:
 
 感
 
-        
+
 
         Args:
 
             news_list: 新闻列表
 
-            
+
 
         Returns:
 
@@ -1952,7 +1952,7 @@ List[Dict]:
 
         return results
 
-    
+
 
     def extract_keywords(self, text: str, top_k: int = 10) -> List[str]:
 
@@ -1964,7 +1964,7 @@ text:
 
 容
 
-            
+
 
         Returns:
 
@@ -1976,13 +1976,13 @@ List[str]:
 
         return [kw[0] for kw in keywords]
 
-    
+
 
     def summarize_text(self, text: str, max_length: int = 100) -> str:
 
         """文本摘要（简单截断）
 
-        
+
 
         Args:
 
@@ -1990,7 +1990,7 @@ text:
 
 容
 
-            max_length: 最大长?            
+            max_length: 最大长?
 
         Returns:
 
@@ -2016,7 +2016,7 @@ if __name__ == "__main__":
 
     ai_engine = PersonalAIEngine()
 
-    
+
 
 #
 
@@ -2032,7 +2032,7 @@ if __name__ == "__main__":
 
     ]
 
-    
+
 
 print("
 
@@ -2048,7 +2048,7 @@ print(f"
 
 感: {result['label']}, 置信? {result['score']:.4f}\n")
 
-    
+
 
 #
 
@@ -2172,7 +2172,7 @@ logger = logging.getLogger(__name__)
 
 class PersonalDataGovernance:
 
-    """个人版数据治理（简化版?    
+    """个人版数据治理（简化版?
 
     特点?        - 轻量级：使用DVC进行版本控制
 
@@ -2182,7 +2182,7 @@ class PersonalDataGovernance:
 
     """
 
-    
+
 
     def __init__(self, project_root: str = 'd:/ZephyrAlpha', db_path: str = 'data/governance.db'):
 
@@ -2194,7 +2194,7 @@ class PersonalDataGovernance:
 
         self._create_tables()
 
-    
+
 
     def _create_tables(self):
 
@@ -2218,7 +2218,7 @@ class PersonalDataGovernance:
 
         );
 
-        
+
 
         CREATE TABLE IF NOT EXISTS data_lineage (
 
@@ -2234,7 +2234,7 @@ class PersonalDataGovernance:
 
         );
 
-        
+
 
         CREATE TABLE IF NOT EXISTS data_quality_log (
 
@@ -2256,13 +2256,13 @@ class PersonalDataGovernance:
 
         self.conn.commit()
 
-    
+
 
     def create_data_version(self, data_path: str, version_tag: str, description: str = "") -> str:
 
         """创建数据版本
 
-        
+
 
         Args:
 
@@ -2272,7 +2272,7 @@ class PersonalDataGovernance:
 
             description: 版本描述
 
-            
+
 
         Returns:
 
@@ -2286,19 +2286,19 @@ class PersonalDataGovernance:
 
             subprocess.run(['dvc', 'add', data_path], cwd=self.project_root, check=True)
 
-            
+
 
             # 提交到Git
 
-            subprocess.run(['git', 'add', f'{data_path}.dvc', '.gitignore'], 
+            subprocess.run(['git', 'add', f'{data_path}.dvc', '.gitignore'],
 
                           cwd=self.project_root, check=True)
 
-            subprocess.run(['git', 'commit', '-m', f'Data version: {version_tag}'], 
+            subprocess.run(['git', 'commit', '-m', f'Data version: {version_tag}'],
 
                           cwd=self.project_root, check=True)
 
-            
+
 
             # 记录版本信息
 
@@ -2310,13 +2310,13 @@ class PersonalDataGovernance:
 
                 VALUES (?, ?, ?, ?, ?, ?)
 
-            """, (version_id, data_path, version_tag, description, 
+            """, (version_id, data_path, version_tag, description,
 
                   datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'personal'))
 
             self.conn.commit()
 
-            
+
 
             logger.info(f"数据版本创建成功: {version_tag}")
 
@@ -2328,17 +2328,17 @@ class PersonalDataGovernance:
 
             return None
 
-    
+
 
     def rollback_data_version(self, version_tag: str) -> bool:
 
-        """回滚到指定数据版?        
+        """回滚到指定数据版?
 
         Args:
 
             version_tag: 版本标签
 
-            
+
 
         Returns:
 
@@ -2352,7 +2352,7 @@ class PersonalDataGovernance:
 
             cursor = self.conn.execute(
 
-                "SELECT data_path FROM data_versions WHERE version_tag = ?", 
+                "SELECT data_path FROM data_versions WHERE version_tag = ?",
 
                 (version_tag,)
 
@@ -2360,7 +2360,7 @@ class PersonalDataGovernance:
 
             result = cursor.fetchone()
 
-            
+
 
             if not result:
 
@@ -2368,23 +2368,23 @@ class PersonalDataGovernance:
 
                 return False
 
-            
+
 
             data_path = result[0]
 
-            
+
 
             # 使用Git回滚
 
-            subprocess.run(['git', 'checkout', version_tag, f'{data_path}.dvc'], 
+            subprocess.run(['git', 'checkout', version_tag, f'{data_path}.dvc'],
 
                           cwd=self.project_root, check=True)
 
-            
+
 
             # 使用DVC检出数?            subprocess.run(['dvc', 'checkout'], cwd=self.project_root, check=True)
 
-            
+
 
             logger.info(f"数据版本回滚成功: {version_tag}")
 
@@ -2396,11 +2396,11 @@ class PersonalDataGovernance:
 
             return False
 
-    
+
 
     def record_lineage(self, source_path: str, target_path: str, transformation: str):
 
-        """记录数据血?        
+        """记录数据血?
 
         Args:
 
@@ -2418,7 +2418,7 @@ class PersonalDataGovernance:
 
                 VALUES (?, ?, ?, ?)
 
-            """, (source_path, target_path, transformation, 
+            """, (source_path, target_path, transformation,
 
                   datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
@@ -2430,11 +2430,11 @@ class PersonalDataGovernance:
 
             logger.error(f"数据血缘记录失? {e}")
 
-    
+
 
     def log_quality_check(self, data_path: str, quality_score: float, check_results: Dict):
 
-        """记录质量检查结?        
+        """记录质量检查结?
 
         Args:
 
@@ -2452,7 +2452,7 @@ class PersonalDataGovernance:
 
                 VALUES (?, ?, ?, ?)
 
-            """, (data_path, quality_score, json.dumps(check_results), 
+            """, (data_path, quality_score, json.dumps(check_results),
 
                   datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
@@ -2464,17 +2464,17 @@ class PersonalDataGovernance:
 
             logger.error(f"质量检查记录失? {e}")
 
-    
+
 
     def get_lineage(self, data_path: str) -> List[Dict]:
 
-        """获取数据血?        
+        """获取数据血?
 
         Args:
 
             data_path: 数据路径
 
-            
+
 
         Returns:
 
@@ -2492,7 +2492,7 @@ class PersonalDataGovernance:
 
         """, (data_path, data_path))
 
-        
+
 
         lineage = []
 
@@ -2510,11 +2510,11 @@ class PersonalDataGovernance:
 
             })
 
-        
+
 
         return lineage
 
-    
+
 
     def close(self):
 
@@ -2534,7 +2534,7 @@ if __name__ == "__main__":
 
     governance = PersonalDataGovernance()
 
-    
+
 
     # 创建数据版本
 
@@ -2548,7 +2548,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     # 记录数据血?    governance.record_lineage(
 
@@ -2560,7 +2560,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     # 记录质量检?    governance.log_quality_check(
 
@@ -2572,7 +2572,7 @@ if __name__ == "__main__":
 
     )
 
-    
+
 
     # 查询数据血?    lineage = governance.get_lineage('data/stock_data.csv')
 
@@ -2582,7 +2582,7 @@ if __name__ == "__main__":
 
         print(f"  {item['source_path']} -> {item['target_path']}: {item['transformation']}")
 
-    
+
 
 #
 
@@ -3009,4 +3009,3 @@ Dask
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

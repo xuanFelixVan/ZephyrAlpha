@@ -730,7 +730,7 @@ audit_trail:
 
   backend: tigerbeetle
 
-  
+
 
   tigerbeetle:
 
@@ -740,7 +740,7 @@ audit_trail:
 
     cluster_id: 0
 
-    
+
 
   sqlite:
 
@@ -748,7 +748,7 @@ audit_trail:
 
     db_path: "./data/audit_trail.db"
 
-    
+
 
   retention:
 
@@ -756,7 +756,7 @@ audit_trail:
 
     days: 365
 
-    
+
 
   monitoring:
 
@@ -792,7 +792,7 @@ model_risk_management:
 
     artifact_root: "./data/mlflow/artifacts"
 
-    
+
 
   validation:
 
@@ -802,7 +802,7 @@ model_risk_management:
 
     max_drawdown_threshold: 0.20
 
-    
+
 
   risk_assessment:
 
@@ -814,7 +814,7 @@ model_risk_management:
 
     max_hyperparameters: 10
 
-    
+
 
   approval:
 
@@ -844,7 +844,7 @@ regulatory_reporting:
 
     version: "latest"
 
-    
+
 
   reports:
 
@@ -860,7 +860,7 @@ regulatory_reporting:
 
       - "json"
 
-      
+
 
   scheduling:
 
@@ -1079,4 +1079,3 @@ networks:
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
-

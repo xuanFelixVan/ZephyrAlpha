@@ -126,7 +126,7 @@ layer: layer_07
 
 
 
-**主方案**: Py-Spy + cProfile  
+**主方案**: Py-Spy + cProfile
 
 **集成**: 集成到性能监控模块
 
@@ -139,4 +139,3 @@ layer: layer_07
 
 
 **蓝图创建时间**: 2026-04-07
-

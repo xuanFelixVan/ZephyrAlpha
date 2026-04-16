@@ -266,7 +266,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -278,7 +278,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -318,7 +318,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -354,7 +354,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -394,7 +394,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -410,7 +410,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -422,7 +422,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -446,7 +446,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -458,7 +458,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -478,7 +478,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -506,7 +506,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -522,7 +522,7 @@ value: ?
 
 
 
-            
+
 
 
 
@@ -542,7 +542,7 @@ value: ?
 
 
 
-    
+
 
 
 
@@ -554,7 +554,7 @@ value: ?
 
 
 
-        
+
 
 
 
@@ -566,7 +566,7 @@ value: ?
 
 
 
-            
+
 
 
 
@@ -586,7 +586,7 @@ value: ?
 
 
 
-    
+
 
 
 
@@ -610,7 +610,7 @@ value: ?
 
 
 
-        
+
 
 
 
@@ -626,7 +626,7 @@ value: ?
 
 
 
-    
+
 
 
 
@@ -634,7 +634,7 @@ value: ?
 
 
 
-        
+
 
 
 
@@ -888,7 +888,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -896,7 +896,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -928,7 +928,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -948,7 +948,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -980,7 +980,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -996,7 +996,7 @@ class RedditAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1016,7 +1016,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1040,7 +1040,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1052,7 +1052,7 @@ class RedditAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1072,7 +1072,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1104,7 +1104,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1124,7 +1124,7 @@ class RedditAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1144,7 +1144,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1180,7 +1180,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1200,7 +1200,7 @@ class RedditAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1220,7 +1220,7 @@ class RedditAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1228,7 +1228,7 @@ class RedditAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1236,7 +1236,7 @@ class RedditAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1494,7 +1494,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1506,7 +1506,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1518,7 +1518,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1538,7 +1538,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1574,7 +1574,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1594,7 +1594,7 @@ class FREDAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1614,7 +1614,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1626,7 +1626,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1638,7 +1638,7 @@ class FREDAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1658,7 +1658,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1686,7 +1686,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1702,7 +1702,7 @@ class FREDAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1722,7 +1722,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1734,7 +1734,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1746,7 +1746,7 @@ class FREDAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1766,7 +1766,7 @@ class FREDAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1794,7 +1794,7 @@ class FREDAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1810,7 +1810,7 @@ class FREDAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -2044,7 +2044,7 @@ class SECEdgARAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -2056,7 +2056,7 @@ class SECEdgARAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -2068,7 +2068,7 @@ class SECEdgARAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -2084,7 +2084,7 @@ class SECEdgARAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -2096,7 +2096,7 @@ class SECEdgARAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -2112,7 +2112,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2132,7 +2132,7 @@ CIK?
 
 
 
-    
+
 
 
 
@@ -2164,7 +2164,7 @@ CIK?
 
 
 
-        
+
 
 
 
@@ -2184,7 +2184,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2204,7 +2204,7 @@ CIK?
 
 
 
-    
+
 
 
 
@@ -2240,7 +2240,7 @@ CIK?
 
 
 
-        
+
 
 
 
@@ -2268,7 +2268,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2288,7 +2288,7 @@ CIK?
 
 
 
-    
+
 
 
 
@@ -2316,7 +2316,7 @@ CIK?
 
 
 
-        
+
 
 
 
@@ -2328,7 +2328,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2348,7 +2348,7 @@ CIK?
 
 
 
-    
+
 
 
 
@@ -2360,7 +2360,7 @@ CIK?
 
 
 
-        
+
 
 
 
@@ -2376,7 +2376,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2396,7 +2396,7 @@ CIK?
 
 
 
-    
+
 
 
 
@@ -2424,7 +2424,7 @@ CIK?
 
 
 
-        
+
 
 
 
@@ -2440,7 +2440,7 @@ CIK?
 
 
 
-            
+
 
 
 
@@ -2718,7 +2718,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2730,7 +2730,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2770,7 +2770,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2794,7 +2794,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2830,7 +2830,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2854,7 +2854,7 @@ text:
 
 
 
-            
+
 
 
 
@@ -2874,7 +2874,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -2906,7 +2906,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -2918,7 +2918,7 @@ text:
 
 
 
-            
+
 
 
 
@@ -2938,7 +2938,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -2962,7 +2962,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -2978,7 +2978,7 @@ text:
 
 
 
-            
+
 
 
 
@@ -2994,7 +2994,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -3046,7 +3046,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -3078,7 +3078,7 @@ text:
 
 
 
-            
+
 
 
 
@@ -3098,7 +3098,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -3110,7 +3110,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -3130,7 +3130,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -3142,7 +3142,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -3162,7 +3162,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -3174,7 +3174,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -3194,7 +3194,7 @@ text:
 
 
 
-    
+
 
 
 
@@ -3222,7 +3222,7 @@ text:
 
 
 
-        
+
 
 
 
@@ -3238,7 +3238,7 @@ text:
 
 
 
-            
+
 
 
 
@@ -3616,7 +3616,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3624,7 +3624,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3648,7 +3648,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3672,7 +3672,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3688,7 +3688,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3704,7 +3704,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3716,7 +3716,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3728,7 +3728,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -3748,7 +3748,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3760,7 +3760,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3772,7 +3772,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -3792,7 +3792,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3804,7 +3804,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3816,7 +3816,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -3836,7 +3836,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3844,7 +3844,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3864,7 +3864,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3884,7 +3884,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3896,7 +3896,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -3916,7 +3916,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3924,7 +3924,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -3936,7 +3936,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -3952,7 +3952,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -3988,7 +3988,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -4008,7 +4008,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -4028,7 +4028,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -4036,7 +4036,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -4052,7 +4052,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -4064,7 +4064,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -4072,7 +4072,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -5834,7 +5834,7 @@ def retry_with_backoff(
 
 
 
-    
+
 
 
 
@@ -5850,7 +5850,7 @@ def retry_with_backoff(
 
 
 
-        
+
 
 
 
@@ -5862,7 +5862,7 @@ def retry_with_backoff(
 
 
 
-        
+
 
 
 
@@ -5882,7 +5882,7 @@ def retry_with_backoff(
 
 
 
-    
+
 
 
 
@@ -5910,7 +5910,7 @@ def retry_with_backoff(
 
 
 
-            
+
 
 
 
@@ -6022,7 +6022,7 @@ class CircuitBreaker:
 
 
 
-    
+
 
 
 
@@ -6098,7 +6098,7 @@ timeout:
 
 
 
-    
+
 
 
 
@@ -6126,7 +6126,7 @@ timeout:
 
 
 
-        
+
 
 
 
@@ -6158,7 +6158,7 @@ timeout:
 
 
 
-    
+
 
 
 
@@ -6190,7 +6190,7 @@ timeout:
 
 
 
-    
+
 
 
 
@@ -6210,7 +6210,7 @@ timeout:
 
 
 
-        
+
 
 
 
@@ -6722,7 +6722,7 @@ model:
 
 
 
-  
+
 
 
 
@@ -6746,7 +6746,7 @@ fallback_model:
 
 
 
-  
+
 
 
 
@@ -6778,7 +6778,7 @@ analysis:
 
 
 
-  
+
 
 
 
@@ -6806,7 +6806,7 @@ cache_ttl: 3600  # ?
 
 
 
-  
+
 
 
 
@@ -6886,7 +6886,7 @@ monitoring_interval: 60  # ?
 
 
 
-  
+
 
 
 
@@ -6934,7 +6934,7 @@ pushers:
 
 
 
-      
+
 
 
 
@@ -6950,7 +6950,7 @@ pushers:
 
 
 
-    
+
 
 
 
@@ -6970,7 +6970,7 @@ pushers:
 
 
 
-    
+
 
 
 
@@ -7058,7 +7058,7 @@ rule_name: "
 
 
 
-    
+
 
 
 
@@ -7105,6 +7105,3 @@ rule_name: "
 ```
 ```---
 ```
-
-
-

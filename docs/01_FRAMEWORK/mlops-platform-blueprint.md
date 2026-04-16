@@ -80,7 +80,7 @@ responsibility_boundary: |
 
 > **核心职责**: 提供mlops platform blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Mlops Platform蓝图设计相关内容
 
@@ -566,7 +566,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -582,7 +582,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -618,7 +618,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -646,7 +646,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -658,7 +658,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -666,7 +666,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -702,7 +702,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -714,7 +714,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -754,7 +754,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -782,7 +782,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -790,7 +790,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -826,7 +826,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -838,7 +838,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -874,7 +874,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -890,7 +890,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -934,7 +934,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -946,7 +946,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -966,7 +966,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -990,7 +990,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -1006,7 +1006,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -1142,7 +1142,7 @@ class ModelRegistry:
 
 
 
-    
+
 
 
 
@@ -1158,7 +1158,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1226,7 +1226,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1238,7 +1238,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1250,7 +1250,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1258,7 +1258,7 @@ class ModelRegistry:
 
 
 
-    
+
 
 
 
@@ -1298,7 +1298,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1326,7 +1326,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1334,7 +1334,7 @@ class ModelRegistry:
 
 
 
-    
+
 
 
 
@@ -1354,7 +1354,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1362,7 +1362,7 @@ class ModelRegistry:
 
 
 
-    
+
 
 
 
@@ -1382,7 +1382,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1398,7 +1398,7 @@ class ModelRegistry:
 
 
 
-        
+
 
 
 
@@ -1406,7 +1406,7 @@ class ModelRegistry:
 
 
 
-    
+
 
 
 
@@ -1462,7 +1462,7 @@ class PipelineStep(ABC):
 
 
 
-    
+
 
 
 
@@ -1498,7 +1498,7 @@ class TrainingPipeline:
 
 
 
-    
+
 
 
 
@@ -1518,7 +1518,7 @@ class TrainingPipeline:
 
 
 
-        
+
 
 
 
@@ -1538,7 +1538,7 @@ class TrainingPipeline:
 
 
 
-    
+
 
 
 
@@ -1582,7 +1582,7 @@ class TrainingPipeline:
 
 
 
-        
+
 
 
 
@@ -1606,7 +1606,7 @@ class DataLoadingStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1618,7 +1618,7 @@ class DataLoadingStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1658,7 +1658,7 @@ class FeatureEngineeringStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1670,7 +1670,7 @@ class FeatureEngineeringStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1694,7 +1694,7 @@ class FeatureEngineeringStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1722,7 +1722,7 @@ class ModelTrainingStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1734,7 +1734,7 @@ class ModelTrainingStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1758,7 +1758,7 @@ class ModelTrainingStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1786,7 +1786,7 @@ class ModelValidationStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1798,7 +1798,7 @@ class ModelValidationStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -1822,7 +1822,7 @@ class ModelValidationStep(PipelineStep):
 
 
 
-    
+
 
 
 
@@ -2455,6 +2455,3 @@ github-actions-runner>=2.0.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

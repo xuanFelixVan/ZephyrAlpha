@@ -280,7 +280,7 @@ class AutoMLPipeline:
 
         self.output_dir = output_dir
 
-    
+
 
     def train_tabular_model(self, train_data, label_column, problem_type='regression'):
 
@@ -294,7 +294,7 @@ class AutoMLPipeline:
 
         )
 
-        
+
 
         predictor.fit(
 
@@ -306,11 +306,11 @@ class AutoMLPipeline:
 
         )
 
-        
+
 
         return predictor
 
-    
+
 
     def train_timeseries_model(self, train_data, target_column, prediction_length=10):
 
@@ -324,7 +324,7 @@ class AutoMLPipeline:
 
         )
 
-        
+
 
         predictor.fit(
 
@@ -334,11 +334,11 @@ class AutoMLPipeline:
 
         )
 
-        
+
 
         return predictor
 
-    
+
 
     def predict(self, predictor, test_data):
 
@@ -346,7 +346,7 @@ class AutoMLPipeline:
 
         return predictions
 
-    
+
 
     def evaluate(self, predictor, test_data):
 
@@ -402,7 +402,7 @@ class HyperparameterOptimizer:
 
         self.y_train = y_train
 
-    
+
 
     def objective(self, trial):
 
@@ -414,7 +414,7 @@ class HyperparameterOptimizer:
 
         min_samples_leaf = trial.suggest_int('min_samples_leaf', 1, 10)
 
-        
+
 
         model = RandomForestRegressor(
 
@@ -430,7 +430,7 @@ class HyperparameterOptimizer:
 
         )
 
-        
+
 
         scores = cross_val_score(
 
@@ -446,11 +446,11 @@ class HyperparameterOptimizer:
 
         )
 
-        
+
 
         return scores.mean()
 
-    
+
 
     def optimize(self, n_trials=100):
 
@@ -458,11 +458,11 @@ class HyperparameterOptimizer:
 
         study.optimize(self.objective, n_trials=n_trials)
 
-        
+
 
         return study.best_params, study.best_value
 
-    
+
 
     def visualize_optimization(self, study):
 
@@ -470,7 +470,7 @@ class HyperparameterOptimizer:
 
         fig.show()
 
-        
+
 
         fig = optuna.visualization.plot_param_importances(study)
 
@@ -522,7 +522,7 @@ class MLflowExperimentTracker:
 
         mlflow.set_experiment(experiment_name)
 
-    
+
 
     def log_experiment(self, model, params, metrics, artifacts=None):
 
@@ -530,17 +530,17 @@ class MLflowExperimentTracker:
 
             mlflow.log_params(params)
 
-            
+
 
             for metric_name, metric_value in metrics.items():
 
                 mlflow.log_metric(metric_name, metric_value)
 
-            
+
 
             mlflow.sklearn.log_model(model, 'model')
 
-            
+
 
             if artifacts:
 
@@ -548,7 +548,7 @@ class MLflowExperimentTracker:
 
                     mlflow.log_artifact(artifact_path, artifact_name)
 
-    
+
 
     def load_best_model(self, experiment_name, metric_name='rmse'):
 
@@ -556,23 +556,23 @@ class MLflowExperimentTracker:
 
         best_run = runs.loc[runs[f'metrics.{metric_name}'].idxmin()]
 
-        
+
 
         model_uri = f"runs:/{best_run.run_id}/model"
 
         model = mlflow.sklearn.load_model(model_uri)
 
-        
+
 
         return model, best_run
 
-    
+
 
     def register_model(self, model, model_name, stage='Production'):
 
         mlflow.sklearn.log_model(model, 'model', registered_model_name=model_name)
 
-        
+
 
         client = mlflow.tracking.MlflowClient()
 
@@ -616,7 +616,7 @@ class AutoFeatureEngineer:
 
         self.selector = None
 
-    
+
 
     def auto_preprocess(self, X_train, X_test, y_train):
 
@@ -626,7 +626,7 @@ class AutoFeatureEngineer:
 
         X_test_scaled = self.scaler.transform(X_test)
 
-        
+
 
         self.selector = SelectKBest(score_func=f_regression, k='auto')
 
@@ -634,17 +634,17 @@ class AutoFeatureEngineer:
 
         X_test_selected = self.selector.transform(X_test_scaled)
 
-        
+
 
         return X_train_selected, X_test_selected
 
-    
+
 
     def generate_features(self, X):
 
         new_features = {}
 
-        
+
 
         for i in range(X.shape[1]):
 
@@ -652,7 +652,7 @@ class AutoFeatureEngineer:
 
             new_features[f'feature_{i}_log'] = np.log1p(np.abs(X[:, i]))
 
-        
+
 
         return new_features
 
@@ -694,7 +694,7 @@ class AutoModelSelector:
 
         }
 
-    
+
 
     def select_best_model(self, X, y, cv=5):
 
@@ -704,7 +704,7 @@ class AutoModelSelector:
 
         best_name = None
 
-        
+
 
         for name, model in self.models.items():
 
@@ -712,7 +712,7 @@ class AutoModelSelector:
 
             mean_score = scores.mean()
 
-            
+
 
             if mean_score > best_score:
 
@@ -722,7 +722,7 @@ class AutoModelSelector:
 
                 best_name = name
 
-        
+
 
         return best_name, best_model, best_score
 
@@ -1091,4 +1091,3 @@ model_performance = Gauge(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

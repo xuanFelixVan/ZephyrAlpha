@@ -190,7 +190,7 @@ class TestMeanVarianceOptimizer:
 
         return MeanVarianceOptimizer()
 
-    
+
 
     @pytest.fixture
 
@@ -208,7 +208,7 @@ class TestMeanVarianceOptimizer:
 
         return expected_returns, cov_matrix
 
-    
+
 
     def test_basic_optimization(self, optimizer, sample_data):
 
@@ -218,7 +218,7 @@ class TestMeanVarianceOptimizer:
 
         result = optimizer.optimize(expected_returns, cov_matrix)
 
-        
+
 
         assert result['status'] == 'optimal'
 
@@ -228,7 +228,7 @@ class TestMeanVarianceOptimizer:
 
         assert all(w >= -1e-6 for w in result['weights'])
 
-    
+
 
     def test_max_sharpe_optimization(self, optimizer, sample_data):
 
@@ -238,7 +238,7 @@ class TestMeanVarianceOptimizer:
 
         result = optimizer.optimize_max_sharpe(expected_returns, cov_matrix)
 
-        
+
 
         assert result['sharpe_ratio'] > 0
 
@@ -246,7 +246,7 @@ class TestMeanVarianceOptimizer:
 
         assert result['volatility'] > 0
 
-    
+
 
     def test_min_volatility_optimization(self, optimizer, sample_data):
 
@@ -256,13 +256,13 @@ class TestMeanVarianceOptimizer:
 
         result = optimizer.optimize_min_volatility(expected_returns, cov_matrix)
 
-        
+
 
         assert result['volatility'] > 0
 
         assert result['status'] == 'optimal'
 
-    
+
 
     def test_with_constraints(self, optimizer, sample_data):
 
@@ -276,23 +276,23 @@ class TestMeanVarianceOptimizer:
 
         ]
 
-        
+
 
         result = optimizer.optimize(
 
-            expected_returns, 
+            expected_returns,
 
-            cov_matrix, 
+            cov_matrix,
 
             constraints=constraints
 
         )
 
-        
+
 
         assert all(w <= 0.2 + 1e-6 for w in result['weights'])
 
-    
+
 
     def test_invalid_inputs(self, optimizer):
 
@@ -302,13 +302,13 @@ class TestMeanVarianceOptimizer:
 
             optimizer.optimize(None, None)
 
-        
+
 
         with pytest.raises(ValueError):
 
             optimizer.optimize(np.array([]), np.array([]))
 
-    
+
 
     def test_numerical_stability(self, optimizer):
 
@@ -320,11 +320,11 @@ class TestMeanVarianceOptimizer:
 
         cov_matrix = np.eye(n_assets) * 1e-10
 
-        
+
 
         result = optimizer.optimize(expected_returns, cov_matrix)
 
-        
+
 
         assert result['status'] == 'optimal'
 
@@ -356,7 +356,7 @@ class TestConstraintManager:
 
         return ConstraintManager()
 
-    
+
 
     def test_add_weight_constraint(self, manager):
 
@@ -364,13 +364,13 @@ class TestConstraintManager:
 
         manager.add_weight_constraint(min_weight=0.0, max_weight=0.5)
 
-        
+
 
         assert len(manager.constraints) == 1
 
         assert manager.constraints[0].type == 'weight'
 
-    
+
 
     def test_add_sector_constraint(self, manager):
 
@@ -386,13 +386,13 @@ class TestConstraintManager:
 
         )
 
-        
+
 
         assert len(manager.constraints) == 1
 
         assert manager.constraints[0].type == 'sector'
 
-    
+
 
     def test_validate_constraints(self, manager):
 
@@ -400,7 +400,7 @@ class TestConstraintManager:
 
         manager.add_weight_constraint(min_weight=0.0, max_weight=0.5)
 
-        
+
 
         is_valid = manager.validate()
 
@@ -416,7 +416,7 @@ class TestConflictResolver:
 
         return ConflictResolver()
 
-    
+
 
     def test_detect_no_conflict(self, resolver):
 
@@ -430,13 +430,13 @@ class TestConflictResolver:
 
         ]
 
-        
+
 
         conflicts = resolver.detect_conflicts(constraints, n_assets=10)
 
         assert len(conflicts) == 0
 
-    
+
 
     def test_detect_contradictory_conflict(self, resolver):
 
@@ -450,7 +450,7 @@ class TestConflictResolver:
 
         ]
 
-        
+
 
         conflicts = resolver.detect_conflicts(constraints, n_assets=10)
 
@@ -458,7 +458,7 @@ class TestConflictResolver:
 
         assert conflicts[0]['type'] == 'contradictory'
 
-    
+
 
     def test_resolve_conflict(self, resolver):
 
@@ -472,13 +472,13 @@ class TestConflictResolver:
 
         ]
 
-        
+
 
         conflicts = resolver.detect_conflicts(constraints, n_assets=10)
 
         resolution = resolver.resolve_conflicts(constraints, conflicts)
 
-        
+
 
         assert resolution['success'] == True
 
@@ -510,7 +510,7 @@ class TestOptimizerDiagnostics:
 
         return OptimizerDiagnostics()
 
-    
+
 
     def test_diagnose_optimal_result(self, diagnostics):
 
@@ -522,17 +522,17 @@ class TestOptimizerDiagnostics:
 
         cov_matrix = np.eye(3) * 0.04
 
-        
+
 
         result = diagnostics.diagnose(weights, expected_returns, cov_matrix)
 
-        
+
 
         assert result['status'] == 'healthy'
 
         assert len(result['issues']) == 0
 
-    
+
 
     def test_diagnose_high_concentration(self, diagnostics):
 
@@ -544,11 +544,11 @@ class TestOptimizerDiagnostics:
 
         cov_matrix = np.eye(3) * 0.04
 
-        
+
 
         result = diagnostics.diagnose(weights, expected_returns, cov_matrix)
 
-        
+
 
         assert len(result['issues']) > 0
 
@@ -564,7 +564,7 @@ class TestHealthScorer:
 
         return HealthScorer()
 
-    
+
 
     def test_calculate_health_score(self, scorer):
 
@@ -576,11 +576,11 @@ class TestHealthScorer:
 
         cov_matrix = np.eye(3) * 0.04
 
-        
+
 
         result = scorer.calculate(weights, returns, cov_matrix)
 
-        
+
 
         assert 0 <= result['overall_score'] <= 100
 
@@ -590,7 +590,7 @@ class TestHealthScorer:
 
         assert 'diversification_score' in result
 
-    
+
 
     def test_health_score_interpretation(self, scorer):
 
@@ -600,7 +600,7 @@ class TestHealthScorer:
 
         low_score = scorer.interpret_score(45)
 
-        
+
 
         assert 'good' in high_score.lower()
 
@@ -662,7 +662,7 @@ class TestIntegration:
 
         return MeanVarianceOptimizer()
 
-    
+
 
     @pytest.fixture
 
@@ -670,7 +670,7 @@ class TestIntegration:
 
         return ConstraintManager()
 
-    
+
 
     @pytest.fixture
 
@@ -678,7 +678,7 @@ class TestIntegration:
 
         return OptimizerDiagnostics()
 
-    
+
 
     def test_optimization_with_constraints_integration(
 
@@ -692,7 +692,7 @@ class TestIntegration:
 
         cov_matrix = np.eye(3) * 0.04
 
-        
+
 
         constraint_manager.add_weight_constraint(min_weight=0.0, max_weight=0.5)
 
@@ -706,7 +706,7 @@ class TestIntegration:
 
         )
 
-        
+
 
         result = optimizer.optimize(
 
@@ -718,7 +718,7 @@ class TestIntegration:
 
         )
 
-        
+
 
         assert result['status'] == 'optimal'
 
@@ -726,7 +726,7 @@ class TestIntegration:
 
         assert result['weights'][0] + result['weights'][1] <= 0.6 + 1e-6
 
-    
+
 
     def test_optimization_with_diagnostics_integration(
 
@@ -740,11 +740,11 @@ class TestIntegration:
 
         cov_matrix = np.eye(3) * 0.04
 
-        
+
 
         opt_result = optimizer.optimize(expected_returns, cov_matrix)
 
-        
+
 
         diag_result = diagnostics.diagnose(
 
@@ -756,7 +756,7 @@ class TestIntegration:
 
         )
 
-        
+
 
         assert diag_result['status'] in ['healthy', 'warning']
 
@@ -784,7 +784,7 @@ class TestDataFlowIntegration:
 
         return DataFlowManager()
 
-    
+
 
     def test_end_to_end_data_flow(self, flow_manager):
 
@@ -798,11 +798,11 @@ class TestDataFlowIntegration:
 
         })
 
-        
+
 
         processed_data = flow_manager.process(raw_data)
 
-        
+
 
         assert 'returns' in processed_data
 
@@ -838,11 +838,11 @@ def temp_db():
 
         db_path = f.name
 
-    
+
 
     yield db_path
 
-    
+
 
     if os.path.exists(db_path):
 
@@ -862,11 +862,11 @@ def temp_config():
 
         config_path = f.name
 
-    
+
 
     yield config_path
 
-    
+
 
     if os.path.exists(config_path):
 
@@ -904,7 +904,7 @@ class TestE2E:
 
         return OptimizationAPI()
 
-    
+
 
     def test_complete_optimization_workflow(self, api):
 
@@ -924,11 +924,11 @@ class TestE2E:
 
         }
 
-        
+
 
         response = api.optimize(request)
 
-        
+
 
         assert response['status'] == 'success'
 
@@ -954,11 +954,11 @@ def test_monitoring_workflow(self, api):
 
     portfolio_id = 'test_portfolio'
 
-    
+
 
     drift_response = api.get_drift(portfolio_id)
 
-    
+
 
     assert drift_response['status'] == 'success'
 
@@ -996,7 +996,7 @@ class TestPerformance:
 
         cov_matrix = cov_matrix @ cov_matrix.T
 
-        
+
 
         start_time = time.time()
 
@@ -1004,13 +1004,13 @@ class TestPerformance:
 
         elapsed_time = time.time() - start_time
 
-        
+
 
         assert elapsed_time < 1.0
 
         assert result['status'] == 'optimal'
 
-    
+
 
     def test_concurrent_optimization(self, optimizer):
 
@@ -1018,7 +1018,7 @@ class TestPerformance:
 
         import concurrent.futures
 
-        
+
 
         def optimize_task(i):
 
@@ -1030,7 +1030,7 @@ class TestPerformance:
 
             return optimizer.optimize(expected_returns, cov_matrix)
 
-        
+
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
 
@@ -1038,7 +1038,7 @@ class TestPerformance:
 
             results = [f.result() for f in futures]
 
-        
+
 
         assert all(r['status'] == 'optimal' for r in results)
 
@@ -1068,7 +1068,7 @@ def generate_test_data(n_assets: int, n_periods: int) -> Dict:
 
     生成测试数据
 
-    
+
 
     Args:
 
@@ -1076,7 +1076,7 @@ def generate_test_data(n_assets: int, n_periods: int) -> Dict:
 
         n_periods: 时间周期
 
-    
+
 
     Returns:
 
@@ -1086,21 +1086,21 @@ def generate_test_data(n_assets: int, n_periods: int) -> Dict:
 
     np.random.seed(42)
 
-    
+
 
     returns = np.random.randn(n_periods, n_assets) * 0.02
 
-    
+
 
     prices = 100 * np.exp(np.cumsum(returns, axis=0))
 
-    
+
 
     expected_returns = np.mean(returns, axis=0) * 252
 
     cov_matrix = np.cov(returns.T) * 252
 
-    
+
 
     return {
 
@@ -1182,7 +1182,7 @@ def generate_test_report():
 
     生成测试报告
 
-    
+
 
     Returns:
 
@@ -1272,13 +1272,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v2
 
-    
+
 
     - name: Set up Python
 
@@ -1288,7 +1288,7 @@ jobs:
 
         python-version: 3.9
 
-    
+
 
     - name: Install dependencies
 
@@ -1298,25 +1298,25 @@ jobs:
 
         pip install pytest pytest-cov
 
-    
+
 
     - name: Run unit tests
 
       run: pytest tests/unit -v --cov=layer6 --cov-report=xml
 
-    
+
 
     - name: Run integration tests
 
       run: pytest tests/integration -v
 
-    
+
 
     - name: Run E2E tests
 
       run: pytest tests/e2e -v
 
-    
+
 
     - name: Upload coverage
 
@@ -1340,7 +1340,7 @@ coverage:
 
   precision: 2
 
-  
+
 
   status:
 
@@ -1352,7 +1352,7 @@ coverage:
 
         threshold: 5%
 
-    
+
 
     patch:
 
@@ -1428,11 +1428,11 @@ def test_external_api_call():
 
         mock_call.return_value = {'status': 'success'}
 
-        
+
 
         result = api.call_external()
 
-        
+
 
         assert result['status'] == 'success'
 
@@ -1451,4 +1451,3 @@ def test_external_api_call():
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-08 | 初始版本创建 | 架构团队 |
-

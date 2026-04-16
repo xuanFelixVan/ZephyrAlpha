@@ -24,7 +24,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：执行策略回测、策略模拟、成本分析
 
@@ -170,7 +170,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为策略执行层的回测核心
 
@@ -194,7 +194,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
   - 回测结果分析
 
-  
+
 
 
 
@@ -250,7 +250,7 @@ class ExecutionStrategy(bt.Strategy):
 
         self.buycomm = None
 
-        
+
 
     def next(self):
 
@@ -266,7 +266,7 @@ class ExecutionStrategy(bt.Strategy):
 
                 self.order = self.sell(size=100)
 
-                
+
 
     def notify_order(self, order):
 
@@ -330,7 +330,7 @@ class LiveTradingEngine:
 
         self.main_engine.add_app(CtaStrategyApp)
 
-        
+
 
     def connect(self, userid, password, brokerid, td_address, md_address):
 
@@ -606,7 +606,7 @@ VeighNa依赖
 
 
 
-## 
+##
 
 
 
@@ -672,7 +672,7 @@ VeighNa依赖
 
 
 
-## 
+##
 
 
 
@@ -744,7 +744,7 @@ graph LR
 
     D[市场冲击模型] --> B
 
-    
+
 
     B --> E[算法交易优化器]
 
@@ -752,7 +752,7 @@ graph LR
 
     B --> G[智能订单路由]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -867,10 +867,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

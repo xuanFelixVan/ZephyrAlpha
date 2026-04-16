@@ -730,4 +730,3 @@ responsibility: STATE
 
 
 **结论**: Layer 2 Alpha因子层现在拥有完整的30个模块蓝图，达到专业机构标准！🎉
-

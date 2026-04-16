@@ -25,7 +25,7 @@ responsibility: ''
 
 > **核心职责**: Portfolio Risk Attribution蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Portfolio Risk Attribution蓝图设计相关内容
 
@@ -425,15 +425,15 @@ class TotalRiskCalculator:
 
     """总风险计算器"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
 
-    def calculate_portfolio_volatility(self, 
+
+    def calculate_portfolio_volatility(self,
 
                                        returns: pd.DataFrame,
 
@@ -447,11 +447,11 @@ class TotalRiskCalculator:
 
         portfolio_volatility = np.sqrt(portfolio_variance)
 
-        
+
 
         return portfolio_volatility
 
-    
+
 
     def calculate_var(self,
 
@@ -465,7 +465,7 @@ class TotalRiskCalculator:
 
         return -var
 
-    
+
 
     def calculate_cvar(self,
 
@@ -481,7 +481,7 @@ class TotalRiskCalculator:
 
         return -cvar
 
-    
+
 
     def calculate_max_drawdown(self, returns: pd.Series) -> float:
 
@@ -495,7 +495,7 @@ class TotalRiskCalculator:
 
         max_drawdown = drawdown.min()
 
-        
+
 
         return -max_drawdown
 
@@ -545,13 +545,13 @@ class FactorRiskAttribution:
 
     """因子风险归因"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
+
 
     def calculate_factor_risk_contribution(self,
 
@@ -567,7 +567,7 @@ class FactorRiskAttribution:
 
         portfolio_exposure = np.dot(portfolio_weights, factor_exposures)
 
-        
+
 
         # 因子风险贡献
 
@@ -575,7 +575,7 @@ class FactorRiskAttribution:
 
         factor_risk_contributions = {}
 
-        
+
 
         for i, factor_name in enumerate(factor_exposures.columns):
 
@@ -583,7 +583,7 @@ class FactorRiskAttribution:
 
             factor_risk_contributions[factor_name] = factor_contribution
 
-        
+
 
         # 特质风险
 
@@ -591,11 +591,11 @@ class FactorRiskAttribution:
 
         idiosyncratic_risk = 1 - total_factor_risk
 
-        
+
 
         factor_risk_contributions['idiosyncratic'] = idiosyncratic_risk
 
-        
+
 
         return factor_risk_contributions
 
@@ -645,13 +645,13 @@ class RiskBudgetAllocator:
 
     """风险预算分配器"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
+
 
     def allocate_risk_budget(self,
 
@@ -663,11 +663,11 @@ class RiskBudgetAllocator:
 
         risk_budgets = {}
 
-        
+
 
         total_risk = sum(risk_contributions.values())
 
-        
+
 
         for component, contribution in risk_contributions.items():
 
@@ -675,11 +675,11 @@ class RiskBudgetAllocator:
 
             risk_budgets[component] = budget
 
-        
+
 
         return risk_budgets
 
-    
+
 
     def check_budget_usage(self,
 
@@ -691,7 +691,7 @@ class RiskBudgetAllocator:
 
         budget_usage = {}
 
-        
+
 
         for component, budget in risk_budgets.items():
 
@@ -701,7 +701,7 @@ class RiskBudgetAllocator:
 
             remaining = budget - current
 
-            
+
 
             budget_usage[component] = {
 
@@ -717,7 +717,7 @@ class RiskBudgetAllocator:
 
             }
 
-        
+
 
         return budget_usage
 
@@ -763,13 +763,13 @@ class RiskfolioRiskAttribution:
 
     """Riskfolio风险归因"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
+
 
     def calculate_risk_attribution(self,
 
@@ -785,17 +785,17 @@ class RiskfolioRiskAttribution:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         # 计算风险贡献
 
-        risk_contrib = rp.risk_contribution(w=weights, 
+        risk_contrib = rp.risk_contribution(w=weights,
 
-                                           cov=port.cov, 
+                                           cov=port.cov,
 
                                            returns=port.returns)
 
-        
+
 
         return {
 
@@ -839,13 +839,13 @@ class PyPortfolioOptRiskAttribution:
 
     """PyPortfolioOpt风险归因"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
+
 
     def calculate_risk_attribution(self,
 
@@ -859,7 +859,7 @@ class PyPortfolioOptRiskAttribution:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         # 优化组合
 
@@ -867,13 +867,13 @@ class PyPortfolioOptRiskAttribution:
 
         weights = ef.max_sharpe()
 
-        
+
 
         # 计算风险贡献
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         return {
 
@@ -929,13 +929,13 @@ class AIRiskAttributionAssistant:
 
     """AI风险归因助手"""
 
-    
+
 
     def __init__(self, api_key: str):
 
         self.llm = OpenAI(api_key=api_key)
 
-        
+
 
     def analyze_risk_anomaly(self, risk_data: Dict) -> str:
 
@@ -947,11 +947,11 @@ class AIRiskAttributionAssistant:
 
             作为风险归因专家，请分析以下风险数据是否异常：
 
-            
+
 
             风险数据：{risk_data}
 
-            
+
 
             请提供：
 
@@ -967,11 +967,11 @@ class AIRiskAttributionAssistant:
 
         )
 
-        
+
 
         return self.llm(prompt.format(risk_data=risk_data))
 
-    
+
 
     def generate_optimization_suggestions(self, risk_data: Dict) -> str:
 
@@ -983,11 +983,11 @@ class AIRiskAttributionAssistant:
 
             作为风险优化专家，请根据以下风险数据提供优化建议：
 
-            
+
 
             风险数据：{risk_data}
 
-            
+
 
             请提供：
 
@@ -1005,7 +1005,7 @@ class AIRiskAttributionAssistant:
 
         )
 
-        
+
 
         return self.llm(prompt.format(risk_data=risk_data))
 
@@ -1099,7 +1099,7 @@ class RiskAttributionAlertSystem:
 
     """风险归因告警系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1115,7 +1115,7 @@ class RiskAttributionAlertSystem:
 
         }
 
-        
+
 
     def check_alerts(self, risk_data: Dict) -> List[Dict]:
 
@@ -1123,7 +1123,7 @@ class RiskAttributionAlertSystem:
 
         alerts = []
 
-        
+
 
         if risk_data['volatility'] > self.thresholds['volatility_high']:
 
@@ -1145,7 +1145,7 @@ class RiskAttributionAlertSystem:
 
             })
 
-        
+
 
         if risk_data['max_drawdown'] > self.thresholds['max_drawdown_high']:
 
@@ -1167,7 +1167,7 @@ class RiskAttributionAlertSystem:
 
             })
 
-        
+
 
         return alerts
 
@@ -1284,4 +1284,3 @@ class RiskAttributionAlertSystem:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

@@ -6,7 +6,7 @@
 
 使用方式:
     from src.modules.data_hub import DataHub
-    
+
     hub = DataHub()
     ohlcv = hub.get_ohlcv("000001.SZ", "2026-01-01", "2026-01-31")
     symbols = hub.list_symbols("A")
@@ -55,16 +55,16 @@ class IDataHub(ABC):
         fields: Optional[List[str]] = None
     ) -> pd.DataFrame:
         """获取OHLCV数据
-        
+
         Args:
             symbol: 股票代码，如 "000001.SZ"
             start_date: 开始日期，格式 "YYYY-MM-DD"
             end_date: 结束日期，格式 "YYYY-MM-DD"
             fields: 可选字段列表，如 ["open", "high", "low", "close", "volume"]
-            
+
         Returns:
             pandas.DataFrame: OHLCV数据，索引为日期
-            
+
         Raises:
             ValidationException: 参数验证失败
             DataException: 数据获取失败
@@ -78,11 +78,11 @@ class IDataHub(ABC):
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """获取基本面数据
-        
+
         Args:
             symbol: 股票代码
             fields: 可选字段列表
-            
+
         Returns:
             Dict[str, Any]: 基本面数据字典
         """
@@ -91,10 +91,10 @@ class IDataHub(ABC):
     @abstractmethod
     def list_symbols(self, market: str = "A") -> List[str]:
         """获取股票列表
-        
+
         Args:
             market: 市场代码，"A"表示A股，"HK"表示港股，"US"表示美股
-            
+
         Returns:
             List[str]: 股票代码列表
         """
@@ -103,14 +103,14 @@ class IDataHub(ABC):
 
 class DataHub(IDataHub):
     """数据中心实现 (占位符版本)
-    
+
     当前返回示例数据，用于开发和测试。
     生产环境需要连接真实数据源。
     """
-    
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """初始化DataHub
-        
+
         Args:
             config: 配置字典，支持以下键:
                 - data_source: 数据源类型 ("akshare", "tushare", "mock")
@@ -121,9 +121,9 @@ class DataHub(IDataHub):
         self.data_source = self.config.get("data_source", "mock")
         self.cache_enabled = self.config.get("cache_enabled", True)
         self.max_retries = self.config.get("max_retries", 3)
-        
+
         logger.info(f"DataHub初始化完成，数据源: {self.data_source}")
-    
+
     def get_ohlcv(
         self,
         symbol: str,
@@ -132,37 +132,37 @@ class DataHub(IDataHub):
         fields: Optional[List[str]] = None
     ) -> pd.DataFrame:
         """获取OHLCV数据 (占位符实现)
-        
+
         当前返回示例数据，模拟20个交易日的OHLCV数据。
         生产环境需要替换为真实数据源调用。
         """
         # 参数验证
         if not symbol or not start_date or not end_date:
             raise ValidationException("symbol, start_date, end_date不能为空")
-        
+
         logger.debug(f"获取OHLCV数据: {symbol}, {start_date} 到 {end_date}")
-        
+
         # 生成示例数据
         try:
             start_dt = datetime.strptime(start_date, "%Y-%m-%d")
             end_dt = datetime.strptime(end_date, "%Y-%m-%d")
         except ValueError as e:
             raise ValidationException(f"日期格式错误: {e}")
-        
+
         # 生成20个交易日数据
         dates = pd.date_range(start=start_dt, end=end_dt, freq='D')
         if len(dates) > 20:
             dates = dates[:20]  # 限制数据量
-        
+
         # 生成随机但合理的OHLCV数据
         np.random.seed(42)  # 固定随机种子以保证可重复性
         n_days = len(dates)
-        
+
         # 基础价格序列 (随机游走)
         base_price = 100.0
         returns = np.random.normal(0.001, 0.02, n_days)  # 日收益率
         price_series = base_price * np.cumprod(1 + returns)
-        
+
         # 生成OHLCV
         data = []
         for i in range(n_days):
@@ -171,7 +171,7 @@ class DataHub(IDataHub):
             high_price = max(open_price, close_price) * (1 + abs(np.random.normal(0, 0.005)))
             low_price = min(open_price, close_price) * (1 - abs(np.random.normal(0, 0.005)))
             volume = np.random.randint(1000000, 10000000)
-            
+
             data.append({
                 'open': round(open_price, 2),
                 'high': round(high_price, 2),
@@ -179,34 +179,34 @@ class DataHub(IDataHub):
                 'close': round(close_price, 2),
                 'volume': volume
             })
-        
+
         df = pd.DataFrame(data, index=dates)
-        
+
         # 如果指定了字段，则过滤
         if fields:
             available_fields = ['open', 'high', 'low', 'close', 'volume']
             valid_fields = [f for f in fields if f in available_fields]
             if valid_fields:
                 df = df[valid_fields]
-        
+
         logger.info(f"生成示例OHLCV数据: {symbol}, 形状: {df.shape}")
         return df
-    
+
     def get_fundamental(
         self,
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """获取基本面数据 (占位符实现)
-        
+
         当前返回示例基本面数据。
         生产环境需要连接真实财务数据源。
         """
         if not symbol:
             raise ValidationException("symbol不能为空")
-        
+
         logger.debug(f"获取基本面数据: {symbol}")
-        
+
         # 示例基本面数据
         fundamental_data = {
             "symbol": symbol,
@@ -221,7 +221,7 @@ class DataHub(IDataHub):
             "net_profit_growth": round(np.random.uniform(-0.2, 0.4), 4),  # 净利润增长率
             "update_date": datetime.now().strftime("%Y-%m-%d")
         }
-        
+
         # 如果指定了字段，则过滤
         if fields:
             result = {k: v for k, v in fundamental_data.items() if k in fields}
@@ -229,17 +229,17 @@ class DataHub(IDataHub):
             if "symbol" not in result:
                 result["symbol"] = symbol
             return result
-        
+
         return fundamental_data
-    
+
     def list_symbols(self, market: str = "A") -> List[str]:
         """获取股票列表 (占位符实现)
-        
+
         当前返回示例股票列表。
         生产环境需要从交易所或数据源获取实时列表。
         """
         logger.debug(f"获取股票列表，市场: {market}")
-        
+
         # 示例股票列表
         if market == "A":
             symbols = [
@@ -273,7 +273,7 @@ class DataHub(IDataHub):
         else:
             symbols = []
             logger.warning(f"不支持的市场代码: {market}")
-        
+
         logger.info(f"返回股票列表，市场: {market}, 数量: {len(symbols)}")
         return symbols
 

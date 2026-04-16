@@ -276,7 +276,7 @@ class XGBoostModel:
 
         self.model = None
 
-    
+
 
     def train(self, X_train, y_train):
 
@@ -284,13 +284,13 @@ class XGBoostModel:
 
         self.model.fit(X_train, y_train)
 
-    
+
 
     def predict(self, X):
 
         return self.model.predict(X)
 
-    
+
 
     def get_feature_importance(self):
 
@@ -356,13 +356,13 @@ class LightGBMModel:
 
         self.model = None
 
-    
+
 
     def train(self, X_train, y_train, X_val=None, y_val=None):
 
         train_data = lgb.Dataset(X_train, label=y_train)
 
-        
+
 
         valid_sets = [train_data]
 
@@ -372,7 +372,7 @@ class LightGBMModel:
 
             valid_sets.append(valid_data)
 
-        
+
 
         self.model = lgb.train(
 
@@ -390,7 +390,7 @@ class LightGBMModel:
 
         )
 
-    
+
 
     def predict(self, X):
 
@@ -454,21 +454,21 @@ class CatBoostModel:
 
         self.model = None
 
-    
+
 
     def train(self, X_train, y_train, cat_features=None):
 
         self.model = CatBoostRegressor(**self.params)
 
-        
+
 
         train_pool = Pool(X_train, y_train, cat_features=cat_features)
 
-        
+
 
         self.model.fit(train_pool)
 
-    
+
 
     def predict(self, X):
 
@@ -504,7 +504,7 @@ class StackingEnsemble:
 
         self.n_folds = n_folds
 
-    
+
 
     def fit(self, X, y):
 
@@ -512,15 +512,15 @@ class StackingEnsemble:
 
         self.meta_model_ = clone(self.meta_model)
 
-        
+
 
         kfold = KFold(n_splits=self.n_folds, shuffle=True, random_state=42)
 
-        
+
 
         meta_features = np.zeros((X.shape[0], len(self.base_models)))
 
-        
+
 
         for i, model in enumerate(self.base_models):
 
@@ -530,29 +530,29 @@ class StackingEnsemble:
 
                 self.base_models_[i].append(instance)
 
-                
+
 
                 instance.fit(X[train_idx], y[train_idx])
 
-                
+
 
                 meta_features[val_idx, i] = instance.predict(X[val_idx])
 
-        
+
 
         self.meta_model_.fit(meta_features, y)
 
-        
+
 
         return self
 
-    
+
 
     def predict(self, X):
 
         meta_features = np.zeros((X.shape[0], len(self.base_models)))
 
-        
+
 
         for i, models in enumerate(self.base_models_):
 
@@ -564,7 +564,7 @@ class StackingEnsemble:
 
             meta_features[:, i] = predictions.mean(axis=1)
 
-        
+
 
         return self.meta_model_.predict(meta_features)
 
@@ -590,7 +590,7 @@ class WeightedAverageEnsemble:
 
         self.weights = None
 
-    
+
 
     def optimize_weights(self, X_val, y_val):
 
@@ -602,11 +602,11 @@ class WeightedAverageEnsemble:
 
             predictions.append(pred)
 
-        
+
 
         predictions = np.array(predictions).T
 
-        
+
 
         def objective(weights):
 
@@ -616,19 +616,19 @@ class WeightedAverageEnsemble:
 
             return mse
 
-        
+
 
         n_models = len(self.models)
 
         initial_weights = np.ones(n_models) / n_models
 
-        
+
 
         constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
 
         bounds = [(0, 1) for _ in range(n_models)]
 
-        
+
 
         result = minimize(
 
@@ -644,15 +644,15 @@ class WeightedAverageEnsemble:
 
         )
 
-        
+
 
         self.weights = result.x
 
-        
+
 
         return self.weights
 
-    
+
 
     def predict(self, X):
 
@@ -664,13 +664,13 @@ class WeightedAverageEnsemble:
 
             predictions.append(pred)
 
-        
+
 
         predictions = np.array(predictions).T
 
         weighted_pred = np.dot(predictions, self.weights)
 
-        
+
 
         return weighted_pred
 
@@ -1017,4 +1017,3 @@ ensemble_performance = Gauge(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -111,7 +111,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -449,7 +449,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -485,7 +485,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -787,7 +787,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -811,7 +811,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -835,7 +835,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -859,7 +859,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -871,13 +871,13 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbol: str, 
+        symbol: str,
 
 
 
@@ -913,7 +913,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -925,13 +925,13 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbol: str, 
+        symbol: str,
 
 
 
@@ -967,7 +967,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -979,13 +979,13 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbol: str, 
+        symbol: str,
 
 
 
@@ -1021,7 +1021,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -1033,13 +1033,13 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbol: str, 
+        symbol: str,
 
 
 
@@ -1051,7 +1051,7 @@ class BaostockAdapter:
 
 
 
-        end_date: datetime, 
+        end_date: datetime,
 
 
 
@@ -1081,7 +1081,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -1093,13 +1093,13 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        data: pd.DataFrame, 
+        data: pd.DataFrame,
 
 
 
@@ -1135,7 +1135,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -1147,7 +1147,7 @@ class BaostockAdapter:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1177,7 +1177,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -1201,7 +1201,7 @@ class BaostockAdapter:
 
 
 
-    
+
 
 
 
@@ -1577,7 +1577,7 @@ def validate_data(
 
 
 
-    self, 
+    self,
 
 
 
@@ -1619,7 +1619,7 @@ def validate_data(
 
 
 
-    
+
 
 
 
@@ -1649,7 +1649,7 @@ def validate_data(
 
 
 
-    
+
 
 
 
@@ -1703,7 +1703,7 @@ def cross_validate(
 
 
 
-    self, 
+    self,
 
 
 
@@ -1733,7 +1733,7 @@ def cross_validate(
 
 
 
-    
+
 
 
 
@@ -1763,7 +1763,7 @@ def cross_validate(
 
 
 
-    
+
 
 
 
@@ -2025,7 +2025,7 @@ def test_baostock_integration():
 
 
 
-    
+
 
 
 
@@ -2037,7 +2037,7 @@ def test_baostock_integration():
 
 
 
-    
+
 
 
 
@@ -2049,7 +2049,7 @@ def test_baostock_integration():
 
 
 
-        "000001.SZ", 
+        "000001.SZ",
 
 
 
@@ -2079,7 +2079,7 @@ def test_baostock_integration():
 
 
 
-    
+
 
 
 
@@ -2459,7 +2459,7 @@ baostock:
 
 
 
-  
+
 
 
 
@@ -2489,7 +2489,7 @@ baostock:
 
 
 
-  
+
 
 
 
@@ -2610,8 +2610,3 @@ baostock:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?
-
-
-
-
-

@@ -157,14 +157,14 @@ priority: P0
 def calculate_slippage(order, execution):
     """
     滑点 = 实际成交价格 - 理论成交价格
-    
+
     执行滑点 = 成交均价 - 下单时市场价格
     时间滑点 = 下单时市场价格 - 决策时市场价格
     """
     execution_slippage = execution.avg_price - order.market_price_at_order
     timing_slippage = order.market_price_at_order - order.decision_price
     total_slippage = execution.avg_price - order.decision_price
-    
+
     return {
         'execution_slippage': execution_slippage,
         'timing_slippage': timing_slippage,
@@ -178,17 +178,17 @@ def calculate_slippage(order, execution):
 def market_impact_model(volume, adv, volatility, participation_rate):
     """
     Almgren-Chriss市场冲击模型
-    
+
     临时冲击 = σ * (Q/V)^0.5 * participation_rate
     永久冲击 = σ * (Q/V) * participation_rate
-    
+
     Q: 交易量
     V: 日均成交量(ADV)
     σ: 波动率
     """
     temporary_impact = volatility * (volume / adv) ** 0.5 * participation_rate
     permanent_impact = volatility * (volume / adv) * participation_rate
-    
+
     return {
         'temporary_impact': temporary_impact,
         'permanent_impact': permanent_impact,
@@ -202,7 +202,7 @@ def market_impact_model(volume, adv, volatility, participation_rate):
 def execution_efficiency_score(actual_cost, benchmark_cost):
     """
     执行效率评分 (0-100)
-    
+
     VWAP基准: 与VWAP价格的偏离度
     TWAP基准: 与TWAP价格的偏离度
     Arrival基准: 与下单时价格的偏离度
@@ -278,21 +278,21 @@ class TCAResult:
     symbol: str                # 证券代码
     direction: str             # 买卖方向
     quantity: float            # 交易数量
-    
+
     # 成本分解
     explicit_cost: float       # 显性成本
     implicit_cost: float       # 隐性成本
     opportunity_cost: float    # 机会成本
     total_cost: float          # 总成本
-    
+
     # 滑点分析
     execution_slippage: float  # 执行滑点
     timing_slippage: float     # 时间滑点
-    
+
     # 冲击成本
     temporary_impact: float    # 临时冲击
     permanent_impact: float    # 永久冲击
-    
+
     # 效率评分
     vwap_score: float          # VWAP效率评分
     arrival_score: float       # Arrival效率评分

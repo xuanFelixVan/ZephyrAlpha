@@ -485,7 +485,7 @@ class MonitoringDashboard:
 
         }
 
-    
+
 
     def track_request(self, endpoint: str, duration: float):
 
@@ -494,4 +494,3 @@ class MonitoringDashboard:
         self.metrics['response_time'].observe(duration)
 
 ```
-

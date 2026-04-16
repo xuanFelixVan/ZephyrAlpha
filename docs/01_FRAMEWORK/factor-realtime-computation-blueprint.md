@@ -20,4 +20,3 @@ open_source_solution: Apache Flink + Redis + Apache Arrow
 responsibility: ''
 ---
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -99,7 +99,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -129,7 +129,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -527,7 +527,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -1075,7 +1075,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1099,7 +1099,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1165,7 +1165,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1225,7 +1225,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1279,7 +1279,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1327,7 +1327,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1381,7 +1381,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1429,7 +1429,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1483,7 +1483,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1531,7 +1531,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1579,7 +1579,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1621,7 +1621,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1663,7 +1663,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -1717,7 +1717,7 @@ class DataValidator:
 
 
 
-    
+
 
 
 
@@ -2231,13 +2231,13 @@ def check_completeness(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
@@ -2267,7 +2267,7 @@ def check_completeness(
 
 
 
-    
+
 
 
 
@@ -2303,7 +2303,7 @@ def check_completeness(
 
 
 
-    
+
 
 
 
@@ -2357,7 +2357,7 @@ def check_completeness(
 
 
 
-    
+
 
 
 
@@ -2405,7 +2405,7 @@ def check_completeness(
 
 
 
-    
+
 
 
 
@@ -2441,7 +2441,7 @@ def check_completeness(
 
 
 
-    
+
 
 
 
@@ -2483,19 +2483,19 @@ def check_consistency(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
 
 
-    reference_data: pd.DataFrame, 
+    reference_data: pd.DataFrame,
 
 
 
@@ -2525,7 +2525,7 @@ def check_consistency(
 
 
 
-    
+
 
 
 
@@ -2555,7 +2555,7 @@ def check_consistency(
 
 
 
-    
+
 
 
 
@@ -2609,7 +2609,7 @@ def check_consistency(
 
 
 
-    
+
 
 
 
@@ -2663,7 +2663,7 @@ def check_consistency(
 
 
 
-    
+
 
 
 
@@ -2705,13 +2705,13 @@ def check_validity(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    data: pd.DataFrame, 
+    data: pd.DataFrame,
 
 
 
@@ -2741,7 +2741,7 @@ def check_validity(
 
 
 
-    
+
 
 
 
@@ -2771,7 +2771,7 @@ def check_validity(
 
 
 
-    
+
 
 
 
@@ -2825,7 +2825,7 @@ def check_validity(
 
 
 
-    
+
 
 
 
@@ -2855,7 +2855,7 @@ def check_validity(
 
 
 
-        
+
 
 
 
@@ -2903,7 +2903,7 @@ def check_validity(
 
 
 
-    
+
 
 
 
@@ -2945,7 +2945,7 @@ def calculate_quality_score(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2975,7 +2975,7 @@ def calculate_quality_score(
 
 
 
-    
+
 
 
 
@@ -2993,7 +2993,7 @@ def calculate_quality_score(
 
 
 
-    
+
 
 
 
@@ -3017,7 +3017,7 @@ def calculate_quality_score(
 
 
 
-    
+
 
 
 
@@ -3077,7 +3077,7 @@ def calculate_quality_score(
 
 
 
-    
+
 
 
 
@@ -3113,7 +3113,7 @@ def calculate_quality_score(
 
 
 
-    
+
 
 
 
@@ -3459,7 +3459,7 @@ def test_validator_integration():
 
 
 
-    
+
 
 
 
@@ -3471,7 +3471,7 @@ def test_validator_integration():
 
 
 
-    
+
 
 
 
@@ -3501,7 +3501,7 @@ def test_validator_integration():
 
 
 
-    
+
 
 
 
@@ -3513,7 +3513,7 @@ def test_validator_integration():
 
 
 
-    
+
 
 
 
@@ -3953,7 +3953,7 @@ data_validator:
 
 
 
-  
+
 
 
 
@@ -3983,7 +3983,7 @@ data_validator:
 
 
 
-  
+
 
 
 
@@ -4037,7 +4037,7 @@ data_validator:
 
 
 
-  
+
 
 
 
@@ -4067,7 +4067,7 @@ data_validator:
 
 
 
-  
+
 
 
 
@@ -4194,8 +4194,3 @@ data_validator:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据预处理层负责?
-
-
-
-
-

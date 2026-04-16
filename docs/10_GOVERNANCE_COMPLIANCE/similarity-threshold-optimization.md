@@ -556,4 +556,3 @@ python scripts/responsibility_similarity_checker.py --threshold 0.85
 **维护者**: 首席文档架构师
 
 **状态**: ✅ 活跃
-

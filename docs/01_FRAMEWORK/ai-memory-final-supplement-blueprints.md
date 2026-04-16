@@ -28,7 +28,7 @@ responsibility: 处理AI_MEMORY_FINAL_SUPPLEMENT_BLUEPRINTS相关业务
 
 > **核心职责**: AI记忆架构最终补充缺失模块的完整蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：12个最终补充模块的蓝图设计
 
@@ -238,7 +238,7 @@ class SignalMemory:
 
     """信号记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -248,45 +248,45 @@ class SignalMemory:
 
     timestamp: datetime
 
-    
+
 
     signal_type: str  # 'factor', 'technical', 'sentiment', 'composite'
 
     signal_source: str  # 信号来源
 
-    
+
 
     generation_logic: str  # 生成逻辑描述
 
     trigger_conditions: Dict  # 触发条件
 
-    
+
 
     signal_value: float  # 信号值
 
     signal_strength: float  # 信号强度
 
-    
+
 
     prediction_accuracy: float  # 预测准确率
 
     ic_value: float  # IC值
 
-    
+
 
     decay_rate: float  # 衰减率
 
     effective_period: int  # 有效期（天）
 
-    
+
 
     market_regime: str  # 市场状态
 
-    
+
 
     notes: Optional[str] = None
 
-    
+
 
     def to_dict(self) -> Dict:
 
@@ -340,7 +340,7 @@ class SignalMemoryManager:
 
     """信号记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -350,7 +350,7 @@ class SignalMemoryManager:
 
         self.decay_detector = SignalDecayDetector()
 
-    
+
 
     def record_signal(self, signal_data: Dict) -> str:
 
@@ -358,13 +358,13 @@ class SignalMemoryManager:
 
         记录信号记忆
 
-        
+
 
         Args:
 
             signal_data: 信号数据字典
 
-            
+
 
         Returns:
 
@@ -408,13 +408,13 @@ class SignalMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
+
 
     def get_signal_quality_evolution(self, signal_id: str) -> Dict:
 
@@ -422,13 +422,13 @@ class SignalMemoryManager:
 
         获取信号质量演化历史
 
-        
+
 
         Args:
 
             signal_id: 信号ID
 
-            
+
 
         Returns:
 
@@ -440,7 +440,7 @@ class SignalMemoryManager:
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         return {
 
@@ -458,7 +458,7 @@ class SignalMemoryManager:
 
         }
 
-    
+
 
     def detect_signal_decay(self, signal_id: str) -> Dict:
 
@@ -466,13 +466,13 @@ class SignalMemoryManager:
 
         检测信号衰减
 
-        
+
 
         Args:
 
             signal_id: 信号ID
 
-            
+
 
         Returns:
 
@@ -484,19 +484,19 @@ class SignalMemoryManager:
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'], reverse=True)
 
-        
+
 
         if len(memories_sorted) < 5:
 
             return {'status': 'insufficient_data', 'confidence': 0.0}
 
-        
+
 
         recent_decay_rates = [m['decay_rate'] for m in memories_sorted[:10]]
 
         avg_decay_rate = np.mean(recent_decay_rates)
 
-        
+
 
         if avg_decay_rate > 0.7:
 
@@ -516,7 +516,7 @@ class SignalMemoryManager:
 
             confidence = 0.7
 
-        
+
 
         return {
 
@@ -638,7 +638,7 @@ class StrategyMemory:
 
     """策略记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -648,33 +648,33 @@ class StrategyMemory:
 
     timestamp: datetime
 
-    
+
 
     version: str  # 策略版本
 
-    
+
 
     logic_changes: List[str]  # 逻辑变更
 
     parameter_changes: Dict  # 参数变更
 
-    
+
 
     performance_metrics: Dict[str, float]  # 性能指标
 
     market_regime: str  # 市场状态
 
-    
+
 
     risk_metrics: Dict[str, float]  # 风险指标
 
-    
+
 
     is_active: bool  # 是否活跃
 
     failure_reason: Optional[str]  # 失效原因
 
-    
+
 
     notes: Optional[str] = None
 
@@ -692,7 +692,7 @@ class StrategyMemoryManager:
 
     """策略记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -700,7 +700,7 @@ class StrategyMemoryManager:
 
         self.performance_tracker = StrategyPerformanceTracker()
 
-    
+
 
     def record_strategy_state(self, strategy_data: Dict) -> str:
 
@@ -708,13 +708,13 @@ class StrategyMemoryManager:
 
         记录策略状态记忆
 
-        
+
 
         Args:
 
             strategy_data: 策略数据字典
 
-            
+
 
         Returns:
 
@@ -752,13 +752,13 @@ class StrategyMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
+
 
     def get_strategy_evolution(self, strategy_id: str) -> Dict:
 
@@ -766,13 +766,13 @@ class StrategyMemoryManager:
 
         获取策略演化历史
 
-        
+
 
         Args:
 
             strategy_id: 策略ID
 
-            
+
 
         Returns:
 
@@ -784,7 +784,7 @@ class StrategyMemoryManager:
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         return {
 
@@ -892,45 +892,45 @@ class CostMemory:
 
     """成本记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     trade_id: str
 
     symbol: str
 
-    
+
 
     market_regime: str  # 市场状态
 
-    
+
 
     actual_cost_bps: float  # 实际成本（基点）
 
     predicted_cost_bps: float  # 预测成本
 
-    
+
 
     cost_components: Dict[str, float]  # 成本组成
 
-    
+
 
     optimization_applied: List[str]  # 应用的优化措施
 
     optimization_effect: float  # 优化效果
 
-    
+
 
     is_anomaly: bool  # 是否异常
 
     anomaly_reason: Optional[str]  # 异常原因
 
-    
+
 
     notes: Optional[str] = None
 
@@ -948,7 +948,7 @@ class CostMemoryManager:
 
     """成本记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -956,7 +956,7 @@ class CostMemoryManager:
 
         self.cost_analyzer = CostAnalyzer()
 
-    
+
 
     def record_cost(self, cost_data: Dict) -> str:
 
@@ -992,15 +992,15 @@ class CostMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_cost_statistics(self, 
+
+    def get_cost_statistics(self,
 
                            symbol: str = None,
 
@@ -1024,23 +1024,23 @@ class CostMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
-        
+
 
         if not memories:
 
             return {}
 
-        
+
 
         actual_costs = [m['actual_cost_bps'] for m in memories]
 
         predicted_costs = [m['predicted_cost_bps'] for m in memories]
 
-        
+
 
         return {
 
@@ -1154,7 +1154,7 @@ class AlertMemory:
 
     """预警记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -1162,13 +1162,13 @@ class AlertMemory:
 
     timestamp: datetime
 
-    
+
 
     alert_type: str  # 'risk', 'performance', 'system'
 
     alert_level: str  # 'critical', 'high', 'medium', 'low'
 
-    
+
 
     trigger_condition: str  # 触发条件
 
@@ -1176,23 +1176,23 @@ class AlertMemory:
 
     threshold: float  # 阈值
 
-    
+
 
     is_true_positive: Optional[bool]  # 是否真阳性
 
     actual_impact: Optional[float]  # 实际影响
 
-    
+
 
     response_actions: List[str]  # 响应措施
 
     response_effectiveness: Optional[float]  # 响应效果
 
-    
+
 
     related_alerts: List[str]  # 相关预警
 
-    
+
 
     notes: Optional[str] = None
 
@@ -1210,7 +1210,7 @@ class AlertMemoryManager:
 
     """预警记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -1218,7 +1218,7 @@ class AlertMemoryManager:
 
         self.accuracy_calculator = AlertAccuracyCalculator()
 
-    
+
 
     def record_alert(self, alert_data: Dict) -> str:
 
@@ -1256,15 +1256,15 @@ class AlertMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_alert_accuracy_statistics(self, 
+
+    def get_alert_accuracy_statistics(self,
 
                                      alert_type: str = None,
 
@@ -1282,27 +1282,27 @@ class AlertMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
-        
+
 
         verified_alerts = [m for m in memories if m['is_true_positive'] is not None]
 
-        
+
 
         if not verified_alerts:
 
             return {}
 
-        
+
 
         true_positives = sum(1 for m in verified_alerts if m['is_true_positive'])
 
         false_positives = len(verified_alerts) - true_positives
 
-        
+
 
         return {
 
@@ -1412,7 +1412,7 @@ class ConfigMemory:
 
     """配置记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -1420,37 +1420,37 @@ class ConfigMemory:
 
     timestamp: datetime
 
-    
+
 
     config_type: str  # 'system', 'strategy', 'model', 'data'
 
     config_key: str
 
-    
+
 
     old_value: str
 
     new_value: str
 
-    
+
 
     change_reason: str  # 变更原因
 
     changed_by: str  # 变更人
 
-    
+
 
     impact_assessment: Optional[Dict]  # 影响评估
 
     rollback_available: bool  # 是否可回滚
 
-    
+
 
     performance_before: Optional[Dict]  # 变更前性能
 
     performance_after: Optional[Dict]  # 变更后性能
 
-    
+
 
     notes: Optional[str] = None
 
@@ -1468,7 +1468,7 @@ class ConfigMemoryManager:
 
     """配置记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -1476,7 +1476,7 @@ class ConfigMemoryManager:
 
         self.git_manager = GitConfigManager()
 
-    
+
 
     def record_config_change(self, config_data: Dict) -> str:
 
@@ -1514,15 +1514,15 @@ class ConfigMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_config_change_history(self, 
+
+    def get_config_change_history(self,
 
                                  config_key: str = None,
 
@@ -1546,13 +1546,13 @@ class ConfigMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'], reverse=True)
 
-        
+
 
         return memories_sorted
 
@@ -1642,39 +1642,39 @@ class KnowledgeGraphMemory:
 
     """知识图谱记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     knowledge_type: str  # 'entity', 'relation', 'rule'
 
-    
+
 
     source_module: str  # 来源模块
 
     target_module: Optional[str]  # 目标模块
 
-    
+
 
     knowledge_content: Dict  # 知识内容
 
-    
+
 
     confidence: float  # 置信度
 
-    
+
 
     related_knowledge: List[str]  # 相关知识
 
-    
+
 
     conflicts: List[Dict]  # 冲突列表
 
-    
+
 
     notes: Optional[str] = None
 
@@ -1692,7 +1692,7 @@ class KnowledgeGraphMemoryManager:
 
     """知识图谱记忆管理器"""
 
-    
+
 
     def __init__(self, neo4j_uri: str, storage_backend='sqlite'):
 
@@ -1700,7 +1700,7 @@ class KnowledgeGraphMemoryManager:
 
         self.storage = self._init_storage(storage_backend)
 
-    
+
 
     def record_knowledge(self, knowledge_data: Dict) -> str:
 
@@ -1730,17 +1730,17 @@ class KnowledgeGraphMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         self._update_neo4j_graph(memory)
 
-        
+
 
         return memory.memory_id
 
-    
+
 
     def query_knowledge_relations(self, module_id: str) -> Dict:
 
@@ -1758,7 +1758,7 @@ class KnowledgeGraphMemoryManager:
 
             )
 
-            
+
 
             relations = []
 
@@ -1774,7 +1774,7 @@ class KnowledgeGraphMemoryManager:
 
                 })
 
-            
+
 
             return {
 
@@ -1888,7 +1888,7 @@ class BacktestMemory:
 
     """回测记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -1896,29 +1896,29 @@ class BacktestMemory:
 
     timestamp: datetime
 
-    
+
 
     strategy_id: str
 
     strategy_version: str
 
-    
+
 
     backtest_period: tuple  # 回测时间段
 
     parameters: Dict  # 回测参数
 
-    
+
 
     performance_metrics: Dict[str, float]  # 性能指标
 
-    
+
 
     forward_performance: Optional[Dict]  # 前瞻性能（实盘）
 
     accuracy_score: Optional[float]  # 准确性评分
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2012,19 +2012,19 @@ class LiquidityMemory:
 
     """流动性记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     symbol: str
 
     market_regime: str
 
-    
+
 
     liquidity_score: float  # 流动性评分
 
@@ -2032,19 +2032,19 @@ class LiquidityMemory:
 
     market_depth: float  # 市场深度
 
-    
+
 
     is_crisis: bool  # 是否危机
 
     crisis_severity: Optional[float]  # 危机严重程度
 
-    
+
 
     predicted_liquidity: Optional[float]  # 预测流动性
 
     prediction_accuracy: Optional[float]  # 预测准确性
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2138,35 +2138,35 @@ class DataSourceMemory:
 
     """数据源记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     source_id: str
 
     source_name: str
 
-    
+
 
     reliability_score: float  # 可靠性评分
 
     latency_ms: float  # 延迟（毫秒）
 
-    
+
 
     quality_metrics: Dict[str, float]  # 质量指标
 
-    
+
 
     is_active: bool  # 是否活跃
 
     switch_reason: Optional[str]  # 切换原因
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2260,7 +2260,7 @@ class MLMemory:
 
     """机器学习记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -2268,27 +2268,27 @@ class MLMemory:
 
     timestamp: datetime
 
-    
+
 
     experiment_type: str  # 'training', 'feature_engineering', 'model_selection'
 
-    
+
 
     features_used: List[str]  # 使用的特征
 
     feature_importance: Dict[str, float]  # 特征重要性
 
-    
+
 
     model_type: str  # 模型类型
 
     hyperparameters: Dict  # 超参数
 
-    
+
 
     performance_metrics: Dict[str, float]  # 性能指标
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2382,35 +2382,35 @@ class InteractionMemory:
 
     """交互记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     user_id: str
 
     interaction_type: str  # 'query', 'command', 'feedback'
 
-    
+
 
     interaction_content: str  # 交互内容
 
-    
+
 
     response_time_ms: float  # 响应时间
 
     user_satisfaction: Optional[float]  # 用户满意度
 
-    
+
 
     optimization_applied: List[str]  # 应用的优化
 
     optimization_effect: Optional[float]  # 优化效果
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2504,7 +2504,7 @@ class ResearchMemory:
 
     """研究记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -2512,31 +2512,31 @@ class ResearchMemory:
 
     timestamp: datetime
 
-    
+
 
     project_name: str
 
     research_type: str  # 'factor', 'strategy', 'model', 'system'
 
-    
+
 
     hypothesis: str  # 研究假设
 
     methodology: str  # 研究方法
 
-    
+
 
     results: Optional[Dict]  # 研究结果
 
     is_successful: Optional[bool]  # 是否成功
 
-    
+
 
     failure_reason: Optional[str]  # 失败原因
 
     lessons_learned: Optional[str]  # 经验教训
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2753,4 +2753,3 @@ Week 2: 功能增强
 **文档状态**: ✅ 完成
 
 **下一步**: 更新System_Manifest.md索引
-

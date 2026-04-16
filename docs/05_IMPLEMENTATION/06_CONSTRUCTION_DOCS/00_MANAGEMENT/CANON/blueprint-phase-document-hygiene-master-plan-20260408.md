@@ -22,7 +22,7 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 # 蓝图阶段：文档「彻底清洁」总执行案（2026-04-08）
 
-> **目标**：在**不破坏可追溯性**的前提下，让蓝图阶段所依赖的文档体系达到：**可发现、单真源、链接可门禁、归档可审计**。  
+> **目标**：在**不破坏可追溯性**的前提下，让蓝图阶段所依赖的文档体系达到：**可发现、单真源、链接可门禁、归档可审计**。
 > **「彻底」定义**：不是「删到篇数最少」，而是 **孤儿收敛到可接受水位、重复与 overlap 均有台账与指针、合并前 L1=0**。
 
 ```
@@ -45,7 +45,7 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 ## 2. 基线清单 vs 自动重算（避免口径漂移）
 
-- **基线**：`STRICT_ORPHAN_FILES_LIST_20260408.txt` + `STRICT_ORPHAN_FILES_REPORT_20260408.md`（含 **A/B/C 人工分桶**），用于治理任务拆分。  
+- **基线**：`STRICT_ORPHAN_FILES_LIST_20260408.txt` + `STRICT_ORPHAN_FILES_REPORT_20260408.md`（含 **A/B/C 人工分桶**），用于治理任务拆分。
 - **重算**：仓库根目录执行：
 
   ```text
@@ -93,8 +93,8 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 ## 4. 禁止事项（避免「假彻底」）
 
-- **无台账批量删除**重复或历史报告。  
-- **单次 PR 改几百个文件**（除非纯机器生成且已 L1 验证）。  
+- **无台账批量删除**重复或历史报告。
+- **单次 PR 改几百个文件**（除非纯机器生成且已 L1 验证）。
 - **跳过分桶**把高价值 A 类与应归档 B 类混处理。
 
 ```

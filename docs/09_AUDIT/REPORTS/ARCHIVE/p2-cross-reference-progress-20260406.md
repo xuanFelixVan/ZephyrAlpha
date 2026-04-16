@@ -19,7 +19,7 @@ layer: layer_09
 
 > **核心职责**: 分析报告和评估结果
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：分析报告和评估结果相关内容
 
@@ -285,7 +285,7 @@ graph LR
 
     B --> C[下游文档]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -495,7 +495,7 @@ def validate_markdown_links(directory):
 
     broken_links = []
 
-    
+
 
     for md_file in Path(directory).rglob('*.md'):
 
@@ -503,13 +503,13 @@ def validate_markdown_links(directory):
 
             content = f.read()
 
-        
+
 
         # 提取所有链接
 
         links = re.findall(r'\[.*?\]\((.*?)\)', content)
 
-        
+
 
         for link in links:
 
@@ -535,7 +535,7 @@ def validate_markdown_links(directory):
 
                     })
 
-    
+
 
     return broken_links
 
@@ -804,4 +804,3 @@ def validate_markdown_links(directory):
 **报告日期**: 2026-04-06
 
 **下次报告日期**: 2026-04-07
-

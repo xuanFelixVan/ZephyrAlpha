@@ -22,7 +22,7 @@ applicable_scope: "全系统技术规格书（Layer 0-11）compliance_level: 专
 
 > **核心职责**: 目录导航和文档索引
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 
@@ -68,7 +68,7 @@ applicable_scope: "全系统技术规格书（Layer 0-11）compliance_level: 专
 
 
 
-- **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260419.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419`；**zero_inbound=0**；候选 **97**）  
+- **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260419.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419`；**zero_inbound=0**；候选 **97**）
 
 - **rollup（深度 3 条数）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索本前缀 **97** 条）
 

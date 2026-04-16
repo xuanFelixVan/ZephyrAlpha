@@ -32,4 +32,3 @@ A	docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md
 A	docs/09_AUDIT/STATE/SENTINEL_PROGRESS_20260408.json
 A	docs/09_AUDIT/STATE/inventory_md_20260408.csv
 A	scripts/sentinel_l1_governance_scan.py
-

@@ -49,7 +49,7 @@ implementation_status: 进行?
 
 
 
-                                                                         
+
 
 
 
@@ -683,7 +683,7 @@ def generate_signal(data, params):
 
 
 
-    
+
 
 
 
@@ -707,7 +707,7 @@ def generate_signal(data, params):
 
 
 
-    
+
 
 
 
@@ -731,7 +731,7 @@ def generate_signal(data, params):
 
 
 
-    
+
 
 
 
@@ -1879,7 +1879,7 @@ def generate_signal(data, params):
 
 
 
-                                                     
+
 
 
 
@@ -2513,7 +2513,7 @@ def generate_signal(data, params):
 
 
 
-                                                    
+
 
 
 
@@ -2609,7 +2609,7 @@ def generate_signal(data, params):
 
 
 
-                                                
+
 
 
 
@@ -2967,27 +2967,22 @@ A: 建议每季度评估一次，避免过度优化。参数调整幅度不宜�
 
 
 
-**文档维护**: 清风量化策略研发中心  
+**文档维护**: 清风量化策略研发中心
 
 
 
 
 
-**联系方式**: strategy@qfquant.com  
+**联系方式**: strategy@qfquant.com
 
 
 
 
 
-**版本**: v2.0  
+**版本**: v2.0
 
 
 
 
 
 **最后更?*: 2026-03-28
-
-
-
-
-

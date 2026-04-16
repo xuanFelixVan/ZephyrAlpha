@@ -99,7 +99,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -129,7 +129,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -461,7 +461,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -497,7 +497,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -817,7 +817,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -841,7 +841,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -889,7 +889,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1045,7 +1045,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1129,7 +1129,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1189,7 +1189,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1237,7 +1237,7 @@ class FactorStore:
 
 
 
-    
+
 
 
 
@@ -1823,13 +1823,13 @@ def save_factor(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor: FactorData, 
+    factor: FactorData,
 
 
 
@@ -1859,7 +1859,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -1907,7 +1907,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -1937,7 +1937,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -1949,7 +1949,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -1967,7 +1967,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -1991,7 +1991,7 @@ def save_factor(
 
 
 
-    
+
 
 
 
@@ -2033,25 +2033,25 @@ def get_factor(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_id: str, 
+    factor_id: str,
 
 
 
 
 
-    start_date: Optional[str] = None, 
+    start_date: Optional[str] = None,
 
 
 
 
 
-    end_date: Optional[str] = None, 
+    end_date: Optional[str] = None,
 
 
 
@@ -2081,7 +2081,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2123,7 +2123,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2147,7 +2147,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2165,7 +2165,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2183,7 +2183,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2213,7 +2213,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2231,7 +2231,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2249,7 +2249,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2291,7 +2291,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2303,7 +2303,7 @@ def get_factor(
 
 
 
-    
+
 
 
 
@@ -2345,7 +2345,7 @@ def get_factor_lineage(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2375,7 +2375,7 @@ def get_factor_lineage(
 
 
 
-    
+
 
 
 
@@ -2405,7 +2405,7 @@ def get_factor_lineage(
 
 
 
-    
+
 
 
 
@@ -2447,7 +2447,7 @@ def get_factor_lineage(
 
 
 
-    
+
 
 
 
@@ -2471,7 +2471,7 @@ def get_factor_lineage(
 
 
 
-    
+
 
 
 
@@ -2733,7 +2733,7 @@ def test_factor_store_integration():
 
 
 
-    
+
 
 
 
@@ -2859,7 +2859,7 @@ def test_factor_store_integration():
 
 
 
-    
+
 
 
 
@@ -2871,7 +2871,7 @@ def test_factor_store_integration():
 
 
 
-    
+
 
 
 
@@ -3323,7 +3323,7 @@ factor_store:
 
 
 
-  
+
 
 
 
@@ -3353,7 +3353,7 @@ factor_store:
 
 
 
-  
+
 
 
 
@@ -3474,8 +3474,3 @@ factor_store:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人
-
-
-
-
-

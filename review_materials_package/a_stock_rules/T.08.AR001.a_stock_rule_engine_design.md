@@ -69,7 +69,7 @@ classDiagram
         +check_position(position: Position) RuleResult
         +calculate_fees(order: UnifiedOrder) FeeResult
     }
-    
+
     class BaseRule {
         <<abstract>>
         +rule_id: str
@@ -79,21 +79,21 @@ classDiagram
         +check(context: Dict) RuleResult
         +get_description() str
     }
-    
+
     class T1Rule {
         -lock_days: int = 1
         -exceptions: List[str]
         +check_sell_permission(position, buy_date, current_date) RuleResult
         +get_unlock_date(buy_date) datetime
     }
-    
+
     class LimitUpDownRule {
         -limit_rates: Dict[str, float]
         +check_limit_price(symbol, price, preclose) RuleResult
         +get_limit_price(symbol, preclose) float
         +is_limit_up(symbol, price, preclose) bool
     }
-    
+
     class TradingFeeRule {
         -commission_rate: float
         -stamp_tax_rate: float
@@ -102,20 +102,20 @@ classDiagram
         +calculate_stamp_tax(amount, side) float
         +calculate_total_fees(order) FeeResult
     }
-    
+
     class RiskRule {
         -max_position_ratio: float
         -max_daily_turnover: float
         +check_position_limit(positions, total_capital) RuleResult
         +check_turnover_limit(daily_turnover) RuleResult
     }
-    
+
     AStockRuleEngine --> BaseRule : 包含
     BaseRule <|-- T1Rule : 继承
     BaseRule <|-- LimitUpDownRule : 继承
     BaseRule <|-- TradingFeeRule : 继承
     BaseRule <|-- RiskRule : 继承
-    
+
     class RuleResult {
         +passed: bool
         +rule_id: str
@@ -123,7 +123,7 @@ classDiagram
         +details: Dict
         +actions: List[str]
     }
-    
+
     class FeeResult {
         +commission: float
         +stamp_tax: float
@@ -185,35 +185,35 @@ class FeeResult:
 
 class BaseRule(ABC):
     """规则基类"""
-    
-    def __init__(self, rule_id: str, rule_name: str, category: RuleCategory, 
+
+    def __init__(self, rule_id: str, rule_name: str, category: RuleCategory,
                  enabled: bool = True, config: Dict[str, Any] = None):
         self.rule_id = rule_id
         self.rule_name = rule_name
         self.category = category
         self.enabled = enabled
         self.config = config or {}
-    
+
     @abstractmethod
     def check(self, context: Dict[str, Any]) -> RuleResult:
         """检查规则
-        
+
         参数:
             context: 检查上下文，包含订单、持仓、市场数据等
-            
+
         返回:
             RuleResult: 规则检查结果
         """
         pass
-    
+
     def get_description(self) -> str:
         """获取规则描述"""
         return f"{self.rule_name} ({self.rule_id})"
-    
+
     def enable(self):
         """启用规则"""
         self.enabled = True
-    
+
     def disable(self):
         """禁用规则"""
         self.enabled = False
@@ -221,26 +221,26 @@ class BaseRule(ABC):
 
 class AStockRuleEngine:
     """A股规则引擎"""
-    
+
     def __init__(self, config_path: str = None):
         self.rule_registry: Dict[str, BaseRule] = {}
         self.rule_configs: List[Dict] = []
-        
+
         if config_path:
             self.load_config(config_path)
             self._initialize_rules()
-    
+
     def register_rule(self, rule: BaseRule):
         """注册规则"""
         self.rule_registry[rule.rule_id] = rule
-    
+
     def check_order(self, order: Dict[str, Any], context: Dict[str, Any] = None) -> List[RuleResult]:
         """检查订单合规性
-        
+
         参数:
             order: 订单数据
             context: 额外上下文（持仓、账户、市场数据等）
-            
+
         返回:
             List[RuleResult]: 所有规则检查结果
         """
@@ -248,35 +248,35 @@ class AStockRuleEngine:
         check_context = {"order": order}
         if context:
             check_context.update(context)
-        
+
         for rule in self.rule_registry.values():
             if not rule.enabled:
                 continue
-            
+
             # 只检查与订单相关的规则
             if rule.category in [RuleCategory.TRADE, RuleCategory.FEE, RuleCategory.RISK]:
                 result = rule.check(check_context)
                 results.append(result)
-        
+
         return results
-    
+
     def calculate_fees(self, order: Dict[str, Any], market_data: Dict[str, Any] = None) -> FeeResult:
         """计算交易费用
-        
+
         参数:
             order: 订单数据
             market_data: 市场数据（用于滑点计算等）
-            
+
         返回:
             FeeResult: 费用计算结果
         """
         # 获取费用规则
-        fee_rules = [r for r in self.rule_registry.values() 
+        fee_rules = [r for r in self.rule_registry.values()
                     if r.category == RuleCategory.FEE and r.enabled]
-        
+
         # 默认费用结果
         fee_result = FeeResult()
-        
+
         # 应用所有费用规则
         for rule in fee_rules:
             if hasattr(rule, 'calculate_fees'):
@@ -286,22 +286,22 @@ class AStockRuleEngine:
                 fee_result.stamp_tax += rule_fee_result.stamp_tax
                 fee_result.transfer_fee += rule_fee_result.transfer_fee
                 fee_result.misc_fee += rule_fee_result.misc_fee
-        
+
         fee_result.total_fee = (
-            fee_result.commission + 
-            fee_result.stamp_tax + 
-            fee_result.transfer_fee + 
+            fee_result.commission +
+            fee_result.stamp_tax +
+            fee_result.transfer_fee +
             fee_result.misc_fee
         )
-        
+
         return fee_result
-    
+
     def load_config(self, config_path: str):
         """加载规则配置"""
         import yaml
         with open(config_path, 'r', encoding='utf-8') as f:
             self.rule_configs = yaml.safe_load(f)
-    
+
     def _initialize_rules(self):
         """根据配置初始化规则"""
         # 这里会根据配置创建具体的规则实例
@@ -323,7 +323,7 @@ class T1TradingSystem:
         '适用范围': 'A股市场所有品种',
         '例外情况': ['ETF基金', '可转债', '期权']
     }
-    
+
     def check_sell_permission(self, position, buy_date, current_date):
         """检查卖出权限"""
         if buy_date == current_date:
@@ -455,7 +455,7 @@ rules:
       lock_days: 1
       exceptions: ["ETF", "可转债", "期权"]
       check_method: "check_sell_permission"
-  
+
   - rule_id: "TRADE_002"
     rule_name: "涨跌停规则"
     category: "trade"
@@ -477,7 +477,7 @@ rules:
           st: 0.20
           first_day: null  # 无涨跌停
       precision: 0.01  # 价格精度
-  
+
   - rule_id: "TRADE_003"
     rule_name: "ST股票规则"
     category: "trade"
@@ -488,7 +488,7 @@ rules:
       st_prefixes: ["*ST", "ST"]
       warning_days: 30
       delisting_threshold: 3  # 连续3年亏损
-  
+
   # ============ 费用规则 ============
   - rule_id: "FEE_001"
     rule_name: "佣金规则"
@@ -501,7 +501,7 @@ rules:
       min_amount: 5.0
       both_sides: true
       calculate_method: "percentage_with_min"
-  
+
   - rule_id: "FEE_002"
     rule_name: "印花税规则"
     category: "fee"
@@ -512,7 +512,7 @@ rules:
       rate: 0.001  # 千一
       apply_on: "sell"  # 卖出时收取
       exempt_categories: ["ETF", "国债"]
-  
+
   - rule_id: "FEE_003"
     rule_name: "过户费规则"
     category: "fee"
@@ -524,7 +524,7 @@ rules:
       sz_rate: 0.00002  # 深市万0.2
       min_amount: 1.0
       both_sides: true
-  
+
   - rule_id: "FEE_004"
     rule_name: "滑点模型"
     category: "fee"
@@ -536,7 +536,7 @@ rules:
       liquidity_factor: true
       volatility_factor: true
       market_cap_weight: true
-  
+
   # ============ 风险规则 ============
   - rule_id: "RISK_001"
     rule_name: "单股仓位限制"
@@ -548,7 +548,7 @@ rules:
       max_position_ratio: 0.10  # 单股最大10%
       max_position_value: 1000000  # 单股最大100万
       apply_to: ["A股", "港股"]
-  
+
   - rule_id: "RISK_002"
     rule_name: "总仓位限制"
     category: "risk"
@@ -558,7 +558,7 @@ rules:
     config:
       max_total_ratio: 0.80  # 总仓位最大80%
       cash_reserve_ratio: 0.05  # 现金储备5%
-  
+
   - rule_id: "RISK_003"
     rule_name: "日换手率限制"
     category: "risk"
@@ -568,7 +568,7 @@ rules:
     config:
       max_daily_turnover: 0.30  # 日换手率不超过30%
       calculation_period: "daily"
-  
+
   # ============ 市场规则 ============
   - rule_id: "MARKET_001"
     rule_name: "交易时间规则"
@@ -589,7 +589,7 @@ rules:
           afternoon_open: "13:00"
           afternoon_close: "16:00"
       holidays: "config/holidays.yaml"
-  
+
   - rule_id: "MARKET_002"
     rule_name: "集合竞价规则"
     category: "market"
@@ -619,30 +619,30 @@ rules:
 ```python
 class VnPySimulationAdapter(BaseEngineAdapter):
     """vn.py模拟交易适配器"""
-    
+
     def __init__(self, config: VnPyConfig):
         super().__init__(config)
         # 初始化A股规则引擎
         self.rule_engine = AStockRuleEngine("config/rules/a_stock_rules.yaml")
-    
+
     def submit_order(self, order: UnifiedOrder) -> Result:
         """提交订单"""
         # 1. 规则检查
         rule_results = self.rule_engine.check_order(order.to_dict())
-        
+
         # 2. 检查是否有错误级别的规则违规
-        critical_errors = [r for r in rule_results 
-                          if r.severity in [RuleSeverity.ERROR, RuleSeverity.CRITICAL] 
+        critical_errors = [r for r in rule_results
+                          if r.severity in [RuleSeverity.ERROR, RuleSeverity.CRITICAL]
                           and not r.passed]
-        
+
         if critical_errors:
             error_msg = "; ".join([f"{r.rule_name}: {r.message}" for r in critical_errors])
             return Result.error(f"订单违反规则: {error_msg}")
-        
+
         # 3. 计算费用
         fee_result = self.rule_engine.calculate_fees(order.to_dict())
         order.metadata['fees'] = fee_result
-        
+
         # 4. 执行订单
         return self._execute_order(order)
 ```
@@ -664,12 +664,12 @@ from a_stock_rules import AStockRuleEngine, T1Rule, LimitUpDownRule
 
 class TestAStockRuleEngine:
     """A股规则引擎测试"""
-    
+
     def setup_method(self):
         self.engine = AStockRuleEngine()
         self.engine.register_rule(T1Rule("TRADE_001", "T+1规则", RuleCategory.TRADE))
         self.engine.register_rule(LimitUpDownRule("TRADE_002", "涨跌停规则", RuleCategory.TRADE))
-    
+
     def test_t1_rule_check(self):
         """测试T+1规则检查"""
         order = {
@@ -679,13 +679,13 @@ class TestAStockRuleEngine:
             "position_date": "2026-04-01",
             "current_date": "2026-04-01"
         }
-        
+
         results = self.engine.check_order(order)
         t1_result = [r for r in results if r.rule_id == "TRADE_001"][0]
-        
+
         assert not t1_result.passed
         assert "T+1制度" in t1_result.message
-    
+
     def test_limit_up_rule_check(self):
         """测试涨跌停规则检查"""
         order = {
@@ -695,13 +695,13 @@ class TestAStockRuleEngine:
             "price": 11.00,
             "preclose": 10.00
         }
-        
+
         results = self.engine.check_order(order)
         limit_result = [r for r in results if r.rule_id == "TRADE_002"][0]
-        
+
         assert not limit_result.passed
         assert "涨停" in limit_result.message
-    
+
     def test_fee_calculation(self):
         """测试费用计算"""
         order = {
@@ -710,9 +710,9 @@ class TestAStockRuleEngine:
             "quantity": 10000,
             "price": 10.00
         }
-        
+
         fee_result = self.engine.calculate_fees(order)
-        
+
         assert fee_result.commission == max(100000 * 0.0003, 5.0)  # 30元或最低5元
         assert fee_result.stamp_tax == 0  # 买入不收印花税
         assert fee_result.total_fee > 0

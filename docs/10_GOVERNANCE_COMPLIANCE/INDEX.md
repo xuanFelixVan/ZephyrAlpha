@@ -96,3 +96,6 @@ responsibility:
 - 扫描范围: D:\ZephyrAlpha\docs
 - 索引文件: docs\10_GOVERNANCE_COMPLIANCE\INDEX.md
 - 自动化工具: Auto-Index Compiler v1.1.0
+
+<!-- orphan-link -->
+- [link-maintenance-mechanism](link-maintenance-mechanism.md)

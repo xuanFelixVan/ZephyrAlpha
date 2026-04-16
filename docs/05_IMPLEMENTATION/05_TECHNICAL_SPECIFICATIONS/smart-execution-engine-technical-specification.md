@@ -167,7 +167,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -289,7 +289,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -367,7 +367,7 @@ implementation_status: 设计阶段
 
 
 
-  - 执行性能评估和报?  
+  - 执行性能评估和报?
 
 
 
@@ -877,7 +877,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -955,7 +955,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -997,7 +997,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1015,7 +1015,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1051,7 +1051,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1081,7 +1081,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1099,7 +1099,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1117,7 +1117,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1147,7 +1147,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1177,7 +1177,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1195,7 +1195,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1225,7 +1225,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1255,7 +1255,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1273,7 +1273,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1303,7 +1303,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1333,7 +1333,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1351,7 +1351,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1381,7 +1381,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1405,7 +1405,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        获取执行?        
+        获取执行?
 
 
 
@@ -1423,7 +1423,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1441,7 +1441,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1465,7 +1465,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1489,7 +1489,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        获取子订单列?        
+        获取子订单列?
 
 
 
@@ -1507,7 +1507,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1531,7 +1531,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1573,7 +1573,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        选择最优执行算?        
+        选择最优执行算?
 
 
 
@@ -1603,7 +1603,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1627,7 +1627,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1657,7 +1657,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1675,7 +1675,7 @@ class SmartExecutionEngineAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1747,7 +1747,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1789,7 +1789,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1813,7 +1813,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1837,7 +1837,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1873,7 +1873,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-        生成VWAP子订?        
+        生成VWAP子订?
 
 
 
@@ -1891,7 +1891,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1915,7 +1915,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1951,7 +1951,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-        根据市场变化动态调?        
+        根据市场变化动态调?
 
 
 
@@ -1975,7 +1975,7 @@ class VWAPAlgorithmAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -2041,7 +2041,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -2083,7 +2083,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -2101,7 +2101,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -2131,7 +2131,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -2167,7 +2167,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-        生成TWAP子订?        
+        生成TWAP子订?
 
 
 
@@ -2185,7 +2185,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -2509,7 +2509,7 @@ class TWAPAlgorithmAPI(ABC):
 
 
 
-- **认证方式**: API密钥认证（与其他模块共享?- **授权机制**: 基于角色的权限控制（RBAC?- **数据加密**: 
+- **认证方式**: API密钥认证（与其他模块共享?- **授权机制**: 基于角色的权限控制（RBAC?- **数据加密**:
 
 
 
@@ -4850,8 +4850,3 @@ CREATE TABLE IF NOT EXISTS child_orders (
 
 
 **文档结束**
-
-
-
-
-

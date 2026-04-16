@@ -69,7 +69,7 @@ implementation_status: 进行?---
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -517,7 +517,7 @@ system:
 
   environment: "production"  # development, staging, production
 
-  
+
 
 # 数据库配?
 
@@ -535,7 +535,7 @@ database:
 
   pool_size: 20
 
-  
+
 
 # 缓存配置
 
@@ -549,7 +549,7 @@ cache:
 
   ttl: 3600
 
-  
+
 
 # 消息队列配置
 
@@ -561,7 +561,7 @@ kafka:
 
   topic_prefix: "qingfeng"
 
-  
+
 
 # 日志配置
 
@@ -607,7 +607,7 @@ strategies:
 
       take_profit: 0.15
 
-    
+
 
   S002:
 
@@ -623,7 +623,7 @@ strategies:
 
       signal_period: 9
 
-      
+
 
 # 风险控制配置
 
@@ -635,7 +635,7 @@ risk_control:
 
   max_drawdown: 0.2       # 最大回?
 
-  
+
 
 # 交易配置
 
@@ -675,7 +675,7 @@ factors:
 
       period: 20
 
-      
+
 
   ALPHA_002:
 
@@ -689,7 +689,7 @@ factors:
 
       period: 30
 
-      
+
 
 # 因子权重
 
@@ -1011,7 +1011,6 @@ def fast_calculation(data):
 
 
 
-**最后更?*: 2026-03-28  
+**最后更?*: 2026-03-28
 
 **维护?*: 清风量化系统
-

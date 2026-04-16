@@ -99,7 +99,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -129,7 +129,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -485,7 +485,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -521,7 +521,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -1129,7 +1129,7 @@ class MeanVarianceOptimizer:
 
 
 
-    
+
 
 
 
@@ -1153,7 +1153,7 @@ class MeanVarianceOptimizer:
 
 
 
-    
+
 
 
 
@@ -1207,7 +1207,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1243,7 +1243,7 @@ class MeanVarianceOptimizer:
 
 
 
-            
+
 
 
 
@@ -1273,7 +1273,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1285,7 +1285,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1327,7 +1327,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1405,7 +1405,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1429,7 +1429,7 @@ class MeanVarianceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1489,7 +1489,7 @@ class RiskParityOptimizer:
 
 
 
-    
+
 
 
 
@@ -1513,7 +1513,7 @@ class RiskParityOptimizer:
 
 
 
-    
+
 
 
 
@@ -1555,7 +1555,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1579,7 +1579,7 @@ class RiskParityOptimizer:
 
 
 
-            
+
 
 
 
@@ -1609,7 +1609,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1633,7 +1633,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1663,7 +1663,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1681,7 +1681,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1711,7 +1711,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1753,7 +1753,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1789,7 +1789,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -1807,7 +1807,7 @@ class RiskParityOptimizer:
 
 
 
-            "total_risk": np.sqrt(np.dot(weights.values.flatten().T, 
+            "total_risk": np.sqrt(np.dot(weights.values.flatten().T,
 
 
 
@@ -1849,7 +1849,7 @@ class MaxSharpeOptimizer:
 
 
 
-    
+
 
 
 
@@ -1873,7 +1873,7 @@ class MaxSharpeOptimizer:
 
 
 
-    
+
 
 
 
@@ -1921,7 +1921,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -1951,7 +1951,7 @@ class MaxSharpeOptimizer:
 
 
 
-            
+
 
 
 
@@ -1981,7 +1981,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -1993,7 +1993,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2005,7 +2005,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2023,7 +2023,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2035,7 +2035,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2047,7 +2047,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2077,7 +2077,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2119,7 +2119,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2131,7 +2131,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2143,7 +2143,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2155,7 +2155,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2179,7 +2179,7 @@ class MaxSharpeOptimizer:
 
 
 
-        
+
 
 
 
@@ -2239,7 +2239,7 @@ class ConstraintProcessor:
 
 
 
-    
+
 
 
 
@@ -2257,7 +2257,7 @@ class ConstraintProcessor:
 
 
 
-    
+
 
 
 
@@ -2293,7 +2293,7 @@ class ConstraintProcessor:
 
 
 
-        
+
 
 
 
@@ -2311,7 +2311,7 @@ class ConstraintProcessor:
 
 
 
-            
+
 
 
 
@@ -2371,7 +2371,7 @@ class ConstraintProcessor:
 
 
 
-        
+
 
 
 
@@ -2431,7 +2431,7 @@ class ConstraintProcessor:
 
 
 
-        
+
 
 
 
@@ -2443,7 +2443,7 @@ class ConstraintProcessor:
 
 
 
-    
+
 
 
 
@@ -2485,7 +2485,7 @@ class ConstraintProcessor:
 
 
 
-        
+
 
 
 
@@ -2509,7 +2509,7 @@ class ConstraintProcessor:
 
 
 
-            
+
 
 
 
@@ -2569,7 +2569,7 @@ class ConstraintProcessor:
 
 
 
-        
+
 
 
 
@@ -2605,7 +2605,7 @@ class RiskBudgetManager:
 
 
 
-    
+
 
 
 
@@ -2623,7 +2623,7 @@ class RiskBudgetManager:
 
 
 
-    
+
 
 
 
@@ -2665,7 +2665,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2689,7 +2689,7 @@ class RiskBudgetManager:
 
 
 
-            
+
 
 
 
@@ -2719,7 +2719,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2731,7 +2731,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2743,7 +2743,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2755,7 +2755,7 @@ class RiskBudgetManager:
 
 
 
-    
+
 
 
 
@@ -2797,7 +2797,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2821,7 +2821,7 @@ class RiskBudgetManager:
 
 
 
-            
+
 
 
 
@@ -2869,7 +2869,7 @@ class RiskBudgetManager:
 
 
 
-        
+
 
 
 
@@ -2905,7 +2905,7 @@ class ResultAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2923,7 +2923,7 @@ class ResultAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2977,7 +2977,7 @@ class ResultAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3013,7 +3013,7 @@ class ResultAnalyzer:
 
 
 
-            
+
 
 
 
@@ -3055,7 +3055,7 @@ class ResultAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3067,7 +3067,7 @@ class ResultAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3079,7 +3079,7 @@ class ResultAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3133,7 +3133,7 @@ class ResultAnalyzer:
 
 
 
-    
+
 
 
 
@@ -3223,7 +3223,7 @@ class PortfolioOptimizer:
 
 
 
-    
+
 
 
 
@@ -3241,7 +3241,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3319,7 +3319,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3331,7 +3331,7 @@ class PortfolioOptimizer:
 
 
 
-    
+
 
 
 
@@ -3367,7 +3367,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3385,7 +3385,7 @@ class PortfolioOptimizer:
 
 
 
-            
+
 
 
 
@@ -3415,7 +3415,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3583,7 +3583,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3613,7 +3613,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3655,7 +3655,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3667,7 +3667,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3757,7 +3757,7 @@ class PortfolioOptimizer:
 
 
 
-    
+
 
 
 
@@ -3805,7 +3805,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3835,7 +3835,7 @@ class PortfolioOptimizer:
 
 
 
-            
+
 
 
 
@@ -3865,7 +3865,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -3901,7 +3901,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -4397,7 +4397,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4421,7 +4421,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4445,7 +4445,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4457,7 +4457,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4487,7 +4487,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4565,7 +4565,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4583,7 +4583,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4607,7 +4607,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4625,7 +4625,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4637,7 +4637,7 @@ def optimize(
 
 
 
-    
+
 
 
 
@@ -4923,7 +4923,7 @@ def test_portfolio_optimizer_integration():
 
 
 
-    
+
 
 
 
@@ -4935,7 +4935,7 @@ def test_portfolio_optimizer_integration():
 
 
 
-    
+
 
 
 
@@ -4977,7 +4977,7 @@ def test_portfolio_optimizer_integration():
 
 
 
-    
+
 
 
 
@@ -5031,7 +5031,7 @@ def test_portfolio_optimizer_integration():
 
 
 
-    
+
 
 
 
@@ -5043,7 +5043,7 @@ def test_portfolio_optimizer_integration():
 
 
 
-    
+
 
 
 
@@ -5447,7 +5447,7 @@ portfolio_optimizer:
 
 
 
-  
+
 
 
 
@@ -5495,7 +5495,7 @@ portfolio_optimizer:
 
 
 
-  
+
 
 
 
@@ -5628,8 +5628,3 @@ portfolio_optimizer:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 组合优化层负责人
-
-
-
-
-

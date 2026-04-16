@@ -45,7 +45,7 @@ implementation_status: 进行?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -261,7 +261,7 @@ class ConfigManagerAPI:
 
 
 
-    
+
 
 
 
@@ -279,7 +279,7 @@ class ConfigManagerAPI:
 
 
 
-    
+
 
 
 
@@ -303,7 +303,7 @@ class ConfigManagerAPI:
 
 
 
-    
+
 
 
 
@@ -327,7 +327,7 @@ class ConfigManagerAPI:
 
 
 
-    
+
 
 
 
@@ -399,7 +399,7 @@ class ConfigItem:
 
 
 
-    
+
 
 
 
@@ -477,7 +477,7 @@ class ConfigVersion:
 
 
 
-    
+
 
 
 
@@ -720,8 +720,3 @@ class ConfigVersion:
 
 
 **文档状?*: ?已完整
-
-
-
-
-

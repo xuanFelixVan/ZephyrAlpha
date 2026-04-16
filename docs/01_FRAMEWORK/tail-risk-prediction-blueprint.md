@@ -26,7 +26,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -316,7 +316,7 @@ class TailRiskPredictor:
 
 
 
-    
+
 
 
 
@@ -372,7 +372,7 @@ class TailRiskPredictor:
 
 
 
-        
+
 
 
 
@@ -420,7 +420,7 @@ class TailRiskPredictor:
 
 
 
-    
+
 
 
 
@@ -468,7 +468,7 @@ class TailRiskPredictor:
 
 
 
-        
+
 
 
 
@@ -484,7 +484,7 @@ class TailRiskPredictor:
 
 
 
-            returns: 收益率序?            
+            returns: 收益率序?
 
 
 
@@ -516,7 +516,7 @@ class TailRiskPredictor:
 
 
 
-    
+
 
 
 
@@ -564,7 +564,7 @@ class TailRiskPredictor:
 
 
 
-        
+
 
 
 
@@ -580,7 +580,7 @@ class TailRiskPredictor:
 
 
 
-            returns: 收益率序?            
+            returns: 收益率序?
 
 
 
@@ -612,7 +612,7 @@ class TailRiskPredictor:
 
 
 
-    
+
 
 
 
@@ -652,7 +652,7 @@ class TailRiskPredictor:
 
 
 
-        """检测尾部事?        
+        """检测尾部事?
 
 
 
@@ -676,7 +676,7 @@ class TailRiskPredictor:
 
 
 
-            
+
 
 
 
@@ -1533,10 +1533,3 @@ ES = stats.genextreme.expect(lambda x: x, args=params, lb=VaR)
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

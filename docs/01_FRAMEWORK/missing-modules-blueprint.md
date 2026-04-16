@@ -44,7 +44,7 @@ layer: layer_01
 
 > **核心职责**: 补充Layer 8人机交互层的缺失模块蓝图
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Layer 8缺失模块蓝图相关内容
 
@@ -54,11 +54,11 @@ layer: layer_01
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **Layer**: Layer 8 - 人机交互层  
+> **Layer**: Layer 8 - 人机交互层
 
 > **目标**: 补充3个缺失模块，达到100%完整度
 
@@ -278,7 +278,7 @@ class TelegramNotificationService:
 
         self.chat_id = chat_id
 
-    
+
 
     async def send_message(self, message: str, parse_mode: str = 'Markdown'):
 
@@ -294,7 +294,7 @@ class TelegramNotificationService:
 
         )
 
-    
+
 
     async def send_trade_notification(self, trade_info: Dict):
 
@@ -324,7 +324,7 @@ class TelegramNotificationService:
 
         await self.send_message(message)
 
-    
+
 
     async def send_risk_alert(self, risk_info: Dict):
 
@@ -378,7 +378,7 @@ class DiscordNotificationService:
 
         self.channel_id = channel_id
 
-    
+
 
     async def send_embed(self, title: str, description: str, color: int = 0x00ff00):
 
@@ -398,7 +398,7 @@ class DiscordNotificationService:
 
         await channel.send(embed=embed)
 
-    
+
 
     async def send_trade_notification(self, trade_info: Dict):
 
@@ -454,7 +454,7 @@ class PushoverNotificationService:
 
         self.api_url = "https://api.pushover.net/1/messages.json"
 
-    
+
 
     def send_message(self, message: str, title: str = None, priority: int = 0):
 
@@ -472,19 +472,19 @@ class PushoverNotificationService:
 
         }
 
-        
+
 
         if title:
 
             data["title"] = title
 
-        
+
 
         response = requests.post(self.api_url, data=data)
 
         return response.json()
 
-    
+
 
     def send_urgent_alert(self, message: str, title: str = None):
 
@@ -720,7 +720,7 @@ class IntelligentQA:
 
         self.qa_chain = None
 
-    
+
 
     def load_documents(self) -> List:
 
@@ -740,7 +740,7 @@ class IntelligentQA:
 
         return documents
 
-    
+
 
     def build_vectorstore(self):
 
@@ -748,7 +748,7 @@ class IntelligentQA:
 
         documents = self.load_documents()
 
-        
+
 
         self.vectorstore = Chroma.from_documents(
 
@@ -760,11 +760,11 @@ class IntelligentQA:
 
         )
 
-        
+
 
         self.vectorstore.persist()
 
-    
+
 
     def load_vectorstore(self):
 
@@ -778,7 +778,7 @@ class IntelligentQA:
 
         )
 
-    
+
 
     def build_qa_chain(self):
 
@@ -788,7 +788,7 @@ class IntelligentQA:
 
             self.load_vectorstore()
 
-        
+
 
         self.qa_chain = RetrievalQA.from_chain_type(
 
@@ -806,7 +806,7 @@ class IntelligentQA:
 
         )
 
-    
+
 
     def ask(self, question: str) -> dict:
 
@@ -816,11 +816,11 @@ class IntelligentQA:
 
             self.build_qa_chain()
 
-        
+
 
         result = self.qa_chain({"query": question})
 
-        
+
 
         return {
 
@@ -854,7 +854,7 @@ class DocumentManager:
 
         self.docs_root = Path(docs_root)
 
-    
+
 
     def get_all_documents(self) -> List[Dict]:
 
@@ -862,7 +862,7 @@ class DocumentManager:
 
         documents = []
 
-        
+
 
         for md_file in self.docs_root.rglob("*.md"):
 
@@ -870,7 +870,7 @@ class DocumentManager:
 
                 post = frontmatter.load(f)
 
-                
+
 
                 documents.append({
 
@@ -884,11 +884,11 @@ class DocumentManager:
 
                 })
 
-        
+
 
         return documents
 
-    
+
 
     def search_documents(self, query: str) -> List[Dict]:
 
@@ -896,7 +896,7 @@ class DocumentManager:
 
         documents = self.get_all_documents()
 
-        
+
 
         results = []
 
@@ -906,11 +906,11 @@ class DocumentManager:
 
                 results.append(doc)
 
-        
+
 
         return results
 
-    
+
 
     def get_document_by_category(self, category: str) -> List[Dict]:
 
@@ -918,7 +918,7 @@ class DocumentManager:
 
         documents = self.get_all_documents()
 
-        
+
 
         return [
 
@@ -968,7 +968,7 @@ class FAQManager:
 
         self.faqs = self._load_faqs()
 
-    
+
 
     def _load_faqs(self) -> List[FAQ]:
 
@@ -986,7 +986,7 @@ class FAQManager:
 
             return []
 
-    
+
 
     def save_faqs(self):
 
@@ -1010,13 +1010,13 @@ class FAQManager:
 
         ]
 
-        
+
 
         with open(self.faq_file, 'w', encoding='utf-8') as f:
 
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-    
+
 
     def add_faq(self, question: str, answer: str, category: str, tags: List[str]):
 
@@ -1028,7 +1028,7 @@ class FAQManager:
 
         self.save_faqs()
 
-    
+
 
     def search_faq(self, query: str) -> List[FAQ]:
 
@@ -1036,7 +1036,7 @@ class FAQManager:
 
         results = []
 
-        
+
 
         for faq in self.faqs:
 
@@ -1048,11 +1048,11 @@ class FAQManager:
 
                 results.append(faq)
 
-        
+
 
         return results
 
-    
+
 
     def get_faq_by_category(self, category: str) -> List[FAQ]:
 
@@ -1158,13 +1158,12 @@ Layer 8人机交互层蓝图已达到100%完整，可以开始实施。
 
 
 
-**蓝图完成日期**: 2026-04-07  
+**蓝图完成日期**: 2026-04-07
 
-**Layer 8完整度**: 100% ✅  
+**Layer 8完整度**: 100% ✅
 
-**开源替代率**: 87%+ ✅  
+**开源替代率**: 87%+ ✅
 
-**个人适用性**: ⭐⭐⭐⭐⭐ ✅  
+**个人适用性**: ⭐⭐⭐⭐⭐ ✅
 
 **下一步**: 开始实施
-

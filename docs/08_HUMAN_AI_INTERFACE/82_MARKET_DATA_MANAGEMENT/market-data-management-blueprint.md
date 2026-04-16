@@ -288,7 +288,7 @@ class MarketDataReceiver:
 
         self.data_sources = {}
 
-    
+
 
     async def receive_market_data(self, symbol: str):
 
@@ -296,7 +296,7 @@ class MarketDataReceiver:
 
         data_source = self.connect_data_source(symbol)
 
-        
+
 
         while True:
 
@@ -304,7 +304,7 @@ class MarketDataReceiver:
 
             tick = await data_source.get_tick()
 
-            
+
 
             # 校验数据
 
@@ -320,7 +320,7 @@ class MarketDataReceiver:
 
                 )
 
-    
+
 
     def validate_tick(self, tick: dict) -> bool:
 
@@ -354,7 +354,7 @@ class HistoricalDataStorage:
 
         self.init_database()
 
-    
+
 
     def init_database(self):
 
@@ -388,7 +388,7 @@ class HistoricalDataStorage:
 
             """)
 
-    
+
 
     def store_tick(self, tick: dict):
 
@@ -404,9 +404,9 @@ class HistoricalDataStorage:
 
             """, tick)
 
-    
 
-    def query_historical_data(self, symbol: str, start_time: datetime, 
+
+    def query_historical_data(self, symbol: str, start_time: datetime,
 
                              end_time: datetime) -> pd.DataFrame:
 
@@ -448,9 +448,9 @@ class DataSubscriptionManager:
 
         )
 
-    
 
-    def subscribe(self, client_id: str, symbols: List[str], 
+
+    def subscribe(self, client_id: str, symbols: List[str],
 
                  callback: Callable) -> str:
 
@@ -458,7 +458,7 @@ class DataSubscriptionManager:
 
         subscription_id = generate_id()
 
-        
+
 
         # 订阅Kafka主题
 
@@ -466,7 +466,7 @@ class DataSubscriptionManager:
 
         self.kafka_consumer.subscribe(topics)
 
-        
+
 
         # 记录订阅
 
@@ -482,11 +482,11 @@ class DataSubscriptionManager:
 
         }
 
-        
+
 
         return subscription_id
 
-    
+
 
     def unsubscribe(self, subscription_id: str):
 
@@ -496,7 +496,7 @@ class DataSubscriptionManager:
 
             del self.subscriptions[subscription_id]
 
-    
+
 
     def distribute_data(self):
 
@@ -506,7 +506,7 @@ class DataSubscriptionManager:
 
             data = message.value
 
-            
+
 
             # 找到对应的订阅者
 
@@ -538,7 +538,7 @@ class MarketDataDistributor:
 
         self.buffer = deque(maxlen=10000)
 
-    
+
 
     def broadcast(self, data: dict):
 
@@ -546,13 +546,13 @@ class MarketDataDistributor:
 
         symbol = data['symbol']
 
-        
+
 
         # 缓存数据
 
         self.buffer.append(data)
 
-        
+
 
         # 分发到订阅者
 
@@ -566,9 +566,9 @@ class MarketDataDistributor:
 
                 print(f"Failed to send to subscriber: {e}")
 
-    
 
-    def replay(self, symbol: str, start_time: datetime, 
+
+    def replay(self, symbol: str, start_time: datetime,
 
                end_time: datetime) -> List[dict]:
 
@@ -578,7 +578,7 @@ class MarketDataDistributor:
 
             data for data in self.buffer
 
-            if data['symbol'] == symbol and 
+            if data['symbol'] == symbol and
 
                start_time <= data['timestamp'] <= end_time
 
@@ -670,9 +670,8 @@ class MarketDataDistributor:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

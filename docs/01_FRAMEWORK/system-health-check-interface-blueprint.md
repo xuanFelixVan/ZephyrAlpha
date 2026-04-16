@@ -19,7 +19,7 @@ responsibility: ''
 ---
 # 系统健康检查界面蓝图
 > **核心职责**: System Health Check Interface蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：System Health Check Interface蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -307,7 +307,7 @@ from typing import Dict, List
 
 class SystemHealthCheckInterface:
     """系统健康检查界面"""
-    
+
     def __init__(self):
         self.services = {
             "API服务": "http://localhost:8000/health",
@@ -315,39 +315,39 @@ class SystemHealthCheckInterface:
             "Prometheus": "http://localhost:9090/-/healthy",
             "Redis": "redis://localhost:6379",
         }
-    
+
     def render_overview(self):
         """渲染系统概览"""
         st.subheader("🖥️ 系统概览")
-        
+
         col1, col2, col3, col4, col5 = st.columns(5)
-        
+
         with col1:
             status = self._get_system_status()
             status_color = {"正常": "🟢", "警告": "🟡", "错误": "🔴"}
             st.metric("系统状态", f"{status_color.get(status, '⚪')} {status}")
-        
+
         with col2:
             boot_time = datetime.fromtimestamp(psutil.boot_time())
             uptime = datetime.now() - boot_time
             st.metric("运行时间", str(uptime).split('.')[0])
-        
+
         with col3:
             cpu_percent = psutil.cpu_percent(interval=1)
             st.metric("CPU使用", f"{cpu_percent:.1f}%")
-        
+
         with col4:
             memory = psutil.virtual_memory()
             st.metric("内存使用", f"{memory.percent:.1f}%")
-        
+
         with col5:
             disk = psutil.disk_usage('/')
             st.metric("磁盘使用", f"{disk.percent:.1f}%")
-    
+
     def render_component_status(self):
         """渲染组件状态"""
         st.subheader("📦 组件状态")
-        
+
         components = [
             {"name": "数据服务", "status": "正常", "latency": "15ms"},
             {"name": "策略引擎", "status": "正常", "latency": "8ms"},
@@ -355,42 +355,42 @@ class SystemHealthCheckInterface:
             {"name": "监控系统", "status": "警告", "latency": "50ms"},
             {"name": "AI服务", "status": "正常", "latency": "100ms"},
         ]
-        
+
         cols = st.columns(len(components))
-        
+
         for col, comp in zip(cols, components):
             with col:
                 status_color = {"正常": "🟢", "警告": "🟡", "错误": "🔴"}
                 st.markdown(f"**{comp['name']}**")
                 st.markdown(f"{status_color.get(comp['status'], '⚪')} {comp['status']}")
                 st.caption(f"延迟: {comp['latency']}")
-    
+
     def render_service_health(self):
         """渲染服务健康状态"""
         st.subheader("🏥 服务健康")
-        
+
         for service_name, health_url in self.services.items():
             with st.expander(f"📡 {service_name}", expanded=False):
                 health_status = self._check_service_health(health_url)
-                
+
                 col1, col2, col3 = st.columns(3)
-                
+
                 with col1:
                     status_color = {"healthy": "🟢", "unhealthy": "🔴", "unknown": "⚪"}
                     st.metric("状态", f"{status_color.get(health_status['status'], '⚪')} {health_status['status']}")
-                
+
                 with col2:
                     st.metric("响应时间", f"{health_status['latency']:.0f}ms")
-                
+
                 with col3:
                     st.metric("最后检查", health_status['last_check'])
-    
+
     def render_resource_monitor(self):
         """渲染资源监控"""
         st.subheader("📊 资源监控")
-        
+
         tab1, tab2, tab3, tab4 = st.tabs(["CPU", "内存", "磁盘", "网络"])
-        
+
         with tab1:
             self._render_cpu_monitor()
         with tab2:
@@ -399,70 +399,70 @@ class SystemHealthCheckInterface:
             self._render_disk_monitor()
         with tab4:
             self._render_network_monitor()
-    
+
     def render_alerts(self):
         """渲染告警状态"""
         st.subheader("🚨 告警状态")
-        
+
         alerts = [
             {"level": "P2", "message": "磁盘使用率超过85%", "time": "10分钟前"},
             {"level": "P3", "message": "数据延迟2分钟", "time": "30分钟前"},
         ]
-        
+
         if not alerts:
             st.success("✅ 当前无活跃告警")
         else:
             for alert in alerts:
                 level_color = {"P0": "🔴", "P1": "🟠", "P2": "🟡", "P3": "🔵"}
                 st.warning(f"{level_color.get(alert['level'], '⚪')} [{alert['level']}] {alert['message']} - {alert['time']}")
-    
+
     def render_quick_actions(self):
         """渲染快速操作"""
         st.subheader("⚡ 快速操作")
-        
+
         col1, col2, col3, col4, col5 = st.columns(5)
-        
+
         with col1:
             if st.button("🔍 一键检查", use_container_width=True):
                 with st.spinner("正在执行健康检查..."):
                     st.success("✅ 健康检查完成")
-        
+
         with col2:
             if st.button("🔄 重启服务", use_container_width=True):
                 st.warning("⚠️ 此操作需要确认")
-        
+
         with col3:
             if st.button("🧹 清理缓存", use_container_width=True):
                 st.warning("⚠️ 此操作需要确认")
-        
+
         with col4:
             if st.button("📋 查看日志", use_container_width=True):
                 st.info("📝 正在打开日志查看器...")
-        
+
         with col5:
             if st.button("📤 导出报告", use_container_width=True):
                 st.success("✅ 健康报告已导出")
-    
+
     def _get_system_status(self) -> str:
         """获取系统整体状态"""
         cpu = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory().percent
         disk = psutil.disk_usage('/').percent
-        
+
         if cpu > 90 or memory > 90 or disk > 90:
             return "错误"
         elif cpu > 70 or memory > 70 or disk > 70:
             return "警告"
         else:
             return "正常"
-    
+
     def _check_service_health(self, health_url: str) -> Dict:
         """检查服务健康状态"""
         try:
             start_time = datetime.now()
             response = requests.get(health_url, timeout=5)
             latency = (datetime.now() - start_time).total_seconds() * 1000
-            
+
             return {
                 "status": "healthy" if response.status_code == 200 else "unhealthy",
                 "latency": latency,
@@ -474,21 +474,21 @@ class SystemHealthCheckInterface:
                 "latency": 0,
                 "last_check": datetime.now().strftime("%H:%M:%S")
             }
-    
+
     def _render_cpu_monitor(self):
         """渲染CPU监控"""
         cpu_percent = psutil.cpu_percent(interval=1, percpu=True)
-        
+
         fig = go.Figure(data=[
             go.Bar(x=[f"核心{i+1}" for i in range(len(cpu_percent))], y=cpu_percent)
         ])
         fig.update_layout(title="CPU核心使用率", yaxis_range=[0, 100])
         st.plotly_chart(fig, use_container_width=True)
-    
+
     def _render_memory_monitor(self):
         """渲染内存监控"""
         memory = psutil.virtual_memory()
-        
+
         fig = go.Figure(data=[go.Pie(
             labels=["已使用", "可用"],
             values=[memory.used, memory.available],
@@ -496,11 +496,11 @@ class SystemHealthCheckInterface:
         )])
         fig.update_layout(title="内存使用分布")
         st.plotly_chart(fig, use_container_width=True)
-    
+
     def _render_disk_monitor(self):
         """渲染磁盘监控"""
         disk = psutil.disk_usage('/')
-        
+
         fig = go.Figure(data=[go.Pie(
             labels=["已使用", "可用"],
             values=[disk.used, disk.free],
@@ -508,11 +508,11 @@ class SystemHealthCheckInterface:
         )])
         fig.update_layout(title="磁盘使用分布")
         st.plotly_chart(fig, use_container_width=True)
-    
+
     def _render_network_monitor(self):
         """渲染网络监控"""
         net_io = psutil.net_io_counters()
-        
+
         col1, col2 = st.columns(2)
         with col1:
             st.metric("发送流量", f"{net_io.bytes_sent / 1024 / 1024:.1f} MB")

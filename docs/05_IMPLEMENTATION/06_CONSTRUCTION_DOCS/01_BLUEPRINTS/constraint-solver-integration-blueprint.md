@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：约束求解器集成、凸优化求解、约束冲突检测
 
@@ -154,7 +154,7 @@ class ConstraintSolver:
 
     """约束求解器"""
 
-    
+
 
     def __init__(self, solver='ECOS'):
 
@@ -164,7 +164,7 @@ class ConstraintSolver:
 
         self.solution = None
 
-    
+
 
     def build_problem(self, objective, constraints):
 
@@ -172,7 +172,7 @@ class ConstraintSolver:
 
         构建优化问题
 
-        
+
 
         Parameters:
 
@@ -192,7 +192,7 @@ class ConstraintSolver:
 
         return self
 
-    
+
 
     def solve(self, verbose=False):
 
@@ -208,7 +208,7 @@ class ConstraintSolver:
 
             return 'solver_error', None
 
-    
+
 
     def check_conflicts(self, constraints):
 
@@ -226,7 +226,7 @@ class ConstraintSolver:
 
         return conflicts
 
-    
+
 
     def _is_conflict(self, c1, c2):
 
@@ -371,4 +371,3 @@ class ConstraintSolverOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

@@ -536,3 +536,8 @@ docs/
 
 - [api-readme](api-readme.md)
 
+<!-- orphan-link -->
+- [controlled-documents-register](01_GOVERNANCE\REGISTERS\controlled-documents-register.md)
+
+<!-- orphan-link -->
+- [PRECOMMIT_HOOK_SETUP](PRECOMMIT_HOOK_SETUP.md)

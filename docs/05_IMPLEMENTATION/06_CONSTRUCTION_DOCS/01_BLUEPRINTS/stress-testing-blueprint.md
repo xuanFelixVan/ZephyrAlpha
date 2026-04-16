@@ -21,7 +21,7 @@ layer: layer_07
 
 > **核心职责**: 提供极限压力测试能力，测试系统在极端负载下的稳定性和极限容量
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：压力测试、极限测试、稳定性测试、容量规划
 
@@ -133,11 +133,11 @@ class StressTestUser(HttpUser):
 
     """压力测试用户"""
 
-    
+
 
     wait_time = between(0.1, 0.5)
 
-    
+
 
     @task
 
@@ -165,7 +165,7 @@ class StressTestUser(HttpUser):
 
         )
 
-    
+
 
     @task
 
@@ -201,7 +201,7 @@ class StressTestRunner:
 
     """压力测试运行器"""
 
-    
+
 
     def __init__(self, target_host: str):
 
@@ -209,7 +209,7 @@ class StressTestRunner:
 
         self.results = []
 
-    
+
 
     def run_gradual_stress_test(
 
@@ -229,13 +229,13 @@ class StressTestRunner:
 
         current_users = start_users
 
-        
+
 
         while current_users <= max_users:
 
             logging.info(f"Testing with {current_users} users")
 
-            
+
 
             self._run_test_with_users(
 
@@ -245,11 +245,11 @@ class StressTestRunner:
 
             )
 
-            
+
 
             current_users += step
 
-    
+
 
     def _run_test_with_users(
 
@@ -265,7 +265,7 @@ class StressTestRunner:
 
         start_time = time.time()
 
-        
+
 
         result = {
 
@@ -279,21 +279,21 @@ class StressTestRunner:
 
         }
 
-        
+
 
         time.sleep(duration)
 
-        
+
 
         result["end_time"] = time.time()
 
         result["actual_duration"] = result["end_time"] - start_time
 
-        
+
 
         self.results.append(result)
 
-    
+
 
     def find_breaking_point(self) -> Dict:
 
@@ -301,7 +301,7 @@ class StressTestRunner:
 
         breaking_point = None
 
-        
+
 
         for i, result in enumerate(self.results):
 
@@ -319,7 +319,7 @@ class StressTestRunner:
 
                 break
 
-        
+
 
         return breaking_point
 
@@ -343,7 +343,7 @@ class StabilityTester:
 
     """稳定性测试器"""
 
-    
+
 
     def __init__(self, target_host: str):
 
@@ -351,7 +351,7 @@ class StabilityTester:
 
         self.stability_metrics = []
 
-    
+
 
     def run_long_duration_test(
 
@@ -369,17 +369,17 @@ class StabilityTester:
 
         end_time = start_time + timedelta(hours=duration_hours)
 
-        
+
 
         logging.info(f"Starting stability test for {duration_hours} hours")
 
-        
+
 
         while datetime.now() < end_time:
 
             metrics = self._collect_metrics()
 
-            
+
 
             self.stability_metrics.append({
 
@@ -389,11 +389,11 @@ class StabilityTester:
 
             })
 
-            
+
 
             time.sleep(60)
 
-    
+
 
     def _collect_metrics(self) -> Dict:
 
@@ -401,7 +401,7 @@ class StabilityTester:
 
         import requests
 
-        
+
 
         try:
 
@@ -413,7 +413,7 @@ class StabilityTester:
 
             )
 
-            
+
 
             return {
 
@@ -433,7 +433,7 @@ class StabilityTester:
 
             }
 
-    
+
 
     def analyze_stability(self) -> Dict:
 
@@ -443,7 +443,7 @@ class StabilityTester:
 
             return {"error": "No metrics collected"}
 
-        
+
 
         healthy_count = sum(
 
@@ -453,15 +453,15 @@ class StabilityTester:
 
         )
 
-        
+
 
         total_count = len(self.stability_metrics)
 
-        
+
 
         uptime = healthy_count / total_count * 100
 
-        
+
 
         response_times = [
 
@@ -473,11 +473,11 @@ class StabilityTester:
 
         ]
 
-        
+
 
         avg_response_time = sum(response_times) / len(response_times) if response_times else 0
 
-        
+
 
         return {
 
@@ -513,13 +513,13 @@ class CapacityPlanner:
 
     """容量规划器"""
 
-    
+
 
     def __init__(self):
 
         self.capacity_data = []
 
-    
+
 
     def record_capacity_point(
 
@@ -555,7 +555,7 @@ class CapacityPlanner:
 
         })
 
-    
+
 
     def calculate_max_capacity(
 
@@ -573,7 +573,7 @@ class CapacityPlanner:
 
         max_capacity = None
 
-        
+
 
         for data in self.capacity_data:
 
@@ -583,13 +583,13 @@ class CapacityPlanner:
 
                 data["memory_usage"] <= target_memory_usage):
 
-                
+
 
                 if max_capacity is None or data["concurrent_users"] > max_capacity:
 
                     max_capacity = data["concurrent_users"]
 
-        
+
 
         return {
 
@@ -607,7 +607,7 @@ class CapacityPlanner:
 
         }
 
-    
+
 
     def recommend_scaling(
 
@@ -623,11 +623,11 @@ class CapacityPlanner:
 
         max_capacity = self.calculate_max_capacity()
 
-        
+
 
         max_supported_users = max_capacity["max_concurrent_users"]
 
-        
+
 
         if target_users <= max_supported_users:
 
@@ -641,11 +641,11 @@ class CapacityPlanner:
 
             }
 
-        
+
 
         scaling_factor = target_users / max_supported_users
 
-        
+
 
         return {
 
@@ -661,7 +661,7 @@ class CapacityPlanner:
 
         }
 
-    
+
 
     def generate_capacity_report(self) -> Dict:
 
@@ -671,11 +671,11 @@ class CapacityPlanner:
 
             return {"error": "No capacity data"}
 
-        
+
 
         max_capacity = self.calculate_max_capacity()
 
-        
+
 
         return {
 
@@ -691,7 +691,7 @@ class CapacityPlanner:
 
         }
 
-    
+
 
     def _analyze_capacity_trend(self) -> str:
 
@@ -701,15 +701,15 @@ class CapacityPlanner:
 
             return "insufficient_data"
 
-        
+
 
         recent_data = self.capacity_data[-10:]
 
-        
+
 
         throughputs = [d["throughput"] for d in recent_data]
 
-        
+
 
         if throughputs[-1] > throughputs[0] * 1.1:
 
@@ -723,7 +723,7 @@ class CapacityPlanner:
 
             return "stable"
 
-    
+
 
     def _generate_capacity_recommendations(self) -> List[str]:
 
@@ -731,27 +731,27 @@ class CapacityPlanner:
 
         recommendations = []
 
-        
+
 
         max_capacity = self.calculate_max_capacity()
 
-        
+
 
         if max_capacity["max_concurrent_users"] < 100:
 
             recommendations.append("系统容量较低，建议优化性能或扩容")
 
-        
+
 
         trend = self._analyze_capacity_trend()
 
-        
+
 
         if trend == "declining":
 
             recommendations.append("系统性能呈下降趋势，建议排查问题")
 
-        
+
 
         return recommendations
 
@@ -773,7 +773,7 @@ class FaultRecoveryTester:
 
     """故障恢复测试器"""
 
-    
+
 
     def __init__(self, target_host: str):
 
@@ -781,7 +781,7 @@ class FaultRecoveryTester:
 
         self.recovery_tests = []
 
-    
+
 
     def test_service_restart_recovery(
 
@@ -797,15 +797,15 @@ class FaultRecoveryTester:
 
         import time
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         subprocess.run(["docker", "restart", service_name])
 
-        
+
 
         recovered = False
 
@@ -813,7 +813,7 @@ class FaultRecoveryTester:
 
         retry_count = 0
 
-        
+
 
         while not recovered and retry_count < max_retries:
 
@@ -829,7 +829,7 @@ class FaultRecoveryTester:
 
                 )
 
-                
+
 
                 if response.status_code == 200:
 
@@ -839,17 +839,17 @@ class FaultRecoveryTester:
 
                 pass
 
-            
+
 
             time.sleep(2)
 
             retry_count += 1
 
-        
+
 
         recovery_time = time.time() - start_time
 
-        
+
 
         result = {
 
@@ -867,15 +867,15 @@ class FaultRecoveryTester:
 
         }
 
-        
+
 
         self.recovery_tests.append(result)
 
-        
+
 
         return result
 
-    
+
 
     def test_database_failover_recovery(
 
@@ -891,23 +891,23 @@ class FaultRecoveryTester:
 
         import time
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         subprocess.run(["docker", "stop", db_service])
 
-        
+
 
         time.sleep(10)
 
-        
+
 
         subprocess.run(["docker", "start", db_service])
 
-        
+
 
         recovered = False
 
@@ -915,7 +915,7 @@ class FaultRecoveryTester:
 
         retry_count = 0
 
-        
+
 
         while not recovered and retry_count < max_retries:
 
@@ -943,17 +943,17 @@ class FaultRecoveryTester:
 
                 pass
 
-            
+
 
             time.sleep(2)
 
             retry_count += 1
 
-        
+
 
         recovery_time = time.time() - start_time
 
-        
+
 
         result = {
 
@@ -971,15 +971,15 @@ class FaultRecoveryTester:
 
         }
 
-        
+
 
         self.recovery_tests.append(result)
 
-        
+
 
         return result
 
-    
+
 
     def generate_recovery_report(self) -> Dict:
 
@@ -989,7 +989,7 @@ class FaultRecoveryTester:
 
             return {"error": "No recovery tests"}
 
-        
+
 
         successful_recoveries = sum(
 
@@ -999,7 +999,7 @@ class FaultRecoveryTester:
 
         )
 
-        
+
 
         avg_recovery_time = sum(
 
@@ -1011,7 +1011,7 @@ class FaultRecoveryTester:
 
         ) / successful_recoveries if successful_recoveries > 0 else 0
 
-        
+
 
         return {
 
@@ -1053,11 +1053,11 @@ class StressTestUser(HttpUser):
 
     """压力测试用户"""
 
-    
+
 
     wait_time = between(0.1, 0.5)
 
-    
+
 
     @task
 
@@ -1174,4 +1174,3 @@ locust -f stress_test.py --worker --master-host=<master-ip>
 
 
 - 情景集覆盖范围与参数校准依赖数据质量与风控口径；实施阶段需在契约真源或子契约中固化情景库版本、更新频率与回滚策略。
-

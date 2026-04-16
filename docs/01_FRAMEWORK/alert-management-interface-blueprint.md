@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Alert Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Alert Management Interface蓝图设计相关内容
 
@@ -106,7 +106,7 @@ class AlertManagementInterface:
 
     """告警管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -114,7 +114,7 @@ class AlertManagementInterface:
 
         self.alert_channels = ["Telegram", "Email", "Webhook"]
 
-    
+
 
     def render_rules(self):
 
@@ -122,7 +122,7 @@ class AlertManagementInterface:
 
         st.subheader("⚙️ 告警规则配置")
 
-        
+
 
         with st.form("alert_rule"):
 
@@ -132,7 +132,7 @@ class AlertManagementInterface:
 
             threshold = st.number_input("阈值", value=0.05)
 
-            
+
 
             submitted = st.form_submit_button("添加规则")
 
@@ -193,4 +193,3 @@ class AlertManagementInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

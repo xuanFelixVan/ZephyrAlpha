@@ -200,7 +200,7 @@ Layer 7: AI报告(AI Reporting Layer)
 
 
 
-               性能分析模块架构                              
+               性能分析模块架构
 
 
 
@@ -208,167 +208,167 @@ Layer 7: AI报告(AI Reporting Layer)
 
 
 
-                                                            
 
 
 
- ┌─────────────────────────────────────────────────────  
 
+ ┌─────────────────────────────────────────────────────
 
 
-          性能指标采集(Metrics Collection)           
 
+          性能指标采集(Metrics Collection)
 
 
-  ├─ CPU使用率采                                      
 
+  ├─ CPU使用率采
 
 
-  ├─ 内存使用率采                                      
 
+  ├─ 内存使用率采
 
 
-  ├─ I/O性能采集                                         
 
+  ├─ I/O性能采集
 
 
-  └─ 网络性能采集                                         
 
+  └─ 网络性能采集
 
 
- └─────────────────────────────────────────────────────  
 
+ └─────────────────────────────────────────────────────
 
 
-                                                          
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
+ ┌─────────────────────────────────────────────────────
 
-          性能瓶颈识别(Bottleneck Detection)         
 
 
+          性能瓶颈识别(Bottleneck Detection)
 
-  ├─ CPU瓶颈识别                                         
 
 
+  ├─ CPU瓶颈识别
 
-  ├─ 内存瓶颈识别                                         
 
 
+  ├─ 内存瓶颈识别
 
-  ├─ I/O瓶颈识别                                         
 
 
+  ├─ I/O瓶颈识别
 
-  └─ 网络瓶颈识别                                         
 
 
+  └─ 网络瓶颈识别
 
- └─────────────────────────────────────────────────────  
 
 
+ └─────────────────────────────────────────────────────
 
-                                                          
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          性能报告生成(Report Generation)            
+ ┌─────────────────────────────────────────────────────
 
 
 
-  ├─ 实时性能报告                                         
+          性能报告生成(Report Generation)
 
 
 
-  ├─ 定期性能报告                                         
+  ├─ 实时性能报告
 
 
 
-  ├─ 性能对比报告                                         
+  ├─ 定期性能报告
 
 
 
-  └─ 性能趋势报告                                         
+  ├─ 性能对比报告
 
 
 
- └─────────────────────────────────────────────────────  
+  └─ 性能趋势报告
 
 
 
-                                                          
+ └─────────────────────────────────────────────────────
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          优化建议生成(Optimization Suggestion)      
 
+ ┌─────────────────────────────────────────────────────
 
 
-  ├─ 代码优化建议                                         
 
+          优化建议生成(Optimization Suggestion)
 
 
-  ├─ 配置优化建议                                         
 
+  ├─ 代码优化建议
 
 
-  ├─ 架构优化建议                                         
 
+  ├─ 配置优化建议
 
 
-  └─ 资源优化建议                                         
 
+  ├─ 架构优化建议
 
 
- └─────────────────────────────────────────────────────  
 
+  └─ 资源优化建议
 
 
-                                                          
 
+ └─────────────────────────────────────────────────────
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          性能趋势分析(Trend Analysis)               
 
 
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 性能指标趋势                                         
 
 
+          性能趋势分析(Trend Analysis)
 
-  ├─ 性能退化检                                        
 
 
+  ├─ 性能指标趋势
 
-  ├─ 性能预测                                             
 
 
+  ├─ 性能退化检
 
-  └─ 性能告警                                             
 
 
+  ├─ 性能预测
 
- └─────────────────────────────────────────────────────  
 
 
+  └─ 性能告警
 
-                                                            
+
+
+ └─────────────────────────────────────────────────────
+
+
+
+
 
 
 
@@ -400,7 +400,7 @@ Layer 7: AI报告(AI Reporting Layer)
 
 
 
-                                                           
+
 
 
 
@@ -1240,7 +1240,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1256,7 +1256,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1276,7 +1276,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1324,7 +1324,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1376,7 +1376,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1428,7 +1428,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1484,7 +1484,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1496,7 +1496,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1508,7 +1508,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1516,7 +1516,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1528,7 +1528,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1552,7 +1552,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1564,7 +1564,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1576,7 +1576,7 @@ class PerformanceAnalyzer:
 
 
 
-                INSERT INTO performance_metrics 
+                INSERT INTO performance_metrics
 
 
 
@@ -1608,7 +1608,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1620,7 +1620,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1628,7 +1628,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1640,7 +1640,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1648,7 +1648,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1684,7 +1684,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1720,7 +1720,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1736,7 +1736,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -1752,11 +1752,11 @@ class PerformanceAnalyzer:
 
 
 
-                    INSERT INTO performance_bottlenecks 
+                    INSERT INTO performance_bottlenecks
 
 
 
-                    (bottleneck_id, module_name, bottleneck_type, severity, 
+                    (bottleneck_id, module_name, bottleneck_type, severity,
 
 
 
@@ -1788,7 +1788,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -1800,7 +1800,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1808,7 +1808,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1820,7 +1820,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1828,7 +1828,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1844,7 +1844,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1992,7 +1992,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2004,7 +2004,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2012,11 +2012,11 @@ class PerformanceAnalyzer:
 
 
 
-            INSERT INTO performance_reports 
+            INSERT INTO performance_reports
 
 
 
-            (report_id, report_type, report_period, generated_at, report_content, 
+            (report_id, report_type, report_period, generated_at, report_content,
 
 
 
@@ -2048,7 +2048,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2060,7 +2060,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2068,7 +2068,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2080,7 +2080,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2088,7 +2088,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2124,7 +2124,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2156,7 +2156,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2172,7 +2172,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2188,11 +2188,11 @@ class PerformanceAnalyzer:
 
 
 
-                    INSERT INTO optimization_suggestions 
+                    INSERT INTO optimization_suggestions
 
 
 
-                    (suggestion_id, bottleneck_id, suggestion_type, description, 
+                    (suggestion_id, bottleneck_id, suggestion_type, description,
 
 
 
@@ -2224,7 +2224,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2236,7 +2236,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2244,7 +2244,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2256,7 +2256,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2284,7 +2284,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2296,7 +2296,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2308,7 +2308,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2324,7 +2324,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2356,7 +2356,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2376,7 +2376,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2412,7 +2412,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2420,7 +2420,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2440,7 +2440,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2476,7 +2476,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2903,6 +2903,3 @@ class PerformanceAnalyzer:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-
-
-

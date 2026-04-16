@@ -62,7 +62,7 @@ last_updated: 2026-04-02---
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -108,7 +108,7 @@ last_updated: 2026-04-02---
 
 ﻗﻗﻗ ﻟﺁﮒ؟۰ﮔﻝ (ﮔﻝ)
 
-ﻗﻗﻗ ﻟﺁﮒ؟۰ﻟﺑ۷ﻠ (ﻟﺑ۷ﻠ)  
+ﻗﻗﻗ ﻟﺁﮒ؟۰ﻟﺑ۷ﻠ (ﻟﺑ۷ﻠ)
 
 ﻗﻗﻗ ﻝ۷ﮔﺓﮔﭨ۰ﮔﮒﭦ?(ﮔﭨ۰ﮔﮒﭦ?
 
@@ -692,7 +692,7 @@ alerts:
 
     notification: ["email", "slack"]
 
-    
+
 
 - name: "ﻟﺁﮒ؟۰ﮔﭘﻠﺟﮒﺙﮒﺕﺕﮒﻟ۵"
 
@@ -702,7 +702,7 @@ alerts:
 
     notification: ["email"]
 
-    
+
 
 - name: "ﻝ۷ﮔﺓﮔﭨ۰ﮔﮒﭦ۵ﻛﺕﻠﮒﻟ?
 
@@ -712,7 +712,7 @@ alerts:
 
     notification: ["email", "slack"]
 
-    
+
 
 - name: "ﻝﺏﭨﻝﭨﮒﺁﻝ۷ﮔ۶ﮒﻟ?
 
@@ -894,7 +894,7 @@ improvement_tracking:
 
     metrics_impact: ["ﻟﺁﮒ؟۰ﮔﭘﻠﺟﮒﮒﺍ", "ﻟﺁﮒﮒﻝ۰؟ﻝﮔﮒ?]
 
-    
+
 
   - id: "IMP-002"
 
@@ -930,13 +930,13 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
    pip install logging-aggregator
 
-   
+
 
    # ﻠﻝﺛ؟ﮔ۴ﮒﺟﮔﭘﻠ
 
    cp config/logging_config.yaml.example config/logging_config.yaml
 
-   
+
 
    # ﮒﺁﮒ۷ﮔ۴ﮒﺟﮔﭘﻠﮔﮒ۰
 
@@ -954,13 +954,13 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
    pip install monitoring-dashboard
 
-   
+
 
    # ﻠﻝﺛ؟ﻝﮔ۶ﮔﺍﮔ؟ﮔﭦ?
 
    cp config/monitoring_config.yaml.example config/monitoring_config.yaml
 
-   
+
 
    # ﮒﺁﮒ۷ﻝﮔ۶ﻛﭨ۹ﻟ۰۷ﮔ?
 
@@ -990,7 +990,7 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
        level: "P2"
 
-       
+
 
 - name: "ﮒﺓ۴ﮒﺓﮒ۴ﮒﭦﺓﮒﻟ۵"
 
@@ -1020,7 +1020,7 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
        recipients: ["admin@example.com", "team@example.com"]
 
-       
+
 
      slack:
 
@@ -1028,7 +1028,7 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
        webhook_url: "https://hooks.slack.com/services/..."
 
-       
+
 
      phone:
 
@@ -1050,7 +1050,7 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 
 - ﮔﺁﮔﺅﺙﮒ؟۰ﮔ۴ﻝﮔ۶ﮔﮔﺅﺙﻟﺍﮔﺑﻝ؟ﮔﮒ?
 
-   
+
 
 2. **ﻝﺏﭨﻝﭨﮔﺑﮔﺍﮔﭖﻝ۷**
 
@@ -1103,4 +1103,3 @@ title: "ﮒ۱ﮒﻝ۷ﮔﺓﮒﻠ۵ﻟ۹ﮒ۷ﮔﭘﻠ"
 |------|------|------|------|
 
 | v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒﮒﭨﭦﮒ؟ﮔﺑﮔ۶ﻟﺛﻝﮔ۶ﻛﺛﻝﺏﭨ | ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛ?(Spec-Approver) |
-

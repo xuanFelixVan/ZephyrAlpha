@@ -24,8 +24,8 @@ responsibility: "处理STRICT_ORPHAN_FILES_REPORT_20260408相关业务"
 
 
 
-> **非真源声明**：本文档为原始版本，已被 REGEN 版本取代。  
-> **canonical_path**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md`  
+> **非真源声明**：本文档为原始版本，已被 REGEN 版本取代。
+> **canonical_path**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md`
 > **module_id 变更**：原 `09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` → `09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408_ORIG`（ADR-OC-003，2026-04-09）
 
 # 严格孤儿文件名单（入度 inbound=0）— 2026-04-08
@@ -1337,4 +1337,3 @@ responsibility: "处理STRICT_ORPHAN_FILES_REPORT_20260408相关业务"
 ## 附：纯路径清单
 
 - 完整严格孤儿列表（每行一个路径）：`STRICT_ORPHAN_FILES_LIST_20260408.txt`
-

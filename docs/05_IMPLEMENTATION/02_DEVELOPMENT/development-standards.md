@@ -50,7 +50,7 @@ implementation_status: 进行?---
 
 > **核心职责**: 标准规范制定
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：标准规范制定相关内容
 
@@ -735,4 +735,3 @@ pytest tests/ --cov=src --cov-report=html
 - DESIGN_PRINCIPLES.md - 设计原则
 
 - DEVELOPER_RULES.md - 原文档（已拆分）
-

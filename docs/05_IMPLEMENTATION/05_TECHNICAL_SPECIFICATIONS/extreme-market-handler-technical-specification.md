@@ -36,7 +36,7 @@ estimated_hours: 40h
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -114,7 +114,7 @@ estimated_hours: 40h
 
 
 
-**ﻛﺕﮒ۰ﻠ?*: 
+**ﻛﺕﮒ۰ﻠ?*:
 
 
 
@@ -508,7 +508,7 @@ class MarketCondition:
 
 
 
-    """ﮒﺕﮒﭦﻝ?    
+    """ﮒﺕﮒﭦﻝ?
 
 
 
@@ -564,7 +564,7 @@ class ExtremeMarketAlert:
 
 
 
-    
+
 
 
 
@@ -628,7 +628,7 @@ class InterventionAction:
 
 
 
-    
+
 
 
 
@@ -684,7 +684,7 @@ class EmergencyPlan:
 
 
 
-    """ﮒﭦﮔ۴ﻠ۱?    
+    """ﮒﭦﮔ۴ﻠ۱?
 
 
 
@@ -736,7 +736,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-    
+
 
 
 
@@ -748,7 +748,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-    
+
 
 
 
@@ -776,7 +776,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-        ﮔ۲ﮔﭖﮔﻝ،ﺁﮒﺕﮒﭦﮔ۰?        
+        ﮔ۲ﮔﭖﮔﻝ،ﺁﮒﺕﮒﭦﮔ۰?
 
 
 
@@ -788,7 +788,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-            historical_context: ﮒﮒﺎﻛﺕﻛﺕ?            
+            historical_context: ﮒﮒﺎﻛﺕﻛﺕ?
 
 
 
@@ -836,7 +836,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-    
+
 
 
 
@@ -864,7 +864,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-        
+
 
 
 
@@ -876,7 +876,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-            
+
 
 
 
@@ -920,7 +920,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-    
+
 
 
 
@@ -948,7 +948,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-        ﮔ۶ﻟ۰ﮒﭦﮔ۴ﻠ۱?        
+        ﮔ۶ﻟ۰ﮒﭦﮔ۴ﻠ۱?
 
 
 
@@ -960,7 +960,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-            context: ﮔ۶ﻟ۰ﻛﺕﻛﺕ?            
+            context: ﮔ۶ﻟ۰ﻛﺕﻛﺕ?
 
 
 
@@ -1000,7 +1000,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-    
+
 
 
 
@@ -1036,7 +1036,7 @@ class ExtremeMarketHandlerAPI:
 
 
 
-        
+
 
 
 
@@ -1056,7 +1056,7 @@ target_positions: ﻝ؟ﮔﻛﭨﻛﺛ
 
 
 
-            
+
 
 
 
@@ -1096,7 +1096,7 @@ target_positions: ﻝ؟ﮔﻛﭨﻛﺛ
 
 
 
-    
+
 
 
 
@@ -1128,7 +1128,7 @@ target_positions: ﻝ؟ﮔﻛﭨﻛﺛ
 
 
 
-        
+
 
 
 
@@ -1144,7 +1144,7 @@ channels: ﻠﻝ۴ﮔﺕﻠ(wechat/email/sms/phone)
 
 
 
-            
+
 
 
 
@@ -1180,7 +1180,7 @@ channels: ﻠﻝ۴ﮔﺕﻠ(wechat/email/sms/phone)
 
 
 
-    
+
 
 
 
@@ -1208,7 +1208,7 @@ channels: ﻠﻝ۴ﮔﺕﻠ(wechat/email/sms/phone)
 
 
 
-        ﻟﺓﮒﮒﺕﮒﭦﻝﭘﮔﮒ?        
+        ﻟﺓﮒﮒﺕﮒﭦﻝﭘﮔﮒ?
 
 
 
@@ -1220,7 +1220,7 @@ channels: ﻠﻝ۴ﮔﺕﻠ(wechat/email/sms/phone)
 
 
 
-            
+
 
 
 
@@ -1796,7 +1796,7 @@ CREATE TABLE IF NOT EXISTS market_state_history (
 
 
 
-- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**: 
+- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**:
 
 
 
@@ -2210,7 +2210,7 @@ extreme_market_handler_config:
 
 
 
-    anomaly_threshold: 0.95  # ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﻠ?    
+    anomaly_threshold: 0.95  # ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﻠ?
 
 
 
@@ -2222,7 +2222,7 @@ extreme_market_handler_config:
 
 
 
-    liquidity_crisis_threshold: 0.2  # ﮔﭖﮒ۷ﮔ۶ﮒﺎﮔﭦﻠ?    
+    liquidity_crisis_threshold: 0.2  # ﮔﭖﮒ۷ﮔ۶ﮒﺎﮔﭦﻠ?
 
 
 
@@ -2238,7 +2238,7 @@ extreme_market_handler_config:
 
 
 
-    
+
 
 
 
@@ -2302,7 +2302,7 @@ class TestExtremeMarketHandler:
 
 
 
-    
+
 
 
 
@@ -2318,7 +2318,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2346,7 +2346,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2354,7 +2354,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2370,7 +2370,7 @@ class TestExtremeMarketHandler:
 
 
 
-    
+
 
 
 
@@ -2386,7 +2386,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2410,7 +2410,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2418,7 +2418,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2434,7 +2434,7 @@ class TestExtremeMarketHandler:
 
 
 
-    
+
 
 
 
@@ -2450,7 +2450,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2458,7 +2458,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2478,7 +2478,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2486,7 +2486,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2498,7 +2498,7 @@ class TestExtremeMarketHandler:
 
 
 
-    
+
 
 
 
@@ -2514,7 +2514,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2534,7 +2534,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2546,7 +2546,7 @@ class TestExtremeMarketHandler:
 
 
 
-    
+
 
 
 
@@ -2562,7 +2562,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2610,7 +2610,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2618,7 +2618,7 @@ class TestExtremeMarketHandler:
 
 
 
-        
+
 
 
 
@@ -2922,7 +2922,7 @@ performance_benchmarks:
 
 
 
-    
+
 
 
 
@@ -3006,7 +3006,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -3038,7 +3038,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -3074,7 +3074,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -3114,11 +3114,11 @@ performance_benchmarks:
 
 
 
-- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**: 
+- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**:
 
 
 
-  - ﮔﻝ،ﺁﮒﺕﮒﭦﻟﺁﮒ،ﮔﭘﻠﺑ??  - ﮒﺗﺎﻠ۱ﻟ۶۵ﮒﮔﭘﻠﺑ??- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: 
+  - ﮔﻝ،ﺁﮒﺕﮒﭦﻟﺁﮒ،ﮔﭘﻠﺑ??  - ﮒﺗﺎﻠ۱ﻟ۶۵ﮒﮔﭘﻠﺑ??- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**:
 
 
 
@@ -3130,7 +3130,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*: 
+- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*:
 
 
 
@@ -3146,7 +3146,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﺍﮔ؟ﻛﺟﮔ۳**: 
+- **ﮔﺍﮔ؟ﻛﺟﮔ۳**:
 
 
 
@@ -3158,11 +3158,11 @@ performance_benchmarks:
 
 
 
-- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**: 
+- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**:
 
 
 
-  - ﮒﭦﻛﭦﻟ۶ﻟﺎﻝﻟ؟ﺟﻠ؟ﮔ۶?  - ﻝﺑ۶ﮔ۴ﻟ؟ﺟﻠ؟ﮔﭦ?- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**: 
+  - ﮒﭦﻛﭦﻟ۶ﻟﺎﻝﻟ؟ﺟﻠ؟ﮔ۶?  - ﻝﺑ۶ﮔ۴ﻟ؟ﺟﻠ؟ﮔﭦ?- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**:
 
 
 
@@ -3242,7 +3242,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﮒﭦﮔﭘﻠﺑ**: 
+- **ﮒﮒﭦﮔﭘﻠﺑ**:
 
 
 
@@ -3254,7 +3254,7 @@ performance_benchmarks:
 
 
 
-- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**: 
+- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**:
 
 
 
@@ -3454,7 +3454,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﺙﮒﻛﭦﭦ?*: 1?ﺣ 1?- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 0.5?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**: 
+- **ﮒﺙﮒﻛﭦﭦ?*: 1?ﺣ 1?- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 0.5?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**:
 
 
 
@@ -3583,6 +3583,3 @@ performance_benchmarks:
 
 
 **ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦ**: 2026-04-02 | **ﻝ?*: ?ﻟﮔ۰ | **ﻝﭨﺑﮔ۳?*: ZephyrAlphaﮔﮔﺁﮒ۱?
-
-
-

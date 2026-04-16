@@ -18,8 +18,8 @@ responsibility:
 
 # 孤儿文件根治大师计划 (Orphan Eradication Master Plan)
 
-> **目标**: 永久性根除孤儿文件，建立零漂移的文档治理体系  
-> **策略**: 自动化 + 强制约束 + 永恒防御  
+> **目标**: 永久性根除孤儿文件，建立零漂移的文档治理体系
+> **策略**: 自动化 + 强制约束 + 永恒防御
 > **哲学**: "没有入链的文件不存在"
 
 ```
@@ -90,19 +90,19 @@ class IndexCompiler:
     自动索引编译器
     从文件系统自动生成索引，不依赖人工维护
     """
-    
+
     def compile_index(self, layer_dir: Path) -> str:
         """
         编译层级索引
         不是读取现有INDEX.md，而是实时扫描文件系统
         """
         files = self.scan_layer_files(layer_dir)
-        
+
         # 自动生成索引内容
         index_content = self.generate_index_content(files)
-        
+
         return index_content
-    
+
     def generate_index_content(self, files: List[Path]) -> str:
         """生成标准格式的INDEX内容"""
         content = f"""---
@@ -123,7 +123,7 @@ generated_at: {datetime.now()}
 """
         for f in files:
             content += f"- [{f.stem}]<!-- -->(./{f.name})\n"
-        
+
         return content
 ```
 
@@ -136,7 +136,7 @@ class MandatoryInboundGuard:
     强制入链守卫
     任何文件必须有至少一个入链，否则禁止提交
     """
-    
+
     def check_before_commit(self, staged_files: List[Path]) -> bool:
         """
         Pre-commit钩子调用
@@ -148,9 +148,9 @@ class MandatoryInboundGuard:
                 if not self.auto_mount(file):
                     print(f"❌ {file}: 无入链且无法自动挂载")
                     return False
-        
+
         return True
-    
+
     def auto_mount(self, file: Path) -> bool:
         """
         自动挂载到合适的INDEX
@@ -158,14 +158,14 @@ class MandatoryInboundGuard:
         """
         layer = self.detect_layer(file)
         index_file = f"docs/{layer}/INDEX.md"
-        
+
         # 编译更新索引
         compiler = IndexCompiler()
         new_index = compiler.compile_index(Path(f"docs/{layer}"))
-        
+
         # 写入索引
         Path(index_file).write_text(new_index, encoding='utf-8')
-        
+
         return True
 ```
 
@@ -188,10 +188,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Recompile All Indexes
         run: python scripts/index_compiler.py --recompile-all
-      
+
       - name: Check Orphan Rate
         run: |
           ORPHAN_RATE=$(python scripts/strict_orphan_inbound_scan.py --rate-only)
@@ -199,7 +199,7 @@ jobs:
             echo "❌ 孤儿率 $ORPHAN_RATE% 超过5%阈值"
             exit 1
           fi
-      
+
       - name: Validate Index Consistency
         run: python scripts/validate_index_consistency.py
 ```
@@ -216,7 +216,7 @@ jobs:
 # 1.1 开发自动索引编译器
 scripts/index_compiler.py
 
-# 1.2 开发强制入链守卫  
+# 1.2 开发强制入链守卫
 scripts/mandatory_inbound_guard.py
 
 # 1.3 更新pre-commit配置
@@ -404,7 +404,7 @@ git commit -m "根治孤儿文件: 建立永恒自动索引系统"
 ```---
 ```
 
-**决策建议**: 采用方案D (永恒自动索引系统)  
-**预计工时**: 14-22小时  
-**根治效果**: 永恒免疫  
+**决策建议**: 采用方案D (永恒自动索引系统)
+**预计工时**: 14-22小时
+**根治效果**: 永恒免疫
 **维护成本**: 趋近于零

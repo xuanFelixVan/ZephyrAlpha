@@ -22,7 +22,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供meta learning blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Meta Learning蓝图设计相关内容
 
@@ -306,7 +306,7 @@ class MetaLearningFramework:
 
 
 
-    
+
 
 
 
@@ -346,7 +346,7 @@ class MetaLearningFramework:
 
 
 
-        
+
 
 
 
@@ -376,7 +376,7 @@ num_inner_steps:
 
 
 
-    
+
 
 
 
@@ -438,7 +438,7 @@ num_epochs:
 
 
 
-    
+
 
 
 
@@ -474,7 +474,7 @@ num_epochs:
 
 
 
-            
+
 
 
 
@@ -510,7 +510,7 @@ class TaskDistribution:
 
 
 
-    
+
 
 
 
@@ -556,7 +556,7 @@ class TaskDistribution:
 
 
 
-    
+
 
 
 
@@ -588,7 +588,7 @@ class TaskDistribution:
 
 
 
-        
+
 
 
 
@@ -638,7 +638,7 @@ class Task:
 
 
 
-    
+
 
 
 
@@ -678,7 +678,7 @@ class TaskBatch:
 
 
 
-    
+
 
 
 
@@ -716,7 +716,7 @@ class MetaOptimizer:
 
 
 
-    
+
 
 
 
@@ -760,7 +760,7 @@ meta_lr:
 
 
 
-    
+
 
 
 
@@ -834,7 +834,7 @@ class MetaLearningConfig:
 
 
 
-    
+
 
 
 
@@ -1092,7 +1092,7 @@ class AssetDeployer:
 
 
 
-    
+
 
 
 
@@ -1509,6 +1509,3 @@ class AssetDeployer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

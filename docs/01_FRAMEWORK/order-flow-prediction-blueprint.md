@@ -136,7 +136,7 @@ class OrderFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -174,7 +174,7 @@ class OrderFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -202,7 +202,7 @@ class OrderFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -212,7 +212,7 @@ class OrderFlowPredictor:
 
 
 
-            
+
 
 
 
@@ -232,7 +232,7 @@ class OrderFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -256,7 +256,7 @@ class OrderFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -268,7 +268,7 @@ class OrderFlowPredictor:
 
 
 
-            
+
 
 
 
@@ -286,7 +286,7 @@ class OrderFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -310,7 +310,7 @@ class OrderFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -322,7 +322,7 @@ class OrderFlowPredictor:
 
 
 
-            
+
 
 
 
@@ -342,7 +342,7 @@ class OrderFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -366,7 +366,7 @@ class OrderFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -378,7 +378,7 @@ class OrderFlowPredictor:
 
 
 
-            
+
 
 
 
@@ -581,4 +581,3 @@ class OrderFlowPredictor:
 
 
 ```
-

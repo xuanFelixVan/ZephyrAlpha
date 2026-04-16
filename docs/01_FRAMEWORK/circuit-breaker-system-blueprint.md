@@ -497,7 +497,7 @@ class CircuitBreakerCondition:
 
         }
 
-        
+
 
     def check_market_volatility(self, market_data: Dict) -> bool:
 
@@ -505,7 +505,7 @@ class CircuitBreakerCondition:
 
         return volatility > self.thresholds['market_volatility']
 
-        
+
 
     def check_volume_anomaly(self, volume_data: Dict) -> bool:
 
@@ -515,11 +515,11 @@ class CircuitBreakerCondition:
 
         volume_ratio = current_volume / avg_volume
 
-        
+
 
         return volume_ratio > self.thresholds['volume_spike']
 
-        
+
 
     def check_strategy_anomaly(self, strategy_data: Dict) -> bool:
 
@@ -527,7 +527,7 @@ class CircuitBreakerCondition:
 
         return loss > self.thresholds['strategy_loss']
 
-        
+
 
     def check_system_anomaly(self, system_data: Dict) -> bool:
 
@@ -535,7 +535,7 @@ class CircuitBreakerCondition:
 
         error_rate = system_data.get('error_rate', 0)
 
-        
+
 
         return (
 
@@ -545,13 +545,13 @@ class CircuitBreakerCondition:
 
         )
 
-        
+
 
     def determine_breaker_level(self, conditions: Dict) -> CircuitBreakerLevel:
 
         severity_score = 0
 
-        
+
 
         if conditions.get('market_volatility', False):
 
@@ -569,7 +569,7 @@ class CircuitBreakerCondition:
 
             severity_score += 2
 
-            
+
 
         if severity_score >= 4:
 
@@ -611,7 +611,7 @@ class CircuitBreakerSystem:
 
         self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
-        
+
 
         self.level_durations = {
 
@@ -623,7 +623,7 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.breakers = {
 
@@ -637,7 +637,7 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.order_engine = None
 
@@ -647,23 +647,23 @@ class CircuitBreakerSystem:
 
         self.audit_logger = None
 
-        
+
 
     def trigger_circuit_breaker(self, breaker_type: str, level: CircuitBreakerLevel, reason: str):
 
         breaker_key = f"circuit_breaker:{breaker_type}"
 
-        
+
 
         self.breakers[breaker_type].open()
 
-        
+
 
         duration = self.level_durations[level]
 
         end_time = datetime.now() + timedelta(minutes=duration)
 
-        
+
 
         breaker_state = {
 
@@ -683,27 +683,27 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.redis_client.setex(breaker_key, duration * 60, str(breaker_state))
 
-        
+
 
         self._pause_trading(breaker_type)
 
-        
+
 
         self._notify_circuit_breaker(breaker_type, level, reason, duration)
 
-        
+
 
         self._log_circuit_breaker(breaker_type, level, reason, duration)
 
-        
+
 
         return breaker_state
 
-        
+
 
     def _pause_trading(self, breaker_type: str):
 
@@ -711,7 +711,7 @@ class CircuitBreakerSystem:
 
         self.strategy_manager.pause_strategies(breaker_type)
 
-        
+
 
     def _notify_circuit_breaker(self, breaker_type: str, level: CircuitBreakerLevel, reason: str, duration: int):
 
@@ -731,7 +731,7 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.notification_service.send_email(notification)
 
@@ -739,7 +739,7 @@ class CircuitBreakerSystem:
 
         self.notification_service.send_push(notification)
 
-        
+
 
     def _log_circuit_breaker(self, breaker_type: str, level: CircuitBreakerLevel, reason: str, duration: int):
 
@@ -759,11 +759,11 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.audit_logger.info(log_entry)
 
-        
+
 
     def check_circuit_breaker_status(self, breaker_type: str) -> Dict:
 
@@ -771,7 +771,7 @@ class CircuitBreakerSystem:
 
         state = self.redis_client.get(breaker_key)
 
-        
+
 
         if state:
 
@@ -781,13 +781,13 @@ class CircuitBreakerSystem:
 
             return {'status': 'inactive'}
 
-            
+
 
     def recover_circuit_breaker(self, breaker_type: str, manual: bool = False):
 
         breaker_key = f"circuit_breaker:{breaker_type}"
 
-        
+
 
         state = self.redis_client.get(breaker_key)
 
@@ -795,27 +795,27 @@ class CircuitBreakerSystem:
 
             return
 
-            
+
 
         breaker_state = eval(state)
 
-        
+
 
         self.breakers[breaker_type].close()
 
-        
+
 
         self._resume_trading(breaker_type)
 
-        
+
 
         self.redis_client.delete(breaker_key)
 
-        
+
 
         self._log_recovery(breaker_type, breaker_state, manual)
 
-        
+
 
     def _resume_trading(self, breaker_type: str):
 
@@ -823,7 +823,7 @@ class CircuitBreakerSystem:
 
         self.strategy_manager.resume_strategies(breaker_type)
 
-        
+
 
     def _log_recovery(self, breaker_type: str, breaker_state: Dict, manual: bool):
 
@@ -843,7 +843,7 @@ class CircuitBreakerSystem:
 
         }
 
-        
+
 
         self.audit_logger.info(log_entry)
 
@@ -1368,4 +1368,3 @@ class CircuitBreakerRecord:
 > **版本**: v1.0.0
 
 > **下次审计日期**: 2026-05-07
-

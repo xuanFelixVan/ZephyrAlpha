@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: VaR/ES监控详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：VaR计算、ES计算、回测验证
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 实时计算和监控VaR、ES风险指标
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 计算方法多样：历史模拟、参数法、蒙特卡洛
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 实时性要求：需要高效的计算性能
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供实时风险敞口监控
 
@@ -256,13 +256,13 @@ class VaRCalculator:
 
     """VaR计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_historical(
 
@@ -278,7 +278,7 @@ class VaRCalculator:
 
         var = -np.percentile(returns, (1 - confidence_level) * 100)
 
-        
+
 
         result = VaRResult(
 
@@ -292,15 +292,15 @@ class VaRCalculator:
 
         )
 
-        
+
 
         self.logger.info(f"历史VaR计算完成，{confidence_level*100}%VaR={var:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def calculate_parametric(
 
@@ -320,7 +320,7 @@ class VaRCalculator:
 
         var = -(mean - z_score * std)
 
-        
+
 
         result = VaRResult(
 
@@ -334,15 +334,15 @@ class VaRCalculator:
 
         )
 
-        
+
 
         self.logger.info(f"参数VaR计算完成，{confidence_level*100}%VaR={var:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def calculate_monte_carlo(
 
@@ -364,7 +364,7 @@ class VaRCalculator:
 
         var = -np.percentile(simulated_returns, (1 - confidence_level) * 100)
 
-        
+
 
         result = VaRResult(
 
@@ -378,11 +378,11 @@ class VaRCalculator:
 
         )
 
-        
+
 
         self.logger.info(f"蒙特卡洛VaR计算完成，{confidence_level*100}%VaR={var:.6f}")
 
-        
+
 
         return result
 
@@ -394,13 +394,13 @@ class ESCalculator:
 
     """ES计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_historical(
 
@@ -420,7 +420,7 @@ class ESCalculator:
 
         es = -tail_returns.mean()
 
-        
+
 
         result = ESResult(
 
@@ -434,15 +434,15 @@ class ESCalculator:
 
         )
 
-        
+
 
         self.logger.info(f"历史ES计算完成，{confidence_level*100}%ES={es:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def calculate_parametric(
 
@@ -462,7 +462,7 @@ class ESCalculator:
 
         es = -(mean - std * stats.norm.pdf(z_score) / (1 - confidence_level))
 
-        
+
 
         result = ESResult(
 
@@ -476,11 +476,11 @@ class ESCalculator:
 
         )
 
-        
+
 
         self.logger.info(f"参数ES计算完成，{confidence_level*100}%ES={es:.6f}")
 
-        
+
 
         return result
 
@@ -492,13 +492,13 @@ class Backtester:
 
     """回测验证器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def kupiec_test(
 
@@ -516,7 +516,7 @@ class Backtester:
 
         Kupiec无条件覆盖检验
 
-        
+
 
         参数:
 
@@ -526,7 +526,7 @@ class Backtester:
 
             confidence_level: 置信水平
 
-            
+
 
         返回:
 
@@ -542,7 +542,7 @@ class Backtester:
 
         exception_rate = exceptions / n
 
-        
+
 
         p = 1 - confidence_level
 
@@ -560,15 +560,15 @@ class Backtester:
 
             )
 
-        
+
 
         pvalue = 1 - stats.chi2.cdf(lr_stat, 1)
 
-        
+
 
         is_valid = pvalue > 0.05
 
-        
+
 
         result = BacktestResult(
 
@@ -588,11 +588,11 @@ class Backtester:
 
         )
 
-        
+
 
         self.logger.info(f"Kupiec检验完成，例外次数={exceptions}，p值={pvalue:.4f}")
 
-        
+
 
         return result
 
@@ -604,7 +604,7 @@ class VaRESMonitor:
 
     """VaR/ES监控器主类"""
 
-    
+
 
     def __init__(self):
 
@@ -616,7 +616,7 @@ class VaRESMonitor:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_var(
 
@@ -656,7 +656,7 @@ class VaRESMonitor:
 
             )
 
-    
+
 
     def calculate_es(
 
@@ -684,7 +684,7 @@ class VaRESMonitor:
 
             return self.es_calculator.calculate_parametric(mean, std, confidence_level)
 
-    
+
 
     def backtest(
 
@@ -807,4 +807,3 @@ class VaRESMonitor:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

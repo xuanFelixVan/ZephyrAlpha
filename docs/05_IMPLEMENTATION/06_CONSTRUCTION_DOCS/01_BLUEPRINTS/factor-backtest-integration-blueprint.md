@@ -140,7 +140,7 @@ layer: layer_05
 ```python
 # 定制化量化数据模型
 > **核心职责**: Factor Backtest Integration蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本节负责：Feature Store（因子存储/点查/批查/离线服务）的集成示例
 > - ❌ 本节不负责：具体因子公式与业务口径（由因子库与研究文档定义）
 
@@ -175,7 +175,7 @@ factor_view = FeatureView(
 )
 ```
 
-**优势**: 
+**优势**:
 - 专门的特征存储，支持版本控制、点查批查、在线/离线服务
 - 可定制金融时序数据Schema，支持四维索引（时间×资产×因子×版本）
 - 替代方案: 如需要更轻量级方案，可用**QuestDB**（高性能时序数据库）
@@ -249,7 +249,7 @@ elif errorcode == -201:
 1. **基础数据函数 (THS_BD)** - 获取单点数据
 ```python
 # 获取股票基本信息
-data = THS_BD('600004.SH,300330.SZ', 
+data = THS_BD('600004.SH,300330.SZ',
               'ths_stock_short_name_stock;ths_pe_ttm_stock',
               ';;')
 # 返回: 证券简称、市盈率(TTM)等基础数据
@@ -271,7 +271,7 @@ data = THS_DS('000001.SZ',
 - **基础数据**: 每周500万条限制
 - **数据更新时间**:
 : 15:07左右更新
-  - 港股日行情 16:37左右更新  
+  - 港股日行情 16:37左右更新
   - 美股日行情 次日06:12左右更新
 
 **集成架构设计**:
@@ -282,28 +282,28 @@ class iFinDDataSource:
         self.username = config["ifind_username"]
         self.password = config["ifind_password"]
         self.logged_in = False
-        
+
     def login(self):
         """登录iFinD"""
         errorcode = THS_iFinDLogin(self.username, self.password)
         self.logged_in = (errorcode == 0)
         return self.logged_in
-        
+
     def get_stock_data(self, symbols, start_date, end_date):
         """获取股票历史数据"""
         if not self.logged_in:
             self.login()
-            
+
         # 转换代码格式 (e.g., 000001 -> 000001.SZ)
         formatted_symbols = self._format_symbols(symbols)
-        
+
         # 调用THS_DS获取数据
         data = THS_DS(formatted_symbols,
                      'ths_open_price_stock;ths_close_price_stock;ths_high_price_stock;ths_low_price_stock;ths_volume_stock',
                      ';', '', start_date, end_date)
-        
+
         return self._parse_response(data)
-    
+
     def get_financial_data(self, symbols, indicators, report_date):
         """获取财务数据"""
         # 使用THS_BD获取财务指标
@@ -328,7 +328,7 @@ class iFinDDataSource:
 ```python
 class FactorBacktraderAdapter:
     def to_backtrader_feed(factor_data: FactorData) -> bt.feeds.PandasData
-    
+
 class StrategyFactory:
     """因子策略工厂，创建基于因子的Backtrader策略"""
     def create_factor_strategy(factor_ids: List[str], weights: List[float]) -> bt.Strategy
@@ -370,7 +370,7 @@ graph TB
   end
 
   subgraph L8[Layer 8 人机交互]
-    UI[Streamlit Dashboard / Grafana] 
+    UI[Streamlit Dashboard / Grafana]
   end
 ```
 
@@ -390,7 +390,7 @@ graph TB
 - 回测结果/风险预算 → 组合优化 → 归因分析 → 可视化与告警
 ```
 
-### 4.3 
+### 4.3
 
 ```python
 # 因子数据标准接口
@@ -400,29 +400,29 @@ class FactorData:
     values: pd.DataFrame  # index=datetime, columns=symbols
     metadata: FactorMetadata
     lineage: FactorLineage  # 血缘信息
-    
+
 # 因子中间库接口
 class FactorStore(ABC):
     """因子存储抽象接口"""
     @abstractmethod
     def save_factor(self, factor: FactorData, version: str) -> bool:
         """保存因子数据"""
-    
+
     @abstractmethod
     def get_factor(self, factor_id: str, start_date: str, end_date: str, version: str = "latest") -> FactorData:
         """获取因子数据"""
-    
+
     @abstractmethod
     def list_factors(self) -> List[FactorMetadata]:
-    
+
 class BacktraderAdapter:
     \"\"\"Backtrader 适配器：将因子数据转换为 DataFeed，并生成因子策略。\"\"\"
     def create_datafeed(self, factor: FactorData, price_data: pd.DataFrame) -> bt.feeds.PandasData:
         \"\"\"创建 Backtrader 数据源。\"\"\"
-    
+
     def create_factor_strategy(self, factor_weights: Dict[str, float]) -> Type[bt.Strategy]:
         """创建基于因子的策略类"""
-    
+
 # 组合优化接口
 class PortfolioOptimizer(ABC):
     """组合优化抽象接口"""
@@ -559,16 +559,16 @@ class PortfolioOptimizer(ABC):
 api_keys:
   data_sources:
     tushare: "your_tushare_token_here"      # 数据API密钥
-    baostock: ""                            # 
+    baostock: ""                            #
     ifind: {username: "your_ifind_username", password: "your_ifind_password"}  # iFinD账号和密码
-  
+
   trading:
     broker: "simulated"                     # 模拟交易无需密钥
     # 如使用实盘交易，在此添加券商API密钥
     # broker: "qmt"
     # account: "your_account"
     # password: "your_password"            # 注意：密码仍以明文存储，但通过文件权限保护
-  
+
   ai_services:
     deepseek: "your_deepseek_api_key"       # DeepSeek API密钥
     qwen: "your_qwen_api_key"              # 通义千问API密钥
@@ -599,12 +599,12 @@ chmod 700 ~/.zephyralpha
    ```python
    # 可选功能：简单文件加密
    from cryptography.fernet import Fernet
-   
+
    # 生成密钥（首次运行）
    key = Fernet.generate_key()
    with open("~/.zephyralpha/encryption_key.key", "wb") as f:
        f.write(key)
-   
+
    # 加密数据
    cipher = Fernet(key)
    encrypted = cipher.encrypt(b"sensitive_data")
@@ -615,24 +615,24 @@ chmod 700 ~/.zephyralpha
 
 **简化审计日志:
 ```python
-# 
+#
 import logging
 from datetime import datetime
 
 class PersonalAuditLogger:
     def __init__(self):
         self.log_file = "~/zephyralpha_logs/audit.log"
-        
+
     def log_operation(self, operation: str, status: str, details: str = ""):
         timestamp = datetime.now().isoformat()
         # 脱敏处理：不记录敏感信息
         safe_details = self._sanitize(details)
-        
+
         log_entry = f"{timestamp} | {operation} | {status} | {safe_details}"
-        
+
         with open(self.log_file, "a") as f:
             f.write(log_entry + "\n")
-    
+
     def _sanitize(self, text: str) -> str:
         """脱敏处理，移除可能的敏感信息"""
         import re
@@ -652,7 +652,7 @@ class PersonalAuditLogger:
 1. **
    ```bash
    cp ~/.zephyralpha/config.yaml ~/zephyralpha_backups/config_$(date +%Y%m%d).yaml
-   
+
    # 保留最多 7 天的备份
    find ~/zephyralpha_backups -name "config_*.yaml" -mtime +7 -delete
    ```
@@ -661,11 +661,11 @@ class PersonalAuditLogger:
    # recovery_script.py - 系统恢复脚本
    import shutil
    import os
-   
+
    def restore_config():
        backup_dir = os.path.expanduser("~/zephyralpha_backups")
        config_file = os.path.expanduser("~/.zephyralpha/config.yaml")
-       
+
        # 查找最新备份
        backups = sorted([f for f in os.listdir(backup_dir) if f.startswith("config_")])
        if backups:
@@ -692,16 +692,16 @@ last_updated: "2026-04-01"
 api_keys:
   data_sources:
     tushare: "您的Tushare Token"
-    baostock: ""  # 
+    baostock: ""  #
     ifind: {username: "您的iFinD账号", password: "您的iFinD密码"}  # iFinD账号和密码
-  
+
   trading:
     mode: "simulation"  # simulation / paper_trading / live_trading
     broker: "simulated"
     # broker: "qmt"
     # account: "您的账户"
 
-  
+
   ai_services:
     deepseek: "您的DeepSeek API密钥"
     qwen: "您的通义千问API密钥"
@@ -710,7 +710,7 @@ system:
   data_dir: "~/zephyralpha_data"
   log_dir: "~/zephyralpha_logs"
   backup_dir: "~/zephyralpha_backups"
-  
+
   security:
     enable_backup: true
     backup_interval_days: 1
@@ -732,20 +732,20 @@ def validate_config(config_path: str) -> bool:
     try:
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
-        
+
 需字段
         required = ["api_keys", "system"]
         for field in required:
             if field not in config:
 需字段: {field}")
                 return False
-        
+
         # 检查文件权限
         if os.stat(config_path).st_mode & 0o777 != 0o600:
-        
+
 print("
         return True
-        
+
     except Exception as e:
 print(f"
         return False
@@ -780,7 +780,7 @@ print(f"
 
 **用户友好文档**:
 - 常见问题解答（FAQ）章节
-- 
+-
 障排除流流程
 - 一键恢复脚本
 
@@ -829,7 +829,7 @@ chmod +x install.sh
 
 （高级用户）**:
 ```bash
-# 1. 
+# 1.
 git clone https://github.com/zephyralpha/zephyralpha.git
 cd zephyralpha
 
@@ -886,19 +886,19 @@ from pathlib import Path
 
 def initialize_config():
 """
-    
+
     # 确定用户主目录
     home_dir = Path.home()
     config_dir = home_dir / ".zephyralpha"
     config_file = config_dir / "config.yaml"
-    
+
     if config_file.exists():
 response = input("
         if response.lower() != 'y':
             return config_file
-    
+
     config_dir.mkdir(exist_ok=True)
-    
+
     default_config = {
         "version": "1.0",
         "system": {
@@ -924,18 +924,18 @@ response = input("
             }
         }
     }
-    
+
   # 示例配置
     with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
-    
+
 仅限 Unix 系统
     if os.name != 'nt':
         os.chmod(config_file, 0o600)
-    
+
 print(f"
     print("请编辑此文件，填写您的API密钥")
-    
+
     return config_file
 ```
 
@@ -962,25 +962,25 @@ from pathlib import Path
 
 def main():
     """启动主程序""
-    
+
     # 检查Python版本
     if sys.version_info < (3, 8):
         print("错误: 需要 Python 3.8 或更高版本)
         sys.exit(1)
-    
+
     # 检查虚拟环境
     if not hasattr(sys, 'real_prefix') and not sys.prefix == sys.base_prefix:
         print("警告: 建议在虚拟环境中运行")
-    
+
     config_path = Path.home() / ".zephyralpha" / "config.yaml"
     if not config_path.exists():
 print("
         from src.core.config import initialize_config
         initialize_config()
         sys.exit(0)
-    
+
     from src.main import run
-    
+
     # 运行主程序
     try:
         run()
@@ -1000,10 +1000,10 @@ if __name__ == "__main__":
    ```python
    # 自动创建的SQLite数据库
    import sqlite3
-   
+
    db_path = "~/zephyralpha_data/system.db"
    conn = sqlite3.connect(db_path)
-   
+
    # 自动创建表结构
    conn.execute("""
    CREATE TABLE IF NOT EXISTS factor_metadata (
@@ -1019,10 +1019,10 @@ if __name__ == "__main__":
 2. **Parquet文件存储**: 用于存储大规模的因子数据和价格数据
    ```python
    import pandas as pd
-   
+
    # 保存因子数据
    factor_data.to_parquet("~/zephyralpha_data/factors/factor_momentum.parquet")
-   
+
    # 读取因子数据
    factor_data = pd.read_parquet("~/zephyralpha_data/factors/factor_momentum.parquet")
    ```
@@ -1036,10 +1036,10 @@ from pathlib import Path
 
 class StorageManager:
     """存储路径管理器""
-    
+
     def __init__(self, base_dir=None):
         self.base_dir = Path(base_dir) if base_dir else Path.home() / "zephyralpha_data"
-        
+
         # 创建目录结构
         self.dirs = {
             "raw_data": self.base_dir / "raw",
@@ -1049,10 +1049,10 @@ class StorageManager:
             "models": self.base_dir / "models",
             "reports": self.base_dir / "reports"
         }
-        
+
         for dir_path in self.dirs.values():
             dir_path.mkdir(parents=True, exist_ok=True)
-    
+
     def get_path(self, category: str, filename: str) -> Path:
         """获取存储路径"""
         if category not in self.dirs:
@@ -1060,7 +1060,7 @@ class StorageManager:
         return self.dirs[category] / filename
 ```
 
-### 8.7 
+### 8.7
 故障排除与恢复
 
 **常见问题解决方案**:
@@ -1076,7 +1076,7 @@ class StorageManager:
 # 恢复脚本：修复常见问题
 python scripts/recovery.py --fix-all
 
-# 
+#
 python scripts/recovery.py --fix-deps      # 修复依赖
 python scripts/recovery.py --fix-data      # 修复数据目录
 python scripts/recovery.py --fix-perms     # 修复权限
@@ -1103,17 +1103,17 @@ print("
 def fix_data_directories():
     """修复数据目录"""
     from pathlib import Path
-    
+
     base_dirs = [
         Path.home() / "zephyralpha_data",
         Path.home() / "zephyralpha_logs",
         Path.home() / "zephyralpha_backups"
     ]
-    
+
     for dir_path in base_dirs:
         dir_path.mkdir(parents=True, exist_ok=True)
         print(f"已创建目录 {dir_path}")
-    
+
     print("数据目录修复完成")
 
 def main():
@@ -1121,9 +1121,9 @@ def main():
     parser.add_argument("--fix-all", action="store_true", help="修复所有问题)
     parser.add_argument("--fix-deps", action="store_true", help="修复依赖")
     parser.add_argument("--fix-data", action="store_true", help="修复数据目录")
-    
+
     args = parser.parse_args()
-    
+
     if args.fix_all:
         fix_dependencies()
         fix_configuration()
@@ -1135,7 +1135,7 @@ def main():
             fix_configuration()
         if args.fix_data:
             fix_data_directories()
-    
+
     print("恢复操作完成")
 
 if __name__ == "__main__":
@@ -1153,20 +1153,20 @@ from pathlib import Path
 
 def create_backup():
     """创建系统备份"""
-    
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_dir = Path.home() / "zephyralpha_backups" / f"backup_{timestamp}"
-    
+
     config_source = Path.home() / ".zephyralpha" / "config.yaml"
     if config_source.exists():
         backup_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy(config_source, backup_dir / "config.yaml")
-    
+
     # 备份重要数据
     data_source = Path.home() / "zephyralpha_data" / "factors"
     if data_source.exists():
         shutil.copytree(data_source, backup_dir / "factors", dirs_exist_ok=True)
-    
+
     print(f"备份已创建 {backup_dir}")
     return backup_dir
 ```
@@ -1181,7 +1181,7 @@ def create_backup():
    ```bash
 ZephyrAlpha
    ./install.sh
-   
+
    # 2. 恢复备份
    tar -xzf zephyralpha_backup_YYYYMMDD.tar.gz
    cp backup/config.yaml ~/.zephyralpha/
@@ -1193,22 +1193,22 @@ ZephyrAlpha
 **首次使用向导**:
 ```python
 def first_run_wizard():
-    
+
     print("=" * 60)
     print("欢迎使用 ZephyrAlpha 量化研究系统")
     print("=" * 60)
     print()
-    
+
 
     # （此处为交互式向导逻辑，省略）
-    
+
     use_ai = input("是否启用AI服务 (y/N): ").lower() == 'y'
-    
+
     # 步骤3: 存储路径确认
     print("\n步骤3: 存储路径确认")
     default_data_dir = str(Path.home() / "zephyralpha_data")
     data_dir = input(f"数据存储目录（默认 {default_data_dir}）：").strip() or default_data_dir
-    
+
     config = {
         "api_keys": {
             "data_sources": {
@@ -1219,7 +1219,7 @@ def first_run_wizard():
             "data_dir": data_dir
         }
     }
-    
+
     save_config(config)
 print("\n
 ```
@@ -1234,7 +1234,7 @@ print("\n
 #
 清理30天前的日志文件
    find ~/zephyralpha_logs -name "*.log" -mtime +30 -delete
-   
+
 #
 清理90天前的备份文件
    find ~/zephyralpha_backups -name "backup_*" -mtime +90 -delete
@@ -1350,11 +1350,8 @@ python scripts/migrate.py
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Factor Backtest Integration** | 
+| **Factor Backtest Integration** |
 
 ### 11.3 版本管理
 
 |------|------|----------|--------|
-
-
-

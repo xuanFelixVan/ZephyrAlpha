@@ -22,7 +22,7 @@ responsibility: ''
 ---
 # 组合再平衡系统蓝图（蓝图阶段）
 > **核心职责**: Portfolio Rebalancing蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Portfolio Rebalancing蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -128,20 +128,20 @@ responsibility: ''
 ```python
 class RebalancingTrigger:
     """再平衡触发接口"""
-    
+
     def check_threshold_trigger(self,
                               current_weights: Dict[str, float],
                               target_weights: Dict[str, float],
                               threshold: float) -> bool:
         """检查阈值触发"""
         pass
-    
+
     def check_time_trigger(self,
                           last_rebalance_date: str,
                           rebalance_frequency: str) -> bool:
         """检查时间触发"""
         pass
-    
+
     def check_event_trigger(self,
                            event_type: str,
                            event_data: Dict) -> bool:
@@ -154,21 +154,21 @@ class RebalancingTrigger:
 ```python
 class RebalancingOptimizer:
     """再平衡优化接口"""
-    
+
     def optimize_cost(self,
                      current_weights: Dict[str, float],
                      target_weights: Dict[str, float],
                      cost_params: Dict) -> Dict[str, float]:
         """成本优化"""
         pass
-    
+
     def optimize_risk(self,
                     current_weights: Dict[str, float],
                     target_weights: Dict[str, float],
                     risk_constraints: Dict) -> Dict[str, float]:
         """风险优化"""
         pass
-    
+
     def optimize_tax(self,
                    current_weights: Dict[str, float],
                    target_weights: Dict[str, float],
@@ -182,19 +182,19 @@ class RebalancingOptimizer:
 ```python
 class RebalancingExecutor:
     """再平衡执行接口"""
-    
+
     def generate_orders(self,
                        current_weights: Dict[str, float],
                        target_weights: Dict[str, float]) -> List[Dict]:
         """生成订单"""
         pass
-    
+
     def execute_orders(self,
                       orders: List[Dict],
                       execution_strategy: str) -> List[Dict]:
         """执行订单"""
         pass
-    
+
     def update_positions(self,
                        executed_orders: List[Dict]) -> None:
         """更新持仓"""

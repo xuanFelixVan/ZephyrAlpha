@@ -142,7 +142,7 @@ class PerformanceMetric:
 
     deviation: float
 
-    
+
 
 @dataclass
 
@@ -168,7 +168,7 @@ class AlgorithmPerformanceBenchmark:
 
     """算法性能基准库"""
 
-    
+
 
     def __init__(self, mlflow_tracking_uri: str):
 
@@ -176,9 +176,9 @@ class AlgorithmPerformanceBenchmark:
 
         self.baselines = self._load_baselines()
 
-        
 
-    def define_baseline(self, 
+
+    def define_baseline(self,
 
                        algorithm_name: str,
 
@@ -186,11 +186,11 @@ class AlgorithmPerformanceBenchmark:
 
         """定义性能基准"""
 
-        
+
 
         baseline_id = f"{algorithm_name}_baseline_{datetime.now().strftime('%Y%m%d')}"
 
-        
+
 
         with mlflow.start_run(run_name=baseline_id):
 
@@ -198,21 +198,21 @@ class AlgorithmPerformanceBenchmark:
 
                 mlflow.log_metric(f"baseline_{metric_type.value}", value)
 
-            
+
 
             mlflow.set_tag("algorithm", algorithm_name)
 
             mlflow.set_tag("type", "baseline")
 
-        
+
 
         self.baselines[algorithm_name] = metrics
 
         return baseline_id
 
-    
 
-    def test_performance(self, 
+
+    def test_performance(self,
 
                         algorithm_name: str,
 
@@ -220,11 +220,11 @@ class AlgorithmPerformanceBenchmark:
 
         """测试性能"""
 
-        
+
 
         baseline = self.baselines.get(algorithm_name, {})
 
-        
+
 
         performance_metrics = []
 
@@ -232,7 +232,7 @@ class AlgorithmPerformanceBenchmark:
 
             baseline_value = baseline.get(metric_type, 0)
 
-            
+
 
             if baseline_value > 0:
 
@@ -242,11 +242,11 @@ class AlgorithmPerformanceBenchmark:
 
                 deviation = 0
 
-            
+
 
             status = self._determine_status(metric_type, current_value, baseline_value)
 
-            
+
 
             performance_metrics.append(PerformanceMetric(
 
@@ -264,7 +264,7 @@ class AlgorithmPerformanceBenchmark:
 
             ))
 
-        
+
 
         benchmark = PerformanceBenchmark(
 
@@ -282,17 +282,17 @@ class AlgorithmPerformanceBenchmark:
 
         )
 
-        
+
 
         self._log_to_mlflow(benchmark)
 
-        
+
 
         return benchmark
 
-    
 
-    def detect_degradation(self, 
+
+    def detect_degradation(self,
 
                           algorithm_name: str,
 
@@ -300,7 +300,7 @@ class AlgorithmPerformanceBenchmark:
 
         """检测性能退化"""
 
-        
+
 
         runs = mlflow.search_runs(
 
@@ -310,13 +310,13 @@ class AlgorithmPerformanceBenchmark:
 
         )
 
-        
+
 
         if runs.empty:
 
             return {'degradation_detected': False, 'reason': 'No test data'}
 
-        
+
 
         degradation_analysis = {
 
@@ -330,7 +330,7 @@ class AlgorithmPerformanceBenchmark:
 
         }
 
-        
+
 
         for metric_type in MetricType:
 
@@ -340,13 +340,13 @@ class AlgorithmPerformanceBenchmark:
 
                 values = runs[metric_col].values
 
-                
+
 
                 if len(values) >= 2:
 
                     trend = values[-1] - values[0]
 
-                    
+
 
                     if trend < -0.1:
 
@@ -362,7 +362,7 @@ class AlgorithmPerformanceBenchmark:
 
                         })
 
-        
+
 
         if degradation_analysis['degradation_detected']:
 
@@ -372,25 +372,25 @@ class AlgorithmPerformanceBenchmark:
 
             )
 
-        
+
 
         return degradation_analysis
 
-    
 
-    def generate_performance_report(self, 
+
+    def generate_performance_report(self,
 
                                    algorithm_name: str) -> str:
 
         """生成性能报告"""
 
-        
+
 
         latest_benchmark = self.test_performance(algorithm_name, {})
 
         degradation = self.detect_degradation(algorithm_name)
 
-        
+
 
         report = f"""
 
@@ -428,7 +428,7 @@ class AlgorithmPerformanceBenchmark:
 
 """
 
-        
+
 
         return report
 
@@ -514,13 +514,13 @@ class AlgorithmPerformanceBenchmark:
 
 
 
-✅ **标准化性能基准** - 对标Renaissance Technologies验证标准  
+✅ **标准化性能基准** - 对标Renaissance Technologies验证标准
 
-✅ **自动化性能测试** - MLflow集成,自动记录  
+✅ **自动化性能测试** - MLflow集成,自动记录
 
-✅ **性能退化检测** - AI辅助检测性能下降  
+✅ **性能退化检测** - AI辅助检测性能下降
 
-✅ **可视化报告** - 自动生成性能报告  
+✅ **可视化报告** - 自动生成性能报告
 
 
 
@@ -633,4 +633,3 @@ class AlgorithmPerformanceBenchmark:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

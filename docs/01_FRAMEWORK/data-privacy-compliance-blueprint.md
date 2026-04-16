@@ -392,7 +392,7 @@ class SensitiveDataIdentifier:
 
     """敏感数据识别器"""
 
-    
+
 
     def __init__(self):
 
@@ -410,7 +410,7 @@ class SensitiveDataIdentifier:
 
         }
 
-        
+
 
         self.financial_patterns = {
 
@@ -420,7 +420,7 @@ class SensitiveDataIdentifier:
 
         }
 
-        
+
 
     def identify_sensitive_data(
 
@@ -432,11 +432,11 @@ class SensitiveDataIdentifier:
 
         """识别敏感数据"""
 
-        
+
 
         classifications = []
 
-        
+
 
         for field_name, value in data.items():
 
@@ -446,11 +446,11 @@ class SensitiveDataIdentifier:
 
                 classifications.append(classification)
 
-        
+
 
         return classifications
 
-    
+
 
     def _classify_field(
 
@@ -464,13 +464,13 @@ class SensitiveDataIdentifier:
 
         """分类字段"""
 
-        
+
 
         contains_pii = self._check_pii(value)
 
         contains_financial = self._check_financial(value)
 
-        
+
 
         if contains_pii:
 
@@ -502,7 +502,7 @@ class SensitiveDataIdentifier:
 
             sensitivity = DataSensitivity.INTERNAL
 
-        
+
 
         return DataClassification(
 
@@ -522,13 +522,13 @@ class SensitiveDataIdentifier:
 
         )
 
-    
+
 
     def _check_pii(self, value: str) -> bool:
 
         """检查PII"""
 
-        
+
 
         for pattern in self.pii_patterns.values():
 
@@ -538,13 +538,13 @@ class SensitiveDataIdentifier:
 
         return False
 
-    
+
 
     def _check_financial(self, value: str) -> bool:
 
         """检查财务数据"""
 
-        
+
 
         for pattern in self.financial_patterns.values():
 
@@ -602,7 +602,7 @@ class DataMasker:
 
     """数据脱敏器"""
 
-    
+
 
     def __init__(self):
 
@@ -620,7 +620,7 @@ class DataMasker:
 
         }
 
-        
+
 
     def mask_data(
 
@@ -636,17 +636,17 @@ class DataMasker:
 
         """脱敏数据"""
 
-        
+
 
         if field_name in self.masking_rules:
 
             return self.masking_rulesfield_name
 
-        
+
 
         return self._default_mask(value, masking_type)
 
-    
+
 
     def _mask_name(
 
@@ -660,7 +660,7 @@ class DataMasker:
 
         """脱敏姓名"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -680,7 +680,7 @@ class DataMasker:
 
             return name
 
-    
+
 
     def _mask_id_card(
 
@@ -694,7 +694,7 @@ class DataMasker:
 
         """脱敏身份证号"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -708,7 +708,7 @@ class DataMasker:
 
             return id_card
 
-    
+
 
     def _mask_phone(
 
@@ -722,7 +722,7 @@ class DataMasker:
 
         """脱敏手机号"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -736,7 +736,7 @@ class DataMasker:
 
             return phone
 
-    
+
 
     def _mask_email(
 
@@ -750,7 +750,7 @@ class DataMasker:
 
         """脱敏邮箱"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -772,7 +772,7 @@ class DataMasker:
 
             return email
 
-    
+
 
     def _mask_bank_account(
 
@@ -786,7 +786,7 @@ class DataMasker:
 
         """脱敏银行账号"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -800,7 +800,7 @@ class DataMasker:
 
             return account
 
-    
+
 
     def _default_mask(
 
@@ -814,7 +814,7 @@ class DataMasker:
 
         """默认脱敏"""
 
-        
+
 
         if masking_type == 'full':
 
@@ -1157,4 +1157,3 @@ class DataBreachEvent:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

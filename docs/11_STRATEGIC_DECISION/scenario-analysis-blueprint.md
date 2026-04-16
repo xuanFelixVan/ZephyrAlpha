@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 情景分析系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：情景分析系统蓝图设计相关内容
 
@@ -70,7 +70,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Scenario Analysis蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Scenario Analysis蓝图设计相关内容
 
@@ -136,11 +136,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **目标**: 构建多维度情景分析体系，评估极端情况下的组合表现
 
@@ -494,7 +494,7 @@ class ScenarioBuilder:
 
     """情景构建引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -574,9 +574,9 @@ class ScenarioBuilder:
 
         }
 
-        
 
-    def create_historical_scenario(self, 
+
+    def create_historical_scenario(self,
 
                                   scenario_key: str) -> ScenarioDefinition:
 
@@ -586,11 +586,11 @@ class ScenarioBuilder:
 
             raise ValueError(f"未知历史情景: {scenario_key}")
 
-        
+
 
         config = self.historical_scenarios[scenario_key]
 
-        
+
 
         return ScenarioDefinition(
 
@@ -618,9 +618,9 @@ class ScenarioBuilder:
 
         )
 
-    
 
-    def create_hypothetical_scenario(self, 
+
+    def create_hypothetical_scenario(self,
 
                                     name: str,
 
@@ -640,17 +640,17 @@ class ScenarioBuilder:
 
         }
 
-        
+
 
         volatility_changes = {
 
-            factor: volatility_multiplier 
+            factor: volatility_multiplier
 
             for factor in factor_shocks
 
         }
 
-        
+
 
         return ScenarioDefinition(
 
@@ -678,9 +678,9 @@ class ScenarioBuilder:
 
         )
 
-    
 
-    def create_extreme_scenario(self, 
+
+    def create_extreme_scenario(self,
 
                                name: str,
 
@@ -704,7 +704,7 @@ class ScenarioBuilder:
 
         }
 
-        
+
 
         correlation_changes = {
 
@@ -714,7 +714,7 @@ class ScenarioBuilder:
 
         }
 
-        
+
 
         volatility_changes = {
 
@@ -722,7 +722,7 @@ class ScenarioBuilder:
 
         }
 
-        
+
 
         return ScenarioDefinition(
 
@@ -750,9 +750,9 @@ class ScenarioBuilder:
 
         )
 
-    
 
-    def create_custom_scenario(self, 
+
+    def create_custom_scenario(self,
 
                               name: str,
 
@@ -790,7 +790,7 @@ class ScenarioBuilder:
 
         )
 
-    
+
 
     def create_scenario_library(self) -> List[ScenarioDefinition]:
 
@@ -798,13 +798,13 @@ class ScenarioBuilder:
 
         scenarios = []
 
-        
+
 
         for key in self.historical_scenarios:
 
             scenarios.append(self.create_historical_scenario(key))
 
-        
+
 
         scenarios.append(self.create_hypothetical_scenario(
 
@@ -816,7 +816,7 @@ class ScenarioBuilder:
 
         ))
 
-        
+
 
         scenarios.append(self.create_hypothetical_scenario(
 
@@ -828,11 +828,11 @@ class ScenarioBuilder:
 
         ))
 
-        
+
 
         scenarios.append(self.create_extreme_scenario("黑天鹅事件"))
 
-        
+
 
         return scenarios
 
@@ -922,7 +922,7 @@ class ScenarioSimulationEngine:
 
     """情景模拟引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -930,9 +930,9 @@ class ScenarioSimulationEngine:
 
         self.n_simulations = config.get('n_simulations', 10000)
 
-        
 
-    def run_monte_carlo_simulation(self, 
+
+    def run_monte_carlo_simulation(self,
 
                                   scenario: ScenarioDefinition,
 
@@ -946,13 +946,13 @@ class ScenarioSimulationEngine:
 
         """执行蒙特卡洛模拟"""
 
-        
+
 
         n_assets = len(portfolio_weights)
 
         assets = list(portfolio_weights.keys())
 
-        
+
 
         scenario_mean = self._calculate_scenario_mean(
 
@@ -960,7 +960,7 @@ class ScenarioSimulationEngine:
 
         )
 
-        
+
 
         scenario_cov = self._calculate_scenario_covariance(
 
@@ -968,7 +968,7 @@ class ScenarioSimulationEngine:
 
         )
 
-        
+
 
         simulated_returns = np.random.multivariate_normal(
 
@@ -980,15 +980,15 @@ class ScenarioSimulationEngine:
 
         )
 
-        
+
 
         portfolio_returns = simulated_returns @ np.array(list(portfolio_weights.values()))
 
-        
+
 
         final_values = 1000000 * (1 + portfolio_returns)
 
-        
+
 
         statistics = {
 
@@ -1010,7 +1010,7 @@ class ScenarioSimulationEngine:
 
         }
 
-        
+
 
         return SimulationResult(
 
@@ -1028,9 +1028,9 @@ class ScenarioSimulationEngine:
 
         )
 
-    
 
-    def _calculate_scenario_mean(self, 
+
+    def _calculate_scenario_mean(self,
 
                                 portfolio_weights: Dict[str, float],
 
@@ -1044,17 +1044,17 @@ class ScenarioSimulationEngine:
 
         assets = list(portfolio_weights.keys())
 
-        
+
 
         base_mean = np.zeros(n_assets)
 
-        
+
 
         for i, asset in enumerate(assets):
 
             exposures = factor_exposures.loc[asset] if asset in factor_exposures.index else pd.Series()
 
-            
+
 
             shock_impact = 0
 
@@ -1064,17 +1064,17 @@ class ScenarioSimulationEngine:
 
                 shock_impact += exposure * shock
 
-            
+
 
             base_mean[i] = shock_impact
 
-        
+
 
         return base_mean
 
-    
 
-    def _calculate_scenario_covariance(self, 
+
+    def _calculate_scenario_covariance(self,
 
                                       base_covariance: pd.DataFrame,
 
@@ -1084,13 +1084,13 @@ class ScenarioSimulationEngine:
 
         scenario_cov = base_covariance.values.copy()
 
-        
+
 
         vol_multiplier = scenario.volatility_changes.get('all', 1.0)
 
         scenario_cov = scenario_cov * (vol_multiplier ** 2)
 
-        
+
 
         if scenario.correlation_changes:
 
@@ -1108,11 +1108,11 @@ class ScenarioSimulationEngine:
 
                 scenario_cov = corr * np.outer(std_diag, std_diag)
 
-        
+
 
         return scenario_cov
 
-    
+
 
     def _calculate_max_drawdown(self, returns: np.ndarray) -> float:
 
@@ -1126,9 +1126,9 @@ class ScenarioSimulationEngine:
 
         return np.min(drawdowns)
 
-    
 
-    def run_historical_simulation(self, 
+
+    def run_historical_simulation(self,
 
                                  scenario: ScenarioDefinition,
 
@@ -1142,25 +1142,25 @@ class ScenarioSimulationEngine:
 
         start_date, end_date = scenario_period
 
-        
+
 
         period_returns = historical_returns.loc[start_date:end_date]
 
-        
+
 
         weights = np.array(list(portfolio_weights.values()))
 
         portfolio_returns = period_returns.values @ weights
 
-        
+
 
         n_simulations = len(portfolio_returns)
 
-        
+
 
         final_values = 1000000 * np.cumprod(1 + portfolio_returns)
 
-        
+
 
         statistics = {
 
@@ -1180,7 +1180,7 @@ class ScenarioSimulationEngine:
 
         }
 
-        
+
 
         return SimulationResult(
 
@@ -1198,9 +1198,9 @@ class ScenarioSimulationEngine:
 
         )
 
-    
 
-    def run_factor_shock_simulation(self, 
+
+    def run_factor_shock_simulation(self,
 
                                    scenario: ScenarioDefinition,
 
@@ -1216,13 +1216,13 @@ class ScenarioSimulationEngine:
 
         weights = np.array(list(portfolio_weights.values()))
 
-        
+
 
         portfolio_exposures = np.zeros(len(scenario.factor_shocks))
 
         factors = list(scenario.factor_shocks.keys())
 
-        
+
 
         for i, factor in enumerate(factors):
 
@@ -1232,15 +1232,15 @@ class ScenarioSimulationEngine:
 
                 portfolio_exposures[i] += weights[j] * exposure
 
-        
+
 
         factor_shocks = np.array([scenario.factor_shocks[f] for f in factors])
 
-        
+
 
         portfolio_shock = portfolio_exposures @ factor_shocks
 
-        
+
 
         n_simulations = self.n_simulations
 
@@ -1254,11 +1254,11 @@ class ScenarioSimulationEngine:
 
         )
 
-        
+
 
         final_values = 1000000 * (1 + simulated_returns)
 
-        
+
 
         statistics = {
 
@@ -1272,7 +1272,7 @@ class ScenarioSimulationEngine:
 
         }
 
-        
+
 
         return SimulationResult(
 
@@ -1290,9 +1290,9 @@ class ScenarioSimulationEngine:
 
         )
 
-    
 
-    def run_stress_test(self, 
+
+    def run_stress_test(self,
 
                        scenario: ScenarioDefinition,
 
@@ -1306,7 +1306,7 @@ class ScenarioSimulationEngine:
 
         asset_impacts = {}
 
-        
+
 
         for asset, position in portfolio_positions.items():
 
@@ -1316,7 +1316,7 @@ class ScenarioSimulationEngine:
 
             current_value = quantity * current_price
 
-            
+
 
             asset_shock = 0
 
@@ -1326,13 +1326,13 @@ class ScenarioSimulationEngine:
 
                 asset_shock += beta * shock
 
-            
+
 
             price_change = current_price * asset_shock
 
             impact = quantity * price_change
 
-            
+
 
             asset_impacts[asset] = {
 
@@ -1344,21 +1344,21 @@ class ScenarioSimulationEngine:
 
             }
 
-            
+
 
             total_impact += impact
 
-        
+
 
         portfolio_value = sum(p['quantity'] * p['price'] for p in portfolio_positions.values())
 
         portfolio_return = total_impact / portfolio_value
 
-        
+
 
         simulated_returns = np.array([portfolio_return])
 
-        
+
 
         statistics = {
 
@@ -1372,7 +1372,7 @@ class ScenarioSimulationEngine:
 
         }
 
-        
+
 
         return SimulationResult(
 
@@ -1480,15 +1480,15 @@ class ImpactAssessmentEngine:
 
     """影响评估引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
         self.config = config
 
-        
 
-    def assess_impact(self, 
+
+    def assess_impact(self,
 
                      simulation_result: SimulationResult,
 
@@ -1498,7 +1498,7 @@ class ImpactAssessmentEngine:
 
         """评估情景影响"""
 
-        
+
 
         return_dist = self._analyze_return_distribution(
 
@@ -1506,7 +1506,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         risk_metrics = self._calculate_risk_metrics(
 
@@ -1516,7 +1516,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         liquidity_impact = self._assess_liquidity_impact(
 
@@ -1526,7 +1526,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         exposure_changes = self._analyze_exposure_changes(
 
@@ -1536,7 +1536,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         severity = self._determine_severity(
 
@@ -1544,7 +1544,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         recommendations = self._generate_recommendations(
 
@@ -1552,7 +1552,7 @@ class ImpactAssessmentEngine:
 
         )
 
-        
+
 
         return ImpactAssessment(
 
@@ -1576,9 +1576,9 @@ class ImpactAssessmentEngine:
 
         )
 
-    
 
-    def _analyze_return_distribution(self, 
+
+    def _analyze_return_distribution(self,
 
                                     simulated_returns: np.ndarray) -> Dict:
 
@@ -1586,7 +1586,7 @@ class ImpactAssessmentEngine:
 
         percentiles = [1, 5, 10, 25, 50, 75, 90, 95, 99]
 
-        
+
 
         return {
 
@@ -1600,7 +1600,7 @@ class ImpactAssessmentEngine:
 
             'percentiles': {
 
-                f'p{p}': np.percentile(simulated_returns, p) 
+                f'p{p}': np.percentile(simulated_returns, p)
 
                 for p in percentiles
 
@@ -1612,7 +1612,7 @@ class ImpactAssessmentEngine:
 
         }
 
-    
+
 
     def _calculate_skewness(self, data: np.ndarray) -> float:
 
@@ -1626,7 +1626,7 @@ class ImpactAssessmentEngine:
 
         return np.sum(((data - mean) / std) ** 3) / n
 
-    
+
 
     def _calculate_kurtosis(self, data: np.ndarray) -> float:
 
@@ -1640,9 +1640,9 @@ class ImpactAssessmentEngine:
 
         return np.sum(((data - mean) / std) ** 4) / n - 3
 
-    
 
-    def _calculate_risk_metrics(self, 
+
+    def _calculate_risk_metrics(self,
 
                                simulated_returns: np.ndarray,
 
@@ -1654,23 +1654,23 @@ class ImpactAssessmentEngine:
 
         var_99 = np.percentile(simulated_returns, 1)
 
-        
+
 
         cvar_95 = np.mean(simulated_returns[simulated_returns <= var_95])
 
         cvar_99 = np.mean(simulated_returns[simulated_returns <= var_99])
 
-        
+
 
         max_dd = self._calculate_max_drawdown(simulated_returns)
 
-        
+
 
         current_var = current_metrics.get('var_95', -0.05)
 
         var_change = (var_95 - current_var) / abs(current_var) if current_var != 0 else 0
 
-        
+
 
         return {
 
@@ -1690,7 +1690,7 @@ class ImpactAssessmentEngine:
 
         }
 
-    
+
 
     def _calculate_max_drawdown(self, returns: np.ndarray) -> float:
 
@@ -1700,7 +1700,7 @@ class ImpactAssessmentEngine:
 
             return 0.0
 
-        
+
 
         cumulative = np.cumprod(1 + returns)
 
@@ -1710,9 +1710,9 @@ class ImpactAssessmentEngine:
 
         return np.min(drawdowns)
 
-    
 
-    def _assess_liquidity_impact(self, 
+
+    def _assess_liquidity_impact(self,
 
                                 portfolio_positions: Dict[str, Dict],
 
@@ -1722,7 +1722,7 @@ class ImpactAssessmentEngine:
 
         total_position = sum(p['quantity'] * p['price'] for p in portfolio_positions.values())
 
-        
+
 
         liquidity_scores = {}
 
@@ -1734,7 +1734,7 @@ class ImpactAssessmentEngine:
 
             participation = position_value / adv if adv > 0 else 1.0
 
-            
+
 
             liquidity_scores[asset] = {
 
@@ -1744,11 +1744,11 @@ class ImpactAssessmentEngine:
 
             }
 
-        
+
 
         high_risk_count = sum(1 for s in liquidity_scores.values() if s['liquidity_risk'] == 'high')
 
-        
+
 
         return {
 
@@ -1760,9 +1760,9 @@ class ImpactAssessmentEngine:
 
         }
 
-    
 
-    def _analyze_exposure_changes(self, 
+
+    def _analyze_exposure_changes(self,
 
                                  portfolio_positions: Dict[str, Dict],
 
@@ -1780,9 +1780,9 @@ class ImpactAssessmentEngine:
 
         }
 
-    
 
-    def _determine_severity(self, 
+
+    def _determine_severity(self,
 
                            return_dist: Dict,
 
@@ -1794,7 +1794,7 @@ class ImpactAssessmentEngine:
 
         var_95 = risk_metrics['var_95']
 
-        
+
 
         if var_95 < -0.30 or liquidity_impact['overall_liquidity_risk'] == 'high':
 
@@ -1812,9 +1812,9 @@ class ImpactAssessmentEngine:
 
             return 'low'
 
-    
 
-    def _generate_recommendations(self, 
+
+    def _generate_recommendations(self,
 
                                  severity: str,
 
@@ -1826,7 +1826,7 @@ class ImpactAssessmentEngine:
 
         recommendations = []
 
-        
+
 
         if severity == 'critical':
 
@@ -1834,31 +1834,31 @@ class ImpactAssessmentEngine:
 
             recommendations.append("考虑购买看跌期权对冲尾部风险")
 
-        
+
 
         if risk_metrics['var_change_pct'] > 0.5:
 
             recommendations.append("风险显著增加，建议重新评估风险预算")
 
-        
+
 
         if liquidity_impact['overall_liquidity_risk'] == 'high':
 
             recommendations.append("部分资产流动性风险较高，建议分批减仓")
 
-        
+
 
         if risk_metrics['max_drawdown'] < -0.20:
 
             recommendations.append("潜在最大回撤较大，建议设置止损")
 
-        
+
 
         if not recommendations:
 
             recommendations.append("组合在当前情景下表现稳健")
 
-        
+
 
         return recommendations
 
@@ -1906,15 +1906,15 @@ class MitigationStrategyGenerator:
 
     """应对策略生成器"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
 
-    def generate_strategies(self, 
+
+    def generate_strategies(self,
 
                            assessment: ImpactAssessment,
 
@@ -1924,7 +1924,7 @@ class MitigationStrategyGenerator:
 
         strategies = []
 
-        
+
 
         if assessment.overall_severity in ['critical', 'high']:
 
@@ -1936,7 +1936,7 @@ class MitigationStrategyGenerator:
 
             strategies.append(hedge_strategy)
 
-        
+
 
         position_strategy = self._generate_position_adjustment(
 
@@ -1946,7 +1946,7 @@ class MitigationStrategyGenerator:
 
         strategies.append(position_strategy)
 
-        
+
 
         risk_strategy = self._generate_risk_mitigation(
 
@@ -1956,17 +1956,17 @@ class MitigationStrategyGenerator:
 
         strategies.append(risk_strategy)
 
-        
+
 
         strategies.sort(key=lambda x: x.priority)
 
-        
+
 
         return strategies
 
-    
 
-    def _generate_hedge_strategy(self, 
+
+    def _generate_hedge_strategy(self,
 
                                 assessment: ImpactAssessment,
 
@@ -1976,7 +1976,7 @@ class MitigationStrategyGenerator:
 
         total_value = sum(p['quantity'] * p['price'] for p in positions.values())
 
-        
+
 
         actions = [
 
@@ -1996,7 +1996,7 @@ class MitigationStrategyGenerator:
 
         ]
 
-        
+
 
         return MitigationStrategy(
 
@@ -2024,9 +2024,9 @@ class MitigationStrategyGenerator:
 
         )
 
-    
 
-    def _generate_position_adjustment(self, 
+
+    def _generate_position_adjustment(self,
 
                                      assessment: ImpactAssessment,
 
@@ -2036,7 +2036,7 @@ class MitigationStrategyGenerator:
 
         actions = []
 
-        
+
 
         for asset, position in positions.items():
 
@@ -2056,7 +2056,7 @@ class MitigationStrategyGenerator:
 
                 })
 
-        
+
 
         return MitigationStrategy(
 
@@ -2084,9 +2084,9 @@ class MitigationStrategyGenerator:
 
         )
 
-    
 
-    def _generate_risk_mitigation(self, 
+
+    def _generate_risk_mitigation(self,
 
                                  assessment: ImpactAssessment,
 
@@ -2116,7 +2116,7 @@ class MitigationStrategyGenerator:
 
         ]
 
-        
+
 
         return MitigationStrategy(
 
@@ -2296,9 +2296,9 @@ class LimitUpDownScenario:
 
     """涨跌停情景分析"""
 
-    
 
-    def create_limit_scenario(self, 
+
+    def create_limit_scenario(self,
 
                              limit_type: str = 'down') -> ScenarioDefinition:
 
@@ -2324,7 +2324,7 @@ class LimitUpDownScenario:
 
             }
 
-        
+
 
         return ScenarioDefinition(
 
@@ -2366,9 +2366,9 @@ class PolicyShockScenario:
 
     """政策冲击情景"""
 
-    
 
-    def create_policy_scenario(self, 
+
+    def create_policy_scenario(self,
 
                               policy_type: str) -> ScenarioDefinition:
 
@@ -2404,11 +2404,11 @@ class PolicyShockScenario:
 
         }
 
-        
+
 
         shocks = policy_shocks.get(policy_type, {'market': -0.10})
 
-        
+
 
         return ScenarioDefinition(
 
@@ -2572,7 +2572,7 @@ class PolicyShockScenario:
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
 **下一步**: 更新Layer 11主蓝图文档
 
@@ -2641,4 +2641,3 @@ class PolicyShockScenario:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

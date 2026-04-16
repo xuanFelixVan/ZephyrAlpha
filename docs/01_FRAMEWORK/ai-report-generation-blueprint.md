@@ -216,7 +216,7 @@ class AIReportGenerator:
 
     """AI报告生成器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -228,7 +228,7 @@ class AIReportGenerator:
 
         self.report_templates = self._load_templates()
 
-        
+
 
     def generate_report(self,
 
@@ -240,29 +240,29 @@ class AIReportGenerator:
 
         """生成报告"""
 
-        
+
 
         if config is None:
 
             config = self._get_default_config(report_type)
 
-        
+
 
         report_id = f"{report_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         analyzed_data = self._analyze_data(data, config)
 
-        
+
 
         charts = self._generate_charts(data, config)
 
-        
+
 
         content = self._generate_content(analyzed_data, charts, config)
 
-        
+
 
         report = GeneratedReport(
 
@@ -288,21 +288,21 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         return report
 
-    
+
 
     def _initialize_llm(self) -> BaseLLM:
 
         """初始化LLM"""
 
-        
+
 
         llm_config = self.config.get('llm', {})
 
-        
+
 
         if llm_config.get('provider') == 'openai':
 
@@ -330,13 +330,13 @@ class AIReportGenerator:
 
             )
 
-    
+
 
     def _load_templates(self) -> Dict:
 
         """加载模板"""
 
-        
+
 
         return {
 
@@ -366,13 +366,13 @@ class AIReportGenerator:
 
         }
 
-    
+
 
     def _get_default_config(self, report_type: str) -> ReportConfig:
 
         """获取默认配置"""
 
-        
+
 
         configs = {
 
@@ -414,21 +414,21 @@ class AIReportGenerator:
 
         }
 
-        
+
 
         return configs.get(report_type, configs['market_analysis'])
 
-    
+
 
     def _analyze_data(self, data: Dict, config: ReportConfig) -> Dict:
 
         """分析数据"""
 
-        
+
 
         analyzed = {}
 
-        
+
 
         if config.report_type == 'market_analysis':
 
@@ -442,21 +442,21 @@ class AIReportGenerator:
 
             analyzed = self._analyze_risk_data(data)
 
-        
+
 
         return analyzed
 
-    
+
 
     def _analyze_market_data(self, data: Dict) -> Dict:
 
         """分析市场数据"""
 
-        
+
 
         returns = data.get('returns', pd.DataFrame())
 
-        
+
 
         if not returns.empty:
 
@@ -478,7 +478,7 @@ class AIReportGenerator:
 
             stats = {}
 
-        
+
 
         return {
 
@@ -490,23 +490,23 @@ class AIReportGenerator:
 
         }
 
-    
+
 
     def _analyze_strategy_data(self, data: Dict) -> Dict:
 
         """分析策略数据"""
 
-        
+
 
         returns = data.get('returns', pd.Series())
 
-        
+
 
         if not returns.empty:
 
             cumulative_return = (1 + returns).cumprod()
 
-            
+
 
             stats = {
 
@@ -528,35 +528,35 @@ class AIReportGenerator:
 
             stats = {}
 
-        
+
 
         return {'statistics': stats}
 
-    
+
 
     def _analyze_risk_data(self, data: Dict) -> Dict:
 
         """分析风险数据"""
 
-        
+
 
         returns = data.get('returns', pd.DataFrame())
 
         weights = data.get('weights', np.array([]))
 
-        
+
 
         if not returns.empty and len(weights) > 0:
 
             portfolio_returns = (returns * weights).sum(axis=1)
 
-            
+
 
             var_95 = np.percentile(portfolio_returns, 5)
 
             cvar_95 = portfolio_returns[portfolio_returns <= var_95].mean()
 
-            
+
 
             stats = {
 
@@ -574,21 +574,21 @@ class AIReportGenerator:
 
             stats = {}
 
-        
+
 
         return {'statistics': stats}
 
-    
+
 
     def _generate_charts(self, data: Dict, config: ReportConfig) -> List[Dict]:
 
         """生成图表"""
 
-        
+
 
         charts = []
 
-        
+
 
         if config.report_type == 'market_analysis':
 
@@ -602,25 +602,25 @@ class AIReportGenerator:
 
             charts = self._generate_risk_charts(data)
 
-        
+
 
         return charts
 
-    
+
 
     def _generate_market_charts(self, data: Dict) -> List[Dict]:
 
         """生成市场图表"""
 
-        
+
 
         charts = []
 
-        
+
 
         returns = data.get('returns', pd.DataFrame())
 
-        
+
 
         if not returns.empty:
 
@@ -632,11 +632,11 @@ class AIReportGenerator:
 
                 fig.add_trace(go.Scatter(x=cumulative.index, y=cumulative, name=col))
 
-            
+
 
             fig.update_layout(title='累计收益曲线', xaxis_title='日期', yaxis_title='累计收益')
 
-            
+
 
             charts.append({
 
@@ -648,31 +648,31 @@ class AIReportGenerator:
 
             })
 
-        
+
 
         return charts
 
-    
+
 
     def _generate_strategy_charts(self, data: Dict) -> List[Dict]:
 
         """生成策略图表"""
 
-        
+
 
         charts = []
 
-        
+
 
         returns = data.get('returns', pd.Series())
 
-        
+
 
         if not returns.empty:
 
             cumulative = (1 + returns).cumprod()
 
-            
+
 
             fig = go.Figure()
 
@@ -680,7 +680,7 @@ class AIReportGenerator:
 
             fig.update_layout(title='策略净值曲线', xaxis_title='日期', yaxis_title='净值')
 
-            
+
 
             charts.append({
 
@@ -692,25 +692,25 @@ class AIReportGenerator:
 
             })
 
-        
+
 
         return charts
 
-    
+
 
     def _generate_risk_charts(self, data: Dict) -> List[Dict]:
 
         """生成风险图表"""
 
-        
+
 
         charts = []
 
-        
+
 
         returns = data.get('returns', pd.DataFrame())
 
-        
+
 
         if not returns.empty:
 
@@ -726,23 +726,23 @@ class AIReportGenerator:
 
             })
 
-        
+
 
         return charts
 
-    
+
 
     def _generate_content(self, analyzed_data: Dict, charts: List[Dict], config: ReportConfig) -> str:
 
         """生成报告内容"""
 
-        
+
 
         template = self.report_templates.get(config.report_type, {})
 
         prompt_template = template.get('prompt', '')
 
-        
+
 
         prompt = PromptTemplate(
 
@@ -752,11 +752,11 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
 
-        
+
 
         content = chain.run(
 
@@ -766,23 +766,23 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         return content
 
-    
+
 
     def _get_top_performers(self, returns: pd.DataFrame, top_n: int = 5) -> List[Dict]:
 
         """获取表现最好的资产"""
 
-        
+
 
         total_returns = (1 + returns).prod() - 1
 
         top_assets = total_returns.nlargest(top_n)
 
-        
+
 
         return [
 
@@ -792,19 +792,19 @@ class AIReportGenerator:
 
         ]
 
-    
+
 
     def _get_worst_performers(self, returns: pd.DataFrame, top_n: int = 5) -> List[Dict]:
 
         """获取表现最差的资产"""
 
-        
+
 
         total_returns = (1 + returns).prod() - 1
 
         worst_assets = total_returns.nsmallest(top_n)
 
-        
+
 
         return [
 
@@ -814,13 +814,13 @@ class AIReportGenerator:
 
         ]
 
-    
+
 
     def _calculate_max_drawdown(self, returns: pd.Series) -> float:
 
         """计算最大回撤"""
 
-        
+
 
         cumulative = (1 + returns).cumprod()
 
@@ -828,17 +828,17 @@ class AIReportGenerator:
 
         drawdown = (cumulative - running_max) / running_max
 
-        
+
 
         return drawdown.min()
 
-    
+
 
     def _get_market_analysis_prompt(self) -> str:
 
         """获取市场分析提示词"""
 
-        
+
 
         return """
 
@@ -884,13 +884,13 @@ class AIReportGenerator:
 
 """
 
-    
+
 
     def _get_strategy_report_prompt(self) -> str:
 
         """获取策略报告提示词"""
 
-        
+
 
         return """
 
@@ -936,13 +936,13 @@ class AIReportGenerator:
 
 """
 
-    
+
 
     def _get_risk_report_prompt(self) -> str:
 
         """获取风险报告提示词"""
 
-        
+
 
         return """
 
@@ -1012,7 +1012,7 @@ class AIReportGenerationInterface:
 
     """AI报告生成接口"""
 
-    
+
 
     def generate_report(self,
 
@@ -1026,7 +1026,7 @@ class AIReportGenerationInterface:
 
         pass
 
-    
+
 
     def get_report_template(self, report_type: str) -> Dict:
 
@@ -1034,7 +1034,7 @@ class AIReportGenerationInterface:
 
         pass
 
-    
+
 
     def customize_template(self,
 
@@ -1140,7 +1140,7 @@ llm:
 
   api_key: 'your_api_key'
 
-  
+
 
 report:
 
@@ -1150,7 +1150,7 @@ report:
 
   output_dir: './reports'
 
-  
+
 
 templates:
 
@@ -1229,4 +1229,3 @@ templates:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

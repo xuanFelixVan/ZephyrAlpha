@@ -52,15 +52,15 @@ $toolConfigs = @{
 # MCP服务器主循环
 function Process-MCP-Request {
     param($request)
-    
+
     try {
         # 解析JSON-RPC请求
         $method = $request.method
         $id = $request.id
         $params = $request.params
-        
+
         Write-Host "[MCP] 收到请求: $method (ID: $id)" -ForegroundColor Cyan
-        
+
         if ($method -eq "initialize") {
             # 初始化响应
             return @{
@@ -81,7 +81,7 @@ function Process-MCP-Request {
         elseif ($method -eq "tools/list") {
             # 返回工具列表
             $tools = @()
-            
+
             foreach ($toolName in $toolConfigs.Keys) {
                 $config = $toolConfigs[$toolName]
                 $tools += @{
@@ -93,7 +93,7 @@ function Process-MCP-Request {
                     }
                 }
             }
-            
+
             return @{
                 jsonrpc = "2.0"
                 id = $id
@@ -106,30 +106,30 @@ function Process-MCP-Request {
             # 调用工具
             $toolName = $params.name
             Write-Host "[MCP] 调用工具: $toolName" -ForegroundColor Yellow
-            
+
             if (-not $toolConfigs.ContainsKey($toolName)) {
                 throw "未知的工具: $toolName"
             }
-            
+
             $config = $toolConfigs[$toolName]
             $command = $config.command
             $args = $config.args
-            
+
             # 构建完整命令
             $fullCommand = "$command " + ($args -join " ")
             Write-Host "[MCP] 执行命令: $fullCommand" -ForegroundColor Green
-            
+
             # 执行命令（带超时）
             $output = ""
             $errorOutput = ""
             $exitCode = 0
-            
+
             try {
                 $process = Start-Process -FilePath $command -ArgumentList $args -NoNewWindow -PassThru -RedirectStandardOutput "temp_stdout.txt" -RedirectStandardError "temp_stderr.txt"
-                
+
                 # 等待进程完成或超时
                 $process | Wait-Process -Timeout $config.timeout -ErrorAction SilentlyContinue
-                
+
                 if (-not $process.HasExited) {
                     # 超时，终止进程
                     $process | Stop-Process -Force
@@ -145,7 +145,7 @@ function Process-MCP-Request {
                     }
                     $exitCode = $process.ExitCode
                 }
-                
+
                 # 清理临时文件
                 Remove-Item "temp_stdout.txt" -ErrorAction SilentlyContinue
                 Remove-Item "temp_stderr.txt" -ErrorAction SilentlyContinue
@@ -153,31 +153,31 @@ function Process-MCP-Request {
             catch {
                 $errorOutput = "执行错误: $_"
             }
-            
+
             # 构建响应
             $content = @()
-            
+
             if ($output) {
                 $content += @{
                     type = "text"
                     text = $output
                 }
             }
-            
+
             if ($errorOutput) {
                 $content += @{
                     type = "text"
                     text = "错误输出: $errorOutput"
                 }
             }
-            
+
             if (-not $output -and -not $errorOutput) {
                 $content += @{
                     type = "text"
                     text = "命令执行完成，但无输出。退出码: $exitCode"
                 }
             }
-            
+
             return @{
                 jsonrpc = "2.0"
                 id = $id
@@ -228,23 +228,23 @@ while ($true) {
     try {
         # 读取一行输入
         $line = $host.UI.ReadLine()
-        
+
         if (-not $line) {
             # 空行或EOF，继续等待
             Start-Sleep -Milliseconds 100
             continue
         }
-        
+
         # 解析JSON请求
         $request = $line | ConvertFrom-Json
-        
+
         # 处理请求
         $response = Process-MCP-Request -request $request
-        
+
         # 发送响应
         $responseJson = $response | ConvertTo-Json -Depth 10 -Compress
         Write-Host $responseJson
-        
+
         # 如果是shutdown请求，退出
         if ($request.method -eq "shutdown") {
             Write-Host "[MCP] 收到关闭请求，退出..." -ForegroundColor Red

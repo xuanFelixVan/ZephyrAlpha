@@ -21,7 +21,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -511,7 +511,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -575,7 +575,7 @@ class DistributedTrainer:
 
 
 
-        """初始化分布式训练?        
+        """初始化分布式训练?
 
 
 
@@ -623,7 +623,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -671,7 +671,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -719,7 +719,7 @@ class DistributedTrainer:
 
 
 
-        
+
 
 
 
@@ -743,7 +743,7 @@ class DistributedTrainer:
 
 
 
-            
+
 
 
 
@@ -775,7 +775,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -839,7 +839,7 @@ class DistributedTrainer:
 
 
 
-        
+
 
 
 
@@ -871,7 +871,7 @@ class DistributedTrainer:
 
 
 
-            
+
 
 
 
@@ -903,7 +903,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -975,7 +975,7 @@ class DistributedTrainer:
 
 
 
-        
+
 
 
 
@@ -1031,7 +1031,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -1079,7 +1079,7 @@ class DistributedTrainer:
 
 
 
-        
+
 
 
 
@@ -1103,7 +1103,7 @@ class DistributedTrainer:
 
 
 
-            
+
 
 
 
@@ -1143,7 +1143,7 @@ class DistributedTrainer:
 
 
 
-    
+
 
 
 
@@ -1335,7 +1335,7 @@ for epoch in range(num_epochs):
 
 
 
-    
+
 
 
 
@@ -2800,10 +2800,3 @@ model_engine, optimizer, _, _ = deepspeed.initialize(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

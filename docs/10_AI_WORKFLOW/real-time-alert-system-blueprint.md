@@ -26,11 +26,11 @@ layer: layer_00
 
 
 
- 统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT               
+ 统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT
 
 
 
- 接收所有子系统的告警并统一分发                               
+ 接收所有子系统的告警并统一分发
 
 
 
@@ -38,7 +38,7 @@ layer: layer_00
 
 
 
-                              
+
 
 
 
@@ -46,11 +46,11 @@ layer: layer_00
 
 
 
- 本文 舆情专用预警模块 - 监控舆情并生成预警事           
+ 本文 舆情专用预警模块 - 监控舆情并生成预警事
 
 
 
- 预警事件 发送到统一告警平台进行分发                        
+ 预警事件 发送到统一告警平台进行分发
 
 
 
@@ -230,7 +230,7 @@ layer: layer_00
 
 
 
-                   实时预警系统模块架构                               
+                   实时预警系统模块架构
 
 
 
@@ -238,127 +238,127 @@ layer: layer_00
 
 
 
-                                                                    
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
+ ┌──────────────────────────────────────────────────────────────
 
 
-          RealTimeAlertSystem (主预警系                      
 
+          RealTimeAlertSystem (主预警系
 
 
-  - 监控管理                                                    
 
+  - 监控管理
 
 
-  - 规则执行                                                    
 
+  - 规则执行
 
 
-  - 预警推                                                   
 
+  - 预警推
 
 
- └────────────────────────────────────────────────────────────── 
 
+ └──────────────────────────────────────────────────────────────
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
+ ┌──────────────────────────────────────────────────────────────
 
-          监控                                               
 
 
+          监控
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
 
 
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
 
-  │NewsMonitor   │SentimentMon  │EventMonitor  │Data   
 
 
+  │NewsMonitor   │SentimentMon  │EventMonitor  │Data
 
-               │itor                       │Mon    
 
 
+               │itor                       │Mon
 
-  └───────────── └───────────── └───────────── └────── 
 
 
+  └───────────── └───────────── └───────────── └──────
 
- └────────────────────────────────────────────────────────────── 
 
 
+ └──────────────────────────────────────────────────────────────
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
 
-          规则引擎                                           
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-  - 规则解析(RuleParser)                                     
+          规则引擎
 
 
 
-  - 规则执行(RuleExecutor)                                   
+  - 规则解析(RuleParser)
 
 
 
-  - 规则管理(RuleManager)                                    
+  - 规则执行(RuleExecutor)
 
 
 
- └────────────────────────────────────────────────────────────── 
+  - 规则管理(RuleManager)
 
 
 
-                                                                   
+ └──────────────────────────────────────────────────────────────
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
 
-          推送层                                                
 
+ ┌──────────────────────────────────────────────────────────────
 
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
 
+          推送层
 
 
-  │EmailPusher   │WeChatPusher  │TelegramPush  │SMS    
 
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
 
 
-                            │er            │Pusher 
 
+  │EmailPusher   │WeChatPusher  │TelegramPush  │SMS
 
 
-  └───────────── └───────────── └───────────── └────── 
 
+                            │er            │Pusher
 
 
- └────────────────────────────────────────────────────────────── 
 
+  └───────────── └───────────── └───────────── └──────
 
 
-                                                                    
+
+ └──────────────────────────────────────────────────────────────
+
+
+
+
 
 
 
@@ -592,7 +592,7 @@ rules:
 
 
 
-    
+
 
 
 
@@ -636,7 +636,7 @@ rules:
 
 
 
-    
+
 
 
 
@@ -1194,7 +1194,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1206,7 +1206,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1242,7 +1242,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1258,7 +1258,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1274,7 +1274,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1290,7 +1290,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1306,7 +1306,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1318,7 +1318,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1330,7 +1330,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1350,7 +1350,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1362,7 +1362,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1374,7 +1374,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1394,7 +1394,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1406,7 +1406,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1418,7 +1418,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1438,7 +1438,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1450,7 +1450,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1470,7 +1470,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1482,7 +1482,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1494,7 +1494,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1514,7 +1514,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1526,7 +1526,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1538,7 +1538,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1558,7 +1558,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1590,7 +1590,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1610,7 +1610,7 @@ class RealTimeAlertSystem:
 
 
 
-            
+
 
 
 
@@ -1630,7 +1630,7 @@ class RealTimeAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1642,7 +1642,7 @@ class RealTimeAlertSystem:
 
 
 
-        
+
 
 
 
@@ -1702,7 +1702,7 @@ class Monitor(ABC):
 
 
 
-    
+
 
 
 
@@ -1722,7 +1722,7 @@ class Monitor(ABC):
 
 
 
-    
+
 
 
 
@@ -1742,7 +1742,7 @@ class Monitor(ABC):
 
 
 
-    
+
 
 
 
@@ -1758,7 +1758,7 @@ class Monitor(ABC):
 
 
 
-        
+
 
 
 
@@ -1778,7 +1778,7 @@ class Monitor(ABC):
 
 
 
-    
+
 
 
 
@@ -1794,7 +1794,7 @@ class Monitor(ABC):
 
 
 
-        
+
 
 
 
@@ -1830,7 +1830,7 @@ class NewsMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1842,7 +1842,7 @@ class NewsMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1858,7 +1858,7 @@ class NewsMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1890,7 +1890,7 @@ class SentimentMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1902,7 +1902,7 @@ class SentimentMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1918,7 +1918,7 @@ class SentimentMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1950,7 +1950,7 @@ class EventMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1962,7 +1962,7 @@ class EventMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -1978,7 +1978,7 @@ class EventMonitor(Monitor):
 
 
 
-    
+
 
 
 
@@ -2022,7 +2022,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2034,7 +2034,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2050,7 +2050,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2066,7 +2066,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2078,7 +2078,7 @@ class RuleEngine:
 
 
 
-        
+
 
 
 
@@ -2090,7 +2090,7 @@ class RuleEngine:
 
 
 
-            
+
 
 
 
@@ -2110,7 +2110,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2122,7 +2122,7 @@ class RuleEngine:
 
 
 
-        
+
 
 
 
@@ -2134,7 +2134,7 @@ class RuleEngine:
 
 
 
-            
+
 
 
 
@@ -2154,7 +2154,7 @@ class RuleEngine:
 
 
 
-    
+
 
 
 
@@ -2166,7 +2166,7 @@ class RuleEngine:
 
 
 
-        
+
 
 
 
@@ -2178,7 +2178,7 @@ class RuleEngine:
 
 
 
-            
+
 
 
 
@@ -2226,7 +2226,7 @@ class AlertPusher(ABC):
 
 
 
-    
+
 
 
 
@@ -2242,7 +2242,7 @@ class AlertPusher(ABC):
 
 
 
-        
+
 
 
 
@@ -2254,7 +2254,7 @@ class AlertPusher(ABC):
 
 
 
-            
+
 
 
 
@@ -2274,7 +2274,7 @@ class AlertPusher(ABC):
 
 
 
-    
+
 
 
 
@@ -2290,7 +2290,7 @@ class AlertPusher(ABC):
 
 
 
-        
+
 
 
 
@@ -2326,7 +2326,7 @@ class EmailPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2338,7 +2338,7 @@ class EmailPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2354,7 +2354,7 @@ class EmailPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2386,7 +2386,7 @@ class WeChatPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2398,7 +2398,7 @@ class WeChatPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2414,7 +2414,7 @@ class WeChatPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2446,7 +2446,7 @@ class TelegramPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2458,7 +2458,7 @@ class TelegramPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -2474,7 +2474,7 @@ class TelegramPusher(AlertPusher):
 
 
 
-    
+
 
 
 
@@ -4203,6 +4203,3 @@ print("=" * 60)
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-
-
-

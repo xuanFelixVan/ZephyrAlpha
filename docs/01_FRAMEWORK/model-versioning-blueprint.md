@@ -16,7 +16,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供model versioning blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Model Versioning蓝图设计相关内容
 
@@ -214,7 +214,7 @@ class ModelVersioning:
 
 
 
-    
+
 
 
 
@@ -260,7 +260,7 @@ class ModelVersioning:
 
 
 
-    
+
 
 
 
@@ -296,7 +296,7 @@ class ModelVersioning:
 
 
 
-        
+
 
 
 
@@ -320,7 +320,7 @@ class ModelVersioning:
 
 
 
-            
+
 
 
 
@@ -340,7 +340,7 @@ class ModelVersioning:
 
 
 
-    
+
 
 
 
@@ -372,7 +372,7 @@ class ModelVersioning:
 
 
 
-        
+
 
 
 
@@ -392,7 +392,7 @@ class ModelVersioning:
 
 
 
-            
+
 
 
 
@@ -412,7 +412,7 @@ class ModelVersioning:
 
 
 
-    
+
 
 
 
@@ -450,7 +450,7 @@ class ModelVersioning:
 
 
 
-            
+
 
 
 
@@ -701,4 +701,3 @@ boto3>=1.28.0
 
 
 ```
-

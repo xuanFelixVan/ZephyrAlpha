@@ -18,7 +18,7 @@ related_documents:
 
 
 
-> **用途**：Owner 在 **Trae** 与 **Cursor** 两边并行推进蓝图终稿时，**以本文件为唯一进度真源**；新开的 Cursor 对话只要读本文件 + `CONSTRUCTION_GATE`，即可接续安排 Trae、核对交付。  
+> **用途**：Owner 在 **Trae** 与 **Cursor** 两边并行推进蓝图终稿时，**以本文件为唯一进度真源**；新开的 Cursor 对话只要读本文件 + `CONSTRUCTION_GATE`，即可接续安排 Trae、核对交付。
 
 > **谁维护**：**Cursor-01（统筹）** 在每批验收后更新；台账提交只落在 `docs/blueprint-commander` 分支。
 
@@ -952,13 +952,13 @@ API_Contract.md
 
 
 
-- **Trae** 与 **Cursor** **并行**：不得同时修改对方目录包内的文件。  
+- **Trae** 与 **Cursor** **并行**：不得同时修改对方目录包内的文件。
 
-- **每批最多 8 个文件**（单会话可控）。  
+- **每批最多 8 个文件**（单会话可控）。
 
-- **Trae T1** 固定为 `01_BLUEPRINTS` 四篇 Draft。  
+- **Trae T1** 固定为 `01_BLUEPRINTS` 四篇 Draft。
 
-- **Trae T2+**：`python scripts/generate_01_blueprints_index.py` 刷新索引后按 `INDEX.md` 顺序取下一组。  
+- **Trae T2+**：`python scripts/generate_01_blueprints_index.py` 刷新索引后按 `INDEX.md` 顺序取下一组。
 
 - **Cursor C***：`docs/01_FRAMEWORK/` **根目录** `*BLUEPRINT*.md` 按文件名排序分批；子目录另开 **C-L4-***。
 
@@ -1281,4 +1281,3 @@ L1 结果（无效链）：0
 | 1.8.7 | 2026-04-10 | T3-42：8 篇 S/T 前缀蓝图内容侧已抽查合规，施工 N/A；待回收 rec-T3-42 |
 
 | 1.8.8 | 2026-04-10 | T3-43（Trae-10）两篇：施工 N/A；空提交 3287f676 已在 trae-10，统筹记已完成 |
-

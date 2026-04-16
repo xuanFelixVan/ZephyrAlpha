@@ -164,7 +164,7 @@ class RAGSystem:
 
 
 
-    
+
 
 
 
@@ -196,7 +196,7 @@ class RAGSystem:
 
 
 
-        
+
 
 
 
@@ -218,7 +218,7 @@ embedding_model:
 
 
 
-    
+
 
 
 
@@ -242,7 +242,7 @@ embedding_model:
 
 
 
-        
+
 
 
 
@@ -254,7 +254,7 @@ embedding_model:
 
 
 
-            
+
 
 
 
@@ -268,7 +268,7 @@ embedding_model:
 
 
 
-    
+
 
 
 
@@ -308,7 +308,7 @@ embedding_model:
 
 
 
-            
+
 
 
 
@@ -328,7 +328,7 @@ List[Dict]:
 
 
 
-    
+
 
 
 
@@ -356,7 +356,7 @@ List[Dict]:
 
 
 
-        
+
 
 
 
@@ -615,4 +615,3 @@ tiktoken>=0.5.0
 
 
 ```
-

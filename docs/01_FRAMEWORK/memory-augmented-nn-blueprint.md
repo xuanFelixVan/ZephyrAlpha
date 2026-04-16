@@ -32,7 +32,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -306,7 +306,7 @@ class MemoryAugmentedNN:
 
 
 
-    
+
 
 
 
@@ -362,7 +362,7 @@ class MemoryAugmentedNN:
 
 
 
-        """初始化记忆网?        
+        """初始化记忆网?
 
 
 
@@ -418,7 +418,7 @@ class MemoryAugmentedNN:
 
 
 
-    
+
 
 
 
@@ -458,7 +458,7 @@ class MemoryAugmentedNN:
 
 
 
-        """从记忆读?        
+        """从记忆读?
 
 
 
@@ -482,7 +482,7 @@ class MemoryAugmentedNN:
 
 
 
-            
+
 
 
 
@@ -522,7 +522,7 @@ class MemoryAugmentedNN:
 
 
 
-    
+
 
 
 
@@ -578,7 +578,7 @@ class MemoryAugmentedNN:
 
 
 
-        
+
 
 
 
@@ -836,7 +836,7 @@ class MemoryAugmentedNN(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1251,10 +1251,3 @@ class MemoryAugmentedNN(nn.Module):
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

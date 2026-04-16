@@ -21,11 +21,11 @@ parent_document: ./ARCHITECTURE.md
 
 
 
-> **核心职责**：说明 **三级时间框架（业务决策）** 与 **Layer 0～11（技术流水线）** 的对应关系。  
+> **核心职责**：说明 **三级时间框架（业务决策）** 与 **Layer 0～11（技术流水线）** 的对应关系。
 
 
 
-> **权威顺序**：与 ARCHITECTURE.md 冲突时，**以 ARCHITECTURE.md 为准**。  
+> **权威顺序**：与 ARCHITECTURE.md 冲突时，**以 ARCHITECTURE.md 为准**。
 
 
 
@@ -285,15 +285,15 @@ parent_document: ./ARCHITECTURE.md
 
 
 
-- **实施侧蓝图全目录索引**（机器维护）：[`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)（运行 `python scripts/generate_01_blueprints_index.py` 更新）。  
+- **实施侧蓝图全目录索引**（机器维护）：[`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)（运行 `python scripts/generate_01_blueprints_index.py` 更新）。
 
 
 
-- 新增或重命名蓝图 / 规格书后，应在本文件或 ARCHITECTURE.md 「相关文档」中 **至少一处** 可点击到达。  
+- 新增或重命名蓝图 / 规格书后，应在本文件或 ARCHITECTURE.md 「相关文档」中 **至少一处** 可点击到达。
 
 
 
-- 架构级缺口与矛盾登记：ARCH_MODULE_GAP_REGISTER_20260408.md。  
+- 架构级缺口与矛盾登记：ARCH_MODULE_GAP_REGISTER_20260408.md。
 
 
 
@@ -316,6 +316,3 @@ parent_document: ./ARCHITECTURE.md
 
 
 **版本**: v1.1 | **更新**: 2026-04-08 | **状态**: Active
-
-
-

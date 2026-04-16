@@ -13,14 +13,14 @@ $qmt_processes = @()
 try {
     # Look for common QMT process names
     $process_names = @("*qmt*", "*think*", "*guojin*", "*迅投*", "*国金*")
-    
+
     foreach ($name in $process_names) {
         $procs = Get-Process -ErrorAction SilentlyContinue | Where-Object {$_.ProcessName -like $name}
         if ($procs) {
             $qmt_processes += $procs
         }
     }
-    
+
     if ($qmt_processes.Count -gt 0) {
         Write-Host "   Found $($qmt_processes.Count) QMT-related process(es):" -ForegroundColor Green
         foreach ($proc in $qmt_processes) {
@@ -62,12 +62,12 @@ Write-Host "3. Checking configuration file..." -ForegroundColor Yellow
 $env_file = ".env.qmt"
 if (Test-Path $env_file) {
     Write-Host "   ✅ $env_file found" -ForegroundColor Green
-    
+
     # Read and display account info (masked)
     $content = Get-Content $env_file
     $sim_account = ($content | Where-Object {$_ -like "QMT_SIMULATION_ACCOUNT=*"}).Split('=')[1]
     $live_account = ($content | Where-Object {$_ -like "QMT_LIVE_ACCOUNT=*"}).Split('=')[1]
-    
+
     if ($sim_account) {
         Write-Host "   Simulation account: $sim_account" -ForegroundColor White
     }

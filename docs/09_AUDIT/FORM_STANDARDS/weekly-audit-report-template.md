@@ -317,9 +317,8 @@ standard_type: 专业量化机构文档
 
 
 
-**报告生成时间**: {report_time}  
+**报告生成时间**: {report_time}
 
-**报告版本**: v1.0  
+**报告版本**: v1.0
 
 **下次审计时间**: {next_audit_time}
-

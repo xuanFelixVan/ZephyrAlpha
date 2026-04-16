@@ -29,7 +29,7 @@ responsibility: ''
 
 > **核心职责**: Algorithm Inventory Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Algorithm Inventory Management蓝图设计相关内容
 
@@ -39,13 +39,13 @@ responsibility: ''
 
 
 
-> **版本**: v1.0.0  
+> **版本**: v1.0.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **实施周期**: 1-2周  
+> **实施周期**: 1-2周
 
-> **开源项目**: NautilusTrader + NexusTrader  
+> **开源项目**: NautilusTrader + NexusTrader
 
 > **目标**: 构建专业级算法清单管理系统，满足FCA 2025算法交易控制审查要求，实现算法全生命周期管理
 
@@ -257,7 +257,7 @@ class AlgorithmInventoryManager:
 
         self.approval_workflows = {}
 
-    
+
 
     def register_algorithm(self, strategy: Strategy, metadata: dict):
 
@@ -283,7 +283,7 @@ class AlgorithmInventoryManager:
 
         return algorithm_id
 
-    
+
 
     def update_lifecycle_state(self, algorithm_id: str, new_state: str):
 
@@ -293,7 +293,7 @@ class AlgorithmInventoryManager:
 
             raise ValueError(f"Invalid state: {new_state}")
 
-        
+
 
         self.lifecycle_states[algorithm_id] = {
 
@@ -305,7 +305,7 @@ class AlgorithmInventoryManager:
 
         }
 
-        
+
 
         self._log_state_change(algorithm_id, new_state)
 
@@ -343,7 +343,7 @@ class AlgorithmInventoryNexusIntegration:
 
         self.strategy_manager = StrategyManager()
 
-    
+
 
     def sync_with_nexus(self, algorithm_id: str):
 
@@ -505,43 +505,43 @@ class AlgorithmRegistration:
 
         self.db = db_session
 
-    
+
 
     def register_algorithm(self, metadata: AlgorithmMetadata) -> str:
 
         self._validate_metadata(metadata)
 
-        
+
 
         algorithm_id = self._generate_algorithm_id(metadata)
 
-        
+
 
         self.db.add_algorithm(algorithm_id, metadata)
 
-        
+
 
         self._create_lifecycle_event(
 
-            algorithm_id, 
+            algorithm_id,
 
-            'registration', 
+            'registration',
 
-            None, 
+            None,
 
             AlgorithmState.DEVELOPMENT
 
         )
 
-        
+
 
         self._notify_stakeholders(algorithm_id, 'registered')
 
-        
+
 
         return algorithm_id
 
-    
+
 
     def _validate_metadata(self, metadata: AlgorithmMetadata):
 
@@ -553,7 +553,7 @@ class AlgorithmRegistration:
 
                 raise ValueError(f"Missing required field: {field}")
 
-        
+
 
         if not metadata.risk_params:
 
@@ -585,15 +585,15 @@ class AlgorithmLifecycleManager:
 
     }
 
-    
 
-    def transition_state(self, algorithm_id: str, new_state: AlgorithmState, 
+
+    def transition_state(self, algorithm_id: str, new_state: AlgorithmState,
 
                          user: str, reason: str) -> bool:
 
         current_state = self._get_current_state(algorithm_id)
 
-        
+
 
         if new_state not in self.VALID_TRANSITIONS[current_state]:
 
@@ -603,7 +603,7 @@ class AlgorithmLifecycleManager:
 
             )
 
-        
+
 
         if new_state == AlgorithmState.PRODUCTION:
 
@@ -611,19 +611,19 @@ class AlgorithmLifecycleManager:
 
                 raise ApprovalRequiredError("Production deployment requires approval")
 
-        
+
 
         self._update_state(algorithm_id, new_state, user, reason)
 
-        
+
 
         self._log_transition(algorithm_id, current_state, new_state, user, reason)
 
-        
+
 
         return True
 
-    
+
 
     def _check_production_approval(self, algorithm_id: str) -> bool:
 
@@ -631,17 +631,17 @@ class AlgorithmLifecycleManager:
 
         required_types = ['risk_assessment', 'compliance_review', 'technical_review']
 
-        
+
 
         for approval_type in required_types:
 
-            if not any(a.type == approval_type and a.status == 'approved' 
+            if not any(a.type == approval_type and a.status == 'approved'
 
                       for a in approvals):
 
                 return False
 
-        
+
 
         return True
 
@@ -669,9 +669,9 @@ class AlgorithmApprovalWorkflow:
 
     }
 
-    
 
-    def submit_for_approval(self, algorithm_id: str, approval_type: str, 
+
+    def submit_for_approval(self, algorithm_id: str, approval_type: str,
 
                            submitter: str, notes: str) -> str:
 
@@ -679,7 +679,7 @@ class AlgorithmApprovalWorkflow:
 
             raise ValueError(f"Invalid approval type: {approval_type}")
 
-        
+
 
         approval_id = self._create_approval_request(
 
@@ -687,57 +687,57 @@ class AlgorithmApprovalWorkflow:
 
         )
 
-        
+
 
         approvers = self._get_approvers(approval_type)
 
         self._notify_approvers(approval_id, approvers)
 
-        
+
 
         return approval_id
 
-    
+
 
     def approve(self, approval_id: str, approver: str, comments: str) -> bool:
 
         approval = self.db.get_approval(approval_id)
 
-        
+
 
         if not self._can_approve(approval, approver):
 
             raise PermissionError("User not authorized to approve")
 
-        
+
 
         self._update_approval_status(approval_id, 'approved', approver, comments)
 
-        
+
 
         if self._all_approvals_complete(approval.algorithm_id):
 
             self._enable_production_deployment(approval.algorithm_id)
 
-        
+
 
         return True
 
-    
+
 
     def reject(self, approval_id: str, approver: str, comments: str) -> bool:
 
         approval = self.db.get_approval(approval_id)
 
-        
+
 
         self._update_approval_status(approval_id, 'rejected', approver, comments)
 
-        
+
 
         self._notify_stakeholders(approval.algorithm_id, 'approval_rejected')
 
-        
+
 
         return True
 
@@ -871,7 +871,7 @@ class AlgorithmModel(Base):
 
     __tablename__ = 'algorithms'
 
-    
+
 
     algorithm_id = Column(String(50), primary_key=True)
 
@@ -909,7 +909,7 @@ class AlgorithmRepository:
 
         self.Session = sessionmaker(bind=self.engine)
 
-    
+
 
     def add_algorithm(self, algorithm_id: str, metadata: AlgorithmMetadata):
 
@@ -1043,7 +1043,7 @@ async def transition_state(algorithm_id: str, request: StateTransitionRequest):
 
     success = lifecycle_manager.transition_state(
 
-        algorithm_id, 
+        algorithm_id,
 
         AlgorithmState(request.new_state),
 
@@ -1087,7 +1087,7 @@ async def list_algorithms(state: Optional[str] = None, owner: Optional[str] = No
 
         filters['owner'] = owner
 
-    
+
 
     algorithms = db.list_algorithms(filters)
 
@@ -1205,7 +1205,7 @@ groups:
 
           description: "Algorithm {{ $labels.algorithm_id }} has been in testing for over 7 days"
 
-      
+
 
       - alert: ApprovalPendingTooLong
 
@@ -1223,7 +1223,7 @@ groups:
 
           description: "Approval {{ $labels.approval_id }} has been pending for over 3 days"
 
-      
+
 
       - alert: ProductionAlgorithmWithoutApproval
 
@@ -1271,7 +1271,7 @@ class SimplifiedAlgorithmInventory:
 
         self._init_database()
 
-    
+
 
     def _init_database(self):
 
@@ -1279,15 +1279,15 @@ class SimplifiedAlgorithmInventory:
 
         self._create_tables()
 
-    
 
-    def quick_register(self, name: str, strategy_class: type, 
+
+    def quick_register(self, name: str, strategy_class: type,
 
                        owner: str = "default") -> str:
 
         algorithm_id = f"algo_{name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-        
+
 
         self.db.execute("""
 
@@ -1297,21 +1297,21 @@ class SimplifiedAlgorithmInventory:
 
         """, (algorithm_id, name, owner, datetime.now()))
 
-        
+
 
         self.db.commit()
 
-        
+
 
         return algorithm_id
 
-    
+
 
     def quick_approve(self, algorithm_id: str, approver: str = "admin"):
 
         self.db.execute("""
 
-            INSERT INTO algorithm_approvals 
+            INSERT INTO algorithm_approvals
 
             (approval_id, algorithm_id, approval_type, approver, status, approved_at)
 
@@ -1319,7 +1319,7 @@ class SimplifiedAlgorithmInventory:
 
         """, (f"appr_{algorithm_id}", algorithm_id, approver, datetime.now()))
 
-        
+
 
         self.db.execute("""
 
@@ -1329,7 +1329,7 @@ class SimplifiedAlgorithmInventory:
 
         """, (datetime.now(), algorithm_id))
 
-        
+
 
         self.db.commit()
 
@@ -1431,29 +1431,29 @@ class TestAlgorithmInventory:
 
         assert algorithm_id is not None
 
-        
+
 
         algorithm = test_db.get_algorithm(algorithm_id)
 
         assert algorithm.state == AlgorithmState.DEVELOPMENT
 
-    
+
 
     def test_state_transition(self):
 
         lifecycle = AlgorithmLifecycleManager(test_db)
 
-        
+
 
         algorithm_id = create_test_algorithm()
 
-        
+
 
         lifecycle.transition_state(
 
-            algorithm_id, 
+            algorithm_id,
 
-            AlgorithmState.TESTING, 
+            AlgorithmState.TESTING,
 
             "test_user",
 
@@ -1461,31 +1461,31 @@ class TestAlgorithmInventory:
 
         )
 
-        
+
 
         algorithm = test_db.get_algorithm(algorithm_id)
 
         assert algorithm.state == AlgorithmState.TESTING
 
-    
+
 
     def test_invalid_state_transition(self):
 
         lifecycle = AlgorithmLifecycleManager(test_db)
 
-        
+
 
         algorithm_id = create_test_algorithm()
 
-        
+
 
         with pytest.raises(InvalidStateTransition):
 
             lifecycle.transition_state(
 
-                algorithm_id, 
+                algorithm_id,
 
-                AlgorithmState.PRODUCTION, 
+                AlgorithmState.PRODUCTION,
 
                 "test_user",
 
@@ -1493,17 +1493,17 @@ class TestAlgorithmInventory:
 
             )
 
-    
+
 
     def test_approval_workflow(self):
 
         workflow = AlgorithmApprovalWorkflow(test_db)
 
-        
+
 
         algorithm_id = create_test_algorithm_in_testing()
 
-        
+
 
         approval_id = workflow.submit_for_approval(
 
@@ -1511,11 +1511,11 @@ class TestAlgorithmInventory:
 
         )
 
-        
+
 
         workflow.approve(approval_id, 'risk_manager', 'Approved')
 
-        
+
 
         approval = test_db.get_approval(approval_id)
 
@@ -1660,4 +1660,3 @@ class TestAlgorithmInventory:
 
 
 **版本**: v1.0.0 | **更新**: 2026-04-07 | **状态**: 蓝图设计完成
-

@@ -667,7 +667,7 @@ models:
 
     device: "cuda"
 
-  
+
 
   llm:
 
@@ -677,7 +677,7 @@ models:
 
     base_url: "http://localhost:11434"
 
-  
+
 
   sentiment:
 
@@ -742,4 +742,3 @@ python main.py
 **ﻝ۰؛ﻛﭨﭘﻠﻝﺛ؟**: RTX 3090 24GB + 64GB RAM + i7-12700KF
 
 **ﻠﻝﺛ؟ﻟﺁﻝﭦ۶**: ﻗﻗﻗﻗﻗ?ﮔﭦﮔﻝﭦ?
-

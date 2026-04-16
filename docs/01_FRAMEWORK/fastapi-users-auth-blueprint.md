@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Fastapi Users Auth蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Fastapi Users Auth蓝图设计相关内容
 
@@ -32,11 +32,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 3天  
+> **实施周期**: 3天
 
 > **目标**: 构建专业级认证权限系统，使用FastAPI-Users替代自研认证
 
@@ -376,11 +376,11 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
     is_verified = Column(Boolean, default=False, nullable=False)
 
-    
+
 
     role = Column(String, default=Role.VIEWER, nullable=False)
 
-    
+
 
     permissions = relationship("Permission", back_populates="user")
 
@@ -392,7 +392,7 @@ class Permission(Base):
 
     __tablename__ = "permissions"
 
-    
+
 
     id = Column(Integer, primary_key=True)
 
@@ -402,7 +402,7 @@ class Permission(Base):
 
     action = Column(String, nullable=False)
 
-    
+
 
     user = relationship("User", back_populates="permissions")
 
@@ -468,7 +468,7 @@ def require_permission(resource: str, action: str):
 
                 return await func(*args, user=user, **kwargs)
 
-            
+
 
             has_permission = any(
 
@@ -478,7 +478,7 @@ def require_permission(resource: str, action: str):
 
             )
 
-            
+
 
             if not has_permission:
 
@@ -490,7 +490,7 @@ def require_permission(resource: str, action: str):
 
                 )
 
-            
+
 
             return await func(*args, user=user, **kwargs)
 
@@ -530,7 +530,7 @@ async def get_api_key_user(api_key: str = Security(api_key_header)):
 
         return None
 
-    
+
 
     user = await get_user_by_api_key(api_key)
 
@@ -544,7 +544,7 @@ async def get_api_key_user(api_key: str = Security(api_key_header)):
 
         )
 
-    
+
 
     return user
 
@@ -712,7 +712,7 @@ auth:
 
     expire_minutes: 60
 
-  
+
 
   api_key:
 
@@ -720,7 +720,7 @@ auth:
 
     expire_days: 365
 
-  
+
 
   roles:
 
@@ -895,4 +895,3 @@ FastAPI-Users认证权限系统通过**开源优先策略**，实现了：
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

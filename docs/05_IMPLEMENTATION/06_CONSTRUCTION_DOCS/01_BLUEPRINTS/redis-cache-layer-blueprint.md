@@ -17,7 +17,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 化存储（TimescaleDB/ClickHouse）、大数据处理
 
@@ -201,13 +201,13 @@ from datetime import timedelta
 
 class DataCache:
 
-    
+
 
     def __init__(self, host: str = 'localhost', port: int = 6379, db: int = 0):
 
         self.client = redis.Redis(host=host, port=port, db=db, decode_responses=True)
 
-    
+
 
     def cache_realtime_price(self, symbol: str, price: float, ttl: int = 5):
 
@@ -215,7 +215,7 @@ class DataCache:
 
         self.client.setex(key, ttl, str(price))
 
-    
+
 
     def get_realtime_prices(self, symbols: List[str]) -> dict:
 
@@ -231,7 +231,7 @@ class DataCache:
 
         return {s: float(r) for s, r in zip(symbols, results) if r}
 
-    
+
 
     def cache_factor_values(self, factor_id: str, values: dict, ttl: int = 3600):
 
@@ -239,7 +239,7 @@ class DataCache:
 
         self.client.setex(key, ttl, json.dumps(values))
 
-    
+
 
     def get_factor_values(self, factor_id: str) -> Optional[dict]:
 
@@ -249,7 +249,7 @@ class DataCache:
 
         return json.loads(data) if data else None
 
-    
+
 
     def cache_market_snapshot(self, snapshot: dict, ttl: int = 60):
 
@@ -277,13 +277,13 @@ class DistributedLock:
 
     """分布式锁"""
 
-    
+
 
     def __init__(self, client: redis.Redis):
 
         self.client = client
 
-    
+
 
     def acquire(self, lock_name: str, timeout: int = 10, retry_interval: float = 0.1) -> bool:
 
@@ -291,7 +291,7 @@ class DistributedLock:
 
         lock_key = f"lock:{lock_name}"
 
-        
+
 
         end_time = time.time() + timeout
 
@@ -303,17 +303,17 @@ class DistributedLock:
 
             time.sleep(retry_interval)
 
-        
+
 
         return None
 
-    
+
 
     def release(self, lock_name: str, identifier: str) -> bool:
 
         lock_key = f"lock:{lock_name}"
 
-        
+
 
         script = """
 
@@ -329,7 +329,7 @@ class DistributedLock:
 
         """
 
-        
+
 
         return bool(self.client.eval(script, 1, lock_key, identifier))
 
@@ -337,13 +337,13 @@ class DistributedLock:
 
 class TaskLock:
 
-    
+
 
     def __init__(self, client: redis.Redis):
 
         self.lock = DistributedLock(client)
 
-    
+
 
     def __enter__(self):
 
@@ -353,7 +353,7 @@ class TaskLock:
 
         return self
 
-    
+
 
     def __exit__(self, exc_type, exc_val, exc_tb):
 
@@ -369,7 +369,7 @@ class TaskLock:
 
 class DataStream:
 
-    
+
 
     def __init__(self, client: redis.Redis, stream_name: str):
 
@@ -377,7 +377,7 @@ class DataStream:
 
         self.stream_name = stream_name
 
-    
+
 
     def publish(self, data: dict) -> str:
 
@@ -385,7 +385,7 @@ class DataStream:
 
         return self.client.xadd(self.stream_name, data)
 
-    
+
 
     def consume(self, group: str, consumer: str, count: int = 10) -> list:
 
@@ -399,7 +399,7 @@ class DataStream:
 
             pass
 
-        
+
 
         messages = self.client.xreadgroup(
 
@@ -413,11 +413,11 @@ class DataStream:
 
         )
 
-        
+
 
         return messages
 
-    
+
 
     def ack(self, group: str, message_id: str):
 
@@ -544,10 +544,3 @@ volumes:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Model Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Model Management Interface蓝图设计相关内容
 
@@ -84,7 +84,7 @@ class ModelManagementInterface:
 
     """模型管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -104,7 +104,7 @@ class ModelManagementInterface:
 
         ]
 
-    
+
 
     def render_models(self):
 
@@ -112,13 +112,13 @@ class ModelManagementInterface:
 
         st.subheader("🤖 模型列表")
 
-        
+
 
         import pandas as pd
 
         df = pd.DataFrame(self.models)
 
-        
+
 
         st.dataframe(
 
@@ -201,4 +201,3 @@ class ModelManagementInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -23,7 +23,7 @@ layer: layer_06
 
 负责多资产相关性建模模块的设计与构建和运行和操作，实现复杂相关性结构建模，支持尾部相关性分析，提升多资产组合优化质量。
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：多资产相关性建模、Copula建模、尾部相关性
 > - ❌ 本文档不负责：协方差估计（由COVARIANCE_ESTIMATION_ENHANCEMENT模块负责）
 
@@ -85,15 +85,15 @@ from scipy import stats
 
 class CorrelationModeler:
     """相关性建模器"""
-    
+
     def __init__(self, method='pearson'):
         self.method = method
         self.corr_matrix = None
-    
+
     def fit(self, returns):
         """
         估计相关矩阵
-        
+
         Parameters:
         -----------
         returns : np.array
@@ -112,26 +112,26 @@ class CorrelationModeler:
                     self.corr_matrix[i, j] = tau
                     self.corr_matrix[j, i] = tau
             np.fill_diagonal(self.corr_matrix, 1.0)
-        
+
         return self
-    
+
     def tail_dependence(self, returns, alpha=0.05):
         """计算尾部相关性"""
         n_assets = returns.shape[1]
         lower_tail = np.zeros((n_assets, n_assets))
         upper_tail = np.zeros((n_assets, n_assets))
-        
+
         for i in range(n_assets):
             for j in range(i+1, n_assets):
                 u = stats.rankdata(returns[:, i]) / len(returns)
                 v = stats.rankdata(returns[:, j]) / len(returns)
-                
+
                 lower_tail[i, j] = np.mean((u <= alpha) & (v <= alpha)) / alpha
                 upper_tail[i, j] = np.mean((u >= 1-alpha) & (v >= 1-alpha)) / alpha
-                
+
                 lower_tail[j, i] = lower_tail[i, j]
                 upper_tail[j, i] = upper_tail[i, j]
-        
+
         return lower_tail, upper_tail
 ```
 

@@ -29,7 +29,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 > **核心职责**: 均值方差优化详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：均值方差优化、有效前沿计算、最优组合求解
 
@@ -61,7 +61,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **业务需求**: 实现Markowitz均值方差优化理论，提供有效前沿计算和最优组合求解能力
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 参数估计敏感：预期收益和协方差估计误差对优化结果影响大
 
@@ -71,7 +71,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
   - 离散化问题：连续权重转换为实际可交易数量
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供标准化的均值方差优化框架
 
@@ -191,7 +191,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **职责范围**: 均值方差优化、有效前沿计算、最优组合求解、约束处理
 
-- **上下层接口**: 
+- **上下层接口**:
 
   - 上层依赖: Layer 5 交易成本层 (提供交易成本约束)
 
@@ -203,7 +203,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **核心职责**: 均值方差优化、有效前沿计算、最优组合求解
 
-- **职责边界**: 
+- **职责边界**:
 
   - ✓本模块负责: 均值方差优化、有效前沿计算、最优组合求解
 
@@ -369,7 +369,7 @@ class ExpectedReturnsEstimator:
 
     """预期收益估计器"""
 
-    
+
 
     def __init__(self, method: ExpectedReturnMethod = ExpectedReturnMethod.MEAN_HISTORICAL):
 
@@ -377,7 +377,7 @@ class ExpectedReturnsEstimator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def estimate(
 
@@ -395,7 +395,7 @@ class ExpectedReturnsEstimator:
 
         估计预期收益
 
-        
+
 
         参数:
 
@@ -405,7 +405,7 @@ class ExpectedReturnsEstimator:
 
             **kwargs: 其他参数
 
-            
+
 
         返回:
 
@@ -415,7 +415,7 @@ class ExpectedReturnsEstimator:
 
         from pypfopt import expected_returns
 
-        
+
 
         if self.method == ExpectedReturnMethod.MEAN_HISTORICAL:
 
@@ -441,7 +441,7 @@ class ExpectedReturnsEstimator:
 
             returns = expected_returns.capm_return(
 
-                prices, market_prices=market_prices, 
+                prices, market_prices=market_prices,
 
                 risk_free_rate=kwargs.get("risk_free_rate", 0.02),
 
@@ -457,11 +457,11 @@ class ExpectedReturnsEstimator:
 
             )
 
-        
+
 
         self.logger.info(f"预期收益估计完成，方法={self.method.value}")
 
-        
+
 
         return returns
 
@@ -473,7 +473,7 @@ class CovarianceEstimator:
 
     """协方差估计器"""
 
-    
+
 
     def __init__(self, method: CovarianceMethod = CovarianceMethod.LEDOIT_WOLF):
 
@@ -481,7 +481,7 @@ class CovarianceEstimator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def estimate(
 
@@ -499,7 +499,7 @@ class CovarianceEstimator:
 
         估计协方差矩阵
 
-        
+
 
         参数:
 
@@ -509,7 +509,7 @@ class CovarianceEstimator:
 
             **kwargs: 其他参数
 
-            
+
 
         返回:
 
@@ -519,11 +519,11 @@ class CovarianceEstimator:
 
         from pypfopt import risk_models
 
-        
+
 
         returns = prices.pct_change().dropna()
 
-        
+
 
         if self.method == CovarianceMethod.SAMPLE:
 
@@ -565,11 +565,11 @@ class CovarianceEstimator:
 
             cov = risk_models.sample_cov(returns, frequency=frequency)
 
-        
+
 
         self.logger.info(f"协方差估计完成，方法={self.method.value}")
 
-        
+
 
         return cov
 
@@ -581,7 +581,7 @@ class EfficientFrontierCalculator:
 
     """有效前沿计算器"""
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.02):
 
@@ -589,7 +589,7 @@ class EfficientFrontierCalculator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate(
 
@@ -609,7 +609,7 @@ class EfficientFrontierCalculator:
 
         计算有效前沿
 
-        
+
 
         参数:
 
@@ -621,7 +621,7 @@ class EfficientFrontierCalculator:
 
             weight_bounds: 权重边界
 
-            
+
 
         返回:
 
@@ -631,7 +631,7 @@ class EfficientFrontierCalculator:
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         min_vol_ef = EfficientFrontier(
 
@@ -645,7 +645,7 @@ class EfficientFrontierCalculator:
 
         min_vol = min_vol_performance[1]
 
-        
+
 
         max_ret_ef = EfficientFrontier(
 
@@ -659,11 +659,11 @@ class EfficientFrontierCalculator:
 
         max_vol = max_ret_performance[1]
 
-        
+
 
         target_vols = np.linspace(min_vol, max_vol, n_points)
 
-        
+
 
         returns = []
 
@@ -671,7 +671,7 @@ class EfficientFrontierCalculator:
 
         weights_list = []
 
-        
+
 
         for target_vol in target_vols:
 
@@ -689,7 +689,7 @@ class EfficientFrontierCalculator:
 
                 performance = ef.portfolio_performance(risk_free_rate=self.risk_free_rate)
 
-                
+
 
                 returns.append(performance[0])
 
@@ -701,11 +701,11 @@ class EfficientFrontierCalculator:
 
                 self.logger.warning(f"目标波动率 {target_vol} 优化失败: {e}")
 
-        
+
 
         self.logger.info(f"有效前沿计算完成，{len(returns)}个点")
 
-        
+
 
         return np.array(returns), np.array(volatilities), weights_list
 
@@ -717,7 +717,7 @@ class OptimalPortfolioSolver:
 
     """最优组合求解器"""
 
-    
+
 
     def __init__(self, config: OptimizationConfig):
 
@@ -725,7 +725,7 @@ class OptimalPortfolioSolver:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def solve(
 
@@ -741,7 +741,7 @@ class OptimalPortfolioSolver:
 
         求解最优组合
 
-        
+
 
         参数:
 
@@ -749,7 +749,7 @@ class OptimalPortfolioSolver:
 
             covariance_matrix: 协方差矩阵
 
-            
+
 
         返回:
 
@@ -759,15 +759,15 @@ class OptimalPortfolioSolver:
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         start_time = datetime.now()
 
-        
+
 
         ef = EfficientFrontier(
 
-            expected_returns, 
+            expected_returns,
 
             covariance_matrix,
 
@@ -775,7 +775,7 @@ class OptimalPortfolioSolver:
 
         )
 
-        
+
 
         if self.config.objective == OptimizationObjective.MAX_SHARPE:
 
@@ -807,15 +807,15 @@ class OptimalPortfolioSolver:
 
             weights = ef.max_sharpe(risk_free_rate=self.config.risk_free_rate)
 
-        
+
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         performance = ef.portfolio_performance(risk_free_rate=self.config.risk_free_rate)
 
-        
+
 
         risk_contribution = self._calculate_risk_contribution(
 
@@ -823,13 +823,13 @@ class OptimalPortfolioSolver:
 
         )
 
-        
+
 
         end_time = datetime.now()
 
         optimization_time = (end_time - start_time).total_seconds()
 
-        
+
 
         result = OptimizationResult(
 
@@ -849,15 +849,15 @@ class OptimalPortfolioSolver:
 
         )
 
-        
+
 
         self.logger.info(f"优化完成，目标={self.config.objective.value}，耗时{optimization_time:.2f}秒")
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_risk_contribution(
 
@@ -873,15 +873,15 @@ class OptimalPortfolioSolver:
 
         portfolio_risk = np.sqrt(weights @ covariance_matrix @ weights)
 
-        
+
 
         marginal_risk = covariance_matrix @ weights / portfolio_risk
 
-        
+
 
         risk_contribution = weights * marginal_risk
 
-        
+
 
         return (risk_contribution / portfolio_risk).to_dict()
 
@@ -893,13 +893,13 @@ class ConstraintHandler:
 
     """约束处理器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_weight_constraint(
 
@@ -917,17 +917,17 @@ class ConstraintHandler:
 
         n_assets = len(ef.tickers)
 
-        
+
 
         ef.add_constraint(lambda w: w >= min_weight)
 
         ef.add_constraint(lambda w: w <= max_weight)
 
-        
+
 
         self.logger.info(f"添加权重约束: [{min_weight}, {max_weight}]")
 
-    
+
 
     def add_sector_constraint(
 
@@ -947,13 +947,13 @@ class ConstraintHandler:
 
             sector_indices = [
 
-                i for i, ticker in enumerate(ef.tickers) 
+                i for i, ticker in enumerate(ef.tickers)
 
                 if sector_mapping.get(ticker) == sector
 
             ]
 
-            
+
 
             if sector_indices:
 
@@ -969,11 +969,11 @@ class ConstraintHandler:
 
                 )
 
-        
+
 
         self.logger.info(f"添加行业约束: {len(sector_weights)}个行业")
 
-    
+
 
     def add_leverage_constraint(
 
@@ -989,7 +989,7 @@ class ConstraintHandler:
 
         ef.add_constraint(lambda w: sum(abs(wi) for wi in w) <= max_leverage)
 
-        
+
 
         self.logger.info(f"添加杠杆约束: 最大杠杆={max_leverage}")
 
@@ -1001,13 +1001,13 @@ class DiscreteAllocationConverter:
 
     """离散分配转换器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def convert(
 
@@ -1027,7 +1027,7 @@ class DiscreteAllocationConverter:
 
         将连续权重转换为离散分配
 
-        
+
 
         参数:
 
@@ -1039,7 +1039,7 @@ class DiscreteAllocationConverter:
 
             min_ratio: 最小持仓比例
 
-            
+
 
         返回:
 
@@ -1049,7 +1049,7 @@ class DiscreteAllocationConverter:
 
         from pypfopt import DiscreteAllocation
 
-        
+
 
         da = DiscreteAllocation(
 
@@ -1057,15 +1057,15 @@ class DiscreteAllocationConverter:
 
         )
 
-        
+
 
         allocation, leftover = da.greedy_portfolio()
 
-        
+
 
         self.logger.info(f"离散分配完成，剩余资金={leftover:.2f}")
 
-        
+
 
         return allocation, leftover
 
@@ -1077,13 +1077,13 @@ class MeanVarianceOptimizer:
 
     """均值方差优化器主类"""
 
-    
+
 
     def __init__(self, config: OptimizationConfig):
 
         self.config = config
 
-        
+
 
         self.expected_returns_estimator = ExpectedReturnsEstimator(
 
@@ -1091,7 +1091,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         self.covariance_estimator = CovarianceEstimator(
 
@@ -1099,7 +1099,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         self.efficient_frontier_calculator = EfficientFrontierCalculator(
 
@@ -1107,23 +1107,23 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         self.optimal_solver = OptimalPortfolioSolver(config)
 
-        
+
 
         self.constraint_handler = ConstraintHandler()
 
-        
+
 
         self.discrete_converter = DiscreteAllocationConverter()
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def optimize(
 
@@ -1139,7 +1139,7 @@ class MeanVarianceOptimizer:
 
         执行优化
 
-        
+
 
         参数:
 
@@ -1147,7 +1147,7 @@ class MeanVarianceOptimizer:
 
             **kwargs: 其他参数
 
-            
+
 
         返回:
 
@@ -1161,7 +1161,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         covariance_matrix = self.covariance_estimator.estimate(
 
@@ -1169,15 +1169,15 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         result = self.optimal_solver.solve(expected_returns, covariance_matrix)
 
-        
+
 
         return result
 
-    
+
 
     def get_efficient_frontier(
 
@@ -1195,7 +1195,7 @@ class MeanVarianceOptimizer:
 
         获取有效前沿
 
-        
+
 
         参数:
 
@@ -1205,7 +1205,7 @@ class MeanVarianceOptimizer:
 
             **kwargs: 其他参数
 
-            
+
 
         返回:
 
@@ -1219,7 +1219,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         covariance_matrix = self.covariance_estimator.estimate(
 
@@ -1227,7 +1227,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         returns, volatilities, weights_list = self.efficient_frontier_calculator.calculate(
 
@@ -1235,7 +1235,7 @@ class MeanVarianceOptimizer:
 
         )
 
-        
+
 
         return returns, volatilities, weights_list
 
@@ -1373,7 +1373,7 @@ CREATE TABLE IF NOT EXISTS mv_optimization_results (
 
     optimization_date TIMESTAMP NOT NULL,
 
-    
+
 
     objective VARCHAR(30) NOT NULL,
 
@@ -1385,27 +1385,27 @@ CREATE TABLE IF NOT EXISTS mv_optimization_results (
 
     sharpe_ratio DECIMAL(10, 4),
 
-    
+
 
     risk_free_rate DECIMAL(5, 4),
 
     weight_bounds_json TEXT,
 
-    
+
 
     covariance_method VARCHAR(30),
 
     expected_return_method VARCHAR(30),
 
-    
+
 
     optimization_time_ms INTEGER,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1433,7 +1433,7 @@ CREATE TABLE IF NOT EXISTS mv_efficient_frontier (
 
     calculation_date TIMESTAMP NOT NULL,
 
-    
+
 
     returns_json TEXT NOT NULL,
 
@@ -1441,19 +1441,19 @@ CREATE TABLE IF NOT EXISTS mv_efficient_frontier (
 
     weights_list_json TEXT NOT NULL,
 
-    
+
 
     n_points INTEGER,
 
-    
+
 
     valid_until TIMESTAMP,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1501,7 +1501,7 @@ COMMENT ON TABLE mv_efficient_frontier IS '有效前沿缓存表';
 
 算法名称: 均值方差优化
 
-数学公式: 
+数学公式:
 
 min: w'Σw
 
@@ -1539,7 +1539,7 @@ s.t.: w'μ >= r_target
 
 算法名称: 最大夏普比率
 
-数学公式: 
+数学公式:
 
 max: (w'μ - rf) / sqrt(w'Σw)
 
@@ -1591,13 +1591,13 @@ mean_variance_params:
 
   risk_free_rate: 0.02            # 无风险利率
 
-  
+
 
   # 权重约束
 
   weight_bounds: [0.0, 1.0]       # 权重边界
 
-  
+
 
   # 参数估计方法
 
@@ -1605,7 +1605,7 @@ mean_variance_params:
 
   covariance_method: ledoit_wolf
 
-  
+
 
   # 数值稳定性参数
 
@@ -1639,7 +1639,7 @@ class TestExpectedReturnsEstimator:
 
     """预期收益估计器测试"""
 
-    
+
 
     def test_mean_historical_return(self):
 
@@ -1651,7 +1651,7 @@ class TestExpectedReturnsEstimator:
 
         )
 
-        
+
 
         dates = pd.date_range("2025-01-01", periods=100, freq="D")
 
@@ -1665,11 +1665,11 @@ class TestExpectedReturnsEstimator:
 
         }, index=dates)
 
-        
+
 
         returns = estimator.estimate(prices)
 
-        
+
 
         assert isinstance(returns, pd.Series)
 
@@ -1683,7 +1683,7 @@ class TestCovarianceEstimator:
 
     """协方差估计器测试"""
 
-    
+
 
     def test_ledoit_wolf(self):
 
@@ -1695,7 +1695,7 @@ class TestCovarianceEstimator:
 
         )
 
-        
+
 
         dates = pd.date_range("2025-01-01", periods=100, freq="D")
 
@@ -1709,11 +1709,11 @@ class TestCovarianceEstimator:
 
         }, index=dates)
 
-        
+
 
         cov = estimator.estimate(prices)
 
-        
+
 
         assert isinstance(cov, pd.DataFrame)
 
@@ -1727,7 +1727,7 @@ class TestOptimalPortfolioSolver:
 
     """最优组合求解器测试"""
 
-    
+
 
     def test_max_sharpe(self):
 
@@ -1741,11 +1741,11 @@ class TestOptimalPortfolioSolver:
 
         )
 
-        
+
 
         solver = OptimalPortfolioSolver(config)
 
-        
+
 
         expected_returns = pd.Series({"a1": 0.10, "a2": 0.12})
 
@@ -1757,11 +1757,11 @@ class TestOptimalPortfolioSolver:
 
         )
 
-        
+
 
         result = solver.solve(expected_returns, cov_matrix)
 
-        
+
 
         assert isinstance(result, OptimizationResult)
 
@@ -2066,4 +2066,3 @@ scipy>=1.10.0
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

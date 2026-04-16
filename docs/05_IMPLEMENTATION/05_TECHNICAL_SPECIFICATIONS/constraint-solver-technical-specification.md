@@ -29,7 +29,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 > **核心职责**: 约束求解详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：约束定义、约束验证、约束求解
 
@@ -61,7 +61,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **业务需求**: 提供灵活、可扩展的约束系统，支持多种约束类型和复杂约束组合
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 约束类型多样：权重约束、行业约束、因子约束、风险约束等
 
@@ -69,7 +69,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
   - 约束验证复杂：需要高效验证约束是否满足
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供统一的约束管理框架
 
@@ -183,7 +183,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **职责范围**: 约束定义、约束验证、约束求解、冲突检测
 
-- **上下层接口**: 
+- **上下层接口**:
 
   - 上层依赖: Layer 5 交易成本层 (提供交易成本约束)
 
@@ -195,7 +195,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 - **核心职责**: 约束定义、约束验证、约束求解、冲突检测
 
-- **职责边界**: 
+- **职责边界**:
 
   - ✓本模块负责: 约束定义、验证、求解、冲突检测
 
@@ -353,7 +353,7 @@ class BaseConstraint(ABC):
 
     """约束基类"""
 
-    
+
 
     def __init__(
 
@@ -379,7 +379,7 @@ class BaseConstraint(ABC):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     @abstractmethod
 
@@ -397,7 +397,7 @@ class BaseConstraint(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -415,7 +415,7 @@ class BaseConstraint(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -441,7 +441,7 @@ class WeightConstraint(BaseConstraint):
 
     """权重约束"""
 
-    
+
 
     def __init__(
 
@@ -473,7 +473,7 @@ class WeightConstraint(BaseConstraint):
 
         self.asset_indices = asset_indices
 
-    
+
 
     def evaluate(
 
@@ -495,17 +495,17 @@ class WeightConstraint(BaseConstraint):
 
             relevant_weights = weights
 
-        
+
 
         violations = np.maximum(0, self.min_weight - relevant_weights) + \
 
                      np.maximum(0, relevant_weights - self.max_weight)
 
-        
+
 
         return np.sum(violations)
 
-    
+
 
     def is_satisfied(
 
@@ -521,7 +521,7 @@ class WeightConstraint(BaseConstraint):
 
         return self.evaluate(weights) < self.tolerance
 
-    
+
 
     def to_cvxpy_constraint(
 
@@ -537,11 +537,11 @@ class WeightConstraint(BaseConstraint):
 
         import cvxpy as cp
 
-        
+
 
         constraints = []
 
-        
+
 
         if self.asset_indices:
 
@@ -557,7 +557,7 @@ class WeightConstraint(BaseConstraint):
 
             constraints.append(weights_var <= self.max_weight)
 
-        
+
 
         return constraints
 
@@ -569,7 +569,7 @@ class SectorConstraint(BaseConstraint):
 
     """行业约束"""
 
-    
+
 
     def __init__(
 
@@ -601,7 +601,7 @@ class SectorConstraint(BaseConstraint):
 
         self.tickers = tickers
 
-    
+
 
     def evaluate(
 
@@ -617,7 +617,7 @@ class SectorConstraint(BaseConstraint):
 
         total_violation = 0.0
 
-        
+
 
         for sector, (min_w, max_w) in self.sector_weights.items():
 
@@ -629,7 +629,7 @@ class SectorConstraint(BaseConstraint):
 
             ]
 
-            
+
 
             if sector_indices:
 
@@ -641,11 +641,11 @@ class SectorConstraint(BaseConstraint):
 
                 total_violation += violation
 
-        
+
 
         return total_violation
 
-    
+
 
     def is_satisfied(
 
@@ -661,7 +661,7 @@ class SectorConstraint(BaseConstraint):
 
         return self.evaluate(weights) < self.tolerance
 
-    
+
 
     def to_cvxpy_constraint(
 
@@ -677,11 +677,11 @@ class SectorConstraint(BaseConstraint):
 
         import cvxpy as cp
 
-        
+
 
         constraints = []
 
-        
+
 
         for sector, (min_w, max_w) in self.sector_weights.items():
 
@@ -693,7 +693,7 @@ class SectorConstraint(BaseConstraint):
 
             ]
 
-            
+
 
             if sector_indices:
 
@@ -703,7 +703,7 @@ class SectorConstraint(BaseConstraint):
 
                 constraints.append(sector_expr <= max_w)
 
-        
+
 
         return constraints
 
@@ -715,7 +715,7 @@ class FactorConstraint(BaseConstraint):
 
     """因子约束"""
 
-    
+
 
     def __init__(
 
@@ -743,7 +743,7 @@ class FactorConstraint(BaseConstraint):
 
         self.factor_bounds = factor_bounds
 
-    
+
 
     def evaluate(
 
@@ -759,7 +759,7 @@ class FactorConstraint(BaseConstraint):
 
         factor_exposure = self.factor_exposures @ weights
 
-        
+
 
         total_violation = 0.0
 
@@ -773,11 +773,11 @@ class FactorConstraint(BaseConstraint):
 
             total_violation += violation
 
-        
+
 
         return total_violation
 
-    
+
 
     def is_satisfied(
 
@@ -793,7 +793,7 @@ class FactorConstraint(BaseConstraint):
 
         return self.evaluate(weights) < self.tolerance
 
-    
+
 
     def to_cvxpy_constraint(
 
@@ -809,15 +809,15 @@ class FactorConstraint(BaseConstraint):
 
         import cvxpy as cp
 
-        
+
 
         constraints = []
 
-        
+
 
         factor_exposure = self.factor_exposures @ weights_var
 
-        
+
 
         for factor_idx, (min_exp, max_exp) in self.factor_bounds.items():
 
@@ -825,7 +825,7 @@ class FactorConstraint(BaseConstraint):
 
             constraints.append(factor_exposure[factor_idx] <= max_exp)
 
-        
+
 
         return constraints
 
@@ -837,7 +837,7 @@ class LeverageConstraint(BaseConstraint):
 
     """杠杆约束"""
 
-    
+
 
     def __init__(
 
@@ -861,7 +861,7 @@ class LeverageConstraint(BaseConstraint):
 
         self.max_leverage = max_leverage
 
-    
+
 
     def evaluate(
 
@@ -879,7 +879,7 @@ class LeverageConstraint(BaseConstraint):
 
         return max(0, leverage - self.max_leverage)
 
-    
+
 
     def is_satisfied(
 
@@ -895,7 +895,7 @@ class LeverageConstraint(BaseConstraint):
 
         return self.evaluate(weights) < self.tolerance
 
-    
+
 
     def to_cvxpy_constraint(
 
@@ -911,7 +911,7 @@ class LeverageConstraint(BaseConstraint):
 
         import cvxpy as cp
 
-        
+
 
         constraints = [
 
@@ -919,7 +919,7 @@ class LeverageConstraint(BaseConstraint):
 
         ]
 
-        
+
 
         return constraints
 
@@ -931,7 +931,7 @@ class TurnoverConstraint(BaseConstraint):
 
     """换手率约束"""
 
-    
+
 
     def __init__(
 
@@ -959,7 +959,7 @@ class TurnoverConstraint(BaseConstraint):
 
         self.max_turnover = max_turnover
 
-    
+
 
     def evaluate(
 
@@ -977,7 +977,7 @@ class TurnoverConstraint(BaseConstraint):
 
         return max(0, turnover - self.max_turnover)
 
-    
+
 
     def is_satisfied(
 
@@ -993,7 +993,7 @@ class TurnoverConstraint(BaseConstraint):
 
         return self.evaluate(weights) < self.tolerance
 
-    
+
 
     def to_cvxpy_constraint(
 
@@ -1009,7 +1009,7 @@ class TurnoverConstraint(BaseConstraint):
 
         import cvxpy as cp
 
-        
+
 
         constraints = [
 
@@ -1017,7 +1017,7 @@ class TurnoverConstraint(BaseConstraint):
 
         ]
 
-        
+
 
         return constraints
 
@@ -1029,7 +1029,7 @@ class ConstraintValidator:
 
     """约束验证器"""
 
-    
+
 
     def __init__(self):
 
@@ -1037,7 +1037,7 @@ class ConstraintValidator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_constraint(
 
@@ -1053,7 +1053,7 @@ class ConstraintValidator:
 
         self.logger.info(f"添加约束: {constraint.name}")
 
-    
+
 
     def validate(
 
@@ -1071,7 +1071,7 @@ class ConstraintValidator:
 
         total_violation = 0.0
 
-        
+
 
         for constraint in self.constraints:
 
@@ -1079,7 +1079,7 @@ class ConstraintValidator:
 
             is_violated = violation_amount >= constraint.tolerance
 
-            
+
 
             violation = ConstraintViolation(
 
@@ -1099,11 +1099,11 @@ class ConstraintValidator:
 
             total_violation += violation_amount
 
-        
+
 
         is_valid = total_violation < 1e-6
 
-        
+
 
         result = ConstraintValidationResult(
 
@@ -1117,15 +1117,15 @@ class ConstraintValidator:
 
         )
 
-        
+
 
         self.logger.info(f"约束验证完成，有效={is_valid}，总违反量={total_violation:.6f}")
 
-        
+
 
         return result
 
-    
+
 
     def get_cvxpy_constraints(
 
@@ -1141,7 +1141,7 @@ class ConstraintValidator:
 
         cvxpy_constraints = []
 
-        
+
 
         for constraint in self.constraints:
 
@@ -1153,7 +1153,7 @@ class ConstraintValidator:
 
                 )
 
-        
+
 
         return cvxpy_constraints
 
@@ -1165,13 +1165,13 @@ class ConflictDetector:
 
     """冲突检测器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def detect_conflicts(
 
@@ -1185,7 +1185,7 @@ class ConflictDetector:
 
         conflicts = []
 
-        
+
 
         for i, c1 in enumerate(constraints):
 
@@ -1207,15 +1207,15 @@ class ConflictDetector:
 
                         })
 
-        
+
 
         self.logger.info(f"检测到{len(conflicts)}个约束冲突")
 
-        
+
 
         return conflicts
 
-    
+
 
     def _check_pairwise_conflict(
 
@@ -1233,7 +1233,7 @@ class ConflictDetector:
 
             return "weight_sector_conflict"
 
-        
+
 
         return None
 
@@ -1245,7 +1245,7 @@ class ConstraintSolver:
 
     """约束求解器主类"""
 
-    
+
 
     def __init__(self):
 
@@ -1255,7 +1255,7 @@ class ConstraintSolver:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_constraint(
 
@@ -1269,7 +1269,7 @@ class ConstraintSolver:
 
         self.validator.add_constraint(constraint)
 
-    
+
 
     def solve(
 
@@ -1287,7 +1287,7 @@ class ConstraintSolver:
 
         求解约束满足问题
 
-        
+
 
         参数:
 
@@ -1297,7 +1297,7 @@ class ConstraintSolver:
 
             **kwargs: 其他参数
 
-            
+
 
         返回:
 
@@ -1307,11 +1307,11 @@ class ConstraintSolver:
 
         import cvxpy as cp
 
-        
+
 
         weights = cp.Variable(n_assets)
 
-        
+
 
         constraints = [
 
@@ -1321,7 +1321,7 @@ class ConstraintSolver:
 
         ]
 
-        
+
 
         constraints.extend(
 
@@ -1329,7 +1329,7 @@ class ConstraintSolver:
 
         )
 
-        
+
 
         if objective_func:
 
@@ -1339,31 +1339,31 @@ class ConstraintSolver:
 
             objective = cp.Minimize(0)
 
-        
+
 
         problem = cp.Problem(objective, constraints)
 
-        
+
 
         try:
 
             problem.solve()
 
-            
+
 
             if problem.status == "optimal":
 
                 result_weights = weights.value
 
-                
+
 
                 validation_result = self.validator.validate(result_weights, **kwargs)
 
-                
+
 
                 self.logger.info(f"约束求解成功，状态={problem.status}")
 
-                
+
 
                 return result_weights, validation_result
 
@@ -1373,7 +1373,7 @@ class ConstraintSolver:
 
                 raise ValueError(f"约束求解失败: {problem.status}")
 
-                
+
 
         except Exception as e:
 
@@ -1381,7 +1381,7 @@ class ConstraintSolver:
 
             raise
 
-    
+
 
     def validate(
 
@@ -1397,7 +1397,7 @@ class ConstraintSolver:
 
         return self.validator.validate(weights, **kwargs)
 
-    
+
 
     def detect_conflicts(
 
@@ -1461,21 +1461,21 @@ CREATE TABLE IF NOT EXISTS constraint_configs (
 
     priority VARCHAR(10) NOT NULL,
 
-    
+
 
     config_json TEXT NOT NULL,
 
-    
+
 
     is_active BOOLEAN DEFAULT TRUE,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1511,7 +1511,7 @@ COMMENT ON TABLE constraint_configs IS '约束配置存储表';
 
 算法名称: 约束满足问题
 
-数学公式: 
+数学公式:
 
 find: w
 
@@ -1774,4 +1774,3 @@ s.t.: gi(w) ≤ 0, i = 1, ..., m
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

@@ -62,7 +62,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -82,7 +82,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -102,7 +102,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -122,7 +122,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -142,7 +142,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -198,7 +198,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -230,7 +230,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -262,7 +262,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -298,7 +298,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -334,7 +334,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -366,7 +366,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -398,7 +398,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -430,7 +430,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -462,7 +462,7 @@ class EngineInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -588,7 +588,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -616,7 +616,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -640,7 +640,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-            
+
 
 
 
@@ -660,7 +660,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-            
+
 
 
 
@@ -680,7 +680,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -720,7 +720,7 @@ class VnpyAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -756,7 +756,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -780,7 +780,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -836,7 +836,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -896,7 +896,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -908,7 +908,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -920,7 +920,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -964,7 +964,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -976,7 +976,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1028,7 +1028,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1052,7 +1052,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1064,7 +1064,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1092,7 +1092,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1104,7 +1104,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1124,7 +1124,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1144,7 +1144,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1156,7 +1156,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1220,7 +1220,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1256,7 +1256,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1276,7 +1276,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-                
+
 
 
 
@@ -1320,7 +1320,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1340,7 +1340,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1376,7 +1376,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1424,7 +1424,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1444,7 +1444,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1464,7 +1464,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1512,7 +1512,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1532,7 +1532,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1552,7 +1552,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1592,7 +1592,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1612,7 +1612,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1636,7 +1636,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1656,7 +1656,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1676,7 +1676,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -1696,7 +1696,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1708,7 +1708,7 @@ print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -1838,7 +1838,7 @@ class RQAlphaAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -1858,7 +1858,7 @@ class RQAlphaAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -1898,7 +1898,7 @@ class RQAlphaAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -1934,7 +1934,7 @@ class RQAlphaAdapter(EngineInterface):
 
 
 
-    
+
 
 
 
@@ -1974,7 +1974,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2038,7 +2038,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2098,7 +2098,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2134,7 +2134,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2186,7 +2186,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2222,7 +2222,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2242,7 +2242,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2278,7 +2278,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2314,7 +2314,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2326,7 +2326,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2366,7 +2366,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2386,7 +2386,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2422,7 +2422,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2442,7 +2442,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2462,7 +2462,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2502,7 +2502,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2522,7 +2522,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2538,7 +2538,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2558,7 +2558,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2570,7 +2570,7 @@ print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2712,7 +2712,7 @@ class EngineManagerService:
 
 
 
-    
+
 
 
 
@@ -2728,7 +2728,7 @@ class EngineManagerService:
 
 
 
-    
+
 
 
 
@@ -2792,7 +2792,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2804,7 +2804,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2824,7 +2824,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2844,7 +2844,7 @@ class EngineManagerService:
 
 
 
-    
+
 
 
 
@@ -2864,7 +2864,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2876,7 +2876,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2896,7 +2896,7 @@ class EngineManagerService:
 
 
 
-    
+
 
 
 
@@ -2916,7 +2916,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2928,7 +2928,7 @@ class EngineManagerService:
 
 
 
-            
+
 
 
 
@@ -2948,7 +2948,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -2968,7 +2968,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -2992,7 +2992,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-            
+
 
 
 
@@ -3024,7 +3024,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -3040,7 +3040,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-        
+
 
 
 
@@ -3056,7 +3056,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-        
+
 
 
 
@@ -3064,7 +3064,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -3080,7 +3080,7 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-    
+
 
 
 
@@ -3244,11 +3244,8 @@ print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
 
 
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 
 
 
 **ﻛﺕﻛﺕﮔ?*: P0-5 ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
-
-
-

@@ -24,7 +24,7 @@ layer: layer_10
 
 > **核心职责**: 基于 VaR 的风险预算分配 + 动态风险预算调整
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：风险预算、动态调整、VaR 计算
 
@@ -258,7 +258,7 @@ class SimplifiedRiskBudgetSystem:
 
     """简化版动态风险预算系统"""
 
-    
+
 
     def __init__(self, config: RiskBudgetConfig):
 
@@ -268,7 +268,7 @@ class SimplifiedRiskBudgetSystem:
 
         self.budget_allocator = RiskBudgetAllocator()
 
-        
+
 
     def calculate_var_budget(
 
@@ -284,7 +284,7 @@ class SimplifiedRiskBudgetSystem:
 
         """
 
-        
+
 
         Args:
 
@@ -292,7 +292,7 @@ class SimplifiedRiskBudgetSystem:
 
             confidence_level: 置信水平
 
-            
+
 
         Returns:
 
@@ -302,7 +302,7 @@ class SimplifiedRiskBudgetSystem:
 
         pass
 
-    
+
 
     def adjust_budget_dynamically(
 
@@ -316,13 +316,13 @@ class SimplifiedRiskBudgetSystem:
 
         """
 
-        
+
 
         Args:
 
             current_budget: 当前风险预算
 
-            
+
 
         Returns:
 
@@ -332,7 +332,7 @@ class SimplifiedRiskBudgetSystem:
 
         pass
 
-    
+
 
     def monitor_budget_usage(
 
@@ -348,7 +348,7 @@ class SimplifiedRiskBudgetSystem:
 
 况
 
-        
+
 
         Returns:
 
@@ -366,7 +366,7 @@ class SimplifiedRiskBudgetSystem:
 
 class VaRCalculator:
 
-    
+
 
     def historical_var(
 
@@ -382,7 +382,7 @@ class VaRCalculator:
 
         pass
 
-    
+
 
     def parametric_var(
 
@@ -400,7 +400,7 @@ class VaRCalculator:
 
         pass
 
-    
+
 
     def monte_carlo_var(
 
@@ -436,7 +436,7 @@ class SimplifiedRiskBudgetAPI:
 
     """简化版风险预算API"""
 
-    
+
 
     @endpoint("/api/v1/risk_budget/calculate")
 
@@ -454,7 +454,7 @@ class SimplifiedRiskBudgetAPI:
 
         """计算风险预算"""
 
-        
+
 
     @endpoint("/api/v1/risk_budget/adjust")
 
@@ -468,7 +468,7 @@ class SimplifiedRiskBudgetAPI:
 
     ) -> AdjustResult:
 
-        
+
 
     @endpoint("/api/v1/risk_budget/monitor")
 
@@ -621,10 +621,3 @@ class SimplifiedRiskBudgetAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

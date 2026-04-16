@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供容器编排和服务编排能力，支持服务的部署、扩缩容、网络管理
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：容器编排、服务部署、资源管理、网络管理
 
@@ -185,7 +185,7 @@ class ServiceManager:
 
     """服务管理器"""
 
-    
+
 
     def __init__(self, compose_file: str = "docker-compose.yml"):
 
@@ -193,7 +193,7 @@ class ServiceManager:
 
         self.config = self._load_config()
 
-    
+
 
     def _load_config(self) -> ComposeConfig:
 
@@ -201,17 +201,17 @@ class ServiceManager:
 
         import yaml
 
-        
+
 
         with open(self.compose_file, 'r', encoding='utf-8') as f:
 
             data = yaml.safe_load(f)
 
-        
+
 
         return ComposeConfig(**data)
 
-    
+
 
     def add_service(self, name: str, config: ServiceConfig):
 
@@ -221,7 +221,7 @@ class ServiceManager:
 
         self._save_config()
 
-    
+
 
     def remove_service(self, name: str):
 
@@ -233,7 +233,7 @@ class ServiceManager:
 
             self._save_config()
 
-    
+
 
     def update_service(self, name: str, config: ServiceConfig):
 
@@ -245,7 +245,7 @@ class ServiceManager:
 
             self._save_config()
 
-    
+
 
     def _save_config(self):
 
@@ -253,7 +253,7 @@ class ServiceManager:
 
         import yaml
 
-        
+
 
         with open(self.compose_file, 'w', encoding='utf-8') as f:
 
@@ -281,13 +281,13 @@ class DeploymentManager:
 
     """部署管理器"""
 
-    
+
 
     def __init__(self, compose_file: str = "docker-compose.yml"):
 
         self.compose_file = compose_file
 
-    
+
 
     def deploy(self, services: List[str] = None):
 
@@ -295,27 +295,27 @@ class DeploymentManager:
 
         cmd = ["docker-compose", "-f", self.compose_file, "up", "-d"]
 
-        
+
 
         if services:
 
             cmd.extend(services)
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Deploy failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
-    
+
 
     def stop(self, services: List[str] = None):
 
@@ -323,27 +323,27 @@ class DeploymentManager:
 
         cmd = ["docker-compose", "-f", self.compose_file, "stop"]
 
-        
+
 
         if services:
 
             cmd.extend(services)
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Stop failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
-    
+
 
     def restart(self, services: List[str] = None):
 
@@ -351,27 +351,27 @@ class DeploymentManager:
 
         cmd = ["docker-compose", "-f", self.compose_file, "restart"]
 
-        
+
 
         if services:
 
             cmd.extend(services)
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Restart failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
-    
+
 
     def scale(self, service: str, replicas: int):
 
@@ -389,21 +389,21 @@ class DeploymentManager:
 
         ]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Scale failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
-    
+
 
     def rollback(self, service: str, version: str):
 
@@ -423,21 +423,21 @@ class DeploymentManager:
 
         ]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Rollback failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
-    
+
 
     def get_status(self) -> Dict:
 
@@ -445,17 +445,17 @@ class DeploymentManager:
 
         cmd = ["docker-compose", "-f", self.compose_file, "ps", "--format", "json"]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Get status failed: {result.stderr}")
 
-        
+
 
         services = []
 
@@ -465,7 +465,7 @@ class DeploymentManager:
 
                 services.append(json.loads(line))
 
-        
+
 
         return services
 
@@ -483,13 +483,13 @@ class ResourceManager:
 
     """资源管理器"""
 
-    
+
 
     def __init__(self):
 
         self.resource_limits = {}
 
-    
+
 
     def set_resource_limits(
 
@@ -537,7 +537,7 @@ class ResourceManager:
 
         }
 
-    
+
 
     def get_resource_usage(self) -> Dict:
 
@@ -545,17 +545,17 @@ class ResourceManager:
 
         cmd = ["docker", "stats", "--no-stream", "--format", "json"]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Get resource usage failed: {result.stderr}")
 
-        
+
 
         usage = []
 
@@ -565,11 +565,11 @@ class ResourceManager:
 
                 usage.append(json.loads(line))
 
-        
+
 
         return usage
 
-    
+
 
     def optimize_resources(self):
 
@@ -577,11 +577,11 @@ class ResourceManager:
 
         usage = self.get_resource_usage()
 
-        
+
 
         recommendations = []
 
-        
+
 
         for container in usage:
 
@@ -591,7 +591,7 @@ class ResourceManager:
 
             memory_percent = float(container['MemPerc'].rstrip('%'))
 
-            
+
 
             if cpu_percent < 20:
 
@@ -609,7 +609,7 @@ class ResourceManager:
 
                 })
 
-            
+
 
             if memory_percent < 30:
 
@@ -627,7 +627,7 @@ class ResourceManager:
 
                 })
 
-        
+
 
         return recommendations
 
@@ -645,13 +645,13 @@ class NetworkManager:
 
     """网络管理器"""
 
-    
+
 
     def __init__(self):
 
         self.networks = {}
 
-    
+
 
     def create_network(
 
@@ -669,33 +669,33 @@ class NetworkManager:
 
         cmd = ["docker", "network", "create"]
 
-        
+
 
         if driver:
 
             cmd.extend(["--driver", driver])
 
-        
+
 
         if subnet:
 
             cmd.extend(["--subnet", subnet])
 
-        
+
 
         cmd.append(name)
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Create network failed: {result.stderr}")
 
-        
+
 
         self.networks[name] = {
 
@@ -705,11 +705,11 @@ class NetworkManager:
 
         }
 
-        
+
 
         return result.stdout
 
-    
+
 
     def remove_network(self, name: str):
 
@@ -717,27 +717,27 @@ class NetworkManager:
 
         cmd = ["docker", "network", "rm", name]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Remove network failed: {result.stderr}")
 
-        
+
 
         if name in self.networks:
 
             del self.networks[name]
 
-        
+
 
         return result.stdout
 
-    
+
 
     def list_networks(self) -> List[Dict]:
 
@@ -745,17 +745,17 @@ class NetworkManager:
 
         cmd = ["docker", "network", "ls", "--format", "json"]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"List networks failed: {result.stderr}")
 
-        
+
 
         networks = []
 
@@ -765,11 +765,11 @@ class NetworkManager:
 
                 networks.append(json.loads(line))
 
-        
+
 
         return networks
 
-    
+
 
     def connect_service(self, service_name: str, network_name: str):
 
@@ -777,17 +777,17 @@ class NetworkManager:
 
         cmd = ["docker", "network", "connect", network_name, service_name]
 
-        
+
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Connect service failed: {result.stderr}")
 
-        
+
 
         return result.stdout
 
@@ -1681,7 +1681,7 @@ groups:
 
           description: "容器{{ $labels.container_name }}已停止运行"
 
-      
+
 
       - alert: HighCPUUsage
 
@@ -1699,7 +1699,7 @@ groups:
 
           description: "容器{{ $labels.container_name }}的CPU使用率超过80%"
 
-      
+
 
       - alert: HighMemoryUsage
 
@@ -1833,7 +1833,7 @@ services:
 
       - backend
 
-  
+
 
   factor-engine:
 
@@ -1890,4 +1890,3 @@ services:
 
 
 - 具体事件载荷、指标字段字典与告警通道配置将在施工阶段固化到 `API_Contract.md` 子契约；本蓝图先锁定边界、接口闭合点与验收闭环。
-

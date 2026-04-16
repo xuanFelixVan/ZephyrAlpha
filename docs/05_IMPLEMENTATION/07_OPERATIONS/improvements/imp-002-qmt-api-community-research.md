@@ -25,7 +25,7 @@ layer: layer_05
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -335,7 +335,7 @@ class MarketDataFetcher:
 
     """行情数据获取最佳实?""
 
-    
+
 
     def __init__(self, retry_times: int = 3, retry_delay: float = 1.0):
 
@@ -343,7 +343,7 @@ class MarketDataFetcher:
 
         self.retry_delay = retry_delay
 
-    
+
 
     def get_realtime_quotes_with_retry(
 
@@ -379,7 +379,7 @@ class MarketDataFetcher:
 
         return pd.DataFrame()
 
-    
+
 
     def _process_quote_data(self, data: dict, fields: Optional[List[str]]) -> pd.DataFrame:
 
@@ -431,13 +431,13 @@ def get_historical_klines(
 
     """获取历史K线数据（分块获取?""
 
-    
+
 
     all_data = []
 
     current_start = start_date
 
-    
+
 
     while True:
 
@@ -457,29 +457,29 @@ def get_historical_klines(
 
         )
 
-        
+
 
         if not data or stock_code not in data:
 
             break
 
-        
+
 
         df = pd.DataFrame(data[stock_code])
 
         all_data.append(df)
 
-        
+
 
         if len(df) < chunk_size:
 
             break
 
-        
+
 
         current_start = df.index[-1]
 
-    
+
 
     if all_data:
 
@@ -523,13 +523,13 @@ class QMTConnectionPool:
 
     """QMT连接池管理器"""
 
-    
+
 
     _instance = None
 
     _lock = threading.Lock()
 
-    
+
 
     def __new__(cls, max_connections: int = 10):
 
@@ -545,7 +545,7 @@ class QMTConnectionPool:
 
         return cls._instance
 
-    
+
 
     def _initialize(self, max_connections: int):
 
@@ -557,7 +557,7 @@ class QMTConnectionPool:
 
         self._lock = threading.Lock()
 
-    
+
 
     def get_connection(self, timeout: float = 5.0) -> Optional[object]:
 
@@ -581,7 +581,7 @@ class QMTConnectionPool:
 
         return None
 
-    
+
 
     def return_connection(self, connection: object):
 
@@ -595,7 +595,7 @@ class QMTConnectionPool:
 
             self._close_connection(connection)
 
-    
+
 
     def _create_connection(self) -> object:
 
@@ -603,7 +603,7 @@ class QMTConnectionPool:
 
         return True
 
-    
+
 
     def _close_connection(self, connection: object):
 
@@ -647,7 +647,7 @@ class LRUCache:
 
     """LRU缓存实现"""
 
-    
+
 
     def __init__(self, max_size: int = 1000, ttl: int = 300):
 
@@ -661,7 +661,7 @@ class LRUCache:
 
         self._lock = threading.Lock()
 
-    
+
 
     def get(self, key: str) -> Optional[Any]:
 
@@ -673,7 +673,7 @@ class LRUCache:
 
                 return None
 
-            
+
 
             if time.time() - self.timestamps[key] > self.ttl:
 
@@ -681,13 +681,13 @@ class LRUCache:
 
                 return None
 
-            
+
 
             self.cache.move_to_end(key)
 
             return self.cache[key]
 
-    
+
 
     def set(self, key: str, value: Any):
 
@@ -699,19 +699,19 @@ class LRUCache:
 
                 self._remove(key)
 
-            
+
 
             if len(self.cache) >= self.max_size:
 
                 self._remove_oldest()
 
-            
+
 
             self.cache[key] = value
 
             self.timestamps[key] = time.time()
 
-    
+
 
     def _remove(self, key: str):
 
@@ -721,7 +721,7 @@ class LRUCache:
 
         self.timestamps.pop(key, None)
 
-    
+
 
     def _remove_oldest(self):
 
@@ -785,7 +785,7 @@ def retry_with_exponential_backoff(
 
     """指数退避重试装饰器"""
 
-    
+
 
     def decorator(func: Callable) -> Callable:
 
@@ -795,7 +795,7 @@ def retry_with_exponential_backoff(
 
             last_exception = None
 
-            
+
 
             for attempt in range(max_retries):
 
@@ -807,7 +807,7 @@ def retry_with_exponential_backoff(
 
                     last_exception = e
 
-                    
+
 
                     if attempt < max_retries - 1:
 
@@ -827,15 +827,15 @@ def retry_with_exponential_backoff(
 
                         raise last_exception
 
-            
+
 
             raise last_exception
 
-        
+
 
         return wrapper
 
-    
+
 
     return decorator
 
@@ -877,7 +877,7 @@ def get_stock_data(stock_code: str):
 
 #### 问题1: QMT客户端连接断开
 
-**现象**: 
+**现象**:
 
 - API调用失败，提示连接错?
 
@@ -905,7 +905,7 @@ class QMTConnectionManager:
 
     """QMT连接管理?""
 
-    
+
 
     def __init__(self, check_interval: int = 60):
 
@@ -915,7 +915,7 @@ class QMTConnectionManager:
 
         self._start_health_check()
 
-    
+
 
     def _start_health_check(self):
 
@@ -935,13 +935,13 @@ class QMTConnectionManager:
 
                     self._reconnect()
 
-        
+
 
         thread = threading.Thread(target=health_check, daemon=True)
 
         thread.start()
 
-    
+
 
     def _check_connection(self):
 
@@ -957,7 +957,7 @@ class QMTConnectionManager:
 
             self.is_connected = False
 
-    
+
 
     def _reconnect(self):
 
@@ -987,7 +987,7 @@ class QMTConnectionManager:
 
 #### 问题2: 数据获取速度
 
-**现象**: 
+**现象**:
 
 - API响应时间长（>1秒）
 
@@ -1037,7 +1037,7 @@ class QMTConnectionManager:
 
 #### 问题3: 数据不完整或错误
 
-**现象**: 
+**现象**:
 
 - 数据字段缺失
 
@@ -1069,13 +1069,13 @@ def validate_quote_data(data: pd.DataFrame) -> bool:
 
     required_fields = ['open', 'high', 'low', 'close', 'volume']
 
-    
+
 
     if data.empty:
 
         return False
 
-    
+
 
     for field in required_fields:
 
@@ -1083,19 +1083,19 @@ def validate_quote_data(data: pd.DataFrame) -> bool:
 
             return False
 
-        
+
 
         if data[field].isnull().any():
 
             return False
 
-        
+
 
         if (data[field] < 0).any():
 
             return False
 
-    
+
 
     return True
 
@@ -1262,4 +1262,3 @@ def validate_quote_data(data: pd.DataFrame) -> bool:
 
 
 **文档版本**: v1.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?
-

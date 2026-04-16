@@ -105,33 +105,33 @@ from typing import List, Dict
 class PortfolioComparisonTool:
     def __init__(self):
         self.evaluation_dimensions = [
-            'return', 'risk', 'cost', 'efficiency', 
+            'return', 'risk', 'cost', 'efficiency',
             'diversification', 'liquidity'
         ]
-    
+
     def compare_returns(self, portfolios: List[Dict]) -> Dict:
         comparison = {
             'expected_returns': {},
             'return_ranks': {},
             'return_statistics': {}
         }
-        
+
         for i, portfolio in enumerate(portfolios):
             weights = portfolio['weights']
             expected_returns = portfolio['expected_returns']
-            
+
             portfolio_return = np.dot(weights, expected_returns)
             comparison['expected_returns'][f'portfolio_{i}'] = portfolio_return
-        
+
         sorted_returns = sorted(
             comparison['expected_returns'].items(),
             key=lambda x: x[1],
             reverse=True
         )
-        
+
         for rank, (name, ret) in enumerate(sorted_returns, 1):
             comparison['return_ranks'][name] = rank
-        
+
         returns = list(comparison['expected_returns'].values())
         comparison['return_statistics'] = {
             'mean': np.mean(returns),
@@ -140,9 +140,9 @@ class PortfolioComparisonTool:
             'min': np.min(returns),
             'range': np.max(returns) - np.min(returns)
         }
-        
+
         return comparison
-    
+
     def compare_risks(self, portfolios: List[Dict]) -> Dict:
         comparison = {
             'volatility': {},
@@ -151,42 +151,42 @@ class PortfolioComparisonTool:
             'max_drawdown': {},
             'risk_ranks': {}
         }
-        
+
         for i, portfolio in enumerate(portfolios):
             weights = portfolio['weights']
             cov_matrix = portfolio['cov_matrix']
             returns_data = portfolio.get('returns_data')
-            
+
             portfolio_vol = np.sqrt(
                 np.dot(weights.T, np.dot(cov_matrix, weights))
             )
             comparison['volatility'][f'portfolio_{i}'] = portfolio_vol
-            
+
             if returns_data is not None:
                 portfolio_returns = np.dot(returns_data, weights)
-                
+
                 var_95 = np.percentile(portfolio_returns, 5)
                 cvar_95 = np.mean(portfolio_returns[portfolio_returns <= var_95])
-                
+
                 comparison['var_95'][f'portfolio_{i}'] = var_95
                 comparison['cvar_95'][f'portfolio_{i}'] = cvar_95
-                
+
                 cumulative = np.cumprod(1 + portfolio_returns)
                 running_max = np.maximum.accumulate(cumulative)
                 drawdowns = (cumulative - running_max) / running_max
                 max_dd = np.min(drawdowns)
                 comparison['max_drawdown'][f'portfolio_{i}'] = max_dd
-        
+
         sorted_vol = sorted(
             comparison['volatility'].items(),
             key=lambda x: x[1]
         )
-        
+
         for rank, (name, vol) in enumerate(sorted_vol, 1):
             comparison['risk_ranks'][name] = rank
-        
+
         return comparison
-    
+
     def compare_costs(self, portfolios: List[Dict]) -> Dict:
         comparison = {
             'transaction_costs': {},
@@ -194,16 +194,16 @@ class PortfolioComparisonTool:
             'total_costs': {},
             'cost_ranks': {}
         }
-        
+
         for i, portfolio in enumerate(portfolios):
             weights = portfolio['weights']
             current_weights = portfolio.get('current_weights', weights)
             liquidity_data = portfolio.get('liquidity_data', {})
-            
+
             turnover = np.sum(np.abs(weights - current_weights))
-            
+
             transaction_cost = turnover * 0.001
-            
+
             market_impact = 0
             for j, w in enumerate(weights):
                 trade_size = abs(w - current_weights[j])
@@ -211,23 +211,23 @@ class PortfolioComparisonTool:
                     avg_volume = liquidity_data.get(j, {}).get('avg_volume', 1e6)
                     participation_rate = trade_size / avg_volume
                     market_impact += 0.1 * np.sqrt(participation_rate) * trade_size
-            
+
             total_cost = transaction_cost + market_impact
-            
+
             comparison['transaction_costs'][f'portfolio_{i}'] = transaction_cost
             comparison['market_impact'][f'portfolio_{i}'] = market_impact
             comparison['total_costs'][f'portfolio_{i}'] = total_cost
-        
+
         sorted_costs = sorted(
             comparison['total_costs'].items(),
             key=lambda x: x[1]
         )
-        
+
         for rank, (name, cost) in enumerate(sorted_costs, 1):
             comparison['cost_ranks'][name] = rank
-        
+
         return comparison
-    
+
     def compare_efficiency(self, portfolios: List[Dict]) -> Dict:
         comparison = {
             'sharpe_ratio': {},
@@ -235,43 +235,43 @@ class PortfolioComparisonTool:
             'sortino_ratio': {},
             'efficiency_ranks': {}
         }
-        
+
         for i, portfolio in enumerate(portfolios):
             weights = portfolio['weights']
             expected_returns = portfolio['expected_returns']
             cov_matrix = portfolio['cov_matrix']
             returns_data = portfolio.get('returns_data')
-            
+
             portfolio_return = np.dot(weights, expected_returns)
             portfolio_vol = np.sqrt(
                 np.dot(weights.T, np.dot(cov_matrix, weights))
             )
-            
+
             risk_free_rate = 0.02
             sharpe = (portfolio_return - risk_free_rate) / portfolio_vol
             comparison['sharpe_ratio'][f'portfolio_{i}'] = sharpe
-            
+
             if returns_data is not None:
                 portfolio_returns = np.dot(returns_data, weights)
                 negative_returns = portfolio_returns[portfolio_returns < 0]
-                
+
                 if len(negative_returns) > 0:
                     downside_vol = np.std(negative_returns)
                     sortino = (portfolio_return - risk_free_rate) / downside_vol
                     comparison['sortino_ratio'][f'portfolio_{i}'] = sortino
-        
+
         sorted_sharpe = sorted(
             comparison['sharpe_ratio'].items(),
             key=lambda x: x[1],
             reverse=True
         )
-        
+
         for rank, (name, sr) in enumerate(sorted_sharpe, 1):
             comparison['efficiency_ranks'][name] = rank
-        
+
         return comparison
-    
-    def calculate_comprehensive_score(self, portfolios: List[Dict], 
+
+    def calculate_comprehensive_score(self, portfolios: List[Dict],
                                      weights: Dict = None) -> Dict:
         if weights is None:
             weights = {
@@ -281,26 +281,26 @@ class PortfolioComparisonTool:
                 'efficiency': 0.20,
                 'diversification': 0.10
             }
-        
+
         return_comparison = self.compare_returns(portfolios)
         risk_comparison = self.compare_risks(portfolios)
         cost_comparison = self.compare_costs(portfolios)
         efficiency_comparison = self.compare_efficiency(portfolios)
-        
+
         scores = {}
-        
+
         for i in range(len(portfolios)):
             name = f'portfolio_{i}'
-            
+
             return_score = 1.0 / return_comparison['return_ranks'][name]
             risk_score = 1.0 / risk_comparison['risk_ranks'][name]
             cost_score = 1.0 / cost_comparison['cost_ranks'][name]
             efficiency_score = 1.0 / efficiency_comparison['efficiency_ranks'][name]
-            
+
             diversification_score = self._calculate_diversification_score(
                 portfolios[i]['weights']
             )
-            
+
             comprehensive_score = (
                 weights['return'] * return_score +
                 weights['risk'] * risk_score +
@@ -308,7 +308,7 @@ class PortfolioComparisonTool:
                 weights['efficiency'] * efficiency_score +
                 weights['diversification'] * diversification_score
             )
-            
+
             scores[name] = {
                 'comprehensive_score': comprehensive_score,
                 'return_score': return_score,
@@ -317,35 +317,35 @@ class PortfolioComparisonTool:
                 'efficiency_score': efficiency_score,
                 'diversification_score': diversification_score
             }
-        
+
         sorted_scores = sorted(
             scores.items(),
             key=lambda x: x[1]['comprehensive_score'],
             reverse=True
         )
-        
+
         for rank, (name, score) in enumerate(sorted_scores, 1):
             scores[name]['rank'] = rank
-        
+
         return scores
-    
+
     def _calculate_diversification_score(self, weights):
         weights = np.array(weights)
         weights = weights[weights > 0]
-        
+
         if len(weights) == 0:
             return 0
-        
+
         herfindahl = np.sum(weights ** 2)
-        
+
         effective_n = 1.0 / herfindahl
-        
+
         max_diversification = 1.0 / (1.0 / len(weights))
-        
+
         diversification_score = effective_n / max_diversification
-        
+
         return diversification_score
-    
+
     def generate_decision_recommendation(self, portfolios: List[Dict],
                                         preference: str = 'balanced') -> Dict:
         if preference == 'return_oriented':
@@ -372,15 +372,15 @@ class PortfolioComparisonTool:
                 'efficiency': 0.20,
                 'diversification': 0.10
             }
-        
+
         scores = self.calculate_comprehensive_score(portfolios, weights)
-        
+
         best_portfolio = max(scores.items(), key=lambda x: x[1]['comprehensive_score'])
-        
+
         return_comparison = self.compare_returns(portfolios)
         risk_comparison = self.compare_risks(portfolios)
         cost_comparison = self.compare_costs(portfolios)
-        
+
         recommendation = {
             'best_portfolio': best_portfolio[0],
             'comprehensive_score': best_portfolio[1]['comprehensive_score'],
@@ -395,23 +395,23 @@ class PortfolioComparisonTool:
                 best_portfolio, scores, preference
             )
         }
-        
+
         return recommendation
-    
+
     def _generate_recommendation_text(self, best_portfolio, scores, preference):
         name = best_portfolio[0]
         score = best_portfolio[1]
-        
+
         text = f"推荐选择{name}，综合得分{score['comprehensive_score']:.3f}。\n"
         text += f"该组合在收益、风险、成本、效率等多维度表现最优。\n"
-        
+
         if preference == 'return_oriented':
             text += f"收益得分{score['return_score']:.3f}，适合追求高收益的投资者。"
         elif preference == 'risk_averse':
             text += f"风险得分{score['risk_score']:.3f}，适合风险厌恶型投资者。"
         else:
             text += f"综合表现均衡，适合大多数投资者。"
-        
+
         return text
 
 ## 4. 数据模型

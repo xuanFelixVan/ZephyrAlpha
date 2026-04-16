@@ -15,7 +15,7 @@ class TestMain:
     def test_main_returns_result(self):
         """测试main函数返回Result对象"""
         result = main()
-        
+
         assert result.success is True
         assert result.data == {"version": "5.0.0"}
         assert result.error is None
@@ -25,16 +25,16 @@ class TestMain:
         main()
         captured = capsys.readouterr()
         output = captured.out
-        
+
         # 检查标题和版本信息
         assert "清风量化交易系统 v5.1" in output
         assert "=" * 60 in output
-        
+
         # 检查模块列表
         assert "factor_calculator" in output
         assert "risk_manager" in output
         assert "alert_manager" in output
-        
+
         # 检查文档引用
         assert "System_Manifest.md" in output
 
@@ -51,7 +51,7 @@ class TestMain:
         """测试main函数输出到stdout"""
         main()
         output = mock_stdout.getvalue()
-        
+
         assert "清风量化交易系统 v5.1" in output
         assert len(output) > 100  # 确保有足够的输出内容
 

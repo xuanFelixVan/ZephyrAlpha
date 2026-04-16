@@ -230,7 +230,7 @@ class ResearchProject:
 
     deliverables: List[Dict] = field(default_factory=list)
 
-    
+
 
     def to_dict(self) -> Dict:
 
@@ -326,7 +326,7 @@ class ResearchProjectManager:
 
     """研究项目管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -338,7 +338,7 @@ class ResearchProjectManager:
 
         self.deliverables: Dict[str, List[ResearchDeliverable]] = {}
 
-        
+
 
     def create_project(self,
 
@@ -362,11 +362,11 @@ class ResearchProjectManager:
 
         """创建项目"""
 
-        
+
 
         project_id = f"PROJ_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         project = ResearchProject(
 
@@ -394,7 +394,7 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         self.projects[project_id] = project
 
@@ -402,15 +402,15 @@ class ResearchProjectManager:
 
         self.deliverables[project_id] = []
 
-        
+
 
         logger.info(f"Created project: {project_id} - {name}")
 
-        
+
 
         return project
 
-    
+
 
     def update_project_status(self,
 
@@ -420,39 +420,39 @@ class ResearchProjectManager:
 
         """更新项目状态"""
 
-        
+
 
         if project_id not in self.projects:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         project = self.projects[project_id]
 
         old_status = project.status
 
-        
+
 
         project.status = new_status
 
         project.updated_at = datetime.now()
 
-        
+
 
         if new_status == ProjectStatus.IN_PROGRESS and project.start_date is None:
 
             project.start_date = datetime.now()
 
-        
+
 
         logger.info(f"Updated project {project_id} status: {old_status.value} -> {new_status.value}")
 
-        
+
 
         return True
 
-    
+
 
     def add_milestone(self,
 
@@ -468,17 +468,17 @@ class ResearchProjectManager:
 
         """添加里程碑"""
 
-        
+
 
         if project_id not in self.projects:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         milestone_id = f"MS_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         milestone = ResearchMilestone(
 
@@ -496,11 +496,11 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         self.milestones[project_id].append(milestone)
 
-        
+
 
         project = self.projects[project_id]
 
@@ -518,15 +518,15 @@ class ResearchProjectManager:
 
         project.updated_at = datetime.now()
 
-        
+
 
         logger.info(f"Added milestone {milestone_id} to project {project_id}")
 
-        
+
 
         return milestone
 
-    
+
 
     def complete_milestone(self,
 
@@ -536,13 +536,13 @@ class ResearchProjectManager:
 
         """完成里程碑"""
 
-        
+
 
         if project_id not in self.milestones:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         for milestone in self.milestones[project_id]:
 
@@ -552,7 +552,7 @@ class ResearchProjectManager:
 
                 milestone.completed_date = datetime.now()
 
-                
+
 
                 project = self.projects[project_id]
 
@@ -564,23 +564,23 @@ class ResearchProjectManager:
 
                         ms['completed_date'] = datetime.now().isoformat()
 
-                
+
 
                 project.updated_at = datetime.now()
 
-                
+
 
                 logger.info(f"Completed milestone {milestone_id}")
 
-                
+
 
                 return True
 
-        
+
 
         return False
 
-    
+
 
     def add_deliverable(self,
 
@@ -598,17 +598,17 @@ class ResearchProjectManager:
 
         """添加成果"""
 
-        
+
 
         if project_id not in self.projects:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         deliverable_id = f"DLV_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         deliverable = ResearchDeliverable(
 
@@ -628,11 +628,11 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         self.deliverables[project_id].append(deliverable)
 
-        
+
 
         project = self.projects[project_id]
 
@@ -650,25 +650,25 @@ class ResearchProjectManager:
 
         project.updated_at = datetime.now()
 
-        
+
 
         logger.info(f"Added deliverable {deliverable_id} to project {project_id}")
 
-        
+
 
         return deliverable
 
-    
+
 
     def get_project(self, project_id: str) -> Optional[ResearchProject]:
 
         """获取项目"""
 
-        
+
 
         return self.projects.get(project_id)
 
-    
+
 
     def list_projects(self,
 
@@ -680,51 +680,51 @@ class ResearchProjectManager:
 
         """列出项目"""
 
-        
+
 
         projects = list(self.projects.values())
 
-        
+
 
         if status:
 
             projects = [p for p in projects if p.status == status]
 
-        
+
 
         if research_type:
 
             projects = [p for p in projects if p.research_type == research_type]
 
-        
+
 
         if owner:
 
             projects = [p for p in projects if p.owner == owner]
 
-        
+
 
         return projects
 
-    
+
 
     def get_project_progress(self, project_id: str) -> Dict:
 
         """获取项目进度"""
 
-        
+
 
         if project_id not in self.projects:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         project = self.projects[project_id]
 
         milestones = self.milestones.get(project_id, [])
 
-        
+
 
         if not milestones:
 
@@ -742,7 +742,7 @@ class ResearchProjectManager:
 
             }
 
-        
+
 
         total = len(milestones)
 
@@ -750,7 +750,7 @@ class ResearchProjectManager:
 
         progress = (completed / total) * 100 if total > 0 else 0.0
 
-        
+
 
         return {
 
@@ -768,17 +768,17 @@ class ResearchProjectManager:
 
         }
 
-    
+
 
     def _check_on_track(self, project: ResearchProject, milestones: List[ResearchMilestone]) -> bool:
 
         """检查项目是否按计划进行"""
 
-        
+
 
         now = datetime.now()
 
-        
+
 
         for milestone in milestones:
 
@@ -786,23 +786,23 @@ class ResearchProjectManager:
 
                 return False
 
-        
+
 
         return True
 
-    
+
 
     def generate_project_report(self, project_id: str) -> Dict:
 
         """生成项目报告"""
 
-        
+
 
         if project_id not in self.projects:
 
             raise ValueError(f"Project {project_id} not found")
 
-        
+
 
         project = self.projects[project_id]
 
@@ -810,7 +810,7 @@ class ResearchProjectManager:
 
         deliverables = self.deliverables.get(project_id, [])
 
-        
+
 
         report = {
 
@@ -840,7 +840,7 @@ class ResearchProjectManager:
 
         }
 
-        
+
 
         return report
 
@@ -868,7 +868,7 @@ class ResearchProjectManagementInterface:
 
     """研究项目管理接口"""
 
-    
+
 
     def create_project(self,
 
@@ -884,7 +884,7 @@ class ResearchProjectManagementInterface:
 
         pass
 
-    
+
 
     def update_project(self,
 
@@ -896,7 +896,7 @@ class ResearchProjectManagementInterface:
 
         pass
 
-    
+
 
     def get_project_progress(self,
 
@@ -998,7 +998,7 @@ project_management:
 
   data_dir: './data/projects'
 
-  
+
 
 jira:
 
@@ -1010,7 +1010,7 @@ jira:
 
   api_token: 'your_api_token'
 
-  
+
 
 notion:
 
@@ -1091,4 +1091,3 @@ notion:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

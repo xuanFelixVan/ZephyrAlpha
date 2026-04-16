@@ -39,7 +39,7 @@ implementation_status: 待实现
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -595,7 +595,7 @@ class DashboardConfig:
 
 
 
-    """仪表板配?    
+    """仪表板配?
 
 
 
@@ -673,7 +673,7 @@ class PageConfig:
 
 
 
-    
+
 
 
 
@@ -751,7 +751,7 @@ class WidgetConfig:
 
 
 
-    
+
 
 
 
@@ -823,7 +823,7 @@ class StreamlitDashboardAPI:
 
 
 
-    
+
 
 
 
@@ -841,7 +841,7 @@ class StreamlitDashboardAPI:
 
 
 
-    
+
 
 
 
@@ -859,7 +859,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -895,7 +895,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -913,7 +913,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -943,7 +943,7 @@ class StreamlitDashboardAPI:
 
 
 
-    
+
 
 
 
@@ -961,7 +961,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -991,7 +991,7 @@ class StreamlitDashboardAPI:
 
 
 
-    
+
 
 
 
@@ -1009,7 +1009,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -1027,7 +1027,7 @@ class StreamlitDashboardAPI:
 
 
 
-            
+
 
 
 
@@ -1057,7 +1057,7 @@ class StreamlitDashboardAPI:
 
 
 
-    
+
 
 
 
@@ -1099,7 +1099,7 @@ class StreamlitDashboardAPI:
 
 
 
-        
+
 
 
 
@@ -1123,7 +1123,7 @@ class StreamlitDashboardAPI:
 
 
 
-            
+
 
 
 
@@ -1195,7 +1195,7 @@ class DataAggregatorAPI:
 
 
 
-    
+
 
 
 
@@ -1213,7 +1213,7 @@ class DataAggregatorAPI:
 
 
 
-    
+
 
 
 
@@ -1249,7 +1249,7 @@ class DataAggregatorAPI:
 
 
 
-        
+
 
 
 
@@ -1267,7 +1267,7 @@ class DataAggregatorAPI:
 
 
 
-            
+
 
 
 
@@ -1297,7 +1297,7 @@ class DataAggregatorAPI:
 
 
 
-    
+
 
 
 
@@ -1339,7 +1339,7 @@ class DataAggregatorAPI:
 
 
 
-        
+
 
 
 
@@ -1357,7 +1357,7 @@ class DataAggregatorAPI:
 
 
 
-            
+
 
 
 
@@ -1387,7 +1387,7 @@ class DataAggregatorAPI:
 
 
 
-    
+
 
 
 
@@ -1423,7 +1423,7 @@ class DataAggregatorAPI:
 
 
 
-        
+
 
 
 
@@ -1441,7 +1441,7 @@ class DataAggregatorAPI:
 
 
 
-            
+
 
 
 
@@ -1471,7 +1471,7 @@ class DataAggregatorAPI:
 
 
 
-    
+
 
 
 
@@ -1519,7 +1519,7 @@ class DataAggregatorAPI:
 
 
 
-        
+
 
 
 
@@ -1543,7 +1543,7 @@ class DataAggregatorAPI:
 
 
 
-            
+
 
 
 
@@ -1615,7 +1615,7 @@ class UserInteractionAPI:
 
 
 
-    
+
 
 
 
@@ -1633,7 +1633,7 @@ class UserInteractionAPI:
 
 
 
-    
+
 
 
 
@@ -1681,7 +1681,7 @@ class UserInteractionAPI:
 
 
 
-        
+
 
 
 
@@ -1705,7 +1705,7 @@ class UserInteractionAPI:
 
 
 
-            param_value: 参数据            
+            param_value: 参数据
 
 
 
@@ -1735,7 +1735,7 @@ class UserInteractionAPI:
 
 
 
-    
+
 
 
 
@@ -1777,7 +1777,7 @@ class UserInteractionAPI:
 
 
 
-        
+
 
 
 
@@ -1795,7 +1795,7 @@ class UserInteractionAPI:
 
 
 
-            action: 动作（start/stop/pause?            
+            action: 动作（start/stop/pause?
 
 
 
@@ -1825,7 +1825,7 @@ class UserInteractionAPI:
 
 
 
-    
+
 
 
 
@@ -1873,7 +1873,7 @@ class UserInteractionAPI:
 
 
 
-        
+
 
 
 
@@ -1903,7 +1903,7 @@ class UserInteractionAPI:
 
 
 
-            
+
 
 
 
@@ -1981,7 +1981,7 @@ class OverviewPage:
 
 
 
-    
+
 
 
 
@@ -1999,7 +1999,7 @@ class OverviewPage:
 
 
 
-    
+
 
 
 
@@ -2017,7 +2017,7 @@ class OverviewPage:
 
 
 
-        
+
 
 
 
@@ -2125,7 +2125,7 @@ class StrategyPage:
 
 
 
-    
+
 
 
 
@@ -2143,7 +2143,7 @@ class StrategyPage:
 
 
 
-    
+
 
 
 
@@ -2161,7 +2161,7 @@ class StrategyPage:
 
 
 
-        
+
 
 
 
@@ -2311,7 +2311,7 @@ class TradingPage:
 
 
 
-    
+
 
 
 
@@ -2329,7 +2329,7 @@ class TradingPage:
 
 
 
-    
+
 
 
 
@@ -2347,7 +2347,7 @@ class TradingPage:
 
 
 
-        
+
 
 
 
@@ -2557,7 +2557,7 @@ class DashboardSecurity:
 
 
 
-    """仪表板安全机?    
+    """仪表板安全机?
 
 
 
@@ -2575,7 +2575,7 @@ class DashboardSecurity:
 
 
 
-    
+
 
 
 
@@ -2599,7 +2599,7 @@ class DashboardSecurity:
 
 
 
-        
+
 
 
 
@@ -2617,7 +2617,7 @@ class DashboardSecurity:
 
 
 
-    
+
 
 
 
@@ -2641,7 +2641,7 @@ class DashboardSecurity:
 
 
 
-        
+
 
 
 
@@ -2665,7 +2665,7 @@ class DashboardSecurity:
 
 
 
-    
+
 
 
 
@@ -2689,7 +2689,7 @@ class DashboardSecurity:
 
 
 
-        
+
 
 
 
@@ -2779,7 +2779,7 @@ class DashboardSession:
 
 
 
-    """仪表板会?    
+    """仪表板会?
 
 
 
@@ -2857,7 +2857,7 @@ class UserPreference:
 
 
 
-    
+
 
 
 
@@ -2941,7 +2941,7 @@ class WidgetState:
 
 
 
-    """组件?    
+    """组件?
 
 
 
@@ -3037,7 +3037,7 @@ class SessionStorage:
 
 
 
-    
+
 
 
 
@@ -3055,7 +3055,7 @@ class SessionStorage:
 
 
 
-    
+
 
 
 
@@ -3073,7 +3073,7 @@ class SessionStorage:
 
 
 
-        
+
 
 
 
@@ -3091,7 +3091,7 @@ class SessionStorage:
 
 
 
-        
+
 
 
 
@@ -3115,7 +3115,7 @@ class SessionStorage:
 
 
 
-    
+
 
 
 
@@ -3133,7 +3133,7 @@ class SessionStorage:
 
 
 
-        
+
 
 
 
@@ -3157,7 +3157,7 @@ class SessionStorage:
 
 
 
-    
+
 
 
 
@@ -3175,7 +3175,7 @@ class SessionStorage:
 
 
 
-        
+
 
 
 
@@ -3193,7 +3193,7 @@ class SessionStorage:
 
 
 
-    
+
 
 
 
@@ -3211,7 +3211,7 @@ class SessionStorage:
 
 
 
-        
+
 
 
 
@@ -3555,7 +3555,7 @@ class DataAggregator:
 
 
 
-    """数据聚合?    
+    """数据聚合?
 
 
 
@@ -3573,7 +3573,7 @@ class DataAggregator:
 
 
 
-    
+
 
 
 
@@ -3609,13 +3609,13 @@ class DataAggregator:
 
 
 
-        
 
 
 
 
 
-        算法复杂? O(n), n为持仓数?        
+
+        算法复杂? O(n), n为持仓数?
 
 
 
@@ -3633,7 +3633,7 @@ class DataAggregator:
 
 
 
-            
+
 
 
 
@@ -3675,7 +3675,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3705,7 +3705,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3759,7 +3759,7 @@ class DataAggregator:
 
 
 
-    
+
 
 
 
@@ -3777,7 +3777,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3795,7 +3795,7 @@ class DataAggregator:
 
 
 
-            
+
 
 
 
@@ -3825,7 +3825,7 @@ class DataAggregator:
 
 
 
-    
+
 
 
 
@@ -3843,7 +3843,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3861,7 +3861,7 @@ class DataAggregator:
 
 
 
-            
+
 
 
 
@@ -3891,7 +3891,7 @@ class DataAggregator:
 
 
 
-    
+
 
 
 
@@ -3909,7 +3909,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3927,7 +3927,7 @@ class DataAggregator:
 
 
 
-            
+
 
 
 
@@ -3999,7 +3999,7 @@ class DataCache:
 
 
 
-    
+
 
 
 
@@ -4017,7 +4017,7 @@ class DataCache:
 
 
 
-    
+
 
 
 
@@ -4041,7 +4041,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4059,7 +4059,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4071,7 +4071,7 @@ class DataCache:
 
 
 
-            key: 缓存?            
+            key: 缓存?
 
 
 
@@ -4107,7 +4107,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4119,7 +4119,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4143,7 +4143,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4155,7 +4155,7 @@ class DataCache:
 
 
 
-    
+
 
 
 
@@ -4173,7 +4173,7 @@ class DataCache:
 
 
 
-        
+
 
 
 
@@ -4197,7 +4197,7 @@ class DataCache:
 
 
 
-    
+
 
 
 
@@ -4257,7 +4257,7 @@ class PageRenderer:
 
 
 
-    """页面渲染?    
+    """页面渲染?
 
 
 
@@ -4275,7 +4275,7 @@ class PageRenderer:
 
 
 
-    
+
 
 
 
@@ -4293,7 +4293,7 @@ class PageRenderer:
 
 
 
-        
+
 
 
 
@@ -4335,7 +4335,7 @@ class PageRenderer:
 
 
 
-    
+
 
 
 
@@ -4353,7 +4353,7 @@ class PageRenderer:
 
 
 
-        
+
 
 
 
@@ -4371,7 +4371,7 @@ class PageRenderer:
 
 
 
-            
+
 
 
 
@@ -4443,7 +4443,7 @@ class PageRenderer:
 
 
 
-        
+
 
 
 
@@ -4557,7 +4557,7 @@ def test_aggregate_portfolio_data():
 
 
 
-    
+
 
 
 
@@ -4581,7 +4581,7 @@ def test_aggregate_portfolio_data():
 
 
 
-    
+
 
 
 
@@ -4635,7 +4635,7 @@ def test_data_cache():
 
 
 
-    
+
 
 
 
@@ -4653,7 +4653,7 @@ def test_data_cache():
 
 
 
-    
+
 
 
 
@@ -4689,7 +4689,7 @@ def test_page_rendering():
 
 
 
-    
+
 
 
 
@@ -5075,7 +5075,7 @@ class TestDashboardIntegration:
 
 
 
-    
+
 
 
 
@@ -5099,7 +5099,7 @@ class TestDashboardIntegration:
 
 
 
-        
+
 
 
 
@@ -5111,7 +5111,7 @@ class TestDashboardIntegration:
 
 
 
-        
+
 
 
 
@@ -6072,8 +6072,3 @@ class TestDashboardIntegration:
 
 
 **文档?*: ?已完?**下一?*: 生成技术评审报?
-
-
-
-
-

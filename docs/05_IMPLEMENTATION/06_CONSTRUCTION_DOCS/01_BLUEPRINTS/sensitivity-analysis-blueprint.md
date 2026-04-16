@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：敏感性分析、参数敏感性评估、关键参数识别
 
@@ -160,7 +160,7 @@ class SensitivityAnalyzer:
 
     """敏感性分析器"""
 
-    
+
 
     def __init__(self, optimizer_func, param_names, param_bounds):
 
@@ -190,7 +190,7 @@ class SensitivityAnalyzer:
 
         self.param_bounds = param_bounds
 
-    
+
 
     def local_sensitivity(self, base_params, param_deltas=None):
 
@@ -198,7 +198,7 @@ class SensitivityAnalyzer:
 
         局部敏感性分析
 
-        
+
 
         Parameters:
 
@@ -218,17 +218,17 @@ class SensitivityAnalyzer:
 
             param_deltas = {name: 0.1 for name in self.param_names}
 
-        
+
 
         # 基准结果
 
         base_result = self.optimizer_func(**base_params)
 
-        
+
 
         sensitivities = {}
 
-        
+
 
         for param_name in self.param_names:
 
@@ -236,7 +236,7 @@ class SensitivityAnalyzer:
 
             base_value = base_params[param_name]
 
-            
+
 
             # 正向扰动
 
@@ -246,7 +246,7 @@ class SensitivityAnalyzer:
 
             result_plus = self.optimizer_func(**params_plus)
 
-            
+
 
             # 负向扰动
 
@@ -256,7 +256,7 @@ class SensitivityAnalyzer:
 
             result_minus = self.optimizer_func(**params_minus)
 
-            
+
 
             # 计算敏感性指标
 
@@ -264,7 +264,7 @@ class SensitivityAnalyzer:
 
                 'sensitivity': (result_plus - result_minus) / (2 * delta * base_value),
 
-                'elasticity': ((result_plus - result_minus) / base_result) / 
+                'elasticity': ((result_plus - result_minus) / base_result) /
 
                              ((params_plus[param_name] - params_minus[param_name]) / base_value),
 
@@ -274,11 +274,11 @@ class SensitivityAnalyzer:
 
             }
 
-        
+
 
         return sensitivities
 
-    
+
 
     def global_sensitivity_sobol(self, n_samples=1000):
 
@@ -286,7 +286,7 @@ class SensitivityAnalyzer:
 
         全局敏感性分析 (Sobol方法)
 
-        
+
 
         Parameters:
 
@@ -310,13 +310,13 @@ class SensitivityAnalyzer:
 
         }
 
-        
+
 
         # 生成样本
 
         param_values = saltelli.sample(problem, n_samples)
 
-        
+
 
         # 运行模型
 
@@ -330,17 +330,17 @@ class SensitivityAnalyzer:
 
             results.append(result)
 
-        
+
 
         results = np.array(results)
 
-        
+
 
         # Sobol分析
 
         si = sobol.analyze(problem, results)
 
-        
+
 
         return {
 
@@ -352,7 +352,7 @@ class SensitivityAnalyzer:
 
         }
 
-    
+
 
     def global_sensitivity_morris(self, n_trajectories=10):
 
@@ -360,7 +360,7 @@ class SensitivityAnalyzer:
 
         全局敏感性分析 (Morris方法)
 
-        
+
 
         Parameters:
 
@@ -384,13 +384,13 @@ class SensitivityAnalyzer:
 
         }
 
-        
+
 
         # 生成样本
 
         param_values = morris_sample.sample(problem, n_trajectories)
 
-        
+
 
         # 运行模型
 
@@ -404,17 +404,17 @@ class SensitivityAnalyzer:
 
             results.append(result)
 
-        
+
 
         results = np.array(results)
 
-        
+
 
         # Morris分析
 
         si = morris.analyze(problem, param_values, results)
 
-        
+
 
         return {
 
@@ -426,7 +426,7 @@ class SensitivityAnalyzer:
 
         }
 
-    
+
 
     def identify_key_parameters(self, sensitivity_results, threshold=0.1):
 
@@ -434,7 +434,7 @@ class SensitivityAnalyzer:
 
         识别关键参数
 
-        
+
 
         Parameters:
 
@@ -452,7 +452,7 @@ class SensitivityAnalyzer:
 
         key_params = []
 
-        
+
 
         for param_name, sensitivity in sensitivity_results.items():
 
@@ -464,7 +464,7 @@ class SensitivityAnalyzer:
 
                 sensitivity_value = abs(sensitivity)
 
-            
+
 
             if sensitivity_value > threshold:
 
@@ -478,13 +478,13 @@ class SensitivityAnalyzer:
 
                 })
 
-        
+
 
         # 排序
 
         key_params.sort(key=lambda x: x['sensitivity'], reverse=True)
 
-        
+
 
         # 分配排名
 
@@ -492,11 +492,11 @@ class SensitivityAnalyzer:
 
             param['rank'] = i + 1
 
-        
+
 
         return key_params
 
-    
+
 
     def stability_assessment(self, base_params, n_iterations=100):
 
@@ -504,7 +504,7 @@ class SensitivityAnalyzer:
 
         参数稳定性评估
 
-        
+
 
         Parameters:
 
@@ -522,7 +522,7 @@ class SensitivityAnalyzer:
 
         results = []
 
-        
+
 
         for _ in range(n_iterations):
 
@@ -536,17 +536,17 @@ class SensitivityAnalyzer:
 
                 perturbed_params[param_name] *= (1 + perturbation)
 
-            
+
 
             result = self.optimizer_func(**perturbed_params)
 
             results.append(result)
 
-        
+
 
         results = np.array(results)
 
-        
+
 
         # 计算稳定性指标
 
@@ -568,7 +568,7 @@ class SensitivityAnalyzer:
 
         }
 
-        
+
 
         return stability_metrics
 
@@ -711,4 +711,3 @@ class SensitivityAnalysisOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

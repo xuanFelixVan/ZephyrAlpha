@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 组合绩效评估详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：绩效指标计算、基准比较、风险调整收益
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 全面评估投资组合绩效，提供多维度绩效指标
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 指标多样：收益、风险、风险调整收益等
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 时间窗口：不同时间窗口的绩效计算
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供全面的绩效评估能力
 
@@ -232,13 +232,13 @@ class ReturnCalculator:
 
     """收益计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_total_return(
 
@@ -252,7 +252,7 @@ class ReturnCalculator:
 
         return (1 + returns).prod() - 1
 
-    
+
 
     def calculate_annualized_return(
 
@@ -280,13 +280,13 @@ class RiskMetricsCalculator:
 
     """风险指标计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_volatility(
 
@@ -302,7 +302,7 @@ class RiskMetricsCalculator:
 
         return returns.std() * np.sqrt(frequency)
 
-    
+
 
     def calculate_max_drawdown(
 
@@ -322,7 +322,7 @@ class RiskMetricsCalculator:
 
         return drawdown.min()
 
-    
+
 
     def calculate_downside_deviation(
 
@@ -350,7 +350,7 @@ class RiskAdjustedMetricsCalculator:
 
     """风险调整收益计算器"""
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.02):
 
@@ -358,7 +358,7 @@ class RiskAdjustedMetricsCalculator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_sharpe_ratio(
 
@@ -376,7 +376,7 @@ class RiskAdjustedMetricsCalculator:
 
         return excess_returns.mean() / returns.std() * np.sqrt(frequency)
 
-    
+
 
     def calculate_sortino_ratio(
 
@@ -396,7 +396,7 @@ class RiskAdjustedMetricsCalculator:
 
         return excess_returns.mean() / downside_std * np.sqrt(frequency)
 
-    
+
 
     def calculate_calmar_ratio(
 
@@ -416,7 +416,7 @@ class RiskAdjustedMetricsCalculator:
 
         return annualized_return / abs(max_dd) if max_dd != 0 else 0
 
-    
+
 
     def _calculate_max_drawdown(
 
@@ -444,29 +444,29 @@ class PerformanceEvaluator:
 
     """绩效评估器主类"""
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.02):
 
         self.risk_free_rate = risk_free_rate
 
-        
+
 
         self.return_calculator = ReturnCalculator()
 
-        
+
 
         self.risk_calculator = RiskMetricsCalculator()
 
-        
+
 
         self.risk_adjusted_calculator = RiskAdjustedMetricsCalculator(risk_free_rate)
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def evaluate(
 
@@ -484,7 +484,7 @@ class PerformanceEvaluator:
 
         执行绩效评估
 
-        
+
 
         参数:
 
@@ -494,7 +494,7 @@ class PerformanceEvaluator:
 
             frequency: 年化频率
 
-            
+
 
         返回:
 
@@ -510,13 +510,13 @@ class PerformanceEvaluator:
 
         )
 
-        
+
 
         volatility = self.risk_calculator.calculate_volatility(returns, frequency)
 
         max_drawdown = self.risk_calculator.calculate_max_drawdown(returns)
 
-        
+
 
         sharpe_ratio = self.risk_adjusted_calculator.calculate_sharpe_ratio(
 
@@ -536,7 +536,7 @@ class PerformanceEvaluator:
 
         )
 
-        
+
 
         metrics = PerformanceMetrics(
 
@@ -556,13 +556,13 @@ class PerformanceEvaluator:
 
         )
 
-        
+
 
         benchmark_return = None
 
         excess_return = None
 
-        
+
 
         if benchmark_returns is not None:
 
@@ -574,7 +574,7 @@ class PerformanceEvaluator:
 
             excess_return = annualized_return - benchmark_return
 
-            
+
 
             metrics.information_ratio = self._calculate_information_ratio(
 
@@ -588,7 +588,7 @@ class PerformanceEvaluator:
 
             )
 
-        
+
 
         result = PerformanceResult(
 
@@ -604,15 +604,15 @@ class PerformanceEvaluator:
 
         )
 
-        
+
 
         self.logger.info(f"绩效评估完成，夏普比率={sharpe_ratio:.4f}")
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_information_ratio(
 
@@ -632,7 +632,7 @@ class PerformanceEvaluator:
 
         return excess_returns.mean() / excess_returns.std() * np.sqrt(frequency)
 
-    
+
 
     def _calculate_alpha_beta(
 
@@ -652,7 +652,7 @@ class PerformanceEvaluator:
 
         benchmark_variance = benchmark_returns.var()
 
-        
+
 
         beta = covariance / benchmark_variance
 
@@ -660,7 +660,7 @@ class PerformanceEvaluator:
 
         alpha_annualized = alpha * frequency
 
-        
+
 
         return alpha_annualized, beta
 
@@ -765,4 +765,3 @@ class PerformanceEvaluator:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

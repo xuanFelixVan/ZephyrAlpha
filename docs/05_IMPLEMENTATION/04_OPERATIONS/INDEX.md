@@ -20,23 +20,23 @@ compliance_level: 专业标准
 
 
 
-- **本目录门面（短说明）**：~~[./README.md]~~  
+- **本目录门面（短说明）**：~~[./README.md]~~
 
-- **审计状态子树**：~~[./audit_state/INDEX.md]~~  
+- **审计状态子树**：~~[./audit_state/INDEX.md]~~
 
-- **索引健全性（零入链 · 最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260415.md（**zero_inbound=0**）｜历史 `20260411`  
+- **索引健全性（零入链 · 最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260415.md（**zero_inbound=0**）｜历史 `20260411`
 
-- **治理工具总索引**：../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md  
+- **治理工具总索引**：../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
 
-- **整仓按目录尽治（REPO_WIDE §7）**：../06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md  
+- **整仓按目录尽治（REPO_WIDE §7）**：../06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md
 
-- **STATE 子域索引**：[../../09_AUDIT/STATE/INDEX.md](../../09_AUDIT/STATE/INDEX.md)  
+- **STATE 子域索引**：[../../09_AUDIT/STATE/INDEX.md](../../09_AUDIT/STATE/INDEX.md)
 
-- **L1 治理快照（20260408）**：../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md  
+- **L1 治理快照（20260408）**：../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md
 
-- **前缀体量（深度 3 · rollup）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，**20260414** 快照 **407** 条）｜历史 `20260413`  
+- **前缀体量（深度 3 · rollup）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，**20260414** 快照 **407** 条）｜历史 `20260413`
 
-- **审计域总索引**：[../../09_AUDIT/INDEX.md](../../09_AUDIT/INDEX.md)  
+- **审计域总索引**：[../../09_AUDIT/INDEX.md](../../09_AUDIT/INDEX.md)
 
 - **实施域索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)
 

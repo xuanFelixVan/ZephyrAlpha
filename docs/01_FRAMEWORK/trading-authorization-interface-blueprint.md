@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Trading Authorization Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Trading Authorization Interface蓝图设计相关内容
 
@@ -334,7 +334,7 @@ class AuthorizationQueue:
 
     """授权请求队列管理"""
 
-    
+
 
     def __init__(self):
 
@@ -344,7 +344,7 @@ class AuthorizationQueue:
 
         self.rejected_requests = []
 
-    
+
 
     def render_queue(self):
 
@@ -352,29 +352,29 @@ class AuthorizationQueue:
 
         st.subheader("📋 授权请求队列")
 
-        
+
 
         tab1, tab2, tab3 = st.tabs(["待审批", "已批准", "已拒绝"])
 
-        
+
 
         with tab1:
 
             self._render_pending_requests()
 
-        
+
 
         with tab2:
 
             self._render_approved_requests()
 
-        
+
 
         with tab3:
 
             self._render_rejected_requests()
 
-    
+
 
     def _render_pending_requests(self):
 
@@ -386,7 +386,7 @@ class AuthorizationQueue:
 
             return
 
-        
+
 
         for request in self.pending_requests:
 
@@ -394,7 +394,7 @@ class AuthorizationQueue:
 
                 col1, col2, col3 = st.columns([3, 1, 1])
 
-                
+
 
                 with col1:
 
@@ -406,7 +406,7 @@ class AuthorizationQueue:
 
                     st.caption(f"AI置信度: {request['ai_confidence']:.1%}")
 
-                
+
 
                 with col2:
 
@@ -414,7 +414,7 @@ class AuthorizationQueue:
 
                         self._approve_request(request)
 
-                
+
 
                 with col3:
 
@@ -422,13 +422,13 @@ class AuthorizationQueue:
 
                         self._reject_request(request)
 
-                
+
 
                 with st.expander("查看详情"):
 
                     st.json(request)
 
-    
+
 
     def _approve_request(self, request: Dict):
 
@@ -446,7 +446,7 @@ class AuthorizationQueue:
 
         st.rerun()
 
-    
+
 
     def _reject_request(self, request: Dict):
 
@@ -478,7 +478,7 @@ class EmergencyStopLoss:
 
     """紧急止损授权"""
 
-    
+
 
     def __init__(self):
 
@@ -492,7 +492,7 @@ class EmergencyStopLoss:
 
         }
 
-    
+
 
     def render_emergency_panel(self):
 
@@ -500,11 +500,11 @@ class EmergencyStopLoss:
 
         st.subheader("🚨 紧急止损授权")
 
-        
+
 
         col1, col2, col3 = st.columns(3)
 
-        
+
 
         with col1:
 
@@ -514,7 +514,7 @@ class EmergencyStopLoss:
 
                 self._trigger_stop_loss("single_position")
 
-        
+
 
         with col2:
 
@@ -524,7 +524,7 @@ class EmergencyStopLoss:
 
                 self._trigger_stop_loss("portfolio")
 
-        
+
 
         with col3:
 
@@ -534,13 +534,13 @@ class EmergencyStopLoss:
 
                 self._trigger_stop_loss("daily_loss")
 
-        
+
 
         with st.expander("止损阈值配置"):
 
             self._render_threshold_config()
 
-    
+
 
     def _trigger_stop_loss(self, stop_type: str):
 
@@ -552,7 +552,7 @@ class EmergencyStopLoss:
 
         st.success(f"✅ {stop_type} 止损已执行")
 
-    
+
 
     def _render_threshold_config(self):
 
@@ -574,7 +574,7 @@ class EmergencyStopLoss:
 
         )
 
-        
+
 
         self.stop_loss_thresholds['portfolio'] = st.slider(
 
@@ -592,7 +592,7 @@ class EmergencyStopLoss:
 
         )
 
-        
+
 
         self.stop_loss_thresholds['daily_loss'] = st.slider(
 
@@ -624,7 +624,7 @@ class AuthorizationRules:
 
     """授权规则配置"""
 
-    
+
 
     def __init__(self):
 
@@ -642,7 +642,7 @@ class AuthorizationRules:
 
         }
 
-    
+
 
     def render_rules_config(self):
 
@@ -650,7 +650,7 @@ class AuthorizationRules:
 
         st.subheader("⚙️ 授权规则配置")
 
-        
+
 
         with st.form("authorization_rules"):
 
@@ -666,7 +666,7 @@ class AuthorizationRules:
 
             )
 
-            
+
 
             self.rules['require_approval_above'] = st.number_input(
 
@@ -678,7 +678,7 @@ class AuthorizationRules:
 
             )
 
-            
+
 
             self.rules['auto_approve_below'] = st.number_input(
 
@@ -690,7 +690,7 @@ class AuthorizationRules:
 
             )
 
-            
+
 
             st.markdown("### 交易限制")
 
@@ -704,7 +704,7 @@ class AuthorizationRules:
 
             )
 
-            
+
 
             self.rules['max_position_size'] = st.slider(
 
@@ -722,7 +722,7 @@ class AuthorizationRules:
 
             )
 
-            
+
 
             submitted = st.form_submit_button("保存规则")
 
@@ -730,7 +730,7 @@ class AuthorizationRules:
 
                 self._save_rules()
 
-    
+
 
     def _save_rules(self):
 
@@ -760,7 +760,7 @@ class TelegramAuthorizationBot:
 
     """Telegram授权机器人"""
 
-    
+
 
     def __init__(self, token: str):
 
@@ -770,7 +770,7 @@ class TelegramAuthorizationBot:
 
         self._setup_handlers()
 
-    
+
 
     def _setup_handlers(self):
 
@@ -780,7 +780,7 @@ class TelegramAuthorizationBot:
 
         self.updater.dispatcher.add_handler(CallbackQueryHandler(self._button))
 
-    
+
 
     def send_authorization_request(self, request: Dict):
 
@@ -800,7 +800,7 @@ class TelegramAuthorizationBot:
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        
+
 
         message = f"""
 
@@ -830,7 +830,7 @@ AI理由: {request['ai_reasoning']}
 
         """
 
-        
+
 
         self.bot.send_message(
 
@@ -842,7 +842,7 @@ AI理由: {request['ai_reasoning']}
 
         )
 
-    
+
 
     def _start(self, update, context):
 
@@ -856,7 +856,7 @@ AI理由: {request['ai_reasoning']}
 
         )
 
-    
+
 
     def _button(self, update, context):
 
@@ -866,7 +866,7 @@ AI理由: {request['ai_reasoning']}
 
         query.answer()
 
-        
+
 
         data = query.data
 
@@ -882,7 +882,7 @@ AI理由: {request['ai_reasoning']}
 
             query.edit_message_text(text=f"❌ 交易已拒绝 (ID: {request_id})")
 
-    
+
 
     def start(self):
 
@@ -1277,4 +1277,3 @@ redis==5.0.1
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -57,7 +57,7 @@ def main():
         if dir_path.exists() and dir_path.is_dir():
             errors.extend(check_index_existence(dir_path))
         # 如果目录不存在，则跳过（可能是项目结构差异）
-    
+
     if errors:
         print("❌ 索引完整性检查失败：")
         for err in errors:

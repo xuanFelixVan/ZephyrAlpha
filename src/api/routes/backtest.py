@@ -19,7 +19,7 @@ class BacktestRequest(BaseModel):
     initial_capital: float = Field(default=1000000.0, description="初始资金")
     commission: float = Field(default=0.0003, description="手续费率")
     slippage: float = Field(default=0.0001, description="滑点")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -53,17 +53,17 @@ class BacktestResult(BaseModel):
 async def run_backtest(request: BacktestRequest):
     """
     执行回测
-    
+
     启动回测任务并返回任务ID
-    
+
     Args:
         request: 回测请求参数
-    
+
     Returns:
         Dict[str, Any]: 回测任务信息
     """
     backtest_id = f"backtest_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    
+
     return {
         "backtest_id": backtest_id,
         "strategy_id": request.strategy_id,
@@ -77,19 +77,19 @@ async def run_backtest(request: BacktestRequest):
 async def get_backtest_result(backtest_id: str):
     """
     获取回测结果
-    
+
     Args:
         backtest_id: 回测ID
-    
+
     Returns:
         BacktestResult: 回测结果
-    
+
     Raises:
         HTTPException: 回测不存在
     """
     if not backtest_id.startswith("backtest_"):
         raise HTTPException(status_code=404, detail="回测不存在")
-    
+
     return BacktestResult(
         backtest_id=backtest_id,
         strategy_id="strategy_001",
@@ -114,12 +114,12 @@ async def get_backtest_trades(
 ):
     """
     获取回测交易记录
-    
+
     Args:
         backtest_id: 回测ID
         skip: 跳过记录数
         limit: 返回记录数
-    
+
     Returns:
         List[Dict[str, Any]]: 交易记录列表
     """
@@ -145,7 +145,7 @@ async def get_backtest_trades(
             "timestamp": "2025-01-10T14:20:00",
         },
     ]
-    
+
     return trades[skip:skip+limit]
 
 
@@ -153,10 +153,10 @@ async def get_backtest_trades(
 async def get_backtest_equity(backtest_id: str):
     """
     获取回测净值曲线
-    
+
     Args:
         backtest_id: 回测ID
-    
+
     Returns:
         Dict[str, Any]: 净值曲线数据
     """

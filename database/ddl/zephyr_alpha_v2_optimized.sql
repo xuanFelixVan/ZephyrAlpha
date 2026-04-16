@@ -19,7 +19,7 @@
 -- ================================================================
 
 CREATE DATABASE zephyr_alpha
-    WITH 
+    WITH
     OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_US.UTF-8'
@@ -690,7 +690,7 @@ DECLARE
     partition_name TEXT;
 BEGIN
     partition_name := table_name || '_' || TO_CHAR(start_date, 'YYYYMM');
-    
+
     EXECUTE format(
         'CREATE TABLE %I PARTITION OF %I FOR VALUES FROM (%L) TO (%L)',
         partition_name,
@@ -698,7 +698,7 @@ BEGIN
         start_date,
         end_date
     );
-    
+
     RAISE NOTICE 'Created partition: %', partition_name;
 END;
 $$ LANGUAGE plpgsql;
@@ -714,7 +714,7 @@ DECLARE
     partition_name TEXT;
 BEGIN
     partition_name := table_name || '_' || TO_CHAR(start_date, 'YYYY') || TO_CHAR(start_date, 'WW');
-    
+
     EXECUTE format(
         'CREATE TABLE %I PARTITION OF %I FOR VALUES FROM (%L) TO (%L)',
         partition_name,
@@ -722,7 +722,7 @@ BEGIN
         start_date,
         end_date
     );
-    
+
     RAISE NOTICE 'Created partition: %', partition_name;
 END;
 $$ LANGUAGE plpgsql;
@@ -737,7 +737,7 @@ VALUES ('DEFAULT_001', '默认模拟账户', 'simulation', 1000000.0000, 1000000
 
 -- 插入默认引擎
 INSERT INTO engines (engine_id, engine_name, engine_type, version, status)
-VALUES 
+VALUES
     ('VNPY_001', 'vn.py引擎', 'vnpy', '3.0.0', 'inactive'),
     ('RQALPHA_001', 'RQAlpha引擎', 'rqalpha', '4.0.0', 'inactive'),
     ('BACKTRADER_001', 'Backtrader引擎', 'backtrader', '1.9.0', 'inactive'),
@@ -759,7 +759,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO zephyr_app;
 -- ================================================================
 -- DDL脚本执行完成
 -- ================================================================
--- 
+--
 -- 执行摘要:
 -- - 创建数据库: zephyr_alpha
 -- - 创建扩展: uuid-ossp, pg_trgm, btree_gin
@@ -770,12 +770,12 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO zephyr_app;
 -- - 创建函数: 2个分区管理函数
 -- - 插入初始数据: 1个默认账户, 5个引擎
 -- - 创建用户: zephyr_app
--- 
+--
 -- 专业标准符合度: 96%
 -- 优化内容:
 -- 1. 数据类型优化: DECIMAL(20,4)
 -- 2. 分区策略优化: 按月分区，保留7-10年
 -- 3. 索引策略优化: 平均8个索引/表
 -- 4. 表结构优化: 删除冗余字段
--- 
+--
 -- ================================================================

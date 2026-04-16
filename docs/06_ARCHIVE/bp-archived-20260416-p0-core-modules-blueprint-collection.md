@@ -179,7 +179,7 @@ class FactorBacktestStrategy(bt.Strategy):
 
     """因子回测策略"""
 
-    
+
 
     params = (
 
@@ -189,7 +189,7 @@ class FactorBacktestStrategy(bt.Strategy):
 
     )
 
-    
+
 
     def __init__(self):
 
@@ -197,13 +197,13 @@ class FactorBacktestStrategy(bt.Strategy):
 
         self.rebalance_counter = 0
 
-    
+
 
     def next(self):
 
         self.rebalance_counter += 1
 
-        
+
 
         if self.rebalance_counter >= self.params.rebalance_freq:
 
@@ -211,7 +211,7 @@ class FactorBacktestStrategy(bt.Strategy):
 
             self.rebalance_counter = 0
 
-    
+
 
     def rebalance(self):
 
@@ -219,19 +219,19 @@ class FactorBacktestStrategy(bt.Strategy):
 
         current_date = self.datas[0].datetime.date(0)
 
-        
+
 
         # 获取当前因子值
 
         factor_values = self.factor_data.loc[current_date]
 
-        
+
 
         # 排序并选择Top股票
 
         top_stocks = factor_values.nlargest(10)
 
-        
+
 
         # 调整持仓
 
@@ -251,7 +251,7 @@ class FactorBacktestEngine:
 
     """因子回测引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -259,9 +259,9 @@ class FactorBacktestEngine:
 
         self.cerebro = bt.Cerebro()
 
-    
 
-    def run_backtest(self, factor_data: pd.DataFrame, 
+
+    def run_backtest(self, factor_data: pd.DataFrame,
 
                     price_data: pd.DataFrame) -> Dict:
 
@@ -281,7 +281,7 @@ class FactorBacktestEngine:
 
             self.cerebro.adddata(data)
 
-        
+
 
         # 添加策略
 
@@ -293,7 +293,7 @@ class FactorBacktestEngine:
 
         )
 
-        
+
 
         # 添加分析器
 
@@ -303,19 +303,19 @@ class FactorBacktestEngine:
 
         self.cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
 
-        
+
 
         # 运行回测
 
         results = self.cerebro.run()
 
-        
+
 
         # 提取结果
 
         strategy = results[0]
 
-        
+
 
         backtest_results = {
 
@@ -327,7 +327,7 @@ class FactorBacktestEngine:
 
         }
 
-        
+
 
         return backtest_results
 
@@ -439,11 +439,11 @@ class SentimentDataSpider(scrapy.Spider):
 
     """舆情数据爬虫"""
 
-    
+
 
     name = "sentiment_spider"
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -451,7 +451,7 @@ class SentimentDataSpider(scrapy.Spider):
 
         self.sources = config.get("sources", [])
 
-    
+
 
     def parse(self, response):
 
@@ -465,7 +465,7 @@ class SentimentDataSpider(scrapy.Spider):
 
         dates = response.css('.news-date::text').extract()
 
-        
+
 
         for title, content, date in zip(titles, contents, dates):
 
@@ -473,7 +473,7 @@ class SentimentDataSpider(scrapy.Spider):
 
             sentiment = self._analyze_sentiment(title + " " + content)
 
-            
+
 
             yield {
 
@@ -491,7 +491,7 @@ class SentimentDataSpider(scrapy.Spider):
 
             }
 
-    
+
 
     def _analyze_sentiment(self, text: str) -> Dict:
 
@@ -501,7 +501,7 @@ class SentimentDataSpider(scrapy.Spider):
 
         score = s.sentiments
 
-        
+
 
         if score > 0.6:
 
@@ -515,7 +515,7 @@ class SentimentDataSpider(scrapy.Spider):
 
             label = "neutral"
 
-        
+
 
         return {
 
@@ -531,7 +531,7 @@ class SentimentDataManager:
 
     """舆情数据管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -541,7 +541,7 @@ class SentimentDataManager:
 
         self.db = self.mongo_client["sentiment_db"]
 
-    
+
 
     def store_sentiment_data(self, data: List[Dict]):
 
@@ -551,11 +551,11 @@ class SentimentDataManager:
 
         collection.insert_many(data)
 
-    
 
-    def get_sentiment_by_stock(self, stock_code: str, 
 
-                               start_date: str, 
+    def get_sentiment_by_stock(self, stock_code: str,
+
+                               start_date: str,
 
                                end_date: str) -> pd.DataFrame:
 
@@ -575,13 +575,13 @@ class SentimentDataManager:
 
         }
 
-        
+
 
         cursor = self.db["sentiment_data"].find(query)
 
         df = pd.DataFrame(list(cursor))
 
-        
+
 
         return df
 
@@ -705,7 +705,7 @@ class PredictionService:
 
     """预测服务"""
 
-    
+
 
     def __init__(self):
 
@@ -713,7 +713,7 @@ class PredictionService:
 
         self.runner = self.model.to_runner()
 
-    
+
 
     @bentoml.api(input=JSON(), output=JSON())
 
@@ -725,23 +725,23 @@ class PredictionService:
 
         features = self._preprocess(data)
 
-        
+
 
         # 模型预测
 
         prediction = await self.runner.predict.async_run(features)
 
-        
+
 
         # 后处理
 
         result = self._postprocess(prediction)
 
-        
+
 
         return result
 
-    
+
 
     def _preprocess(self, data: Dict) -> np.ndarray:
 
@@ -753,7 +753,7 @@ class PredictionService:
 
         return features
 
-    
+
 
     def _postprocess(self, prediction: np.ndarray) -> Dict:
 
@@ -929,7 +929,7 @@ class AutomatedFeatureEngineer:
 
     """自动化特征工程"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -939,7 +939,7 @@ class AutomatedFeatureEngineer:
 
         self.selector = DropConstantFeatures()
 
-    
+
 
     def generate_features(self, data: pd.DataFrame) -> pd.DataFrame:
 
@@ -959,7 +959,7 @@ class AutomatedFeatureEngineer:
 
         )
 
-        
+
 
         feature_matrix, feature_defs = ft.dfs(
 
@@ -973,25 +973,25 @@ class AutomatedFeatureEngineer:
 
         )
 
-        
+
 
         # 2. 特征编码
 
         feature_matrix_encoded = self.encoder.fit_transform(feature_matrix)
 
-        
+
 
         # 3. 特征选择
 
         feature_matrix_selected = self.selector.fit_transform(feature_matrix_encoded)
 
-        
+
 
         return feature_matrix_selected
 
-    
 
-    def select_features(self, features: pd.DataFrame, 
+
+    def select_features(self, features: pd.DataFrame,
 
                        target: pd.Series,
 
@@ -1003,13 +1003,13 @@ class AutomatedFeatureEngineer:
 
         from sklearn.ensemble import RandomForestClassifier
 
-        
+
 
         rf = RandomForestClassifier(n_estimators=100, random_state=42)
 
         rf.fit(features, target)
 
-        
+
 
         # 获取特征重要性
 
@@ -1021,13 +1021,13 @@ class AutomatedFeatureEngineer:
 
         }).sort_values('importance', ascending=False)
 
-        
+
 
         # 选择Top K特征
 
         selected_features = importance.head(top_k)['feature'].tolist()
 
-        
+
 
         return selected_features
 
@@ -1141,7 +1141,7 @@ class ModelTestSuite:
 
     """模型测试套件"""
 
-    
+
 
     def __init__(self, model, test_data: pd.DataFrame):
 
@@ -1151,7 +1151,7 @@ class ModelTestSuite:
 
         self.context = gx.get_context()
 
-    
+
 
     def test_model_prediction(self):
 
@@ -1163,13 +1163,13 @@ class ModelTestSuite:
 
         y_test = self.test_data['target']
 
-        
+
 
         # 模型预测
 
         predictions = self.model.predict(X_test)
 
-        
+
 
         # 验证预测结果
 
@@ -1177,7 +1177,7 @@ class ModelTestSuite:
 
         assert not np.any(np.isnan(predictions))
 
-        
+
 
         # 计算准确率
 
@@ -1185,7 +1185,7 @@ class ModelTestSuite:
 
         assert accuracy > 0.7, f"模型准确率 {accuracy} 低于阈值 0.7"
 
-    
+
 
     def test_model_performance(self):
 
@@ -1193,11 +1193,11 @@ class ModelTestSuite:
 
         import time
 
-        
+
 
         X_test = self.test_data.drop('target', axis=1)
 
-        
+
 
         # 测试推理时间
 
@@ -1207,13 +1207,13 @@ class ModelTestSuite:
 
         inference_time = time.time() - start_time
 
-        
+
 
         # 验证推理时间
 
         assert inference_time < 1.0, f"推理时间 {inference_time} 超过阈值 1.0秒"
 
-    
+
 
     def test_model_robustness(self):
 
@@ -1221,7 +1221,7 @@ class ModelTestSuite:
 
         X_test = self.test_data.drop('target', axis=1)
 
-        
+
 
         # 测试异常数据处理
 
@@ -1229,7 +1229,7 @@ class ModelTestSuite:
 
         X_test_with_nan.iloc[0, 0] = np.nan
 
-        
+
 
         try:
 
@@ -1241,7 +1241,7 @@ class ModelTestSuite:
 
             pytest.fail(f"模型处理异常数据失败: {e}")
 
-    
+
 
     def test_model_data_quality(self):
 
@@ -1269,7 +1269,7 @@ class ModelTestSuite:
 
         )
 
-        
+
 
         # 添加期望
 
@@ -1277,13 +1277,13 @@ class ModelTestSuite:
 
         validator.expect_column_values_to_be_between("feature_1", min_value=0, max_value=100)
 
-        
+
 
         # 验证
 
         results = validator.validate()
 
-        
+
 
         assert results.success, "数据质量验证失败"
 
@@ -1463,13 +1463,13 @@ class ModelObservability:
 
     """模型可观测性"""
 
-    
+
 
     def __init__(self, config: Dict):
 
         self.config = config
 
-        
+
 
         # 定义指标
 
@@ -1483,7 +1483,7 @@ class ModelObservability:
 
         )
 
-        
+
 
         self.prediction_latency = Histogram(
 
@@ -1495,7 +1495,7 @@ class ModelObservability:
 
         )
 
-        
+
 
         self.model_accuracy = Gauge(
 
@@ -1507,7 +1507,7 @@ class ModelObservability:
 
         )
 
-        
+
 
         self.prediction_drift = Gauge(
 
@@ -1519,13 +1519,13 @@ class ModelObservability:
 
         )
 
-        
+
 
         # 启动Prometheus服务器
 
         start_http_server(8000)
 
-    
+
 
     def record_prediction(self, model_name: str, model_version: str):
 
@@ -1539,7 +1539,7 @@ class ModelObservability:
 
         ).inc()
 
-    
+
 
     def record_latency(self, model_name: str, latency: float):
 
@@ -1551,7 +1551,7 @@ class ModelObservability:
 
         ).observe(latency)
 
-    
+
 
     def update_accuracy(self, model_name: str, model_version: str, accuracy: float):
 
@@ -1565,9 +1565,9 @@ class ModelObservability:
 
         ).set(accuracy)
 
-    
 
-    def detect_drift(self, predictions: np.ndarray, 
+
+    def detect_drift(self, predictions: np.ndarray,
 
                      baseline: np.ndarray) -> float:
 
@@ -1575,25 +1575,25 @@ class ModelObservability:
 
         from scipy.stats import ks_2samp
 
-        
+
 
         # Kolmogorov-Smirnov检验
 
         statistic, p_value = ks_2samp(predictions, baseline)
 
-        
+
 
         # 漂移得分
 
         drift_score = statistic
 
-        
+
 
         return drift_score
 
-    
 
-    def check_performance(self, model_name: str, 
+
+    def check_performance(self, model_name: str,
 
                          predictions: np.ndarray,
 
@@ -1605,13 +1605,13 @@ class ModelObservability:
 
         accuracy = (predictions == actuals).mean()
 
-        
+
 
         # 更新指标
 
         self.update_accuracy(model_name, "latest", accuracy)
 
-        
+
 
         # 检查性能下降
 
@@ -1619,7 +1619,7 @@ class ModelObservability:
 
             self._send_alert(model_name, accuracy)
 
-        
+
 
         return {
 
@@ -1629,7 +1629,7 @@ class ModelObservability:
 
         }
 
-    
+
 
     def _send_alert(self, model_name: str, accuracy: float):
 
@@ -1761,13 +1761,13 @@ class ModelLifecycleManager:
 
     """模型生命周期管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
         self.config = config
 
-        
+
 
         # 初始化MLflow
 
@@ -1775,7 +1775,7 @@ class ModelLifecycleManager:
 
         mlflow.set_experiment(config.get("experiment_name", "stock_prediction"))
 
-        
+
 
         # 初始化W&B
 
@@ -1787,9 +1787,9 @@ class ModelLifecycleManager:
 
         )
 
-    
 
-    def log_experiment(self, model, params: Dict, metrics: Dict, 
+
+    def log_experiment(self, model, params: Dict, metrics: Dict,
 
                       artifacts: Dict = None):
 
@@ -1801,19 +1801,19 @@ class ModelLifecycleManager:
 
             mlflow.log_params(params)
 
-            
+
 
             # 记录指标
 
             mlflow.log_metrics(metrics)
 
-            
+
 
             # 记录模型
 
             mlflow.sklearn.log_model(model, "model")
 
-            
+
 
             # 记录工件
 
@@ -1823,7 +1823,7 @@ class ModelLifecycleManager:
 
                     mlflow.log_artifact(path, name)
 
-            
+
 
             # W&B记录
 
@@ -1831,7 +1831,7 @@ class ModelLifecycleManager:
 
             wandb.log({"model": wandb.sklearn.plot_learning_curve(model)})
 
-    
+
 
     def register_model(self, model_name: str, model_version: str):
 
@@ -1847,7 +1847,7 @@ class ModelLifecycleManager:
 
         )
 
-        
+
 
         # 设置模型版本标签
 
@@ -1865,9 +1865,9 @@ class ModelLifecycleManager:
 
         )
 
-    
 
-    def deploy_model(self, model_name: str, model_version: str, 
+
+    def deploy_model(self, model_name: str, model_version: str,
 
                     environment: str = "staging"):
 
@@ -1879,7 +1879,7 @@ class ModelLifecycleManager:
 
         model = mlflow.sklearn.load_model(model_uri)
 
-        
+
 
         # 部署到环境
 
@@ -1891,7 +1891,7 @@ class ModelLifecycleManager:
 
             self._deploy_to_staging(model)
 
-    
+
 
     def rollback_model(self, model_name: str, target_version: str):
 
@@ -1909,7 +1909,7 @@ class ModelLifecycleManager:
 
         )
 
-        
+
 
         # 回滚到目标版本
 
@@ -1923,7 +1923,7 @@ class ModelLifecycleManager:
 
         )
 
-        
+
 
         # 记录回滚操作
 
@@ -1931,7 +1931,7 @@ class ModelLifecycleManager:
 
         mlflow.log_param("rollback_to", target_version)
 
-    
+
 
     def _deploy_to_production(self, model):
 
@@ -1941,7 +1941,7 @@ class ModelLifecycleManager:
 
         pass
 
-    
+
 
     def _deploy_to_staging(self, model):
 
@@ -2069,7 +2069,7 @@ class SmartOrderRouter:
 
     """智能订单路由"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2077,7 +2077,7 @@ class SmartOrderRouter:
 
         self.exchanges = self._initialize_exchanges()
 
-    
+
 
     def _initialize_exchanges(self) -> Dict:
 
@@ -2085,7 +2085,7 @@ class SmartOrderRouter:
 
         exchanges = {}
 
-        
+
 
         for exchange_name in self.config.get("exchanges", []):
 
@@ -2099,15 +2099,15 @@ class SmartOrderRouter:
 
             })
 
-        
+
 
         return exchanges
 
-    
 
-    def find_best_execution_path(self, symbol: str, 
 
-                                  side: str, 
+    def find_best_execution_path(self, symbol: str,
+
+                                  side: str,
 
                                   quantity: float) -> Dict:
 
@@ -2117,7 +2117,7 @@ class SmartOrderRouter:
 
         orderbooks = self._fetch_orderbooks(symbol)
 
-        
+
 
         # 计算执行成本
 
@@ -2127,7 +2127,7 @@ class SmartOrderRouter:
 
         )
 
-        
+
 
         # 优化订单拆分
 
@@ -2137,11 +2137,11 @@ class SmartOrderRouter:
 
         )
 
-        
+
 
         return optimal_split
 
-    
+
 
     def _fetch_orderbooks(self, symbol: str) -> Dict:
 
@@ -2149,7 +2149,7 @@ class SmartOrderRouter:
 
         orderbooks = {}
 
-        
+
 
         for exchange_name, exchange in self.exchanges.items():
 
@@ -2163,15 +2163,15 @@ class SmartOrderRouter:
 
                 print(f"获取 {exchange_name} 订单簿失败: {e}")
 
-        
+
 
         return orderbooks
 
-    
 
-    def _calculate_execution_costs(self, orderbooks: Dict, 
 
-                                   side: str, 
+    def _calculate_execution_costs(self, orderbooks: Dict,
+
+                                   side: str,
 
                                    quantity: float) -> Dict:
 
@@ -2179,7 +2179,7 @@ class SmartOrderRouter:
 
         costs = {}
 
-        
+
 
         for exchange_name, orderbook in orderbooks.items():
 
@@ -2195,15 +2195,15 @@ class SmartOrderRouter:
 
                 cost = self._calculate_sell_cost(bids, quantity)
 
-            
+
 
             costs[exchange_name] = cost
 
-        
+
 
         return costs
 
-    
+
 
     def _calculate_buy_cost(self, asks: List, quantity: float) -> float:
 
@@ -2213,7 +2213,7 @@ class SmartOrderRouter:
 
         remaining_quantity = quantity
 
-        
+
 
         for price, volume in asks:
 
@@ -2221,7 +2221,7 @@ class SmartOrderRouter:
 
                 break
 
-            
+
 
             filled_quantity = min(remaining_quantity, volume)
 
@@ -2229,11 +2229,11 @@ class SmartOrderRouter:
 
             remaining_quantity -= filled_quantity
 
-        
+
 
         return total_cost
 
-    
+
 
     def _calculate_sell_cost(self, bids: List, quantity: float) -> float:
 
@@ -2243,7 +2243,7 @@ class SmartOrderRouter:
 
         remaining_quantity = quantity
 
-        
+
 
         for price, volume in bids:
 
@@ -2251,7 +2251,7 @@ class SmartOrderRouter:
 
                 break
 
-            
+
 
             filled_quantity = min(remaining_quantity, volume)
 
@@ -2259,13 +2259,13 @@ class SmartOrderRouter:
 
             remaining_quantity -= filled_quantity
 
-        
+
 
         return total_revenue
 
-    
 
-    def _optimize_order_split(self, execution_costs: Dict, 
+
+    def _optimize_order_split(self, execution_costs: Dict,
 
                              quantity: float) -> Dict:
 
@@ -2275,7 +2275,7 @@ class SmartOrderRouter:
 
         n_exchanges = len(exchanges)
 
-        
+
 
         # 定义目标函数
 
@@ -2289,7 +2289,7 @@ class SmartOrderRouter:
 
             return total_cost
 
-        
+
 
         # 定义约束
 
@@ -2299,19 +2299,19 @@ class SmartOrderRouter:
 
         ]
 
-        
+
 
         # 定义边界
 
         bounds = [(0, quantity) for _ in range(n_exchanges)]
 
-        
+
 
         # 初始猜测
 
         x0 = [quantity / n_exchanges] * n_exchanges
 
-        
+
 
         # 优化
 
@@ -2329,7 +2329,7 @@ class SmartOrderRouter:
 
         )
 
-        
+
 
         # 构建结果
 
@@ -2341,19 +2341,19 @@ class SmartOrderRouter:
 
         }
 
-        
+
 
         for i, exchange in enumerate(exchanges):
 
             optimal_split["exchanges"][exchange] = result.x[i]
 
-        
+
 
         return optimal_split
 
-    
 
-    def execute_order(self, symbol: str, side: str, 
+
+    def execute_order(self, symbol: str, side: str,
 
                      quantity: float, split: Dict):
 
@@ -2361,7 +2361,7 @@ class SmartOrderRouter:
 
         results = []
 
-        
+
 
         for exchange_name, exchange_quantity in split["exchanges"].items():
 
@@ -2369,7 +2369,7 @@ class SmartOrderRouter:
 
                 exchange = self.exchanges[exchange_name]
 
-                
+
 
                 try:
 
@@ -2385,7 +2385,7 @@ class SmartOrderRouter:
 
                     )
 
-                    
+
 
                     results.append({
 
@@ -2399,7 +2399,7 @@ class SmartOrderRouter:
 
                     })
 
-                    
+
 
                 except Exception as e:
 
@@ -2415,7 +2415,7 @@ class SmartOrderRouter:
 
                     })
 
-        
+
 
         return results
 
@@ -2529,7 +2529,7 @@ class DynamicRiskBudget:
 
     """动态风险预算"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2537,9 +2537,9 @@ class DynamicRiskBudget:
 
         self.risk_free_rate = config.get("risk_free_rate", 0.02)
 
-    
 
-    def allocate_risk_budget(self, returns: pd.DataFrame, 
+
+    def allocate_risk_budget(self, returns: pd.DataFrame,
 
                             total_risk_budget: float) -> Dict:
 
@@ -2551,27 +2551,27 @@ class DynamicRiskBudget:
 
         S = risk_models.sample_cov(returns)
 
-        
+
 
         # 构建有效前沿
 
         ef = EfficientFrontier(mu, S)
 
-        
+
 
         # 设置风险预算约束
 
-        ef.add_objective(self._risk_budget_objective, 
+        ef.add_objective(self._risk_budget_objective,
 
                         total_risk_budget=total_risk_budget)
 
-        
+
 
         # 优化
 
         weights = ef.max_sharpe(risk_free_rate=self.risk_free_rate)
 
-        
+
 
         # 计算风险贡献
 
@@ -2581,7 +2581,7 @@ class DynamicRiskBudget:
 
         )
 
-        
+
 
         return {
 
@@ -2589,15 +2589,15 @@ class DynamicRiskBudget:
 
             "risk_contributions": risk_contributions,
 
-            "total_risk": np.sqrt(np.dot(list(weights.values()), 
+            "total_risk": np.sqrt(np.dot(list(weights.values()),
 
                                         np.dot(S, list(weights.values()))))
 
         }
 
-    
 
-    def _risk_budget_objective(self, weights: np.ndarray, 
+
+    def _risk_budget_objective(self, weights: np.ndarray,
 
                                total_risk_budget: float):
 
@@ -2609,7 +2609,7 @@ class DynamicRiskBudget:
 
         risk_contributions = weights * np.dot(self.cov_matrix, weights) / portfolio_risk
 
-        
+
 
         # 目标: 风险贡献与预算的偏差最小化
 
@@ -2617,9 +2617,9 @@ class DynamicRiskBudget:
 
         return np.sum((risk_contributions - target_risk) ** 2)
 
-    
 
-    def _calculate_risk_contributions(self, weights: Dict, 
+
+    def _calculate_risk_contributions(self, weights: Dict,
 
                                      cov_matrix: pd.DataFrame) -> Dict:
 
@@ -2627,11 +2627,11 @@ class DynamicRiskBudget:
 
         weights_array = np.array(list(weights.values()))
 
-        portfolio_risk = np.sqrt(np.dot(weights_array.T, 
+        portfolio_risk = np.sqrt(np.dot(weights_array.T,
 
                                        np.dot(cov_matrix, weights_array)))
 
-        
+
 
         risk_contributions = {}
 
@@ -2643,13 +2643,13 @@ class DynamicRiskBudget:
 
             risk_contributions[asset] = risk_contribution
 
-        
+
 
         return risk_contributions
 
-    
 
-    def adjust_risk_budget(self, current_weights: Dict, 
+
+    def adjust_risk_budget(self, current_weights: Dict,
 
                           market_conditions: Dict) -> Dict:
 
@@ -2661,7 +2661,7 @@ class DynamicRiskBudget:
 
         trend = market_conditions.get("trend", 0)
 
-        
+
 
         # 高波动降低风险预算
 
@@ -2677,7 +2677,7 @@ class DynamicRiskBudget:
 
             risk_multiplier = 1.0
 
-        
+
 
         # 上涨趋势增加风险预算
 
@@ -2689,7 +2689,7 @@ class DynamicRiskBudget:
 
             risk_multiplier *= 0.9
 
-        
+
 
         # 调整权重
 
@@ -2701,7 +2701,7 @@ class DynamicRiskBudget:
 
         }
 
-        
+
 
         # 归一化
 
@@ -2715,7 +2715,7 @@ class DynamicRiskBudget:
 
         }
 
-        
+
 
         return adjusted_weights
 
@@ -2827,7 +2827,7 @@ class AIReportGenerator:
 
     """AI报告生成器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2843,7 +2843,7 @@ class AIReportGenerator:
 
         )
 
-    
+
 
     def generate_performance_report(self, performance_data: Dict) -> str:
 
@@ -2895,15 +2895,15 @@ class AIReportGenerator:
 
 """
 
-        
+
 
         prompt = ChatPromptTemplate.from_template(template)
 
-        
+
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
 
-        
+
 
         report = chain.run(
 
@@ -2919,11 +2919,11 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         return report
 
-    
+
 
     def generate_risk_report(self, risk_data: Dict) -> str:
 
@@ -2973,13 +2973,13 @@ class AIReportGenerator:
 
 """
 
-        
+
 
         prompt = ChatPromptTemplate.from_template(template)
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
 
-        
+
 
         report = chain.run(
 
@@ -2995,11 +2995,11 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         return report
 
-    
+
 
     def generate_market_report(self, market_data: Dict) -> str:
 
@@ -3049,13 +3049,13 @@ class AIReportGenerator:
 
 """
 
-        
+
 
         prompt = ChatPromptTemplate.from_template(template)
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
 
-        
+
 
         report = chain.run(
 
@@ -3071,7 +3071,7 @@ class AIReportGenerator:
 
         )
 
-        
+
 
         return report
 
@@ -3189,7 +3189,7 @@ class AIDecisionExplainer:
 
     """AI决策解释器"""
 
-    
+
 
     def __init__(self, model, config: Dict):
 
@@ -3197,21 +3197,21 @@ class AIDecisionExplainer:
 
         self.config = config
 
-        
+
 
         # 初始化SHAP解释器
 
         self.shap_explainer = shap.TreeExplainer(model)
 
-        
+
 
         # 初始化LIME解释器
 
         self.lime_explainer = None
 
-    
 
-    def explain_prediction(self, instance: pd.DataFrame, 
+
+    def explain_prediction(self, instance: pd.DataFrame,
 
                           method: str = "shap") -> Dict:
 
@@ -3229,7 +3229,7 @@ class AIDecisionExplainer:
 
             return {"error": "不支持的解释方法"}
 
-    
+
 
     def _explain_with_shap(self, instance: pd.DataFrame) -> Dict:
 
@@ -3239,7 +3239,7 @@ class AIDecisionExplainer:
 
         shap_values = self.shap_explainer.shap_values(instance)
 
-        
+
 
         # 获取特征重要性
 
@@ -3251,7 +3251,7 @@ class AIDecisionExplainer:
 
         }).sort_values('shap_value', key=abs, ascending=False)
 
-        
+
 
         # 生成解释
 
@@ -3269,11 +3269,11 @@ class AIDecisionExplainer:
 
         }
 
-        
+
 
         return explanation
 
-    
+
 
     def _explain_with_lime(self, instance: pd.DataFrame) -> Dict:
 
@@ -3293,7 +3293,7 @@ class AIDecisionExplainer:
 
             )
 
-        
+
 
         # 生成解释
 
@@ -3307,13 +3307,13 @@ class AIDecisionExplainer:
 
         )
 
-        
+
 
         # 提取特征重要性
 
         feature_importance = exp.as_list()
 
-        
+
 
         explanation = {
 
@@ -3327,13 +3327,13 @@ class AIDecisionExplainer:
 
         }
 
-        
+
 
         return explanation
 
-    
 
-    def visualize_explanation(self, explanation: Dict, 
+
+    def visualize_explanation(self, explanation: Dict,
 
                              save_path: str = None):
 
@@ -3347,7 +3347,7 @@ class AIDecisionExplainer:
 
             self._visualize_lime(explanation, save_path)
 
-    
+
 
     def _visualize_shap(self, explanation: Dict, save_path: str):
 
@@ -3357,7 +3357,7 @@ class AIDecisionExplainer:
 
         shap_values = [item['shap_value'] for item in explanation['feature_importance'][:10]]
 
-        
+
 
         plt.figure(figsize=(10, 6))
 
@@ -3369,7 +3369,7 @@ class AIDecisionExplainer:
 
         plt.tight_layout()
 
-        
+
 
         if save_path:
 
@@ -3379,7 +3379,7 @@ class AIDecisionExplainer:
 
             plt.show()
 
-    
+
 
     def _visualize_lime(self, explanation: Dict, save_path: str):
 
@@ -3389,7 +3389,7 @@ class AIDecisionExplainer:
 
         weights = [item[1] for item in explanation['feature_importance']]
 
-        
+
 
         plt.figure(figsize=(10, 6))
 
@@ -3401,7 +3401,7 @@ class AIDecisionExplainer:
 
         plt.tight_layout()
 
-        
+
 
         if save_path:
 
@@ -3411,7 +3411,7 @@ class AIDecisionExplainer:
 
             plt.show()
 
-    
+
 
     def generate_explanation_report(self, instance: pd.DataFrame) -> str:
 
@@ -3421,13 +3421,13 @@ class AIDecisionExplainer:
 
         shap_exp = self._explain_with_shap(instance)
 
-        
+
 
         # LIME解释
 
         lime_exp = self._explain_with_lime(instance)
 
-        
+
 
         # 生成报告
 
@@ -3451,23 +3451,23 @@ Top 5 重要特征:
 
 """
 
-        
+
 
         for i, item in enumerate(shap_exp['feature_importance'][:5], 1):
 
             report += f"\n{i}. {item['feature']}: {item['shap_value']:.4f}"
 
-        
+
 
         report += "\n\n## LIME解释\nTop 5 重要特征:\n"
 
-        
+
 
         for i, item in enumerate(lime_exp['feature_importance'][:5], 1):
 
             report += f"\n{i}. {item[0]}: {item[1]:.4f}"
 
-        
+
 
         return report
 
@@ -3575,7 +3575,7 @@ class ResearchProjectManager:
 
     """研究项目管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -3589,7 +3589,7 @@ class ResearchProjectManager:
 
         )
 
-    
+
 
     def create_research_project(self, project_data: Dict) -> str:
 
@@ -3607,7 +3607,7 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         # 创建研究任务
 
@@ -3623,11 +3623,11 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         return task.key
 
-    
+
 
     def track_experiment(self, experiment_data: Dict) -> str:
 
@@ -3649,17 +3649,17 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         # 添加实验标签
 
         experiment.update(labels=['experiment'])
 
-        
+
 
         return experiment.key
 
-    
+
 
     def record_result(self, result_data: Dict) -> str:
 
@@ -3681,13 +3681,13 @@ class ResearchProjectManager:
 
         )
 
-        
+
 
         # 添加成果标签
 
         result.update(labels=['result'])
 
-        
+
 
         # 添加附件
 
@@ -3703,11 +3703,11 @@ class ResearchProjectManager:
 
                 )
 
-        
+
 
         return result.key
 
-    
+
 
     def generate_project_report(self, project_key: str) -> str:
 
@@ -3717,7 +3717,7 @@ class ResearchProjectManager:
 
         tasks = self.jira.search_issues(f'project={project_key}')
 
-        
+
 
         # 统计任务状态
 
@@ -3729,7 +3729,7 @@ class ResearchProjectManager:
 
             status_counts[status] = status_counts.get(status, 0) + 1
 
-        
+
 
         # 生成报告
 
@@ -3751,27 +3751,27 @@ class ResearchProjectManager:
 
 """
 
-        
+
 
         for status, count in status_counts.items():
 
             report += f"\n- {status}: {count}个"
 
-        
+
 
         report += f"\n\n## 任务列表\n"
 
-        
+
 
         for task in tasks:
 
             report += f"\n- [{task.key}] {task.fields.summary} - {task.fields.status.name}"
 
-        
+
 
         return report
 
-    
+
 
     def get_project_metrics(self, project_key: str) -> Dict:
 
@@ -3779,7 +3779,7 @@ class ResearchProjectManager:
 
         tasks = self.jira.search_issues(f'project={project_key}')
 
-        
+
 
         metrics = {
 
@@ -3795,7 +3795,7 @@ class ResearchProjectManager:
 
         }
 
-        
+
 
         for task in tasks:
 
@@ -3813,13 +3813,13 @@ class ResearchProjectManager:
 
                 metrics["todo_tasks"] += 1
 
-        
+
 
         if metrics["total_tasks"] > 0:
 
             metrics["completion_rate"] = metrics["completed_tasks"] / metrics["total_tasks"]
 
-        
+
 
         return metrics
 
@@ -3958,4 +3958,3 @@ python src/research_project/manager.py
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
-

@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 流动性管理系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：流动性管理系统蓝图设计相关内容
 
@@ -68,7 +68,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Liquidity Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Liquidity Management蓝图设计相关内容
 
@@ -134,11 +134,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 2个月  
+> **实施周期**: 2个月
 
 > **目标**: 构建专业级流动性管理体系，确保交易执行效率和风险控制
 
@@ -462,7 +462,7 @@ class LiquidityAssessmentEngine:
 
     """流动性评估引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -478,7 +478,7 @@ class LiquidityAssessmentEngine:
 
         }
 
-        
+
 
         self.thresholds = {
 
@@ -492,9 +492,9 @@ class LiquidityAssessmentEngine:
 
         }
 
-    
 
-    def calculate_liquidity_score(self, 
+
+    def calculate_liquidity_score(self,
 
                                   security_code: str,
 
@@ -502,7 +502,7 @@ class LiquidityAssessmentEngine:
 
         """计算流动性评分"""
 
-        
+
 
         turnover_score = self._calculate_turnover_score(
 
@@ -512,7 +512,7 @@ class LiquidityAssessmentEngine:
 
         )
 
-        
+
 
         spread_score = self._calculate_spread_score(
 
@@ -522,7 +522,7 @@ class LiquidityAssessmentEngine:
 
         )
 
-        
+
 
         depth_score = self._calculate_depth_score(
 
@@ -532,7 +532,7 @@ class LiquidityAssessmentEngine:
 
         )
 
-        
+
 
         impact_score = self._calculate_impact_score(
 
@@ -542,7 +542,7 @@ class LiquidityAssessmentEngine:
 
         )
 
-        
+
 
         total_score = (
 
@@ -556,11 +556,11 @@ class LiquidityAssessmentEngine:
 
         )
 
-        
+
 
         level = self._determine_liquidity_level(total_score)
 
-        
+
 
         return LiquidityScore(
 
@@ -582,9 +582,9 @@ class LiquidityAssessmentEngine:
 
         )
 
-    
 
-    def _calculate_turnover_score(self, 
+
+    def _calculate_turnover_score(self,
 
                                  turnover_rate: float,
 
@@ -596,11 +596,11 @@ class LiquidityAssessmentEngine:
 
             return 0.0
 
-        
+
 
         ratio = turnover_rate / avg_turnover_rate
 
-        
+
 
         if ratio >= 2.0:
 
@@ -622,9 +622,9 @@ class LiquidityAssessmentEngine:
 
             return 20.0
 
-    
 
-    def _calculate_spread_score(self, 
+
+    def _calculate_spread_score(self,
 
                                spread: float,
 
@@ -636,11 +636,11 @@ class LiquidityAssessmentEngine:
 
             return 100.0
 
-        
+
 
         ratio = spread / avg_spread
 
-        
+
 
         if ratio <= 0.5:
 
@@ -662,9 +662,9 @@ class LiquidityAssessmentEngine:
 
             return 20.0
 
-    
 
-    def _calculate_depth_score(self, 
+
+    def _calculate_depth_score(self,
 
                               depth: float,
 
@@ -676,11 +676,11 @@ class LiquidityAssessmentEngine:
 
             return 0.0
 
-        
+
 
         ratio = depth / avg_depth
 
-        
+
 
         if ratio >= 2.0:
 
@@ -702,9 +702,9 @@ class LiquidityAssessmentEngine:
 
             return 20.0
 
-    
 
-    def _calculate_impact_score(self, 
+
+    def _calculate_impact_score(self,
 
                                impact: float,
 
@@ -716,11 +716,11 @@ class LiquidityAssessmentEngine:
 
             return 100.0
 
-        
+
 
         ratio = impact / avg_impact
 
-        
+
 
         if ratio <= 0.5:
 
@@ -742,7 +742,7 @@ class LiquidityAssessmentEngine:
 
             return 20.0
 
-    
+
 
     def _determine_liquidity_level(self, score: float) -> LiquidityLevel:
 
@@ -768,9 +768,9 @@ class LiquidityAssessmentEngine:
 
             return LiquidityLevel.LOW
 
-    
 
-    def generate_liquidity_warning(self, 
+
+    def generate_liquidity_warning(self,
 
                                   score: LiquidityScore,
 
@@ -780,7 +780,7 @@ class LiquidityAssessmentEngine:
 
         warnings = []
 
-        
+
 
         if score.level == LiquidityLevel.LOW:
 
@@ -808,7 +808,7 @@ class LiquidityAssessmentEngine:
 
                 })
 
-        
+
 
         if score.spread_score < 40:
 
@@ -822,7 +822,7 @@ class LiquidityAssessmentEngine:
 
             })
 
-        
+
 
         return {
 
@@ -916,7 +916,7 @@ class LiquidityConstraintSystem:
 
     """流动性约束系统"""
 
-    
+
 
     def __init__(self):
 
@@ -926,9 +926,9 @@ class LiquidityConstraintSystem:
 
         self.min_liquidity_threshold = 40    # 最小流动性阈值
 
-        
 
-    def calculate_constraints(self, 
+
+    def calculate_constraints(self,
 
                              security_code: str,
 
@@ -942,7 +942,7 @@ class LiquidityConstraintSystem:
 
         """计算流动性约束"""
 
-        
+
 
         max_position_ratio = self._calculate_max_position_ratio(
 
@@ -952,7 +952,7 @@ class LiquidityConstraintSystem:
 
         )
 
-        
+
 
         max_daily_volume = self._calculate_max_daily_volume(
 
@@ -962,7 +962,7 @@ class LiquidityConstraintSystem:
 
         )
 
-        
+
 
         max_participation_rate = self._calculate_max_participation_rate(
 
@@ -970,7 +970,7 @@ class LiquidityConstraintSystem:
 
         )
 
-        
+
 
         max_cost_ratio = self._calculate_max_cost_ratio(
 
@@ -978,7 +978,7 @@ class LiquidityConstraintSystem:
 
         )
 
-        
+
 
         min_liquidity_score = self._calculate_min_liquidity_score(
 
@@ -986,7 +986,7 @@ class LiquidityConstraintSystem:
 
         )
 
-        
+
 
         return LiquidityConstraint(
 
@@ -1006,9 +1006,9 @@ class LiquidityConstraintSystem:
 
         )
 
-    
 
-    def _calculate_max_position_ratio(self, 
+
+    def _calculate_max_position_ratio(self,
 
                                      liquidity_score: LiquidityScore,
 
@@ -1030,11 +1030,11 @@ class LiquidityConstraintSystem:
 
         }
 
-        
+
 
         base_ratio = base_ratios.get(liquidity_score.level, 0.05)
 
-        
+
 
         if portfolio_value > 1e8:  # 大资金
 
@@ -1044,9 +1044,9 @@ class LiquidityConstraintSystem:
 
             return base_ratio
 
-    
 
-    def _calculate_max_daily_volume(self, 
+
+    def _calculate_max_daily_volume(self,
 
                                    avg_daily_volume: float,
 
@@ -1068,17 +1068,17 @@ class LiquidityConstraintSystem:
 
         }
 
-        
+
 
         rate = participation_rates.get(liquidity_score.level, 0.05)
 
-        
+
 
         return int(avg_daily_volume * rate)
 
-    
 
-    def _calculate_max_participation_rate(self, 
+
+    def _calculate_max_participation_rate(self,
 
                                          liquidity_score: LiquidityScore) -> float:
 
@@ -1098,11 +1098,11 @@ class LiquidityConstraintSystem:
 
         }
 
-        
+
 
         return rates.get(liquidity_score.level, 0.05)
 
-    
+
 
     def _calculate_max_cost_ratio(self, target_return: float) -> float:
 
@@ -1110,9 +1110,9 @@ class LiquidityConstraintSystem:
 
         return abs(target_return) * self.cost_tolerance_ratio
 
-    
 
-    def _calculate_min_liquidity_score(self, 
+
+    def _calculate_min_liquidity_score(self,
 
                                       liquidity_score: LiquidityScore) -> float:
 
@@ -1120,9 +1120,9 @@ class LiquidityConstraintSystem:
 
         return max(liquidity_score.total_score * 0.8, self.min_liquidity_threshold)
 
-    
 
-    def check_constraint_violation(self, 
+
+    def check_constraint_violation(self,
 
                                   constraint: LiquidityConstraint,
 
@@ -1134,7 +1134,7 @@ class LiquidityConstraintSystem:
 
         violations = []
 
-        
+
 
         if current_position > constraint.max_position_ratio:
 
@@ -1148,7 +1148,7 @@ class LiquidityConstraintSystem:
 
             })
 
-        
+
 
         if planned_trade > constraint.max_daily_volume:
 
@@ -1162,7 +1162,7 @@ class LiquidityConstraintSystem:
 
             })
 
-        
+
 
         return {
 
@@ -1268,13 +1268,13 @@ class LiquidityStressTestEngine:
 
     """流动性压力测试引擎"""
 
-    
+
 
     def __init__(self):
 
         self.scenarios = self._define_scenarios()
 
-        
+
 
     def _define_scenarios(self) -> List[StressTestScenario]:
 
@@ -1340,9 +1340,9 @@ class LiquidityStressTestEngine:
 
         ]
 
-    
 
-    def run_stress_test(self, 
+
+    def run_stress_test(self,
 
                        portfolio: Dict,
 
@@ -1352,7 +1352,7 @@ class LiquidityStressTestEngine:
 
         results = []
 
-        
+
 
         for scenario in self.scenarios:
 
@@ -1368,13 +1368,13 @@ class LiquidityStressTestEngine:
 
             results.append(result)
 
-        
+
 
         return results
 
-    
 
-    def _run_single_scenario(self, 
+
+    def _run_single_scenario(self,
 
                             scenario: StressTestScenario,
 
@@ -1384,7 +1384,7 @@ class LiquidityStressTestEngine:
 
         """运行单个场景"""
 
-        
+
 
         portfolio_loss = 0.0
 
@@ -1392,25 +1392,25 @@ class LiquidityStressTestEngine:
 
         total_time = 0.0
 
-        
+
 
         for security_code, position in portfolio.items():
 
             position_value = position['value']
 
-            
+
 
             security_loss = position_value * scenario.price_shock
 
             portfolio_loss += security_loss
 
-            
+
 
             if security_code in liquidity_scores:
 
                 score = liquidity_scores[security_code]
 
-                
+
 
                 cost = self._estimate_liquidation_cost(
 
@@ -1424,7 +1424,7 @@ class LiquidityStressTestEngine:
 
                 liquidation_cost += cost
 
-                
+
 
                 time = self._estimate_liquidation_time(
 
@@ -1438,7 +1438,7 @@ class LiquidityStressTestEngine:
 
                 total_time = max(total_time, time)
 
-        
+
 
         liquidity_score = self._calculate_scenario_liquidity_score(
 
@@ -1450,7 +1450,7 @@ class LiquidityStressTestEngine:
 
         )
 
-        
+
 
         risk_level = self._determine_risk_level(
 
@@ -1462,7 +1462,7 @@ class LiquidityStressTestEngine:
 
         )
 
-        
+
 
         return StressTestResult(
 
@@ -1482,9 +1482,9 @@ class LiquidityStressTestEngine:
 
         )
 
-    
 
-    def _estimate_liquidation_cost(self, 
+
+    def _estimate_liquidation_cost(self,
 
                                   position_value: float,
 
@@ -1496,25 +1496,25 @@ class LiquidityStressTestEngine:
 
         base_cost_ratio = 0.01  # 基础成本1%
 
-        
+
 
         liquidity_adjustment = (100 - liquidity_score.total_score) / 100
 
-        
+
 
         scenario_adjustment = scenario.spread_increase / 10
 
-        
+
 
         cost_ratio = base_cost_ratio * (1 + liquidity_adjustment) * scenario_adjustment
 
-        
+
 
         return position_value * cost_ratio
 
-    
 
-    def _estimate_liquidation_time(self, 
+
+    def _estimate_liquidation_time(self,
 
                                   position: Dict,
 
@@ -1528,11 +1528,11 @@ class LiquidityStressTestEngine:
 
         avg_daily_volume = position.get('avg_daily_volume', 1e6)
 
-        
+
 
         adjusted_volume = avg_daily_volume * (1 - scenario.volume_decline)
 
-        
+
 
         participation_rates = {
 
@@ -1548,15 +1548,15 @@ class LiquidityStressTestEngine:
 
         }
 
-        
+
 
         rate = participation_rates.get(liquidity_score.level, 0.05)
 
-        
+
 
         daily_liquidation = adjusted_volume * rate
 
-        
+
 
         if daily_liquidation > 0:
 
@@ -1566,13 +1566,13 @@ class LiquidityStressTestEngine:
 
             days = 999  # 无法清算
 
-        
+
 
         return min(days, 30)  # 最多30天
 
-    
 
-    def _calculate_scenario_liquidity_score(self, 
+
+    def _calculate_scenario_liquidity_score(self,
 
                                            portfolio_loss: float,
 
@@ -1588,13 +1588,13 @@ class LiquidityStressTestEngine:
 
         time_score = max(0, 100 - time_to_liquidate * 3)
 
-        
+
 
         return (loss_score + cost_score + time_score) / 3
 
-    
 
-    def _determine_risk_level(self, 
+
+    def _determine_risk_level(self,
 
                              portfolio_loss: float,
 
@@ -1694,15 +1694,15 @@ class LiquidityBudgetAllocationSystem:
 
     """流动性预算分配系统"""
 
-    
+
 
     def __init__(self):
 
         self.liquidity_reserve_ratio = 0.10  # 流动性储备比例10%
 
-        
 
-    def allocate_budget(self, 
+
+    def allocate_budget(self,
 
                        portfolio_value: float,
 
@@ -1712,17 +1712,17 @@ class LiquidityBudgetAllocationSystem:
 
         """分配流动性预算"""
 
-        
+
 
         total_budget = portfolio_value * self.liquidity_reserve_ratio
 
-        
+
 
         budgets = []
 
         total_weight = 0.0
 
-        
+
 
         for strategy in strategies:
 
@@ -1736,7 +1736,7 @@ class LiquidityBudgetAllocationSystem:
 
             total_weight += strategy['weight'] * liquidity_factor
 
-        
+
 
         for strategy in strategies:
 
@@ -1748,7 +1748,7 @@ class LiquidityBudgetAllocationSystem:
 
             )
 
-            
+
 
             allocated_budget = (
 
@@ -1756,7 +1756,7 @@ class LiquidityBudgetAllocationSystem:
 
             )
 
-            
+
 
             budget = LiquidityBudget(
 
@@ -1776,13 +1776,13 @@ class LiquidityBudgetAllocationSystem:
 
             budgets.append(budget)
 
-        
+
 
         return budgets
 
-    
 
-    def _calculate_strategy_liquidity_factor(self, 
+
+    def _calculate_strategy_liquidity_factor(self,
 
                                             strategy: Dict,
 
@@ -1792,19 +1792,19 @@ class LiquidityBudgetAllocationSystem:
 
         positions = strategy.get('positions', {})
 
-        
+
 
         if not positions:
 
             return 1.0
 
-        
+
 
         total_score = 0.0
 
         total_weight = 0.0
 
-        
+
 
         for security_code, weight in positions.items():
 
@@ -1816,7 +1816,7 @@ class LiquidityBudgetAllocationSystem:
 
                 total_weight += weight
 
-        
+
 
         if total_weight > 0:
 
@@ -1826,13 +1826,13 @@ class LiquidityBudgetAllocationSystem:
 
             avg_score = 50.0
 
-        
+
 
         return avg_score / 100.0
 
-    
 
-    def optimize_execution(self, 
+
+    def optimize_execution(self,
 
                           trade_request: Dict,
 
@@ -1844,7 +1844,7 @@ class LiquidityBudgetAllocationSystem:
 
         trade_value = trade_request['value']
 
-        
+
 
         if trade_value > budget.remaining_budget:
 
@@ -1860,7 +1860,7 @@ class LiquidityBudgetAllocationSystem:
 
             }
 
-        
+
 
         participation_rates = {
 
@@ -1876,11 +1876,11 @@ class LiquidityBudgetAllocationSystem:
 
         }
 
-        
+
 
         rates = participation_rates.get(liquidity_score.level, [0.01, 0.03, 0.05, 0.08])
 
-        
+
 
         execution_plans = []
 
@@ -1890,11 +1890,11 @@ class LiquidityBudgetAllocationSystem:
 
             days = np.ceil(trade_value / daily_volume)
 
-            
+
 
             cost = self._estimate_execution_cost(trade_value, rate, liquidity_score)
 
-            
+
 
             execution_plans.append({
 
@@ -1910,11 +1910,11 @@ class LiquidityBudgetAllocationSystem:
 
             })
 
-        
+
 
         optimal_plan = min(execution_plans, key=lambda x: x['estimated_cost'])
 
-        
+
 
         return {
 
@@ -1928,9 +1928,9 @@ class LiquidityBudgetAllocationSystem:
 
         }
 
-    
 
-    def _estimate_execution_cost(self, 
+
+    def _estimate_execution_cost(self,
 
                                 trade_value: float,
 
@@ -1942,19 +1942,19 @@ class LiquidityBudgetAllocationSystem:
 
         base_cost = 0.001  # 基础成本0.1%
 
-        
+
 
         participation_cost = participation_rate * 0.01
 
-        
+
 
         liquidity_adjustment = (100 - liquidity_score.total_score) / 1000
 
-        
+
 
         total_cost_ratio = base_cost + participation_cost + liquidity_adjustment
 
-        
+
 
         return trade_value * total_cost_ratio
 
@@ -2018,9 +2018,9 @@ class LiquidityManagementInterface:
 
     """流动性管理接口"""
 
-    
 
-    def assess_liquidity(self, 
+
+    def assess_liquidity(self,
 
                         portfolio: Dict,
 
@@ -2030,9 +2030,9 @@ class LiquidityManagementInterface:
 
         pass
 
-    
 
-    def generate_constraints(self, 
+
+    def generate_constraints(self,
 
                             liquidity_scores: Dict[str, LiquidityScore],
 
@@ -2042,9 +2042,9 @@ class LiquidityManagementInterface:
 
         pass
 
-    
 
-    def run_stress_test(self, 
+
+    def run_stress_test(self,
 
                        portfolio: Dict,
 
@@ -2054,9 +2054,9 @@ class LiquidityManagementInterface:
 
         pass
 
-    
 
-    def allocate_budget(self, 
+
+    def allocate_budget(self,
 
                        portfolio_value: float,
 
@@ -2244,15 +2244,15 @@ class LimitUpDownLiquidityManager:
 
     """涨跌停板流动性管理"""
 
-    
+
 
     def __init__(self):
 
         self.limit_threshold = 0.10  # 涨跌停阈值10%
 
-        
 
-    def check_limit_risk(self, 
+
+    def check_limit_risk(self,
 
                         security_code: str,
 
@@ -2266,7 +2266,7 @@ class LimitUpDownLiquidityManager:
 
         price_change = (current_price - prev_close) / prev_close
 
-        
+
 
         if abs(price_change) >= self.limit_threshold * 0.95:
 
@@ -2326,15 +2326,15 @@ class SuspendedStockLiquidityManager:
 
     """停牌股票流动性管理"""
 
-    
+
 
     def __init__(self):
 
         self.suspended_stocks = {}
 
-        
 
-    def add_suspended_stock(self, 
+
+    def add_suspended_stock(self,
 
                            security_code: str,
 
@@ -2354,7 +2354,7 @@ class SuspendedStockLiquidityManager:
 
         }
 
-    
+
 
     def update_suspend_days(self, current_date: datetime):
 
@@ -2364,7 +2364,7 @@ class SuspendedStockLiquidityManager:
 
             info['suspend_days'] = (current_date - info['suspend_date']).days
 
-    
+
 
     def assess_liquidity_risk(self) -> Dict:
 
@@ -2376,7 +2376,7 @@ class SuspendedStockLiquidityManager:
 
         )
 
-        
+
 
         long_suspended = [
 
@@ -2386,7 +2386,7 @@ class SuspendedStockLiquidityManager:
 
         ]
 
-        
+
 
         return {
 
@@ -2538,7 +2538,7 @@ class SuspendedStockLiquidityManager:
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
 **下一步**: 更新Layer 11主蓝图文档
 
@@ -2607,4 +2607,3 @@ class SuspendedStockLiquidityManager:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

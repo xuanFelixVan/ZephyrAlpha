@@ -23,7 +23,7 @@ layer: layer_00
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据源健康监控、健康检查、故障检测
 
@@ -265,7 +265,7 @@ class DataSourceHealthChecker:
 
     """数据源健康检查器"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -277,7 +277,7 @@ class DataSourceHealthChecker:
 
         self.check_interval = config.get("check_interval", 30)
 
-        
+
 
         self.health_status: Dict[str, HealthCheckResult] = {}
 
@@ -285,7 +285,7 @@ class DataSourceHealthChecker:
 
         self.failure_threshold = config.get("failure_threshold", 3)
 
-    
+
 
     async def check_http_endpoint(
 
@@ -303,7 +303,7 @@ class DataSourceHealthChecker:
 
         start_time = time.time()
 
-        
+
 
         try:
 
@@ -319,7 +319,7 @@ class DataSourceHealthChecker:
 
                     response_time = (time.time() - start_time) * 1000
 
-                    
+
 
                     if response.status != expected_status:
 
@@ -339,7 +339,7 @@ class DataSourceHealthChecker:
 
                         )
 
-                    
+
 
                     if expected_content:
 
@@ -363,7 +363,7 @@ class DataSourceHealthChecker:
 
                             )
 
-                    
+
 
                     return HealthCheckResult(
 
@@ -381,7 +381,7 @@ class DataSourceHealthChecker:
 
                     )
 
-        
+
 
         except asyncio.TimeoutError:
 
@@ -401,7 +401,7 @@ class DataSourceHealthChecker:
 
             )
 
-        
+
 
         except Exception as e:
 
@@ -421,7 +421,7 @@ class DataSourceHealthChecker:
 
             )
 
-    
+
 
     async def check_api_response(
 
@@ -439,7 +439,7 @@ class DataSourceHealthChecker:
 
         params = api_config.get("params", {})
 
-        
+
 
         headers = {}
 
@@ -447,11 +447,11 @@ class DataSourceHealthChecker:
 
             headers["Authorization"] = f"Bearer {api_key}"
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         try:
 
@@ -471,7 +471,7 @@ class DataSourceHealthChecker:
 
                     response_time = (time.time() - start_time) * 1000
 
-                    
+
 
                     if response.status != 200:
 
@@ -491,11 +491,11 @@ class DataSourceHealthChecker:
 
                         )
 
-                    
+
 
                     data = await response.json()
 
-                    
+
 
                     if api_config.get("validate_response"):
 
@@ -525,7 +525,7 @@ class DataSourceHealthChecker:
 
                             )
 
-                    
+
 
                     return HealthCheckResult(
 
@@ -549,7 +549,7 @@ class DataSourceHealthChecker:
 
                     )
 
-        
+
 
         except Exception as e:
 
@@ -569,7 +569,7 @@ class DataSourceHealthChecker:
 
             )
 
-    
+
 
     def _validate_response(
 
@@ -597,7 +597,7 @@ class DataSourceHealthChecker:
 
                     }
 
-        
+
 
         if rules.get("data_freshness"):
 
@@ -605,7 +605,7 @@ class DataSourceHealthChecker:
 
             max_age_seconds = rules["data_freshness"]["max_age_seconds"]
 
-            
+
 
             if timestamp_field in data:
 
@@ -613,7 +613,7 @@ class DataSourceHealthChecker:
 
                 age = (datetime.now() - data_time).total_seconds()
 
-                
+
 
                 if age > max_age_seconds:
 
@@ -625,11 +625,11 @@ class DataSourceHealthChecker:
 
                     }
 
-        
+
 
         return {"valid": True}
 
-    
+
 
     async def check_all_sources(self) -> Dict[str, HealthCheckResult]:
 
@@ -637,7 +637,7 @@ class DataSourceHealthChecker:
 
         tasks = []
 
-        
+
 
         for source_name, source_config in self.sources.items():
 
@@ -665,17 +665,17 @@ class DataSourceHealthChecker:
 
                 ))
 
-        
+
 
         results = await asyncio.gather(*tasks)
 
-        
+
 
         for result in results:
 
             self.health_status[result.source_name] = result
 
-            
+
 
             if result.status == HealthStatus.UNHEALTHY:
 
@@ -687,11 +687,11 @@ class DataSourceHealthChecker:
 
                 self.consecutive_failures[result.source_name] = 0
 
-        
+
 
         return self.health_status
 
-    
+
 
     def get_source_status(self, source_name: str) -> HealthStatus:
 
@@ -701,7 +701,7 @@ class DataSourceHealthChecker:
 
         return HealthStatus.UNKNOWN
 
-    
+
 
     def should_failover(self, source_name: str) -> bool:
 
@@ -737,13 +737,13 @@ import time
 
 class DataSourceMetrics:
 
-    
+
 
     def __init__(self):
 
         self.registry = CollectorRegistry()
 
-        
+
 
         self.health_status = Gauge(
 
@@ -757,7 +757,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.response_time = Histogram(
 
@@ -773,7 +773,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.request_total = Counter(
 
@@ -787,7 +787,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.error_total = Counter(
 
@@ -801,7 +801,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.availability = Gauge(
 
@@ -815,7 +815,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.data_latency = Gauge(
 
@@ -829,7 +829,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.active_connections = Gauge(
 
@@ -843,7 +843,7 @@ class DataSourceMetrics:
 
         )
 
-        
+
 
         self.source_info = Info(
 
@@ -855,7 +855,7 @@ class DataSourceMetrics:
 
         )
 
-    
+
 
     def update_health_status(
 
@@ -881,7 +881,7 @@ class DataSourceMetrics:
 
         }.get(status, -1.0)
 
-        
+
 
         self.health_status.labels(
 
@@ -891,7 +891,7 @@ class DataSourceMetrics:
 
         ).set(status_value)
 
-    
+
 
     def record_response_time(
 
@@ -915,7 +915,7 @@ class DataSourceMetrics:
 
         ).observe(response_time_seconds)
 
-    
+
 
     def increment_request(
 
@@ -941,7 +941,7 @@ class DataSourceMetrics:
 
         ).inc()
 
-    
+
 
     def increment_error(
 
@@ -967,7 +967,7 @@ class DataSourceMetrics:
 
         ).inc()
 
-    
+
 
     def update_availability(
 
@@ -989,7 +989,7 @@ class DataSourceMetrics:
 
         ).set(availability_pct)
 
-    
+
 
     def update_data_latency(
 
@@ -1013,7 +1013,7 @@ class DataSourceMetrics:
 
         ).set(latency_seconds)
 
-    
+
 
     def update_active_connections(
 
@@ -1035,7 +1035,7 @@ class DataSourceMetrics:
 
         ).set(count)
 
-    
+
 
     def set_source_info(self, info: Dict[str, str]):
 
@@ -1045,7 +1045,7 @@ class DataSourceMetrics:
 
 
 
-### 3.3 
+### 3.3
 
 
 
@@ -1117,7 +1117,7 @@ class FailoverManager:
 
     """
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -1129,13 +1129,13 @@ class FailoverManager:
 
         )
 
-        
+
 
         self.endpoints: Dict[str, List[DataSourceEndpoint]] = {}
 
         self.current_active: Dict[str, str] = {}
 
-        
+
 
         self.failure_threshold = config.get("failure_threshold", 3)
 
@@ -1143,15 +1143,15 @@ class FailoverManager:
 
         self.check_interval = config.get("check_interval", 30)
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self._init_endpoints()
 
-    
+
 
     def _init_endpoints(self):
 
@@ -1159,7 +1159,7 @@ class FailoverManager:
 
             self.endpoints[source_type] = []
 
-            
+
 
             for idx, source in enumerate(sources):
 
@@ -1183,11 +1183,11 @@ class FailoverManager:
 
                 self.endpoints[source_type].append(endpoint)
 
-            
+
 
             self.endpoints[source_type].sort(key=lambda x: x.priority)
 
-            
+
 
             if self.endpoints[source_type]:
 
@@ -1195,7 +1195,7 @@ class FailoverManager:
 
                     self.endpoints[source_type][0].name
 
-    
+
 
     def get_active_endpoint(self, source_type: str) -> Optional[str]:
 
@@ -1205,17 +1205,17 @@ class FailoverManager:
 
             return self.current_active[source_type]
 
-        
+
 
         if source_type in self.endpoints and self.endpoints[source_type]:
 
             return self.endpoints[source_type][0].name
 
-        
+
 
         return None
 
-    
+
 
     def get_all_endpoints(self, source_type: str) -> List[str]:
 
@@ -1225,7 +1225,7 @@ class FailoverManager:
 
         return []
 
-    
+
 
     def report_failure(self, source_type: str, endpoint_name: str):
 
@@ -1235,7 +1235,7 @@ class FailoverManager:
 
             return
 
-        
+
 
         for endpoint in self.endpoints[source_type]:
 
@@ -1245,7 +1245,7 @@ class FailoverManager:
 
                 endpoint.last_check = datetime.now()
 
-                
+
 
                 if endpoint.consecutive_failures >= self.failure_threshold:
 
@@ -1263,7 +1263,7 @@ class FailoverManager:
 
                 break
 
-    
+
 
     def report_success(self, source_type: str, endpoint_name: str):
 
@@ -1273,7 +1273,7 @@ class FailoverManager:
 
             return
 
-        
+
 
         for endpoint in self.endpoints[source_type]:
 
@@ -1287,7 +1287,7 @@ class FailoverManager:
 
                 break
 
-    
+
 
     def _trigger_failover(self, source_type: str):
 
@@ -1297,7 +1297,7 @@ class FailoverManager:
 
             return
 
-        
+
 
         for endpoint in self.endpoints[source_type]:
 
@@ -1307,7 +1307,7 @@ class FailoverManager:
 
                 self.current_active[source_type] = endpoint.name
 
-                
+
 
                 self.logger.info(
 
@@ -1317,11 +1317,11 @@ class FailoverManager:
 
                 )
 
-                
+
 
                 return
 
-        
+
 
         self.logger.error(
 
@@ -1329,7 +1329,7 @@ class FailoverManager:
 
         )
 
-    
+
 
     async def health_check_loop(self):
 
@@ -1345,7 +1345,7 @@ class FailoverManager:
 
                             endpoint.consecutive_failures -= 1
 
-                            
+
 
                             if endpoint.consecutive_failures <= self.recovery_threshold:
 
@@ -1361,17 +1361,17 @@ class FailoverManager:
 
                                 endpoint.consecutive_failures = 0
 
-            
+
 
             await asyncio.sleep(self.check_interval)
 
-    
+
 
     def get_status(self) -> Dict[str, Any]:
 
         status = {}
 
-        
+
 
         for source_type, endpoints in self.endpoints.items():
 
@@ -1401,7 +1401,7 @@ class FailoverManager:
 
             }
 
-        
+
 
         return status
 
@@ -1483,7 +1483,7 @@ class Alert:
 
 class AlertManager:
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -1493,23 +1493,23 @@ class AlertManager:
 
         self.alert_history: List[Alert] = []
 
-        
+
 
         self.notification_channels = config.get("notification_channels", {})
 
         self.alert_rules = config.get("alert_rules", {})
 
-        
+
 
         self.cooldown_period = config.get("cooldown_period", 300)
 
         self.last_alert_time: Dict[str, datetime] = {}
 
-        
+
 
         self.max_alerts = config.get("max_alerts", 1000)
 
-    
+
 
     def create_alert(
 
@@ -1529,7 +1529,7 @@ class AlertManager:
 
         alert_id = f"{source_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-        
+
 
         alert = Alert(
 
@@ -1547,7 +1547,7 @@ class AlertManager:
 
         )
 
-        
+
 
         if self._should_send_alert(source_name, severity):
 
@@ -1557,21 +1557,21 @@ class AlertManager:
 
             self.last_alert_time[source_name] = datetime.now()
 
-        
+
 
         self.alert_history.append(alert)
 
-        
+
 
         if len(self.alert_history) > self.max_alerts:
 
             self.alert_history = self.alert_history[-self.max_alerts:]
 
-        
+
 
         return alert
 
-    
+
 
     def _should_send_alert(self, source_name: str, severity: AlertSeverity) -> bool:
 
@@ -1579,11 +1579,11 @@ class AlertManager:
 
             return True
 
-        
+
 
         time_since_last = datetime.now() - self.last_alert_time[source_name]
 
-        
+
 
         cooldown_map = {
 
@@ -1597,11 +1597,11 @@ class AlertManager:
 
         }
 
-        
+
 
         return time_since_last.total_seconds() >= cooldown_map[severity]
 
-    
+
 
     def _send_notification(self, alert: Alert):
 
@@ -1631,7 +1631,7 @@ class AlertManager:
 
                 print(f"Failed to send notification via {channel_type}: {e}")
 
-    
+
 
     def _send_email(self, alert: Alert, config: Dict[str, Any]):
 
@@ -1645,7 +1645,7 @@ class AlertManager:
 
         msg['Subject'] = f"[{alert.severity.value.upper()}] {alert.source_name} - {alert.message}"
 
-        
+
 
         body = f"""
 
@@ -1669,11 +1669,11 @@ class AlertManager:
 
         """
 
-        
+
 
         msg.attach(MIMEText(body, 'plain'))
 
-        
+
 
         with smtplib.SMTP(config['smtp_server'], config['smtp_port']) as server:
 
@@ -1683,7 +1683,7 @@ class AlertManager:
 
             server.send_message(msg)
 
-    
+
 
     def _send_webhook(self, alert: Alert, config: Dict[str, Any]):
 
@@ -1705,7 +1705,7 @@ class AlertManager:
 
         }
 
-        
+
 
         requests.post(
 
@@ -1719,7 +1719,7 @@ class AlertManager:
 
         )
 
-    
+
 
     def _send_wechat(self, alert: Alert, config: Dict[str, Any]):
 
@@ -1727,7 +1727,7 @@ class AlertManager:
 
         webhook_url = config['webhook_url']
 
-        
+
 
         content = f"""
 
@@ -1741,7 +1741,7 @@ class AlertManager:
 
         """
 
-        
+
 
         payload = {
 
@@ -1755,11 +1755,11 @@ class AlertManager:
 
         }
 
-        
+
 
         requests.post(webhook_url, json=payload, timeout=10)
 
-    
+
 
     def _send_dingtalk(self, alert: Alert, config: Dict[str, Any]):
 
@@ -1767,7 +1767,7 @@ class AlertManager:
 
         webhook_url = config['webhook_url']
 
-        
+
 
         content = f"""
 
@@ -1781,7 +1781,7 @@ class AlertManager:
 
         """
 
-        
+
 
         payload = {
 
@@ -1795,7 +1795,7 @@ class AlertManager:
 
         }
 
-        
+
 
         if config.get('at_mobiles'):
 
@@ -1807,11 +1807,11 @@ class AlertManager:
 
             }
 
-        
+
 
         requests.post(webhook_url, json=payload, timeout=10)
 
-    
+
 
     def acknowledge_alert(self, alert_id: str) -> bool:
 
@@ -1827,7 +1827,7 @@ class AlertManager:
 
         return False
 
-    
+
 
     def resolve_alert(self, alert_id: str) -> bool:
 
@@ -1845,7 +1845,7 @@ class AlertManager:
 
         return False
 
-    
+
 
     def get_active_alerts(self) -> List[Alert]:
 
@@ -1853,7 +1853,7 @@ class AlertManager:
 
         return [a for a in self.alerts if not a.resolved]
 
-    
+
 
     def get_alert_history(
 
@@ -1871,7 +1871,7 @@ class AlertManager:
 
         cutoff_time = datetime.now() - timedelta(hours=hours)
 
-        
+
 
         filtered = [
 
@@ -1881,19 +1881,19 @@ class AlertManager:
 
         ]
 
-        
+
 
         if source_name:
 
             filtered = [a for a in filtered if a.source_name == source_name]
 
-        
+
 
         if severity:
 
             filtered = [a for a in filtered if a.severity == severity]
 
-        
+
 
         return filtered
 
@@ -2011,7 +2011,7 @@ groups:
 
         annotations:
 
-      
+
 
       - alert: DataSourceDegraded
 
@@ -2027,7 +2027,7 @@ groups:
 
           summary: 数据源降级状态已持续超过 5 分钟
 
-      
+
 
       - alert: HighResponseTime
 
@@ -2041,7 +2041,7 @@ groups:
 
         annotations:
 
-      
+
 
       - alert: HighErrorRate
 
@@ -2055,7 +2055,7 @@ groups:
 
         annotations:
 
-      
+
 
       - alert: LowAvailability
 
@@ -2281,7 +2281,7 @@ for source_name, result in results.items():
 
 
 
-### 5.2 
+### 5.2
 
 障切换
 
@@ -2445,7 +2445,7 @@ print(f"告警ID: {alert.alert_id}")
 
 | CPU | 0.5?| 0.2?| 0.1?| 0.8?|
 
-| 
+|
 
 存 | 512MB | 256MB | 128MB | 896MB |
 
@@ -2465,7 +2465,7 @@ print(f"告警ID: {alert.alert_id}")
 
 
 
-### 7.2 
+### 7.2
 
 障切换
 
@@ -2505,7 +2505,7 @@ print(f"告警ID: {alert.alert_id}")
 
 
 
-- [x] 
+- [x]
 
 障切换功能
 
@@ -2606,10 +2606,3 @@ print(f"告警ID: {alert.alert_id}")
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

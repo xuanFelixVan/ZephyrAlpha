@@ -17,7 +17,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -249,7 +249,7 @@ class ReportTemplate:
 
 class ReportTemplateManager:
 
-    
+
 
     def __init__(self, template_dir: str):
 
@@ -259,7 +259,7 @@ class ReportTemplateManager:
 
         self.templates: Dict[str, ReportTemplate] = {}
 
-    
+
 
     def load_template(self, template_id: str) -> ReportTemplate:
 
@@ -271,7 +271,7 @@ class ReportTemplateManager:
 
             template_data = json.load(f)
 
-        
+
 
         template = ReportTemplate(
 
@@ -289,15 +289,15 @@ class ReportTemplateManager:
 
         )
 
-        
+
 
         self.templates[template_id] = template
 
         return template
 
-    
 
-    def render_template(self, template_id: str, 
+
+    def render_template(self, template_id: str,
 
                         context: Dict[str, Any]) -> str:
 
@@ -309,13 +309,13 @@ class ReportTemplateManager:
 
             raise ValueError(f"Template {template_id} not found")
 
-        
+
 
         jinja_template = self.env.get_template(template.template_path)
 
         return jinja_template.render(**context)
 
-    
+
 
     def create_custom_template(self, template_config: Dict[str, Any]) -> ReportTemplate:
 
@@ -335,7 +335,7 @@ class ReportTemplateManager:
 
         )
 
-        
+
 
         self.templates[template.template_id] = template
 
@@ -363,13 +363,13 @@ import pandas as pd
 
 class DataAggregator:
 
-    
+
 
     def __init__(self, db_connection):
 
         self.db = db_connection
 
-    
+
 
     def aggregate_quality_scores(self, table_names: List[str],
 
@@ -393,15 +393,15 @@ class DataAggregator:
 
         """
 
-        
+
 
         results = self.db.fetch_all(query, (table_names, start_date, end_date))
 
-        
+
 
         df = pd.DataFrame(results)
 
-        
+
 
         aggregated_data = {}
 
@@ -409,7 +409,7 @@ class DataAggregator:
 
             table_df = df[df['table_name'] == table_name]
 
-            
+
 
             aggregated_data[table_name] = {
 
@@ -425,11 +425,11 @@ class DataAggregator:
 
             }
 
-        
+
 
         return aggregated_data
 
-    
+
 
     def aggregate_quality_issues(self, table_names: List[str],
 
@@ -455,15 +455,15 @@ class DataAggregator:
 
         """
 
-        
+
 
         results = self.db.fetch_all(query, (table_names, start_date, end_date))
 
-        
+
 
         df = pd.DataFrame(results)
 
-        
+
 
         aggregated_data = {}
 
@@ -471,7 +471,7 @@ class DataAggregator:
 
             table_df = df[df['table_name'] == table_name]
 
-            
+
 
             aggregated_data[table_name] = {
 
@@ -483,11 +483,11 @@ class DataAggregator:
 
             }
 
-        
+
 
         return aggregated_data
 
-    
+
 
     def aggregate_repair_statistics(self, table_names: List[str],
 
@@ -499,7 +499,7 @@ class DataAggregator:
 
         query = """
 
-        SELECT table_name, 
+        SELECT table_name,
 
                COUNT(*) as total_repairs,
 
@@ -515,15 +515,15 @@ class DataAggregator:
 
         """
 
-        
+
 
         results = self.db.fetch_all(query, (table_names, start_date, end_date))
 
-        
+
 
         df = pd.DataFrame(results)
 
-        
+
 
         aggregated_data = {}
 
@@ -531,11 +531,11 @@ class DataAggregator:
 
             table_name = row['table_name']
 
-            success_rate = (row['successful_repairs'] / row['total_repairs'] 
+            success_rate = (row['successful_repairs'] / row['total_repairs']
 
                            if row['total_repairs'] > 0 else 0)
 
-            
+
 
             aggregated_data[table_name] = {
 
@@ -547,7 +547,7 @@ class DataAggregator:
 
             }
 
-        
+
 
         return aggregated_data
 
@@ -577,7 +577,7 @@ import plotly.graph_objects as go
 
 class ReportGenerator:
 
-    
+
 
     def __init__(self, template_manager: ReportTemplateManager,
 
@@ -587,7 +587,7 @@ class ReportGenerator:
 
         self.data_aggregator = data_aggregator
 
-    
+
 
     def generate_daily_report(self, table_names: List[str],
 
@@ -599,7 +599,7 @@ class ReportGenerator:
 
         end_date = report_date.replace(hour=23, minute=59, second=59)
 
-        
+
 
         quality_scores = self.data_aggregator.aggregate_quality_scores(
 
@@ -607,7 +607,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         quality_issues = self.data_aggregator.aggregate_quality_issues(
 
@@ -615,7 +615,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         repair_stats = self.data_aggregator.aggregate_repair_statistics(
 
@@ -623,7 +623,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         context = {
 
@@ -641,7 +641,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         html_content = self.template_manager.render_template(
 
@@ -649,7 +649,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         return {
 
@@ -663,7 +663,7 @@ class ReportGenerator:
 
         }
 
-    
+
 
     def generate_weekly_report(self, table_names: List[str],
 
@@ -673,7 +673,7 @@ class ReportGenerator:
 
         start_date = end_date - timedelta(days=7)
 
-        
+
 
         quality_scores = self.data_aggregator.aggregate_quality_scores(
 
@@ -681,7 +681,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         quality_issues = self.data_aggregator.aggregate_quality_issues(
 
@@ -689,7 +689,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         repair_stats = self.data_aggregator.aggregate_repair_statistics(
 
@@ -697,11 +697,11 @@ class ReportGenerator:
 
         )
 
-        
+
 
         trends = self._calculate_weekly_trends(quality_scores)
 
-        
+
 
         context = {
 
@@ -723,7 +723,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         html_content = self.template_manager.render_template(
 
@@ -731,7 +731,7 @@ class ReportGenerator:
 
         )
 
-        
+
 
         return {
 
@@ -747,19 +747,19 @@ class ReportGenerator:
 
         }
 
-    
+
 
     def _calculate_weekly_trends(self, quality_scores: Dict[str, Any]) -> Dict[str, Any]:
 
         trends = {}
 
-        
+
 
         for table_name, scores in quality_scores.items():
 
             score_trend = scores.get('score_trend', [])
 
-            
+
 
             if len(score_trend) >= 2:
 
@@ -767,7 +767,7 @@ class ReportGenerator:
 
                 older_avg = sum(score_trend[:3]) / 3
 
-                
+
 
                 if recent_avg > older_avg * 1.05:
 
@@ -781,7 +781,7 @@ class ReportGenerator:
 
                     trend = 'stable'
 
-                
+
 
                 trends[table_name] = {
 
@@ -791,7 +791,7 @@ class ReportGenerator:
 
                 }
 
-        
+
 
         return trends
 
@@ -825,7 +825,7 @@ class ReportFormatter:
 
     """报告格式化器"""
 
-    
+
 
     def to_pdf(self, html_content: str, output_path: str):
 
@@ -833,7 +833,7 @@ class ReportFormatter:
 
         HTML(string=html_content).write_pdf(output_path)
 
-    
+
 
     def to_html(self, html_content: str, output_path: str):
 
@@ -843,7 +843,7 @@ class ReportFormatter:
 
             f.write(html_content)
 
-    
+
 
     def to_excel(self, report_data: Dict[str, Any], output_path: str):
 
@@ -851,35 +851,35 @@ class ReportFormatter:
 
         wb = openpyxl.Workbook()
 
-        
+
 
         ws_summary = wb.active
 
         ws_summary.title = "Summary"
 
-        
+
 
         ws_summary['A1'] = "Data Quality Report"
 
         ws_summary['A1'].font = Font(size=16, bold=True)
 
-        
+
 
         ws_summary['A3'] = "Report Date:"
 
         ws_summary['B3'] = report_data.get('report_date', '')
 
-        
+
 
         ws_summary['A4'] = "Generated At:"
 
         ws_summary['B4'] = str(report_data.get('generated_at', ''))
 
-        
+
 
         quality_scores = report_data.get('quality_scores', {})
 
-        
+
 
         ws_scores = wb.create_sheet("Quality Scores")
 
@@ -891,7 +891,7 @@ class ReportFormatter:
 
         ws_scores['D1'] = "Max Score"
 
-        
+
 
         for idx, (table_name, scores) in enumerate(quality_scores.items(), start=2):
 
@@ -903,11 +903,11 @@ class ReportFormatter:
 
             ws_scores[f'D{idx}'] = scores.get('max_score', 0)
 
-        
+
 
         wb.save(output_path)
 
-    
+
 
     def to_json(self, report_data: Dict[str, Any], output_path: str):
 
@@ -1029,7 +1029,7 @@ GET /api/v1/reports/history?report_type=daily&days=30
 
 
 
-## 
+##
 
 
 
@@ -1065,7 +1065,7 @@ services:
 
       - postgres
 
-  
+
 
   postgres:
 
@@ -1117,7 +1117,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -1203,7 +1203,7 @@ graph LR
 
     D[系统集成] --> B
 
-    
+
 
     B --> E[质量评分系统]
 
@@ -1211,7 +1211,7 @@ graph LR
 
     B --> G[系统增强]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1314,12 +1314,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

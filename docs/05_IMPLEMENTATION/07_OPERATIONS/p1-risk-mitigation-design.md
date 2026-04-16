@@ -197,7 +197,7 @@ class LLMFallbackStrategy:
 
 
 
-    
+
 
 
 
@@ -209,7 +209,7 @@ class LLMFallbackStrategy:
 
 
 
-    
+
 
 
 
@@ -245,7 +245,7 @@ self._cache_fallback    # ﻝﺙﮒﻠﻝﭦ۶
 
 
 
-        
+
 
 
 
@@ -273,7 +273,7 @@ self._cache_fallback    # ﻝﺙﮒﻠﻝﭦ۶
 
 
 
-        
+
 
 
 
@@ -333,7 +333,7 @@ logger.warning(f"ﻝﻝ۴ﮒ۳ﺎﻟﺑ۴: {strategy.__name__}, ﻠﻟﺁﺁ: {e
 
 
 
-        
+
 
 
 
@@ -341,7 +341,7 @@ raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝﻝ۴ﮒ۳ﺎﻟﺑ?)
 
 
 
-    
+
 
 
 
@@ -357,7 +357,7 @@ raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝﻝ۴ﮒ۳ﺎﻟﺑ?)
 
 
 
-    
+
 
 
 
@@ -373,7 +373,7 @@ raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝﻝ۴ﮒ۳ﺎﻟﺑ?)
 
 
 
-    
+
 
 
 
@@ -393,7 +393,7 @@ raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝﻝ۴ﮒ۳ﺎﻟﺑ?)
 
 
 
-    
+
 
 
 
@@ -441,7 +441,7 @@ class RetryStrategy:
 
 
 
-    
+
 
 
 
@@ -453,7 +453,7 @@ class RetryStrategy:
 
 
 
-    
+
 
 
 
@@ -501,7 +501,7 @@ class RetryStrategy:
 
 
 
-        
+
 
 
 
@@ -533,7 +533,7 @@ class RetryStrategy:
 
 
 
-        
+
 
 
 
@@ -561,7 +561,7 @@ class RetryStrategy:
 
 
 
-        
+
 
 
 
@@ -621,7 +621,7 @@ class RetryStrategy:
 
 
 
-        
+
 
 
 
@@ -657,7 +657,7 @@ class CostController:
 
 
 
-    
+
 
 
 
@@ -669,7 +669,7 @@ class CostController:
 
 
 
-    
+
 
 
 
@@ -717,7 +717,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-        
+
 
 
 
@@ -729,7 +729,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-        
+
 
 
 
@@ -757,7 +757,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-            
+
 
 
 
@@ -773,7 +773,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-            
+
 
 
 
@@ -781,7 +781,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-    
+
 
 
 
@@ -801,7 +801,7 @@ alert_threshold: float = 0.8  # 80%ﮒﻟ۵
 
 
 
-        
+
 
 
 
@@ -853,7 +853,7 @@ class TokenOptimizer:
 
 
 
-    
+
 
 
 
@@ -865,7 +865,7 @@ class TokenOptimizer:
 
 
 
-    
+
 
 
 
@@ -877,7 +877,7 @@ class TokenOptimizer:
 
 
 
-        
+
 
 
 
@@ -889,7 +889,7 @@ class TokenOptimizer:
 
 
 
-        
+
 
 
 
@@ -921,7 +921,7 @@ class TokenOptimizer:
 
 
 
-        
+
 
 
 
@@ -937,7 +937,7 @@ class TokenOptimizer:
 
 
 
-        
+
 
 
 
@@ -953,7 +953,7 @@ class TokenOptimizer:
 
 
 
-        
+
 
 
 
@@ -961,7 +961,7 @@ class TokenOptimizer:
 
 
 
-    
+
 
 
 
@@ -1047,7 +1047,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -1059,7 +1059,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -1107,7 +1107,7 @@ class QMTConnectionPool:
 
 
 
-        
+
 
 
 
@@ -1139,7 +1139,7 @@ class QMTConnectionPool:
 
 
 
-        
+
 
 
 
@@ -1155,7 +1155,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -1187,7 +1187,7 @@ class QMTConnectionPool:
 
 
 
-    
+
 
 
 
@@ -1243,7 +1243,7 @@ class QMTReconnectStrategy:
 
 
 
-    
+
 
 
 
@@ -1255,7 +1255,7 @@ class QMTReconnectStrategy:
 
 
 
-    
+
 
 
 
@@ -1295,7 +1295,7 @@ class QMTReconnectStrategy:
 
 
 
-        
+
 
 
 
@@ -1399,7 +1399,7 @@ class QMTFallbackStrategy:
 
 
 
-    
+
 
 
 
@@ -1411,7 +1411,7 @@ class QMTFallbackStrategy:
 
 
 
-    
+
 
 
 
@@ -1439,7 +1439,7 @@ class QMTFallbackStrategy:
 
 
 
-        
+
 
 
 
@@ -1483,7 +1483,7 @@ class QMTFallbackStrategy:
 
 
 
-        
+
 
 
 
@@ -1507,7 +1507,7 @@ class QMTFallbackStrategy:
 
 
 
-        
+
 
 
 
@@ -1593,7 +1593,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -1605,7 +1605,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -1645,7 +1645,7 @@ max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒﮔﺍﻠ?
 
 
 
-        
+
 
 
 
@@ -1701,7 +1701,7 @@ max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒﮔﺍﻠ?
 
 
 
-        
+
 
 
 
@@ -1713,7 +1713,7 @@ max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒﮔﺍﻠ?
 
 
 
-        
+
 
 
 
@@ -1729,7 +1729,7 @@ max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒﮔﺍﻠ?
 
 
 
-        
+
 
 
 
@@ -1741,7 +1741,7 @@ max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒﮔﺍﻠ?
 
 
 
-        
+
 
 
 
@@ -1777,7 +1777,7 @@ class MultiSourceDataManager:
 
 
 
-    
+
 
 
 
@@ -1789,7 +1789,7 @@ class MultiSourceDataManager:
 
 
 
-    
+
 
 
 
@@ -1817,7 +1817,7 @@ class MultiSourceDataManager:
 
 
 
-        
+
 
 
 
@@ -1889,7 +1889,7 @@ class MultiSourceDataManager:
 
 
 
-        
+
 
 
 
@@ -1925,7 +1925,7 @@ class HealthChecker:
 
 
 
-    
+
 
 
 
@@ -1937,7 +1937,7 @@ class HealthChecker:
 
 
 
-    
+
 
 
 
@@ -1973,7 +1973,7 @@ class HealthChecker:
 
 
 
-        
+
 
 
 
@@ -1997,7 +1997,7 @@ class HealthChecker:
 
 
 
-        
+
 
 
 
@@ -2005,7 +2005,7 @@ class HealthChecker:
 
 
 
-        
+
 
 
 
@@ -2017,7 +2017,7 @@ class HealthChecker:
 
 
 
-        
+
 
 
 
@@ -2025,7 +2025,7 @@ class HealthChecker:
 
 
 
-    
+
 
 
 
@@ -2415,7 +2415,7 @@ class RiskMonitorLogger:
 
 
 
-    
+
 
 
 
@@ -2427,7 +2427,7 @@ class RiskMonitorLogger:
 
 
 
-    
+
 
 
 
@@ -2491,7 +2491,7 @@ class RiskMonitorLogger:
 
 
 
-        
+
 
 
 
@@ -2499,7 +2499,7 @@ class RiskMonitorLogger:
 
 
 
-        
+
 
 
 
@@ -2612,6 +2612,3 @@ class RiskMonitorLogger:
 
 
 **ﻛﺕﻛﺕﮔ?*: ﮒﺙﮒ۶ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
-
-
-

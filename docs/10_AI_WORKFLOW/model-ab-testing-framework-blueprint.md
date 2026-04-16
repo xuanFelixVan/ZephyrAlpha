@@ -54,7 +54,7 @@ layer: layer_04
 
 > **核心职责**: 模型A/B测试框架设计和架构规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：模型A/B测试框架设计和架构规划相关内容
 
@@ -334,13 +334,13 @@ with mlflow.start_run(run_name="model_a"):
 
     mlflow.log_param("batch_size", 32)
 
-    
+
 
     # 训练模型
 
     model_a = train_model()
 
-    
+
 
     # 记录指标
 
@@ -348,7 +348,7 @@ with mlflow.start_run(run_name="model_a"):
 
     mlflow.log_metric("f1_score", 0.91)
 
-    
+
 
     # 保存模型
 
@@ -366,17 +366,17 @@ with mlflow.start_run(run_name="model_b"):
 
     mlflow.log_param("batch_size", 16)
 
-    
+
 
     model_b = train_model()
 
-    
+
 
     mlflow.log_metric("accuracy", 0.95)
 
     mlflow.log_metric("f1_score", 0.94)
 
-    
+
 
     mlflow.sklearn.log_model(model_b, "model")
 
@@ -410,7 +410,7 @@ def statistical_significance_test(
 
     """统计显著性检验
 
-    
+
 
     Args:
 
@@ -420,7 +420,7 @@ def statistical_significance_test(
 
         alpha: 显著性水平
 
-        
+
 
     Returns:
 
@@ -432,7 +432,7 @@ def statistical_significance_test(
 
     t_stat, p_value = stats.ttest_ind(results_a, results_b)
 
-    
+
 
     # 效应量 (Cohen's d)
 
@@ -444,7 +444,7 @@ def statistical_significance_test(
 
     cohens_d = (np.mean(results_a) - np.mean(results_b)) / pooled_std
 
-    
+
 
     # 置信区间
 
@@ -456,7 +456,7 @@ def statistical_significance_test(
 
     ci_high = mean_diff + 1.96 * se
 
-    
+
 
     return {
 
@@ -496,7 +496,7 @@ class TrafficSplitter:
 
     """流量分配器"""
 
-    
+
 
     def __init__(self, traffic_split: Dict[str, float]):
 
@@ -510,19 +510,19 @@ class TrafficSplitter:
 
         self.traffic_split = traffic_split
 
-        
+
 
     def assign_model(self, user_id: str) -> str:
 
         """为用户分配模型
 
-        
+
 
         Args:
 
             user_id: 用户ID
 
-            
+
 
         Returns:
 
@@ -536,7 +536,7 @@ class TrafficSplitter:
 
         hash_percent = (hash_value % 10000) / 10000
 
-        
+
 
         # 根据流量分配比例选择模型
 
@@ -550,7 +550,7 @@ class TrafficSplitter:
 
                 return model
 
-                
+
 
         return list(self.traffic_split.keys())[-1]
 
@@ -664,7 +664,7 @@ def visualize_ab_test_results(results_a: Dict, results_b: Dict):
 
     """可视化A/B测试结果
 
-    
+
 
     Args:
 
@@ -682,7 +682,7 @@ def visualize_ab_test_results(results_a: Dict, results_b: Dict):
 
     )
 
-    
+
 
     # 准确率对比
 
@@ -702,7 +702,7 @@ def visualize_ab_test_results(results_a: Dict, results_b: Dict):
 
     )
 
-    
+
 
     # F1分数对比
 
@@ -722,7 +722,7 @@ def visualize_ab_test_results(results_a: Dict, results_b: Dict):
 
     )
 
-    
+
 
     fig.update_layout(height=600, showlegend=True)
 
@@ -872,7 +872,7 @@ services:
 
       - postgres
 
-      
+
 
   postgres:
 
@@ -892,7 +892,7 @@ services:
 
       - ./postgres-data:/var/lib/postgresql/data
 
-      
+
 
   grafana:
 
@@ -1043,4 +1043,3 @@ services:
 **下次更新建议**: 实施后1个月
 
 **最终状态**: ✅ 完整蓝图已生成
-

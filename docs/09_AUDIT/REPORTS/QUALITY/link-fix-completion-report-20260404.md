@@ -563,6 +563,3 @@ python scripts/link_fixer.py --dir docs/ --fix --report reports/full_link_fix_re
 
 
 **СИІТгАтАУА**: 2026-04-11
-
-
-

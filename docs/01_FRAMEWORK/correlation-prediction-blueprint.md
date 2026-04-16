@@ -71,7 +71,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -527,7 +527,7 @@ class CorrelationPredictor:
 
 
 
-    
+
 
 
 
@@ -611,7 +611,7 @@ class CorrelationPredictor:
 
 
 
-        
+
 
 
 
@@ -683,7 +683,7 @@ class CorrelationPredictor:
 
 
 
-    
+
 
 
 
@@ -755,7 +755,7 @@ class CorrelationPredictor:
 
 
 
-        
+
 
 
 
@@ -779,7 +779,7 @@ class CorrelationPredictor:
 
 
 
-            returns: 收益率矩?            
+            returns: 收益率矩?
 
 
 
@@ -839,7 +839,7 @@ class CorrelationPredictor:
 
 
 
-    
+
 
 
 
@@ -899,7 +899,7 @@ class CorrelationPredictor:
 
 
 
-        """检测相关性状态变?        
+        """检测相关性状态变?
 
 
 
@@ -935,7 +935,7 @@ class CorrelationPredictor:
 
 
 
-            
+
 
 
 
@@ -1537,7 +1537,7 @@ def dcc_garch(returns):
 
 
 
-    
+
 
 
 
@@ -2132,14 +2132,3 @@ def dcc_garch(returns):
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

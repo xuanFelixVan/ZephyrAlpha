@@ -15,7 +15,7 @@ layer: layer_05
 
 # 文档地图与放置规则 — 办公室规程
 
-> **本文件做什么**：把机构常用的 **「先定地图与放置规则，再盘点与搬迁」** 落实为**可执行衔接**——说明**真源在哪**、**与哪些任务/脚本联动**、**一批文件怎么从扫描走到归位**。  
+> **本文件做什么**：把机构常用的 **「先定地图与放置规则，再盘点与搬迁」** 落实为**可执行衔接**——说明**真源在哪**、**与哪些任务/脚本联动**、**一批文件怎么从扫描走到归位**。
 > **本文件不做什么**：**不**替代 `DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md` 中的目录职责表全文；表内细节以该标准为 **single source of truth**。**Layer 0～11 与 `docs/` 路径分立**在 LAYOUT **§1 第 5 条**有摘要，**§1.5** 为展开与同口径操作说明；**勿**再单立新文件重复该口径。
 
 ```
@@ -42,8 +42,8 @@ layer: layer_05
 
 与 LAYOUT 标准 **§1 第 5 条**同口径（该处为摘要，本节为步骤与例外说明）。**这是两个不同维度**（人类与 AI 均易混）；搬迁、新建或写 `front matter` 时按顺序各定一次：
 
-1. **先定架构 Layer（技术栈分层）**：模块在 **Layer 0～11** 中主责在哪一层，以 [`docs/01_FRAMEWORK/ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 的分层表与栈说明为真源。  
-2. **再定 `docs/` 物理落盘**：该 Markdown 应落在哪棵目录树，以 **LAYOUT 标准** 与本文 **第 1 节真源表**为准。  
+1. **先定架构 Layer（技术栈分层）**：模块在 **Layer 0～11** 中主责在哪一层，以 [`docs/01_FRAMEWORK/ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 的分层表与栈说明为真源。
+2. **再定 `docs/` 物理落盘**：该 Markdown 应落在哪棵目录树，以 **LAYOUT 标准** 与本文 **第 1 节真源表**为准。
 3. **防混规则**：路径段中的数字前缀（例如 `10_AI_WORKFLOW`、`11_STRATEGIC_DECISION`）**不等于** Layer 10 / Layer 11；模块 Layer 以正文、`front matter` 的 `layer`（若有）与 `ARCHITECTURE.md` **对照一致**为准，**不得**仅从路径推断。
 
 若蓝图 **YAML `layer` 与正文「Layer 定位」冲突**，以 **`ARCHITECTURE.md` + Owner 裁决**收敛为单一表述，并在同一 PR 内改完。
@@ -56,9 +56,9 @@ layer: layer_05
 
 **专业机构常见做法（压缩版）**：先有**受控分类法 / 文档类型 → 存放位置**映射（本仓库即 **LAYOUT 标准 §2～§4** + 图纸柜规则 + 命名标准），再对实物做 **inventory（rollup / 清单）**，把每份稿**分桶**后搬迁，最后用 **门禁（L1、verify、可选 INDEX_HEALTH）**验收。**「位置对不对」**与 **「链断不断」「内容是否重复」** 是不同信号，**不可互相替代**。
 
-**是否需要「完整判断方案」？**  
-- **需要一套分层判准**（下表），否则搬迁批次容易漏维度。  
-- **不承诺**对「每一个文件」做业务语义审计或全库「必须在某 INDEX 出现」的硬规则（见 REPO_WIDE §1.1 **§1.1**、本文 **§5.3**）。  
+**是否需要「完整判断方案」？**
+- **需要一套分层判准**（下表），否则搬迁批次容易漏维度。
+- **不承诺**对「每一个文件」做业务语义审计或全库「必须在某 INDEX 出现」的硬规则（见 REPO_WIDE §1.1 **§1.1**、本文 **§5.3**）。
 - **实践口径**：每个搬迁 PR 在描述里写清本批启用了表中**哪几行**判准即可（不必每篇长文）。
 
 #### 1.6.1 分桶表（第一列 =「位置 / 元数据 / 关系」）
@@ -100,12 +100,12 @@ layer: layer_05
 
 适用于 [施工阶段任务清单](./construction-phase-task-list.md) Phase 3 前缀批次或并行的小步 PR（§7 细节见 [REPO_WIDE 已归档](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md)）。
 
-1. **出图**：`export_repo_directory_rollup.py`（可选 `--include-untracked`）→ 选定本批要处理的前缀或子队列。  
-2. **打开标准**：对照 **LAYOUT 标准 §2～§4** 与本文 **§1.5**（Layer 与路径分立），写下本批「目标目录类型」（一句话即可，贴在 PR 描述）。  
-3. **逐文件/子簇**：判断应归 **哪一格**；若涉及 **图纸柜**，叠加 **01_BLUEPRINTS_REPOSITORY_RULES**。  
-4. **搬迁前**：涉及删或合并时走 删稿裁决 Playbook；涉及重复内容走 REPO_WIDE **§3**（C1/C2/D）。  
-5. **搬迁后**：`sentinel_l1_governance_scan.py`；若动蓝图路径则 `verify_*` + 按需 `generate_01_blueprints_index.py`。  
-6. **收口**：重跑 rollup（同日期戳或新日期）便于 JSON diff 证明该前缀「变薄」或达标。  
+1. **出图**：`export_repo_directory_rollup.py`（可选 `--include-untracked`）→ 选定本批要处理的前缀或子队列。
+2. **打开标准**：对照 **LAYOUT 标准 §2～§4** 与本文 **§1.5**（Layer 与路径分立），写下本批「目标目录类型」（一句话即可，贴在 PR 描述）。
+3. **逐文件/子簇**：判断应归 **哪一格**；若涉及 **图纸柜**，叠加 **01_BLUEPRINTS_REPOSITORY_RULES**。
+4. **搬迁前**：涉及删或合并时走 删稿裁决 Playbook；涉及重复内容走 REPO_WIDE **§3**（C1/C2/D）。
+5. **搬迁后**：`sentinel_l1_governance_scan.py`；若动蓝图路径则 `verify_*` + 按需 `generate_01_blueprints_index.py`。
+6. **收口**：重跑 rollup（同日期戳或新日期）便于 JSON diff 证明该前缀「变薄」或达标。
 7. **索引与互链（见下文 §4）**：路径变更后，**凡引用旧路径之处**须替换或 stub；按需更新域内 `INDEX.md` / 登记表 / 机器清单；再跑 **L1** 与相关 **verify_***。
 
 ```
@@ -152,15 +152,15 @@ layer: layer_05
 
 ### 5.2 已落地：零入链报表（索引健全性 · v1）
 
-- **脚本**：`scripts/governance/scan_index_health.py`（仓库根 `scripts/scan_index_health.py` 转发）。  
-- **默认**：候选 = `docs/` 下已跟踪 `.md`（排除 `docs/06_ARCHIVE/`、`docs/09_ARCHIVE/`、`docs/09_AUDIT/STATE/overnight_runs/`）；入链来源 = **全库已跟踪** `.md` 正文中的 Markdown 相对链接。  
-- **产出**：`docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.{md,json}`。  
-- **参数**：`--prefix`（可多次缩小候选树）、`--link-source same-as-candidates`、`--ignore-path` / `--ignore-glob`、`--exclude-prefix` 等（见 `python scripts/governance/scan_index_health.py --help`）。  
+- **脚本**：`scripts/governance/scan_index_health.py`（仓库根 `scripts/scan_index_health.py` 转发）。
+- **默认**：候选 = `docs/` 下已跟踪 `.md`（排除 `docs/06_ARCHIVE/`、`docs/09_ARCHIVE/`、`docs/09_AUDIT/STATE/overnight_runs/`）；入链来源 = **全库已跟踪** `.md` 正文中的 Markdown 相对链接。
+- **产出**：`docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.{md,json}`。
+- **参数**：`--prefix`（可多次缩小候选树）、`--link-source same-as-candidates`、`--ignore-path` / `--ignore-glob`、`--exclude-prefix` 等（见 `python scripts/governance/scan_index_health.py --help`）。
 - **不做**：HTML 链接、代码块内路径、「必须在某 INDEX 出现」的规则校验（后者仍属 **§5.3**）。
 
 ### 5.3 仍属可选 / 待规则冻结
 
-- **域 INDEX 覆盖规则**：例如「某前缀下正式稿必须出现在域内 `INDEX.md`」——须先写成标准条款，再单独立项脚本。  
+- **域 INDEX 覆盖规则**：例如「某前缀下正式稿必须出现在域内 `INDEX.md`」——须先写成标准条款，再单独立项脚本。
 - **与 rollup 同窗**：大治理批次可先 rollup 再跑 `scan_index_health`，优先啃**大前缀**下的零入链。
 
 **结论**：**搬迁批次内**至少应做 **§4.1 + L1 + 相关 verify**；**零入链报表**作**健全性信号**，与 §2.2「分层可达」兼容（门脸路径默认 `--ignore-path` 排除）。

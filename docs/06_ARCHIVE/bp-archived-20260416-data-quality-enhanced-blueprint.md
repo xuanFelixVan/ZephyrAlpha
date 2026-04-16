@@ -21,7 +21,7 @@ layer: layer_00
 
 > **核心职责**: 提供全面的数据质量检查和监控能力，支持数据质量规则定义、自动检查、质量报告
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据质量检查、数据质量监控、质量报告、质量修复
 
@@ -135,7 +135,7 @@ class DataQualityChecker:
 
     """数据质量检查器"""
 
-    
+
 
     def __init__(self, project_name: str = "zephyr-alpha"):
 
@@ -145,7 +145,7 @@ class DataQualityChecker:
 
         self.expectations = {}
 
-    
+
 
     def create_expectation_suite(
 
@@ -161,7 +161,7 @@ class DataQualityChecker:
 
         suite = gx.ExpectationSuite(expectation_suite_name=suite_name)
 
-        
+
 
         for expectation in expectations:
 
@@ -173,13 +173,13 @@ class DataQualityChecker:
 
             )
 
-        
+
 
         self.context.add_expectation_suite(suite)
 
         self.expectations[suite_name] = suite
 
-    
+
 
     def check_dataframe(
 
@@ -195,7 +195,7 @@ class DataQualityChecker:
 
         dataset = PandasDataset(df)
 
-        
+
 
         results = dataset.validate(
 
@@ -203,7 +203,7 @@ class DataQualityChecker:
 
         )
 
-        
+
 
         return {
 
@@ -231,7 +231,7 @@ class DataQualityChecker:
 
         }
 
-    
+
 
     def check_table(
 
@@ -259,11 +259,11 @@ class DataQualityChecker:
 
         )
 
-        
+
 
         results = batch.validate()
 
-        
+
 
         return {
 
@@ -277,7 +277,7 @@ class DataQualityChecker:
 
         }
 
-    
+
 
     def create_factor_data_expectations(self):
 
@@ -333,11 +333,11 @@ class DataQualityChecker:
 
         ]
 
-        
+
 
         self.create_expectation_suite("factor_data_quality", expectations)
 
-    
+
 
     def create_market_data_expectations(self):
 
@@ -391,7 +391,7 @@ class DataQualityChecker:
 
         ]
 
-        
+
 
         self.create_expectation_suite("market_data_quality", expectations)
 
@@ -415,7 +415,7 @@ class DataQualityMonitor:
 
     """数据质量监控器"""
 
-    
+
 
     def __init__(self):
 
@@ -429,7 +429,7 @@ class DataQualityMonitor:
 
         )
 
-        
+
 
         self.success_counter = Counter(
 
@@ -441,7 +441,7 @@ class DataQualityMonitor:
 
         )
 
-        
+
 
         self.failure_counter = Counter(
 
@@ -453,7 +453,7 @@ class DataQualityMonitor:
 
         )
 
-        
+
 
         self.check_duration = Histogram(
 
@@ -465,7 +465,7 @@ class DataQualityMonitor:
 
         )
 
-        
+
 
         self.quality_score = Gauge(
 
@@ -477,7 +477,7 @@ class DataQualityMonitor:
 
         )
 
-    
+
 
     def monitor_check(
 
@@ -495,17 +495,17 @@ class DataQualityMonitor:
 
         start_time = time.time()
 
-        
+
 
         self.check_counter.labels(table=table_name, suite=suite_name).inc()
 
-        
+
 
         try:
 
             result = check_func()
 
-            
+
 
             if result.get("success"):
 
@@ -527,13 +527,13 @@ class DataQualityMonitor:
 
                 ).inc()
 
-            
+
 
             score = self._calculate_quality_score(result)
 
             self.quality_score.labels(table=table_name).set(score)
 
-            
+
 
             return result
 
@@ -549,7 +549,7 @@ class DataQualityMonitor:
 
             ).observe(duration)
 
-    
+
 
     def _calculate_quality_score(self, result: Dict) -> float:
 
@@ -557,13 +557,13 @@ class DataQualityMonitor:
 
         statistics = result.get("statistics", {})
 
-        
+
 
         successful_expectations = statistics.get("successful_expectations", 0)
 
         evaluated_expectations = statistics.get("evaluated_expectations", 1)
 
-        
+
 
         return successful_expectations / evaluated_expectations
 
@@ -587,13 +587,13 @@ class DataQualityReporter:
 
     """数据质量报告器"""
 
-    
+
 
     def __init__(self, checker: DataQualityChecker):
 
         self.checker = checker
 
-    
+
 
     def generate_report(
 
@@ -633,23 +633,23 @@ class DataQualityReporter:
 
         }
 
-        
+
 
         for table in tables:
 
             suite_name = f"{table}_quality"
 
-            
+
 
             try:
 
                 result = self.checker.check_table(table, suite_name)
 
-                
+
 
                 statistics = result.get("statistics", {})
 
-                
+
 
                 report["summary"]["total_expectations"] += statistics.get(
 
@@ -669,7 +669,7 @@ class DataQualityReporter:
 
                 )
 
-                
+
 
                 if result.get("success"):
 
@@ -679,7 +679,7 @@ class DataQualityReporter:
 
                     report["summary"]["failed_tables"] += 1
 
-                
+
 
                 report["details"].append({
 
@@ -709,7 +709,7 @@ class DataQualityReporter:
 
                 })
 
-        
+
 
         report["summary"]["quality_score"] = (
 
@@ -719,11 +719,11 @@ class DataQualityReporter:
 
         )
 
-        
+
 
         return report
 
-    
+
 
     def generate_trend_report(
 
@@ -751,13 +751,13 @@ class DataQualityReporter:
 
         }
 
-        
+
 
         for i in range(days):
 
             score = 0.95 - (i * 0.01)
 
-            
+
 
             trend["daily_scores"].append({
 
@@ -767,7 +767,7 @@ class DataQualityReporter:
 
             })
 
-        
+
 
         if len(trend["daily_scores"]) >= 2:
 
@@ -775,13 +775,13 @@ class DataQualityReporter:
 
             older_scores = [s["score"] for s in trend["daily_scores"][-3:]]
 
-            
+
 
             recent_avg = sum(recent_scores) / len(recent_scores)
 
             older_avg = sum(older_scores) / len(older_scores)
 
-            
+
 
             if recent_avg > older_avg + 0.05:
 
@@ -791,11 +791,11 @@ class DataQualityReporter:
 
                 trend["trend"] = "declining"
 
-        
+
 
         return trend
 
-    
+
 
     def save_report(
 
@@ -827,7 +827,7 @@ class DataQualityFixer:
 
     """数据质量修复器"""
 
-    
+
 
     def __init__(self):
 
@@ -843,7 +843,7 @@ class DataQualityFixer:
 
         }
 
-    
+
 
     def suggest_fixes(
 
@@ -859,7 +859,7 @@ class DataQualityFixer:
 
         suggestions = []
 
-        
+
 
         for result in quality_result.get("results", []):
 
@@ -867,7 +867,7 @@ class DataQualityFixer:
 
                 expectation_type = result.get("expectation_type")
 
-                
+
 
                 if "null" in expectation_type.lower():
 
@@ -883,7 +883,7 @@ class DataQualityFixer:
 
                     })
 
-                
+
 
                 elif "unique" in expectation_type.lower():
 
@@ -899,7 +899,7 @@ class DataQualityFixer:
 
                     })
 
-                
+
 
                 elif "between" in expectation_type.lower():
 
@@ -915,11 +915,11 @@ class DataQualityFixer:
 
                     })
 
-        
+
 
         return suggestions
 
-    
+
 
     def apply_fix(
 
@@ -935,7 +935,7 @@ class DataQualityFixer:
 
         issue_type = fix_suggestion.get("issue")
 
-        
+
 
         if issue_type in self.fix_strategies:
 
@@ -943,11 +943,11 @@ class DataQualityFixer:
 
             return _fix(df, fix_suggestion)
 
-        
+
 
         return df
 
-    
+
 
     def _fix_null_values(
 
@@ -963,7 +963,7 @@ class DataQualityFixer:
 
         column = suggestion.get("column")
 
-        
+
 
         if df[column].dtype in ['int64', 'float64']:
 
@@ -973,11 +973,11 @@ class DataQualityFixer:
 
             df[column].fillna(df[column].mode()[0], inplace=True)
 
-        
+
 
         return df
 
-    
+
 
     def _fix_duplicates(
 
@@ -993,15 +993,15 @@ class DataQualityFixer:
 
         column = suggestion.get("column")
 
-        
+
 
         df.drop_duplicates(subset=[column], keep='first', inplace=True)
 
-        
+
 
         return df
 
-    
+
 
     def _fix_outliers(
 
@@ -1017,7 +1017,7 @@ class DataQualityFixer:
 
         column = suggestion.get("column")
 
-        
+
 
         Q1 = df[column].quantile(0.25)
 
@@ -1025,23 +1025,23 @@ class DataQualityFixer:
 
         IQR = Q3 - Q1
 
-        
+
 
         lower_bound = Q1 - 1.5 * IQR
 
         upper_bound = Q3 + 1.5 * IQR
 
-        
+
 
         df.loc[df[column] < lower_bound, column] = lower_bound
 
         df.loc[df[column] > upper_bound, column] = upper_bound
 
-        
+
 
         return df
 
-    
+
 
     def _fix_invalid_values(
 
@@ -1057,15 +1057,15 @@ class DataQualityFixer:
 
         column = suggestion.get("column")
 
-        
+
 
         valid_values = suggestion.get("valid_values", [])
 
-        
+
 
         df = df[df[column].isin(valid_values)]
 
-        
+
 
         return df
 
@@ -1123,7 +1123,7 @@ stores:
 
       base_directory: expectations/
 
-  
+
 
   validations_store:
 
@@ -1213,17 +1213,17 @@ def check_factor_data_quality():
 
     checker.create_factor_data_expectations()
 
-    
+
 
     result = checker.check_table("factor_data", "factor_data_quality")
 
-    
+
 
     if not result.get("success"):
 
         raise Exception("Factor data quality check failed")
 
-    
+
 
     return result
 
@@ -1235,17 +1235,17 @@ def check_market_data_quality():
 
     checker.create_market_data_expectations()
 
-    
+
 
     result = checker.check_table("market_data", "market_data_quality")
 
-    
+
 
     if not result.get("success"):
 
         raise Exception("Market data quality check failed")
 
-    
+
 
     return result
 
@@ -1257,7 +1257,7 @@ def generate_quality_report():
 
     reporter = DataQualityReporter(checker)
 
-    
+
 
     report = reporter.generate_report(
 
@@ -1267,7 +1267,7 @@ def generate_quality_report():
 
     )
 
-    
+
 
     reporter.save_report(
 
@@ -1277,7 +1277,7 @@ def generate_quality_report():
 
     )
 
-    
+
 
     return report
 
@@ -1474,4 +1474,3 @@ check_market_task >> generate_report_task
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

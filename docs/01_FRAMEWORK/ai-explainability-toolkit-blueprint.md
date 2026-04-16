@@ -26,7 +26,7 @@ responsibility_boundary: ''
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -432,7 +432,7 @@ class DecisionCapture:
 
 
 
-    
+
 
 
 
@@ -462,13 +462,13 @@ class DecisionCapture:
 
 
 
-        
 
 
 
 
 
-    def capture_decision(self, 
+
+    def capture_decision(self,
 
 
 
@@ -504,7 +504,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -564,7 +564,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -600,7 +600,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -636,7 +636,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -678,7 +678,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -720,7 +720,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -732,7 +732,7 @@ class DecisionCapture:
 
 
 
-        
+
 
 
 
@@ -786,7 +786,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -804,13 +804,13 @@ class SHAPExplainer:
 
 
 
-        self.explainer = shap.TreeExplainer(model)  # 或其他SHAP解释?        
+        self.explainer = shap.TreeExplainer(model)  # 或其他SHAP解释?
 
 
 
 
 
-    def explain_prediction(self, 
+    def explain_prediction(self,
 
 
 
@@ -834,7 +834,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -846,7 +846,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -858,7 +858,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -900,7 +900,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -930,7 +930,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -972,13 +972,13 @@ class SHAPExplainer:
 
 
 
-    
 
 
 
 
 
-    def _generate_explanation(self, 
+
+    def _generate_explanation(self,
 
 
 
@@ -1008,7 +1008,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1020,7 +1020,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1050,7 +1050,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1080,7 +1080,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1110,7 +1110,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1128,7 +1128,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1182,7 +1182,7 @@ class AuditLogger:
 
 
 
-    
+
 
 
 
@@ -1206,13 +1206,13 @@ class AuditLogger:
 
 
 
-        
 
 
 
 
 
-    def log_decision_audit(self, 
+
+    def log_decision_audit(self,
 
 
 
@@ -1236,7 +1236,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1266,7 +1266,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1302,7 +1302,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1332,7 +1332,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1356,7 +1356,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1380,7 +1380,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1410,7 +1410,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1428,7 +1428,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1452,7 +1452,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1464,13 +1464,13 @@ class AuditLogger:
 
 
 
-    
 
 
 
 
 
-    def generate_audit_report(self, 
+
+    def generate_audit_report(self,
 
 
 
@@ -1494,7 +1494,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1512,7 +1512,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1530,7 +1530,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1548,7 +1548,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1614,7 +1614,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1686,7 +1686,7 @@ class AuditLogger:
 
 
 
-    
+
 
 
 
@@ -1722,7 +1722,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1740,7 +1740,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -1758,7 +1758,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1776,7 +1776,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1824,7 +1824,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1860,7 +1860,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1896,7 +1896,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -1968,13 +1968,13 @@ class AuditLogger:
 
 
 
-    
 
 
 
 
 
-    def generate_explanation_report(self, 
+
+    def generate_explanation_report(self,
 
 
 
@@ -1992,7 +1992,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -2016,7 +2016,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2058,7 +2058,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2070,7 +2070,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2088,7 +2088,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2106,7 +2106,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2124,7 +2124,7 @@ class AuditLogger:
 
 
 
-            
+
 
 
 
@@ -2148,7 +2148,7 @@ class AuditLogger:
 
 
 
-        
+
 
 
 
@@ -2869,8 +2869,3 @@ class AuditLogger:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-

@@ -136,7 +136,7 @@ class QualityRule:
 
     threshold: float
 
-    
+
 
 @dataclass
 
@@ -164,7 +164,7 @@ class DataQualityManager:
 
     """数据质量管理器"""
 
-    
+
 
     def __init__(self, ge_config_path: str):
 
@@ -172,23 +172,23 @@ class DataQualityManager:
 
         self.rules = {}
 
-        
+
 
     def add_quality_rule(self, rule: QualityRule) -> bool:
 
         """添加质量规则"""
 
-        
+
 
         self.rules[rule.rule_id] = rule
 
-        
+
 
         suite_name = f"{rule.rule_name}_suite"
 
         suite = self.context.create_expectation_suite(suite_name)
 
-        
+
 
         suite.add_expectation(
 
@@ -198,15 +198,15 @@ class DataQualityManager:
 
         )
 
-        
+
 
         self.context.save_expectation_suite(suite)
 
         return True
 
-    
 
-    def validate_data(self, 
+
+    def validate_data(self,
 
                      df,
 
@@ -214,13 +214,13 @@ class DataQualityManager:
 
         """验证数据质量"""
 
-        
+
 
         dataset = ge.from_pandas(df)
 
         results = []
 
-        
+
 
         for rule_id, rule in self.rules.items():
 
@@ -232,7 +232,7 @@ class DataQualityManager:
 
             )
 
-            
+
 
             quality_result = QualityResult(
 
@@ -254,13 +254,13 @@ class DataQualityManager:
 
             results.append(quality_result)
 
-        
+
 
         return results
 
-    
 
-    def get_quality_score(self, 
+
+    def get_quality_score(self,
 
                          entity_name: str,
 
@@ -268,17 +268,17 @@ class DataQualityManager:
 
         """计算质量分数"""
 
-        
+
 
         if dimensions is None:
 
             dimensions = list(QualityDimension)
 
-        
+
 
         results = self.validate_data(entity_name)
 
-        
+
 
         dimension_scores = {}
 
@@ -294,7 +294,7 @@ class DataQualityManager:
 
                 ) / len(dim_results)
 
-        
+
 
         overall_score = sum(dimension_scores.values()) / len(dimension_scores)
 
@@ -382,13 +382,13 @@ class DataQualityManager:
 
 
 
-✅ **自动化数据验证** - Great Expectations集成  
+✅ **自动化数据验证** - Great Expectations集成
 
-✅ **多维度质量检查** - 完整性、准确性、一致性等  
+✅ **多维度质量检查** - 完整性、准确性、一致性等
 
-✅ **可视化报告** - 自动生成质量文档  
+✅ **可视化报告** - 自动生成质量文档
 
-✅ **开源免费** - Apache 2.0许可证  
+✅ **开源免费** - Apache 2.0许可证
 
 
 
@@ -499,4 +499,3 @@ class DataQualityManager:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

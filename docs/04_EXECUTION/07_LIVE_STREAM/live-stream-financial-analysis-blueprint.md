@@ -43,7 +43,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Live Stream Financial Analysis蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Live Stream Financial Analysis蓝图设计相关内容
 
@@ -137,7 +137,7 @@ def transcribe_with_api(audio_path: str):
 
     client = openai.OpenAI(api_key="your-api-key")
 
-    
+
 
     with open(audio_path, 'rb') as audio_file:
 
@@ -151,7 +151,7 @@ def transcribe_with_api(audio_path: str):
 
         )
 
-    
+
 
     return transcript.text
 
@@ -175,7 +175,7 @@ import torch
 
 class LocalWhisperTranscriber:
 
-    
+
 
     def __init__(self, model_size: str = "medium", device: str = "cuda"):
 
@@ -183,7 +183,7 @@ class LocalWhisperTranscriber:
 
         初始化本地Whisper模型
 
-        
+
 
         Args:
 
@@ -197,9 +197,9 @@ class LocalWhisperTranscriber:
 
         self.model = whisper.load_model(model_size, device=self.device)
 
-        
 
-    
+
+
 
     def transcribe(self, audio_path: str, language: str = "zh") -> dict:
 
@@ -217,7 +217,7 @@ class LocalWhisperTranscriber:
 
         )
 
-        
+
 
         return {
 
@@ -283,7 +283,7 @@ def analyze_with_gpt4(transcript: str):
 
     client = OpenAI(api_key="your-api-key")
 
-    
+
 
     response = client.chat.completions.create(
 
@@ -297,7 +297,7 @@ def analyze_with_gpt4(transcript: str):
 
     )
 
-    
+
 
     return response.choices[0].message.content
 
@@ -323,7 +323,7 @@ import torch
 
 class LocalDeepSeekAnalyzer:
 
-    
+
 
     def __init__(self, model_path: str = "deepseek-ai/deepseek-llm-7b-chat"):
 
@@ -331,7 +331,7 @@ class LocalDeepSeekAnalyzer:
 
         初始化DeepSeek模型
 
-        
+
 
         Args:
 
@@ -349,9 +349,9 @@ class LocalDeepSeekAnalyzer:
 
         )
 
-        
 
-    
+
+
 
     def analyze(self, transcript: str) -> dict:
 
@@ -395,11 +395,11 @@ class LocalDeepSeekAnalyzer:
 
 }}"""
 
-        
+
 
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
 
-        
+
 
         outputs = self.model.generate(
 
@@ -415,11 +415,11 @@ class LocalDeepSeekAnalyzer:
 
         )
 
-        
+
 
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        
+
 
         # 解析JSON响应
 
@@ -431,7 +431,7 @@ class LocalDeepSeekAnalyzer:
 
         json_str = response[json_start:json_end]
 
-        
+
 
         return json.loads(json_str)
 
@@ -459,7 +459,7 @@ import torch
 
 class LocalQwenAnalyzer:
 
-    
+
 
     def __init__(self, model_path: str = "Qwen/Qwen2.5-7B-Instruct"):
 
@@ -467,7 +467,7 @@ class LocalQwenAnalyzer:
 
         初始化Qwen模型
 
-        
+
 
         Args:
 
@@ -487,9 +487,9 @@ class LocalQwenAnalyzer:
 
         )
 
-        
 
-    
+
+
 
     def analyze(self, transcript: str) -> dict:
 
@@ -511,7 +511,7 @@ class LocalQwenAnalyzer:
 
         ]
 
-        
+
 
         text = self.tokenizer.apply_chat_template(
 
@@ -523,11 +523,11 @@ class LocalQwenAnalyzer:
 
         )
 
-        
+
 
         model_inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
 
-        
+
 
         generated_ids = self.model.generate(
 
@@ -539,25 +539,25 @@ class LocalQwenAnalyzer:
 
         )
 
-        
+
 
         generated_ids = [
 
-            output_ids[len(input_ids):] 
+            output_ids[len(input_ids):]
 
             for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
 
         ]
 
-        
+
 
         response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
-        
+
 
         return self._parse_response(response)
 
-    
+
 
     def _parse_response(self, response: str) -> dict:
 
@@ -565,7 +565,7 @@ class LocalQwenAnalyzer:
 
         import json
 
-        
+
 
         try:
 
@@ -621,13 +621,13 @@ import json
 
 class OllamaAnalyzer:
 
-    
+
 
     def __init__(self, model_name: str = "qwen2.5:7b", base_url: str = "http://localhost:11434"):
 
         """
 
-        
+
 
         Args:
 
@@ -639,9 +639,9 @@ class OllamaAnalyzer:
 
         self.base_url = base_url
 
-        
 
-    
+
+
 
     def analyze(self, transcript: str) -> dict:
 
@@ -671,7 +671,7 @@ class OllamaAnalyzer:
 
 }}"""
 
-        
+
 
         response = requests.post(
 
@@ -697,13 +697,13 @@ class OllamaAnalyzer:
 
         )
 
-        
+
 
         result = response.json()
 
         response_text = result["response"]
 
-        
+
 
         # 解析JSON
 
@@ -797,7 +797,7 @@ class LocalFinBERTAnalyzer:
 
 ?""
 
-    
+
 
     def __init__(self, model_path: str = "yiyanghkust/finbert-tone"):
 
@@ -805,7 +805,7 @@ class LocalFinBERTAnalyzer:
 
         初始化FinBERT模型
 
-        
+
 
         Args:
 
@@ -815,13 +815,13 @@ class LocalFinBERTAnalyzer:
 
         self.device = 0 if torch.cuda.is_available() else -1
 
-        
+
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
         self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
-        
+
 
         self.sentiment_pipeline = pipeline(
 
@@ -835,9 +835,9 @@ class LocalFinBERTAnalyzer:
 
         )
 
-        
 
-    
+
+
 
     def analyze_sentiment(self, text: str) -> dict:
 
@@ -849,7 +849,7 @@ class LocalFinBERTAnalyzer:
 
         segments = [text[i:i+max_length] for i in range(0, len(text), max_length)]
 
-        
+
 
         sentiments = []
 
@@ -859,7 +859,7 @@ class LocalFinBERTAnalyzer:
 
             sentiments.append(result[0])
 
-        
+
 
 感分布
 
@@ -869,11 +869,11 @@ class LocalFinBERTAnalyzer:
 
         neutral_count = sum(1 for s in sentiments if s['label'] == 'Neutral')
 
-        
+
 
         total = len(sentiments)
 
-        
+
 
         if positive_count > negative_count and positive_count > neutral_count:
 
@@ -893,7 +893,7 @@ class LocalFinBERTAnalyzer:
 
             confidence = neutral_count / total
 
-        
+
 
         return {
 
@@ -1177,7 +1177,7 @@ models:
 
     device: "cuda"
 
-  
+
 
   llm:
 
@@ -1187,7 +1187,7 @@ models:
 
     device: "cuda"
 
-  
+
 
   sentiment:
 
@@ -1451,7 +1451,7 @@ models:
 
     device: "cuda"
 
-  
+
 
   llm:
 
@@ -1461,7 +1461,7 @@ model_name: "deepseek-r1:14b"  # ?"qwen2.5:32b"
 
     base_url: "http://localhost:11434"
 
-  
+
 
   sentiment:
 
@@ -1517,7 +1517,7 @@ python main.py
 
 
 
-- 
+-
 
 - [部署脚本（PowerShell）
 
@@ -1645,7 +1645,7 @@ class DouyinLiveMonitor:
 
     """抖音直播间监控器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1657,7 +1657,7 @@ class DouyinLiveMonitor:
 
         self.monitored_rooms = {}
 
-    
+
 
     async def start_monitoring(self, streamer_list: List[Dict]):
 
@@ -1669,7 +1669,7 @@ class DouyinLiveMonitor:
 
             )
 
-    
+
 
     async def _monitor_single_streamer(self, streamer: Dict):
 
@@ -1681,25 +1681,25 @@ class DouyinLiveMonitor:
 
                 is_live = await self._check_live_status(streamer["url"])
 
-                
+
 
                 if is_live:
 
                     live_data = await self._get_live_room_data(streamer["url"])
 
-                    
+
 
                     # 触发录制事件
 
                     await self._on_streamer_live(streamer, live_data)
 
-                
+
 
 #
 
                 await asyncio.sleep(self.config["check_interval"])
 
-                
+
 
             except Exception as e:
 
@@ -1707,7 +1707,7 @@ class DouyinLiveMonitor:
 
                 await asyncio.sleep(60)
 
-    
+
 
     async def _check_live_status(self, live_url: str) -> bool:
 
@@ -1717,7 +1717,7 @@ class DouyinLiveMonitor:
 
             time.sleep(2)
 
-            
+
 
             # 检查是否有直播标识
 
@@ -1725,13 +1725,13 @@ class DouyinLiveMonitor:
 
             return live_indicator is not None
 
-            
+
 
         except Exception as e:
 
             return False
 
-    
+
 
     async def _get_live_room_data(self, live_url: str) -> Dict:
 
@@ -1741,7 +1741,7 @@ class DouyinLiveMonitor:
 
             time.sleep(3)
 
-            
+
 
             # 提取在线人数
 
@@ -1749,13 +1749,13 @@ class DouyinLiveMonitor:
 
             online_count = self._parse_count(online_element.text) if online_element else 0
 
-            
+
 
             title_element = self.page.ele('css:.room-title', timeout=5)
 
             title = title_element.text if title_element else ""
 
-            
+
 
             # 提取主播名称
 
@@ -1763,7 +1763,7 @@ class DouyinLiveMonitor:
 
             streamer_name = streamer_element.text if streamer_element else ""
 
-            
+
 
             return {
 
@@ -1777,13 +1777,13 @@ class DouyinLiveMonitor:
 
             }
 
-            
+
 
         except Exception as e:
 
             return {}
 
-    
+
 
     def _parse_count(self, count_text: str) -> int:
 
@@ -1791,7 +1791,7 @@ class DouyinLiveMonitor:
 
             count_text = count_text.strip()
 
-            
+
 
 if '? in count_text:
 
@@ -1809,13 +1809,13 @@ return int(float(count_text.replace('?, '')) * 100000000)
 
             return 0
 
-    
+
 
     async def _on_streamer_live(self, streamer: Dict, live_data: Dict):
 
         self.logger.info(f"主播 {streamer['name']} 已开播，在线人数: {live_data['online_count']}")
 
-        
+
 
         # 触发录制任务
 
@@ -1845,7 +1845,7 @@ import logging
 
 class AudioRecorder:
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1859,7 +1859,7 @@ class AudioRecorder:
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    
+
 
     async def record_audio(
 
@@ -1881,7 +1881,7 @@ class AudioRecorder:
 
         录制音频
 
-        
+
 
         Args:
 
@@ -1889,7 +1889,7 @@ class AudioRecorder:
 
             streamer_name: 主播名称
 
-        
+
 
         Returns:
 
@@ -1903,7 +1903,7 @@ class AudioRecorder:
 
             output_file = self.output_dir / f"{streamer_name}_{timestamp}.{output_format}"
 
-            
+
 
             # 构建FFmpeg命令
 
@@ -1927,9 +1927,9 @@ class AudioRecorder:
 
             ]
 
-            
 
-            
+
+
 
             # 异步执行录制
 
@@ -1943,7 +1943,7 @@ class AudioRecorder:
 
             )
 
-            
+
 
 #
 
@@ -1951,7 +1951,7 @@ class AudioRecorder:
 
             stdout, stderr = await process.communicate()
 
-            
+
 
             if process.returncode == 0:
 
@@ -1965,7 +1965,7 @@ class AudioRecorder:
 
                 return None
 
-                
+
 
         except Exception as e:
 
@@ -1973,7 +1973,7 @@ class AudioRecorder:
 
             return None
 
-    
+
 
     async def record_segmented(
 
@@ -1993,7 +1993,7 @@ class AudioRecorder:
 
         分段录制音频
 
-        
+
 
         Args:
 
@@ -2003,7 +2003,7 @@ class AudioRecorder:
 
             total_duration: 总时长（秒）
 
-        
+
 
         Returns:
 
@@ -2015,7 +2015,7 @@ class AudioRecorder:
 
         segments = total_duration // segment_duration
 
-        
+
 
         for i in range(segments):
 
@@ -2029,13 +2029,13 @@ class AudioRecorder:
 
             )
 
-            
+
 
             if output_file:
 
                 recorded_files.append(output_file)
 
-        
+
 
         return recorded_files
 
@@ -2083,7 +2083,7 @@ import time
 
 class AudioTranscriber:
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2091,7 +2091,7 @@ class AudioTranscriber:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         # 加载Whisper模型
 
@@ -2101,7 +2101,7 @@ class AudioTranscriber:
 
         self.model = whisper.load_model(model_size)
 
-    
+
 
     async def transcribe(
 
@@ -2117,13 +2117,13 @@ class AudioTranscriber:
 
         转录音频
 
-        
+
 
         Args:
 
             audio_path: 音频文件路径
 
-        
+
 
         Returns:
 
@@ -2135,9 +2135,9 @@ class AudioTranscriber:
 
             start_time = time.time()
 
-            
 
-            
+
+
 
             # 使用Whisper转录
 
@@ -2151,7 +2151,7 @@ class AudioTranscriber:
 
             )
 
-            
+
 
             transcript = result["text"]
 
@@ -2171,13 +2171,13 @@ class AudioTranscriber:
 
             ]
 
-            
+
 
             elapsed_time = time.time() - start_time
 
-            
 
-            
+
+
 
             return {
 
@@ -2191,7 +2191,7 @@ class AudioTranscriber:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -2207,7 +2207,7 @@ class AudioTranscriber:
 
             }
 
-    
+
 
     async def transcribe_batch(
 
@@ -2223,7 +2223,7 @@ class AudioTranscriber:
 
         results = []
 
-        
+
 
         for audio_file in audio_files:
 
@@ -2231,7 +2231,7 @@ class AudioTranscriber:
 
             results.append(result)
 
-        
+
 
         return results
 
@@ -2259,7 +2259,7 @@ class FinancialContentAnalyzer:
 
 """
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2267,7 +2267,7 @@ class FinancialContentAnalyzer:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self.client = OpenAI(
 
@@ -2277,11 +2277,11 @@ class FinancialContentAnalyzer:
 
         )
 
-        
+
 
         self.model = config.get("openai_model", "gpt-4")
 
-    
+
 
     async def extract_key_points(
 
@@ -2295,7 +2295,7 @@ class FinancialContentAnalyzer:
 
         """
 
-        
+
 
         Args:
 
@@ -2303,7 +2303,7 @@ class FinancialContentAnalyzer:
 
             streamer_name: 主播名称
 
-        
+
 
         Returns:
 
@@ -2365,7 +2365,7 @@ class FinancialContentAnalyzer:
 
 """
 
-            
+
 
             response = self.client.chat.completions.create(
 
@@ -2395,13 +2395,13 @@ class FinancialContentAnalyzer:
 
             )
 
-            
+
 
             # 解析JSON响应
 
             content = response.choices[0].message.content
 
-            
+
 
             # 提取JSON部分
 
@@ -2417,17 +2417,17 @@ class FinancialContentAnalyzer:
 
                 json_str = content
 
-            
+
 
             result = json.loads(json_str)
 
-            
 
-            
+
+
 
             return result
 
-            
+
 
         except Exception as e:
 
@@ -2453,7 +2453,7 @@ class FinancialContentAnalyzer:
 
             }
 
-    
+
 
     async def analyze_sentiment(self, text: str) -> Dict:
 
@@ -2461,7 +2461,7 @@ class FinancialContentAnalyzer:
 
 感分析
 
-        
+
 
         Args:
 
@@ -2469,7 +2469,7 @@ text:
 
 ?
 
-        
+
 
         Returns:
 
@@ -2481,7 +2481,7 @@ text:
 
             from transformers import pipeline
 
-            
+
 
 感分析模型
 
@@ -2495,13 +2495,13 @@ text:
 
             )
 
-            
+
 
             max_length = 512
 
             segments = [text[i:i+max_length] for i in range(0, len(text), max_length)]
 
-            
+
 
             sentiments = []
 
@@ -2511,7 +2511,7 @@ text:
 
                 sentiments.append(result[0])
 
-            
+
 
 #
 
@@ -2523,11 +2523,11 @@ text:
 
             neutral_count = sum(1 for s in sentiments if s['label'] == 'Neutral')
 
-            
+
 
             total = len(sentiments)
 
-            
+
 
             if positive_count > negative_count and positive_count > neutral_count:
 
@@ -2547,7 +2547,7 @@ text:
 
                 confidence = neutral_count / total
 
-            
+
 
             return {
 
@@ -2567,7 +2567,7 @@ text:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -2623,7 +2623,7 @@ import logging
 
 class OpinionAggregator:
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2633,7 +2633,7 @@ class OpinionAggregator:
 
         self.opinions = []
 
-    
+
 
     def add_opinion(
 
@@ -2653,7 +2653,7 @@ class OpinionAggregator:
 
         添加主播观点
 
-        
+
 
         Args:
 
@@ -2681,15 +2681,15 @@ class OpinionAggregator:
 
         })
 
-        
 
-    
+
+
 
     def aggregate(self) -> Dict:
 
         """
 
-        
+
 
         Returns:
 
@@ -2709,13 +2709,13 @@ class OpinionAggregator:
 
             }
 
-        
+
 
         # 统计大盘看法
 
         view_scores = {"看多": 0.0, "看空": 0.0, "震荡": 0.0}
 
-        
+
 
         for item in self.opinions:
 
@@ -2725,7 +2725,7 @@ class OpinionAggregator:
 
             weight = item["weight"]
 
-            
+
 
             # 加权投票
 
@@ -2733,7 +2733,7 @@ class OpinionAggregator:
 
             view_scores[view] += score
 
-        
+
 
         # 确定主流观点
 
@@ -2743,7 +2743,7 @@ class OpinionAggregator:
 
         consensus_ratio = view_scores[dominant_view] / total_score if total_score > 0 else 0
 
-        
+
 
         # 统计推荐板块
 
@@ -2753,13 +2753,13 @@ class OpinionAggregator:
 
             all_sectors.extend(item["opinion"].get("sectors", []))
 
-        
+
 
         sector_counts = Counter(all_sectors)
 
         top_sectors = sector_counts.most_common(10)
 
-        
+
 
         # 统计推荐个股
 
@@ -2769,23 +2769,23 @@ class OpinionAggregator:
 
             all_stocks.extend(item["opinion"].get("stocks", []))
 
-        
+
 
         stock_counts = Counter([s["code"] for s in all_stocks if "code" in s])
 
         top_stocks = stock_counts.most_common(10)
 
-        
+
 
         avg_confidence = np.mean([item["opinion"]["confidence"] for item in self.opinions])
 
-        
+
 
         # 计算平均在线人数
 
         avg_online_count = np.mean([item["online_count"] for item in self.opinions])
 
-        
+
 
         return {
 
@@ -2807,7 +2807,7 @@ class OpinionAggregator:
 
         }
 
-    
+
 
     def clear(self):
 
@@ -2837,7 +2837,7 @@ import logging
 
 class FactorGenerator:
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -2845,7 +2845,7 @@ class FactorGenerator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def generate_factors(
 
@@ -2861,7 +2861,7 @@ class FactorGenerator:
 
         生成预测因子
 
-        
+
 
         Args:
 
@@ -2869,7 +2869,7 @@ class FactorGenerator:
 
             market_data: 市场数据（可选）
 
-        
+
 
         Returns:
 
@@ -2889,11 +2889,11 @@ class FactorGenerator:
 
             )
 
-            
+
 
             consensus_factor = aggregated_opinion["consensus_ratio"]
 
-            
+
 
             # 3. 影响力因子（基于主播数量和在线人数）
 
@@ -2905,11 +2905,11 @@ class FactorGenerator:
 
             )
 
-            
+
 
             confidence_factor = aggregated_opinion["avg_confidence"] / 10.0
 
-            
+
 
             # 5. 板块热度因子
 
@@ -2921,7 +2921,7 @@ class FactorGenerator:
 
             )
 
-            
+
 
             # 6. 综合因子（加权平均）
 
@@ -2937,7 +2937,7 @@ class FactorGenerator:
 
             )
 
-            
+
 
             return {
 
@@ -2965,7 +2965,7 @@ class FactorGenerator:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -2973,7 +2973,7 @@ class FactorGenerator:
 
             return {}
 
-    
+
 
     def _calculate_sentiment_factor(
 
@@ -2999,7 +2999,7 @@ class FactorGenerator:
 
             return 0.0
 
-    
+
 
     def _calculate_influence_factor(
 
@@ -3013,19 +3013,19 @@ class FactorGenerator:
 
         streamer_factor = min(total_streamers / 10.0, 1.0)
 
-        
+
 
         online_factor = min(avg_online_count / 100000.0, 1.0)
 
-        
+
 
         influence_factor = (streamer_factor * 0.6 + online_factor * 0.4)
 
-        
+
 
         return influence_factor
 
-    
+
 
     def _calculate_sector_factors(
 
@@ -3041,7 +3041,7 @@ class FactorGenerator:
 
         sector_factors = {}
 
-        
+
 
         for sector, count in top_sectors:
 
@@ -3049,11 +3049,11 @@ class FactorGenerator:
 
             sector_factors[sector] = count / total_streamers
 
-        
+
 
         return sector_factors
 
-    
+
 
     def _calculate_composite_factor(
 
@@ -3087,7 +3087,7 @@ class FactorGenerator:
 
         })
 
-        
+
 
         # 加权平均
 
@@ -3103,7 +3103,7 @@ class FactorGenerator:
 
         )
 
-        
+
 
         return composite
 
@@ -3141,7 +3141,7 @@ import json
 
 class LiveStreamFinancialSystem:
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -3149,7 +3149,7 @@ class LiveStreamFinancialSystem:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         # 初始化各模块
 
@@ -3165,13 +3165,13 @@ class LiveStreamFinancialSystem:
 
         self.factor_generator = FactorGenerator(config["factor_generator"])
 
-        
+
 
         # 结果存储
 
         self.results = []
 
-    
+
 
     async def run(self, streamer_list: List[Dict]):
 
@@ -3179,7 +3179,7 @@ class LiveStreamFinancialSystem:
 
         运行系统
 
-        
+
 
         Args:
 
@@ -3187,7 +3187,7 @@ class LiveStreamFinancialSystem:
 
         """
 
-        
+
 
         # 启动监控任务
 
@@ -3203,21 +3203,21 @@ class LiveStreamFinancialSystem:
 
             tasks.append(task)
 
-        
+
 
 #
 
         await asyncio.gather(*tasks)
 
-        
+
 
         final_factors = await self._generate_final_factors()
 
-        
+
 
         return final_factors
 
-    
+
 
     async def _process_streamer(self, streamer: Dict):
 
@@ -3225,27 +3225,27 @@ class LiveStreamFinancialSystem:
 
         try:
 
-            
+
 
             is_live = await self.monitor._check_live_status(streamer["url"])
 
-            
+
 
             if not is_live:
 
                 return
 
-            
+
 
             live_data = await self.monitor._get_live_room_data(streamer["url"])
 
-            
+
 
             # 3. 获取直播流地址
 
             stream_url = await self._get_stream_url(streamer["url"])
 
-            
+
 
             if not stream_url:
 
@@ -3253,7 +3253,7 @@ class LiveStreamFinancialSystem:
 
                 return
 
-            
+
 
             # 4. 录制音频
 
@@ -3267,7 +3267,7 @@ class LiveStreamFinancialSystem:
 
             )
 
-            
+
 
             if not audio_path:
 
@@ -3275,13 +3275,13 @@ class LiveStreamFinancialSystem:
 
                 return
 
-            
+
 
             # 5. 转录音频
 
             transcript = await self.transcriber.transcribe(audio_path)
 
-            
+
 
             if not transcript["text"]:
 
@@ -3289,7 +3289,7 @@ class LiveStreamFinancialSystem:
 
                 return
 
-            
+
 
 # 6.
 
@@ -3301,7 +3301,7 @@ class LiveStreamFinancialSystem:
 
             )
 
-            
+
 
 # 7.
 
@@ -3309,7 +3309,7 @@ class LiveStreamFinancialSystem:
 
             sentiment = await self.analyzer.analyze_sentiment(transcript["text"])
 
-            
+
 
             # 8. 添加到聚合器
 
@@ -3331,7 +3331,7 @@ class LiveStreamFinancialSystem:
 
             )
 
-            
+
 
             # 9. 保存结果
 
@@ -3351,21 +3351,21 @@ class LiveStreamFinancialSystem:
 
             }
 
-            
+
 
             self.results.append(result)
 
-            
+
 
             self.logger.info(f"主播 {streamer['name']} 处理完成")
 
-            
+
 
         except Exception as e:
 
             self.logger.error(f"处理主播 {streamer['name']} 失败: {e}")
 
-    
+
 
     async def _get_stream_url(self, live_url: str) -> str:
 
@@ -3377,7 +3377,7 @@ class LiveStreamFinancialSystem:
 
         pass
 
-    
+
 
     async def _generate_final_factors(self) -> Dict:
 
@@ -3385,13 +3385,13 @@ class LiveStreamFinancialSystem:
 
         aggregated = self.aggregator.aggregate()
 
-        
+
 
         # 生成因子
 
         factors = self.factor_generator.generate_factors(aggregated)
 
-        
+
 
 ?
 
@@ -3399,11 +3399,11 @@ class LiveStreamFinancialSystem:
 
         factors["streamer_count"] = len(self.results)
 
-        
+
 
         return factors
 
-    
+
 
     def save_results(self, output_path: str):
 
@@ -3413,7 +3413,7 @@ class LiveStreamFinancialSystem:
 
             json.dump(self.results, f, ensure_ascii=False, indent=2)
 
-        
+
 
 ```
 
@@ -3793,7 +3793,7 @@ async def main():
 
         config = yaml.safe_load(f)
 
-    
+
 
     # 加载主播列表
 
@@ -3801,17 +3801,17 @@ async def main():
 
         streamer_data = json.load(f)
 
-    
+
 
     system = LiveStreamFinancialSystem(config)
 
-    
+
 
     # 运行系统
 
     factors = await system.run(streamer_data["streamers"])
 
-    
+
 
     # 输出结果
 
@@ -3829,7 +3829,7 @@ print(f"? {factors['influence_factor']:.3f}")
 
     print(f"热门板块: {list(factors['sector_factors'].keys())[:5]}")
 
-    
+
 
     # 保存结果
 
@@ -3927,7 +3927,7 @@ async def scheduled_analysis():
 
     scheduler = AsyncIOScheduler()
 
-    
+
 
     # 每天19:00执行
 
@@ -3943,7 +3943,7 @@ async def scheduled_analysis():
 
     )
 
-    
+
 
     scheduler.start()
 
@@ -4013,7 +4013,7 @@ async def save_to_database(factors: Dict):
 
     )
 
-    
+
 
     await conn.execute('''
 
@@ -4039,7 +4039,7 @@ async def save_to_database(factors: Dict):
 
     )
 
-    
+
 
     await conn.close()
 
@@ -4153,7 +4153,7 @@ async def save_to_database(factors: Dict):
 
 - **技术规格书**: 待创建
 
-- **职责**: 
+- **职责**:
 
 容分析与因子生成
 
@@ -4194,4 +4194,3 @@ async def save_to_database(factors: Dict):
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

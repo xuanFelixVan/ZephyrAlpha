@@ -60,7 +60,7 @@ related_documents:
 
 > **核心职责**: 开源项目集成蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：开源项目集成蓝图设计相关内容
 
@@ -70,7 +70,7 @@ related_documents:
 
 > **核心职责**: Open Source Integration蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Open Source Integration蓝图设计相关内容
 
@@ -406,9 +406,9 @@ class RiskfolioLibIntegration:
 
     """Riskfolio-Lib集成封装器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  returns: pd.DataFrame,
 
@@ -420,7 +420,7 @@ class RiskfolioLibIntegration:
 
         self._setup_riskfolio()
 
-    
+
 
     def _setup_riskfolio(self):
 
@@ -430,11 +430,11 @@ class RiskfolioLibIntegration:
 
         self.portfolio = rp.Portfolio(returns=self.returns)
 
-        self.portfolio.assets_stats(method_mu='hist', 
+        self.portfolio.assets_stats(method_mu='hist',
 
                                     method_cov='hist')
 
-    
+
 
     def optimize(self,
 
@@ -446,7 +446,7 @@ class RiskfolioLibIntegration:
 
         """执行组合优化"""
 
-        
+
 
         if method == OptimizationMethod.RISK_PARITY:
 
@@ -464,13 +464,13 @@ class RiskfolioLibIntegration:
 
             weights = self._optimize_mean_variance(method, risk_measure)
 
-        
+
 
         return self._calculate_result(weights, method, risk_measure)
 
-    
 
-    def _optimize_risk_parity(self, 
+
+    def _optimize_risk_parity(self,
 
                              risk_measure: RiskMeasure) -> pd.Series:
 
@@ -478,7 +478,7 @@ class RiskfolioLibIntegration:
 
         import riskfolio as rp
 
-        
+
 
         port = rp.RiskParityPortfolio(
 
@@ -492,9 +492,9 @@ class RiskfolioLibIntegration:
 
         return weights
 
-    
 
-    def _optimize_hrp(self, 
+
+    def _optimize_hrp(self,
 
                      risk_measure: RiskMeasure) -> pd.Series:
 
@@ -502,7 +502,7 @@ class RiskfolioLibIntegration:
 
         import riskfolio as rp
 
-        
+
 
         port = rp.HCPortfolio(
 
@@ -516,7 +516,7 @@ class RiskfolioLibIntegration:
 
         return weights
 
-    
+
 
     def _optimize_black_litterman(self,
 
@@ -526,7 +526,7 @@ class RiskfolioLibIntegration:
 
         import riskfolio as rp
 
-        
+
 
         views = constraints.get('views', {})
 
@@ -542,7 +542,7 @@ class RiskfolioLibIntegration:
 
         return weights
 
-    
+
 
     def _calculate_result(self,
 
@@ -554,7 +554,7 @@ class RiskfolioLibIntegration:
 
         """计算优化结果"""
 
-        
+
 
         expected_return = (self.returns.mean() * weights).sum() * 252
 
@@ -566,7 +566,7 @@ class RiskfolioLibIntegration:
 
         sharpe_ratio = (expected_return - self.risk_free_rate) / expected_risk
 
-        
+
 
         return OptimizationResult(
 
@@ -856,9 +856,9 @@ class PyPortfolioOptIntegration:
 
     """PyPortfolioOpt集成封装器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  prices: pd.DataFrame,
 
@@ -870,7 +870,7 @@ class PyPortfolioOptIntegration:
 
         self._setup_pypfopt()
 
-    
+
 
     def _setup_pypfopt(self):
 
@@ -878,13 +878,13 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import expected_returns, risk_models
 
-        
+
 
         self.mu = expected_returns.mean_historical_return(self.prices)
 
         self.S = risk_models.sample_cov(self.prices)
 
-    
+
 
     def optimize_max_sharpe(self,
 
@@ -900,27 +900,27 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         ef = EfficientFrontier(self.mu, self.S, weight_bounds=weight_bounds)
 
-        
+
 
         if sector_mapper:
 
             ef.add_sector_constraints(sector_mapper, sector_lower, sector_upper)
 
-        
+
 
         weights = ef.max_sharpe(risk_free_rate=self.risk_free_rate)
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         expected_return, expected_volatility, sharpe_ratio = ef.portfolio_performance()
 
-        
+
 
         return PortfolioOptimizationResult(
 
@@ -936,7 +936,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def optimize_min_volatility(self,
 
@@ -946,7 +946,7 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         ef = EfficientFrontier(self.mu, self.S, weight_bounds=weight_bounds)
 
@@ -954,11 +954,11 @@ class PyPortfolioOptIntegration:
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         expected_return, expected_volatility, sharpe_ratio = ef.portfolio_performance()
 
-        
+
 
         return PortfolioOptimizationResult(
 
@@ -974,7 +974,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def optimize_black_litterman(self,
 
@@ -988,11 +988,11 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import BlackLittermanModel, market_implied_prior_returns
 
-        
+
 
         market_prior = market_implied_prior_returns(market_prices)
 
-        
+
 
         bl = BlackLittermanModel(
 
@@ -1006,13 +1006,13 @@ class PyPortfolioOptIntegration:
 
         )
 
-        
+
 
         bl_return = bl.bl_returns()
 
         bl_cov = bl.bl_cov()
 
-        
+
 
         from pypfopt import EfficientFrontier
 
@@ -1022,11 +1022,11 @@ class PyPortfolioOptIntegration:
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         expected_return, expected_volatility, sharpe_ratio = ef.portfolio_performance()
 
-        
+
 
         return PortfolioOptimizationResult(
 
@@ -1042,7 +1042,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def optimize_hrp(self) -> PortfolioOptimizationResult:
 
@@ -1050,17 +1050,17 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import HRPOpt
 
-        
+
 
         hrp = HRPOpt(self.prices.pct_change().dropna())
 
         weights = hrp.optimize()
 
-        
+
 
         expected_return, expected_volatility, sharpe_ratio = hrp.portfolio_performance()
 
-        
+
 
         return PortfolioOptimizationResult(
 
@@ -1076,7 +1076,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def get_discrete_allocation(self,
 
@@ -1090,13 +1090,13 @@ class PyPortfolioOptIntegration:
 
         from pypfopt import DiscreteAllocation
 
-        
+
 
         da = DiscreteAllocation(weights, latest_prices, total_portfolio_value=total_portfolio_value)
 
         allocation, leftover = da.greedy_portfolio()
 
-        
+
 
         return allocation
 
@@ -1348,7 +1348,7 @@ class XQRiskCoreIntegration:
 
     """XQRiskCore集成封装器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1356,7 +1356,7 @@ class XQRiskCoreIntegration:
 
         self._setup_xqriskcore()
 
-    
+
 
     def _setup_xqriskcore(self):
 
@@ -1366,21 +1366,21 @@ class XQRiskCoreIntegration:
 
         pass
 
-    
 
-    def check_trade_compliance(self, 
+
+    def check_trade_compliance(self,
 
                                trade_request: TradeRequest) -> RiskCheckResult:
 
         """检查交易合规性"""
 
-        
+
 
         violations = []
 
         recommendations = []
 
-        
+
 
         # 检查交易限额
 
@@ -1390,7 +1390,7 @@ class XQRiskCoreIntegration:
 
             recommendations.append("Reduce position size or request exception approval")
 
-        
+
 
         # 检查交易频率
 
@@ -1400,7 +1400,7 @@ class XQRiskCoreIntegration:
 
             recommendations.append("Wait for cooldown period")
 
-        
+
 
         # 检查风险预算
 
@@ -1410,7 +1410,7 @@ class XQRiskCoreIntegration:
 
             recommendations.append("Reduce position size or increase risk budget")
 
-        
+
 
         # 检查禁止交易
 
@@ -1420,7 +1420,7 @@ class XQRiskCoreIntegration:
 
             recommendations.append("Request exception approval from compliance")
 
-        
+
 
         # 确定风险等级和状态
 
@@ -1442,7 +1442,7 @@ class XQRiskCoreIntegration:
 
             risk_level = RiskLevel.HIGH
 
-        
+
 
         return RiskCheckResult(
 
@@ -1462,7 +1462,7 @@ class XQRiskCoreIntegration:
 
         )
 
-    
+
 
     def log_decision_audit(self,
 
@@ -1472,11 +1472,11 @@ class XQRiskCoreIntegration:
 
         """记录决策审计日志"""
 
-        
+
 
         audit_id = f"AUDIT_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-        
+
 
         audit_record = {
 
@@ -1496,17 +1496,17 @@ class XQRiskCoreIntegration:
 
         }
 
-        
+
 
         # 这里需要根据XQRiskCore的实际API进行日志记录
 
         # self.audit_logger.log(audit_record)
 
-        
+
 
         return audit_id
 
-    
+
 
     def check_user_permission(self,
 
@@ -1518,7 +1518,7 @@ class XQRiskCoreIntegration:
 
         """检查用户权限"""
 
-        
+
 
         # 这里需要根据XQRiskCore的实际RBAC API进行权限检查
 
@@ -1526,7 +1526,7 @@ class XQRiskCoreIntegration:
 
         return True
 
-    
+
 
     def _check_position_limit(self, trade: TradeRequest) -> bool:
 
@@ -1536,7 +1536,7 @@ class XQRiskCoreIntegration:
 
         return True
 
-    
+
 
     def _check_trading_frequency(self, trade: TradeRequest) -> bool:
 
@@ -1546,7 +1546,7 @@ class XQRiskCoreIntegration:
 
         return True
 
-    
+
 
     def _check_risk_budget(self, trade: TradeRequest) -> bool:
 
@@ -1556,7 +1556,7 @@ class XQRiskCoreIntegration:
 
         return True
 
-    
+
 
     def _check_restricted_assets(self, trade: TradeRequest) -> bool:
 
@@ -2201,4 +2201,3 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

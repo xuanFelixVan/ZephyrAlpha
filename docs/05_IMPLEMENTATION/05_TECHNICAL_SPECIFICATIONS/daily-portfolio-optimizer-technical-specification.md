@@ -66,7 +66,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为文艺复兴模式的核心组件，将Alpha信号转化为组合权限
 
@@ -108,7 +108,7 @@ implementation_status: 设计阶段
 
 **Layer归属**: Layer 6 - 组合优化层
 
-**职责范围**: 
+**职责范围**:
 
 - 估计风险模型（协方差矩阵）
 
@@ -120,7 +120,7 @@ implementation_status: 设计阶段
 
 
 
-**上下层接口**: 
+**上下层接口**:
 
 - 上层依赖: 接收Alpha因子工厂的Alpha信号
 
@@ -132,7 +132,7 @@ implementation_status: 设计阶段
 
 **核心职责**: 组合优化与风险控制
 
-**职责边界**: 
+**职责边界**:
 
 - ✓本模块负责: 风险模型估计、组合优化、约束管理、换手率控制
 
@@ -258,7 +258,7 @@ class IDailyPortfolioOptimizer(ABC):
 
     """日线组合优化器接口""
 
-    
+
 
     @abstractmethod
 
@@ -266,19 +266,19 @@ class IDailyPortfolioOptimizer(ABC):
 
         """优化组合
 
-        
+
 
         Args:
 
             portfolio_input: 组合输入
 
-            
+
 
         Returns:
 
             PortfolioOutput: 组合输出
 
-            
+
 
         Raises:
 
@@ -288,7 +288,7 @@ class IDailyPortfolioOptimizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -298,13 +298,13 @@ class IDailyPortfolioOptimizer(ABC):
 
         """估计风险模型
 
-        
+
 
         Args:
 
             historical_returns: 历史收益?            factor_exposures: 因子暴露(?
 
-            
+
 
         Returns:
 
@@ -314,7 +314,7 @@ class IDailyPortfolioOptimizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -324,7 +324,7 @@ class IDailyPortfolioOptimizer(ABC):
 
         """应用约束
 
-        
+
 
         Args:
 
@@ -332,7 +332,7 @@ class IDailyPortfolioOptimizer(ABC):
 
             constraints: 约束条件
 
-            
+
 
         Returns:
 
@@ -342,7 +342,7 @@ class IDailyPortfolioOptimizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -352,7 +352,7 @@ class IDailyPortfolioOptimizer(ABC):
 
         """计算风险贡献
 
-        
+
 
         Args:
 
@@ -360,7 +360,7 @@ class IDailyPortfolioOptimizer(ABC):
 
             risk_model: 风险模型
 
-            
+
 
         Returns:
 
@@ -692,17 +692,17 @@ class RiskModelEstimator:
 
     """风险模型估计划""
 
-    
+
 
     def estimate_sample_covariance(self, historical_returns: pd.DataFrame,
 
                                    lookback_period: int = 252) -> pd.DataFrame:
 
-        """估计样本协方差矩?        
+        """估计样本协方差矩?
 
         Args:
 
-            historical_returns: 历史收益?            lookback_period: 回看?            
+            historical_returns: 历史收益?            lookback_period: 回看?
 
         Returns:
 
@@ -712,11 +712,11 @@ class RiskModelEstimator:
 
         recent_returns = historical_returns.iloc[-lookback_period:]
 
-        
+
 
         # 计算样本协方?        cov_matrix = recent_returns.cov()
 
-        
+
 
         return cov_matrix
 
@@ -738,13 +738,13 @@ def estimate_factor_risk_model(self, historical_returns: pd.DataFrame,
 
     """估计因子风险模型
 
-    
+
 
     Args:
 
         historical_returns: 历史收益?        factor_exposures: 因子暴露
 
-        lookback_period: 回看?        
+        lookback_period: 回看?
 
     Returns:
 
@@ -754,11 +754,11 @@ def estimate_factor_risk_model(self, historical_returns: pd.DataFrame,
 
     # 1. 估计因子收益?    factor_returns = self._estimate_factor_returns(historical_returns, factor_exposures)
 
-    
+
 
     # 2. 估计因子协方差矩?    factor_cov = factor_returns.iloc[-lookback_period:].cov()
 
-    
+
 
     # 3. 估计特质风险
 
@@ -770,13 +770,13 @@ def estimate_factor_risk_model(self, historical_returns: pd.DataFrame,
 
     idiosyncratic_var = idiosyncratic_returns.var()
 
-    
+
 
     # 4. 构建完整协方差矩?    # Σ = B * F * B' + D
 
     cov_matrix = factor_exposures @ factor_cov @ factor_exposures.T + np.diag(idiosyncratic_var)
 
-    
+
 
     return {
 
@@ -804,11 +804,11 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
     """Ledoit-Wolf收缩估计
 
-    
+
 
     Args:
 
-        historical_returns: 历史收益?        
+        historical_returns: 历史收益?
 
     Returns:
 
@@ -816,7 +816,7 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
     from sklearn.covariance import LedoitWolf
 
-    
+
 
     # 使用Ledoit-Wolf收缩
 
@@ -824,7 +824,7 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
     lw.fit(historical_returns)
 
-    
+
 
     # 返回收缩后的协方差矩?    shrunk_cov = pd.DataFrame(
 
@@ -836,7 +836,7 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
     )
 
-    
+
 
     return shrunk_cov
 
@@ -858,7 +858,7 @@ class PortfolioOptimizer:
 
     """组合优化?""
 
-    
+
 
     def mean_variance_optimization(self, alpha_signals: pd.Series,
 
@@ -868,7 +868,7 @@ class PortfolioOptimizer:
 
         """?方差优化
 
-        
+
 
         Args:
 
@@ -878,7 +878,7 @@ class PortfolioOptimizer:
 
             constraints: 约束条件
 
-            
+
 
         Returns:
 
@@ -886,11 +886,11 @@ class PortfolioOptimizer:
 
         from scipy.optimize import minimize
 
-        
+
 
         cov_matrix = risk_model['covariance_matrix']
 
-        
+
 
         def objective(weights):
 
@@ -900,15 +900,15 @@ class PortfolioOptimizer:
 
             portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
 
-            
+
 
             # 夏普比率最大化 (假设无风险利率为0)
 
             sharpe_ratio = portfolio_return / portfolio_risk
 
-            
 
-            return -sharpe_ratio  # 最小化负夏普比?        
+
+            return -sharpe_ratio  # 最小化负夏普比?
 
         # 初始权重
 
@@ -916,7 +916,7 @@ class PortfolioOptimizer:
 
         initial_weights = np.ones(n_assets) / n_assets
 
-        
+
 
         # 约束条件
 
@@ -926,7 +926,7 @@ class PortfolioOptimizer:
 
         ]
 
-        
+
 
         # 添加其他约束
 
@@ -940,15 +940,15 @@ class PortfolioOptimizer:
 
             })
 
-        
+
 
         # 边界条件
 
-        bounds = [(constraints.get('min_weight', 0), 
+        bounds = [(constraints.get('min_weight', 0),
 
                    constraints.get('max_weight', 1)) for _ in range(n_assets)]
 
-        
+
 
         # 优化
 
@@ -966,13 +966,13 @@ class PortfolioOptimizer:
 
         )
 
-        
+
 
         # 返回权重字典
 
         weights_dict = dict(zip(alpha_signals.index, result.x))
 
-        
+
 
         return weights_dict
 
@@ -992,7 +992,7 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
     """风险平价优化
 
-    
+
 
     Args:
 
@@ -1000,7 +1000,7 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
         risk_budget: 风险预算(?
 
-        
+
 
     Returns:
 
@@ -1008,13 +1008,13 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
     from scipy.optimize import minimize
 
-    
+
 
     cov_matrix = risk_model['covariance_matrix']
 
     n_assets = len(cov_matrix)
 
-    
+
 
     # 默认风险预算为等风险贡献
 
@@ -1022,7 +1022,7 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
         risk_budget = {asset: 1.0/n_assets for asset in cov_matrix.columns}
 
-    
+
 
     def objective(weights):
 
@@ -1034,23 +1034,23 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
         risk_contrib = weights * marginal_contrib / portfolio_risk
 
-        
+
 
         # 目标: 风险贡献与风险预算的偏差最小化
 
         target_risk_contrib = np.array([risk_budget[asset] for asset in cov_matrix.columns])
 
-        
+
 
         return np.sum((risk_contrib / portfolio_risk - target_risk_contrib) ** 2)
 
-    
+
 
     # 初始权重
 
     initial_weights = np.ones(n_assets) / n_assets
 
-    
+
 
     # 约束条件
 
@@ -1060,13 +1060,13 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
     ]
 
-    
+
 
     # 边界条件
 
     bounds = [(0.0, 1.0) for _ in range(n_assets)]
 
-    
+
 
     # 优化
 
@@ -1084,13 +1084,13 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
 
     )
 
-    
+
 
     # 返回权重字典
 
     weights_dict = dict(zip(cov_matrix.columns, result.x))
 
-    
+
 
     return weights_dict
 
@@ -1114,7 +1114,7 @@ def apply_weight_constraints(self, weights: Dict[str, float],
 
     """应用权重约束
 
-    
+
 
     Args:
 
@@ -1122,7 +1122,7 @@ def apply_weight_constraints(self, weights: Dict[str, float],
 
         constraints: 约束条件
 
-        
+
 
     Returns:
 
@@ -1136,7 +1136,7 @@ def apply_weight_constraints(self, weights: Dict[str, float],
 
     min_weight = constraints.get('min_weight', 0.0)
 
-    
+
 
     # 应用约束
 
@@ -1146,13 +1146,13 @@ def apply_weight_constraints(self, weights: Dict[str, float],
 
         constrained_weights[asset] = np.clip(weight, min_weight, max_weight)
 
-    
+
 
     # 归一?    total_weight = sum(constrained_weights.values())
 
     constrained_weights = {k: v/total_weight for k, v in constrained_weights.items()}
 
-    
+
 
     return constrained_weights
 
@@ -1170,7 +1170,7 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
 
                              max_turnover: float) -> Dict[str, float]:
 
-    """应用换手率约束    
+    """应用换手率约束
 
     Args:
 
@@ -1180,7 +1180,7 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
 
         max_turnover: 最大换手率
 
-        
+
 
     Returns:
 
@@ -1192,13 +1192,13 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
 
                    for asset in set(target_weights) | set(current_weights))
 
-    
+
 
     # 如果换手率超?按比例缩?    if turnover > max_turnover:
 
         scale_factor = max_turnover / turnover
 
-        
+
 
         adjusted_weights = {}
 
@@ -1210,13 +1210,13 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
 
             adjusted_weights[asset] = current + (target - current) * scale_factor
 
-        
+
 
         # 归一?        total_weight = sum(adjusted_weights.values())
 
         adjusted_weights = {k: v/total_weight for k, v in adjusted_weights.items()}
 
-        
+
 
         return adjusted_weights
 
@@ -1240,7 +1240,7 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
 
     """计算风险贡献
 
-    
+
 
     Args:
 
@@ -1248,7 +1248,7 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
 
         risk_model: 风险模型
 
-        
+
 
     Returns:
 
@@ -1258,39 +1258,39 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
 
     cov_matrix = risk_model['covariance_matrix']
 
-    
+
 
     # 转换为向?    weight_vector = np.array([weights[asset] for asset in cov_matrix.columns])
 
-    
+
 
     # 计算组合风险
 
     portfolio_risk = np.sqrt(np.dot(weight_vector.T, np.dot(cov_matrix, weight_vector)))
 
-    
+
 
     # 计算边际风险贡献
 
     marginal_risk_contrib = np.dot(cov_matrix, weight_vector) / portfolio_risk
 
-    
+
 
     # 计算风险贡献
 
     risk_contrib = weight_vector * marginal_risk_contrib
 
-    
+
 
     # 归一化为百分?    risk_contrib_pct = risk_contrib / portfolio_risk
 
-    
+
 
     # 返回字典
 
     risk_contrib_dict = dict(zip(cov_matrix.columns, risk_contrib_pct))
 
-    
+
 
     return risk_contrib_dict
 
@@ -1406,19 +1406,19 @@ def test_portfolio_optimization():
 
     portfolio_input = prepare_test_data()
 
-    
+
 
     # 2. 估计风险模型
 
     risk_model = optimizer.estimate_risk_model(portfolio_input.historical_returns)
 
-    
+
 
     # 3. 优化组合
 
     result = optimizer.optimize_portfolio(portfolio_input)
 
-    
+
 
     # 4. 验证结果
 
@@ -1719,4 +1719,3 @@ def test_portfolio_optimization():
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Draft | **下一?*: 技术评?
-

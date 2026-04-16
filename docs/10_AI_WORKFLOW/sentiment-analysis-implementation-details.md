@@ -1266,7 +1266,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1326,7 +1326,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1362,7 +1362,7 @@ class TwitterAPIAdapter:
 
 
 
-        
+
 
 
 
@@ -1374,7 +1374,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1438,7 +1438,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1470,7 +1470,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1490,7 +1490,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1506,7 +1506,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1554,7 +1554,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1578,7 +1578,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1590,7 +1590,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1614,7 +1614,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1626,7 +1626,7 @@ class TwitterAPIAdapter:
 
 
 
-            
+
 
 
 
@@ -1642,7 +1642,7 @@ class TwitterAPIAdapter:
 
 
 
-    
+
 
 
 
@@ -1734,7 +1734,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1742,7 +1742,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1774,7 +1774,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1798,7 +1798,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -1930,7 +1930,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1974,7 +1974,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2002,7 +2002,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2030,7 +2030,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2098,7 +2098,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2122,7 +2122,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2142,7 +2142,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2166,7 +2166,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2182,7 +2182,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2218,7 +2218,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2234,7 +2234,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2266,7 +2266,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2278,7 +2278,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2318,7 +2318,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2342,7 +2342,7 @@ class DLSentimentAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2366,7 +2366,7 @@ class DLSentimentAnalyzer:
 
 
 
-                
+
 
 
 
@@ -2382,7 +2382,7 @@ class DLSentimentAnalyzer:
 
 
 
-                
+
 
 
 
@@ -2394,7 +2394,7 @@ class DLSentimentAnalyzer:
 
 
 
-                
+
 
 
 
@@ -2430,7 +2430,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2438,7 +2438,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2462,7 +2462,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2478,7 +2478,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2494,7 +2494,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2502,7 +2502,7 @@ class DLSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2526,7 +2526,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2542,7 +2542,7 @@ class DLSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2582,7 +2582,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -2598,7 +2598,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -2626,7 +2626,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -2654,7 +2654,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -2662,7 +2662,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
@@ -2744,7 +2744,7 @@ app:
 
 
 
-  
+
 
 
 
@@ -2772,7 +2772,7 @@ api:
 
 
 
-  
+
 
 
 
@@ -2816,7 +2816,7 @@ database:
 
 
 
-    
+
 
 
 
@@ -2840,7 +2840,7 @@ database:
 
 
 
-    
+
 
 
 
@@ -2864,7 +2864,7 @@ database:
 
 
 
-    
+
 
 
 
@@ -2900,7 +2900,7 @@ message_queue:
 
 
 
-      
+
 
 
 
@@ -2932,7 +2932,7 @@ logging:
 
 
 
-  
+
 
 
 
@@ -3028,7 +3028,7 @@ twitter:
 
 
 
-  
+
 
 
 
@@ -3052,7 +3052,7 @@ twitter:
 
 
 
-    
+
 
 
 
@@ -3076,7 +3076,7 @@ twitter:
 
 
 
-    
+
 
 
 
@@ -3124,7 +3124,7 @@ reddit:
 
 
 
-  
+
 
 
 
@@ -3180,7 +3180,7 @@ fred:
 
 
 
-  
+
 
 
 
@@ -3236,7 +3236,7 @@ sec_edgar:
 
 
 
-  
+
 
 
 
@@ -3312,7 +3312,7 @@ sentiment:
 
 
 
-    
+
 
 
 
@@ -3332,7 +3332,7 @@ sentiment:
 
 
 
-    
+
 
 
 
@@ -3352,7 +3352,7 @@ sentiment:
 
 
 
-    
+
 
 
 
@@ -3396,7 +3396,7 @@ multilingual:
 
 
 
-    
+
 
 
 
@@ -3530,7 +3530,7 @@ relation_extraction:
 
 
 
-                     单机部署架构                             
+                     单机部署架构
 
 
 
@@ -3538,31 +3538,7 @@ relation_extraction:
 
 
 
-                                                            
 
-
-
- ┌───────────────────────────────────────────────────────
-
-
-
-              Nginx (反向代理)                          
-
-
-
-              - 负载均衡                                
-
-
-
-              - SSL终止                                 
-
-
-
- └───────────────────────────────────────────────────────
-
-
-
-                                                          
 
 
 
@@ -3570,19 +3546,15 @@ relation_extraction:
 
 
 
-              FastAPI应用                               
+              Nginx (反向代理)
 
 
 
-              - RESTful API                             
+              - 负载均衡
 
 
 
-              - WebSocket                               
-
-
-
-              - 业务逻辑                                
+              - SSL终止
 
 
 
@@ -3590,7 +3562,35 @@ relation_extraction:
 
 
 
-                                                          
+
+
+
+
+ ┌───────────────────────────────────────────────────────
+
+
+
+              FastAPI应用
+
+
+
+              - RESTful API
+
+
+
+              - WebSocket
+
+
+
+              - 业务逻辑
+
+
+
+ └───────────────────────────────────────────────────────
+
+
+
+
 
 
 
@@ -3598,11 +3598,11 @@ relation_extraction:
 
 
 
- PostgreSQL     Redis      Neo4j       Kafka    
+ PostgreSQL     Redis      Neo4j       Kafka
 
 
 
-  (关系     (缓存)     (图数据库) (消息队列) 
+  (关系     (缓存)     (图数据库) (消息队列)
 
 
 
@@ -3610,7 +3610,7 @@ relation_extraction:
 
 
 
-                                                            
+
 
 
 
@@ -3618,19 +3618,19 @@ relation_extraction:
 
 
 
-              GPU服务                                
+              GPU服务
 
 
 
-              - 深度学习模型                            
+              - 深度学习模型
 
 
 
-              - 情感分析                                
+              - 情感分析
 
 
 
-              - 多模态处                             
+              - 多模态处
 
 
 
@@ -3638,7 +3638,7 @@ relation_extraction:
 
 
 
-                                                            
+
 
 
 
@@ -3670,7 +3670,7 @@ relation_extraction:
 
 
 
-                       分布式部署架                                
+                       分布式部署架
 
 
 
@@ -3678,35 +3678,7 @@ relation_extraction:
 
 
 
-                                                                    
 
-
-
- ┌───────────────────────────────────────────────────────────────
-
-
-
-                    负载均衡                                 
-
-
-
-  ┌───────────── ┌───────────── ┌─────────────         
-
-
-
-    Nginx 1      Nginx 2      Nginx 3            
-
-
-
-  └───────────── └───────────── └─────────────         
-
-
-
- └───────────────────────────────────────────────────────────────
-
-
-
-                                                                  
 
 
 
@@ -3714,19 +3686,19 @@ relation_extraction:
 
 
 
-                    API服务                                  
+                    负载均衡
 
 
 
-  ┌───────────── ┌───────────── ┌─────────────         
+  ┌───────────── ┌───────────── ┌─────────────
 
 
 
-   API Pod 1    API Pod 2    API Pod 3           
+    Nginx 1      Nginx 2      Nginx 3
 
 
 
-  └───────────── └───────────── └─────────────         
+  └───────────── └───────────── └─────────────
 
 
 
@@ -3734,7 +3706,7 @@ relation_extraction:
 
 
 
-                                                                  
+
 
 
 
@@ -3742,39 +3714,19 @@ relation_extraction:
 
 
 
-                    数据                                     
+                    API服务
 
 
 
-  ┌────────────── ┌────────────── ┌──────────────      
+  ┌───────────── ┌───────────── ┌─────────────
 
 
 
-  PostgreSQL    Redis Cluster Neo4j Cluster      
+   API Pod 1    API Pod 2    API Pod 3
 
 
 
-    Cluster                                      
-
-
-
-  └────────────── └────────────── └──────────────      
-
-
-
-  ┌────────────── ┌──────────────                        
-
-
-
-  │Kafka Cluster  │Spark Cluster                         
-
-
-
-                                                     
-
-
-
-  └────────────── └──────────────                        
+  └───────────── └───────────── └─────────────
 
 
 
@@ -3782,7 +3734,7 @@ relation_extraction:
 
 
 
-                                                                  
+
 
 
 
@@ -3790,23 +3742,39 @@ relation_extraction:
 
 
 
-                    GPU计算                                  
+                    数据
 
 
 
-  ┌────────────── ┌────────────── ┌──────────────      
+  ┌────────────── ┌────────────── ┌──────────────
 
 
 
-   GPU Node 1    GPU Node 2    GPU Node 3        
+  PostgreSQL    Redis Cluster Neo4j Cluster
 
 
 
-   (RTX 3080)    (RTX 3080)    (RTX 3080)        
+    Cluster
 
 
 
-  └────────────── └────────────── └──────────────      
+  └────────────── └────────────── └──────────────
+
+
+
+  ┌────────────── ┌──────────────
+
+
+
+  │Kafka Cluster  │Spark Cluster
+
+
+
+
+
+
+
+  └────────────── └──────────────
 
 
 
@@ -3814,7 +3782,39 @@ relation_extraction:
 
 
 
-                                                                    
+
+
+
+
+ ┌───────────────────────────────────────────────────────────────
+
+
+
+                    GPU计算
+
+
+
+  ┌────────────── ┌────────────── ┌──────────────
+
+
+
+   GPU Node 1    GPU Node 2    GPU Node 3
+
+
+
+   (RTX 3080)    (RTX 3080)    (RTX 3080)
+
+
+
+  └────────────── └────────────── └──────────────
+
+
+
+ └───────────────────────────────────────────────────────────────
+
+
+
+
 
 
 
@@ -4570,7 +4570,7 @@ scrape_configs:
 
 
 
-    
+
 
 
 
@@ -4590,7 +4590,7 @@ scrape_configs:
 
 
 
-      
+
 
 
 
@@ -4610,7 +4610,7 @@ scrape_configs:
 
 
 
-      
+
 
 
 
@@ -4630,7 +4630,7 @@ scrape_configs:
 
 
 
-      
+
 
 
 
@@ -4830,7 +4830,7 @@ async def monitor_requests(request, call_next):
 
 
 
-    
+
 
 
 
@@ -4838,7 +4838,7 @@ async def monitor_requests(request, call_next):
 
 
 
-    
+
 
 
 
@@ -4850,7 +4850,7 @@ async def monitor_requests(request, call_next):
 
 
 
-        
+
 
 
 
@@ -4878,7 +4878,7 @@ async def monitor_requests(request, call_next):
 
 
 
-        
+
 
 
 
@@ -4906,7 +4906,7 @@ async def monitor_requests(request, call_next):
 
 
 
-        
+
 
 
 
@@ -4914,7 +4914,7 @@ async def monitor_requests(request, call_next):
 
 
 
-        
+
 
 
 
@@ -5181,6 +5181,3 @@ except Exception as e:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-
-
-

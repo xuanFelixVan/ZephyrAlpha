@@ -24,7 +24,7 @@ implementation_status: 蓝图设计完成
 
 > **核心职责**: Help System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Help System蓝图设计相关内容
 
@@ -612,7 +612,7 @@ class HelpSystemInterface:
 
     """帮助系统界面"""
 
-    
+
 
     def __init__(self):
 
@@ -620,7 +620,7 @@ class HelpSystemInterface:
 
         self.faq_path = Path("docs/help/faq.json")
 
-    
+
 
     def render_search(self):
 
@@ -628,7 +628,7 @@ class HelpSystemInterface:
 
         st.subheader("🔍 搜索文档")
 
-        
+
 
         search_query = st.text_input(
 
@@ -638,7 +638,7 @@ class HelpSystemInterface:
 
         )
 
-        
+
 
         if search_query:
 
@@ -646,7 +646,7 @@ class HelpSystemInterface:
 
             self._render_search_results(results)
 
-    
+
 
     def render_docs_browser(self):
 
@@ -654,7 +654,7 @@ class HelpSystemInterface:
 
         st.subheader("📚 文档浏览")
 
-        
+
 
         tab1, tab2, tab3, tab4 = st.tabs([
 
@@ -662,7 +662,7 @@ class HelpSystemInterface:
 
         ])
 
-        
+
 
         with tab1:
 
@@ -680,7 +680,7 @@ class HelpSystemInterface:
 
             self._render_best_practices()
 
-    
+
 
     def render_faq(self):
 
@@ -688,11 +688,11 @@ class HelpSystemInterface:
 
         st.subheader("❓ 常见问题")
 
-        
+
 
         faq_data = self._load_faq()
 
-        
+
 
         for category, questions in faq_data.items():
 
@@ -706,7 +706,7 @@ class HelpSystemInterface:
 
                     st.divider()
 
-    
+
 
     def render_video_tutorials(self):
 
@@ -714,11 +714,11 @@ class HelpSystemInterface:
 
         st.subheader("🎬 视频教程")
 
-        
+
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
@@ -726,13 +726,13 @@ class HelpSystemInterface:
 
             st.video("https://example.com/video1.mp4")
 
-            
+
 
             st.markdown("### 策略配置")
 
             st.video("https://example.com/video2.mp4")
 
-        
+
 
         with col2:
 
@@ -740,13 +740,13 @@ class HelpSystemInterface:
 
             st.video("https://example.com/video3.mp4")
 
-            
+
 
             st.markdown("### 风险管理")
 
             st.video("https://example.com/video4.mp4")
 
-    
+
 
     def render_learning_path(self):
 
@@ -754,7 +754,7 @@ class HelpSystemInterface:
 
         st.subheader("📖 学习路径")
 
-        
+
 
         stages = [
 
@@ -768,11 +768,11 @@ class HelpSystemInterface:
 
         ]
 
-        
+
 
         cols = st.columns(len(stages))
 
-        
+
 
         for i, (col, stage) in enumerate(zip(cols, stages)):
 
@@ -790,7 +790,7 @@ class HelpSystemInterface:
 
                     st.warning(f"⏳ {stage['name']}")
 
-                
+
 
                 st.caption(f"预计时间: {stage['time']}")
 
@@ -885,4 +885,3 @@ class HelpSystemInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

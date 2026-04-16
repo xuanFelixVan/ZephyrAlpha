@@ -109,7 +109,7 @@ def example_function(input_data: Dict) -> Result:
 
     功能详细描述
 
-    
+
 
     Args:
 
@@ -119,7 +119,7 @@ def example_function(input_data: Dict) -> Result:
 
             - field2: 类型和含?
 
-    
+
 
     Returns:
 
@@ -129,7 +129,7 @@ def example_function(input_data: Dict) -> Result:
 
             - error_message: 错误信息(如有)
 
-    
+
 
     Raises:
 
@@ -213,7 +213,7 @@ class ModuleName:
 
     """模块主类"""
 
-    
+
 
     def __init__(self, config: Config):
 
@@ -221,7 +221,7 @@ class ModuleName:
 
         pass
 
-    
+
 
     async def function1(self, input: InputType) -> OutputType:
 
@@ -229,7 +229,7 @@ class ModuleName:
 
         pass
 
-    
+
 
     def function2(self, input: InputType) -> OutputType:
 
@@ -343,7 +343,7 @@ class ModuleName:
 
     """模块主类"""
 
-    
+
 
     def __init__(self, config: ModuleConfig):
 
@@ -351,7 +351,7 @@ class ModuleName:
 
         self._initialize_components()
 
-    
+
 
     def _initialize_components(self):
 
@@ -363,7 +363,7 @@ class ModuleName:
 
         self.validator = DataValidator()
 
-    
+
 
     class DataManager:
 
@@ -371,7 +371,7 @@ class ModuleName:
 
         pass
 
-    
+
 
     class CacheManager:
 
@@ -393,7 +393,7 @@ def core_algorithm(data: InputData) -> OutputData:
 
     核心算法实现
 
-    
+
 
     算法步骤:
 
@@ -405,7 +405,7 @@ def core_algorithm(data: InputData) -> OutputData:
 
     4. 结果后处?
 
-    
+
 
     时间复杂? O(n log n)
 
@@ -553,7 +553,7 @@ class TestModuleName:
 
     """模块测试?""
 
-    
+
 
     def setup_method(self):
 
@@ -561,7 +561,7 @@ class TestModuleName:
 
         self.module = ModuleName(config=test_config)
 
-    
+
 
     def test_function1_normal_case(self):
 
@@ -575,7 +575,7 @@ class TestModuleName:
 
         assert 'expected_field' in result.data
 
-    
+
 
     def test_function1_error_case(self):
 
@@ -587,7 +587,7 @@ class TestModuleName:
 
             self.module.function1(input_data)
 
-    
+
 
     @pytest.mark.performance
 
@@ -749,7 +749,7 @@ alerts:
 
     message: "模块错误率超?%"
 
-    
+
 
   - name: "module_name_slow_response"
 
@@ -895,21 +895,21 @@ alerts:
 
 - API接口契约
 
-- 
+-
 
-- 
+-
 
 
 
 ### 10.2 依赖文档
 
-- 
+-
 
-- 
+-
 
-- 
+-
 
-- 
+-
 
 
 
@@ -929,7 +929,7 @@ alerts:
 
    - 1.1 模块基本信息
 
-   - 1.2 模块概述  
+   - 1.2 模块概述
 
    - 2.1 核心功能列表
 
@@ -980,4 +980,3 @@ alerts:
 
 
 > **注意**: 本模板为指导性文档，实际设计中可根据模块特点适当调整，但必须保证核心设计要素的完整
-

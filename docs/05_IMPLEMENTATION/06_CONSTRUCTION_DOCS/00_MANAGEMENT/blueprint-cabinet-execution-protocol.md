@@ -26,7 +26,7 @@ layer: layer_05
 ```text
 【图纸柜强制协议 — ZephyrAlpha】
 1. 先打开并遵守：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md
-2. 摆放规则真源：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md  
+2. 摆放规则真源：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md
    施工门禁 / 蓝图卫生总案真源：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/
 3. 任务与勾选：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md
 4. 禁止凭记忆列举「有哪些文件」或宣称「已完成」：必须用工具列出目录 / 搜索后再写结论。
@@ -45,12 +45,12 @@ layer: layer_05
 
 ## 给 AI 的操作纪律（必须遵守）
 
-1. **真源优先**：与图纸柜能放什么冲突时，以 01_BLUEPRINTS_REPOSITORY_RULES.md 为准。  
-2. **先查证、后陈述**：描述「某目录下有哪些文件」「是否已干净」前，必须先 `list_dir` / `glob` / `grep` 或终端列目录，再把结果写入回复。  
-3. **禁止幻觉**：不得编造不存在的文件名、路径或脚本名；若未执行命令，不得声称已执行。  
-4. **索引同步**：增删或移动 `01_BLUEPRINTS` 根目录下的 `*.md` 后，在仓库根执行：  
-   `python scripts/governance/generate_01_blueprints_index.py`  
-5. **进度外置**：多步任务以 任务清单 勾选为准；会话结束不等于任务完成，以下次打开清单为准。  
+1. **真源优先**：与图纸柜能放什么冲突时，以 01_BLUEPRINTS_REPOSITORY_RULES.md 为准。
+2. **先查证、后陈述**：描述「某目录下有哪些文件」「是否已干净」前，必须先 `list_dir` / `glob` / `grep` 或终端列目录，再把结果写入回复。
+3. **禁止幻觉**：不得编造不存在的文件名、路径或脚本名；若未执行命令，不得声称已执行。
+4. **索引同步**：增删或移动 `01_BLUEPRINTS` 根目录下的 `*.md` 后，在仓库根执行：
+   `python scripts/governance/generate_01_blueprints_index.py`
+5. **进度外置**：多步任务以 任务清单 勾选为准；会话结束不等于任务完成，以下次打开清单为准。
 6. **过程稿位置**：带批次日期的报告、分析、清单稿放在 `01_BLUEPRINTS/REPORTS/`，不放根目录。
 
 ```

@@ -19,7 +19,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Deepar蓝图设计相关内容
 
@@ -283,7 +283,7 @@ class DeepARModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -327,7 +327,7 @@ class DeepARModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -355,7 +355,7 @@ input_dim:
 
 
 
-    
+
 
 
 
@@ -387,7 +387,7 @@ input_dim:
 
 
 
-        
+
 
 
 
@@ -407,7 +407,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-            
+
 
 
 
@@ -435,7 +435,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-    
+
 
 
 
@@ -471,7 +471,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-        
+
 
 
 
@@ -489,7 +489,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-            
+
 
 
 
@@ -519,7 +519,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-    
+
 
 
 
@@ -547,7 +547,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-        
+
 
 
 
@@ -563,7 +563,7 @@ past_values: ?(batch_size, context_length)
 
 
 
-            
+
 
 
 
@@ -627,7 +627,7 @@ class TimeSeriesConfig:
 
 
 
-    
+
 
 
 
@@ -661,7 +661,7 @@ class DeepARDataProcessor:
 
 
 
-    
+
 
 
 
@@ -697,7 +697,7 @@ class DeepARDataProcessor:
 
 
 
-            
+
 
 
 
@@ -951,7 +951,7 @@ scipy>=1.11.0
 
 
 
-        
+
 
 
 
@@ -1001,7 +1001,7 @@ class RiskManager:
 
 
 
-        
+
 
 
 
@@ -1041,7 +1041,7 @@ class RiskManager:
 
 
 
-        
+
 
 
 
@@ -1406,4 +1406,3 @@ class RiskManager:
 
 
 ```
-

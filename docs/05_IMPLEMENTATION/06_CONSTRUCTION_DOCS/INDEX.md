@@ -145,8 +145,8 @@ layer: layer_05
 
 ### 索引健全性与目录体量（P5 §7）
 
-- **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md（`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`；**zero_inbound=0**）  
-- **rollup（深度 3 条数）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索本前缀 **272** 条）  
+- **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md（`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`；**zero_inbound=0**）
+- **rollup（深度 3 条数）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索本前缀 **272** 条）
 - **尽治任务清单 §7**：./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md
 
 ```
@@ -183,7 +183,7 @@ layer: layer_05
 ```---
 ```
 
-**目录状态**：与子目录磁盘布局对齐（2026-04-10）  
+**目录状态**：与子目录磁盘布局对齐（2026-04-10）
 **索引策略**：大门 + 子目录表；篇级枚举交给各 `INDEX.md` 与蓝图生成脚本
 
 <!-- orphan-link -->

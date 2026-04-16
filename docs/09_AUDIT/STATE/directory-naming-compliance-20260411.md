@@ -369,4 +369,3 @@ responsibility: STATE
 - PATH_STANDARD.md §1.1
 
 - FILE_NAMING_STANDARD.md
-

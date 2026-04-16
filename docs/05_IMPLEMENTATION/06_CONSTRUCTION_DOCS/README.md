@@ -58,9 +58,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-- **索引健全性（零入链 · 本前缀 · 最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417`；**zero_inbound=0**；候选 md **266**）  
+- **索引健全性（零入链 · 本前缀 · 最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417`；**zero_inbound=0**；候选 md **266**）
 
-- **目录体量（rollup · 深度 3）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`，**272** 条）  
+- **目录体量（rollup · 深度 3）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`，**272** 条）
 
 - **整仓尽治口径**：./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md ｜ 治理工具总索引
 
@@ -68,7 +68,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 > **核心职责**: 模块说明和快速入门指南
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：模块说明和快速入门指南相关内容
 
@@ -180,7 +180,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﻠﻟ۵ﮔﻝ۳ﭦ**: 
+**ﻠﻟ۵ﮔﻝ۳ﭦ**:
 
 - ﮔﮔAIﮔﭦﻟﺛﻛﺛﮒﮒﺙﮒﻛﭦﭦﮒﮒ۷ﮒﺙﮒ۶ﻛﭨﭨﻛﺛﮒﺙﮒﮔﮔﮔ۰۲ﮔﮒﭨﭦﻛﭨﭨﮒ۰ﮒﺅﺙﮒﺟﻠ۰ﭨﮒ؟ﮔﺑﻠﻟﺁﭨﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
 
@@ -240,9 +240,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 4  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 4
 
-**ﮒ؟ﮔﮒﭦ?*: 95%  
+**ﮒ؟ﮔﮒﭦ?*: 95%
 
 **ﻛﺙﮒﻝﭦ?*: P0
 
@@ -278,9 +278,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 3  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 3
 
-**ﮒ؟ﮔﮒﭦ?*: 75%  
+**ﮒ؟ﮔﮒﭦ?*: 75%
 
 **ﻛﺙﮒﻝﭦ?*: P1
 
@@ -312,9 +312,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 0  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 0
 
-**ﮒ؟ﮔﮒﭦ?*: 0%  
+**ﮒ؟ﮔﮒﭦ?*: 0%
 
 **ﻛﺙﮒﻝﭦ?*: P2
 
@@ -346,9 +346,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 3  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 3
 
-**ﮒ؟ﮔﮒﭦ?*: 75%  
+**ﮒ؟ﮔﮒﭦ?*: 75%
 
 **ﻛﺙﮒﻝﭦ?*: P2 |
 
@@ -358,9 +358,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 0  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 0
 
-**ﮒ؟ﮔﮒﭦ?*: 0%  
+**ﮒ؟ﮔﮒﭦ?*: 0%
 
 **ﻛﺙﮒﻝﭦ?*: P2
 
@@ -390,9 +390,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 1  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 1
 
-**ﮒ؟ﮔﮒﭦ?*: 100%  
+**ﮒ؟ﮔﮒﭦ?*: 100%
 
 **ﻛﺙﮒﻝﭦ?*: P1
 
@@ -424,9 +424,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-**ﮔﮔ۰۲ﮔﺍﻠ**: 2  
+**ﮔﮔ۰۲ﮔﺍﻠ**: 2
 
-**ﮒ؟ﮔﮒﭦ?*: 50%  
+**ﮒ؟ﮔﮒﭦ?*: 50%
 
 **ﻛﺙﮒﻝﭦ?*: P2
 
@@ -622,9 +622,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 **ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 **ﻝﮔ؛**: v1.0
-

@@ -300,7 +300,7 @@ class DataSourceKafkaManager:
 
         )
 
-    
+
 
     def publish_data_event(self, source_name, event_type, data):
 
@@ -318,7 +318,7 @@ class DataSourceKafkaManager:
 
         self.producer.send('data-source-events', event)
 
-    
+
 
     def consume_data_events(self):
 
@@ -368,7 +368,7 @@ class DebeziumCDCManager:
 
         self.debezium_url = debezium_url
 
-    
+
 
     def create_connector(self, source_config):
 
@@ -402,7 +402,7 @@ class DebeziumCDCManager:
 
         }
 
-        
+
 
         response = requests.post(
 
@@ -562,13 +562,13 @@ class DataSourceSelector:
 
         self.performance_metrics = {}
 
-    
+
 
     def select_optimal_source(self, data_type, priority='speed'):
 
         candidates = self.get_available_sources(data_type)
 
-        
+
 
         if priority == 'speed':
 
@@ -586,7 +586,7 @@ class DataSourceSelector:
 
             return self.select_by_balanced(candidates)
 
-    
+
 
     def select_by_speed(self, candidates):
 
@@ -602,7 +602,7 @@ class DataSourceSelector:
 
         return max(scores, key=scores.get)
 
-    
+
 
     def select_by_cost(self, candidates):
 
@@ -979,4 +979,3 @@ source_availability_gauge = Gauge(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供集中化的配置管理，支持配置版本控制、热更新和环境隔离
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：配置存储、版本管理、热更新、环境隔离
 
@@ -179,7 +179,7 @@ class ConfigCenter:
 
     """配置中心管理器"""
 
-    
+
 
     def __init__(self, host: str = "localhost", port: int = 8500):
 
@@ -187,7 +187,7 @@ class ConfigCenter:
 
         self.prefix = "zephyr/config"
 
-    
+
 
     def set_config(
 
@@ -207,7 +207,7 @@ class ConfigCenter:
 
         full_key = f"{self.prefix}/{environment}/{key}"
 
-        
+
 
         config_data = {
 
@@ -221,11 +221,11 @@ class ConfigCenter:
 
         }
 
-        
+
 
         return self.client.kv.put(full_key, json.dumps(config_data))
 
-    
+
 
     def get_config(
 
@@ -243,19 +243,19 @@ class ConfigCenter:
 
         index, data = self.client.kv.get(full_key)
 
-        
+
 
         if data is None:
 
             return None
 
-        
+
 
         config = json.loads(data['Value'])
 
         return config
 
-    
+
 
     def delete_config(self, key: str, environment: str = "dev") -> bool:
 
@@ -265,7 +265,7 @@ class ConfigCenter:
 
         return self.client.kv.delete(full_key)
 
-    
+
 
     def list_configs(self, environment: str = "dev") -> Dict[str, Any]:
 
@@ -275,7 +275,7 @@ class ConfigCenter:
 
         index, data = self.client.kv.get(prefix, recurse=True)
 
-        
+
 
         configs = {}
 
@@ -287,7 +287,7 @@ class ConfigCenter:
 
                 configs[key] = json.loads(item['Value'])
 
-        
+
 
         return configs
 
@@ -305,7 +305,7 @@ class ConfigVersionManager:
 
     """配置版本管理器"""
 
-    
+
 
     def __init__(self, config_center: ConfigCenter):
 
@@ -313,7 +313,7 @@ class ConfigVersionManager:
 
         self.history_prefix = "zephyr/history"
 
-    
+
 
     def save_version(
 
@@ -335,7 +335,7 @@ class ConfigVersionManager:
 
         version_key = f"{self.history_prefix}/{environment}/{key}/{timestamp}"
 
-        
+
 
         version_data = {
 
@@ -349,7 +349,7 @@ class ConfigVersionManager:
 
         }
 
-        
+
 
         self.config_center.client.kv.put(
 
@@ -359,11 +359,11 @@ class ConfigVersionManager:
 
         )
 
-        
+
 
         return timestamp
 
-    
+
 
     def list_versions(
 
@@ -381,7 +381,7 @@ class ConfigVersionManager:
 
         index, data = self.config_center.client.kv.get(prefix, recurse=True)
 
-        
+
 
         versions = []
 
@@ -395,11 +395,11 @@ class ConfigVersionManager:
 
                 versions.append(version)
 
-        
+
 
         return sorted(versions, key=lambda x: x['timestamp'], reverse=True)
 
-    
+
 
     def rollback(
 
@@ -419,17 +419,17 @@ class ConfigVersionManager:
 
         index, data = self.config_center.client.kv.get(version_key)
 
-        
+
 
         if data is None:
 
             raise ValueError(f"Version {version_id} not found")
 
-        
+
 
         version_data = json.loads(data['Value'])
 
-        
+
 
         self.config_center.set_config(
 
@@ -443,7 +443,7 @@ class ConfigVersionManager:
 
         )
 
-        
+
 
         return True
 
@@ -467,7 +467,7 @@ class ConfigWatcher:
 
     """配置变更监听器"""
 
-    
+
 
     def __init__(self, config_center: ConfigCenter):
 
@@ -479,7 +479,7 @@ class ConfigWatcher:
 
         self.watch_thread = None
 
-    
+
 
     def register_callback(self, key: str, callback: callable):
 
@@ -491,7 +491,7 @@ class ConfigWatcher:
 
         self.callbacks[key].append(callback)
 
-    
+
 
     def watch(self, key: str, environment: str = "dev"):
 
@@ -499,7 +499,7 @@ class ConfigWatcher:
 
         full_key = f"{self.config_center.prefix}/{environment}/{key}"
 
-        
+
 
         index = None
 
@@ -517,13 +517,13 @@ class ConfigWatcher:
 
                 )
 
-                
+
 
                 if data is not None:
 
                     config = json.loads(data['Value'])
 
-                    
+
 
                     if key in self.callbacks:
 
@@ -531,7 +531,7 @@ class ConfigWatcher:
 
                             callback(config)
 
-            
+
 
             except Exception as e:
 
@@ -539,7 +539,7 @@ class ConfigWatcher:
 
                 time.sleep(5)
 
-    
+
 
     def start(self):
 
@@ -553,7 +553,7 @@ class ConfigWatcher:
 
         self.watch_thread.start()
 
-    
+
 
     def stop(self):
 
@@ -565,7 +565,7 @@ class ConfigWatcher:
 
             self.watch_thread.join()
 
-    
+
 
     def _watch_all(self):
 
@@ -595,17 +595,17 @@ class EnvironmentManager:
 
     """环境管理器"""
 
-    
+
 
     ENVIRONMENTS = ["dev", "test", "staging", "prod"]
 
-    
+
 
     def __init__(self, config_center: ConfigCenter):
 
         self.config_center = config_center
 
-    
+
 
     def create_environment(self, env_name: str, base_env: str = None):
 
@@ -615,13 +615,13 @@ class EnvironmentManager:
 
             self.ENVIRONMENTS.append(env_name)
 
-        
+
 
         if base_env:
 
             base_configs = self.config_center.list_configs(base_env)
 
-            
+
 
             for key, config in base_configs.items():
 
@@ -637,7 +637,7 @@ class EnvironmentManager:
 
                 )
 
-    
+
 
     def compare_environments(
 
@@ -655,11 +655,11 @@ class EnvironmentManager:
 
         configs2 = self.config_center.list_configs(env2)
 
-        
+
 
         all_keys = set(configs1.keys()) | set(configs2.keys())
 
-        
+
 
         diff = {
 
@@ -673,7 +673,7 @@ class EnvironmentManager:
 
         }
 
-        
+
 
         for key in all_keys:
 
@@ -701,11 +701,11 @@ class EnvironmentManager:
 
                 diff["same"].append(key)
 
-        
+
 
         return diff
 
-    
+
 
     def promote_config(
 
@@ -723,13 +723,13 @@ class EnvironmentManager:
 
         config = self.config_center.get_config(key, from_env)
 
-        
+
 
         if config is None:
 
             raise ValueError(f"Config {key} not found in {from_env}")
 
-        
+
 
         self.config_center.set_config(
 
@@ -827,7 +827,7 @@ class ConfigSchema:
 
     """配置文件结构定义"""
 
-    
+
 
     DATABASE_CONFIG = {
 
@@ -847,7 +847,7 @@ class ConfigSchema:
 
     }
 
-    
+
 
     REDIS_CONFIG = {
 
@@ -863,7 +863,7 @@ class ConfigSchema:
 
     }
 
-    
+
 
     FACTOR_ENGINE_CONFIG = {
 
@@ -877,7 +877,7 @@ class ConfigSchema:
 
     }
 
-    
+
 
     STRATEGY_ENGINE_CONFIG = {
 
@@ -891,7 +891,7 @@ class ConfigSchema:
 
     }
 
-    
+
 
     DATA_SOURCE_CONFIG = {
 
@@ -929,13 +929,13 @@ class ConfigClient:
 
     """配置客户端"""
 
-    
+
 
     _instance = None
 
     _config_cache = {}
 
-    
+
 
     def __new__(cls, *args, **kwargs):
 
@@ -945,7 +945,7 @@ class ConfigClient:
 
         return cls._instance
 
-    
+
 
     def __init__(self, environment: str = "dev"):
 
@@ -957,7 +957,7 @@ class ConfigClient:
 
         self.watcher.start()
 
-    
+
 
     def get(self, key: str, default: Any = None) -> Any:
 
@@ -967,21 +967,21 @@ class ConfigClient:
 
             return self._config_cache[key]
 
-        
+
 
         config = self.config_center.get_config(key, self.environment)
 
-        
+
 
         if config is None:
 
             return default
 
-        
+
 
         self._config_cache[key] = config['value']
 
-        
+
 
         self.watcher.register_callback(
 
@@ -991,11 +991,11 @@ class ConfigClient:
 
         )
 
-        
+
 
         return config['value']
 
-    
+
 
     def _update_cache(self, key: str, value: Any):
 
@@ -1005,7 +1005,7 @@ class ConfigClient:
 
         print(f"Config updated: {key}")
 
-    
+
 
     def refresh(self, key: str = None):
 
@@ -1465,7 +1465,7 @@ groups:
 
           description: "Consul服务已停止运行超过1分钟"
 
-      
+
 
       - alert: ConfigOperationFailed
 
@@ -1531,7 +1531,7 @@ class SecureConfig:
 
     """安全配置处理"""
 
-    
+
 
     @staticmethod
 
@@ -1595,7 +1595,7 @@ def validate_config(key: str, value: Dict[str, Any]) -> bool:
 
     }
 
-    
+
 
     if key in validators:
 
@@ -1613,7 +1613,7 @@ def validate_config(key: str, value: Dict[str, Any]) -> bool:
 
             return False
 
-    
+
 
     return True
 
@@ -1666,4 +1666,3 @@ def validate_config(key: str, value: Dict[str, Any]) -> bool:
 
 
 - 配置 schema、事件载荷与权限模型细化将在施工阶段固化到 `API_Contract.md` 子契约；本蓝图先确保边界、接口闭合点与验收闭环清晰。
-

@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Performance Analysis Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Performance Analysis Interface蓝图设计相关内容
 
@@ -524,9 +524,9 @@ import plotly.graph_objects as go
 
 from empyrical import (
 
-    cum_returns, 
+    cum_returns,
 
-    annual_return, 
+    annual_return,
 
     max_drawdown,
 
@@ -544,7 +544,7 @@ class PerformanceAnalysisInterface:
 
     """性能分析界面"""
 
-    
+
 
     def __init__(self, returns, benchmark_returns=None):
 
@@ -552,7 +552,7 @@ class PerformanceAnalysisInterface:
 
         self.benchmark_returns = benchmark_returns
 
-    
+
 
     def render_overview(self):
 
@@ -560,7 +560,7 @@ class PerformanceAnalysisInterface:
 
         col1, col2, col3, col4, col5 = st.columns(5)
 
-        
+
 
         with col1:
 
@@ -568,7 +568,7 @@ class PerformanceAnalysisInterface:
 
             st.metric("累计收益", f"{cum_ret:.2%}")
 
-        
+
 
         with col2:
 
@@ -576,7 +576,7 @@ class PerformanceAnalysisInterface:
 
             st.metric("年化收益", f"{ann_ret:.2%}")
 
-        
+
 
         with col3:
 
@@ -584,7 +584,7 @@ class PerformanceAnalysisInterface:
 
             st.metric("最大回撤", f"{max_dd:.2%}")
 
-        
+
 
         with col4:
 
@@ -592,7 +592,7 @@ class PerformanceAnalysisInterface:
 
             st.metric("Sharpe比率", f"{sharpe:.2f}")
 
-        
+
 
         with col5:
 
@@ -600,7 +600,7 @@ class PerformanceAnalysisInterface:
 
             st.metric("Sortino比率", f"{sortino:.2f}")
 
-    
+
 
     def render_equity_curve(self):
 
@@ -608,7 +608,7 @@ class PerformanceAnalysisInterface:
 
         cum_ret = cum_returns(self.returns)
 
-        
+
 
         fig = go.Figure()
 
@@ -624,7 +624,7 @@ class PerformanceAnalysisInterface:
 
         ))
 
-        
+
 
         if self.benchmark_returns is not None:
 
@@ -642,7 +642,7 @@ class PerformanceAnalysisInterface:
 
             ))
 
-        
+
 
         fig.update_layout(
 
@@ -658,7 +658,7 @@ class PerformanceAnalysisInterface:
 
         )
 
-        
+
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -755,4 +755,3 @@ class PerformanceAnalysisInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -14,7 +14,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供mamba ssm blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Mamba Ssm蓝图设计相关内容
 
@@ -218,7 +218,7 @@ class MambaModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -254,7 +254,7 @@ class MambaModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -280,7 +280,7 @@ input_dim:
 
 
 
-    
+
 
 
 
@@ -304,7 +304,7 @@ input_dim:
 
 
 
-        
+
 
 
 
@@ -316,7 +316,7 @@ x:
 
 
 
-            
+
 
 
 
@@ -571,4 +571,3 @@ causal-conv1d>=1.0.0
 
 
 ```
-

@@ -272,7 +272,7 @@ class FundAccountService:
 
         self.accounts = {}
 
-    
+
 
     def create_account(self, account_info: AccountInfo) -> FundAccount:
 
@@ -292,7 +292,7 @@ class FundAccountService:
 
         return account
 
-    
+
 
     def get_balance(self, account_id: str) -> float:
 
@@ -314,7 +314,7 @@ class FundTransferService:
 
         self.account_service = FundAccountService()
 
-    
+
 
     def deposit(self, account_id: str, amount: float) -> TransferResult:
 
@@ -324,7 +324,7 @@ class FundTransferService:
 
         return TransferResult(success=True, new_balance=account.balance)
 
-    
+
 
     def withdraw(self, account_id: str, amount: float) -> TransferResult:
 
@@ -360,7 +360,7 @@ class FundMonitorService:
 
         }
 
-    
+
 
     def monitor_balance(self, account: FundAccount) -> Optional[Alert]:
 
@@ -370,7 +370,7 @@ class FundMonitorService:
 
         return None
 
-    
+
 
     def monitor_transfer(self, transfer: Transfer) -> Optional[Alert]:
 
@@ -464,9 +464,8 @@ class FundMonitorService:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

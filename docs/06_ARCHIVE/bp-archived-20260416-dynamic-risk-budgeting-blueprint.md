@@ -23,7 +23,7 @@ responsibility_layer: Layer 11
 
 > **核心职责**: Dynamic Risk Budgeting蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Dynamic Risk Budgeting蓝图设计相关内容
 
@@ -33,11 +33,11 @@ responsibility_layer: Layer 11
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **优先级**: P0级核心模块  
+> **优先级**: P0级核心模块
 
 > **实施周期**: 2周
 
@@ -259,7 +259,7 @@ class DynamicRiskBudgeting:
 
     """动态风险预算"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -271,7 +271,7 @@ class DynamicRiskBudgeting:
 
         self.max_leverage = config.get('max_leverage', 1.0)
 
-        
+
 
     def calculate_risk_budget(self,
 
@@ -283,31 +283,31 @@ class DynamicRiskBudgeting:
 
         """计算风险预算"""
 
-        
+
 
         cov_matrix = self._estimate_covariance(returns)
 
-        
+
 
         total_risk = self._calculate_portfolio_risk(current_weights, cov_matrix)
 
-        
+
 
         risk_contributions = self._calculate_risk_contributions(current_weights, cov_matrix)
 
-        
+
 
         var_95 = self._calculate_var(returns, current_weights, confidence=0.95)
 
         cvar_95 = self._calculate_cvar(returns, current_weights, confidence=0.95)
 
-        
+
 
         risk_budgets = []
 
         assets = returns.columns
 
-        
+
 
         for i, asset in enumerate(assets):
 
@@ -325,7 +325,7 @@ class DynamicRiskBudgeting:
 
             ))
 
-        
+
 
         return PortfolioRiskReport(
 
@@ -345,7 +345,7 @@ class DynamicRiskBudgeting:
 
         )
 
-    
+
 
     def optimize_risk_budget(self,
 
@@ -357,21 +357,21 @@ class DynamicRiskBudgeting:
 
         """优化风险预算"""
 
-        
+
 
         cov_matrix = self._estimate_covariance(returns)
 
         n_assets = len(returns.columns)
 
-        
+
 
         weights = cp.Variable(n_assets)
 
-        
+
 
         portfolio_risk = cp.quad_form(weights, cov_matrix)
 
-        
+
 
         risk_contributions = []
 
@@ -383,11 +383,11 @@ class DynamicRiskBudgeting:
 
             risk_contributions.append(risk_contribution)
 
-        
+
 
         total_risk = sum(risk_contributions)
 
-        
+
 
         target_contributions = np.array([
 
@@ -397,7 +397,7 @@ class DynamicRiskBudgeting:
 
         ])
 
-        
+
 
         objective = cp.Minimize(
 
@@ -405,7 +405,7 @@ class DynamicRiskBudgeting:
 
         )
 
-        
+
 
         constraints_list = [
 
@@ -417,7 +417,7 @@ class DynamicRiskBudgeting:
 
         ]
 
-        
+
 
         if constraints:
 
@@ -429,17 +429,17 @@ class DynamicRiskBudgeting:
 
                 constraints_list.append(weights >= constraints['min_weight'])
 
-        
+
 
         problem = cp.Problem(objective, constraints_list)
 
         problem.solve()
 
-        
+
 
         return weights.value
 
-    
+
 
     def dynamic_adjustment(self,
 
@@ -451,7 +451,7 @@ class DynamicRiskBudgeting:
 
         """动态调整"""
 
-        
+
 
         regime_multipliers = {
 
@@ -465,21 +465,21 @@ class DynamicRiskBudgeting:
 
         }
 
-        
+
 
         multiplier = regime_multipliers.get(market_regime, 1.0)
 
-        
+
 
         cov_matrix = self._estimate_covariance(returns)
 
         current_risk = self._calculate_portfolio_risk(current_weights, cov_matrix)
 
-        
+
 
         target_risk = self.target_volatility * multiplier
 
-        
+
 
         if current_risk > 0:
 
@@ -487,7 +487,7 @@ class DynamicRiskBudgeting:
 
             new_weights = current_weights * adjustment_factor
 
-            
+
 
             new_weights = new_weights / new_weights.sum()
 
@@ -495,153 +495,153 @@ class DynamicRiskBudgeting:
 
             new_weights = current_weights
 
-        
+
 
         return new_weights
 
-    
+
 
     def _estimate_covariance(self, returns: pd.DataFrame) -> np.ndarray:
 
         """估计协方差矩阵"""
 
-        
+
 
         return returns.cov().values * 252
 
-    
+
 
     def _calculate_portfolio_risk(self, weights: np.ndarray, cov_matrix: np.ndarray) -> float:
 
         """计算组合风险"""
 
-        
+
 
         return np.sqrt(weights @ cov_matrix @ weights)
 
-    
+
 
     def _calculate_risk_contributions(self, weights: np.ndarray, cov_matrix: np.ndarray) -> np.ndarray:
 
         """计算风险贡献"""
 
-        
+
 
         portfolio_risk = self._calculate_portfolio_risk(weights, cov_matrix)
 
-        
+
 
         if portfolio_risk == 0:
 
             return np.zeros_like(weights)
 
-        
+
 
         marginal_risks = cov_matrix @ weights
 
-        
+
 
         risk_contributions = weights * marginal_risks / portfolio_risk
 
-        
+
 
         return risk_contributions
 
-    
+
 
     def _calculate_marginal_risk(self, weights: np.ndarray, cov_matrix: np.ndarray, asset_idx: int) -> float:
 
         """计算边际风险"""
 
-        
+
 
         portfolio_risk = self._calculate_portfolio_risk(weights, cov_matrix)
 
-        
+
 
         if portfolio_risk == 0:
 
             return 0
 
-        
+
 
         marginal_risk = (cov_matrix[asset_idx, :] @ weights) / portfolio_risk
 
-        
+
 
         return marginal_risk
 
-    
+
 
     def _calculate_var(self, returns: pd.DataFrame, weights: np.ndarray, confidence: float = 0.95) -> float:
 
         """计算VaR"""
 
-        
+
 
         portfolio_returns = (returns * weights).sum(axis=1)
 
-        
+
 
         var = np.percentile(portfolio_returns, (1 - confidence) * 100)
 
-        
+
 
         return -var
 
-    
+
 
     def _calculate_cvar(self, returns: pd.DataFrame, weights: np.ndarray, confidence: float = 0.95) -> float:
 
         """计算CVaR"""
 
-        
+
 
         portfolio_returns = (returns * weights).sum(axis=1)
 
-        
+
 
         var = self._calculate_var(returns, weights, confidence)
 
-        
+
 
         cvar = portfolio_returns[portfolio_returns <= -var].mean()
 
-        
+
 
         return -cvar
 
-    
+
 
     def _calculate_max_drawdown(self, returns: pd.DataFrame, weights: np.ndarray) -> float:
 
         """计算最大回撤"""
 
-        
+
 
         portfolio_returns = (returns * weights).sum(axis=1)
 
-        
+
 
         cumulative = (1 + portfolio_returns).cumprod()
 
-        
+
 
         running_max = cumulative.cummax()
 
-        
+
 
         drawdown = (cumulative - running_max) / running_max
 
-        
+
 
         max_drawdown = drawdown.min()
 
-        
+
 
         return -max_drawdown
 
-    
+
 
     def generate_risk_report(self,
 
@@ -651,11 +651,11 @@ class DynamicRiskBudgeting:
 
         """生成风险报告"""
 
-        
+
 
         risk_report = self.calculate_risk_budget(returns, weights)
 
-        
+
 
         report = {
 
@@ -705,7 +705,7 @@ class DynamicRiskBudgeting:
 
         }
 
-        
+
 
         return report
 
@@ -733,7 +733,7 @@ class DynamicRiskBudgetingInterface:
 
     """动态风险预算接口"""
 
-    
+
 
     def calculate_risk_budget(self,
 
@@ -745,7 +745,7 @@ class DynamicRiskBudgetingInterface:
 
         pass
 
-    
+
 
     def optimize_risk_budget(self,
 
@@ -757,7 +757,7 @@ class DynamicRiskBudgetingInterface:
 
         pass
 
-    
+
 
     def dynamic_adjustment(self,
 
@@ -861,7 +861,7 @@ risk_budgeting:
 
   risk_free_rate: 0.03
 
-  
+
 
 regime_adjustment:
 
@@ -873,7 +873,7 @@ regime_adjustment:
 
   crisis_multiplier: 0.5
 
-  
+
 
 constraints:
 
@@ -950,4 +950,3 @@ constraints:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

@@ -171,7 +171,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -207,7 +207,7 @@ layer: layer_05
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为风险预算系统的基础，实现精细化风险预算
 
@@ -253,13 +253,13 @@ class BarraRiskModel:
 
     """
 
-    
+
 
     索引: BARRA_RISK_001-M01
 
     """
 
-    
+
 
     def __init__(self, config: BarraConfig):
 
@@ -275,11 +275,11 @@ class BarraRiskModel:
 
         self.risk_attributor = RiskAttributor()
 
-        
 
-    def fit(self, 
 
-            factor_data: pd.DataFrame, 
+    def fit(self,
+
+            factor_data: pd.DataFrame,
 
             returns_data: pd.DataFrame,
 
@@ -289,7 +289,7 @@ class BarraRiskModel:
 
         拟合Barra风险模型
 
-        
+
 
         Args:
 
@@ -299,7 +299,7 @@ class BarraRiskModel:
 
             factor_loadings: 因子载荷矩阵（可选，已知时）
 
-            
+
 
         Returns:
 
@@ -321,7 +321,7 @@ class BarraRiskModel:
 
             self.factor_loadings = factor_loadings
 
-        
+
 
         self.factor_covariance = self.factor_covariance_estimator.estimate(
 
@@ -329,7 +329,7 @@ class BarraRiskModel:
 
         )
 
-        
+
 
         # 3. 估计特质风险
 
@@ -339,11 +339,11 @@ class BarraRiskModel:
 
         )
 
-        
+
 
         return self
 
-    
+
 
     def calculate_portfolio_risk(
 
@@ -357,13 +357,13 @@ class BarraRiskModel:
 
         计算组合风险
 
-        
+
 
         Args:
 
             weights: 组合权重向量
 
-            
+
 
         Returns:
 
@@ -375,21 +375,21 @@ class BarraRiskModel:
 
         portfolio_factor_exposure = self.factor_loadings.T @ weights
 
-        
+
 
         # 因子风险
 
         factor_risk = np.sqrt(
 
-            portfolio_factor_exposure.T @ 
+            portfolio_factor_exposure.T @
 
-            self.factor_covariance @ 
+            self.factor_covariance @
 
             portfolio_factor_exposure
 
         )
 
-        
+
 
         # 特质风险
 
@@ -399,11 +399,11 @@ class BarraRiskModel:
 
         )
 
-        
+
 
         total_risk = np.sqrt(factor_risk**2 + idio_risk**2)
 
-        
+
 
         return PortfolioRiskResult(
 
@@ -439,7 +439,7 @@ class BarraRiskModel:
 
 > **核心职责**: Barra Risk Model蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -481,13 +481,13 @@ def calculate_factor_exposure(
 
     计算因子暴露
 
-    
+
 
     Args:
 
         factor_data: 因子数据
 
-        
+
 
     Returns:
 
@@ -517,7 +517,7 @@ def decompose_risk(
 
     分解组合风险
 
-    
+
 
     Args:
 
@@ -527,7 +527,7 @@ def decompose_risk(
 
         idiosyncratic_risk: 特质风险
 
-        
+
 
     Returns:
 
@@ -587,7 +587,7 @@ graph LR
 
     C[数据目录] --> B
 
-    
+
 
     B --> E[简化风险预算系统]
 
@@ -595,7 +595,7 @@ graph LR
 
     B --> G[VaR/ES监控]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -695,7 +695,7 @@ graph LR
 
 |------|------|------|
 
-| **Barra Risk Model** | 
+| **Barra Risk Model** |
 
 
 
@@ -704,10 +704,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

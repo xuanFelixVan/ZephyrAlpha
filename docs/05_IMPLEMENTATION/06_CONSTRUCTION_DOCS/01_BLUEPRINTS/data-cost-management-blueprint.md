@@ -237,13 +237,13 @@ class CostRecord:
 
 class CostCollector:
 
-    
+
 
     def __init__(self):
 
         self.cost_records: List[CostRecord] = []
 
-    
+
 
     def collect_storage_cost(self, resource_id: str,
 
@@ -257,7 +257,7 @@ class CostCollector:
 
         amount = size_gb * cost_per_gb
 
-        
+
 
         record = CostRecord(
 
@@ -275,13 +275,13 @@ class CostCollector:
 
         )
 
-        
+
 
         self.cost_records.append(record)
 
         return record
 
-    
+
 
     def collect_compute_cost(self, resource_id: str,
 
@@ -301,7 +301,7 @@ class CostCollector:
 
         amount = cpu_cost + memory_cost
 
-        
+
 
         record = CostRecord(
 
@@ -329,13 +329,13 @@ class CostCollector:
 
         )
 
-        
+
 
         self.cost_records.append(record)
 
         return record
 
-    
+
 
     def collect_api_cost(self, resource_id: str,
 
@@ -347,7 +347,7 @@ class CostCollector:
 
         amount = api_calls * cost_per_call
 
-        
+
 
         record = CostRecord(
 
@@ -365,13 +365,13 @@ class CostCollector:
 
         )
 
-        
+
 
         self.cost_records.append(record)
 
         return record
 
-    
+
 
     def get_costs_by_type(self, cost_type: CostType,
 
@@ -381,19 +381,19 @@ class CostCollector:
 
         filtered = [r for r in self.cost_records if r.cost_type == cost_type]
 
-        
+
 
         if start_time:
 
             filtered = [r for r in filtered if r.timestamp >= start_time]
 
-        
+
 
         if end_time:
 
             filtered = [r for r in filtered if r.timestamp <= end_time]
 
-        
+
 
         return filtered
 
@@ -435,7 +435,7 @@ class CostAllocation:
 
 class CostAttributionManager:
 
-    
+
 
     def __init__(self):
 
@@ -443,7 +443,7 @@ class CostAttributionManager:
 
         self.attribution_rules: Dict[str, Dict[str, Any]] = {}
 
-    
+
 
     def define_attribution_rule(self, resource_pattern: str,
 
@@ -465,13 +465,13 @@ class CostAttributionManager:
 
         }
 
-    
+
 
     def allocate_cost(self, cost_record: CostRecord) -> List[CostAllocation]:
 
         allocations = []
 
-        
+
 
         for pattern, rule in self.attribution_rules.items():
 
@@ -495,17 +495,17 @@ class CostAttributionManager:
 
                 )
 
-                
+
 
                 allocations.append(allocation)
 
-        
+
 
         self.allocations.extend(allocations)
 
         return allocations
 
-    
+
 
     def get_team_costs(self, team: str,
 
@@ -517,19 +517,19 @@ class CostAttributionManager:
 
         filtered = [a for a in self.allocations if a.team == team]
 
-        
+
 
         if start_time:
 
             filtered = [a for a in filtered if a.timestamp >= start_time]
 
-        
+
 
         if end_time:
 
             filtered = [a for a in filtered if a.timestamp <= end_time]
 
-        
+
 
         costs = {}
 
@@ -539,7 +539,7 @@ class CostAttributionManager:
 
             costs[project] = costs.get(project, 0) + allocation.amount
 
-        
+
 
         return costs
 
@@ -583,7 +583,7 @@ class OptimizationRecommendation:
 
 class CostOptimizationAdvisor:
 
-    
+
 
     def __init__(self, cost_collector: CostCollector):
 
@@ -591,7 +591,7 @@ class CostOptimizationAdvisor:
 
         self.recommendations: List[OptimizationRecommendation] = []
 
-    
+
 
     def analyze_storage_optimization(self) -> List[OptimizationRecommendation]:
 
@@ -599,11 +599,11 @@ class CostOptimizationAdvisor:
 
         recommendations = []
 
-        
+
 
         storage_costs = self.cost_collector.get_costs_by_type(CostType.STORAGE)
 
-        
+
 
         for cost in storage_costs:
 
@@ -627,13 +627,13 @@ class CostOptimizationAdvisor:
 
                 recommendations.append(recommendation)
 
-        
+
 
         self.recommendations.extend(recommendations)
 
         return recommendations
 
-    
+
 
     def analyze_compute_optimization(self) -> List[OptimizationRecommendation]:
 
@@ -641,11 +641,11 @@ class CostOptimizationAdvisor:
 
         recommendations = []
 
-        
+
 
         compute_costs = self.cost_collector.get_costs_by_type(CostType.COMPUTE)
 
-        
+
 
         for cost in compute_costs:
 
@@ -653,7 +653,7 @@ class CostOptimizationAdvisor:
 
             memory_gb_hours = cost.details.get("memory_gb_hours", 0)
 
-            
+
 
             if cpu_hours > 0 and memory_gb_hours / cpu_hours > 8:
 
@@ -675,13 +675,13 @@ class CostOptimizationAdvisor:
 
                 recommendations.append(recommendation)
 
-        
+
 
         self.recommendations.extend(recommendations)
 
         return recommendations
 
-    
+
 
     def get_total_potential_savings(self) -> float:
 
@@ -791,7 +791,7 @@ GET /api/v1/cost/recommendations
 
 
 
-## 
+##
 
 
 
@@ -819,7 +819,7 @@ GET /api/v1/cost/recommendations
 
 
 
-## 
+##
 
 
 
@@ -939,7 +939,7 @@ graph LR
 
     B --> D0["DATA GOVERNANCE"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -990,12 +990,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

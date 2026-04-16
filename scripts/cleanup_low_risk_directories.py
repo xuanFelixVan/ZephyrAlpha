@@ -46,20 +46,20 @@ def move_to_archive(dir_name: str, dry_run: bool = True) -> bool:
     if not source.exists():
         print(f"  [SKIP] 不存在: {dir_name}")
         return True
-    
+
     # 统计文件数
     file_count = len(list(source.rglob("*")))
-    
+
     if dry_run:
         print(f"  [DRY-RUN] 将移动: {dir_name} ({file_count} 个项目)")
         return True
-    
+
     try:
         ARCHIVE_DIR.mkdir(exist_ok=True)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         target_name = f"{dir_name}_CLEANED_{timestamp}"
         target = ARCHIVE_DIR / target_name
-        
+
         shutil.move(str(source), str(target))
         print(f"  [OK] 已归档: {dir_name} -> 99_ARCHIVE/{target_name}")
         return True
@@ -73,20 +73,20 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--execute", action="store_true", help="实际执行")
     args = parser.parse_args()
-    
+
     dry_run = not args.execute
     mode = "[模拟运行]" if dry_run else "[实际执行]"
-    
+
     print("="*70)
     print(f"低风险目录清理 {mode}")
     print("="*70)
     print(f"目标: 清理 {len(LOW_RISK_DIRS)} 个低风险目录\n")
-    
+
     success_count = 0
     for dir_name in LOW_RISK_DIRS:
         if move_to_archive(dir_name, dry_run):
             success_count += 1
-    
+
     print(f"\n{'='*70}")
     print(f"完成: {success_count}/{len(LOW_RISK_DIRS)}")
     if dry_run:

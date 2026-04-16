@@ -71,7 +71,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -765,7 +765,7 @@ class CurriculumLearning:
 
 
 
-    
+
 
 
 
@@ -837,7 +837,7 @@ class CurriculumLearning:
 
 
 
-        """初始化课程学?        
+        """初始化课程学?
 
 
 
@@ -909,7 +909,7 @@ class CurriculumLearning:
 
 
 
-    
+
 
 
 
@@ -993,7 +993,7 @@ class CurriculumLearning:
 
 
 
-        
+
 
 
 
@@ -1041,7 +1041,7 @@ class CurriculumLearning:
 
 
 
-            
+
 
 
 
@@ -1101,7 +1101,7 @@ class CurriculumLearning:
 
 
 
-    
+
 
 
 
@@ -1185,7 +1185,7 @@ class CurriculumLearning:
 
 
 
-        
+
 
 
 
@@ -1221,7 +1221,7 @@ class CurriculumLearning:
 
 
 
-            total_epochs: 总轮?            
+            total_epochs: 总轮?
 
 
 
@@ -1978,14 +1978,3 @@ numpy>=1.24.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

@@ -268,7 +268,7 @@ class AccountManagementService:
 
         self.accounts = {}
 
-    
+
 
     def create_account(self, account_info: AccountInfo) -> Account:
 
@@ -288,13 +288,13 @@ class AccountManagementService:
 
         return account
 
-    
+
 
     def get_account(self, account_id: str) -> Account:
 
         return self.accounts.get(account_id)
 
-    
+
 
     def list_accounts(self, user_id: str) -> List[Account]:
 
@@ -316,7 +316,7 @@ class AccountSwitchService:
 
         self.current_account = {}
 
-    
+
 
     def switch_account(self, user_id: str, account_id: str) -> bool:
 
@@ -330,7 +330,7 @@ class AccountSwitchService:
 
         return False
 
-    
+
 
     def get_current_account(self, user_id: str) -> Optional[str]:
 
@@ -352,7 +352,7 @@ class AccountPermissionService:
 
         self.permissions = {}
 
-    
+
 
     def grant_permission(self, user_id: str, account_id: str, permission: str):
 
@@ -364,7 +364,7 @@ class AccountPermissionService:
 
         self.permissions[key].add(permission)
 
-    
+
 
     def check_permission(self, user_id: str, account_id: str, permission: str) -> bool:
 
@@ -456,9 +456,8 @@ class AccountPermissionService:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

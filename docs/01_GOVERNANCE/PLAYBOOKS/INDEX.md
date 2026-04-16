@@ -16,7 +16,8 @@ priority: P0
 
 | 文件 | 用途 | 状态 |
 |------|------|------|
-| `construction-change-impact-playbook.md` | 施工变更影响分析 SOP | 待创建 |
+| [construction-change-impact-playbook.md](construction-change-impact-playbook.md) | 施工变更影响分析 SOP（Phase 2 施工阶段必备）| ✅ Active |
+| [dead-link-repair-playbook.md](dead-link-repair-playbook.md) | 断链分类修复 SOP（A/B/C/D 四类 + 阈值恢复路线图）| ✅ Active |
 | `blueprint-retirement-playbook.md` | 蓝图退役 + 价值提取 SOP | 待创建（Phase B）|
 | `subsystem-dedup-playbook.md` | 重复子系统合并 SOP | 待创建（Phase D）|
 
@@ -28,3 +29,6 @@ priority: P0
 | 文件删除保留裁决 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/file-deletion-or-retention-playbook.md` |
 | 全局文件治理会话交接 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/global-file-governance-session-handoff.md` |
 | 蓝图图纸柜执行协议 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-cabinet-execution-protocol.md` |
+
+<!-- orphan-link -->
+- [github-branch-protection-setup](github-branch-protection-setup.md)

@@ -174,7 +174,7 @@ class ResearchDirectorInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -194,7 +194,7 @@ class ResearchDirectorInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -202,7 +202,7 @@ class ResearchDirectorInterface(ABC):
 
 
 
-            market_state: ﮒﺕﮒﭦﻝﭘﮔﻛﺟ۰ﺅﺟ?            
+            market_state: ﮒﺕﮒﭦﻝﭘﮔﻛﺟ۰ﺅﺟ?
 
 
 
@@ -222,7 +222,7 @@ class ResearchDirectorInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -242,7 +242,7 @@ class ResearchDirectorInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -254,7 +254,7 @@ research_direction: ﻝﻝ۸ﭘﮔﺗﮒ
 
 
 
-            
+
 
 
 
@@ -274,7 +274,7 @@ research_direction: ﻝﻝ۸ﭘﮔﺗﮒ
 
 
 
-    
+
 
 
 
@@ -294,7 +294,7 @@ research_direction: ﻝﻝ۸ﭘﮔﺗﮒ
 
 
 
-        
+
 
 
 
@@ -306,7 +306,7 @@ task: ﻝﻝ۸ﭘﻛﭨﭨﮒ۰
 
 
 
-            
+
 
 
 
@@ -350,7 +350,7 @@ class FactorResearcherInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -358,7 +358,7 @@ class FactorResearcherInterface(ABC):
 
 
 
-    def mine_factors(self, 
+    def mine_factors(self,
 
 
 
@@ -382,7 +382,7 @@ class FactorResearcherInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -398,7 +398,7 @@ target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?            factor_type: ﮒﮒﻝﺎﭨﮒ
 
 
 
-            
+
 
 
 
@@ -418,7 +418,7 @@ target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?            factor_type: ﮒﮒﻝﺎﭨﮒ
 
 
 
-    
+
 
 
 
@@ -426,7 +426,7 @@ target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?            factor_type: ﮒﮒﻝﺎﭨﮒ
 
 
 
-    def validate_factor(self, 
+    def validate_factor(self,
 
 
 
@@ -482,7 +482,7 @@ target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?
 
 
 
-    
+
 
 
 
@@ -502,7 +502,7 @@ target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?
 
 
 
-        
+
 
 
 
@@ -518,7 +518,7 @@ factor: ﮒﮒﻛﺟ۰ﮔﺁ
 
 
 
-            
+
 
 
 
@@ -538,7 +538,7 @@ factor: ﮒﮒﻛﺟ۰ﮔﺁ
 
 
 
-    
+
 
 
 
@@ -558,7 +558,7 @@ factor: ﮒﮒﻛﺟ۰ﮔﺁ
 
 
 
-        
+
 
 
 
@@ -570,7 +570,7 @@ factor: ﮒﮒﻛﺟ۰ﮔﺁ
 
 
 
-            
+
 
 
 
@@ -614,7 +614,7 @@ class StrategyResearcherInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -622,7 +622,7 @@ class StrategyResearcherInterface(ABC):
 
 
 
-    def design_strategy(self, 
+    def design_strategy(self,
 
 
 
@@ -642,7 +642,7 @@ class StrategyResearcherInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -654,7 +654,7 @@ factors: ﮒﮒﮒﻟ۰۷
 
 
 
-            market_state: ﮒﺕﮒﭦﻝﭘﺅﺟﺛ?            
+            market_state: ﮒﺕﮒﭦﻝﭘﺅﺟﺛ?
 
 
 
@@ -674,7 +674,7 @@ factors: ﮒﮒﮒﻟ۰۷
 
 
 
-    
+
 
 
 
@@ -682,7 +682,7 @@ factors: ﮒﮒﮒﻟ۰۷
 
 
 
-    def backtest_strategy(self, 
+    def backtest_strategy(self,
 
 
 
@@ -702,7 +702,7 @@ factors: ﮒﮒﮒﻟ۰۷
 
 
 
-        
+
 
 
 
@@ -718,7 +718,7 @@ strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
 
 
 
-            
+
 
 
 
@@ -738,7 +738,7 @@ strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
 
 
 
-    
+
 
 
 
@@ -746,7 +746,7 @@ strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
 
 
 
-    def optimize_strategy(self, 
+    def optimize_strategy(self,
 
 
 
@@ -766,7 +766,7 @@ strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
 
 
 
-        
+
 
 
 
@@ -782,7 +782,7 @@ strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
 
 
 
-            
+
 
 
 
@@ -826,7 +826,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -842,7 +842,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-        ﮒﮔﮒﺕﮒﭦﻝﭘﺅﺟﺛ?        
+        ﮒﮔﮒﺕﮒﭦﻝﭘﺅﺟﺛ?
 
 
 
@@ -854,7 +854,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-            
+
 
 
 
@@ -874,7 +874,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -894,7 +894,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -906,7 +906,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-            
+
 
 
 
@@ -926,7 +926,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -946,7 +946,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -958,7 +958,7 @@ class MarketAnalystInterface(ABC):
 
 
 
-            
+
 
 
 
@@ -1002,7 +1002,7 @@ class KnowledgeManagerInterface(ABC):
 
 
 
-    
+
 
 
 
@@ -1022,7 +1022,7 @@ class KnowledgeManagerInterface(ABC):
 
 
 
-        
+
 
 
 
@@ -1034,7 +1034,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-            
+
 
 
 
@@ -1050,7 +1050,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-    
+
 
 
 
@@ -1070,7 +1070,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-        
+
 
 
 
@@ -1082,7 +1082,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-            
+
 
 
 
@@ -1102,7 +1102,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-    
+
 
 
 
@@ -1118,7 +1118,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-        ﮔ۲ﻝﺑ۱ﻝ۴ﺅﺟ?        
+        ﮔ۲ﻝﺑ۱ﻝ۴ﺅﺟ?
 
 
 
@@ -1134,7 +1134,7 @@ research_result: ﻝﻝ۸ﭘﮔﮔ
 
 
 
-            
+
 
 
 
@@ -1466,7 +1466,7 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 
 
-    
+
 
 
 
@@ -1506,7 +1506,7 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 
 
-    
+
 
 
 
@@ -1558,7 +1558,7 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 
 
-    
+
 
 
 
@@ -1570,7 +1570,7 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 
 
-    
+
 
 
 
@@ -1622,7 +1622,7 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 
 
-def mine_factors(self, 
+def mine_factors(self,
 
 
 
@@ -1646,7 +1646,7 @@ def mine_factors(self,
 
 
 
-    
+
 
 
 
@@ -1690,7 +1690,7 @@ def mine_factors(self,
 
 
 
-    
+
 
 
 
@@ -1718,7 +1718,7 @@ def mine_factors(self,
 
 
 
-    
+
 
 
 
@@ -1910,7 +1910,7 @@ class TestResearchDirector:
 
 
 
-    
+
 
 
 
@@ -1926,7 +1926,7 @@ class TestResearchDirector:
 
 
 
-        
+
 
 
 
@@ -1950,7 +1950,7 @@ class TestResearchDirector:
 
 
 
-        
+
 
 
 
@@ -1958,7 +1958,7 @@ class TestResearchDirector:
 
 
 
-        
+
 
 
 
@@ -2342,7 +2342,7 @@ class TestResearchDirector:
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
 
 
 
@@ -2351,6 +2351,3 @@ class TestResearchDirector:
 
 
 ```
-
-
-

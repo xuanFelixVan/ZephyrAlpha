@@ -109,7 +109,7 @@ class PortfolioCapacityEstimator:
         self.max_impact_cost = max_impact_cost
         self.max_participation_rate = max_participation_rate
         self.min_liquidity_ratio = min_liquidity_ratio
-    
+
     def estimate_liquidity(self, volume_data, avg_daily_volume):
         liquidity_metrics = {
             'avg_volume': np.mean(volume_data),
@@ -117,34 +117,34 @@ class PortfolioCapacityEstimator:
             'volume_trend': stats.linregress(range(len(volume_data)), volume_data).slope,
             'liquidity_score': np.mean(volume_data) / avg_daily_volume
         }
-        
+
         return liquidity_metrics
-    
+
     def estimate_market_impact(self, trade_size, avg_daily_volume, volatility):
         participation_rate = trade_size / avg_daily_volume
-        
+
         square_root_law = 0.1 * volatility * np.sqrt(participation_rate)
-        
+
         linear_model = 0.05 * participation_rate * volatility
-        
+
         return {
             'square_root_impact': square_root_law,
             'linear_impact': linear_model,
             'participation_rate': participation_rate,
             'estimated_impact': max(square_root_law, linear_model)
         }
-    
-    def calculate_capacity(self, portfolio_weights, liquidity_data, 
+
+    def calculate_capacity(self, portfolio_weights, liquidity_data,
                           volatility_data, target_impact_cost=None):
         if target_impact_cost is None:
             target_impact_cost = self.max_impact_cost
-        
+
         capacity_constraints = []
-        
+
         for symbol, weight in portfolio_weights.items():
             liquidity = liquidity_data.get(symbol, {})
             volatility = volatility_data.get(symbol, 0.02)
-            
+
             avg_volume = liquidity.get('avg_volume', 0)
             if avg_volume == 0:
                 capacity_constraints.append({
@@ -154,15 +154,15 @@ class PortfolioCapacityEstimator:
                     'reason': '无流动性数据'
                 })
                 continue
-            
+
             max_trade_size_by_impact = (target_impact_cost / (0.1 * volatility)) ** 2 * avg_volume
-            
+
             max_trade_size_by_participation = self.max_participation_rate * avg_volume
-            
+
             max_trade_size = min(max_trade_size_by_impact, max_trade_size_by_participation)
-            
+
             max_position = max_trade_size / weight if weight > 0 else 0
-            
+
             capacity_constraints.append({
                 'symbol': symbol,
                 'constraint_type': 'liquidity',
@@ -173,33 +173,33 @@ class PortfolioCapacityEstimator:
                 'impact_cost': target_impact_cost,
                 'participation_rate': self.max_participation_rate
             })
-        
-        total_capacity = min([c['max_capacity'] for c in capacity_constraints 
+
+        total_capacity = min([c['max_capacity'] for c in capacity_constraints
                              if c['max_capacity'] > 0])
-        
+
         return {
             'total_capacity': total_capacity,
             'capacity_constraints': capacity_constraints,
-            'bottleneck_asset': min(capacity_constraints, 
+            'bottleneck_asset': min(capacity_constraints,
                                    key=lambda x: x['max_capacity'])['symbol'],
             'capacity_utilization': self._calculate_utilization(capacity_constraints)
         }
-    
+
     def _calculate_utilization(self, constraints):
         capacities = [c['max_capacity'] for c in constraints if c['max_capacity'] > 0]
         if not capacities:
             return 0
-        
+
         return {
             'min_capacity': min(capacities),
             'max_capacity': max(capacities),
             'avg_capacity': np.mean(capacities),
             'capacity_std': np.std(capacities)
         }
-    
+
     def identify_capacity_limitations(self, capacity_result, current_aum):
         limitations = []
-        
+
         if current_aum > capacity_result['total_capacity']:
             limitations.append({
                 'type': 'capacity_exceeded',
@@ -209,13 +209,13 @@ class PortfolioCapacityEstimator:
                 'excess': current_aum - capacity_result['total_capacity'],
                 'recommendation': '当前规模超过容量限制，建议减少规模或优化组合'
             })
-        
+
         bottleneck = capacity_result['bottleneck_asset']
         bottleneck_constraint = next(
             (c for c in capacity_result['capacity_constraints'] if c['symbol'] == bottleneck),
             None
         )
-        
+
         if bottleneck_constraint:
             limitations.append({
                 'type': 'bottleneck_asset',
@@ -225,7 +225,7 @@ class PortfolioCapacityEstimator:
                 'reason': f'资产{bottleneck}流动性限制组合容量',
                 'recommendation': f'考虑降低{bottleneck}权重或寻找替代资产'
             })
-        
+
         for constraint in capacity_result['capacity_constraints']:
             if constraint.get('participation_rate', 0) > 0.05:
                 limitations.append({
@@ -235,43 +235,43 @@ class PortfolioCapacityEstimator:
                     'participation_rate': constraint['participation_rate'],
                     'recommendation': f'资产{constraint["symbol"]}参与率较高，注意市场冲击'
                 })
-        
+
         return limitations
-    
-    def optimize_capacity(self, portfolio_weights, liquidity_data, 
+
+    def optimize_capacity(self, portfolio_weights, liquidity_data,
                          volatility_data, current_aum):
         capacity_result = self.calculate_capacity(
             portfolio_weights, liquidity_data, volatility_data
         )
-        
+
         limitations = self.identify_capacity_limitations(capacity_result, current_aum)
-        
+
         optimization_suggestions = []
-        
+
         if capacity_result['total_capacity'] < current_aum:
             bottleneck = capacity_result['bottleneck_asset']
             bottleneck_weight = portfolio_weights[bottleneck]
-            
+
             optimized_weights = portfolio_weights.copy()
             optimized_weights[bottleneck] *= 0.5
-            
+
             other_assets = [s for s in portfolio_weights.keys() if s != bottleneck]
             redistribute_weight = bottleneck_weight * 0.5 / len(other_assets)
-            
+
             for asset in other_assets:
                 optimized_weights[asset] += redistribute_weight
-            
+
             new_capacity = self.calculate_capacity(
                 optimized_weights, liquidity_data, volatility_data
             )
-            
+
             optimization_suggestions.append({
                 'type': 'weight_reduction',
                 'description': f'降低{bottleneck}权重50%',
                 'new_capacity': new_capacity['total_capacity'],
                 'capacity_improvement': new_capacity['total_capacity'] - capacity_result['total_capacity']
             })
-        
+
         return {
             'current_capacity': capacity_result['total_capacity'],
             'current_aum': current_aum,
@@ -280,7 +280,7 @@ class PortfolioCapacityEstimator:
             'optimization_suggestions': optimization_suggestions,
             'recommendation': self._generate_recommendation(capacity_result, current_aum)
         }
-    
+
     def _generate_recommendation(self, capacity_result, current_aum):
         if current_aum > capacity_result['total_capacity']:
             return '当前规模超过容量限制，建议立即优化'

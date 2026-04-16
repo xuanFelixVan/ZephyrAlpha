@@ -27,7 +27,7 @@ layer: layer_00
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据验证引擎、验证规则、数据校验
 
@@ -223,7 +223,7 @@ A[
 
     end
 
-    
+
 
     subgraph "验证引擎"
 
@@ -235,7 +235,7 @@ A[
 
         B --> F[统计验证器]
 
-        
+
 
         C --> G[验证规则引擎]
 
@@ -247,7 +247,7 @@ A[
 
     end
 
-    
+
 
         G --> H[验证结果]
 
@@ -257,7 +257,7 @@ A[
 
     end
 
-    
+
 
 subgraph "
 
@@ -375,7 +375,7 @@ from great_expectations.dataset import SparkDataset
 
 class BusinessRuleValidator:
 
-    
+
 
     def __init__(self, spark, config):
 
@@ -385,7 +385,7 @@ class BusinessRuleValidator:
 
         self.context = gx.get_context()
 
-    
+
 
     def validate_price_range(self, df, symbol, price_column='close'):
 
@@ -393,7 +393,7 @@ class BusinessRuleValidator:
 
         验证价格范围
 
-        
+
 
         Args:
 
@@ -403,7 +403,7 @@ class BusinessRuleValidator:
 
             price_column: 价格列名
 
-        
+
 
         Returns:
 
@@ -413,19 +413,19 @@ class BusinessRuleValidator:
 
         expectations = self.config.get('price_ranges', {}).get(symbol, {})
 
-        
+
 
         if not expectations:
 
             return self._create_warning_result(f"No price range config for {symbol}")
 
-        
+
 
         min_price = expectations.get('min', 0)
 
         max_price = expectations.get('max', float('inf'))
 
-        
+
 
         expectation_suite = self.context.add_expectation_suite(
 
@@ -433,7 +433,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         expectation_suite.add_expectation(
 
@@ -449,7 +449,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         validator = self.context.get_validator(
 
@@ -459,23 +459,23 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         return validator.validate()
 
-    
+
 
     def validate_volume(self, df, volume_column='volume'):
 
         """
 
-        
+
 
         Args:
 
             df: Spark DataFrame
 
-        
+
 
         Returns:
 
@@ -485,7 +485,7 @@ class BusinessRuleValidator:
 
         expectation_suite = self.context.add_expectation_suite("volume_validation")
 
-        
+
 
         expectation_suite.add_expectation(
 
@@ -501,7 +501,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         expectation_suite.add_expectation(
 
@@ -513,7 +513,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         validator = self.context.get_validator(
 
@@ -523,17 +523,17 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         return validator.validate()
 
-    
+
 
     def validate_time_continuity(self, df, time_column='timestamp', freq='1min'):
 
         """
 
-        
+
 
         Args:
 
@@ -543,7 +543,7 @@ class BusinessRuleValidator:
 
             freq: 预期频率
 
-        
+
 
         Returns:
 
@@ -553,7 +553,7 @@ class BusinessRuleValidator:
 
         expectation_suite = self.context.add_expectation_suite("time_continuity")
 
-        
+
 
         expectation_suite.add_expectation(
 
@@ -565,7 +565,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         expectation_suite.add_expectation(
 
@@ -577,7 +577,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         validator = self.context.get_validator(
 
@@ -587,7 +587,7 @@ class BusinessRuleValidator:
 
         )
 
-        
+
 
         return validator.validate()
 
@@ -633,7 +633,7 @@ class IntegrityValidator:
 
     """完整性验证器"""
 
-    
+
 
     def __init__(self, spark, config):
 
@@ -643,7 +643,7 @@ class IntegrityValidator:
 
         self.schemas = self._load_schemas()
 
-    
+
 
     def _load_schemas(self):
 
@@ -669,7 +669,7 @@ class IntegrityValidator:
 
             }, strict=True),
 
-            
+
 
             'order_book': DataFrameSchema({
 
@@ -687,7 +687,7 @@ class IntegrityValidator:
 
             }, strict=True),
 
-            
+
 
             'trade_data': DataFrameSchema({
 
@@ -705,7 +705,7 @@ class IntegrityValidator:
 
         }
 
-    
+
 
     def validate_schema(self, df, schema_name):
 
@@ -713,7 +713,7 @@ class IntegrityValidator:
 
         验证Schema
 
-        
+
 
         Args:
 
@@ -721,7 +721,7 @@ class IntegrityValidator:
 
             schema_name: Schema名称
 
-        
+
 
         Returns:
 
@@ -731,13 +731,13 @@ class IntegrityValidator:
 
         schema = self.schemas.get(schema_name)
 
-        
+
 
         if not schema:
 
             raise ValueError(f"Unknown schema: {schema_name}")
 
-        
+
 
         try:
 
@@ -765,13 +765,13 @@ class IntegrityValidator:
 
             }
 
-    
+
 
     def validate_completeness(self, df, required_columns):
 
         """
 
-        
+
 
         Args:
 
@@ -779,7 +779,7 @@ class IntegrityValidator:
 
 required_columns:
 
-        
+
 
         Returns:
 
@@ -789,7 +789,7 @@ required_columns:
 
         errors = []
 
-        
+
 
         for col in required_columns:
 
@@ -807,7 +807,7 @@ required_columns:
 
                 })
 
-        
+
 
         return {
 
@@ -819,13 +819,13 @@ required_columns:
 
         }
 
-    
+
 
     def validate_uniqueness(self, df, unique_columns):
 
         """
 
-        
+
 
         Args:
 
@@ -833,7 +833,7 @@ required_columns:
 
             unique_columns: 唯一性约束列列表
 
-        
+
 
         Returns:
 
@@ -843,7 +843,7 @@ required_columns:
 
         errors = []
 
-        
+
 
         for cols in unique_columns:
 
@@ -851,11 +851,11 @@ required_columns:
 
                 cols = [cols]
 
-            
+
 
             duplicate_count = df.groupBy(*cols).count().filter('count > 1').count()
 
-            
+
 
             if duplicate_count > 0:
 
@@ -869,7 +869,7 @@ required_columns:
 
                 })
 
-        
+
 
         return {
 
@@ -909,7 +909,7 @@ class ConsistencyValidator:
 
     """一致性验证器"""
 
-    
+
 
     def __init__(self, spark: SparkSession, config):
 
@@ -919,7 +919,7 @@ class ConsistencyValidator:
 
         self.tolerance = config.get('tolerance', 0.01)
 
-    
+
 
     def validate_cross_source(self, df1, df2, key_columns, value_columns):
 
@@ -927,7 +927,7 @@ class ConsistencyValidator:
 
         跨数据源验证
 
-        
+
 
         Args:
 
@@ -939,7 +939,7 @@ class ConsistencyValidator:
 
             value_columns: 值列
 
-        
+
 
         Returns:
 
@@ -949,7 +949,7 @@ class ConsistencyValidator:
 
         errors = []
 
-        
+
 
         joined_df = df1.alias('a').join(
 
@@ -961,7 +961,7 @@ class ConsistencyValidator:
 
         )
 
-        
+
 
         for value_col in value_columns:
 
@@ -975,11 +975,11 @@ class ConsistencyValidator:
 
             )
 
-            
+
 
             inconsistent_count = joined_df.filter(col(diff_col) > self.tolerance).count()
 
-            
+
 
             if inconsistent_count > 0:
 
@@ -995,7 +995,7 @@ class ConsistencyValidator:
 
                 })
 
-        
+
 
         return {
 
@@ -1007,13 +1007,13 @@ class ConsistencyValidator:
 
         }
 
-    
+
 
     def validate_timestamp_alignment(self, df1, df2, timestamp_column='timestamp'):
 
         """
 
-        
+
 
         Args:
 
@@ -1021,7 +1021,7 @@ class ConsistencyValidator:
 
             df2: 第二个数据源
 
-        
+
 
         Returns:
 
@@ -1031,25 +1031,25 @@ class ConsistencyValidator:
 
         errors = []
 
-        
+
 
         timestamps1 = df1.select(timestamp_column).distinct().collect()
 
         timestamps2 = df2.select(timestamp_column).distinct().collect()
 
-        
+
 
         set1 = set([row[timestamp_column] for row in timestamps1])
 
         set2 = set([row[timestamp_column] for row in timestamps2])
 
-        
+
 
         missing_in_1 = set2 - set1
 
         missing_in_2 = set1 - set2
 
-        
+
 
         if missing_in_1:
 
@@ -1063,7 +1063,7 @@ class ConsistencyValidator:
 
             })
 
-        
+
 
         if missing_in_2:
 
@@ -1077,7 +1077,7 @@ class ConsistencyValidator:
 
             })
 
-        
+
 
         return {
 
@@ -1125,7 +1125,7 @@ validation_rules:
 
       max: 500
 
-  
+
 
   volume_range:
 
@@ -1133,7 +1133,7 @@ validation_rules:
 
     max: 1000000000
 
-  
+
 
   time_continuity:
 
@@ -1141,7 +1141,7 @@ validation_rules:
 
     gap_unit: minutes
 
-  
+
 
   market_state:
 
@@ -1181,13 +1181,13 @@ completeness_rules:
 
       - volume
 
-    
+
 
     unique_constraints:
 
       - [symbol, timestamp]
 
-    
+
 
     not_null_columns:
 
@@ -1199,7 +1199,7 @@ completeness_rules:
 
       - volume
 
-  
+
 
   order_book:
 
@@ -1217,13 +1217,13 @@ completeness_rules:
 
       - ask_volume
 
-    
+
 
     unique_constraints:
 
       - [symbol, timestamp, level]
 
-    
+
 
     not_null_columns:
 
@@ -1257,7 +1257,7 @@ consistency_rules:
 
         type: database
 
-    
+
 
     key_columns:
 
@@ -1265,7 +1265,7 @@ consistency_rules:
 
       - timestamp
 
-    
+
 
     value_columns:
 
@@ -1273,11 +1273,11 @@ consistency_rules:
 
       - volume
 
-    
+
 
     tolerance: 0.001
 
-  
+
 
   timestamp_alignment:
 
@@ -1311,13 +1311,13 @@ from typing import Dict, List, Any
 
 class ValidationReportGenerator:
 
-    
+
 
     def __init__(self, config):
 
         self.config = config
 
-    
+
 
     def generate_report(self, validation_results: Dict[str, Any]) -> Dict[str, Any]:
 
@@ -1325,13 +1325,13 @@ class ValidationReportGenerator:
 
         生成验证报告
 
-        
+
 
         Args:
 
             validation_results: 验证结果
 
-        
+
 
         Returns:
 
@@ -1355,11 +1355,11 @@ class ValidationReportGenerator:
 
         }
 
-        
+
 
         return report
 
-    
+
 
     def _generate_summary(self, validation_results):
 
@@ -1369,7 +1369,7 @@ class ValidationReportGenerator:
 
         passed_checks = sum(1 for r in validation_results.values() if r.get('success', False))
 
-        
+
 
         return {
 
@@ -1383,7 +1383,7 @@ class ValidationReportGenerator:
 
         }
 
-    
+
 
     def _calculate_quality_score(self, validation_results):
 
@@ -1401,7 +1401,7 @@ class ValidationReportGenerator:
 
         }
 
-        
+
 
         scores = {}
 
@@ -1417,7 +1417,7 @@ class ValidationReportGenerator:
 
                 scores[category] = max(0, 100 - error_count * 10)
 
-        
+
 
         quality_score = sum(
 
@@ -1427,11 +1427,11 @@ class ValidationReportGenerator:
 
         )
 
-        
+
 
         return round(quality_score, 2)
 
-    
+
 
     def _generate_recommendations(self, validation_results):
 
@@ -1439,7 +1439,7 @@ class ValidationReportGenerator:
 
         recommendations = []
 
-        
+
 
         for category, result in validation_results.items():
 
@@ -1457,11 +1457,11 @@ class ValidationReportGenerator:
 
                     })
 
-        
+
 
         return recommendations
 
-    
+
 
     def _get_recommendation(self, category, error):
 
@@ -1489,7 +1489,7 @@ class ValidationReportGenerator:
 
         }
 
-        
+
 
         return recommendations_map.get(category, {}).get(
 
@@ -1529,7 +1529,7 @@ class ValidationReportGenerator:
 
 class DataQualityScorer:
 
-    
+
 
     def __init__(self, config):
 
@@ -1547,7 +1547,7 @@ class DataQualityScorer:
 
         }
 
-    
+
 
     def calculate_score(self, validation_results):
 
@@ -1555,13 +1555,13 @@ class DataQualityScorer:
 
         计算数据质量评分
 
-        
+
 
         Args:
 
             validation_results: 验证结果
 
-        
+
 
         Returns:
 
@@ -1571,7 +1571,7 @@ class DataQualityScorer:
 
         dimension_scores = {}
 
-        
+
 
         for dimension, weight in self.weights.items():
 
@@ -1579,7 +1579,7 @@ class DataQualityScorer:
 
             dimension_scores[dimension] = self._calculate_dimension_score(result)
 
-        
+
 
         overall_score = sum(
 
@@ -1589,7 +1589,7 @@ class DataQualityScorer:
 
         )
 
-        
+
 
         return {
 
@@ -1601,7 +1601,7 @@ class DataQualityScorer:
 
         }
 
-    
+
 
     def _calculate_dimension_score(self, result):
 
@@ -1611,19 +1611,19 @@ class DataQualityScorer:
 
             return 100.0
 
-        
+
 
         error_count = len(result.get('errors', []))
 
         warning_count = len(result.get('warnings', []))
 
-        
+
 
         score = 100 - (error_count * 10 + warning_count * 5)
 
         return max(0, score)
 
-    
+
 
     def _get_grade(self, score):
 
@@ -1711,7 +1711,7 @@ class DataQualityScorer:
 
 
 
-### 8.1 
+### 8.1
 
 
 
@@ -1733,7 +1733,7 @@ alerts:
 
     severity: critical
 
-  
+
 
   - name: data_quality_score_low
 
@@ -1741,7 +1741,7 @@ alerts:
 
     severity: warning
 
-  
+
 
   - name: validation_latency_high
 
@@ -1894,10 +1894,3 @@ alerts:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

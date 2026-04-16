@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供智能故障诊断和根因分析能力，支持故障预测、自动诊断、智能修复
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：故障诊断、根因分析、故障预测、自动修复
 
@@ -135,7 +135,7 @@ class FaultDetector:
 
     """故障检测器"""
 
-    
+
 
     def __init__(
 
@@ -151,7 +151,7 @@ class FaultDetector:
 
         self.grafana_url = grafana_url
 
-    
+
 
     def detect_anomalies(
 
@@ -167,7 +167,7 @@ class FaultDetector:
 
         anomalies = []
 
-        
+
 
         metrics = [
 
@@ -181,7 +181,7 @@ class FaultDetector:
 
         ]
 
-        
+
 
         for metric_name, query in metrics:
 
@@ -193,19 +193,19 @@ class FaultDetector:
 
             )
 
-            
+
 
             if response.status_code == 200:
 
                 result = response.json().get("data", {}).get("result", [])
 
-                
+
 
                 if result:
 
                     value = float(result[0].get("value", [0, 0])[1])
 
-                    
+
 
                     if self._is_anomaly(metric_name, value):
 
@@ -225,11 +225,11 @@ class FaultDetector:
 
                         })
 
-        
+
 
         return anomalies
 
-    
+
 
     def _is_anomaly(self, metric_name: str, value: float) -> bool:
 
@@ -247,11 +247,11 @@ class FaultDetector:
 
         }
 
-        
+
 
         return value > thresholds.get(metric_name, float('inf'))
 
-    
+
 
     def _get_threshold(self, metric_name: str) -> float:
 
@@ -269,11 +269,11 @@ class FaultDetector:
 
         }
 
-        
+
 
         return thresholds.get(metric_name, 0.0)
 
-    
+
 
     def _determine_severity(self, metric_name: str, value: float) -> str:
 
@@ -291,7 +291,7 @@ class FaultDetector:
 
         }
 
-        
+
 
         if value > critical_thresholds.get(metric_name, float('inf')):
 
@@ -301,7 +301,7 @@ class FaultDetector:
 
             return "warning"
 
-    
+
 
     def detect_service_failure(self, service_name: str) -> Dict:
 
@@ -309,7 +309,7 @@ class FaultDetector:
 
         query = f'up{{service="{service_name}"}}'
 
-        
+
 
         response = requests.get(
 
@@ -319,19 +319,19 @@ class FaultDetector:
 
         )
 
-        
+
 
         if response.status_code == 200:
 
             result = response.json().get("data", {}).get("result", [])
 
-            
+
 
             if result:
 
                 value = int(result[0].get("value", [0, 0])[1])
 
-                
+
 
                 if value == 0:
 
@@ -347,7 +347,7 @@ class FaultDetector:
 
                     }
 
-        
+
 
         return {
 
@@ -375,13 +375,13 @@ class RootCauseAnalyzer:
 
     """根因分析器"""
 
-    
+
 
     def __init__(self, fault_detector: FaultDetector):
 
         self.detector = fault_detector
 
-    
+
 
     def analyze_root_cause(
 
@@ -411,7 +411,7 @@ class RootCauseAnalyzer:
 
         }
 
-        
+
 
         if fault_type == "high_cpu":
 
@@ -427,11 +427,11 @@ class RootCauseAnalyzer:
 
             ]
 
-            
+
 
             analysis["evidence"] = self._collect_evidence(service_name, "cpu")
 
-            
+
 
             analysis["recommendations"] = [
 
@@ -445,7 +445,7 @@ class RootCauseAnalyzer:
 
             ]
 
-        
+
 
         elif fault_type == "high_memory":
 
@@ -461,11 +461,11 @@ class RootCauseAnalyzer:
 
             ]
 
-            
+
 
             analysis["evidence"] = self._collect_evidence(service_name, "memory")
 
-            
+
 
             analysis["recommendations"] = [
 
@@ -479,7 +479,7 @@ class RootCauseAnalyzer:
 
             ]
 
-        
+
 
         elif fault_type == "high_error_rate":
 
@@ -495,11 +495,11 @@ class RootCauseAnalyzer:
 
             ]
 
-            
+
 
             analysis["evidence"] = self._collect_evidence(service_name, "error")
 
-            
+
 
             analysis["recommendations"] = [
 
@@ -513,11 +513,11 @@ class RootCauseAnalyzer:
 
             ]
 
-        
+
 
         return analysis
 
-    
+
 
     def _collect_evidence(
 
@@ -533,7 +533,7 @@ class RootCauseAnalyzer:
 
         evidence = []
 
-        
+
 
         queries = {
 
@@ -563,7 +563,7 @@ class RootCauseAnalyzer:
 
         }
 
-        
+
 
         for query in queries.get(evidence_type, []):
 
@@ -575,13 +575,13 @@ class RootCauseAnalyzer:
 
             )
 
-            
+
 
             if response.status_code == 200:
 
                 result = response.json().get("data", {}).get("result", [])
 
-                
+
 
                 if result:
 
@@ -595,7 +595,7 @@ class RootCauseAnalyzer:
 
                     })
 
-        
+
 
         return evidence
 
@@ -621,7 +621,7 @@ class FaultPredictor:
 
     """故障预测器"""
 
-    
+
 
     def __init__(self, fault_detector: FaultDetector):
 
@@ -631,7 +631,7 @@ class FaultPredictor:
 
         self.scalers = {}
 
-    
+
 
     def train_model(
 
@@ -647,7 +647,7 @@ class FaultPredictor:
 
         features = []
 
-        
+
 
         for data_point in historical_data:
 
@@ -665,17 +665,17 @@ class FaultPredictor:
 
             features.append(feature_vector)
 
-        
+
 
         X = np.array(features)
 
-        
+
 
         scaler = StandardScaler()
 
         X_scaled = scaler.fit_transform(X)
 
-        
+
 
         model = IsolationForest(
 
@@ -687,13 +687,13 @@ class FaultPredictor:
 
         model.fit(X_scaled)
 
-        
+
 
         self.models[service_name] = model
 
         self.scalers[service_name] = scaler
 
-    
+
 
     def predict_fault(
 
@@ -721,7 +721,7 @@ class FaultPredictor:
 
             }
 
-        
+
 
         feature_vector = np.array([[
 
@@ -735,23 +735,23 @@ class FaultPredictor:
 
         ]])
 
-        
+
 
         X_scaled = self.scalers[service_name].transform(feature_vector)
 
-        
+
 
         prediction = self.models[service_name].predict(X_scaled)[0]
 
-        
+
 
         anomaly_score = self.models[service_name].decision_function(X_scaled)[0]
 
-        
+
 
         confidence = 1.0 - (anomaly_score + 0.5)
 
-        
+
 
         return {
 
@@ -787,7 +787,7 @@ class AutoRepair:
 
     """自动修复器"""
 
-    
+
 
     def __init__(self):
 
@@ -803,7 +803,7 @@ class AutoRepair:
 
         }
 
-    
+
 
     def auto_repair(
 
@@ -835,7 +835,7 @@ class AutoRepair:
 
         }
 
-        
+
 
         if fault_type in self.repair_actions:
 
@@ -847,11 +847,11 @@ class AutoRepair:
 
             repair_result["success"] = True
 
-        
+
 
         return repair_result
 
-    
+
 
     def _repair_high_cpu(
 
@@ -867,11 +867,11 @@ class AutoRepair:
 
         actions = []
 
-        
+
 
         actions.append(f"检查{service_name}的CPU使用情况")
 
-        
+
 
         if not dry_run:
 
@@ -883,11 +883,11 @@ class AutoRepair:
 
             actions.append(f"重启服务{service_name}")
 
-        
+
 
         return actions
 
-    
+
 
     def _repair_high_memory(
 
@@ -903,11 +903,11 @@ class AutoRepair:
 
         actions = []
 
-        
+
 
         actions.append(f"检查{service_name}的内存使用情况")
 
-        
+
 
         if not dry_run:
 
@@ -919,11 +919,11 @@ class AutoRepair:
 
             actions.append(f"重启服务{service_name}")
 
-        
+
 
         return actions
 
-    
+
 
     def _repair_high_error_rate(
 
@@ -939,11 +939,11 @@ class AutoRepair:
 
         actions = []
 
-        
+
 
         actions.append(f"检查{service_name}的错误日志")
 
-        
+
 
         if not dry_run:
 
@@ -955,11 +955,11 @@ class AutoRepair:
 
             actions.append(f"获取{service_name}最近100行日志")
 
-        
+
 
         return actions
 
-    
+
 
     def _repair_service_down(
 
@@ -975,11 +975,11 @@ class AutoRepair:
 
         actions = []
 
-        
+
 
         actions.append(f"检查{service_name}的状态")
 
-        
+
 
         if not dry_run:
 
@@ -991,7 +991,7 @@ class AutoRepair:
 
             actions.append(f"启动服务{service_name}")
 
-        
+
 
         return actions
 
@@ -1139,7 +1139,7 @@ scrape_configs:
 
       - targets: ['localhost:9090']
 
-  
+
 
   - job_name: 'factor-engine'
 
@@ -1147,7 +1147,7 @@ scrape_configs:
 
       - targets: ['factor-engine:8000']
 
-  
+
 
   - job_name: 'strategy-engine'
 
@@ -1270,4 +1270,3 @@ scrape_configs:
 
 
 - 诊断规则库需要随系统演进持续扩展；实施阶段需在契约真源中固化事件模型、告警字段与自动修复的授权边界。
-

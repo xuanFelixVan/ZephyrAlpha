@@ -38,7 +38,7 @@ implementation_status: 待实现
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -596,7 +596,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -620,7 +620,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -662,7 +662,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -698,7 +698,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -716,7 +716,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -758,7 +758,7 @@ class SectorAnalysis:
 
 
 
-    
+
 
 
 
@@ -788,7 +788,7 @@ class SectorAnalysis:
 
 
 
-    
+
 
 
 
@@ -812,7 +812,7 @@ class SectorAnalysis:
 
 
 
-    
+
 
 
 
@@ -830,7 +830,7 @@ class SectorAnalysis:
 
 
 
-    
+
 
 
 
@@ -872,7 +872,7 @@ class MarketSentiment:
 
 
 
-    
+
 
 
 
@@ -896,7 +896,7 @@ class MarketSentiment:
 
 
 
-    
+
 
 
 
@@ -920,7 +920,7 @@ class MarketSentiment:
 
 
 
-    
+
 
 
 
@@ -938,7 +938,7 @@ class MarketSentiment:
 
 
 
-    
+
 
 
 
@@ -956,7 +956,7 @@ class MarketSentiment:
 
 
 
-    
+
 
 
 
@@ -992,7 +992,7 @@ class MarketAnalysisResult:
 
 
 
-    
+
 
 
 
@@ -1022,7 +1022,7 @@ class MarketAnalysisResult:
 
 
 
-    
+
 
 
 
@@ -1046,7 +1046,7 @@ class MarketAnalysisResult:
 
 
 
-    
+
 
 
 
@@ -1088,7 +1088,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1106,7 +1106,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1160,7 +1160,7 @@ class MarketAnalyzerAPI:
 
 
 
-        
+
 
 
 
@@ -1196,7 +1196,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1214,7 +1214,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1244,7 +1244,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1280,7 +1280,7 @@ class MarketAnalyzerAPI:
 
 
 
-        
+
 
 
 
@@ -1298,7 +1298,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1328,7 +1328,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1370,7 +1370,7 @@ class MarketAnalyzerAPI:
 
 
 
-        
+
 
 
 
@@ -1388,7 +1388,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1418,7 +1418,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1454,7 +1454,7 @@ class MarketAnalyzerAPI:
 
 
 
-        
+
 
 
 
@@ -1472,7 +1472,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1502,7 +1502,7 @@ class MarketAnalyzerAPI:
 
 
 
-    
+
 
 
 
@@ -1538,7 +1538,7 @@ class MarketAnalyzerAPI:
 
 
 
-        
+
 
 
 
@@ -1556,7 +1556,7 @@ class MarketAnalyzerAPI:
 
 
 
-            
+
 
 
 
@@ -1628,7 +1628,7 @@ class MarketAlertAPI:
 
 
 
-    
+
 
 
 
@@ -1646,7 +1646,7 @@ class MarketAlertAPI:
 
 
 
-    
+
 
 
 
@@ -1694,7 +1694,7 @@ class MarketAlertAPI:
 
 
 
-        
+
 
 
 
@@ -1718,7 +1718,7 @@ class MarketAlertAPI:
 
 
 
-            
+
 
 
 
@@ -1748,7 +1748,7 @@ class MarketAlertAPI:
 
 
 
-    
+
 
 
 
@@ -1784,7 +1784,7 @@ class MarketAlertAPI:
 
 
 
-        
+
 
 
 
@@ -1802,7 +1802,7 @@ class MarketAlertAPI:
 
 
 
-            
+
 
 
 
@@ -1832,7 +1832,7 @@ class MarketAlertAPI:
 
 
 
-    
+
 
 
 
@@ -1868,7 +1868,7 @@ class MarketAlertAPI:
 
 
 
-        
+
 
 
 
@@ -1886,7 +1886,7 @@ class MarketAlertAPI:
 
 
 
-            
+
 
 
 
@@ -1916,7 +1916,7 @@ class MarketAlertAPI:
 
 
 
-    
+
 
 
 
@@ -1952,7 +1952,7 @@ class MarketAlertAPI:
 
 
 
-        
+
 
 
 
@@ -1970,7 +1970,7 @@ class MarketAlertAPI:
 
 
 
-            
+
 
 
 
@@ -2060,7 +2060,7 @@ class MarketDataInput:
 
 
 
-    
+
 
 
 
@@ -2084,7 +2084,7 @@ class MarketDataInput:
 
 
 
-    
+
 
 
 
@@ -2108,7 +2108,7 @@ class MarketDataInput:
 
 
 
-    
+
 
 
 
@@ -2768,7 +2768,7 @@ class MarketAnalyzerSecurity:
 
 
 
-    """市场分析器安全机?    
+    """市场分析器安全机?
 
 
 
@@ -2786,7 +2786,7 @@ class MarketAnalyzerSecurity:
 
 
 
-    
+
 
 
 
@@ -2804,7 +2804,7 @@ class MarketAnalyzerSecurity:
 
 
 
-        """验证输入数据合法?        
+        """验证输入数据合法?
 
 
 
@@ -2822,7 +2822,7 @@ class MarketAnalyzerSecurity:
 
 
 
-    
+
 
 
 
@@ -2846,7 +2846,7 @@ class MarketAnalyzerSecurity:
 
 
 
-        
+
 
 
 
@@ -2876,7 +2876,7 @@ class MarketAnalyzerSecurity:
 
 
 
-    
+
 
 
 
@@ -2900,7 +2900,7 @@ class MarketAnalyzerSecurity:
 
 
 
-        
+
 
 
 
@@ -2992,7 +2992,7 @@ class MarketAnalysisMetadata:
 
 
 
-    """市场分析元数?    
+    """市场分析元数?
 
 
 
@@ -3040,7 +3040,7 @@ class MarketAnalysisMetadata:
 
 
 
-    
+
 
 
 
@@ -3088,7 +3088,7 @@ class SectorRotationRecord:
 
 
 
-    
+
 
 
 
@@ -3124,7 +3124,7 @@ class SectorRotationRecord:
 
 
 
-    
+
 
 
 
@@ -3148,7 +3148,7 @@ class SectorRotationRecord:
 
 
 
-    
+
 
 
 
@@ -3184,7 +3184,7 @@ class MarketAlertConfig:
 
 
 
-    
+
 
 
 
@@ -3292,7 +3292,7 @@ class MarketAnalysisStorage:
 
 
 
-    
+
 
 
 
@@ -3310,7 +3310,7 @@ class MarketAnalysisStorage:
 
 
 
-    
+
 
 
 
@@ -3334,7 +3334,7 @@ class MarketAnalysisStorage:
 
 
 
-        
+
 
 
 
@@ -3352,7 +3352,7 @@ class MarketAnalysisStorage:
 
 
 
-        
+
 
 
 
@@ -3376,7 +3376,7 @@ class MarketAnalysisStorage:
 
 
 
-    
+
 
 
 
@@ -3394,7 +3394,7 @@ class MarketAnalysisStorage:
 
 
 
-        
+
 
 
 
@@ -3418,7 +3418,7 @@ class MarketAnalysisStorage:
 
 
 
-    
+
 
 
 
@@ -3436,7 +3436,7 @@ class MarketAnalysisStorage:
 
 
 
-        
+
 
 
 
@@ -3790,7 +3790,7 @@ class MarketIndicatorCalculator:
 
 
 
-    """市场指标计算?    
+    """市场指标计算?
 
 
 
@@ -3808,7 +3808,7 @@ class MarketIndicatorCalculator:
 
 
 
-    
+
 
 
 
@@ -3850,7 +3850,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -3862,7 +3862,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -3886,7 +3886,7 @@ class MarketIndicatorCalculator:
 
 
 
-            
+
 
 
 
@@ -3928,7 +3928,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -3964,7 +3964,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4000,7 +4000,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4114,7 +4114,7 @@ class MarketIndicatorCalculator:
 
 
 
-    
+
 
 
 
@@ -4132,7 +4132,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4144,7 +4144,7 @@ class MarketIndicatorCalculator:
 
 
 
-            index_change_pct: 指数涨跌?            
+            index_change_pct: 指数涨跌?
 
 
 
@@ -4204,7 +4204,7 @@ class MarketIndicatorCalculator:
 
 
 
-    
+
 
 
 
@@ -4222,7 +4222,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4240,7 +4240,7 @@ class MarketIndicatorCalculator:
 
 
 
-            
+
 
 
 
@@ -4270,7 +4270,7 @@ class MarketIndicatorCalculator:
 
 
 
-    
+
 
 
 
@@ -4324,7 +4324,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4360,7 +4360,7 @@ class MarketIndicatorCalculator:
 
 
 
-            
+
 
 
 
@@ -4396,7 +4396,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4414,7 +4414,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4432,7 +4432,7 @@ class MarketIndicatorCalculator:
 
 
 
-    
+
 
 
 
@@ -4450,7 +4450,7 @@ class MarketIndicatorCalculator:
 
 
 
-        
+
 
 
 
@@ -4468,7 +4468,7 @@ class MarketIndicatorCalculator:
 
 
 
-            
+
 
 
 
@@ -4528,7 +4528,7 @@ class SectorRotationAnalyzer:
 
 
 
-    """板块轮动分析?    
+    """板块轮动分析?
 
 
 
@@ -4546,7 +4546,7 @@ class SectorRotationAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4588,13 +4588,13 @@ class SectorRotationAnalyzer:
 
 
 
-        
 
 
 
 
 
-        算法复杂? O(n*m), n为板块数，m为天?        
+
+        算法复杂? O(n*m), n为板块数，m为天?
 
 
 
@@ -4618,7 +4618,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -4648,7 +4648,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4672,7 +4672,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4696,7 +4696,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4714,7 +4714,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4756,7 +4756,7 @@ class SectorRotationAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4798,7 +4798,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4816,7 +4816,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -4858,7 +4858,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4870,7 +4870,7 @@ class SectorRotationAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4906,7 +4906,7 @@ class SectorRotationAnalyzer:
 
 
 
-        """检测轮动信?        
+        """检测轮动信?
 
 
 
@@ -4924,7 +4924,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -4954,7 +4954,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4978,7 +4978,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -5020,7 +5020,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -5032,7 +5032,7 @@ class SectorRotationAnalyzer:
 
 
 
-    
+
 
 
 
@@ -5068,7 +5068,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -5086,7 +5086,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -5122,7 +5122,7 @@ class SectorRotationAnalyzer:
 
 
 
-    
+
 
 
 
@@ -5158,7 +5158,7 @@ class SectorRotationAnalyzer:
 
 
 
-        
+
 
 
 
@@ -5176,7 +5176,7 @@ class SectorRotationAnalyzer:
 
 
 
-            
+
 
 
 
@@ -5248,7 +5248,7 @@ class MarketInterpreter:
 
 
 
-    """市场解读?    
+    """市场解读?
 
 
 
@@ -5266,7 +5266,7 @@ class MarketInterpreter:
 
 
 
-    
+
 
 
 
@@ -5296,7 +5296,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5344,7 +5344,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5356,7 +5356,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5386,7 +5386,7 @@ class MarketInterpreter:
 
 
 
-            
+
 
 
 
@@ -5440,7 +5440,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5458,7 +5458,7 @@ class MarketInterpreter:
 
 
 
-    
+
 
 
 
@@ -5506,7 +5506,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5536,7 +5536,7 @@ class MarketInterpreter:
 
 
 
-            
+
 
 
 
@@ -5584,7 +5584,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5740,7 +5740,7 @@ class MarketInterpreter:
 
 
 
-    
+
 
 
 
@@ -5758,7 +5758,7 @@ class MarketInterpreter:
 
 
 
-        
+
 
 
 
@@ -5776,7 +5776,7 @@ class MarketInterpreter:
 
 
 
-            
+
 
 
 
@@ -5908,7 +5908,7 @@ def test_calculate_market_indicators():
 
 
 
-    
+
 
 
 
@@ -5938,7 +5938,7 @@ def test_calculate_market_indicators():
 
 
 
-    
+
 
 
 
@@ -5980,7 +5980,7 @@ def test_analyze_sector_rotation():
 
 
 
-    
+
 
 
 
@@ -6010,7 +6010,7 @@ def test_analyze_sector_rotation():
 
 
 
-    
+
 
 
 
@@ -6058,7 +6058,7 @@ def test_interpret_market():
 
 
 
-    
+
 
 
 
@@ -6094,7 +6094,7 @@ def test_interpret_market():
 
 
 
-    
+
 
 
 
@@ -6474,7 +6474,7 @@ class TestMarketAnalyzerIntegration:
 
 
 
-    
+
 
 
 
@@ -6498,7 +6498,7 @@ class TestMarketAnalyzerIntegration:
 
 
 
-        
+
 
 
 
@@ -6522,7 +6522,7 @@ class TestMarketAnalyzerIntegration:
 
 
 
-        
+
 
 
 
@@ -7505,8 +7505,3 @@ class TestMarketAnalyzerIntegration:
 
 
 **文档状?*: ?已完?**下一?*: 生成技术评审报告
-
-
-
-
-

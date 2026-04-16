@@ -26,7 +26,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -374,7 +374,7 @@ class TradingRuleEngine:
 
 
 
-    
+
 
 
 
@@ -390,7 +390,7 @@ class TradingRuleEngine:
 
 
 
-        
+
 
 
 
@@ -438,7 +438,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -474,7 +474,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -510,7 +510,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -558,7 +558,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -598,7 +598,7 @@ class TradingRuleEngine:
 
 
 
-    
+
 
 
 
@@ -610,7 +610,7 @@ class TradingRuleEngine:
 
 
 
-        
+
 
 
 
@@ -618,7 +618,7 @@ class TradingRuleEngine:
 
 
 
-        
+
 
 
 
@@ -638,7 +638,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -650,7 +650,7 @@ class TradingRuleEngine:
 
 
 
-            
+
 
 
 
@@ -678,7 +678,7 @@ class TradingRuleEngine:
 
 
 
-        
+
 
 
 
@@ -686,7 +686,7 @@ class TradingRuleEngine:
 
 
 
-        
+
 
 
 
@@ -738,7 +738,7 @@ class PositionRuleEngine:
 
 
 
-    
+
 
 
 
@@ -750,7 +750,7 @@ class PositionRuleEngine:
 
 
 
-        
+
 
 
 
@@ -810,7 +810,7 @@ class PositionRuleEngine:
 
 
 
-            
+
 
 
 
@@ -846,7 +846,7 @@ class PositionRuleEngine:
 
 
 
-            
+
 
 
 
@@ -882,7 +882,7 @@ class PositionRuleEngine:
 
 
 
-            
+
 
 
 
@@ -918,7 +918,7 @@ class PositionRuleEngine:
 
 
 
-            
+
 
 
 
@@ -958,7 +958,7 @@ class PositionRuleEngine:
 
 
 
-    
+
 
 
 
@@ -970,7 +970,7 @@ class PositionRuleEngine:
 
 
 
-        
+
 
 
 
@@ -978,7 +978,7 @@ class PositionRuleEngine:
 
 
 
-        
+
 
 
 
@@ -998,7 +998,7 @@ class PositionRuleEngine:
 
 
 
-        
+
 
 
 
@@ -1050,7 +1050,7 @@ class RiskLimitRuleEngine:
 
 
 
-    
+
 
 
 
@@ -1062,7 +1062,7 @@ class RiskLimitRuleEngine:
 
 
 
-        
+
 
 
 
@@ -1110,7 +1110,7 @@ class RiskLimitRuleEngine:
 
 
 
-            
+
 
 
 
@@ -1146,7 +1146,7 @@ class RiskLimitRuleEngine:
 
 
 
-            
+
 
 
 
@@ -1182,7 +1182,7 @@ class RiskLimitRuleEngine:
 
 
 
-            
+
 
 
 
@@ -1218,7 +1218,7 @@ class RiskLimitRuleEngine:
 
 
 
-            
+
 
 
 
@@ -1258,7 +1258,7 @@ class RiskLimitRuleEngine:
 
 
 
-    
+
 
 
 
@@ -1270,7 +1270,7 @@ class RiskLimitRuleEngine:
 
 
 
-        
+
 
 
 
@@ -1278,7 +1278,7 @@ class RiskLimitRuleEngine:
 
 
 
-        
+
 
 
 
@@ -1298,7 +1298,7 @@ class RiskLimitRuleEngine:
 
 
 
-        
+
 
 
 
@@ -1362,7 +1362,7 @@ class TradingComplianceChecker:
 
 
 
-    
+
 
 
 
@@ -1378,7 +1378,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1390,7 +1390,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1402,7 +1402,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1438,7 +1438,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1454,7 +1454,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1466,7 +1466,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1474,7 +1474,7 @@ class TradingComplianceChecker:
 
 
 
-    
+
 
 
 
@@ -1486,7 +1486,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1506,7 +1506,7 @@ class TradingComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1562,7 +1562,7 @@ class PositionComplianceChecker:
 
 
 
-    
+
 
 
 
@@ -1574,7 +1574,7 @@ class PositionComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1586,7 +1586,7 @@ class PositionComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1598,7 +1598,7 @@ class PositionComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1630,7 +1630,7 @@ class PositionComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1646,7 +1646,7 @@ class PositionComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -1682,7 +1682,7 @@ class AutoBlocker:
 
 
 
-    
+
 
 
 
@@ -1694,7 +1694,7 @@ class AutoBlocker:
 
 
 
-        
+
 
 
 
@@ -1706,7 +1706,7 @@ class AutoBlocker:
 
 
 
-        
+
 
 
 
@@ -1718,7 +1718,7 @@ class AutoBlocker:
 
 
 
-        
+
 
 
 
@@ -1738,7 +1738,7 @@ class AutoBlocker:
 
 
 
-        
+
 
 
 
@@ -1746,7 +1746,7 @@ class AutoBlocker:
 
 
 
-    
+
 
 
 
@@ -1786,7 +1786,7 @@ class AutoBlocker:
 
 
 
-        
+
 
 
 
@@ -1838,7 +1838,7 @@ class TransactionLogger:
 
 
 
-    
+
 
 
 
@@ -1850,7 +1850,7 @@ class TransactionLogger:
 
 
 
-        
+
 
 
 
@@ -1862,7 +1862,7 @@ class TransactionLogger:
 
 
 
-        
+
 
 
 
@@ -1918,7 +1918,7 @@ class TransactionLogger:
 
 
 
-        
+
 
 
 
@@ -1926,15 +1926,15 @@ class TransactionLogger:
 
 
 
-        
 
 
 
-    def query_logs(self, 
+
+    def query_logs(self,
 
 
 
-                   start_date: datetime = None, 
+                   start_date: datetime = None,
 
 
 
@@ -1954,7 +1954,7 @@ class TransactionLogger:
 
 
 
-        
+
 
 
 
@@ -2010,7 +2010,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -2022,7 +2022,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2034,7 +2034,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2082,7 +2082,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2094,15 +2094,15 @@ class AuditTrail:
 
 
 
-        
 
 
 
-    def generate_audit_report(self, 
+
+    def generate_audit_report(self,
 
 
 
-                              start_date: datetime, 
+                              start_date: datetime,
 
 
 
@@ -2114,7 +2114,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2138,7 +2138,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2146,7 +2146,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2154,7 +2154,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2234,7 +2234,7 @@ class ComplianceReporter:
 
 
 
-    
+
 
 
 
@@ -2246,7 +2246,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2258,7 +2258,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2270,7 +2270,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2282,7 +2282,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2294,7 +2294,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2334,7 +2334,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2374,7 +2374,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2382,11 +2382,11 @@ class ComplianceReporter:
 
 
 
-    
 
 
 
-    def generate_regulatory_report(self, 
+
+    def generate_regulatory_report(self,
 
 
 
@@ -2394,7 +2394,7 @@ class ComplianceReporter:
 
 
 
-                                   start_date: datetime, 
+                                   start_date: datetime,
 
 
 
@@ -2406,7 +2406,7 @@ class ComplianceReporter:
 
 
 
-        
+
 
 
 
@@ -2803,6 +2803,3 @@ class ComplianceReporter:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

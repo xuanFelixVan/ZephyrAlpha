@@ -23,7 +23,7 @@ layer: layer_05
 
 > **核心职责**: 数据质量评分，计算和评定数据质量等级
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -239,7 +239,7 @@ class DimensionScore:
 
 class QualityScorer:
 
-    
+
 
     def __init__(self):
 
@@ -259,7 +259,7 @@ class QualityScorer:
 
         }
 
-    
+
 
     def calculate_completeness_score(self, df: pd.DataFrame) -> DimensionScore:
 
@@ -269,7 +269,7 @@ class QualityScorer:
 
         completeness = 1 - (missing_cells / total_cells)
 
-        
+
 
         details = {
 
@@ -283,7 +283,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -297,15 +297,15 @@ class QualityScorer:
 
         )
 
-    
 
-    def calculate_accuracy_score(self, df: pd.DataFrame, 
+
+    def calculate_accuracy_score(self, df: pd.DataFrame,
 
                                   rules: Dict[str, Any]) -> DimensionScore:
 
         accuracy_scores = []
 
-        
+
 
         for column, rule in rules.items():
 
@@ -317,7 +317,7 @@ class QualityScorer:
 
                     max_val = rule.get("max")
 
-                    valid_count = df[(df[column] >= min_val) & 
+                    valid_count = df[(df[column] >= min_val) &
 
                                     (df[column] <= max_val)][column].count()
 
@@ -327,11 +327,11 @@ class QualityScorer:
 
                     accuracy_scores.append(accuracy)
 
-        
+
 
         overall_accuracy = np.mean(accuracy_scores) if accuracy_scores else 0
 
-        
+
 
         details = {
 
@@ -343,7 +343,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -357,7 +357,7 @@ class QualityScorer:
 
         )
 
-    
+
 
     def calculate_timeliness_score(self, df: pd.DataFrame,
 
@@ -379,17 +379,17 @@ class QualityScorer:
 
             )
 
-        
+
 
         df_sorted = df.sort_values(timestamp_column)
 
         timestamps = pd.to_datetime(df_sorted[timestamp_column])
 
-        
+
 
         time_diffs = timestamps.diff().dropna()
 
-        
+
 
         if expected_frequency == "daily":
 
@@ -403,7 +403,7 @@ class QualityScorer:
 
             expected_diff = pd.Timedelta(days=1)
 
-        
+
 
         timely_count = (time_diffs <= expected_diff * 1.1).sum()
 
@@ -411,7 +411,7 @@ class QualityScorer:
 
         timeliness = timely_count / total_count if total_count > 0 else 0
 
-        
+
 
         details = {
 
@@ -425,7 +425,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -439,7 +439,7 @@ class QualityScorer:
 
         )
 
-    
+
 
     def calculate_consistency_score(self, df: pd.DataFrame,
 
@@ -447,13 +447,13 @@ class QualityScorer:
 
         consistency_scores = []
 
-        
+
 
         for rule in consistency_rules:
 
             rule_type = rule.get("type")
 
-            
+
 
             if rule_type == "cross_column":
 
@@ -463,7 +463,7 @@ class QualityScorer:
 
                 condition = rule.get("condition")
 
-                
+
 
                 if col1 in df.columns and col2 in df.columns:
 
@@ -475,11 +475,11 @@ class QualityScorer:
 
                         consistency_scores.append(consistent / total)
 
-        
+
 
         overall_consistency = np.mean(consistency_scores) if consistency_scores else 0
 
-        
+
 
         details = {
 
@@ -491,7 +491,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -505,7 +505,7 @@ class QualityScorer:
 
         )
 
-    
+
 
     def calculate_uniqueness_score(self, df: pd.DataFrame,
 
@@ -513,7 +513,7 @@ class QualityScorer:
 
         uniqueness_scores = []
 
-        
+
 
         for column in unique_columns:
 
@@ -527,11 +527,11 @@ class QualityScorer:
 
                 uniqueness_scores.append(uniqueness)
 
-        
+
 
         overall_uniqueness = np.mean(uniqueness_scores) if uniqueness_scores else 0
 
-        
+
 
         details = {
 
@@ -543,7 +543,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -557,7 +557,7 @@ class QualityScorer:
 
         )
 
-    
+
 
     def calculate_validity_score(self, df: pd.DataFrame,
 
@@ -565,7 +565,7 @@ class QualityScorer:
 
         validity_scores = []
 
-        
+
 
         for column, rule in validity_rules.items():
 
@@ -597,11 +597,11 @@ class QualityScorer:
 
                     validity_scores.append(validity)
 
-        
+
 
         overall_validity = np.mean(validity_scores) if validity_scores else 0
 
-        
+
 
         details = {
 
@@ -613,7 +613,7 @@ class QualityScorer:
 
         }
 
-        
+
 
         return DimensionScore(
 
@@ -669,7 +669,7 @@ class OverallQualityScore:
 
 class OverallScoreCalculator:
 
-    
+
 
     def __init__(self):
 
@@ -687,7 +687,7 @@ class OverallScoreCalculator:
 
         }
 
-    
+
 
     def calculate_overall_score(self, table_name: str,
 
@@ -703,15 +703,15 @@ class OverallScoreCalculator:
 
         total_weight = sum(ds.weight for ds in dimension_scores)
 
-        
+
 
         overall_score = weighted_sum / total_weight if total_weight > 0 else 0
 
-        
+
 
         grade = self._determine_grade(overall_score)
 
-        
+
 
         return OverallQualityScore(
 
@@ -727,7 +727,7 @@ class OverallScoreCalculator:
 
         )
 
-    
+
 
     def _determine_grade(self, score: float) -> str:
 
@@ -763,13 +763,13 @@ import pandas as pd
 
 class ScoreHistoryManager:
 
-    
+
 
     def __init__(self, db_connection):
 
         self.db = db_connection
 
-    
+
 
     def save_score(self, score: OverallQualityScore):
 
@@ -777,7 +777,7 @@ class ScoreHistoryManager:
 
         query = """
 
-        INSERT INTO quality_scores 
+        INSERT INTO quality_scores
 
         (table_name, overall_score, grade, dimension_scores, calculated_at)
 
@@ -785,7 +785,7 @@ class ScoreHistoryManager:
 
         """
 
-        
+
 
         self.db.execute(query, (
 
@@ -801,9 +801,9 @@ class ScoreHistoryManager:
 
         ))
 
-    
 
-    def get_score_history(self, table_name: str, 
+
+    def get_score_history(self, table_name: str,
 
                           days: int = 30) -> List[Dict[str, Any]]:
 
@@ -821,17 +821,17 @@ class ScoreHistoryManager:
 
         """
 
-        
+
 
         start_date = datetime.now() - timedelta(days=days)
 
         results = self.db.fetch_all(query, (table_name, start_date))
 
-        
+
 
         return results
 
-    
+
 
     def get_score_trend(self, table_name: str,
 
@@ -841,29 +841,29 @@ class ScoreHistoryManager:
 
         history = self.get_score_history(table_name, days)
 
-        
+
 
         if not history:
 
             return {"trend": "no_data"}
 
-        
+
 
         scores = [h['overall_score'] for h in history]
 
-        
+
 
         if len(scores) < 2:
 
             return {"trend": "insufficient_data"}
 
-        
+
 
         recent_avg = np.mean(scores[:7]) if len(scores) >= 7 else np.mean(scores)
 
         older_avg = np.mean(scores[-7:]) if len(scores) >= 7 else np.mean(scores)
 
-        
+
 
         if recent_avg > older_avg * 1.05:
 
@@ -877,7 +877,7 @@ class ScoreHistoryManager:
 
             trend = "stable"
 
-        
+
 
         return {
 
@@ -1027,7 +1027,7 @@ GET /api/v1/quality/trend/{table_name}?days=30
 
 
 
-## 
+##
 
 
 
@@ -1059,7 +1059,7 @@ services:
 
       - redis
 
-  
+
 
   postgres:
 
@@ -1075,7 +1075,7 @@ services:
 
       - pg-data:/var/lib/postgresql/data
 
-  
+
 
   redis:
 
@@ -1121,7 +1121,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -1203,7 +1203,7 @@ graph LR
 
     D[数据目录] --> B
 
-    
+
 
     B --> E[自动化数据修复引擎]
 
@@ -1211,7 +1211,7 @@ graph LR
 
     B --> G[监控仪表板增强]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1314,12 +1314,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

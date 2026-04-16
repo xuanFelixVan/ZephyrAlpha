@@ -21,7 +21,7 @@ description: 策略研究模板 - 策略逻辑实现、参数优化、回测验�
 
 # %% [markdown]
 # # 策略研究与回测分析
-# 
+#
 # > **项目**: ZephyrAlpha v5.1
 # > **作者**: [姓名/团队]
 # > **创建日期**: YYYY-MM-DD
@@ -65,7 +65,7 @@ except ImportError:
                 signals[short_ma > long_ma] = 1  # 买入信号
                 signals[short_ma <= long_ma] = -1  # 卖出信号
             return signals
-    
+
     class Backtester:
         """简化版回测器"""
         @staticmethod
@@ -136,22 +136,22 @@ print("🎯 策略定义与实现")
 # 3.1 定义策略类
 class TradingStrategy:
     """交易策略基类"""
-    
+
     def __init__(self, params=None):
         self.params = params or {}
         self.signals = None
         self.performance = {}
-    
+
     def calculate_signals(self, data):
         """计算交易信号 - 子类需重写此方法"""
         raise NotImplementedError("子类必须实现calculate_signals方法")
-    
+
     def optimize_parameters(self, data, param_grid):
         """参数优化"""
         # 简化实现 - 实际应使用网格搜索或贝叶斯优化
         best_score = -np.inf
         best_params = {}
-        
+
         # 示例参数优化逻辑
         for params in param_grid:
             # 这里应实现参数评估逻辑
@@ -159,15 +159,15 @@ class TradingStrategy:
             if score > best_score:
                 best_score = score
                 best_params = params
-        
+
         self.params.update(best_params)
         return best_params, best_score
-    
+
     def evaluate_parameters(self, data, params):
         """评估参数性能"""
         # 简化实现
         return np.random.random()
-    
+
     def run(self, data):
         """运行策略"""
         self.signals = self.calculate_signals(data)
@@ -176,24 +176,24 @@ class TradingStrategy:
 # 3.2 具体策略实现 - 移动平均交叉策略
 class MovingAverageCrossover(TradingStrategy):
     """移动平均交叉策略"""
-    
+
     def calculate_signals(self, data):
         """实现移动平均交叉策略"""
         short_window = self.params.get('short_window', 10)
         long_window = self.params.get('long_window', 30)
-        
+
         # 计算移动平均
         short_ma = data['close'].rolling(window=short_window).mean()
         long_ma = data['close'].rolling(window=long_window).mean()
-        
+
         # 生成交易信号
         signals = pd.Series(0, index=data.index)
         signals[short_ma > long_ma] = 1    # 买入信号
         signals[short_ma <= long_ma] = -1  # 卖出信号
-        
+
         # 添加持仓信息
         positions = signals.diff()
-        
+
         return pd.DataFrame({
             'signal': signals,
             'position': positions,
@@ -228,9 +228,9 @@ fig, axes = plt.subplots(3, 1, figsize=(14, 12), sharex=True)
 
 # 4.1 价格与移动平均
 axes[0].plot(df['date'], df['close'], label='收盘价', linewidth=1.5, alpha=0.7)
-axes[0].plot(df['date'], signals_df['short_ma'], label=f"短期MA({strategy_params['short_window']}天)", 
+axes[0].plot(df['date'], signals_df['short_ma'], label=f"短期MA({strategy_params['short_window']}天)",
              linewidth=2, alpha=0.8)
-axes[0].plot(df['date'], signals_df['long_ma'], label=f"长期MA({strategy_params['long_window']}天)", 
+axes[0].plot(df['date'], signals_df['long_ma'], label=f"长期MA({strategy_params['long_window']}天)",
              linewidth=2, alpha=0.8)
 axes[0].set_title('价格与移动平均线', fontsize=12)
 axes[0].set_ylabel('价格')
@@ -242,9 +242,9 @@ buy_signals = df.loc[signals_df['position'] == 1, 'date']
 sell_signals = df.loc[signals_df['position'] == -1, 'date']
 
 axes[1].plot(df['date'], df['close'], label='收盘价', linewidth=1, alpha=0.5)
-axes[1].scatter(buy_signals, df.loc[df['date'].isin(buy_signals), 'close'], 
+axes[1].scatter(buy_signals, df.loc[df['date'].isin(buy_signals), 'close'],
                 color='green', s=50, marker='^', label='买入信号', alpha=0.7)
-axes[1].scatter(sell_signals, df.loc[df['date'].isin(sell_signals), 'close'], 
+axes[1].scatter(sell_signals, df.loc[df['date'].isin(sell_signals), 'close'],
                 color='red', s=50, marker='v', label='卖出信号', alpha=0.7)
 axes[1].set_title('交易信号', fontsize=12)
 axes[1].set_ylabel('价格')
@@ -253,9 +253,9 @@ axes[1].grid(True, alpha=0.3)
 
 # 4.3 信号强度
 axes[2].plot(df['date'], signals_df['signal'], drawstyle='steps', linewidth=1.5)
-axes[2].fill_between(df['date'], 0, signals_df['signal'], 
+axes[2].fill_between(df['date'], 0, signals_df['signal'],
                      where=signals_df['signal']>=0, color='green', alpha=0.3, label='买入区间')
-axes[2].fill_between(df['date'], 0, signals_df['signal'], 
+axes[2].fill_between(df['date'], 0, signals_df['signal'],
                      where=signals_df['signal']<=0, color='red', alpha=0.3, label='卖出区间')
 axes[2].set_title('信号强度', fontsize=12)
 axes[2].set_xlabel('日期')
@@ -321,7 +321,7 @@ axes[0, 1].grid(True, alpha=0.3)
 
 # 每日收益分布
 axes[1, 0].hist(net_returns.dropna(), bins=50, edgecolor='black', alpha=0.7)
-axes[1, 0].axvline(x=net_returns.mean(), color='r', linestyle='--', 
+axes[1, 0].axvline(x=net_returns.mean(), color='r', linestyle='--',
                    label=f'均值: {net_returns.mean():.4f}')
 axes[1, 0].axvline(x=net_returns.median(), color='g', linestyle='--',
                    label=f'中位数: {net_returns.median():.4f}')
@@ -409,15 +409,15 @@ for params in param_grid:
     # 创建新策略实例
     test_strategy = MovingAverageCrossover(params)
     test_signals = test_strategy.run(df)
-    
+
     # 计算信号收益（简化评估）
     test_returns = test_signals['signal'].shift(1) * df['returns']
     test_returns = test_returns.fillna(0)
-    
+
     # 计算评估指标
     total_ret = (1 + test_returns).prod() - 1
     sharpe = test_returns.mean() / test_returns.std() * np.sqrt(252) if test_returns.std() != 0 else 0
-    
+
     optimization_results.append({
         'short_window': params['short_window'],
         'long_window': params['long_window'],
@@ -484,7 +484,7 @@ best_params = optimization_df.loc[optimization_df['夏普比率'].idxmax()]
 print(f"最佳参数: 短期窗口={best_params['short_window']}, 长期窗口={best_params['long_window']}")
 
 # 在测试集上测试
-test_strategy = MovingAverageCrossover({'short_window': int(best_params['short_window']), 
+test_strategy = MovingAverageCrossover({'short_window': int(best_params['short_window']),
                                         'long_window': int(best_params['long_window'])})
 test_signals = test_strategy.run(test_data)
 
@@ -642,8 +642,8 @@ print("\n🎉 策略分析完成！")
 
 # %% [markdown]
 # ---
-# 
-# **备注**: 
+#
+# **备注**:
 # - 本模板为通用策略研究模板，请根据实际策略调整计算逻辑
 # - 建议进行充分的样本外测试和稳健性检验
 # - 考虑实际交易成本和市场流动性

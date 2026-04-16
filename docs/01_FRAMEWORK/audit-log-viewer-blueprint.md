@@ -236,13 +236,13 @@ class AuditLogViewer:
 
     """审计日志查看器"""
 
-    
+
 
     def __init__(self):
 
         self.logs = self._load_logs()
 
-        
+
 
     def render_overview(self):
 
@@ -250,11 +250,11 @@ class AuditLogViewer:
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         today_logs = [l for l in self.logs if l['date'] == datetime.now().date()]
 
-        
+
 
         with col1:
 
@@ -268,7 +268,7 @@ class AuditLogViewer:
 
             )
 
-        
+
 
         with col2:
 
@@ -284,7 +284,7 @@ class AuditLogViewer:
 
             )
 
-        
+
 
         with col3:
 
@@ -300,7 +300,7 @@ class AuditLogViewer:
 
             )
 
-        
+
 
         with col4:
 
@@ -356,11 +356,11 @@ def render_log_query():
 
     st.subheader("🔍 日志查询")
 
-    
+
 
     col1, col2 = st.columns(2)
 
-    
+
 
     with col1:
 
@@ -374,7 +374,7 @@ def render_log_query():
 
         )
 
-        
+
 
         log_types = st.multiselect(
 
@@ -386,7 +386,7 @@ def render_log_query():
 
         )
 
-    
+
 
     with col2:
 
@@ -400,11 +400,11 @@ def render_log_query():
 
         )
 
-        
+
 
         keyword = st.text_input("关键词搜索", placeholder="输入关键词...")
 
-    
+
 
     if st.button("查询", type="primary"):
 
@@ -412,7 +412,7 @@ def render_log_query():
 
         return logs
 
-    
+
 
     return None
 
@@ -498,23 +498,23 @@ def render_decision_chain(log_id):
 
     st.markdown("### 决策链路追踪")
 
-    
+
 
     chain = get_decision_chain(log_id)
 
-    
+
 
     for i, step in enumerate(chain):
 
         col1, col2 = st.columns([1, 10])
 
-        
+
 
         with col1:
 
             st.markdown(f"**步骤 {i+1}**")
 
-        
+
 
         with col2:
 
@@ -526,7 +526,7 @@ def render_decision_chain(log_id):
 
                 st.markdown(f"**结果**: {step['result']}")
 
-                
+
 
                 if step.get('ai_confidence'):
 
@@ -572,11 +572,11 @@ def render_log_analysis():
 
     st.subheader("📊 日志分析")
 
-    
+
 
     col1, col2 = st.columns(2)
 
-    
+
 
     with col1:
 
@@ -586,7 +586,7 @@ def render_log_analysis():
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     with col2:
 
@@ -596,11 +596,11 @@ def render_log_analysis():
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     col3, col4 = st.columns(2)
 
-    
+
 
     with col3:
 
@@ -610,7 +610,7 @@ def render_log_analysis():
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     with col4:
 
@@ -905,4 +905,3 @@ with tab3:
 **最后更新**: 2026-04-06
 
 **维护者**: 首席蓝图架构师
-

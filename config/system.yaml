@@ -10,19 +10,19 @@ system:
     # 数据目录：存储市场数据、因子数据等
     # 优先使用环境变量 ZEPHYR_DATA_DIR，如未设置则使用默认值
     data_dir: "${ZEPHYR_DATA_DIR:./data}"
-    
+
     # 日志目录：存储系统运行日志
     # 优先使用环境变量 ZEPHYR_LOG_DIR，如未设置则使用默认值
     log_dir: "${ZEPHYR_LOG_DIR:./logs}"
-    
+
     # 输出目录：存储回测报告、分析结果等
     # 优先使用环境变量 ZEPHYR_OUTPUT_DIR，如未设置则使用默认值
     output_dir: "${ZEPHYR_OUTPUT_DIR:./output}"
-    
+
     # 配置目录：存储系统配置文件
     # 优先使用环境变量 ZEPHYR_CONFIG_DIR，如未设置则使用默认值
     config_dir: "${ZEPHYR_CONFIG_DIR:./config}"
-    
+
     # 项目根目录：自动检测，无需手动配置
     # 在代码中使用 Path(__file__).parent.parent 获取
     project_root: "${ZEPHYR_PROJECT_ROOT:."

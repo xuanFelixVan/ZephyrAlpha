@@ -145,7 +145,7 @@ responsibility:
 
 
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -201,7 +201,7 @@ def calculate_hedge_ratio(portfolio_var: float,
 
     计算对冲比例
 
-    
+
 
     Args:
 
@@ -211,7 +211,7 @@ def calculate_hedge_ratio(portfolio_var: float,
 
         target_protection: 目标保护比例
 
-        
+
 
     Returns:
 
@@ -281,7 +281,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[实时风险对冲引擎]
 
@@ -289,7 +289,7 @@ graph LR
 
     B --> G[组合保险策略]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -381,7 +381,7 @@ graph LR
 
 |------|------|------|
 
-| **Tail Risk Hedging** | 
+| **Tail Risk Hedging** |
 
 
 
@@ -390,10 +390,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

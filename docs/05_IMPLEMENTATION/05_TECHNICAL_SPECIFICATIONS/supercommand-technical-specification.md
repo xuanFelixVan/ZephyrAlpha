@@ -111,7 +111,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -515,7 +515,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -551,7 +551,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -1063,7 +1063,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1117,7 +1117,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1141,7 +1141,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1171,7 +1171,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1195,7 +1195,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1219,7 +1219,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1237,7 +1237,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1267,7 +1267,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1279,13 +1279,13 @@ class SuperCommandInterface:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbols: List[str], 
+        symbols: List[str],
 
 
 
@@ -1315,7 +1315,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1339,7 +1339,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1369,7 +1369,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1393,7 +1393,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1423,7 +1423,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1447,7 +1447,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1477,7 +1477,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1489,13 +1489,13 @@ class SuperCommandInterface:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        strategy_id: str, 
+        strategy_id: str,
 
 
 
@@ -1525,7 +1525,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1549,7 +1549,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1579,7 +1579,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1591,13 +1591,13 @@ class SuperCommandInterface:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        strategy_id: str, 
+        strategy_id: str,
 
 
 
@@ -1609,7 +1609,7 @@ class SuperCommandInterface:
 
 
 
-        end_date: datetime, 
+        end_date: datetime,
 
 
 
@@ -1639,7 +1639,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1675,7 +1675,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1705,7 +1705,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1717,13 +1717,13 @@ class SuperCommandInterface:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        symbol: str, 
+        symbol: str,
 
 
 
@@ -1759,7 +1759,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1789,7 +1789,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1819,7 +1819,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1831,7 +1831,7 @@ class SuperCommandInterface:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1861,7 +1861,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1879,7 +1879,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1909,7 +1909,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -1933,7 +1933,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -1951,7 +1951,7 @@ class SuperCommandInterface:
 
 
 
-            
+
 
 
 
@@ -1981,7 +1981,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -2005,7 +2005,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -2035,7 +2035,7 @@ class SuperCommandInterface:
 
 
 
-    
+
 
 
 
@@ -2059,7 +2059,7 @@ class SuperCommandInterface:
 
 
 
-        
+
 
 
 
@@ -2717,7 +2717,7 @@ async def connect_with_retry(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2753,7 +2753,7 @@ async def connect_with_retry(
 
 
 
-    
+
 
 
 
@@ -2783,7 +2783,7 @@ async def connect_with_retry(
 
 
 
-    
+
 
 
 
@@ -2915,7 +2915,7 @@ def _evict_cache(self, cache_key: str) -> None:
 
 
 
-    
+
 
 
 
@@ -2945,7 +2945,7 @@ def _evict_cache(self, cache_key: str) -> None:
 
 
 
-    
+
 
 
 
@@ -3011,7 +3011,7 @@ def optimize_subscriptions(
 
 
 
-    self, 
+    self,
 
 
 
@@ -3041,7 +3041,7 @@ def optimize_subscriptions(
 
 
 
-    
+
 
 
 
@@ -3071,7 +3071,7 @@ def optimize_subscriptions(
 
 
 
-    
+
 
 
 
@@ -3101,7 +3101,7 @@ def optimize_subscriptions(
 
 
 
-        symbols[i:i + batch_size] 
+        symbols[i:i + batch_size]
 
 
 
@@ -3513,7 +3513,7 @@ def test_supercmd_integration():
 
 
 
-    
+
 
 
 
@@ -3525,7 +3525,7 @@ def test_supercmd_integration():
 
 
 
-    
+
 
 
 
@@ -3537,7 +3537,7 @@ def test_supercmd_integration():
 
 
 
-    
+
 
 
 
@@ -3561,7 +3561,7 @@ def test_supercmd_integration():
 
 
 
-    
+
 
 
 
@@ -3579,7 +3579,7 @@ def test_supercmd_integration():
 
 
 
-    
+
 
 
 
@@ -4071,7 +4071,7 @@ def test_supercmd_integration():
 
 
 
-  
+
 
 
 
@@ -4101,7 +4101,7 @@ def test_supercmd_integration():
 
 
 
-  
+
 
 
 
@@ -4161,7 +4161,7 @@ def test_supercmd_integration():
 
 
 
-  
+
 
 
 
@@ -4185,7 +4185,7 @@ def test_supercmd_integration():
 
 
 
-  
+
 
 
 
@@ -4245,7 +4245,7 @@ def test_supercmd_integration():
 
 
 
-  
+
 
 
 
@@ -4367,7 +4367,7 @@ supercommand:
 
 
 
-  
+
 
 
 
@@ -4397,7 +4397,7 @@ supercommand:
 
 
 
-    
+
 
 
 
@@ -4524,8 +4524,3 @@ supercommand:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?
-
-
-
-
-

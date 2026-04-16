@@ -30,7 +30,7 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -50,11 +50,11 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 
 
 
-> **ﮔ۰ﻛﺝﻝﺎﭨﮒ**: ﮔﮒﮔ۰ﻛﺝ  
+> **ﮔ۰ﻛﺝﻝﺎﭨﮒ**: ﮔﮒﮔ۰ﻛﺝ
 
 
 
-> **ﮒ؟ﮔﺛﮔﭘﻠﺑ**: 2026-04-01 ﻟ?2026-04-02  
+> **ﮒ؟ﮔﺛﮔﭘﻠﺑ**: 2026-04-01 ﻟ?2026-04-02
 
 
 
@@ -348,7 +348,7 @@ class Event:
 
 
 
-    
+
 
 
 
@@ -420,7 +420,7 @@ class EventHandler(ABC):
 
 
 
-    
+
 
 
 
@@ -440,7 +440,7 @@ class EventHandler(ABC):
 
 
 
-    
+
 
 
 
@@ -516,7 +516,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -536,7 +536,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -556,7 +556,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -564,11 +564,11 @@ class EventBus:
 
 
 
-        self, 
+        self,
 
 
 
-        event_type: EventType, 
+        event_type: EventType,
 
 
 
@@ -592,7 +592,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -608,7 +608,7 @@ class EventBus:
 
 
 
-        
+
 
 
 
@@ -616,7 +616,7 @@ class EventBus:
 
 
 
-        
+
 
 
 
@@ -636,7 +636,7 @@ class EventBus:
 
 
 
-        
+
 
 
 
@@ -648,7 +648,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -656,11 +656,11 @@ class EventBus:
 
 
 
-        self, 
+        self,
 
 
 
-        handler: EventHandler, 
+        handler: EventHandler,
 
 
 
@@ -692,7 +692,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -808,7 +808,7 @@ class TestHandler(EventHandler):
 
 
 
-    
+
 
 
 
@@ -840,7 +840,7 @@ async def performance_test():
 
 
 
-    
+
 
 
 
@@ -852,7 +852,7 @@ async def performance_test():
 
 
 
-    
+
 
 
 
@@ -888,7 +888,7 @@ async def performance_test():
 
 
 
-    
+
 
 
 
@@ -896,7 +896,7 @@ async def performance_test():
 
 
 
-    
+
 
 
 
@@ -908,7 +908,7 @@ async def performance_test():
 
 
 
-    
+
 
 
 
@@ -1364,15 +1364,12 @@ asyncio.run(performance_test())
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 
 
 **ﻝﮔ؛**: v1.0
-
-
-

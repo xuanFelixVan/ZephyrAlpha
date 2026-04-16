@@ -23,7 +23,7 @@ layer: layer_07
 
 负责投资组合诊断工具的设计与构建和运行和操作，实现投资组合质量验证、问题检测和修复建议，确保优化结果的可靠性和可执行性。
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：投资组合诊断、优化质量验证、问题检测
 > - ❌ 本文档不负责：绩效分析（由PORTFOLIO_PERFORMANCE_EVALUATION模块负责）
 
@@ -83,13 +83,13 @@ import numpy as np
 
 class PortfolioDiagnostics:
     """投资组合诊断器"""
-    
+
     def __init__(self, weights, cov_matrix, expected_returns):
         self.weights = weights
         self.cov = cov_matrix
         self.mu = expected_returns
         self.issues = []
-    
+
     def run_diagnostics(self):
         """运行完整诊断"""
         self.check_constraints()
@@ -97,7 +97,7 @@ class PortfolioDiagnostics:
         self.check_risk_concentration()
         self.check_executability()
         return self.generate_report()
-    
+
     def check_constraints(self):
         """检查约束满足"""
         if np.abs(np.sum(self.weights) - 1.0) > 1e-6:
@@ -106,14 +106,14 @@ class PortfolioDiagnostics:
                 'message': '权重和不等于1',
                 'severity': 'high'
             })
-        
+
         if np.any(self.weights < -1e-6):
             self.issues.append({
                 'type': 'constraint_violation',
                 'message': '存在负权重',
                 'severity': 'medium'
             })
-    
+
     def check_numerical_stability(self):
         """检查数值稳定性"""
         cond = np.linalg.cond(self.cov)
@@ -123,13 +123,13 @@ class PortfolioDiagnostics:
                 'message': f'协方差矩阵条件数过高: {cond:.2e}',
                 'severity': 'high'
             })
-    
+
     def check_risk_concentration(self):
         """检查风险集中度"""
         marginal_risk = self.cov @ self.weights
         risk_contrib = self.weights * marginal_risk
         risk_contrib_pct = risk_contrib / np.sum(risk_contrib)
-        
+
         max_concentration = np.max(risk_contrib_pct)
         if max_concentration > 0.3:
             self.issues.append({
@@ -137,7 +137,7 @@ class PortfolioDiagnostics:
                 'message': f'风险集中度过高: {max_concentration:.1%}',
                 'severity': 'medium'
             })
-    
+
     def check_executability(self):
         """检查可执行性"""
         max_weight = np.max(np.abs(self.weights))
@@ -147,7 +147,7 @@ class PortfolioDiagnostics:
                 'message': f'单资产权重过大: {max_weight:.1%}',
                 'severity': 'low'
             })
-    
+
     def generate_report(self):
         """生成诊断报告"""
         return {

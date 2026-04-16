@@ -63,7 +63,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -733,7 +733,7 @@ class GrayscaleRelease:
 
 
 
-    
+
 
 
 
@@ -805,7 +805,7 @@ class GrayscaleRelease:
 
 
 
-        """初始化灰度发?        
+        """初始化灰度发?
 
 
 
@@ -877,7 +877,7 @@ class GrayscaleRelease:
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ class GrayscaleRelease:
 
 
 
-        
+
 
 
 
@@ -1009,7 +1009,7 @@ class GrayscaleRelease:
 
 
 
-            new_version: 新版?            old_version: 旧版?            
+            new_version: 新版?            old_version: 旧版?
 
 
 
@@ -1069,7 +1069,7 @@ class GrayscaleRelease:
 
 
 
-    
+
 
 
 
@@ -1141,7 +1141,7 @@ class GrayscaleRelease:
 
 
 
-        
+
 
 
 
@@ -1177,7 +1177,7 @@ class GrayscaleRelease:
 
 
 
-            
+
 
 
 
@@ -1237,7 +1237,7 @@ class GrayscaleRelease:
 
 
 
-    
+
 
 
 
@@ -1321,7 +1321,7 @@ class GrayscaleRelease:
 
 
 
-        
+
 
 
 
@@ -1369,7 +1369,7 @@ class GrayscaleRelease:
 
 
 
-            
+
 
 
 
@@ -2138,14 +2138,3 @@ prometheus-client>=0.19.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

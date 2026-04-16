@@ -29,7 +29,7 @@ responsibility_boundary: '''本文档职责（Layer 7 AI报告层）：'
 
 
 
-**核心定位**:  
+**核心定位**:
 
 使用大语言模型（LLM）技术自动生成专业级自然语言报告，将量化数据转化为易于理解的投资分析报告。
 
@@ -241,7 +241,7 @@ class NaturalLanguageReportGenerator:
 
         )
 
-        
+
 
     def generate_performance_report(self, performance_data, template_name='daily'):
 
@@ -249,7 +249,7 @@ class NaturalLanguageReportGenerator:
 
         生成绩效报告
 
-        
+
 
         Args:
 
@@ -257,7 +257,7 @@ class NaturalLanguageReportGenerator:
 
             template_name: 模板名称
 
-            
+
 
         Returns:
 
@@ -317,11 +317,11 @@ class NaturalLanguageReportGenerator:
 
         ])
 
-        
+
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
 
-        
+
 
         result = chain.run(
 
@@ -341,7 +341,7 @@ class NaturalLanguageReportGenerator:
 
         )
 
-        
+
 
         return result
 
@@ -363,7 +363,7 @@ class ReportTemplateManager:
 
         self.templates = self._load_templates()
 
-        
+
 
     def _load_templates(self):
 
@@ -371,7 +371,7 @@ class ReportTemplateManager:
 
         templates = {}
 
-        
+
 
         # 日报模板
 
@@ -397,7 +397,7 @@ class ReportTemplateManager:
 
         }
 
-        
+
 
         # 周报模板
 
@@ -423,7 +423,7 @@ class ReportTemplateManager:
 
         }
 
-        
+
 
         # 月报模板
 
@@ -449,11 +449,11 @@ class ReportTemplateManager:
 
         }
 
-        
+
 
         return templates
 
-    
+
 
     def get_template(self, template_name):
 
@@ -487,7 +487,7 @@ class PDFReportGenerator:
 
         self.output_dir = output_dir
 
-        
+
 
     def generate_pdf(self, report_content, output_filename):
 
@@ -495,7 +495,7 @@ class PDFReportGenerator:
 
         生成PDF报告
 
-        
+
 
         Args:
 
@@ -521,19 +521,19 @@ class PDFReportGenerator:
 
         )
 
-        
+
 
         styles = getSampleStyleSheet()
 
         story = []
 
-        
+
 
         # 解析Markdown内容
 
         lines = report_content.split('\n')
 
-        
+
 
         for line in lines:
 
@@ -563,11 +563,11 @@ class PDFReportGenerator:
 
                 story.append(Spacer(1, 0.2 * inch))
 
-        
+
 
         doc.build(story)
 
-        
+
 
         return f"{self.output_dir}/{output_filename}"
 
@@ -671,7 +671,7 @@ class ReportTemplate:
 
     updated_at: datetime
 
-    
+
 
 @dataclass
 
@@ -1098,4 +1098,3 @@ class ReportData:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

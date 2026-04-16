@@ -28,4 +28,3 @@ responsibility: STATE
 ## 结果
 
 全部路径可解析且存在于仓库根下。
-

@@ -154,7 +154,7 @@ Trae → 启动进程 → 工具执行 → 输出结果 → 进程退出 → Tra
 ### **支持的工具列表**
 包装器包含7个审计工具：
 1. **bandit-security-scanner** - Python安全漏洞扫描
-2. **pylint-code-analyzer** - Python代码质量分析  
+2. **pylint-code-analyzer** - Python代码质量分析
 3. **mypy-type-checker** - Python类型检查
 4. **safety-dependency-checker** - Python依赖安全扫描
 5. **pydocstyle-doc-checker** - Python文档一致性检查

@@ -39,7 +39,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -565,7 +565,7 @@ class HomomorphicEncryptionML:
 
 
 
-    
+
 
 
 
@@ -649,7 +649,7 @@ class HomomorphicEncryptionML:
 
 
 
-        """初始化同态加密系统        
+        """初始化同态加密系统
 
 
 
@@ -733,7 +733,7 @@ class HomomorphicEncryptionML:
 
 
 
-    
+
 
 
 
@@ -781,7 +781,7 @@ class HomomorphicEncryptionML:
 
 
 
-        """生成密钥?        
+        """生成密钥?
 
 
 
@@ -829,7 +829,7 @@ class HomomorphicEncryptionML:
 
 
 
-    
+
 
 
 
@@ -913,7 +913,7 @@ class HomomorphicEncryptionML:
 
 
 
-        
+
 
 
 
@@ -961,7 +961,7 @@ class HomomorphicEncryptionML:
 
 
 
-            
+
 
 
 
@@ -1021,7 +1021,7 @@ class HomomorphicEncryptionML:
 
 
 
-    
+
 
 
 
@@ -1105,7 +1105,7 @@ class HomomorphicEncryptionML:
 
 
 
-        
+
 
 
 
@@ -1153,7 +1153,7 @@ class HomomorphicEncryptionML:
 
 
 
-            
+
 
 
 
@@ -1213,7 +1213,7 @@ class HomomorphicEncryptionML:
 
 
 
-    
+
 
 
 
@@ -1297,7 +1297,7 @@ class HomomorphicEncryptionML:
 
 
 
-        
+
 
 
 
@@ -1345,7 +1345,7 @@ class HomomorphicEncryptionML:
 
 
 
-            
+
 
 
 
@@ -2666,14 +2666,3 @@ result = enc_result.decrypt()
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

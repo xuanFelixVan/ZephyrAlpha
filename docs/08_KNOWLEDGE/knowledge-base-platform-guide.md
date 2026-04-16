@@ -761,13 +761,13 @@ def search_knowledge(keyword: str) -> List[Dict]:
 
     index_file = Path("D:/ZephyrAlpha/docs/08_KNOWLEDGE_BASE/search_index.json")
 
-    
+
 
     with open(index_file, 'r', encoding='utf-8') as f:
 
         search_index = json.load(f)
 
-    
+
 
     results = []
 
@@ -781,7 +781,7 @@ def search_knowledge(keyword: str) -> List[Dict]:
 
             results.append(entry)
 
-    
+
 
     return results
 
@@ -851,13 +851,13 @@ def search_by_tag(tag: str) -> List[Dict]:
 
     index_file = Path("D:/ZephyrAlpha/docs/08_KNOWLEDGE_BASE/search_index.json")
 
-    
+
 
     with open(index_file, 'r', encoding='utf-8') as f:
 
         search_index = json.load(f)
 
-    
+
 
     results = []
 
@@ -867,7 +867,7 @@ def search_by_tag(tag: str) -> List[Dict]:
 
             results.append(entry)
 
-    
+
 
     return results
 
@@ -943,13 +943,13 @@ def archive_knowledge(entry_id: str):
 
     entry_file = Path(f"docs/08_KNOWLEDGE_BASE/.../{entry_id}.md")
 
-    
+
 
     archive_dir = Path("docs/08_KNOWLEDGE_BASE/ARCHIVE")
 
     archive_dir.mkdir(exist_ok=True)
 
-    
+
 
     shutil.move(entry_file, archive_dir / f"{entry_id}_archived.md")
 
@@ -1092,4 +1092,3 @@ print(f"按状态统计: {stats['entries_by_status']}")
 **文档版本**: v1.0.0
 
 **最后更新**: 2026-04-07
-

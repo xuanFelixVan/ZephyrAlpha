@@ -73,3 +73,12 @@ docs/08_KNOWLEDGE/
 ---
 
 *本文件是知识库总入口。流水线提取的新条目请追加到上方 KE 表格中。*
+
+<!-- orphan-link -->
+- [knowledge-base-case-studies](knowledge-base-case-studies.md)
+
+<!-- orphan-link -->
+- [knowledge-transfer-system](knowledge-transfer-system.md)
+
+<!-- orphan-link -->
+- [knowledge-enrichment-sprint-plan](knowledge-enrichment-sprint-plan.md)

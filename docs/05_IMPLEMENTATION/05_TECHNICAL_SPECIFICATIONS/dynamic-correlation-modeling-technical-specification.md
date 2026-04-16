@@ -51,7 +51,7 @@ implementation_status: 设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -241,7 +241,7 @@ class DynamicCorrelationModel:
 
 
 
-    
+
 
 
 
@@ -253,7 +253,7 @@ class DynamicCorrelationModel:
 
 
 
-    
+
 
 
 
@@ -271,7 +271,7 @@ class DynamicCorrelationModel:
 
 
 
-        初始化动态相关性模?        
+        初始化动态相关性模?
 
 
 
@@ -301,7 +301,7 @@ class DynamicCorrelationModel:
 
 
 
-    
+
 
 
 
@@ -325,7 +325,7 @@ class DynamicCorrelationModel:
 
 
 
-        
+
 
 
 
@@ -343,7 +343,7 @@ class DynamicCorrelationModel:
 
 
 
-            
+
 
 
 
@@ -373,13 +373,13 @@ class DynamicCorrelationModel:
 
 
 
-    
 
 
 
 
 
-    def predict_correlation(self, 
+
+    def predict_correlation(self,
 
 
 
@@ -397,7 +397,7 @@ class DynamicCorrelationModel:
 
 
 
-        预测未来相关性矩?        
+        预测未来相关性矩?
 
 
 
@@ -415,7 +415,7 @@ class DynamicCorrelationModel:
 
 
 
-            
+
 
 
 
@@ -445,7 +445,7 @@ class DynamicCorrelationModel:
 
 
 
-    
+
 
 
 
@@ -475,7 +475,7 @@ class DynamicCorrelationModel:
 
 
 
-        检测相关性突?        
+        检测相关性突?
 
 
 
@@ -487,7 +487,7 @@ class DynamicCorrelationModel:
 
 
 
-            returns_data: 收益率数?            threshold: 突变阈?            
+            returns_data: 收益率数?            threshold: 突变阈?
 
 
 
@@ -511,13 +511,13 @@ class DynamicCorrelationModel:
 
 
 
-    
 
 
 
 
 
-    def get_conditional_correlation(self, 
+
+    def get_conditional_correlation(self,
 
 
 
@@ -535,7 +535,7 @@ class DynamicCorrelationModel:
 
 
 
-        获取条件相关性矩?        
+        获取条件相关性矩?
 
 
 
@@ -547,7 +547,7 @@ class DynamicCorrelationModel:
 
 
 
-            timestamp: 时间?            
+            timestamp: 时间?
 
 
 
@@ -619,7 +619,7 @@ class GARCHModel:
 
 
 
-    
+
 
 
 
@@ -637,7 +637,7 @@ class GARCHModel:
 
 
 
-    
+
 
 
 
@@ -661,7 +661,7 @@ class GARCHModel:
 
 
 
-        
+
 
 
 
@@ -697,7 +697,7 @@ class GARCHModel:
 
 
 
-    
+
 
 
 
@@ -721,7 +721,7 @@ class GARCHModel:
 
 
 
-        
+
 
 
 
@@ -733,7 +733,7 @@ class GARCHModel:
 
 
 
-            returns: 收益率序?            
+            returns: 收益率序?
 
 
 
@@ -763,7 +763,7 @@ class GARCHModel:
 
 
 
-    
+
 
 
 
@@ -781,7 +781,7 @@ class GARCHModel:
 
 
 
-        获取条件波动?        
+        获取条件波动?
 
 
 
@@ -805,7 +805,7 @@ class GARCHModel:
 
 
 
-    
+
 
 
 
@@ -823,7 +823,7 @@ class GARCHModel:
 
 
 
-        预测未来波动?        
+        预测未来波动?
 
 
 
@@ -841,7 +841,7 @@ class GARCHModel:
 
 
 
-            
+
 
 
 
@@ -1083,7 +1083,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1107,7 +1107,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    3. 计算动态条件相关?    
+    3. 计算动态条件相关?
 
 
 
@@ -1131,7 +1131,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1149,7 +1149,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-        
+
 
 
 
@@ -1173,7 +1173,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1197,7 +1197,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1233,7 +1233,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1263,7 +1263,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1281,7 +1281,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1293,7 +1293,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1317,7 +1317,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-        
+
 
 
 
@@ -1335,7 +1335,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1449,13 +1449,13 @@ def detect_correlation_break(
 
 
 
-    检测相关性突?    
+    检测相关性突?
 
 
 
 
 
-    方法: 滚动窗口相关性变化检?    
+    方法: 滚动窗口相关性变化检?
 
 
 
@@ -1473,7 +1473,7 @@ def detect_correlation_break(
 
 
 
-        threshold: 突变阈?        
+        threshold: 突变阈?
 
 
 
@@ -1509,7 +1509,7 @@ def detect_correlation_break(
 
 
 
-    
+
 
 
 
@@ -1527,7 +1527,7 @@ def detect_correlation_break(
 
 
 
-        
+
 
 
 
@@ -1545,7 +1545,7 @@ def detect_correlation_break(
 
 
 
-        
+
 
 
 
@@ -1617,7 +1617,7 @@ def detect_correlation_break(
 
 
 
-    
+
 
 
 
@@ -1685,7 +1685,7 @@ class TestDynamicCorrelation:
 
 
 
-    
+
 
 
 
@@ -1721,7 +1721,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1745,7 +1745,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1769,7 +1769,7 @@ class TestDynamicCorrelation:
 
 
 
-    
+
 
 
 
@@ -1793,7 +1793,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1811,7 +1811,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1829,7 +1829,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1859,7 +1859,7 @@ class TestDynamicCorrelation:
 
 
 
-    
+
 
 
 
@@ -1889,7 +1889,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1907,7 +1907,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -1919,7 +1919,7 @@ class TestDynamicCorrelation:
 
 
 
-        
+
 
 
 
@@ -2094,8 +2094,3 @@ pandas>=1.3.0
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开发
-
-
-
-
-

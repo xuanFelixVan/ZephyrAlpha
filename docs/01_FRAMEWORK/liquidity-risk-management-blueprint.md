@@ -25,7 +25,7 @@ responsibility: ''
 
 > **核心职责**: Liquidity Risk Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Liquidity Risk Management蓝图设计相关内容
 
@@ -237,9 +237,9 @@ class LiquidityDataCollector:
 
     """流动性数据采集接口"""
 
-    
 
-    def collect_market_liquidity(self, 
+
+    def collect_market_liquidity(self,
 
                                 symbol: str,
 
@@ -251,7 +251,7 @@ class LiquidityDataCollector:
 
         pass
 
-    
+
 
     def collect_position_liquidity(self,
 
@@ -263,7 +263,7 @@ class LiquidityDataCollector:
 
         pass
 
-    
+
 
     def collect_trade_liquidity(self,
 
@@ -291,7 +291,7 @@ class LiquidityMetricsCalculator:
 
     """流动性指标计算接口"""
 
-    
+
 
     def calculate_market_metrics(self,
 
@@ -301,7 +301,7 @@ class LiquidityMetricsCalculator:
 
         pass
 
-    
+
 
     def calculate_position_metrics(self,
 
@@ -311,7 +311,7 @@ class LiquidityMetricsCalculator:
 
         pass
 
-    
+
 
     def calculate_portfolio_metrics(self,
 
@@ -335,7 +335,7 @@ class LiquidityStressTest:
 
     """流动性压力测试接口"""
 
-    
+
 
     def run_historical_scenario(self,
 
@@ -347,7 +347,7 @@ class LiquidityStressTest:
 
         pass
 
-    
+
 
     def run_hypothetical_scenario(self,
 
@@ -359,7 +359,7 @@ class LiquidityStressTest:
 
         pass
 
-    
+
 
     def generate_stress_test_report(self,
 
@@ -383,7 +383,7 @@ class LiquidityAlertSystem:
 
     """流动性预警接口"""
 
-    
+
 
     def check_alert_rules(self,
 
@@ -393,7 +393,7 @@ class LiquidityAlertSystem:
 
         pass
 
-    
+
 
     def send_alert_notification(self,
 
@@ -403,7 +403,7 @@ class LiquidityAlertSystem:
 
         pass
 
-    
+
 
     def record_alert_event(self,
 
@@ -744,4 +744,3 @@ weights = ef.max_sharpe()
 **蓝图状态**: 蓝图设计完成
 
 **下一步行动**: 施工阶段实施
-

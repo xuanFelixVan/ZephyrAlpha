@@ -166,7 +166,7 @@ class SentimentDataCollector:
 
     """舆情数据采集器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -178,9 +178,9 @@ class SentimentDataCollector:
 
         self.research_sources = config.get('research_sources', [])
 
-        
 
-    def collect_news(self, 
+
+    def collect_news(self,
 
                     keywords: List[str],
 
@@ -190,11 +190,11 @@ class SentimentDataCollector:
 
         """采集新闻数据"""
 
-        
+
 
         news_data = []
 
-        
+
 
         for source in self.news_sources:
 
@@ -206,43 +206,43 @@ class SentimentDataCollector:
 
                 news_data.extend(self._collect_web_news(source, keywords))
 
-        
+
 
         df = pd.DataFrame(news_data)
 
-        
+
 
         if not df.empty:
 
-            df = df[(df['publish_time'] >= start_date) & 
+            df = df[(df['publish_time'] >= start_date) &
 
                    (df['publish_time'] <= end_date)]
 
-        
+
 
         return df
 
-    
+
 
     def _collect_rss_news(self, source: Dict, keywords: List[str]) -> List[Dict]:
 
         """采集RSS新闻"""
 
-        
+
 
         import feedparser
 
-        
+
 
         news_items = []
 
-        
+
 
         try:
 
             feed = feedparser.parse(source['url'])
 
-            
+
 
             for entry in feed.entries:
 
@@ -250,7 +250,7 @@ class SentimentDataCollector:
 
                 summary = entry.get('summary', '')
 
-                
+
 
                 if any(keyword in title or keyword in summary for keyword in keywords):
 
@@ -274,21 +274,21 @@ class SentimentDataCollector:
 
             print(f"Error collecting RSS news from {source['name']}: {e}")
 
-        
+
 
         return news_items
 
-    
+
 
     def _collect_web_news(self, source: Dict, keywords: List[str]) -> List[Dict]:
 
         """采集网页新闻"""
 
-        
+
 
         news_items = []
 
-        
+
 
         try:
 
@@ -296,11 +296,11 @@ class SentimentDataCollector:
 
             soup = BeautifulSoup(response.content, 'html.parser')
 
-            
+
 
             articles = soup.find_all(source.get('article_tag', 'article'))
 
-            
+
 
             for article in articles:
 
@@ -308,7 +308,7 @@ class SentimentDataCollector:
 
                 content_tag = article.find(source.get('content_tag', 'p'))
 
-                
+
 
                 if title_tag and content_tag:
 
@@ -316,7 +316,7 @@ class SentimentDataCollector:
 
                     content = content_tag.get_text(strip=True)
 
-                    
+
 
                     if any(keyword in title or keyword in content for keyword in keywords):
 
@@ -340,11 +340,11 @@ class SentimentDataCollector:
 
             print(f"Error collecting web news from {source['name']}: {e}")
 
-        
+
 
         return news_items
 
-    
+
 
     def collect_social_media(self,
 
@@ -356,33 +356,33 @@ class SentimentDataCollector:
 
         """采集社交媒体数据"""
 
-        
+
 
         social_data = []
 
-        
+
 
         if 'twitter' in platforms:
 
             social_data.extend(self._collect_twitter(keywords, limit))
 
-        
+
 
         df = pd.DataFrame(social_data)
 
         return df
 
-    
+
 
     def _collect_twitter(self, keywords: List[str], limit: int) -> List[Dict]:
 
         """采集Twitter数据"""
 
-        
+
 
         twitter_data = []
 
-        
+
 
         try:
 
@@ -402,17 +402,17 @@ class SentimentDataCollector:
 
             )
 
-            
+
 
             api = tweepy.API(auth, wait_on_rate_limit=True)
 
-            
+
 
             query = ' OR '.join(keywords)
 
             tweets = tweepy.Cursor(api.search_tweets, q=query, lang='zh').items(limit)
 
-            
+
 
             for tweet in tweets:
 
@@ -444,11 +444,11 @@ class SentimentDataCollector:
 
             print(f"Error collecting Twitter data: {e}")
 
-        
+
 
         return twitter_data
 
-    
+
 
     def collect_research_reports(self,
 
@@ -460,11 +460,11 @@ class SentimentDataCollector:
 
         """采集研报数据"""
 
-        
+
 
         research_data = []
 
-        
+
 
         for source in self.research_sources:
 
@@ -476,39 +476,39 @@ class SentimentDataCollector:
 
                 research_data.extend(self._collect_web_research(source, stock_codes))
 
-        
+
 
         df = pd.DataFrame(research_data)
 
-        
+
 
         if not df.empty:
 
-            df = df[(df['publish_time'] >= start_date) & 
+            df = df[(df['publish_time'] >= start_date) &
 
                    (df['publish_time'] <= end_date)]
 
-        
+
 
         return df
 
-    
+
 
     def _collect_api_research(self, source: Dict, stock_codes: List[str]) -> List[Dict]:
 
         """采集API研报数据"""
 
-        
+
 
         research_items = []
 
-        
+
 
         try:
 
             headers = {'Authorization': f"Bearer {source['api_key']}"}
 
-            
+
 
             for stock_code in stock_codes:
 
@@ -520,13 +520,13 @@ class SentimentDataCollector:
 
                 )
 
-                
+
 
                 if response.status_code == 200:
 
                     data = response.json()
 
-                    
+
 
                     for item in data.get('reports', []):
 
@@ -558,21 +558,21 @@ class SentimentDataCollector:
 
             print(f"Error collecting API research from {source['name']}: {e}")
 
-        
+
 
         return research_items
 
-    
+
 
     def _collect_web_research(self, source: Dict, stock_codes: List[str]) -> List[Dict]:
 
         """采集网页研报数据"""
 
-        
+
 
         research_items = []
 
-        
+
 
         try:
 
@@ -584,13 +584,13 @@ class SentimentDataCollector:
 
                 soup = BeautifulSoup(response.content, 'html.parser')
 
-                
 
-                reports = soup.find_all(source.get('report_tag', 'div'), 
+
+                reports = soup.find_all(source.get('report_tag', 'div'),
 
                                        class_=source.get('report_class'))
 
-                
+
 
                 for report in reports:
 
@@ -598,7 +598,7 @@ class SentimentDataCollector:
 
                     summary_tag = report.find(source.get('summary_tag', 'p'))
 
-                    
+
 
                     if title_tag:
 
@@ -624,7 +624,7 @@ class SentimentDataCollector:
 
             print(f"Error collecting web research from {source['name']}: {e}")
 
-        
+
 
         return research_items
 
@@ -652,7 +652,7 @@ class SentimentDataCleaner:
 
     """舆情数据清洗器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -660,75 +660,75 @@ class SentimentDataCleaner:
 
         self.stop_words = self._load_stop_words()
 
-        
+
 
     def clean_text(self, text: str) -> str:
 
         """清洗文本"""
 
-        
+
 
         text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
 
-        
+
 
         text = re.sub(r'\@\w+|\#\w+', '', text)
 
-        
+
 
         text = re.sub(r'[^\w\s\u4e00-\u9fff]', ' ', text)
 
-        
+
 
         text = re.sub(r'\s+', ' ', text).strip()
 
-        
+
 
         return text
 
-    
+
 
     def tokenize(self, text: str) -> List[str]:
 
         """分词"""
 
-        
+
 
         words = jieba.cut(text)
 
-        
+
 
         words = [w for w in words if w not in self.stop_words and len(w) > 1]
 
-        
+
 
         return words
 
-    
+
 
     def extract_keywords(self, text: str, top_k: int = 10) -> List[str]:
 
         """提取关键词"""
 
-        
+
 
         keywords = jieba.analyse.extract_tags(text, topK=top_k)
 
         return keywords
 
-    
+
 
     def clean_sentiment_data(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """清洗舆情数据"""
 
-        
+
 
         if data.empty:
 
             return data
 
-        
+
 
         data['cleaned_content'] = data['content'].apply(self.clean_text)
 
@@ -740,25 +740,25 @@ class SentimentDataCleaner:
 
         )
 
-        
+
 
         data = data.drop_duplicates(subset=['title', 'publish_time'])
 
-        
+
 
         data = data[data['cleaned_content'].str.len() > 10]
 
-        
+
 
         return data
 
-    
+
 
     def _load_stop_words(self) -> set:
 
         """加载停用词"""
 
-        
+
 
         default_stop_words = {
 
@@ -772,7 +772,7 @@ class SentimentDataCleaner:
 
         }
 
-        
+
 
         return default_stop_words
 
@@ -800,7 +800,7 @@ class SentimentDataIntegrationInterface:
 
     """舆情数据源集成接口"""
 
-    
+
 
     def collect_all_sentiment(self,
 
@@ -814,7 +814,7 @@ class SentimentDataIntegrationInterface:
 
         pass
 
-    
+
 
     def get_sentiment_by_stock(self,
 
@@ -828,7 +828,7 @@ class SentimentDataIntegrationInterface:
 
         pass
 
-    
+
 
     def get_sentiment_by_source(self,
 
@@ -1061,4 +1061,3 @@ research_sources:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

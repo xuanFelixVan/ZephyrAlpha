@@ -17,7 +17,7 @@ layer: layer_05
 
 # 监控告警系统蓝图
 
-> **职责边界**: 
+> **职责边界**:
 
 ## 核心定位
 
@@ -122,18 +122,18 @@ graph TB
         C[数据质量指标] --> E
         D[业务指标] --> E
     end
-    
+
     subgraph "监控引擎"
         E --> F[指标存储]
         F --> G[规则引擎]
         G --> H[告警管理器]
     end
-    
+
     subgraph "可视化层"
         F --> I[Grafana仪表板]
         H --> J[告警通知]
     end
-    
+
     subgraph "通知渠道"
         J --> K[邮件]
         J --> L[Slack]
@@ -202,7 +202,7 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  
+
   - job_name: 'data-preprocessing'
     static_configs:
       - targets:
@@ -211,13 +211,13 @@ scrape_configs:
         - 'data-validator:8080'
     metrics_path: '/metrics'
     scrape_interval: 10s
-  
+
   - job_name: 'data-quality'
     static_configs:
       - targets: ['data-quality-exporter:8080']
     metrics_path: '/metrics'
     scrape_interval: 30s
-  
+
   - job_name: 'spark'
     static_configs:
       - targets: ['spark-master:8080', 'spark-worker-1:8080', 'spark-worker-2:8080']
@@ -237,89 +237,89 @@ from prometheus_client import Counter, Gauge, Histogram, start_http_server
 import time
 
 class DataQualityExporter:
-    
+
     def __init__(self, port=8080):
         self.port = port
-        
+
         self.validation_total = Counter(
             'data_validation_total',
             'Total number of data validations',
             ['source', 'status']
         )
-        
+
         self.validation_duration = Histogram(
             'data_validation_duration_seconds',
             'Duration of data validation in seconds',
             ['source']
         )
-        
+
         self.data_quality_score = Gauge(
             'data_quality_score',
             'Current data quality score',
             ['source']
         )
-        
+
         self.anomaly_count = Counter(
             'data_anomaly_count',
             'Number of data anomalies detected',
             ['source', 'type']
         )
-        
+
         self.data_freshness = Gauge(
             'data_freshness_seconds',
             'Data freshness in seconds',
             ['source']
         )
-        
+
         self.record_count = Gauge(
             'data_record_count',
             'Number of records processed',
             ['source', 'status']
         )
-    
+
     def start(self):
         start_http_server(self.port)
         print(f"Exporter started on port {self.port}")
-    
+
     def record_validation(self, source, status, duration):
         """
         记录验证指标
-        
+
         Args:
         """
         self.validation_total.labels(source=source, status=status).inc()
         self.validation_duration.labels(source=source).observe(duration)
-    
+
     def update_quality_score(self, source, score):
         """
         更新数据质量评分
-        
+
         Args:
             score: 质量评分 (0-100)
         """
         self.data_quality_score.labels(source=source).set(score)
-    
+
     def record_anomaly(self, source, anomaly_type):
         """
         记录异常
-        
+
         Args:
             anomaly_type: 异常类型
         """
         self.anomaly_count.labels(source=source, type=anomaly_type).inc()
-    
+
     def update_freshness(self, source, seconds):
         """
-        
+
         Args:
             seconds: 数据新鲜度（秒）
         """
         self.data_freshness.labels(source=source).set(seconds)
-    
+
     def update_record_count(self, source, status, count):
         """
         更新记录数量
-        
+
         Args:
             count: 记录数量
         """
@@ -327,63 +327,63 @@ class DataQualityExporter:
 
 
 class SystemMetricsExporter:
-    
+
     def __init__(self, port=8081):
         self.port = port
-        
+
         self.cpu_usage = Gauge(
             'system_cpu_usage_percent',
             'CPU usage percentage'
         )
-        
+
         self.memory_usage = Gauge(
             'system_memory_usage_bytes',
             'Memory usage in bytes',
             ['type']
         )
-        
+
         self.disk_usage = Gauge(
             'system_disk_usage_percent',
             'Disk usage percentage',
             ['mount']
         )
-        
+
         self.network_io = Counter(
             'system_network_io_bytes',
             'Network I/O in bytes',
             ['direction']
         )
-        
+
         self.spark_jobs = Gauge(
             'spark_active_jobs',
             'Number of active Spark jobs'
         )
-        
+
         self.spark_tasks = Gauge(
             'spark_active_tasks',
             'Number of active Spark tasks'
         )
-    
+
     def start(self):
         start_http_server(self.port)
         print(f"System metrics exporter started on port {self.port}")
-    
+
     def update_cpu_usage(self, usage):
         self.cpu_usage.set(usage)
-    
+
     def update_memory_usage(self, used, free, cached):
 存使用"""
         self.memory_usage.labels(type='used').set(used)
         self.memory_usage.labels(type='free').set(free)
         self.memory_usage.labels(type='cached').set(cached)
-    
+
     def update_disk_usage(self, mount, usage):
         self.disk_usage.labels(mount=mount).set(usage)
-    
+
     def record_network_io(self, direction, bytes_count):
         """记录网络I/O"""
         self.network_io.labels(direction=direction).inc(bytes_count)
-    
+
     def update_spark_metrics(self, jobs, tasks):
         """更新Spark指标"""
         self.spark_jobs.set(jobs)
@@ -421,12 +421,12 @@ route:
         severity: critical
       receiver: 'critical-alerts'
       continue: false
-    
+
     - match:
         severity: warning
       receiver: 'warning-alerts'
       continue: false
-    
+
     - match:
         alertname: DataQualityLow
       receiver: 'data-quality-team'
@@ -437,7 +437,7 @@ receivers:
     email_configs:
       - to: 'admin@zephyr-alpha.com'
         send_resolved: true
-  
+
   - name: 'critical-alerts'
     email_configs:
       - to: 'critical-alerts@zephyr-alpha.com'
@@ -449,7 +449,7 @@ receivers:
     webhook_configs:
       - url: 'http://webhook-server:5000/alert'
         send_resolved: true
-  
+
   - name: 'warning-alerts'
     email_configs:
       - to: 'warning-alerts@zephyr-alpha.com'
@@ -458,7 +458,7 @@ receivers:
       - api_url: 'https://hooks.slack.com/services/xxx'
         channel: '#warning-alerts'
         send_resolved: true
-  
+
   - name: 'data-quality-team'
     email_configs:
       - to: 'data-quality@zephyr-alpha.com'
@@ -490,7 +490,7 @@ groups:
         annotations:
           summary: "High CPU usage detected"
           description: "CPU usage is {{ $value }}% on instance {{ $labels.instance }}"
-      
+
       - alert: CriticalCPUUsage
         expr: system_cpu_usage_percent > 95
         for: 2m
@@ -499,7 +499,7 @@ groups:
         annotations:
           summary: "Critical CPU usage detected"
           description: "CPU usage is {{ $value }}% on instance {{ $labels.instance }}"
-      
+
       - alert: HighMemoryUsage
         expr: (system_memory_usage_bytes{type="used"} / (system_memory_usage_bytes{type="used"} + system_memory_usage_bytes{type="free"})) * 100 > 85
         for: 5m
@@ -508,7 +508,7 @@ groups:
         annotations:
           summary: "High memory usage detected"
           description: "Memory usage is {{ $value }}% on instance {{ $labels.instance }}"
-      
+
       - alert: HighDiskUsage
         expr: system_disk_usage_percent > 85
         for: 5m
@@ -534,7 +534,7 @@ groups:
         annotations:
           summary: "Data quality score is low"
           description: "Data quality score is {{ $value }} for source {{ $labels.source }}"
-      
+
       - alert: DataQualityCritical
         expr: data_quality_score < 50
         for: 2m
@@ -543,7 +543,7 @@ groups:
         annotations:
           summary: "Data quality score is critical"
           description: "Data quality score is {{ $value }} for source {{ $labels.source }}"
-      
+
       - alert: HighValidationFailureRate
         expr: rate(data_validation_total{status="failure"}[5m]) / rate(data_validation_total[5m]) > 0.05
         for: 5m
@@ -552,7 +552,7 @@ groups:
         annotations:
           summary: "High validation failure rate"
           description: "Validation failure rate is {{ $value }} for source {{ $labels.source }}"
-      
+
       - alert: DataStale
         expr: data_freshness_seconds > 3600
         for: 5m
@@ -561,7 +561,7 @@ groups:
         annotations:
           summary: "Data is stale"
           description: "Data freshness is {{ $value }}s for source {{ $labels.source }}"
-      
+
       - alert: AnomalySpike
         expr: rate(data_anomaly_count[5m]) > 10
         for: 2m
@@ -587,7 +587,7 @@ groups:
         annotations:
           summary: "Service is down"
           description: "Service {{ $labels.job }} on instance {{ $labels.instance }} is down"
-      
+
       - alert: HighErrorRate
         expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
         for: 5m
@@ -596,7 +596,7 @@ groups:
         annotations:
           summary: "High error rate detected"
           description: "Error rate is {{ $value }} for service {{ $labels.job }}"
-      
+
       - alert: SlowResponseTime
         expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
         for: 5m
@@ -742,14 +742,14 @@ import requests
 import json
 
 class SlackNotifier:
-    
+
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
-    
+
     def send_alert(self, alert):
         """
         发送告警到Slack
-        
+
         Args:
             alert: 告警信息
         """
@@ -758,9 +758,9 @@ class SlackNotifier:
             'warning': '#FFA500',
             'info': '#00FF00'
         }
-        
+
         color = severity_colors.get(alert.get('severity', 'info'), '#808080')
-        
+
         payload = {
             "attachments": [
                 {
@@ -789,13 +789,13 @@ class SlackNotifier:
                 }
             ]
         }
-        
+
         response = requests.post(
             self.webhook_url,
             data=json.dumps(payload),
             headers={'Content-Type': 'application/json'}
         )
-        
+
         return response.status_code == 200
 ```
 
@@ -806,14 +806,14 @@ import requests
 import json
 
 class WeChatNotifier:
-    
+
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
-    
+
     def send_alert(self, alert):
         """
         发送告警到企业微信
-        
+
         Args:
             alert: 告警信息
         """
@@ -822,8 +822,8 @@ class WeChatNotifier:
             'warning': '🟡',
             'info': '🟢'
         }
-        
-        
+
+
         content = f"""{emoji} **{alert.get('summary', 'Alert')}**
 
 **严重程度**: {alert.get('severity', 'unknown')}
@@ -834,20 +834,20 @@ class WeChatNotifier:
 
 _ZephyrAlpha Monitoring_
 """
-        
+
         payload = {
             "msgtype": "markdown",
             "markdown": {
                 "content": content
             }
         }
-        
+
         response = requests.post(
             self.webhook_url,
             data=json.dumps(payload),
             headers={'Content-Type': 'application/json'}
         )
-        
+
         return response.status_code == 200
 ```
 
@@ -885,7 +885,7 @@ _ZephyrAlpha Monitoring_
 
 
 
-### 8.1 
+### 8.1
 
 |------|--------|----------|
 
@@ -965,6 +965,3 @@ _ZephyrAlpha Monitoring_
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-

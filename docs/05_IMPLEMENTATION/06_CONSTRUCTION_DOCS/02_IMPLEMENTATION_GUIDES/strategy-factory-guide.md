@@ -155,7 +155,7 @@ class BaseStrategy(ABC):
 
     """策略基类 - 所有策略必须继承此?""
 
-    
+
 
     def __init__(self, strategy_id: str, config: Optional[Dict[str, Any]] = None):
 
@@ -167,7 +167,7 @@ class BaseStrategy(ABC):
 
         self.status = "initialized"
 
-        
+
 
     @abstractmethod
 
@@ -177,7 +177,7 @@ class BaseStrategy(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -187,7 +187,7 @@ class BaseStrategy(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -197,7 +197,7 @@ class BaseStrategy(ABC):
 
         pass
 
-    
+
 
     def get_metadata(self) -> Dict[str, Any]:
 
@@ -241,7 +241,7 @@ class StrategyFactory:
 
     """策略工厂 - 创建和管理策略实?""
 
-    
+
 
     _instance = None
 
@@ -251,7 +251,7 @@ class StrategyFactory:
 
     _cache: Dict[str, BaseStrategy] = {}
 
-    
+
 
     def __new__(cls):
 
@@ -265,13 +265,13 @@ class StrategyFactory:
 
         return cls._instance
 
-    
+
 
     def create_strategy(
 
-        self, 
+        self,
 
-        strategy_id: str, 
+        strategy_id: str,
 
         config: Optional[Dict[str, Any]] = None
 
@@ -281,13 +281,13 @@ class StrategyFactory:
 
         cache_key = f"{strategy_id}_{hash(frozenset(config.items()))}"
 
-        
+
 
         if cache_key in self._cache:
 
             return self._cache[cache_key]
 
-        
+
 
         strategy_class = self._registry.get_strategy_class(strategy_id)
 
@@ -295,17 +295,17 @@ class StrategyFactory:
 
             strategy_class = self._loader.load_strategy(strategy_id)
 
-        
+
 
         strategy = strategy_class(strategy_id, config)
 
         self._cache[cache_key] = strategy
 
-        
+
 
         return strategy
 
-    
+
 
     def get_strategy(self, strategy_id: str) -> Optional[BaseStrategy]:
 
@@ -313,7 +313,7 @@ class StrategyFactory:
 
         return self._cache.get(strategy_id)
 
-    
+
 
     def clear_cache(self) -> None:
 
@@ -341,7 +341,7 @@ class StrategyRegistry:
 
     """策略注册?- 管理策略元数据和类映?""
 
-    
+
 
     def __init__(self):
 
@@ -349,13 +349,13 @@ class StrategyRegistry:
 
         self._metadata: Dict[str, Dict[str, Any]] = {}
 
-    
+
 
     def register(
 
-        self, 
+        self,
 
-        strategy_id: str, 
+        strategy_id: str,
 
         strategy_class: Type[BaseStrategy],
 
@@ -369,7 +369,7 @@ class StrategyRegistry:
 
         self._metadata[strategy_id] = metadata or {}
 
-    
+
 
     def unregister(self, strategy_id: str) -> None:
 
@@ -379,7 +379,7 @@ class StrategyRegistry:
 
         self._metadata.pop(strategy_id, None)
 
-    
+
 
     def get_strategy_class(self, strategy_id: str) -> Optional[Type[BaseStrategy]]:
 
@@ -387,7 +387,7 @@ class StrategyRegistry:
 
         return self._strategies.get(strategy_id)
 
-    
+
 
     def get_metadata(self, strategy_id: str) -> Optional[Dict[str, Any]]:
 
@@ -395,7 +395,7 @@ class StrategyRegistry:
 
         return self._metadata.get(strategy_id)
 
-    
+
 
     def list_strategies(self) -> List[str]:
 
@@ -429,13 +429,13 @@ class StrategyLoader:
 
     """策略加载?- 动态加载策略模?""
 
-    
+
 
     def __init__(self, strategy_dir: str = "src/strategies"):
 
         self.strategy_dir = Path(strategy_dir)
 
-    
+
 
     def load_strategy(self, strategy_id: str) -> Optional[Type[BaseStrategy]]:
 
@@ -443,13 +443,13 @@ class StrategyLoader:
 
         module_name = f"strategies.{strategy_id}"
 
-        
+
 
         try:
 
             module = importlib.import_module(module_name)
 
-            
+
 
             for name, obj in inspect.getmembers(module, inspect.isclass):
 
@@ -457,7 +457,7 @@ class StrategyLoader:
 
                     return obj
 
-            
+
 
             return None
 
@@ -465,7 +465,7 @@ class StrategyLoader:
 
             raise StrategyLoadError(f"Failed to load strategy {strategy_id}: {e}")
 
-    
+
 
     def scan_strategies(self) -> List[str]:
 
@@ -473,7 +473,7 @@ class StrategyLoader:
 
         strategies = []
 
-        
+
 
         for file_path in self.strategy_dir.glob("*.py"):
 
@@ -481,13 +481,13 @@ class StrategyLoader:
 
                 continue
 
-            
+
 
             strategy_id = file_path.stem
 
             strategies.append(strategy_id)
 
-        
+
 
         return strategies
 
@@ -771,7 +771,7 @@ from strategy.base import BaseStrategy
 
 class TestStrategyFactory:
 
-    
+
 
     def test_create_strategy(self):
 
@@ -779,7 +779,7 @@ class TestStrategyFactory:
 
         strategy = factory.create_strategy("test_strategy", {"param": 1})
 
-        
+
 
         assert strategy is not None
 
@@ -787,23 +787,23 @@ class TestStrategyFactory:
 
         assert strategy.config == {"param": 1}
 
-    
+
 
     def test_strategy_cache(self):
 
         factory = StrategyFactory()
 
-        
+
 
         strategy1 = factory.create_strategy("test_strategy", {"param": 1})
 
         strategy2 = factory.create_strategy("test_strategy", {"param": 1})
 
-        
+
 
         assert strategy1 is strategy2
 
-    
+
 
     def test_clear_cache(self):
 
@@ -811,11 +811,11 @@ class TestStrategyFactory:
 
         factory.create_strategy("test_strategy", {"param": 1})
 
-        
+
 
         factory.clear_cache()
 
-        
+
 
         assert len(factory._cache) == 0
 
@@ -841,7 +841,7 @@ from strategy.scanner import StrategyScanner
 
 class TestStrategyIntegration:
 
-    
+
 
     def test_full_workflow(self):
 
@@ -849,13 +849,13 @@ class TestStrategyIntegration:
 
         factory = StrategyFactory()
 
-        
+
 
         strategies = scanner.scan_strategies()
 
         assert len(strategies) >= 5
 
-        
+
 
         for strategy_id in strategies:
 
@@ -891,7 +891,7 @@ from functools import lru_cache
 
 class StrategyFactory:
 
-    
+
 
     @lru_cache(maxsize=128)
 
@@ -911,7 +911,7 @@ class StrategyFactory:
 
 class StrategyRegistry:
 
-    
+
 
     def get_strategy_class(self, strategy_id: str):
 
@@ -1061,11 +1061,10 @@ def clear_cache_if_needed(self):
 
 
 
-**文档维护?*: 首席架构? 
+**文档维护?*: 首席架构?
 
-**创建日期**: 2026-04-02  
+**创建日期**: 2026-04-02
 
-**最后更?*: 2026-04-02  
+**最后更?*: 2026-04-02
 
 **版本**: v1.0
-

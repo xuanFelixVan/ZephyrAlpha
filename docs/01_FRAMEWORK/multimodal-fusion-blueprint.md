@@ -20,7 +20,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供multimodal fusion blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Multimodal Fusion蓝图设计相关内容
 
@@ -218,7 +218,7 @@ class MultimodalFusionModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -274,7 +274,7 @@ modality_configs:
 
 
 
-    
+
 
 
 
@@ -298,7 +298,7 @@ modality_configs:
 
 
 
-        
+
 
 
 
@@ -310,7 +310,7 @@ modality_configs:
 
 
 
-            
+
 
 
 
@@ -336,7 +336,7 @@ modality_configs:
 
 
 
-    
+
 
 
 
@@ -603,4 +603,3 @@ timm>=0.9.0
 
 
 ```
-

@@ -156,7 +156,7 @@ layer: layer_00
 
 
 
-             运维与知识管理模块架构                                  
+             运维与知识管理模块架构
 
 
 
@@ -164,103 +164,103 @@ layer: layer_00
 
 
 
-                                                                    
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
+ ┌──────────────────────────────────────────────────────────────
 
 
-      PerformanceOptimizer (性能优化                        
 
+      PerformanceOptimizer (性能优化
 
 
-  - 性能监控                                                    
 
+  - 性能监控
 
 
-  - 瓶颈分析                                                    
 
+  - 瓶颈分析
 
 
-  - 自动优化                                                    
 
+  - 自动优化
 
 
- └────────────────────────────────────────────────────────────── 
 
+ └──────────────────────────────────────────────────────────────
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
+ ┌──────────────────────────────────────────────────────────────
 
-      DataSecurityManager (数据安全管理                      
 
 
+      DataSecurityManager (数据安全管理
 
-  - 数据加密                                                    
 
 
+  - 数据加密
 
-  - 访问控制                                                    
 
 
+  - 访问控制
 
-  - 审计日志                                                    
 
 
+  - 审计日志
 
- └────────────────────────────────────────────────────────────── 
 
 
+ └──────────────────────────────────────────────────────────────
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
 
-      KnowledgeManager (知识管理                             
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-  - 知识库构                                                 
+      KnowledgeManager (知识管理
 
 
 
-  - 知识检                                                   
+  - 知识库构
 
 
 
-  - 知识应用                                                    
+  - 知识检
 
 
 
- └────────────────────────────────────────────────────────────── 
+  - 知识应用
 
 
 
-                                                                   
+ └──────────────────────────────────────────────────────────────
 
 
 
- ┌────────────────────────────────────────────────────────────── 
 
 
 
-      开源工具层                                                
 
+ ┌──────────────────────────────────────────────────────────────
 
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
+
+      开源工具层
+
+
+
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
 
 
 
@@ -272,19 +272,19 @@ layer: layer_00
 
 
 
-                                         │Base     
+                                         │Base
 
 
 
-  └───────────── └───────────── └───────────── └────── 
+  └───────────── └───────────── └───────────── └──────
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                    
+
 
 
 
@@ -460,7 +460,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -472,7 +472,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -484,7 +484,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -512,7 +512,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -524,7 +524,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -556,7 +556,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -596,7 +596,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -608,7 +608,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -632,7 +632,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -644,7 +644,7 @@ class PerformanceOptimizer:
 
 
 
-            
+
 
 
 
@@ -664,7 +664,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -708,7 +708,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -752,7 +752,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -796,7 +796,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -804,7 +804,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -828,7 +828,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -840,7 +840,7 @@ class PerformanceOptimizer:
 
 
 
-            
+
 
 
 
@@ -860,7 +860,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -884,7 +884,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -896,7 +896,7 @@ class PerformanceOptimizer:
 
 
 
-            
+
 
 
 
@@ -916,7 +916,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -944,7 +944,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -960,7 +960,7 @@ class PerformanceOptimizer:
 
 
 
-            
+
 
 
 
@@ -980,7 +980,7 @@ class PerformanceOptimizer:
 
 
 
-    
+
 
 
 
@@ -1008,7 +1008,7 @@ class PerformanceOptimizer:
 
 
 
-        
+
 
 
 
@@ -1024,7 +1024,7 @@ class PerformanceOptimizer:
 
 
 
-            
+
 
 
 
@@ -1186,7 +1186,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1198,7 +1198,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1210,7 +1210,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1242,7 +1242,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1262,7 +1262,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1298,7 +1298,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1306,7 +1306,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1318,7 +1318,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1330,7 +1330,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -1354,7 +1354,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1366,7 +1366,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1378,7 +1378,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -1406,7 +1406,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1434,7 +1434,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1450,7 +1450,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -1474,7 +1474,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1502,7 +1502,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1514,7 +1514,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1546,7 +1546,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1566,7 +1566,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -1586,7 +1586,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1630,7 +1630,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1706,7 +1706,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1718,7 +1718,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1738,7 +1738,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1786,7 +1786,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1810,7 +1810,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1822,7 +1822,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -1842,7 +1842,7 @@ class DataSecurityManager:
 
 
 
-    
+
 
 
 
@@ -1870,7 +1870,7 @@ class DataSecurityManager:
 
 
 
-        
+
 
 
 
@@ -1886,7 +1886,7 @@ class DataSecurityManager:
 
 
 
-            
+
 
 
 
@@ -2044,7 +2044,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2056,7 +2056,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2068,7 +2068,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2100,7 +2100,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2116,7 +2116,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2132,7 +2132,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2156,7 +2156,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2176,7 +2176,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2200,7 +2200,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2252,7 +2252,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2264,7 +2264,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2284,7 +2284,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2312,7 +2312,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2344,7 +2344,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2368,7 +2368,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2408,7 +2408,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2436,7 +2436,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2456,7 +2456,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2492,7 +2492,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2516,7 +2516,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2536,7 +2536,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2548,7 +2548,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2560,7 +2560,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2592,7 +2592,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2628,7 +2628,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2652,7 +2652,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2672,7 +2672,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2684,7 +2684,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2696,7 +2696,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2716,7 +2716,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2728,7 +2728,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2740,7 +2740,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -2760,7 +2760,7 @@ class KnowledgeManager:
 
 
 
-    
+
 
 
 
@@ -2784,7 +2784,7 @@ class KnowledgeManager:
 
 
 
-        
+
 
 
 
@@ -2796,7 +2796,7 @@ class KnowledgeManager:
 
 
 
-            
+
 
 
 
@@ -4597,6 +4597,3 @@ CREATE TABLE knowledge_base (
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

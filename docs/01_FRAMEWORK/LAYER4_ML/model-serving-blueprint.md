@@ -19,7 +19,7 @@ estimated_hours: 25
 
 > **核心职责**: 提供模型服务框架的完整架构设计，实现模型打包、部署和推理服务
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：模型服务架构、API设计、部署方案
 
@@ -179,13 +179,13 @@ class QuantModelService:
 
     """量化模型服务"""
 
-    
+
 
     def __init__(self):
 
         self.model = bentoml.pytorch.get("quant_model:latest").to_runner()
 
-        
+
 
     @bentoml.api
 
@@ -195,7 +195,7 @@ class QuantModelService:
 
         return self.model.run(input_data)
 
-    
+
 
     @bentoml.api
 
@@ -205,7 +205,7 @@ class QuantModelService:
 
         return self.model.run_batch(input_data)
 
-    
+
 
     @bentoml.api
 
@@ -217,7 +217,7 @@ class QuantModelService:
 
         explanation = self.compute_shap_values(input_data)
 
-        
+
 
         return {
 
@@ -247,7 +247,7 @@ labels:
 
   project: zephyr-alpha
 
-  
+
 
 include:
 
@@ -255,7 +255,7 @@ include:
 
   - "models/*"
 
-  
+
 
 python:
 
@@ -267,7 +267,7 @@ python:
 
     - pandas
 
-    
+
 
 docker:
 
@@ -289,7 +289,7 @@ class OptimizedModelService:
 
     """优化模型服务"""
 
-    
+
 
     def __init__(self):
 
@@ -297,19 +297,19 @@ class OptimizedModelService:
 
         self.warmup_model()
 
-        
+
 
         # 批处理优化
 
         self.batch_size = 32
 
-        
+
 
         # 缓存优化
 
         self.cache = {}
 
-        
+
 
     def warmup_model(self):
 
@@ -319,7 +319,7 @@ class OptimizedModelService:
 
         self.model.run(dummy_input)
 
-        
+
 
     def predict_with_cache(self, input_data):
 
@@ -327,19 +327,19 @@ class OptimizedModelService:
 
         cache_key = self.compute_hash(input_data)
 
-        
+
 
         if cache_key in self.cache:
 
             return self.cache[cache_key]
 
-        
+
 
         result = self.model.run(input_data)
 
         self.cache[cache_key] = result
 
-        
+
 
         return result
 
@@ -485,7 +485,7 @@ alerts:
 
     action: notify
 
-    
+
 
   - name: low_throughput
 
@@ -528,4 +528,3 @@ alerts:
 **蓝图版本**: v1.0.0
 
 **创建日期**: 2026-04-07
-

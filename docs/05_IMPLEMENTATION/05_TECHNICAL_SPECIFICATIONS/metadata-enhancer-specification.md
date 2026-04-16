@@ -86,7 +86,7 @@ class MetadataEnhancer:
 
 
 
-    
+
 
 
 
@@ -98,7 +98,7 @@ class MetadataEnhancer:
 
 
 
-        
+
 
 
 
@@ -110,7 +110,7 @@ class MetadataEnhancer:
 
 
 
-        
+
 
 
 
@@ -122,7 +122,7 @@ class MetadataEnhancer:
 
 
 
-        
+
 
 
 
@@ -307,6 +307,3 @@ class MetadataEnhancer:
 
 
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
-
-
-

@@ -1,0 +1,54 @@
+{
+  "generated_date": "20260416",
+  "generator": "scripts/governance/scan_duplicate_file_content.py",
+  "include_untracked": true,
+  "extensions": [
+    "yaml"
+  ],
+  "max_mb": null,
+  "candidate_count_tracked": 26,
+  "candidate_count_untracked": 0,
+  "total_candidates_scanned": 26,
+  "duplicate_cluster_count": 2,
+  "duplicate_file_path_count": 4,
+  "skipped_over_max_mb": [],
+  "read_errors": [],
+  "clusters": [
+    {
+      "sha256": "1232d883043d2a5637ee6e16f7baf0976f24a2d3fd74254664335c454bcb2112",
+      "paths": [
+        "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/a_stock_rules/a_stock_rules_config.yaml",
+        "review_materials_package/a_stock_rules/a_stock_rules_config.yaml"
+      ],
+      "members": [
+        {
+          "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/a_stock_rules/a_stock_rules_config.yaml",
+          "git_source": "tracked"
+        },
+        {
+          "path": "review_materials_package/a_stock_rules/a_stock_rules_config.yaml",
+          "git_source": "tracked"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "sha256": "72769c70bb26d893e66c127f4cffb287760a18c89868d819695e3670b2e5b9f6",
+      "paths": [
+        "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/trading_cost_config_template.yaml",
+        "review_materials_package/trading_costs/trading_cost_config_template.yaml"
+      ],
+      "members": [
+        {
+          "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/trading_cost_config_template.yaml",
+          "git_source": "tracked"
+        },
+        {
+          "path": "review_materials_package/trading_costs/trading_cost_config_template.yaml",
+          "git_source": "tracked"
+        }
+      ],
+      "count": 2
+    }
+  ]
+}

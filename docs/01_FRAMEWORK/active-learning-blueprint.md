@@ -71,7 +71,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -789,7 +789,7 @@ class ActiveLearning:
 
 
 
-    
+
 
 
 
@@ -861,7 +861,7 @@ class ActiveLearning:
 
 
 
-        """初始化主动学?        
+        """初始化主动学?
 
 
 
@@ -933,7 +933,7 @@ class ActiveLearning:
 
 
 
-    
+
 
 
 
@@ -1017,7 +1017,7 @@ class ActiveLearning:
 
 
 
-        """查询待标注样?        
+        """查询待标注样?
 
 
 
@@ -1077,7 +1077,7 @@ class ActiveLearning:
 
 
 
-            
+
 
 
 
@@ -1137,7 +1137,7 @@ class ActiveLearning:
 
 
 
-    
+
 
 
 
@@ -1233,7 +1233,7 @@ class ActiveLearning:
 
 
 
-        
+
 
 
 
@@ -1269,7 +1269,7 @@ class ActiveLearning:
 
 
 
-            labeled_data: 已标注数据            new_labels: 新指标            
+            labeled_data: 已标注数据            new_labels: 新指标
 
 
 
@@ -2014,14 +2014,3 @@ modAL>=0.4.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

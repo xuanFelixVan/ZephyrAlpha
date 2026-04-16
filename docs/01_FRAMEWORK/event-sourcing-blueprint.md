@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Event Sourcing蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Event Sourcing蓝图设计相关内容
 
@@ -378,7 +378,7 @@ class EventStore:
 
     """事件存储"""
 
-    
+
 
     def __init__(self, db_path: str = './event_store.db'):
 
@@ -386,19 +386,19 @@ class EventStore:
 
         self._init_db()
 
-        
+
 
     def _init_db(self):
 
         """初始化数据库"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -426,27 +426,27 @@ class EventStore:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_aggregate 
+            CREATE INDEX IF NOT EXISTS idx_aggregate
 
             ON events(aggregate_id, version)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_event_type 
+            CREATE INDEX IF NOT EXISTS idx_event_type
 
             ON events(event_type, timestamp)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
@@ -466,13 +466,13 @@ class EventStore:
 
         ''')
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def append_event(
 
@@ -492,13 +492,13 @@ class EventStore:
 
         """追加事件"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute(
 
@@ -512,13 +512,13 @@ class EventStore:
 
         version = (max_version or 0) + 1
 
-        
+
 
         event_id = str(uuid.uuid4())
 
         timestamp = datetime.now()
 
-        
+
 
         event = Event(
 
@@ -540,11 +540,11 @@ class EventStore:
 
         )
 
-        
+
 
         cursor.execute('''
 
-            INSERT INTO events 
+            INSERT INTO events
 
             (event_id, event_type, aggregate_id, aggregate_type, version, data, metadata, timestamp, created_at)
 
@@ -572,17 +572,17 @@ class EventStore:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         return event
 
-    
+
 
     def get_events(
 
@@ -598,13 +598,13 @@ class EventStore:
 
         """获取事件"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         if to_version is None:
 
@@ -634,13 +634,13 @@ class EventStore:
 
             ''', (aggregate_id, from_version, to_version))
 
-        
+
 
         rows = cursor.fetchall()
 
         conn.close()
 
-        
+
 
         events = []
 
@@ -666,11 +666,11 @@ class EventStore:
 
             ))
 
-        
+
 
         return events
 
-    
+
 
     def save_snapshot(
 
@@ -688,17 +688,17 @@ class EventStore:
 
         """保存快照"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
-            INSERT OR REPLACE INTO snapshots 
+            INSERT OR REPLACE INTO snapshots
 
             (aggregate_id, aggregate_type, version, state, created_at)
 
@@ -718,13 +718,13 @@ class EventStore:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def get_snapshot(
 
@@ -736,13 +736,13 @@ class EventStore:
 
         """获取快照"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -754,13 +754,13 @@ class EventStore:
 
         ''', (aggregate_id,))
 
-        
+
 
         row = cursor.fetchone()
 
         conn.close()
 
-        
+
 
         if row:
 
@@ -774,7 +774,7 @@ class EventStore:
 
             }
 
-        
+
 
         return None
 
@@ -822,7 +822,7 @@ class EventReplayer:
 
     """事件重放器"""
 
-    
+
 
     def __init__(self, event_store: EventStore):
 
@@ -830,7 +830,7 @@ class EventReplayer:
 
         self.handlers: Dict[str, Callable] = {}
 
-        
+
 
     def register_handler(
 
@@ -846,7 +846,7 @@ class EventReplayer:
 
         self.handlers[event_type] = handler
 
-    
+
 
     def rebuild_state(
 
@@ -860,11 +860,11 @@ class EventReplayer:
 
         """重建状态"""
 
-        
+
 
         snapshot = self.event_store.get_snapshot(aggregate_id)
 
-        
+
 
         if snapshot:
 
@@ -878,7 +878,7 @@ class EventReplayer:
 
             from_version = 0
 
-        
+
 
         events = self.event_store.get_events(
 
@@ -888,7 +888,7 @@ class EventReplayer:
 
         )
 
-        
+
 
         for event in events:
 
@@ -896,11 +896,11 @@ class EventReplayer:
 
                 state = self.handlersevent.event_type
 
-        
+
 
         return state
 
-    
+
 
     def rebuild_state_at_time(
 
@@ -916,17 +916,17 @@ class EventReplayer:
 
         """重建指定时间点的状态"""
 
-        
+
 
         state = initial_state or {}
 
-        
+
 
         conn = sqlite3.connect(self.event_store.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -940,13 +940,13 @@ class EventReplayer:
 
         ''', (aggregate_id, target_time.isoformat()))
 
-        
+
 
         rows = cursor.fetchall()
 
         conn.close()
 
-        
+
 
         for row in rows:
 
@@ -970,13 +970,13 @@ class EventReplayer:
 
             )
 
-            
+
 
             if event.event_type in self.handlers:
 
                 state = self.handlersevent.event_type
 
-        
+
 
         return state
 
@@ -1257,4 +1257,3 @@ class Subscription:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

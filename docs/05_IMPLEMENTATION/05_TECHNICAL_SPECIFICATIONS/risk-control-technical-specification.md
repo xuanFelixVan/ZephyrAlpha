@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 风险控制详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：风险阈值管理、风险监控、风险预警
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 实时监控组合风险，提供风险预警和控制机制
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 风险指标多样：VaR、ES、波动率、回撤等
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 阈值管理：灵活的风险阈值配置
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供实时风险监控能力
 
@@ -270,7 +270,7 @@ class ThresholdManager:
 
     """阈值管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -278,7 +278,7 @@ class ThresholdManager:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def set_threshold(
 
@@ -312,7 +312,7 @@ class ThresholdManager:
 
         self.logger.info(f"设置阈值: {metric_name}, 警告={warning_level}, 严重={critical_level}")
 
-    
+
 
     def check_threshold(
 
@@ -330,11 +330,11 @@ class ThresholdManager:
 
             return RiskLevel.LOW
 
-        
+
 
         threshold = self.thresholds[metric_name]
 
-        
+
 
         if value >= threshold.action_level:
 
@@ -360,7 +360,7 @@ class RiskMonitor:
 
     """风险监控器"""
 
-    
+
 
     def __init__(self, threshold_manager: ThresholdManager):
 
@@ -368,7 +368,7 @@ class RiskMonitor:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def monitor(
 
@@ -382,13 +382,13 @@ class RiskMonitor:
 
         监控风险指标
 
-        
+
 
         参数:
 
             risk_metrics: 风险指标字典
 
-            
+
 
         返回:
 
@@ -398,19 +398,19 @@ class RiskMonitor:
 
         alerts = []
 
-        
+
 
         for metric_name, value in risk_metrics.items():
 
             risk_level = self.threshold_manager.check_threshold(metric_name, value)
 
-            
+
 
             if risk_level != RiskLevel.LOW:
 
                 threshold = self.threshold_manager.thresholds.get(metric_name)
 
-                
+
 
                 alert = RiskAlert(
 
@@ -432,11 +432,11 @@ class RiskMonitor:
 
                 alerts.append(alert)
 
-        
+
 
         self.logger.info(f"风险监控完成，发现{len(alerts)}个预警")
 
-        
+
 
         return alerts
 
@@ -448,7 +448,7 @@ class RiskAlerter:
 
     """风险预警器"""
 
-    
+
 
     def __init__(self):
 
@@ -456,7 +456,7 @@ class RiskAlerter:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def register_handler(
 
@@ -470,7 +470,7 @@ class RiskAlerter:
 
         self.alert_handlers.append(handler)
 
-    
+
 
     def send_alert(
 
@@ -492,7 +492,7 @@ class RiskAlerter:
 
                 self.logger.error(f"预警处理失败: {e}")
 
-        
+
 
         self.logger.warning(f"风险预警: {alert.message}")
 
@@ -504,7 +504,7 @@ class RiskController:
 
     """风险控制器主类"""
 
-    
+
 
     def __init__(self):
 
@@ -516,7 +516,7 @@ class RiskController:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def configure_thresholds(
 
@@ -542,7 +542,7 @@ class RiskController:
 
             )
 
-    
+
 
     def check_risk(
 
@@ -556,13 +556,13 @@ class RiskController:
 
         检查风险状态
 
-        
+
 
         参数:
 
             risk_metrics: 风险指标字典
 
-            
+
 
         返回:
 
@@ -572,13 +572,13 @@ class RiskController:
 
         alerts = self.monitor.monitor(risk_metrics)
 
-        
+
 
         for alert in alerts:
 
             self.alerter.send_alert(alert)
 
-        
+
 
         overall_level = RiskLevel.LOW
 
@@ -588,7 +588,7 @@ class RiskController:
 
                 overall_level = alert.risk_level
 
-        
+
 
         status = RiskStatus(
 
@@ -602,11 +602,11 @@ class RiskController:
 
         )
 
-        
+
 
         self.logger.info(f"风险检查完成，整体风险等级={overall_level.value}")
 
-        
+
 
         return status
 
@@ -711,4 +711,3 @@ class RiskController:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

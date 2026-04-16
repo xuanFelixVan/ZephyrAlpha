@@ -23,7 +23,7 @@ layer: layer_06
 
 > **核心职责**: 组合优化诊断，诊断组合优化问题的健康状况
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -163,7 +163,7 @@ class OptimizationDiagnostics:
 
     """
 
-    
+
 
     def diagnose(
 
@@ -179,7 +179,7 @@ class OptimizationDiagnostics:
 
         """
 
-        
+
 
         返回:
 
@@ -189,7 +189,7 @@ class OptimizationDiagnostics:
 
         pass
 
-    
+
 
     def check_numerical_stability(
 
@@ -205,7 +205,7 @@ class OptimizationDiagnostics:
 
         pass
 
-    
+
 
     def check_constraint_feasibility(
 
@@ -292,8 +292,3 @@ class OptimizationDiagnostics:
 
 
 - 诊断规则库需要随优化器与约束体系扩展逐步增量完善；初期可能只覆盖主要数值/约束问题，更多策略特定问题在实施阶段补齐。
-
-
-
-
-

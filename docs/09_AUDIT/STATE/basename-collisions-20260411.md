@@ -76,4 +76,3 @@ responsibility: STATE
 | `SITEMAP.md` | 5 |
 
 | `CHANGELOG.md` | 2 |
-

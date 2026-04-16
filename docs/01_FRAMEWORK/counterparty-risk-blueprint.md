@@ -388,7 +388,7 @@ class CreditRatingModel:
 
     """信用评级模型"""
 
-    
+
 
     def __init__(self):
 
@@ -396,7 +396,7 @@ class CreditRatingModel:
 
         self.rating_adjustment_factors = self._load_adjustment_factors()
 
-        
+
 
     def assess_counterparty(
 
@@ -412,7 +412,7 @@ class CreditRatingModel:
 
         """评估交易对手信用"""
 
-        
+
 
         external_rating = self._map_external_rating(
 
@@ -420,7 +420,7 @@ class CreditRatingModel:
 
         )
 
-        
+
 
         internal_rating = self._calculate_internal_rating(
 
@@ -430,13 +430,13 @@ class CreditRatingModel:
 
         )
 
-        
+
 
         pd = self._calculate_pd(internal_rating)
 
         lgd = self._calculate_lgd(financial_data)
 
-        
+
 
         return CounterpartyInfo(
 
@@ -458,7 +458,7 @@ class CreditRatingModel:
 
         )
 
-    
+
 
     def _calculate_internal_rating(
 
@@ -472,11 +472,11 @@ class CreditRatingModel:
 
         """计算内部评级"""
 
-        
+
 
         score = 0
 
-        
+
 
         leverage = financial_data.get('leverage', 0)
 
@@ -492,7 +492,7 @@ class CreditRatingModel:
 
             score += 10
 
-        
+
 
         profitability = financial_data.get('profitability', 0)
 
@@ -508,7 +508,7 @@ class CreditRatingModel:
 
             score += 10
 
-        
+
 
         liquidity = financial_data.get('liquidity', 0)
 
@@ -524,7 +524,7 @@ class CreditRatingModel:
 
             score += 10
 
-        
+
 
         if score >= 70:
 
@@ -554,7 +554,7 @@ class CreditRatingModel:
 
             return CreditRating.CCC
 
-    
+
 
     def _calculate_pd(
 
@@ -566,7 +566,7 @@ class CreditRatingModel:
 
         """计算违约概率"""
 
-        
+
 
         pd_mapping = {
 
@@ -592,11 +592,11 @@ class CreditRatingModel:
 
         }
 
-        
+
 
         return pd_mapping.get(rating, 0.10)
 
-    
+
 
     def _calculate_lgd(
 
@@ -608,11 +608,11 @@ class CreditRatingModel:
 
         """计算违约损失率"""
 
-        
+
 
         base_lgd = 0.45
 
-        
+
 
         collateral = financial_data.get('collateral_coverage', 0)
 
@@ -628,7 +628,7 @@ class CreditRatingModel:
 
             lgd = base_lgd
 
-        
+
 
         return max(0.1, min(0.9, lgd))
 
@@ -678,7 +678,7 @@ class CVACalculator:
 
     """CVA计算器"""
 
-    
+
 
     def __init__(self):
 
@@ -686,7 +686,7 @@ class CVACalculator:
 
         self.confidence_level = 0.95
 
-        
+
 
     def calculate_cva(
 
@@ -704,11 +704,11 @@ class CVACalculator:
 
         """计算CVA"""
 
-        
+
 
         cva = 0.0
 
-        
+
 
         for i in range(len(exposures)):
 
@@ -718,15 +718,15 @@ class CVACalculator:
 
             df = discount_factors[i]
 
-            
+
 
             cva += (1 - lgd) * ee * pd * df
 
-        
+
 
         return cva
 
-    
+
 
     def calculate_exposure_profile(
 
@@ -740,11 +740,11 @@ class CVACalculator:
 
         """计算敞口曲线"""
 
-        
+
 
         exposures = []
 
-        
+
 
         for t in range(time_horizon):
 
@@ -752,11 +752,11 @@ class CVACalculator:
 
             exposures.append(exposure)
 
-        
+
 
         return exposures
 
-    
+
 
     def _simulate_exposure(
 
@@ -770,11 +770,11 @@ class CVACalculator:
 
         """模拟敞口"""
 
-        
+
 
         total_exposure = 0.0
 
-        
+
 
         for position in positions:
 
@@ -782,7 +782,7 @@ class CVACalculator:
 
             volatility = position['volatility']
 
-            
+
 
             simulated_value = notional * np.exp(
 
@@ -790,11 +790,11 @@ class CVACalculator:
 
             )
 
-            
+
 
             total_exposure += max(0, simulated_value)
 
-        
+
 
         return total_exposure
 
@@ -1121,4 +1121,3 @@ class CollateralInfo:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

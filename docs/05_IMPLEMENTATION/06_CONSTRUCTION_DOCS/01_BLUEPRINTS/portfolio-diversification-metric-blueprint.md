@@ -17,7 +17,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -169,7 +169,7 @@ class DiversificationMetrics:
 
     """
 
-    
+
 
     def effective_number_assets(
 
@@ -181,11 +181,11 @@ class DiversificationMetrics:
 
         """
 
-        
+
 
         ENP = 1 / sum(w_i^2)
 
-        
+
 
         衡量组合中有效持有的资产数量
 
@@ -193,7 +193,7 @@ class DiversificationMetrics:
 
         pass
 
-    
+
 
     def diversification_ratio(
 
@@ -209,17 +209,17 @@ class DiversificationMetrics:
 
         """
 
-        
+
 
         DR = sum(w_i * sigma_i) / sigma_p
 
-        
+
 
         """
 
         pass
 
-    
+
 
     def concentration_index(
 
@@ -233,13 +233,13 @@ class DiversificationMetrics:
 
         """
 
-        
+
 
         """
 
         pass
 
-    
+
 
     def correlation_diversification(
 
@@ -251,13 +251,13 @@ class DiversificationMetrics:
 
         """
 
-        
+
 
         """
 
         pass
 
-    
+
 
     def entropy_index(
 
@@ -269,11 +269,11 @@ class DiversificationMetrics:
 
         """
 
-        
+
 
         H = -sum(w_i * log(w_i))
 
-        
+
 
         """
 
@@ -303,7 +303,7 @@ diversification_metrics:
 
     warning_threshold: 10
 
-    
+
 
   dr:
 
@@ -311,7 +311,7 @@ diversification_metrics:
 
     target: 1.5
 
-    
+
 
   concentration:
 
@@ -412,8 +412,3 @@ diversification_metrics:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-
-
-
-
-

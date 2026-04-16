@@ -274,13 +274,13 @@ class MultiPeriodOptimizer:
 
         self.n_periods = n_periods
 
-    
+
 
     def optimize_multi_period(self, returns, cov_matrices, risk_aversion=1.0):
 
         weights = [cp.Variable(self.n_assets) for _ in range(self.n_periods)]
 
-        
+
 
         objective = 0
 
@@ -292,7 +292,7 @@ class MultiPeriodOptimizer:
 
             objective += portfolio_return - risk_aversion * portfolio_risk
 
-        
+
 
         constraints = []
 
@@ -302,7 +302,7 @@ class MultiPeriodOptimizer:
 
             constraints.append(weights[t] >= 0)
 
-        
+
 
         for t in range(self.n_periods - 1):
 
@@ -310,23 +310,23 @@ class MultiPeriodOptimizer:
 
             constraints.append(turnover <= 0.2)
 
-        
+
 
         problem = cp.Problem(cp.Maximize(objective), constraints)
 
         problem.solve()
 
-        
+
 
         return [w.value for w in weights]
 
-    
+
 
     def optimize_with_transaction_costs(self, returns, cov_matrices, transaction_costs):
 
         weights = [cp.Variable(self.n_assets) for _ in range(self.n_periods)]
 
-        
+
 
         objective = 0
 
@@ -338,7 +338,7 @@ class MultiPeriodOptimizer:
 
             objective += portfolio_return - portfolio_risk
 
-            
+
 
             if t > 0:
 
@@ -346,7 +346,7 @@ class MultiPeriodOptimizer:
 
                 objective -= transaction_cost
 
-        
+
 
         constraints = []
 
@@ -356,13 +356,13 @@ class MultiPeriodOptimizer:
 
             constraints.append(weights[t] >= 0)
 
-        
+
 
         problem = cp.Problem(cp.Maximize(objective), constraints)
 
         problem.solve()
 
-        
+
 
         return [w.value for w in weights]
 
@@ -410,7 +410,7 @@ class MultiPeriodPortfolioOpt:
 
         self.price_data = price_data
 
-    
+
 
     def optimize_for_horizon(self, horizon_days):
 
@@ -438,29 +438,29 @@ class MultiPeriodPortfolioOpt:
 
             S = risk_models.sample_cov(returns)
 
-        
+
 
         ef = EfficientFrontier(mu, S)
 
         ef.add_objective(objective_functions.L2_reg, gamma=0.1)
 
-        
+
 
         weights = ef.max_sharpe()
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         return cleaned_weights
 
-    
+
 
     def optimize_multi_horizon(self, horizons=[5, 20, 60]):
 
         horizon_weights = {}
 
-        
+
 
         for horizon in horizons:
 
@@ -468,7 +468,7 @@ class MultiPeriodPortfolioOpt:
 
             horizon_weights[horizon] = weights
 
-        
+
 
         return horizon_weights
 
@@ -494,7 +494,7 @@ class MultiPeriodCoordinator:
 
         self.horizon_weights = {}
 
-    
+
 
     def coordinate_optimization(self, horizon_optimizers):
 
@@ -504,21 +504,21 @@ class MultiPeriodCoordinator:
 
             self.horizon_weights[horizon] = weights
 
-        
+
 
         final_weights = self._aggregate_weights()
 
-        
+
 
         return final_weights
 
-    
+
 
     def _aggregate_weights(self):
 
         total_weight = np.zeros(len(list(self.horizon_weights.values())[0]))
 
-        
+
 
         for horizon, weights in self.horizon_weights.items():
 
@@ -534,15 +534,15 @@ class MultiPeriodCoordinator:
 
                 weight_factor = 0.3
 
-            
+
 
             total_weight += weight_factor * np.array(list(weights.values()))
 
-        
+
 
         total_weight /= np.sum(total_weight)
 
-        
+
 
         return total_weight
 
@@ -564,13 +564,13 @@ class DynamicWeightAdjuster:
 
         self.last_adjustment = None
 
-    
+
 
     def adjust_weights(self, current_weights, market_conditions, performance_metrics):
 
         adjusted_weights = current_weights.copy()
 
-        
+
 
         if self._should_adjust(market_conditions, performance_metrics):
 
@@ -578,27 +578,27 @@ class DynamicWeightAdjuster:
 
             trend = market_conditions['trend']
 
-            
+
 
             if volatility > 0.02:
 
                 adjusted_weights = self._reduce_risk(adjusted_weights, 0.1)
 
-            
+
 
             if trend < -0.05:
 
                 adjusted_weights = self._defensive_position(adjusted_weights)
 
-            
+
 
             self.last_adjustment = datetime.now()
 
-        
+
 
         return adjusted_weights
 
-    
+
 
     def _should_adjust(self, market_conditions, performance_metrics):
 
@@ -606,11 +606,11 @@ class DynamicWeightAdjuster:
 
             return True
 
-        
+
 
         time_since_last = datetime.now() - self.last_adjustment
 
-        
+
 
         if self.adjustment_frequency == 'daily':
 
@@ -620,7 +620,7 @@ class DynamicWeightAdjuster:
 
             return time_since_last.days >= 7
 
-        
+
 
         return False
 
@@ -977,4 +977,3 @@ portfolio_performance = Gauge(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

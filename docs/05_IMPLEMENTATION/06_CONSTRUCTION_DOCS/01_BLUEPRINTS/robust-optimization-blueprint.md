@@ -21,7 +21,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -161,11 +161,11 @@ class UncertaintySetBuilder:
 
     不确定性集合构建器
 
-    
+
 
     """
 
-    
+
 
     def build_return_uncertainty(
 
@@ -181,7 +181,7 @@ class UncertaintySetBuilder:
 
         """
 
-        
+
 
         参数:
 
@@ -189,7 +189,7 @@ class UncertaintySetBuilder:
 
             confidence: 置信水平
 
-            
+
 
         返回:
 
@@ -201,7 +201,7 @@ class UncertaintySetBuilder:
 
         pass
 
-    
+
 
     def build_covariance_uncertainty(
 
@@ -217,7 +217,7 @@ class UncertaintySetBuilder:
 
         """
 
-        
+
 
         """
 
@@ -237,19 +237,19 @@ class WorstCaseOptimizer:
 
 况优化器
 
-    
+
 
 min max f(w, )
 
     w  θ∈U
 
-    
+
 
     在最坏参数下优化
 
     """
 
-    
+
 
     def optimize_worst_case(
 
@@ -265,13 +265,13 @@ min max f(w, )
 
         """
 
-        
+
 
         参数:
 
             risk_aversion: 风险厌恶系数
 
-            
+
 
         返回:
 
@@ -293,11 +293,11 @@ class DistributionallyRobustOptimizer:
 
     """
 
-    
+
 
     """
 
-    
+
 
     def optimize_dro_cvar(
 
@@ -315,7 +315,7 @@ class DistributionallyRobustOptimizer:
 
         分布鲁棒CVaR优化
 
-        
+
 
         参数:
 
@@ -325,7 +325,7 @@ class DistributionallyRobustOptimizer:
 
             wasserstein_radius: Wasserstein距离半径
 
-            
+
 
         返回:
 
@@ -349,11 +349,11 @@ class SensitivityAnalyzer:
 
     敏感性分析器
 
-    
+
 
     """
 
-    
+
 
     def analyze_return_sensitivity(
 
@@ -369,7 +369,7 @@ class SensitivityAnalyzer:
 
         """
 
-        
+
 
         参数:
 
@@ -377,7 +377,7 @@ class SensitivityAnalyzer:
 
             expected_returns: 基准收益
 
-            
+
 
         返回:
 
@@ -385,7 +385,7 @@ class SensitivityAnalyzer:
 
         pass
 
-    
+
 
     def analyze_covariance_sensitivity(
 
@@ -423,11 +423,11 @@ class RobustOptimizer:
 
     """
 
-    
+
 
     """
 
-    
+
 
     def __init__(
 
@@ -441,7 +441,7 @@ class RobustOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -457,7 +457,7 @@ class RobustOptimizer:
 
         self.sensitivity_analyzer = SensitivityAnalyzer()
 
-    
+
 
     def optimize(
 
@@ -503,7 +503,7 @@ robust_optimization:
 
     n_samples: 1000
 
-    
+
 
   # 鲁棒优化方法
 
@@ -513,7 +513,7 @@ robust_optimization:
 
     wasserstein_radius: 0.1
 
-    
+
 
   sensitivity:
 
@@ -618,8 +618,3 @@ robust_optimization:
 
 
 - 不确定性集合与参数校准口径会显著影响输出；实施阶段需在契约真源或子契约中固化默认口径、验证方法与降级策略。
-
-
-
-
-

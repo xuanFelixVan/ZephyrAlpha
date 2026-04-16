@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: Pandas + Great Expectations  
+**主方案**: Pandas + Great Expectations
 
 **集成**: 集成到数据管理模块
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

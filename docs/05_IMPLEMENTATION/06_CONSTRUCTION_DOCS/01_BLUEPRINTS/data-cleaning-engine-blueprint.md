@@ -19,7 +19,7 @@ compliance_level: 专业标准
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据清洗引擎、数据质量检测、异常值处理
 
@@ -215,7 +215,7 @@ graph TB
 
     end
 
-    
+
 
 subgraph "
 
@@ -229,7 +229,7 @@ subgraph "
 
         B --> F[格式标准化器]
 
-        
+
 
 C --> G[
 
@@ -243,7 +243,7 @@ C --> G[
 
     end
 
-    
+
 
 G --> H[
 
@@ -257,7 +257,7 @@ G --> I[
 
     end
 
-    
+
 
 subgraph "
 
@@ -295,7 +295,7 @@ class AnomalyDetector:
 
     """异常值检测器"""
 
-    
+
 
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
 
@@ -315,23 +315,23 @@ class AnomalyDetector:
 
         }
 
-    
+
 
     def detect_anomalies(self, df, columns: List[str], method: str = 'zscore'):
 
         """
 
-        
+
 
         Args:
 
             df: Spark DataFrame
 
-        
+
 
         Returns:
 
-            DataFrame: 
+            DataFrame:
 
 含异常值标记的DataFrame
 
@@ -341,11 +341,11 @@ class AnomalyDetector:
 
         if not detector:
 
-        
+
 
         return detector(df, columns)
 
-    
+
 
     def _zscore_detection(self, df, columns: List[str], threshold: float = 3.0):
 
@@ -359,13 +359,13 @@ class AnomalyDetector:
 
             ).collect()[0]
 
-            
+
 
             mean_val = stats['mean']
 
             std_val = stats['std']
 
-            
+
 
             if std_val and std_val > 0:
 
@@ -383,11 +383,11 @@ class AnomalyDetector:
 
                 )
 
-        
+
 
         return df
 
-    
+
 
     def _iqr_detection(self, df, columns: List[str], multiplier: float = 1.5):
 
@@ -399,13 +399,13 @@ class AnomalyDetector:
 
             iqr = q3 - q1
 
-            
+
 
             lower_bound = q1 - multiplier * iqr
 
             upper_bound = q3 + multiplier * iqr
 
-            
+
 
             df = df.withColumn(
 
@@ -421,11 +421,11 @@ class AnomalyDetector:
 
             )
 
-        
+
 
         return df
 
-    
+
 
     def _isolation_forest_detection(self, df, columns: List[str], contamination: float = 0.1):
 
@@ -433,7 +433,7 @@ class AnomalyDetector:
 
         from pyspark.ml.iforest import IsolationForest
 
-        
+
 
         # 准备特征向量
 
@@ -447,7 +447,7 @@ class AnomalyDetector:
 
         df_features = assembler.transform(df)
 
-        
+
 
         # 训练Isolation Forest模型
 
@@ -465,15 +465,15 @@ class AnomalyDetector:
 
         )
 
-        
+
 
         model = iforest.fit(df_features)
 
-        
+
 
         predictions = model.transform(df_features)
 
-        
+
 
         return predictions.withColumn(
 
@@ -483,7 +483,7 @@ class AnomalyDetector:
 
         )
 
-    
+
 
     def _dbscan_detection(self, df, columns: List[str], eps: float = 0.5, min_samples: int = 5):
 
@@ -491,7 +491,7 @@ class AnomalyDetector:
 
         from pyspark.ml.clustering import DBSCAN
 
-        
+
 
         # 准备特征向量
 
@@ -505,7 +505,7 @@ class AnomalyDetector:
 
         df_features = assembler.transform(df)
 
-        
+
 
         # DBSCAN聚类
 
@@ -521,13 +521,13 @@ class AnomalyDetector:
 
         )
 
-        
+
 
         model = dbscan.fit(df_features)
 
         predictions = model.transform(df_features)
 
-        
+
 
         return predictions.withColumn(
 
@@ -561,7 +561,7 @@ class MissingValueHandler:
 
     """缺失值处理器"""
 
-    
+
 
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
 
@@ -589,13 +589,13 @@ class MissingValueHandler:
 
         }
 
-    
+
 
     def handle_missing_values(self, df, strategy_config: Dict[str, str]):
 
         """
 
-        
+
 
         Args:
 
@@ -603,7 +603,7 @@ class MissingValueHandler:
 
 
 
-        
+
 
         Returns:
 
@@ -621,21 +621,21 @@ class MissingValueHandler:
 
 策略: {strategy}")
 
-            
+
 
             df = handler(df, col_name)
 
-        
+
 
         return df
 
-    
+
 
     def _drop_missing(self, df, col_name: str):
 
         return df.dropna(subset=[col_name])
 
-    
+
 
     def _fill_with_mean(self, df, col_name: str):
 
@@ -645,7 +645,7 @@ class MissingValueHandler:
 
         return df.fillna({col_name: mean_val})
 
-    
+
 
     def _fill_with_median(self, df, col_name: str):
 
@@ -655,7 +655,7 @@ class MissingValueHandler:
 
         return df.fillna({col_name: median_val})
 
-    
+
 
     def _fill_with_mode(self, df, col_name: str):
 
@@ -667,7 +667,7 @@ class MissingValueHandler:
 
         return df.fillna({col_name: mode_val})
 
-    
+
 
     def _forward_fill(self, df, col_name: str, order_col: str = 'timestamp'):
 
@@ -677,7 +677,7 @@ class MissingValueHandler:
 
         window = Window.orderBy(order_col).rowsBetween(Window.unboundedPreceding, 0)
 
-        
+
 
         return df.withColumn(
 
@@ -693,7 +693,7 @@ class MissingValueHandler:
 
         )
 
-    
+
 
     def _backward_fill(self, df, col_name: str, order_col: str = 'timestamp'):
 
@@ -703,7 +703,7 @@ class MissingValueHandler:
 
         window = Window.orderBy(order_col).rowsBetween(0, Window.unboundedFollowing)
 
-        
+
 
         return df.withColumn(
 
@@ -719,7 +719,7 @@ class MissingValueHandler:
 
         )
 
-    
+
 
     def _interpolation(self, df, col_name: str, order_col: str = 'timestamp', method: str = 'linear'):
 
@@ -729,13 +729,13 @@ class MissingValueHandler:
 
         import pyspark.sql.functions as F
 
-        
+
 
         window_before = Window.orderBy(order_col).rowsBetween(Window.unboundedPreceding, -1)
 
         window_after = Window.orderBy(order_col).rowsBetween(1, Window.unboundedFollowing)
 
-        
+
 
         df = df.withColumn(
 
@@ -763,7 +763,7 @@ class MissingValueHandler:
 
         )
 
-        
+
 
         if method == 'linear':
 
@@ -775,11 +775,11 @@ class MissingValueHandler:
 
                     col(col_name).isNull(),
 
-                    col('prev_value') + 
+                    col('prev_value') +
 
-                    (col('next_value') - col('prev_value')) * 
+                    (col('next_value') - col('prev_value')) *
 
-                    (col(order_col) - col('prev_time')) / 
+                    (col(order_col) - col('prev_time')) /
 
                     (col('next_time') - col('prev_time'))
 
@@ -787,11 +787,11 @@ class MissingValueHandler:
 
             )
 
-        
+
 
         return df.drop('prev_value', 'next_value', 'prev_time', 'next_time')
 
-    
+
 
     def _ml_prediction(self, df, col_name: str, feature_cols: List[str]):
 
@@ -803,7 +803,7 @@ class MissingValueHandler:
 
         from pyspark.ml.regression import RandomForestRegressor
 
-        
+
 
         # 分离有值和无值的数据
 
@@ -811,7 +811,7 @@ class MissingValueHandler:
 
         df_missing = df.filter(col(col_name).isNull())
 
-        
+
 
         # 训练模型
 
@@ -823,11 +823,11 @@ class MissingValueHandler:
 
         )
 
-        
+
 
         train_data = assembler.transform(df_with_value)
 
-        
+
 
         rf = RandomForestRegressor(
 
@@ -843,17 +843,17 @@ class MissingValueHandler:
 
         )
 
-        
+
 
         model = rf.fit(train_data)
 
-        
+
 
         test_data = assembler.transform(df_missing)
 
         predictions = model.transform(test_data)
 
-        
+
 
         # 合并结果
 
@@ -877,7 +877,7 @@ from typing import Dict, List, Any
 
 class DuplicateRemover:
 
-    
+
 
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
 
@@ -897,7 +897,7 @@ class DuplicateRemover:
 
         }
 
-    
+
 
     def remove_duplicates(self, df, method: str = 'exact', **kwargs):
 
@@ -905,7 +905,7 @@ class DuplicateRemover:
 
         去除重复数据
 
-        
+
 
         Args:
 
@@ -915,7 +915,7 @@ class DuplicateRemover:
 
             **kwargs: 方法参数
 
-        
+
 
         Returns:
 
@@ -929,11 +929,11 @@ class DuplicateRemover:
 
             raise ValueError(f"不支持的去重方法: {method}")
 
-        
+
 
         return remover(df, **kwargs)
 
-    
+
 
     def _exact_dedup(self, df, subset: List[str] = None):
 
@@ -941,7 +941,7 @@ class DuplicateRemover:
 
         return df.dropDuplicates(subset=subset)
 
-    
+
 
     def _hash_dedup(self, df, columns: List[str]):
 
@@ -955,13 +955,13 @@ class DuplicateRemover:
 
         )
 
-        
+
 
         # 去重
 
         return df.dropDuplicates(['hash_key']).drop('hash_key')
 
-    
+
 
     def _fuzzy_dedup(self, df, columns: List[str], threshold: float = 0.9):
 
@@ -971,7 +971,7 @@ class DuplicateRemover:
 
         from pyspark.sql.types import FloatType
 
-        
+
 
         for col_name in columns:
 
@@ -979,7 +979,7 @@ class DuplicateRemover:
 
             df = tokenizer.transform(df)
 
-            
+
 
             hashingTF = HashingTF(
 
@@ -993,7 +993,7 @@ class DuplicateRemover:
 
             df = hashingTF.transform(df)
 
-        
+
 
 ?
 
@@ -1007,11 +1007,11 @@ class DuplicateRemover:
 
         )
 
-        
+
 
         model = mh.fit(df)
 
-        
+
 
         similar_pairs = model.approxSimilarityJoin(
 
@@ -1019,17 +1019,17 @@ class DuplicateRemover:
 
         ).filter(col("distance") < (1 - threshold))
 
-        
+
 
         # 标记重复记录
 
         duplicate_ids = similar_pairs.select("datasetB.id").distinct()
 
-        
+
 
         return df.join(duplicate_ids, on="id", how="left_anti")
 
-    
+
 
     def _time_window_dedup(self, df, time_col: str, window_size: str = '1 hour'):
 
@@ -1039,7 +1039,7 @@ class DuplicateRemover:
 
         import pyspark.sql.functions as F
 
-        
+
 
         window = Window.partitionBy(
 
@@ -1047,7 +1047,7 @@ class DuplicateRemover:
 
         ).orderBy(col(time_col))
 
-        
+
 
         return df.withColumn(
 
@@ -1083,7 +1083,7 @@ from typing import Dict, List
 
 class GreatExpectationsCleaner:
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -1093,7 +1093,7 @@ class GreatExpectationsCleaner:
 
         self.expectation_suite = self._load_expectation_suite()
 
-    
+
 
     def _load_expectation_suite(self):
 
@@ -1101,7 +1101,7 @@ class GreatExpectationsCleaner:
 
         suite_name = self.config.get('suite_name', 'data_cleaning_suite')
 
-        
+
 
         try:
 
@@ -1115,7 +1115,7 @@ class GreatExpectationsCleaner:
 
             return self._build_default_expectations(suite)
 
-    
+
 
     def _build_default_expectations(self, suite):
 
@@ -1137,7 +1137,7 @@ class GreatExpectationsCleaner:
 
         )
 
-        
+
 
         # 数量数据期望
 
@@ -1155,7 +1155,7 @@ class GreatExpectationsCleaner:
 
         )
 
-        
+
 
         suite.add_expectation(
 
@@ -1167,11 +1167,11 @@ class GreatExpectationsCleaner:
 
         )
 
-        
+
 
         return suite
 
-    
+
 
     def validate_and_clean(self, df):
 
@@ -1179,7 +1179,7 @@ class GreatExpectationsCleaner:
 
         gx_df = SparkDFDataset(df)
 
-        
+
 
         # 运行验证
 
@@ -1191,7 +1191,7 @@ class GreatExpectationsCleaner:
 
         )
 
-        
+
 
 洗数据
 
@@ -1199,11 +1199,11 @@ class GreatExpectationsCleaner:
 
             df = self._apply_cleaning_rules(df, results)
 
-        
+
 
         return df, results
 
-    
+
 
     def _apply_cleaning_rules(self, df, validation_results):
 
@@ -1217,7 +1217,7 @@ class GreatExpectationsCleaner:
 
                 column = result.expectation_config.kwargs.get('column')
 
-                
+
 
                 if expectation_type == 'expect_column_values_to_be_between':
 
@@ -1225,7 +1225,7 @@ class GreatExpectationsCleaner:
 
                     max_val = result.expectation_config.kwargs.get('max_value')
 
-                    
+
 
                     df = df.filter(
 
@@ -1233,13 +1233,13 @@ class GreatExpectationsCleaner:
 
                     )
 
-                
+
 
                 elif expectation_type == 'expect_column_values_to_not_be_null':
 
                     df = df.dropna(subset=[column])
 
-        
+
 
         return df
 
@@ -1263,7 +1263,7 @@ from typing import Dict, List, Any
 
 class SparkDataCleaner:
 
-    
+
 
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
 
@@ -1277,7 +1277,7 @@ class SparkDataCleaner:
 
         self.duplicate_remover = DuplicateRemover(spark, config)
 
-    
+
 
     def clean_data(self, df, cleaning_config: Dict[str, Any]):
 
@@ -1285,7 +1285,7 @@ class SparkDataCleaner:
 
 洗
 
-        
+
 
         Args:
 
@@ -1293,7 +1293,7 @@ DataFrame
 
 cleaning_config:
 
-        
+
 
         Returns:
 
@@ -1321,7 +1321,7 @@ Dict:
 
         }
 
-        
+
 
         # 1. 异常值检测和处理
 
@@ -1337,7 +1337,7 @@ Dict:
 
             )
 
-            
+
 
             anomaly_cols = [c for c in df.columns if c.endswith('_is_anomaly')]
 
@@ -1349,7 +1349,7 @@ Dict:
 
                 report['anomalies_removed'] += before_count - df.count()
 
-        
+
 
         if cleaning_config.get('handle_missing', False):
 
@@ -1365,7 +1365,7 @@ Dict:
 
             report['missing_values_filled'] = before_count - df.count()
 
-        
+
 
         # 3. 重复数据去重
 
@@ -1385,11 +1385,11 @@ Dict:
 
             report['duplicates_removed'] = before_count - df.count()
 
-        
+
 
         report['output_count'] = df.count()
 
-        
+
 
         return df, report
 
@@ -1509,7 +1509,7 @@ cleaning_rules:
 
     action: remove
 
-  
+
 
   - name: volume_positive_check
 
@@ -1519,7 +1519,7 @@ cleaning_rules:
 
     action: remove
 
-  
+
 
   - name: timestamp_not_null
 
@@ -1549,7 +1549,7 @@ class CleaningConfigLoader:
 
 """
 
-    
+
 
     def __init__(self, config_path: str):
 
@@ -1557,7 +1557,7 @@ class CleaningConfigLoader:
 
         self.config = self._load_config()
 
-    
+
 
     def _load_config(self) -> Dict[str, Any]:
 
@@ -1565,31 +1565,31 @@ class CleaningConfigLoader:
 
             return yaml.safe_load(f)
 
-    
+
 
     def get_anomaly_config(self) -> Dict[str, Any]:
 
         return self.config.get('anomaly_detection', {})
 
-    
+
 
     def get_missing_config(self) -> Dict[str, Any]:
 
         return self.config.get('missing_value_handling', {})
 
-    
+
 
     def get_dedup_config(self) -> Dict[str, Any]:
 
         return self.config.get('duplicate_removal', {})
 
-    
+
 
     def get_format_config(self) -> Dict[str, Any]:
 
         return self.config.get('format_standardization', {})
 
-    
+
 
     def get_cleaning_rules(self) -> List[Dict[str, Any]]:
 
@@ -1647,7 +1647,7 @@ services:
 
       - ./config:/config
 
-  
+
 
   spark-worker:
 
@@ -1671,7 +1671,7 @@ services:
 
       - ./config:/config
 
-  
+
 
   data-cleaning-engine:
 
@@ -1929,25 +1929,25 @@ def clean_data_with_cache(df, cleaning_config):
 
     df.cache()
 
-    
+
 
 洗
 
     cleaned_df = cleaner.clean_data(df, cleaning_config)
 
-    
+
 
 洗后的数据
 
     cleaned_df.cache()
 
-    
+
 
     # 释放原始数据缓存
 
     df.unpersist()
 
-    
+
 
     return cleaned_df
 
@@ -2027,13 +2027,13 @@ def monitor_cleaning(func):
 
         cleaning_counter.inc()
 
-        
+
 
         with cleaning_duration.time():
 
             result = func(*args, **kwargs)
 
-        
+
 
         # 更新监控指标
 
@@ -2051,11 +2051,11 @@ def monitor_cleaning(func):
 
             )
 
-        
+
 
         return result
 
-    
+
 
     return wrapper
 
@@ -2188,10 +2188,3 @@ def monitor_cleaning(func):
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

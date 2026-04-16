@@ -36,7 +36,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -96,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﮔﮔﺁﻝ?*: 
+- **ﮔﮔﺁﻝ?*:
 
 
 
@@ -116,7 +116,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻠ۱ﮔﻛﭨ?*: 
+- **ﻠ۱ﮔﻛﭨ?*:
 
 
 
@@ -350,7 +350,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*:
 
 
 
@@ -374,7 +374,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -664,7 +664,7 @@ class PositionRepository:
 
 
 
-    
+
 
 
 
@@ -684,7 +684,7 @@ class PositionRepository:
 
 
 
-    
+
 
 
 
@@ -728,7 +728,7 @@ class PositionRepository:
 
 
 
-    
+
 
 
 
@@ -772,7 +772,7 @@ class PositionRepository:
 
 
 
-        
+
 
 
 
@@ -804,7 +804,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -824,7 +824,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -888,7 +888,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -904,7 +904,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -984,7 +984,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -1012,7 +1012,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1028,7 +1028,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-            
+
 
 
 
@@ -1048,7 +1048,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-        
+
 
 
 
@@ -1132,7 +1132,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-        
+
 
 
 
@@ -1144,7 +1144,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-        
+
 
 
 
@@ -1232,7 +1232,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-        
+
 
 
 
@@ -1240,7 +1240,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-    
+
 
 
 
@@ -1304,7 +1304,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
 
 
 
-        
+
 
 
 
@@ -1356,7 +1356,7 @@ position_pct: ﻛﭨﻛﺛﮒﮔﺁ
 
 
 
-            
+
 
 
 
@@ -1376,7 +1376,7 @@ position_pct: ﻛﭨﻛﺛﮒﮔﺁ
 
 
 
-        
+
 
 
 
@@ -1460,7 +1460,7 @@ position_pct: ﻛﭨﻛﺛﮒﮔﺁ
 
 
 
-        
+
 
 
 
@@ -1472,7 +1472,7 @@ position_pct: ﻛﭨﻛﺛﮒﮔﺁ
 
 
 
-        
+
 
 
 
@@ -1496,7 +1496,7 @@ class PositionCache:
 
 
 
-    
+
 
 
 
@@ -1536,7 +1536,7 @@ class PositionCache:
 
 
 
-    
+
 
 
 
@@ -1564,7 +1564,7 @@ class PositionCache:
 
 
 
-        
+
 
 
 
@@ -1580,7 +1580,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -1604,7 +1604,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1620,7 +1620,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1628,7 +1628,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -1656,7 +1656,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1680,7 +1680,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1760,7 +1760,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1768,7 +1768,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -1796,7 +1796,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1840,7 +1840,7 @@ class PositionCalculator:
 
 
 
-    
+
 
 
 
@@ -1852,7 +1852,7 @@ class PositionCalculator:
 
 
 
-    
+
 
 
 
@@ -1880,7 +1880,7 @@ class PositionCalculator:
 
 
 
-        
+
 
 
 
@@ -1896,7 +1896,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -1916,7 +1916,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -1948,7 +1948,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -1968,7 +1968,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -1988,7 +1988,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -2016,7 +2016,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2032,7 +2032,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2056,7 +2056,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2064,7 +2064,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -2092,7 +2092,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2108,7 +2108,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2132,7 +2132,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2156,7 +2156,7 @@ class PositionUpdater:
 
 
 
-    
+
 
 
 
@@ -2200,7 +2200,7 @@ class PositionUpdater:
 
 
 
-    
+
 
 
 
@@ -2244,7 +2244,7 @@ class PositionUpdater:
 
 
 
-        
+
 
 
 
@@ -2276,7 +2276,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2296,7 +2296,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2332,7 +2332,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -2376,7 +2376,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2408,7 +2408,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2428,7 +2428,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2440,7 +2440,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2456,7 +2456,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2476,7 +2476,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2532,7 +2532,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2612,7 +2612,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2620,7 +2620,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2648,7 +2648,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2668,7 +2668,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2724,7 +2724,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2804,7 +2804,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2812,7 +2812,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2820,7 +2820,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -2864,7 +2864,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2896,7 +2896,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2920,7 +2920,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2928,7 +2928,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2940,7 +2940,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2948,7 +2948,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2960,7 +2960,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2980,7 +2980,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3036,7 +3036,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3116,7 +3116,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3124,7 +3124,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3148,7 +3148,7 @@ class PositionQuery:
 
 
 
-    
+
 
 
 
@@ -3184,7 +3184,7 @@ class PositionQuery:
 
 
 
-    
+
 
 
 
@@ -3212,7 +3212,7 @@ class PositionQuery:
 
 
 
-        
+
 
 
 
@@ -3228,7 +3228,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3248,7 +3248,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3260,7 +3260,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3268,7 +3268,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3288,7 +3288,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3296,7 +3296,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -3320,7 +3320,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3332,7 +3332,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3368,7 +3368,7 @@ class RiskController:
 
 
 
-    
+
 
 
 
@@ -3384,7 +3384,7 @@ class RiskController:
 
 
 
-    
+
 
 
 
@@ -3412,7 +3412,7 @@ class RiskController:
 
 
 
-        
+
 
 
 
@@ -3428,7 +3428,7 @@ class RiskController:
 
 
 
-            
+
 
 
 
@@ -3448,7 +3448,7 @@ class RiskController:
 
 
 
-    
+
 
 
 
@@ -3484,7 +3484,7 @@ class RiskController:
 
 
 
-        
+
 
 
 
@@ -3508,7 +3508,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -3532,7 +3532,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3540,7 +3540,7 @@ current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3564,7 +3564,7 @@ class PositionManager:
 
 
 
-    
+
 
 
 
@@ -3576,7 +3576,7 @@ class PositionManager:
 
 
 
-        
+
 
 
 
@@ -3604,7 +3604,7 @@ class PositionManager:
 
 
 
-        
+
 
 
 
@@ -3612,7 +3612,7 @@ class PositionManager:
 
 
 
-    
+
 
 
 
@@ -3656,7 +3656,7 @@ class PositionManager:
 
 
 
-        
+
 
 
 
@@ -3688,7 +3688,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -3716,7 +3716,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -3744,7 +3744,7 @@ price: ﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -3760,7 +3760,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3780,7 +3780,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -3804,7 +3804,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3816,7 +3816,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3836,7 +3836,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -3860,7 +3860,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3872,7 +3872,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3896,7 +3896,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -3932,7 +3932,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3956,7 +3956,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -3976,7 +3976,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -3988,7 +3988,7 @@ stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -4316,7 +4316,7 @@ def calculate_unrealized_pnl(
 
 
 
-    
+
 
 
 
@@ -4328,7 +4328,7 @@ def calculate_unrealized_pnl(
 
 
 
-    
+
 
 
 
@@ -4404,7 +4404,7 @@ def update_position_from_trade(
 
 
 
-    
+
 
 
 
@@ -4428,7 +4428,7 @@ def update_position_from_trade(
 
 
 
-    
+
 
 
 
@@ -4444,7 +4444,7 @@ def update_position_from_trade(
 
 
 
-    
+
 
 
 
@@ -4688,7 +4688,7 @@ def test_position_manager_integration():
 
 
 
-    
+
 
 
 
@@ -4696,7 +4696,7 @@ def test_position_manager_integration():
 
 
 
-    
+
 
 
 
@@ -4732,7 +4732,7 @@ def test_position_manager_integration():
 
 
 
-    
+
 
 
 
@@ -5016,7 +5016,7 @@ position_manager:
 
 
 
-  
+
 
 
 
@@ -5040,7 +5040,7 @@ position_manager:
 
 
 
-  
+
 
 
 
@@ -5052,7 +5052,7 @@ position_manager:
 
 
 
-  
+
 
 
 
@@ -5129,6 +5129,3 @@ position_manager:
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
-
-
-

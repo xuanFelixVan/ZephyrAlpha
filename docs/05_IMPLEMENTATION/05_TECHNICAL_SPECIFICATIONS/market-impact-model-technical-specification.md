@@ -179,7 +179,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -301,7 +301,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -373,7 +373,7 @@ implementation_status: 设计阶段
 
 
 
-  - 市场冲击模型训练和维?  - 实时冲击预测和成本估?  - 冲击监控和预?  - 模型性能评估和优?  
+  - 市场冲击模型训练和维?  - 实时冲击预测和成本估?  - 冲击监控和预?  - 模型性能评估和优?
 
 
 
@@ -817,7 +817,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -871,7 +871,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -901,7 +901,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -919,7 +919,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -949,7 +949,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1003,7 +1003,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1039,7 +1039,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1069,7 +1069,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1117,7 +1117,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1147,7 +1147,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1171,7 +1171,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1219,7 +1219,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1243,7 +1243,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            validation_split: 验证集比?            
+            validation_split: 验证集比?
 
 
 
@@ -1273,7 +1273,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1315,7 +1315,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1333,7 +1333,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1363,7 +1363,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1399,7 +1399,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1447,7 +1447,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1495,7 +1495,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        
+
 
 
 
@@ -1519,7 +1519,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            
+
 
 
 
@@ -1549,7 +1549,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-    
+
 
 
 
@@ -1585,7 +1585,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-        设置冲击预警?        
+        设置冲击预警?
 
 
 
@@ -1603,7 +1603,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-            threshold_bps: 冲击阈值（基点?            
+            threshold_bps: 冲击阈值（基点?
 
 
 
@@ -1897,7 +1897,7 @@ class MarketImpactModelAPI(ABC):
 
 
 
-- **认证方式**: API密钥认证（与其他模块共享?- **授权机制**: 基于角色的权限控制（RBAC?- **数据加密**: 
+- **认证方式**: API密钥认证（与其他模块共享?- **授权机制**: 基于角色的权限控制（RBAC?- **数据加密**:
 
 
 
@@ -3962,8 +3962,3 @@ class MarketImpactModelAPI(ABC):
 
 
 **文档结束**
-
-
-
-
-

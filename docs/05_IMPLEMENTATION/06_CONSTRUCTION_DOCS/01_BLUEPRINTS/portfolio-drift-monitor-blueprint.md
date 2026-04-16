@@ -190,7 +190,7 @@ from scipy import stats
 
 class PortfolioDriftMonitor:
 
-    def __init__(self, target_weights, drift_threshold=0.05, 
+    def __init__(self, target_weights, drift_threshold=0.05,
 
                  rebalance_threshold=0.10):
 
@@ -202,7 +202,7 @@ class PortfolioDriftMonitor:
 
         self.drift_history = []
 
-    
+
 
     def calculate_current_weights(self, positions, market_values):
 
@@ -210,17 +210,17 @@ class PortfolioDriftMonitor:
 
         total_value = sum(market_values.values())
 
-        
+
 
         for symbol, position in positions.items():
 
             current_weights[symbol] = market_values[symbol] / total_value
 
-        
+
 
         return current_weights
 
-    
+
 
     def calculate_drift(self, current_weights):
 
@@ -232,17 +232,17 @@ class PortfolioDriftMonitor:
 
             drift[symbol] = current_weight - target_weight
 
-        
+
 
         return drift
 
-    
+
 
     def calculate_drift_metrics(self, drift):
 
         drift_values = np.array(list(drift.values()))
 
-        
+
 
         metrics = {
 
@@ -258,11 +258,11 @@ class PortfolioDriftMonitor:
 
         }
 
-        
+
 
         return metrics
 
-    
+
 
     def analyze_drift_trend(self, window=30):
 
@@ -270,11 +270,11 @@ class PortfolioDriftMonitor:
 
             return None
 
-        
+
 
         recent_drifts = [d['total_drift'] for d in self.drift_history[-window:]]
 
-        
+
 
         trend = {
 
@@ -286,17 +286,17 @@ class PortfolioDriftMonitor:
 
         }
 
-        
+
 
         return trend
 
-    
+
 
     def check_rebalance_trigger(self, drift_metrics, drift_trend):
 
         triggers = []
 
-        
+
 
         if drift_metrics['max_drift'] > self.rebalance_threshold:
 
@@ -312,7 +312,7 @@ class PortfolioDriftMonitor:
 
             })
 
-        
+
 
         if drift_metrics['total_drift'] > self.rebalance_threshold * 2:
 
@@ -328,7 +328,7 @@ class PortfolioDriftMonitor:
 
             })
 
-        
+
 
         if drift_trend and drift_trend['slope'] > 0.001:
 
@@ -344,11 +344,11 @@ class PortfolioDriftMonitor:
 
             })
 
-        
+
 
         return triggers
 
-    
+
 
     def monitor(self, positions, market_values):
 
@@ -360,7 +360,7 @@ class PortfolioDriftMonitor:
 
         drift_trend = self.analyze_drift_trend()
 
-        
+
 
         drift_record = {
 
@@ -376,15 +376,15 @@ class PortfolioDriftMonitor:
 
         }
 
-        
+
 
         self.drift_history.append(drift_record)
 
-        
+
 
         triggers = self.check_rebalance_trigger(drift_metrics, drift_trend)
 
-        
+
 
         return {
 
@@ -400,7 +400,7 @@ class PortfolioDriftMonitor:
 
         }
 
-    
+
 
     def _generate_recommendation(self, triggers):
 
@@ -408,7 +408,7 @@ class PortfolioDriftMonitor:
 
             return '组合权重正常，无需操作'
 
-        
+
 
         high_severity = [t for t in triggers if t['severity'] == 'high']
 
@@ -416,7 +416,7 @@ class PortfolioDriftMonitor:
 
             return '建议立即执行再平衡'
 
-        
+
 
         medium_severity = [t for t in triggers if t['severity'] == 'medium']
 
@@ -424,7 +424,7 @@ class PortfolioDriftMonitor:
 
             return '建议近期执行再平衡'
 
-        
+
 
         return '建议持续监控漂移情况'
 
@@ -709,4 +709,3 @@ class RebalanceTrigger:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

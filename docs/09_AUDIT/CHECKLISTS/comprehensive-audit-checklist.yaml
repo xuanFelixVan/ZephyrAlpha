@@ -1,6 +1,6 @@
 # 文档治理综合审计检查清单
 # Document Governance Comprehensive Audit Checklist
-# 
+#
 # 用途: 为新模型系统(AI Agent)提供标准化的全量审计检查清单
 # 格式: YAML (机器可读)
 # 版本: 2.0.0
@@ -12,7 +12,7 @@ audit_spec:
   applicable_scope: "全系统文档生命周期"
   compliance_level: "强制标准"
   last_updated: "2026-04-13"
-  
+
   # 元数据检查配置
   metadata:
     required_fields:
@@ -59,7 +59,7 @@ checks:
   # ============================================================
   # P0 级别检查 - 阻止提交的关键缺陷
   # ============================================================
-  
+
   - id: "C-01"
     name: "双YAML Frontmatter检测"
     description: "检测文件是否包含多个YAML frontmatter块"
@@ -70,7 +70,7 @@ checks:
     script: "doc_guard_pre_commit.py --scan-double-yaml"
     success_criteria: "双YAML文件数 = 0"
     failure_action: "阻止提交，使用 fix_double_yaml_merge.py 修复"
-    
+
   - id: "C-02"
     name: "无效内链检测"
     description: "检测Markdown内链目标文件是否存在"
@@ -81,7 +81,7 @@ checks:
     script: "ci_cd_link_checker.py"
     success_criteria: "无效链接数 = 0"
     failure_action: "阻止合并，使用 batch_fix_invalid_links_v2.py 修复"
-    
+
   - id: "C-03"
     name: "重复Module ID检测"
     description: "检测module_id是否全局唯一"
@@ -92,7 +92,7 @@ checks:
     script: "doc_guard_pre_commit.py --scan-module-id"
     success_criteria: "重复ID组数 = 0"
     failure_action: "阻止提交，使用 dedupe_module_id_frontmatter.py 修复"
-    
+
   - id: "C-04"
     name: "编码损坏检测"
     description: "检测文件是否存在乱码字符"
@@ -103,7 +103,7 @@ checks:
     script: "doc_guard_pre_commit.py --scan-encoding"
     success_criteria: "乱码字符数 = 0"
     failure_action: "阻止提交，需人工重写修复"
-    
+
   - id: "C-05"
     name: "必需元数据字段检测"
     description: "检测frontmatter是否包含所有必需字段"
@@ -114,7 +114,7 @@ checks:
     script: "check_required_metadata.py"  # 待创建
     success_criteria: "所有文件包含必需字段"
     failure_action: "阻止提交，使用 backfill_metadata_fields.py 修复"
-    
+
   - id: "D-07"
     name: "目录命名规范检测"
     description: "检测目录命名是否符合规范（外部审计安全评估后新增）"
@@ -137,11 +137,11 @@ checks:
       - "test"
       - "new"
     max_depth: 6
-    
+
   # ============================================================
   # P1 级别检查 - 影响质量的重要问题
   # ============================================================
-  
+
   - id: "C-10"
     name: "文件命名规范检测"
     description: "检测文件名是否符合命名规范"
@@ -162,7 +162,7 @@ checks:
         - "LICENSE"
         - "CONTRIBUTING.md"
         - "SECURITY.md"
-        
+
   - id: "C-11"
     name: "Layer字段一致性检测"
     description: "检测文档layer字段与所在目录是否一致"
@@ -173,7 +173,7 @@ checks:
     script: "check_layer_consistency.py"  # 待创建
     success_criteria: "不一致文件数 = 0"
     failure_action: "警告，更新layer字段"
-    
+
   - id: "C-12"
     name: "目录深度检测"
     description: "检测目录嵌套深度是否超过阈值"
@@ -185,7 +185,7 @@ checks:
     script: "check_directory_depth.py"  # 待创建
     success_criteria: "超深目录数 = 0"
     failure_action: "警告，建议重构目录结构"
-    
+
   - id: "C-13"
     name: "INDEX.md完整性检测"
     description: "检测每个目录是否都有INDEX.md文件"
@@ -196,7 +196,7 @@ checks:
     script: "check_index_completeness.py"  # 待创建
     success_criteria: "缺失INDEX目录数 = 0"
     failure_action: "警告，自动生成INDEX.md"
-    
+
   - id: "C-14"
     name: "SITEMAP同步检测"
     description: "检测新目录是否在SITEMAP.md中有映射"
@@ -207,11 +207,11 @@ checks:
     script: "doc_guard_pre_commit.py --scan-sitemap"
     success_criteria: "未映射目录数 = 0"
     failure_action: "警告，更新SITEMAP.md"
-    
+
   # ============================================================
   # P2 级别检查 - 建议性改进
   # ============================================================
-  
+
   - id: "C-20"
     name: "版本号一致性检测"
     description: "检测文档版本号是否符合语义化版本规范"
@@ -222,7 +222,7 @@ checks:
     script: "check_version_consistency.py"
     success_criteria: "不规范版本号数 ≤ 10"
     failure_action: "建议更新版本号"
-    
+
   - id: "C-21"
     name: "死链接检测（外部）"
     description: "检测外部链接是否可访问"
@@ -233,7 +233,7 @@ checks:
     script: "check_external_links.py"  # 待创建
     success_criteria: "死外部链接数 ≤ 20"
     failure_action: "建议更新或移除链接"
-    
+
   - id: "C-22"
     name: "文档长度检测"
     description: "检测超长文档（可能需要拆分）"
@@ -245,7 +245,7 @@ checks:
     script: "check_document_length.py"  # 待创建
     success_criteria: "超长文档数 ≤ 50"
     failure_action: "建议拆分为多个文档"
-    
+
   - id: "C-23"
     name: "图片链接有效性"
     description: "检测图片链接是否有效"
@@ -267,7 +267,7 @@ execution:
       checks: ["C-02", "C-21", "C-23"]
     - name: "元数据检查"
       checks: ["C-03", "C-05", "C-10", "C-11", "C-20"]
-      
+
   # 执行顺序
   sequence:
     - "C-01"  # 先检查结构
@@ -289,7 +289,7 @@ reporting:
     - html
   output_dir: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
   filename_template: "COMPREHENSIVE_AUDIT_{timestamp}"
-  
+
   # 报告内容配置
   include:
     - summary
@@ -297,7 +297,7 @@ reporting:
     - fix_suggestions
     - statistics
     - trend_analysis
-    
+
   # 阈值配置
   thresholds:
     excellent: 98  # 98%以上为优秀
@@ -310,11 +310,11 @@ integration:
   pre_commit:
     enabled: true
     checks: ["C-01", "C-03", "C-04", "C-05"]
-    
+
   ci_cd:
     enabled: true
     checks: ["C-01", "C-02", "C-03", "C-04", "C-05", "C-10", "C-11"]
-    
+
   periodic:
     enabled: true
     frequency: "weekly"

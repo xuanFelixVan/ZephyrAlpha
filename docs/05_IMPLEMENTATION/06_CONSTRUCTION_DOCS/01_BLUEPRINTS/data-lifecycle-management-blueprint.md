@@ -245,13 +245,13 @@ class LifecyclePolicy:
 
 class LifecyclePolicyManager:
 
-    
+
 
     def __init__(self):
 
         self.policies: Dict[str, LifecyclePolicy] = {}
 
-    
+
 
     def create_policy(self, policy_config: Dict[str, Any]) -> LifecyclePolicy:
 
@@ -271,13 +271,13 @@ class LifecyclePolicyManager:
 
         )
 
-        
+
 
         self.policies[policy.policy_id] = policy
 
         return policy
 
-    
+
 
     def get_policy(self, policy_id: str) -> Optional[LifecyclePolicy]:
 
@@ -285,7 +285,7 @@ class LifecyclePolicyManager:
 
         return self.policies.get(policy_id)
 
-    
+
 
     def get_applicable_policy(self, data_classification: str) -> Optional[LifecyclePolicy]:
 
@@ -337,13 +337,13 @@ class DataAsset:
 
 class DataTieringManager:
 
-    
+
 
     def __init__(self):
 
         self.assets: Dict[str, DataAsset] = {}
 
-    
+
 
     def register_asset(self, asset_config: Dict[str, Any]) -> DataAsset:
 
@@ -367,13 +367,13 @@ class DataTieringManager:
 
         )
 
-        
+
 
         self.assets[asset.asset_id] = asset
 
         return asset
 
-    
+
 
     def determine_tier(self, asset_id: str) -> DataTier:
 
@@ -385,13 +385,13 @@ class DataTieringManager:
 
             return DataTier.HOT
 
-        
+
 
         days_since_creation = (datetime.now() - asset.created_at).days
 
         days_since_access = (datetime.now() - asset.last_accessed_at).days
 
-        
+
 
         if days_since_access <= 7:
 
@@ -409,7 +409,7 @@ class DataTieringManager:
 
             return DataTier.ARCHIVE
 
-    
+
 
     def get_tier_statistics(self) -> Dict[str, Any]:
 
@@ -427,7 +427,7 @@ class DataTieringManager:
 
         }
 
-        
+
 
         for asset in self.assets.values():
 
@@ -437,7 +437,7 @@ class DataTieringManager:
 
             stats[tier]["size"] += asset.size_bytes
 
-        
+
 
         return stats
 
@@ -491,7 +491,7 @@ class LifecycleExecutionEngine:
 
     """生命周期执行引擎"""
 
-    
+
 
     def __init__(self, policy_manager: LifecyclePolicyManager,
 
@@ -503,7 +503,7 @@ class LifecycleExecutionEngine:
 
         self.actions: List[LifecycleAction] = []
 
-    
+
 
     def execute_lifecycle_policies(self):
 
@@ -513,17 +513,17 @@ class LifecycleExecutionEngine:
 
             policy = self.policy_manager.get_applicable_policy(asset.classification)
 
-            
+
 
             if not policy:
 
                 continue
 
-            
+
 
             days_since_creation = (datetime.now() - asset.created_at).days
 
-            
+
 
             if days_since_creation >= policy.retention_days:
 
@@ -541,7 +541,7 @@ class LifecycleExecutionEngine:
 
                 self._execute_tier_migration(asset, DataTier.WARM)
 
-    
+
 
     def _execute_tier_migration(self, asset: DataAsset, target_tier: DataTier):
 
@@ -549,7 +549,7 @@ class LifecycleExecutionEngine:
 
         logger.info(f"Migrating asset {asset.asset_id} from {asset.current_tier} to {target_tier}")
 
-        
+
 
         action = LifecycleAction(
 
@@ -571,13 +571,13 @@ class LifecycleExecutionEngine:
 
         )
 
-        
+
 
         asset.current_tier = target_tier
 
         self.actions.append(action)
 
-    
+
 
     def _execute_archive(self, asset: DataAsset):
 
@@ -585,7 +585,7 @@ class LifecycleExecutionEngine:
 
         logger.info(f"Archiving asset {asset.asset_id}")
 
-        
+
 
         action = LifecycleAction(
 
@@ -607,13 +607,13 @@ class LifecycleExecutionEngine:
 
         )
 
-        
+
 
         asset.current_tier = DataTier.ARCHIVE
 
         self.actions.append(action)
 
-    
+
 
     def _execute_deletion(self, asset: DataAsset):
 
@@ -621,7 +621,7 @@ class LifecycleExecutionEngine:
 
         logger.info(f"Deleting asset {asset.asset_id}")
 
-        
+
 
         action = LifecycleAction(
 
@@ -643,7 +643,7 @@ class LifecycleExecutionEngine:
 
         )
 
-        
+
 
         del self.tiering_manager.assets[asset.asset_id]
 
@@ -735,7 +735,7 @@ GET /api/v1/lifecycle/tiers/statistics
 
 
 
-## 
+##
 
 
 
@@ -767,7 +767,7 @@ GET /api/v1/lifecycle/tiers/statistics
 
 
 
-## 
+##
 
 
 
@@ -883,7 +883,7 @@ graph LR
 
     B --> D0["REALTIME DATA L"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -934,12 +934,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

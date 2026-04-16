@@ -56,7 +56,7 @@ implementation_status: 蓝图设计完成
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1218,7 +1218,7 @@ class WeightedVotingMechanism:
 
 
 
-    
+
 
 
 
@@ -1302,7 +1302,7 @@ class WeightedVotingMechanism:
 
 
 
-        
+
 
 
 
@@ -1326,7 +1326,7 @@ class WeightedVotingMechanism:
 
 
 
-        
+
 
 
 
@@ -1386,7 +1386,7 @@ class WeightedVotingMechanism:
 
 
 
-        
+
 
 
 
@@ -1422,7 +1422,7 @@ class WeightedVotingMechanism:
 
 
 
-        
+
 
 
 
@@ -2130,7 +2130,7 @@ class ConflictDetector:
 
 
 
-        
+
 
 
 
@@ -2166,7 +2166,7 @@ class ConflictDetector:
 
 
 
-        
+
 
 
 
@@ -2262,7 +2262,7 @@ class ConflictDetector:
 
 
 
-        
+
 
 
 
@@ -2322,7 +2322,7 @@ class ConflictDetector:
 
 
 
-            
+
 
 
 
@@ -2418,7 +2418,7 @@ class ConflictDetector:
 
 
 
-        
+
 
 
 
@@ -3104,7 +3104,7 @@ class WeightOptimizer:
 
 
 
-    
+
 
 
 
@@ -3200,7 +3200,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3260,7 +3260,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3320,7 +3320,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3344,7 +3344,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3368,7 +3368,7 @@ class WeightOptimizer:
 
 
 
-    
+
 
 
 
@@ -3488,7 +3488,7 @@ class WeightOptimizer:
 
 
 
-    
+
 
 
 
@@ -3620,7 +3620,7 @@ class WeightOptimizer:
 
 
 
-    
+
 
 
 
@@ -3704,7 +3704,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3788,7 +3788,7 @@ class WeightOptimizer:
 
 
 
-        
+
 
 
 
@@ -3812,7 +3812,7 @@ class WeightOptimizer:
 
 
 
-    
+
 
 
 
@@ -5059,14 +5059,3 @@ class WeightOptimizer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

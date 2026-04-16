@@ -19,7 +19,7 @@ layer: layer_05
 # 文档生成蓝图
 
 > **核心职责**: 提供自动化的文档生成能力，支持API文档、代码文档、用户文档的自动生成和发布
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：文档自动生成、API文档生成、代码文档生成、文档发布
 > - ❌ 本文档不负责：文档内容编写（由开发团队负责）、文档版本管理（由Git负责）
 
@@ -75,10 +75,10 @@ from typing import Dict, List
 
 class APIDocGenerator:
     """API文档生成器"""
-    
+
     def __init__(self, app: FastAPI):
         self.app = app
-    
+
     def generate_openapi_spec(
         self,
         title: str = "ZephyrAlpha API",
@@ -92,24 +92,24 @@ class APIDocGenerator:
             description=description,
             routes=self.app.routes
         )
-    
+
     def save_openapi_spec(
         self,
         output_path: str = "docs/api/openapi.json"
     ):
         """保存OpenAPI规范"""
         spec = self.generate_openapi_spec()
-        
+
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(spec, f, indent=2, ensure_ascii=False)
-    
+
     def generate_markdown_docs(
         self,
         output_dir: str = "docs/api/"
     ):
         """生成Markdown格式API文档"""
         spec = self.generate_openapi_spec()
-        
+
         for path, methods in spec.get("paths", {}).items():
             for method, details in methods.items():
                 doc_content = self._generate_endpoint_doc(
@@ -117,13 +117,13 @@ class APIDocGenerator:
                     method,
                     details
                 )
-                
+
                 filename = f"{method}_{path.replace('/', '_')}.md"
                 filepath = f"{output_dir}/{filename}"
-                
+
                 with open(filepath, 'w', encoding='utf-8') as f:
                     f.write(doc_content)
-    
+
     def _generate_endpoint_doc(
         self,
         path: str,
@@ -139,29 +139,29 @@ class APIDocGenerator:
 ## 请求参数
 
 """
-        
+
         if 'parameters' in details:
             doc += "| 参数名 | 类型 | 必需 | 描述 |\n"
             doc += "|--------|------|------|------|\n"
-            
+
             for param in details['parameters']:
                 doc += f"| {param.get('name')} | {param.get('schema', {}).get('type', 'unknown')} | {'是' if param.get('required') else '否'} | {param.get('description', '')} |\n"
-        
+
         if 'requestBody' in details:
             doc += "\n## 请求体\n\n"
             doc += f"```json\n{json.dumps(details['requestBody'], indent=2, ensure_ascii=False)}\n```\n"
-        
+
         doc += "\n## 响应\n\n"
-        
+
         for status_code, response in details.get('responses', {}).items():
             doc += f"### {status_code}\n\n"
             doc += f"{response.get('description', '')}\n\n"
-            
+
             if 'content' in response:
                 doc += "```json\n"
                 doc += json.dumps(response['content'], indent=2, ensure_ascii=False)
                 doc += "\n```\n"
-        
+
         return doc
 ```
 
@@ -174,10 +174,10 @@ from typing import List, Dict
 
 class CodeDocGenerator:
     """代码文档生成器"""
-    
+
     def __init__(self, project_root: str):
         self.project_root = project_root
-    
+
     def generate_python_docs(
         self,
         source_dir: str,
@@ -188,70 +188,70 @@ class CodeDocGenerator:
             for file in files:
                 if file.endswith('.py'):
                     filepath = os.path.join(root, file)
-                    
+
                     doc_content = self._generate_module_doc(filepath)
-                    
+
                     relative_path = os.path.relpath(filepath, source_dir)
                     output_path = os.path.join(
                         output_dir,
                         relative_path.replace('.py', '.md')
                     )
-                    
+
                     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                    
+
                     with open(output_path, 'w', encoding='utf-8') as f:
                         f.write(doc_content)
-    
+
     def _generate_module_doc(self, filepath: str) -> str:
         """生成模块文档"""
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         tree = ast.parse(content)
-        
+
         doc = f"# {os.path.basename(filepath)}\n\n"
-        
+
         module_doc = ast.get_docstring(tree)
         if module_doc:
             doc += f"## 模块描述\n\n{module_doc}\n\n"
-        
+
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
                 doc += self._generate_function_doc(node)
             elif isinstance(node, ast.ClassDef):
                 doc += self._generate_class_doc(node)
-        
+
         return doc
-    
+
     def _generate_function_doc(self, node: ast.FunctionDef) -> str:
         """生成函数文档"""
         doc = f"## {node.name}\n\n"
-        
+
         func_doc = ast.get_docstring(node)
         if func_doc:
             doc += f"{func_doc}\n\n"
-        
+
         doc += "**参数**:\n\n"
-        
+
         for arg in node.args.args:
             doc += f"- `{arg.arg}`\n"
-        
+
         doc += "\n"
-        
+
         return doc
-    
+
     def _generate_class_doc(self, node: ast.ClassDef) -> str:
         """生成类文档"""
         doc = f"## class {node.name}\n\n"
-        
+
         class_doc = ast.get_docstring(node)
         if class_doc:
             doc += f"{class_doc}\n\n"
-        
+
         for item in node.body:
             if isinstance(item, ast.FunctionDef):
                 doc += self._generate_function_doc(item)
-        
+
         return doc
 ```
 
@@ -264,16 +264,16 @@ from typing import List
 
 class SphinxDocGenerator:
     """Sphinx文档生成器"""
-    
+
     def __init__(self, docs_dir: str = "docs"):
         self.docs_dir = docs_dir
         self.source_dir = os.path.join(docs_dir, "source")
         self.build_dir = os.path.join(docs_dir, "build")
-    
+
     def init_sphinx_project(self):
         """初始化Sphinx项目"""
         os.makedirs(self.source_dir, exist_ok=True)
-        
+
         subprocess.run([
             "sphinx-quickstart",
             "-q",
@@ -283,7 +283,7 @@ class SphinxDocGenerator:
             "--sep",
             self.docs_dir
         ])
-    
+
     def generate_html_docs(self):
         """生成HTML文档"""
         subprocess.run([
@@ -292,7 +292,7 @@ class SphinxDocGenerator:
             self.source_dir,
             os.path.join(self.build_dir, "html")
         ])
-    
+
     def generate_pdf_docs(self):
         """生成PDF文档"""
         subprocess.run([
@@ -301,18 +301,18 @@ class SphinxDocGenerator:
             self.source_dir,
             os.path.join(self.build_dir, "latex")
         ])
-        
+
         subprocess.run([
             "make",
             "-C",
             os.path.join(self.build_dir, "latex"),
             "all-pdf"
         ])
-    
+
     def update_conf_py(self, config: Dict):
         """更新Sphinx配置"""
         conf_path = os.path.join(self.source_dir, "conf.py")
-        
+
         with open(conf_path, 'a', encoding='utf-8') as f:
             for key, value in config.items():
                 if isinstance(value, str):
@@ -321,16 +321,16 @@ class SphinxDocGenerator:
                     f.write(f"{key} = {value}\n")
                 else:
                     f.write(f"{key} = {value}\n")
-    
+
     def add_extensions(self, extensions: List[str]):
         """添加Sphinx扩展"""
         conf_path = os.path.join(self.source_dir, "conf.py")
-        
+
         with open(conf_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         extensions_str = f"extensions = {extensions}\n"
-        
+
         if "extensions = " in content:
             content = content.replace(
                 "extensions = []",
@@ -338,7 +338,7 @@ class SphinxDocGenerator:
             )
         else:
             content += "\n" + extensions_str
-        
+
         with open(conf_path, 'w', encoding='utf-8') as f:
             f.write(content)
 ```
@@ -352,10 +352,10 @@ from datetime import datetime
 
 class DocPublisher:
     """文档发布器"""
-    
+
     def __init__(self, build_dir: str = "docs/build/html"):
         self.build_dir = build_dir
-    
+
     def publish_to_github_pages(
         self,
         repo_url: str,
@@ -363,29 +363,29 @@ class DocPublisher:
     ):
         """发布到GitHub Pages"""
         temp_dir = "/tmp/docs_publish"
-        
+
         subprocess.run([
             "git", "clone",
             "--branch", branch,
             repo_url,
             temp_dir
         ])
-        
+
         subprocess.run(["rm", "-rf", f"{temp_dir}/*"])
-        
+
         subprocess.run([
             "cp", "-r",
             f"{self.build_dir}/*",
             temp_dir
         ])
-        
+
         subprocess.run(["git", "add", "."], cwd=temp_dir)
         subprocess.run(
             ["git", "commit", "-m", f"Update docs {datetime.now().isoformat()}"],
             cwd=temp_dir
         )
         subprocess.run(["git", "push"], cwd=temp_dir)
-    
+
     def publish_to_s3(
         self,
         bucket_name: str,
@@ -398,7 +398,7 @@ class DocPublisher:
             f"s3://{bucket_name}",
             "--region", aws_region
         ])
-    
+
     def publish_to_netlify(
         self,
         site_id: str,
@@ -470,7 +470,7 @@ dag = DAG(
 def generate_api_docs():
     from fastapi import FastAPI
     app = FastAPI()
-    
+
     generator = APIDocGenerator(app)
     generator.save_openapi_spec()
     generator.generate_markdown_docs()

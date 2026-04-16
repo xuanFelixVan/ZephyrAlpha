@@ -92,7 +92,7 @@ class iFindAdapter:
 
     """iFind数据源适配?""
 
-    
+
 
     def __init__(self, token: str):
 
@@ -102,7 +102,7 @@ class iFindAdapter:
 
         self.headers = {"Authorization": f"Bearer {token}"}
 
-    
+
 
     def get_market_data(self, symbol: str, start_date: str, end_date: str):
 
@@ -186,7 +186,7 @@ class QMTAdapter:
 
     """QMT数据源适配?""
 
-    
+
 
     def __init__(self, account: str, password: str):
 
@@ -196,7 +196,7 @@ class QMTAdapter:
 
         self.connected = False
 
-    
+
 
     def connect(self):
 
@@ -206,7 +206,7 @@ class QMTAdapter:
 
         return True
 
-    
+
 
     def get_market_data(self, symbol: str, period: str = "1d"):
 
@@ -216,7 +216,7 @@ class QMTAdapter:
 
             self.connect()
 
-        
+
 
         data = xtdata.get_market_data(
 
@@ -298,7 +298,7 @@ class TushareAdapter:
 
     """Tushare数据源适配?""
 
-    
+
 
     def __init__(self, token: str):
 
@@ -306,7 +306,7 @@ class TushareAdapter:
 
         self.pro = ts.pro_api()
 
-    
+
 
     def get_daily_data(self, ts_code: str, start_date: str, end_date: str):
 
@@ -384,13 +384,13 @@ class AKShareAdapter:
 
     """AKShare数据源适配?""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def get_stock_daily(self, symbol: str):
 
@@ -462,13 +462,13 @@ class BaostockAdapter:
 
     """Baostock数据源适配?""
 
-    
+
 
     def __init__(self):
 
         self.logged_in = False
 
-    
+
 
     def login(self):
 
@@ -482,7 +482,7 @@ class BaostockAdapter:
 
         self.logged_in = True
 
-    
+
 
     def get_daily_data(self, code: str, start: str, end: str):
 
@@ -492,7 +492,7 @@ class BaostockAdapter:
 
             self.login()
 
-        
+
 
         rs = bs.query_history_k_data_plus(
 
@@ -510,7 +510,7 @@ class BaostockAdapter:
 
         )
 
-        
+
 
         data_list = []
 
@@ -518,7 +518,7 @@ class BaostockAdapter:
 
             data_list.append(rs.get_row_data())
 
-        
+
 
         return data_list
 
@@ -580,13 +580,13 @@ class EFinanceAdapter:
 
     """EFinance数据源适配?""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def get_stock_data(self, code: str, start: str, end: str):
 
@@ -658,13 +658,13 @@ class YFinanceAdapter:
 
     """yfinance数据源适配?""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def get_stock_data(self, symbol: str, start: str, end: str):
 
@@ -738,13 +738,13 @@ class QlibAdapter:
 
     """Qlib数据源适配?""
 
-    
+
 
     def __init__(self):
 
         qlib.init()
 
-    
+
 
     def get_stock_data(self, instruments, start_time, end_time, fields):
 
@@ -1031,4 +1031,3 @@ class QlibAdapter:
 
 
 **清单版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?
-

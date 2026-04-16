@@ -93,21 +93,21 @@ subsystems:
     canonical: true
     status: active
     purpose: "按层组织的蓝图目录（L00-L11 子目录）——目标结构；过渡期真源仍为 docs/01_FRAMEWORK/"
-    file_count: 2
+    file_count: 14
     layer: cross_layer
-    owner: TBD
-    notes: "2026-04-16 创建目录与 INDEX/README；Phase D 从 01_FRAMEWORK 迁移蓝图至此"
+    owner: ZephyrAlpha-Owner
+    notes: "2026-04-16 更新计数：12 个 L*_ 子目录各含 INDEX.md + 根目录 INDEX.md + README.md = 14 个文件；过渡期蓝图真源仍在 docs/01_FRAMEWORK/"
     migration_plan: "Phase D: 从 docs/01_FRAMEWORK/ 迁移蓝图至此，按 Layer 分类"
 
   - id: CONSTRUCTION_PLANS
     canonical_path: docs/04_CONSTRUCTION/
     canonical: true
     status: active
-    purpose: "施工阶段文档（MASTER_DEVELOPMENT_PLAN.md, 各层施工图 CONSTRUCTION_PLAN_*.md）"
-    file_count: 4
+    purpose: "Phase 2 施工图设计（MASTER_DEVELOPMENT_PLAN.md + 各层施工图 CONSTRUCTION_PLAN_*.md）；9 张施工图，当前 1/9 完成"
+    file_count: 7
     layer: cross_layer
-    owner: TBD
-    notes: "规则引用路径正确，此目录存在且内容正确"
+    owner: ZephyrAlpha-Owner
+    notes: "2026-04-16 更新：包含 INDEX.md, PLANS/INDEX.md, MASTER_DEVELOPMENT_PLAN.md, CONSTRUCTION_PLAN_L00_DATA_SOURCE.md + 3 个 Trae Prompt 模板"
 
   - id: IMPLEMENTATION
     canonical_path: docs/05_IMPLEMENTATION/
@@ -185,8 +185,7 @@ subsystems:
     owner: TBD
     notes: "文件较少，主要蓝图可能在 docs/10_AI_WORKFLOW/"
 
-  # RESEARCH 重复条目已于 2026-04-16 合并，保留上方唯一条目
-        notes: "内容主要是审计报告而非研究，需区分"
+  # RESEARCH 重复条目已于 2026-04-16 合并，保留上方唯一条目（内容主要是审计报告而非研究）
 
   - id: HUMAN_AI_INTERFACE
     canonical_path: docs/08_HUMAN_AI_INTERFACE/

@@ -25,7 +25,7 @@ responsibility: ''
 
 > **核心职责**: Trade Error Correction蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Trade Error Correction蓝图设计相关内容
 
@@ -561,41 +561,41 @@ class ErrorDetector:
 
         }
 
-        
+
 
     def detect_errors(self, trade_data: Dict) -> List[Dict]:
 
         errors = []
 
-        
+
 
         order_errors = self._detect_order_errors(trade_data)
 
         errors.extend(order_errors)
 
-        
+
 
         execution_errors = self._detect_execution_errors(trade_data)
 
         errors.extend(execution_errors)
 
-        
+
 
         allocation_errors = self._detect_allocation_errors(trade_data)
 
         errors.extend(allocation_errors)
 
-        
+
 
         return errors
 
-        
+
 
     def _detect_order_errors(self, trade_data: Dict) -> List[Dict]:
 
         errors = []
 
-        
+
 
         if not self._validate_stock_code(trade_data['stock_code']):
 
@@ -615,7 +615,7 @@ class ErrorDetector:
 
             })
 
-            
+
 
         if not self._validate_quantity(trade_data['quantity']):
 
@@ -635,7 +635,7 @@ class ErrorDetector:
 
             })
 
-            
+
 
         if not self._validate_price(trade_data['price'], trade_data['stock_code']):
 
@@ -655,17 +655,17 @@ class ErrorDetector:
 
             })
 
-            
+
 
         return errors
 
-        
+
 
     def _detect_execution_errors(self, trade_data: Dict) -> List[Dict]:
 
         errors = []
 
-        
+
 
         if 'execution_price' in trade_data:
 
@@ -673,7 +673,7 @@ class ErrorDetector:
 
             deviation = abs(trade_data['execution_price'] - market_price) / market_price
 
-            
+
 
             if deviation > 0.02:
 
@@ -693,17 +693,17 @@ class ErrorDetector:
 
                 })
 
-                
+
 
         return errors
 
-        
+
 
     def _detect_allocation_errors(self, trade_data: Dict) -> List[Dict]:
 
         errors = []
 
-        
+
 
         if 'account' in trade_data:
 
@@ -725,41 +725,41 @@ class ErrorDetector:
 
                 })
 
-                
+
 
         return errors
 
-        
+
 
     def _validate_stock_code(self, stock_code: str) -> bool:
 
         return stock_code.startswith(('SH', 'SZ')) and len(stock_code) == 8
 
-        
+
 
     def _validate_quantity(self, quantity: int) -> bool:
 
         return quantity > 0 and quantity % 100 == 0
 
-        
+
 
     def _validate_price(self, price: float, stock_code: str) -> bool:
 
         return price > 0
 
-        
+
 
     def _validate_direction(self, direction: str) -> bool:
 
         return direction in ['buy', 'sell']
 
-        
+
 
     def _validate_account(self, account: str) -> bool:
 
         return account in self.config['valid_accounts']
 
-        
+
 
     def _get_market_price(self, stock_code: str) -> float:
 
@@ -787,7 +787,7 @@ class ErrorAssessor:
 
         self.config = config
 
-        
+
 
     def assess_error(self, error: Dict) -> Dict:
 
@@ -797,7 +797,7 @@ class ErrorAssessor:
 
         urgency = self._assess_urgency(error)
 
-        
+
 
         return {
 
@@ -813,13 +813,13 @@ class ErrorAssessor:
 
         }
 
-        
+
 
     def _assess_financial_impact(self, error: Dict) -> Dict:
 
         trade_data = error['trade_data']
 
-        
+
 
         direct_loss = self._calculate_direct_loss(trade_data)
 
@@ -829,7 +829,7 @@ class ErrorAssessor:
 
         total_loss = direct_loss + opportunity_cost + correction_cost
 
-        
+
 
         return {
 
@@ -843,13 +843,13 @@ class ErrorAssessor:
 
         }
 
-        
+
 
     def _assess_risk_impact(self, error: Dict) -> Dict:
 
         trade_data = error['trade_data']
 
-        
+
 
         market_risk = self._assess_market_risk(trade_data)
 
@@ -859,7 +859,7 @@ class ErrorAssessor:
 
         reputation_risk = self._assess_reputation_risk(error)
 
-        
+
 
         return {
 
@@ -873,7 +873,7 @@ class ErrorAssessor:
 
         }
 
-        
+
 
     def _assess_urgency(self, error: Dict) -> Dict:
 
@@ -885,7 +885,7 @@ class ErrorAssessor:
 
         correction_difficulty = self._assess_correction_difficulty(error)
 
-        
+
 
         urgency_score = (
 
@@ -899,7 +899,7 @@ class ErrorAssessor:
 
         )
 
-        
+
 
         return {
 
@@ -917,73 +917,73 @@ class ErrorAssessor:
 
         }
 
-        
+
 
     def _calculate_direct_loss(self, trade_data: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _calculate_opportunity_cost(self, trade_data: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _calculate_correction_cost(self, error: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _assess_market_risk(self, trade_data: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _assess_liquidity_risk(self, trade_data: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _assess_compliance_risk(self, error: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _assess_reputation_risk(self, error: Dict) -> float:
 
         return 0.0
 
-        
+
 
     def _assess_time_sensitivity(self, error: Dict) -> float:
 
         return 0.5
 
-        
+
 
     def _assess_market_impact(self, error: Dict) -> float:
 
         return 0.5
 
-        
+
 
     def _assess_client_impact(self, error: Dict) -> float:
 
         return 0.5
 
-        
+
 
     def _assess_correction_difficulty(self, error: Dict) -> float:
 
         return 0.5
 
-        
+
 
     def _get_urgency_level(self, score: float) -> str:
 
@@ -1037,13 +1037,13 @@ class ErrorCorrector:
 
         self.audit_logger = None
 
-        
+
 
     def correct_error(self, error: Dict, assessment: Dict, correction_method: str) -> Dict:
 
         correction_result = None
 
-        
+
 
         if correction_method == 'cancel':
 
@@ -1061,27 +1061,27 @@ class ErrorCorrector:
 
             raise ValueError(f"未知的纠正方法: {correction_method}")
 
-            
+
 
         self._log_correction(error, assessment, correction_result)
 
-        
+
 
         return correction_result
 
-        
+
 
     def _cancel_correction(self, error: Dict, assessment: Dict) -> Dict:
 
         trade_data = error['trade_data']
 
-        
+
 
         if 'order_id' in trade_data:
 
             self.order_engine.cancel_order(trade_data['order_id'])
 
-            
+
 
         return {
 
@@ -1093,13 +1093,13 @@ class ErrorCorrector:
 
         }
 
-        
+
 
     def _modify_correction(self, error: Dict, assessment: Dict) -> Dict:
 
         trade_data = error['trade_data']
 
-        
+
 
         if 'order_id' in trade_data:
 
@@ -1107,7 +1107,7 @@ class ErrorCorrector:
 
             self.order_engine.modify_order(trade_data['order_id'], modified_params)
 
-            
+
 
         return {
 
@@ -1121,13 +1121,13 @@ class ErrorCorrector:
 
         }
 
-        
+
 
     def _compensate_correction(self, error: Dict, assessment: Dict) -> Dict:
 
         trade_data = error['trade_data']
 
-        
+
 
         if error['type'] == ErrorType.EXECUTION_ERROR:
 
@@ -1135,7 +1135,7 @@ class ErrorCorrector:
 
             self.order_engine.submit_order(reverse_order)
 
-            
+
 
         return {
 
@@ -1149,13 +1149,13 @@ class ErrorCorrector:
 
         }
 
-        
+
 
     def _get_modified_params(self, error: Dict) -> Dict:
 
         return {}
 
-        
+
 
     def _create_reverse_order(self, trade_data: Dict) -> Dict:
 
@@ -1171,7 +1171,7 @@ class ErrorCorrector:
 
         }
 
-        
+
 
     def _log_correction(self, error: Dict, assessment: Dict, result: Dict):
 
@@ -1189,11 +1189,11 @@ class ErrorCorrector:
 
         }
 
-        
+
 
         self.audit_logger.info(log_entry)
 
-        
+
 
     @app.task
 
@@ -1203,7 +1203,7 @@ class ErrorCorrector:
 
         assessment = self._get_assessment(error_id)
 
-        
+
 
         return self.correct_error(error, assessment, correction_method)
 
@@ -1776,4 +1776,3 @@ class CorrectionRecord:
 > **版本**: v1.0.0
 
 > **下次审计日期**: 2026-05-07
-

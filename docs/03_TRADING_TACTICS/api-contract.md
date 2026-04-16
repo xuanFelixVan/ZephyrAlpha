@@ -1264,4 +1264,3 @@ class IRiskManager(ABC):
 - `engine_version`（策略引擎/回测引擎版本）
 
 - `created_at` / `created_by`（用户或 Agent）
-

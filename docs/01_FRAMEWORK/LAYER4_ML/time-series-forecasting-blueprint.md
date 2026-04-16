@@ -19,7 +19,7 @@ estimated_hours: 30
 
 > **核心职责**: 提供时序预测模型的完整架构设计，实现价格预测、波动率预测和因子预测能力
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：时序预测模型架构、训练、部署
 
@@ -199,7 +199,7 @@ class DeepARForecaster:
 
     """DeepAR时序预测器"""
 
-    
+
 
     def __init__(self, prediction_length: int = 30, freq: str = "D"):
 
@@ -207,7 +207,7 @@ class DeepARForecaster:
 
         self.freq = freq
 
-        
+
 
     def train(self, train_data: pd.DataFrame):
 
@@ -223,7 +223,7 @@ class DeepARForecaster:
 
         )
 
-        
+
 
         estimator = DeepAREstimator(
 
@@ -241,13 +241,13 @@ class DeepARForecaster:
 
         )
 
-        
+
 
         predictor = estimator.train(dataset)
 
         return predictor
 
-    
+
 
     def predict(self, predictor, test_data: pd.DataFrame):
 
@@ -263,7 +263,7 @@ class DeepARForecaster:
 
         )
 
-        
+
 
         forecasts = list(predictor.predict(dataset))
 
@@ -289,13 +289,13 @@ class TransformerForecaster:
 
     """Transformer时序预测器"""
 
-    
+
 
     def __init__(self, max_prediction_length: int = 30):
 
         self.max_prediction_length = max_prediction_length
 
-        
+
 
     def create_dataset(self, data: pd.DataFrame):
 
@@ -329,7 +329,7 @@ class TransformerForecaster:
 
         return dataset
 
-    
+
 
     def train(self, train_dataset):
 
@@ -357,13 +357,13 @@ class TransformerForecaster:
 
         )
 
-        
+
 
         trainer = pl.Trainer(max_epochs=100)
 
         trainer.fit(tft, train_dataloader=train_dataset.to_dataloader())
 
-        
+
 
         return tft
 
@@ -381,7 +381,7 @@ class QuantTimeSeriesForecaster:
 
     """量化时序预测器"""
 
-    
+
 
     def __init__(self):
 
@@ -389,7 +389,7 @@ class QuantTimeSeriesForecaster:
 
         self.transformer = TransformerForecaster()
 
-        
+
 
     def predict_price(self, data: pd.DataFrame, horizon: int = 30):
 
@@ -399,7 +399,7 @@ class QuantTimeSeriesForecaster:
 
         forecasts = self.deepar.predict(predictor, data)
 
-        
+
 
         return {
 
@@ -411,7 +411,7 @@ class QuantTimeSeriesForecaster:
 
         }
 
-    
+
 
     def predict_volatility(self, data: pd.DataFrame, horizon: int = 30):
 
@@ -421,7 +421,7 @@ class QuantTimeSeriesForecaster:
 
         data["volatility"] = data["close"].pct_change().rolling(20).std()
 
-        
+
 
         # 预测波动率
 
@@ -429,11 +429,11 @@ class QuantTimeSeriesForecaster:
 
         forecasts = self.deepar.predict(predictor, data[["volatility"]])
 
-        
+
 
         return forecasts[0].mean
 
-    
+
 
     def predict_factor(self, data: pd.DataFrame, factor_name: str, horizon: int = 30):
 
@@ -443,11 +443,11 @@ class QuantTimeSeriesForecaster:
 
         model = self.transformer.train(dataset)
 
-        
+
 
         predictions = model.predict(data)
 
-        
+
 
         return predictions
 
@@ -483,7 +483,7 @@ class TimeSeriesForecastingService:
 
     """时序预测服务"""
 
-    
+
 
     def __init__(self):
 
@@ -491,7 +491,7 @@ class TimeSeriesForecastingService:
 
         self.transformer_model = bentoml.pytorch.get("transformer:latest").to_runner()
 
-        
+
 
     @bentoml.api
 
@@ -501,7 +501,7 @@ class TimeSeriesForecastingService:
 
         forecast = self.deepar_model.run(data)
 
-        
+
 
         return {
 
@@ -513,7 +513,7 @@ class TimeSeriesForecastingService:
 
         }
 
-    
+
 
     @bentoml.api
 
@@ -523,7 +523,7 @@ class TimeSeriesForecastingService:
 
         forecast = self.deepar_model.run(data)
 
-        
+
 
         return {
 
@@ -545,13 +545,13 @@ class BatchForecaster:
 
     """批量预测器"""
 
-    
+
 
     def __init__(self, model_path: str):
 
         self.model = self.load_model(model_path)
 
-        
+
 
     def batch_predict(self, data_list: list):
 
@@ -559,7 +559,7 @@ class BatchForecaster:
 
         results = []
 
-        
+
 
         for data in data_list:
 
@@ -575,7 +575,7 @@ class BatchForecaster:
 
             })
 
-        
+
 
         return results
 
@@ -667,13 +667,13 @@ class ModelMonitor:
 
     """模型监控器"""
 
-    
+
 
     def __init__(self):
 
         self.metrics = {}
 
-        
+
 
     def track_performance(self, predictions, actuals):
 
@@ -681,17 +681,17 @@ class ModelMonitor:
 
         mape = self.calculate_mape(predictions, actuals)
 
-        
+
 
         self.metrics["mape"] = mape
 
-        
+
 
         if mape > 0.1:
 
             self.trigger_alert("预测准确率下降")
 
-    
+
 
     def calculate_mape(self, predictions, actuals):
 
@@ -810,4 +810,3 @@ class ModelMonitor:
 **创建日期**: 2026-04-07
 
 **维护者**: 系统架构师
-

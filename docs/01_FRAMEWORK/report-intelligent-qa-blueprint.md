@@ -94,7 +94,7 @@ class ReportIntelligentQA:
 
     """报告智能问答系统"""
 
-    
+
 
     def __init__(self):
 
@@ -102,7 +102,7 @@ class ReportIntelligentQA:
 
         self.llm = ChatOpenAI(model='gpt-4')
 
-        
+
 
     def answer_question(self, question, context=None):
 
@@ -112,7 +112,7 @@ class ReportIntelligentQA:
 
         retrieved_docs = self.rag_system.retrieve(question)
 
-        
+
 
         # 生成答案
 
@@ -126,7 +126,7 @@ class ReportIntelligentQA:
 
         )
 
-        
+
 
         return {
 
@@ -149,4 +149,3 @@ class ReportIntelligentQA:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -36,7 +36,7 @@ estimated_hours: 80h
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -114,7 +114,7 @@ estimated_hours: 80h
 
 
 
-**ﻛﺕﮒ۰ﻠ?*: 
+**ﻛﺕﮒ۰ﻠ?*:
 
 
 
@@ -492,7 +492,7 @@ class DecisionInput:
 
 
 
-    
+
 
 
 
@@ -540,7 +540,7 @@ class FeatureImportance:
 
 
 
-    """ﻝﺗﮒﺝﻠﻟ۵?    
+    """ﻝﺗﮒﺝﻠﻟ۵?
 
 
 
@@ -588,7 +588,7 @@ class ReasoningChain:
 
 
 
-    
+
 
 
 
@@ -640,7 +640,7 @@ class ExplanationReport:
 
 
 
-    
+
 
 
 
@@ -696,7 +696,7 @@ class AIExplainerAPI:
 
 
 
-    
+
 
 
 
@@ -708,7 +708,7 @@ class AIExplainerAPI:
 
 
 
-    
+
 
 
 
@@ -744,7 +744,7 @@ class AIExplainerAPI:
 
 
 
-        
+
 
 
 
@@ -764,7 +764,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-            
+
 
 
 
@@ -776,7 +776,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-            
+
 
 
 
@@ -796,7 +796,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-    
+
 
 
 
@@ -828,7 +828,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-        
+
 
 
 
@@ -844,7 +844,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-            
+
 
 
 
@@ -888,7 +888,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-    
+
 
 
 
@@ -920,7 +920,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-        ﮒﮔﻝﺗﮒﺝﻠﻟ۵?        
+        ﮒﮔﻝﺗﮒﺝﻠﻟ۵?
 
 
 
@@ -936,7 +936,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-            
+
 
 
 
@@ -952,7 +952,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-    
+
 
 
 
@@ -984,7 +984,7 @@ decision: ﮒﺏﻝﻟﺝﮒ۴ﮔﺍﮔ؟
 
 
 
-        ﻝﮔﮒﻛﭦﮒ؟ﻟ۶۲?        
+        ﻝﮔﮒﻛﭦﮒ؟ﻟ۶۲?
 
 
 
@@ -1004,7 +1004,7 @@ target_outcome: ﻝ؟ﮔﻝﭨﮔ
 
 
 
-            
+
 
 
 
@@ -1044,7 +1044,7 @@ target_outcome: ﻝ؟ﮔﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -1072,7 +1072,7 @@ target_outcome: ﻝ؟ﮔﻝﭨﮔ
 
 
 
-        ﮒﺁﻟ۶ﮒﮔ۷ﻝﻟﺟ?        
+        ﮒﺁﻟ۶ﮒﮔ۷ﻝﻟﺟ?
 
 
 
@@ -1088,7 +1088,7 @@ format: ﻟﺝﮒﭦﮔﺙﮒﺙ(html/json/png)
 
 
 
-            
+
 
 
 
@@ -1548,7 +1548,7 @@ AIﮒﺏﻝﻛﺟ۰ﮒﺓ ?ﮒﺏﻝﻟﺝﮒ۴ﮔﮒ ?ﻝﺗﮒﺝﮔﺍﮔ؟�
 
 
 
-  4. ﻝﮔﻝﭨﮔﮒﻟ۶۲ﻠﮔ۴?  5. ﮔﺕﺎﮔﮒﺁﻟ۶ﮒﮒﺝ?- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**: 
+  4. ﻝﮔﻝﭨﮔﮒﻟ۶۲ﻠﮔ۴?  5. ﮔﺕﺎﮔﮒﺁﻟ۶ﮒﮒﺝ?- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**:
 
 
 
@@ -1800,7 +1800,7 @@ kernel_width: 0.25  # ﮔﺕﮒ؟ﺛ?    sample_size: 5000  # ﮔﺓﮔ؛ﮔﺍ�
 
 
 
-    
+
 
 
 
@@ -1816,7 +1816,7 @@ max_iter: 100  # ﮔﮒ۳۶ﻟﺟﻛﭨ۲ﮔ؛۰?    tolerance: 0.01  # ﮒ؟ﺗ
 
 
 
-    
+
 
 
 
@@ -1884,7 +1884,7 @@ class TestAIExplainer:
 
 
 
-    
+
 
 
 
@@ -1924,7 +1924,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -1936,7 +1936,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -1952,7 +1952,7 @@ class TestAIExplainer:
 
 
 
-    
+
 
 
 
@@ -1988,7 +1988,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2000,7 +2000,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2016,7 +2016,7 @@ class TestAIExplainer:
 
 
 
-    
+
 
 
 
@@ -2052,7 +2052,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2068,7 +2068,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2076,7 +2076,7 @@ class TestAIExplainer:
 
 
 
-    
+
 
 
 
@@ -2116,7 +2116,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2144,7 +2144,7 @@ class TestAIExplainer:
 
 
 
-        
+
 
 
 
@@ -2496,7 +2496,7 @@ performance_benchmarks:
 
 
 
-    
+
 
 
 
@@ -2520,7 +2520,7 @@ performance_benchmarks:
 
 
 
-    
+
 
 
 
@@ -2556,7 +2556,7 @@ performance_benchmarks:
 
 
 
-- **OWASP Top 10ﻟ۵ﻝ**: ﮒ۷ﻠ۷10ﻠ۰ﺗﮒ؟ﮒ۷ﮔ۲?- **ﮔﺙﮔﺑﮔ،ﮔ**: 
+- **OWASP Top 10ﻟ۵ﻝ**: ﮒ۷ﻠ۷10ﻠ۰ﺗﮒ؟ﮒ۷ﮔ۲?- **ﮔﺙﮔﺑﮔ،ﮔ**:
 
 
 
@@ -2568,7 +2568,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﺕﻠﮔﭖ?*: ﮒﺗﺑﮒﭦ۵ﮔﺕﻠﮔﭖ?- **ﮔﺍﮔ؟ﻠﻝ۶ﮔﭖﻟﺁ**: 
+- **ﮔﺕﻠﮔﭖ?*: ﮒﺗﺑﮒﭦ۵ﮔﺕﻠﮔﭖ?- **ﮔﺍﮔ؟ﻠﻝ۶ﮔﭖﻟﺁ**:
 
 
 
@@ -2622,7 +2622,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -2654,7 +2654,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -2682,7 +2682,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -2702,7 +2702,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﻟﺛﻝﺙﭦ?*: 
+- **ﮔﻟﺛﻝﺙﭦ?*:
 
 
 
@@ -2718,7 +2718,7 @@ performance_benchmarks:
 
 
 
-- **ﻛﺝﻟﭖﻠ۲ﻠ۸**: 
+- **ﻛﺝﻟﭖﻠ۲ﻠ۸**:
 
 
 
@@ -2738,7 +2738,7 @@ performance_benchmarks:
 
 
 
-- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**: 
+- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**:
 
 
 
@@ -2746,7 +2746,7 @@ performance_benchmarks:
 
 
 
-- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: 
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**:
 
 
 
@@ -2758,7 +2758,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*: 
+- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*:
 
 
 
@@ -2770,7 +2770,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﺏﮒﺝﻝﭦ۵ﮔ**: 
+- **ﮔﺏﮒﺝﻝﭦ۵ﮔ**:
 
 
 
@@ -2786,7 +2786,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﺍﮔ؟ﻛﺟﮔ۳**: 
+- **ﮔﺍﮔ؟ﻛﺟﮔ۳**:
 
 
 
@@ -2798,7 +2798,7 @@ performance_benchmarks:
 
 
 
-- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**: 
+- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**:
 
 
 
@@ -2806,7 +2806,7 @@ performance_benchmarks:
 
 
 
-- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**: 
+- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**:
 
 
 
@@ -2888,7 +2888,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﮒﭦﮔﭘﻠﺑ**: 
+- **ﮒﮒﭦﮔﭘﻠﺑ**:
 
 
 
@@ -2900,7 +2900,7 @@ performance_benchmarks:
 
 
 
-- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**: 
+- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**:
 
 
 
@@ -2940,7 +2940,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﭖﻟﺁﻟ۵ﻝ?*: ?5% ﮒﮒﮔﭖﻟﺁﻟ۵ﻝ?- **ﮔﮔ۰۲ﮒ؟ﮔﺑ?*: 
+- **ﮔﭖﻟﺁﻟ۵ﻝ?*: ?5% ﮒﮒﮔﭖﻟﺁﻟ۵ﻝ?- **ﮔﮔ۰۲ﮒ؟ﮔﺑ?*:
 
 
 
@@ -3158,7 +3158,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 1?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**: 
+- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 1?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**:
 
 
 
@@ -3174,7 +3174,7 @@ performance_benchmarks:
 
 
 
-- **ﻠ۱ﻝ؟ﻟﺁﻛﺙﺍ**: 
+- **ﻠ۱ﻝ؟ﻟﺁﻛﺙﺍ**:
 
 
 
@@ -3307,6 +3307,3 @@ performance_benchmarks:
 
 
 **ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦ**: 2026-04-02 | **ﻝ?*: ?ﻟﮔ۰ | **ﻝﭨﺑﮔ۳?*: ZephyrAlphaﮔﮔﺁﮒ۱?
-
-
-

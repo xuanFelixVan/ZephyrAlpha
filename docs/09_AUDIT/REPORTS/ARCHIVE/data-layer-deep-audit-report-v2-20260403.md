@@ -400,9 +400,9 @@ docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ - INDEX.md ظ?```
 
 ```powershell
 
-Get-ChildItem -Path "d:\ZephyrAlpha\docs" -Recurse -Directory | 
+Get-ChildItem -Path "d:\ZephyrAlpha\docs" -Recurse -Directory |
 
-Where-Object { $_.GetFiles().Count -eq 0 } | 
+Where-Object { $_.GetFiles().Count -eq 0 } |
 
 Remove-Item -Force
 
@@ -503,6 +503,3 @@ Remove-Item -Force
 1. ظ?**ف╖▓فجغ╗?*: Gitبقص╛ `backup-before-deep-audit-20260403-v2`
 
 ```---
-
-
-

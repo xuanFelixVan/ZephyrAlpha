@@ -15,7 +15,7 @@ layer: layer_05
 
 # 仓库根治理 Playbook（根目录卫生 · 密钥 · 误生成文件）
 
-> **用途**：把「根目录出现怪文件、敏感配置进库、运行时数据进库」时的**机构式处理方式**写成可执行口径；与 蓝图交付标准 **§1.5**（R1、R4）及 任务清单 **W2 / W4** 对照。  
+> **用途**：把「根目录出现怪文件、敏感配置进库、运行时数据进库」时的**机构式处理方式**写成可执行口径；与 蓝图交付标准 **§1.5**（R1、R4）及 任务清单 **W2 / W4** 对照。
 > **不替代**：全局文档孤儿/重复仍以 孤儿与重复 Playbook 为准。
 
 ```
@@ -24,8 +24,8 @@ layer: layer_05
 
 ## 1. 仓库根「正常该有什么」（摘要）
 
-- **常见且合理**：`docs/`、`src/`、`tests/`、`scripts/`、`config/`、`tools/`、`notebooks/`、`pyproject.toml`、`README.md`、`requirements*.txt`、`.gitignore`、`.editorconfig`、`.pre-commit-config.yaml`、`.github/`、`.env.example` 及**不含密钥**的 `*.example` 环境模板。  
-- **仅本机、一般不进库**：`.venv/`、`.pytest_cache/`、`.audit_cache/`、IDE 工作区目录（如 `.trae/`，以 `.gitignore` 为准）。  
+- **常见且合理**：`docs/`、`src/`、`tests/`、`scripts/`、`config/`、`tools/`、`notebooks/`、`pyproject.toml`、`README.md`、`requirements*.txt`、`.gitignore`、`.editorconfig`、`.pre-commit-config.yaml`、`.github/`、`.env.example` 及**不含密钥**的 `*.example` 环境模板。
+- **仅本机、一般不进库**：`.venv/`、`.pytest_cache/`、`.audit_cache/`、IDE 工作区目录（如 `.trae/`，以 `.gitignore` 为准）。
 - **数据/日志**：`data/`、`logs/`、`reports/` 等是否进库以 **`.gitignore` + 项目约定** 为准；大文件与密钥**不得**入库。
 
 ```
@@ -54,7 +54,7 @@ layer: layer_05
 
 ## 4. 与任务清单的挂钩
 
-- **W2（R1）**：根门面、`.gitignore`、密钥不进库 → 本节 **§1～2** 为操作细则。  
+- **W2（R1）**：根门面、`.gitignore`、密钥不进库 → 本节 **§1～2** 为操作细则。
 - **W4（R4）**：排除层验证 → 本节 **§1** 与 `.gitignore`/CI 一致即可。
 
 ```

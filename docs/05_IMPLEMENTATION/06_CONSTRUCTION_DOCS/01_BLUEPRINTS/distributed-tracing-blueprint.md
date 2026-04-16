@@ -19,7 +19,7 @@ layer: layer_05
 # 分布式追踪蓝图
 
 > **核心职责**: 提供分布式系统的链路追踪能力，支持请求链路可视化、性能分析、故障定位
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：分布式追踪、链路可视化、性能分析
 > - ❌ 本文档不负责：日志聚合（由日志聚合模块负责）、指标监控（由Prometheus负责）
 
@@ -76,7 +76,7 @@ from typing import Dict, Any, Optional
 
 class DistributedTracer:
     """分布式追踪器"""
-    
+
     def __init__(
         self,
         service_name: str,
@@ -91,7 +91,7 @@ class DistributedTracer:
             agent_port,
             sampling_rate
         )
-    
+
     def _init_tracer(
         self,
         service_name: str,
@@ -114,9 +114,9 @@ class DistributedTracer:
             },
             service_name=service_name
         )
-        
+
         return config.initialize_tracer()
-    
+
     def start_span(
         self,
         operation_name: str,
@@ -128,13 +128,13 @@ class DistributedTracer:
             operation_name,
             child_of=parent_span
         )
-        
+
         if tags:
             for key, value in tags.items():
                 span.set_tag(key, value)
-        
+
         return span
-    
+
     def trace_function(
         self,
         operation_name: str,
@@ -159,7 +159,7 @@ class DistributedTracer:
                         raise
             return wrapper
         return decorator
-    
+
     def trace_http_request(
         self,
         method: str,
@@ -168,11 +168,11 @@ class DistributedTracer:
     ):
         """追踪HTTP请求"""
         span = self.start_span(f"HTTP {method}")
-        
+
         span.set_tag(ext_tags.HTTP_METHOD, method)
         span.set_tag(ext_tags.HTTP_URL, url)
         span.set_tag(ext_tags.SPAN_KIND, ext_tags.SPAN_KIND_RPC_CLIENT)
-        
+
         if headers:
             headers = headers.copy()
             self.tracer.inject(
@@ -180,9 +180,9 @@ class DistributedTracer:
                 'text_map',
                 headers
             )
-        
+
         return span, headers
-    
+
     def trace_database_query(
         self,
         query: str,
@@ -190,14 +190,14 @@ class DistributedTracer:
     ):
         """追踪数据库查询"""
         span = self.start_span("DB Query")
-        
+
         span.set_tag(ext_tags.SPAN_KIND, ext_tags.SPAN_KIND_RPC_CLIENT)
         span.set_tag('db.type', 'sql')
         span.set_tag('db.statement', query)
-        
+
         if params:
             span.set_tag('db.params', str(params))
-        
+
         return span
 ```
 
@@ -209,10 +209,10 @@ from typing import List, Dict
 
 class TraceCollector:
     """追踪数据收集器"""
-    
+
     def __init__(self, jaeger_url: str = "http://localhost:16686"):
         self.jaeger_url = jaeger_url
-    
+
     def get_traces(
         self,
         service_name: str,
@@ -225,55 +225,55 @@ class TraceCollector:
             "service": service_name,
             "limit": limit
         }
-        
+
         if start_time:
             params["start"] = start_time
-        
+
         if end_time:
             params["end"] = end_time
-        
+
         response = requests.get(
             f"{self.jaeger_url}/api/traces",
             params=params
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to get traces: {response.text}")
-        
+
         return response.json().get("data", [])
-    
+
     def get_trace_by_id(self, trace_id: str) -> Dict:
         """根据ID获取追踪数据"""
         response = requests.get(
             f"{self.jaeger_url}/api/traces/{trace_id}"
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to get trace: {response.text}")
-        
+
         return response.json().get("data", [{}])[0]
-    
+
     def get_services(self) -> List[str]:
         """获取所有服务"""
         response = requests.get(
             f"{self.jaeger_url}/api/services"
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to get services: {response.text}")
-        
+
         return response.json().get("data", [])
-    
+
     def get_operations(self, service_name: str) -> List[str]:
         """获取服务的所有操作"""
         response = requests.get(
             f"{self.jaeger_url}/api/operations",
             params={"service": service_name}
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to get operations: {response.text}")
-        
+
         return response.json().get("data", [])
 ```
 
@@ -285,14 +285,14 @@ from collections import defaultdict
 
 class TraceAnalyzer:
     """追踪数据分析器"""
-    
+
     def __init__(self, trace_collector: TraceCollector):
         self.collector = trace_collector
-    
+
     def analyze_trace(self, trace: Dict) -> Dict:
         """分析单个追踪"""
         spans = trace.get("spans", [])
-        
+
         analysis = {
             "trace_id": trace.get("traceID"),
             "total_duration": 0,
@@ -301,13 +301,13 @@ class TraceAnalyzer:
             "errors": [],
             "slow_spans": []
         }
-        
+
         for span in spans:
             duration = span.get("duration", 0)
             analysis["total_duration"] = max(analysis["total_duration"], duration)
-            
+
             analysis["services"].add(span.get("processID"))
-            
+
             if span.get("tags"):
                 for tag in span["tags"]:
                     if tag.get("key") == "error" and tag.get("value"):
@@ -316,18 +316,18 @@ class TraceAnalyzer:
                             "operation": span.get("operationName"),
                             "error": tag.get("value")
                         })
-            
+
             if duration > 1000000:
                 analysis["slow_spans"].append({
                     "span_id": span.get("spanID"),
                     "operation": span.get("operationName"),
                     "duration": duration
                 })
-        
+
         analysis["services"] = list(analysis["services"])
-        
+
         return analysis
-    
+
     def analyze_service_performance(
         self,
         service_name: str,
@@ -335,12 +335,12 @@ class TraceAnalyzer:
     ) -> Dict:
         """分析服务性能"""
         start_time = int((datetime.now().timestamp() - hours * 3600) * 1e6)
-        
+
         traces = self.collector.get_traces(
             service_name,
             start_time=start_time
         )
-        
+
         performance = {
             "service_name": service_name,
             "total_traces": len(traces),
@@ -350,13 +350,13 @@ class TraceAnalyzer:
             "error_rate": 0,
             "operations": defaultdict(list)
         }
-        
+
         total_duration = 0
         error_count = 0
-        
+
         for trace in traces:
             analysis = self.analyze_trace(trace)
-            
+
             total_duration += analysis["total_duration"]
             performance["max_duration"] = max(
                 performance["max_duration"],
@@ -366,22 +366,22 @@ class TraceAnalyzer:
                 performance["min_duration"],
                 analysis["total_duration"]
             )
-            
+
             if analysis["errors"]:
                 error_count += 1
-            
+
             for span in trace.get("spans", []):
                 operation = span.get("operationName")
                 duration = span.get("duration", 0)
                 performance["operations"][operation].append(duration)
-        
+
         if traces:
             performance["avg_duration"] = total_duration / len(traces)
             performance["error_rate"] = error_count / len(traces)
-        
+
         if performance["min_duration"] == float('inf'):
             performance["min_duration"] = 0
-        
+
         performance["operations"] = {
             op: {
                 "count": len(durations),
@@ -391,9 +391,9 @@ class TraceAnalyzer:
             }
             for op, durations in performance["operations"].items()
         }
-        
+
         return performance
-    
+
     def detect_anomalies(
         self,
         service_name: str,
@@ -401,9 +401,9 @@ class TraceAnalyzer:
     ) -> List[Dict]:
         """检测异常"""
         anomalies = []
-        
+
         performance = self.analyze_service_performance(service_name, hours)
-        
+
         if performance["error_rate"] > 0.05:
             anomalies.append({
                 "type": "high_error_rate",
@@ -411,7 +411,7 @@ class TraceAnalyzer:
                 "error_rate": performance["error_rate"],
                 "severity": "high"
             })
-        
+
         for operation, stats in performance["operations"].items():
             if stats["avg_duration"] > 1000000:
                 anomalies.append({
@@ -421,7 +421,7 @@ class TraceAnalyzer:
                     "avg_duration": stats["avg_duration"],
                     "severity": "medium"
                 })
-        
+
         return anomalies
 ```
 
@@ -482,7 +482,7 @@ def init_jaeger_tracer(service_name: str):
         },
         service_name=service_name,
     )
-    
+
     return config.initialize_tracer()
 ```
 

@@ -35,7 +35,7 @@ items:
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -133,7 +133,7 @@ items:
 
 
 
-**ﮔﭘﮔﻟ۶ﻟﺎ**: 
+**ﮔﭘﮔﻟ۶ﻟﺎ**:
 
 
 
@@ -827,7 +827,7 @@ def check_order_before_submission(
 
 
 
-    self, 
+    self,
 
 
 
@@ -851,7 +851,7 @@ def check_order_before_submission(
 
 
 
-    ﻟ؟۱ﮒﮔﻛﭦ۳ﮒﮒﻟ۶ﮔ۲?    
+    ﻟ؟۱ﮒﮔﻛﭦ۳ﮒﮒﻟ۶ﮔ۲?
 
 
 
@@ -871,7 +871,7 @@ def check_order_before_submission(
 
 
 
-        
+
 
 
 
@@ -1011,7 +1011,7 @@ def check_abnormal_trading(self) -> ComplianceCheckResult:
 
 
 
-    ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﻛﭦ۳ﮔﻟ۰?    
+    ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﻛﭦ۳ﮔﻟ۰?
 
 
 
@@ -1055,7 +1055,7 @@ logger.warning(f"ﮒﻟ۶ﻟ۵ﮒ: {result.warnings}")
 
 
 
-    
+
 
 
 
@@ -1103,7 +1103,7 @@ def generate_compliance_report(self) -> Dict:
 
 
 
-    
+
 
 
 
@@ -1213,7 +1213,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -1265,7 +1265,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -1289,7 +1289,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -1305,7 +1305,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -1317,7 +1317,7 @@ logger.warning(f"ﮒﻟ۶ﻟ۵ﮒ: {compliance_result.warnings}")
 
 
 
-        
+
 
 
 
@@ -1329,7 +1329,7 @@ logger.warning(f"ﮒﻟ۶ﻟ۵ﮒ: {compliance_result.warnings}")
 
 
 
-        
+
 
 
 
@@ -1381,7 +1381,7 @@ class EnhancedRiskManager:
 
 
 
-        
+
 
 
 
@@ -1409,7 +1409,7 @@ class EnhancedRiskManager:
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class EnhancedRiskManager:
 
 
 
-        
+
 
 
 
@@ -1429,7 +1429,7 @@ class EnhancedRiskManager:
 
 
 
-        
+
 
 
 
@@ -1521,7 +1521,7 @@ def daily_reset_task():
 
 
 
-    
+
 
 
 
@@ -1807,7 +1807,7 @@ compliance:
 
 
 
-    
+
 
 
 
@@ -1827,7 +1827,7 @@ compliance:
 
 
 
-    
+
 
 
 
@@ -1843,7 +1843,7 @@ compliance:
 
 
 
-    
+
 
 
 
@@ -2191,7 +2191,7 @@ class MLComplianceChecker:
 
 
 
-    
+
 
 
 
@@ -2207,7 +2207,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2215,7 +2215,7 @@ class MLComplianceChecker:
 
 
 
-        """ﻛﺛﺟﻝ۷MLﮔ۲ﮔﭖﮒﺙﮒﺕﺕﻛﭦ۳ﮔﮔ۷۰?        
+        """ﻛﺛﺟﻝ۷MLﮔ۲ﮔﭖﮒﺙﮒﺕﺕﻛﭦ۳ﮔﮔ۷۰?
 
 
 
@@ -2231,7 +2231,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2259,7 +2259,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2267,7 +2267,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2279,7 +2279,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2291,7 +2291,7 @@ class MLComplianceChecker:
 
 
 
-        
+
 
 
 
@@ -2299,7 +2299,7 @@ class MLComplianceChecker:
 
 
 
-    
+
 
 
 
@@ -2307,7 +2307,7 @@ class MLComplianceChecker:
 
 
 
-        """ﻟ۹ﻠﮒﭦﻠﮒﺙﻟﺍ?        
+        """ﻟ۹ﻠﮒﭦﻠﮒﺙﻟﺍ?
 
 
 
@@ -2355,7 +2355,7 @@ class MLComplianceChecker:
 
 
 
-  
+
 
 
 
@@ -2367,7 +2367,7 @@ class MLComplianceChecker:
 
 
 
-  
+
 
 
 
@@ -2435,7 +2435,7 @@ class RuleRecommender:
 
 
 
-    
+
 
 
 
@@ -2443,7 +2443,7 @@ class RuleRecommender:
 
 
 
-        self, 
+        self,
 
 
 
@@ -2459,7 +2459,7 @@ class RuleRecommender:
 
 
 
-        
+
 
 
 
@@ -2467,7 +2467,7 @@ class RuleRecommender:
 
 
 
-        
+
 
 
 
@@ -2557,7 +2557,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-    
+
 
 
 
@@ -2573,7 +2573,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        
+
 
 
 
@@ -2597,7 +2597,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        
+
 
 
 
@@ -2625,7 +2625,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        
+
 
 
 
@@ -2633,7 +2633,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        """ﮔ۶ﻟ۰ﻟ۶ﮒﮔ۲?        
+        """ﮔ۶ﻟ۰ﻟ۶ﮒﮔ۲?
 
 
 
@@ -2653,7 +2653,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        4. ﻟﺟﮒﮔ۲ﮔ۴ﻝﭨ?        
+        4. ﻟﺟﮒﮔ۲ﮔ۴ﻝﭨ?
 
 
 
@@ -2673,7 +2673,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-    
+
 
 
 
@@ -2689,7 +2689,7 @@ class DynamicComplianceRuleEngine:
 
 
 
-        
+
 
 
 
@@ -2765,7 +2765,7 @@ compliance_rules:
 
 
 
-    
+
 
 
 
@@ -2793,7 +2793,7 @@ compliance_rules:
 
 
 
-    
+
 
 
 
@@ -2837,7 +2837,7 @@ name: "ﻝﻝﭦﺟﻛﭦ۳ﮔﻠﻛﭨﮔﮔ۲?
 
 
 
-  
+
 
 
 
@@ -2849,7 +2849,7 @@ name: "ﻝﻝﭦﺟﻛﭦ۳ﮔﻠﻛﭨﮔﮔ۲?
 
 
 
-  
+
 
 
 
@@ -3051,7 +3051,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-    """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶?    
+    """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶?
 
 
 
@@ -3059,7 +3059,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-    
+
 
 
 
@@ -3111,7 +3111,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-    
+
 
 
 
@@ -3155,7 +3155,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-    
+
 
 
 
@@ -3183,7 +3183,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-        
+
 
 
 
@@ -3227,7 +3227,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-        
+
 
 
 
@@ -3235,7 +3235,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-        
+
 
 
 
@@ -3267,7 +3267,7 @@ async def check_order_compliance(order: OrderRequest):
 
 
 
-        
+
 
 
 
@@ -3295,7 +3295,7 @@ async def get_compliance_report():
 
 
 
-    
+
 
 
 
@@ -3303,7 +3303,7 @@ async def get_compliance_report():
 
 
 
-    
+
 
 
 
@@ -3351,7 +3351,7 @@ async def health_check():
 
 
 
-    """ﮒ۴ﮒﭦﺓﮔ۲?    
+    """ﮒ۴ﮒﭦﺓﮔ۲?
 
 
 
@@ -3359,7 +3359,7 @@ async def health_check():
 
 
 
-    
+
 
 
 
@@ -3427,7 +3427,7 @@ if __name__ == "__main__":
 
 
 
-  
+
 
 
 
@@ -3443,7 +3443,7 @@ if __name__ == "__main__":
 
 
 
-  - ﻠﻝﺛ؟ﻠﮔﭖﮒﻝ?  
+  - ﻠﻝﺛ؟ﻠﮔﭖﮒﻝ?
 
 
 
@@ -3539,7 +3539,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
 
 
 
-    
+
 
 
 
@@ -3547,7 +3547,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
 
 
 
-        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶?        
+        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶?
 
 
 
@@ -3575,7 +3575,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
 
 
 
-        
+
 
 
 
@@ -3619,7 +3619,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
 
 
 
-        
+
 
 
 
@@ -3627,7 +3627,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
 
 
 
-        
+
 
 
 
@@ -4052,6 +4052,3 @@ def serve():
 
 
 **ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﮔﭘﮔ?
-
-
-

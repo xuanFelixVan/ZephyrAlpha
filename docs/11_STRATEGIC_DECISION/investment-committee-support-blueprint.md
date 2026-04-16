@@ -25,7 +25,7 @@ layer: layer_00
 
 > **核心职责**: 投资委员会决策支持系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资委员会决策支持系统蓝图设计相关内容
 
@@ -441,7 +441,7 @@ class AIProposalGenerator:
 
     """AI提案生成器"""
 
-    
+
 
     def __init__(self, llm):
 
@@ -453,19 +453,19 @@ class AIProposalGenerator:
 
             基于以下市场分析和系统状态，生成投资决策提案：
 
-            
+
 
             市场分析：
 
             {market_analysis}
 
-            
+
 
             系统状态：
 
             {system_status}
 
-            
+
 
             请生成一个包含以下内容的决策提案：
 
@@ -479,7 +479,7 @@ class AIProposalGenerator:
 
             5. 风险评估
 
-            
+
 
             输出格式：
 
@@ -491,11 +491,11 @@ class AIProposalGenerator:
 
         )
 
-    
+
 
     async def generate_proposal(
 
-        self, 
+        self,
 
         market_analysis: Dict,
 
@@ -509,7 +509,7 @@ class AIProposalGenerator:
 
         chain = LLMChain(llm=self.llm, prompt=self.proposal_template)
 
-        
+
 
         # 生成提案内容
 
@@ -523,7 +523,7 @@ class AIProposalGenerator:
 
         )
 
-        
+
 
         # 解析结果并创建提案对象
 
@@ -557,11 +557,11 @@ class AIProposalGenerator:
 
         )
 
-        
+
 
         return proposal
 
-    
+
 
     def _generate_proposal_id(self) -> str:
 
@@ -591,7 +591,7 @@ class ProposalReviewer:
 
     """提案评审器"""
 
-    
+
 
     def __init__(self, risk_engine, compliance_checker):
 
@@ -599,7 +599,7 @@ class ProposalReviewer:
 
         self.compliance_checker = compliance_checker
 
-    
+
 
     async def review_proposal(self, proposal: DecisionProposal) -> Dict:
 
@@ -621,17 +621,17 @@ class ProposalReviewer:
 
         }
 
-        
+
 
         # 生成评审建议
 
         review_result['recommendation'] = self._generate_recommendation(review_result)
 
-        
+
 
         return review_result
 
-    
+
 
     async def _auto_review(self, proposal: DecisionProposal) -> Dict:
 
@@ -641,19 +641,19 @@ class ProposalReviewer:
 
         completeness = self._check_completeness(proposal)
 
-        
+
 
         # 检查提案合理性
 
         reasonability = self._check_reasonability(proposal)
 
-        
+
 
         # 检查提案可行性
 
         feasibility = self._check_feasibility(proposal)
 
-        
+
 
         return {
 
@@ -667,7 +667,7 @@ class ProposalReviewer:
 
         }
 
-    
+
 
     async def _assess_risk(self, proposal: DecisionProposal) -> Dict:
 
@@ -681,7 +681,7 @@ class ProposalReviewer:
 
         )
 
-    
+
 
     async def _check_compliance(self, proposal: DecisionProposal) -> Dict:
 
@@ -693,7 +693,7 @@ class ProposalReviewer:
 
         )
 
-    
+
 
     def _generate_recommendation(self, review_result: Dict) -> str:
 
@@ -705,7 +705,7 @@ class ProposalReviewer:
 
         compliance_check = review_result['compliance_check']
 
-        
+
 
         if auto_review['overall_score'] < 0.6:
 
@@ -751,7 +751,7 @@ class VotingManager:
 
     """投票管理器"""
 
-    
+
 
     def __init__(self, db, notification_service):
 
@@ -759,11 +759,11 @@ class VotingManager:
 
         self.notification_service = notification_service
 
-    
+
 
     async def create_voting(
 
-        self, 
+        self,
 
         proposal: DecisionProposal,
 
@@ -777,7 +777,7 @@ class VotingManager:
 
         voting_id = self._generate_voting_id()
 
-        
+
 
         voting = {
 
@@ -797,27 +797,27 @@ class VotingManager:
 
         }
 
-        
+
 
         # 保存投票任务
 
         await self.db.save_voting(voting)
 
-        
+
 
         # 发送投票通知
 
         await self.notification_service.send_voting_notification(voting)
 
-        
+
 
         return voting_id
 
-    
+
 
     async def cast_vote(
 
-        self, 
+        self,
 
         voting_id: str,
 
@@ -839,7 +839,7 @@ class VotingManager:
 
             return False
 
-        
+
 
         # 记录投票
 
@@ -859,11 +859,11 @@ class VotingManager:
 
         )
 
-        
+
 
         await self.db.save_vote(vote)
 
-        
+
 
         # 检查是否可以提前结束投票
 
@@ -871,11 +871,11 @@ class VotingManager:
 
             await self._close_voting(voting_id)
 
-        
+
 
         return True
 
-    
+
 
     async def get_voting_result(self, voting_id: str) -> Dict:
 
@@ -885,7 +885,7 @@ class VotingManager:
 
         votes = voting['votes']
 
-        
+
 
         # 统计投票结果
 
@@ -897,7 +897,7 @@ class VotingManager:
 
         total_count = len(votes)
 
-        
+
 
         # 根据投票规则判断结果
 
@@ -915,7 +915,7 @@ class VotingManager:
 
         )
 
-        
+
 
         return {
 
@@ -935,7 +935,7 @@ class VotingManager:
 
         }
 
-    
+
 
     def _evaluate_voting_rule(
 
@@ -1003,7 +1003,7 @@ class DecisionArchiver:
 
     """决策存档器"""
 
-    
+
 
     def __init__(self, db, git_repo_path: str):
 
@@ -1013,11 +1013,11 @@ class DecisionArchiver:
 
         self.archive_path = Path(git_repo_path) / "decisions"
 
-    
+
 
     async def archive_decision(
 
-        self, 
+        self,
 
         decision: DecisionRecord,
 
@@ -1031,7 +1031,7 @@ class DecisionArchiver:
 
         decision_id = await self.db.save_decision(decision)
 
-        
+
 
         # 保存到文件系统
 
@@ -1041,7 +1041,7 @@ class DecisionArchiver:
 
             json.dump(asdict(decision), f, ensure_ascii=False, indent=2)
 
-        
+
 
         # 保存附件
 
@@ -1057,7 +1057,7 @@ class DecisionArchiver:
 
                 pass
 
-        
+
 
         # Git提交
 
@@ -1065,11 +1065,11 @@ class DecisionArchiver:
 
         self.repo.index.commit(f"Archive decision: {decision.decision_id}")
 
-        
+
 
         return decision_id
 
-    
+
 
     async def query_decisions(
 
@@ -1103,7 +1103,7 @@ class DecisionArchiver:
 
         )
 
-    
+
 
     async def get_decision_history(self, decision_id: str) -> List[Dict]:
 
@@ -1115,7 +1115,7 @@ class DecisionArchiver:
 
         commits = list(self.repo.iter_commits(paths=str(decision_file)))
 
-        
+
 
         history = []
 
@@ -1133,7 +1133,7 @@ class DecisionArchiver:
 
             })
 
-        
+
 
         return history
 
@@ -1167,7 +1167,7 @@ class DecisionKnowledgeBase:
 
     """决策知识库"""
 
-    
+
 
     def __init__(self, embedding_model, vector_store_path: str):
 
@@ -1181,7 +1181,7 @@ class DecisionKnowledgeBase:
 
         )
 
-    
+
 
     async def extract_knowledge(self, decision: DecisionRecord) -> Dict:
 
@@ -1205,7 +1205,7 @@ class DecisionKnowledgeBase:
 
         }
 
-        
+
 
         # 提取成功因素
 
@@ -1213,7 +1213,7 @@ class DecisionKnowledgeBase:
 
             knowledge['success_factors'] = await self._extract_success_factors(decision)
 
-        
+
 
         # 提取风险因素
 
@@ -1221,27 +1221,27 @@ class DecisionKnowledgeBase:
 
             knowledge['risk_factors'] = await self._extract_risk_factors(decision)
 
-        
+
 
         # 提取最佳实践
 
         knowledge['best_practices'] = await self._extract_best_practices(decision)
 
-        
+
 
         # 存储到向量数据库
 
         await self._store_knowledge(knowledge)
 
-        
+
 
         return knowledge
 
-    
+
 
     async def retrieve_similar_decisions(
 
-        self, 
+        self,
 
         query: str,
 
@@ -1255,11 +1255,11 @@ class DecisionKnowledgeBase:
 
         return [doc.metadata for doc in results]
 
-    
+
 
     async def generate_decision_suggestion(
 
-        self, 
+        self,
 
         context: Dict
 
@@ -1275,7 +1275,7 @@ class DecisionKnowledgeBase:
 
         )
 
-        
+
 
         # 基于历史决策生成建议
 
@@ -1287,7 +1287,7 @@ class DecisionKnowledgeBase:
 
         )
 
-        
+
 
         return suggestion
 
@@ -1325,13 +1325,13 @@ class OpenProjectIntegration:
 
     """OpenProject集成"""
 
-    
+
 
     def __init__(self, base_url: str, api_key: str):
 
         self.client = OpenProjectClient(base_url, api_key)
 
-    
+
 
     async def create_decision_project(self, decision: DecisionProposal):
 
@@ -1347,7 +1347,7 @@ class OpenProjectIntegration:
 
         })
 
-        
+
 
         # 创建工作包（任务）
 
@@ -1365,11 +1365,11 @@ class OpenProjectIntegration:
 
         })
 
-        
+
 
         return project, work_package
 
-    
+
 
     async def track_decision_progress(self, proposal_id: str):
 
@@ -1379,7 +1379,7 @@ class OpenProjectIntegration:
 
         work_packages = await self.client.get_work_packages(project['id'])
 
-        
+
 
         return {
 
@@ -1443,7 +1443,7 @@ async def create_proposal(
 
     new_proposal = await proposal_manager.create_proposal(proposal)
 
-    
+
 
     # 触发AI评审（后台任务）
 
@@ -1455,7 +1455,7 @@ async def create_proposal(
 
     )
 
-    
+
 
     return {"proposal_id": new_proposal.proposal_id}
 
@@ -1479,7 +1479,7 @@ async def cast_vote(vote: VoteCreate):
 
     )
 
-    
+
 
     return {"success": result}
 
@@ -1810,4 +1810,3 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 **预计完成时间**: 2026-04-10
 
 **维护者**: 系统架构师
-

@@ -187,7 +187,7 @@ def secure_url_open(url: str, timeout: int, allowed_domains: list = None):
 
         raise ValueError(f"Unsupported protocol: {url}")
 
-    
+
 
     # 2. 域名白名单验证（新增增强）
 
@@ -201,7 +201,7 @@ def secure_url_open(url: str, timeout: int, allowed_domains: list = None):
 
             raise ValueError(f"Domain not in whitelist: {domain}")
 
-    
+
 
     # 3. 超时和重试配置    return urllib.request.urlopen(url, timeout=timeout)  # nosec B310
 
@@ -243,7 +243,7 @@ try:
 
     print('?secure_url_open function available')
 
-    
+
 
     # 测试安全验证
 
@@ -257,7 +257,7 @@ try:
 
         print(f'?Correctly rejected: {e}')
 
-        
+
 
 except Exception as e:
 
@@ -327,7 +327,7 @@ global:
 
   max_log_files: 30
 
-  
+
 
 # 触发器定义：
 
@@ -485,7 +485,7 @@ ai_interfaces:
 
     - "生成质量报告"
 
-  
+
 
   ai_command_mapping:
 
@@ -499,7 +499,7 @@ ai_interfaces:
 
     tech_debt: "manual_full_audit"
 
-  
+
 
   standardized_response_format:
 
@@ -569,7 +569,7 @@ class TriggerEngine {
 
     [string]$LogDirectory = ".trae/audit_logs"
 
-    
+
 
     TriggerEngine() {
 
@@ -579,7 +579,7 @@ class TriggerEngine {
 
     }
 
-    
+
 
     [void]LoadConfig() {
 
@@ -589,7 +589,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         $yamlContent = Get-Content $this.ConfigPath -Raw
 
@@ -599,7 +599,7 @@ class TriggerEngine {
 
     }
 
-    
+
 
     [void]InitLogDirectory() {
 
@@ -611,7 +611,7 @@ class TriggerEngine {
 
     }
 
-    
+
 
     [bool]EvaluateCondition([string]$condition, [hashtable]$context) {
 
@@ -621,7 +621,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         if ($condition -eq "triggered_by_ai_command") {
 
@@ -629,7 +629,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         try {
 
@@ -647,7 +647,7 @@ class TriggerEngine {
 
     }
 
-    
+
 
     [void]ExecuteTrigger([string]$triggerName, [hashtable]$context = @{}) {
 
@@ -661,7 +661,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         # 评估条件
 
@@ -673,25 +673,25 @@ class TriggerEngine {
 
         }
 
-        
+
 
         $startTime = Get-Date
 
         $logFile = "$($this.LogDirectory)/$(Get-Date -Format 'yyyyMMdd_HHmmss')_$triggerName.log"
 
-        
+
 
         Write-Host "=== Executing trigger: $triggerName ===" -ForegroundColor Cyan
 
         Write-Host "Description: $($trigger.description)" -ForegroundColor Gray
 
-        
+
 
         $successCount = 0
 
         $totalActions = $trigger.actions.Count
 
-        
+
 
         foreach ($action in $trigger.actions) {
 
@@ -699,19 +699,19 @@ class TriggerEngine {
 
             $actionName = "$($action.tool)_$($action.scope -replace '[\\/]', '_')"
 
-            
+
 
             try {
 
                 Write-Host "  ?$($action.tool) on $($action.scope)" -ForegroundColor Gray
 
-                
+
 
                 # 执行MCP工具调用
 
                 $result = $this.ExecuteMCPTool($action)
 
-                
+
 
                 if ($result.success) {
 
@@ -723,7 +723,7 @@ class TriggerEngine {
 
                     $this.LogError($logFile, $actionName, $result.error)
 
-                    
+
 
                     if ($trigger.on_failure -eq "block") {
 
@@ -733,13 +733,13 @@ class TriggerEngine {
 
                 }
 
-                
+
 
             } catch {
 
                 $this.LogError($logFile, $actionName, $_)
 
-                
+
 
                 if ($trigger.on_failure -eq "block") {
 
@@ -751,7 +751,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         $duration = (Get-Date) - $startTime
 
@@ -773,17 +773,17 @@ class TriggerEngine {
 
         }
 
-        
+
 
         $this.LogSummary($logFile, $summary)
 
-        
+
 
         # 发送通知
 
         $this.SendNotification($trigger, $summary)
 
-        
+
 
         Write-Host "=== Trigger completed: $successCount/$totalActions actions succeeded ===" -ForegroundColor Cyan
 
@@ -791,7 +791,7 @@ class TriggerEngine {
 
     }
 
-    
+
 
     [hashtable]ExecuteMCPTool([hashtable]$action) {
 
@@ -801,7 +801,7 @@ class TriggerEngine {
 
         $args = $action.args -join " "
 
-        
+
 
         $result = @{
 
@@ -815,7 +815,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         try {
 
@@ -867,13 +867,13 @@ class TriggerEngine {
 
         }
 
-        
+
 
         return $result
 
     }
 
-    
+
 
     [void]ProcessAICommand([string]$command) {
 
@@ -881,7 +881,7 @@ class TriggerEngine {
 
         $mappedTrigger = $null
 
-        
+
 
         foreach ($mapping in $this.Config.ai_interfaces.ai_command_mapping.GetEnumerator()) {
 
@@ -895,7 +895,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         if (-not $mappedTrigger) {
 
@@ -917,7 +917,7 @@ class TriggerEngine {
 
         }
 
-        
+
 
         if ($mappedTrigger) {
 
@@ -955,11 +955,11 @@ function Validate-TriggerConfig {
 
     )
 
-    
+
 
     Write-Host "Validating trigger configuration..." -ForegroundColor Cyan
 
-    
+
 
     # 1. 检查配置文件存在性
 
@@ -971,7 +971,7 @@ function Validate-TriggerConfig {
 
     }
 
-    
+
 
     # 2. 解析YAML
 
@@ -989,7 +989,7 @@ function Validate-TriggerConfig {
 
     }
 
-    
+
 
     # 3. 检查必需字段
 
@@ -1009,7 +1009,7 @@ function Validate-TriggerConfig {
 
     Write-Host "?Required sections present" -ForegroundColor Green
 
-    
+
 
     # 4. 检查触发器配置
 
@@ -1017,7 +1017,7 @@ function Validate-TriggerConfig {
 
     Write-Host "Found $triggerCount triggers" -ForegroundColor Cyan
 
-    
+
 
     $valid = $true
 
@@ -1025,7 +1025,7 @@ function Validate-TriggerConfig {
 
         $trigger = $config.triggers.$triggerName
 
-        
+
 
         # 检查触发器必需字段
 
@@ -1043,7 +1043,7 @@ function Validate-TriggerConfig {
 
         }
 
-        
+
 
         # 检查动作配置
 
@@ -1065,7 +1065,7 @@ function Validate-TriggerConfig {
 
     }
 
-    
+
 
     if ($valid) {
 
@@ -1205,7 +1205,7 @@ class QualityMonitoringSystem:
 
         self.tech_debt_manager = TechDebtManager()
 
-    
+
 
     def handle_event(self, event_type, event_data):
 
@@ -1213,7 +1213,7 @@ class QualityMonitoringSystem:
 
         triggers = self.trigger_engine.match_triggers(event_type, event_data)
 
-        
+
 
         # 2. 异步执行
 
@@ -1221,7 +1221,7 @@ class QualityMonitoringSystem:
 
             self.execute_async(self.process_trigger, trigger, event_data)
 
-    
+
 
     def process_trigger(self, trigger, event_data):
 
@@ -1235,13 +1235,13 @@ class QualityMonitoringSystem:
 
             results.append(tool_result)
 
-        
+
 
         # 4. 报告生成
 
         report = self.report_generator.generate(trigger, results)
 
-        
+
 
         # 5. 技术债务更新
 
@@ -1249,7 +1249,7 @@ class QualityMonitoringSystem:
 
             self.tech_debt_manager.update_dashboard(report)
 
-        
+
 
         # 6. AI简报生成（如需要）
 
@@ -1259,7 +1259,7 @@ class QualityMonitoringSystem:
 
             return ai_summary
 
-        
+
 
         return report
 
@@ -1589,25 +1589,25 @@ class QualityMonitoringSystem:
 
     """基于执行日志优化触发器配置""
 
-    
+
 
     # 1. 识别高频误报
 
     false_positives = identify_false_positives(logs)
 
-    
+
 
     # 2. 识别性能瓶颈
 
     performance_bottlenecks = identify_bottlenecks(logs)
 
-    
+
 
     # 3. 识别遗漏问题
 
     missed_issues = identify_missed_issues(logs)
 
-    
+
 
     # 4. 生成优化建议
 
@@ -1621,7 +1621,7 @@ class QualityMonitoringSystem:
 
     }
 
-    
+
 
     return optimizations
 
@@ -1689,7 +1689,7 @@ ai_command_learning:
 
     - "similar_projects_patterns"
 
-  
+
 
   # 自动命令扩展示例
 
@@ -1723,7 +1723,7 @@ ai_command_learning:
 
   "tools_used": ["bandit", "safety", "markdownlint"],
 
-  
+
 
   "summary": {
 
@@ -1743,7 +1743,7 @@ ai_command_learning:
 
   },
 
-  
+
 
   "issues": [
 
@@ -1767,7 +1767,7 @@ ai_command_learning:
 
   ],
 
-  
+
 
   "recommendations": [
 
@@ -1785,7 +1785,7 @@ ai_command_learning:
 
   ],
 
-  
+
 
   "next_steps": [
 
@@ -2129,7 +2129,7 @@ global:
 
   retention_days: 90
 
-  
+
 
 triggers:
 
@@ -2183,7 +2183,7 @@ ai_interfaces:
 
     - "生成质量报告"
 
-  
+
 
   ai_command_mapping:
 
@@ -2197,7 +2197,7 @@ ai_interfaces:
 
     tech_debt: "manual_full_audit"
 
-  
+
 
   standardized_response_format:
 
@@ -2277,17 +2277,17 @@ function Start-QualityMonitoring {
 
     Write-Host "版本: v5.3" -ForegroundColor Gray
 
-    
+
 
     # 加载配置
 
     $config = Get-Content ".trae/audit_triggers.yaml" -Raw | ConvertFrom-Yaml
 
-    
+
 
     # 初始化引?    $engine = [TriggerEngine]::new()
 
-    
+
 
     # 执行命令
 
@@ -2335,7 +2335,7 @@ function Start-QualityMonitoring {
 
     }
 
-    
+
 
     Write-Host "=== 执行完成 ===" -ForegroundColor Cyan
 
@@ -2375,7 +2375,7 @@ class AICommandProcessor {
 
     }
 
-    
+
 
     [hashtable]$TriggerMapping = @{
 
@@ -2389,13 +2389,13 @@ class AICommandProcessor {
 
     }
 
-    
+
 
     [string]ParseCommand([string]$text) {
 
         $text = $text.ToLower()
 
-        
+
 
         # 关键词匹?        $matchedTriggers = @()
 
@@ -2417,7 +2417,7 @@ class AICommandProcessor {
 
         }
 
-        
+
 
         # 优先级排?        if ($matchedTriggers -contains "审计" -and $matchedTriggers -contains "扫描") {
 
@@ -2437,13 +2437,13 @@ class AICommandProcessor {
 
         }
 
-        
+
 
         return "quick_audit"  # 默认
 
     }
 
-    
+
 
     [string]GenerateResponse([string]$trigger, [hashtable]$results) {
 
@@ -2483,7 +2483,7 @@ class AICommandProcessor {
 
         }
 
-        
+
 
         return $templates[$trigger]
 
@@ -2531,7 +2531,6 @@ class AICommandProcessor {
 
 
 
-**蓝图文档完成** ? 
+**蓝图文档完成** ?
 
 **下一?*: 按蓝图开始四阶段施工
-

@@ -114,7 +114,7 @@ interface WebAPI {
 
   getEngineStatus(engineId: string): Promise<EngineStatus>;
 
-  
+
 
   // ﻛﭦ۳ﮔﻝﮔ۶
 
@@ -122,7 +122,7 @@ interface WebAPI {
 
   getOrderHistory(filters: OrderFilters): Promise<Order[]>;
 
-  
+
 
   // ﮔ۶ﻟﺛﮒﺁﻟ۶?
 
@@ -130,7 +130,7 @@ interface WebAPI {
 
   getRiskMetrics(): Promise<RiskMetrics>;
 
-  
+
 
   // ﻠﻝﺛ؟ﻝ؟۰ﻝ
 
@@ -138,7 +138,7 @@ interface WebAPI {
 
   updateEngineConfig(engineId: string, config: Partial<EngineConfig>): Promise<void>;
 
-  
+
 
   // ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓ
 
@@ -164,7 +164,7 @@ interface WebSocketAPI {
 
   unsubscribe(eventType: EventType): void;
 
-  
+
 
   // ﻛﭦﻛﭨﭘﻝﺎﭨﮒﮒ؟ﻛﺗ
 
@@ -288,7 +288,7 @@ class RealTimeAggregator:
 
     """ﮒ؟ﮔﭘﮔﺍﮔ؟ﻟﮒﮒ۷ﺅﺙﻛﺙﮒWebﻝﻠ۱ﮔﺍﮔ؟ﮔﺑﮔﺍﮔ۶ﻟﺛ"""
 
-    
+
 
     def __init__(self, window_size: int = 100):
 
@@ -296,7 +296,7 @@ class RealTimeAggregator:
 
         self.data_buffer = []
 
-        
+
 
     def add_data_point(self, data_point: Dict) -> None:
 
@@ -308,7 +308,7 @@ class RealTimeAggregator:
 
             self.data_buffer.pop(0)
 
-    
+
 
     def get_aggregated_data(self, aggregation_type: str = "mean") -> Dict:
 
@@ -318,7 +318,7 @@ class RealTimeAggregator:
 
             return {}
 
-            
+
 
         if aggregation_type == "mean":
 
@@ -332,7 +332,7 @@ class RealTimeAggregator:
 
             return self._calculate_min_max()
 
-    
+
 
     def _calculate_mean(self) -> Dict:
 
@@ -354,7 +354,7 @@ class WebSocketManager:
 
 """WebSocketﻟﺟﮔ۴ﻝ؟۰ﻝﮒ۷ﺅﺙﮒ۳ﻝﻟﺟﮔ۴ﮔﺎﮒﻠﻟﺟ"""
 
-    
+
 
     def __init__(self, max_connections: int = 100):
 
@@ -364,7 +364,7 @@ class WebSocketManager:
 
         self.connection_pool = []
 
-        
+
 
     async def connect(self, client_id: str, websocket: WebSocket) -> bool:
 
@@ -374,7 +374,7 @@ class WebSocketManager:
 
             await self._evict_oldest_connection()
 
-        
+
 
         self.connections[client_id] = {
 
@@ -388,7 +388,7 @@ class WebSocketManager:
 
         return True
 
-    
+
 
     async def broadcast(self, event_type: str, data: Dict) -> None:
 
@@ -396,7 +396,7 @@ class WebSocketManager:
 
         disconnected_clients = []
 
-        
+
 
         for client_id, conn_info in self.connections.items():
 
@@ -418,7 +418,7 @@ class WebSocketManager:
 
                 disconnected_clients.append(client_id)
 
-        
+
 
 # ﮔﺕﻝﮔﮒﺙﻟﺟﮔ۴ﻝﮒ؟۱ﮔﺓﻝ،ﺁ
 
@@ -496,7 +496,7 @@ interface WebAppState {
 
   };
 
-  
+
 
   // ﮒﺙﮔﻝ?
 
@@ -506,7 +506,7 @@ interface WebAppState {
 
   };
 
-  
+
 
   // ﻛﭦ۳ﮔﮔﺍﮔ؟
 
@@ -520,7 +520,7 @@ interface WebAppState {
 
   };
 
-  
+
 
   // ﮔ۶ﻟﺛﮔﺍﮔ؟
 
@@ -534,7 +534,7 @@ interface WebAppState {
 
   };
 
-  
+
 
   // ﻠﻝﺛ؟ﮔﺍﮔ؟
 
@@ -548,7 +548,7 @@ interface WebAppState {
 
   };
 
-  
+
 
   // ﻝﺏﭨﻝﭨﻝ?
 
@@ -598,7 +598,7 @@ class DashboardData(BaseModel):
 
     recent_alerts: List[Alert]
 
-    
+
 
 class EngineStatus(BaseModel):
 
@@ -620,7 +620,7 @@ class EngineStatus(BaseModel):
 
     error_count: int
 
-    
+
 
 class Trade(BaseModel):
 
@@ -1020,13 +1020,12 @@ class Trade(BaseModel):
 
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02
 
 **ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 
-**ﻝﺑ۱ﮒﺙ**: `DESIGN_003`  
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_003`
 
 **ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰
-

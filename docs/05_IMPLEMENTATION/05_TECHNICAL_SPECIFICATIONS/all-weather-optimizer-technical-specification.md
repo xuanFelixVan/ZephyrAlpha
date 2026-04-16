@@ -107,7 +107,7 @@ implementation_status: "待实?risk_level: P1"
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -125,7 +125,7 @@ implementation_status: "待实?risk_level: P1"
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -259,7 +259,7 @@ implementation_status: "待实?risk_level: P1"
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -295,7 +295,7 @@ implementation_status: "待实?risk_level: P1"
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -777,7 +777,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -813,7 +813,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1227,13 +1227,13 @@ class AllWeatherOptimizer:
 
 
 
-    
 
 
 
 
 
-    def optimize_allocation(self, 
+
+    def optimize_allocation(self,
 
 
 
@@ -1257,7 +1257,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1281,7 +1281,7 @@ class AllWeatherOptimizer:
 
 
 
-            
+
 
 
 
@@ -1311,7 +1311,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1323,7 +1323,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1371,7 +1371,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1431,7 +1431,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1467,7 +1467,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1503,7 +1503,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1539,7 +1539,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1599,7 +1599,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -1641,7 +1641,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -1671,7 +1671,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1689,7 +1689,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1737,7 +1737,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1749,7 +1749,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -1779,7 +1779,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1905,7 +1905,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -1917,7 +1917,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -1959,7 +1959,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2007,7 +2007,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2031,7 +2031,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2049,7 +2049,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2067,7 +2067,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2085,7 +2085,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2115,7 +2115,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2139,7 +2139,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2151,7 +2151,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2163,7 +2163,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2193,7 +2193,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2211,7 +2211,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2229,7 +2229,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2247,7 +2247,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2259,7 +2259,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2289,7 +2289,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2325,7 +2325,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2343,7 +2343,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2373,7 +2373,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2397,7 +2397,7 @@ class AllWeatherOptimizer:
 
 
 
-        
+
 
 
 
@@ -2409,7 +2409,7 @@ class AllWeatherOptimizer:
 
 
 
-    
+
 
 
 
@@ -2469,13 +2469,13 @@ class RiskParityOptimizer:
 
 
 
-    
 
 
 
 
 
-    def optimize(self, assets: List[AssetDefinition], covariance_matrix: pd.DataFrame, 
+
+    def optimize(self, assets: List[AssetDefinition], covariance_matrix: pd.DataFrame,
 
 
 
@@ -2499,7 +2499,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -2523,7 +2523,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -2547,7 +2547,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -2595,7 +2595,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -2607,7 +2607,7 @@ class RiskParityOptimizer:
 
 
 
-        
+
 
 
 
@@ -2643,7 +2643,7 @@ class BlackLittermanModel:
 
 
 
-    
+
 
 
 
@@ -2679,7 +2679,7 @@ class BlackLittermanModel:
 
 
 
-        
+
 
 
 
@@ -2715,7 +2715,7 @@ class BlackLittermanModel:
 
 
 
-        
+
 
 
 
@@ -2733,7 +2733,7 @@ class BlackLittermanModel:
 
 
 
-        
+
 
 
 
@@ -3349,7 +3349,7 @@ class BlackLittermanModel:
 
 
 
-数学公式: 
+数学公式:
 
 
 
@@ -3367,7 +3367,7 @@ class BlackLittermanModel:
 
 
 
-  
+
 
 
 
@@ -3433,7 +3433,7 @@ class BlackLittermanModel:
 
 
 
-  
+
 
 
 
@@ -3587,7 +3587,7 @@ def test_risk_parity_optimization():
 
 
 
-    
+
 
 
 
@@ -3611,7 +3611,7 @@ def test_risk_parity_optimization():
 
 
 
-    
+
 
 
 
@@ -3691,7 +3691,7 @@ def test_risk_parity_optimization():
 
 
 
-   - **概率**: ?   - **缓解措施**: 
+   - **概率**: ?   - **缓解措施**:
 
 
 
@@ -3859,21 +3859,16 @@ def test_risk_parity_optimization():
 
 
 
-**评审结论**: ?批准实施  
+**评审结论**: ?批准实施
 
 
 
 
 
-**评审日期**: 2026-04-02  
+**评审日期**: 2026-04-02
 
 
 
 
 
 **评审?*: 首席技术评审官
-
-
-
-
-

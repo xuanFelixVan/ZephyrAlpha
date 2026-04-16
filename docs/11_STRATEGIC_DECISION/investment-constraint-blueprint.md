@@ -50,7 +50,7 @@ priority: P1
 
 > **核心职责**: 投资限制管理系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资限制管理系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P1
 
 > **核心职责**: Investment Constraint蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Investment Constraint蓝图设计相关内容
 
@@ -468,7 +468,7 @@ class ConstraintRule:
 
     updated_at: datetime = field(default_factory=datetime.now)
 
-    
+
 
     def to_dict(self) -> Dict:
 
@@ -502,7 +502,7 @@ class ConstraintRuleEngine:
 
     """约束规则引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -510,7 +510,7 @@ class ConstraintRuleEngine:
 
         self.sector_mapping: Dict[str, str] = {}
 
-        
+
 
     def add_rule(self, rule: ConstraintRule):
 
@@ -518,7 +518,7 @@ class ConstraintRuleEngine:
 
         self.rules[rule.rule_id] = rule
 
-        
+
 
     def remove_rule(self, rule_id: str):
 
@@ -528,7 +528,7 @@ class ConstraintRuleEngine:
 
             del self.rules[rule_id]
 
-            
+
 
     def update_rule(self, rule_id: str, parameters: Dict[str, Any]):
 
@@ -540,7 +540,7 @@ class ConstraintRuleEngine:
 
             self.rules[rule_id].updated_at = datetime.now()
 
-    
+
 
     def set_sector_mapping(self, mapping: Dict[str, str]):
 
@@ -548,7 +548,7 @@ class ConstraintRuleEngine:
 
         self.sector_mapping = mapping
 
-    
+
 
     def get_active_rules(self) -> List[ConstraintRule]:
 
@@ -556,17 +556,17 @@ class ConstraintRuleEngine:
 
         return [r for r in self.rules.values() if r.is_active]
 
-    
+
 
     def get_rules_by_type(self, constraint_type: ConstraintType) -> List[ConstraintRule]:
 
         """按类型获取规则"""
 
-        return [r for r in self.rules.values() 
+        return [r for r in self.rules.values()
 
                 if r.constraint_type == constraint_type and r.is_active]
 
-    
+
 
     def create_sector_constraint(self,
 
@@ -598,7 +598,7 @@ class ConstraintRuleEngine:
 
         )
 
-    
+
 
     def create_single_stock_constraint(self,
 
@@ -630,7 +630,7 @@ class ConstraintRuleEngine:
 
         )
 
-    
+
 
     def create_concentration_constraint(self,
 
@@ -662,7 +662,7 @@ class ConstraintRuleEngine:
 
         )
 
-    
+
 
     def create_liquidity_constraint(self,
 
@@ -728,7 +728,7 @@ class RuleConfigurationManager:
 
     """规则配置管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -736,7 +736,7 @@ class RuleConfigurationManager:
 
         self.rule_priorities: Dict[str, int] = {}
 
-        
+
 
     def create_version(self,
 
@@ -754,7 +754,7 @@ class RuleConfigurationManager:
 
         version_id = f"{rule_id}_v{len(self.rule_versions.get(rule_id, [])) + 1}"
 
-        
+
 
         version = RuleVersion(
 
@@ -772,7 +772,7 @@ class RuleConfigurationManager:
 
         )
 
-        
+
 
         if rule_id not in self.rule_versions:
 
@@ -780,13 +780,13 @@ class RuleConfigurationManager:
 
         self.rule_versions[rule_id].append(version)
 
-        
+
 
         return version
 
-    
 
-    def get_active_version(self, 
+
+    def get_active_version(self,
 
                           rule_id: str,
 
@@ -798,11 +798,11 @@ class RuleConfigurationManager:
 
             as_of_date = datetime.now()
 
-        
+
 
         versions = self.rule_versions.get(rule_id, [])
 
-        
+
 
         for version in reversed(versions):
 
@@ -812,11 +812,11 @@ class RuleConfigurationManager:
 
                     return version
 
-        
+
 
         return None
 
-    
+
 
     def set_priority(self, rule_id: str, priority: int):
 
@@ -824,13 +824,13 @@ class RuleConfigurationManager:
 
         self.rule_priorities[rule_id] = priority
 
-    
+
 
     def get_sorted_rules(self, rule_ids: List[str]) -> List[str]:
 
         """按优先级排序规则"""
 
-        return sorted(rule_ids, 
+        return sorted(rule_ids,
 
                      key=lambda x: self.rule_priorities.get(x, 999))
 
@@ -882,13 +882,13 @@ class RealtimeConstraintChecker:
 
     """实时约束检查器"""
 
-    
+
 
     def __init__(self, rule_engine: ConstraintRuleEngine):
 
         self.rule_engine = rule_engine
 
-        
+
 
     def check_all_constraints(self,
 
@@ -904,7 +904,7 @@ class RealtimeConstraintChecker:
 
         results = []
 
-        
+
 
         for rule in self.rule_engine.get_active_rules():
 
@@ -932,15 +932,15 @@ class RealtimeConstraintChecker:
 
                 continue
 
-            
+
 
             results.append(result)
 
-        
+
 
         return results
 
-    
+
 
     def _check_sector_constraint(self,
 
@@ -952,7 +952,7 @@ class RealtimeConstraintChecker:
 
         sector_weights = self._calculate_sector_weights(weights)
 
-        
+
 
         violations = []
 
@@ -960,13 +960,13 @@ class RealtimeConstraintChecker:
 
         violated_sector = None
 
-        
+
 
         sector_lower = rule.parameters.get('sector_lower', {})
 
         sector_upper = rule.parameters.get('sector_upper', {})
 
-        
+
 
         for sector, weight in sector_weights.items():
 
@@ -974,7 +974,7 @@ class RealtimeConstraintChecker:
 
             upper = sector_upper.get(sector, 1.0)
 
-            
+
 
             if weight < lower:
 
@@ -988,7 +988,7 @@ class RealtimeConstraintChecker:
 
                 violations.append(f"{sector}权重{weight:.2%}低于下限{lower:.2%}")
 
-            
+
 
             if weight > upper:
 
@@ -1002,11 +1002,11 @@ class RealtimeConstraintChecker:
 
                 violations.append(f"{sector}权重{weight:.2%}超过上限{upper:.2%}")
 
-        
+
 
         is_satisfied = len(violations) == 0
 
-        
+
 
         return ConstraintCheckResult(
 
@@ -1028,7 +1028,7 @@ class RealtimeConstraintChecker:
 
         )
 
-    
+
 
     def _check_single_stock_constraint(self,
 
@@ -1042,7 +1042,7 @@ class RealtimeConstraintChecker:
 
         min_weight = rule.parameters.get('min_weight', 0.0)
 
-        
+
 
         violations = []
 
@@ -1050,7 +1050,7 @@ class RealtimeConstraintChecker:
 
         violated_stock = None
 
-        
+
 
         for stock, weight in weights.items():
 
@@ -1066,7 +1066,7 @@ class RealtimeConstraintChecker:
 
                 violations.append(f"{stock}权重{weight:.2%}低于下限{min_weight:.2%}")
 
-            
+
 
             if weight > max_weight:
 
@@ -1080,11 +1080,11 @@ class RealtimeConstraintChecker:
 
                 violations.append(f"{stock}权重{weight:.2%}超过上限{max_weight:.2%}")
 
-        
+
 
         is_satisfied = len(violations) == 0
 
-        
+
 
         return ConstraintCheckResult(
 
@@ -1106,7 +1106,7 @@ class RealtimeConstraintChecker:
 
         )
 
-    
+
 
     def _check_concentration_constraint(self,
 
@@ -1120,19 +1120,19 @@ class RealtimeConstraintChecker:
 
         max_concentration = rule.parameters.get('max_concentration', 0.5)
 
-        
+
 
         sorted_weights = sorted(weights.values(), reverse=True)
 
         top_n_concentration = sum(sorted_weights[:top_n])
 
-        
+
 
         is_satisfied = top_n_concentration <= max_concentration
 
         violation_amount = max(0, top_n_concentration - max_concentration)
 
-        
+
 
         return ConstraintCheckResult(
 
@@ -1150,13 +1150,13 @@ class RealtimeConstraintChecker:
 
             violation_severity=self._get_severity(violation_amount),
 
-            message=f"前{top_n}大持仓集中度{top_n_concentration:.2%}" + 
+            message=f"前{top_n}大持仓集中度{top_n_concentration:.2%}" +
 
                    (f"超过上限{max_concentration:.2%}" if not is_satisfied else f"在限制内")
 
         )
 
-    
+
 
     def _check_liquidity_constraint(self,
 
@@ -1194,11 +1194,11 @@ class RealtimeConstraintChecker:
 
             )
 
-        
+
 
         max_adv_ratio = rule.parameters.get('max_adv_ratio', 0.05)
 
-        
+
 
         violations = []
 
@@ -1206,7 +1206,7 @@ class RealtimeConstraintChecker:
 
         violated_stock = None
 
-        
+
 
         for stock, weight in weights.items():
 
@@ -1216,13 +1216,13 @@ class RealtimeConstraintChecker:
 
                 daily_volume = adv[stock] * prices[stock]
 
-                
+
 
                 if daily_volume > 0:
 
                     adv_ratio = position_value / daily_volume
 
-                    
+
 
                     if adv_ratio > max_adv_ratio:
 
@@ -1236,11 +1236,11 @@ class RealtimeConstraintChecker:
 
                         violations.append(f"{stock}持仓占日均成交量{adv_ratio:.2%}超过上限{max_adv_ratio:.2%}")
 
-        
+
 
         is_satisfied = len(violations) == 0
 
-        
+
 
         return ConstraintCheckResult(
 
@@ -1262,7 +1262,7 @@ class RealtimeConstraintChecker:
 
         )
 
-    
+
 
     def _calculate_sector_weights(self, weights: Dict[str, float]) -> Dict[str, float]:
 
@@ -1270,7 +1270,7 @@ class RealtimeConstraintChecker:
 
         sector_weights = {}
 
-        
+
 
         for stock, weight in weights.items():
 
@@ -1278,11 +1278,11 @@ class RealtimeConstraintChecker:
 
             sector_weights[sector] = sector_weights.get(sector, 0) + weight
 
-        
+
 
         return sector_weights
 
-    
+
 
     def _get_severity(self, violation_amount: float) -> str:
 
@@ -1344,7 +1344,7 @@ class ViolationDetector:
 
     """违规检测引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -1352,7 +1352,7 @@ class ViolationDetector:
 
         self.violation_counter = 0
 
-        
+
 
     def detect_violations(self,
 
@@ -1362,7 +1362,7 @@ class ViolationDetector:
 
         new_violations = []
 
-        
+
 
         for result in check_results:
 
@@ -1370,7 +1370,7 @@ class ViolationDetector:
 
                 self.violation_counter += 1
 
-                
+
 
                 violation = ViolationRecord(
 
@@ -1400,17 +1400,17 @@ class ViolationDetector:
 
                 )
 
-                
+
 
                 self.violations[violation.violation_id] = violation
 
                 new_violations.append(violation)
 
-        
+
 
         return new_violations
 
-    
+
 
     def resolve_violation(self,
 
@@ -1428,7 +1428,7 @@ class ViolationDetector:
 
             self.violations[violation_id].resolution = resolution
 
-    
+
 
     def waive_violation(self,
 
@@ -1446,7 +1446,7 @@ class ViolationDetector:
 
             self.violations[violation_id].resolution = f"豁免原因: {reason}"
 
-    
+
 
     def get_active_violations(self) -> List[ViolationRecord]:
 
@@ -1454,7 +1454,7 @@ class ViolationDetector:
 
         return [v for v in self.violations.values() if v.status == 'active']
 
-    
+
 
     def get_violation_statistics(self) -> Dict:
 
@@ -1462,7 +1462,7 @@ class ViolationDetector:
 
         all_violations = list(self.violations.values())
 
-        
+
 
         return {
 
@@ -1552,7 +1552,7 @@ class AlertSystem:
 
     """预警系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1562,7 +1562,7 @@ class AlertSystem:
 
         self.alert_counter = 0
 
-        
+
 
     def add_handler(self, handler: Callable):
 
@@ -1570,7 +1570,7 @@ class AlertSystem:
 
         self.alert_handlers.append(handler)
 
-    
+
 
     def generate_alerts(self,
 
@@ -1582,7 +1582,7 @@ class AlertSystem:
 
         new_alerts = []
 
-        
+
 
         for result in check_results:
 
@@ -1590,11 +1590,11 @@ class AlertSystem:
 
                 self.alert_counter += 1
 
-                
+
 
                 level = self._determine_alert_level(result.violation_severity)
 
-                
+
 
                 alert = Alert(
 
@@ -1612,27 +1612,27 @@ class AlertSystem:
 
                 )
 
-                
+
 
                 self.alerts.append(alert)
 
                 new_alerts.append(alert)
 
-                
+
 
                 self._dispatch_alert(alert)
 
-        
+
 
         for violation in violations:
 
             self.alert_counter += 1
 
-            
+
 
             level = AlertLevel.ERROR if violation.severity == 'severe' else AlertLevel.WARNING
 
-            
+
 
             alert = Alert(
 
@@ -1650,21 +1650,21 @@ class AlertSystem:
 
             )
 
-            
+
 
             self.alerts.append(alert)
 
             new_alerts.append(alert)
 
-            
+
 
             self._dispatch_alert(alert)
 
-        
+
 
         return new_alerts
 
-    
+
 
     def _determine_alert_level(self, severity: str) -> AlertLevel:
 
@@ -1684,7 +1684,7 @@ class AlertSystem:
 
         return mapping.get(severity, AlertLevel.WARNING)
 
-    
+
 
     def _dispatch_alert(self, alert: Alert):
 
@@ -1700,7 +1700,7 @@ class AlertSystem:
 
                 print(f"Alert handler error: {e}")
 
-    
+
 
     def acknowledge_alert(self, alert_id: str):
 
@@ -1714,7 +1714,7 @@ class AlertSystem:
 
                 break
 
-    
+
 
     def get_unacknowledged_alerts(self) -> List[Alert]:
 
@@ -1758,9 +1758,9 @@ class AdjustmentSuggestionEngine:
 
     """调整建议引擎"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  rule_engine: ConstraintRuleEngine,
 
@@ -1770,7 +1770,7 @@ class AdjustmentSuggestionEngine:
 
         self.checker = checker
 
-        
+
 
     def generate_suggestions(self,
 
@@ -1782,19 +1782,19 @@ class AdjustmentSuggestionEngine:
 
         suggestions = []
 
-        
+
 
         for violation in violations:
 
             rule = self.rule_engine.rules.get(violation.rule_id)
 
-            
+
 
             if rule is None:
 
                 continue
 
-            
+
 
             if rule.constraint_type == ConstraintType.SINGLE_STOCK:
 
@@ -1808,7 +1808,7 @@ class AdjustmentSuggestionEngine:
 
                     suggestions.append(suggestion)
 
-            
+
 
             elif rule.constraint_type == ConstraintType.SECTOR:
 
@@ -1822,7 +1822,7 @@ class AdjustmentSuggestionEngine:
 
                     suggestions.append(suggestion)
 
-            
+
 
             elif rule.constraint_type == ConstraintType.CONCENTRATION:
 
@@ -1836,11 +1836,11 @@ class AdjustmentSuggestionEngine:
 
                     suggestions.append(suggestion)
 
-        
+
 
         return sorted(suggestions, key=lambda x: x.priority)
 
-    
+
 
     def _generate_single_stock_adjustment(self,
 
@@ -1854,7 +1854,7 @@ class AdjustmentSuggestionEngine:
 
         max_weight = rule.parameters.get('max_weight', 1.0)
 
-        
+
 
         overweight_stocks = [
 
@@ -1864,13 +1864,13 @@ class AdjustmentSuggestionEngine:
 
         ]
 
-        
+
 
         if not overweight_stocks:
 
             return None
 
-        
+
 
         suggested_changes = {}
 
@@ -1880,7 +1880,7 @@ class AdjustmentSuggestionEngine:
 
             suggested_changes[stock] = -excess
 
-        
+
 
         return AdjustmentSuggestion(
 
@@ -1904,7 +1904,7 @@ class AdjustmentSuggestionEngine:
 
         )
 
-    
+
 
     def _generate_sector_adjustment(self,
 
@@ -1920,7 +1920,7 @@ class AdjustmentSuggestionEngine:
 
         sector_upper = rule.parameters.get('sector_upper', {})
 
-        
+
 
         overweight_sectors = [
 
@@ -1930,25 +1930,25 @@ class AdjustmentSuggestionEngine:
 
         ]
 
-        
+
 
         if not overweight_sectors:
 
             return None
 
-        
+
 
         target_stocks = []
 
         suggested_changes = {}
 
-        
+
 
         for sector in overweight_sectors:
 
             excess = sector_weights[sector] - sector_upper[sector]
 
-            
+
 
             sector_stocks = [
 
@@ -1958,7 +1958,7 @@ class AdjustmentSuggestionEngine:
 
             ]
 
-            
+
 
             for stock in sector_stocks:
 
@@ -1968,7 +1968,7 @@ class AdjustmentSuggestionEngine:
 
                     suggested_changes[stock] = -weights[stock] * (excess / sector_weights[sector])
 
-        
+
 
         return AdjustmentSuggestion(
 
@@ -1992,7 +1992,7 @@ class AdjustmentSuggestionEngine:
 
         )
 
-    
+
 
     def _generate_concentration_adjustment(self,
 
@@ -2008,7 +2008,7 @@ class AdjustmentSuggestionEngine:
 
         max_concentration = rule.parameters.get('max_concentration', 0.5)
 
-        
+
 
         sorted_stocks = sorted(weights.items(), key=lambda x: x[1], reverse=True)
 
@@ -2016,17 +2016,17 @@ class AdjustmentSuggestionEngine:
 
         top_concentration = sum(w for _, w in top_stocks)
 
-        
+
 
         if top_concentration <= max_concentration:
 
             return None
 
-        
+
 
         excess = top_concentration - max_concentration
 
-        
+
 
         suggested_changes = {}
 
@@ -2036,7 +2036,7 @@ class AdjustmentSuggestionEngine:
 
             suggested_changes[stock] = -reduction
 
-        
+
 
         return AdjustmentSuggestion(
 
@@ -2090,9 +2090,9 @@ class PyPortfolioOptIntegration:
 
     """PyPortfolioOpt约束集成"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  expected_returns: pd.Series,
 
@@ -2104,7 +2104,7 @@ class PyPortfolioOptIntegration:
 
         self.ef = EfficientFrontier(expected_returns, cov_matrix)
 
-    
+
 
     def add_sector_constraints(self,
 
@@ -2122,7 +2122,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def add_weight_constraints(self,
 
@@ -2136,7 +2136,7 @@ class PyPortfolioOptIntegration:
 
         self.ef.add_constraint(lambda w: w <= max_weight)
 
-    
+
 
     def add_tracking_error_constraint(self,
 
@@ -2158,7 +2158,7 @@ class PyPortfolioOptIntegration:
 
         )
 
-    
+
 
     def optimize(self, objective: str = 'max_sharpe') -> Dict[str, float]:
 
@@ -2176,7 +2176,7 @@ class PyPortfolioOptIntegration:
 
             weights = self.ef.min_volatility()
 
-        
+
 
         return self.ef.clean_weights()
 
@@ -2202,13 +2202,13 @@ class SkfolioIntegration:
 
     """skfolio约束集成"""
 
-    
+
 
     def __init__(self):
 
         self.model = None
 
-    
+
 
     def create_constrained_model(self,
 
@@ -2234,7 +2234,7 @@ class SkfolioIntegration:
 
         return self.model
 
-    
+
 
     def fit(self, returns: pd.DataFrame):
 
@@ -2244,7 +2244,7 @@ class SkfolioIntegration:
 
             self.model.fit(returns)
 
-    
+
 
     def predict(self, returns: pd.DataFrame) -> Portfolio:
 
@@ -2413,4 +2413,3 @@ class SkfolioIntegration:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

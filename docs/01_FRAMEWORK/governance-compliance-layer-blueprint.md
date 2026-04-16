@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Governance Compliance Layer蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Governance Compliance Layer蓝图设计相关内容
 
@@ -446,7 +446,7 @@ class TradingAuthorizationSystem:
 
     """交易授权系统"""
 
-    
+
 
     def __init__(self, llm_client, risk_assessor):
 
@@ -464,19 +464,19 @@ class TradingAuthorizationSystem:
 
         }
 
-        
 
-    def authorize_trade(self, 
+
+    def authorize_trade(self,
 
                        request: AuthorizationRequest) -> AuthorizationResult:
 
         """授权交易"""
 
-        
+
 
         risk_assessment = self.risk_assessor.assess(request)
 
-        
+
 
         if risk_assessment['risk_level'] == 'low':
 
@@ -500,13 +500,13 @@ class TradingAuthorizationSystem:
 
                 )
 
-        
+
 
         elif risk_assessment['risk_level'] == 'medium':
 
             return self._request_manual_confirmation(request, risk_assessment)
 
-        
+
 
         else:  # high risk
 
@@ -528,19 +528,19 @@ class TradingAuthorizationSystem:
 
             )
 
-    
+
 
     def _check_limits(self, request: AuthorizationRequest) -> bool:
 
         """检查授权额度"""
 
-        
+
 
         if request.amount > self.authorization_limits['single_trade']:
 
             return False
 
-        
+
 
         daily_used = self._get_daily_used_amount()
 
@@ -548,13 +548,13 @@ class TradingAuthorizationSystem:
 
             return False
 
-        
+
 
         return True
 
-    
 
-    def _request_manual_confirmation(self, 
+
+    def _request_manual_confirmation(self,
 
                                     request: AuthorizationRequest,
 
@@ -562,13 +562,13 @@ class TradingAuthorizationSystem:
 
         """请求人工确认"""
 
-        
+
 
         prompt = f"""
 
         作为交易授权审核员，请审核以下交易请求：
 
-        
+
 
         交易信息：
 
@@ -582,13 +582,13 @@ class TradingAuthorizationSystem:
 
         - 金额：{request.amount}
 
-        
+
 
         风险评估：
 
         {risk_assessment}
 
-        
+
 
         请给出授权建议：
 
@@ -598,19 +598,19 @@ class TradingAuthorizationSystem:
 
         3. 附加条件（如有）
 
-        
+
 
         以JSON格式输出。
 
         """
 
-        
+
 
         response = self.llm_client.generate(prompt)
 
         decision = self._parse_decision(response)
 
-        
+
 
         return AuthorizationResult(
 
@@ -756,13 +756,13 @@ class TradingAuthorizationSystem:
 
 
 
-✅ **内部控制** - 交易授权、操作审计、风险控制  
+✅ **内部控制** - 交易授权、操作审计、风险控制
 
-✅ **合规监控** - 监管合规、内部合规、合规预警  
+✅ **合规监控** - 监管合规、内部合规、合规预警
 
-✅ **决策审计** - AI决策审计、人工决策记录  
+✅ **决策审计** - AI决策审计、人工决策记录
 
-✅ **风险治理** - 风险委员会、风险预算管理  
+✅ **风险治理** - 风险委员会、风险预算管理
 
 
 
@@ -893,4 +893,3 @@ class TradingAuthorizationSystem:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-

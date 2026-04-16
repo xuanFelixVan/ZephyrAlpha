@@ -17,7 +17,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -307,7 +307,7 @@ CREATE MATERIALIZED VIEW kline_1m
 
 WITH (timescaledb.continuous) AS
 
-SELECT 
+SELECT
 
     time_bucket('1 minute', time) AS bucket,
 
@@ -347,7 +347,7 @@ CREATE MATERIALIZED VIEW kline_5m
 
 WITH (timescaledb.continuous) AS
 
-SELECT 
+SELECT
 
     time_bucket('5 minutes', time) AS bucket,
 
@@ -373,7 +373,7 @@ CREATE MATERIALIZED VIEW kline_1d
 
 WITH (timescaledb.continuous) AS
 
-SELECT 
+SELECT
 
     time_bucket('1 day', time) AS bucket,
 
@@ -485,7 +485,7 @@ import pandas as pd
 
 class TimescaleDBWriter:
 
-    
+
 
     def __init__(self, connection_string: str):
 
@@ -493,13 +493,13 @@ class TimescaleDBWriter:
 
         self.cursor = self.conn.cursor()
 
-    
+
 
     def write_ticks(self, ticks: List[Dict]) -> int:
 
         sql = """
 
-        INSERT INTO stock_ticks 
+        INSERT INTO stock_ticks
 
         (time, symbol, price, volume, bid_price, ask_price, bid_volume, ask_volume)
 
@@ -507,7 +507,7 @@ class TimescaleDBWriter:
 
         """
 
-        
+
 
         values = [(
 
@@ -519,7 +519,7 @@ class TimescaleDBWriter:
 
         ) for tick in ticks]
 
-        
+
 
         execute_values(self.cursor, sql, values)
 
@@ -527,13 +527,13 @@ class TimescaleDBWriter:
 
         return len(values)
 
-    
+
 
     def write_klines(self, klines: pd.DataFrame) -> int:
 
         sql = """
 
-        INSERT INTO stock_klines 
+        INSERT INTO stock_klines
 
         (time, symbol, interval, open, high, low, close, volume, amount)
 
@@ -541,7 +541,7 @@ class TimescaleDBWriter:
 
         """
 
-        
+
 
         values = [(
 
@@ -553,7 +553,7 @@ class TimescaleDBWriter:
 
         ) for _, row in klines.iterrows()]
 
-        
+
 
         execute_values(self.cursor, sql, values)
 
@@ -561,13 +561,13 @@ class TimescaleDBWriter:
 
         return len(values)
 
-    
+
 
     def write_factors(self, factors: pd.DataFrame) -> int:
 
         sql = """
 
-        INSERT INTO factor_values 
+        INSERT INTO factor_values
 
         (time, symbol, factor_id, value, quality)
 
@@ -575,7 +575,7 @@ class TimescaleDBWriter:
 
         """
 
-        
+
 
         values = [(
 
@@ -585,7 +585,7 @@ class TimescaleDBWriter:
 
         ) for _, row in factors.iterrows()]
 
-        
+
 
         execute_values(self.cursor, sql, values)
 
@@ -605,13 +605,13 @@ class TimescaleDBWriter:
 
 class TimescaleDBReader:
 
-    
+
 
     def __init__(self, connection_string: str):
 
         self.conn = psycopg2.connect(connection_string)
 
-    
+
 
     def get_klines(
 
@@ -641,7 +641,7 @@ class TimescaleDBReader:
 
         """
 
-        
+
 
         return pd.read_sql(sql, self.conn, params=[
 
@@ -649,7 +649,7 @@ class TimescaleDBReader:
 
         ])
 
-    
+
 
     def get_ticks(
 
@@ -679,7 +679,7 @@ class TimescaleDBReader:
 
         """
 
-        
+
 
         return pd.read_sql(sql, self.conn, params=[
 
@@ -687,7 +687,7 @@ class TimescaleDBReader:
 
         ])
 
-    
+
 
     def get_factor_values(
 
@@ -721,7 +721,7 @@ class TimescaleDBReader:
 
         """
 
-        
+
 
         return pd.read_sql(sql, self.conn, params=[
 
@@ -729,7 +729,7 @@ class TimescaleDBReader:
 
         ])
 
-    
+
 
     def get_latest_prices(self, symbols: List[str]) -> Dict[str, float]:
 
@@ -745,7 +745,7 @@ class TimescaleDBReader:
 
         """
 
-        
+
 
         df = pd.read_sql(sql, self.conn, params=[symbols])
 
@@ -765,13 +765,13 @@ class TimeWindowQueries:
 
     """时间窗口查询"""
 
-    
+
 
     def __init__(self, reader: TimescaleDBReader):
 
         self.reader = reader
 
-    
+
 
     def get_rolling_stats(
 
@@ -789,7 +789,7 @@ class TimeWindowQueries:
 
         sql = f"""
 
-        SELECT 
+        SELECT
 
             time,
 
@@ -813,11 +813,11 @@ class TimeWindowQueries:
 
         """
 
-        
+
 
         return pd.read_sql(sql, self.reader.conn, params=[symbol])
 
-    
+
 
     def get_time_bucket_agg(
 
@@ -835,7 +835,7 @@ class TimeWindowQueries:
 
         sql = f"""
 
-        SELECT 
+        SELECT
 
             time_bucket('{bucket_size}', time) AS bucket,
 
@@ -863,7 +863,7 @@ class TimeWindowQueries:
 
         """
 
-        
+
 
         return pd.read_sql(sql, self.reader.conn, params=[
 
@@ -957,7 +957,7 @@ from asyncpg import create_pool
 
 class AsyncTimescaleDBWriter:
 
-    
+
 
     def __init__(self, connection_string: str, pool_size: int = 5):
 
@@ -967,7 +967,7 @@ class AsyncTimescaleDBWriter:
 
         self.pool = None
 
-    
+
 
     async def init_pool(self):
 
@@ -983,7 +983,7 @@ class AsyncTimescaleDBWriter:
 
         )
 
-    
+
 
     async def write_ticks_batch(self, ticks: List[Dict]) -> int:
 
@@ -999,7 +999,7 @@ class AsyncTimescaleDBWriter:
 
             ]
 
-            
+
 
             await conn.executemany(
 
@@ -1015,7 +1015,7 @@ class AsyncTimescaleDBWriter:
 
             )
 
-            
+
 
             return len(values)
 
@@ -1053,7 +1053,7 @@ SELECT * FROM timescaledb_information.jobs;
 
 -- 查看数据大小
 
-SELECT 
+SELECT
 
     hypertable_name,
 
@@ -1075,13 +1075,13 @@ FROM timescaledb_information.compressed_hypertable_stats;
 
 class TimescaleDBHealthCheck:
 
-    
+
 
     def __init__(self, conn):
 
         self.conn = conn
 
-    
+
 
     def check_connection(self) -> bool:
 
@@ -1099,13 +1099,13 @@ class TimescaleDBHealthCheck:
 
             return False
 
-    
+
 
     def check_hypertables(self) -> List[Dict]:
 
         sql = """
 
-        SELECT 
+        SELECT
 
             hypertable_name,
 
@@ -1117,7 +1117,7 @@ class TimescaleDBHealthCheck:
 
         """
 
-        
+
 
         with self.conn.cursor() as cur:
 
@@ -1125,13 +1125,13 @@ class TimescaleDBHealthCheck:
 
             return cur.fetchall()
 
-    
+
 
     def check_jobs(self) -> List[Dict]:
 
         sql = """
 
-        SELECT 
+        SELECT
 
             job_id,
 
@@ -1145,7 +1145,7 @@ class TimescaleDBHealthCheck:
 
         """
 
-        
+
 
         with self.conn.cursor() as cur:
 
@@ -1295,7 +1295,7 @@ class TimescaleDBToClickHouse:
 
     """数据归档到ClickHouse"""
 
-    
+
 
     def archive_old_data(self, days: int = 30):
 
@@ -1315,7 +1315,7 @@ class TimescaleDBToClickHouse:
 
         """
 
-        
+
 
 ```
 
@@ -1329,11 +1329,11 @@ class TimescaleDBToClickHouse:
 
 class TimescaleDBRedisCache:
 
-    
+
 
     def get_latest_price_with_cache(self, symbol: str) -> float:
 
-        # 1. 
+        # 1.
 
         # 2. 缓存未命中则查TimescaleDB
 
@@ -1398,10 +1398,3 @@ class TimescaleDBRedisCache:
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 | v1.0.1 | 2026-04-08 | 补齐三段门禁 | Trae-07 |
-
-
-
-
-
-
-

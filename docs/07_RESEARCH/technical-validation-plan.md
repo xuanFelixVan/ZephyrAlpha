@@ -123,13 +123,13 @@ class QlibValidator:
 
     """Qlib验证?""
 
-    
+
 
     def __init__(self):
 
         self.results = {}
 
-    
+
 
     def validate_basic_functionality(self):
 
@@ -143,7 +143,7 @@ class QlibValidator:
 
             qlib.init(provider_uri=provider_uri, region=REG_CN)
 
-            
+
 
             # 2. 数据加载测试
 
@@ -151,7 +151,7 @@ class QlibValidator:
 
             df = D.features(instruments, ['$close', '$volume'], start_time='2020-01-01', end_time='2020-12-31')
 
-            
+
 
             # 3. 模型训练测试
 
@@ -187,11 +187,11 @@ class QlibValidator:
 
             }
 
-            
+
 
             model = init_instance_by_config(model_config)
 
-            
+
 
             self.results['basic_functionality'] = {
 
@@ -205,7 +205,7 @@ class QlibValidator:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -217,7 +217,7 @@ class QlibValidator:
 
             }
 
-    
+
 
     def validate_neural_networks(self):
 
@@ -229,7 +229,7 @@ class QlibValidator:
 
             from qlib.contrib.model.pytorch_lstm import LSTMModel
 
-            
+
 
             lstm_config = {
 
@@ -257,11 +257,11 @@ class QlibValidator:
 
             }
 
-            
+
 
             lstm_model = LSTMModel(**lstm_config)
 
-            
+
 
             self.results['neural_networks'] = {
 
@@ -273,7 +273,7 @@ class QlibValidator:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -285,7 +285,7 @@ class QlibValidator:
 
             }
 
-    
+
 
     def validate_performance(self, n_samples=10000):
 
@@ -293,11 +293,11 @@ class QlibValidator:
 
         import time
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         # 模拟大规模数据训?
 
@@ -305,21 +305,21 @@ class QlibValidator:
 
         y = np.random.randn(n_samples)
 
-        
+
 
         from qlib.contrib.model.gbdt import LGBModel
 
         model = LGBModel()
 
-        
+
 
         training_time = time.time() - start_time
 
-        
+
 
         memory_usage = self._get_memory_usage()
 
-        
+
 
         self.results['performance'] = {
 
@@ -357,7 +357,7 @@ class ResourceAssessor:
 
     """资源需求评估器"""
 
-    
+
 
     def assess_training_resources(self, model_name, data_size):
 
@@ -365,13 +365,13 @@ class ResourceAssessor:
 
         results = {}
 
-        
+
 
         # CPU使用?
 
         cpu_percent = psutil.cpu_percent(interval=1)
 
-        
+
 
         # 内存使用
 
@@ -379,25 +379,25 @@ class ResourceAssessor:
 
         memory_before = process.memory_info().rss / 1024 / 1024  # MB
 
-        
+
 
         # 模拟训练过程
 
         start_time = time.time()
 
-        
+
 
         # 这里模拟实际训练过程
 
         self._simulate_training(data_size)
 
-        
+
 
         end_time = time.time()
 
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
 
-        
+
 
         results[model_name] = {
 
@@ -413,11 +413,11 @@ class ResourceAssessor:
 
         }
 
-        
+
 
         return results
 
-    
+
 
     def _estimate_gpu_memory(self, data_size):
 
@@ -431,7 +431,7 @@ class ResourceAssessor:
 
         return base_memory + additional_memory
 
-    
+
 
     def _recommend_hardware(self, training_time, memory_usage):
 
@@ -471,7 +471,7 @@ class CompatibilityChecker:
 
     """兼容性检查器"""
 
-    
+
 
     REQUIRED_PACKAGES = {
 
@@ -497,7 +497,7 @@ class CompatibilityChecker:
 
     }
 
-    
+
 
     def check_environment(self):
 
@@ -505,7 +505,7 @@ class CompatibilityChecker:
 
         results = {}
 
-        
+
 
         # Python版本
 
@@ -519,13 +519,13 @@ class CompatibilityChecker:
 
         }
 
-        
+
 
         # 包兼容?
 
         installed_packages = {pkg.key: pkg.version for pkg in pkg_resources.working_set}
 
-        
+
 
         for package, required_version in self.REQUIRED_PACKAGES.items():
 
@@ -561,7 +561,7 @@ class CompatibilityChecker:
 
                 }
 
-        
+
 
         return results
 
@@ -900,4 +900,3 @@ graph TD
 2. 执行第一阶段环境检查
 
 3. 开始Qlib基础功能验证
-

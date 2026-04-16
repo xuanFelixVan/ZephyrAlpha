@@ -61,7 +61,7 @@ plugins:
 
   - search:
 
-      lang: 
+      lang:
 
         - zh
 
@@ -173,11 +173,10 @@ class ModuleImplementation:
 
         pass
 
-    
+
 
     def execute(self):
 
         pass
 
 ```
-

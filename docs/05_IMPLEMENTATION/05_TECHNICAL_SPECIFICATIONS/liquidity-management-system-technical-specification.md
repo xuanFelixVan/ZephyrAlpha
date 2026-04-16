@@ -172,7 +172,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -288,7 +288,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -360,7 +360,7 @@ implementation_status: 设计阶段
 
 
 
-  
+
 
 
 
@@ -522,7 +522,7 @@ def monitor_liquidity(
 
 
 
-    监控流动?    
+    监控流动?
 
 
 
@@ -540,7 +540,7 @@ def monitor_liquidity(
 
 
 
-    
+
 
 
 
@@ -582,7 +582,7 @@ def monitor_liquidity(
 
 
 
-      - timestamp: 时间?    
+      - timestamp: 时间?
 
 
 
@@ -666,7 +666,7 @@ def predict_cash_flow(
 
 
 
-    预测现金?    
+    预测现金?
 
 
 
@@ -690,7 +690,7 @@ def predict_cash_flow(
 
 
 
-    
+
 
 
 
@@ -714,7 +714,7 @@ def predict_cash_flow(
 
 
 
-      - confidence: 预测置信?    
+      - confidence: 预测置信?
 
 
 
@@ -792,7 +792,7 @@ def generate_liquidity_warning(
 
 
 
-    生成流动性预?    
+    生成流动性预?
 
 
 
@@ -810,7 +810,7 @@ def generate_liquidity_warning(
 
 
 
-    
+
 
 
 
@@ -828,7 +828,7 @@ def generate_liquidity_warning(
 
 
 
-      - timestamp: 时间?    
+      - timestamp: 时间?
 
 
 
@@ -930,7 +930,7 @@ def optimize_fund_allocation(
 
 
 
-    
+
 
 
 
@@ -948,7 +948,7 @@ def optimize_fund_allocation(
 
 
 
-    - target_return: 目标收益?    
+    - target_return: 目标收益?
 
 
 
@@ -978,7 +978,7 @@ def optimize_fund_allocation(
 
 
 
-      - action_items: 行动?    
+      - action_items: 行动?
 
 
 
@@ -1938,7 +1938,7 @@ class TurnoverRatioCalculator:
 
 
 
-    
+
 
 
 
@@ -1980,7 +1980,7 @@ class TurnoverRatioCalculator:
 
 
 
-        计算资金周转?        
+        计算资金周转?
 
 
 
@@ -1992,7 +1992,7 @@ class TurnoverRatioCalculator:
 
 
 
-        1. 计算周期内总交易金?        2. 计算周期内平均资金占?        3. 计算周转?        
+        1. 计算周期内总交易金?        2. 计算周期内平均资金占?        3. 计算周转?
 
 
 
@@ -2010,7 +2010,7 @@ class TurnoverRatioCalculator:
 
 
 
-        
+
 
 
 
@@ -2052,7 +2052,7 @@ class TurnoverRatioCalculator:
 
 
 
-        
+
 
 
 
@@ -2082,7 +2082,7 @@ class TurnoverRatioCalculator:
 
 
 
-        
+
 
 
 
@@ -2100,7 +2100,7 @@ class TurnoverRatioCalculator:
 
 
 
-        
+
 
 
 
@@ -2196,7 +2196,7 @@ class CashFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -2238,7 +2238,7 @@ class CashFlowPredictor:
 
 
 
-        简单现金流预测（历史平均法?        
+        简单现金流预测（历史平均法?
 
 
 
@@ -2250,7 +2250,7 @@ class CashFlowPredictor:
 
 
 
-        1. 计算历史平均日流程        2. 计算历史平均日流程        3. 预测未来每日现金?        
+        1. 计算历史平均日流程        2. 计算历史平均日流程        3. 预测未来每日现金?
 
 
 
@@ -2274,7 +2274,7 @@ class CashFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -2304,7 +2304,7 @@ class CashFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -2364,7 +2364,7 @@ class CashFlowPredictor:
 
 
 
-        
+
 
 
 
@@ -2508,7 +2508,7 @@ class LiquidityRiskAssessor:
 
 
 
-    
+
 
 
 
@@ -2544,7 +2544,7 @@ class LiquidityRiskAssessor:
 
 
 
-        计算流动性风险得?        
+        计算流动性风险得?
 
 
 
@@ -2562,7 +2562,7 @@ class LiquidityRiskAssessor:
 
 
 
-        3. 流出压力（权?0%? 流出/流入>1高风?        4. 周转率（权重20%? 过高或过低都有风?        
+        3. 流出压力（权?0%? 流出/流入>1高风?        4. 周转率（权重20%? 过高或过低都有风?
 
 
 
@@ -2586,7 +2586,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2610,7 +2610,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2658,7 +2658,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2706,7 +2706,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2730,7 +2730,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2748,7 +2748,7 @@ class LiquidityRiskAssessor:
 
 
 
-        
+
 
 
 
@@ -2988,7 +2988,7 @@ class TestTurnoverRatioCalculator:
 
 
 
-    
+
 
 
 
@@ -3012,7 +3012,7 @@ class TestTurnoverRatioCalculator:
 
 
 
-    
+
 
 
 
@@ -3054,7 +3054,7 @@ class TestCashFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -3078,7 +3078,7 @@ class TestCashFlowPredictor:
 
 
 
-    
+
 
 
 
@@ -3144,7 +3144,7 @@ class TestLiquidityManagementSystem:
 
 
 
-    
+
 
 
 
@@ -3168,7 +3168,7 @@ class TestLiquidityManagementSystem:
 
 
 
-    
+
 
 
 
@@ -3192,7 +3192,7 @@ class TestLiquidityManagementSystem:
 
 
 
-    
+
 
 
 
@@ -3931,8 +3931,3 @@ class TestLiquidityManagementSystem:
 
 
 **文档结束**
-
-
-
-
-

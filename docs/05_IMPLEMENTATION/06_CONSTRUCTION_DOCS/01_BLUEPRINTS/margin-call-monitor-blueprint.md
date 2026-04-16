@@ -19,7 +19,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -333,21 +333,21 @@ class MarginCallMonitorConfig:
 
     snowball_knock_in_thresholds: Dict[str, float] = None
 
-    
+
 
     margin_call_thresholds: Dict[str, float] = None
 
-    
+
 
     market_leverage_thresholds: Dict[str, float] = None
 
-    
+
 
     alert_channels: List[str] = None  # ['email', 'sms', 'wechat', 'system']
 
     alert_cooldown_minutes: int = 30
 
-    
+
 
     def __post_init__(self):
 
@@ -357,23 +357,23 @@ class MarginCallMonitorConfig:
 
             }
 
-        
+
 
         if self.margin_call_thresholds is None:
 
             self.margin_call_thresholds = {
 
-                'P0_CRITICAL': 1.30,   # 
+                'P0_CRITICAL': 1.30,   #
 
-                'P1_HIGH': 1.50,       # 
+                'P1_HIGH': 1.50,       #
 
-                'P2_MEDIUM': 1.80,     # 
+                'P2_MEDIUM': 1.80,     #
 
-                'P3_LOW': 2.00         # 
+                'P3_LOW': 2.00         #
 
             }
 
-        
+
 
         if self.market_leverage_thresholds is None:
 
@@ -381,7 +381,7 @@ class MarginCallMonitorConfig:
 
             }
 
-        
+
 
         if self.alert_channels is None:
 
@@ -595,11 +595,11 @@ async def get_active_alerts():
 
 class MarginCallMonitorIntegrator:
 
-    
+
 
     """
 
-    
+
 
     def integrate_with_leverage_management(
 
@@ -611,7 +611,7 @@ class MarginCallMonitorIntegrator:
 
         pass
 
-    
+
 
     def integrate_with_stress_test(
 
@@ -623,7 +623,7 @@ class MarginCallMonitorIntegrator:
 
         pass
 
-    
+
 
     def integrate_with_risk_control(
 
@@ -673,7 +673,7 @@ class MarginCallMonitorIntegrator:
 
 
 
-### 6.2 
+### 6.2
 
 
 
@@ -840,12 +840,3 @@ class MarginCallMonitorIntegrator:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-05 | 初始版本创建 | 组合优化层负责人 |
-
-
-
-
-
-
-
-
-

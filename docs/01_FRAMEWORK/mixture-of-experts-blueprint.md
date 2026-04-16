@@ -16,7 +16,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供mixture of experts blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Mixture Of Experts蓝图设计相关内容
 
@@ -214,7 +214,7 @@ class MixtureOfExperts(nn.Module):
 
 
 
-    
+
 
 
 
@@ -254,7 +254,7 @@ class MixtureOfExperts(nn.Module):
 
 
 
-        
+
 
 
 
@@ -290,7 +290,7 @@ input_dim:
 
 
 
-    
+
 
 
 
@@ -314,7 +314,7 @@ input_dim:
 
 
 
-        
+
 
 
 
@@ -326,7 +326,7 @@ x:
 
 
 
-            
+
 
 
 
@@ -575,4 +575,3 @@ fairscale>=0.4.0
 
 
 ```
-

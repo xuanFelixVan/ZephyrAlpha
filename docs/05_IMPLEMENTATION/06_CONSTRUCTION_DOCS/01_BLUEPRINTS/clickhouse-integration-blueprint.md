@@ -29,7 +29,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：ClickHouse集成、列式存储、高性能查询
 
@@ -423,7 +423,7 @@ GROUP BY date, factor_id;
 
 -- 时间范围查询
 
-SELECT 
+SELECT
 
     symbol,
 
@@ -447,7 +447,7 @@ ORDER BY open_time;
 
 -- 聚合分析查询
 
-SELECT 
+SELECT
 
     symbol,
 
@@ -477,7 +477,7 @@ LIMIT 100;
 
 -- 窗口函数查询
 
-SELECT 
+SELECT
 
     symbol,
 
@@ -487,9 +487,9 @@ SELECT
 
     avg(close) OVER (
 
-        PARTITION BY symbol 
+        PARTITION BY symbol
 
-        ORDER BY open_time 
+        ORDER BY open_time
 
         ROWS BETWEEN 19 PRECEDING AND CURRENT ROW
 
@@ -497,9 +497,9 @@ SELECT
 
     avg(close) OVER (
 
-        PARTITION BY symbol 
+        PARTITION BY symbol
 
-        ORDER BY open_time 
+        ORDER BY open_time
 
         ROWS BETWEEN 49 PRECEDING AND CURRENT ROW
 
@@ -543,13 +543,13 @@ import pandas as pd
 
 class ClickHouseWriter:
 
-    
+
 
     def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
 
         self.client = Client(host=host, port=port, database=database)
 
-    
+
 
     def write_klines(self, klines: pd.DataFrame) -> int:
 
@@ -571,7 +571,7 @@ class ClickHouseWriter:
 
         ]
 
-        
+
 
         self.client.execute(
 
@@ -585,11 +585,11 @@ class ClickHouseWriter:
 
         )
 
-        
+
 
         return len(data)
 
-    
+
 
     def write_factors(self, factors: pd.DataFrame) -> int:
 
@@ -607,7 +607,7 @@ class ClickHouseWriter:
 
         ]
 
-        
+
 
         self.client.execute(
 
@@ -621,7 +621,7 @@ class ClickHouseWriter:
 
         )
 
-        
+
 
         return len(data)
 
@@ -637,13 +637,13 @@ class ClickHouseWriter:
 
 class ClickHouseReader:
 
-    
+
 
     def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
 
         self.client = Client(host=host, port=port, database=database)
 
-    
+
 
     def get_klines(
 
@@ -661,7 +661,7 @@ class ClickHouseReader:
 
         sql = """
 
-        SELECT 
+        SELECT
 
             open_time, symbol, open, high, low, close, volume, amount
 
@@ -677,7 +677,7 @@ class ClickHouseReader:
 
         """
 
-        
+
 
         result = self.client.execute(sql, {
 
@@ -691,7 +691,7 @@ class ClickHouseReader:
 
         })
 
-        
+
 
         return pd.DataFrame(result, columns=[
 
@@ -699,7 +699,7 @@ class ClickHouseReader:
 
         ])
 
-    
+
 
     def get_factor_panel(
 
@@ -719,7 +719,7 @@ class ClickHouseReader:
 
         sql = """
 
-        SELECT 
+        SELECT
 
             date, symbol, value
 
@@ -735,7 +735,7 @@ class ClickHouseReader:
 
         """
 
-        
+
 
         result = self.client.execute(sql, {
 
@@ -749,7 +749,7 @@ class ClickHouseReader:
 
         })
 
-        
+
 
         df = pd.DataFrame(result, columns=['date', 'symbol', 'value'])
 
@@ -849,11 +849,11 @@ volumes:
 
     <max_concurrent_queries>100</max_concurrent_queries>
 
-    
+
 
     <mark_cache_size>5368709120</mark_cache_size>
 
-    
+
 
     <logger>
 
@@ -932,10 +932,3 @@ volumes:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

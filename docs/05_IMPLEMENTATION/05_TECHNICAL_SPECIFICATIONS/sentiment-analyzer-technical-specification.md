@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -455,7 +455,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -793,7 +793,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -865,7 +865,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -907,7 +907,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -955,7 +955,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1009,7 +1009,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1057,7 +1057,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1105,7 +1105,7 @@ class SentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1171,7 +1171,7 @@ class NewsSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1201,7 +1201,7 @@ class NewsSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1231,7 +1231,7 @@ class NewsSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1255,7 +1255,7 @@ class NewsSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1267,7 +1267,7 @@ class NewsSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1297,7 +1297,7 @@ class NewsSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1309,7 +1309,7 @@ class NewsSentimentAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1351,7 +1351,7 @@ class NewsSentimentAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1859,13 +1859,13 @@ def calculate_sentiment_score(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    news_text: str, 
+    news_text: str,
 
 
 
@@ -1895,7 +1895,7 @@ def calculate_sentiment_score(
 
 
 
-    
+
 
 
 
@@ -1925,7 +1925,7 @@ def calculate_sentiment_score(
 
 
 
-    
+
 
 
 
@@ -1961,7 +1961,7 @@ def calculate_sentiment_score(
 
 
 
-        
+
 
 
 
@@ -1985,7 +1985,7 @@ def calculate_sentiment_score(
 
 
 
-        
+
 
 
 
@@ -2063,7 +2063,7 @@ def calculate_news_intensity(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2093,7 +2093,7 @@ def calculate_news_intensity(
 
 
 
-    
+
 
 
 
@@ -2123,7 +2123,7 @@ def calculate_news_intensity(
 
 
 
-    
+
 
 
 
@@ -2153,7 +2153,7 @@ def calculate_news_intensity(
 
 
 
-    
+
 
 
 
@@ -2165,7 +2165,7 @@ def calculate_news_intensity(
 
 
 
-    
+
 
 
 
@@ -2237,19 +2237,19 @@ def calculate_coverage(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    stock_code: str, 
+    stock_code: str,
 
 
 
 
 
-    news_count: int, 
+    news_count: int,
 
 
 
@@ -2279,7 +2279,7 @@ def calculate_coverage(
 
 
 
-    
+
 
 
 
@@ -2303,7 +2303,7 @@ def calculate_coverage(
 
 
 
-    
+
 
 
 
@@ -2333,7 +2333,7 @@ def calculate_coverage(
 
 
 
-    
+
 
 
 
@@ -2345,7 +2345,7 @@ def calculate_coverage(
 
 
 
-    
+
 
 
 
@@ -2607,7 +2607,7 @@ def test_sentiment_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -2631,7 +2631,7 @@ def test_sentiment_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -3065,7 +3065,7 @@ sentiment_analyzer:
 
 
 
-  
+
 
 
 
@@ -3089,7 +3089,7 @@ sentiment_analyzer:
 
 
 
-  
+
 
 
 
@@ -3113,7 +3113,7 @@ sentiment_analyzer:
 
 
 
-  
+
 
 
 
@@ -3234,8 +3234,3 @@ sentiment_analyzer:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 舆情分析层负责人
-
-
-
-
-

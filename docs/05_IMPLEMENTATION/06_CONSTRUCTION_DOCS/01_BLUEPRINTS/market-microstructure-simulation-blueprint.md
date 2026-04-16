@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：市场微观结构模拟、代理建模、市场仿真
 
@@ -152,7 +152,7 @@ class TradingAgent(ABC):
 
     """交易代理基类"""
 
-    
+
 
     def __init__(self, agent_id, cash, holdings):
 
@@ -162,7 +162,7 @@ class TradingAgent(ABC):
 
         self.holdings = holdings
 
-    
+
 
     @abstractmethod
 
@@ -172,7 +172,7 @@ class TradingAgent(ABC):
 
         pass
 
-    
+
 
     def update_holdings(self, fills):
 
@@ -190,7 +190,7 @@ class MarketMakerAgent(TradingAgent):
 
     """做市商代理"""
 
-    
+
 
     def __init__(self, agent_id, cash, holdings, spread=0.01):
 
@@ -198,7 +198,7 @@ class MarketMakerAgent(TradingAgent):
 
         self.spread = spread
 
-    
+
 
     def get_orders(self, market_state):
 
@@ -220,7 +220,7 @@ class MarketSimulator:
 
     """市场模拟器"""
 
-    
+
 
     def __init__(self):
 
@@ -228,13 +228,13 @@ class MarketSimulator:
 
         self.order_book = {}
 
-    
+
 
     def add_agent(self, agent):
 
         self.agents.append(agent)
 
-    
+
 
     def step(self):
 
@@ -242,7 +242,7 @@ class MarketSimulator:
 
         market_state = self._get_market_state()
 
-        
+
 
         all_orders = []
 
@@ -252,11 +252,11 @@ class MarketSimulator:
 
             all_orders.extend(orders)
 
-        
+
 
         fills = self._match_orders(all_orders)
 
-        
+
 
         for agent in self.agents:
 
@@ -264,13 +264,13 @@ class MarketSimulator:
 
             agent.update_holdings(agent_fills)
 
-    
+
 
     def _get_market_state(self):
 
         return {'mid_price': 100.0}
 
-    
+
 
     def _match_orders(self, orders):
 
@@ -417,4 +417,3 @@ class SimulationOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

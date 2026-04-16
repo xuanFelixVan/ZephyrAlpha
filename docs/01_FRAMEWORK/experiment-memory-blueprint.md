@@ -31,7 +31,7 @@ responsibility: 处理EXPERIMENT_MEMORY_BLUEPRINT相关业务
 
 > **核心职责**: 实验记忆系统设计与实施指导
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：实验记忆系统设计相关内容
 
@@ -123,7 +123,7 @@ Layer 8: 人机交互层
 
     └─ 依赖 ↓ 实验记忆提供历史实验查询
 
-    
+
 
 Layer 7.8: 市场状态记忆层
 
@@ -131,7 +131,7 @@ Layer 7.8: 市场状态记忆层
 
     └─ 依赖 ↓ 实验记忆提供状态识别实验
 
-    
+
 
 Layer 7.7: 模型记忆层
 
@@ -139,7 +139,7 @@ Layer 7.7: 模型记忆层
 
     └─ 依赖 ↓ 实验记忆提供训练实验
 
-    
+
 
 Layer 7.6: 实验记忆层 (本模块) ⭐ 新增
 
@@ -151,7 +151,7 @@ Layer 7.6: 实验记忆层 (本模块) ⭐ 新增
 
     └─ 实验失败案例库
 
-    
+
 
 Layer 7.5: AI记忆层
 
@@ -159,7 +159,7 @@ Layer 7.5: AI记忆层
 
     └─ 依赖 ↑ 实验记忆提供实验数据
 
-    
+
 
 Layer 7: AI报告层
 
@@ -171,7 +171,7 @@ Layer 7: AI报告层
 
 
 
-**架构位置**: 
+**架构位置**:
 
 - **核心定位**: Layer 7.6（介于Layer 7.5 AI记忆层和Layer 7.7 模型记忆层之间）
 
@@ -377,7 +377,7 @@ class ExperimentTracker:
 
     """实验追踪组件 - 基于MLflow Tracking"""
 
-    
+
 
     def __init__(self):
 
@@ -385,9 +385,9 @@ class ExperimentTracker:
 
         self.experiment_cache = {}
 
-    
 
-    def create_experiment(self, 
+
+    def create_experiment(self,
 
                          experiment_name: str,
 
@@ -399,7 +399,7 @@ class ExperimentTracker:
 
         创建新实验
 
-        
+
 
         Args:
 
@@ -409,7 +409,7 @@ class ExperimentTracker:
 
             description: 实验描述
 
-            
+
 
         Returns:
 
@@ -435,7 +435,7 @@ class ExperimentTracker:
 
         return experiment_id
 
-    
+
 
     def log_experiment_config(self,
 
@@ -447,7 +447,7 @@ class ExperimentTracker:
 
         记录实验配置
 
-        
+
 
         Args:
 
@@ -469,7 +469,7 @@ class ExperimentTracker:
 
                     mlflow.log_param(key, str(value))
 
-    
+
 
     def log_experiment_metrics(self,
 
@@ -481,7 +481,7 @@ class ExperimentTracker:
 
         记录实验指标
 
-        
+
 
         Args:
 
@@ -497,7 +497,7 @@ class ExperimentTracker:
 
                 mlflow.log_metric(key, value)
 
-    
+
 
     def log_experiment_artifacts(self,
 
@@ -509,7 +509,7 @@ class ExperimentTracker:
 
         记录实验产物
 
-        
+
 
         Args:
 
@@ -539,13 +539,13 @@ class ExperimentComparator:
 
     """实验对比组件"""
 
-    
+
 
     def __init__(self):
 
         self.mlflow_client = mlflow.tracking.MlflowClient()
 
-    
+
 
     def compare_experiments(self,
 
@@ -557,7 +557,7 @@ class ExperimentComparator:
 
         对比多个实验
 
-        
+
 
         Args:
 
@@ -565,7 +565,7 @@ class ExperimentComparator:
 
             metrics: 要对比的指标列表
 
-            
+
 
         Returns:
 
@@ -575,7 +575,7 @@ class ExperimentComparator:
 
         comparison_data = []
 
-        
+
 
         for exp_id in experiment_ids:
 
@@ -587,7 +587,7 @@ class ExperimentComparator:
 
             )
 
-            
+
 
             for run in runs:
 
@@ -601,27 +601,27 @@ class ExperimentComparator:
 
                 }
 
-                
+
 
                 for metric in metrics:
 
                     row[metric] = run.data.metrics.get(metric, None)
 
-                
+
 
                 for param in run.data.params:
 
                     row[f'param_{param}'] = run.data.params[param]
 
-                
+
 
                 comparison_data.append(row)
 
-        
+
 
         return pd.DataFrame(comparison_data)
 
-    
+
 
     def find_best_experiment(self,
 
@@ -635,7 +635,7 @@ class ExperimentComparator:
 
         找到最佳实验
 
-        
+
 
         Args:
 
@@ -645,7 +645,7 @@ class ExperimentComparator:
 
             mode: 优化模式 (max/min)
 
-            
+
 
         Returns:
 
@@ -657,7 +657,7 @@ class ExperimentComparator:
 
         best_value = float('-inf') if mode == 'max' else float('inf')
 
-        
+
 
         for exp_id in experiment_ids:
 
@@ -667,7 +667,7 @@ class ExperimentComparator:
 
             )
 
-            
+
 
             for run in runs:
 
@@ -677,7 +677,7 @@ class ExperimentComparator:
 
                     continue
 
-                
+
 
                 if mode == 'max' and value > best_value:
 
@@ -691,7 +691,7 @@ class ExperimentComparator:
 
                     best_exp_id = exp_id
 
-        
+
 
         return best_exp_id, best_value
 
@@ -709,13 +709,13 @@ class ExperimentReproducer:
 
     """实验复现组件 - 基于MLflow Projects"""
 
-    
+
 
     def __init__(self):
 
         self.mlflow_client = mlflow.tracking.MlflowClient()
 
-    
+
 
     def create_reproduction_package(self,
 
@@ -727,7 +727,7 @@ class ExperimentReproducer:
 
         创建实验复现包
 
-        
+
 
         Args:
 
@@ -735,7 +735,7 @@ class ExperimentReproducer:
 
             output_dir: 输出目录
 
-            
+
 
         Returns:
 
@@ -749,17 +749,17 @@ class ExperimentReproducer:
 
         )
 
-        
+
 
         if not runs:
 
             raise ValueError(f"No runs found for experiment {experiment_id}")
 
-        
+
 
         run = runs[0]
 
-        
+
 
         reproduction_config = {
 
@@ -779,7 +779,7 @@ class ExperimentReproducer:
 
         }
 
-        
+
 
         package_path = os.path.join(output_dir, f"reproduction_{experiment_id}.json")
 
@@ -787,11 +787,11 @@ class ExperimentReproducer:
 
             json.dump(reproduction_config, f, indent=2)
 
-        
+
 
         return package_path
 
-    
+
 
     def reproduce_experiment(self,
 
@@ -803,7 +803,7 @@ class ExperimentReproducer:
 
         复现实验
 
-        
+
 
         Args:
 
@@ -811,7 +811,7 @@ class ExperimentReproducer:
 
             new_experiment_name: 新实验名称
 
-            
+
 
         Returns:
 
@@ -823,17 +823,17 @@ class ExperimentReproducer:
 
             config = json.load(f)
 
-        
+
 
         if new_experiment_name is None:
 
             new_experiment_name = f"reproduction_{config['experiment_id']}"
 
-        
+
 
         new_exp_id = mlflow.create_experiment(new_experiment_name)
 
-        
+
 
         with mlflow.start_run(experiment_id=new_exp_id):
 
@@ -841,13 +841,13 @@ class ExperimentReproducer:
 
                 mlflow.log_param(key, value)
 
-            
+
 
             for key, value in config['metrics'].items():
 
                 mlflow.log_metric(key, value)
 
-        
+
 
         return new_exp_id
 
@@ -865,7 +865,7 @@ class FailureCaseLibrary:
 
     """失败案例库组件"""
 
-    
+
 
     def __init__(self, storage_path: str = './failure_cases'):
 
@@ -873,7 +873,7 @@ class FailureCaseLibrary:
 
         os.makedirs(storage_path, exist_ok=True)
 
-    
+
 
     def record_failure(self,
 
@@ -891,7 +891,7 @@ class FailureCaseLibrary:
 
         记录失败案例
 
-        
+
 
         Args:
 
@@ -923,7 +923,7 @@ class FailureCaseLibrary:
 
         }
 
-        
+
 
         case_file = os.path.join(
 
@@ -933,13 +933,13 @@ class FailureCaseLibrary:
 
         )
 
-        
+
 
         with open(case_file, 'w') as f:
 
             json.dump(failure_case, f, indent=2)
 
-    
+
 
     def search_similar_failures(self,
 
@@ -951,7 +951,7 @@ class FailureCaseLibrary:
 
         搜索相似失败案例
 
-        
+
 
         Args:
 
@@ -959,7 +959,7 @@ class FailureCaseLibrary:
 
             keywords: 关键词列表
 
-            
+
 
         Returns:
 
@@ -969,7 +969,7 @@ class FailureCaseLibrary:
 
         similar_cases = []
 
-        
+
 
         for filename in os.listdir(self.storage_path):
 
@@ -977,7 +977,7 @@ class FailureCaseLibrary:
 
                 continue
 
-            
+
 
             filepath = os.path.join(self.storage_path, filename)
 
@@ -985,13 +985,13 @@ class FailureCaseLibrary:
 
                 case = json.load(f)
 
-            
+
 
             if failure_type and case['failure_type'] != failure_type:
 
                 continue
 
-            
+
 
             if keywords:
 
@@ -1001,11 +1001,11 @@ class FailureCaseLibrary:
 
                     continue
 
-            
+
 
             similar_cases.append(case)
 
-        
+
 
         return similar_cases
 
@@ -1123,7 +1123,7 @@ def calculate_experiment_similarity(exp1: Dict, exp2: Dict) -> float:
 
     计算实验相似度
 
-    
+
 
     Args:
 
@@ -1131,7 +1131,7 @@ def calculate_experiment_similarity(exp1: Dict, exp2: Dict) -> float:
 
         exp2: 实验2配置
 
-        
+
 
     Returns:
 
@@ -1147,7 +1147,7 @@ def calculate_experiment_similarity(exp1: Dict, exp2: Dict) -> float:
 
     )
 
-    
+
 
     metric_similarity = _calculate_metric_similarity(
 
@@ -1157,11 +1157,11 @@ def calculate_experiment_similarity(exp1: Dict, exp2: Dict) -> float:
 
     )
 
-    
+
 
     similarity = 0.6 * param_similarity + 0.4 * metric_similarity
 
-    
+
 
     return similarity
 
@@ -1173,13 +1173,13 @@ def _calculate_param_similarity(params1: Dict, params2: Dict) -> float:
 
     common_keys = set(params1.keys()) & set(params2.keys())
 
-    
+
 
     if not common_keys:
 
         return 0.0
 
-    
+
 
     similarities = []
 
@@ -1189,7 +1189,7 @@ def _calculate_param_similarity(params1: Dict, params2: Dict) -> float:
 
         val2 = params2[key]
 
-        
+
 
         if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
 
@@ -1207,11 +1207,11 @@ def _calculate_param_similarity(params1: Dict, params2: Dict) -> float:
 
             sim = 1.0 if str(val1) == str(val2) else 0.0
 
-        
+
 
         similarities.append(sim)
 
-    
+
 
     return np.mean(similarities)
 
@@ -1223,13 +1223,13 @@ def _calculate_metric_similarity(metrics1: Dict, metrics2: Dict) -> float:
 
     common_keys = set(metrics1.keys()) & set(metrics2.keys())
 
-    
+
 
     if not common_keys:
 
         return 0.0
 
-    
+
 
     similarities = []
 
@@ -1239,7 +1239,7 @@ def _calculate_metric_similarity(metrics1: Dict, metrics2: Dict) -> float:
 
         val2 = metrics2[key]
 
-        
+
 
         if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
 
@@ -1257,11 +1257,11 @@ def _calculate_metric_similarity(metrics1: Dict, metrics2: Dict) -> float:
 
             sim = 1.0 if str(val1) == str(val2) else 0.0
 
-        
+
 
         similarities.append(sim)
 
-    
+
 
     return np.mean(similarities)
 
@@ -1846,4 +1846,3 @@ v1.1.0 (计划中)
 **文档状态**: ✅ 蓝图设计完成
 
 **下一步**: 开始实施 Phase 1
-

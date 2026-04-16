@@ -94,4 +94,3 @@ parent_document: ../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md
 
 
 > 本报告由审计系统自动生成，基于专业量化机构标准进行深度审计，所有发现均有明确证据支持。建议按照优先级顺序修复发现的问题，确保文档治理质量持续改进。
-

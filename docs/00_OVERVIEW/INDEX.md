@@ -96,3 +96,12 @@ responsibility:
 - 扫描范围: D:\ZephyrAlpha\docs
 - 索引文件: docs\00_OVERVIEW\INDEX.md
 - 自动化工具: Auto-Index Compiler v1.1.0
+
+<!-- orphan-link -->
+- [ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER](ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md)
+
+<!-- orphan-link -->
+- [data-flow](data-flow.md)
+
+<!-- orphan-link -->
+- [数字化系统健康白皮书](数字化系统健康白皮书.md)

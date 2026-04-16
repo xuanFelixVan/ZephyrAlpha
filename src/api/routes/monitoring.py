@@ -44,9 +44,9 @@ class RiskMetrics(BaseModel):
 async def get_system_metrics():
     """
     获取系统指标
-    
+
     返回系统资源使用情况
-    
+
     Returns:
         SystemMetrics: 系统指标
     """
@@ -63,9 +63,9 @@ async def get_system_metrics():
 async def get_trading_metrics():
     """
     获取交易指标
-    
+
     返回交易系统运行指标
-    
+
     Returns:
         TradingMetrics: 交易指标
     """
@@ -83,9 +83,9 @@ async def get_trading_metrics():
 async def get_risk_metrics():
     """
     获取风险指标
-    
+
     返回风险监控指标
-    
+
     Returns:
         RiskMetrics: 风险指标
     """
@@ -106,13 +106,13 @@ async def get_alerts(
 ):
     """
     获取预警列表
-    
+
     返回系统预警信息
-    
+
     Args:
         severity: 预警级别过滤 (P0, P1, P2, P3)
         limit: 返回记录数
-    
+
     Returns:
         List[Dict[str, Any]]: 预警列表
     """
@@ -138,10 +138,10 @@ async def get_alerts(
             "status": "resolved",
         },
     ]
-    
+
     if severity:
         alerts = [a for a in alerts if a["severity"] == severity]
-    
+
     return alerts[:limit]
 
 
@@ -149,9 +149,9 @@ async def get_alerts(
 async def get_dashboard():
     """
     获取监控仪表板数据
-    
+
     返回综合监控数据
-    
+
     Returns:
         Dict[str, Any]: 仪表板数据
     """

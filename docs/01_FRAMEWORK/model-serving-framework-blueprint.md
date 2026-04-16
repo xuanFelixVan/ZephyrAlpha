@@ -22,7 +22,7 @@ reference_models:
 
 > **核心职责**: 提供model serving framework blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Model Serving Framework蓝图设计相关内容
 
@@ -32,11 +32,11 @@ reference_models:
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **优先级**: P0级核心模块  
+> **优先级**: P0级核心模块
 
 > **实施周期**: 1周
 
@@ -194,7 +194,7 @@ class ModelServingFramework:
 
     """模型服务框架"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -206,17 +206,17 @@ class ModelServingFramework:
 
         self.load_models()
 
-        
+
 
     def load_models(self):
 
         """加载所有模型"""
 
-        
+
 
         model_dir = Path(self.config.get('model_dir', './models'))
 
-        
+
 
         for model_path in model_dir.glob('**/*.pkl'):
 
@@ -224,7 +224,7 @@ class ModelServingFramework:
 
             version = model_path.parent.name
 
-            
+
 
             try:
 
@@ -232,19 +232,19 @@ class ModelServingFramework:
 
                     model = pickle.load(f)
 
-                
+
 
                 if model_name not in self.models:
 
                     self.models[model_name] = {}
 
-                
+
 
                 self.models[model_name][version] = model
 
                 self.model_versions[model_name] = version
 
-                
+
 
                 logger.info(f"Loaded model: {model_name} v{version}")
 
@@ -252,7 +252,7 @@ class ModelServingFramework:
 
                 logger.error(f"Failed to load model {model_path}: {e}")
 
-    
+
 
     def predict(self,
 
@@ -264,29 +264,29 @@ class ModelServingFramework:
 
         """模型预测"""
 
-        
+
 
         if model_name not in self.models:
 
             raise ValueError(f"Model {model_name} not found")
 
-        
+
 
         if version is None:
 
             version = self.model_versions.get(model_name)
 
-        
+
 
         if version not in self.models[model_name]:
 
             raise ValueError(f"Model version {version} not found")
 
-        
+
 
         model = self.models[model_name][version]
 
-        
+
 
         try:
 
@@ -300,7 +300,7 @@ class ModelServingFramework:
 
             raise
 
-    
+
 
     def predict_proba(self,
 
@@ -312,51 +312,51 @@ class ModelServingFramework:
 
         """预测概率"""
 
-        
+
 
         if model_name not in self.models:
 
             raise ValueError(f"Model {model_name} not found")
 
-        
+
 
         if version is None:
 
             version = self.model_versions.get(model_name)
 
-        
+
 
         model = self.models[model_name][version]
 
-        
+
 
         if not hasattr(model, 'predict_proba'):
 
             raise AttributeError(f"Model {model_name} does not support predict_proba")
 
-        
+
 
         return model.predict_proba(data)
 
-    
+
 
     def get_model_info(self, model_name: str) -> Dict:
 
         """获取模型信息"""
 
-        
+
 
         if model_name not in self.models:
 
             raise ValueError(f"Model {model_name} not found")
 
-        
+
 
         versions = list(self.models[model_name].keys())
 
         current_version = self.model_versions.get(model_name)
 
-        
+
 
         return {
 
@@ -370,31 +370,31 @@ class ModelServingFramework:
 
         }
 
-    
+
 
     def switch_version(self, model_name: str, version: str) -> bool:
 
         """切换模型版本"""
 
-        
+
 
         if model_name not in self.models:
 
             raise ValueError(f"Model {model_name} not found")
 
-        
+
 
         if version not in self.models[model_name]:
 
             raise ValueError(f"Model version {version} not found")
 
-        
+
 
         self.model_versions[model_name] = version
 
         logger.info(f"Switched {model_name} to version {version}")
 
-        
+
 
         return True
 
@@ -414,7 +414,7 @@ class QuantModelService:
 
     """量化模型服务"""
 
-    
+
 
     def __init__(self):
 
@@ -422,17 +422,17 @@ class QuantModelService:
 
         self.framework = ModelServingFramework(self.config)
 
-    
+
 
     def _load_config(self) -> Dict:
 
         """加载配置"""
 
-        
+
 
         config_path = Path('./config/model_serving.yaml')
 
-        
+
 
         if config_path.exists():
 
@@ -440,7 +440,7 @@ class QuantModelService:
 
                 return yaml.safe_load(f)
 
-        
+
 
         return {
 
@@ -450,7 +450,7 @@ class QuantModelService:
 
         }
 
-    
+
 
     @bentoml.api
 
@@ -462,11 +462,11 @@ class QuantModelService:
 
         """预测接口"""
 
-        
+
 
         return self.framework.predict(model_name, data)
 
-    
+
 
     @bentoml.api
 
@@ -478,11 +478,11 @@ class QuantModelService:
 
         """预测概率接口"""
 
-        
+
 
         return self.framework.predict_proba(model_name, data)
 
-    
+
 
     @bentoml.api
 
@@ -490,11 +490,11 @@ class QuantModelService:
 
         """获取模型信息接口"""
 
-        
+
 
         return self.framework.get_model_info(model_name)
 
-    
+
 
     @bentoml.api
 
@@ -506,11 +506,11 @@ class QuantModelService:
 
         """切换版本接口"""
 
-        
+
 
         success = self.framework.switch_version(model_name, version)
 
-        
+
 
         return {
 
@@ -668,17 +668,17 @@ async def predict(request: PredictRequest):
 
     """预测接口"""
 
-    
+
 
     start_time = datetime.now()
 
-    
+
 
     try:
 
         data = np.array(request.data)
 
-        
+
 
         predictions = framework.predict(
 
@@ -690,11 +690,11 @@ async def predict(request: PredictRequest):
 
         )
 
-        
+
 
         version = request.version or framework.model_versions.get(request.model_name)
 
-        
+
 
         PREDICTION_COUNTER.labels(
 
@@ -704,13 +704,13 @@ async def predict(request: PredictRequest):
 
         ).inc()
 
-        
+
 
         latency = (datetime.now() - start_time).total_seconds()
 
         PREDICTION_LATENCY.labels(model_name=request.model_name).observe(latency)
 
-        
+
 
         return PredictResponse(
 
@@ -736,7 +736,7 @@ async def get_model_info(model_name: str):
 
     """获取模型信息"""
 
-    
+
 
     try:
 
@@ -756,13 +756,13 @@ async def switch_version(model_name: str, version: str):
 
     """切换模型版本"""
 
-    
+
 
     try:
 
         success = framework.switch_version(model_name, version)
 
-        
+
 
         return {
 
@@ -788,7 +788,7 @@ async def health_check():
 
     """健康检查"""
 
-    
+
 
     return {
 
@@ -808,7 +808,7 @@ async def metrics():
 
     """Prometheus指标"""
 
-    
+
 
     return prometheus_client.generate_latest()
 
@@ -946,7 +946,7 @@ model_serving:
 
   default_timeout: 30
 
-  
+
 
 server:
 
@@ -956,7 +956,7 @@ server:
 
   workers: 4
 
-  
+
 
 monitoring:
 
@@ -964,7 +964,7 @@ monitoring:
 
   prometheus_port: 9090
 
-  
+
 
 logging:
 
@@ -1041,4 +1041,3 @@ logging:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

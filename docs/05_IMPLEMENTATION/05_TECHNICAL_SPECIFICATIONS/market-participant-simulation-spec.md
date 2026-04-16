@@ -33,7 +33,7 @@ implementation_status: 设计阶段
 
 # 市场参与者行为模拟系统技术规格书
 > **核心职责**: 文档内容说明
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -110,27 +110,27 @@ implementation_status: 设计阶段
 ```python
 class NationalTeamAgent(BaseAgent):
     """国家队智能体
-    
+
     索引: AGENT.NATIONAL_TEAM.001
     职责: 模拟国家队（证金、汇金、社?的市场干预行为    特点: 政策驱动、市场稳定目标、长期持有
-    
+
     行为模式:
     1. 市场暴跌时买入蓝筹股稳定市场
     2. 市场过热时适度减持降温
     3. 重大政策出台时配合政策方向
     4. 长期持有,不频繁交易
     """
-    
+
     def __init__(self, config: NationalTeamConfig):
         self.config = config
         self.policy_signal_detector = PolicySignalDetector()
         self.market_stability_monitor = MarketStabilityMonitor()
         self.decision_engine = RuleBasedDecisionEngine()  # 规则引擎
         self.llm_assistant = GLM47Flash()  # LLM辅助决策
-        
+
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
         """生成交易决策
-        
+
         决策流程:
         1. 检测政策信号
         2. 评估市场稳定性
@@ -143,21 +143,21 @@ class NationalTeamAgent(BaseAgent):
             news_data=market_state.news,
             macro_data=market_state.macro_indicators
         )
-        
+
         # 2. 评估市场稳定性
         stability_score = self.market_stability_monitor.evaluate(
             price_data=market_state.prices,
             volatility=market_state.volatility,
             sentiment=market_state.sentiment
         )
-        
+
         # 3. 规则引擎生成基础决策
         base_decision = self.decision_engine.decide(
             policy_signals=policy_signals,
             stability_score=stability_score,
             market_state=market_state
         )
-        
+
         # 4. LLM优化决策理由
         reasoning = self.llm_assistant.generate_reasoning(
             decision=base_decision,
@@ -167,7 +167,7 @@ class NationalTeamAgent(BaseAgent):
                 'market_state': market_state
             }
         )
-        
+
         return AgentDecision(
             action=base_decision.action,  # BUY/SELL/HOLD
             target_stocks=base_decision.target_stocks,
@@ -190,7 +190,7 @@ national_team_agent:
     market_drop: -0.05  # 市场下跌5%触发干预
     volatility_spike: 2.0  # 波动率超过 2 倍标准差
     sentiment_panic: -0.8  # 情绪指数低于-0.8
-  
+
   target_stocks:
     - category: "蓝筹股"
       weight: 0.6
@@ -198,11 +198,11 @@ national_team_agent:
       weight: 0.3
     - category: "政策支持板块"
       weight: 0.1
-  
+
   position_limit:
     max_single_stock: 0.05  # 单只股票最大持仓 %
     max_total: 0.15  # 总持仓最大 15%
-  
+
   holding_period:
     min_days: 90  # 最小持有 90 天
     avg_days: 180  # 平均持有 180 天
@@ -214,28 +214,28 @@ national_team_agent:
 
 ```python
 class InstitutionalAgent(BaseAgent):
-    """主力/游资智能体    
+    """主力/游资智能体
     索引: AGENT.INSTITUTIONAL.001
     职责: 模拟主力资金(机构、游资）的操盘行为
     特点: 资金优势、信息优势、操盘策略
-    
+
     行为模式:
     1. 吸筹阶段: 低位缓慢建仓,控制价格波动
     2. 洗盘阶段: 震荡洗出散户,提高持仓成本
     3. 拉升阶段: 快速拉升，吸引散户跟风
     4. 出货阶段: 高位震荡出货,制造假突破
     """
-    
+
     def __init__(self, config: InstitutionalConfig):
         self.config = config
         self.rl_model = SACAgent()  # Soft Actor-Critic强化学习
         self.llm_strategist = GLM47Flash()  # LLM策略生成
         self.market_microstructure_analyzer = MarketMicrostructureAnalyzer()
         self.sentiment_analyzer = SentimentAnalyzer()
-        
+
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
         """生成交易决策
-        
+
         决策流程:
         1. 分析市场微观结构
         2. RL模型生成基础动作
@@ -248,11 +248,11 @@ class InstitutionalAgent(BaseAgent):
             trade_flow=market_state.trade_flow,
             liquidity=market_state.liquidity
         )
-        
+
         # 2. RL模型生成基础动作
         state_vector = self._build_state_vector(market_state, microstructure)
         rl_action = self.rl_model.act(state_vector)
-        
+
         # 3. LLM优化策略
         strategy = self.llm_strategist.optimize_strategy(
             rl_action=rl_action,
@@ -260,7 +260,7 @@ class InstitutionalAgent(BaseAgent):
             microstructure=microstructure,
             agent_portfolio=self.portfolio
         )
-        
+
         return AgentDecision(
             action=strategy.action,
             target_stocks=strategy.target_stocks,
@@ -269,9 +269,9 @@ class InstitutionalAgent(BaseAgent):
             reasoning=strategy.reasoning,
             agent_type='institutional'
         )
-    
+
     def _build_state_vector(self, market_state, microstructure) -> np.ndarray:
-        """构建状态向量        
+        """构建状态向量
         状态维度
         1. 价格相关: 收益率、波动率、动量
         2. 成交量相关：换手率、量价关系
@@ -281,32 +281,32 @@ class InstitutionalAgent(BaseAgent):
         6. 持仓状态：当前仓位、盈亏比例
         """
         features = []
-        
+
         # 价格特征
         features.append(market_state.returns)
         features.append(market_state.volatility)
         features.append(market_state.momentum)
-        
+
         # 成交量特征
         features.append(market_state.turnover_rate)
         features.append(market_state.volume_price_correlation)
-        
+
         # 订单簿特征
         features.append(microstructure.bid_ask_imbalance)
         features.append(microstructure.order_book_depth)
-        
+
         # 资金流向
         features.append(market_state.institutional_flow)
         features.append(market_state.retail_flow)
-        
+
         # 情绪指标
         features.append(market_state.sentiment_score)
         features.append(market_state.market_heat)
-        
+
         # 持仓状态
         features.append(self.portfolio.position_ratio)
         features.append(self.portfolio.pnl_ratio)
-        
+
         return np.array(features)
 ```
 
@@ -322,28 +322,28 @@ institutional_agent:
       duration_days: [20, 60]
       price_change_limit: 0.05
       volume_pattern: "low_key"
-    
+
     washing:
       duration_days: [10, 30]
       price_volatility: [0.02, 0.05]
       volume_pattern: "oscillation"
-    
+
     lifting:
       duration_days: [5, 15]
       price_change_target: [0.20, 0.50]
       volume_pattern: "surge"
-    
+
     distribution:
       duration_days: [10, 30]
       price_volatility: [0.03, 0.08]
       volume_pattern: "high_turnover"
-  
+
   capital_management:
     max_single_position: 0.10
     max_total_position: 0.50
     stop_loss: -0.10
     take_profit: 0.30
-  
+
   rl_training:
     algorithm: "SAC"
     learning_rate: 0.0003
@@ -359,26 +359,26 @@ institutional_agent:
 ```python
 class RetailInvestorAgent(BaseAgent):
     """散户智能体
-    
+
     索引: AGENT.RETAIL.001
     职责: 模拟散户投资者的交易行为
-    特点: 羊群效应、情绪驱动、追涨杀跌    
+    特点: 羊群效应、情绪驱动、追涨杀跌
     行为模式:
     1. 羊群效应: 跟随主流资金和热点题材
     2. 过度自信: 高估自己的判断能力
     3. 损失厌恶: 过早卖出盈利股票,过久持有亏损股票
     4. 处置效应: 倾向于实现收益，避免实现损失
     """
-    
+
     def __init__(self, config: RetailInvestorConfig):
         self.config = config
         self.behavioral_model = BehavioralFinanceModel()
         self.sentiment_analyzer = SentimentAnalyzer()
         self.herding_detector = HerdingDetector()
-        
+
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
         """生成交易决策
-        
+
         决策流程:
         1. 分析市场情绪
         2. 检测羊群行为
@@ -391,14 +391,14 @@ class RetailInvestorAgent(BaseAgent):
             social_media=market_state.social_media,
             search_trends=market_state.search_trends
         )
-        
+
         # 2. 检测羊群行为
         herding_signals = self.herding_detector.detect(
             capital_flow=market_state.capital_flow,
             hot_sectors=market_state.hot_sectors,
             volume surge=market_state.volume_surge_stocks
         )
-        
+
         # 3. 行为金融模型生成决策
         decision = self.behavioral_model.decide(
             sentiment=sentiment,
@@ -406,7 +406,7 @@ class RetailInvestorAgent(BaseAgent):
             market_state=market_state,
             agent_portfolio=self.portfolio
         )
-        
+
         return AgentDecision(
             action=decision.action,
             target_stocks=decision.target_stocks,
@@ -429,17 +429,17 @@ retail_investor_agent:
     overconfidence: 0.4  # 过度自信程度
     loss_aversion: 2.25  # 损失厌恶系数(标准值）
     disposition_effect: 0.7  # 处置效应强度
-  
+
   sentiment_sensitivity:
     positive_threshold: 0.3  # 正面情绪阈值
     negative_threshold: -0.3  # 负面情绪阈值
     reaction_delay: [0, 3]  # 反应延迟（天）
-  
+
   trading_pattern:
     holding_period:
-      profit: [1, 10]  # 盈利股票持有1-10?      loss: [10, 60]  # 亏损股票持有10-60?    
+      profit: [1, 10]  # 盈利股票持有1-10?      loss: [10, 60]  # 亏损股票持有10-60?
     position_sizing:
-      method: "all_in"  # 散户倾向于全仓      max_stocks: 5  # 最多持有 5 只股票    
+      method: "all_in"  # 散户倾向于全仓      max_stocks: 5  # 最多持有 5 只股票
     stop_loss_take_profit:
       stop_loss: -0.20  # 止损 -20%
       take_profit: 0.30  # 止盈 30%
@@ -451,12 +451,12 @@ retail_investor_agent:
 ```python
 class MarketSimulationEngine:
     """市场模拟引擎
-    
+
     索引: ENGINE.MARKET_SIM.001
     职责: 整合三类智能体，模拟市场交易过程
     特点: 订单簿驱动、价格发现机制、市场冲击模型
     """
-    
+
     def __init__(self, config: MarketSimConfig):
         self.config = config
         self.order_book = OrderBookSimulator()
@@ -467,12 +467,12 @@ class MarketSimulationEngine:
             'institutional': InstitutionalAgent(config.institutional),
             'retail': RetailInvestorAgent(config.retail)
         }
-        
-    def simulate_market(self, 
+
+    def simulate_market(self,
                        initial_state: MarketState,
                        simulation_steps: int = 100) -> SimulationResult:
         """模拟市场交易
-        
+
         模拟流程:
         1. 初始化市场状态
         2. 各智能体生成交易决策
@@ -484,31 +484,31 @@ class MarketSimulationEngine:
         """
         market_state = initial_state
         simulation_history = []
-        
+
         for step in range(simulation_steps):
             # 1. 各智能体生成交易决策
             agent_decisions = {}
             for agent_name, agent in self.agents.items():
                 decision = agent.generate_trading_decision(market_state)
                 agent_decisions[agent_name] = decision
-            
+
             # 2. 订单提交到订单簿
             for agent_name, decision in agent_decisions.items():
                 orders = self._convert_decision_to_orders(decision)
                 for order in orders:
                     self.order_book.submit_order(order)
-            
+
             # 3. 价格发现机制撮合交易
             trades = self.price_discovery.match_orders(self.order_book)
-            
+
             # 4. 计算市场冲击
             market_impact = self.market_impact.calculate(trades, market_state)
-            
+
             # 5. 更新市场状态
             market_state = self._update_market_state(
                 market_state, trades, market_impact
             )
-            
+
             # 6. 记录历史
             simulation_history.append({
                 'step': step,
@@ -517,7 +517,7 @@ class MarketSimulationEngine:
                 'trades': trades,
                 'market_impact': market_impact
             })
-        
+
         return SimulationResult(
             final_state=market_state,
             history=simulation_history,
@@ -531,34 +531,34 @@ class MarketSimulationEngine:
 ```python
 class OrderMatchingAlgorithm:
     """订单撮合算法
-    
+
     索引: ALGORITHM.ORDER_MATCHING.001
     原理: 价格优先、时间优?    复杂? O(n log n) - n为订单数?    """
-    
+
     def match_orders(self, order_book: OrderBook) -> List[Trade]:
         """撮合订单
-        
+
         撮合规则:
-        1. 价格优先: 买单价格高者优先，卖单价格低者优?        2. 时间优先: 同价格时，先提交的订单优?        3. 撮合条件: 买一??卖一?        
+        1. 价格优先: 买单价格高者优先，卖单价格低者优?        2. 时间优先: 同价格时，先提交的订单优?        3. 撮合条件: 买一??卖一?
         算法流程:
         1. 对买单按价格降序排序（价格相同按时间升序?        2. 对卖单按价格升序排序（价格相同按时间升序?        3. 取买一和卖一进行撮合
         4. 如果买一??卖一价，则成?        5. 成交价格 = min(买一? 卖一? 前一笔成交价)
         6. 更新订单簿，重复步骤3-5
-        
+
         返回:
             List[Trade]: 成交记录列表
         """
         trades = []
-        
+
         while order_book.has_buy_orders() and order_book.has_sell_orders():
             best_buy = order_book.get_best_buy_order()
             best_sell = order_book.get_best_sell_order()
-            
+
             if best_buy.price >= best_sell.price:
-                trade_price = min(best_buy.price, best_sell.price, 
+                trade_price = min(best_buy.price, best_sell.price,
                                  self._get_last_trade_price())
                 trade_volume = min(best_buy.volume, best_sell.volume)
-                
+
                 trade = Trade(
                     price=trade_price,
                     volume=trade_volume,
@@ -567,13 +567,13 @@ class OrderMatchingAlgorithm:
                     timestamp=datetime.now()
                 )
                 trades.append(trade)
-                
+
                 order_book.update_after_trade(best_buy, best_sell, trade_volume)
             else:
                 break
-        
+
         return trades
-    
+
     def _get_last_trade_price(self) -> float:
         """获取最后一笔成交价?""
         pass
@@ -597,54 +597,54 @@ order_matching:
 ```python
 class PriceDiscoveryAlgorithm:
     """价格发现算法
-    
+
     索引: ALGORITHM.PRICE_DISCOVERY.001
     原理: 基于订单簿供需平衡计算均衡价格
     复杂? O(n) - n为价格档位数?    """
-    
+
     def discover_equilibrium_price(self, order_book: OrderBook) -> EquilibriumPrice:
         """发现均衡价格
-        
+
         算法原理:
         1. 收集所有智能体的买卖订?        2. 构建虚拟订单簿（买盘和卖盘）
         3. 计算每个价格档位的累积供需
         4. 找到供需平衡点（累积买量 ?累积卖量?        5. 均衡价格 = 供需平衡点对应的价格
-        
+
         数学模型:
         - 买盘累积: B(p) = Σ buy_volume where buy_price ?p
         - 卖盘累积: S(p) = Σ sell_volume where sell_price ?p
         - 均衡条件: |B(p*) - S(p*)| ?min
         - 均衡价格: p* = argmin |B(p) - S(p)|
-        
+
         返回:
             EquilibriumPrice: 均衡价格对象
         """
         price_levels = self._get_price_levels(order_book)
-        
+
         equilibrium_candidates = []
         for price in price_levels:
             cumulative_buy = order_book.get_cumulative_buy_volume(price)
             cumulative_sell = order_book.get_cumulative_sell_volume(price)
             imbalance = abs(cumulative_buy - cumulative_sell)
-            
+
             equilibrium_candidates.append({
                 'price': price,
                 'buy_volume': cumulative_buy,
                 'sell_volume': cumulative_sell,
                 'imbalance': imbalance
             })
-        
+
         equilibrium = min(equilibrium_candidates, key=lambda x: x['imbalance'])
-        
+
         return EquilibriumPrice(
             price=equilibrium['price'],
             buy_volume=equilibrium['buy_volume'],
             sell_volume=equilibrium['sell_volume'],
             confidence=self._calculate_confidence(equilibrium)
         )
-    
+
     def _calculate_confidence(self, equilibrium: dict) -> float:
-        """计算均衡价格置信?        
+        """计算均衡价格置信?
         置信?= 1 - (imbalance / total_volume)
         """
         total_volume = equilibrium['buy_volume'] + equilibrium['sell_volume']
@@ -669,89 +669,89 @@ price_discovery:
 ```python
 class GameEquilibriumAlgorithm:
     """博弈均衡算法
-    
+
     索引: ALGORITHM.GAME_EQUILIBRIUM.001
     原理: 多智能体博弈的纳什均衡求解
     复杂? O(n^m) - n为策略数，m为智能体系    """
-    
-    def find_nash_equilibrium(self, 
+
+    def find_nash_equilibrium(self,
                              agents: List[Agent],
                              market_state: MarketState) -> NashEquilibrium:
         """求解纳什均衡
-        
+
         算法原理:
         1. 定义每个智能体的策略空间
         2. 计算每个智能体的支付函数（收益函数）
         3. 迭代求解最优响应策略        4. 收敛到纳什均衡
-        
+
         数学模型:
         - 策略空间: S_i = {s_i1, s_i2, ..., s_in}
         - 支付函数: u_i(s_i, s_{-i})
         - 最优响? BR_i(s_{-i}) = argmax u_i(s_i, s_{-i})
         - 纳什均衡: s* = (s_1*, ..., s_m*) where s_i* = BR_i(s_{-i}*)
-        
+
         迭代算法:
         1. 初始? 随机选择初始策略 s^0
         2. 迭代: s_i^{t+1} = BR_i(s_{-i}^t)
         3. 收敛: ||s^{t+1} - s^t|| < ε
-        
+
         返回:
             NashEquilibrium: 纳什均衡对象
         """
-        strategies = {agent.agent_id: self._initialize_strategy(agent) 
+        strategies = {agent.agent_id: self._initialize_strategy(agent)
                      for agent in agents}
-        
+
         for iteration in range(self.config.max_iterations):
             new_strategies = {}
-            
+
             for agent in agents:
                 best_response = self._find_best_response(
-                    agent, 
-                    strategies, 
+                    agent,
+                    strategies,
                     market_state
                 )
                 new_strategies[agent.agent_id] = best_response
-            
+
             if self._is_converged(strategies, new_strategies):
                 return NashEquilibrium(
                     strategies=new_strategies,
                     iteration=iteration,
                     converged=True
                 )
-            
+
             strategies = new_strategies
-        
+
         return NashEquilibrium(
             strategies=strategies,
             iteration=self.config.max_iterations,
             converged=False
         )
-    
-    def _find_best_response(self, 
+
+    def _find_best_response(self,
                            agent: Agent,
                            strategies: dict,
                            market_state: MarketState) -> Strategy:
-        """找到最优响应策略        
+        """找到最优响应策略
         方法: 遍历所有可能的策略，选择收益最大的
         """
         best_strategy = None
         best_payoff = float('-inf')
-        
+
         for strategy in agent.get_possible_strategies():
             payoff = self._calculate_payoff(agent, strategy, strategies, market_state)
             if payoff > best_payoff:
                 best_payoff = payoff
                 best_strategy = strategy
-        
+
         return best_strategy
-    
+
     def _calculate_payoff(self,
                          agent: Agent,
                          strategy: Strategy,
                          other_strategies: dict,
                          market_state: MarketState) -> float:
         """计算支付函数（收益）
-        
+
         收益 = 预期收益 - 风险成本 - 交易成本
         """
         expected_return = self._calculate_expected_return(
@@ -759,7 +759,7 @@ class GameEquilibriumAlgorithm:
         )
         risk_cost = self._calculate_risk_cost(agent, strategy)
         transaction_cost = self._calculate_transaction_cost(agent, strategy)
-        
+
         return expected_return - risk_cost - transaction_cost
 ```
 
@@ -785,32 +785,32 @@ game_equilibrium:
 
 ```python
 class BaseAgent(ABC):
-    """智能体基?    
+    """智能体基?
     索引: INTERFACE.AGENT.BASE.001
     遵循: API_Contract.md 2.4?    """
-    
+
     @abstractmethod
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
         """生成交易决策
-        
+
         参数:
-            market_state: 市场状态对接            
+            market_state: 市场状态对接
         返回:
             AgentDecision: 智能体决策对接        """
         pass
-    
+
     @abstractmethod
     def update_portfolio(self, trade_result: TradeResult) -> None:
         """更新持仓
-        
+
         参数:
             trade_result: 交易结果对象
         """
         pass
-    
+
     @abstractmethod
     def get_state(self) -> AgentState:
-        """获取智能体状态        
+        """获取智能体状态
         返回:
             AgentState: 智能体状态对接        """
         pass
@@ -829,14 +829,14 @@ class MarketState:
     sentiment: SentimentIndicators  # 情绪指标
     news: List[NewsItem]  # 新闻数据
     macro_indicators: Dict[str, float]  # 宏观指标
-    
+
 @dataclass
 class AgentDecision:
     """智能体决策数据结束""
     action: str  # BUY/SELL/HOLD
     target_stocks: List[str]  # 目标股票列表
     position_size: Dict[str, float]  # 各股票仓位大?    confidence: float  # 决策置信?    reasoning: str  # 决策理由
-    agent_type: str  # 智能体类别    timestamp: datetime  # 时间?    
+    agent_type: str  # 智能体类别    timestamp: datetime  # 时间?
 @dataclass
 class SimulationResult:
     """模拟结果数据结构"""
@@ -848,42 +848,42 @@ class SimulationResult:
 ```python
 class MarketParticipantSimulatorInterface:
     """市场参与者模拟器接口
-    
+
     索引: INTERFACE.SIMULATOR.001
     职责: 提供与现有系统的集成接口
     """
-    
-    def predict_market_state(self, 
+
+    def predict_market_state(self,
                             current_state: MarketState,
                             prediction_horizon: int = 5) -> MarketStatePrediction:
-        """预测市场状态        
+        """预测市场状态
         参数:
             current_state: 当前市场状态            prediction_horizon: 预测时长(?
-            
+
         返回:
             MarketStatePrediction: 市场状态预测        """
         pass
-    
-    def predict_capital_flow(self, 
+
+    def predict_capital_flow(self,
                             symbols: List[str],
                             date: str) -> CapitalFlowPrediction:
         """预测资金流向
-        
+
         参数:
             symbols: 股票代码列表
             date: 交易日期
-            
+
         返回:
             CapitalFlowPrediction: 资金流向预测
         """
         pass
-    
-    def generate_risk_warning(self, 
+
+    def generate_risk_warning(self,
                              market_state: MarketState) -> RiskWarning:
         """生成风险预警
-        
+
         参数:
-            market_state: 市场状态            
+            market_state: 市场状态
         返回:
             RiskWarning: 风险预警
         """
@@ -903,7 +903,7 @@ class MarketParticipantSimulatorInterface:
 @dataclass
 class FactorOutput:
     """因子输出数据结构
-    
+
     索引: FORMAT.FACTOR.OUTPUT.001
     用? Layer 2.5 ?Layer 2 因子输出
     """
@@ -958,31 +958,31 @@ class FactorMetadata:
 ```python
 class FactorStorageInterface:
     """因子存储接口
-    
+
     索引: INTERFACE.FACTOR.STORAGE.001
     用? Layer 2.5 ?Layer 2 因子库集?    """
-    
+
     def save_factor(self, factor_output: FactorOutput) -> bool:
         """保存因子到因子库
-        
+
         存储路径: /factors/{factor_name}/{date}.parquet
-        
+
         返回:
             bool: 保存是否成功
         """
         pass
-    
-    def load_factor(self, 
+
+    def load_factor(self,
                    factor_id: str,
                    start_date: datetime,
                    end_date: datetime) -> pd.DataFrame:
         """加载因子数据
-        
+
         返回:
             pd.DataFrame: 因子数据
         """
         pass
-    
+
     def get_factor_metadata(self, factor_id: str) -> FactorMetadata:
         """获取因子元数?""
         pass
@@ -1005,7 +1005,7 @@ class FactorStorageInterface:
 @dataclass
 class TradingSignal:
     """交易信号数据结构
-    
+
     索引: FORMAT.SIGNAL.OUTPUT.001
     用? Layer 2.5 ?Layer 5 策略执行?    """
     signal_id: str  # 信号ID
@@ -1059,7 +1059,7 @@ class RiskLevel(Enum):
 @dataclass
 class PortfolioDecision:
     """组合决策数据结构
-    
+
     索引: FORMAT.DECISION.OUTPUT.001
     用? Layer 2.5 ?Layer 6 组合优化?    """
     decision_id: str  # 决策ID
@@ -1129,33 +1129,33 @@ class DecisionConstraints:
 ```python
 class RiskControlInterface:
     """风险控制接口
-    
+
     索引: INTERFACE.RISK.CONTROL.001
     用? Layer 2.5 ?Layer 5 风险控制
     """
-    
-    def check_risk_budget(self, 
+
+    def check_risk_budget(self,
                          decision: PortfolioDecision) -> RiskCheckResult:
-        """检查风险预?        
+        """检查风险预?
         返回:
             RiskCheckResult: 风险检查结?        """
         pass
-    
-    def apply_stop_loss(self, 
+
+    def apply_stop_loss(self,
                        position: Position,
                        current_price: float) -> StopLossDecision:
         """应用止损策略
-        
+
         返回:
             StopLossDecision: 止损决策
         """
         pass
-    
+
     def apply_take_profit(self,
                          position: Position,
                          current_price: float) -> TakeProfitDecision:
         """应用止盈策略
-        
+
         返回:
             TakeProfitDecision: 止盈决策
         """
@@ -1241,57 +1241,57 @@ class RiskControlInterface:
 ```python
 class AgentBehaviorValidator:
     """智能体行为验证器
-    
+
     索引: VALIDATOR.AGENT.BEHAVIOR.001
     目标: 验证智能体决策与历史实际行为的相似度
     """
-    
+
     def validate_agent_behavior(self,
                                 agent: BaseAgent,
                                 historical_data: pd.DataFrame,
                                 validation_period: DateRange) -> ValidationResult:
-        """验证智能体行?        
+        """验证智能体行?
         验证流程:
         1. 提取历史时点的市场状?        2. 智能体生成决?        3. 对比智能体决?vs 历史实际行为
         4. 计算行为相似?        5. 分析决策差异原因
-        
+
         返回:
             ValidationResult: 验证结果
         """
         similarity_scores = []
         decision_diffs = []
-        
+
         for date in validation_period:
             # 1. 提取历史时点的市场状?            market_state = self._extract_market_state(historical_data, date)
-            
+
             # 2. 智能体生成决?            agent_decision = agent.generate_trading_decision(market_state)
-            
+
             # 3. 提取历史实际行为
             actual_behavior = self._extract_actual_behavior(historical_data, date, agent.agent_type)
-            
+
             # 4. 计算行为相似?            similarity = self._calculate_similarity(agent_decision, actual_behavior)
             similarity_scores.append(similarity)
-            
+
             # 5. 分析决策差异
             diff = self._analyze_decision_diff(agent_decision, actual_behavior)
             decision_diffs.append(diff)
-        
+
         return ValidationResult(
             avg_similarity=np.mean(similarity_scores),
             min_similarity=np.min(similarity_scores),
             decision_diffs=decision_diffs,
             passed=np.mean(similarity_scores) >= 0.70
         )
-    
-    def _calculate_similarity(self, 
+
+    def _calculate_similarity(self,
                              decision: AgentDecision,
                              actual: ActualBehavior) -> float:
-        """计算行为相似?        
+        """计算行为相似?
         相似?= 0.4 * 动作相似?+ 0.3 * 方向相似?+ 0.3 * 强度相似?        """
         action_sim = 1.0 if decision.action == actual.action else 0.0
         direction_sim = 1.0 if decision.direction == actual.direction else 0.0
         strength_sim = 1.0 - abs(decision.strength - actual.strength)
-        
+
         return 0.4 * action_sim + 0.3 * direction_sim + 0.3 * strength_sim
 ```
 
@@ -1311,65 +1311,65 @@ class AgentBehaviorValidator:
 
 ```python
 class MarketSimulationValidator:
-    """市场模拟验证?    
+    """市场模拟验证?
     索引: VALIDATOR.MARKET.SIMULATION.001
     目标: 验证市场模拟引擎的准确?    """
-    
+
     def validate_market_simulation(self,
                                    simulation_engine: MarketSimulationEngine,
                                    historical_data: pd.DataFrame,
                                    validation_period: DateRange) -> ValidationResult:
         """验证市场模拟
-        
+
         验证流程:
         1. 提取历史时点的初始市场状?        2. 运行市场模拟引擎
         3. 对比模拟价格 vs 实际价格
         4. 计算价格误差
         5. 分析误差原因
-        
+
         返回:
             ValidationResult: 验证结果
         """
         price_errors = []
         volume_errors = []
-        
+
         for date in validation_period:
             # 1. 提取初始市场状?            initial_state = self._extract_initial_state(historical_data, date)
-            
+
             # 2. 运行市场模拟
             simulation_result = simulation_engine.simulate_market(
                 initial_state=initial_state,
                 simulation_steps=100
             )
-            
+
             # 3. 提取实际价格
             actual_prices = self._extract_actual_prices(historical_data, date)
-            
+
             # 4. 计算价格误差
             price_error = self._calculate_price_error(
                 simulation_result.final_state.prices,
                 actual_prices
             )
             price_errors.append(price_error)
-            
+
             # 5. 计算成交量误?            volume_error = self._calculate_volume_error(
                 simulation_result.final_state.volumes,
                 actual_prices.volumes
             )
             volume_errors.append(volume_error)
-        
+
         return ValidationResult(
             avg_price_error=np.mean(price_errors),
             max_price_error=np.max(price_errors),
             avg_volume_error=np.mean(volume_errors),
             passed=np.mean(price_errors) < 0.05 and np.mean(volume_errors) < 0.10
         )
-    
+
     def _calculate_price_error(self,
                               simulated_prices: pd.DataFrame,
                               actual_prices: pd.DataFrame) -> float:
         """计算价格误差
-        
+
         误差 = mean(|simulated - actual| / actual)
         """
         relative_error = np.abs(simulated_prices - actual_prices) / actual_prices

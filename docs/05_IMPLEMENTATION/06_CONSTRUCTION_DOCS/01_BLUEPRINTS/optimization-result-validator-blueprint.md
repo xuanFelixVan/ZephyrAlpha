@@ -224,13 +224,13 @@ class OptimizationResultValidator:
 
         self.min_weight = min_weight
 
-    
+
 
     def validate_constraints(self, weights, constraints):
 
         violations = []
 
-        
+
 
         if abs(np.sum(weights) - 1.0) > self.tolerance:
 
@@ -248,7 +248,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         for i, w in enumerate(weights):
 
@@ -270,7 +270,7 @@ class OptimizationResultValidator:
 
                 })
 
-            
+
 
             if w > self.max_weight + self.tolerance:
 
@@ -290,7 +290,7 @@ class OptimizationResultValidator:
 
                 })
 
-        
+
 
         for constraint in constraints:
 
@@ -316,17 +316,17 @@ class OptimizationResultValidator:
 
                     })
 
-        
+
 
         return violations
 
-    
+
 
     def validate_numerical_stability(self, weights, expected_returns, cov_matrix):
 
         issues = []
 
-        
+
 
         if np.any(np.isnan(weights)):
 
@@ -340,7 +340,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         if np.any(np.isinf(weights)):
 
@@ -354,7 +354,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         condition_number = np.linalg.cond(cov_matrix)
 
@@ -372,7 +372,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         eigenvalues = np.linalg.eigvalsh(cov_matrix)
 
@@ -390,25 +390,25 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         return issues
 
-    
 
-    def validate_logical_rationality(self, weights, expected_returns, 
+
+    def validate_logical_rationality(self, weights, expected_returns,
 
                                     target_return=None, target_risk=None):
 
         issues = []
 
-        
+
 
         portfolio_return = np.dot(weights, expected_returns)
 
         portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
 
-        
+
 
         if target_return and portfolio_return < target_return * 0.9:
 
@@ -426,7 +426,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         if target_risk and portfolio_risk > target_risk * 1.1:
 
@@ -444,7 +444,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         max_weight_idx = np.argmax(weights)
 
@@ -464,35 +464,35 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         return issues
 
-    
+
 
     def validate_risk_metrics(self, weights, returns_data, cov_matrix):
 
         portfolio_returns = np.dot(returns_data, weights)
 
-        
+
 
         var_95 = np.percentile(portfolio_returns, 5)
 
         cvar_95 = np.mean(portfolio_returns[portfolio_returns <= var_95])
 
-        
+
 
         sharpe_ratio = np.mean(portfolio_returns) / np.std(portfolio_returns)
 
-        
+
 
         max_drawdown = self._calculate_max_drawdown(portfolio_returns)
 
-        
+
 
         risk_issues = []
 
-        
+
 
         if sharpe_ratio < 0:
 
@@ -508,7 +508,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         if max_drawdown < -0.2:
 
@@ -524,7 +524,7 @@ class OptimizationResultValidator:
 
             })
 
-        
+
 
         return {
 
@@ -540,7 +540,7 @@ class OptimizationResultValidator:
 
         }
 
-    
+
 
     def _calculate_max_drawdown(self, returns):
 
@@ -552,7 +552,7 @@ class OptimizationResultValidator:
 
         return np.min(drawdowns)
 
-    
+
 
     def validate_optimization_result(self, weights, expected_returns, cov_matrix,
 
@@ -562,7 +562,7 @@ class OptimizationResultValidator:
 
         constraint_violations = self.validate_constraints(weights, constraints)
 
-        
+
 
         numerical_issues = self.validate_numerical_stability(
 
@@ -570,7 +570,7 @@ class OptimizationResultValidator:
 
         )
 
-        
+
 
         logical_issues = self.validate_logical_rationality(
 
@@ -578,7 +578,7 @@ class OptimizationResultValidator:
 
         )
 
-        
+
 
         risk_validation = None
 
@@ -586,27 +586,27 @@ class OptimizationResultValidator:
 
             risk_validation = self.validate_risk_metrics(weights, returns_data, cov_matrix)
 
-        
+
 
         all_issues = (
 
-            constraint_violations + 
+            constraint_violations +
 
-            numerical_issues + 
+            numerical_issues +
 
-            logical_issues + 
+            logical_issues +
 
             (risk_validation['issues'] if risk_validation else [])
 
         )
 
-        
+
 
         critical_issues = [i for i in all_issues if i['severity'] == 'critical']
 
         high_issues = [i for i in all_issues if i['severity'] == 'high']
 
-        
+
 
         if critical_issues:
 
@@ -620,7 +620,7 @@ class OptimizationResultValidator:
 
             overall_status = 'passed'
 
-        
+
 
         return {
 
@@ -654,7 +654,7 @@ class OptimizationResultValidator:
 
         }
 
-    
+
 
     def _generate_recommendation(self, status, issues):
 
@@ -893,4 +893,3 @@ class ValidationResult:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

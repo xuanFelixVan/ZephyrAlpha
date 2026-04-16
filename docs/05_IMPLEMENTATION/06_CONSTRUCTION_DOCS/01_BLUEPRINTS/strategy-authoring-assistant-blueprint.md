@@ -23,9 +23,9 @@ responsibility:
 
 >
 
-> **职责边界**：  
+> **职责边界**：
 
-> - ✅ 本文档负责：意图收集、澄清问答、结构化落盘（DraftSpec/StrategyConfig）、静态校验、版本化与审计字段落盘。  
+> - ✅ 本文档负责：意图收集、澄清问答、结构化落盘（DraftSpec/StrategyConfig）、静态校验、版本化与审计字段落盘。
 
 > - ❌ 本文档不负责：策略真实收益承诺、数据拉取与清洗实现、撮合与成交仿真细节、绩效指标计算实现（分别由数据/回测/评估模块负责）。
 
@@ -35,13 +35,13 @@ responsibility:
 
 
 
-1. **低门槛输入**：支持自然语言描述 + 表单化补全（桌面端 UI 友好）。  
+1. **低门槛输入**：支持自然语言描述 + 表单化补全（桌面端 UI 友好）。
 
-2. **LLM 辅助但可控**：LLM 仅生成草案与建议，最终必须 **Schema 校验通过** 才能执行。  
+2. **LLM 辅助但可控**：LLM 仅生成草案与建议，最终必须 **Schema 校验通过** 才能执行。
 
-3. **可复现**：执行只依赖落盘的 `StrategyConfig` 与 `dataset_id`/`seed` 等审计字段。  
+3. **可复现**：执行只依赖落盘的 `StrategyConfig` 与 `dataset_id`/`seed` 等审计字段。
 
-4. **可追溯**：保留“用户原文”“澄清问答”“校验结果”“配置版本链”，便于复盘与合规审计。  
+4. **可追溯**：保留“用户原文”“澄清问答”“校验结果”“配置版本链”，便于复盘与合规审计。
 
 
 
@@ -123,15 +123,15 @@ flowchart TD
 
 
 
-- **标的与频率**：你要做什么市场/哪些标的/什么周期？  
+- **标的与频率**：你要做什么市场/哪些标的/什么周期？
 
-- **信号逻辑**：你认为“买/卖/空仓”的触发条件是什么（阈值、排序、组合规则）？  
+- **信号逻辑**：你认为“买/卖/空仓”的触发条件是什么（阈值、排序、组合规则）？
 
-- **风险约束**：最大回撤容忍、仓位上限、止损/止盈是否需要？  
+- **风险约束**：最大回撤容忍、仓位上限、止损/止盈是否需要？
 
-- **回测区间**：起止时间、基准、是否走分层/滚动回测？  
+- **回测区间**：起止时间、基准、是否走分层/滚动回测？
 
-- **成本假设**：手续费、滑点、冲击模型选择。  
+- **成本假设**：手续费、滑点、冲击模型选择。
 
 
 
@@ -147,23 +147,23 @@ flowchart TD
 
 
 
-- **Freqtrade**：JSON 配置 + 回测/干跑输出，可学习其配置结构与运行编排。  
+- **Freqtrade**：JSON 配置 + 回测/干跑输出，可学习其配置结构与运行编排。
 
   - 仓库：`https://github.com/freqtrade/freqtrade`
 
-- **QuantConnect Lean**：`config.json` 驱动的模块化引擎 + CLI（backtest/optimize/live）。  
+- **QuantConnect Lean**：`config.json` 驱动的模块化引擎 + CLI（backtest/optimize/live）。
 
   - 仓库：`https://github.com/quantconnect/lean`
 
-- **VnPy (VeighNa)**：面向交易的 GUI/回测/参数优化工作流参考（桌面端路径尤其相关）。  
+- **VnPy (VeighNa)**：面向交易的 GUI/回测/参数优化工作流参考（桌面端路径尤其相关）。
 
   - 仓库：`https://github.com/vnpy/vnpy`
 
-- **Backtrader**：事件驱动回测 + 参数化优化（适合参考策略参数组织）。  
+- **Backtrader**：事件驱动回测 + 参数化优化（适合参考策略参数组织）。
 
   - 仓库：`https://github.com/mementum/backtrader`
 
-- **vectorbt**：向量化回测 + 大规模参数扫描（适合参考“参数网格/快速评估”的接口设计）。  
+- **vectorbt**：向量化回测 + 大规模参数扫描（适合参考“参数网格/快速评估”的接口设计）。
 
   - 仓库：`https://github.com/polakowo/vectorbt`
 
@@ -173,15 +173,15 @@ flowchart TD
 
 
 
-- **Instructor**：用 Pydantic 约束 LLM 输出为结构化对象（适合 DraftSpec/StrategyConfig 生成）。  
+- **Instructor**：用 Pydantic 约束 LLM 输出为结构化对象（适合 DraftSpec/StrategyConfig 生成）。
 
   - 仓库：`https://github.com/instructor-ai/instructor`
 
-- **Jsonformer**：基于 JSON Schema 的结构强约束生成，适合“结构绝不跑偏”的输出。  
+- **Jsonformer**：基于 JSON Schema 的结构强约束生成，适合“结构绝不跑偏”的输出。
 
   - 仓库：`https://github.com/1rgs/jsonformer`
 
-- **Guardrails**：输出验证 + 失败重试（re-ask），适合做 Validator 的策略。  
+- **Guardrails**：输出验证 + 失败重试（re-ask），适合做 Validator 的策略。
 
   - 仓库：`https://github.com/guardrails-ai/guardrails`
 
@@ -218,6 +218,3 @@ flowchart TD
 
 
 - LLM 生成的策略表达可能存在误解；必须通过 **字段级校验、可解释回显（把配置用中文复述给用户确认）** 与回测回归用例逐步收敛稳定性。
-
-
-

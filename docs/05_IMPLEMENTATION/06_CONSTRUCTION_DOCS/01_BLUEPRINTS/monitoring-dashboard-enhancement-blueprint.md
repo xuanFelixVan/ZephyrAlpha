@@ -147,7 +147,7 @@ layer: layer_08
 
 > 核心职责: Monitoring Dashboard Enhancement蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -215,7 +215,7 @@ class MonitoringDashboard:
 
     """监控面板"""
 
-    
+
 
     def __init__(self):
 
@@ -231,7 +231,7 @@ page_title="
 
         )
 
-        
+
 
     def render(self):
 
@@ -241,7 +241,7 @@ st.title("
 
 风量化实时监控面板")
 
-        
+
 
         tab1, tab2, tab3, tab4 = st.tabs([
 
@@ -255,7 +255,7 @@ st.title("
 
         ])
 
-        
+
 
         with tab1:
 
@@ -273,7 +273,7 @@ st.title("
 
             self._render_system_monitor()
 
-    
+
 
     def _render_trading_monitor(self):
 
@@ -281,9 +281,9 @@ st.title("
 
         st.header("实时交易监控")
 
-        
 
-        # 
+
+        #
 
         col1, col2, col3, col4 = st.columns(4)
 
@@ -299,7 +299,7 @@ st.title("
 
             st.metric("可用资金", "¥246,913", "+5.2%")
 
-        
+
 
         order_status = {
 
@@ -319,7 +319,7 @@ st.title("
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _render_risk_monitor(self):
 
@@ -327,7 +327,7 @@ st.title("
 
         st.header("风险监控")
 
-        
+
 
         # 风险指标卡片
 
@@ -345,7 +345,7 @@ st.metric("VaR (95%)", "12,345", "-1,234")
 
         with col4:
 
-        
+
 
         st.subheader("VaR趋势")
 
@@ -353,7 +353,7 @@ st.metric("VaR (95%)", "12,345", "-1,234")
 
         var_values = np.random.uniform(10000, 15000, 30)
 
-        
+
 
         fig = go.Figure()
 
@@ -379,7 +379,7 @@ yaxis_title="VaR ()"
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _render_performance_monitor(self):
 
@@ -387,7 +387,7 @@ yaxis_title="VaR ()"
 
         st.header("绩效监控")
 
-        
+
 
         # 绩效指标卡片
 
@@ -407,7 +407,7 @@ yaxis_title="VaR ()"
 
             st.metric("胜率", "62.5%", "+1.2%")
 
-        
+
 
         # 收益曲线
 
@@ -417,7 +417,7 @@ yaxis_title="VaR ()"
 
         returns = np.cumsum(np.random.normal(0.001, 0.02, 90))
 
-        
+
 
         fig = go.Figure()
 
@@ -445,7 +445,7 @@ yaxis_title="VaR ()"
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _render_system_monitor(self):
 
@@ -453,7 +453,7 @@ yaxis_title="VaR ()"
 
         st.header("系统监控")
 
-        
+
 
         # 系统指标卡片
 
@@ -471,7 +471,7 @@ yaxis_title="VaR ()"
 
         with col4:
 
-        
+
 
         health_data = {
 
@@ -525,7 +525,7 @@ if __name__ == "__main__":
 
 def monitor_orders(self):
 
-    
+
 
     # 自动刷新
 
@@ -533,13 +533,13 @@ def monitor_orders(self):
 
         st.rerun()
 
-    
+
 
     # 获取订单数据
 
     orders = self._get_orders()
 
-    
+
 
     # 显示订单表格
 
@@ -553,7 +553,7 @@ def monitor_orders(self):
 
     )
 
-    
+
 
     status_counts = orders['status'].value_counts()
 
@@ -597,7 +597,7 @@ def monitor_var(self):
 
     st.subheader("VaR实时监控")
 
-    
+
 
     # 计算VaR
 
@@ -605,7 +605,7 @@ def monitor_var(self):
 
     var_99 = self._calculate_var(0.99)
 
-    
+
 
     # 显示VaR指标
 
@@ -619,7 +619,7 @@ st.metric("VaR (95%)", f"{var_95:,.0f}")
 
 st.metric("VaR (99%)", f"{var_99:,.0f}")
 
-    
+
 
     var_history = self._get_var_history()
 
@@ -677,7 +677,7 @@ def monitor_returns(self):
 
     st.subheader("收益实时跟踪")
 
-    
+
 
     # 计算收益
 
@@ -685,7 +685,7 @@ def monitor_returns(self):
 
     daily_return = self._calculate_daily_return()
 
-    
+
 
     # 显示收益指标
 
@@ -699,7 +699,7 @@ def monitor_returns(self):
 
         st.metric("今日收益", f"{daily_return:.2%}")
 
-    
+
 
     # 收益曲线
 
@@ -751,15 +751,15 @@ def monitor_system_health(self):
 
     st.subheader("系统健康监控")
 
-    
+
 
     system_status = self._get_system_status()
 
-    
+
 
     st.table(system_status)
 
-    
+
 
     # 性能指标
 
@@ -895,7 +895,7 @@ class AlertMessage:
 
 
 
-## 
+##
 
 
 
@@ -937,7 +937,7 @@ class AlertMessage:
 
 
 
-## 
+##
 
 
 
@@ -1010,10 +1010,3 @@ class AlertMessage:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

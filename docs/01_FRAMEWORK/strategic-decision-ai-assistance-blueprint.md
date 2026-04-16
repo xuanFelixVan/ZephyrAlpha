@@ -29,7 +29,7 @@ responsibility_boundary: '''本文档职责（Layer 11 战略决策层）：'
 
 
 
-**核心定位**:  
+**核心定位**:
 
 使用强化学习和决策树技术为战略决策提供AI辅助，提升决策质量和效率。
 
@@ -233,13 +233,13 @@ class StrategicDecisionEnv(gym.Env):
 
     """战略决策环境"""
 
-    
+
 
     def __init__(self, config):
 
         super(StrategicDecisionEnv, self).__init__()
 
-        
+
 
         # 定义动作空间：资产配置权重
 
@@ -255,7 +255,7 @@ class StrategicDecisionEnv(gym.Env):
 
         )
 
-        
+
 
         # 定义观察空间：市场状态
 
@@ -271,7 +271,7 @@ class StrategicDecisionEnv(gym.Env):
 
         )
 
-        
+
 
         self.num_assets = config['num_assets']
 
@@ -281,7 +281,7 @@ class StrategicDecisionEnv(gym.Env):
 
         self.max_steps = config.get('max_steps', 252)
 
-        
+
 
     def reset(self):
 
@@ -293,7 +293,7 @@ class StrategicDecisionEnv(gym.Env):
 
         return self.state
 
-    
+
 
     def step(self, action):
 
@@ -303,7 +303,7 @@ class StrategicDecisionEnv(gym.Env):
 
         weights = action / np.sum(action)
 
-        
+
 
         # 计算奖励
 
@@ -313,7 +313,7 @@ class StrategicDecisionEnv(gym.Env):
 
         reward = portfolio_return - 0.5 * portfolio_risk
 
-        
+
 
         # 更新状态
 
@@ -321,17 +321,17 @@ class StrategicDecisionEnv(gym.Env):
 
         self.state = self._get_next_state()
 
-        
+
 
         # 判断是否结束
 
         done = self.current_step >= self.max_steps
 
-        
+
 
         return self.state, reward, done, {}
 
-    
+
 
     def _get_initial_state(self):
 
@@ -339,7 +339,7 @@ class StrategicDecisionEnv(gym.Env):
 
         return np.random.randn(self.state_dim)
 
-    
+
 
     def _get_next_state(self):
 
@@ -347,7 +347,7 @@ class StrategicDecisionEnv(gym.Env):
 
         return np.random.randn(self.state_dim)
 
-    
+
 
     def _calculate_portfolio_return(self, weights):
 
@@ -357,7 +357,7 @@ class StrategicDecisionEnv(gym.Env):
 
         return np.dot(weights, returns)
 
-    
+
 
     def _calculate_portfolio_risk(self, weights):
 
@@ -373,7 +373,7 @@ class StrategicDecisionAssistant:
 
     """战略决策AI助手"""
 
-    
+
 
     def __init__(self, config):
 
@@ -381,7 +381,7 @@ class StrategicDecisionAssistant:
 
         ray.init(ignore_reinit_error=True)
 
-        
+
 
     def train_decision_model(self):
 
@@ -397,11 +397,11 @@ class StrategicDecisionAssistant:
 
         config['num_workers'] = 4
 
-        
+
 
         trainer = ppo.PPOTrainer(config=config)
 
-        
+
 
         for i in range(100):
 
@@ -409,11 +409,11 @@ class StrategicDecisionAssistant:
 
             print(f"Iteration {i}, reward: {result['episode_reward_mean']}")
 
-        
+
 
         return trainer
 
-    
+
 
     def generate_decision_recommendation(self, state, trainer):
 
@@ -421,7 +421,7 @@ class StrategicDecisionAssistant:
 
         生成决策建议
 
-        
+
 
         Args:
 
@@ -429,7 +429,7 @@ class StrategicDecisionAssistant:
 
             trainer: 训练好的模型
 
-            
+
 
         Returns:
 
@@ -441,7 +441,7 @@ class StrategicDecisionAssistant:
 
         weights = action / np.sum(action)
 
-        
+
 
         return {
 
@@ -455,7 +455,7 @@ class StrategicDecisionAssistant:
 
         }
 
-    
+
 
     def _calculate_confidence(self, weights):
 
@@ -463,7 +463,7 @@ class StrategicDecisionAssistant:
 
         return float(np.max(weights))
 
-    
+
 
     def _estimate_return(self, weights):
 
@@ -471,7 +471,7 @@ class StrategicDecisionAssistant:
 
         return float(np.random.uniform(0.05, 0.15))
 
-    
+
 
     def _estimate_risk(self, weights):
 
@@ -501,7 +501,7 @@ class DecisionExplainer:
 
     """决策解释器"""
 
-    
+
 
     def __init__(self, model):
 
@@ -509,7 +509,7 @@ class DecisionExplainer:
 
         self.explainer = shap.TreeExplainer(model) if hasattr(model, 'predict_proba') else shap.KernelExplainer(model.predict, shap.kmeans(X, 10))
 
-        
+
 
     def explain_decision(self, features: np.ndarray, feature_names: List[str]) -> Dict:
 
@@ -517,7 +517,7 @@ class DecisionExplainer:
 
         解释决策依据
 
-        
+
 
         Args:
 
@@ -525,7 +525,7 @@ class DecisionExplainer:
 
             feature_names: 特征名称
 
-            
+
 
         Returns:
 
@@ -537,7 +537,7 @@ class DecisionExplainer:
 
         shap_values = self.explainer.shap_values(features)
 
-        
+
 
         # 特征重要性排序
 
@@ -545,7 +545,7 @@ class DecisionExplainer:
 
         importance_ranking = np.argsort(feature_importance)[::-1]
 
-        
+
 
         # 生成解释文本
 
@@ -559,7 +559,7 @@ class DecisionExplainer:
 
         )
 
-        
+
 
         return {
 
@@ -573,7 +573,7 @@ class DecisionExplainer:
 
         }
 
-    
+
 
     def _generate_explanation_text(
 
@@ -591,11 +591,11 @@ class DecisionExplainer:
 
         top_features = importance_ranking[:5]
 
-        
+
 
         explanation = "决策依据分析：\n\n"
 
-        
+
 
         for i, idx in enumerate(top_features, 1):
 
@@ -603,7 +603,7 @@ class DecisionExplainer:
 
             shap_value = shap_values[0, idx]
 
-            
+
 
             if shap_value > 0:
 
@@ -613,15 +613,15 @@ class DecisionExplainer:
 
                 impact = "负向影响"
 
-            
+
 
             explanation += f"{i}. {feature_name}: {impact} (SHAP值: {shap_value:.4f})\n"
 
-        
+
 
         return explanation
 
-    
+
 
     def sensitivity_analysis(
 
@@ -639,7 +639,7 @@ class DecisionExplainer:
 
         敏感性分析
 
-        
+
 
         Args:
 
@@ -649,7 +649,7 @@ class DecisionExplainer:
 
             perturbation_range: 扰动范围
 
-            
+
 
         Returns:
 
@@ -659,7 +659,7 @@ class DecisionExplainer:
 
         sensitivity_results = {}
 
-        
+
 
         for i, feature_name in enumerate(feature_names):
 
@@ -669,7 +669,7 @@ class DecisionExplainer:
 
             perturbed_features[i] *= (1 + perturbation_range)
 
-            
+
 
             # 计算决策变化
 
@@ -677,11 +677,11 @@ class DecisionExplainer:
 
             perturbed_decision = self.model.predict(perturbed_features.reshape(1, -1))
 
-            
+
 
             decision_change = np.abs(perturbed_decision - base_decision)
 
-            
+
 
             sensitivity_results[feature_name] = {
 
@@ -695,7 +695,7 @@ class DecisionExplainer:
 
             }
 
-        
+
 
         return sensitivity_results
 
@@ -723,13 +723,13 @@ class DecisionEffectEvaluator:
 
     """决策效果评估器"""
 
-    
+
 
     def __init__(self):
 
         self.decision_history = []
 
-        
+
 
     def record_decision(
 
@@ -765,7 +765,7 @@ class DecisionEffectEvaluator:
 
         })
 
-    
+
 
     def evaluate_decision(
 
@@ -783,7 +783,7 @@ class DecisionEffectEvaluator:
 
         评估决策效果
 
-        
+
 
         Args:
 
@@ -793,7 +793,7 @@ class DecisionEffectEvaluator:
 
             evaluated_at: 评估时间
 
-            
+
 
         Returns:
 
@@ -813,13 +813,13 @@ class DecisionEffectEvaluator:
 
                 break
 
-        
+
 
         if decision is None:
 
             raise ValueError(f"Decision {decision_id} not found")
 
-        
+
 
         # 计算效果指标
 
@@ -829,7 +829,7 @@ class DecisionEffectEvaluator:
 
         return_error = actual_return - expected_return
 
-        
+
 
         expected_risk = decision['expected_outcome'].get('expected_risk', 0)
 
@@ -837,7 +837,7 @@ class DecisionEffectEvaluator:
 
         risk_error = actual_risk - expected_risk
 
-        
+
 
         # 计算决策质量得分
 
@@ -851,7 +851,7 @@ class DecisionEffectEvaluator:
 
         )
 
-        
+
 
         # 更新决策记录
 
@@ -863,7 +863,7 @@ class DecisionEffectEvaluator:
 
         decision['quality_score'] = quality_score
 
-        
+
 
         return {
 
@@ -879,7 +879,7 @@ class DecisionEffectEvaluator:
 
         }
 
-    
+
 
     def _calculate_quality_score(
 
@@ -899,23 +899,23 @@ class DecisionEffectEvaluator:
 
         return_score = max(0, 100 - abs(return_error) * 1000)
 
-        
+
 
         # 风险预测准确度得分
 
         risk_score = max(0, 100 - abs(risk_error) * 500)
 
-        
+
 
         # 综合得分
 
         quality_score = return_score * 0.6 + risk_score * 0.4
 
-        
+
 
         return quality_score
 
-    
+
 
     def generate_improvement_suggestions(self) -> List[str]:
 
@@ -925,29 +925,29 @@ class DecisionEffectEvaluator:
 
             return []
 
-        
+
 
         # 分析历史决策
 
         evaluated_decisions = [d for d in self.decision_history if d.get('evaluated', False)]
 
-        
+
 
         if not evaluated_decisions:
 
             return ["暂无已评估的决策，无法生成改进建议"]
 
-        
+
 
         # 计算平均质量得分
 
         avg_quality = np.mean([d['quality_score'] for d in evaluated_decisions])
 
-        
+
 
         suggestions = []
 
-        
+
 
         if avg_quality < 60:
 
@@ -961,7 +961,7 @@ class DecisionEffectEvaluator:
 
             suggestions.append("决策质量良好，继续保持")
 
-        
+
 
         # 分析收益预测偏差
 
@@ -973,11 +973,11 @@ class DecisionEffectEvaluator:
 
         ]
 
-        
+
 
         avg_return_error = np.mean(return_errors)
 
-        
+
 
         if avg_return_error > 0.02:
 
@@ -987,7 +987,7 @@ class DecisionEffectEvaluator:
 
             suggestions.append("收益预测偏乐观，建议降低预期")
 
-        
+
 
         return suggestions
 
@@ -1504,4 +1504,3 @@ class DecisionExplanation:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

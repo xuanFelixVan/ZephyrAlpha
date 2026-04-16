@@ -15,14 +15,14 @@ layer: layer_05
 
 # D 类合稿 — 待统一审核登记（低置信分支）
 
-> **用途**：机器生成 `*_CONSOLIDATED_YYYYMMDD.md`（或等价新路径）后，**旧稿不删**（stub 或正文迁 archive + 原路径 stub）。本表集中记录 **待你后审** 的条目，避免散落在 commit message 里找不到。  
-> **高置信**合并 **不登记本表**（准入与「高置信可合并」见 Playbook **§2.5.2**、收口形态 **§5.1**）；若仍希望留审计痕，可写在 commit body 或 `docs/09_AUDIT/STATE/` 简短日志。  
+> **用途**：机器生成 `*_CONSOLIDATED_YYYYMMDD.md`（或等价新路径）后，**旧稿不删**（stub 或正文迁 archive + 原路径 stub）。本表集中记录 **待你后审** 的条目，避免散落在 commit message 里找不到。
+> **高置信**合并 **不登记本表**（准入与「高置信可合并」见 Playbook **§2.5.2**、收口形态 **§5.1**）；若仍希望留审计痕，可写在 commit body 或 `docs/09_AUDIT/STATE/` 简短日志。
 > **机器候选池（启发式）**：最新 `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`（[`JSON`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json)）。可选 **A 档分流 + 二审队列**：`BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md`（[`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json)）、[`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl)（脚本 `triage_blueprint_d_overlap_pairs.py`，Playbook **§3.5**）；更强模型二审配合 二审提示词模板（输出 `confidence`、`low_confidence_register` 等，与 Playbook **§2.5** 对齐）。评审顺序与双轨见 D 类蓝图重叠 Playbook。
 
 ## 列说明
 
-**「一点就跳」**：**合稿新路径**、**旧稿路径**、**旧正文归档**（有文件时）三列请写 **Markdown 链接**（方括号内为显示文字，紧接圆括号内为从本文件起算的相对路径）。  
-**相对路径以本登记表文件所在目录为基准**（即与 `D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md` 同级起算的 `../`、`../../` 等），这样在 IDE / GitHub / 飞书文档渲染里均可点击打开目标稿。  
+**「一点就跳」**：**合稿新路径**、**旧稿路径**、**旧正文归档**（有文件时）三列请写 **Markdown 链接**（方括号内为显示文字，紧接圆括号内为从本文件起算的相对路径）。
+**相对路径以本登记表文件所在目录为基准**（即与 `D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md` 同级起算的 `../`、`../../` 等），这样在 IDE / GitHub / 飞书文档渲染里均可点击打开目标稿。
 显示文字建议含短文件名或 `stub` / `archive` 提示；无归档时 **旧正文归档** 列仍填 `-`（纯文字即可）。
 
 | 列 | 含义 |

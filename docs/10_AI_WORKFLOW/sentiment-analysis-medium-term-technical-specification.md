@@ -36,7 +36,7 @@ applicable_modules: null
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -126,13 +126,13 @@ class FinancialKnowledgeGraph:
 
     """金融知识图谱管理
 
-    
+
 
     负责图谱构建、查询、推理和可视
 
     """
 
-    
+
 
     def __init__(
 
@@ -150,7 +150,7 @@ class FinancialKnowledgeGraph:
 
         """初始化知识图谱管理器
 
-        
+
 
         Args:
 
@@ -166,7 +166,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def add_entity(
 
@@ -182,7 +182,7 @@ class FinancialKnowledgeGraph:
 
         """添加实体
 
-        
+
 
         Args:
 
@@ -192,7 +192,7 @@ class FinancialKnowledgeGraph:
 
             properties: 实体属
 
-            
+
 
         Returns:
 
@@ -202,7 +202,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def add_relation(
 
@@ -220,7 +220,7 @@ class FinancialKnowledgeGraph:
 
         """添加关系
 
-        
+
 
         Args:
 
@@ -232,7 +232,7 @@ class FinancialKnowledgeGraph:
 
             properties: 关系属
 
-            
+
 
         Returns:
 
@@ -242,7 +242,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def query_entity(
 
@@ -254,13 +254,13 @@ class FinancialKnowledgeGraph:
 
         """查询实体
 
-        
+
 
         Args:
 
             entity_id: 实体ID
 
-            
+
 
         Returns:
 
@@ -270,7 +270,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def query_relations(
 
@@ -286,7 +286,7 @@ class FinancialKnowledgeGraph:
 
         """查询关系
 
-        
+
 
         Args:
 
@@ -296,7 +296,7 @@ class FinancialKnowledgeGraph:
 
             direction: 方向 (in, out, both)
 
-            
+
 
         Returns:
 
@@ -306,7 +306,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def find_path(
 
@@ -322,7 +322,7 @@ class FinancialKnowledgeGraph:
 
         """查找路径
 
-        
+
 
         Args:
 
@@ -332,7 +332,7 @@ class FinancialKnowledgeGraph:
 
             max_depth: 最大深
 
-            
+
 
         Returns:
 
@@ -342,7 +342,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def analyze_event_correlation(
 
@@ -356,7 +356,7 @@ class FinancialKnowledgeGraph:
 
         """分析事件关联
 
-        
+
 
         Args:
 
@@ -364,7 +364,7 @@ class FinancialKnowledgeGraph:
 
             time_window: 时间窗口（天
 
-            
+
 
         Returns:
 
@@ -374,7 +374,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def analyze_impact_propagation(
 
@@ -390,7 +390,7 @@ class FinancialKnowledgeGraph:
 
         """分析影响传导
 
-        
+
 
         Args:
 
@@ -400,7 +400,7 @@ class FinancialKnowledgeGraph:
 
             max_depth: 最大深
 
-            
+
 
         Returns:
 
@@ -410,7 +410,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def detect_community(
 
@@ -422,13 +422,13 @@ class FinancialKnowledgeGraph:
 
         """社区发现
 
-        
+
 
         Args:
 
             algorithm: 算法 (louvain, label_propagation)
 
-            
+
 
         Returns:
 
@@ -438,13 +438,13 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def get_graph_statistics(self) -> Dict[str, Any]:
 
         """获取图谱统计信息
 
-        
+
 
         Returns:
 
@@ -454,7 +454,7 @@ class FinancialKnowledgeGraph:
 
         pass
 
-    
+
 
     def export_graph(
 
@@ -468,7 +468,7 @@ class FinancialKnowledgeGraph:
 
         """导出图谱
 
-        
+
 
         Args:
 
@@ -476,7 +476,7 @@ class FinancialKnowledgeGraph:
 
             output_path: 输出路径
 
-            
+
 
         Returns:
 
@@ -730,13 +730,13 @@ class EntityRecognizer:
 
     """实体识别
 
-    
+
 
     从文本中识别金融实体
 
     """
 
-    
+
 
     def __init__(
 
@@ -750,7 +750,7 @@ class EntityRecognizer:
 
         """初始化实体识别器
 
-        
+
 
         Args:
 
@@ -762,7 +762,7 @@ class EntityRecognizer:
 
         pass
 
-    
+
 
     def recognize(
 
@@ -776,7 +776,7 @@ class EntityRecognizer:
 
         """识别实体
 
-        
+
 
         Args:
 
@@ -784,7 +784,7 @@ class EntityRecognizer:
 
             entity_types: 实体类型列表（可选）
 
-            
+
 
         Returns:
 
@@ -794,7 +794,7 @@ class EntityRecognizer:
 
         pass
 
-    
+
 
     def recognize_batch(
 
@@ -808,7 +808,7 @@ class EntityRecognizer:
 
         """批量识别实体
 
-        
+
 
         Args:
 
@@ -816,7 +816,7 @@ class EntityRecognizer:
 
             entity_types: 实体类型列表（可选）
 
-            
+
 
         Returns:
 
@@ -826,7 +826,7 @@ class EntityRecognizer:
 
         pass
 
-    
+
 
     def add_custom_pattern(
 
@@ -840,7 +840,7 @@ class EntityRecognizer:
 
         """添加自定义模
 
-        
+
 
         Args:
 
@@ -852,13 +852,13 @@ class EntityRecognizer:
 
         pass
 
-    
+
 
     def get_entity_types(self) -> List[str]:
 
         """获取支持的实体类
 
-        
+
 
         Returns:
 
@@ -1014,13 +1014,13 @@ class RelationExtractor:
 
     """关系抽取
 
-    
+
 
     从文本中抽取实体关系
 
     """
 
-    
+
 
     def __init__(
 
@@ -1034,7 +1034,7 @@ class RelationExtractor:
 
         """初始化关系抽取器
 
-        
+
 
         Args:
 
@@ -1046,7 +1046,7 @@ class RelationExtractor:
 
         pass
 
-    
+
 
     def extract(
 
@@ -1060,7 +1060,7 @@ class RelationExtractor:
 
         """抽取关系
 
-        
+
 
         Args:
 
@@ -1068,7 +1068,7 @@ class RelationExtractor:
 
             entities: 实体列表
 
-            
+
 
         Returns:
 
@@ -1078,7 +1078,7 @@ class RelationExtractor:
 
         pass
 
-    
+
 
     def extract_batch(
 
@@ -1092,7 +1092,7 @@ class RelationExtractor:
 
         """批量抽取关系
 
-        
+
 
         Args:
 
@@ -1100,7 +1100,7 @@ class RelationExtractor:
 
             entities_list: 实体列表
 
-            
+
 
         Returns:
 
@@ -1110,13 +1110,13 @@ class RelationExtractor:
 
         pass
 
-    
+
 
     def get_relation_types(self) -> List[str]:
 
         """获取支持的关系类
 
-        
+
 
         Returns:
 
@@ -1250,13 +1250,13 @@ class StreamProcessingManager:
 
     """流式处理管理
 
-    
+
 
     管理Kafka消息队列和Spark Streaming应用
 
     """
 
-    
+
 
     def __init__(
 
@@ -1272,7 +1272,7 @@ class StreamProcessingManager:
 
         """初始化流式处理管理器
 
-        
+
 
         Args:
 
@@ -1286,7 +1286,7 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def create_topic(
 
@@ -1302,7 +1302,7 @@ class StreamProcessingManager:
 
         """创建Kafka主题
 
-        
+
 
         Args:
 
@@ -1312,7 +1312,7 @@ class StreamProcessingManager:
 
             replication_factor: 副本因子
 
-            
+
 
         Returns:
 
@@ -1322,7 +1322,7 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def produce_message(
 
@@ -1338,7 +1338,7 @@ class StreamProcessingManager:
 
         """生产消息
 
-        
+
 
         Args:
 
@@ -1348,7 +1348,7 @@ class StreamProcessingManager:
 
             value: 消息
 
-            
+
 
         Returns:
 
@@ -1358,7 +1358,7 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def consume_messages(
 
@@ -1374,7 +1374,7 @@ class StreamProcessingManager:
 
         """消费消息
 
-        
+
 
         Args:
 
@@ -1388,7 +1388,7 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def start_streaming_job(
 
@@ -1402,7 +1402,7 @@ class StreamProcessingManager:
 
         """启动流式处理作业
 
-        
+
 
         Args:
 
@@ -1410,7 +1410,7 @@ class StreamProcessingManager:
 
             processing_logic: 处理逻辑
 
-            
+
 
         Returns:
 
@@ -1420,19 +1420,19 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def stop_streaming_job(self, job_name: str) -> bool:
 
         """停止流式处理作业
 
-        
+
 
         Args:
 
             job_name: 作业名称
 
-            
+
 
         Returns:
 
@@ -1442,19 +1442,19 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def get_job_status(self, job_name: str) -> Dict[str, Any]:
 
         """获取作业状
 
-        
+
 
         Args:
 
             job_name: 作业名称
 
-            
+
 
         Returns:
 
@@ -1464,13 +1464,13 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def get_kafka_metrics(self) -> Dict[str, Any]:
 
         """获取Kafka指标
 
-        
+
 
         Returns:
 
@@ -1480,13 +1480,13 @@ class StreamProcessingManager:
 
         pass
 
-    
+
 
     def get_spark_metrics(self) -> Dict[str, Any]:
 
         """获取Spark指标
 
-        
+
 
         Returns:
 
@@ -1564,7 +1564,7 @@ def process_news_stream(df):
 
     from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 
-    
+
 
     # 定义schema
 
@@ -1578,7 +1578,7 @@ def process_news_stream(df):
 
     ])
 
-    
+
 
     # 解析JSON
 
@@ -1588,7 +1588,7 @@ def process_news_stream(df):
 
     ).select("data.*")
 
-    
+
 
     # 情感分析
 
@@ -1600,7 +1600,7 @@ def process_news_stream(df):
 
     )
 
-    
+
 
     return sentiment_df
 
@@ -1714,13 +1714,13 @@ class MultilingualSentimentAnalyzer:
 
     """多语言情感分析
 
-    
+
 
     支持多语言文本的情感分
 
     """
 
-    
+
 
     def __init__(
 
@@ -1736,7 +1736,7 @@ class MultilingualSentimentAnalyzer:
 
         """初始化多语言情感分析
 
-        
+
 
         Args:
 
@@ -1750,19 +1750,19 @@ class MultilingualSentimentAnalyzer:
 
         pass
 
-    
+
 
     def detect_language(self, text: str) -> str:
 
         """检测语言
 
-        
+
 
         Args:
 
             text: 文本
 
-            
+
 
         Returns:
 
@@ -1772,7 +1772,7 @@ class MultilingualSentimentAnalyzer:
 
         pass
 
-    
+
 
     def translate(
 
@@ -1788,7 +1788,7 @@ class MultilingualSentimentAnalyzer:
 
         """翻译文本
 
-        
+
 
         Args:
 
@@ -1798,7 +1798,7 @@ class MultilingualSentimentAnalyzer:
 
             target_lang: 目标语言
 
-            
+
 
         Returns:
 
@@ -1808,7 +1808,7 @@ class MultilingualSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze(
 
@@ -1824,7 +1824,7 @@ class MultilingualSentimentAnalyzer:
 
         """分析文本情感
 
-        
+
 
         Args:
 
@@ -1834,7 +1834,7 @@ class MultilingualSentimentAnalyzer:
 
             translate_to_en: 是否翻译为英
 
-            
+
 
         Returns:
 
@@ -1844,7 +1844,7 @@ class MultilingualSentimentAnalyzer:
 
         pass
 
-    
+
 
     def analyze_batch(
 
@@ -1858,7 +1858,7 @@ class MultilingualSentimentAnalyzer:
 
         """批量分析文本情感
 
-        
+
 
         Args:
 
@@ -1866,7 +1866,7 @@ class MultilingualSentimentAnalyzer:
 
             source_langs: 源语言列表（可选）
 
-            
+
 
         Returns:
 
@@ -1876,13 +1876,13 @@ class MultilingualSentimentAnalyzer:
 
         pass
 
-    
+
 
     def get_supported_languages(self) -> List[str]:
 
         """获取支持的语言列表
 
-        
+
 
         Returns:
 
@@ -2350,11 +2350,11 @@ GET    /languages                   # 获取支持的语言
 
 开
 
-  
+
 
 数据源接
 
-  
+
 
 实体识别
 
@@ -2364,7 +2364,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 合并识别结果
 
-  
+
 
 关系抽取
 
@@ -2374,7 +2374,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 合并抽取结果
 
-  
+
 
 实体消歧
 
@@ -2384,7 +2384,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 实体融合
 
-  
+
 
 关系验证
 
@@ -2394,7 +2394,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 关系过滤
 
-  
+
 
 图谱存储
 
@@ -2404,7 +2404,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 建立索引
 
-  
+
 
 图谱更新
 
@@ -2414,7 +2414,7 @@ GET    /languages                   # 获取支持的语言
 
   └─ 版本管理
 
-  
+
 
 结束
 
@@ -2430,19 +2430,19 @@ GET    /languages                   # 获取支持的语言
 
 开
 
-  
+
 
 初始化Kafka和Spark
 
-  
+
 
 创建Kafka主题
 
-  
+
 
 启动消息生产
 
-  
+
 
 [数据源类]
 
@@ -2450,11 +2450,11 @@ GET    /languages                   # 获取支持的语言
 
   └─ 定时任务 触发采集 获取数据 发送到Kafka
 
-      
+
 
   Spark Streaming消费
 
-      
+
 
   数据处理
 
@@ -2466,7 +2466,7 @@ GET    /languages                   # 获取支持的语言
 
       └─ 结果聚合
 
-          
+
 
       结果输出
 
@@ -2476,7 +2476,7 @@ GET    /languages                   # 获取支持的语言
 
           └─ 推送到WebSocket
 
-              
+
 
           [继续处理?]
 
@@ -2496,11 +2496,11 @@ GET    /languages                   # 获取支持的语言
 
 开
 
-  
+
 
 接收文本输入
 
-  
+
 
 语言检
 
@@ -2510,25 +2510,25 @@ GET    /languages                   # 获取支持的语言
 
   └─ 确定语言
 
-  
+
 
 [是否需要翻]
 
   ├─ 直接分析
 
-  └─ 
+  └─
 
       选择翻译模型
 
-          
+
 
       执行翻译
 
-          
+
 
       翻译质量评估
 
-          
+
 
       [翻译质量达标?]
 
@@ -2536,15 +2536,15 @@ GET    /languages                   # 获取支持的语言
 
           └─ 使用译文分析
 
-              
+
 
           选择情感分析模型
 
-              
+
 
           执行情感分析
 
-              
+
 
           结果融合
 
@@ -2554,11 +2554,11 @@ GET    /languages                   # 获取支持的语言
 
               └─ 加权融合
 
-                  
+
 
               返回结果
 
-                  
+
 
                 结束
 
@@ -2676,7 +2676,7 @@ neo4j:
 
   max_connection_pool_size: 50
 
-  
+
 
 # 实体识别配置
 
@@ -2702,7 +2702,7 @@ entity_recognition:
 
       - "Microsoft"
 
-  
+
 
 # 关系抽取配置
 
@@ -2726,7 +2726,7 @@ relation_extraction:
 
   confidence_threshold: 0.7
 
-  
+
 
 # 图谱更新配置
 
@@ -2734,7 +2734,7 @@ graph_update:
 
   mode: "incremental"  # incremental, full
 
-  update_interval: 3600  # 
+  update_interval: 3600  #
 
   batch_size: 100
 
@@ -2796,7 +2796,7 @@ kafka:
 
     enable_auto_commit: false
 
-    
+
 
 # Spark配置
 
@@ -2816,7 +2816,7 @@ spark:
 
     spark.sql.streaming.checkpointLocation: "./checkpoints"
 
-    
+
 
 # 处理作业配置
 
@@ -2868,7 +2868,7 @@ language_detection:
 
   confidence_threshold: 0.9
 
-  
+
 
 # 翻译配置
 
@@ -2880,9 +2880,9 @@ translation:
 
   cache_size: 10000
 
-  cache_ttl: 3600  # 
+  cache_ttl: 3600  #
 
-  
+
 
 # 情感分析模型配置
 
@@ -2900,7 +2900,7 @@ sentiment_models:
 
   fr: "camembert-base"
 
-  
+
 
 # 性能配置
 
@@ -2925,4 +2925,3 @@ performance:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-

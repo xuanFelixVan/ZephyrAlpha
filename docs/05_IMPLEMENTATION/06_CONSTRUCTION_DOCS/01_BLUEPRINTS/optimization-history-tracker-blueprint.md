@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：优化历史追踪、决策记录、决策审计
 
@@ -196,7 +196,7 @@ class OptimizationHistoryTracker:
 
     """优化历史追踪器"""
 
-    
+
 
     def __init__(self, db_path='optimization_history.db'):
 
@@ -204,7 +204,7 @@ class OptimizationHistoryTracker:
 
         self._init_database()
 
-    
+
 
     def _init_database(self):
 
@@ -214,7 +214,7 @@ class OptimizationHistoryTracker:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -242,7 +242,7 @@ class OptimizationHistoryTracker:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
@@ -266,13 +266,13 @@ class OptimizationHistoryTracker:
 
         ''')
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def record_optimization(self, optimization_type, parameters, constraints,
 
@@ -282,7 +282,7 @@ class OptimizationHistoryTracker:
 
         记录优化决策
 
-        
+
 
         Parameters:
 
@@ -322,13 +322,13 @@ class OptimizationHistoryTracker:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
-            INSERT INTO optimization_records 
+            INSERT INTO optimization_records
 
-            (timestamp, optimization_type, parameters, constraints, result, 
+            (timestamp, optimization_type, parameters, constraints, result,
 
              metrics, environment, notes)
 
@@ -354,7 +354,7 @@ class OptimizationHistoryTracker:
 
         ))
 
-        
+
 
         record_id = cursor.lastrowid
 
@@ -362,13 +362,13 @@ class OptimizationHistoryTracker:
 
         conn.close()
 
-        
+
 
         return record_id
 
-    
 
-    def query_history(self, start_date=None, end_date=None, 
+
+    def query_history(self, start_date=None, end_date=None,
 
                      optimization_type=None, limit=100):
 
@@ -376,7 +376,7 @@ class OptimizationHistoryTracker:
 
         查询历史记录
 
-        
+
 
         Parameters:
 
@@ -402,13 +402,13 @@ class OptimizationHistoryTracker:
 
         conn = sqlite3.connect(self.db_path)
 
-        
+
 
         query = 'SELECT * FROM optimization_records WHERE 1=1'
 
         params = []
 
-        
+
 
         if start_date:
 
@@ -416,7 +416,7 @@ class OptimizationHistoryTracker:
 
             params.append(start_date)
 
-        
+
 
         if end_date:
 
@@ -424,7 +424,7 @@ class OptimizationHistoryTracker:
 
             params.append(end_date)
 
-        
+
 
         if optimization_type:
 
@@ -432,17 +432,17 @@ class OptimizationHistoryTracker:
 
             params.append(optimization_type)
 
-        
+
 
         query += f' ORDER BY timestamp DESC LIMIT {limit}'
 
-        
+
 
         df = pd.read_sql_query(query, conn, params=params)
 
         conn.close()
 
-        
+
 
         # 反序列化
 
@@ -452,11 +452,11 @@ class OptimizationHistoryTracker:
 
                 df[col] = df[col].apply(lambda x: pickle.loads(x) if x else None)
 
-        
+
 
         return df
 
-    
+
 
     def analyze_decision_patterns(self, days=30):
 
@@ -464,7 +464,7 @@ class OptimizationHistoryTracker:
 
         分析决策模式
 
-        
+
 
         Parameters:
 
@@ -480,13 +480,13 @@ class OptimizationHistoryTracker:
 
         history = self.query_history(start_date=start_date)
 
-        
+
 
         if len(history) == 0:
 
             return {'message': '无历史数据'}
 
-        
+
 
         patterns = {
 
@@ -500,7 +500,7 @@ class OptimizationHistoryTracker:
 
         }
 
-        
+
 
         # 平均指标
 
@@ -512,7 +512,7 @@ class OptimizationHistoryTracker:
 
                 all_metrics.append(metrics)
 
-        
+
 
         if all_metrics:
 
@@ -520,7 +520,7 @@ class OptimizationHistoryTracker:
 
             patterns['avg_metrics'] = metrics_df.mean().to_dict()
 
-        
+
 
         # 参数趋势
 
@@ -532,7 +532,7 @@ class OptimizationHistoryTracker:
 
                 all_params.append(params)
 
-        
+
 
         if all_params:
 
@@ -552,7 +552,7 @@ class OptimizationHistoryTracker:
 
                     }
 
-        
+
 
         # 结果分布
 
@@ -564,7 +564,7 @@ class OptimizationHistoryTracker:
 
                 all_results.append(result['weights'])
 
-        
+
 
         if all_results:
 
@@ -578,11 +578,11 @@ class OptimizationHistoryTracker:
 
             }
 
-        
+
 
         return patterns
 
-    
+
 
     def audit_decision(self, record_id):
 
@@ -590,7 +590,7 @@ class OptimizationHistoryTracker:
 
         审计决策
 
-        
+
 
         Parameters:
 
@@ -604,7 +604,7 @@ class OptimizationHistoryTracker:
 
         conn = sqlite3.connect(self.db_path)
 
-        
+
 
         # 获取记录
 
@@ -616,17 +616,17 @@ class OptimizationHistoryTracker:
 
         )
 
-        
+
 
         if len(record) == 0:
 
             return {'error': '记录不存在'}
 
-        
+
 
         record = record.iloc[0]
 
-        
+
 
         # 反序列化
 
@@ -638,7 +638,7 @@ class OptimizationHistoryTracker:
 
         metrics = pickle.loads(record['metrics'])
 
-        
+
 
         # 审计检查
 
@@ -656,7 +656,7 @@ class OptimizationHistoryTracker:
 
         }
 
-        
+
 
         # 1. 约束满足检查
 
@@ -664,7 +664,7 @@ class OptimizationHistoryTracker:
 
         audit_results['checks'].append(constraint_check)
 
-        
+
 
         # 2. 结果合理性检查
 
@@ -672,7 +672,7 @@ class OptimizationHistoryTracker:
 
         audit_results['checks'].append(rationality_check)
 
-        
+
 
         # 3. 参数合理性检查
 
@@ -680,7 +680,7 @@ class OptimizationHistoryTracker:
 
         audit_results['checks'].append(parameter_check)
 
-        
+
 
         # 4. 性能指标检查
 
@@ -688,7 +688,7 @@ class OptimizationHistoryTracker:
 
         audit_results['checks'].append(performance_check)
 
-        
+
 
         # 计算总体评分
 
@@ -696,7 +696,7 @@ class OptimizationHistoryTracker:
 
         audit_results['overall_score'] = np.mean(scores)
 
-        
+
 
         # 生成建议
 
@@ -706,7 +706,7 @@ class OptimizationHistoryTracker:
 
         )
 
-        
+
 
         # 保存审计结果
 
@@ -714,7 +714,7 @@ class OptimizationHistoryTracker:
 
         cursor.execute('''
 
-            INSERT INTO decision_audit 
+            INSERT INTO decision_audit
 
             (record_id, audit_type, audit_result, audit_score, recommendations)
 
@@ -734,17 +734,17 @@ class OptimizationHistoryTracker:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         return audit_results
 
-    
+
 
     def _check_constraints(self, result, constraints):
 
@@ -754,13 +754,13 @@ class OptimizationHistoryTracker:
 
         issues = []
 
-        
+
 
         if constraints and 'weights' in result:
 
             weights = result['weights']
 
-            
+
 
             # 权重和检查
 
@@ -770,7 +770,7 @@ class OptimizationHistoryTracker:
 
                 issues.append('权重和不等于1')
 
-            
+
 
             # 权重范围检查
 
@@ -782,7 +782,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('权重低于下限')
 
-            
+
 
             if 'max_weight' in constraints:
 
@@ -792,7 +792,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('权重超过上限')
 
-        
+
 
         return {
 
@@ -804,7 +804,7 @@ class OptimizationHistoryTracker:
 
         }
 
-    
+
 
     def _check_result_rationality(self, result):
 
@@ -814,13 +814,13 @@ class OptimizationHistoryTracker:
 
         issues = []
 
-        
+
 
         if result and 'weights' in result:
 
             weights = result['weights']
 
-            
+
 
             # 集中度检查
 
@@ -832,7 +832,7 @@ class OptimizationHistoryTracker:
 
                 issues.append(f'单资产权重过大: {max_weight:.2%}')
 
-            
+
 
             # 有效资产数检查
 
@@ -844,7 +844,7 @@ class OptimizationHistoryTracker:
 
                 issues.append(f'有效资产数过少: {effective_n:.1f}')
 
-        
+
 
         return {
 
@@ -856,7 +856,7 @@ class OptimizationHistoryTracker:
 
         }
 
-    
+
 
     def _check_parameters(self, parameters):
 
@@ -866,7 +866,7 @@ class OptimizationHistoryTracker:
 
         issues = []
 
-        
+
 
         if parameters:
 
@@ -880,7 +880,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('风险厌恶系数为负')
 
-            
+
 
             # 目标收益检查
 
@@ -892,7 +892,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('目标收益过高')
 
-        
+
 
         return {
 
@@ -904,7 +904,7 @@ class OptimizationHistoryTracker:
 
         }
 
-    
+
 
     def _check_performance(self, metrics):
 
@@ -914,7 +914,7 @@ class OptimizationHistoryTracker:
 
         issues = []
 
-        
+
 
         if metrics:
 
@@ -928,7 +928,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('Sharpe比率为负')
 
-            
+
 
             # 最大回撤检查
 
@@ -940,7 +940,7 @@ class OptimizationHistoryTracker:
 
                     issues.append('最大回撤过大')
 
-        
+
 
         return {
 
@@ -952,7 +952,7 @@ class OptimizationHistoryTracker:
 
         }
 
-    
+
 
     def _generate_recommendations(self, checks):
 
@@ -960,7 +960,7 @@ class OptimizationHistoryTracker:
 
         recommendations = []
 
-        
+
 
         for check in checks:
 
@@ -970,7 +970,7 @@ class OptimizationHistoryTracker:
 
                     recommendations.append(f"[{check['type']}] {issue}")
 
-        
+
 
         return recommendations
 
@@ -1097,4 +1097,3 @@ class HistoryTrackerOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -527,7 +527,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -931,7 +931,7 @@ class LSTMModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -955,7 +955,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -967,7 +967,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1057,7 +1057,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1075,7 +1075,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1087,7 +1087,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1105,7 +1105,7 @@ class LSTMModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1129,7 +1129,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1147,7 +1147,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1171,7 +1171,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1189,7 +1189,7 @@ class LSTMModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1225,7 +1225,7 @@ class AttentionLayer(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1249,7 +1249,7 @@ class AttentionLayer(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1309,7 +1309,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1339,7 +1339,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1357,7 +1357,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1393,7 +1393,7 @@ class LSTMTrainer:
 
 
 
-        
+
 
 
 
@@ -1411,7 +1411,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1495,7 +1495,7 @@ class LSTMTrainer:
 
 
 
-        
+
 
 
 
@@ -1525,7 +1525,7 @@ class LSTMTrainer:
 
 
 
-            
+
 
 
 
@@ -1549,7 +1549,7 @@ class LSTMTrainer:
 
 
 
-            
+
 
 
 
@@ -1597,7 +1597,7 @@ class LSTMTrainer:
 
 
 
-            
+
 
 
 
@@ -1615,7 +1615,7 @@ class LSTMTrainer:
 
 
 
-        
+
 
 
 
@@ -1627,7 +1627,7 @@ class LSTMTrainer:
 
 
 
-        
+
 
 
 
@@ -1675,7 +1675,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1717,7 +1717,7 @@ class LSTMTrainer:
 
 
 
-            
+
 
 
 
@@ -1753,7 +1753,7 @@ class LSTMTrainer:
 
 
 
-            
+
 
 
 
@@ -1765,7 +1765,7 @@ class LSTMTrainer:
 
 
 
-        
+
 
 
 
@@ -1777,7 +1777,7 @@ class LSTMTrainer:
 
 
 
-    
+
 
 
 
@@ -1855,7 +1855,7 @@ class LSTMPredictor:
 
 
 
-    
+
 
 
 
@@ -1891,7 +1891,7 @@ class LSTMPredictor:
 
 
 
-    
+
 
 
 
@@ -1933,7 +1933,7 @@ class LSTMPredictor:
 
 
 
-            
+
 
 
 
@@ -1951,7 +1951,7 @@ class LSTMPredictor:
 
 
 
-            
+
 
 
 
@@ -1975,7 +1975,7 @@ class LSTMPredictor:
 
 
 
-            
+
 
 
 
@@ -2549,7 +2549,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2585,7 +2585,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2609,7 +2609,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2627,7 +2627,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2651,7 +2651,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2669,7 +2669,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]
 
 
 
-    
+
 
 
 
@@ -2723,7 +2723,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -2753,7 +2753,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -2831,7 +2831,7 @@ def train_epoch(self, X: np.ndarray, y: np.ndarray) -> float:
 
 
 
-    
+
 
 
 
@@ -2861,7 +2861,7 @@ def train_epoch(self, X: np.ndarray, y: np.ndarray) -> float:
 
 
 
-    
+
 
 
 
@@ -2903,7 +2903,7 @@ def train_epoch(self, X: np.ndarray, y: np.ndarray) -> float:
 
 
 
-        
+
 
 
 
@@ -2939,7 +2939,7 @@ def train_epoch(self, X: np.ndarray, y: np.ndarray) -> float:
 
 
 
-        
+
 
 
 
@@ -2951,7 +2951,7 @@ def train_epoch(self, X: np.ndarray, y: np.ndarray) -> float:
 
 
 
-    
+
 
 
 
@@ -3291,7 +3291,7 @@ def test_lstm_model_integration():
 
 
 
-    
+
 
 
 
@@ -3309,7 +3309,7 @@ def test_lstm_model_integration():
 
 
 
-    
+
 
 
 
@@ -3339,7 +3339,7 @@ def test_lstm_model_integration():
 
 
 
-    
+
 
 
 
@@ -3351,7 +3351,7 @@ def test_lstm_model_integration():
 
 
 
-    
+
 
 
 
@@ -3809,7 +3809,7 @@ lstm_model:
 
 
 
-  
+
 
 
 
@@ -3948,8 +3948,3 @@ lstm_model:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 机器学习层负责人
-
-
-
-
-

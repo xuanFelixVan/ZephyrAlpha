@@ -92,7 +92,7 @@ module_id: TEMPLATE_[类型]
 ```python
 # %% [markdown]
 # # 模板标题
-# 
+#
 # > 项目元数据
 # > 状态信息
 # > 分析目标
@@ -149,6 +149,6 @@ module_id: TEMPLATE_[类型]
 
 ```---
 
-**最后更新**: 2026-04-03  
-**维护者**: 研究团队  
+**最后更新**: 2026-04-03
+**维护者**: 研究团队
 **联系**: research-team@zephyralpha.com

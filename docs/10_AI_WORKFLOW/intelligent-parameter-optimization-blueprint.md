@@ -322,7 +322,7 @@ class ParameterOptimizer:
 
         self.sampler = TPESampler(seed=42)
 
-        
+
 
     def define_param_space(self, trial):
 
@@ -344,7 +344,7 @@ class ParameterOptimizer:
 
         return params
 
-        
+
 
     def objective(self, trial):
 
@@ -352,25 +352,25 @@ class ParameterOptimizer:
 
         params = self.define_param_space(trial)
 
-        
+
 
         with mlflow.start_run(nested=True):
 
             mlflow.log_params(params)
 
-            
+
 
             strategy = self.strategy_class(**params)
 
             results = self.run_backtest(strategy, self.data)
 
-            
+
 
             sharpe_ratio = results['sharpe_ratio']
 
             max_drawdown = results['max_drawdown']
 
-            
+
 
             mlflow.log_metrics({
 
@@ -380,17 +380,17 @@ class ParameterOptimizer:
 
             })
 
-            
+
 
             if trial.should_prune():
 
                 raise optuna.TrialPruned()
 
-                
+
 
             return sharpe_ratio
 
-            
+
 
     def run_optimization(self):
 
@@ -406,7 +406,7 @@ class ParameterOptimizer:
 
         )
 
-        
+
 
         study.optimize(
 
@@ -418,11 +418,11 @@ class ParameterOptimizer:
 
         )
 
-        
+
 
         return study.best_params, study.best_value
 
-        
+
 
     def mlflow_callback(self, study, trial):
 
@@ -454,7 +454,7 @@ class OverfittingDetector:
 
         self.tscv = TimeSeriesSplit(n_splits=n_splits)
 
-        
+
 
     def cross_validate(self, strategy_class, params, data):
 
@@ -462,7 +462,7 @@ class OverfittingDetector:
 
         scores = []
 
-        
+
 
         for train_idx, test_idx in self.tscv.split(data):
 
@@ -470,17 +470,17 @@ class OverfittingDetector:
 
             test_data = data.iloc[test_idx]
 
-            
+
 
             strategy = strategy_class(**params)
 
-            
+
 
             train_score = self.run_backtest(strategy, train_data)['sharpe_ratio']
 
             test_score = self.run_backtest(strategy, test_data)['sharpe_ratio']
 
-            
+
 
             scores.append({
 
@@ -492,11 +492,11 @@ class OverfittingDetector:
 
             })
 
-            
+
 
         return self.evaluate_overfitting(scores)
 
-        
+
 
     def evaluate_overfitting(self, scores):
 
@@ -510,11 +510,11 @@ class OverfittingDetector:
 
         gap_std = np.std([s['gap'] for s in scores])
 
-        
+
 
         overfitting_score = gap_mean / train_mean if train_mean != 0 else 0
 
-        
+
 
         return {
 
@@ -564,7 +564,7 @@ class OptimizationVisualizer:
 
         self.study = study
 
-        
+
 
     def plot_history(self):
 
@@ -574,7 +574,7 @@ class OptimizationVisualizer:
 
         return fig
 
-        
+
 
     def plot_importance(self):
 
@@ -584,7 +584,7 @@ class OptimizationVisualizer:
 
         return fig
 
-        
+
 
     def plot_slice(self):
 
@@ -594,7 +594,7 @@ class OptimizationVisualizer:
 
         return fig
 
-        
+
 
     def plot_contour(self, params):
 
@@ -604,7 +604,7 @@ class OptimizationVisualizer:
 
         return fig
 
-        
+
 
     def generate_report(self):
 
@@ -690,7 +690,7 @@ class OptimizationTask:
 
     best_value: float
 
-    
+
 
 @dataclass
 
@@ -922,7 +922,7 @@ class IParameterOptimizer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -932,7 +932,7 @@ class IParameterOptimizer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -942,7 +942,7 @@ class IParameterOptimizer(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -972,7 +972,7 @@ class IOverfittingDetector(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -1207,4 +1207,3 @@ with mlflow.start_run():
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

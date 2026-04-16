@@ -17,8 +17,8 @@ responsibility:
 
 # 相关开源项目参考
 
-> **调研日期**: 2026-04-13  
-> **目的**: 为方案D寻找可借鉴的开源工具  
+> **调研日期**: 2026-04-13
+> **目的**: 为方案D寻找可借鉴的开源工具
 > **结论**: 没有完全匹配的方案D，但可以组合多个工具实现
 
 ```
@@ -299,14 +299,14 @@ repos:
       - id: yamllint
         files: ^docs/.*\.md$
         args: ['-c', '.yamllint.yml']
-  
+
   # Markdown格式检查
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.37.0
     hooks:
       - id: markdownlint
         files: ^docs/.*\.md$
-  
+
   # 链接检查 (CI阶段)
   - repo: local
     hooks:
@@ -357,7 +357,7 @@ repos:
 # 参考: mkdocs/structure/files.py
 class File:
     """封装文件路径和URL生成"""
-    
+
     @property
     def url(self):
         """从文件路径生成URL"""
@@ -365,12 +365,12 @@ class File:
 
 class Navigation:
     """自动构建导航"""
-    
+
     def __init__(self, pages, files):
         self.pages = pages
         self.files = files
         self._build_navigation()
-    
+
     def _build_navigation(self):
         """从文件系统构建导航树"""
         for file in self.files:
@@ -384,17 +384,17 @@ class Navigation:
 // 参考: mdbook/src/book/summary.rs
 pub fn generate_summary_from_fs(src_dir: &Path) -> Result<Summary> {
     let mut summary = Summary::default();
-    
+
     for entry in fs::read_dir(src_dir)? {
         let entry = entry?;
         let path = entry.path();
-        
+
         if path.extension() == Some("md") {
             let item = SummaryItem::from_path(&path)?;
             summary.prefix_chapters.push(item);
         }
     }
-    
+
     Ok(summary)
 }
 ```

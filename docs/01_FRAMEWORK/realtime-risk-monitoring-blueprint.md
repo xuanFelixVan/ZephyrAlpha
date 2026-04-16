@@ -20,7 +20,7 @@ responsibility: ''
 ---
 # 实时风险监控仪表板蓝图> **版本**: v1.0.1
 > **核心职责**: Realtime Risk Monitoring蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Realtime Risk Monitoring蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -109,7 +109,7 @@ Two Sigma实时风险监控体系:
 ```python
 class VaRCalculator:
     """VaR计算?- 实时计算风险价值""
-    
+
     def __init__(self):
         self.confidence_levels = [0.95, 0.99]
         self.methods = {
@@ -117,36 +117,36 @@ class VaRCalculator:
             'parametric': ParametricVaR(),
             'monte_carlo': MonteCarloVaR()
         }
-        
-    def calculate_var(self, 
+
+    def calculate_var(self,
                      positions: Dict[str, float],
                      returns_history: pd.DataFrame,
                      method: str = 'historical') -> VaRResult:
         """计算VaR"""
-        
+
         # 1. 计算组合收益?        portfolio_returns = self._calculate_portfolio_returns(positions, returns_history)
-        
+
         # 2. 使用指定方法计算VaR
         var_calculator = self.methods[method]
-        
+
         var_values = {}
         for confidence in self.confidence_levels:
             var_values[f'VaR_{int(confidence*100)}'] = var_calculator.calculate(
-                portfolio_returns, 
+                portfolio_returns,
                 confidence=confidence
             )
-        
+
         # 3. 计算CVaR (条件风险价值
         cvar_values = {}
         for confidence in self.confidence_levels:
             cvar_values[f'CVaR_{int(confidence*100)}'] = self._calculate_cvar(
-                portfolio_returns, 
+                portfolio_returns,
                 confidence=confidence
             )
-        
+
         # 4. 风险分解
         risk_contribution = self._calculate_risk_contribution(positions, returns_history)
-        
+
         return VaRResult(
             var_values=var_values,
             cvar_values=cvar_values,
@@ -154,7 +154,7 @@ class VaRCalculator:
             timestamp=pd.Timestamp.now(),
             method=method
         )
-    
+
     def _calculate_cvar(self, returns: pd.Series, confidence: float) -> float:
         """计算CVaR (Expected Shortfall)"""
         var_threshold = np.percentile(returns, (1 - confidence) * 100)
@@ -166,22 +166,22 @@ class VaRCalculator:
 ```python
 class ExposureCalculator:
     """敞口计算?- 计算多因子敞?""
-    
+
     def __init__(self):
         self.barra_factors = [
-            'market', 'size', 'value', 'momentum', 
+            'market', 'size', 'value', 'momentum',
             'quality', 'volatility', 'liquidity'
         ]
         self.factor_model = BarraRiskModel()
-        
-    def calculate_exposure(self, 
+
+    def calculate_exposure(self,
                           positions: Dict[str, float],
                           factor_data: pd.DataFrame) -> ExposureResult:
         """计算因子敞口"""
-        
+
         # 1. 获取股票因子暴露
         stock_exposures = factor_data[self.barra_factors]
-        
+
         # 2. 计算组合因子敞口
         portfolio_exposure = {}
         for factor in self.barra_factors:
@@ -191,17 +191,17 @@ class ExposureCalculator:
                 if stock in stock_exposures.index
             ])
             portfolio_exposure[factor] = weighted_exposure
-        
+
         # 3. 计算敞口偏离
         target_exposure = self._get_target_exposure()
         exposure_deviation = {
             factor: portfolio_exposure[factor] - target_exposure[factor]
             for factor in self.barra_factors
         }
-        
+
         # 4. 敞口风险贡献
         exposure_risk = self._calculate_exposure_risk(portfolio_exposure)
-        
+
         return ExposureResult(
             portfolio_exposure=portfolio_exposure,
             target_exposure=target_exposure,
@@ -216,36 +216,36 @@ class ExposureCalculator:
 ```python
 class LiquidityCalculator:
     """流动性风险计算器"""
-    
+
     def __init__(self):
         self.liquidity_thresholds = {
             'spread': 0.002,      # 买卖价差<0.2%
             'depth': 1000000,     # 市场深度>100?            'turnover': 0.01      # 换手?1%
         }
-        
-    def calculate_liquidity_risk(self, 
+
+    def calculate_liquidity_risk(self,
                                 positions: Dict[str, float],
                                 market_data: pd.DataFrame) -> LiquidityResult:
         """计算流动性风?""
-        
+
         liquidity_metrics = {}
-        
+
         for stock in positions.keys():
             if stock not in market_data.index:
                 continue
-                
+
             # 1. 买卖价差
             bid_ask_spread = self._calculate_spread(market_data.loc[stock])
-            
+
             # 2. 市场深度
             market_depth = self._calculate_depth(market_data.loc[stock])
-            
+
             # 3. 换手?            turnover_rate = self._calculate_turnover(market_data.loc[stock])
-            
+
             # 4. 流动性评?            liquidity_score = self._calculate_liquidity_score(
                 bid_ask_spread, market_depth, turnover_rate
             )
-            
+
             liquidity_metrics[stock] = {
                 'spread': bid_ask_spread,
                 'depth': market_depth,
@@ -253,11 +253,11 @@ class LiquidityCalculator:
                 'score': liquidity_score,
                 'status': 'PASS' if liquidity_score > 0.7 else 'WARN'
             }
-        
+
         # 5. 组合流动性风?        portfolio_liquidity_risk = self._calculate_portfolio_liquidity_risk(
             positions, liquidity_metrics
         )
-        
+
         return LiquidityResult(
             stock_metrics=liquidity_metrics,
             portfolio_risk=portfolio_liquidity_risk,
@@ -270,26 +270,26 @@ class LiquidityCalculator:
 ```python
 class CorrelationCalculator:
     """相关性风险计算器"""
-    
+
     def __init__(self):
         self.lookback_period = 60  # 60天回看期
-        self.correlation_threshold = 0.7  # 相关性阈?        
-    def calculate_correlation_risk(self, 
+        self.correlation_threshold = 0.7  # 相关性阈?
+    def calculate_correlation_risk(self,
                                    positions: Dict[str, float],
                                    returns_history: pd.DataFrame) -> CorrelationResult:
         """计算相关性风?""
-        
+
         # 1. 计算资产相关性矩?        correlation_matrix = returns_history.iloc[-self.lookback_period:].corr()
-        
+
         # 2. 识别高相关性资产对
         high_correlation_pairs = self._identify_high_correlation_pairs(correlation_matrix)
-        
+
         # 3. 计算组合相关性风?        portfolio_correlation_risk = self._calculate_portfolio_correlation_risk(
             positions, correlation_matrix
         )
-        
+
         # 4. 相关性趋势分?        correlation_trend = self._analyze_correlation_trend(returns_history)
-        
+
         return CorrelationResult(
             correlation_matrix=correlation_matrix,
             high_correlation_pairs=high_correlation_pairs,
@@ -326,7 +326,7 @@ class CorrelationCalculator:
           color: "yellow"
         - value: 0.10
           color: "red"
-          
+
     - title: "因子敞口监控"
       type: bargauge
       datasource: prometheus
@@ -339,14 +339,14 @@ class CorrelationCalculator:
           legendFormat: "价值
         - expr: "factor_exposure_momentum"
           legendFormat: "动量"
-          
+
     - title: "流动性风?
       type: gauge
       datasource: prometheus
       targets:
         - expr: "portfolio_liquidity_score"
           legendFormat: "流动性评?
-          
+
     # 第二? 风险趋势?    - title: "VaR趋势"
       type: graph
       datasource: prometheus
@@ -355,7 +355,7 @@ class CorrelationCalculator:
           legendFormat: "VaR(95%)"
         - expr: "portfolio_var_99_history"
           legendFormat: "VaR(99%)"
-          
+
     - title: "因子敞口趋势"
       type: graph
       datasource: prometheus
@@ -364,13 +364,13 @@ class CorrelationCalculator:
           legendFormat: "市场敞口"
         - expr: "factor_exposure_size_history"
           legendFormat: "规模敞口"
-          
+
     # 第三? 风险热力?    - title: "风险热力?
       type: heatmap
       datasource: prometheus
       targets:
         - expr: "risk_heatmap_data"
-          
+
     # 第四? 告警面板
     - title: "风险告警"
       type: table
@@ -383,16 +383,16 @@ class CorrelationCalculator:
 ```python
 class RiskHeatmapGenerator:
     """风险热力图生成器"""
-    
+
     def __init__(self):
         self.risk_dimensions = ['market', 'liquidity', 'concentration', 'correlation']
         self.risk_levels = ['low', 'medium', 'high', 'critical']
-        
+
     def generate_heatmap(self, risk_data: Dict) -> HeatmapData:
         """生成风险热力图数据""
-        
+
         heatmap_matrix = []
-        
+
         for dimension in self.risk_dimensions:
             row = []
             for level in self.risk_levels:
@@ -402,7 +402,7 @@ class RiskHeatmapGenerator:
                 ])
                 row.append(count)
             heatmap_matrix.append(row)
-        
+
         return HeatmapData(
             matrix=heatmap_matrix,
             dimensions=self.risk_dimensions,
@@ -419,7 +419,7 @@ class RiskHeatmapGenerator:
 ```python
 class RiskAlertEngine:
     """风险告警引擎"""
-    
+
     def __init__(self):
         self.alert_rules = self._load_alert_rules()
         self.alert_channels = {
@@ -427,24 +427,24 @@ class RiskAlertEngine:
             'email': EmailAlert(),
             'grafana': GrafanaAlert()
         }
-        
+
     def monitor_risk(self, risk_result: RiskResult):
         """监控风险"""
-        
+
         # 1. 检查VaR告警
         if risk_result.var_result.var_values['VaR_95'] > self.alert_rules['var_threshold']:
             self._trigger_var_alert(risk_result.var_result)
-        
+
         # 2. 检查敞口告?        for factor, deviation in risk_result.exposure_result.exposure_deviation.items():
             if abs(deviation) > self.alert_rules['exposure_threshold']:
                 self._trigger_exposure_alert(factor, deviation)
-        
+
         # 3. 检查流动性告?        if risk_result.liquidity_result.portfolio_risk > self.alert_rules['liquidity_threshold']:
             self._trigger_liquidity_alert(risk_result.liquidity_result)
-        
+
         # 4. 检查相关性告?        if len(risk_result.correlation_result.high_correlation_pairs) > self.alert_rules['correlation_threshold']:
             self._trigger_correlation_alert(risk_result.correlation_result)
-    
+
     def _trigger_var_alert(self, var_result: VaRResult):
         """触发VaR告警"""
         alert = Alert(
@@ -463,22 +463,22 @@ class RiskAlertEngine:
 ```python
 class AutoHedger:
     """自动对冲?""
-    
+
     def __init__(self):
         self.hedge_instruments = {
             'market': 'IF期货',      # 市场风险用股指期货对接            'size': 'IC期货',        # 规模风险用中?00期货对冲
             'sector': '行业ETF'      # 行业风险用行业ETF对冲
         }
-        
+
     def auto_hedge(self, risk_result: RiskResult) -> HedgeInstruction:
         """自动对冲"""
-        
+
         # 1. 识别需要对冲的风险
         hedge_needs = self._identify_hedge_needs(risk_result)
-        
+
         # 2. 计算对冲比例
         hedge_ratios = self._calculate_hedge_ratios(hedge_needs)
-        
+
         # 3. 生成对冲指令
         hedge_instructions = []
         for risk_type, ratio in hedge_ratios.items():
@@ -491,7 +491,7 @@ class AutoHedger:
                 timestamp=pd.Timestamp.now()
             )
             hedge_instructions.append(instruction)
-        
+
         return hedge_instructions
 ```
 

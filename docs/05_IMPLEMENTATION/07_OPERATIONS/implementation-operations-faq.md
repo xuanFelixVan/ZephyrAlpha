@@ -337,7 +337,7 @@ SELECT pg_size_pretty(pg_database_size('zephyr_alpha'));
 
 -- 2. 查看表大小
 
-SELECT 
+SELECT
 
     tablename,
 
@@ -615,13 +615,13 @@ server {
 
     server_name zephyr-alpha.com;
 
-    
+
 
     ssl_certificate /etc/letsencrypt/live/zephyr-alpha.com/fullchain.pem;
 
     ssl_certificate_key /etc/letsencrypt/live/zephyr-alpha.com/privkey.pem;
 
-    
+
 
     location / {
 
@@ -675,7 +675,7 @@ async def rate_limit(request: Request, calls: int = 100, period: int = 60):
 
     key = f"rate_limit:{ip}"
 
-    
+
 
     current = redis_client.get(key)
 
@@ -683,7 +683,7 @@ async def rate_limit(request: Request, calls: int = 100, period: int = 60):
 
         raise HTTPException(status_code=429, detail="Too many requests")
 
-    
+
 
     pipe = redis_client.pipeline()
 
@@ -789,13 +789,13 @@ global:
 
   resolve_timeout: 5m
 
-  
+
 
 route:
 
   receiver: 'team-email'
 
-  
+
 
 receivers:
 
@@ -1066,4 +1066,3 @@ nethogs
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

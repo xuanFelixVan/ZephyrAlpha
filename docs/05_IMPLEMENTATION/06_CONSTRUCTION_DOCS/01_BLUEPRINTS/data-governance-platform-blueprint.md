@@ -27,7 +27,7 @@ layer: layer_10
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据治理平台、数据标准、数据质量
 
@@ -147,7 +147,7 @@ layer: layer_10
 
 > 核心职责: Data Governance Platform蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -209,7 +209,7 @@ layer: layer_10
 
 | **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
 
-| **DataHub** | 0.10+ | 
+| **DataHub** | 0.10+ |
 
 | **OpenMetadata** | 1.2+ | 数据目录 | [官方文档](https://docs.open-metadata.org/) |
 
@@ -225,7 +225,7 @@ graph LR
 
     B[数据血缘追踪] --> D
 
-    
+
 
     D --> E[数据生命周期管理]
 
@@ -233,7 +233,7 @@ graph LR
 
     D --> G[数据成本管理]
 
-    
+
 
     style D fill:#ff6b6b
 
@@ -347,13 +347,13 @@ class GovernancePolicy:
 
 class GovernancePolicyManager:
 
-    
+
 
     def __init__(self):
 
         self.policies: Dict[str, GovernancePolicy] = {}
 
-    
+
 
     def create_policy(self, policy_config: Dict[str, Any]) -> GovernancePolicy:
 
@@ -375,13 +375,13 @@ class GovernancePolicyManager:
 
         )
 
-        
+
 
         self.policies[policy.policy_id] = policy
 
         return policy
 
-    
+
 
     def get_policy(self, policy_id: str) -> Optional[GovernancePolicy]:
 
@@ -389,9 +389,9 @@ class GovernancePolicyManager:
 
         return self.policies.get(policy_id)
 
-    
 
-    def update_policy(self, policy_id: str, 
+
+    def update_policy(self, policy_id: str,
 
                       updates: Dict[str, Any]) -> Optional[GovernancePolicy]:
 
@@ -403,7 +403,7 @@ class GovernancePolicyManager:
 
             return None
 
-        
+
 
         for key, value in updates.items():
 
@@ -411,13 +411,13 @@ class GovernancePolicyManager:
 
                 setattr(policy, key, value)
 
-        
+
 
         policy.updated_at = datetime.now()
 
         return policy
 
-    
+
 
     def list_policies(self, policy_type: PolicyType = None) -> List[GovernancePolicy]:
 
@@ -465,25 +465,25 @@ class ComplianceCheckResult:
 
 class ComplianceCheckEngine:
 
-    
+
 
     def __init__(self, policy_manager: GovernancePolicyManager):
 
         self.policy_manager = policy_manager
 
-    
 
-    def check_compliance(self, asset_id: str, 
+
+    def check_compliance(self, asset_id: str,
 
                          asset_data: Dict[str, Any]) -> ComplianceCheckResult:
 
         violations = []
 
-        
+
 
         applicable_policies = self._get_applicable_policies(asset_id)
 
-        
+
 
         for policy in applicable_policies:
 
@@ -493,13 +493,13 @@ class ComplianceCheckEngine:
 
             )
 
-            
+
 
             if not is_compliant:
 
                 violations.extend(policy_violations)
 
-        
+
 
         return ComplianceCheckResult(
 
@@ -517,15 +517,15 @@ class ComplianceCheckEngine:
 
         )
 
-    
+
 
     def _get_applicable_policies(self, asset_id: str) -> List[GovernancePolicy]:
 
-        return [p for p in self.policy_manager.list_policies() 
+        return [p for p in self.policy_manager.list_policies()
 
                 if p.status == PolicyStatus.ACTIVE]
 
-    
+
 
     def _check_policy_compliance(self, policy: GovernancePolicy,
 
@@ -533,7 +533,7 @@ class ComplianceCheckEngine:
 
         violations = []
 
-        
+
 
         if policy.policy_type == PolicyType.DATA_QUALITY:
 
@@ -547,11 +547,11 @@ class ComplianceCheckEngine:
 
             violations = self._check_privacy_rules(policy.rules, asset_data)
 
-        
+
 
         return len(violations) == 0, violations
 
-    
+
 
     def _check_quality_rules(self, rules: Dict[str, Any],
 
@@ -559,7 +559,7 @@ class ComplianceCheckEngine:
 
         violations = []
 
-        
+
 
         for rule_name, rule_config in rules.items():
 
@@ -569,7 +569,7 @@ class ComplianceCheckEngine:
 
                 completeness = asset_data.get('completeness', 0)
 
-                
+
 
                 if completeness < threshold:
 
@@ -579,11 +579,11 @@ class ComplianceCheckEngine:
 
                     )
 
-        
+
 
         return violations
 
-    
+
 
     def _check_security_rules(self, rules: Dict[str, Any],
 
@@ -591,7 +591,7 @@ class ComplianceCheckEngine:
 
         violations = []
 
-        
+
 
         if rules.get('encryption_required'):
 
@@ -599,11 +599,11 @@ class ComplianceCheckEngine:
 
                 violations.append("Data must be encrypted")
 
-        
+
 
         return violations
 
-    
+
 
     def _check_privacy_rules(self, rules: Dict[str, Any],
 
@@ -611,7 +611,7 @@ class ComplianceCheckEngine:
 
         violations = []
 
-        
+
 
         sensitive_fields = rules.get('sensitive_fields', [])
 
@@ -623,7 +623,7 @@ class ComplianceCheckEngine:
 
                     violations.append(f"Sensitive field {field} must be masked")
 
-        
+
 
         return violations
 
@@ -671,15 +671,15 @@ class AuditTrailEngine:
 
     """审计追踪引擎"""
 
-    
+
 
     def __init__(self):
 
         self.audit_events: List[AuditEvent] = []
 
-    
 
-    def log_event(self, event_type: str, user_id: str, 
+
+    def log_event(self, event_type: str, user_id: str,
 
                   asset_id: str, action: str, details: Dict[str, Any] = None):
 
@@ -701,11 +701,11 @@ class AuditTrailEngine:
 
         )
 
-        
+
 
         self.audit_events.append(event)
 
-    
+
 
     def get_audit_trail(self, asset_id: str = None,
 
@@ -719,35 +719,35 @@ class AuditTrailEngine:
 
         filtered_events = self.audit_events
 
-        
+
 
         if asset_id:
 
             filtered_events = [e for e in filtered_events if e.asset_id == asset_id]
 
-        
+
 
         if user_id:
 
             filtered_events = [e for e in filtered_events if e.user_id == user_id]
 
-        
+
 
         if start_time:
 
             filtered_events = [e for e in filtered_events if e.timestamp >= start_time]
 
-        
+
 
         if end_time:
 
             filtered_events = [e for e in filtered_events if e.timestamp <= end_time]
 
-        
+
 
         return filtered_events
 
-    
+
 
     def generate_audit_report(self, start_time: datetime,
 
@@ -757,7 +757,7 @@ class AuditTrailEngine:
 
         events = self.get_audit_trail(start_time=start_time, end_time=end_time)
 
-        
+
 
         report = {
 
@@ -783,7 +783,7 @@ class AuditTrailEngine:
 
         }
 
-        
+
 
         for event in events:
 
@@ -791,13 +791,13 @@ class AuditTrailEngine:
 
                 report["summary"]["events_by_type"].get(event.event_type, 0) + 1
 
-            
+
 
             report["summary"]["events_by_user"][event.user_id] = \
 
                 report["summary"]["events_by_user"].get(event.user_id, 0) + 1
 
-        
+
 
         return report
 
@@ -913,7 +913,7 @@ services:
 
       - ATLAS_SERVER_HTTP_PORT=21000
 
-  
+
 
   datahub:
 
@@ -923,7 +923,7 @@ services:
 
       - "8080:8080"
 
-  
+
 
   airflow:
 
@@ -937,7 +937,7 @@ services:
 
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
 
-  
+
 
   opa:
 
@@ -955,7 +955,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -989,7 +989,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -1086,12 +1086,3 @@ services:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

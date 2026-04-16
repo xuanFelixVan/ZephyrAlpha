@@ -390,7 +390,7 @@ class ESGDataCollector:
 
     """ESG数据采集器"""
 
-    
+
 
     def __init__(self):
 
@@ -406,7 +406,7 @@ class ESGDataCollector:
 
         }
 
-        
+
 
     def collect_environmental_data(
 
@@ -420,17 +420,17 @@ class ESGDataCollector:
 
         """采集环境数据"""
 
-        
+
 
         if data_types is None:
 
             data_types = list(self.data_sources.keys())
 
-        
+
 
         environmental_data = []
 
-        
+
 
         for data_type in data_types:
 
@@ -440,11 +440,11 @@ class ESGDataCollector:
 
                 environmental_data.extend(data)
 
-        
+
 
         return environmental_data
 
-    
+
 
     def _collect_carbon_data(
 
@@ -456,7 +456,7 @@ class ESGDataCollector:
 
         """采集碳排放数据"""
 
-        
+
 
         return [
 
@@ -506,7 +506,7 @@ class ESGDataCollector:
 
         ]
 
-    
+
 
     def _collect_energy_data(
 
@@ -518,7 +518,7 @@ class ESGDataCollector:
 
         """采集能源数据"""
 
-        
+
 
         return [
 
@@ -546,7 +546,7 @@ class ESGDataCollector:
 
         ]
 
-    
+
 
     def _collect_waste_data(
 
@@ -558,7 +558,7 @@ class ESGDataCollector:
 
         """采集废物数据"""
 
-        
+
 
         return [
 
@@ -586,7 +586,7 @@ class ESGDataCollector:
 
         ]
 
-    
+
 
     def _collect_water_data(
 
@@ -598,7 +598,7 @@ class ESGDataCollector:
 
         """采集水资源数据"""
 
-        
+
 
         return [
 
@@ -666,7 +666,7 @@ class ESGScorer:
 
     """ESG评分器"""
 
-    
+
 
     def __init__(self):
 
@@ -680,7 +680,7 @@ class ESGScorer:
 
         }
 
-        
+
 
     def calculate_esg_score(
 
@@ -696,7 +696,7 @@ class ESGScorer:
 
         """计算ESG评分"""
 
-        
+
 
         e_score = self._calculate_environmental_score(environmental_data)
 
@@ -704,7 +704,7 @@ class ESGScorer:
 
         g_score = self._calculate_governance_score(governance_data)
 
-        
+
 
         overall_score = (
 
@@ -716,7 +716,7 @@ class ESGScorer:
 
         )
 
-        
+
 
         return {
 
@@ -732,7 +732,7 @@ class ESGScorer:
 
         }
 
-    
+
 
     def _calculate_environmental_score(
 
@@ -744,11 +744,11 @@ class ESGScorer:
 
         """计算环境评分"""
 
-        
+
 
         score = 50.0
 
-        
+
 
         for data in environmental_data:
 
@@ -766,7 +766,7 @@ class ESGScorer:
 
                     score -= 10
 
-            
+
 
             elif data.metric_name == 'total_energy_consumption':
 
@@ -782,11 +782,11 @@ class ESGScorer:
 
                     score -= 5
 
-        
+
 
         return max(0, min(100, score))
 
-    
+
 
     def _calculate_social_score(
 
@@ -798,11 +798,11 @@ class ESGScorer:
 
         """计算社会评分"""
 
-        
+
 
         return 70.0
 
-    
+
 
     def _calculate_governance_score(
 
@@ -814,11 +814,11 @@ class ESGScorer:
 
         """计算治理评分"""
 
-        
+
 
         return 75.0
 
-    
+
 
     def _get_esg_rating(
 
@@ -830,7 +830,7 @@ class ESGScorer:
 
         """获取ESG评级"""
 
-        
+
 
         if overall_score >= 80:
 
@@ -1181,4 +1181,3 @@ class ESGComplianceCheck:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

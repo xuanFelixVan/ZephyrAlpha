@@ -354,7 +354,7 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 
 from sqlalchemy import Column, Integer, String, Boolean
 
-from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base        
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 
 
@@ -592,11 +592,10 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
-**蓝图创建时间**: 2026-04-07  
+**蓝图创建时间**: 2026-04-07
 
-**蓝图版本**: 1.1.0  
+**蓝图版本**: 1.1.0
 
-**最后更新**: 2026-04-07（整合历史蓝图内容）  
+**最后更新**: 2026-04-07（整合历史蓝图内容）
 
 **内容来源**: 原有蓝图 + AUTH_SYSTEM_BLUEPRINT.md
-

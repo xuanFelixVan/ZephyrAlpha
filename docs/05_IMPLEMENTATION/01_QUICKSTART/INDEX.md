@@ -23,8 +23,8 @@ layer: layer_05
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 > - ❌ 本文档不负责：其他模块业务规格正文
 
-> **目录职责**: 新手上手、开发环境、学习路径与首轮回测指引  
-> **文档数量**: 7 个 Markdown（本目录**无**单独 `README.md`，入口即本索引）  
+> **目录职责**: 新手上手、开发环境、学习路径与首轮回测指引
+> **文档数量**: 7 个 Markdown（本目录**无**单独 `README.md`，入口即本索引）
 > **最后更新**: 2026-04-11
 
 ```
@@ -66,15 +66,15 @@ layer: layer_05
 
 ### 入门顺序
 
-1. dev_setup.md — 配置本地环境  
-2. LEARNING_PATH.md — 按路径学习  
-3. first_backtest.md — 跑通第一次回测  
+1. dev_setup.md — 配置本地环境
+2. LEARNING_PATH.md — 按路径学习
+3. first_backtest.md — 跑通第一次回测
 
 ### 规划与扩展
 
-- [ROADMAP.md](./ROADMAP.md) — 里程碑与路线  
-- PHASE1_DESIGN.md — Phase 1 设计摘要  
-- factor_design.md — 因子设计入门  
+- [ROADMAP.md](./ROADMAP.md) — 里程碑与路线
+- PHASE1_DESIGN.md — Phase 1 设计摘要
+- factor_design.md — 因子设计入门
 
 ```
 ```---
@@ -92,7 +92,7 @@ layer: layer_05
 ```---
 ```
 
-**维护者**: 实施层架构师  
+**维护者**: 实施层架构师
 **创建日期**: 2026-04-03
 
 <!-- orphan-link -->

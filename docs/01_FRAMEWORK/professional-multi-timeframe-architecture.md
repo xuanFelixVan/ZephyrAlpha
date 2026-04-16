@@ -58,54 +58,54 @@ graph TB
 ]
         A3 --> A4[季度调仓决策]
     end
-    
+
     subgraph "第二? 中观策略?(Renaissance模式)"
         B1[市场状态识别系统] --> B2[阿尔法因子工厂]
         B2 --> B3[多因子合成引擎]
         B3 --> B4[日线组合优化器]
         B4 --> B5[日线交易信号生成]
     end
-    
+
     subgraph "第三? 微观执行?(专业机构模式)"
         C1[分钟执行优化器] --> C2[智能执行算法库]
 C2 --> C3[
-        
+
         subgraph "专业策略模块集群"
             D1[开盘策略模块]
-            D2[盘中策略模块] 
+            D2[盘中策略模块]
             D3[收盘策略模块]
             D4[事件驱动模块]
         end
-        
+
         C4[实时风险对冲引擎] --> C5[秒级风险控制系统]
     end
-    
+
     subgraph "贯穿支撑系统"
         E1[统一数据基础设施]
         E2[多时间框架风控体系]
 E3[
         E4[人机协同决策界面]
     end
-    
+
     A4 --> B1
     B5 --> C1
     D1 --> C1
     D2 --> C1
     D3 --> C1
     D4 --> C1
-    
+
     E1 --> A1
     E1 --> B1
     E1 --> C1
-    
+
     E2 --> A4
     E2 --> B5
     E2 --> C3
-    
+
     E3 -.-> A1
     E3 -.-> B1
     E3 -.-> C1
-    
+
     E4 --> A4
     E4 --> B5
     E4 --> C3
@@ -132,7 +132,7 @@ E3[
 ```python
 class EconomicRegimeEngine:
     """经济范式判断引擎 - 识别宏观经济周期阶段"""
-    
+
     def __init__(self):
         self.macro_indicators = {
             'growth': ['GDP_growth', 'Industrial_output', 'PMI'],
@@ -146,21 +146,21 @@ class EconomicRegimeEngine:
             'recession': RecessionRegimeModel(),
             'recovery': RecoveryRegimeModel()
         }
-        
+
     def analyze_current_regime(self) -> RegimeAnalysis:
         """分析当前经济范式"""
         # 1. 收集宏观经济指标
         indicator_data = self._collect_macro_data()
-        
+
         # 2. 多模型概率评?
         regime_probabilities = {}
         for regime_name, model in self.regime_models.items():
             probability = model.predict_probability(indicator_data)
             regime_probabilities[regime_name] = probability
-        
+
         # 3. 生成范式判断
         dominant_regime = max(regime_probabilities, key=regime_probabilities.get)
-        
+
         return RegimeAnalysis(
             dominant_regime=dominant_regime,
             probabilities=regime_probabilities,
@@ -174,7 +174,7 @@ class EconomicRegimeEngine:
 ```python
 class AllWeatherOptimizer:
 """
-    
+
     def __init__(self):
         self.asset_classes = {
             'equity': {'growth': 'stocks', 'inflation': 'TIPS'},
@@ -184,7 +184,7 @@ class AllWeatherOptimizer:
         }
         self.risk_parity = RiskParityOptimizer()
         self.black_litterman = BlackLittermanModel()
-        
+
     def optimize_allocation(self, regime: RegimeAnalysis) -> StrategicAllocation:
 """
 ?""
@@ -197,7 +197,7 @@ class AllWeatherOptimizer:
                 'max_weight': 0.40
             }
         )
-        
+
         # 2. 基于经济范式的Black-Litterman调整
         regime_views = self._generate_regime_views(regime)
         adjusted_weights = self.black_litterman.adjust(
@@ -206,7 +206,7 @@ class AllWeatherOptimizer:
             confidence=regime.confidence * 0.8,  # 基于置信度调?
             tau=0.05  # 不确定性系?
         )
-        
+
 置
         return StrategicAllocation(
             weights=adjusted_weights,
@@ -244,30 +244,30 @@ class AllWeatherOptimizer:
 ```python
 class MarketRegimeSystem:
     """市场状态识别系?- HMM + 技术指标融?""
-    
+
     def __init__(self):
         self.hmm_model = HMMRegimeClassifier(n_states=4)  # 牛市/熊市/震荡?转折?
         self.technical_indicators = TechnicalRegimeIndicator()
         self.microstructure = MarketMicrostructureAnalyzer()
-        
+
     def identify_market_state(self, market_data: MarketData) -> MarketState:
         # 1. HMM隐马尔可夫模型识?
         hmm_state, hmm_prob = self.hmm_model.predict(market_data.price_series)
-        
+
         # 2. 技术指标状态识?
         tech_state = self.technical_indicators.analyze(
             trend_indicators=['MA20', 'MA60', 'MACD'],
             momentum_indicators=['RSI', 'Stochastic', 'CCI'],
             volatility_indicators=['ATR', 'Bollinger']
         )
-        
+
         # 3. 市场微观结构分析
         microstructure = self.microstructure.analyze(
             order_book=market_data.order_book,
             trade_flow=market_data.trade_flow,
             liquidity=market_data.liquidity
         )
-        
+
         # 4. 多源融合决策
         final_state = self._fuse_decisions(
             hmm_state=hmm_state,
@@ -275,7 +275,7 @@ class MarketRegimeSystem:
             microstructure=microstructure,
             hmm_confidence=hmm_prob
         )
-        
+
         return MarketState(
             regime=final_state,
             confidence=self._calculate_confidence(hmm_prob, tech_state.confidence),
@@ -289,12 +289,12 @@ class MarketRegimeSystem:
 ```python
 class AlphaFactorFactory:
     """阿尔法因子工?- 5700+因子动态管?""
-    
+
     def __init__(self):
         self.factor_library = FactorLibrary(size=5700)
         self.factor_selector = DynamicFactorSelector()
         self.factor_combiner = FactorCombinationEngine()
-        
+
     def generate_alpha_signals(self, market_state: MarketState) -> AlphaSignals:
         """生成阿尔法信?""
         selected_factors = self.factor_selector.select_factors(
@@ -302,33 +302,33 @@ class AlphaFactorFactory:
             stock_universe=self._get_stock_universe(),
             factor_types=['value', 'growth', 'quality', 'momentum', 'technical']
         )
-        
+
         # 2. 因子计算与IC检?
         factor_values = {}
         factor_metrics = {}
-        
+
         for factor in selected_factors:
             values = self.factor_library.calculate(factor)
             ic_result = self._calculate_ic(values, market_state)
-            
+
             if ic_result.ic_ir > 1.0:  # IR > 1.0的因子保?
                 factor_values[factor.name] = values
                 factor_metrics[factor.name] = ic_result
-        
+
         # 3. 多因子合?
         combined_alpha = self.factor_combiner.combine(
             factor_values=factor_values,
             weights=self._optimize_weights(factor_metrics),
             combination_method='hierarchical'  # 分层合成
         )
-        
+
         # 4. 风险调整
         risk_adjusted_alpha = self._apply_risk_adjustment(
             alpha=combined_alpha,
             risk_factors=['market', 'size', 'value', 'momentum'],
             exposure_limits={'max_single_factor': 0.3}
         )
-        
+
         return AlphaSignals(
             raw_scores=combined_alpha,
             risk_adjusted=risk_adjusted_alpha,
@@ -342,25 +342,25 @@ class AlphaFactorFactory:
 ```python
 class DailyPortfolioOptimizer:
     """日线组合优化?- 均值方?+ 风险约束"""
-    
+
     def __init__(self):
         self.mean_variance = MeanVarianceOptimizer()
         self.risk_constraints = RiskConstraintManager()
         self.turnover_control = TurnoverController()
-        
-    def optimize_daily_portfolio(self, 
+
+    def optimize_daily_portfolio(self,
                                 alpha_signals: AlphaSignals,
                                 current_positions: Dict) -> DailyPortfolio:
         """优化日线投资组合"""
         # 1. 预期收益估计
         expected_returns = self._estimate_returns(alpha_signals)
-        
+
         # 2. 协方差矩阵估?
         covariance_matrix = self._estimate_covariance(
             returns_history=self._get_returns_history(),
             shrinkage_method='ledoit_wolf'
         )
-        
+
         # 3. 优化问题定义
         optimization_problem = {
             'objective': 'max_sharpe',  # 最大化夏普比率
@@ -371,21 +371,21 @@ class DailyPortfolioOptimizer:
                 'max_turnover': 0.05  # 最大换手率5%
             }
         }
-        
+
         # 4. 求解优化问题
         optimal_weights = self.mean_variance.optimize(
             expected_returns=expected_returns,
             covariance_matrix=covariance_matrix,
             **optimization_problem
         )
-        
+
         # 5. 考虑交易成本调整
         adjusted_weights = self.turnover_control.adjust_for_cost(
             target_weights=optimal_weights,
             current_weights=current_positions,
             transaction_cost=0.001  # 交易成本0.1%
         )
-        
+
         return DailyPortfolio(
             weights=adjusted_weights,
             expected_stats=self._calculate_expected_stats(adjusted_weights, expected_returns, covariance_matrix),
@@ -398,33 +398,33 @@ class DailyPortfolioOptimizer:
 
 ```python
 class StrategySelectionSystem:
-    
+
     集成位置: 中观策略层核心组?
 ?
 
     参考设? STRATEGY_SELECTION_TACTICS_ENTRY.md
     """
-    
+
     def __init__(self, strategy_pool: StrategyPool):
         self.strategy_pool = strategy_pool
         self.evaluator = MultiCriteriaEvaluator()      # TOPSIS多准则评?
         self.weight_optimizer = DynamicWeightOptimizer()  # 动态权重优?
 self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
 ?
-        
-    def select_strategies_by_timeframe(self, market_state: MarketState, 
+
+    def select_strategies_by_timeframe(self, market_state: MarketState,
                                       timeframe: str) -> SelectedStrategies:
         """基于时间框架选择策略
-        
+
         参数:
 策略
-            
+
         返回:
             选定策略列表及权重分?
         """
         # 1. 获取候选策略池
         all_strategies = self.strategy_pool.get_all_strategies()
-        
+
         # 2. 按时间框架过?
         if timeframe == 'weekly':
             candidates = [s for s in all_strategies if s.timeframe in ['weekly', 'monthly']]
@@ -434,29 +434,29 @@ self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
             candidates = [s for s in all_strategies if s.timeframe in ['intraday', 'daily']]
         else:
             candidates = all_strategies
-            
+
         # 3. 按市场状态过?
-        market_filtered = [s for s in candidates 
+        market_filtered = [s for s in candidates
                           if market_state.regime in s.get_applicable_states()]
-        
+
         # 4. 多准则评?(TOPSIS算法)
         criteria_matrix = self._build_criteria_matrix(market_filtered)
         ranking_result = self.evaluator.evaluate(market_filtered, criteria_matrix)
-        
+
 # 5.
 )
         correlation_analysis = self.correlation_analyzer.analyze(market_filtered)
         diversified_strategies = self._apply_diversification_filter(
-            ranking_result.top_strategies, 
+            ranking_result.top_strategies,
             correlation_analysis
         )
-        
+
         # 6. 动态权重分?
         final_weights = self.weight_optimizer.optimize_weights(
-            diversified_strategies, 
+            diversified_strategies,
             market_state=market_state
         )
-        
+
         return SelectedStrategies(
             strategies=diversified_strategies,
             weights=final_weights,
@@ -466,21 +466,21 @@ self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
                 diversified_strategies, market_state, timeframe
             )
         )
-        
+
     def _build_criteria_matrix(self, strategies: List[Strategy]) -> pd.DataFrame:
         """构建多准则评估矩?
-        
+
         评估维度:
         - 绩效维度: 夏普比率、年化收益、最大回撤、胜?
         - 风险维度: 波动率、下行风险、尾部风?
         - 复杂度维? 策略简洁性、过拟合风险
         """
         criteria_data = {}
-        
+
         for strategy in strategies:
             perf = strategy.get_performance()
             metrics = strategy.get_metrics()
-            
+
             criteria_data[strategy.id] = {
                 'sharpe_ratio': perf.sharpe_ratio,
                 'annual_return': perf.annual_return,
@@ -492,31 +492,31 @@ self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
                 'adaptability_score': metrics.adaptability_score,
                 'complexity_score': metrics.complexity_score
             }
-            
+
         return pd.DataFrame.from_dict(criteria_data, orient='index')
-        
+
     def _apply_diversification_filter(self, strategies: List[Strategy],
                                     correlation_analysis: CorrelationAnalysis) -> List[Strategy]:
         """应用风险分散过滤?""
         filtered = []
-        
+
         for strategy in strategies:
 ?
             if not filtered:
                 filtered.append(strategy)
                 continue
-                
+
             max_correlation = max(
                 correlation_analysis.correlation_matrix.loc[strategy.id, s.id]
                 for s in filtered if s.id in correlation_analysis.correlation_matrix.index
             )
-            
+
 #
             if max_correlation < 0.7:
                 filtered.append(strategy)
-                
+
         return filtered
-        
+
     def _generate_selection_reasoning(self, strategies: List[Strategy],
                                     market_state: MarketState,
                                     timeframe: str) -> str:
@@ -525,14 +525,14 @@ self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
         reasoning.append(f"时间框架: {timeframe}")
 reasoning.append(f"? {market_state.regime.value}")
         reasoning.append(f"选择策略数量: {len(strategies)}")
-        
+
         for i, strategy in enumerate(strategies[:3], 1):
             perf = strategy.get_performance()
             reasoning.append(
                 f"{i}. {strategy.name}: 夏普{perf.sharpe_ratio:.2f}, "
                 f"年化收益{perf.annual_return:.1%}, 最大回撤{perf.max_drawdown:.1%}"
             )
-            
+
         return "\n".join(reasoning)
 ```
 
@@ -568,13 +568,13 @@ reasoning.append(f"? {market_state.regime.value}")
 ```python
 class MinuteExecutionOptimizer:
     """分钟执行优化?- 分时图模式识?+ 智能执行"""
-    
+
     def __init__(self):
         self.minute_patterns = MinutePatternLibrary()
         self.execution_algorithms = ExecutionAlgorithmFactory()
         self.market_impact = MarketImpactModel()
-        
-    def optimize_minute_execution(self, 
+
+    def optimize_minute_execution(self,
                                  daily_signal: DailySignal,
                                  market_data: MinuteData) -> ExecutionPlan:
         """优化分钟级别执行"""
@@ -584,7 +584,7 @@ class MinuteExecutionOptimizer:
             volume_series=market_data.volume,
             order_book=market_data.order_book
         )
-        
+
         # 2. 执行算法选择
         algorithm = self.execution_algorithms.select_algorithm(
             order_characteristics={
@@ -598,7 +598,7 @@ class MinuteExecutionOptimizer:
                 'pattern': pattern_analysis.dominant_pattern
             }
         )
-        
+
         # 3. 冲击成本预测
         impact_estimate = self.market_impact.estimate(
             order_size=daily_signal.quantity,
@@ -606,7 +606,7 @@ class MinuteExecutionOptimizer:
             time_of_day=market_data.timestamp.hour,
             algorithm=algorithm.name
         )
-        
+
         # 4. 生成执行计划
         execution_plan = algorithm.generate_plan(
             symbol=daily_signal.symbol,
@@ -618,7 +618,7 @@ class MinuteExecutionOptimizer:
             },
             market_data=market_data
         )
-        
+
         return ExecutionPlan(
             algorithm=algorithm.name,
             schedule=execution_plan.schedule,
@@ -633,7 +633,7 @@ class MinuteExecutionOptimizer:
 ```python
 class ExecutionAlgorithmFactory:
     """智能执行算法工厂 - VWAP/TWAP/IS/自适应"""
-    
+
     def __init__(self):
         self.algorithms = {
             'VWAP': VWAPAlgorithm(
@@ -657,13 +657,13 @@ class ExecutionAlgorithmFactory:
                 minimum_fill=0.3  # 最低成交率30%
             )
         }
-        
-    def select_algorithm(self, order_characteristics: Dict, 
+
+    def select_algorithm(self, order_characteristics: Dict,
                         market_conditions: Dict) -> ExecutionAlgorithm:
         """选择最优执行算?""
         # 1. 基于订单特性的初筛
         candidate_algorithms = self._prefilter_algorithms(order_characteristics)
-        
+
         # 2. 基于市场条件的评?
         algorithm_scores = {}
         for algo_name, algorithm in candidate_algorithms.items():
@@ -674,10 +674,10 @@ class ExecutionAlgorithmFactory:
                 time_constraint=order_characteristics.get('urgency', 'medium')
             )
             algorithm_scores[algo_name] = score
-        
+
         # 3. 选择最高分算法
         best_algorithm = max(algorithm_scores, key=algorithm_scores.get)
-        
+
         return self.algorithms[best_algorithm]
 ```
 
@@ -686,7 +686,7 @@ class ExecutionAlgorithmFactory:
 ```python
 class RealtimeRiskHedger:
     """实时风险对冲引擎 - 秒级风险监控与对?""
-    
+
     def __init__(self):
         self.risk_monitors = {
             'exposure': ExposureMonitor(),
@@ -696,18 +696,18 @@ class RealtimeRiskHedger:
         }
         self.hedge_instruments = HedgeInstrumentFactory()
         self.hedge_strategies = HedgeStrategyFactory()
-        
-    def monitor_and_hedge(self, portfolio: Portfolio, 
+
+    def monitor_and_hedge(self, portfolio: Portfolio,
                          market_data: RealtimeData) -> HedgeActions:
         """监控风险并执行对?""
         # 1. 实时风险监测
         risk_metrics = {}
         alerts = []
-        
+
         for risk_type, monitor in self.risk_monitors.items():
             metrics = monitor.calculate(portfolio, market_data)
             risk_metrics[risk_type] = metrics
-            
+
             if metrics.breached_threshold:
                 alerts.append({
                     'risk_type': risk_type,
@@ -715,14 +715,14 @@ class RealtimeRiskHedger:
                     'current_value': metrics.current_value,
                     'threshold': metrics.threshold
                 })
-        
+
         # 2. 判断是否需要对?
         if not alerts:
             return HedgeActions(actions=[], hedged=False)
-        
+
 ?
         hedge_plan = self._create_hedge_plan(alerts, portfolio, market_data)
-        
+
         # 4. 生成对冲指令
         hedge_actions = []
         for hedge_item in hedge_plan.items:
@@ -730,19 +730,19 @@ class RealtimeRiskHedger:
                 instrument_type=hedge_item.instrument_type,
                 symbol=hedge_item.symbol
             )
-            
+
             strategy = self.hedge_strategies.get_strategy(
                 strategy_type=hedge_item.strategy_type,
                 hedge_ratio=hedge_item.ratio
             )
-            
+
             action = strategy.generate_action(
                 instrument=instrument,
                 portfolio=portfolio,
                 market_data=market_data
             )
             hedge_actions.append(action)
-        
+
         return HedgeActions(
             actions=hedge_actions,
             hedged=True,
@@ -758,12 +758,12 @@ class RealtimeRiskHedger:
 ```python
 class OpeningStrategy:
     """开盘策略模?- 集合竞价分析与开盘动?""
-    
+
     def __init__(self):
         self.auction_analyzer = AuctionAnalyzer()
         self.opening_momentum = OpeningMomentumDetector()
         self.gap_analysis = GapAnalysisEngine()
-        
+
     def generate_opening_signals(self, pre_market_data: PreMarketData) -> OpeningSignals:
         """生成开盘交易信?""
         # 1. 集合竞价分析
@@ -771,20 +771,20 @@ class OpeningStrategy:
             auction_orders=pre_market_data.auction_orders,
             indicative_price=pre_market_data.indicative_price
         )
-        
+
         # 2. 跳空缺口分析
         gap_analysis = self.gap_analysis.analyze(
             previous_close=pre_market_data.previous_close,
             current_indication=pre_market_data.current_indication
         )
-        
+
         # 3. 开盘动量预?
         momentum_prediction = self.opening_momentum.predict(
             pre_market_volume=pre_market_data.volume,
             overnight_news=pre_market_data.overnight_news,
             futures_pre_open=pre_market_data.futures_movement
         )
-        
+
         # 4. 生成开盘信?
         signals = []
         if auction_analysis.imbalance_ratio > 1.5:  # 买卖失衡 > 50%
@@ -793,14 +793,14 @@ class OpeningStrategy:
                 direction=auction_analysis.dominant_side,
                 confidence=auction_analysis.confidence
             ))
-        
+
         if gap_analysis.gap_size > 0.02:  # 跳空 > 2%
             signals.append(OpeningSignal(
                 type='gap_fade' if gap_analysis.is_likely_fade else 'gap_follow',
                 direction='short' if gap_analysis.is_likely_fade else 'long',
                 confidence=gap_analysis.fade_probability
             ))
-        
+
         return OpeningSignals(
             signals=signals,
             auction_analysis=auction_analysis,
@@ -815,13 +815,13 @@ class OpeningStrategy:
 ```python
 class IntradayStrategy:
     """盘中策略模块 - 分时图突?+ 成交量异?""
-    
+
     def __init__(self):
         self.chart_patterns = IntradayChartPatterns()
         self.volume_anomaly = VolumeAnomalyDetector()
         self.mean_reversion = IntradayMeanReversion()
-        
-    def generate_intraday_signals(self, 
+
+    def generate_intraday_signals(self,
                                  intraday_data: IntradayData) -> IntradaySignals:
         """生成盘中交易信号"""
         # 1. 分时图形态识?
@@ -830,28 +830,28 @@ class IntradayStrategy:
             volume_series=intraday_data.volume,
             time_of_day=intraday_data.timestamp.hour
         )
-        
+
         # 2. 成交量异常检?
         volume_anomalies = self.volume_anomaly.detect(
             current_volume=intraday_data.volume,
             historical_volume=intraday_data.volume_history,
             threshold_sigma=3.0  # 3倍标准差
         )
-        
+
         # 3. 均值回归机会识?
         mean_reversion_ops = self.mean_reversion.identify_opportunities(
             price_deviation=intraday_data.price_deviation,
             rsi_values=intraday_data.rsi,
             bollinger_position=intraday_data.bollinger_position
         )
-        
+
         # 4. 信号整合与过?
         filtered_signals = self._filter_and_rank_signals(
             chart_signals=chart_patterns.signals,
             volume_signals=volume_anomalies.signals,
             mean_reversion_signals=mean_reversion_ops.signals
         )
-        
+
         return IntradaySignals(
             signals=filtered_signals,
             market_context={
@@ -882,7 +882,7 @@ class IntradayStrategy:
 ```python
 class UnifiedDataInfrastructure:
     """统一数据基础设施 - 支持多时间框架数据需?""
-    
+
     def __init__(self):
         self.data_sources = {
             'macro': MacroDataSource(),
@@ -892,26 +892,26 @@ class UnifiedDataInfrastructure:
         }
         self.data_lake = TimeSeriesDataLake()
         self.data_apis = UnifiedDataAPIs()
-        
+
     def get_data(self, timeframe: str, data_type: str, **kwargs):
         """获取指定时间框架的数?""
         source = self.data_sources.get(timeframe)
         if not source:
             raise ValueError(f"Unsupported timeframe: {timeframe}")
-        
+
         # 检查缓?
         cache_key = self._generate_cache_key(timeframe, data_type, kwargs)
         cached_data = self.data_lake.get(cache_key)
-        
+
         if cached_data and not kwargs.get('force_fresh', False):
             return cached_data
-        
+
         # 从源获取数据
         fresh_data = source.fetch(data_type, **kwargs)
-        
+
         # 存储到数据湖
         self.data_lake.store(cache_key, fresh_data)
-        
+
         return fresh_data
 ```
 
@@ -920,7 +920,7 @@ class UnifiedDataInfrastructure:
 ```python
 class MultiTimeframeRiskSystem:
     """多时间框架风控体?- 分层风险控制"""
-    
+
     def __init__(self):
         self.risk_layers = {
             'strategic': StrategicRiskLayer(),      # 战略层风险（季度?
@@ -930,12 +930,12 @@ class MultiTimeframeRiskSystem:
         }
         self.risk_aggregator = RiskAggregator()
         self.escalation_policy = RiskEscalationPolicy()
-        
-    def monitor_risk(self, portfolio: Portfolio, 
+
+    def monitor_risk(self, portfolio: Portfolio,
                     market_data: MultiTimeframeData) -> RiskReport:
         """监控多时间框架风?""
         risk_reports = {}
-        
+
         # 各层级独立风险监?
         for layer_name, risk_layer in self.risk_layers.items():
             layer_report = risk_layer.monitor(
@@ -944,16 +944,16 @@ class MultiTimeframeRiskSystem:
                 layer_specific_rules=self._get_layer_rules(layer_name)
             )
             risk_reports[layer_name] = layer_report
-        
+
 ?
         aggregated_risk = self.risk_aggregator.aggregate(risk_reports)
-        
+
         # 风险升级决策
         escalation_actions = self.escalation_policy.evaluate(
             risk_reports=risk_reports,
             aggregated_risk=aggregated_risk
         )
-        
+
         return RiskReport(
             layer_reports=risk_reports,
             aggregated_risk=aggregated_risk,
@@ -967,7 +967,7 @@ class MultiTimeframeRiskSystem:
 ```python
 class FullCyclePerformanceAttribution:
 """
-    
+
     def __init__(self):
         self.attribution_methods = {
             'brinson': BrinsonAttribution(),
@@ -976,13 +976,13 @@ class FullCyclePerformanceAttribution:
             'execution': ExecutionAttribution()
         }
         self.attribution_visualizer = AttributionVisualizer()
-        
-    def attribute_performance(self, 
+
+    def attribute_performance(self,
                              portfolio_history: PortfolioHistory,
                              benchmark_history: BenchmarkHistory) -> AttributionReport:
 """
         attribution_results = {}
-        
+
         # 多维度归因分?
         for method_name, method in self.attribution_methods.items():
             result = method.attribute(
@@ -990,10 +990,10 @@ class FullCyclePerformanceAttribution:
                 benchmark=benchmark_history
             )
             attribution_results[method_name] = result
-        
+
         # 归因结果整合
         integrated_view = self._integrate_attributions(attribution_results)
-        
+
         # 生成可视化报?
         visualizations = self.attribution_visualizer.create_visualizations(
 
@@ -1033,7 +1033,7 @@ class FullCyclePerformanceAttribution:
             attribution_results=attribution_results,
             integrated_view=integrated_view
         )
-        
+
         return AttributionReport(
             method_results=attribution_results,
             integrated_view=integrated_view,

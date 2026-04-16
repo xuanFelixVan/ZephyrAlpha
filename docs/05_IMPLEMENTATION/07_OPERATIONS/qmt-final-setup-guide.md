@@ -13,11 +13,11 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 C: \Users\fanzi\.conda\envs\qmt\python.exe scripts\test_qmt_connection_v6.py
 ---
-**Last Updated:** 2026-04-03  
+**Last Updated:** 2026-04-03
 
 
 
-**Status:** Awaiting QMT client configuration  
+**Status:** Awaiting QMT client configuration
 
 
 
@@ -26,6 +26,3 @@ C: \Users\fanzi\.conda\envs\qmt\python.exe scripts\test_qmt_connection_v6.py
 
 
 ```
-
-
-

@@ -36,7 +36,7 @@ estimated_hours: 60h
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -114,7 +114,7 @@ estimated_hours: 60h
 
 
 
-**ﻛﺕﮒ۰ﻠ?*: 
+**ﻛﺕﮒ۰ﻠ?*:
 
 
 
@@ -512,7 +512,7 @@ class ConstraintRule:
 
 
 
-    
+
 
 
 
@@ -576,7 +576,7 @@ class ConstraintCheckResult:
 
 
 
-    """ﻝﭦ۵ﮔﮔ۲ﮔ۴ﻝﭨ?    
+    """ﻝﭦ۵ﮔﮔ۲ﮔ۴ﻝﭨ?
 
 
 
@@ -636,7 +636,7 @@ class ViolationRecord:
 
 
 
-    
+
 
 
 
@@ -696,7 +696,7 @@ class AIConstraintEngineAPI:
 
 
 
-    
+
 
 
 
@@ -708,7 +708,7 @@ class AIConstraintEngineAPI:
 
 
 
-    
+
 
 
 
@@ -756,7 +756,7 @@ class AIConstraintEngineAPI:
 
 
 
-        
+
 
 
 
@@ -788,7 +788,7 @@ class AIConstraintEngineAPI:
 
 
 
-            
+
 
 
 
@@ -796,7 +796,7 @@ class AIConstraintEngineAPI:
 
 
 
-            ConstraintRule: ﮒﮒﭨﭦﻝﻝﭦ۵ﮔﻟ۶?            
+            ConstraintRule: ﮒﮒﭨﭦﻝﻝﭦ۵ﮔﻟ۶?
 
 
 
@@ -820,7 +820,7 @@ RuleSyntaxError: ﻟ۶ﮒﻟﺁﮔﺏﻠﻟﺁﺁ
 
 
 
-    
+
 
 
 
@@ -852,7 +852,7 @@ RuleSyntaxError: ﻟ۶ﮒﻟﺁﮔﺏﻠﻟﺁﺁ
 
 
 
-        
+
 
 
 
@@ -868,7 +868,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-            
+
 
 
 
@@ -884,7 +884,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-    
+
 
 
 
@@ -916,7 +916,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-        
+
 
 
 
@@ -932,7 +932,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-            
+
 
 
 
@@ -972,7 +972,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-    
+
 
 
 
@@ -1000,7 +1000,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-        
+
 
 
 
@@ -1008,7 +1008,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-            check_result: ﻝﭦ۵ﮔﮔ۲ﮔ۴ﻝﭨ?            
+            check_result: ﻝﭦ۵ﮔﮔ۲ﮔ۴ﻝﭨ?
 
 
 
@@ -1048,7 +1048,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-    
+
 
 
 
@@ -1080,7 +1080,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-        
+
 
 
 
@@ -1096,7 +1096,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-            
+
 
 
 
@@ -1116,7 +1116,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-    
+
 
 
 
@@ -1144,7 +1144,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-        
+
 
 
 
@@ -1156,7 +1156,7 @@ context: ﻛﺕﻛﺕﮔﻛﺟ۰?ﮔﻛﭨﻙﻟﭖﻠﻝ)
 
 
 
-            
+
 
 
 
@@ -1708,7 +1708,7 @@ AIﮒﺏﻝﻛﺟ۰ﮒﺓ ?ﻝﭦ۵ﮔﻟ۶ﮒﮒﻟﺛﺛ ?ﮒ؟ﮔﭘﻝﭦ۵�
 
 
 
-- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**: 
+- **ﮔﺍﮔ؟ﻟﺑ۷ﻠ**:
 
 
 
@@ -2036,7 +2036,7 @@ constraint_engine_config:
 
 
 
-    
+
 
 
 
@@ -2064,7 +2064,7 @@ auto_block_p0: true  # P0ﻝﭦ۶ﻟﺟﻟ۶ﻟ۹ﮒ۷ﮔ۵?    auto_approve_p3:
 
 
 
-    
+
 
 
 
@@ -2124,7 +2124,7 @@ class TestAIConstraintEngine:
 
 
 
-    
+
 
 
 
@@ -2140,7 +2140,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2176,7 +2176,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2188,7 +2188,7 @@ class TestAIConstraintEngine:
 
 
 
-    
+
 
 
 
@@ -2204,7 +2204,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2240,7 +2240,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2268,7 +2268,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2276,7 +2276,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2292,7 +2292,7 @@ class TestAIConstraintEngine:
 
 
 
-    
+
 
 
 
@@ -2308,7 +2308,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2340,7 +2340,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2364,7 +2364,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2372,7 +2372,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2388,7 +2388,7 @@ class TestAIConstraintEngine:
 
 
 
-    
+
 
 
 
@@ -2404,7 +2404,7 @@ class TestAIConstraintEngine:
 
 
 
-        
+
 
 
 
@@ -2436,7 +2436,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2460,7 +2460,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2468,7 +2468,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2480,7 +2480,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-    
+
 
 
 
@@ -2496,7 +2496,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2528,7 +2528,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2552,7 +2552,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2564,7 +2564,7 @@ rule_name="ﻝ۵ﮔ۱ﻛﭦ۳ﮔSTﻟ۰ﻝ۴۷",
 
 
 
-        
+
 
 
 
@@ -2872,7 +2872,7 @@ performance_benchmarks:
 
 
 
-    
+
 
 
 
@@ -2956,7 +2956,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -2988,7 +2988,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -3016,7 +3016,7 @@ performance_benchmarks:
 
 
 
-- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**: 
+- **ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ**:
 
 
 
@@ -3060,7 +3060,7 @@ performance_benchmarks:
 
 
 
-- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**: 
+- **ﮔ۶ﻟﺛﻝﭦ۵ﮔ**:
 
 
 
@@ -3072,7 +3072,7 @@ performance_benchmarks:
 
 
 
-- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: 
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**:
 
 
 
@@ -3084,7 +3084,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*: 
+- **ﮒﺙﮒ؟ﺗﮔ۶ﻝﭦ۵?*:
 
 
 
@@ -3100,7 +3100,7 @@ performance_benchmarks:
 
 
 
-- **ﮔﺍﮔ؟ﻛﺟﮔ۳**: 
+- **ﮔﺍﮔ؟ﻛﺟﮔ۳**:
 
 
 
@@ -3112,7 +3112,7 @@ performance_benchmarks:
 
 
 
-- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**: 
+- **ﻟ؟ﺟﻠ؟ﮔ۶ﮒﭘ**:
 
 
 
@@ -3120,7 +3120,7 @@ performance_benchmarks:
 
 
 
-- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**: 
+- **ﮒ؟۰ﻟ؟۰ﻟ۵ﮔﺎ**:
 
 
 
@@ -3204,7 +3204,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﮒﭦﮔﭘﻠﺑ**: 
+- **ﮒﮒﭦﮔﭘﻠﺑ**:
 
 
 
@@ -3224,7 +3224,7 @@ performance_benchmarks:
 
 
 
-- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**: 
+- **ﻟﭖﮔﭦﻛﺛﺟﻝ۷**:
 
 
 
@@ -3420,7 +3420,7 @@ performance_benchmarks:
 
 
 
-- **ﮒﺙﮒﻛﭦﭦ?*: 1?ﺣ 1.5?- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 0.5?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**: 
+- **ﮒﺙﮒﻛﭦﭦ?*: 1?ﺣ 1.5?- **ﮔﭖﻟﺁﻛﭦﭦﮒ**: 0.5?ﺣ 0.5?- **ﻝﺁﮒ۱ﻟﭖﮔﭦ**:
 
 
 
@@ -3549,6 +3549,3 @@ performance_benchmarks:
 
 
 **ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦ**: 2026-04-02 | **ﻝ?*: ?ﻟﮔ۰ | **ﻝﭨﺑﮔ۳?*: ZephyrAlphaﮔﮔﺁﮒ۱?
-
-
-

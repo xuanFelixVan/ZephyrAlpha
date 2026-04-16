@@ -173,7 +173,7 @@ class Event:
 
     """ﻛﭦﻛﭨﭘﮒﭦﻝﺎﭨ"""
 
-    
+
 
     event_type: EventType
 
@@ -187,7 +187,7 @@ class Event:
 
     event_id: Optional[str] = None
 
-    
+
 
     def __post_init__(self):
 
@@ -195,7 +195,7 @@ class Event:
 
             self.event_id = f"{self.event_type.value}_{self.timestamp.timestamp()}"
 
-    
+
 
     def to_dict(self) -> Dict[str, Any]:
 
@@ -217,7 +217,7 @@ class Event:
 
         }
 
-    
+
 
     @classmethod
 
@@ -263,7 +263,7 @@ class EventHandler(ABC):
 
     """ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۷ﮒﭦﻝﺎ?""
 
-    
+
 
     def __init__(self, handler_id: str, event_types: Optional[List[EventType]] = None):
 
@@ -271,7 +271,7 @@ class EventHandler(ABC):
 
         self.event_types = event_types or []
 
-    
+
 
     @abstractmethod
 
@@ -281,7 +281,7 @@ class EventHandler(ABC):
 
         pass
 
-    
+
 
     def can_handle(self, event: Event) -> bool:
 
@@ -293,7 +293,7 @@ class EventHandler(ABC):
 
         return event.event_type in self.event_types
 
-    
+
 
     def on_error(self, event: Event, error: Exception) -> None:
 
@@ -329,7 +329,7 @@ class EventBus:
 
     """ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ - ﻝ؟۰ﻝﻛﭦﻛﭨﭘﻝﮒﮒﺕﮒﻟ؟۱ﻠ"""
 
-    
+
 
     _instance = None
 
@@ -339,7 +339,7 @@ class EventBus:
 
     _max_history_size: int = 10000
 
-    
+
 
     def __new__(cls):
 
@@ -349,13 +349,13 @@ class EventBus:
 
         return cls._instance
 
-    
+
 
     def subscribe(
 
-        self, 
+        self,
 
-        event_type: EventType, 
+        event_type: EventType,
 
         handler: EventHandler
 
@@ -367,13 +367,13 @@ class EventBus:
 
             self._subscribers[event_type].append(handler)
 
-    
+
 
     def unsubscribe(
 
-        self, 
+        self,
 
-        event_type: EventType, 
+        event_type: EventType,
 
         handler: EventHandler
 
@@ -385,7 +385,7 @@ class EventBus:
 
             self._subscribers[event_type].remove(handler)
 
-    
+
 
     async def publish(self, event: Event) -> None:
 
@@ -393,11 +393,11 @@ class EventBus:
 
         self._add_to_history(event)
 
-        
+
 
         handlers = self._subscribers.get(event.event_type, [])
 
-        
+
 
         tasks = []
 
@@ -407,19 +407,19 @@ class EventBus:
 
                 tasks.append(self._handle_event(handler, event))
 
-        
+
 
         if tasks:
 
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    
+
 
     async def _handle_event(
 
-        self, 
+        self,
 
-        handler: EventHandler, 
+        handler: EventHandler,
 
         event: Event
 
@@ -441,7 +441,7 @@ class EventBus:
 
             raise EventBusError(f"Handler {handler.handler_id} failed: {e}")
 
-    
+
 
     def _add_to_history(self, event: Event) -> None:
 
@@ -449,17 +449,17 @@ class EventBus:
 
         self._event_history.append(event)
 
-        
+
 
         if len(self._event_history) > self._max_history_size:
 
             self._event_history.pop(0)
 
-    
+
 
     def get_history(
 
-        self, 
+        self,
 
         event_type: Optional[EventType] = None,
 
@@ -477,11 +477,11 @@ class EventBus:
 
             events = self._event_history
 
-        
+
 
         return events[-limit:]
 
-    
+
 
     def clear_history(self) -> None:
 
@@ -779,7 +779,7 @@ class TestEventHandler(EventHandler):
 
         self.received_events = []
 
-    
+
 
     async def handle(self, event: Event):
 
@@ -789,7 +789,7 @@ class TestEventHandler(EventHandler):
 
 class TestEventBus:
 
-    
+
 
     @pytest.mark.asyncio
 
@@ -799,11 +799,11 @@ class TestEventBus:
 
         handler = TestEventHandler()
 
-        
+
 
         bus.subscribe(EventType.MARKET_DATA, handler)
 
-        
+
 
         event = Event(
 
@@ -813,17 +813,17 @@ class TestEventBus:
 
         )
 
-        
+
 
         await bus.publish(event)
 
-        
+
 
         assert len(handler.received_events) == 1
 
         assert handler.received_events[0].data["symbol"] == "AAPL"
 
-    
+
 
     @pytest.mark.asyncio
 
@@ -833,19 +833,19 @@ class TestEventBus:
 
         handler = TestEventHandler()
 
-        
+
 
         bus.subscribe(EventType.MARKET_DATA, handler)
 
         bus.unsubscribe(EventType.MARKET_DATA, handler)
 
-        
+
 
         event = Event(event_type=EventType.MARKET_DATA)
 
         await bus.publish(event)
 
-        
+
 
         assert len(handler.received_events) == 0
 
@@ -875,7 +875,7 @@ from event_bus.event import Event, EventType
 
 class TestEventBusPerformance:
 
-    
+
 
     @pytest.mark.asyncio
 
@@ -883,11 +883,11 @@ class TestEventBusPerformance:
 
         bus = EventBus()
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         tasks = []
 
@@ -897,17 +897,17 @@ class TestEventBusPerformance:
 
             tasks.append(bus.publish(event))
 
-        
+
 
         await asyncio.gather(*tasks)
 
-        
+
 
         elapsed_time = time.time() - start_time
 
         throughput = 10000 / elapsed_time
 
-        
+
 
         assert throughput > 10000
 
@@ -933,7 +933,7 @@ class TestEventBusPerformance:
 
 class EventBus:
 
-    
+
 
     async def publish_batch(self, events: List[Event]) -> None:
 
@@ -955,13 +955,13 @@ class EventBus:
 
 class EventBus:
 
-    
+
 
     def subscribe(
 
-        self, 
+        self,
 
-        event_type: EventType, 
+        event_type: EventType,
 
         handler: EventHandler,
 
@@ -1045,7 +1045,7 @@ def _add_to_history(self, event: Event):
 
     self._event_history.append(event)
 
-    
+
 
     if len(self._event_history) > self._max_history_size:
 
@@ -1077,7 +1077,7 @@ class EventBus:
 
         self._running = False
 
-    
+
 
     async def start(self):
 
@@ -1153,9 +1153,8 @@ class EventBus:
 
 **ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 **ﻝﮔ؛**: v1.0
-

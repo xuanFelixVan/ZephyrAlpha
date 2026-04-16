@@ -31,15 +31,15 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-**ﮔﮒ۰ﮒﻝ۶ﺍ**: AccountService  
+**ﮔﮒ۰ﮒﻝ۶ﺍ**: AccountService
 
 
 
-**ﮔﮒ۰ﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ? 
+**ﮔﮒ۰ﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
 
 
 
-**ﻛﺝﻟﭖﮔﮒ۰**: PositionService, OrderService  
+**ﻛﺝﻟﭖﮔﮒ۰**: PositionService, OrderService
 
 
 
@@ -905,7 +905,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -925,7 +925,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -945,7 +945,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -965,7 +965,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1009,7 +1009,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1029,7 +1029,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1069,7 +1069,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1117,7 +1117,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1137,7 +1137,7 @@ class AccountRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1219,15 +1219,15 @@ class AccountRepository(ABC):
 
 
 
-**ﮔﮒ۰ﮒﻝ۶ﺍ**: PositionService  
+**ﮔﮒ۰ﮒﻝ۶ﺍ**: PositionService
 
 
 
-**ﮔﮒ۰ﻟﻟﺑ۲**: ﮔﻛﭨﻝ؟۰ﻝﻙﮔﻛﭨﮔ۴ﻟﺁ۱ﻙﮔﻛﭨﮒﮒ? 
+**ﮔﮒ۰ﻟﻟﺑ۲**: ﮔﻛﭨﻝ؟۰ﻝﻙﮔﻛﭨﮔ۴ﻟﺁ۱ﻙﮔﻛﭨﮒﮒ?
 
 
 
-**ﻛﺝﻟﭖﮔﮒ۰**: AccountService, TradeService  
+**ﻛﺝﻟﭖﮔﮒ۰**: AccountService, TradeService
 
 
 
@@ -1631,7 +1631,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1651,7 +1651,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1671,7 +1671,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1707,7 +1707,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1743,7 +1743,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1763,7 +1763,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1811,7 +1811,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1859,7 +1859,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1879,7 +1879,7 @@ class PositionRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -1965,15 +1965,15 @@ class PositionRepository(ABC):
 
 
 
-**ﮔﮒ۰ﮒﻝ۶ﺍ**: OrderService  
+**ﮔﮒ۰ﮒﻝ۶ﺍ**: OrderService
 
 
 
-**ﮔﮒ۰ﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ? 
+**ﮔﮒ۰ﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
 
 
 
-**ﻛﺝﻟﭖﮔﮒ۰**: AccountService, PositionService, EngineService  
+**ﻛﺝﻟﭖﮔﮒ۰**: AccountService, PositionService, EngineService
 
 
 
@@ -2871,7 +2871,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -2891,7 +2891,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -2911,7 +2911,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -2931,7 +2931,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -2991,7 +2991,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3011,7 +3011,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3051,7 +3051,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3111,7 +3111,7 @@ class OrderRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3181,15 +3181,15 @@ class OrderRepository(ABC):
 
 
 
-**ﮔﮒ۰ﮒﻝ۶ﺍ**: TradeService  
+**ﮔﮒ۰ﮒﻝ۶ﺍ**: TradeService
 
 
 
-**ﮔﮒ۰ﻟﻟﺑ۲**: ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﻝ؟۰ﻝﻙﻛﭦ۳ﮔﮔ۴ﻟﺁ۱ﻙﻛﭦ۳ﮔﻝﭨﻟ؟? 
+**ﮔﮒ۰ﻟﻟﺑ۲**: ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﻝ؟۰ﻝﻙﻛﭦ۳ﮔﮔ۴ﻟﺁ۱ﻙﻛﭦ۳ﮔﻝﭨﻟ؟?
 
 
 
-**ﻛﺝﻟﭖﮔﮒ۰**: OrderService, PositionService  
+**ﻛﺝﻟﭖﮔﮒ۰**: OrderService, PositionService
 
 
 
@@ -3803,7 +3803,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3823,7 +3823,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3843,7 +3843,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3863,7 +3863,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3919,7 +3919,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -3939,7 +3939,7 @@ class TradeRepository(ABC):
 
 
 
-    
+
 
 
 
@@ -4499,11 +4499,8 @@ class TradeRepository(ABC):
 
 
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 
 
 
 **ﻛﺕﻛﺕﮔ?*: P0-4 ﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟
-
-
-

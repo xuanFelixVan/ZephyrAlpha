@@ -45,7 +45,7 @@ implementation_status: 进行?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1005,7 +1005,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1029,7 +1029,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1077,7 +1077,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1107,7 +1107,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1131,7 +1131,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1149,7 +1149,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1179,7 +1179,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1203,7 +1203,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1233,7 +1233,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1299,7 +1299,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1341,7 +1341,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1359,7 +1359,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1401,7 +1401,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1425,7 +1425,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1443,7 +1443,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1461,7 +1461,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1491,7 +1491,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1551,7 +1551,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1587,7 +1587,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1605,7 +1605,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1635,7 +1635,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1683,7 +1683,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1707,7 +1707,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1725,7 +1725,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1755,7 +1755,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1809,7 +1809,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1839,7 +1839,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1857,7 +1857,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1887,7 +1887,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -1941,7 +1941,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1971,7 +1971,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -1989,7 +1989,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2019,7 +2019,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -2079,7 +2079,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2115,7 +2115,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2133,7 +2133,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2163,7 +2163,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -2205,7 +2205,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2223,7 +2223,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2241,7 +2241,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2271,7 +2271,7 @@ class IFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -2295,7 +2295,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2313,7 +2313,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -2331,7 +2331,7 @@ class IFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -3477,7 +3477,7 @@ def sign_request(api_key: str, api_secret: str) -> Dict[str, str]:
 
 
 
-    
+
 
 
 
@@ -3513,7 +3513,7 @@ def sign_request(api_key: str, api_secret: str) -> Dict[str, str]:
 
 
 
-    
+
 
 
 
@@ -3573,7 +3573,7 @@ def sign_request(api_key: str, api_secret: str) -> Dict[str, str]:
 
 
 
-    
+
 
 
 
@@ -3681,7 +3681,7 @@ class LRUCache:
 
 
 
-    
+
 
 
 
@@ -3723,7 +3723,7 @@ class LRUCache:
 
 
 
-    
+
 
 
 
@@ -3747,7 +3747,7 @@ class LRUCache:
 
 
 
-        
+
 
 
 
@@ -3783,7 +3783,7 @@ class LRUCache:
 
 
 
-        
+
 
 
 
@@ -3819,7 +3819,7 @@ class LRUCache:
 
 
 
-            
+
 
 
 
@@ -3843,7 +3843,7 @@ class LRUCache:
 
 
 
-            
+
 
 
 
@@ -3861,7 +3861,7 @@ class LRUCache:
 
 
 
-    
+
 
 
 
@@ -3885,7 +3885,7 @@ class LRUCache:
 
 
 
-        
+
 
 
 
@@ -3915,7 +3915,7 @@ class LRUCache:
 
 
 
-        
+
 
 
 
@@ -3951,7 +3951,7 @@ class LRUCache:
 
 
 
-            
+
 
 
 
@@ -3969,7 +3969,7 @@ class LRUCache:
 
 
 
-            
+
 
 
 
@@ -3987,7 +3987,7 @@ class LRUCache:
 
 
 
-    
+
 
 
 
@@ -4017,7 +4017,7 @@ class LRUCache:
 
 
 
-    
+
 
 
 
@@ -4125,7 +4125,7 @@ class RateLimiter:
 
 
 
-    
+
 
 
 
@@ -4155,7 +4155,7 @@ class RateLimiter:
 
 
 
-    
+
 
 
 
@@ -4179,7 +4179,7 @@ class RateLimiter:
 
 
 
-        
+
 
 
 
@@ -4215,7 +4215,7 @@ class RateLimiter:
 
 
 
-        
+
 
 
 
@@ -4245,7 +4245,7 @@ class RateLimiter:
 
 
 
-            
+
 
 
 
@@ -4263,7 +4263,7 @@ class RateLimiter:
 
 
 
-            
+
 
 
 
@@ -4281,7 +4281,7 @@ class RateLimiter:
 
 
 
-            
+
 
 
 
@@ -4299,7 +4299,7 @@ class RateLimiter:
 
 
 
-    
+
 
 
 
@@ -4329,7 +4329,7 @@ class RateLimiter:
 
 
 
-            
+
 
 
 
@@ -4347,7 +4347,7 @@ class RateLimiter:
 
 
 
-            
+
 
 
 
@@ -4413,7 +4413,7 @@ def check_completeness(data: pd.DataFrame, expected_dates: List[datetime]) -> fl
 
 
 
-    
+
 
 
 
@@ -4443,7 +4443,7 @@ def check_completeness(data: pd.DataFrame, expected_dates: List[datetime]) -> fl
 
 
 
-    
+
 
 
 
@@ -4473,7 +4473,7 @@ def check_completeness(data: pd.DataFrame, expected_dates: List[datetime]) -> fl
 
 
 
-    
+
 
 
 
@@ -4491,7 +4491,7 @@ def check_completeness(data: pd.DataFrame, expected_dates: List[datetime]) -> fl
 
 
 
-    
+
 
 
 
@@ -4545,7 +4545,7 @@ def detect_outliers(data: pd.DataFrame, column: str, threshold: float = 3.0) -> 
 
 
 
-    
+
 
 
 
@@ -4575,7 +4575,7 @@ def detect_outliers(data: pd.DataFrame, column: str, threshold: float = 3.0) -> 
 
 
 
-    
+
 
 
 
@@ -4605,7 +4605,7 @@ def detect_outliers(data: pd.DataFrame, column: str, threshold: float = 3.0) -> 
 
 
 
-    
+
 
 
 
@@ -4623,7 +4623,7 @@ def detect_outliers(data: pd.DataFrame, column: str, threshold: float = 3.0) -> 
 
 
 
-    
+
 
 
 
@@ -4947,7 +4947,7 @@ class TestIFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -5031,7 +5031,7 @@ class TestIFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -5073,7 +5073,7 @@ class TestIFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -5097,7 +5097,7 @@ class TestIFindDataConnector:
 
 
 
-    
+
 
 
 
@@ -5127,7 +5127,7 @@ class TestIFindDataConnector:
 
 
 
-        
+
 
 
 
@@ -6027,7 +6027,7 @@ ifind:
 
 
 
-  
+
 
 
 
@@ -6063,7 +6063,7 @@ ifind:
 
 
 
-  
+
 
 
 
@@ -6087,7 +6087,7 @@ ifind:
 
 
 
-  
+
 
 
 
@@ -6226,8 +6226,3 @@ ifind:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?
-
-
-
-
-

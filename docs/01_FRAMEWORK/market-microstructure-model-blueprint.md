@@ -16,7 +16,7 @@ owner: 首席文档架构师
 
 > **核心职责**: Market Microstructure Model蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Market Microstructure Model蓝图设计相关内容
 
@@ -208,7 +208,7 @@ class MarketMicrostructureModel:
 
 
 
-    
+
 
 
 
@@ -256,7 +256,7 @@ class MarketMicrostructureModel:
 
 
 
-    
+
 
 
 
@@ -284,7 +284,7 @@ class MarketMicrostructureModel:
 
 
 
-        
+
 
 
 
@@ -294,7 +294,7 @@ class MarketMicrostructureModel:
 
 
 
-            
+
 
 
 
@@ -314,7 +314,7 @@ class MarketMicrostructureModel:
 
 
 
-    
+
 
 
 
@@ -338,7 +338,7 @@ class MarketMicrostructureModel:
 
 
 
-        
+
 
 
 
@@ -350,7 +350,7 @@ class MarketMicrostructureModel:
 
 
 
-            
+
 
 
 
@@ -368,7 +368,7 @@ class MarketMicrostructureModel:
 
 
 
-    
+
 
 
 
@@ -396,7 +396,7 @@ class MarketMicrostructureModel:
 
 
 
-        
+
 
 
 
@@ -412,7 +412,7 @@ class MarketMicrostructureModel:
 
 
 
-            
+
 
 
 
@@ -667,4 +667,3 @@ numba>=0.58.0
 
 
 ```
-

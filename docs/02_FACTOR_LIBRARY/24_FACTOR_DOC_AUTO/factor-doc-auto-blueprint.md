@@ -92,4 +92,3 @@ responsibility: 24_FACTOR_DOC_AUTO
 - 文档一致性: 100%
 
 - 维护成本: 降低80%
-

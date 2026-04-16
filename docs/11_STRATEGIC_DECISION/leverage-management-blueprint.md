@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 融资融券管理系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：融资融券管理系统蓝图设计相关内容
 
@@ -70,7 +70,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Leverage Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Leverage Management蓝图设计相关内容
 
@@ -136,11 +136,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 3个月  
+> **实施周期**: 3个月
 
 > **目标**: 构建专业级融资融券管理体系，实现动态杠杆优化和风险控制
 
@@ -468,7 +468,7 @@ class DynamicLeverageEngine:
 
     """动态杠杆优化引擎"""
 
-    
+
 
     def __init__(self, strategy: LeverageStrategy):
 
@@ -478,9 +478,9 @@ class DynamicLeverageEngine:
 
         self.current_state = LeverageState.OPTIMAL
 
-        
 
-    def calculate_target_leverage(self, 
+
+    def calculate_target_leverage(self,
 
                                   market_data: Dict,
 
@@ -490,7 +490,7 @@ class DynamicLeverageEngine:
 
         """计算目标杠杆率"""
 
-        
+
 
         volatility_factor = self._calculate_volatility_factor(
 
@@ -498,7 +498,7 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         sharpe_factor = self._calculate_sharpe_factor(
 
@@ -506,7 +506,7 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         risk_budget_factor = self._calculate_risk_budget_factor(
 
@@ -514,7 +514,7 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         target_leverage = (
 
@@ -526,7 +526,7 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         target_leverage = np.clip(
 
@@ -538,11 +538,11 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         return target_leverage
 
-    
+
 
     def _calculate_volatility_factor(self, volatility: float) -> float:
 
@@ -550,7 +550,7 @@ class DynamicLeverageEngine:
 
         base_volatility = 0.20  # 基准波动率20%
 
-        
+
 
         if volatility < base_volatility * 0.5:
 
@@ -568,7 +568,7 @@ class DynamicLeverageEngine:
 
             return self.strategy.min_leverage
 
-    
+
 
     def _calculate_sharpe_factor(self, sharpe_ratio: float) -> float:
 
@@ -594,7 +594,7 @@ class DynamicLeverageEngine:
 
             return self.strategy.min_leverage
 
-    
+
 
     def _calculate_risk_budget_factor(self, risk_budget: float) -> float:
 
@@ -616,9 +616,9 @@ class DynamicLeverageEngine:
 
             return self.strategy.min_leverage
 
-    
 
-    def calculate_leverage_efficiency(self, 
+
+    def calculate_leverage_efficiency(self,
 
                                      leveraged_return: float,
 
@@ -632,7 +632,7 @@ class DynamicLeverageEngine:
 
         leverage_risk = leverage_ratio * 0.10  # 假设风险为杠杆率10%
 
-        
+
 
         if leverage_risk > 0:
 
@@ -642,13 +642,13 @@ class DynamicLeverageEngine:
 
             efficiency = 0.0
 
-        
+
 
         return efficiency
 
-    
 
-    def generate_leverage_adjustment(self, 
+
+    def generate_leverage_adjustment(self,
 
                                     current_leverage: float,
 
@@ -658,7 +658,7 @@ class DynamicLeverageEngine:
 
         leverage_diff = target_leverage - current_leverage
 
-        
+
 
         if abs(leverage_diff) < 0.05:
 
@@ -670,11 +670,11 @@ class DynamicLeverageEngine:
 
             }
 
-        
+
 
         adjustment_amount = leverage_diff * self.strategy.adjustment_speed
 
-        
+
 
         new_leverage = current_leverage + adjustment_amount
 
@@ -688,11 +688,11 @@ class DynamicLeverageEngine:
 
         )
 
-        
+
 
         self._update_state(new_leverage)
 
-        
+
 
         return {
 
@@ -712,7 +712,7 @@ class DynamicLeverageEngine:
 
         }
 
-    
+
 
     def _update_state(self, leverage: float):
 
@@ -810,15 +810,15 @@ class FinancingCostOptimizer:
 
     """融资成本优化系统"""
 
-    
+
 
     def __init__(self, brokers: List[BrokerInfo]):
 
         self.brokers = brokers
 
-        
 
-    def compare_brokers(self, 
+
+    def compare_brokers(self,
 
                        financing_amount: float,
 
@@ -828,7 +828,7 @@ class FinancingCostOptimizer:
 
         comparison_results = []
 
-        
+
 
         for broker in self.brokers:
 
@@ -840,7 +840,7 @@ class FinancingCostOptimizer:
 
                 continue
 
-            
+
 
             financing_cost = self._calculate_financing_cost(
 
@@ -852,7 +852,7 @@ class FinancingCostOptimizer:
 
             )
 
-            
+
 
             total_score = (
 
@@ -862,7 +862,7 @@ class FinancingCostOptimizer:
 
             )
 
-            
+
 
             comparison_results.append({
 
@@ -880,11 +880,11 @@ class FinancingCostOptimizer:
 
             })
 
-        
+
 
         comparison_results.sort(key=lambda x: x['total_score'], reverse=True)
 
-        
+
 
         return {
 
@@ -896,9 +896,9 @@ class FinancingCostOptimizer:
 
         }
 
-    
 
-    def _calculate_financing_cost(self, 
+
+    def _calculate_financing_cost(self,
 
                                  amount: float,
 
@@ -910,9 +910,9 @@ class FinancingCostOptimizer:
 
         return amount * rate * days / 360
 
-    
 
-    def optimize_financing_term(self, 
+
+    def optimize_financing_term(self,
 
                                financing_amount: float,
 
@@ -924,13 +924,13 @@ class FinancingCostOptimizer:
 
         terms = [7, 14, 30, 60, 90, 180]  # 可选期限（天）
 
-        
+
 
         best_term = None
 
         best_net_return = -np.inf
 
-        
+
 
         for term in terms:
 
@@ -944,13 +944,13 @@ class FinancingCostOptimizer:
 
             )
 
-            
+
 
             term_return = expected_return * term / 365
 
             net_return = term_return - financing_cost / financing_amount
 
-            
+
 
             if net_return > best_net_return:
 
@@ -958,7 +958,7 @@ class FinancingCostOptimizer:
 
                 best_term = term
 
-        
+
 
         return {
 
@@ -1052,13 +1052,13 @@ class ShortManagementSystem:
 
     """融券管理系统"""
 
-    
+
 
     def __init__(self):
 
         self.security_sources = {}
 
-        
+
 
     def update_security_source(self, source: SecuritySource):
 
@@ -1070,9 +1070,9 @@ class ShortManagementSystem:
 
         self.security_sources[source.security_code].append(source)
 
-    
 
-    def check_availability(self, 
+
+    def check_availability(self,
 
                           security_code: str,
 
@@ -1090,13 +1090,13 @@ class ShortManagementSystem:
 
             }
 
-        
+
 
         sources = self.security_sources[security_code]
 
         total_available = sum(s.available_quantity for s in sources)
 
-        
+
 
         if total_available < required_quantity:
 
@@ -1108,7 +1108,7 @@ class ShortManagementSystem:
 
             }
 
-        
+
 
         return {
 
@@ -1120,9 +1120,9 @@ class ShortManagementSystem:
 
         }
 
-    
 
-    def optimize_short_strategy(self, 
+
+    def optimize_short_strategy(self,
 
                                security_code: str,
 
@@ -1136,17 +1136,17 @@ class ShortManagementSystem:
 
             return {'error': '无券源'}
 
-        
+
 
         sources = self.security_sources[security_code]
 
-        
+
 
         best_source = None
 
         best_cost = np.inf
 
-        
+
 
         for source in sources:
 
@@ -1154,11 +1154,11 @@ class ShortManagementSystem:
 
                 continue
 
-            
+
 
             short_cost = short_amount * source.short_rate * short_days / 360
 
-            
+
 
             total_score = (
 
@@ -1168,7 +1168,7 @@ class ShortManagementSystem:
 
             )
 
-            
+
 
             if total_score > (1 - best_cost / short_amount) * 0.6 + 0.4:
 
@@ -1176,13 +1176,13 @@ class ShortManagementSystem:
 
                 best_cost = short_cost
 
-        
+
 
         if best_source is None:
 
             return {'error': '无合适券源'}
 
-        
+
 
         return {
 
@@ -1270,7 +1270,7 @@ class MarginManagementSystem:
 
     """保证金管理系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1278,9 +1278,9 @@ class MarginManagementSystem:
 
         self.liquidation_line = 1.30 # 平仓线130%
 
-        
 
-    def calculate_maintenance_ratio(self, 
+
+    def calculate_maintenance_ratio(self,
 
                                    cash: float,
 
@@ -1296,7 +1296,7 @@ class MarginManagementSystem:
 
         total_liabilities = financing_balance + short_balance
 
-        
+
 
         if total_liabilities > 0:
 
@@ -1306,13 +1306,13 @@ class MarginManagementSystem:
 
             ratio = np.inf
 
-        
+
 
         return ratio
 
-    
 
-    def check_margin_status(self, 
+
+    def check_margin_status(self,
 
                            maintenance_ratio: float) -> Dict:
 
@@ -1350,7 +1350,7 @@ class MarginManagementSystem:
 
             action = '立即补充保证金'
 
-        
+
 
         return {
 
@@ -1366,9 +1366,9 @@ class MarginManagementSystem:
 
         }
 
-    
 
-    def calculate_required_margin(self, 
+
+    def calculate_required_margin(self,
 
                                  cash: float,
 
@@ -1384,19 +1384,19 @@ class MarginManagementSystem:
 
         total_liabilities = financing_balance + short_balance
 
-        
+
 
         required_assets = total_liabilities * self.warning_line
 
         required_margin = required_assets - total_assets
 
-        
+
 
         return max(0, required_margin)
 
-    
 
-    def generate_margin_suggestions(self, 
+
+    def generate_margin_suggestions(self,
 
                                    maintenance_ratio: float,
 
@@ -1408,7 +1408,7 @@ class MarginManagementSystem:
 
         suggestions = []
 
-        
+
 
         if required_margin > 0:
 
@@ -1422,7 +1422,7 @@ class MarginManagementSystem:
 
             })
 
-            
+
 
             sellable_securities = [
 
@@ -1432,7 +1432,7 @@ class MarginManagementSystem:
 
             ]
 
-            
+
 
             if sellable_securities:
 
@@ -1444,7 +1444,7 @@ class MarginManagementSystem:
 
                 )
 
-                
+
 
                 top_security = sellable_securities[0]
 
@@ -1460,7 +1460,7 @@ class MarginManagementSystem:
 
                 })
 
-            
+
 
             suggestions.append({
 
@@ -1470,7 +1470,7 @@ class MarginManagementSystem:
 
             })
 
-        
+
 
         return {
 
@@ -1566,9 +1566,9 @@ class LeverageManagementInterface:
 
     """融资融券管理接口"""
 
-    
 
-    def calculate_target_leverage(self, 
+
+    def calculate_target_leverage(self,
 
                                   market_data: Dict,
 
@@ -1580,9 +1580,9 @@ class LeverageManagementInterface:
 
         pass
 
-    
 
-    def generate_leverage_adjustment(self, 
+
+    def generate_leverage_adjustment(self,
 
                                     current_state: LeverageState,
 
@@ -1592,9 +1592,9 @@ class LeverageManagementInterface:
 
         pass
 
-    
 
-    def check_margin_status(self, 
+
+    def check_margin_status(self,
 
                            portfolio: Dict) -> Dict:
 
@@ -1602,9 +1602,9 @@ class LeverageManagementInterface:
 
         pass
 
-    
 
-    def optimize_financing_cost(self, 
+
+    def optimize_financing_cost(self,
 
                                financing_amount: float,
 
@@ -1798,7 +1798,7 @@ class MarginableSecuritySelector:
 
     """融资融券标的筛选器"""
 
-    
+
 
     def __init__(self):
 
@@ -1816,9 +1816,9 @@ class MarginableSecuritySelector:
 
         }
 
-    
 
-    def filter_marginable_securities(self, 
+
+    def filter_marginable_securities(self,
 
                                     securities: List[Dict]) -> List[Dict]:
 
@@ -1826,7 +1826,7 @@ class MarginableSecuritySelector:
 
         marginable = []
 
-        
+
 
         for security in securities:
 
@@ -1834,11 +1834,11 @@ class MarginableSecuritySelector:
 
                 marginable.append(security)
 
-        
+
 
         return marginable
 
-    
+
 
     def _check_criteria(self, security: Dict) -> bool:
 
@@ -1870,13 +1870,13 @@ class QMTLeverageAPI:
 
     """QMT融资融券API接口"""
 
-    
+
 
     def __init__(self, qmt_client):
 
         self.qmt_client = qmt_client
 
-    
+
 
     def get_financing_balance(self) -> float:
 
@@ -1884,7 +1884,7 @@ class QMTLeverageAPI:
 
         pass
 
-    
+
 
     def get_short_balance(self) -> float:
 
@@ -1892,7 +1892,7 @@ class QMTLeverageAPI:
 
         pass
 
-    
+
 
     def get_maintenance_ratio(self) -> float:
 
@@ -1900,7 +1900,7 @@ class QMTLeverageAPI:
 
         pass
 
-    
+
 
     def adjust_financing(self, amount: float) -> Dict:
 
@@ -1908,7 +1908,7 @@ class QMTLeverageAPI:
 
         pass
 
-    
+
 
     def adjust_short(self, security_code: str, quantity: int) -> Dict:
 
@@ -2056,7 +2056,7 @@ class QMTLeverageAPI:
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
 **下一步**: 创建业绩归因系统蓝图
 
@@ -2125,4 +2125,3 @@ class QMTLeverageAPI:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

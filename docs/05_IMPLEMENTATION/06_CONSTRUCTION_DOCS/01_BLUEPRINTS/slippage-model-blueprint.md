@@ -29,7 +29,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：滑点建模、滑点预测、滑点优化
 
@@ -133,7 +133,7 @@ class SlippageModel:
 
     """滑点模型"""
 
-    
+
 
     def __init__(self, model_type='square_root'):
 
@@ -141,7 +141,7 @@ class SlippageModel:
 
         self.params = {}
 
-    
+
 
     def estimate_slippage(self, trade_size, adv, volatility, duration):
 
@@ -149,7 +149,7 @@ class SlippageModel:
 
         估算滑点
 
-        
+
 
         Parameters:
 
@@ -175,7 +175,7 @@ class SlippageModel:
 
         participation_rate = trade_size / adv
 
-        
+
 
         if self.model_type == 'linear':
 
@@ -189,11 +189,11 @@ class SlippageModel:
 
             slippage = self._adaptive_slippage(participation_rate, volatility, duration)
 
-        
+
 
         return slippage
 
-    
+
 
     def _adaptive_slippage(self, participation_rate, volatility, duration):
 
@@ -368,4 +368,3 @@ class SlippageOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

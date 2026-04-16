@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -521,7 +521,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -557,7 +557,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -1033,7 +1033,7 @@ class ReturnMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1051,7 +1051,7 @@ class ReturnMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1105,7 +1105,7 @@ class ReturnMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1135,7 +1135,7 @@ class ReturnMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1177,7 +1177,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1201,7 +1201,7 @@ class ReturnMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1237,7 +1237,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1255,7 +1255,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1267,7 +1267,7 @@ class ReturnMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1303,7 +1303,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1321,7 +1321,7 @@ class ReturnMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1351,7 +1351,7 @@ class ReturnMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1387,7 +1387,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1405,7 +1405,7 @@ class ReturnMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1435,7 +1435,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1477,7 +1477,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1519,7 +1519,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1561,7 +1561,7 @@ class ReturnMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1597,7 +1597,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1621,7 +1621,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1663,7 +1663,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1687,7 +1687,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1717,7 +1717,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1753,7 +1753,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1771,7 +1771,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1819,7 +1819,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1861,7 +1861,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1885,7 +1885,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -1933,7 +1933,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -1975,7 +1975,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -1999,7 +1999,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2029,7 +2029,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2071,7 +2071,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2095,7 +2095,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2131,7 +2131,7 @@ class RiskMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2167,7 +2167,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2185,7 +2185,7 @@ class RiskMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2215,7 +2215,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2257,7 +2257,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2299,7 +2299,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2341,7 +2341,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2383,7 +2383,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2425,7 +2425,7 @@ class RiskMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2461,7 +2461,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2485,7 +2485,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2527,7 +2527,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2551,7 +2551,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2599,7 +2599,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2641,7 +2641,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2665,7 +2665,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2701,7 +2701,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2719,7 +2719,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2731,7 +2731,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2749,7 +2749,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2761,7 +2761,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2803,7 +2803,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2827,7 +2827,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2863,7 +2863,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2881,7 +2881,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2893,7 +2893,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-    
+
 
 
 
@@ -2929,7 +2929,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -2947,7 +2947,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-            
+
 
 
 
@@ -2977,7 +2977,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -3019,7 +3019,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -3061,7 +3061,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -3103,7 +3103,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 
-        
+
 
 
 
@@ -3139,7 +3139,7 @@ class AttributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -3157,7 +3157,7 @@ class AttributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -3211,7 +3211,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3247,7 +3247,7 @@ class AttributionAnalyzer:
 
 
 
-            
+
 
 
 
@@ -3289,7 +3289,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3313,7 +3313,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3367,7 +3367,7 @@ class AttributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -3409,7 +3409,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3433,7 +3433,7 @@ class AttributionAnalyzer:
 
 
 
-            
+
 
 
 
@@ -3463,7 +3463,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3481,7 +3481,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3499,7 +3499,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3523,7 +3523,7 @@ class AttributionAnalyzer:
 
 
 
-        
+
 
 
 
@@ -3559,7 +3559,7 @@ class ReportGenerator:
 
 
 
-    
+
 
 
 
@@ -3577,7 +3577,7 @@ class ReportGenerator:
 
 
 
-    
+
 
 
 
@@ -3631,7 +3631,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3667,7 +3667,7 @@ class ReportGenerator:
 
 
 
-            
+
 
 
 
@@ -3697,7 +3697,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3709,7 +3709,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3721,7 +3721,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3787,7 +3787,7 @@ class ReportGenerator:
 
 
 
-    
+
 
 
 
@@ -3829,7 +3829,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3853,7 +3853,7 @@ class ReportGenerator:
 
 
 
-            
+
 
 
 
@@ -3883,7 +3883,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3937,7 +3937,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3979,7 +3979,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -3991,7 +3991,7 @@ class ReportGenerator:
 
 
 
-    
+
 
 
 
@@ -4033,7 +4033,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -4057,7 +4057,7 @@ class ReportGenerator:
 
 
 
-            
+
 
 
 
@@ -4141,7 +4141,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -4195,7 +4195,7 @@ class ReportGenerator:
 
 
 
-        
+
 
 
 
@@ -4231,7 +4231,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4249,7 +4249,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4309,7 +4309,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4321,7 +4321,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4369,7 +4369,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4399,7 +4399,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -4429,7 +4429,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4453,7 +4453,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4501,7 +4501,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -4543,7 +4543,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4579,7 +4579,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4591,7 +4591,7 @@ class PerformanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4633,7 +4633,7 @@ class PerformanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4657,7 +4657,7 @@ class PerformanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -5177,7 +5177,7 @@ def calculate_sharpe_ratio(
 
 
 
-    
+
 
 
 
@@ -5195,7 +5195,7 @@ def calculate_sharpe_ratio(
 
 
 
-    
+
 
 
 
@@ -5225,7 +5225,7 @@ def calculate_sharpe_ratio(
 
 
 
-    
+
 
 
 
@@ -5327,7 +5327,7 @@ def calculate_max_drawdown(
 
 
 
-    
+
 
 
 
@@ -5345,7 +5345,7 @@ def calculate_max_drawdown(
 
 
 
-    
+
 
 
 
@@ -5465,7 +5465,7 @@ def calculate_brinson_attribution(
 
 
 
-    
+
 
 
 
@@ -5483,7 +5483,7 @@ def calculate_brinson_attribution(
 
 
 
-    
+
 
 
 
@@ -5507,7 +5507,7 @@ def calculate_brinson_attribution(
 
 
 
-    
+
 
 
 
@@ -5543,7 +5543,7 @@ def calculate_brinson_attribution(
 
 
 
-    
+
 
 
 
@@ -5835,7 +5835,7 @@ def test_performance_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -5847,7 +5847,7 @@ def test_performance_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -5883,7 +5883,7 @@ def test_performance_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -5895,7 +5895,7 @@ def test_performance_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -6293,7 +6293,7 @@ performance_analyzer:
 
 
 
-  
+
 
 
 
@@ -6329,7 +6329,7 @@ performance_analyzer:
 
 
 
-    
+
 
 
 
@@ -6371,7 +6371,7 @@ performance_analyzer:
 
 
 
-    
+
 
 
 
@@ -6498,8 +6498,3 @@ performance_analyzer:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: AI报告层负责人
-
-
-
-
-

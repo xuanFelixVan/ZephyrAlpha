@@ -17,7 +17,7 @@
 
 输出:
   docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_LATEST.json
-  docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_LATEST.md
+  docs/09_AUDIT/STATE/index-health-orphan-latest.md
 """
 
 from __future__ import annotations
@@ -331,7 +331,7 @@ def main() -> int:
         md_lines.append(f"> 仅列出前 {args.max_list} 条，共 {len(zero_inbound)} 条，详见 JSON。")
     md_lines.append("")
 
-    md_path = out_dir / "INDEX_HEALTH_ORPHAN_LATEST.md"
+    md_path = out_dir / "index-health-orphan-latest.md"
     md_path.write_text("\n".join(md_lines), encoding="utf-8")
 
     print(f"Wrote: {json_path.relative_to(REPO)}")

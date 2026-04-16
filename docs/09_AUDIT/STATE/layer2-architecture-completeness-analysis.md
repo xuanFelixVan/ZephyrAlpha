@@ -237,7 +237,7 @@ from gplearn.genetic import SymbolicTransformer
 
 
 
-**个人使用建议**: 
+**个人使用建议**:
 
 - **首选**: gplearn（轻量级，易于集成）
 
@@ -305,7 +305,7 @@ import statsmodels.api as sm
 
 
 
-**个人使用建议**: 
+**个人使用建议**:
 
 - **必选**: scikit-learn + statsmodels（标准组合）
 
@@ -389,7 +389,7 @@ import cvxpy as cp
 
 
 
-**个人使用建议**: 
+**个人使用建议**:
 
 - **首选**: PyPortfolioOpt（易用性强）
 
@@ -467,7 +467,7 @@ import pyfolio as pf
 
 
 
-**个人使用建议**: 
+**个人使用建议**:
 
 - **首选**: skfolio（现代化设计）
 
@@ -545,7 +545,7 @@ import mlflow
 
 
 
-**个人使用建议**: 
+**个人使用建议**:
 
 - **首选**: DVC（轻量级，易用）
 
@@ -1329,7 +1329,7 @@ import dash
 
 
 
-**个人价值**: 
+**个人价值**:
 
 - ⭐⭐⭐⭐⭐ 因子研究能力
 
@@ -1348,4 +1348,3 @@ import dash
 
 
 **分析完成时间**: 2026-04-08 00:12:57
-

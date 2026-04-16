@@ -14,7 +14,7 @@ responsibility: CANON 受控正文索引
 
 # CANON 索引
 
-> **定位**：本目录为**施工门禁**与**蓝图阶段文档卫生总案**的受控真源；导航说明见 [CANON/README.md](./README.md)。  
+> **定位**：本目录为**施工门禁**与**蓝图阶段文档卫生总案**的受控真源；导航说明见 [CANON/README.md](./README.md)。
 > **防漂移**：正文增删时同步更新本索引与 [上级 INDEX.md](../INDEX.md) 的 CANON 小节。
 
 ## 文档列表（可点击）

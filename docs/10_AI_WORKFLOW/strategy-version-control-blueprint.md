@@ -452,7 +452,7 @@ class StrategyVersionControl:
 
         pass
 
-    
+
 
     def rollback(self, version: str) -> bool:
 
@@ -460,7 +460,7 @@ class StrategyVersionControl:
 
         pass
 
-    
+
 
     def get_history(self, limit: int = 10) -> List[VersionInfo]:
 
@@ -468,7 +468,7 @@ class StrategyVersionControl:
 
         pass
 
-    
+
 
     def compare_versions(self, v1: str, v2: str) -> DiffReport:
 
@@ -476,7 +476,7 @@ class StrategyVersionControl:
 
         pass
 
-    
+
 
     def create_branch(self, branch_name: str) -> bool:
 
@@ -635,4 +635,3 @@ class DiffReport(BaseModel):
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

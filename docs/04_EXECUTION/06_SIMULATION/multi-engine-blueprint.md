@@ -21,7 +21,7 @@ implementation_status: 设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -141,35 +141,35 @@ implementation_status: 设计阶段
 
 
 
-│ ┌─────────────────────────────────────────────────────────────────────  
+│ ┌─────────────────────────────────────────────────────────────────────
 
 
 
-│ ?                  统一接口适配器(UnifiedAdapter)                       
+│ ?                  统一接口适配器(UnifiedAdapter)
 
 
 
-│ ? ├── 引擎工厂 (EngineFactory)                                          
+│ ? ├── 引擎工厂 (EngineFactory)
 
 
 
-│ ? ├── 配置管理器(ConfigManager)                                        
+│ ? ├── 配置管理器(ConfigManager)
 
 
 
-│ ? ├── 性能监控器(PerformanceMonitor)                                   
+│ ? ├── 性能监控器(PerformanceMonitor)
 
 
 
-│ 
+│
 
 
 
-└── 错误处理器(ErrorHandler)                                         
+└── 错误处理器(ErrorHandler)
 
 
 
-│ └─────────────────────────────────────────────────────────────────────  
+│ └─────────────────────────────────────────────────────────────────────
 
 
 
@@ -385,7 +385,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -401,7 +401,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -417,7 +417,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -429,7 +429,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -465,7 +465,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -473,7 +473,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -493,7 +493,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -505,7 +505,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -517,7 +517,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -533,7 +533,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -545,7 +545,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -585,7 +585,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -605,7 +605,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -677,7 +677,7 @@ vnpy:
 
 
 
-  
+
 
 
 
@@ -701,7 +701,7 @@ vnpy:
 
 
 
-  
+
 
 
 
@@ -717,7 +717,7 @@ vnpy:
 
 
 
-  
+
 
 
 
@@ -805,7 +805,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -821,7 +821,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -837,7 +837,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -849,7 +849,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -957,7 +957,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1001,7 +1001,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1029,7 +1029,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1037,7 +1037,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1053,7 +1053,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1137,7 +1137,7 @@ rqalpha:
 
 
 
-  
+
 
 
 
@@ -1153,7 +1153,7 @@ rqalpha:
 
 
 
-  
+
 
 
 
@@ -1173,7 +1173,7 @@ rqalpha:
 
 
 
-  
+
 
 
 
@@ -1193,7 +1193,7 @@ rqalpha:
 
 
 
-  
+
 
 
 
@@ -1281,7 +1281,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1297,7 +1297,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1309,7 +1309,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1321,7 +1321,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1357,7 +1357,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1377,7 +1377,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1393,7 +1393,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1409,7 +1409,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1425,7 +1425,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1441,7 +1441,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1457,7 +1457,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1489,7 +1489,7 @@ class BacktraderAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1549,7 +1549,7 @@ backtrader:
 
 
 
-  
+
 
 
 
@@ -1569,7 +1569,7 @@ backtrader:
 
 
 
-  
+
 
 
 
@@ -1601,7 +1601,7 @@ backtrader:
 
 
 
-  
+
 
 
 
@@ -1629,7 +1629,7 @@ backtrader:
 
 
 
-  
+
 
 
 
@@ -1717,7 +1717,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1733,7 +1733,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1749,7 +1749,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1761,7 +1761,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1789,7 +1789,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1801,7 +1801,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1813,7 +1813,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1833,7 +1833,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1845,7 +1845,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1857,7 +1857,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1909,7 +1909,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1929,7 +1929,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1949,7 +1949,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-    
+
 
 
 
@@ -1969,7 +1969,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -1993,7 +1993,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
 
 
 
-        
+
 
 
 
@@ -2041,7 +2041,7 @@ qmt:
 
 
 
-  
+
 
 
 
@@ -2057,7 +2057,7 @@ qmt:
 
 
 
-  
+
 
 
 
@@ -2081,7 +2081,7 @@ qmt:
 
 
 
-  
+
 
 
 
@@ -2097,7 +2097,7 @@ qmt:
 
 
 
-  
+
 
 
 
@@ -2461,7 +2461,7 @@ class UnifiedOrder:
 
 
 
-    
+
 
 
 
@@ -2481,7 +2481,7 @@ class UnifiedOrder:
 
 
 
-    
+
 
 
 
@@ -2545,7 +2545,7 @@ class UnifiedPosition:
 
 
 
-    
+
 
 
 
@@ -2593,7 +2593,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2613,7 +2613,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2633,7 +2633,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2653,7 +2653,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2673,7 +2673,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2693,7 +2693,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2713,7 +2713,7 @@ class BaseEngineAdapter(ABC):
 
 
 
-    
+
 
 
 
@@ -2761,7 +2761,7 @@ class EngineFactory:
 
 
 
-    
+
 
 
 
@@ -2797,7 +2797,7 @@ class EngineFactory:
 
 
 
-    
+
 
 
 
@@ -2821,7 +2821,7 @@ class EngineFactory:
 
 
 
-        
+
 
 
 
@@ -2833,7 +2833,7 @@ class EngineFactory:
 
 
 
-    
+
 
 
 
@@ -2861,7 +2861,7 @@ class EngineFactory:
 
 
 
-        
+
 
 
 
@@ -2897,7 +2897,7 @@ class MultiEngine:
 
 
 
-    
+
 
 
 
@@ -2917,7 +2917,7 @@ class MultiEngine:
 
 
 
-        
+
 
 
 
@@ -2929,7 +2929,7 @@ class MultiEngine:
 
 
 
-    
+
 
 
 
@@ -2949,7 +2949,7 @@ class MultiEngine:
 
 
 
-        
+
 
 
 
@@ -2957,7 +2957,7 @@ class MultiEngine:
 
 
 
-        
+
 
 
 
@@ -2969,7 +2969,7 @@ class MultiEngine:
 
 
 
-            engine for name, engine in self.engines.items() 
+            engine for name, engine in self.engines.items()
 
 
 
@@ -2981,7 +2981,7 @@ class MultiEngine:
 
 
 
-    
+
 
 
 
@@ -3009,7 +3009,7 @@ class MultiEngine:
 
 
 
-            
+
 
 
 
@@ -3037,7 +3037,7 @@ class MultiEngine:
 
 
 
-            
+
 
 
 
@@ -3045,7 +3045,7 @@ class MultiEngine:
 
 
 
-    
+
 
 
 
@@ -3085,7 +3085,7 @@ class MultiEngine:
 
 
 
-        
+
 
 
 
@@ -3217,7 +3217,7 @@ engine_routing:
 
 
 
-  
+
 
 
 
@@ -3241,7 +3241,7 @@ engine_routing:
 
 
 
-  
+
 
 
 
@@ -3265,7 +3265,7 @@ engine_routing:
 
 
 
-  
+
 
 
 
@@ -3293,7 +3293,7 @@ engine_routing:
 
 
 
-  
+
 
 
 
@@ -3357,7 +3357,7 @@ class EngineMonitor:
 
 
 
-    
+
 
 
 
@@ -3389,7 +3389,7 @@ class EngineMonitor:
 
 
 
-    
+
 
 
 
@@ -3405,7 +3405,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3425,7 +3425,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3445,7 +3445,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3465,7 +3465,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3477,11 +3477,11 @@ class EngineMonitor:
 
 
 
-            health.latency_ok and 
+            health.latency_ok and
 
 
 
-            health.error_rate_ok and 
+            health.error_rate_ok and
 
 
 
@@ -3493,7 +3493,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3501,7 +3501,7 @@ class EngineMonitor:
 
 
 
-    
+
 
 
 
@@ -3517,7 +3517,7 @@ class EngineMonitor:
 
 
 
-        
+
 
 
 
@@ -3789,7 +3789,7 @@ class BenchmarkStrategy:
 
 
 
-    
+
 
 
 
@@ -3805,7 +3805,7 @@ class BenchmarkStrategy:
 
 
 
-        
+
 
 
 
@@ -3825,7 +3825,7 @@ class BenchmarkStrategy:
 
 
 
-            
+
 
 
 
@@ -3849,7 +3849,7 @@ class BenchmarkStrategy:
 
 
 
-        
+
 
 
 
@@ -3953,7 +3953,7 @@ test_cases:
 
 
 
-  
+
 
 
 
@@ -3985,7 +3985,7 @@ test_cases:
 
 
 
-  
+
 
 
 
@@ -4089,7 +4089,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4117,7 +4117,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4129,7 +4129,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4141,7 +4141,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4153,7 +4153,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4165,7 +4165,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4177,7 +4177,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4189,7 +4189,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4217,7 +4217,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4257,7 +4257,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4273,7 +4273,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4289,7 +4289,7 @@ class DailyRebalancer:
 
 
 
-            
+
 
 
 
@@ -4305,7 +4305,7 @@ class DailyRebalancer:
 
 
 
-            
+
 
 
 
@@ -4349,7 +4349,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4357,7 +4357,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4377,7 +4377,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4389,7 +4389,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4401,7 +4401,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4409,7 +4409,7 @@ class DailyRebalancer:
 
 
 
-    
+
 
 
 
@@ -4425,7 +4425,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4445,7 +4445,7 @@ class DailyRebalancer:
 
 
 
-            
+
 
 
 
@@ -4469,7 +4469,7 @@ class DailyRebalancer:
 
 
 
-            
+
 
 
 
@@ -4477,7 +4477,7 @@ class DailyRebalancer:
 
 
 
-            
+
 
 
 
@@ -4489,7 +4489,7 @@ class DailyRebalancer:
 
 
 
-        
+
 
 
 
@@ -4541,7 +4541,7 @@ daily_rebalancer:
 
 
 
-  
+
 
 
 
@@ -4565,7 +4565,7 @@ daily_rebalancer:
 
 
 
-  
+
 
 
 
@@ -4585,7 +4585,7 @@ daily_rebalancer:
 
 
 
-  
+
 
 
 
@@ -4605,7 +4605,7 @@ daily_rebalancer:
 
 
 
-  
+
 
 
 
@@ -4697,7 +4697,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -4709,7 +4709,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4721,7 +4721,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4733,7 +4733,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4745,7 +4745,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4757,7 +4757,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4769,7 +4769,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4777,7 +4777,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4817,7 +4817,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -4833,7 +4833,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4849,7 +4849,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4861,7 +4861,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4877,7 +4877,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4885,7 +4885,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -4905,7 +4905,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4917,7 +4917,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4925,7 +4925,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -4949,7 +4949,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4957,7 +4957,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -4977,7 +4977,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -4989,7 +4989,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -5021,7 +5021,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -5029,7 +5029,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -5037,7 +5037,7 @@ class CostCalculator:
 
 
 
-    
+
 
 
 
@@ -5077,7 +5077,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -5085,7 +5085,7 @@ class CostCalculator:
 
 
 
-        
+
 
 
 
@@ -5137,7 +5137,7 @@ cost_model:
 
 
 
-  
+
 
 
 
@@ -5153,7 +5153,7 @@ cost_model:
 
 
 
-  
+
 
 
 
@@ -5181,7 +5181,7 @@ cost_model:
 
 
 
-    
+
 
 
 
@@ -5205,7 +5205,7 @@ cost_model:
 
 
 
-    
+
 
 
 
@@ -5333,7 +5333,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -5361,7 +5361,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5373,7 +5373,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -5425,7 +5425,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -5441,7 +5441,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -5449,7 +5449,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -5461,7 +5461,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5473,7 +5473,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5485,7 +5485,7 @@ class AccountManager:
 
 
 
-            target_allocation, 
+            target_allocation,
 
 
 
@@ -5497,7 +5497,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5545,7 +5545,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5557,7 +5557,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5581,7 +5581,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -5593,7 +5593,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5601,7 +5601,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5613,7 +5613,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5629,7 +5629,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -5641,7 +5641,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -5657,7 +5657,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -5677,7 +5677,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5689,7 +5689,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5701,7 +5701,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5725,7 +5725,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -5745,7 +5745,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5765,7 +5765,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5777,7 +5777,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5789,7 +5789,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -5865,7 +5865,7 @@ account_manager:
 
 
 
-    
+
 
 
 
@@ -5913,7 +5913,7 @@ account_manager:
 
 
 
-      
+
 
 
 
@@ -5953,7 +5953,7 @@ account_manager:
 
 
 
-      
+
 
 
 
@@ -6001,7 +6001,7 @@ account_manager:
 
 
 
-      
+
 
 
 
@@ -6021,7 +6021,7 @@ account_manager:
 
 
 
-  
+
 
 
 
@@ -6045,7 +6045,7 @@ account_manager:
 
 
 
-    
+
 
 
 
@@ -6265,7 +6265,7 @@ class QuantStatsReporter:
 
 
 
-        
+
 
 
 
@@ -6477,7 +6477,7 @@ class AShareMatchingEngine:
 
 
 
-        
+
 
 
 
@@ -6497,7 +6497,7 @@ class AShareMatchingEngine:
 
 
 
-            
+
 
 
 
@@ -6509,7 +6509,7 @@ class AShareMatchingEngine:
 
 
 
-            
+
 
 
 
@@ -6601,7 +6601,7 @@ class TradingSaga:
 
 
 
-        
+
 
 
 
@@ -6621,7 +6621,7 @@ class TradingSaga:
 
 
 
-            
+
 
 
 
@@ -6633,7 +6633,7 @@ class TradingSaga:
 
 
 
-            
+
 
 
 
@@ -6645,7 +6645,7 @@ class TradingSaga:
 
 
 
-            
+
 
 
 
@@ -6661,7 +6661,7 @@ class TradingSaga:
 
 
 
-            
+
 
 
 
@@ -6793,7 +6793,7 @@ security = HTTPBearer()
 
 
 
-@app.get("/api/v1/positions", 
+@app.get("/api/v1/positions",
 
 
 
@@ -6901,7 +6901,7 @@ services:
 
 
 
-  
+
 
 
 
@@ -6941,7 +6941,7 @@ services:
 
 
 
-    
+
 
 
 
@@ -7313,7 +7313,7 @@ services:
 
 
 
-   
+
 
 
 
@@ -7321,7 +7321,7 @@ services:
 
 
 
-   
+
 
 
 
@@ -7349,7 +7349,7 @@ services:
 
 
 
-   
+
 
 
 
@@ -7361,7 +7361,7 @@ services:
 
 
 
-   
+
 
 
 
@@ -7429,7 +7429,7 @@ class EnhancedEngineFactory:
 
 
 
-    
+
 
 
 
@@ -7633,7 +7633,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -7653,7 +7653,7 @@ class PortfolioOptimizer:
 
 
 
-            
+
 
 
 
@@ -8501,15 +8501,15 @@ ffn>=0.3.0
 
 
 
-**维护者**: 清风量化系统  
+**维护者**: 清风量化系统
 
 
 
-**索引**: `SIM_002`  
+**索引**: `SIM_002`
 
 
 
-**关联文档**: BLUEPRINT.md, README.md  
+**关联文档**: BLUEPRINT.md, README.md
 
 
 
@@ -8642,6 +8642,3 @@ ffn>=0.3.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
-
-
-

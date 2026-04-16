@@ -20,7 +20,7 @@ responsibility:
 
 
 
-> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「宏观因子系统」；替代原 LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md 中仅挂 **EXTENDED_OPTIMIZATION** 的弱匹配。  
+> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「宏观因子系统」；替代原 LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md 中仅挂 **EXTENDED_OPTIMIZATION** 的弱匹配。
 
 > **相关（中观/状态）**：ECONOMIC_REGIME_ENGINE_BLUEPRINT.md、MARKET_REGIME_DETECTION_BLUEPRINT.md
 
@@ -30,7 +30,7 @@ responsibility:
 
 
 
-- **负责**：宏观因子库（增长、通胀、利率、信用、汇率等代理）、标准化与发布频率、组合暴露监控、进入战略配置与风险预算的约束。  
+- **负责**：宏观因子库（增长、通胀、利率、信用、汇率等代理）、标准化与发布频率、组合暴露监控、进入战略配置与风险预算的约束。
 
 - **不负责**：单券基本面因子（Layer 2）；纯技术优化模块细节见 EXTENDED_OPTIMIZATION_MODULES_BLUEPRINT.md。
 
@@ -92,9 +92,6 @@ responsibility:
 
 
 
-- STRATEGIC_DECISION_LAYER_BLUEPRINT.md  
+- STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 
-- RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md  
-
-
-
+- RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md

@@ -60,7 +60,7 @@ open_source_solution: tcapy
 
 > **核心职责**: 交易成本分析系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：交易成本分析系统蓝图设计相关内容
 
@@ -70,7 +70,7 @@ open_source_solution: tcapy
 
 > **核心职责**: Tca蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Tca蓝图设计相关内容
 
@@ -144,11 +144,11 @@ open_source_solution: tcapy
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 2周（集成tcapy）  
+> **实施周期**: 2周（集成tcapy）
 
 > **目标**: 构建专业级交易成本分析体系，实现交易执行质量评估和成本优化
 
@@ -470,15 +470,15 @@ class SlippageAnalysisEngine:
 
     """滑点分析引擎"""
 
-    
+
 
     def __init__(self):
 
         self.bps_multiplier = 10000  # 基点乘数
 
-        
 
-    def analyze_slippage(self, 
+
+    def analyze_slippage(self,
 
                         trade_data: Dict,
 
@@ -488,11 +488,11 @@ class SlippageAnalysisEngine:
 
         """分析滑点"""
 
-        
+
 
         actual_price = trade_data['execution_price']
 
-        
+
 
         theoretical_price = self._calculate_theoretical_price(
 
@@ -504,11 +504,11 @@ class SlippageAnalysisEngine:
 
         )
 
-        
+
 
         total_slippage = actual_price - theoretical_price
 
-        
+
 
         market_impact = self._calculate_market_impact(
 
@@ -518,7 +518,7 @@ class SlippageAnalysisEngine:
 
         )
 
-        
+
 
         timing_cost = self._calculate_timing_cost(
 
@@ -530,7 +530,7 @@ class SlippageAnalysisEngine:
 
         )
 
-        
+
 
         spread_cost = self._calculate_spread_cost(
 
@@ -540,11 +540,11 @@ class SlippageAnalysisEngine:
 
         )
 
-        
+
 
         slippage_bps = (total_slippage / theoretical_price) * self.bps_multiplier
 
-        
+
 
         return SlippageResult(
 
@@ -568,9 +568,9 @@ class SlippageAnalysisEngine:
 
         )
 
-    
 
-    def _calculate_theoretical_price(self, 
+
+    def _calculate_theoretical_price(self,
 
                                     trade_data: Dict,
 
@@ -584,17 +584,17 @@ class SlippageAnalysisEngine:
 
         order_time = order_data['order_time']
 
-        
+
 
         arrival_price = market_data.loc[order_time, 'mid_price']
 
-        
+
 
         return arrival_price
 
-    
 
-    def _calculate_market_impact(self, 
+
+    def _calculate_market_impact(self,
 
                                 trade_data: Dict,
 
@@ -606,23 +606,23 @@ class SlippageAnalysisEngine:
 
         trade_size = trade_data['quantity']
 
-        
+
 
         pre_trade_price = market_data.loc[trade_time - timedelta(seconds=5), 'mid_price']
 
         post_trade_price = market_data.loc[trade_time + timedelta(seconds=5), 'mid_price']
 
-        
+
 
         impact = (post_trade_price - pre_trade_price) / pre_trade_price
 
-        
+
 
         return impact * trade_data['execution_price']
 
-    
 
-    def _calculate_timing_cost(self, 
+
+    def _calculate_timing_cost(self,
 
                               trade_data: Dict,
 
@@ -636,23 +636,23 @@ class SlippageAnalysisEngine:
 
         trade_time = trade_data['execution_time']
 
-        
+
 
         order_price = market_data.loc[order_time, 'mid_price']
 
         trade_price = market_data.loc[trade_time, 'mid_price']
 
-        
+
 
         timing_cost = (trade_price - order_price) / order_price
 
-        
+
 
         return timing_cost * trade_data['execution_price']
 
-    
 
-    def _calculate_spread_cost(self, 
+
+    def _calculate_spread_cost(self,
 
                               trade_data: Dict,
 
@@ -662,25 +662,25 @@ class SlippageAnalysisEngine:
 
         trade_time = trade_data['execution_time']
 
-        
+
 
         bid = market_data.loc[trade_time, 'bid_price']
 
         ask = market_data.loc[trade_time, 'ask_price']
 
-        
+
 
         spread = ask - bid
 
         half_spread = spread / 2
 
-        
+
 
         return half_spread
 
-    
 
-    def analyze_slippage_distribution(self, 
+
+    def analyze_slippage_distribution(self,
 
                                      trades: List[SlippageResult]) -> Dict:
 
@@ -688,7 +688,7 @@ class SlippageAnalysisEngine:
 
         slippages = [t.slippage_bps for t in trades]
 
-        
+
 
         return {
 
@@ -804,7 +804,7 @@ class MarketImpactEngine:
 
     """市场冲击分析引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -820,9 +820,9 @@ class MarketImpactEngine:
 
         }
 
-        
 
-    def analyze_impact(self, 
+
+    def analyze_impact(self,
 
                       trade_data: Dict,
 
@@ -832,7 +832,7 @@ class MarketImpactEngine:
 
         """分析市场冲击"""
 
-        
+
 
         trade_size = trade_data['quantity']
 
@@ -840,11 +840,11 @@ class MarketImpactEngine:
 
         volatility = self._calculate_volatility(market_data, lookback_days)
 
-        
+
 
         participation_rate = trade_size / adv
 
-        
+
 
         temporary_impact = self._calculate_temporary_impact(
 
@@ -852,7 +852,7 @@ class MarketImpactEngine:
 
         )
 
-        
+
 
         permanent_impact = self._calculate_permanent_impact(
 
@@ -860,15 +860,15 @@ class MarketImpactEngine:
 
         )
 
-        
+
 
         total_impact = temporary_impact + permanent_impact
 
-        
+
 
         impact_bps = (total_impact / trade_data['execution_price']) * 10000
 
-        
+
 
         decay_half_life = self._estimate_decay_half_life(
 
@@ -878,7 +878,7 @@ class MarketImpactEngine:
 
         )
 
-        
+
 
         return MarketImpactResult(
 
@@ -904,9 +904,9 @@ class MarketImpactEngine:
 
         )
 
-    
 
-    def _calculate_adv(self, 
+
+    def _calculate_adv(self,
 
                       market_data: pd.DataFrame,
 
@@ -918,9 +918,9 @@ class MarketImpactEngine:
 
         return volumes.mean()
 
-    
 
-    def _calculate_volatility(self, 
+
+    def _calculate_volatility(self,
 
                              market_data: pd.DataFrame,
 
@@ -932,9 +932,9 @@ class MarketImpactEngine:
 
         return returns.std() * np.sqrt(252)
 
-    
 
-    def _calculate_temporary_impact(self, 
+
+    def _calculate_temporary_impact(self,
 
                                    trade_size: float,
 
@@ -948,17 +948,17 @@ class MarketImpactEngine:
 
         beta = self.model_params['beta']
 
-        
+
 
         participation = trade_size / adv
 
-        
+
 
         return alpha * (participation ** beta) * volatility
 
-    
 
-    def _calculate_permanent_impact(self, 
+
+    def _calculate_permanent_impact(self,
 
                                    trade_size: float,
 
@@ -972,17 +972,17 @@ class MarketImpactEngine:
 
         delta = self.model_params['delta']
 
-        
+
 
         participation = trade_size / adv
 
-        
+
 
         return gamma * (participation ** delta) * volatility
 
-    
 
-    def _estimate_decay_half_life(self, 
+
+    def _estimate_decay_half_life(self,
 
                                  trade_data: Dict,
 
@@ -992,9 +992,9 @@ class MarketImpactEngine:
 
         return 15.0  # 默认15分钟
 
-    
 
-    def fit_impact_model(self, 
+
+    def fit_impact_model(self,
 
                         historical_trades: List[Dict],
 
@@ -1004,13 +1004,13 @@ class MarketImpactEngine:
 
         from scipy.optimize import minimize
 
-        
+
 
         def objective(params):
 
             alpha, beta, gamma, delta = params
 
-            
+
 
             total_error = 0
 
@@ -1024,27 +1024,27 @@ class MarketImpactEngine:
 
                 ) * trade['volatility']
 
-                
+
 
                 actual_impact = trade['actual_impact']
 
-                
+
 
                 total_error += (predicted_impact - actual_impact) ** 2
 
-            
+
 
             return total_error
 
-        
+
 
         initial_params = [0.142, 0.5, 0.089, 0.5]
 
-        
+
 
         result = minimize(objective, initial_params, method='L-BFGS-B')
 
-        
+
 
         return {
 
@@ -1150,15 +1150,15 @@ class ExecutionBenchmarkSystem:
 
     """执行基准系统"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
 
-    def calculate_benchmarks(self, 
+
+    def calculate_benchmarks(self,
 
                            order_data: Dict,
 
@@ -1168,31 +1168,31 @@ class ExecutionBenchmarkSystem:
 
         """计算执行基准"""
 
-        
+
 
         vwap = self._calculate_vwap(market_data, order_data)
 
-        
+
 
         twap = self._calculate_twap(market_data, order_data)
 
-        
+
 
         arrival_price = self._calculate_arrival_price(market_data, order_data)
 
-        
+
 
         execution_price = self._calculate_execution_price(trade_data)
 
-        
+
 
         vwap_slippage = (execution_price - vwap) / vwap * 10000
 
-        
+
 
         twap_slippage = (execution_price - twap) / twap * 10000
 
-        
+
 
         is_cost = self._calculate_implementation_shortfall(
 
@@ -1204,7 +1204,7 @@ class ExecutionBenchmarkSystem:
 
         )
 
-        
+
 
         return BenchmarkResult(
 
@@ -1228,9 +1228,9 @@ class ExecutionBenchmarkSystem:
 
         )
 
-    
 
-    def _calculate_vwap(self, 
+
+    def _calculate_vwap(self,
 
                        market_data: pd.DataFrame,
 
@@ -1242,21 +1242,21 @@ class ExecutionBenchmarkSystem:
 
         end_time = order_data['end_time']
 
-        
+
 
         period_data = market_data.loc[start_time:end_time]
 
-        
+
 
         vwap = (period_data['close'] * period_data['volume']).sum() / period_data['volume'].sum()
 
-        
+
 
         return vwap
 
-    
 
-    def _calculate_twap(self, 
+
+    def _calculate_twap(self,
 
                        market_data: pd.DataFrame,
 
@@ -1268,21 +1268,21 @@ class ExecutionBenchmarkSystem:
 
         end_time = order_data['end_time']
 
-        
+
 
         period_data = market_data.loc[start_time:end_time]
 
-        
+
 
         twap = period_data['close'].mean()
 
-        
+
 
         return twap
 
-    
 
-    def _calculate_arrival_price(self, 
+
+    def _calculate_arrival_price(self,
 
                                 market_data: pd.DataFrame,
 
@@ -1292,19 +1292,19 @@ class ExecutionBenchmarkSystem:
 
         order_time = order_data['order_time']
 
-        
+
 
         bid = market_data.loc[order_time, 'bid']
 
         ask = market_data.loc[order_time, 'ask']
 
-        
+
 
         return (bid + ask) / 2
 
-    
 
-    def _calculate_execution_price(self, 
+
+    def _calculate_execution_price(self,
 
                                   trade_data: List[Dict]) -> float:
 
@@ -1314,13 +1314,13 @@ class ExecutionBenchmarkSystem:
 
         total_quantity = sum(t['quantity'] for t in trade_data)
 
-        
+
 
         return total_value / total_quantity
 
-    
 
-    def _calculate_implementation_shortfall(self, 
+
+    def _calculate_implementation_shortfall(self,
 
                                            execution_price: float,
 
@@ -1332,9 +1332,9 @@ class ExecutionBenchmarkSystem:
 
         return (execution_price - arrival_price) * quantity
 
-    
 
-    def compare_to_benchmark(self, 
+
+    def compare_to_benchmark(self,
 
                             result: BenchmarkResult,
 
@@ -1360,7 +1360,7 @@ class ExecutionBenchmarkSystem:
 
             slippage = result.is_cost
 
-        
+
 
         return {
 
@@ -1468,7 +1468,7 @@ class ExecutionQualityEvaluator:
 
     """执行质量评估系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1482,15 +1482,15 @@ class ExecutionQualityEvaluator:
 
         }
 
-        
+
 
         self.max_acceptable_slippage = 50  # 最大可接受滑点50bps
 
         self.max_execution_time = 3600     # 最大执行时间1小时
 
-        
 
-    def evaluate_broker(self, 
+
+    def evaluate_broker(self,
 
                        broker_id: str,
 
@@ -1500,33 +1500,33 @@ class ExecutionQualityEvaluator:
 
         """评估经纪商"""
 
-        
+
 
         total_trades = len(trades)
 
         total_volume = sum(t['quantity'] for t in trades)
 
-        
+
 
         avg_slippage_bps = np.mean([b.vwap_slippage for b in benchmarks])
 
-        
+
 
         fill_rate = self._calculate_fill_rate(trades)
 
-        
+
 
         avg_execution_time = self._calculate_avg_execution_time(trades)
 
-        
+
 
         cost_score = self._calculate_cost_score(avg_slippage_bps)
 
-        
+
 
         speed_score = self._calculate_speed_score(avg_execution_time)
 
-        
+
 
         overall_score = (
 
@@ -1538,7 +1538,7 @@ class ExecutionQualityEvaluator:
 
         )
 
-        
+
 
         return ExecutionQualityResult(
 
@@ -1566,7 +1566,7 @@ class ExecutionQualityEvaluator:
 
         )
 
-    
+
 
     def _calculate_fill_rate(self, trades: List[Dict]) -> float:
 
@@ -1576,11 +1576,11 @@ class ExecutionQualityEvaluator:
 
         ordered = sum(t['ordered_quantity'] for t in trades)
 
-        
+
 
         return filled / ordered if ordered > 0 else 0.0
 
-    
+
 
     def _calculate_avg_execution_time(self, trades: List[Dict]) -> float:
 
@@ -1594,11 +1594,11 @@ class ExecutionQualityEvaluator:
 
         ]
 
-        
+
 
         return np.mean(execution_times) if execution_times else 0.0
 
-    
+
 
     def _calculate_cost_score(self, avg_slippage_bps: float) -> float:
 
@@ -1608,7 +1608,7 @@ class ExecutionQualityEvaluator:
 
         return max(0, min(100, score))
 
-    
+
 
     def _calculate_speed_score(self, avg_execution_time: float) -> float:
 
@@ -1618,9 +1618,9 @@ class ExecutionQualityEvaluator:
 
         return max(0, min(100, score))
 
-    
 
-    def rank_brokers(self, 
+
+    def rank_brokers(self,
 
                     broker_results: List[ExecutionQualityResult]) -> List[ExecutionQualityResult]:
 
@@ -1636,19 +1636,19 @@ class ExecutionQualityEvaluator:
 
         )
 
-        
+
 
         for i, result in enumerate(sorted_results):
 
             result.ranking = i + 1
 
-        
+
 
         return sorted_results
 
-    
 
-    def generate_optimization_suggestions(self, 
+
+    def generate_optimization_suggestions(self,
 
                                          result: ExecutionQualityResult) -> List[Dict]:
 
@@ -1656,7 +1656,7 @@ class ExecutionQualityEvaluator:
 
         suggestions = []
 
-        
+
 
         if result.avg_slippage_bps > 20:
 
@@ -1672,7 +1672,7 @@ class ExecutionQualityEvaluator:
 
             })
 
-        
+
 
         if result.fill_rate < 0.95:
 
@@ -1688,7 +1688,7 @@ class ExecutionQualityEvaluator:
 
             })
 
-        
+
 
         if result.avg_execution_time > 1800:
 
@@ -1704,7 +1704,7 @@ class ExecutionQualityEvaluator:
 
             })
 
-        
+
 
         return suggestions
 
@@ -1766,9 +1766,9 @@ class TCAPyIntegration:
 
     """tcapy集成接口"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  market_data_db: str = 'arctic',
 
@@ -1782,9 +1782,9 @@ class TCAPyIntegration:
 
         )
 
-        
 
-    def analyze_trades(self, 
+
+    def analyze_trades(self,
 
                       trade_df: pd.DataFrame,
 
@@ -1798,7 +1798,7 @@ class TCAPyIntegration:
 
         """分析交易成本"""
 
-        
+
 
         results = self.tca.calculate_tca(
 
@@ -1814,7 +1814,7 @@ class TCAPyIntegration:
 
         )
 
-        
+
 
         return {
 
@@ -1832,9 +1832,9 @@ class TCAPyIntegration:
 
         }
 
-    
 
-    def generate_tca_report(self, 
+
+    def generate_tca_report(self,
 
                            results: Dict,
 
@@ -1842,7 +1842,7 @@ class TCAPyIntegration:
 
         """生成TCA报告"""
 
-        
+
 
         report = self.tca.generate_report(
 
@@ -1852,19 +1852,19 @@ class TCAPyIntegration:
 
         )
 
-        
+
 
         return report
 
-    
 
-    def compare_brokers(self, 
+
+    def compare_brokers(self,
 
                        broker_trades: Dict[str, pd.DataFrame]) -> pd.DataFrame:
 
         """比较经纪商执行质量"""
 
-        
+
 
         comparison = self.tca.compare_brokers(
 
@@ -1872,7 +1872,7 @@ class TCAPyIntegration:
 
         )
 
-        
+
 
         return comparison
 
@@ -1976,9 +1976,9 @@ class TCAInterface:
 
     """TCA接口"""
 
-    
 
-    def analyze_trade_cost(self, 
+
+    def analyze_trade_cost(self,
 
                           trade_data: Dict,
 
@@ -1988,9 +1988,9 @@ class TCAInterface:
 
         pass
 
-    
 
-    def generate_tca_report(self, 
+
+    def generate_tca_report(self,
 
                            result: TCAReport,
 
@@ -2000,9 +2000,9 @@ class TCAInterface:
 
         pass
 
-    
 
-    def compare_execution_quality(self, 
+
+    def compare_execution_quality(self,
 
                                  broker_ids: List[str],
 
@@ -2178,9 +2178,9 @@ class LimitUpDownTCA:
 
     """涨跌停板TCA分析"""
 
-    
 
-    def analyze_limit_impact(self, 
+
+    def analyze_limit_impact(self,
 
                             trade_data: Dict,
 
@@ -2188,13 +2188,13 @@ class LimitUpDownTCA:
 
         """分析涨跌停对交易成本的影响"""
 
-        
+
 
         limit_price = trade_data['limit_price']
 
         execution_price = trade_data['execution_price']
 
-        
+
 
         if abs(execution_price - limit_price) / limit_price < 0.001:
 
@@ -2208,7 +2208,7 @@ class LimitUpDownTCA:
 
             }
 
-        
+
 
         return {
 
@@ -2232,9 +2232,9 @@ class CallAuctionTCA:
 
     """集合竞价TCA分析"""
 
-    
 
-    def analyze_auction_cost(self, 
+
+    def analyze_auction_cost(self,
 
                             trade_data: Dict,
 
@@ -2242,17 +2242,17 @@ class CallAuctionTCA:
 
         """分析集合竞价成本"""
 
-        
+
 
         auction_price = auction_data['auction_price']
 
         continuous_price = auction_data['continuous_price']
 
-        
+
 
         auction_slippage = (trade_data['execution_price'] - auction_price) / auction_price
 
-        
+
 
         return {
 
@@ -2404,9 +2404,9 @@ class CallAuctionTCA:
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
-**开源方案**: tcapy  
+**开源方案**: tcapy
 
 **下一步**: 创建再平衡决策系统蓝图
 
@@ -2475,4 +2475,3 @@ class CallAuctionTCA:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

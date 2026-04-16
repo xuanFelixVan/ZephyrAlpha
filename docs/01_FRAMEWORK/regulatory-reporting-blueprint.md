@@ -688,7 +688,7 @@ class TradeDataCollector:
 
 
 
-    
+
 
 
 
@@ -700,7 +700,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -724,7 +724,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -732,7 +732,7 @@ class TradeDataCollector:
 
 
 
-            SELECT * FROM trades 
+            SELECT * FROM trades
 
 
 
@@ -748,7 +748,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -756,7 +756,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -812,7 +812,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -820,7 +820,7 @@ class TradeDataCollector:
 
 
 
-    
+
 
 
 
@@ -844,7 +844,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -852,7 +852,7 @@ class TradeDataCollector:
 
 
 
-            SELECT * FROM positions 
+            SELECT * FROM positions
 
 
 
@@ -864,7 +864,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -872,7 +872,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -908,7 +908,7 @@ class TradeDataCollector:
 
 
 
-        
+
 
 
 
@@ -1010,7 +1010,7 @@ class TradeReportGenerator:
 
 
 
-    
+
 
 
 
@@ -1022,7 +1022,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1054,7 +1054,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1062,7 +1062,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1070,7 +1070,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1094,7 +1094,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1102,7 +1102,7 @@ class TradeReportGenerator:
 
 
 
-    
+
 
 
 
@@ -1126,7 +1126,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1142,7 +1142,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1154,7 +1154,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1166,7 +1166,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1210,7 +1210,7 @@ class TradeReportGenerator:
 
 
 
-    
+
 
 
 
@@ -1238,7 +1238,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1246,7 +1246,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1298,7 +1298,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1338,7 +1338,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1346,7 +1346,7 @@ class TradeReportGenerator:
 
 
 
-    
+
 
 
 
@@ -1378,7 +1378,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1534,7 +1534,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -1566,7 +1566,7 @@ class TradeReportGenerator:
 
 
 
-        
+
 
 
 
@@ -2201,6 +2201,3 @@ class ReportTemplate:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
-

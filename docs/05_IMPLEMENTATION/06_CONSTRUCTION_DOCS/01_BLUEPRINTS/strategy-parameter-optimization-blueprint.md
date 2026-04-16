@@ -21,15 +21,15 @@ layer: layer_05
 
 > **核心职责**: 提供策略参数的自动优化能力，支持超参数调优、参数搜索和参数验证
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：策略参数优化、超参数调优、参数搜索、参数验证
 
 > - ❌ 本文档不负责：策略逻辑（由策略引擎负责）、回测执行（由回测模块负责）、风险管理（由风控模块负责）
 
-> 
+>
 
-> **上游模块**: 
+> **上游模块**:
 
 > - 策略引擎（STRATEGY_ENGINE_001）：提供策略逻辑和参数定义
 
@@ -155,13 +155,13 @@ class StrategyParameterOptimizer:
 
     """策略参数优化器 - 基于Optuna"""
 
-    
+
 
     def __init__(self):
 
         self.study = None
 
-        
+
 
     def optimize(
 
@@ -183,11 +183,11 @@ class StrategyParameterOptimizer:
 
         )
 
-        
+
 
         self.study.optimize(objective_func, n_trials=n_trials)
 
-        
+
 
         return {
 
@@ -259,7 +259,7 @@ class ParameterSpace:
 
     step: Any = None
 
-    
+
 
     def suggest(self, trial: optuna.Trial) -> Any:
 
@@ -269,11 +269,11 @@ class ParameterSpace:
 
             return trial.suggest_int(
 
-                self.name, 
+                self.name,
 
-                self.low, 
+                self.low,
 
-                self.high, 
+                self.high,
 
                 step=self.step
 
@@ -283,11 +283,11 @@ class ParameterSpace:
 
             return trial.suggest_float(
 
-                self.name, 
+                self.name,
 
-                self.low, 
+                self.low,
 
-                self.high, 
+                self.high,
 
                 step=self.step
 
@@ -297,7 +297,7 @@ class ParameterSpace:
 
             return trial.suggest_categorical(
 
-                self.name, 
+                self.name,
 
                 self.choices
 
@@ -307,11 +307,11 @@ class ParameterSpace:
 
             return trial.suggest_float(
 
-                self.name, 
+                self.name,
 
-                self.low, 
+                self.low,
 
-                self.high, 
+                self.high,
 
                 log=True
 
@@ -323,7 +323,7 @@ class ParameterSpaceManager:
 
     """参数空间管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -331,7 +331,7 @@ class ParameterSpaceManager:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def add_parameter(
 
@@ -355,7 +355,7 @@ class ParameterSpaceManager:
 
         param_type_enum = ParameterType[param_type.upper()]
 
-        
+
 
         space = ParameterSpace(
 
@@ -373,13 +373,13 @@ class ParameterSpaceManager:
 
         )
 
-        
+
 
         self.spaces[name] = space
 
         self.logger.info(f"Added parameter: {name}")
 
-        
+
 
     def suggest_parameters(self, trial: optuna.Trial) -> Dict[str, Any]:
 
@@ -437,7 +437,7 @@ class OptimizationEngine:
 
     """优化引擎"""
 
-    
+
 
     def __init__(
 
@@ -459,7 +459,7 @@ class OptimizationEngine:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def optimize(
 
@@ -479,11 +479,11 @@ class OptimizationEngine:
 
             start_time = datetime.now()
 
-            
+
 
             sampler = self._create_sampler()
 
-            
+
 
             study = optuna.create_study(
 
@@ -493,7 +493,7 @@ class OptimizationEngine:
 
             )
 
-            
+
 
             def wrapped_objective(trial):
 
@@ -501,7 +501,7 @@ class OptimizationEngine:
 
                 return self.objective_func(params)
 
-            
+
 
             study.optimize(
 
@@ -515,13 +515,13 @@ class OptimizationEngine:
 
             )
 
-            
+
 
             end_time = datetime.now()
 
             optimization_time = (end_time - start_time).total_seconds()
 
-            
+
 
             result = OptimizationResult(
 
@@ -539,7 +539,7 @@ class OptimizationEngine:
 
             )
 
-            
+
 
             self.logger.info(
 
@@ -551,11 +551,11 @@ class OptimizationEngine:
 
             )
 
-            
+
 
             return result
 
-            
+
 
         except Exception as e:
 
@@ -563,7 +563,7 @@ class OptimizationEngine:
 
             raise
 
-    
+
 
     def _create_sampler(self) -> optuna.samplers.BaseSampler:
 
@@ -627,13 +627,13 @@ class ParameterValidator:
 
     """参数验证器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def validate_stability(
 
@@ -659,7 +659,7 @@ class ParameterValidator:
 
                 values.append(value)
 
-            
+
 
             mean_value = np.mean(values)
 
@@ -667,11 +667,11 @@ class ParameterValidator:
 
             cv = std_value / mean_value if mean_value != 0 else float('inf')
 
-            
+
 
             is_stable = cv < 0.1
 
-            
+
 
             stats_dict = {
 
@@ -687,7 +687,7 @@ class ParameterValidator:
 
             }
 
-            
+
 
             self.logger.info(
 
@@ -697,11 +697,11 @@ class ParameterValidator:
 
             )
 
-            
+
 
             return is_stable, stats_dict
 
-            
+
 
         except Exception as e:
 
@@ -709,7 +709,7 @@ class ParameterValidator:
 
             return False, {}
 
-    
+
 
     def validate_overfitting(
 
@@ -731,15 +731,15 @@ class ParameterValidator:
 
             test_value = test_func(params)
 
-            
+
 
             overfitting_ratio = (train_value - test_value) / train_value if train_value != 0 else float('inf')
 
-            
+
 
             is_not_overfitting = overfitting_ratio < 0.2
 
-            
+
 
             stats_dict = {
 
@@ -751,7 +751,7 @@ class ParameterValidator:
 
             }
 
-            
+
 
             self.logger.info(
 
@@ -763,11 +763,11 @@ class ParameterValidator:
 
             )
 
-            
+
 
             return is_not_overfitting, stats_dict
 
-            
+
 
         except Exception as e:
 
@@ -775,7 +775,7 @@ class ParameterValidator:
 
             return False, {}
 
-    
+
 
     def analyze_importance(
 
@@ -791,15 +791,15 @@ class ParameterValidator:
 
             importance = optuna.importance.get_param_importances(study)
 
-            
+
 
             self.logger.info(f"Parameter importance: {importance}")
 
-            
+
 
             return importance
 
-            
+
 
         except Exception as e:
 
@@ -821,7 +821,7 @@ class StrategyParameterOptimizer:
 
     """策略参数优化管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -831,7 +831,7 @@ class StrategyParameterOptimizer:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def add_parameter(
 
@@ -869,7 +869,7 @@ class StrategyParameterOptimizer:
 
         )
 
-    
+
 
     def optimize(
 
@@ -899,11 +899,11 @@ class StrategyParameterOptimizer:
 
             )
 
-            
+
 
             result = engine.optimize(n_trials=n_trials)
 
-            
+
 
             if validate:
 
@@ -915,11 +915,11 @@ class StrategyParameterOptimizer:
 
                 )
 
-                
+
 
                 importance = self.validator.analyze_importance(result.study)
 
-                
+
 
                 return {
 
@@ -957,7 +957,7 @@ class StrategyParameterOptimizer:
 
                 }
 
-                
+
 
         except Exception as e:
 
@@ -987,17 +987,17 @@ def moving_average_objective(params):
 
     long_window = params['long_window']
 
-    
+
 
     if short_window >= long_window:
 
         return -float('inf')
 
-    
+
 
     sharpe_ratio = backtest_moving_average(short_window, long_window)
 
-    
+
 
     return sharpe_ratio
 
@@ -1053,17 +1053,17 @@ def rsi_objective(params):
 
     overbought = params['overbought']
 
-    
+
 
     if oversold >= overbought:
 
         return -float('inf')
 
-    
+
 
     sharpe_ratio = backtest_rsi(rsi_period, oversold, overbought)
 
-    
+
 
     return sharpe_ratio
 
@@ -1313,7 +1313,7 @@ CREATE TABLE parameter_trials (
 
 
 
-**总工时估算**: 
+**总工时估算**:
 
 - Phase 1: 3天（核心功能）
 
@@ -1444,4 +1444,3 @@ CREATE TABLE parameter_trials (
 **最后更新**: 2026-04-08
 
 **状态**: Active
-

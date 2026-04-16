@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Sentiment Analysis Layer蓝图设计相关内容
 
@@ -382,7 +382,7 @@ class NewsCollector:
 
     """新闻采集器"""
 
-    
+
 
     def __init__(self):
 
@@ -398,7 +398,7 @@ class NewsCollector:
 
         self.seen_hashes = set()
 
-        
+
 
     def collect_news(
 
@@ -414,11 +414,11 @@ class NewsCollector:
 
         """采集新闻"""
 
-        
+
 
         all_news = []
 
-        
+
 
         for source_name, source_url in self.sources.items():
 
@@ -444,15 +444,15 @@ class NewsCollector:
 
                 print(f"Error fetching from {source_name}: {e}")
 
-        
+
 
         deduplicated = self._deduplicate(all_news)
 
-        
+
 
         return deduplicated
 
-    
+
 
     def _fetch_from_source(
 
@@ -472,17 +472,17 @@ class NewsCollector:
 
         """从数据源获取新闻"""
 
-        
+
 
         pass
 
-    
+
 
     def _deduplicate(self, news_list: List[Dict]) -> List[Dict]:
 
         """去重"""
 
-        
+
 
         unique_news = []
 
@@ -496,11 +496,11 @@ class NewsCollector:
 
                 unique_news.append(news)
 
-        
+
 
         return unique_news
 
-    
+
 
     def _compute_hash(self, text: str) -> str:
 
@@ -544,7 +544,7 @@ class SentimentAnalyzer:
 
     """情感分析器"""
 
-    
+
 
     def __init__(self, model_path: str = 'yiyanghkust/finbert-tone'):
 
@@ -554,25 +554,25 @@ class SentimentAnalyzer:
 
         self.sentiment_dict = self._load_sentiment_dict()
 
-        
+
 
     def analyze(self, text: str) -> Dict:
 
         """分析情感"""
 
-        
+
 
         bert_score = self._analyze_with_bert(text)
 
-        
+
 
         rule_score = self._analyze_with_rules(text)
 
-        
+
 
         final_score = self._combine_scores(bert_score, rule_score)
 
-        
+
 
         return {
 
@@ -588,13 +588,13 @@ class SentimentAnalyzer:
 
         }
 
-    
+
 
     def _analyze_with_bert(self, text: str) -> Dict:
 
         """使用FinBERT分析"""
 
-        
+
 
         inputs = self.tokenizer(
 
@@ -608,7 +608,7 @@ class SentimentAnalyzer:
 
         )
 
-        
+
 
         with torch.no_grad():
 
@@ -616,7 +616,7 @@ class SentimentAnalyzer:
 
             probabilities = torch.softmax(outputs.logits, dim=1)
 
-            
+
 
         labels = ['negative', 'neutral', 'positive']
 
@@ -628,29 +628,29 @@ class SentimentAnalyzer:
 
         }
 
-        
+
 
         return scores
 
-    
+
 
     def _analyze_with_rules(self, text: str) -> Dict:
 
         """使用规则分析"""
 
-        
+
 
         positive_words = self.sentiment_dict['positive']
 
         negative_words = self.sentiment_dict['negative']
 
-        
+
 
         positive_count = sum(1 for word in positive_words if word in text)
 
         negative_count = sum(1 for word in negative_words if word in text)
 
-        
+
 
         total = positive_count + negative_count
 
@@ -658,7 +658,7 @@ class SentimentAnalyzer:
 
             return {'positive': 0.33, 'negative': 0.33, 'neutral': 0.34}
 
-        
+
 
         return {
 
@@ -670,7 +670,7 @@ class SentimentAnalyzer:
 
         }
 
-    
+
 
     def _combine_scores(
 
@@ -684,13 +684,13 @@ class SentimentAnalyzer:
 
         """综合评分"""
 
-        
+
 
         bert_weight = 0.7
 
         rule_weight = 0.3
 
-        
+
 
         return {
 
@@ -702,13 +702,13 @@ class SentimentAnalyzer:
 
         }
 
-    
+
 
     def _load_sentiment_dict(self) -> Dict:
 
         """加载情感词典"""
 
-        
+
 
         return {
 
@@ -764,7 +764,7 @@ class SocialDataCollector:
 
     """社交数据采集器"""
 
-    
+
 
     def __init__(self):
 
@@ -772,7 +772,7 @@ class SocialDataCollector:
 
         self.eastmoney_api = 'https://guba.eastmoney.com'
 
-        
+
 
     def collect_xueqiu(
 
@@ -786,7 +786,7 @@ class SocialDataCollector:
 
         """采集雪球数据"""
 
-        
+
 
         try:
 
@@ -800,13 +800,13 @@ class SocialDataCollector:
 
             }
 
-            
+
 
             response = requests.get(url, params=params)
 
             data = response.json()
 
-            
+
 
             posts = []
 
@@ -840,7 +840,7 @@ class SocialDataCollector:
 
                 })
 
-            
+
 
             return posts
 
@@ -850,7 +850,7 @@ class SocialDataCollector:
 
             return []
 
-    
+
 
     def collect_eastmoney(
 
@@ -864,7 +864,7 @@ class SocialDataCollector:
 
         """采集东方财富股吧数据"""
 
-        
+
 
         pass
 
@@ -1183,4 +1183,3 @@ class AnalystForecast:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

@@ -166,7 +166,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -300,7 +300,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -384,7 +384,7 @@ implementation_status: 设计阶段
 
 
 
-  - 对冲交易执行和效果评?  
+  - 对冲交易执行和效果评?
 
 
 
@@ -558,7 +558,7 @@ def monitor_realtime_risk(
 
 
 
-    
+
 
 
 
@@ -576,7 +576,7 @@ def monitor_realtime_risk(
 
 
 
-    
+
 
 
 
@@ -624,7 +624,7 @@ def monitor_realtime_risk(
 
 
 
-      - timestamp: 时间?    
+      - timestamp: 时间?
 
 
 
@@ -720,7 +720,7 @@ def generate_risk_warning(
 
 
 
-    
+
 
 
 
@@ -738,7 +738,7 @@ def generate_risk_warning(
 
 
 
-    - risk_thresholds: 风险?      - beta_max: Beta上限（默?.2?      - sector_concentration_max: 行业集中度上限（默认0.3?      - style_deviation_max: 风格偏离度上限（默认0.5?      - var_95_max: 95% VaR上限（默?.05?    
+    - risk_thresholds: 风险?      - beta_max: Beta上限（默?.2?      - sector_concentration_max: 行业集中度上限（默认0.3?      - style_deviation_max: 风格偏离度上限（默认0.5?      - var_95_max: 95% VaR上限（默?.05?
 
 
 
@@ -762,7 +762,7 @@ def generate_risk_warning(
 
 
 
-      - timestamp: 时间?    
+      - timestamp: 时间?
 
 
 
@@ -858,7 +858,7 @@ def generate_hedge_orders(
 
 
 
-    
+
 
 
 
@@ -882,7 +882,7 @@ def generate_hedge_orders(
 
 
 
-    
+
 
 
 
@@ -936,7 +936,7 @@ def generate_hedge_orders(
 
 
 
-    
+
 
 
 
@@ -1038,7 +1038,7 @@ def evaluate_hedge_effect(
 
 
 
-    
+
 
 
 
@@ -1056,7 +1056,7 @@ def evaluate_hedge_effect(
 
 
 
-    - hedge_period: 评估周期（天?    
+    - hedge_period: 评估周期（天?
 
 
 
@@ -1092,7 +1092,7 @@ def evaluate_hedge_effect(
 
 
 
-    
+
 
 
 
@@ -2062,7 +2062,7 @@ class BetaMonitor:
 
 
 
-    
+
 
 
 
@@ -2086,7 +2086,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2128,7 +2128,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2152,7 +2152,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2170,7 +2170,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2200,7 +2200,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2218,7 +2218,7 @@ class BetaMonitor:
 
 
 
-                position.symbol, 
+                position.symbol,
 
 
 
@@ -2248,7 +2248,7 @@ class BetaMonitor:
 
 
 
-        
+
 
 
 
@@ -2404,7 +2404,7 @@ class SectorMonitor:
 
 
 
-    
+
 
 
 
@@ -2428,7 +2428,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2470,7 +2470,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2494,7 +2494,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2506,7 +2506,7 @@ class SectorMonitor:
 
 
 
-        - 时间复杂? O(N)，N为组合股票数?        - 空间复杂? O(M)，M为行业数?        
+        - 时间复杂? O(N)，N为组合股票数?        - 空间复杂? O(M)，M为行业数?
 
 
 
@@ -2536,7 +2536,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2560,7 +2560,7 @@ class SectorMonitor:
 
 
 
-            
+
 
 
 
@@ -2584,7 +2584,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2614,7 +2614,7 @@ class SectorMonitor:
 
 
 
-        
+
 
 
 
@@ -2734,7 +2734,7 @@ class BetaHedgeCalculator:
 
 
 
-    
+
 
 
 
@@ -2776,7 +2776,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2842,7 +2842,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2860,7 +2860,7 @@ class BetaHedgeCalculator:
 
 
 
-        - target_beta: 目标Beta（通常??        - portfolio_value: 组合?        - futures_type: 期货类型（IF/IC/IH?        - futures_price: 期货价格（可选，默认使用最新价?        
+        - target_beta: 目标Beta（通常??        - portfolio_value: 组合?        - futures_type: 期货类型（IF/IC/IH?        - futures_price: 期货价格（可选，默认使用最新价?
 
 
 
@@ -2884,7 +2884,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2926,7 +2926,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2944,7 +2944,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2968,7 +2968,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -2980,7 +2980,7 @@ class BetaHedgeCalculator:
 
 
 
-        
+
 
 
 
@@ -3224,7 +3224,7 @@ class TestBetaMonitor:
 
 
 
-    
+
 
 
 
@@ -3248,7 +3248,7 @@ class TestBetaMonitor:
 
 
 
-    
+
 
 
 
@@ -3272,7 +3272,7 @@ class TestBetaMonitor:
 
 
 
-    
+
 
 
 
@@ -3314,7 +3314,7 @@ class TestSectorMonitor:
 
 
 
-    
+
 
 
 
@@ -3338,7 +3338,7 @@ class TestSectorMonitor:
 
 
 
-    
+
 
 
 
@@ -3404,7 +3404,7 @@ class TestRiskHedgeEngine:
 
 
 
-    
+
 
 
 
@@ -3428,7 +3428,7 @@ class TestRiskHedgeEngine:
 
 
 
-    
+
 
 
 
@@ -3452,7 +3452,7 @@ class TestRiskHedgeEngine:
 
 
 
-    
+
 
 
 
@@ -4221,8 +4221,3 @@ class TestRiskHedgeEngine:
 
 
 **文档结束**
-
-
-
-
-

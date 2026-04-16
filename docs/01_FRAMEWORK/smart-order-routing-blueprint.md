@@ -202,7 +202,7 @@ class Order:
 
     created_at: datetime = None
 
-    
+
 
     def __post_init__(self):
 
@@ -238,7 +238,7 @@ class SmartOrderRouter:
 
     """智能订单路由"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -258,7 +258,7 @@ class SmartOrderRouter:
 
         }
 
-        
+
 
     def route_order(self,
 
@@ -268,19 +268,19 @@ class SmartOrderRouter:
 
         """订单路由"""
 
-        
+
 
         self._validate_order(order)
 
-        
+
 
         algorithm = self._select_algorithm(order, execution_config)
 
-        
+
 
         broker = self._select_broker(order, execution_config)
 
-        
+
 
         execution_plan = ExecutionPlan(
 
@@ -300,87 +300,87 @@ class SmartOrderRouter:
 
         )
 
-        
+
 
         return execution_plan
 
-    
+
 
     def _validate_order(self, order: Order):
 
         """验证订单"""
 
-        
+
 
         if order.quantity <= 0:
 
             raise ValueError(f"Invalid quantity: {order.quantity}")
 
-        
+
 
         if order.order_type == OrderType.LIMIT and order.limit_price is None:
 
             raise ValueError("Limit order must have limit_price")
 
-    
+
 
     def _select_algorithm(self, order: Order, config: Dict) -> 'ExecutionAlgorithm':
 
         """选择执行算法"""
 
-        
+
 
         algorithm_name = config.get('algorithm', 'TWAP')
 
-        
+
 
         if algorithm_name not in self.execution_algorithms:
 
             raise ValueError(f"Unknown algorithm: {algorithm_name}")
 
-        
+
 
         return self.execution_algorithms[algorithm_name]
 
-    
+
 
     def _select_broker(self, order: Order, config: Dict) -> Dict:
 
         """选择券商"""
 
-        
+
 
         preferred_broker = config.get('broker')
 
-        
+
 
         if preferred_broker and preferred_broker in self.brokers:
 
             return self.brokers[preferred_broker]
 
-        
+
 
         return self._select_optimal_broker(order)
 
-    
+
 
     def _select_optimal_broker(self, order: Order) -> Dict:
 
         """选择最优券商"""
 
-        
+
 
         best_broker = None
 
         best_score = -1
 
-        
+
 
         for broker_name, broker_info in self.brokers.items():
 
             score = self._calculate_broker_score(order, broker_info)
 
-            
+
 
             if score > best_score:
 
@@ -388,71 +388,71 @@ class SmartOrderRouter:
 
                 best_broker = broker_info
 
-        
+
 
         return best_broker
 
-    
+
 
     def _calculate_broker_score(self, order: Order, broker: Dict) -> float:
 
         """计算券商评分"""
 
-        
+
 
         score = 0.0
 
-        
+
 
         score += broker.get('commission_rate', 0.001) * -1000
 
-        
+
 
         score += broker.get('fill_rate', 0.95) * 100
 
-        
+
 
         score += broker.get('latency_ms', 100) * -0.1
 
-        
+
 
         return score
 
-    
+
 
     def _generate_slices(self, order: Order, algorithm: 'ExecutionAlgorithm') -> List[Dict]:
 
         """生成订单切片"""
 
-        
+
 
         return algorithm.generate_slices(order, self.config)
 
-    
+
 
     def _estimate_cost(self, order: Order, algorithm: 'ExecutionAlgorithm', broker: Dict) -> float:
 
         """估算成本"""
 
-        
+
 
         commission_cost = order.quantity * broker.get('commission_rate', 0.0003)
 
-        
+
 
         market_impact = algorithm.estimate_market_impact(order, self.config)
 
-        
+
 
         return commission_cost + market_impact
 
-    
+
 
     def _initialize_brokers(self) -> Dict:
 
         """初始化券商"""
 
-        
+
 
         return {
 
@@ -490,7 +490,7 @@ class ExecutionAlgorithm:
 
     """执行算法基类"""
 
-    
+
 
     def generate_slices(self, order: Order, config: Dict) -> List[Dict]:
 
@@ -498,7 +498,7 @@ class ExecutionAlgorithm:
 
         raise NotImplementedError
 
-    
+
 
     def estimate_market_impact(self, order: Order, config: Dict) -> float:
 
@@ -514,43 +514,43 @@ class TWAPAlgorithm(ExecutionAlgorithm):
 
     """TWAP算法"""
 
-    
+
 
     def __init__(self):
 
         self.name = 'TWAP'
 
-    
+
 
     def generate_slices(self, order: Order, config: Dict) -> List[Dict]:
 
         """生成时间加权切片"""
 
-        
+
 
         duration_minutes = config.get('duration_minutes', 240)
 
         slice_interval = config.get('slice_interval', 5)
 
-        
+
 
         num_slices = duration_minutes // slice_interval
 
         quantity_per_slice = order.quantity // num_slices
 
-        
+
 
         slices = []
 
         current_time = datetime.now()
 
-        
+
 
         for i in range(num_slices):
 
             slice_time = current_time + timedelta(minutes=i * slice_interval)
 
-            
+
 
             quantity = quantity_per_slice
 
@@ -558,7 +558,7 @@ class TWAPAlgorithm(ExecutionAlgorithm):
 
                 quantity = order.quantity - quantity_per_slice * (num_slices - 1)
 
-            
+
 
             slices.append({
 
@@ -572,27 +572,27 @@ class TWAPAlgorithm(ExecutionAlgorithm):
 
             })
 
-        
+
 
         return slices
 
-    
+
 
     def estimate_market_impact(self, order: Order, config: Dict) -> float:
 
         """估算市场冲击"""
 
-        
+
 
         avg_daily_volume = config.get('avg_daily_volume', 1000000)
 
         participation_rate = order.quantity / avg_daily_volume
 
-        
+
 
         impact = 0.1 * participation_rate * order.quantity
 
-        
+
 
         return impact
 
@@ -604,33 +604,33 @@ class VWAPAlgorithm(ExecutionAlgorithm):
 
     """VWAP算法"""
 
-    
+
 
     def __init__(self):
 
         self.name = 'VWAP'
 
-    
+
 
     def generate_slices(self, order: Order, config: Dict) -> List[Dict]:
 
         """生成成交量加权切片"""
 
-        
+
 
         volume_profile = config.get('volume_profile', self._get_default_volume_profile())
 
-        
+
 
         total_volume = sum(volume_profile.values())
 
-        
+
 
         slices = []
 
         current_time = datetime.now()
 
-        
+
 
         for i, (time_slot, volume) in enumerate(volume_profile.items()):
 
@@ -638,11 +638,11 @@ class VWAPAlgorithm(ExecutionAlgorithm):
 
             quantity = int(order.quantity * volume_weight)
 
-            
+
 
             slice_time = current_time + timedelta(minutes=i * 30)
 
-            
+
 
             slices.append({
 
@@ -658,37 +658,37 @@ class VWAPAlgorithm(ExecutionAlgorithm):
 
             })
 
-        
+
 
         return slices
 
-    
+
 
     def estimate_market_impact(self, order: Order, config: Dict) -> float:
 
         """估算市场冲击"""
 
-        
+
 
         avg_daily_volume = config.get('avg_daily_volume', 1000000)
 
         participation_rate = order.quantity / avg_daily_volume
 
-        
+
 
         impact = 0.15 * participation_rate * order.quantity
 
-        
+
 
         return impact
 
-    
+
 
     def _get_default_volume_profile(self) -> Dict:
 
         """获取默认成交量分布"""
 
-        
+
 
         return {
 
@@ -718,35 +718,35 @@ class POVAlgorithm(ExecutionAlgorithm):
 
     """POV算法"""
 
-    
+
 
     def __init__(self):
 
         self.name = 'POV'
 
-    
+
 
     def generate_slices(self, order: Order, config: Dict) -> List[Dict]:
 
         """生成百分比成交量切片"""
 
-        
+
 
         target_participation = config.get('target_participation', 0.10)
 
-        
+
 
         slices = []
 
         current_time = datetime.now()
 
-        
+
 
         remaining_quantity = order.quantity
 
         slice_id = 0
 
-        
+
 
         while remaining_quantity > 0:
 
@@ -754,11 +754,11 @@ class POVAlgorithm(ExecutionAlgorithm):
 
             slice_quantity = int(estimated_volume * target_participation)
 
-            
+
 
             slice_quantity = min(slice_quantity, remaining_quantity)
 
-            
+
 
             slices.append({
 
@@ -774,31 +774,31 @@ class POVAlgorithm(ExecutionAlgorithm):
 
             })
 
-            
+
 
             remaining_quantity -= slice_quantity
 
             slice_id += 1
 
-        
+
 
         return slices
 
-    
+
 
     def estimate_market_impact(self, order: Order, config: Dict) -> float:
 
         """估算市场冲击"""
 
-        
+
 
         participation_rate = config.get('target_participation', 0.10)
 
-        
+
 
         impact = 0.08 * participation_rate * order.quantity
 
-        
+
 
         return impact
 
@@ -810,57 +810,57 @@ class ImplementationShortfallAlgorithm(ExecutionAlgorithm):
 
     """实施差额算法"""
 
-    
+
 
     def __init__(self):
 
         self.name = 'IS'
 
-    
+
 
     def generate_slices(self, order: Order, config: Dict) -> List[Dict]:
 
         """生成最优执行切片"""
 
-        
+
 
         arrival_price = config.get('arrival_price', 100.0)
 
-        
+
 
         slices = self._optimize_execution(order, config, arrival_price)
 
-        
+
 
         return slices
 
-    
+
 
     def _optimize_execution(self, order: Order, config: Dict, arrival_price: float) -> List[Dict]:
 
         """优化执行"""
 
-        
+
 
         num_slices = config.get('num_slices', 20)
 
-        
+
 
         quantities = cp.Variable(num_slices, integer=True)
 
-        
+
 
         market_impact = cp.sum(cp.square(quantities) * 0.001)
 
-        
+
 
         timing_risk = cp.sum(quantities) - order.quantity
 
-        
+
 
         objective = cp.Minimize(market_impact + timing_risk)
 
-        
+
 
         constraints = [
 
@@ -870,19 +870,19 @@ class ImplementationShortfallAlgorithm(ExecutionAlgorithm):
 
         ]
 
-        
+
 
         problem = cp.Problem(objective, constraints)
 
         problem.solve()
 
-        
+
 
         slices = []
 
         current_time = datetime.now()
 
-        
+
 
         for i, qty in enumerate(quantities.value):
 
@@ -900,17 +900,17 @@ class ImplementationShortfallAlgorithm(ExecutionAlgorithm):
 
                 })
 
-        
+
 
         return slices
 
-    
+
 
     def estimate_market_impact(self, order: Order, config: Dict) -> float:
 
         """估算市场冲击"""
 
-        
+
 
         return 0.05 * order.quantity
 
@@ -938,7 +938,7 @@ class SmartOrderRoutingInterface:
 
     """智能订单路由接口"""
 
-    
+
 
     def route_order(self,
 
@@ -950,7 +950,7 @@ class SmartOrderRoutingInterface:
 
         pass
 
-    
+
 
     def get_execution_status(self,
 
@@ -960,7 +960,7 @@ class SmartOrderRoutingInterface:
 
         pass
 
-    
+
 
     def cancel_order(self, order_id: str) -> bool:
 
@@ -1062,7 +1062,7 @@ routing:
 
   default_duration_minutes: 240
 
-  
+
 
 algorithms:
 
@@ -1070,19 +1070,19 @@ algorithms:
 
     slice_interval: 5
 
-    
+
 
   VWAP:
 
     volume_profile: 'default'
 
-    
+
 
   POV:
 
     target_participation: 0.10
 
-    
+
 
 brokers:
 
@@ -1161,4 +1161,3 @@ brokers:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

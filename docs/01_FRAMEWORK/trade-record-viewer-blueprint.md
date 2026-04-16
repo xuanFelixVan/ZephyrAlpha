@@ -20,7 +20,7 @@ responsibility: ''
 
 # 交易记录查看器蓝图
 > **核心职责**: Trade Record Viewer蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Trade Record Viewer蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -52,26 +52,26 @@ from datetime import datetime, timedelta
 
 class TradeRecordViewer:
     """交易记录查看器"""
-    
+
     def __init__(self):
         self.trades = []
-    
+
     def render_query(self):
         """渲染查询面板"""
         st.subheader("🔍 交易记录查询")
-        
+
         with st.form("trade_query"):
             col1, col2, col3 = st.columns(3)
-            
+
             with col1:
                 symbol = st.text_input("股票代码")
-            
+
             with col2:
                 start_date = st.date_input("开始日期")
-            
+
             with col3:
                 end_date = st.date_input("结束日期")
-            
+
             submitted = st.form_submit_button("查询")
 ```
 

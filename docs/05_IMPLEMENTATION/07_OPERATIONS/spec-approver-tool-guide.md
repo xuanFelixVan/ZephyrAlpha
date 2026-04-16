@@ -62,7 +62,7 @@ layer: layer_05
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -398,7 +398,7 @@ def handle_request(request_json):
 
     parameters = request_json.get("parameters", {})
 
-    
+
 
     if operation == "convert_blueprint_to_spec":
 
@@ -833,4 +833,3 @@ PATHS = {
 |------|------|------|------|
 
 | v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒﮒﭨﭦﮒ؟ﮔﺑﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?| ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛ?(Spec-Approver) |
-

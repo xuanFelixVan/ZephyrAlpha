@@ -436,7 +436,7 @@ monitoring:
 
   interval: 3600  # 每小时检查一次
 
-  
+
 
   services:
 
@@ -448,7 +448,7 @@ monitoring:
 
       alert_on_failure: true
 
-    
+
 
     mlflow:
 
@@ -458,7 +458,7 @@ monitoring:
 
       alert_on_failure: true
 
-    
+
 
     regulatory_reporting:
 
@@ -468,7 +468,7 @@ monitoring:
 
       alert_on_failure: true
 
-  
+
 
   alerts:
 
@@ -486,7 +486,7 @@ monitoring:
 
         - your_email@example.com
 
-    
+
 
     log:
 
@@ -494,7 +494,7 @@ monitoring:
 
       log_file: ./logs/monitoring.log
 
-  
+
 
   metrics:
 
@@ -562,7 +562,7 @@ class P0ModulesMonitor:
 
     """P0模块监控器"""
 
-    
+
 
     def __init__(self, config_path: str = "./config/monitoring.yaml"):
 
@@ -570,7 +570,7 @@ class P0ModulesMonitor:
 
         self.monitoring_results = {}
 
-    
+
 
     def _load_config(self, config_path: str) -> Dict[str, Any]:
 
@@ -584,13 +584,13 @@ class P0ModulesMonitor:
 
         return {}
 
-    
+
 
     def check_all_services(self):
 
         """检查所有服务状态"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -598,11 +598,11 @@ class P0ModulesMonitor:
 
         print("="*60)
 
-        
+
 
         services = self.config.get('monitoring', {}).get('services', {})
 
-        
+
 
         for service_name, service_config in services.items():
 
@@ -610,25 +610,25 @@ class P0ModulesMonitor:
 
                 self._check_service(service_name, service_config)
 
-        
+
 
         self._generate_monitoring_report()
 
-    
+
 
     def _check_service(self, service_name: str, service_config: Dict[str, Any]):
 
         """检查单个服务"""
 
-        
+
 
         print(f"\n检查服务: {service_name}")
 
-        
+
 
         health_check_url = service_config.get('health_check_url')
 
-        
+
 
         if health_check_url:
 
@@ -636,7 +636,7 @@ class P0ModulesMonitor:
 
                 response = requests.get(health_check_url, timeout=5)
 
-                
+
 
                 if response.status_code == 200:
 
@@ -684,13 +684,13 @@ class P0ModulesMonitor:
 
                 }
 
-    
+
 
     def _generate_monitoring_report(self):
 
         """生成监控报告"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -698,7 +698,7 @@ class P0ModulesMonitor:
 
         print("="*60)
 
-        
+
 
         report = {
 
@@ -720,23 +720,23 @@ class P0ModulesMonitor:
 
         }
 
-        
+
 
         report_path = f"./data/monitoring/p0_modules_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
         os.makedirs(os.path.dirname(report_path), exist_ok=True)
 
-        
+
 
         with open(report_path, 'w', encoding='utf-8') as f:
 
             json.dump(report, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 监控报告已生成: {report_path}")
 
-        
+
 
         print("\n服务状态汇总:")
 
@@ -756,7 +756,7 @@ def main():
 
     """主函数"""
 
-    
+
 
     monitor = P0ModulesMonitor(config_path="./config/monitoring.yaml")
 
@@ -1082,7 +1082,7 @@ audit_trail:
 
   backend: sqlite
 
-  
+
 
   tigerbeetle:
 
@@ -1092,7 +1092,7 @@ audit_trail:
 
     cluster_id: 0
 
-  
+
 
   sqlite:
 
@@ -1100,7 +1100,7 @@ audit_trail:
 
     db_path: "./data/audit_trail.db"
 
-  
+
 
   retention:
 
@@ -1108,7 +1108,7 @@ audit_trail:
 
     days: 365
 
-  
+
 
   monitoring:
 
@@ -1140,7 +1140,7 @@ model_risk_management:
 
     artifact_root: "./data/mlflow/artifacts"
 
-  
+
 
   validation:
 
@@ -1150,7 +1150,7 @@ model_risk_management:
 
     max_drawdown_threshold: 0.20
 
-  
+
 
   approval:
 
@@ -1180,7 +1180,7 @@ regulatory_reporting:
 
     version: "latest"
 
-  
+
 
   reports:
 
@@ -1196,7 +1196,7 @@ regulatory_reporting:
 
       - "json"
 
-  
+
 
   scheduling:
 
@@ -1235,4 +1235,3 @@ regulatory_reporting:
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
-

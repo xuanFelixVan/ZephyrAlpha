@@ -245,9 +245,9 @@ python scripts\test_notification.py
 
 # ﮔ۴ﻝﮔﮔZephyrAlphaﻛﭨﭨﮒ۰
 
-Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"} | 
+Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"} |
 
-    Select-Object TaskName, State, NextRunTime, LastRunTime | 
+    Select-Object TaskName, State, NextRunTime, LastRunTime |
 
     Format-Table -AutoSize
 
@@ -425,11 +425,11 @@ D:\ZephyrAlpha\
 
 # ﮔ۴ﻝﮔﮔﺍﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
 
-Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_*.json | 
+Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_*.json |
 
-    Sort-Object LastWriteTime -Descending | 
+    Sort-Object LastWriteTime -Descending |
 
-    Select-Object -First 1 | 
+    Select-Object -First 1 |
 
     Get-Content | ConvertFrom-Json | ConvertTo-Json -Depth 10
 
@@ -437,11 +437,11 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_*.json |
 
 # ﮔ۴ﻝﮔﮔﺍﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
 
-Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*.md | 
+Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*.md |
 
-    Sort-Object LastWriteTime -Descending | 
+    Sort-Object LastWriteTime -Descending |
 
-    Select-Object -First 1 | 
+    Select-Object -First 1 |
 
     Get-Content
 
@@ -555,7 +555,7 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*
 
 ```powershell
 
-Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | 
+Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" |
 
     Select-Object TaskName, State, LastRunTime, LastTaskResult
 
@@ -593,9 +593,9 @@ Get-Content logs\quick_audit.log -Tail 50
 
 # ﮔ۴ﻝWindowsﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮔ۴ﮒﺟ
 
-Get-WinEvent -LogName "Microsoft-Windows-TaskScheduler/Operational" | 
+Get-WinEvent -LogName "Microsoft-Windows-TaskScheduler/Operational" |
 
-    Where-Object {$_.Message -like "*ZephyrAlpha*"} | 
+    Where-Object {$_.Message -like "*ZephyrAlpha*"} |
 
     Select-Object -First 10
 
@@ -867,9 +867,9 @@ Start-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 
 # ﮔ۴ﻝﮔﮔﺍﮔ۴ﮒ?
 
-Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json | 
+Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
-    Sort-Object LastWriteTime -Descending | 
+    Sort-Object LastWriteTime -Descending |
 
     Select-Object -First 1
 
@@ -890,4 +890,3 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
 
 ```
-

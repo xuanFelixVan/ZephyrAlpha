@@ -31,7 +31,7 @@ layer: layer_05
 
 > **核心职责**: 组合保险策略，CPPI/OBPI组合保险策略
 
-> **职责边界**: 
+> **职责边界**:
 
 >...
 
@@ -145,7 +145,7 @@ layer: layer_05
 
 > 核心职责: Portfolio Insurance Strategy蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -187,7 +187,7 @@ layer: layer_05
 
 ```python
 
-def cppi_adjust(portfolio_value: float, 
+def cppi_adjust(portfolio_value: float,
 
               floor_value: float,
 
@@ -197,7 +197,7 @@ def cppi_adjust(portfolio_value: float,
 
     """
 
-    CPPI 动态调整    
+    CPPI 动态调整
 
     Args:
 
@@ -271,7 +271,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[风险控制]
 
@@ -279,7 +279,7 @@ graph LR
 
     B --> G[压力测试系统]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -369,7 +369,7 @@ graph LR
 
 |------|------|------|
 
-| **Portfolio Insurance Strategy** | 
+| **Portfolio Insurance Strategy** |
 
 
 
@@ -378,10 +378,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

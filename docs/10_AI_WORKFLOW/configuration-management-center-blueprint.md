@@ -370,7 +370,7 @@ class FactorConfig(BaseModel):
 
     threshold: float
 
-    
+
 
     @validator('window')
 
@@ -382,7 +382,7 @@ class FactorConfig(BaseModel):
 
         return v
 
-    
+
 
     @validator('threshold')
 
@@ -504,7 +504,7 @@ class ConfigManager:
 
         pass
 
-    
+
 
     def set(self, key: str, value: Any) -> None:
 
@@ -512,7 +512,7 @@ class ConfigManager:
 
         pass
 
-    
+
 
     def reload(self) -> None:
 
@@ -520,7 +520,7 @@ class ConfigManager:
 
         pass
 
-    
+
 
     def validate(self) -> bool:
 
@@ -528,7 +528,7 @@ class ConfigManager:
 
         pass
 
-    
+
 
     def export(self, format: str = 'yaml') -> str:
 
@@ -556,7 +556,7 @@ class SystemConfig(BaseModel):
 
     data_dir: str
 
-    
+
 
 class DatabaseConfig(BaseModel):
 
@@ -566,7 +566,7 @@ class DatabaseConfig(BaseModel):
 
     pool_size: int = 5
 
-    
+
 
 class LoggingConfig(BaseModel):
 
@@ -687,4 +687,3 @@ class LoggingConfig(BaseModel):
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

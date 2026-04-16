@@ -94,7 +94,7 @@ class MultiStrategyDynamicAllocator:
 
     """多策略动态配置器"""
 
-    
+
 
     def __init__(self):
 
@@ -102,7 +102,7 @@ class MultiStrategyDynamicAllocator:
 
         self.ai_recommender = AIRecommender()
 
-        
+
 
     def optimize_allocation(self, strategies, constraints):
 
@@ -112,7 +112,7 @@ class MultiStrategyDynamicAllocator:
 
         cov_matrix = self._calculate_covariance(strategies)
 
-        
+
 
         # 优化资金分配
 
@@ -126,7 +126,7 @@ class MultiStrategyDynamicAllocator:
 
         )
 
-        
+
 
         # 优化风险预算
 
@@ -140,7 +140,7 @@ class MultiStrategyDynamicAllocator:
 
         )
 
-        
+
 
         return {
 
@@ -165,4 +165,3 @@ class MultiStrategyDynamicAllocator:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -50,7 +50,7 @@ responsibility: 处理INDEX相关业务
 
 
 
-> **定位**：承接“模块设计草图/笔记/临时设计稿”的可达入口，避免形成“事实孤儿”。  
+> **定位**：承接“模块设计草图/笔记/临时设计稿”的可达入口，避免形成“事实孤儿”。
 
 > **原则**：仅做索引挂载，不改正文；后续可按 Layer/主题继续拆分子索引。
 
@@ -69,5 +69,3 @@ responsibility: 处理INDEX相关业务
 
 
 - [战略决策层蓝图](../11_STRATEGIC_DECISION/complete-blueprint-overview.md)
-
-

@@ -15,8 +15,8 @@ layer: layer_05
 
 # 蓝图 D 类重叠 — 二审提示词模板（更强模型 · 固定输出 Schema）
 
-> **你是谁**：你是**二审推理模型**（例如 GLM-5.1、Claude Opus 系列等），具备长上下文与严谨结构化输出能力。  
-> **你在做什么**：人类 Owner 已用脚本 `triage_blueprint_d_overlap_pairs.py` 对机器候选对做了 **A 档路径分流**；你收到的是 **JSONL 中的若干行**（每行一个 JSON 对象），内含路径、机器指标与**摘录**（非全文）。你要对**每一行**给出**语义层判断**，输出**严格 JSON**（见下文 Schema），供人类合并进台账或执行 stub/合并——**你的输出不是 Git 自动提交，也不替代 Owner 最终签核**。  
+> **你是谁**：你是**二审推理模型**（例如 GLM-5.1、Claude Opus 系列等），具备长上下文与严谨结构化输出能力。
+> **你在做什么**：人类 Owner 已用脚本 `triage_blueprint_d_overlap_pairs.py` 对机器候选对做了 **A 档路径分流**；你收到的是 **JSONL 中的若干行**（每行一个 JSON 对象），内含路径、机器指标与**摘录**（非全文）。你要对**每一行**给出**语义层判断**，输出**严格 JSON**（见下文 Schema），供人类合并进台账或执行 stub/合并——**你的输出不是 Git 自动提交，也不替代 Owner 最终签核**。
 > **真源规程**：D 类蓝图重叠 Playbook（**§2.5** 置信度与 **高置信可合并** 准入、**§5** 高/低置信双轨、待审登记）。
 
 ```
@@ -25,14 +25,14 @@ layer: layer_05
 
 ## 一、输入你应拿到什么
 
-1. **本 Markdown 文件全文**（或至少从「二、任务」到「五、输出 JSON Schema」整段），作为系统/开发者指令。  
+1. **本 Markdown 文件全文**（或至少从「二、任务」到「五、输出 JSON Schema」整段），作为系统/开发者指令。
 2. **一段或多段 JSONL**：每行一个对象，字段至少包含（与脚本一致，以实际行为准）：
-   - `pair_id`：稳定编号  
-   - `path_a` / `path_b`  
-   - `triage_tier`：`BLUEPRINTS_VS_ARCHIVE` | `DUAL_ARCHIVE` | `DUAL_CABINET` | `DUAL_ACTIVE` | `MIXED`  
-   - `triage_reasons_zh`：脚本给出的分流理由  
-   - `second_pass_priority`：`HIGH` | `MEDIUM` | `LOW`  
-   - `machine`：`score`、`metrics`、`suggested_canonical`、`suggested_other`、`suggested_canonical_reasons_zh`、`suggested_merge_outline` 等  
+   - `pair_id`：稳定编号
+   - `path_a` / `path_b`
+   - `triage_tier`：`BLUEPRINTS_VS_ARCHIVE` | `DUAL_ARCHIVE` | `DUAL_CABINET` | `DUAL_ACTIVE` | `MIXED`
+   - `triage_reasons_zh`：脚本给出的分流理由
+   - `second_pass_priority`：`HIGH` | `MEDIUM` | `LOW`
+   - `machine`：`score`、`metrics`、`suggested_canonical`、`suggested_other`、`suggested_canonical_reasons_zh`、`suggested_merge_outline` 等
    - `excerpt_a` / `excerpt_b`：`module_id`、`first_h1`、`responsibility_excerpt_zh`、`h2_titles_sample`、`body_excerpt`（**非全文**）
 
 3. **可选**：人类告诉你本轮只处理 `second_pass_priority === "HIGH"` 的子集，或指定 `pair_id` 列表。
@@ -45,10 +45,10 @@ layer: layer_05
 
 对 **JSONL 中每一行**（或人类指定子集）：
 
-1. **判断**两篇蓝图是否描述**同一 bounded context / 同一职责边界**（允许表述不同），还是**不同职责**仅共享通用词。  
-2. **在承认摘录不完整的前提下**，给出**可执行建议**（见 `recommended_action` 枚举）。  
-3. **若**与机器 `suggested_canonical` **明显冲突**，必须在 `rationale_zh` 中写明冲突原因与更优 canonical 路径（仓库内 POSIX 路径）。  
-4. **不要**编造仓库中不存在的路径；**不要**声称已读取全文若仅有摘录。  
+1. **判断**两篇蓝图是否描述**同一 bounded context / 同一职责边界**（允许表述不同），还是**不同职责**仅共享通用词。
+2. **在承认摘录不完整的前提下**，给出**可执行建议**（见 `recommended_action` 枚举）。
+3. **若**与机器 `suggested_canonical` **明显冲突**，必须在 `rationale_zh` 中写明冲突原因与更优 canonical 路径（仓库内 POSIX 路径）。
+4. **不要**编造仓库中不存在的路径；**不要**声称已读取全文若仅有摘录。
 5. 输出 **单一 JSON 数组** 或 **NDJSON**（每行一个 verdict 对象）二选一，须在回复**首段**用一句话声明选用哪种，且**全文仅包含 JSON**，无 Markdown 围栏外的解释（除首句声明外）。**推荐**：`verdicts` 为根的 **一个 JSON 对象**，见 Schema。
 
 ```
@@ -71,7 +71,7 @@ layer: layer_05
 
 ## 四、置信度与语言
 
-- `confidence`：`0.0`～`1.0` 浮点数；与 `same_topic_likelihood`、`recommended_action`、`low_confidence_register` 一并供人类按 Playbook **§2.5** 判定是否落入 **高置信可合并**（可走 **§5.1**）或必须 **低置信 / 待审登记**（**§5.2**）。  
+- `confidence`：`0.0`～`1.0` 浮点数；与 `same_topic_likelihood`、`recommended_action`、`low_confidence_register` 一并供人类按 Playbook **§2.5** 判定是否落入 **高置信可合并**（可走 **§5.1**）或必须 **低置信 / 待审登记**（**§5.2**）。
 - `rationale_zh`：**中文**，简洁、可审计（3～8 句为宜）。
 
 ```
@@ -129,9 +129,9 @@ layer: layer_05
 
 **若**你认为本文件存在以下问题，**允许且鼓励**在 JSON 根对象中**追加**可选键 `prompt_template_patch_proposal`（不影响 `verdicts` 解析）：
 
-- 边界案例未覆盖（如 `10_AI_WORKFLOW` vs `01_FRAMEWORK` 同题）；  
-- Schema 字段不足以表达合并粒度；  
-- 与 Playbook 表述冲突；  
+- 边界案例未覆盖（如 `10_AI_WORKFLOW` vs `01_FRAMEWORK` 同题）；
+- Schema 字段不足以表达合并粒度；
+- 与 Playbook 表述冲突；
 - 摘录字段应增删（需同步改 `triage_blueprint_d_overlap_pairs.py` 时，在 proposal 中写明）。
 
 **`prompt_template_patch_proposal` 结构（写死）**：
@@ -156,10 +156,10 @@ layer: layer_05
 
 ## 七、人类 Owner 使用步骤（复制检查清单）
 
-1. 仓库根：`python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（或 `--queue-mode high_medium`）。  
-2. 打开 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_YYYYMMDD.jsonl`，按需截取行。  
-3. 将 **本模板全文** + **JSONL 片段** 粘贴到 GLM / Claude **系统或开发者消息**；用户消息写：「请按模板输出唯一 JSON」。  
-4. 将模型输出保存为 `.../STATE/D_OVERLAP_SECOND_PASS_VERDICTS_YYYYMMDD_run01.json`，**抽样核对**后执行 Playbook（stub / 合并 / 登记）。  
+1. 仓库根：`python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（或 `--queue-mode high_medium`）。
+2. 打开 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_YYYYMMDD.jsonl`，按需截取行。
+3. 将 **本模板全文** + **JSONL 片段** 粘贴到 GLM / Claude **系统或开发者消息**；用户消息写：「请按模板输出唯一 JSON」。
+4. 将模型输出保存为 `.../STATE/D_OVERLAP_SECOND_PASS_VERDICTS_YYYYMMDD_run01.json`，**抽样核对**后执行 Playbook（stub / 合并 / 登记）。
 5. 若 JSON 内含 `prompt_template_patch_proposal`，评审后更新本 `.md` 与脚本。
 
 ```

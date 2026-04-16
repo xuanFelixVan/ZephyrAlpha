@@ -73,9 +73,9 @@ status: "completed"
 
 ```powershell
 # 生成待扫描列表（从 index 20 开始）
-git log --all --diff-filter=D --name-only --pretty:format:"" | 
-  ForEach-Object { if ($_.Trim() -match "audit_fix_backup" -and $_.Trim() -match "\.md$") { $_.Trim() } } | 
-  Sort-Object -Unique | 
+git log --all --diff-filter=D --name-only --pretty:format:"" |
+  ForEach-Object { if ($_.Trim() -match "audit_fix_backup" -and $_.Trim() -match "\.md$") { $_.Trim() } } |
+  Sort-Object -Unique |
   Select-Object -Skip 20 -First 20
 ```
 

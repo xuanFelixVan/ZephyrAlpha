@@ -370,7 +370,7 @@ class DataQualityAssessor:
 
     """数据质量评估器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -380,7 +380,7 @@ class DataQualityAssessor:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self.quality_dimensions = {
 
@@ -394,7 +394,7 @@ class DataQualityAssessor:
 
         }
 
-    
+
 
     def assess_quality(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -416,7 +416,7 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             # 评估各维度
 
@@ -426,7 +426,7 @@ class DataQualityAssessor:
 
                 assessment["dimensions"][dimension] = dimension_score
 
-            
+
 
             # 计算综合评分
 
@@ -442,7 +442,7 @@ class DataQualityAssessor:
 
             })
 
-            
+
 
             overall_score = sum(
 
@@ -452,17 +452,17 @@ class DataQualityAssessor:
 
             )
 
-            
+
 
             assessment["overall_score"] = overall_score
 
             assessment["grade"] = self._get_quality_grade(overall_score)
 
-            
+
 
             return assessment
 
-            
+
 
         except Exception as e:
 
@@ -470,7 +470,7 @@ class DataQualityAssessor:
 
             return {"error": str(e)}
 
-    
+
 
     def _assess_completeness(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -486,7 +486,7 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             # 字段完整性
 
@@ -502,13 +502,13 @@ class DataQualityAssessor:
 
                 field_completeness[column] = completeness_rate
 
-            
+
 
             # 记录完整性
 
             record_completeness = df.notna().all(axis=1).sum() / len(df)
 
-            
+
 
             # 时间序列完整性
 
@@ -524,7 +524,7 @@ class DataQualityAssessor:
 
                 time_series_completeness = 1.0
 
-            
+
 
             # 计算完整性评分
 
@@ -540,7 +540,7 @@ class DataQualityAssessor:
 
             )
 
-            
+
 
             completeness_metrics["score"] = completeness_score
 
@@ -554,11 +554,11 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             return completeness_metrics
 
-            
+
 
         except Exception as e:
 
@@ -566,7 +566,7 @@ class DataQualityAssessor:
 
             return {"score": 0.0, "error": str(e)}
 
-    
+
 
     def _assess_accuracy(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -582,11 +582,11 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             accuracy_issues = []
 
-            
+
 
             # 数值准确性检查
 
@@ -604,13 +604,13 @@ class DataQualityAssessor:
 
                 ).sum()
 
-                
+
 
                 if price_logic_errors > 0:
 
                     accuracy_issues.append(f"价格逻辑错误: {price_logic_errors}条")
 
-                
+
 
                 # 价格范围检查
 
@@ -622,13 +622,13 @@ class DataQualityAssessor:
 
                 ).sum()
 
-                
+
 
                 if price_range_errors > 0:
 
                     accuracy_issues.append(f"价格范围错误: {price_range_errors}条")
 
-            
+
 
             # 成交量准确性检查
 
@@ -640,7 +640,7 @@ class DataQualityAssessor:
 
                     accuracy_issues.append(f"成交量错误: {volume_errors}条")
 
-            
+
 
             # 计算准确性评分
 
@@ -650,7 +650,7 @@ class DataQualityAssessor:
 
             accuracy_score = max(0, 1 - (total_errors / max(total_records, 1)))
 
-            
+
 
             accuracy_metrics["score"] = accuracy_score
 
@@ -662,11 +662,11 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             return accuracy_metrics
 
-            
+
 
         except Exception as e:
 
@@ -674,7 +674,7 @@ class DataQualityAssessor:
 
             return {"score": 0.0, "error": str(e)}
 
-    
+
 
     def _assess_timeliness(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -690,7 +690,7 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             if 'date' in df.columns:
 
@@ -700,13 +700,13 @@ class DataQualityAssessor:
 
                 delay_days = (current_date - latest_date).days
 
-                
+
 
                 # 时效性评分 (延迟1天内得满分,每延迟1天扣0.1分)
 
                 timeliness_score = max(0, 1 - (delay_days * 0.1))
 
-                
+
 
                 timeliness_metrics["score"] = timeliness_score
 
@@ -724,11 +724,11 @@ class DataQualityAssessor:
 
                 timeliness_metrics["details"] = {"message": "无日期字段"}
 
-            
+
 
             return timeliness_metrics
 
-            
+
 
         except Exception as e:
 
@@ -736,7 +736,7 @@ class DataQualityAssessor:
 
             return {"score": 0.0, "error": str(e)}
 
-    
+
 
     def _assess_consistency(self, df: pd.DataFrame, source_name: str) -> Dict:
 
@@ -752,11 +752,11 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             consistency_issues = []
 
-            
+
 
             # 格式一致性检查
 
@@ -768,7 +768,7 @@ class DataQualityAssessor:
 
                     consistency_issues.append(f"日期格式不一致: {date_formats}种格式")
 
-            
+
 
             # 数据类型一致性检查
 
@@ -782,7 +782,7 @@ class DataQualityAssessor:
 
                         consistency_issues.append(f"列 {column} 数据类型不一致")
 
-            
+
 
             # 计算一致性评分
 
@@ -792,7 +792,7 @@ class DataQualityAssessor:
 
             consistency_score = max(0, 1 - (total_issues / total_checks))
 
-            
+
 
             consistency_metrics["score"] = consistency_score
 
@@ -804,11 +804,11 @@ class DataQualityAssessor:
 
             }
 
-            
+
 
             return consistency_metrics
 
-            
+
 
         except Exception as e:
 
@@ -816,7 +816,7 @@ class DataQualityAssessor:
 
             return {"score": 0.0, "error": str(e)}
 
-    
+
 
     def _get_quality_grade(self, score: float) -> str:
 
@@ -846,7 +846,7 @@ class DataQualityAssessor:
 
             return "D"
 
-    
+
 
     def generate_improvement_suggestions(self, assessment: Dict) -> List[Dict]:
 
@@ -854,7 +854,7 @@ class DataQualityAssessor:
 
         suggestions = []
 
-        
+
 
         for dimension, metrics in assessment["dimensions"].items():
 
@@ -916,7 +916,7 @@ class DataQualityAssessor:
 
                     })
 
-        
+
 
         return suggestions
 
@@ -944,7 +944,7 @@ class QualityScoringSystem:
 
     """质量评分系统"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -954,7 +954,7 @@ class QualityScoringSystem:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_quality_score(self, assessment: Dict) -> Dict:
 
@@ -966,7 +966,7 @@ class QualityScoringSystem:
 
             dimensions = assessment.get("dimensions", {})
 
-            
+
 
             # 计算加权评分
 
@@ -982,7 +982,7 @@ class QualityScoringSystem:
 
             })
 
-            
+
 
             weighted_score = sum(
 
@@ -992,19 +992,19 @@ class QualityScoringSystem:
 
             )
 
-            
+
 
             # 计算质量等级
 
             quality_level = self._get_quality_level(weighted_score)
 
-            
+
 
             # 计算质量趋势
 
             trend = self._calculate_trend(weighted_score)
 
-            
+
 
             quality_score = {
 
@@ -1026,17 +1026,17 @@ class QualityScoringSystem:
 
             }
 
-            
+
 
             # 保存历史记录
 
             self.scoring_history.append(quality_score)
 
-            
+
 
             return quality_score
 
-            
+
 
         except Exception as e:
 
@@ -1044,7 +1044,7 @@ class QualityScoringSystem:
 
             return {"error": str(e)}
 
-    
+
 
     def _get_quality_level(self, score: float) -> str:
 
@@ -1070,7 +1070,7 @@ class QualityScoringSystem:
 
             return "不合格"
 
-    
+
 
     def _calculate_trend(self, current_score: float) -> str:
 
@@ -1080,13 +1080,13 @@ class QualityScoringSystem:
 
             return "稳定"
 
-        
+
 
         previous_score = self.scoring_history[-1].get("weighted_score", current_score)
 
         change = current_score - previous_score
 
-        
+
 
         if change > 0.05:
 
@@ -1100,7 +1100,7 @@ class QualityScoringSystem:
 
             return "稳定"
 
-    
+
 
     def generate_quality_report(self, assessment: Dict, quality_score: Dict) -> Dict:
 
@@ -1134,7 +1134,7 @@ class QualityScoringSystem:
 
             }
 
-            
+
 
             # 维度分析
 
@@ -1148,7 +1148,7 @@ class QualityScoringSystem:
 
                 }
 
-                
+
 
                 # 识别问题
 
@@ -1164,7 +1164,7 @@ class QualityScoringSystem:
 
                     })
 
-            
+
 
             # 生成建议
 
@@ -1172,11 +1172,11 @@ class QualityScoringSystem:
 
                 report["recommendations"] = self._generate_recommendations(report["issues"])
 
-            
+
 
             return report
 
-            
+
 
         except Exception as e:
 
@@ -1184,7 +1184,7 @@ class QualityScoringSystem:
 
             return {"error": str(e)}
 
-    
+
 
     def _generate_recommendations(self, issues: List[Dict]) -> List[Dict]:
 
@@ -1192,13 +1192,13 @@ class QualityScoringSystem:
 
         recommendations = []
 
-        
+
 
         for issue in issues:
 
             dimension = issue["dimension"]
 
-            
+
 
             if dimension == "completeness":
 
@@ -1256,7 +1256,7 @@ class QualityScoringSystem:
 
                 })
 
-        
+
 
         return recommendations
 
@@ -1384,7 +1384,7 @@ class DataQualityAssessmentSystem:
 
     """数据质量评估系统"""
 
-    
+
 
     def __init__(self, config_path: str):
 
@@ -1392,13 +1392,13 @@ class DataQualityAssessmentSystem:
 
             self.config = yaml.safe_load(f)
 
-        
+
 
         self.assessor = DataQualityAssessor(self.config)
 
         self.scoring_system = QualityScoringSystem(self.config)
 
-    
+
 
     def run_assessment(self, df, source_name: str) -> Dict:
 
@@ -1408,19 +1408,19 @@ class DataQualityAssessmentSystem:
 
         assessment = self.assessor.assess_quality(df, source_name)
 
-        
+
 
         # 2. 计算质量评分
 
         quality_score = self.scoring_system.calculate_quality_score(assessment)
 
-        
+
 
         # 3. 生成质量报告
 
         report = self.scoring_system.generate_quality_report(assessment, quality_score)
 
-        
+
 
         return {
 
@@ -1432,7 +1432,7 @@ class DataQualityAssessmentSystem:
 
         }
 
-    
+
 
     def start_periodic_assessment(self):
 
@@ -1440,7 +1440,7 @@ class DataQualityAssessmentSystem:
 
         schedule.every(1).days.do(self._daily_assessment)
 
-        
+
 
         while True:
 
@@ -1448,7 +1448,7 @@ class DataQualityAssessmentSystem:
 
             time.sleep(60)
 
-    
+
 
     def _daily_assessment(self):
 
@@ -1458,13 +1458,13 @@ class DataQualityAssessmentSystem:
 
         df = self._fetch_data()
 
-        
+
 
         # 运行评估
 
         result = self.run_assessment(df, "daily_data")
 
-        
+
 
         # 保存报告
 
@@ -1739,4 +1739,3 @@ python src/data_quality/assessor.py
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

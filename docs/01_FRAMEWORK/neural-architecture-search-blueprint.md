@@ -166,7 +166,7 @@ class NeuralArchitectureSearch:
 
 
 
-    
+
 
 
 
@@ -198,7 +198,7 @@ class NeuralArchitectureSearch:
 
 
 
-        
+
 
 
 
@@ -226,7 +226,7 @@ class NeuralArchitectureSearch:
 
 
 
-    
+
 
 
 
@@ -258,7 +258,7 @@ class NeuralArchitectureSearch:
 
 
 
-        
+
 
 
 
@@ -278,7 +278,7 @@ class NeuralArchitectureSearch:
 
 
 
-            
+
 
 
 
@@ -292,7 +292,7 @@ class NeuralArchitectureSearch:
 
 
 
-    
+
 
 
 
@@ -316,7 +316,7 @@ class NeuralArchitectureSearch:
 
 
 
-        
+
 
 
 
@@ -328,7 +328,7 @@ class NeuralArchitectureSearch:
 
 
 
-            
+
 
 
 
@@ -573,4 +573,3 @@ autogluon>=0.8.0
 
 
 ```
-

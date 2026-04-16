@@ -199,7 +199,7 @@ class DataLineageTracker:
 
     """数据血缘追踪器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -215,7 +215,7 @@ class DataLineageTracker:
 
         )
 
-    
+
 
     def track_data_source(self, source_info: Dict) -> str:
 
@@ -241,13 +241,13 @@ class DataLineageTracker:
 
         }
 
-        
+
 
         response = self.client.entity_post.create(entity)
 
         return response["guid"]
 
-    
+
 
     def track_data_transformation(self, transformation_info: Dict) -> str:
 
@@ -273,13 +273,13 @@ class DataLineageTracker:
 
         }
 
-        
+
 
         response = self.client.entity_post.create(entity)
 
         return response["guid"]
 
-    
+
 
     def get_lineage(self, entity_guid: str) -> Dict:
 
@@ -287,7 +287,7 @@ class DataLineageTracker:
 
         lineage = self.client.lineage.get_lineage(entity_guid)
 
-        
+
 
         return {
 
@@ -299,7 +299,7 @@ class DataLineageTracker:
 
         }
 
-    
+
 
     def _parse_lineage_relations(self, lineage: Dict) -> List[Dict]:
 
@@ -307,7 +307,7 @@ class DataLineageTracker:
 
         relations = []
 
-        
+
 
         for relation in lineage.get("relations", []):
 
@@ -321,11 +321,11 @@ class DataLineageTracker:
 
             })
 
-        
+
 
         return relations
 
-    
+
 
     def visualize_lineage(self, entity_guid: str, save_path: str = None):
 
@@ -335,17 +335,17 @@ class DataLineageTracker:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         lineage = self.get_lineage(entity_guid)
 
-        
+
 
         # 构建图
 
         G = nx.DiGraph()
 
-        
+
 
         for relation in lineage["relations"]:
 
@@ -357,19 +357,19 @@ class DataLineageTracker:
 
             )
 
-        
+
 
         # 绘制图
 
         plt.figure(figsize=(12, 8))
 
-        nx.draw(G, with_labels=True, node_color='lightblue', 
+        nx.draw(G, with_labels=True, node_color='lightblue',
 
                 node_size=2000, font_size=10, arrows=True)
 
         plt.title("Data Lineage")
 
-        
+
 
         if save_path:
 
@@ -473,7 +473,7 @@ class ModelRiskManager:
 
     """模型风险管理器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -481,7 +481,7 @@ class ModelRiskManager:
 
         self.risk_thresholds = config.get("risk_thresholds", {})
 
-    
+
 
     def identify_model_risks(self, model_info: Dict) -> List[Dict]:
 
@@ -489,7 +489,7 @@ class ModelRiskManager:
 
         risks = []
 
-        
+
 
         # 1. 数据风险
 
@@ -497,7 +497,7 @@ class ModelRiskManager:
 
         risks.extend(data_risks)
 
-        
+
 
         # 2. 模型风险
 
@@ -505,7 +505,7 @@ class ModelRiskManager:
 
         risks.extend(model_risks)
 
-        
+
 
         # 3. 部署风险
 
@@ -513,11 +513,11 @@ class ModelRiskManager:
 
         risks.extend(deployment_risks)
 
-        
+
 
         return risks
 
-    
+
 
     def _identify_data_risks(self, model_info: Dict) -> List[Dict]:
 
@@ -525,7 +525,7 @@ class ModelRiskManager:
 
         risks = []
 
-        
+
 
         # 数据质量风险
 
@@ -543,7 +543,7 @@ class ModelRiskManager:
 
             })
 
-        
+
 
         # 数据漂移风险
 
@@ -561,11 +561,11 @@ class ModelRiskManager:
 
             })
 
-        
+
 
         return risks
 
-    
+
 
     def _identify_model_risks(self, model_info: Dict) -> List[Dict]:
 
@@ -573,7 +573,7 @@ class ModelRiskManager:
 
         risks = []
 
-        
+
 
         # 模型性能风险
 
@@ -591,7 +591,7 @@ class ModelRiskManager:
 
             })
 
-        
+
 
         # 模型过拟合风险
 
@@ -609,11 +609,11 @@ class ModelRiskManager:
 
             })
 
-        
+
 
         return risks
 
-    
+
 
     def _identify_deployment_risks(self, model_info: Dict) -> List[Dict]:
 
@@ -621,7 +621,7 @@ class ModelRiskManager:
 
         risks = []
 
-        
+
 
         # 推理延迟风险
 
@@ -639,11 +639,11 @@ class ModelRiskManager:
 
             })
 
-        
+
 
         return risks
 
-    
+
 
     def assess_model_risk(self, model_info: Dict) -> Dict:
 
@@ -651,7 +651,7 @@ class ModelRiskManager:
 
         risks = self.identify_model_risks(model_info)
 
-        
+
 
         # 计算风险评分
 
@@ -671,11 +671,11 @@ class ModelRiskManager:
 
                 risk_score += 0.05
 
-        
+
 
         risk_score = min(1.0, risk_score)
 
-        
+
 
         # 确定风险等级
 
@@ -691,7 +691,7 @@ class ModelRiskManager:
 
             risk_level = "high"
 
-        
+
 
         return {
 
@@ -705,9 +705,9 @@ class ModelRiskManager:
 
         }
 
-    
 
-    def monitor_model_risk(self, model_id: str, 
+
+    def monitor_model_risk(self, model_id: str,
 
                           monitoring_period: int = 30) -> Dict:
 
@@ -717,13 +717,13 @@ class ModelRiskManager:
 
         historical_risks = self._get_historical_risks(model_id, monitoring_period)
 
-        
+
 
         # 分析风险趋势
 
         risk_trend = self._analyze_risk_trend(historical_risks)
 
-        
+
 
         # 生成风险报告
 
@@ -739,11 +739,11 @@ class ModelRiskManager:
 
         }
 
-        
+
 
         return risk_report
 
-    
+
 
     def _get_historical_risks(self, model_id: str, days: int) -> List[Dict]:
 
@@ -753,7 +753,7 @@ class ModelRiskManager:
 
         pass
 
-    
+
 
     def _analyze_risk_trend(self, historical_risks: List[Dict]) -> Dict:
 
@@ -763,11 +763,11 @@ class ModelRiskManager:
 
             return {"trend": "stable"}
 
-        
+
 
         risk_scores = [r["risk_score"] for r in historical_risks]
 
-        
+
 
         if risk_scores[-1] > risk_scores[0]:
 
@@ -781,7 +781,7 @@ class ModelRiskManager:
 
             trend = "stable"
 
-        
+
 
         return {
 
@@ -793,7 +793,7 @@ class ModelRiskManager:
 
         }
 
-    
+
 
     def _generate_risk_recommendations(self, risk_trend: Dict) -> List[str]:
 
@@ -801,7 +801,7 @@ class ModelRiskManager:
 
         recommendations = []
 
-        
+
 
         if risk_trend["trend"] == "increasing":
 
@@ -817,7 +817,7 @@ class ModelRiskManager:
 
             recommendations.append("模型风险下降,当前策略有效")
 
-        
+
 
         return recommendations
 
@@ -931,7 +931,7 @@ class ModelFairnessDetector:
 
     """模型公平性检测器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -939,9 +939,9 @@ class ModelFairnessDetector:
 
         self.sensitive_features = config.get("sensitive_features", [])
 
-    
 
-    def detect_fairness(self, y_true: np.ndarray, 
+
+    def detect_fairness(self, y_true: np.ndarray,
 
                        y_pred: np.ndarray,
 
@@ -969,7 +969,7 @@ class ModelFairnessDetector:
 
         )
 
-        
+
 
         # 计算公平性差异
 
@@ -987,13 +987,13 @@ class ModelFairnessDetector:
 
         }
 
-        
+
 
         # 评估公平性
 
         is_fair = self._evaluate_fairness(fairness_metrics)
 
-        
+
 
         return {
 
@@ -1005,7 +1005,7 @@ class ModelFairnessDetector:
 
         }
 
-    
+
 
     def _evaluate_fairness(self, fairness_metrics: Dict) -> bool:
 
@@ -1013,17 +1013,17 @@ class ModelFairnessDetector:
 
         dpd = fairness_metrics["demographic_parity_difference"]
 
-        
+
 
         # 阈值判断
 
         threshold = self.config.get("fairness_threshold", 0.1)
 
-        
+
 
         return abs(dpd) < threshold
 
-    
+
 
     def _generate_fairness_recommendations(self, fairness_metrics: Dict) -> List[str]:
 
@@ -1031,11 +1031,11 @@ class ModelFairnessDetector:
 
         recommendations = []
 
-        
+
 
         dpd = fairness_metrics["demographic_parity_difference"]
 
-        
+
 
         if abs(dpd) > 0.1:
 
@@ -1047,13 +1047,13 @@ class ModelFairnessDetector:
 
             recommendations.append("模型公平性良好,继续保持")
 
-        
+
 
         return recommendations
 
-    
 
-    def optimize_fairness(self, model, X_train: pd.DataFrame, 
+
+    def optimize_fairness(self, model, X_train: pd.DataFrame,
 
                          y_train: pd.Series,
 
@@ -1065,17 +1065,17 @@ class ModelFairnessDetector:
 
         constraint = DemographicParity()
 
-        
+
 
         mitigator = ExponentiatedGradient(model, constraint)
 
         mitigator.fit(X_train, y_train, sensitive_features=sensitive_features)
 
-        
+
 
         return mitigator
 
-    
+
 
     def generate_fairness_report(self, fairness_results: Dict) -> str:
 
@@ -1099,7 +1099,7 @@ class ModelFairnessDetector:
 
 """
 
-        
+
 
         for metric, values in fairness_results['fairness_metrics']['metric_by_group'].items():
 
@@ -1109,7 +1109,7 @@ class ModelFairnessDetector:
 
                 report += f"- {group}: {value:.4f}\n"
 
-        
+
 
         report += "\n## 建议\n"
 
@@ -1117,7 +1117,7 @@ class ModelFairnessDetector:
 
             report += f"- {recommendation}\n"
 
-        
+
 
         return report
 
@@ -1215,7 +1215,7 @@ class DataSourceCostOptimizer:
 
     """数据源成本优化器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1223,7 +1223,7 @@ class DataSourceCostOptimizer:
 
         self.cost_thresholds = config.get("cost_thresholds", {})
 
-    
+
 
     def analyze_data_source_costs(self, usage_data: pd.DataFrame) -> Dict:
 
@@ -1233,7 +1233,7 @@ class DataSourceCostOptimizer:
 
         cost_by_source = usage_data.groupby('source')['cost'].sum()
 
-        
+
 
         # 计算成本趋势
 
@@ -1243,7 +1243,7 @@ class DataSourceCostOptimizer:
 
         )['cost'].sum()
 
-        
+
 
         # 识别高成本数据源
 
@@ -1253,7 +1253,7 @@ class DataSourceCostOptimizer:
 
         ]
 
-        
+
 
         return {
 
@@ -1269,7 +1269,7 @@ class DataSourceCostOptimizer:
 
         }
 
-    
+
 
     def _identify_optimizations(self, usage_data: pd.DataFrame) -> List[Dict]:
 
@@ -1277,7 +1277,7 @@ class DataSourceCostOptimizer:
 
         optimizations = []
 
-        
+
 
         # 检查重复数据
 
@@ -1295,7 +1295,7 @@ class DataSourceCostOptimizer:
 
             })
 
-        
+
 
         # 检查低使用率数据源
 
@@ -1303,7 +1303,7 @@ class DataSourceCostOptimizer:
 
         low_usage_sources = usage_by_source[usage_by_source < 10]
 
-        
+
 
         if len(low_usage_sources) > 0:
 
@@ -1317,11 +1317,11 @@ class DataSourceCostOptimizer:
 
             })
 
-        
+
 
         return optimizations
 
-    
+
 
     def optimize_data_source_usage(self, usage_data: pd.DataFrame) -> Dict:
 
@@ -1331,13 +1331,13 @@ class DataSourceCostOptimizer:
 
         cost_analysis = self.analyze_data_source_costs(usage_data)
 
-        
+
 
         # 生成优化建议
 
         recommendations = []
 
-        
+
 
         for opportunity in cost_analysis["optimization_opportunities"]:
 
@@ -1365,7 +1365,7 @@ class DataSourceCostOptimizer:
 
                 })
 
-        
+
 
         return {
 
@@ -1375,7 +1375,7 @@ class DataSourceCostOptimizer:
 
         }
 
-    
+
 
     def generate_cost_report(self, usage_data: pd.DataFrame) -> str:
 
@@ -1383,7 +1383,7 @@ class DataSourceCostOptimizer:
 
         cost_analysis = self.analyze_data_source_costs(usage_data)
 
-        
+
 
         report = f"""
 
@@ -1401,13 +1401,13 @@ class DataSourceCostOptimizer:
 
 """
 
-        
+
 
         for source, cost in cost_analysis['cost_by_source'].items():
 
 report += f"- {source}: {cost:.2f}\n"
 
-        
+
 
         report += "\n## 优化机会\n"
 
@@ -1415,7 +1415,7 @@ report += f"- {source}: {cost:.2f}\n"
 
 report += f"- {opportunity['description']}: {opportunity['potential_savings']:.2f}\n"
 
-        
+
 
         return report
 
@@ -1509,7 +1509,7 @@ class DataAugmentationSystem:
 
     """数据增强系统"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -1527,9 +1527,9 @@ class DataAugmentationSystem:
 
         }
 
-    
 
-    def augment_data(self, data: pd.DataFrame, 
+
+    def augment_data(self, data: pd.DataFrame,
 
                     method: str = "noise_injection",
 
@@ -1541,19 +1541,19 @@ class DataAugmentationSystem:
 
             raise ValueError(f"不支持的增强方法: {method}")
 
-        
+
 
         # 应用增强方法
 
         augmented_data = self.augmentation_methodsmethod
 
-        
+
 
         return augmented_data
 
-    
 
-    def _noise_injection(self, data: pd.DataFrame, 
+
+    def _noise_injection(self, data: pd.DataFrame,
 
                         ratio: float) -> pd.DataFrame:
 
@@ -1561,7 +1561,7 @@ class DataAugmentationSystem:
 
         augmented = data.copy()
 
-        
+
 
         for column in data.columns:
 
@@ -1569,7 +1569,7 @@ class DataAugmentationSystem:
 
                 noise = np.random.normal(
 
-                    0, 
+                    0,
 
                     data[column].std() * ratio,
 
@@ -1579,13 +1579,13 @@ class DataAugmentationSystem:
 
                 augmented[column] = data[column] + noise
 
-        
+
 
         return augmented
 
-    
 
-    def _time_warping(self, data: pd.DataFrame, 
+
+    def _time_warping(self, data: pd.DataFrame,
 
                      ratio: float) -> pd.DataFrame:
 
@@ -1593,13 +1593,13 @@ class DataAugmentationSystem:
 
         augmented = data.copy()
 
-        
+
 
         # 随机选择扭曲点
 
         warp_points = np.random.choice(
 
-            len(data), 
+            len(data),
 
             size=int(len(data) * ratio),
 
@@ -1607,7 +1607,7 @@ class DataAugmentationSystem:
 
         )
 
-        
+
 
         for point in warp_points:
 
@@ -1621,13 +1621,13 @@ class DataAugmentationSystem:
 
                 ) / 2
 
-        
+
 
         return augmented
 
-    
 
-    def _magnitude_warping(self, data: pd.DataFrame, 
+
+    def _magnitude_warping(self, data: pd.DataFrame,
 
                           ratio: float) -> pd.DataFrame:
 
@@ -1635,7 +1635,7 @@ class DataAugmentationSystem:
 
         augmented = data.copy()
 
-        
+
 
         for column in data.columns:
 
@@ -1645,7 +1645,7 @@ class DataAugmentationSystem:
 
                 scale_factor = np.random.uniform(
 
-                    1 - ratio, 
+                    1 - ratio,
 
                     1 + ratio,
 
@@ -1655,13 +1655,13 @@ class DataAugmentationSystem:
 
                 augmented[column] = data[column] * scale_factor
 
-        
+
 
         return augmented
 
-    
 
-    def _mixup(self, data: pd.DataFrame, 
+
+    def _mixup(self, data: pd.DataFrame,
 
               ratio: float) -> pd.DataFrame:
 
@@ -1669,19 +1669,19 @@ class DataAugmentationSystem:
 
         augmented = data.copy()
 
-        
+
 
         # 随机选择样本对
 
         n_samples = int(len(data) * ratio)
 
-        
+
 
         for _ in range(n_samples):
 
             i, j = np.random.choice(len(data), size=2, replace=False)
 
-            
+
 
             # Mixup
 
@@ -1689,7 +1689,7 @@ class DataAugmentationSystem:
 
             mixed_sample = alpha * data.iloc[i] + (1 - alpha) * data.iloc[j]
 
-            
+
 
             # 添加到增强数据
 
@@ -1701,11 +1701,11 @@ class DataAugmentationSystem:
 
             ], ignore_index=True)
 
-        
+
 
         return augmented
 
-    
+
 
     def generate_augmented_dataset(self, data: pd.DataFrame,
 
@@ -1719,11 +1719,11 @@ class DataAugmentationSystem:
 
             methods = list(self.augmentation_methods.keys())
 
-        
+
 
         augmented_datasets = [data]
 
-        
+
 
         for method in methods:
 
@@ -1731,13 +1731,13 @@ class DataAugmentationSystem:
 
             augmented_datasets.append(augmented)
 
-        
+
 
         # 合并所有增强数据
 
         final_dataset = pd.concat(augmented_datasets, ignore_index=True)
 
-        
+
 
         return final_dataset
 
@@ -1936,4 +1936,3 @@ python src/data_augmentation/system.py
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
-

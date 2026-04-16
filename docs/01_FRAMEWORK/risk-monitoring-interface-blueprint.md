@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Risk Monitoring Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Risk Monitoring Interface蓝图设计相关内容
 
@@ -276,7 +276,7 @@ class RiskOverviewPanel:
 
     """风险概览面板"""
 
-    
+
 
     def __init__(self):
 
@@ -298,7 +298,7 @@ class RiskOverviewPanel:
 
         }
 
-    
+
 
     def render_overview(self):
 
@@ -306,39 +306,39 @@ class RiskOverviewPanel:
 
         st.subheader("📊 风险概览")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
             self._render_var_card()
 
-        
+
 
         with col2:
 
             self._render_es_card()
 
-        
+
 
         with col3:
 
             self._render_drawdown_card()
 
-        
+
 
         with col4:
 
             self._render_ratio_card()
 
-        
+
 
         self._render_risk_trend()
 
-    
+
 
     def _render_var_card(self):
 
@@ -346,19 +346,19 @@ class RiskOverviewPanel:
 
         st.markdown("### VaR监控")
 
-        
+
 
         var_95 = self.risk_metrics['var_95']
 
         var_99 = self.risk_metrics['var_99']
 
-        
+
 
         color_95 = "green" if var_95 < 0.03 else "orange" if var_95 < 0.05 else "red"
 
         color_99 = "green" if var_99 < 0.05 else "orange" if var_99 < 0.08 else "red"
 
-        
+
 
         st.metric(
 
@@ -372,7 +372,7 @@ class RiskOverviewPanel:
 
         )
 
-        
+
 
         st.metric(
 
@@ -386,7 +386,7 @@ class RiskOverviewPanel:
 
         )
 
-    
+
 
     def _render_es_card(self):
 
@@ -394,13 +394,13 @@ class RiskOverviewPanel:
 
         st.markdown("### ES监控")
 
-        
+
 
         es_95 = self.risk_metrics['es_95']
 
         es_99 = self.risk_metrics['es_99']
 
-        
+
 
         st.metric(
 
@@ -414,7 +414,7 @@ class RiskOverviewPanel:
 
         )
 
-        
+
 
         st.metric(
 
@@ -428,7 +428,7 @@ class RiskOverviewPanel:
 
         )
 
-    
+
 
     def _render_drawdown_card(self):
 
@@ -436,11 +436,11 @@ class RiskOverviewPanel:
 
         st.markdown("### 最大回撤")
 
-        
+
 
         max_dd = self.risk_metrics['max_drawdown']
 
-        
+
 
         st.metric(
 
@@ -454,7 +454,7 @@ class RiskOverviewPanel:
 
         )
 
-        
+
 
         st.metric(
 
@@ -466,7 +466,7 @@ class RiskOverviewPanel:
 
         )
 
-    
+
 
     def _render_ratio_card(self):
 
@@ -474,13 +474,13 @@ class RiskOverviewPanel:
 
         st.markdown("### 风险调整收益")
 
-        
+
 
         sharpe = self.risk_metrics['sharpe_ratio']
 
         sortino = self.risk_metrics['sortino_ratio']
 
-        
+
 
         st.metric(
 
@@ -492,7 +492,7 @@ class RiskOverviewPanel:
 
         )
 
-        
+
 
         st.metric(
 
@@ -504,7 +504,7 @@ class RiskOverviewPanel:
 
         )
 
-    
+
 
     def _render_risk_trend(self):
 
@@ -512,7 +512,7 @@ class RiskOverviewPanel:
 
         st.markdown("### 风险指标趋势")
 
-        
+
 
         dates = [datetime.now() - timedelta(days=i) for i in range(30, 0, -1)]
 
@@ -520,11 +520,11 @@ class RiskOverviewPanel:
 
         es_values = var_values * 1.4
 
-        
+
 
         fig = go.Figure()
 
-        
+
 
         fig.add_trace(go.Scatter(
 
@@ -540,7 +540,7 @@ class RiskOverviewPanel:
 
         ))
 
-        
+
 
         fig.add_trace(go.Scatter(
 
@@ -556,7 +556,7 @@ class RiskOverviewPanel:
 
         ))
 
-        
+
 
         fig.update_layout(
 
@@ -572,7 +572,7 @@ class RiskOverviewPanel:
 
         )
 
-        
+
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -590,7 +590,7 @@ class RiskAlertPanel:
 
     """风险预警面板"""
 
-    
+
 
     def __init__(self):
 
@@ -606,7 +606,7 @@ class RiskAlertPanel:
 
         }
 
-    
+
 
     def render_alerts(self):
 
@@ -614,29 +614,29 @@ class RiskAlertPanel:
 
         st.subheader("🚨 风险预警")
 
-        
+
 
         tab1, tab2, tab3 = st.tabs(["实时预警", "历史预警", "预警配置"])
 
-        
+
 
         with tab1:
 
             self._render_active_alerts()
 
-        
+
 
         with tab2:
 
             self._render_alert_history()
 
-        
+
 
         with tab3:
 
             self._render_alert_config()
 
-    
+
 
     def _render_active_alerts(self):
 
@@ -670,7 +670,7 @@ class RiskAlertPanel:
 
         ]
 
-        
+
 
         if not alerts:
 
@@ -678,7 +678,7 @@ class RiskAlertPanel:
 
             return
 
-        
+
 
         for alert in alerts:
 
@@ -692,19 +692,19 @@ class RiskAlertPanel:
 
             }
 
-            
+
 
             with st.container():
 
                 col1, col2, col3 = st.columns([1, 3, 1])
 
-                
+
 
                 with col1:
 
                     st.markdown(f"{level_color.get(alert['level'], '⚪')} {alert['level']}")
 
-                
+
 
                 with col2:
 
@@ -712,17 +712,17 @@ class RiskAlertPanel:
 
                     st.caption(alert['message'])
 
-                
+
 
                 with col3:
 
                     st.caption(alert['timestamp'].strftime('%H:%M:%S'))
 
-                
+
 
                 st.divider()
 
-    
+
 
     def _render_alert_history(self):
 
@@ -730,7 +730,7 @@ class RiskAlertPanel:
 
         st.markdown("### 历史预警记录")
 
-        
+
 
         df = pd.DataFrame({
 
@@ -744,11 +744,11 @@ class RiskAlertPanel:
 
         })
 
-        
+
 
         st.dataframe(df, use_container_width=True)
 
-    
+
 
     def _render_alert_config(self):
 
@@ -756,7 +756,7 @@ class RiskAlertPanel:
 
         st.markdown("### 预警规则配置")
 
-        
+
 
         with st.form("alert_config"):
 
@@ -776,7 +776,7 @@ class RiskAlertPanel:
 
             )
 
-            
+
 
             self.alert_rules['drawdown_threshold'] = st.slider(
 
@@ -794,7 +794,7 @@ class RiskAlertPanel:
 
             )
 
-            
+
 
             self.alert_rules['concentration_threshold'] = st.slider(
 
@@ -812,7 +812,7 @@ class RiskAlertPanel:
 
             )
 
-            
+
 
             submitted = st.form_submit_button("保存配置")
 
@@ -834,7 +834,7 @@ class RiskAttributionPanel:
 
     """风险归因面板"""
 
-    
+
 
     def __init__(self):
 
@@ -884,7 +884,7 @@ class RiskAttributionPanel:
 
         }
 
-    
+
 
     def render_attribution(self):
 
@@ -892,29 +892,29 @@ class RiskAttributionPanel:
 
         st.subheader("📈 风险归因分析")
 
-        
+
 
         tab1, tab2, tab3 = st.tabs(["因子归因", "行业归因", "风格归因"])
 
-        
+
 
         with tab1:
 
             self._render_factor_attribution()
 
-        
+
 
         with tab2:
 
             self._render_industry_attribution()
 
-        
+
 
         with tab3:
 
             self._render_style_attribution()
 
-    
+
 
     def _render_factor_attribution(self):
 
@@ -922,7 +922,7 @@ class RiskAttributionPanel:
 
         st.markdown("### 因子风险贡献")
 
-        
+
 
         fig = go.Figure(data=[go.Pie(
 
@@ -934,7 +934,7 @@ class RiskAttributionPanel:
 
         )])
 
-        
+
 
         fig.update_layout(
 
@@ -944,11 +944,11 @@ class RiskAttributionPanel:
 
         )
 
-        
+
 
         st.plotly_chart(fig, use_container_width=True)
 
-        
+
 
         df = pd.DataFrame({
 
@@ -958,11 +958,11 @@ class RiskAttributionPanel:
 
         })
 
-        
+
 
         st.dataframe(df, use_container_width=True)
 
-    
+
 
     def _render_industry_attribution(self):
 
@@ -970,7 +970,7 @@ class RiskAttributionPanel:
 
         st.markdown("### 行业风险贡献")
 
-        
+
 
         fig = go.Figure(data=[go.Bar(
 
@@ -982,7 +982,7 @@ class RiskAttributionPanel:
 
         )])
 
-        
+
 
         fig.update_layout(
 
@@ -996,11 +996,11 @@ class RiskAttributionPanel:
 
         )
 
-        
+
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _render_style_attribution(self):
 
@@ -1008,7 +1008,7 @@ class RiskAttributionPanel:
 
         st.markdown("### 风格风险贡献")
 
-        
+
 
         fig = go.Figure(data=[go.Bar(
 
@@ -1020,7 +1020,7 @@ class RiskAttributionPanel:
 
         )])
 
-        
+
 
         fig.update_layout(
 
@@ -1034,7 +1034,7 @@ class RiskAttributionPanel:
 
         )
 
-        
+
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -1167,4 +1167,3 @@ class RiskAttributionPanel:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -244,4 +244,3 @@ pip install xtquant pandas numpy
 
 
 **ﻠﻟ۵ﮔﻠ**ﺅﺙﻛﺕﻟ۵ﻟﺓﺏﻟﺟ?Add to PATH"ﻠﻠ۰ﺗﺅﺙﻟﺟﮔﺁcondaﮒﺛﻛﭨ۳ﮒﺁﻝ۷ﻝﮒﺏﻠ؟ﻙ?
-

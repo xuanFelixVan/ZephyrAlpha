@@ -27,7 +27,7 @@ responsibility: ''
 
 > **核心职责**: 蓝图设计和架构规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：蓝图设计和架构规划相关内容
 
@@ -37,11 +37,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0.0  
+> **版本**: v1.0.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **实施周期**: 2周  
+> **实施周期**: 2周
 
 > **开源项目**: Open Policy Agent + spaCy + Great Expectations
 
@@ -61,7 +61,7 @@ responsibility: ''
 
 
 
-**核心定位**:  
+**核心定位**:
 
 使用AI技术和规则引擎实现智能合规检查，确保所有交易和持仓符合监管要求和内部风控标准。
 
@@ -287,7 +287,7 @@ class ComplianceRuleManager:
 
     """合规规则管理器"""
 
-    
+
 
     def __init__(self, opa_url='http://localhost:8181'):
 
@@ -295,7 +295,7 @@ class ComplianceRuleManager:
 
         self.rules = {}
 
-        
+
 
     def define_trading_rule(self, rule: ComplianceRule):
 
@@ -303,7 +303,7 @@ class ComplianceRuleManager:
 
         定义交易合规规则
 
-        
+
 
         Args:
 
@@ -315,19 +315,19 @@ class ComplianceRuleManager:
 
         rego_rule = self._convert_to_rego(rule)
 
-        
+
 
         # 加载到OPA引擎
 
         self._load_to_opa(rule.rule_id, rego_rule)
 
-        
+
 
         # 存储规则元数据
 
         self.rules[rule.rule_id] = rule
 
-        
+
 
     def _convert_to_rego(self, rule: ComplianceRule) -> str:
 
@@ -377,7 +377,7 @@ rule[{rule.rule_id}] {{
 
             return ""
 
-    
+
 
     def _load_to_opa(self, rule_id: str, rego_rule: str):
 
@@ -385,13 +385,13 @@ rule[{rule.rule_id}] {{
 
         import requests
 
-        
+
 
         url = f"{self.opa_url}/v1/policies/{rule_id}"
 
         response = requests.put(url, data=rego_rule)
 
-        
+
 
         if response.status_code != 200:
 
@@ -419,7 +419,7 @@ class IntelligentComplianceChecker:
 
     """智能合规检查器"""
 
-    
+
 
     def __init__(self, opa_url='http://localhost:8181'):
 
@@ -427,7 +427,7 @@ class IntelligentComplianceChecker:
 
         self.nlp = spacy.load('zh_core_web_sm')
 
-        
+
 
     def check_trading_compliance(self, trade_data: Dict) -> Dict:
 
@@ -435,13 +435,13 @@ class IntelligentComplianceChecker:
 
         检查交易合规性
 
-        
+
 
         Args:
 
             trade_data: 交易数据
 
-            
+
 
         Returns:
 
@@ -455,17 +455,17 @@ class IntelligentComplianceChecker:
 
         response = requests.post(url, json={'input': {'trade': trade_data}})
 
-        
+
 
         result = response.json()
 
-        
+
 
         # 分析违规原因
 
         violations = self._analyze_violations(result, trade_data)
 
-        
+
 
         return {
 
@@ -477,7 +477,7 @@ class IntelligentComplianceChecker:
 
         }
 
-    
+
 
     def check_position_compliance(self, position_data: Dict) -> Dict:
 
@@ -485,13 +485,13 @@ class IntelligentComplianceChecker:
 
         检查持仓合规性
 
-        
+
 
         Args:
 
             position_data: 持仓数据
 
-            
+
 
         Returns:
 
@@ -503,15 +503,15 @@ class IntelligentComplianceChecker:
 
         response = requests.post(url, json={'input': {'position': position_data}})
 
-        
+
 
         result = response.json()
 
-        
+
 
         violations = self._analyze_violations(result, position_data)
 
-        
+
 
         return {
 
@@ -523,7 +523,7 @@ class IntelligentComplianceChecker:
 
         }
 
-    
+
 
     def check_text_compliance(self, text: str) -> Dict:
 
@@ -531,13 +531,13 @@ class IntelligentComplianceChecker:
 
         检查文本合规性
 
-        
+
 
         Args:
 
             text: 待检查文本
 
-            
+
 
         Returns:
 
@@ -549,25 +549,25 @@ class IntelligentComplianceChecker:
 
         doc = self.nlp(text)
 
-        
+
 
         # 提取实体和关键词
 
         entities = [(ent.text, ent.label_) for ent in doc.ents]
 
-        
+
 
         # 检查敏感词
 
         sensitive_words = self._check_sensitive_words(text)
 
-        
+
 
         # 检查合规性
 
         violations = []
 
-        
+
 
         if sensitive_words:
 
@@ -581,7 +581,7 @@ class IntelligentComplianceChecker:
 
             })
 
-        
+
 
         return {
 
@@ -595,7 +595,7 @@ class IntelligentComplianceChecker:
 
         }
 
-    
+
 
     def _analyze_violations(self, result: Dict, data: Dict) -> List[Dict]:
 
@@ -603,7 +603,7 @@ class IntelligentComplianceChecker:
 
         violations = []
 
-        
+
 
         if not result.get('allow', True):
 
@@ -619,11 +619,11 @@ class IntelligentComplianceChecker:
 
             })
 
-        
+
 
         return violations
 
-    
+
 
     def _check_sensitive_words(self, text: str) -> List[str]:
 
@@ -641,7 +641,7 @@ class IntelligentComplianceChecker:
 
         ]
 
-        
+
 
         found_words = []
 
@@ -651,11 +651,11 @@ class IntelligentComplianceChecker:
 
                 found_words.append(word)
 
-        
+
 
         return found_words
 
-    
+
 
     def _generate_recommendations(self, violations: List[Dict]) -> List[str]:
 
@@ -663,7 +663,7 @@ class IntelligentComplianceChecker:
 
         recommendations = []
 
-        
+
 
         for violation in violations:
 
@@ -675,7 +675,7 @@ class IntelligentComplianceChecker:
 
                 recommendations.append('请移除文本中的敏感词')
 
-        
+
 
         return recommendations
 
@@ -701,7 +701,7 @@ class ComplianceReportGenerator:
 
     """合规报告生成器"""
 
-    
+
 
     def generate_violation_report(
 
@@ -717,7 +717,7 @@ class ComplianceReportGenerator:
 
         生成违规报告
 
-        
+
 
         Args:
 
@@ -725,7 +725,7 @@ class ComplianceReportGenerator:
 
             report_date: 报告日期
 
-            
+
 
         Returns:
 
@@ -751,7 +751,7 @@ class ComplianceReportGenerator:
 
 """
 
-        
+
 
         for i, violation in enumerate(violations, 1):
 
@@ -773,11 +773,11 @@ class ComplianceReportGenerator:
 
 """
 
-        
+
 
         return report
 
-    
+
 
     def generate_compliance_summary(
 
@@ -795,7 +795,7 @@ class ComplianceReportGenerator:
 
         生成合规摘要报告
 
-        
+
 
         Args:
 
@@ -805,7 +805,7 @@ class ComplianceReportGenerator:
 
             period_end: 统计结束日期
 
-            
+
 
         Returns:
 
@@ -819,7 +819,7 @@ class ComplianceReportGenerator:
 
         violation_rate = 1 - (compliant_checks / total_checks) if total_checks > 0 else 0
 
-        
+
 
         report = f"""
 
@@ -851,7 +851,7 @@ class ComplianceReportGenerator:
 
 """
 
-        
+
 
         # 统计违规类型分布
 
@@ -865,13 +865,13 @@ class ComplianceReportGenerator:
 
                 violation_types[vtype] = violation_types.get(vtype, 0) + 1
 
-        
+
 
         for vtype, count in violation_types.items():
 
             report += f"- **{vtype}**: {count} 次\n"
 
-        
+
 
         return report
 
@@ -1388,4 +1388,3 @@ class ComplianceCheckResult:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -40,7 +40,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -100,7 +100,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-- **ﮔﮔﺁﻝﺅﺟ?*: 
+- **ﮔﮔﺁﻝﺅﺟ?*:
 
 
 
@@ -120,7 +120,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-- **ﻠ۱ﮔﻛﭨﺓﺅﺟﺛ?*: 
+- **ﻠ۱ﮔﻛﭨﺓﺅﺟﺛ?*:
 
 
 
@@ -960,7 +960,7 @@ QMTﮔﻛﺝﺅﺙ?- ﻛﭦ۳ﮔﮔ۴ﮒ۲ﺅﺙXtQuantTraderﺅﺙ?- ﮔﺍﮔ�
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴ﺅﺟ?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴ﺅﺟ?*:
 
 
 
@@ -984,7 +984,7 @@ QMTﮔﻛﺝﺅﺙ?- ﻛﭦ۳ﮔﮔ۴ﮒ۲ﺅﺙXtQuantTraderﺅﺙ?- ﮔﺍﮔ�
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -1408,7 +1408,7 @@ class OrderConverter:
 
 
 
-    
+
 
 
 
@@ -1420,7 +1420,7 @@ class OrderConverter:
 
 
 
-    
+
 
 
 
@@ -1432,7 +1432,7 @@ class OrderConverter:
 
 
 
-        
+
 
 
 
@@ -1444,7 +1444,7 @@ class OrderConverter:
 
 
 
-            
+
 
 
 
@@ -1464,7 +1464,7 @@ class OrderConverter:
 
 
 
-        
+
 
 
 
@@ -1484,7 +1484,7 @@ class OrderConverter:
 
 
 
-        
+
 
 
 
@@ -1492,7 +1492,7 @@ class OrderConverter:
 
 
 
-        
+
 
 
 
@@ -1528,7 +1528,7 @@ class OrderConverter:
 
 
 
-    
+
 
 
 
@@ -1540,7 +1540,7 @@ class OrderConverter:
 
 
 
-        
+
 
 
 
@@ -1552,7 +1552,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -1604,7 +1604,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -1632,7 +1632,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1648,7 +1648,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -1688,7 +1688,7 @@ QMTﻟ؟۱ﮒﻝﺎﭨﮒﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -1712,7 +1712,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1744,7 +1744,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1776,7 +1776,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1804,7 +1804,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1816,7 +1816,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1840,7 +1840,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1872,7 +1872,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1900,7 +1900,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1912,7 +1912,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1920,7 +1920,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1932,7 +1932,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1944,7 +1944,7 @@ class OrderMonitor:
 
 
 
-            
+
 
 
 
@@ -1964,7 +1964,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -1976,7 +1976,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -1988,7 +1988,7 @@ class OrderMonitor:
 
 
 
-            
+
 
 
 
@@ -2008,7 +2008,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -2036,7 +2036,7 @@ class OrderMonitor:
 
 
 
-                    
+
 
 
 
@@ -2048,7 +2048,7 @@ class OrderMonitor:
 
 
 
-                    
+
 
 
 
@@ -2056,7 +2056,7 @@ class OrderMonitor:
 
 
 
-                
+
 
 
 
@@ -2064,7 +2064,7 @@ class OrderMonitor:
 
 
 
-                
+
 
 
 
@@ -2076,7 +2076,7 @@ class OrderMonitor:
 
 
 
-    
+
 
 
 
@@ -2088,7 +2088,7 @@ class OrderMonitor:
 
 
 
-        
+
 
 
 
@@ -2124,7 +2124,7 @@ class RiskChecker:
 
 
 
-    
+
 
 
 
@@ -2140,7 +2140,7 @@ class RiskChecker:
 
 
 
-    
+
 
 
 
@@ -2152,7 +2152,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2164,7 +2164,7 @@ class RiskChecker:
 
 
 
-            
+
 
 
 
@@ -2192,7 +2192,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2208,7 +2208,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2224,7 +2224,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2232,7 +2232,7 @@ class RiskChecker:
 
 
 
-    
+
 
 
 
@@ -2244,7 +2244,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2256,7 +2256,7 @@ class RiskChecker:
 
 
 
-            
+
 
 
 
@@ -2280,7 +2280,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2288,7 +2288,7 @@ class RiskChecker:
 
 
 
-    
+
 
 
 
@@ -2300,7 +2300,7 @@ class RiskChecker:
 
 
 
-        
+
 
 
 
@@ -2312,7 +2312,7 @@ price: ﻟ؟۱ﮒﻛﭨﺓﮔﺙ
 
 
 
-            
+
 
 
 
@@ -2336,7 +2336,7 @@ price: ﻟ؟۱ﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2348,7 +2348,7 @@ price: ﻟ؟۱ﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2356,7 +2356,7 @@ price: ﻟ؟۱ﮒﻛﭨﺓﮔﺙ
 
 
 
-    
+
 
 
 
@@ -2368,7 +2368,7 @@ price: ﻟ؟۱ﮒﻛﭨﺓﮔﺙ
 
 
 
-        
+
 
 
 
@@ -2380,7 +2380,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-            
+
 
 
 
@@ -2416,7 +2416,7 @@ class ExceptionHandler:
 
 
 
-    
+
 
 
 
@@ -2432,7 +2432,7 @@ class ExceptionHandler:
 
 
 
-    
+
 
 
 
@@ -2460,7 +2460,7 @@ class ExceptionHandler:
 
 
 
-        
+
 
 
 
@@ -2476,7 +2476,7 @@ class ExceptionHandler:
 
 
 
-            
+
 
 
 
@@ -2496,7 +2496,7 @@ class ExceptionHandler:
 
 
 
-        
+
 
 
 
@@ -2556,7 +2556,7 @@ class RetryManager:
 
 
 
-    
+
 
 
 
@@ -2576,7 +2576,7 @@ class RetryManager:
 
 
 
-    
+
 
 
 
@@ -2588,7 +2588,7 @@ class RetryManager:
 
 
 
-        
+
 
 
 
@@ -2600,7 +2600,7 @@ class RetryManager:
 
 
 
-            
+
 
 
 
@@ -2620,7 +2620,7 @@ class RetryManager:
 
 
 
-        
+
 
 
 
@@ -2640,7 +2640,7 @@ class RetryManager:
 
 
 
-        
+
 
 
 
@@ -2652,7 +2652,7 @@ class RetryManager:
 
 
 
-    
+
 
 
 
@@ -2664,7 +2664,7 @@ class RetryManager:
 
 
 
-        
+
 
 
 
@@ -2688,7 +2688,7 @@ class RetryManager:
 
 
 
-    
+
 
 
 
@@ -2720,7 +2720,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -2736,7 +2736,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -2748,7 +2748,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -2760,7 +2760,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -2784,7 +2784,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -2824,7 +2824,7 @@ class AccountManager:
 
 
 
-    
+
 
 
 
@@ -2836,7 +2836,7 @@ class AccountManager:
 
 
 
-        
+
 
 
 
@@ -2848,7 +2848,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -2872,7 +2872,7 @@ class AccountManager:
 
 
 
-            
+
 
 
 
@@ -2944,7 +2944,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -2956,7 +2956,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -2964,7 +2964,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -2988,7 +2988,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3000,7 +3000,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3028,7 +3028,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3036,7 +3036,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3048,7 +3048,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3060,7 +3060,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3120,7 +3120,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3128,7 +3128,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3136,7 +3136,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3176,7 +3176,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3196,7 +3196,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3204,7 +3204,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3212,7 +3212,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3252,7 +3252,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3264,7 +3264,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3276,7 +3276,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3312,7 +3312,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3328,7 +3328,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3336,7 +3336,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3352,7 +3352,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3380,7 +3380,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3396,7 +3396,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3420,7 +3420,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3432,7 +3432,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3452,7 +3452,7 @@ class QMTExecutor:
 
 
 
-            
+
 
 
 
@@ -3460,7 +3460,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3504,7 +3504,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3516,7 +3516,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3536,7 +3536,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3548,7 +3548,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -3568,7 +3568,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3588,7 +3588,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -3904,7 +3904,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -3936,7 +3936,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -3992,7 +3992,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -4000,7 +4000,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -4008,7 +4008,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -4048,7 +4048,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -4068,7 +4068,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -4076,7 +4076,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -4084,7 +4084,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -4152,7 +4152,7 @@ def should_retry(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -4172,7 +4172,7 @@ def should_retry(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -4188,7 +4188,7 @@ def should_retry(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -4208,7 +4208,7 @@ def should_retry(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -4380,7 +4380,7 @@ def test_qmt_executor_integration():
 
 
 
-    
+
 
 
 
@@ -4388,7 +4388,7 @@ def test_qmt_executor_integration():
 
 
 
-    
+
 
 
 
@@ -4436,7 +4436,7 @@ def test_qmt_executor_integration():
 
 
 
-    
+
 
 
 
@@ -4444,7 +4444,7 @@ def test_qmt_executor_integration():
 
 
 
-    
+
 
 
 
@@ -4708,7 +4708,7 @@ qmt_executor:
 
 
 
-  
+
 
 
 
@@ -4724,7 +4724,7 @@ qmt_executor:
 
 
 
-  
+
 
 
 
@@ -4980,7 +4980,7 @@ class QMTExecutor:
 
 
 
-    
+
 
 
 
@@ -4992,7 +4992,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -5032,7 +5032,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -5060,7 +5060,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -5072,7 +5072,7 @@ class QMTExecutor:
 
 
 
-        
+
 
 
 
@@ -5108,7 +5108,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5128,7 +5128,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5140,7 +5140,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -5200,7 +5200,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5208,7 +5208,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5272,7 +5272,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5300,7 +5300,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5312,7 +5312,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-    
+
 
 
 
@@ -5360,7 +5360,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -5372,7 +5372,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -5388,7 +5388,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -5428,7 +5428,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 
-        
+
 
 
 
@@ -5452,7 +5452,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
 
 
 
-    """ﮔ۶ﻟ۰ﮒﻟ۶ﮔ۲ﺅﺟ?    
+    """ﮔ۶ﻟ۰ﮒﻟ۶ﮔ۲ﺅﺟ?
 
 
 
@@ -5464,7 +5464,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
 
 
 
-        
+
 
 
 
@@ -5516,7 +5516,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
 
 
 
-    
+
 
 
 
@@ -5532,7 +5532,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
 
 
 
-    
+
 
 
 
@@ -5556,7 +5556,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
 
 
 
-    
+
 
 
 
@@ -5580,7 +5580,7 @@ def _get_position_pct(self, symbol: str) -> float:
 
 
 
-    
+
 
 
 
@@ -5592,7 +5592,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -5616,7 +5616,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -5632,7 +5632,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -5648,7 +5648,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-    
+
 
 
 
@@ -5672,7 +5672,7 @@ def _get_last_trade_date(self, symbol: str) -> Optional[datetime]:
 
 
 
-    
+
 
 
 
@@ -5684,7 +5684,7 @@ symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
 
 
-        
+
 
 
 
@@ -5732,7 +5732,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5744,7 +5744,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-        
+
 
 
 
@@ -5768,7 +5768,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5784,7 +5784,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5792,7 +5792,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5820,7 +5820,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5836,7 +5836,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-    
+
 
 
 
@@ -5852,7 +5852,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-        
+
 
 
 
@@ -5864,7 +5864,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-            order_id, 
+            order_id,
 
 
 
@@ -5876,7 +5876,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-        
+
 
 
 
@@ -5888,7 +5888,7 @@ def cancel_order(self, order_id: str) -> bool:
 
 
 
-        
+
 
 
 
@@ -5948,7 +5948,7 @@ def start_compliance_monitoring(self):
 
 
 
-    
+
 
 
 
@@ -5968,7 +5968,7 @@ def start_compliance_monitoring(self):
 
 
 
-                
+
 
 
 
@@ -5992,7 +5992,7 @@ def start_compliance_monitoring(self):
 
 
 
-                
+
 
 
 
@@ -6016,7 +6016,7 @@ def start_compliance_monitoring(self):
 
 
 
-                
+
 
 
 
@@ -6024,7 +6024,7 @@ def start_compliance_monitoring(self):
 
 
 
-                
+
 
 
 
@@ -6040,7 +6040,7 @@ def start_compliance_monitoring(self):
 
 
 
-    
+
 
 
 
@@ -6124,7 +6124,7 @@ def generate_compliance_report(self) -> Dict:
 
 
 
-    
+
 
 
 
@@ -6144,7 +6144,7 @@ def generate_compliance_report(self) -> Dict:
 
 
 
-    
+
 
 
 
@@ -6164,7 +6164,7 @@ def generate_compliance_report(self) -> Dict:
 
 
 
-    
+
 
 
 
@@ -6228,7 +6228,7 @@ per_second: 15                # ﮔﺑﻛﺕ۴ﮔﺙﮔﮒﺅﺙﮔﺁﻝ۶15ﺅ
 
 
 
-  
+
 
 
 
@@ -6248,7 +6248,7 @@ per_second: 15                # ﮔﺑﻛﺕ۴ﮔﺙﮔﮒﺅﺙﮔﺁﻝ۶15ﺅ
 
 
 
-  
+
 
 
 
@@ -6260,7 +6260,7 @@ per_second: 15                # ﮔﺑﻛﺕ۴ﮔﺙﮔﮒﺅﺙﮔﺁﻝ۶15ﺅ
 
 
 
-    lock_period_months: 6              # 6ﻛﺕ۹ﮔﻠﻛﭨﺅﺟ?    major_shareholder_threshold: 0.05  # 5%ﮒ۳۶ﻟ۰ﻛﺕﻟ؟۳ﺅﺟ?    penetration_enabled: true          # ﻝ۸ﺟﻠﻝﻝ؟۰ﮒﺁﺅﺟ?  
+    lock_period_months: 6              # 6ﻛﺕ۹ﮔﻠﻛﭨﺅﺟ?    major_shareholder_threshold: 0.05  # 5%ﮒ۳۶ﻟ۰ﻛﺕﻟ؟۳ﺅﺟ?    penetration_enabled: true          # ﻝ۸ﺟﻠﻝﻝ؟۰ﮒﺁﺅﺟ?
 
 
 
@@ -6320,7 +6320,7 @@ def load_compliance_config(self, config_path: str = 'config/compliance_config.ya
 
 
 
-    
+
 
 
 
@@ -6348,7 +6348,7 @@ def load_compliance_config(self, config_path: str = 'config/compliance_config.ya
 
 
 
-        
+
 
 
 
@@ -6364,7 +6364,7 @@ def load_compliance_config(self, config_path: str = 'config/compliance_config.ya
 
 
 
-        
+
 
 
 
@@ -6372,7 +6372,7 @@ def load_compliance_config(self, config_path: str = 'config/compliance_config.ya
 
 
 
-        
+
 
 
 
@@ -6440,7 +6440,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-    
+
 
 
 
@@ -6476,7 +6476,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-    
+
 
 
 
@@ -6528,7 +6528,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-        
+
 
 
 
@@ -6540,7 +6540,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-    
+
 
 
 
@@ -6604,7 +6604,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-        
+
 
 
 
@@ -6616,7 +6616,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-    
+
 
 
 
@@ -6652,7 +6652,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
 
 
 
-        
+
 
 
 
@@ -6752,7 +6752,7 @@ def send_compliance_alert(self, level: str, message: str):
 
 
 
-    """ﮒﻠﮒﻟ۶ﮒﺅﺟ?    
+    """ﮒﻠﮒﻟ۶ﮒﺅﺟ?
 
 
 
@@ -6780,7 +6780,7 @@ message: ﮒﻟ۵ﮔﭘﮔﺁ
 
 
 
-    
+
 
 
 
@@ -6804,7 +6804,7 @@ message: ﮒﻟ۵ﮔﭘﮔﺁ
 
 
 
-    
+
 
 
 
@@ -6997,6 +6997,3 @@ message: ﮒﻟ۵ﮔﭘﮔﺁ
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.2.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳ﻟ?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
-
-
-

@@ -1719,4 +1719,3 @@ python src/main.py --code 000001.SZ --commission 0.001
 **前置文档**: LEARNING_PATH.md
 
 **下一步文?*: 因子计算详细设计
-

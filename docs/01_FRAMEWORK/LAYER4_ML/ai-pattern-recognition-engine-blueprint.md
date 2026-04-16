@@ -138,7 +138,7 @@ AI模式识别引擎，负责利用机器学习技术识别市场交易模式，
 
 class LSTMPatternRecognizer:
 
-    """LSTM模式识别?    
+    """LSTM模式识别?
 
     索引: AI_PATTERN_001-M01
 
@@ -150,7 +150,7 @@ class LSTMPatternRecognizer:
 
     """
 
-    
+
 
     def __init__(self, config: LSTMConfig):
 
@@ -166,13 +166,13 @@ class LSTMPatternRecognizer:
 
         }
 
-        
+
 
     def _build_lstm_model(self, horizon: int) -> tf.keras.Model:
 
         """构建LSTM模型
 
-        
+
 
         架构:
 
@@ -194,7 +194,7 @@ class LSTMPatternRecognizer:
 
         model = tf.keras.Sequential([
 
-            tf.keras.layers.LSTM(128, return_sequences=True, 
+            tf.keras.layers.LSTM(128, return_sequences=True,
 
                                 input_shape=(self.config.seq_len, self.config.feature_dim)),
 
@@ -210,7 +210,7 @@ class LSTMPatternRecognizer:
 
         ])
 
-        
+
 
         model.compile(
 
@@ -222,11 +222,11 @@ class LSTMPatternRecognizer:
 
         )
 
-        
+
 
         return model
 
-    
+
 
     def train(self, train_data: np.ndarray, train_labels: np.ndarray,
 
@@ -236,7 +236,7 @@ class LSTMPatternRecognizer:
 
         """训练LSTM模型
 
-        
+
 
         Args:
 
@@ -250,7 +250,7 @@ class LSTMPatternRecognizer:
 
             horizon: 时间框架 ('short_term', 'mid_term', 'long_term')
 
-            
+
 
         Returns:
 
@@ -260,7 +260,7 @@ class LSTMPatternRecognizer:
 
         model = self.models[horizon]
 
-        
+
 
         history = model.fit(
 
@@ -282,7 +282,7 @@ class LSTMPatternRecognizer:
 
         )
 
-        
+
 
         return TrainingResult(
 
@@ -294,13 +294,13 @@ class LSTMPatternRecognizer:
 
         )
 
-    
+
 
     def predict(self, data: np.ndarray, horizon: str = 'mid_term') -> PatternPrediction:
 
         """预测市场模式
 
-        
+
 
         Args:
 
@@ -308,7 +308,7 @@ class LSTMPatternRecognizer:
 
             horizon: 时间框架
 
-            
+
 
         Returns:
 
@@ -320,11 +320,11 @@ class LSTMPatternRecognizer:
 
         predictions = model.predict(data)
 
-        
+
 
         pattern_types = ['trend_up', 'trend_down', 'range_bound', 'breakout', 'reversal']
 
-        
+
 
         return PatternPrediction(
 
@@ -338,11 +338,11 @@ class LSTMPatternRecognizer:
 
         )
 
-    
+
 
     def _calculate_confidence(self, predictions: np.ndarray) -> float:
 
-        """计算预测置信?        
+        """计算预测置信?
 
         基于预测概率分布的熵计算置信?        熵越低，置信度越?        """
 
@@ -366,7 +366,7 @@ class LSTMPatternRecognizer:
 
 class TransformerPatternRecognizer:
 
-    """Transformer模式识别?    
+    """Transformer模式识别?
 
     索引: AI_PATTERN_001-M02
 
@@ -378,7 +378,7 @@ class TransformerPatternRecognizer:
 
     """
 
-    
+
 
     def __init__(self, config: TransformerConfig):
 
@@ -386,13 +386,13 @@ class TransformerPatternRecognizer:
 
         self.model = self._build_transformer_model()
 
-        
+
 
     def _build_transformer_model(self) -> tf.keras.Model:
 
         """构建Transformer模型
 
-        
+
 
         架构:
 
@@ -416,7 +416,7 @@ class TransformerPatternRecognizer:
 
         inputs = tf.keras.Input(shape=(self.config.seq_len, self.config.feature_dim))
 
-        
+
 
         # Positional Encoding
 
@@ -424,7 +424,7 @@ class TransformerPatternRecognizer:
 
         x = inputs + pos_encoding
 
-        
+
 
         # Transformer Encoder Layers
 
@@ -432,13 +432,13 @@ class TransformerPatternRecognizer:
 
             x = self._transformer_encoder_layer(x)
 
-        
+
 
         # Global Average Pooling
 
         x = tf.keras.layers.GlobalAveragePooling1D()(x)
 
-        
+
 
         # Dense Layers
 
@@ -448,11 +448,11 @@ class TransformerPatternRecognizer:
 
         outputs = tf.keras.layers.Dense(self.config.num_patterns, activation='softmax')(x)
 
-        
+
 
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
-        
+
 
         model.compile(
 
@@ -464,17 +464,17 @@ class TransformerPatternRecognizer:
 
         )
 
-        
+
 
         return model
 
-    
+
 
     def _positional_encoding(self, seq_len: int, feature_dim: int) -> tf.Tensor:
 
         """计算位置编码
 
-        
+
 
         使用正弦和余弦函数生成位置编?        """
 
@@ -482,7 +482,7 @@ class TransformerPatternRecognizer:
 
         div_term = np.exp(np.arange(0, feature_dim, 2) * -(np.log(10000.0) / feature_dim))
 
-        
+
 
         pos_encoding = np.zeros((seq_len, feature_dim))
 
@@ -490,17 +490,17 @@ class TransformerPatternRecognizer:
 
         pos_encoding[:, 1::2] = np.cos(position * div_term)
 
-        
+
 
         return tf.constant(pos_encoding, dtype=tf.float32)
 
-    
+
 
     def _transformer_encoder_layer(self, x: tf.Tensor) -> tf.Tensor:
 
         """Transformer编码器层
 
-        
+
 
         包含:
 
@@ -526,7 +526,7 @@ class TransformerPatternRecognizer:
 
         x = tf.keras.layers.LayerNormalization()(x + attn_output)
 
-        
+
 
         # Feed Forward
 
@@ -536,23 +536,23 @@ class TransformerPatternRecognizer:
 
         x = tf.keras.layers.LayerNormalization()(x + ff_output)
 
-        
+
 
         return x
 
-    
+
 
     def predict_with_attention(self, data: np.ndarray) -> AttentionPrediction:
 
         """预测并返回注意力权重
 
-        
+
 
         Args:
 
             data: 输入数据 (batch_size, seq_len, feature_dim)
 
-            
+
 
         Returns:
 
@@ -568,15 +568,15 @@ class TransformerPatternRecognizer:
 
             outputs=[self.model.output, self.model.layers[2].output]  # 第一个注意力?        )
 
-        
+
 
         predictions, attention_weights = attention_model.predict(data)
 
-        
+
 
         pattern_types = ['trend_up', 'trend_down', 'range_bound', 'breakout', 'reversal']
 
-        
+
 
         return AttentionPrediction(
 
@@ -606,7 +606,7 @@ class FeatureEngineer:
 
     """特征工程模块
 
-    
+
 
     索引: AI_PATTERN_001-M03
 
@@ -616,7 +616,7 @@ class FeatureEngineer:
 
     """
 
-    
+
 
     def __init__(self, config: FeatureConfig):
 
@@ -628,13 +628,13 @@ class FeatureEngineer:
 
         self.sentiment_features = SentimentFeatureExtractor()
 
-        
+
 
     def extract_features(self, market_data: pd.DataFrame,
 
                         sentiment_data: Optional[pd.DataFrame] = None) -> np.ndarray:
 
-        """提取多维度特?        
+        """提取多维度特?
 
         Args:
 
@@ -642,7 +642,7 @@ class FeatureEngineer:
 
             sentiment_data: 情绪数据 (?
 
-            
+
 
         Returns:
 
@@ -652,13 +652,13 @@ class FeatureEngineer:
 
         # 技术指标特?        tech_features = self.technical_features.extract(market_data)
 
-        
+
 
         # 市场微观结构特征
 
         micro_features = self.microstructure_features.extract(market_data)
 
-        
+
 
         # 情绪特征
 
@@ -668,25 +668,25 @@ class FeatureEngineer:
 
             sent_features = self.sentiment_features.extract(sentiment_data)
 
-        
+
 
         # 合并特征
 
         features = np.concatenate([tech_features, micro_features, sent_features], axis=1)
 
-        
+
 
         # 标准?        features = self._normalize_features(features)
 
-        
+
 
         return features
 
-    
+
 
     def _normalize_features(self, features: np.ndarray) -> np.ndarray:
 
-        """特征标准?        
+        """特征标准?
 
         使用RobustScaler减少异常值影?        """
 
@@ -702,11 +702,11 @@ class TechnicalFeatureExtractor:
 
     """技术指标特征提取器"""
 
-    
+
 
     def extract(self, data: pd.DataFrame) -> np.ndarray:
 
-        """提取技术指标特?        
+        """提取技术指标特?
 
         包含:
 
@@ -722,7 +722,7 @@ class TechnicalFeatureExtractor:
 
         features = []
 
-        
+
 
         # 动量指标
 
@@ -732,19 +732,19 @@ class TechnicalFeatureExtractor:
 
         features.append(self._calculate_momentum(data['close'], period=10))
 
-        
+
 
         # 波动率指?        features.append(self._calculate_atr(data, period=14))
 
         features.append(self._calculate_bollinger_bands(data['close'], period=20))
 
-        
+
 
         # 成交量指?        features.append(self._calculate_obv(data))
 
         features.append(self._calculate_volume_rate(data['volume'], period=10))
 
-        
+
 
         # 趋势指标
 
@@ -754,11 +754,11 @@ class TechnicalFeatureExtractor:
 
         features.append(self._calculate_adx(data, period=14))
 
-        
+
 
         return np.array(features).T
 
-    
+
 
     def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> np.ndarray:
 
@@ -776,7 +776,7 @@ class TechnicalFeatureExtractor:
 
         return rsi.fillna(50).values
 
-    
+
 
     def _calculate_macd(self, prices: pd.Series) -> np.ndarray:
 
@@ -794,7 +794,7 @@ class TechnicalFeatureExtractor:
 
         return histogram.fillna(0).values
 
-    
+
 
     def _calculate_momentum(self, prices: pd.Series, period: int = 10) -> np.ndarray:
 
@@ -804,7 +804,7 @@ class TechnicalFeatureExtractor:
 
         return momentum.fillna(0).values
 
-    
+
 
     def _calculate_atr(self, data: pd.DataFrame, period: int = 14) -> np.ndarray:
 
@@ -816,7 +816,7 @@ class TechnicalFeatureExtractor:
 
         close = data['close']
 
-        
+
 
         tr1 = high - low
 
@@ -824,17 +824,17 @@ class TechnicalFeatureExtractor:
 
         tr3 = abs(low - close.shift())
 
-        
+
 
         tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
 
         atr = tr.rolling(window=period).mean()
 
-        
+
 
         return atr.fillna(0).values
 
-    
+
 
     def _calculate_bollinger_bands(self, prices: pd.Series, period: int = 20) -> np.ndarray:
 
@@ -848,13 +848,13 @@ class TechnicalFeatureExtractor:
 
         lower_band = ma - (std * 2)
 
-        
+
 
         bb_position = (prices - lower_band) / (upper_band - lower_band)
 
         return bb_position.fillna(0.5).values
 
-    
+
 
     def _calculate_obv(self, data: pd.DataFrame) -> np.ndarray:
 
@@ -864,7 +864,7 @@ class TechnicalFeatureExtractor:
 
         return obv.values
 
-    
+
 
     def _calculate_volume_rate(self, volume: pd.Series, period: int = 10) -> np.ndarray:
 
@@ -876,7 +876,7 @@ class TechnicalFeatureExtractor:
 
         return volume_rate.fillna(1).values
 
-    
+
 
     def _calculate_ma(self, prices: pd.Series, period: int = 20) -> np.ndarray:
 
@@ -886,7 +886,7 @@ class TechnicalFeatureExtractor:
 
         return (prices / ma - 1).fillna(0).values
 
-    
+
 
     def _calculate_ema(self, prices: pd.Series, period: int = 20) -> np.ndarray:
 
@@ -896,7 +896,7 @@ class TechnicalFeatureExtractor:
 
         return (prices / ema - 1).fillna(0).values
 
-    
+
 
     def _calculate_adx(self, data: pd.DataFrame, period: int = 14) -> np.ndarray:
 
@@ -908,19 +908,19 @@ class TechnicalFeatureExtractor:
 
         close = data['close']
 
-        
+
 
         plus_dm = high.diff()
 
         minus_dm = low.diff()
 
-        
+
 
         plus_dm[plus_dm < 0] = 0
 
         minus_dm[minus_dm > 0] = 0
 
-        
+
 
         tr = self._calculate_atr(data, period=1)
 
@@ -928,13 +928,13 @@ class TechnicalFeatureExtractor:
 
         minus_di = 100 * (abs(minus_dm).rolling(window=period).mean() / tr)
 
-        
+
 
         dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di)
 
         adx = dx.rolling(window=period).mean()
 
-        
+
 
         return adx.fillna(0).values
 
@@ -944,13 +944,13 @@ class MicrostructureFeatureExtractor:
 
     """市场微观结构特征提取?""
 
-    
+
 
     def extract(self, data: pd.DataFrame) -> np.ndarray:
 
         """提取市场微观结构特征
 
-        
+
 
         包含:
 
@@ -962,31 +962,31 @@ class MicrostructureFeatureExtractor:
 
         features = []
 
-        
+
 
         # Amihud非流动性指?        features.append(self._calculate_amihud_illiquidity(data))
 
-        
+
 
         # 买卖价差估算（基于高频数据）
 
         features.append(self._estimate_bid_ask_spread(data))
 
-        
+
 
         # 已实现波动率
 
         features.append(self._calculate_realized_volatility(data))
 
-        
+
 
         # 跳跃波动?        features.append(self._calculate_jump_volatility(data))
 
-        
+
 
         return np.array(features).T
 
-    
+
 
     def _calculate_amihud_illiquidity(self, data: pd.DataFrame) -> np.ndarray:
 
@@ -998,7 +998,7 @@ class MicrostructureFeatureExtractor:
 
         return illiquidity.fillna(0).values
 
-    
+
 
     def _estimate_bid_ask_spread(self, data: pd.DataFrame) -> np.ndarray:
 
@@ -1008,25 +1008,25 @@ class MicrostructureFeatureExtractor:
 
         low = data['low']
 
-        
+
 
         beta = (np.log(high / low) ** 2).rolling(window=2).sum()
 
         gamma = (np.log(high.rolling(window=2).max() / low.rolling(window=2).min()) ** 2)
 
-        
+
 
         alpha = (np.sqrt(2 * beta) - np.sqrt(beta)) / (3 - 2 * np.sqrt(2)) - np.sqrt(gamma / (3 - 2 * np.sqrt(2)))
 
-        
+
 
         spread = 2 * (np.exp(alpha) - 1) / (1 + np.exp(alpha))
 
-        
+
 
         return spread.fillna(0).values
 
-    
+
 
     def _calculate_realized_volatility(self, data: pd.DataFrame, period: int = 20) -> np.ndarray:
 
@@ -1038,7 +1038,7 @@ class MicrostructureFeatureExtractor:
 
         return realized_vol.fillna(0).values
 
-    
+
 
     def _calculate_jump_volatility(self, data: pd.DataFrame, period: int = 20) -> np.ndarray:
 
@@ -1046,17 +1046,17 @@ class MicrostructureFeatureExtractor:
 
         returns = data['close'].pct_change()
 
-        
+
 
         # 使用已实现波动率和双幂次波动率的差值估算跳?        realized_vol = returns.rolling(window=period).std()
 
         bipower_vol = (abs(returns) * abs(returns.shift(1))).rolling(window=period).mean() ** 0.5
 
-        
+
 
         jump_vol = np.sqrt(abs(realized_vol ** 2 - bipower_vol ** 2))
 
-        
+
 
         return jump_vol.fillna(0).values
 
@@ -1066,13 +1066,13 @@ class SentimentFeatureExtractor:
 
     """情绪特征提取?""
 
-    
+
 
     def extract(self, sentiment_data: pd.DataFrame) -> np.ndarray:
 
         """提取情绪特征
 
-        
+
 
         包含:
 
@@ -1086,7 +1086,7 @@ class SentimentFeatureExtractor:
 
         features = []
 
-        
+
 
         # 新闻情感得分
 
@@ -1094,7 +1094,7 @@ class SentimentFeatureExtractor:
 
             features.append(sentiment_data['news_sentiment'].values)
 
-        
+
 
         # 社交媒体情绪
 
@@ -1102,13 +1102,13 @@ class SentimentFeatureExtractor:
 
             features.append(sentiment_data['social_sentiment'].values)
 
-        
+
 
         # 分析师情?        if 'analyst_sentiment' in sentiment_data.columns:
 
             features.append(sentiment_data['analyst_sentiment'].values)
 
-        
+
 
         # 市场情绪指标（VIX等）
 
@@ -1116,7 +1116,7 @@ class SentimentFeatureExtractor:
 
             features.append(sentiment_data['vix'].values)
 
-        
+
 
         return np.array(features).T if features else np.zeros((len(sentiment_data), 1))
 
@@ -1132,13 +1132,13 @@ class SentimentFeatureExtractor:
 
 class ModelEnsembler:
 
-    """模型集成?    
+    """模型集成?
 
     索引: AI_PATTERN_001-M04
 
     职责: 融合LSTM和Transformer模型的预测结束    输入: 多个模型的预测结束    输出: 集成后的最终预?    """
 
-    
+
 
     def __init__(self, config: EnsembleConfig):
 
@@ -1150,11 +1150,11 @@ class ModelEnsembler:
 
         self.weights = self._initialize_weights()
 
-        
+
 
     def _initialize_weights(self) -> Dict[str, float]:
 
-        """初始化模型权限        
+        """初始化模型权限
 
         基于验证集性能动态调整权限        """
 
@@ -1170,17 +1170,17 @@ class ModelEnsembler:
 
         }
 
-    
+
 
     def ensemble_predictions(self, predictions: Dict[str, PatternPrediction]) -> EnsemblePrediction:
 
-        """集成多个模型的预测结束        
+        """集成多个模型的预测结束
 
         Args:
 
             predictions: 各模型的预测结果
 
-            
+
 
         Returns:
 
@@ -1194,7 +1194,7 @@ class ModelEnsembler:
 
         pattern_types = ['trend_up', 'trend_down', 'range_bound', 'breakout', 'reversal']
 
-        
+
 
         for pattern in pattern_types:
 
@@ -1202,7 +1202,7 @@ class ModelEnsembler:
 
             total_weight = 0.0
 
-            
+
 
             for model_name, pred in predictions.items():
 
@@ -1214,11 +1214,11 @@ class ModelEnsembler:
 
                 total_weight += weight
 
-            
+
 
             weighted_probs[pattern] = weighted_sum / total_weight if total_weight > 0 else 0.0
 
-        
+
 
         # 找出最高概率的模式
 
@@ -1226,11 +1226,11 @@ class ModelEnsembler:
 
         final_probability = weighted_probs[final_pattern]
 
-        
+
 
         # 计算集成置信?        confidence = self._calculate_ensemble_confidence(predictions)
 
-        
+
 
         return EnsemblePrediction(
 
@@ -1246,11 +1246,11 @@ class ModelEnsembler:
 
         )
 
-    
+
 
     def _calculate_ensemble_confidence(self, predictions: Dict[str, PatternPrediction]) -> float:
 
-        """计算集成置信?        
+        """计算集成置信?
 
         基于模型一致性计算置信度
 
@@ -1258,7 +1258,7 @@ class ModelEnsembler:
 
         pattern_votes = {}
 
-        
+
 
         for pred in predictions.values():
 
@@ -1266,37 +1266,37 @@ class ModelEnsembler:
 
             pattern_votes[pattern] = pattern_votes.get(pattern, 0) + 1
 
-        
+
 
         max_votes = max(pattern_votes.values())
 
         total_votes = len(predictions)
 
-        
+
 
         consistency = max_votes / total_votes
 
-        
+
 
         # 结合平均置信?        avg_confidence = np.mean([pred.confidence for pred in predictions.values()])
 
-        
+
 
         # 综合置信?        ensemble_confidence = 0.6 * consistency + 0.4 * avg_confidence
 
-        
+
 
         return float(ensemble_confidence)
 
-    
+
 
     def update_weights(self, validation_performance: Dict[str, float]):
 
         """更新模型权重
 
-        
 
-        基于验证集性能动态调整权限        
+
+        基于验证集性能动态调整权限
 
         Args:
 
@@ -1306,7 +1306,7 @@ class ModelEnsembler:
 
         total_performance = sum(validation_performance.values())
 
-        
+
 
         if total_performance > 0:
 
@@ -1406,7 +1406,7 @@ class IPatternRecognizer(ABC):
 
     """模式识别器接口""
 
-    
+
 
     @abstractmethod
 
@@ -1418,7 +1418,7 @@ class IPatternRecognizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1428,7 +1428,7 @@ class IPatternRecognizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1438,7 +1438,7 @@ class IPatternRecognizer(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1454,7 +1454,7 @@ class IFeatureExtractor(ABC):
 
     """特征提取器接口""
 
-    
+
 
     @abstractmethod
 
@@ -1470,7 +1470,7 @@ class IModelEnsembler(ABC):
 
     """模型集成器接口""
 
-    
+
 
     @abstractmethod
 
@@ -1480,7 +1480,7 @@ class IModelEnsembler(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1500,7 +1500,7 @@ class IModelEnsembler(ABC):
 
 class AIPatternRecognitionEngine:
 
-    """AI模式识别引擎主接口    
+    """AI模式识别引擎主接口
 
     索引: AI_PATTERN_001-MAIN
 
@@ -1508,7 +1508,7 @@ class AIPatternRecognitionEngine:
 
     """
 
-    
+
 
     def __init__(self, config: AIEngineConfig):
 
@@ -1522,7 +1522,7 @@ class AIPatternRecognitionEngine:
 
         self.ensembler = ModelEnsembler(config.ensemble_config)
 
-        
+
 
     def recognize_pattern(self, market_data: pd.DataFrame,
 
@@ -1532,7 +1532,7 @@ class AIPatternRecognitionEngine:
 
         """识别市场模式
 
-        
+
 
         Args:
 
@@ -1542,7 +1542,7 @@ class AIPatternRecognitionEngine:
 
             horizon: 时间框架 ('short_term', 'mid_term', 'long_term')
 
-            
+
 
         Returns:
 
@@ -1552,13 +1552,13 @@ class AIPatternRecognitionEngine:
 
         features = self.feature_engineer.extract_features(market_data, sentiment_data)
 
-        
+
 
         # 2. 准备输入数据
 
         input_data = self._prepare_input(features)
 
-        
+
 
         # 3. LSTM预测
 
@@ -1572,7 +1572,7 @@ class AIPatternRecognitionEngine:
 
             )
 
-        
+
 
         # 4. Transformer预测
 
@@ -1580,23 +1580,23 @@ class AIPatternRecognitionEngine:
 
         predictions = {**lstm_predictions, 'transformer': transformer_pred}
 
-        
+
 
         # 5. 模型集成
 
         ensemble_pred = self.ensembler.ensemble_predictions(predictions)
 
-        
+
 
         # 6. 特征重要性分?        feature_importance = self._analyze_feature_importance(features, ensemble_pred)
 
-        
+
 
         # 7. 风险评估
 
         risk_assessment = self._assess_risk(ensemble_pred, market_data)
 
-        
+
 
         return AIPatternRecognitionResult(
 
@@ -1610,13 +1610,13 @@ class AIPatternRecognitionEngine:
 
         )
 
-    
+
 
     def _prepare_input(self, features: np.ndarray) -> np.ndarray:
 
         """准备模型输入
 
-        
+
 
         将特征转换为时序格式
 
@@ -1626,21 +1626,21 @@ class AIPatternRecognitionEngine:
 
         n_samples = len(features) - seq_len + 1
 
-        
+
 
         input_data = np.zeros((n_samples, seq_len, features.shape[1]))
 
-        
+
 
         for i in range(n_samples):
 
             input_data[i] = features[i:i + seq_len]
 
-        
 
-        return input_data[-1:]  # 返回最后一个样?    
 
-    def _analyze_feature_importance(self, features: np.ndarray, 
+        return input_data[-1:]  # 返回最后一个样?
+
+    def _analyze_feature_importance(self, features: np.ndarray,
 
                                    prediction: PatternPrediction) -> Dict[str, float]:
 
@@ -1662,19 +1662,19 @@ class AIPatternRecognitionEngine:
 
         ]
 
-        
+
 
         # 简化：随机分配重要性（实际应使用SHAP?        importance = np.random.rand(len(feature_names))
 
         importance = importance / importance.sum()
 
-        
+
 
         return dict(zip(feature_names, importance))
 
-    
 
-    def _assess_risk(self, prediction: PatternPrediction, 
+
+    def _assess_risk(self, prediction: PatternPrediction,
 
                     market_data: pd.DataFrame) -> Dict[str, float]:
 
@@ -1684,11 +1684,11 @@ class AIPatternRecognitionEngine:
 
         volatility = market_data['close'].pct_change().std()
 
-        
+
 
         risk_score = (1 - confidence) * volatility * 100
 
-        
+
 
         return {
 
@@ -1974,7 +1974,7 @@ graph LR
 
     D[市场状态识别] --> B
 
-    
+
 
     B --> E[AI增强集成]
 
@@ -1982,7 +1982,7 @@ graph LR
 
     B --> G[智能执行引擎]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -2099,4 +2099,3 @@ graph LR
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

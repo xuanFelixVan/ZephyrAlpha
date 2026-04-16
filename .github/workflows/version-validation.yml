@@ -12,37 +12,37 @@ on:
 jobs:
   validate-version-metadata:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0  # 获取完整历史，用于引用更新检查
-    
+
     - name: 设置Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: 安装依赖
       run: |
         pip install pyyaml
-    
+
     - name: 验证版本元数据
       run: |
         python src/utils/validate_version_metadata.py docs/ --recursive --threshold 70
-    
+
     - name: 生成验证报告
       if: always()
       run: |
         python src/utils/validate_version_metadata.py docs/ --recursive --format json --output version_validation_report.json
-    
+
     - name: 上传验证报告
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: version-validation-report
         path: version_validation_report.json
-    
+
     - name: 发布验证结果
       if: always()
       uses: actions/github-script@v6
@@ -51,14 +51,14 @@ jobs:
           const fs = require('fs');
           try {
             const report = JSON.parse(fs.readFileSync('version_validation_report.json', 'utf8'));
-            
+
             // 计算统计数据
             const totalFiles = report.length;
             const filesWithMetadata = report.filter(r => r.has_metadata).length;
             const filesValidMetadata = report.filter(r => r.metadata_valid).length;
             const filesValidFilename = report.filter(r => r.filename_valid).length;
             const avgScore = report.reduce((sum, r) => sum + r.score, 0) / totalFiles;
-            
+
             const passed = avgScore >= 70;
             const summary = `版本管理验证结果: ${passed ? '✅ 通过' : '❌ 未通过'}
             验证文件数: ${totalFiles}
@@ -67,13 +67,13 @@ jobs:
             文件名有效: ${filesValidFilename}/${totalFiles} (${(filesValidFilename/totalFiles*100).toFixed(1)}%)
             平均分数: ${avgScore.toFixed(1)}/100
             合格标准: ≥70分`;
-            
+
             // 查找问题文件
             const problematicFiles = report.filter(r => r.issues && r.issues.length > 0);
-            const details = problematicFiles.slice(0, 5).map(r => 
+            const details = problematicFiles.slice(0, 5).map(r =>
               `📄 ${r.file} (${r.score}/100): ${r.issues.join('; ')}`
             ).join('\n');
-            
+
             // 创建注释
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -81,7 +81,7 @@ jobs:
               issue_number: context.issue.number || context.payload.pull_request?.number,
               body: `## 版本管理验证报告\n\n${summary}\n\n### 问题文件示例\n${details}\n\n完整报告请下载artifact。`
             });
-            
+
             // 设置检查状态
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -91,7 +91,7 @@ jobs:
               context: 'version-metadata-validation',
               description: passed ? '版本元数据合规' : '版本元数据需要修复'
             });
-            
+
           } catch (error) {
             console.error('处理验证报告时出错:', error);
           }

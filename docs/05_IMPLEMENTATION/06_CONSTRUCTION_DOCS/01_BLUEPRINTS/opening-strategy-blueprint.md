@@ -213,7 +213,7 @@ class OpeningSignalGenerator:
 
     """开盘信号生成器"""
 
-    
+
 
     def __init__(self):
 
@@ -229,7 +229,7 @@ class OpeningSignalGenerator:
 
         }
 
-        
+
 
     def generate_signals(self,
 
@@ -241,7 +241,7 @@ class OpeningSignalGenerator:
 
         signals = {}
 
-        
+
 
         for strategy_name, strategy in self.strategies.items():
 
@@ -249,11 +249,11 @@ class OpeningSignalGenerator:
 
             signals[strategy_name] = signal
 
-        
+
 
         best_strategy = self._select_best_strategy(market_state)
 
-        
+
 
         return {
 
@@ -265,7 +265,7 @@ class OpeningSignalGenerator:
 
         }
 
-    
+
 
     def _select_best_strategy(self, market_state: str) -> str:
 
@@ -281,7 +281,7 @@ class OpeningSignalGenerator:
 
         }
 
-        
+
 
         return strategy_mapping.get(market_state, 'momentum')
 
@@ -291,7 +291,7 @@ class OpeningSignalGenerator:
 
 class OpeningBreakoutStrategy:
 
-    
+
 
     def generate_signal(self,
 
@@ -303,13 +303,13 @@ class OpeningBreakoutStrategy:
 
         prev_low = pre_market_data['low'].iloc[-1]
 
-        
+
 
         # 开盘价
 
         opening_price = opening_data['open'].iloc[0]
 
-        
+
 
         # 判断突破方向
 
@@ -331,7 +331,7 @@ class OpeningBreakoutStrategy:
 
             strength = 0
 
-        
+
 
         return {
 
@@ -361,7 +361,7 @@ class OpeningVolatilityAnalyzer:
 
     """开盘波动分析器"""
 
-    
+
 
     def analyze(self, opening_data: pd.DataFrame) -> Dict[str, Any]:
 
@@ -371,17 +371,17 @@ class OpeningVolatilityAnalyzer:
 
         volatility = opening_returns.std() * np.sqrt(252 * 240)  # 年化
 
-        
+
 
         price_range = (opening_data['high'].max() - opening_data['low'].min()) / \
 
                      opening_data['open'].iloc[0]
 
-        
+
 
         volume_ratio = opening_data['volume'].mean() / opening_data['volume'].iloc[0]
 
-        
+
 
         return {
 
@@ -395,7 +395,7 @@ class OpeningVolatilityAnalyzer:
 
         }
 
-    
+
 
     def _classify_volatility(self, volatility: float) -> str:
 
@@ -552,10 +552,3 @@ class OpeningVolatilityAnalyzer:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

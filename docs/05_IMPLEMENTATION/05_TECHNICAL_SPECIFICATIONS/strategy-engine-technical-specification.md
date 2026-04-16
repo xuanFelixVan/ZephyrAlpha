@@ -36,7 +36,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -96,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﮔﮔﺁﻝ?*: 
+- **ﮔﮔﺁﻝ?*:
 
 
 
@@ -116,7 +116,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻠ۱ﮔﻛﭨ?*: 
+- **ﻠ۱ﮔﻛﭨ?*:
 
 
 
@@ -370,7 +370,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*:
 
 
 
@@ -394,7 +394,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -720,7 +720,7 @@ class IStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -740,7 +740,7 @@ class IStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -776,7 +776,7 @@ class IStrategy(ABC):
 
 
 
-    
+
 
 
 
@@ -812,7 +812,7 @@ class StrategyScanner:
 
 
 
-    
+
 
 
 
@@ -828,7 +828,7 @@ class StrategyScanner:
 
 
 
-    
+
 
 
 
@@ -848,7 +848,7 @@ class StrategyScanner:
 
 
 
-        
+
 
 
 
@@ -868,7 +868,7 @@ class StrategyScanner:
 
 
 
-        
+
 
 
 
@@ -876,7 +876,7 @@ class StrategyScanner:
 
 
 
-    
+
 
 
 
@@ -916,7 +916,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -928,7 +928,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -948,7 +948,7 @@ class StrategyLoader:
 
 
 
-        
+
 
 
 
@@ -964,7 +964,7 @@ class StrategyLoader:
 
 
 
-        
+
 
 
 
@@ -972,7 +972,7 @@ class StrategyLoader:
 
 
 
-    
+
 
 
 
@@ -988,7 +988,7 @@ class StrategyLoader:
 
 
 
-        
+
 
 
 
@@ -1004,7 +1004,7 @@ class StrategyLoader:
 
 
 
-        
+
 
 
 
@@ -1028,7 +1028,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1052,7 +1052,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1072,7 +1072,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1088,7 +1088,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1108,7 +1108,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1128,7 +1128,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1136,7 +1136,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1156,7 +1156,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1164,7 +1164,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1184,7 +1184,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1192,7 +1192,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1212,7 +1212,7 @@ class StrategyRegistry:
 
 
 
-        
+
 
 
 
@@ -1224,7 +1224,7 @@ class StrategyRegistry:
 
 
 
-    
+
 
 
 
@@ -1256,7 +1256,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -1276,7 +1276,7 @@ class StrategyFactory:
 
 
 
-    
+
 
 
 
@@ -1292,7 +1292,7 @@ class StrategyFactory:
 
 
 
-        
+
 
 
 
@@ -1312,7 +1312,7 @@ class StrategyFactory:
 
 
 
-        
+
 
 
 
@@ -1320,7 +1320,7 @@ class StrategyFactory:
 
 
 
-        
+
 
 
 
@@ -1332,7 +1332,7 @@ class StrategyFactory:
 
 
 
-        
+
 
 
 
@@ -1340,7 +1340,7 @@ class StrategyFactory:
 
 
 
-        
+
 
 
 
@@ -1364,7 +1364,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1392,7 +1392,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1412,7 +1412,7 @@ class EventBus:
 
 
 
-        
+
 
 
 
@@ -1424,7 +1424,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1448,7 +1448,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1484,7 +1484,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1516,7 +1516,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1544,7 +1544,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1580,7 +1580,7 @@ class EventBus:
 
 
 
-    
+
 
 
 
@@ -1596,7 +1596,7 @@ class EventBus:
 
 
 
-        
+
 
 
 
@@ -1640,7 +1640,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -1672,7 +1672,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -1692,7 +1692,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1732,7 +1732,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1744,7 +1744,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1764,7 +1764,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1772,7 +1772,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -1792,7 +1792,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1804,7 +1804,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1812,7 +1812,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1832,7 +1832,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1840,7 +1840,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -1860,7 +1860,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1872,7 +1872,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1880,7 +1880,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1900,7 +1900,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1908,7 +1908,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -1928,7 +1928,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1940,7 +1940,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1948,7 +1948,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1968,7 +1968,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -1976,7 +1976,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -2016,7 +2016,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -2024,7 +2024,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -2036,7 +2036,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -2048,7 +2048,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2056,7 +2056,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2064,7 +2064,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2076,7 +2076,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2100,7 +2100,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2108,7 +2108,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2124,7 +2124,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2148,7 +2148,7 @@ class StrategyEngine:
 
 
 
-            
+
 
 
 
@@ -2160,7 +2160,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -2192,7 +2192,7 @@ class StrategyEngine:
 
 
 
-    
+
 
 
 
@@ -2212,7 +2212,7 @@ class StrategyEngine:
 
 
 
-        
+
 
 
 
@@ -2576,7 +2576,7 @@ def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
 
 
 
-    
+
 
 
 
@@ -2600,7 +2600,7 @@ def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
 
 
 
-    
+
 
 
 
@@ -2620,7 +2620,7 @@ def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
 
 
 
-    
+
 
 
 
@@ -2684,7 +2684,7 @@ def generate_signals(
 
 
 
-    
+
 
 
 
@@ -2716,7 +2716,7 @@ def generate_signals(
 
 
 
-    
+
 
 
 
@@ -2736,7 +2736,7 @@ def generate_signals(
 
 
 
-    
+
 
 
 
@@ -2744,7 +2744,7 @@ def generate_signals(
 
 
 
-    
+
 
 
 
@@ -2756,7 +2756,7 @@ def generate_signals(
 
 
 
-    
+
 
 
 
@@ -2768,7 +2768,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2776,7 +2776,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2784,7 +2784,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2796,7 +2796,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2820,7 +2820,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2828,7 +2828,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2844,7 +2844,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2868,7 +2868,7 @@ def generate_signals(
 
 
 
-        
+
 
 
 
@@ -2908,7 +2908,7 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 
 
 
-    
+
 
 
 
@@ -2932,7 +2932,7 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 
 
 
-    
+
 
 
 
@@ -2948,7 +2948,7 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 
 
 
-    
+
 
 
 
@@ -3140,7 +3140,7 @@ def test_strategy_engine_integration():
 
 
 
-    
+
 
 
 
@@ -3188,7 +3188,7 @@ def test_strategy_engine_integration():
 
 
 
-    
+
 
 
 
@@ -3200,7 +3200,7 @@ def test_strategy_engine_integration():
 
 
 
-    
+
 
 
 
@@ -3484,7 +3484,7 @@ strategy_engine:
 
 
 
-  
+
 
 
 
@@ -3500,7 +3500,7 @@ strategy_engine:
 
 
 
-  
+
 
 
 
@@ -3581,6 +3581,3 @@ strategy_engine:
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
-
-
-

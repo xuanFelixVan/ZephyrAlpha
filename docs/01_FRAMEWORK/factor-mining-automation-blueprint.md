@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Factor Mining Automation蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Factor Mining Automation蓝图设计相关内容
 
@@ -68,11 +68,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 2周  
+> **实施周期**: 2周
 
 > **目标**: 构建专业级因子挖掘自动化体系，对标WorldQuant、Two Sigma因子挖掘标准
 
@@ -408,7 +408,7 @@ class AutomatedFactorMiner:
 
     """自动化因子挖掘器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -420,7 +420,7 @@ class AutomatedFactorMiner:
 
         self.feature_matrix = None
 
-    
+
 
     def prepare_entity_set(self, data_dict: Dict[str, pd.DataFrame]) -> ft.EntitySet:
 
@@ -430,7 +430,7 @@ class AutomatedFactorMiner:
 
             self.entity_set = ft.EntitySet(id="factor_mining")
 
-            
+
 
             # 添加股票实体
 
@@ -448,7 +448,7 @@ class AutomatedFactorMiner:
 
                 )
 
-            
+
 
             # 添加财务数据实体
 
@@ -466,7 +466,7 @@ class AutomatedFactorMiner:
 
                 )
 
-            
+
 
             # 添加关系
 
@@ -478,11 +478,11 @@ class AutomatedFactorMiner:
 
                 )
 
-            
+
 
             return self.entity_set
 
-            
+
 
         except Exception as e:
 
@@ -490,9 +490,9 @@ class AutomatedFactorMiner:
 
             return None
 
-    
 
-    def generate_factors(self, entity_set: ft.EntitySet, 
+
+    def generate_factors(self, entity_set: ft.EntitySet,
 
                         target_dataframe: str = "stocks",
 
@@ -514,7 +514,7 @@ class AutomatedFactorMiner:
 
             ]
 
-            
+
 
             # 定义聚合原语
 
@@ -526,7 +526,7 @@ class AutomatedFactorMiner:
 
             ]
 
-            
+
 
             # 运行深度特征合成
 
@@ -544,21 +544,21 @@ class AutomatedFactorMiner:
 
             )
 
-            
+
 
             self.feature_matrix = feature_matrix
 
             self.feature_defs = feature_defs
 
-            
+
 
             self.logger.info(f"生成 {len(feature_defs)} 个因子")
 
-            
+
 
             return feature_matrix
 
-            
+
 
         except Exception as e:
 
@@ -566,9 +566,9 @@ class AutomatedFactorMiner:
 
             return None
 
-    
 
-    def select_factors(self, feature_matrix: pd.DataFrame, 
+
+    def select_factors(self, feature_matrix: pd.DataFrame,
 
                       target: pd.Series,
 
@@ -582,47 +582,47 @@ class AutomatedFactorMiner:
 
             factor_ics = {}
 
-            
+
 
             for column in feature_matrix.columns:
 
                 factor_values = feature_matrix[column]
 
-                
+
 
                 # 计算IC
 
                 ic = factor_values.corr(target, method='spearman')
 
-                
+
 
                 if not np.isnan(ic):
 
                     factor_ics[column] = abs(ic)
 
-            
+
 
             # 排序并选择Top K
 
-            sorted_factors = sorted(factor_ics.items(), 
+            sorted_factors = sorted(factor_ics.items(),
 
-                                   key=lambda x: x[1], 
+                                   key=lambda x: x[1],
 
                                    reverse=True)
 
-            
+
 
             selected_factors = [factor for factor, ic in sorted_factors[:top_k]]
 
-            
+
 
             self.logger.info(f"筛选出 {len(selected_factors)} 个因子")
 
-            
+
 
             return selected_factors
 
-            
+
 
         except Exception as e:
 
@@ -630,7 +630,7 @@ class AutomatedFactorMiner:
 
             return []
 
-    
+
 
     def generate_factor_report(self, feature_matrix: pd.DataFrame,
 
@@ -652,7 +652,7 @@ class AutomatedFactorMiner:
 
             }
 
-            
+
 
             for factor_name in selected_factors:
 
@@ -668,11 +668,11 @@ class AutomatedFactorMiner:
 
                 report["factor_list"].append(factor_info)
 
-            
+
 
             return report
 
-            
+
 
         except Exception as e:
 
@@ -706,7 +706,7 @@ class FactorEvaluator:
 
     """因子评估器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -714,9 +714,9 @@ class FactorEvaluator:
 
         self.logger = logging.getLogger(__name__)
 
-    
 
-    def evaluate_factor(self, factor_values: pd.Series, 
+
+    def evaluate_factor(self, factor_values: pd.Series,
 
                        returns: pd.Series,
 
@@ -736,7 +736,7 @@ class FactorEvaluator:
 
             }
 
-            
+
 
             # 1. IC分析
 
@@ -744,7 +744,7 @@ class FactorEvaluator:
 
             evaluation["metrics"]["ic"] = ic_metrics
 
-            
+
 
             # 2. IR分析
 
@@ -752,7 +752,7 @@ class FactorEvaluator:
 
             evaluation["metrics"]["ir"] = ir_metrics
 
-            
+
 
             # 3. 因子单调性
 
@@ -760,7 +760,7 @@ class FactorEvaluator:
 
             evaluation["metrics"]["monotonicity"] = monotonicity
 
-            
+
 
             # 4. 因子稳定性
 
@@ -768,7 +768,7 @@ class FactorEvaluator:
 
             evaluation["metrics"]["stability"] = stability
 
-            
+
 
             # 5. 综合评分
 
@@ -776,11 +776,11 @@ class FactorEvaluator:
 
             evaluation["overall_score"] = overall_score
 
-            
+
 
             return evaluation
 
-            
+
 
         except Exception as e:
 
@@ -788,9 +788,9 @@ class FactorEvaluator:
 
             return {"error": str(e)}
 
-    
 
-    def _calculate_ic(self, factor_values: pd.Series, 
+
+    def _calculate_ic(self, factor_values: pd.Series,
 
                       returns: pd.Series) -> Dict:
 
@@ -802,19 +802,19 @@ class FactorEvaluator:
 
             ic_spearman = factor_values.corr(returns, method='spearman')
 
-            
+
 
             # Pearson IC
 
             ic_pearson = factor_values.corr(returns, method='pearson')
 
-            
+
 
             # IC均值
 
             ic_mean = (abs(ic_spearman) + abs(ic_pearson)) / 2
 
-            
+
 
             return {
 
@@ -828,7 +828,7 @@ class FactorEvaluator:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -836,9 +836,9 @@ class FactorEvaluator:
 
             return {}
 
-    
 
-    def _calculate_ir(self, factor_values: pd.Series, 
+
+    def _calculate_ir(self, factor_values: pd.Series,
 
                      returns: pd.Series) -> Dict:
 
@@ -850,7 +850,7 @@ class FactorEvaluator:
 
             ic_series = []
 
-            
+
 
             # 按时间分组计算IC
 
@@ -858,7 +858,7 @@ class FactorEvaluator:
 
                 dates = factor_values.index.unique()
 
-                
+
 
                 for date in dates:
 
@@ -866,7 +866,7 @@ class FactorEvaluator:
 
                     returns_date = returns[returns.index == date]
 
-                    
+
 
                     if len(factor_date) > 0 and len(returns_date) > 0:
 
@@ -874,11 +874,11 @@ class FactorEvaluator:
 
                         ic_series.append(ic)
 
-                
+
 
                 ic_series = pd.Series(ic_series)
 
-                
+
 
                 # 计算IR
 
@@ -888,7 +888,7 @@ class FactorEvaluator:
 
                 ir = ic_mean / ic_std if ic_std != 0 else 0
 
-                
+
 
                 return {
 
@@ -906,7 +906,7 @@ class FactorEvaluator:
 
                 return {"ir": 0, "message": "无时间索引"}
 
-                
+
 
         except Exception as e:
 
@@ -914,9 +914,9 @@ class FactorEvaluator:
 
             return {}
 
-    
 
-    def _check_monotonicity(self, factor_values: pd.Series, 
+
+    def _check_monotonicity(self, factor_values: pd.Series,
 
                            returns: pd.Series) -> Dict:
 
@@ -930,7 +930,7 @@ class FactorEvaluator:
 
             factor_groups = pd.qcut(factor_values, n_groups, labels=False, duplicates='drop')
 
-            
+
 
             # 计算各组平均收益
 
@@ -946,19 +946,19 @@ class FactorEvaluator:
 
                     group_returns.append(group_return)
 
-            
+
 
             # 检查单调性
 
             is_monotonic = all(
 
-                group_returns[i] <= group_returns[i+1] 
+                group_returns[i] <= group_returns[i+1]
 
                 for i in range(len(group_returns)-1)
 
             )
 
-            
+
 
             # 计算单调性得分
 
@@ -978,7 +978,7 @@ class FactorEvaluator:
 
                 monotonicity_score = max(0, correlation)
 
-            
+
 
             return {
 
@@ -990,7 +990,7 @@ class FactorEvaluator:
 
             }
 
-            
+
 
         except Exception as e:
 
@@ -998,7 +998,7 @@ class FactorEvaluator:
 
             return {}
 
-    
+
 
     def _check_stability(self, factor_values: pd.Series) -> Dict:
 
@@ -1012,7 +1012,7 @@ class FactorEvaluator:
 
                 autocorr = factor_values.autocorr(lag=1)
 
-                
+
 
                 return {
 
@@ -1026,7 +1026,7 @@ class FactorEvaluator:
 
                 return {"autocorrelation": 0, "is_stable": False}
 
-                
+
 
         except Exception as e:
 
@@ -1034,7 +1034,7 @@ class FactorEvaluator:
 
             return {}
 
-    
+
 
     def _calculate_overall_score(self, metrics: Dict) -> float:
 
@@ -1044,7 +1044,7 @@ class FactorEvaluator:
 
             scores = []
 
-            
+
 
             # IC得分
 
@@ -1054,7 +1054,7 @@ class FactorEvaluator:
 
                 scores.append(ic_score)
 
-            
+
 
             # IR得分
 
@@ -1064,7 +1064,7 @@ class FactorEvaluator:
 
                 scores.append(ir_score)
 
-            
+
 
             # 单调性得分
 
@@ -1074,7 +1074,7 @@ class FactorEvaluator:
 
                 scores.append(mono_score)
 
-            
+
 
             # 稳定性得分
 
@@ -1084,17 +1084,17 @@ class FactorEvaluator:
 
                 scores.append(stab_score)
 
-            
+
 
             # 综合评分
 
             overall_score = np.mean(scores) if scores else 0.0
 
-            
+
 
             return overall_score
 
-            
+
 
         except Exception as e:
 
@@ -1150,7 +1150,7 @@ entity_set:
 
   id: "factor_mining"
 
-  
+
 
 data_sources:
 
@@ -1184,7 +1184,7 @@ feature_engineering:
 
     - "add_numeric"
 
-  
+
 
   agg_primitives:
 
@@ -1198,7 +1198,7 @@ feature_engineering:
 
     - "min"
 
-  
+
 
   max_depth: 2
 
@@ -1242,7 +1242,7 @@ class FactorMiningSystem:
 
     """因子挖掘系统"""
 
-    
+
 
     def __init__(self, config_path: str):
 
@@ -1250,13 +1250,13 @@ class FactorMiningSystem:
 
             self.config = yaml.safe_load(f)
 
-        
+
 
         self.miner = AutomatedFactorMiner(self.config)
 
         self.evaluator = FactorEvaluator(self.config)
 
-    
+
 
     def run_mining(self, data_dict: Dict) -> Dict:
 
@@ -1266,13 +1266,13 @@ class FactorMiningSystem:
 
         entity_set = self.miner.prepare_entity_set(data_dict)
 
-        
+
 
         # 2. 生成因子
 
         feature_matrix = self.miner.generate_factors(entity_set)
 
-        
+
 
         # 3. 筛选因子
 
@@ -1280,7 +1280,7 @@ class FactorMiningSystem:
 
         selected_factors = self.miner.select_factors(feature_matrix, target)
 
-        
+
 
         # 4. 评估因子
 
@@ -1298,13 +1298,13 @@ class FactorMiningSystem:
 
             evaluations.append(evaluation)
 
-        
+
 
         # 5. 生成报告
 
         report = self.miner.generate_factor_report(feature_matrix, selected_factors)
 
-        
+
 
         return {
 
@@ -1318,7 +1318,7 @@ class FactorMiningSystem:
 
         }
 
-    
+
 
     def start_periodic_mining(self):
 
@@ -1326,7 +1326,7 @@ class FactorMiningSystem:
 
         schedule.every(1).weeks.do(self._weekly_mining)
 
-        
+
 
         while True:
 
@@ -1334,7 +1334,7 @@ class FactorMiningSystem:
 
             time.sleep(60)
 
-    
+
 
     def _weekly_mining(self):
 
@@ -1344,13 +1344,13 @@ class FactorMiningSystem:
 
         data_dict = self._fetch_data()
 
-        
+
 
         # 运行挖掘
 
         result = self.run_mining(data_dict)
 
-        
+
 
         # 保存结果
 
@@ -1625,4 +1625,3 @@ python src/factor_mining/miner.py
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

@@ -25,7 +25,7 @@ layer: layer_07
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：情景分析、压力测试、情景归因
 
@@ -139,7 +139,7 @@ layer: layer_07
 
 
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -159,9 +159,9 @@ layer: layer_07
 
 - 敏感性分析（参数敏感性、模型敏感性）
 
-- 
+-
 
-- 
+-
 
 景报告生成
 
@@ -203,13 +203,13 @@ import numpy as np
 
 class ScenarioAnalyzer:
 
-    
+
 
     def __init__(self):
 
         self.scenario_library = {}
 
-        
+
 
     def historical_scenario_replay(
 
@@ -227,23 +227,23 @@ class ScenarioAnalyzer:
 
 景回放
 
-        
+
 
         Args:
 
             portfolio_weights: 组合权重
 
-            scenario_name: 
+            scenario_name:
 
-            scenario_dates: 
+            scenario_dates:
 
 景日期范围
 
-            
+
 
         Returns:
 
-            
+
 
 景分析结果
 
@@ -251,7 +251,7 @@ class ScenarioAnalyzer:
 
         pass
 
-    
+
 
     def hypothetical_scenario_analysis(
 
@@ -267,7 +267,7 @@ class ScenarioAnalyzer:
 
 景分析
 
-        
+
 
         Args:
 
@@ -275,11 +275,11 @@ class ScenarioAnalyzer:
 
             shock_params: 冲击参数，如 {'equity_shock': -0.2, 'rate_shock': 0.02}
 
-            
+
 
         Returns:
 
-            
+
 
 景分析结果
 
@@ -287,7 +287,7 @@ class ScenarioAnalyzer:
 
         pass
 
-    
+
 
     def sensitivity_analysis(
 
@@ -303,7 +303,7 @@ class ScenarioAnalyzer:
 
         """
 
-        
+
 
         Args:
 
@@ -313,7 +313,7 @@ class ScenarioAnalyzer:
 
             parameter_range: 参数范围
 
-            
+
 
         Returns:
 
@@ -321,7 +321,7 @@ class ScenarioAnalyzer:
 
         pass
 
-    
+
 
     def generate_scenario_report(
 
@@ -335,15 +335,15 @@ class ScenarioAnalyzer:
 
 景分析报告
 
-        
+
 
         Args:
 
-            scenario_results: 
+            scenario_results:
 
 景分析结果列表
 
-            
+
 
         Returns:
 
@@ -361,7 +361,7 @@ class ScenarioAnalyzer:
 
 
 
-| 
+|
 
 景类型 | 日期范围 | 描述 |
 
@@ -391,7 +391,7 @@ class ScenarioAPI:
 
 景分析API"""
 
-    
+
 
     @endpoint("/api/v1/scenario/historical")
 
@@ -407,7 +407,7 @@ class ScenarioAPI:
 
 景回放"""
 
-        
+
 
     @endpoint("/api/v1/scenario/hypothetical")
 
@@ -423,7 +423,7 @@ class ScenarioAPI:
 
 景分析"""
 
-        
+
 
     @endpoint("/api/v1/scenario/sensitivity")
 
@@ -439,7 +439,7 @@ class ScenarioAPI:
 
     ) -> SensitivityResult:
 
-        
+
 
     @endpoint("/api/v1/scenario/report")
 
@@ -558,10 +558,3 @@ class ScenarioAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

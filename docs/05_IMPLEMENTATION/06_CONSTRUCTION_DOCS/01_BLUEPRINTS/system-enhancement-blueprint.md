@@ -29,7 +29,7 @@ layer: layer_06
 
 > **核心职责**: 系统功能增强和性能优化
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -149,7 +149,7 @@ layer: layer_06
 
 |--------|--------|--------------|----------|------|
 
-| P0 | 
+| P0 |
 
 日度报告| 风险响应滞后 |
 
@@ -281,7 +281,7 @@ graph TB
 
 #### P0级模块（核心差距）
 
-**P0-01: 
+**P0-01:
 
 情景分析（ScenarioAnalyzer）**
 
@@ -333,7 +333,7 @@ graph TB
 
 > **核心职责**: System Enhancement蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -381,15 +381,15 @@ def optimized_shap_analysis(model, X_train, X_test, sample_size=1000):
 
         X_sample = X_train
 
-    
+
 
     # 使用TreeSHAP（适用于树模型）    explainer = shap.TreeExplainer(model, X_sample)
 
-    
+
 
     # 并行计算 SHAP    shap_values = explainer.shap_values(X_test, check_additivity=False)
 
-    
+
 
     return shap_values
 
@@ -419,7 +419,7 @@ def approximate_shap_analysis(model, X_train, X_test, nsamples=100):
 
 |------|--------|---------|--------|---------|
 
-| 
+|
 
 | 采样SHAP | 1000 | 8s | 95%+ | 大数据集（推荐） |
 
@@ -825,7 +825,7 @@ class CrossAssetCorrelationReport:
 
 |------|---------|---------|-------------|
 
-| 
+|
 
 景分析 | SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md |
 
@@ -917,7 +917,7 @@ class CrossAssetCorrelationReport:
 
 |------|---------|--------|---------|
 
-| 
+|
 
 情景分析 | 组合数据、因子暴露 | Layer 4 | 日度 |
 
@@ -951,11 +951,11 @@ class CrossAssetCorrelationReport:
 
 
 
-**Week 1: 
+**Week 1:
 
 景分析 + 压力测试**
 
-- Day 1-2: 
+- Day 1-2:
 
 - Day 3-4: 压力测试报告生成器开发
 
@@ -1041,7 +1041,7 @@ class CrossAssetCorrelationReport:
 
 
 
-## 
+##
 
 ### 6.1 功能验收标准
 
@@ -1053,7 +1053,7 @@ class CrossAssetCorrelationReport:
 
 |------|---------|---------|
 
-| 
+|
 
 | 压力测试 | 支持历史/假设/反向三种测试类型 | 回测验证 |
 
@@ -1193,7 +1193,7 @@ class CrossAssetCorrelationReport:
 
 
 
-## 
+##
 
 ### 8.1 参考文献
 
@@ -1289,7 +1289,7 @@ graph LR
 
     D[质量报告自动化] --> B
 
-    
+
 
     B --> E[增强告警系统]
 
@@ -1297,7 +1297,7 @@ graph LR
 
     B --> G[质量评分系统]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1392,4 +1392,3 @@ graph LR
 
 
 ```
-

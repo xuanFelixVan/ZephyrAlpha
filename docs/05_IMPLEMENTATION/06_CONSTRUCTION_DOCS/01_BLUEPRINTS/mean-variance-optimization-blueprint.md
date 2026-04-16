@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：均值方差优化、有效前沿计算、最优权重求解
 
@@ -46,13 +46,13 @@ class MeanVarianceOptimizer:
 
     均值方差优化器
 
-    
+
 
 PyPortfolioOpt功能
 
     """
 
-    
+
 
     def __init__(
 
@@ -70,7 +70,7 @@ PyPortfolioOpt功能
 
         初始化优化器
 
-        
+
 
         参数:
 
@@ -84,7 +84,7 @@ PyPortfolioOpt功能
 
         self.frequency = frequency
 
-        
+
 
         # 初始化估计器
 
@@ -96,7 +96,7 @@ PyPortfolioOpt功能
 
         self.converter = DiscreteAllocationConverter()
 
-    
+
 
     def optimize(
 
@@ -116,7 +116,7 @@ PyPortfolioOpt功能
 
         执行优化
 
-        
+
 
         参数:
 
@@ -126,7 +126,7 @@ PyPortfolioOpt功能
 
             constraints: 约束条件
 
-            
+
 
         返回:
 
@@ -134,7 +134,7 @@ PyPortfolioOpt功能
 
         pass
 
-    
+
 
     def get_efficient_frontier(
 
@@ -152,7 +152,7 @@ PyPortfolioOpt功能
 
         pass
 
-    
+
 
     def get_discrete_allocation(
 
@@ -342,7 +342,7 @@ mean_variance_optimization:
 
     capm_benchmark: 'SPY'
 
-    
+
 
   covariance:
 
@@ -352,7 +352,7 @@ mean_variance_optimization:
 
     shrinkage_target: 'single_factor'
 
-    
+
 
   optimization:
 
@@ -362,11 +362,11 @@ mean_variance_optimization:
 
     frequency: 252
 
-    
+
 
   constraints:
 
-    
+
 
   discrete_allocation:
 
@@ -394,11 +394,11 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
     """
 
-    
+
 
     """
 
-    
+
 
     def optimize(self, objective: str, **kwargs) -> Dict:
 
@@ -406,17 +406,17 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
         mu = expected_returns.mean_historical_return(self.returns)
 
-        
+
 
         S = risk_models.risk_models.sample_cov(self.returns)
 
-        
+
 
         # 创建有效前沿对象
 
         ef = EfficientFrontier(mu, S)
 
-        
+
 
         # 添加约束
 
@@ -424,7 +424,7 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
             self._add_constraints(ef)
 
-        
+
 
         # 执行优化
 
@@ -436,13 +436,13 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
             weights = ef.min_volatility()
 
-        
+
 
         # 获取组合统计
 
         ret, vol, sharpe = ef.portfolio_performance()
 
-        
+
 
         return {
 
@@ -482,19 +482,19 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
 class TestMeanVarianceOptimizer:
 
-    
+
 
     def test_max_sharpe_portfolio(self):
 
         pass
 
-    
+
 
     def test_min_volatility_portfolio(self):
 
         pass
 
-    
+
 
     def test_efficient_frontier(self):
 
@@ -502,7 +502,7 @@ class TestMeanVarianceOptimizer:
 
         pass
 
-    
+
 
     def test_discrete_allocation(self):
 
@@ -510,7 +510,7 @@ class TestMeanVarianceOptimizer:
 
         pass
 
-    
+
 
     def test_constraints(self):
 
@@ -530,7 +530,7 @@ class TestMeanVarianceOptimizer:
 
 class TestIntegration:
 
-    
+
 
     def test_with_black_litterman(self):
 
@@ -538,13 +538,13 @@ class TestIntegration:
 
         pass
 
-    
+
 
     def test_with_risk_parity(self):
 
         pass
 
-    
+
 
     def test_with_rebalancing(self):
 
@@ -570,7 +570,7 @@ class TestIntegration:
 
 |------|--------|----------|
 
-| 
+|
 
 存监控 |
 
@@ -681,4 +681,3 @@ class TestIntegration:
 
 
 ```
-

@@ -77,19 +77,19 @@ interface WebAPI {
   // 仪表板数据
   getDashboardData(): Promise<DashboardData>;
   getEngineStatus(engineId: string): Promise<EngineStatus>;
-  
+
   // 交易监控
   getRecentTrades(limit: number): Promise<Trade[]>;
   getOrderHistory(filters: OrderFilters): Promise<Order[]>;
-  
+
   // 性能可视化
   getPerformanceMetrics(timeRange: TimeRange): Promise<PerformanceMetrics>;
   getRiskMetrics(): Promise<RiskMetrics>;
-  
+
   // 配置管理
   getEngineConfig(engineId: string): Promise<EngineConfig>;
   updateEngineConfig(engineId: string, config: Partial<EngineConfig>): Promise<void>;
-  
+
   // 系统健康
   getSystemHealth(): Promise<SystemHealth>;
   getLogs(query: LogQuery): Promise<LogEntry[]>;
@@ -102,7 +102,7 @@ interface WebSocketAPI {
   // 实时事件订阅
   subscribe(eventType: EventType, callback: (event: Event) => void): void;
   unsubscribe(eventType: EventType): void;
-  
+
   // 事件类型定义
   eventTypes: {
     TRADE_EXECUTED: 'trade_executed';
@@ -164,29 +164,29 @@ interface WebSocketAPI {
 ```python
 class RealTimeAggregator:
     """实时数据聚合器，优化Web界面数据更新性能"""
-    
+
     def __init__(self, window_size: int = 100):
         self.window_size = window_size
         self.data_buffer = []
-        
+
     def add_data_point(self, data_point: Dict) -> None:
         """添加数据点，采用滚动窗口优化内存"""
         self.data_buffer.append(data_point)
         if len(self.data_buffer) > self.window_size:
             self.data_buffer.pop(0)
-    
+
     def get_aggregated_data(self, aggregation_type: str = "mean") -> Dict:
         """获取聚合数据，支持多种聚合方式"""
         if not self.data_buffer:
             return {}
-            
+
         if aggregation_type == "mean":
             return self._calculate_mean()
         elif aggregation_type == "latest":
             return self.data_buffer[-1]
         elif aggregation_type == "minmax":
             return self._calculate_min_max()
-    
+
     def _calculate_mean(self) -> Dict:
         """计算平均值，优化性能"""
         # 实现略
@@ -197,28 +197,28 @@ class RealTimeAggregator:
 ```python
 class WebSocketManager:
     """WebSocket连接管理器，处理连接池和重连"""
-    
+
     def __init__(self, max_connections: int = 100):
         self.max_connections = max_connections
         self.connections = {}
         self.connection_pool = []
-        
+
     async def connect(self, client_id: str, websocket: WebSocket) -> bool:
         """建立WebSocket连接，实现连接池管理"""
         if len(self.connections) >= self.max_connections:
             await self._evict_oldest_connection()
-        
+
         self.connections[client_id] = {
             "websocket": websocket,
             "connected_at": datetime.now(),
             "last_activity": datetime.now()
         }
         return True
-    
+
     async def broadcast(self, event_type: str, data: Dict) -> None:
         """广播消息，实现高效群发"""
         disconnected_clients = []
-        
+
         for client_id, conn_info in self.connections.items():
             try:
                 await conn_info["websocket"].send_json({
@@ -229,7 +229,7 @@ class WebSocketManager:
                 conn_info["last_activity"] = datetime.now()
             except Exception:
                 disconnected_clients.append(client_id)
-        
+
         # 清理断开连接的客户端
         for client_id in disconnected_clients:
             del self.connections[client_id]
@@ -268,33 +268,33 @@ interface WebAppState {
     user: User | null;
     permissions: string[];
   };
-  
+
   // 引擎状态
   engines: {
     [engineId: string]: EngineStatus;
   };
-  
+
   // 交易数据
   trades: {
     recent: Trade[];
     filters: TradeFilters;
     isLoading: boolean;
   };
-  
+
   // 性能数据
   performance: {
     metrics: PerformanceMetrics;
     timeRange: TimeRange;
     charts: ChartData[];
   };
-  
+
   // 配置数据
   configurations: {
     engines: EngineConfig[];
     strategies: StrategyConfig[];
     riskLimits: RiskLimit[];
   };
-  
+
   // 系统状态
   system: {
     health: SystemHealth;
@@ -319,7 +319,7 @@ class DashboardData(BaseModel):
     total_volume_today: float
     system_health_score: float
     recent_alerts: List[Alert]
-    
+
 class EngineStatus(BaseModel):
     """引擎状态模型"""
     engine_id: str
@@ -330,7 +330,7 @@ class EngineStatus(BaseModel):
     memory_usage: float
     trade_count_today: int
     error_count: int
-    
+
 class Trade(BaseModel):
     """交易数据模型"""
     trade_id: str
@@ -529,8 +529,8 @@ class Trade(BaseModel):
 
 ```---
 
-**文档版本**: 1.0.0  
-**最后更新**: 2026-04-02  
-**维护者**: 首席蓝图架构师  
-**索引**: `DESIGN_003`  
+**文档版本**: 1.0.0
+**最后更新**: 2026-04-02
+**维护者**: 首席蓝图架构师
+**索引**: `DESIGN_003`
 **状态**: ✅ 设计完成，待评审

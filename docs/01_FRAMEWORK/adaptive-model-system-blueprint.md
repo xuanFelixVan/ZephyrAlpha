@@ -53,7 +53,7 @@ responsibility_layer: Layer 4
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -937,7 +937,7 @@ class RegimeDetector:
 
 
 
-    
+
 
 
 
@@ -1045,7 +1045,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1081,7 +1081,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1117,7 +1117,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1165,7 +1165,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1189,7 +1189,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1213,7 +1213,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1321,7 +1321,7 @@ class RegimeDetector:
 
 
 
-    
+
 
 
 
@@ -1357,7 +1357,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1381,7 +1381,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1453,7 +1453,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1489,7 +1489,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1537,7 +1537,7 @@ class RegimeDetector:
 
 
 
-        
+
 
 
 
@@ -1645,7 +1645,7 @@ class ModelPool:
 
 
 
-    
+
 
 
 
@@ -1765,7 +1765,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -1801,7 +1801,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -1897,7 +1897,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -1921,7 +1921,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -1993,7 +1993,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -2017,7 +2017,6 @@ class ModelPool:
 
 
 
-    
 
 
 
@@ -2029,7 +2028,8 @@ class ModelPool:
 
 
 
-    def update_model_performance(self, 
+
+    def update_model_performance(self,
 
 
 
@@ -2089,7 +2089,7 @@ class ModelPool:
 
 
 
-        
+
 
 
 
@@ -2257,7 +2257,7 @@ class EnsembleManager:
 
 
 
-    
+
 
 
 
@@ -2305,7 +2305,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2377,7 +2377,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2437,7 +2437,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2509,7 +2509,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2545,7 +2545,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2617,7 +2617,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2701,7 +2701,7 @@ class EnsembleManager:
 
 
 
-    
+
 
 
 
@@ -2737,7 +2737,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2773,7 +2773,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2809,7 +2809,7 @@ class EnsembleManager:
 
 
 
-        
+
 
 
 
@@ -2917,7 +2917,7 @@ class AutoOptimizer:
 
 
 
-    
+
 
 
 
@@ -2965,7 +2965,6 @@ class AutoOptimizer:
 
 
 
-        
 
 
 
@@ -2977,7 +2976,8 @@ class AutoOptimizer:
 
 
 
-    def optimize_hyperparameters(self, 
+
+    def optimize_hyperparameters(self,
 
 
 
@@ -3037,7 +3037,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3073,7 +3073,7 @@ class AutoOptimizer:
 
 
 
-            
+
 
 
 
@@ -3109,7 +3109,7 @@ class AutoOptimizer:
 
 
 
-            
+
 
 
 
@@ -3145,7 +3145,7 @@ class AutoOptimizer:
 
 
 
-            
+
 
 
 
@@ -3169,7 +3169,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3205,7 +3205,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3229,7 +3229,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3265,7 +3265,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3337,7 +3337,7 @@ class AutoOptimizer:
 
 
 
-    
+
 
 
 
@@ -3373,7 +3373,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3397,7 +3397,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3469,7 +3469,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3505,7 +3505,7 @@ class AutoOptimizer:
 
 
 
-        
+
 
 
 
@@ -3639,7 +3639,7 @@ class PerformanceMonitor:
 
 
 
-    
+
 
 
 
@@ -3687,7 +3687,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3723,7 +3723,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3759,7 +3759,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3795,7 +3795,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3831,7 +3831,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3939,7 +3939,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -3963,7 +3963,7 @@ class PerformanceMonitor:
 
 
 
-    
+
 
 
 
@@ -3999,7 +3999,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -4035,7 +4035,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -4083,7 +4083,7 @@ class PerformanceMonitor:
 
 
 
-        
+
 
 
 
@@ -4179,7 +4179,7 @@ class AutoRetrainer:
 
 
 
-    
+
 
 
 
@@ -4227,7 +4227,6 @@ class AutoRetrainer:
 
 
 
-        
 
 
 
@@ -4239,7 +4238,8 @@ class AutoRetrainer:
 
 
 
-    def auto_retrain(self, 
+
+    def auto_retrain(self,
 
 
 
@@ -4287,7 +4287,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4311,7 +4311,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4347,7 +4347,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4419,7 +4419,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4491,7 +4491,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4575,7 +4575,7 @@ class AutoRetrainer:
 
 
 
-        
+
 
 
 
@@ -4781,7 +4781,7 @@ class AdaptiveFactorEngine:
 
 
 
-    
+
 
 
 
@@ -4841,7 +4841,7 @@ class AdaptiveFactorEngine:
 
 
 
-        
+
 
 
 
@@ -4877,7 +4877,7 @@ class AdaptiveFactorEngine:
 
 
 
-        
+
 
 
 
@@ -4901,7 +4901,7 @@ class AdaptiveFactorEngine:
 
 
 
-        
+
 
 
 
@@ -4937,7 +4937,7 @@ class AdaptiveFactorEngine:
 
 
 
-        
+
 
 
 
@@ -5021,7 +5021,7 @@ class AdaptiveFactorEngine:
 
 
 
-        
+
 
 
 
@@ -5189,7 +5189,7 @@ class AdaptiveMLPipeline:
 
 
 
-    
+
 
 
 
@@ -5237,7 +5237,7 @@ class AdaptiveMLPipeline:
 
 
 
-        
+
 
 
 
@@ -5273,7 +5273,7 @@ class AdaptiveMLPipeline:
 
 
 
-        
+
 
 
 
@@ -5321,7 +5321,7 @@ class AdaptiveMLPipeline:
 
 
 
-            
+
 
 
 
@@ -5405,7 +5405,7 @@ class AdaptiveMLPipeline:
 
 
 
-                
+
 
 
 
@@ -6628,14 +6628,3 @@ class AdaptiveMLPipeline:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

@@ -48,7 +48,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -356,7 +356,7 @@ graph LR
 
 
 
-    
+
 
 
 
@@ -372,7 +372,7 @@ graph LR
 
 
 
-    
+
 
 
 
@@ -532,7 +532,7 @@ class TradingCostOptimizer:
 
 
 
-    交易成本优化器    
+    交易成本优化器
 
 
 
@@ -540,7 +540,7 @@ class TradingCostOptimizer:
 
 
 
-    
+
 
 
 
@@ -576,7 +576,7 @@ class TradingCostOptimizer:
 
 
 
-        
+
 
 
 
@@ -616,7 +616,7 @@ class TradingCostOptimizer:
 
 
 
-        
+
 
 
 
@@ -640,7 +640,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-            
+
 
 
 
@@ -656,7 +656,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -668,7 +668,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -676,7 +676,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -696,7 +696,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -704,7 +704,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -740,7 +740,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-    
+
 
 
 
@@ -776,7 +776,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -784,7 +784,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-            execution_time: 执行时间（天）            
+            execution_time: 执行时间（天）
 
 
 
@@ -804,7 +804,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-    
+
 
 
 
@@ -832,7 +832,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        比较不同执行算法的成本        
+        比较不同执行算法的成本
 
 
 
@@ -848,7 +848,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-            
+
 
 
 
@@ -868,7 +868,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -884,7 +884,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-        
+
 
 
 
@@ -908,7 +908,7 @@ market_data: 市场数据（含流动性、波动率等）
 
 
 
-    
+
 
 
 
@@ -948,7 +948,7 @@ return trades[trades != 0]  #
 
 
 
-    
+
 
 
 
@@ -988,7 +988,7 @@ return trades[trades != 0]  #
 
 
 
-        
+
 
 
 
@@ -1000,7 +1000,7 @@ return trades[trades != 0]  #
 
 
 
-        
+
 
 
 
@@ -1024,7 +1024,7 @@ return trades[trades != 0]  #
 
 
 
-    
+
 
 
 
@@ -1064,7 +1064,7 @@ return trades[trades != 0]  #
 
 
 
-    
+
 
 
 
@@ -1100,7 +1100,7 @@ return trades[trades != 0]  #
 
 
 
-        
+
 
 
 
@@ -1112,7 +1112,7 @@ return trades[trades != 0]  #
 
 
 
-        
+
 
 
 
@@ -1124,7 +1124,7 @@ return trades[trades != 0]  #
 
 
 
-        
+
 
 
 
@@ -1184,7 +1184,7 @@ class AlmgrenChrissModel:
 
 
 
-    
+
 
 
 
@@ -1196,7 +1196,7 @@ class AlmgrenChrissModel:
 
 
 
-    
+
 
 
 
@@ -1220,7 +1220,7 @@ self.permanent_impact_coeff = config.permanent_impact_coeff  #
 
 
 
-        
+
 
 
 
@@ -1256,7 +1256,7 @@ self.permanent_impact_coeff = config.permanent_impact_coeff  #
 
 
 
-        
+
 
 
 
@@ -1268,7 +1268,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-+                        execution_time: 执行时间（天）            
++                        execution_time: 执行时间（天）
 
 
 
@@ -1288,7 +1288,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-        
+
 
 
 
@@ -1312,7 +1312,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-            
+
 
 
 
@@ -1332,7 +1332,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-            
+
 
 
 
@@ -1352,7 +1352,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-            
+
 
 
 
@@ -1360,7 +1360,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-            
+
 
 
 
@@ -1388,7 +1388,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-        
+
 
 
 
@@ -1412,7 +1412,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-    
+
 
 
 
@@ -1452,15 +1452,15 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-        
 
 
 
-        
 
 
 
-        
+
+
+
 
 
 
@@ -1472,11 +1472,11 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-            self.temporary_impact_coeff * 
+            self.temporary_impact_coeff *
 
 
 
-            volatility * 
+            volatility *
 
 
 
@@ -1492,7 +1492,7 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-    
+
 
 
 
@@ -1524,15 +1524,15 @@ market_data: 市场数据（含波动率、成交量等）
 
 
 
-        
 
 
 
-        
 
 
 
-        
+
+
+
 
 
 
@@ -1584,7 +1584,7 @@ class VWAPAlgorithm:
 
 
 
-    VWAP（成交量加权平均价格）算法    
+    VWAP（成交量加权平均价格）算法
 
 
 
@@ -1592,7 +1592,7 @@ class VWAPAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1628,7 +1628,7 @@ class VWAPAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1664,7 +1664,7 @@ class VWAPAlgorithm:
 
 
 
-        
+
 
 
 
@@ -1700,7 +1700,7 @@ class VWAPAlgorithm:
 
 
 
-        
+
 
 
 
@@ -1732,7 +1732,7 @@ class TWAPAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1744,7 +1744,7 @@ class TWAPAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1780,7 +1780,7 @@ class TWAPAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1816,7 +1816,7 @@ class TWAPAlgorithm:
 
 
 
-        
+
 
 
 
@@ -1844,7 +1844,7 @@ class TWAPAlgorithm:
 
 
 
-        
+
 
 
 
@@ -1872,7 +1872,7 @@ class ImplementationShortfallAlgorithm:
 
 
 
-    IS（Implementation Shortfall）算法    
+    IS（Implementation Shortfall）算法
 
 
 
@@ -1888,7 +1888,7 @@ class ImplementationShortfallAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1920,7 +1920,7 @@ class ImplementationShortfallAlgorithm:
 
 
 
-    
+
 
 
 
@@ -1956,7 +1956,7 @@ class ImplementationShortfallAlgorithm:
 
 
 
-        
+
 
 
 
@@ -1992,7 +1992,7 @@ class ImplementationShortfallAlgorithm:
 
 
 
-        
+
 
 
 
@@ -2032,7 +2032,7 @@ class TradingCostConfig:
 
 
 
-不超过市场成交量的 10%    
+不超过市场成交量的 10%
 
 
 
@@ -2168,7 +2168,7 @@ class ExecutionPlan:
 
 
 
-    
+
 
 
 
@@ -2196,7 +2196,7 @@ class MarketImpactResult:
 
 
 
-    
+
 
 
 
@@ -2432,7 +2432,7 @@ class PortfolioOptimizer:
 
 
 
-    
+
 
 
 
@@ -2444,7 +2444,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -2480,7 +2480,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -2500,7 +2500,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -2516,7 +2516,7 @@ class PortfolioOptimizer:
 
 
 
-        
+
 
 
 
@@ -2564,7 +2564,7 @@ class RebalancingSystem:
 
 
 
-    
+
 
 
 
@@ -2576,7 +2576,7 @@ class RebalancingSystem:
 
 
 
-        
+
 
 
 
@@ -2632,7 +2632,7 @@ class RebalancingSystem:
 
 
 
-        
+
 
 
 
@@ -2664,7 +2664,7 @@ class RebalancingSystem:
 
 
 
-        
+
 
 
 
@@ -2676,7 +2676,7 @@ class RebalancingSystem:
 
 
 
-        
+
 
 
 
@@ -2764,7 +2764,7 @@ def test_market_impact_estimation():
 
 
 
-    
+
 
 
 
@@ -2776,7 +2776,7 @@ def test_market_impact_estimation():
 
 
 
-    
+
 
 
 
@@ -2808,7 +2808,7 @@ def test_execution_plan_generation():
 
 
 
-    
+
 
 
 
@@ -2820,7 +2820,7 @@ def test_execution_plan_generation():
 
 
 
-    
+
 
 
 
@@ -2828,7 +2828,7 @@ def test_execution_plan_generation():
 
 
 
-    
+
 
 
 
@@ -2876,7 +2876,7 @@ def test_integration_with_portfolio_optimizer():
 
 
 
-    
+
 
 
 
@@ -2892,7 +2892,7 @@ def test_integration_with_portfolio_optimizer():
 
 
 
-    
+
 
 
 
@@ -3500,7 +3500,7 @@ def test_integration_with_portfolio_optimizer():
 
 
 
-| **Trading Cost Optimization** | 
+| **Trading Cost Optimization** |
 
 
 
@@ -3533,6 +3533,3 @@ def test_integration_with_portfolio_optimizer():
 
 
 ```
-
-
-

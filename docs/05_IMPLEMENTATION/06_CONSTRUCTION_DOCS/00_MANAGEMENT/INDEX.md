@@ -14,8 +14,8 @@ responsibility: 00_MANAGEMENT 全量 Markdown 索引与防漂移登记
 
 # 项目办公室目录索引（00_MANAGEMENT）
 
-> **用途**：本文件列出本目录下**全部** `.md` 文件的可点击相对链接与一句话职责，作为机器与人类的**单一索引真源**；与 [项目办公室 README](./README.md) 中「办公室内文件一览」互补（README 偏流程与治理动作，本文件偏**磁盘对齐**）。  
-> **防漂移**：新增、重命名或删除本目录（含 `CANON/`）下规章类 Markdown 时，**必须**同步更新本 `INDEX.md` 与 `README.md` 相关表；禁止在链接目标中使用仓库内不存在的占位路径（见 README「索引与防漂移」）。  
+> **用途**：本文件列出本目录下**全部** `.md` 文件的可点击相对链接与一句话职责，作为机器与人类的**单一索引真源**；与 [项目办公室 README](./README.md) 中「办公室内文件一览」互补（README 偏流程与治理动作，本文件偏**磁盘对齐**）。
+> **防漂移**：新增、重命名或删除本目录（含 `CANON/`）下规章类 Markdown 时，**必须**同步更新本 `INDEX.md` 与 `README.md` 相关表；禁止在链接目标中使用仓库内不存在的占位路径（见 README「索引与防漂移」）。
 > **统计**：`00_MANAGEMENT/` 平层 **26** 篇 `.md`（含本 `INDEX.md`）+ `CANON/` **4** 篇 + `CANON/ARCHIVE/` **2** 篇 = **32** 篇 Markdown。
 
 ## 快速入口（蓝图终稿 / 施工前必读）
@@ -77,9 +77,9 @@ responsibility: 00_MANAGEMENT 全量 Markdown 索引与防漂移登记
 
 ## 维护规则
 
-1. **新增**规章类 `.md`：在本表按字母序插入一行，并更新 README 中相关表。  
-2. **删除或迁出**：移除本表对应行，并检查全库指向该文件的相对链接。  
-3. **重命名**：更新本表与 README；建议同时跑 `python scripts/governance/sentinel_l1_governance_scan.py` 收口内链。  
+1. **新增**规章类 `.md`：在本表按字母序插入一行，并更新 README 中相关表。
+2. **删除或迁出**：移除本表对应行，并检查全库指向该文件的相对链接。
+3. **重命名**：更新本表与 README；建议同时跑 `python scripts/governance/sentinel_l1_governance_scan.py` 收口内链。
 4. **版本号**：本索引结构性变更递增 `version` 主版本；同步更新 `last_updated`。
 
 ## 变更历史
@@ -92,7 +92,7 @@ responsibility: 00_MANAGEMENT 全量 Markdown 索引与防漂移登记
 
 ## 相关文档
 
-- [建设文档区 INDEX.md](../INDEX.md)  
+- [建设文档区 INDEX.md](../INDEX.md)
 - [全库治理文档导航](./governance-documents-navigation.md)
 
-**索引状态**：活跃  
+**索引状态**：活跃

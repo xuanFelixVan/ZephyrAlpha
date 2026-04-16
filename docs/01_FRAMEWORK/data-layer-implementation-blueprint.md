@@ -53,7 +53,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -453,7 +453,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│             桥水基金数据源层架构                           
+│             桥水基金数据源层架构
 
 
 
@@ -557,7 +557,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│            文艺复兴科技数据源层架构                         
+│            文艺复兴科技数据源层架构
 
 
 
@@ -667,7 +667,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│             Two Sigma数据源层架构                          
+│             Two Sigma数据源层架构
 
 
 
@@ -961,7 +961,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│              数据源层实施路线图                            
+│              数据源层实施路线图
 
 
 
@@ -1071,7 +1071,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│             数据源层整体架构                               
+│             数据源层整体架构
 
 
 
@@ -1247,7 +1247,7 @@ implementation_status: 蓝图设计阶段
 
 
 
-│              实时行情数据流架构                            
+│              实时行情数据流架构
 
 
 
@@ -1307,7 +1307,7 @@ class RealtimeDataFeed:
 
 
 
-    """实时行情数据流"""    
+    """实时行情数据流"""
 
 
 
@@ -1337,7 +1337,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -1355,7 +1355,7 @@ class RealtimeDataFeed:
 
 
 
-        
+
 
 
 
@@ -1403,7 +1403,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -1421,7 +1421,7 @@ class RealtimeDataFeed:
 
 
 
-        
+
 
 
 
@@ -1451,7 +1451,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -1469,7 +1469,7 @@ class RealtimeDataFeed:
 
 
 
-        
+
 
 
 
@@ -1499,7 +1499,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -1511,7 +1511,7 @@ class RealtimeDataFeed:
 
 
 
-        """获取最新价格"""        
+        """获取最新价格"""
 
 
 
@@ -1529,7 +1529,7 @@ class RealtimeDataFeed:
 
 
 
-            
+
 
 
 
@@ -1559,7 +1559,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -1583,7 +1583,7 @@ class RealtimeDataFeed:
 
 
 
-    
+
 
 
 
@@ -2161,7 +2161,7 @@ config/
 
 
 
-│             数据质量监控架构                               
+│             数据质量监控架构
 
 
 
@@ -2233,7 +2233,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2269,7 +2269,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2281,7 +2281,7 @@ class DataQualityMonitor:
 
 
 
-        """初始化数据质量监控        
+        """初始化数据质量监控
 
 
 
@@ -2323,7 +2323,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2335,7 +2335,7 @@ class DataQualityMonitor:
 
 
 
-        """检测缺失        
+        """检测缺失
 
 
 
@@ -2347,7 +2347,7 @@ class DataQualityMonitor:
 
 
 
-            data: 待检测数据            
+            data: 待检测数据
 
 
 
@@ -2377,7 +2377,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2389,7 +2389,7 @@ class DataQualityMonitor:
 
 
 
-        """检测异常        
+        """检测异常
 
 
 
@@ -2401,7 +2401,7 @@ class DataQualityMonitor:
 
 
 
-            data: 待检测数据            
+            data: 待检测数据
 
 
 
@@ -2431,7 +2431,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2443,7 +2443,7 @@ class DataQualityMonitor:
 
 
 
-        """检测数据延迟        
+        """检测数据延迟
 
 
 
@@ -2455,7 +2455,7 @@ class DataQualityMonitor:
 
 
 
-            timestamp: 数据时间戳            
+            timestamp: 数据时间戳
 
 
 
@@ -2485,7 +2485,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2503,7 +2503,7 @@ class DataQualityMonitor:
 
 
 
-        
+
 
 
 
@@ -2515,7 +2515,7 @@ class DataQualityMonitor:
 
 
 
-            data: 待评估数据            
+            data: 待评估数据
 
 
 
@@ -2545,7 +2545,7 @@ class DataQualityMonitor:
 
 
 
-    
+
 
 
 
@@ -2557,7 +2557,7 @@ class DataQualityMonitor:
 
 
 
-        """发送告警        
+        """发送告警
 
 
 
@@ -3147,7 +3147,7 @@ config/
 
 
 
-│             数据冗余管理架构                               
+│             数据冗余管理架构
 
 
 
@@ -3213,7 +3213,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3243,7 +3243,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3255,7 +3255,7 @@ class DataRedundancyManager:
 
 
 
-        """初始化数据冗余管理器        
+        """初始化数据冗余管理器
 
 
 
@@ -3291,7 +3291,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3303,7 +3303,7 @@ class DataRedundancyManager:
 
 
 
-        """添加数据源        
+        """添加数据源
 
 
 
@@ -3327,7 +3327,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3339,7 +3339,7 @@ class DataRedundancyManager:
 
 
 
-        """移除数据源        
+        """移除数据源
 
 
 
@@ -3363,7 +3363,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3381,7 +3381,7 @@ class DataRedundancyManager:
 
 
 
-        
+
 
 
 
@@ -3405,7 +3405,7 @@ class DataRedundancyManager:
 
 
 
-            
+
 
 
 
@@ -3435,7 +3435,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3447,7 +3447,7 @@ class DataRedundancyManager:
 
 
 
-        """切换数据源        
+        """切换数据源
 
 
 
@@ -3471,7 +3471,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3483,7 +3483,7 @@ class DataRedundancyManager:
 
 
 
-        """健康检查        
+        """健康检查
 
 
 
@@ -3513,7 +3513,7 @@ class DataRedundancyManager:
 
 
 
-    
+
 
 
 
@@ -3531,7 +3531,7 @@ class DataRedundancyManager:
 
 
 
-        
+
 
 
 
@@ -3555,7 +3555,7 @@ class DataRedundancyManager:
 
 
 
-            
+
 
 
 
@@ -4131,7 +4131,7 @@ config/
 
 
 
-│             数据缓存管理架构                               
+│             数据缓存管理架构
 
 
 
@@ -4197,7 +4197,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4239,7 +4239,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4251,7 +4251,7 @@ class DataCacheManager:
 
 
 
-        """初始化数据缓存管理器        
+        """初始化数据缓存管理器
 
 
 
@@ -4299,7 +4299,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4317,7 +4317,7 @@ class DataCacheManager:
 
 
 
-        
+
 
 
 
@@ -4359,7 +4359,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4377,7 +4377,7 @@ class DataCacheManager:
 
 
 
-        
+
 
 
 
@@ -4413,7 +4413,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4431,7 +4431,7 @@ class DataCacheManager:
 
 
 
-        
+
 
 
 
@@ -4461,7 +4461,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4485,7 +4485,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4503,7 +4503,7 @@ class DataCacheManager:
 
 
 
-        
+
 
 
 
@@ -4551,7 +4551,7 @@ class DataCacheManager:
 
 
 
-    
+
 
 
 
@@ -4569,7 +4569,7 @@ class DataCacheManager:
 
 
 
-        
+
 
 
 
@@ -5151,7 +5151,7 @@ config/
 
 
 
-│             宏观经济数据引擎架构                           
+│             宏观经济数据引擎架构
 
 
 
@@ -5217,7 +5217,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5259,7 +5259,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5271,7 +5271,7 @@ class MacroDataEngine:
 
 
 
-        """初始化宏观经济数据引擎        
+        """初始化宏观经济数据引擎
 
 
 
@@ -5319,7 +5319,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5337,7 +5337,7 @@ class MacroDataEngine:
 
 
 
-        
+
 
 
 
@@ -5355,7 +5355,7 @@ class MacroDataEngine:
 
 
 
-            
+
 
 
 
@@ -5385,7 +5385,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5403,7 +5403,7 @@ class MacroDataEngine:
 
 
 
-        
+
 
 
 
@@ -5421,7 +5421,7 @@ class MacroDataEngine:
 
 
 
-            
+
 
 
 
@@ -5451,7 +5451,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5463,7 +5463,7 @@ class MacroDataEngine:
 
 
 
-        """预测各经济范式概率        
+        """预测各经济范式概率
 
 
 
@@ -5529,7 +5529,7 @@ class MacroDataEngine:
 
 
 
-    
+
 
 
 
@@ -5541,7 +5541,7 @@ class MacroDataEngine:
 
 
 
-        """检测经济范式转换        
+        """检测经济范式转换
 
 
 
@@ -6153,7 +6153,7 @@ config/
 
 
 
-│             ClickHouse数据存储架构                         
+│             ClickHouse数据存储架构
 
 
 
@@ -6213,7 +6213,7 @@ class ClickHouseClient:
 
 
 
-    """ClickHouse 客户端    
+    """ClickHouse 客户端
 
 
 
@@ -6249,7 +6249,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6261,7 +6261,7 @@ class ClickHouseClient:
 
 
 
-        """初始化 ClickHouse 客户端        
+        """初始化 ClickHouse 客户端
 
 
 
@@ -6321,7 +6321,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6333,7 +6333,7 @@ class ClickHouseClient:
 
 
 
-        """插入 K 线数据        
+        """插入 K 线数据
 
 
 
@@ -6363,7 +6363,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6405,7 +6405,7 @@ class ClickHouseClient:
 
 
 
-        """查询 K 线数据        
+        """查询 K 线数据
 
 
 
@@ -6435,7 +6435,7 @@ class ClickHouseClient:
 
 
 
-            
+
 
 
 
@@ -6459,7 +6459,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6477,7 +6477,7 @@ class ClickHouseClient:
 
 
 
-        
+
 
 
 
@@ -6507,7 +6507,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6561,7 +6561,7 @@ class ClickHouseClient:
 
 
 
-        
+
 
 
 
@@ -6597,7 +6597,7 @@ class ClickHouseClient:
 
 
 
-            
+
 
 
 
@@ -6627,7 +6627,7 @@ class ClickHouseClient:
 
 
 
-    
+
 
 
 
@@ -6645,7 +6645,7 @@ class ClickHouseClient:
 
 
 
-        
+
 
 
 
@@ -6663,7 +6663,7 @@ class ClickHouseClient:
 
 
 
-            
+
 
 
 
@@ -7227,7 +7227,7 @@ config/
 
 
 
-│             分布式数据处理架?                            
+│             分布式数据处理架?
 
 
 
@@ -7293,7 +7293,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7317,7 +7317,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7329,7 +7329,7 @@ class DistributedProcessor:
 
 
 
-        """初始化分布式数据处理层        
+        """初始化分布式数据处理层
 
 
 
@@ -7377,7 +7377,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7395,7 +7395,7 @@ class DistributedProcessor:
 
 
 
-        
+
 
 
 
@@ -7419,7 +7419,7 @@ class DistributedProcessor:
 
 
 
-            **kwargs: 函数关键字参?            
+            **kwargs: 函数关键字参?
 
 
 
@@ -7449,7 +7449,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7467,7 +7467,7 @@ class DistributedProcessor:
 
 
 
-        
+
 
 
 
@@ -7485,7 +7485,7 @@ class DistributedProcessor:
 
 
 
-            
+
 
 
 
@@ -7515,7 +7515,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7557,7 +7557,7 @@ class DistributedProcessor:
 
 
 
-        
+
 
 
 
@@ -7581,7 +7581,7 @@ class DistributedProcessor:
 
 
 
-            
+
 
 
 
@@ -7611,7 +7611,7 @@ class DistributedProcessor:
 
 
 
-    
+
 
 
 
@@ -7659,7 +7659,7 @@ class DistributedProcessor:
 
 
 
-        
+
 
 
 
@@ -7689,7 +7689,7 @@ class DistributedProcessor:
 
 
 
-            
+
 
 
 
@@ -8235,7 +8235,7 @@ config/
 
 
 
-│             AI数据引擎架构                                 
+│             AI数据引擎架构
 
 
 
@@ -8619,7 +8619,7 @@ config/
 
 
 
-│              高频数据处理架构                               
+│              高频数据处理架构
 
 
 
@@ -9045,7 +9045,7 @@ tests/data/
 
 
 
-│             数据治理系统架构                               
+│             数据治理系统架构
 
 
 
@@ -9111,7 +9111,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9135,7 +9135,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9147,7 +9147,7 @@ class DataGovernance:
 
 
 
-        """初始化数据治理系?        
+        """初始化数据治理系?
 
 
 
@@ -9177,7 +9177,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9195,7 +9195,7 @@ class DataGovernance:
 
 
 
-        
+
 
 
 
@@ -9207,7 +9207,7 @@ class DataGovernance:
 
 
 
-            data_source: 数据源名称            
+            data_source: 数据源名称
 
 
 
@@ -9237,7 +9237,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9255,7 +9255,7 @@ class DataGovernance:
 
 
 
-        
+
 
 
 
@@ -9273,7 +9273,7 @@ class DataGovernance:
 
 
 
-            
+
 
 
 
@@ -9303,7 +9303,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9315,7 +9315,7 @@ class DataGovernance:
 
 
 
-        """回滚到历史快?        
+        """回滚到历史快?
 
 
 
@@ -9333,7 +9333,7 @@ class DataGovernance:
 
 
 
-            
+
 
 
 
@@ -9363,7 +9363,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9381,7 +9381,7 @@ class DataGovernance:
 
 
 
-        
+
 
 
 
@@ -9393,7 +9393,7 @@ class DataGovernance:
 
 
 
-            user: 用户?            dataset: 数据集名?            permission: 权限类型（read/write/admin?            
+            user: 用户?            dataset: 数据集名?            permission: 权限类型（read/write/admin?
 
 
 
@@ -9423,7 +9423,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9441,7 +9441,7 @@ class DataGovernance:
 
 
 
-        
+
 
 
 
@@ -9459,7 +9459,7 @@ class DataGovernance:
 
 
 
-            
+
 
 
 
@@ -9489,7 +9489,7 @@ class DataGovernance:
 
 
 
-    
+
 
 
 
@@ -9501,7 +9501,7 @@ class DataGovernance:
 
 
 
-        """追踪数据血?        
+        """追踪数据血?
 
 
 
@@ -9519,7 +9519,7 @@ class DataGovernance:
 
 
 
-            
+
 
 
 
@@ -10947,7 +10947,7 @@ tests/data/
 
 
 
-> 本文档为数据源层专业实施蓝图v1.0版本，由首席架构师于2026-04-02创建?> 
+> 本文档为数据源层专业实施蓝图v1.0版本，由首席架构师于2026-04-02创建?>
 
 
 
@@ -10959,15 +10959,10 @@ tests/data/
 
 
 
-> 
+>
 
 
 
 
 
 > 下一步行动：开始Phase 1 Week 1的P0级模块实现
-
-
-
-
-

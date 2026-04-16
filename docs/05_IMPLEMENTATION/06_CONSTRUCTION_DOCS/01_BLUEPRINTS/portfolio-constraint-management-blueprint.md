@@ -20,7 +20,7 @@ layer: layer_06
 
 # 组合约束管理模块蓝图
 
-> **职责边界**: 
+> **职责边界**:
 > - ...
 ## 设计目标
 
@@ -117,10 +117,10 @@ graph LR
     A[组合优化引擎] --> B[组合约束管理]
     C[数据质量监控] --> B
     D[数据目录] --> B
-    
+
     B --> E[多目标优化]
     B --> G[场景分析]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -138,10 +138,10 @@ import pandas as pd
 import numpy as np
 
 class ConstraintManager:
-    
+
     def __init__(self):
         self.constraints = []
-        
+
     def add_sector_constraint(
         self,
         sector_weights: Dict[str, tuple],
@@ -149,12 +149,12 @@ class ConstraintManager:
     ):
         """
         添加行业约束
-        
+
         Args:
             sector_mapping: 股票到行业的映射
         """
         pass
-    
+
     def add_factor_constraint(
         self,
         factor_exposures: pd.DataFrame,
@@ -162,13 +162,13 @@ class ConstraintManager:
     ):
         """
         添加因子约束
-        
+
         Args:
             factor_exposures: 因子暴露矩阵
             factor_limits: 因子暴露限制
         """
         pass
-    
+
     def add_risk_constraint(
         self,
         max_volatility: float = None,
@@ -177,31 +177,31 @@ class ConstraintManager:
     ):
         """
         添加风险约束
-        
+
         Args:
             max_volatility: 最大波动率
             max_var: 最大VaR
         """
         pass
-    
+
     def detect_conflicts(self) -> List[dict]:
         """
-        
+
         Returns:
             冲突列表
         """
         pass
-    
+
     def apply_constraints(
         self,
         ef: EfficientFrontier
     ) -> EfficientFrontier:
         """
         应用约束到优化器
-        
+
         Args:
             ef: EfficientFrontier对象
-            
+
         Returns:
         """
         pass
@@ -219,7 +219,7 @@ class ConstraintManager:
 ```python
 class ConstraintAPI:
     """约束管理API"""
-    
+
     @endpoint("/api/v1/constraints/add")
     async def add_constraint(
         self,
@@ -227,13 +227,13 @@ class ConstraintAPI:
         constraint_params: dict
     ) -> ConstraintResult:
         """添加约束"""
-        
+
     @endpoint("/api/v1/constraints/check_conflicts")
     async def check_conflicts(
         self,
         constraints: List[dict]
     ) -> ConflictCheckResult:
-        
+
     @endpoint("/api/v1/constraints/apply")
     async def apply_constraints(
         self,
@@ -346,6 +346,3 @@ class ConstraintAPI:
 ### 5.3 版本管理
 
 |------|------|----------|--------|
-
-
-

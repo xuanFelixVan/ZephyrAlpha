@@ -40,7 +40,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -166,7 +166,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 
 
 
-**ﮔﭘﮔﻟ۶ﻟﺎ**: 
+**ﮔﭘﮔﻟ۶ﻟﺎ**:
 
 
 
@@ -240,7 +240,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 
 
 
-**ﻟﻟﺑ۲ﻟﮒﺑ**: 
+**ﻟﻟﺑ۲ﻟﮒﺑ**:
 
 
 
@@ -260,7 +260,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 
 
 
-- **ﻛﺕﮒﺎﻛﺝﻟﭖ**: 
+- **ﻛﺕﮒﺎﻛﺝﻟﭖ**:
 
 
 
@@ -468,7 +468,7 @@ class AIFactorMiner:
 
 
 
-    
+
 
 
 
@@ -516,11 +516,11 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ,ﮒﮒ،ﻛﺕﮒ۳۶ﮒﺙﮔﻝﮒ?        """
 
 
 
-        
 
 
 
-    def mine_factors(self, 
+
+    def mine_factors(self,
 
 
 
@@ -592,7 +592,7 @@ target: ﻝ؟ﮔﮔﭘﻝﻝﮒﭦ?            methods: ﻛﺛﺟﻝ۷ﻝﮔﮔ�
 
 
 
-            
+
 
 
 
@@ -612,7 +612,7 @@ ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮔ۲?            RuntimeError: ﮔﮔ�
 
 
 
-    
+
 
 
 
@@ -640,7 +640,7 @@ ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮔ۲?            RuntimeError: ﮔﮔ�
 
 
 
-        
+
 
 
 
@@ -672,7 +672,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?
 
 
 
-    
+
 
 
 
@@ -688,7 +688,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?
 
 
 
-        
+
 
 
 
@@ -700,7 +700,7 @@ factor: ﮒﮒﮒﮒﺕ
 
 
 
-            
+
 
 
 
@@ -712,7 +712,7 @@ factor_id: ﮔﺏ۷ﮒﮒﻝﮒﮒID
 
 
 
-            
+
 
 
 
@@ -760,7 +760,7 @@ class DeepLearningFactorMiner:
 
 
 
-    
+
 
 
 
@@ -776,7 +776,7 @@ class DeepLearningFactorMiner:
 
 
 
-        
+
 
 
 
@@ -816,7 +816,7 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -844,7 +844,7 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -860,7 +860,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            lookback_window: ﮒﻝﻝ۹ﮒ۲
 
 
 
-            
+
 
 
 
@@ -876,7 +876,7 @@ LSTMﮔﮔﻝﮒﮒﮒ?        """
 
 
 
-    
+
 
 
 
@@ -928,7 +928,7 @@ Transformerﮔﮔﻝﮒﮒﮒ?        """
 
 
 
-    
+
 
 
 
@@ -956,7 +956,7 @@ Transformerﮔﮔﻝﮒﮒﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1012,7 +1012,7 @@ class ReinforcementLearningMiner:
 
 
 
-    
+
 
 
 
@@ -1028,7 +1028,7 @@ class ReinforcementLearningMiner:
 
 
 
-        
+
 
 
 
@@ -1064,7 +1064,7 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1096,7 +1096,7 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1116,7 +1116,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            optimization_target: ﻛﺙﮒﻝ؟ﮔ ('s
 
 
 
-            
+
 
 
 
@@ -1136,7 +1136,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            optimization_target: ﻛﺙﮒﻝ؟ﮔ ('s
 
 
 
-    
+
 
 
 
@@ -1160,7 +1160,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            optimization_target: ﻛﺙﮒﻝ؟ﮔ ('s
 
 
 
-        
+
 
 
 
@@ -1176,7 +1176,7 @@ factors: ﮒﮒﮒﻟ۰۷
 
 
 
-            
+
 
 
 
@@ -1224,7 +1224,7 @@ class GeneticAlgorithmMiner:
 
 
 
-    
+
 
 
 
@@ -1240,7 +1240,7 @@ class GeneticAlgorithmMiner:
 
 
 
-        
+
 
 
 
@@ -1280,7 +1280,7 @@ config: ﻠﻝﺛ؟ﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1320,7 +1320,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            max_complexity: ﮔﮒ۳۶ﮒ۳ﮔﮒﭦ۵
 
 
 
-            
+
 
 
 
@@ -1336,7 +1336,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            max_complexity: ﮔﮒ۳۶ﮒ۳ﮔﮒﭦ۵
 
 
 
-    
+
 
 
 
@@ -1348,7 +1348,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            max_complexity: ﮔﮒ۳۶ﮒ۳ﮔﮒﭦ۵
 
 
 
-        ﮒ؟ﻛﺗﻠﮒﻛﺕﻝ۷ﮒﺛﮔﺍ?        
+        ﮒ؟ﻛﺗﻠﮒﻛﺕﻝ۷ﮒﺛﮔﺍ?
 
 
 
@@ -1776,7 +1776,7 @@ target: ﻝ؟ﮔﮔﭘﻝ?            max_complexity: ﮔﮒ۳۶ﮒ۳ﮔﮒﭦ۵
 
 
 
-**ﻟ؟۳ﻟﺁﮔﺗﮒﺙ**: 
+**ﻟ؟۳ﻟﺁﮔﺗﮒﺙ**:
 
 
 
@@ -2164,7 +2164,7 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 
 
 
-2. **ﻝﺗﮒﺝﮒﺓ۴ﻝ۷**: 
+2. **ﻝﺗﮒﺝﮒﺓ۴ﻝ۷**:
 
 
 
@@ -2184,7 +2184,7 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 
 
 
-3. **AIﮔﮔ**: 
+3. **AIﮔﮔ**:
 
 
 
@@ -3024,7 +3024,7 @@ function_set = {
 
 
 
-    'custom': ['returns', 'volatility', 'zscore', 'rank', 'delay', 
+    'custom': ['returns', 'volatility', 'zscore', 'rank', 'delay',
 
 
 
@@ -3502,7 +3502,7 @@ def test_lstm_factor_mining():
 
 
 
-    
+
 
 
 
@@ -3510,7 +3510,7 @@ def test_lstm_factor_mining():
 
 
 
-    
+
 
 
 
@@ -4720,23 +4720,20 @@ performance_test:
 
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: v1.0  
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02
 
 
 
-**ﮔﮔ۰۲ﻝ?*: ?ﮒ؟ﮔ  
+**ﮔﮔ۰۲ﻝ?*: ?ﮒ؟ﮔ
 
 
 
 **ﻛﺕﻛﺕ?*: ﮒﺙﮒ۶ﮒ؟ﮔﺛPhase 1
-
-
-

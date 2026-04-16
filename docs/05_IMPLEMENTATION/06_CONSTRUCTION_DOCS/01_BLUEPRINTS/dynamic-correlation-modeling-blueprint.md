@@ -133,7 +133,7 @@ compliance_level: 专业标准
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -177,7 +177,7 @@ graph LR
 
     D[数据血缘追踪] --> B
 
-    
+
 
     B --> E[风险平价策略]
 
@@ -185,7 +185,7 @@ graph LR
 
     B --> G[VaR/ES监控]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -261,11 +261,11 @@ class DynamicCorrelationModeler:
 
     """
 
-    
+
 
     索引: DYNAMIC_CORR_001-M01
 
-    
+
 
     def __init__(self, config: DCCConfig):
 
@@ -277,7 +277,7 @@ class DynamicCorrelationModeler:
 
         self.regime_detector = CorrelationRegimeDetector()
 
-        
+
 
     def fit(self, returns_data: pd.DataFrame) -> 'DynamicCorrelationModeler':
 
@@ -285,13 +285,13 @@ class DynamicCorrelationModeler:
 
         拟合DCC-GARCH模型
 
-        
+
 
         Args:
 
             returns_data: 多资产收益率数据（DataFrame，列为资产）
 
-            
+
 
         Returns:
 
@@ -309,7 +309,7 @@ class DynamicCorrelationModeler:
 
             )
 
-        
+
 
         # 2. 计算标准化残差        standardized_residuals = self._calculate_standardized_residuals(
 
@@ -317,21 +317,21 @@ class DynamicCorrelationModeler:
 
         )
 
-        
+
 
         # 3. 拟合DCC模型
 
         self.dcc_model = self._fit_dcc(standardized_residuals)
 
-        
+
 
         return self
 
-    
+
 
     def estimate_dynamic_correlation(
 
-        self, 
+        self,
 
         returns_data: pd.DataFrame,
 
@@ -349,9 +349,9 @@ class DynamicCorrelationModeler:
 
         Returns:
 
-        
 
-        
+
+
 
         # 3. 极端市场调整
 
@@ -363,7 +363,7 @@ class DynamicCorrelationModeler:
 
             )
 
-        
+
 
         # 4. 计算协方差矩阵
 
@@ -375,7 +375,7 @@ class DynamicCorrelationModeler:
 
         )
 
-        
+
 
         return DynamicCorrelationResult(
 
@@ -391,7 +391,7 @@ class DynamicCorrelationModeler:
 
         )
 
-    
+
 
     def detect_correlation_breakdown(
 
@@ -417,7 +417,7 @@ class DynamicCorrelationModeler:
 
         )
 
-        
+
 
         # 2. 识别突变        breakdown_points = self._identify_breakdown_points(
 
@@ -425,13 +425,13 @@ class DynamicCorrelationModeler:
 
         )
 
-        
+
 
         # 3. 评估突变严重程度
 
         severity = self._assess_breakdown_severity(breakdown_points)
 
-        
+
 
         return CorrelationBreakdownResult(
 
@@ -445,7 +445,7 @@ class DynamicCorrelationModeler:
 
         )
 
-    
+
 
     def forecast_correlation(
 
@@ -463,17 +463,17 @@ class DynamicCorrelationModeler:
 
             horizon: 预测期数（天数）
 
-            
+
 
         Returns:
 
         # 1. 预测条件波动率        volatility_forecast = self._forecast_volatility(horizon)
 
-        
+
 
         correlation_forecast = self.dcc_model.forecast(horizon)
 
-        
+
 
         # 3. 计算预测区间
 
@@ -483,7 +483,7 @@ class DynamicCorrelationModeler:
 
         )
 
-        
+
 
         return CorrelationForecast(
 
@@ -497,7 +497,7 @@ class DynamicCorrelationModeler:
 
         )
 
-    
+
 
     def _fit_garch(self, returns: pd.Series) -> arch_model:
 
@@ -509,11 +509,11 @@ class DynamicCorrelationModeler:
 
         return fitted_model
 
-    
+
 
     def _calculate_standardized_residuals(
 
-        self, 
+        self,
 
         returns_data: pd.DataFrame
 
@@ -523,7 +523,7 @@ class DynamicCorrelationModeler:
 
         standardized = pd.DataFrame(index=returns_data.index)
 
-        
+
 
         for asset in returns_data.columns:
 
@@ -533,11 +533,11 @@ class DynamicCorrelationModeler:
 
             standardized[asset] = residuals / conditional_vol
 
-        
+
 
         return standardized
 
-    
+
 
     def _fit_dcc(self, standardized_residuals: pd.DataFrame):
 
@@ -545,7 +545,7 @@ class DynamicCorrelationModeler:
 
         from mgarch import mgarch
 
-        
+
 
         dist = 't'
 
@@ -553,11 +553,11 @@ class DynamicCorrelationModeler:
 
         model.fit(standardized_residuals)
 
-        
+
 
         return model
 
-    
+
 
     def _adjust_for_extreme_market(
 
@@ -571,7 +571,7 @@ class DynamicCorrelationModeler:
 
         adjustment_factor = self.config.extreme_market_adjustment_factor
 
-        
+
 
         if regime_change.is_extreme:
 
@@ -581,7 +581,7 @@ class DynamicCorrelationModeler:
 
             return adjusted_corr
 
-        
+
 
         return correlation
 
@@ -595,11 +595,11 @@ class CorrelationRegimeDetector:
 
     """
 
-    
+
 
     索引: DYNAMIC_CORR_001-M02
 
-    
+
 
     def __init__(self, config: RegimeDetectionConfig):
 
@@ -607,11 +607,11 @@ class CorrelationRegimeDetector:
 
         self.breakdown_threshold = config.breakdown_threshold
 
-        
+
 
     def detect(
 
-        self, 
+        self,
 
         correlation_matrix: pd.DataFrame
 
@@ -629,25 +629,25 @@ class CorrelationRegimeDetector:
 
         ].mean()
 
-        
+
 
         # 2. 与历史均值比较        historical_mean = self._get_historical_mean_correlation()
 
         deviation = abs(mean_correlation - historical_mean)
 
-        
+
 
         # 3. 判断是否突变
 
         is_breakdown = deviation > self.breakdown_threshold
 
-        
+
 
         # 4. 识别极端市场
 
         is_extreme = self._is_extreme_market(correlation_matrix)
 
-        
+
 
         return RegimeChange(
 
@@ -665,11 +665,11 @@ class CorrelationRegimeDetector:
 
         )
 
-    
+
 
     def _is_extreme_market(
 
-        self, 
+        self,
 
         correlation_matrix: pd.DataFrame
 
@@ -683,7 +683,7 @@ class CorrelationRegimeDetector:
 
         mean_corr = off_diagonal.mean()
 
-        
+
 
         return mean_corr > self.config.extreme_correlation_threshold
 
@@ -711,7 +711,7 @@ class DCCConfig:
 
     retrain_frequency: int = 30  # 模型重训练频率（天）
 
-    
+
 
 @dataclass
 
@@ -745,7 +745,7 @@ class AssetReturns:
 
     timestamps: pd.DatetimeIndex
 
-    
+
 
 @dataclass
 
@@ -781,7 +781,7 @@ class DynamicCorrelationResult:
 
     timestamp: datetime
 
-    
+
 
 @dataclass
 
@@ -795,7 +795,7 @@ class CorrelationBreakdownResult:
 
     recommendation: str
 
-    
+
 
 @dataclass
 
@@ -915,13 +915,13 @@ R_t = diag(Q_t)^(-1/2) Q_t diag(Q_t)^(-1/2)
 
 class RiskParityOptimizer:
 
-    
+
 
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
 
         self.correlation_modeler = correlation_modeler
 
-        
+
 
     def optimize(self, returns: pd.DataFrame) -> pd.Series:
 
@@ -931,7 +931,7 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         # 2. 使用动态协方差矩阵进行优化
 
@@ -941,7 +941,7 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         return weights
 
@@ -955,13 +955,13 @@ class RiskParityOptimizer:
 
 class CorrelationAlertSystem:
 
-    
+
 
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
 
         self.correlation_modeler = correlation_modeler
 
-        
+
 
     def monitor(self, returns: pd.DataFrame) -> Alert:
 
@@ -971,7 +971,7 @@ class CorrelationAlertSystem:
 
         )
 
-        
+
 
         # 2. 生成预警
 
@@ -1011,7 +1011,7 @@ def test_garch_fitting():
 
     modeler.fit(returns)
 
-    
+
 
     assert len(modeler.garch_models) == returns.shape[1]
 
@@ -1027,11 +1027,11 @@ def test_dynamic_correlation_estimation():
 
     modeler.fit(returns)
 
-    
+
 
     result = modeler.estimate_dynamic_correlation(returns)
 
-    
+
 
     assert result.correlation_matrix.shape == (returns.shape[1], returns.shape[1])
 
@@ -1049,11 +1049,11 @@ def test_breakdown_detection():
 
     modeler.fit(returns)
 
-    
+
 
     breakdown = modeler.detect_correlation_breakdown(returns)
 
-    
+
 
     assert breakdown.is_breakdown == True
 
@@ -1073,25 +1073,25 @@ def test_integration_with_risk_parity():
 
     returns = load_historical_returns()
 
-    
+
 
     correlation_modeler = DynamicCorrelationModeler(DCCConfig())
 
     correlation_modeler.fit(returns)
 
-    
+
 
     # 初始化风险平价优化器
 
     optimizer = RiskParityOptimizer(correlation_modeler)
 
-    
+
 
     # 执行优化
 
     weights = optimizer.optimize(returns)
 
-    
+
 
     # 验证结果
 
@@ -1353,7 +1353,7 @@ def test_integration_with_risk_parity():
 
 |------|------|------|
 
-| **Dynamic Correlation Modeling** | 
+| **Dynamic Correlation Modeling** |
 
 
 
@@ -1370,4 +1370,3 @@ def test_integration_with_risk_parity():
 
 
 ```
-

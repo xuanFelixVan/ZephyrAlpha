@@ -22,7 +22,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供market making model blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Market Making Model蓝图设计相关内容
 
@@ -176,7 +176,7 @@ class MarketMakingModel:
 
 
 
-    
+
 
 
 
@@ -224,7 +224,7 @@ class MarketMakingModel:
 
 
 
-    
+
 
 
 
@@ -264,7 +264,7 @@ class MarketMakingModel:
 
 
 
-            
+
 
 
 
@@ -280,7 +280,7 @@ torch.Tensor: ?        """
 
 
 
-    
+
 
 
 
@@ -304,7 +304,7 @@ torch.Tensor: ?        """
 
 
 
-        
+
 
 
 
@@ -330,7 +330,7 @@ torch.Tensor: ?        """
 
 
 
-    
+
 
 
 
@@ -358,7 +358,7 @@ torch.Tensor: ?        """
 
 
 
-        
+
 
 
 
@@ -378,7 +378,7 @@ torch.Tensor: ?        """
 
 
 
-    
+
 
 
 
@@ -402,7 +402,7 @@ torch.Tensor: ?        """
 
 
 
-        
+
 
 
 
@@ -464,7 +464,7 @@ class MarketMakingRL:
 
 
 
-    
+
 
 
 
@@ -496,7 +496,7 @@ class MarketMakingRL:
 
 
 
-        
+
 
 
 
@@ -512,7 +512,7 @@ class MarketMakingRL:
 
 
 
-    
+
 
 
 
@@ -536,7 +536,7 @@ class MarketMakingRL:
 
 
 
-        
+
 
 
 
@@ -564,7 +564,7 @@ state: ?
 
 
 
-    
+
 
 
 
@@ -596,7 +596,7 @@ state: ?
 
 
 
-        
+
 
 
 
@@ -616,7 +616,7 @@ state: ?
 
 
 
-            
+
 
 
 
@@ -823,4 +823,3 @@ state: ?
 
 
 ```
-

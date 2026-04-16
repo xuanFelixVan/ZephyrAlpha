@@ -33,7 +33,7 @@ implementation_status: 分析完成
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -2631,7 +2631,7 @@ class ToolRegistry:
 
 
 
-    
+
 
 
 
@@ -2643,7 +2643,7 @@ class ToolRegistry:
 
 
 
-    
+
 
 
 
@@ -2655,7 +2655,7 @@ class ToolRegistry:
 
 
 
-        
+
 
 
 
@@ -2663,7 +2663,7 @@ class ToolRegistry:
 
 
 
-        self.register_strategy_tools()      # 策略层工?        self.register_factor_tools()        # 因子层工?        self.register_risk_tools()          # 风控层工?        self.register_approval_tools()      # 授权层工?        
+        self.register_strategy_tools()      # 策略层工?        self.register_factor_tools()        # 因子层工?        self.register_risk_tools()          # 风控层工?        self.register_approval_tools()      # 授权层工?
 
 
 
@@ -2671,7 +2671,7 @@ class ToolRegistry:
 
 
 
-        self.register_sentiment_tools()     # 舆情层工?        self.register_ml_tools()            # ML层工?        self.register_portfolio_tools()     # 组合层工?        self.register_report_tools()        # 报告层工?        
+        self.register_sentiment_tools()     # 舆情层工?        self.register_ml_tools()            # ML层工?        self.register_portfolio_tools()     # 组合层工?        self.register_report_tools()        # 报告层工?
 
 
 
@@ -2679,7 +2679,7 @@ class ToolRegistry:
 
 
 
-        self.register_data_tools()          # 数据层工?        self.register_dashboard_tools()     # 仪表板工?    
+        self.register_data_tools()          # 数据层工?        self.register_dashboard_tools()     # 仪表板工?
 
 
 
@@ -2828,6 +2828,3 @@ class ToolRegistry:
 
 
 > 本分析由首席架构师完成，全面覆盖系统所有模块的文字交互需求，为Layer 11实施提供完整指导?
-
-
-

@@ -12,37 +12,37 @@ indicators:
     threshold_high: 7.0      # 高增长阈值
     threshold_low: 5.0       # 低增长阈值
     weight: 0.5              # 权重
-    
+
   # CPI通胀率
   cpi:
     threshold_high: 3.0      # 高通胀阈值
     threshold_low: 1.0       # 低通胀阈值
     weight: 0.7              # 权重
-    
+
   # PPI通胀率
   ppi:
     threshold_high: 2.0      # 高阈值
     threshold_low: -2.0      # 低阈值
     weight: 0.3              # 权重
-    
+
   # PMI景气度
   pmi:
     threshold_high: 52.0     # 扩张阈值
     threshold_low: 48.0      # 收缩阈值
     weight: 0.3              # 权重
-    
+
   # 工业增加值
   industrial_output:
     threshold_high: 8.0      # 高增长阈值
     threshold_low: 5.0       # 低增长阈值
     weight: 0.2              # 权重
-    
+
   # M2增速
   m2_growth:
     threshold_high: 12.0     # 高增速阈值
     threshold_low: 8.0       # 低增速阈值
     weight: 0.5              # 权重
-    
+
   # 信贷增速
   credit_growth:
     threshold_high: 15.0     # 高增速阈值
@@ -55,17 +55,17 @@ regime_thresholds:
   expansion:
     growth_min: 0.6          # 增长评分最小值
     inflation_max: 0.4       # 通胀评分最大值
-    
+
   # 滞胀期
   stagflation:
     growth_max: 0.4          # 增长评分最大值
     inflation_min: 0.6       # 通胀评分最小值
-    
+
   # 衰退期
   recession:
     growth_max: 0.4          # 增长评分最大值
     inflation_max: 0.4       # 通胀评分最大值
-    
+
   # 复苏期
   recovery:
     growth_min: 0.6          # 增长评分最小值
@@ -79,21 +79,21 @@ asset_allocation:
     bonds: 0.20              # 债券
     commodities: 0.15        # 商品
     cash: 0.05               # 现金
-    
+
   # 滞胀期资产配置
   stagflation:
     equity: 0.20             # 股票
     bonds: 0.15              # 债券
     commodities: 0.50        # 商品（抗通胀）
     cash: 0.15               # 现金
-    
+
   # 衰退期资产配置
   recession:
     equity: 0.20             # 股票
     bonds: 0.60              # 债券（避险）
     commodities: 0.05        # 商品
     cash: 0.15               # 现金
-    
+
   # 复苏期资产配置
   recovery:
     equity: 0.50             # 股票
@@ -105,10 +105,10 @@ asset_allocation:
 risk_warnings:
   # 滞胀风险阈值
   stagflation_probability_threshold: 0.3
-  
+
   # 衰退风险阈值
   recession_probability_threshold: 0.3
-  
+
   # 风险等级映射
   risk_level_mapping:
     expansion: "低风险"
@@ -122,12 +122,12 @@ data_sources:
   wind:
     enabled: true
     timeout: 30
-    
+
   # iFinD数据源
   ifind:
     enabled: true
     timeout: 30
-    
+
   # 缓存配置
   cache:
     enabled: true

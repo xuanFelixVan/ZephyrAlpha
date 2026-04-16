@@ -412,3 +412,9 @@ responsibility:
 - 扫描范围: D:\ZephyrAlpha\docs
 - 索引文件: docs\05_IMPLEMENTATION\INDEX.md
 - 自动化工具: Auto-Index Compiler v1.1.0
+
+<!-- orphan-link -->
+- [VERSIONING](VERSIONING.md)
+
+<!-- orphan-link -->
+- [code-examples](code-examples.md)

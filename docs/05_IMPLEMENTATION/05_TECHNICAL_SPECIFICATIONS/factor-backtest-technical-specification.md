@@ -106,7 +106,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -136,7 +136,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -462,7 +462,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -498,7 +498,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -818,7 +818,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -842,7 +842,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -896,7 +896,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -944,7 +944,7 @@ class FactorBacktester:
 
 
 
-        
+
 
 
 
@@ -986,7 +986,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -1046,7 +1046,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -1094,7 +1094,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -1148,7 +1148,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -1196,7 +1196,7 @@ class FactorBacktester:
 
 
 
-    
+
 
 
 
@@ -1758,19 +1758,19 @@ def calculate_ic(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_values: pd.Series, 
+    factor_values: pd.Series,
 
 
 
 
 
-    forward_returns: pd.Series, 
+    forward_returns: pd.Series,
 
 
 
@@ -1800,7 +1800,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1830,7 +1830,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1854,7 +1854,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1884,7 +1884,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1914,7 +1914,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1956,25 +1956,25 @@ def run_layered_backtest(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_data: pd.DataFrame, 
+    factor_data: pd.DataFrame,
 
 
 
 
 
-    price_data: pd.DataFrame, 
+    price_data: pd.DataFrame,
 
 
 
 
 
-    n_groups: int = 10, 
+    n_groups: int = 10,
 
 
 
@@ -2004,7 +2004,7 @@ def run_layered_backtest(
 
 
 
-    
+
 
 
 
@@ -2040,7 +2040,7 @@ def run_layered_backtest(
 
 
 
-    
+
 
 
 
@@ -2064,7 +2064,7 @@ def run_layered_backtest(
 
 
 
-    
+
 
 
 
@@ -2088,7 +2088,7 @@ def run_layered_backtest(
 
 
 
-        
+
 
 
 
@@ -2100,7 +2100,7 @@ def run_layered_backtest(
 
 
 
-        
+
 
 
 
@@ -2130,7 +2130,7 @@ def run_layered_backtest(
 
 
 
-    
+
 
 
 
@@ -2172,13 +2172,13 @@ def calculate_performance(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    returns: pd.Series, 
+    returns: pd.Series,
 
 
 
@@ -2208,7 +2208,7 @@ def calculate_performance(
 
 
 
-    
+
 
 
 
@@ -2244,7 +2244,7 @@ def calculate_performance(
 
 
 
-    
+
 
 
 
@@ -2280,7 +2280,7 @@ def calculate_performance(
 
 
 
-    
+
 
 
 
@@ -2310,7 +2310,7 @@ def calculate_performance(
 
 
 
-    
+
 
 
 
@@ -2602,7 +2602,7 @@ def test_factor_backtester_integration():
 
 
 
-    
+
 
 
 
@@ -2632,7 +2632,7 @@ def test_factor_backtester_integration():
 
 
 
-    
+
 
 
 
@@ -2662,7 +2662,7 @@ def test_factor_backtester_integration():
 
 
 
-    
+
 
 
 
@@ -2674,7 +2674,7 @@ def test_factor_backtester_integration():
 
 
 
-    
+
 
 
 
@@ -3126,7 +3126,7 @@ factor_backtester:
 
 
 
-  
+
 
 
 
@@ -3150,7 +3150,7 @@ factor_backtester:
 
 
 
-  
+
 
 
 
@@ -3271,8 +3271,3 @@ factor_backtester:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人
-
-
-
-
-

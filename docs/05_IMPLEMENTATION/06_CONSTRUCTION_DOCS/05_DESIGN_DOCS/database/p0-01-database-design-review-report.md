@@ -324,7 +324,7 @@ created_at, updated_at, metadata  -- 16ﻛﺕ۹ﮒﭦﻝ۰ﮒﮔ؟ﭖ
 
 
 
-ALTER TABLE accounts 
+ALTER TABLE accounts
 
 
 
@@ -970,7 +970,7 @@ def create_monthly_partition(table_name, start_date, end_date):
 
 
 
-    
+
 
 
 
@@ -982,7 +982,7 @@ def create_monthly_partition(table_name, start_date, end_date):
 
 
 
-    FOR VALUES FROM ('{start_date.strftime('%Y-%m-%d')}') 
+    FOR VALUES FROM ('{start_date.strftime('%Y-%m-%d')}')
 
 
 
@@ -994,7 +994,7 @@ def create_monthly_partition(table_name, start_date, end_date):
 
 
 
-    
+
 
 
 
@@ -1018,7 +1018,7 @@ def create_weekly_partition(table_name, start_date, end_date):
 
 
 
-    
+
 
 
 
@@ -1030,7 +1030,7 @@ def create_weekly_partition(table_name, start_date, end_date):
 
 
 
-    FOR VALUES FROM ('{start_date.strftime('%Y-%m-%d')}') 
+    FOR VALUES FROM ('{start_date.strftime('%Y-%m-%d')}')
 
 
 
@@ -1042,7 +1042,7 @@ def create_weekly_partition(table_name, start_date, end_date):
 
 
 
-    
+
 
 
 
@@ -1066,7 +1066,7 @@ def auto_create_partitions(conn, table_name, partition_type='monthly', months_ah
 
 
 
-    
+
 
 
 
@@ -1114,7 +1114,7 @@ def auto_create_partitions(conn, table_name, partition_type='monthly', months_ah
 
 
 
-        
+
 
 
 
@@ -1138,7 +1138,7 @@ def auto_create_partitions(conn, table_name, partition_type='monthly', months_ah
 
 
 
-    
+
 
 
 
@@ -2392,19 +2392,16 @@ ALTER TABLE accounts DROP COLUMN daily_pnl;
 
 
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝ?*: ?ﮒﺓﺎﻟﺁ? 
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝ?*: ?ﮒﺓﺎﻟﺁ?
 
 
 
-**ﻟﺁﮒ؟۰ﻝﭨﻟ؟ﭦ**: ﮔﮔ۰ﻛﭨﭘﮔﺗ? 
+**ﻟﺁﮒ؟۰ﻝﭨﻟ؟ﭦ**: ﮔﮔ۰ﻛﭨﭘﮔﺗ?
 
 
 
-**ﻝ؛۵ﮒ?*: ﻛﺙﮒ?5% ?ﻛﺙﮒ?6%  
+**ﻝ؛۵ﮒ?*: ﻛﺙﮒ?5% ?ﻛﺙﮒ?6%
 
 
 
 **ﻛﺕﻛﺕ?*: ﮔ۶ﻟ۰ﻛﺙﮒﮔﺗﮔ۰ ?ﮔﺑﮔﺍﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ ?ﮒﺙﮒ۶P0-2ﮔﺍﮔ؟ﮒﮒﺕﻟ؟ﺝﻟ؟۰
-
-
-

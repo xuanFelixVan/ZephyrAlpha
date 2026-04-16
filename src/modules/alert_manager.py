@@ -182,7 +182,7 @@ class ServerChanAlertChannel(AlertChannel):
         for attempt in range(self.max_retries):
             try:
                 url = f"https://sctapi.ftqq.com/{self.sendkey}.send"
-                
+
                 # 安全验证：只允许http或https协议（防御性编程）
                 if not url.startswith(('http://', 'https://')):
                     logger.error(f"Unsupported protocol in URL: {url}")
@@ -270,7 +270,7 @@ class BarkAlertChannel(AlertChannel):
         for attempt in range(self.max_retries):
             try:
                 url = f"{self.bark_url}/{urllib.parse.quote(title)}/{urllib.parse.quote(content)}"
-                
+
                 # 安全验证：只允许http或https协议
                 if not url.startswith(('http://', 'https://')):
                     logger.error(f"Unsupported protocol in URL: {url}")

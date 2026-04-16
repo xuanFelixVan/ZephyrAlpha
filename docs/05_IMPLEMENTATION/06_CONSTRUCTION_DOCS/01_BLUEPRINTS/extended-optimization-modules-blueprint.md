@@ -128,7 +128,7 @@ class ESGOptimizer:
 
     """
 
-    
+
 
     def __init__(self, esg_scores: pd.DataFrame):
 
@@ -136,7 +136,7 @@ class ESGOptimizer:
 
         初始化ESG优化器
 
-        
+
 
         Args:
 
@@ -146,7 +146,7 @@ class ESGOptimizer:
 
         self.esg_scores = esg_scores
 
-    
+
 
     def optimize_with_esg_constraint(
 
@@ -164,7 +164,7 @@ class ESGOptimizer:
 
         带ESG约束的优化
 
-        
+
 
         Args:
 
@@ -174,7 +174,7 @@ class ESGOptimizer:
 
             max_weight: 单个资产最大权重
 
-        
+
 
         Returns:
 
@@ -186,23 +186,23 @@ class ESGOptimizer:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         ef = EfficientFrontier(mu, S)
 
-        
+
 
         # 添加ESG约束
 
         esg_weights = self.esg_scores['esg_score'] / self.esg_scores['esg_score'].sum()
 
-        
+
 
         # 添加权重约束
 
         ef.add_constraint(lambda w: w <= max_weight)
 
-        
+
 
         # 添加ESG评分约束
 
@@ -212,17 +212,17 @@ class ESGOptimizer:
 
             return portfolio_esg - min_esg_score
 
-        
+
 
         ef.add_constraint(esg_constraint)
 
-        
+
 
         weights = ef.max_sharpe()
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         return {
 
@@ -332,7 +332,7 @@ class SectorRotationOptimizer:
 
     """
 
-    
+
 
     def __init__(self, sector_data: pd.DataFrame):
 
@@ -340,7 +340,7 @@ class SectorRotationOptimizer:
 
         初始化行业轮动优化器
 
-        
+
 
         Args:
 
@@ -352,7 +352,7 @@ class SectorRotationOptimizer:
 
         self.sector_momentum = None
 
-    
+
 
     def calculate_sector_momentum(
 
@@ -366,13 +366,13 @@ class SectorRotationOptimizer:
 
         计算行业动量
 
-        
+
 
         Args:
 
             lookback_period: 回看期（月）
 
-        
+
 
         Returns:
 
@@ -384,11 +384,11 @@ class SectorRotationOptimizer:
 
         self.sector_momentum = returns.iloc[-1]
 
-        
+
 
         return self.sector_momentum
 
-    
+
 
     def rotate_sectors(
 
@@ -406,7 +406,7 @@ class SectorRotationOptimizer:
 
         行业轮动
 
-        
+
 
         Args:
 
@@ -416,7 +416,7 @@ class SectorRotationOptimizer:
 
             momentum_threshold: 动量阈值
 
-        
+
 
         Returns:
 
@@ -426,13 +426,13 @@ class SectorRotationOptimizer:
 
         momentum = self.calculate_sector_momentum()
 
-        
+
 
         # 选择动量最高的行业
 
         top_sectors = momentum[momentum > momentum_threshold].nlargest(top_n)
 
-        
+
 
         # 等权重配置
 
@@ -440,7 +440,7 @@ class SectorRotationOptimizer:
 
         weights[top_sectors.index] = 1.0 / len(top_sectors)
 
-        
+
 
         return {
 
@@ -548,7 +548,7 @@ class StyleRotationOptimizer:
 
     """
 
-    
+
 
     def __init__(self, style_factors: pd.DataFrame):
 
@@ -556,7 +556,7 @@ class StyleRotationOptimizer:
 
         初始化风格轮动优化器
 
-        
+
 
         Args:
 
@@ -568,7 +568,7 @@ class StyleRotationOptimizer:
 
         self.style_scores = None
 
-    
+
 
     def calculate_style_scores(
 
@@ -582,13 +582,13 @@ class StyleRotationOptimizer:
 
         计算风格评分
 
-        
+
 
         Args:
 
             lookback_period: 回看期（月）
 
-        
+
 
         Returns:
 
@@ -600,11 +600,11 @@ class StyleRotationOptimizer:
 
         self.style_scores = returns.iloc[-1]
 
-        
+
 
         return self.style_scores
 
-    
+
 
     def rotate_styles(
 
@@ -620,7 +620,7 @@ class StyleRotationOptimizer:
 
         风格轮动
 
-        
+
 
         Args:
 
@@ -628,7 +628,7 @@ class StyleRotationOptimizer:
 
             style_weights: 风格权重
 
-        
+
 
         Returns:
 
@@ -638,7 +638,7 @@ class StyleRotationOptimizer:
 
         scores = self.calculate_style_scores()
 
-        
+
 
         if style_weights is None:
 
@@ -652,7 +652,7 @@ class StyleRotationOptimizer:
 
             weights = pd.Series(style_weights)
 
-        
+
 
         return {
 
@@ -760,7 +760,7 @@ class FactorTimingOptimizer:
 
     """
 
-    
+
 
     def __init__(self, factor_returns: pd.DataFrame):
 
@@ -768,7 +768,7 @@ class FactorTimingOptimizer:
 
         初始化因子择时优化器
 
-        
+
 
         Args:
 
@@ -780,7 +780,7 @@ class FactorTimingOptimizer:
 
         self.factor_scores = None
 
-    
+
 
     def calculate_factor_scores(
 
@@ -796,7 +796,7 @@ class FactorTimingOptimizer:
 
         计算因子评分
 
-        
+
 
         Args:
 
@@ -804,7 +804,7 @@ class FactorTimingOptimizer:
 
             method: 评分方法
 
-        
+
 
         Returns:
 
@@ -832,11 +832,11 @@ class FactorTimingOptimizer:
 
             self.factor_scores = returns.iloc[-1]
 
-        
+
 
         return self.factor_scores
 
-    
+
 
     def time_factors(
 
@@ -854,7 +854,7 @@ class FactorTimingOptimizer:
 
         因子择时
 
-        
+
 
         Args:
 
@@ -864,7 +864,7 @@ class FactorTimingOptimizer:
 
             score_threshold: 评分阈值
 
-        
+
 
         Returns:
 
@@ -874,13 +874,13 @@ class FactorTimingOptimizer:
 
         scores = self.calculate_factor_scores()
 
-        
+
 
         # 选择评分高于阈值的因子
 
         selected_factors = scores[scores > score_threshold]
 
-        
+
 
         if factor_weights is None:
 
@@ -892,7 +892,7 @@ class FactorTimingOptimizer:
 
             weights = pd.Series(factor_weights)
 
-        
+
 
         return {
 
@@ -1000,7 +1000,7 @@ async def extended_optimize(request: ExtendedOptimizationRequest):
 
         prices = pd.DataFrame(request.prices)
 
-        
+
 
         if request.optimization_type == "esg":
 
@@ -1030,7 +1030,7 @@ async def extended_optimize(request: ExtendedOptimizationRequest):
 
             raise ValueError(f"Unknown optimization type: {request.optimization_type}")
 
-        
+
 
         return ExtendedOptimizationResponse(
 
@@ -1080,11 +1080,11 @@ class TestESGOptimizer:
 
         })
 
-        
+
 
         optimizer = ESGOptimizer(esg_scores)
 
-        
+
 
         prices = pd.DataFrame({
 
@@ -1096,11 +1096,11 @@ class TestESGOptimizer:
 
         })
 
-        
+
 
         result = optimizer.optimize_with_esg_constraint(prices, min_esg_score=0.7)
 
-        
+
 
         assert 'weights' in result
 
@@ -1124,11 +1124,11 @@ class TestSectorRotationOptimizer:
 
         })
 
-        
+
 
         optimizer = SectorRotationOptimizer(sector_data)
 
-        
+
 
         prices = pd.DataFrame({
 
@@ -1140,11 +1140,11 @@ class TestSectorRotationOptimizer:
 
         })
 
-        
+
 
         result = optimizer.rotate_sectors(prices, top_n=2)
 
-        
+
 
         assert 'weights' in result
 
@@ -1295,4 +1295,3 @@ class TestSectorRotationOptimizer:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-08 | 初始版本创建 | 架构团队 |
-

@@ -25,7 +25,7 @@ responsibility:
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：因子中性优化、因子暴露控制、中性约束求解
 
@@ -161,11 +161,11 @@ class FactorExposureConstraint:
 
     因子暴露约束
 
-    
+
 
     """
 
-    
+
 
     def set_factor_bounds(
 
@@ -181,7 +181,7 @@ class FactorExposureConstraint:
 
         """
 
-        
+
 
         参数:
 
@@ -195,7 +195,7 @@ class FactorExposureConstraint:
 
         pass
 
-    
+
 
     def set_factor_neutral(
 
@@ -209,7 +209,7 @@ class FactorExposureConstraint:
 
         """
 
-        
+
 
         参数:
 
@@ -235,11 +235,11 @@ class SectorNeutralOptimizer:
 
     行业中性优化器
 
-    
+
 
     """
 
-    
+
 
     def optimize_sector_neutral(
 
@@ -259,7 +259,7 @@ class SectorNeutralOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -273,7 +273,7 @@ class SectorNeutralOptimizer:
 
             tolerance: 中性容忍度
 
-            
+
 
         返回:
 
@@ -297,7 +297,7 @@ class StyleFactorNeutralOptimizer:
 
     风格因子中性优化器
 
-    
+
 
     常见风格因子:
 
@@ -307,7 +307,7 @@ class StyleFactorNeutralOptimizer:
 
     """
 
-    
+
 
     def optimize_style_neutral(
 
@@ -325,7 +325,7 @@ class StyleFactorNeutralOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -335,9 +335,9 @@ class StyleFactorNeutralOptimizer:
 
             target_exposures: 目标因子暴露
 
-            constraints: 
+            constraints:
 
-            
+
 
         返回:
 
@@ -361,13 +361,13 @@ class MarketNeutralOptimizer:
 
     市场中性优化器
 
-    
+
 
     构建Beta中性组合，对冲市场风险
 
     """
 
-    
+
 
     def optimize_market_neutral(
 
@@ -387,7 +387,7 @@ class MarketNeutralOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -395,9 +395,9 @@ class MarketNeutralOptimizer:
 
             beta_loadings: Beta系数
 
-            constraints: 
+            constraints:
 
-            
+
 
         返回:
 
@@ -421,11 +421,11 @@ class TrackingErrorController:
 
     """
 
-    
+
 
     """
 
-    
+
 
     def set_tracking_error_limit(
 
@@ -443,7 +443,7 @@ class TrackingErrorController:
 
         设置跟踪误差上限
 
-        
+
 
         参数:
 
@@ -453,7 +453,7 @@ class TrackingErrorController:
 
         pass
 
-    
+
 
     def calculate_tracking_error(
 
@@ -471,7 +471,7 @@ class TrackingErrorController:
 
         计算跟踪误差
 
-        
+
 
 TE = sqrt((w - w_b)' *  * (w - w_b))
 
@@ -499,11 +499,11 @@ class FactorNeutralOptimizer:
 
     因子中性优化器
 
-    
+
 
     """
 
-    
+
 
     def __init__(
 
@@ -517,7 +517,7 @@ class FactorNeutralOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -539,7 +539,7 @@ class FactorNeutralOptimizer:
 
         self.te_controller = TrackingErrorController()
 
-    
+
 
     def optimize(
 
@@ -557,7 +557,7 @@ class FactorNeutralOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -569,7 +569,7 @@ class FactorNeutralOptimizer:
 
             constraints: 约束条件
 
-            
+
 
         返回:
 
@@ -579,7 +579,7 @@ class FactorNeutralOptimizer:
 
         pass
 
-    
+
 
     def get_factor_exposure(
 
@@ -595,7 +595,7 @@ class FactorNeutralOptimizer:
 
         计算组合因子暴露
 
-        
+
 
         暴露 = w' * F
 
@@ -697,7 +697,7 @@ factor_neutral_optimization:
 
       - RealEstate
 
-      
+
 
   neutrality:
 
@@ -719,7 +719,7 @@ factor_neutral_optimization:
 
       tolerance: 0.02
 
-      
+
 
   # 跟踪误差
 
@@ -747,7 +747,7 @@ factor_neutral_optimization:
 
 > **核心职责**: Factor Neutral Optimization蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -783,7 +783,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
     """
 
-    
+
 
     def optimize(self, expected_returns, factor_loadings, **kwargs):
 
@@ -791,13 +791,13 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
         port = rp.Portfolio(returns=expected_returns)
 
-        
+
 
         # 设置因子模型
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         # 添加因子约束
 
@@ -805,7 +805,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
             self._add_factor_constraints(port, kwargs['factor_constraints'])
 
-        
+
 
         # 执行优化
 
@@ -819,7 +819,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
         )
 
-        
+
 
         return weights
 
@@ -849,7 +849,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
 class TestFactorNeutralOptimizer:
 
-    
+
 
     def test_factor_exposure_constraint(self):
 
@@ -857,25 +857,25 @@ class TestFactorNeutralOptimizer:
 
         pass
 
-    
+
 
     def test_sector_neutral(self):
 
         pass
 
-    
+
 
     def test_style_neutral(self):
 
         pass
 
-    
+
 
     def test_market_neutral(self):
 
         pass
 
-    
+
 
     def test_tracking_error(self):
 
@@ -980,8 +980,3 @@ class TestFactorNeutralOptimizer:
 
 
 - 中性化效果依赖因子载荷质量与约束可行性；实施阶段需在契约真源中固化数据口径与不可行约束的降级策略。
-
-
-
-
-

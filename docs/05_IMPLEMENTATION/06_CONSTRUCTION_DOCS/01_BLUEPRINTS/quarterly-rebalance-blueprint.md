@@ -22,7 +22,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：季度再平衡、定期调整、再平衡计划制定
 
@@ -38,7 +38,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：季度再平衡、定期调整、再平衡计划制定
 
@@ -186,13 +186,13 @@ graph TB
 
     B -->|偏离度≥阈值| D[触发调仓]
 
-    
+
 
     E --> F[优化调仓时机]
 
     F --> G[评估调仓成本]
 
-    
+
 
     G --> H{成本效益判断}
 
@@ -200,7 +200,7 @@ graph TB
 
     H -->|成本≥收益| C
 
-    
+
 
     I --> J[生成调仓指令]
 
@@ -228,11 +228,11 @@ import numpy as np
 
 class RebalanceTrigger:
 
-    
+
 
     def __init__(self):
 
-        
+
 
     def check_trigger(self,
 
@@ -244,13 +244,13 @@ class RebalanceTrigger:
 
         drift = self._calculate_drift(current_allocation, target_allocation)
 
-        
+
 
         # 计算距离上次调仓天数
 
         days_since_last = (pd.Timestamp.now() - last_rebalance_date).days
 
-        
+
 
         # 判断是否触发
 
@@ -258,7 +258,7 @@ class RebalanceTrigger:
 
         trigger_reasons = []
 
-        
+
 
         if drift > self.drift_threshold:
 
@@ -268,13 +268,13 @@ trigger_reasons.append(f'
 
 过阈值{self.drift_threshold:.2%}')
 
-        
+
 
         if days_since_last > self.time_threshold:
 
             triggered = True
 
-        
+
 
         return {
 
@@ -288,7 +288,7 @@ trigger_reasons.append(f'
 
         }
 
-    
+
 
     def _calculate_drift(self,
 
@@ -298,7 +298,7 @@ trigger_reasons.append(f'
 
         drifts = []
 
-        
+
 
         for asset in target.keys():
 
@@ -308,7 +308,7 @@ trigger_reasons.append(f'
 
                 drifts.append(drift)
 
-        
+
 
         return max(drifts) if drifts else 0
 
@@ -322,13 +322,13 @@ trigger_reasons.append(f'
 
 class RebalanceMagnitudeCalculator:
 
-    
+
 
     def __init__(self):
 
         self.max_turnover = 0.30  # 最大换手率30%
 
-        
+
 
     def calculate(self,
 
@@ -350,11 +350,11 @@ class RebalanceMagnitudeCalculator:
 
             ideal_adjustments[asset] = adjustment
 
-        
+
 
         turnover = sum(abs(adj) for adj in ideal_adjustments.values()) / 2
 
-        
+
 
         if turnover > self.max_turnover:
 
@@ -366,7 +366,7 @@ class RebalanceMagnitudeCalculator:
 
             turnover = self.max_turnover
 
-        
+
 
         return {
 
@@ -388,7 +388,7 @@ class RebalanceMagnitudeCalculator:
 
 class RebalancingTimingOptimizer:
 
-    
+
 
     def __init__(self):
 
@@ -400,7 +400,7 @@ class RebalancingTimingOptimizer:
 
         ]
 
-        
+
 
     def optimize(self,
 
@@ -414,7 +414,7 @@ class RebalancingTimingOptimizer:
 
         future_dates = pd.date_range(start=pd.Timestamp.now(), periods=5, freq='B')
 
-        
+
 
         # 评分每个日期
 
@@ -426,11 +426,11 @@ class RebalancingTimingOptimizer:
 
             scores[date] = score
 
-        
+
 
         best_date = max(scores, key=scores.get)
 
-        
+
 
         return {
 
@@ -442,7 +442,7 @@ class RebalancingTimingOptimizer:
 
         }
 
-    
+
 
     def _score_date(self,
 
@@ -456,7 +456,7 @@ class RebalancingTimingOptimizer:
 
         score = 100.0
 
-        
+
 
         date_str = date.strftime('%m-%d')
 
@@ -466,7 +466,7 @@ class RebalancingTimingOptimizer:
 
                 score -= 30
 
-        
+
 
         # 检查市场波动率
 
@@ -482,7 +482,7 @@ class RebalancingTimingOptimizer:
 
                 score -= 10
 
-        
+
 
         if date in liquidity_forecast.index:
 
@@ -496,11 +496,11 @@ class RebalancingTimingOptimizer:
 
                 score -= 10
 
-        
+
 
         return max(score, 0)
 
-    
+
 
     def _explain_score(self, date: pd.Timestamp, score: float) -> str:
 
@@ -620,7 +620,7 @@ graph LR
 
     D[交易成本分析引擎] --> B
 
-    
+
 
     B --> E[组合再平衡]
 
@@ -628,7 +628,7 @@ graph LR
 
     B --> G[算法交易优化器]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -743,8 +743,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-
-
-
-
-

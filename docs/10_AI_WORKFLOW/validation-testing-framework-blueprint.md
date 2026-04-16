@@ -156,7 +156,7 @@ layer: layer_00
 
 
 
-             验证与测试框架架                                      
+             验证与测试框架架
 
 
 
@@ -164,75 +164,75 @@ layer: layer_00
 
 
 
-                                                                    
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-          ABTestingFramework (A/B测试框架)                     
+          ABTestingFramework (A/B测试框架)
 
 
 
-  - 实验设计                                                    
+  - 实验设计
 
 
 
-  - 流量分配                                                    
+  - 流量分配
 
 
 
-  - 结果分析                                                    
+  - 结果分析
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-          BacktestingValidator (回测验证                     
+          BacktestingValidator (回测验证
 
 
 
-  - 情感信号回测                                                
+  - 情感信号回测
 
 
 
-  - 因子有效性验                                             
+  - 因子有效性验
 
 
 
-  - 稳健性检                                                 
+  - 稳健性检
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-          开源工具层                                            
+          开源工具层
 
 
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
 
 
 
@@ -244,19 +244,19 @@ layer: layer_00
 
 
 
-  │Tests         │Modeling      │Framework             
+  │Tests         │Modeling      │Framework
 
 
 
-  └───────────── └───────────── └───────────── └────── 
+  └───────────── └───────────── └───────────── └──────
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                    
+
 
 
 
@@ -456,7 +456,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -468,7 +468,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -480,7 +480,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -504,7 +504,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -556,7 +556,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -596,7 +596,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -616,7 +616,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -652,7 +652,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -676,7 +676,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -696,7 +696,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -728,7 +728,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -748,7 +748,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -768,7 +768,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -800,7 +800,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -828,7 +828,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -856,7 +856,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -872,7 +872,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -892,7 +892,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -924,7 +924,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -944,7 +944,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -964,7 +964,7 @@ class ABTestingFramework:
 
 
 
-    
+
 
 
 
@@ -992,7 +992,7 @@ class ABTestingFramework:
 
 
 
-        
+
 
 
 
@@ -1008,7 +1008,7 @@ class ABTestingFramework:
 
 
 
-            
+
 
 
 
@@ -1274,7 +1274,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1286,7 +1286,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1298,7 +1298,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1318,7 +1318,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1350,7 +1350,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1370,7 +1370,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1390,7 +1390,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1422,7 +1422,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1442,7 +1442,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1462,7 +1462,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1494,7 +1494,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1514,7 +1514,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1534,7 +1534,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1558,7 +1558,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1570,7 +1570,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1590,7 +1590,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1622,7 +1622,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1642,7 +1642,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1662,7 +1662,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1694,7 +1694,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1714,7 +1714,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1734,7 +1734,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1766,7 +1766,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1786,7 +1786,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1806,7 +1806,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1834,7 +1834,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1850,7 +1850,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1870,7 +1870,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1902,7 +1902,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1922,7 +1922,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -1942,7 +1942,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -1970,7 +1970,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -1986,7 +1986,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -2006,7 +2006,7 @@ class BacktestingValidator:
 
 
 
-    
+
 
 
 
@@ -2034,7 +2034,7 @@ class BacktestingValidator:
 
 
 
-        
+
 
 
 
@@ -2050,7 +2050,7 @@ class BacktestingValidator:
 
 
 
-            
+
 
 
 
@@ -2164,7 +2164,7 @@ class SentimentStrategy(bt.Strategy):
 
 
 
-    
+
 
 
 
@@ -2184,7 +2184,7 @@ class SentimentStrategy(bt.Strategy):
 
 
 
-    
+
 
 
 
@@ -2208,7 +2208,7 @@ class SentimentStrategy(bt.Strategy):
 
 
 
-    
+
 
 
 
@@ -2224,7 +2224,7 @@ class SentimentStrategy(bt.Strategy):
 
 
 
-        
+
 
 
 
@@ -2288,7 +2288,7 @@ def run_backtest(
 
 
 
-    
+
 
 
 
@@ -2308,7 +2308,7 @@ def run_backtest(
 
 
 
-    
+
 
 
 
@@ -2324,7 +2324,7 @@ def run_backtest(
 
 
 
-    
+
 
 
 
@@ -2332,7 +2332,7 @@ def run_backtest(
 
 
 
-    
+
 
 
 
@@ -2418,7 +2418,7 @@ def perform_ttest(
 
 
 
-    
+
 
 
 
@@ -2438,7 +2438,7 @@ def perform_ttest(
 
 
 
-        
+
 
 
 
@@ -2506,7 +2506,7 @@ def perform_mannwhitney_u(
 
 
 
-    
+
 
 
 
@@ -2522,7 +2522,7 @@ def perform_mannwhitney_u(
 
 
 
-        
+
 
 
 
@@ -2590,7 +2590,7 @@ def calculate_effect_size(
 
 
 
-    
+
 
 
 
@@ -2606,7 +2606,7 @@ def calculate_effect_size(
 
 
 
-        
+
 
 
 
@@ -2630,7 +2630,7 @@ def calculate_effect_size(
 
 
 
-    
+
 
 
 
@@ -2646,7 +2646,7 @@ def calculate_effect_size(
 
 
 
-    
+
 
 
 
@@ -3933,6 +3933,3 @@ CREATE TABLE backtest_records (
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

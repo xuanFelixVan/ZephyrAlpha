@@ -229,13 +229,13 @@ graph LR
 
     D[策略组合优化] --> B
 
-    
+
 
     B --> E[多目标优化]
 
     B --> G[组合约束管理]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -271,7 +271,7 @@ import numpy as np
 
 class BaseOptimizer(ABC):
 
-    
+
 
     @abstractmethod
 
@@ -291,13 +291,13 @@ class BaseOptimizer(ABC):
 
         执行优化
 
-        
+
 
         Args:
 
             constraints: 约束条件
 
-            
+
 
         Returns:
 
@@ -309,7 +309,7 @@ class BaseOptimizer(ABC):
 
 class PyPortfolioOptOptimizer(BaseOptimizer):
 
-    
+
 
     def optimize(
 
@@ -325,7 +325,7 @@ class PyPortfolioOptOptimizer(BaseOptimizer):
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         ef = EfficientFrontier(expected_returns, cov_matrix)
 
@@ -343,7 +343,7 @@ class PyPortfolioOptOptimizer(BaseOptimizer):
 
 class RiskfolioLibOptimizer(BaseOptimizer):
 
-    
+
 
     def optimize(
 
@@ -359,7 +359,7 @@ class RiskfolioLibOptimizer(BaseOptimizer):
 
         import riskfolio as rp
 
-        
+
 
         # Riskfolio-Lib优化逻辑
 
@@ -369,7 +369,7 @@ class RiskfolioLibOptimizer(BaseOptimizer):
 
 class SkfolioOptimizer(BaseOptimizer):
 
-    
+
 
     def optimize(
 
@@ -385,7 +385,7 @@ class SkfolioOptimizer(BaseOptimizer):
 
         from skfolio import Portfolio
 
-        
+
 
         # skfolio优化逻辑
 
@@ -395,7 +395,7 @@ class SkfolioOptimizer(BaseOptimizer):
 
 class DeepfolioOptimizer(BaseOptimizer):
 
-    
+
 
     def optimize(
 
@@ -411,7 +411,7 @@ class DeepfolioOptimizer(BaseOptimizer):
 
         import deepfolio as df
 
-        
+
 
         # deepfolio优化逻辑
 
@@ -423,7 +423,7 @@ class OptimizerIntegration:
 
     """优化器集成管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -439,7 +439,7 @@ class OptimizerIntegration:
 
         }
 
-        
+
 
     def optimize_with_method(
 
@@ -459,7 +459,7 @@ class OptimizerIntegration:
 
         使用指定方法优化
 
-        
+
 
         Args:
 
@@ -467,7 +467,7 @@ class OptimizerIntegration:
 
             constraints: 约束条件
 
-            
+
 
         Returns:
 
@@ -479,11 +479,11 @@ class OptimizerIntegration:
 
             raise ValueError(f"Unknown optimizer: {method}")
 
-            
+
 
         return optimizer.optimize(expected_returns, cov_matrix, constraints)
 
-    
+
 
     def compare_optimizers(
 
@@ -499,7 +499,7 @@ class OptimizerIntegration:
 
         """
 
-        
+
 
         Returns:
 
@@ -511,7 +511,7 @@ class OptimizerIntegration:
 
             weights = optimizer.optimize(expected_returns, cov_matrix, constraints)
 
-            
+
 
             # 计算绩效指标
 
@@ -521,7 +521,7 @@ class OptimizerIntegration:
 
             sharpe_ratio = portfolio_return / portfolio_volatility
 
-            
+
 
             results[name] = {
 
@@ -535,7 +535,7 @@ class OptimizerIntegration:
 
             }
 
-            
+
 
         return pd.DataFrame(results).T
 
@@ -565,7 +565,7 @@ class OptimizerAPI:
 
     """优化器集成API"""
 
-    
+
 
     @endpoint("/api/v1/optimizer/optimize")
 
@@ -585,7 +585,7 @@ class OptimizerAPI:
 
         """执行优化"""
 
-        
+
 
     @endpoint("/api/v1/optimizer/compare")
 
@@ -601,7 +601,7 @@ class OptimizerAPI:
 
     ) -> ComparisonResult:
 
-        
+
 
     @endpoint("/api/v1/optimizer/select")
 
@@ -720,10 +720,3 @@ class OptimizerAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

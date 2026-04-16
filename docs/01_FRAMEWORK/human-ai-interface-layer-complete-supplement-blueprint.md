@@ -19,7 +19,7 @@ responsibility: ''
 ---
 # 人机交互层完整补充蓝图
 > **核心职责**: Human Ai Interface Layer Complete Supplement蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Human Ai Interface Layer Complete Supplement蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 

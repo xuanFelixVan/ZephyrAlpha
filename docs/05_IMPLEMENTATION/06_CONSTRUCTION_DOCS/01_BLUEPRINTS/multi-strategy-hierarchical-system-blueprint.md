@@ -139,46 +139,46 @@ graph TB
 
 ```python
 class StrategyPerformanceEvaluator:
-    """策略绩效评估器    
+    """策略绩效评估器
     索引: STRATEGY_HIERARCHY_001-M01
     输出: 策略绩效评估结果
     """
-    
+
     def __init__(self, config: PerformanceConfig):
         self.config = config
-        self.risk_free_rate = config.risk_free_rate  # 无风险利率        
+        self.risk_free_rate = config.risk_free_rate  # 无风险利率
     def evaluate_strategy(self, strategy_returns: pd.Series,
                          benchmark_returns: Optional[pd.Series] = None,
                          strategy_name: str = '') -> StrategyPerformance:
         """评估策略绩效
-        
+
         Args:
             strategy_returns: 策略历史收益率            benchmark_returns: 基准收益率（可选）
             strategy_name: 策略名称
-            
+
         Returns:
             StrategyPerformance: 策略绩效评估结果
         """
         # 1. 计算收益率指标        return_metrics = self._calculate_return_metrics(strategy_returns)
-        
+
         # 2. 计算风险指标
         risk_metrics = self._calculate_risk_metrics(strategy_returns)
-        
+
         # 3. 计算风险调整收益指标
         risk_adjusted_metrics = self._calculate_risk_adjusted_metrics(
             strategy_returns, risk_metrics
         )
-        
+
         # 4. 计算相对指标（如果有基准）
         relative_metrics = {}
         if benchmark_returns is not None:
             relative_metrics = self._calculate_relative_metrics(
                 strategy_returns, benchmark_returns
             )
-        
+
         # 5. 计算容量指标
         capacity_metrics = self._calculate_capacity_metrics(strategy_returns)
-        
+
         return StrategyPerformance(
             strategy_name=strategy_name,
             return_metrics=return_metrics,
@@ -187,7 +187,7 @@ class StrategyPerformanceEvaluator:
             relative_metrics=relative_metrics,
             capacity_metrics=capacity_metrics
         )
-    
+
     def _calculate_return_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算收益率指标""
         return {
@@ -198,24 +198,24 @@ class StrategyPerformanceEvaluator:
             'best_day': returns.max(),
             'worst_day': returns.min()
         }
-    
+
     def _calculate_risk_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算风险指标"""
         # VaR (95%置信度
         var_95 = np.percentile(returns, 5)
-        
+
         # CVaR (条件风险（CVaR）
         cvar_95 = returns[returns <= var_95].mean()
-        
+
         # 最大回撤        cumulative = (1 + returns).cumprod()
         running_max = cumulative.cummax()
         drawdown = (cumulative - running_max) / running_max
         max_drawdown = drawdown.min()
-        
+
         # 下行风险
         negative_returns = returns[returns < 0]
         downside_risk = negative_returns.std() * np.sqrt(252) if len(negative_returns) > 0 else 0
-        
+
         return {
             'volatility': returns.std() * np.sqrt(252),
             'var_95': abs(var_95),
@@ -223,7 +223,7 @@ class StrategyPerformanceEvaluator:
             'max_drawdown': abs(max_drawdown),
             'downside_risk': downside_risk
         }
-    
+
     def _calculate_risk_adjusted_metrics(self, returns: pd.Series,
                                         risk_metrics: Dict[str, float]) -> Dict[str, float]:
         """计算风险调整收益指标"""
@@ -231,68 +231,68 @@ class StrategyPerformanceEvaluator:
         volatility = risk_metrics['volatility']
         max_drawdown = risk_metrics['max_drawdown']
         downside_risk = risk_metrics['downside_risk']
-        
+
         # Sharpe比率
         sharpe_ratio = (annual_return - self.risk_free_rate) / volatility if volatility > 0 else 0
-        
+
         # Sortino比率
         sortino_ratio = (annual_return - self.risk_free_rate) / downside_risk if downside_risk > 0 else 0
-        
+
         # Calmar比率
         calmar_ratio = annual_return / max_drawdown if max_drawdown > 0 else 0
-        
+
         return {
             'sharpe_ratio': sharpe_ratio,
             'sortino_ratio': sortino_ratio,
             'calmar_ratio': calmar_ratio,
             'information_ratio': sharpe_ratio  # 简化处理        }
-    
+
     def _calculate_relative_metrics(self, strategy_returns: pd.Series,
                                    benchmark_returns: pd.Series) -> Dict[str, float]:
         """计算相对指标"""
         # Alpha和Beta
         covariance = np.cov(strategy_returns, benchmark_returns)[0, 1]
         benchmark_variance = benchmark_returns.var()
-        
+
         beta = covariance / benchmark_variance if benchmark_variance > 0 else 0
         alpha = strategy_returns.mean() - beta * benchmark_returns.mean()
-        
+
         # 跟踪误差
         tracking_error = (strategy_returns - benchmark_returns).std() * np.sqrt(252)
-        
+
         # 信息比率
         excess_return = (strategy_returns.mean() - benchmark_returns.mean()) * 252
         information_ratio = excess_return / tracking_error if tracking_error > 0 else 0
-        
+
         return {
             'alpha': alpha * 252,
             'beta': beta,
             'tracking_error': tracking_error,
             'information_ratio': information_ratio
         }
-    
+
     def _calculate_capacity_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算容量指标"""
         # 平均持仓时间
-        avg_holding_period = 5  # 简化：假设平均持仓 5 天        
+        avg_holding_period = 5  # 简化：假设平均持仓 5 天
         # 资金周转率        turnover_rate = 252 / avg_holding_period
-        
+
         # 策略容量（简化估算）
         # 基于收益率波动和流动性估算        capacity = 1e8 * (1 / returns.std())  # 简化：波动率越小，容量越大
-        
+
         return {
             'avg_holding_period': avg_holding_period,
             'turnover_rate': turnover_rate,
             'estimated_capacity': capacity
         }
-    
+
     def calculate_correlation_matrix(self, strategy_returns: Dict[str, pd.Series]) -> pd.DataFrame:
         Args:
-            strategy_returns: 各策略的收益率序列            
+            strategy_returns: 各策略的收益率序列
         Returns:
         returns_df = pd.DataFrame(strategy_returns)
         correlation_matrix = returns_df.corr()
-        
+
         return correlation_matrix
 ```
 
@@ -302,7 +302,7 @@ class StrategyLayerWeightAllocator:
     """
     索引: STRATEGY_HIERARCHY_001-M02
     """
-    
+
     def __init__(self, config: WeightAllocationConfig):
         self.config = config
         self.core_strategy_weight = config.core_strategy_weight  # 核心策略层权重（例如 60%）
@@ -310,40 +310,40 @@ class StrategyLayerWeightAllocator:
     def allocate_weights(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         current_weights: Dict[str, float]) -> WeightAllocationResult:
-        
+
         Args:
             strategy_performances: 各策略的绩效评估结果
-            
+
         Returns:
         """
         # 1. 策略分类（核心策略 vs 卫星策略）
         core_strategies, satellite_strategies = self._classify_strategies(
             strategy_performances
         )
-        
+
         # 2. 核心策略层权重分配
         core_weights = self._allocate_layer_weights(
             core_strategies, strategy_performances, correlation_matrix,
             self.core_strategy_weight
         )
-        
+
         # 3. 卫星策略层权重分配
         satellite_weights = self._allocate_layer_weights(
             satellite_strategies, strategy_performances, correlation_matrix,
             self.satellite_strategy_weight
         )
-        
+
         # 4. 合并权重
         final_weights = {**core_weights, **satellite_weights}
-        
+
         # 5. 应用权重约束
         final_weights = self._apply_weight_constraints(final_weights, current_weights)
-        
+
         # 6. 计算风险贡献
         risk_contributions = self._calculate_risk_contributions(
             final_weights, correlation_matrix
         )
-        
+
         return WeightAllocationResult(
             weights=final_weights,
             core_weights=core_weights,
@@ -353,66 +353,66 @@ class StrategyLayerWeightAllocator:
                 current_weights, final_weights
             )
         )
-    
+
     def _classify_strategies(self, performances: Dict[str, StrategyPerformance]) -> Tuple[List[str], List[str]]:
         """策略分类
-        
+
         核心策略：夏普比率≥1.5，最大回撤≤15%
         core_strategies = []
         satellite_strategies = []
-        
+
         for name, perf in performances.items():
             sharpe = perf.risk_adjusted_metrics['sharpe_ratio']
             max_dd = perf.risk_metrics['max_drawdown']
-            
+
             if sharpe >= 1.5 and max_dd <= 0.15:
                 core_strategies.append(name)
             else:
                 satellite_strategies.append(name)
-        
+
         return core_strategies, satellite_strategies
-    
+
     def _allocate_layer_weights(self, strategies: List[str],
                                 performances: Dict[str, StrategyPerformance],
                                 correlation_matrix: pd.DataFrame,
                                 layer_weight: float) -> Dict[str, float]:
 权重
-        
+
         """
         if len(strategies) == 0:
             return {}
-        
+
         # 计算各策略的风险贡献
         strategy_risks = {}
         for name in strategies:
             perf = performances[name]
             strategy_risks[name] = perf.risk_metrics['volatility']
-        
+
         # 风险平价权重
         inv_risks = {name: 1.0 / risk for name, risk in strategy_risks.items()}
         total_inv_risk = sum(inv_risks.values())
-        
+
         weights = {
             name: (inv_risk / total_inv_risk) * layer_weight
             for name, inv_risk in inv_risks.items()
         }
-        
+
         return weights
-    
+
     def _apply_weight_constraints(self, weights: Dict[str, float],
                                  current_weights: Dict[str, float]) -> Dict[str, float]:
         """应用权重约束"""
         # 权重下限
         min_weight = self.config.min_weight
         weights = {k: max(v, min_weight) for k, v in weights.items()}
-        
+
         # 权重上限
         max_weight = self.config.max_weight
         weights = {k: min(v, max_weight) for k, v in weights.items()}
-        
+
         # 权重归一化        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
-        
+
 度限制
         max_adjustment = self.config.max_daily_adjustment
         for name in weights:
@@ -423,12 +423,12 @@ class StrategyLayerWeightAllocator:
                         weights[name] = current_weights[name] + max_adjustment
                     else:
                         weights[name] = current_weights[name] - max_adjustment
-        
+
         # 再次归一化        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
-        
+
         return weights
-    
+
     def _calculate_risk_contributions(self, weights: Dict[str, float],
                                      correlation_matrix: pd.DataFrame) -> Dict[str, float]:
         """计算风险贡献"""
@@ -437,25 +437,25 @@ class StrategyLayerWeightAllocator:
         for name, weight in weights.items():
             avg_correlation = correlation_matrix[name].mean()
             risk_contributions[name] = weight * avg_correlation
-        
+
         # 标准化        total_risk = sum(risk_contributions.values())
         if total_risk > 0:
             risk_contributions = {k: v / total_risk for k, v in risk_contributions.items()}
-        
+
         return risk_contributions
-    
+
     def _generate_adjustment_reason(self, current_weights: Dict[str, float],
                                    new_weights: Dict[str, float]) -> str:
         """生成调整理由"""
         adjustments = []
-        
+
         for name in new_weights:
             if name in current_weights:
                 adjustment = new_weights[name] - current_weights[name]
                 if abs(adjustment) > 0.01:
                     direction = "提高" if adjustment > 0 else "降低"
                     adjustments.append(f"{direction}{name}权重{abs(adjustment):.2%}")
-        
+
         if adjustments:
             return "基于绩效评估和风险贡献调整 " + ", ".join(adjustments)
         else:
@@ -468,28 +468,28 @@ class StrategyLayerWeightAllocator:
 ```python
 class SignalFusionEngine:
     """信号融合引擎
-    
+
     索引: STRATEGY_HIERARCHY_001-M03
     职责: 融合多策略信号，解决信号冲突
     输出: 融合后的最终信号    """
-    
+
     def __init__(self, config: FusionConfig):
         self.config = config
         self.fusion_method = config.fusion_method  # 融合方法（voting/weighted/ml）
     def fuse_signals(self, strategy_signals: Dict[str, TradingSignal],
                     strategy_weights: Dict[str, float],
                     historical_accuracy: Dict[str, float]) -> FusedSignal:
-        """融合多策略信号        
+        """融合多策略信号
         Args:
             strategy_signals: 各策略的交易信号
             strategy_weights: 策略权重
-            historical_accuracy: 各策略的历史准确率            
+            historical_accuracy: 各策略的历史准确率
         Returns:
             FusedSignal: 融合后的信号
         """
         # 1. 检测信号冲突
         conflicts = self._detect_conflicts(strategy_signals)
-        
+
         # 2. 根据融合方法融合信号
         if self.fusion_method == 'voting':
             fused_signal = self._voting_fusion(strategy_signals, strategy_weights)
@@ -503,16 +503,16 @@ class SignalFusionEngine:
             fused_signal = self._weighted_fusion(
                 strategy_signals, strategy_weights, historical_accuracy
             )
-        
+
         # 3. 添加冲突信息
         fused_signal.conflicts = conflicts
-        
+
         return fused_signal
-    
+
     def _detect_conflicts(self, signals: Dict[str, TradingSignal]) -> List[SignalConflict]:
         """检测信号冲突"""
         conflicts = []
-        
+
         # 检测方向冲突        directions = [sig.direction for sig in signals.values()]
         if 'long' in directions and 'short' in directions:
             conflicts.append(SignalConflict(
@@ -520,7 +520,7 @@ class SignalFusionEngine:
                 description='多空方向冲突',
                 strategies=[name for name, sig in signals.items() if sig.direction in ['long', 'short']]
             ))
-        
+
         # 检测强度冲突        strengths = [sig.strength for sig in signals.values()]
         if max(strengths) - min(strengths) > 0.5:
             conflicts.append(SignalConflict(
@@ -528,23 +528,23 @@ class SignalFusionEngine:
                 description='信号强度差异过大',
                 strategies=list(signals.keys())
             ))
-        
+
         return conflicts
-    
+
     def _voting_fusion(self, signals: Dict[str, TradingSignal],
                       weights: Dict[str, float]) -> FusedSignal:
         """投票法融合"""
         # 统计各方向的加权票数
         votes = {'long': 0.0, 'short': 0.0, 'neutral': 0.0}
-        
+
         for name, signal in signals.items():
             weight = weights.get(name, 1.0 / len(signals))
             votes[signal.direction] += weight
-        
+
         # 选择票数最多的方向
         final_direction = max(votes, key=votes.get)
         final_strength = votes[final_direction] / sum(votes.values())
-        
+
         return FusedSignal(
             direction=final_direction,
             strength=final_strength,
@@ -552,7 +552,7 @@ class SignalFusionEngine:
             fusion_method='voting',
             contributing_strategies=signals.keys()
         )
-    
+
     def _weighted_fusion(self, signals: Dict[str, TradingSignal],
                         weights: Dict[str, float],
                         accuracy: Dict[str, float]) -> FusedSignal:
@@ -563,23 +563,23 @@ class SignalFusionEngine:
             strategy_weight = weights.get(name, 1.0 / len(signals))
             strategy_accuracy = accuracy.get(name, 0.5)
             composite_weights[name] = strategy_weight * strategy_accuracy
-        
+
         # 归一化        total_weight = sum(composite_weights.values())
         composite_weights = {k: v / total_weight for k, v in composite_weights.items()}
-        
+
         # 加权平均信号强度
         weighted_strength = 0.0
         weighted_direction = 0.0
-        
+
         for name, signal in signals.items():
             weight = composite_weights[name]
-            
+
             # 方向转换为数值（long=1, neutral=0, short=-1）
             direction_value = {'long': 1, 'neutral': 0, 'short': -1}[signal.direction]
-            
+
             weighted_direction += weight * direction_value * signal.strength
             weighted_strength += weight * signal.strength
-        
+
         # 确定最终方向
         if weighted_direction > 0.1:
             final_direction = 'long'
@@ -587,7 +587,7 @@ class SignalFusionEngine:
             final_direction = 'short'
         else:
             final_direction = 'neutral'
-        
+
         return FusedSignal(
             direction=final_direction,
             strength=abs(weighted_direction),
@@ -595,13 +595,13 @@ class SignalFusionEngine:
             fusion_method='weighted',
             contributing_strategies=signals.keys()
         )
-    
+
     def _ml_fusion(self, signals: Dict[str, TradingSignal],
                   weights: Dict[str, float]) -> FusedSignal:
         """机器学习融合（简化版）"""
 应使用训练好的ML模型
         # 这里简化为加权平均
-        
+
         return self._weighted_fusion(signals, weights, {})
 ```
 
@@ -610,57 +610,57 @@ class SignalFusionEngine:
 
 ```python
 class StrategySynergyOptimizer:
-    """策略协同优化器    
+    """策略协同优化器
     索引: STRATEGY_HIERARCHY_001-M04
 
     """
-    
+
     def __init__(self, config: SynergyConfig):
         self.config = config
-        
+
     def optimize_synergy(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         resource_constraints: ResourceConstraints) -> SynergyOptimizationResult:
         """优化策略协同
-        
+
         Args:
             strategy_performances: 策略绩效
-            
+
         Returns:
             SynergyOptimizationResult: 协同优化结果
         """
         # 1. 识别协同效应
         synergies = self._identify_synergies(correlation_matrix)
-        
+
         # 2. 识别冲突策略
         conflicts = self._identify_conflicts(correlation_matrix)
-        
+
 
         resource_allocation = self._optimize_resources(
             strategy_performances, synergies, conflicts, resource_constraints
         )
-        
+
         # 4. 生成优化建议
         recommendations = self._generate_recommendations(synergies, conflicts)
-        
+
         return SynergyOptimizationResult(
             synergies=synergies,
             conflicts=conflicts,
             resource_allocation=resource_allocation,
             recommendations=recommendations
         )
-    
+
     def _identify_synergies(self, correlation_matrix: pd.DataFrame) -> List[StrategySynergy]:
         """识别协同效应
-        
+
         synergies = []
-        
+
         strategies = correlation_matrix.columns
         for i, strat1 in enumerate(strategies):
             for j, strat2 in enumerate(strategies):
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
-                    
+
                     if -0.3 <= corr <= 0.3:
                         synergy_type = 'diversification' if corr >= 0 else 'hedging'
                         synergies.append(StrategySynergy(
@@ -670,22 +670,22 @@ class StrategySynergyOptimizer:
                             synergy_type=synergy_type,
                             benefit='风险分散' if synergy_type == 'diversification' else '风险对冲'
                         ))
-        
+
         return synergies
-    
+
     def _identify_conflicts(self, correlation_matrix: pd.DataFrame) -> List[StrategyConflict]:
         """识别冲突策略
-        
+
         冲突策略：相关系数 > 0.7 的策略组
         """
         conflicts = []
-        
+
         strategies = correlation_matrix.columns
         for i, strat1 in enumerate(strategies):
             for j, strat2 in enumerate(strategies):
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
-                    
+
                     # 高相关 = 冲突
                     if corr > 0.7:
                         conflicts.append(StrategyConflict(
@@ -694,61 +694,61 @@ class StrategySynergyOptimizer:
                             correlation=corr,
                             conflict_type='high_correlation',
                         ))
-        
+
         return conflicts
-    
+
     def _optimize_resources(self, performances: Dict[str, StrategyPerformance],
                            synergies: List[StrategySynergy],
                            conflicts: List[StrategyConflict],
                            constraints: ResourceConstraints) -> Dict[str, ResourceAllocation]:
 """
         allocations = {}
-        
-            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一化            
+
+            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一化
             # 协同加成
             synergy_bonus = 0.0
             for synergy in synergies:
                 if name in [synergy.strategy1, synergy.strategy2]:
                     synergy_bonus += 0.1
-            
+
             # 冲突惩罚
             conflict_penalty = 0.0
             for conflict in conflicts:
                 if name in [conflict.strategy1, conflict.strategy2]:
                     conflict_penalty += 0.1
-            
+
             # 最终分配            final_allocation = base_allocation + synergy_bonus - conflict_penalty
             final_allocation = max(0.1, min(1.0, final_allocation))  # 限制在[0.1, 1.0]
-            
+
             allocations[name] = ResourceAllocation(
                 strategy_name=name,
                 allocation_ratio=final_allocation,
                 capital_allocation=constraints.total_capital * final_allocation,
                 risk_budget=constraints.total_risk_budget * final_allocation
             )
-        
+
         # 归一化        total_allocation = sum(a.allocation_ratio for a in allocations.values())
         for name in allocations:
             allocations[name].allocation_ratio /= total_allocation
             allocations[name].capital_allocation = constraints.total_capital * allocations[name].allocation_ratio
             allocations[name].risk_budget = constraints.total_risk_budget * allocations[name].allocation_ratio
-        
+
         return allocations
-    
+
     def _generate_recommendations(self, synergies: List[StrategySynergy],
                                  conflicts: List[StrategyConflict]) -> List[str]:
         """生成优化建议"""
         recommendations = []
-        
+
         # 协同建议
         for synergy in synergies[:3]:  # 3 个协同效应            recommendations.append(
 
             )
-        
+
         # 冲突建议
         for conflict in conflicts[:3]:  # 3 个冲突            recommendations.append(
             )
-        
+
         return recommendations
 ```
 
@@ -853,7 +853,7 @@ class SynergyOptimizationResult:
 
 class IPerformanceEvaluator(ABC):
     """绩效评估器接口"""
-    
+
     @abstractmethod
     def evaluate(self, returns: pd.Series, benchmark: Optional[pd.Series] = None) -> StrategyPerformance:
         """评估策略绩效"""
@@ -861,7 +861,7 @@ class IPerformanceEvaluator(ABC):
 
 
 class IWeightAllocator(ABC):
-    
+
     @abstractmethod
     def allocate(self, performances: Dict[str, StrategyPerformance],
                 correlation_matrix: pd.DataFrame) -> Dict[str, float]:
@@ -870,7 +870,7 @@ class IWeightAllocator(ABC):
 
 class ISignalFusion(ABC):
     """信号融合接口"""
-    
+
     @abstractmethod
     def fuse(self, signals: Dict[str, TradingSignal],
             weights: Dict[str, float]) -> FusedSignal:
@@ -882,27 +882,27 @@ class ISignalFusion(ABC):
 ```python
 class MultiStrategyHierarchicalSystem:
     """多策略分层系统主接口
-    
+
     索引: STRATEGY_HIERARCHY_001-MAIN
-    
+
     def __init__(self, config: HierarchicalSystemConfig):
         self.config = config
         self.performance_evaluator = StrategyPerformanceEvaluator(config.performance_config)
         self.weight_allocator = StrategyLayerWeightAllocator(config.weight_config)
         self.signal_fusion = SignalFusionEngine(config.fusion_config)
         self.synergy_optimizer = StrategySynergyOptimizer(config.synergy_config)
-        
+
     def manage_strategies(self, strategy_returns: Dict[str, pd.Series],
                          strategy_signals: Dict[str, TradingSignal],
                          current_weights: Dict[str, float],
                          resource_constraints: ResourceConstraints) -> ManagementResult:
-        """管理多策略        
+        """管理多策略
         Args:
             strategy_returns: 各策略的历史收益率
             strategy_signals: 各策略的当前信号
             current_weights: 当前权重
             resource_constraints: 资源约束
-            
+
         Returns:
             ManagementResult: 管理结果
         """
@@ -910,28 +910,28 @@ class MultiStrategyHierarchicalSystem:
         performances = {}
         for name, returns in strategy_returns.items():
             performances[name] = self.performance_evaluator.evaluate_strategy(returns)
-        
-        
+
+
 
         weight_result = self.weight_allocator.allocate_weights(
             performances, correlation_matrix, current_weights
         )
-        
+
         # 4. 信号融合
         historical_accuracy = {
             name: 0.5 + perf.risk_adjusted_metrics['sharpe_ratio'] / 10.0
             for name, perf in performances.items()
         }
-        
+
         fused_signal = self.signal_fusion.fuse_signals(
             strategy_signals, weight_result.weights, historical_accuracy
         )
-        
+
         # 5. 协同优化
         synergy_result = self.synergy_optimizer.optimize_synergy(
             performances, correlation_matrix, resource_constraints
         )
-        
+
         return ManagementResult(
             performances=performances,
             weight_allocation=weight_result,
@@ -1072,7 +1072,7 @@ class MultiStrategyHierarchicalSystem:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Multi Strategy Hierarchical System** | 
+| **Multi Strategy Hierarchical System** |
 
 ### 9.3 版本管理
 

@@ -291,7 +291,7 @@ neural_network_stack:
 
 reasoning: "PyTorchﮒ۷ﻝﻝ۸ﭘﮒﻝﻛﭦ۶ﻠ۷ﻝﺛﺎﻛﺕﮔﺑﻝﭖﮔﺑﭨ"
 
-  
+
 
   gpu_acceleration:
 
@@ -301,7 +301,7 @@ reasoning: "PyTorchﮒ۷ﻝﻝ۸ﭘﮒﻝﻛﭦ۶ﻠ۷ﻝﺛﺎﻛﺕﮔﺑﻝ�
 
     cloud_gpu: "NVIDIA A100/A10G (AWS), V100 (GCP)"
 
-  
+
 
   distributed_training:
 
@@ -311,7 +311,7 @@ reasoning: "PyTorchﮒ۷ﻝﻝ۸ﭘﮒﻝﻛﭦ۶ﻠ۷ﻝﺛﺎﻛﺕﮔﺑﻝ�
 
     monitoring: "Weights & Biases, MLflow"
 
-  
+
 
   model_serving:
 
@@ -619,7 +619,7 @@ validation_environment:
 
     production: "NVIDIA A100 (80GB VRAM) x 4, 256GB RAM, 64-core CPU"
 
-  
+
 
   software:
 
@@ -633,7 +633,7 @@ validation_environment:
 
     tensorflow: "2.15.0"
 
-  
+
 
   data:
 
@@ -679,7 +679,7 @@ cpu: "16ﮔﺕﮒﺟﻛﭨ۴ﻛﺕ"
 
     network: "1Gbpsﻛﭨ۴ﮒ۳۹ﻝﺛ?
 
-  
+
 
   training_phase:
 
@@ -693,7 +693,7 @@ cpu: "32ﮔﺕﮒﺟﻛﭨ۴ﻛﺕ"
 
     network: "10Gbpsﻝﺛﻝﭨ"
 
-  
+
 
   production_phase:
 
@@ -727,7 +727,7 @@ software_requirements:
 
 - "JAX (ﮒﺁﻠﺅﺙﻝ۷ﻛﭦﻝﻝ۸ﭘ)"
 
-  
+
 
   libraries:
 
@@ -741,7 +741,7 @@ software_requirements:
 
     - "Weights & Biases (ﮒ؟ﻠ۹ﻟﺟﺛﻟﺕ۹)"
 
-  
+
 
   infrastructure:
 
@@ -1019,7 +1019,7 @@ risk_mitigation_strategy:
 
 - "ﮒﭨﭦﻝ،ﮔ۷۰ﮒﻝﮔ۶ﮒﻠ۱ﻟ۵ﻝﺏﭨﻝﭨ?
 
-  
+
 
   data_mitigation:
 
@@ -1031,7 +1031,7 @@ risk_mitigation_strategy:
 
     - "ﮒ؟ﮔﻟﺟﻟ۰ﮔﺍﮔ؟ﮒ؟۰ﻟ؟۰"
 
-  
+
 
   operational_mitigation:
 
@@ -1353,7 +1353,7 @@ monitoring_system:
 
     retention: "90ﮒ۳?
 
-  
+
 
   visualization:
 
@@ -1363,7 +1363,7 @@ monitoring_system:
 
 alert_rules: "ﮒﭦﻛﭦﻠﮒﺙﻝﻟ۹ﮒ۷ﮒﻟ۵"
 
-  
+
 
   logging:
 
@@ -1373,7 +1373,7 @@ alert_rules: "ﮒﭦﻛﭦﻠﮒﺙﻝﻟ۹ﮒ۷ﮒﻟ۵"
 
     retention: "180ﮒ۳?
 
-  
+
 
   alerting:
 
@@ -1519,9 +1519,9 @@ escalation: "3ﻝﭦ۶ﮒﻝﭦ۶ﻝﻝ?
 
 
 
-> **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0  
+> **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
 
-> **ﮒﮒﭨﭦﮔﭘﻠﺑ**: 2026-04-02  
+> **ﮒﮒﭨﭦﮔﭘﻠﺑ**: 2026-04-02
 
 > **ﮔﺑﮔﺍﻟ؟۰ﮒ**: ﮔﺁﮒ۲ﮒﭦ۵ﮒ؟۰ﮔ۴ﮔﺑﮔ?
 
@@ -1530,4 +1530,3 @@ escalation: "3ﻝﭦ۶ﮒﻝﭦ۶ﻝﻝ?
 > **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?- ﻝﮒﺝﮒ؟ﮔﺛ
 
 > **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﮔ۶ﻟ۰ﮔﮔﺁﻠ۹ﻟﺁﻟ؟۰ﮒ
-

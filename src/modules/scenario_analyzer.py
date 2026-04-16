@@ -46,7 +46,7 @@ class MarketShock:
     currency_shock: float
     volatility_spike: float
     liquidity_drop: float
-    
+
     def to_dict(self) -> Dict:
         """转换为字典"""
         return {
@@ -69,7 +69,7 @@ class AssetImpact:
     shocked_value: float
     impact_pct: float
     impact_amount: float
-    
+
     def to_dict(self) -> Dict:
         """转换为字典"""
         return {
@@ -95,7 +95,7 @@ class ScenarioResult:
     risk_metrics: Dict[str, float]
     recommendations: List[str] = field(default_factory=list)
     analysis_time: datetime = field(default_factory=datetime.now)
-    
+
     def to_dict(self) -> Dict:
         """转换为字典"""
         return {
@@ -113,11 +113,11 @@ class ScenarioResult:
 
 class ScenarioLibrary:
     """情景库管理器"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.scenarios = self._load_default_scenarios()
-    
+
     def _load_default_scenarios(self) -> Dict[str, Dict]:
         """加载默认情景库"""
         return {
@@ -197,15 +197,15 @@ class ScenarioLibrary:
                 "recovery_days": 90
             }
         }
-    
+
     def get_scenario(self, scenario_type: ScenarioType) -> Optional[Dict]:
         """获取情景定义"""
         return self.scenarios.get(scenario_type.value)
-    
+
     def list_scenarios(self) -> List[str]:
         """列出所有可用情景"""
         return list(self.scenarios.keys())
-    
+
     def add_custom_scenario(self, name: str, scenario_def: Dict) -> bool:
         """添加自定义情景"""
         try:
@@ -219,10 +219,10 @@ class ScenarioLibrary:
 
 class MarketShockEngine:
     """市场冲击模拟引擎"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-    
+
     def apply_market_shock(
         self,
         asset_value: float,
@@ -232,14 +232,14 @@ class MarketShockEngine:
         sector_factor: float = 1.0
     ) -> float:
         """应用市场冲击
-        
+
         Args:
             asset_value: 资产原始价值
             asset_type: 资产类型 (equity/bond/commodity/currency)
             shock_params: 市场冲击参数
             beta: 资产Beta系数
             sector_factor: 行业因子调整
-            
+
         Returns:
             冲击后的资产价值
         """
@@ -249,35 +249,35 @@ class MarketShockEngine:
             'commodity': shock_params.commodity_shock,
             'currency': shock_params.currency_shock
         }
-        
+
         base_shock = shock_map.get(asset_type, 0)
         adjusted_shock = base_shock * beta * sector_factor
-        
+
         shocked_value = asset_value * (1 + adjusted_shock)
-        
+
         return shocked_value
-    
+
     def apply_shock_to_portfolio(
         self,
         portfolio: pd.DataFrame,
         shock_params: MarketShock
     ) -> pd.DataFrame:
         """应用市场冲击到整个投资组合
-        
+
         Args:
             portfolio: 投资组合数据
             shock_params: 市场冲击参数
-            
+
         Returns:
             冲击后的投资组合
         """
         shocked_portfolio = portfolio.copy()
-        
+
         for idx, row in portfolio.iterrows():
             asset_type = row.get('asset_type', 'equity')
             beta = row.get('beta', 1.0)
             sector_factor = row.get('sector_factor', 1.0)
-            
+
             shocked_value = self.apply_market_shock(
                 asset_value=row['value'],
                 asset_type=asset_type,
@@ -285,59 +285,59 @@ class MarketShockEngine:
                 beta=beta,
                 sector_factor=sector_factor
             )
-            
+
             shocked_portfolio.at[idx, 'shocked_value'] = shocked_value
             shocked_portfolio.at[idx, 'impact_amount'] = row['value'] - shocked_value
             shocked_portfolio.at[idx, 'impact_pct'] = (row['value'] - shocked_value) / row['value']
-        
+
         return shocked_portfolio
 
 
 class RiskMetricsCalculator:
     """风险指标计算器"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-    
+
     def calculate_scenario_risk_metrics(
         self,
         portfolio: pd.DataFrame,
         shocked_portfolio: pd.DataFrame
     ) -> Dict[str, float]:
         """计算情景下的风险指标
-        
+
         Args:
             portfolio: 原始投资组合
             shocked_portfolio: 冲击后的投资组合
-            
+
         Returns:
             风险指标字典
         """
         metrics = {}
-        
+
         original_value = portfolio['value'].sum()
         shocked_value = shocked_portfolio['shocked_value'].sum()
-        
+
         metrics['portfolio_loss'] = original_value - shocked_value
         metrics['portfolio_loss_pct'] = (original_value - shocked_value) / original_value
-        
+
         asset_losses = portfolio['value'] - shocked_portfolio['shocked_value']
         metrics['max_single_asset_loss'] = asset_losses.max()
         metrics['max_single_asset_loss_pct'] = (asset_losses / portfolio['value']).max()
-        
+
         if 'liquidity_drop' in shocked_portfolio.columns:
             metrics['liquidity_risk'] = shocked_portfolio['liquidity_drop'].mean()
         else:
             metrics['liquidity_risk'] = 0.0
-        
+
         weights = shocked_portfolio['shocked_value'] / shocked_value
         metrics['concentration_risk'] = (weights ** 2).sum()
-        
+
         metrics['num_assets_affected'] = (asset_losses > 0).sum()
         metrics['pct_assets_affected'] = (asset_losses > 0).sum() / len(portfolio)
-        
+
         return metrics
-    
+
     def calculate_var_equivalent(
         self,
         portfolio_loss: float,
@@ -345,12 +345,12 @@ class RiskMetricsCalculator:
         confidence_level: float = 0.99
     ) -> float:
         """计算VaR等价值
-        
+
         Args:
             portfolio_loss: 组合损失
             portfolio_value: 组合价值
             confidence_level: 置信水平
-            
+
         Returns:
             VaR等价值
         """
@@ -360,20 +360,20 @@ class RiskMetricsCalculator:
 
 class ScenarioAnalyzer:
     """情景分析器主类"""
-    
+
     def __init__(self, config: Optional[Dict] = None):
         """初始化情景分析器
-        
+
         Args:
             config: 配置参数
         """
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
-        
+
         self.scenario_library = ScenarioLibrary()
         self.shock_engine = MarketShockEngine()
         self.risk_calculator = RiskMetricsCalculator()
-    
+
     def analyze_scenario(
         self,
         portfolio: pd.DataFrame,
@@ -381,17 +381,17 @@ class ScenarioAnalyzer:
         custom_shock: Optional[MarketShock] = None
     ) -> ScenarioResult:
         """分析特定情景下的组合表现
-        
+
         Args:
             portfolio: 投资组合数据
             scenario_type: 情景类型
             custom_shock: 自定义冲击参数 (仅用于custom类型)
-            
+
         Returns:
             情景分析结果
         """
         self.logger.info(f"Analyzing scenario: {scenario_type.value}")
-        
+
         if scenario_type == ScenarioType.CUSTOM:
             if custom_shock is None:
                 raise ValueError("Custom scenario requires custom_shock parameter")
@@ -403,15 +403,15 @@ class ScenarioAnalyzer:
                 raise ValueError(f"Unknown scenario type: {scenario_type}")
             shock_params = scenario_def['shock_params']
             scenario_name = scenario_def['name']
-        
+
         shocked_portfolio = self.shock_engine.apply_shock_to_portfolio(
             portfolio, shock_params
         )
-        
+
         risk_metrics = self.risk_calculator.calculate_scenario_risk_metrics(
             portfolio, shocked_portfolio
         )
-        
+
         asset_impacts = []
         for idx, row in shocked_portfolio.iterrows():
             impact = AssetImpact(
@@ -424,9 +424,9 @@ class ScenarioAnalyzer:
                 impact_amount=row['impact_amount']
             )
             asset_impacts.append(impact)
-        
+
         recommendations = self._generate_recommendations(risk_metrics, scenario_type)
-        
+
         result = ScenarioResult(
             scenario_name=scenario_name,
             scenario_type=scenario_type,
@@ -437,21 +437,21 @@ class ScenarioAnalyzer:
             risk_metrics=risk_metrics,
             recommendations=recommendations
         )
-        
+
         self.logger.info(f"Scenario analysis completed: {scenario_type.value}")
         return result
-    
+
     def analyze_multiple_scenarios(
         self,
         portfolio: pd.DataFrame,
         scenario_types: Optional[List[ScenarioType]] = None
     ) -> Dict[str, ScenarioResult]:
         """分析多个情景下的组合表现
-        
+
         Args:
             portfolio: 投资组合数据
             scenario_types: 情景类型列表 (默认分析所有预设情景)
-            
+
         Returns:
             多个情景的分析结果字典
         """
@@ -463,7 +463,7 @@ class ScenarioAnalyzer:
                 ScenarioType.TRADE_WAR,
                 ScenarioType.LIQUIDITY_CRISIS
             ]
-        
+
         results = {}
         for scenario_type in scenario_types:
             try:
@@ -471,38 +471,38 @@ class ScenarioAnalyzer:
                 results[scenario_type.value] = result
             except Exception as e:
                 self.logger.error(f"Failed to analyze scenario {scenario_type.value}: {e}")
-        
+
         return results
-    
+
     def generate_scenario_report(
         self,
         results: Dict[str, ScenarioResult],
         output_format: str = "markdown"
     ) -> str:
         """生成情景分析报告
-        
+
         Args:
             results: 情景分析结果
             output_format: 输出格式 (markdown/html/json)
-            
+
         Returns:
             报告内容
         """
         if output_format == "json":
             return json.dumps({
-                scenario: result.to_dict() 
+                scenario: result.to_dict()
                 for scenario, result in results.items()
             }, indent=2, ensure_ascii=False)
-        
+
         elif output_format == "markdown":
             return self._generate_markdown_report(results)
-        
+
         elif output_format == "html":
             return self._generate_html_report(results)
-        
+
         else:
             raise ValueError(f"Unsupported output format: {output_format}")
-    
+
     def _generate_markdown_report(self, results: Dict[str, ScenarioResult]) -> str:
         """生成Markdown格式报告"""
         report = []
@@ -510,12 +510,12 @@ class ScenarioAnalyzer:
         report.append(f"\n**生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         report.append(f"\n**分析情景数**: {len(results)}")
         report.append("\n---\n")
-        
+
         for scenario_key, result in results.items():
             report.append(f"## {result.scenario_name}")
             report.append(f"\n**情景类型**: {result.scenario_type.value}")
             report.append(f"\n**组合损失**: ¥{result.portfolio_impact:,.2f} ({result.portfolio_impact_pct:.2%})")
-            
+
             report.append("\n### 市场冲击参数")
             shock_dict = result.shock_params.to_dict()
             report.append("\n| 冲击类型 | 冲击幅度 |")
@@ -525,7 +525,7 @@ class ScenarioAnalyzer:
                     report.append(f"\n| {key} | {value:.2%} |")
                 else:
                     report.append(f"\n| {key} | {value:.2f} |")
-            
+
             report.append("\n### 风险指标")
             report.append("\n| 指标 | 数值 |")
             report.append("\n|-----|------|")
@@ -537,16 +537,16 @@ class ScenarioAnalyzer:
                         report.append(f"\n| {key} | {value:,.2f} |")
                 else:
                     report.append(f"\n| {key} | {value} |")
-            
+
             if result.recommendations:
                 report.append("\n### 风险管理建议")
                 for i, rec in enumerate(result.recommendations, 1):
                     report.append(f"\n{i}. {rec}")
-            
+
             report.append("\n---\n")
-        
+
         return "\n".join(report)
-    
+
     def _generate_html_report(self, results: Dict[str, ScenarioResult]) -> str:
         """生成HTML格式报告"""
         html = []
@@ -565,11 +565,11 @@ class ScenarioAnalyzer:
         html.append("<body>")
         html.append("<h1>情景分析报告</h1>")
         html.append(f"<p><strong>生成时间</strong>: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>")
-        
+
         for scenario_key, result in results.items():
             html.append(f"<h2>{result.scenario_name}</h2>")
             html.append(f"<p><strong>组合损失</strong>: ¥{result.portfolio_impact:,.2f} ({result.portfolio_impact_pct:.2%})</p>")
-            
+
             html.append("<h3>风险指标</h3>")
             html.append("<table>")
             html.append("<tr><th>指标</th><th>数值</th></tr>")
@@ -582,12 +582,12 @@ class ScenarioAnalyzer:
                 else:
                     html.append(f"<tr><td>{key}</td><td>{value}</td></tr>")
             html.append("</table>")
-        
+
         html.append("</body>")
         html.append("</html>")
-        
+
         return "\n".join(html)
-    
+
     def _generate_recommendations(
         self,
         risk_metrics: Dict[str, float],
@@ -595,28 +595,28 @@ class ScenarioAnalyzer:
     ) -> List[str]:
         """生成风险管理建议"""
         recommendations = []
-        
+
         if risk_metrics['portfolio_loss_pct'] > 0.30:
             recommendations.append("⚠️ 组合损失超过30%，建议立即降低仓位或增加对冲")
         elif risk_metrics['portfolio_loss_pct'] > 0.20:
             recommendations.append("⚠️ 组合损失超过20%，建议评估风险敞口并考虑调整仓位")
-        
+
         if risk_metrics['concentration_risk'] > 0.15:
             recommendations.append("⚠️ 集中度风险较高，建议分散投资降低单一资产依赖")
-        
+
         if risk_metrics['liquidity_risk'] > 0.50:
             recommendations.append("⚠️ 流动性风险较高，建议增加现金或高流动性资产配置")
-        
+
         if scenario_type == ScenarioType.FINANCIAL_CRISIS:
             recommendations.append("建议增加防御性资产配置（国债、黄金）")
             recommendations.append("建议降低杠杆率，提高现金储备")
         elif scenario_type == ScenarioType.RATE_HIKE:
             recommendations.append("建议缩短债券久期，降低利率风险敞口")
             recommendations.append("建议增加浮动利率资产配置")
-        
+
         if not recommendations:
             recommendations.append("✅ 当前风险水平可控，建议持续监控")
-        
+
         return recommendations
 
 
@@ -630,25 +630,25 @@ def create_sample_portfolio() -> pd.DataFrame:
         {'asset_id': 'GOLD_001', 'asset_name': '黄金ETF', 'asset_type': 'commodity', 'value': 300000, 'beta': 0.0, 'sector_factor': 1.0},
         {'asset_id': 'USD_001', 'asset_name': '美元货币基金', 'asset_type': 'currency', 'value': 200000, 'beta': 0.0, 'sector_factor': 1.0},
     ]
-    
+
     return pd.DataFrame(data)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    
+
     analyzer = ScenarioAnalyzer()
-    
+
     portfolio = create_sample_portfolio()
     print(f"投资组合总价值: ¥{portfolio['value'].sum():,.2f}")
-    
+
     print("\n=== 分析2008金融危机情景 ===")
     result = analyzer.analyze_scenario(portfolio, ScenarioType.FINANCIAL_CRISIS)
     print(f"组合损失: ¥{result.portfolio_impact:,.2f} ({result.portfolio_impact_pct:.2%})")
     print(f"风险指标: {result.risk_metrics}")
-    
+
     print("\n=== 分析所有预设情景 ===")
     results = analyzer.analyze_multiple_scenarios(portfolio)
-    
+
     report = analyzer.generate_scenario_report(results, output_format="markdown")
     print("\n" + report)

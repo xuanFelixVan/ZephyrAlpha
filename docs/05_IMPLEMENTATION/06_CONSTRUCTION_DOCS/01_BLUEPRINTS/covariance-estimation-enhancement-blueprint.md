@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：协方差估计、收缩估计、动态协方差建模
 
@@ -150,7 +150,7 @@ class CovarianceEstimator:
 
     """协方差估计器"""
 
-    
+
 
     def __init__(self, method='ledoit_wolf'):
 
@@ -158,7 +158,7 @@ class CovarianceEstimator:
 
         self.cov_ = None
 
-    
+
 
     def fit(self, returns):
 
@@ -166,7 +166,7 @@ class CovarianceEstimator:
 
         估计协方差矩阵
 
-        
+
 
         Parameters:
 
@@ -202,11 +202,11 @@ class CovarianceEstimator:
 
             self.cov_ = self._ewma_cov(returns)
 
-        
+
 
         return self
 
-    
+
 
     def _ewma_cov(self, returns, lambda_=0.94):
 
@@ -216,7 +216,7 @@ class CovarianceEstimator:
 
         cov = np.zeros((N, N))
 
-        
+
 
         for t in range(T):
 
@@ -224,11 +224,11 @@ class CovarianceEstimator:
 
             cov = lambda_ * cov + (1 - lambda_) * r @ r.T
 
-        
+
 
         return cov
 
-    
+
 
     def predict(self, horizon=1):
 
@@ -373,4 +373,3 @@ class CovarianceEstimatorOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

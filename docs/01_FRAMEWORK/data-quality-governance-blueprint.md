@@ -276,7 +276,7 @@ class DataSourceHealthMonitor:
 
     """数据源健康状态监控器"""
 
-    
+
 
     def __init__(self):
 
@@ -290,25 +290,25 @@ class DataSourceHealthMonitor:
 
         }
 
-        
+
 
     def check_health(self, source_id: str) -> DataSourceHealth:
 
         """检查数据源健康状态"""
 
-        
+
 
         # 1. 检查连接状态
 
         connection_status = self._check_connection(source_id)
 
-        
+
 
         # 2. 检查性能指标
 
         performance_metrics = self._check_performance(source_id)
 
-        
+
 
         # 3. 计算健康状态
 
@@ -320,7 +320,7 @@ class DataSourceHealthMonitor:
 
         )
 
-        
+
 
         return DataSourceHealth(
 
@@ -342,7 +342,7 @@ class DataSourceHealthMonitor:
 
         )
 
-    
+
 
     def _check_connection(self, source_id: str) -> bool:
 
@@ -350,7 +350,7 @@ class DataSourceHealthMonitor:
 
         pass
 
-    
+
 
     def _check_performance(self, source_id: str) -> Dict:
 
@@ -358,9 +358,9 @@ class DataSourceHealthMonitor:
 
         pass
 
-    
 
-    def _calculate_health_status(self, 
+
+    def _calculate_health_status(self,
 
                                  connection_status: bool,
 
@@ -368,13 +368,13 @@ class DataSourceHealthMonitor:
 
         """计算健康状态"""
 
-        
+
 
         if not connection_status:
 
             return DataSourceStatus.OFFLINE
 
-        
+
 
         if (metrics['response_time'] > self.health_thresholds['response_time'] or
 
@@ -382,13 +382,13 @@ class DataSourceHealthMonitor:
 
             return DataSourceStatus.UNHEALTHY
 
-        
+
 
         if metrics['uptime'] < self.health_thresholds['uptime']:
 
             return DataSourceStatus.DEGRADED
 
-        
+
 
         return DataSourceStatus.HEALTHY
 
@@ -406,7 +406,7 @@ class DataQualityValidator:
 
     """数据质量实时验证器"""
 
-    
+
 
     def __init__(self):
 
@@ -422,9 +422,9 @@ class DataQualityValidator:
 
         }
 
-        
 
-    def validate(self, 
+
+    def validate(self,
 
                 data: pd.DataFrame,
 
@@ -432,13 +432,13 @@ class DataQualityValidator:
 
         """实时验证数据质量"""
 
-        
+
 
         if validation_types is None:
 
             validation_types = list(self.validators.keys())
 
-        
+
 
         results = {}
 
@@ -448,23 +448,23 @@ class DataQualityValidator:
 
                 results[vtype] = self.validatorsvtype
 
-        
+
 
         return results
 
-    
+
 
     def _validate_completeness(self, data: pd.DataFrame) -> Dict:
 
         """验证完整性"""
 
-        
+
 
         critical_fields = ['open', 'high', 'low', 'close', 'volume']
 
         missing_stats = {}
 
-        
+
 
         for field in critical_fields:
 
@@ -484,7 +484,7 @@ class DataQualityValidator:
 
                 }
 
-        
+
 
         return {
 
@@ -496,25 +496,25 @@ class DataQualityValidator:
 
         }
 
-    
+
 
     def _validate_accuracy(self, data: pd.DataFrame) -> Dict:
 
         """验证准确性"""
 
-        
+
 
         # 价格范围验证
 
         price_anomalies = self._check_price_anomalies(data)
 
-        
+
 
         # 成交量验证
 
         volume_anomalies = self._check_volume_anomalies(data)
 
-        
+
 
         return {
 
@@ -532,13 +532,13 @@ class DataQualityValidator:
 
         }
 
-    
+
 
     def _validate_timeliness(self, data: pd.DataFrame) -> Dict:
 
         """验证时效性"""
 
-        
+
 
         # 检查数据延迟
 
@@ -548,7 +548,7 @@ class DataQualityValidator:
 
         delay = (current_time - latest_time).total_seconds() if latest_time else float('inf')
 
-        
+
 
         return {
 
@@ -566,19 +566,19 @@ class DataQualityValidator:
 
         }
 
-    
+
 
     def _validate_consistency(self, data: pd.DataFrame) -> Dict:
 
         """验证一致性"""
 
-        
+
 
         # 检查价格逻辑一致性
 
         consistency_issues = []
 
-        
+
 
         # high >= low
 
@@ -596,7 +596,7 @@ class DataQualityValidator:
 
                 })
 
-        
+
 
         # open, close in [low, high]
 
@@ -606,7 +606,7 @@ class DataQualityValidator:
 
                 invalid = data[
 
-                    (data[field] < data['low']) | 
+                    (data[field] < data['low']) |
 
                     (data[field] > data['high'])
 
@@ -622,7 +622,7 @@ class DataQualityValidator:
 
                     })
 
-        
+
 
         return {
 
@@ -652,7 +652,7 @@ class AnomalyAlerter:
 
     """异常数据告警器"""
 
-    
+
 
     def __init__(self, alert_config: Dict):
 
@@ -660,9 +660,9 @@ class AnomalyAlerter:
 
         self.alert_channels = ['email', 'slack', 'webhook']
 
-        
 
-    def send_alert(self, 
+
+    def send_alert(self,
 
                   alert_type: str,
 
@@ -674,7 +674,7 @@ class AnomalyAlerter:
 
         """发送告警"""
 
-        
+
 
         alert = {
 
@@ -690,25 +690,25 @@ class AnomalyAlerter:
 
         }
 
-        
+
 
         # 根据严重级别选择告警渠道
 
         channels = self._get_alert_channels(severity)
 
-        
+
 
         for channel in channels:
 
             self._send_to_channel(channel, alert)
 
-    
+
 
     def _get_alert_channels(self, severity: str) -> List[str]:
 
         """根据严重级别获取告警渠道"""
 
-        
+
 
         if severity == 'critical':
 
@@ -722,7 +722,7 @@ class AnomalyAlerter:
 
             return ['webhook']
 
-    
+
 
     def _send_to_channel(self, channel: str, alert: Dict):
 
@@ -802,7 +802,7 @@ class DataQualityAssessor:
 
     """数据质量评估器"""
 
-    
+
 
     def __init__(self):
 
@@ -822,9 +822,9 @@ class DataQualityAssessor:
 
         }
 
-        
 
-    def assess(self, 
+
+    def assess(self,
 
               data: pd.DataFrame,
 
@@ -832,13 +832,13 @@ class DataQualityAssessor:
 
         """多维度评估数据质量"""
 
-        
+
 
         if dimensions is None:
 
             dimensions = list(self.assessors.keys())
 
-        
+
 
         assessments = []
 
@@ -850,17 +850,17 @@ class DataQualityAssessor:
 
                 assessments.append(assessment)
 
-        
+
 
         return assessments
 
-    
+
 
     def _assess_completeness(self, data: pd.DataFrame) -> QualityAssessment:
 
         """评估完整性"""
 
-        
+
 
         # 计算字段完整性
 
@@ -876,19 +876,19 @@ class DataQualityAssessor:
 
             field_completeness[column] = completeness_rate
 
-        
+
 
         # 计算总体完整性
 
         overall_completeness = np.mean(list(field_completeness.values()))
 
-        
+
 
         # 计算评分（0-100）
 
         score = overall_completeness * 100
 
-        
+
 
         # 判断状态
 
@@ -904,7 +904,7 @@ class DataQualityAssessor:
 
             status = 'FAIL'
 
-        
+
 
         return QualityAssessment(
 
@@ -926,13 +926,13 @@ class DataQualityAssessor:
 
         )
 
-    
+
 
     def _assess_accuracy(self, data: pd.DataFrame) -> QualityAssessment:
 
         """评估准确性"""
 
-        
+
 
         # 检测异常值
 
@@ -940,13 +940,13 @@ class DataQualityAssessor:
 
         anomaly_rate = len(anomalies) / len(data) if len(data) > 0 else 0
 
-        
+
 
         # 计算评分
 
         score = (1 - anomaly_rate) * 100
 
-        
+
 
         # 判断状态
 
@@ -962,7 +962,7 @@ class DataQualityAssessor:
 
             status = 'FAIL'
 
-        
+
 
         return QualityAssessment(
 
@@ -984,7 +984,7 @@ class DataQualityAssessor:
 
         )
 
-    
+
 
     def _assess_consistency(self, data: pd.DataFrame) -> QualityAssessment:
 
@@ -992,7 +992,7 @@ class DataQualityAssessor:
 
         pass
 
-    
+
 
     def _assess_timeliness(self, data: pd.DataFrame) -> QualityAssessment:
 
@@ -1000,7 +1000,7 @@ class DataQualityAssessor:
 
         pass
 
-    
+
 
     def _assess_uniqueness(self, data: pd.DataFrame) -> QualityAssessment:
 
@@ -1008,7 +1008,7 @@ class DataQualityAssessor:
 
         pass
 
-    
+
 
     def _assess_validity(self, data: pd.DataFrame) -> QualityAssessment:
 
@@ -1030,7 +1030,7 @@ class QualityScorer:
 
     """数据质量评分器"""
 
-    
+
 
     def __init__(self):
 
@@ -1050,15 +1050,15 @@ class QualityScorer:
 
         }
 
-        
 
-    def calculate_score(self, 
+
+    def calculate_score(self,
 
                        assessments: List[QualityAssessment]) -> float:
 
         """计算综合质量评分"""
 
-        
+
 
         weighted_score = 0.0
 
@@ -1068,17 +1068,17 @@ class QualityScorer:
 
             weighted_score += assessment.score * weight
 
-        
+
 
         return weighted_score
 
-    
+
 
     def get_quality_grade(self, score: float) -> str:
 
         """获取质量等级"""
 
-        
+
 
         if score >= 95:
 
@@ -1144,7 +1144,7 @@ class RealTimeQualityChecker:
 
     """实时数据质量检查器"""
 
-    
+
 
     def __init__(self):
 
@@ -1160,13 +1160,13 @@ class RealTimeQualityChecker:
 
         }
 
-        
+
 
     def check(self, data: pd.DataFrame) -> Dict:
 
         """实时检查数据质量"""
 
-        
+
 
         results = {}
 
@@ -1174,13 +1174,13 @@ class RealTimeQualityChecker:
 
             results[check_type] = checker.check(data)
 
-        
+
 
         # 计算总体质量状态
 
         overall_status = self._calculate_overall_status(results)
 
-        
+
 
         return {
 
@@ -1192,17 +1192,17 @@ class RealTimeQualityChecker:
 
         }
 
-    
+
 
     def _calculate_overall_status(self, results: Dict) -> str:
 
         """计算总体质量状态"""
 
-        
+
 
         statuses = [r['status'] for r in results.values()]
 
-        
+
 
         if 'FAIL' in statuses:
 
@@ -1222,19 +1222,19 @@ class CompletenessChecker:
 
     """完整性检查器"""
 
-    
+
 
     def check(self, data: pd.DataFrame) -> Dict:
 
         """检查完整性"""
 
-        
+
 
         critical_fields = ['open', 'high', 'low', 'close', 'volume']
 
         missing_stats = {}
 
-        
+
 
         for field in critical_fields:
 
@@ -1254,11 +1254,11 @@ class CompletenessChecker:
 
                 }
 
-        
+
 
         overall_status = 'PASS' if all(s['status'] == 'PASS' for s in missing_stats.values()) else 'FAIL'
 
-        
+
 
         return {
 
@@ -1284,7 +1284,7 @@ class AutoAlertEngine:
 
     """自动告警引擎"""
 
-    
+
 
     def __init__(self, alert_config: Dict):
 
@@ -1300,13 +1300,13 @@ class AutoAlertEngine:
 
         }
 
-        
+
 
     def process_quality_result(self, quality_result: Dict):
 
         """处理质量检查结果"""
 
-        
+
 
         if quality_result['overall_status'] == 'FAIL':
 
@@ -1316,13 +1316,13 @@ class AutoAlertEngine:
 
             self._trigger_alert('warning', quality_result)
 
-    
+
 
     def _trigger_alert(self, severity: str, quality_result: Dict):
 
         """触发告警"""
 
-        
+
 
         alert = {
 
@@ -1336,25 +1336,25 @@ class AutoAlertEngine:
 
         }
 
-        
+
 
         # 根据严重级别选择告警渠道
 
         channels = self._get_alert_channels(severity)
 
-        
+
 
         for channel in channels:
 
             self.alert_handlerschannel
 
-    
+
 
     def _get_alert_channels(self, severity: str) -> List[str]:
 
         """获取告警渠道"""
 
-        
+
 
         if severity == 'critical':
 
@@ -1428,39 +1428,39 @@ class QualityRuleManager:
 
     """数据质量规则管理器"""
 
-    
+
 
     def __init__(self):
 
         self.rules = {}
 
-        
+
 
     def define_rule(self, rule: QualityRule):
 
         """定义质量规则"""
 
-        
+
 
         self.rules[rule.rule_id] = rule
 
-        
 
-    def get_rules_by_dimension(self, 
+
+    def get_rules_by_dimension(self,
 
                                dimension: QualityDimension) -> List[QualityRule]:
 
         """按维度获取规则"""
 
-        
 
-        return [rule for rule in self.rules.values() 
+
+        return [rule for rule in self.rules.values()
 
                 if rule.dimension == dimension]
 
-    
 
-    def validate_data_against_rules(self, 
+
+    def validate_data_against_rules(self,
 
                                     data: pd.DataFrame,
 
@@ -1468,13 +1468,13 @@ class QualityRuleManager:
 
         """根据规则验证数据"""
 
-        
+
 
         if rule_ids is None:
 
             rule_ids = list(self.rules.keys())
 
-        
+
 
         results = {}
 
@@ -1488,27 +1488,27 @@ class QualityRuleManager:
 
                 results[rule_id] = result
 
-        
+
 
         return results
 
-    
+
 
     def _apply_rule(self, data: pd.DataFrame, rule: QualityRule) -> Dict:
 
         """应用规则"""
 
-        
+
 
         # 使用Great Expectations应用规则
 
         import great_expectations as ge
 
-        
+
 
         df_ge = ge.from_pandas(data)
 
-        
+
 
         try:
 
@@ -1522,7 +1522,7 @@ class QualityRuleManager:
 
             )
 
-            
+
 
             return {
 
@@ -1584,25 +1584,25 @@ class QualityImprovementTracker:
 
     """数据质量改进跟踪器"""
 
-    
+
 
     def __init__(self):
 
         self.issues = {}
 
-        
+
 
     def report_issue(self, issue: QualityIssue):
 
         """报告质量问题"""
 
-        
+
 
         self.issues[issue.issue_id] = issue
 
-        
 
-    def update_issue_status(self, 
+
+    def update_issue_status(self,
 
                            issue_id: str,
 
@@ -1612,7 +1612,7 @@ class QualityImprovementTracker:
 
         """更新问题状态"""
 
-        
+
 
         if issue_id in self.issues:
 
@@ -1624,25 +1624,25 @@ class QualityImprovementTracker:
 
                 self.issues[issue_id].resolved_at = datetime.now()
 
-    
+
 
     def get_open_issues(self) -> List[QualityIssue]:
 
         """获取未解决的问题"""
 
-        
 
-        return [issue for issue in self.issues.values() 
+
+        return [issue for issue in self.issues.values()
 
                 if issue.status in ['open', 'in_progress']]
 
-    
+
 
     def generate_improvement_report(self) -> Dict:
 
         """生成改进报告"""
 
-        
+
 
         total_issues = len(self.issues)
 
@@ -1652,7 +1652,7 @@ class QualityImprovementTracker:
 
         resolved_issues = len([i for i in self.issues.values() if i.status == 'resolved'])
 
-        
+
 
         return {
 
@@ -2193,4 +2193,3 @@ start_http_server(8000)
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

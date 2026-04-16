@@ -152,7 +152,7 @@ class FactorBacktestEngine:
 
     """因子回测引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -162,7 +162,7 @@ class FactorBacktestEngine:
 
         self.results = None
 
-        
+
 
     def run_single_factor_backtest(self,
 
@@ -174,17 +174,17 @@ class FactorBacktestEngine:
 
         """单因子回测"""
 
-        
+
 
         cerebro = bt.Cerebro()
 
-        
+
 
         for stock_code in price_data.columns.get_level_values(0).unique():
 
             stock_data = price_data[stock_code]
 
-            
+
 
             data = bt.feeds.PandasData(
 
@@ -196,7 +196,7 @@ class FactorBacktestEngine:
 
             cerebro.adddata(data)
 
-        
+
 
         cerebro.addstrategy(
 
@@ -208,7 +208,7 @@ class FactorBacktestEngine:
 
         )
 
-        
+
 
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
 
@@ -218,19 +218,19 @@ class FactorBacktestEngine:
 
         cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
 
-        
+
 
         initial_cash = backtest_config.get('initial_cash', 1000000)
 
         cerebro.broker.setcash(initial_cash)
 
-        
+
 
         results = cerebro.run()
 
         strategy = results[0]
 
-        
+
 
         backtest_result = {
 
@@ -248,11 +248,11 @@ class FactorBacktestEngine:
 
         }
 
-        
+
 
         return backtest_result
 
-    
+
 
     def run_multi_factor_backtest(self,
 
@@ -266,11 +266,11 @@ class FactorBacktestEngine:
 
         """多因子组合回测"""
 
-        
+
 
         composite_factor = pd.DataFrame(index=next(iter(factors.values())).index)
 
-        
+
 
         for factor_name, factor_data in factors.items():
 
@@ -278,11 +278,11 @@ class FactorBacktestEngine:
 
             composite_factor[factor_name] = factor_data * weight
 
-        
+
 
         composite_factor['composite'] = composite_factor.sum(axis=1)
 
-        
+
 
         return self.run_single_factor_backtest(
 
@@ -302,7 +302,7 @@ class FactorStrategy(bt.Strategy):
 
     """因子策略"""
 
-    
+
 
     params = (
 
@@ -312,7 +312,7 @@ class FactorStrategy(bt.Strategy):
 
     )
 
-    
+
 
     def __init__(self):
 
@@ -326,13 +326,13 @@ class FactorStrategy(bt.Strategy):
 
         self.num_stocks = self.config.get('num_stocks', 10)
 
-        
+
 
     def next(self):
 
         self.rebalance_counter += 1
 
-        
+
 
         if self.rebalance_counter >= self.rebalance_freq:
 
@@ -340,7 +340,7 @@ class FactorStrategy(bt.Strategy):
 
             self.rebalance_counter = 0
 
-    
+
 
     def rebalance(self):
 
@@ -348,7 +348,7 @@ class FactorStrategy(bt.Strategy):
 
         current_date = self.datas[0].datetime.date(0)
 
-        
+
 
         try:
 
@@ -358,33 +358,33 @@ class FactorStrategy(bt.Strategy):
 
             return
 
-        
+
 
         if isinstance(factor_values, pd.DataFrame):
 
             factor_values = factor_values.iloc[0]
 
-        
+
 
         factor_values = factor_values.dropna()
 
-        
+
 
         if len(factor_values) == 0:
 
             return
 
-        
+
 
         top_stocks = factor_values.nlargest(self.num_stocks)
 
-        
+
 
         for data in self.datas:
 
             position = self.getposition(data)
 
-            
+
 
             if data._name in top_stocks.index:
 
@@ -420,13 +420,13 @@ class FactorAnalyzer:
 
     """因子分析器"""
 
-    
+
 
     def __init__(self, config: Dict):
 
         self.config = config
 
-        
+
 
     def analyze_factor(self,
 
@@ -440,21 +440,21 @@ class FactorAnalyzer:
 
         """分析因子"""
 
-        
+
 
         factor_data_aligned = self._align_data(factor_data, price_data)
 
-        
+
 
         factor_data_stacked = factor_data_aligned.stack()
 
         factor_data_stacked.index = factor_data_stacked.index.set_names(['date', 'asset'])
 
-        
+
 
         price_data_aligned = price_data.reindex(factor_data_aligned.index)
 
-        
+
 
         factor_data_clean = get_clean_factor_and_forward_returns(
 
@@ -468,7 +468,7 @@ class FactorAnalyzer:
 
         )
 
-        
+
 
         analysis_result = {
 
@@ -482,11 +482,11 @@ class FactorAnalyzer:
 
         }
 
-        
+
 
         return analysis_result
 
-    
+
 
     def _align_data(self, factor_data: pd.DataFrame, price_data: pd.DataFrame) -> pd.DataFrame:
 
@@ -496,7 +496,7 @@ class FactorAnalyzer:
 
         return factor_data.loc[common_dates]
 
-    
+
 
     def _calculate_ic(self, factor_data: pd.DataFrame) -> Dict:
 
@@ -504,7 +504,7 @@ class FactorAnalyzer:
 
         ic_results = {}
 
-        
+
 
         for period in factor_data.columns:
 
@@ -514,11 +514,11 @@ class FactorAnalyzer:
 
                 ic_results[period] = ic
 
-        
+
 
         return ic_results
 
-    
+
 
     def _analyze_quantiles(self, factor_data: pd.DataFrame) -> Dict:
 
@@ -526,7 +526,7 @@ class FactorAnalyzer:
 
         quantile_returns = factor_data.groupby('factor_quantile')['1D'].mean()
 
-        
+
 
         return {
 
@@ -538,7 +538,7 @@ class FactorAnalyzer:
 
         }
 
-    
+
 
     def _check_monotonicity(self, returns: pd.Series) -> bool:
 
@@ -546,7 +546,7 @@ class FactorAnalyzer:
 
         return all(returns.iloc[i] <= returns.iloc[i+1] for i in range(len(returns)-1))
 
-    
+
 
     def _analyze_turnover(self, factor_data: pd.DataFrame) -> Dict:
 
@@ -554,7 +554,7 @@ class FactorAnalyzer:
 
         turnover = factor_data.groupby('factor_quantile')['factor'].count()
 
-        
+
 
         return {
 
@@ -564,7 +564,7 @@ class FactorAnalyzer:
 
         }
 
-    
+
 
     def _calculate_factor_returns(self, factor_data: pd.DataFrame) -> Dict:
 
@@ -572,7 +572,7 @@ class FactorAnalyzer:
 
         factor_returns = {}
 
-        
+
 
         for period in ['1D', '5D', '10D', '20D']:
 
@@ -580,11 +580,11 @@ class FactorAnalyzer:
 
                 factor_returns[period] = factor_data[period].mean()
 
-        
+
 
         return factor_returns
 
-    
+
 
     def generate_tear_sheet(self,
 
@@ -596,7 +596,7 @@ class FactorAnalyzer:
 
         """生成完整分析报告"""
 
-        
+
 
         factor_data_aligned = self._align_data(factor_data, price_data)
 
@@ -604,11 +604,11 @@ class FactorAnalyzer:
 
         factor_data_stacked.index = factor_data_stacked.index.set_names(['date', 'asset'])
 
-        
+
 
         price_data_aligned = price_data.reindex(factor_data_aligned.index)
 
-        
+
 
         create_full_tear_sheet(factor_data_stacked, price_data_aligned)
 
@@ -636,7 +636,7 @@ class FactorBacktestInterface:
 
     """因子回测接口"""
 
-    
+
 
     def run_backtest(self,
 
@@ -652,7 +652,7 @@ class FactorBacktestInterface:
 
         pass
 
-    
+
 
     def get_backtest_result(self,
 
@@ -662,7 +662,7 @@ class FactorBacktestInterface:
 
         pass
 
-    
+
 
     def compare_factors(self,
 
@@ -786,7 +786,7 @@ backtest:
 
   num_stocks: 10
 
-  
+
 
 factor:
 
@@ -794,7 +794,7 @@ factor:
 
   periods: [1, 5, 10, 20]
 
-  
+
 
 analysis:
 
@@ -871,4 +871,3 @@ analysis:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 活跃
-

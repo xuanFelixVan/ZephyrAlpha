@@ -50,7 +50,7 @@ priority: P1
 
 > **核心职责**: 宏观因子系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：宏观因子系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P1
 
 > **核心职责**: Macro Factor蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Macro Factor蓝图设计相关内容
 
@@ -464,13 +464,13 @@ class MacroFactorIdentifier:
 
     """宏观因子识别引擎"""
 
-    
+
 
     def __init__(self):
 
         self.factors: Dict[str, MacroFactor] = {}
 
-        
+
 
     def add_factor(self, factor: MacroFactor):
 
@@ -478,7 +478,7 @@ class MacroFactorIdentifier:
 
         self.factors[factor.factor_id] = factor
 
-    
+
 
     def get_factor(self, factor_id: str) -> Optional[MacroFactor]:
 
@@ -486,7 +486,7 @@ class MacroFactorIdentifier:
 
         return self.factors.get(factor_id)
 
-    
+
 
     def get_factors_by_type(self, factor_type: MacroFactorType) -> List[MacroFactor]:
 
@@ -494,7 +494,7 @@ class MacroFactorIdentifier:
 
         return [f for f in self.factors.values() if f.factor_type == factor_type]
 
-    
+
 
     def create_growth_factor(self,
 
@@ -512,13 +512,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         growth_factor = growth_data.mean(axis=1)
 
         growth_factor = (growth_factor - growth_factor.mean()) / growth_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -538,7 +538,7 @@ class MacroFactorIdentifier:
 
         )
 
-    
+
 
     def create_inflation_factor(self,
 
@@ -556,13 +556,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         inflation_factor = inflation_data.mean(axis=1)
 
         inflation_factor = (inflation_factor - inflation_factor.mean()) / inflation_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -582,7 +582,7 @@ class MacroFactorIdentifier:
 
         )
 
-    
+
 
     def create_interest_rate_factor(self,
 
@@ -600,13 +600,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         rate_factor = rate_data.mean(axis=1)
 
         rate_factor = (rate_factor - rate_factor.mean()) / rate_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -626,7 +626,7 @@ class MacroFactorIdentifier:
 
         )
 
-    
+
 
     def create_currency_factor(self,
 
@@ -644,13 +644,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         currency_factor = currency_data.mean(axis=1)
 
         currency_factor = (currency_factor - currency_factor.mean()) / currency_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -670,7 +670,7 @@ class MacroFactorIdentifier:
 
         )
 
-    
+
 
     def create_liquidity_factor(self,
 
@@ -688,13 +688,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         liquidity_factor = liquidity_data.mean(axis=1)
 
         liquidity_factor = (liquidity_factor - liquidity_factor.mean()) / liquidity_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -714,7 +714,7 @@ class MacroFactorIdentifier:
 
         )
 
-    
+
 
     def create_risk_appetite_factor(self,
 
@@ -732,13 +732,13 @@ class MacroFactorIdentifier:
 
         })
 
-        
+
 
         risk_factor = -risk_data.mean(axis=1)  # 负号：VIX高表示风险厌恶
 
         risk_factor = (risk_factor - risk_factor.mean()) / risk_factor.std()
 
-        
+
 
         return MacroFactor(
 
@@ -772,7 +772,7 @@ class FactorConstructionEngine:
 
     """因子构建引擎"""
 
-    
+
 
     def __init__(self, n_pca_components: int = 5):
 
@@ -782,7 +782,7 @@ class FactorConstructionEngine:
 
         self.scaler = None
 
-        
+
 
     def extract_pca_factors(self,
 
@@ -796,19 +796,19 @@ class FactorConstructionEngine:
 
         scaled_data = self.scaler.fit_transform(factor_data.dropna())
 
-        
+
 
         self.pca = PCA(n_components=retain_variance)
 
         pca_factors = self.pca.fit_transform(scaled_data)
 
-        
+
 
         n_components = pca_factors.shape[1]
 
         column_names = [f'PC{i+1}' for i in range(n_components)]
 
-        
+
 
         return pd.DataFrame(
 
@@ -820,9 +820,9 @@ class FactorConstructionEngine:
 
         )
 
-    
 
-    def orthogonalize_factors(self, 
+
+    def orthogonalize_factors(self,
 
                              factors: pd.DataFrame) -> pd.DataFrame:
 
@@ -830,13 +830,13 @@ class FactorConstructionEngine:
 
         orthogonal_factors = pd.DataFrame(index=factors.index)
 
-        
+
 
         for i, col in enumerate(factors.columns):
 
             factor = factors[col].copy()
 
-            
+
 
             for prev_col in orthogonal_factors.columns:
 
@@ -846,15 +846,15 @@ class FactorConstructionEngine:
 
                 factor = factor - projection * prev_factor
 
-            
+
 
             orthogonal_factors[col] = factor
 
-        
+
 
         return orthogonal_factors
 
-    
+
 
     def standardize_factors(self,
 
@@ -880,7 +880,7 @@ class FactorConstructionEngine:
 
             return factors
 
-    
+
 
     def combine_factors(self,
 
@@ -892,13 +892,13 @@ class FactorConstructionEngine:
 
         factor_df = pd.DataFrame(factors)
 
-        
+
 
         if weights is None:
 
             weights = {col: 1.0 / len(factors) for col in factor_df.columns}
 
-        
+
 
         combined = pd.Series(0, index=factor_df.index)
 
@@ -906,11 +906,11 @@ class FactorConstructionEngine:
 
             combined += factor_df[col] * weight
 
-        
+
 
         return combined
 
-    
+
 
     def get_factor_explained_variance(self) -> np.ndarray:
 
@@ -970,9 +970,9 @@ class FactorLoadingEstimator:
 
     """因子载荷估计器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  window: int = 252,
 
@@ -982,7 +982,7 @@ class FactorLoadingEstimator:
 
         self.min_periods = min_periods
 
-        
+
 
     def estimate_time_series(self,
 
@@ -996,13 +996,13 @@ class FactorLoadingEstimator:
 
         aligned_data = pd.concat([asset_returns, factor_returns], axis=1).dropna()
 
-        
+
 
         if len(aligned_data) < self.min_periods:
 
             return None
 
-        
+
 
         y = aligned_data.iloc[:, 0]
 
@@ -1010,7 +1010,7 @@ class FactorLoadingEstimator:
 
         X = sm.add_constant(X)
 
-        
+
 
         if method == 'ols':
 
@@ -1024,7 +1024,7 @@ class FactorLoadingEstimator:
 
             residuals = model.resid
 
-            
+
 
         elif method == 'lasso':
 
@@ -1040,7 +1040,7 @@ class FactorLoadingEstimator:
 
             residuals = y - lasso.predict(X.drop('const', axis=1))
 
-            
+
 
         elif method == 'ridge':
 
@@ -1060,7 +1060,7 @@ class FactorLoadingEstimator:
 
             raise ValueError(f"Unknown method: {method}")
 
-        
+
 
         return FactorLoadingResult(
 
@@ -1076,7 +1076,7 @@ class FactorLoadingEstimator:
 
         )
 
-    
+
 
     def estimate_cross_sectional(self,
 
@@ -1088,7 +1088,7 @@ class FactorLoadingEstimator:
 
         results = {}
 
-        
+
 
         for date in asset_returns.index:
 
@@ -1096,19 +1096,19 @@ class FactorLoadingEstimator:
 
             X = factor_values.loc[date] if date in factor_values.index else None
 
-            
+
 
             if X is None or len(X.dropna()) < len(X) * 0.5:
 
                 continue
 
-            
+
 
             X = sm.add_constant(X)
 
             model = sm.OLS(y, X).fit()
 
-            
+
 
             results[date] = FactorLoadingResult(
 
@@ -1124,11 +1124,11 @@ class FactorLoadingEstimator:
 
             )
 
-        
+
 
         return results
 
-    
+
 
     def estimate_rolling(self,
 
@@ -1142,7 +1142,7 @@ class FactorLoadingEstimator:
 
         loadings_list = []
 
-        
+
 
         for i in range(self.window, len(asset_returns)):
 
@@ -1150,11 +1150,11 @@ class FactorLoadingEstimator:
 
             window_factors = factor_returns.iloc[i-self.window:i]
 
-            
+
 
             result = self.estimate_time_series(window_returns, window_factors, method)
 
-            
+
 
             if result:
 
@@ -1166,7 +1166,7 @@ class FactorLoadingEstimator:
 
                 })
 
-        
+
 
         return pd.DataFrame(loadings_list).set_index('date')
 
@@ -1202,9 +1202,9 @@ class PortfolioExposureCalculator:
 
     """组合暴露计算器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  factor_loadings: Dict[str, Dict[str, float]],
 
@@ -1214,7 +1214,7 @@ class PortfolioExposureCalculator:
 
         self.factor_covariance = factor_covariance
 
-        
+
 
     def calculate_exposure(self,
 
@@ -1224,7 +1224,7 @@ class PortfolioExposureCalculator:
 
         exposures = {}
 
-        
+
 
         for asset, weight in weights.items():
 
@@ -1234,11 +1234,11 @@ class PortfolioExposureCalculator:
 
                     exposures[factor] = exposures.get(factor, 0) + weight * loading
 
-        
+
 
         return exposures
 
-    
+
 
     def calculate_marginal_contribution(self,
 
@@ -1248,7 +1248,7 @@ class PortfolioExposureCalculator:
 
         contributions = {}
 
-        
+
 
         for asset, weight in weights.items():
 
@@ -1260,11 +1260,11 @@ class PortfolioExposureCalculator:
 
                     contributions[asset][factor] = weight * loading
 
-        
+
 
         return contributions
 
-    
+
 
     def calculate_risk_contribution(self,
 
@@ -1274,19 +1274,19 @@ class PortfolioExposureCalculator:
 
         exposures = self.calculate_exposure(weights)
 
-        
+
 
         exposure_vector = pd.Series(exposures)
 
-        
+
 
         factor_var = exposure_vector @ self.factor_covariance @ exposure_vector
 
-        
+
 
         marginal_risk = self.factor_covariance @ exposure_vector
 
-        
+
 
         risk_contributions = {}
 
@@ -1294,11 +1294,11 @@ class PortfolioExposureCalculator:
 
             risk_contributions[factor] = exposures[factor] * marginal_risk[factor] / factor_var
 
-        
+
 
         return risk_contributions
 
-    
+
 
     def decompose_exposure(self,
 
@@ -1308,13 +1308,13 @@ class PortfolioExposureCalculator:
 
         breakdown = {}
 
-        
+
 
         for factor in self.factor_covariance.columns:
 
             breakdown[factor] = {}
 
-            
+
 
             for asset, weight in weights.items():
 
@@ -1324,11 +1324,11 @@ class PortfolioExposureCalculator:
 
                     breakdown[factor][asset] = weight * loading
 
-        
+
 
         return breakdown
 
-    
+
 
     def get_full_analysis(self,
 
@@ -1392,9 +1392,9 @@ class FactorReturnAttribution:
 
     """因子收益归因"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  factor_loadings: Dict[str, Dict[str, float]],
 
@@ -1404,7 +1404,7 @@ class FactorReturnAttribution:
 
         self.factor_returns = factor_returns
 
-    
+
 
     def attribute_return(self,
 
@@ -1418,7 +1418,7 @@ class FactorReturnAttribution:
 
         total_return = portfolio_returns.sum()
 
-        
+
 
         exposures = {}
 
@@ -1430,7 +1430,7 @@ class FactorReturnAttribution:
 
                     exposures[factor] = exposures.get(factor, 0) + weight * loading
 
-        
+
 
         factor_returns_dict = {}
 
@@ -1442,13 +1442,13 @@ class FactorReturnAttribution:
 
                 factor_returns_dict[factor] = exposures[factor] * factor_return
 
-        
+
 
         factor_return_total = sum(factor_returns_dict.values())
 
         specific_return = total_return - factor_return_total
 
-        
+
 
         attribution_pct = {}
 
@@ -1458,7 +1458,7 @@ class FactorReturnAttribution:
 
         attribution_pct['specific'] = specific_return / total_return if total_return != 0 else 0
 
-        
+
 
         return FactorAttributionResult(
 
@@ -1472,7 +1472,7 @@ class FactorReturnAttribution:
 
         )
 
-    
+
 
     def generate_attribution_report(self,
 
@@ -1488,9 +1488,9 @@ class FactorReturnAttribution:
 
         report += "因子收益贡献:\n"
 
-        
 
-        for factor, ret in sorted(result.factor_returns.items(), 
+
+        for factor, ret in sorted(result.factor_returns.items(),
 
                                  key=lambda x: abs(x[1]), reverse=True):
 
@@ -1498,13 +1498,13 @@ class FactorReturnAttribution:
 
             report += f"  {factor}: {ret:.2%} ({pct:.1%})\n"
 
-        
+
 
         specific_pct = result.attribution_pct.get('specific', 0)
 
         report += f"\n特质收益: {result.specific_return:.2%} ({specific_pct:.1%})\n"
 
-        
+
 
         return report
 
@@ -1538,7 +1538,7 @@ class RiskAttributionAnalysis:
 
     """风险归因分析"""
 
-    
+
 
     def __init__(self,
 
@@ -1550,7 +1550,7 @@ class RiskAttributionAnalysis:
 
         self.specific_risk = specific_risk
 
-    
+
 
     def attribute_risk(self,
 
@@ -1564,7 +1564,7 @@ class RiskAttributionAnalysis:
 
         factor_exposures = np.zeros(n_factors)
 
-        
+
 
         for i, factor in enumerate(self.factor_covariance.columns):
 
@@ -1574,11 +1574,11 @@ class RiskAttributionAnalysis:
 
                     factor_exposures[i] += weight * factor_loadings[asset].get(factor, 0)
 
-        
+
 
         factor_var = factor_exposures @ self.factor_covariance.values @ factor_exposures
 
-        
+
 
         specific_var = 0
 
@@ -1588,33 +1588,33 @@ class RiskAttributionAnalysis:
 
                 specific_var += (weight ** 2) * (self.specific_risk[asset] ** 2)
 
-        
+
 
         total_var = factor_var + specific_var
 
         total_risk = np.sqrt(total_var)
 
-        
+
 
         factor_risks = {}
 
         marginal_risk = self.factor_covariance.values @ factor_exposures
 
-        
+
 
         for i, factor in enumerate(self.factor_covariance.columns):
 
             factor_risks[factor] = factor_exposures[i] * marginal_risk[i] / total_var
 
-        
+
 
         specific_risk_contrib = specific_var / total_var
 
-        
+
 
         risk_contributions = {**factor_risks, 'specific': specific_risk_contrib}
 
-        
+
 
         return RiskAttributionResult(
 
@@ -1628,7 +1628,7 @@ class RiskAttributionAnalysis:
 
         )
 
-    
+
 
     def generate_risk_report(self,
 
@@ -1644,7 +1644,7 @@ class RiskAttributionAnalysis:
 
         report += "因子风险贡献:\n"
 
-        
+
 
         for factor, contrib in sorted(result.risk_contributions.items(),
 
@@ -1654,13 +1654,13 @@ class RiskAttributionAnalysis:
 
                 report += f"  {factor}: {contrib:.2%}\n"
 
-        
+
 
         report += f"\n特质风险: {result.specific_risk:.2%}\n"
 
         report += f"特质风险贡献: {result.risk_contributions.get('specific', 0):.2%}\n"
 
-        
+
 
         return report
 
@@ -1706,13 +1706,13 @@ class FactorExposureConstraintManager:
 
     """因子暴露约束管理器"""
 
-    
+
 
     def __init__(self):
 
         self.constraints: Dict[str, FactorConstraint] = {}
 
-    
+
 
     def add_constraint(self, constraint: FactorConstraint):
 
@@ -1720,7 +1720,7 @@ class FactorExposureConstraintManager:
 
         self.constraints[constraint.factor_name] = constraint
 
-    
+
 
     def set_neutral_constraint(self, factor_name: str, tolerance: float = 0.1):
 
@@ -1740,7 +1740,7 @@ class FactorExposureConstraintManager:
 
         )
 
-    
+
 
     def check_constraints(self,
 
@@ -1750,7 +1750,7 @@ class FactorExposureConstraintManager:
 
         results = {}
 
-        
+
 
         for factor, exposure in exposures.items():
 
@@ -1764,11 +1764,11 @@ class FactorExposureConstraintManager:
 
                 results[factor] = True
 
-        
+
 
         return results
 
-    
+
 
     def get_violations(self,
 
@@ -1778,7 +1778,7 @@ class FactorExposureConstraintManager:
 
         violations = {}
 
-        
+
 
         for factor, exposure in exposures.items():
 
@@ -1786,7 +1786,7 @@ class FactorExposureConstraintManager:
 
                 constraint = self.constraints[factor]
 
-                
+
 
                 if exposure < constraint.min_exposure:
 
@@ -1816,7 +1816,7 @@ class FactorExposureConstraintManager:
 
                     }
 
-        
+
 
         return violations
 
@@ -1834,9 +1834,9 @@ class FactorMonitoringAlert:
 
     """因子监控预警"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  constraint_manager: FactorExposureConstraintManager,
 
@@ -1846,7 +1846,7 @@ class FactorMonitoringAlert:
 
         self.warning_threshold = warning_threshold
 
-    
+
 
     def check_exposure_alerts(self,
 
@@ -1856,7 +1856,7 @@ class FactorMonitoringAlert:
 
         alerts = []
 
-        
+
 
         for factor, exposure in exposures.items():
 
@@ -1864,13 +1864,13 @@ class FactorMonitoringAlert:
 
                 constraint = self.constraint_manager.constraints[factor]
 
-                
+
 
                 range_size = constraint.max_exposure - constraint.min_exposure
 
                 warning_zone = range_size * (1 - self.warning_threshold) / 2
 
-                
+
 
                 if exposure < constraint.min_exposure + warning_zone:
 
@@ -1888,7 +1888,7 @@ class FactorMonitoringAlert:
 
                     })
 
-                
+
 
                 if exposure > constraint.max_exposure - warning_zone:
 
@@ -1906,7 +1906,7 @@ class FactorMonitoringAlert:
 
                     })
 
-        
+
 
         violations = self.constraint_manager.get_violations(exposures)
 
@@ -1924,7 +1924,7 @@ class FactorMonitoringAlert:
 
             })
 
-        
+
 
         return alerts
 
@@ -1958,13 +1958,13 @@ class SkfolioFactorIntegration:
 
     """skfolio因子模型集成"""
 
-    
+
 
     def __init__(self):
 
         self.factor_model = None
 
-    
+
 
     def create_factor_model(self,
 
@@ -1984,7 +1984,7 @@ class SkfolioFactorIntegration:
 
         return self.factor_model
 
-    
+
 
     def create_constrained_optimizer(self,
 
@@ -2020,13 +2020,13 @@ class StatsmodelsIntegration:
 
     """statsmodels集成"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def factor_regression(self,
 
@@ -2044,13 +2044,13 @@ class StatsmodelsIntegration:
 
             X = sm.add_constant(X)
 
-        
+
 
         model = sm.OLS(asset_returns, X)
 
         results = model.fit()
 
-        
+
 
         return results
 
@@ -2211,4 +2211,3 @@ class StatsmodelsIntegration:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

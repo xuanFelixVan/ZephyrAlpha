@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: GitLab Issues + GitLab Boards  
+**主方案**: GitLab Issues + GitLab Boards
 
 **前端**: 集成GitLab界面
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

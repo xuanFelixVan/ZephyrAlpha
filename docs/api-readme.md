@@ -62,7 +62,7 @@ layer: layer_00
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -525,4 +525,3 @@ CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 - OpenAPI规范: https://spec.openapis.org/oas/v3.1.html
 
 - Swagger UI: https://swagger.io/tools/swagger-ui/
-

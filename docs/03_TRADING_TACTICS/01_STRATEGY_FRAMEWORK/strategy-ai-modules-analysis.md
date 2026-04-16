@@ -33,7 +33,7 @@ implementation_status: ﮒﮔﮒ؟ﮔ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -307,7 +307,7 @@ Phase 1: AIﻝﻝ۴ﻝﻝ۸ﭘﻛﺕﻝﮔ?    - AIﻝﻝ۴ﮔﺏﮔﺏﻝﮔ
 
 
 
-  
+
 
 
 
@@ -323,7 +323,7 @@ Phase 2: AIﻝﻝ۴ﮔﭖﻟﺁﻛﺕﻛﺙﮒ?    - AIﮒﮔﭖﻠ۹ﻟﺁ
 
 
 
-  
+
 
 
 
@@ -331,7 +331,7 @@ Phase 2: AIﻝﻝ۴ﮔﭖﻟﺁﻛﺕﻛﺙﮒ?    - AIﮒﮔﭖﻠ۹ﻟﺁ
 
 
 
-  
+
 
 
 
@@ -347,7 +347,7 @@ Phase 4: ﻝﻝ۴ﻠ۷ﻝﺛﺎﻛﺕﻟﭖﻠﮒﻠ?    - AIﻝﻝ۴ﻠ۷ﻝﺛ
 
 
 
-  
+
 
 
 
@@ -433,7 +433,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -465,7 +465,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -485,7 +485,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -577,7 +577,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -593,7 +593,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -609,7 +609,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -629,7 +629,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -645,7 +645,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-    - ﮔﭖﮒ۷ﮔ۶ﻝﭦ۵ﮔ?  
+    - ﮔﭖﮒ۷ﮔ۶ﻝﭦ۵ﮔ?
 
 
 
@@ -735,7 +735,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -759,7 +759,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -779,7 +779,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -803,7 +803,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-  
+
 
 
 
@@ -815,7 +815,7 @@ Phase 5: ﮔﻝﭨﻝﮔ۶ﻛﺕﻟﺟﻛﭨ?    - AIﮔ۶ﻟﺛﻝﮔ۶
 
 
 
-    - ﻠﭨﮒ۳۸ﻠﺗﻛﭦﻛﭨﭘﮒﭦﮒﺁ?    - ﮔﭖﮒ۷ﮔ۶ﮒﺎﮔﭦﮒﭦﮒﺁ?    - ﻝﺏﭨﻝﭨﮔ۶ﻠ۲ﻠ۸ﮒﭦﮒﺁ?  
+    - ﻠﭨﮒ۳۸ﻠﺗﻛﭦﻛﭨﭘﮒﭦﮒﺁ?    - ﮔﭖﮒ۷ﮔ۶ﮒﺎﮔﭦﮒﭦﮒﺁ?    - ﻝﺏﭨﻝﭨﮔ۶ﻠ۲ﻠ۸ﮒﭦﮒﺁ?
 
 
 
@@ -917,7 +917,7 @@ class StrategyLifecycleAI:
 
 
 
-    
+
 
 
 
@@ -937,7 +937,7 @@ class StrategyLifecycleAI:
 
 
 
-        
+
 
 
 
@@ -957,7 +957,7 @@ class StrategyLifecycleAI:
 
 
 
-        
+
 
 
 
@@ -997,7 +997,7 @@ class StrategyLifecycleAI:
 
 
 
-        
+
 
 
 
@@ -1063,7 +1063,7 @@ class PortfolioOptimizationAI:
 
 
 
-    
+
 
 
 
@@ -1083,7 +1083,7 @@ class PortfolioOptimizationAI:
 
 
 
-        
+
 
 
 
@@ -1099,7 +1099,7 @@ class PortfolioOptimizationAI:
 
 
 
-        
+
 
 
 
@@ -1107,7 +1107,7 @@ class PortfolioOptimizationAI:
 
 
 
-        
+
 
 
 
@@ -1115,7 +1115,7 @@ class PortfolioOptimizationAI:
 
 
 
-        
+
 
 
 
@@ -1127,7 +1127,7 @@ class PortfolioOptimizationAI:
 
 
 
-        
+
 
 
 
@@ -1209,7 +1209,7 @@ class RiskControlAI:
 
 
 
-    
+
 
 
 
@@ -1229,7 +1229,7 @@ class RiskControlAI:
 
 
 
-        
+
 
 
 
@@ -1249,7 +1249,7 @@ class RiskControlAI:
 
 
 
-        
+
 
 
 
@@ -1261,7 +1261,7 @@ class RiskControlAI:
 
 
 
-        
+
 
 
 
@@ -1277,7 +1277,7 @@ class RiskControlAI:
 
 
 
-        
+
 
 
 
@@ -1289,7 +1289,7 @@ class RiskControlAI:
 
 
 
-        
+
 
 
 
@@ -1602,6 +1602,3 @@ class RiskControlAI:
 
 
 **ﮒﮔﻛﭦ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
-
-
-

@@ -27,12 +27,12 @@ def check_governance_health():
         capture_output=True,
         text=True
     )
-    
+
     if result.returncode != 0:
         print("[pre-commit] ❌ 扫描失败")
         print(result.stderr)
         return False
-    
+
     # 读取扫描结果
     try:
         with open(L1_STATE, encoding='utf-8') as f:
@@ -40,33 +40,33 @@ def check_governance_health():
     except Exception as e:
         print(f"[pre-commit] ⚠️  无法读取扫描结果: {e}")
         return True  # 允许提交继续
-    
+
     links_stats = data.get("links", {}).get("stats", {})
     mod_stats = data.get("module_ids", {})
-    
+
     invalid = links_stats.get("invalid", 0)
     dup_count = mod_stats.get("duplicate_ids_count", 0)
-    
+
     # 设定阈值
     # NOTE: 2026-04-17 全库 Sentinel 断链约 435（蓝图归档/索引漂移）；过渡期上调至 500。
     # 降低计划：每完成 2 个 Wave 下调 50，Wave 全部完成后恢复至 100。
     # 决策日期：2026-04-17 | 下次复查：Pipeline A Wave 3 完成后
     BROKEN_LINK_THRESHOLD = 500   # 允许的最大断链数（三条流水线执行期过渡阈值）
     DUPLICATE_THRESHOLD = 20       # 允许的最大活跃重复组
-    
+
     print("[pre-commit] 📊 治理健康度快照:")
     print(f"  断链数         : {invalid}")
     print(f"  重复 module_id : {dup_count}")
-    
+
     if invalid > BROKEN_LINK_THRESHOLD:
         print(f"[pre-commit] ❌ 断链数 {invalid} 超过阈值 {BROKEN_LINK_THRESHOLD}")
         print("[pre-commit] 💡 建议: 运行 fix_dead_links.py --apply 修复")
         return False
-    
+
     if dup_count > DUPLICATE_THRESHOLD:
         print(f"[pre-commit] ❌ 重复 module_id {dup_count} 超过阈值 {DUPLICATE_THRESHOLD}")
         return False
-    
+
     print("[pre-commit] ✅ 治理健康度检查通过")
     return True
 

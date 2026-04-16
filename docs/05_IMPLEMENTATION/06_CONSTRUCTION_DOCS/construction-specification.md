@@ -81,7 +81,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1854,7 +1854,7 @@ class [ClassName]:
 
 
 
-    
+
 
 
 
@@ -1878,7 +1878,7 @@ class [ClassName]:
 
 
 
-    
+
 
 
 
@@ -1908,7 +1908,7 @@ class [ClassName]:
 
 
 
-    
+
 
 
 
@@ -1926,7 +1926,7 @@ class [ClassName]:
 
 
 
-        
+
 
 
 
@@ -1968,7 +1968,7 @@ class [ClassName]:
 
 
 
-    
+
 
 
 
@@ -1986,7 +1986,7 @@ class [ClassName]:
 
 
 
-        
+
 
 
 
@@ -2004,7 +2004,7 @@ class [ClassName]:
 
 
 
-        
+
 
 
 
@@ -2016,7 +2016,7 @@ class [ClassName]:
 
 
 
-            返回值说?        
+            返回值说?
 
 
 
@@ -2160,7 +2160,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2172,7 +2172,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2196,7 +2196,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2214,7 +2214,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2226,7 +2226,7 @@ def calculate_position_size(
 
 
 
-        ValueError: 如果risk_pct不在0-1范围?    
+        ValueError: 如果risk_pct不在0-1范围?
 
 
 
@@ -2274,7 +2274,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2292,7 +2292,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -2310,7 +2310,7 @@ def calculate_position_size(
 
 
 
-    
+
 
 
 
@@ -4013,19 +4013,19 @@ implementation_status: 进行?---
 
 
 
-**文档维护?*: 首席架构? 
+**文档维护?*: 首席架构?
 
 
 
 
 
-**创建日期**: 2026-04-02  
+**创建日期**: 2026-04-02
 
 
 
 
 
-**最后更?*: 2026-04-02  
+**最后更?*: 2026-04-02
 
 
 
@@ -4080,8 +4080,3 @@ implementation_status: 进行?---
 
 
 **请将本说明书的路径添加到AI智能体的上下文中，确保每次施工都能参考本规范?*
-
-
-
-
-

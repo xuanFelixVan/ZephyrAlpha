@@ -162,7 +162,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
 ├─────────────────────────────────────────────────────────────
 
-                                                            
+
 
  ┌─────────────────────────────────────────────────────┐
 
@@ -196,7 +196,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
  └─────────────────────────────────────────────────────┘
 
-                                                          
+
 
  ┌─────────────────────────────────────────────────────┐
 
@@ -228,7 +228,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
  └─────────────────────────────────────────────────────┘
 
-                                                          
+
 
  ┌─────────────────────────────────────────────────────┐
 
@@ -244,7 +244,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
  └─────────────────────────────────────────────────────┘
 
-                                                            
+
 
 └─────────────────────────────────────────────────────────────
 
@@ -260,7 +260,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
 情景定义 → 数据准备 → 压力测试执行 → 结果分析 → 报告生成 → 风险决策
 
-                                                           
+
 
     └────────────────── 情景优化 ←───────────────────────────
 
@@ -742,7 +742,7 @@ StressTestSettings:
 
       MarketDrop: -0.40
 
-      
+
 
     - Name: "2015股灾"
 
@@ -752,7 +752,7 @@ StressTestSettings:
 
       MarketDrop: -0.35
 
-      
+
 
   HypotheticalScenarios:
 
@@ -762,7 +762,7 @@ StressTestSettings:
 
       Severity: 0.30
 
-      
+
 
     - Name: "流动性枯竭"
 
@@ -792,7 +792,7 @@ class ScenarioAnalysisSystem:
 
     """情景分析与压力测试系统"""
 
-    
+
 
     def __init__(self):
 
@@ -802,17 +802,17 @@ class ScenarioAnalysisSystem:
 
         self.trading_monitor = LiveTradingMonitor()
 
-    
+
 
     def run_historical_scenario_test(self, scenario_name: str) -> dict:
 
         """运行历史情景测试"""
 
-        
+
 
         portfolio = self.trading_monitor.get_current_positions()
 
-        
+
 
         result = self.stress_engine.run_historical_scenario(
 
@@ -822,15 +822,15 @@ class ScenarioAnalysisSystem:
 
         )
 
-        
+
 
         risk_metrics = self._calculate_risk_metrics(result)
 
-        
+
 
         report = self._generate_report(result, risk_metrics)
 
-        
+
 
         return {
 
@@ -846,17 +846,17 @@ class ScenarioAnalysisSystem:
 
         }
 
-    
+
 
     def run_hypothetical_scenario_test(self, scenario_params: dict) -> dict:
 
         """运行假设情景测试"""
 
-        
+
 
         portfolio = self.trading_monitor.get_current_positions()
 
-        
+
 
         result = self.stress_engine.run_hypothetical_scenario(
 
@@ -866,11 +866,11 @@ class ScenarioAnalysisSystem:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_risk_metrics(self, test_result: dict) -> dict:
 
@@ -1127,4 +1127,3 @@ class ScenarioAnalysisSystem:
 
 
 **版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: 蓝图设计
-

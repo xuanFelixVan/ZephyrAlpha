@@ -337,7 +337,7 @@ const EngineStatusCard: React.FC<EngineStatusCardProps> = ({
 
   return (
 
-    <Card 
+    <Card
 
       title={
 
@@ -895,15 +895,15 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
 
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis 
+          <XAxis
 
-            dataKey={xAxisKey} 
+            dataKey={xAxisKey}
 
             tickFormatter={formatDate}
 
           />
 
-          <YAxis 
+          <YAxis
 
             tickFormatter={formatNumber}
 
@@ -911,7 +911,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
 
           />
 
-          <Tooltip 
+          <Tooltip
 
             formatter={(value) => [formatNumber(value as number), yAxisKey]}
 
@@ -975,7 +975,7 @@ graph LR
 
     H --> D
 
-    
+
 
     I[WebSocket] --> J[WebSocket Service]
 
@@ -1093,7 +1093,7 @@ const startEngine = createAsyncThunk('engines/start', async (engineId: string) =
 
 
 
-const updateEngineConfig = createAsyncThunk('engines/updateConfig', 
+const updateEngineConfig = createAsyncThunk('engines/updateConfig',
 
   async ({ engineId, config }: { engineId: string; config: EngineConfig }) => {
 
@@ -1109,7 +1109,7 @@ const updateEngineConfig = createAsyncThunk('engines/updateConfig',
 
 // ﻛﭦ۳ﮔﻝﺕﮒﺏAction
 
-const fetchTrades = createAsyncThunk('trades/fetch', 
+const fetchTrades = createAsyncThunk('trades/fetch',
 
   async (filters: TradeFilters) => {
 
@@ -1125,7 +1125,7 @@ const fetchTrades = createAsyncThunk('trades/fetch',
 
 // WebSocket Action
 
-const websocketMessageReceived = createAction('websocket/message', 
+const websocketMessageReceived = createAction('websocket/message',
 
   (message: WebSocketMessage) => ({ payload: message })
 
@@ -1399,13 +1399,12 @@ src/
 
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02
 
 **ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 
-**ﻝﺑ۱ﮒﺙ**: `DESIGN_004`  
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_004`
 
 **ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰
-

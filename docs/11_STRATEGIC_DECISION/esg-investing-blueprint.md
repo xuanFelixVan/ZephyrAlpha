@@ -50,7 +50,7 @@ priority: P2
 
 > **核心职责**: ESG投资系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：ESG投资系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P2
 
 > **核心职责**: Esg Investing蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Esg Investing蓝图设计相关内容
 
@@ -414,7 +414,7 @@ class ESGDataManager:
 
     """ESG数据管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -422,7 +422,7 @@ class ESGDataManager:
 
         self.exclusion_list: List[str] = []
 
-        
+
 
     def add_esg_score(self, score: ESGScore):
 
@@ -430,7 +430,7 @@ class ESGDataManager:
 
         self.esg_scores[score.stock_code] = score
 
-    
+
 
     def get_esg_score(self, stock_code: str) -> Optional[ESGScore]:
 
@@ -438,7 +438,7 @@ class ESGDataManager:
 
         return self.esg_scores.get(stock_code)
 
-    
+
 
     def add_to_exclusion_list(self, stock_code: str, reason: str):
 
@@ -446,9 +446,9 @@ class ESGDataManager:
 
         self.exclusion_list.append(stock_code)
 
-    
 
-    def calculate_portfolio_esg_score(self, 
+
+    def calculate_portfolio_esg_score(self,
 
                                      weights: Dict[str, float]) -> float:
 
@@ -458,7 +458,7 @@ class ESGDataManager:
 
         total_weight = 0
 
-        
+
 
         for stock, weight in weights.items():
 
@@ -468,13 +468,13 @@ class ESGDataManager:
 
                 total_weight += weight
 
-        
+
 
         return total_score / total_weight if total_weight > 0 else 0
 
-    
 
-    def get_low_esg_stocks(self, 
+
+    def get_low_esg_stocks(self,
 
                           threshold: float = 50) -> List[str]:
 
@@ -506,9 +506,9 @@ class ESGOptimizer:
 
     """ESG优化器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  esg_manager: ESGDataManager,
 
@@ -522,7 +522,7 @@ class ESGOptimizer:
 
         self.cov_matrix = cov_matrix
 
-    
+
 
     def optimize_with_esg_constraint(self,
 
@@ -534,7 +534,7 @@ class ESGOptimizer:
 
         ef = EfficientFrontier(self.expected_returns, self.cov_matrix)
 
-        
+
 
         assets = list(self.expected_returns.index)
 
@@ -546,11 +546,11 @@ class ESGOptimizer:
 
         ])
 
-        
+
 
         ef.add_constraint(lambda w: w <= max_weight)
 
-        
+
 
         n_assets = len(assets)
 
@@ -560,7 +560,7 @@ class ESGOptimizer:
 
         )
 
-        
+
 
         for stock in self.esg_manager.exclusion_list:
 
@@ -570,7 +570,7 @@ class ESGOptimizer:
 
                 ef.add_constraint(lambda w, idx=idx: w[idx] == 0)
 
-        
+
 
         weights = ef.max_sharpe()
 
@@ -727,4 +727,3 @@ class ESGOptimizer:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

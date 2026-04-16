@@ -39,7 +39,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -721,7 +721,7 @@ class GraphNeuralNetwork:
 
 
 
-    
+
 
 
 
@@ -829,7 +829,7 @@ class GraphNeuralNetwork:
 
 
 
-        
+
 
 
 
@@ -925,7 +925,7 @@ class GraphNeuralNetwork:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class GraphNeuralNetwork:
 
 
 
-        """构建图数据        
+        """构建图数据
 
 
 
@@ -1033,7 +1033,7 @@ class GraphNeuralNetwork:
 
 
 
-            edges: 边数据            
+            edges: 边数据
 
 
 
@@ -1081,7 +1081,7 @@ class GraphNeuralNetwork:
 
 
 
-    
+
 
 
 
@@ -1141,7 +1141,7 @@ class GraphNeuralNetwork:
 
 
 
-        """编码图节奏        
+        """编码图节奏
 
 
 
@@ -1165,7 +1165,7 @@ class GraphNeuralNetwork:
 
 
 
-            graph: 图数据            
+            graph: 图数据
 
 
 
@@ -1225,7 +1225,7 @@ class GraphNeuralNetwork:
 
 
 
-    
+
 
 
 
@@ -1309,7 +1309,7 @@ class GraphNeuralNetwork:
 
 
 
-        
+
 
 
 
@@ -1345,7 +1345,7 @@ class GraphNeuralNetwork:
 
 
 
-            target_pairs: 目标节点?            
+            target_pairs: 目标节点?
 
 
 
@@ -2126,14 +2126,3 @@ networkx>=3.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

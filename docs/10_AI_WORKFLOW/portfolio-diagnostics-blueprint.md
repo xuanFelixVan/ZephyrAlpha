@@ -296,7 +296,7 @@ class RiskExposureAnalyzer:
 
         for factor in factor_loadings.columns:
 
-            exposure = sum(weights.get(asset, 0) * factor_loadings.loc[asset, factor] 
+            exposure = sum(weights.get(asset, 0) * factor_loadings.loc[asset, factor]
 
                          for asset in factor_loadings.index)
 
@@ -304,7 +304,7 @@ class RiskExposureAnalyzer:
 
         return exposures
 
-    
+
 
     def analyze_industry_exposure(self, weights: dict, industry_mapping: dict):
 
@@ -344,7 +344,7 @@ class PortfolioOptimizer:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         ef = EfficientFrontier(mu, S)
 
@@ -352,7 +352,7 @@ class PortfolioOptimizer:
 
         return weights
 
-    
+
 
     def optimize_min_volatility(self, prices: pd.DataFrame):
 
@@ -362,7 +362,7 @@ class PortfolioOptimizer:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         ef = EfficientFrontier(mu, S)
 
@@ -370,7 +370,7 @@ class PortfolioOptimizer:
 
         return weights
 
-    
+
 
     def optimize_risk_parity(self, prices: pd.DataFrame):
 
@@ -494,7 +494,7 @@ class PortfolioDiagnostics:
 
         pass
 
-    
+
 
     def get_risk_exposure(self, portfolio: Portfolio) -> RiskExposure:
 
@@ -502,7 +502,7 @@ class PortfolioDiagnostics:
 
         pass
 
-    
+
 
     def get_return_attribution(self, portfolio: Portfolio) -> ReturnAttribution:
 
@@ -510,7 +510,7 @@ class PortfolioDiagnostics:
 
         pass
 
-    
+
 
     def get_optimization_suggestions(self, portfolio: Portfolio) -> List[OptimizationSuggestion]:
 
@@ -518,7 +518,7 @@ class PortfolioDiagnostics:
 
         pass
 
-    
+
 
     def get_health_score(self, portfolio: Portfolio) -> HealthScore:
 
@@ -687,4 +687,3 @@ class HealthScore(BaseModel):
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

@@ -23,7 +23,7 @@ from src.api.routes import health, strategies, backtest, monitoring
 def custom_openapi():
     """
     自定义OpenAPI规范
-    
+
     添加：
     - 详细的API描述
     - 联系信息
@@ -32,7 +32,7 @@ def custom_openapi():
     """
     if app.openapi_schema:
         return app.openapi_schema
-    
+
     openapi_schema = get_openapi(
         title="ZephyrAlpha量化交易系统API",
         version="1.0.0",
@@ -113,18 +113,18 @@ ZephyrAlpha是一个专业级量化交易系统，提供完整的策略开发、
             },
         ],
     )
-    
+
     openapi_schema["info"]["contact"] = {
         "name": "ZephyrAlpha团队",
         "email": "support@zephyr-alpha.com",
         "url": "https://zephyr-alpha.com",
     }
-    
+
     openapi_schema["info"]["license"] = {
         "name": "MIT License",
         "url": "https://opensource.org/licenses/MIT",
     }
-    
+
     openapi_schema["servers"] = [
         {
             "url": "http://localhost:8000",
@@ -135,7 +135,7 @@ ZephyrAlpha是一个专业级量化交易系统，提供完整的策略开发、
             "description": "生产环境服务器",
         },
     ]
-    
+
     openapi_schema["components"]["securitySchemes"] = {
         "bearerAuth": {
             "type": "http",
@@ -150,7 +150,7 @@ ZephyrAlpha是一个专业级量化交易系统，提供完整的策略开发、
             "description": "API密钥认证，在请求头中添加 X-API-Key",
         },
     }
-    
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
@@ -190,7 +190,7 @@ app.include_router(monitoring.router, prefix="/api/monitoring", tags=["monitorin
 async def root():
     """
     API根路径
-    
+
     返回系统基本信息和可用端点
     """
     return {

@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Grafana Monitoring蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Grafana Monitoring蓝图设计相关内容
 
@@ -32,11 +32,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 2周  
+> **实施周期**: 2周
 
 > **目标**: 构建专业级监控可视化系统，使用Prometheus+Grafana+AlertManager替代自研监控
 
@@ -406,7 +406,7 @@ class ZephyrAlphaExporter:
 
     """ZephyrAlpha自定义指标导出器"""
 
-    
+
 
     def __init__(self, port=8000):
 
@@ -414,7 +414,7 @@ class ZephyrAlphaExporter:
 
         self.running = False
 
-        
+
 
     def start(self):
 
@@ -424,7 +424,7 @@ class ZephyrAlphaExporter:
 
         self.running = True
 
-        
+
 
         # 启动后台采集线程
 
@@ -432,7 +432,7 @@ class ZephyrAlphaExporter:
 
         thread.start()
 
-        
+
 
     def _collect_metrics(self):
 
@@ -446,29 +446,29 @@ class ZephyrAlphaExporter:
 
                 self._collect_system_metrics()
 
-                
+
 
                 # 采集交易指标
 
                 self._collect_trading_metrics()
 
-                
+
 
                 # 采集风险指标
 
                 self._collect_risk_metrics()
 
-                
+
 
             except Exception as e:
 
                 print(f"指标采集失败: {e}")
 
-            
+
 
             time.sleep(10)  # 每10秒采集一次
 
-    
+
 
     def _collect_system_metrics(self):
 
@@ -476,13 +476,13 @@ class ZephyrAlphaExporter:
 
         import psutil
 
-        
+
 
         SYSTEM_CPU_USAGE.set(psutil.cpu_percent())
 
         SYSTEM_MEMORY_USAGE.set(psutil.virtual_memory().percent)
 
-    
+
 
     def _collect_trading_metrics(self):
 
@@ -494,7 +494,7 @@ class ZephyrAlphaExporter:
 
         pass
 
-    
+
 
     def _collect_risk_metrics(self):
 
@@ -574,7 +574,7 @@ scrape_configs:
 
       - targets: ['localhost:9090']
 
-  
+
 
   # 系统指标监控
 
@@ -584,7 +584,7 @@ scrape_configs:
 
       - targets: ['localhost:9100']
 
-  
+
 
   # ZephyrAlpha应用监控
 
@@ -598,7 +598,7 @@ scrape_configs:
 
     scrape_interval: 10s
 
-  
+
 
   # 数据库监控
 
@@ -608,7 +608,7 @@ scrape_configs:
 
       - targets: ['localhost:9187']
 
-  
+
 
   # Redis监控
 
@@ -658,7 +658,7 @@ groups:
 
           description: "交易延迟P95 > 5秒，当前值: {{ $value }}秒"
 
-      
+
 
       # 交易失败率告警
 
@@ -708,7 +708,7 @@ groups:
 
           description: "组合VaR超过100万，当前值: {{ $value }}"
 
-      
+
 
       # 最大回撤告警
 
@@ -758,7 +758,7 @@ groups:
 
           description: "CPU使用率 > 80%，当前值: {{ $value }}%"
 
-      
+
 
       # 内存使用率告警
 
@@ -1178,7 +1178,7 @@ route:
 
       continue: true
 
-    
+
 
     - match:
 
@@ -1188,7 +1188,7 @@ route:
 
       continue: true
 
-    
+
 
     # P1级预警 - 企业微信+钉钉
 
@@ -1200,7 +1200,7 @@ route:
 
       continue: true
 
-    
+
 
     - match:
 
@@ -1208,7 +1208,7 @@ route:
 
       receiver: 'dingtalk'
 
-    
+
 
     # P2级预警 - 企业微信
 
@@ -1218,7 +1218,7 @@ route:
 
       receiver: 'wechat'
 
-    
+
 
     # P3级预警 - 邮件
 
@@ -1240,7 +1240,7 @@ receivers:
 
         send_resolved: true
 
-  
+
 
   - name: 'dingtalk'
 
@@ -1250,7 +1250,7 @@ receivers:
 
         send_resolved: true
 
-  
+
 
   - name: 'email'
 
@@ -1412,7 +1412,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   grafana:
 
@@ -1440,7 +1440,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   alertmanager:
 
@@ -1460,7 +1460,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   node-exporter:
 
@@ -1661,4 +1661,3 @@ Grafana监控可视化系统通过**开源优先策略**，实现了：
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

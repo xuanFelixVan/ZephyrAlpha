@@ -21,7 +21,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -195,7 +195,7 @@ class UnrealizedGainLossCalculator:
 
     """
 
-    
+
 
     def calculate_unrealized_pnl(
 
@@ -211,7 +211,7 @@ class UnrealizedGainLossCalculator:
 
         """
 
-        
+
 
         参数:
 
@@ -221,7 +221,7 @@ class UnrealizedGainLossCalculator:
 
             current_prices: 当前价格
 
-            
+
 
         返回:
 
@@ -229,7 +229,7 @@ class UnrealizedGainLossCalculator:
 
         pass
 
-    
+
 
     def identify_harvest_candidates(
 
@@ -243,11 +243,11 @@ class UnrealizedGainLossCalculator:
 
         """
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -269,11 +269,11 @@ class WashSaleDetector:
 
     洗售规则检测器
 
-    
+
 
     """
 
-    
+
 
     def check_wash_sale(
 
@@ -291,7 +291,7 @@ class WashSaleDetector:
 
         """
 
-        
+
 
         返回:
 
@@ -303,7 +303,7 @@ class WashSaleDetector:
 
         pass
 
-    
+
 
     def find_wash_sale_period(
 
@@ -335,11 +335,11 @@ class SubstituteSecuritySelector:
 
     """
 
-    
+
 
     """
 
-    
+
 
     def find_substitutes(
 
@@ -357,11 +357,11 @@ class SubstituteSecuritySelector:
 
         查找替代证券
 
-        
+
 
         参数:
 
-            
+
 
         返回:
 
@@ -385,7 +385,7 @@ class AfterTaxReturnOptimizer:
 
     """
 
-    
+
 
     def optimize_after_tax(
 
@@ -405,7 +405,7 @@ class AfterTaxReturnOptimizer:
 
         税后收益优化
 
-        
+
 
         参数:
 
@@ -415,7 +415,7 @@ class AfterTaxReturnOptimizer:
 
             long_term_tax_rate: 长期资本利得税率
 
-            
+
 
         返回:
 
@@ -425,7 +425,7 @@ class AfterTaxReturnOptimizer:
 
         pass
 
-    
+
 
     def calculate_tax_savings(
 
@@ -465,11 +465,11 @@ class TaxLossHarvester:
 
     """
 
-    
+
 
     """
 
-    
+
 
     def __init__(
 
@@ -491,7 +491,7 @@ class TaxLossHarvester:
 
         self.tax_optimizer = AfterTaxReturnOptimizer()
 
-    
+
 
     def scan_harvest_opportunities(
 
@@ -511,7 +511,7 @@ class TaxLossHarvester:
 
         pass
 
-    
+
 
     def execute_harvest(
 
@@ -547,7 +547,7 @@ tax_loss_harvesting:
 
   jurisdiction: 'US'  # US, CN
 
-  
+
 
   # 税率
 
@@ -557,7 +557,7 @@ tax_loss_harvesting:
 
     long_term: 0.15   # 长期资本利得
 
-    
+
 
   # 洗售规则
 
@@ -569,11 +569,11 @@ tax_loss_harvesting:
 
     forward_days: 30
 
-    
+
 
   harvest:
 
-    
+
 
   # 替代证券
 
@@ -635,7 +635,7 @@ graph LR
 
     D[交易成本分析引擎] --> B
 
-    
+
 
     B --> E[组合再平衡]
 
@@ -643,7 +643,7 @@ graph LR
 
     B --> G[季度调仓]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -754,8 +754,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-
-
-
-
-

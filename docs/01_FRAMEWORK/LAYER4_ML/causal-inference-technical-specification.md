@@ -37,7 +37,7 @@ implementation_status: ﮔﮔﺁﻟ۶ﮔﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -245,7 +245,7 @@ implementation_status: ﮔﮔﺁﻟ۶ﮔﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -493,7 +493,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -509,7 +509,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -525,7 +525,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -541,7 +541,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -557,7 +557,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -581,7 +581,7 @@ class CausalGraph:
 
 
 
-    
+
 
 
 
@@ -601,7 +601,7 @@ class CausalGraph:
 
 
 
-        
+
 
 
 
@@ -637,7 +637,7 @@ class CausalGraph:
 
 
 
-        
+
 
 
 
@@ -761,7 +761,7 @@ class CausalDiscovery:
 
 
 
-    
+
 
 
 
@@ -773,7 +773,7 @@ class CausalDiscovery:
 
 
 
-    
+
 
 
 
@@ -785,7 +785,7 @@ class CausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -817,7 +817,7 @@ class CausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -829,7 +829,7 @@ class CausalDiscovery:
 
 
 
-            alpha: ﮔﺝﻟﮔ۶ﮔﺍﺑﮒﺗ?            indep_test: ﻝ؛ﻝ،ﮔ۶ﮔ۲ﻠ۹ﮔﺗﮔﺏ?            
+            alpha: ﮔﺝﻟﮔ۶ﮔﺍﺑﮒﺗ?            indep_test: ﻝ؛ﻝ،ﮔ۶ﮔ۲ﻠ۹ﮔﺗﮔﺏ?
 
 
 
@@ -845,7 +845,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -853,7 +853,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -865,7 +865,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -877,7 +877,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -905,7 +905,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-                    
+
 
 
 
@@ -917,7 +917,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-                    
+
 
 
 
@@ -949,7 +949,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -957,7 +957,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -985,7 +985,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-    
+
 
 
 
@@ -1017,7 +1017,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1037,7 +1037,7 @@ lambda1: L1ﮔ۲ﮒﮒﮒﮔ?            loss_type: ﮔﮒ۳ﺎﮒﺛﮔﺍﻝ�
 
 
 
-            
+
 
 
 
@@ -1053,7 +1053,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1065,7 +1065,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1073,7 +1073,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1085,7 +1085,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1097,7 +1097,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1121,7 +1121,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-                    
+
 
 
 
@@ -1153,7 +1153,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-        
+
 
 
 
@@ -1181,7 +1181,7 @@ CausalGraph: ﮒﮔﮒ?        """
 
 
 
-    
+
 
 
 
@@ -1225,7 +1225,7 @@ graph: ﮒﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
 
 
 
-            
+
 
 
 
@@ -1265,7 +1265,7 @@ graph: ﮒﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
 
 
 
-        
+
 
 
 
@@ -1281,7 +1281,7 @@ validation_result["violations"].append("ﮒﮒ۷ﻝ?)
 
 
 
-        
+
 
 
 
@@ -1317,7 +1317,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-        
+
 
 
 
@@ -1325,7 +1325,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-        
+
 
 
 
@@ -1333,7 +1333,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-    
+
 
 
 
@@ -1349,7 +1349,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-        
+
 
 
 
@@ -1361,7 +1361,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-        
+
 
 
 
@@ -1385,7 +1385,7 @@ f"ﻝ۵ﮔ۱ﻟﺝﺗﮒﮒ? {source} -> {target}"
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class CausalEffectEstimator:
 
 
 
-    
+
 
 
 
@@ -1429,7 +1429,7 @@ class CausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -1469,7 +1469,7 @@ class CausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -1497,7 +1497,7 @@ confounders: ﮔﺓﺓﮔﮒﻝﺑ
 
 
 
-            
+
 
 
 
@@ -1521,7 +1521,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1537,7 +1537,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1553,7 +1553,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1565,7 +1565,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1577,7 +1577,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1609,7 +1609,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1633,7 +1633,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1653,7 +1653,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1661,7 +1661,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1709,7 +1709,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-    
+
 
 
 
@@ -1765,7 +1765,7 @@ confounders: ﮔﺓﺓﮔﮒﻝﺑ
 
 
 
-            
+
 
 
 
@@ -1785,7 +1785,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1801,7 +1801,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1817,7 +1817,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1825,7 +1825,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1837,7 +1837,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1849,7 +1849,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1857,7 +1857,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1873,7 +1873,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1921,7 +1921,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-    
+
 
 
 
@@ -1957,7 +1957,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -1981,7 +1981,7 @@ confounders: ﮔﺓﺓﮔﮒﻝﺑ
 
 
 
-            
+
 
 
 
@@ -2001,7 +2001,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2017,7 +2017,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2037,7 +2037,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2049,7 +2049,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2061,7 +2061,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2073,7 +2073,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2089,7 +2089,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2105,7 +2105,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2113,7 +2113,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2129,7 +2129,7 @@ CausalEffect: ﮒﮔﮔﮒﭦ
 
 
 
-        
+
 
 
 
@@ -2193,7 +2193,7 @@ class CounterfactualAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ class CounterfactualAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2213,7 +2213,7 @@ class CounterfactualAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2253,7 +2253,7 @@ class CounterfactualAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2281,7 +2281,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-            
+
 
 
 
@@ -2301,7 +2301,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-        
+
 
 
 
@@ -2309,7 +2309,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-        
+
 
 
 
@@ -2321,7 +2321,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-            
+
 
 
 
@@ -2333,7 +2333,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-            
+
 
 
 
@@ -2349,7 +2349,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-            
+
 
 
 
@@ -2357,7 +2357,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-            
+
 
 
 
@@ -2393,7 +2393,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-        
+
 
 
 
@@ -2401,7 +2401,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-    
+
 
 
 
@@ -2441,7 +2441,7 @@ sample_indices: ﮔﺓﮔ؛ﻝﺑ۱ﮒﺙ
 
 
 
-        
+
 
 
 
@@ -2485,7 +2485,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-        
+
 
 
 
@@ -2497,7 +2497,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-            
+
 
 
 
@@ -2517,7 +2517,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-            
+
 
 
 
@@ -2529,7 +2529,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-        
+
 
 
 
@@ -2537,7 +2537,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-    
+
 
 
 
@@ -2573,7 +2573,7 @@ Dict[str, float]: ﮒﮒﻝﺝ۳ﻛﺛﻝCATE
 
 
 
-        
+
 
 
 
@@ -2593,7 +2593,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-            
+
 
 
 
@@ -2617,7 +2617,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2625,7 +2625,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2633,7 +2633,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2649,7 +2649,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2657,7 +2657,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2665,7 +2665,7 @@ outcome: ﻝ؟ﮔﻝﭨﮔﮒﻠ
 
 
 
-        
+
 
 
 
@@ -2729,7 +2729,7 @@ class FactorCausalAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2753,7 +2753,7 @@ class FactorCausalAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2797,7 +2797,7 @@ returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒﮒﮒﻝ۶ﺍﮒﻟ
 
 
 
-            
+
 
 
 
@@ -2821,7 +2821,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -2829,7 +2829,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -2845,7 +2845,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-            
+
 
 
 
@@ -2865,7 +2865,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -2885,7 +2885,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -2909,11 +2909,11 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-                f for f in factor_names 
+                f for f in factor_names
 
 
 
-                if f not in direct_causes and 
+                if f not in direct_causes and
 
 
 
@@ -2929,7 +2929,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -2965,7 +2965,7 @@ Dict: ﮒﮔﮒﮔﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -2981,7 +2981,7 @@ returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒﮒﮒﻝ۶ﺍﮒﻟ
 
 
 
-            threshold: ﮔﮒﭦﻠﮒ?            
+            threshold: ﮔﮒﭦﻠﮒ?
 
 
 
@@ -3001,7 +3001,7 @@ List[str]: ﻟﮒﻛﺟ۰ﮒﺓﮒﮒﮒﻟ۰۷
 
 
 
-        
+
 
 
 
@@ -3021,7 +3021,7 @@ List[str]: ﻟﮒﻛﺟ۰ﮒﺓﮒﮒﮒﻟ۰۷
 
 
 
-        
+
 
 
 
@@ -3093,7 +3093,7 @@ class TestCausalDiscovery:
 
 
 
-    
+
 
 
 
@@ -3113,7 +3113,7 @@ class TestCausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -3129,7 +3129,7 @@ class TestCausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -3137,7 +3137,7 @@ class TestCausalDiscovery:
 
 
 
-    
+
 
 
 
@@ -3157,7 +3157,7 @@ class TestCausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -3173,7 +3173,7 @@ class TestCausalDiscovery:
 
 
 
-    
+
 
 
 
@@ -3193,7 +3193,7 @@ class TestCausalDiscovery:
 
 
 
-        
+
 
 
 
@@ -3213,7 +3213,7 @@ class TestCausalEffectEstimator:
 
 
 
-    
+
 
 
 
@@ -3233,7 +3233,7 @@ class TestCausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -3249,7 +3249,7 @@ class TestCausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -3257,7 +3257,7 @@ class TestCausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -3269,7 +3269,7 @@ class TestCausalEffectEstimator:
 
 
 
-        
+
 
 
 
@@ -3462,6 +3462,3 @@ class TestCausalEffectEstimator:
 
 
 ```
-
-
-

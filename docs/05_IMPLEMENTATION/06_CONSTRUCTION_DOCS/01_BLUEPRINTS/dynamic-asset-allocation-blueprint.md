@@ -17,7 +17,7 @@ layer: layer_06
 ---
 
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：动态资产配置、资产权重调整、市场环境适应
 > - ❌ 本文档不负责：单资产优化（由均值方差优化模块负责）
 
@@ -90,9 +90,9 @@ layer: layer_06
 ```python
 class StrategicAssetAllocator:
     """
-    
+
     """
-    
+
     def calculate_strategic_weights(
         self,
         risk_tolerance: float,
@@ -100,15 +100,15 @@ class StrategicAssetAllocator:
         asset_classes: List[str]
     ) -> Dict[str, float]:
         """
-        
+
         参数:
             risk_tolerance: 风险承受能力 (0-1)
             asset_classes: 资产类别列表
-            
+
         返回:
         """
         pass
-    
+
     def get_target_portfolio(
         self,
         strategic_weights: Dict[str, float],
@@ -123,9 +123,9 @@ class StrategicAssetAllocator:
 ```python
 class TacticalAssetAllocator:
     """
-    
+
     """
-    
+
     def calculate_tactical_adjustment(
         self,
         strategic_weights: Dict[str, float],
@@ -134,15 +134,15 @@ class TacticalAssetAllocator:
     ) -> Dict[str, float]:
         """
         计算战术调整
-        
+
         参数:
             max_deviation: 最大偏离度
-            
+
         返回:
             战术调整后的权重
         """
         pass
-    
+
     def apply_tactical_overlay(
         self,
         base_weights: np.ndarray,
@@ -159,9 +159,9 @@ class TacticalAssetAllocator:
 ```python
 class RegimeBasedAllocator:
     """
-    
+
     """
-    
+
     def __init__(self):
         self.regime_configs = {
             'bull': {'equity': 0.7, 'bond': 0.2, 'commodity': 0.1},
@@ -169,28 +169,28 @@ class RegimeBasedAllocator:
             'neutral': {'equity': 0.5, 'bond': 0.4, 'commodity': 0.1},
             'crisis': {'equity': 0.2, 'bond': 0.6, 'commodity': 0.2}
         }
-    
+
     def get_regime_weights(
         self,
         current_regime: str,
         confidence: float
     ) -> Dict[str, float]:
         """
-        
+
         参数:
             confidence: 状态判断置信度
-            
+
         返回:
         """
         pass
-    
+
     def blend_regime_weights(
         self,
         regime_probabilities: Dict[str, float]
     ) -> Dict[str, float]:
         """
         混合多种状态的权重
-        
+
         """
         pass
 ```
@@ -201,7 +201,7 @@ class RiskBudgetAdjuster:
     """
     风险预算动态调整器
     """
-    
+
     def adjust_risk_budget(
         self,
         base_risk_budget: float,
@@ -209,16 +209,16 @@ class RiskBudgetAdjuster:
         drawdown_level: float
     ) -> float:
         """
-        
+
         参数:
             base_risk_budget: 基础风险预算
             drawdown_level: 当前回撤水平
-            
+
         返回:
             调整后的风险预算
         """
         pass
-    
+
     def calculate_position_sizing(
         self,
         risk_budget: float,
@@ -239,9 +239,9 @@ class RiskBudgetAdjuster:
 ```python
 class DynamicAssetAllocator:
     """
-    
+
     """
-    
+
     def __init__(
         self,
         saa_allocator: StrategicAssetAllocator,
@@ -251,7 +251,7 @@ class DynamicAssetAllocator:
         self.saa = saa_allocator
         self.taa = taa_allocator
         self.regime = regime_allocator
-    
+
     def allocate(
         self,
         market_state: Dict,
@@ -259,11 +259,11 @@ class DynamicAssetAllocator:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        
+
         参数:
             risk_profile: 风险偏好
             constraints: 约束条件
-            
+
         返回:
         """
         strategic = self.saa.calculate_strategic_weights(
@@ -271,17 +271,17 @@ class DynamicAssetAllocator:
             risk_profile['horizon'],
             risk_profile['assets']
         )
-        
+
         regime_adjusted = self.regime.blend_regime_weights(
             market_state['regime_probabilities']
         )
-        
+
         # 3. 应用战术叠加
         tactical = self.taa.calculate_tactical_adjustment(
             strategic,
             market_state['signals']
         )
-        
+
         # 4. 综合输出
         return self._combine_allocations(strategic, regime_adjusted, tactical)
 ```
@@ -293,7 +293,7 @@ dynamic_asset_allocation:
   strategic:
     rebalance_frequency: 'quarterly'
     drift_tolerance: 0.05
-    
+
   tactical:
     max_deviation: 0.10
     signal_weights:
@@ -301,7 +301,7 @@ dynamic_asset_allocation:
       momentum: 0.3
       sentiment: 0.2
       quality: 0.2
-      
+
   regime_mapping:
     bull:
       equity_weight: 0.70
@@ -319,7 +319,7 @@ dynamic_asset_allocation:
       equity_weight: 0.20
       bond_weight: 0.60
       alternative_weight: 0.20
-      
+
   # 风险预算
   risk_budget:
     base_budget: 0.10
@@ -379,5 +379,3 @@ dynamic_asset_allocation:
 ## 已知限制
 
 - 动态配置效果依赖市场状态识别与成本模型；实施阶段需在契约真源中固化状态口径、成本假设与回测/验证流程。
-
-

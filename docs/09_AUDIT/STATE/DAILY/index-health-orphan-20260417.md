@@ -42,6 +42,3 @@ responsibility: STATE
 
 
 ## 零入链路径（节选）
-
-
-

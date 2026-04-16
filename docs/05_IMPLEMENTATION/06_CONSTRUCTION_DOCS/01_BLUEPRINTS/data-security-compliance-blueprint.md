@@ -149,7 +149,7 @@ layer: layer_10
 
 > 核心职责: Data Security Compliance蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -239,13 +239,13 @@ class EncryptionKey:
 
 class DataEncryptionManager:
 
-    
+
 
     def __init__(self):
 
         self.keys: Dict[str, EncryptionKey] = {}
 
-    
+
 
     def generate_key(self, key_id: str,
 
@@ -259,11 +259,11 @@ class DataEncryptionManager:
 
         else:
 
-            # 
+            #
 
             key_value = Fernet.generate_key()
 
-        
+
 
         key = EncryptionKey(
 
@@ -275,13 +275,13 @@ class DataEncryptionManager:
 
         )
 
-        
+
 
         self.keys[key_id] = key
 
         return key
 
-    
+
 
     def encrypt_data(self, data: str, key_id: str) -> str:
 
@@ -293,17 +293,17 @@ class DataEncryptionManager:
 
             raise ValueError(f"Key {key_id} not found")
 
-        
+
 
         fernet = Fernet(key.key_value)
 
         encrypted = fernet.encrypt(data.encode())
 
-        
+
 
         return base64.b64encode(encrypted).decode()
 
-    
+
 
     def decrypt_data(self, encrypted_data: str, key_id: str) -> str:
 
@@ -315,7 +315,7 @@ class DataEncryptionManager:
 
             raise ValueError(f"Key {key_id} not found")
 
-        
+
 
         fernet = Fernet(key.key_value)
 
@@ -323,11 +323,11 @@ class DataEncryptionManager:
 
         decrypted = fernet.decrypt(encrypted)
 
-        
+
 
         return decrypted.decode()
 
-    
+
 
     def rotate_key(self, key_id: str) -> EncryptionKey:
 
@@ -339,11 +339,11 @@ class DataEncryptionManager:
 
             raise ValueError(f"Key {key_id} not found")
 
-        
+
 
         new_key = self.generate_key(f"{key_id}_v{datetime.now().timestamp()}", old_key.algorithm)
 
-        
+
 
         return new_key
 
@@ -413,7 +413,7 @@ class Role:
 
 class AccessControlManager:
 
-    
+
 
     def __init__(self):
 
@@ -421,7 +421,7 @@ class AccessControlManager:
 
         self.roles: Dict[str, Role] = {}
 
-    
+
 
     def create_role(self, role_config: Dict[str, Any]) -> Role:
 
@@ -439,13 +439,13 @@ class AccessControlManager:
 
         )
 
-        
+
 
         self.roles[role.role_id] = role
 
         return role
 
-    
+
 
     def create_user(self, user_config: Dict[str, Any]) -> User:
 
@@ -463,13 +463,13 @@ class AccessControlManager:
 
         )
 
-        
+
 
         self.users[user.user_id] = user
 
         return user
 
-    
+
 
     def check_permission(self, user_id: str,
 
@@ -483,7 +483,7 @@ class AccessControlManager:
 
             return False
 
-        
+
 
         for role_id in user.roles:
 
@@ -493,7 +493,7 @@ class AccessControlManager:
 
                 continue
 
-            
+
 
             if resource in role.permissions:
 
@@ -501,11 +501,11 @@ class AccessControlManager:
 
                     return True
 
-        
+
 
         return False
 
-    
+
 
     def grant_permission(self, role_id: str,
 
@@ -521,17 +521,17 @@ class AccessControlManager:
 
             return
 
-        
+
 
         if resource not in role.permissions:
 
             role.permissions[resource] = set()
 
-        
+
 
         role.permissions[resource].add(permission)
 
-    
+
 
     def revoke_permission(self, role_id: str,
 
@@ -547,7 +547,7 @@ class AccessControlManager:
 
             return
 
-        
+
 
         if resource in role.permissions:
 
@@ -585,13 +585,13 @@ class MaskingStrategy(Enum):
 
 class DataMasker:
 
-    
+
 
     def __init__(self):
 
         self.masking_rules: Dict[str, Dict[str, Any]] = {}
 
-    
+
 
     def register_masking_rule(self, field_name: str,
 
@@ -609,7 +609,7 @@ class DataMasker:
 
         }
 
-    
+
 
     def mask_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
 
@@ -617,7 +617,7 @@ class DataMasker:
 
         masked_data = data.copy()
 
-        
+
 
         for field_name, rule in self.masking_rules.items():
 
@@ -633,11 +633,11 @@ class DataMasker:
 
                 )
 
-        
+
 
         return masked_data
 
-    
+
 
     def _apply_masking(self, value: Any,
 
@@ -651,7 +651,7 @@ class DataMasker:
 
             return "***"
 
-        
+
 
         elif strategy == MaskingStrategy.PARTIAL:
 
@@ -663,7 +663,7 @@ class DataMasker:
 
             return "***"
 
-        
+
 
         elif strategy == MaskingStrategy.HASH:
 
@@ -673,7 +673,7 @@ class DataMasker:
 
             return "***"
 
-        
+
 
         elif strategy == MaskingStrategy.RANDOM:
 
@@ -683,11 +683,11 @@ class DataMasker:
 
             return "***"
 
-        
+
 
         return value
 
-    
+
 
     def mask_phone_number(self, phone: str) -> str:
 
@@ -697,7 +697,7 @@ class DataMasker:
 
         return "***"
 
-    
+
 
     def mask_email(self, email: str) -> str:
 
@@ -711,17 +711,17 @@ class DataMasker:
 
             domain = parts[1]
 
-            
+
 
             masked_username = username[:2] + "*" * (len(username) - 2)
 
-            
+
 
             return f"{masked_username}@{domain}"
 
         return "***"
 
-    
+
 
     def mask_id_card(self, id_card: str) -> str:
 
@@ -861,7 +861,7 @@ services:
 
       - IPC_LOCK
 
-  
+
 
   opa:
 
@@ -873,7 +873,7 @@ services:
 
     command: run --server --addr=:8181
 
-  
+
 
   anchore:
 
@@ -887,7 +887,7 @@ services:
 
       - ANCHORE_ADMIN_PASSWORD=admin
 
-  
+
 
   elasticsearch:
 
@@ -911,7 +911,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -945,7 +945,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -1065,7 +1065,7 @@ graph LR
 
     B --> D2["DATA QUALITY MO"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1116,12 +1116,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

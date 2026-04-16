@@ -19,8 +19,8 @@ layer: layer_05
 
 ### 索引与防漂移（给 AI / 人类）
 
-- **本目录机器可读清单**：[INDEX.md](./INDEX.md) — 与本文件夹内 **实际存在的 `.md` 文件**对齐；新增、重命名或删除规章类文件时须同步更新 `INDEX.md` 与本文「办公室内文件一览」。  
-- **禁止占位路径**：勿使用仓库中不存在的相对路径作为 Markdown 链接目标（历史上曾误用 `10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md`、`12_MODULE_DESIGNS/layer_0/INDEX.md` 等假路径，会导致点击失效并诱发 AI 幻觉）。链到办公室总入口用 `./README.md`，链到 CANON 用 `./CANON/README.md`；链到仓库根、`scripts/` 等须从本目录正确上溯（例如 `../../../../README.md`、`../../../../scripts/README.md`）。  
+- **本目录机器可读清单**：[INDEX.md](./INDEX.md) — 与本文件夹内 **实际存在的 `.md` 文件**对齐；新增、重命名或删除规章类文件时须同步更新 `INDEX.md` 与本文「办公室内文件一览」。
+- **禁止占位路径**：勿使用仓库中不存在的相对路径作为 Markdown 链接目标（历史上曾误用 `10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md`、`12_MODULE_DESIGNS/layer_0/INDEX.md` 等假路径，会导致点击失效并诱发 AI 幻觉）。链到办公室总入口用 `./README.md`，链到 CANON 用 `./CANON/README.md`；链到仓库根、`scripts/` 等须从本目录正确上溯（例如 `../../../../README.md`、`../../../../scripts/README.md`）。
 - **声称「缺失」前**：先全库搜索或运行 `scripts/governance/` 下对应 `verify_*` / 扫描脚本；流程见 [蓝图终稿任务清单（已归档）](./CANON/ARCHIVE/blueprint-phase-closure-task-list.md) 中「防臃肿操作规程」。
 
 **给任意 AI / 新协作者交接时**：请先读 项目办公室 AI 交接说明（阅读顺序、真源优先级、常见任务；**§0.1** Git / L1 / UTF-8；**§0.1.4** `.gitignore` 与 `docs/09_AUDIT/STATE/` **两条线**；**§0.2** Solo+全委托 AI 机械清单；**§3.2** 区分 **文档治理 L0～L5** 与 **系统技术栈 Layer 0～11**）。**机构式分层总览**见 文档治理架构（L0～L5、与审计边界）。**运行架构分层（Layer 0～11）真源**为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)；**勿**用 `docs/10_AI_WORKFLOW` 等路径前缀代替 Layer 编号（见 放置规程 §1.5）。编码与乱码预防全文见 文档编码标准；任务清单 **§1.2 末**、**§7.2 末** 与 **§0.1.4 / §0.2** 同口径。
@@ -43,9 +43,9 @@ layer: layer_05
 
 ### 扫描覆盖：还能优化什么？（诚实口径）
 
-- **已写清**：任务清单 REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md **§1.1** —— **Git 已跟踪路径**可被清单/rollup **全覆盖（路径级）**；**不等于**对每一种格式做语义分析或自动处理。  
-- **L1 注意**：`sentinel_l1` 扫的是工作区 **`*.md`**（排除常见缓存目录），与 **`git ls-files` 仅已跟踪** 可能不一致；收口验收前宜保持工作区干净或书面接受差异。  
-- **`.gitignore` vs `STATE/`**：真·临时文件与缓存靠 **ignore（线 A）**；扫描报表进历史的节奏靠 **STATE 分提交（线 B）** —— 见 AI 交接 §0.1.4、任务清单 §1.2 末。  
+- **已写清**：任务清单 REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md **§1.1** —— **Git 已跟踪路径**可被清单/rollup **全覆盖（路径级）**；**不等于**对每一种格式做语义分析或自动处理。
+- **L1 注意**：`sentinel_l1` 扫的是工作区 **`*.md`**（排除常见缓存目录），与 **`git ls-files` 仅已跟踪** 可能不一致；收口验收前宜保持工作区干净或书面接受差异。
+- **`.gitignore` vs `STATE/`**：真·临时文件与缓存靠 **ignore（线 A）**；扫描报表进历史的节奏靠 **STATE 分提交（线 B）** —— 见 AI 交接 §0.1.4、任务清单 §1.2 末。
 - **仍可选的优化**（未默认可跑）：**域 INDEX 必列规则**（须先写标准再写脚本，见 文档地图与放置规则 **§5.3**）、二进制 **体积/LFS 门禁**、CI 中 **全量治理脚本门禁 + 秘密扫描**、根目录 **Docker/CODEOWNERS**（见 `ARCHITECTURE_SERVICE_CATALOG` 缺口表）、**记录管理类保留策略/法律 hold**（本仓库未单独立标，需 Owner 外规接入时另档）。
 
 ### 施工阶段四步 Pipeline（主线）
@@ -167,35 +167,35 @@ layer: layer_05
 
 ## 常用脚本
 
-- 刷新 `01_BLUEPRINTS/INDEX.md`：在仓库根目录执行  
+- 刷新 `01_BLUEPRINTS/INDEX.md`：在仓库根目录执行
   `python scripts/governance/generate_01_blueprints_index.py`
-- **目录深度聚合**（整仓治理排期、`docs/` 下深度 3～6 Top 表 + JSON）：  
-  `python scripts/governance/export_repo_directory_rollup.py`  
+- **目录深度聚合**（整仓治理排期、`docs/` 下深度 3～6 Top 表 + JSON）：
+  `python scripts/governance/export_repo_directory_rollup.py`
   （可选 `--date YYYYMMDD`、`--top N`、`--include-untracked`；输出在 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`）
-- **架构服务目录 + C4 摘要**（`src/`、`pyproject`、API routes、根目录机构缺口表）：  
-  `python scripts/governance/generate_architecture_service_catalog.py`  
+- **架构服务目录 + C4 摘要**（`src/`、`pyproject`、API routes、根目录机构缺口表）：
+  `python scripts/governance/generate_architecture_service_catalog.py`
   （输出 `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*`）
-- **内容重复（须指定后缀，默认 `.md`）**：  
-  `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`）  
-  （输出 `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`）  
-- **同名不同路径 / basename 碰撞（C2 报表）**：  
-  `python scripts/governance/scan_basename_collisions.py`（默认 `docs/` + `.md`；可加 `--all-repo`）  
-  （输出 `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*`）  
-- **蓝图 D 类重叠候选（启发式 + 建议 canonical/合并大纲）**：  
-  `python scripts/governance/scan_blueprint_d_overlap_candidates.py`（见 D 类蓝图重叠 Playbook；**低置信合稿**须登记 D 类合稿待审登记）  
-  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`）  
-- **蓝图 D 类 A 档分流 + 二审队列（JSONL）**：  
-  `python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（可选 `--queue-mode high_medium`；见 Playbook **§3.5** 与 二审提示词模板）  
-  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`）  
-- **索引健全性（零入链候选，默认扫 `docs/`）**：  
-  `python scripts/governance/scan_index_health.py`  
-  （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 文档地图与放置规则 **§5.2**）  
+- **内容重复（须指定后缀，默认 `.md`）**：
+  `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`）
+  （输出 `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`）
+- **同名不同路径 / basename 碰撞（C2 报表）**：
+  `python scripts/governance/scan_basename_collisions.py`（默认 `docs/` + `.md`；可加 `--all-repo`）
+  （输出 `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*`）
+- **蓝图 D 类重叠候选（启发式 + 建议 canonical/合并大纲）**：
+  `python scripts/governance/scan_blueprint_d_overlap_candidates.py`（见 D 类蓝图重叠 Playbook；**低置信合稿**须登记 D 类合稿待审登记）
+  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`）
+- **蓝图 D 类 A 档分流 + 二审队列（JSONL）**：
+  `python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（可选 `--queue-mode high_medium`；见 Playbook **§3.5** 与 二审提示词模板）
+  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`）
+- **索引健全性（零入链候选，默认扫 `docs/`）**：
+  `python scripts/governance/scan_index_health.py`
+  （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 文档地图与放置规则 **§5.2**）
 - **全部治理命令一张表**：治理工具总索引
 
 ### 基线复跑约定（与 REPO_WIDE P0、§3.1 复审口径一致）
 
-- **最低频率**：每个**大版本**或至少**每季度**复跑：`export_repo_directory_rollup.py`（建议带 `--date YYYYMMDD`）、`REPO_GIT_TRACKED_FILES_*.txt`（§1 内 PowerShell/Python 片段）。  
-- **大治理批次收口**：同一窗口内建议复跑 `scan_duplicate_file_content.py --ext md`、`scan_index_health.py`、`sentinel_l1_governance_scan.py`；若本轮含 **D 类**，在 `scan_blueprint_d_overlap_candidates.py` 之后可再跑 `triage_blueprint_d_overlap_pairs.py` 生成二审 JSONL。产出更新至 `docs/09_AUDIT/STATE/` 后 **commit**，便于 JSON/报表 diff。  
+- **最低频率**：每个**大版本**或至少**每季度**复跑：`export_repo_directory_rollup.py`（建议带 `--date YYYYMMDD`）、`REPO_GIT_TRACKED_FILES_*.txt`（§1 内 PowerShell/Python 片段）。
+- **大治理批次收口**：同一窗口内建议复跑 `scan_duplicate_file_content.py --ext md`、`scan_index_health.py`、`sentinel_l1_governance_scan.py`；若本轮含 **D 类**，在 `scan_blueprint_d_overlap_candidates.py` 之后可再跑 `triage_blueprint_d_overlap_pairs.py` 生成二审 JSONL。产出更新至 `docs/09_AUDIT/STATE/` 后 **commit**，便于 JSON/报表 diff。
 - **归档区 C1 合并**：须符合 [REPO_WIDE（已归档）](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§3**；当前 Owner 裁定为 **宽松**（见该文 §3.1 末段）。
 
 ```

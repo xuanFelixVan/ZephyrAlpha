@@ -21,7 +21,7 @@ description: 因子开发模板 - 新因子计算、IC分析、回测验证
 
 # %% [markdown]
 # # 因子开发与分析
-# 
+#
 # > **项目**: ZephyrAlpha v5.1
 # > **作者**: [姓名/团队]
 # > **创建日期**: YYYY-MM-DD
@@ -56,7 +56,7 @@ except ImportError:
         def calculate_momentum(data, period=20):
             """计算动量因子"""
             return data['close'].pct_change(period)
-        
+
         @staticmethod
         def calculate_volume_ratio(data, short_period=5, long_period=20):
             """计算量比因子"""
@@ -89,13 +89,13 @@ except FileNotFoundError:
     # 创建示例数据用于演示
     dates = pd.date_range('2020-01-01', periods=500, freq='D')
     symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
-    
+
     data_list = []
     for symbol in symbols:
         base_price = np.random.uniform(50, 500)
         returns = np.random.normal(0.0005, 0.02, 500)
         prices = base_price * np.exp(np.cumsum(returns))
-        
+
         for i, date in enumerate(dates):
             data_list.append({
                 'date': date,
@@ -107,7 +107,7 @@ except FileNotFoundError:
                 'volume': np.random.randint(1000000, 10000000),
                 'market_cap': np.random.uniform(1e9, 1e12)
             })
-    
+
     df = pd.DataFrame(data_list)
 
 # 数据预处理
@@ -139,11 +139,11 @@ print("🧮 因子定义与计算")
 def calculate_new_factor(data, params=None):
     """
     计算新因子
-    
+
     参数:
         data: 包含价格和交易量数据的DataFrame
         params: 因子参数字典
-        
+
     返回:
         Series: 因子值
     """
@@ -153,18 +153,18 @@ def calculate_new_factor(data, params=None):
             'volume_period': 10,
             'volatility_period': 20
         }
-    
+
     # 示例因子：动量与量比结合
     momentum = data['close'].pct_change(params['momentum_period'])
     volume_ratio = data['volume'].rolling(params['volume_period']).mean() / \
                    data['volume'].rolling(params['volume_period'] * 2).mean()
     volatility = data['returns'].rolling(params['volatility_period']).std()
-    
+
     # 因子公式：动量 * 量比 / 波动率
     # 避免除以零
     volatility = volatility.replace(0, np.nan)
     factor = momentum * volume_ratio / volatility
-    
+
     return factor
 
 # 3.2 计算因子值
@@ -212,7 +212,7 @@ axes[0].set_title('按日期缺失率 (%)', fontsize=12)
 axes[0].set_xlabel('日期')
 axes[0].set_ylabel('缺失率 (%)')
 axes[0].grid(True, alpha=0.3)
-axes[0].axhline(y=missing_by_date.mean() * 100, color='r', linestyle='--', 
+axes[0].axhline(y=missing_by_date.mean() * 100, color='r', linestyle='--',
                 label=f'平均: {missing_by_date.mean()*100:.1f}%')
 
 # 按股票缺失率
@@ -241,7 +241,7 @@ axes[0].hist(factor_flat, bins=50, edgecolor='black', alpha=0.7)
 axes[0].set_title('因子值分布', fontsize=12)
 axes[0].set_xlabel('因子值')
 axes[0].set_ylabel('频率')
-axes[0].axvline(x=np.mean(factor_flat), color='r', linestyle='--', 
+axes[0].axvline(x=np.mean(factor_flat), color='r', linestyle='--',
                 label=f'均值: {np.mean(factor_flat):.4f}')
 axes[0].axvline(x=np.median(factor_flat), color='g', linestyle='--',
                 label=f'中位数: {np.median(factor_flat):.4f}')
@@ -259,14 +259,14 @@ axes[1].grid(True, alpha=0.3)
 if len(factor_pivot.columns) > 1:
     factor_corr = factor_pivot.corr()
     mask = np.triu(np.ones_like(factor_corr, dtype=bool))
-    
+
     im = axes[2].imshow(factor_corr, cmap='coolwarm', vmin=-1, vmax=1)
     axes[2].set_title('因子值相关性', fontsize=12)
     axes[2].set_xlabel('股票')
     axes[2].set_ylabel('股票')
     plt.colorbar(im, ax=axes[2])
 else:
-    axes[2].text(0.5, 0.5, '股票数量不足\n无法计算相关性', 
+    axes[2].text(0.5, 0.5, '股票数量不足\n无法计算相关性',
                  ha='center', va='center', fontsize=12)
     axes[2].set_title('因子值相关性', fontsize=12)
 
@@ -295,35 +295,35 @@ ic_results = {}
 
 for period in lookforward_periods:
     returns = returns_data[f'ret_{period}d']
-    
+
     # 对齐因子和收益率数据
     common_dates = factor_pivot.index.intersection(returns.index)
     factor_aligned = factor_pivot.loc[common_dates]
     returns_aligned = returns.loc[common_dates]
-    
+
     # 计算每日IC (Rank IC)
     daily_ic = []
     dates_ic = []
-    
+
     for date in common_dates:
         factor_today = factor_aligned.loc[date]
         returns_future = returns_aligned.loc[date]
-        
+
         # 对齐数据（删除NaN）
         aligned_data = pd.DataFrame({
             'factor': factor_today,
             'return': returns_future
         }).dropna()
-        
+
         if len(aligned_data) > 5:  # 至少需要5个数据点
             # 计算Rank IC (Spearman相关系数)
             ic = aligned_data['factor'].corr(aligned_data['return'], method='spearman')
             daily_ic.append(ic)
             dates_ic.append(date)
-    
+
     ic_series = pd.Series(daily_ic, index=dates_ic)
     ic_results[f'IC_{period}d'] = ic_series
-    
+
     print(f"IC_{period}d: 均值={ic_series.mean():.4f}, 标准差={ic_series.std():.4f}, "
           f"IR={ic_series.mean()/ic_series.std():.4f}")
 
@@ -334,15 +334,15 @@ fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 for i, period in enumerate(lookforward_periods):
     ic_series = ic_results[f'IC_{period}d']
     ax = axes[i // 2, i % 2]
-    
+
     ax.plot(ic_series.index, ic_series.values, linewidth=1, alpha=0.7)
-    ax.axhline(y=ic_series.mean(), color='r', linestyle='--', 
+    ax.axhline(y=ic_series.mean(), color='r', linestyle='--',
                label=f'均值: {ic_series.mean():.4f}')
-    ax.fill_between(ic_series.index, 
+    ax.fill_between(ic_series.index,
                     ic_series.mean() - ic_series.std(),
                     ic_series.mean() + ic_series.std(),
                     alpha=0.2, color='gray', label='±1标准差')
-    
+
     ax.set_title(f'IC_{period}d 时间序列', fontsize=12)
     ax.set_xlabel('日期')
     ax.set_ylabel('IC值')
@@ -355,7 +355,7 @@ for period in lookforward_periods:
     ic_series = ic_results[f'IC_{period}d']
     ax.hist(ic_series.dropna(), bins=30, alpha=0.5, label=f'IC_{period}d',
             density=True)
-    
+
 ax.set_title('IC分布对比', fontsize=12)
 ax.set_xlabel('IC值')
 ax.set_ylabel('密度')
@@ -407,23 +407,23 @@ group_stats = []
 for date in common_dates:
     factor_today = factor_aligned.loc[date]
     returns_next = returns_aligned.loc[date]
-    
+
     # 对齐数据
     aligned = pd.DataFrame({
         'factor': factor_today,
         'return': returns_next
     }).dropna()
-    
+
     if len(aligned) < 10:  # 至少需要10只股票
         continue
-    
+
     # 按因子值分组 (十分位)
     aligned['group'] = pd.qcut(aligned['factor'], q=10, labels=False, duplicates='drop')
-    
+
     # 计算每组平均收益率
     group_mean = aligned.groupby('group')['return'].mean()
     group_returns.append(group_mean)
-    
+
     # 记录多空收益 (第10组 - 第1组)
     if len(group_mean) >= 10:
         long_short_return = group_mean.iloc[-1] - group_mean.iloc[0]  # 第10组 - 第1组
@@ -462,19 +462,19 @@ if not group_stats_df.empty:
     axes[0, 1].set_xlabel('日期')
     axes[0, 1].set_ylabel('累积收益')
     axes[0, 1].grid(True, alpha=0.3)
-    
+
     # 计算多空策略表现
     ls_returns = group_stats_df['long_short']
     ls_cumulative = (1 + ls_returns).cumprod() - 1
     total_return = ls_cumulative.iloc[-1] if len(ls_cumulative) > 0 else 0
-    axes[0, 1].text(0.05, 0.95, f'总收益: {total_return:.2%}', 
+    axes[0, 1].text(0.05, 0.95, f'总收益: {total_return:.2%}',
                     transform=axes[0, 1].transAxes, fontsize=10,
                     verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
 # 收益率分布
 group_colors = plt.cm.viridis(np.linspace(0, 1, 10))
 for group in range(min(10, len(mean_group_returns))):
-    axes[1, 0].hist(group_returns_df[group].dropna(), bins=20, alpha=0.5, 
+    axes[1, 0].hist(group_returns_df[group].dropna(), bins=20, alpha=0.5,
                     color=group_colors[group], label=f'组{group+1}', density=True)
 
 axes[1, 0].set_title('各组收益率分布', fontsize=12)
@@ -487,17 +487,17 @@ axes[1, 0].legend(loc='upper right', fontsize=8)
 if not group_stats_df.empty:
     group_stats_df['year_month'] = group_stats_df['date'].dt.to_period('M')
     monthly_ls = group_stats_df.groupby('year_month')['long_short'].mean()
-    
+
     # 创建月度热图数据
     monthly_ls_df = monthly_ls.unstack() if hasattr(monthly_ls, 'unstack') else monthly_ls.to_frame().T
-    im = axes[1, 1].imshow(monthly_ls_df.values if len(monthly_ls_df.shape) > 1 else [monthly_ls_df.values], 
+    im = axes[1, 1].imshow(monthly_ls_df.values if len(monthly_ls_df.shape) > 1 else [monthly_ls_df.values],
                           cmap='RdYlGn', aspect='auto')
     axes[1, 1].set_title('月度多空收益热图', fontsize=12)
     axes[1, 1].set_xlabel('月份')
     axes[1, 1].set_ylabel('')
     plt.colorbar(im, ax=axes[1, 1])
 else:
-    axes[1, 1].text(0.5, 0.5, '数据不足\n无法生成热图', 
+    axes[1, 1].text(0.5, 0.5, '数据不足\n无法生成热图',
                     ha='center', va='center', fontsize=12)
     axes[1, 1].set_title('月度多空收益热图', fontsize=12)
 
@@ -508,7 +508,7 @@ plt.show()
 print("\n分组回测统计:")
 if not group_stats_df.empty:
     ls_returns = group_stats_df['long_short']
-    
+
     stats = {
         '总天数': len(ls_returns),
         '多空平均日收益': f'{ls_returns.mean():.4%}',
@@ -520,7 +520,7 @@ if not group_stats_df.empty:
         '收益偏度': f'{ls_returns.skew():.4f}',
         '收益峰度': f'{ls_returns.kurtosis():.4f}'
     }
-    
+
     stats_df = pd.DataFrame(list(stats.items()), columns=['指标', '值'])
     display(stats_df)
 else:
@@ -541,7 +541,7 @@ for period in lookforward_periods:
     rolling_mean = ic_series.rolling(window=window_size, min_periods=20).mean()
     rolling_std = ic_series.rolling(window=window_size, min_periods=20).std()
     rolling_ir = rolling_mean / rolling_std
-    
+
     rolling_ic[f'IC_{period}d'] = {
         'mean': rolling_mean,
         'std': rolling_std,
@@ -555,22 +555,22 @@ colors = plt.cm.Set1(np.linspace(0, 1, len(lookforward_periods)))
 
 for idx, period in enumerate(lookforward_periods):
     rolling_data = rolling_ic[f'IC_{period}d']
-    
+
     # 滚动IC均值
-    axes[0].plot(rolling_data['mean'].index, rolling_data['mean'].values, 
+    axes[0].plot(rolling_data['mean'].index, rolling_data['mean'].values,
                  color=colors[idx], linewidth=1.5, label=f'IC_{period}d')
     axes[0].set_title(f'滚动{window_size}天IC均值', fontsize=12)
     axes[0].set_ylabel('IC均值')
     axes[0].grid(True, alpha=0.3)
     axes[0].legend(loc='upper left')
-    
+
     # 滚动IC标准差
     axes[1].plot(rolling_data['std'].index, rolling_data['std'].values,
                  color=colors[idx], linewidth=1.5)
     axes[1].set_title(f'滚动{window_size}天IC标准差', fontsize=12)
     axes[1].set_ylabel('IC标准差')
     axes[1].grid(True, alpha=0.3)
-    
+
     # 滚动信息比率
     axes[2].plot(rolling_data['ir'].index, rolling_data['ir'].values,
                  color=colors[idx], linewidth=1.5)
@@ -590,12 +590,12 @@ if not ic_results:
 else:
     # 使用主要周期的IC
     main_ic = ic_results[f'IC_{lookforward_periods[0]}d']
-    
+
     # 提取年份
     main_ic_df = main_ic.reset_index()
     main_ic_df.columns = ['date', 'IC']
     main_ic_df['year'] = main_ic_df['date'].dt.year
-    
+
     # 年度统计
     yearly_stats = main_ic_df.groupby('year')['IC'].agg([
         ('IC均值', 'mean'),
@@ -603,9 +603,9 @@ else:
         ('IC>0比例', lambda x: (x > 0).mean()),
         ('天数', 'count')
     ]).round(4)
-    
+
     yearly_stats['信息比率'] = yearly_stats['IC均值'] / yearly_stats['IC标准差']
-    
+
     display(yearly_stats)
 
 # %% [markdown]
@@ -619,14 +619,14 @@ print("\n## 因子评价")
 
 if not ic_stats_df.empty:
     main_ic_row = ic_stats_df.iloc[0]  # 使用第一个周期
-    
+
     evaluation = {
         '预测能力': '强' if float(main_ic_row['IC均值']) > 0.05 else '中等' if float(main_ic_row['IC均值']) > 0.02 else '弱',
         '稳定性': '高' if float(main_ic_row['IC>0比例'].strip('%')) > 60 else '中等' if float(main_ic_row['IC>0比例'].strip('%')) > 55 else '低',
         '显著性': '显著' if float(main_ic_row['t统计量']) > 2 else '边缘显著' if float(main_ic_row['t统计量']) > 1.5 else '不显著',
         '实用性': '高' if float(main_ic_row['信息比率']) > 0.5 else '中等' if float(main_ic_row['信息比率']) > 0.2 else '低'
     }
-    
+
     eval_df = pd.DataFrame(list(evaluation.items()), columns=['维度', '评价'])
     display(eval_df)
 
@@ -639,12 +639,12 @@ suggestions = []
 if not ic_stats_df.empty:
     ic_mean = float(ic_stats_df.iloc[0]['IC均值'])
     ic_ir = float(ic_stats_df.iloc[0]['信息比率'])
-    
+
     if ic_mean < 0.02:
         suggestions.append("IC值较低，建议优化因子公式或参数")
     elif ic_mean > 0.05:
         suggestions.append("IC值较高，因子预测能力强")
-    
+
     if ic_ir < 0.3:
         suggestions.append("信息比率偏低，建议降低因子波动或提高稳定性")
     else:
@@ -654,7 +654,7 @@ if not ic_stats_df.empty:
 if not group_stats_df.empty and 'long_short' in group_stats_df.columns:
     ls_returns = group_stats_df['long_short']
     win_rate = (ls_returns > 0).mean()
-    
+
     if win_rate < 0.55:
         suggestions.append(f"胜率较低 ({win_rate:.1%})，建议增加过滤条件或优化分组方法")
     else:
@@ -734,8 +734,8 @@ print("\n🎉 因子分析完成！")
 
 # %% [markdown]
 # ---
-# 
-# **备注**: 
+#
+# **备注**:
 # - 本模板为通用因子开发模板，请根据实际因子调整计算逻辑
 # - 建议进行充分的样本外测试
 # - 考虑实际交易成本和换手率

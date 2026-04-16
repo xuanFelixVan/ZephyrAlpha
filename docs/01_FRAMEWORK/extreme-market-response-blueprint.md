@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Extreme Market Response蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Extreme Market Response蓝图设计相关内容
 
@@ -198,11 +198,11 @@ class ExtremeMarketDetector:
 
         self.condition_history: List[MarketCondition] = []
 
-        
+
 
     def detect_extreme_level(
 
-        self, 
+        self,
 
         condition: MarketCondition
 
@@ -212,11 +212,11 @@ class ExtremeMarketDetector:
 
             return ExtremeMarketLevel.EXTREME
 
-        
+
 
         volatility_ratio = (
 
-            condition.volatility / 
+            condition.volatility /
 
             self.historical_baseline.get('avg_volatility', 0.02)
 
@@ -224,17 +224,17 @@ class ExtremeMarketDetector:
 
         liquidity_ratio = (
 
-            condition.liquidity / 
+            condition.liquidity /
 
             self.historical_baseline.get('avg_liquidity', 0.8)
 
         )
 
-        
+
 
         extreme_score = 0
 
-        
+
 
         if volatility_ratio > 3.0:
 
@@ -248,7 +248,7 @@ class ExtremeMarketDetector:
 
             extreme_score += 1
 
-        
+
 
         if liquidity_ratio < 0.5:
 
@@ -262,7 +262,7 @@ class ExtremeMarketDetector:
 
             extreme_score += 1
 
-        
+
 
         if condition.bid_ask_spread > 0.005:
 
@@ -272,7 +272,7 @@ class ExtremeMarketDetector:
 
             extreme_score += 1
 
-        
+
 
         if condition.panic_index > 0.6:
 
@@ -282,7 +282,7 @@ class ExtremeMarketDetector:
 
             extreme_score += 1
 
-        
+
 
         if condition.cross_asset_correlation > 0.8:
 
@@ -292,7 +292,7 @@ class ExtremeMarketDetector:
 
             extreme_score += 1
 
-        
+
 
         if extreme_score >= 8:
 
@@ -314,7 +314,7 @@ class ExtremeMarketDetector:
 
             return ExtremeMarketLevel.NORMAL
 
-    
+
 
     def get_market_condition_trend(self) -> str:
 
@@ -322,19 +322,19 @@ class ExtremeMarketDetector:
 
             return "insufficient_data"
 
-        
+
 
         recent = self.condition_history[-10:]
 
         earlier = self.condition_history[-20:-10] if len(self.condition_history) >= 20 else recent
 
-        
+
 
         recent_liquidity = np.mean([c.liquidity for c in recent])
 
         earlier_liquidity = np.mean([c.liquidity for c in earlier])
 
-        
+
 
         if recent_liquidity < earlier_liquidity * 0.8:
 
@@ -422,11 +422,11 @@ class AIBehaviorMonitor:
 
         self.baseline_metrics = config.get('baseline_metrics', {})
 
-        
+
 
     def detect_ai_anomaly(
 
-        self, 
+        self,
 
         metrics: AIBehaviorMetrics
 
@@ -434,7 +434,7 @@ class AIBehaviorMonitor:
 
         anomalies = []
 
-        
+
 
         if metrics.prediction_accuracy < 0.5:
 
@@ -450,7 +450,7 @@ class AIBehaviorMonitor:
 
             })
 
-        
+
 
         baseline_freq = self.baseline_metrics.get('decision_frequency', 10)
 
@@ -468,7 +468,7 @@ class AIBehaviorMonitor:
 
             })
 
-        
+
 
         risk_limit = self.config.get('risk_limit', 0.15)
 
@@ -486,7 +486,7 @@ class AIBehaviorMonitor:
 
             })
 
-        
+
 
         if metrics.rule_violations > 0:
 
@@ -502,7 +502,7 @@ class AIBehaviorMonitor:
 
             })
 
-        
+
 
         if metrics.system_health < 0.8:
 
@@ -518,7 +518,7 @@ class AIBehaviorMonitor:
 
             })
 
-        
+
 
         return {
 
@@ -528,7 +528,7 @@ class AIBehaviorMonitor:
 
             'max_severity': max(
 
-                [a['severity'] for a in anomalies], 
+                [a['severity'] for a in anomalies],
 
                 default='none'
 
@@ -700,11 +700,11 @@ class PermissionDowngrader:
 
         }
 
-        
+
 
     def downgrade_permissions(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel
 
@@ -712,19 +712,19 @@ class PermissionDowngrader:
 
         return self.permission_mapping.get(
 
-            extreme_level, 
+            extreme_level,
 
             self.permission_mapping[ExtremeMarketLevel.NORMAL]
 
         )
 
-    
+
 
     def apply_permission_change(
 
-        self, 
+        self,
 
-        old_permission: AIPermission, 
+        old_permission: AIPermission,
 
         new_permission: AIPermission
 
@@ -732,7 +732,7 @@ class PermissionDowngrader:
 
         changes = []
 
-        
+
 
         if old_permission.decision_permission != new_permission.decision_permission:
 
@@ -746,7 +746,7 @@ class PermissionDowngrader:
 
             })
 
-        
+
 
         if old_permission.trading_permission != new_permission.trading_permission:
 
@@ -760,7 +760,7 @@ class PermissionDowngrader:
 
             })
 
-        
+
 
         if old_permission.risk_control_permission != new_permission.risk_control_permission:
 
@@ -774,7 +774,7 @@ class PermissionDowngrader:
 
             })
 
-        
+
 
         return {
 
@@ -934,11 +934,11 @@ class HumanAISwitcher:
 
         self.notification_system = config.get('notification_system')
 
-        
+
 
     def execute_switch(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel,
 
@@ -948,13 +948,13 @@ class HumanAISwitcher:
 
         event_id = f"SWITCH_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         old_permission = self._get_current_permission()
 
         new_permission = self._calculate_new_permission(extreme_level)
 
-        
+
 
         switch_event = SwitchEvent(
 
@@ -974,29 +974,29 @@ class HumanAISwitcher:
 
         )
 
-        
+
 
         self._execute_downgrade(new_permission)
 
-        
+
 
         self._notify_human_decision_maker(switch_event)
 
-        
+
 
         self._save_ai_state()
 
-        
+
 
         self._enable_human_interface()
 
-        
+
 
         switch_event.phase = SwitchPhase.HUMAN_CONTROL
 
         self.switch_history.append(switch_event)
 
-        
+
 
         return {
 
@@ -1012,17 +1012,17 @@ class HumanAISwitcher:
 
         }
 
-    
+
 
     def _get_current_permission(self) -> AIPermission:
 
         pass
 
-    
+
 
     def _calculate_new_permission(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel
 
@@ -1030,17 +1030,17 @@ class HumanAISwitcher:
 
         pass
 
-    
+
 
     def _execute_downgrade(self, permission: AIPermission) -> None:
 
         pass
 
-    
+
 
     def _notify_human_decision_maker(
 
-        self, 
+        self,
 
         event: SwitchEvent
 
@@ -1048,13 +1048,13 @@ class HumanAISwitcher:
 
         pass
 
-    
+
 
     def _save_ai_state(self) -> None:
 
         pass
 
-    
+
 
     def _enable_human_interface(self) -> None:
 
@@ -1322,11 +1322,11 @@ class EmergencyPlanExecutor:
 
         }
 
-        
+
 
     def execute_plan(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel
 
@@ -1334,7 +1334,7 @@ class EmergencyPlanExecutor:
 
         plan = self.plans.get(extreme_level)
 
-        
+
 
         if not plan:
 
@@ -1346,11 +1346,11 @@ class EmergencyPlanExecutor:
 
             }
 
-        
+
 
         execution_results = []
 
-        
+
 
         for action in plan.actions:
 
@@ -1358,7 +1358,7 @@ class EmergencyPlanExecutor:
 
             execution_results.append(result)
 
-        
+
 
         return {
 
@@ -1376,11 +1376,11 @@ class EmergencyPlanExecutor:
 
         }
 
-    
+
 
     def _execute_action(
 
-        self, 
+        self,
 
         action: EmergencyAction
 
@@ -1506,11 +1506,11 @@ class RecoveryAssessor:
 
         self.baseline_metrics = config.get('baseline_metrics', {})
 
-        
+
 
     def assess_recovery_conditions(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel,
 
@@ -1532,7 +1532,7 @@ class RecoveryAssessor:
 
             observation_period_elapsed=self._check_observation_period(
 
-                extreme_level, 
+                extreme_level,
 
                 switch_timestamp
 
@@ -1542,23 +1542,23 @@ class RecoveryAssessor:
 
         )
 
-        
+
 
         recovery_score = self._calculate_recovery_score(recovery_condition)
 
-        
+
 
         can_recover = self._can_recover(
 
-            extreme_level, 
+            extreme_level,
 
-            recovery_condition, 
+            recovery_condition,
 
             recovery_score
 
         )
 
-        
+
 
         return {
 
@@ -1570,7 +1570,7 @@ class RecoveryAssessor:
 
             'required_approval': extreme_level in [
 
-                ExtremeMarketLevel.EXTREME, 
+                ExtremeMarketLevel.EXTREME,
 
                 ExtremeMarketLevel.DISASTER
 
@@ -1580,7 +1580,7 @@ class RecoveryAssessor:
 
         }
 
-    
+
 
     def _check_volatility(self, condition: MarketCondition) -> bool:
 
@@ -1588,7 +1588,7 @@ class RecoveryAssessor:
 
         return condition.volatility < baseline * 1.5
 
-    
+
 
     def _check_liquidity(self, condition: MarketCondition) -> bool:
 
@@ -1596,23 +1596,23 @@ class RecoveryAssessor:
 
         return condition.liquidity > baseline * 0.9
 
-    
+
 
     def _check_panic_index(self, condition: MarketCondition) -> bool:
 
         return condition.panic_index < 0.3
 
-    
+
 
     def _check_correlation(self, condition: MarketCondition) -> bool:
 
         return condition.cross_asset_correlation < 0.5
 
-    
+
 
     def _check_observation_period(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel,
 
@@ -1632,17 +1632,17 @@ class RecoveryAssessor:
 
         }
 
-        
+
 
         required_period = observation_periods.get(extreme_level, timedelta(hours=1))
 
         return datetime.now() - switch_timestamp > required_period
 
-    
+
 
     def _calculate_recovery_score(
 
-        self, 
+        self,
 
         condition: RecoveryCondition
 
@@ -1672,11 +1672,11 @@ class RecoveryAssessor:
 
         return score
 
-    
+
 
     def _can_recover(
 
-        self, 
+        self,
 
         extreme_level: ExtremeMarketLevel,
 
@@ -2157,4 +2157,3 @@ class RecoveryAssessor:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-

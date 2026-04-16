@@ -84,57 +84,57 @@ layer: layer_04
 
 ┌─────────────────────────────────────────────────────────────────────
 
-           模型性能与版本管理模块架构                                
+           模型性能与版本管理模块架构
 
 ├─────────────────────────────────────────────────────────────────────
 
-                                                                    
 
- ┌────────────────────────────────────────────────────────────── 
 
-          ModelPerformanceManager (性能管理                 
+ ┌──────────────────────────────────────────────────────────────
 
-  - 准确率监                                                 
+          ModelPerformanceManager (性能管理
 
-  - 漂移检                                                   
+  - 准确率监
 
-  - 自动重训                                                 
+  - 漂移检
 
- └────────────────────────────────────────────────────────────── 
+  - 自动重训
 
-                                                                   
+ └──────────────────────────────────────────────────────────────
 
- ┌────────────────────────────────────────────────────────────── 
 
-          ModelVersionManager (版本管理                      
 
-  - 模型注册                                                    
+ ┌──────────────────────────────────────────────────────────────
 
-  - 实验跟踪                                                    
+          ModelVersionManager (版本管理
 
-  - 模型部署                                                    
+  - 模型注册
 
- └────────────────────────────────────────────────────────────── 
+  - 实验跟踪
 
-                                                                   
+  - 模型部署
 
- ┌────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
-          开源工具层                                            
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
 
-  │MLflow        │Evidently     │Prometheus    │Grafana 
+ ┌──────────────────────────────────────────────────────────────
+
+          开源工具层
+
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
+
+  │MLflow        │Evidently     │Prometheus    │Grafana
 
   │Model         │AI            │Monitoring    │Dashboard
 
-  │Registry      │Testing                            
+  │Registry      │Testing
 
-  └───────────── └───────────── └───────────── └────── 
+  └───────────── └───────────── └───────────── └──────
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
-                                                                    
+
 
 └─────────────────────────────────────────────────────────────────────
 
@@ -218,19 +218,19 @@ class ModelPerformanceManager:
 
     """模型性能管理
 
-    
+
 
     负责模型性能监控、漂移检测和自动重训
 
     """
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
         """初始化模型性能管理
 
-        
+
 
         Args:
 
@@ -244,7 +244,7 @@ class ModelPerformanceManager:
 
         self.baseline_metrics = None
 
-    
+
 
     def calculate_metrics(
 
@@ -260,7 +260,7 @@ class ModelPerformanceManager:
 
         """计算性能指标
 
-        
+
 
         Args:
 
@@ -270,7 +270,7 @@ class ModelPerformanceManager:
 
             y_prob: 预测概率（可选）
 
-            
+
 
         Returns:
 
@@ -280,7 +280,7 @@ class ModelPerformanceManager:
 
         pass
 
-    
+
 
     def monitor_performance(
 
@@ -294,7 +294,7 @@ class ModelPerformanceManager:
 
         """监控模型性能
 
-        
+
 
         Args:
 
@@ -302,7 +302,7 @@ class ModelPerformanceManager:
 
             metrics: 性能指标
 
-            
+
 
         Returns:
 
@@ -312,7 +312,7 @@ class ModelPerformanceManager:
 
         pass
 
-    
+
 
     def detect_drift(
 
@@ -328,7 +328,7 @@ class ModelPerformanceManager:
 
         """检测模型漂
 
-        
+
 
         Args:
 
@@ -338,7 +338,7 @@ class ModelPerformanceManager:
 
             drift_type: 漂移类型
 
-            
+
 
         Returns:
 
@@ -348,7 +348,7 @@ class ModelPerformanceManager:
 
         pass
 
-    
+
 
     def check_performance_degradation(
 
@@ -362,7 +362,7 @@ class ModelPerformanceManager:
 
         """检查性能下降
 
-        
+
 
         Args:
 
@@ -370,7 +370,7 @@ class ModelPerformanceManager:
 
             threshold: 阈
 
-            
+
 
         Returns:
 
@@ -380,7 +380,7 @@ class ModelPerformanceManager:
 
         pass
 
-    
+
 
     def trigger_retraining(
 
@@ -394,7 +394,7 @@ class ModelPerformanceManager:
 
         """触发模型重训
 
-        
+
 
         Args:
 
@@ -402,7 +402,7 @@ class ModelPerformanceManager:
 
             reason: 触发原因
 
-            
+
 
         Returns:
 
@@ -412,7 +412,7 @@ class ModelPerformanceManager:
 
         pass
 
-    
+
 
     def generate_performance_report(
 
@@ -426,7 +426,7 @@ class ModelPerformanceManager:
 
         """生成性能报告
 
-        
+
 
         Args:
 
@@ -434,7 +434,7 @@ class ModelPerformanceManager:
 
             time_range: 时间范围
 
-            
+
 
         Returns:
 
@@ -516,13 +516,13 @@ class ModelVersionManager:
 
     """模型版本管理
 
-    
+
 
     负责模型注册、实验跟踪和模型部署
 
     """
 
-    
+
 
     def __init__(
 
@@ -536,7 +536,7 @@ class ModelVersionManager:
 
         """初始化模型版本管理器
 
-        
+
 
         Args:
 
@@ -552,13 +552,13 @@ class ModelVersionManager:
 
         self.client = MlflowClient(tracking_uri=mlflow_tracking_uri)
 
-        
+
 
         # 设置MLflow跟踪URI
 
         mlflow.set_tracking_uri(mlflow_tracking_uri)
 
-    
+
 
     def register_model(
 
@@ -580,7 +580,7 @@ class ModelVersionManager:
 
         """注册模型
 
-        
+
 
         Args:
 
@@ -596,7 +596,7 @@ class ModelVersionManager:
 
             description: 描述
 
-            
+
 
         Returns:
 
@@ -606,7 +606,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def log_experiment(
 
@@ -628,7 +628,7 @@ class ModelVersionManager:
 
         """记录实验
 
-        
+
 
         Args:
 
@@ -644,7 +644,7 @@ class ModelVersionManager:
 
             tags: 标签
 
-            
+
 
         Returns:
 
@@ -654,7 +654,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def compare_experiments(
 
@@ -666,13 +666,13 @@ class ModelVersionManager:
 
         """对比实验
 
-        
+
 
         Args:
 
             experiment_ids: 实验ID列表
 
-            
+
 
         Returns:
 
@@ -682,7 +682,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def load_model(
 
@@ -696,7 +696,7 @@ class ModelVersionManager:
 
         """加载模型
 
-        
+
 
         Args:
 
@@ -704,7 +704,7 @@ class ModelVersionManager:
 
             version: 模型版本
 
-            
+
 
         Returns:
 
@@ -714,7 +714,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def transition_model_stage(
 
@@ -730,7 +730,7 @@ class ModelVersionManager:
 
         """转换模型阶段
 
-        
+
 
         Args:
 
@@ -744,7 +744,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def get_model_versions(
 
@@ -756,13 +756,13 @@ class ModelVersionManager:
 
         """获取模型版本列表
 
-        
+
 
         Args:
 
             model_name: 模型名称
 
-            
+
 
         Returns:
 
@@ -772,7 +772,7 @@ class ModelVersionManager:
 
         pass
 
-    
+
 
     def delete_model_version(
 
@@ -786,7 +786,7 @@ class ModelVersionManager:
 
         """删除模型版本
 
-        
+
 
         Args:
 
@@ -860,13 +860,13 @@ def setup_mlflow():
 
     mlflow.set_tracking_uri("./mlruns")
 
-    
+
 
     # 设置实验名称
 
     mlflow.set_experiment("sentiment_analysis")
 
-    
+
 
     # 启用自动记录
 
@@ -898,19 +898,19 @@ def log_model_training(
 
         mlflow.log_params(params)
 
-        
+
 
         # 记录指标
 
         mlflow.log_metrics(metrics)
 
-        
+
 
         # 记录模型
 
         mlflow.sklearn.log_model(model, "model")
 
-        
+
 
         # 注册模型
 
@@ -966,7 +966,7 @@ def generate_drift_report(
 
     """生成漂移检测报
 
-    
+
 
     Args:
 
@@ -976,7 +976,7 @@ def generate_drift_report(
 
         output_path: 输出路径
 
-        
+
 
     Returns:
 
@@ -992,13 +992,13 @@ def generate_drift_report(
 
     column_mapping.prediction = "predicted_sentiment"
 
-    
+
 
     # 创建仪表
 
     dashboard = Dashboard(tabs=[DataDriftTab()])
 
-    
+
 
     # 计算漂移
 
@@ -1012,13 +1012,13 @@ def generate_drift_report(
 
     )
 
-    
+
 
     # 保存报告
 
     dashboard.save(output_path)
 
-    
+
 
     return output_path
 
@@ -1633,4 +1633,3 @@ CREATE TABLE drift_detection_records (
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-

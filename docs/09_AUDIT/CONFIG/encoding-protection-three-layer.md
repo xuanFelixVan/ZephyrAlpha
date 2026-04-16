@@ -58,8 +58,8 @@ layer: cross_layer
 
 ## 快速自检清单
 
-1. **Pre-commit**：`pre-commit run doc-guard-pre-commit --all-files`  exit 0  
-2. **CI**：推送含 `docs/` 的 commit，检查 `Governance audit` workflow 中编码步骤通过  
+1. **Pre-commit**：`pre-commit run doc-guard-pre-commit --all-files`  exit 0
+2. **CI**：推送含 `docs/` 的 commit，检查 `Governance audit` workflow 中编码步骤通过
 3. **Daily**：`python docs/09_AUDIT/AUTOMATION/daily_check.py`，查看生成的 JSON 中 `encoding_ok: true`
 
 ---

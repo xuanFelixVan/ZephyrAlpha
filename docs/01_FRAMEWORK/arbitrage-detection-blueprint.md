@@ -71,7 +71,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -633,7 +633,7 @@ class ArbitrageDetectionModel:
 
 
 
-    
+
 
 
 
@@ -705,7 +705,7 @@ class ArbitrageDetectionModel:
 
 
 
-        """初始化套利检测模块        
+        """初始化套利检测模块
 
 
 
@@ -765,7 +765,7 @@ class ArbitrageDetectionModel:
 
 
 
-    
+
 
 
 
@@ -825,7 +825,7 @@ class ArbitrageDetectionModel:
 
 
 
-        """检测空间套?        
+        """检测空间套?
 
 
 
@@ -849,7 +849,7 @@ class ArbitrageDetectionModel:
 
 
 
-            prices: 各市场价值            
+            prices: 各市场价值
 
 
 
@@ -909,7 +909,7 @@ class ArbitrageDetectionModel:
 
 
 
-    
+
 
 
 
@@ -981,7 +981,7 @@ class ArbitrageDetectionModel:
 
 
 
-        """检测统计套?        
+        """检测统计套?
 
 
 
@@ -1029,7 +1029,7 @@ class ArbitrageDetectionModel:
 
 
 
-            
+
 
 
 
@@ -1089,7 +1089,7 @@ class ArbitrageDetectionModel:
 
 
 
-    
+
 
 
 
@@ -1161,7 +1161,7 @@ class ArbitrageDetectionModel:
 
 
 
-        
+
 
 
 
@@ -1197,7 +1197,7 @@ class ArbitrageDetectionModel:
 
 
 
-            
+
 
 
 
@@ -1257,7 +1257,7 @@ class ArbitrageDetectionModel:
 
 
 
-    
+
 
 
 
@@ -1329,7 +1329,7 @@ class ArbitrageDetectionModel:
 
 
 
-        
+
 
 
 
@@ -1365,7 +1365,7 @@ class ArbitrageDetectionModel:
 
 
 
-            
+
 
 
 
@@ -1990,14 +1990,3 @@ class ArbitrageDetectionModel:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

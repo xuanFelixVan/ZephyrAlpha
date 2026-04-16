@@ -21,7 +21,7 @@ layer: layer_01
 
 > **核心职责**: 提供自动化的构建、测试、部署流程，确保代码质量和部署效率
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：自动化构建、测试、部署流程
 
@@ -189,13 +189,13 @@ jobs:
 
         python-version: [3.9, 3.10, 3.11]
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python ${{ matrix.python-version }}
 
@@ -205,7 +205,7 @@ jobs:
 
         python-version: ${{ matrix.python-version }}
 
-    
+
 
     - name: Cache dependencies
 
@@ -221,7 +221,7 @@ jobs:
 
           ${{ runner.os }}-pip-
 
-    
+
 
     - name: Install dependencies
 
@@ -233,7 +233,7 @@ jobs:
 
         pip install -r requirements-dev.txt
 
-    
+
 
     - name: Lint with flake8
 
@@ -245,7 +245,7 @@ jobs:
 
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    
+
 
     - name: Format check with black
 
@@ -255,7 +255,7 @@ jobs:
 
         black --check .
 
-    
+
 
     - name: Type check with mypy
 
@@ -265,7 +265,7 @@ jobs:
 
         mypy . --ignore-missing-imports
 
-    
+
 
     - name: Test with pytest
 
@@ -275,7 +275,7 @@ jobs:
 
         pytest tests/ -v --cov=src --cov-report=xml --cov-report=html
 
-    
+
 
     - name: Upload coverage
 
@@ -343,13 +343,13 @@ jobs:
 
     environment: ${{ github.event.inputs.environment || 'staging' }}
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python
 
@@ -359,7 +359,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -369,7 +369,7 @@ jobs:
 
         pip install -r requirements.txt
 
-    
+
 
     - name: Run tests
 
@@ -377,7 +377,7 @@ jobs:
 
         pytest tests/ -v
 
-    
+
 
     - name: Build Docker image
 
@@ -387,7 +387,7 @@ jobs:
 
         docker tag zephyr-alpha:${{ github.sha }} zephyr-alpha:latest
 
-    
+
 
     - name: Log in to Docker Hub
 
@@ -401,7 +401,7 @@ jobs:
 
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    
+
 
     - name: Push to Docker Hub
 
@@ -413,7 +413,7 @@ jobs:
 
         docker push ${{ secrets.DOCKER_USERNAME }}/zephyr-alpha:latest
 
-    
+
 
     - name: Deploy to staging
 
@@ -423,7 +423,7 @@ jobs:
 
         docker-compose -f docker-compose.staging.yml up -d
 
-    
+
 
     - name: Deploy to production
 
@@ -465,13 +465,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python
 
@@ -481,7 +481,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -491,7 +491,7 @@ jobs:
 
         pip install -r requirements-dev.txt
 
-    
+
 
     - name: Run SonarCloud Scan
 
@@ -503,7 +503,7 @@ jobs:
 
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    
+
 
     - name: Check test coverage
 
@@ -511,7 +511,7 @@ jobs:
 
         pytest tests/ --cov=src --cov-fail-under=80
 
-    
+
 
     - name: Security scan with Bandit
 
@@ -523,7 +523,7 @@ jobs:
 
         bandit -r src/ -ll
 
-    
+
 
     - name: Dependency check
 
@@ -533,7 +533,7 @@ jobs:
 
         safety check --json
 
-    
+
 
     - name: Quality gate
 
@@ -573,13 +573,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python
 
@@ -589,7 +589,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -599,7 +599,7 @@ jobs:
 
         pip install build twine
 
-    
+
 
     - name: Build package
 
@@ -607,7 +607,7 @@ jobs:
 
         python -m build
 
-    
+
 
     - name: Publish to PyPI
 
@@ -621,7 +621,7 @@ jobs:
 
         twine upload dist/*
 
-    
+
 
     - name: Create GitHub Release
 
@@ -637,7 +637,7 @@ jobs:
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    
+
 
     - name: Build and push Docker image
 
@@ -785,7 +785,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   redis:
 
@@ -801,7 +801,7 @@ services:
 
     restart: unless-stopped
 
-  
+
 
   postgres:
 
@@ -1064,4 +1064,3 @@ volumes:
 
 
 - 事件载荷、报告字段字典与通知通道细化将在施工阶段固化到 `API_Contract.md` 子契约；本蓝图先确保边界、接口闭合点与验收闭环清晰。
-

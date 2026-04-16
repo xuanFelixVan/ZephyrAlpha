@@ -50,7 +50,7 @@ priority: P1
 
 > **核心职责**: 资本配置系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：资本配置系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P1
 
 > **核心职责**: Capital Allocation蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Capital Allocation蓝图设计相关内容
 
@@ -520,7 +520,7 @@ class CapitalDemandForecaster:
 
     """资本需求预测器"""
 
-    
+
 
     def __init__(self):
 
@@ -528,7 +528,7 @@ class CapitalDemandForecaster:
 
         self.forecasts: List[DemandForecast] = []
 
-    
+
 
     def record_demand(self, demand: CapitalDemand):
 
@@ -536,9 +536,9 @@ class CapitalDemandForecaster:
 
         self.demand_history.append(demand)
 
-    
 
-    def analyze_historical_pattern(self, 
+
+    def analyze_historical_pattern(self,
 
                                   days: int = 90) -> Dict:
 
@@ -548,7 +548,7 @@ class CapitalDemandForecaster:
 
             return {}
 
-        
+
 
         df = pd.DataFrame([
 
@@ -568,13 +568,13 @@ class CapitalDemandForecaster:
 
         ])
 
-        
+
 
         if df.empty:
 
             return {}
 
-        
+
 
         return {
 
@@ -590,7 +590,7 @@ class CapitalDemandForecaster:
 
         }
 
-    
+
 
     def forecast_demand(self,
 
@@ -602,33 +602,33 @@ class CapitalDemandForecaster:
 
         strategy_demands = {}
 
-        
+
 
         for strategy_id, strategy_info in strategies.items():
 
             base_demand = strategy_info.get('avg_capital_demand', 0)
 
-            
+
 
             signal_strength = strategy_info.get('current_signal_strength', 0.5)
 
-            
+
 
             market_factor = market_conditions.get('volatility_factor', 1.0)
 
-            
+
 
             forecasted_demand = base_demand * signal_strength * market_factor
 
-            
+
 
             strategy_demands[strategy_id] = forecasted_demand
 
-        
+
 
         total_demand = sum(strategy_demands.values())
 
-        
+
 
         forecast = DemandForecast(
 
@@ -646,13 +646,13 @@ class CapitalDemandForecaster:
 
         )
 
-        
+
 
         self.forecasts.append(forecast)
 
         return forecast
 
-    
+
 
     def detect_demand_conflicts(self,
 
@@ -664,11 +664,11 @@ class CapitalDemandForecaster:
 
         conflicts = []
 
-        
+
 
         total_required = sum(d.required_amount for d in demands)
 
-        
+
 
         if total_required > available_capital:
 
@@ -684,7 +684,7 @@ class CapitalDemandForecaster:
 
             })
 
-        
+
 
         by_asset = {}
 
@@ -696,7 +696,7 @@ class CapitalDemandForecaster:
 
             by_asset[d.asset_code].append(d)
 
-        
+
 
         for asset, asset_demands in by_asset.items():
 
@@ -714,7 +714,7 @@ class CapitalDemandForecaster:
 
                 })
 
-        
+
 
         return conflicts
 
@@ -758,9 +758,9 @@ class CapitalAllocationOptimizer:
 
     """资本分配优化器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  reserve_ratio: float = 0.1,
 
@@ -774,7 +774,7 @@ class CapitalAllocationOptimizer:
 
         self.allocation_counter = 0
 
-    
+
 
     def allocate_by_risk_budget(self,
 
@@ -788,15 +788,15 @@ class CapitalAllocationOptimizer:
 
         self.allocations = []
 
-        
+
 
         investable = total_capital * (1 - self.reserve_ratio - self.min_cash_ratio)
 
-        
+
 
         total_risk_budget = sum(risk_budgets.values())
 
-        
+
 
         for demand in demands:
 
@@ -804,7 +804,7 @@ class CapitalAllocationOptimizer:
 
             budget_ratio = strategy_budget / total_risk_budget if total_risk_budget > 0 else 0
 
-            
+
 
             allocated = min(
 
@@ -814,7 +814,7 @@ class CapitalAllocationOptimizer:
 
             )
 
-            
+
 
             self.allocation_counter += 1
 
@@ -840,11 +840,11 @@ class CapitalAllocationOptimizer:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
-    
+
 
     def allocate_by_expected_return(self,
 
@@ -856,23 +856,23 @@ class CapitalAllocationOptimizer:
 
         self.allocations = []
 
-        
+
 
         investable = total_capital * (1 - self.reserve_ratio - self.min_cash_ratio)
 
-        
 
-        sorted_demands = sorted(demands, 
 
-                               key=lambda d: d.expected_return, 
+        sorted_demands = sorted(demands,
+
+                               key=lambda d: d.expected_return,
 
                                reverse=True)
 
-        
+
 
         remaining = investable
 
-        
+
 
         for demand in sorted_demands:
 
@@ -880,13 +880,13 @@ class CapitalAllocationOptimizer:
 
                 break
 
-            
+
 
             allocated = min(demand.required_amount, remaining)
 
             remaining -= allocated
 
-            
+
 
             self.allocation_counter += 1
 
@@ -912,11 +912,11 @@ class CapitalAllocationOptimizer:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
-    
+
 
     def allocate_by_efficiency(self,
 
@@ -928,11 +928,11 @@ class CapitalAllocationOptimizer:
 
         self.allocations = []
 
-        
+
 
         investable = total_capital * (1 - self.reserve_ratio - self.min_cash_ratio)
 
-        
+
 
         def efficiency_score(d: CapitalDemand) -> float:
 
@@ -942,15 +942,15 @@ class CapitalAllocationOptimizer:
 
             return d.expected_return / d.risk_estimate
 
-        
+
 
         sorted_demands = sorted(demands, key=efficiency_score, reverse=True)
 
-        
+
 
         remaining = investable
 
-        
+
 
         for demand in sorted_demands:
 
@@ -958,13 +958,13 @@ class CapitalAllocationOptimizer:
 
                 break
 
-            
+
 
             allocated = min(demand.required_amount, remaining)
 
             remaining -= allocated
 
-            
+
 
             self.allocation_counter += 1
 
@@ -990,11 +990,11 @@ class CapitalAllocationOptimizer:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
-    
+
 
     def multi_objective_optimize(self,
 
@@ -1020,21 +1020,21 @@ class CapitalAllocationOptimizer:
 
             }
 
-        
+
 
         investable = total_capital * (1 - self.reserve_ratio - self.min_cash_ratio)
 
-        
+
 
         def multi_objective_score(d: CapitalDemand) -> float:
 
             return_score = d.expected_return * weights['return']
 
-            
+
 
             risk_score = (1 - d.risk_estimate) * weights['risk']
 
-            
+
 
             if d.risk_estimate > 0:
 
@@ -1044,19 +1044,19 @@ class CapitalAllocationOptimizer:
 
                 efficiency_score = d.expected_return * weights['efficiency']
 
-            
+
 
             return return_score + risk_score + efficiency_score
 
-        
+
 
         sorted_demands = sorted(demands, key=multi_objective_score, reverse=True)
 
-        
+
 
         return self.allocate_by_priority(sorted_demands, investable, total_capital)
 
-    
+
 
     def allocate_by_priority(self,
 
@@ -1072,7 +1072,7 @@ class CapitalAllocationOptimizer:
 
         remaining = investable
 
-        
+
 
         for demand in sorted_demands:
 
@@ -1080,13 +1080,13 @@ class CapitalAllocationOptimizer:
 
                 break
 
-            
+
 
             allocated = min(demand.required_amount, remaining)
 
             remaining -= allocated
 
-            
+
 
             self.allocation_counter += 1
 
@@ -1112,7 +1112,7 @@ class CapitalAllocationOptimizer:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
@@ -1122,13 +1122,13 @@ class DynamicAdjustmentEngine:
 
     """动态调整引擎"""
 
-    
+
 
     def __init__(self):
 
         self.adjustment_history: List[Dict] = []
 
-    
+
 
     def adjust_for_market_signal(self,
 
@@ -1140,7 +1140,7 @@ class DynamicAdjustmentEngine:
 
         volatility_change = market_signal.get('volatility_change', 0)
 
-        
+
 
         if volatility_change > 0.2:
 
@@ -1150,11 +1150,11 @@ class DynamicAdjustmentEngine:
 
                 alloc.allocated_weight *= 0.9
 
-        
+
 
         return current_allocations
 
-    
+
 
     def adjust_for_performance(self,
 
@@ -1168,7 +1168,7 @@ class DynamicAdjustmentEngine:
 
             strategy_perf = performance_data.get(alloc.strategy_id, 0)
 
-            
+
 
             if strategy_perf > 0.1:
 
@@ -1182,7 +1182,7 @@ class DynamicAdjustmentEngine:
 
                 alloc.allocated_weight *= 0.9
 
-        
+
 
         return current_allocations
 
@@ -1220,13 +1220,13 @@ class CapitalEfficiencyMonitor:
 
     """资本效率监控器"""
 
-    
+
 
     def __init__(self):
 
         self.metrics_history: List[EfficiencyMetrics] = []
 
-    
+
 
     def calculate_utilization(self,
 
@@ -1238,7 +1238,7 @@ class CapitalEfficiencyMonitor:
 
         return allocated / total_capital if total_capital > 0 else 0
 
-    
+
 
     def calculate_turnover(self,
 
@@ -1258,7 +1258,7 @@ class CapitalEfficiencyMonitor:
 
         return annual_trades / avg_capital
 
-    
+
 
     def calculate_idle_ratio(self,
 
@@ -1270,7 +1270,7 @@ class CapitalEfficiencyMonitor:
 
         return idle_capital / total_capital if total_capital > 0 else 0
 
-    
+
 
     def calculate_efficiency_score(self,
 
@@ -1298,7 +1298,7 @@ class CapitalEfficiencyMonitor:
 
         return score
 
-    
+
 
     def monitor_efficiency(self,
 
@@ -1316,7 +1316,7 @@ class CapitalEfficiencyMonitor:
 
         utilization = self.calculate_utilization(allocated, total_capital)
 
-        
+
 
         trades_value = trades_data.get('total_value', 0)
 
@@ -1324,13 +1324,13 @@ class CapitalEfficiencyMonitor:
 
         turnover = self.calculate_turnover(trades_value, avg_capital)
 
-        
+
 
         idle_capital = total_capital - allocated
 
         idle_ratio = self.calculate_idle_ratio(idle_capital, total_capital)
 
-        
+
 
         total_returns = sum(returns_data.values())
 
@@ -1340,7 +1340,7 @@ class CapitalEfficiencyMonitor:
 
         )
 
-        
+
 
         by_strategy = {}
 
@@ -1356,7 +1356,7 @@ class CapitalEfficiencyMonitor:
 
                 by_strategy[alloc.strategy_id] = 0
 
-        
+
 
         metrics = EfficiencyMetrics(
 
@@ -1374,13 +1374,13 @@ class CapitalEfficiencyMonitor:
 
         )
 
-        
+
 
         self.metrics_history.append(metrics)
 
         return metrics
 
-    
+
 
     def generate_efficiency_report(self,
 
@@ -1394,7 +1394,7 @@ class CapitalEfficiencyMonitor:
 
         report += f"计算日期: {metrics.calculation_date}\n\n"
 
-        
+
 
         report += "核心指标:\n"
 
@@ -1406,17 +1406,17 @@ class CapitalEfficiencyMonitor:
 
         report += f"  综合效率评分: {metrics.efficiency_score:.2f}/1.0\n\n"
 
-        
+
 
         report += "各策略效率:\n"
 
-        for strategy, score in sorted(metrics.by_strategy.items(), 
+        for strategy, score in sorted(metrics.by_strategy.items(),
 
                                      key=lambda x: x[1], reverse=True):
 
             report += f"  {strategy}: {score:.4f}\n"
 
-        
+
 
         return report
 
@@ -1478,9 +1478,9 @@ class CashFlowManager:
 
     """现金流管理器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  min_cash_buffer: float = 0.05,
 
@@ -1494,7 +1494,7 @@ class CashFlowManager:
 
         self.forecasts: List[CashFlowForecast] = []
 
-    
+
 
     def add_cash_flow(self, item: CashFlowItem):
 
@@ -1502,7 +1502,7 @@ class CashFlowManager:
 
         self.cash_flows.append(item)
 
-    
+
 
     def forecast_dividends(self,
 
@@ -1514,7 +1514,7 @@ class CashFlowManager:
 
         items = []
 
-        
+
 
         for stock_code, position in positions.items():
 
@@ -1522,7 +1522,7 @@ class CashFlowManager:
 
                 expected_dividend = dividend_calendar[stock_code] * position.get('shares', 0)
 
-                
+
 
                 item = CashFlowItem(
 
@@ -1542,11 +1542,11 @@ class CashFlowManager:
 
                 items.append(item)
 
-        
+
 
         return items
 
-    
+
 
     def forecast_period(self,
 
@@ -1566,7 +1566,7 @@ class CashFlowManager:
 
         ]
 
-        
+
 
         outflows = [
 
@@ -1578,13 +1578,13 @@ class CashFlowManager:
 
         ]
 
-        
+
 
         expected_inflow = sum(cf.amount * cf.probability for cf in inflows)
 
         expected_outflow = sum(cf.amount * cf.probability for cf in outflows)
 
-        
+
 
         forecast = CashFlowForecast(
 
@@ -1604,13 +1604,13 @@ class CashFlowManager:
 
         )
 
-        
+
 
         self.forecasts.append(forecast)
 
         return forecast
 
-    
+
 
     def manage_cash_buffer(self,
 
@@ -1622,7 +1622,7 @@ class CashFlowManager:
 
         required_buffer = total_capital * self.min_cash_buffer
 
-        
+
 
         return {
 
@@ -1638,7 +1638,7 @@ class CashFlowManager:
 
         }
 
-    
+
 
     def optimize_idle_cash(self,
 
@@ -1650,7 +1650,7 @@ class CashFlowManager:
 
         recommendations = []
 
-        
+
 
         for option in investment_options:
 
@@ -1668,7 +1668,7 @@ class CashFlowManager:
 
                 })
 
-        
+
 
         return recommendations
 
@@ -1704,7 +1704,7 @@ class OpportunityCostAnalyzer:
 
     """机会成本分析器"""
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.03):
 
@@ -1712,7 +1712,7 @@ class OpportunityCostAnalyzer:
 
         self.costs: List[OpportunityCost] = []
 
-    
+
 
     def calculate_idle_capital_cost(self,
 
@@ -1724,7 +1724,7 @@ class OpportunityCostAnalyzer:
 
         cost = idle_amount * self.risk_free_rate * (days / 365)
 
-        
+
 
         return OpportunityCost(
 
@@ -1738,7 +1738,7 @@ class OpportunityCostAnalyzer:
 
         )
 
-    
+
 
     def calculate_allocation_inefficiency_cost(self,
 
@@ -1752,7 +1752,7 @@ class OpportunityCostAnalyzer:
 
         cost = (optimal_return - current_return) * capital
 
-        
+
 
         return OpportunityCost(
 
@@ -1766,7 +1766,7 @@ class OpportunityCostAnalyzer:
 
         )
 
-    
+
 
     def calculate_timing_cost(self,
 
@@ -1780,7 +1780,7 @@ class OpportunityCostAnalyzer:
 
         cost = delayed_amount * expected_return * (delay_days / 365)
 
-        
+
 
         return OpportunityCost(
 
@@ -1794,7 +1794,7 @@ class OpportunityCostAnalyzer:
 
         )
 
-    
+
 
     def analyze_total_opportunity_cost(self,
 
@@ -1816,7 +1816,7 @@ class OpportunityCostAnalyzer:
 
         )
 
-        
+
 
         efficiency_cost = self.calculate_allocation_inefficiency_cost(
 
@@ -1824,7 +1824,7 @@ class OpportunityCostAnalyzer:
 
         )
 
-        
+
 
         timing_cost = self.calculate_timing_cost(
 
@@ -1836,11 +1836,11 @@ class OpportunityCostAnalyzer:
 
         )
 
-        
+
 
         self.costs.extend([idle_cost, efficiency_cost, timing_cost])
 
-        
+
 
         return {
 
@@ -1860,7 +1860,7 @@ class OpportunityCostAnalyzer:
 
         }
 
-    
+
 
     def generate_cost_recommendations(self,
 
@@ -1874,7 +1874,7 @@ class OpportunityCostAnalyzer:
 
         recommendations = []
 
-        
+
 
         if idle_cost.amount > 0:
 
@@ -1884,7 +1884,7 @@ class OpportunityCostAnalyzer:
 
             )
 
-        
+
 
         if efficiency_cost.amount > 0:
 
@@ -1894,7 +1894,7 @@ class OpportunityCostAnalyzer:
 
             )
 
-        
+
 
         if timing_cost.amount > 0:
 
@@ -1904,7 +1904,7 @@ class OpportunityCostAnalyzer:
 
             )
 
-        
+
 
         return recommendations
 
@@ -1936,13 +1936,13 @@ class RiskfolioIntegration:
 
     """Riskfolio-Lib集成"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def optimize_risk_parity(self,
 
@@ -1956,7 +1956,7 @@ class RiskfolioIntegration:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         weights = port.risk_parity(
 
@@ -1964,11 +1964,11 @@ class RiskfolioIntegration:
 
         )
 
-        
+
 
         return weights.to_dict()
 
-    
+
 
     def optimize_max_sharpe(self,
 
@@ -1982,7 +1982,7 @@ class RiskfolioIntegration:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         weights = port.optimization(
 
@@ -1996,7 +1996,7 @@ class RiskfolioIntegration:
 
         )
 
-        
+
 
         return weights.to_dict()
 
@@ -2020,13 +2020,13 @@ class SkfolioIntegration:
 
     """skfolio集成"""
 
-    
+
 
     def __init__(self):
 
         pass
 
-    
+
 
     def optimize_mean_risk(self,
 
@@ -2040,15 +2040,15 @@ class SkfolioIntegration:
 
         optimizer.fit(returns)
 
-        
+
 
         weights = optimizer.weights_
 
-        
+
 
         return dict(zip(returns.columns, weights))
 
-    
+
 
     def optimize_risk_budgeting(self,
 
@@ -2058,21 +2058,21 @@ class SkfolioIntegration:
 
         """风险预算优化"""
 
-        budgets = [risk_budget.get(col, 1/len(returns.columns)) 
+        budgets = [risk_budget.get(col, 1/len(returns.columns))
 
                   for col in returns.columns]
 
-        
+
 
         optimizer = RiskBudgeting(risk_budget=budgets)
 
         optimizer.fit(returns)
 
-        
+
 
         weights = optimizer.weights_
 
-        
+
 
         return dict(zip(returns.columns, weights))
 
@@ -2233,4 +2233,3 @@ class SkfolioIntegration:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

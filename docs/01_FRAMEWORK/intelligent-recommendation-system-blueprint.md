@@ -26,7 +26,7 @@ responsibility: ''
 
 > **核心职责**: Intelligent Recommendation System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Intelligent Recommendation System蓝图设计相关内容
 
@@ -212,13 +212,13 @@ class RuleBasedRecommender:
 
     """基于规则的推荐引擎"""
 
-    
+
 
     def __init__(self):
 
         self.rules = self._load_rules()
 
-        
+
 
     def _load_rules(self):
 
@@ -290,7 +290,7 @@ class RuleBasedRecommender:
 
         }
 
-    
+
 
     def recommend(self, context):
 
@@ -298,13 +298,13 @@ class RuleBasedRecommender:
 
         生成推荐
 
-        
+
 
         Args:
 
             context: 上下文信息
 
-            
+
 
         Returns:
 
@@ -314,7 +314,7 @@ class RuleBasedRecommender:
 
         recommendations = []
 
-        
+
 
         for category, rules in self.rules.items():
 
@@ -334,13 +334,13 @@ class RuleBasedRecommender:
 
                     })
 
-        
+
 
         # 按优先级排序
 
         recommendations.sort(key=lambda x: x['priority'], reverse=True)
 
-        
+
 
         return recommendations
 
@@ -362,7 +362,7 @@ class AIRecommender:
 
     """AI推荐引擎"""
 
-    
+
 
     def __init__(self, api_key):
 
@@ -376,7 +376,7 @@ class AIRecommender:
 
         )
 
-        
+
 
     def recommend_strategy_optimization(self, strategy_data):
 
@@ -386,7 +386,7 @@ class AIRecommender:
 
         基于以下策略数据，提供优化建议：
 
-        
+
 
         策略数据:
 
@@ -398,17 +398,17 @@ class AIRecommender:
 
         - 胜率: {strategy_data['win_rate']}
 
-        
+
 
         请提供3-5条具体的优化建议。
 
         """
 
-        
+
 
         return self.llm.predict(prompt)
 
-    
+
 
     def recommend_risk_management(self, risk_data):
 
@@ -418,7 +418,7 @@ class AIRecommender:
 
         基于以下风险数据，提供风险管理建议：
 
-        
+
 
         风险数据:
 
@@ -430,13 +430,13 @@ class AIRecommender:
 
         - 持仓集中度: {risk_data['concentration']}
 
-        
+
 
         请提供3-5条具体的风险管理建议。
 
         """
 
-        
+
 
         return self.llm.predict(prompt)
 
@@ -454,7 +454,7 @@ class IntelligentRecommendationSystem:
 
     """智能推荐系统"""
 
-    
+
 
     def __init__(self, api_key):
 
@@ -462,7 +462,7 @@ class IntelligentRecommendationSystem:
 
         self.ai_recommender = AIRecommender(api_key)
 
-        
+
 
     def get_recommendations(self, user_id):
 
@@ -470,13 +470,13 @@ class IntelligentRecommendationSystem:
 
         获取推荐
 
-        
+
 
         Args:
 
             user_id: 用户ID
 
-            
+
 
         Returns:
 
@@ -488,25 +488,25 @@ class IntelligentRecommendationSystem:
 
         context = self._get_context(user_id)
 
-        
+
 
         # 规则推荐
 
         rule_recommendations = self.rule_recommender.recommend(context)
 
-        
+
 
         # AI推荐
 
         ai_recommendations = self._get_ai_recommendations(context)
 
-        
+
 
         # 合并推荐
 
         all_recommendations = rule_recommendations + ai_recommendations
 
-        
+
 
         # 去重和排序
 
@@ -514,7 +514,7 @@ class IntelligentRecommendationSystem:
 
         sorted_recommendations = self._sort_by_priority(unique_recommendations)
 
-        
+
 
         return {
 
@@ -524,7 +524,7 @@ class IntelligentRecommendationSystem:
 
         }
 
-    
+
 
     def _get_context(self, user_id):
 
@@ -546,7 +546,7 @@ class IntelligentRecommendationSystem:
 
         }
 
-    
+
 
     def _get_ai_recommendations(self, context):
 
@@ -554,7 +554,7 @@ class IntelligentRecommendationSystem:
 
         recommendations = []
 
-        
+
 
         # 策略优化推荐
 
@@ -572,7 +572,7 @@ class IntelligentRecommendationSystem:
 
         })
 
-        
+
 
         # 风险管理推荐
 
@@ -590,7 +590,7 @@ class IntelligentRecommendationSystem:
 
         })
 
-        
+
 
         return recommendations
 
@@ -614,19 +614,19 @@ def render_recommendation_interface():
 
     st.title("💡 智能推荐")
 
-    
+
 
     # 初始化推荐系统
 
     rec_system = IntelligentRecommendationSystem(api_key=st.secrets['OPENAI_API_KEY'])
 
-    
+
 
     # 获取推荐
 
     recommendations = rec_system.get_recommendations(user_id='default')
 
-    
+
 
     # 显示推荐
 
@@ -642,11 +642,11 @@ def render_recommendation_interface():
 
         }
 
-        
+
 
         emoji = priority_emoji.get(rec['priority'], '⚪')
 
-        
+
 
         with st.expander(f"{emoji} {rec['category'].upper()} - {rec['priority'].upper()}"):
 
@@ -847,4 +847,3 @@ llm = ChatOpenAI(openai_api_key='your-key', model_name='gpt-4')
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

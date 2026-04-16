@@ -23,7 +23,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据脱敏加密、敏感数据识别、脱敏规则执行
 
@@ -221,7 +221,7 @@ import re
 
 class PIIIdentifier:
 
-    
+
 
     SUPPORTED_PII_TYPES = [
 
@@ -241,7 +241,7 @@ class PIIIdentifier:
 
     ]
 
-    
+
 
     def __init__(self, language: str = "en"):
 
@@ -251,11 +251,11 @@ class PIIIdentifier:
 
         self.language = language
 
-        
+
 
         self.custom_patterns = self._load_custom_patterns()
 
-    
+
 
     def _load_custom_patterns(self) -> Dict[str, re.Pattern]:
 
@@ -273,7 +273,7 @@ class PIIIdentifier:
 
         }
 
-    
+
 
     def scan(self, text: str) -> List[Dict[str, Any]]:
 
@@ -289,7 +289,7 @@ class PIIIdentifier:
 
         )
 
-        
+
 
         pii_list = []
 
@@ -309,7 +309,7 @@ class PIIIdentifier:
 
             })
 
-        
+
 
         for pattern_name, pattern in self.custom_patterns.items():
 
@@ -329,11 +329,11 @@ class PIIIdentifier:
 
                 })
 
-        
+
 
         return pii_list
 
-    
+
 
     def scan_dataframe(self, df, sample_size: int = 1000) -> Dict[str, List[Dict]]:
 
@@ -341,7 +341,7 @@ class PIIIdentifier:
 
         results = {}
 
-        
+
 
         for column in df.columns:
 
@@ -349,7 +349,7 @@ class PIIIdentifier:
 
             text = " ".join(sample)
 
-            
+
 
             pii_found = self.scan(text)
 
@@ -357,7 +357,7 @@ class PIIIdentifier:
 
                 results[column] = pii_found
 
-        
+
 
         return results
 
@@ -367,7 +367,7 @@ class PIIIdentifier:
 
 class DataMasker:
 
-    
+
 
     MASKING_STRATEGIES = {
 
@@ -377,13 +377,13 @@ class DataMasker:
 
     }
 
-    
+
 
     def __init__(self):
 
         self.anonymizer = AnonymizerEngine()
 
-    
+
 
     def mask_phone(self, phone: str) -> str:
 
@@ -393,7 +393,7 @@ class DataMasker:
 
         return phone[:3] + "****" + phone[-4:] if len(phone) > 7 else "****"
 
-    
+
 
     def mask_id_card(self, id_card: str) -> str:
 
@@ -403,7 +403,7 @@ class DataMasker:
 
         return id_card[:3] + "****" + id_card[-4:]
 
-    
+
 
     def mask_bank_card(self, card: str) -> str:
 
@@ -413,7 +413,7 @@ class DataMasker:
 
         return "****"
 
-    
+
 
     def mask_email(self, email: str) -> str:
 
@@ -429,7 +429,7 @@ class DataMasker:
 
         return "***"
 
-    
+
 
     def mask_name(self, name: str) -> str:
 
@@ -445,7 +445,7 @@ class DataMasker:
 
             return f"{name[0]}*{name[-1]}"
 
-    
+
 
     def apply_strategy(
 
@@ -479,11 +479,11 @@ class DataMasker:
 
         }
 
-        
+
 
         masker = strategy_map.get(pii_type, lambda x: "***")
 
-        
+
 
         if strategy == "redact":
 
@@ -499,7 +499,7 @@ class DataMasker:
 
             return masker(text)
 
-    
+
 
     def anonymize_text(
 
@@ -515,7 +515,7 @@ class DataMasker:
 
         sorted_pii = sorted(pii_list, key=lambda x: x["start"], reverse=True)
 
-        
+
 
         result = text
 
@@ -533,7 +533,7 @@ class DataMasker:
 
             result = result[:pii["start"]] + masked + result[pii["end"]:]
 
-        
+
 
         return result
 
@@ -577,7 +577,7 @@ class EncryptionEngine:
 
     """数据加密引擎"""
 
-    
+
 
     def __init__(self, master_key: Optional[bytes] = None):
 
@@ -589,7 +589,7 @@ class EncryptionEngine:
 
             self.fernet = Fernet(Fernet.generate_key())
 
-    
+
 
     @staticmethod
 
@@ -599,7 +599,7 @@ class EncryptionEngine:
 
             salt = os.urandom(16)
 
-        
+
 
         kdf = PBKDF2HMAC(
 
@@ -615,13 +615,13 @@ class EncryptionEngine:
 
         )
 
-        
+
 
         key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
         return key, salt
 
-    
+
 
     def encrypt(self, data: str) -> str:
 
@@ -631,7 +631,7 @@ class EncryptionEngine:
 
         return self.fernet.encrypt(data).decode()
 
-    
+
 
     def decrypt(self, encrypted_data: str) -> str:
 
@@ -641,7 +641,7 @@ class EncryptionEngine:
 
         return self.fernet.decrypt(encrypted_data).decode()
 
-    
+
 
     def encrypt_dict(self, data: dict) -> str:
 
@@ -651,7 +651,7 @@ class EncryptionEngine:
 
         return self.encrypt(json_str)
 
-    
+
 
     def decrypt_dict(self, encrypted_data: str) -> dict:
 
@@ -661,7 +661,7 @@ class EncryptionEngine:
 
         return json.loads(json_str)
 
-    
+
 
     def encrypt_file(self, input_path: str, output_path: str):
 
@@ -671,17 +671,17 @@ class EncryptionEngine:
 
             data = f.read()
 
-        
+
 
         encrypted = self.fernet.encrypt(data)
 
-        
+
 
         with open(output_path, 'wb') as f:
 
             f.write(encrypted)
 
-    
+
 
     def decrypt_file(self, input_path: str, output_path: str):
 
@@ -691,11 +691,11 @@ class EncryptionEngine:
 
             encrypted_data = f.read()
 
-        
+
 
         decrypted = self.fernet.decrypt(encrypted_data)
 
-        
+
 
         with open(output_path, 'wb') as f:
 
@@ -707,7 +707,7 @@ class EncryptionEngine:
 
 class FieldLevelEncryption:
 
-    
+
 
     SENSITIVE_FIELDS = [
 
@@ -717,7 +717,7 @@ class FieldLevelEncryption:
 
     ]
 
-    
+
 
     def __init__(self, encryption_engine: EncryptionEngine):
 
@@ -725,7 +725,7 @@ class FieldLevelEncryption:
 
         self.field_keys = {}
 
-    
+
 
     def encrypt_field(self, value: str, field_name: str) -> str:
 
@@ -737,7 +737,7 @@ class FieldLevelEncryption:
 
         return value
 
-    
+
 
     def decrypt_field(self, value: str, field_name: str) -> str:
 
@@ -749,7 +749,7 @@ class FieldLevelEncryption:
 
         return value
 
-    
+
 
     def encrypt_record(self, record: dict, fields: list = None) -> dict:
 
@@ -759,7 +759,7 @@ class FieldLevelEncryption:
 
         encrypted_record = {}
 
-        
+
 
         for key, value in record.items():
 
@@ -771,11 +771,11 @@ class FieldLevelEncryption:
 
                 encrypted_record[key] = value
 
-        
+
 
         return encrypted_record
 
-    
+
 
     def decrypt_record(self, record: dict) -> dict:
 
@@ -783,7 +783,7 @@ class FieldLevelEncryption:
 
         decrypted_record = {}
 
-        
+
 
         for key, value in record.items():
 
@@ -795,7 +795,7 @@ class FieldLevelEncryption:
 
                 decrypted_record[key] = value
 
-        
+
 
         return decrypted_record
 
@@ -835,7 +835,7 @@ class AccessAuditEngine:
 
     """访问审计引擎"""
 
-    
+
 
     def __init__(self, db_path: str = "data/audit/access_audit.db"):
 
@@ -845,7 +845,7 @@ class AccessAuditEngine:
 
         self._init_database()
 
-    
+
 
     def _init_database(self):
 
@@ -887,37 +887,37 @@ class AccessAuditEngine:
 
             """)
 
-            
+
 
             conn.execute("""
 
-                CREATE INDEX IF NOT EXISTS idx_timestamp 
+                CREATE INDEX IF NOT EXISTS idx_timestamp
 
                 ON access_logs(timestamp)
 
             """)
 
-            
+
 
             conn.execute("""
 
-                CREATE INDEX IF NOT EXISTS idx_user_action 
+                CREATE INDEX IF NOT EXISTS idx_user_action
 
                 ON access_logs(user_id, action)
 
             """)
 
-            
+
 
             conn.execute("""
 
-                CREATE INDEX IF NOT EXISTS idx_resource 
+                CREATE INDEX IF NOT EXISTS idx_resource
 
                 ON access_logs(resource_type, resource_id)
 
             """)
 
-    
+
 
     def log_access(
 
@@ -987,7 +987,7 @@ class AccessAuditEngine:
 
             ))
 
-    
+
 
     def query_logs(
 
@@ -1013,7 +1013,7 @@ class AccessAuditEngine:
 
         params = []
 
-        
+
 
         if user_id:
 
@@ -1021,7 +1021,7 @@ class AccessAuditEngine:
 
             params.append(user_id)
 
-        
+
 
         if action:
 
@@ -1029,7 +1029,7 @@ class AccessAuditEngine:
 
             params.append(action)
 
-        
+
 
         if resource_type:
 
@@ -1037,7 +1037,7 @@ class AccessAuditEngine:
 
             params.append(resource_type)
 
-        
+
 
         if start_time:
 
@@ -1045,7 +1045,7 @@ class AccessAuditEngine:
 
             params.append(start_time)
 
-        
+
 
         if end_time:
 
@@ -1053,11 +1053,11 @@ class AccessAuditEngine:
 
             params.append(end_time)
 
-        
+
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
 
-        
+
 
         with sqlite3.connect(self.db_path) as conn:
 
@@ -1075,11 +1075,11 @@ class AccessAuditEngine:
 
             """, params + [limit])
 
-            
+
 
             return [dict(row) for row in cursor.fetchall()]
 
-    
+
 
     def get_user_access_summary(
 
@@ -1105,13 +1105,13 @@ class AccessAuditEngine:
 
         ).isoformat()
 
-        
+
 
         with sqlite3.connect(self.db_path) as conn:
 
             conn.row_factory = sqlite3.Row
 
-            
+
 
             total_count = conn.execute("""
 
@@ -1121,7 +1121,7 @@ class AccessAuditEngine:
 
             """, (user_id, start_time)).fetchone()["count"]
 
-            
+
 
             action_counts = conn.execute("""
 
@@ -1135,7 +1135,7 @@ class AccessAuditEngine:
 
             """, (user_id, start_time)).fetchall()
 
-            
+
 
             resource_counts = conn.execute("""
 
@@ -1149,7 +1149,7 @@ class AccessAuditEngine:
 
             """, (user_id, start_time)).fetchall()
 
-            
+
 
             return {
 
@@ -1161,7 +1161,7 @@ class AccessAuditEngine:
 
                 "action_breakdown": {
 
-                    row["action"]: row["count"] 
+                    row["action"]: row["count"]
 
                     for row in action_counts
 
@@ -1177,7 +1177,7 @@ class AccessAuditEngine:
 
             }
 
-    
+
 
     def detect_anomalies(self, hours: int = 24) -> List[Dict[str, Any]]:
 
@@ -1187,17 +1187,17 @@ class AccessAuditEngine:
 
         ).isoformat()
 
-        
+
 
         anomalies = []
 
-        
+
 
         with sqlite3.connect(self.db_path) as conn:
 
             conn.row_factory = sqlite3.Row
 
-            
+
 
             high_frequency = conn.execute("""
 
@@ -1213,7 +1213,7 @@ class AccessAuditEngine:
 
             """, (start_time,)).fetchall()
 
-            
+
 
             for row in high_frequency:
 
@@ -1231,7 +1231,7 @@ class AccessAuditEngine:
 
                 })
 
-            
+
 
             failed_access = conn.execute("""
 
@@ -1247,7 +1247,7 @@ class AccessAuditEngine:
 
             """, (start_time,)).fetchall()
 
-            
+
 
             for row in failed_access:
 
@@ -1267,7 +1267,7 @@ class AccessAuditEngine:
 
                 })
 
-        
+
 
         return anomalies
 
@@ -1307,7 +1307,7 @@ class KeyManagementService:
 
     """密钥管理服务"""
 
-    
+
 
     def __init__(self, key_store_path: str = "data/keys/"):
 
@@ -1319,7 +1319,7 @@ class KeyManagementService:
 
         self.metadata = self._load_metadata()
 
-    
+
 
     def _load_metadata(self) -> Dict:
 
@@ -1331,7 +1331,7 @@ class KeyManagementService:
 
         return {"keys": {}}
 
-    
+
 
     def _save_metadata(self):
 
@@ -1339,7 +1339,7 @@ class KeyManagementService:
 
             json.dump(self.metadata, f, indent=2)
 
-    
+
 
     def generate_key(
 
@@ -1355,7 +1355,7 @@ class KeyManagementService:
 
         key = Fernet.generate_key()
 
-        
+
 
         key_file = self.key_store_path / f"{key_id}.key"
 
@@ -1363,7 +1363,7 @@ class KeyManagementService:
 
             f.write(key)
 
-        
+
 
         self.metadata["keys"][key_id] = {
 
@@ -1385,11 +1385,11 @@ class KeyManagementService:
 
         self._save_metadata()
 
-        
+
 
         return key
 
-    
+
 
     def get_key(self, key_id: str) -> Optional[bytes]:
 
@@ -1397,13 +1397,13 @@ class KeyManagementService:
 
         key_file = self.key_store_path / f"{key_id}.key"
 
-        
+
 
         if not key_file.exists():
 
             return None
 
-        
+
 
         if key_id in self.metadata["keys"]:
 
@@ -1411,19 +1411,19 @@ class KeyManagementService:
 
             expires_at = datetime.fromisoformat(key_info["expires_at"])
 
-            
+
 
             if datetime.now() > expires_at:
 
                 raise ValueError(f"Key {key_id} has expired")
 
-        
+
 
         with open(key_file, 'rb') as f:
 
             return f.read()
 
-    
+
 
     def rotate_key(
 
@@ -1439,7 +1439,7 @@ class KeyManagementService:
 
         old_key = self.get_key(key_id)
 
-        
+
 
         if keep_old:
 
@@ -1449,7 +1449,7 @@ class KeyManagementService:
 
                 f.write(old_key)
 
-        
+
 
         new_key = Fernet.generate_key()
 
@@ -1459,7 +1459,7 @@ class KeyManagementService:
 
             f.write(new_key)
 
-        
+
 
         if key_id in self.metadata["keys"]:
 
@@ -1469,17 +1469,17 @@ class KeyManagementService:
 
             self._save_metadata()
 
-        
+
 
         return new_key
 
-    
+
 
     def list_keys(self) -> Dict[str, Dict]:
 
         return self.metadata["keys"]
 
-    
+
 
     def revoke_key(self, key_id: str):
 
@@ -1583,7 +1583,7 @@ data_masking:
 
       chinese_bank_card: '\d{16,19}'
 
-  
+
 
   masking_strategies:
 
@@ -1599,7 +1599,7 @@ data_masking:
 
     bank_card: "mask"
 
-  
+
 
   encryption:
 
@@ -1607,7 +1607,7 @@ data_masking:
 
     key_rotation_days: 90
 
-  
+
 
   audit:
 
@@ -1617,7 +1617,7 @@ data_masking:
 
     anomaly_detection: true
 
-  
+
 
   sensitive_fields:
 
@@ -1799,7 +1799,7 @@ anomalies = audit.detect_anomalies(hours=24)
 
 | CPU | 1?| 2?|
 
-| 
+|
 
 存 | 512MB | 1GB |
 
@@ -1956,10 +1956,3 @@ anomalies = audit.detect_anomalies(hours=24)
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

@@ -39,7 +39,7 @@ layer: layer_09
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -118,4 +118,3 @@ layer: layer_09
 - **建议频率**: 每日运行一次
 
 - **运行命令**: `python scripts/continuous_monitoring.py`
-

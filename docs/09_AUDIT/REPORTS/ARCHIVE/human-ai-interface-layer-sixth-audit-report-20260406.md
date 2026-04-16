@@ -391,7 +391,7 @@ responsibility_boundary: |
 
   本文档负责人机交互层技术实现细节。
 
-  
+
 
   决策权分配战略定义请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
 
@@ -550,4 +550,3 @@ NATURAL_LANGUAGE_MODULE_ANALYSIS.md: NATURAL_LANGUAGE_MODULE_ANALYSIS_BLUEPRINT_
 **审计人员**: AI审计系统
 
 **下次审计建议**: 修复完成后进行复审计
-

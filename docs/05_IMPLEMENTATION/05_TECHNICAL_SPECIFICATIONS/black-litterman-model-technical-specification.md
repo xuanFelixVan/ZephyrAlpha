@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: Black-Litterman模型详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Black-Litterman算法实现、接口定义、测试用例
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 解决传统均值方差优化对预期收益率估计过于敏感的问题，结合市场均衡观点与投资者主观观点
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 参数估计误差敏感：传统均值方差优化对预期收益率估计误差极其敏感
 
@@ -70,7 +70,7 @@ implementation_status: 待实施
 
   - 数值稳定性问题：协方差矩阵可能病态导致优化失败
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提升组合优化结果的稳定性和可解释性
 
@@ -190,7 +190,7 @@ implementation_status: 待实施
 
 - **职责范围**: 市场均衡收益计算、主观观点矩阵构建、后验收益估计、组合权重优化
 
-- **上下层接口**: 
+- **上下层接口**:
 
   - 上层依赖: Layer 5 交易成本层 (提供交易成本约束)
 
@@ -202,7 +202,7 @@ implementation_status: 待实施
 
 - **核心职责**: Black-Litterman模型实现、观点融合、后验估计
 
-- **职责边界**: 
+- **职责边界**:
 
   - ✓本模块负责: 市场均衡收益计算、观点矩阵构建、BL融合、后验估计
 
@@ -360,7 +360,7 @@ class MarketEquilibriumCalculator:
 
     """市场均衡收益计算器"""
 
-    
+
 
     def __init__(self, risk_aversion: float = 2.5):
 
@@ -368,7 +368,7 @@ class MarketEquilibriumCalculator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_equilibrium_returns(
 
@@ -384,7 +384,7 @@ class MarketEquilibriumCalculator:
 
         计算市场均衡收益（先验）
 
-        
+
 
         参数:
 
@@ -392,7 +392,7 @@ class MarketEquilibriumCalculator:
 
             covariance_matrix: 协方差矩阵
 
-            
+
 
         返回:
 
@@ -404,25 +404,25 @@ class MarketEquilibriumCalculator:
 
         market_weights = pd.Series({
 
-            asset: cap / total_cap 
+            asset: cap / total_cap
 
             for asset, cap in market_caps.items()
 
         })
 
-        
+
 
         pi = self.risk_aversion * covariance_matrix @ market_weights
 
-        
+
 
         self.logger.info(f"市场均衡收益计算完成，均值={pi.mean():.4f}")
 
-        
+
 
         return pi
 
-    
+
 
     def validate_market_caps(
 
@@ -438,7 +438,7 @@ class MarketEquilibriumCalculator:
 
             raise ValueError("市值数据不能为空")
 
-        
+
 
         for asset, cap in market_caps.items():
 
@@ -446,7 +446,7 @@ class MarketEquilibriumCalculator:
 
                 raise ValueError(f"资产 {asset} 市值必须为正数")
 
-        
+
 
         return True
 
@@ -458,13 +458,13 @@ class ViewMatrixBuilder:
 
     """观点矩阵构建器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def build_view_matrix(
 
@@ -480,7 +480,7 @@ class ViewMatrixBuilder:
 
         构建观点矩阵
 
-        
+
 
         参数:
 
@@ -488,7 +488,7 @@ class ViewMatrixBuilder:
 
             views: 投资者观点列表
 
-            
+
 
         返回:
 
@@ -500,7 +500,7 @@ class ViewMatrixBuilder:
 
         n_views = len(views)
 
-        
+
 
         P = np.zeros((n_views, n_assets))
 
@@ -508,7 +508,7 @@ class ViewMatrixBuilder:
 
         Omega = np.zeros((n_views, n_views))
 
-        
+
 
         for i, view in enumerate(views):
 
@@ -526,15 +526,15 @@ class ViewMatrixBuilder:
 
                 pass
 
-        
+
 
         self.logger.info(f"观点矩阵构建完成，{n_views}个观点")
 
-        
+
 
         return P, Q, Omega
 
-    
+
 
     def validate_views(
 
@@ -558,7 +558,7 @@ class ViewMatrixBuilder:
 
                 raise ValueError(f"置信度必须在(0, 1]范围内")
 
-        
+
 
         return True
 
@@ -570,7 +570,7 @@ class BlackLittermanFusionEngine:
 
     """Black-Litterman融合引擎"""
 
-    
+
 
     def __init__(self, tau: float = 0.02):
 
@@ -578,7 +578,7 @@ class BlackLittermanFusionEngine:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def fuse_views(
 
@@ -600,7 +600,7 @@ class BlackLittermanFusionEngine:
 
         执行Black-Litterman融合
 
-        
+
 
         参数:
 
@@ -614,7 +614,7 @@ class BlackLittermanFusionEngine:
 
             Omega: 观点置信度矩阵
 
-            
+
 
         返回:
 
@@ -628,33 +628,33 @@ class BlackLittermanFusionEngine:
 
         Omega_inv = np.linalg.inv(Omega)
 
-        
+
 
         M = np.linalg.inv(tau_Sigma_inv + P.T @ Omega_inv @ P)
 
-        
+
 
         bl_return = M @ (tau_Sigma_inv @ pi.values + P.T @ Omega_inv @ Q)
 
-        
+
 
         bl_cov = Sigma.values + M
 
-        
+
 
         bl_return_series = pd.Series(bl_return, index=pi.index)
 
         bl_cov_df = pd.DataFrame(bl_cov, index=Sigma.index, columns=Sigma.columns)
 
-        
+
 
         self.logger.info("Black-Litterman融合完成")
 
-        
+
 
         return bl_return_series, bl_cov_df
 
-    
+
 
     def check_numerical_stability(
 
@@ -668,7 +668,7 @@ class BlackLittermanFusionEngine:
 
         cond_number = np.linalg.cond(covariance_matrix.values)
 
-        
+
 
         if cond_number > 1000:
 
@@ -676,7 +676,7 @@ class BlackLittermanFusionEngine:
 
             return False
 
-        
+
 
         return True
 
@@ -688,13 +688,13 @@ class ConfidenceCalculator:
 
     """置信度计算器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate_confidence_from_ic(
 
@@ -710,7 +710,7 @@ class ConfidenceCalculator:
 
         基于因子IC计算观点置信度
 
-        
+
 
         参数:
 
@@ -718,7 +718,7 @@ class ConfidenceCalculator:
 
             ic_ir: 信息比率
 
-            
+
 
         返回:
 
@@ -728,11 +728,11 @@ class ConfidenceCalculator:
 
         confidence = min(abs(ic_ir) / 2, 1.0)
 
-        
+
 
         return confidence
 
-    
+
 
     def calculate_confidence_from_backtest(
 
@@ -748,7 +748,7 @@ class ConfidenceCalculator:
 
         基于回测结果计算观点置信度
 
-        
+
 
         参数:
 
@@ -756,7 +756,7 @@ class ConfidenceCalculator:
 
             backtest_period: 回测周期（年）
 
-            
+
 
         返回:
 
@@ -768,7 +768,7 @@ class ConfidenceCalculator:
 
         confidence = min(t_stat / 3, 1.0)
 
-        
+
 
         return confidence
 
@@ -780,13 +780,13 @@ class ResultAnalyzer:
 
     """结果分析器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def analyze_view_impact(
 
@@ -804,7 +804,7 @@ class ResultAnalyzer:
 
         分析观点对后验收益的影响
 
-        
+
 
         参数:
 
@@ -814,7 +814,7 @@ class ResultAnalyzer:
 
             views: 观点列表
 
-            
+
 
         返回:
 
@@ -824,7 +824,7 @@ class ResultAnalyzer:
 
         impact = {}
 
-        
+
 
         for view in views:
 
@@ -836,11 +836,11 @@ class ResultAnalyzer:
 
             impact[asset] = posterior - prior
 
-        
+
 
         return impact
 
-    
+
 
     def calculate_risk_contribution(
 
@@ -856,7 +856,7 @@ class ResultAnalyzer:
 
         计算风险贡献
 
-        
+
 
         参数:
 
@@ -864,7 +864,7 @@ class ResultAnalyzer:
 
             covariance_matrix: 协方差矩阵
 
-            
+
 
         返回:
 
@@ -874,15 +874,15 @@ class ResultAnalyzer:
 
         portfolio_risk = np.sqrt(weights @ covariance_matrix @ weights)
 
-        
+
 
         marginal_risk = covariance_matrix @ weights / portfolio_risk
 
-        
+
 
         risk_contribution = weights * marginal_risk
 
-        
+
 
         return risk_contribution / portfolio_risk
 
@@ -894,13 +894,13 @@ class BlackLittermanOptimizer:
 
     """Black-Litterman优化器主类"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
         self.config = config
 
-        
+
 
         self.equilibrium_calculator = MarketEquilibriumCalculator(
 
@@ -908,11 +908,11 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         self.view_matrix_builder = ViewMatrixBuilder()
 
-        
+
 
         self.fusion_engine = BlackLittermanFusionEngine(
 
@@ -920,19 +920,19 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         self.confidence_calculator = ConfidenceCalculator()
 
-        
+
 
         self.result_analyzer = ResultAnalyzer()
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def optimize(
 
@@ -946,13 +946,13 @@ class BlackLittermanOptimizer:
 
         执行Black-Litterman优化
 
-        
+
 
         参数:
 
             input_data: 优化输入数据
 
-            
+
 
         返回:
 
@@ -962,11 +962,11 @@ class BlackLittermanOptimizer:
 
         start_time = datetime.now()
 
-        
+
 
         assets = list(input_data.market_prices.columns)
 
-        
+
 
         from pypfopt import risk_models
 
@@ -976,7 +976,7 @@ class BlackLittermanOptimizer:
 
         ).ledoit_wolf()
 
-        
+
 
         pi = self.equilibrium_calculator.calculate_equilibrium_returns(
 
@@ -984,7 +984,7 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         self.view_matrix_builder.validate_views(input_data.views, assets)
 
@@ -994,7 +994,7 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         bl_returns, bl_cov = self.fusion_engine.fuse_views(
 
@@ -1002,7 +1002,7 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         from pypfopt import EfficientFrontier
 
@@ -1012,11 +1012,11 @@ class BlackLittermanOptimizer:
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         performance = ef.portfolio_performance(risk_free_rate=input_data.risk_free_rate)
 
-        
+
 
         weights_series = pd.Series(cleaned_weights)
 
@@ -1026,7 +1026,7 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         view_impact = self.result_analyzer.analyze_view_impact(
 
@@ -1034,13 +1034,13 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         end_time = datetime.now()
 
         optimization_time = (end_time - start_time).total_seconds()
 
-        
+
 
         result = BlackLittermanResult(
 
@@ -1066,11 +1066,11 @@ class BlackLittermanOptimizer:
 
         )
 
-        
+
 
         self.logger.info(f"优化完成，耗时{optimization_time:.2f}秒")
 
-        
+
 
         return result
 
@@ -1320,7 +1320,7 @@ CREATE TABLE IF NOT EXISTS bl_views (
 
     created_by VARCHAR(50),
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1328,7 +1328,7 @@ CREATE TABLE IF NOT EXISTS bl_views (
 
     INDEX idx_valid_period (valid_from, valid_until),
 
-    
+
 
     CONSTRAINT chk_confidence CHECK (confidence > 0 AND confidence <= 1)
 
@@ -1358,7 +1358,7 @@ CREATE TABLE IF NOT EXISTS bl_optimization_results (
 
     optimization_date TIMESTAMP NOT NULL,
 
-    
+
 
     weights_json TEXT NOT NULL,
 
@@ -1368,7 +1368,7 @@ CREATE TABLE IF NOT EXISTS bl_optimization_results (
 
     sharpe_ratio DECIMAL(10, 4),
 
-    
+
 
     bl_returns_json TEXT,
 
@@ -1378,21 +1378,21 @@ CREATE TABLE IF NOT EXISTS bl_optimization_results (
 
     view_impact_json TEXT,
 
-    
+
 
     risk_aversion DECIMAL(5, 2),
 
     tau DECIMAL(6, 4),
 
-    
+
 
     optimization_time_ms INTEGER,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1418,7 +1418,7 @@ CREATE TABLE IF NOT EXISTS bl_market_equilibrium (
 
     calculation_date TIMESTAMP NOT NULL,
 
-    
+
 
     assets_json TEXT NOT NULL,
 
@@ -1428,19 +1428,19 @@ CREATE TABLE IF NOT EXISTS bl_market_equilibrium (
 
     covariance_matrix_json TEXT NOT NULL,
 
-    
+
 
     risk_aversion DECIMAL(5, 2),
 
-    
+
 
     valid_until TIMESTAMP,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_calculation_date (calculation_date),
 
@@ -1556,7 +1556,7 @@ COMMENT ON TABLE bl_market_equilibrium IS '市场均衡收益缓存表';
 
 算法名称: Black-Litterman融合
 
-数学公式: 
+数学公式:
 
 E[R] = [(τΣ)^(-1) + P'Ω^(-1)P]^(-1) * [(τΣ)^(-1)π + P'Ω^(-1)Q]
 
@@ -1618,7 +1618,7 @@ black_litterman_params:
 
   risk_free_rate: 0.02        # 无风险利率
 
-  
+
 
   # 协方差估计参数
 
@@ -1626,7 +1626,7 @@ black_litterman_params:
 
   shrinkage_target: average_variance  # 收缩目标
 
-  
+
 
   # 优化参数
 
@@ -1634,7 +1634,7 @@ black_litterman_params:
 
   weight_bounds: [0.0, 1.0]   # 权重边界
 
-  
+
 
   # 数值稳定性参数
 
@@ -1670,7 +1670,7 @@ class TestMarketEquilibriumCalculator:
 
     """市场均衡收益计算器测试"""
 
-    
+
 
     def test_calculate_equilibrium_returns(self):
 
@@ -1678,7 +1678,7 @@ class TestMarketEquilibriumCalculator:
 
         calculator = MarketEquilibriumCalculator(risk_aversion=2.5)
 
-        
+
 
         market_caps = {
 
@@ -1690,7 +1690,7 @@ class TestMarketEquilibriumCalculator:
 
         }
 
-        
+
 
         cov_matrix = pd.DataFrame(
 
@@ -1706,11 +1706,11 @@ class TestMarketEquilibriumCalculator:
 
         )
 
-        
+
 
         pi = calculator.calculate_equilibrium_returns(market_caps, cov_matrix)
 
-        
+
 
         assert isinstance(pi, pd.Series)
 
@@ -1718,7 +1718,7 @@ class TestMarketEquilibriumCalculator:
 
         assert all(pi.index == cov_matrix.index)
 
-    
+
 
     def test_validate_market_caps_invalid(self):
 
@@ -1726,13 +1726,13 @@ class TestMarketEquilibriumCalculator:
 
         calculator = MarketEquilibriumCalculator()
 
-        
+
 
         with pytest.raises(ValueError):
 
             calculator.validate_market_caps({})
 
-        
+
 
         with pytest.raises(ValueError):
 
@@ -1746,7 +1746,7 @@ class TestViewMatrixBuilder:
 
     """观点矩阵构建器测试"""
 
-    
+
 
     def test_build_view_matrix(self):
 
@@ -1754,7 +1754,7 @@ class TestViewMatrixBuilder:
 
         builder = ViewMatrixBuilder()
 
-        
+
 
         assets = ["asset1", "asset2", "asset3"]
 
@@ -1780,11 +1780,11 @@ class TestViewMatrixBuilder:
 
         ]
 
-        
+
 
         P, Q, Omega = builder.build_view_matrix(assets, views)
 
-        
+
 
         assert P.shape == (1, 3)
 
@@ -1804,7 +1804,7 @@ class TestBlackLittermanFusionEngine:
 
     """Black-Litterman融合引擎测试"""
 
-    
+
 
     def test_fuse_views(self):
 
@@ -1812,7 +1812,7 @@ class TestBlackLittermanFusionEngine:
 
         engine = BlackLittermanFusionEngine(tau=0.02)
 
-        
+
 
         pi = pd.Series([0.05, 0.07, 0.06], index=["a1", "a2", "a3"])
 
@@ -1836,11 +1836,11 @@ class TestBlackLittermanFusionEngine:
 
         Omega = np.array([[0.01]])
 
-        
+
 
         bl_returns, bl_cov = engine.fuse_views(pi, P, Q, Sigma, Omega)
 
-        
+
 
         assert isinstance(bl_returns, pd.Series)
 
@@ -1856,7 +1856,7 @@ class TestBlackLittermanOptimizer:
 
     """Black-Litterman优化器集成测试"""
 
-    
+
 
     @pytest.fixture
 
@@ -1868,7 +1868,7 @@ class TestBlackLittermanOptimizer:
 
         np.random.seed(42)
 
-        
+
 
         prices = pd.DataFrame({
 
@@ -1880,7 +1880,7 @@ class TestBlackLittermanOptimizer:
 
         }, index=dates)
 
-        
+
 
         market_caps = {
 
@@ -1892,7 +1892,7 @@ class TestBlackLittermanOptimizer:
 
         }
 
-        
+
 
         views = [
 
@@ -1916,7 +1916,7 @@ class TestBlackLittermanOptimizer:
 
         ]
 
-        
+
 
         return BlackLittermanInput(
 
@@ -1934,7 +1934,7 @@ class TestBlackLittermanOptimizer:
 
         )
 
-    
+
 
     def test_optimize(self, sample_input):
 
@@ -1950,13 +1950,13 @@ class TestBlackLittermanOptimizer:
 
         }
 
-        
+
 
         optimizer = BlackLittermanOptimizer(config)
 
         result = optimizer.optimize(sample_input)
 
-        
+
 
         assert isinstance(result, BlackLittermanResult)
 
@@ -2100,7 +2100,7 @@ performance_benchmarks:
 
     target_time: <100ms
 
-    
+
 
   medium_portfolio:
 
@@ -2108,7 +2108,7 @@ performance_benchmarks:
 
     target_time: <300ms
 
-    
+
 
   large_portfolio:
 
@@ -2116,7 +2116,7 @@ performance_benchmarks:
 
     target_time: <500ms
 
-    
+
 
   stress_test:
 
@@ -2411,4 +2411,3 @@ performance_benchmarks:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

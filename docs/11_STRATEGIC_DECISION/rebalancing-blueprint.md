@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 再平衡决策系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：再平衡决策系统蓝图设计相关内容
 
@@ -68,7 +68,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Rebalancing蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Rebalancing蓝图设计相关内容
 
@@ -142,11 +142,11 @@ implementation_status: 设计阶段
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **目标**: 构建智能化再平衡决策体系，优化组合维护成本与收益
 
@@ -476,7 +476,7 @@ class RebalanceTriggerEngine:
 
     """再平衡触发引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -490,13 +490,13 @@ class RebalanceTriggerEngine:
 
         self.cost_config = config.get('cost_trigger', {})
 
-        
+
 
         self.last_rebalance_time = None
 
-        
 
-    def check_triggers(self, 
+
+    def check_triggers(self,
 
                       current_weights: Dict[str, float],
 
@@ -510,11 +510,11 @@ class RebalanceTriggerEngine:
 
         """检查所有触发条件"""
 
-        
+
 
         time_trigger = self._check_time_trigger(current_time)
 
-        
+
 
         threshold_trigger = self._check_threshold_trigger(
 
@@ -522,11 +522,11 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         event_trigger = self._check_event_trigger(market_data)
 
-        
+
 
         cost_trigger = self._check_cost_trigger(
 
@@ -534,7 +534,7 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         triggers = [
 
@@ -548,21 +548,21 @@ class RebalanceTriggerEngine:
 
         ]
 
-        
+
 
         valid_triggers = [t for t in triggers if t is not None]
 
-        
+
 
         if valid_triggers:
 
             return max(valid_triggers, key=lambda x: x.priority)
 
-        
+
 
         return None
 
-    
+
 
     def _check_time_trigger(self, current_time: datetime) -> Optional[RebalanceTrigger]:
 
@@ -590,15 +590,15 @@ class RebalanceTriggerEngine:
 
             )
 
-        
+
 
         period_days = self.time_config.get('period_days', 30)
 
-        
+
 
         days_since_last = (current_time - self.last_rebalance_time).days
 
-        
+
 
         if days_since_last >= period_days:
 
@@ -622,13 +622,13 @@ class RebalanceTriggerEngine:
 
             )
 
-        
+
 
         return None
 
-    
 
-    def _check_threshold_trigger(self, 
+
+    def _check_threshold_trigger(self,
 
                                 current_weights: Dict[str, float],
 
@@ -638,13 +638,13 @@ class RebalanceTriggerEngine:
 
         threshold = self.threshold_config.get('threshold', 0.05)
 
-        
+
 
         max_deviation = 0.0
 
         max_deviation_asset = None
 
-        
+
 
         for asset in target_weights:
 
@@ -654,7 +654,7 @@ class RebalanceTriggerEngine:
 
             deviation = abs(current_w - target_w)
 
-            
+
 
             if deviation > max_deviation:
 
@@ -662,7 +662,7 @@ class RebalanceTriggerEngine:
 
                 max_deviation_asset = asset
 
-        
+
 
         if max_deviation >= threshold:
 
@@ -692,11 +692,11 @@ class RebalanceTriggerEngine:
 
             )
 
-        
+
 
         return None
 
-    
+
 
     def _check_event_trigger(self, market_data: pd.DataFrame) -> Optional[RebalanceTrigger]:
 
@@ -704,19 +704,19 @@ class RebalanceTriggerEngine:
 
         event_threshold = self.event_config.get('event_threshold', 0.03)
 
-        
+
 
         if len(market_data) < 20:
 
             return None
 
-        
+
 
         recent_return = market_data['close'].pct_change().tail(5).mean()
 
         historical_vol = market_data['close'].pct_change().tail(20).std()
 
-        
+
 
         if abs(recent_return) > event_threshold:
 
@@ -746,13 +746,13 @@ class RebalanceTriggerEngine:
 
             )
 
-        
+
 
         return None
 
-    
 
-    def _check_cost_trigger(self, 
+
+    def _check_cost_trigger(self,
 
                            current_weights: Dict[str, float],
 
@@ -766,7 +766,7 @@ class RebalanceTriggerEngine:
 
         min_benefit_cost_ratio = self.cost_config.get('min_ratio', 2.0)
 
-        
+
 
         expected_cost = self._estimate_rebalance_cost(
 
@@ -774,7 +774,7 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         expected_benefit = self._estimate_rebalance_benefit(
 
@@ -782,7 +782,7 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         if expected_cost > 0 and expected_benefit / expected_cost >= min_benefit_cost_ratio:
 
@@ -810,13 +810,13 @@ class RebalanceTriggerEngine:
 
             )
 
-        
+
 
         return None
 
-    
 
-    def _estimate_rebalance_cost(self, 
+
+    def _estimate_rebalance_cost(self,
 
                                 current_weights: Dict[str, float],
 
@@ -832,7 +832,7 @@ class RebalanceTriggerEngine:
 
         market_impact = 0.0002
 
-        
+
 
         total_turnover = 0.0
 
@@ -846,7 +846,7 @@ class RebalanceTriggerEngine:
 
             total_turnover += turnover
 
-        
+
 
         total_cost = total_turnover * portfolio_value * (
 
@@ -854,13 +854,13 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         return total_cost
 
-    
 
-    def _estimate_rebalance_benefit(self, 
+
+    def _estimate_rebalance_benefit(self,
 
                                    current_weights: Dict[str, float],
 
@@ -872,7 +872,7 @@ class RebalanceTriggerEngine:
 
         risk_reduction = 0.001
 
-        
+
 
         total_deviation = sum(
 
@@ -882,11 +882,11 @@ class RebalanceTriggerEngine:
 
         )
 
-        
+
 
         benefit = total_deviation * risk_reduction * 1000000
 
-        
+
 
         return benefit
 
@@ -984,7 +984,7 @@ class RebalanceOptimizationEngine:
 
     """再平衡优化引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -994,9 +994,9 @@ class RebalanceOptimizationEngine:
 
         self.tax_config = config.get('tax', {})
 
-        
 
-    def optimize_rebalance(self, 
+
+    def optimize_rebalance(self,
 
                           trigger: RebalanceTrigger,
 
@@ -1012,11 +1012,11 @@ class RebalanceOptimizationEngine:
 
         """优化再平衡方案"""
 
-        
+
 
         optimization_type = self._determine_optimization_type(trigger)
 
-        
+
 
         if optimization_type == 'minimum_cost':
 
@@ -1050,15 +1050,15 @@ class RebalanceOptimizationEngine:
 
             )
 
-        
+
 
         total_turnover = sum(abs(t['weight_change']) for t in trades)
 
-        
+
 
         estimated_cost = self._estimate_total_cost(trades, portfolio_value)
 
-        
+
 
         estimated_benefit = self._estimate_total_benefit(
 
@@ -1066,11 +1066,11 @@ class RebalanceOptimizationEngine:
 
         )
 
-        
+
 
         execution_phases = self._create_execution_phases(trades)
 
-        
+
 
         return RebalancePlan(
 
@@ -1092,7 +1092,7 @@ class RebalanceOptimizationEngine:
 
         )
 
-    
+
 
     def _determine_optimization_type(self, trigger: RebalanceTrigger) -> str:
 
@@ -1114,9 +1114,9 @@ class RebalanceOptimizationEngine:
 
             return 'risk_budget'
 
-    
 
-    def _minimum_cost_optimization(self, 
+
+    def _minimum_cost_optimization(self,
 
                                   current_weights: Dict[str, float],
 
@@ -1128,7 +1128,7 @@ class RebalanceOptimizationEngine:
 
         trades = []
 
-        
+
 
         for asset in target_weights:
 
@@ -1136,7 +1136,7 @@ class RebalanceOptimizationEngine:
 
             target_w = target_weights[asset]
 
-            
+
 
             if abs(current_w - target_w) > 0.001:
 
@@ -1154,17 +1154,17 @@ class RebalanceOptimizationEngine:
 
                 })
 
-        
+
 
         trades.sort(key=lambda x: x['priority'], reverse=True)
 
-        
+
 
         return trades
 
-    
 
-    def _tax_optimized_rebalancing(self, 
+
+    def _tax_optimized_rebalancing(self,
 
                                   current_weights: Dict[str, float],
 
@@ -1180,7 +1180,7 @@ class RebalanceOptimizationEngine:
 
         tax_rate = self.tax_config.get('rate', 0.2)
 
-        
+
 
         for asset in target_weights:
 
@@ -1190,7 +1190,7 @@ class RebalanceOptimizationEngine:
 
             weight_change = target_w - current_w
 
-            
+
 
             if abs(weight_change) > 0.001:
 
@@ -1200,7 +1200,7 @@ class RebalanceOptimizationEngine:
 
                 current_price = position.get('current_price', 0)
 
-                
+
 
                 if weight_change < 0 and current_price > cost_basis:
 
@@ -1208,7 +1208,7 @@ class RebalanceOptimizationEngine:
 
                     tax_cost = abs(weight_change) * portfolio_value * unrealized_gain * tax_rate
 
-                    
+
 
                     trades.append({
 
@@ -1244,17 +1244,17 @@ class RebalanceOptimizationEngine:
 
                     })
 
-        
+
 
         trades.sort(key=lambda x: x['priority'], reverse=True)
 
-        
+
 
         return trades
 
-    
 
-    def _partial_rebalancing(self, 
+
+    def _partial_rebalancing(self,
 
                             current_weights: Dict[str, float],
 
@@ -1266,7 +1266,7 @@ class RebalanceOptimizationEngine:
 
         max_turnover = self.config.get('max_turnover', 0.2)
 
-        
+
 
         all_deviations = []
 
@@ -1288,17 +1288,17 @@ class RebalanceOptimizationEngine:
 
             })
 
-        
+
 
         all_deviations.sort(key=lambda x: x['deviation'], reverse=True)
 
-        
+
 
         trades = []
 
         total_turnover = 0
 
-        
+
 
         for item in all_deviations:
 
@@ -1306,7 +1306,7 @@ class RebalanceOptimizationEngine:
 
                 break
 
-            
+
 
             asset = item['asset']
 
@@ -1314,7 +1314,7 @@ class RebalanceOptimizationEngine:
 
             target_w = target_weights[asset]
 
-            
+
 
             partial_adjustment = min(
 
@@ -1324,11 +1324,11 @@ class RebalanceOptimizationEngine:
 
             )
 
-            
+
 
             new_weight = current_w + partial_adjustment * item['direction']
 
-            
+
 
             trades.append({
 
@@ -1344,17 +1344,17 @@ class RebalanceOptimizationEngine:
 
             })
 
-            
+
 
             total_turnover += partial_adjustment
 
-        
+
 
         return trades
 
-    
 
-    def _risk_budget_rebalancing(self, 
+
+    def _risk_budget_rebalancing(self,
 
                                 current_weights: Dict[str, float],
 
@@ -1372,9 +1372,9 @@ class RebalanceOptimizationEngine:
 
         )
 
-    
 
-    def _estimate_total_cost(self, 
+
+    def _estimate_total_cost(self,
 
                             trades: List[Dict],
 
@@ -1388,7 +1388,7 @@ class RebalanceOptimizationEngine:
 
         market_impact = self.cost_config.get('impact', 0.0002)
 
-        
+
 
         total_cost = 0
 
@@ -1398,23 +1398,23 @@ class RebalanceOptimizationEngine:
 
             cost = trade_value * (commission_rate + spread_cost + market_impact)
 
-            
+
 
             if 'tax_cost' in trade:
 
                 cost += trade['tax_cost']
 
-            
+
 
             total_cost += cost
 
-        
+
 
         return total_cost
 
-    
 
-    def _estimate_total_benefit(self, 
+
+    def _estimate_total_benefit(self,
 
                                trades: List[Dict],
 
@@ -1426,15 +1426,15 @@ class RebalanceOptimizationEngine:
 
         risk_reduction = 0.002
 
-        
+
 
         total_deviation = sum(abs(t['weight_change']) for t in trades)
 
-        
+
 
         return total_deviation * portfolio_value * risk_reduction
 
-    
+
 
     def _create_execution_phases(self, trades: List[Dict]) -> List[Dict]:
 
@@ -1442,7 +1442,7 @@ class RebalanceOptimizationEngine:
 
         max_trades_per_phase = 5
 
-        
+
 
         phases = []
 
@@ -1462,7 +1462,7 @@ class RebalanceOptimizationEngine:
 
             })
 
-        
+
 
         return phases
 
@@ -1544,15 +1544,15 @@ class RebalanceExecutionEngine:
 
     """再平衡执行引擎"""
 
-    
+
 
     def __init__(self, config: Dict):
 
         self.config = config
 
-        
 
-    def execute_rebalance(self, 
+
+    def execute_rebalance(self,
 
                          plan: RebalancePlan,
 
@@ -1562,7 +1562,7 @@ class RebalanceExecutionEngine:
 
         results = []
 
-        
+
 
         for phase in plan.execution_phases:
 
@@ -1578,13 +1578,13 @@ class RebalanceExecutionEngine:
 
             results.append(result)
 
-        
+
 
         return results
 
-    
 
-    def _execute_phase(self, 
+
+    def _execute_phase(self,
 
                       plan_id: str,
 
@@ -1598,7 +1598,7 @@ class RebalanceExecutionEngine:
 
         total_cost = 0
 
-        
+
 
         for trade in phase['trades']:
 
@@ -1622,13 +1622,13 @@ class RebalanceExecutionEngine:
 
                 executed_trade = self._execute_trade(trade)
 
-            
+
 
             executed_trades.append(executed_trade)
 
             total_cost += abs(executed_trade.get('quantity', 0)) * 0.0003
 
-        
+
 
         return ExecutionResult(
 
@@ -1646,7 +1646,7 @@ class RebalanceExecutionEngine:
 
         )
 
-    
+
 
     def _execute_trade(self, trade: Dict) -> Dict:
 
@@ -1666,9 +1666,9 @@ class RebalanceExecutionEngine:
 
         }
 
-    
 
-    def optimize_timing(self, 
+
+    def optimize_timing(self,
 
                        trade: Dict,
 
@@ -1678,9 +1678,9 @@ class RebalanceExecutionEngine:
 
         return datetime.now()
 
-    
 
-    def monitor_execution(self, 
+
+    def monitor_execution(self,
 
                          result: ExecutionResult) -> Dict:
 
@@ -1778,7 +1778,7 @@ class RebalanceEvaluator:
 
     """再平衡评估系统"""
 
-    
+
 
     def __init__(self):
 
@@ -1792,9 +1792,9 @@ class RebalanceEvaluator:
 
         }
 
-        
 
-    def evaluate_rebalance(self, 
+
+    def evaluate_rebalance(self,
 
                           plan: RebalancePlan,
 
@@ -1806,13 +1806,13 @@ class RebalanceEvaluator:
 
         """评估再平衡效果"""
 
-        
+
 
         actual_cost = sum(r.total_cost for r in execution_results)
 
         cost_benefit_ratio = plan.estimated_benefit / actual_cost if actual_cost > 0 else 0
 
-        
+
 
         risk_before = pre_portfolio.get('volatility', 0.15)
 
@@ -1820,7 +1820,7 @@ class RebalanceEvaluator:
 
         risk_improvement = (risk_before - risk_after) / risk_before if risk_before > 0 else 0
 
-        
+
 
         te_before = pre_portfolio.get('tracking_error', 0.05)
 
@@ -1828,7 +1828,7 @@ class RebalanceEvaluator:
 
         te_improvement = (te_before - te_after) / te_before if te_before > 0 else 0
 
-        
+
 
         cost_score = min(1.0, cost_benefit_ratio / 2)
 
@@ -1836,7 +1836,7 @@ class RebalanceEvaluator:
 
         te_score = max(0, te_improvement)
 
-        
+
 
         overall_score = (
 
@@ -1848,7 +1848,7 @@ class RebalanceEvaluator:
 
         )
 
-        
+
 
         recommendations = self._generate_recommendations(
 
@@ -1856,7 +1856,7 @@ class RebalanceEvaluator:
 
         )
 
-        
+
 
         return RebalanceEvaluation(
 
@@ -1876,9 +1876,9 @@ class RebalanceEvaluator:
 
         )
 
-    
 
-    def _generate_recommendations(self, 
+
+    def _generate_recommendations(self,
 
                                  cost_ratio: float,
 
@@ -1890,37 +1890,37 @@ class RebalanceEvaluator:
 
         recommendations = []
 
-        
+
 
         if cost_ratio < 1.0:
 
             recommendations.append("考虑降低再平衡频率以减少交易成本")
 
-        
+
 
         if risk_imp < 0:
 
             recommendations.append("再平衡后风险上升，检查目标权重设置")
 
-        
+
 
         if te_imp < 0:
 
             recommendations.append("跟踪误差上升，考虑调整再平衡阈值")
 
-        
+
 
         if not recommendations:
 
             recommendations.append("再平衡效果良好，保持当前策略")
 
-        
+
 
         return recommendations
 
-    
 
-    def backtest_rebalance_strategy(self, 
+
+    def backtest_rebalance_strategy(self,
 
                                    historical_data: pd.DataFrame,
 
@@ -1994,9 +1994,9 @@ class RebalanceInterface:
 
     """再平衡接口"""
 
-    
 
-    def check_rebalance_need(self, 
+
+    def check_rebalance_need(self,
 
                             portfolio_id: str) -> Optional[RebalanceTrigger]:
 
@@ -2004,9 +2004,9 @@ class RebalanceInterface:
 
         pass
 
-    
 
-    def generate_rebalance_plan(self, 
+
+    def generate_rebalance_plan(self,
 
                                trigger: RebalanceTrigger) -> RebalancePlan:
 
@@ -2014,9 +2014,9 @@ class RebalanceInterface:
 
         pass
 
-    
 
-    def execute_rebalance(self, 
+
+    def execute_rebalance(self,
 
                          plan: RebalancePlan,
 
@@ -2026,9 +2026,9 @@ class RebalanceInterface:
 
         pass
 
-    
 
-    def evaluate_rebalance(self, 
+
+    def evaluate_rebalance(self,
 
                           plan_id: str) -> RebalanceEvaluation:
 
@@ -2202,9 +2202,9 @@ class LimitUpDownRebalance:
 
     """涨跌停再平衡处理"""
 
-    
 
-    def adjust_for_limit(self, 
+
+    def adjust_for_limit(self,
 
                         plan: RebalancePlan,
 
@@ -2214,7 +2214,7 @@ class LimitUpDownRebalance:
 
         adjusted_trades = []
 
-        
+
 
         for trade in plan.trades:
 
@@ -2226,11 +2226,11 @@ class LimitUpDownRebalance:
 
             adjusted_trades.append(trade)
 
-        
+
 
         plan.trades = sorted(adjusted_trades, key=lambda x: x['priority'], reverse=True)
 
-        
+
 
         return plan
 
@@ -2248,9 +2248,9 @@ class SuspendedStockRebalance:
 
     """停牌股票再平衡处理"""
 
-    
 
-    def handle_suspended(self, 
+
+    def handle_suspended(self,
 
                         plan: RebalancePlan,
 
@@ -2262,7 +2262,7 @@ class SuspendedStockRebalance:
 
         suspended_value = 0
 
-        
+
 
         for trade in plan.trades:
 
@@ -2276,7 +2276,7 @@ class SuspendedStockRebalance:
 
                 adjusted_trades.append(trade)
 
-        
+
 
         if suspended_value > 0:
 
@@ -2292,11 +2292,11 @@ class SuspendedStockRebalance:
 
             })
 
-        
+
 
         plan.trades = adjusted_trades
 
-        
+
 
         return plan
 
@@ -2436,7 +2436,7 @@ class SuspendedStockRebalance:
 
 
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 
 **下一步**: 创建基准管理系统蓝图
 
@@ -2505,4 +2505,3 @@ class SuspendedStockRebalance:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

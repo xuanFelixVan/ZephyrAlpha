@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：组合健康度评分、多维度健康评估、健康度趋势追踪
 
@@ -162,9 +162,9 @@ class PortfolioHealthScorer:
 
     """组合健康度评分器"""
 
-    
 
-    def __init__(self, weights, returns, cov_matrix, volumes, 
+
+    def __init__(self, weights, returns, cov_matrix, volumes,
 
                  risk_free_rate=0.03):
 
@@ -206,7 +206,7 @@ class PortfolioHealthScorer:
 
         self.rf = risk_free_rate
 
-    
+
 
     def calculate_health_score(self):
 
@@ -216,31 +216,31 @@ class PortfolioHealthScorer:
 
         risk_health = self._calculate_risk_health()
 
-        
+
 
         # 2. 收益健康度
 
         return_health = self._calculate_return_health()
 
-        
+
 
         # 3. 流动性健康度
 
         liquidity_health = self._calculate_liquidity_health()
 
-        
+
 
         # 4. 集中度健康度
 
         concentration_health = self._calculate_concentration_health()
 
-        
+
 
         # 5. 稳定性健康度
 
         stability_health = self._calculate_stability_health()
 
-        
+
 
         # 6. 综合评分 (加权平均)
 
@@ -258,7 +258,7 @@ class PortfolioHealthScorer:
 
         }
 
-        
+
 
         overall_score = (
 
@@ -274,7 +274,7 @@ class PortfolioHealthScorer:
 
         )
 
-        
+
 
         return {
 
@@ -300,7 +300,7 @@ class PortfolioHealthScorer:
 
         }
 
-    
+
 
     def _calculate_risk_health(self):
 
@@ -312,7 +312,7 @@ class PortfolioHealthScorer:
 
         sharpe = (portfolio_return - self.rf) / portfolio_vol if portfolio_vol > 0 else 0
 
-        
+
 
         # 最大回撤
 
@@ -324,13 +324,13 @@ class PortfolioHealthScorer:
 
         max_dd = np.min(drawdown)
 
-        
+
 
         # VaR
 
         var_95 = np.percentile(self.returns @ self.weights, 5)
 
-        
+
 
         # 风险健康度评分 (0-100)
 
@@ -340,15 +340,15 @@ class PortfolioHealthScorer:
 
         var_score = min(max((1 + var_95 * 10) * 50, 0), 100)
 
-        
+
 
         risk_health = (sharpe_score + dd_score + var_score) / 3
 
-        
+
 
         return risk_health
 
-    
+
 
     def _calculate_return_health(self):
 
@@ -356,19 +356,19 @@ class PortfolioHealthScorer:
 
         portfolio_returns = self.returns @ self.weights
 
-        
+
 
         # 年化收益
 
         annual_return = np.mean(portfolio_returns) * 252
 
-        
+
 
         # 正收益比例
 
         positive_ratio = np.sum(portfolio_returns > 0) / len(portfolio_returns)
 
-        
+
 
         # 收益稳定性
 
@@ -376,7 +376,7 @@ class PortfolioHealthScorer:
 
         stability = 1 / (1 + return_std * 10)
 
-        
+
 
         # 收益健康度评分 (0-100)
 
@@ -386,15 +386,15 @@ class PortfolioHealthScorer:
 
         stability_score = stability * 100
 
-        
+
 
         return_health = (return_score + positive_score + stability_score) / 3
 
-        
+
 
         return return_health
 
-    
+
 
     def _calculate_liquidity_health(self):
 
@@ -404,21 +404,21 @@ class PortfolioHealthScorer:
 
         weighted_volume = np.sum(self.weights * self.volumes)
 
-        
+
 
         # 流动性覆盖率
 
         liquidity_coverage = weighted_volume / np.sum(self.volumes)
 
-        
+
 
         # 流动性集中度
 
-        volume_concentration = np.sum(np.sort(self.weights)[-5:] * 
+        volume_concentration = np.sum(np.sort(self.weights)[-5:] *
 
                                       np.sort(self.volumes)[-5:]) / weighted_volume
 
-        
+
 
         # 流动性健康度评分 (0-100)
 
@@ -426,15 +426,15 @@ class PortfolioHealthScorer:
 
         concentration_score = (1 - volume_concentration) * 100
 
-        
+
 
         liquidity_health = (coverage_score + concentration_score) / 2
 
-        
+
 
         return liquidity_health
 
-    
+
 
     def _calculate_concentration_health(self):
 
@@ -444,25 +444,25 @@ class PortfolioHealthScorer:
 
         hhi = np.sum(self.weights ** 2)
 
-        
+
 
         # 有效资产数量
 
         effective_n = 1 / hhi if hhi > 0 else 0
 
-        
+
 
         # 最大权重
 
         max_weight = np.max(self.weights)
 
-        
+
 
         # 前5大权重
 
         top5_weight = np.sum(np.sort(self.weights)[-5:])
 
-        
+
 
         # 集中度健康度评分 (0-100)
 
@@ -474,17 +474,17 @@ class PortfolioHealthScorer:
 
         top5_score = min(max((1 - top5_weight) * 100, 0), 100)
 
-        
 
-        concentration_health = (hhi_score + effective_n_score + 
+
+        concentration_health = (hhi_score + effective_n_score +
 
                                max_weight_score + top5_score) / 4
 
-        
+
 
         return concentration_health
 
-    
+
 
     def _calculate_stability_health(self):
 
@@ -492,31 +492,31 @@ class PortfolioHealthScorer:
 
         portfolio_returns = self.returns @ self.weights
 
-        
+
 
         # 收益波动率
 
         volatility = np.std(portfolio_returns)
 
-        
+
 
         # 偏度
 
         skewness = pd.Series(portfolio_returns).skew()
 
-        
+
 
         # 峰度
 
         kurtosis = pd.Series(portfolio_returns).kurtosis()
 
-        
+
 
         # 自相关性
 
         autocorr = pd.Series(portfolio_returns).autocorr()
 
-        
+
 
         # 稳定性健康度评分 (0-100)
 
@@ -528,15 +528,15 @@ class PortfolioHealthScorer:
 
         autocorr_score = min(max((1 - abs(autocorr)) * 100, 0), 100)
 
-        
+
 
         stability_health = (vol_score + skew_score + kurt_score + autocorr_score) / 4
 
-        
+
 
         return stability_health
 
-    
+
 
     def _get_health_grade(self, score):
 
@@ -566,7 +566,7 @@ class PortfolioHealthScorer:
 
             return 'D'
 
-    
+
 
     def track_health_trend(self, history_days=30):
 
@@ -578,7 +578,7 @@ class PortfolioHealthScorer:
 
         dates = pd.date_range(end=datetime.now(), periods=history_days, freq='D')
 
-        
+
 
         trend_data = []
 
@@ -596,11 +596,11 @@ class PortfolioHealthScorer:
 
             })
 
-        
+
 
         return pd.DataFrame(trend_data)
 
-    
+
 
     def generate_health_alert(self, score, thresholds=None):
 
@@ -618,11 +618,11 @@ class PortfolioHealthScorer:
 
             }
 
-        
+
 
         alerts = []
 
-        
+
 
         if score < thresholds['critical']:
 
@@ -660,7 +660,7 @@ class PortfolioHealthScorer:
 
             })
 
-        
+
 
         return alerts
 
@@ -811,4 +811,3 @@ class HealthScoringOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

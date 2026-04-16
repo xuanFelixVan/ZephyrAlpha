@@ -8,4 +8,3 @@ owner: 待指定
 last_updated: '2026-04-13'
 ---
 内容已统一至 `../04_OPERATIONS/audit_state`。
-

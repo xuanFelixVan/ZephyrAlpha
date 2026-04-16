@@ -36,6 +36,3 @@ responsibility: 12_FACTOR_ORTHOGONALIZATION
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
-
-
-

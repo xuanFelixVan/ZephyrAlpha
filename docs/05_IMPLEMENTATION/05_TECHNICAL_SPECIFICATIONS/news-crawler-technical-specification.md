@@ -99,7 +99,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -129,7 +129,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -449,7 +449,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -485,7 +485,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -793,7 +793,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -865,7 +865,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -913,7 +913,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -961,7 +961,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -1009,7 +1009,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -1051,7 +1051,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -1099,7 +1099,7 @@ class NewsCrawler:
 
 
 
-    
+
 
 
 
@@ -1159,7 +1159,7 @@ class 爬虫管理系统:
 
 
 
-    
+
 
 
 
@@ -1183,7 +1183,7 @@ class 爬虫管理系统:
 
 
 
-    
+
 
 
 
@@ -1243,7 +1243,7 @@ class 爬虫管理系统:
 
 
 
-    
+
 
 
 
@@ -1895,13 +1895,13 @@ def crawl_news(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    site: str, 
+    site: str,
 
 
 
@@ -1931,7 +1931,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -1967,7 +1967,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -1991,7 +1991,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -2009,7 +2009,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -2027,7 +2027,7 @@ def crawl_news(
 
 
 
-        
+
 
 
 
@@ -2051,7 +2051,7 @@ def crawl_news(
 
 
 
-            
+
 
 
 
@@ -2081,7 +2081,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -2099,7 +2099,7 @@ def crawl_news(
 
 
 
-    
+
 
 
 
@@ -2141,13 +2141,13 @@ def handle_anti_crawler(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    site: str, 
+    site: str,
 
 
 
@@ -2177,7 +2177,7 @@ def handle_anti_crawler(
 
 
 
-    
+
 
 
 
@@ -2207,7 +2207,7 @@ def handle_anti_crawler(
 
 
 
-    
+
 
 
 
@@ -2249,7 +2249,7 @@ def handle_anti_crawler(
 
 
 
-    
+
 
 
 
@@ -2273,7 +2273,7 @@ def handle_anti_crawler(
 
 
 
-    
+
 
 
 
@@ -2297,7 +2297,7 @@ def handle_anti_crawler(
 
 
 
-    
+
 
 
 
@@ -2339,7 +2339,7 @@ def clean_news_data(
 
 
 
-    self, 
+    self,
 
 
 
@@ -2369,7 +2369,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2399,7 +2399,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2423,7 +2423,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2441,7 +2441,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2459,7 +2459,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2477,7 +2477,7 @@ def clean_news_data(
 
 
 
-    
+
 
 
 
@@ -2739,7 +2739,7 @@ def test_news_crawler_integration():
 
 
 
-    
+
 
 
 
@@ -2757,7 +2757,7 @@ def test_news_crawler_integration():
 
 
 
-    
+
 
 
 
@@ -3197,7 +3197,7 @@ news_crawler:
 
 
 
-  
+
 
 
 
@@ -3227,7 +3227,7 @@ news_crawler:
 
 
 
-  
+
 
 
 
@@ -3348,8 +3348,3 @@ news_crawler:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 舆情分析层负责人
-
-
-
-
-

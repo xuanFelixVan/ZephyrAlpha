@@ -94,7 +94,7 @@ class GovernanceDecisionSupport:
 
     """治理决策支持系统"""
 
-    
+
 
     def __init__(self):
 
@@ -102,7 +102,7 @@ class GovernanceDecisionSupport:
 
         self.ai_recommender = AIRecommender()
 
-        
+
 
     def generate_decision_recommendation(self, decision_context):
 
@@ -112,13 +112,13 @@ class GovernanceDecisionSupport:
 
         analysis = self._analyze_decision_context(decision_context)
 
-        
+
 
         # 生成决策方案
 
         options = self.decision_tree.generate_options(analysis)
 
-        
+
 
         # AI推荐最优方案
 
@@ -130,7 +130,7 @@ class GovernanceDecisionSupport:
 
         )
 
-        
+
 
         return {
 
@@ -155,4 +155,3 @@ class GovernanceDecisionSupport:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

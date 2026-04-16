@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Alpha Factor Layer蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Alpha Factor Layer蓝图设计相关内容
 
@@ -418,7 +418,7 @@ class TechnicalFactorEngine:
 
     """技术因子引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -434,7 +434,7 @@ class TechnicalFactorEngine:
 
         }
 
-        
+
 
     def calculate_all(
 
@@ -448,17 +448,17 @@ class TechnicalFactorEngine:
 
         """计算所有技术因子"""
 
-        
+
 
         if factor_names is None:
 
             factor_names = list(self.factors.keys())
 
-        
+
 
         result = data.copy()
 
-        
+
 
         for factor_name in factor_names:
 
@@ -466,17 +466,17 @@ class TechnicalFactorEngine:
 
                 result = self.factorsfactor_name
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_momentum(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算动量因子"""
 
-        
+
 
         for period in [5, 10, 20, 60]:
 
@@ -488,17 +488,17 @@ class TechnicalFactorEngine:
 
             )
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_reversal(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算反转因子"""
 
-        
+
 
         for period in [1, 3, 5]:
 
@@ -512,17 +512,17 @@ class TechnicalFactorEngine:
 
             )
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_volatility(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算波动率因子"""
 
-        
+
 
         for period in [10, 20, 60]:
 
@@ -538,31 +538,31 @@ class TechnicalFactorEngine:
 
             )
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_liquidity(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算流动性因子"""
 
-        
+
 
         data['TURNOVER'] = data['volume'] / data['shares_outstanding']
 
-        
+
 
         data['AMIHUD'] = (
 
-            abs(data['close'].pct_change()) / 
+            abs(data['close'].pct_change()) /
 
             (data['amount'] + 1e-10)
 
         )
 
-        
+
 
         return data
 
@@ -610,7 +610,7 @@ class ICAnalyzer:
 
     """IC分析器"""
 
-    
+
 
     def __init__(self):
 
@@ -622,7 +622,7 @@ class ICAnalyzer:
 
         }
 
-        
+
 
     def analyze(
 
@@ -638,7 +638,7 @@ class ICAnalyzer:
 
         """分析IC"""
 
-        
+
 
         ic_series = self._calculate_ic_series(
 
@@ -650,7 +650,7 @@ class ICAnalyzer:
 
         )
 
-        
+
 
         return {
 
@@ -666,7 +666,7 @@ class ICAnalyzer:
 
         }
 
-    
+
 
     def _calculate_ic_series(
 
@@ -682,13 +682,13 @@ class ICAnalyzer:
 
         """计算IC时间序列"""
 
-        
+
 
         ic_list = []
 
         dates = factor_values.index.unique()
 
-        
+
 
         for date in dates:
 
@@ -696,11 +696,11 @@ class ICAnalyzer:
 
             returns = forward_returns.loc[date]
 
-            
+
 
             aligned = pd.concat([factor, returns], axis=1).dropna()
 
-            
+
 
             if len(aligned) > 10:
 
@@ -708,11 +708,11 @@ class ICAnalyzer:
 
                 ic_list.append({'date': date, 'ic': ic})
 
-        
+
 
         return pd.DataFrame(ic_list).set_index('date')['ic']
 
-    
+
 
     def _calculate_rank_ic(
 
@@ -726,11 +726,11 @@ class ICAnalyzer:
 
         """计算Rank IC"""
 
-        
+
 
         return spearmanr(factor, returns)[0]
 
-    
+
 
     def _calculate_normal_ic(
 
@@ -744,7 +744,7 @@ class ICAnalyzer:
 
         """计算Normal IC"""
 
-        
+
 
         return pearsonr(factor, returns)[0]
 
@@ -1031,4 +1031,3 @@ class FactorEvaluation:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

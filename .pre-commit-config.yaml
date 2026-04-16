@@ -127,7 +127,7 @@ repos:
         name: TDR 变更联动暂存检查
         entry: python scripts/hooks/check_tdr_propagation.py
         language: system
-        files: (^docs/01_FRAMEWORK/tech-decision-records\.md$|^docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/.*\.md$)
+        files: (^docs/02_ARCHITECTURE/TECH_DECISION_RECORDS\.md$|^docs/02_ARCHITECTURE/TECH_DECISION_RECORDS/.*\.md$)
         pass_filenames: false
 
       - id: check-directory-budget

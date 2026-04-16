@@ -26,7 +26,7 @@ responsibility:
 
 > **核心职责**: 治理仪表盘系统设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：治理仪表盘系统设计相关内容
 
@@ -290,7 +290,7 @@ responsibility:
 
     - 合规趋势: 近30天/90天/180天趋势
 
-  
+
 
   风险等级:
 
@@ -302,7 +302,7 @@ responsibility:
 
     - 风险趋势: 风险等级变化趋势
 
-  
+
 
   审计状态:
 
@@ -314,7 +314,7 @@ responsibility:
 
     - 整改完成率
 
-  
+
 
   培训完成度:
 
@@ -456,7 +456,7 @@ class RealtimeMonitoringDashboard:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -464,7 +464,7 @@ class RealtimeMonitoringDashboard:
 
         self.grafana = GrafanaAPI()
 
-    
+
 
     def get_realtime_metrics(self):
 
@@ -472,7 +472,7 @@ class RealtimeMonitoringDashboard:
 
         获取实时监控指标
 
-        
+
 
         Returns:
 
@@ -524,7 +524,7 @@ class RealtimeMonitoringDashboard:
 
         pass
 
-    
+
 
     def create_realtime_dashboard(self):
 
@@ -532,7 +532,7 @@ class RealtimeMonitoringDashboard:
 
         创建实时监控仪表盘
 
-        
+
 
         包含：
 
@@ -576,7 +576,7 @@ class RealtimeMonitoringDashboard:
 
       条件: risk_level = 'HIGH'
 
-      动作: 
+      动作:
 
         - 发送邮件告警
 
@@ -586,7 +586,7 @@ class RealtimeMonitoringDashboard:
 
       频率: 实时
 
-    
+
 
     - 规则名称: 风险事件激增预警
 
@@ -600,7 +600,7 @@ class RealtimeMonitoringDashboard:
 
       频率: 每5分钟检查
 
-  
+
 
   合规违规预警:
 
@@ -618,7 +618,7 @@ class RealtimeMonitoringDashboard:
 
       频率: 实时
 
-  
+
 
   系统异常预警:
 
@@ -634,7 +634,7 @@ class RealtimeMonitoringDashboard:
 
       频率: 每1分钟检查
 
-  
+
 
   监管变更预警:
 
@@ -706,7 +706,7 @@ receivers:
 
       - to: 'team@example.com'
 
-  
+
 
   - name: 'team-email-critical'
 
@@ -720,7 +720,7 @@ receivers:
 
         send_resolved: true
 
-  
+
 
   - name: 'team-email-warning'
 
@@ -756,7 +756,7 @@ class ReportGenerator:
 
     """
 
-    
+
 
     def generate_compliance_report(self, report_type: str, period: str):
 
@@ -764,7 +764,7 @@ class ReportGenerator:
 
         生成合规报告
 
-        
+
 
         Args:
 
@@ -772,7 +772,7 @@ class ReportGenerator:
 
             period: 报告周期
 
-        
+
 
         Returns:
 
@@ -784,23 +784,23 @@ class ReportGenerator:
 
         data = self._collect_report_data(report_type, period)
 
-        
+
 
         # 2. 生成报告内容
 
         report_content = self._generate_report_content(data)
 
-        
+
 
         # 3. 转换为PDF
 
         pdf_file = self._convert_to_pdf(report_content)
 
-        
+
 
         return pdf_file
 
-    
+
 
     def _collect_report_data(self, report_type: str, period: str):
 
@@ -824,7 +824,7 @@ class ReportGenerator:
 
         }
 
-    
+
 
     def _generate_report_content(self, data: dict):
 
@@ -832,7 +832,7 @@ class ReportGenerator:
 
         生成报告内容
 
-        
+
 
         使用Jinja2模板引擎
 
@@ -868,7 +868,7 @@ class ReportGenerator:
 
     <h2>报告周期: {{ period }}</h2>
 
-    
+
 
     <h3>1. 合规评分</h3>
 
@@ -884,7 +884,7 @@ class ReportGenerator:
 
     </ul>
 
-    
+
 
     <h3>2. 风险事件</h3>
 
@@ -916,7 +916,7 @@ class ReportGenerator:
 
     </table>
 
-    
+
 
     <h3>3. 审计发现</h3>
 
@@ -926,7 +926,7 @@ class ReportGenerator:
 
     <p>待整改: {{ data.audit_findings.pending }}个</p>
 
-    
+
 
     <h3>4. 培训完成情况</h3>
 
@@ -934,7 +934,7 @@ class ReportGenerator:
 
     <p>员工培训覆盖率: {{ data.training_status.coverage_rate }}%</p>
 
-    
+
 
     <h3>5. 监管变更</h3>
 
@@ -1028,7 +1028,7 @@ services:
 
       - governance_network
 
-  
+
 
   influxdb:
 
@@ -1056,7 +1056,7 @@ services:
 
       - governance_network
 
-  
+
 
   postgres:
 
@@ -1084,7 +1084,7 @@ services:
 
       - governance_network
 
-  
+
 
   alertmanager:
 
@@ -1148,7 +1148,7 @@ class SupersetIntegration:
 
     """
 
-    
+
 
     def create_compliance_dashboard(self):
 
@@ -1162,13 +1162,13 @@ class SupersetIntegration:
 
         datasource = self._create_datasource()
 
-        
+
 
         # 2. 创建图表
 
         charts = self._create_charts(datasource)
 
-        
+
 
         # 3. 创建仪表盘
 
@@ -1182,17 +1182,17 @@ class SupersetIntegration:
 
         )
 
-        
+
 
         db.session.add(dashboard)
 
         db.session.commit()
 
-        
+
 
         return dashboard
 
-    
+
 
     def _create_charts(self, datasource):
 
@@ -1204,7 +1204,7 @@ class SupersetIntegration:
 
         charts = []
 
-        
+
 
         # 合规评分图表
 
@@ -1230,7 +1230,7 @@ class SupersetIntegration:
 
         charts.append(compliance_score_chart)
 
-        
+
 
         # 风险等级分布图表
 
@@ -1254,7 +1254,7 @@ class SupersetIntegration:
 
         charts.append(risk_distribution_chart)
 
-        
+
 
         return charts
 
@@ -1467,4 +1467,3 @@ class SupersetIntegration:
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: 活跃
-

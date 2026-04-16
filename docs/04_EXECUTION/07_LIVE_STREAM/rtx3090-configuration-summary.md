@@ -570,4 +570,3 @@ python main.py
 **ﻠﻝﺛ؟ﻟﺁﻝﭦ۶**: ﻗﻗﻗﻗﻗ?ﮔﭦﮔﻝﭦ?
 
 **ﮔ۷ﻟﮔﺗﮔ۰**: Whisper large-v3 + DeepSeek-R1 14B + FinBERT
-

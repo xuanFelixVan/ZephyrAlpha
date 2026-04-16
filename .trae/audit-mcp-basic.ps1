@@ -9,7 +9,7 @@ if ($inputText) {
         $request = $inputText | ConvertFrom-Json
         $method = $request.method
         $id = $request.id
-        
+
         if ($method -eq "tools/list") {
             $tools = @(
                 @{
@@ -48,19 +48,19 @@ if ($inputText) {
                     inputSchema = @{ type = "object"; properties = @{} }
                 }
             )
-            
+
             $response = @{
                 jsonrpc = "2.0"
                 id = $id
                 result = @{ tools = $tools }
             }
-            
+
             $responseJson = $response | ConvertTo-Json -Depth 10
             Write-Host $responseJson
         }
         elseif ($method -eq "tools/call") {
             $toolName = $request.params.name
-            
+
             $output = ""
             switch ($toolName) {
                 "bandit-security-scanner" {
@@ -85,18 +85,18 @@ if ($inputText) {
                     $output = npx markdownlint-cli docs/ 2>&1
                 }
             }
-            
+
             $content = @()
             if ($output) {
                 $content += @{ type = "text"; text = $output.ToString() }
             }
-            
+
             $response = @{
                 jsonrpc = "2.0"
                 id = $id
                 result = @{ content = $content }
             }
-            
+
             $responseJson = $response | ConvertTo-Json -Depth 10
             Write-Host $responseJson
         }

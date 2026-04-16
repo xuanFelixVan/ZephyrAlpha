@@ -10,7 +10,7 @@ last_updated: 2026-04-07
 owner: 首席蓝图架构师
 standard_type: 高层架构蓝图
 priority: P0
-responsibility_boundary: 
+responsibility_boundary:
 ---
 
 ## 1. 概述
@@ -187,7 +187,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -215,7 +215,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -239,7 +239,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -263,7 +263,7 @@ class ExperimentTracker:
 
 
 
-        """开始实验运行        
+        """开始实验运行
 
 
 
@@ -279,7 +279,7 @@ class ExperimentTracker:
 
 
 
-            
+
 
 
 
@@ -299,7 +299,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -323,7 +323,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -343,7 +343,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -371,7 +371,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -395,7 +395,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -423,7 +423,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -439,7 +439,7 @@ class ExperimentTracker:
 
 
 
-            
+
 
 
 
@@ -459,7 +459,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -487,7 +487,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -511,7 +511,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -535,7 +535,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -551,7 +551,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -579,7 +579,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -595,7 +595,7 @@ class ExperimentTracker:
 
 
 
-            
+
 
 
 
@@ -615,7 +615,7 @@ class ExperimentTracker:
 
 
 
-    
+
 
 
 
@@ -639,7 +639,7 @@ class ExperimentTracker:
 
 
 
-        
+
 
 
 
@@ -651,7 +651,7 @@ class ExperimentTracker:
 
 
 
-            
+
 
 
 
@@ -735,7 +735,7 @@ with tracker.start_run(run_name='lstm_v1') as run:
 
 
 
-    
+
 
 
 
@@ -763,7 +763,7 @@ with tracker.start_run(run_name='lstm_v1') as run:
 
 
 
-    
+
 
 
 
@@ -867,7 +867,7 @@ class ModelTrainingPipeline:
 
 
 
-    
+
 
 
 
@@ -1372,6 +1372,3 @@ mlflow.register_model("runs:/<run_id>/model", "model_name")
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-

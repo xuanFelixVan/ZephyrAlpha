@@ -72,20 +72,20 @@ def extract_directories(paths: list[str], prefix: str | None) -> set[str]:
 
 def check_directory_name(dir_name: str) -> dict:
     issues: list[str] = []
-    
+
     if CHINESE_PATTERN.search(dir_name):
         issues.append("包含中文字符")
-    
+
     if " " in dir_name:
         issues.append("包含空格")
-    
+
     if INVALID_CHARS_PATTERN.search(dir_name.replace("_", "").replace("-", "")):
         issues.append("包含特殊字符")
-    
+
     if not VALID_PREFIX_PATTERN.match(dir_name):
         if dir_name not in {"docs", "scripts", "src", "tests", "config", "data", ".git", ".github", ".venv", ".pytest_cache", "__pycache__", "node_modules"}:
             issues.append("缺少 2 位数字前缀（如 00_、01_）")
-    
+
     return {
         "name": dir_name,
         "has_chinese": bool(CHINESE_PATTERN.search(dir_name)),
@@ -99,7 +99,7 @@ def check_directory_name(dir_name: str) -> dict:
 def scan_directories(repo_root: Path, prefix: str | None) -> dict:
     paths = git_ls_files(repo_root)
     dirs = extract_directories(paths, prefix)
-    
+
     results: dict[str, list[dict]] = defaultdict(list)
     summary = {
         "total_directories": len(dirs),
@@ -109,12 +109,12 @@ def scan_directories(repo_root: Path, prefix: str | None) -> dict:
         "missing_prefix": 0,
         "compliant": 0,
     }
-    
+
     for dir_path in sorted(dirs):
         dir_name = os.path.basename(dir_path)
         check_result = check_directory_name(dir_name)
         check_result["path"] = dir_path
-        
+
         if check_result["has_chinese"]:
             summary["with_chinese"] += 1
             results["chinese"].append(check_result)
@@ -127,10 +127,10 @@ def scan_directories(repo_root: Path, prefix: str | None) -> dict:
         if check_result["missing_prefix"]:
             summary["missing_prefix"] += 1
             results["missing_prefix"].append(check_result)
-        
+
         if not check_result["issues"]:
             summary["compliant"] += 1
-    
+
     return {
         "summary": summary,
         "issues": dict(results),
@@ -158,9 +158,9 @@ def render_markdown(data: dict, date_str: str) -> str:
         f"| 合规目录 | {data['summary']['compliant']} |",
         f"",
     ]
-    
+
     issues = data.get("issues", {})
-    
+
     if issues.get("chinese"):
         lines.extend([
             f"## 包含中文的目录",
@@ -171,7 +171,7 @@ def render_markdown(data: dict, date_str: str) -> str:
         for item in issues["chinese"]:
             lines.append(f"| `{item['path']}` | `{item['name']}` |")
         lines.append("")
-    
+
     if issues.get("space"):
         lines.extend([
             f"## 包含空格的目录",
@@ -182,7 +182,7 @@ def render_markdown(data: dict, date_str: str) -> str:
         for item in issues["space"]:
             lines.append(f"| `{item['path']}` | `{item['name']}` |")
         lines.append("")
-    
+
     if issues.get("special_chars"):
         lines.extend([
             f"## 包含特殊字符的目录",
@@ -193,7 +193,7 @@ def render_markdown(data: dict, date_str: str) -> str:
         for item in issues["special_chars"]:
             lines.append(f"| `{item['path']}` | `{item['name']}` |")
         lines.append("")
-    
+
     if issues.get("missing_prefix"):
         lines.extend([
             f"## 缺少编号前缀的目录",
@@ -206,7 +206,7 @@ def render_markdown(data: dict, date_str: str) -> str:
         for item in issues["missing_prefix"]:
             lines.append(f"| `{item['path']}` | `{item['name']}` |")
         lines.append("")
-    
+
     if not any(issues.values()):
         lines.extend([
             f"## 结论",
@@ -214,7 +214,7 @@ def render_markdown(data: dict, date_str: str) -> str:
             f"**所有目录命名均合规**。",
             f"",
         ])
-    
+
     lines.extend([
         f"---",
         f"",
@@ -224,7 +224,7 @@ def render_markdown(data: dict, date_str: str) -> str:
         f"- [FILE_NAMING_STANDARD.md](../../docs/09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)",
         f"",
     ])
-    
+
     return "\n".join(lines)
 
 
@@ -234,27 +234,27 @@ def main() -> int:
     parser.add_argument("--prefix", default=None, help="仅扫描指定前缀下的目录")
     parser.add_argument("--output-dir", default="docs/09_AUDIT/STATE", help="输出目录")
     args = parser.parse_args()
-    
+
     repo_root = Path(__file__).resolve().parent.parent.parent
     output_dir = repo_root / args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     print(f"扫描目录命名合规性...")
     data = scan_directories(repo_root, args.prefix)
-    
+
     base_name = f"DIRECTORY_NAMING_COMPLIANCE_{args.date}"
-    
+
     json_path = output_dir / f"{base_name}.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"JSON 报告: {json_path}")
-    
+
     md_path = output_dir / f"{base_name}.md"
     md_content = render_markdown(data, args.date)
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(md_content)
     print(f"MD 报告: {md_path}")
-    
+
     print(f"\n摘要:")
     print(f"  总目录数: {data['summary']['total_directories']}")
     print(f"  包含中文: {data['summary']['with_chinese']}")
@@ -262,7 +262,7 @@ def main() -> int:
     print(f"  包含特殊字符: {data['summary']['with_special_chars']}")
     print(f"  缺少编号前缀: {data['summary']['missing_prefix']}")
     print(f"  合规目录: {data['summary']['compliant']}")
-    
+
     return 0
 
 

@@ -180,4 +180,3 @@ responsibility: REPORTS
 3. **P1-D4**: 对 `ai_factor_miner/` 子模块与蓝图做深度一致性审查
 
 4. **长期**: 建立 `src/` → `docs/` 的自动映射检查，在 CI 中验证
-

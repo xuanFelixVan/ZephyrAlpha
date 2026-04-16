@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 多目标优化详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：多目标优化、Pareto前沿计算、权重权衡
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 同时优化多个目标（收益、风险、交易成本、因子暴露等），提供Pareto最优解集
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 目标冲突：多个目标之间存在权衡关系
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 计算复杂度高：多目标优化计算量大
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供更全面的优化视角
 
@@ -174,7 +174,7 @@ implementation_status: 待实施
 
 - **职责范围**: 多目标优化、Pareto前沿计算、目标权衡分析
 
-- **上下层接口**: 
+- **上下层接口**:
 
   - 上层依赖: Layer 5 交易成本层 (提供交易成本目标)
 
@@ -186,7 +186,7 @@ implementation_status: 待实施
 
 - **核心职责**: 多目标优化、Pareto前沿计算、目标权衡分析
 
-- **职责边界**: 
+- **职责边界**:
 
   - ✓本模块负责: 多目标优化、Pareto前沿计算、目标权衡
 
@@ -340,7 +340,7 @@ class ObjectiveFunctionManager:
 
     """目标函数管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -348,7 +348,7 @@ class ObjectiveFunctionManager:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_objective(
 
@@ -386,7 +386,7 @@ class ObjectiveFunctionManager:
 
         self.logger.info(f"添加目标函数: {name}, 类型={objective_type.value}, 权重={weight}")
 
-    
+
 
     def evaluate(
 
@@ -414,7 +414,7 @@ class ObjectiveFunctionManager:
 
         return values
 
-    
+
 
     def weighted_sum(
 
@@ -450,7 +450,7 @@ class ParetoFrontierCalculator:
 
     """Pareto前沿计算器"""
 
-    
+
 
     def __init__(self, config: MultiObjectiveConfig):
 
@@ -458,7 +458,7 @@ class ParetoFrontierCalculator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def calculate(
 
@@ -474,7 +474,7 @@ class ParetoFrontierCalculator:
 
         计算Pareto前沿
 
-        
+
 
         参数:
 
@@ -482,7 +482,7 @@ class ParetoFrontierCalculator:
 
             constraint_func: 约束函数
 
-            
+
 
         返回:
 
@@ -492,7 +492,7 @@ class ParetoFrontierCalculator:
 
         pareto_solutions = []
 
-        
+
 
         if self.config.method == "weighted_sum":
 
@@ -506,19 +506,19 @@ class ParetoFrontierCalculator:
 
             pareto_solutions = self._nsga2_method(n_assets, constraint_func)
 
-        
+
 
         pareto_front = self._filter_dominated(pareto_solutions)
 
-        
+
 
         self.logger.info(f"Pareto前沿计算完成，{len(pareto_front)}个非支配解")
 
-        
+
 
         return pareto_front
 
-    
+
 
     def _weighted_sum_method(
 
@@ -534,11 +534,11 @@ class ParetoFrontierCalculator:
 
         import cvxpy as cp
 
-        
+
 
         solutions = []
 
-        
+
 
         weight_combinations = self._generate_weight_combinations(
 
@@ -546,7 +546,7 @@ class ParetoFrontierCalculator:
 
         )
 
-        
+
 
         for weights in weight_combinations:
 
@@ -554,11 +554,11 @@ class ParetoFrontierCalculator:
 
                 obj.weight = weights[i]
 
-            
+
 
             w = cp.Variable(n_assets)
 
-            
+
 
             objective_expr = 0
 
@@ -572,7 +572,7 @@ class ParetoFrontierCalculator:
 
                     objective_expr -= obj.weight * obj.function(w)
 
-            
+
 
             constraints = [
 
@@ -584,23 +584,23 @@ class ParetoFrontierCalculator:
 
             ]
 
-            
+
 
             if constraint_func:
 
                 constraints.extend(constraint_func(w))
 
-            
+
 
             problem = cp.Problem(cp.Maximize(objective_expr), constraints)
 
-            
+
 
             try:
 
                 problem.solve()
 
-                
+
 
                 if problem.status == "optimal":
 
@@ -618,11 +618,11 @@ class ParetoFrontierCalculator:
 
                 self.logger.warning(f"优化失败: {e}")
 
-        
+
 
         return solutions
 
-    
+
 
     def _epsilon_constraint_method(
 
@@ -638,7 +638,7 @@ class ParetoFrontierCalculator:
 
         pass
 
-    
+
 
     def _nsga2_method(
 
@@ -654,7 +654,7 @@ class ParetoFrontierCalculator:
 
         pass
 
-    
+
 
     def _generate_weight_combinations(
 
@@ -670,7 +670,7 @@ class ParetoFrontierCalculator:
 
         combinations = []
 
-        
+
 
         if n_objectives == 2:
 
@@ -688,11 +688,11 @@ class ParetoFrontierCalculator:
 
                 combinations.append(weights.tolist())
 
-        
+
 
         return combinations
 
-    
+
 
     def _filter_dominated(
 
@@ -706,7 +706,7 @@ class ParetoFrontierCalculator:
 
         pareto_front = []
 
-        
+
 
         for i, sol_i in enumerate(solutions):
 
@@ -720,7 +720,7 @@ class ParetoFrontierCalculator:
 
                     break
 
-            
+
 
             sol_i.is_dominated = is_dominated
 
@@ -728,11 +728,11 @@ class ParetoFrontierCalculator:
 
                 pareto_front.append(sol_i)
 
-        
+
 
         return pareto_front
 
-    
+
 
     def _dominates(
 
@@ -750,7 +750,7 @@ class ParetoFrontierCalculator:
 
         better_in_at_least_one = False
 
-        
+
 
         for key in sol1.objective_values:
 
@@ -758,7 +758,7 @@ class ParetoFrontierCalculator:
 
             v2 = sol2.objective_values[key]
 
-            
+
 
             if v1 < v2:
 
@@ -768,11 +768,11 @@ class ParetoFrontierCalculator:
 
                 better_in_at_least_one = True
 
-        
+
 
         return better_in_all and better_in_at_least_one
 
-    
+
 
     def _evaluate_objectives(
 
@@ -794,13 +794,13 @@ class TradeoffAnalyzer:
 
     """权衡分析器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def find_best_compromise(
 
@@ -816,11 +816,11 @@ class TradeoffAnalyzer:
 
             raise ValueError("Pareto前沿为空")
 
-        
+
 
         objective_names = list(pareto_front[0].objective_values.keys())
 
-        
+
 
         normalized_values = {}
 
@@ -836,13 +836,13 @@ class TradeoffAnalyzer:
 
             normalized_values[name] = [(v - min_val) / range_val for v in values]
 
-        
+
 
         distances = []
 
         ideal_point = [1.0] * len(objective_names)
 
-        
+
 
         for i in range(len(pareto_front)):
 
@@ -856,19 +856,19 @@ class TradeoffAnalyzer:
 
             distances.append(distance)
 
-        
+
 
         best_idx = np.argmin(distances)
 
-        
+
 
         self.logger.info(f"找到最佳折中解，索引={best_idx}")
 
-        
+
 
         return pareto_front[best_idx]
 
-    
+
 
     def analyze_tradeoffs(
 
@@ -890,11 +890,11 @@ class TradeoffAnalyzer:
 
         }
 
-        
+
 
         objective_names = list(pareto_front[0].objective_values.keys())
 
-        
+
 
         for name in objective_names:
 
@@ -912,7 +912,7 @@ class TradeoffAnalyzer:
 
             }
 
-        
+
 
         return analysis
 
@@ -924,29 +924,29 @@ class MultiObjectiveOptimizer:
 
     """多目标优化器主类"""
 
-    
+
 
     def __init__(self, config: MultiObjectiveConfig):
 
         self.config = config
 
-        
+
 
         self.objective_manager = ObjectiveFunctionManager()
 
-        
+
 
         self.pareto_calculator = ParetoFrontierCalculator(config)
 
-        
+
 
         self.tradeoff_analyzer = TradeoffAnalyzer()
 
-        
+
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_objective(
 
@@ -972,7 +972,7 @@ class MultiObjectiveOptimizer:
 
         )
 
-    
+
 
     def optimize(
 
@@ -988,7 +988,7 @@ class MultiObjectiveOptimizer:
 
         执行多目标优化
 
-        
+
 
         参数:
 
@@ -996,7 +996,7 @@ class MultiObjectiveOptimizer:
 
             constraint_func: 约束函数
 
-            
+
 
         返回:
 
@@ -1006,21 +1006,21 @@ class MultiObjectiveOptimizer:
 
         start_time = datetime.now()
 
-        
+
 
         pareto_front = self.pareto_calculator.calculate(n_assets, constraint_func)
 
-        
+
 
         best_compromise = self.tradeoff_analyzer.find_best_compromise(pareto_front)
 
-        
+
 
         end_time = datetime.now()
 
         optimization_time = (end_time - start_time).total_seconds()
 
-        
+
 
         result = MultiObjectiveResult(
 
@@ -1034,11 +1034,11 @@ class MultiObjectiveOptimizer:
 
         )
 
-        
+
 
         self.logger.info(f"多目标优化完成，耗时{optimization_time:.2f}秒")
 
-        
+
 
         return result
 
@@ -1086,27 +1086,27 @@ CREATE TABLE IF NOT EXISTS mo_optimization_results (
 
     optimization_date TIMESTAMP NOT NULL,
 
-    
+
 
     method VARCHAR(30) NOT NULL,
 
     n_pareto_points INTEGER,
 
-    
+
 
     pareto_front_json TEXT NOT NULL,
 
     best_compromise_json TEXT NOT NULL,
 
-    
+
 
     optimization_time_ms INTEGER,
 
-    
+
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    
+
 
     INDEX idx_portfolio (portfolio_id),
 
@@ -1142,7 +1142,7 @@ COMMENT ON TABLE mo_optimization_results IS '多目标优化结果存储表';
 
 算法名称: 多目标优化
 
-数学公式: 
+数学公式:
 
 min/max: [f1(w), f2(w), ..., fk(w)]
 
@@ -1399,4 +1399,3 @@ Pareto最优: 不存在w'使得fi(w') ≤ fi(w)对所有i成立
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

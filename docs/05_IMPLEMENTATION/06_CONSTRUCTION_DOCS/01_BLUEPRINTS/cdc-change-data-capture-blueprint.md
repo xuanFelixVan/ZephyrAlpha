@@ -29,7 +29,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：CDC变更数据捕获、数据变更检测、变更流处理
 
@@ -305,7 +305,7 @@ class FileChangeEvent:
 
 class FileCDCMonitor:
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -317,7 +317,7 @@ class FileCDCMonitor:
 
         self.ignore_patterns = config.get("ignore_patterns", [".git", "__pycache__"])
 
-        
+
 
         self.event_queue = queue.Queue()
 
@@ -325,13 +325,13 @@ class FileCDCMonitor:
 
         self.file_hashes: Dict[str, str] = {}
 
-        
+
 
         self.observer = Observer()
 
         self.running = False
 
-    
+
 
     def _compute_file_hash(self, file_path: str) -> Optional[str]:
 
@@ -347,7 +347,7 @@ class FileCDCMonitor:
 
             return None
 
-    
+
 
     def _should_watch(self, file_path: str) -> bool:
 
@@ -357,7 +357,7 @@ class FileCDCMonitor:
 
                 return False
 
-        
+
 
         import fnmatch
 
@@ -369,11 +369,11 @@ class FileCDCMonitor:
 
                 return True
 
-        
+
 
         return False
 
-    
+
 
     def _create_event(
 
@@ -397,7 +397,7 @@ class FileCDCMonitor:
 
         ).hexdigest()[:16]
 
-        
+
 
         return FileChangeEvent(
 
@@ -425,7 +425,7 @@ class FileCDCMonitor:
 
         )
 
-    
+
 
     def on_file_created(self, file_path: str):
 
@@ -435,13 +435,13 @@ class FileCDCMonitor:
 
             return
 
-        
+
 
         new_hash = self._compute_file_hash(file_path)
 
         self.file_hashes[file_path] = new_hash
 
-        
+
 
         event = self._create_event(file_path, ChangeType.CREATE, new_hash=new_hash)
 
@@ -449,7 +449,7 @@ class FileCDCMonitor:
 
         self._notify_handlers(event)
 
-    
+
 
     def on_file_modified(self, file_path: str):
 
@@ -459,23 +459,23 @@ class FileCDCMonitor:
 
             return
 
-        
+
 
         old_hash = self.file_hashes.get(file_path)
 
         new_hash = self._compute_file_hash(file_path)
 
-        
+
 
         if old_hash == new_hash:
 
             return
 
-        
+
 
         self.file_hashes[file_path] = new_hash
 
-        
+
 
         event = self._create_event(
 
@@ -489,7 +489,7 @@ class FileCDCMonitor:
 
         self._notify_handlers(event)
 
-    
+
 
     def on_file_deleted(self, file_path: str):
 
@@ -499,7 +499,7 @@ class FileCDCMonitor:
 
             old_hash = self.file_hashes.pop(file_path)
 
-            
+
 
             event = self._create_event(file_path, ChangeType.DELETE, old_hash=old_hash)
 
@@ -507,13 +507,13 @@ class FileCDCMonitor:
 
             self._notify_handlers(event)
 
-    
+
 
     def add_change_handler(self, handler: Callable):
 
         self.change_handlers.append(handler)
 
-    
+
 
     def _notify_handlers(self, event: FileChangeEvent):
 
@@ -529,7 +529,7 @@ class FileCDCMonitor:
 
                 print(f"Handler error: {e}")
 
-    
+
 
     def get_event(self, timeout: float = 1.0) -> Optional[FileChangeEvent]:
 
@@ -543,7 +543,7 @@ class FileCDCMonitor:
 
             return None
 
-    
+
 
     def start(self):
 
@@ -557,13 +557,13 @@ class FileCDCMonitor:
 
                 self.observer.schedule(handler, watch_path, recursive=True)
 
-        
+
 
         self.observer.start()
 
         self.running = True
 
-    
+
 
     def stop(self):
 
@@ -581,13 +581,13 @@ class FileCDCMonitor:
 
 class CDCEventHandler(FileSystemEventHandler):
 
-    
+
 
     def __init__(self, monitor: FileCDCMonitor):
 
         self.monitor = monitor
 
-    
+
 
     def on_created(self, event):
 
@@ -595,7 +595,7 @@ class CDCEventHandler(FileSystemEventHandler):
 
             self.monitor.on_file_created(event.src_path)
 
-    
+
 
     def on_modified(self, event):
 
@@ -603,7 +603,7 @@ class CDCEventHandler(FileSystemEventHandler):
 
             self.monitor.on_file_modified(event.src_path)
 
-    
+
 
     def on_deleted(self, event):
 
@@ -611,7 +611,7 @@ class CDCEventHandler(FileSystemEventHandler):
 
             self.monitor.on_file_deleted(event.src_path)
 
-    
+
 
     def on_moved(self, event):
 
@@ -683,7 +683,7 @@ class APICDCConfig:
 
 class APICDCPoller:
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -691,25 +691,25 @@ class APICDCPoller:
 
         self.endpoints: Dict[str, APICDCConfig] = {}
 
-        
+
 
         for name, ep_config in config.get("endpoints", {}).items():
 
             self.endpoints[name] = APICDCConfig(**ep_config)
 
-        
+
 
         self.change_handlers: List[Callable] = []
 
         self.state_store = CDCStateStore(config.get("state_path", "data/cdc_state/"))
 
-        
+
 
         self.running = False
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     async def poll_endpoint(self, name: str, config: APICDCConfig):
 
@@ -721,7 +721,7 @@ class APICDCPoller:
 
             config.cursor_value = last_cursor
 
-        
+
 
         try:
 
@@ -729,13 +729,13 @@ class APICDCPoller:
 
                 params = config.params or {}
 
-                
+
 
                 if config.cursor_value:
 
                     params[config.cursor_field] = config.cursor_value
 
-                
+
 
                 async with session.request(
 
@@ -761,11 +761,11 @@ class APICDCPoller:
 
                         return
 
-                    
+
 
                     data = await response.json()
 
-                    
+
 
                     items = data
 
@@ -775,19 +775,19 @@ class APICDCPoller:
 
                             items = items.get(path_part, [])
 
-                    
+
 
                     if not isinstance(items, list):
 
                         items = [items]
 
-                    
+
 
                     for item in items:
 
                         await self._process_item(name, config, item)
 
-                    
+
 
                     if items:
 
@@ -799,13 +799,13 @@ class APICDCPoller:
 
                             self.state_store.set_cursor(name, new_cursor)
 
-        
+
 
         except Exception as e:
 
             self.logger.error(f"Poll error for {name}: {e}")
 
-    
+
 
     async def _process_item(
 
@@ -825,7 +825,7 @@ class APICDCPoller:
 
             return
 
-        
+
 
         item_hash = hashlib.md5(
 
@@ -833,11 +833,11 @@ class APICDCPoller:
 
         ).hexdigest()
 
-        
+
 
         stored_hash = self.state_store.get_item_hash(endpoint_name, item_id)
 
-        
+
 
         if stored_hash is None:
 
@@ -851,11 +851,11 @@ class APICDCPoller:
 
             return
 
-        
+
 
         self.state_store.set_item_hash(endpoint_name, item_id, item_hash)
 
-        
+
 
         event = {
 
@@ -877,7 +877,7 @@ class APICDCPoller:
 
         }
 
-        
+
 
         for handler in self.change_handlers:
 
@@ -895,13 +895,13 @@ class APICDCPoller:
 
                 self.logger.error(f"Handler error: {e}")
 
-    
+
 
     def add_change_handler(self, handler: Callable):
 
         self.change_handlers.append(handler)
 
-    
+
 
     async def start(self):
 
@@ -909,7 +909,7 @@ class APICDCPoller:
 
         self.running = True
 
-        
+
 
         while self.running:
 
@@ -919,13 +919,13 @@ class APICDCPoller:
 
                 tasks.append(self.poll_endpoint(name, config))
 
-            
+
 
             if tasks:
 
                 await asyncio.gather(*tasks, return_exceptions=True)
 
-            
+
 
             await asyncio.sleep(
 
@@ -933,7 +933,7 @@ class APICDCPoller:
 
             )
 
-    
+
 
     def stop(self):
 
@@ -947,7 +947,7 @@ class APICDCPoller:
 
 class CDCStateStore:
 
-    
+
 
     def __init__(self, state_path: str):
 
@@ -957,17 +957,17 @@ class CDCStateStore:
 
         self.state_path.mkdir(parents=True, exist_ok=True)
 
-        
+
 
         self.cursors: Dict[str, Any] = {}
 
         self.item_hashes: Dict[str, Dict[str, str]] = {}
 
-        
+
 
         self._load_state()
 
-    
+
 
     def _load_state(self):
 
@@ -979,7 +979,7 @@ class CDCStateStore:
 
                 self.cursors = json.load(f)
 
-        
+
 
         hash_file = self.state_path / "item_hashes.json"
 
@@ -989,7 +989,7 @@ class CDCStateStore:
 
                 self.item_hashes = json.load(f)
 
-    
+
 
     def _save_state(self):
 
@@ -999,7 +999,7 @@ class CDCStateStore:
 
             json.dump(self.cursors, f, indent=2)
 
-        
+
 
         hash_file = self.state_path / "item_hashes.json"
 
@@ -1007,7 +1007,7 @@ class CDCStateStore:
 
             json.dump(self.item_hashes, f, indent=2)
 
-    
+
 
     def get_cursor(self, endpoint_name: str) -> Any:
 
@@ -1015,7 +1015,7 @@ class CDCStateStore:
 
         return self.cursors.get(endpoint_name)
 
-    
+
 
     def set_cursor(self, endpoint_name: str, cursor: Any):
 
@@ -1025,13 +1025,13 @@ class CDCStateStore:
 
         self._save_state()
 
-    
+
 
     def get_item_hash(self, endpoint_name: str, item_id: str) -> Optional[str]:
 
         return self.item_hashes.get(endpoint_name, {}).get(item_id)
 
-    
+
 
     def set_item_hash(self, endpoint_name: str, item_id: str, hash_value: str):
 
@@ -1039,7 +1039,7 @@ class CDCStateStore:
 
             self.item_hashes[endpoint_name] = {}
 
-        
+
 
         self.item_hashes[endpoint_name][item_id] = hash_value
 
@@ -1101,13 +1101,13 @@ class ChangeEvent:
 
 class CDCEventProcessor:
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
         self.config = config
 
-        
+
 
         self.redis_client = redis.Redis(
 
@@ -1121,7 +1121,7 @@ class CDCEventProcessor:
 
         )
 
-        
+
 
         self.stream_name = config.get("stream_name", "cdc_events")
 
@@ -1129,17 +1129,17 @@ class CDCEventProcessor:
 
         self.consumer_name = config.get("consumer_name", "worker_1")
 
-        
+
 
         self.handlers: Dict[str, List[Callable]] = {}
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self._ensure_consumer_group()
 
-    
+
 
     def _ensure_consumer_group(self):
 
@@ -1165,7 +1165,7 @@ class CDCEventProcessor:
 
                 raise
 
-    
+
 
     def register_handler(self, operation: str, handler: Callable):
 
@@ -1175,7 +1175,7 @@ class CDCEventProcessor:
 
         self.handlers[operation].append(handler)
 
-    
+
 
     def emit_event(self, event: ChangeEvent):
 
@@ -1199,11 +1199,11 @@ class CDCEventProcessor:
 
         }
 
-        
+
 
         self.redis_client.xadd(self.stream_name, event_data)
 
-    
+
 
     def process_events(self, count: int = 10, block: int = 1000):
 
@@ -1223,13 +1223,13 @@ class CDCEventProcessor:
 
         )
 
-        
+
 
         if not messages:
 
             return
 
-        
+
 
         for stream, msgs in messages:
 
@@ -1255,7 +1255,7 @@ class CDCEventProcessor:
 
                     self.logger.error(f"Error processing event {msg_id}: {e}")
 
-    
+
 
     def _parse_event(self, data: Dict[str, str]) -> ChangeEvent:
 
@@ -1281,7 +1281,7 @@ class CDCEventProcessor:
 
         )
 
-    
+
 
     def _dispatch_event(self, event: ChangeEvent):
 
@@ -1289,7 +1289,7 @@ class CDCEventProcessor:
 
         handlers = self.handlers.get(event.operation, [])
 
-        
+
 
         for handler in handlers:
 
@@ -1301,7 +1301,7 @@ class CDCEventProcessor:
 
                 self.logger.error(f"Handler error: {e}")
 
-    
+
 
     def start_processing(self):
 
@@ -1585,7 +1585,7 @@ asyncio.run(poller.start())
 
 | CPU | 0.5?| 1?| 1.5?|
 
-| 
+|
 
 存 | 1GB | 2GB | 3GB |
 
@@ -1625,7 +1625,7 @@ asyncio.run(poller.start())
 
 - [x] 监控告警
 
-- [x] 
+- [x]
 
 障恢复
 
@@ -1690,10 +1690,3 @@ asyncio.run(poller.start())
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

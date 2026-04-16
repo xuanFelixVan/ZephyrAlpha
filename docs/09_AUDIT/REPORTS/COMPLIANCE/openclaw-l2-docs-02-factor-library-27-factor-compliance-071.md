@@ -39,4 +39,3 @@ responsibility: REPORTS
 - P2: 1 篇
 
 ## 目录级结论
-

@@ -20,7 +20,7 @@ responsibility:
 
 
 
-> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「ESG 投资系统」；与 GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md 合规叙事衔接。  
+> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「ESG 投资系统」；与 GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md 合规叙事衔接。
 
 > **对照表**：LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
 
@@ -30,7 +30,7 @@ responsibility:
 
 
 
-- **负责**：ESG 数据源选型、评分映射、硬/软约束进入组合优化、持仓 ESG 暴露报表。  
+- **负责**：ESG 数据源选型、评分映射、硬/软约束进入组合优化、持仓 ESG 暴露报表。
 
 - **不负责**：替代 Layer 10 全部合规判责；具体排雷清单以合规蓝图为准。
 
@@ -92,9 +92,6 @@ responsibility:
 
 
 
-- PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md  
+- PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
 
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md  
-
-
-
+- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md

@@ -27,7 +27,7 @@ responsibility: ''
 
 > **核心职责**: Aml Monitoring System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Aml Monitoring System蓝图设计相关内容
 
@@ -37,11 +37,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **状态**: 活跃  
+> **状态**: 活跃
 
 > **对标机构**: Citadel, Two Sigma, Bridgewater, D.E. Shaw
 
@@ -201,7 +201,7 @@ class AMLMonitoringInterface:
 
         pass
 
-    
+
 
     def screen_sanctions(self, entity: Entity) -> SanctionResult:
 
@@ -209,7 +209,7 @@ class AMLMonitoringInterface:
 
         pass
 
-    
+
 
     def assess_customer_risk(self, customer: Customer) -> RiskScore:
 
@@ -217,7 +217,7 @@ class AMLMonitoringInterface:
 
         pass
 
-    
+
 
     def generate_str_report(self, suspicious_transactions: List[Transaction]) -> STRReport:
 
@@ -225,7 +225,7 @@ class AMLMonitoringInterface:
 
         pass
 
-    
+
 
     def get_aml_dashboard(self) -> AMLDashboard:
 
@@ -387,13 +387,13 @@ class SanctionScreening:
 
         sanctions_db = self.load_sanctions_db()
 
-        
+
 
         fuzzy_match_score = self.fuzzy_match(entity_name, sanctions_db)
 
         phonetic_match_score = self.phonetic_match(entity_name, sanctions_db)
 
-        
+
 
         if fuzzy_match_score > 0.85 or phonetic_match_score > 0.90:
 
@@ -455,7 +455,7 @@ class CustomerRiskAssessment:
 
         }
 
-        
+
 
         weighted_score = sum(
 
@@ -465,7 +465,7 @@ class CustomerRiskAssessment:
 
         )
 
-        
+
 
         return RiskScore(
 
@@ -553,7 +553,7 @@ class Transaction:
 
     channel: str
 
-    
+
 
 @dataclass
 
@@ -569,7 +569,7 @@ class Entity:
 
     industry: str
 
-    
+
 
 @dataclass
 
@@ -591,7 +591,7 @@ class AMLAlert:
 
     resolution: str
 
-    
+
 
 @dataclass
 
@@ -1067,11 +1067,10 @@ explanation = detector.explain(transaction_features)
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

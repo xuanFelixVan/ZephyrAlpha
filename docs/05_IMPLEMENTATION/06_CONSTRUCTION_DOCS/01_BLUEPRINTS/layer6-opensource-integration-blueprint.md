@@ -184,7 +184,7 @@ class PyPortfolioOptIntegration:
 
         self.risk_free_rate = risk_free_rate
 
-    
+
 
     def optimize_mean_variance(
 
@@ -200,7 +200,7 @@ class PyPortfolioOptIntegration:
 
         均值方差优化
 
-        
+
 
         Args:
 
@@ -208,7 +208,7 @@ class PyPortfolioOptIntegration:
 
             method: 优化方法
 
-        
+
 
         Returns:
 
@@ -220,11 +220,11 @@ class PyPortfolioOptIntegration:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         ef = EfficientFrontier(mu, S)
 
-        
+
 
         if method == "max_sharpe":
 
@@ -238,13 +238,13 @@ class PyPortfolioOptIntegration:
 
             weights = ef.max_return()
 
-        
+
 
         cleaned_weights = ef.clean_weights()
 
         performance = ef.portfolio_performance(verbose=False)
 
-        
+
 
         return {
 
@@ -258,7 +258,7 @@ class PyPortfolioOptIntegration:
 
         }
 
-    
+
 
     def optimize_black_litterman(
 
@@ -278,7 +278,7 @@ class PyPortfolioOptIntegration:
 
         Black-Litterman优化
 
-        
+
 
         Args:
 
@@ -290,7 +290,7 @@ class PyPortfolioOptIntegration:
 
             risk_aversion: 风险厌恶系数
 
-        
+
 
         Returns:
 
@@ -300,7 +300,7 @@ class PyPortfolioOptIntegration:
 
         S = risk_models.sample_cov(prices)
 
-        
+
 
         bl = BlackLittermanModel(
 
@@ -316,13 +316,13 @@ class PyPortfolioOptIntegration:
 
         )
 
-        
+
 
         rets = bl.bl_returns()
 
         bl_S = bl.bl_cov()
 
-        
+
 
         ef = EfficientFrontier(rets, bl_S)
 
@@ -330,7 +330,7 @@ class PyPortfolioOptIntegration:
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         return {
 
@@ -420,7 +420,7 @@ class RiskfolioIntegration:
 
         pass
 
-    
+
 
     def optimize_risk_parity(
 
@@ -436,7 +436,7 @@ class RiskfolioIntegration:
 
         风险平价优化
 
-        
+
 
         Args:
 
@@ -444,7 +444,7 @@ class RiskfolioIntegration:
 
             risk_measure: 风险度量
 
-        
+
 
         Returns:
 
@@ -456,7 +456,7 @@ class RiskfolioIntegration:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         model='Classic'
 
@@ -468,7 +468,7 @@ class RiskfolioIntegration:
 
         hist = True
 
-        
+
 
         w = port.rp_optimization(
 
@@ -484,7 +484,7 @@ class RiskfolioIntegration:
 
         )
 
-        
+
 
         return {
 
@@ -494,7 +494,7 @@ class RiskfolioIntegration:
 
         }
 
-    
+
 
     def optimize_cvar(
 
@@ -510,7 +510,7 @@ class RiskfolioIntegration:
 
         CVaR优化
 
-        
+
 
         Args:
 
@@ -518,7 +518,7 @@ class RiskfolioIntegration:
 
             alpha: 置信水平
 
-        
+
 
         Returns:
 
@@ -530,7 +530,7 @@ class RiskfolioIntegration:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         model='Classic'
 
@@ -542,7 +542,7 @@ class RiskfolioIntegration:
 
         l = 0
 
-        
+
 
         w = port.optimization(
 
@@ -560,7 +560,7 @@ class RiskfolioIntegration:
 
         )
 
-        
+
 
         return {
 
@@ -634,7 +634,7 @@ class CvxpyIntegration:
 
         self.solvers = ['ECOS', 'OSQP', 'SCS']
 
-    
+
 
     def optimize_with_constraints(
 
@@ -654,7 +654,7 @@ class CvxpyIntegration:
 
         约束优化
 
-        
+
 
         Args:
 
@@ -666,7 +666,7 @@ class CvxpyIntegration:
 
             solver: 求解器
 
-        
+
 
         Returns:
 
@@ -678,17 +678,17 @@ class CvxpyIntegration:
 
         w = cp.Variable(n)
 
-        
+
 
         portfolio_return = expected_returns @ w
 
         portfolio_risk = cp.quad_form(w, cov_matrix)
 
-        
+
 
         objective = cp.Maximize(portfolio_return - 0.5 * portfolio_risk)
 
-        
+
 
         constraint_list = [
 
@@ -698,7 +698,7 @@ class CvxpyIntegration:
 
         ]
 
-        
+
 
         for c in constraints:
 
@@ -716,17 +716,17 @@ class CvxpyIntegration:
 
                 constraint_list.append(sector_weight <= c['max_weight'])
 
-        
+
 
         problem = cp.Problem(objective, constraint_list)
 
-        
+
 
         try:
 
             problem.solve(solver=solver)
 
-            
+
 
             if problem.status == 'optimal':
 
@@ -828,7 +828,7 @@ class PyfolioIntegration:
 
         pass
 
-    
+
 
     def analyze_performance(
 
@@ -844,7 +844,7 @@ class PyfolioIntegration:
 
         绩效分析
 
-        
+
 
         Args:
 
@@ -852,7 +852,7 @@ class PyfolioIntegration:
 
             benchmark_returns: 基准收益
 
-        
+
 
         Returns:
 
@@ -862,7 +862,7 @@ class PyfolioIntegration:
 
         perf_stats = pf.timeseries.perf_stats(returns)
 
-        
+
 
         return {
 
@@ -880,7 +880,7 @@ class PyfolioIntegration:
 
         }
 
-    
+
 
     def calculate_health_score(
 
@@ -896,7 +896,7 @@ class PyfolioIntegration:
 
         计算健康度评分
 
-        
+
 
         Args:
 
@@ -904,7 +904,7 @@ class PyfolioIntegration:
 
             positions: 持仓数据
 
-        
+
 
         Returns:
 
@@ -914,7 +914,7 @@ class PyfolioIntegration:
 
         perf_stats = pf.timeseries.perf_stats(returns)
 
-        
+
 
         risk_score = self._calculate_risk_score(perf_stats)
 
@@ -924,7 +924,7 @@ class PyfolioIntegration:
 
         diversification_score = self._calculate_diversification_score(positions)
 
-        
+
 
         overall_score = (
 
@@ -938,7 +938,7 @@ class PyfolioIntegration:
 
         )
 
-        
+
 
         return {
 
@@ -1018,7 +1018,7 @@ class SALibIntegration:
 
         pass
 
-    
+
 
     def analyze_sensitivity(
 
@@ -1036,7 +1036,7 @@ class SALibIntegration:
 
         敏感性分析
 
-        
+
 
         Args:
 
@@ -1046,7 +1046,7 @@ class SALibIntegration:
 
             N: 采样数量
 
-        
+
 
         Returns:
 
@@ -1056,21 +1056,21 @@ class SALibIntegration:
 
         param_values = saltelli.sample(problem, N)
 
-        
+
 
         Y = np.zeros([param_values.shape[0]])
 
-        
+
 
         for i, X in enumerate(param_values):
 
             Y[i] = model_func(X)
 
-        
+
 
         Si = sobol.analyze(problem, Y)
 
-        
+
 
         return {
 
@@ -1296,7 +1296,7 @@ def check_dependency_conflicts():
 
     检查依赖冲突
 
-    
+
 
     Returns:
 
@@ -1306,11 +1306,11 @@ def check_dependency_conflicts():
 
     import pkg_resources
 
-    
+
 
     conflicts = []
 
-    
+
 
     try:
 
@@ -1328,7 +1328,7 @@ def check_dependency_conflicts():
 
         conflicts.append(str(e))
 
-    
+
 
     return conflicts
 
@@ -1376,7 +1376,7 @@ def test_compatibility():
 
     测试兼容性
 
-    
+
 
     Returns:
 
@@ -1386,7 +1386,7 @@ def test_compatibility():
 
     results = {}
 
-    
+
 
     try:
 
@@ -1398,7 +1398,7 @@ def test_compatibility():
 
         results['PyPortfolioOpt'] = f'ERROR: {e}'
 
-    
+
 
     try:
 
@@ -1410,7 +1410,7 @@ def test_compatibility():
 
         results['cvxpy'] = f'ERROR: {e}'
 
-    
+
 
     return results
 
@@ -1559,4 +1559,3 @@ def optimize_with_fallback(params: Dict):
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-08 | 初始版本创建 | 架构团队 |
-

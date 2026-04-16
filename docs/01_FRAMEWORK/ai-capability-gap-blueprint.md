@@ -36,7 +36,7 @@ responsibility_boundary: ''
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -928,7 +928,7 @@ class OnlineLearner(ABC):
 
 
 
-    
+
 
 
 
@@ -968,7 +968,7 @@ class OnlineLearner(ABC):
 
 
 
-    
+
 
 
 
@@ -1008,7 +1008,7 @@ class OnlineLearner(ABC):
 
 
 
-    
+
 
 
 
@@ -1048,7 +1048,7 @@ class OnlineLearner(ABC):
 
 
 
-    
+
 
 
 
@@ -1120,7 +1120,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-    
+
 
 
 
@@ -1176,7 +1176,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-        
+
 
 
 
@@ -1232,7 +1232,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-        
+
 
 
 
@@ -1264,7 +1264,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-            
+
 
 
 
@@ -1288,7 +1288,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-            
+
 
 
 
@@ -1312,7 +1312,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-            
+
 
 
 
@@ -1328,7 +1328,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-    
+
 
 
 
@@ -1376,7 +1376,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-    
+
 
 
 
@@ -1448,7 +1448,7 @@ class OnlineSGD(OnlineLearner):
 
 
 
-    
+
 
 
 
@@ -1536,7 +1536,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -1592,7 +1592,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1680,7 +1680,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -1720,7 +1720,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1736,7 +1736,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1768,7 +1768,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1784,7 +1784,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -1824,7 +1824,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1840,7 +1840,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1872,7 +1872,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1888,7 +1888,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1904,7 +1904,7 @@ class OnlineLearningPipeline:
 
 
 
-        
+
 
 
 
@@ -1920,7 +1920,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -1968,7 +1968,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -2032,7 +2032,7 @@ class OnlineLearningPipeline:
 
 
 
-    
+
 
 
 
@@ -3064,7 +3064,7 @@ class ModelMonitor:
 
 
 
-    
+
 
 
 
@@ -3112,7 +3112,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3192,7 +3192,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3216,7 +3216,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3248,7 +3248,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3280,7 +3280,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3320,7 +3320,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3392,7 +3392,7 @@ class ModelMonitor:
 
 
 
-            
+
 
 
 
@@ -3424,7 +3424,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3440,7 +3440,7 @@ class ModelMonitor:
 
 
 
-    
+
 
 
 
@@ -3472,7 +3472,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3512,7 +3512,7 @@ class ModelMonitor:
 
 
 
-            
+
 
 
 
@@ -3536,7 +3536,7 @@ class ModelMonitor:
 
 
 
-            
+
 
 
 
@@ -3560,7 +3560,7 @@ class ModelMonitor:
 
 
 
-            
+
 
 
 
@@ -3616,7 +3616,7 @@ class ModelMonitor:
 
 
 
-            
+
 
 
 
@@ -3728,7 +3728,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3744,7 +3744,7 @@ class ModelMonitor:
 
 
 
-    
+
 
 
 
@@ -3784,7 +3784,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3800,7 +3800,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3824,7 +3824,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3840,7 +3840,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3888,7 +3888,7 @@ class ModelMonitor:
 
 
 
-        
+
 
 
 
@@ -3904,7 +3904,7 @@ class ModelMonitor:
 
 
 
-    
+
 
 
 
@@ -4834,7 +4834,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -4874,7 +4874,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -4906,7 +4906,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -4970,7 +4970,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5002,7 +5002,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5026,7 +5026,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5042,7 +5042,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5058,7 +5058,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5074,7 +5074,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5146,7 +5146,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5162,7 +5162,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5258,7 +5258,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5282,7 +5282,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5298,7 +5298,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -5370,7 +5370,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5418,7 +5418,7 @@ class DataDriftDetector:
 
 
 
-            
+
 
 
 
@@ -5450,7 +5450,7 @@ class DataDriftDetector:
 
 
 
-                
+
 
 
 
@@ -5466,7 +5466,7 @@ class DataDriftDetector:
 
 
 
-                
+
 
 
 
@@ -5482,7 +5482,7 @@ class DataDriftDetector:
 
 
 
-                
+
 
 
 
@@ -5602,7 +5602,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5698,7 +5698,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5714,7 +5714,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5730,7 +5730,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -5802,7 +5802,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5826,7 +5826,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5850,7 +5850,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5874,7 +5874,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5890,7 +5890,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -5906,7 +5906,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -6026,7 +6026,7 @@ class DataDriftDetector:
 
 
 
-    
+
 
 
 
@@ -6066,7 +6066,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -6194,7 +6194,7 @@ class DataDriftDetector:
 
 
 
-        
+
 
 
 
@@ -10705,10 +10705,3 @@ Month 5-6: P1级高级AI能力建设
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-
-
-

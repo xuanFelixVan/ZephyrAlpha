@@ -137,10 +137,10 @@ import pandas as pd
 def fetch_stock_data(symbols: list):
     """
     获取股票数据
-    
+
     Args:
         symbols: 股票代码列表
-    
+
     Returns:
         DataFrame: 股票数据
     """
@@ -148,36 +148,36 @@ def fetch_stock_data(symbols: list):
     for symbol in symbols:
         df = fetch_from_api(symbol)
         data.append(df)
-    
+
     return pd.concat(data)
 
 @task
 def validate_data(df: pd.DataFrame):
     """
     验证数据
-    
+
     Args:
         df: 原始数据
-    
+
     Returns:
         DataFrame: 验证后的数据
     """
     if df.empty:
         raise ValueError("数据为空")
-    
+
     if df.isnull().sum().sum() > 0:
         df = df.fillna(method='ffill')
-    
+
     return df
 
 @task
 def save_to_database(df: pd.DataFrame):
     """
     保存到数据库
-    
+
     Args:
         df: 数据
-    
+
     Returns:
         bool: 是否成功
     """
@@ -188,7 +188,7 @@ schedule = IntervalSchedule(interval=timedelta(minutes=5))
 
 with Flow("stock-data-collection", schedule=schedule) as flow:
     symbols = ['AAPL', 'GOOGL', 'MSFT']
-    
+
     raw_data = fetch_stock_data(symbols)
     validated_data = validate_data(raw_data)
     result = save_to_database(validated_data)
@@ -206,10 +206,10 @@ from prefect.tasks.control_flow import case, merge
 def clean_data(df: pd.DataFrame):
     """
 洗
-    
+
     Args:
         df: 原始数据
-    
+
     Returns:
 DataFrame:
 洗后的数据
@@ -222,11 +222,11 @@ DataFrame:
 def calculate_features(df: pd.DataFrame):
     """
     计算特征
-    
+
     Args:
 df:
 洗后的数据
-    
+
     Returns:
         DataFrame: 特征数据
     """
@@ -239,10 +239,10 @@ df:
 def save_features(df: pd.DataFrame):
     """
     保存特征
-    
+
     Args:
         df: 特征数据
-    
+
     Returns:
         bool: 是否成功
     """
@@ -251,7 +251,7 @@ def save_features(df: pd.DataFrame):
 
 with Flow("data-processing") as flow:
     data_param = Parameter("data")
-    
+
     cleaned_data = clean_data(data_param)
     features = calculate_features(cleaned_data)
     result = save_features(features)
@@ -292,7 +292,7 @@ def send_alerts(signals):
 with Flow("trading-signal-pipeline") as flow:
     market_data = fetch_market_data()
     fundamental_data = fetch_fundamental_data()
-    
+
     merged_data = merge_data(market_data, fundamental_data)
     signals = calculate_signals(merged_data)
     alert_result = send_alerts(signals)
@@ -314,10 +314,10 @@ from datetime import timedelta
 def fetch_data_with_retry(symbol: str):
     """
     带重试的数据获取
-    
+
     Args:
         symbol: 股票代码
-    
+
     Returns:
         DataFrame: 数据
     """
@@ -334,10 +334,10 @@ def fetch_data_with_retry(symbol: str):
 )
 def process_after_success(data):
     """
-    
+
     Args:
         data: 数据
-    
+
     Returns:
         bool: 是否成功
     """
@@ -350,10 +350,10 @@ def process_after_success(data):
 def handle_failure(error):
     """
     失败处理
-    
+
     Args:
         error: 错误信息
-    
+
     Returns:
         bool: 是否成功
     """
@@ -379,8 +379,8 @@ from prefect.utilities.notifications import slack_notification
 @task(state_handlers=[slack_notification(webhook_url="...")])
 def critical_task():
     """
-    
-    
+
+
     Returns:
         bool: 是否成功
     """
@@ -389,21 +389,21 @@ def critical_task():
 @task
 def monitor_task_status():
     """
-    
+
     Returns:
     """
     from prefect.client import Client
-    
+
     client = Client()
     flow_runs = client.get_flow_runs()
-    
+
     status = {
         'total': len(flow_runs),
         'success': sum(1 for r in flow_runs if r.state.is_successful()),
         'failed': sum(1 for r in flow_runs if r.state.is_failed()),
         'running': sum(1 for r in flow_runs if r.state.is_running())
     }
-    
+
     return status
 ```
 
@@ -455,7 +455,7 @@ services:
       - PREFECT_UI_API_URL=http://localhost:4200/api
     volumes:
       - prefect-data:/root/.prefect
-  
+
   prefect-agent:
     image: prefecthq/prefect:2-latest
     command: prefect agent start -q default
@@ -658,6 +658,3 @@ flow.register()
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-

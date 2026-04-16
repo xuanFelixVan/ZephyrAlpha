@@ -14,15 +14,15 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 
 
-> **物理位置**：治理脚本集中在 `scripts/governance/`（机构常见的 **tooling 子树**）。仓库根 `scripts/*.py` 下同名文件为 **薄兼容入口**（`runpy` 转发），历史文档中的 `python scripts/<name>.py` 仍可执行。  
+> **物理位置**：治理脚本集中在 `scripts/governance/`（机构常见的 **tooling 子树**）。仓库根 `scripts/*.py` 下同名文件为 **薄兼容入口**（`runpy` 转发），历史文档中的 `python scripts/<name>.py` 仍可执行。
 
-> **本文件**：逻辑归口——从这里查「干什么、怎么跑、产出在哪」。  
+> **本文件**：逻辑归口——从这里查「干什么、怎么跑、产出在哪」。
 
-> **与任务清单的关系**：执行口径与 Pipeline 见 [施工阶段统一任务清单](./construction-phase-task-list.md)；波次与扫描细节见 [REPO_WIDE（已归档）](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§1.1**。  
+> **与任务清单的关系**：执行口径与 Pipeline 见 [施工阶段统一任务清单](./construction-phase-task-list.md)；波次与扫描细节见 [REPO_WIDE（已归档）](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§1.1**。
 
-> **删稿裁决**（机器不代劳）：见 文件删除与保留裁决 Playbook。  
+> **删稿裁决**（机器不代劳）：见 文件删除与保留裁决 Playbook。
 
-> **文档地图 + 放置**：搬迁或新建 `docs/` 路径前，先 LAYOUT 标准（**§1 第 5～6 条**）+ 办公室放置规程（**§1.5**、**§1.6**「位置是否正确」分桶；互指 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)、REPO_WIDE **§2.3.1**、**§2.3.2**）；**勿**另立平行标准；再跑本表脚本验收。  
+> **文档地图 + 放置**：搬迁或新建 `docs/` 路径前，先 LAYOUT 标准（**§1 第 5～6 条**）+ 办公室放置规程（**§1.5**、**§1.6**「位置是否正确」分桶；互指 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)、REPO_WIDE **§2.3.1**、**§2.3.2**）；**勿**另立平行标准；再跑本表脚本验收。
 
 > **Git 暂存、L1 何时跑、UTF-8 编辑**：见 项目办公室 AI 交接说明 **§0.1** 与 REPO_WIDE §1.2；编码全文 DOCUMENT_ENCODING_STANDARD。**`.gitignore` 与 `STATE/` 两条线**、**Solo+全委托 AI 双提交**：**§0.1.4**、**§0.2**；任务清单 §7.2 末。
 
@@ -111,29 +111,29 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 
 
-0. （若涉及**归位/新建目录**）对照 文档地图与放置规则（**§1.5**、**§1.6**）与 LAYOUT 标准，确认目标路径合法或已登记例外；**勿**用路径前缀代替 Layer 编号。  
+0. （若涉及**归位/新建目录**）对照 文档地图与放置规则（**§1.5**、**§1.6**）与 LAYOUT 标准，确认目标路径合法或已登记例外；**勿**用路径前缀代替 Layer 编号。
 
-1. `verify_*`（蓝图与总清单）  
+1. `verify_*`（蓝图与总清单）
 
-2. `sentinel_l1_governance_scan.py`  
+2. `sentinel_l1_governance_scan.py`
 
-2′. （仅当 L1 报告 **首道无 `module_id` > 0**）`backfill_missing_module_id.py` → `--apply` → 再跑步骤 2  
+2′. （仅当 L1 报告 **首道无 `module_id` > 0**）`backfill_missing_module_id.py` → `--apply` → 再跑步骤 2
 
-3. `export_repo_directory_rollup.py`  
+3. `export_repo_directory_rollup.py`
 
-4. `generate_architecture_service_catalog.py`  
+4. `generate_architecture_service_catalog.py`
 
-5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）  
+5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）
 
-6. `scan_basename_collisions.py`（C2 同名不同路径报表；与 C1 独立）  
+6. `scan_basename_collisions.py`（C2 同名不同路径报表；与 C1 独立）
 
 7. `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选 + 机器建议；见 D 类 Playbook **§2.5** 置信度、**§5** 双轨与 **高置信可合并**；**低置信**合稿须登记 D 类合稿待审登记；方案索引见 REPO_WIDE §3.4.1）
 
 7′. `triage_blueprint_d_overlap_pairs.py`（可选：A 档分流 + `SECOND_PASS_QUEUE_*.jsonl`；二审见 D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md；与上条同批）
 
-8. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 放置规程 §5.2）  
+8. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 放置规程 §5.2）
 
-8′. （可选）`sample_docs_nav_coverage.py` — 主导航正文覆盖率抽样；产出样例见 REPO_WIDE §6 推荐阅读表  
+8′. （可选）`sample_docs_nav_coverage.py` — 主导航正文覆盖率抽样；产出样例见 REPO_WIDE §6 推荐阅读表
 
 9. `scan_directory_naming_compliance.py`（**P6.1 目录命名合规性**；见 REPO_WIDE P6；对照 PATH_STANDARD.md §1.1）
 
@@ -157,9 +157,9 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 
 
-**不是。**  
+**不是。**
 
-- **扫描 / 清单**的作用，是让你**看见**仓库里有什么（包括历史脚本、一次性修复脚本）。  
+- **扫描 / 清单**的作用，是让你**看见**仓库里有什么（包括历史脚本、一次性修复脚本）。
 
 - **删不删**要按 文件删除与保留裁决 Playbook 判断：引用关系、CI、是否重复实现等。**本索引不替你决定删除**。
 
@@ -226,4 +226,3 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | 1.1.0 | 2026-04-10 | 物理迁入 `scripts/governance/`；兼容桩；`scan`/`rollup` 支持 `--include-untracked`；互指删稿 Playbook |
 
 | 1.0.0 | 2026-04-10 | 首版：治理工具总表 + FAQ + 复跑顺序 |
-

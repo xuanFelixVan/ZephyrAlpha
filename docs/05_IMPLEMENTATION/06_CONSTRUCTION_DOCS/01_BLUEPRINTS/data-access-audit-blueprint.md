@@ -21,7 +21,7 @@ layer: layer_05
 
 负责数据访问审计模块设计，记录数据访问日志，监控访问行为，支持合规审计和安全追溯。
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：数据访问审计、访问日志、权限审计
 > - ❌ 本文档不负责：数据权限管理（由权限模块负责）
 
@@ -115,18 +115,18 @@ layer: layer_05
 graph TB
         A[数据访问请求] --> B[访问拦截器]
     end
-    
+
     subgraph "审计引擎"
         B --> C[访问日志记录器]
         C --> D[权限审计器]
         D --> E[异常检测器]
     end
-    
+
         C --> F[审计日志存储]
         D --> F
         E --> F
     end
-    
+
         F --> G[日志分析引擎]
         G --> H[异常告警]
         G --> I[合规报告]
@@ -175,15 +175,15 @@ from typing import Dict, List, Any
 import json
 
 class AccessAuditLogger:
-    
+
     def __init__(self, config):
         self.config = config
         self.audit_storage = config.get('audit_storage', 'elasticsearch')
-    
+
     def log_access(self, access_event: Dict[str, Any]):
         """
         记录访问事件
-        
+
         Args:
             access_event: 访问事件信息
         """
@@ -202,14 +202,14 @@ class AccessAuditLogger:
             'session_id': access_event.get('session_id', ''),
             'additional_info': access_event.get('additional_info', {})
         }
-        
+
         self._store_audit_record(audit_record)
-        
+
         return audit_record
-    
+
     def log_permission_check(self, permission_event: Dict[str, Any]):
         """
-        
+
         Args:
         """
         audit_record = {
@@ -223,15 +223,15 @@ class AccessAuditLogger:
             'policy_id': permission_event.get('policy_id', ''),
             'reason': permission_event.get('reason', '')
         }
-        
+
         self._store_audit_record(audit_record)
-        
+
         return audit_record
-    
+
     def log_permission_change(self, change_event: Dict[str, Any]):
         """
         记录权限变更事件
-        
+
         Args:
             change_event: 权限变更事件
         """
@@ -246,11 +246,11 @@ class AccessAuditLogger:
             'new_permission': change_event.get('new_permission', ''),
             'change_reason': change_event.get('change_reason', '')
         }
-        
+
         self._store_audit_record(audit_record)
-        
+
         return audit_record
-    
+
     def _store_audit_record(self, record):
         """存储审计记录"""
         if self.audit_storage == 'elasticsearch':
@@ -259,19 +259,19 @@ class AccessAuditLogger:
             self._store_to_file(record)
         else:
             self._store_to_database(record)
-    
+
     def _store_to_elasticsearch(self, record):
         """存储到Elasticsearch"""
         pass
-    
+
     def _store_to_file(self, record):
         with open(self.config.get('audit_file', 'audit.log'), 'a') as f:
             f.write(json.dumps(record) + '\n')
-    
+
     def _store_to_database(self, record):
         """存储到数据库"""
         pass
-    
+
     def _generate_event_id(self):
         """生成事件ID"""
         import uuid
@@ -280,17 +280,17 @@ class AccessAuditLogger:
 
 ### 3.2 ELK Stack集成
 
-**GitHub**: 
+**GitHub**:
 - Elasticsearch: https://github.com/elastic/elasticsearch
 - Logstash: https://github.com/elastic/logstash
 - Kibana: https://github.com/elastic/kibana
 
-**Star?*: 
+**Star?*:
 - Elasticsearch: 68k+
 - Logstash: 14k+
 - Kibana: 19k+
 
-- 
+-
 - 日志聚合
 - 实时监控
 
@@ -302,24 +302,24 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 
 class AuditLogAnalyzer:
-    
+
     def __init__(self, es_host='localhost', es_port=9200):
         self.es = Elasticsearch([{'host': es_host, 'port': es_port}])
         self.index_prefix = 'audit-logs'
-    
+
     def search_access_logs(self, query: Dict[str, Any], time_range: Dict[str, Any] = None):
         """
         搜索访问日志
-        
+
         Args:
             query: 查询条件
             time_range: 时间范围
-        
+
         Returns:
             List: 查询结果
         """
         index_name = f"{self.index_prefix}-{datetime.now().strftime('%Y.%m.%d')}"
-        
+
         search_query = {
             'query': {
                 'bool': {
@@ -327,35 +327,35 @@ class AuditLogAnalyzer:
                 }
             }
         }
-        
+
         for key, value in query.items():
             search_query['query']['bool']['must'].append({
                 'match': {key: value}
             })
-        
+
         if time_range:
             search_query['query']['bool']['filter'] = {
                 'range': {
                     'timestamp': time_range
                 }
             }
-        
+
         result = self.es.search(index=index_name, body=search_query)
-        
+
         return [hit['_source'] for hit in result['hits']['hits']]
-    
+
     def get_user_access_stats(self, user: str, time_range: Dict[str, Any] = None):
         """
         获取用户访问统计
-        
+
         Args:
             time_range: 时间范围
-        
+
         Returns:
             Dict: 统计结果
         """
         index_name = f"{self.index_prefix}-{datetime.now().strftime('%Y.%m.%d')}"
-        
+
         aggs_query = {
             'query': {
                 'bool': {
@@ -379,49 +379,49 @@ class AuditLogAnalyzer:
                 }
             }
         }
-        
+
         if time_range:
             aggs_query['query']['bool']['filter'] = {
                 'range': {
                     'timestamp': time_range
                 }
             }
-        
+
         result = self.es.search(index=index_name, body=aggs_query)
-        
+
         return {
             'operation_distribution': result['aggregations']['operation_count']['buckets'],
             'resource_distribution': result['aggregations']['resource_count']['buckets'],
             'avg_duration_ms': result['aggregations']['avg_duration']['value'],
             'total_data_size': result['aggregations']['total_data_size']['value']
         }
-    
+
     def detect_anomalous_access(self, time_window: int = 3600):
         """
-        
+
         Args:
-        
+
         Returns:
             List: 异常访问列表
         """
         index_name = f"{self.index_prefix}-{datetime.now().strftime('%Y.%m.%d')}"
-        
+
         now = datetime.now()
         start_time = (now - timedelta(seconds=time_window)).isoformat()
-        
+
         anomalies = []
-        
+
         high_frequency_users = self._detect_high_frequency_access(index_name, start_time)
         anomalies.extend(high_frequency_users)
-        
+
         unusual_time_access = self._detect_unusual_time_access(index_name, start_time)
         anomalies.extend(unusual_time_access)
-        
+
         large_data_access = self._detect_large_data_access(index_name, start_time)
         anomalies.extend(large_data_access)
-        
+
         return anomalies
-    
+
     def _detect_high_frequency_access(self, index_name, start_time):
         query = {
             'query': {
@@ -438,12 +438,12 @@ class AuditLogAnalyzer:
                 }
             }
         }
-        
+
         result = self.es.search(index=index_name, body=query)
-        
+
         anomalies = []
         threshold = 100
-        
+
         for bucket in result['aggregations']['user_access_count']['buckets']:
             if bucket['doc_count'] > threshold:
                 anomalies.append({
@@ -453,9 +453,9 @@ class AuditLogAnalyzer:
                     'threshold': threshold,
                     'severity': 'warning'
                 })
-        
+
         return anomalies
-    
+
     def _detect_unusual_time_access(self, index_name, start_time):
         query = {
             'query': {
@@ -472,12 +472,12 @@ class AuditLogAnalyzer:
                 }
             }
         }
-        
+
         result = self.es.search(index=index_name, body=query)
-        
+
         anomalies = []
         unusual_hours = [0, 1, 2, 3, 4, 5, 22, 23]
-        
+
         for bucket in result['aggregations']['hourly_access']['buckets']:
             if bucket['key'] in unusual_hours and bucket['doc_count'] > 10:
                 anomalies.append({
@@ -486,9 +486,9 @@ class AuditLogAnalyzer:
                     'access_count': bucket['doc_count'],
                     'severity': 'warning'
                 })
-        
+
         return anomalies
-    
+
     def _detect_large_data_access(self, index_name, start_time):
         query = {
             'query': {
@@ -510,12 +510,12 @@ class AuditLogAnalyzer:
                 }
             }
         }
-        
+
         result = self.es.search(index=index_name, body=query)
-        
+
         anomalies = []
         threshold = 1e9
-        
+
         for bucket in result['aggregations']['user_data_size']['buckets']:
             total_size = bucket['total_size']['value']
             if total_size > threshold:
@@ -526,7 +526,7 @@ class AuditLogAnalyzer:
                     'threshold': threshold,
                     'severity': 'warning'
                 })
-        
+
         return anomalies
 ```
 
@@ -546,7 +546,7 @@ from typing import List, Dict, Any
 
 class AnomalyDetector:
     """异常访问检测器"""
-    
+
     def __init__(self, config):
         self.config = config
         self.model = IsolationForest(
@@ -555,27 +555,27 @@ class AnomalyDetector:
         )
         self.scaler = StandardScaler()
         self.is_trained = False
-    
+
     def train(self, historical_data: List[Dict[str, Any]]):
         """
-        
+
         Args:
             historical_data: 历史访问数据
         """
         features = self._extract_features(historical_data)
-        
+
         features_scaled = self.scaler.fit_transform(features)
-        
+
         self.model.fit(features_scaled)
-        
+
         self.is_trained = True
-    
+
     def detect(self, access_event: Dict[str, Any]):
         """
-        
+
         Args:
             access_event: 访问事件
-        
+
         Returns:
         """
         if not self.is_trained:
@@ -584,25 +584,25 @@ class AnomalyDetector:
                 'anomaly_score': 0,
                 'reason': 'Model not trained'
             }
-        
+
         features = self._extract_features([access_event])
         features_scaled = self.scaler.transform(features)
-        
+
         prediction = self.model.predict(features_scaled)[0]
         anomaly_score = self.model.score_samples(features_scaled)[0]
-        
+
         is_anomaly = prediction == -1
-        
+
         return {
             'is_anomaly': is_anomaly,
             'anomaly_score': float(anomaly_score),
             'reason': self._get_anomaly_reason(access_event, anomaly_score) if is_anomaly else 'Normal access'
         }
-    
+
     def _extract_features(self, data: List[Dict[str, Any]]):
         """提取特征"""
         features = []
-        
+
         for event in data:
             feature_vector = [
                 event.get('hour_of_day', 0),
@@ -614,30 +614,30 @@ class AnomalyDetector:
                 event.get('user_risk_score', 0)
             ]
             features.append(feature_vector)
-        
+
         return np.array(features)
-    
+
     def _get_anomaly_reason(self, event, score):
         """获取异常原因"""
         reasons = []
-        
+
         if event.get('hour_of_day', 0) in [0, 1, 2, 3, 4, 5]:
             reasons.append('Unusual access time')
-        
+
         if event.get('access_frequency', 0) > 100:
             reasons.append('High access frequency')
-        
+
         if event.get('data_size', 0) > 1e9:
             reasons.append('Large data access')
-        
+
         if event.get('resource_sensitivity', 0) > 0.8:
             reasons.append('High sensitivity resource access')
-        
+
         return '; '.join(reasons) if reasons else 'Unknown anomaly pattern'
 
 
 class RiskScorer:
-    
+
     def __init__(self, config):
         self.config = config
         self.weights = {
@@ -647,42 +647,42 @@ class RiskScorer:
             'time_anomaly': 0.15,
             'user_risk': 0.15
         }
-    
+
     def calculate_risk_score(self, access_event: Dict[str, Any]) -> float:
         """
         计算风险评分
-        
+
         Args:
             access_event: 访问事件
-        
+
         Returns:
             float: 风险评分 (0-100)
         """
         scores = {}
-        
+
         scores['access_frequency'] = self._score_access_frequency(
             access_event.get('access_frequency', 0)
         )
-        
+
         scores['data_size'] = self._score_data_size(
             access_event.get('data_size', 0)
         )
-        
+
         scores['resource_sensitivity'] = access_event.get('resource_sensitivity', 0) * 100
-        
+
         scores['time_anomaly'] = self._score_time_anomaly(
             access_event.get('hour_of_day', 0)
         )
-        
+
         scores['user_risk'] = access_event.get('user_risk_score', 0) * 100
-        
+
         risk_score = sum(
             scores[key] * self.weights[key]
             for key in self.weights
         )
-        
+
         return min(100, max(0, risk_score))
-    
+
     def _score_access_frequency(self, frequency):
         """评分访问频率"""
         if frequency < 10:
@@ -693,7 +693,7 @@ class RiskScorer:
             return 50
         else:
             return 100
-    
+
     def _score_data_size(self, size):
         """评分数据大小"""
         if size < 1e6:
@@ -704,7 +704,7 @@ class RiskScorer:
             return 60
         else:
             return 100
-    
+
     def _score_time_anomaly(self, hour):
         """评分时间异常"""
         if hour in [0, 1, 2, 3, 4, 5]:
@@ -726,7 +726,7 @@ audit_rules:
     enabled: true
     log_all_access: true
     log_failed_access: true
-    
+
     sensitive_resources:
       - resource_type: database
         resource_pattern: "financial_data.*"
@@ -734,7 +734,7 @@ audit_rules:
       - resource_type: file
         resource_pattern: "customer_.*\\.csv"
         sensitivity: high
-    
+
     audit_fields:
       - timestamp
       - user
@@ -752,20 +752,20 @@ audit_rules:
 ```yaml
 permission_audit:
   enabled: true
-  
+
   track_permission_changes: true
   track_permission_checks: true
-  
+
   alert_on:
     - event: permission_denied
       threshold: 5
       time_window: 3600
       severity: warning
-    
+
     - event: permission_change
       notify: true
       severity: info
-    
+
     - event: privilege_escalation
       severity: critical
 ```
@@ -774,25 +774,25 @@ permission_audit:
 ```yaml
 anomaly_detection:
   enabled: true
-  
+
   rules:
     - name: high_frequency_access
       type: frequency
       threshold: 100
       time_window: 3600
       severity: warning
-    
+
     - name: unusual_time_access
       type: time
       unusual_hours: [0, 1, 2, 3, 4, 5, 22, 23]
       threshold: 10
       severity: warning
-    
+
     - name: large_data_access
       type: volume
       threshold: 1000000000
       severity: warning
-    
+
     - name: sensitive_resource_access
       type: resource
       sensitivity_threshold: 0.8
@@ -810,17 +810,17 @@ from typing import Dict, List, Any
 
 class ComplianceReportGenerator:
     """合规性报告生成器"""
-    
+
     def __init__(self, config):
         self.config = config
-    
+
     def generate_report(self, report_type: str, time_range: Dict[str, Any]):
         """
-        
+
         Args:
             report_type: 报告类型
             time_range: 时间范围
-        
+
         Returns:
         """
         if report_type == 'access_summary':
@@ -831,7 +831,7 @@ class ComplianceReportGenerator:
             return self._generate_security_incidents_report(time_range)
         else:
             raise ValueError(f"Unknown report type: {report_type}")
-    
+
     def _generate_access_summary_report(self, time_range):
         """生成访问摘要报告"""
         return {
@@ -851,7 +851,7 @@ class ComplianceReportGenerator:
             'access_trends': [],
             'recommendations': []
         }
-    
+
     def _generate_permission_audit_report(self, time_range):
         """生成权限审计报告"""
         return {
@@ -869,7 +869,7 @@ class ComplianceReportGenerator:
             'denied_access_attempts': [],
             'recommendations': []
         }
-    
+
     def _generate_security_incidents_report(self, time_range):
         return {
             'report_id': self._generate_report_id(),
@@ -886,7 +886,7 @@ class ComplianceReportGenerator:
             'trends': [],
             'recommendations': []
         }
-    
+
     def _generate_report_id(self):
         """生成报告ID"""
         import uuid
@@ -921,7 +921,7 @@ class ComplianceReportGenerator:
 
 
 
-### 7.1 
+### 7.1
 
 |------|--------|----------|
 
@@ -1014,6 +1014,3 @@ class ComplianceReportGenerator:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-

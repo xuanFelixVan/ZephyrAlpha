@@ -13,19 +13,19 @@ strategy:
   version: "1.0.0"                    # 策略版本
   type: "momentum"                    # 策略类型: momentum, mean_reversion, arbitrage, etc.
   status: "active"                    # 策略状态: active, inactive, testing
-  
+
   # 策略描述
   description: |
     基于价格动量的趋势跟踪策略
     使用双均线交叉作为入场信号
     配合ATR动态止损止盈
-  
+
   # 策略标签
   tags:
     - "趋势跟踪"
     - "动量策略"
     - "中频交易"
-  
+
   # 策略作者
   author: "首席策略师"
   created_at: "2026-04-02"
@@ -41,19 +41,19 @@ parameters:
     fast_period: 10                   # 快速均线周期
     slow_period: 30                   # 慢速均线周期
     ma_type: "EMA"                    # 均线类型: SMA, EMA, WMA
-  
+
   # 止损止盈参数
   risk_management:
     stop_loss_atr_multiplier: 2.0     # ATR止损倍数
     take_profit_atr_multiplier: 3.0   # ATR止盈倍数
     atr_period: 14                    # ATR计算周期
-  
+
   # 仓位管理参数
   position_sizing:
     max_position_pct: 0.95            # 最大仓位比例
     position_size_method: "risk_parity"  # 仓位计算方法: fixed, risk_parity, kelly
     risk_per_trade: 0.02              # 每笔交易风险比例
-  
+
   # 过滤条件
   filters:
     min_volume: 1000000               # 最小成交量过滤
@@ -67,7 +67,7 @@ parameters:
 universe:
   # 交易标的类型
   type: "stocks"                      # stocks, futures, crypto, forex
-  
+
   # 标的列表
   symbols:
     - "AAPL"
@@ -75,7 +75,7 @@ universe:
     - "MSFT"
     - "AMZN"
     - "TSLA"
-  
+
   # 动态标的筛选（可选）
   dynamic_selection:
     enabled: false
@@ -92,17 +92,17 @@ backtest:
   # 回测时间范围
   start_date: "2020-01-01"
   end_date: "2025-12-31"
-  
+
   # 初始资金
   initial_capital: 1000000
-  
+
   # 交易成本
   commission: 0.001                   # 手续费率
   slippage: 0.0005                    # 滑点率
-  
+
   # 数据频率
   frequency: "1d"                     # 1d, 1h, 5m, 1m
-  
+
   # 基准
   benchmark: "SPY"
 
@@ -113,18 +113,18 @@ backtest:
 live:
   # 是否启用实盘
   enabled: false
-  
+
   # 交易所配置
   exchange:
     name: "ibkr"                      # ibkr, alpaca, binance
     paper_trading: true               # 是否模拟交易
-  
+
   # 订单配置
   orders:
     order_type: "market"              # market, limit, stop
     time_in_force: "GTC"              # GTC, IOC, FOK
     outside_rth: false                # 是否允许盘外交易
-  
+
   # 风控配置
   risk_controls:
     max_daily_loss: 0.05              # 最大日损失
@@ -141,14 +141,14 @@ monitoring:
   performance:
     track_metrics: true
     metrics_interval: 3600            # 指标记录间隔（秒）
-  
+
   # 告警配置
   alerts:
     enabled: true
     channels:
       - "email"
       - "slack"
-    
+
     # 告警条件
     conditions:
       drawdown_threshold: 0.10        # 回撤告警阈值
@@ -162,14 +162,14 @@ monitoring:
 logging:
   level: "INFO"                       # DEBUG, INFO, WARNING, ERROR
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  
+
   # 日志文件
   file:
     enabled: true
     path: "logs/strategy_S001.log"
     max_size: 10485760                # 10MB
     backup_count: 5
-  
+
   # 控制台输出
   console:
     enabled: true
@@ -182,20 +182,20 @@ logging:
 metadata:
   # 策略分类
   category: "equity"                  # equity, futures, crypto, forex
-  
+
   # 风险等级
   risk_level: "medium"                # low, medium, high
-  
+
   # 预期收益
   expected_return:
     annual: 0.15                      # 年化预期收益
     sharpe: 1.5                       # 预期夏普比率
-  
+
   # 相关策略
   related_strategies:
     - "S002"
     - "S003"
-  
+
   # 参考文档
   references:
     - "docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md"

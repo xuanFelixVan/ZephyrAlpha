@@ -33,7 +33,7 @@ compliance_level: ﻛﺕﻛﺕﮔﮒ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -197,7 +197,7 @@ self.alpha158_manager = QlibAlpha158Manager()  # ﻟﺍﻝ۷AIﮒﮒ
 
 
 
-    
+
 
 
 
@@ -345,7 +345,7 @@ class FeatureStore:
 
 
 
-    
+
 
 
 
@@ -475,7 +475,7 @@ self.trainer = trainer  # ﮔﺏ۷ﮒ۴ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﺅﺟ?
 
 
 
-        
+
 
 
 
@@ -483,7 +483,7 @@ self.trainer = trainer  # ﮔﺏ۷ﮒ۴ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﺅﺟ?
 
 
 
-        
+
 
 
 
@@ -511,7 +511,7 @@ self.trainer = trainer  # ﮔﺏ۷ﮒ۴ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﺅﺟ?
 
 
 
-        
+
 
 
 
@@ -523,7 +523,7 @@ self.trainer = trainer  # ﮔﺏ۷ﮒ۴ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﺅﺟ?
 
 
 
-        
+
 
 
 
@@ -631,7 +631,7 @@ class MLOpsPlatform:
 
 
 
-    
+
 
 
 
@@ -818,6 +818,3 @@ class MLOpsPlatform:
 
 
 **ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-
-
-

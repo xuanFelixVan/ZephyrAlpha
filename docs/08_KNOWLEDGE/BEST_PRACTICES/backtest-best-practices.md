@@ -32,7 +32,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -274,7 +274,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -470,7 +470,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -514,7 +514,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-               
+
 
 
 
@@ -530,7 +530,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-                   
+
 
 
 
@@ -654,7 +654,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -678,7 +678,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -690,7 +690,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -702,7 +702,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -714,7 +714,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -810,7 +810,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -834,7 +834,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -998,7 +998,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1110,7 +1110,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1130,7 +1130,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1142,7 +1142,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1226,7 +1226,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1258,7 +1258,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1626,7 +1626,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1638,7 +1638,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1746,7 +1746,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1758,7 +1758,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1886,7 +1886,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -1898,7 +1898,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-           
+
 
 
 
@@ -1914,7 +1914,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -1970,7 +1970,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2002,7 +2002,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2042,7 +2042,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2062,7 +2062,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2130,7 +2130,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2138,7 +2138,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2346,7 +2346,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2362,7 +2362,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2386,7 +2386,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2434,7 +2434,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2462,7 +2462,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -2526,7 +2526,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-   
+
 
 
 
@@ -2854,7 +2854,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮔﭖ", "ﮔﻛﺛﺏﮒ؟
 
 
 
-       
+
 
 
 
@@ -3046,7 +3046,7 @@ def momentum_backtest(data, lookback=20, top_pct=0.1, rebalance_freq=20):
 
 
 
-    
+
 
 
 
@@ -3074,7 +3074,7 @@ def momentum_backtest(data, lookback=20, top_pct=0.1, rebalance_freq=20):
 
 
 
-    
+
 
 
 
@@ -3090,7 +3090,7 @@ def momentum_backtest(data, lookback=20, top_pct=0.1, rebalance_freq=20):
 
 
 
-    
+
 
 
 
@@ -3106,7 +3106,7 @@ def momentum_backtest(data, lookback=20, top_pct=0.1, rebalance_freq=20):
 
 
 
-    
+
 
 
 
@@ -3122,7 +3122,7 @@ def momentum_backtest(data, lookback=20, top_pct=0.1, rebalance_freq=20):
 
 
 
-    
+
 
 
 
@@ -3194,7 +3194,7 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 
-    
+
 
 
 
@@ -3222,7 +3222,7 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 
-    
+
 
 
 
@@ -3238,7 +3238,7 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 
-    
+
 
 
 
@@ -3254,7 +3254,7 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 
-    
+
 
 
 
@@ -3270,7 +3270,7 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 
-    
+
 
 
 
@@ -3531,6 +3531,3 @@ def mean_reversion_backtest(data, lookback=20, bottom_pct=0.1, rebalance_freq=5)
 
 
 **ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﻠﮒﮒ؟?**ﻝﭘﮔ?*: ﻗ?ﮔﺑﭨﻟﺓ
-
-
-

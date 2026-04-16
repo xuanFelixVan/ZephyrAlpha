@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -455,7 +455,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -811,7 +811,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -835,7 +835,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -889,7 +889,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -943,7 +943,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1039,7 +1039,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1135,7 +1135,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1183,7 +1183,7 @@ class ICAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1739,19 +1739,19 @@ def calculate_ic(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_values: pd.Series, 
+    factor_values: pd.Series,
 
 
 
 
 
-    forward_returns: pd.Series, 
+    forward_returns: pd.Series,
 
 
 
@@ -1781,7 +1781,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1805,7 +1805,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1829,7 +1829,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1847,7 +1847,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1877,7 +1877,7 @@ def calculate_ic(
 
 
 
-    
+
 
 
 
@@ -1919,19 +1919,19 @@ def calculate_rolling_ic(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_df: pd.DataFrame, 
+    factor_df: pd.DataFrame,
 
 
 
 
 
-    return_df: pd.DataFrame, 
+    return_df: pd.DataFrame,
 
 
 
@@ -1961,7 +1961,7 @@ def calculate_rolling_ic(
 
 
 
-    
+
 
 
 
@@ -1991,7 +1991,7 @@ def calculate_rolling_ic(
 
 
 
-    
+
 
 
 
@@ -2015,7 +2015,7 @@ def calculate_rolling_ic(
 
 
 
-    
+
 
 
 
@@ -2039,7 +2039,7 @@ def calculate_rolling_ic(
 
 
 
-        
+
 
 
 
@@ -2081,7 +2081,7 @@ def calculate_rolling_ic(
 
 
 
-    
+
 
 
 
@@ -2123,19 +2123,19 @@ def analyze_decay(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_df: pd.DataFrame, 
+    factor_df: pd.DataFrame,
 
 
 
 
 
-    return_df: pd.DataFrame, 
+    return_df: pd.DataFrame,
 
 
 
@@ -2165,7 +2165,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2195,7 +2195,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2219,7 +2219,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2249,7 +2249,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2285,7 +2285,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2297,7 +2297,7 @@ def analyze_decay(
 
 
 
-    
+
 
 
 
@@ -2589,7 +2589,7 @@ def test_ic_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -2619,7 +2619,7 @@ def test_ic_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -2649,7 +2649,7 @@ def test_ic_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -2661,7 +2661,7 @@ def test_ic_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -2673,7 +2673,7 @@ def test_ic_analyzer_integration():
 
 
 
-    
+
 
 
 
@@ -3089,7 +3089,7 @@ ic_analyzer:
 
 
 
-  
+
 
 
 
@@ -3119,7 +3119,7 @@ ic_analyzer:
 
 
 
-  
+
 
 
 
@@ -3246,8 +3246,3 @@ ic_analyzer:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人
-
-
-
-
-

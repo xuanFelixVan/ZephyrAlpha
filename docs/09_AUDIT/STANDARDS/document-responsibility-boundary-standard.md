@@ -122,7 +122,7 @@ applicable_scope: 'ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕ�
 
 
 
-**ﮔﮔ۰۲ﻝﮒﺛﮒ۷ﮔ**: 
+**ﮔﮔ۰۲ﻝﮒﺛﮒ۷ﮔ**:
 
 
 
@@ -1232,7 +1232,7 @@ applicable_scope: 'ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕ�
 
 
 
-**ﻝﮔﮔﺗﮒﺙ**: 
+**ﻝﮔﮔﺗﮒﺙ**:
 
 
 
@@ -1313,6 +1313,3 @@ applicable_scope: 'ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕ�
 
 
 **ﮔﮔ۰۲ﻝﭨﮔ**
-
-
-

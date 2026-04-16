@@ -19,7 +19,7 @@ standard_type: רҵ
 applicable_scope: ȫϵͳ
 compliance_level: רҵ׼
 ---
-## 1. 
+## 1.
 
 
 
@@ -55,7 +55,7 @@ class RiskBudgetSystem:
 
 
 
-    
+
 
 
 
@@ -83,7 +83,7 @@ class RiskBudgetSystem:
 
 
 
-    
+
 
 
 
@@ -126,6 +126,3 @@ class RiskBudgetSystem:
 
 
 **汾**: v1.0 | ****: 2026-04-03 | **״̬**: Final
-
-
-

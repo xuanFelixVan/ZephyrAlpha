@@ -171,11 +171,11 @@ class HierarchicalOptimizer:
 
     层次化优化器
 
-    
+
 
     """
 
-    
+
 
     def __init__(
 
@@ -197,7 +197,7 @@ class HierarchicalOptimizer:
 
         self.layer_optimizers = {}
 
-    
+
 
     def optimize(
 
@@ -217,7 +217,7 @@ class HierarchicalOptimizer:
 
         """
 
-        
+
 
         参数:
 
@@ -229,7 +229,7 @@ class HierarchicalOptimizer:
 
             group_mapping: 预定义分组映射（可选）
 
-            
+
 
         返回:
 
@@ -241,7 +241,7 @@ class HierarchicalOptimizer:
 
         pass
 
-    
+
 
     def cluster_assets(
 
@@ -257,7 +257,7 @@ class HierarchicalOptimizer:
 
         资产聚类分组
 
-        
+
 
         方法:
 
@@ -267,7 +267,7 @@ class HierarchicalOptimizer:
 
         pass
 
-    
+
 
     def optimize_layer(
 
@@ -295,7 +295,7 @@ class HierarchicalOptimizer:
 
         pass
 
-    
+
 
     def aggregate_results(
 
@@ -329,13 +329,13 @@ class AssetGrouper:
 
     """
 
-    
+
 
     def __init__(self, method: str = 'correlation'):
 
         self.method = method
 
-    
+
 
     def group_by_correlation(
 
@@ -349,7 +349,7 @@ class AssetGrouper:
 
         """
 
-        
+
 
         d_ij = 1 - corr_ij
 
@@ -357,7 +357,7 @@ class AssetGrouper:
 
         pass
 
-    
+
 
     def group_by_sector(
 
@@ -373,7 +373,7 @@ class AssetGrouper:
 
         pass
 
-    
+
 
     def group_by_factor(
 
@@ -391,7 +391,7 @@ class AssetGrouper:
 
         pass
 
-    
+
 
     def group_by_region(
 
@@ -423,7 +423,7 @@ class CrossLayerConstraintCoordinator:
 
     """
 
-    
+
 
     def propagate_constraints(
 
@@ -437,19 +437,19 @@ class CrossLayerConstraintCoordinator:
 
         """
 
-        
+
 
         示例:
 
-        
 
-        分解: 
+
+        分解:
 
         """
 
         pass
 
-    
+
 
     def validate_consistency(
 
@@ -467,7 +467,7 @@ class CrossLayerConstraintCoordinator:
 
         pass
 
-    
+
 
     def resolve_conflicts(
 
@@ -513,7 +513,7 @@ class AutoLayeringEngine:
 
     """
 
-    
+
 
     def determine_optimal_layers(
 
@@ -529,7 +529,7 @@ class AutoLayeringEngine:
 
         """
 
-        
+
 
         考虑因素:
 
@@ -541,7 +541,7 @@ class AutoLayeringEngine:
 
         pass
 
-    
+
 
     def auto_cluster(
 
@@ -557,7 +557,7 @@ class AutoLayeringEngine:
 
         自动聚类
 
-        
+
 
         方法选择:
 
@@ -589,13 +589,13 @@ class ParallelLayerOptimizer:
 
     """
 
-    
+
 
     def __init__(self, n_workers: int = 4):
 
         self.n_workers = n_workers
 
-    
+
 
     def optimize_layers_parallel(
 
@@ -609,7 +609,7 @@ class ParallelLayerOptimizer:
 
         并行优化各层
 
-        
+
 
         适用场景:
 
@@ -635,7 +635,7 @@ class IterativeCoordinator:
 
     """
 
-    
+
 
     def coordinate(
 
@@ -655,7 +655,7 @@ class IterativeCoordinator:
 
         迭代协调各层结果
 
-        
+
 
         流程:
 
@@ -681,7 +681,7 @@ class OptimizationMethodSelector:
 
     """
 
-    
+
 
     def select_method(
 
@@ -697,7 +697,7 @@ class OptimizationMethodSelector:
 
         """
 
-        
+
 
         规则:
 
@@ -757,7 +757,7 @@ class OptimizationMethodSelector:
 
 
 
-### 5.1 
+### 5.1
 
 
 
@@ -767,7 +767,7 @@ class OptimizationMethodSelector:
 
 > **核心职责**: Hierarchical Optimization Framework蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -803,7 +803,7 @@ optimizer = HierarchicalOptimizer(n_layers=3)
 
 
 
-# 
+#
 
 
 
@@ -1124,8 +1124,3 @@ optimizer = HierarchicalOptimizer(
 6. 暂不支持实时流式优化,仅支持批量优化
 
 7. 与Layer 2因子层的数据同步依赖数据库轮询
-
-
-
-
-

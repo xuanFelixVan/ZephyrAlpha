@@ -1209,4 +1209,3 @@ python scripts/governance/scan_directory_naming_compliance.py --date 20260411 --
 | 1.1.0 | 2026-04-11 | **新增 §4 文件夹结构与命名合规性工作流（P6）**：含 P6.1 目录命名合规性扫描、P6.3 目录放置位置验证、P6.6～P6.7 归档/研究目录关系梳理；与任务清单 P6 互指；推荐插件：File System、Qdrant、SequentialThinking、Knowledge Graph |
 
 | 1.0.0 | 2026-04-11 | 首版：文档治理与蓝图终稿插件使用手册 |
-

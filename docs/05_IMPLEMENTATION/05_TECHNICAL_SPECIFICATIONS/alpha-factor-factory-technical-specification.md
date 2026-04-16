@@ -179,7 +179,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -301,7 +301,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -319,7 +319,7 @@ implementation_status: 设计阶段
 
 
 
-**上下层接?*: 
+**上下层接?*:
 
 
 
@@ -349,7 +349,7 @@ implementation_status: 设计阶段
 
 
 
-**职责边界**: 
+**职责边界**:
 
 
 
@@ -619,7 +619,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-    
+
 
 
 
@@ -643,7 +643,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-        
+
 
 
 
@@ -661,7 +661,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            
+
 
 
 
@@ -673,7 +673,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            pd.DataFrame: 因子值矩?            
+            pd.DataFrame: 因子值矩?
 
 
 
@@ -709,7 +709,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-    
+
 
 
 
@@ -739,7 +739,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-        """筛选因?        
+        """筛选因?
 
 
 
@@ -757,7 +757,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            ic_threshold: IC?            
+            ic_threshold: IC?
 
 
 
@@ -781,7 +781,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-    
+
 
 
 
@@ -811,7 +811,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-        
+
 
 
 
@@ -829,7 +829,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            
+
 
 
 
@@ -859,7 +859,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-    
+
 
 
 
@@ -889,7 +889,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-        
+
 
 
 
@@ -913,7 +913,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            
+
 
 
 
@@ -943,7 +943,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-    
+
 
 
 
@@ -979,7 +979,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-        
+
 
 
 
@@ -1003,7 +1003,7 @@ class IAlphaFactorFactory(ABC):
 
 
 
-            
+
 
 
 
@@ -1957,7 +1957,7 @@ CREATE TABLE factor_performance (
 
 
 
-> **职责边界说明**: 
+> **职责边界说明**:
 
 
 
@@ -2017,7 +2017,7 @@ class AlphaFactorFactory:
 
 
 
-    
+
 
 
 
@@ -2059,7 +2059,7 @@ class AlphaFactorFactory:
 
 
 
-    
+
 
 
 
@@ -2077,7 +2077,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2107,7 +2107,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2125,7 +2125,7 @@ class AlphaFactorFactory:
 
 
 
-            
+
 
 
 
@@ -2149,7 +2149,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2161,7 +2161,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2197,7 +2197,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2209,7 +2209,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2239,7 +2239,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2251,7 +2251,7 @@ class AlphaFactorFactory:
 
 
 
-        
+
 
 
 
@@ -2377,7 +2377,7 @@ class FactorScreener:
 
 
 
-    
+
 
 
 
@@ -2401,7 +2401,7 @@ class FactorScreener:
 
 
 
-    
+
 
 
 
@@ -2419,7 +2419,7 @@ class FactorScreener:
 
 
 
-        """计算因子IC?        
+        """计算因子IC?
 
 
 
@@ -2461,7 +2461,7 @@ class FactorScreener:
 
 
 
-    
+
 
 
 
@@ -2485,7 +2485,7 @@ class FactorScreener:
 
 
 
-        """基于IC筛选因?        
+        """基于IC筛选因?
 
 
 
@@ -2503,7 +2503,7 @@ class FactorScreener:
 
 
 
-            ic_threshold: IC?            
+            ic_threshold: IC?
 
 
 
@@ -2527,7 +2527,7 @@ class FactorScreener:
 
 
 
-        
+
 
 
 
@@ -2545,7 +2545,7 @@ class FactorScreener:
 
 
 
-            
+
 
 
 
@@ -2563,7 +2563,7 @@ class FactorScreener:
 
 
 
-                
+
 
 
 
@@ -2605,7 +2605,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-    """因子正交?    
+    """因子正交?
 
 
 
@@ -2617,7 +2617,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-        factor_values: 因子值矩?        
+        factor_values: 因子值矩?
 
 
 
@@ -2647,7 +2647,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-    
+
 
 
 
@@ -2665,7 +2665,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-    
+
 
 
 
@@ -2677,7 +2677,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-    
+
 
 
 
@@ -2719,7 +2719,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
 
 
 
-    
+
 
 
 
@@ -2785,7 +2785,7 @@ class FactorCombiner:
 
 
 
-    
+
 
 
 
@@ -2809,7 +2809,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -2827,7 +2827,7 @@ class FactorCombiner:
 
 
 
-            
+
 
 
 
@@ -2857,7 +2857,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -2893,7 +2893,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -2923,7 +2923,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -2941,7 +2941,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -2959,7 +2959,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -3013,7 +3013,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -3031,7 +3031,7 @@ class FactorCombiner:
 
 
 
-        
+
 
 
 
@@ -3085,7 +3085,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 
 
-    
+
 
 
 
@@ -3103,7 +3103,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 
 
-        
+
 
 
 
@@ -3139,7 +3139,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 
 
-    
+
 
 
 
@@ -3157,7 +3157,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 
 
-    
+
 
 
 
@@ -3169,7 +3169,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 
 
-    
+
 
 
 
@@ -3235,7 +3235,7 @@ class FactorDecayPredictor:
 
 
 
-    
+
 
 
 
@@ -3265,7 +3265,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3295,7 +3295,7 @@ class FactorDecayPredictor:
 
 
 
-            
+
 
 
 
@@ -3325,7 +3325,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3343,7 +3343,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3361,7 +3361,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3385,7 +3385,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3403,7 +3403,7 @@ class FactorDecayPredictor:
 
 
 
-        
+
 
 
 
@@ -3757,7 +3757,7 @@ def test_alpha_signal_generation():
 
 
 
-    
+
 
 
 
@@ -3775,7 +3775,7 @@ def test_alpha_signal_generation():
 
 
 
-    
+
 
 
 
@@ -3787,7 +3787,7 @@ def test_alpha_signal_generation():
 
 
 
-    
+
 
 
 
@@ -3805,7 +3805,7 @@ def test_alpha_signal_generation():
 
 
 
-    
+
 
 
 
@@ -4700,8 +4700,3 @@ def test_alpha_signal_generation():
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Draft | **下一?*: 技术评?
-
-
-
-
-

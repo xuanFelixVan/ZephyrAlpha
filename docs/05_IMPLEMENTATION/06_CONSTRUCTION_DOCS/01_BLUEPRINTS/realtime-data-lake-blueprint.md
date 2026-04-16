@@ -139,7 +139,7 @@ layer: layer_05
 
 > 核心职责: Realtime Data Lake蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -219,7 +219,7 @@ class DataLakeManager:
 
     """数据湖管理器"""
 
-    
+
 
     def __init__(self, spark: SparkSession, lake_path: str):
 
@@ -227,7 +227,7 @@ class DataLakeManager:
 
         self.lake_path = lake_path
 
-    
+
 
     def create_table(self, table_name: str, schema: Dict[str, str],
 
@@ -237,25 +237,25 @@ class DataLakeManager:
 
         table_path = f"{self.lake_path}/{table_name}"
 
-        
+
 
         df = self.spark.createDataFrame([], schema)
 
-        
+
 
         writer = df.write.format("delta").mode("overwrite")
 
-        
+
 
         if partition_columns:
 
             writer = writer.partitionBy(*partition_columns)
 
-        
+
 
         writer.save(table_path)
 
-    
+
 
     def write_data(self, table_name: str, df: pd.DataFrame,
 
@@ -263,17 +263,17 @@ class DataLakeManager:
 
         table_path = f"{self.lake_path}/{table_name}"
 
-        
+
 
         spark_df = self.spark.createDataFrame(df)
 
-        
+
 
         spark_df.write.format("delta").mode(mode).save(table_path)
 
-    
 
-    def read_data(self, table_name: str, 
+
+    def read_data(self, table_name: str,
 
                   filters: Dict[str, Any] = None) -> pd.DataFrame:
 
@@ -281,15 +281,15 @@ class DataLakeManager:
 
         table_path = f"{self.lake_path}/{table_name}"
 
-        
+
 
         delta_table = DeltaTable.forPath(self.spark, table_path)
 
-        
+
 
         df = delta_table.toDF()
 
-        
+
 
         if filters:
 
@@ -297,29 +297,29 @@ class DataLakeManager:
 
                 df = df.filter(df[column] == value)
 
-        
+
 
         return df.toPandas()
 
-    
+
 
     def get_table_history(self, table_name: str) -> List[Dict]:
 
         table_path = f"{self.lake_path}/{table_name}"
 
-        
+
 
         delta_table = DeltaTable.forPath(self.spark, table_path)
 
-        
+
 
         history = delta_table.history()
 
-        
+
 
         return history.toPandas().to_dict('records')
 
-    
+
 
     def restore_table_version(self, table_name: str, version: int):
 
@@ -327,11 +327,11 @@ class DataLakeManager:
 
         table_path = f"{self.lake_path}/{table_name}"
 
-        
+
 
         delta_table = DeltaTable.forPath(self.spark, table_path)
 
-        
+
 
         delta_table.restoreToVersion(version)
 
@@ -351,13 +351,13 @@ import pandas as pd
 
 class QueryOptimizer:
 
-    
+
 
     def __init__(self, data_lake_manager: DataLakeManager):
 
         self.data_lake = data_lake_manager
 
-    
+
 
     def optimize_time_range_query(self, table_name: str,
 
@@ -373,7 +373,7 @@ class QueryOptimizer:
 
         table_path = f"{self.data_lake.lake_path}/{table_name}"
 
-        
+
 
         query = f"""
 
@@ -385,11 +385,11 @@ class QueryOptimizer:
 
         """
 
-        
+
 
         return spark.sql(query).toPandas()
 
-    
+
 
     def optimize_partition_query(self, table_name: str,
 
@@ -401,13 +401,13 @@ class QueryOptimizer:
 
         table_path = f"{self.data_lake.lake_path}/{table_name}"
 
-        
+
 
         where_clauses = [f"{k} = '{v}'" for k, v in partition_filters.items()]
 
         where_clause = " AND ".join(where_clauses)
 
-        
+
 
         query = f"""
 
@@ -419,7 +419,7 @@ class QueryOptimizer:
 
         """
 
-        
+
 
         return spark.sql(query).toPandas()
 
@@ -539,7 +539,7 @@ services:
 
       - minio-data:/data
 
-  
+
 
   spark:
 
@@ -567,7 +567,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -595,7 +595,7 @@ volumes:
 
 
 
-## 
+##
 
 
 
@@ -711,7 +711,7 @@ graph LR
 
     B --> D1["DATA QUALITY MO"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -758,12 +758,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

@@ -47,7 +47,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -573,7 +573,7 @@ class GradientCheckpointing:
 
 
 
-    
+
 
 
 
@@ -657,7 +657,7 @@ class GradientCheckpointing:
 
 
 
-        
+
 
 
 
@@ -729,7 +729,7 @@ class GradientCheckpointing:
 
 
 
-    
+
 
 
 
@@ -813,7 +813,7 @@ class GradientCheckpointing:
 
 
 
-        
+
 
 
 
@@ -861,7 +861,7 @@ class GradientCheckpointing:
 
 
 
-            
+
 
 
 
@@ -921,7 +921,7 @@ class GradientCheckpointing:
 
 
 
-    
+
 
 
 
@@ -993,7 +993,7 @@ class GradientCheckpointing:
 
 
 
-        
+
 
 
 
@@ -1665,7 +1665,7 @@ class CheckpointedModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -2542,14 +2542,3 @@ model_engine, _, _, _ = deepspeed.initialize(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

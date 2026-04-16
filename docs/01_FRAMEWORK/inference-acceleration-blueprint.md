@@ -39,7 +39,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -685,7 +685,7 @@ class InferenceAccelerator:
 
 
 
-    
+
 
 
 
@@ -781,7 +781,7 @@ class InferenceAccelerator:
 
 
 
-        
+
 
 
 
@@ -865,7 +865,7 @@ class InferenceAccelerator:
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ class InferenceAccelerator:
 
 
 
-        
+
 
 
 
@@ -997,7 +997,7 @@ class InferenceAccelerator:
 
 
 
-            
+
 
 
 
@@ -1045,7 +1045,7 @@ class InferenceAccelerator:
 
 
 
-    
+
 
 
 
@@ -1129,7 +1129,7 @@ class InferenceAccelerator:
 
 
 
-        
+
 
 
 
@@ -1177,7 +1177,7 @@ class InferenceAccelerator:
 
 
 
-            
+
 
 
 
@@ -1225,7 +1225,7 @@ class InferenceAccelerator:
 
 
 
-    
+
 
 
 
@@ -1321,7 +1321,7 @@ class InferenceAccelerator:
 
 
 
-        
+
 
 
 
@@ -1381,7 +1381,7 @@ class InferenceAccelerator:
 
 
 
-            
+
 
 
 
@@ -1441,7 +1441,7 @@ class InferenceAccelerator:
 
 
 
-    
+
 
 
 
@@ -1501,7 +1501,7 @@ class InferenceAccelerator:
 
 
 
-        
+
 
 
 
@@ -1885,7 +1885,7 @@ class ModelQuantizer:
 
 
 
-    
+
 
 
 
@@ -1945,7 +1945,7 @@ class ModelQuantizer:
 
 
 
-        """动态量?        
+        """动态量?
 
 
 
@@ -1981,7 +1981,7 @@ class ModelQuantizer:
 
 
 
-            
+
 
 
 
@@ -2089,7 +2089,7 @@ class ModelQuantizer:
 
 
 
-    
+
 
 
 
@@ -2161,7 +2161,7 @@ class ModelQuantizer:
 
 
 
-        """静态量?        
+        """静态量?
 
 
 
@@ -2209,7 +2209,7 @@ class ModelQuantizer:
 
 
 
-            
+
 
 
 
@@ -2353,7 +2353,7 @@ class OperatorFusion:
 
 
 
-    
+
 
 
 
@@ -2425,7 +2425,7 @@ class OperatorFusion:
 
 
 
-        
+
 
 
 
@@ -2461,7 +2461,7 @@ class OperatorFusion:
 
 
 
-            
+
 
 
 
@@ -2509,7 +2509,7 @@ class OperatorFusion:
 
 
 
-    
+
 
 
 
@@ -2581,7 +2581,7 @@ class OperatorFusion:
 
 
 
-        
+
 
 
 
@@ -2617,7 +2617,7 @@ class OperatorFusion:
 
 
 
-            
+
 
 
 
@@ -2749,7 +2749,7 @@ class DynamicBatcher:
 
 
 
-    
+
 
 
 
@@ -2821,7 +2821,7 @@ class DynamicBatcher:
 
 
 
-        """初始化动态批处理?        
+        """初始化动态批处理?
 
 
 
@@ -2869,7 +2869,7 @@ class DynamicBatcher:
 
 
 
-    
+
 
 
 
@@ -2941,7 +2941,7 @@ class DynamicBatcher:
 
 
 
-        
+
 
 
 
@@ -2977,7 +2977,7 @@ class DynamicBatcher:
 
 
 
-            
+
 
 
 
@@ -4778,14 +4778,3 @@ outputs = llm.generate(["Hello, world!"], sampling_params)
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

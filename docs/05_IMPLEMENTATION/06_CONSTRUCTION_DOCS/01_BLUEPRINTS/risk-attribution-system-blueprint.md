@@ -187,7 +187,7 @@ layer: layer_07
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -249,7 +249,7 @@ class RiskAttributionSystem:
 
     """
 
-    风险归因系统核心类    
+    风险归因系统核心类
 
     索引: RISK_ATTRIBUTION_001-M01
 
@@ -257,7 +257,7 @@ class RiskAttributionSystem:
 
     """
 
-    
+
 
     def __init__(self, config: AttributionConfig):
 
@@ -271,7 +271,7 @@ class RiskAttributionSystem:
 
         self.report_generator = AttributionReportGenerator()
 
-        
+
 
     def attribute_risk(self,
 
@@ -285,7 +285,7 @@ class RiskAttributionSystem:
 
         执行风险归因
 
-        
+
 
         Args:
 
@@ -295,7 +295,7 @@ class RiskAttributionSystem:
 
             barra_model: Barra风险模型
 
-            
+
 
         Returns:
 
@@ -311,7 +311,7 @@ class RiskAttributionSystem:
 
         )
 
-        
+
 
         # 2. 行业风险归因
 
@@ -321,7 +321,7 @@ class RiskAttributionSystem:
 
         )
 
-        
+
 
         # 3. 资产风险归因
 
@@ -331,7 +331,7 @@ class RiskAttributionSystem:
 
         )
 
-        
+
 
         # 4. 汇总归因结果        total_attribution = self._aggregate_attribution(
 
@@ -339,7 +339,7 @@ class RiskAttributionSystem:
 
         )
 
-        
+
 
         return AttributionResult(
 
@@ -355,7 +355,7 @@ class RiskAttributionSystem:
 
         )
 
-    
+
 
     def monitor_risk_budget(self,
 
@@ -369,7 +369,7 @@ class RiskAttributionSystem:
 
 
 
-        
+
 
         Args:
 
@@ -379,7 +379,7 @@ class RiskAttributionSystem:
 
             barra_model: Barra风险模型
 
-            
+
 
         Returns:
 
@@ -391,7 +391,7 @@ class RiskAttributionSystem:
 
         risk_decomposition = barra_model.decompose_risk(portfolio_weights)
 
-        
+
 
         # 2. 对比风险预算
 
@@ -401,17 +401,17 @@ class RiskAttributionSystem:
 
         )
 
-        
+
 
 预算风险        over_budget_risks = self._identify_over_budget(budget_utilization)
 
-        
+
 
         # 4. 生成预警信号
 
         alerts = self._generate_alerts(over_budget_risks)
 
-        
+
 
         return RiskBudgetMonitorResult(
 
@@ -425,7 +425,7 @@ class RiskAttributionSystem:
 
         )
 
-    
+
 
     def generate_report(self,
 
@@ -437,13 +437,13 @@ class RiskAttributionSystem:
 
         生成归因报告
 
-        
+
 
         Args:
 
             attribution_result: 归因结果
 
-            output_format: 输出格式（'html', 'pdf', 'markdown'）            
+            output_format: 输出格式（'html', 'pdf', 'markdown'）
 
         Returns:
 
@@ -457,7 +457,7 @@ class RiskAttributionSystem:
 
         )
 
-    
+
 
     def _aggregate_attribution(self,
 
@@ -479,7 +479,7 @@ class RiskAttributionSystem:
 
         ], axis=1)
 
-        
+
 
         return total
 
@@ -495,7 +495,7 @@ class FactorRiskAttributor:
 
     """
 
-    因子风险归因器    
+    因子风险归因器
 
     索引: RISK_ATTRIBUTION_001-M02
 
@@ -503,13 +503,13 @@ class FactorRiskAttributor:
 
     """
 
-    
+
 
     def __init__(self, config: FactorAttributionConfig):
 
         self.config = config
 
-        
+
 
     def attribute(self,
 
@@ -523,7 +523,7 @@ class FactorRiskAttributor:
 
         因子风险归因
 
-        
+
 
         Args:
 
@@ -533,7 +533,7 @@ class FactorRiskAttributor:
 
             barra_model: Barra风险模型
 
-            
+
 
         Returns:
 
@@ -545,7 +545,7 @@ class FactorRiskAttributor:
 
         portfolio_exposure = barra_model.calculate_factor_exposure(portfolio_weights)
 
-        
+
 
         # 2. 计算基准因子暴露（如有）
 
@@ -561,7 +561,7 @@ class FactorRiskAttributor:
 
             active_exposure = portfolio_exposure
 
-        
+
 
         # 3. 计算因子风险贡献
 
@@ -571,7 +571,7 @@ class FactorRiskAttributor:
 
         )
 
-        
+
 
         # 4. 计算主动风险归因（如有基准）
 
@@ -587,7 +587,7 @@ class FactorRiskAttributor:
 
             active_risk_contribution = None
 
-        
+
 
         # 5. 构建归因结果        attribution = pd.DataFrame({
 
@@ -603,11 +603,11 @@ class FactorRiskAttributor:
 
         })
 
-        
+
 
         return attribution
 
-    
+
 
     def _calculate_factor_risk_contribution(self,
 
@@ -619,7 +619,7 @@ class FactorRiskAttributor:
 
         计算因子风险贡献
 
-        
+
 
 风险贡献法：
 
@@ -633,21 +633,21 @@ class FactorRiskAttributor:
 
         portfolio_risk = np.sqrt(factor_exposure @ F_f)
 
-        
+
 
 风险贡献
 
         marginal_risk_contribution = factor_exposure * F_f / portfolio_risk
 
-        
+
 
         # 计算风险贡献百分比        risk_contribution = marginal_risk_contribution / portfolio_risk
 
-        
+
 
         return risk_contribution
 
-    
+
 
     def _calculate_active_risk_contribution(self,
 
@@ -671,7 +671,7 @@ class IndustryRiskAttributor:
 
     """
 
-    行业风险归因器    
+    行业风险归因器
 
     索引: RISK_ATTRIBUTION_001-M03
 
@@ -679,13 +679,13 @@ class IndustryRiskAttributor:
 
     """
 
-    
+
 
     def __init__(self, config: IndustryAttributionConfig):
 
         self.config = config
 
-        
+
 
     def attribute(self,
 
@@ -699,7 +699,7 @@ class IndustryRiskAttributor:
 
         行业风险归因
 
-        
+
 
         Args:
 
@@ -709,7 +709,7 @@ class IndustryRiskAttributor:
 
             barra_model: Barra风险模型
 
-            
+
 
         Returns:
 
@@ -719,15 +719,15 @@ class IndustryRiskAttributor:
 
         # 1. 获取行业因子暴露
 
-        industry_factors = [f for f in barra_model.factor_loadings.columns 
+        industry_factors = [f for f in barra_model.factor_loadings.columns
 
                           if f.startswith('industry_')]
 
-        
+
 
         portfolio_industry_exposure = barra_model.factor_loadings[industry_factors].T @ portfolio_weights
 
-        
+
 
         # 2. 计算基准行业暴露（如有）
 
@@ -743,7 +743,7 @@ class IndustryRiskAttributor:
 
             active_industry_exposure = portfolio_industry_exposure
 
-        
+
 
         # 3. 计算行业风险贡献
 
@@ -755,7 +755,7 @@ class IndustryRiskAttributor:
 
         )
 
-        
+
 
         # 4. 构建归因结果        attribution = pd.DataFrame({
 
@@ -769,11 +769,11 @@ class IndustryRiskAttributor:
 
         })
 
-        
+
 
         return attribution
 
-    
+
 
     def _calculate_industry_risk_contribution(self,
 
@@ -789,11 +789,11 @@ class IndustryRiskAttributor:
 
         industry_risk = np.sqrt(industry_exposure @ I_i)
 
-        
+
 
         risk_contribution = (industry_exposure * I_i) / industry_risk
 
-        
+
 
         return risk_contribution
 
@@ -809,7 +809,7 @@ class AssetRiskAttributor:
 
     """
 
-    资产风险归因器    
+    资产风险归因器
 
     索引: RISK_ATTRIBUTION_001-M04
 
@@ -817,13 +817,13 @@ class AssetRiskAttributor:
 
     """
 
-    
+
 
     def __init__(self, config: AssetAttributionConfig):
 
         self.config = config
 
-        
+
 
     def attribute(self,
 
@@ -837,7 +837,7 @@ class AssetRiskAttributor:
 
         资产风险归因
 
-        
+
 
         Args:
 
@@ -847,7 +847,7 @@ class AssetRiskAttributor:
 
             barra_model: Barra风险模型
 
-            
+
 
         Returns:
 
@@ -863,7 +863,7 @@ class AssetRiskAttributor:
 
         )
 
-        
+
 
         # 2. 计算主动权重（如有基准）
 
@@ -875,7 +875,7 @@ class AssetRiskAttributor:
 
             active_weights = portfolio_weights
 
-        
+
 
         # 3. 构建归因结果        attribution = pd.DataFrame({
 
@@ -889,11 +889,11 @@ class AssetRiskAttributor:
 
         })
 
-        
+
 
         return attribution
 
-    
+
 
     def _calculate_asset_risk_contribution(self,
 
@@ -905,7 +905,7 @@ class AssetRiskAttributor:
 
         计算资产风险贡献
 
-        
+
 
 风险贡献法：
 
@@ -919,17 +919,17 @@ class AssetRiskAttributor:
 
         portfolio_risk = np.sqrt(weights @ Sigma_w)
 
-        
+
 
 风险贡献
 
         marginal_risk_contribution = weights * Sigma_w / portfolio_risk
 
-        
+
 
         # 计算风险贡献百分比        risk_contribution = marginal_risk_contribution / portfolio_risk
 
-        
+
 
         return risk_contribution
 
@@ -945,7 +945,7 @@ class AttributionReportGenerator:
 
     """
 
-    归因报告生成器    
+    归因报告生成器
 
     索引: RISK_ATTRIBUTION_001-M05
 
@@ -953,13 +953,13 @@ class AttributionReportGenerator:
 
     """
 
-    
+
 
     def __init__(self):
 
         self.template_dir = 'templates/attribution/'
 
-        
+
 
     def generate(self,
 
@@ -971,7 +971,7 @@ class AttributionReportGenerator:
 
         生成归因报告
 
-        
+
 
         Args:
 
@@ -979,7 +979,7 @@ class AttributionReportGenerator:
 
             output_format: 输出格式
 
-            
+
 
         Returns:
 
@@ -989,21 +989,21 @@ class AttributionReportGenerator:
 
         # 1. 生成可视化图表        charts = self._generate_charts(attribution_result)
 
-        
+
 
         report_content = self._generate_content(attribution_result, charts)
 
-        
+
 
         # 3. 保存报告
 
         report_path = self._save_report(report_content, output_format)
 
-        
+
 
         return report_path
 
-    
+
 
     def _generate_charts(self, attribution_result: AttributionResult) -> Dict[str, str]:
 
@@ -1011,7 +1011,7 @@ class AttributionReportGenerator:
 
         charts = {}
 
-        
+
 
         # 1. 因子风险贡献图        charts['factor_risk'] = self._plot_factor_risk_contribution(
 
@@ -1019,7 +1019,7 @@ class AttributionReportGenerator:
 
         )
 
-        
+
 
         # 2. 行业风险贡献图        charts['industry_risk'] = self._plot_industry_risk_contribution(
 
@@ -1027,7 +1027,7 @@ class AttributionReportGenerator:
 
         )
 
-        
+
 
         # 3. 资产风险贡献图（Top 20）
 
@@ -1037,11 +1037,11 @@ class AttributionReportGenerator:
 
         )
 
-        
+
 
         return charts
 
-    
+
 
     def _plot_factor_risk_contribution(self, factor_attr: pd.DataFrame) -> str:
 
@@ -1049,11 +1049,11 @@ class AttributionReportGenerator:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         fig, ax = plt.subplots(figsize=(12, 6))
 
-        
+
 
         factor_attr['Risk_Contribution'].plot(kind='bar', ax=ax)
 
@@ -1065,7 +1065,7 @@ class AttributionReportGenerator:
 
         ax.grid(True, alpha=0.3)
 
-        
+
 
         chart_path = 'output/factor_risk_contribution.png'
 
@@ -1073,11 +1073,11 @@ class AttributionReportGenerator:
 
         plt.close()
 
-        
+
 
         return chart_path
 
-    
+
 
     def _plot_industry_risk_contribution(self, industry_attr: pd.DataFrame) -> str:
 
@@ -1085,11 +1085,11 @@ class AttributionReportGenerator:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         fig, ax = plt.subplots(figsize=(12, 6))
 
-        
+
 
         industry_attr['Risk_Contribution'].plot(kind='bar', ax=ax)
 
@@ -1101,7 +1101,7 @@ class AttributionReportGenerator:
 
         ax.grid(True, alpha=0.3)
 
-        
+
 
         chart_path = 'output/industry_risk_contribution.png'
 
@@ -1109,11 +1109,11 @@ class AttributionReportGenerator:
 
         plt.close()
 
-        
+
 
         return chart_path
 
-    
+
 
     def _plot_asset_risk_contribution(self, asset_attr: pd.DataFrame) -> str:
 
@@ -1121,17 +1121,17 @@ class AttributionReportGenerator:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         # 取Top 20
 
         top_assets = asset_attr.nlargest(20, 'Risk_Contribution')
 
-        
+
 
         fig, ax = plt.subplots(figsize=(12, 6))
 
-        
+
 
         top_assets['Risk_Contribution'].plot(kind='bar', ax=ax)
 
@@ -1143,7 +1143,7 @@ class AttributionReportGenerator:
 
         ax.grid(True, alpha=0.3)
 
-        
+
 
         chart_path = 'output/asset_risk_contribution.png'
 
@@ -1151,11 +1151,11 @@ class AttributionReportGenerator:
 
         plt.close()
 
-        
+
 
         return chart_path
 
-    
+
 
     def _generate_content(self,
 
@@ -1169,7 +1169,7 @@ class AttributionReportGenerator:
 
 > **核心职责**: Risk Attribution System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1255,7 +1255,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
         return content
 
-    
+
 
     def _save_report(self, content: str, output_format: str) -> str:
 
@@ -1263,13 +1263,13 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
         report_path = f'output/risk_attribution_report.{output_format}'
 
-        
+
 
         with open(report_path, 'w', encoding='utf-8') as f:
 
             f.write(content)
 
-        
+
 
         return report_path
 
@@ -1291,7 +1291,7 @@ class AttributionConfig:
 
     asset_config: AssetAttributionConfig
 
-    
+
 
 @dataclass
 
@@ -1301,7 +1301,7 @@ class FactorAttributionConfig:
 
     include_industry_factors: bool = True
 
-    
+
 
 @dataclass
 
@@ -1309,7 +1309,7 @@ class IndustryAttributionConfig:
 
     industry_classification: str = 'gics'  # 'gics', 'sw', 'zz'
 
-    
+
 
 @dataclass
 
@@ -1367,7 +1367,7 @@ class AttributionResult:
 
     total_attribution: pd.DataFrame  # 总归因    timestamp: datetime
 
-    
+
 
 @dataclass
 
@@ -1403,13 +1403,13 @@ class BarraRiskModel:
 
     """Barra风险模型（集成风险归因）"""
 
-    
+
 
     def __init__(self):
 
         self.risk_attribution_system = RiskAttributionSystem(AttributionConfig())
 
-        
+
 
     def attribute_risk(self,
 
@@ -1439,9 +1439,9 @@ class PortfolioOptimizer:
 
     """组合优化器（集成风险归因）"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  barra_model: BarraRiskModel,
 
@@ -1451,7 +1451,7 @@ class PortfolioOptimizer:
 
         self.attribution_system = attribution_system
 
-        
+
 
     def optimize_and_attribute(self,
 
@@ -1465,7 +1465,7 @@ class PortfolioOptimizer:
 
         optimal_weights = self.optimize(expected_returns, constraints)
 
-        
+
 
         # 2. 风险归因
 
@@ -1475,7 +1475,7 @@ class PortfolioOptimizer:
 
         )
 
-        
+
 
         return optimal_weights, attribution
 
@@ -1785,7 +1785,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[组合绩效评估]
 
@@ -1793,7 +1793,7 @@ graph LR
 
     B --> G[压力测试系统]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1852,4 +1852,3 @@ graph LR
 
 
 ```
-

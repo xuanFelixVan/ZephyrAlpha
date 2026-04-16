@@ -257,7 +257,7 @@ graph TB
 
     end
 
-    
+
 
         B1[批量采集器]
 
@@ -267,13 +267,13 @@ graph TB
 
     end
 
-    
+
 
         C4[归档存储<br/>对象存储]
 
     end
 
-    
+
 
 洗]
 
@@ -285,7 +285,7 @@ graph TB
 
     end
 
-    
+
 
         E1[统一数据API]
 
@@ -297,7 +297,7 @@ graph TB
 
     end
 
-    
+
 
         F2[中观策略层]
 
@@ -305,7 +305,7 @@ graph TB
 
     end
 
-    
+
 
     A1 --> B1
 
@@ -317,7 +317,7 @@ graph TB
 
     A5 --> B1
 
-    
+
 
     B1 --> B4
 
@@ -325,7 +325,7 @@ graph TB
 
     B3 --> B4
 
-    
+
 
     B4 --> C1
 
@@ -333,7 +333,7 @@ graph TB
 
     B4 --> C3
 
-    
+
 
     C1 --> D1
 
@@ -341,7 +341,7 @@ graph TB
 
     C3 --> D1
 
-    
+
 
     D1 --> D2
 
@@ -349,7 +349,7 @@ graph TB
 
     D3 --> D4
 
-    
+
 
     D4 --> E1
 
@@ -359,7 +359,7 @@ graph TB
 
     D4 --> E4
 
-    
+
 
     E1 --> F1
 
@@ -465,7 +465,7 @@ from datetime import datetime
 
 class DataSourceAdapter(ABC):
 
-    
+
 
     @abstractmethod
 
@@ -475,7 +475,7 @@ class DataSourceAdapter(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -485,7 +485,7 @@ class DataSourceAdapter(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -495,7 +495,7 @@ class DataSourceAdapter(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -511,7 +511,7 @@ class DataSourceAdapter(ABC):
 
 class MacroDataSourceAdapter(DataSourceAdapter):
 
-    
+
 
     def __init__(self, source_config: Dict[str, Any]):
 
@@ -519,7 +519,7 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
         self.connection = None
 
-        
+
 
     def connect(self) -> bool:
 
@@ -529,7 +529,7 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
 
@@ -551,13 +551,13 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def subscribe(self, callback: callable) -> None:
 
         pass
 
-    
+
 
     def disconnect(self) -> None:
 
@@ -571,7 +571,7 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
 class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
-    
+
 
     def __init__(self, source_config: Dict[str, Any]):
 
@@ -579,13 +579,13 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
         self.connection = None
 
-        
+
 
     def connect(self) -> bool:
 
         pass
 
-    
+
 
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
 
@@ -607,13 +607,13 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def subscribe(self, callback: callable) -> None:
 
         pass
 
-    
+
 
     def disconnect(self) -> None:
 
@@ -627,7 +627,7 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
 class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
-    
+
 
     def __init__(self, source_config: Dict[str, Any]):
 
@@ -635,13 +635,13 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
         self.connection = None
 
-        
+
 
     def connect(self) -> bool:
 
         pass
 
-    
+
 
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
 
@@ -663,7 +663,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def subscribe(self, callback: callable) -> None:
 
@@ -673,7 +673,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def disconnect(self) -> None:
 
@@ -687,7 +687,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
 class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
 
-    
+
 
     def __init__(self, source_config: Dict[str, Any]):
 
@@ -697,13 +697,13 @@ class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
 
         self.websocket = None
 
-        
+
 
     def connect(self) -> bool:
 
         pass
 
-    
+
 
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
 
@@ -711,7 +711,7 @@ class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def subscribe(self, callback: callable) -> None:
 
@@ -721,7 +721,7 @@ class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
 
         pass
 
-    
+
 
     def disconnect(self) -> None:
 
@@ -755,7 +755,7 @@ class DataLakeStorage:
 
     """数据湖存储层 - Delta Lake实现"""
 
-    
+
 
     def __init__(self, spark_session, base_path: str):
 
@@ -763,7 +763,7 @@ class DataLakeStorage:
 
         self.base_path = base_path
 
-        
+
 
     def store_macro_data(self, data: pd.DataFrame, table_name: str) -> None:
 
@@ -773,7 +773,7 @@ class DataLakeStorage:
 
         spark_df = self.spark.createDataFrame(data)
 
-        
+
 
         spark_df.write.format("delta") \
 
@@ -783,7 +783,7 @@ class DataLakeStorage:
 
             .save(f"{self.base_path}/macro/{table_name}")
 
-    
+
 
     def store_daily_data(self, data: pd.DataFrame, table_name: str) -> None:
 
@@ -791,7 +791,7 @@ class DataLakeStorage:
 
         spark_df = self.spark.createDataFrame(data)
 
-        
+
 
         spark_df.write.format("delta") \
 
@@ -801,7 +801,7 @@ class DataLakeStorage:
 
             .save(f"{self.base_path}/daily/{table_name}")
 
-    
+
 
     def store_intraday_data(self, data: pd.DataFrame, table_name: str) -> None:
 
@@ -809,7 +809,7 @@ class DataLakeStorage:
 
         spark_df = self.spark.createDataFrame(data)
 
-        
+
 
         spark_df.write.format("delta") \
 
@@ -819,9 +819,9 @@ class DataLakeStorage:
 
             .save(f"{self.base_path}/intraday/{table_name}")
 
-    
 
-    def query_macro_data(self, 
+
+    def query_macro_data(self,
 
                         indicators: List[str],
 
@@ -845,7 +845,7 @@ class DataLakeStorage:
 
         return self.spark.sql(query).toPandas()
 
-    
+
 
     def query_daily_data(self,
 
@@ -873,7 +873,7 @@ class DataLakeStorage:
 
         return self.spark.sql(query).toPandas()
 
-    
+
 
     def query_intraday_data(self,
 
@@ -899,7 +899,7 @@ class DataLakeStorage:
 
         return self.spark.sql(query).toPandas()
 
-    
+
 
     def compact_data(self, table_path: str) -> None:
 
@@ -907,7 +907,7 @@ class DataLakeStorage:
 
         self.spark.sql(f"OPTIMIZE delta.`{table_path}`")
 
-    
+
 
     def vacuum_data(self, table_path: str, retention_hours: int = 168) -> None:
 
@@ -939,7 +939,7 @@ from datetime import datetime
 
 class TimeSeriesDBStorage:
 
-    
+
 
     def __init__(self, url: str, token: str, org: str, bucket: str):
 
@@ -951,9 +951,9 @@ class TimeSeriesDBStorage:
 
         self.query_api = self.client.query_api()
 
-        
 
-    def write_realtime_data(self, 
+
+    def write_realtime_data(self,
 
                            measurement: str,
 
@@ -967,25 +967,25 @@ class TimeSeriesDBStorage:
 
             .time(timestamp, WritePrecision.NS)
 
-        
+
 
         for tag_key, tag_value in tags.items():
 
             point.tag(tag_key, tag_value)
 
-        
+
 
         for field_key, field_value in fields.items():
 
             point.field(field_key, field_value)
 
-        
+
 
         self.write_api.write(bucket=self.bucket, record=point)
 
-    
 
-    def write_batch_realtime_data(self, 
+
+    def write_batch_realtime_data(self,
 
                                   measurement: str,
 
@@ -1001,13 +1001,13 @@ class TimeSeriesDBStorage:
 
                 .time(row['timestamp'], WritePrecision.NS)
 
-            
+
 
             for tag_col in tag_columns:
 
                 point.tag(tag_col, str(row[tag_col]))
 
-            
+
 
             for col in data.columns:
 
@@ -1015,15 +1015,15 @@ class TimeSeriesDBStorage:
 
                     point.field(col, row[col])
 
-            
+
 
             points.append(point)
 
-        
+
 
         self.write_api.write(bucket=self.bucket, record=points)
 
-    
+
 
     def query_realtime_data(self,
 
@@ -1053,13 +1053,13 @@ class TimeSeriesDBStorage:
 
         '''
 
-        
+
 
         result = self.query_api.query_data_frame(query)
 
         return result
 
-    
+
 
     def query_latest_data(self, measurement: str, symbol: str) -> pd.DataFrame:
 
@@ -1077,7 +1077,7 @@ class TimeSeriesDBStorage:
 
         '''
 
-        
+
 
         result = self.query_api.query_data_frame(query)
 
@@ -1163,9 +1163,9 @@ class UnifiedDataAPI:
 
     """统一数据API"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  data_lake: DataLakeStorage,
 
@@ -1179,7 +1179,7 @@ class UnifiedDataAPI:
 
         self.cache = cache_client
 
-        
+
 
     @app.post("/api/v1/macro/data")
 
@@ -1191,7 +1191,7 @@ class UnifiedDataAPI:
 
         cached_data = self.cache.get(cache_key)
 
-        
+
 
         if cached_data:
 
@@ -1205,7 +1205,7 @@ class UnifiedDataAPI:
 
             }
 
-        
+
 
         # 2. 从数据湖查询
 
@@ -1221,11 +1221,11 @@ class UnifiedDataAPI:
 
             )
 
-            
+
 
             self.cache.set(cache_key, data.to_dict(), expire=3600)  # 1小时过期
 
-            
+
 
             return {
 
@@ -1241,7 +1241,7 @@ class UnifiedDataAPI:
 
             raise HTTPException(status_code=500, detail=str(e))
 
-    
+
 
     @app.post("/api/v1/daily/data")
 
@@ -1253,7 +1253,7 @@ class UnifiedDataAPI:
 
         cached_data = self.cache.get(cache_key)
 
-        
+
 
         if cached_data:
 
@@ -1267,7 +1267,7 @@ class UnifiedDataAPI:
 
             }
 
-        
+
 
         # 2. 从数据湖查询
 
@@ -1285,11 +1285,11 @@ class UnifiedDataAPI:
 
             )
 
-            
+
 
             self.cache.set(cache_key, data.to_dict(), expire=1800)  # 30分钟过期
 
-            
+
 
             return {
 
@@ -1305,7 +1305,7 @@ class UnifiedDataAPI:
 
             raise HTTPException(status_code=500, detail=str(e))
 
-    
+
 
     @app.post("/api/v1/intraday/data")
 
@@ -1317,7 +1317,7 @@ class UnifiedDataAPI:
 
         cached_data = self.cache.get(cache_key)
 
-        
+
 
         if cached_data:
 
@@ -1331,7 +1331,7 @@ class UnifiedDataAPI:
 
             }
 
-        
+
 
         # 2. 从数据湖查询
 
@@ -1347,11 +1347,11 @@ class UnifiedDataAPI:
 
             )
 
-            
+
 
             self.cache.set(cache_key, data.to_dict(), expire=300)  # 5分钟过期
 
-            
+
 
             return {
 
@@ -1367,7 +1367,7 @@ class UnifiedDataAPI:
 
             raise HTTPException(status_code=500, detail=str(e))
 
-    
+
 
     @app.get("/api/v1/realtime/data/{symbol}")
 
@@ -1385,7 +1385,7 @@ class UnifiedDataAPI:
 
             )
 
-            
+
 
             return {
 
@@ -1401,7 +1401,7 @@ class UnifiedDataAPI:
 
             raise HTTPException(status_code=500, detail=str(e))
 
-    
+
 
     @app.get("/api/v1/data/catalog")
 
@@ -1453,7 +1453,7 @@ class UnifiedDataAPI:
 
         }
 
-        
+
 
         return {
 
@@ -1489,7 +1489,7 @@ class DataSubscriptionService:
 
 服务"""
 
-    
+
 
     def __init__(self, realtime_adapter: RealtimeMarketDataSourceAdapter):
 
@@ -1499,9 +1499,9 @@ class DataSubscriptionService:
 
         self.websocket_clients: List[websockets.WebSocketServerProtocol] = []
 
-        
 
-    async def subscribe_realtime_quotes(self, 
+
+    async def subscribe_realtime_quotes(self,
 
                                         symbols: List[str],
 
@@ -1511,7 +1511,7 @@ class DataSubscriptionService:
 
         subscription_id = f"sub_{datetime.now().timestamp()}"
 
-        
+
 
         # 注册回调函数
 
@@ -1523,7 +1523,7 @@ class DataSubscriptionService:
 
             self.subscriptions[symbol].append(callback)
 
-        
+
 
 
 
@@ -1535,11 +1535,11 @@ class DataSubscriptionService:
 
         )
 
-        
+
 
         return subscription_id
 
-    
+
 
     async def _handle_realtime_data(self, data: Dict[str, Any]) -> None:
 
@@ -1547,7 +1547,7 @@ class DataSubscriptionService:
 
         symbol = data.get('symbol')
 
-        
+
 
         if symbol in self.subscriptions:
 
@@ -1561,11 +1561,11 @@ class DataSubscriptionService:
 
                     print(f"Callback error: {e}")
 
-        
+
 
         await self._broadcast_to_websocket(data)
 
-    
+
 
     async def _broadcast_to_websocket(self, data: Dict[str, Any]) -> None:
 
@@ -1579,9 +1579,9 @@ class DataSubscriptionService:
 
             )
 
-    
 
-    async def handle_websocket_client(self, 
+
+    async def handle_websocket_client(self,
 
                                       websocket: websockets.WebSocketServerProtocol,
 
@@ -1589,7 +1589,7 @@ class DataSubscriptionService:
 
         self.websocket_clients.append(websocket)
 
-        
+
 
         try:
 
@@ -1603,7 +1603,7 @@ class DataSubscriptionService:
 
             self.websocket_clients.remove(websocket)
 
-    
+
 
     async def unsubscribe(self, subscription_id: str) -> None:
 
@@ -2099,11 +2099,11 @@ def test_macro_data_adapter_fetch():
 
     adapter = MacroDataSourceAdapter(config)
 
-    
+
 
     assert adapter.connect() == True
 
-    
+
 
     # 获取数据
 
@@ -2121,7 +2121,7 @@ def test_macro_data_adapter_fetch():
 
     data = adapter.fetch(params)
 
-    
+
 
     # 验证数据
 
@@ -2133,7 +2133,7 @@ def test_macro_data_adapter_fetch():
 
     assert 'CPI' in data.columns
 
-    
+
 
     # 断开连接
 
@@ -2149,7 +2149,7 @@ def test_data_lake_store_and_query():
 
     storage = DataLakeStorage(spark, base_path)
 
-    
+
 
     # 存储数据
 
@@ -2163,11 +2163,11 @@ def test_data_lake_store_and_query():
 
     })
 
-    
+
 
     storage.store_daily_data(test_data, 'test_table')
 
-    
+
 
     # 查询数据
 
@@ -2183,7 +2183,7 @@ def test_data_lake_store_and_query():
 
     )
 
-    
+
 
     assert len(result) == 1
 
@@ -2199,7 +2199,7 @@ def test_unified_data_api():
 
     client = TestClient(app)
 
-    
+
 
     # 测试获取日频数据
 
@@ -2215,7 +2215,7 @@ def test_unified_data_api():
 
     })
 
-    
+
 
     assert response.status_code == 200
 
@@ -2247,7 +2247,7 @@ def test_end_to_end_data_flow():
 
     raw_data = adapter.fetch(params)
 
-    
+
 
     # 2. 存储到数据湖
 
@@ -2255,7 +2255,7 @@ def test_end_to_end_data_flow():
 
     storage.store_daily_data(raw_data, 'market_data')
 
-    
+
 
     # 3. 通过API查询数据
 
@@ -2273,7 +2273,7 @@ def test_end_to_end_data_flow():
 
     })
 
-    
+
 
     assert response.status_code == 200
 
@@ -2297,11 +2297,11 @@ def test_query_performance():
 
     import time
 
-    
+
 
     client = TestClient(app)
 
-    
+
 
     # 测试日频数据查询性能
 
@@ -2317,13 +2317,13 @@ def test_query_performance():
 
     end_time = time.time()
 
-    
+
 
     assert response.status_code == 200
 
     assert (end_time - start_time) < 0.1  # 100ms
 
-    
+
 
     # 测试实时数据查询性能
 
@@ -2333,7 +2333,7 @@ def test_query_performance():
 
     end_time = time.time()
 
-    
+
 
     assert response.status_code == 200
 
@@ -2457,7 +2457,7 @@ def test_query_performance():
 
 | **Apache Kafka** | 3.5+ | 消息队列 | [官方文档](https://kafka.apache.org/) |
 
-| **PostgreSQL** | 15+ | 
+| **PostgreSQL** | 15+ |
 
 | **Redis** | 7.0+ | 缓存 | [官方文档](https://redis.io/) |
 
@@ -2477,7 +2477,7 @@ graph LR
 
     B --> D2["REALTIME DATA L"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -2515,7 +2515,7 @@ graph LR
 
 |------|------|------|
 
-| **Unified Data Infrastructure** | 
+| **Unified Data Infrastructure** |
 
 
 
@@ -2524,10 +2524,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

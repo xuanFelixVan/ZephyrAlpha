@@ -21,7 +21,7 @@ layer: layer_01
 
 > **核心职责**: 提供全面的审计日志记录和分析能力，支持安全审计、操作审计、合规审计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：审计日志记录、审计日志分析、合规检查
 
@@ -183,7 +183,7 @@ class AuditLogger:
 
     """审计日志记录器"""
 
-    
+
 
     def __init__(self, loki_url: str = "http://localhost:3100"):
 
@@ -197,7 +197,7 @@ class AuditLogger:
 
         }
 
-    
+
 
     def log_event(
 
@@ -245,15 +245,15 @@ class AuditLogger:
 
         }
 
-        
+
 
         self._send_to_loki(audit_entry)
 
-        
+
 
         return audit_entry
 
-    
+
 
     def log_security_event(
 
@@ -291,7 +291,7 @@ class AuditLogger:
 
         )
 
-    
+
 
     def log_operation_event(
 
@@ -331,7 +331,7 @@ class AuditLogger:
 
         )
 
-    
+
 
     def log_compliance_event(
 
@@ -369,7 +369,7 @@ class AuditLogger:
 
         )
 
-    
+
 
     def _send_to_loki(self, entry: Dict):
 
@@ -377,11 +377,11 @@ class AuditLogger:
 
         import requests
 
-        
+
 
         headers = {"Content-Type": "application/json"}
 
-        
+
 
         payload = {
 
@@ -403,7 +403,7 @@ class AuditLogger:
 
         }
 
-        
+
 
         response = requests.post(
 
@@ -415,7 +415,7 @@ class AuditLogger:
 
         )
 
-        
+
 
         if response.status_code != 204:
 
@@ -435,13 +435,13 @@ class AuditLogQuery:
 
     """审计日志查询器"""
 
-    
+
 
     def __init__(self, loki_url: str = "http://localhost:3100"):
 
         self.loki_url = loki_url
 
-    
+
 
     def query_by_user(
 
@@ -461,11 +461,11 @@ class AuditLogQuery:
 
         query = f'{{job="audit-logging"}} |= `{user_id}`'
 
-        
+
 
         return self._execute_query(query, start_time, end_time, limit)
 
-    
+
 
     def query_by_event_type(
 
@@ -485,11 +485,11 @@ class AuditLogQuery:
 
         query = f'{{job="audit-logging"}} |= `{event_type.value}`'
 
-        
+
 
         return self._execute_query(query, start_time, end_time, limit)
 
-    
+
 
     def query_by_resource(
 
@@ -509,11 +509,11 @@ class AuditLogQuery:
 
         query = f'{{job="audit-logging"}} |= `{resource}`'
 
-        
+
 
         return self._execute_query(query, start_time, end_time, limit)
 
-    
+
 
     def query_security_events(
 
@@ -533,17 +533,17 @@ class AuditLogQuery:
 
         query = f'{{job="audit-logging"}} |= `security_event`'
 
-        
+
 
         if severity:
 
             query += f' |= `{severity}`'
 
-        
+
 
         return self._execute_query(query, start_time, end_time, limit)
 
-    
+
 
     def _execute_query(
 
@@ -563,7 +563,7 @@ class AuditLogQuery:
 
         import requests
 
-        
+
 
         params = {
 
@@ -573,19 +573,19 @@ class AuditLogQuery:
 
         }
 
-        
+
 
         if start_time:
 
             params["start"] = int(start_time.timestamp() * 1e9)
 
-        
+
 
         if end_time:
 
             params["end"] = int(end_time.timestamp() * 1e9)
 
-        
+
 
         response = requests.get(
 
@@ -595,17 +595,17 @@ class AuditLogQuery:
 
         )
 
-        
+
 
         if response.status_code != 200:
 
             raise Exception(f"Query failed: {response.text}")
 
-        
+
 
         result = response.json()
 
-        
+
 
         logs = []
 
@@ -615,7 +615,7 @@ class AuditLogQuery:
 
                 logs.append(json.loads(value[1]))
 
-        
+
 
         return logs
 
@@ -639,13 +639,13 @@ class AuditLogAnalyzer:
 
     """审计日志分析器"""
 
-    
+
 
     def __init__(self, audit_query: AuditLogQuery):
 
         self.query = audit_query
 
-    
+
 
     def analyze_user_activity(
 
@@ -661,11 +661,11 @@ class AuditLogAnalyzer:
 
         start_time = datetime.now() - timedelta(days=days)
 
-        
+
 
         logs = self.query.query_by_user(user_id, start_time=start_time)
 
-        
+
 
         activity = {
 
@@ -681,7 +681,7 @@ class AuditLogAnalyzer:
 
         }
 
-        
+
 
         for log in logs:
 
@@ -689,27 +689,27 @@ class AuditLogAnalyzer:
 
             activity["resources_accessed"].add(log.get("resource"))
 
-            
+
 
             log_date = datetime.fromisoformat(log.get("timestamp")).date()
 
             activity["daily_activity"][str(log_date)] += 1
 
-            
+
 
             if log.get("status") == "failed":
 
                 activity["failed_operations"] += 1
 
-        
+
 
         activity["resources_accessed"] = list(activity["resources_accessed"])
 
-        
+
 
         return activity
 
-    
+
 
     def detect_anomalies(
 
@@ -725,11 +725,11 @@ class AuditLogAnalyzer:
 
         start_time = datetime.now() - timedelta(days=days)
 
-        
+
 
         anomalies = []
 
-        
+
 
         if user_id:
 
@@ -739,11 +739,11 @@ class AuditLogAnalyzer:
 
             logs = self.query.query_security_events(start_time=start_time)
 
-        
+
 
         failed_count = sum(1 for log in logs if log.get("status") == "failed")
 
-        
+
 
         if failed_count > 5:
 
@@ -759,7 +759,7 @@ class AuditLogAnalyzer:
 
             })
 
-        
+
 
         login_times = [
 
@@ -771,13 +771,13 @@ class AuditLogAnalyzer:
 
         ]
 
-        
+
 
         if login_times:
 
             off_hours_logins = sum(1 for hour in login_times if hour < 6 or hour > 22)
 
-            
+
 
             if off_hours_logins > 3:
 
@@ -793,11 +793,11 @@ class AuditLogAnalyzer:
 
                 })
 
-        
+
 
         return anomalies
 
-    
+
 
     def generate_audit_report(
 
@@ -845,7 +845,7 @@ class AuditLogAnalyzer:
 
         }
 
-        
+
 
         all_logs = self.query._execute_query(
 
@@ -859,7 +859,7 @@ class AuditLogAnalyzer:
 
         )
 
-        
+
 
         for log in all_logs:
 
@@ -869,31 +869,31 @@ class AuditLogAnalyzer:
 
             report["summary"]["event_types"][log.get("event_type")] += 1
 
-            
+
 
             if log.get("event_type") == "security_event":
 
                 report["summary"]["security_events"] += 1
 
-            
+
 
             if log.get("status") == "failed":
 
                 report["summary"]["failed_operations"] += 1
 
-            
+
 
             if report_type == "detailed":
 
                 report["details"].append(log)
 
-        
+
 
         report["summary"]["unique_users"] = list(report["summary"]["unique_users"])
 
         report["summary"]["event_types"] = dict(report["summary"]["event_types"])
 
-        
+
 
         return report
 
@@ -1178,4 +1178,3 @@ compactor:
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

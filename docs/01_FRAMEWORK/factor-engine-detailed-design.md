@@ -132,7 +132,7 @@ class FactorLoader:
 
 
 
-    
+
 
 
 
@@ -148,7 +148,7 @@ class FactorLoader:
 
 
 
-    
+
 
 
 
@@ -164,7 +164,7 @@ class FactorLoader:
 
 
 
-    
+
 
 
 
@@ -176,7 +176,7 @@ class FactorLoader:
 
 
 
-    
+
 
 
 
@@ -280,7 +280,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -316,7 +316,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -352,7 +352,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -436,7 +436,7 @@ class FactorStorage:
 
 
 
-    
+
 
 
 
@@ -472,7 +472,7 @@ class FactorStorage:
 
 
 
-    
+
 
 
 
@@ -508,7 +508,7 @@ class FactorStorage:
 
 
 
-    
+
 
 
 
@@ -544,7 +544,7 @@ class FactorStorage:
 
 
 
-    
+
 
 
 
@@ -624,7 +624,7 @@ class FactorValidator:
 
 
 
-    
+
 
 
 
@@ -656,7 +656,7 @@ class FactorValidator:
 
 
 
-    
+
 
 
 
@@ -688,7 +688,7 @@ class FactorValidator:
 
 
 
-    
+
 
 
 
@@ -716,7 +716,7 @@ class FactorValidator:
 
 
 
-    
+
 
 
 
@@ -792,7 +792,7 @@ class FactorOptimizer:
 
 
 
-    
+
 
 
 
@@ -824,7 +824,7 @@ class FactorOptimizer:
 
 
 
-    
+
 
 
 
@@ -852,7 +852,7 @@ class FactorOptimizer:
 
 
 
-    
+
 
 
 
@@ -924,7 +924,7 @@ class FactorMonitor:
 
 
 
-    
+
 
 
 
@@ -956,7 +956,7 @@ class FactorMonitor:
 
 
 
-    
+
 
 
 
@@ -984,7 +984,7 @@ class FactorMonitor:
 
 
 
-    
+
 
 
 
@@ -1156,7 +1156,7 @@ def price_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1172,7 +1172,7 @@ def price_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1204,7 +1204,7 @@ def price_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1256,7 +1256,7 @@ def pb_factor(data: pd.DataFrame) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1272,7 +1272,7 @@ data:
 
 
 
-    
+
 
 
 
@@ -1308,7 +1308,7 @@ def pe_factor(data: pd.DataFrame) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1717,6 +1717,3 @@ def save_factor_compressed(
 
 
 ```
-
-
-

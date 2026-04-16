@@ -29,7 +29,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -177,7 +177,7 @@ class SimplifiedTimeframeCoordination:
 
     """
 
-    
+
 
     索引: TIMEFRAME_COORD_001-M01
 
@@ -185,7 +185,7 @@ class SimplifiedTimeframeCoordination:
 
     """
 
-    
+
 
     def __init__(self, config: TimeframeConfig):
 
@@ -195,7 +195,7 @@ class SimplifiedTimeframeCoordination:
 
         self.conflict_resolver = ConflictResolver(config.conflict_config)
 
-        
+
 
     def coordinate_signals(
 
@@ -211,7 +211,7 @@ class SimplifiedTimeframeCoordination:
 
         """
 
-        
+
 
         Args:
 
@@ -221,7 +221,7 @@ class SimplifiedTimeframeCoordination:
 
             market_data: 市场数据
 
-            
+
 
         Returns:
 
@@ -237,7 +237,7 @@ class SimplifiedTimeframeCoordination:
 
         )
 
-        
+
 
         conflicts = self.conflict_resolver.detect_conflicts(
 
@@ -245,13 +245,13 @@ class SimplifiedTimeframeCoordination:
 
         )
 
-        
+
 
         # 3. 冲突解决
 
         resolutions = self.conflict_resolver.resolve(conflicts)
 
-        
+
 
         return CoordinationResult(
 
@@ -277,13 +277,13 @@ class SignalFusion:
 
     """
 
-    
+
 
     索引: TIMEFRAME_COORD_001-M02
 
     """
 
-    
+
 
     def fuse(
 
@@ -301,7 +301,7 @@ class SignalFusion:
 
         融合信号
 
-        
+
 
         Args:
 
@@ -311,7 +311,7 @@ class SignalFusion:
 
             market_data: 市场数据
 
-            
+
 
         Returns:
 
@@ -321,7 +321,7 @@ class SignalFusion:
 
         fused = {}
 
-        
+
 
         for asset in short_term_signals.keys():
 
@@ -335,7 +335,7 @@ class SignalFusion:
 
             )
 
-            
+
 
             # 融合信号
 
@@ -361,7 +361,7 @@ class SignalFusion:
 
             )
 
-        
+
 
         return fused
 
@@ -387,7 +387,7 @@ class SignalFusion:
 
 > **核心职责**: Simplified Timeframe Coordination蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -429,7 +429,7 @@ def coordinate_signals(
 
     """
 
-    
+
 
     Args:
 
@@ -439,7 +439,7 @@ def coordinate_signals(
 
         market_data: 市场数据
 
-        
+
 
     Returns:
 
@@ -463,13 +463,13 @@ def resolve_conflicts(
 
     解决信号冲突
 
-    
+
 
     Args:
 
         conflicts: 冲突列表
 
-        
+
 
     Returns:
 
@@ -503,7 +503,7 @@ def resolve_conflicts(
 
 
 
-1. 
+1.
 
 
 
@@ -603,7 +603,7 @@ def resolve_conflicts(
 
 |------|------|------|
 
-| **Simplified Timeframe Coordination** | 
+| **Simplified Timeframe Coordination** |
 
 
 
@@ -612,10 +612,3 @@ def resolve_conflicts(
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

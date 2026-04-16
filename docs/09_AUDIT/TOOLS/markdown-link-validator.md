@@ -135,7 +135,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -159,7 +159,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -175,7 +175,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -187,7 +187,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -219,7 +219,7 @@ class MarkdownLinkValidator:
 
 
 
-            'validity_rate': len(self.valid_links) / (len(self.valid_links) + len(self.broken_links)) * 100 
+            'validity_rate': len(self.valid_links) / (len(self.valid_links) + len(self.broken_links)) * 100
 
 
 
@@ -231,7 +231,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -279,7 +279,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -295,7 +295,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -307,7 +307,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -327,7 +327,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -391,7 +391,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -411,7 +411,7 @@ class MarkdownLinkValidator:
 
 
 
-                
+
 
 
 
@@ -487,7 +487,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -531,7 +531,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -571,7 +571,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -587,7 +587,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -599,7 +599,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -611,7 +611,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -623,7 +623,7 @@ class MarkdownLinkValidator:
 
 
 
-        
+
 
 
 
@@ -647,7 +647,7 @@ class MarkdownLinkValidator:
 
 
 
-            'validity_rate': len(self.valid_links) / (len(self.valid_links) + len(self.broken_links)) * 100 
+            'validity_rate': len(self.valid_links) / (len(self.valid_links) + len(self.broken_links)) * 100
 
 
 
@@ -663,7 +663,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -691,7 +691,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -727,7 +727,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -771,7 +771,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -823,7 +823,7 @@ class MarkdownLinkValidator:
 
 
 
-            
+
 
 
 
@@ -847,7 +847,7 @@ class MarkdownLinkValidator:
 
 
 
-    
+
 
 
 
@@ -887,7 +887,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -899,7 +899,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -911,7 +911,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -995,7 +995,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -1003,7 +1003,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -1011,7 +1011,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -1039,7 +1039,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -1059,7 +1059,7 @@ def main():
 
 
 
-    
+
 
 
 
@@ -1400,6 +1400,3 @@ validator.generate_report('validation_report.md')
 
 
 **工具版本**: v1.0.0
-
-
-

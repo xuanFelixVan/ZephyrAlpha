@@ -147,7 +147,7 @@ class ComplianceDocumentInterface:
 
         pass
 
-    
+
 
     def get_document(self, document_id: str, version: str = None) -> Document:
 
@@ -155,7 +155,7 @@ class ComplianceDocumentInterface:
 
         pass
 
-    
+
 
     def get_version_history(self, document_id: str) -> VersionHistory:
 
@@ -163,7 +163,7 @@ class ComplianceDocumentInterface:
 
         pass
 
-    
+
 
     def set_permissions(self, document_id: str, permissions: Permissions) -> PermissionResult:
 
@@ -171,7 +171,7 @@ class ComplianceDocumentInterface:
 
         pass
 
-    
+
 
     def search_documents(self, query: str) -> SearchResult:
 
@@ -335,7 +335,7 @@ class VersionControl:
 
         new_version_number = self.increment_version(current_version.version_number)
 
-        
+
 
         return DocumentVersion(
 
@@ -373,19 +373,19 @@ class PermissionManagement:
 
         user_permissions = self.get_user_permissions(user_id)
 
-        
+
 
         if document.access_level == "public":
 
             return True
 
-        
+
 
         if user_id in document.owners:
 
             return True
 
-        
+
 
         required_permission = self.get_required_permission(document.access_level, action)
 
@@ -465,7 +465,7 @@ class Document:
 
     owners: List[str]
 
-    
+
 
 @dataclass
 
@@ -485,7 +485,7 @@ class DocumentVersion:
 
     changes: str
 
-    
+
 
 @dataclass
 
@@ -501,7 +501,7 @@ class Permissions:
 
     granted_at: datetime
 
-    
+
 
 @dataclass
 
@@ -913,11 +913,10 @@ docker-compose up -d
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

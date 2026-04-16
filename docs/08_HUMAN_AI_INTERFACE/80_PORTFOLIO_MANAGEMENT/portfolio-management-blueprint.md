@@ -280,7 +280,7 @@ class PortfolioConstructor:
 
         self.constraints = {}
 
-    
+
 
     def construct_portfolio(self, strategies: List[Strategy], constraints: Constraints) -> Portfolio:
 
@@ -296,7 +296,7 @@ class PortfolioConstructor:
 
         initial_weights = self.allocate_initial_weights(strategies)
 
-        
+
 
         return Portfolio(
 
@@ -308,7 +308,7 @@ class PortfolioConstructor:
 
         )
 
-    
+
 
     def allocate_initial_weights(self, strategies: List[Strategy]) -> dict:
 
@@ -338,9 +338,9 @@ class PortfolioOptimizer:
 
         self.risk_model = RiskModels.exp_cov
 
-    
 
-    def optimize_mean_variance(self, returns: pd.DataFrame, 
+
+    def optimize_mean_variance(self, returns: pd.DataFrame,
 
                                 target_return: float = None,
 
@@ -354,13 +354,13 @@ class PortfolioOptimizer:
 
         S = self.risk_model(returns)
 
-        
+
 
         # 构建有效前沿
 
         ef = EfficientFrontier(mu, S, weight_bounds=(min_weight, max_weight))
 
-        
+
 
         # 优化
 
@@ -372,11 +372,11 @@ class PortfolioOptimizer:
 
             weights = ef.max_sharpe()
 
-        
+
 
         return weights
 
-    
+
 
     def optimize_risk_parity(self, returns: pd.DataFrame) -> dict:
 
@@ -384,13 +384,13 @@ class PortfolioOptimizer:
 
         from pypfopt import risk_models
 
-        
+
 
         S = risk_models.CovarianceShrinkage(returns).ledoit_wolf()
 
         n_assets = len(returns.columns)
 
-        
+
 
         # 风险平价权重
 
@@ -398,7 +398,7 @@ class PortfolioOptimizer:
 
         weights = risk_contributions / risk_contributions.sum()
 
-        
+
 
         return dict(zip(returns.columns, weights))
 
@@ -420,7 +420,7 @@ class AssetAllocator:
 
         self.tactical_allocation = {}
 
-    
+
 
     def strategic_allocate(self, target_allocation: dict) -> AllocationResult:
 
@@ -438,9 +438,9 @@ class AssetAllocator:
 
         )
 
-    
 
-    def tactical_adjust(self, strategic_allocation: dict, 
+
+    def tactical_adjust(self, strategic_allocation: dict,
 
                        market_views: dict) -> dict:
 
@@ -454,7 +454,7 @@ class AssetAllocator:
 
                 tactical_allocation[asset] += adjustment
 
-        
+
 
         # 归一化
 
@@ -462,7 +462,7 @@ class AssetAllocator:
 
         tactical_allocation = {k: v/total for k, v in tactical_allocation.items()}
 
-        
+
 
         return tactical_allocation
 
@@ -484,9 +484,9 @@ class PortfolioMonitor:
 
         self.rebalance_threshold = 0.05  # 5%偏离阈值
 
-    
 
-    def monitor_portfolio(self, portfolio: Portfolio, 
+
+    def monitor_portfolio(self, portfolio: Portfolio,
 
                          current_weights: dict) -> MonitorResult:
 
@@ -494,13 +494,13 @@ class PortfolioMonitor:
 
         drift = self.calculate_drift(portfolio.weights, current_weights)
 
-        
+
 
         # 检查是否需要再平衡
 
         need_rebalance = any(abs(d) > self.rebalance_threshold for d in drift.values())
 
-        
+
 
         # 生成再平衡建议
 
@@ -514,7 +514,7 @@ class PortfolioMonitor:
 
             )
 
-        
+
 
         return MonitorResult(
 
@@ -530,7 +530,7 @@ class PortfolioMonitor:
 
         )
 
-    
+
 
     def calculate_drift(self, target: dict, current: dict) -> dict:
 
@@ -628,9 +628,8 @@ class PortfolioMonitor:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

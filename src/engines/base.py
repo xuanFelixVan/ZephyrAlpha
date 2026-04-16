@@ -68,62 +68,62 @@ class EngineConfig:
 
 class BaseEngineAdapter:
     """引擎适配器基类"""
-    
+
     def __init__(self, config: EngineConfig):
         self.config = config
         self.initialized = False
-        
+
     def initialize(self) -> Result:
         """初始化引擎"""
         raise NotImplementedError
-        
+
     def shutdown(self) -> Result:
         """关闭引擎"""
         raise NotImplementedError
-        
+
     def submit_order(self, order: UnifiedOrder) -> Result:
         """提交订单"""
         raise NotImplementedError
-        
+
     def cancel_order(self, order_id: str) -> Result:
         """取消订单"""
         raise NotImplementedError
-        
+
     def get_positions(self) -> Result[List[CorePosition]]:
         """获取持仓列表"""
         raise NotImplementedError
-        
+
     def get_account_info(self) -> Result[Dict[str, Any]]:
         """获取账户信息"""
         raise NotImplementedError
-        
-    def get_historical_data(self, symbol: str, start_date: str, end_date: str, 
+
+    def get_historical_data(self, symbol: str, start_date: str, end_date: str,
                            frequency: str = "1d") -> Result[pd.DataFrame]:
         """获取历史数据"""
         raise NotImplementedError
-        
-    def run_backtest(self, strategy_class: Any, data: pd.DataFrame, 
+
+    def run_backtest(self, strategy_class: Any, data: pd.DataFrame,
                     **kwargs) -> Result[Dict[str, Any]]:
         """运行回测"""
         raise NotImplementedError
-        
+
     def get_performance_metrics(self) -> Result[Dict[str, Any]]:
         """获取绩效指标"""
         raise NotImplementedError
-        
+
     def is_ashare_compatible(self) -> bool:
         """是否支持A股规则"""
         return False
-        
+
     def supports_order_type(self, order_type: OrderType) -> bool:
         """支持的订单类型"""
         return order_type in [OrderType.MARKET, OrderType.LIMIT]
-        
+
     def calculate_commission(self, amount: float) -> float:
         """计算佣金"""
         commission = amount * self.config.commission_rate
         return max(commission, self.config.min_commission)
-        
+
     def estimate_slippage(self, symbol: str, quantity: float, side: OrderSide) -> float:
         """估算滑点"""
         return self.config.slippage_rate

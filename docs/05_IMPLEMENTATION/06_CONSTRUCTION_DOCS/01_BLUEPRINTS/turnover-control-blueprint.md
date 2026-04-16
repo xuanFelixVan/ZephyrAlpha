@@ -19,7 +19,7 @@ layer: layer_06
 
 > **核心职责**: 控制组合周转率，降低交易成本
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -183,7 +183,7 @@ class TurnoverController:
 
     """
 
-    
+
 
     def set_turnover_constraint(
 
@@ -197,7 +197,7 @@ class TurnoverController:
 
         """
 
-        
+
 
         参数:
 
@@ -207,7 +207,7 @@ class TurnoverController:
 
         pass
 
-    
+
 
     def calculate_turnover(
 
@@ -221,7 +221,7 @@ class TurnoverController:
 
         """
 
-        
+
 
         Turnover = 0.5 * sum(|w_target - w_current|)
 
@@ -229,7 +229,7 @@ class TurnoverController:
 
         pass
 
-    
+
 
     def optimize_with_turnover_constraint(
 
@@ -269,11 +269,11 @@ turnover_control:
 
   max_turnover: 0.3  # 年化30%
 
-  
+
 
   # 交易频率
 
-  
+
 
   # 成本考虑
 
@@ -329,7 +329,7 @@ graph LR
 
     D[交易成本分析引擎] --> B
 
-    
+
 
     B --> E[组合再平衡]
 
@@ -337,7 +337,7 @@ graph LR
 
     B --> G[税损收割]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -402,10 +402,3 @@ graph LR
 **文档维护**:
 
 - **责任模块**: TURNOVER_CONTROL
-
-
-
-
-
-
-

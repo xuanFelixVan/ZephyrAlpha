@@ -30,7 +30,7 @@ tags: '["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔﮒ?, "ﻛ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -462,7 +462,7 @@ class FactorCalculator:
 
 
 
-    
+
 
 
 
@@ -748,7 +748,7 @@ def get_factor_data(
 
 
 
-    
+
 
 
 
@@ -768,7 +768,7 @@ start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        end_date: ﻝﭨ�
 
 
 
-    
+
 
 
 
@@ -780,7 +780,7 @@ start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        end_date: ﻝﭨ�
 
 
 
-    
+
 
 
 
@@ -1060,7 +1060,7 @@ def calculate_factor(data: pd.DataFrame) -> pd.Series:
 
 
 
-    
+
 
 
 
@@ -1084,7 +1084,7 @@ DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒﮒ?        CalculationError: ﻟ؟۰ﻝ�
 
 
 
-    
+
 
 
 
@@ -1174,7 +1174,7 @@ def get_factor_data(
 
 
 
-    
+
 
 
 
@@ -1198,7 +1198,7 @@ end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙﮔﺙﮒﺙﻛﺕﭦYYYY-MM-DD
 
 
 
-    
+
 
 
 
@@ -1214,7 +1214,7 @@ end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙﮔﺙﮒﺙﻛﺕﭦYYYY-MM-DD
 
 
 
-    
+
 
 
 
@@ -1544,7 +1544,7 @@ def old_interface():
 
 
 
-    
+
 
 
 
@@ -1970,7 +1970,7 @@ class FactorRequest(BaseModel):
 
 
 
-    
+
 
 
 
@@ -1994,7 +1994,7 @@ class FactorRequest(BaseModel):
 
 
 
-    
+
 
 
 

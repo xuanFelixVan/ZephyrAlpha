@@ -147,7 +147,7 @@ layer: layer_06
 
 > **核心职责**: 计算和评估投资组合的风险调整收益
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -189,7 +189,7 @@ layer: layer_06
 
 
 
-| 
+|
 
 |---------|---------|-----------|---------|
 
@@ -245,7 +245,7 @@ graph LR
 
     D[组合优化引擎] --> B
 
-    
+
 
     B --> E[系统集成]
 
@@ -253,7 +253,7 @@ graph LR
 
     B --> G[质量报告自动化]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -425,7 +425,7 @@ class PortfolioPerformanceEvaluator:
 
     """
 
-    
+
 
     索引: PORTFOLIO_PERF_001-M01
 
@@ -433,13 +433,13 @@ class PortfolioPerformanceEvaluator:
 
     """
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.02):
 
         self.risk_free_rate = risk_free_rate
 
-        
+
 
     def calculate_performance_metrics(
 
@@ -455,11 +455,11 @@ class PortfolioPerformanceEvaluator:
 
         计算绩效指标
 
-        
+
 
         Args:
 
-            
+
 
         Returns:
 
@@ -473,7 +473,7 @@ class PortfolioPerformanceEvaluator:
 
         )
 
-        
+
 
         return {
 
@@ -493,7 +493,7 @@ class PortfolioPerformanceEvaluator:
 
         }
 
-    
+
 
     def calculate_risk_metrics(
 
@@ -507,11 +507,11 @@ class PortfolioPerformanceEvaluator:
 
         计算风险指标
 
-        
+
 
         Args:
 
-            
+
 
         Returns:
 
@@ -531,7 +531,7 @@ class PortfolioPerformanceEvaluator:
 
         }
 
-    
+
 
     def calculate_alpha_beta(
 
@@ -547,11 +547,11 @@ class PortfolioPerformanceEvaluator:
 
         计算Alpha和Beta
 
-        
+
 
         Args:
 
-            
+
 
         Returns:
 
@@ -567,7 +567,7 @@ class PortfolioPerformanceEvaluator:
 
         )
 
-        
+
 
         return {
 
@@ -585,7 +585,7 @@ class PortfolioPerformanceEvaluator:
 
         }
 
-    
+
 
     def generate_tearsheet(
 
@@ -603,7 +603,7 @@ class PortfolioPerformanceEvaluator:
 
         """
 
-        
+
 
         Args:
 
@@ -611,7 +611,7 @@ class PortfolioPerformanceEvaluator:
 
             transactions: 交易数据
 
-            
+
 
         Returns:
 
@@ -651,13 +651,13 @@ class QuantStatsEvaluator:
 
     """
 
-    
+
 
     索引: PORTFOLIO_PERF_001-M02
 
     """
 
-    
+
 
     def calculate_extended_metrics(
 
@@ -673,11 +673,11 @@ class QuantStatsEvaluator:
 
         计算扩展绩效指标
 
-        
+
 
         Args:
 
-            
+
 
         Returns:
 
@@ -705,7 +705,7 @@ class QuantStatsEvaluator:
 
         }
 
-    
+
 
     def generate_html_report(
 
@@ -723,7 +723,7 @@ class QuantStatsEvaluator:
 
         生成HTML绩效报告
 
-        
+
 
         Args:
 
@@ -765,13 +765,13 @@ def calculate_rolling_metrics(
 
     计算滚动绩效指标
 
-    
+
 
     Args:
 
         window: 滚动窗口（天数）
 
-        
+
 
     Returns:
 
@@ -785,11 +785,11 @@ def calculate_rolling_metrics(
 
     )
 
-    
+
 
     rolling_volatility = returns.rolling(window).std() * np.sqrt(252)
 
-    
+
 
     rolling_max_drawdown = returns.rolling(window).apply(
 
@@ -797,7 +797,7 @@ def calculate_rolling_metrics(
 
     )
 
-    
+
 
     return pd.DataFrame({
 
@@ -951,7 +951,7 @@ class PerformanceAPI:
 
     """绩效评估API接口"""
 
-    
+
 
     @endpoint("/api/v1/performance/calculate")
 
@@ -967,13 +967,13 @@ class PerformanceAPI:
 
         计算绩效指标
 
-        
+
 
         Args:
 
             request: 绩效计算请求
 
-            
+
 
         Returns:
 
@@ -983,7 +983,7 @@ class PerformanceAPI:
 
         pass
 
-    
+
 
     @endpoint("/api/v1/performance/tearsheet")
 
@@ -1003,7 +1003,7 @@ class PerformanceAPI:
 
         生成完整绩效报告
 
-        
+
 
         Args:
 
@@ -1011,7 +1011,7 @@ class PerformanceAPI:
 
             end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -1021,7 +1021,7 @@ class PerformanceAPI:
 
         pass
 
-    
+
 
     @endpoint("/api/v1/performance/compare")
 
@@ -1041,7 +1041,7 @@ class PerformanceAPI:
 
         对比多个策略绩效
 
-        
+
 
         Args:
 
@@ -1049,7 +1049,7 @@ class PerformanceAPI:
 
             end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -1258,12 +1258,3 @@ class PerformanceAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-
-
-

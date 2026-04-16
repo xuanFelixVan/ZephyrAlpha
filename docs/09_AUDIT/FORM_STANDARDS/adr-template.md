@@ -711,6 +711,3 @@ parent_document: ../STANDARDS/ADR_STANDARD.md
 
 
 **غ╕شةؤ┤░**: [YYYY-MM-DD]
-
-
-

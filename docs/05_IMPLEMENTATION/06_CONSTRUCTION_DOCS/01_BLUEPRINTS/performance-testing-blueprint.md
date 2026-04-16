@@ -19,7 +19,7 @@ layer: layer_05
 # 性能测试蓝图
 
 > **核心职责**: 提供全面的性能测试能力，支持负载测试、性能基准、性能优化建议
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：性能测试、负载测试、性能基准、性能优化建议
 > - ❌ 本文档不负责：压力测试（由压力测试模块负责）、功能测试（由测试模块负责）
 
@@ -75,44 +75,44 @@ import json
 
 class FactorEngineUser(HttpUser):
     """因子引擎性能测试用户"""
-    
+
     wait_time = between(1, 3)
-    
+
     def on_start(self):
         """测试开始时执行"""
         self.login()
-    
+
     def login(self):
         """登录获取token"""
         response = self.client.post("/api/v1/auth/login", json={
             "username": "test_user",
             "password": "test_password"
         })
-        
+
         if response.status_code == 200:
             self.token = response.json().get("token")
         else:
             self.token = None
-    
+
     @task(3)
     def get_factor_list(self):
         """获取因子列表"""
         headers = {"Authorization": f"Bearer {self.token}"}
-        
+
         self.client.get(
             "/api/v1/factors",
             headers=headers,
             name="Get Factor List"
         )
-    
+
     @task(2)
     def calculate_factor(self):
         """计算因子"""
         headers = {"Authorization": f"Bearer {self.token}"}
-        
+
         factor_names = ["MOMENTUM", "MEAN_REVERSION", "VOLATILITY"]
         factor_name = random.choice(factor_names)
-        
+
         self.client.post(
             "/api/v1/factors/calculate",
             headers=headers,
@@ -124,14 +124,14 @@ class FactorEngineUser(HttpUser):
             },
             name="Calculate Factor"
         )
-    
+
     @task(1)
     def get_factor_result(self):
         """获取因子结果"""
         headers = {"Authorization": f"Bearer {self.token}"}
-        
+
         factor_id = random.randint(1, 1000)
-        
+
         self.client.get(
             f"/api/v1/factors/{factor_id}",
             headers=headers,
@@ -140,14 +140,14 @@ class FactorEngineUser(HttpUser):
 
 class StrategyEngineUser(HttpUser):
     """策略引擎性能测试用户"""
-    
+
     wait_time = between(2, 5)
-    
+
     @task(3)
     def get_strategy_list(self):
         """获取策略列表"""
         self.client.get("/api/v1/strategies", name="Get Strategy List")
-    
+
     @task(2)
     def run_backtest(self):
         """运行回测"""
@@ -162,12 +162,12 @@ class StrategyEngineUser(HttpUser):
             },
             name="Run Backtest"
         )
-    
+
     @task(1)
     def get_backtest_result(self):
         """获取回测结果"""
         backtest_id = random.randint(1, 100)
-        
+
         self.client.get(
             f"/api/v1/strategies/backtest/{backtest_id}",
             name="Get Backtest Result"
@@ -184,11 +184,11 @@ import statistics
 
 class PerformanceBenchmark:
     """性能基准"""
-    
+
     def __init__(self):
         self.baselines = {}
         self.results = []
-    
+
     def set_baseline(
         self,
         endpoint: str,
@@ -203,7 +203,7 @@ class PerformanceBenchmark:
             "error_rate": error_rate,
             "set_at": datetime.now().isoformat()
         }
-    
+
     def record_result(
         self,
         endpoint: str,
@@ -219,7 +219,7 @@ class PerformanceBenchmark:
             "error_rate": error_rate,
             "recorded_at": datetime.now().isoformat()
         })
-    
+
     def compare_with_baseline(
         self,
         endpoint: str,
@@ -233,36 +233,36 @@ class PerformanceBenchmark:
                 "status": "no_baseline",
                 "message": "未设置基准"
             }
-        
+
         baseline = self.baselines[endpoint]
-        
+
         response_time_change = (
             (response_time_ms - baseline["response_time_ms"]) /
             baseline["response_time_ms"] * 100
         )
-        
+
         throughput_change = (
             (throughput_rps - baseline["throughput_rps"]) /
             baseline["throughput_rps"] * 100
         )
-        
+
         error_rate_change = (
             (error_rate - baseline["error_rate"]) /
             baseline["error_rate"] * 100 if baseline["error_rate"] > 0 else 0
         )
-        
+
         status = "pass"
-        
+
         if response_time_change > 20:
             status = "fail"
         elif response_time_change > 10:
             status = "warning"
-        
+
         if error_rate_change > 50:
             status = "fail"
         elif error_rate_change > 20:
             status = "warning"
-        
+
         return {
             "status": status,
             "response_time_change": response_time_change,
@@ -275,7 +275,7 @@ class PerformanceBenchmark:
                 "error_rate": error_rate
             }
         }
-    
+
     def generate_benchmark_report(self) -> Dict:
         """生成基准报告"""
         report = {
@@ -283,7 +283,7 @@ class PerformanceBenchmark:
             "baselines": self.baselines,
             "comparisons": []
         }
-        
+
         for result in self.results:
             comparison = self.compare_with_baseline(
                 result["endpoint"],
@@ -291,13 +291,13 @@ class PerformanceBenchmark:
                 result["throughput_rps"],
                 result["error_rate"]
             )
-            
+
             report["comparisons"].append({
                 "endpoint": result["endpoint"],
                 "comparison": comparison,
                 "recorded_at": result["recorded_at"]
             })
-        
+
         return report
 ```
 
@@ -308,10 +308,10 @@ from collections import defaultdict
 
 class PerformanceAnalyzer:
     """性能分析器"""
-    
+
     def __init__(self):
         self.metrics = defaultdict(list)
-    
+
     def record_metric(
         self,
         endpoint: str,
@@ -324,17 +324,17 @@ class PerformanceAnalyzer:
             "status_code": status_code,
             "timestamp": datetime.now().isoformat()
         })
-    
+
     def analyze_endpoint(self, endpoint: str) -> Dict:
         """分析端点性能"""
         if endpoint not in self.metrics:
             return {"error": "No data for endpoint"}
-        
+
         data = self.metrics[endpoint]
-        
+
         response_times = [d["response_time"] for d in data]
         status_codes = [d["status_code"] for d in data]
-        
+
         analysis = {
             "endpoint": endpoint,
             "total_requests": len(data),
@@ -353,22 +353,22 @@ class PerformanceAnalyzer:
             },
             "error_rate": sum(1 for code in status_codes if code >= 400) / len(data)
         }
-        
+
         return analysis
-    
+
     def _percentile(self, data: List[float], percentile: int) -> float:
         """计算百分位数"""
         sorted_data = sorted(data)
         index = int(len(sorted_data) * percentile / 100)
         return sorted_data[min(index, len(sorted_data) - 1)]
-    
+
     def identify_bottlenecks(self) -> List[Dict]:
         """识别性能瓶颈"""
         bottlenecks = []
-        
+
         for endpoint in self.metrics:
             analysis = self.analyze_endpoint(endpoint)
-            
+
             if analysis["response_time"]["p95"] > 1000:
                 bottlenecks.append({
                     "endpoint": endpoint,
@@ -376,7 +376,7 @@ class PerformanceAnalyzer:
                     "p95_response_time": analysis["response_time"]["p95"],
                     "severity": "high"
                 })
-            
+
             if analysis["error_rate"] > 0.05:
                 bottlenecks.append({
                     "endpoint": endpoint,
@@ -384,15 +384,15 @@ class PerformanceAnalyzer:
                     "error_rate": analysis["error_rate"],
                     "severity": "high"
                 })
-        
+
         return bottlenecks
-    
+
     def generate_optimization_suggestions(self) -> List[Dict]:
         """生成优化建议"""
         suggestions = []
-        
+
         bottlenecks = self.identify_bottlenecks()
-        
+
         for bottleneck in bottlenecks:
             if bottleneck["type"] == "slow_response":
                 suggestions.append({
@@ -405,7 +405,7 @@ class PerformanceAnalyzer:
                         "考虑异步处理"
                     ]
                 })
-            
+
             elif bottleneck["type"] == "high_error_rate":
                 suggestions.append({
                     "endpoint": bottleneck["endpoint"],
@@ -417,7 +417,7 @@ class PerformanceAnalyzer:
                         "优化错误处理"
                     ]
                 })
-        
+
         return suggestions
 ```
 
@@ -455,7 +455,7 @@ from datetime import datetime
 
 class PerformanceReportGenerator:
     """性能报告生成器"""
-    
+
     def generate_report(
         self,
         test_name: str,
@@ -479,15 +479,15 @@ class PerformanceReportGenerator:
             "conclusions": self._generate_conclusions(statistics),
             "recommendations": self._generate_recommendations(statistics)
         }
-        
+
         return report
-    
+
     def _generate_conclusions(self, statistics: Dict) -> List[str]:
         """生成结论"""
         conclusions = []
-        
+
         avg_response_time = statistics.get("avg_response_time", 0)
-        
+
         if avg_response_time < 100:
             conclusions.append("系统响应速度优秀")
         elif avg_response_time < 500:
@@ -496,36 +496,36 @@ class PerformanceReportGenerator:
             conclusions.append("系统响应速度一般，需要优化")
         else:
             conclusions.append("系统响应速度慢，需要紧急优化")
-        
+
         failure_rate = statistics.get("failure_rate", 0)
-        
+
         if failure_rate < 0.01:
             conclusions.append("系统稳定性优秀")
         elif failure_rate < 0.05:
             conclusions.append("系统稳定性良好")
         else:
             conclusions.append("系统稳定性差，需要优化")
-        
+
         return conclusions
-    
+
     def _generate_recommendations(self, statistics: Dict) -> List[str]:
         """生成建议"""
         recommendations = []
-        
+
         avg_response_time = statistics.get("avg_response_time", 0)
-        
+
         if avg_response_time > 500:
             recommendations.append("优化数据库查询，添加必要的索引")
             recommendations.append("使用缓存减少数据库访问")
             recommendations.append("考虑使用异步处理")
-        
+
         failure_rate = statistics.get("failure_rate", 0)
-        
+
         if failure_rate > 0.05:
             recommendations.append("检查错误日志，定位问题根源")
             recommendations.append("增加重试机制和熔断器")
             recommendations.append("优化错误处理逻辑")
-        
+
         return recommendations
 ```
 

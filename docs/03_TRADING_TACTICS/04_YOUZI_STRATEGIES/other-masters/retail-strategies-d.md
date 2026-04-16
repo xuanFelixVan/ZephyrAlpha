@@ -66,7 +66,7 @@ layer: layer_03
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -1063,4 +1063,3 @@ class ValueInvestorStrategy(BaseStrategy):
 |  | S029/S030 |
 
 |  | S029/S030 |
-

@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 组合归因分析详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Brinson归因、因子归因、收益分解
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 分解组合收益来源，识别超额收益驱动因素
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 归因模型选择：Brinson、因子归因等
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 数据要求：需要持仓、基准、收益等数据
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供收益来源分析能力
 
@@ -216,13 +216,13 @@ class BrinsonAttribution:
 
     """Brinson归因分析器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def analyze(
 
@@ -244,7 +244,7 @@ class BrinsonAttribution:
 
         执行Brinson归因分析
 
-        
+
 
         参数:
 
@@ -258,7 +258,7 @@ class BrinsonAttribution:
 
             categories: 类别映射
 
-            
+
 
         返回:
 
@@ -268,7 +268,7 @@ class BrinsonAttribution:
 
         unique_categories = categories.unique()
 
-        
+
 
         allocation_effect = 0.0
 
@@ -278,13 +278,13 @@ class BrinsonAttribution:
 
         category_breakdown = {}
 
-        
+
 
         for cat in unique_categories:
 
             cat_mask = categories == cat
 
-            
+
 
             w_p = portfolio_weights[cat_mask].sum()
 
@@ -294,7 +294,7 @@ class BrinsonAttribution:
 
             r_b = (benchmark_weights[cat_mask] * benchmark_returns[cat_mask]).sum() / w_b if w_b > 0 else 0
 
-            
+
 
             alloc = (w_p - w_b) * r_b
 
@@ -302,7 +302,7 @@ class BrinsonAttribution:
 
             interact = (w_p - w_b) * (r_p - r_b)
 
-            
+
 
             allocation_effect += alloc
 
@@ -310,7 +310,7 @@ class BrinsonAttribution:
 
             interaction_effect += interact
 
-            
+
 
             category_breakdown[cat] = {
 
@@ -324,11 +324,11 @@ class BrinsonAttribution:
 
             }
 
-        
+
 
         total_active_return = allocation_effect + selection_effect + interaction_effect
 
-        
+
 
         result = BrinsonAttributionResult(
 
@@ -344,11 +344,11 @@ class BrinsonAttribution:
 
         )
 
-        
+
 
         self.logger.info(f"Brinson归因完成，总主动收益={total_active_return:.6f}")
 
-        
+
 
         return result
 
@@ -360,13 +360,13 @@ class FactorAttribution:
 
     """因子归因分析器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def analyze(
 
@@ -384,7 +384,7 @@ class FactorAttribution:
 
         执行因子归因分析
 
-        
+
 
         参数:
 
@@ -394,7 +394,7 @@ class FactorAttribution:
 
             factor_exposures: 因子暴露
 
-            
+
 
         返回:
 
@@ -404,7 +404,7 @@ class FactorAttribution:
 
         factor_names = factor_returns.columns.tolist()
 
-        
+
 
         factor_contributions = {}
 
@@ -418,13 +418,13 @@ class FactorAttribution:
 
             factor_contributions[factor] = contribution
 
-        
+
 
         total_factor_return = sum(factor_contributions.values())
 
         specific_return = portfolio_returns.mean() - total_factor_return
 
-        
+
 
         result = FactorAttributionResult(
 
@@ -440,11 +440,11 @@ class FactorAttribution:
 
         )
 
-        
+
 
         self.logger.info(f"因子归因完成，因子收益={total_factor_return:.6f}")
 
-        
+
 
         return result
 
@@ -456,7 +456,7 @@ class AttributionAnalyzer:
 
     """归因分析器主类"""
 
-    
+
 
     def __init__(self):
 
@@ -466,7 +466,7 @@ class AttributionAnalyzer:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def analyze_brinson(
 
@@ -494,7 +494,7 @@ class AttributionAnalyzer:
 
         )
 
-    
+
 
     def analyze_factor(
 
@@ -615,4 +615,3 @@ class AttributionAnalyzer:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

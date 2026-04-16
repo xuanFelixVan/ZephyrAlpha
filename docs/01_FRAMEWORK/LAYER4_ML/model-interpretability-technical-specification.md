@@ -293,7 +293,7 @@ implementation_status: 技术规格设计完整
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -323,7 +323,7 @@ implementation_status: 技术规格设计完整
 
 
 
-- **核心职责**: 模型可解释性分?- **职责边界**: 
+- **核心职责**: 模型可解释性分?- **职责边界**:
 
 
 
@@ -929,7 +929,7 @@ class SHAPExplainer:
 
 
 
-    """SHAP解释?    
+    """SHAP解释?
 
 
 
@@ -947,7 +947,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -977,7 +977,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1001,7 +1001,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1013,7 +1013,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1055,7 +1055,7 @@ class SHAPExplainer:
 
 
 
-                self.model.predict, 
+                self.model.predict,
 
 
 
@@ -1073,7 +1073,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -1091,7 +1091,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1109,7 +1109,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1139,7 +1139,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1157,7 +1157,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1169,7 +1169,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1229,7 +1229,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1277,7 +1277,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -1289,7 +1289,7 @@ class SHAPExplainer:
 
 
 
-        """局部解释        
+        """局部解释
 
 
 
@@ -1313,7 +1313,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1343,7 +1343,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1355,7 +1355,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1373,7 +1373,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1403,7 +1403,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1421,7 +1421,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1439,7 +1439,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1463,7 +1463,7 @@ class SHAPExplainer:
 
 
 
-            
+
 
 
 
@@ -1517,7 +1517,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1529,7 +1529,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -1583,7 +1583,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1595,7 +1595,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1637,7 +1637,7 @@ class SHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -1649,7 +1649,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -1697,7 +1697,7 @@ class SHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -1763,7 +1763,7 @@ class LIMEExplainer:
 
 
 
-    """LIME解释?    
+    """LIME解释?
 
 
 
@@ -1781,7 +1781,7 @@ class LIMEExplainer:
 
 
 
-    
+
 
 
 
@@ -1817,7 +1817,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -1841,7 +1841,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -1877,7 +1877,7 @@ class LIMEExplainer:
 
 
 
-    
+
 
 
 
@@ -1889,7 +1889,7 @@ class LIMEExplainer:
 
 
 
-        """局部解释        
+        """局部解释
 
 
 
@@ -1907,7 +1907,7 @@ class LIMEExplainer:
 
 
 
-            num_features: 解释的特征数据            
+            num_features: 解释的特征数据
 
 
 
@@ -1961,7 +1961,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -1973,7 +1973,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -1997,7 +1997,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -2051,7 +2051,7 @@ class LIMEExplainer:
 
 
 
-    
+
 
 
 
@@ -2099,7 +2099,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -2111,7 +2111,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -2153,7 +2153,7 @@ class LIMEExplainer:
 
 
 
-        
+
 
 
 
@@ -2189,7 +2189,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2231,7 +2231,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2267,7 +2267,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        """排列重要性分?        
+        """排列重要性分?
 
 
 
@@ -2291,7 +2291,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2315,7 +2315,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2351,7 +2351,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2369,7 +2369,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2441,7 +2441,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2453,7 +2453,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2483,7 +2483,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2501,7 +2501,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2561,7 +2561,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2573,7 +2573,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-    
+
 
 
 
@@ -2603,7 +2603,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2663,7 +2663,7 @@ class FeatureImportanceAnalyzer:
 
 
 
-        
+
 
 
 
@@ -2693,7 +2693,7 @@ class DecisionExplainer:
 
 
 
-    """决策解释生成?    
+    """决策解释生成?
 
 
 
@@ -2711,7 +2711,7 @@ class DecisionExplainer:
 
 
 
-    
+
 
 
 
@@ -2735,7 +2735,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -2783,7 +2783,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -2795,7 +2795,7 @@ class DecisionExplainer:
 
 
 
-            prediction: 预测试            feature_importance: 特征重要性列?            context: 上下文信?            
+            prediction: 预测试            feature_importance: 特征重要性列?            context: 上下文信?
 
 
 
@@ -2825,7 +2825,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -2849,7 +2849,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -2873,7 +2873,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -2933,7 +2933,7 @@ class DecisionExplainer:
 
 
 
-    
+
 
 
 
@@ -2987,7 +2987,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -3029,7 +3029,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -3071,7 +3071,7 @@ class DecisionExplainer:
 
 
 
-        
+
 
 
 
@@ -3083,7 +3083,7 @@ class DecisionExplainer:
 
 
 
-    
+
 
 
 
@@ -3179,7 +3179,7 @@ class DecisionExplainer:
 
 
 
-    
+
 
 
 
@@ -3281,7 +3281,7 @@ class ModelInterpretabilityService:
 
 
 
-    """模型可解释性服?    
+    """模型可解释性服?
 
 
 
@@ -3293,7 +3293,7 @@ class ModelInterpretabilityService:
 
 
 
-    
+
 
 
 
@@ -3323,7 +3323,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3371,7 +3371,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3419,7 +3419,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3473,7 +3473,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3509,7 +3509,7 @@ class ModelInterpretabilityService:
 
 
 
-            
+
 
 
 
@@ -3563,7 +3563,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3587,7 +3587,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3611,7 +3611,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3623,7 +3623,7 @@ class ModelInterpretabilityService:
 
 
 
-    
+
 
 
 
@@ -3671,7 +3671,7 @@ class ModelInterpretabilityService:
 
 
 
-        """生成可解释性报告        
+        """生成可解释性报告
 
 
 
@@ -3707,7 +3707,7 @@ class ModelInterpretabilityService:
 
 
 
-            
+
 
 
 
@@ -3731,7 +3731,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3749,7 +3749,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3845,7 +3845,7 @@ class ModelInterpretabilityService:
 
 
 
-        
+
 
 
 
@@ -3857,7 +3857,7 @@ class ModelInterpretabilityService:
 
 
 
-    
+
 
 
 
@@ -4013,7 +4013,7 @@ class TestSHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -4055,7 +4055,7 @@ class TestSHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -4085,7 +4085,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4103,7 +4103,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4121,7 +4121,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4145,7 +4145,7 @@ class TestSHAPExplainer:
 
 
 
-    
+
 
 
 
@@ -4175,7 +4175,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4193,7 +4193,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4211,7 +4211,7 @@ class TestSHAPExplainer:
 
 
 
-        
+
 
 
 
@@ -4506,8 +4506,3 @@ class TestSHAPExplainer:
 
 
 **维护?*: AI工程?
-
-
-
-
-

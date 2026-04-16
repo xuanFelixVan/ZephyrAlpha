@@ -21,7 +21,7 @@ description: 报告生成模板 - 自动化报告、图表生成、文档输出
 
 # %% [markdown]
 # # 研究报告生成
-# 
+#
 # > **项目**: ZephyrAlpha v5.1
 # > **作者**: [姓名/团队]
 # > **创建日期**: YYYY-MM-DD
@@ -190,9 +190,9 @@ print("📋 生成执行摘要")
 executive_summary = f"""
 # 执行摘要
 
-**报告编号**: {report_config['report_id']}  
-**报告周期**: {report_config['report_period']}  
-**生成日期**: {report_config['generation_date']}  
+**报告编号**: {report_config['report_id']}
+**报告周期**: {report_config['report_period']}
+**生成日期**: {report_config['generation_date']}
 **版本**: {report_config['version']}
 
 ## 核心发现
@@ -278,7 +278,7 @@ if len(factor_names) > 1:
     axes[1, 0].set_ylabel('因子')
     plt.colorbar(im, ax=axes[1, 0])
 else:
-    axes[1, 0].text(0.5, 0.5, '因子数量不足\n无法计算相关性', 
+    axes[1, 0].text(0.5, 0.5, '因子数量不足\n无法计算相关性',
                    ha='center', va='center', fontsize=12)
     axes[1, 0].set_title('因子IR相关性', fontsize=viz_config['font_size']['title'])
 
@@ -314,17 +314,17 @@ if len(backtest_df) > 0:
     axes[0, 0].set_xlabel('日期')
     axes[0, 0].set_ylabel('组合价值')
     axes[0, 0].grid(True, alpha=0.3)
-    
+
     # 添加最终价值标注
     final_value = backtest_df['portfolio_value'].iloc[-1]
-    axes[0, 0].text(0.05, 0.95, f'最终价值: {final_value:,.0f}', 
+    axes[0, 0].text(0.05, 0.95, f'最终价值: {final_value:,.0f}',
                    transform=axes[0, 0].transAxes, fontsize=10,
                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
 # 每日收益分布
 if len(backtest_df) > 0:
     axes[0, 1].hist(backtest_df['daily_return'].dropna(), bins=30, edgecolor='black', alpha=0.7)
-    axes[0, 1].axvline(x=backtest_df['daily_return'].mean(), color='r', linestyle='--', 
+    axes[0, 1].axvline(x=backtest_df['daily_return'].mean(), color='r', linestyle='--',
                       label=f'均值: {backtest_df['daily_return'].mean():.4f}')
     axes[0, 1].axvline(x=backtest_df['daily_return'].median(), color='g', linestyle='--',
                       label=f'中位数: {backtest_df['daily_return'].median():.4f}')
@@ -341,10 +341,10 @@ if len(backtest_df) > 0 and 'cumulative_return' in backtest_df.columns:
     axes[1, 0].set_xlabel('日期')
     axes[1, 0].set_ylabel('累积收益')
     axes[1, 0].grid(True, alpha=0.3)
-    
+
     # 添加总收益率标注
     total_return = backtest_df['cumulative_return'].iloc[-1] if len(backtest_df) > 0 else 0
-    axes[1, 0].text(0.05, 0.95, f'总收益率: {total_return:.2%}', 
+    axes[1, 0].text(0.05, 0.95, f'总收益率: {total_return:.2%}',
                    transform=axes[1, 0].transAxes, fontsize=10,
                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
@@ -352,18 +352,18 @@ if len(backtest_df) > 0 and 'cumulative_return' in backtest_df.columns:
 if len(backtest_df) > 0:
     backtest_df['year_month'] = backtest_df['date'].dt.to_period('M')
     monthly_returns = backtest_df.groupby('year_month')['daily_return'].mean()
-    
+
     if len(monthly_returns) > 0:
         # 创建月度热图数据
         monthly_returns_df = monthly_returns.unstack() if hasattr(monthly_returns, 'unstack') else monthly_returns.to_frame().T
-        im = axes[1, 1].imshow([monthly_returns.values] if len(monthly_returns_df.shape) == 1 else monthly_returns_df.values, 
+        im = axes[1, 1].imshow([monthly_returns.values] if len(monthly_returns_df.shape) == 1 else monthly_returns_df.values,
                               cmap='RdYlGn', aspect='auto')
         axes[1, 1].set_title('月度收益热图', fontsize=viz_config['font_size']['title'])
         axes[1, 1].set_xlabel('月份')
         axes[1, 1].set_ylabel('')
         plt.colorbar(im, ax=axes[1, 1])
     else:
-        axes[1, 1].text(0.5, 0.5, '数据不足\n无法生成热图', 
+        axes[1, 1].text(0.5, 0.5, '数据不足\n无法生成热图',
                        ha='center', va='center', fontsize=12)
         axes[1, 1].set_title('月度收益热图', fontsize=viz_config['font_size']['title'])
 
@@ -391,24 +391,24 @@ if len(backtest_df) > 0:
     # 计算VaR (95%)
     var_95 = np.percentile(backtest_df['daily_return'].dropna(), 5)
     risk_metrics['VaR(95%)'] = f'{var_95:.4f}'
-    
+
     # 计算CVaR (95%)
     cvar_95 = backtest_df['daily_return'][backtest_df['daily_return'] <= var_95].mean()
     risk_metrics['CVaR(95%)'] = f'{cvar_95:.4f}'
-    
+
     # 计算波动率
     volatility = backtest_df['daily_return'].std()
     risk_metrics['日波动率'] = f'{volatility:.4f}'
-    
+
     # 计算偏度和峰度
     skewness = backtest_df['daily_return'].skew()
     kurtosis = backtest_df['daily_return'].kurtosis()
     risk_metrics['偏度'] = f'{skewness:.4f}'
     risk_metrics['峰度'] = f'{kurtosis:.4f}'
-    
+
     # 计算最大回撤
     risk_metrics['最大回撤'] = f"{backtest_summary['max_drawdown']:.2%}"
-    
+
     # 计算胜率
     win_rate = (backtest_df['daily_return'] > 0).mean()
     risk_metrics['胜率'] = f'{win_rate:.2%}'
@@ -421,7 +421,7 @@ display(risk_metrics_df)
 # 风险可视化
 if len(backtest_df) > 0:
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    
+
     # 收益分布与VaR
     returns = backtest_df['daily_return'].dropna()
     axes[0].hist(returns, bins=30, edgecolor='black', alpha=0.7, density=True)
@@ -433,12 +433,12 @@ if len(backtest_df) > 0:
     axes[0].set_ylabel('密度')
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
-    
+
     # 滚动风险指标
     window_size = 10
     rolling_vol = returns.rolling(window=window_size).std()
     rolling_var = returns.rolling(window=window_size).apply(lambda x: np.percentile(x, 5))
-    
+
     axes[1].plot(backtest_df['date'].iloc[window_size-1:], rolling_vol.dropna(), label=f'滚动{window_size}天波动率', linewidth=1.5)
     axes[1].plot(backtest_df['date'].iloc[window_size-1:], rolling_var.dropna(), label=f'滚动{window_size}天VaR', linewidth=1.5)
     axes[1].set_title('滚动风险指标', fontsize=viz_config['font_size']['title'])
@@ -446,7 +446,7 @@ if len(backtest_df) > 0:
     axes[1].set_ylabel('风险指标值')
     axes[1].legend()
     axes[1].grid(True, alpha=0.3)
-    
+
     plt.tight_layout()
     plt.savefig(f"{output_config['figures_dir']}/risk_analysis.png", dpi=viz_config['dpi'], bbox_inches='tight')
     plt.show()
@@ -682,8 +682,8 @@ print("\n🎉 报告生成流程完成！")
 
 # %% [markdown]
 # ---
-# 
-# **备注**: 
+#
+# **备注**:
 # - 本模板为通用报告生成模板，请根据实际报告需求调整
 # - 确保数据源的可用性和数据质量
 # - 定期更新报告模板以适应新的分析需求
@@ -695,7 +695,7 @@ def calculate_max_drawdown(portfolio_values):
     """计算最大回撤"""
     if len(portfolio_values) == 0:
         return 0
-    
+
     peak = portfolio_values.expanding().max()
     drawdown = (portfolio_values - peak) / peak
     return drawdown.min() if not drawdown.empty else 0

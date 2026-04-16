@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供现代化的Python依赖管理，确保依赖版本一致性、可重现性
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：依赖管理、版本控制、环境隔离、依赖解析
 
@@ -251,7 +251,7 @@ class DependencyManager:
 
     """依赖管理器"""
 
-    
+
 
     def __init__(self, project_path: str = "."):
 
@@ -261,7 +261,7 @@ class DependencyManager:
 
         self.lock_path = self.project_path / "poetry.lock"
 
-    
+
 
     def install_dependencies(
 
@@ -277,7 +277,7 @@ class DependencyManager:
 
         cmd = ["poetry", "install"]
 
-        
+
 
         if group:
 
@@ -287,7 +287,7 @@ class DependencyManager:
 
             cmd.append("--with-dev")
 
-        
+
 
         result = subprocess.run(
 
@@ -301,7 +301,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -313,7 +313,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def add_dependency(
 
@@ -331,7 +331,7 @@ class DependencyManager:
 
         cmd = ["poetry", "add", package]
 
-        
+
 
         if group:
 
@@ -341,7 +341,7 @@ class DependencyManager:
 
             cmd.append("--group dev")
 
-        
+
 
         result = subprocess.run(
 
@@ -355,7 +355,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -369,7 +369,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def remove_dependency(
 
@@ -385,13 +385,13 @@ class DependencyManager:
 
         cmd = ["poetry", "remove", package]
 
-        
+
 
         if group:
 
             cmd.extend(["--group", group])
 
-        
+
 
         result = subprocess.run(
 
@@ -405,7 +405,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -419,7 +419,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def update_dependencies(
 
@@ -433,13 +433,13 @@ class DependencyManager:
 
         cmd = ["poetry", "update"]
 
-        
+
 
         if package:
 
             cmd.append(package)
 
-        
+
 
         result = subprocess.run(
 
@@ -453,7 +453,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -465,7 +465,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def show_dependencies(
 
@@ -481,7 +481,7 @@ class DependencyManager:
 
         cmd = ["poetry", "show"]
 
-        
+
 
         if tree:
 
@@ -491,7 +491,7 @@ class DependencyManager:
 
             cmd.append("--outdated")
 
-        
+
 
         result = subprocess.run(
 
@@ -505,11 +505,11 @@ class DependencyManager:
 
         )
 
-        
+
 
         dependencies = self._parse_show_output(result.stdout)
 
-        
+
 
         return {
 
@@ -521,7 +521,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def check_dependencies(self) -> Dict[str, Any]:
 
@@ -539,7 +539,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -553,7 +553,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def lock_dependencies(self) -> Dict[str, Any]:
 
@@ -571,7 +571,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -583,7 +583,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def export_requirements(
 
@@ -601,7 +601,7 @@ class DependencyManager:
 
         cmd = ["poetry", "export", "-f", "requirements.txt", "-o", output_file]
 
-        
+
 
         if dev:
 
@@ -611,7 +611,7 @@ class DependencyManager:
 
             cmd.append("--hash")
 
-        
+
 
         result = subprocess.run(
 
@@ -625,7 +625,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -639,7 +639,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def get_virtualenv_path(self) -> Optional[str]:
 
@@ -657,7 +657,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         if result.returncode == 0:
 
@@ -665,7 +665,7 @@ class DependencyManager:
 
         return None
 
-    
+
 
     def create_virtualenv(
 
@@ -679,7 +679,7 @@ class DependencyManager:
 
         cmd = ["poetry", "env", "use"]
 
-        
+
 
         if python:
 
@@ -689,7 +689,7 @@ class DependencyManager:
 
             cmd.append("python3.10")
 
-        
+
 
         result = subprocess.run(
 
@@ -703,7 +703,7 @@ class DependencyManager:
 
         )
 
-        
+
 
         return {
 
@@ -715,7 +715,7 @@ class DependencyManager:
 
         }
 
-    
+
 
     def _parse_show_output(self, output: str) -> List[Dict[str, str]]:
 
@@ -751,7 +751,7 @@ class DependencyAnalyzer:
 
     """依赖分析器"""
 
-    
+
 
     def __init__(self, project_path: str = "."):
 
@@ -759,7 +759,7 @@ class DependencyAnalyzer:
 
         self.manager = DependencyManager(project_path)
 
-    
+
 
     def analyze_dependencies(self) -> Dict[str, Any]:
 
@@ -769,7 +769,7 @@ class DependencyAnalyzer:
 
         outdated = self.manager.show_dependencies(outdated=True)
 
-        
+
 
         return {
 
@@ -785,7 +785,7 @@ class DependencyAnalyzer:
 
         }
 
-    
+
 
     def check_security_vulnerabilities(self) -> Dict[str, Any]:
 
@@ -803,7 +803,7 @@ class DependencyAnalyzer:
 
         )
 
-        
+
 
         return {
 
@@ -817,7 +817,7 @@ class DependencyAnalyzer:
 
         }
 
-    
+
 
     def generate_dependency_report(self) -> Dict[str, Any]:
 
@@ -827,7 +827,7 @@ class DependencyAnalyzer:
 
         check_result = self.manager.check_dependencies()
 
-        
+
 
         return {
 
@@ -849,7 +849,7 @@ class DependencyAnalyzer:
 
         }
 
-    
+
 
     def _generate_recommendations(
 
@@ -865,25 +865,25 @@ class DependencyAnalyzer:
 
         recommendations = []
 
-        
+
 
         if not check_result.get("valid", False):
 
             recommendations.append("修复pyproject.toml配置问题")
 
-        
+
 
         if analysis["outdated_dependencies"] > 0:
 
             recommendations.append(f"更新{analysis['outdated_dependencies']}个过时的依赖")
 
-        
+
 
         if not analysis["virtualenv_path"]:
 
             recommendations.append("创建虚拟环境")
 
-        
+
 
         return recommendations
 
@@ -925,13 +925,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Install Poetry
 
@@ -945,7 +945,7 @@ jobs:
 
         virtualenvs-in-project: true
 
-    
+
 
     - name: Set up Python
 
@@ -957,31 +957,31 @@ jobs:
 
         cache: 'poetry'
 
-    
+
 
     - name: Install dependencies
 
       run: poetry install --no-interaction
 
-    
+
 
     - name: Check dependencies
 
       run: poetry check
 
-    
+
 
     - name: Check for outdated dependencies
 
       run: poetry show --outdated
 
-    
+
 
     - name: Export requirements.txt
 
       run: poetry export -f requirements.txt -o requirements.txt --without-hashes
 
-    
+
 
     - name: Security audit
 
@@ -1274,4 +1274,3 @@ poetry show --outdated
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

@@ -143,7 +143,7 @@ implementation_status: 设计阶段
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -271,7 +271,7 @@ implementation_status: 设计阶段
 
 
 
-**职责范围**: 
+**职责范围**:
 
 
 
@@ -295,7 +295,7 @@ implementation_status: 设计阶段
 
 
 
-**上下层接?*: 
+**上下层接?*:
 
 
 
@@ -337,7 +337,7 @@ implementation_status: 设计阶段
 
 
 
-**职责边界**: 
+**职责边界**:
 
 
 
@@ -607,7 +607,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-    
+
 
 
 
@@ -625,7 +625,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-        """识别市场?        
+        """识别市场?
 
 
 
@@ -643,7 +643,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-            
+
 
 
 
@@ -655,7 +655,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-            MarketStateOutput: 市场状态输?            
+            MarketStateOutput: 市场状态输?
 
 
 
@@ -691,7 +691,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-    
+
 
 
 
@@ -709,7 +709,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-        """获取状态概述        
+        """获取状态概述
 
 
 
@@ -721,7 +721,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-            regime: 市场?            
+            regime: 市场?
 
 
 
@@ -745,7 +745,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-    
+
 
 
 
@@ -763,7 +763,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-        """预测状态转?        
+        """预测状态转?
 
 
 
@@ -781,7 +781,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-            
+
 
 
 
@@ -805,7 +805,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-    def get_regime_history(self, start_date: datetime, 
+    def get_regime_history(self, start_date: datetime,
 
 
 
@@ -829,7 +829,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-        """获取状态历?        
+        """获取状态历?
 
 
 
@@ -847,7 +847,7 @@ class IMarketRegimeSystem(ABC):
 
 
 
-            
+
 
 
 
@@ -1725,7 +1725,7 @@ class HMMRegimeClassifier:
 
 
 
-    
+
 
 
 
@@ -1749,7 +1749,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1767,7 +1767,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1797,7 +1797,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1809,7 +1809,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1857,7 +1857,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1869,7 +1869,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1881,7 +1881,7 @@ class HMMRegimeClassifier:
 
 
 
-        """预测市场?        
+        """预测市场?
 
 
 
@@ -1899,7 +1899,7 @@ class HMMRegimeClassifier:
 
 
 
-            
+
 
 
 
@@ -1941,7 +1941,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -1965,7 +1965,7 @@ class HMMRegimeClassifier:
 
 
 
-        
+
 
 
 
@@ -2079,7 +2079,7 @@ class TechnicalRegimeIndicator:
 
 
 
-    
+
 
 
 
@@ -2103,7 +2103,7 @@ class TechnicalRegimeIndicator:
 
 
 
-        """分析技术指标状?        
+        """分析技术指标状?
 
 
 
@@ -2127,7 +2127,7 @@ class TechnicalRegimeIndicator:
 
 
 
-            volatility_indicators: 波动率指标列?            
+            volatility_indicators: 波动率指标列?
 
 
 
@@ -2157,7 +2157,7 @@ class TechnicalRegimeIndicator:
 
 
 
-        
+
 
 
 
@@ -2175,7 +2175,7 @@ class TechnicalRegimeIndicator:
 
 
 
-        
+
 
 
 
@@ -2187,7 +2187,7 @@ class TechnicalRegimeIndicator:
 
 
 
-        
+
 
 
 
@@ -2241,7 +2241,7 @@ class TechnicalRegimeIndicator:
 
 
 
-            
+
 
 
 
@@ -2367,7 +2367,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2385,7 +2385,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-        
+
 
 
 
@@ -2439,7 +2439,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2481,7 +2481,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2499,7 +2499,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2511,7 +2511,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2541,7 +2541,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 
 
-    
+
 
 
 
@@ -2893,7 +2893,7 @@ def test_market_regime_identification():
 
 
 
-    
+
 
 
 
@@ -2911,7 +2911,7 @@ def test_market_regime_identification():
 
 
 
-    
+
 
 
 
@@ -3822,8 +3822,3 @@ def test_market_regime_identification():
 
 
 **技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Draft | **下一?*: 技术评?
-
-
-
-
-

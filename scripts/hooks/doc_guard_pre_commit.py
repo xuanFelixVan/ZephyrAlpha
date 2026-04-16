@@ -315,30 +315,130 @@ class DocGuardChecker:
 
     # ─── C-10: 文件命名规范检查 ─────────────────────────────────────
 
+    @staticmethod
+    def _is_git_tracked(file_path: Path) -> bool:
+        """检查文件是否已被 git 追踪（已存在于历史中）。
+        用于祖父条款：已追踪的大写文件免于新规阻断。
+        """
+        import subprocess
+        try:
+            result = subprocess.run(
+                ['git', 'ls-files', '--error-unmatch', str(file_path)],
+                capture_output=True, cwd=str(PROJECT_ROOT)
+            )
+            return result.returncode == 0
+        except Exception:
+            return True  # 查询失败时保守放行
+
     def check_naming_single(self, file_path: Path) -> bool:
-        """检查单个文件的命名规范，返回是否有错误"""
+        """检查单个文件的命名规范，返回是否有阻断错误。
+
+        单轨标准（自 2026-04-16 起）：
+          唯一合法格式 → 全小写 kebab/snake：^[a-z0-9][a-z0-9_-]*\\.md$
+          例：construction-plan-l01-data-processing.md
+              doc-naming-standard.md
+
+        祖父条款（自动豁免，无需手动维护列表）：
+          1. 固定名（永久合法）：INDEX.md / README.md / AGENTS.md / CHANGELOG.md 等
+          2. 已被 git 追踪的大写文件：视为历史遗留，警告但不阻断
+             → 在 Pipeline A/B 文件消除波次中逐步迁移至小写
+          3. 特殊命名模式（显式设计约定）：
+             - KE-NNN-slug.md（知识条目）
+             - DR-TYPE-YYYYMMDD-NNN.md（决策记录）
+             - session-YYYYMMDD-*.md（Session Log）
+
+        硬阻断（exit 1，提交失败）：
+          - 中文字符
+          - 空格
+          - 特殊字符（@#$%&!）
+          - 版本号后缀（-v2, _v3, -round2）
+          - 【新建】大写 .md 文件且不在 git 追踪中（单轨标准强制）
+        """
         import re
-        
-        # 豁免文件
-        EXEMPTIONS = {'README.md', 'INDEX.md', 'SITEMAP.md', 'LICENSE', 'CONTRIBUTING.md', 'SECURITY.md'}
-        
+
+        # ── 固定名豁免（永久合法，不检查格式）──────────────────────────
+        FIXED_NAMES = {
+            'README.md', 'INDEX.md', 'SITEMAP.md', 'AGENTS.md',
+            'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE',
+        }
         filename = file_path.name
-        
-        # 豁免检查
-        if filename in EXEMPTIONS:
+        if filename in FIXED_NAMES:
             return False
-        
-        # 检查命名规范：小写字母、数字、下划线、连字符
-        # 格式: ^[a-z0-9_-]+\.md$
-        pattern = re.compile(r'^[a-z0-9_-]+\.md$')
-        
-        if not pattern.match(filename):
-            rel_path = file_path.relative_to(self.docs_root.parent)
-            print(f"⚠️  [C-10] {rel_path}: 文件名不符合规范")
-            print(f"   期望格式: 小写字母+数字+下划线+连字符 (如: file_name-v2.md)")
+
+        # ── 硬阻断检查 1：中文字符 ──────────────────────────────────────
+        if re.search(r'[\u4e00-\u9fff\u3400-\u4dbf]', filename):
+            self._report_naming_error(file_path, "包含中文字符", "请使用全小写英文命名，如 data-source-plan.md")
             return True
-        
+
+        # ── 硬阻断检查 2：空格 ──────────────────────────────────────────
+        if ' ' in filename:
+            self._report_naming_error(file_path, "文件名包含空格", "请用连字符 - 替代，如 data-source-plan.md")
+            return True
+
+        # ── 硬阻断检查 3：特殊字符 ────────────────────────────────────
+        if re.search(r'[@#$%&!]', filename):
+            self._report_naming_error(file_path, "包含特殊字符 (@#$%&!)", "请移除特殊字符")
+            return True
+
+        # ── 硬阻断检查 4：版本号后缀 ──────────────────────────────────
+        if re.search(r'[-_](v\d+|round\d+|r\d+)\.(md|yaml|yml|json|py)$', filename, re.IGNORECASE):
+            self._report_naming_error(file_path, "文件名含版本号后缀（如 -v2, _v3）", "版本历史用 git log 追踪，不要在文件名中加版本号")
+            return True
+
+        # ── 格式合规检查（.md 文件专属）──────────────────────────────
+        if not filename.endswith('.md'):
+            return False
+
+        lowercase_pattern = re.compile(r'^[a-z0-9][a-z0-9_-]*\.md$')
+        ke_pattern = re.compile(r'^KE-\d{3}-[a-z0-9-]+\.md$')
+        dr_pattern = re.compile(r'^DR-[A-Z]+-\d{8}-\d{3}\.md$')
+        session_pattern = re.compile(r'^session-\d{8}.*\.md$')
+
+        # 标准合规：小写 kebab/snake 或特殊设计模式
+        if any([
+            lowercase_pattern.match(filename),
+            ke_pattern.match(filename),
+            dr_pattern.match(filename),
+            session_pattern.match(filename),
+        ]):
+            return False  # ✅ 合规
+
+        # ── 硬阻断检查 5：新建大写文件（单轨标准核心约束）────────────
+        has_uppercase = re.search(r'[A-Z]', filename)
+        if has_uppercase:
+            if self._is_git_tracked(file_path):
+                # 历史遗留文件：警告但不阻断（祖父条款）
+                try:
+                    rel_path = file_path.relative_to(self.docs_root.parent)
+                except ValueError:
+                    rel_path = file_path
+                print(f"⚠️  [C-10 祖父] {rel_path}: 历史遗留大写文件（不阻断，请在下次 Wave 迁移至小写）")
+                return False
+            else:
+                # 新建大写文件：硬阻断
+                self._report_naming_error(
+                    file_path,
+                    "新建文件名含大写字母（违反单轨小写标准）",
+                    f"请改为全小写 kebab-case，如：{filename.lower().replace('_', '-')}"
+                )
+                return True
+
+        # 其他不合规格式（既非小写也非大写，但通过了前面所有检查）：警告
+        try:
+            rel_path = file_path.relative_to(self.docs_root.parent)
+        except ValueError:
+            rel_path = file_path
+        print(f"⚠️  [C-10 警告] {rel_path}: 命名格式异常，建议使用全小写 kebab-case")
         return False
+
+    def _report_naming_error(self, file_path: Path, reason: str, suggestion: str):
+        """输出命名违规错误（阻断级）"""
+        try:
+            rel_path = file_path.relative_to(self.docs_root.parent)
+        except ValueError:
+            rel_path = file_path
+        print(f"❌ [C-10] {rel_path}: {reason}")
+        print(f"   建议: {suggestion}")
 
     # ─── 批量检查 ──────────────────────────────────────────────────
 
@@ -676,7 +776,7 @@ def main():
         help='docs 根目录路径'
     )
 
-    args = parser.parse_args()
+    args, remaining_args = parser.parse_known_args()
     checker = DocGuardChecker(Path(args.docs_root))
 
     # 单项扫描
@@ -694,13 +794,19 @@ def main():
         checker.strip_all_bom()
         sys.exit(0)
     if args.check_naming:
-        # 从stdin读取文件名（pre-commit模式）
-        import fileinput
+        # 双模式支持：
+        #   1. pre-commit 模式（pass_filenames:true）：文件路径作为位置参数传入
+        #   2. CI 管道模式：文件路径经 stdin 传入（如 find docs/ -name "*.md" | python script.py --check-naming）
+        filenames = [f for f in remaining_args if not f.startswith('-')]
+
+        if not filenames and not sys.stdin.isatty():
+            # CI 管道模式：从 stdin 读取文件名列表
+            filenames = [line.strip() for line in sys.stdin if line.strip()]
+
         has_error = False
-        for line in fileinput.input():
-            file_path = line.strip()
-            if file_path:
-                result = checker.check_naming_single(Path(file_path))
+        for file_path_str in filenames:
+            if file_path_str:
+                result = checker.check_naming_single(Path(file_path_str))
                 if result:
                     has_error = True
         sys.exit(1 if has_error else 0)

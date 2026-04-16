@@ -20,7 +20,7 @@ layer: layer_04
 
 > **核心职责**: 提供ai enhancement integration blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：AI辅助、智能优化、增强功能、AI能力注入
 
@@ -164,7 +164,7 @@ graph TD
 
     G --> I[AI监督?Layer 7-8]
 
-    
+
 
     J[交易数据] --> K[L9_ANOMALY_DETECTOR<br/>AI异常检测]
 
@@ -184,7 +184,7 @@ graph TD
 
 > **核心职责**: 提供ai enhancement integration blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Ai Enhancement Integration蓝图设计相关内容
 
@@ -208,7 +208,7 @@ class AIEnhancementModule:
 
     """AI增强模块基类"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -218,7 +218,7 @@ class AIEnhancementModule:
 
         self.version = '1.0.0'
 
-    
+
 
     def initialize(self) -> bool:
 
@@ -226,7 +226,7 @@ class AIEnhancementModule:
 
         pass
 
-    
+
 
     def enhance(self, input_data: Any, context: Optional[Dict] = None) -> EnhancementResult:
 
@@ -234,7 +234,7 @@ class AIEnhancementModule:
 
         pass
 
-    
+
 
     def validate(self, result: EnhancementResult) -> ValidationReport:
 
@@ -242,7 +242,7 @@ class AIEnhancementModule:
 
         pass
 
-    
+
 
     def get_status(self) -> ModuleStatus:
 
@@ -250,7 +250,7 @@ class AIEnhancementModule:
 
         pass
 
-    
+
 
     def reset(self) -> None:
 
@@ -330,13 +330,13 @@ class GplearnFactorMiner:
 
     """gplearn因子挖掘集成"""
 
-    
+
 
     def __init__(self, config: FactorMiningConfig):
 
         from gplearn.genetic import SymbolicRegressor
 
-        
+
 
         self.config = config
 
@@ -372,13 +372,13 @@ class GplearnFactorMiner:
 
         )
 
-        
+
 
         # 自定义函数集 (针对量化优化)
 
         self.custom_functions = self._define_custom_functions()
 
-    
+
 
     def _define_custom_functions(self) -> Dict[str, Callable]:
 
@@ -404,13 +404,13 @@ class GplearnFactorMiner:
 
         }
 
-    
+
 
     def mine_factors(self, raw_data: pd.DataFrame, target: pd.Series) -> List[Factor]:
 
         """挖掘因子"""
 
-        
+
 
         # 1. 准备数据
 
@@ -418,35 +418,35 @@ class GplearnFactorMiner:
 
         y = target.values
 
-        
+
 
         # 2. 训练遗传编程模型
 
         self.gplearn.fit(X, y)
 
-        
+
 
         # 3. 提取生成的因?
 
         factors = self._extract_factors(self.gplearn)
 
-        
+
 
         # 4. 评估因子质量
 
         evaluated_factors = self._evaluate_factors(factors, X, y)
 
-        
+
 
         # 5. 筛选有效因?
 
         valid_factors = self._filter_factors(evaluated_factors)
 
-        
+
 
         return valid_factors
 
-    
+
 
     def _extract_factors(self, model) -> List[Factor]:
 
@@ -454,7 +454,7 @@ class GplearnFactorMiner:
 
         factors = []
 
-        
+
 
         # 遍历种群中的个体
 
@@ -476,7 +476,7 @@ class GplearnFactorMiner:
 
             factors.append(factor)
 
-        
+
 
         return factors
 
@@ -496,7 +496,7 @@ gplearn:
 
   mode: "production"  # development | production
 
-  
+
 
   # 遗传算法参数
 
@@ -520,7 +520,7 @@ gplearn:
 
     parsimony_coefficient: 0.01
 
-    
+
 
   # 函数集配?
 
@@ -532,7 +532,7 @@ gplearn:
 
     custom: ["returns", "volatility", "zscore", "rank", "delay", "ts_mean", "ts_std"]
 
-  
+
 
   # 性能配置
 
@@ -544,7 +544,7 @@ gplearn:
 
     random_state: 42
 
-    
+
 
   # 因子筛选配?
 
@@ -584,7 +584,7 @@ class TestGplearnFactorMiner:
 
     """gplearn因子挖掘测试"""
 
-    
+
 
     def setup_method(self):
 
@@ -608,7 +608,7 @@ class TestGplearnFactorMiner:
 
         self.miner = GplearnFactorMiner(self.config)
 
-        
+
 
         # 创建测试数据
 
@@ -626,7 +626,7 @@ class TestGplearnFactorMiner:
 
         self.y = pd.Series(np.random.randn(n_samples))
 
-    
+
 
     def test_initialization(self):
 
@@ -636,7 +636,7 @@ class TestGplearnFactorMiner:
 
         assert self.miner.status == 'initialized'
 
-    
+
 
     @patch('gplearn.genetic.SymbolicRegressor.fit')
 
@@ -656,13 +656,13 @@ class TestGplearnFactorMiner:
 
         mock_fit.return_value = mock_model
 
-        
+
 
         # 执行挖掘
 
         factors = self.miner.mine_factors(self.X, self.y)
 
-        
+
 
         # 验证结果
 
@@ -674,7 +674,7 @@ class TestGplearnFactorMiner:
 
         assert factors[0].fitness == 0.8
 
-    
+
 
     def test_custom_functions(self):
 
@@ -682,7 +682,7 @@ class TestGplearnFactorMiner:
 
         custom_funcs = self.miner.custom_functions
 
-        
+
 
         # 测试收益率函?
 
@@ -694,7 +694,7 @@ class TestGplearnFactorMiner:
 
         np.testing.assert_array_almost_equal(returns, expected, decimal=6)
 
-        
+
 
         # 测试Z-score函数
 
@@ -718,7 +718,7 @@ class GplearnMonitoring:
 
     """gplearn监控"""
 
-    
+
 
     METRICS = [
 
@@ -740,7 +740,7 @@ class GplearnMonitoring:
 
     ]
 
-    
+
 
     def __init__(self):
 
@@ -748,7 +748,7 @@ class GplearnMonitoring:
 
         self.prometheus_client = PrometheusClient()
 
-    
+
 
     def record_metrics(self, metrics: Dict[str, Any]):
 
@@ -762,7 +762,7 @@ class GplearnMonitoring:
 
         })
 
-        
+
 
         # 推送到Prometheus
 
@@ -776,7 +776,7 @@ class GplearnMonitoring:
 
             )
 
-    
+
 
     def generate_report(self) -> MonitoringReport:
 
@@ -786,11 +786,11 @@ class GplearnMonitoring:
 
             return MonitoringReport(empty=True)
 
-        
+
 
         latest = self.metrics_history[-1]
 
-        
+
 
         return MonitoringReport(
 
@@ -852,7 +852,7 @@ class HMMMarketRegimeDetector:
 
     """HMM市场状态识别集?""
 
-    
+
 
     def __init__(self, config: MarketRegimeConfig):
 
@@ -872,19 +872,19 @@ class HMMMarketRegimeDetector:
 
         }
 
-    
+
 
     def detect_regime(self, market_data: pd.DataFrame) -> RegimeDetectionResult:
 
         """检测市场状?""
 
-        
+
 
         # 1. 特征提取
 
         features = self._extract_features(market_data)
 
-        
+
 
         # 2. 训练或加载HMM模型
 
@@ -892,19 +892,19 @@ class HMMMarketRegimeDetector:
 
             self.hmm_model = self._train_hmm(features)
 
-        
+
 
         # 3. 状态预?
 
         hidden_states = self.hmm_model.predict(features)
 
-        
+
 
         # 4. 状态转换概?
 
         transition_matrix = self.hmm_model.transmat_
 
-        
+
 
         # 5. 生成检测结?
 
@@ -924,11 +924,11 @@ class HMMMarketRegimeDetector:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     def _extract_features(self, market_data: pd.DataFrame) -> pd.DataFrame:
 
@@ -936,7 +936,7 @@ class HMMMarketRegimeDetector:
 
         features = pd.DataFrame()
 
-        
+
 
         # 基础特征
 
@@ -946,7 +946,7 @@ class HMMMarketRegimeDetector:
 
         features['volume_ratio'] = market_data['volume'] / market_data['volume'].rolling(20).mean()
 
-        
+
 
         # 技术指标特?
 
@@ -956,13 +956,13 @@ class HMMMarketRegimeDetector:
 
         features['bollinger_band_width'] = self._calculate_bollinger_band_width(market_data['close'])
 
-        
+
 
         # 市场宽度特征
 
         features['advance_decline_ratio'] = self._calculate_advance_decline_ratio(market_data)
 
-        
+
 
         return features.dropna()
 
@@ -980,7 +980,7 @@ hmm_market_regime:
 
   enabled: true
 
-  
+
 
   # HMM参数
 
@@ -994,7 +994,7 @@ hmm_market_regime:
 
     random_state: 42
 
-    
+
 
   # 特征配置
 
@@ -1008,7 +1008,7 @@ hmm_market_regime:
 
       volume_ratio: true
 
-      
+
 
     technical:
 
@@ -1036,7 +1036,7 @@ hmm_market_regime:
 
         std_dev: 2
 
-        
+
 
     market_breadth:
 
@@ -1044,7 +1044,7 @@ hmm_market_regime:
 
       new_highs_lows: false  # 需要额外数?
 
-      
+
 
   # 检测配?
 
@@ -1094,31 +1094,31 @@ class AutogluonFeatureOptimizer:
 
     """autogluon特征工程集成"""
 
-    
+
 
     def __init__(self, config: FeatureOptimizationConfig):
 
         from autogluon.tabular import TabularPredictor
 
-        
+
 
         self.config = config
 
         self.predictor = None
 
-        
+
 
     def optimize_features(self, X: pd.DataFrame, y: pd.Series) -> FeatureOptimizationResult:
 
         """优化特征"""
 
-        
+
 
         # 1. 准备数据
 
         data = pd.concat([X, y], axis=1)
 
-        
+
 
         # 2. 训练autogluon模型
 
@@ -1140,19 +1140,19 @@ class AutogluonFeatureOptimizer:
 
         )
 
-        
+
 
         # 3. 特征重要性分?
 
         feature_importance = self.predictor.feature_importance(data)
 
-        
+
 
         # 4. 特征选择
 
         selected_features = self._select_features(feature_importance)
 
-        
+
 
         # 5. 生成结果
 
@@ -1172,7 +1172,7 @@ class AutogluonFeatureOptimizer:
 
         )
 
-        
+
 
         return result
 
@@ -1406,13 +1406,13 @@ class OptunaHyperparameterOptimizer:
 
     """optuna超参数优化集?""
 
-    
+
 
     def __init__(self, config: HyperparamOptimizationConfig):
 
         import optuna
 
-        
+
 
         self.config = config
 
@@ -1420,13 +1420,13 @@ class OptunaHyperparameterOptimizer:
 
         self.best_params = None
 
-    
+
 
     def optimize(self, model_class, X_train, y_train, X_val, y_val) -> OptimizationResult:
 
         """优化超参?""
 
-        
+
 
         def objective(trial):
 
@@ -1434,19 +1434,19 @@ class OptunaHyperparameterOptimizer:
 
             params = self._define_search_space(trial)
 
-            
+
 
             # 2. 创建模型
 
             model = model_class(**params)
 
-            
+
 
             # 3. 训练模型
 
             model.fit(X_train, y_train)
 
-            
+
 
             # 4. 验证模型
 
@@ -1454,11 +1454,11 @@ class OptunaHyperparameterOptimizer:
 
             score = self._calculate_score(y_val, y_pred)
 
-            
+
 
             return score
 
-        
+
 
         # 5. 创建研究
 
@@ -1472,13 +1472,13 @@ class OptunaHyperparameterOptimizer:
 
         )
 
-        
+
 
         # 6. 执行优化
 
         self.study.optimize(
 
-            objective, 
+            objective,
 
             n_trials=self.config.n_trials,
 
@@ -1488,13 +1488,13 @@ class OptunaHyperparameterOptimizer:
 
         )
 
-        
+
 
         # 7. 获取最佳参?
 
         self.best_params = self.study.best_params
 
-        
+
 
         # 8. 生成结果
 
@@ -1512,11 +1512,11 @@ class OptunaHyperparameterOptimizer:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     def _define_search_space(self, trial) -> Dict[str, Any]:
 
@@ -1524,7 +1524,7 @@ class OptunaHyperparameterOptimizer:
 
         params = {}
 
-        
+
 
         # 机器学习通用参数
 
@@ -1538,7 +1538,7 @@ class OptunaHyperparameterOptimizer:
 
             params['min_samples_leaf'] = trial.suggest_int('min_samples_leaf', 1, 10)
 
-            
+
 
         elif self.config.model_type == 'xgboost':
 
@@ -1554,11 +1554,11 @@ class OptunaHyperparameterOptimizer:
 
             params['reg_lambda'] = trial.suggest_float('reg_lambda', 0, 1.0)
 
-            
+
 
         elif self.config.model_type == 'neural_network':
 
-            params['hidden_layer_sizes'] = trial.suggest_categorical('hidden_layer_sizes', 
+            params['hidden_layer_sizes'] = trial.suggest_categorical('hidden_layer_sizes',
 
                                                                     [(50,), (100,), (50, 50), (100, 50)])
 
@@ -1568,7 +1568,7 @@ class OptunaHyperparameterOptimizer:
 
             params['learning_rate_init'] = trial.suggest_float('learning_rate_init', 0.001, 0.1, log=True)
 
-        
+
 
         return params
 
@@ -1586,7 +1586,7 @@ optuna_hyperparameter:
 
   enabled: true
 
-  
+
 
   # 优化参数
 
@@ -1600,7 +1600,7 @@ optuna_hyperparameter:
 
     n_jobs: -1  # 使用所有CPU核心
 
-    
+
 
   # 搜索算法配置
 
@@ -1610,7 +1610,7 @@ optuna_hyperparameter:
 
     seed: 42
 
-    
+
 
   # 剪枝配置
 
@@ -1622,7 +1622,7 @@ optuna_hyperparameter:
 
     n_min_trials: 5
 
-    
+
 
   # 模型类型配置
 
@@ -1636,7 +1636,7 @@ optuna_hyperparameter:
 
     neural_network: true
 
-    
+
 
   # 日志配置
 
@@ -1686,13 +1686,13 @@ class MLensModelEnsembler:
 
     """mlens模型集成集成"""
 
-    
+
 
     def __init__(self, config: EnsembleConfig):
 
         from mlens.ensemble import SuperLearner
 
-        
+
 
         self.config = config
 
@@ -1710,13 +1710,13 @@ class MLensModelEnsembler:
 
         )
 
-        
+
 
     def build_ensemble(self, base_models: List[BaseModel], meta_model: BaseModel) -> EnsembleResult:
 
         """构建模型集成"""
 
-        
+
 
         # 1. 添加基础层模?
 
@@ -1724,37 +1724,37 @@ class MLensModelEnsembler:
 
             self.ensemble.add([model], name=model_name)
 
-        
+
 
         # 2. 添加元学习器
 
         self.ensemble.add_meta(meta_model)
 
-        
+
 
         # 3. 训练集成模型
 
         self.ensemble.fit(self.X_train, self.y_train)
 
-        
+
 
         # 4. 预测
 
         y_pred = self.ensemble.predict(self.X_test)
 
-        
+
 
         # 5. 评估集成效果
 
         performance = self._evaluate_performance(self.y_test, y_pred)
 
-        
+
 
         # 6. 分析模型贡献
 
         contributions = self._analyze_contributions()
 
-        
+
 
         # 7. 生成结果
 
@@ -1774,11 +1774,11 @@ class MLensModelEnsembler:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     def _analyze_contributions(self) -> Dict[str, float]:
 
@@ -1786,13 +1786,13 @@ class MLensModelEnsembler:
 
         contributions = {}
 
-        
+
 
         # 获取基础层预?
 
         base_predictions = self.ensemble.data.get_layer_predictions(0)
 
-        
+
 
         # 计算每个基础模型的贡?
 
@@ -1802,17 +1802,17 @@ class MLensModelEnsembler:
 
             correlation = np.corrcoef(
 
-                base_predictions[:, i], 
+                base_predictions[:, i],
 
                 self.ensemble.data.get_final_predictions()
 
             )[0, 1]
 
-            
+
 
             contributions[model_name] = float(correlation)
 
-        
+
 
         return contributions
 
@@ -1830,7 +1830,7 @@ mlens_ensemble:
 
   enabled: true
 
-  
+
 
   # 集成配置
 
@@ -1846,7 +1846,7 @@ mlens_ensemble:
 
     n_jobs: -1
 
-    
+
 
   # 基础层模型配?
 
@@ -1862,7 +1862,7 @@ mlens_ensemble:
 
         max_depth: 10
 
-        
+
 
     - name: "xgboost"
 
@@ -1874,7 +1874,7 @@ mlens_ensemble:
 
         max_depth: 6
 
-        
+
 
     - name: "lightgbm"
 
@@ -1886,7 +1886,7 @@ mlens_ensemble:
 
         num_leaves: 31
 
-        
+
 
     - name: "neural_network"
 
@@ -1898,7 +1898,7 @@ mlens_ensemble:
 
         activation: "relu"
 
-        
+
 
   # 元学习器配置
 
@@ -1912,7 +1912,7 @@ mlens_ensemble:
 
       fit_intercept: true
 
-      
+
 
   # 性能配置
 
@@ -1960,7 +1960,7 @@ class PyODAnomalyDetector:
 
     """pyod异常检测集?""
 
-    
+
 
     def __init__(self, config: AnomalyDetectionConfig):
 
@@ -1970,7 +1970,7 @@ class PyODAnomalyDetector:
 
         from pyod.models.copod import COPOD
 
-        
+
 
         self.config = config
 
@@ -2000,19 +2000,19 @@ class PyODAnomalyDetector:
 
         self.ensemble_detector = None
 
-    
+
 
     def detect_anomalies(self, data: pd.DataFrame) -> AnomalyDetectionResult:
 
         """检测异?""
 
-        
+
 
         # 1. 数据预处?
 
         processed_data = self._preprocess_data(data)
 
-        
+
 
         # 2. 训练多个检测器
 
@@ -2026,13 +2026,13 @@ class PyODAnomalyDetector:
 
             detector_scores[name] = scores
 
-        
+
 
         # 3. 集成检测结?
 
         self.ensemble_detector = self._create_ensemble_detector(detector_scores)
 
-        
+
 
         # 4. 检测异?
 
@@ -2040,13 +2040,13 @@ class PyODAnomalyDetector:
 
         anomalies = self.ensemble_detector.predict(processed_data)
 
-        
+
 
         # 5. 分析异常特征
 
         anomaly_features = self._analyze_anomaly_features(processed_data, anomalies)
 
-        
+
 
         # 6. 生成结果
 
@@ -2070,11 +2070,11 @@ class PyODAnomalyDetector:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     def _create_ensemble_detector(self, detector_scores: Dict[str, np.ndarray]) -> EnsembleDetector:
 
@@ -2084,7 +2084,7 @@ class PyODAnomalyDetector:
 
         weights = self.config.ensemble_weights
 
-        
+
 
         # 标准化各检测器分数
 
@@ -2094,7 +2094,7 @@ class PyODAnomalyDetector:
 
             normalized_scores[name] = (scores - scores.min()) / (scores.max() - scores.min() + 1e-10)
 
-        
+
 
         # 计算加权平均分数
 
@@ -2104,7 +2104,7 @@ class PyODAnomalyDetector:
 
             ensemble_scores += weights.get(name, 1.0) * scores
 
-        
+
 
         # 创建集成检测器
 
@@ -2114,7 +2114,7 @@ class PyODAnomalyDetector:
 
                 return ensemble_scores
 
-            
+
 
             def predict(self, X, threshold=None):
 
@@ -2124,7 +2124,7 @@ class PyODAnomalyDetector:
 
                 return (ensemble_scores >= threshold).astype(int)
 
-        
+
 
         return EnsembleDetector()
 
@@ -2142,7 +2142,7 @@ pyod_anomaly_detection:
 
   enabled: true
 
-  
+
 
   # 检测器配置
 
@@ -2156,7 +2156,7 @@ pyod_anomaly_detection:
 
       contamination: 0.1  # 预期异常比例
 
-      
+
 
     lof:
 
@@ -2166,7 +2166,7 @@ pyod_anomaly_detection:
 
       contamination: 0.1
 
-      
+
 
     copod:
 
@@ -2174,7 +2174,7 @@ pyod_anomaly_detection:
 
       contamination: 0.1
 
-      
+
 
     # 可选检测器
 
@@ -2186,7 +2186,7 @@ pyod_anomaly_detection:
 
       contamination: 0.1
 
-      
+
 
   # 集成配置
 
@@ -2202,7 +2202,7 @@ pyod_anomaly_detection:
 
     method: "weighted_average"  # weighted_average | majority_vote | stacking
 
-    
+
 
   # 检测配?
 
@@ -2216,7 +2216,7 @@ pyod_anomaly_detection:
 
     retrain_frequency: "1D"  # 每日重训?
 
-    
+
 
   # 告警配置
 
@@ -2260,7 +2260,7 @@ class TechnicalValidation:
 
     """技术验证框?""
 
-    
+
 
     def validate_gplearn(self):
 
@@ -2276,7 +2276,7 @@ class TechnicalValidation:
 
         pass
 
-    
+
 
     def validate_hmm(self):
 
@@ -2290,7 +2290,7 @@ class TechnicalValidation:
 
         pass
 
-    
+
 
     def validate_autogluon(self):
 
@@ -2304,7 +2304,7 @@ class TechnicalValidation:
 
         pass
 
-    
+
 
     def validate_optuna(self):
 
@@ -2318,7 +2318,7 @@ class TechnicalValidation:
 
         pass
 
-    
+
 
     def validate_mlens(self):
 
@@ -2332,7 +2332,7 @@ class TechnicalValidation:
 
         pass
 
-    
+
 
     def validate_pyod(self):
 
@@ -2466,7 +2466,7 @@ graph LR
 
     D[数据目录] --> B
 
-    
+
 
     B --> E[组合优化引擎]
 
@@ -2474,7 +2474,7 @@ graph LR
 
     B --> G[交易信号验证器]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -2577,4 +2577,3 @@ graph LR
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
-

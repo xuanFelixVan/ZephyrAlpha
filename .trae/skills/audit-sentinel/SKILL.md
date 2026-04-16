@@ -160,7 +160,7 @@ Audit Sentinel 支持集成多种免费MCP工具以增强审计能力。以下�
 | **类型检查** | `mypy` | Python类型注解检查，提高代码可靠性 | `pip install mypy` |
 | **配置安全检查** | `yamllint` | YAML配置文件语法、安全、合规性检查 | `pip install yamllint` |
 
-**MCP服务器配置说明**: 
+**MCP服务器配置说明**:
 - ✅ **已提供单个MCP服务器配置**: 所有上述工具均已配置为独立的JSON配置文件
 - 📋 **配置方式**: Trae智能体后台**每次只能保存一个配置**，请逐个配置7个工具
 - 🔧 **使用方法**: 复制下方"Trae智能体MCP服务器配置"章节中的单个JSON配置，逐个粘贴保存
@@ -177,12 +177,12 @@ mcp_servers:
     command: "bandit"
     args: ["-r", "src/", "-f", "json"]
     parser: "bandit-json"
-    
+
   - name: "markdown-quality"
     command: "markdownlint"
     args: ["docs/", "--config", ".markdownlint.json"]
     parser: "markdownlint-json"
-    
+
   - name: "python-static-analysis"
     command: "pylint"
     args: ["src/", "--output-format=json"]
@@ -325,7 +325,7 @@ L3 专业标准层:
 ##### 配置文件位置（供参考）:
 所有单个配置文件已保存至 `.trae/` 目录:
 - `.trae/mcp-server-bandit.json`
-- `.trae/mcp-server-pylint.json`  
+- `.trae/mcp-server-pylint.json`
 - `.trae/mcp-server-mypy.json`
 - `.trae/mcp-server-safety.json`
 - `.trae/mcp-server-pydocstyle.json`
@@ -336,7 +336,7 @@ L3 专业标准层:
 > - `.trae/audit-mcp-simple.ps1` - 简化版包装器脚本
 > - `.trae/mcp-audit-wrapper.json` - 完整MCP配置文件
 > - `.trae/MCP_WRAPPER_SOLUTION.md` - 详细解决方案文档
-> 
+>
 > 使用包装器配置替代上述7个独立配置，详细步骤见 **[MCP包装器配置](#mcp包装器配置解决connection-closed错误)** 章节。
 
 **注意事项**:
@@ -481,7 +481,7 @@ npm list -g markdownlint-cli  # 检查markdownlint安装
 
 #### 包装器包含的7个审计工具
 1. **bandit-security-scanner** - Python安全漏洞扫描
-2. **pylint-code-analyzer** - Python代码质量分析  
+2. **pylint-code-analyzer** - Python代码质量分析
 3. **mypy-type-checker** - Python类型检查
 4. **safety-dependency-checker** - Python依赖安全扫描
 5. **pydocstyle-doc-checker** - Python文档一致性检查
@@ -604,7 +604,7 @@ npm list -g markdownlint-cli  # 检查markdownlint安装
 
 ## 2. 详细审计发现
 - L1文件系统层结果
-- L2文档内容层结果  
+- L2文档内容层结果
 - L3专业标准层结果
 
 ## 3. 量化指标统计
@@ -630,7 +630,7 @@ npm list -g markdownlint-cli  # 检查markdownlint安装
 
 ## 关键发现 (3项)
 1. [高风险问题]
-2. [中风险问题]  
+2. [中风险问题]
 3. [低风险问题]
 
 ## 立即行动 (2项)
@@ -767,4 +767,3 @@ Audit Sentinel响应:
 
 ```
 ```
-

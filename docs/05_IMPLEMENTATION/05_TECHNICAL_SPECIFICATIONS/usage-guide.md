@@ -46,7 +46,7 @@ reports:
 
     password: "your_password"
 
-  
+
 
   modules:
 
@@ -56,7 +56,7 @@ reports:
 
       cache_ttl: 3600
 
-    
+
 
     stress_test:
 
@@ -64,7 +64,7 @@ reports:
 
       parallel_workers: 4
 
-    
+
 
     realtime_risk:
 
@@ -72,7 +72,7 @@ reports:
 
       update_interval: 1  # seconds
 
-    
+
 
     multi_timeframe_fusion:
 
@@ -618,7 +618,7 @@ def handle_risk_update(risk_report):
 
     print(f"VaR更新: {risk_report.var_95:.2%}")
 
-    
+
 
     if risk_report.alerts:
 
@@ -658,11 +658,11 @@ def on_message(ws, message):
 
     risk_metrics = data['risk_metrics']
 
-    
+
 
     print(f"实时VaR: {risk_metrics['var_95']:.2%}")
 
-    
+
 
     if data.get('alert'):
 
@@ -1903,4 +1903,3 @@ reporter = RegulatoryReporter(audit=audit)
 **最后更?*: 2026-04-02
 
 **维护?*: Layer 7 AI报告层团?
-

@@ -20,7 +20,7 @@ layer: layer_05
 ## 核心定位
 
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：数据备份恢复、备份策略制定、恢复机制实施
 > - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
@@ -122,19 +122,19 @@ graph TB
         C[Kubernetes] --> E
         D[对象存储] --> E
     end
-    
+
     subgraph "备份引擎"
         E --> F[备份调度器]
         F --> G[增量备份器]
         G --> H[备份验证器]
     end
-    
+
     subgraph "存储后端"
         H --> I[本地存储]
         H --> J[云存储]
         H --> K[异地存储]
     end
-    
+
     subgraph "恢复引擎"
         L[恢复请求] --> M[恢复管理器]
         M --> N[数据恢复器]
@@ -187,23 +187,23 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 class ResticBackupManager:
-    
+
     def __init__(self, config):
         self.config = config
         self.repository = config.get('repository', '/backup/repo')
         self.password = config.get('password', '')
         self.env = {'RESTIC_PASSWORD': self.password}
-    
+
     def init_repository(self):
         cmd = ['restic', 'init', '--repo', self.repository]
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -214,34 +214,34 @@ class ResticBackupManager:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def create_backup(self, paths: List[str], tags: List[str] = None):
         """
         创建备份
-        
+
         Args:
             paths: 备份路径列表
             tags: 备份标签
-        
+
         Returns:
             Dict: 备份结果
         """
         cmd = ['restic', 'backup', '--repo', self.repository]
-        
+
         for path in paths:
             cmd.append(path)
-        
+
         if tags:
             for tag in tags:
                 cmd.extend(['--tag', tag])
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             snapshot_id = self._extract_snapshot_id(result.stdout)
             return {
@@ -255,18 +255,18 @@ class ResticBackupManager:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def list_snapshots(self):
 ?""
         cmd = ['restic', 'snapshots', '--repo', self.repository, '--json']
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             snapshots = json.loads(result.stdout)
             return {
@@ -278,15 +278,15 @@ class ResticBackupManager:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def restore_backup(self, snapshot_id: str, target_path: str):
         """
         恢复备份
-        
+
         Args:
 ID
             target_path: 恢复目标路径
-        
+
         Returns:
             Dict: 恢复结果
         """
@@ -296,14 +296,14 @@ ID
             snapshot_id,
             '--target', target_path
         ]
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -315,17 +315,17 @@ ID
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def check_backup(self):
         cmd = ['restic', 'check', '--repo', self.repository]
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -337,41 +337,41 @@ ID
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def prune_old_snapshots(self, keep_policy: Dict[str, int]):
         """
 ?
-        
+
         Args:
             keep_policy: 保留策略
                 - keep_daily: 保留最近N天的每日备份
                 - keep_weekly: 保留最近N周的每周备份
                 - keep_monthly: 保留最近N月的每月备份
-        
+
         Returns:
 Dict:
 理结果
         """
         cmd = ['restic', 'forget', '--repo', self.repository]
-        
+
         if 'keep_daily' in keep_policy:
             cmd.extend(['--keep-daily', str(keep_policy['keep_daily'])])
-        
+
         if 'keep_weekly' in keep_policy:
             cmd.extend(['--keep-weekly', str(keep_policy['keep_weekly'])])
-        
+
         if 'keep_monthly' in keep_policy:
             cmd.extend(['--keep-monthly', str(keep_policy['keep_monthly'])])
-        
+
         cmd.append('--prune')
-        
+
         result = subprocess.run(
             cmd,
             env=self.env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -383,7 +383,7 @@ Dict:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def _extract_snapshot_id(self, output):
 ID"""
         for line in output.split('\n'):
@@ -396,21 +396,21 @@ ID"""
 
 
 class BackupScheduler:
-    
+
     def __init__(self, config):
         self.config = config
         self.backup_manager = ResticBackupManager(config)
         self.schedules = config.get('schedules', [])
-    
+
     def schedule_backup(self, name: str, paths: List[str], schedule: str, tags: List[str] = None):
         """
         调度备份任务
-        
+
         Args:
             name: 备份任务名称
             paths: 备份路径列表
             tags: 备份标签
-        
+
         Returns:
             Dict: 调度结果
         """
@@ -422,33 +422,33 @@ class BackupScheduler:
             'enabled': True,
             'created_at': datetime.now().isoformat()
         }
-        
+
         self.schedules.append(schedule_config)
-        
+
         return {
             'success': True,
             'message': f'Backup task {name} scheduled',
             'schedule': schedule_config
         }
-    
+
     def execute_scheduled_backups(self):
         """执行所有调度的备份任务"""
         results = []
-        
+
         for schedule in self.schedules:
             if not schedule.get('enabled', False):
                 continue
-            
+
             result = self.backup_manager.create_backup(
                 paths=schedule['paths'],
                 tags=schedule['tags']
             )
-            
+
             results.append({
                 'name': schedule['name'],
                 'result': result
             })
-        
+
         return results
 ```
 
@@ -526,7 +526,7 @@ from typing import Dict, Any
 
 class DatabaseBackupManager:
     """数据库备份管理器"""
-    
+
     def __init__(self, config):
         self.config = config
         self.db_type = config.get('db_type', 'postgresql')
@@ -535,19 +535,19 @@ class DatabaseBackupManager:
         self.db_name = config.get('db_name', 'zephyr_alpha')
         self.db_user = config.get('db_user', 'postgres')
         self.db_password = config.get('db_password', '')
-    
+
     def create_full_backup(self, backup_path: str):
         """
-        
+
         Args:
             backup_path: 备份文件路径
-        
+
         Returns:
             Dict: 备份结果
         """
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         backup_file = f"{backup_path}/{self.db_name}_full_{timestamp}.sql"
-        
+
         if self.db_type == 'postgresql':
             cmd = [
                 'pg_dump',
@@ -573,16 +573,16 @@ class DatabaseBackupManager:
                 'success': False,
                 'error': f'Unsupported database type: {self.db_type}'
             }
-        
+
         env = {'PGPASSWORD': self.db_password} if self.db_type == 'postgresql' else None
-        
+
         result = subprocess.run(
             cmd,
             env=env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -594,21 +594,21 @@ class DatabaseBackupManager:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def create_incremental_backup(self, backup_path: str, last_backup_time: str):
         """
         创建增量备份
-        
+
         Args:
             backup_path: 备份文件路径
             last_backup_time: 上次备份时间
-        
+
         Returns:
             Dict: 备份结果
         """
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         backup_file = f"{backup_path}/{self.db_name}_incr_{timestamp}.sql"
-        
+
         if self.db_type == 'postgresql':
             cmd = [
                 'pg_dump',
@@ -625,16 +625,16 @@ class DatabaseBackupManager:
                 'success': False,
                 'error': 'Incremental backup not supported for this database type'
             }
-        
+
         env = {'PGPASSWORD': self.db_password}
-        
+
         result = subprocess.run(
             cmd,
             env=env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -646,14 +646,14 @@ class DatabaseBackupManager:
                 'success': False,
                 'error': result.stderr
             }
-    
+
     def restore_backup(self, backup_file: str):
         """
         恢复备份
-        
+
         Args:
             backup_file: 备份文件路径
-        
+
         Returns:
             Dict: 恢复结果
         """
@@ -682,16 +682,16 @@ class DatabaseBackupManager:
                 'success': False,
                 'error': f'Unsupported database type: {self.db_type}'
             }
-        
+
         env = {'PGPASSWORD': self.db_password} if self.db_type == 'postgresql' else None
-        
+
         result = subprocess.run(
             cmd,
             env=env,
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             return {
                 'success': True,
@@ -717,20 +717,20 @@ backup_strategies:
     retention_days: 90
     compression: true
     encryption: true
-  
+
   incremental_backup:
     enabled: true
     schedule: "0 * * * *"
     retention_days: 7
     compression: true
-  
+
   database_backup:
     enabled: true
     schedule: "0 3 * * *"
     retention_days: 30
     compression: true
     encryption: true
-  
+
   kubernetes_backup:
     enabled: true
     schedule: "0 4 * * *"
@@ -746,14 +746,14 @@ storage_strategies:
     enabled: true
     path: /backup/local
     max_size_gb: 500
-  
+
   cloud_storage:
     enabled: true
     provider: s3
     bucket: zephyr-alpha-backup
     region: us-east-1
     encryption: true
-  
+
   offsite_storage:
     enabled: true
     provider: s3
@@ -768,7 +768,7 @@ storage_strategies:
 recovery_strategies:
   rpo: 1h
   rto: 4h
-  
+
   recovery_priorities:
     - name: critical_data
       priority: 1
@@ -776,14 +776,14 @@ recovery_strategies:
       resources:
         - database
         - config
-    
+
     - name: important_data
       priority: 2
       rto: 2h
       resources:
         - user_data
         - logs
-    
+
     - name: normal_data
       priority: 3
       rto: 4h
@@ -803,16 +803,16 @@ import hashlib
 from typing import Dict, Any
 
 class BackupValidator:
-    
+
     def __init__(self, config):
         self.config = config
-    
+
     def validate_backup(self, backup_path: str):
         """
-        
+
         Args:
             backup_path: 备份路径
-        
+
         Returns:
             Dict: 验证结果
         """
@@ -822,47 +822,47 @@ class BackupValidator:
             'file_size': self._check_file_size(backup_path),
             'checksum': self._calculate_checksum(backup_path)
         }
-        
+
         results['valid'] = all([
             results['file_exists'],
             results['file_readable'],
             results['file_size']['valid']
         ])
-        
+
         return results
-    
+
     def _check_file_exists(self, path):
         return os.path.exists(path)
-    
+
     def _check_file_readable(self, path):
         return os.access(path, os.R_OK)
-    
+
     def _check_file_size(self, path):
         size = os.path.getsize(path)
         min_size = self.config.get('min_backup_size', 1024)
-        
+
         return {
             'size': size,
             'valid': size >= min_size
         }
-    
+
     def _calculate_checksum(self, path):
         sha256_hash = hashlib.sha256()
-        
+
         with open(path, 'rb') as f:
             for chunk in iter(lambda: f.read(4096), b''):
                 sha256_hash.update(chunk)
-        
+
         return sha256_hash.hexdigest()
-    
+
     def test_restore(self, backup_path: str, test_path: str):
         """
         测试恢复
-        
+
         Args:
             backup_path: 备份路径
             test_path: 测试恢复路径
-        
+
         Returns:
             Dict: 测试结果
         """
@@ -879,23 +879,23 @@ class BackupValidator:
 from typing import Dict, List, Any
 
 class DisasterRecoveryManager:
-    
+
     def __init__(self, config):
         self.config = config
         self.recovery_priorities = config.get('recovery_priorities', [])
-    
+
     def execute_recovery(self, disaster_type: str):
         """
         执行灾难恢复
-        
+
         Args:
             disaster_type: 灾难类型
-        
+
         Returns:
             Dict: 恢复结果
         """
         recovery_plan = self._create_recovery_plan(disaster_type)
-        
+
         results = []
         for step in recovery_plan:
             result = self._execute_recovery_step(step)
@@ -903,15 +903,15 @@ class DisasterRecoveryManager:
                 'step': step['name'],
                 'result': result
             })
-            
+
             if not result['success']:
                 break
-        
+
         return {
             'success': all(r['result']['success'] for r in results),
             'results': results
         }
-    
+
     def _create_recovery_plan(self, disaster_type):
         """创建恢复计划"""
         plans = {
@@ -934,9 +934,9 @@ class DisasterRecoveryManager:
                 {'name': 'switch_traffic', 'priority': 4}
             ]
         }
-        
+
         return plans.get(disaster_type, [])
-    
+
     def _execute_recovery_step(self, step):
         """执行恢复步骤"""
         pass
@@ -971,7 +971,7 @@ class DisasterRecoveryManager:
 
 
 
-### 8.1 
+### 8.1
 
 |------|--------|----------|
 
@@ -1067,6 +1067,3 @@ class DisasterRecoveryManager:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-

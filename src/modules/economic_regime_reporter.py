@@ -64,7 +64,7 @@ class RegimeReport:
 
 
 class RegimeClassifier:
-    
+
     def __init__(self):
         self.regime_indicators = {
             EconomicRegime.EXPANSION: {
@@ -92,13 +92,13 @@ class RegimeClassifier:
                 'yield_curve_slope': (0.00, 0.02)
             }
         }
-    
+
     def classify(self, macro_data: pd.DataFrame) -> EconomicRegime:
         if macro_data.empty:
             return EconomicRegime.UNKNOWN
-        
+
         latest_data = macro_data.iloc[-1]
-        
+
         scores = {}
         for regime, indicators in self.regime_indicators.items():
             score = 0
@@ -109,42 +109,42 @@ class RegimeClassifier:
                     if low <= value <= high:
                         score += 1
                     count += 1
-            
+
             if count > 0:
                 scores[regime] = score / count
-        
+
         if not scores:
             return EconomicRegime.UNKNOWN
-        
+
         best_regime = max(scores, key=scores.get)
         return best_regime
-    
+
     def calculate_probability(self, macro_data: pd.DataFrame, regime: EconomicRegime) -> float:
         if macro_data.empty or regime == EconomicRegime.UNKNOWN:
             return 0.0
-        
+
         latest_data = macro_data.iloc[-1]
         indicators = self.regime_indicators.get(regime, {})
-        
+
         if not indicators:
             return 0.0
-        
+
         probabilities = []
         for indicator, (low, high) in indicators.items():
             if indicator in latest_data:
                 value = latest_data[indicator]
                 mid = (low + high) / 2
                 width = high - low
-                
+
                 distance = abs(value - mid)
                 prob = max(0, 1 - (distance / width))
                 probabilities.append(prob)
-        
+
         return np.mean(probabilities) if probabilities else 0.0
 
 
 class MacroFactorModel:
-    
+
     def __init__(self):
         self.factor_loadings = {
             'growth': ['gdp_growth', 'industrial_production', 'retail_sales'],
@@ -154,7 +154,7 @@ class MacroFactorModel:
             'currency': ['dollar_index', 'eur_usd', 'usd_jpy'],
             'commodity': ['oil_price', 'gold_price', 'copper_price']
         }
-    
+
     def calculate_exposure(self, macro_data: pd.DataFrame, portfolio_data: Optional[pd.DataFrame] = None) -> MacroFactorExposure:
         if macro_data.empty:
             return MacroFactorExposure(
@@ -165,18 +165,18 @@ class MacroFactorModel:
                 currency_exposure=0.0,
                 commodity_exposure=0.0
             )
-        
+
         latest_data = macro_data.iloc[-1]
-        
+
         def calculate_factor_exposure(factor_name: str) -> float:
             indicators = self.factor_loadings.get(factor_name, [])
             values = []
             for indicator in indicators:
                 if indicator in latest_data:
                     values.append(latest_data[indicator])
-            
+
             return float(np.mean(values)) if values else 0.0
-        
+
         return MacroFactorExposure(
             growth_exposure=calculate_factor_exposure('growth'),
             inflation_exposure=calculate_factor_exposure('inflation'),
@@ -188,7 +188,7 @@ class MacroFactorModel:
 
 
 class StrategicAllocator:
-    
+
     def __init__(self):
         self.regime_allocation = {
             EconomicRegime.EXPANSION: {
@@ -222,31 +222,31 @@ class StrategicAllocator:
                 'cash': 0.10
             }
         }
-    
+
     def suggest_allocation(self, regime: EconomicRegime, factor_exposure: MacroFactorExposure) -> Dict[str, float]:
         base_allocation = self.regime_allocation.get(regime, self.regime_allocation[EconomicRegime.UNKNOWN])
-        
+
         adjusted_allocation = base_allocation.copy()
-        
+
         if factor_exposure.growth_exposure > 0.03:
             adjusted_allocation['equity'] = min(0.70, adjusted_allocation['equity'] * 1.1)
             adjusted_allocation['bond'] = max(0.15, adjusted_allocation['bond'] * 0.9)
-        
+
         if factor_exposure.inflation_exposure > 0.04:
             adjusted_allocation['commodity'] = min(0.20, adjusted_allocation['commodity'] * 1.2)
             adjusted_allocation['bond'] = max(0.15, adjusted_allocation['bond'] * 0.85)
-        
+
         if factor_exposure.rate_exposure > 0.05:
             adjusted_allocation['cash'] = min(0.30, adjusted_allocation['cash'] * 1.5)
-        
+
         total = sum(adjusted_allocation.values())
         adjusted_allocation = {k: v / total for k, v in adjusted_allocation.items()}
-        
+
         return adjusted_allocation
 
 
 class TransitionRiskAssessor:
-    
+
     def __init__(self):
         self.transition_signals = {
             'yield_curve_inversion': -0.01,
@@ -254,42 +254,42 @@ class TransitionRiskAssessor:
             'volatility_spike': 0.03,
             'leading_indicator_decline': -0.02
         }
-    
+
     def assess_transition_risk(self, macro_data: pd.DataFrame, current_regime: EconomicRegime) -> Tuple[RegimeTransitionRisk, List[str]]:
         if macro_data.empty or len(macro_data) < 30:
             return RegimeTransitionRisk.LOW, []
-        
+
         warning_signals = []
         risk_score = 0
-        
+
         latest_data = macro_data.iloc[-1]
         prev_data = macro_data.iloc[-30]
-        
+
         if 'yield_curve_slope' in latest_data and 'yield_curve_slope' in prev_data:
             slope_change = latest_data['yield_curve_slope'] - prev_data['yield_curve_slope']
             if slope_change < self.transition_signals['yield_curve_inversion']:
                 warning_signals.append(f"收益率曲线倒挂预警: 斜率变化 {slope_change:.4f}")
                 risk_score += 2
-        
+
         if 'credit_spread' in latest_data and 'credit_spread' in prev_data:
             spread_change = latest_data['credit_spread'] - prev_data['credit_spread']
             if spread_change > self.transition_signals['credit_spread_widening']:
                 warning_signals.append(f"信用利差扩大预警: 利差变化 {spread_change:.4f}")
                 risk_score += 1.5
-        
+
         if 'vix' in latest_data and 'vix' in prev_data:
             vix_change = latest_data['vix'] - prev_data['vix']
             if vix_change > self.transition_signals['volatility_spike']:
                 warning_signals.append(f"波动率飙升预警: VIX变化 {vix_change:.4f}")
                 risk_score += 1
-        
+
         if current_regime == EconomicRegime.EXPANSION:
             risk_score *= 1.2
         elif current_regime == EconomicRegime.PEAK:
             risk_score *= 1.5
         elif current_regime == EconomicRegime.RECESSION:
             risk_score *= 0.8
-        
+
         if risk_score >= 4:
             return RegimeTransitionRisk.CRITICAL, warning_signals
         elif risk_score >= 3:
@@ -301,33 +301,33 @@ class TransitionRiskAssessor:
 
 
 class EconomicRegimeReporter:
-    
+
     def __init__(self):
         self.regime_classifier = RegimeClassifier()
         self.macro_factor_model = MacroFactorModel()
         self.strategic_allocator = StrategicAllocator()
         self.transition_risk_assessor = TransitionRiskAssessor()
-        
+
         logger.info("EconomicRegimeReporter initialized successfully")
-    
+
     def analyze_regime(self, macro_data: pd.DataFrame, portfolio_data: Optional[pd.DataFrame] = None) -> RegimeReport:
         logger.info("Starting economic regime analysis...")
-        
+
         current_regime = self.regime_classifier.classify(macro_data)
         logger.info(f"Current regime classified as: {current_regime.value}")
-        
+
         regime_probability = self.regime_classifier.calculate_probability(macro_data, current_regime)
         logger.info(f"Regime probability: {regime_probability:.2%}")
-        
+
         factor_exposure = self.macro_factor_model.calculate_exposure(macro_data, portfolio_data)
         logger.info(f"Factor exposure calculated: growth={factor_exposure.growth_exposure:.4f}")
-        
+
         strategic_allocation = self.strategic_allocator.suggest_allocation(current_regime, factor_exposure)
         logger.info(f"Strategic allocation suggested: {strategic_allocation}")
-        
+
         transition_risk, warning_signals = self.transition_risk_assessor.assess_transition_risk(macro_data, current_regime)
         logger.info(f"Transition risk: {transition_risk.value}, warnings: {len(warning_signals)}")
-        
+
         report = RegimeReport(
             current_regime=current_regime,
             regime_probability=regime_probability,
@@ -337,13 +337,13 @@ class EconomicRegimeReporter:
             warning_signals=warning_signals,
             timestamp=datetime.now()
         )
-        
+
         logger.info("Economic regime analysis completed successfully")
         return report
-    
+
     def generate_report(self, macro_data: pd.DataFrame, portfolio_data: Optional[pd.DataFrame] = None, output_format: str = "dict") -> Dict:
         regime_report = self.analyze_regime(macro_data, portfolio_data)
-        
+
         report_dict = {
             'report_id': f"REGIME_RPT_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             'timestamp': regime_report.timestamp.isoformat(),
@@ -364,15 +364,15 @@ class EconomicRegimeReporter:
             'warning_signals': regime_report.warning_signals,
             'recommendations': self._generate_recommendations(regime_report)
         }
-        
+
         if output_format == "markdown":
             return self._to_markdown(report_dict)
         else:
             return report_dict
-    
+
     def _generate_recommendations(self, regime_report: RegimeReport) -> List[str]:
         recommendations = []
-        
+
         regime = regime_report.current_regime
         if regime == EconomicRegime.EXPANSION:
             recommendations.append("建议维持风险资产配置，关注通胀压力")
@@ -386,15 +386,15 @@ class EconomicRegimeReporter:
         elif regime == EconomicRegime.RECOVERY:
             recommendations.append("建议逐步增加风险资产配置")
             recommendations.append("关注周期性行业和成长股")
-        
+
         if regime_report.regime_transition_risk in [RegimeTransitionRisk.HIGH, RegimeTransitionRisk.CRITICAL]:
             recommendations.append("⚠️ 范式转换风险较高，建议密切监控市场信号")
-        
+
         if regime_report.warning_signals:
             recommendations.append(f"检测到 {len(regime_report.warning_signals)} 个预警信号，请关注")
-        
+
         return recommendations
-    
+
     def _to_markdown(self, report_dict: Dict) -> str:
         md = f"""# 经济范式分析报告
 
@@ -425,25 +425,25 @@ class EconomicRegimeReporter:
 """
         for asset, allocation in report_dict['strategic_allocation'].items():
             md += f"| {asset} | {allocation:.2%} |\n"
-        
+
         md += "\n## 四、预警信号\n\n"
         if report_dict['warning_signals']:
             for signal in report_dict['warning_signals']:
                 md += f"- {signal}\n"
         else:
             md += "无预警信号\n"
-        
+
         md += "\n## 五、投资建议\n\n"
         for rec in report_dict['recommendations']:
             md += f"- {rec}\n"
-        
+
         return md
 
 
 if __name__ == "__main__":
     np.random.seed(42)
     dates = pd.date_range(start='2023-01-01', periods=100, freq='D')
-    
+
     macro_data = pd.DataFrame({
         'date': dates,
         'gdp_growth': np.random.uniform(0.02, 0.04, 100),
@@ -456,10 +456,10 @@ if __name__ == "__main__":
         'vix': np.random.uniform(15, 25, 100)
     })
     macro_data.set_index('date', inplace=True)
-    
+
     reporter = EconomicRegimeReporter()
     report = reporter.generate_report(macro_data, output_format="dict")
-    
+
     print("\n" + "="*80)
     print("经济范式分析报告")
     print("="*80)
@@ -472,7 +472,7 @@ if __name__ == "__main__":
     print("\n投资建议:")
     for rec in report['recommendations']:
         print(f"  - {rec}")
-    
+
     print("\n" + "="*80)
     print("Markdown格式报告:")
     print("="*80)

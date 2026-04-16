@@ -13,4 +13,3 @@ responsibility: STATE
 **方案版本**: v1.0
 
 **适用范围**: Layer 2 Alpha因子层
-

@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Settings Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Settings Management Interface蓝图设计相关内容
 
@@ -610,7 +610,7 @@ class SettingsManagerInterface:
 
     """设置管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -622,7 +622,7 @@ class SettingsManagerInterface:
 
         self.cipher = self._get_cipher()
 
-    
+
 
     def _ensure_config_exists(self):
 
@@ -646,7 +646,7 @@ class SettingsManagerInterface:
 
                 yaml.dump(default_config, f, allow_unicode=True)
 
-    
+
 
     def _get_cipher(self):
 
@@ -670,7 +670,7 @@ class SettingsManagerInterface:
 
         return Fernet(key)
 
-    
+
 
     def encrypt_value(self, value: str) -> str:
 
@@ -678,7 +678,7 @@ class SettingsManagerInterface:
 
         return self.cipher.encrypt(value.encode()).decode()
 
-    
+
 
     def decrypt_value(self, encrypted_value: str) -> str:
 
@@ -686,7 +686,7 @@ class SettingsManagerInterface:
 
         return self.cipher.decrypt(encrypted_value.encode()).decode()
 
-    
+
 
     def render_system_config(self):
 
@@ -694,15 +694,15 @@ class SettingsManagerInterface:
 
         st.subheader("⚙️ 系统配置")
 
-        
+
 
         config = self._load_config()["system"]
 
-        
+
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
@@ -716,7 +716,7 @@ class SettingsManagerInterface:
 
             )
 
-            
+
 
             cache_strategy = st.selectbox(
 
@@ -728,7 +728,7 @@ class SettingsManagerInterface:
 
             )
 
-        
+
 
         with col2:
 
@@ -736,7 +736,7 @@ class SettingsManagerInterface:
 
             timeout = st.slider("超时时间(秒)", 10, 120, config["timeout"])
 
-        
+
 
         if st.button("保存系统配置"):
 
@@ -754,7 +754,7 @@ class SettingsManagerInterface:
 
             st.success("系统配置已保存")
 
-    
+
 
     def render_user_preferences(self):
 
@@ -762,15 +762,15 @@ class SettingsManagerInterface:
 
         st.subheader("🎨 用户偏好")
 
-        
+
 
         config = self._load_config()["preferences"]
 
-        
+
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
@@ -784,7 +784,7 @@ class SettingsManagerInterface:
 
             )
 
-            
+
 
             theme_color = st.selectbox(
 
@@ -796,7 +796,7 @@ class SettingsManagerInterface:
 
             )
 
-        
+
 
         with col2:
 
@@ -810,7 +810,7 @@ class SettingsManagerInterface:
 
             )
 
-            
+
 
             default_page = st.selectbox(
 
@@ -822,7 +822,7 @@ class SettingsManagerInterface:
 
             )
 
-        
+
 
         if st.button("保存用户偏好"):
 
@@ -840,7 +840,7 @@ class SettingsManagerInterface:
 
             st.success("用户偏好已保存")
 
-    
+
 
     def render_notification_config(self):
 
@@ -848,21 +848,21 @@ class SettingsManagerInterface:
 
         st.subheader("🔔 通知配置")
 
-        
+
 
         config = self._load_config()["notification"]
 
-        
+
 
         tab1, tab2 = st.tabs(["邮件通知", "Telegram通知"])
 
-        
+
 
         with tab1:
 
             email_enabled = st.checkbox("启用邮件通知", config["email_enabled"])
 
-            
+
 
             if email_enabled:
 
@@ -876,13 +876,13 @@ class SettingsManagerInterface:
 
                 receiver_email = st.text_input("收件人邮箱")
 
-        
+
 
         with tab2:
 
             telegram_enabled = st.checkbox("启用Telegram通知", config["telegram_enabled"])
 
-            
+
 
             if telegram_enabled:
 
@@ -890,7 +890,7 @@ class SettingsManagerInterface:
 
                 chat_id = st.text_input("Chat ID")
 
-        
+
 
         if st.button("保存通知配置"):
 
@@ -997,4 +997,3 @@ class SettingsManagerInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

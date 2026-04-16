@@ -18,4 +18,3 @@ open_source_solution: 自研 + QuantLib
 priority: P2
 ---
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

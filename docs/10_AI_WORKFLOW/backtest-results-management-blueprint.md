@@ -308,13 +308,13 @@ def log_backtest_result(run_name: str, params: dict, metrics: dict, artifacts: d
 
         mlflow.log_params(params)
 
-        
+
 
         # 记录指标
 
         mlflow.log_metrics(metrics)
 
-        
+
 
         # 记录附件
 
@@ -322,7 +322,7 @@ def log_backtest_result(run_name: str, params: dict, metrics: dict, artifacts: d
 
             mlflow.log_artifact(path, name)
 
-        
+
 
         return mlflow.active_run().info.run_id
 
@@ -532,7 +532,7 @@ class BacktestResultsManager:
 
         pass
 
-    
+
 
     def get_result(self, run_id: str) -> BacktestResult:
 
@@ -540,7 +540,7 @@ class BacktestResultsManager:
 
         pass
 
-    
+
 
     def query_results(self, query: Query) -> List[BacktestResult]:
 
@@ -548,7 +548,7 @@ class BacktestResultsManager:
 
         pass
 
-    
+
 
     def compare_results(self, run_ids: List[str]) -> ComparisonReport:
 
@@ -556,7 +556,7 @@ class BacktestResultsManager:
 
         pass
 
-    
+
 
     def analyze_statistics(self, run_ids: List[str]) -> StatisticsReport:
 
@@ -592,13 +592,13 @@ class BacktestResult(BaseModel):
 
     status: str
 
-    
+
 
     # 性能指标
 
     metrics: Dict[str, float]
 
-    
+
 
     # 交易统计
 
@@ -608,7 +608,7 @@ class BacktestResult(BaseModel):
 
     loss_trades: int
 
-    
+
 
     # 风险指标
 
@@ -725,4 +725,3 @@ class BacktestResult(BaseModel):
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

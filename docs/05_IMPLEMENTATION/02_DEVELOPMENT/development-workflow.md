@@ -50,7 +50,7 @@ implementation_status: 进行?---
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -569,4 +569,3 @@ git tag -l
 - DESIGN_PRINCIPLES.md - 设计原则
 
 - DEVELOPER_RULES.md - 原文档（已拆分）
-

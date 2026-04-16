@@ -36,7 +36,7 @@ implementation_status: 活跃维护
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -735,6 +735,3 @@ CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md -
 
 
 - [实施层索引](../05_IMPLEMENTATION/INDEX.md)
-
-
-

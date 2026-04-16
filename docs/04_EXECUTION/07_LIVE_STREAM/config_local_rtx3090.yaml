@@ -23,7 +23,7 @@ models:
       fp16: true  # 使用FP16加速
       beam_size: 5  # 提高准确率
       best_of: 5
-  
+
   # 内容分析模型（大语言模型）
   llm:
     type: "ollama"  # 使用Ollama
@@ -37,7 +37,7 @@ models:
       num_predict: 2000
       top_p: 0.9
       top_k: 40
-  
+
   # 情感分析模型
   sentiment:
     type: "local"
@@ -72,7 +72,7 @@ analyzer:
   max_retries: 3  # 最大重试次数
   timeout: 120  # 超时时间（秒）
   save_raw_response: true  # 保存原始响应
-  
+
   # 观点提取配置
   extraction:
     min_confidence: 3  # 最小信心度
@@ -84,7 +84,7 @@ aggregator:
   min_streamers: 3  # 最少主播数量
   weight_by_online_count: true  # 按在线人数加权
   weight_by_confidence: true  # 按信心度加权
-  
+
   # 权重配置
   weights:
     online_count_factor: 0.3  # 在线人数权重
@@ -99,7 +99,7 @@ factor_generator:
     consensus: 0.3  # 一致性因子权重
     influence: 0.2  # 影响力因子权重
     confidence: 0.1  # 信心度因子权重
-  
+
   # 标准化配置
   normalization:
     method: "zscore"  # 标准化方法
@@ -112,7 +112,7 @@ output:
   save_transcript: true  # 保存转录文本
   save_audio: false  # 不保存音频（节省空间）
   save_metadata: true  # 保存元数据
-  
+
   # 输出格式
   formats:
     - "json"
@@ -144,12 +144,12 @@ performance:
     enabled: true
     device_id: 0
     memory_fraction: 0.9  # 使用90%显存
-    
+
   # 并发配置
   concurrency:
     max_workers: 4  # 最大并发数
     batch_size: 2  # 批处理大小
-    
+
   # 缓存配置
   cache:
     enabled: true

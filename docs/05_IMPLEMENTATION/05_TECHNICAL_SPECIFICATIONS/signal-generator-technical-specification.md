@@ -36,7 +36,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -96,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﮔﮔﺁﻝ?*: 
+- **ﮔﮔﺁﻝ?*:
 
 
 
@@ -116,7 +116,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻠ۱ﮔﻛﭨ?*: 
+- **ﻠ۱ﮔﻛﭨ?*:
 
 
 
@@ -354,7 +354,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*:
 
 
 
@@ -378,7 +378,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 
 
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 
 
 
@@ -712,7 +712,7 @@ class RawSignalCalculator:
 
 
 
-    
+
 
 
 
@@ -724,7 +724,7 @@ class RawSignalCalculator:
 
 
 
-    
+
 
 
 
@@ -752,7 +752,7 @@ class RawSignalCalculator:
 
 
 
-        
+
 
 
 
@@ -768,7 +768,7 @@ method: ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
 
 
 
-            
+
 
 
 
@@ -832,7 +832,7 @@ method: ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
 
 
 
-    
+
 
 
 
@@ -844,7 +844,7 @@ method: ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
 
 
 
-        
+
 
 
 
@@ -856,7 +856,7 @@ method: ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
 
 
 
-            
+
 
 
 
@@ -928,7 +928,7 @@ class SignalFilter:
 
 
 
-    
+
 
 
 
@@ -944,7 +944,7 @@ class SignalFilter:
 
 
 
-    
+
 
 
 
@@ -972,7 +972,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -988,7 +988,7 @@ class SignalFilter:
 
 
 
-            
+
 
 
 
@@ -1012,7 +1012,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1020,7 +1020,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1032,7 +1032,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1048,7 +1048,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1056,7 +1056,7 @@ class SignalFilter:
 
 
 
-    
+
 
 
 
@@ -1092,7 +1092,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1116,7 +1116,7 @@ class SignalFilter:
 
 
 
-            
+
 
 
 
@@ -1136,7 +1136,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1144,7 +1144,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1164,7 +1164,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1172,7 +1172,7 @@ class SignalFilter:
 
 
 
-    
+
 
 
 
@@ -1200,7 +1200,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1216,7 +1216,7 @@ class SignalFilter:
 
 
 
-            
+
 
 
 
@@ -1236,7 +1236,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1248,7 +1248,7 @@ class SignalFilter:
 
 
 
-        
+
 
 
 
@@ -1272,7 +1272,7 @@ class SignalConfirmator:
 
 
 
-    
+
 
 
 
@@ -1288,7 +1288,7 @@ class SignalConfirmator:
 
 
 
-    
+
 
 
 
@@ -1320,7 +1320,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1340,7 +1340,7 @@ class SignalConfirmator:
 
 
 
-            
+
 
 
 
@@ -1364,7 +1364,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1372,7 +1372,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1380,7 +1380,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1400,7 +1400,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1408,7 +1408,7 @@ class SignalConfirmator:
 
 
 
-    
+
 
 
 
@@ -1436,7 +1436,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1452,7 +1452,7 @@ class SignalConfirmator:
 
 
 
-            
+
 
 
 
@@ -1476,7 +1476,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1484,7 +1484,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1492,7 +1492,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1508,7 +1508,7 @@ class SignalConfirmator:
 
 
 
-            
+
 
 
 
@@ -1528,7 +1528,7 @@ class SignalConfirmator:
 
 
 
-        
+
 
 
 
@@ -1552,7 +1552,7 @@ class SignalSynthesizer:
 
 
 
-    
+
 
 
 
@@ -1568,7 +1568,7 @@ class SignalSynthesizer:
 
 
 
-    
+
 
 
 
@@ -1596,7 +1596,7 @@ class SignalSynthesizer:
 
 
 
-        
+
 
 
 
@@ -1612,7 +1612,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-            
+
 
 
 
@@ -1648,7 +1648,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-        
+
 
 
 
@@ -1656,7 +1656,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-        
+
 
 
 
@@ -1672,7 +1672,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-        
+
 
 
 
@@ -1680,7 +1680,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-    
+
 
 
 
@@ -1708,7 +1708,7 @@ weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
 
 
 
-        
+
 
 
 
@@ -1724,7 +1724,7 @@ factor_ic: ﮒﮒICﮒﮒﺕ
 
 
 
-            
+
 
 
 
@@ -1760,7 +1760,7 @@ factor_ic: ﮒﮒICﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1768,7 +1768,7 @@ factor_ic: ﮒﮒICﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1788,7 +1788,7 @@ factor_ic: ﮒﮒICﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -1812,7 +1812,7 @@ class SignalDecayManager:
 
 
 
-    
+
 
 
 
@@ -1832,7 +1832,7 @@ class SignalDecayManager:
 
 
 
-    
+
 
 
 
@@ -1860,7 +1860,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -1876,7 +1876,7 @@ class SignalDecayManager:
 
 
 
-            
+
 
 
 
@@ -1900,7 +1900,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -1908,7 +1908,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -1920,7 +1920,7 @@ class SignalDecayManager:
 
 
 
-            
+
 
 
 
@@ -1932,7 +1932,7 @@ class SignalDecayManager:
 
 
 
-                
+
 
 
 
@@ -1948,7 +1948,7 @@ class SignalDecayManager:
 
 
 
-                    
+
 
 
 
@@ -1964,7 +1964,7 @@ class SignalDecayManager:
 
 
 
-                
+
 
 
 
@@ -1972,7 +1972,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -1980,7 +1980,7 @@ class SignalDecayManager:
 
 
 
-    
+
 
 
 
@@ -1992,7 +1992,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -2012,7 +2012,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -2032,7 +2032,7 @@ class SignalDecayManager:
 
 
 
-                
+
 
 
 
@@ -2044,7 +2044,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -2056,7 +2056,7 @@ class SignalDecayManager:
 
 
 
-        
+
 
 
 
@@ -2084,7 +2084,7 @@ class SignalQualityAssessor:
 
 
 
-    
+
 
 
 
@@ -2096,7 +2096,7 @@ class SignalQualityAssessor:
 
 
 
-    
+
 
 
 
@@ -2124,7 +2124,7 @@ class SignalQualityAssessor:
 
 
 
-        
+
 
 
 
@@ -2140,7 +2140,7 @@ class SignalQualityAssessor:
 
 
 
-            
+
 
 
 
@@ -2160,7 +2160,7 @@ class SignalQualityAssessor:
 
 
 
-        
+
 
 
 
@@ -2184,7 +2184,7 @@ class SignalQualityAssessor:
 
 
 
-                
+
 
 
 
@@ -2204,7 +2204,7 @@ class SignalQualityAssessor:
 
 
 
-        
+
 
 
 
@@ -2224,7 +2224,7 @@ class SignalQualityAssessor:
 
 
 
-        
+
 
 
 
@@ -2240,7 +2240,7 @@ class SignalQualityAssessor:
 
 
 
-        
+
 
 
 
@@ -2264,7 +2264,7 @@ class SignalGenerator:
 
 
 
-    
+
 
 
 
@@ -2276,7 +2276,7 @@ class SignalGenerator:
 
 
 
-        
+
 
 
 
@@ -2304,7 +2304,7 @@ class SignalGenerator:
 
 
 
-        
+
 
 
 
@@ -2312,7 +2312,7 @@ class SignalGenerator:
 
 
 
-    
+
 
 
 
@@ -2344,7 +2344,7 @@ class SignalGenerator:
 
 
 
-        
+
 
 
 
@@ -2364,7 +2364,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-            
+
 
 
 
@@ -2384,7 +2384,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2392,7 +2392,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2408,7 +2408,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2420,7 +2420,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2440,7 +2440,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2448,7 +2448,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2476,7 +2476,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2508,7 +2508,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -2544,7 +2544,7 @@ factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
 
 
 
-        
+
 
 
 
@@ -2568,7 +2568,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-            
+
 
 
 
@@ -2588,7 +2588,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -2596,7 +2596,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-    
+
 
 
 
@@ -2608,7 +2608,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -2620,7 +2620,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-            
+
 
 
 
@@ -2640,7 +2640,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -2656,7 +2656,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-                
+
 
 
 
@@ -2684,7 +2684,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -2692,7 +2692,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-    
+
 
 
 
@@ -2720,7 +2720,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-        
+
 
 
 
@@ -2736,7 +2736,7 @@ weights: ﮔﻠﮒﮒﺕ
 
 
 
-            
+
 
 
 
@@ -3056,7 +3056,7 @@ def calculate(
 
 
 
-    
+
 
 
 
@@ -3076,7 +3076,7 @@ def calculate(
 
 
 
-    
+
 
 
 
@@ -3180,7 +3180,7 @@ def filter_by_strength(
 
 
 
-    
+
 
 
 
@@ -3200,7 +3200,7 @@ def filter_by_strength(
 
 
 
-    
+
 
 
 
@@ -3216,7 +3216,7 @@ def filter_by_strength(
 
 
 
-    
+
 
 
 
@@ -3228,7 +3228,7 @@ def filter_by_strength(
 
 
 
-    
+
 
 
 
@@ -3280,7 +3280,7 @@ def apply_decay(
 
 
 
-    
+
 
 
 
@@ -3304,7 +3304,7 @@ def apply_decay(
 
 
 
-    
+
 
 
 
@@ -3324,7 +3324,7 @@ def apply_decay(
 
 
 
-    
+
 
 
 
@@ -3332,7 +3332,7 @@ def apply_decay(
 
 
 
-    
+
 
 
 
@@ -3344,7 +3344,7 @@ def apply_decay(
 
 
 
-        
+
 
 
 
@@ -3356,7 +3356,7 @@ def apply_decay(
 
 
 
-            
+
 
 
 
@@ -3372,7 +3372,7 @@ def apply_decay(
 
 
 
-                
+
 
 
 
@@ -3388,7 +3388,7 @@ def apply_decay(
 
 
 
-            
+
 
 
 
@@ -3396,7 +3396,7 @@ def apply_decay(
 
 
 
-    
+
 
 
 
@@ -3572,7 +3572,7 @@ def test_signal_generator_integration():
 
 
 
-    
+
 
 
 
@@ -3592,7 +3592,7 @@ def test_signal_generator_integration():
 
 
 
-    
+
 
 
 
@@ -3620,7 +3620,7 @@ def test_signal_generator_integration():
 
 
 
-    
+
 
 
 
@@ -3628,7 +3628,7 @@ def test_signal_generator_integration():
 
 
 
-    
+
 
 
 
@@ -3912,7 +3912,7 @@ signal_generation:
 
 
 
-  
+
 
 
 
@@ -3944,7 +3944,7 @@ signal_generation:
 
 
 
-  
+
 
 
 
@@ -3980,7 +3980,7 @@ signal_generation:
 
 
 
-  
+
 
 
 
@@ -4065,6 +4065,3 @@ signal_generation:
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
-
-
-

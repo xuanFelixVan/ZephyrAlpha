@@ -28,7 +28,7 @@ implementation_status: 待实施
 
 > **核心职责**: 压力测试详细技术实现规范
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：压力测试场景、敏感性分析、情景分析
 
@@ -60,7 +60,7 @@ implementation_status: 待实施
 
 - **业务需求**: 评估极端市场条件下组合的风险敞口
 
-- **技术痛点**: 
+- **技术痛点**:
 
   - 场景设计：需要设计合理的压力测试场景
 
@@ -68,7 +68,7 @@ implementation_status: 待实施
 
   - 结果解释：压力测试结果的可解释性
 
-- **预期收益**: 
+- **预期收益**:
 
   - 提供极端风险敞口评估
 
@@ -234,7 +234,7 @@ class ScenarioManager:
 
     """场景管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -242,7 +242,7 @@ class ScenarioManager:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def add_scenario(
 
@@ -258,7 +258,7 @@ class ScenarioManager:
 
         self.logger.info(f"添加场景: {scenario.name}")
 
-    
+
 
     def get_scenario(
 
@@ -272,7 +272,7 @@ class ScenarioManager:
 
         return self.scenarios.get(name)
 
-    
+
 
     def create_standard_scenarios(self) -> None:
 
@@ -290,7 +290,7 @@ class ScenarioManager:
 
         ))
 
-        
+
 
         self.add_scenario(StressScenario(
 
@@ -304,7 +304,7 @@ class ScenarioManager:
 
         ))
 
-        
+
 
         self.add_scenario(StressScenario(
 
@@ -326,13 +326,13 @@ class HistoricalSimulator:
 
     """历史模拟器"""
 
-    
+
 
     def __init__(self):
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def simulate(
 
@@ -350,7 +350,7 @@ class HistoricalSimulator:
 
         执行历史模拟
 
-        
+
 
         参数:
 
@@ -360,7 +360,7 @@ class HistoricalSimulator:
 
             portfolio_weights: 组合权重
 
-            
+
 
         返回:
 
@@ -370,7 +370,7 @@ class HistoricalSimulator:
 
         shocked_returns = returns.copy()
 
-        
+
 
         for factor, shock in scenario.shocks.items():
 
@@ -378,17 +378,17 @@ class HistoricalSimulator:
 
                 shocked_returns[factor] = shocked_returns[factor] + shock / 252
 
-        
+
 
         portfolio_returns = (shocked_returns * portfolio_weights).sum(axis=1)
 
-        
+
 
         portfolio_value_change = portfolio_returns.sum()
 
         percentage_loss = portfolio_value_change
 
-        
+
 
         asset_impacts = {}
 
@@ -396,7 +396,7 @@ class HistoricalSimulator:
 
             asset_impacts[col] = (shocked_returns[col] * portfolio_weights[i]).sum()
 
-        
+
 
         result = StressTestResult(
 
@@ -414,11 +414,11 @@ class HistoricalSimulator:
 
         )
 
-        
+
 
         self.logger.info(f"历史模拟完成，场景={scenario.name}，损失={percentage_loss:.4f}")
 
-        
+
 
         return result
 
@@ -430,7 +430,7 @@ class MonteCarloSimulator:
 
     """蒙特卡洛模拟器"""
 
-    
+
 
     def __init__(self, n_simulations: int = 10000):
 
@@ -438,7 +438,7 @@ class MonteCarloSimulator:
 
         self.logger = logging.getLogger(__name__)
 
-    
+
 
     def simulate(
 
@@ -458,7 +458,7 @@ class MonteCarloSimulator:
 
         执行蒙特卡洛模拟
 
-        
+
 
         参数:
 
@@ -470,7 +470,7 @@ class MonteCarloSimulator:
 
             scenario: 压力测试场景
 
-            
+
 
         返回:
 
@@ -486,7 +486,7 @@ class MonteCarloSimulator:
 
                 shocked_mean[i] += scenario.shocks[factor] / 252
 
-        
+
 
         simulated_returns = np.random.multivariate_normal(
 
@@ -494,17 +494,17 @@ class MonteCarloSimulator:
 
         )
 
-        
+
 
         portfolio_returns = simulated_returns @ portfolio_weights
 
-        
+
 
         portfolio_value_change = portfolio_returns.mean()
 
         percentage_loss = portfolio_value_change
 
-        
+
 
         var_95 = np.percentile(portfolio_returns, 5)
 
@@ -512,7 +512,7 @@ class MonteCarloSimulator:
 
         es_95 = portfolio_returns[portfolio_returns <= var_95].mean()
 
-        
+
 
         result = StressTestResult(
 
@@ -538,11 +538,11 @@ class MonteCarloSimulator:
 
         )
 
-        
+
 
         self.logger.info(f"蒙特卡洛模拟完成，VaR(95%)={var_95:.4f}")
 
-        
+
 
         return result
 
@@ -554,7 +554,7 @@ class StressTester:
 
     """压力测试器主类"""
 
-    
+
 
     def __init__(self, n_simulations: int = 10000):
 
@@ -566,11 +566,11 @@ class StressTester:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
         self.scenario_manager.create_standard_scenarios()
 
-    
+
 
     def run_test(
 
@@ -592,7 +592,7 @@ class StressTester:
 
         执行压力测试
 
-        
+
 
         参数:
 
@@ -606,7 +606,7 @@ class StressTester:
 
             portfolio_weights: 组合权重
 
-            
+
 
         返回:
 
@@ -616,13 +616,13 @@ class StressTester:
 
         scenario = self.scenario_manager.get_scenario(scenario_name)
 
-        
+
 
         if not scenario:
 
             raise ValueError(f"场景不存在: {scenario_name}")
 
-        
+
 
         if scenario.scenario_type == ScenarioType.HISTORICAL and returns is not None:
 
@@ -640,7 +640,7 @@ class StressTester:
 
             return self.historical_simulator.simulate(returns, scenario, portfolio_weights)
 
-    
+
 
     def run_all_scenarios(
 
@@ -656,7 +656,7 @@ class StressTester:
 
         results = {}
 
-        
+
 
         for scenario_name in self.scenario_manager.scenarios:
 
@@ -674,7 +674,7 @@ class StressTester:
 
                 self.logger.error(f"场景测试失败: {scenario_name}, 错误: {e}")
 
-        
+
 
         return results
 
@@ -779,4 +779,3 @@ class StressTester:
 
 
 **版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队
-

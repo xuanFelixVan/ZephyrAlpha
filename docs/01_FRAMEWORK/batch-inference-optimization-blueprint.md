@@ -47,7 +47,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -393,7 +393,7 @@ class BatchInferenceOptimizer:
 
 
 
-    
+
 
 
 
@@ -477,7 +477,7 @@ class BatchInferenceOptimizer:
 
 
 
-        """初始化批处理优化?        
+        """初始化批处理优化?
 
 
 
@@ -537,7 +537,7 @@ class BatchInferenceOptimizer:
 
 
 
-    
+
 
 
 
@@ -597,7 +597,7 @@ class BatchInferenceOptimizer:
 
 
 
-        """优化批处?        
+        """优化批处?
 
 
 
@@ -633,7 +633,7 @@ class BatchInferenceOptimizer:
 
 
 
-            
+
 
 
 
@@ -1794,14 +1794,3 @@ outputs = llm.generate(prompts, sampling_params)
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

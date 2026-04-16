@@ -29,7 +29,7 @@ registries:
 
   - id: SCRIPTS_TIER1_REGISTRY
     path: docs/01_GOVERNANCE/REGISTERS/scripts-canonical-tier1.yaml
-    manages: "日常治理/CI/预提交优先调用的 30 个脚本入口（物理脚本数更多，避免重复建设）"
+    manages: "日常治理/CI/预提交优先调用的 31 个脚本入口（物理脚本数更多，避免重复建设）"
     status: active
     last_updated: "2026-04-16"
     notes: "dedupe_archive_only_module_ids 已并入 dedupe_archive_module_ids --mode archive-only"
@@ -188,7 +188,7 @@ tools:
 
   pre_commit_hooks:
     path: scripts/hooks/
-    count: 12
+    count: 19
     files:
       - name: doc_guard_pre_commit.py
         purpose: "文档守卫——编码检查 + 格式校验"
@@ -459,6 +459,6 @@ changelog:
     date: "2026-04-16"
     changes:
       - "初始创建，覆盖注册表/标准/工具/操作手册/仪表盘/AI入职/知识库七大类"
-      - "记录 22 个脚本（audit）、16 个脚本（governance）、14 个脚本（ci_audit）、12 个钩子、8 个 CI 工作流"
+      - "记录 22 个脚本（audit）、16 个脚本（governance）、14 个脚本（ci_audit）、19 个钩子（本地）+ 5 个社区钩子、8 个 CI 工作流"
       - "标记 PROJECT_HEALTH_DASHBOARD 为最高优先级缺失项"
       - "记录 FILE_PROVENANCE_SYSTEM 和 SESSION_ARTIFACT_PATTERN 为待建设组件"

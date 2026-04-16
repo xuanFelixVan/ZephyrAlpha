@@ -50,7 +50,7 @@ priority: P0
 
 > **核心职责**: 多策略协调系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：多策略协调系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P0
 
 > **核心职责**: Multi Strategy Coordination蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Multi Strategy Coordination蓝图设计相关内容
 
@@ -538,7 +538,7 @@ class SignalCollector:
 
     """信号收集器"""
 
-    
+
 
     def __init__(self):
 
@@ -546,9 +546,9 @@ class SignalCollector:
 
         self.strategies: Dict[str, Dict] = {}
 
-        
 
-    def register_strategy(self, 
+
+    def register_strategy(self,
 
                          strategy_id: str,
 
@@ -558,7 +558,7 @@ class SignalCollector:
 
         self.strategies[strategy_id] = strategy_info
 
-    
+
 
     def receive_signal(self, signal: RawSignal):
 
@@ -566,7 +566,7 @@ class SignalCollector:
 
         self.raw_signals.append(signal)
 
-    
+
 
     def receive_signals(self, signals: List[RawSignal]):
 
@@ -574,9 +574,9 @@ class SignalCollector:
 
         self.raw_signals.extend(signals)
 
-    
 
-    def get_signals_by_strategy(self, 
+
+    def get_signals_by_strategy(self,
 
                                strategy_id: str) -> List[RawSignal]:
 
@@ -584,9 +584,9 @@ class SignalCollector:
 
         return [s for s in self.raw_signals if s.strategy_id == strategy_id]
 
-    
 
-    def get_signals_by_stock(self, 
+
+    def get_signals_by_stock(self,
 
                             stock_code: str) -> List[RawSignal]:
 
@@ -594,7 +594,7 @@ class SignalCollector:
 
         return [s for s in self.raw_signals if s.stock_code == stock_code]
 
-    
+
 
     def clear_signals(self):
 
@@ -608,13 +608,13 @@ class SignalNormalizer:
 
     """信号标准化器"""
 
-    
+
 
     def __init__(self):
 
         self.signal_counter = 0
 
-    
+
 
     def normalize_direction(self, direction: str) -> SignalDirection:
 
@@ -642,7 +642,7 @@ class SignalNormalizer:
 
         return direction_map.get(direction.lower(), SignalDirection.HOLD)
 
-    
+
 
     def normalize_strength(self, strength: float) -> float:
 
@@ -650,7 +650,7 @@ class SignalNormalizer:
 
         return max(0.0, min(1.0, abs(strength)))
 
-    
+
 
     def normalize_confidence(self, confidence: float) -> float:
 
@@ -658,9 +658,9 @@ class SignalNormalizer:
 
         return max(0.0, min(1.0, confidence))
 
-    
 
-    def normalize_signal(self, 
+
+    def normalize_signal(self,
 
                         raw_signal: RawSignal,
 
@@ -670,13 +670,13 @@ class SignalNormalizer:
 
         self.signal_counter += 1
 
-        
+
 
         direction = self.normalize_direction(raw_signal.direction)
 
         strength = self.normalize_strength(raw_signal.strength)
 
-        
+
 
         base_confidence = strategy_info.get('base_confidence', 0.5)
 
@@ -686,11 +686,11 @@ class SignalNormalizer:
 
         )
 
-        
+
 
         target_weight = raw_signal.metadata.get('target_weight', 0.0)
 
-        
+
 
         return StandardizedSignal(
 
@@ -722,9 +722,9 @@ class SignalNormalizer:
 
         )
 
-    
 
-    def normalize_all(self, 
+
+    def normalize_all(self,
 
                      raw_signals: List[RawSignal],
 
@@ -798,7 +798,7 @@ class ConflictDetector:
 
     """冲突检测器"""
 
-    
+
 
     def __init__(self):
 
@@ -806,7 +806,7 @@ class ConflictDetector:
 
         self.conflict_counter = 0
 
-    
+
 
     def detect_direction_conflicts(self,
 
@@ -816,7 +816,7 @@ class ConflictDetector:
 
         conflicts = []
 
-        
+
 
         by_stock = {}
 
@@ -828,7 +828,7 @@ class ConflictDetector:
 
             by_stock[sig.stock_code].append(sig)
 
-        
+
 
         for stock_code, stock_signals in by_stock.items():
 
@@ -836,11 +836,11 @@ class ConflictDetector:
 
                 continue
 
-            
+
 
             directions = set(s.direction for s in stock_signals)
 
-            
+
 
             if SignalDirection.BUY in directions and SignalDirection.SELL in directions:
 
@@ -864,11 +864,11 @@ class ConflictDetector:
 
                 self.conflicts.append(conflict)
 
-        
+
 
         return conflicts
 
-    
+
 
     def detect_capital_conflicts(self,
 
@@ -880,17 +880,17 @@ class ConflictDetector:
 
         conflicts = []
 
-        
+
 
         total_demand = sum(
 
-            abs(s.target_weight) * available_capital 
+            abs(s.target_weight) * available_capital
 
             for s in signals if s.direction in [SignalDirection.BUY, SignalDirection.SELL]
 
         )
 
-        
+
 
         if total_demand > available_capital:
 
@@ -914,11 +914,11 @@ class ConflictDetector:
 
             self.conflicts.append(conflict)
 
-        
+
 
         return conflicts
 
-    
+
 
     def detect_all_conflicts(self,
 
@@ -944,7 +944,7 @@ class ConflictResolver:
 
     """冲突解决器"""
 
-    
+
 
     def __init__(self):
 
@@ -954,7 +954,7 @@ class ConflictResolver:
 
         self.strategy_weights: Dict[str, float] = {}
 
-    
+
 
     def set_strategy_weights(self, weights: Dict[str, float]):
 
@@ -962,7 +962,7 @@ class ConflictResolver:
 
         self.strategy_weights = weights
 
-    
+
 
     def resolve_by_strength(self,
 
@@ -972,7 +972,7 @@ class ConflictResolver:
 
         return max(signals, key=lambda s: s.strength)
 
-    
+
 
     def resolve_by_confidence(self,
 
@@ -982,7 +982,7 @@ class ConflictResolver:
 
         return max(signals, key=lambda s: s.confidence)
 
-    
+
 
     def resolve_by_strategy_weight(self,
 
@@ -996,11 +996,11 @@ class ConflictResolver:
 
             return sig.strength * sig.confidence * strategy_weight
 
-        
+
 
         return max(signals, key=get_weighted_score)
 
-    
+
 
     def resolve_conflict(self,
 
@@ -1014,11 +1014,11 @@ class ConflictResolver:
 
         self.resolution_counter += 1
 
-        
+
 
         involved_signals = [s for s in signals if s.signal_id in conflict.involved_signals]
 
-        
+
 
         if method == 'strength':
 
@@ -1032,11 +1032,11 @@ class ConflictResolver:
 
             winner = self.resolve_by_strategy_weight(involved_signals)
 
-        
+
 
         losers = [s.signal_id for s in involved_signals if s.signal_id != winner.signal_id]
 
-        
+
 
         resolution = ConflictResolution(
 
@@ -1054,13 +1054,13 @@ class ConflictResolver:
 
         )
 
-        
+
 
         self.resolutions.append(resolution)
 
         return resolution
 
-    
+
 
     def resolve_all_conflicts(self,
 
@@ -1074,7 +1074,7 @@ class ConflictResolver:
 
         return [
 
-            self.resolve_conflict(c, signals, method) 
+            self.resolve_conflict(c, signals, method)
 
             for c in conflicts
 
@@ -1140,13 +1140,13 @@ class CapitalDemandEstimator:
 
     """资金需求评估器"""
 
-    
+
 
     def __init__(self):
 
         self.demands: List[CapitalDemand] = []
 
-    
+
 
     def estimate_signal_demand(self,
 
@@ -1164,7 +1164,7 @@ class CapitalDemandEstimator:
 
         required = abs(signal.target_weight) * total_capital
 
-        
+
 
         return CapitalDemand(
 
@@ -1184,7 +1184,7 @@ class CapitalDemandEstimator:
 
         )
 
-    
+
 
     def estimate_all_demands(self,
 
@@ -1200,7 +1200,7 @@ class CapitalDemandEstimator:
 
         self.demands = []
 
-        
+
 
         for sig in signals:
 
@@ -1208,7 +1208,7 @@ class CapitalDemandEstimator:
 
             exp_ret = expected_returns.get(sig.signal_id, 0.0)
 
-            
+
 
             demand = self.estimate_signal_demand(
 
@@ -1218,11 +1218,11 @@ class CapitalDemandEstimator:
 
             self.demands.append(demand)
 
-        
+
 
         return self.demands
 
-    
+
 
     def get_total_demand(self) -> float:
 
@@ -1230,7 +1230,7 @@ class CapitalDemandEstimator:
 
         return sum(d.required_capital for d in self.demands)
 
-    
+
 
     def get_capital_gap(self, available: float) -> float:
 
@@ -1244,7 +1244,7 @@ class CapitalAllocator:
 
     """资金分配器"""
 
-    
+
 
     def __init__(self, reserve_ratio: float = 0.1):
 
@@ -1254,7 +1254,7 @@ class CapitalAllocator:
 
         self.allocation_counter = 0
 
-    
+
 
     def allocate_by_priority(self,
 
@@ -1266,17 +1266,17 @@ class CapitalAllocator:
 
         self.allocations = []
 
-        
+
 
         investable = available_capital * (1 - self.reserve_ratio)
 
         remaining = investable
 
-        
+
 
         sorted_demands = sorted(demands, key=lambda d: d.priority)
 
-        
+
 
         for demand in sorted_demands:
 
@@ -1284,13 +1284,13 @@ class CapitalAllocator:
 
                 break
 
-            
+
 
             allocated = min(demand.required_capital, remaining)
 
             remaining -= allocated
 
-            
+
 
             self.allocation_counter += 1
 
@@ -1314,11 +1314,11 @@ class CapitalAllocator:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
-    
+
 
     def allocate_proportionally(self,
 
@@ -1330,29 +1330,29 @@ class CapitalAllocator:
 
         self.allocations = []
 
-        
+
 
         investable = available_capital * (1 - self.reserve_ratio)
 
         total_demand = sum(d.required_capital for d in demands)
 
-        
+
 
         if total_demand == 0:
 
             return self.allocations
 
-        
+
 
         scale_factor = min(1.0, investable / total_demand)
 
-        
+
 
         for demand in demands:
 
             allocated = demand.required_capital * scale_factor
 
-            
+
 
             self.allocation_counter += 1
 
@@ -1376,11 +1376,11 @@ class CapitalAllocator:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
-    
+
 
     def allocate_by_risk_budget(self,
 
@@ -1394,15 +1394,15 @@ class CapitalAllocator:
 
         self.allocations = []
 
-        
+
 
         investable = available_capital * (1 - self.reserve_ratio)
 
-        
+
 
         total_risk_budget = sum(risk_budgets.values())
 
-        
+
 
         for demand in demands:
 
@@ -1410,11 +1410,11 @@ class CapitalAllocator:
 
             budget_ratio = strategy_budget / total_risk_budget if total_risk_budget > 0 else 0
 
-            
+
 
             allocated = investable * budget_ratio
 
-            
+
 
             self.allocation_counter += 1
 
@@ -1438,7 +1438,7 @@ class CapitalAllocator:
 
             self.allocations.append(allocation)
 
-        
+
 
         return self.allocations
 
@@ -1484,7 +1484,7 @@ class ExecutionCoordinator:
 
     """执行协调器"""
 
-    
+
 
     def __init__(self):
 
@@ -1492,7 +1492,7 @@ class ExecutionCoordinator:
 
         self.order_counter = 0
 
-    
+
 
     def calculate_priority_score(self,
 
@@ -1506,7 +1506,7 @@ class ExecutionCoordinator:
 
         urgency = signal.metadata.get('urgency', 0.5)
 
-        
+
 
         score = (
 
@@ -1522,11 +1522,11 @@ class ExecutionCoordinator:
 
         )
 
-        
+
 
         return score
 
-    
+
 
     def rank_by_priority(self,
 
@@ -1540,11 +1540,11 @@ class ExecutionCoordinator:
 
         self.orders = []
 
-        
+
 
         allocation_map = {a.signal_id: a for a in allocations}
 
-        
+
 
         orders_with_scores = []
 
@@ -1554,7 +1554,7 @@ class ExecutionCoordinator:
 
                 continue
 
-            
+
 
             alloc = allocation_map[sig.signal_id]
 
@@ -1562,7 +1562,7 @@ class ExecutionCoordinator:
 
             score = self.calculate_priority_score(sig, alloc, priority)
 
-            
+
 
             self.order_counter += 1
 
@@ -1586,19 +1586,19 @@ class ExecutionCoordinator:
 
             orders_with_scores.append(order)
 
-        
 
-        self.orders = sorted(orders_with_scores, 
 
-                            key=lambda o: o.priority_score, 
+        self.orders = sorted(orders_with_scores,
+
+                            key=lambda o: o.priority_score,
 
                             reverse=True)
 
-        
+
 
         return self.orders
 
-    
+
 
     def batch_orders(self,
 
@@ -1612,11 +1612,11 @@ class ExecutionCoordinator:
 
             order.execution_batch = i // batch_size
 
-        
+
 
         return orders
 
-    
+
 
     def merge_same_direction_orders(self,
 
@@ -1626,13 +1626,13 @@ class ExecutionCoordinator:
 
         merged = {}
 
-        
+
 
         for order in orders:
 
             key = (order.stock_code, order.direction)
 
-            
+
 
             if key not in merged:
 
@@ -1646,13 +1646,13 @@ class ExecutionCoordinator:
 
                 existing.priority_score = max(
 
-                    existing.priority_score, 
+                    existing.priority_score,
 
                     order.priority_score
 
                 )
 
-        
+
 
         return list(merged.values())
 
@@ -1692,13 +1692,13 @@ class PortfolioRiskMonitor:
 
     """组合风险监控器"""
 
-    
+
 
     def __init__(self):
 
         self.risk_history: List[PortfolioRiskMetrics] = []
 
-    
+
 
     def calculate_strategy_risk_contribution(self,
 
@@ -1710,7 +1710,7 @@ class PortfolioRiskMonitor:
 
         contributions = {}
 
-        
+
 
         for strategy_id in strategy_ids:
 
@@ -1722,7 +1722,7 @@ class PortfolioRiskMonitor:
 
             }
 
-            
+
 
             if not strategy_positions:
 
@@ -1730,7 +1730,7 @@ class PortfolioRiskMonitor:
 
                 continue
 
-            
+
 
             strategy_weight = sum(
 
@@ -1740,7 +1740,7 @@ class PortfolioRiskMonitor:
 
             contributions[strategy_id] = strategy_weight
 
-        
+
 
         total = sum(contributions.values())
 
@@ -1748,11 +1748,11 @@ class PortfolioRiskMonitor:
 
             contributions = {k: v/total for k, v in contributions.items()}
 
-        
+
 
         return contributions
 
-    
+
 
     def calculate_concentration_risk(self,
 
@@ -1762,17 +1762,17 @@ class PortfolioRiskMonitor:
 
         weights = [abs(p.get('weight', 0)) for p in positions.values()]
 
-        
+
 
         if not weights:
 
             return 0.0
 
-        
+
 
         herfindahl = sum(w**2 for w in weights)
 
-        
+
 
         n = len(weights)
 
@@ -1780,21 +1780,21 @@ class PortfolioRiskMonitor:
 
         min_herfindahl = 1.0 / n
 
-        
+
 
         if max_herfindahl == min_herfindahl:
 
             return 0.0
 
-        
+
 
         normalized = (herfindahl - min_herfindahl) / (max_herfindahl - min_herfindahl)
 
-        
+
 
         return normalized
 
-    
+
 
     def calculate_correlation_risk(self,
 
@@ -1806,13 +1806,13 @@ class PortfolioRiskMonitor:
 
             return 0.0
 
-        
+
 
         returns_df = pd.DataFrame(strategy_returns)
 
         corr_matrix = returns_df.corr()
 
-        
+
 
         n = len(corr_matrix)
 
@@ -1820,25 +1820,25 @@ class PortfolioRiskMonitor:
 
             return 0.0
 
-        
+
 
         upper_triangle = corr_matrix.values[np.triu_indices(n, k=1)]
 
-        
+
 
         if len(upper_triangle) == 0:
 
             return 0.0
 
-        
+
 
         avg_abs_corr = np.mean(np.abs(upper_triangle))
 
-        
+
 
         return avg_abs_corr
 
-    
+
 
     def assess_portfolio_risk(self,
 
@@ -1856,15 +1856,15 @@ class PortfolioRiskMonitor:
 
         )
 
-        
+
 
         concentration = self.calculate_concentration_risk(positions)
 
-        
+
 
         correlation = self.calculate_correlation_risk(strategy_returns)
 
-        
+
 
         total_risk = (
 
@@ -1876,7 +1876,7 @@ class PortfolioRiskMonitor:
 
         )
 
-        
+
 
         metrics = PortfolioRiskMetrics(
 
@@ -1894,11 +1894,11 @@ class PortfolioRiskMonitor:
 
         )
 
-        
+
 
         self.risk_history.append(metrics)
 
-        
+
 
         return metrics
 
@@ -1926,7 +1926,7 @@ class MultiStrategyCoordinator:
 
     """多策略协调器"""
 
-    
+
 
     def __init__(self,
 
@@ -1946,7 +1946,7 @@ class MultiStrategyCoordinator:
 
                  risk_monitor: PortfolioRiskMonitor):
 
-        
+
 
         self.collector = signal_collector
 
@@ -1964,7 +1964,7 @@ class MultiStrategyCoordinator:
 
         self.risk_monitor = risk_monitor
 
-    
+
 
     def coordinate(self,
 
@@ -1978,21 +1978,21 @@ class MultiStrategyCoordinator:
 
         """协调主流程"""
 
-        
+
 
         normalized = self.normalizer.normalize_all(
 
-            raw_signals, 
+            raw_signals,
 
             self.collector.strategies
 
         )
 
-        
+
 
         conflicts = self.conflict_detector.detect_all_conflicts(
 
-            normalized, 
+            normalized,
 
             available_capital,
 
@@ -2000,7 +2000,7 @@ class MultiStrategyCoordinator:
 
         )
 
-        
+
 
         resolutions = self.conflict_resolver.resolve_all_conflicts(
 
@@ -2008,11 +2008,11 @@ class MultiStrategyCoordinator:
 
         )
 
-        
+
 
         resolved_signals = self._apply_resolutions(normalized, resolutions)
 
-        
+
 
         demands = self.capital_estimator.estimate_all_demands(
 
@@ -2026,7 +2026,7 @@ class MultiStrategyCoordinator:
 
         )
 
-        
+
 
         allocations = self.capital_allocator.allocate_by_priority(
 
@@ -2034,7 +2034,7 @@ class MultiStrategyCoordinator:
 
         )
 
-        
+
 
         orders = self.execution_coordinator.rank_by_priority(
 
@@ -2042,15 +2042,15 @@ class MultiStrategyCoordinator:
 
         )
 
-        
+
 
         orders = self.execution_coordinator.batch_orders(orders)
 
-        
+
 
         return orders
 
-    
+
 
     def _apply_resolutions(self,
 
@@ -2066,7 +2066,7 @@ class MultiStrategyCoordinator:
 
             losing_ids.update(res.losing_signal_ids)
 
-        
+
 
         return [s for s in signals if s.signal_id not in losing_ids]
 
@@ -2211,4 +2211,3 @@ class MultiStrategyCoordinator:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

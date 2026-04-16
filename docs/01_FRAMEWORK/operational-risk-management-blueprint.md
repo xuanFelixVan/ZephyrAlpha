@@ -381,7 +381,7 @@ class OperationalRiskEventCollector:
 
 
 
-    
+
 
 
 
@@ -413,7 +413,7 @@ class OperationalRiskEventCollector:
 
 
 
-    
+
 
 
 
@@ -437,7 +437,7 @@ class OperationalRiskEventCollector:
 
 
 
-    
+
 
 
 
@@ -497,7 +497,7 @@ class LossDistributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -521,7 +521,7 @@ class LossDistributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -545,7 +545,7 @@ class LossDistributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -565,7 +565,7 @@ class LossDistributionAnalyzer:
 
 
 
-    
+
 
 
 
@@ -613,7 +613,7 @@ class OperationalRiskAlertSystem:
 
 
 
-    
+
 
 
 
@@ -633,7 +633,7 @@ class OperationalRiskAlertSystem:
 
 
 
-    
+
 
 
 
@@ -657,7 +657,7 @@ class OperationalRiskAlertSystem:
 
 
 
-    
+
 
 
 
@@ -1022,6 +1022,3 @@ class OperationalRiskAlertSystem:
 
 
 **下一步行动**: 施工阶段实施
-
-
-

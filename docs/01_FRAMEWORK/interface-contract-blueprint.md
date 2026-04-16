@@ -19,7 +19,7 @@ responsibility: ''
 
 > **核心职责**: Interface Contract蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Interface Contract蓝图设计相关内容
 
@@ -165,7 +165,7 @@ class IEconomicRegimeEngine(ABC):
 
     """经济范式判断引擎接口"""
 
-    
+
 
     @abstractmethod
 
@@ -173,19 +173,19 @@ class IEconomicRegimeEngine(ABC):
 
         """分析经济范式
 
-        
+
 
         Args:
 
             macro_data: 宏观经济数据输入
 
-            
+
 
         Returns:
 
             RegimeOutput: 经济范式输出
 
-            
+
 
         Raises:
 
@@ -197,17 +197,17 @@ class IEconomicRegimeEngine(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
-    def predict_transition(self, current_regime: str, 
+    def predict_transition(self, current_regime: str,
 
                           horizon_days: int = 90) -> Dict[str, float]:
 
         """预测范式转换
 
-        
+
 
         Args:
 
@@ -215,7 +215,7 @@ class IEconomicRegimeEngine(ABC):
 
             horizon_days: 预测时间范围(天)
 
-            
+
 
         Returns:
 
@@ -418,4 +418,3 @@ class IEconomicRegimeEngine(ABC):
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

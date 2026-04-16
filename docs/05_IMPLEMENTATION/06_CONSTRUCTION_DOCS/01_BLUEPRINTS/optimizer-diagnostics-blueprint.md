@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：优化器诊断、数值稳定性检查、优化失败分析
 
@@ -186,7 +186,7 @@ class OptimizerDiagnostics:
 
     """优化器诊断器"""
 
-    
+
 
     def __init__(self):
 
@@ -196,7 +196,7 @@ class OptimizerDiagnostics:
 
         self.info = []
 
-    
+
 
     def diagnose_optimization(self, problem, solution, expected_returns, cov_matrix):
 
@@ -204,7 +204,7 @@ class OptimizerDiagnostics:
 
         全面诊断优化结果
 
-        
+
 
         Parameters:
 
@@ -234,41 +234,41 @@ class OptimizerDiagnostics:
 
         self.info = []
 
-        
+
 
         # 1. 数值稳定性检查
 
         self._check_numerical_stability(cov_matrix)
 
-        
+
 
         # 2. 优化状态检查
 
         self._check_optimization_status(problem)
 
-        
+
 
         # 3. KKT条件验证
 
         self._check_kkt_conditions(problem, solution)
 
-        
+
 
         # 4. 约束满足检查
 
         self._check_constraint_satisfaction(problem, solution)
 
-        
+
 
         # 5. 结果合理性检查
 
         self._check_solution_rationality(solution, expected_returns, cov_matrix)
 
-        
+
 
         return self._generate_report()
 
-    
+
 
     def _check_numerical_stability(self, cov_matrix):
 
@@ -306,7 +306,7 @@ class OptimizerDiagnostics:
 
             })
 
-        
+
 
         # 奇异性检查
 
@@ -328,7 +328,7 @@ class OptimizerDiagnostics:
 
             })
 
-        
+
 
         # 数值范围检查
 
@@ -346,7 +346,7 @@ class OptimizerDiagnostics:
 
             })
 
-    
+
 
     def _check_optimization_status(self, problem):
 
@@ -354,7 +354,7 @@ class OptimizerDiagnostics:
 
         status = problem.status
 
-        
+
 
         if status == 'infeasible':
 
@@ -412,7 +412,7 @@ class OptimizerDiagnostics:
 
             })
 
-    
+
 
     def _check_kkt_conditions(self, problem, solution):
 
@@ -424,7 +424,7 @@ class OptimizerDiagnostics:
 
             dual_vars = self._extract_dual_variables(problem)
 
-            
+
 
             # 检查对偶间隙
 
@@ -434,7 +434,7 @@ class OptimizerDiagnostics:
 
             duality_gap = abs(primal_value - dual_value)
 
-            
+
 
             if duality_gap > 1e-4:
 
@@ -460,7 +460,7 @@ class OptimizerDiagnostics:
 
             })
 
-    
+
 
     def _check_constraint_satisfaction(self, problem, solution):
 
@@ -470,7 +470,7 @@ class OptimizerDiagnostics:
 
             violation = self._compute_constraint_violation(constraint, solution)
 
-            
+
 
             if violation > 1e-4:
 
@@ -488,7 +488,7 @@ class OptimizerDiagnostics:
 
                 })
 
-    
+
 
     def _check_solution_rationality(self, solution, expected_returns, cov_matrix):
 
@@ -512,7 +512,7 @@ class OptimizerDiagnostics:
 
             })
 
-        
+
 
         # 负权重检查
 
@@ -530,7 +530,7 @@ class OptimizerDiagnostics:
 
             })
 
-        
+
 
         # 集中度检查
 
@@ -550,7 +550,7 @@ class OptimizerDiagnostics:
 
             })
 
-    
+
 
     def _generate_report(self):
 
@@ -574,7 +574,7 @@ class OptimizerDiagnostics:
 
         }
 
-    
+
 
     def _generate_recommendations(self):
 
@@ -582,7 +582,7 @@ class OptimizerDiagnostics:
 
         recommendations = []
 
-        
+
 
         for issue in self.issues:
 
@@ -590,11 +590,11 @@ class OptimizerDiagnostics:
 
                 recommendations.append(issue['suggestion'])
 
-        
+
 
         return list(set(recommendations))
 
-    
+
 
     def _extract_dual_variables(self, problem):
 
@@ -610,7 +610,7 @@ class OptimizerDiagnostics:
 
         return dual_vars
 
-    
+
 
     def _compute_dual_value(self, dual_vars):
 
@@ -618,7 +618,7 @@ class OptimizerDiagnostics:
 
         return sum(np.sum(np.abs(v)) for v in dual_vars.values() if v is not None)
 
-    
+
 
     def _compute_constraint_violation(self, constraint, solution):
 
@@ -761,4 +761,3 @@ class OptimizerDiagnosticsOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

@@ -13,9 +13,9 @@ responsibility: 01_TECHNICAL_KNOWLEDGE
 
 # 🎯 AI 代码编辑器完全指南 2026年4月版
 
-**调查日期**: 2026年4月12日  
-**覆盖编辑器**: GitHub Copilot, Cursor, Claude Code, Windsurf, JetBrains AI, Amazon Q  
-**数据来源**: 各编辑器官方网站实时查询  
+**调查日期**: 2026年4月12日
+**覆盖编辑器**: GitHub Copilot, Cursor, Claude Code, Windsurf, JetBrains AI, Amazon Q
+**数据来源**: 各编辑器官方网站实时查询
 **更新频率**: 建议月度检查
 
 > 这是一份**超级详细的综合指南**，包含价格、模型、成本分析、场景选择、成本陷阱等全方位信息。
@@ -52,23 +52,23 @@ responsibility: 01_TECHNICAL_KNOWLEDGE
 $0/月     → GitHub Copilot Free (2000补全/月)
          → Cursor Hobby (有限配额)
          → Amazon Q Free (无限代码补全!)
-         
+
 $10/月    → GitHub Copilot Pro ⭐ (最便宜的全能方案)
          → JetBrains AI Pro ($9.66) (最便宜付费版)
-         
+
 $20/月    → Cursor Pro ⭐⭐ (最透明的成本)
          → Claude Code Pro (Opus访问)
          → Windsurf Pro (全模型)
-         
+
 $40/月    → Cursor Teams ($40/user) (团队首选)
          → Windsurf Teams ($40/user)
-         
+
 $60/月    → Cursor Pro+ (体验最好)
-         
+
 $100-200  → Claude Code Max (5-20x用量)
          → Windsurf Max (无日限制)
          → Cursor Ultra (20x配置)
-         
+
 企业      → Amazon Q Business Pro ($20/user) ⭐ (唯一权限感知)
          → GitHub Enterprise (议价)
 ```
@@ -957,7 +957,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
   - 月均 <1M tokens
   - 可接受日限制
   - 成本最优
-  
+
 选 Max ($200) 如果:
   - 月均 >5M tokens
   - 无法接受日限制
@@ -1146,10 +1146,10 @@ https://www.jetbrains.com/ai-ides/buy
 
 **总成本计算:**
 ```
-AI Pro ($9.66) + IDE License (~$17-20 for JB All Products) 
+AI Pro ($9.66) + IDE License (~$17-20 for JB All Products)
 = ~$26-30/月
 
-或: 
+或:
 AI Ultimate ($28.98) + IDE License
 = ~$46-50/月
 ```
@@ -1579,8 +1579,8 @@ Pro ($20) → Max ($200):
 ### 轻度使用者 (<100 完成/月)
 
 ```
-GitHub Copilot Pro: 
-  $10 (固定) + 少量超额 
+GitHub Copilot Pro:
+  $10 (固定) + 少量超额
   = $10-15/月 ✅ 最便宜
 
 Cursor Pro:
@@ -2023,7 +2023,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 ```
 是 → Amazon Q Business Pro ($20/user/月) ✅ 独家支持
    → AI 回复被权限限制，符合数据治理
-   
+
 否 → GitHub Enterprise / Cursor Enterprise / JetBrains
    → 其他任何企业方案都可以
 ```
@@ -2033,7 +2033,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 ```
 是 → JetBrains Enterprise (支持完整)
    → 或 Windsurf Enterprise (支持部分)
-   
+
 否 → Amazon Q / GitHub / Cursor
    → 云端部署即可
 ```
@@ -2041,14 +2041,14 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 ### Q3: 多少用户？
 
 ```
-10-50人   → Amazon Q Business Lite ($3/user) 
+10-50人   → Amazon Q Business Lite ($3/user)
         或 Cursor Teams ($40/user)
         或 JetBrains Enterprise
-        
+
 50-500人  → Amazon Q Business Pro ($20/user)
         或 GitHub Enterprise (议价)
         或 JetBrains Enterprise (议价)
-        
+
 500+ 人   → 定制企业方案
         → GitHub Enterprise / Amazon Q / JetBrains
         → 需要销售咨询，通常 $10-20+/user
@@ -2060,7 +2060,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 HIPAA    → Amazon Q (✅) 或 Claude Code Max ($200)
 GDPR     → 所有主流方案都支持
 SOC 2    → GitHub / Cursor / Windsurf / Claude / JetBrains
-FedRAMP  → GitHub (✅) 
+FedRAMP  → GitHub (✅)
 PCI-DSS  → 需要咨询各方案
 ```
 

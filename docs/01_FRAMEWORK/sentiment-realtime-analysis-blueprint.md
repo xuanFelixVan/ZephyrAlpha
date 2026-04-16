@@ -282,7 +282,7 @@ class SentimentStreamProducer:
 
         )
 
-    
+
 
     def send_sentiment_data(self, topic, data):
 
@@ -308,7 +308,7 @@ class SentimentStreamConsumer:
 
         )
 
-    
+
 
     def consume_sentiment_stream(self):
 
@@ -366,11 +366,11 @@ class SentimentStreamProcessor:
 
             .getOrCreate()
 
-        
+
 
         self.ssc = StreamingContext(self.spark.sparkContext, batchDuration=5)
 
-    
+
 
     def create_stream(self):
 
@@ -386,23 +386,23 @@ class SentimentStreamProcessor:
 
         )
 
-        
+
 
         sentiment_scores = kafka_stream.map(lambda x: json.loads(x[1]))
 
-        
+
 
         windowed_sentiment = sentiment_scores.window(60, 10)
 
-        
+
 
         aggregated_sentiment = windowed_sentiment.reduceByKey(lambda a, b: a + b)
 
-        
+
 
         return aggregated_sentiment
 
-    
+
 
     def start(self):
 
@@ -468,13 +468,13 @@ class RealtimeSentimentAnalyzer:
 
         )
 
-    
+
 
     def analyze_sentiment(self, text):
 
         result = self.sentiment_pipeline(text)[0]
 
-        
+
 
         return {
 
@@ -486,7 +486,7 @@ class RealtimeSentimentAnalyzer:
 
         }
 
-    
+
 
     def _convert_to_score(self, label, confidence):
 
@@ -502,13 +502,13 @@ class RealtimeSentimentAnalyzer:
 
             return 0.0
 
-    
+
 
     def analyze_batch(self, texts):
 
         results = self.sentiment_pipeline(texts)
 
-        
+
 
         sentiment_scores = []
 
@@ -524,7 +524,7 @@ class RealtimeSentimentAnalyzer:
 
             })
 
-        
+
 
         return sentiment_scores
 
@@ -568,13 +568,13 @@ class EventDetector:
 
         }
 
-    
+
 
     def detect_events(self, text: str) -> List[Dict]:
 
         events = []
 
-        
+
 
         for event_type, pattern in self.event_patterns.items():
 
@@ -594,11 +594,11 @@ class EventDetector:
 
                 })
 
-        
+
 
         return events
 
-    
+
 
     def classify_event_importance(self, event: Dict, context: Dict) -> str:
 
@@ -612,11 +612,11 @@ class EventDetector:
 
         }
 
-        
+
 
         text = context.get('text', '')
 
-        
+
 
         for importance, keywords in importance_keywords.items():
 
@@ -626,7 +626,7 @@ class EventDetector:
 
                     return importance
 
-        
+
 
         return 'low'
 
@@ -658,13 +658,13 @@ class ImpactAssessor:
 
         }
 
-    
+
 
     def assess_impact(self, sentiment_result: Dict, events: List[Dict], context: Dict) -> Dict:
 
         sentiment_score = sentiment_result['sentiment_score']
 
-        
+
 
         event_importance_scores = {
 
@@ -676,7 +676,7 @@ class ImpactAssessor:
 
         }
 
-        
+
 
         event_impact = 0.0
 
@@ -686,17 +686,17 @@ class ImpactAssessor:
 
             event_impact += event_importance_scores.get(importance, 0.3)
 
-        
+
 
         if events:
 
             event_impact /= len(events)
 
-        
+
 
         total_impact = sentiment_score * 0.6 + event_impact * 0.4
 
-        
+
 
         return {
 
@@ -1085,4 +1085,3 @@ signal_accuracy = Gauge(
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

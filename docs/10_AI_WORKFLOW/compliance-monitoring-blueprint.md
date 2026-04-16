@@ -59,17 +59,17 @@ peer:
 
 ┌─────────────────────────────────────────────────────────────
 
- 框架 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT 
+ 框架 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT
 
- 定义合规监控整体架构和设计原                              
+ 定义合规监控整体架构和设计原
 
 └─────────────────────────────────────────────────────────────
 
-                              
+
 
 ┌─────────────────────────────────────────────────────────────
 
- 本文 实现- 合规监控模块的具体实现方                 
+ 本文 实现- 合规监控模块的具体实现方
 
 └─────────────────────────────────────────────────────────────
 
@@ -183,91 +183,91 @@ Layer 6: 风险管理(Risk Management Layer)
 
 ┌─────────────────────────────────────────────────────────────
 
-               合规监控模块架构                              
+               合规监控模块架构
 
 ├─────────────────────────────────────────────────────────────
 
-                                                            
 
- ┌─────────────────────────────────────────────────────  
 
-          交易合规(Trading Compliance)               
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 交易前合规检                                    
+          交易合规(Trading Compliance)
 
-  ├─ 交易中合规监                                    
+  ├─ 交易前合规检
 
-  ├─ 交易后合规审                                    
+  ├─ 交易中合规监
 
-  └─ 交易限制管理                                       
+  ├─ 交易后合规审
 
- └─────────────────────────────────────────────────────  
+  └─ 交易限制管理
 
-                                                          
+ └─────────────────────────────────────────────────────
 
- ┌─────────────────────────────────────────────────────  
 
-          风控合规(Risk Compliance)                  
 
-  ├─ 风险限额检                                      
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 敞口限制检                                      
+          风控合规(Risk Compliance)
 
-  ├─ 止损止盈检                                      
+  ├─ 风险限额检
 
-  └─ 风险指标监控                                       
+  ├─ 敞口限制检
 
- └─────────────────────────────────────────────────────  
+  ├─ 止损止盈检
 
-                                                          
+  └─ 风险指标监控
 
- ┌─────────────────────────────────────────────────────  
+ └─────────────────────────────────────────────────────
 
-          监管报告(Regulatory Reporting)             
 
-  ├─ 日报生成                                           
 
-  ├─ 周报生成                                           
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 月报生成                                           
+          监管报告(Regulatory Reporting)
 
-  └─ 年报生成                                           
+  ├─ 日报生成
 
- └─────────────────────────────────────────────────────  
+  ├─ 周报生成
 
-                                                          
+  ├─ 月报生成
 
- ┌─────────────────────────────────────────────────────  
+  └─ 年报生成
 
-          审计追踪(Audit Trail)                      
+ └─────────────────────────────────────────────────────
 
-  ├─ 操作日志记录                                       
 
-  ├─ 合规检查记                                      
 
-  ├─ 违规记录追踪                                       
+ ┌─────────────────────────────────────────────────────
 
-  └─ 审计报告生成                                       
+          审计追踪(Audit Trail)
 
- └─────────────────────────────────────────────────────  
+  ├─ 操作日志记录
 
-                                                          
+  ├─ 合规检查记
 
- ┌─────────────────────────────────────────────────────  
+  ├─ 违规记录追踪
 
-          预警机制(Alert Mechanism)                  
+  └─ 审计报告生成
 
-  ├─ 实时违规预警                                       
+ └─────────────────────────────────────────────────────
 
-  ├─ 风险阈值预                                      
 
-  ├─ 合规异常预警                                       
 
-  └─ 多渠道通知                                         
+ ┌─────────────────────────────────────────────────────
 
- └─────────────────────────────────────────────────────  
+          预警机制(Alert Mechanism)
 
-                                                            
+  ├─ 实时违规预警
+
+  ├─ 风险阈值预
+
+  ├─ 合规异常预警
+
+  └─ 多渠道通知
+
+ └─────────────────────────────────────────────────────
+
+
 
 └─────────────────────────────────────────────────────────────
 
@@ -283,7 +283,7 @@ Layer 6: 风险管理(Risk Management Layer)
 
 交易请求 合规检风控检执行 审计记录 报告生成
 
-                                                           
+
 
     └────────────────── 违规拦截 ←───────────────────────────
 
@@ -905,7 +905,7 @@ class ComplianceMonitor:
 
     """合规监控系统"""
 
-    
+
 
     def __init__(self, db_path: str = "data/compliance.db"):
 
@@ -913,7 +913,7 @@ class ComplianceMonitor:
 
         self._init_database()
 
-    
+
 
     def _init_database(self):
 
@@ -923,7 +923,7 @@ class ComplianceMonitor:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
@@ -951,7 +951,7 @@ class ComplianceMonitor:
 
         """)
 
-        
+
 
         cursor.execute("""
 
@@ -977,7 +977,7 @@ class ComplianceMonitor:
 
         """)
 
-        
+
 
         cursor.execute("""
 
@@ -1003,7 +1003,7 @@ class ComplianceMonitor:
 
         """)
 
-        
+
 
         cursor.execute("""
 
@@ -1029,27 +1029,27 @@ class ComplianceMonitor:
 
         """)
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def check_trading_compliance(self, order: dict) -> dict:
 
         """检查交易合规""
 
-        
+
 
         check_id = f"check_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         violations = []
 
-        
+
 
         if order.get('volume', 0) > 100000:
 
@@ -1061,7 +1061,7 @@ class ComplianceMonitor:
 
             })
 
-        
+
 
         if order.get('price', 0) <= 0:
 
@@ -1073,25 +1073,25 @@ class ComplianceMonitor:
 
             })
 
-        
+
 
         check_result = "pass" if len(violations) == 0 else "fail"
 
         action_taken = "blocked" if len(violations) > 0 else "approved"
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            INSERT INTO compliance_checks 
+            INSERT INTO compliance_checks
 
-            (check_id, check_type, check_time, order_id, check_result, 
+            (check_id, check_type, check_time, order_id, check_result,
 
              violation_type, violation_details, action_taken, reviewer)
 
@@ -1099,7 +1099,7 @@ class ComplianceMonitor:
 
         """, (
 
-            check_id, "trading_compliance", datetime.now(), 
+            check_id, "trading_compliance", datetime.now(),
 
             order.get('order_id', ''), check_result,
 
@@ -1111,13 +1111,13 @@ class ComplianceMonitor:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         if violations:
 
@@ -1129,7 +1129,7 @@ class ComplianceMonitor:
 
             })
 
-        
+
 
         return {
 
@@ -1143,23 +1143,23 @@ class ComplianceMonitor:
 
         }
 
-    
+
 
     def check_risk_compliance(self, position: dict, risk_limits: dict) -> dict:
 
         """检查风控合规""
 
-        
+
 
         violations = []
 
-        
+
 
         position_value = position.get('value', 0)
 
         position_limit = risk_limits.get('position_limit', 1000000)
 
-        
+
 
         if position_value > position_limit:
 
@@ -1171,11 +1171,11 @@ class ComplianceMonitor:
 
             })
 
-        
+
 
         utilization_rate = position_value / position_limit
 
-        
+
 
         status = "normal"
 
@@ -1187,17 +1187,17 @@ class ComplianceMonitor:
 
             status = "breach"
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            UPDATE risk_limits 
+            UPDATE risk_limits
 
             SET current_value = ?, utilization_rate = ?, status = ?, updated_at = ?
 
@@ -1205,13 +1205,13 @@ class ComplianceMonitor:
 
         """, (position_value, utilization_rate, status, datetime.now()))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         return {
 
@@ -1225,23 +1225,23 @@ class ComplianceMonitor:
 
         }
 
-    
+
 
     def generate_regulatory_report(self, report_type: str, period: dict) -> dict:
 
         """生成监管报告"""
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            SELECT COUNT(*) FROM compliance_checks 
+            SELECT COUNT(*) FROM compliance_checks
 
             WHERE DATE(check_time) BETWEEN ? AND ?
 
@@ -1249,13 +1249,13 @@ class ComplianceMonitor:
 
         total_checks = cursor.fetchone()[0]
 
-        
+
 
         cursor.execute("""
 
-            SELECT COUNT(*) FROM compliance_checks 
+            SELECT COUNT(*) FROM compliance_checks
 
-            WHERE check_result = 'fail' 
+            WHERE check_result = 'fail'
 
             AND DATE(check_time) BETWEEN ? AND ?
 
@@ -1263,15 +1263,15 @@ class ComplianceMonitor:
 
         violations_count = cursor.fetchone()[0]
 
-        
+
 
         conn.close()
 
-        
+
 
         compliance_status = "compliant" if violations_count == 0 else "non_compliant"
 
-        
+
 
         report_content = f"""
 
@@ -1325,23 +1325,23 @@ class ComplianceMonitor:
 
         """
 
-        
+
 
         report_id = f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            INSERT INTO regulatory_reports 
+            INSERT INTO regulatory_reports
 
-            (report_id, report_type, report_period, generated_at, report_content, 
+            (report_id, report_type, report_period, generated_at, report_content,
 
              compliance_status, violations_count, reviewed_by)
 
@@ -1355,13 +1355,13 @@ class ComplianceMonitor:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         return {
 
@@ -1377,27 +1377,27 @@ class ComplianceMonitor:
 
         }
 
-    
+
 
     def record_audit_trail(self, audit_event: dict) -> str:
 
         """记录审计追踪"""
 
-        
+
 
         audit_id = f"audit_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("""
 
-            INSERT INTO audit_trail 
+            INSERT INTO audit_trail
 
             (audit_id, event_type, event_time, user_id, action, details, result, ip_address)
 
@@ -1415,29 +1415,29 @@ class ComplianceMonitor:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         return audit_id
 
-    
+
 
     def alert_compliance_violation(self, violation_event: dict) -> bool:
 
         """发送合规预""
 
-        
+
 
         check_id = violation_event.get('check_id', '')
 
         violations = violation_event.get('violations', [])
 
-        
+
 
         alert_message = f"""
 
@@ -1461,11 +1461,11 @@ class ComplianceMonitor:
 
         """
 
-        
+
 
         print(alert_message)
 
-        
+
 
         return True
 
@@ -1684,4 +1684,3 @@ class ComplianceMonitor:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-

@@ -153,4 +153,3 @@ compliance_level: 专业标准
 - 补充推荐字段（open_source_dependency, estimated_effort, priority）
 
 - 建立自动化检查机制
-

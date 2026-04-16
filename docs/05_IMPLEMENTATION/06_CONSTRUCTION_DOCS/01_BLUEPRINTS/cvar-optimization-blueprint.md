@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：CVaR优化、条件风险价值计算、尾部风险建模
 
@@ -152,7 +152,7 @@ def cvar_optimization(returns, alpha=0.95, target_return=None):
 
     CVaR优化核心算法
 
-    
+
 
     Parameters:
 
@@ -170,7 +170,7 @@ def cvar_optimization(returns, alpha=0.95, target_return=None):
 
         目标收益率 (可选)
 
-    
+
 
     Returns:
 
@@ -194,13 +194,13 @@ def cvar_optimization(returns, alpha=0.95, target_return=None):
 
     u = cp.Variable(T)
 
-    
+
 
     # CVaR定义
 
     cvar = zeta + 1/(T*(1-alpha)) * cp.sum(u)
 
-    
+
 
     # 约束条件
 
@@ -216,13 +216,13 @@ def cvar_optimization(returns, alpha=0.95, target_return=None):
 
     ]
 
-    
+
 
     if target_return:
 
         constraints.append(returns.mean(axis=0) @ w >= target_return)
 
-    
+
 
     # 求解
 
@@ -230,7 +230,7 @@ def cvar_optimization(returns, alpha=0.95, target_return=None):
 
     prob.solve()
 
-    
+
 
     return w.value, cvar.value
 
@@ -375,4 +375,3 @@ class CVaROptimizerOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

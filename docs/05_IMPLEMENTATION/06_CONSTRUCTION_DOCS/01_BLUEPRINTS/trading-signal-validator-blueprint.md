@@ -153,7 +153,7 @@ layer: layer_05
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为策略执行层的信号质量核心
 
@@ -179,7 +179,7 @@ layer: layer_05
 
   - 信号优化建议
 
-  
+
 
 
 
@@ -235,7 +235,7 @@ class TradingSignalValidator:
 
         qlib.init(provider_uri='~/.qlib/qlib_data/cn_data')
 
-        
+
 
     def evaluate_signal(self, signal_data, start_date, end_date):
 
@@ -257,7 +257,7 @@ class TradingSignalValidator:
 
         )
 
-        
+
 
         ic_analysis = self.calculate_ic(signal_data, dataset)
 
@@ -265,7 +265,7 @@ class TradingSignalValidator:
 
         rank_ic_analysis = self.calculate_rank_ic(signal_data, dataset)
 
-        
+
 
         return {
 
@@ -435,7 +435,7 @@ class ValidationResult:
 
     validation_date: datetime
 
-    
+
 
     ic_analysis: dict
 
@@ -443,7 +443,7 @@ class ValidationResult:
 
     rank_ic_analysis: dict
 
-    
+
 
     time_stability: dict
 
@@ -451,7 +451,7 @@ class ValidationResult:
 
     parameter_stability: dict
 
-    
+
 
     statistical_significance: dict
 
@@ -459,7 +459,7 @@ class ValidationResult:
 
     out_of_sample_performance: dict
 
-    
+
 
     optimization_suggestions: list
 
@@ -571,7 +571,7 @@ Qlib依赖
 
 
 
-## 
+##
 
 
 
@@ -639,7 +639,7 @@ Qlib依赖
 
 
 
-## 
+##
 
 
 
@@ -713,7 +713,7 @@ graph LR
 
     D[算法交易优化器] --> B
 
-    
+
 
     B --> E[智能执行引擎]
 
@@ -721,7 +721,7 @@ graph LR
 
     B --> G[交易成本分析引擎]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -836,10 +836,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

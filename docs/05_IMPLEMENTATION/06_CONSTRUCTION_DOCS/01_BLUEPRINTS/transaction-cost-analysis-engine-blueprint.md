@@ -140,7 +140,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -156,7 +156,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-**架构角色**: 
+**架构角色**:
 
 - 作为策略执行层的成本分析核心
 
@@ -182,7 +182,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
   - 成本归因分析
 
-  
+
 
 
 
@@ -232,7 +232,7 @@ class TransactionCostAnalyzer:
 
         self.tca = TCA()
 
-        
+
 
     def analyze_execution(self, trades, market_data, benchmark='vwap'):
 
@@ -284,7 +284,7 @@ def calculate_explicit_costs(trade):
 
     other_fees = trade.other_fees
 
-    
+
 
     total_explicit_cost = commission + stamp_duty + transfer_fee + other_fees
 
@@ -318,7 +318,7 @@ def calculate_implicit_costs(trade, market_data):
 
     opportunity_cost = calculate_opportunity_cost(trade, market_data)
 
-    
+
 
     total_implicit_cost = market_impact + timing_cost + spread_cost + opportunity_cost
 
@@ -358,7 +358,7 @@ def calculate_vwap_benchmark(trades, market_data):
 
     vwap_cost = abs(vwap_deviation) * trades['volume'].sum() * vwap
 
-    
+
 
     return {
 
@@ -386,7 +386,7 @@ def calculate_implementation_shortfall(trade, decision_price, execution_price):
 
     is_cost_bps = (is_cost / (decision_price * trade['volume'])) * 10000
 
-    
+
 
     return {
 
@@ -452,19 +452,19 @@ class CostAnalysisResult:
 
     symbol: str
 
-    
+
 
     total_cost: float
 
     total_cost_bps: float
 
-    
+
 
     explicit_cost: float
 
     implicit_cost: float
 
-    
+
 
     market_impact: float
 
@@ -474,7 +474,7 @@ class CostAnalysisResult:
 
     opportunity_cost: float
 
-    
+
 
     vwap_deviation: float
 
@@ -482,7 +482,7 @@ class CostAnalysisResult:
 
     is_cost: float
 
-    
+
 
     execution_quality_score: float
 
@@ -592,7 +592,7 @@ tcapy依赖
 
 
 
-## 
+##
 
 
 
@@ -664,7 +664,7 @@ tcapy依赖
 
 
 
-## 
+##
 
 
 
@@ -736,7 +736,7 @@ graph LR
 
     D[数据目录] --> B
 
-    
+
 
     B --> E[智能执行引擎]
 
@@ -744,7 +744,7 @@ graph LR
 
     B --> G[组合再平衡]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -861,10 +861,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

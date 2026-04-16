@@ -29,7 +29,7 @@ responsibility: ''
 
 > **核心职责**: Market Abuse Surveillance蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Market Abuse Surveillance蓝图设计相关内容
 
@@ -39,13 +39,13 @@ responsibility: ''
 
 
 
-> **版本**: v1.0.0  
+> **版本**: v1.0.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **实施周期**: 2-3周  
+> **实施周期**: 2-3周
 
-> **开源项目**: EquiAnalytics  
+> **开源项目**: EquiAnalytics
 
 > **目标**: 构建专业级市场滥用监控系统，满足FCA MAR要求，检测市场操纵和内幕交易行为
 
@@ -231,13 +231,13 @@ class MarketAbuseSurveillance:
 
         self.rules = self._load_detection_rules()
 
-    
+
 
     def detect_wash_trading(self, start_date: str, end_date: str) -> list:
 
         query = """
 
-        SELECT 
+        SELECT
 
             t1.transaction_id,
 
@@ -255,7 +255,7 @@ class MarketAbuseSurveillance:
 
         FROM transactions t1
 
-        INNER JOIN transactions t2 ON 
+        INNER JOIN transactions t2 ON
 
             t1.user_id = t2.user_id AND
 
@@ -273,19 +273,19 @@ class MarketAbuseSurveillance:
 
         """
 
-        
+
 
         results = self.db.execute(query, (start_date, end_date))
 
         return self._analyze_wash_trading(results)
 
-    
+
 
     def detect_spoofing(self, start_date: str, end_date: str) -> list:
 
         query = """
 
-        SELECT 
+        SELECT
 
             user_id,
 
@@ -301,7 +301,7 @@ class MarketAbuseSurveillance:
 
         FROM orders
 
-        WHERE 
+        WHERE
 
             timestamp BETWEEN %s AND %s AND
 
@@ -315,19 +315,19 @@ class MarketAbuseSurveillance:
 
         """
 
-        
+
 
         results = self.db.execute(query, (start_date, end_date))
 
         return self._analyze_spoofing(results)
 
-    
+
 
     def detect_insider_trading(self, start_date: str, end_date: str) -> list:
 
         query = """
 
-        SELECT 
+        SELECT
 
             t.user_id,
 
@@ -351,7 +351,7 @@ class MarketAbuseSurveillance:
 
         INNER JOIN news_events n ON t.symbol = n.symbol
 
-        WHERE 
+        WHERE
 
             t.timestamp BETWEEN %s AND %s AND
 
@@ -361,7 +361,7 @@ class MarketAbuseSurveillance:
 
         """
 
-        
+
 
         results = self.db.execute(query, (start_date, end_date, start_date, end_date))
 
@@ -393,13 +393,13 @@ class WashTradingDetector:
 
         self.quantity_tolerance = config.get('quantity_tolerance', 0.05)
 
-    
+
 
     def detect(self, transactions: list) -> list:
 
         alerts = []
 
-        
+
 
         for i, t1 in enumerate(transactions):
 
@@ -425,11 +425,11 @@ class WashTradingDetector:
 
                     })
 
-        
+
 
         return alerts
 
-    
+
 
     def _is_wash_trading_pair(self, t1: dict, t2: dict) -> bool:
 
@@ -437,19 +437,19 @@ class WashTradingDetector:
 
             return False
 
-        
+
 
         if t1['symbol'] != t2['symbol']:
 
             return False
 
-        
+
 
         if t1['transaction_type'] == t2['transaction_type']:
 
             return False
 
-        
+
 
         time_diff = abs((t1['timestamp'] - t2['timestamp']).total_seconds())
 
@@ -457,7 +457,7 @@ class WashTradingDetector:
 
             return False
 
-        
+
 
         price_diff = abs(t1['price'] - t2['price'])
 
@@ -465,7 +465,7 @@ class WashTradingDetector:
 
             return False
 
-        
+
 
         quantity_diff = abs(t1['quantity'] - t2['quantity']) / t1['quantity']
 
@@ -473,17 +473,17 @@ class WashTradingDetector:
 
             return False
 
-        
+
 
         return True
 
-    
+
 
     def _calculate_severity(self, t1: dict, t2: dict) -> str:
 
         total_value = (t1['quantity'] * t1['price'] + t2['quantity'] * t2['price']) / 2
 
-        
+
 
         if total_value > 1000000:
 
@@ -523,23 +523,23 @@ class SpoofingDetector:
 
         self.size_threshold = config.get('size_threshold', 10000)
 
-    
+
 
     def detect(self, orders: list) -> list:
 
         alerts = []
 
-        
+
 
         user_orders = self._group_by_user(orders)
 
-        
+
 
         for user_id, user_order_list in user_orders.items():
 
             spoofing_score = self._calculate_spoofing_score(user_order_list)
 
-            
+
 
             if spoofing_score > self.config['spoofing_threshold']:
 
@@ -559,35 +559,35 @@ class SpoofingDetector:
 
                 })
 
-        
+
 
         return alerts
 
-    
+
 
     def _calculate_spoofing_score(self, orders: list) -> float:
 
         cancelled_orders = [o for o in orders if o['status'] == 'cancelled']
 
-        
+
 
         if len(cancelled_orders) < self.cancel_threshold:
 
             return 0.0
 
-        
 
-        fast_cancels = [o for o in cancelled_orders 
+
+        fast_cancels = [o for o in cancelled_orders
 
                        if o['cancel_time_seconds'] < self.cancel_time_threshold]
 
-        
 
-        large_orders = [o for o in fast_cancels 
+
+        large_orders = [o for o in fast_cancels
 
                        if o['quantity'] > self.size_threshold]
 
-        
+
 
         score = (
 
@@ -599,11 +599,11 @@ class SpoofingDetector:
 
         )
 
-        
+
 
         return score
 
-    
+
 
     def _calculate_layering_score(self, orders: list) -> float:
 
@@ -611,23 +611,23 @@ class SpoofingDetector:
 
         cancelled_orders = [o for o in orders if o['status'] == 'cancelled']
 
-        
+
 
         if len(active_orders) == 0 or len(cancelled_orders) == 0:
 
             return 0.0
 
-        
+
 
         price_levels = set(o['price'] for o in active_orders)
 
         cancel_price_levels = set(o['price'] for o in cancelled_orders)
 
-        
+
 
         overlap = len(price_levels & cancel_price_levels)
 
-        
+
 
         return overlap / len(cancel_price_levels)
 
@@ -653,13 +653,13 @@ class InsiderTradingDetector:
 
         self.price_threshold = config.get('price_threshold', 0.05)
 
-    
+
 
     def detect(self, transactions: list, news_events: list) -> list:
 
         alerts = []
 
-        
+
 
         for news in news_events:
 
@@ -669,7 +669,7 @@ class InsiderTradingDetector:
 
             )
 
-            
+
 
             for transaction in related_transactions:
 
@@ -699,17 +699,17 @@ class InsiderTradingDetector:
 
                     })
 
-        
+
 
         return alerts
 
-    
+
 
     def _find_related_transactions(self, transactions: list, news: dict) -> list:
 
         related = []
 
-        
+
 
         for transaction in transactions:
 
@@ -717,7 +717,7 @@ class InsiderTradingDetector:
 
                 continue
 
-            
+
 
             time_diff = abs(
 
@@ -725,17 +725,17 @@ class InsiderTradingDetector:
 
             )
 
-            
+
 
             if time_diff <= self.time_window:
 
                 related.append(transaction)
 
-        
+
 
         return related
 
-    
+
 
     def _is_suspicious(self, transaction: dict, news: dict) -> bool:
 
@@ -743,13 +743,13 @@ class InsiderTradingDetector:
 
             return True
 
-        
+
 
         if news['sentiment'] == 'negative' and transaction['transaction_type'] == 'sell':
 
             return True
 
-        
+
 
         volume_ratio = transaction['quantity'] / news['avg_daily_volume']
 
@@ -757,7 +757,7 @@ class InsiderTradingDetector:
 
             return True
 
-        
+
 
         return False
 
@@ -917,7 +917,7 @@ class STRReportGenerator:
 
         self.template = self._load_template(template_path)
 
-    
+
 
     def generate_str(self, alert: dict) -> dict:
 
@@ -931,7 +931,7 @@ class STRReportGenerator:
 
             'reporting_entity': 'ZephyrAlpha Trading System',
 
-            
+
 
             'subject': {
 
@@ -943,7 +943,7 @@ class STRReportGenerator:
 
             },
 
-            
+
 
             'suspicious_activity': {
 
@@ -961,7 +961,7 @@ class STRReportGenerator:
 
             },
 
-            
+
 
             'evidence': {
 
@@ -973,11 +973,11 @@ class STRReportGenerator:
 
             },
 
-            
+
 
             'supporting_documents': self._collect_supporting_documents(alert),
 
-            
+
 
             'prepared_by': {
 
@@ -991,11 +991,11 @@ class STRReportGenerator:
 
         }
 
-        
+
 
         return report
 
-    
+
 
     def _generate_description(self, alert: dict) -> str:
 
@@ -1007,13 +1007,13 @@ class STRReportGenerator:
 
                           f"within a short time window, creating artificial trading volume.",
 
-            
+
 
             'spoofing': f"User {alert['user_id']} engaged in spoofing behavior for symbol {alert['symbol']}. "
 
                        f"Large orders were placed and quickly cancelled to create false market signals.",
 
-            
+
 
             'insider_trading': f"User {alert['user_id']} executed suspicious transactions in {alert['symbol']} "
 
@@ -1021,7 +1021,7 @@ class STRReportGenerator:
 
         }
 
-        
+
 
         return descriptions.get(alert['alert_type'], 'Unknown market abuse activity detected.')
 
@@ -1041,7 +1041,7 @@ class RegulatoryReportGenerator:
 
         alerts = self._get_alerts_for_period(period)
 
-        
+
 
         report = {
 
@@ -1053,7 +1053,7 @@ class RegulatoryReportGenerator:
 
             'report_date': datetime.now().strftime('%Y-%m-%d'),
 
-            
+
 
             'summary': {
 
@@ -1067,19 +1067,19 @@ class RegulatoryReportGenerator:
 
             },
 
-            
+
 
             'detailed_findings': self._generate_detailed_findings(alerts),
 
-            
+
 
             'actions_taken': self._get_actions_taken(alerts),
 
-            
+
 
             'recommendations': self._generate_recommendations(alerts),
 
-            
+
 
             'statistics': {
 
@@ -1093,7 +1093,7 @@ class RegulatoryReportGenerator:
 
         }
 
-        
+
 
         return report
 
@@ -1197,7 +1197,7 @@ groups:
 
           description: "Detection rate is abnormally high, possible system issue"
 
-      
+
 
       - alert: CriticalAlertUnresolved
 
@@ -1215,7 +1215,7 @@ groups:
 
           description: "Critical alert {{ $labels.alert_id }} has been open for over 1 hour"
 
-      
+
 
       - alert: DetectionLatencyHigh
 
@@ -1263,7 +1263,7 @@ class SimplifiedMarketAbuseSurveillance:
 
         self.detectors = self._initialize_detectors()
 
-    
+
 
     def quick_scan(self, symbol: str = None, days: int = 7) -> list:
 
@@ -1271,11 +1271,11 @@ class SimplifiedMarketAbuseSurveillance:
 
         start_date = end_date - timedelta(days=days)
 
-        
+
 
         transactions = self._get_transactions(start_date, end_date, symbol)
 
-        
+
 
         all_alerts = []
 
@@ -1285,11 +1285,11 @@ class SimplifiedMarketAbuseSurveillance:
 
             all_alerts.extend(alerts)
 
-        
+
 
         return all_alerts
 
-    
+
 
     def quick_report(self, alert_id: str) -> dict:
 
@@ -1397,55 +1397,55 @@ class TestMarketAbuseSurveillance:
 
         detector = WashTradingDetector(test_config)
 
-        
+
 
         transactions = create_wash_trading_test_data()
 
-        
+
 
         alerts = detector.detect(transactions)
 
-        
+
 
         assert len(alerts) > 0
 
         assert all(a['alert_type'] == 'wash_trading' for a in alerts)
 
-    
+
 
     def test_spoofing_detection(self):
 
         detector = SpoofingDetector(test_config)
 
-        
+
 
         orders = create_spoofing_test_data()
 
-        
+
 
         alerts = detector.detect(orders)
 
-        
+
 
         assert len(alerts) > 0
 
         assert all(a['alert_type'] == 'spoofing' for a in alerts)
 
-    
+
 
     def test_false_positive_rate(self):
 
         detector = WashTradingDetector(test_config)
 
-        
+
 
         normal_transactions = create_normal_trading_test_data()
 
-        
+
 
         alerts = detector.detect(normal_transactions)
 
-        
+
 
         false_positive_rate = len(alerts) / len(normal_transactions)
 
@@ -1590,4 +1590,3 @@ class TestMarketAbuseSurveillance:
 
 
 **版本**: v1.0.0 | **更新**: 2026-04-07 | **状态**: 蓝图设计完成
-

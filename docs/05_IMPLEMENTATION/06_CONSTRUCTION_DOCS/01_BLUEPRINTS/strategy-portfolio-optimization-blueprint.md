@@ -24,7 +24,7 @@ layer: layer_05
 
 > **核心职责**: 多策略组合优化，实现策略间资金分配
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：策略组合优化、资金分配、风险预算管理
 
@@ -302,7 +302,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[多策略分层系统]
 
@@ -310,7 +310,7 @@ graph LR
 
     B --> G[风险平价策略]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -348,13 +348,13 @@ class StrategyPortfolioOptimizer:
 
     """策略组合优化器""
 
-    
+
 
     def __init__(self, strategies: List[str]):
 
         self.strategies = strategies
 
-        
+
 
     def optimize_strategy_allocation(
 
@@ -372,7 +372,7 @@ class StrategyPortfolioOptimizer:
 
         优化策略资金分配
 
-        
+
 
         Args:
 
@@ -388,7 +388,7 @@ class StrategyPortfolioOptimizer:
 
             risk_budget: 风险预算
 
-            
+
 
         Returns:
 
@@ -398,7 +398,7 @@ class StrategyPortfolioOptimizer:
 
         pass
 
-    
+
 
     def calculate_strategy_correlation(
 
@@ -412,7 +412,7 @@ class StrategyPortfolioOptimizer:
 
         计算策略间相关性矩阵
 
-        
+
 
         Returns:
 
@@ -422,7 +422,7 @@ class StrategyPortfolioOptimizer:
 
         return strategy_returns.corr()
 
-    
+
 
     def allocate_strategy_risk_budget(
 
@@ -438,7 +438,7 @@ class StrategyPortfolioOptimizer:
 
         分配策略风险预算
 
-        
+
 
         Returns:
 
@@ -466,7 +466,7 @@ class StrategyPortfolioAPI:
 
     """策略组合优化API"""
 
-    
+
 
     @endpoint("/api/v1/strategy_portfolio/optimize")
 
@@ -482,7 +482,7 @@ class StrategyPortfolioAPI:
 
         """优化策略组合"""
 
-        
+
 
     @endpoint("/api/v1/strategy_portfolio/correlation")
 
@@ -496,7 +496,7 @@ class StrategyPortfolioAPI:
 
         """计算策略相关性""
 
-        
+
 
     @endpoint("/api/v1/strategy_portfolio/risk_budget")
 
@@ -651,4 +651,3 @@ class StrategyPortfolioAPI:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态: Active
-

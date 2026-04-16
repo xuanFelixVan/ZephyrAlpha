@@ -39,7 +39,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -607,7 +607,7 @@ class MonthlyReport:
 
 
 
-    
+
 
 
 
@@ -673,7 +673,7 @@ class MonthlyReport:
 
 
 
-    
+
 
 
 
@@ -715,7 +715,7 @@ class MonthlyReport:
 
 
 
-    
+
 
 
 
@@ -757,7 +757,7 @@ class MonthlySummary:
 
 
 
-    
+
 
 
 
@@ -787,7 +787,7 @@ class MonthlySummary:
 
 
 
-    
+
 
 
 
@@ -811,7 +811,7 @@ class MonthlySummary:
 
 
 
-    
+
 
 
 
@@ -835,7 +835,7 @@ class MonthlySummary:
 
 
 
-    
+
 
 
 
@@ -865,7 +865,7 @@ class MonthlySummary:
 
 
 
-    
+
 
 
 
@@ -907,7 +907,7 @@ class TrendAnalysis:
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ class TrendAnalysis:
 
 
 
-    
+
 
 
 
@@ -979,7 +979,7 @@ class TrendAnalysis:
 
 
 
-    
+
 
 
 
@@ -1021,7 +1021,7 @@ class PerformanceAttribution:
 
 
 
-    
+
 
 
 
@@ -1057,7 +1057,7 @@ class PerformanceAttribution:
 
 
 
-    
+
 
 
 
@@ -1081,7 +1081,7 @@ class PerformanceAttribution:
 
 
 
-    
+
 
 
 
@@ -1117,7 +1117,7 @@ class MonthlyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1135,7 +1135,7 @@ class MonthlyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1195,7 +1195,7 @@ class MonthlyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1237,7 +1237,7 @@ class MonthlyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1255,7 +1255,7 @@ class MonthlyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1285,7 +1285,7 @@ class MonthlyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1321,7 +1321,7 @@ class MonthlyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1339,7 +1339,7 @@ class MonthlyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1369,7 +1369,7 @@ class MonthlyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1417,7 +1417,7 @@ class MonthlyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1429,7 +1429,7 @@ class MonthlyReporterAPI:
 
 
 
-            start_month: 开始月份（YYYY-MM格式?            end_month: 结束月份（YYYY-MM格式?            status: 报告状态过?            
+            start_month: 开始月份（YYYY-MM格式?            end_month: 结束月份（YYYY-MM格式?            status: 报告状态过?
 
 
 
@@ -1459,7 +1459,7 @@ class MonthlyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1507,7 +1507,7 @@ class MonthlyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1537,7 +1537,7 @@ class MonthlyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1609,7 +1609,7 @@ class MonthlyScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1627,7 +1627,7 @@ class MonthlyScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1675,7 +1675,7 @@ class MonthlyScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1699,7 +1699,7 @@ class MonthlyScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1729,7 +1729,7 @@ class MonthlyScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1765,7 +1765,7 @@ class MonthlyScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1783,7 +1783,7 @@ class MonthlyScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1813,7 +1813,7 @@ class MonthlyScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1849,7 +1849,7 @@ class MonthlyScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1867,7 +1867,7 @@ class MonthlyScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1897,7 +1897,7 @@ class MonthlyScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1927,7 +1927,7 @@ class MonthlyScheduleAPI:
 
 
 
-        """获取调度状态        
+        """获取调度状态
 
 
 
@@ -1945,7 +1945,7 @@ class MonthlyScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -2029,7 +2029,7 @@ class MonthlyReportInput:
 
 
 
-    
+
 
 
 
@@ -2053,7 +2053,7 @@ class MonthlyReportInput:
 
 
 
-    
+
 
 
 
@@ -2077,7 +2077,7 @@ class MonthlyReportInput:
 
 
 
-    
+
 
 
 
@@ -2095,7 +2095,7 @@ class MonthlyReportInput:
 
 
 
-    
+
 
 
 
@@ -3003,7 +3003,7 @@ class MonthlyReportSecurity:
 
 
 
-    
+
 
 
 
@@ -3021,7 +3021,7 @@ class MonthlyReportSecurity:
 
 
 
-    
+
 
 
 
@@ -3039,7 +3039,7 @@ class MonthlyReportSecurity:
 
 
 
-        """验证输入数据合法?        
+        """验证输入数据合法?
 
 
 
@@ -3057,7 +3057,7 @@ class MonthlyReportSecurity:
 
 
 
-    
+
 
 
 
@@ -3081,7 +3081,7 @@ class MonthlyReportSecurity:
 
 
 
-        
+
 
 
 
@@ -3117,7 +3117,7 @@ class MonthlyReportSecurity:
 
 
 
-    
+
 
 
 
@@ -3141,7 +3141,7 @@ class MonthlyReportSecurity:
 
 
 
-        
+
 
 
 
@@ -3171,7 +3171,7 @@ class MonthlyReportSecurity:
 
 
 
-    
+
 
 
 
@@ -3195,7 +3195,7 @@ class MonthlyReportSecurity:
 
 
 
-        
+
 
 
 
@@ -3285,7 +3285,7 @@ class MonthlyReportMetadata:
 
 
 
-    """月报元数据    
+    """月报元数据
 
 
 
@@ -3387,7 +3387,7 @@ class MonthlyReportTemplate:
 
 
 
-    
+
 
 
 
@@ -3477,7 +3477,7 @@ class MonthlyScheduleConfig:
 
 
 
-    
+
 
 
 
@@ -3603,7 +3603,7 @@ class MonthlyReportStorage:
 
 
 
-    
+
 
 
 
@@ -3621,7 +3621,7 @@ class MonthlyReportStorage:
 
 
 
-    
+
 
 
 
@@ -3645,7 +3645,7 @@ class MonthlyReportStorage:
 
 
 
-        
+
 
 
 
@@ -3663,7 +3663,7 @@ class MonthlyReportStorage:
 
 
 
-        
+
 
 
 
@@ -3687,7 +3687,7 @@ class MonthlyReportStorage:
 
 
 
-    
+
 
 
 
@@ -3705,7 +3705,7 @@ class MonthlyReportStorage:
 
 
 
-        
+
 
 
 
@@ -3729,7 +3729,7 @@ class MonthlyReportStorage:
 
 
 
-    
+
 
 
 
@@ -3747,7 +3747,7 @@ class MonthlyReportStorage:
 
 
 
-        
+
 
 
 
@@ -3777,7 +3777,7 @@ class MonthlyReportStorage:
 
 
 
-    
+
 
 
 
@@ -3789,7 +3789,7 @@ class MonthlyReportStorage:
 
 
 
-        """归档旧报告        
+        """归档旧报告
 
 
 
@@ -4181,7 +4181,7 @@ class TrendAnalyzer:
 
 
 
-    """趋势分析?    
+    """趋势分析?
 
 
 
@@ -4199,7 +4199,7 @@ class TrendAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4247,13 +4247,13 @@ class TrendAnalyzer:
 
 
 
-        
 
 
 
 
 
-        算法复杂? O(n), n为历史数据长?        
+
+        算法复杂? O(n), n为历史数据长?
 
 
 
@@ -4271,7 +4271,7 @@ class TrendAnalyzer:
 
 
 
-            current_value: 当前?            historical_values: 历史值序?            
+            current_value: 当前?            historical_values: 历史值序?
 
 
 
@@ -4307,7 +4307,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4325,7 +4325,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4343,7 +4343,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4361,7 +4361,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4439,7 +4439,7 @@ class TrendAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4457,7 +4457,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4469,7 +4469,7 @@ class TrendAnalyzer:
 
 
 
-            change_pct: 变化百分?            
+            change_pct: 变化百分?
 
 
 
@@ -4523,7 +4523,7 @@ class TrendAnalyzer:
 
 
 
-    
+
 
 
 
@@ -4541,7 +4541,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4553,7 +4553,7 @@ class TrendAnalyzer:
 
 
 
-            historical_values: 历史值序?            
+            historical_values: 历史值序?
 
 
 
@@ -4583,7 +4583,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4607,7 +4607,7 @@ class TrendAnalyzer:
 
 
 
-        
+
 
 
 
@@ -4661,7 +4661,7 @@ class PerformanceAttributor:
 
 
 
-    """绩效归因?    
+    """绩效归因?
 
 
 
@@ -4679,7 +4679,7 @@ class PerformanceAttributor:
 
 
 
-    
+
 
 
 
@@ -4739,13 +4739,13 @@ class PerformanceAttributor:
 
 
 
-        
 
 
 
 
 
-        算法复杂? O(n*m), n为资产数，m为时间段?        
+
+        算法复杂? O(n*m), n为资产数，m为时间段?
 
 
 
@@ -4769,7 +4769,7 @@ class PerformanceAttributor:
 
 
 
-            sector_returns: 板块收益?            
+            sector_returns: 板块收益?
 
 
 
@@ -4811,7 +4811,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4835,7 +4835,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4859,7 +4859,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4871,7 +4871,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4895,7 +4895,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4919,7 +4919,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -4985,7 +4985,7 @@ class PerformanceAttributor:
 
 
 
-    
+
 
 
 
@@ -5033,7 +5033,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -5057,7 +5057,7 @@ class PerformanceAttributor:
 
 
 
-            sector_returns: 板块收益?            
+            sector_returns: 板块收益?
 
 
 
@@ -5087,7 +5087,7 @@ class PerformanceAttributor:
 
 
 
-    
+
 
 
 
@@ -5135,7 +5135,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -5159,7 +5159,7 @@ class PerformanceAttributor:
 
 
 
-            sector_returns: 板块收益?            
+            sector_returns: 板块收益?
 
 
 
@@ -5189,7 +5189,7 @@ class PerformanceAttributor:
 
 
 
-    
+
 
 
 
@@ -5237,7 +5237,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -5261,7 +5261,7 @@ class PerformanceAttributor:
 
 
 
-            sector_returns: 板块收益?            
+            sector_returns: 板块收益?
 
 
 
@@ -5291,7 +5291,7 @@ class PerformanceAttributor:
 
 
 
-    
+
 
 
 
@@ -5333,7 +5333,7 @@ class PerformanceAttributor:
 
 
 
-        
+
 
 
 
@@ -5345,7 +5345,7 @@ class PerformanceAttributor:
 
 
 
-            portfolio_returns: 组合收益?            benchmark_returns: 基准收益?            
+            portfolio_returns: 组合收益?            benchmark_returns: 基准收益?
 
 
 
@@ -5411,7 +5411,7 @@ class TrendInterpreter:
 
 
 
-    """趋势解读?    
+    """趋势解读?
 
 
 
@@ -5429,7 +5429,7 @@ class TrendInterpreter:
 
 
 
-    
+
 
 
 
@@ -5459,7 +5459,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5507,7 +5507,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5519,7 +5519,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5549,7 +5549,7 @@ class TrendInterpreter:
 
 
 
-            
+
 
 
 
@@ -5603,7 +5603,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5621,7 +5621,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5633,7 +5633,7 @@ class TrendInterpreter:
 
 
 
-    
+
 
 
 
@@ -5681,7 +5681,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5711,7 +5711,7 @@ class TrendInterpreter:
 
 
 
-            
+
 
 
 
@@ -5759,7 +5759,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5921,7 +5921,7 @@ class TrendInterpreter:
 
 
 
-    
+
 
 
 
@@ -5939,7 +5939,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -5957,7 +5957,7 @@ class TrendInterpreter:
 
 
 
-            
+
 
 
 
@@ -5987,7 +5987,7 @@ class TrendInterpreter:
 
 
 
-    
+
 
 
 
@@ -6005,7 +6005,7 @@ class TrendInterpreter:
 
 
 
-        
+
 
 
 
@@ -6023,7 +6023,7 @@ class TrendInterpreter:
 
 
 
-            
+
 
 
 
@@ -6155,7 +6155,7 @@ def test_generate_monthly_report():
 
 
 
-    
+
 
 
 
@@ -6191,7 +6191,7 @@ def test_generate_monthly_report():
 
 
 
-    
+
 
 
 
@@ -6245,7 +6245,7 @@ def test_analyze_trend():
 
 
 
-    
+
 
 
 
@@ -6281,7 +6281,7 @@ def test_analyze_trend():
 
 
 
-    
+
 
 
 
@@ -6323,7 +6323,7 @@ def test_calculate_attribution():
 
 
 
-    
+
 
 
 
@@ -6371,7 +6371,7 @@ def test_calculate_attribution():
 
 
 
-    
+
 
 
 
@@ -6781,7 +6781,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-    
+
 
 
 
@@ -6805,7 +6805,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -6835,7 +6835,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -6853,7 +6853,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -6877,7 +6877,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -6913,7 +6913,7 @@ class TestMonthlyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -7976,8 +7976,3 @@ class TestMonthlyReporterIntegration:
 
 
 **文档状?*: ?已完?**下一?*: 生成技术评审报?
-
-
-
-
-

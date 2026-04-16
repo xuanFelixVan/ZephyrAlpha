@@ -35,7 +35,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -199,7 +199,7 @@ layer: layer_05
 
 
 
-| 
+|
 
 |---------|---------|-----------|---------|
 
@@ -257,7 +257,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[风险预算系统]
 
@@ -265,7 +265,7 @@ graph LR
 
     B --> G[组合再平衡]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -323,7 +323,7 @@ graph TB
 
     end
 
-    
+
 
     subgraph "风险平价核心引擎"
 
@@ -339,7 +339,7 @@ graph TB
 
     end
 
-    
+
 
     subgraph "扩展策略"
 
@@ -351,7 +351,7 @@ graph TB
 
     end
 
-    
+
 
         J --> M[组合权重方案]
 
@@ -415,7 +415,7 @@ class RiskParityOptimizer:
 
     """
 
-    
+
 
     索引: RISK_PARITY_001-M01
 
@@ -425,13 +425,13 @@ class RiskParityOptimizer:
 
     """
 
-    
+
 
     def __init__(self):
 
         pass
 
-        
+
 
     def calculate_risk_contribution(
 
@@ -447,13 +447,13 @@ class RiskParityOptimizer:
 
         计算各资产的风险贡献
 
-        
+
 
         Args:
 
             weights: 组合权重
 
-            
+
 
         Returns:
 
@@ -467,11 +467,11 @@ class RiskParityOptimizer:
 
         risk_contrib = weights * marginal_contrib / np.sqrt(portfolio_var)
 
-        
+
 
         return risk_contrib / np.sum(risk_contrib)
 
-    
+
 
     def optimize_risk_parity(
 
@@ -487,13 +487,13 @@ class RiskParityOptimizer:
 
         执行风险平价优化
 
-        
+
 
         Args:
 
             risk_budget: 风险预算，默认等风险贡献
 
-            
+
 
         Returns:
 
@@ -503,19 +503,19 @@ class RiskParityOptimizer:
 
             risk_budget = np.ones(returns.shape[1]) / returns.shape[1]
 
-        
+
 
         S = risk_models.CovarianceShrinkage(returns).ledoit_wolf()
 
-        
+
 
         weights = risk_parity(S, risk_budget=risk_budget)
 
-        
+
 
         risk_contrib = self.calculate_risk_contribution(weights, S)
 
-        
+
 
         return {
 
@@ -553,7 +553,7 @@ class RiskfolioRiskParityOptimizer:
 
     基于Riskfolio-Lib的风险平价优化器
 
-    
+
 
     索引: RISK_PARITY_001-M02
 
@@ -561,7 +561,7 @@ class RiskfolioRiskParityOptimizer:
 
     """
 
-    
+
 
     def optimize_risk_parity(
 
@@ -577,7 +577,7 @@ class RiskfolioRiskParityOptimizer:
 
         执行风险平价优化
 
-        
+
 
         Args:
 
@@ -595,7 +595,7 @@ class RiskfolioRiskParityOptimizer:
 
                 - 'CDaR': 条件回撤风险
 
-            
+
 
         Returns:
 
@@ -607,7 +607,7 @@ class RiskfolioRiskParityOptimizer:
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         w = port.rp_optimization(
 
@@ -619,7 +619,7 @@ class RiskfolioRiskParityOptimizer:
 
         )
 
-        
+
 
         return w
 
@@ -649,7 +649,7 @@ class SkfolioRiskParityOptimizer:
 
     基于skfolio的风险平价优化器
 
-    
+
 
     索引: RISK_PARITY_001-M03
 
@@ -657,7 +657,7 @@ class SkfolioRiskParityOptimizer:
 
     """
 
-    
+
 
     def optimize_risk_parity(
 
@@ -673,7 +673,7 @@ class SkfolioRiskParityOptimizer:
 
         执行风险平价优化
 
-        
+
 
         Args:
 
@@ -681,7 +681,7 @@ class SkfolioRiskParityOptimizer:
 
             risk_budget: 风险预算
 
-            
+
 
         Returns:
 
@@ -691,7 +691,7 @@ class SkfolioRiskParityOptimizer:
 
         X = prices_to_returns(prices)
 
-        
+
 
         model = RiskBudgeting(
 
@@ -701,15 +701,15 @@ class SkfolioRiskParityOptimizer:
 
         )
 
-        
+
 
         model.fit(X)
 
-        
+
 
         weights = model.weights_
 
-        
+
 
         return {
 
@@ -723,7 +723,7 @@ class SkfolioRiskParityOptimizer:
 
 
 
-### 3.2 
+### 3.2
 
 
 
@@ -771,13 +771,13 @@ def calculate_risk_contribution(
 
     计算风险贡献
 
-    
+
 
     Args:
 
         weights: 组合权重
 
-        
+
 
     Returns:
 
@@ -787,19 +787,19 @@ def calculate_risk_contribution(
 
     portfolio_vol = np.sqrt(portfolio_var)
 
-    
+
 
     marginal_contrib = np.dot(cov_matrix, weights)
 
-    
+
 
     risk_contrib = weights * marginal_contrib / portfolio_vol
 
-    
+
 
     risk_contrib_pct = risk_contrib / np.sum(risk_contrib)
 
-    
+
 
     return risk_contrib_pct, marginal_contrib, portfolio_vol
 
@@ -853,13 +853,13 @@ def risk_parity_optimization(
 
     风险平价优化
 
-    
+
 
     Args:
 
         risk_budget: 风险预算，默认等风险贡献
 
-        
+
 
     Returns:
 
@@ -867,13 +867,13 @@ def risk_parity_optimization(
 
     n_assets = cov_matrix.shape[0]
 
-    
+
 
     if risk_budget is None:
 
         risk_budget = np.ones(n_assets) / n_assets
 
-    
+
 
     def objective(w):
 
@@ -885,21 +885,21 @@ def risk_parity_optimization(
 
         risk_contrib_pct = risk_contrib / np.sum(risk_contrib)
 
-        
+
 
         return np.sum((risk_contrib_pct - risk_budget) ** 2)
 
-    
+
 
     constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
 
     bounds = tuple((0, 1) for _ in range(n_assets))
 
-    
+
 
     initial_guess = np.ones(n_assets) / n_assets
 
-    
+
 
     result = minimize(
 
@@ -917,7 +917,7 @@ def risk_parity_optimization(
 
     )
 
-    
+
 
     return result.x
 
@@ -945,11 +945,11 @@ def inverse_volatility_strategy(
 
     逆波动率策略
 
-    
+
 
     Args:
 
-        
+
 
     Returns:
 
@@ -963,7 +963,7 @@ def inverse_volatility_strategy(
 
     weights = inv_vol / np.sum(inv_vol)
 
-    
+
 
     return weights.values
 
@@ -989,11 +989,11 @@ def hierarchical_risk_parity(
 
     层级风险平价策略
 
-    
+
 
     Args:
 
-        
+
 
     Returns:
 
@@ -1005,7 +1005,7 @@ def hierarchical_risk_parity(
 
     weights = hrp.optimize()
 
-    
+
 
     return {
 
@@ -1159,7 +1159,7 @@ class RiskParityAPI:
 
     """风险平价API接口"""
 
-    
+
 
     @endpoint("/api/v1/risk_parity/optimize")
 
@@ -1175,13 +1175,13 @@ class RiskParityAPI:
 
         执行风险平价优化
 
-        
+
 
         Args:
 
             request: 优化请求
 
-            
+
 
         Returns:
 
@@ -1191,7 +1191,7 @@ class RiskParityAPI:
 
         pass
 
-    
+
 
     @endpoint("/api/v1/risk_parity/risk_contribution")
 
@@ -1209,13 +1209,13 @@ class RiskParityAPI:
 
         计算风险贡献
 
-        
+
 
         Args:
 
             weights: 当前权重
 
-            
+
 
         Returns:
 
@@ -1225,7 +1225,7 @@ class RiskParityAPI:
 
         pass
 
-    
+
 
     @endpoint("/api/v1/risk_parity/backtest")
 
@@ -1247,7 +1247,7 @@ class RiskParityAPI:
 
         回测风险平价策略
 
-        
+
 
         Args:
 
@@ -1255,7 +1255,7 @@ class RiskParityAPI:
 
             end_date: 结束日期
 
-            
+
 
         Returns:
 
@@ -1460,12 +1460,3 @@ class RiskParityAPI:
 
 
 - 权重输出对协方差估计与约束口径敏感；实施阶段需在契约真源或子契约中固化估计方法、缺失值处理与降级策略。
-
-
-
-
-
-
-
-
-

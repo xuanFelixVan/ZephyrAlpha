@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：因子暴露计算、因子敞口控制、因子中性化
 
@@ -156,7 +156,7 @@ class FactorExposureManager:
 
     """因子暴露管理器"""
 
-    
+
 
     def __init__(self, factor_loadings, factor_cov):
 
@@ -180,7 +180,7 @@ class FactorExposureManager:
 
         self.factor_cov = factor_cov
 
-    
+
 
     def calculate_exposure(self, weights):
 
@@ -188,7 +188,7 @@ class FactorExposureManager:
 
         return self.loadings.T @ weights
 
-    
+
 
     def factor_neutral_optimization(self, returns, neutral_factors=None):
 
@@ -196,7 +196,7 @@ class FactorExposureManager:
 
         因子中性化优化
 
-        
+
 
         Parameters:
 
@@ -216,7 +216,7 @@ class FactorExposureManager:
 
         w = cp.Variable(N)
 
-        
+
 
         constraints = [
 
@@ -226,7 +226,7 @@ class FactorExposureManager:
 
         ]
 
-        
+
 
         # 添加中性约束
 
@@ -236,7 +236,7 @@ class FactorExposureManager:
 
                 constraints.append(self.loadings[:, idx].T @ w == 0)
 
-        
+
 
         # 最大化预期收益
 
@@ -244,11 +244,11 @@ class FactorExposureManager:
 
         prob.solve()
 
-        
+
 
         return w.value
 
-    
+
 
     def factor_budget_optimization(self, returns, factor_budgets):
 
@@ -256,7 +256,7 @@ class FactorExposureManager:
 
         因子风险预算优化
 
-        
+
 
         Parameters:
 
@@ -276,17 +276,17 @@ class FactorExposureManager:
 
         w = cp.Variable(N)
 
-        
+
 
         # 因子风险贡献
 
         portfolio_var = cp.quad_form(w, self.loadings @ self.factor_cov @ self.loadings.T)
 
-        
+
 
         constraints = [cp.sum(w) == 1, w >= 0]
 
-        
+
 
         # 因子风险预算约束
 
@@ -296,13 +296,13 @@ class FactorExposureManager:
 
             constraints.append(factor_exp**2 * self.factor_cov[idx, idx] <= budget * portfolio_var)
 
-        
+
 
         prob = cp.Problem(cp.Maximize(returns @ w), constraints)
 
         prob.solve()
 
-        
+
 
         return w.value
 
@@ -447,4 +447,3 @@ class FactorExposureOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

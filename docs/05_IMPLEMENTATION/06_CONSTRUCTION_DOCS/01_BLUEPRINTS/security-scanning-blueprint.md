@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供全面的安全扫描能力，检测容器镜像、代码库、文件系统的安全漏洞和配置问题
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：安全扫描、漏洞检测、配置审计、合规检查
 
@@ -149,7 +149,7 @@ class ImageScanner:
 
     """容器镜像扫描器"""
 
-    
+
 
     def __init__(self, severity_threshold: str = "HIGH"):
 
@@ -157,7 +157,7 @@ class ImageScanner:
 
         self.scanner = "trivy"
 
-    
+
 
     def scan_image(
 
@@ -191,11 +191,11 @@ class ImageScanner:
 
         ]
 
-        
+
 
         cmd = [c for c in cmd if c]
 
-        
+
 
         result = subprocess.run(
 
@@ -207,17 +207,17 @@ class ImageScanner:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Scan failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def get_vulnerability_summary(self, scan_result: Dict) -> Dict:
 
@@ -241,7 +241,7 @@ class ImageScanner:
 
         }
 
-        
+
 
         if "Results" in scan_result:
 
@@ -257,11 +257,11 @@ class ImageScanner:
 
                         summary[severity.lower()] += 1
 
-        
+
 
         return summary
 
-    
+
 
     def filter_vulnerabilities(
 
@@ -279,11 +279,11 @@ class ImageScanner:
 
         threshold_index = severity_order.index(severity_threshold)
 
-        
+
 
         filtered = []
 
-        
+
 
         if "Results" in scan_result:
 
@@ -319,11 +319,11 @@ class ImageScanner:
 
                                 })
 
-        
+
 
         return filtered
 
-    
+
 
     def generate_report(
 
@@ -349,17 +349,17 @@ class ImageScanner:
 
         }
 
-        
+
 
         with open(output_file, 'w', encoding='utf-8') as f:
 
             json.dump(report, f, indent=2, ensure_ascii=False)
 
-        
+
 
         return report
 
-    
+
 
     def _generate_recommendations(self, scan_result: Dict) -> List[str]:
 
@@ -367,7 +367,7 @@ class ImageScanner:
 
         recommendations = []
 
-        
+
 
         if "Results" in scan_result:
 
@@ -385,7 +385,7 @@ class ImageScanner:
 
                             )
 
-        
+
 
         return list(set(recommendations))
 
@@ -403,13 +403,13 @@ class FileSystemScanner:
 
     """文件系统扫描器"""
 
-    
+
 
     def __init__(self):
 
         self.scanner = "trivy"
 
-    
+
 
     def scan_filesystem(
 
@@ -439,7 +439,7 @@ class FileSystemScanner:
 
         ]
 
-        
+
 
         result = subprocess.run(
 
@@ -451,17 +451,17 @@ class FileSystemScanner:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Scan failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def scan_config_files(self, path: str) -> Dict:
 
@@ -479,7 +479,7 @@ class FileSystemScanner:
 
         ]
 
-        
+
 
         result = subprocess.run(
 
@@ -491,17 +491,17 @@ class FileSystemScanner:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Config scan failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def detect_secrets(self, path: str) -> List[Dict]:
 
@@ -509,7 +509,7 @@ class FileSystemScanner:
 
         secrets = []
 
-        
+
 
         secret_patterns = [
 
@@ -523,13 +523,13 @@ class FileSystemScanner:
 
         ]
 
-        
+
 
         import re
 
         import os
 
-        
+
 
         for root, dirs, files in os.walk(path):
 
@@ -539,19 +539,19 @@ class FileSystemScanner:
 
                     file_path = os.path.join(root, file)
 
-                    
+
 
                     with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
 
                         content = f.read()
 
-                        
+
 
                         for pattern in secret_patterns:
 
                             matches = re.finditer(pattern, content, re.IGNORECASE)
 
-                            
+
 
                             for match in matches:
 
@@ -567,7 +567,7 @@ class FileSystemScanner:
 
                                 })
 
-        
+
 
         return secrets
 
@@ -585,13 +585,13 @@ class RepositoryScanner:
 
     """代码库扫描器"""
 
-    
+
 
     def __init__(self):
 
         self.scanner = "trivy"
 
-    
+
 
     def scan_repository(
 
@@ -623,7 +623,7 @@ class RepositoryScanner:
 
         ]
 
-        
+
 
         result = subprocess.run(
 
@@ -635,17 +635,17 @@ class RepositoryScanner:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Scan failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def scan_dependencies(self, repo_path: str) -> Dict:
 
@@ -667,17 +667,17 @@ class RepositoryScanner:
 
         ]
 
-        
+
 
         results = {}
 
-        
+
 
         for dep_file in dependency_files:
 
             file_path = os.path.join(repo_path, dep_file)
 
-            
+
 
             if os.path.exists(file_path):
 
@@ -695,7 +695,7 @@ class RepositoryScanner:
 
                 ]
 
-                
+
 
                 result = subprocess.run(
 
@@ -707,13 +707,13 @@ class RepositoryScanner:
 
                 )
 
-                
+
 
                 if result.returncode == 0:
 
                     results[dep_file] = json.loads(result.stdout)
 
-        
+
 
         return results
 
@@ -731,7 +731,7 @@ class ComplianceChecker:
 
     """合规检查器"""
 
-    
+
 
     def __init__(self):
 
@@ -747,7 +747,7 @@ class ComplianceChecker:
 
         }
 
-    
+
 
     def check_docker_compliance(self) -> Dict:
 
@@ -767,7 +767,7 @@ class ComplianceChecker:
 
         ]
 
-        
+
 
         result = subprocess.run(
 
@@ -779,17 +779,17 @@ class ComplianceChecker:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Compliance check failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def check_kubernetes_compliance(self, kubeconfig: str = None) -> Dict:
 
@@ -809,13 +809,13 @@ class ComplianceChecker:
 
         ]
 
-        
+
 
         if kubeconfig:
 
             cmd.extend(["--kubeconfig", kubeconfig])
 
-        
+
 
         result = subprocess.run(
 
@@ -827,17 +827,17 @@ class ComplianceChecker:
 
         )
 
-        
+
 
         if result.returncode != 0:
 
             raise Exception(f"Compliance check failed: {result.stderr}")
 
-        
+
 
         return json.loads(result.stdout)
 
-    
+
 
     def generate_compliance_report(
 
@@ -873,7 +873,7 @@ class ComplianceChecker:
 
         }
 
-        
+
 
         if "Results" in compliance_result:
 
@@ -883,7 +883,7 @@ class ComplianceChecker:
 
                     report["summary"]["total_checks"] += 1
 
-                    
+
 
                     status = check.get("Status", "SKIP")
 
@@ -899,7 +899,7 @@ class ComplianceChecker:
 
                         report["summary"]["skipped"] += 1
 
-                    
+
 
                     report["details"].append({
 
@@ -917,13 +917,13 @@ class ComplianceChecker:
 
                     })
 
-        
+
 
         with open(output_file, 'w', encoding='utf-8') as f:
 
             json.dump(report, f, indent=2, ensure_ascii=False)
 
-        
+
 
         return report
 
@@ -1071,7 +1071,7 @@ jobs:
 
         uses: actions/checkout@v3
 
-      
+
 
       - name: Run Trivy vulnerability scanner
 
@@ -1089,7 +1089,7 @@ jobs:
 
           severity: 'CRITICAL,HIGH'
 
-      
+
 
       - name: Upload Trivy scan results to GitHub Security tab
 
@@ -1099,7 +1099,7 @@ jobs:
 
           sarif_file: 'trivy-results.sarif'
 
-      
+
 
       - name: Scan Docker image
 
@@ -1531,7 +1531,7 @@ groups:
 
           description: "镜像{{ $labels.image_name }}发现{{ $value }}个严重漏洞"
 
-      
+
 
       - alert: ComplianceCheckFailed
 
@@ -1637,13 +1637,13 @@ class VulnerabilityManager:
 
     """漏洞管理器"""
 
-    
+
 
     def __init__(self):
 
         self.vulnerabilities = []
 
-    
+
 
     def track_vulnerability(self, vuln: Vulnerability):
 
@@ -1661,7 +1661,7 @@ class VulnerabilityManager:
 
         })
 
-    
+
 
     def update_status(self, vuln_id: str, status: str):
 
@@ -1677,7 +1677,7 @@ class VulnerabilityManager:
 
                 break
 
-    
+
 
     def get_open_vulnerabilities(self) -> List[Dict]:
 
@@ -1746,4 +1746,3 @@ class VulnerabilityManager:
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

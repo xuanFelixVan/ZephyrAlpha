@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：订单流分析、订单簿分析、交易信号提取
 
@@ -160,13 +160,13 @@ class OrderFlowAnalyzer:
 
     """订单流分析器"""
 
-    
+
 
     def __init__(self):
 
         self.signals = {}
 
-    
+
 
     def analyze_order_imbalance(self, bid_volume, ask_volume):
 
@@ -178,7 +178,7 @@ class OrderFlowAnalyzer:
 
         return imbalance
 
-    
+
 
     def detect_toxic_flow(self, order_flow, price_changes):
 
@@ -188,7 +188,7 @@ class OrderFlowAnalyzer:
 
         return correlation > 0.5
 
-    
+
 
     def estimate_price_impact(self, order_size, depth):
 
@@ -200,7 +200,7 @@ class OrderFlowAnalyzer:
 
         return impact_level / len(depth)
 
-    
+
 
     def extract_signals(self, order_book):
 
@@ -208,7 +208,7 @@ class OrderFlowAnalyzer:
 
         signals = {}
 
-        
+
 
         signals['imbalance'] = self.analyze_order_imbalance(
 
@@ -218,15 +218,15 @@ class OrderFlowAnalyzer:
 
         )
 
-        
+
 
         signals['spread'] = order_book['ask_price'].iloc[0] - order_book['bid_price'].iloc[0]
 
-        
+
 
         signals['depth'] = order_book['bid_volume'].sum() + order_book['ask_volume'].sum()
 
-        
+
 
         return signals
 
@@ -343,4 +343,3 @@ class OrderFlowOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

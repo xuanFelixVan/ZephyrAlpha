@@ -148,7 +148,7 @@ class OrderApplicationService:
 
     """订单应用服务"""
 
-    
+
 
     def create_order(self, request: CreateOrderRequest) -> Order:
 
@@ -156,7 +156,7 @@ class OrderApplicationService:
 
         pass
 
-    
+
 
     def execute_order(self, order_id: str) -> List[Trade]:
 
@@ -164,7 +164,7 @@ class OrderApplicationService:
 
         pass
 
-    
+
 
     def cancel_order(self, order_id: str, quantity: Decimal = None) -> None:
 
@@ -172,7 +172,7 @@ class OrderApplicationService:
 
         pass
 
-    
+
 
     def query_order(self, order_id: str) -> Order:
 
@@ -180,7 +180,7 @@ class OrderApplicationService:
 
         pass
 
-    
+
 
     def query_trades(self, order_id: str) -> List[Trade]:
 
@@ -277,4 +277,3 @@ class OrderApplicationService:
 
 
 **最后更新**: 2026-04-07
-

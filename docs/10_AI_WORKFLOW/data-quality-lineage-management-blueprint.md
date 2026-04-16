@@ -156,7 +156,7 @@ layer: layer_00
 
 
 
-             数据质量与血缘管理模块架构                              
+             数据质量与血缘管理模块架构
 
 
 
@@ -164,75 +164,75 @@ layer: layer_00
 
 
 
-                                                                    
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-      DataQualityManager (数据质量管理                       
+      DataQualityManager (数据质量管理
 
 
 
-  - 质量评分                                                    
+  - 质量评分
 
 
 
-  - 异常检                                                   
+  - 异常检
 
 
 
-  - 清洗验证                                                    
+  - 清洗验证
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-      DataLineageTracker (数据血缘追踪器)                       
+      DataLineageTracker (数据血缘追踪器)
 
 
 
-  - 来源追踪                                                    
+  - 来源追踪
 
 
 
-  - 流程记录                                                    
+  - 流程记录
 
 
 
-  - 血缘可视化                                                  
+  - 血缘可视化
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                   
 
 
 
- ┌────────────────────────────────────────────────────────────── 
+
+ ┌──────────────────────────────────────────────────────────────
 
 
 
-      开源工具集                                             
+      开源工具集
 
 
 
-  ┌───────────── ┌───────────── ┌───────────── ┌────── 
+  ┌───────────── ┌───────────── ┌───────────── ┌──────
 
 
 
@@ -244,15 +244,15 @@ layer: layer_00
 
 
 
-  └───────────── └───────────── └───────────── └────── 
+  └───────────── └───────────── └───────────── └──────
 
 
 
- └────────────────────────────────────────────────────────────── 
+ └──────────────────────────────────────────────────────────────
 
 
 
-                                                                    
+
 
 
 
@@ -368,7 +368,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -380,7 +380,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -392,7 +392,7 @@ class DataQualityManager:
 
 
 
-        
+
 
 
 
@@ -420,7 +420,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -436,7 +436,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -464,7 +464,7 @@ class DataQualityManager:
 
 
 
-        
+
 
 
 
@@ -480,7 +480,7 @@ class DataQualityManager:
 
 
 
-            
+
 
 
 
@@ -500,7 +500,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -528,7 +528,7 @@ class DataQualityManager:
 
 
 
-        
+
 
 
 
@@ -544,7 +544,7 @@ class DataQualityManager:
 
 
 
-            
+
 
 
 
@@ -564,7 +564,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -596,7 +596,7 @@ class DataQualityManager:
 
 
 
-        
+
 
 
 
@@ -616,7 +616,7 @@ class DataQualityManager:
 
 
 
-            
+
 
 
 
@@ -636,7 +636,7 @@ class DataQualityManager:
 
 
 
-    
+
 
 
 
@@ -664,7 +664,7 @@ class DataQualityManager:
 
 
 
-        
+
 
 
 
@@ -680,7 +680,7 @@ class DataQualityManager:
 
 
 
-            
+
 
 
 
@@ -902,7 +902,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -914,7 +914,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -926,7 +926,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -950,7 +950,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -970,7 +970,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1018,7 +1018,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1030,7 +1030,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -1062,7 +1062,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1090,7 +1090,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -1126,7 +1126,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1158,7 +1158,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -1186,7 +1186,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1202,7 +1202,7 @@ class DataLineageTracker:
 
 
 
-            
+
 
 
 
@@ -1222,7 +1222,7 @@ class DataLineageTracker:
 
 
 
-    
+
 
 
 
@@ -1250,7 +1250,7 @@ class DataLineageTracker:
 
 
 
-        
+
 
 
 
@@ -1266,7 +1266,7 @@ class DataLineageTracker:
 
 
 
-            
+
 
 
 
@@ -1570,7 +1570,7 @@ def generate_data_quality_report(
 
 
 
-    
+
 
 
 
@@ -1586,7 +1586,7 @@ def generate_data_quality_report(
 
 
 
-        
+
 
 
 
@@ -1626,7 +1626,7 @@ def generate_data_quality_report(
 
 
 
-    
+
 
 
 
@@ -1700,7 +1700,7 @@ class DataQualityAndLineageManager:
 
 
 
-    
+
 
 
 
@@ -1728,7 +1728,7 @@ class DataQualityAndLineageManager:
 
 
 
-        
+
 
 
 
@@ -1756,7 +1756,7 @@ class DataQualityAndLineageManager:
 
 
 
-    
+
 
 
 
@@ -1788,7 +1788,7 @@ class DataQualityAndLineageManager:
 
 
 
-        
+
 
 
 
@@ -1808,7 +1808,7 @@ class DataQualityAndLineageManager:
 
 
 
-            
+
 
 
 
@@ -1828,7 +1828,7 @@ class DataQualityAndLineageManager:
 
 
 
-    
+
 
 
 
@@ -1852,7 +1852,7 @@ class DataQualityAndLineageManager:
 
 
 
-        
+
 
 
 
@@ -1864,7 +1864,7 @@ class DataQualityAndLineageManager:
 
 
 
-            
+
 
 
 
@@ -1884,7 +1884,7 @@ class DataQualityAndLineageManager:
 
 
 
-    
+
 
 
 
@@ -1908,7 +1908,7 @@ class DataQualityAndLineageManager:
 
 
 
-        
+
 
 
 
@@ -1920,7 +1920,7 @@ class DataQualityAndLineageManager:
 
 
 
-            
+
 
 
 
@@ -2833,6 +2833,3 @@ CREATE TABLE processing_logs (
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-

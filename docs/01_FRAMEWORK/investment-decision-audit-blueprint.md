@@ -27,7 +27,7 @@ responsibility: ''
 
 > **核心职责**: Investment Decision Audit蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Investment Decision Audit蓝图设计相关内容
 
@@ -37,11 +37,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **状态**: 活跃  
+> **状态**: 活跃
 
 > **对标机构**: Citadel, Two Sigma, Bridgewater, D.E. Shaw
 
@@ -177,7 +177,7 @@ class InvestmentDecisionAuditInterface:
 
         pass
 
-    
+
 
     def record_basis(self, decision_id: str, basis: DecisionBasis) -> BasisRecord:
 
@@ -185,7 +185,7 @@ class InvestmentDecisionAuditInterface:
 
         pass
 
-    
+
 
     def analyze_impact(self, decision_id: str) -> ImpactAnalysis:
 
@@ -193,7 +193,7 @@ class InvestmentDecisionAuditInterface:
 
         pass
 
-    
+
 
     def audit_decision(self, decision_id: str) -> AuditReport:
 
@@ -201,7 +201,7 @@ class InvestmentDecisionAuditInterface:
 
         pass
 
-    
+
 
     def generate_audit_report(self, period: str) -> AuditSummary:
 
@@ -359,7 +359,7 @@ class BasisRecording:
 
         signals = self.extract_signals(basis)
 
-        
+
 
         return BasisRecord(
 
@@ -399,7 +399,7 @@ class ImpactAnalysis:
 
         post_state = self.get_portfolio_state(decision.timestamp + timedelta(days=1))
 
-        
+
 
         impact_metrics = {
 
@@ -411,7 +411,7 @@ class ImpactAnalysis:
 
         }
 
-        
+
 
         return ImpactAnalysis(
 
@@ -495,7 +495,7 @@ class InvestmentDecision:
 
     status: str
 
-    
+
 
 @dataclass
 
@@ -509,7 +509,7 @@ class DecisionTrail:
 
     lineage: LineageGraph
 
-    
+
 
 @dataclass
 
@@ -525,7 +525,7 @@ class DecisionBasis:
 
     signals: List[Signal]
 
-    
+
 
 @dataclass
 
@@ -931,11 +931,10 @@ entity = client.entity_post.create_entity({
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

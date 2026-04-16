@@ -21,15 +21,15 @@ layer: layer_08
 
 > **核心职责**: 提供券商API接口集成，支持实盘交易执行、订单管理和账户管理
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：券商API接口集成、实盘交易执行、订单管理、账户管理
 
 > - ❌ 本文档不负责：策略逻辑（由策略引擎负责）、风险控制（由风控模块负责）、数据获取（由数据模块负责）
 
-> 
+>
 
-> **上游模块**: 
+> **上游模块**:
 
 > - 策略引擎（STRATEGY_ENGINE_001）：提供交易信号
 
@@ -219,7 +219,7 @@ class LiveTradingInterface:
 
     """实盘交易接口 - 基于Vnpy"""
 
-    
+
 
     def __init__(self):
 
@@ -227,13 +227,13 @@ class LiveTradingInterface:
 
         self.main_engine = MainEngine(self.event_engine)
 
-        
+
 
         self.main_engine.add_gateway(CtpGateway)
 
         self.main_engine.add_gateway(XtGateway)
 
-        
+
 
     def connect_broker(self, gateway_name: str, setting: dict):
 
@@ -241,7 +241,7 @@ class LiveTradingInterface:
 
         self.main_engine.connect(setting, gateway_name)
 
-        
+
 
     def send_order(self, req: OrderRequest):
 
@@ -319,7 +319,7 @@ class BrokerInterfaceManager:
 
     """券商接口管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -329,7 +329,7 @@ class BrokerInterfaceManager:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def add_broker(self, config: BrokerConfig) -> bool:
 
@@ -351,7 +351,7 @@ class BrokerInterfaceManager:
 
             return False
 
-    
+
 
     def connect_broker(self, broker_name: str) -> bool:
 
@@ -367,7 +367,7 @@ class BrokerInterfaceManager:
 
                 return False
 
-            
+
 
             if config.broker_type == BrokerType.QMT:
 
@@ -383,7 +383,7 @@ class BrokerInterfaceManager:
 
                 return False
 
-                
+
 
         except Exception as e:
 
@@ -391,7 +391,7 @@ class BrokerInterfaceManager:
 
             return False
 
-    
+
 
     def _connect_qmt(self, config: BrokerConfig) -> bool:
 
@@ -403,13 +403,13 @@ class BrokerInterfaceManager:
 
             from xtquant.xttrader import XtQuantTrader
 
-            
+
 
             trader = XtQuantTrader(config.broker_api, config.account_id)
 
             trader.connect()
 
-            
+
 
             self.connections[config.broker_name] = True
 
@@ -417,7 +417,7 @@ class BrokerInterfaceManager:
 
             return True
 
-            
+
 
         except Exception as e:
 
@@ -425,7 +425,7 @@ class BrokerInterfaceManager:
 
             return False
 
-    
+
 
     def _connect_ctp(self, config: BrokerConfig) -> bool:
 
@@ -435,7 +435,7 @@ class BrokerInterfaceManager:
 
             from vnpy.gateway.ctp import CtpGateway
 
-            
+
 
             self.connections[config.broker_name] = True
 
@@ -443,7 +443,7 @@ class BrokerInterfaceManager:
 
             return True
 
-            
+
 
         except Exception as e:
 
@@ -573,7 +573,7 @@ class OrderExecutionEngine:
 
     """订单执行引擎"""
 
-    
+
 
     def __init__(self, broker_manager: BrokerInterfaceManager):
 
@@ -583,7 +583,7 @@ class OrderExecutionEngine:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def send_order(self, req: OrderRequest) -> Optional[str]:
 
@@ -597,11 +597,11 @@ class OrderExecutionEngine:
 
                 return None
 
-            
+
 
             order_id = self._generate_order_id()
 
-            
+
 
             order = Order(
 
@@ -633,11 +633,11 @@ class OrderExecutionEngine:
 
             )
 
-            
+
 
             self.orders[order_id] = order
 
-            
+
 
             if req.broker_name == "QMT":
 
@@ -647,7 +647,7 @@ class OrderExecutionEngine:
 
                 success = self._send_vnpy_order(order)
 
-            
+
 
             if success:
 
@@ -665,7 +665,7 @@ class OrderExecutionEngine:
 
                 return None
 
-                
+
 
         except Exception as e:
 
@@ -673,7 +673,7 @@ class OrderExecutionEngine:
 
             return None
 
-    
+
 
     def cancel_order(self, order_id: str) -> bool:
 
@@ -689,7 +689,7 @@ class OrderExecutionEngine:
 
                 return False
 
-            
+
 
             if order.status in [OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED]:
 
@@ -697,7 +697,7 @@ class OrderExecutionEngine:
 
                 return False
 
-            
+
 
             if order.broker_name == "QMT":
 
@@ -707,7 +707,7 @@ class OrderExecutionEngine:
 
                 success = self._cancel_vnpy_order(order)
 
-            
+
 
             if success:
 
@@ -725,7 +725,7 @@ class OrderExecutionEngine:
 
                 return False
 
-                
+
 
         except Exception as e:
 
@@ -733,7 +733,7 @@ class OrderExecutionEngine:
 
             return False
 
-    
+
 
     def query_order(self, order_id: str) -> Optional[Order]:
 
@@ -741,7 +741,7 @@ class OrderExecutionEngine:
 
         return self.orders.get(order_id)
 
-    
+
 
     def _generate_order_id(self) -> str:
 
@@ -751,7 +751,7 @@ class OrderExecutionEngine:
 
         return f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
 
-    
+
 
     def _send_qmt_order(self, order: Order) -> bool:
 
@@ -761,11 +761,11 @@ class OrderExecutionEngine:
 
             from xtquant.xttrader import XtQuantTrader
 
-            
+
 
             return True
 
-            
+
 
         except Exception as e:
 
@@ -773,7 +773,7 @@ class OrderExecutionEngine:
 
             return False
 
-    
+
 
     def _send_vnpy_order(self, order: Order) -> bool:
 
@@ -783,7 +783,7 @@ class OrderExecutionEngine:
 
             return True
 
-            
+
 
         except Exception as e:
 
@@ -863,7 +863,7 @@ class AccountManager:
 
     """账户管理器"""
 
-    
+
 
     def __init__(self, broker_manager: BrokerInterfaceManager):
 
@@ -873,7 +873,7 @@ class AccountManager:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def query_account(self, broker_name: str) -> Optional[Account]:
 
@@ -887,7 +887,7 @@ class AccountManager:
 
                 return None
 
-            
+
 
             if broker_name == "QMT":
 
@@ -897,7 +897,7 @@ class AccountManager:
 
                 return self._query_vnpy_account(broker_name)
 
-                
+
 
         except Exception as e:
 
@@ -905,7 +905,7 @@ class AccountManager:
 
             return None
 
-    
+
 
     def query_positions(self, broker_name: str) -> List[Position]:
 
@@ -921,7 +921,7 @@ class AccountManager:
 
             return []
 
-            
+
 
         except Exception as e:
 
@@ -929,7 +929,7 @@ class AccountManager:
 
             return []
 
-    
+
 
     def _query_qmt_account(self, broker_name: str) -> Optional[Account]:
 
@@ -939,7 +939,7 @@ class AccountManager:
 
             from xtquant.xttrader import XtQuantTrader
 
-            
+
 
             return Account(
 
@@ -961,7 +961,7 @@ class AccountManager:
 
             )
 
-            
+
 
         except Exception as e:
 
@@ -969,7 +969,7 @@ class AccountManager:
 
             return None
 
-    
+
 
     def _query_vnpy_account(self, broker_name: str) -> Optional[Account]:
 
@@ -997,7 +997,7 @@ class AccountManager:
 
             )
 
-            
+
 
         except Exception as e:
 
@@ -1019,7 +1019,7 @@ class LiveTradingManager:
 
     """实盘交易管理器"""
 
-    
+
 
     def __init__(self):
 
@@ -1031,7 +1031,7 @@ class LiveTradingManager:
 
         self.logger = logging.getLogger(__name__)
 
-        
+
 
     def initialize(self, broker_configs: List[BrokerConfig]) -> bool:
 
@@ -1043,13 +1043,13 @@ class LiveTradingManager:
 
                 self.broker_manager.add_broker(config)
 
-                
+
 
             self.logger.info("Live trading manager initialized")
 
             return True
 
-            
+
 
         except Exception as e:
 
@@ -1057,7 +1057,7 @@ class LiveTradingManager:
 
             return False
 
-    
+
 
     def connect_all_brokers(self) -> Dict[str, bool]:
 
@@ -1071,7 +1071,7 @@ class LiveTradingManager:
 
         return results
 
-    
+
 
     def execute_signal(
 
@@ -1105,11 +1105,11 @@ class LiveTradingManager:
 
             )
 
-            
+
 
             return self.order_engine.send_order(req)
 
-            
+
 
         except Exception as e:
 
@@ -1343,7 +1343,7 @@ CREATE TABLE account_snapshots (
 
 
 
-**总工时估算**: 
+**总工时估算**:
 
 - Phase 1: 5天（核心功能）
 
@@ -1458,4 +1458,3 @@ CREATE TABLE account_snapshots (
 **最后更新**: 2026-04-08
 
 **状态**: Active
-

@@ -99,3 +99,18 @@ responsibility:
 - 扫描范围: D:\ZephyrAlpha\docs
 - 索引文件: docs\03_TRADING_TACTICS\INDEX.md
 - 自动化工具: Auto-Index Compiler v1.1.0
+
+<!-- orphan-link -->
+- [ai-supervision-integration-plan](ai-supervision-integration-plan.md)
+
+<!-- orphan-link -->
+- [neural-network-integration-plan](neural-network-integration-plan.md)
+
+<!-- orphan-link -->
+- [optimization-report](optimization-report.md)
+
+<!-- orphan-link -->
+- [parameter-management](parameter-management.md)
+
+<!-- orphan-link -->
+- [refactor-complete](refactor-complete.md)

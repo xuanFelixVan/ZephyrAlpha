@@ -1470,7 +1470,7 @@ timestamp: str  # ISO 8601ﮔﺙﮒﺙ
 
     order_id: Optional[str] = None
 
-    
+
 
     class Config:
 
@@ -1582,7 +1582,7 @@ class EngineConfig(BaseModel):
 
     risk_limits: Dict[str, Any] = {}
 
-    
+
 
     class Config:
 
@@ -1678,7 +1678,7 @@ def test_login_success(client: TestClient):
 
     })
 
-    
+
 
     assert response.status_code == 200
 
@@ -1704,7 +1704,7 @@ def test_login_failure(client: TestClient):
 
     })
 
-    
+
 
     assert response.status_code == 401
 
@@ -1738,7 +1738,7 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
 
     }, headers=auth_headers)
 
-    
+
 
     assert response.status_code == 200
 
@@ -1882,9 +1882,9 @@ logging.basicConfig(
 
 # ﻝﭨﮔﮒﮔ۴?
 
-logger.add("logs/api.log", 
+logger.add("logs/api.log",
 
-           rotation="100 MB", 
+           rotation="100 MB",
 
            retention="30 days",
 
@@ -1962,7 +1962,7 @@ async def rate_limit_middleware(request: Request, call_next):
 
         await limiter.check(request, "1000/minute")
 
-    
+
 
     response = await call_next(request)
 
@@ -2020,13 +2020,12 @@ async def rate_limit_middleware(request: Request, call_next):
 
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02
 
 **ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 
-**ﻝﺑ۱ﮒﺙ**: `DESIGN_005`  
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
 
 **ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰
-

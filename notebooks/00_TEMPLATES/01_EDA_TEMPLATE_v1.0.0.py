@@ -21,7 +21,7 @@ description: 探索性数据分析模板 - 数据质量检查、分布分析、�
 
 # %% [markdown]
 # # 探索性数据分析 (EDA)
-# 
+#
 # > **项目**: ZephyrAlpha v5.1
 # > **作者**: [姓名/团队]
 # > **创建日期**: YYYY-MM-DD
@@ -136,13 +136,13 @@ axes = axes.ravel()
 
 for i, col in enumerate(numeric_cols[:6]):  # 限制前6个列
     ax = axes[i]
-    
+
     # 直方图
     df[col].hist(ax=ax, bins=30, edgecolor='black', alpha=0.7)
     ax.set_title(f'{col} 分布', fontsize=12)
     ax.set_xlabel(col)
     ax.set_ylabel('频率')
-    
+
     # 添加统计信息
     mean_val = df[col].mean()
     median_val = df[col].median()
@@ -163,16 +163,16 @@ plt.show()
 # %%
 if 'date' in df.columns:
     print("⏰ 时间序列分析")
-    
+
     # 确保日期列是datetime类型
     df['date'] = pd.to_datetime(df['date'])
-    
+
     # 按日期排序
     df = df.sort_values('date')
-    
+
     # 创建时间序列图表
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    
+
     # 1. 收盘价趋势
     if 'close' in df.columns:
         axes[0, 0].plot(df['date'], df['close'], linewidth=2)
@@ -180,7 +180,7 @@ if 'date' in df.columns:
         axes[0, 0].set_xlabel('日期')
         axes[0, 0].set_ylabel('收盘价')
         axes[0, 0].grid(True, alpha=0.3)
-    
+
     # 2. 成交量趋势
     if 'volume' in df.columns:
         axes[0, 1].bar(df['date'], df['volume'], alpha=0.7)
@@ -188,16 +188,16 @@ if 'date' in df.columns:
         axes[0, 1].set_xlabel('日期')
         axes[0, 1].set_ylabel('成交量')
         axes[0, 1].grid(True, alpha=0.3)
-    
+
     # 3. 滚动统计
     if 'close' in df.columns:
         rolling_mean = df['close'].rolling(window=20).mean()
         rolling_std = df['close'].rolling(window=20).std()
-        
+
         axes[1, 0].plot(df['date'], df['close'], label='原始', alpha=0.7)
         axes[1, 0].plot(df['date'], rolling_mean, label='20日移动平均', linewidth=2)
-        axes[1, 0].fill_between(df['date'], 
-                                rolling_mean - rolling_std, 
+        axes[1, 0].fill_between(df['date'],
+                                rolling_mean - rolling_std,
                                 rolling_mean + rolling_std,
                                 alpha=0.2, label='±1标准差')
         axes[1, 0].set_title('移动平均与波动率', fontsize=12)
@@ -205,7 +205,7 @@ if 'date' in df.columns:
         axes[1, 0].set_ylabel('价格')
         axes[1, 0].legend()
         axes[1, 0].grid(True, alpha=0.3)
-    
+
     # 4. 日收益率分布
     if 'close' in df.columns:
         returns = df['close'].pct_change().dropna()
@@ -217,7 +217,7 @@ if 'date' in df.columns:
         axes[1, 1].set_ylabel('频率')
         axes[1, 1].legend()
         axes[1, 1].grid(True, alpha=0.3)
-    
+
     plt.tight_layout()
     plt.show()
 
@@ -231,13 +231,13 @@ print("🔗 多变量分析")
 if len(numeric_cols) > 1:
     print("\n1. 相关性矩阵:")
     correlation_matrix = df[numeric_cols].corr()
-    
+
     fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(correlation_matrix, annot=True, fmt='.2f', cmap='coolwarm', 
+    sns.heatmap(correlation_matrix, annot=True, fmt='.2f', cmap='coolwarm',
                 center=0, square=True, linewidths=1, ax=ax)
     ax.set_title('相关性矩阵热图', fontsize=14)
     plt.show()
-    
+
     # 显示高度相关的特征对
     print("\n高度相关的特征对 (|相关性| > 0.7):")
     corr_pairs = correlation_matrix.unstack().sort_values(ascending=False)
@@ -251,9 +251,9 @@ if len(numeric_cols) > 1:
 if len(numeric_cols) >= 3:
     print("\n2. 散点图矩阵 (前4个数值列):")
     selected_cols = numeric_cols[:4]
-    
+
     try:
-        scatter_matrix = pd.plotting.scatter_matrix(df[selected_cols], 
+        scatter_matrix = pd.plotting.scatter_matrix(df[selected_cols],
                                                    figsize=(12, 10),
                                                    diagonal='hist',
                                                    alpha=0.7)
@@ -279,11 +279,11 @@ for col in numeric_cols:
     IQR = Q3 - Q1
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
-    
+
     outliers = df[(df[col] < lower_bound) | (df[col] > upper_bound)]
     outlier_count = len(outliers)
     outlier_percent = outlier_count / len(df) * 100
-    
+
     outliers_summary.append({
         '列名': col,
         '异常值数量': outlier_count,
@@ -298,13 +298,13 @@ display(outliers_df)
 # 7.2 可视化异常值
 if len(numeric_cols) > 0:
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-    
+
     # 箱线图
     df[numeric_cols[:min(5, len(numeric_cols))]].boxplot(ax=axes[0])
     axes[0].set_title('箱线图 (异常值检测)', fontsize=12)
     axes[0].set_ylabel('值')
     axes[0].tick_params(axis='x', rotation=45)
-    
+
     # 散点图显示异常值
     if len(numeric_cols) >= 2:
         col1, col2 = numeric_cols[0], numeric_cols[1]
@@ -313,7 +313,7 @@ if len(numeric_cols) > 0:
         axes[1].set_ylabel(col2)
         axes[1].set_title(f'{col1} vs {col2} 散点图', fontsize=12)
         axes[1].grid(True, alpha=0.3)
-    
+
     plt.tight_layout()
     plt.show()
 
@@ -329,9 +329,9 @@ recommendations = []
 for col in numeric_cols:
     skewness = df[col].skew()
     kurtosis = df[col].kurtosis()
-    
+
     rec = {'列名': col, '偏度': f'{skewness:.3f}', '峰度': f'{kurtosis:.3f}'}
-    
+
     # 基于偏度的建议
     if abs(skewness) > 1:
         rec['建议'] = '考虑对数变换或Box-Cox变换'
@@ -339,7 +339,7 @@ for col in numeric_cols:
         rec['建议'] = '轻微偏斜，可能需要变换'
     else:
         rec['建议'] = '分布相对对称'
-    
+
     # 基于峰度的建议
     if kurtosis > 3:
         rec['峰度解读'] = '尖峰分布（尾部较重）'
@@ -347,7 +347,7 @@ for col in numeric_cols:
         rec['峰度解读'] = '平峰分布（尾部较轻）'
     else:
         rec['峰度解读'] = '正态分布峰度'
-    
+
     recommendations.append(rec)
 
 rec_df = pd.DataFrame(recommendations)
@@ -439,8 +439,8 @@ print("\n🎉 EDA分析完成！")
 
 # %% [markdown]
 # ---
-# 
-# **备注**: 
+#
+# **备注**:
 # - 本模板为通用EDA模板，请根据实际数据调整
 # - 建议定期更新EDA分析，跟踪数据质量变化
 # - 对于大型数据集，考虑抽样分析以提高效率

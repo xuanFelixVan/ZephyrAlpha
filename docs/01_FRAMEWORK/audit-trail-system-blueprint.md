@@ -380,7 +380,7 @@ class AuditEvent:
 
     checksum: str
 
-    
+
 
     def calculate_checksum(self) -> str:
 
@@ -406,7 +406,7 @@ class AuditEvent:
 
         }, sort_keys=True)
 
-        
+
 
         return hashlib.sha256(data.encode()).hexdigest()
 
@@ -416,7 +416,7 @@ class AuditLogger:
 
     """审计日志记录器"""
 
-    
+
 
     def __init__(self, db_path: str = './audit_trail.db'):
 
@@ -424,13 +424,13 @@ class AuditLogger:
 
         self._init_db()
 
-        
+
 
     def _init_db(self):
 
         """初始化数据库"""
 
-        
+
 
         import sqlite3
 
@@ -438,7 +438,7 @@ class AuditLogger:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -472,43 +472,43 @@ class AuditLogger:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_timestamp 
+            CREATE INDEX IF NOT EXISTS idx_timestamp
 
             ON audit_events(timestamp)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_event_type 
+            CREATE INDEX IF NOT EXISTS idx_event_type
 
             ON audit_events(event_type)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_entity 
+            CREATE INDEX IF NOT EXISTS idx_entity
 
             ON audit_events(entity_type, entity_id)
 
         ''')
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def log_event(
 
@@ -534,13 +534,13 @@ class AuditLogger:
 
         """记录审计事件"""
 
-        
+
 
         timestamp = datetime.now()
 
         event_id = f"AUD_{timestamp.strftime('%Y%m%d%H%M%S%f')}"
 
-        
+
 
         event = AuditEvent(
 
@@ -568,25 +568,25 @@ class AuditLogger:
 
         )
 
-        
+
 
         event.checksum = event.calculate_checksum()
 
-        
+
 
         self._save_event(event)
 
-        
+
 
         return event
 
-    
+
 
     def _save_event(self, event: AuditEvent):
 
         """保存事件到数据库"""
 
-        
+
 
         import sqlite3
 
@@ -594,15 +594,15 @@ class AuditLogger:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
-            INSERT INTO audit_events 
+            INSERT INTO audit_events
 
-            (event_id, event_type, timestamp, entity_type, entity_id, 
+            (event_id, event_type, timestamp, entity_type, entity_id,
 
-             operator, action, before_state, after_state, metadata, 
+             operator, action, before_state, after_state, metadata,
 
              checksum, created_at)
 
@@ -636,19 +636,19 @@ class AuditLogger:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-    
+
 
     def verify_integrity(self, event_id: str) -> bool:
 
         """验证事件完整性"""
 
-        
+
 
         import sqlite3
 
@@ -656,7 +656,7 @@ class AuditLogger:
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute(
 
@@ -666,19 +666,19 @@ class AuditLogger:
 
         )
 
-        
+
 
         row = cursor.fetchone()
 
         conn.close()
 
-        
+
 
         if not row:
 
             return False
 
-        
+
 
         event = AuditEvent(
 
@@ -706,7 +706,7 @@ class AuditLogger:
 
         )
 
-        
+
 
         return event.checksum == event.calculate_checksum()
 
@@ -756,7 +756,7 @@ class WALStorage:
 
     """WAL日志存储"""
 
-    
+
 
     def __init__(self, wal_dir: str = './audit_wal'):
 
@@ -770,19 +770,19 @@ class WALStorage:
 
         self.max_wal_size = 100 * 1024 * 1024  # 100MB
 
-        
+
 
     def append(self, event: AuditEvent):
 
         """追加事件到WAL"""
 
-        
+
 
         if self.current_wal_file is None or self.current_wal_size >= self.max_wal_size:
 
             self._rotate_wal_file()
 
-        
+
 
         wal_entry = {
 
@@ -810,29 +810,29 @@ class WALStorage:
 
         }
 
-        
+
 
         entry_line = json.dumps(wal_entry, ensure_ascii=False) + '\n'
 
         entry_bytes = entry_line.encode('utf-8')
 
-        
+
 
         with open(self.current_wal_file, 'ab') as f:
 
             f.write(entry_bytes)
 
-        
+
 
         self.current_wal_size += len(entry_bytes)
 
-    
+
 
     def _rotate_wal_file(self):
 
         """轮转WAL文件"""
 
-        
+
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
@@ -840,11 +840,11 @@ class WALStorage:
 
         self.current_wal_size = 0
 
-        
+
 
         self.current_wal_file.touch()
 
-    
+
 
     def read_events(
 
@@ -858,11 +858,11 @@ class WALStorage:
 
         """读取事件"""
 
-        
+
 
         events = []
 
-        
+
 
         for wal_file in sorted(self.wal_dir.glob('audit_*.wal')):
 
@@ -876,7 +876,7 @@ class WALStorage:
 
                         event_time = datetime.fromisoformat(entry['timestamp'])
 
-                        
+
 
                         if start_time and event_time < start_time:
 
@@ -886,7 +886,7 @@ class WALStorage:
 
                             continue
 
-                        
+
 
                         event = AuditEvent(
 
@@ -914,7 +914,7 @@ class WALStorage:
 
                         )
 
-                        
+
 
                         events.append(event)
 
@@ -922,7 +922,7 @@ class WALStorage:
 
                         print(f"Error reading WAL entry: {e}")
 
-        
+
 
         return events
 
@@ -966,13 +966,13 @@ class EventChainTracer:
 
     """事件链追踪器"""
 
-    
+
 
     def __init__(self, audit_logger: AuditLogger):
 
         self.audit_logger = audit_logger
 
-        
+
 
     def trace_entity_events(
 
@@ -990,7 +990,7 @@ class EventChainTracer:
 
         """追踪实体事件链"""
 
-        
+
 
         import sqlite3
 
@@ -998,11 +998,11 @@ class EventChainTracer:
 
         cursor = conn.cursor()
 
-        
+
 
         query = '''
 
-            SELECT * FROM audit_events 
+            SELECT * FROM audit_events
 
             WHERE entity_type = ? AND entity_id = ?
 
@@ -1010,7 +1010,7 @@ class EventChainTracer:
 
         params = [entity_type, entity_id]
 
-        
+
 
         if start_time:
 
@@ -1018,7 +1018,7 @@ class EventChainTracer:
 
             params.append(start_time.isoformat())
 
-        
+
 
         if end_time:
 
@@ -1026,11 +1026,11 @@ class EventChainTracer:
 
             params.append(end_time.isoformat())
 
-        
+
 
         query += ' ORDER BY timestamp'
 
-        
+
 
         cursor.execute(query, params)
 
@@ -1038,7 +1038,7 @@ class EventChainTracer:
 
         conn.close()
 
-        
+
 
         events = []
 
@@ -1070,11 +1070,11 @@ class EventChainTracer:
 
             ))
 
-        
+
 
         return events
 
-    
+
 
     def analyze_causality(
 
@@ -1086,17 +1086,17 @@ class EventChainTracer:
 
         """分析事件因果关系"""
 
-        
+
 
         causality_map = {}
 
-        
+
 
         for i, event in enumerate(events):
 
             causality_map[event.event_id] = []
 
-            
+
 
             if i > 0:
 
@@ -1108,11 +1108,11 @@ class EventChainTracer:
 
                     causality_map[event.event_id].append(prev_event.event_id)
 
-        
+
 
         return causality_map
 
-    
+
 
     def visualize_event_chain(
 
@@ -1126,13 +1126,13 @@ class EventChainTracer:
 
         """可视化事件链"""
 
-        
+
 
         import plotly.graph_objects as go
 
         from plotly.subplots import make_subplots
 
-        
+
 
         fig = make_subplots(
 
@@ -1142,7 +1142,7 @@ class EventChainTracer:
 
         )
 
-        
+
 
         timestamps = [e.timestamp for e in events]
 
@@ -1150,7 +1150,7 @@ class EventChainTracer:
 
         event_ids = [e.event_id for e in events]
 
-        
+
 
         fig.add_trace(
 
@@ -1174,7 +1174,7 @@ class EventChainTracer:
 
         )
 
-        
+
 
         fig.update_layout(
 
@@ -1188,11 +1188,11 @@ class EventChainTracer:
 
         )
 
-        
+
 
         fig.write_html(output_file)
 
-        
+
 
         return output_file
 
@@ -1557,4 +1557,3 @@ class AuditStatistics:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

@@ -871,7 +871,7 @@ monitoring:
 
     deep_audit: "0 4 1 * *"       # 每月1日凌晨4点
 
-  
+
 
   thresholds:
 
@@ -885,7 +885,7 @@ monitoring:
 
       p3: 98
 
-    
+
 
     responsibility_length:
 
@@ -893,7 +893,7 @@ monitoring:
 
       max: 200
 
-    
+
 
     document_length:
 
@@ -901,7 +901,7 @@ monitoring:
 
       max: 10000
 
-  
+
 
   notifications:
 
@@ -915,7 +915,7 @@ monitoring:
 
         - dev-team@example.com
 
-    
+
 
     instant_messaging:
 
@@ -923,7 +923,7 @@ monitoring:
 
       webhook: "https://hooks.example.com/webhook"
 
-    
+
 
     sms:
 
@@ -1162,4 +1162,3 @@ python scripts/comprehensive_deep_audit.py
 **维护者**: 系统架构师
 
 **状态**: ✅ **生效中**
-

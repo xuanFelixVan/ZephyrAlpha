@@ -19,9 +19,9 @@ responsibility:
 
 # 孤儿文件治理专项方案
 
-> **紧急度**: P0  
-> **影响范围**: 2,939个文件 (87.7%的docs/)  
-> **预计工时**: 40-60小时  
+> **紧急度**: P0
+> **影响范围**: 2,939个文件 (87.7%的docs/)
+> **预计工时**: 40-60小时
 > **治理目标**: 孤儿率从87.7%降至<10%
 
 ```
@@ -207,15 +207,15 @@ def scan_orphans():
     # 1. 收集所有.md文件
     all_files = list(DOCS_DIR.rglob("*.md"))
     file_set = set(str(f.relative_to(DOCS_DIR)) for f in all_files)
-    
+
     # 2. 统计入度
     in_degree = defaultdict(int)
-    
+
     for md_file in all_files:
         try:
             with open(md_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
+
             links = extract_links(content)
             for link in links:
                 target = resolve_link(link, md_file)
@@ -224,7 +224,7 @@ def scan_orphans():
                     in_degree[target_rel] += 1
         except Exception:
             continue
-    
+
     # 3. 找出孤儿文件(入度=0)
     orphans = []
     for f in all_files:
@@ -235,13 +235,13 @@ def scan_orphans():
                 'size': f.stat().st_size,
                 'layer': rel_path.split('/')[0] if '/' in rel_path else 'root'
             })
-    
+
     return orphans
 
 if __name__ == "__main__":
     orphans = scan_orphans()
     print(f"发现 {len(orphans)} 个孤儿文件")
-    
+
     # 保存结果
     with open('orphan_scan_result.json', 'w', encoding='utf-8') as f:
         json.dump(orphans, f, ensure_ascii=False, indent=2)
@@ -265,24 +265,24 @@ def mount_to_index(orphan_path: str, index_path: str):
     """将孤儿文件挂载到指定INDEX"""
     index_file = DOCS_DIR / index_path
     orphan_rel = orphan_path.replace('.md', '')
-    
+
     # 读取现有INDEX
     with open(index_file, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     # 生成挂载链接
     link_line = f"- [{Path(orphan_path).name}]<!-- -->(./{orphan_rel}.md)\n"
-    
+
     # 在"## 文档列表"后插入
     if '## 文档列表' in content:
         content = content.replace('## 文档列表\n', f'## 文档列表\n{link_line}')
     else:
         content += f"\n## 文档列表\n{link_line}"
-    
+
     # 写回
     with open(index_file, 'w', encoding='utf-8') as f:
         f.write(content)
-    
+
     print(f"✅ 挂载: {orphan_path} -> {index_path}")
 
 def auto_mount_orphans(orphans: list):
@@ -290,12 +290,12 @@ def auto_mount_orphans(orphans: list):
     for orphan in orphans:
         path = orphan['path']
         parts = path.split('/')
-        
+
         if len(parts) >= 2:
             # 挂载到对应层级的INDEX
             layer = parts[0]
             index_path = f"{layer}/INDEX.md"
-            
+
             if (DOCS_DIR / index_path).exists():
                 mount_to_index(path, index_path)
             else:
@@ -305,10 +305,10 @@ def auto_mount_orphans(orphans: list):
 if __name__ == "__main__":
     with open('orphan_scan_result.json', 'r', encoding='utf-8') as f:
         orphans = json.load(f)
-    
+
     # 只处理活跃区(01-11层)
     active_orphans = [o for o in orphans if o['layer'][:2].isdigit()]
-    
+
     print(f"处理 {len(active_orphans)} 个活跃区孤儿文件")
     auto_mount_orphans(active_orphans)
 ```
@@ -423,7 +423,7 @@ git reset --hard orphan-governance-backup-20260413
 ```---
 ```
 
-**专项启动时间**: 2026-04-13  
-**预计完成时间**: 2026-04-20 (7天内)  
-**负责人**: 首席文档架构师  
+**专项启动时间**: 2026-04-13
+**预计完成时间**: 2026-04-20 (7天内)
+**负责人**: 首席文档架构师
 **状态**: 🟡 待启动

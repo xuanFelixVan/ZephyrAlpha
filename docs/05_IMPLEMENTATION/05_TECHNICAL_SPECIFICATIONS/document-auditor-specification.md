@@ -31,7 +31,7 @@ implementation_status: "ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -139,7 +139,7 @@ class DocumentAuditor:
 
 
 
-    
+
 
 
 
@@ -155,7 +155,7 @@ class DocumentAuditor:
 
 
 
-        
+
 
 
 
@@ -167,7 +167,7 @@ class DocumentAuditor:
 
 
 
-        
+
 
 
 
@@ -179,7 +179,7 @@ class DocumentAuditor:
 
 
 
-        
+
 
 
 
@@ -191,7 +191,7 @@ class DocumentAuditor:
 
 
 
-        
+
 
 
 
@@ -203,7 +203,7 @@ class DocumentAuditor:
 
 
 
-        
+
 
 
 
@@ -337,7 +337,7 @@ def check_links(self, files: List[Path]) -> List[AuditIssue]:
 
 
 
-        
+
 
 
 
@@ -413,7 +413,7 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
 
 
 
-    
+
 
 
 
@@ -429,7 +429,7 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
 
 
 
-        
+
 
 
 
@@ -529,7 +529,7 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
 
 
 
-    
+
 
 
 
@@ -839,7 +839,7 @@ class CustomAuditRule:
 
 
 
-    
+
 
 
 
@@ -911,7 +911,7 @@ rules:
 
 
 
-  
+
 
 
 
@@ -976,6 +976,3 @@ rules:
 
 
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
-
-
-

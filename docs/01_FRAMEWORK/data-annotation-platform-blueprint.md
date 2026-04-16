@@ -38,7 +38,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -278,7 +278,7 @@ class DataAnnotationPlatform:
 
 
 
-    
+
 
 
 
@@ -318,7 +318,7 @@ class DataAnnotationPlatform:
 
 
 
-        """初始化标注平?        
+        """初始化标注平?
 
 
 
@@ -358,7 +358,7 @@ class DataAnnotationPlatform:
 
 
 
-    
+
 
 
 
@@ -414,7 +414,7 @@ class DataAnnotationPlatform:
 
 
 
-        
+
 
 
 
@@ -438,7 +438,7 @@ class DataAnnotationPlatform:
 
 
 
-            
+
 
 
 
@@ -478,7 +478,7 @@ class DataAnnotationPlatform:
 
 
 
-    
+
 
 
 
@@ -526,7 +526,7 @@ class DataAnnotationPlatform:
 
 
 
-        
+
 
 
 
@@ -550,7 +550,7 @@ class DataAnnotationPlatform:
 
 
 
-            
+
 
 
 
@@ -1351,10 +1351,3 @@ export = project.export_tasks(export_type="JSON")
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

@@ -20,15 +20,15 @@ compliance_level: 专业标准
 
 
 
-- **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
+- **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
-- **REPORTS 报告区门面**：~~[../REPORTS/README.md]~~ ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：./INDEX_HEALTH_ORPHAN_20260414.md（`docs/09_AUDIT/REPORTS`；历史 `20260412`；勿与下条 **STATE · 最新** 混读）  
+- **REPORTS 报告区门面**：~~[../REPORTS/README.md]~~ ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：./INDEX_HEALTH_ORPHAN_20260414.md（`docs/09_AUDIT/REPORTS`；历史 `20260412`；勿与下条 **STATE · 最新** 混读）
 
-- **本前缀零入链（STATE · 最新 20260416）**：./INDEX_HEALTH_ORPHAN_20260416.md（**zero_inbound=0**）｜历史 `20260413`  
+- **本前缀零入链（STATE · 最新 20260416）**：./INDEX_HEALTH_ORPHAN_20260416.md（**zero_inbound=0**）｜历史 `20260413`
 
-- **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md  
+- **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md
 
-- **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md  
+- **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
 
 - **L1 治理快照（20260408 · 主快照）**：./SENTINEL_L1_SCAN_20260408.md
 
@@ -405,4 +405,3 @@ compliance_level: 专业标准
 **维护频率**: 按需更新
 
 **下次更新**: 按需
-

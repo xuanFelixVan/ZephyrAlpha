@@ -243,7 +243,7 @@ class TestCalculateAlphaFactor:
             "ALPHA_085": "price_60d_low",
             "ALPHA_086": "rsi_14"
         }
-        
+
         for factor_id, expected_name in factor_names.items():
             result = calculator.calculate(factor_id, data)
             assert isinstance(result, FactorResult)

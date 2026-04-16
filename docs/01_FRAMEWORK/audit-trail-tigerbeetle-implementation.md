@@ -26,7 +26,7 @@ implementation_status: 实施就绪
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -36,11 +36,11 @@ implementation_status: 实施就绪
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-06  
+> **创建日期**: 2026-04-06
 
-> **实施周期**: 3天  
+> **实施周期**: 3天
 
 > **目标**: 使用TigerBeetle构建金融级审计追踪系统，适合个人开发、AI维护、个人使用
 
@@ -422,7 +422,7 @@ class AuditTrailManager:
 
     """审计追踪管理器"""
 
-    
+
 
     def __init__(self, config: Dict[str, Any]):
 
@@ -436,7 +436,7 @@ class AuditTrailManager:
 
         self._initialized = False
 
-    
+
 
     async def initialize(self):
 
@@ -446,7 +446,7 @@ class AuditTrailManager:
 
             return
 
-        
+
 
         try:
 
@@ -468,7 +468,7 @@ class AuditTrailManager:
 
             raise
 
-    
+
 
     async def log_event(
 
@@ -494,29 +494,29 @@ class AuditTrailManager:
 
         """记录审计事件"""
 
-        
+
 
         if not self._initialized:
 
             await self.initialize()
 
-        
+
 
         event_id = self._generate_event_id()
 
         timestamp = datetime.now().isoformat()
 
-        
+
 
         checksum = self._calculate_checksum(
 
-            event_id, event_type, timestamp, entity_type, 
+            event_id, event_type, timestamp, entity_type,
 
             entity_id, operator, action, before_state, after_state
 
         )
 
-        
+
 
         event = AuditEvent(
 
@@ -544,7 +544,7 @@ class AuditTrailManager:
 
         )
 
-        
+
 
         try:
 
@@ -560,7 +560,7 @@ class AuditTrailManager:
 
             raise
 
-    
+
 
     async def query_events(
 
@@ -582,39 +582,39 @@ class AuditTrailManager:
 
         """查询审计事件"""
 
-        
+
 
         if not self._initialized:
 
             await self.initialize()
 
-        
+
 
         events = []
 
-        
+
 
         print(f"✅ 查询审计事件: type={event_type}, entity={entity_type}/{entity_id}")
 
-        
+
 
         return events
 
-    
+
 
     async def verify_integrity(self, event_id: str) -> bool:
 
         """验证事件完整性"""
 
-        
+
 
         print(f"✅ 验证事件完整性: {event_id}")
 
-        
+
 
         return True
 
-    
+
 
     def _generate_event_id(self) -> str:
 
@@ -624,7 +624,7 @@ class AuditTrailManager:
 
         return f"EVT_{timestamp}"
 
-    
+
 
     def _calculate_checksum(
 
@@ -652,11 +652,11 @@ class AuditTrailManager:
 
         """计算事件校验和"""
 
-        
+
 
         data = f"{event_id}|{event_type.value}|{timestamp}|{entity_type}|{entity_id}|{operator}|{action}"
 
-        
+
 
         if before_state:
 
@@ -666,31 +666,31 @@ class AuditTrailManager:
 
             data += f"|{json.dumps(after_state, sort_keys=True)}"
 
-        
+
 
         return hashlib.sha256(data.encode()).hexdigest()
 
-    
+
 
     async def _write_to_tigerbeetle(self, event: AuditEvent):
 
         """写入TigerBeetle"""
 
-        
+
 
         event_data = asdict(event)
 
         event_data['event_type'] = event.event_type.value
 
-        
+
 
         print(f"📝 写入TigerBeetle: {event.event_id}")
 
-        
+
 
         pass
 
-    
+
 
     async def close(self):
 
@@ -712,7 +712,7 @@ class AuditLogger:
 
     """审计日志记录器（简化版）"""
 
-    
+
 
     def __init__(self, db_path: str = './data/audit_trail.db'):
 
@@ -720,7 +720,7 @@ class AuditLogger:
 
         self._init_db()
 
-    
+
 
     def _init_db(self):
 
@@ -730,17 +730,17 @@ class AuditLogger:
 
         import os
 
-        
+
 
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -774,47 +774,47 @@ class AuditLogger:
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_timestamp 
+            CREATE INDEX IF NOT EXISTS idx_timestamp
 
             ON audit_events(timestamp)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_event_type 
+            CREATE INDEX IF NOT EXISTS idx_event_type
 
             ON audit_events(event_type)
 
         ''')
 
-        
+
 
         cursor.execute('''
 
-            CREATE INDEX IF NOT EXISTS idx_entity 
+            CREATE INDEX IF NOT EXISTS idx_entity
 
             ON audit_events(entity_type, entity_id)
 
         ''')
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         print(f"✅ 审计数据库初始化成功: {self.db_path}")
 
-    
+
 
     def log_event(
 
@@ -840,19 +840,19 @@ class AuditLogger:
 
         """记录审计事件（同步版本）"""
 
-        
+
 
         import sqlite3
 
         from datetime import datetime
 
-        
+
 
         event_id = f"EVT_{datetime.now().strftime('%Y%m%d%H%M%S%f')}"
 
         timestamp = datetime.now().isoformat()
 
-        
+
 
         checksum = self._calculate_checksum(
 
@@ -862,13 +862,13 @@ class AuditLogger:
 
         )
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute('''
 
@@ -898,19 +898,19 @@ class AuditLogger:
 
         ))
 
-        
+
 
         conn.commit()
 
         conn.close()
 
-        
+
 
         print(f"✅ 审计事件记录成功: {event_id}")
 
         return event_id
 
-    
+
 
     def query_events(
 
@@ -932,23 +932,23 @@ class AuditLogger:
 
         """查询审计事件"""
 
-        
+
 
         import sqlite3
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         query = "SELECT * FROM audit_events WHERE 1=1"
 
         params = []
 
-        
+
 
         if event_type:
 
@@ -956,7 +956,7 @@ class AuditLogger:
 
             params.append(event_type)
 
-        
+
 
         if entity_type:
 
@@ -964,7 +964,7 @@ class AuditLogger:
 
             params.append(entity_type)
 
-        
+
 
         if entity_id:
 
@@ -972,7 +972,7 @@ class AuditLogger:
 
             params.append(entity_id)
 
-        
+
 
         if start_time:
 
@@ -980,7 +980,7 @@ class AuditLogger:
 
             params.append(start_time)
 
-        
+
 
         if end_time:
 
@@ -988,17 +988,17 @@ class AuditLogger:
 
             params.append(end_time)
 
-        
+
 
         query += f" ORDER BY timestamp DESC LIMIT {limit}"
 
-        
+
 
         cursor.execute(query, params)
 
         rows = cursor.fetchall()
 
-        
+
 
         events = []
 
@@ -1032,17 +1032,17 @@ class AuditLogger:
 
             })
 
-        
+
 
         conn.close()
 
-        
+
 
         print(f"✅ 查询到 {len(events)} 条审计事件")
 
         return events
 
-    
+
 
     def _calculate_checksum(
 
@@ -1070,11 +1070,11 @@ class AuditLogger:
 
         """计算事件校验和"""
 
-        
+
 
         data = f"{event_id}|{event_type}|{timestamp}|{entity_type}|{entity_id}|{operator}|{action}"
 
-        
+
 
         if before_state:
 
@@ -1084,7 +1084,7 @@ class AuditLogger:
 
             data += f"|{json.dumps(after_state, sort_keys=True)}"
 
-        
+
 
         return hashlib.sha256(data.encode()).hexdigest()
 
@@ -1126,7 +1126,7 @@ audit_trail:
 
   backend: sqlite
 
-  
+
 
   tigerbeetle:
 
@@ -1136,7 +1136,7 @@ audit_trail:
 
     cluster_id: 0
 
-  
+
 
   sqlite:
 
@@ -1144,7 +1144,7 @@ audit_trail:
 
     db_path: "./data/audit_trail.db"
 
-  
+
 
   retention:
 
@@ -1152,7 +1152,7 @@ audit_trail:
 
     days: 365
 
-  
+
 
   monitoring:
 
@@ -1164,7 +1164,7 @@ audit_trail:
 
       email: "your_email@example.com"
 
-  
+
 
   event_types:
 
@@ -1262,7 +1262,7 @@ class TestAuditLogger:
 
     """审计日志记录器测试"""
 
-    
+
 
     @pytest.fixture
 
@@ -1272,13 +1272,13 @@ class TestAuditLogger:
 
         return AuditLogger(db_path='./data/test_audit_trail.db')
 
-    
+
 
     def test_log_trade_event(self, audit_logger):
 
         """测试交易事件记录"""
 
-        
+
 
         event_id = audit_logger.log_event(
 
@@ -1316,23 +1316,23 @@ class TestAuditLogger:
 
         )
 
-        
+
 
         assert event_id is not None
 
         assert event_id.startswith('EVT_')
 
-        
+
 
         print(f"✅ 交易事件记录测试通过: {event_id}")
 
-    
+
 
     def test_query_events(self, audit_logger):
 
         """测试事件查询"""
 
-        
+
 
         for i in range(5):
 
@@ -1352,7 +1352,7 @@ class TestAuditLogger:
 
             )
 
-        
+
 
         events = audit_logger.query_events(
 
@@ -1362,21 +1362,21 @@ class TestAuditLogger:
 
         )
 
-        
+
 
         assert len(events) >= 5
 
-        
+
 
         print(f"✅ 事件查询测试通过: 查询到 {len(events)} 条事件")
 
-    
+
 
     def test_event_integrity(self, audit_logger):
 
         """测试事件完整性"""
 
-        
+
 
         event_id = audit_logger.log_event(
 
@@ -1394,11 +1394,11 @@ class TestAuditLogger:
 
         )
 
-        
+
 
         events = audit_logger.query_events(limit=1)
 
-        
+
 
         if events:
 
@@ -1408,7 +1408,7 @@ class TestAuditLogger:
 
             assert event['checksum'] is not None
 
-            
+
 
             print(f"✅ 事件完整性测试通过: {event_id}")
 
@@ -1416,21 +1416,21 @@ class TestAuditLogger:
 
             print("⚠️ 未找到事件记录")
 
-    
+
 
     def test_performance(self, audit_logger):
 
         """测试性能"""
 
-        
+
 
         import time
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         for i in range(100):
 
@@ -1450,17 +1450,17 @@ class TestAuditLogger:
 
             )
 
-        
+
 
         end_time = time.time()
 
         duration = end_time - start_time
 
-        
+
 
         print(f"✅ 性能测试通过: 100条事件记录耗时 {duration:.2f}秒")
 
-        
+
 
         assert duration < 5.0
 
@@ -1472,11 +1472,11 @@ def test_audit_trail_integration():
 
     """审计追踪系统集成测试"""
 
-    
+
 
     audit_logger = AuditLogger(db_path='./data/test_audit_trail.db')
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -1498,19 +1498,19 @@ def test_audit_trail_integration():
 
     )
 
-    
+
 
     assert event_id is not None
 
-    
+
 
     events = audit_logger.query_events(event_type='system_config')
 
-    
+
 
     assert len(events) > 0
 
-    
+
 
     print(f"✅ 集成测试通过: 事件ID={event_id}, 查询到{len(events)}条记录")
 
@@ -1578,7 +1578,7 @@ def example_trade_audit():
 
     """交易审计示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1586,11 +1586,11 @@ def example_trade_audit():
 
     print("="*60)
 
-    
+
 
     audit_logger = AuditLogger(db_path='./data/audit_trail.db')
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -1632,11 +1632,11 @@ def example_trade_audit():
 
     )
 
-    
+
 
     print(f"✅ 交易订单审计记录成功: {event_id}")
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -1680,7 +1680,7 @@ def example_trade_audit():
 
     )
 
-    
+
 
     print(f"✅ 交易成交审计记录成功: {event_id}")
 
@@ -1692,7 +1692,7 @@ def example_strategy_audit():
 
     """策略审计示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1700,11 +1700,11 @@ def example_strategy_audit():
 
     print("="*60)
 
-    
+
 
     audit_logger = AuditLogger(db_path='./data/audit_trail.db')
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -1748,7 +1748,7 @@ def example_strategy_audit():
 
     )
 
-    
+
 
     print(f"✅ 策略启动审计记录成功: {event_id}")
 
@@ -1760,7 +1760,7 @@ def example_risk_audit():
 
     """风险审计示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1768,11 +1768,11 @@ def example_risk_audit():
 
     print("="*60)
 
-    
+
 
     audit_logger = AuditLogger(db_path='./data/audit_trail.db')
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -1816,7 +1816,7 @@ def example_risk_audit():
 
     )
 
-    
+
 
     print(f"✅ 风险预警审计记录成功: {event_id}")
 
@@ -1828,7 +1828,7 @@ def example_audit_query():
 
     """审计查询示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1836,11 +1836,11 @@ def example_audit_query():
 
     print("="*60)
 
-    
+
 
     audit_logger = AuditLogger(db_path='./data/audit_trail.db')
 
-    
+
 
     print("\n查询所有交易订单事件:")
 
@@ -1850,7 +1850,7 @@ def example_audit_query():
 
         print(f"  - {event['event_id']}: {event['entity_type']}/{event['entity_id']} - {event['action']}")
 
-    
+
 
     print("\n查询所有风险预警事件:")
 
@@ -1860,7 +1860,7 @@ def example_audit_query():
 
         print(f"  - {event['event_id']}: {event['entity_type']}/{event['entity_id']} - {event['action']}")
 
-    
+
 
     print("\n查询最近10条审计事件:")
 
@@ -1878,7 +1878,7 @@ def main():
 
     """主函数"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1886,7 +1886,7 @@ def main():
 
     print("="*60)
 
-    
+
 
     example_trade_audit()
 
@@ -1896,7 +1896,7 @@ def main():
 
     example_audit_query()
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1972,7 +1972,7 @@ class AuditTrailMonitor:
 
     """审计追踪监控器"""
 
-    
+
 
     def __init__(self, db_path: str = './data/audit_trail.db'):
 
@@ -1980,13 +1980,13 @@ class AuditTrailMonitor:
 
         self.audit_logger = AuditLogger(db_path=db_path)
 
-    
+
 
     def check_database_health(self):
 
         """检查数据库健康状态"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -1994,7 +1994,7 @@ class AuditTrailMonitor:
 
         print("="*60)
 
-        
+
 
         if not os.path.exists(self.db_path):
 
@@ -2002,19 +2002,19 @@ class AuditTrailMonitor:
 
             return False
 
-        
+
 
         file_size = os.path.getsize(self.db_path)
 
         print(f"✅ 数据库文件大小: {file_size / 1024:.2f} KB")
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("SELECT COUNT(*) FROM audit_events")
 
@@ -2022,7 +2022,7 @@ class AuditTrailMonitor:
 
         print(f"✅ 总事件数: {total_events}")
 
-        
+
 
         cursor.execute("SELECT MIN(timestamp), MAX(timestamp) FROM audit_events")
 
@@ -2032,15 +2032,15 @@ class AuditTrailMonitor:
 
             print(f"✅ 时间范围: {result[0]} 至 {result[1]}")
 
-        
+
 
         cursor.execute("""
 
-            SELECT event_type, COUNT(*) as count 
+            SELECT event_type, COUNT(*) as count
 
-            FROM audit_events 
+            FROM audit_events
 
-            GROUP BY event_type 
+            GROUP BY event_type
 
             ORDER BY count DESC
 
@@ -2048,7 +2048,7 @@ class AuditTrailMonitor:
 
         event_stats = cursor.fetchall()
 
-        
+
 
         print("\n📊 事件类型统计:")
 
@@ -2056,21 +2056,21 @@ class AuditTrailMonitor:
 
             print(f"  - {event_type}: {count}")
 
-        
+
 
         conn.close()
 
-        
+
 
         return True
 
-    
+
 
     def check_data_integrity(self):
 
         """检查数据完整性"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -2078,19 +2078,19 @@ class AuditTrailMonitor:
 
         print("="*60)
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("SELECT COUNT(*) FROM audit_events WHERE checksum IS NULL")
 
         invalid_count = cursor.fetchone()[0]
 
-        
+
 
         if invalid_count > 0:
 
@@ -2100,13 +2100,13 @@ class AuditTrailMonitor:
 
             print("✅ 所有记录都有校验和")
 
-        
+
 
         cursor.execute("SELECT COUNT(*) FROM audit_events WHERE timestamp IS NULL")
 
         null_timestamp_count = cursor.fetchone()[0]
 
-        
+
 
         if null_timestamp_count > 0:
 
@@ -2116,17 +2116,17 @@ class AuditTrailMonitor:
 
             print("✅ 所有记录都有时间戳")
 
-        
+
 
         conn.close()
 
-    
+
 
     def generate_daily_report(self):
 
         """生成每日审计报告"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -2134,11 +2134,11 @@ class AuditTrailMonitor:
 
         print("="*60)
 
-        
+
 
         today = datetime.now().strftime('%Y-%m-%d')
 
-        
+
 
         events = self.audit_logger.query_events(
 
@@ -2148,13 +2148,13 @@ class AuditTrailMonitor:
 
         )
 
-        
+
 
         print(f"📅 日期: {today}")
 
         print(f"📊 今日事件总数: {len(events)}")
 
-        
+
 
         event_type_stats = {}
 
@@ -2164,7 +2164,7 @@ class AuditTrailMonitor:
 
             event_type_stats[event_type] = event_type_stats.get(event_type, 0) + 1
 
-        
+
 
         print("\n📈 事件类型分布:")
 
@@ -2172,13 +2172,13 @@ class AuditTrailMonitor:
 
             print(f"  - {event_type}: {count}")
 
-        
+
 
         report_path = f"./data/monitoring/audit_report_{today}.json"
 
         os.makedirs(os.path.dirname(report_path), exist_ok=True)
 
-        
+
 
         with open(report_path, 'w', encoding='utf-8') as f:
 
@@ -2194,17 +2194,17 @@ class AuditTrailMonitor:
 
             }, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"\n✅ 报告已保存: {report_path}")
 
-    
+
 
     def cleanup_old_data(self, days: int = 365):
 
         """清理过期数据"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -2212,23 +2212,23 @@ class AuditTrailMonitor:
 
         print("="*60)
 
-        
+
 
         cutoff_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
         cursor = conn.cursor()
 
-        
+
 
         cursor.execute("SELECT COUNT(*) FROM audit_events WHERE timestamp < ?", (cutoff_date,))
 
         old_count = cursor.fetchone()[0]
 
-        
+
 
         if old_count > 0:
 
@@ -2240,17 +2240,17 @@ class AuditTrailMonitor:
 
             print(f"✅ 没有超过 {days} 天的记录")
 
-        
+
 
         conn.close()
 
-    
+
 
     def run_all_checks(self):
 
         """运行所有检查"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -2258,7 +2258,7 @@ class AuditTrailMonitor:
 
         print("="*60)
 
-        
+
 
         self.check_database_health()
 
@@ -2268,7 +2268,7 @@ class AuditTrailMonitor:
 
         self.cleanup_old_data()
 
-        
+
 
         print("\n" + "="*60)
 
@@ -2284,7 +2284,7 @@ def main():
 
     """主函数"""
 
-    
+
 
     monitor = AuditTrailMonitor(db_path='./data/audit_trail.db')
 
@@ -2922,7 +2922,7 @@ def init_audit_trail():
 
     """初始化审计追踪系统"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -2930,23 +2930,23 @@ def init_audit_trail():
 
     print("="*60)
 
-    
+
 
     db_path = './data/audit_trail.db'
 
-    
+
 
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-    
+
 
     audit_logger = AuditLogger(db_path=db_path)
 
-    
+
 
     print(f"✅ 审计数据库初始化成功: {db_path}")
 
-    
+
 
     event_id = audit_logger.log_event(
 
@@ -2978,11 +2978,11 @@ def init_audit_trail():
 
     )
 
-    
+
 
     print(f"✅ 初始化事件记录成功: {event_id}")
 
-    
+
 
     print("\n" + "="*60)
 
@@ -3050,7 +3050,7 @@ def cleanup_audit_trail(days: int = 365):
 
     """清理过期审计数据"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -3058,11 +3058,11 @@ def cleanup_audit_trail(days: int = 365):
 
     print("="*60)
 
-    
+
 
     db_path = './data/audit_trail.db'
 
-    
+
 
     if not os.path.exists(db_path):
 
@@ -3070,27 +3070,27 @@ def cleanup_audit_trail(days: int = 365):
 
         return
 
-    
+
 
     conn = sqlite3.connect(db_path)
 
     cursor = conn.cursor()
 
-    
+
 
     cutoff_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
 
-    
+
 
     cursor.execute("SELECT COUNT(*) FROM audit_events WHERE timestamp < ?", (cutoff_date,))
 
     old_count = cursor.fetchone()[0]
 
-    
+
 
     print(f"📊 发现 {old_count} 条超过 {days} 天的记录")
 
-    
+
 
     if old_count > 0:
 
@@ -3098,7 +3098,7 @@ def cleanup_audit_trail(days: int = 365):
 
         os.makedirs(os.path.dirname(backup_path), exist_ok=True)
 
-        
+
 
         import shutil
 
@@ -3106,11 +3106,11 @@ def cleanup_audit_trail(days: int = 365):
 
         print(f"✅ 数据已备份到: {backup_path}")
 
-        
+
 
         response = input(f"⚠️ 是否删除 {old_count} 条过期记录? (yes/no): ")
 
-        
+
 
         if response.lower() == 'yes':
 
@@ -3118,11 +3118,11 @@ def cleanup_audit_trail(days: int = 365):
 
             conn.commit()
 
-            
+
 
             print(f"✅ 已删除 {old_count} 条过期记录")
 
-            
+
 
             cursor.execute("VACUUM")
 
@@ -3136,11 +3136,11 @@ def cleanup_audit_trail(days: int = 365):
 
         print("✅ 没有需要清理的记录")
 
-    
+
 
     conn.close()
 
-    
+
 
     print("\n" + "="*60)
 
@@ -3156,17 +3156,17 @@ if __name__ == '__main__':
 
     import argparse
 
-    
+
 
     parser = argparse.ArgumentParser(description='清理过期审计数据')
 
     parser.add_argument('--days', type=int, default=365, help='保留天数（默认365天）')
 
-    
+
 
     args = parser.parse_args()
 
-    
+
 
     cleanup_audit_trail(days=args.days)
 
@@ -3537,4 +3537,3 @@ pause
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
-

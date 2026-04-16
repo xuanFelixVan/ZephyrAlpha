@@ -43,7 +43,7 @@ layer: layer_05
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -1202,4 +1202,3 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 - ✅ 建立了文档治理知识库
 
 - ✅ 支持持续改进文档治理体系
-

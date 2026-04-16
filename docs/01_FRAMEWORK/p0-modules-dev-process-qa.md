@@ -563,7 +563,7 @@ system:
 
   debug: true
 
-  
+
 
 modules:
 
@@ -573,7 +573,7 @@ modules:
 
     backend: sqlite
 
-  
+
 
   mlflow:
 
@@ -691,17 +691,17 @@ def analyze_error_logs(log_file):
 
     error_pattern = re.compile(r'ERROR: (.*)')
 
-    
+
 
     with open(log_file, 'r') as f:
 
         errors = error_pattern.findall(f.read())
 
-    
+
 
     error_counts = Counter(errors)
 
-    
+
 
     return error_counts.most_common(10)
 
@@ -807,7 +807,7 @@ def test_log_event():
 
     logger = AuditLogger(db_path='./test.db')
 
-    
+
 
     event_id = logger.log_event(
 
@@ -823,7 +823,7 @@ def test_log_event():
 
     )
 
-    
+
 
     assert event_id is not None
 
@@ -871,7 +871,7 @@ def test_audit_and_model_integration():
 
     model_manager = ModelLifecycleManager()
 
-    
+
 
     # 注册模型并记录审计
 
@@ -887,7 +887,7 @@ def test_audit_and_model_integration():
 
     )
 
-    
+
 
     # 验证审计记录
 
@@ -925,7 +925,7 @@ class AuditTrailUser(HttpUser):
 
     wait_time = between(1, 3)
 
-    
+
 
     @task
 
@@ -979,13 +979,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v3
 
-    
+
 
     - name: Set up Python
 
@@ -995,7 +995,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -1005,7 +1005,7 @@ jobs:
 
         pip install pytest pytest-cov
 
-    
+
 
     - name: Run tests
 
@@ -1013,7 +1013,7 @@ jobs:
 
         pytest tests/ -v --cov=src --cov-report=xml
 
-    
+
 
     - name: Upload coverage
 
@@ -1411,17 +1411,17 @@ def analyze_error_logs(log_file):
 
     error_pattern = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ERROR (.*)')
 
-    
+
 
     with open(log_file, 'r') as f:
 
         errors = error_pattern.findall(f.read())
 
-    
+
 
     error_counts = Counter([error[1] for error in errors])
 
-    
+
 
     return error_counts.most_common(10)
 
@@ -1454,4 +1454,3 @@ def analyze_error_logs(log_file):
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
-

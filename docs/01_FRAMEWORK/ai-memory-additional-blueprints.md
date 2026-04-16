@@ -28,7 +28,7 @@ responsibility: 处理AI_MEMORY_ADDITIONAL_BLUEPRINTS相关业务
 
 > **核心职责**: AI记忆架构补充缺失模块的完整蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：8个补充缺失模块的蓝图设计
 
@@ -234,7 +234,7 @@ class ExecutionMemory:
 
     """交易执行记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -242,7 +242,7 @@ class ExecutionMemory:
 
     timestamp: datetime
 
-    
+
 
     execution_type: str  # 'market', 'limit', 'vwap', 'twap'
 
@@ -250,7 +250,7 @@ class ExecutionMemory:
 
     side: str  # 'buy', 'sell'
 
-    
+
 
     order_size: float
 
@@ -260,31 +260,31 @@ class ExecutionMemory:
 
     target_price: float
 
-    
+
 
     slippage_bps: float  # 滑点（基点）
 
     market_impact_bps: float  # 市场冲击（基点）
 
-    
+
 
     execution_duration_seconds: float
 
     market_regime: str  # 市场状态
 
-    
+
 
     liquidity_score: float  # 流动性评分
 
     volatility: float  # 波动率
 
-    
+
 
     execution_quality: float  # 执行质量评分
 
     notes: Optional[str] = None
 
-    
+
 
     def to_dict(self) -> Dict:
 
@@ -342,7 +342,7 @@ class ExecutionMemoryManager:
 
     """交易执行记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -350,7 +350,7 @@ class ExecutionMemoryManager:
 
         self.analyzer = ExecutionMemoryAnalyzer()
 
-    
+
 
     def record_execution(self, execution_data: Dict) -> str:
 
@@ -358,13 +358,13 @@ class ExecutionMemoryManager:
 
         记录执行记忆
 
-        
+
 
         Args:
 
             execution_data: 执行数据字典
 
-            
+
 
         Returns:
 
@@ -410,15 +410,15 @@ class ExecutionMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def retrieve_similar_executions(self, 
+
+    def retrieve_similar_executions(self,
 
                                    symbol: str,
 
@@ -432,7 +432,7 @@ class ExecutionMemoryManager:
 
         检索相似的历史执行记忆
 
-        
+
 
         Args:
 
@@ -444,7 +444,7 @@ class ExecutionMemoryManager:
 
             top_k: 返回数量
 
-            
+
 
         Returns:
 
@@ -462,11 +462,11 @@ class ExecutionMemoryManager:
 
         }
 
-        
+
 
         memories = self.storage.query(query)
 
-        
+
 
         memories_sorted = sorted(
 
@@ -476,13 +476,13 @@ class ExecutionMemoryManager:
 
         )
 
-        
+
 
         return memories_sorted[:top_k]
 
-    
 
-    def get_execution_statistics(self, 
+
+    def get_execution_statistics(self,
 
                                 symbol: str = None,
 
@@ -494,7 +494,7 @@ class ExecutionMemoryManager:
 
         获取执行统计数据
 
-        
+
 
         Args:
 
@@ -504,7 +504,7 @@ class ExecutionMemoryManager:
 
             time_range: 时间范围（可选）
 
-            
+
 
         Returns:
 
@@ -526,17 +526,17 @@ class ExecutionMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
-        
+
 
         if not memories:
 
             return {}
 
-        
+
 
         slippages = [m['slippage_bps'] for m in memories]
 
@@ -544,7 +544,7 @@ class ExecutionMemoryManager:
 
         qualities = [m['execution_quality'] for m in memories]
 
-        
+
 
         return {
 
@@ -728,7 +728,7 @@ class FactorMemory:
 
     """因子记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -738,7 +738,7 @@ class FactorMemory:
 
     timestamp: datetime
 
-    
+
 
     ic: float  # 信息系数
 
@@ -746,29 +746,29 @@ class FactorMemory:
 
     turnover: float  # 换手率
 
-    
+
 
     factor_exposure: np.ndarray  # 因子暴露
 
     factor_return: float  # 因子收益
 
-    
+
 
     market_regime: str  # 市场状态
 
     sector_performance: Dict[str, float]  # 行业表现
 
-    
+
 
     correlation_with_other_factors: Dict[str, float]  # 与其他因子的相关性
 
-    
+
 
     decay_signal: float  # 衰减信号（0-1，越高越可能衰减）
 
     effectiveness_score: float  # 有效性评分
 
-    
+
 
     notes: Optional[str] = None
 
@@ -786,7 +786,7 @@ class FactorMemoryManager:
 
     """因子记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -796,7 +796,7 @@ class FactorMemoryManager:
 
         self.correlation_tracker = FactorCorrelationTracker()
 
-    
+
 
     def record_factor_performance(self, factor_data: Dict) -> str:
 
@@ -804,13 +804,13 @@ class FactorMemoryManager:
 
         记录因子表现记忆
 
-        
+
 
         Args:
 
             factor_data: 因子数据字典
 
-            
+
 
         Returns:
 
@@ -850,13 +850,13 @@ class FactorMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
+
 
     def get_factor_decay_history(self, factor_id: str) -> Dict:
 
@@ -864,13 +864,13 @@ class FactorMemoryManager:
 
         获取因子衰减历史
 
-        
+
 
         Args:
 
             factor_id: 因子ID
 
-            
+
 
         Returns:
 
@@ -880,17 +880,17 @@ class FactorMemoryManager:
 
         memories = self.storage.query({'factor_id': factor_id})
 
-        
+
 
         if not memories:
 
             return {}
 
-        
+
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         return {
 
@@ -906,9 +906,9 @@ class FactorMemoryManager:
 
         }
 
-    
 
-    def get_factor_correlation_evolution(self, 
+
+    def get_factor_correlation_evolution(self,
 
                                         factor_ids: List[str],
 
@@ -918,7 +918,7 @@ class FactorMemoryManager:
 
         获取因子相关性演化
 
-        
+
 
         Args:
 
@@ -926,7 +926,7 @@ class FactorMemoryManager:
 
             time_range: 时间范围
 
-            
+
 
         Returns:
 
@@ -936,7 +936,7 @@ class FactorMemoryManager:
 
         evolution_data = {}
 
-        
+
 
         for factor_id in factor_ids:
 
@@ -946,13 +946,13 @@ class FactorMemoryManager:
 
                 query['timestamp_range'] = time_range
 
-            
+
 
             memories = self.storage.query(query)
 
             memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-            
+
 
             evolution_data[factor_id] = {
 
@@ -962,11 +962,11 @@ class FactorMemoryManager:
 
             }
 
-        
+
 
         return evolution_data
 
-    
+
 
     def predict_factor_failure(self, factor_id: str) -> Dict:
 
@@ -974,13 +974,13 @@ class FactorMemoryManager:
 
         预测因子失效
 
-        
+
 
         Args:
 
             factor_id: 因子ID
 
-            
+
 
         Returns:
 
@@ -990,19 +990,19 @@ class FactorMemoryManager:
 
         decay_history = self.get_factor_decay_history(factor_id)
 
-        
+
 
         if not decay_history:
 
             return {'prediction': 'unknown', 'confidence': 0.0}
 
-        
+
 
         recent_decay_signals = decay_history['decay_signals'][-10:]
 
         avg_decay_signal = np.mean(recent_decay_signal)
 
-        
+
 
         if avg_decay_signal > 0.7:
 
@@ -1022,7 +1022,7 @@ class FactorMemoryManager:
 
             confidence = 0.7
 
-        
+
 
         return {
 
@@ -1200,7 +1200,7 @@ class PortfolioMemory:
 
     """投资组合记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -1208,31 +1208,31 @@ class PortfolioMemory:
 
     timestamp: datetime
 
-    
+
 
     weights: Dict[str, float]  # 资产权重
 
     previous_weights: Dict[str, float]  # 前一期权重
 
-    
+
 
     rebalance_reason: str  # 再平衡原因
 
     rebalance_type: str  # 'scheduled', 'triggered', 'manual'
 
-    
+
 
     risk_metrics: Dict[str, float]  # 风险指标
 
     return_attribution: Dict[str, float]  # 收益归因
 
-    
+
 
     market_regime: str  # 市场状态
 
     performance_metrics: Dict[str, float]  # 业绩指标
 
-    
+
 
     decision_factors: List[str]  # 决策因素
 
@@ -1252,7 +1252,7 @@ class PortfolioMemoryManager:
 
     """投资组合记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -1260,7 +1260,7 @@ class PortfolioMemoryManager:
 
         self.attribution_analyzer = AttributionAnalyzer()
 
-    
+
 
     def record_portfolio_state(self, portfolio_data: Dict) -> str:
 
@@ -1268,13 +1268,13 @@ class PortfolioMemoryManager:
 
         记录组合状态记忆
 
-        
+
 
         Args:
 
             portfolio_data: 组合数据字典
 
-            
+
 
         Returns:
 
@@ -1312,15 +1312,15 @@ class PortfolioMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_weight_evolution(self, 
+
+    def get_weight_evolution(self,
 
                             portfolio_id: str,
 
@@ -1330,7 +1330,7 @@ class PortfolioMemoryManager:
 
         获取权重演化历史
 
-        
+
 
         Args:
 
@@ -1338,7 +1338,7 @@ class PortfolioMemoryManager:
 
             time_range: 时间范围
 
-            
+
 
         Returns:
 
@@ -1352,13 +1352,13 @@ class PortfolioMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         evolution = {}
 
@@ -1380,11 +1380,11 @@ class PortfolioMemoryManager:
 
                 evolution[asset]['weights'].append(weight)
 
-        
+
 
         return evolution
 
-    
+
 
     def get_rebalance_history(self, portfolio_id: str) -> List[Dict]:
 
@@ -1392,13 +1392,13 @@ class PortfolioMemoryManager:
 
         获取再平衡历史
 
-        
+
 
         Args:
 
             portfolio_id: 组合ID
 
-            
+
 
         Returns:
 
@@ -1408,7 +1408,7 @@ class PortfolioMemoryManager:
 
         memories = self.storage.query({'portfolio_id': portfolio_id})
 
-        
+
 
         rebalances = [
 
@@ -1422,7 +1422,7 @@ class PortfolioMemoryManager:
 
                 'weight_changes': self._calculate_weight_changes(
 
-                    m['previous_weights'], 
+                    m['previous_weights'],
 
                     m['weights']
 
@@ -1438,7 +1438,7 @@ class PortfolioMemoryManager:
 
         ]
 
-        
+
 
         return sorted(rebalances, key=lambda r: r['timestamp'], reverse=True)
 
@@ -1604,7 +1604,7 @@ class ExternalEventMemory:
 
     """外部环境事件记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -1612,7 +1612,7 @@ class ExternalEventMemory:
 
     timestamp: datetime
 
-    
+
 
     event_type: str  # 'macro', 'policy', 'industry', 'black_swan'
 
@@ -1620,25 +1620,25 @@ class ExternalEventMemory:
 
     event_description: str  # 事件描述
 
-    
+
 
     affected_markets: List[str]  # 受影响市场
 
     affected_sectors: List[str]  # 受影响行业
 
-    
+
 
     market_impact: Dict[str, float]  # 市场影响
 
     strategy_impact: Dict[str, float]  # 策略影响
 
-    
+
 
     response_actions: List[str]  # 应对措施
 
     lessons_learned: Optional[str]  # 经验教训
 
-    
+
 
     related_events: List[str]  # 相关事件ID
 
@@ -1658,7 +1658,7 @@ class ExternalEnvMemoryManager:
 
     """外部环境记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -1666,7 +1666,7 @@ class ExternalEnvMemoryManager:
 
         self.impact_analyzer = EventImpactAnalyzer()
 
-    
+
 
     def record_external_event(self, event_data: Dict) -> str:
 
@@ -1674,13 +1674,13 @@ class ExternalEnvMemoryManager:
 
         记录外部环境事件
 
-        
+
 
         Args:
 
             event_data: 事件数据字典
 
-            
+
 
         Returns:
 
@@ -1720,15 +1720,15 @@ class ExternalEnvMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_similar_events(self, 
+
+    def get_similar_events(self,
 
                           event_type: str,
 
@@ -1740,7 +1740,7 @@ class ExternalEnvMemoryManager:
 
         获取相似的历史事件
 
-        
+
 
         Args:
 
@@ -1750,7 +1750,7 @@ class ExternalEnvMemoryManager:
 
             top_k: 返回数量
 
-            
+
 
         Returns:
 
@@ -1760,11 +1760,11 @@ class ExternalEnvMemoryManager:
 
         query = {'event_type': event_type}
 
-        
+
 
         events = self.storage.query(query)
 
-        
+
 
         if affected_sectors:
 
@@ -1776,17 +1776,17 @@ class ExternalEnvMemoryManager:
 
             ]
 
-        
+
 
         events_sorted = sorted(events, key=lambda e: e['timestamp'], reverse=True)
 
-        
+
 
         return events_sorted[:top_k]
 
-    
 
-    def get_event_impact_history(self, 
+
+    def get_event_impact_history(self,
 
                                 event_type: str = None,
 
@@ -1796,7 +1796,7 @@ class ExternalEnvMemoryManager:
 
         获取事件影响历史
 
-        
+
 
         Args:
 
@@ -1804,7 +1804,7 @@ class ExternalEnvMemoryManager:
 
             time_range: 时间范围（可选）
 
-            
+
 
         Returns:
 
@@ -1822,11 +1822,11 @@ class ExternalEnvMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         events = self.storage.query(query)
 
-        
+
 
         impact_summary = {
 
@@ -1840,7 +1840,7 @@ class ExternalEnvMemoryManager:
 
         }
 
-        
+
 
         for event in events:
 
@@ -1852,7 +1852,7 @@ class ExternalEnvMemoryManager:
 
             impact_summary['by_type'][etype] += 1
 
-        
+
 
         return impact_summary
 
@@ -2018,7 +2018,7 @@ class BenchmarkMemory:
 
     """性能基准记忆数据模型"""
 
-    
+
 
     memory_id: str
 
@@ -2028,7 +2028,7 @@ class BenchmarkMemory:
 
     timestamp: datetime
 
-    
+
 
     portfolio_return: float  # 组合收益
 
@@ -2036,23 +2036,23 @@ class BenchmarkMemory:
 
     excess_return: float  # 超额收益
 
-    
+
 
     tracking_error: float  # 跟踪误差
 
     information_ratio: float  # 信息比率
 
-    
+
 
     style_exposure: Dict[str, float]  # 风格因子暴露
 
     excess_attribution: Dict[str, float]  # 超额收益归因
 
-    
+
 
     market_regime: str  # 市场状态
 
-    
+
 
     notes: Optional[str] = None
 
@@ -2070,7 +2070,7 @@ class BenchmarkMemoryManager:
 
     """性能基准记忆管理器"""
 
-    
+
 
     def __init__(self, storage_backend='sqlite'):
 
@@ -2078,7 +2078,7 @@ class BenchmarkMemoryManager:
 
         self.attribution_analyzer = AttributionAnalyzer()
 
-    
+
 
     def record_benchmark_comparison(self, comparison_data: Dict) -> str:
 
@@ -2086,13 +2086,13 @@ class BenchmarkMemoryManager:
 
         记录基准对比记忆
 
-        
+
 
         Args:
 
             comparison_data: 对比数据字典
 
-            
+
 
         Returns:
 
@@ -2130,15 +2130,15 @@ class BenchmarkMemoryManager:
 
         )
 
-        
+
 
         self.storage.save(memory.to_dict())
 
         return memory.memory_id
 
-    
 
-    def get_excess_return_evolution(self, 
+
+    def get_excess_return_evolution(self,
 
                                    portfolio_id: str,
 
@@ -2150,7 +2150,7 @@ class BenchmarkMemoryManager:
 
         获取超额收益演化历史
 
-        
+
 
         Args:
 
@@ -2160,7 +2160,7 @@ class BenchmarkMemoryManager:
 
             time_range: 时间范围
 
-            
+
 
         Returns:
 
@@ -2180,13 +2180,13 @@ class BenchmarkMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         return {
 
@@ -2200,9 +2200,9 @@ class BenchmarkMemoryManager:
 
         }
 
-    
 
-    def get_style_exposure_evolution(self, 
+
+    def get_style_exposure_evolution(self,
 
                                     portfolio_id: str,
 
@@ -2212,7 +2212,7 @@ class BenchmarkMemoryManager:
 
         获取风格暴露演化历史
 
-        
+
 
         Args:
 
@@ -2220,7 +2220,7 @@ class BenchmarkMemoryManager:
 
             time_range: 时间范围
 
-            
+
 
         Returns:
 
@@ -2234,13 +2234,13 @@ class BenchmarkMemoryManager:
 
             query['timestamp_range'] = time_range
 
-        
+
 
         memories = self.storage.query(query)
 
         memories_sorted = sorted(memories, key=lambda m: m['timestamp'])
 
-        
+
 
         evolution = {}
 
@@ -2262,7 +2262,7 @@ class BenchmarkMemoryManager:
 
                 evolution[style]['exposures'].append(exposure)
 
-        
+
 
         return evolution
 
@@ -2376,13 +2376,13 @@ class AILearningMemory:
 
     """AI学习记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     learning_type: str  # 'knowledge', 'skill', 'correction'
 
@@ -2390,19 +2390,19 @@ class AILearningMemory:
 
     learning_content: str
 
-    
+
 
     before_state: Dict  # 学习前状态
 
     after_state: Dict  # 学习后状态
 
-    
+
 
     improvement_score: float  # 改进评分
 
     confidence_level: float  # 置信度
 
-    
+
 
     related_tasks: List[str]  # 相关任务
 
@@ -2500,37 +2500,37 @@ class DataQualityMemory:
 
     """数据质量记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     data_source: str
 
     data_type: str
 
-    
+
 
     quality_issue: str  # 质量问题描述
 
     severity: str  # 'critical', 'high', 'medium', 'low'
 
-    
+
 
     affected_range: Dict  # 受影响范围
 
     detection_method: str  # 检测方法
 
-    
+
 
     fix_action: Optional[str]  # 修复措施
 
     fix_result: Optional[str]  # 修复结果
 
-    
+
 
     recurrence_risk: float  # 复发风险
 
@@ -2628,19 +2628,19 @@ class MicrostructureMemory:
 
     """市场微观结构记忆数据模型"""
 
-    
+
 
     memory_id: str
 
     timestamp: datetime
 
-    
+
 
     symbol: str
 
     market_regime: str
 
-    
+
 
     liquidity_metrics: Dict[str, float]  # 流动性指标
 
@@ -2648,11 +2648,11 @@ class MicrostructureMemory:
 
     correlation_structure: Dict[str, float]  # 相关性结构
 
-    
+
 
     microstructure_changes: List[str]  # 微观结构变化
 
-    
+
 
     impact_on_strategy: Dict[str, float]  # 对策略的影响
 
@@ -2861,4 +2861,3 @@ Week 2: 功能增强
 **文档状态**: ✅ 完成
 
 **下一步**: 更新System_Manifest.md索引
-

@@ -167,15 +167,15 @@ graph TB
 
     D[风险预算] --> B
 
-    
+
 
 B --> E{
 
-    
+
 
     E -->|经济扩张| F[风险平价模型]
 
-    
+
 
     F --> J[目标权重]
 
@@ -185,7 +185,7 @@ B --> E{
 
     I --> J
 
-    
+
 
     J --> K[约束优化]
 
@@ -219,13 +219,13 @@ class RiskParityModel:
 
     """风险平价模型"""
 
-    
+
 
     def __init__(self):
 
         self.target_risk_contribution = None
 
-        
+
 
     def optimize(self,
 
@@ -237,7 +237,7 @@ class RiskParityModel:
 
         n_assets = len(covariance_matrix)
 
-        
+
 
 
 
@@ -249,19 +249,19 @@ class RiskParityModel:
 
             target_risk_contribution = np.array(list(target_risk.values()))
 
-        
+
 
         # 定义优化变量
 
         weights = cp.Variable(n_assets)
 
-        
+
 
         # 计算组合风险
 
         portfolio_risk = cp.quad_form(weights, covariance_matrix.values)
 
-        
+
 
         # 计算风险贡献
 
@@ -269,7 +269,7 @@ class RiskParityModel:
 
         risk_contribution = cp.multiply(weights, marginal_risk) / portfolio_risk
 
-        
+
 
         # 目标函数：最小化风险贡献与目标风险贡献的差异
 
@@ -279,7 +279,7 @@ class RiskParityModel:
 
         )
 
-        
+
 
         # 约束条件
 
@@ -289,7 +289,7 @@ class RiskParityModel:
 
         ]
 
-        
+
 
         # 求解
 
@@ -297,7 +297,7 @@ class RiskParityModel:
 
         problem.solve()
 
-        
+
 
         # 返回权重
 
@@ -309,7 +309,7 @@ class RiskParityModel:
 
         ))
 
-        
+
 
         return optimal_weights
 
@@ -321,7 +321,7 @@ class AllWeatherModel:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -339,7 +339,7 @@ class AllWeatherModel:
 
         }
 
-        
+
 
         self.environment_weights = {
 
@@ -393,7 +393,7 @@ class AllWeatherModel:
 
         }
 
-        
+
 
     def allocate(self,
 
@@ -403,11 +403,11 @@ class AllWeatherModel:
 
         # 获取基准权重
 
-        base_weights = self.environment_weights.get(economic_regime, 
+        base_weights = self.environment_weights.get(economic_regime,
 
                                                    self.environment_weights['GROWTH'])
 
-        
+
 
         # 根据概率调整权重
 
@@ -417,7 +417,7 @@ class AllWeatherModel:
 
             adjusted_weights[asset] = weight * regime_probability
 
-        
+
 
         total_weight = sum(adjusted_weights.values())
 
@@ -431,7 +431,7 @@ class AllWeatherModel:
 
             }
 
-        
+
 
         return adjusted_weights
 
@@ -459,7 +459,7 @@ class MultiObjectiveOptimizer:
 
     """多目标优化器"""
 
-    
+
 
     def __init__(self):
 
@@ -475,7 +475,7 @@ class MultiObjectiveOptimizer:
 
         }
 
-        
+
 
     def optimize(self,
 
@@ -489,37 +489,37 @@ class MultiObjectiveOptimizer:
 
         n_assets = len(expected_returns)
 
-        
+
 
         # 定义优化变量
 
         weights = cp.Variable(n_assets)
 
-        
+
 
         portfolio_return = expected_returns.values @ weights
 
         portfolio_risk = cp.sqrt(cp.quad_form(weights, covariance_matrix.values))
 
-        
+
 
         # 构建综合目标函数
 
         objective_value = 0
 
-        
+
 
         if 'return' in objective_weights:
 
             objective_value += objective_weights['return'] * portfolio_return
 
-        
+
 
         if 'risk' in objective_weights:
 
             objective_value -= objective_weights['risk'] * portfolio_risk
 
-        
+
 
         if 'sharpe' in objective_weights:
 
@@ -527,13 +527,13 @@ class MultiObjectiveOptimizer:
 
             objective_value += objective_weights['sharpe'] * (portfolio_return - risk_free_rate) / portfolio_risk
 
-        
+
 
         # 目标函数
 
         objective = cp.Maximize(objective_value)
 
-        
+
 
         # 约束条件
 
@@ -547,7 +547,7 @@ class MultiObjectiveOptimizer:
 
         ]
 
-        
+
 
         # 行业约束
 
@@ -561,7 +561,7 @@ class MultiObjectiveOptimizer:
 
                 constraint_list.append(cp.sum(weights[sector_mask]) <= max_weight)
 
-        
+
 
         # 求解
 
@@ -569,7 +569,7 @@ class MultiObjectiveOptimizer:
 
         problem.solve()
 
-        
+
 
         # 返回权重
 
@@ -581,11 +581,11 @@ class MultiObjectiveOptimizer:
 
         ))
 
-        
+
 
         return optimal_weights
 
-    
+
 
     def _maximize_return(self, weights, expected_returns):
 
@@ -593,7 +593,7 @@ class MultiObjectiveOptimizer:
 
         return expected_returns @ weights
 
-    
+
 
     def _minimize_risk(self, weights, covariance_matrix):
 
@@ -601,7 +601,7 @@ class MultiObjectiveOptimizer:
 
         return cp.quad_form(weights, covariance_matrix)
 
-    
+
 
     def _maximize_sharpe(self, weights, expected_returns, covariance_matrix, risk_free_rate=0.02):
 
@@ -613,7 +613,7 @@ class MultiObjectiveOptimizer:
 
         return (portfolio_return - risk_free_rate) / portfolio_risk
 
-    
+
 
     def _maximize_diversification(self, weights, covariance_matrix):
 
@@ -621,7 +621,7 @@ class MultiObjectiveOptimizer:
 
         return -cp.sum_squares(weights - 1/n)
 
-    
+
 
     def _get_sector_mask(self, sector: str) -> np.ndarray:
 
@@ -639,13 +639,13 @@ class MultiObjectiveOptimizer:
 
 class ConstraintHandler:
 
-    
+
 
     def __init__(self):
 
         self.constraints = {}
 
-        
+
 
     def add_constraint(self, constraint_type: str, constraint_params: Dict[str, Any]) -> None:
 
@@ -653,7 +653,7 @@ class ConstraintHandler:
 
         self.constraints[constraint_type] = constraint_params
 
-        
+
 
     def apply_constraints(self,
 
@@ -665,7 +665,7 @@ class ConstraintHandler:
 
         adjusted_weights = weights.copy()
 
-        
+
 
         # 应用权重约束
 
@@ -675,7 +675,7 @@ class ConstraintHandler:
 
             max_weight = self.constraints['weight_bounds'].get('max', 1)
 
-            
+
 
             for asset in adjusted_weights:
 
@@ -689,13 +689,13 @@ class ConstraintHandler:
 
                 )
 
-        
+
 
         if 'liquidity' in self.constraints:
 
             min_liquidity = self.constraints['liquidity'].get('min', 0)
 
-            
+
 
             for asset, weight in adjusted_weights.items():
 
@@ -705,7 +705,7 @@ class ConstraintHandler:
 
                 pass
 
-        
+
 
         total_weight = sum(adjusted_weights.values())
 
@@ -719,7 +719,7 @@ class ConstraintHandler:
 
             }
 
-        
+
 
         return adjusted_weights
 
@@ -827,7 +827,7 @@ graph LR
 
     D[风险平价策略] --> B
 
-    
+
 
     B --> E[季度调仓]
 
@@ -835,7 +835,7 @@ graph LR
 
     B --> G[组合优化引擎]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -952,10 +952,3 @@ graph LR
 
 
 - 权重输出对长期假设（收益/风险/相关性）敏感；实施阶段需在契约真源或子契约中固化默认假设来源、更新频率与回滚策略。
-
-
-
-
-
-
-

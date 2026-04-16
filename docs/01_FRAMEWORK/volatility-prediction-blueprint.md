@@ -26,7 +26,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -324,7 +324,7 @@ class VolatilityPredictor:
 
 
 
-    
+
 
 
 
@@ -380,7 +380,7 @@ class VolatilityPredictor:
 
 
 
-        """鍒濆鍖栨尝鍔ㄧ巼棰勬祴鍣?        
+        """鍒濆鍖栨尝鍔ㄧ巼棰勬祴鍣?
 
 
 
@@ -436,7 +436,7 @@ class VolatilityPredictor:
 
 
 
-    
+
 
 
 
@@ -476,7 +476,7 @@ class VolatilityPredictor:
 
 
 
-        """棰勬祴娉㈠姩鐜?        
+        """棰勬祴娉㈠姩鐜?
 
 
 
@@ -492,7 +492,7 @@ class VolatilityPredictor:
 
 
 
-            returns: 鏀剁泭鐜囧簭鍒?            
+            returns: 鏀剁泭鐜囧簭鍒?
 
 
 
@@ -524,7 +524,7 @@ class VolatilityPredictor:
 
 
 
-    
+
 
 
 
@@ -580,7 +580,7 @@ class VolatilityPredictor:
 
 
 
-        
+
 
 
 
@@ -604,7 +604,7 @@ class VolatilityPredictor:
 
 
 
-            
+
 
 
 
@@ -923,10 +923,3 @@ class VolatilityPredictor:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-

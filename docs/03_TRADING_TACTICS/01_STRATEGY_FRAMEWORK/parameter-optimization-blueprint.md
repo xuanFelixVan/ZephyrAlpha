@@ -30,7 +30,7 @@ implementation_status: 设计阶段
 
 # 参数优化系统技术蓝图
 > **核心职责**: Parameter Optimization蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Parameter Optimization蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -97,64 +97,64 @@ implementation_status: 设计阶段
 
 ```python
 class OptimizationController:
-    """参数优化控制?    
+    """参数优化控制?
     索引: STRAT.PARAM.OPT.001-M01
     职责: 参数优化流程控制、算法选择、结果聚?    设计模式: 策略模式 + 工厂模式
     """
-    
+
     def __init__(self, batch_evaluator: BatchEvaluator, config: OptimizationConfig):
         self.batch_evaluator = batch_evaluator
         self.config = config
         self.algorithm_selector = AlgorithmSelector()
         self.result_cache = ResultCache()
         self.visualizer = OptimizationVisualizer()
-        
+
     def optimize(self, strategy_id: str, param_space: ParameterSpace) -> OptimizationResult:
         """执行参数优化
-        
+
         参数:
             strategy_id: 策略ID
             param_space: 参数空间定义
-            
+
         返回:
             OptimizationResult: 优化结果，包含最优参数、性能指指标        """
         # 1. 检查缓存中是否有历史结束        cached_result = self.result_cache.get(strategy_id, param_space)
         if cached_result and self.config.use_cache:
             logger.info(f"使用缓存优化结果: {strategy_id}")
             return cached_result
-            
+
         # 2. 选择优化算法
         algorithm = self.algorithm_selector.select_algorithm(
             param_space=param_space,
             budget=self.config.optimization_budget,
             strategy_type=self._get_strategy_type(strategy_id)
         )
-        
+
         # 3. 准备优化环境
         optimization_env = self._prepare_optimization_env(strategy_id, param_space)
-        
+
         # 4. 执行优化
         optimization_result = algorithm.optimize(
             objective_func=self._create_objective_func(strategy_id),
             param_space=param_space,
             env=optimization_env
         )
-        
+
         # 5. 样本外验证        oos_result = self._validate_out_of_sample(
-            strategy_id, 
+            strategy_id,
             optimization_result.best_params
         )
-        
+
         # 6. 生成优化报告
         report = self._generate_optimization_report(
-            optimization_result, 
+            optimization_result,
             oos_result,
             algorithm.get_optimization_history()
         )
-        
+
         # 7. 缓存结果
         self.result_cache.set(strategy_id, param_space, optimization_result)
-        
+
         return OptimizationResult(
             best_params=optimization_result.best_params,
             best_score=optimization_result.best_score,
@@ -163,7 +163,7 @@ class OptimizationController:
             report=report,
             algorithm_used=algorithm.name
         )
-        
+
     def _create_objective_func(self, strategy_id: str) -> Callable[[Dict], float]:
         """创建目标函数（最大化夏普比率，最小化最大回撤等?""
         def objective(params: Dict) -> float:
@@ -173,7 +173,7 @@ class OptimizationController:
                 parameters=params,
                 time_range=self.config.time_range
             )
-            
+
             # 2. 计算目标函数据            if self.config.objective == "sharpe_ratio":
                 score = result.metrics.get("sharpe_ratio", 0)
             elif self.config.objective == "calmar_ratio":
@@ -184,28 +184,28 @@ class OptimizationController:
                 # 默认复合目标：夏普比?- 0.5 * 最大回?                sharpe = result.metrics.get("sharpe_ratio", 0)
                 max_dd = result.metrics.get("max_drawdown", 1)
                 score = sharpe - 0.5 * max_dd
-                
+
             # 3. 添加正则化项防止过拟?            regularization = self._calculate_regularization(params)
             score -= regularization
-            
+
             return score
-            
+
         return objective
-        
+
     def _validate_out_of_sample(self, strategy_id: str, params: Dict) -> ValidationResult:
-        """样本外验证        
+        """样本外验证
         使用未参与优化的数据进行验证，检测过拟合
         """
         # 1. 划分样本外数据（时间序列分割?        oos_time_range = self._get_out_of_sample_range()
-        
+
         # 2. 在样本外数据上评?        oos_result = self.batch_evaluator.evaluate_single(
             strategy_id=strategy_id,
             parameters=params,
             time_range=oos_time_range
         )
-        
+
         # 3. 计算过拟合比?        overfitting_ratio = self._calculate_overfitting_ratio(oos_result)
-        
+
         return ValidationResult(
             score=oos_result.metrics.get("sharpe_ratio", 0),
             overfitting_ratio=overfitting_ratio,
@@ -217,31 +217,31 @@ class OptimizationController:
 
 ```python
 class SmartGridSearchOptimizer:
-    """智能网格搜索优化?    
+    """智能网格搜索优化?
     索引: STRAT.PARAM.OPT.001-M02
     职责: 高效网格搜索，支持非均匀网格和智能采?    特点: 相比传统网格搜索减少50-80%计算?    """
-    
+
     def __init__(self, n_jobs: int = -1, use_smart_sampling: bool = True):
         self.n_jobs = n_jobs if n_jobs > 0 else cpu_count()
         self.use_smart_sampling = use_smart_sampling
         self.parallel_executor = ProcessPoolExecutor(max_workers=self.n_jobs)
-        
-    def optimize(self, objective_func: Callable, param_space: ParameterSpace, 
+
+    def optimize(self, objective_func: Callable, param_space: ParameterSpace,
                 env: OptimizationEnv) -> GridSearchResult:
         """执行网格搜索优化"""
-        
+
         # 1. 生成参数网格（智能采样或均匀网格?        if self.use_smart_sampling:
             param_grid = self._generate_smart_grid(param_space)
         else:
             param_grid = self._generate_uniform_grid(param_space)
-            
+
         logger.info(f"生成参数网格: {len(param_grid)} 个参数组?)
-        
+
         # 2. 并行评估所有参数组?        futures = []
         for params in param_grid:
             future = self.parallel_executor.submit(objective_func, params)
             futures.append((params, future))
-            
+
         # 3. 收集结果
         results = []
         for params, future in futures:
@@ -251,11 +251,11 @@ class SmartGridSearchOptimizer:
             except Exception as e:
                 logger.warning(f"参数组合评估失败: {params}, 错误: {e}")
                 results.append((params, -float('inf')))  # 最低分
-                
+
         # 4. 找出最优参?        best_params, best_score = max(results, key=lambda x: x[1])
-        
+
         # 5. 分析参数敏感?        sensitivity = self._analyze_parameter_sensitivity(results, param_space)
-        
+
         return GridSearchResult(
             best_params=best_params,
             best_score=best_score,
@@ -263,22 +263,22 @@ class SmartGridSearchOptimizer:
             parameter_sensitivity=sensitivity,
             param_grid_size=len(param_grid)
         )
-        
+
     def _generate_smart_grid(self, param_space: ParameterSpace) -> List[Dict]:
         """生成智能参数网格
-        
+
         基于参数重要性进行非均匀采样?        - 重要参数：密集采?        - 次要参数：稀疏采?        - 相关参数：联合采?        """
         grid = []
-        
+
         # 分析参数类型和范围        continuous_params = []
         discrete_params = []
-        
+
         for param_name, param_def in param_space.items():
             if param_def['type'] == 'continuous':
                 continuous_params.append((param_name, param_def))
             else:
                 discrete_params.append((param_name, param_def))
-                
+
         # 连续参数：对数尺度采样或均匀采样
         continuous_samples = {}
         for param_name, param_def in continuous_params:
@@ -297,30 +297,30 @@ class SmartGridSearchOptimizer:
                     param_def.get('n_samples', 10)
                 )
             continuous_samples[param_name] = samples
-            
+
         # 离散参数：全采样或随机采?        discrete_combinations = self._generate_discrete_combinations(discrete_params)
-        
+
         # 生成完整参数网格
         if continuous_samples:
             # 使用拉丁超立方采样减少组合数
             lhs_samples = self._latin_hypercube_sampling(continuous_samples, n_samples=50)
-            
+
             for lhs_sample in lhs_samples:
                 for discrete_combo in discrete_combinations:
                     params = {**lhs_sample, **discrete_combo}
                     grid.append(params)
         else:
             grid = discrete_combinations
-            
+
         return grid
-        
+
     def _latin_hyper立方采样(self, continuous_samples: Dict, n_samples: int) -> List[Dict]:
         """拉丁超立方采样，保证参数空间均匀覆盖"""
         param_names = list(continuous_samples.keys())
         n_params = len(param_names)
-        
+
         # 生成拉丁超立方设计        lhs = lhs(n_params, samples=n_samples, criterion='maximin')
-        
+
         # 将设计点映射到实际参数据        samples = []
         for i in range(n_samples):
             params = {}
@@ -335,7 +335,7 @@ class SmartGridSearchOptimizer:
                     max_val = param_def['max']
                     params[param_name] = min_val + lhs[i, j] * (max_val - min_val)
             samples.append(params)
-            
+
         return samples
 ```
 
@@ -343,21 +343,21 @@ class SmartGridSearchOptimizer:
 
 ```python
 class BayesianOptimizer:
-    """贝叶斯优化器（基于Optuna?    
+    """贝叶斯优化器（基于Optuna?
     索引: STRAT.PARAM.OPT.001-M03
     职责: 贝叶斯优化，智能采样，高效全局优化
     特点: 适合高维、昂贵的黑箱函数优化
     """
-    
+
     def __init__(self, n_trials: int = 100, n_jobs: int = 1):
         self.n_trials = n_trials
         self.n_jobs = n_jobs
         self.study = None
-        
+
     def optimize(self, objective_func: Callable, param_space: ParameterSpace,
                 env: OptimizationEnv) -> BayesianOptimizationResult:
         """执行贝叶斯优化""
-        
+
         # 1. 创建Optuna研究
         self.study = optuna.create_study(
             direction="maximize",
@@ -368,7 +368,7 @@ class BayesianOptimizer:
                 interval_steps=1
             )
         )
-        
+
         # 2. 定义Optuna目标函数
         def optuna_objective(trial):
             # 根据参数空间定义建议参数
@@ -399,19 +399,19 @@ class BayesianOptimizer:
                         param_name,
                         param_def['choices']
                     )
-                    
+
             # 评估目标函数
             score = objective_func(params)
-            
+
             # 添加中间报告（用于早停）
             trial.report(score, step=trial.number)
-            
+
             # 如果被剪枝，抛出TrialPruned异常
             if trial.should_prune():
                 raise optuna.TrialPruned()
-                
+
             return score
-            
+
         # 3. 运行优化
         self.study.optimize(
             optuna_objective,
@@ -419,14 +419,14 @@ class BayesianOptimizer:
             n_jobs=self.n_jobs,
             timeout=env.timeout_total,
             catch=(Exception,)  # 捕获所有异?        )
-        
+
         # 4. 提取结果
         best_params = self.study.best_params
         best_score = self.study.best_value
-        
+
         # 5. 分析优化历史
         optimization_history = self._analyze_optimization_history()
-        
+
         return BayesianOptimizationResult(
             best_params=best_params,
             best_score=best_score,
@@ -434,19 +434,19 @@ class BayesianOptimizer:
             optimization_history=optimization_history,
             n_trials_completed=len(self.study.trials)
         )
-        
+
     def get_parameter_importance(self) -> Dict[str, float]:
         """获取参数重要性（基于特征重要性分析）"""
         if not self.study:
             return {}
-            
+
         # 使用Optuna的特征重要性分?        importance = optuna.importance.get_param_importances(self.study)
         return importance
-        
+
     def get_optimization_history(self) -> OptimizationHistory:
         """获取优化历史，用于可视化"""
         history = OptimizationHistory()
-        
+
         for trial in self.study.trials:
             if trial.state == optuna.trial.TrialState.COMPLETE:
                 history.add_trial(
@@ -455,7 +455,7 @@ class BayesianOptimizer:
                     score=trial.value,
                     duration=trial.duration
                 )
-                
+
         return history
 ```
 
@@ -463,92 +463,92 @@ class BayesianOptimizer:
 
 ```python
 class TimeSeriesCrossValidator:
-    """时间序列交叉验证?    
+    """时间序列交叉验证?
     索引: STRAT.PARAM.OPT.001-M04
     职责: 时间序列数据交叉验证，避免未来信息泄?    特点: 专门为金融时间序列设计的交叉验证方法
     """
-    
+
     def __init__(self, n_splits: int = 5, test_size: float = 0.2):
         self.n_splits = n_splits
         self.test_size = test_size
-        
+
     def split(self, data: pd.DataFrame, dates: pd.DatetimeIndex) -> List[Tuple]:
         """生成时间序列交叉验证分割
-        
+
         参数:
             data: 时间序列数据
             dates: 日期索引
-            
+
         返回:
             List[Tuple]: 每个元素?train_indices, test_indices)
         """
         splits = []
         n_samples = len(data)
         test_samples = int(n_samples * self.test_size)
-        
+
         # 时间序列交叉验证：滑动窗?        for i in range(self.n_splits):
             # 计算训练集和测试集的起始位置
             test_start = n_samples - test_samples * (i + 1)
             test_end = n_samples - test_samples * i
-            
+
             train_end = test_start - 1
-            
+
             # 确保有足够的训练数据
             if train_end < test_samples:
                 continue
-                
+
             train_indices = list(range(0, train_end))
             test_indices = list(range(test_start, test_end))
-            
+
             splits.append((train_indices, test_indices))
-            
+
         return splits
-        
+
     def purged_cv_split(self, data: pd.DataFrame, dates: pd.DatetimeIndex,
                        purge_gap: int = 5) -> List[Tuple]:
         """净化交叉验证：在训练集和测试集之间添加间隔
-        
+
         防止信息泄露，适用于事件驱动策略        """
         splits = []
         n_samples = len(data)
         test_samples = int(n_samples * self.test_size)
-        
+
         for i in range(self.n_splits):
             test_start = n_samples - test_samples * (i + 1)
             test_end = n_samples - test_samples * i
-            
+
             # 添加净化间?            train_end = test_start - purge_gap
-            
+
             if train_end < test_samples:
                 continue
-                
+
             train_indices = list(range(0, train_end))
             test_indices = list(range(test_start, test_end))
-            
+
             splits.append((train_indices, test_indices))
-            
+
         return splits
-        
+
     def combinatorial_cv_split(self, data: pd.DataFrame, dates: pd.DatetimeIndex,
                              n_train_windows: int = 10) -> List[Tuple]:
-        """组合交叉验证：多个训练窗口组?        
+        """组合交叉验证：多个训练窗口组?
         增加训练数据多样性，提高泛化能力
         """
         splits = []
         n_samples = len(data)
         test_samples = int(n_samples * self.test_size)
-        
+
         # 固定测试集（最?0%?        test_indices = list(range(n_samples - test_samples, n_samples))
-        
+
         # 多个训练窗口
         train_window_size = n_samples - test_samples - 1
         step = max(1, train_window_size // n_train_windows)
-        
+
         for start in range(0, train_window_size, step):
             end = min(start + train_window_size, n_samples - test_samples - 1)
             train_indices = list(range(start, end))
             splits.append((train_indices, test_indices))
-            
+
         return splits
 ```
 
@@ -559,25 +559,25 @@ class TimeSeriesCrossValidator:
 ```python
 class OverfittingDetector:
     """过拟合检测器"""
-    
+
     def detect(self, in_sample_results: Dict, out_of_sample_results: Dict) -> OverfittingReport:
         """检测过拟合"""
-        
+
         report = OverfittingReport()
-        
+
         # 1. 性能衰减比率
         is_sharpe = in_sample_results.get('sharpe_ratio', 0)
         oos_sharpe = out_of_sample_results.get('sharpe_ratio', 0)
         report.performance_decay = (is_sharpe - oos_sharpe) / max(abs(is_sharpe), 0.01)
-        
+
         # 2. 最大回撤增加比?        is_max_dd = in_sample_results.get('max_drawdown', 0)
         oos_max_dd = out_of_sample_results.get('max_drawdown', 0)
         report.drawdown_increase = (oos_max_dd - is_max_dd) / max(is_max_dd, 0.01)
-        
+
         # 3. 胜率稳定?        is_win_rate = in_sample_results.get('win_rate', 0)
         oos_win_rate = out_of_sample_results.get('win_rate', 0)
         report.win_rate_stability = abs(is_win_rate - oos_win_rate)
-        
+
         # 4. 收益分布变化（Kolmogorov-Smirnov检验）
         is_returns = in_sample_results.get('returns_series', [])
         oos_returns = out_of_sample_results.get('returns_series', [])
@@ -585,9 +585,9 @@ class OverfittingDetector:
             ks_stat, p_value = ks_2samp(is_returns, oos_returns)
             report.ks_test_statistic = ks_stat
             report.ks_test_pvalue = p_value
-            
+
         # 5. 综合过拟合评?        report.overfitting_score = self._calculate_overfitting_score(report)
-        
+
         # 6. 过拟合等?        if report.overfitting_score > 0.7:
             report.severity = "严重过拟?
         elif report.overfitting_score > 0.5:
@@ -596,7 +596,7 @@ class OverfittingDetector:
             report.severity = "轻度过拟?
         else:
             report.severity = "正常"
-            
+
         return report
 ```
 
@@ -604,52 +604,52 @@ class OverfittingDetector:
 ```python
 class RegularizationTechniques:
     """正则化技术集成""
-    
+
     @staticmethod
     def parameter_complexity_penalty(params: Dict) -> float:
         """参数复杂度惩罚（奥卡姆剃刀原则?""
         penalty = 0
-        
+
         for param_name, param_value in params.items():
             # 参数值偏离默认值越远，惩罚越大
             if param_name in DEFAULT_PARAMS:
                 default = DEFAULT_PARAMS[param_name]
                 penalty += abs(param_value - default) / default
-                
+
         return penalty * 0.01  # 1%的复杂度惩罚
-        
+
     @staticmethod
     def turnover_penalty(trades: List[Trade]) -> float:
         """换手率惩罚（减少过度交易?""
         if not trades:
             return 0
-            
+
         total_turnover = sum(trade.volume * trade.price for trade in trades)
         avg_daily_turnover = total_turnover / len(trades)
-        
+
         # 换手率超过阈值时施加惩罚
         if avg_daily_turnover > TURNOVER_THRESHOLD:
             excess = avg_daily_turnover - TURNOVER_THRESHOLD
             return excess / TURNOVER_THRESHOLD * 0.1
-            
+
         return 0
-        
+
     @staticmethod
     def parameter_stability_penalty(param_history: List[Dict]) -> float:
         """参数稳定性惩罚（防止参数剧烈波动?""
         if len(param_history) < 2:
             return 0
-            
+
         stability_penalty = 0
         for i in range(1, len(param_history)):
             prev = param_history[i-1]
             curr = param_history[i]
-            
+
             for key in prev:
                 if key in curr:
                     change = abs(curr[key] - prev[key]) / max(abs(prev[key]), 0.01)
                     stability_penalty += change
-                    
+
         return stability_penalty / (len(param_history) - 1)
 ```
 
@@ -662,26 +662,26 @@ class RegularizationTechniques:
 parameter_optimization:
   # 策略配置
   strategy_id: "S001_MA_Crossover"
-  
+
   # 参数空间定义（支持自然语言描述?  parameter_space:
     fast_period:
       type: "integer"
       min: 5
       max: 50
       description: "快线周期，建?-20?
-      
+
     slow_period:
-      type: "integer"  
+      type: "integer"
       min: 20
       max: 200
       description: "慢线周期，建?0-60?
       constraint: "slow_period > fast_period"  # 参数约束
-      
+
     volume_filter:
       type: "categorical"
       choices: [true, false]
       description: "是否启用成交量过?
-      
+
     volume_ratio:
       type: "continuous"
       min: 1.0
@@ -689,7 +689,7 @@ parameter_optimization:
       description: "成交量倍数阈?
       log_scale: true  # 对数尺度采样
       condition: "volume_filter == true"  # 条件参数
-      
+
   # 优化算法配置
   algorithm:
     name: "bayesian"  # grid, bayesian, genetic, random
@@ -697,7 +697,7 @@ parameter_optimization:
       n_trials: 100
       n_jobs: 4
       timeout_hours: 2
-      
+
   # 目标函数配置
   objective:
     primary: "composite_score"  # sharpe_ratio, calmar_ratio, composite_score
@@ -705,13 +705,13 @@ parameter_optimization:
     regularization:
       parameter_complexity: 0.01
       turnover: 0.05
-      
+
   # 过拟合防?  overfitting_prevention:
     out_of_sample_ratio: 0.3
     cross_validation_folds: 3
     purged_gap_days: 5
     max_overfitting_score: 0.5
-    
+
   # 输出配置
   output:
     save_optimization_history: true
@@ -793,9 +793,9 @@ result = optimizer.optimize(config)
 | PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 
-**文档版本**: v1.0  
-**最后更?*: 2026-04-01  
-**维护?*: 策略研发中心  
+**文档版本**: v1.0
+**最后更?*: 2026-04-01
+**维护?*: 策略研发中心
 **预计开发时?*: 100小时?.5周全职开发）
 ```---
 

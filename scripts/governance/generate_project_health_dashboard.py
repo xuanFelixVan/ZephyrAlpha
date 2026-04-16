@@ -34,7 +34,7 @@ def get_audit_files():
 def get_expired_state_files():
     expired_count = 0
     now = time.time()
-    
+
     # 检查 DAILY (TTL: 30天)
     daily_dir = os.path.join(STATE_DIR, "DAILY")
     if os.path.exists(daily_dir):
@@ -42,7 +42,7 @@ def get_expired_state_files():
             p = os.path.join(daily_dir, f)
             if os.path.isfile(p) and (now - os.path.getmtime(p)) > 30 * 86400:
                 expired_count += 1
-                
+
     # 检查 OVERNIGHT (TTL: 14天)
     overnight_dir = os.path.join(STATE_DIR, "OVERNIGHT")
     if os.path.exists(overnight_dir):
@@ -50,7 +50,7 @@ def get_expired_state_files():
             p = os.path.join(overnight_dir, f)
             if os.path.isfile(p) and (now - os.path.getmtime(p)) > 14 * 86400:
                 expired_count += 1
-                
+
     return expired_count
 
 def get_knowledge_base_count():
@@ -66,14 +66,14 @@ def calculate_yaml_compliance_rate():
         for f in files:
             if f.endswith('.md'):
                 md_files.append(os.path.join(root, f))
-                
+
     if not md_files:
         return 0.0
-        
+
     # 抽样最多 100 个文档检查
     sample_size = min(100, len(md_files))
     sample = random.sample(md_files, sample_size)
-    
+
     compliant_count = 0
     for f in sample:
         try:
@@ -83,7 +83,7 @@ def calculate_yaml_compliance_rate():
                     compliant_count += 1
         except Exception:
             pass
-            
+
     return (compliant_count / sample_size) * 100
 
 def check_asset_health(path):
@@ -95,29 +95,29 @@ def check_asset_health(path):
 
 def generate_dashboard():
     print("Gathering metrics for Project Health Dashboard...")
-    
+
     # 提前创建空文件，以确保自身健康检查能找到
     output_path = os.path.join(DASHBOARD_DIR, "project-health-latest.md")
     if not os.path.exists(output_path):
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write("")
-    
+
     total_files = get_total_files()
     audit_files = get_audit_files()
     expired_files = get_expired_state_files()
     kb_count = get_knowledge_base_count()
     yaml_rate = calculate_yaml_compliance_rate()
-    
+
     today = datetime.now()
     tomorrow = today + timedelta(days=1)
-    
+
     # 状态评估
     total_status = "改善中" if total_files < 3500 else "需关注"
     audit_status = "需清理" if audit_files > 200 else "达标"
     expired_status = "告警" if expired_files > 0 else "达标"
     kb_status = "空心化" if kb_count < 50 else "达标"
     yaml_status = "达标" if yaml_rate >= 95 else "改善中"
-    
+
     markdown_content = f"""# ZephyrAlpha 项目健康仪表盘
 > 自动生成于 {today.strftime('%Y-%m-%d %H:%M:%S')} | 下次更新：{tomorrow.strftime('%Y-%m-%d')}
 
@@ -145,7 +145,7 @@ def generate_dashboard():
 
 ## 待处理告警
 """
-    
+
     alerts = []
     if expired_files > 0:
         alerts.append(f"1. STATE/ 有 {expired_files} 个文件超过 TTL，建议运行 `purge_expired_state.py` 清理。")
@@ -155,16 +155,16 @@ def generate_dashboard():
         alerts.append(f"3. 知识库严重空心化（当前 {kb_count}/50 目标），建议执行知识提取冲刺计划。")
     if yaml_rate < 95:
         alerts.append(f"4. YAML Frontmatter 合规率 ({yaml_rate:.1f}%) 低于 95% 目标。")
-        
+
     if not alerts:
         markdown_content += "🎉 当前无严重告警，系统运行健康。\n"
     else:
         markdown_content += "\n".join(alerts) + "\n"
-        
+
     output_path = os.path.join(DASHBOARD_DIR, "project-health-latest.md")
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
-        
+
     print(f"Dashboard successfully generated at: {output_path}")
 
 if __name__ == "__main__":

@@ -42,7 +42,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -186,7 +186,7 @@ Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
 
 
 
-    
+
 
 
 
@@ -202,7 +202,7 @@ Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
 
 
 
-        
+
 
 
 
@@ -222,7 +222,7 @@ Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
 
 
 
-    
+
 
 
 
@@ -250,7 +250,7 @@ Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
 
 
 
-        
+
 
 
 
@@ -278,7 +278,7 @@ factor_loadings: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?
 
 
 
-            
+
 
 
 
@@ -302,7 +302,7 @@ ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ
 
 
 
-    
+
 
 
 
@@ -322,7 +322,7 @@ ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ
 
 
 
-        
+
 
 
 
@@ -334,7 +334,7 @@ ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ
 
 
 
-            
+
 
 
 
@@ -354,7 +354,7 @@ pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
 
 
 
-    
+
 
 
 
@@ -374,7 +374,7 @@ pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
 
 
 
-        
+
 
 
 
@@ -386,7 +386,7 @@ pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
 
 
 
-            
+
 
 
 
@@ -406,7 +406,7 @@ pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
 
 
 
-    
+
 
 
 
@@ -430,7 +430,7 @@ pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
 
 
 
-        
+
 
 
 
@@ -442,7 +442,7 @@ total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒﮒﻠ۲ﻠ
 
 
 
-            
+
 
 
 
@@ -494,7 +494,7 @@ class FactorExposureCalculator:
 
 
 
-    
+
 
 
 
@@ -510,7 +510,7 @@ class FactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -530,7 +530,7 @@ config: ﮒﮒﻠﻝﺛ؟
 
 
 
-    
+
 
 
 
@@ -554,7 +554,7 @@ config: ﮒﮒﻠﻝﺛ؟
 
 
 
-        
+
 
 
 
@@ -570,7 +570,7 @@ factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
 
 
 
-            
+
 
 
 
@@ -622,7 +622,7 @@ class FactorCovarianceEstimator:
 
 
 
-    
+
 
 
 
@@ -630,7 +630,7 @@ class FactorCovarianceEstimator:
 
 
 
-    
+
 
 
 
@@ -658,7 +658,7 @@ class FactorCovarianceEstimator:
 
 
 
-    
+
 
 
 
@@ -694,7 +694,7 @@ factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
 
 
 
-            
+
 
 
 
@@ -1016,7 +1016,7 @@ class BarraConfig:
 
 
 
-    
+
 
 
 
@@ -1056,7 +1056,7 @@ class BarraConfig:
 
 
 
-    
+
 
 
 
@@ -1124,7 +1124,7 @@ class FactorConfig:
 
 
 
-    
+
 
 
 
@@ -1132,7 +1132,7 @@ class FactorConfig:
 
 
 
-    regression_window: int = 252  # ﻛﭦ۳ﮔ?    
+    regression_window: int = 252  # ﻛﭦ۳ﮔ?
 
 
 
@@ -1144,7 +1144,7 @@ class FactorConfig:
 
 
 
-    
+
 
 
 
@@ -1192,7 +1192,7 @@ class CovarianceConfig:
 
 
 
-    
+
 
 
 
@@ -1208,7 +1208,7 @@ class CovarianceConfig:
 
 
 
-    
+
 
 
 
@@ -1220,7 +1220,7 @@ class CovarianceConfig:
 
 
 
-    
+
 
 
 
@@ -1534,7 +1534,7 @@ factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
 
 
 
-        
+
 
 
 
@@ -1554,7 +1554,7 @@ pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
 
 
 
-    
+
 
 
 
@@ -1574,7 +1574,7 @@ pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
 
 
 
-    
+
 
 
 
@@ -1594,7 +1594,7 @@ pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
 
 
 
-        
+
 
 
 
@@ -1610,7 +1610,7 @@ pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
 
 
 
-        
+
 
 
 
@@ -1622,7 +1622,7 @@ pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
 
 
 
-    
+
 
 
 
@@ -1694,7 +1694,7 @@ def estimate_factor_covariance_shrinkage(
 
 
 
-    
+
 
 
 
@@ -1710,7 +1710,7 @@ factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
 
 
 
-        
+
 
 
 
@@ -1730,7 +1730,7 @@ pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
 
 
 
-    
+
 
 
 
@@ -1742,7 +1742,7 @@ pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
 
 
 
-    
+
 
 
 
@@ -1758,7 +1758,7 @@ pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
 
 
 
-    
+
 
 
 
@@ -1834,7 +1834,7 @@ def decompose_portfolio_risk(
 
 
 
-    
+
 
 
 
@@ -1858,7 +1858,7 @@ def decompose_portfolio_risk(
 
 
 
-    
+
 
 
 
@@ -1878,7 +1878,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-        
+
 
 
 
@@ -1902,7 +1902,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-    
+
 
 
 
@@ -1914,7 +1914,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-    
+
 
 
 
@@ -1930,7 +1930,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-    
+
 
 
 
@@ -1942,7 +1942,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-    
+
 
 
 
@@ -1950,7 +1950,7 @@ factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝ�
 
 
 
-    
+
 
 
 
@@ -2056,7 +2056,7 @@ class TestFactorExposureCalculator:
 
 
 
-    
+
 
 
 
@@ -2108,7 +2108,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2124,7 +2124,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2140,7 +2140,7 @@ class TestFactorExposureCalculator:
 
 
 
-    
+
 
 
 
@@ -2172,7 +2172,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2180,7 +2180,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2192,7 +2192,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2204,7 +2204,7 @@ class TestFactorExposureCalculator:
 
 
 
-        
+
 
 
 
@@ -2240,7 +2240,7 @@ class TestFactorCovarianceEstimator:
 
 
 
-    
+
 
 
 
@@ -2276,7 +2276,7 @@ class TestFactorCovarianceEstimator:
 
 
 
-        
+
 
 
 
@@ -2288,7 +2288,7 @@ class TestFactorCovarianceEstimator:
 
 
 
-        
+
 
 
 
@@ -2336,7 +2336,7 @@ class TestRiskDecomposition:
 
 
 
-    
+
 
 
 
@@ -2364,7 +2364,7 @@ class TestRiskDecomposition:
 
 
 
-        
+
 
 
 
@@ -2424,7 +2424,7 @@ class TestRiskDecomposition:
 
 
 
-        
+
 
 
 
@@ -2448,7 +2448,7 @@ class TestRiskDecomposition:
 
 
 
-        
+
 
 
 
@@ -2460,7 +2460,7 @@ class TestRiskDecomposition:
 
 
 
-        
+
 
 
 
@@ -2472,7 +2472,7 @@ class TestRiskDecomposition:
 
 
 
-        assert abs(decomposition.factor_risk_ratio + 
+        assert abs(decomposition.factor_risk_ratio +
 
 
 
@@ -2508,7 +2508,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-    
+
 
 
 
@@ -2528,7 +2528,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2544,7 +2544,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2556,7 +2556,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2584,7 +2584,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2596,7 +2596,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2612,7 +2612,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-    
+
 
 
 
@@ -2628,7 +2628,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2652,7 +2652,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2672,7 +2672,7 @@ class TestBarraRiskModelIntegration:
 
 
 
-        
+
 
 
 
@@ -2708,7 +2708,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-    
+
 
 
 
@@ -2756,7 +2756,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2772,7 +2772,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2784,7 +2784,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2792,7 +2792,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2804,7 +2804,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-    
+
 
 
 
@@ -2832,7 +2832,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2884,7 +2884,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2900,7 +2900,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2916,7 +2916,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -2924,7 +2924,7 @@ class TestBarraRiskModelPerformance:
 
 
 
-        
+
 
 
 
@@ -3088,7 +3088,7 @@ model:
 
 
 
-  
+
 
 
 
@@ -3140,7 +3140,7 @@ factors:
 
 
 
-  
+
 
 
 
@@ -3683,6 +3683,3 @@ riskfolio-lib>=4.0.0
 
 
 **ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
-
-
-

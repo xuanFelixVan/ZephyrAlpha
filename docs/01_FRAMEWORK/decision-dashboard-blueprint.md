@@ -28,7 +28,7 @@ responsibility: 处理DECISION_DASHBOARD_BLUEPRINT相关业务
 
 > **核心职责**: Decision Dashboard蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Decision Dashboard蓝图设计相关内容
 
@@ -280,7 +280,7 @@ class DecisionDashboard:
 
     """决策仪表板"""
 
-    
+
 
     def __init__(self):
 
@@ -288,7 +288,7 @@ class DecisionDashboard:
 
         self.decision_history = []
 
-        
+
 
     def render_overview(self):
 
@@ -296,7 +296,7 @@ class DecisionDashboard:
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
@@ -310,7 +310,7 @@ class DecisionDashboard:
 
             )
 
-        
+
 
         with col2:
 
@@ -324,7 +324,7 @@ class DecisionDashboard:
 
             )
 
-        
+
 
         with col3:
 
@@ -340,7 +340,7 @@ class DecisionDashboard:
 
             )
 
-        
+
 
         with col4:
 
@@ -356,7 +356,7 @@ class DecisionDashboard:
 
             )
 
-    
+
 
     def render_pending_decisions(self):
 
@@ -364,7 +364,7 @@ class DecisionDashboard:
 
         st.subheader("📋 待决策事项")
 
-        
+
 
         for decision in self.pending_decisions:
 
@@ -378,7 +378,7 @@ class DecisionDashboard:
 
                 self._render_decision_detail(decision)
 
-    
+
 
     def _render_decision_detail(self, decision):
 
@@ -386,7 +386,7 @@ class DecisionDashboard:
 
         col1, col2 = st.columns([2, 1])
 
-        
+
 
         with col1:
 
@@ -398,7 +398,7 @@ class DecisionDashboard:
 
             st.markdown(f"**创建时间**: {decision['created_at']}")
 
-        
+
 
         with col2:
 
@@ -490,15 +490,15 @@ def render_decision_detail_page(decision_id):
 
     decision = get_decision_by_id(decision_id)
 
-    
+
 
     st.title(f"决策详情: {decision['title']}")
 
-    
+
 
     tab1, tab2, tab3, tab4 = st.tabs(["决策背景", "AI分析", "风险评估", "历史参考"])
 
-    
+
 
     with tab1:
 
@@ -510,7 +510,7 @@ def render_decision_detail_page(decision_id):
 
         st.markdown(f"**触发条件**: {decision['trigger_condition']}")
 
-    
+
 
     with tab2:
 
@@ -520,13 +520,13 @@ def render_decision_detail_page(decision_id):
 
         st.markdown(f"**置信度**: {decision['confidence']:.1%}")
 
-        
+
 
         fig = create_confidence_chart(decision['confidence_breakdown'])
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     with tab3:
 
@@ -538,7 +538,7 @@ def render_decision_detail_page(decision_id):
 
         st.markdown(f"**最大损失**: {decision['max_loss']}")
 
-    
+
 
     with tab4:
 
@@ -548,11 +548,11 @@ def render_decision_detail_page(decision_id):
 
         st.dataframe(similar_decisions)
 
-    
+
 
     st.divider()
 
-    
+
 
     col1, col2, col3 = st.columns(3)
 
@@ -612,11 +612,11 @@ def render_decision_history():
 
     st.subheader("📊 决策历史追踪")
 
-    
+
 
     col1, col2 = st.columns(2)
 
-    
+
 
     with col1:
 
@@ -626,7 +626,7 @@ def render_decision_history():
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     with col2:
 
@@ -636,7 +636,7 @@ def render_decision_history():
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     st.markdown("#### 决策历史列表")
 
@@ -945,4 +945,3 @@ with tab3:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

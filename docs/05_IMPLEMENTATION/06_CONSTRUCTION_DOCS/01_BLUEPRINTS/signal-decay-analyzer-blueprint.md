@@ -204,19 +204,19 @@ class SignalDecayAnalyzer:
 
         self.signal_history = []
 
-    
+
 
     def exponential_decay_model(self, t, amplitude, decay_rate, offset):
 
         return amplitude * np.exp(-decay_rate * t) + offset
 
-    
+
 
     def linear_decay_model(self, t, slope, intercept):
 
         return slope * t + intercept
 
-    
+
 
     def fit_decay_model(self, signal_values, time_points):
 
@@ -236,11 +236,11 @@ class SignalDecayAnalyzer:
 
             )
 
-            
+
 
             amplitude, decay_rate, offset = popt
 
-            
+
 
             if decay_rate > 0:
 
@@ -250,7 +250,7 @@ class SignalDecayAnalyzer:
 
                 half_life = np.inf
 
-            
+
 
             return {
 
@@ -280,13 +280,13 @@ class SignalDecayAnalyzer:
 
             model.fit(time_points.reshape(-1, 1), signal_values)
 
-            
+
 
             slope = model.coef_[0]
 
             intercept = model.intercept_
 
-            
+
 
             if slope < 0:
 
@@ -296,7 +296,7 @@ class SignalDecayAnalyzer:
 
                 half_life = np.inf
 
-            
+
 
             return {
 
@@ -312,7 +312,7 @@ class SignalDecayAnalyzer:
 
             }
 
-    
+
 
     def _calculate_r_squared(self, y_true, y_pred):
 
@@ -322,7 +322,7 @@ class SignalDecayAnalyzer:
 
         return 1 - (ss_res / ss_tot)
 
-    
+
 
     def predict_signal_strength(self, decay_model, future_time):
 
@@ -352,7 +352,7 @@ class SignalDecayAnalyzer:
 
             )
 
-    
+
 
     def calculate_effective_period(self, decay_model, threshold=None):
 
@@ -360,7 +360,7 @@ class SignalDecayAnalyzer:
 
             threshold = self.decay_threshold
 
-        
+
 
         if decay_model['model'] == 'exponential':
 
@@ -370,7 +370,7 @@ class SignalDecayAnalyzer:
 
             offset = decay_model['offset']
 
-            
+
 
             if decay_rate > 0:
 
@@ -386,7 +386,7 @@ class SignalDecayAnalyzer:
 
             intercept = decay_model['intercept']
 
-            
+
 
             if slope < 0:
 
@@ -396,23 +396,23 @@ class SignalDecayAnalyzer:
 
                 effective_period = np.inf
 
-        
+
 
         return max(self.min_half_life, min(effective_period, self.max_half_life))
 
-    
+
 
     def analyze_signal_quality(self, signal_values, time_points):
 
         decay_model = self.fit_decay_model(signal_values, time_points)
 
-        
+
 
         half_life = decay_model['half_life']
 
         r_squared = decay_model['r_squared']
 
-        
+
 
         if half_life < 3:
 
@@ -432,7 +432,7 @@ class SignalDecayAnalyzer:
 
             recommendation = '信号有效期较长，可放心使用'
 
-        
+
 
         return {
 
@@ -450,23 +450,23 @@ class SignalDecayAnalyzer:
 
         }
 
-    
+
 
     def monitor_signal_decay(self, signal_id, signal_values, time_points):
 
         quality_analysis = self.analyze_signal_quality(signal_values, time_points)
 
-        
+
 
         current_strength = signal_values[-1]
 
         initial_strength = signal_values[0]
 
-        
+
 
         decay_percentage = (initial_strength - current_strength) / initial_strength
 
-        
+
 
         signal_record = {
 
@@ -484,11 +484,11 @@ class SignalDecayAnalyzer:
 
         }
 
-        
+
 
         self.signal_history.append(signal_record)
 
-        
+
 
         return {
 
@@ -789,4 +789,3 @@ class SignalRecord:
 
 
 - 衰减估计对样本量与市场状态敏感；实施阶段需在契约真源或子契约中固化最小样本要求、缺失值处理与降级策略。
-

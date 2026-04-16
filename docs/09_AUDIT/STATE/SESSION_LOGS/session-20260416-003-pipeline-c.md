@@ -112,15 +112,15 @@ status: "completed"
 继续 GH Wave 2，从 index 7 开始扫描剩余文件：
 
 ```powershell
-git log --all --diff-filter=D --name-only --pretty=format:"" | 
-  ForEach-Object { 
-    if ($_.Trim() -match "^docs/01_FRAMEWORK" -and 
-        $_.Trim() -match "\.md$" -and 
-        $_ -notmatch "audit_fix_backup") { 
-      $_.Trim() 
-    } 
-  } | 
-  Sort-Object -Unique | 
+git log --all --diff-filter=D --name-only --pretty=format:"" |
+  ForEach-Object {
+    if ($_.Trim() -match "^docs/01_FRAMEWORK" -and
+        $_.Trim() -match "\.md$" -and
+        $_ -notmatch "audit_fix_backup") {
+      $_.Trim()
+    }
+  } |
+  Sort-Object -Unique |
   Select-Object -Skip 7 -First 20
 ```
 

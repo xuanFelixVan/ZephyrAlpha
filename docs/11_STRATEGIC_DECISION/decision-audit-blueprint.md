@@ -50,7 +50,7 @@ priority: P2
 
 > **核心职责**: 投资决策审计系统蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资决策审计系统蓝图设计相关内容
 
@@ -60,7 +60,7 @@ priority: P2
 
 > **核心职责**: Decision Audit蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Decision Audit蓝图设计相关内容
 
@@ -562,7 +562,7 @@ class DecisionRecord:
 
     target_price: Optional[float]
 
-    
+
 
     market_context: MarketContext
 
@@ -570,7 +570,7 @@ class DecisionRecord:
 
     rationale: DecisionRationale
 
-    
+
 
     expected_return: float
 
@@ -578,7 +578,7 @@ class DecisionRecord:
 
     confidence: float
 
-    
+
 
     status: str = 'pending'
 
@@ -586,7 +586,7 @@ class DecisionRecord:
 
     performance_result: Optional[Dict] = None
 
-    
+
 
     created_at: datetime = field(default_factory=datetime.now)
 
@@ -598,13 +598,13 @@ class DecisionCapture:
 
     """决策捕获器"""
 
-    
+
 
     def __init__(self):
 
         self.decision_counter = 0
 
-    
+
 
     def capture_market_context(self) -> MarketContext:
 
@@ -626,7 +626,7 @@ class DecisionCapture:
 
         )
 
-    
+
 
     def capture_portfolio_context(self,
 
@@ -652,7 +652,7 @@ class DecisionCapture:
 
         )
 
-    
+
 
     def capture_rationale(self,
 
@@ -680,7 +680,7 @@ class DecisionCapture:
 
         )
 
-    
+
 
     def create_decision_record(self,
 
@@ -712,7 +712,7 @@ class DecisionCapture:
 
         self.decision_counter += 1
 
-        
+
 
         return DecisionRecord(
 
@@ -754,7 +754,7 @@ class DecisionStorage:
 
     """决策存储器"""
 
-    
+
 
     def __init__(self, storage_path: str = "data/audit/decisions"):
 
@@ -764,7 +764,7 @@ class DecisionStorage:
 
         self.index: Dict[str, int] = {}
 
-    
+
 
     def store(self, decision: DecisionRecord):
 
@@ -774,7 +774,7 @@ class DecisionStorage:
 
         self.decisions.append(decision)
 
-        
+
 
         self.index[decision.decision_id] = idx
 
@@ -784,7 +784,7 @@ class DecisionStorage:
 
         self.index[f"date_{decision.timestamp.date()}"] = idx
 
-    
+
 
     def get_by_id(self, decision_id: str) -> Optional[DecisionRecord]:
 
@@ -798,7 +798,7 @@ class DecisionStorage:
 
         return None
 
-    
+
 
     def get_by_strategy(self, strategy_id: str) -> List[DecisionRecord]:
 
@@ -806,7 +806,7 @@ class DecisionStorage:
 
         return [d for d in self.decisions if d.strategy_id == strategy_id]
 
-    
+
 
     def get_by_date_range(self,
 
@@ -824,7 +824,7 @@ class DecisionStorage:
 
         ]
 
-    
+
 
     def get_by_type(self, decision_type: DecisionType) -> List[DecisionRecord]:
 
@@ -832,7 +832,7 @@ class DecisionStorage:
 
         return [d for d in self.decisions if d.decision_type == decision_type]
 
-    
+
 
     def compute_hash(self, decision: DecisionRecord) -> str:
 
@@ -850,7 +850,7 @@ class DecisionStorage:
 
         }, sort_keys=True)
 
-        
+
 
         return hashlib.sha256(data.encode()).hexdigest()
 
@@ -924,13 +924,13 @@ class ExecutionTracker:
 
     """执行追踪器"""
 
-    
+
 
     def __init__(self):
 
         self.executions: Dict[str, ExecutionResult] = {}
 
-    
+
 
     def record_execution(self,
 
@@ -962,13 +962,13 @@ class ExecutionTracker:
 
         )
 
-        
+
 
         self.executions[decision_id] = result
 
         return result
 
-    
+
 
     def analyze_execution_quality(self,
 
@@ -982,11 +982,11 @@ class ExecutionTracker:
 
         executed_weight = execution.filled_quantity
 
-        
+
 
         weight_deviation = abs(planned_weight - executed_weight) / planned_weight if planned_weight > 0 else 0
 
-        
+
 
         return {
 
@@ -1008,7 +1008,7 @@ class PerformanceTracker:
 
     """绩效追踪器"""
 
-    
+
 
     def __init__(self):
 
@@ -1016,7 +1016,7 @@ class PerformanceTracker:
 
         self.active_positions: Dict[str, Dict] = {}
 
-    
+
 
     def start_tracking(self,
 
@@ -1040,7 +1040,7 @@ class PerformanceTracker:
 
         }
 
-    
+
 
     def update_tracking(self,
 
@@ -1058,7 +1058,7 @@ class PerformanceTracker:
 
             pos['min_price'] = min(pos['min_price'], current_price)
 
-    
+
 
     def end_tracking(self,
 
@@ -1078,31 +1078,31 @@ class PerformanceTracker:
 
             return None
 
-        
+
 
         entry_price = pos['entry_price']
 
         entry_date = pos['entry_date']
 
-        
+
 
         holding_days = (exit_date - entry_date).days
 
-        
+
 
         realized_pnl = exit_price - entry_price
 
         realized_pnl_pct = realized_pnl / entry_price if entry_price > 0 else 0
 
-        
+
 
         annualized_return = (1 + realized_pnl_pct) ** (365 / max(holding_days, 1)) - 1
 
-        
+
 
         max_drawdown = (pos['max_price'] - pos['min_price']) / pos['max_price'] if pos['max_price'] > 0 else 0
 
-        
+
 
         result = PerformanceResult(
 
@@ -1130,17 +1130,17 @@ class PerformanceTracker:
 
         )
 
-        
+
 
         self.performances[decision_id] = result
 
         del self.active_positions[decision_id]
 
-        
+
 
         return result
 
-    
+
 
     def get_performance_summary(self,
 
@@ -1150,13 +1150,13 @@ class PerformanceTracker:
 
         results = [self.performances[did] for did in decision_ids if did in self.performances]
 
-        
+
 
         if not results:
 
             return {}
 
-        
+
 
         return {
 
@@ -1232,13 +1232,13 @@ class DecisionQualityAnalyzer:
 
     """决策质量分析器"""
 
-    
+
 
     def __init__(self):
 
         self.quality_history: List[DecisionQualityMetrics] = []
 
-    
+
 
     def calculate_accuracy(self,
 
@@ -1252,7 +1252,7 @@ class DecisionQualityAnalyzer:
 
         total = 0
 
-        
+
 
         for decision in decisions:
 
@@ -1262,7 +1262,7 @@ class DecisionQualityAnalyzer:
 
                 total += 1
 
-                
+
 
                 if decision.action == 'buy' and perf.realized_pnl > 0:
 
@@ -1272,11 +1272,11 @@ class DecisionQualityAnalyzer:
 
                     correct += 1
 
-        
+
 
         return correct / total if total > 0 else 0
 
-    
+
 
     def analyze_consistency(self,
 
@@ -1288,13 +1288,13 @@ class DecisionQualityAnalyzer:
 
             return 1.0
 
-        
+
 
         similar_contexts = 0
 
         total_pairs = 0
 
-        
+
 
         for i, d1 in enumerate(decisions):
 
@@ -1308,11 +1308,11 @@ class DecisionQualityAnalyzer:
 
                         similar_contexts += 1
 
-        
+
 
         return similar_contexts / total_pairs if total_pairs > 0 else 1.0
 
-    
+
 
     def _similar_context(self,
 
@@ -1326,17 +1326,17 @@ class DecisionQualityAnalyzer:
 
         same_regime = d1.market_context.market_regime == d2.market_context.market_regime
 
-        
+
 
         vol_diff = abs(d1.market_context.volatility_level - d2.market_context.volatility_level)
 
         similar_vol = vol_diff < 0.1
 
-        
+
 
         return same_regime and similar_vol
 
-    
+
 
     def detect_biases(self,
 
@@ -1348,29 +1348,29 @@ class DecisionQualityAnalyzer:
 
         biases = {}
 
-        
+
 
         disposition_effect = self._calculate_disposition_effect(decisions, performances)
 
         biases['disposition_effect'] = disposition_effect
 
-        
+
 
         overconfidence = self._calculate_overconfidence(decisions, performances)
 
         biases['overconfidence'] = overconfidence
 
-        
+
 
         herding = self._calculate_herding(decisions)
 
         biases['herding'] = herding
 
-        
+
 
         return biases
 
-    
+
 
     def _calculate_disposition_effect(self,
 
@@ -1388,7 +1388,7 @@ class DecisionQualityAnalyzer:
 
         total_loss = 0
 
-        
+
 
         for decision in decisions:
 
@@ -1396,11 +1396,11 @@ class DecisionQualityAnalyzer:
 
                 continue
 
-            
+
 
             perf = performances[decision.decision_id]
 
-            
+
 
             if perf.realized_pnl > 0:
 
@@ -1418,17 +1418,17 @@ class DecisionQualityAnalyzer:
 
                     late_loss_close += 1
 
-        
+
 
         profit_close_rate = early_profit_close / total_profit if total_profit > 0 else 0
 
         loss_hold_rate = late_loss_close / total_loss if total_loss > 0 else 0
 
-        
+
 
         return profit_close_rate - loss_hold_rate
 
-    
+
 
     def _calculate_overconfidence(self,
 
@@ -1442,7 +1442,7 @@ class DecisionQualityAnalyzer:
 
         high_confidence_total = 0
 
-        
+
 
         for decision in decisions:
 
@@ -1450,7 +1450,7 @@ class DecisionQualityAnalyzer:
 
                 continue
 
-            
+
 
             if decision.confidence > 0.8:
 
@@ -1462,23 +1462,23 @@ class DecisionQualityAnalyzer:
 
                     high_confidence_correct += 1
 
-        
+
 
         if high_confidence_total == 0:
 
             return 0
 
-        
+
 
         actual_accuracy = high_confidence_correct / high_confidence_total
 
         expected_accuracy = 0.8
 
-        
+
 
         return max(0, expected_accuracy - actual_accuracy)
 
-    
+
 
     def _calculate_herding(self, decisions: List[DecisionRecord]) -> float:
 
@@ -1488,7 +1488,7 @@ class DecisionQualityAnalyzer:
 
             return 0
 
-        
+
 
         same_day_decisions = {}
 
@@ -1502,7 +1502,7 @@ class DecisionQualityAnalyzer:
 
             same_day_decisions[date_key].append(d)
 
-        
+
 
         herding_score = 0
 
@@ -1516,7 +1516,7 @@ class DecisionQualityAnalyzer:
 
                 herding_score += same_action_ratio
 
-        
+
 
         return herding_score / len(same_day_decisions) if same_day_decisions else 0
 
@@ -1526,13 +1526,13 @@ class PatternRecognizer:
 
     """模式识别器"""
 
-    
+
 
     def __init__(self):
 
         self.patterns: List[DecisionPattern] = []
 
-    
+
 
     def identify_success_patterns(self,
 
@@ -1544,7 +1544,7 @@ class PatternRecognizer:
 
         successful = []
 
-        
+
 
         for decision in decisions:
 
@@ -1552,7 +1552,7 @@ class PatternRecognizer:
 
                 continue
 
-            
+
 
             perf = performances[decision.decision_id]
 
@@ -1560,11 +1560,11 @@ class PatternRecognizer:
 
                 successful.append((decision, perf))
 
-        
+
 
         patterns = []
 
-        
+
 
         regime_groups = {}
 
@@ -1578,7 +1578,7 @@ class PatternRecognizer:
 
             regime_groups[regime].append((decision, perf))
 
-        
+
 
         for regime, group in regime_groups.items():
 
@@ -1586,7 +1586,7 @@ class PatternRecognizer:
 
                 avg_return = sum(p.realized_pnl_pct for _, p in group) / len(group)
 
-                
+
 
                 pattern = DecisionPattern(
 
@@ -1606,13 +1606,13 @@ class PatternRecognizer:
 
                 patterns.append(pattern)
 
-        
+
 
         self.patterns.extend(patterns)
 
         return patterns
 
-    
+
 
     def identify_failure_patterns(self,
 
@@ -1624,7 +1624,7 @@ class PatternRecognizer:
 
         failed = []
 
-        
+
 
         for decision in decisions:
 
@@ -1632,7 +1632,7 @@ class PatternRecognizer:
 
                 continue
 
-            
+
 
             perf = performances[decision.decision_id]
 
@@ -1640,11 +1640,11 @@ class PatternRecognizer:
 
                 failed.append((decision, perf))
 
-        
+
 
         patterns = []
 
-        
+
 
         high_vol_failures = [
 
@@ -1654,13 +1654,13 @@ class PatternRecognizer:
 
         ]
 
-        
+
 
         if len(high_vol_failures) >= 3:
 
             avg_loss = sum(p.realized_pnl_pct for _, p in high_vol_failures) / len(high_vol_failures)
 
-            
+
 
             pattern = DecisionPattern(
 
@@ -1680,13 +1680,13 @@ class PatternRecognizer:
 
             patterns.append(pattern)
 
-        
+
 
         self.patterns.extend(patterns)
 
         return patterns
 
-    
+
 
     def generate_improvement_suggestions(self,
 
@@ -1696,13 +1696,13 @@ class PatternRecognizer:
 
         suggestions = []
 
-        
+
 
         success_patterns = [p for p in patterns if p.pattern_type == 'success']
 
         failure_patterns = [p for p in patterns if p.pattern_type == 'failure']
 
-        
+
 
         for pattern in success_patterns:
 
@@ -1712,7 +1712,7 @@ class PatternRecognizer:
 
             )
 
-        
+
 
         for pattern in failure_patterns:
 
@@ -1722,7 +1722,7 @@ class PatternRecognizer:
 
             )
 
-        
+
 
         return suggestions
 
@@ -1752,7 +1752,7 @@ class ReviewReport:
 
     generated_at: datetime
 
-    
+
 
     decision_summary: Dict
 
@@ -1796,7 +1796,7 @@ class ReviewReportGenerator:
 
     """复盘报告生成器"""
 
-    
+
 
     def __init__(self):
 
@@ -1804,7 +1804,7 @@ class ReviewReportGenerator:
 
         self.report_counter = 0
 
-    
+
 
     def generate_weekly_review(self,
 
@@ -1820,7 +1820,7 @@ class ReviewReportGenerator:
 
         self.report_counter += 1
 
-        
+
 
         decision_summary = {
 
@@ -1832,7 +1832,7 @@ class ReviewReportGenerator:
 
         }
 
-        
+
 
         for d in decisions:
 
@@ -1840,13 +1840,13 @@ class ReviewReportGenerator:
 
             decision_summary['by_type'][type_key] = decision_summary['by_type'].get(type_key, 0) + 1
 
-            
+
 
             strategy_key = d.strategy_id
 
             decision_summary['by_strategy'][strategy_key] = decision_summary['by_strategy'].get(strategy_key, 0) + 1
 
-        
+
 
         performance_summary = {
 
@@ -1858,7 +1858,7 @@ class ReviewReportGenerator:
 
         }
 
-        
+
 
         quality_analysis = {
 
@@ -1870,7 +1870,7 @@ class ReviewReportGenerator:
 
         }
 
-        
+
 
         patterns_identified = [
 
@@ -1890,13 +1890,13 @@ class ReviewReportGenerator:
 
         ]
 
-        
+
 
         improvement_suggestions = self._generate_suggestions(quality_metrics, patterns)
 
         lessons_learned = self._extract_lessons(decisions, performances)
 
-        
+
 
         report = ReviewReport(
 
@@ -1924,13 +1924,13 @@ class ReviewReportGenerator:
 
         )
 
-        
+
 
         self.reports.append(report)
 
         return report
 
-    
+
 
     def _generate_suggestions(self,
 
@@ -1942,19 +1942,19 @@ class ReviewReportGenerator:
 
         suggestions = []
 
-        
+
 
         if quality_metrics.accuracy_rate < 0.5:
 
             suggestions.append("决策准确率较低，建议审查决策逻辑和信号质量")
 
-        
+
 
         if quality_metrics.consistency_score < 0.7:
 
             suggestions.append("决策一致性较低，建议标准化决策流程")
 
-        
+
 
         for bias_type, bias_value in quality_metrics.bias_analysis.items():
 
@@ -1962,11 +1962,11 @@ class ReviewReportGenerator:
 
                 suggestions.append(f"检测到{bias_type}偏差({bias_value:.2f})，建议针对性改进")
 
-        
+
 
         return suggestions
 
-    
+
 
     def _extract_lessons(self,
 
@@ -1978,7 +1978,7 @@ class ReviewReportGenerator:
 
         lessons = []
 
-        
+
 
         big_wins = [
 
@@ -1992,7 +1992,7 @@ class ReviewReportGenerator:
 
         ]
 
-        
+
 
         for decision, perf in big_wins[:3]:
 
@@ -2004,7 +2004,7 @@ class ReviewReportGenerator:
 
             )
 
-        
+
 
         big_losses = [
 
@@ -2018,7 +2018,7 @@ class ReviewReportGenerator:
 
         ]
 
-        
+
 
         for decision, perf in big_losses[:3]:
 
@@ -2030,7 +2030,7 @@ class ReviewReportGenerator:
 
             )
 
-        
+
 
         return lessons
 
@@ -2040,7 +2040,7 @@ class ExperienceLibrary:
 
     """经验库管理"""
 
-    
+
 
     def __init__(self):
 
@@ -2050,7 +2050,7 @@ class ExperienceLibrary:
 
         self.category_index: Dict[str, List[int]] = {}
 
-    
+
 
     def add_experience(self,
 
@@ -2068,7 +2068,7 @@ class ExperienceLibrary:
 
         self.experience_counter += 1
 
-        
+
 
         experience = Experience(
 
@@ -2086,11 +2086,11 @@ class ExperienceLibrary:
 
         )
 
-        
+
 
         self.experiences.append(experience)
 
-        
+
 
         if category not in self.category_index:
 
@@ -2098,11 +2098,11 @@ class ExperienceLibrary:
 
         self.category_index[category].append(len(self.experiences) - 1)
 
-        
+
 
         return experience
 
-    
+
 
     def search_by_conditions(self,
 
@@ -2112,31 +2112,31 @@ class ExperienceLibrary:
 
         relevant = []
 
-        
+
 
         for exp in self.experiences:
 
             match_score = self._calculate_match_score(
 
-                current_conditions, 
+                current_conditions,
 
                 exp.applicable_conditions
 
             )
 
-            
+
 
             if match_score > 0.5:
 
                 relevant.append((exp, match_score))
 
-        
+
 
         relevant.sort(key=lambda x: x[1], reverse=True)
 
         return [exp for exp, _ in relevant[:10]]
 
-    
+
 
     def _calculate_match_score(self,
 
@@ -2150,7 +2150,7 @@ class ExperienceLibrary:
 
             return 0
 
-        
+
 
         common_keys = set(conditions1.keys()) & set(conditions2.keys())
 
@@ -2158,7 +2158,7 @@ class ExperienceLibrary:
 
             return 0
 
-        
+
 
         matches = sum(
 
@@ -2168,11 +2168,11 @@ class ExperienceLibrary:
 
         )
 
-        
+
 
         return matches / len(common_keys)
 
-    
+
 
     def increment_usage(self, experience_id: str):
 
@@ -2256,7 +2256,7 @@ class AuditLogManager:
 
     """审计日志管理"""
 
-    
+
 
     def __init__(self):
 
@@ -2264,7 +2264,7 @@ class AuditLogManager:
 
         self.log_counter = 0
 
-    
+
 
     def log_decision(self,
 
@@ -2276,7 +2276,7 @@ class AuditLogManager:
 
         self.log_counter += 1
 
-        
+
 
         log = AuditLog(
 
@@ -2306,13 +2306,13 @@ class AuditLogManager:
 
         )
 
-        
+
 
         log.hash = self._compute_hash(log)
 
         self.logs.append(log)
 
-    
+
 
     def log_trade(self,
 
@@ -2324,7 +2324,7 @@ class AuditLogManager:
 
         self.log_counter += 1
 
-        
+
 
         log = AuditLog(
 
@@ -2344,13 +2344,13 @@ class AuditLogManager:
 
         )
 
-        
+
 
         log.hash = self._compute_hash(log)
 
         self.logs.append(log)
 
-    
+
 
     def _compute_hash(self, log: AuditLog) -> str:
 
@@ -2368,11 +2368,11 @@ class AuditLogManager:
 
         }, sort_keys=True)
 
-        
+
 
         return hashlib.sha256(data.encode()).hexdigest()
 
-    
+
 
     def verify_integrity(self) -> bool:
 
@@ -2388,7 +2388,7 @@ class AuditLogManager:
 
         return True
 
-    
+
 
     def query_logs(self,
 
@@ -2404,35 +2404,35 @@ class AuditLogManager:
 
         results = self.logs
 
-        
+
 
         if log_type:
 
             results = [l for l in results if l.log_type == log_type]
 
-        
+
 
         if start_date:
 
             results = [l for l in results if l.timestamp.date() >= start_date]
 
-        
+
 
         if end_date:
 
             results = [l for l in results if l.timestamp.date() <= end_date]
 
-        
+
 
         if resource:
 
             results = [l for l in results if l.resource == resource]
 
-        
+
 
         return results
 
-    
+
 
     def export_logs(self,
 
@@ -2446,7 +2446,7 @@ class AuditLogManager:
 
         logs = self.query_logs(start_date=start_date, end_date=end_date)
 
-        
+
 
         if format == 'json':
 
@@ -2472,7 +2472,7 @@ class AuditLogManager:
 
             ], indent=2)
 
-        
+
 
         return ""
 
@@ -2482,7 +2482,7 @@ class ComplianceReportGenerator:
 
     """合规报告生成器"""
 
-    
+
 
     def __init__(self):
 
@@ -2490,7 +2490,7 @@ class ComplianceReportGenerator:
 
         self.report_counter = 0
 
-    
+
 
     def generate_monthly_report(self,
 
@@ -2504,17 +2504,17 @@ class ComplianceReportGenerator:
 
         self.report_counter += 1
 
-        
+
 
         total_decisions = len(decisions)
 
         total_trades = len([l for l in audit_logs if l.log_type == 'trade'])
 
-        
+
 
         compliance_status = 'compliant' if len(violations) == 0 else 'non_compliant'
 
-        
+
 
         summary = {
 
@@ -2528,7 +2528,7 @@ class ComplianceReportGenerator:
 
         }
 
-        
+
 
         report = ComplianceReport(
 
@@ -2554,7 +2554,7 @@ class ComplianceReportGenerator:
 
         )
 
-        
+
 
         self.reports.append(report)
 
@@ -2719,4 +2719,3 @@ class ComplianceReportGenerator:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

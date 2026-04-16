@@ -60,7 +60,7 @@ implementation_status: Active
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -1136,7 +1136,7 @@ pip install -r requirements.txt
 
 
 
-   
+
 
 
 
@@ -1148,7 +1148,7 @@ pip install -r requirements.txt
 
 
 
-   
+
 
 
 
@@ -1164,7 +1164,7 @@ pip install -r requirements.txt
 
 
 
-       
+
 
 
 
@@ -1184,7 +1184,7 @@ pip install -r requirements.txt
 
 
 
-       
+
 
 
 
@@ -1208,7 +1208,7 @@ self.logger.info(f"[CORRUPTED]ﻝ? {self.strategy_id}")
 
 
 
-       
+
 
 
 
@@ -1248,7 +1248,7 @@ self.logger.info(f"[CORRUPTED]ﻝ? {self.strategy_id}")
 
 
 
-   
+
 
 
 
@@ -1260,7 +1260,7 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-   
+
 
 
 
@@ -1276,7 +1276,7 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-   
+
 
 
 
@@ -1312,7 +1312,7 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-   
+
 
 
 
@@ -1324,7 +1324,7 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-   
+
 
 
 
@@ -1792,11 +1792,11 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-**[CORRUPTED]**: 2026-04-02  
+**[CORRUPTED]**: 2026-04-02
 
 
 
-**[CORRUPTED]ﺑ?*: 2026-04-02  
+**[CORRUPTED]ﺑ?*: 2026-04-02
 
 
 
@@ -1830,7 +1830,7 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 
-**ﻟ[CORRUPTED]ﺍﻛﺛ**: 
+**ﻟ[CORRUPTED]ﺍﻛﺛ**:
 
 
 
@@ -1851,6 +1851,3 @@ strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_follow
 
 
 **ﻝ[CORRUPTED]ﻛﺛ[CORRUPTED]ﻛﺗﻠ[CORRUPTED]?* ﻭ
-
-
-

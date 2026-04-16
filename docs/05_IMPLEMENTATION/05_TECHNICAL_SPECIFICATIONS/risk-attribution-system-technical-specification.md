@@ -42,7 +42,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -166,7 +166,7 @@ class RiskAttributionSystem:
 
 
 
-    
+
 
 
 
@@ -198,7 +198,7 @@ class RiskAttributionSystem:
 
 
 
-    
+
 
 
 
@@ -222,7 +222,7 @@ class RiskAttributionSystem:
 
 
 
-        
+
 
 
 
@@ -234,7 +234,7 @@ class RiskAttributionSystem:
 
 
 
-            returns_data: ﮔﭘﻝﻝﮔﺍ?            
+            returns_data: ﮔﭘﻝﻝﮔﺍ?
 
 
 
@@ -254,7 +254,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -274,7 +274,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -286,7 +286,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-            
+
 
 
 
@@ -306,7 +306,7 @@ FactorAttribution: ﮒﮒﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -326,7 +326,7 @@ FactorAttribution: ﮒﮒﮒﺛﮒﻝﭨﮔ
 
 
 
-        
+
 
 
 
@@ -338,7 +338,7 @@ FactorAttribution: ﮒﮒﮒﺛﮒﻝﭨﮔ
 
 
 
-            
+
 
 
 
@@ -536,7 +536,7 @@ def attribute_risk(
 
 
 
-    
+
 
 
 
@@ -552,7 +552,7 @@ def attribute_risk(
 
 
 
-    
+
 
 
 
@@ -596,7 +596,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -612,7 +612,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -632,7 +632,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -652,7 +652,7 @@ AttributionResult: ﮒﺛﮒﻝﭨﮔ
 
 
 
-    
+
 
 
 
@@ -722,7 +722,7 @@ class TestRiskAttribution:
 
 
 
-    
+
 
 
 
@@ -742,7 +742,7 @@ class TestRiskAttribution:
 
 
 
-        
+
 
 
 
@@ -754,7 +754,7 @@ class TestRiskAttribution:
 
 
 
-        
+
 
 
 
@@ -782,7 +782,7 @@ assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ?
 
 
 
-        
+
 
 
 
@@ -790,7 +790,7 @@ assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ?
 
 
 
-        
+
 
 
 
@@ -863,6 +863,3 @@ assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ?
 
 
 **ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
-
-
-

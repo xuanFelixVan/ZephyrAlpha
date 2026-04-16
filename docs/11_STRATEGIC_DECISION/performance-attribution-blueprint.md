@@ -37,12 +37,12 @@ implementation_status: 设计阶段
 
 # Layer 11.7: 业绩归因系统蓝图
 > **核心职责**: 业绩归因系统蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：业绩归因系统蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 > **核心职责**: Performance Attribution蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Performance Attribution蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -80,9 +80,9 @@ implementation_status: 设计阶段
 ```---
 ```
 
-> **版本**: v1.0  
-> **创建日期**: 2026-04-05  
-> **实施周期**: 2.5个月  
+> **版本**: v1.0
+> **创建日期**: 2026-04-05
+> **实施周期**: 2.5个月
 > **目标**: 构建专业级业绩归因体系，实现多维度业绩分解和归因分析
 
 ```
@@ -239,46 +239,46 @@ class BrinsonAttributionResult:
 
 class BrinsonAttributionEngine:
     """Brinson归因引擎"""
-    
+
     def __init__(self):
         self.tolerance = 1e-6
-        
-    def calculate_attribution(self, 
+
+    def calculate_attribution(self,
                              portfolio_weights: Dict[str, float],
                              benchmark_weights: Dict[str, float],
                              portfolio_returns: Dict[str, float],
                              benchmark_returns: Dict[str, float]) -> BrinsonAttributionResult:
         """计算Brinson归因"""
-        
+
         assets = list(set(portfolio_weights.keys()) | set(benchmark_weights.keys()))
-        
+
         w_p = np.array([portfolio_weights.get(a, 0.0) for a in assets])
         w_b = np.array([benchmark_weights.get(a, 0.0) for a in assets])
         r_p = np.array([portfolio_returns.get(a, 0.0) for a in assets])
         r_b = np.array([benchmark_returns.get(a, 0.0) for a in assets])
-        
+
         portfolio_total_return = np.sum(w_p * r_p)
         benchmark_total_return = np.sum(w_b * r_b)
-        
+
         allocation_effect = self._calculate_allocation_effect(
             w_p, w_b, r_b, benchmark_total_return
         )
-        
+
         selection_effect = self._calculate_selection_effect(
             w_b, r_p, r_b
         )
-        
+
         interaction_effect = self._calculate_interaction_effect(
             w_p, w_b, r_p, r_b
         )
-        
+
         total_excess_return = portfolio_total_return - benchmark_total_return
-        
+
         details = self._generate_detailed_attribution(
-            assets, w_p, w_b, r_p, r_b, 
+            assets, w_p, w_b, r_p, r_b,
             allocation_effect, selection_effect, interaction_effect
         )
-        
+
         return BrinsonAttributionResult(
             allocation_effect=allocation_effect,
             selection_effect=selection_effect,
@@ -287,31 +287,31 @@ class BrinsonAttributionEngine:
             details=details,
             timestamp=datetime.now()
         )
-    
-    def _calculate_allocation_effect(self, 
+
+    def _calculate_allocation_effect(self,
                                     w_p: np.ndarray,
                                     w_b: np.ndarray,
                                     r_b: np.ndarray,
                                     benchmark_total_return: float) -> float:
         """计算配置效应"""
         return np.sum((w_p - w_b) * (r_b - benchmark_total_return))
-    
-    def _calculate_selection_effect(self, 
+
+    def _calculate_selection_effect(self,
                                    w_b: np.ndarray,
                                    r_p: np.ndarray,
                                    r_b: np.ndarray) -> float:
         """计算选择效应"""
         return np.sum(w_b * (r_p - r_b))
-    
-    def _calculate_interaction_effect(self, 
+
+    def _calculate_interaction_effect(self,
                                      w_p: np.ndarray,
                                      w_b: np.ndarray,
                                      r_p: np.ndarray,
                                      r_b: np.ndarray) -> float:
         """计算交互效应"""
         return np.sum((w_p - w_b) * (r_p - r_b))
-    
-    def _generate_detailed_attribution(self, 
+
+    def _generate_detailed_attribution(self,
                                       assets: List[str],
                                       w_p: np.ndarray,
                                       w_b: np.ndarray,
@@ -330,12 +330,12 @@ class BrinsonAttributionEngine:
                 'total_excess_return': allocation_effect + selection_effect + interaction_effect
             }
         }
-        
+
         for i, asset in enumerate(assets):
             asset_allocation = (w_p[i] - w_b[i]) * r_b[i]
             asset_selection = w_b[i] * (r_p[i] - r_b[i])
             asset_interaction = (w_p[i] - w_b[i]) * (r_p[i] - r_b[i])
-            
+
             details['by_asset'][asset] = {
                 'portfolio_weight': w_p[i],
                 'benchmark_weight': w_b[i],
@@ -346,10 +346,10 @@ class BrinsonAttributionEngine:
                 'interaction_effect': asset_interaction,
                 'total_effect': asset_allocation + asset_selection + asset_interaction
             }
-        
+
         return details
-    
-    def generate_attribution_report(self, 
+
+    def generate_attribution_report(self,
                                    result: BrinsonAttributionResult) -> str:
         """生成归因报告"""
         report = []
@@ -361,7 +361,7 @@ class BrinsonAttributionEngine:
         report.append(f"  配置效应: {result.allocation_effect:.4%}")
         report.append(f"  选择效应: {result.selection_effect:.4%}")
         report.append(f"  交互效应: {result.interaction_effect:.4%}")
-        
+
         report.append(f"\n按资产分解:")
         for asset, details in result.details['by_asset'].items():
             report.append(f"\n  {asset}:")
@@ -370,9 +370,9 @@ class BrinsonAttributionEngine:
             report.append(f"    组合收益: {details['portfolio_return']:.4%}")
             report.append(f"    基准收益: {details['benchmark_return']:.4%}")
             report.append(f"    总效应: {details['total_effect']:.4%}")
-        
+
         report.append("\n" + "=" * 60)
-        
+
         return "\n".join(report)
 ```
 
@@ -417,32 +417,32 @@ r_squared: float                        # R
 
 class FactorAttributionEngine:
     """因子归因引擎"""
-    
+
     def __init__(self):
         self.factors = ['market', 'size', 'value', 'momentum', 'quality', 'volatility']
-        
-    def calculate_attribution(self, 
+
+    def calculate_attribution(self,
                              portfolio_return: float,
                              factor_exposures: Dict[str, float],
                              factor_returns: Dict[str, float]) -> FactorAttributionResult:
         """计算因子归因"""
-        
+
         factor_contributions = {}
         total_factor_contribution = 0.0
-        
+
         for factor in self.factors:
             if factor in factor_exposures and factor in factor_returns:
                 contribution = factor_exposures[factor] * factor_returns[factor]
                 factor_contributions[factor] = contribution
                 total_factor_contribution += contribution
-        
+
         idiosyncratic_return = portfolio_return - total_factor_contribution
-        
+
         r_squared = self._calculate_r_squared(
             portfolio_return,
             total_factor_contribution
         )
-        
+
         details = {
             'factor_exposures': factor_exposures,
             'factor_returns': factor_returns,
@@ -451,7 +451,7 @@ class FactorAttributionEngine:
                 for factor, contrib in factor_contributions.items()
             }
         }
-        
+
         return FactorAttributionResult(
             factor_contributions=factor_contributions,
             idiosyncratic_return=idiosyncratic_return,
@@ -460,36 +460,36 @@ class FactorAttributionEngine:
             details=details,
             timestamp=datetime.now()
         )
-    
-    def _calculate_r_squared(self, 
+
+    def _calculate_r_squared(self,
                             portfolio_return: float,
                             factor_contribution: float) -> float:
         """计算R"""
         if abs(portfolio_return) < 1e-10:
             return 0.0
-        
+
         explained_variance = factor_contribution ** 2
         total_variance = portfolio_return ** 2
-        
+
         return explained_variance / total_variance if total_variance > 0 else 0.0
-    
-    def analyze_factor_exposure_changes(self, 
+
+    def analyze_factor_exposure_changes(self,
                                        current_exposures: Dict[str, float],
                                        previous_exposures: Dict[str, float]) -> Dict:
         """分析因子暴露变化"""
         changes = {}
-        
+
         for factor in self.factors:
             current = current_exposures.get(factor, 0.0)
             previous = previous_exposures.get(factor, 0.0)
-            
+
             changes[factor] = {
                 'current': current,
                 'previous': previous,
                 'change': current - previous,
                 'change_pct': (current - previous) / abs(previous) if abs(previous) > 1e-10 else 0.0
             }
-        
+
         return {
             'exposure_changes': changes,
             'significant_changes': [
@@ -539,38 +539,38 @@ class RiskAttributionResult:
 
 class RiskAttributionEngine:
     """风险归因引擎"""
-    
+
     def __init__(self):
         self.annualization_factor = np.sqrt(252)
-        
-    def calculate_attribution(self, 
+
+    def calculate_attribution(self,
                              portfolio_weights: Dict[str, float],
                              covariance_matrix: np.ndarray,
                              portfolio_return: float,
                              asset_names: List[str]) -> RiskAttributionResult:
         """计算风险归因"""
-        
+
         w = np.array([portfolio_weights.get(name, 0.0) for name in asset_names])
-        
+
         portfolio_variance = np.dot(w, np.dot(covariance_matrix, w))
         portfolio_risk = np.sqrt(portfolio_variance)
-        
+
         risk_contributions = self._calculate_risk_contributions(
             w, covariance_matrix, portfolio_risk, asset_names
         )
-        
+
         marginal_risks = self._calculate_marginal_risks(
             w, covariance_matrix, portfolio_risk, asset_names
         )
-        
+
         risk_adjusted_return = portfolio_return / portfolio_risk if portfolio_risk > 0 else 0.0
-        
+
         details = {
             'portfolio_variance': portfolio_variance,
             'annualized_risk': portfolio_risk * self.annualization_factor,
             'risk_concentration': self._calculate_risk_concentration(risk_contributions)
         }
-        
+
         return RiskAttributionResult(
             total_risk=portfolio_risk,
             risk_contributions=risk_contributions,
@@ -579,47 +579,47 @@ class RiskAttributionEngine:
             details=details,
             timestamp=datetime.now()
         )
-    
-    def _calculate_risk_contributions(self, 
+
+    def _calculate_risk_contributions(self,
                                      w: np.ndarray,
                                      cov_matrix: np.ndarray,
                                      portfolio_risk: float,
                                      asset_names: List[str]) -> Dict[str, float]:
         """计算风险贡献度"""
         risk_contributions = {}
-        
+
         for i, name in enumerate(asset_names):
             rc_i = w[i] * np.dot(w, cov_matrix[:, i]) / portfolio_risk
             risk_contributions[name] = rc_i
-        
+
         return risk_contributions
-    
-    def _calculate_marginal_risks(self, 
+
+    def _calculate_marginal_risks(self,
                                  w: np.ndarray,
                                  cov_matrix: np.ndarray,
                                  portfolio_risk: float,
                                  asset_names: List[str]) -> Dict[str, float]:
         """计算边际风险"""
         marginal_risks = {}
-        
+
         for i, name in enumerate(asset_names):
             mr_i = np.dot(w, cov_matrix[:, i]) / portfolio_risk
             marginal_risks[name] = mr_i
-        
+
         return marginal_risks
-    
-    def _calculate_risk_concentration(self, 
+
+    def _calculate_risk_concentration(self,
                                      risk_contributions: Dict[str, float]) -> Dict:
         """计算风险集中度"""
         contributions = np.array(list(risk_contributions.values()))
         contributions = np.abs(contributions)
         total = np.sum(contributions)
-        
+
         if total == 0:
             return {'concentration_ratio': 0.0, 'top3_contribution': 0.0}
-        
+
         sorted_contributions = np.sort(contributions)[::-1]
-        
+
         return {
             'concentration_ratio': sorted_contributions[0] / total if len(sorted_contributions) > 0 else 0.0,
             'top3_contribution': np.sum(sorted_contributions[:3]) / total if len(sorted_contributions) >= 3 else 0.0
@@ -663,18 +663,18 @@ class MultiPeriodAttributionResult:
 
 class MultiPeriodAttributionEngine:
     """多期归因引擎"""
-    
+
     def __init__(self, brinson_engine: BrinsonAttributionEngine):
         self.brinson_engine = brinson_engine
-        
-    def calculate_multi_period_attribution(self, 
+
+    def calculate_multi_period_attribution(self,
                                           periods_data: List[Dict]) -> MultiPeriodAttributionResult:
         """计算多期归因"""
-        
+
         period_attributions = []
         cumulative_portfolio_return = 1.0
         cumulative_benchmark_return = 1.0
-        
+
         for period_data in periods_data:
             attribution = self.brinson_engine.calculate_attribution(
                 portfolio_weights=period_data['portfolio_weights'],
@@ -682,30 +682,30 @@ class MultiPeriodAttributionEngine:
                 portfolio_returns=period_data['portfolio_returns'],
                 benchmark_returns=period_data['benchmark_returns']
             )
-            
+
             period_return = sum(period_data['portfolio_returns'].values())
             benchmark_return = sum(period_data['benchmark_returns'].values())
-            
+
             cumulative_portfolio_return *= (1 + period_return)
             cumulative_benchmark_return *= (1 + benchmark_return)
-            
+
             period_attributions.append({
                 'period': period_data['period'],
                 'attribution': attribution,
                 'portfolio_return': period_return,
                 'benchmark_return': benchmark_return
             })
-        
+
         cumulative_excess_return = cumulative_portfolio_return - cumulative_benchmark_return
-        
+
         time_weighted_attribution = self._calculate_time_weighted_attribution(
             period_attributions
         )
-        
+
         attribution_stability = self._calculate_attribution_stability(
             period_attributions
         )
-        
+
         return MultiPeriodAttributionResult(
             cumulative_excess_return=cumulative_excess_return,
             period_attributions=period_attributions,
@@ -713,50 +713,50 @@ class MultiPeriodAttributionEngine:
             attribution_stability=attribution_stability,
             timestamp=datetime.now()
         )
-    
-    def _calculate_time_weighted_attribution(self, 
+
+    def _calculate_time_weighted_attribution(self,
                                             period_attributions: List[Dict]) -> Dict:
         """计算时间加权归因"""
         tw_allocation = 0.0
         tw_selection = 0.0
         tw_interaction = 0.0
-        
+
         for period_attr in period_attributions:
             attr = period_attr['attribution']
             portfolio_return = period_attr['portfolio_return']
             benchmark_return = period_attr['benchmark_return']
-            
+
             weight = (1 + benchmark_return) / (1 + portfolio_return)
-            
+
             tw_allocation += attr.allocation_effect * weight
             tw_selection += attr.selection_effect * weight
             tw_interaction += attr.interaction_effect * weight
-        
+
         return {
             'time_weighted_allocation': tw_allocation,
             'time_weighted_selection': tw_selection,
             'time_weighted_interaction': tw_interaction
         }
-    
-    def _calculate_attribution_stability(self, 
+
+    def _calculate_attribution_stability(self,
                                         period_attributions: List[Dict]) -> float:
         """计算归因稳定性"""
         if len(period_attributions) < 2:
             return 1.0
-        
+
         allocation_effects = [
-            p['attribution'].allocation_effect 
+            p['attribution'].allocation_effect
             for p in period_attributions
         ]
-        
+
         allocation_std = np.std(allocation_effects)
         allocation_mean = np.mean(allocation_effects)
-        
+
         if abs(allocation_mean) < 1e-10:
             return 0.0
-        
+
         stability = 1.0 - min(allocation_std / abs(allocation_mean), 1.0)
-        
+
         return max(0.0, stability)
 ```
 
@@ -789,21 +789,21 @@ class AttributionReport:
 ```python
 class AttributionInterface:
     """业绩归因接口"""
-    
-    def calculate_full_attribution(self, 
+
+    def calculate_full_attribution(self,
                                   portfolio_data: Dict,
                                   benchmark_data: Dict,
                                   factor_data: Dict) -> AttributionReport:
         """计算完整归因"""
         pass
-    
-    def generate_attribution_report(self, 
+
+    def generate_attribution_report(self,
                                    result: AttributionReport,
                                    format: str = 'markdown') -> str:
         """生成归因报告"""
         pass
-    
-    def compare_attributions(self, 
+
+    def compare_attributions(self,
                             result1: AttributionReport,
                             result2: AttributionReport) -> Dict:
         """对比归因结果"""
@@ -901,43 +901,43 @@ Layer 8 监控报告
 ```python
 class IndustryAttributionEngine:
     """行业归因引擎"""
-    
+
     def __init__(self):
         self.industries = [
             '金融', '房地产', '工业', '材料', '能源',
             '可选消费', '必选消费', '医疗保健', '信息技术', '电信服务', '公用事业'
         ]
-    
-    def calculate_industry_attribution(self, 
+
+    def calculate_industry_attribution(self,
                                       portfolio_weights: Dict[str, float],
                                       benchmark_weights: Dict[str, float],
                                       industry_returns: Dict[str, float]) -> Dict:
         """计算行业归因"""
         brinson_engine = BrinsonAttributionEngine()
-        
+
         result = brinson_engine.calculate_attribution(
             portfolio_weights=portfolio_weights,
             benchmark_weights=benchmark_weights,
             portfolio_returns=industry_returns,
             benchmark_returns=industry_returns
         )
-        
+
         return {
             'industry_attribution': result,
             'top_positive_industries': self._get_top_industries(result, positive=True),
             'top_negative_industries': self._get_top_industries(result, positive=False)
         }
-    
+
     def _get_top_industries(self, result: BrinsonAttributionResult, positive: bool = True) -> List:
         """获取贡献最大的行业"""
         by_asset = result.details['by_asset']
-        
+
         sorted_industries = sorted(
             by_asset.items(),
             key=lambda x: x[1]['total_effect'],
             reverse=positive
         )
-        
+
         return sorted_industries[:3]
 ```
 
@@ -946,26 +946,26 @@ class IndustryAttributionEngine:
 ```python
 class StyleAttributionEngine:
     """风格归因引擎"""
-    
+
     def __init__(self):
         self.styles = ['大盘成长', '大盘价值', '小盘成长', '小盘价值']
-    
-    def calculate_style_attribution(self, 
+
+    def calculate_style_attribution(self,
                                    portfolio_style_exposure: Dict[str, float],
                                    style_returns: Dict[str, float]) -> Dict:
         """计算风格归因"""
         style_contributions = {}
-        
+
         for style in self.styles:
             exposure = portfolio_style_exposure.get(style, 0.0)
             style_return = style_returns.get(style, 0.0)
-            
+
             style_contributions[style] = {
                 'exposure': exposure,
                 'return': style_return,
                 'contribution': exposure * style_return
             }
-        
+
         return {
             'style_contributions': style_contributions,
             'dominant_style': max(style_contributions.items(), key=lambda x: x[1]['contribution'])[0]
@@ -1044,7 +1044,7 @@ class StyleAttributionEngine:
 ```---
 ```
 
-**文档状态**: ✅ 设计完成  
+**文档状态**: ✅ 设计完成
 **下一步**: 创建流动性管理系统蓝图
 ```
 ```---

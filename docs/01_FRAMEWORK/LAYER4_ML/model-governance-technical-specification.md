@@ -353,7 +353,7 @@ implementation_status: "技术规格设计完?regulatory_framework: SR 11-7, OCC
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -383,7 +383,7 @@ implementation_status: "技术规格设计完?regulatory_framework: SR 11-7, OCC
 
 
 
-- **核心职责**: 模型治理与合规管?- **职责边界**: 
+- **核心职责**: 模型治理与合规管?- **职责边界**:
 
 
 
@@ -1109,7 +1109,7 @@ class ModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -1133,7 +1133,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1151,7 +1151,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1169,7 +1169,7 @@ class ModelRiskManagement:
 
 
 
-            
+
 
 
 
@@ -1199,7 +1199,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1229,7 +1229,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1241,7 +1241,7 @@ class ModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -1259,7 +1259,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1277,7 +1277,7 @@ class ModelRiskManagement:
 
 
 
-            
+
 
 
 
@@ -1349,7 +1349,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1373,7 +1373,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1397,7 +1397,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1421,7 +1421,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1433,7 +1433,7 @@ class ModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -1451,7 +1451,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1469,7 +1469,7 @@ class ModelRiskManagement:
 
 
 
-            
+
 
 
 
@@ -1499,7 +1499,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1553,7 +1553,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1589,7 +1589,7 @@ class ModelRiskManagement:
 
 
 
-            
+
 
 
 
@@ -1607,7 +1607,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1619,7 +1619,7 @@ class ModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -1637,7 +1637,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1655,7 +1655,7 @@ class ModelRiskManagement:
 
 
 
-            
+
 
 
 
@@ -1691,7 +1691,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1763,7 +1763,7 @@ class ModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -1799,7 +1799,7 @@ class ModelDocumentation:
 
 
 
-    
+
 
 
 
@@ -1823,7 +1823,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -1841,7 +1841,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -1859,7 +1859,7 @@ class ModelDocumentation:
 
 
 
-            
+
 
 
 
@@ -1901,7 +1901,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -2021,7 +2021,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -2033,7 +2033,7 @@ class ModelDocumentation:
 
 
 
-    
+
 
 
 
@@ -2045,7 +2045,7 @@ class ModelDocumentation:
 
 
 
-        """生成技术文?        
+        """生成技术文?
 
 
 
@@ -2063,7 +2063,7 @@ class ModelDocumentation:
 
 
 
-            
+
 
 
 
@@ -2171,7 +2171,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -2183,7 +2183,7 @@ class ModelDocumentation:
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -2219,7 +2219,7 @@ class ModelDocumentation:
 
 
 
-            
+
 
 
 
@@ -2321,7 +2321,7 @@ class ModelDocumentation:
 
 
 
-        
+
 
 
 
@@ -2357,7 +2357,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -2381,7 +2381,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2441,7 +2441,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2471,7 +2471,7 @@ class AuditTrail:
 
 
 
-            context: 上下文信?            
+            context: 上下文信?
 
 
 
@@ -2579,7 +2579,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2591,7 +2591,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2603,7 +2603,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -2669,7 +2669,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2699,7 +2699,7 @@ class AuditTrail:
 
 
 
-            
+
 
 
 
@@ -2813,7 +2813,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2825,7 +2825,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2837,7 +2837,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -2891,7 +2891,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -2915,7 +2915,7 @@ class AuditTrail:
 
 
 
-            context: 上下文信?            
+            context: 上下文信?
 
 
 
@@ -3017,7 +3017,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3029,7 +3029,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3041,7 +3041,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -3095,7 +3095,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3125,7 +3125,7 @@ class AuditTrail:
 
 
 
-            
+
 
 
 
@@ -3215,7 +3215,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3245,7 +3245,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3257,7 +3257,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3269,7 +3269,7 @@ class AuditTrail:
 
 
 
-    
+
 
 
 
@@ -3317,7 +3317,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3341,7 +3341,7 @@ class AuditTrail:
 
 
 
-            
+
 
 
 
@@ -3371,7 +3371,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3491,7 +3491,7 @@ class AuditTrail:
 
 
 
-        
+
 
 
 
@@ -3527,7 +3527,7 @@ class ApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -3551,7 +3551,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3611,7 +3611,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3647,7 +3647,7 @@ class ApprovalWorkflow:
 
 
 
-            
+
 
 
 
@@ -3683,7 +3683,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3701,7 +3701,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3713,7 +3713,7 @@ class ApprovalWorkflow:
 
 
 
-            request_type, 
+            request_type,
 
 
 
@@ -3731,7 +3731,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3827,7 +3827,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3845,7 +3845,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3857,7 +3857,7 @@ class ApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -3905,7 +3905,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3929,7 +3929,7 @@ class ApprovalWorkflow:
 
 
 
-            
+
 
 
 
@@ -3959,7 +3959,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3977,7 +3977,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -3989,7 +3989,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4031,7 +4031,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4049,7 +4049,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4061,7 +4061,7 @@ class ApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -4109,7 +4109,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4133,7 +4133,7 @@ class ApprovalWorkflow:
 
 
 
-            
+
 
 
 
@@ -4163,7 +4163,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4175,7 +4175,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4199,7 +4199,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4211,7 +4211,7 @@ class ApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -4265,7 +4265,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4295,7 +4295,7 @@ class ApprovalWorkflow:
 
 
 
-            
+
 
 
 
@@ -4325,7 +4325,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4343,7 +4343,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4367,7 +4367,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4379,7 +4379,7 @@ class ApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -4391,7 +4391,7 @@ class ApprovalWorkflow:
 
 
 
-        """获取待审批列?        
+        """获取待审批列?
 
 
 
@@ -4403,7 +4403,7 @@ class ApprovalWorkflow:
 
 
 
-            approver: 审批?            
+            approver: 审批?
 
 
 
@@ -4487,7 +4487,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -4499,7 +4499,7 @@ class ApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -5239,7 +5239,7 @@ class TestModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -5269,7 +5269,7 @@ class TestModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -5287,7 +5287,7 @@ class TestModelRiskManagement:
 
 
 
-    
+
 
 
 
@@ -5377,7 +5377,7 @@ class TestModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -5389,7 +5389,7 @@ class TestModelRiskManagement:
 
 
 
-        
+
 
 
 
@@ -5449,7 +5449,7 @@ class TestApprovalWorkflow:
 
 
 
-    
+
 
 
 
@@ -5473,7 +5473,7 @@ class TestApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -5521,7 +5521,7 @@ class TestApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -5533,7 +5533,7 @@ class TestApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -5575,7 +5575,7 @@ class TestApprovalWorkflow:
 
 
 
-        
+
 
 
 
@@ -6060,8 +6060,3 @@ class TestApprovalWorkflow:
 
 
 **维护?*: 首席风险?
-
-
-
-
-

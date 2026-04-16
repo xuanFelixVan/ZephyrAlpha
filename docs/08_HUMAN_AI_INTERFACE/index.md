@@ -98,3 +98,9 @@ responsibility:
 - 扫描范围: D:\ZephyrAlpha\docs
 - 索引文件: docs\08_HUMAN_AI_INTERFACE\INDEX.md
 - 自动化工具: Auto-Index Compiler v1.1.0
+
+<!-- orphan-link -->
+- [blueprint-chapter-naming-standard](blueprint-chapter-naming-standard.md)
+
+<!-- orphan-link -->
+- [index-template](index-template.md)

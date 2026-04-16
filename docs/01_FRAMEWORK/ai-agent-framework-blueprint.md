@@ -47,7 +47,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -765,7 +765,7 @@ class AIAgentFramework:
 
 
 
-    
+
 
 
 
@@ -861,7 +861,7 @@ class AIAgentFramework:
 
 
 
-        
+
 
 
 
@@ -945,7 +945,7 @@ class AIAgentFramework:
 
 
 
-    
+
 
 
 
@@ -1029,7 +1029,7 @@ class AIAgentFramework:
 
 
 
-        
+
 
 
 
@@ -1065,7 +1065,7 @@ class AIAgentFramework:
 
 
 
-            context: 上下?            
+            context: 上下?
 
 
 
@@ -1125,7 +1125,7 @@ class AIAgentFramework:
 
 
 
-    
+
 
 
 
@@ -1197,7 +1197,7 @@ class AIAgentFramework:
 
 
 
-        
+
 
 
 
@@ -1233,7 +1233,7 @@ class AIAgentFramework:
 
 
 
-            
+
 
 
 
@@ -1293,7 +1293,7 @@ class AIAgentFramework:
 
 
 
-    
+
 
 
 
@@ -1353,7 +1353,7 @@ class AIAgentFramework:
 
 
 
-        """反思执行结束        
+        """反思执行结束
 
 
 
@@ -1389,7 +1389,7 @@ class AIAgentFramework:
 
 
 
-            
+
 
 
 
@@ -2146,14 +2146,3 @@ faiss-cpu>=1.7.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

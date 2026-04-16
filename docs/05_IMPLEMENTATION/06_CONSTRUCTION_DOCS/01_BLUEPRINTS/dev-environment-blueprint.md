@@ -19,7 +19,7 @@ layer: layer_05
 # 开发环境标准化蓝图
 
 > **核心职责**: 提供标准化的开发环境，确保所有开发者使用一致的开发配置
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：开发环境标准化、开发容器配置、环境一致性保证、开发工具集成
 > - ❌ 本文档不负责：生产环境部署（由部署模块负责）、CI/CD配置（由CI/CD模块负责）
 
@@ -80,7 +80,7 @@ layer: layer_05
   "name": "ZephyrAlpha Development Environment",
   "dockerFile": "Dockerfile",
   "context": "..",
-  
+
   "settings": {
     "python.defaultInterpreterPath": "/usr/local/bin/python",
     "python.linting.enabled": true,
@@ -97,7 +97,7 @@ layer: layer_05
       "**/.pytest_cache": true
     }
   },
-  
+
   "extensions": [
     "ms-python.python",
     "ms-python.vscode-pylance",
@@ -110,13 +110,13 @@ layer: layer_05
     "tamasfe.even-better-toml",
     "yzhang.markdown-all-in-one"
   ],
-  
+
   "forwardPorts": [8000, 5432, 6379],
-  
+
   "postCreateCommand": "pip install -r requirements.txt && pip install -r requirements-dev.txt",
-  
+
   "remoteUser": "vscode",
-  
+
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.10"
@@ -196,27 +196,27 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-    
+
     volumes:
       - ..:/workspace:cached
       - ~/.ssh:/home/vscode/.ssh:ro
       - ~/.gitconfig:/home/vscode/.gitconfig:ro
-    
+
     environment:
       - PYTHONPATH=/workspace/src
       - DATABASE_URL=postgresql://test:test@db:5432/zephyr_dev
       - REDIS_URL=redis://redis:6379/0
-    
+
     depends_on:
       - db
       - redis
-    
+
     ports:
       - "8000:8000"
       - "8888:8888"
-    
+
     command: sleep infinity
-  
+
   db:
     image: postgres:15
     environment:
@@ -227,7 +227,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  
+
   redis:
     image: redis:7-alpine
     ports:
@@ -251,11 +251,11 @@ import json
 
 class DevEnvironmentManager:
     """开发环境管理器"""
-    
+
     def __init__(self, project_root: str = "."):
         self.project_root = Path(project_root)
         self.devcontainer_dir = self.project_root / ".devcontainer"
-    
+
     def check_environment(self) -> Dict[str, Any]:
         """检查开发环境"""
         checks = {
@@ -266,73 +266,73 @@ class DevEnvironmentManager:
             "python_version": self._check_python_version(),
             "required_ports_available": self._check_ports()
         }
-        
+
         return {
             "all_passed": all(checks.values()),
             "checks": checks
         }
-    
+
     def setup_environment(self):
         """设置开发环境"""
         print("🔧 设置开发环境...")
-        
+
         self._create_devcontainer_dir()
         self._create_dockerfile()
         self._create_devcontainer_json()
         self._create_docker_compose()
         self._create_vscode_settings()
         self._create_vscode_extensions()
-        
+
         print("✅ 开发环境设置完成！")
-    
+
     def start_environment(self):
         """启动开发环境"""
         print("🚀 启动开发环境...")
-        
+
         subprocess.run(
             ["docker-compose", "-f", ".devcontainer/docker-compose.yml", "up", "-d"],
             cwd=self.project_root,
             check=True
         )
-        
+
         print("✅ 开发环境已启动！")
-    
+
     def stop_environment(self):
         """停止开发环境"""
         print("🛑 停止开发环境...")
-        
+
         subprocess.run(
             ["docker-compose", "-f", ".devcontainer/docker-compose.yml", "down"],
             cwd=self.project_root,
             check=True
         )
-        
+
         print("✅ 开发环境已停止！")
-    
+
     def rebuild_environment(self):
         """重建开发环境"""
         print("🔄 重建开发环境...")
-        
+
         subprocess.run(
             ["docker-compose", "-f", ".devcontainer/docker-compose.yml", "down", "-v"],
             cwd=self.project_root,
             check=True
         )
-        
+
         subprocess.run(
             ["docker-compose", "-f", ".devcontainer/docker-compose.yml", "build", "--no-cache"],
             cwd=self.project_root,
             check=True
         )
-        
+
         subprocess.run(
             ["docker-compose", "-f", ".devcontainer/docker-compose.yml", "up", "-d"],
             cwd=self.project_root,
             check=True
         )
-        
+
         print("✅ 开发环境已重建！")
-    
+
     def _check_docker(self) -> bool:
         """检查Docker是否安装"""
         try:
@@ -344,7 +344,7 @@ class DevEnvironmentManager:
             return result.returncode == 0
         except FileNotFoundError:
             return False
-    
+
     def _check_docker_running(self) -> bool:
         """检查Docker是否运行"""
         try:
@@ -356,7 +356,7 @@ class DevEnvironmentManager:
             return result.returncode == 0
         except FileNotFoundError:
             return False
-    
+
     def _check_vscode(self) -> bool:
         """检查VS Code是否安装"""
         try:
@@ -368,12 +368,12 @@ class DevEnvironmentManager:
             return result.returncode == 0
         except FileNotFoundError:
             return False
-    
+
     def _check_devcontainer(self) -> bool:
         """检查DevContainer是否配置"""
         devcontainer_json = self.devcontainer_dir / "devcontainer.json"
         return devcontainer_json.exists()
-    
+
     def _check_python_version(self) -> bool:
         """检查Python版本"""
         try:
@@ -387,11 +387,11 @@ class DevEnvironmentManager:
             return major == 3 and minor >= 10
         except (FileNotFoundError, IndexError):
             return False
-    
+
     def _check_ports(self) -> bool:
         """检查端口是否可用"""
         import socket
-        
+
         ports = [8000, 5432, 6379]
         for port in ports:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -399,13 +399,13 @@ class DevEnvironmentManager:
             sock.close()
             if result == 0:
                 return False
-        
+
         return True
-    
+
     def _create_devcontainer_dir(self):
         """创建.devcontainer目录"""
         self.devcontainer_dir.mkdir(parents=True, exist_ok=True)
-    
+
     def _create_dockerfile(self):
         """创建Dockerfile"""
         dockerfile_content = """FROM python:3.10-slim
@@ -445,10 +445,10 @@ WORKDIR /workspace
 
 CMD ["sleep", "infinity"]
 """
-        
+
         dockerfile_path = self.devcontainer_dir / "Dockerfile"
         dockerfile_path.write_text(dockerfile_content, encoding='utf-8')
-    
+
     def _create_devcontainer_json(self):
         """创建devcontainer.json"""
         config = {
@@ -466,10 +466,10 @@ CMD ["sleep", "infinity"]
             ],
             "forwardPorts": [8000, 5432, 6379]
         }
-        
+
         config_path = self.devcontainer_dir / "devcontainer.json"
         config_path.write_text(json.dumps(config, indent=2), encoding='utf-8')
-    
+
     def _create_docker_compose(self):
         """创建docker-compose.yml"""
         compose_content = """version: '3.8'
@@ -484,7 +484,7 @@ services:
     ports:
       - "8000:8000"
     command: sleep infinity
-  
+
   db:
     image: postgres:15
     environment:
@@ -493,21 +493,21 @@ services:
       POSTGRES_PASSWORD: test
     ports:
       - "5432:5432"
-  
+
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
 """
-        
+
         compose_path = self.devcontainer_dir / "docker-compose.yml"
         compose_path.write_text(compose_content, encoding='utf-8')
-    
+
     def _create_vscode_settings(self):
         """创建VS Code设置"""
         settings_dir = self.project_root / ".vscode"
         settings_dir.mkdir(exist_ok=True)
-        
+
         settings = {
             "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
             "python.linting.enabled": True,
@@ -515,10 +515,10 @@ services:
             "python.formatting.provider": "black",
             "editor.formatOnSave": True
         }
-        
+
         settings_path = settings_dir / "settings.json"
         settings_path.write_text(json.dumps(settings, indent=2), encoding='utf-8')
-    
+
     def _create_vscode_extensions(self):
         """创建VS Code扩展推荐"""
         recommendations = {
@@ -530,7 +530,7 @@ services:
                 "eamodio.gitlens"
             ]
         }
-        
+
         extensions_path = self.project_root / ".vscode" / "extensions.json"
         extensions_path.write_text(json.dumps(recommendations, indent=2), encoding='utf-8')
 ```
@@ -550,10 +550,10 @@ on:
 jobs:
   check-environment:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Check DevContainer configuration
       run: |
         if [ -f ".devcontainer/devcontainer.json" ]; then
@@ -562,7 +562,7 @@ jobs:
           echo "❌ DevContainer配置缺失"
           exit 1
         fi
-    
+
     - name: Validate Dockerfile
       run: |
         if [ -f ".devcontainer/Dockerfile" ]; then
@@ -571,7 +571,7 @@ jobs:
           echo "❌ Dockerfile缺失"
           exit 1
         fi
-    
+
     - name: Test DevContainer build
       run: |
         docker build -t zephyr-dev -f .devcontainer/Dockerfile .

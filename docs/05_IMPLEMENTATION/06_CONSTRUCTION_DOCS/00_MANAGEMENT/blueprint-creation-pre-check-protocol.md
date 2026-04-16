@@ -33,8 +33,8 @@ Layer 11 蓝图终稿任务中，最初标记 11 个蓝图「缺失」，实际�
 
 ```powershell
 # 在 docs/ 全目录搜索文件名匹配（替换关键词）
-Get-ChildItem -Path 'docs' -Recurse -Filter '*.md' | 
-  Where-Object { $_.Name -match 'blueprint-name-pattern' } | 
+Get-ChildItem -Path 'docs' -Recurse -Filter '*.md' |
+  Where-Object { $_.Name -match 'blueprint-name-pattern' } |
   Select-Object FullName, Length | Sort-Object Length -Descending
 ```
 
@@ -44,8 +44,8 @@ Get-ChildItem -Path 'docs' -Recurse -Filter '*.md' |
 
 ```powershell
 # 搜索文件内容中的关键词
-Get-ChildItem -Path 'docs' -Recurse -Filter '*.md' | 
-  Select-String -Pattern 'module_id.*BLUEPRINT_NAME|核心职责.*关键字' | 
+Get-ChildItem -Path 'docs' -Recurse -Filter '*.md' |
+  Select-String -Pattern 'module_id.*BLUEPRINT_NAME|核心职责.*关键字' |
   Select-Object Filename, Line | Sort-Object Filename
 ```
 

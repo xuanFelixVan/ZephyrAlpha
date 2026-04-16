@@ -142,7 +142,7 @@ class AccountApplicationService:
 
     """账户应用服务"""
 
-    
+
 
     def create_account(self, request: CreateAccountRequest) -> Account:
 
@@ -150,7 +150,7 @@ class AccountApplicationService:
 
         pass
 
-    
+
 
     def deposit(self, account_id: str, amount: Decimal) -> Transaction:
 
@@ -158,7 +158,7 @@ class AccountApplicationService:
 
         pass
 
-    
+
 
     def withdraw(self, account_id: str, amount: Decimal) -> Transaction:
 
@@ -166,7 +166,7 @@ class AccountApplicationService:
 
         pass
 
-    
+
 
     def freeze_account(self, account_id: str, reason: str) -> None:
 
@@ -174,7 +174,7 @@ class AccountApplicationService:
 
         pass
 
-    
+
 
     def create_snapshot(self, account_id: str) -> AccountSnapshot:
 
@@ -241,4 +241,3 @@ class AccountApplicationService:
 
 
 **最后更新**: 2026-04-07
-

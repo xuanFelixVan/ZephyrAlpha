@@ -124,7 +124,7 @@ layer: layer_08
 
 
 
-**主方案**: Apache Airflow  
+**主方案**: Apache Airflow
 
 **前端**: 集成Airflow Web UI
 
@@ -137,4 +137,3 @@ layer: layer_08
 
 
 **蓝图创建时间**: 2026-04-07
-

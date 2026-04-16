@@ -139,7 +139,7 @@ class IFactorCalculator(ABC):
 
 """ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
 
-    
+
 
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
 
@@ -147,7 +147,7 @@ class IFactorCalculator(ABC):
 
 - QlibAlpha158: AIﮒﮒﻟ؟۰ﻝ؟ (Layer 4)
 
-    
+
 
     ﻟﺍﻝ۷ﺅﺟ?
 
@@ -157,7 +157,7 @@ class IFactorCalculator(ABC):
 
     """
 
-    
+
 
     @abstractmethod
 
@@ -171,19 +171,19 @@ class IFactorCalculator(ABC):
 
 """ﻟ؟۰ﻝ؟ﮒﮒ
 
-        
+
 
         Args:
 
 factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
 
-            
+
 
         Returns:
 
 FactorOutput: ﮒﮒﻟ؟۰ﻝ؟ﻝﭨﮔ
 
-            
+
 
         Raises:
 
@@ -195,7 +195,7 @@ InvalidInputError: ﻟﺝﮒ۴ﮒﮔﺍﮔﮔ
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -203,7 +203,7 @@ InvalidInputError: ﻟﺝﮒ۴ﮒﮔﺍﮔﮔ
 
 """ﻟﺓﮒﮒﮒﮒ؟ﻛﺗ
 
-        
+
 
         Returns:
 
@@ -213,7 +213,7 @@ Dict[str, Dict]: ﮒﮒﮒﻝ۶ﺍ -> ﮒﮒﮒ؟ﻛﺗ
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -221,13 +221,13 @@ Dict[str, Dict]: ﮒﮒﮒﻝ۶ﺍ -> ﮒﮒﮒ؟ﻛﺗ
 
         """ﻠ۹ﻟﺁﻟﺝﮒ۴ﮒﮔﺍ
 
-        
+
 
         Args:
 
 factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
 
-            
+
 
         Returns:
 
@@ -367,7 +367,7 @@ class IModelTrainer(ABC):
 
 """ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
 
-    
+
 
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
 
@@ -377,7 +377,7 @@ class IModelTrainer(ABC):
 
 - ModelTrainingPipeline: ﻠﻝ۷ﻟ؟ﻝﭨﮔﭖﮔﺍﺑﺅﺟ?    """
 
-    
+
 
     @abstractmethod
 
@@ -397,7 +397,7 @@ class IModelTrainer(ABC):
 
 """ﻟ؟ﻝﭨﮔ۷۰ﮒ
 
-        
+
 
         Args:
 
@@ -409,7 +409,7 @@ y_train: ﻟ؟ﻝﭨﮔﻝﺝ
 
 y_val: ﻠ۹ﻟﺁﮔﻝﺝ
 
-            
+
 
         Returns:
 
@@ -419,7 +419,7 @@ TrainingResult: ﻟ؟ﻝﭨﻝﭨﮔ
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -427,7 +427,7 @@ TrainingResult: ﻟ؟ﻝﭨﻝﭨﮔ
 
 """ﻛﺟﮒﮔ۷۰ﮒ
 
-        
+
 
         Args:
 
@@ -437,7 +437,7 @@ path: ﻛﺟﮒﻟﺓﺁﮒﺝ
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -445,7 +445,7 @@ path: ﻛﺟﮒﻟﺓﺁﮒﺝ
 
 """ﮒﻟﺛﺛﮔ۷۰ﮒ
 
-        
+
 
         Args:
 
@@ -455,7 +455,7 @@ path: ﻛﺟﮒﻟﺓﺁﮒﺝ
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -463,7 +463,7 @@ path: ﻛﺟﮒﻟﺓﺁﮒﺝ
 
         """ﻟﺓﮒﮔ۷۰ﮒﻠﻝﺛ؟
 
-        
+
 
         Returns:
 
@@ -613,13 +613,13 @@ class IFeatureService(ABC):
 
     """ﻝﺗﮒﺝﮔﮒ۰ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
 
-    
+
 
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
 
 - FeatureStore: ﻝﺗﮒﺝﮒﮒ۷ﮔﮒ۰
 
-    
+
 
     ﻟﺍﻝ۷ﺅﺟ?
 
@@ -629,7 +629,7 @@ class IFeatureService(ABC):
 
     """
 
-    
+
 
     @abstractmethod
 
@@ -643,13 +643,13 @@ class IFeatureService(ABC):
 
         """ﻟﺓﮒﮒ۷ﻝﭦﺟﻝﺗﮒﺝ
 
-        
+
 
         Args:
 
             request: ﻝﺗﮒﺝﻟﺁﺓﮔﺎ
 
-            
+
 
         Returns:
 
@@ -659,7 +659,7 @@ class IFeatureService(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -673,13 +673,13 @@ class IFeatureService(ABC):
 
         """ﻟﺓﮒﮒﮒﺎﻝﺗﮒﺝ
 
-        
+
 
         Args:
 
             request: ﮒﮒﺎﻝﺗﮒﺝﻟﺁﺓﮔﺎ
 
-            
+
 
         Returns:
 
@@ -689,7 +689,7 @@ class IFeatureService(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -705,7 +705,7 @@ class IFeatureService(ABC):
 
         """ﮔﺏ۷ﮒﻝﺗﮒﺝ
 
-        
+
 
         Args:
 
@@ -713,7 +713,7 @@ class IFeatureService(ABC):
 
             feature_definition: ﻝﺗﮒﺝﮒ؟ﻛﺗ
 
-            
+
 
         Returns:
 
@@ -960,4 +960,3 @@ features = feature_store.get_online_features(request)
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
 
 **ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-

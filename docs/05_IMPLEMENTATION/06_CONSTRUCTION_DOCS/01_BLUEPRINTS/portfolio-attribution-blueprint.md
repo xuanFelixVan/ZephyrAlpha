@@ -120,11 +120,11 @@ graph LR
 景分析] --> B[组合归因分析]
     C[组合优化引擎] --> B
     D[数据质量监控] --> B
-    
+
     B --> E[组合绩效评估]
     B --> F[风险监控]
     B --> G[风险贡献分析]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -141,10 +141,10 @@ import pandas as pd
 import numpy as np
 
 class PortfolioAttributionAnalyzer:
-    
+
     def __init__(self):
         pass
-        
+
     def brinson_attribution(
         self,
         portfolio_weights: pd.DataFrame,
@@ -154,10 +154,10 @@ class PortfolioAttributionAnalyzer:
     ) -> dict:
         """
         Brinson归因分析
-        
+
         Args:
             benchmark_weights: 基准权重
-            
+
         Returns:
             {
 'allocation_effect':
@@ -171,14 +171,14 @@ class PortfolioAttributionAnalyzer:
             benchmark_weights,
             benchmark_returns
         )
-        
+
         return {
             'allocation_effect': model.allocation_effect(),
             'selection_effect': model.selection_effect(),
             'interaction_effect': model.interaction_effect(),
             'total_excess_return': model.total_excess_return()
         }
-    
+
     def factor_attribution(
         self,
         portfolio_returns: pd.Series,
@@ -187,15 +187,15 @@ class PortfolioAttributionAnalyzer:
     ) -> dict:
         """
         因子归因分析
-        
+
         Args:
             factor_exposures: 因子暴露
-            
+
         Returns:
             因子归因结果
         """
         pass
-    
+
     def risk_attribution(
         self,
         portfolio_weights: np.ndarray,
@@ -204,10 +204,10 @@ class PortfolioAttributionAnalyzer:
     ) -> dict:
         """
         风险归因分析
-        
+
         Args:
             portfolio_weights: 组合权重
-            
+
         Returns:
             风险归因结果
         """
@@ -231,7 +231,7 @@ class PortfolioAttributionAnalyzer:
 ```python
 class AttributionAPI:
     """归因分析API"""
-    
+
     @endpoint("/api/v1/attribution/brinson")
     async def brinson_analysis(
         self,
@@ -241,7 +241,7 @@ class AttributionAPI:
         end_date: str
     ) -> BrinsonResult:
         """Brinson归因分析"""
-        
+
     @endpoint("/api/v1/attribution/factor")
     async def factor_analysis(
         self,
@@ -251,7 +251,7 @@ class AttributionAPI:
         end_date: str
     ) -> FactorAttributionResult:
         """因子归因分析"""
-        
+
     @endpoint("/api/v1/attribution/risk")
     async def risk_analysis(
         self,
@@ -363,6 +363,3 @@ class AttributionAPI:
 ### 5.3 版本管理
 
 |------|------|----------|--------|
-
-
-

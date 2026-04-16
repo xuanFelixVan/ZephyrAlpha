@@ -33,7 +33,7 @@ layer: layer_07
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -183,7 +183,7 @@ layer: layer_07
 
 
 
-**架构角色**: 
+**架构角色**:
 
 
 
@@ -243,13 +243,13 @@ class StressTestingSystem:
 
     """
 
-    
+
 
     索引: STRESS_TEST_001-M01
 
     """
 
-    
+
 
     def __init__(self, config: StressTestConfig):
 
@@ -261,7 +261,7 @@ class StressTestingSystem:
 
         self.report_generator = StressTestReportGenerator()
 
-        
+
 
     def run_stress_test(
 
@@ -277,15 +277,15 @@ class StressTestingSystem:
 
         执行压力测试
 
-        
+
 
         Args:
 
             portfolio: 当前组合
 
-            scenarios: 
+            scenarios:
 
-            
+
 
         Returns:
 
@@ -295,7 +295,7 @@ class StressTestingSystem:
 
         results = []
 
-        
+
 
         for scenario in scenarios:
 
@@ -307,7 +307,7 @@ class StressTestingSystem:
 
             )
 
-            
+
 
             # 2. 计算风险暴露
 
@@ -317,7 +317,7 @@ class StressTestingSystem:
 
             )
 
-            
+
 
             # 3. 估计损失分布
 
@@ -327,7 +327,7 @@ class StressTestingSystem:
 
             )
 
-            
+
 
             results.append(ScenarioResult(
 
@@ -339,7 +339,7 @@ class StressTestingSystem:
 
             ))
 
-        
+
 
         return StressTestResult(
 
@@ -353,7 +353,7 @@ class StressTestingSystem:
 
 
 
-### 3.2 
+### 3.2
 
 
 
@@ -363,9 +363,9 @@ class ScenarioAnalyzer:
 
     """
 
-    
 
-    
+
+
 
     索引: STRESS_TEST_001-M02
 
@@ -373,7 +373,7 @@ class ScenarioAnalyzer:
 
     """
 
-    
+
 
     def apply_shock(
 
@@ -387,17 +387,17 @@ class ScenarioAnalyzer:
 
         """
 
-        
+
 
         Args:
 
             portfolio: 原始组合
 
-            scenario: 
+            scenario:
 
 景定义
 
-            
+
 
         Returns:
 
@@ -431,7 +431,7 @@ class ScenarioAnalyzer:
 
 
 
-| 
+|
 
 景名称 | 时间范围 | 触发事件 | 主要冲击 | 适用场景 |
 
@@ -439,7 +439,7 @@ class ScenarioAnalyzer:
 
 
 
-### 4.2 
+### 4.2
 
 
 
@@ -481,7 +481,7 @@ historical_scenarios:
 
         shock: -0.20
 
-        
+
 
   - name: "2020_covid_crash"
 
@@ -525,7 +525,7 @@ monte_carlo_scenarios:
 
     degrees_of_freedom: 5
 
-    
+
 
   - name: "correlation_breakdown"
 
@@ -555,7 +555,7 @@ custom_scenarios:
 
       consumer_discretionary: -0.20
 
-      
+
 
   - name: "tech_bubble_burst"
 
@@ -579,7 +579,7 @@ custom_scenarios:
 
 class MonteCarloScenarioGenerator:
 
-    
+
 
     def __init__(
 
@@ -599,7 +599,7 @@ class MonteCarloScenarioGenerator:
 
         self.degrees_of_freedom = degrees_of_freedom
 
-    
+
 
     def generate_scenarios(
 
@@ -615,13 +615,13 @@ class MonteCarloScenarioGenerator:
 
         scenarios = {}
 
-        
+
 
         mean_returns = returns.mean()
 
         cov_matrix = returns.cov()
 
-        
+
 
         if self.distribution == "student_t":
 
@@ -639,7 +639,7 @@ class MonteCarloScenarioGenerator:
 
             )
 
-        
+
 
         for conf_level in confidence_levels:
 
@@ -651,7 +651,7 @@ class MonteCarloScenarioGenerator:
 
             )
 
-            
+
 
             tail_scenarios = simulated_returns[
 
@@ -659,11 +659,11 @@ class MonteCarloScenarioGenerator:
 
             ]
 
-            
+
 
             worst_case = tail_scenarios.iloc[0]
 
-            
+
 
             scenarios[f"monte_carlo_{int(conf_level*100)}"] = Scenario(
 
@@ -677,11 +677,11 @@ class MonteCarloScenarioGenerator:
 
             )
 
-        
+
 
         return scenarios
 
-    
+
 
     def _simulate_t_distribution(
 
@@ -697,11 +697,11 @@ class MonteCarloScenarioGenerator:
 
         n_assets = len(mean)
 
-        
+
 
         L = np.linalg.cholesky(cov)
 
-        
+
 
         z = np.random.standard_t(
 
@@ -711,15 +711,15 @@ class MonteCarloScenarioGenerator:
 
         )
 
-        
+
 
         simulated = z @ L.T + mean.values
 
-        
+
 
         return pd.DataFrame(simulated, columns=mean.index)
 
-    
+
 
     def _simulate_normal(
 
@@ -779,7 +779,7 @@ class MonteCarloScenarioGenerator:
 
 class StressTestMetricsCalculator:
 
-    
+
 
     def calculate_loss_metrics(
 
@@ -793,7 +793,7 @@ class StressTestMetricsCalculator:
 
         losses = [r.portfolio_loss for r in scenario_results]
 
-        
+
 
         return {
 
@@ -809,7 +809,7 @@ class StressTestMetricsCalculator:
 
         }
 
-    
+
 
     def calculate_exposure_metrics(
 
@@ -825,7 +825,7 @@ class StressTestMetricsCalculator:
 
         exposures = {}
 
-        
+
 
         for factor, shock in scenario.factor_shocks.items():
 
@@ -833,7 +833,7 @@ class StressTestMetricsCalculator:
 
             exposures[f"{factor}_exposure"] = factor_exposure * shock
 
-        
+
 
         for sector, shock in scenario.sector_shocks.items():
 
@@ -841,11 +841,11 @@ class StressTestMetricsCalculator:
 
             exposures[f"{sector}_exposure"] = sector_weight * shock
 
-        
+
 
         return exposures
 
-    
+
 
     def calculate_liquidity_metrics(
 
@@ -861,17 +861,17 @@ class StressTestMetricsCalculator:
 
         metrics = {}
 
-        
+
 
         total_value = portfolio.total_value
 
-        
+
 
         liquidation_days = 0
 
         price_impact = 0
 
-        
+
 
         for position in portfolio.positions:
 
@@ -879,7 +879,7 @@ class StressTestMetricsCalculator:
 
             position_value = position.market_value
 
-            
+
 
             daily_liquidation = avg_volume * market_data[position.symbol]["close"].iloc[-1]
 
@@ -887,7 +887,7 @@ class StressTestMetricsCalculator:
 
             liquidation_days = max(liquidation_days, days_needed)
 
-            
+
 
             participation_rate = position_value / (avg_volume * 20)
 
@@ -895,17 +895,17 @@ class StressTestMetricsCalculator:
 
             price_impact += impact * position.weight
 
-        
+
 
         metrics["liquidation_days"] = liquidation_days
 
         metrics["price_impact"] = price_impact
 
-        
+
 
         return metrics
 
-    
+
 
     def calculate_tail_risk_metrics(
 
@@ -923,11 +923,11 @@ class StressTestMetricsCalculator:
 
         n = len(losses)
 
-        
+
 
         metrics = {}
 
-        
+
 
         for conf in confidence_levels:
 
@@ -935,19 +935,19 @@ class StressTestMetricsCalculator:
 
             var = losses[var_index]
 
-            
+
 
             tail_losses = losses[:var_index]
 
             es = np.mean(tail_losses) if tail_losses else var
 
-            
+
 
             metrics[f"var_{int(conf*100)}"] = var
 
             metrics[f"es_{int(conf*100)}"] = es
 
-        
+
 
         return metrics
 
@@ -979,7 +979,7 @@ class StressTestMetricsCalculator:
 
 
 
-## 2. 
+## 2.
 
 景分析结果
 
@@ -987,7 +987,7 @@ class StressTestMetricsCalculator:
 
 景
 
-| 
+|
 
 景名称 | 组合损失 | 风险等级 | 主要风险因子 |
 
@@ -1061,7 +1061,7 @@ class StressTestMetricsCalculator:
 
 > **核心职责**: Stress Testing System蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ?
 
@@ -1105,17 +1105,17 @@ def run_stress_test(
 
     执行压力测试
 
-    
+
 
     Args:
 
         portfolio: 当前组合
 
-        scenarios: 
+        scenarios:
 
 景列表
 
-        
+
 
     Returns:
 
@@ -1127,7 +1127,7 @@ def run_stress_test(
 
 
 
-# 
+#
 
 景生成接口
 
@@ -1143,19 +1143,19 @@ def generate_scenarios(
 
 景
 
-    
+
 
     Args:
 
-        scenario_type: 
+        scenario_type:
 
-        config: 
+        config:
 
-        
+
 
     Returns:
 
-        List[Scenario]: 
+        List[Scenario]:
 
 景列表
 
@@ -1187,7 +1187,7 @@ def generate_scenarios(
 
 
 
-1. 
+1.
 
 
 
@@ -1257,7 +1257,7 @@ graph LR
 
     D[数据质量监控] --> B
 
-    
+
 
     B --> E[尾部风险对冲]
 
@@ -1265,7 +1265,7 @@ graph LR
 
     B --> G[组合绩效评估]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -1357,7 +1357,7 @@ graph LR
 
 |------|------|------|
 
-| **Stress Testing System** | 
+| **Stress Testing System** |
 
 
 
@@ -1366,10 +1366,3 @@ graph LR
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

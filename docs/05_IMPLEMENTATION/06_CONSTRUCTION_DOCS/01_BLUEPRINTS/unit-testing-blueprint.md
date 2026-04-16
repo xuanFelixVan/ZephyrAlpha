@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供完整的单元测试框架，确保代码质量和功能正确性
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：单元测试、测试框架、测试覆盖率、测试自动化
 
@@ -179,7 +179,7 @@ python_classes = Test*
 
 python_functions = test_*
 
-addopts = 
+addopts =
 
     -v
 
@@ -235,7 +235,7 @@ class TestDataGenerator:
 
     """测试数据生成器"""
 
-    
+
 
     @staticmethod
 
@@ -251,7 +251,7 @@ class TestDataGenerator:
 
         dates = pd.date_range(start=start_date, periods=rows, freq='D')
 
-        
+
 
         np.random.seed(42)
 
@@ -259,7 +259,7 @@ class TestDataGenerator:
 
         prices = base_price + np.random.randn(rows).cumsum()
 
-        
+
 
         data = pd.DataFrame({
 
@@ -277,11 +277,11 @@ class TestDataGenerator:
 
         })
 
-        
+
 
         return data
 
-    
+
 
     @staticmethod
 
@@ -297,7 +297,7 @@ class TestDataGenerator:
 
         np.random.seed(42)
 
-        
+
 
         data = pd.DataFrame(
 
@@ -307,11 +307,11 @@ class TestDataGenerator:
 
         )
 
-        
+
 
         return data
 
-    
+
 
     @staticmethod
 
@@ -327,13 +327,13 @@ class TestDataGenerator:
 
         np.random.seed(42)
 
-        
+
 
         dates = pd.date_range(start='2023-01-01', periods=periods, freq='D')
 
         asset_names = [f'asset_{i}' for i in range(assets)]
 
-        
+
 
         returns = pd.DataFrame(
 
@@ -345,7 +345,7 @@ class TestDataGenerator:
 
         )
 
-        
+
 
         return returns
 
@@ -357,7 +357,7 @@ class TestFixture:
 
     """测试夹具基类"""
 
-    
+
 
     @pytest.fixture
 
@@ -371,7 +371,7 @@ class TestFixture:
 
         shutil.rmtree(temp_path)
 
-    
+
 
     @pytest.fixture
 
@@ -381,7 +381,7 @@ class TestFixture:
 
         return TestDataGenerator.generate_ohlcv_data()
 
-    
+
 
     @pytest.fixture
 
@@ -391,7 +391,7 @@ class TestFixture:
 
         return TestDataGenerator.generate_factor_data()
 
-    
+
 
     @pytest.fixture
 
@@ -409,7 +409,7 @@ class TestAssertions:
 
     """测试断言工具"""
 
-    
+
 
     @staticmethod
 
@@ -437,7 +437,7 @@ class TestAssertions:
 
                 f"Columns mismatch: {list(df1.columns)} vs {list(df2.columns)}"
 
-        
+
 
         if check_index:
 
@@ -445,7 +445,7 @@ class TestAssertions:
 
                 f"Index mismatch: {df1.index} vs {df2.index}"
 
-        
+
 
         if check_dtype:
 
@@ -453,7 +453,7 @@ class TestAssertions:
 
                 f"Dtypes mismatch: {df1.dtypes} vs {df2.dtypes}"
 
-        
+
 
         np.testing.assert_allclose(
 
@@ -467,7 +467,7 @@ class TestAssertions:
 
         )
 
-    
+
 
     @staticmethod
 
@@ -493,7 +493,7 @@ class TestAssertions:
 
                 f"Index mismatch: {s1.index} vs {s2.index}"
 
-        
+
 
         if check_dtype:
 
@@ -501,7 +501,7 @@ class TestAssertions:
 
                 f"Dtype mismatch: {s1.dtype} vs {s2.dtype}"
 
-        
+
 
         np.testing.assert_allclose(
 
@@ -515,7 +515,7 @@ class TestAssertions:
 
         )
 
-    
+
 
     @staticmethod
 
@@ -539,7 +539,7 @@ class TestAssertions:
 
             assert obj is not None, "Object is None"
 
-    
+
 
     @staticmethod
 
@@ -555,7 +555,7 @@ class TestAssertions:
 
             "Returns index must be DatetimeIndex"
 
-    
+
 
     @staticmethod
 
@@ -579,7 +579,7 @@ class TestPerformance:
 
     """测试性能工具"""
 
-    
+
 
     @staticmethod
 
@@ -589,7 +589,7 @@ class TestPerformance:
 
         import time
 
-        
+
 
         start_time = time.time()
 
@@ -597,7 +597,7 @@ class TestPerformance:
 
         end_time = time.time()
 
-        
+
 
         return {
 
@@ -607,7 +607,7 @@ class TestPerformance:
 
         }
 
-    
+
 
     @staticmethod
 
@@ -627,7 +627,7 @@ class TestPerformance:
 
         measurement = TestPerformance.measure_time(func, *args, **kwargs)
 
-        
+
 
         assert measurement["execution_time"] <= max_time, \
 
@@ -635,7 +635,7 @@ class TestPerformance:
 
             f"expected <= {max_time:.2f}s"
 
-        
+
 
         return measurement["result"]
 
@@ -647,7 +647,7 @@ class TestMock:
 
     """测试Mock工具"""
 
-    
+
 
     @staticmethod
 
@@ -657,7 +657,7 @@ class TestMock:
 
         from unittest.mock import MagicMock, patch
 
-        
+
 
         mock_conn = MagicMock()
 
@@ -665,11 +665,11 @@ class TestMock:
 
         mock_conn.cursor.return_value = mock_cursor
 
-        
+
 
         return mock_conn, mock_cursor
 
-    
+
 
     @staticmethod
 
@@ -679,7 +679,7 @@ class TestMock:
 
         from unittest.mock import MagicMock
 
-        
+
 
         mock_response = MagicMock()
 
@@ -687,11 +687,11 @@ class TestMock:
 
         mock_response.json.return_value = data
 
-        
+
 
         return mock_response
 
-    
+
 
     @staticmethod
 
@@ -701,7 +701,7 @@ class TestMock:
 
         from unittest.mock import mock_open, patch
 
-        
+
 
         return patch('builtins.open', mock_open(read_data=content))
 
@@ -733,7 +733,7 @@ class TestFactorEngine(TestFixture):
 
     """因子引擎测试"""
 
-    
+
 
     @pytest.mark.unit
 
@@ -743,7 +743,7 @@ class TestFactorEngine(TestFixture):
 
         engine = FactorEngine()
 
-        
+
 
         factor = engine.calculate_momentum(
 
@@ -753,7 +753,7 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         TestAssertions.assert_not_empty(factor)
 
@@ -761,7 +761,7 @@ class TestFactorEngine(TestFixture):
 
         assert len(factor) == len(sample_ohlcv_data)
 
-    
+
 
     @pytest.mark.unit
 
@@ -771,11 +771,11 @@ class TestFactorEngine(TestFixture):
 
         engine = FactorEngine()
 
-        
+
 
         normalized = engine.normalize_factors(sample_factor_data)
 
-        
+
 
         TestAssertions.assert_dataframe_equal(
 
@@ -785,13 +785,13 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         assert normalized.mean().abs().max() < 1e-6
 
         assert (normalized.std() - 1.0).abs().max() < 1e-6
 
-    
+
 
     @pytest.mark.unit
 
@@ -803,7 +803,7 @@ class TestFactorEngine(TestFixture):
 
         engine = FactorEngine()
 
-        
+
 
         factor = engine.calculate_momentum(
 
@@ -813,13 +813,13 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         assert len(factor) == len(sample_ohlcv_data)
 
         assert not factor.isnull().all()
 
-    
+
 
     @pytest.mark.unit
 
@@ -829,7 +829,7 @@ class TestFactorEngine(TestFixture):
 
         engine = FactorEngine()
 
-        
+
 
         industry_dummy = pd.get_dummies(
 
@@ -837,7 +837,7 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         neutralized = engine.neutralize_factors(
 
@@ -847,7 +847,7 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         TestAssertions.assert_dataframe_equal(
 
@@ -857,7 +857,7 @@ class TestFactorEngine(TestFixture):
 
         )
 
-    
+
 
     @pytest.mark.slow
 
@@ -869,7 +869,7 @@ class TestFactorEngine(TestFixture):
 
         engine = FactorEngine()
 
-        
+
 
         result = TestPerformance.assert_performance(
 
@@ -883,7 +883,7 @@ class TestFactorEngine(TestFixture):
 
         )
 
-        
+
 
         assert len(result) == 10000
 
@@ -927,13 +927,13 @@ jobs:
 
         python-version: [3.9, 3.10, 3.11]
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python ${{ matrix.python-version }}
 
@@ -943,7 +943,7 @@ jobs:
 
         python-version: ${{ matrix.python-version }}
 
-    
+
 
     - name: Cache dependencies
 
@@ -959,7 +959,7 @@ jobs:
 
           ${{ runner.os }}-pip-
 
-    
+
 
     - name: Install dependencies
 
@@ -971,13 +971,13 @@ jobs:
 
         pip install pytest pytest-cov pytest-xdist
 
-    
+
 
     - name: Run unit tests
 
       run: pytest tests/unit -v --cov=src --cov-report=xml --cov-report=html -n auto
 
-    
+
 
     - name: Upload coverage to Codecov
 
@@ -993,7 +993,7 @@ jobs:
 
         fail_ci_if_error: true
 
-    
+
 
     - name: Archive test results
 
@@ -1276,4 +1276,3 @@ def test_double(input, expected):
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

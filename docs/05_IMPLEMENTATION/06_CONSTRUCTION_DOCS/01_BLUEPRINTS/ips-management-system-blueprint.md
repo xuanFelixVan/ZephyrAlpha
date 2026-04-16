@@ -20,7 +20,7 @@ responsibility:
 
 
 
-> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「IPS 管理系统」。  
+> **定位**：对应 [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) Layer 11「IPS 管理系统」。
 
 > **对照表**：LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
 
@@ -30,7 +30,7 @@ responsibility:
 
 
 
-- **负责**：IPS 条款结构化（资产类别、久期、杠杆、单一标的上限等）、版本与签批、与风控/再平衡规则同步。  
+- **负责**：IPS 条款结构化（资产类别、久期、杠杆、单一标的上限等）、版本与签批、与风控/再平衡规则同步。
 
 - **不负责**：法律文本起草；最终以持牌顾问或内控审定为准。
 
@@ -92,9 +92,6 @@ responsibility:
 
 
 
-- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md  
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 
-- STRATEGIC_DECISION_LAYER_BLUEPRINT.md  
-
-
-
+- STRATEGIC_DECISION_LAYER_BLUEPRINT.md

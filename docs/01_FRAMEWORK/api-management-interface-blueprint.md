@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Api Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Api Management Interface蓝图设计相关内容
 
@@ -670,7 +670,7 @@ class StrategyConfig(BaseModel):
 
 
 
-@app.get("/api/v1/market/quote/{code}", 
+@app.get("/api/v1/market/quote/{code}",
 
          response_model=MarketQuote,
 
@@ -690,7 +690,7 @@ async def get_market_quote(
 
     """获取股票实时行情
 
-    
+
 
     - **code**: 股票代码，如 000001.SZ
 
@@ -726,7 +726,7 @@ async def get_strategy_list(api_key: str = Depends(get_api_key)):
 
     """获取策略列表
 
-    
+
 
     返回所有已配置的策略
 
@@ -762,7 +762,7 @@ async def create_strategy(
 
     """创建新策略
 
-    
+
 
     - **name**: 策略名称
 
@@ -798,7 +798,7 @@ class APIManagementInterface:
 
     """API管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -806,7 +806,7 @@ class APIManagementInterface:
 
         self.api_key = st.secrets.get("API_KEY", "")
 
-    
+
 
     def render_overview(self):
 
@@ -814,35 +814,35 @@ class APIManagementInterface:
 
         st.subheader("📊 API概览")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
             st.metric("API总数", 25)
 
-        
+
 
         with col2:
 
             st.metric("今日调用", "1,234", "+15%")
 
-        
+
 
         with col3:
 
             st.metric("成功率", "99.5%", "+0.2%")
 
-        
+
 
         with col4:
 
             st.metric("平均响应时间", "45ms", "-5ms")
 
-    
+
 
     def render_api_docs(self):
 
@@ -850,7 +850,7 @@ class APIManagementInterface:
 
         st.subheader("📚 API文档")
 
-        
+
 
         tab1, tab2, tab3, tab4 = st.tabs([
 
@@ -858,7 +858,7 @@ class APIManagementInterface:
 
         ])
 
-        
+
 
         with tab1:
 
@@ -876,7 +876,7 @@ class APIManagementInterface:
 
             self._render_system_api_docs()
 
-    
+
 
     def render_api_tester(self):
 
@@ -884,11 +884,11 @@ class APIManagementInterface:
 
         st.subheader("🧪 API测试")
 
-        
+
 
         col1, col2 = st.columns([1, 2])
 
-        
+
 
         with col1:
 
@@ -898,7 +898,7 @@ class APIManagementInterface:
 
             method = st.selectbox("请求方法", ["GET", "POST", "PUT", "DELETE"])
 
-            
+
 
             st.markdown("### 请求参数")
 
@@ -906,13 +906,13 @@ class APIManagementInterface:
 
             query_params = st.text_area("Query参数", placeholder="start=2025-01-01\nend=2025-12-31")
 
-            
+
 
             if method in ["POST", "PUT"]:
 
                 body = st.text_area("请求体", placeholder='{"name": "策略名"}')
 
-        
+
 
         with col2:
 
@@ -920,7 +920,7 @@ class APIManagementInterface:
 
                 response = self._send_request(method, endpoint, path_params, query_params)
 
-                
+
 
                 st.markdown("### 响应结果")
 
@@ -934,13 +934,13 @@ class APIManagementInterface:
 
                     st.metric("响应时间", f"{response.elapsed.total_seconds()*1000:.0f}ms")
 
-                
+
 
                 st.markdown("#### 响应体")
 
                 st.json(response.json())
 
-    
+
 
     def render_key_management(self):
 
@@ -948,17 +948,17 @@ class APIManagementInterface:
 
         st.subheader("🔑 密钥管理")
 
-        
+
 
         col1, col2 = st.columns([2, 1])
 
-        
+
 
         with col1:
 
             st.markdown("### 密钥列表")
 
-            
+
 
             keys = [
 
@@ -968,7 +968,7 @@ class APIManagementInterface:
 
             ]
 
-            
+
 
             for key in keys:
 
@@ -988,13 +988,13 @@ class APIManagementInterface:
 
                         st.toggle("状态", value=True)
 
-        
+
 
         with col2:
 
             st.markdown("### 创建新密钥")
 
-            
+
 
             key_name = st.text_input("密钥名称")
 
@@ -1008,13 +1008,13 @@ class APIManagementInterface:
 
             expire_days = st.slider("有效期(天)", 1, 365, 30)
 
-            
+
 
             if st.button("创建密钥"):
 
                 st.success(f"密钥 {key_name} 创建成功")
 
-    
+
 
     def render_call_statistics(self):
 
@@ -1022,11 +1022,11 @@ class APIManagementInterface:
 
         st.subheader("📈 调用统计")
 
-        
+
 
         tab1, tab2, tab3 = st.tabs(["调用趋势", "接口排行", "错误分析"])
 
-        
+
 
         with tab1:
 
@@ -1034,7 +1034,7 @@ class APIManagementInterface:
 
             st.line_chart({"调用次数": [100, 120, 115, 130, 125, 140]})
 
-        
+
 
         with tab2:
 
@@ -1050,7 +1050,7 @@ class APIManagementInterface:
 
             })
 
-        
+
 
         with tab3:
 
@@ -1151,4 +1151,3 @@ class APIManagementInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

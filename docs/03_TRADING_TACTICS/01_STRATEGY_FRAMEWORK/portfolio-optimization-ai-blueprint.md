@@ -61,7 +61,7 @@ related_documents:
 
 > **核心职责**: Portfolio Optimization Ai蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Portfolio Optimization Ai蓝图设计相关内容
 
@@ -213,7 +213,7 @@ class MultiStrategyOptimizer:
 
     """多策略组合优化器"""
 
-    
+
 
     def __init__(self):
 
@@ -221,7 +221,7 @@ class MultiStrategyOptimizer:
 
         self.constraint_solver = ConstraintSolver()
 
-        
+
 
     def optimize_strategy_weights(
 
@@ -241,7 +241,7 @@ class MultiStrategyOptimizer:
 
         n_strategies = len(strategies)
 
-        
+
 
         # 提取策略指标
 
@@ -251,17 +251,17 @@ class MultiStrategyOptimizer:
 
         correlation_matrix = self._build_correlation_matrix(strategies)
 
-        
+
 
         cov_matrix = np.outer(volatilities, volatilities) * correlation_matrix
 
-        
+
 
         # 2. 定义优化变量
 
         weights = cp.Variable(n_strategies)
 
-        
+
 
         # 3. 定义目标函数
 
@@ -275,7 +275,7 @@ class MultiStrategyOptimizer:
 
             objective_func = cp.Maximize(portfolio_return / portfolio_volatility)
 
-            
+
 
         elif objective == 'min_risk':
 
@@ -285,7 +285,7 @@ class MultiStrategyOptimizer:
 
             objective_func = cp.Minimize(portfolio_volatility)
 
-            
+
 
         elif objective == 'risk_parity':
 
@@ -295,7 +295,7 @@ class MultiStrategyOptimizer:
 
             objective_func = cp.Minimize(cp.sum_squares(risk_contributions - 1/n_strategies))
 
-        
+
 
         # 4. 定义约束条件
 
@@ -307,7 +307,7 @@ class MultiStrategyOptimizer:
 
         ]
 
-        
+
 
         if constraints:
 
@@ -319,7 +319,7 @@ class MultiStrategyOptimizer:
 
                 constraints_list.append(weights >= constraints['min_weight'])
 
-        
+
 
         # 5. 求解优化问题
 
@@ -327,7 +327,7 @@ class MultiStrategyOptimizer:
 
         problem.solve()
 
-        
+
 
         # 6. 返回优化结果
 
@@ -341,11 +341,11 @@ class MultiStrategyOptimizer:
 
         }
 
-        
+
 
         return strategy_weights
 
-    
+
 
     def analyze_strategy_correlation(
 
@@ -359,13 +359,13 @@ class MultiStrategyOptimizer:
 
         correlation_matrix = self._build_correlation_matrix(strategies)
 
-        
+
 
 ?
 
         avg_correlation = np.mean(correlation_matrix[np.triu_indices(len(strategies), k=1)])
 
-        
+
 
         high_correlation_pairs = []
 
@@ -387,11 +387,11 @@ if correlation_matrix[i, j] > 0.7:  #
 
                     })
 
-        
+
 
         diversity_score = 1 - avg_correlation
 
-        
+
 
         return {
 
@@ -405,7 +405,7 @@ if correlation_matrix[i, j] > 0.7:  #
 
         }
 
-    
+
 
     def allocate_risk_budget(
 
@@ -423,13 +423,13 @@ if correlation_matrix[i, j] > 0.7:  #
 
         total_risk = sum(strategy_risks)
 
-        
+
 
         sharpe_ratios = [s.sharpe_ratio for s in strategies]
 
         total_sharpe = sum(sharpe_ratios)
 
-        
+
 
 
 
@@ -443,7 +443,7 @@ if correlation_matrix[i, j] > 0.7:  #
 
             risk_budgets[strategy.strategy_id] = risk_budget
 
-        
+
 
         return risk_budgets
 
@@ -465,7 +465,7 @@ class MultiFactorOptimizer:
 
     """多因子组合优化器"""
 
-    
+
 
     def __init__(self):
 
@@ -473,7 +473,7 @@ class MultiFactorOptimizer:
 
         self.orthogonalizer = FactorOrthogonalizer()
 
-        
+
 
     def optimize_factor_weights(
 
@@ -489,13 +489,13 @@ class MultiFactorOptimizer:
 
         orthogonal_factors = self.orthogonalizer.orthogonalize(factors)
 
-        
+
 
         # 2. 计算因子IC矩阵
 
         ic_matrix = self._calculate_ic_matrix(orthogonal_factors)
 
-        
+
 
         # 3. 优化因子权重
 
@@ -503,7 +503,7 @@ class MultiFactorOptimizer:
 
         weights = cp.Variable(n_factors)
 
-        
+
 
         if objective == 'max_ic':
 
@@ -515,7 +515,7 @@ class MultiFactorOptimizer:
 
             objective_func = cp.Maximize(portfolio_ic)
 
-            
+
 
         elif objective == 'max_icir':
 
@@ -531,7 +531,7 @@ class MultiFactorOptimizer:
 
             objective_func = cp.Maximize(portfolio_ic / portfolio_ic_volatility)
 
-        
+
 
         # 4. 约束条件
 
@@ -543,7 +543,7 @@ class MultiFactorOptimizer:
 
         ]
 
-        
+
 
         # 5. 求解
 
@@ -551,7 +551,7 @@ class MultiFactorOptimizer:
 
         problem.solve()
 
-        
+
 
         # 6. 返回结果
 
@@ -565,11 +565,11 @@ class MultiFactorOptimizer:
 
         }
 
-        
+
 
         return factor_weights
 
-    
+
 
     def orthogonalize_factors(
 
@@ -583,13 +583,13 @@ class MultiFactorOptimizer:
 
         factor_matrix = self._build_factor_matrix(factors)
 
-        
+
 
         # 2. 施密特正交化
 
         orthogonal_matrix = self._gram_schmidt(factor_matrix)
 
-        
+
 
         orthogonal_factors = []
 
@@ -609,11 +609,11 @@ class MultiFactorOptimizer:
 
             orthogonal_factors.append(orthogonal_factor)
 
-        
+
 
         return orthogonal_factors
 
-    
+
 
     def build_factor_risk_model(
 
@@ -627,13 +627,13 @@ class MultiFactorOptimizer:
 
         factor_cov_matrix = self._calculate_factor_covariance(factors)
 
-        
+
 
         # 2. 计算因子收益矩阵
 
         factor_returns = self._calculate_factor_returns(factors)
 
-        
+
 
         # 3. 构建风险模型
 
@@ -647,7 +647,7 @@ class MultiFactorOptimizer:
 
         )
 
-        
+
 
         return risk_model
 
@@ -669,7 +669,7 @@ class MultiAssetOptimizer:
 
     """多资产组合优化器"""
 
-    
+
 
     def __init__(self):
 
@@ -679,7 +679,7 @@ class MultiAssetOptimizer:
 
         self.style_allocator = StyleAllocator()
 
-        
+
 
     def optimize_asset_allocation(
 
@@ -695,17 +695,17 @@ class MultiAssetOptimizer:
 
         asset_weights = self.asset_allocator.optimize(assets, objective)
 
-        
+
 
 # 2.
 
         sector_weights = self.sector_allocator.optimize(assets, asset_weights)
 
-        
+
 
         style_weights = self.style_allocator.optimize(assets, asset_weights)
 
-        
+
 
         return {
 
@@ -717,7 +717,7 @@ class MultiAssetOptimizer:
 
         }
 
-    
+
 
     def optimize_sector_allocation(
 
@@ -737,7 +737,7 @@ class MultiAssetOptimizer:
 
         weights = cp.Variable(n_sectors)
 
-        
+
 
         # 2. 提取行业指标
 
@@ -749,7 +749,7 @@ class MultiAssetOptimizer:
 
         cov_matrix = np.outer(volatilities, volatilities) * correlation_matrix
 
-        
+
 
         # 3. 目标函数：最大化夏普比率
 
@@ -759,7 +759,7 @@ class MultiAssetOptimizer:
 
         objective_func = cp.Maximize(portfolio_return / portfolio_volatility)
 
-        
+
 
         # 4. 约束条件
 
@@ -771,7 +771,7 @@ class MultiAssetOptimizer:
 
         ]
 
-        
+
 
         if constraints:
 
@@ -779,7 +779,7 @@ class MultiAssetOptimizer:
 
                 constraints_list.append(weights <= constraints['max_sector_weight'])
 
-        
+
 
         # 5. 求解
 
@@ -787,7 +787,7 @@ class MultiAssetOptimizer:
 
         problem.solve()
 
-        
+
 
         # 6. 返回结果
 
@@ -801,7 +801,7 @@ class MultiAssetOptimizer:
 
         }
 
-        
+
 
         return sector_weights
 
@@ -823,7 +823,7 @@ class DynamicAdjustment:
 
     """动态组合调整器"""
 
-    
+
 
     def __init__(self):
 
@@ -833,7 +833,7 @@ class DynamicAdjustment:
 
         self.liquidity_constraint = LiquidityConstraint()
 
-        
+
 
     def adjust_portfolio(
 
@@ -855,7 +855,7 @@ class DynamicAdjustment:
 
         )
 
-        
+
 
         # 2. 风险预算调整
 
@@ -867,7 +867,7 @@ class DynamicAdjustment:
 
         )
 
-        
+
 
         final_portfolio = self.liquidity_constraint.apply(
 
@@ -877,7 +877,7 @@ class DynamicAdjustment:
 
         )
 
-        
+
 
         return final_portfolio
 
@@ -885,7 +885,7 @@ class DynamicAdjustment:
 
 class MarketAdapter:
 
-    
+
 
     def adapt(
 
@@ -899,7 +899,7 @@ class MarketAdapter:
 
         regime = market_state.regime  # bull/bear/sideways/transition
 
-        
+
 
         if regime == 'bull':
 
@@ -919,7 +919,7 @@ class MarketAdapter:
 
             adjusted_weights = self._adjust_for_transition_market(portfolio)
 
-        
+
 
         # 3. 返回调整后的组合
 
@@ -949,7 +949,7 @@ class MarketAdapter:
 
 class PortfolioRiskController:
 
-    
+
 
     def __init__(self):
 
@@ -959,7 +959,7 @@ class PortfolioRiskController:
 
         self.concentration_controller = ConcentrationController()
 
-        
+
 
     def control_portfolio_risk(
 
@@ -975,17 +975,17 @@ class PortfolioRiskController:
 
         var_status = self.var_calculator.calculate_var(portfolio)
 
-        
+
 
         # 2. 回撤控制
 
         drawdown_status = self.drawdown_controller.control_drawdown(portfolio)
 
-        
+
 
         concentration_status = self.concentration_controller.control_concentration(portfolio)
 
-        
+
 
         # 4. 综合风险控制报告
 
@@ -1009,11 +1009,11 @@ class PortfolioRiskController:
 
         )
 
-        
+
 
         return risk_report
 
-    
+
 
     def calculate_var(
 
@@ -1029,25 +1029,25 @@ class PortfolioRiskController:
 
         historical_var = self._historical_var(portfolio, confidence_level)
 
-        
+
 
 # 2. ?
 
         parametric_var = self._parametric_var(portfolio, confidence_level)
 
-        
+
 
         # 3. 蒙特卡洛模拟
 
         monte_carlo_var = self._monte_carlo_var(portfolio, confidence_level)
 
-        
+
 
         # 4. 综合VaR
 
         var = (historical_var + parametric_var + monte_carlo_var) / 3
 
-        
+
 
         return VaRStatus(
 
@@ -1061,7 +1061,7 @@ class PortfolioRiskController:
 
         )
 
-    
+
 
     def control_drawdown(
 
@@ -1079,13 +1079,13 @@ class PortfolioRiskController:
 
         current_drawdown = self._calculate_current_drawdown(portfolio)
 
-        
+
 
 ?
 
         is_exceeded = current_drawdown > max_drawdown
 
-        
+
 
         # 3. 生成控制措施
 
@@ -1105,7 +1105,7 @@ class PortfolioRiskController:
 
             control_measures = []
 
-        
+
 
         return DrawdownStatus(
 
@@ -1163,7 +1163,7 @@ class Portfolio:
 
     last_rebalanced: datetime
 
-    
+
 
     # 组合指标
 
@@ -1175,7 +1175,7 @@ class Portfolio:
 
     max_drawdown: float
 
-    
+
 
     # 风险指标
 
@@ -1199,21 +1199,21 @@ class OptimizationResult:
 
     objective: str
 
-    
+
 
     before_portfolio: Portfolio
 
-    
+
 
     after_portfolio: Portfolio
 
-    
+
 
     # 优化效果
 
     improvement: Dict
 
-    
+
 
     # 优化过程
 
@@ -1309,7 +1309,7 @@ class PortfolioOptimizationTextInterface:
 
     """组合优化文字交互接口"""
 
-    
+
 
     def optimize_portfolio(self, user_request: str):
 
@@ -1319,17 +1319,17 @@ class PortfolioOptimizationTextInterface:
 
         optimization_params = self._parse_optimization_request(user_request)
 
-        
+
 
         # 2. 执行优化
 
         result = self._execute_optimization(optimization_params)
 
-        
+
 
         return self._format_optimization_result(result)
 
-    
+
 
     def get_portfolio_status(self):
 
@@ -1519,7 +1519,7 @@ Beta?.85
 
 - **技术规格书**: 待创建
 
-- **职责**: 
+- **职责**:
 
 - **状态**: Active
 
@@ -1558,4 +1558,3 @@ Beta?.85
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-

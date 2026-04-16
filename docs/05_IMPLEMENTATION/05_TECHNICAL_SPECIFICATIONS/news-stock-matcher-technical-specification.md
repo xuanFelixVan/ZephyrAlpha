@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -455,7 +455,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -787,7 +787,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -811,7 +811,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -859,7 +859,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -901,7 +901,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -1039,7 +1039,7 @@ class NewsStockMatcher:
 
 
 
-    
+
 
 
 
@@ -1099,7 +1099,7 @@ class StockEntityRecognizer:
 
 
 
-    
+
 
 
 
@@ -1123,7 +1123,7 @@ class StockEntityRecognizer:
 
 
 
-    
+
 
 
 
@@ -1171,7 +1171,7 @@ class StockEntityRecognizer:
 
 
 
-    
+
 
 
 
@@ -1213,7 +1213,7 @@ class StockEntityRecognizer:
 
 
 
-    
+
 
 
 
@@ -1225,7 +1225,7 @@ class StockEntityRecognizer:
 
 
 
-        self, 
+        self,
 
 
 
@@ -1255,7 +1255,7 @@ class StockEntityRecognizer:
 
 
 
-        
+
 
 
 
@@ -1279,7 +1279,7 @@ class StockEntityRecognizer:
 
 
 
-        
+
 
 
 
@@ -1303,7 +1303,7 @@ class StockEntityRecognizer:
 
 
 
-        
+
 
 
 
@@ -1345,7 +1345,7 @@ class StockEntityRecognizer:
 
 
 
-        
+
 
 
 
@@ -1853,7 +1853,7 @@ def extract_stock_entities(
 
 
 
-    self, 
+    self,
 
 
 
@@ -1883,7 +1883,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -1913,7 +1913,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -1937,7 +1937,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -1961,7 +1961,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -2003,7 +2003,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -2027,7 +2027,7 @@ def extract_stock_entities(
 
 
 
-    
+
 
 
 
@@ -2069,13 +2069,13 @@ def calculate_relevance_score(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    news_text: str, 
+    news_text: str,
 
 
 
@@ -2105,7 +2105,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2135,7 +2135,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2159,7 +2159,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2183,7 +2183,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2225,7 +2225,7 @@ def calculate_relevance_score(
 
 
 
-    
+
 
 
 
@@ -2267,13 +2267,13 @@ def identify_relation_type(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    news_text: str, 
+    news_text: str,
 
 
 
@@ -2303,7 +2303,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2333,7 +2333,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2357,7 +2357,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2375,7 +2375,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2399,7 +2399,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2429,7 +2429,7 @@ def identify_relation_type(
 
 
 
-    
+
 
 
 
@@ -2685,7 +2685,7 @@ def test_news_stock_matcher_integration():
 
 
 
-    
+
 
 
 
@@ -2703,7 +2703,7 @@ def test_news_stock_matcher_integration():
 
 
 
-    
+
 
 
 
@@ -3107,7 +3107,7 @@ news_stock_matcher:
 
 
 
-  
+
 
 
 
@@ -3252,8 +3252,3 @@ news_stock_matcher:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 舆情分析层负责人
-
-
-
-
-

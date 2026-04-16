@@ -20,4 +20,3 @@ estimated_effort: 1.5周
 open_source_solution: PyPortfolioOpt + CVXPY + Riskfolio-Lib
 ---
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

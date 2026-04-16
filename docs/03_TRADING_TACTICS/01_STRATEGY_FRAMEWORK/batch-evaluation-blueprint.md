@@ -30,7 +30,7 @@ implementation_status: 设计阶段
 
 # 批量策略评估系统技术蓝图
 > **核心职责**: Batch Evaluation蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Batch Evaluation蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -94,54 +94,54 @@ implementation_status: 设计阶段
 
 ```python
 class BatchEvaluationController:
-    """批量评估控制?    
+    """批量评估控制?
     索引: STRAT.BATCH.EVAL.001-M01
     职责: 批量评估流程控制、任务调度、结果聚?    设计模式: 外观模式 + 命令模式
     """
-    
+
     def __init__(self, strategy_engine: IStrategyEngine, config: BatchConfig):
         self.strategy_engine = strategy_engine
         self.config = config
         self.task_scheduler = TaskScheduler()
         self.resource_manager = ResourceManager()
         self.result_aggregator = ResultAggregator()
-        
+
     async def evaluate_batch(self, batch_request: BatchRequest) -> BatchResult:
         """执行批量评估
-        
+
         参数:
             batch_request: 批量评估请求，包含策略列表、时间范围、参数等
-            
+
         返回:
             BatchResult: 批量评估结果，包含所有策略的评估结果
         """
         # 1. 验证请求参数
         self._validate_request(batch_request)
-        
+
         # 2. 准备评估环境
         evaluation_env = await self._prepare_environment(batch_request)
-        
+
         # 3. 创建评估任务
         tasks = self._create_evaluation_tasks(batch_request, evaluation_env)
-        
+
         # 4. 调度任务执行
         task_results = await self.task_scheduler.execute_tasks(tasks)
-        
+
         # 5. 聚合结果
         batch_result = self.result_aggregator.aggregate(task_results)
-        
+
         # 6. 生成评估报告
         report = self._generate_report(batch_result)
-        
+
         return BatchResult(
             results=batch_result,
             report=report,
             metadata=self._collect_metadata()
         )
-        
+
     def _create_evaluation_tasks(self, batch_request: BatchRequest, env: EvaluationEnv) -> List[EvaluationTask]:
         """创建评估任务列表
-        
+
         优化策略:
         - 相同时间范围、相同数据的策略合并数据加载
         - 相似参数策略重用因子计算结果
@@ -149,10 +149,10 @@ class BatchEvaluationController:
         """
         tasks = []
         strategy_groups = self._group_strategies(batch_request.strategies)
-        
+
         for group in strategy_groups:
             # 为每组策略创建共享数据环?            shared_data = self._prepare_shared_data(group, env)
-            
+
             for strategy in group.strategies:
                 task = EvaluationTask(
                     strategy_id=strategy.id,
@@ -163,26 +163,26 @@ class BatchEvaluationController:
                     priority=self._calculate_priority(strategy)
                 )
                 tasks.append(task)
-                
+
         return tasks
-        
+
     async def _prepare_environment(self, batch_request: BatchRequest) -> EvaluationEnv:
         """准备评估环境
-        
+
         包括:
         - 数据下载与预处理
         - 因子计算与缓存        - 内存分配与监控        - 临时文件清理
         """
         env = EvaluationEnv()
-        
+
         # 并行下载数据
         data_tasks = [self._download_data(symbol) for symbol in batch_request.symbols]
         env.data = await asyncio.gather(*data_tasks)
-        
+
         # 预计算因?        env.factors = await self._precompute_factors(env.data, batch_request.factors)
-        
+
         # 初始化缓存        env.cache = LRUCache(maxsize=self.config.cache_size)
-        
+
         return env
 ```
 
@@ -190,17 +190,17 @@ class BatchEvaluationController:
 
 ```python
 class ParallelBacktestExecutor:
-    """并行回测执行?    
+    """并行回测执行?
     索引: STRAT.BATCH.EVAL.001-M02
     职责: 多进程并行回测执行，进程管理与资源控?    设计模式: 生产?消费者模?+ 工作进流程    """
-    
+
     def __init__(self, max_workers: int = None):
         self.max_workers = max_workers or (cpu_count() - 1)
         self.task_queue = Queue()
         self.result_queue = Queue()
         self.workers = []
         self.running = False
-        
+
     def start(self):
         """启动工作进流程""
         self.running = True
@@ -212,26 +212,26 @@ class ParallelBacktestExecutor:
             )
             worker.start()
             self.workers.append(worker)
-            
+
     def submit_tasks(self, tasks: List[EvaluationTask]):
         """提交任务到队?""
         for task in tasks:
             self.task_queue.put(task)
-            
+
     def get_results(self, timeout: float = None) -> List[BacktestResult]:
         """获取结果（阻塞直到所有任务完成或超时?""
         results = []
         expected_count = self.task_queue.qsize()
-        
+
         for _ in range(expected_count):
             try:
                 result = self.result_queue.get(timeout=timeout)
                 results.append(result)
             except Empty:
                 break
-                
+
         return results
-        
+
     def _worker_loop(self, task_queue: Queue, result_queue: Queue):
         """工作进程循环"""
         while self.running:
@@ -248,30 +248,30 @@ class ParallelBacktestExecutor:
                     metrics={}
                 )
                 result_queue.put(error_result)
-                
+
     def _execute_backtest(self, task: EvaluationTask) -> BacktestResult:
         """执行单个回测任务（在独立进程中运行）"""
         # 设置进程独立环境
         import os
         os.environ['PYTHONPATH'] = ':'.join(sys.path)
-        
+
         # 初始化回测引?        cerebro = bt.Cerebro()
-        
+
         # 加载数据
         data = self._load_data(task.data_source)
         cerebro.adddata(data)
-        
+
         # 创建策略实例
         strategy_class = self._load_strategy_class(task.strategy_config)
         cerebro.addstrategy(strategy_class, **task.parameters)
-        
+
         # 设置回测参数
         cerebro.broker.setcash(100000.0)  # 初始资金
         cerebro.broker.setcommission(commission=0.001)  # 佣金
-        
+
         # 运行回测
         results = cerebro.run()
-        
+
         # 提取结果
         return self._extract_results(results[0], task.strategy_id)
 ```
@@ -281,12 +281,12 @@ class ParallelBacktestExecutor:
 ```python
 class StandardizedMetricsCalculator:
     """标准化指标计算器
-    
+
     索引: STRAT.BATCH.EVAL.001-M03
     职责: 计算20+标准化绩效指标，支持风险调整收益计算
     参考指标 CFA协会绩效评估标准 + 专业量化机构指标
     """
-    
+
     # 核心指标定义
     CORE_METRICS = {
         # 收益类指?        'total_return': '累计收益?,
@@ -294,57 +294,57 @@ class StandardizedMetricsCalculator:
         'monthly_return': '月均收益?,
         'win_rate': '胜率',
         'profit_factor': '盈亏?,
-        
+
         # 风险类指?        'max_drawdown': '最大回?,
         'annual_volatility': '年化波动?,
         'downside_risk': '下行风险',
         'var_95': '95% VaR',
         'cvar_95': '95% CVaR',
-        
+
         # 风险调整收益
         'sharpe_ratio': '夏普比率',
         'sortino_ratio': '索提诺比?,
         'calmar_ratio': '卡玛比率',
         'omega_ratio': '欧米茄比?,
         'information_ratio': '信息比率',
-        
+
         # 统计指标
         'skewness': '偏度',
         'kurtosis': '峰度',
         'jarque_bera': 'Jarque-Bera正态性检?,
         'autocorrelation': '收益自相关?,
-        
+
         # 交易特征
         'avg_trade_duration': '平均持仓周期',
         'trades_per_year': '年均交易次数',
         'avg_win_loss_ratio': '平均盈亏?,
         'consecutive_losses': '最大连续亏损次?
     }
-    
+
     def calculate_all(self, equity_curve: pd.Series, trades: List[Trade]) -> Dict[str, float]:
         """计算所有指?""
         metrics = {}
-        
+
         # 基础收益计算
         returns = equity_curve.pct_change().dropna()
-        
+
         # 计算各类指标
         metrics.update(self._calculate_return_metrics(equity_curve, returns))
         metrics.update(self._calculate_risk_metrics(equity_curve, returns))
         metrics.update(self._calculate_risk_adjusted_metrics(returns))
         metrics.update(self._calculate_statistical_metrics(returns))
         metrics.update(self._calculate_trade_metrics(trades))
-        
+
         # 计算综合评分
         metrics['composite_score'] = self._calculate_composite_score(metrics)
-        
+
         return metrics
-        
+
     def _calculate_composite_score(self, metrics: Dict[str, float]) -> float:
         """计算综合评分（用于策略排名）
-        
+
         评分公式:
-        score = 0.3 * sharpe_normalized + 
+        score = 0.3 * sharpe_normalized +
                 0.2 * (1 - max_drawdown_normalized) +
                 0.15 * win_rate_normalized +
                 0.15 * profit_factor_normalized +
@@ -354,7 +354,7 @@ class StandardizedMetricsCalculator:
         # 归一化各项指?        normalized = {}
         for key, value in metrics.items():
             normalized[key] = self._normalize_metric(key, value)
-            
+
         # 权重计算
         weights = {
             'sharpe_ratio': 0.3,
@@ -363,11 +363,11 @@ class StandardizedMetricsCalculator:
             'profit_factor': 0.15,
             'annual_return': 0.1,
             'consistency': 0.1  # 收益一致性得?        }
-        
+
         # 加权求和
-        score = sum(normalized.get(key, 0) * weight 
+        score = sum(normalized.get(key, 0) * weight
                    for key, weight in weights.items())
-        
+
         return round(score * 100, 2)  # 转换?-100?```
 
 
@@ -394,31 +394,31 @@ Level 3: 共享内存 (多进程共?
 def optimize_task_grouping(strategies: List[StrategyConfig]) -> List[StrategyGroup]:
     """优化任务分组，最大化数据复用"""
     groups = []
-    
+
     # 按数据需求分?    data_groups = group_by_data_requirements(strategies)
-    
+
     for data_group in data_groups:
         # 按技术指标依赖分?        indicator_groups = group_by_indicator_dependencies(data_group)
-        
+
         for indicator_group in indicator_groups:
             # 按参数相似度分组
             param_groups = group_by_parameter_similarity(indicator_group)
             groups.extend(param_groups)
-            
+
     return groups
 ```
 
 **内存使用监控**?```python
 class MemoryAwareScheduler:
     """内存感知调度""
-    
-    def schedule_tasks(self, tasks: List[EvaluationTask], 
+
+    def schedule_tasks(self, tasks: List[EvaluationTask],
                       available_memory: int) -> List[List[EvaluationTask]]:
         """基于内存限制调度任务批次"""
         batches = []
         current_batch = []
         current_memory = 0
-        
+
         for task in sorted(tasks, key=lambda t: t.estimated_memory):
             if current_memory + task.estimated_memory <= available_memory * 0.8:
                 current_batch.append(task)
@@ -427,10 +427,10 @@ class MemoryAwareScheduler:
                 batches.append(current_batch)
                 current_batch = [task]
                 current_memory = task.estimated_memory
-                
+
         if current_batch:
             batches.append(current_batch)
-            
+
         return batches
 ```
 
@@ -443,15 +443,15 @@ def incremental_equity_update(previous_equity: pd.Series,
     """增量更新权益曲线，避免全量重?""
     # 只计算受影响的时间段
     affected_dates = get_affected_dates(previous_equity.index, new_trades)
-    
+
     # 局部更?    for date in affected_dates:
         # 计算该日期的新权?        new_equity = calculate_equity_at_date(
-            previous_equity.iloc[:date], 
-            new_trades, 
+            previous_equity.iloc[:date],
+            new_trades,
             new_prices
         )
         previous_equity[date] = new_equity
-        
+
     return previous_equity
 ```
 
@@ -497,26 +497,26 @@ batch_evaluation:
   memory_limit_gb: 16
   timeout_hours: 2
   retry_attempts: 3
-  
+
   # 数据配置
   data_source:
     type: "akshare"  # ?tushare, baostock
     cache_dir: "data/cache"
     update_frequency: "daily"
-    
+
   # 回测配置
   backtest:
     initial_cash: 1000000
     commission: 0.001
     slippage: 0.001
     benchmark: "SH000001"
-    
+
   # 指标配置
   metrics:
     required: ["sharpe_ratio", "max_drawdown", "annual_return", "win_rate"]
     optional: ["calmar_ratio", "sortino_ratio", "information_ratio"]
     risk_free_rate: 0.03
-    
+
   # 报告配置
   report:
     format: "html"  # ?pdf, markdown
@@ -559,9 +559,9 @@ batch_evaluation:
 | STRATEGY_SELECTION_TACTICS_ENTRY.md | 策略选择（→ 图纸柜正式稿） |
 
 
-**文档版本**: v1.0  
-**最后更?*: 2026-04-01  
-**维护?*: 策略研发中心  
+**文档版本**: v1.0
+**最后更?*: 2026-04-01
+**维护?*: 策略研发中心
 **预计开发时?*: 120小时?周全职开发）
 ```
 ```---

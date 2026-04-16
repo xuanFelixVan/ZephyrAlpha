@@ -38,8 +38,8 @@ layer: layer_09
 
 # 工作交接：蓝图阶段文档清洁与接力（孤儿 / 重复 / overlap）
 
-> **场景 A（通用）**：用户暂时离开，由另一模型**连续数小时**自主推进治理。  
-> **场景 B（本版强化）**：在 **Trae** 中使用 **GLM-5.1** **连续约 8 小时、中途不向 Owner 追问**时，以本文 + `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` 为执行剧本，目标结束时达到 **蓝图交付标准**（`CONSTRUCTION_GATE` §0.1 / §0.1a），**可进入施工文档（第 2 阶段）**；**第 3 阶段（写代码）**门槛见门禁 §3，勿与本文终点混淆。  
+> **场景 A（通用）**：用户暂时离开，由另一模型**连续数小时**自主推进治理。
+> **场景 B（本版强化）**：在 **Trae** 中使用 **GLM-5.1** **连续约 8 小时、中途不向 Owner 追问**时，以本文 + `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` 为执行剧本，目标结束时达到 **蓝图交付标准**（`CONSTRUCTION_GATE` §0.1 / §0.1a），**可进入施工文档（第 2 阶段）**；**第 3 阶段（写代码）**门槛见门禁 §3，勿与本文终点混淆。
 > **仓库根**：`d:\ZephyrAlpha`（以实际 clone 路径为准；下文路径均相对仓库根）。
 
 ```
@@ -165,22 +165,22 @@ python scripts/sentinel_l1_governance_scan.py
 
 ## 6. 推荐工作顺序（可循环 4～8 小时）
 
-1. **对齐现状**  
-   - 运行：`python scripts/strict_orphan_inbound_scan.py`（不加 `--basename`）。  
+1. **对齐现状**
+   - 运行：`python scripts/strict_orphan_inbound_scan.py`（不加 `--basename`）。
    - 对比：`STRICT_ORPHAN_FILES_LIST_REGEN_<date>.txt` vs `STRICT_ORPHAN_FILES_LIST_20260408.txt`。
 
-2. **按簇小批挂载**  
-   - 优先：高价值、非纯 `09_AUDIT/STATE` 流水报告、非一次性处理完的 `06_ARCHIVE/overlap_*` 大海。  
+2. **按簇小批挂载**
+   - 优先：高价值、非纯 `09_AUDIT/STATE` 流水报告、非一次性处理完的 `06_ARCHIVE/overlap_*` 大海。
    - 动作：在**该域权威 `INDEX.md`** 增加「严格孤儿挂载」类小节，使用可点击的 Markdown 链接，目标为**真实存在的** `./子路径/文件名.md`。
 
-3. **每 1～2 簇**  
+3. **每 1～2 簇**
    - 跑 L1；在 Playbook **§10** 追加一行（日期、改动文件、说明、L1 结果）。
 
-4. **duplicates / overlap**（与总案 P 级对齐时）  
-   - duplicates：更新 `CANONICAL_POINTERS.md`，**无台账勿硬删**。  
+4. **duplicates / overlap**（与总案 P 级对齐时）
+   - duplicates：更新 `CANONICAL_POINTERS.md`，**无台账勿硬删**。
    - overlap：按 `OVERLAP_CANONICAL_POINTER_TEMPLATE.md` 补 canonical 指针块。
 
-5. **收工**  
+5. **收工**
    - 再跑一次 REGEN；在 §10 或本文件末尾追加「与基线差异摘要」（可选）。
 
 ```
@@ -284,9 +284,9 @@ python scripts/sentinel_l1_governance_scan.py
 
 **推荐自检句式（接力时可当 checklist）**：
 
-- [ ] 从 `ARCHITECTURE` 能否到达边界、映射、`01_BLUEPRINTS/INDEX`？  
-- [ ] 从映射/边界能否回到 `ARCHITECTURE` 与关键蓝图？  
-- [ ] P0 切片涉及的蓝图是否在总纲或映射中有「语义挂钩」（而不仅是文件存在于目录）？  
+- [ ] 从 `ARCHITECTURE` 能否到达边界、映射、`01_BLUEPRINTS/INDEX`？
+- [ ] 从映射/边界能否回到 `ARCHITECTURE` 与关键蓝图？
+- [ ] P0 切片涉及的蓝图是否在总纲或映射中有「语义挂钩」（而不仅是文件存在于目录）？
 - [ ] 新发现的 G4/G5 是否写入 `ARCH_MODULE_GAP_REGISTER_20260408.md`？
 
 ```
@@ -377,22 +377,22 @@ python scripts/sentinel_l1_governance_scan.py
 
 §0.1 五条须**同时**满足（扩展范围内的每篇亦然）：
 
-1. **职责**：负责什么 / 不负责什么已写清。  
-2. **接口**：与邻层、邻模块约定可指到 `docs/03_TRADING_TACTICS/API_Contract.md`（或等价契约）。  
-3. **验收**：至少一句**可检查**的完成标准。  
-4. **状态**：front matter 中 `status` 不得为 `Draft`；`version ≥ 1.0.0`。  
+1. **职责**：负责什么 / 不负责什么已写清。
+2. **接口**：与邻层、邻模块约定可指到 `docs/03_TRADING_TACTICS/API_Contract.md`（或等价契约）。
+3. **验收**：至少一句**可检查**的完成标准。
+4. **状态**：front matter 中 `status` 不得为 `Draft`；`version ≥ 1.0.0`。
 5. **闭合**：篇首或显著位置无未解释的 Draft/待补/TBD；已知限制须进「已知限制」并附补全计划或 §4 豁免。
 
 **B. 放置与目录（§0.1a）**
 
-- [ ] `docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md` 已阅读并与 Owner 意图一致（冲突则改标准或登记豁免）。  
-- [ ] `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS/` 已存在且含 `INDEX.md`（可与终稿并行）。  
+- [ ] `docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md` 已阅读并与 Owner 意图一致（冲突则改标准或登记豁免）。
+- [ ] `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS/` 已存在且含 `INDEX.md`（可与终稿并行）。
 - [ ] §0.2 范围内各篇路径与链接符合 LAYOUT（或篇内说明例外）。
 
 **C. 文档卫生与工程习惯（与 §0 并行、强烈建议作为同一放行前提）**
 
-- **IA / 金线 / 过程稿归位**：本交接 **§13.4～§13.5**（S1～S7）。  
-- **内链门禁**：合并前 `python scripts/sentinel_l1_governance_scan.py`，目标 **Invalid links = 0**（与清洁总案、门禁 §2 精神一致）。  
+- **IA / 金线 / 过程稿归位**：本交接 **§13.4～§13.5**（S1～S7）。
+- **内链门禁**：合并前 `python scripts/sentinel_l1_governance_scan.py`，目标 **Invalid links = 0**（与清洁总案、门禁 §2 精神一致）。
 - **架构缺口**：G4/G5 等宜在 `docs/09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md` 有记录或 P0 已闭（见 `ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`）。
 
 **D. 勿与第 3 阶段混淆**
@@ -421,7 +421,7 @@ python scripts/sentinel_l1_governance_scan.py
 
 ## 14. 施工文档（「施工图纸」类交付）前的专业机构清洁名目（总清单）
 
-> **语义对齐**：门禁 **§0** 中，**第 2 阶段**指施工流程 / 计划 / 方案等（施工文档）；口语里的「施工图纸」在此与其同属**进入编码（第 3 阶段）之前、蓝图终稿之后**的文档准备。  
+> **语义对齐**：门禁 **§0** 中，**第 2 阶段**指施工流程 / 计划 / 方案等（施工文档）；口语里的「施工图纸」在此与其同属**进入编码（第 3 阶段）之前、蓝图终稿之后**的文档准备。
 > **真源**：`CONSTRUCTION_GATE_CRITERIA_20260408.md`（§0.1、§0.1a、§0.2）与 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md`（P0～P3、§5）。
 
 下列名目按**专业机构常见的文档卫生分类**组织，并映射到本仓库路径或脚本（表格内路径均为仓库内相对描述，供检索）。
@@ -485,7 +485,7 @@ python scripts/sentinel_l1_governance_scan.py
 
 ### 14.8 阶段边界（避免一锅煮）
 
-- **进入第 2 阶段（写施工流程 / 计划 / 方案）**：以门禁 **§0.1 蓝图终稿** + **§0.1a 放置与 LAYOUT** 等为准；上表 **§14.1～14.7** 支撑「蓝图与文档体系已可审、可找、可链」。  
+- **进入第 2 阶段（写施工流程 / 计划 / 方案）**：以门禁 **§0.1 蓝图终稿** + **§0.1a 放置与 LAYOUT** 等为准；上表 **§14.1～14.7** 支撑「蓝图与文档体系已可审、可找、可链」。
 - **进入第 3 阶段（写业务代码）**：另有门禁 **§0.3、§3 A～F** 等（含 **收口核对项 EC 复跑**、双 YAML 等），**比「动笔写施工文档」更严一层**；勿把第 3 阶段清单提前当成「写施工文档前必须全勾」，除非 Owner 另有书面决定。
 
 ```
@@ -509,19 +509,19 @@ git commit -m "chore(docs): baseline before Trae GLM hygiene marathon"
 git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 ```
 
-- **禁止**在未提交基线前开始大批量改文件。  
+- **禁止**在未提交基线前开始大批量改文件。
 - 若使用 Trae 内置 git：**同样逻辑**——先有可识别基线提交或 tag。
 
 ### 15.2 长跑中途（建议每 45～90 分钟）
 
-- **小步提交**：每完成「一批可独立验收的改动」（例如：一个域 `INDEX.md` + L1=0）即 `git commit`。  
-- **提交信息**：`docs(<scope>): <动作>；L1=0`（或附脚本输出摘要文件名）。  
+- **小步提交**：每完成「一批可独立验收的改动」（例如：一个域 `INDEX.md` + L1=0）即 `git commit`。
+- **提交信息**：`docs(<scope>): <动作>；L1=0`（或附脚本输出摘要文件名）。
 - **L1 失败**：**优先修复**；若无法快速修复，**`git revert` 该批或 `git restore` 相关文件**，勿在断链状态下继续堆改。
 
 ### 15.3 收工或阶段结束
 
-- 再打 **annotated tag**：`doc-milestone-YYYYMMDD-HHMM`。  
-- `git push` / `git push --tags` 按团队远程策略执行（无远程则保留本地 tag 亦可）。  
+- 再打 **annotated tag**：`doc-milestone-YYYYMMDD-HHMM`。
+- `git push` / `git push --tags` 按团队远程策略执行（无远程则保留本地 tag 亦可）。
 - **不要** `git push --force` 到共享默认分支。
 
 ```
@@ -552,34 +552,34 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 
 ### 17.1 开工第 0 小时（固定动作，约 30～45 分钟）
 
-1. 执行 **§15.1** Git 基线。  
-2. `python scripts/sentinel_l1_governance_scan.py` —— 存档或记录 Invalid 数。  
-3. `python scripts/strict_orphan_inbound_scan.py` —— 得到当日 `STRICT_ORPHAN_FILES_LIST_REGEN_*.txt`。  
-4. **只读**打开：`CONSTRUCTION_GATE_CRITERIA_20260408.md` §0.1～§0.2、`TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`（当前批次表）。  
+1. 执行 **§15.1** Git 基线。
+2. `python scripts/sentinel_l1_governance_scan.py` —— 存档或记录 Invalid 数。
+3. `python scripts/strict_orphan_inbound_scan.py` —— 得到当日 `STRICT_ORPHAN_FILES_LIST_REGEN_*.txt`。
+4. **只读**打开：`CONSTRUCTION_GATE_CRITERIA_20260408.md` §0.1～§0.2、`TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`（当前批次表）。
 5. 在台账或本文件外**独立笔记**列出本 8h **P0 文件清单**（来自 Trae 台账批次，**不得臆造**）。
 
 ### 17.2 第 1～7 小时（循环批次）
 
 每轮建议 **60～90 分钟**，每轮结构：
 
-1. **改文**：按台账批次做 `01_BLUEPRINTS` 内 **§0.1 终稿化**（职责/契约指针/验收/status/TBD 闭合），或做 **INDEX 挂载** / **duplicates 台账一行** / **overlap 小批指针**（与总案「小 PR」精神一致，Trae 内即小 commit）。  
-2. **门禁**：`sentinel_l1_governance_scan.py` → 若 Invalid ≠ 0，**本批止于修复**。  
-3. **提交**：`git commit`（§15.2）。  
+1. **改文**：按台账批次做 `01_BLUEPRINTS` 内 **§0.1 终稿化**（职责/契约指针/验收/status/TBD 闭合），或做 **INDEX 挂载** / **duplicates 台账一行** / **overlap 小批指针**（与总案「小 PR」精神一致，Trae 内即小 commit）。
+2. **门禁**：`sentinel_l1_governance_scan.py` → 若 Invalid ≠ 0，**本批止于修复**。
+3. **提交**：`git commit`（§15.2）。
 4. **每 2 轮**可选重跑 `strict_orphan_inbound_scan.py` 观察趋势。
 
 **Trae 默认目录包**（与台账一致）：优先 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/`；**勿**在未指派下改 `docs/01_FRAMEWORK/` 根下 `*BLUEPRINT*`（台账写明由 Cursor 侧时）。
 
 ### 17.3 第 7～8 小时（收工与冻结）
 
-1. 再跑 **L1**、**strict orphan REGEN**。  
-2. 对照 **§13.6** 自检表：已满足项打勾；未满足项写入 **gap 登记**或 Trae 台账「下一批」。  
-3. 更新 `docs/09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` **§10** 一行（日期、摘要、L1、REGEN 趋势）。  
-4. 更新 `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` §6（或该台账规定的进度区）。  
+1. 再跑 **L1**、**strict orphan REGEN**。
+2. 对照 **§13.6** 自检表：已满足项打勾；未满足项写入 **gap 登记**或 Trae 台账「下一批」。
+3. 更新 `docs/09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` **§10** 一行（日期、摘要、L1、REGEN 趋势）。
+4. 更新 `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` §6（或该台账规定的进度区）。
 5. **§15.3** tag + push（若适用）。
 
 ### 17.4 现实预期（避免幻觉式承诺）
 
-- **8 小时无法保证**「§0.2 内每一篇蓝图 100% §0.1」——以台账 **P0 + L1 不回归** 为硬约束；余量列入下一马拉松或 Cursor 接力。  
+- **8 小时无法保证**「§0.2 内每一篇蓝图 100% §0.1」——以台账 **P0 + L1 不回归** 为硬约束；余量列入下一马拉松或 Cursor 接力。
 - **第 2 阶段放行**的最终勾选权在 **Owner**；执行者交付的是 **可验证证据链**（L1 报告、REGEN、台账、git 历史）。
 
 ```
@@ -592,32 +592,32 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 
 ### 18.1 真源优先级（冲突时从高到低）
 
-1. `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`（**重复池裁决**；未裁决前**不删**）。  
-2. `docs/01_FRAMEWORK/ARCHITECTURE.md`（Layer 总纲）。  
-3. `docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md`（谁做什么）。  
-4. `docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md`（业务视角 ↔ Layer）。  
-5. `docs/03_TRADING_TACTICS/API_Contract.md`（接口契约）。  
-6. **实施蓝图全集列表**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md`（**机器生成**，运行 `python scripts/generate_01_blueprints_index.py` 更新）。  
+1. `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`（**重复池裁决**；未裁决前**不删**）。
+2. `docs/01_FRAMEWORK/ARCHITECTURE.md`（Layer 总纲）。
+3. `docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md`（谁做什么）。
+4. `docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md`（业务视角 ↔ Layer）。
+5. `docs/03_TRADING_TACTICS/API_Contract.md`（接口契约）。
+6. **实施蓝图全集列表**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md`（**机器生成**，运行 `python scripts/generate_01_blueprints_index.py` 更新）。
 7. **能力 ↔ 蓝图对照**（若存在）：`docs/09_AUDIT/STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`（以 `ARCHITECTURE.md` 引用为准；**若不存在则跳过，禁止编造**）。
 
 ### 18.2 「每一层级的子模块」怎么找（给未来 AI 的操作顺序）
 
-1. 从 `ARCHITECTURE.md` 定位 **Layer 编号**与相关链接。  
-2. 用 `MODULE_RESPONSIBILITY_BOUNDARIES.md` 查 **该层职责与模块名**。  
-3. 在 `01_BLUEPRINTS/INDEX.md` **搜索**关键词或模块名，打开对应 `*_BLUEPRINT.md`。  
-4. 若一篇蓝图 **front matter** 或正文有 `related_documents` / 「相关蓝图」小节，**优先**沿链跳转。  
+1. 从 `ARCHITECTURE.md` 定位 **Layer 编号**与相关链接。
+2. 用 `MODULE_RESPONSIBILITY_BOUNDARIES.md` 查 **该层职责与模块名**。
+3. 在 `01_BLUEPRINTS/INDEX.md` **搜索**关键词或模块名，打开对应 `*_BLUEPRINT.md`。
+4. 若一篇蓝图 **front matter** 或正文有 `related_documents` / 「相关蓝图」小节，**优先**沿链跳转。
 5. 若同一主题出现多路径，**先查** `CANONICAL_POINTERS.md` 再读正文。
 
 ### 18.3 蓝图 ↔ 蓝图互链（建议增量、非一次全连）
 
-- **不要求** N×N 全连接；**要求**「同一数据/执行链路上的邻接蓝图」在正文或 `related_documents` 中 **可点击**互指（与 §11.5、架构审计 Q3 一致）。  
-- **新增**互链时每批改后跑 **L1**。  
+- **不要求** N×N 全连接；**要求**「同一数据/执行链路上的邻接蓝图」在正文或 `related_documents` 中 **可点击**互指（与 §11.5、架构审计 Q3 一致）。
+- **新增**互链时每批改后跑 **L1**。
 - **overlap** 文稿按 `docs/06_ARCHIVE/OVERLAP_CANONICAL_POINTER_TEMPLATE.md` 标明 canonical，避免读者读到旧稿误以为现行。
 
 ### 18.4 8 小时内与本节相关的可交付增量
 
-- [ ] `CANONICAL_POINTERS.md` 中 **P0 重复簇**至少 **N→0 个 TBD**（N 由台账规定，做不到则写明 Owner 指派与截止日）。  
-- [ ] `01_BLUEPRINTS/INDEX.md` 与磁盘一致（脚本重生成并提交）。  
+- [ ] `CANONICAL_POINTERS.md` 中 **P0 重复簇**至少 **N→0 个 TBD**（N 由台账规定，做不到则写明 Owner 指派与截止日）。
+- [ ] `01_BLUEPRINTS/INDEX.md` 与磁盘一致（脚本重生成并提交）。
 - [ ] 在 **P0 蓝图**篇内补齐 **指向契约**与 **1～3 条相关蓝图**链接（有则补，无则登记 G5）。
 
 ```

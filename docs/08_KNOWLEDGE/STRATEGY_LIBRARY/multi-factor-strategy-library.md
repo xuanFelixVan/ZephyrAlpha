@@ -31,7 +31,7 @@ tags: '["ﻝﻝ۴ﮒﭦ?, "ﮒ۳ﮒﮒﻝﻝ?, "ﮔﻟﭖﻝﻝ۴"]'
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -307,7 +307,7 @@ def risk_parity_weights(
 
 
 
-    
+
 
 
 
@@ -319,7 +319,7 @@ factor_returns: ﮒﮒﮔﭘﻝﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -343,7 +343,7 @@ factor_returns: ﮒﮒﮔﭘﻝﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -371,7 +371,7 @@ factor_returns: ﮒﮒﮔﭘﻝﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -387,7 +387,7 @@ factor_returns: ﮒﮒﮔﭘﻝﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -419,7 +419,7 @@ factor_returns: ﮒﮒﮔﭘﻝﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -497,7 +497,7 @@ factor_values: ﮒﮒﮒﺙﻝ۸ﻠ?
 
 
 
-    
+
 
 
 
@@ -525,7 +525,7 @@ factor_values: ﮒﮒﮒﺙﻝ۸ﻠ?
 
 
 
-    
+
 
 
 
@@ -595,7 +595,7 @@ def calculate_stock_scores(
 
 
 
-    
+
 
 
 
@@ -607,7 +607,7 @@ factor_values: ﮒﮒﮒﺙﻝ۸ﻠ?        factor_weights: ﮒﮒﮔﻠ
 
 
 
-    
+
 
 
 
@@ -709,7 +709,7 @@ def optimize_portfolio(
 
 
 
-    
+
 
 
 
@@ -737,7 +737,7 @@ cov_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠ?        max_weight: ﮒﻛﺕ۹ﻟ۰ﻝ۴�
 
 
 
-    
+
 
 
 
@@ -757,7 +757,7 @@ cov_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠ?        max_weight: ﮒﻛﺕ۹ﻟ۰ﻝ۴�
 
 
 
-    
+
 
 
 
@@ -785,7 +785,7 @@ cov_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠ?        max_weight: ﮒﻛﺕ۹ﻟ۰ﻝ۴�
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ cov_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠ?        max_weight: ﮒﻛﺕ۹ﻟ۰ﻝ۴�
 
 
 
-    
+
 
 
 
@@ -1563,7 +1563,7 @@ def neutralize(
 
 
 
-    
+
 
 
 
@@ -1575,7 +1575,7 @@ factor_values: ﮒﮒﮒ?        risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1591,7 +1591,7 @@ factor_values: ﮒﮒﮒ?        risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1603,7 +1603,7 @@ factor_values: ﮒﮒﮒ?        risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1826,6 +1826,3 @@ factor_values: ﮒﮒﮒ?        risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-03
-
-
-

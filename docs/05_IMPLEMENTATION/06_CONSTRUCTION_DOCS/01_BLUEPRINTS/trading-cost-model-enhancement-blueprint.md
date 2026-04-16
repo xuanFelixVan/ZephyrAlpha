@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：交易成本建模、成本预测、成本优化
 
@@ -150,7 +150,7 @@ class TradingCostModel:
 
     """交易成本模型"""
 
-    
+
 
     def __init__(self, model_type='proportional'):
 
@@ -158,7 +158,7 @@ class TradingCostModel:
 
         self.params = {}
 
-    
+
 
     def estimate_cost(self, trade_size, price, volume, volatility):
 
@@ -166,7 +166,7 @@ class TradingCostModel:
 
         估算交易成本
 
-        
+
 
         Parameters:
 
@@ -198,7 +198,7 @@ class TradingCostModel:
 
             return self._market_impact_cost(trade_size, price, volume, volatility)
 
-    
+
 
     def _proportional_cost(self, trade_size, price, rate=0.001):
 
@@ -206,7 +206,7 @@ class TradingCostModel:
 
         return abs(trade_size) * price * rate
 
-    
+
 
     def _market_impact_cost(self, trade_size, price, volume, volatility):
 
@@ -361,4 +361,3 @@ class TradingCostOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

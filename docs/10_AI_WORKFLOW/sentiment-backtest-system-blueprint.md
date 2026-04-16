@@ -54,7 +54,7 @@ layer: layer_00
 
 > **核心职责**: 舆情回测系统设计和架构规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：舆情回测系统设计和架构规划相关内容
 
@@ -324,7 +324,7 @@ class SentimentStrategy(bt.Strategy):
 
     """舆情因子策略"""
 
-    
+
 
     params = (
 
@@ -334,7 +334,7 @@ class SentimentStrategy(bt.Strategy):
 
     )
 
-    
+
 
     def __init__(self):
 
@@ -348,7 +348,7 @@ class SentimentStrategy(bt.Strategy):
 
         self.buy_comm = None
 
-        
+
 
     def next(self):
 
@@ -356,7 +356,7 @@ class SentimentStrategy(bt.Strategy):
 
             return
 
-            
+
 
         if not self.position:
 
@@ -452,13 +452,13 @@ class SentimentDataLoader:
 
     """舆情数据加载器"""
 
-    
+
 
     def __init__(self, db_path: str):
 
         self.db_path = db_path
 
-        
+
 
     def load_sentiment_data(
 
@@ -474,7 +474,7 @@ class SentimentDataLoader:
 
         """加载舆情数据
 
-        
+
 
         Args:
 
@@ -484,7 +484,7 @@ class SentimentDataLoader:
 
             symbols: 股票代码列表
 
-            
+
 
         Returns:
 
@@ -494,15 +494,15 @@ class SentimentDataLoader:
 
         import sqlite3
 
-        
+
 
         conn = sqlite3.connect(self.db_path)
 
-        
+
 
         query = f"""
 
-        SELECT 
+        SELECT
 
             date,
 
@@ -528,13 +528,13 @@ class SentimentDataLoader:
 
         """
 
-        
+
 
         df = pd.read_sql_query(query, conn)
 
         conn.close()
 
-        
+
 
         return df
 
@@ -564,7 +564,7 @@ def optimize_parameters(
 
     """优化策略参数
 
-    
+
 
     Args:
 
@@ -572,7 +572,7 @@ def optimize_parameters(
 
         n_trials: 优化次数
 
-        
+
 
     Returns:
 
@@ -588,7 +588,7 @@ def optimize_parameters(
 
         holding_period = trial.suggest_int('holding_period', 1, 20)
 
-        
+
 
         # 创建回测引擎
 
@@ -604,19 +604,19 @@ def optimize_parameters(
 
         )
 
-        
+
 
         # 加载数据
 
         cerebro.adddata(bt.feeds.PandasData(dataname=data))
 
-        
+
 
         # 添加分析器
 
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
 
-        
+
 
         # 运行回测
 
@@ -624,11 +624,11 @@ def optimize_parameters(
 
         sharpe = results[0].analyzers.sharpe.get_analysis()['sharperatio']
 
-        
+
 
         return sharpe
 
-    
+
 
     # 运行优化
 
@@ -636,7 +636,7 @@ def optimize_parameters(
 
     study.optimize(objective, n_trials=n_trials)
 
-    
+
 
     return study.best_params
 
@@ -664,25 +664,25 @@ class SentimentFactor:
 
     """舆情因子基类"""
 
-    
+
 
     def __init__(self, name: str):
 
         self.name = name
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
         """计算因子值
 
-        
+
 
         Args:
 
             data: 舆情数据
 
-            
+
 
         Returns:
 
@@ -698,13 +698,13 @@ class SentimentScoreFactor(SentimentFactor):
 
     """情感得分因子"""
 
-    
+
 
     def __init__(self):
 
         super().__init__("sentiment_score")
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -716,7 +716,7 @@ class SentimentChangeFactor(SentimentFactor):
 
     """情感变化因子"""
 
-    
+
 
     def __init__(self, window: int = 5):
 
@@ -724,7 +724,7 @@ class SentimentChangeFactor(SentimentFactor):
 
         self.window = window
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -736,13 +736,13 @@ class DiscussionHeatFactor(SentimentFactor):
 
     """讨论热度因子"""
 
-    
+
 
     def __init__(self):
 
         super().__init__("discussion_heat")
 
-        
+
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
 
@@ -762,13 +762,13 @@ class BacktestReport:
 
     """回测报告生成器"""
 
-    
+
 
     def __init__(self, results: Dict):
 
         self.results = results
 
-        
+
 
     def generate_performance_report(self) -> Dict:
 
@@ -790,7 +790,7 @@ class BacktestReport:
 
         }
 
-        
+
 
     def generate_risk_report(self) -> Dict:
 
@@ -808,7 +808,7 @@ class BacktestReport:
 
         }
 
-        
+
 
     def plot_equity_curve(self):
 
@@ -816,11 +816,11 @@ class BacktestReport:
 
         import matplotlib.pyplot as plt
 
-        
+
 
         equity_curve = self._calculate_equity_curve()
 
-        
+
 
         plt.figure(figsize=(12, 6))
 
@@ -966,7 +966,7 @@ services:
 
       - DB_PATH=/app/data/sentiment.db
 
-      
+
 
   redis:
 
@@ -1107,4 +1107,3 @@ services:
 **下次更新建议**: 实施后1个月
 
 **最终状态**: ✅ 完整蓝图已生成
-

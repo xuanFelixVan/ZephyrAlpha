@@ -63,7 +63,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -745,7 +745,7 @@ class HighFrequencySignalProcessor:
 
 
 
-    
+
 
 
 
@@ -841,7 +841,7 @@ class HighFrequencySignalProcessor:
 
 
 
-        
+
 
 
 
@@ -925,7 +925,7 @@ class HighFrequencySignalProcessor:
 
 
 
-    
+
 
 
 
@@ -997,7 +997,7 @@ class HighFrequencySignalProcessor:
 
 
 
-        
+
 
 
 
@@ -1033,7 +1033,7 @@ class HighFrequencySignalProcessor:
 
 
 
-            
+
 
 
 
@@ -1093,7 +1093,7 @@ class HighFrequencySignalProcessor:
 
 
 
-    
+
 
 
 
@@ -1165,7 +1165,7 @@ class HighFrequencySignalProcessor:
 
 
 
-        
+
 
 
 
@@ -1201,7 +1201,7 @@ class HighFrequencySignalProcessor:
 
 
 
-            
+
 
 
 
@@ -1249,7 +1249,7 @@ class HighFrequencySignalProcessor:
 
 
 
-    
+
 
 
 
@@ -1321,7 +1321,7 @@ class HighFrequencySignalProcessor:
 
 
 
-        
+
 
 
 
@@ -1345,7 +1345,7 @@ class HighFrequencySignalProcessor:
 
 
 
-            filtered_signals: 过滤后信?            
+            filtered_signals: 过滤后信?
 
 
 
@@ -2126,14 +2126,3 @@ pywavelets>=1.5.0
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active
-
-
-
-
-
-
-
-
-
-
-

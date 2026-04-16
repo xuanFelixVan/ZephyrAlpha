@@ -193,11 +193,11 @@ class MultiPeriodOptimizer:
 
     多期动态优化器
 
-    
+
 
     """
 
-    
+
 
     def __init__(
 
@@ -213,7 +213,7 @@ class MultiPeriodOptimizer:
 
         self.frequency = rebalance_frequency
 
-    
+
 
     def optimize(
 
@@ -235,7 +235,7 @@ class MultiPeriodOptimizer:
 
         pass
 
-    
+
 
     def simulate_execution(
 
@@ -302,10 +302,3 @@ class MultiPeriodOptimizer:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-

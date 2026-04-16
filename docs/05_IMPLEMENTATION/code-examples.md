@@ -69,7 +69,7 @@ implementation_status: 进行?---
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -115,7 +115,7 @@ class TrendFollowStrategy(BaseStrategy):
 
     均线趋势跟踪策略
 
-    
+
 
     逻辑?
 
@@ -127,7 +127,7 @@ class TrendFollowStrategy(BaseStrategy):
 
     """
 
-    
+
 
     def __init__(self, ma_short=20, ma_long=50, stop_loss=0.05, take_profit=0.15):
 
@@ -141,13 +141,13 @@ class TrendFollowStrategy(BaseStrategy):
 
         self.take_profit = take_profit
 
-    
+
 
     def calculate_signal(self, data: pd.DataFrame) -> Dict:
 
         """计算交易信号"""
 
-        
+
 
         # 计算均线
 
@@ -155,7 +155,7 @@ class TrendFollowStrategy(BaseStrategy):
 
         data['ma_long'] = data['close'].rolling(window=self.ma_long).mean()
 
-        
+
 
         # 获取最新数?
 
@@ -163,7 +163,7 @@ class TrendFollowStrategy(BaseStrategy):
 
         prev = data.iloc[-2]
 
-        
+
 
         # 生成信号
 
@@ -181,7 +181,7 @@ class TrendFollowStrategy(BaseStrategy):
 
         }
 
-        
+
 
         # 金叉：快线从下穿上慢?
 
@@ -197,7 +197,7 @@ class TrendFollowStrategy(BaseStrategy):
 
             signal['take_profit'] = latest['close'] * (1 + self.take_profit)
 
-        
+
 
         # 死叉：快线从上穿下慢?
 
@@ -207,17 +207,17 @@ class TrendFollowStrategy(BaseStrategy):
 
             signal['confidence'] = 0.8
 
-        
+
 
         return signal
 
-    
+
 
     def validate_signal(self, signal: Dict, context: Dict) -> bool:
 
         """验证信号有效?""
 
-        
+
 
         # 检查成交量
 
@@ -225,7 +225,7 @@ class TrendFollowStrategy(BaseStrategy):
 
             return False
 
-        
+
 
         # 检查价?
 
@@ -233,7 +233,7 @@ class TrendFollowStrategy(BaseStrategy):
 
             return False
 
-        
+
 
         return True
 
@@ -245,13 +245,13 @@ if __name__ == "__main__":
 
     strategy = TrendFollowStrategy(ma_short=20, ma_long=50)
 
-    
+
 
     # 加载数据
 
     data = pd.read_csv("data/000001.SZ.csv")
 
-    
+
 
     # 计算信号
 
@@ -295,11 +295,11 @@ class MomentumFactor(BaseFactor):
 
     动量因子
 
-    
+
 
     公式: Momentum = (Close_t - Close_t-n) / Close_t-n
 
-    
+
 
     说明?
 
@@ -309,7 +309,7 @@ class MomentumFactor(BaseFactor):
 
     """
 
-    
+
 
     def __init__(self, period=20):
 
@@ -321,19 +321,19 @@ class MomentumFactor(BaseFactor):
 
         self.factor_name = "动量因子"
 
-    
+
 
     def calculate(self, data: pd.DataFrame) -> Union[float, pd.Series]:
 
         """计算因子?""
 
-        
+
 
         if len(data) < self.period + 1:
 
             raise ValueError(f"数据长度不足，需要至少{self.period + 1}?)
 
-        
+
 
         # 计算收益?
 
@@ -341,39 +341,39 @@ class MomentumFactor(BaseFactor):
 
         momentum = (close_prices[-1] - close_prices[-self.period-1]) / close_prices[-self.period-1]
 
-        
+
 
         return momentum
 
-    
+
 
     def calculate_batch(self, data: pd.DataFrame) -> pd.Series:
 
         """批量计算因子?""
 
-        
+
 
         close_prices = data['close'].values
 
         momentum_values = np.zeros(len(data))
 
-        
+
 
         for i in range(self.period, len(data)):
 
             momentum_values[i] = (close_prices[i] - close_prices[i-self.period]) / close_prices[i-self.period]
 
-        
+
 
         return pd.Series(momentum_values, index=data.index, name=self.factor_id)
 
-    
+
 
     def validate(self, factor_value: float) -> bool:
 
         """验证因子值有效?""
 
-        
+
 
         # 检查是否为NaN
 
@@ -381,7 +381,7 @@ class MomentumFactor(BaseFactor):
 
             return False
 
-        
+
 
         # 检查是否为无穷?
 
@@ -389,7 +389,7 @@ class MomentumFactor(BaseFactor):
 
             return False
 
-        
+
 
         return True
 
@@ -401,13 +401,13 @@ if __name__ == "__main__":
 
     factor = MomentumFactor(period=20)
 
-    
+
 
     # 加载数据
 
     data = pd.read_csv("data/000001.SZ.csv")
 
-    
+
 
     # 计算因子
 
@@ -415,7 +415,7 @@ if __name__ == "__main__":
 
     print(f"动量因子? {momentum:.4f}")
 
-    
+
 
     # 批量计算
 
@@ -767,13 +767,13 @@ def main():
 
     args = parser.parse_args()
 
-    
+
 
     # 初始化回测引?
 
     engine = BacktestEngine()
 
-    
+
 
     # 加载策略
 
@@ -785,7 +785,7 @@ def main():
 
         raise ValueError(f"未知策略: {args.strategy}")
 
-    
+
 
     # 加载数据
 
@@ -795,7 +795,7 @@ def main():
 
     data = data[(data['date'] >= args.start_date) & (data['date'] <= args.end_date)]
 
-    
+
 
     # 运行回测
 
@@ -811,7 +811,7 @@ def main():
 
     )
 
-    
+
 
     # 生成报告
 
@@ -823,7 +823,7 @@ def main():
 
     print(f"胜率: {results['win_rate']:.2%}")
 
-    
+
 
     # 保存报告
 
@@ -843,7 +843,6 @@ if __name__ == "__main__":
 
 
 
-**最后更?*: 2026-03-28  
+**最后更?*: 2026-03-28
 
 **维护?*: 清风量化系统
-

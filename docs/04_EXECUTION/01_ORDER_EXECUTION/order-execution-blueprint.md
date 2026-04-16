@@ -23,7 +23,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: Order Execution蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Order Execution蓝图设计相关内容
 
@@ -1306,4 +1306,3 @@ class TradingAPI:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
-

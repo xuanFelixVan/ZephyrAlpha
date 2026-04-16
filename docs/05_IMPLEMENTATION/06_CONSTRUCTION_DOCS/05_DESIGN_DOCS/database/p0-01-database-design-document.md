@@ -159,7 +159,7 @@ postgresql:
 
   maintenance_work_mem: 1GB
 
-  
+
 
 # Redis配置
 
@@ -173,7 +173,7 @@ redis:
 
   timeout: 300
 
-  
+
 
 # ClickHouse配置
 
@@ -2049,9 +2049,8 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
-**版本**: 2.0.0 | **更新日期**: 2026-04-02 | **状?*: ?已优化 
+**版本**: 2.0.0 | **更新日期**: 2026-04-02 | **状?*: ?已优化
 
-**专业标准符合?*: 96% | **达标状?*: ?达标  
+**专业标准符合?*: 96% | **达标状?*: ?达标
 
 **下一?*: 生成DDL脚本 ?开始P0-2数据字典设计
-

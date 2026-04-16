@@ -394,4 +394,3 @@ class FactorExhaustor:
 - 父目? 07_RESEARCH/README.md
 
 - 相关文档: candle_patterns.md
-

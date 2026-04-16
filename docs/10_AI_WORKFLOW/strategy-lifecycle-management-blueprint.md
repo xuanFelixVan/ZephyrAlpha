@@ -215,7 +215,7 @@ from transitions import Machine
 
 class StrategyLifecycle:
     states = ['DEV', 'TEST', 'STAGING', 'ACTIVE', 'DEPRECATED', 'ARCHIVED']
-    
+
     transitions = [
         {'trigger': 'submit_test', 'source': 'DEV', 'dest': 'TEST'},
         {'trigger': 'test_pass', 'source': 'TEST', 'dest': 'STAGING'},

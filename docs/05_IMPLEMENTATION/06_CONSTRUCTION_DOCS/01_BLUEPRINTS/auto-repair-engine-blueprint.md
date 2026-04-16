@@ -23,7 +23,7 @@ layer: layer_05
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：自动修复引擎、异常检测、自动修复
 
@@ -261,7 +261,7 @@ graph LR
 
     D[数据目录] --> B
 
-    
+
 
     B --> E[质量评分系统]
 
@@ -269,7 +269,7 @@ graph LR
 
     B --> G[数据可观测性]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -395,19 +395,19 @@ class ProblemDetector:
 
     """问题检测器"""
 
-    
+
 
     def __init__(self):
 
         self.problems: List[DataProblem] = []
 
-    
+
 
     def detect_missing_values(self, df: pd.DataFrame, table_name: str) -> List[DataProblem]:
 
         problems = []
 
-        
+
 
         for column in df.columns:
 
@@ -415,7 +415,7 @@ class ProblemDetector:
 
             missing_indices = df[missing_mask].index.tolist()
 
-            
+
 
             for idx in missing_indices:
 
@@ -439,25 +439,25 @@ class ProblemDetector:
 
                 problems.append(problem)
 
-        
+
 
         self.problems.extend(problems)
 
         return problems
 
-    
 
-    def detect_outliers(self, df: pd.DataFrame, table_name: str, 
+
+    def detect_outliers(self, df: pd.DataFrame, table_name: str,
 
                         method: str = "iqr") -> List[DataProblem]:
 
         problems = []
 
-        
+
 
         numeric_columns = df.select_dtypes(include=[np.number]).columns
 
-        
+
 
         for column in numeric_columns:
 
@@ -473,13 +473,13 @@ class ProblemDetector:
 
                 upper_bound = Q3 + 1.5 * IQR
 
-                
+
 
                 outlier_mask = (df[column] < lower_bound) | (df[column] > upper_bound)
 
                 outlier_indices = df[outlier_mask].index.tolist()
 
-                
+
 
                 for idx in outlier_indices:
 
@@ -505,13 +505,13 @@ class ProblemDetector:
 
                     problems.append(problem)
 
-        
+
 
         self.problems.extend(problems)
 
         return problems
 
-    
+
 
     def detect_format_errors(self, df: pd.DataFrame, table_name: str,
 
@@ -519,7 +519,7 @@ class ProblemDetector:
 
         problems = []
 
-        
+
 
         for column, pattern in format_rules.items():
 
@@ -531,7 +531,7 @@ class ProblemDetector:
 
                 invalid_indices = df[invalid_mask].index.tolist()
 
-                
+
 
                 for idx in invalid_indices:
 
@@ -557,7 +557,7 @@ class ProblemDetector:
 
                     problems.append(problem)
 
-        
+
 
         self.problems.extend(problems)
 
@@ -639,7 +639,7 @@ class RepairStrategyEngine:
 
     """修复策略引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -679,7 +679,7 @@ class RepairStrategyEngine:
 
         }
 
-    
+
 
     def select_strategy(self, problem: DataProblem, context: Dict[str, Any]) -> RepairStrategy:
 
@@ -687,13 +687,13 @@ class RepairStrategyEngine:
 
         available_strategies = self.strategies.get(problem.problem_type, [])
 
-        
+
 
         if not available_strategies:
 
             return RepairStrategy.MANUAL_REVIEW
 
-        
+
 
         if problem.problem_type == ProblemType.MISSING_VALUE:
 
@@ -705,11 +705,11 @@ class RepairStrategyEngine:
 
                 return RepairStrategy.MODE_IMPUTATION
 
-        
+
 
         return available_strategies[0]
 
-    
+
 
     def execute_repair(self, df: pd.DataFrame, problem: DataProblem,
 
@@ -737,7 +737,7 @@ class RepairStrategyEngine:
 
             repaired_value = None
 
-        
+
 
         return RepairAction(
 
@@ -755,7 +755,7 @@ class RepairStrategyEngine:
 
         )
 
-    
+
 
     def _mean_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
 
@@ -765,7 +765,7 @@ class RepairStrategyEngine:
 
         return df[column].mean()
 
-    
+
 
     def _median_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
 
@@ -775,7 +775,7 @@ class RepairStrategyEngine:
 
         return df[column].median()
 
-    
+
 
     def _mode_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
 
@@ -787,7 +787,7 @@ class RepairStrategyEngine:
 
         return df[column].mode()[0]
 
-    
+
 
     def _knn_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
 
@@ -799,13 +799,13 @@ class RepairStrategyEngine:
 
         imputer = KNNImputer(n_neighbors=5)
 
-        
+
 
         column_idx = list(df.columns).index(problem.field_name)
 
         imputed_data = imputer.fit_transform(numeric_df)
 
-        
+
 
         return imputed_data[problem.row_index, column_idx]
 
@@ -857,15 +857,15 @@ class RepairEvaluation:
 
 class RepairEvaluator:
 
-    
+
 
     def __init__(self):
 
         self.evaluations: List[RepairEvaluation] = []
 
-    
 
-    def evaluate_repair(self, original_df: pd.DataFrame, 
+
+    def evaluate_repair(self, original_df: pd.DataFrame,
 
                         repaired_df: pd.DataFrame,
 
@@ -879,19 +879,19 @@ class RepairEvaluator:
 
         business_rule_score = self._evaluate_business_rules(repaired_df, repair_action)
 
-        
 
-        overall_score = (accuracy_score * 0.4 + 
 
-                        consistency_score * 0.3 + 
+        overall_score = (accuracy_score * 0.4 +
+
+                        consistency_score * 0.3 +
 
                         business_rule_score * 0.3)
 
-        
+
 
         passed = overall_score >= 0.85
 
-        
+
 
         evaluation = RepairEvaluation(
 
@@ -911,19 +911,19 @@ class RepairEvaluator:
 
         )
 
-        
+
 
         self.evaluations.append(evaluation)
 
         return evaluation
 
-    
+
 
     def _evaluate_accuracy(self, df: pd.DataFrame, repair_action: RepairAction) -> float:
 
         column = repair_action.problem.field_name
 
-        
+
 
         if df[column].dtype in [np.float64, np.int64]:
 
@@ -933,7 +933,7 @@ class RepairEvaluator:
 
             repaired_value = repair_action.repaired_value
 
-            
+
 
             if std > 0:
 
@@ -941,17 +941,17 @@ class RepairEvaluator:
 
                 return max(0, 1 - z_score / 3)
 
-        
+
 
         return 0.9
 
-    
+
 
     def _evaluate_consistency(self, df: pd.DataFrame, repair_action: RepairAction) -> float:
 
         return 0.9
 
-    
+
 
     def _evaluate_business_rules(self, df: pd.DataFrame, repair_action: RepairAction) -> float:
 
@@ -1093,7 +1093,7 @@ POST /api/v1/repair/execute
 
 
 
-## 
+##
 
 
 
@@ -1121,7 +1121,7 @@ services:
 
       - ./models:/models
 
-  
+
 
   model-training:
 
@@ -1165,7 +1165,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -1272,12 +1272,3 @@ services:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

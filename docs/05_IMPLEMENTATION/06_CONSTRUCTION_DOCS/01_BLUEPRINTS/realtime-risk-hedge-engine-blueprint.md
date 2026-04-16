@@ -19,7 +19,7 @@ layer: layer_05
 ## 核心定位
 
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：实时风险对冲引擎、动态对冲、风险监控
 > - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
@@ -78,7 +78,7 @@ layer: layer_05
 
 
 > 核心职责: Realtime Risk Hedge Engine蓝图设计
-> 职责边界: 
+> 职责边界:
 
 ## 1. 模块概述
 
@@ -93,7 +93,7 @@ layer: layer_05
 
 **模块类别**: 核心模块（P1级）
 
-**架构角色**: 
+**架构角色**:
 
 
 1. **实时风险监控**: 监控组合风险暴露（Beta、行业、风格）
@@ -129,7 +129,7 @@ graph TB
 ```python
 class RealtimeRiskMonitor:
     """实时风险监控器"""
-    
+
     def __init__(self):
         self.risk_metrics = {
             'beta': BetaMonitor(),           # Beta风险监控
@@ -137,17 +137,17 @@ class RealtimeRiskMonitor:
             'style': StyleMonitor(),         # 风格风险监控
             'tail': TailRiskMonitor()        # 尾部风险监控
         }
-        
+
     def monitor_portfolio_risk(
         self,
         portfolio: Portfolio
     ) -> RiskReport:
         """
         实时监控组合风险
-        
+
         监控维度:
 况下的风险敞口
-        
+
         输出:
         - RiskReport: 风险报告
           - risk_metrics: 风险指标
@@ -161,24 +161,24 @@ class RealtimeRiskMonitor:
 ```python
 class RiskAssessor:
     """风险评估器"""
-    
+
     def __init__(self):
         self.thresholds = {
             'beta_max': 1.2,              # Beta上限
             'sector_concentration': 0.3,  # 行业集中度上限            'style_deviation': 0.5,       # 风格偏离度上限            'var_95': 0.05                # 95% VaR上限
         }
-        
+
     def assess_risk(
         self,
         risk_report: RiskReport
     ) -> RiskAssessment:
         """
-        评估风险并生成预警        
+        评估风险并生成预警
         评估逻辑:
         1. 对比风险指标与阈值        2. 计算风险得分
         3. 生成预警信息
         4. 推荐对冲策略
-        
+
         输出:
         - RiskAssessment: 风险评估结果
           - risk_score: 风险得分（0-100）          - risk_level: 风险级别
@@ -192,7 +192,7 @@ class RiskAssessor:
 ```python
 class HedgeStrategyGenerator:
     """对冲策略生成器"""
-    
+
     def __init__(self):
         self.hedge_tools = {
             'index_futures': IndexFuturesHedge(),    # 股指期货对冲
@@ -200,7 +200,7 @@ class HedgeStrategyGenerator:
             'options': OptionsHedge(),               # 期权对冲
             'sector_rotation': SectorRotationHedge() # 行业轮动对冲
         }
-        
+
     def generate_hedge_strategy(
         self,
         risk_assessment: RiskAssessment,
@@ -208,11 +208,11 @@ class HedgeStrategyGenerator:
     ) -> HedgeStrategy:
         """
         生成对冲策略
-        
+
         1. Beta风险: 使用股指期货对冲
         2. 行业风险: 使用行业ETF或期货对冲        3. 风格风险: 使用风格ETF对冲
         4. 尾部风险: 使用期权保护
-        
+
         输出:
         - HedgeStrategy: 对冲策略
           - hedge_ratio: 对冲比例
@@ -226,10 +226,10 @@ class HedgeStrategyGenerator:
 ```python
 class BetaHedge:
     """Beta对冲"""
-    
+
     def __init__(self):
         self.beta_model = BetaModel()
-        
+
     def calculate_hedge_ratio(
         self,
         portfolio: Portfolio,
@@ -237,21 +237,21 @@ class BetaHedge:
     ) -> float:
         """
         计算Beta对冲比例
-        
-        
+
+
         Hedge Ratio = (Current Beta - Target Beta) / Futures Beta
-        
+
         参数:
         - portfolio: 当前组合
-        - target_beta: 目标Beta（通常为 0 或接近 0）        
+        - target_beta: 目标Beta（通常为 0 或接近 0）
         输出:
         - hedge_ratio: 对冲比例（期货合约数量）
         """
         current_beta = self.beta_model.calculate_beta(portfolio)
         futures_beta = 1.0  # 股指期货Beta约为1
-        
+
         hedge_ratio = (current_beta - target_beta) / futures_beta
-        
+
         return hedge_ratio
 ```
 
@@ -269,10 +269,10 @@ def monitor_realtime_risk(
 ) -> RealtimeRiskReport:
     """
     实时风险监控
-    
+
     参数:
     - portfolio_id: 组合ID
-    
+
     返回:
     - RealtimeRiskReport: 实时风险报告
       - beta: 组合Beta
@@ -294,7 +294,7 @@ def generate_risk_warning(
 ) -> RiskWarning:
     """
     生成风险预警
-    
+
     参数:
     - portfolio_id: 组合ID
     返回:
@@ -313,11 +313,11 @@ def generate_hedge_orders(
     risk_assessment: RiskAssessment
 ) -> List[HedgeOrder]:
     """
-    生成对冲订    
+    生成对冲订
     参数:
     - portfolio_id: 组合ID
     - risk_assessment: 风险评估结果
-    
+
     返回:
     - List[HedgeOrder]: 对冲订单列表
       - order_id: 订单ID
@@ -457,22 +457,22 @@ def calculate_portfolio_beta(
 ) -> float:
     """
     计算组合Beta
-    
-    方法: 回归    
+
+    方法: 回归
     步骤:
     1. 获取组合中所有股票的Beta系数
     2. 按权重加权求和    3. 返回组合Beta
-    
+
     返回:
     - portfolio_beta: 组合Beta
     """
     portfolio_beta = 0.0
-    
+
     for position in portfolio.positions:
         stock_beta = get_stock_beta(position.symbol, benchmark)
         weight = position.market_value / portfolio.total_value
         portfolio_beta += weight * stock_beta
-    
+
     return portfolio_beta
 ```
 
@@ -501,28 +501,28 @@ def calculate_sector_exposure(
 ) -> Dict[str, float]:
     """
     计算行业暴露
-    
+
     步骤:
     1. 获取所有股票的行业分类
     2. 计算组合在各行业的权重    3. 计算相对基准的偏离度
-    
+
     返回:
     """
     sector_weights = {}
-    
+
     for position in portfolio.positions:
         sector = get_stock_sector(position.symbol)
         weight = position.market_value / portfolio.total_value
-        
+
         if sector not in sector_weights:
             sector_weights[sector] = 0.0
         sector_weights[sector] += weight
-    
+
     sector_exposure = {}
     for sector, weight in sector_weights.items():
         benchmark_weight = benchmark_weights.get(sector, 0.0)
         sector_exposure[sector] = weight - benchmark_weight
-    
+
     return sector_exposure
 ```
 
@@ -547,24 +547,24 @@ def calculate_beta_hedge_ratio(
 ) -> int:
     """
     计算Beta对冲需要的期货合约数量
-    
-    
+
+
     Contracts = (Portfolio Beta - Target Beta) * Portfolio Value / (Futures Price * Multiplier)
-    
+
     参数:
     - portfolio_beta: 当前组合Beta
     - target_beta: 目标Beta
     - futures_price: 期货价格
-    
+
     返回:
     - contracts: 期货合约数量（取整）
     """
     beta_gap = portfolio_beta - target_beta
     hedge_value = beta_gap * portfolio_value
     contract_value = futures_price * futures_multiplier
-    
+
     contracts = int(hedge_value / contract_value)
-    
+
     return contracts
 ```
 
@@ -600,15 +600,15 @@ def calculate_beta_hedge_ratio(
 
 ```python
 class TestRealtimeRiskMonitor:
-    
+
     def test_beta_calculation(self):
         """测试Beta计算"""
         pass
-    
+
     def test_sector_exposure_calculation(self):
         """测试行业暴露计算"""
         pass
-    
+
     def test_risk_warning_generation(self):
         """测试风险预警生成"""
         pass
@@ -619,15 +619,15 @@ class TestRealtimeRiskMonitor:
 ```python
 class TestRiskHedgeEngine:
     """风险对冲引擎集成测试"""
-    
+
     def test_end_to_end_hedge(self):
         """测试端到端对冲流程"""
         pass
-    
+
     def test_dynamic_adjustment(self):
         """测试动态调整"""
         pass
-    
+
     def test_hedge_effect_evaluation(self):
         """测试对冲效果评估"""
         pass
@@ -734,11 +734,11 @@ class TestRiskHedgeEngine:
 
 
 - ECONOMIC_REGIME_ENGINE_BLUEPRINT.md - 经济范式判断引擎
-- ALL_WEATHER_OPTIMIZER_BLUEPRINT.md - 
+- ALL_WEATHER_OPTIMIZER_BLUEPRINT.md -
 
 
 
-**蓝图编写**: 首席架构师  
+**蓝图编写**: 首席架构师
 **蓝图日期**: 2026-04-02
 
 
@@ -780,7 +780,7 @@ class TestRiskHedgeEngine:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Realtime Risk Hedge Engine** | 
+| **Realtime Risk Hedge Engine** |
 
 ### 12.3 版本管理
 

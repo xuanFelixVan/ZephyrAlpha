@@ -1362,8 +1362,8 @@ blueprints:
   superseded_by: ''
 - module_id: DATA_QUALITY_REALTIME_MONITORING_001_7449
   title: Data Quality Realtime Monitoring Blueprint
-  path: docs/01_FRAMEWORK/data-quality-realtime-monitoring-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-data-quality-realtime-monitoring-blueprint.md
+  status: ARCHIVED
   layer: layer_01
   layer_raw: layer_01
   priority: P0 (最高优先级)
@@ -1618,8 +1618,8 @@ blueprints:
   superseded_by: ''
 - module_id: 01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370
   title: Dynamic Risk Budgeting Blueprint
-  path: docs/01_FRAMEWORK/dynamic-risk-budgeting-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-dynamic-risk-budgeting-blueprint.md
+  status: ARCHIVED
   layer: layer_01
   layer_raw: layer_01
   priority: P0
@@ -4119,8 +4119,8 @@ blueprints:
   superseded_by: ''
 - module_id: LAYER_006_1892
   title: Portfolio Optimization Layer Blueprint
-  path: docs/01_FRAMEWORK/portfolio-optimization-layer-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-portfolio-optimization-layer-blueprint.md
+  status: ARCHIVED
   layer: layer_07
   layer_raw: layer_07
   priority: P0
@@ -4743,8 +4743,8 @@ blueprints:
   superseded_by: ''
 - module_id: LAYER_010_2151
   title: Strategy Execution Layer Blueprint
-  path: docs/01_FRAMEWORK/strategy-execution-layer-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-strategy-execution-layer-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P0
@@ -6487,7 +6487,7 @@ blueprints:
   superseded_by: ''
 - module_id: AUTO_77314
   title: External_Audit_Security_Assessment_20260413
-  path: docs/11_STRATEGIC_DECISION/EXTERNAL_AUDIT_SECURITY_ASSESSMENT_20260413.md
+  path: docs/11_STRATEGIC_DECISION/external-audit-security-assessment-20260413.md
   status: AUDITED
   layer: unknown
   layer_raw: ''
@@ -8487,8 +8487,8 @@ blueprints:
   superseded_by: ''
 - module_id: DATA_QUALITY_ENHANCED_001_7073
   title: Data Quality Enhanced Blueprint
-  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-quality-enhanced-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-data-quality-enhanced-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P2
@@ -8503,8 +8503,8 @@ blueprints:
   superseded_by: ''
 - module_id: DATA_QUALITY_MONITORING_001_1487
   title: Data Quality Monitoring Blueprint
-  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-quality-monitoring-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-data-quality-monitoring-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P2
@@ -8551,8 +8551,8 @@ blueprints:
   superseded_by: ''
 - module_id: DATA_SOURCE_MANAGEMENT_001_0842
   title: Data Source Management Blueprint
-  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-source-management-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-data-source-management-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P0
@@ -9911,8 +9911,8 @@ blueprints:
   superseded_by: ''
 - module_id: RISK_CONTROL_001_9536
   title: Risk Control Blueprint
-  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/risk-control-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-risk-control-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P0
@@ -10103,8 +10103,8 @@ blueprints:
   superseded_by: ''
 - module_id: SMART_ORDER_ROUTER_001_1630
   title: Smart Order Router Blueprint
-  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/smart-order-router-blueprint.md
-  status: Active
+  path: docs/06_ARCHIVE/bp-archived-20260416-smart-order-router-blueprint.md
+  status: ARCHIVED
   layer: layer_05
   layer_raw: layer_05
   priority: P0

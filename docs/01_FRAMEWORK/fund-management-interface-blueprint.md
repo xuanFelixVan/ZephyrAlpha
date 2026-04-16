@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Fund Management Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Fund Management Interface蓝图设计相关内容
 
@@ -84,7 +84,7 @@ class FundManagementInterface:
 
     """资金管理界面"""
 
-    
+
 
     def __init__(self):
 
@@ -94,7 +94,7 @@ class FundManagementInterface:
 
         self.frozen_fund = 50000
 
-    
+
 
     def render_overview(self):
 
@@ -102,29 +102,29 @@ class FundManagementInterface:
 
         st.subheader("💰 资金概览")
 
-        
+
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
             st.metric("总资金", f"{self.total_fund:,.2f}")
 
-        
+
 
         with col2:
 
             st.metric("可用资金", f"{self.available_fund:,.2f}")
 
-        
+
 
         with col3:
 
             st.metric("冻结资金", f"{self.frozen_fund:,.2f}")
 
-        
+
 
         with col4:
 
@@ -189,4 +189,3 @@ class FundManagementInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

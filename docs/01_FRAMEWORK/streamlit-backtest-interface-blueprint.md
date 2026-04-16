@@ -22,7 +22,7 @@ responsibility: ''
 
 > **核心职责**: Streamlit Backtest Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Streamlit Backtest Interface蓝图设计相关内容
 
@@ -32,11 +32,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-05  
+> **创建日期**: 2026-04-05
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **目标**: 构建专业级交互式回测界面，使用Streamlit替代自研前端
 
@@ -216,7 +216,7 @@ class BacktestDashboard:
 
     """回测仪表板"""
 
-    
+
 
     def __init__(self):
 
@@ -224,7 +224,7 @@ class BacktestDashboard:
 
         self.loader = DataLoader()
 
-        
+
 
     def run(self):
 
@@ -240,17 +240,17 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         st.title("📊 ZephyrAlpha交互式回测系统")
 
-        
+
 
         # 侧边栏配置
 
         self._render_sidebar()
 
-        
+
 
         # 主内容区
 
@@ -266,31 +266,31 @@ class BacktestDashboard:
 
         ])
 
-        
+
 
         with tab1:
 
             self._render_backtest_config()
 
-        
+
 
         with tab2:
 
             self._render_performance_analysis()
 
-        
+
 
         with tab3:
 
             self._render_factor_analysis()
 
-        
+
 
         with tab4:
 
             self._render_detailed_report()
 
-    
+
 
     def _render_sidebar(self):
 
@@ -298,7 +298,7 @@ class BacktestDashboard:
 
         st.sidebar.header("⚙️ 系统配置")
 
-        
+
 
         # 策略选择
 
@@ -310,7 +310,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 时间范围
 
@@ -330,7 +330,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 初始资金
 
@@ -346,7 +346,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 存储到session_state
 
@@ -358,7 +358,7 @@ class BacktestDashboard:
 
         st.session_state['initial_capital'] = initial_capital
 
-    
+
 
     def _render_backtest_config(self):
 
@@ -366,23 +366,23 @@ class BacktestDashboard:
 
         st.header("📈 回测配置")
 
-        
+
 
         col1, col2 = st.columns([1, 1])
 
-        
+
 
         with col1:
 
             st.subheader("策略参数")
 
-            
+
 
             # 根据策略类型显示不同参数
 
             strategy = st.session_state.get('strategy', '双均线策略')
 
-            
+
 
             if strategy == "双均线策略":
 
@@ -398,7 +398,7 @@ class BacktestDashboard:
 
                 }
 
-            
+
 
             elif strategy == "动量策略":
 
@@ -414,13 +414,13 @@ class BacktestDashboard:
 
                 }
 
-        
+
 
         with col2:
 
             st.subheader("交易成本")
 
-            
+
 
             commission = st.number_input(
 
@@ -450,7 +450,7 @@ class BacktestDashboard:
 
             }
 
-        
+
 
         # 运行回测按钮
 
@@ -458,7 +458,7 @@ class BacktestDashboard:
 
             self._run_backtest()
 
-    
+
 
     def _run_backtest(self):
 
@@ -474,7 +474,7 @@ class BacktestDashboard:
 
             costs = st.session_state.get('costs', {})
 
-            
+
 
             # 加载数据
 
@@ -486,13 +486,13 @@ class BacktestDashboard:
 
             )
 
-            
+
 
             # 创建策略
 
             strategy_obj = StrategyFactory.create(strategy, params)
 
-            
+
 
             # 运行回测
 
@@ -510,17 +510,17 @@ class BacktestDashboard:
 
             )
 
-            
+
 
             # 存储结果
 
             st.session_state['backtest_result'] = result
 
-            
+
 
             st.success("✅ 回测完成!")
 
-    
+
 
     def _render_performance_analysis(self):
 
@@ -528,7 +528,7 @@ class BacktestDashboard:
 
         st.header("📊 绩效分析")
 
-        
+
 
         if 'backtest_result' not in st.session_state:
 
@@ -536,17 +536,17 @@ class BacktestDashboard:
 
             return
 
-        
+
 
         result = st.session_state['backtest_result']
 
-        
+
 
         # 关键指标
 
         col1, col2, col3, col4 = st.columns(4)
 
-        
+
 
         with col1:
 
@@ -560,7 +560,7 @@ class BacktestDashboard:
 
             )
 
-        
+
 
         with col2:
 
@@ -574,7 +574,7 @@ class BacktestDashboard:
 
             )
 
-        
+
 
         with col3:
 
@@ -588,7 +588,7 @@ class BacktestDashboard:
 
             )
 
-        
+
 
         with col4:
 
@@ -602,7 +602,7 @@ class BacktestDashboard:
 
             )
 
-        
+
 
         # 净值曲线
 
@@ -612,7 +612,7 @@ class BacktestDashboard:
 
         st.plotly_chart(fig, use_container_width=True)
 
-        
+
 
         # 回撤曲线
 
@@ -622,7 +622,7 @@ class BacktestDashboard:
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _plot_equity_curve(self, result):
 
@@ -640,7 +640,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 净值曲线
 
@@ -664,7 +664,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 基准曲线
 
@@ -688,7 +688,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         # 成交量
 
@@ -710,7 +710,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         fig.update_layout(
 
@@ -722,11 +722,11 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         return fig
 
-    
+
 
     def _plot_drawdown(self, result):
 
@@ -734,7 +734,7 @@ class BacktestDashboard:
 
         fig = go.Figure()
 
-        
+
 
         fig.add_trace(
 
@@ -756,7 +756,7 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         fig.update_layout(
 
@@ -772,11 +772,11 @@ class BacktestDashboard:
 
         )
 
-        
+
 
         return fig
 
-    
+
 
     def _render_factor_analysis(self):
 
@@ -784,7 +784,7 @@ class BacktestDashboard:
 
         st.header("🔍 因子分析")
 
-        
+
 
         if 'backtest_result' not in st.session_state:
 
@@ -792,17 +792,17 @@ class BacktestDashboard:
 
             return
 
-        
+
 
         result = st.session_state['backtest_result']
 
-        
+
 
         # IC分析
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
@@ -812,7 +812,7 @@ class BacktestDashboard:
 
             st.plotly_chart(fig, use_container_width=True)
 
-        
+
 
         with col2:
 
@@ -822,7 +822,7 @@ class BacktestDashboard:
 
             st.plotly_chart(fig, use_container_width=True)
 
-        
+
 
         # 分层回测
 
@@ -832,7 +832,7 @@ class BacktestDashboard:
 
         st.plotly_chart(fig, use_container_width=True)
 
-    
+
 
     def _render_detailed_report(self):
 
@@ -840,7 +840,7 @@ class BacktestDashboard:
 
         st.header("📋 详细报告")
 
-        
+
 
         if 'backtest_result' not in st.session_state:
 
@@ -848,11 +848,11 @@ class BacktestDashboard:
 
             return
 
-        
+
 
         result = st.session_state['backtest_result']
 
-        
+
 
         # 交易记录
 
@@ -862,7 +862,7 @@ class BacktestDashboard:
 
         st.dataframe(df_trades, use_container_width=True)
 
-        
+
 
         # 持仓记录
 
@@ -872,13 +872,13 @@ class BacktestDashboard:
 
         st.dataframe(df_positions, use_container_width=True)
 
-        
+
 
         # 导出按钮
 
         col1, col2 = st.columns(2)
 
-        
+
 
         with col1:
 
@@ -896,7 +896,7 @@ class BacktestDashboard:
 
             )
 
-        
+
 
         with col2:
 
@@ -946,7 +946,7 @@ class StrategyParameterManager:
 
     """策略参数管理器"""
 
-    
+
 
     @staticmethod
 
@@ -956,7 +956,7 @@ class StrategyParameterManager:
 
         params = {}
 
-        
+
 
         if strategy_name == "双均线策略":
 
@@ -990,7 +990,7 @@ class StrategyParameterManager:
 
                 )
 
-        
+
 
         elif strategy_name == "动量策略":
 
@@ -1020,7 +1020,7 @@ class StrategyParameterManager:
 
             )
 
-        
+
 
         elif strategy_name == "因子策略":
 
@@ -1034,7 +1034,7 @@ class StrategyParameterManager:
 
             )
 
-            
+
 
             params['factor_weights'] = {}
 
@@ -1052,7 +1052,7 @@ class StrategyParameterManager:
 
                 )
 
-        
+
 
         return params
 
@@ -1088,7 +1088,7 @@ def render_metrics_card(result: Dict):
 
     col1, col2, col3, col4 = st.columns(4)
 
-    
+
 
     with col1:
 
@@ -1102,7 +1102,7 @@ def render_metrics_card(result: Dict):
 
         )
 
-    
+
 
     with col2:
 
@@ -1116,7 +1116,7 @@ def render_metrics_card(result: Dict):
 
         )
 
-    
+
 
     with col3:
 
@@ -1130,7 +1130,7 @@ def render_metrics_card(result: Dict):
 
         )
 
-    
+
 
     with col4:
 
@@ -1178,7 +1178,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     # K线图
 
@@ -1204,7 +1204,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     # 买卖信号
 
@@ -1212,7 +1212,7 @@ def create_interactive_chart(result: Dict):
 
     sell_signals = result[result['signal'] == 'sell']
 
-    
+
 
     fig.add_trace(
 
@@ -1234,7 +1234,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     fig.add_trace(
 
@@ -1256,7 +1256,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     # 净值曲线
 
@@ -1280,7 +1280,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     # 回撤曲线
 
@@ -1306,7 +1306,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     fig.update_layout(
 
@@ -1320,7 +1320,7 @@ def create_interactive_chart(result: Dict):
 
     )
 
-    
+
 
     return fig
 
@@ -1545,4 +1545,3 @@ Streamlit交互式回测界面通过**开源优先策略**，实现了：
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

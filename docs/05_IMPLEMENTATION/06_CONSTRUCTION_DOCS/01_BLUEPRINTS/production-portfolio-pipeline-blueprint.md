@@ -310,13 +310,13 @@ class ProductionPortfolioPipeline:
 
     生产级组合优化管道
 
-    
+
 
     提供端到端的组合优化解决方案
 
     """
 
-    
+
 
     def __init__(
 
@@ -336,7 +336,7 @@ class ProductionPortfolioPipeline:
 
         初始化生产级管道
 
-        
+
 
         Args:
 
@@ -358,7 +358,7 @@ class ProductionPortfolioPipeline:
 
         self.is_long_only = is_long_only
 
-        
+
 
         self.covar_estimator = EwmaCovarEstimator(
 
@@ -370,11 +370,11 @@ class ProductionPortfolioPipeline:
 
         )
 
-        
+
 
         self.constraints = Constraints(is_long_only=is_long_only)
 
-    
+
 
     def fit(
 
@@ -392,7 +392,7 @@ class ProductionPortfolioPipeline:
 
         训练管道
 
-        
+
 
         Args:
 
@@ -402,7 +402,7 @@ class ProductionPortfolioPipeline:
 
             portfolio_objective: 组合目标
 
-        
+
 
         Returns:
 
@@ -418,7 +418,7 @@ class ProductionPortfolioPipeline:
 
         )
 
-        
+
 
         weights = compute_rolling_optimal_weights(
 
@@ -434,7 +434,7 @@ class ProductionPortfolioPipeline:
 
         )
 
-        
+
 
         return {
 
@@ -444,7 +444,7 @@ class ProductionPortfolioPipeline:
 
         }
 
-    
+
 
     def backtest(
 
@@ -464,7 +464,7 @@ class ProductionPortfolioPipeline:
 
         回测组合
 
-        
+
 
         Args:
 
@@ -476,7 +476,7 @@ class ProductionPortfolioPipeline:
 
             ticker: 组合名称
 
-        
+
 
         Returns:
 
@@ -496,7 +496,7 @@ class ProductionPortfolioPipeline:
 
         )
 
-        
+
 
         return {
 
@@ -506,7 +506,7 @@ class ProductionPortfolioPipeline:
 
         }
 
-    
+
 
     def run_pipeline(
 
@@ -526,7 +526,7 @@ class ProductionPortfolioPipeline:
 
         运行完整管道
 
-        
+
 
         Args:
 
@@ -538,7 +538,7 @@ class ProductionPortfolioPipeline:
 
             rebalancing_costs: 再平衡成本
 
-        
+
 
         Returns:
 
@@ -548,7 +548,7 @@ class ProductionPortfolioPipeline:
 
         fit_result = self.fit(prices, time_period, portfolio_objective)
 
-        
+
 
         backtest_result = self.backtest(
 
@@ -560,7 +560,7 @@ class ProductionPortfolioPipeline:
 
         )
 
-        
+
 
         return {
 
@@ -594,13 +594,13 @@ class HCGLCovarianceEstimator:
 
     HCGL因子协方差估计器
 
-    
+
 
     使用层次聚类Group LASSO方法估计协方差
 
     """
 
-    
+
 
     def __init__(
 
@@ -618,7 +618,7 @@ class HCGLCovarianceEstimator:
 
         初始化HCGL估计器
 
-        
+
 
         Args:
 
@@ -636,7 +636,7 @@ class HCGLCovarianceEstimator:
 
         self.group_lasso_alpha = group_lasso_alpha
 
-        
+
 
         self.factor_model = FactorLassoEstimator(
 
@@ -648,7 +648,7 @@ class HCGLCovarianceEstimator:
 
         )
 
-    
+
 
     def estimate(
 
@@ -664,7 +664,7 @@ class HCGLCovarianceEstimator:
 
         估计协方差矩阵
 
-        
+
 
         Args:
 
@@ -672,7 +672,7 @@ class HCGLCovarianceEstimator:
 
             factors: 因子数据（可选）
 
-        
+
 
         Returns:
 
@@ -688,7 +688,7 @@ class HCGLCovarianceEstimator:
 
             self.factor_model.fit(returns)
 
-        
+
 
         beta = self.factor_model.beta_
 
@@ -696,11 +696,11 @@ class HCGLCovarianceEstimator:
 
         idio_var = self.factor_model.idio_var_
 
-        
+
 
         cov_matrix = beta @ factor_cov @ beta.T + np.diag(idio_var)
 
-        
+
 
         return cov_matrix
 
@@ -720,19 +720,19 @@ class RealWorldDataHandler:
 
     真实世界数据处理器
 
-    
+
 
     处理缺失值、混合频率、流动性约束等
 
     """
 
-    
+
 
     def __init__(self):
 
         self.asset_info = {}
 
-    
+
 
     def handle_missing_data(
 
@@ -748,7 +748,7 @@ class RealWorldDataHandler:
 
         处理缺失数据
 
-        
+
 
         Args:
 
@@ -756,7 +756,7 @@ class RealWorldDataHandler:
 
             min_history: 最小历史数据要求
 
-        
+
 
         Returns:
 
@@ -766,7 +766,7 @@ class RealWorldDataHandler:
 
         valid_assets = []
 
-        
+
 
         for asset in prices.columns:
 
@@ -774,7 +774,7 @@ class RealWorldDataHandler:
 
             valid_count = asset_prices.notna().sum()
 
-            
+
 
             if valid_count >= min_history:
 
@@ -790,11 +790,11 @@ class RealWorldDataHandler:
 
                 }
 
-        
+
 
         return prices[valid_assets]
 
-    
+
 
     def handle_mixed_frequency(
 
@@ -810,7 +810,7 @@ class RealWorldDataHandler:
 
         处理混合频率数据
 
-        
+
 
         Args:
 
@@ -818,7 +818,7 @@ class RealWorldDataHandler:
 
             target_freq: 目标频率
 
-        
+
 
         Returns:
 
@@ -828,7 +828,7 @@ class RealWorldDataHandler:
 
         return prices.asfreq(target_freq).fillna(method='ffill')
 
-    
+
 
     def handle_illiquid_positions(
 
@@ -846,7 +846,7 @@ class RealWorldDataHandler:
 
         处理流动性差的位置
 
-        
+
 
         Args:
 
@@ -856,7 +856,7 @@ class RealWorldDataHandler:
 
             volume_threshold: 成交量阈值
 
-        
+
 
         Returns:
 
@@ -866,7 +866,7 @@ class RealWorldDataHandler:
 
         adjusted_weights = weights.copy()
 
-        
+
 
         for asset in weights.columns:
 
@@ -874,13 +874,13 @@ class RealWorldDataHandler:
 
                 avg_volume = prices[asset].rolling(20).mean().iloc[-1]
 
-                
+
 
                 if avg_volume < volume_threshold:
 
                     adjusted_weights[asset] = 0
 
-        
+
 
         return adjusted_weights
 
@@ -1020,11 +1020,11 @@ async def run_pipeline(request: PipelineRequest):
 
         )
 
-        
+
 
         time_period = qis.TimePeriod(request.start_date, request.end_date)
 
-        
+
 
         pipeline = ProductionPortfolioPipeline(
 
@@ -1032,7 +1032,7 @@ async def run_pipeline(request: PipelineRequest):
 
         )
 
-        
+
 
         result = pipeline.run_pipeline(
 
@@ -1046,7 +1046,7 @@ async def run_pipeline(request: PipelineRequest):
 
         )
 
-        
+
 
         return PipelineResponse(
 
@@ -1092,7 +1092,7 @@ def run_production_pipeline(
 
     运行生产级组合优化管道
 
-    
+
 
     Args:
 
@@ -1108,7 +1108,7 @@ def run_production_pipeline(
 
         rebalancing_costs: 再平衡成本
 
-    
+
 
     Returns:
 
@@ -1118,11 +1118,11 @@ def run_production_pipeline(
 
     time_period = qis.TimePeriod(start_date, end_date)
 
-    
+
 
     pipeline = ProductionPortfolioPipeline(is_long_only=is_long_only)
 
-    
+
 
     return pipeline.run_pipeline(
 
@@ -1270,21 +1270,21 @@ class TestProductionPipeline:
 
         n_periods = 504
 
-        
+
 
         returns = np.random.randn(n_periods, n_assets) * 0.02
 
         prices = 100 * np.exp(np.cumsum(returns, axis=0))
 
-        
+
 
         dates = pd.date_range('2020-01-01', periods=n_periods, freq='D')
 
-        
+
 
         return pd.DataFrame(prices, index=dates)
 
-    
+
 
     def test_pipeline_fit(self, sample_prices):
 
@@ -1292,11 +1292,11 @@ class TestProductionPipeline:
 
         pipeline = ProductionPortfolioPipeline()
 
-        
+
 
         time_period = qis.TimePeriod('2020-01-01', '2021-12-31')
 
-        
+
 
         result = pipeline.fit(
 
@@ -1306,13 +1306,13 @@ class TestProductionPipeline:
 
         )
 
-        
+
 
         assert 'weights' in result
 
         assert 'covar_dict' in result
 
-    
+
 
     def test_pipeline_backtest(self, sample_prices):
 
@@ -1320,15 +1320,15 @@ class TestProductionPipeline:
 
         pipeline = ProductionPortfolioPipeline()
 
-        
+
 
         time_period = qis.TimePeriod('2020-01-01', '2021-12-31')
 
-        
+
 
         fit_result = pipeline.fit(sample_prices, time_period)
 
-        
+
 
         backtest_result = pipeline.backtest(
 
@@ -1338,7 +1338,7 @@ class TestProductionPipeline:
 
         )
 
-        
+
 
         assert 'portfolio' in backtest_result
 
@@ -1360,15 +1360,15 @@ def test_end_to_end_pipeline():
 
     prices = load_test_data()
 
-    
+
 
     pipeline = ProductionPortfolioPipeline()
 
-    
+
 
     time_period = qis.TimePeriod('2020-01-01', '2021-12-31')
 
-    
+
 
     result = pipeline.run_pipeline(
 
@@ -1378,7 +1378,7 @@ def test_end_to_end_pipeline():
 
     )
 
-    
+
 
     assert result['weights'] is not None
 
@@ -1436,7 +1436,7 @@ def parallel_covar_estimation(
 
     并行协方差估计
 
-    
+
 
     Args:
 
@@ -1446,7 +1446,7 @@ def parallel_covar_estimation(
 
         n_jobs: 并行任务数
 
-    
+
 
     Returns:
 
@@ -1456,13 +1456,13 @@ def parallel_covar_estimation(
 
     estimator = EwmaCovarEstimator()
 
-    
+
 
     def estimate_single(period):
 
         return estimator.fit_rolling_covars(prices, period)
 
-    
+
 
     results = Parallel(n_jobs=n_jobs)(
 
@@ -1470,7 +1470,7 @@ def parallel_covar_estimation(
 
     )
 
-    
+
 
     covar_dict = {}
 
@@ -1478,7 +1478,7 @@ def parallel_covar_estimation(
 
         covar_dict.update(result)
 
-    
+
 
     return covar_dict
 
@@ -1725,4 +1725,3 @@ def parallel_covar_estimation(
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-08 | 初始版本创建 | 蓝图架构师 |
-

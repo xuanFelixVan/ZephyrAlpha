@@ -275,7 +275,7 @@ implementation_status: 进行中
 
 
 
-- **Layer归属**: Layer 7 - AI报告?- **职责范围**: 情景定义、情景模拟、影响评估、报告生?- **上下层接?*: 
+- **Layer归属**: Layer 7 - AI报告?- **职责范围**: 情景定义、情景模拟、影响评估、报告生?- **上下层接?*:
 
 
 
@@ -305,7 +305,7 @@ implementation_status: 进行中
 
 
 
-- **核心职责**: 情景分析、压力测试、影响评估、报告生?- **职责边界**: 
+- **核心职责**: 情景分析、压力测试、影响评估、报告生?- **职责边界**:
 
 
 
@@ -761,7 +761,7 @@ class ScenarioAnalyzer:
 
 
 
-    
+
 
 
 
@@ -779,7 +779,7 @@ class ScenarioAnalyzer:
 
 
 
-        
+
 
 
 
@@ -815,7 +815,7 @@ class ScenarioAnalyzer:
 
 
 
-    
+
 
 
 
@@ -863,7 +863,7 @@ class ScenarioAnalyzer:
 
 
 
-        
+
 
 
 
@@ -893,7 +893,7 @@ class ScenarioAnalyzer:
 
 
 
-            
+
 
 
 
@@ -923,7 +923,7 @@ class ScenarioAnalyzer:
 
 
 
-    
+
 
 
 
@@ -965,7 +965,7 @@ class ScenarioAnalyzer:
 
 
 
-        
+
 
 
 
@@ -989,7 +989,7 @@ class ScenarioAnalyzer:
 
 
 
-            
+
 
 
 
@@ -1013,7 +1013,7 @@ class ScenarioAnalyzer:
 
 
 
-    
+
 
 
 
@@ -1055,7 +1055,7 @@ class ScenarioAnalyzer:
 
 
 
-        
+
 
 
 
@@ -1079,7 +1079,7 @@ class ScenarioAnalyzer:
 
 
 
-            
+
 
 
 
@@ -2075,7 +2075,7 @@ def apply_market_shock(
 
 
 
-    
+
 
 
 
@@ -2099,7 +2099,7 @@ def apply_market_shock(
 
 
 
-    
+
 
 
 
@@ -2129,7 +2129,7 @@ def apply_market_shock(
 
 
 
-        
+
 
 
 
@@ -2183,7 +2183,7 @@ def apply_market_shock(
 
 
 
-    
+
 
 
 
@@ -2201,7 +2201,7 @@ def apply_market_shock(
 
 
 
-    
+
 
 
 
@@ -2213,7 +2213,7 @@ def apply_market_shock(
 
 
 
-    
+
 
 
 
@@ -2285,7 +2285,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2321,7 +2321,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2345,7 +2345,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-        
+
 
 
 
@@ -2375,7 +2375,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2393,7 +2393,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2411,7 +2411,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2435,7 +2435,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2447,7 +2447,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2465,7 +2465,7 @@ def calculate_scenario_risk_metrics(
 
 
 
-    
+
 
 
 
@@ -2759,7 +2759,7 @@ def test_apply_market_shock():
 
 
 
-    
+
 
 
 
@@ -2777,7 +2777,7 @@ def test_apply_market_shock():
 
 
 
-    
+
 
 
 
@@ -3126,8 +3126,3 @@ def test_apply_market_shock():
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **?*: ?活跃
-
-
-
-
-

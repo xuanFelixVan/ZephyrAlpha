@@ -22,7 +22,7 @@ related_documents:
   - MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md
   - REAL_TIME_RISK_MONITOR_BLUEPRINT.md
   - OPEN_SOURCE_MODULE_SOLUTION.md
-open_source_solution: 
+open_source_solution:
 primary: Evidently AI
 primary_github: 'https://github.com/evidentlyai/evidently'
 primary_stars: 5000+
@@ -189,7 +189,7 @@ class ModelDriftDetector:
 
     """模型漂移检测系统"""
 
-    
+
 
     def __init__(self, config: Dict):
 
@@ -197,7 +197,7 @@ class ModelDriftDetector:
 
         初始化漂移检测系统
 
-        
+
 
         Args:
 
@@ -207,7 +207,7 @@ class ModelDriftDetector:
 
         pass
 
-    
+
 
     def detect_data_drift(
 
@@ -225,7 +225,7 @@ class ModelDriftDetector:
 
         检测数据漂移
 
-        
+
 
         Args:
 
@@ -235,7 +235,7 @@ class ModelDriftDetector:
 
             threshold: 漂移阈值
 
-        
+
 
         Returns:
 
@@ -245,7 +245,7 @@ class ModelDriftDetector:
 
         pass
 
-    
+
 
     def detect_model_performance_drift(
 
@@ -267,7 +267,7 @@ class ModelDriftDetector:
 
         检测模型性能漂移
 
-        
+
 
         Args:
 
@@ -281,7 +281,7 @@ class ModelDriftDetector:
 
             metric: 性能指标
 
-        
+
 
         Returns:
 
@@ -291,7 +291,7 @@ class ModelDriftDetector:
 
         pass
 
-    
+
 
     def detect_concept_drift(
 
@@ -311,7 +311,7 @@ class ModelDriftDetector:
 
         检测概念漂移
 
-        
+
 
         Args:
 
@@ -323,7 +323,7 @@ class ModelDriftDetector:
 
             current_labels: 当前标签
 
-        
+
 
         Returns:
 
@@ -333,7 +333,7 @@ class ModelDriftDetector:
 
         pass
 
-    
+
 
     def generate_drift_alert(
 
@@ -349,7 +349,7 @@ class ModelDriftDetector:
 
         生成漂移告警
 
-        
+
 
         Args:
 
@@ -357,7 +357,7 @@ class ModelDriftDetector:
 
             alert_channels: 告警渠道
 
-        
+
 
         Returns:
 
@@ -367,7 +367,7 @@ class ModelDriftDetector:
 
         pass
 
-    
+
 
     def generate_drift_report(
 
@@ -383,7 +383,7 @@ class ModelDriftDetector:
 
         生成漂移报告
 
-        
+
 
         Args:
 
@@ -391,7 +391,7 @@ class ModelDriftDetector:
 
             output_format: 输出格式 (html/pdf)
 
-        
+
 
         Returns:
 
@@ -827,7 +827,7 @@ class ModelDriftDetector:
 
         self.column_mapping = ColumnMapping()
 
-    
+
 
     def detect_data_drift(
 
@@ -851,7 +851,7 @@ class ModelDriftDetector:
 
         ])
 
-        
+
 
         data_drift_report.run(
 
@@ -863,11 +863,11 @@ class ModelDriftDetector:
 
         )
 
-        
+
 
         result = data_drift_report.as_dict()
 
-        
+
 
         return {
 
@@ -879,7 +879,7 @@ class ModelDriftDetector:
 
         }
 
-    
+
 
     def detect_model_performance_drift(
 
@@ -903,7 +903,7 @@ class ModelDriftDetector:
 
         ])
 
-        
+
 
         performance_report.run(
 
@@ -915,11 +915,11 @@ class ModelDriftDetector:
 
         )
 
-        
+
 
         result = performance_report.as_dict()
 
-        
+
 
         return {
 
@@ -983,7 +983,7 @@ class EnhancedModelManager(ModelManager):
 
         self.drift_detector = ModelDriftDetector()
 
-    
+
 
     def monitor_model_health(self, model_id: str):
 
@@ -991,7 +991,7 @@ class EnhancedModelManager(ModelManager):
 
         current_data = self.get_current_data(model_id)
 
-        
+
 
         drift_result = self.drift_detector.detect_data_drift(
 
@@ -1001,7 +1001,7 @@ class EnhancedModelManager(ModelManager):
 
         )
 
-        
+
 
         if drift_result['drift_detected']:
 
@@ -1013,7 +1013,7 @@ class EnhancedModelManager(ModelManager):
 
             )
 
-        
+
 
         return drift_result
 
@@ -1279,7 +1279,7 @@ class EvidentlyDriftDetector:
 
         ])
 
-        
+
 
         data_drift_report.run(
 
@@ -1289,7 +1289,7 @@ class EvidentlyDriftDetector:
 
         )
 
-        
+
 
         return data_drift_report
 
@@ -1347,13 +1347,13 @@ class NannyMLDriftDetector:
 
         )
 
-        
+
 
         estimator.fit(reference_data)
 
         results = estimator.estimate(current_data)
 
-        
+
 
         return results
 
@@ -1434,4 +1434,3 @@ class NannyMLDriftDetector:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Blueprint
-

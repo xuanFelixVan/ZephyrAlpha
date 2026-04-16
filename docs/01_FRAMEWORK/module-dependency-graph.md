@@ -883,7 +883,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-    
+
 
 
 
@@ -903,7 +903,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-    
+
 
 
 
@@ -927,7 +927,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-        
+
 
 
 
@@ -939,7 +939,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-        
+
 
 
 
@@ -951,7 +951,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-        
+
 
 
 
@@ -963,7 +963,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-        
+
 
 
 
@@ -971,7 +971,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-    
+
 
 
 
@@ -983,7 +983,7 @@ def detect_circular_dependency(modules: Dict[str, List[str]]) -> List[List[str]]
 
 
 
-    
+
 
 
 
@@ -1406,6 +1406,3 @@ Module B ?Event Bus
 
 
 **下次更新**: 2026-07-02
-
-
-

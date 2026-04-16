@@ -229,7 +229,7 @@ def check_trade_completeness(trade_data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    ﮔ۲ﮔ۴ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﮔﺑﮔ?    
+    ﮔ۲ﮔ۴ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﮔﺑﮔ?
 
 
 
@@ -241,7 +241,7 @@ def check_trade_completeness(trade_data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -277,7 +277,7 @@ def check_trade_completeness(trade_data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -289,7 +289,7 @@ def check_trade_completeness(trade_data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -363,7 +363,7 @@ risk_metrics: ﻠ۲ﻠ۸ﮔﮔ
 
 
 
-    
+
 
 
 
@@ -399,7 +399,7 @@ risk_metrics: ﻠ۲ﻠ۸ﮔﮔ
 
 
 
-    
+
 
 
 
@@ -427,7 +427,7 @@ risk_metrics: ﻠ۲ﻠ۸ﮔﮔ
 
 
 
-    
+
 
 
 
@@ -443,7 +443,7 @@ risk_metrics: ﻠ۲ﻠ۸ﮔﮔ
 
 
 
-    
+
 
 
 
@@ -513,7 +513,7 @@ def check_system_status(system_metrics: Dict[str, Any]) -> Dict[str, Any]:
 
 
 
-    ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﺟﻟ۰ﻝﭘﮔ?    
+    ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﺟﻟ۰ﻝﭘﮔ?
 
 
 
@@ -525,7 +525,7 @@ system_metrics: ﻝﺏﭨﻝﭨﮔﮔ
 
 
 
-    
+
 
 
 
@@ -561,7 +561,7 @@ system_metrics: ﻝﺏﭨﻝﭨﮔﮔ
 
 
 
-    
+
 
 
 
@@ -577,7 +577,7 @@ system_metrics: ﻝﺏﭨﻝﭨﮔﮔ
 
 
 
-    
+
 
 
 
@@ -847,7 +847,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    ﮔ۲ﮔ۴ﮔﻛﭨﻠﻠ۱?    
+    ﮔ۲ﮔ۴ﮔﻛﭨﻠﻠ۱?
 
 
 
@@ -859,7 +859,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -891,7 +891,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -903,7 +903,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -927,7 +927,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -935,7 +935,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-        result['single_stock_exceeded'] or 
+        result['single_stock_exceeded'] or
 
 
 
@@ -947,7 +947,7 @@ def check_position_limits(positions: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1013,7 +1013,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-    ﮔ۲ﮔ۴ﮔﮔ۰۲ﮔﺑﮔ?    
+    ﮔ۲ﮔ۴ﮔﮔ۰۲ﮔﺑﮔ?
 
 
 
@@ -1025,7 +1025,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1057,7 +1057,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1073,7 +1073,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-        
+
 
 
 
@@ -1097,7 +1097,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1105,7 +1105,7 @@ def check_document_updates(doc_list: List[str]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1175,7 +1175,7 @@ def check_knowledge_base(knowledge_base: Dict[str, Any]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1183,7 +1183,7 @@ def check_knowledge_base(knowledge_base: Dict[str, Any]) -> Dict[str, Any]:
 
 
 
-        knowledge_base: ﻝ۴ﻟﺁﮒﭦﮔﺍﮔ?    
+        knowledge_base: ﻝ۴ﻟﺁﮒﭦﮔﺍﮔ?
 
 
 
@@ -1219,7 +1219,7 @@ def check_knowledge_base(knowledge_base: Dict[str, Any]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1239,7 +1239,7 @@ def check_knowledge_base(knowledge_base: Dict[str, Any]) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -1393,7 +1393,7 @@ def check_risk_management_effectiveness(
 
 
 
-    ﮔ۲ﮔ۴ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔﮔﮔ?    
+    ﮔ۲ﮔ۴ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔﮔﮔ?
 
 
 
@@ -1405,7 +1405,7 @@ def check_risk_management_effectiveness(
 
 
 
-    
+
 
 
 
@@ -1441,7 +1441,7 @@ def check_risk_management_effectiveness(
 
 
 
-    
+
 
 
 
@@ -1461,7 +1461,7 @@ def check_risk_management_effectiveness(
 
 
 
-    
+
 
 
 
@@ -1469,7 +1469,7 @@ def check_risk_management_effectiveness(
 
 
 
-    
+
 
 
 
@@ -1547,7 +1547,7 @@ def check_system_performance(
 
 
 
-    
+
 
 
 
@@ -1559,7 +1559,7 @@ performance_metrics: ﮔ۶ﻟﺛﮔﮔ
 
 
 
-    
+
 
 
 
@@ -1595,7 +1595,7 @@ performance_metrics: ﮔ۶ﻟﺛﮔﮔ
 
 
 
-    
+
 
 
 
@@ -1623,7 +1623,7 @@ performance_metrics: ﮔ۶ﻟﺛﮔﮔ
 
 
 
-    
+
 
 
 
@@ -1639,7 +1639,7 @@ performance_metrics: ﮔ۶ﻟﺛﮔﮔ
 
 
 
-    
+
 
 
 
@@ -2135,7 +2135,7 @@ def verify_remediation(
 
 
 
-    
+
 
 
 
@@ -2151,7 +2151,7 @@ def verify_remediation(
 
 
 
-    
+
 
 
 
@@ -2195,7 +2195,7 @@ def verify_remediation(
 
 
 
-    
+
 
 
 
@@ -2207,7 +2207,7 @@ def verify_remediation(
 
 
 
-    
+
 
 
 
@@ -2364,6 +2364,3 @@ def verify_remediation(
 
 
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-03
-
-
-

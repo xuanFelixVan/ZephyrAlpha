@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -527,7 +527,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -949,7 +949,7 @@ class TransformerModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -985,7 +985,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1003,7 +1003,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1033,7 +1033,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1051,7 +1051,7 @@ class TransformerModel(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1075,7 +1075,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1087,7 +1087,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1105,7 +1105,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1135,7 +1135,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1153,7 +1153,7 @@ class TransformerModel(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1189,7 +1189,7 @@ class PositionalEncoding(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1213,7 +1213,7 @@ class PositionalEncoding(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1261,7 +1261,7 @@ class PositionalEncoding(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1315,7 +1315,7 @@ class EncoderLayer(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1333,7 +1333,7 @@ class EncoderLayer(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1351,7 +1351,7 @@ class EncoderLayer(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1369,7 +1369,7 @@ class EncoderLayer(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1387,7 +1387,7 @@ class EncoderLayer(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1423,7 +1423,7 @@ class EncoderLayer(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1447,7 +1447,7 @@ class EncoderLayer(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1483,7 +1483,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1513,7 +1513,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1525,7 +1525,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1537,7 +1537,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1561,7 +1561,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1573,7 +1573,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1597,7 +1597,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1639,7 +1639,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1657,7 +1657,7 @@ class MultiHeadAttention(nn.Module):
 
 
 
-        
+
 
 
 
@@ -1693,7 +1693,7 @@ class FeedForward(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1729,7 +1729,7 @@ class FeedForward(nn.Module):
 
 
 
-    
+
 
 
 
@@ -1777,7 +1777,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -1807,7 +1807,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -1825,7 +1825,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -1861,7 +1861,7 @@ class TransformerTrainer:
 
 
 
-        
+
 
 
 
@@ -1879,7 +1879,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -1963,7 +1963,7 @@ class TransformerTrainer:
 
 
 
-        
+
 
 
 
@@ -1993,7 +1993,7 @@ class TransformerTrainer:
 
 
 
-            
+
 
 
 
@@ -2017,7 +2017,7 @@ class TransformerTrainer:
 
 
 
-            
+
 
 
 
@@ -2065,7 +2065,7 @@ class TransformerTrainer:
 
 
 
-            
+
 
 
 
@@ -2083,7 +2083,7 @@ class TransformerTrainer:
 
 
 
-        
+
 
 
 
@@ -2095,7 +2095,7 @@ class TransformerTrainer:
 
 
 
-        
+
 
 
 
@@ -2143,7 +2143,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -2185,7 +2185,7 @@ class TransformerTrainer:
 
 
 
-            
+
 
 
 
@@ -2221,7 +2221,7 @@ class TransformerTrainer:
 
 
 
-            
+
 
 
 
@@ -2233,7 +2233,7 @@ class TransformerTrainer:
 
 
 
-        
+
 
 
 
@@ -2245,7 +2245,7 @@ class TransformerTrainer:
 
 
 
-    
+
 
 
 
@@ -2323,7 +2323,7 @@ class TransformerPredictor:
 
 
 
-    
+
 
 
 
@@ -2359,7 +2359,7 @@ class TransformerPredictor:
 
 
 
-    
+
 
 
 
@@ -2401,7 +2401,7 @@ class TransformerPredictor:
 
 
 
-            
+
 
 
 
@@ -2419,7 +2419,7 @@ class TransformerPredictor:
 
 
 
-            
+
 
 
 
@@ -2431,7 +2431,7 @@ class TransformerPredictor:
 
 
 
-            
+
 
 
 
@@ -3017,7 +3017,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3059,7 +3059,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3083,7 +3083,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3107,7 +3107,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3125,7 +3125,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3143,7 +3143,7 @@ def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> Tuple[to
 
 
 
-    
+
 
 
 
@@ -3197,7 +3197,7 @@ def forward(self, x: torch.Tensor) -> torch.Tensor:
 
 
 
-    
+
 
 
 
@@ -3227,7 +3227,7 @@ def forward(self, x: torch.Tensor) -> torch.Tensor:
 
 
 
-    
+
 
 
 
@@ -3299,7 +3299,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -3323,7 +3323,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -3359,7 +3359,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -3383,7 +3383,7 @@ def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 
 
 
-    
+
 
 
 
@@ -3735,7 +3735,7 @@ def test_transformer_model_integration():
 
 
 
-    
+
 
 
 
@@ -3753,7 +3753,7 @@ def test_transformer_model_integration():
 
 
 
-    
+
 
 
 
@@ -3783,7 +3783,7 @@ def test_transformer_model_integration():
 
 
 
-    
+
 
 
 
@@ -3795,7 +3795,7 @@ def test_transformer_model_integration():
 
 
 
-    
+
 
 
 
@@ -4265,7 +4265,7 @@ transformer_model:
 
 
 
-  
+
 
 
 
@@ -4410,8 +4410,3 @@ transformer_model:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 机器学习层负责人
-
-
-
-
-

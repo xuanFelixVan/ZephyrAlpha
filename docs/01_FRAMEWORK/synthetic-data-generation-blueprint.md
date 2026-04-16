@@ -184,7 +184,7 @@ class SyntheticDataGenerator:
 
 
 
-    
+
 
 
 
@@ -216,7 +216,7 @@ class SyntheticDataGenerator:
 
 
 
-        
+
 
 
 
@@ -238,7 +238,7 @@ class SyntheticDataGenerator:
 
 
 
-    
+
 
 
 
@@ -266,7 +266,7 @@ class SyntheticDataGenerator:
 
 
 
-        
+
 
 
 
@@ -290,7 +290,7 @@ class SyntheticDataGenerator:
 
 
 
-    
+
 
 
 
@@ -314,7 +314,7 @@ class SyntheticDataGenerator:
 
 
 
-        
+
 
 
 
@@ -340,7 +340,7 @@ class SyntheticDataGenerator:
 
 
 
-    
+
 
 
 
@@ -368,7 +368,7 @@ class SyntheticDataGenerator:
 
 
 
-        
+
 
 
 
@@ -384,7 +384,7 @@ class SyntheticDataGenerator:
 
 
 
-            
+
 
 
 
@@ -637,4 +637,3 @@ ydata-synthetic>=1.3.0
 
 
 ```
-

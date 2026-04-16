@@ -261,19 +261,19 @@ def run_quick_audit():
 
         logger.info("ﮒﺙﮒ۶ﮒﺟ،ﻠﮒ؟۰ﻟ؟?..")
 
-        
+
 
         # ﮒﮒ۶ﮒﮒ؟۰ﻟ؟۰ﮒ۷
 
         auditor = DocumentAuditor(project_root='.')
 
-        
+
 
         # ﮔ۶ﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
 
         results = auditor.quick_audit()
 
-        
+
 
         # ﻝﮔﮔ۴ﮒﮔﻛﭨﭘﮒ?
 
@@ -281,7 +281,7 @@ def run_quick_audit():
 
         output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_{timestamp}.json'
 
-        
+
 
 # ﻛﺟﮒﮔ۴ﮒ
 
@@ -289,11 +289,11 @@ def run_quick_audit():
 
             json.dump(results, f, indent=2, ensure_ascii=False)
 
-        
+
 
 logger.info(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒﺍ: {output_file}")
 
-        
+
 
         # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﻛﺕ۴ﻠﻠ؟ﻠ۱
 
@@ -301,17 +301,17 @@ logger.info(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ�
 
             logger.warning(f"ﮒﻝﺍ {results['summary']['total_issues']} ﻛﺕ۹ﻠ؟ﻠ۱?)
 
-            
+
 
             # ﮒﻠﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ
 
             send_notification(results)
 
-        
+
 
         return 0
 
-        
+
 
     except Exception as e:
 
@@ -415,39 +415,39 @@ def run_standard_audit():
 
 logger.info("ﮒﺙﮒ۶ﮔﮒﮒ؟۰ﻟ؟?..")
 
-        
+
 
         auditor = DocumentAuditor(project_root='.')
 
         results = auditor.full_audit()
 
-        
+
 
         timestamp = datetime.now().strftime('%Y%m%d')
 
         output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_{timestamp}.json'
 
-        
+
 
         with open(output_file, 'w', encoding='utf-8') as f:
 
             json.dump(results, f, indent=2, ensure_ascii=False)
 
-        
+
 
 logger.info(f"ﮔﮒﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒ? {output_file}")
 
-        
+
 
         # ﻝﮔﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ
 
         generate_summary_report(results, timestamp)
 
-        
+
 
         return 0
 
-        
+
 
     except Exception as e:
 
@@ -463,7 +463,7 @@ def generate_summary_report(results, timestamp):
 
     summary_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
 
-    
+
 
     with open(summary_file, 'w', encoding='utf-8') as f:
 
@@ -477,7 +477,7 @@ def generate_summary_report(results, timestamp):
 
         f.write(f"- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {results['summary']['total_issues']}\n\n")
 
-        
+
 
         if results['summary']['issues_by_severity']:
 
@@ -487,7 +487,7 @@ def generate_summary_report(results, timestamp):
 
                 f.write(f"- {severity}: {count}ﻛﺕ۹\n")
 
-        
+
 
         if results['summary']['issues_by_type']:
 
@@ -581,11 +581,11 @@ def run_deep_audit():
 
         logger.info("ﮒﺙﮒ۶ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟?..")
 
-        
+
 
         auditor = DocumentAuditor(project_root='.')
 
-        
+
 
         # ﮔ۶ﻟ۰ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰
 
@@ -595,7 +595,7 @@ def run_deep_audit():
 
         l3_results = auditor.audit_layer3_professional_standards()
 
-        
+
 
         # ﮒﮒﺗﭘﻝﭨﮔ
 
@@ -613,9 +613,9 @@ def run_deep_audit():
 
                 'l3_issues': len(l3_results.get('issues', [])),
 
-                'total_issues': len(l1_results.get('issues', [])) + 
+                'total_issues': len(l1_results.get('issues', [])) +
 
-                               len(l2_results.get('issues', [])) + 
+                               len(l2_results.get('issues', [])) +
 
                                len(l3_results.get('issues', []))
 
@@ -629,33 +629,33 @@ def run_deep_audit():
 
         }
 
-        
+
 
         timestamp = datetime.now().strftime('%Y%m%d')
 
         output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quarterly_{timestamp}.json'
 
-        
+
 
         with open(output_file, 'w', encoding='utf-8') as f:
 
             json.dump(results, f, indent=2, ensure_ascii=False)
 
-        
+
 
 logger.info(f"ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒ? {output_file}")
 
-        
+
 
         # ﻝﮔﻟﺁ۵ﻝﭨﮔ۴ﮒ
 
         generate_detailed_report(results, timestamp)
 
-        
+
 
         return 0
 
-        
+
 
     except Exception as e:
 
@@ -671,7 +671,7 @@ def generate_detailed_report(results, timestamp):
 
     report_file = f'docs/09_AUDIT/REPORTS/QUARTERLY_AUDIT_REPORT_{timestamp}.md'
 
-    
+
 
     with open(report_file, 'w', encoding='utf-8') as f:
 
@@ -681,7 +681,7 @@ f.write(f"# ﮒ۲ﮒﭦ۵ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ\n\n")
 
         f.write(f"**ﮒ؟۰ﻟ؟۰ﻝﺎﭨﮒ**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰\n\n")
 
-        
+
 
         f.write(f"## ﮒ؟۰ﻟ؟۰ﮔ۵ﻟ۵\n\n")
 
@@ -697,7 +697,7 @@ f.write(f"| L3ﻛﺕﻛﺕﮔﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
 
         f.write(f"| **ﮔﭨﻟ؟۰** | **{results['summary']['total_issues']}** |\n\n")
 
-        
+
 
         # L1ﻝﭨﮔﻟﺁ۵ﮔ
 
@@ -709,7 +709,7 @@ f.write(f"| L3ﻛﺕﻛﺕﮔﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
 
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
 
-        
+
 
         # L2ﻝﭨﮔﻟﺁ۵ﮔ
 
@@ -721,7 +721,7 @@ f.write(f"| L3ﻛﺕﻛﺕﮔﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
 
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
 
-        
+
 
         # L3ﻝﭨﮔﻟﺁ۵ﮔ
 
@@ -809,7 +809,7 @@ def cleanup_old_reports():
 
     base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
 
-    
+
 
     # ﮔﺕﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ3ﻛﺕ۹ﮔﺅﺙ?
 
@@ -819,7 +819,7 @@ def cleanup_old_reports():
 
         cleanup_reports(weekly_path, days=90)
 
-    
+
 
 # ﮔﺕﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ?ﮒﺗﺑﺅﺙ
 
@@ -837,13 +837,13 @@ def cleanup_reports(directory, days):
 
     cutoff_date = datetime.now() - timedelta(days=days)
 
-    
+
 
     for file_path in directory.glob('*.json'):
 
         file_date = datetime.fromtimestamp(file_path.stat().st_mtime)
 
-        
+
 
         if file_date < cutoff_date:
 
@@ -897,21 +897,21 @@ email:
 
     - "doc-admin@example.com"
 
-  
+
 
   subject_template: "ZephyrAlphaﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ - {audit_type} - {date}"
 
-  
+
 
   body_template: |
 
     ﮒﺍﮔ؛ﻝﮔﮔ۰۲ﻝ؟۰ﻝﮒﺅﺙ?
 
-    
+
 
     {audit_type}ﮒ؟۰ﻟ؟۰ﮒﺓﺎﮒ؟ﮔﺅﺙﻛﭨ۴ﻛﺕﮔﺁﮒ؟۰ﻟ؟۰ﻝﭨﮔﮔﻟ۵ﺅﺙ
 
-    
+
 
     - ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}
 
@@ -921,11 +921,11 @@ email:
 
 - ﻟ۵ﮒﻠ؟ﻠ۱: {warning_issues}
 
-    
+
 
     ﻟﺁ۵ﻝﭨﮔ۴ﮒﻟﺁﺓﮔ۴ﻝ? {report_path}
 
-    
+
 
 ﮔ۳ﻟﺑ
 
@@ -947,7 +947,7 @@ dingtalk:
 
   webhook: "https://oapi.dingtalk.com/robot/send?access_token=YOUR_TOKEN"
 
-  
+
 
   message_template: |
 
@@ -1017,7 +1017,7 @@ def check_audit_status():
 
     base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
 
-    
+
 
     # ﮔ۲ﮔ۴ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙ?
 
@@ -1035,7 +1035,7 @@ print(f"ﻗﺅﺕ  ﻟ۵ﮒ: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒﺓﺎ {days_since_last
 
 print(f"ﻗ?ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_weekly}")
 
-    
+
 
 # ﮔ۲ﮔ۴ﮔﮒﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙ?
 
@@ -1063,7 +1063,7 @@ def get_latest_report(directory):
 
         return None
 
-    
+
 
     latest_time = None
 
@@ -1075,7 +1075,7 @@ def get_latest_report(directory):
 
             latest_time = file_time
 
-    
+
 
     return latest_time
 
@@ -1147,7 +1147,7 @@ free -m  # ﮔ۲ﮔ۴ﮒﮒ?
 
    sudo systemctl restart cron
 
-   
+
 
    # Windows
 
@@ -1182,4 +1182,3 @@ free -m  # ﮔ۲ﮔ۴ﮒﮒ?
 **ﻠﻝﺛ؟ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
-

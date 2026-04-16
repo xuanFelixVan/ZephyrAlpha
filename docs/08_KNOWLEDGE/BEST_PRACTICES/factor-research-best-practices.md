@@ -222,7 +222,7 @@ def check_data_quality(data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    ﮔﺍﮔ؟ﻟﺑ۷ﻠﮔ۲ﮔ?    
+    ﮔﺍﮔ؟ﻟﺑ۷ﻠﮔ۲ﮔ?
 
 
 
@@ -234,7 +234,7 @@ def check_data_quality(data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -278,7 +278,7 @@ def check_data_quality(data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -298,7 +298,7 @@ def check_data_quality(data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-        outliers = ((data[column] < (q1 - 1.5 * iqr)) | 
+        outliers = ((data[column] < (q1 - 1.5 * iqr)) |
 
 
 
@@ -310,7 +310,7 @@ def check_data_quality(data: pd.DataFrame) -> Dict[str, Any]:
 
 
 
-    
+
 
 
 
@@ -544,7 +544,7 @@ def optimize_factor(
 
 
 
-    
+
 
 
 
@@ -556,7 +556,7 @@ factor_values: ﮒﮒﮒ?        returns: ﮔﭘﻝﻝ?        method: ﻛﺙﮒ
 
 
 
-    
+
 
 
 
@@ -592,7 +592,7 @@ factor_values: ﮒﮒﮒ?        returns: ﮔﭘﻝﻝ?        method: ﻛﺙﮒ
 
 
 
-        
+
 
 
 
@@ -604,7 +604,7 @@ factor_values: ﮒﮒﮒ?        returns: ﮔﭘﻝﻝ?        method: ﻛﺙﮒ
 
 
 
-    
+
 
 
 
@@ -752,7 +752,7 @@ def monitor_factor_performance(
 
 
 
-    
+
 
 
 
@@ -768,7 +768,7 @@ factor_id: ﮒﮒID
 
 
 
-    
+
 
 
 
@@ -792,7 +792,7 @@ factor_id: ﮒﮒID
 
 
 
-    
+
 
 
 
@@ -808,7 +808,7 @@ factor_id: ﮒﮒID
 
 
 
-    
+
 
 
 
@@ -942,7 +942,7 @@ factor_values: ﮒﮒﮒﺙﻝ۸ﻠ?        threshold: ﻝﺕﮒﺏﮔ۶ﻠﮒ?
 
 
 
-    
+
 
 
 
@@ -982,7 +982,7 @@ factor_values: ﮒﮒﮒﺙﻝ۸ﻠ?        threshold: ﻝﺕﮒﺏﮔ۶ﻠﮒ?
 
 
 
-    
+
 
 
 
@@ -1204,7 +1204,7 @@ def set_factor_limits(
 
 
 
-    
+
 
 
 
@@ -1216,7 +1216,7 @@ factor_id: ﮒﮒID
 
 
 
-        risk_tolerance: ﻠ۲ﻠ۸ﮒ؟ﺗﮒﺟﮒﭦ?    
+        risk_tolerance: ﻠ۲ﻠ۸ﮒ؟ﺗﮒﺟﮒﭦ?
 
 
 
@@ -1240,7 +1240,7 @@ factor_id: ﮒﮒID
 
 
 
-    
+
 
 
 
@@ -1346,7 +1346,7 @@ def monitor_portfolio_risk(
 
 
 
-    
+
 
 
 
@@ -1362,7 +1362,7 @@ risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1394,7 +1394,7 @@ risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1406,7 +1406,7 @@ risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 
-    
+
 
 
 
@@ -1739,6 +1739,3 @@ risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-03
-
-
-

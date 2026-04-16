@@ -27,7 +27,7 @@ responsibility: ''
 
 > **核心职责**: Investor Relations Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Investor Relations Management蓝图设计相关内容
 
@@ -37,11 +37,11 @@ responsibility: ''
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **状态**: 活跃  
+> **状态**: 活跃
 
 > **对标机构**: Citadel, Two Sigma, Bridgewater, D.E. Shaw
 
@@ -177,7 +177,7 @@ class InvestorRelationsInterface:
 
         pass
 
-    
+
 
     def track_communication(self, communication: Communication) -> CommunicationRecord:
 
@@ -185,7 +185,7 @@ class InvestorRelationsInterface:
 
         pass
 
-    
+
 
     def send_report(self, report: Report, investors: List[str]) -> SendingStatus:
 
@@ -193,7 +193,7 @@ class InvestorRelationsInterface:
 
         pass
 
-    
+
 
     def manage_disclosure(self, disclosure: Disclosure) -> DisclosureRecord:
 
@@ -201,7 +201,7 @@ class InvestorRelationsInterface:
 
         pass
 
-    
+
 
     def get_investor_dashboard(self) -> InvestorDashboard:
 
@@ -349,7 +349,7 @@ class CommunicationTracking:
 
         required_followup = self.determine_followup(communication_type)
 
-        
+
 
         return CommunicationRecord(
 
@@ -387,7 +387,7 @@ class ReportSending:
 
         failed_count = 0
 
-        
+
 
         for investor_id in investors:
 
@@ -395,7 +395,7 @@ class ReportSending:
 
             personalized_report = self.personalize_report(report, investor)
 
-            
+
 
             try:
 
@@ -417,7 +417,7 @@ class ReportSending:
 
                 self.log_failure(investor_id, str(e))
 
-        
+
 
         return SendingStatus(
 
@@ -503,7 +503,7 @@ class Investor:
 
     preferences: Dict[str, Any]
 
-    
+
 
 @dataclass
 
@@ -519,7 +519,7 @@ class Communication:
 
     timestamp: datetime
 
-    
+
 
 @dataclass
 
@@ -535,7 +535,7 @@ class Report:
 
     created_date: date
 
-    
+
 
 @dataclass
 
@@ -913,11 +913,10 @@ partner = models.execute_kw(db, uid, password, 'res.partner', 'create', [{
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

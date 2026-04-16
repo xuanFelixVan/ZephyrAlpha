@@ -19,9 +19,9 @@ responsibility: 处理ARCH_MODULE_GAP_REGISTER_20260408相关业务
 
 
 
-> **程序依据**：`../PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`  
+> **程序依据**：`../PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`
 
-> **本轮垂直切片**：Layer 0→1 数据 → Layer 2 因子 → Layer 5 回测 → 绩效可读结果  
+> **本轮垂直切片**：Layer 0→1 数据 → Layer 2 因子 → Layer 5 回测 → 绩效可读结果
 
 
 
@@ -81,7 +81,7 @@ responsibility: 处理ARCH_MODULE_GAP_REGISTER_20260408相关业务
 
 
 
-- **G-008 / G-013 / G-016**：接受「权威入口已具备、全量挂载分期」；下轮可脚本化蓝图文件名清单对账。  
+- **G-008 / G-013 / G-016**：接受「权威入口已具备、全量挂载分期」；下轮可脚本化蓝图文件名清单对账。
 
 - **G-015**：`ARCHITECTURE.md` 已收口；其余 `.md` 仍建议随小节编辑顺带清理乱码。
 
@@ -91,9 +91,8 @@ responsibility: 处理ARCH_MODULE_GAP_REGISTER_20260408相关业务
 
 
 
-- [x] L1：**无效内链 = 0**（2026-04-08 扫描，批次 F 后复扫）  
+- [x] L1：**无效内链 = 0**（2026-04-08 扫描，批次 F 后复扫）
 
-- [x] 权威栈：`ARCHITECTURE` ↔ `MODULE_RESPONSIBILITY` ↔ `BLUEPRINT_ARCHITECTURE_MAPPING` ↔ `API_Contract` 可点击通达  
+- [x] 权威栈：`ARCHITECTURE` ↔ `MODULE_RESPONSIBILITY` ↔ `BLUEPRINT_ARCHITECTURE_MAPPING` ↔ `API_Contract` 可点击通达
 
 - [x] Q3 长期：Layer 11 子表与蓝图逐条核验（G-013；对照表 v1.2，22/22）
-

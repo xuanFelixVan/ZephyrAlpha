@@ -270,7 +270,7 @@ class AlgorithmEngine:
 
         }
 
-    
+
 
     def execute(self, order: Order, algorithm: str) -> List[SubOrder]:
 
@@ -294,7 +294,7 @@ class ExecutionMonitor:
 
         self.metrics = {}
 
-    
+
 
     def track_execution(self, execution: Execution):
 
@@ -418,9 +418,8 @@ class TCAAnalyzer:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

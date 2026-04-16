@@ -198,7 +198,7 @@ regulatory_reporting:
 
     version: "latest"
 
-  
+
 
   reports:
 
@@ -214,7 +214,7 @@ regulatory_reporting:
 
       - "json"
 
-  
+
 
   scheduling:
 
@@ -240,7 +240,7 @@ regulatory_reporting:
 
       time: "09:00"
 
-  
+
 
   templates:
 
@@ -386,7 +386,7 @@ class ReportGenerator:
 
     """报告生成器"""
 
-    
+
 
     def __init__(self, config_path: str = "./config/regulatory_reporting.yaml"):
 
@@ -396,7 +396,7 @@ class ReportGenerator:
 
         os.makedirs(self.output_dir, exist_ok=True)
 
-        
+
 
         template_dir = "./templates"
 
@@ -404,7 +404,7 @@ class ReportGenerator:
 
         self.env = Environment(loader=FileSystemLoader(template_dir))
 
-    
+
 
     def _load_config(self, config_path: str) -> Dict[str, Any]:
 
@@ -418,7 +418,7 @@ class ReportGenerator:
 
         return {}
 
-    
+
 
     def generate_daily_trade_report(
 
@@ -432,15 +432,15 @@ class ReportGenerator:
 
         """生成每日交易报告"""
 
-        
+
 
         print(f"\n📊 生成每日交易报告: {date}")
 
-        
+
 
         df = pd.DataFrame([asdict(trade) for trade in trades])
 
-        
+
 
         summary = {
 
@@ -460,7 +460,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         report_path = os.path.join(self.output_dir, f"daily_trade_report_{date}.json")
 
@@ -474,15 +474,15 @@ class ReportGenerator:
 
             }, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 每日交易报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
-    
+
 
     def generate_position_report(
 
@@ -496,15 +496,15 @@ class ReportGenerator:
 
         """生成持仓报告"""
 
-        
+
 
         print(f"\n📈 生成持仓报告: {date}")
 
-        
+
 
         df = pd.DataFrame([asdict(pos) for pos in positions])
 
-        
+
 
         summary = {
 
@@ -520,7 +520,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         report_path = os.path.join(self.output_dir, f"position_report_{date}.json")
 
@@ -534,15 +534,15 @@ class ReportGenerator:
 
             }, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 持仓报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
-    
+
 
     def generate_risk_report(
 
@@ -556,11 +556,11 @@ class ReportGenerator:
 
         """生成风险报告"""
 
-        
+
 
         print(f"\n⚠️ 生成风险报告: {date}")
 
-        
+
 
         report_data = {
 
@@ -572,7 +572,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         report_path = os.path.join(self.output_dir, f"risk_report_{date}.json")
 
@@ -580,27 +580,27 @@ class ReportGenerator:
 
             json.dump(report_data, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 风险报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
-    
+
 
     def _assess_risk_level(self, metrics: RiskMetrics) -> Dict[str, Any]:
 
         """评估风险等级"""
 
-        
+
 
         risk_level = "low"
 
         risk_score = 0
 
-        
+
 
         if metrics.var_95 > 0.05:
 
@@ -618,7 +618,7 @@ class ReportGenerator:
 
             risk_score += 2
 
-        
+
 
         if risk_score >= 5:
 
@@ -628,7 +628,7 @@ class ReportGenerator:
 
             risk_level = "medium"
 
-        
+
 
         return {
 
@@ -640,7 +640,7 @@ class ReportGenerator:
 
         }
 
-    
+
 
     def _generate_risk_recommendations(
 
@@ -654,11 +654,11 @@ class ReportGenerator:
 
         """生成风险缓解建议"""
 
-        
+
 
         recommendations = []
 
-        
+
 
         if risk_level == "high":
 
@@ -666,29 +666,29 @@ class ReportGenerator:
 
             recommendations.append("建议增加对冲策略")
 
-        
+
 
         if metrics.max_drawdown > 0.15:
 
             recommendations.append("建议优化止损策略")
 
-        
+
 
         if metrics.sharpe_ratio < 1.0:
 
             recommendations.append("建议优化策略参数")
 
-        
+
 
         if not recommendations:
 
             recommendations.append("风险水平可控，建议持续监控")
 
-        
+
 
         return recommendations
 
-    
+
 
     def generate_comprehensive_report(
 
@@ -706,11 +706,11 @@ class ReportGenerator:
 
         """生成综合报告"""
 
-        
+
 
         print(f"\n📋 生成综合报告: {date}")
 
-        
+
 
         trade_report = self.generate_daily_trade_report(date, trades)
 
@@ -718,7 +718,7 @@ class ReportGenerator:
 
         risk_report = self.generate_risk_report(date, risk_metrics)
 
-        
+
 
         comprehensive_report = {
 
@@ -738,7 +738,7 @@ class ReportGenerator:
 
         }
 
-        
+
 
         report_path = os.path.join(self.output_dir, f"comprehensive_report_{date}.json")
 
@@ -746,11 +746,11 @@ class ReportGenerator:
 
             json.dump(comprehensive_report, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 综合报告生成成功: {report_path}")
 
-        
+
 
         return report_path
 
@@ -762,7 +762,7 @@ class ReportScheduler:
 
     """报告调度器"""
 
-    
+
 
     def __init__(self, config_path: str = "./config/regulatory_reporting.yaml"):
 
@@ -770,7 +770,7 @@ class ReportScheduler:
 
         self.report_generator = ReportGenerator(config_path)
 
-    
+
 
     def _load_config(self, config_path: str) -> Dict[str, Any]:
 
@@ -784,21 +784,21 @@ class ReportScheduler:
 
         return {}
 
-    
+
 
     def schedule_daily_report(self):
 
         """调度每日报告"""
 
-        
+
 
         print("\n⏰ 调度每日报告")
 
-        
+
 
         today = datetime.now().strftime('%Y-%m-%d')
 
-        
+
 
         trades = self._get_mock_trades()
 
@@ -806,7 +806,7 @@ class ReportScheduler:
 
         risk_metrics = self._get_mock_risk_metrics()
 
-        
+
 
         self.report_generator.generate_comprehensive_report(
 
@@ -820,13 +820,13 @@ class ReportScheduler:
 
         )
 
-    
+
 
     def _get_mock_trades(self) -> List[TradeData]:
 
         """获取模拟交易数据"""
 
-        
+
 
         return [
 
@@ -872,13 +872,13 @@ class ReportScheduler:
 
         ]
 
-    
+
 
     def _get_mock_positions(self) -> List[PositionData]:
 
         """获取模拟持仓数据"""
 
-        
+
 
         return [
 
@@ -920,13 +920,13 @@ class ReportScheduler:
 
         ]
 
-    
+
 
     def _get_mock_risk_metrics(self) -> RiskMetrics:
 
         """获取模拟风险指标"""
 
-        
+
 
         return RiskMetrics(
 
@@ -1042,7 +1042,7 @@ class TestReportGenerator:
 
     """报告生成器测试"""
 
-    
+
 
     @pytest.fixture
 
@@ -1052,13 +1052,13 @@ class TestReportGenerator:
 
         return ReportGenerator(config_path="./config/regulatory_reporting.yaml")
 
-    
+
 
     def test_generate_daily_trade_report(self, report_generator):
 
         """测试每日交易报告生成"""
 
-        
+
 
         trades = [
 
@@ -1084,7 +1084,7 @@ class TestReportGenerator:
 
         ]
 
-        
+
 
         report_path = report_generator.generate_daily_trade_report(
 
@@ -1094,21 +1094,21 @@ class TestReportGenerator:
 
         )
 
-        
+
 
         assert os.path.exists(report_path)
 
-        
+
 
         print(f"✅ 每日交易报告测试通过: {report_path}")
 
-    
+
 
     def test_generate_position_report(self, report_generator):
 
         """测试持仓报告生成"""
 
-        
+
 
         positions = [
 
@@ -1132,7 +1132,7 @@ class TestReportGenerator:
 
         ]
 
-        
+
 
         report_path = report_generator.generate_position_report(
 
@@ -1142,21 +1142,21 @@ class TestReportGenerator:
 
         )
 
-        
+
 
         assert os.path.exists(report_path)
 
-        
+
 
         print(f"✅ 持仓报告测试通过: {report_path}")
 
-    
+
 
     def test_generate_risk_report(self, report_generator):
 
         """测试风险报告生成"""
 
-        
+
 
         risk_metrics = RiskMetrics(
 
@@ -1174,7 +1174,7 @@ class TestReportGenerator:
 
         )
 
-        
+
 
         report_path = report_generator.generate_risk_report(
 
@@ -1184,11 +1184,11 @@ class TestReportGenerator:
 
         )
 
-        
+
 
         assert os.path.exists(report_path)
 
-        
+
 
         print(f"✅ 风险报告测试通过: {report_path}")
 
@@ -1200,7 +1200,7 @@ class TestReportScheduler:
 
     """报告调度器测试"""
 
-    
+
 
     @pytest.fixture
 
@@ -1210,17 +1210,17 @@ class TestReportScheduler:
 
         return ReportScheduler(config_path="./config/regulatory_reporting.yaml")
 
-    
+
 
     def test_schedule_daily_report(self, report_scheduler):
 
         """测试每日报告调度"""
 
-        
+
 
         report_scheduler.schedule_daily_report()
 
-        
+
 
         print(f"✅ 每日报告调度测试通过")
 
@@ -1296,7 +1296,7 @@ def example_trade_report():
 
     """交易报告示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1304,11 +1304,11 @@ def example_trade_report():
 
     print("="*60)
 
-    
+
 
     report_generator = ReportGenerator()
 
-    
+
 
     trades = [
 
@@ -1354,7 +1354,7 @@ def example_trade_report():
 
     ]
 
-    
+
 
     report_path = report_generator.generate_daily_trade_report(
 
@@ -1364,7 +1364,7 @@ def example_trade_report():
 
     )
 
-    
+
 
     print(f"✅ 交易报告生成成功: {report_path}")
 
@@ -1376,7 +1376,7 @@ def example_position_report():
 
     """持仓报告示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1384,11 +1384,11 @@ def example_position_report():
 
     print("="*60)
 
-    
+
 
     report_generator = ReportGenerator()
 
-    
+
 
     positions = [
 
@@ -1430,7 +1430,7 @@ def example_position_report():
 
     ]
 
-    
+
 
     report_path = report_generator.generate_position_report(
 
@@ -1440,7 +1440,7 @@ def example_position_report():
 
     )
 
-    
+
 
     print(f"✅ 持仓报告生成成功: {report_path}")
 
@@ -1452,7 +1452,7 @@ def example_risk_report():
 
     """风险报告示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1460,11 +1460,11 @@ def example_risk_report():
 
     print("="*60)
 
-    
+
 
     report_generator = ReportGenerator()
 
-    
+
 
     risk_metrics = RiskMetrics(
 
@@ -1482,7 +1482,7 @@ def example_risk_report():
 
     )
 
-    
+
 
     report_path = report_generator.generate_risk_report(
 
@@ -1492,7 +1492,7 @@ def example_risk_report():
 
     )
 
-    
+
 
     print(f"✅ 风险报告生成成功: {report_path}")
 
@@ -1504,7 +1504,7 @@ def example_comprehensive_report():
 
     """综合报告示例"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1512,11 +1512,11 @@ def example_comprehensive_report():
 
     print("="*60)
 
-    
+
 
     report_generator = ReportGenerator()
 
-    
+
 
     trades = [
 
@@ -1542,7 +1542,7 @@ def example_comprehensive_report():
 
     ]
 
-    
+
 
     positions = [
 
@@ -1566,7 +1566,7 @@ def example_comprehensive_report():
 
     ]
 
-    
+
 
     risk_metrics = RiskMetrics(
 
@@ -1584,7 +1584,7 @@ def example_comprehensive_report():
 
     )
 
-    
+
 
     report_path = report_generator.generate_comprehensive_report(
 
@@ -1598,7 +1598,7 @@ def example_comprehensive_report():
 
     )
 
-    
+
 
     print(f"✅ 综合报告生成成功: {report_path}")
 
@@ -1610,7 +1610,7 @@ def main():
 
     """主函数"""
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1618,7 +1618,7 @@ def main():
 
     print("="*60)
 
-    
+
 
     example_trade_report()
 
@@ -1628,7 +1628,7 @@ def main():
 
     example_comprehensive_report()
 
-    
+
 
     print("\n" + "="*60)
 
@@ -1702,7 +1702,7 @@ class RegulatoryReportingMonitor:
 
     """监管报告监控器"""
 
-    
+
 
     def __init__(self, config_path: str = "./config/regulatory_reporting.yaml"):
 
@@ -1710,13 +1710,13 @@ class RegulatoryReportingMonitor:
 
         self.report_scheduler = ReportScheduler(config_path)
 
-    
+
 
     def check_report_status(self):
 
         """检查报告状态"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -1724,11 +1724,11 @@ class RegulatoryReportingMonitor:
 
         print("="*60)
 
-        
+
 
         today = datetime.now().strftime('%Y-%m-%d')
 
-        
+
 
         reports = [
 
@@ -1742,17 +1742,17 @@ class RegulatoryReportingMonitor:
 
         ]
 
-        
+
 
         output_dir = "./reports"
 
-        
+
 
         for report in reports:
 
             report_path = os.path.join(output_dir, report)
 
-            
+
 
             if os.path.exists(report_path):
 
@@ -1764,13 +1764,13 @@ class RegulatoryReportingMonitor:
 
                 print(f"⚠️ {report}: 未生成")
 
-    
+
 
     def generate_monitoring_report(self):
 
         """生成监控报告"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -1778,7 +1778,7 @@ class RegulatoryReportingMonitor:
 
         print("="*60)
 
-        
+
 
         monitoring_report = {
 
@@ -1792,29 +1792,29 @@ class RegulatoryReportingMonitor:
 
         }
 
-        
+
 
         report_path = f"./data/monitoring/regulatory_reporting_monitor_{datetime.now().strftime('%Y%m%d')}.json"
 
         os.makedirs(os.path.dirname(report_path), exist_ok=True)
 
-        
+
 
         with open(report_path, 'w', encoding='utf-8') as f:
 
             json.dump(monitoring_report, f, indent=2, ensure_ascii=False)
 
-        
+
 
         print(f"✅ 监控报告已生成: {report_path}")
 
-    
+
 
     def run_all_checks(self):
 
         """运行所有检查"""
 
-        
+
 
         print("\n" + "="*60)
 
@@ -1822,13 +1822,13 @@ class RegulatoryReportingMonitor:
 
         print("="*60)
 
-        
+
 
         self.check_report_status()
 
         self.generate_monitoring_report()
 
-        
+
 
         print("\n" + "="*60)
 
@@ -1844,7 +1844,7 @@ def main():
 
     """主函数"""
 
-    
+
 
     monitor = RegulatoryReportingMonitor()
 
@@ -2293,4 +2293,3 @@ pause
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
-

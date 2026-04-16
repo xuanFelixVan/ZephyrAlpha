@@ -16,7 +16,7 @@ responsibility:
 # 脚本目录 (Scripts)
 
 > 清风量化系统 v5.1 - 自动化脚本工具集
-> 
+>
 > **版本**: v1.0
 > **创建日期**: 2026-04-01
 > **维护者**: Audit Sentinel
@@ -26,7 +26,7 @@ responsibility:
 
 ## 文档治理与门禁（与任务清单 / 办公室互指）
 
-仓库根执行；**命令与产出总表（办公室）**：[治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md)。  
+仓库根执行；**命令与产出总表（办公室）**：[治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md)。
 详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/repo-root-governance-playbook.md)。**删稿裁决**：[文件删除与保留裁决 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/file-deletion-or-retention-playbook.md)。
 
 **实现目录**：[`scripts/governance/`](governance/)（推荐 `python scripts/governance/<脚本名>`）。本目录根下的同名 `.py` 为 **兼容转发**（`runpy`），旧文档中的 `python scripts/<脚本名>.py` 仍可用。

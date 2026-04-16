@@ -149,7 +149,7 @@ layer: layer_05
 
 > 核心职责: Data Observability蓝图设计
 
-> 职责边界: 
+> 职责边界:
 
 
 
@@ -231,11 +231,11 @@ graph LR
 
     D[自动修复引擎] --> E
 
-    
+
 
     E --> F[质量报告自动化]
 
-    
+
 
     style E fill:#ff6b6b
 
@@ -353,13 +353,13 @@ class MonitorResult:
 
 class DataMonitor:
 
-    
+
 
     def __init__(self):
 
         self.monitors: Dict[str, Dict[str, Any]] = {}
 
-    
+
 
     def register_monitor(self, monitor_config: Dict[str, Any]):
 
@@ -367,9 +367,9 @@ class DataMonitor:
 
         self.monitors[monitor_id] = monitor_config
 
-    
 
-    def check_freshness(self, asset_id: str, 
+
+    def check_freshness(self, asset_id: str,
 
                         last_update: datetime,
 
@@ -381,11 +381,11 @@ class DataMonitor:
 
         hours_since_update = (now - last_update).total_seconds() / 3600
 
-        
+
 
         passed = hours_since_update <= threshold_hours
 
-        
+
 
         return MonitorResult(
 
@@ -407,7 +407,7 @@ class DataMonitor:
 
         )
 
-    
+
 
     def check_volume(self, asset_id: str,
 
@@ -421,11 +421,11 @@ class DataMonitor:
 
         volume_ratio = current_volume / expected_volume if expected_volume > 0 else 0
 
-        
+
 
         passed = abs(1 - volume_ratio) <= tolerance
 
-        
+
 
         return MonitorResult(
 
@@ -453,7 +453,7 @@ class DataMonitor:
 
         )
 
-    
+
 
     def check_schema(self, asset_id: str,
 
@@ -467,11 +467,11 @@ class DataMonitor:
 
         extra_columns = set(current_schema.keys()) - set(expected_schema.keys())
 
-        
+
 
         passed = len(missing_columns) == 0 and len(extra_columns) == 0
 
-        
+
 
         return MonitorResult(
 
@@ -543,13 +543,13 @@ class AnomalyDetector:
 
     """异常检测器"""
 
-    
+
 
     def __init__(self):
 
         self.anomalies: List[Anomaly] = []
 
-    
+
 
     def detect_statistical_anomaly(self, data: pd.Series,
 
@@ -559,11 +559,11 @@ class AnomalyDetector:
 
         anomaly_indices = np.where(z_scores > threshold)[0]
 
-        
+
 
         return anomaly_indices.tolist()
 
-    
+
 
     def detect_volume_anomaly(self, historical_volumes: List[int],
 
@@ -575,27 +575,27 @@ class AnomalyDetector:
 
             return False, 0.0
 
-        
+
 
         mean_volume = np.mean(historical_volumes)
 
         std_volume = np.std(historical_volumes)
 
-        
+
 
         if std_volume == 0:
 
             return False, 0.0
 
-        
+
 
         z_score = abs(current_volume - mean_volume) / std_volume
 
-        
+
 
         return z_score > 3.0, z_score
 
-    
+
 
     def detect_freshness_anomaly(self, expected_interval_hours: float,
 
@@ -605,11 +605,11 @@ class AnomalyDetector:
 
         deviation = abs(actual_interval_hours - expected_interval_hours) / expected_interval_hours
 
-        
+
 
         return deviation > 0.5, deviation
 
-    
+
 
     def log_anomaly(self, asset_id: str, anomaly_type: str,
 
@@ -637,7 +637,7 @@ class AnomalyDetector:
 
         )
 
-        
+
 
         self.anomalies.append(anomaly)
 
@@ -679,7 +679,7 @@ class RootCause:
 
 class RootCauseAnalyzer:
 
-    
+
 
     def __init__(self, lineage_tracker, log_analyzer):
 
@@ -687,7 +687,7 @@ class RootCauseAnalyzer:
 
         self.log_analyzer = log_analyzer
 
-    
+
 
     def analyze_root_cause(self, anomaly: Anomaly) -> Optional[RootCause]:
 
@@ -695,13 +695,13 @@ class RootCauseAnalyzer:
 
         upstream_assets = self.lineage_tracker.get_upstream_assets(anomaly.asset_id)
 
-        
+
 
         for upstream_asset in upstream_assets:
 
             upstream_anomalies = self._find_related_anomalies(upstream_asset)
 
-            
+
 
             if upstream_anomalies:
 
@@ -723,13 +723,13 @@ class RootCauseAnalyzer:
 
                 )
 
-        
+
 
         logs = self.log_analyzer.get_recent_logs(anomaly.asset_id)
 
         error_logs = [log for log in logs if log.get('level') == 'ERROR']
 
-        
+
 
         if error_logs:
 
@@ -751,19 +751,19 @@ class RootCauseAnalyzer:
 
             )
 
-        
+
 
         return None
 
-    
+
 
     def _find_related_anomalies(self, asset_id: str) -> List[Anomaly]:
 
         recent_time = datetime.now() - timedelta(hours=24)
 
-        
 
-        return [a for a in self.anomalies 
+
+        return [a for a in self.anomalies
 
                 if a.asset_id == asset_id and a.detected_at >= recent_time]
 
@@ -877,7 +877,7 @@ services:
 
       - DATABASE_URL=postgresql://user:pass@postgres:5432/elementary
 
-  
+
 
   grafana:
 
@@ -891,7 +891,7 @@ services:
 
       - GF_SECURITY_ADMIN_PASSWORD=admin
 
-  
+
 
   postgres:
 
@@ -913,7 +913,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -947,7 +947,7 @@ services:
 
 
 
-## 
+##
 
 
 
@@ -1046,12 +1046,3 @@ services:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

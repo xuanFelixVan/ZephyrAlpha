@@ -274,7 +274,7 @@ class ClearingEngine:
 
         self.calculator = ClearingCalculator()
 
-    
+
 
     def clear_trades(self, trades: List[Trade]) -> ClearingResult:
 
@@ -302,7 +302,7 @@ class SettlementEngine:
 
         self.security_settlement = SecuritySettlement()
 
-    
+
 
     def settle(self, clearing_result: ClearingResult) -> SettlementResult:
 
@@ -330,7 +330,7 @@ class FundTransferService:
 
         self.external_transfer = ExternalTransfer()
 
-    
+
 
     def transfer(self, transfer_request: TransferRequest) -> TransferResult:
 
@@ -426,9 +426,8 @@ class FundTransferService:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

@@ -40,7 +40,7 @@ applicable_scope: "ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ"
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -114,11 +114,11 @@ class StatisticalArbitrage:
 
 
 
-    
 
 
 
-    def find_cointegrated_pairs(self, 
+
+    def find_cointegrated_pairs(self,
 
 
 
@@ -138,15 +138,15 @@ class StatisticalArbitrage:
 
 
 
-    
 
 
 
-    def calculate_spread(self, 
+
+    def calculate_spread(self,
 
 
 
-                        price1: pd.Series, 
+                        price1: pd.Series,
 
 
 
@@ -162,11 +162,11 @@ class StatisticalArbitrage:
 
 
 
-    
 
 
 
-    def generate_signals(self, 
+
+    def generate_signals(self,
 
 
 
@@ -222,7 +222,7 @@ def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, flo
 
 
 
-    
+
 
 
 
@@ -269,6 +269,3 @@ def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, flo
 
 
 **ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final
-
-
-

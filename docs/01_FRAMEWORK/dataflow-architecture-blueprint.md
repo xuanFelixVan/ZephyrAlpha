@@ -21,7 +21,7 @@ parent_document: ./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -227,7 +227,7 @@ class MacroConfigDataFlow:
 
 
 
-    
+
 
 
 
@@ -251,7 +251,7 @@ class MacroConfigDataFlow:
 
 
 
-        
+
 
 
 
@@ -267,7 +267,7 @@ class MacroConfigDataFlow:
 
 
 
-        """数据输入?        
+        """数据输入?
 
 
 
@@ -355,7 +355,7 @@ class MacroConfigDataFlow:
 
 
 
-            indicators=['GDP_growth', 'CPI', 'PPI', 'PMI', 'M2_growth', 
+            indicators=['GDP_growth', 'CPI', 'PPI', 'PMI', 'M2_growth',
 
 
 
@@ -387,7 +387,7 @@ class MacroConfigDataFlow:
 
 
 
-        
+
 
 
 
@@ -403,7 +403,7 @@ class MacroConfigDataFlow:
 
 
 
-        
+
 
 
 
@@ -427,7 +427,7 @@ class MacroConfigDataFlow:
 
 
 
-        
+
 
 
 
@@ -563,7 +563,7 @@ class MacroConfigDataOutput:
 
 
 
-    
+
 
 
 
@@ -595,7 +595,7 @@ class MacroConfigDataOutput:
 
 
 
-        
+
 
 
 
@@ -667,7 +667,7 @@ class MacroConfigDataOutput:
 
 
 
-        
+
 
 
 
@@ -691,7 +691,7 @@ class MacroConfigDataOutput:
 
 
 
-        
+
 
 
 
@@ -715,7 +715,7 @@ class MacroConfigDataOutput:
 
 
 
-        
+
 
 
 
@@ -739,7 +739,7 @@ class MacroConfigDataOutput:
 
 
 
-        
+
 
 
 
@@ -869,7 +869,7 @@ class TacticalStrategyDataFlow:
 
 
 
-    
+
 
 
 
@@ -885,7 +885,7 @@ class TacticalStrategyDataFlow:
 
 
 
-        self.daily_data_collector = DailyDataCollector()         # 日线数据采集?        self.factor_calculator = AlphaFactorCalculator()         # Alpha因子计算?        self.signal_generator = SignalGenerator()                # 信号生成?        
+        self.daily_data_collector = DailyDataCollector()         # 日线数据采集?        self.factor_calculator = AlphaFactorCalculator()         # Alpha因子计算?        self.signal_generator = SignalGenerator()                # 信号生成?
 
 
 
@@ -901,7 +901,7 @@ class TacticalStrategyDataFlow:
 
 
 
-        """数据输入?        
+        """数据输入?
 
 
 
@@ -997,7 +997,7 @@ class TacticalStrategyDataFlow:
 
 
 
-        
+
 
 
 
@@ -1013,7 +1013,7 @@ class TacticalStrategyDataFlow:
 
 
 
-        
+
 
 
 
@@ -1037,7 +1037,7 @@ class TacticalStrategyDataFlow:
 
 
 
-        
+
 
 
 
@@ -1173,7 +1173,7 @@ class TacticalStrategyDataOutput:
 
 
 
-    
+
 
 
 
@@ -1213,7 +1213,7 @@ class TacticalStrategyDataOutput:
 
 
 
-        
+
 
 
 
@@ -1277,7 +1277,7 @@ class TacticalStrategyDataOutput:
 
 
 
-        
+
 
 
 
@@ -1301,7 +1301,7 @@ class TacticalStrategyDataOutput:
 
 
 
-        
+
 
 
 
@@ -1325,7 +1325,7 @@ class TacticalStrategyDataOutput:
 
 
 
-        
+
 
 
 
@@ -1349,7 +1349,7 @@ class TacticalStrategyDataOutput:
 
 
 
-        
+
 
 
 
@@ -1477,7 +1477,7 @@ class ExecutionDataFlow:
 
 
 
-    
+
 
 
 
@@ -1493,7 +1493,7 @@ class ExecutionDataFlow:
 
 
 
-        self.minute_data_collector = MinuteDataCollector()       # 分钟数据采集成        self.execution_optimizer = MinuteExecutionOptimizer()    # 执行优化?        self.risk_hedger = RealtimeRiskHedger()                 # 风险对冲?        
+        self.minute_data_collector = MinuteDataCollector()       # 分钟数据采集成        self.execution_optimizer = MinuteExecutionOptimizer()    # 执行优化?        self.risk_hedger = RealtimeRiskHedger()                 # 风险对冲?
 
 
 
@@ -1509,7 +1509,7 @@ class ExecutionDataFlow:
 
 
 
-        """数据输入?        
+        """数据输入?
 
 
 
@@ -1605,7 +1605,7 @@ class ExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ class ExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -1645,7 +1645,7 @@ class ExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -1781,7 +1781,7 @@ class ExecutionDataOutput:
 
 
 
-    
+
 
 
 
@@ -1813,7 +1813,7 @@ class ExecutionDataOutput:
 
 
 
-        
+
 
 
 
@@ -1885,7 +1885,7 @@ class ExecutionDataOutput:
 
 
 
-        
+
 
 
 
@@ -1909,7 +1909,7 @@ class ExecutionDataOutput:
 
 
 
-        
+
 
 
 
@@ -1933,7 +1933,7 @@ class ExecutionDataOutput:
 
 
 
-        
+
 
 
 
@@ -1957,7 +1957,7 @@ class ExecutionDataOutput:
 
 
 
-        
+
 
 
 
@@ -2087,7 +2087,7 @@ class MacroToTacticalDataFlow:
 
 
 
-    
+
 
 
 
@@ -2111,7 +2111,7 @@ class MacroToTacticalDataFlow:
 
 
 
-        
+
 
 
 
@@ -2167,7 +2167,7 @@ class MacroToTacticalDataFlow:
 
 
 
-        
+
 
 
 
@@ -2199,7 +2199,7 @@ class MacroToTacticalDataFlow:
 
 
 
-        
+
 
 
 
@@ -2215,7 +2215,7 @@ class MacroToTacticalDataFlow:
 
 
 
-        
+
 
 
 
@@ -2311,7 +2311,7 @@ class TacticalToExecutionDataFlow:
 
 
 
-    
+
 
 
 
@@ -2335,7 +2335,7 @@ class TacticalToExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -2391,7 +2391,7 @@ class TacticalToExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -2423,7 +2423,7 @@ class TacticalToExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -2455,7 +2455,7 @@ class TacticalToExecutionDataFlow:
 
 
 
-        
+
 
 
 
@@ -3096,10 +3096,3 @@ class TacticalToExecutionDataFlow:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
-
-
-
-
-
-
-

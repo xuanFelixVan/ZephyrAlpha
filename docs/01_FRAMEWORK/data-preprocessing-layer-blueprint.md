@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 > **核心职责**: 提供data preprocessing layer blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Preprocessing Layer蓝图设计相关内容
 
@@ -488,7 +488,7 @@ class MissingValueHandler:
 
     """缺失值处理器"""
 
-    
+
 
     def __init__(self):
 
@@ -500,7 +500,7 @@ class MissingValueHandler:
 
         }
 
-        
+
 
     def analyze_missing_pattern(
 
@@ -512,7 +512,7 @@ class MissingValueHandler:
 
         """分析缺失值模式"""
 
-        
+
 
         total = data.size
 
@@ -520,13 +520,13 @@ class MissingValueHandler:
 
         missing_rate = missing / total
 
-        
+
 
         pattern = self._detect_missing_pattern(data)
 
         recommended = self._recommend_method(data, pattern)
 
-        
+
 
         return MissingValueReport(
 
@@ -542,13 +542,13 @@ class MissingValueHandler:
 
         )
 
-    
+
 
     def _detect_missing_pattern(self, data: pd.DataFrame) -> str:
 
         """检测缺失值模式"""
 
-        
+
 
         if self._is_mcar(data):
 
@@ -562,27 +562,27 @@ class MissingValueHandler:
 
             return "MNAR"  # 非随机缺失
 
-    
+
 
     def _is_mcar(self, data: pd.DataFrame) -> bool:
 
         """判断是否为MCAR"""
 
-        
+
 
         return True
 
-    
+
 
     def _is_mar(self, data: pd.DataFrame) -> bool:
 
         """判断是否为MAR"""
 
-        
+
 
         return False
 
-    
+
 
     def _recommend_method(
 
@@ -596,7 +596,7 @@ class MissingValueHandler:
 
         """推荐填充方法"""
 
-        
+
 
         if pattern == "MCAR":
 
@@ -610,7 +610,7 @@ class MissingValueHandler:
 
             return ImputationMethod.ML_PREDICT
 
-    
+
 
     def impute(
 
@@ -626,17 +626,17 @@ class MissingValueHandler:
 
         """填充缺失值"""
 
-        
+
 
         if columns is None:
 
             columns = data.columns.tolist()
 
-        
+
 
         imputed = data.copy()
 
-        
+
 
         if method == ImputationMethod.FFILL:
 
@@ -670,11 +670,11 @@ class MissingValueHandler:
 
             imputed = self._ml_impute(imputed, columns)
 
-        
+
 
         return imputed
 
-    
+
 
     def _ml_impute(
 
@@ -688,7 +688,7 @@ class MissingValueHandler:
 
         """机器学习预测填充"""
 
-        
+
 
         for col in columns:
 
@@ -700,7 +700,7 @@ class MissingValueHandler:
 
                 test_data = data[missing_idx]
 
-                
+
 
                 X_train = train_data.drop(columns=[col])
 
@@ -708,7 +708,7 @@ class MissingValueHandler:
 
                 X_test = test_data.drop(columns=[col])
 
-                
+
 
                 from sklearn.ensemble import RandomForestRegressor
 
@@ -716,13 +716,13 @@ class MissingValueHandler:
 
                 model.fit(X_train, y_train)
 
-                
+
 
                 predictions = model.predict(X_test)
 
                 data.loc[missing_idx, col] = predictions
 
-        
+
 
         return data
 
@@ -766,7 +766,7 @@ class OutlierDetector:
 
     """异常值检测器"""
 
-    
+
 
     def __init__(self):
 
@@ -786,7 +786,7 @@ class OutlierDetector:
 
         )
 
-        
+
 
     def detect_zscore(
 
@@ -800,13 +800,13 @@ class OutlierDetector:
 
         """Z-score方法检测异常值"""
 
-        
+
 
         z_scores = np.abs(stats.zscore(data))
 
         return z_scores > threshold
 
-    
+
 
     def detect_iqr(
 
@@ -820,7 +820,7 @@ class OutlierDetector:
 
         """IQR方法检测异常值"""
 
-        
+
 
         Q1 = data.quantile(0.25)
 
@@ -828,17 +828,17 @@ class OutlierDetector:
 
         IQR = Q3 - Q1
 
-        
+
 
         lower_bound = Q1 - k * IQR
 
         upper_bound = Q3 + k * IQR
 
-        
+
 
         return (data < lower_bound) | (data > upper_bound)
 
-    
+
 
     def detect_isolation_forest(
 
@@ -850,13 +850,13 @@ class OutlierDetector:
 
         """Isolation Forest检测异常值"""
 
-        
+
 
         predictions = self.isolation_forest.fit_predict(data)
 
         return predictions == -1
 
-    
+
 
     def detect_lof(
 
@@ -868,13 +868,13 @@ class OutlierDetector:
 
         """LOF检测异常值"""
 
-        
+
 
         predictions = self.lof.fit_predict(data)
 
         return predictions == -1
 
-    
+
 
     def detect_business_rules(
 
@@ -888,33 +888,33 @@ class OutlierDetector:
 
         """业务规则检测异常值"""
 
-        
+
 
         anomalies = pd.Series(False, index=data.index)
 
-        
+
 
         if 'limit_up' in stock_info.columns:
 
             anomalies |= data['close'] >= stock_info['limit_up']
 
-        
+
 
         if 'limit_down' in stock_info.columns:
 
             anomalies |= data['close'] <= stock_info['limit_down']
 
-        
+
 
         if 'suspended' in stock_info.columns:
 
             anomalies |= stock_info['suspended'] == True
 
-        
+
 
         return anomalies
 
-    
+
 
     def handle_outliers(
 
@@ -930,11 +930,11 @@ class OutlierDetector:
 
         """处理异常值"""
 
-        
+
 
         handled = data.copy()
 
-        
+
 
         if method == 'winsorize':
 
@@ -954,7 +954,7 @@ class OutlierDetector:
 
             handled['is_outlier'] = outliers
 
-        
+
 
         return handled
 
@@ -1012,7 +1012,7 @@ class Normalizer:
 
     """归一化处理器"""
 
-    
+
 
     def __init__(self):
 
@@ -1028,7 +1028,7 @@ class Normalizer:
 
         }
 
-        
+
 
     def normalize(
 
@@ -1046,19 +1046,19 @@ class Normalizer:
 
         """归一化处理"""
 
-        
+
 
         if columns is None:
 
             columns = data.select_dtypes(include=[np.number]).columns.tolist()
 
-        
+
 
         normalized = data.copy()
 
         scaler = self.scalers[method]
 
-        
+
 
         if fit:
 
@@ -1068,11 +1068,11 @@ class Normalizer:
 
             normalized[columns] = scaler.transform(data[columns])
 
-        
+
 
         return normalized
 
-    
+
 
     def inverse_normalize(
 
@@ -1088,13 +1088,13 @@ class Normalizer:
 
         """反归一化"""
 
-        
+
 
         if columns is None:
 
             columns = data.select_dtypes(include=[np.number]).columns.tolist()
 
-        
+
 
         scaler = self.scalers[method]
 
@@ -1102,7 +1102,7 @@ class Normalizer:
 
         original[columns] = scaler.inverse_transform(data[columns])
 
-        
+
 
         return original
 
@@ -1142,13 +1142,13 @@ class TimeAligner:
 
     """时间对齐器"""
 
-    
+
 
     def __init__(self, trading_calendar: pd.DataFrame):
 
         self.trading_calendar = trading_calendar
 
-        
+
 
     def align_to_trading_days(
 
@@ -1162,17 +1162,17 @@ class TimeAligner:
 
         """对齐到交易日"""
 
-        
+
 
         trading_days = self.trading_calendar['trade_date']
 
         aligned = data[data[date_column].isin(trading_days)]
 
-        
+
 
         return aligned
 
-    
+
 
     def resample_frequency(
 
@@ -1188,7 +1188,7 @@ class TimeAligner:
 
         """频率转换"""
 
-        
+
 
         if agg_funcs is None:
 
@@ -1208,13 +1208,13 @@ class TimeAligner:
 
             }
 
-        
+
 
         resampled = data.resample(freq).agg(agg_funcs)
 
         return resampled
 
-    
+
 
     def align_timestamp(
 
@@ -1230,7 +1230,7 @@ class TimeAligner:
 
         """对齐时间戳"""
 
-        
+
 
         aligned = data.copy()
 
@@ -1240,11 +1240,11 @@ class TimeAligner:
 
         ).dt.strftime(target_format)
 
-        
+
 
         return aligned
 
-    
+
 
     def convert_timezone(
 
@@ -1260,7 +1260,7 @@ class TimeAligner:
 
         """时区转换"""
 
-        
+
 
         converted = data.copy()
 
@@ -1270,7 +1270,7 @@ class TimeAligner:
 
         ).dt.tz_localize('UTC').dt.tz_convert(target_tz)
 
-        
+
 
         return converted
 
@@ -1318,7 +1318,7 @@ class TechnicalIndicatorEngine:
 
     """技术指标引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -1334,7 +1334,7 @@ class TechnicalIndicatorEngine:
 
         }
 
-        
+
 
     def calculate_all(
 
@@ -1348,17 +1348,17 @@ class TechnicalIndicatorEngine:
 
         """计算所有技术指标"""
 
-        
+
 
         if indicators is None:
 
             indicators = ['SMA', 'EMA', 'RSI', 'MACD', 'ATR', 'BBANDS']
 
-        
+
 
         result = data.copy()
 
-        
+
 
         for indicator in indicators:
 
@@ -1386,17 +1386,17 @@ class TechnicalIndicatorEngine:
 
                 result = self._calculate_bbands(result)
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_sma(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算简单移动平均"""
 
-        
+
 
         for period in [5, 10, 20, 60]:
 
@@ -1410,13 +1410,13 @@ class TechnicalIndicatorEngine:
 
         return data
 
-    
+
 
     def _calculate_ema(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算指数移动平均"""
 
-        
+
 
         for period in [5, 10, 20, 60]:
 
@@ -1430,13 +1430,13 @@ class TechnicalIndicatorEngine:
 
         return data
 
-    
+
 
     def _calculate_rsi(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算RSI"""
 
-        
+
 
         for period in [6, 12, 24]:
 
@@ -1450,13 +1450,13 @@ class TechnicalIndicatorEngine:
 
         return data
 
-    
+
 
     def _calculate_macd(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算MACD"""
 
-        
+
 
         macd, signal, hist = talib.MACD(
 
@@ -1478,13 +1478,13 @@ class TechnicalIndicatorEngine:
 
         return data
 
-    
+
 
     def _calculate_atr(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算ATR"""
 
-        
+
 
         for period in [14]:
 
@@ -1502,13 +1502,13 @@ class TechnicalIndicatorEngine:
 
         return data
 
-    
+
 
     def _calculate_bbands(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算布林带"""
 
-        
+
 
         upper, middle, lower = talib.BBANDS(
 
@@ -1560,7 +1560,7 @@ class FinancialIndicatorEngine:
 
     """财务指标引擎"""
 
-    
+
 
     def __init__(self):
 
@@ -1576,7 +1576,7 @@ class FinancialIndicatorEngine:
 
         }
 
-        
+
 
     def calculate_all(
 
@@ -1588,11 +1588,11 @@ class FinancialIndicatorEngine:
 
         """计算所有财务指标"""
 
-        
+
 
         result = financial_data.copy()
 
-        
+
 
         result = self._calculate_profitability(result)
 
@@ -1602,17 +1602,17 @@ class FinancialIndicatorEngine:
 
         result = self._calculate_valuation(result)
 
-        
+
 
         return result
 
-    
+
 
     def _calculate_profitability(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算盈利能力指标"""
 
-        
+
 
         data['ROE'] = data['net_profit'] / data['total_equity']
 
@@ -1624,49 +1624,49 @@ class FinancialIndicatorEngine:
 
         ) / data['operating_revenue']
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_growth(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算成长能力指标"""
 
-        
+
 
         data['REVENUE_GROWTH'] = data['operating_revenue'].pct_change()
 
         data['PROFIT_GROWTH'] = data['net_profit'].pct_change()
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_solvency(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算偿债能力指标"""
 
-        
+
 
         data['DEBT_RATIO'] = data['total_liabilities'] / data['total_assets']
 
         data['CURRENT_RATIO'] = data['current_assets'] / data['current_liabilities']
 
-        
+
 
         return data
 
-    
+
 
     def _calculate_valuation(self, data: pd.DataFrame) -> pd.DataFrame:
 
         """计算估值指标"""
 
-        
+
 
         data['PE'] = data['market_cap'] / data['net_profit']
 
@@ -1674,7 +1674,7 @@ class FinancialIndicatorEngine:
 
         data['PS'] = data['market_cap'] / data['operating_revenue']
 
-        
+
 
         return data
 
@@ -1716,7 +1716,7 @@ class CompletenessChecker:
 
     """完整性检查器"""
 
-    
+
 
     def __init__(self):
 
@@ -1728,7 +1728,7 @@ class CompletenessChecker:
 
         }
 
-        
+
 
     def check(
 
@@ -1742,7 +1742,7 @@ class CompletenessChecker:
 
         """检查完整性"""
 
-        
+
 
         report = {
 
@@ -1756,7 +1756,7 @@ class CompletenessChecker:
 
         }
 
-        
+
 
         for field in data.columns:
 
@@ -1766,7 +1766,7 @@ class CompletenessChecker:
 
             report['field_completeness'][field] = missing_count == 0
 
-        
+
 
         if data_type in self.required_fields:
 
@@ -1780,35 +1780,35 @@ class CompletenessChecker:
 
             )
 
-        
+
 
         if 'date' in data.columns:
 
             report['time_series_completeness'] = self._check_time_series(data)
 
-        
+
 
         return report
 
-    
+
 
     def _check_time_series(self, data: pd.DataFrame) -> float:
 
         """检查时间序列完整性"""
 
-        
+
 
         dates = pd.to_datetime(data['date'])
 
         date_range = pd.date_range(start=dates.min(), end=dates.max(), freq='D')
 
-        
+
 
         expected_count = len(date_range)
 
         actual_count = len(dates.unique())
 
-        
+
 
         return actual_count / expected_count
 
@@ -2123,4 +2123,3 @@ class DataQualityReport:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

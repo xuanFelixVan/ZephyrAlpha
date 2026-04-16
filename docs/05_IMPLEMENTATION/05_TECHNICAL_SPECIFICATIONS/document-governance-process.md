@@ -594,6 +594,3 @@ applicable_scope: 'ﮒ۷ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: 
 
 
 **ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-
-
-

@@ -302,7 +302,7 @@ class AnomalyDetector:
 
         self.model = self.models[method]
 
-    
+
 
     def fit(self, X):
 
@@ -310,7 +310,7 @@ class AnomalyDetector:
 
         self.model.fit(X)
 
-    
+
 
     def predict(self, X):
 
@@ -318,7 +318,7 @@ class AnomalyDetector:
 
         return self.model.predict(X)
 
-    
+
 
     def get_anomaly_score(self, X):
 
@@ -350,7 +350,7 @@ class OnlineAnomalyDetector:
 
         self.detector = None
 
-    
+
 
     def initialize(self, X_ref):
 
@@ -368,7 +368,7 @@ class OnlineAnomalyDetector:
 
         self.detector.fit(X_ref)
 
-    
+
 
     def detect(self, X):
 
@@ -488,7 +488,7 @@ class IntelligentAnomalyDetector:
 
         pass
 
-    
+
 
     def detect_return_anomaly(self, returns: Series) -> List[Anomaly]:
 
@@ -496,7 +496,7 @@ class IntelligentAnomalyDetector:
 
         pass
 
-    
+
 
     def detect_risk_anomaly(self, risk_metrics: Dict) -> List[Anomaly]:
 
@@ -504,7 +504,7 @@ class IntelligentAnomalyDetector:
 
         pass
 
-    
+
 
     def detect_data_anomaly(self, data: DataFrame) -> List[Anomaly]:
 
@@ -512,7 +512,7 @@ class IntelligentAnomalyDetector:
 
         pass
 
-    
+
 
     def get_anomaly_history(self, start_date: date, end_date: date) -> List[Anomaly]:
 
@@ -661,4 +661,3 @@ class Anomaly(BaseModel):
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

@@ -316,7 +316,7 @@ class RiskContributionCalculator:
 
         self.cov_matrix = returns.cov()
 
-        
+
 
     def calculate_portfolio_volatility(self, weights):
 
@@ -328,7 +328,7 @@ class RiskContributionCalculator:
 
         return np.sqrt(portfolio_var)
 
-        
+
 
     def calculate_marginal_risk_contribution(self, weights):
 
@@ -342,7 +342,7 @@ class RiskContributionCalculator:
 
         return mrc
 
-        
+
 
     def calculate_risk_contribution(self, weights):
 
@@ -356,7 +356,7 @@ class RiskContributionCalculator:
 
         return rc
 
-        
+
 
     def calculate_risk_contribution_ratio(self, weights):
 
@@ -392,7 +392,7 @@ class RiskParityOptimizer:
 
         self.n_assets = cov_matrix.shape[0]
 
-        
+
 
     def risk_parity_objective(self, weights):
 
@@ -404,15 +404,15 @@ class RiskParityOptimizer:
 
         rc = weights * mrc
 
-        
+
 
         target_rc = portfolio_vol / self.n_assets
 
-        
+
 
         return np.sum((rc - target_rc) ** 2)
 
-        
+
 
     def optimize(self):
 
@@ -426,11 +426,11 @@ class RiskParityOptimizer:
 
         bounds = tuple((0, 1) for _ in range(self.n_assets))
 
-        
+
 
         initial_weights = np.ones(self.n_assets) / self.n_assets
 
-        
+
 
         result = minimize(
 
@@ -448,7 +448,7 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         return result.x
 
@@ -472,7 +472,7 @@ class RiskBudgetingOptimizer:
 
         self.n_assets = cov_matrix.shape[0]
 
-        
+
 
     def risk_budgeting_objective(self, weights):
 
@@ -486,11 +486,11 @@ class RiskBudgetingOptimizer:
 
         rcr = rc / portfolio_vol
 
-        
+
 
         return np.sum((rcr - self.risk_budgets) ** 2)
 
-        
+
 
     def optimize(self):
 
@@ -504,11 +504,11 @@ class RiskBudgetingOptimizer:
 
         bounds = tuple((0, 1) for _ in range(self.n_assets))
 
-        
+
 
         initial_weights = np.ones(self.n_assets) / self.n_assets
 
-        
+
 
         result = minimize(
 
@@ -526,7 +526,7 @@ class RiskBudgetingOptimizer:
 
         )
 
-        
+
 
         return result.x
 
@@ -554,7 +554,7 @@ class PyPortfolioOptIntegration:
 
         self.cov_matrix = risk_models.sample_cov(returns)
 
-        
+
 
     def optimize_min_volatility(self):
 
@@ -566,7 +566,7 @@ class PyPortfolioOptIntegration:
 
         return weights
 
-        
+
 
     def optimize_max_sharpe(self, risk_free_rate=0.02):
 
@@ -578,7 +578,7 @@ class PyPortfolioOptIntegration:
 
         return weights
 
-        
+
 
     def optimize_efficient_risk(self, target_volatility):
 
@@ -590,7 +590,7 @@ class PyPortfolioOptIntegration:
 
         return weights
 
-        
+
 
     def optimize_efficient_return(self, target_return):
 
@@ -650,7 +650,7 @@ class RiskBudget:
 
     updated_at: datetime
 
-    
+
 
 @dataclass
 
@@ -870,7 +870,7 @@ class IRiskBudgetManager(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -880,7 +880,7 @@ class IRiskBudgetManager(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -890,7 +890,7 @@ class IRiskBudgetManager(ABC):
 
         pass
 
-        
+
 
     @abstractmethod
 
@@ -1105,4 +1105,3 @@ weights = port.rp_optimization(model='Classic', rm='MV')
 
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成
-

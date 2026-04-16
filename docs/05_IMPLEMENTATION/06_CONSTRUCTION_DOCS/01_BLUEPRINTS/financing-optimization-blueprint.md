@@ -31,7 +31,7 @@ layer: layer_05
 
 > **核心职责**: 融资优化，融资成本优化和杠杆效率提升
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ...
 
@@ -189,7 +189,7 @@ graph LR
 
     D[VaR/ES监控] --> B
 
-    
+
 
     B --> E[动态杠杆管理]
 
@@ -197,7 +197,7 @@ graph LR
 
     B --> G[组合优化引擎]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -279,7 +279,7 @@ def optimize_financing(capital_needed: float,
 
     融资优化
 
-    
+
 
     Args:
 
@@ -289,7 +289,7 @@ def optimize_financing(capital_needed: float,
 
         risk_limits: 风险限制 {渠道: 限制}
 
-        
+
 
     Returns:
 
@@ -309,7 +309,7 @@ def optimize_financing(capital_needed: float,
 
             optimal_mix[channel] = risk_limits[channel]
 
-    
+
 
     return optimal_mix
 
@@ -371,7 +371,7 @@ def optimize_financing(capital_needed: float,
 
 |------|------|------|
 
-| **Financing Optimization** | 
+| **Financing Optimization** |
 
 
 
@@ -380,10 +380,3 @@ def optimize_financing(capital_needed: float,
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

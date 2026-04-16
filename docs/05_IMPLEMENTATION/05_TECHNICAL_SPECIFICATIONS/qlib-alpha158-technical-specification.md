@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -515,7 +515,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -551,7 +551,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -937,7 +937,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -961,7 +961,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -985,7 +985,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -1039,7 +1039,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1081,7 +1081,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1093,7 +1093,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1111,7 +1111,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1123,7 +1123,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1165,7 +1165,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -1237,7 +1237,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1333,7 +1333,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1345,7 +1345,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -1393,7 +1393,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1417,7 +1417,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1435,7 +1435,7 @@ class QlibAlpha158Manager:
 
 
 
-            
+
 
 
 
@@ -1453,7 +1453,7 @@ class QlibAlpha158Manager:
 
 
 
-            
+
 
 
 
@@ -1477,7 +1477,7 @@ class QlibAlpha158Manager:
 
 
 
-            
+
 
 
 
@@ -1513,7 +1513,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1525,7 +1525,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1567,7 +1567,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -1597,7 +1597,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1621,7 +1621,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -1633,7 +1633,7 @@ class QlibAlpha158Manager:
 
 
 
-    
+
 
 
 
@@ -1879,7 +1879,7 @@ class QlibAlpha158Manager:
 
 
 
-        
+
 
 
 
@@ -2531,7 +2531,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2567,7 +2567,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2591,7 +2591,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2633,7 +2633,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2645,7 +2645,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2663,7 +2663,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2675,7 +2675,7 @@ def calculate_factors(
 
 
 
-    
+
 
 
 
@@ -2783,7 +2783,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -2819,7 +2819,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -2843,7 +2843,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -2867,7 +2867,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -2885,7 +2885,7 @@ def validate_factors(
 
 
 
-        
+
 
 
 
@@ -2903,7 +2903,7 @@ def validate_factors(
 
 
 
-        
+
 
 
 
@@ -2927,7 +2927,7 @@ def validate_factors(
 
 
 
-        
+
 
 
 
@@ -2963,7 +2963,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -2975,7 +2975,7 @@ def validate_factors(
 
 
 
-    
+
 
 
 
@@ -3059,7 +3059,7 @@ def _calculate_monotonicity(self, quintile_returns: pd.Series) -> float:
 
 
 
-    
+
 
 
 
@@ -3089,7 +3089,7 @@ def _calculate_monotonicity(self, quintile_returns: pd.Series) -> float:
 
 
 
-    
+
 
 
 
@@ -3119,7 +3119,7 @@ def _calculate_monotonicity(self, quintile_returns: pd.Series) -> float:
 
 
 
-    
+
 
 
 
@@ -3143,7 +3143,7 @@ def _calculate_monotonicity(self, quintile_returns: pd.Series) -> float:
 
 
 
-    
+
 
 
 
@@ -3459,7 +3459,7 @@ def test_qlib_alpha158_integration():
 
 
 
-    
+
 
 
 
@@ -3471,7 +3471,7 @@ def test_qlib_alpha158_integration():
 
 
 
-    
+
 
 
 
@@ -3507,7 +3507,7 @@ def test_qlib_alpha158_integration():
 
 
 
-    
+
 
 
 
@@ -3947,7 +3947,7 @@ qlib_alpha158:
 
 
 
-  
+
 
 
 
@@ -4080,8 +4080,3 @@ qlib_alpha158:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 机器学习层负责人
-
-
-
-
-

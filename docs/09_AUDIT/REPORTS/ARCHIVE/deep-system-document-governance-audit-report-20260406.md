@@ -218,7 +218,7 @@ audit_layers: L1, L2, L3
 
   module_id: IMPL_FEATURE_STORE_TECH_SPEC_001
 
-  
+
 
 - docs/01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md
 
@@ -250,7 +250,7 @@ audit_layers: L1, L2, L3
 
 - docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md
 
-  
+
 
 归档文档:
 
@@ -632,7 +632,7 @@ git commit -m "fix: 删除12个重复归档文档 - P0问题修复"
 
 
 
-**当前问题**: 
+**当前问题**:
 
 - `FEATURE_STORE_BLUEPRINT.md` (蓝图) 和 `FEATURE_STORE_TECHNICAL_SPECIFICATION.md` (技术规格) 职责重叠
 
@@ -841,4 +841,3 @@ git commit -m "fix: 删除12个重复归档文档 - P0问题修复"
 **审计员签名**: Audit Sentinel
 
 **下次审计建议**: 2026-05-06
-

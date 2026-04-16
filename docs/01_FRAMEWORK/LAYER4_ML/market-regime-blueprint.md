@@ -50,7 +50,7 @@ priority: P0
 
 > **核心职责**: 提供market regime blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Market Regime蓝图设计相关内容
 
@@ -422,7 +422,7 @@ class FeatureConfig:
 
     macro_factors: List[str] = None  # 宏观因子
 
-    
+
 
     def __post_init__(self):
 
@@ -440,15 +440,15 @@ class FeatureEngineeringEngine:
 
     """特征工程引擎"""
 
-    
+
 
     def __init__(self, config: FeatureConfig):
 
         self.config = config
 
-        
 
-    def extract_features(self, 
+
+    def extract_features(self,
 
                         price_data: pd.DataFrame,
 
@@ -460,37 +460,37 @@ class FeatureEngineeringEngine:
 
         features = pd.DataFrame(index=price_data.index)
 
-        
+
 
         features = self._extract_return_features(price_data, features)
 
-        
+
 
         features = self._extract_volatility_features(price_data, features)
 
-        
+
 
         features = self._extract_technical_indicators(price_data, features)
 
-        
+
 
         if volume_data is not None:
 
             features = self._extract_volume_features(volume_data, features)
 
-        
+
 
         if macro_data is not None and self.config.macro_factors:
 
             features = self._extract_macro_features(macro_data, features)
 
-        
+
 
         return features
 
-    
 
-    def _extract_return_features(self, 
+
+    def _extract_return_features(self,
 
                                 price_data: pd.DataFrame,
 
@@ -500,7 +500,7 @@ class FeatureEngineeringEngine:
 
         returns = price_data['close'].pct_change()
 
-        
+
 
         for window in self.config.return_windows:
 
@@ -508,11 +508,11 @@ class FeatureEngineeringEngine:
 
             features[f'return_std_{window}d'] = returns.rolling(window).std()
 
-        
+
 
         return features
 
-    
+
 
     def _extract_volatility_features(self,
 
@@ -524,21 +524,21 @@ class FeatureEngineeringEngine:
 
         returns = price_data['close'].pct_change()
 
-        
+
 
         for window in self.config.volatility_windows:
 
             features[f'volatility_{window}d'] = returns.rolling(window).std() * np.sqrt(252)
 
-        
+
 
         features['parkinson_vol'] = self._calculate_parkinson_volatility(price_data)
 
-        
+
 
         return features
 
-    
+
 
     def _calculate_parkinson_volatility(self, price_data: pd.DataFrame) -> pd.Series:
 
@@ -548,7 +548,7 @@ class FeatureEngineeringEngine:
 
         low = price_data['low']
 
-        
+
 
         return np.sqrt(
 
@@ -556,7 +556,7 @@ class FeatureEngineeringEngine:
 
         ) * np.sqrt(252)
 
-    
+
 
     def _extract_technical_indicators(self,
 
@@ -570,7 +570,7 @@ class FeatureEngineeringEngine:
 
             features['rsi_14'] = self._calculate_rsi(price_data['close'], 14)
 
-        
+
 
         if 'macd' in self.config.technical_indicators:
 
@@ -582,7 +582,7 @@ class FeatureEngineeringEngine:
 
             features['macd_hist'] = hist
 
-        
+
 
         if 'bollinger' in self.config.technical_indicators:
 
@@ -596,11 +596,11 @@ class FeatureEngineeringEngine:
 
             features['bb_position'] = (price_data['close'] - lower) / (upper - lower)
 
-        
+
 
         return features
 
-    
+
 
     def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
 
@@ -612,19 +612,19 @@ class FeatureEngineeringEngine:
 
         loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
 
-        
+
 
         rs = gain / loss
 
         rsi = 100 - (100 / (1 + rs))
 
-        
+
 
         return rsi
 
-    
 
-    def _calculate_macd(self, 
+
+    def _calculate_macd(self,
 
                        prices: pd.Series,
 
@@ -640,7 +640,7 @@ class FeatureEngineeringEngine:
 
         ema_slow = prices.ewm(span=slow).mean()
 
-        
+
 
         macd = ema_fast - ema_slow
 
@@ -648,11 +648,11 @@ class FeatureEngineeringEngine:
 
         histogram = macd - signal_line
 
-        
+
 
         return macd, signal_line, histogram
 
-    
+
 
     def _calculate_bollinger(self,
 
@@ -668,17 +668,17 @@ class FeatureEngineeringEngine:
 
         std = prices.rolling(window=period).std()
 
-        
+
 
         upper = middle + (std * std_dev)
 
         lower = middle - (std * std_dev)
 
-        
+
 
         return upper, middle, lower
 
-    
+
 
     def _extract_volume_features(self,
 
@@ -692,11 +692,11 @@ class FeatureEngineeringEngine:
 
         features['turnover_rate'] = volume_data['turnover'] if 'turnover' in volume_data.columns else np.nan
 
-        
+
 
         return features
 
-    
+
 
     def _extract_macro_features(self,
 
@@ -712,7 +712,7 @@ class FeatureEngineeringEngine:
 
                 features[f'macro_{factor}'] = macro_data[factor]
 
-        
+
 
         return features
 
@@ -730,9 +730,9 @@ class DataNormalizer:
 
     """数据标准化器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  pca_variance: float = 0.95,
 
@@ -750,7 +750,7 @@ class DataNormalizer:
 
         self.scaler = None
 
-        
+
 
     def fit_transform(self, features: pd.DataFrame) -> np.ndarray:
 
@@ -758,23 +758,23 @@ class DataNormalizer:
 
         features_clean = features.dropna()
 
-        
+
 
         self.scaler = StandardScaler()
 
         scaled_features = self.scaler.fit_transform(features_clean)
 
-        
+
 
         self.pca = PCA(n_components=self.pca_variance, whiten=self.use_whitening)
 
         transformed_features = self.pca.fit_transform(scaled_features)
 
-        
+
 
         return transformed_features
 
-    
+
 
     def transform(self, features: pd.DataFrame) -> np.ndarray:
 
@@ -782,17 +782,17 @@ class DataNormalizer:
 
         features_clean = features.dropna()
 
-        
+
 
         scaled_features = self.scaler.transform(features_clean)
 
         transformed_features = self.pca.transform(scaled_features)
 
-        
+
 
         return transformed_features
 
-    
+
 
     def get_n_components(self) -> int:
 
@@ -846,13 +846,13 @@ class HMMConfig:
 
     tol: float = 1e-4  # 收敛阈值
 
-    
+
 
 class HMMRegimeDetector:
 
     """HMM市场状态检测器"""
 
-    
+
 
     def __init__(self, config: HMMConfig):
 
@@ -864,9 +864,9 @@ class HMMRegimeDetector:
 
         self.training_score = None
 
-        
 
-    def train(self, 
+
+    def train(self,
 
              features: np.ndarray,
 
@@ -878,7 +878,7 @@ class HMMRegimeDetector:
 
         best_score = float('-inf')
 
-        
+
 
         for _ in range(n_init):
 
@@ -896,7 +896,7 @@ class HMMRegimeDetector:
 
             )
 
-            
+
 
             try:
 
@@ -904,7 +904,7 @@ class HMMRegimeDetector:
 
                 score = model.score(features)
 
-                
+
 
                 if score > best_score:
 
@@ -916,21 +916,21 @@ class HMMRegimeDetector:
 
                 continue
 
-        
+
 
         self.model = best_model
 
         self.training_score = best_score
 
-        
+
 
         self._assign_state_labels(features)
 
-        
+
 
         return best_score
 
-    
+
 
     def _assign_state_labels(self, features: np.ndarray):
 
@@ -940,29 +940,29 @@ class HMMRegimeDetector:
 
             return
 
-        
+
 
         state_stats = []
 
-        
+
 
         for state in range(self.config.n_states):
 
             state_mask = self.model.predict(features) == state
 
-            
+
 
             if state_mask.sum() > 0:
 
                 state_features = features[state_mask]
 
-                
+
 
                 mean_return = state_features[:, 0].mean() if state_features.shape[1] > 0 else 0
 
                 mean_vol = state_features[:, 1].std() if state_features.shape[1] > 1 else 0
 
-                
+
 
                 state_stats.append({
 
@@ -976,15 +976,15 @@ class HMMRegimeDetector:
 
                 })
 
-        
 
-        sorted_states = sorted(state_stats, 
+
+        sorted_states = sorted(state_stats,
 
                               key=lambda x: (x['mean_return'], -x['mean_volatility']),
 
                               reverse=True)
 
-        
+
 
         self.state_labels = {}
 
@@ -1002,7 +1002,7 @@ class HMMRegimeDetector:
 
                 self.state_labels[stats['state']] = 'range'
 
-    
+
 
     def predict(self, features: np.ndarray) -> np.ndarray:
 
@@ -1012,11 +1012,11 @@ class HMMRegimeDetector:
 
             raise ValueError("Model not trained. Call train() first.")
 
-        
+
 
         return self.model.predict(features)
 
-    
+
 
     def predict_proba(self, features: np.ndarray) -> np.ndarray:
 
@@ -1026,11 +1026,11 @@ class HMMRegimeDetector:
 
             raise ValueError("Model not trained. Call train() first.")
 
-        
+
 
         return self.model.predict_proba(features)
 
-    
+
 
     def decode(self, features: np.ndarray) -> Tuple[np.ndarray, float]:
 
@@ -1040,11 +1040,11 @@ class HMMRegimeDetector:
 
             raise ValueError("Model not trained. Call train() first.")
 
-        
+
 
         return self.model.decode(features, algorithm='viterbi')
 
-    
+
 
     def get_state_statistics(self) -> Dict:
 
@@ -1054,7 +1054,7 @@ class HMMRegimeDetector:
 
             return {}
 
-        
+
 
         stats = {
 
@@ -1070,11 +1070,11 @@ class HMMRegimeDetector:
 
         }
 
-        
+
 
         return stats
 
-    
+
 
     def get_expected_durations(self) -> Dict[str, float]:
 
@@ -1084,7 +1084,7 @@ class HMMRegimeDetector:
 
             return {}
 
-        
+
 
         durations = {}
 
@@ -1100,7 +1100,7 @@ class HMMRegimeDetector:
 
                 durations[label] = expected_duration
 
-        
+
 
         return durations
 
@@ -1118,15 +1118,15 @@ class StateDecoder:
 
     """状态解码器"""
 
-    
+
 
     def __init__(self, hmm_detector: HMMRegimeDetector):
 
         self.hmm_detector = hmm_detector
 
-        
 
-    def decode_sequence(self, 
+
+    def decode_sequence(self,
 
                        features: np.ndarray,
 
@@ -1138,17 +1138,17 @@ class StateDecoder:
 
         probs = self.hmm_detector.predict_proba(features)
 
-        
+
 
         results = pd.DataFrame(index=dates)
 
         results['state'] = states
 
-        results['state_label'] = [self.hmm_detector.state_labels.get(s, f'state_{s}') 
+        results['state_label'] = [self.hmm_detector.state_labels.get(s, f'state_{s}')
 
                                   for s in states]
 
-        
+
 
         for i in range(probs.shape[1]):
 
@@ -1156,13 +1156,13 @@ class StateDecoder:
 
             results[f'prob_{label}'] = probs[:, i]
 
-        
+
 
         return results
 
-    
 
-    def get_current_state(self, 
+
+    def get_current_state(self,
 
                          features: np.ndarray,
 
@@ -1172,25 +1172,25 @@ class StateDecoder:
 
         recent_features = features[-lookback:]
 
-        
+
 
         states = self.hmm_detector.predict(recent_features)
 
         probs = self.hmm_detector.predict_proba(recent_features)
 
-        
+
 
         current_state = states[-1]
 
         current_prob = probs[-1]
 
-        
+
 
         state_label = self.hmm_detector.state_labels.get(current_state, f'state_{current_state}')
 
         state_prob = current_prob[current_state]
 
-        
+
 
         return {
 
@@ -1256,7 +1256,7 @@ class StateInterpreter:
 
     """状态解释器"""
 
-    
+
 
     def __init__(self, hmm_detector: HMMRegimeDetector):
 
@@ -1264,7 +1264,7 @@ class StateInterpreter:
 
         self.state_characteristics = {}
 
-        
+
 
     def analyze_states(self,
 
@@ -1276,7 +1276,7 @@ class StateInterpreter:
 
         states = self.hmm_detector.predict(features)
 
-        
+
 
         for state in range(self.hmm_detector.config.n_states):
 
@@ -1284,13 +1284,13 @@ class StateInterpreter:
 
             state_returns = returns.values[state_mask]
 
-            
+
 
             if len(state_returns) > 0:
 
                 label = self.hmm_detector.state_labels.get(state, f'state_{state}')
 
-                
+
 
                 expected_return = np.mean(state_returns) * 252
 
@@ -1298,7 +1298,7 @@ class StateInterpreter:
 
                 sharpe_ratio = expected_return / expected_volatility if expected_volatility > 0 else 0
 
-                
+
 
                 cumulative = np.cumsum(state_returns)
 
@@ -1308,17 +1308,17 @@ class StateInterpreter:
 
                 max_drawdown = np.min(drawdown)
 
-                
+
 
                 durations = self._calculate_durations(states, state)
 
                 avg_duration = np.mean(durations) if durations else 0
 
-                
+
 
                 frequency = state_mask.sum() / len(states)
 
-                
+
 
                 self.state_characteristics[label] = StateCharacteristics(
 
@@ -1338,11 +1338,11 @@ class StateInterpreter:
 
                 )
 
-        
+
 
         return self.state_characteristics
 
-    
+
 
     def _calculate_durations(self, states: np.ndarray, target_state: int) -> List[int]:
 
@@ -1352,7 +1352,7 @@ class StateInterpreter:
 
         current_duration = 0
 
-        
+
 
         for state in states:
 
@@ -1368,17 +1368,17 @@ class StateInterpreter:
 
                     current_duration = 0
 
-        
+
 
         if current_duration > 0:
 
             durations.append(current_duration)
 
-        
+
 
         return durations
 
-    
+
 
     def get_state_report(self) -> str:
 
@@ -1388,13 +1388,13 @@ class StateInterpreter:
 
             return "No state analysis available. Run analyze_states() first."
 
-        
+
 
         report = "市场状态特征分析报告\n"
 
         report += "=" * 50 + "\n\n"
 
-        
+
 
         for label, chars in self.state_characteristics.items():
 
@@ -1414,7 +1414,7 @@ class StateInterpreter:
 
             report += "\n"
 
-        
+
 
         return report
 
@@ -1462,9 +1462,9 @@ class RegimeChangeDetector:
 
     """范式转换检测器"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  hmm_detector: HMMRegimeDetector,
 
@@ -1480,7 +1480,7 @@ class RegimeChangeDetector:
 
         self.history = []
 
-        
+
 
     def detect_change(self,
 
@@ -1494,33 +1494,33 @@ class RegimeChangeDetector:
 
             return None
 
-        
+
 
         probs = self.hmm_detector.predict_proba(features)
 
-        
+
 
         current_probs = probs[-1]
 
         prev_probs = probs[-2]
 
-        
+
 
         current_state = np.argmax(current_probs)
 
         prev_state = np.argmax(prev_probs)
 
-        
+
 
         if current_state != prev_state:
 
             prob_change = abs(current_probs[current_state] - prev_probs[prev_state])
 
-            
+
 
             confidence = current_probs[current_state]
 
-            
+
 
             if confidence >= self.confidence_threshold:
 
@@ -1534,7 +1534,7 @@ class RegimeChangeDetector:
 
                 alert_level = 'low'
 
-            
+
 
             signal = RegimeChangeSignal(
 
@@ -1552,19 +1552,19 @@ class RegimeChangeDetector:
 
             )
 
-            
+
 
             self.history.append(signal)
 
-            
+
 
             return signal
 
-        
+
 
         return None
 
-    
+
 
     def get_recent_changes(self, n: int = 10) -> List[RegimeChangeSignal]:
 
@@ -1586,9 +1586,9 @@ class DecisionSupportSystem:
 
     """决策支持系统"""
 
-    
 
-    def __init__(self, 
+
+    def __init__(self,
 
                  state_interpreter: StateInterpreter,
 
@@ -1598,7 +1598,7 @@ class DecisionSupportSystem:
 
         self.change_detector = change_detector
 
-        
+
 
     def generate_recommendations(self,
 
@@ -1622,13 +1622,13 @@ class DecisionSupportSystem:
 
         }
 
-        
+
 
         state_label = current_state['state_label']
 
         state_chars = self.state_interpreter.state_characteristics.get(state_label)
 
-        
+
 
         if state_chars:
 
@@ -1652,7 +1652,7 @@ class DecisionSupportSystem:
 
                 }
 
-            
+
 
             elif state_label == 'bear':
 
@@ -1682,7 +1682,7 @@ class DecisionSupportSystem:
 
                 })
 
-            
+
 
             else:  # range
 
@@ -1696,7 +1696,7 @@ class DecisionSupportSystem:
 
                 }
 
-        
+
 
         if change_signal and change_signal.alert_level == 'high':
 
@@ -1708,11 +1708,11 @@ class DecisionSupportSystem:
 
             })
 
-        
+
 
         return recommendations
 
-    
+
 
     def generate_report(self,
 
@@ -1724,7 +1724,7 @@ class DecisionSupportSystem:
 
         current_state = self.change_detector.hmm_detector.predict(features[-1:])
 
-        
+
 
         state_label = self.change_detector.hmm_detector.state_labels.get(
 
@@ -1732,7 +1732,7 @@ class DecisionSupportSystem:
 
         )
 
-        
+
 
         report = "市场状态识别报告\n"
 
@@ -1740,11 +1740,11 @@ class DecisionSupportSystem:
 
         report += f"报告日期: {dates[-1]}\n\n"
 
-        
+
 
         report += f"当前市场状态: {state_label.upper()}\n\n"
 
-        
+
 
         if self.state_interpreter.state_characteristics:
 
@@ -1760,7 +1760,7 @@ class DecisionSupportSystem:
 
                 report += f"  夏普比率: {chars.sharpe_ratio:.2f}\n\n"
 
-        
+
 
         recent_changes = self.change_detector.get_recent_changes(5)
 
@@ -1774,7 +1774,7 @@ class DecisionSupportSystem:
 
                 report += f"(置信度: {change.confidence:.2%})\n"
 
-        
+
 
         return report
 
@@ -1850,13 +1850,13 @@ class MarketRegimeStorage:
 
     """市场状态存储"""
 
-    
+
 
     def __init__(self, db_path: str):
 
         self.db_path = db_path
 
-        
+
 
     def save_state(self, state: MarketRegimeState):
 
@@ -1864,7 +1864,7 @@ class MarketRegimeStorage:
 
         pass
 
-    
+
 
     def save_change_signal(self, signal: RegimeChangeSignal):
 
@@ -1872,9 +1872,9 @@ class MarketRegimeStorage:
 
         pass
 
-    
 
-    def get_state_history(self, 
+
+    def get_state_history(self,
 
                          start_date: datetime,
 
@@ -1912,7 +1912,7 @@ class HMMIntegrator:
 
     """HMM集成器"""
 
-    
+
 
     def __init__(self):
 
@@ -1926,9 +1926,9 @@ class HMMIntegrator:
 
         }
 
-    
 
-    def create_model(self, 
+
+    def create_model(self,
 
                     model_type: str = 'gaussian',
 
@@ -1944,7 +1944,7 @@ class HMMIntegrator:
 
             raise ValueError(f"Unknown model type: {model_type}")
 
-        
+
 
         return model_class(n_components=n_states, **kwargs)
 
@@ -1962,13 +1962,13 @@ class MarketRegimeTraderIntegration:
 
     """MarketRegimeTrader项目集成"""
 
-    
+
 
     def __init__(self):
 
         self.project_url = "https://github.com/0x596173736972/MarketRegimeTrader"
 
-        
+
 
     def get_reference_features(self) -> List[str]:
 
@@ -1994,7 +1994,7 @@ class MarketRegimeTraderIntegration:
 
         ]
 
-    
+
 
     def get_reference_strategies(self) -> Dict[str, str]:
 
@@ -2118,7 +2118,7 @@ class MarketRegimeTester:
 
     """市场状态识别测试"""
 
-    
+
 
     def test_hmm_training(self):
 
@@ -2126,7 +2126,7 @@ class MarketRegimeTester:
 
         pass
 
-    
+
 
     def test_state_prediction(self):
 
@@ -2134,7 +2134,7 @@ class MarketRegimeTester:
 
         pass
 
-    
+
 
     def test_change_detection(self):
 
@@ -2142,7 +2142,7 @@ class MarketRegimeTester:
 
         pass
 
-    
+
 
     def test_backtest_performance(self):
 
@@ -2273,4 +2273,3 @@ class MarketRegimeTester:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-

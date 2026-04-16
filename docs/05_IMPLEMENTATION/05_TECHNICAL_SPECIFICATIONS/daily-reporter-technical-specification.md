@@ -39,7 +39,7 @@ audit_status: EXTRACT_TO_L0_REQUIRED
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -607,7 +607,7 @@ class DailyReport:
 
 
 
-    
+
 
 
 
@@ -673,7 +673,7 @@ class DailyReport:
 
 
 
-    
+
 
 
 
@@ -709,7 +709,7 @@ class DailyReport:
 
 
 
-    
+
 
 
 
@@ -751,7 +751,7 @@ class TradingSummary:
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ class TradingSummary:
 
 
 
-    
+
 
 
 
@@ -847,7 +847,7 @@ class TradingSummary:
 
 
 
-    
+
 
 
 
@@ -901,7 +901,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -949,7 +949,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ class MarketOverview:
 
 
 
-    
+
 
 
 
@@ -1015,7 +1015,7 @@ class DailyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1033,7 +1033,7 @@ class DailyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class DailyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1123,7 +1123,7 @@ class DailyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1141,7 +1141,7 @@ class DailyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1171,7 +1171,7 @@ class DailyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1207,7 +1207,7 @@ class DailyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1225,7 +1225,7 @@ class DailyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1255,7 +1255,7 @@ class DailyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1303,7 +1303,7 @@ class DailyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1321,7 +1321,7 @@ class DailyReporterAPI:
 
 
 
-            status: 报告状态过?            
+            status: 报告状态过?
 
 
 
@@ -1351,7 +1351,7 @@ class DailyReporterAPI:
 
 
 
-    
+
 
 
 
@@ -1399,7 +1399,7 @@ class DailyReporterAPI:
 
 
 
-        
+
 
 
 
@@ -1429,7 +1429,7 @@ class DailyReporterAPI:
 
 
 
-            
+
 
 
 
@@ -1501,7 +1501,7 @@ class ScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1519,7 +1519,7 @@ class ScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1561,7 +1561,7 @@ class ScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1579,7 +1579,7 @@ class ScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1609,7 +1609,7 @@ class ScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1645,7 +1645,7 @@ class ScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1663,7 +1663,7 @@ class ScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1693,7 +1693,7 @@ class ScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1729,7 +1729,7 @@ class ScheduleAPI:
 
 
 
-        
+
 
 
 
@@ -1747,7 +1747,7 @@ class ScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1777,7 +1777,7 @@ class ScheduleAPI:
 
 
 
-    
+
 
 
 
@@ -1807,7 +1807,7 @@ class ScheduleAPI:
 
 
 
-        """获取调度状态        
+        """获取调度状态
 
 
 
@@ -1825,7 +1825,7 @@ class ScheduleAPI:
 
 
 
-            
+
 
 
 
@@ -1909,7 +1909,7 @@ class ReportInput:
 
 
 
-    
+
 
 
 
@@ -1933,7 +1933,7 @@ class ReportInput:
 
 
 
-    
+
 
 
 
@@ -1963,7 +1963,7 @@ class ReportInput:
 
 
 
-    
+
 
 
 
@@ -2755,7 +2755,7 @@ class ReportSecurity:
 
 
 
-    
+
 
 
 
@@ -2773,7 +2773,7 @@ class ReportSecurity:
 
 
 
-    
+
 
 
 
@@ -2791,7 +2791,7 @@ class ReportSecurity:
 
 
 
-        """验证输入数据合法?        
+        """验证输入数据合法?
 
 
 
@@ -2809,7 +2809,7 @@ class ReportSecurity:
 
 
 
-    
+
 
 
 
@@ -2833,7 +2833,7 @@ class ReportSecurity:
 
 
 
-        
+
 
 
 
@@ -2869,7 +2869,7 @@ class ReportSecurity:
 
 
 
-    
+
 
 
 
@@ -2893,7 +2893,7 @@ class ReportSecurity:
 
 
 
-        
+
 
 
 
@@ -2923,7 +2923,7 @@ class ReportSecurity:
 
 
 
-    
+
 
 
 
@@ -2947,7 +2947,7 @@ class ReportSecurity:
 
 
 
-        
+
 
 
 
@@ -3037,7 +3037,7 @@ class ReportMetadata:
 
 
 
-    """报告元数据    
+    """报告元数据
 
 
 
@@ -3139,7 +3139,7 @@ class ReportTemplate:
 
 
 
-    
+
 
 
 
@@ -3229,7 +3229,7 @@ class ScheduleConfig:
 
 
 
-    
+
 
 
 
@@ -3349,7 +3349,7 @@ class ReportStorage:
 
 
 
-    
+
 
 
 
@@ -3367,7 +3367,7 @@ class ReportStorage:
 
 
 
-    
+
 
 
 
@@ -3391,7 +3391,7 @@ class ReportStorage:
 
 
 
-        
+
 
 
 
@@ -3409,7 +3409,7 @@ class ReportStorage:
 
 
 
-        
+
 
 
 
@@ -3433,7 +3433,7 @@ class ReportStorage:
 
 
 
-    
+
 
 
 
@@ -3451,7 +3451,7 @@ class ReportStorage:
 
 
 
-        
+
 
 
 
@@ -3475,7 +3475,7 @@ class ReportStorage:
 
 
 
-    
+
 
 
 
@@ -3493,7 +3493,7 @@ class ReportStorage:
 
 
 
-        
+
 
 
 
@@ -3523,7 +3523,7 @@ class ReportStorage:
 
 
 
-    
+
 
 
 
@@ -3535,7 +3535,7 @@ class ReportStorage:
 
 
 
-        """归档旧报告        
+        """归档旧报告
 
 
 
@@ -3921,7 +3921,7 @@ class DataAggregator:
 
 
 
-    """数据聚合?    
+    """数据聚合?
 
 
 
@@ -3939,7 +3939,7 @@ class DataAggregator:
 
 
 
-    
+
 
 
 
@@ -3987,7 +3987,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -3999,7 +3999,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -4023,7 +4023,7 @@ class DataAggregator:
 
 
 
-            returns: 收益率序?            
+            returns: 收益率序?
 
 
 
@@ -4065,7 +4065,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -4095,7 +4095,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -4125,7 +4125,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -4155,7 +4155,7 @@ class DataAggregator:
 
 
 
-        
+
 
 
 
@@ -4305,7 +4305,7 @@ class LLMInterpreter:
 
 
 
-    """LLM解读?    
+    """LLM解读?
 
 
 
@@ -4323,7 +4323,7 @@ class LLMInterpreter:
 
 
 
-    
+
 
 
 
@@ -4353,7 +4353,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4401,7 +4401,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4413,7 +4413,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4443,7 +4443,7 @@ class LLMInterpreter:
 
 
 
-            
+
 
 
 
@@ -4497,7 +4497,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4515,7 +4515,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4527,7 +4527,7 @@ class LLMInterpreter:
 
 
 
-    
+
 
 
 
@@ -4575,7 +4575,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4605,7 +4605,7 @@ class LLMInterpreter:
 
 
 
-            
+
 
 
 
@@ -4791,7 +4791,7 @@ class LLMInterpreter:
 
 
 
-    
+
 
 
 
@@ -4809,7 +4809,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4827,7 +4827,7 @@ class LLMInterpreter:
 
 
 
-            
+
 
 
 
@@ -4857,7 +4857,7 @@ class LLMInterpreter:
 
 
 
-    
+
 
 
 
@@ -4875,7 +4875,7 @@ class LLMInterpreter:
 
 
 
-        
+
 
 
 
@@ -4893,7 +4893,7 @@ class LLMInterpreter:
 
 
 
-            
+
 
 
 
@@ -4959,7 +4959,7 @@ class TemplateRenderer:
 
 
 
-    """模板渲染?    
+    """模板渲染?
 
 
 
@@ -4977,7 +4977,7 @@ class TemplateRenderer:
 
 
 
-    
+
 
 
 
@@ -5019,7 +5019,7 @@ class TemplateRenderer:
 
 
 
-        
+
 
 
 
@@ -5061,7 +5061,7 @@ class TemplateRenderer:
 
 
 
-        
+
 
 
 
@@ -5073,7 +5073,7 @@ class TemplateRenderer:
 
 
 
-        
+
 
 
 
@@ -5091,7 +5091,7 @@ class TemplateRenderer:
 
 
 
-            context: 上下文数?            
+            context: 上下文数?
 
 
 
@@ -5229,7 +5229,7 @@ def test_generate_daily_report():
 
 
 
-    
+
 
 
 
@@ -5259,7 +5259,7 @@ def test_generate_daily_report():
 
 
 
-    
+
 
 
 
@@ -5313,7 +5313,7 @@ def test_aggregate_trading_data():
 
 
 
-    
+
 
 
 
@@ -5349,7 +5349,7 @@ def test_aggregate_trading_data():
 
 
 
-    
+
 
 
 
@@ -5397,7 +5397,7 @@ def test_llm_interpretation():
 
 
 
-    
+
 
 
 
@@ -5433,7 +5433,7 @@ def test_llm_interpretation():
 
 
 
-    
+
 
 
 
@@ -5843,7 +5843,7 @@ class TestDailyReporterIntegration:
 
 
 
-    
+
 
 
 
@@ -5867,7 +5867,7 @@ class TestDailyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -5891,7 +5891,7 @@ class TestDailyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -5909,7 +5909,7 @@ class TestDailyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -5933,7 +5933,7 @@ class TestDailyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -5963,7 +5963,7 @@ class TestDailyReporterIntegration:
 
 
 
-        
+
 
 
 
@@ -7026,8 +7026,3 @@ class TestDailyReporterIntegration:
 
 
 **文档状?*: ?已完?**下一?*: 生成技术评审报?
-
-
-
-
-

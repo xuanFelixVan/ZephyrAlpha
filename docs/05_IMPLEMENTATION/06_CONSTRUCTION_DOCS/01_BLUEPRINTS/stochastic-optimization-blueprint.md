@@ -28,7 +28,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：随机优化、参数不确定性建模、鲁棒优化
 
@@ -160,15 +160,15 @@ class StochasticOptimizer:
 
     """随机优化器"""
 
-    
+
 
     def __init__(self, uncertainty_level=0.1):
 
         self.uncertainty_level = uncertainty_level
 
-    
 
-    def robust_mean_variance(self, expected_returns, cov_matrix, 
+
+    def robust_mean_variance(self, expected_returns, cov_matrix,
 
                             target_return=None, uncertainty_set='box'):
 
@@ -176,7 +176,7 @@ class StochasticOptimizer:
 
         鲁棒均值方差优化
 
-        
+
 
         Parameters:
 
@@ -204,13 +204,13 @@ class StochasticOptimizer:
 
         w = cp.Variable(n)
 
-        
+
 
         # 基础约束
 
         constraints = [cp.sum(w) == 1, w >= 0]
 
-        
+
 
         # 鲁棒目标函数
 
@@ -224,7 +224,7 @@ class StochasticOptimizer:
 
             portfolio_var = cp.quad_form(w, cov_matrix)
 
-            
+
 
         elif uncertainty_set == 'ellipsoidal':
 
@@ -234,13 +234,13 @@ class StochasticOptimizer:
 
             delta_cov = self.uncertainty_level * np.eye(n)
 
-            
+
 
             robust_return = expected_returns @ w - cp.sqrt(kappa) * cp.norm(delta_cov @ w)
 
             portfolio_var = cp.quad_form(w, cov_matrix)
 
-        
+
 
         # 目标函数
 
@@ -254,19 +254,19 @@ class StochasticOptimizer:
 
             objective = cp.Maximize(robust_return - 0.5 * portfolio_var)
 
-        
+
 
         prob = cp.Problem(objective, constraints)
 
         prob.solve()
 
-        
+
 
         return w.value
 
-    
 
-    def bayesian_mean_variance(self, historical_returns, prior_mean=None, 
+
+    def bayesian_mean_variance(self, historical_returns, prior_mean=None,
 
                                prior_cov=None, confidence=0.5):
 
@@ -274,7 +274,7 @@ class StochasticOptimizer:
 
         贝叶斯均值方差优化
 
-        
+
 
         Parameters:
 
@@ -300,7 +300,7 @@ class StochasticOptimizer:
 
         T, n = historical_returns.shape
 
-        
+
 
         # 样本统计量
 
@@ -308,7 +308,7 @@ class StochasticOptimizer:
 
         sample_cov = np.cov(historical_returns.T)
 
-        
+
 
         # 贝叶斯收缩
 
@@ -320,7 +320,7 @@ class StochasticOptimizer:
 
             prior_cov = np.eye(n) * sample_cov.diagonal().mean()
 
-        
+
 
         # 后验估计
 
@@ -328,7 +328,7 @@ class StochasticOptimizer:
 
         posterior_mean = shrinkage * prior_mean + (1 - shrinkage) * sample_mean
 
-        
+
 
         # 考虑估计不确定性
 
@@ -336,7 +336,7 @@ class StochasticOptimizer:
 
         posterior_cov = sample_cov + estimation_error
 
-        
+
 
         # 标准均值方差优化
 
@@ -346,7 +346,7 @@ class StochasticOptimizer:
 
         portfolio_var = cp.quad_form(w, posterior_cov)
 
-        
+
 
         prob = cp.Problem(
 
@@ -358,11 +358,11 @@ class StochasticOptimizer:
 
         prob.solve()
 
-        
+
 
         return w.value
 
-    
+
 
     def chance_constrained_optimization(self, expected_returns, cov_matrix,
 
@@ -372,7 +372,7 @@ class StochasticOptimizer:
 
         机会约束优化
 
-        
+
 
         Parameters:
 
@@ -400,19 +400,19 @@ class StochasticOptimizer:
 
         w = cp.Variable(n)
 
-        
+
 
         # 机会约束转换为确定性约束
 
         z = stats.norm.ppf(probability)
 
-        
+
 
         portfolio_return = expected_returns @ w
 
         portfolio_std = cp.sqrt(cp.quad_form(w, cov_matrix))
 
-        
+
 
         # 确保以probability概率达到target_return
 
@@ -426,7 +426,7 @@ class StochasticOptimizer:
 
         ]
 
-        
+
 
         # 最小化方差
 
@@ -440,7 +440,7 @@ class StochasticOptimizer:
 
         prob.solve()
 
-        
+
 
         return w.value
 
@@ -617,4 +617,3 @@ class StochasticOptimizationOutput:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-

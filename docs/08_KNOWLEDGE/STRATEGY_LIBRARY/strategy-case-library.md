@@ -32,7 +32,7 @@ implementation_status: 'ﮒﺓﺎﮒ؟ﮔ?tags: ["ﻝﻝ۴ﮔ۰ﻛﺝ", "ﮔ۰�
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -234,7 +234,7 @@ def calculate_momentum_factor(close_prices, lookback=20):
 
 
 
-    
+
 
 
 
@@ -246,7 +246,7 @@ def calculate_momentum_factor(close_prices, lookback=20):
 
 
 
-    
+
 
 
 
@@ -426,7 +426,7 @@ def calculate_value_factor(fundamental_data):
 
 
 
-    
+
 
 
 
@@ -434,7 +434,7 @@ def calculate_value_factor(fundamental_data):
 
 
 
-    
+
 
 
 
@@ -442,7 +442,7 @@ def calculate_value_factor(fundamental_data):
 
 
 
-    
+
 
 
 
@@ -450,7 +450,7 @@ def calculate_value_factor(fundamental_data):
 
 
 
-    
+
 
 
 
@@ -654,7 +654,7 @@ def generate_trend_signals(close_prices, short_window=20, long_window=60):
 
 
 
-    
+
 
 
 
@@ -674,7 +674,7 @@ def generate_trend_signals(close_prices, short_window=20, long_window=60):
 
 
 
-    
+
 
 
 
@@ -862,7 +862,7 @@ def generate_mean_reversion_signals(close_prices, window=20, num_std=2):
 
 
 
-    
+
 
 
 
@@ -882,7 +882,7 @@ def generate_mean_reversion_signals(close_prices, window=20, num_std=2):
 
 
 
-    
+
 
 
 
@@ -1122,7 +1122,7 @@ def train_random_forest_model(features, labels):
 
 
 
-    
+
 
 
 
@@ -1362,7 +1362,7 @@ def combine_factors(factor_dict, weights):
 
 
 
-    
+
 
 
 
@@ -1370,7 +1370,7 @@ def combine_factors(factor_dict, weights):
 
 
 
-    
+
 
 
 
@@ -1382,7 +1382,7 @@ def combine_factors(factor_dict, weights):
 
 
 
-        orthogonal_factors[name] * weight 
+        orthogonal_factors[name] * weight
 
 
 
@@ -1394,7 +1394,7 @@ def combine_factors(factor_dict, weights):
 
 
 
-    
+
 
 
 
@@ -1598,7 +1598,7 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 
-    
+
 
 
 
@@ -1622,7 +1622,7 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 
-        
+
 
 
 
@@ -1630,7 +1630,7 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 
-    
+
 
 
 
@@ -1654,7 +1654,7 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 
-    
+
 
 
 
@@ -1670,7 +1670,7 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 
-    
+
 
 
 
@@ -2147,6 +2147,3 @@ def calculate_risk_parity_weights(returns, target_risk=0.1):
 
 
 **ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﻝﻝ۴ﮒ؟?**ﻝﭘﮔ?*: ﻗ?ﮔﺑﭨﻟﺓ
-
-
-

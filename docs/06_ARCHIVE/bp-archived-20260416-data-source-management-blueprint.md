@@ -31,7 +31,7 @@ layer: layer_00
 
 > **核心职责**: Data Source Management蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 ...
 
@@ -251,13 +251,13 @@ class SourceRegistry:
 
     """数据源注册器"""
 
-    
+
 
     def __init__(self):
 
         self.sources: Dict[str, DataSource] = {}
 
-    
+
 
     def register_source(self, source_config: Dict[str, Any]) -> DataSource:
 
@@ -277,19 +277,19 @@ class SourceRegistry:
 
         )
 
-        
+
 
         self.sources[source.source_id] = source
 
         return source
 
-    
+
 
     def get_source(self, source_id: str) -> Optional[DataSource]:
 
         return self.sources.get(source_id)
 
-    
+
 
     def update_source(self, source_id: str,
 
@@ -301,7 +301,7 @@ class SourceRegistry:
 
             return None
 
-        
+
 
         for key, value in updates.items():
 
@@ -309,13 +309,13 @@ class SourceRegistry:
 
                 setattr(source, key, value)
 
-        
+
 
         source.updated_at = datetime.now()
 
         return source
 
-    
+
 
     def list_sources(self, source_type: SourceType = None) -> List[DataSource]:
 
@@ -325,7 +325,7 @@ class SourceRegistry:
 
         return list(self.sources.values())
 
-    
+
 
     def test_connection(self, source_id: str) -> Dict[str, Any]:
 
@@ -337,7 +337,7 @@ class SourceRegistry:
 
             return {"success": False, "error": "Source not found"}
 
-        
+
 
         try:
 
@@ -389,7 +389,7 @@ class SourceMonitor:
 
     """数据源监控器"""
 
-    
+
 
     def __init__(self, registry: SourceRegistry):
 
@@ -397,7 +397,7 @@ class SourceMonitor:
 
         self.health_records: Dict[str, SourceHealth] = {}
 
-    
+
 
     def check_source_health(self, source_id: str) -> SourceHealth:
 
@@ -421,25 +421,25 @@ class SourceMonitor:
 
             )
 
-        
+
 
         start_time = time.time()
 
-        
+
 
         try:
 
             connection_result = self.registry.test_connection(source_id)
 
-            
+
 
             latency_ms = (time.time() - start_time) * 1000
 
-            
+
 
             is_healthy = connection_result.get("success", False)
 
-            
+
 
             health = SourceHealth(
 
@@ -457,7 +457,7 @@ class SourceMonitor:
 
             )
 
-            
+
 
             self.health_records[source_id] = health
 
@@ -481,13 +481,13 @@ class SourceMonitor:
 
             )
 
-            
+
 
             self.health_records[source_id] = health
 
             return health
 
-    
+
 
     def check_all_sources(self) -> Dict[str, SourceHealth]:
 
@@ -495,17 +495,17 @@ class SourceMonitor:
 
         results = {}
 
-        
+
 
         for source_id in self.registry.sources.keys():
 
             results[source_id] = self.check_source_health(source_id)
 
-        
+
 
         return results
 
-    
+
 
     def get_health_history(self, source_id: str,
 
@@ -521,7 +521,7 @@ class SourceMonitor:
 
 
 
-### 3.3 
+### 3.3
 
 
 
@@ -581,7 +581,7 @@ class FailureManager:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -589,13 +589,13 @@ class FailureManager:
 
         self.alert_handlers: List[callable] = []
 
-    
+
 
     def register_alert_handler(self, handler: callable):
 
         self.alert_handlers.append(handler)
 
-    
+
 
     def detect_failure(self, source_id: str,
 
@@ -607,11 +607,11 @@ class FailureManager:
 
             return None
 
-        
+
 
         severity = self._determine_severity(health)
 
-        
+
 
         failure = FailureEvent(
 
@@ -629,19 +629,19 @@ class FailureManager:
 
         )
 
-        
+
 
         self.failures.append(failure)
 
-        
+
 
         self._send_alerts(failure)
 
-        
+
 
         return failure
 
-    
+
 
     def _determine_severity(self, health: SourceHealth) -> FailureSeverity:
 
@@ -663,7 +663,7 @@ class FailureManager:
 
             return FailureSeverity.LOW
 
-    
+
 
     def _send_alerts(self, failure: FailureEvent):
 
@@ -677,7 +677,7 @@ class FailureManager:
 
                 print(f"Alert handler failed: {e}")
 
-    
+
 
     def resolve_failure(self, event_id: str,
 
@@ -687,23 +687,23 @@ class FailureManager:
 
         failure = next((f for f in self.failures if f.event_id == event_id), None)
 
-        
+
 
         if not failure:
 
             return None
 
-        
+
 
         failure.resolved_at = datetime.now()
 
         failure.resolution = resolution
 
-        
+
 
         return failure
 
-    
+
 
     def get_active_failures(self) -> List[FailureEvent]:
 
@@ -795,7 +795,7 @@ GET /api/v1/sources/{source_id}/health
 
 
 
-## 
+##
 
 
 
@@ -805,7 +805,7 @@ GET /api/v1/sources/{source_id}/health
 
 | `source_total_sources` | Gauge | 数据源总数 |
 
-| `source_failures_total` | Counter | 
+| `source_failures_total` | Counter |
 
 障总数 |
 
@@ -827,7 +827,7 @@ GET /api/v1/sources/{source_id}/health
 
 
 
-## 
+##
 
 
 
@@ -935,7 +935,7 @@ graph LR
 
     B --> D3["ALTERNATIVE DAT"]
 
-    
+
 
     style B fill:#ff6b6b
 
@@ -952,12 +952,3 @@ graph LR
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
-
-
-
-
-
-
-
-

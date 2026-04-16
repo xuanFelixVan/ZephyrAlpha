@@ -21,7 +21,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 > **核心职责**: 在再平衡决策中考虑交易成本
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：成本感知再平衡、交易成本优化、再平衡策略制定
 
@@ -73,7 +73,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 > **核心职责**: 在再平衡决策中考虑交易成本
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：成本感知再平衡、交易成本优化、再平衡策略制定
 
@@ -231,7 +231,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 **推荐实施路径**:
 
-1. 
+1.
 
 
 
@@ -255,7 +255,7 @@ audit_status: HARDCODED_PARAMS_TO_L0
 
 **推荐实施路径**:
 
-1. 
+1.
 
 
 
@@ -279,7 +279,7 @@ class TransactionCostAwareRebalancer:
 
     """交易成本感知再平衡器"""
 
-    
+
 
     def __init__(
 
@@ -299,7 +299,7 @@ class TransactionCostAwareRebalancer:
 
         self.market_impact_coeff = market_impact_coeff
 
-        
+
 
     def estimate_transaction_cost(
 
@@ -319,7 +319,7 @@ class TransactionCostAwareRebalancer:
 
         估算交易成本
 
-        
+
 
         Args:
 
@@ -329,7 +329,7 @@ class TransactionCostAwareRebalancer:
 
             avg_daily_volume: 平均日成交量
 
-            
+
 
         Returns:
 
@@ -339,15 +339,15 @@ class TransactionCostAwareRebalancer:
 
         trade_value = weight_change * portfolio_value
 
-        
+
 
         commission = np.sum(trade_value * self.commission_rate)
 
-        
+
 
         spread = np.sum(trade_value * self.spread_cost)
 
-        
+
 
         participation_rate = trade_value / (avg_daily_volume * portfolio_value)
 
@@ -357,11 +357,11 @@ class TransactionCostAwareRebalancer:
 
         )
 
-        
+
 
         return commission + spread + market_impact
 
-    
+
 
     def optimize_with_transaction_cost(
 
@@ -383,7 +383,7 @@ class TransactionCostAwareRebalancer:
 
         """
 
-        
+
 
         Returns:
 
@@ -399,7 +399,7 @@ class TransactionCostAwareRebalancer:
 
         pass
 
-    
+
 
     def determine_rebalance_threshold(
 
@@ -419,7 +419,7 @@ class TransactionCostAwareRebalancer:
 
         判断是否需要再平衡
 
-        
+
 
         Returns:
 
@@ -443,7 +443,7 @@ class TransactionCostAPI:
 
     """交易成本感知再平衡API"""
 
-    
+
 
     @endpoint("/api/v1/transaction_cost/estimate")
 
@@ -461,7 +461,7 @@ class TransactionCostAPI:
 
         """估算交易成本"""
 
-        
+
 
     @endpoint("/api/v1/transaction_cost/optimize")
 
@@ -479,7 +479,7 @@ class TransactionCostAPI:
 
     ) -> OptimizationResult:
 
-        
+
 
     @endpoint("/api/v1/transaction_cost/should_rebalance")
 
@@ -580,10 +580,3 @@ class TransactionCostAPI:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-

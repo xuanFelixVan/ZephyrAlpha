@@ -111,7 +111,7 @@ class DynamicLeverageManager:
 
 
 
-    
+
 
 
 
@@ -119,7 +119,7 @@ class DynamicLeverageManager:
 
 
 
-    
+
 
 
 
@@ -135,7 +135,7 @@ class DynamicLeverageManager:
 
 
 
-        
+
 
 
 
@@ -155,7 +155,7 @@ config: ﮔﮔﻠﻝﺛ؟ﮒﮔﺍ
 
 
 
-    
+
 
 
 
@@ -183,7 +183,7 @@ config: ﮔﮔﻠﻝﺛ؟ﮒﮔﺍ
 
 
 
-        
+
 
 
 
@@ -211,7 +211,7 @@ float: ﻝ؟ﮔﮔﮔﻝﺏﭨﮔﺍ
 
 
 
-    
+
 
 
 
@@ -251,7 +251,7 @@ target_leverage: ﻝ؟ﮔﮔﮔ
 
 
 
-            max_change: ﮔﮒ۳۶ﮒﮒﮒﺗﮒﭦ?            
+            max_change: ﮔﮒ۳۶ﮒﮒﮒﺗﮒﭦ?
 
 
 
@@ -271,7 +271,7 @@ float: ﻟﺍﮔﺑﮒﻝﮔﮔ
 
 
 
-    
+
 
 
 
@@ -299,7 +299,7 @@ float: ﻟﺍﮔﺑﮒﻝﮔﮔ
 
 
 
-        
+
 
 
 
@@ -311,7 +311,7 @@ leverage: ﮔﮔﻝﺏﭨﮔﺍ
 
 
 
-            total_capital: ﮔﭨﻟﭖﻠ?            volatility: ﮔﺏ۱ﮒ۷ﻝ?            
+            total_capital: ﮔﭨﻟﭖﻠ?            volatility: ﮔﺏ۱ﮒ۷ﻝ?
 
 
 
@@ -481,7 +481,7 @@ def calculate_volatility_target_leverage(
 
 
 
-    
+
 
 
 
@@ -493,7 +493,7 @@ def calculate_volatility_target_leverage(
 
 
 
-    
+
 
 
 
@@ -525,7 +525,7 @@ float: ﻝ؟ﮔﮔﮔ
 
 
 
-    
+
 
 
 
@@ -533,7 +533,7 @@ float: ﻝ؟ﮔﮔﮔ
 
 
 
-    
+
 
 
 
@@ -601,7 +601,7 @@ target_leverage: ﻝ؟ﮔﮔﮔ
 
 
 
-        max_change: ﮒﮔﮔﮒ۳۶ﮒﮒ?        
+        max_change: ﮒﮔﮔﮒ۳۶ﮒﮒ?
 
 
 
@@ -621,7 +621,7 @@ float: ﻟﺍﮔﺑﮒﻝﮔﮔ
 
 
 
-    
+
 
 
 
@@ -633,7 +633,7 @@ float: ﻟﺍﮔﺑﮒﻝﮔﮔ
 
 
 
-    
+
 
 
 
@@ -679,7 +679,7 @@ class TestDynamicLeverage:
 
 
 
-    
+
 
 
 
@@ -715,7 +715,7 @@ class TestDynamicLeverage:
 
 
 
-        
+
 
 
 
@@ -860,6 +860,3 @@ assert leverage == 2.0  # ﻟﺝﺝﮒﺍﮔﮒ۳۶ﮔﮔ?
 
 
 **ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final | **ﻛﺕﻛﺕﮔ?*: ﮒ؟ﮔﺛﮒﺙﮒ?
-
-
-

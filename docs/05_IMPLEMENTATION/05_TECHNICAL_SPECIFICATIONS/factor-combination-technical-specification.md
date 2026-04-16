@@ -105,7 +105,7 @@ implementation_status: 进行?
 
 
 
-- **技术痛?*: 
+- **技术痛?*:
 
 
 
@@ -135,7 +135,7 @@ implementation_status: 进行?
 
 
 
-- **预期?*: 
+- **预期?*:
 
 
 
@@ -455,7 +455,7 @@ implementation_status: 进行?
 
 
 
-- **上下层接?*: 
+- **上下层接?*:
 
 
 
@@ -491,7 +491,7 @@ implementation_status: 进行?
 
 
 
-- **职责边界**: 
+- **职责边界**:
 
 
 
@@ -793,7 +793,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -817,7 +817,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -865,7 +865,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -925,7 +925,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -973,7 +973,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -1033,7 +1033,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -1087,7 +1087,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -1129,7 +1129,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -1177,7 +1177,7 @@ class FactorCombinationOptimizer:
 
 
 
-    
+
 
 
 
@@ -1691,13 +1691,13 @@ def combine_factors(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_dict: Dict[str, pd.Series], 
+    factor_dict: Dict[str, pd.Series],
 
 
 
@@ -1727,7 +1727,7 @@ def combine_factors(
 
 
 
-    
+
 
 
 
@@ -1757,7 +1757,7 @@ def combine_factors(
 
 
 
-    
+
 
 
 
@@ -1781,7 +1781,7 @@ def combine_factors(
 
 
 
-    
+
 
 
 
@@ -1865,19 +1865,19 @@ def optimize_weights(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_dict: Dict[str, pd.Series], 
+    factor_dict: Dict[str, pd.Series],
 
 
 
 
 
-    returns: pd.Series, 
+    returns: pd.Series,
 
 
 
@@ -1913,7 +1913,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -1943,7 +1943,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -1967,7 +1967,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -1985,7 +1985,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -2021,7 +2021,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -2069,7 +2069,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -2087,7 +2087,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -2099,13 +2099,13 @@ def optimize_weights(
 
 
 
-        neg_icir, 
+        neg_icir,
 
 
 
 
 
-        initial_weights, 
+        initial_weights,
 
 
 
@@ -2117,7 +2117,7 @@ def optimize_weights(
 
 
 
-        bounds=bounds, 
+        bounds=bounds,
 
 
 
@@ -2135,7 +2135,7 @@ def optimize_weights(
 
 
 
-    
+
 
 
 
@@ -2195,13 +2195,13 @@ def orthogonalize_factors(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_dict: Dict[str, pd.Series], 
+    factor_dict: Dict[str, pd.Series],
 
 
 
@@ -2231,7 +2231,7 @@ def orthogonalize_factors(
 
 
 
-    
+
 
 
 
@@ -2261,7 +2261,7 @@ def orthogonalize_factors(
 
 
 
-    
+
 
 
 
@@ -2285,7 +2285,7 @@ def orthogonalize_factors(
 
 
 
-    
+
 
 
 
@@ -2303,7 +2303,7 @@ def orthogonalize_factors(
 
 
 
-    
+
 
 
 
@@ -2327,7 +2327,7 @@ def orthogonalize_factors(
 
 
 
-        
+
 
 
 
@@ -2351,7 +2351,7 @@ def orthogonalize_factors(
 
 
 
-            
+
 
 
 
@@ -2375,7 +2375,7 @@ def orthogonalize_factors(
 
 
 
-            
+
 
 
 
@@ -2393,7 +2393,7 @@ def orthogonalize_factors(
 
 
 
-    
+
 
 
 
@@ -2435,13 +2435,13 @@ def reduce_dimensionality(
 
 
 
-    self, 
+    self,
 
 
 
 
 
-    factor_dict: Dict[str, pd.Series], 
+    factor_dict: Dict[str, pd.Series],
 
 
 
@@ -2477,7 +2477,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2507,7 +2507,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2537,7 +2537,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2549,7 +2549,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2567,7 +2567,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2585,7 +2585,7 @@ def reduce_dimensionality(
 
 
 
-    
+
 
 
 
@@ -2877,7 +2877,7 @@ def test_factor_combination_integration():
 
 
 
-    
+
 
 
 
@@ -2907,7 +2907,7 @@ def test_factor_combination_integration():
 
 
 
-    
+
 
 
 
@@ -2919,7 +2919,7 @@ def test_factor_combination_integration():
 
 
 
-    
+
 
 
 
@@ -2937,7 +2937,7 @@ def test_factor_combination_integration():
 
 
 
-    
+
 
 
 
@@ -2955,7 +2955,7 @@ def test_factor_combination_integration():
 
 
 
-    
+
 
 
 
@@ -3377,7 +3377,7 @@ factor_combination:
 
 
 
-  
+
 
 
 
@@ -3407,7 +3407,7 @@ factor_combination:
 
 
 
-  
+
 
 
 
@@ -3425,7 +3425,7 @@ factor_combination:
 
 
 
-  
+
 
 
 
@@ -3546,8 +3546,3 @@ factor_combination:
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人
-
-
-
-
-

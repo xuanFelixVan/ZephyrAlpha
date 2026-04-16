@@ -24,7 +24,7 @@ responsibility:
 
 > **核心职责**: Data Source Layer蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Data Source Layer蓝图设计相关内容
 
@@ -378,7 +378,7 @@ class QMTDataSource:
 
     """QMT数据源"""
 
-    
+
 
     def __init__(self, config: DataSourceConfig):
 
@@ -390,7 +390,7 @@ class QMTDataSource:
 
         self._init_cache_db()
 
-        
+
 
     def _init_cache_db(self):
 
@@ -420,7 +420,7 @@ class QMTDataSource:
 
         self.cache_db.commit()
 
-        
+
 
     def get_market_data(
 
@@ -438,7 +438,7 @@ class QMTDataSource:
 
         """获取行情数据"""
 
-        
+
 
         cache_key = f"{stock_code}_{frequency}_{start_date}_{end_date}"
 
@@ -448,7 +448,7 @@ class QMTDataSource:
 
             return cached_data
 
-        
+
 
         try:
 
@@ -464,7 +464,7 @@ class QMTDataSource:
 
             return self._get_fallback_data(stock_code, start_date, end_date)
 
-    
+
 
     def _fetch_from_qmt(
 
@@ -482,11 +482,11 @@ class QMTDataSource:
 
         """从QMT获取数据"""
 
-        
+
 
         pass
 
-    
+
 
     def _get_from_cache(self, cache_key: str) -> Optional[pd.DataFrame]:
 
@@ -510,7 +510,7 @@ class QMTDataSource:
 
         return None
 
-    
+
 
     def _save_to_cache(self, cache_key: str, data: pd.DataFrame):
 
@@ -528,7 +528,7 @@ class QMTDataSource:
 
         self.cache_db.commit()
 
-    
+
 
     def _handle_error(self, error: Exception):
 
@@ -536,7 +536,7 @@ class QMTDataSource:
 
         print(f"QMT数据源错误: {error}")
 
-        
+
 
     def _get_fallback_data(
 
@@ -584,7 +584,7 @@ class iFindDataSource:
 
     """iFind数据源"""
 
-    
+
 
     def __init__(self, config: DataSourceConfig):
 
@@ -592,7 +592,7 @@ class iFindDataSource:
 
         self.api_client = None
 
-        
+
 
     def get_financial_data(
 
@@ -608,7 +608,7 @@ class iFindDataSource:
 
         """获取财务数据"""
 
-        
+
 
         try:
 
@@ -622,7 +622,7 @@ class iFindDataSource:
 
             return {}
 
-    
+
 
     def get_research_report(
 
@@ -638,21 +638,21 @@ class iFindDataSource:
 
         """获取研报数据"""
 
-        
+
 
         pass
 
-    
+
 
     def _normalize_financial_data(self, raw_data: Dict) -> Dict:
 
         """标准化财务数据"""
 
-        
+
 
         normalized = {}
 
-        
+
 
         if 'balance_sheet' in raw_data:
 
@@ -666,17 +666,17 @@ class iFindDataSource:
 
             normalized['cash_flow'] = self._convert_units(raw_data['cash_flow'])
 
-            
+
 
         return normalized
 
-    
+
 
     def _convert_units(self, data: Dict) -> Dict:
 
         """单位转换（万元->元）"""
 
-        
+
 
         converted = {}
 
@@ -722,7 +722,7 @@ class SuperCommandDataSource:
 
     """SuperCommand数据源"""
 
-    
+
 
     def __init__(self, config: DataSourceConfig):
 
@@ -732,7 +732,7 @@ class SuperCommandDataSource:
 
         self.social_api = None
 
-        
+
 
     def get_news_data(
 
@@ -750,7 +750,7 @@ class SuperCommandDataSource:
 
         """获取新闻数据"""
 
-        
+
 
         try:
 
@@ -764,7 +764,7 @@ class SuperCommandDataSource:
 
             return []
 
-    
+
 
     def get_social_media_data(
 
@@ -780,17 +780,17 @@ class SuperCommandDataSource:
 
         """获取社交媒体数据"""
 
-        
+
 
         pass
 
-    
+
 
     def _filter_and_rank_news(self, news: List[Dict]) -> List[Dict]:
 
         """过滤和排序新闻"""
 
-        
+
 
         filtered = [n for n in news if self._is_relevant(n)]
 
@@ -798,13 +798,13 @@ class SuperCommandDataSource:
 
         return ranked[:50]  # 返回前50条重要新闻
 
-    
+
 
     def _is_relevant(self, news: Dict) -> bool:
 
         """判断新闻相关性"""
 
-        
+
 
         keywords = ['业绩', '盈利', '亏损', '并购', '重组', '高管']
 
@@ -812,7 +812,7 @@ class SuperCommandDataSource:
 
         content = news.get('content', '')
 
-        
+
 
         return any(kw in title or kw in content for kw in keywords)
 
@@ -878,7 +878,7 @@ class DataSourceRegistry:
 
     """数据源注册中心"""
 
-    
+
 
     def __init__(self):
 
@@ -888,7 +888,7 @@ class DataSourceRegistry:
 
         self.metrics: Dict[str, Dict] = {}
 
-        
+
 
     def register(self, config: DataSourceConfig):
 
@@ -910,7 +910,7 @@ class DataSourceRegistry:
 
         }
 
-        
+
 
     def get_data_source(self, source_id: str) -> Optional[DataSourceConfig]:
 
@@ -918,7 +918,7 @@ class DataSourceRegistry:
 
         return self.registry.get(source_id)
 
-    
+
 
     def update_status(self, source_id: str, status: DataSourceStatus):
 
@@ -926,7 +926,7 @@ class DataSourceRegistry:
 
         self.status[source_id] = status
 
-        
+
 
     def get_active_sources(self) -> List[DataSourceConfig]:
 
@@ -942,13 +942,13 @@ class DataSourceRegistry:
 
         ]
 
-    
+
 
     def health_check(self, source_id: str) -> bool:
 
         """健康检查"""
 
-        
+
 
         try:
 
@@ -962,13 +962,13 @@ class DataSourceRegistry:
 
             return False
 
-    
+
 
     def _ping_source(self, source: DataSourceConfig) -> bool:
 
         """Ping数据源"""
 
-        
+
 
         pass
 
@@ -1008,7 +1008,7 @@ class DataSourceRouter:
 
     """数据源路由器"""
 
-    
+
 
     def __init__(self, registry: DataSourceRegistry):
 
@@ -1018,7 +1018,7 @@ class DataSourceRouter:
 
         self.cache_ttl = 300  # 5分钟缓存
 
-        
+
 
     def route(
 
@@ -1034,7 +1034,7 @@ class DataSourceRouter:
 
         """路由到最优数据源"""
 
-        
+
 
         if strategy == 'auto':
 
@@ -1052,13 +1052,13 @@ class DataSourceRouter:
 
             return self._default_route(data_type, params)
 
-    
+
 
     def _auto_route(self, data_type: DataType, params: Dict) -> str:
 
         """自动路由（综合考虑成本和延迟）"""
 
-        
+
 
         candidates = self._get_candidates(data_type)
 
@@ -1066,7 +1066,7 @@ class DataSourceRouter:
 
             raise Exception(f"No available data source for {data_type}")
 
-        
+
 
         scored = [
 
@@ -1078,21 +1078,21 @@ class DataSourceRouter:
 
         scored.sort(key=lambda x: x[1], reverse=True)
 
-        
+
 
         return scored[0][0].source_id
 
-    
+
 
     def _calculate_score(self, source: DataSourceConfig) -> float:
 
         """计算数据源得分"""
 
-        
+
 
         metrics = self.registry.metrics.get(source.source_id, {})
 
-        
+
 
         latency_score = 1.0 / (metrics.get('avg_latency', 1.0) + 1)
 
@@ -1100,17 +1100,17 @@ class DataSourceRouter:
 
         priority_score = 1.0 / source.priority
 
-        
+
 
         return latency_score * 0.4 + reliability_score * 0.4 + priority_score * 0.2
 
-    
+
 
     def _get_candidates(self, data_type: DataType) -> List[DataSourceConfig]:
 
         """获取候选数据源"""
 
-        
+
 
         active_sources = self.registry.get_active_sources()
 
@@ -1122,17 +1122,17 @@ class DataSourceRouter:
 
         ]
 
-    
+
 
     def _supports_data_type(self, source: DataSourceConfig, data_type: DataType) -> bool:
 
         """判断数据源是否支持该数据类型"""
 
-        
+
 
         return True
 
-    
+
 
     def get_from_cache(self, key: str) -> Optional[any]:
 
@@ -1140,7 +1140,7 @@ class DataSourceRouter:
 
         return self.cache.get(key)
 
-    
+
 
     def save_to_cache(self, key: str, data: any, ttl: int = None):
 
@@ -1190,7 +1190,7 @@ class DataSourceMonitor:
 
     """数据源监控器"""
 
-    
+
 
     def __init__(self, registry: DataSourceRegistry):
 
@@ -1208,7 +1208,7 @@ class DataSourceMonitor:
 
         }
 
-        
+
 
     def record_request(
 
@@ -1224,7 +1224,7 @@ class DataSourceMonitor:
 
         """记录请求"""
 
-        
+
 
         metrics = self.registry.metrics[source_id]
 
@@ -1234,7 +1234,7 @@ class DataSourceMonitor:
 
             metrics['error_count'] += 1
 
-        
+
 
         metrics['avg_latency'] = (
 
@@ -1244,29 +1244,29 @@ class DataSourceMonitor:
 
         )
 
-        
+
 
         if success:
 
             metrics['last_success'] = datetime.now()
 
-        
+
 
         self._check_alerts(source_id, metrics)
 
-    
+
 
     def _check_alerts(self, source_id: str, metrics: Dict):
 
         """检查告警"""
 
-        
+
 
         if metrics['avg_latency'] > self.alert_thresholds['latency']:
 
             self._send_alert(source_id, 'high_latency', metrics['avg_latency'])
 
-        
+
 
         error_rate = metrics['error_count'] / max(metrics['request_count'], 1)
 
@@ -1274,23 +1274,23 @@ class DataSourceMonitor:
 
             self._send_alert(source_id, 'high_error_rate', error_rate)
 
-    
+
 
     def _send_alert(self, source_id: str, alert_type: str, value: float):
 
         """发送告警"""
 
-        
+
 
         print(f"ALERT: {source_id} - {alert_type}: {value}")
 
-        
+
 
     def get_metrics_report(self, source_id: str) -> Dict:
 
         """获取指标报告"""
 
-        
+
 
         metrics = self.registry.metrics.get(source_id, {})
 
@@ -1356,7 +1356,7 @@ class UnifiedDataInterface(ABC):
 
     """统一数据接口"""
 
-    
+
 
     @abstractmethod
 
@@ -1378,7 +1378,7 @@ class UnifiedDataInterface(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1398,7 +1398,7 @@ class UnifiedDataInterface(ABC):
 
         pass
 
-    
+
 
     @abstractmethod
 
@@ -1424,7 +1424,7 @@ class DataFacade(UnifiedDataInterface):
 
     """数据门面"""
 
-    
+
 
     def __init__(
 
@@ -1448,7 +1448,7 @@ class DataFacade(UnifiedDataInterface):
 
         self.router = router
 
-        
+
 
     def get_market_data(
 
@@ -1466,7 +1466,7 @@ class DataFacade(UnifiedDataInterface):
 
         """获取行情数据"""
 
-        
+
 
         cache_key = f"market_{stock_code}_{frequency}_{start_date}_{end_date}"
 
@@ -1476,7 +1476,7 @@ class DataFacade(UnifiedDataInterface):
 
             return cached
 
-        
+
 
         source_id = self.router.route(DataType.MARKET_DATA, {
 
@@ -1490,7 +1490,7 @@ class DataFacade(UnifiedDataInterface):
 
         })
 
-        
+
 
         if source_id == 'qmt':
 
@@ -1500,13 +1500,13 @@ class DataFacade(UnifiedDataInterface):
 
             data = pd.DataFrame()
 
-        
+
 
         self.router.save_to_cache(cache_key, data)
 
         return data
 
-    
+
 
     def get_financial_data(
 
@@ -1522,7 +1522,7 @@ class DataFacade(UnifiedDataInterface):
 
         """获取财务数据"""
 
-        
+
 
         source_id = self.router.route(DataType.FINANCIAL_DATA, {
 
@@ -1534,7 +1534,7 @@ class DataFacade(UnifiedDataInterface):
 
         })
 
-        
+
 
         if source_id == 'ifind':
 
@@ -1544,7 +1544,7 @@ class DataFacade(UnifiedDataInterface):
 
             return {}
 
-    
+
 
     def get_news_data(
 
@@ -1560,7 +1560,7 @@ class DataFacade(UnifiedDataInterface):
 
         """获取新闻数据"""
 
-        
+
 
         source_id = self.router.route(DataType.NEWS_DATA, {
 
@@ -1572,7 +1572,7 @@ class DataFacade(UnifiedDataInterface):
 
         })
 
-        
+
 
         if source_id == 'supercmd':
 
@@ -1889,4 +1889,3 @@ class NewsData:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
-

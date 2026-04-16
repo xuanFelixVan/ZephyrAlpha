@@ -11,7 +11,7 @@ system:
   name: "ZephyrAlpha"                 # 系统名称
   version: "5.1.0"                    # 系统版本
   environment: "development"          # development, staging, production
-  
+
   created_at: "2026-04-02"
   updated_at: "2026-04-02"
 
@@ -28,13 +28,13 @@ database:
     database: "zephyr_alpha"
     username: "${DB_USER}"
     password: "${DB_PASSWORD}"
-    
+
     # 连接池配置
     pool:
       min_connections: 5
       max_connections: 20
       connection_timeout: 30
-  
+
   # 时序数据库（用于市场数据）
   timeseries:
     type: "timescaledb"               # timescaledb, influxdb
@@ -43,7 +43,7 @@ database:
     database: "market_data"
     username: "${TSDB_USER}"
     password: "${TSDB_PASSWORD}"
-  
+
   # 缓存数据库
   cache:
     type: "redis"
@@ -51,7 +51,7 @@ database:
     port: 6379
     database: 0
     password: "${REDIS_PASSWORD}"
-    
+
     # 缓存配置
     ttl: 3600                         # 默认过期时间（秒）
 
@@ -68,20 +68,20 @@ api:
       api_key: "${ALPHA_VANTAGE_API_KEY}"
       rate_limit: 5                   # 每分钟请求数
       timeout: 30
-    
+
     # Yahoo Finance
     yahoo_finance:
       enabled: true
       rate_limit: 100
       timeout: 30
-    
+
     # IEX Cloud
     iex_cloud:
       enabled: false
       api_key: "${IEX_API_KEY}"
       rate_limit: 100
       timeout: 30
-  
+
   # 交易所API
   exchanges:
     # Interactive Brokers
@@ -90,19 +90,19 @@ api:
       host: "127.0.0.1"
       port: 7497                      # TWS: 7497, Gateway: 4001
       client_id: 1
-      
+
       # 账户配置
       account:
         type: "paper"                 # paper, live
         account_id: "${IBKR_ACCOUNT_ID}"
-    
+
     # Alpaca
     alpaca:
       enabled: false
       api_key: "${ALPACA_API_KEY}"
       secret_key: "${ALPACA_SECRET_KEY}"
       base_url: "https://paper-api.alpaca.markets"  # paper trading
-      
+
     # Binance
     binance:
       enabled: false
@@ -121,12 +121,12 @@ strategy_engine:
     scan_interval: 3600               # 扫描间隔（秒）
     cache_enabled: true
     cache_size: 128
-  
+
   # 策略注册表
   registry:
     persist: true                     # 持久化注册信息
     storage: "database"               # database, file
-  
+
   # 策略加载器
   loader:
     hot_reload: true                  # 热加载
@@ -142,13 +142,13 @@ event_bus:
     mode: "async"                     # sync, async
     max_workers: 10                   # 最大工作线程数
     queue_size: 10000                 # 事件队列大小
-  
+
   # 事件历史
   history:
     enabled: true
     max_size: 100000                  # 最大历史记录数
     persist: true                     # 持久化历史
-  
+
   # 事件溯源
   event_sourcing:
     enabled: true
@@ -161,13 +161,13 @@ event_bus:
 backtest_engine:
   # 引擎类型
   engine: "backtesting.py"            # backtesting.py, zipline, custom
-  
+
   # 性能配置
   performance:
     parallel_enabled: true
     num_workers: 4
     chunk_size: 100000
-  
+
   # 结果存储
   storage:
     type: "database"                  # database, file
@@ -182,14 +182,14 @@ risk_management:
   real_time:
     enabled: true
     check_interval: 1                 # 检查间隔（秒）
-    
+
     # 风控规则
     rules:
       max_position_size: 0.95         # 最大仓位
       max_daily_loss: 0.05            # 最大日损失
       max_drawdown: 0.15              # 最大回撤
       max_leverage: 1.0               # 最大杠杆
-  
+
   # 熔断机制
     enabled: true
     triggers:
@@ -207,17 +207,17 @@ monitoring:
     enabled: true
     port: 9090
     metrics_path: "/metrics"
-  
+
   # Grafana仪表盘
   grafana:
     enabled: true
     host: "${GRAFANA_HOST}"
     port: 3000
-  
+
   # 告警配置
   alerts:
     enabled: true
-    
+
     # 告警渠道
     channels:
       email:
@@ -227,26 +227,26 @@ monitoring:
         sender: "${ALERT_EMAIL}"
         recipients:
           - "${ADMIN_EMAIL}"
-      
+
       slack:
         enabled: true
         webhook_url: "${SLACK_WEBHOOK_URL}"
-      
+
       telegram:
         enabled: false
         bot_token: "${TELEGRAM_BOT_TOKEN}"
         chat_id: "${TELEGRAM_CHAT_ID}"
-    
+
     # 告警规则
     rules:
       - name: "high_drawdown"
         condition: "drawdown > 0.10"
         severity: "critical"
-        
+
       - name: "daily_loss_limit"
         condition: "daily_loss > 0.05"
         severity: "critical"
-        
+
       - name: "system_error"
         condition: "error_rate > 0.01"
         severity: "warning"
@@ -258,11 +258,11 @@ monitoring:
 logging:
   # 日志级别
   level: "INFO"                       # DEBUG, INFO, WARNING, ERROR, CRITICAL
-  
+
   # 日志格式
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   date_format: "%Y-%m-%d %H:%M:%S"
-  
+
   # 文件日志
   file:
     enabled: true
@@ -271,12 +271,12 @@ logging:
     max_size: 10485760                # 10MB
     backup_count: 10
     encoding: "utf-8"
-  
+
   # 控制台日志
   console:
     enabled: true
     colorize: true
-  
+
   # 结构化日志（JSON格式）
   structured:
     enabled: true
@@ -293,13 +293,13 @@ security:
     storage: "env"                    # env, vault, aws_secrets
     encryption: true
     rotation_interval: 90             # 密钥轮换间隔（天）
-  
+
   # 访问控制
   access_control:
     enabled: true
     auth_method: "jwt"                # jwt, oauth, api_key
     token_expiry: 3600                # Token过期时间（秒）
-  
+
   # 审计日志
   audit:
     enabled: true
@@ -315,12 +315,12 @@ performance:
   multiprocessing:
     enabled: true
     num_workers: 4                    # 工作进程数
-  
+
   # 内存优化
   memory:
     max_usage: 0.8                    # 最大内存使用率
     gc_threshold: 1000                # 垃圾回收阈值
-  
+
   # 缓存配置
   cache:
     enabled: true
@@ -334,18 +334,18 @@ performance:
 
 backup:
   enabled: true
-  
+
   # 备份策略
   strategy:
     type: "incremental"               # full, incremental
     interval: 86400                   # 备份间隔（秒）
     retention_days: 30                # 保留天数
-  
+
   # 备份存储
   storage:
     type: "s3"                        # local, s3, gcs
     path: "s3://zephyr-alpha-backups/"
-    
+
     # S3配置
     s3:
       bucket: "${S3_BUCKET}"
@@ -360,13 +360,13 @@ backup:
 development:
   # 调试模式
   debug: true
-  
+
   # 自动重载
   auto_reload: true
-  
+
   # 测试模式
   test_mode: false
-  
+
   # 性能分析
   profiling:
     enabled: false

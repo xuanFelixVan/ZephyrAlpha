@@ -200,7 +200,7 @@ Layer 8: 人机交互(Human-AI Interaction Layer)
 
 
 
-               AI工作汇报与交付模块架构                      
+               AI工作汇报与交付模块架构
 
 
 
@@ -208,167 +208,167 @@ Layer 8: 人机交互(Human-AI Interaction Layer)
 
 
 
-                                                            
 
 
 
- ┌─────────────────────────────────────────────────────  
 
+ ┌─────────────────────────────────────────────────────
 
 
-          工作汇报(Work Reporting)                   
 
+          工作汇报(Work Reporting)
 
 
-  ├─ 每日工作总结                                       
 
+  ├─ 每日工作总结
 
 
-  ├─ 每周工作总结                                       
 
+  ├─ 每周工作总结
 
 
-  ├─ 项目阶段总结                                       
 
+  ├─ 项目阶段总结
 
 
-  └─ 年度工作总结                                       
 
+  └─ 年度工作总结
 
 
- └─────────────────────────────────────────────────────  
 
+ └─────────────────────────────────────────────────────
 
 
-                                                          
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
+ ┌─────────────────────────────────────────────────────
 
-          进度通知(Progress Notification)            
 
 
+          进度通知(Progress Notification)
 
-  ├─ 实时进度推                                      
 
 
+  ├─ 实时进度推
 
-  ├─ 里程碑通知                                         
 
 
+  ├─ 里程碑通知
 
-  ├─ 异常告警                                           
 
 
+  ├─ 异常告警
 
-  └─ 完成通知                                           
 
 
+  └─ 完成通知
 
- └─────────────────────────────────────────────────────  
 
 
+ └─────────────────────────────────────────────────────
 
-                                                          
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          决策汇报(Decision Reporting)               
+ ┌─────────────────────────────────────────────────────
 
 
 
-  ├─ 重要决策汇报                                       
+          决策汇报(Decision Reporting)
 
 
 
-  ├─ 风险决策汇报                                       
+  ├─ 重要决策汇报
 
 
 
-  ├─ 策略变更汇报                                       
+  ├─ 风险决策汇报
 
 
 
-  └─ 参数调整汇报                                       
+  ├─ 策略变更汇报
 
 
 
- └─────────────────────────────────────────────────────  
+  └─ 参数调整汇报
 
 
 
-                                                          
+ └─────────────────────────────────────────────────────
 
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          交互交付(Interactive Delivery)             
 
+ ┌─────────────────────────────────────────────────────
 
 
-  ├─ 用户确认机制                                       
 
+          交互交付(Interactive Delivery)
 
 
-  ├─ 反馈收集机制                                       
 
+  ├─ 用户确认机制
 
 
-  ├─ 问题澄清机制                                       
 
+  ├─ 反馈收集机制
 
 
-  └─ 决策参与机制                                       
 
+  ├─ 问题澄清机制
 
 
- └─────────────────────────────────────────────────────  
 
+  └─ 决策参与机制
 
 
-                                                          
 
+ └─────────────────────────────────────────────────────
 
 
- ┌─────────────────────────────────────────────────────  
 
 
 
-          可视化展示层 (Visualization)                  
 
 
+ ┌─────────────────────────────────────────────────────
 
-  ├─ 工作成果图表                                       
 
 
+          可视化展示层 (Visualization)
 
-  ├─ 数据分析可视                                    
 
 
+  ├─ 工作成果图表
 
-  ├─ 趋势分析图表                                       
 
 
+  ├─ 数据分析可视
 
-  └─ 交互式仪表盘                                       
 
 
+  ├─ 趋势分析图表
 
- └─────────────────────────────────────────────────────  
 
 
+  └─ 交互式仪表盘
 
-                                                            
+
+
+ └─────────────────────────────────────────────────────
+
+
+
+
 
 
 
@@ -400,7 +400,7 @@ AI工作记录 数据聚合 报告生成 可视用户交付 用户反馈
 
 
 
-                                                           
+
 
 
 
@@ -1176,7 +1176,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1192,7 +1192,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1212,7 +1212,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1276,7 +1276,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1324,7 +1324,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1376,7 +1376,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1388,7 +1388,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1400,7 +1400,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1412,7 +1412,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1420,7 +1420,7 @@ class AIWorkReporter:
 
 
 
-            SELECT COUNT(*) FROM ai_sessions 
+            SELECT COUNT(*) FROM ai_sessions
 
 
 
@@ -1436,7 +1436,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1444,7 +1444,7 @@ class AIWorkReporter:
 
 
 
-            SELECT COUNT(*) FROM ai_decisions 
+            SELECT COUNT(*) FROM ai_decisions
 
 
 
@@ -1460,7 +1460,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1468,7 +1468,7 @@ class AIWorkReporter:
 
 
 
-            SELECT AVG(effectiveness) FROM ai_decisions 
+            SELECT AVG(effectiveness) FROM ai_decisions
 
 
 
@@ -1484,7 +1484,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1492,7 +1492,7 @@ class AIWorkReporter:
 
 
 
-            SELECT COUNT(*) FROM ai_decisions 
+            SELECT COUNT(*) FROM ai_decisions
 
 
 
@@ -1512,7 +1512,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1520,19 +1520,19 @@ class AIWorkReporter:
 
 
 
-            SELECT user_input, ai_response, execution_result 
+            SELECT user_input, ai_response, execution_result
 
 
 
-            FROM ai_sessions 
+            FROM ai_sessions
 
 
 
-            WHERE DATE(timestamp) = ? 
+            WHERE DATE(timestamp) = ?
 
 
 
-            ORDER BY timestamp DESC 
+            ORDER BY timestamp DESC
 
 
 
@@ -1548,7 +1548,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1564,7 +1564,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1572,7 +1572,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1580,15 +1580,15 @@ class AIWorkReporter:
 
 
 
-            INSERT INTO work_reports 
+            INSERT INTO work_reports
 
 
 
-            (report_id, report_type, date, sessions_count, decisions_count, 
+            (report_id, report_type, date, sessions_count, decisions_count,
 
 
 
-             success_rate, key_achievements, issues_encountered, next_day_plan, 
+             success_rate, key_achievements, issues_encountered, next_day_plan,
 
 
 
@@ -1620,7 +1620,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1632,7 +1632,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1684,7 +1684,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1692,7 +1692,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1704,7 +1704,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1716,7 +1716,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1724,7 +1724,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1732,7 +1732,7 @@ class AIWorkReporter:
 
 
 
-            INSERT INTO progress_notifications 
+            INSERT INTO progress_notifications
 
 
 
@@ -1748,7 +1748,7 @@ class AIWorkReporter:
 
 
 
-            notification_id, task_id, "任务进行, progress, message, 
+            notification_id, task_id, "任务进行, progress, message,
 
 
 
@@ -1760,7 +1760,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1772,7 +1772,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1780,7 +1780,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1788,7 +1788,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1800,7 +1800,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1812,7 +1812,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1820,11 +1820,11 @@ class AIWorkReporter:
 
 
 
-            SELECT reasoning, confidence, effectiveness 
+            SELECT reasoning, confidence, effectiveness
 
 
 
-            FROM ai_decisions 
+            FROM ai_decisions
 
 
 
@@ -1836,7 +1836,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1852,7 +1852,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1860,7 +1860,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1868,7 +1868,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1876,7 +1876,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1884,7 +1884,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1892,7 +1892,7 @@ class AIWorkReporter:
 
 
 
-            INSERT INTO decision_reports 
+            INSERT INTO decision_reports
 
 
 
@@ -1916,7 +1916,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1928,7 +1928,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1972,7 +1972,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -1980,7 +1980,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -1992,7 +1992,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2000,7 +2000,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2008,7 +2008,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2016,7 +2016,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2024,7 +2024,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2032,7 +2032,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2044,7 +2044,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2080,7 +2080,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2108,7 +2108,7 @@ class AIWorkReporter:
 
 
 
-            
+
 
 
 
@@ -2120,7 +2120,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2128,7 +2128,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2156,7 +2156,7 @@ class AIWorkReporter:
 
 
 
-            
+
 
 
 
@@ -2168,7 +2168,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2176,7 +2176,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2192,7 +2192,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2208,7 +2208,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2248,7 +2248,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2264,7 +2264,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2392,7 +2392,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2408,7 +2408,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2440,7 +2440,7 @@ class AIWorkReporter:
 
 
 
-        
+
 
 
 
@@ -2448,7 +2448,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2472,7 +2472,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2488,7 +2488,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2524,7 +2524,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2564,7 +2564,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -2584,7 +2584,7 @@ class AIWorkReporter:
 
 
 
-    
+
 
 
 
@@ -3031,6 +3031,3 @@ class AIWorkReporter:
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
-
-
-

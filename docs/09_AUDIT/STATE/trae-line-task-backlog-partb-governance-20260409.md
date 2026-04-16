@@ -151,4 +151,3 @@ responsibility: "处理TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409相关业
 - [ ] **SUB-05** `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` — 蓝图与施工文档边界（除 Part A 已列单文件外）
 - [ ] **SUB-05** `docs/05_IMPLEMENTATION/07_OPERATIONS/` — 运维手册与监控入口
 - [ ] **SUB-06** `docs/06_ARCHIVE/(root)` — 散落 md 归类索引（全库审计 G1）
-

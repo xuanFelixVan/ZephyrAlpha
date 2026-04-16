@@ -31,7 +31,7 @@ responsibility_boundary: |
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -741,7 +741,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -771,7 +771,7 @@ class PerformanceTracker:
 
 
 
-    
+
 
 
 
@@ -795,7 +795,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -825,7 +825,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -855,7 +855,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -885,7 +885,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -915,7 +915,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -945,7 +945,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -963,7 +963,7 @@ class PerformanceTracker:
 
 
 
-    
+
 
 
 
@@ -987,7 +987,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -1005,7 +1005,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -1023,7 +1023,7 @@ class PerformanceTracker:
 
 
 
-        
+
 
 
 
@@ -1451,7 +1451,7 @@ class MarketStateDetector:
 
 
 
-        
+
 
 
 
@@ -1475,13 +1475,13 @@ class MarketStateDetector:
 
 
 
-        
 
 
 
 
 
-        if (indicators.trend_strength > 0.7 and 
+
+        if (indicators.trend_strength > 0.7 and
 
 
 
@@ -1499,13 +1499,13 @@ class MarketStateDetector:
 
 
 
-        
 
 
 
 
 
-        elif (indicators.trend_strength < -0.7 and 
+
+        elif (indicators.trend_strength < -0.7 and
 
 
 
@@ -1523,7 +1523,7 @@ class MarketStateDetector:
 
 
 
-        
+
 
 
 
@@ -1541,7 +1541,7 @@ class MarketStateDetector:
 
 
 
-        
+
 
 
 
@@ -1559,7 +1559,7 @@ class MarketStateDetector:
 
 
 
-    
+
 
 
 
@@ -1583,7 +1583,7 @@ class MarketStateDetector:
 
 
 
-        
+
 
 
 
@@ -1595,7 +1595,7 @@ class MarketStateDetector:
 
 
 
-        
+
 
 
 
@@ -1625,7 +1625,7 @@ class MarketStateDetector:
 
 
 
-    
+
 
 
 
@@ -1637,13 +1637,13 @@ class MarketStateDetector:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        model_specialty: MarketState, 
+        model_specialty: MarketState,
 
 
 
@@ -1697,7 +1697,7 @@ class MarketStateDetector:
 
 
 
-    
+
 
 
 
@@ -1709,13 +1709,13 @@ class MarketStateDetector:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        state1: MarketState, 
+        state1: MarketState,
 
 
 
@@ -2023,7 +2023,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2035,13 +2035,13 @@ class ConfidenceCalibrator:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        confidence: float, 
+        confidence: float,
 
 
 
@@ -2065,7 +2065,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2083,7 +2083,7 @@ class ConfidenceCalibrator:
 
 
 
-    
+
 
 
 
@@ -2107,7 +2107,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2125,7 +2125,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2161,7 +2161,7 @@ class ConfidenceCalibrator:
 
 
 
-            
+
 
 
 
@@ -2191,7 +2191,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2209,7 +2209,7 @@ class ConfidenceCalibrator:
 
 
 
-    
+
 
 
 
@@ -2239,7 +2239,7 @@ class ConfidenceCalibrator:
 
 
 
-    
+
 
 
 
@@ -2263,7 +2263,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2275,7 +2275,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2317,7 +2317,7 @@ class ConfidenceCalibrator:
 
 
 
-        
+
 
 
 
@@ -2547,7 +2547,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2607,7 +2607,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2631,7 +2631,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2649,7 +2649,7 @@ class RiskContributionCalibrator:
 
 
 
-            model_id: mc 
+            model_id: mc
 
 
 
@@ -2667,7 +2667,7 @@ class RiskContributionCalibrator:
 
 
 
-    
+
 
 
 
@@ -2703,7 +2703,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2739,7 +2739,7 @@ class RiskContributionCalibrator:
 
 
 
-            
+
 
 
 
@@ -2775,7 +2775,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2787,7 +2787,7 @@ class RiskContributionCalibrator:
 
 
 
-    
+
 
 
 
@@ -2829,7 +2829,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2853,7 +2853,7 @@ class RiskContributionCalibrator:
 
 
 
-            
+
 
 
 
@@ -2907,7 +2907,7 @@ class RiskContributionCalibrator:
 
 
 
-            
+
 
 
 
@@ -2919,7 +2919,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -2937,7 +2937,7 @@ class RiskContributionCalibrator:
 
 
 
-            k: v / total_weight 
+            k: v / total_weight
 
 
 
@@ -2955,7 +2955,7 @@ class RiskContributionCalibrator:
 
 
 
-        
+
 
 
 
@@ -3227,7 +3227,7 @@ class TrustCalibrationApplier:
 
 
 
-        
+
 
 
 
@@ -3239,13 +3239,13 @@ class TrustCalibrationApplier:
 
 
 
-        self, 
+        self,
 
 
 
 
 
-        model_id: str, 
+        model_id: str,
 
 
 
@@ -3275,7 +3275,7 @@ class TrustCalibrationApplier:
 
 
 
-        
+
 
 
 
@@ -4020,8 +4020,3 @@ class TrustCalibrationApplier:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
-
-
-
-
-

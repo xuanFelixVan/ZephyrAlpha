@@ -94,7 +94,7 @@ class SentimentEventImpactAssessor:
 
     """舆情事件影响评估器"""
 
-    
+
 
     def __init__(self):
 
@@ -102,7 +102,7 @@ class SentimentEventImpactAssessor:
 
         self.event_study = EventStudy()
 
-        
+
 
     def assess_event_impact(self, event_data, market_data):
 
@@ -112,7 +112,7 @@ class SentimentEventImpactAssessor:
 
         event_type = self._classify_event(event_data)
 
-        
+
 
         # 计算事件影响
 
@@ -124,13 +124,13 @@ class SentimentEventImpactAssessor:
 
         )
 
-        
+
 
         # 预测持续时间
 
         duration = self._predict_duration(impact)
 
-        
+
 
         return {
 
@@ -155,4 +155,3 @@ class SentimentEventImpactAssessor:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

@@ -42,7 +42,7 @@ layer: layer_06
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：投资组合优化框架、优化流程协调、优化结果整合
 
@@ -350,7 +350,7 @@ class PortfolioOptimizationController:
 
     """
 
-    
+
 
     def __init__(self, config: OptimizationConfig):
 
@@ -374,7 +374,7 @@ class PortfolioOptimizationController:
 
         self.risk_budget_manager = RiskBudgetManager()
 
-        
+
 
     async def optimize_portfolio(self, optimization_request: OptimizationRequest) -> OptimizationResult:
 
@@ -382,7 +382,7 @@ class PortfolioOptimizationController:
 
         执行组合优化
 
-        
+
 
         Args:
 
@@ -398,13 +398,13 @@ class PortfolioOptimizationController:
 
         validated_data = await self._prepare_optimization_data(optimization_request)
 
-        
+
 
         # 2. 风险预算处理
 
         risk_constraints = self.risk_budget_manager.process_budget(optimization_request.risk_budget)
 
-        
+
 
         # 3. 执行优化算法
 
@@ -414,7 +414,7 @@ class PortfolioOptimizationController:
 
             raise ValueError(f"不支持的优化方法: {optimization_request.optimization_method}")
 
-            
+
 
         raw_weights = optimizer.optimize(
 
@@ -426,19 +426,19 @@ class PortfolioOptimizationController:
 
         )
 
-        
+
 
         # 4. 应用交易成本与流动性约束
 
         adjusted_weights = self.constraint_processor.apply_real_world_constraints(
 
-            raw_weights, 
+            raw_weights,
 
             optimization_request.trading_constraints
 
         )
 
-        
+
 
         # 5. 生成优化报告
 
@@ -464,11 +464,11 @@ class PortfolioOptimizationController:
 
         )
 
-        
+
 
         return result
 
-    
+
 
     async def _prepare_optimization_data(self, request: OptimizationRequest) -> Dict:
 
@@ -490,7 +490,7 @@ class PortfolioOptimizationController:
 
             returns_data.append(performance['returns_series'])
 
-        
+
 
         returns_df = pd.DataFrame(returns_data).T
 
@@ -498,7 +498,7 @@ class PortfolioOptimizationController:
 
         correlation_matrix = returns_df.corr()
 
-        
+
 
         return {
 
@@ -528,21 +528,21 @@ class MeanVarianceOptimizer:
 
     """
 
-    
+
 
     def __init__(self, risk_free_rate: float = 0.02):
 
         self.risk_free_rate = risk_free_rate
 
-        
 
-    def optimize(self, returns: pd.Series, cov_matrix: pd.DataFrame, 
+
+    def optimize(self, returns: pd.Series, cov_matrix: pd.DataFrame,
 
                 constraints: List[Constraint]) -> pd.Series:
 
         """
 
-        
+
 
         Args:
 
@@ -552,7 +552,7 @@ class MeanVarianceOptimizer:
 
             constraints: 约束条件列表
 
-            
+
 
         Returns:
 
@@ -564,13 +564,13 @@ class MeanVarianceOptimizer:
 
         from pypfopt import EfficientFrontier
 
-        
+
 
         # 创建有效前沿
 
         ef = EfficientFrontier(returns, cov_matrix)
 
-        
+
 
         # 应用约束条件
 
@@ -586,7 +586,7 @@ class MeanVarianceOptimizer:
 
                 pass
 
-        
+
 
         # 优化目标：最小化波动率或最大化夏普比率
 
@@ -606,17 +606,17 @@ class MeanVarianceOptimizer:
 
             weights = ef.efficient_return(target_return=constraints.target_return)
 
-        
+
 
         # 清理数值噪声权重
 
         cleaned_weights = ef.clean_weights()
 
-        
+
 
         return pd.Series(cleaned_weights)
 
-    
+
 
     def plot_efficient_frontier(self, returns: pd.Series, cov_matrix: pd.DataFrame):
 
@@ -628,7 +628,7 @@ class MeanVarianceOptimizer:
 
         from pypfopt import plotting
 
-        
+
 
         ef = EfficientFrontier(returns, cov_matrix)
 
@@ -636,7 +636,7 @@ class MeanVarianceOptimizer:
 
         plotting.plot_efficient_frontier(ef, ax=ax, show_assets=True)
 
-        
+
 
         # 标记最优组合点
 
@@ -646,7 +646,7 @@ class MeanVarianceOptimizer:
 
             ax.scatter(vol, ret, marker='*', s=200, c='r', label='最优组合')
 
-        
+
 
         ax.legend()
 
@@ -670,7 +670,7 @@ class RiskParityOptimizer:
 
     """
 
-    
+
 
     def __init__(self, risk_measure: str = 'CVaR', alpha: float = 0.05):
 
@@ -678,7 +678,7 @@ class RiskParityOptimizer:
 
         self.alpha = alpha  # CVaR置信水平
 
-        
+
 
     def optimize(self, returns: pd.DataFrame, constraints: List[Constraint]) -> pd.Series:
 
@@ -686,7 +686,7 @@ class RiskParityOptimizer:
 
         执行风险平价优化
 
-        
+
 
         Args:
 
@@ -694,7 +694,7 @@ class RiskParityOptimizer:
 
             constraints: 约束条件
 
-            
+
 
         Returns:
 
@@ -704,19 +704,19 @@ class RiskParityOptimizer:
 
         import riskfolio as rp
 
-        
+
 
         # 创建投资组合对象
 
         port = rp.Portfolio(returns=returns)
 
-        
+
 
         # 选择风险度量方法
 
         port.assets_stats(method_mu='hist', method_cov='hist')
 
-        
+
 
         # 设置优化问题
 
@@ -726,7 +726,7 @@ class RiskParityOptimizer:
 
         hist = True  # 使用历史数据
 
-        
+
 
         # 设置约束条件
 
@@ -734,7 +734,7 @@ class RiskParityOptimizer:
 
         lower_bound = constraints.get('lower_bound', 0.0)
 
-        
+
 
         # 执行风险平价优化
 
@@ -756,11 +756,11 @@ class RiskParityOptimizer:
 
         )
 
-        
+
 
         return w
 
-    
+
 
     def calculate_risk_contribution(self, weights: pd.Series, cov_matrix: pd.DataFrame) -> pd.Series:
 
@@ -776,11 +776,11 @@ class RiskParityOptimizer:
 
         risk_contribution = weights * marginal_risk_contribution / portfolio_variance
 
-        
+
 
         return risk_contribution
 
-    
+
 
     def plot_risk_contribution(self, weights: pd.Series, cov_matrix: pd.DataFrame):
 
@@ -792,11 +792,11 @@ class RiskParityOptimizer:
 
         risk_contrib = self.calculate_risk_contribution(weights, cov_matrix)
 
-        
+
 
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-        
+
 
         # 权重分布图
 
@@ -808,7 +808,7 @@ class RiskParityOptimizer:
 
         ax1.tick_params(axis='x', rotation=45)
 
-        
+
 
         # 风险贡献度图
 
@@ -820,7 +820,7 @@ class RiskParityOptimizer:
 
         ax2.tick_params(axis='x', rotation=45)
 
-        
+
 
         plt.tight_layout()
 
@@ -844,7 +844,7 @@ class ConstraintProcessor:
 
     """
 
-    
+
 
     def __init__(self):
 
@@ -864,9 +864,9 @@ class ConstraintProcessor:
 
         }
 
-        
 
-    def apply_real_world_constraints(self, raw_weights: pd.Series, 
+
+    def apply_real_world_constraints(self, raw_weights: pd.Series,
 
                                     constraints: Dict[str, Any]) -> pd.Series:
 
@@ -874,13 +874,13 @@ class ConstraintProcessor:
 
         应用实盘约束条件
 
-        
+
 
         Args:
 
             raw_weights: 理论优化权重
 
-            
+
 
         Returns:
 
@@ -890,7 +890,7 @@ class ConstraintProcessor:
 
         adjusted_weights = raw_weights.copy()
 
-        
+
 
         constraint_priority = [
 
@@ -908,7 +908,7 @@ class ConstraintProcessor:
 
         ]
 
-        
+
 
         for constraint_type in constraint_priority:
 
@@ -920,17 +920,17 @@ class ConstraintProcessor:
 
                     adjusted_weights = handler(adjusted_weights, constraints[constraint_type])
 
-        
+
 
         # 确保权重和为1（归一化）
 
         adjusted_weights = adjusted_weights / adjusted_weights.sum()
 
-        
+
 
         return adjusted_weights
 
-    
+
 
     def _handle_position_limit(self, weights: pd.Series, limit_config: Dict) -> pd.Series:
 
@@ -944,17 +944,17 @@ class ConstraintProcessor:
 
         min_position = limit_config.get('min_position', 0.01) # 默认最小仓位 1%
 
-        
+
 
         # 应用上下界
 
         weights = weights.clip(lower=min_position, upper=max_position)
 
-        
+
 
         return weights
 
-    
+
 
     def _handle_transaction_cost(self, weights: pd.Series, cost_config: Dict) -> pd.Series:
 
@@ -968,13 +968,13 @@ class ConstraintProcessor:
 
         transaction_costs = cost_config.get('transaction_costs', {})
 
-        
+
 
         # 计算调仓比例
 
         rebalance_amount = abs(weights - current_positions)
 
-        
+
 
         # 估算交易成本
 
@@ -990,7 +990,7 @@ class ConstraintProcessor:
 
                 total_cost += strategy_cost
 
-        
+
 
         cost_threshold = cost_config.get('cost_threshold', 0.005)  # 默认0.5%
 
@@ -1000,11 +1000,11 @@ class ConstraintProcessor:
 
             weights = current_positions + (weights - current_positions) * reduction_factor
 
-        
+
 
         return weights
 
-    
+
 
     def _handle_liquidity_constraint(self, weights: pd.Series, liquidity_config: Dict) -> pd.Series:
 
@@ -1018,11 +1018,11 @@ class ConstraintProcessor:
 
         portfolio_value = liquidity_config.get('portfolio_value', 1e6)  # 默认组合规模（示例）
 
-        
+
 
         adjusted_weights = weights.copy()
 
-        
+
 
         for strategy_id, weight in weights.items():
 
@@ -1032,7 +1032,7 @@ class ConstraintProcessor:
 
                 position_value = weight * portfolio_value
 
-                
+
 
 
 
@@ -1044,7 +1044,7 @@ class ConstraintProcessor:
 
                     adjusted_weights[strategy_id] = (max_daily_trade * 3) / portfolio_value
 
-        
+
 
         return adjusted_weights
 
@@ -1066,11 +1066,11 @@ class RLRebalancer:
 
     """
 
-    
+
 
     def __init__(self, state_dim: int = 20, action_dim: int = 10):
 
-        
+
 
         # 使用 Stable-Baselines3
 
@@ -1078,9 +1078,9 @@ class RLRebalancer:
 
         self.env = None
 
-        
 
-    def train(self, historical_data: pd.DataFrame, 
+
+    def train(self, historical_data: pd.DataFrame,
 
               training_episodes: int = 10000) -> None:
 
@@ -1088,7 +1088,7 @@ class RLRebalancer:
 
         训练强化学习模型
 
-        
+
 
         Args:
 
@@ -1112,13 +1112,13 @@ class RLRebalancer:
 
         )
 
-        
+
 
         # 使用 PPO 算法（Proximal Policy Optimization）
 
         from stable_baselines3 import PPO
 
-        
+
 
         self.model = PPO(
 
@@ -1160,13 +1160,13 @@ class RLRebalancer:
 
         )
 
-        
+
 
         # 训练模型
 
         self.model.learn(total_timesteps=training_episodes)
 
-        
+
 
     def predict_rebalance_action(self, current_state: Dict) -> np.ndarray:
 
@@ -1174,13 +1174,13 @@ class RLRebalancer:
 
         预测调仓动作
 
-        
+
 
         Args:
 
             current_state: 当前状态（市场状态、策略表现、风险指标等）
 
-            
+
 
         Returns:
 
@@ -1190,21 +1190,21 @@ class RLRebalancer:
 
         if self.model is None:
 
-        
+
 
         observation = self._format_state_to_observation(current_state)
 
-        
+
 
         # 预测动作
 
         action, _ = self.model.predict(observation, deterministic=True)
 
-        
+
 
         return action
 
-    
+
 
     def _format_state_to_observation(self, state: Dict) -> np.ndarray:
 
@@ -1226,7 +1226,7 @@ class RLRebalancer:
 
         ]
 
-        
+
 
         # 策略表现特征
 
@@ -1248,7 +1248,7 @@ class RLRebalancer:
 
             ])
 
-        
+
 
         # 风险指标特征
 
@@ -1264,7 +1264,7 @@ class RLRebalancer:
 
         ]
 
-        
+
 
         # 组合成观察向量
 
@@ -1278,7 +1278,7 @@ class RLRebalancer:
 
         ])
 
-        
+
 
 
 
@@ -1292,7 +1292,7 @@ class RLRebalancer:
 
             observation = observation[:self.state_dim]
 
-        
+
 
         return observation
 
@@ -1330,7 +1330,7 @@ pypfopt_config:
 
         risk_free_rate: 0.02
 
-    
+
 
     - name: "efficient_risk"
 
@@ -1340,7 +1340,7 @@ pypfopt_config:
 
         target_volatility: 0.15
 
-    
+
 
     - name: "efficient_return"
 
@@ -1350,7 +1350,7 @@ pypfopt_config:
 
         target_return: 0.10
 
-  
+
 
   constraints:
 
@@ -1360,7 +1360,7 @@ pypfopt_config:
 
     factor_exposure: null
 
-  
+
 
   risk_model:
 
@@ -1392,7 +1392,7 @@ riskfolio_config:
 
         confidence_level: 0.95
 
-    
+
 
     - name: "CDaR"
 
@@ -1402,7 +1402,7 @@ riskfolio_config:
 
         alpha: 0.05
 
-    
+
 
     - name: "EDaR"
 
@@ -1412,13 +1412,13 @@ riskfolio_config:
 
         alpha: 0.05
 
-  
+
 
   optimization_models:
 
     - name: "Classic"
 
-    
+
 
     - name: "BL"
 
@@ -1432,13 +1432,13 @@ riskfolio_config:
 
         Omega: null  # 观点不确定性矩阵
 
-    
+
 
     - name: "FM"
 
       description: "因子模型风险平价"
 
-  
+
 
   constraints:
 
@@ -1472,25 +1472,25 @@ class MinDrawdownOptimizer:
 
     """
 
-    
+
 
     def optimize(self, returns: pd.DataFrame, max_positions: int = 10) -> pd.Series:
 
         n_assets = returns.shape[1]
 
-        
+
 
         # 决策变量：权重向量
 
         w = cp.Variable(n_assets)
 
-        
+
 
         # 计算组合收益序列
 
         portfolio_returns = returns.values @ w
 
-        
+
 
         # 计算累积收益和回撤
 
@@ -1500,13 +1500,13 @@ class MinDrawdownOptimizer:
 
         drawdown = running_max - cumulative_returns
 
-        
+
 
         # 目标函数：最小化最大回撤
 
         objective = cp.Minimize(cp.max(drawdown))
 
-        
+
 
         # 约束条件
 
@@ -1520,7 +1520,7 @@ class MinDrawdownOptimizer:
 
         ]
 
-        
+
 
         # 求解优化问题
 
@@ -1528,7 +1528,7 @@ class MinDrawdownOptimizer:
 
         problem.solve(solver=cp.ECOS)
 
-        
+
 
         return pd.Series(w.value, index=returns.columns)
 
@@ -1566,7 +1566,7 @@ async def run_complete_portfolio_optimization():
 
     )
 
-    
+
 
     # 2. 从批量评估系统获取策略绩效数据
 
@@ -1580,7 +1580,7 @@ async def run_complete_portfolio_optimization():
 
     )
 
-    
+
 
     # 3. 构建优化配置（示例）
 
@@ -1624,7 +1624,7 @@ async def run_complete_portfolio_optimization():
 
     }
 
-    
+
 
     # 4. 创建优化请求
 
@@ -1638,7 +1638,7 @@ async def run_complete_portfolio_optimization():
 
     )
 
-    
+
 
     # 5. 执行组合优化
 
@@ -1646,7 +1646,7 @@ async def run_complete_portfolio_optimization():
 
     result = await optimizer.optimize_portfolio(optimization_request)
 
-    
+
 
     # 6. 输出优化结果
 
@@ -1656,7 +1656,7 @@ async def run_complete_portfolio_optimization():
 
     print("=" * 60)
 
-    
+
 
 :")
 
@@ -1664,7 +1664,7 @@ async def run_complete_portfolio_optimization():
 
         print(f"  {strategy_id}: {weight:.2%}")
 
-    
+
 
     print(f"\n预期绩效:")
 
@@ -1676,7 +1676,7 @@ async def run_complete_portfolio_optimization():
 
     print(f"  预期最大回撤 {result.risk_metrics['max_drawdown']:.2%}")
 
-    
+
 
     print(f"\n风险贡献度")
 
@@ -1684,7 +1684,7 @@ async def run_complete_portfolio_optimization():
 
         print(f"  {strategy_id}: {risk_contrib:.2%}")
 
-    
+
 
     # 7. 生成可视化报告
 
@@ -1692,13 +1692,13 @@ async def run_complete_portfolio_optimization():
 
     report = report_generator.generate_report(result)
 
-    
+
 
     # 保存报告
 
     report.save("portfolio_optimization_report.html")
 
-    
+
 
     return result
 
@@ -2088,7 +2088,7 @@ portfolio_optimization:
 
 
 
-4. **风险可控**：多层次风险预算体系，将组合风险约束在预设范围内。  
+4. **风险可控**：多层次风险预算体系，将组合风险约束在预设范围内。
 
 5. **AI 增强**：利用强化学习与机器学习改进动态调仓与状态感知。
 
@@ -2137,12 +2137,3 @@ portfolio_optimization:
 
 
 |------|------|----------|--------|
-
-
-
-
-
-
-
-
-

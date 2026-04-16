@@ -47,7 +47,7 @@ layer: layer_03
 
 > **核心职责**: 文档内容说明
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：文档内容说明相关内容
 
@@ -167,7 +167,7 @@ def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
 
     计算均线交叉信号
 
-    
+
 
     Args:
 
@@ -177,7 +177,7 @@ def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
 
         ma20_period: MA20周期（默?0?
 
-    
+
 
     Returns:
 
@@ -187,7 +187,7 @@ def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
 
     """
 
-    
+
 
     # Step 1: 计算MA5和MA20
 
@@ -195,13 +195,13 @@ def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
 
     ma5_previous = mean(close_prices[-6:-1])
 
-    
+
 
     ma20_current = mean(close_prices[-20:])
 
     ma20_previous = mean(close_prices[-21:-1])
 
-    
+
 
     # Step 2: 检测交?
 
@@ -217,13 +217,13 @@ def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
 
         signal = "HOLD"
 
-    
+
 
     # Step 3: 计算置信?
 
     confidence = abs(ma5_current - ma20_current) / ma20_current
 
-    
+
 
     return signal, confidence
 
@@ -492,4 +492,3 @@ if price_change > 10%:  # 单根K线涨?10%
 
 
 **版本**: 1.0 | **更新**: 2026-03-28 | **状?*: Draft
-

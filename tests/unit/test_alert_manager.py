@@ -158,7 +158,7 @@ class TestEmailAlertChannel:
         mock_smtp_instance.starttls = Mock()
         mock_smtp_instance.login = Mock()
         mock_smtp_instance.sendmail = Mock()
-        
+
         mock_smtp.side_effect = [
             ConnectionError("Failed"),
             Mock(
@@ -265,7 +265,7 @@ class TestServerChanAlertChannel:
     def test_send_url_error(self, mock_urlopen):
         """测试URL错误触发重试"""
         mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
-        
+
         config = {"sendkey": "test_sendkey"}
         channel = ServerChanAlertChannel(config)
 
@@ -284,7 +284,7 @@ class TestServerChanAlertChannel:
         mock_response.read.return_value = b'not json'
         mock_response.__enter__.return_value = mock_response
         mock_urlopen.return_value = mock_response
-        
+
         config = {"sendkey": "test_sendkey"}
         channel = ServerChanAlertChannel(config)
 

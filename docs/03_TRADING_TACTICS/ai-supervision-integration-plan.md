@@ -279,7 +279,7 @@ class RiskControlWorkflow:
 
     """专业机构级风险控制流?""
 
-    
+
 
     def check_trade_proposal(self, proposal: TradeProposal) -> RiskResult:
 
@@ -289,7 +289,7 @@ class RiskControlWorkflow:
 
             return RiskResult(reject=True, reason="基础风险检查失?)
 
-        
+
 
         # ?? TradingAgents风控分析
 
@@ -299,7 +299,7 @@ class RiskControlWorkflow:
 
             return RiskResult(reject=True, reason=f"风控评分过高: {risk_report.risk_score}")
 
-        
+
 
         # ?? 人工审批检?
 
@@ -307,7 +307,7 @@ class RiskControlWorkflow:
 
             return RiskResult(
 
-                reject=False, 
+                reject=False,
 
                 needs_human_approval=True,
 
@@ -315,7 +315,7 @@ class RiskControlWorkflow:
 
             )
 
-        
+
 
         # ?? 最终审?
 
@@ -347,7 +347,7 @@ class AISupervisionIntegration:
 
     """AI监督集成主类"""
 
-    
+
 
     def __init__(self, config: IntegrationConfig):
 
@@ -359,7 +359,7 @@ class AISupervisionIntegration:
 
         self.ai_trader = AITraderEvaluator(config.ai_trader)
 
-        
+
 
         # 本地组件
 
@@ -369,13 +369,13 @@ class AISupervisionIntegration:
 
         self.monitoring = MonitoringDashboard()
 
-    
+
 
     async def analyze_trade_proposal(self, proposal: TradeProposal) -> AnalysisResult:
 
         """专业机构级交易提案分?""
 
-        
+
 
         # 并行执行多个分析
 
@@ -391,11 +391,11 @@ class AISupervisionIntegration:
 
         ]
 
-        
+
 
         results = await asyncio.gather(*tasks)
 
-        
+
 
         # 多智能体辩论决策
 
@@ -407,7 +407,7 @@ class AISupervisionIntegration:
 
         )
 
-        
+
 
         # 风险评估
 
@@ -419,7 +419,7 @@ class AISupervisionIntegration:
 
         )
 
-        
+
 
         # 最终审?
 
@@ -431,7 +431,7 @@ class AISupervisionIntegration:
 
         )
 
-        
+
 
         return AnalysisResult(
 
@@ -473,7 +473,7 @@ tradingagents:
 
   api_key: "${TRADINGAGENTS_API_KEY}"
 
-  
+
 
   # 智能体配?
 
@@ -497,7 +497,7 @@ tradingagents:
 
     portfolio_manager: true
 
-  
+
 
   # 辩论配置
 
@@ -565,7 +565,7 @@ risk_control:
 
   stop_loss_threshold: 0.08    # 止损阈?%
 
-  
+
 
   # 熔断机制
 
@@ -659,37 +659,37 @@ class AIEvaluationFramework:
 
     """专业机构级AI评估框架"""
 
-    
+
 
     def evaluate_ai_performance(self, period: str) -> EvaluationReport:
 
         """评估AI系统表现"""
 
-        
+
 
         # 1. 预测能力评估
 
         prediction_metrics = self._evaluate_prediction_accuracy(period)
 
-        
+
 
         # 2. 决策质量评估
 
         decision_metrics = self._evaluate_decision_quality(period)
 
-        
+
 
         # 3. 风险控制评估
 
         risk_metrics = self._evaluate_risk_control(period)
 
-        
+
 
         # 4. 成本效益评估
 
         cost_metrics = self._evaluate_cost_effectiveness(period)
 
-        
+
 
         # 5. 综合评分
 
@@ -705,7 +705,7 @@ class AIEvaluationFramework:
 
         )
 
-        
+
 
         return EvaluationReport(
 
@@ -1074,4 +1074,3 @@ class AIEvaluationFramework:
 
 
 > **设计状?*: 本方案为专业机构级AI监督集成设计方案，基于现有开源项目和技术最佳实践。实施前需要进行详细的技术验证和风险评估?
-

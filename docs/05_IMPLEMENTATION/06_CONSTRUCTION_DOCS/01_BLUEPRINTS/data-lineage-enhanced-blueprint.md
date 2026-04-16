@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供全面的数据血缘追踪能力，支持数据流向分析、影响分析、数据溯源
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：数据血缘追踪、数据流向分析、影响分析、数据溯源
 
@@ -137,7 +137,7 @@ class DataLineageTracker:
 
     """数据血缘追踪器"""
 
-    
+
 
     def __init__(
 
@@ -153,7 +153,7 @@ class DataLineageTracker:
 
         self.namespace = namespace
 
-    
+
 
     def track_job_execution(
 
@@ -173,7 +173,7 @@ class DataLineageTracker:
 
         run_id = str(uuid.uuid4())
 
-        
+
 
         run_event = RunEvent(
 
@@ -203,15 +203,15 @@ class DataLineageTracker:
 
         )
 
-        
+
 
         self.client.emit(run_event)
 
-        
+
 
         return run_id
 
-    
+
 
     def _build_datasets(self, datasets: List[Dict]) -> List[Dict]:
 
@@ -245,7 +245,7 @@ class DataLineageTracker:
 
         ]
 
-    
+
 
     def track_data_transformation(
 
@@ -265,7 +265,7 @@ class DataLineageTracker:
 
         job_name = job_name or f"transform_{source_table}_to_{target_table}"
 
-        
+
 
         inputs = [{
 
@@ -277,7 +277,7 @@ class DataLineageTracker:
 
         }]
 
-        
+
 
         outputs = [{
 
@@ -289,7 +289,7 @@ class DataLineageTracker:
 
         }]
 
-        
+
 
         return self.track_job_execution(
 
@@ -303,7 +303,7 @@ class DataLineageTracker:
 
         )
 
-    
+
 
     def track_factor_calculation(
 
@@ -335,7 +335,7 @@ class DataLineageTracker:
 
         ]
 
-        
+
 
         outputs = [{
 
@@ -347,7 +347,7 @@ class DataLineageTracker:
 
         }]
 
-        
+
 
         return self.track_job_execution(
 
@@ -381,13 +381,13 @@ class DataFlowAnalyzer:
 
     """数据流向分析器"""
 
-    
+
 
     def __init__(self, marquez_url: str = "http://localhost:5000"):
 
         self.marquez_url = marquez_url
 
-    
+
 
     def analyze_data_flow(
 
@@ -409,7 +409,7 @@ class DataFlowAnalyzer:
 
             return self._get_upstream_datasets(dataset_name)
 
-    
+
 
     def _get_downstream_datasets(
 
@@ -427,17 +427,17 @@ class DataFlowAnalyzer:
 
         )
 
-        
+
 
         if response.status_code != 200:
 
             raise Exception(f"Failed to get dataset: {response.text}")
 
-        
+
 
         dataset = response.json()
 
-        
+
 
         downstream = {
 
@@ -449,17 +449,17 @@ class DataFlowAnalyzer:
 
         }
 
-        
+
 
         for job in dataset.get("fields", []):
 
             downstream["jobs"].append(job.get("name"))
 
-        
+
 
         return downstream
 
-    
+
 
     def _get_upstream_datasets(
 
@@ -477,17 +477,17 @@ class DataFlowAnalyzer:
 
         )
 
-        
+
 
         if response.status_code != 200:
 
             raise Exception(f"Failed to get dataset: {response.text}")
 
-        
+
 
         dataset = response.json()
 
-        
+
 
         upstream = {
 
@@ -499,17 +499,17 @@ class DataFlowAnalyzer:
 
         }
 
-        
+
 
         for job in dataset.get("fields", []):
 
             upstream["jobs"].append(job.get("name"))
 
-        
+
 
         return upstream
 
-    
+
 
     def get_lineage_graph(
 
@@ -531,11 +531,11 @@ class DataFlowAnalyzer:
 
         }
 
-        
+
 
         visited = set()
 
-        
+
 
         self._build_graph_recursive(
 
@@ -551,11 +551,11 @@ class DataFlowAnalyzer:
 
         )
 
-        
+
 
         return graph
 
-    
+
 
     def _build_graph_recursive(
 
@@ -579,11 +579,11 @@ class DataFlowAnalyzer:
 
             return
 
-        
+
 
         visited.add(dataset_name)
 
-        
+
 
         graph["nodes"].append({
 
@@ -595,11 +595,11 @@ class DataFlowAnalyzer:
 
         })
 
-        
+
 
         downstream = self._get_downstream_datasets(dataset_name)
 
-        
+
 
         for job in downstream.get("jobs", []):
 
@@ -627,13 +627,13 @@ class ImpactAnalyzer:
 
     """影响分析器"""
 
-    
+
 
     def __init__(self, flow_analyzer: DataFlowAnalyzer):
 
         self.flow_analyzer = flow_analyzer
 
-    
+
 
     def analyze_change_impact(
 
@@ -663,7 +663,7 @@ class ImpactAnalyzer:
 
         }
 
-        
+
 
         downstream = self.flow_analyzer.analyze_data_flow(
 
@@ -673,13 +673,13 @@ class ImpactAnalyzer:
 
         )
 
-        
+
 
         impact["affected_datasets"] = downstream.get("downstream_datasets", [])
 
         impact["affected_jobs"] = downstream.get("jobs", [])
 
-        
+
 
         if len(impact["affected_jobs"]) > 10:
 
@@ -697,11 +697,11 @@ class ImpactAnalyzer:
 
             impact["recommendations"].append("变更影响范围小，可以正常实施")
 
-        
+
 
         return impact
 
-    
+
 
     def analyze_deletion_impact(
 
@@ -721,7 +721,7 @@ class ImpactAnalyzer:
 
         )
 
-        
+
 
         if impact["affected_jobs"]:
 
@@ -735,11 +735,11 @@ class ImpactAnalyzer:
 
             )
 
-        
+
 
         return impact
 
-    
+
 
     def analyze_schema_change_impact(
 
@@ -763,15 +763,15 @@ class ImpactAnalyzer:
 
         )
 
-        
+
 
         schema_changes = self._compare_schemas(old_schema, new_schema)
 
-        
+
 
         impact["schema_changes"] = schema_changes
 
-        
+
 
         if schema_changes.get("breaking_changes"):
 
@@ -783,11 +783,11 @@ class ImpactAnalyzer:
 
             )
 
-        
+
 
         return impact
 
-    
+
 
     def _compare_schemas(
 
@@ -813,13 +813,13 @@ class ImpactAnalyzer:
 
         }
 
-        
+
 
         old_columns = {col["name"]: col for col in old_schema.get("columns", [])}
 
         new_columns = {col["name"]: col for col in new_schema.get("columns", [])}
 
-        
+
 
         for col_name in old_columns:
 
@@ -829,7 +829,7 @@ class ImpactAnalyzer:
 
                 changes["breaking_changes"].append(f"删除列: {col_name}")
 
-        
+
 
         for col_name in new_columns:
 
@@ -837,7 +837,7 @@ class ImpactAnalyzer:
 
                 changes["added_columns"].append(col_name)
 
-        
+
 
         for col_name in old_columns:
 
@@ -855,7 +855,7 @@ class ImpactAnalyzer:
 
                     })
 
-        
+
 
         return changes
 
@@ -1120,4 +1120,3 @@ migrations:
 
 
 - 字段级血缘、事件载荷与采集适配器细化将在施工阶段固化到 `API_Contract.md` 子契约；本蓝图先确保边界、接口闭合点与验收闭环清晰。
-

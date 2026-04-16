@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供智能的负载均衡和请求路由，支持多种负载均衡策略和流量控制
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：负载均衡、请求路由、流量控制、健康检查
 
@@ -207,7 +207,7 @@ class LoadBalancerStrategy:
 
     """负载均衡策略"""
 
-    
+
 
     @staticmethod
 
@@ -217,7 +217,7 @@ class LoadBalancerStrategy:
 
         return instances[index % len(instances)]
 
-    
+
 
     @staticmethod
 
@@ -233,11 +233,11 @@ class LoadBalancerStrategy:
 
             weighted_instances.extend([instance] * weight)
 
-        
+
 
         return weighted_instances[index % len(weighted_instances)]
 
-    
+
 
     @staticmethod
 
@@ -249,7 +249,7 @@ class LoadBalancerStrategy:
 
         selected = instances[0]
 
-        
+
 
         for instance in instances:
 
@@ -257,7 +257,7 @@ class LoadBalancerStrategy:
 
             conn_count = connections.get(instance_id, 0)
 
-            
+
 
             if conn_count < min_conn:
 
@@ -265,11 +265,11 @@ class LoadBalancerStrategy:
 
                 selected = instance
 
-        
+
 
         return selected
 
-    
+
 
     @staticmethod
 
@@ -283,7 +283,7 @@ class LoadBalancerStrategy:
 
         return instances[index]
 
-    
+
 
     @staticmethod
 
@@ -313,13 +313,13 @@ class RequestRouter:
 
     """请求路由器"""
 
-    
+
 
     def __init__(self):
 
         self.routes = []
 
-    
+
 
     def add_route(
 
@@ -353,11 +353,11 @@ class RequestRouter:
 
         })
 
-        
+
 
         self.routes.sort(key=lambda x: x['priority'], reverse=True)
 
-    
+
 
     def route(
 
@@ -379,11 +379,11 @@ class RequestRouter:
 
                 return route['service_name']
 
-        
+
 
         return None
 
-    
+
 
     def _match_route(
 
@@ -405,7 +405,7 @@ class RequestRouter:
 
             return False
 
-        
+
 
         if route['headers']:
 
@@ -415,7 +415,7 @@ class RequestRouter:
 
                     return False
 
-        
+
 
         if route['query_params']:
 
@@ -425,7 +425,7 @@ class RequestRouter:
 
                     return False
 
-        
+
 
         return True
 
@@ -491,7 +491,7 @@ class RateLimiter:
 
     """限流器"""
 
-    
+
 
     def __init__(self):
 
@@ -499,7 +499,7 @@ class RateLimiter:
 
         self.limits = {}
 
-    
+
 
     def set_limit(self, service_name: str, max_requests: int, window_seconds: int):
 
@@ -513,7 +513,7 @@ class RateLimiter:
 
         }
 
-    
+
 
     def is_allowed(self, service_name: str, client_id: str = "default") -> bool:
 
@@ -523,19 +523,19 @@ class RateLimiter:
 
             return True
 
-        
+
 
         limit = self.limits[service_name]
 
         key = f"{service_name}:{client_id}"
 
-        
+
 
         now = time.time()
 
         window_start = now - limit['window_seconds']
 
-        
+
 
         self.requests[key] = [
 
@@ -545,13 +545,13 @@ class RateLimiter:
 
         ]
 
-        
+
 
         if len(self.requests[key]) >= limit['max_requests']:
 
             return False
 
-        
+
 
         self.requests[key].append(now)
 
@@ -563,7 +563,7 @@ class CircuitBreaker:
 
     """熔断器"""
 
-    
+
 
     def __init__(self):
 
@@ -573,7 +573,7 @@ class CircuitBreaker:
 
         self.success_counts = defaultdict(int)
 
-    
+
 
     def configure(
 
@@ -605,7 +605,7 @@ class CircuitBreaker:
 
         }
 
-    
+
 
     def is_allowed(self, service_name: str) -> bool:
 
@@ -615,17 +615,17 @@ class CircuitBreaker:
 
             return True
 
-        
+
 
         state = self.states[service_name]
 
-        
+
 
         if state['state'] == 'closed':
 
             return True
 
-        
+
 
         if state['state'] == 'open':
 
@@ -637,17 +637,17 @@ class CircuitBreaker:
 
             return False
 
-        
+
 
         if state['state'] == 'half-open':
 
             return True
 
-        
+
 
         return True
 
-    
+
 
     def record_success(self, service_name: str):
 
@@ -657,17 +657,17 @@ class CircuitBreaker:
 
             return
 
-        
+
 
         state = self.states[service_name]
 
-        
+
 
         if state['state'] == 'half-open':
 
             self.success_counts[service_name] += 1
 
-            
+
 
             if self.success_counts[service_name] >= state['success_threshold']:
 
@@ -677,7 +677,7 @@ class CircuitBreaker:
 
                 self.success_counts[service_name] = 0
 
-    
+
 
     def record_failure(self, service_name: str):
 
@@ -687,25 +687,25 @@ class CircuitBreaker:
 
             return
 
-        
+
 
         state = self.states[service_name]
 
         state['last_failure_time'] = time.time()
 
-        
+
 
         if state['state'] == 'closed':
 
             self.failure_counts[service_name] += 1
 
-            
+
 
             if self.failure_counts[service_name] >= state['failure_threshold']:
 
                 state['state'] = 'open'
 
-        
+
 
         elif state['state'] == 'half-open':
 
@@ -737,7 +737,7 @@ class HealthChecker:
 
     """健康检查器"""
 
-    
+
 
     def __init__(self):
 
@@ -747,7 +747,7 @@ class HealthChecker:
 
         self.running = False
 
-    
+
 
     def register_instance(
 
@@ -785,7 +785,7 @@ class HealthChecker:
 
         }
 
-    
+
 
     def start(self):
 
@@ -799,7 +799,7 @@ class HealthChecker:
 
         thread.start()
 
-    
+
 
     def stop(self):
 
@@ -807,7 +807,7 @@ class HealthChecker:
 
         self.running = False
 
-    
+
 
     def _check_loop(self):
 
@@ -819,11 +819,11 @@ class HealthChecker:
 
                 self._check_instance(instance_id, instance)
 
-            
+
 
             time.sleep(self.check_interval)
 
-    
+
 
     def _check_instance(self, instance_id: str, instance: Dict):
 
@@ -833,11 +833,11 @@ class HealthChecker:
 
             url = f"http://{instance['address']}:{instance['port']}{instance['health_path']}"
 
-            
+
 
             response = requests.get(url, timeout=5)
 
-            
+
 
             if response.status_code == 200:
 
@@ -849,29 +849,29 @@ class HealthChecker:
 
                 instance['consecutive_failures'] += 1
 
-                
+
 
                 if instance['consecutive_failures'] >= 3:
 
                     instance['status'] = 'unhealthy'
 
-        
+
 
         except Exception as e:
 
             instance['consecutive_failures'] += 1
 
-            
+
 
             if instance['consecutive_failures'] >= 3:
 
                 instance['status'] = 'unhealthy'
 
-        
+
 
         instance['last_check'] = time.time()
 
-    
+
 
     def get_healthy_instances(self, service_name: str) -> List[Dict]:
 
@@ -1065,7 +1065,7 @@ http:
 
         burst: 50
 
-    
+
 
     circuitbreaker:
 
@@ -1073,7 +1073,7 @@ http:
 
         expression: "NetworkErrorRatio() > 0.3"
 
-    
+
 
     retry:
 
@@ -1535,7 +1535,7 @@ groups:
 
           description: "Traefik服务已停止运行超过1分钟"
 
-      
+
 
       - alert: NoHealthyBackends
 
@@ -1553,7 +1553,7 @@ groups:
 
           description: "服务{{ $labels.service }}没有健康的后端实例"
 
-      
+
 
       - alert: CircuitBreakerOpen
 
@@ -1663,7 +1663,7 @@ middlewares:
 
       burst: 50
 
-  
+
 
   circuitbreaker:
 
@@ -1677,7 +1677,7 @@ middlewares:
 
       recoveryDuration: 30s
 
-  
+
 
   retry:
 
@@ -1702,4 +1702,3 @@ middlewares:
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

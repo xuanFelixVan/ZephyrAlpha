@@ -43,7 +43,7 @@ layer: layer_09
 
 > **核心职责**: 分析报告和评估结果
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：分析报告和评估结果相关内容
 
@@ -231,7 +231,7 @@ class MarkdownLinkValidator:
 
     """Markdown链接验证器"""
 
-    
+
 
     def __init__(self, docs_root: str):
 
@@ -241,7 +241,7 @@ class MarkdownLinkValidator:
 
         self.valid_links: List[Dict[str, str]] = []
 
-    
+
 
     def validate_all_links(self) -> Dict[str, any]:
 
@@ -251,7 +251,7 @@ class MarkdownLinkValidator:
 
             self._validate_file_links(md_file)
 
-        
+
 
         return {
 
@@ -265,7 +265,7 @@ class MarkdownLinkValidator:
 
         }
 
-    
+
 
     def _validate_file_links(self, md_file: Path):
 
@@ -275,13 +275,13 @@ class MarkdownLinkValidator:
 
             content = f.read()
 
-        
+
 
         # 提取所有链接
 
         links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
 
-        
+
 
         for link_text, link_url in links:
 
@@ -323,7 +323,7 @@ class MarkdownLinkValidator:
 
                     })
 
-    
+
 
     def generate_report(self, output_file: str):
 
@@ -341,7 +341,7 @@ class MarkdownLinkValidator:
 
             f.write(f'**失效链接**: {len(self.broken_links)}\n\n')
 
-            
+
 
             if self.broken_links:
 
@@ -369,7 +369,7 @@ if __name__ == '__main__':
 
     validator.generate_report('link_validation_report.md')
 
-    
+
 
     print(f"验证完成: {result['valid_links']}/{result['total_links']} 链接有效")
 
@@ -419,7 +419,7 @@ class ReferenceGraphGenerator:
 
     """引用关系图生成器"""
 
-    
+
 
     def __init__(self, docs_root: str):
 
@@ -429,7 +429,7 @@ class ReferenceGraphGenerator:
 
         self.reverse_references: Dict[str, Set[str]] = defaultdict(set)
 
-    
+
 
     def scan_all_references(self):
 
@@ -439,7 +439,7 @@ class ReferenceGraphGenerator:
 
             self._scan_file_references(md_file)
 
-    
+
 
     def _scan_file_references(self, md_file: Path):
 
@@ -449,17 +449,17 @@ class ReferenceGraphGenerator:
 
             content = f.read()
 
-        
+
 
         # 提取所有内部链接
 
         links = re.findall(r'\[([^\]]+)\]\(([^)]+\.md)\)', content)
 
-        
+
 
         source_file = str(md_file.relative_to(self.docs_root))
 
-        
+
 
         for link_text, link_url in links:
 
@@ -475,7 +475,7 @@ class ReferenceGraphGenerator:
 
                     self.reverse_references[target_file].add(source_file)
 
-    
+
 
     def generate_mermaid_graph(self, output_file: str):
 
@@ -487,7 +487,7 @@ class ReferenceGraphGenerator:
 
             f.write('graph TD\n')
 
-            
+
 
             # 生成节点和边
 
@@ -501,11 +501,11 @@ class ReferenceGraphGenerator:
 
                     f.write(f'    {source_name} --> {target_name}\n')
 
-            
+
 
             f.write('```\n')
 
-    
+
 
     def generate_statistics(self) -> Dict[str, any]:
 
@@ -515,7 +515,7 @@ class ReferenceGraphGenerator:
 
         total_references = sum(len(refs) for refs in self.references.values())
 
-        
+
 
         # 计算入度和出度
 
@@ -523,19 +523,19 @@ class ReferenceGraphGenerator:
 
         out_degrees = {file: len(refs) for file, refs in self.references.items()}
 
-        
+
 
         # 找出最被引用的文档
 
         most_referenced = sorted(in_degrees.items(), key=lambda x: x[1], reverse=True)[:10]
 
-        
+
 
         # 找出引用最多的文档
 
         most_referencing = sorted(out_degrees.items(), key=lambda x: x[1], reverse=True)[:10]
 
-        
+
 
         return {
 
@@ -563,7 +563,7 @@ if __name__ == '__main__':
 
     generator.generate_mermaid_graph('reference_graph.md')
 
-    
+
 
     stats = generator.generate_statistics()
 
@@ -615,7 +615,7 @@ class DocumentChangeNotifier:
 
     """文档变更通知器"""
 
-    
+
 
     def __init__(self, docs_root: str, notification_file: str):
 
@@ -625,7 +625,7 @@ class DocumentChangeNotifier:
 
         self.change_log: Dict[str, List[Dict]] = {}
 
-    
+
 
     def detect_changes(self) -> Dict[str, List[str]]:
 
@@ -641,13 +641,13 @@ class DocumentChangeNotifier:
 
         }
 
-        
+
 
         # 加载上次的文件状态
 
         last_state = self._load_last_state()
 
-        
+
 
         # 获取当前文件状态
 
@@ -665,7 +665,7 @@ class DocumentChangeNotifier:
 
             }
 
-        
+
 
         # 比较状态变化
 
@@ -679,7 +679,7 @@ class DocumentChangeNotifier:
 
                 changes['modified'].append(file_path)
 
-        
+
 
         for file_path in last_state:
 
@@ -687,17 +687,17 @@ class DocumentChangeNotifier:
 
                 changes['deleted'].append(file_path)
 
-        
+
 
         # 保存当前状态
 
         self._save_current_state(current_state)
 
-        
+
 
         return changes
 
-    
+
 
     def notify_affected_documents(self, changes: Dict[str, List[str]]):
 
@@ -707,11 +707,11 @@ class DocumentChangeNotifier:
 
         reference_map = self._load_reference_map()
 
-        
+
 
         notifications = []
 
-        
+
 
         for changed_file in changes['modified'] + changes['deleted']:
 
@@ -731,17 +731,17 @@ class DocumentChangeNotifier:
 
                 })
 
-        
+
 
         # 保存通知记录
 
         self._save_notifications(notifications)
 
-        
+
 
         return notifications
 
-    
+
 
     def _load_last_state(self) -> Dict:
 
@@ -757,7 +757,7 @@ class DocumentChangeNotifier:
 
         return {}
 
-    
+
 
     def _save_current_state(self, state: Dict):
 
@@ -769,7 +769,7 @@ class DocumentChangeNotifier:
 
             json.dump(state, f, indent=2)
 
-    
+
 
     def _load_reference_map(self) -> Dict:
 
@@ -785,7 +785,7 @@ class DocumentChangeNotifier:
 
         return {'forward': {}, 'reverse': {}}
 
-    
+
 
     def _save_notifications(self, notifications: List[Dict]):
 
@@ -823,13 +823,13 @@ if __name__ == '__main__':
 
     )
 
-    
+
 
     changes = notifier.detect_changes()
 
     notifications = notifier.notify_affected_documents(changes)
 
-    
+
 
     print(f"检测到变更: {len(changes['modified'])} 个文件修改")
 
@@ -1064,4 +1064,3 @@ if __name__ == '__main__':
 **报告日期**: 2026-04-07
 
 **下次报告日期**: 2026-04-08
-

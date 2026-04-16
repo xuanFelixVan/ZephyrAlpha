@@ -17,7 +17,7 @@ layer: layer_08
 ## 核心定位
 
 
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：流动性管理系统、流动性监控、现金管理
 > - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
@@ -106,7 +106,7 @@ layer: layer_08
 
 
 > 核心职责: Liquidity Management System蓝图设计
-> 职责边界: 
+> 职责边界:
 
 
 ### 上游依赖
@@ -130,11 +130,11 @@ graph LR
     A[数据质量监控] --> B[流动性管理系统]
     C[数据目录] --> B
     D[VaR/ES监控] --> B
-    
+
     B --> E[融资优化]
     B --> F[动态杠杆管理]
     B --> G[保证金监控]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style C fill:#45b7d1
@@ -169,7 +169,7 @@ graph TB
 ```python
 class FundDataCollector:
     """资金数据采集器"""
-    
+
     def __init__(self):
         self.data_sources = {
             'account': AccountDataSource(),      # 账户数据
@@ -177,7 +177,7 @@ class FundDataCollector:
             'transfer': TransferDataSource(),    # 资金划转
             'fee': FeeDataSource()               # 费用数据
         }
-        
+
     def collect_fund_data(
         self,
         account_id: str,
@@ -186,9 +186,9 @@ class FundDataCollector:
     ) -> FundDataset:
         """
         采集资金数据
-        
+
         数据维度:
-        
+
         输出:
         - FundDataset: 资金数据集
         """
@@ -200,14 +200,14 @@ class FundDataCollector:
 ```python
 class LiquidityAnalyzer:
     """流动性分析器"""
-    
+
     def __init__(self):
         self.metrics = {
             'turnover_ratio': TurnoverRatioCalculator(),    # 资金周转率
             'liquidity_ratio': LiquidityRatioCalculator(),  # 流动比率
             'cash_flow': CashFlowPredictor()                # 现金流预测
         }
-        
+
     def analyze_liquidity(
         self,
         fund_data: FundDataset
@@ -234,7 +234,7 @@ class LiquidityAnalyzer:
 ```python
 class TurnoverRatioCalculator:
     """资金周转率计算器"""
-    
+
     def calculate_turnover_ratio(
         self,
         fund_data: FundDataset,
@@ -242,9 +242,9 @@ class TurnoverRatioCalculator:
     ) -> float:
         """
         计算资金周转率
-        
+
         Turnover Ratio = Total Trading Volume / Average Capital
-        
+
         参数:
         - fund_data: 资金数据
         - period: 计算周期（天）
@@ -253,9 +253,9 @@ class TurnoverRatioCalculator:
         """
         total_trading_volume = fund_data.get_total_trading_volume(period)
         average_capital = fund_data.get_average_capital(period)
-        
+
         turnover_ratio = total_trading_volume / average_capital
-        
+
         return turnover_ratio
 ```
 
@@ -263,10 +263,10 @@ class TurnoverRatioCalculator:
 ```python
 class CashFlowPredictor:
     """现金流预测器"""
-    
+
     def __init__(self):
         self.prediction_model = TimeSeriesModel()
-        
+
     def predict_cash_flow(
         self,
         historical_data: pd.DataFrame,
@@ -277,7 +277,7 @@ class CashFlowPredictor:
         方法:
         2. 时间序列模型: ARIMA/Prophet
         3. 机器学习模型: LSTM（可选）
-        
+
         输出:
           - daily_outflow: 每日流出预测
           - net_flow: 净流量预测
@@ -291,21 +291,21 @@ class CashFlowPredictor:
 ```python
 class LiquidityRiskWarner:
     """流动性风险预警器"""
-    
+
     def __init__(self):
         self.thresholds = {
             'max_outflow_ratio': 0.5        # 最大流出比例        }
-        
+
     def check_liquidity_risk(
         self,
         liquidity_report: LiquidityReport
     ) -> LiquidityWarning:
         """
-        检查流动性风险        
+        检查流动性风险
         检查维度
 
         3. 流出压力: 预期流出是否过大
-        
+
         输出:
         - LiquidityWarning: 流动性预警          - risk_level: 风险级别（LOW/MEDIUM/HIGH）          - warning_items: 预警项列表          - recommendations: 建议措施
         """
@@ -324,10 +324,10 @@ def monitor_liquidity(
     account_id: str
 ) -> LiquidityMonitorResult:
     """
-    监控流动性    
+    监控流动性
     参数:
     - account_id: 账户ID
-    
+
     返回:
     - LiquidityMonitorResult: 流动性监控结束      - available_fund: 可用资金
       - frozen_fund: 冻结资金
@@ -345,11 +345,11 @@ def predict_cash_flow(
     forecast_days: int = 30
 ) -> CashFlowForecast:
     """
-    预测现金流    
+    预测现金流
     参数:
     - account_id: 账户ID
     - forecast_days: 预测天数
-    
+
     返回:
     - CashFlowForecast: 现金流预测      - daily_forecasts: 每日预测列表
       - confidence: 预测置信度    """
@@ -362,10 +362,10 @@ def generate_liquidity_warning(
     account_id: str
 ) -> LiquidityWarning:
     """
-    生成流动性预警    
+    生成流动性预警
     参数:
     - account_id: 账户ID
-    
+
     返回:
     - LiquidityWarning: 流动性预警      - warning_level: 预警级别（GREEN/YELLOW/RED）      - warning_items: 预警项列表      - recommendations: 建议措施
       - timestamp: 时间戳    """
@@ -380,10 +380,10 @@ def optimize_fund_allocation(
     target_return: float = 0.0
 ) -> FundAllocationOptimization:
     """
-    
+
     参数:
     - account_id: 账户ID
-    - target_return: 目标收益率    
+    - target_return: 目标收益率
     返回:
       - action_items: 行动项    """
     pass
@@ -537,24 +537,24 @@ def calculate_turnover_ratio(
     period: int = 30
 ) -> float:
     """
-    计算资金周转率    
+    计算资金周转率
     步骤:
-2. 计算平均资金占用    3. 计算周转率    
+2. 计算平均资金占用    3. 计算周转率
     返回:
     - turnover_ratio: 资金周转率    """
     total_trading_volume = 0.0
     for i in range(period):
         daily_volume = fund_data.get_daily_trading_volume(i)
         total_trading_volume += daily_volume
-    
+
     capital_sum = 0.0
     for i in range(period):
         daily_capital = fund_data.get_daily_capital(i)
         capital_sum += daily_capital
-    
+
     average_capital = capital_sum / period
     turnover_ratio = total_trading_volume / average_capital
-    
+
     return turnover_ratio
 ```
 
@@ -578,14 +578,14 @@ def predict_cash_flow_simple(
     forecast_days: int = 30
 ) -> CashFlowForecast:
     """
-    简单现金流预测（历史平均法）    
+    简单现金流预测（历史平均法）
     步骤:
-    1. 计算历史平均日流量    2. 计算历史平均日流量    3. 预测未来每日现金流    
+    1. 计算历史平均日流量    2. 计算历史平均日流量    3. 预测未来每日现金流
     返回:
     - CashFlowForecast: 现金流预测    """
     avg_daily_inflow = historical_data['inflow'].mean()
     avg_daily_outflow = historical_data['outflow'].mean()
-    
+
     daily_forecasts = []
     for i in range(forecast_days):
         daily_forecast = DailyForecast(
@@ -595,7 +595,7 @@ def predict_cash_flow_simple(
             predicted_net_flow=avg_daily_inflow - avg_daily_outflow
         )
         daily_forecasts.append(daily_forecast)
-    
+
     return CashFlowForecast(
         forecast_days=forecast_days,
         daily_forecasts=daily_forecasts,
@@ -626,14 +626,14 @@ def calculate_liquidity_risk_score(
     liquidity_report: LiquidityReport
 ) -> float:
     """
-    计算流动性风险得分    
+    计算流动性风险得分
     评分维度:
     1. 现金比例（权重 40%）：<10% 高风险，10-20% 中风险，>20% 低风险
     2. 可用资金（权重 40%）：<10万 高风险；10-50 万 中风险；>50 万 低风险
     返回:
     - risk_score: 风险得分（0-100）    """
     score = 0.0
-    
+
     # 现金比例评分
     if liquidity_report.cash_ratio < 0.1:
         score += 30
@@ -641,7 +641,7 @@ def calculate_liquidity_risk_score(
         score += 15
     else:
         score += 0
-    
+
     # 可用资金评分
     if liquidity_report.available_fund < 100000:
         score += 30
@@ -649,14 +649,14 @@ def calculate_liquidity_risk_score(
         score += 15
     else:
         score += 0
-    
+
     # 流出压力评分
     if liquidity_report.daily_outflow > liquidity_report.daily_inflow:
         score += 20
-    
+
     # 周转率评估    if liquidity_report.turnover_ratio < 0.5 or liquidity_report.turnover_ratio > 5.0:
         score += 20
-    
+
     return score
 ```
 
@@ -694,15 +694,15 @@ def calculate_liquidity_risk_score(
 
 ```python
 class TestLiquidityAnalyzer:
-    
+
     def test_turnover_ratio_calculation(self):
         """测试周转率计划""
         pass
-    
+
     def test_cash_flow_prediction(self):
         """测试现金流预测""
         pass
-    
+
     def test_risk_assessment(self):
         """测试风险评估"""
         pass
@@ -713,15 +713,15 @@ class TestLiquidityAnalyzer:
 ```python
 class TestLiquidityManagementSystem:
     """流动性管理系统集成测试"""
-    
+
     def test_end_to_end_monitoring(self):
         """测试端到端监控""
         pass
-    
+
     def test_warning_generation(self):
         """测试预警生成"""
         pass
-    
+
     def test_optimization_suggestion(self):
         """测试优化建议"""
         pass
@@ -831,7 +831,7 @@ class TestLiquidityManagementSystem:
 
 
 
-****蓝图编写**: 首席架构师  
+****蓝图编写**: 首席架构师
 **蓝图日期**: 2026-04-02
 ****蓝图状态**: 已完成
 
@@ -860,7 +860,7 @@ class TestLiquidityManagementSystem:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Liquidity Management System** | 
+| **Liquidity Management System** |
 
 ### 12.3 版本管理
 

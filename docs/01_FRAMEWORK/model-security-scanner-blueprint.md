@@ -20,7 +20,7 @@ owner: 首席文档架构师
 
 > **核心职责**: 提供model security scanner blueprint的完整架构设计、技术选型和实施路径规划
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Model Security Scanner蓝图设计相关内容
 
@@ -304,7 +304,7 @@ class ModelSecurityScanner:
 
 
 
-    
+
 
 
 
@@ -330,7 +330,7 @@ class ModelSecurityScanner:
 
 
 
-        
+
 
 
 
@@ -348,7 +348,7 @@ class ModelSecurityScanner:
 
 
 
-    
+
 
 
 
@@ -378,7 +378,7 @@ class ModelSecurityScanner:
 
 
 
-        
+
 
 
 
@@ -398,7 +398,7 @@ class ModelSecurityScanner:
 
 
 
-            
+
 
 
 
@@ -418,7 +418,7 @@ class ModelSecurityScanner:
 
 
 
-    
+
 
 
 
@@ -440,7 +440,7 @@ class ModelSecurityScanner:
 
 
 
-        
+
 
 
 
@@ -452,7 +452,7 @@ class ModelSecurityScanner:
 
 
 
-            
+
 
 
 
@@ -472,7 +472,7 @@ class ModelSecurityScanner:
 
 
 
-    
+
 
 
 
@@ -494,7 +494,7 @@ class ModelSecurityScanner:
 
 
 
-        
+
 
 
 
@@ -506,7 +506,7 @@ class ModelSecurityScanner:
 
 
 
-            
+
 
 
 
@@ -526,7 +526,7 @@ class ModelSecurityScanner:
 
 
 
-    
+
 
 
 
@@ -572,7 +572,7 @@ class ModelSecurityScanner:
 
 
 
-            
+
 
 
 
@@ -608,7 +608,7 @@ class MembershipInferenceDetector:
 
 
 
-    
+
 
 
 
@@ -678,7 +678,7 @@ class ModelExtractionDetector:
 
 
 
-    
+
 
 
 
@@ -716,7 +716,7 @@ class ModelExtractionDetector:
 
 
 
-            
+
 
 
 
@@ -750,7 +750,7 @@ class Vulnerability:
 
 
 
-    
+
 
 
 
@@ -798,7 +798,7 @@ class SecurityScanResult:
 
 
 
-    
+
 
 
 
@@ -856,7 +856,7 @@ class SecurityScanConfig:
 
 
 
-    
+
 
 
 
@@ -1124,7 +1124,7 @@ class ModelGovernance:
 
 
 
-        
+
 
 
 
@@ -1132,7 +1132,7 @@ class ModelGovernance:
 
 
 
-        
+
 
 
 
@@ -1156,7 +1156,7 @@ class ModelGovernance:
 
 
 
-        
+
 
 
 
@@ -1511,4 +1511,3 @@ class ModelGovernance:
 
 
 ```
-

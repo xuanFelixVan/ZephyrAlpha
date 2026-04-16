@@ -1,8 +1,27 @@
-# ZephyrAlpha 项目通用 AI 治理约束
+﻿# ZephyrAlpha 项目通用 AI 治理约束
 
 > **适用范围**：所有 AI 工具（Cursor、Trae、GitHub Copilot、Claude API 等）。本文件是跨工具的基准约束文件。
 >
-> **版本**：v1.1.0 | 创建日期：2026-04-16 | 状态：Active
+> **版本**：v1.2.0 | 创建日期：2026-04-16 | 状态：Active
+
+---
+
+## 本文件的写入原则（元规则）
+
+> **AGENTS.md 只写永久有效的规则。**
+
+判断标准：一条规则在项目存续期间是否始终成立，与当前阶段、当前文件数量、当前波次进度无关。
+
+| 属于本文件的内容 | 不属于本文件的内容（写哪里）|
+|----------------|--------------------------|
+| 操作边界与禁止行为（永久约束） | 当前文件数量、wave进度（→ `elimination-pipeline-tracker.yaml`）|
+| 锚点文件列表（结构不变时永久有效） | 当前断链数量、扫描结果（→ `SENTINEL_L1_SCAN_LATEST.md`）|
+| 启动协议、格式标准、路径约定 | 某次事故的具体数字（→ `docs/08_KNOWLEDGE/BEST_PRACTICES/`）|
+| 工具权限层级（工具选型不变则永久有效） | 特定蓝图的处置计划（→ 对应 Playbook）|
+
+**修改本文件时**：每条新增内容必须通过"永久性测试"——问：这条规则在 6 个月后还有效吗？无效则不应写入。
+
+---
 
 ## 零、工具权限层级（Tool Authority Hierarchy）
 
@@ -38,10 +57,11 @@
 
 ZephyrAlpha 是一个**个人量化交易系统**，当前处于 **Phase 2（施工图纸阶段）**。
 
-- **源代码**：`src/`（66 个文件，Python）
-- **核心文档**：`docs/`（~1,999 个文件，Markdown 为主）
-- **治理脚本**：`scripts/`（96 个文件，Python）
-- **当前任务**：文件瘦身 + 蓝图治理，目标把总文件数压到 <900
+- **源代码**：`src/`（Python）
+- **核心文档**：`docs/`（Markdown 为主）
+- **治理脚本**：`scripts/`（Python）
+
+> 文件数量、当前 wave 进度等运行时状态，见 `docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml`，不在本文件维护。
 
 **当前 Phase 计划**：读取 `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` 获取最新状态。
 
@@ -84,6 +104,49 @@ AGENTS.md（本文件）
 4. 报告：当前处于 Phase X，本次任务是 Y，属于流水线 Wave Z
 
 > 此协议防止 AI 跳跃执行、破坏施工顺序。任何模型均不得跳过。
+
+### 条件性必读（按任务类型）
+
+> 以下文件不要求每次会话都读，但在特定任务开始前必须先查阅：
+
+| 任务类型 | 必须先读 | 原因 |
+|---------|---------|------|
+| 引入新技术/框架/库 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | 避免与已有 ADR 冲突；复用已有技术选型理由 |
+| 修改架构设计（模块边界/接口/依赖） | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | 新决策须参考历史决策上下文，并追加 ADR 条目 |
+| 首次进入项目 / 对系统演化历史有疑问 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` § 架构演化时间线 | 了解项目从何处来、当前所处阶段，以及重要的结构性变化历史 |
+| 在某领域首次工作（因子/回测/执行层等） | `docs/08_KNOWLEDGE/BEST_PRACTICES/` 对应条目 | 避免重蹈已记录的坑；复用已验证的最佳实践 |
+| 编辑 `docs/09_AUDIT/STANDARDS/` 中的标准文档 | `docs/08_KNOWLEDGE/BEST_PRACTICES/KE-025-encoding-corruption-and-dead-links-postmortem.md` | 标准文档历史上有编码损坏问题，修复前必须了解正确流程 |
+| 删除或移动任何文件 | `docs/01_GOVERNANCE/PLAYBOOKS/dead-link-repair-playbook.md` § 链接维护契约 | 避免产生孤立断链 |
+
+---
+
+## 三-B、施工图格式强制标准（Phase 2 专用）
+
+> **适用对象**：所有 AI 模型在编写或审核 `docs/04_CONSTRUCTION/PLANS/construction-plan-*.md`（及历史遗留的 CONSTRUCTION_PLAN_L00_DATA_SOURCE.md）时必须遵守。
+
+### 施工图 7 点格式（验收门禁）
+
+**施工图缺少任何一个章节，视为 Draft 状态，不得进入 Phase 3 实施。**
+
+| 章节 | 必含内容 | 验收要求 |
+|------|---------|---------|
+| 1. 前置条件 | 依赖蓝图路径、输入数据契约、运行环境 | 明确列出依赖文件路径 |
+| 2. 模块分解 | 模块 ID + 名称 + 职责（3-8 个单元） | 每个模块职责不重叠 |
+| 3. 公共 API | 函数签名（Python type hints）+ 异常类型 | mypy 可静态通过 |
+| 4. 数据流 | Mermaid 图，覆盖输入→处理→输出全链路 | 无孤立节点 |
+| 5. 测试 | 每模块至少 3 条 P0 用例（含边界/异常） | 覆盖主路径+异常路径 |
+| 6. 技术选型与 TDR | 引用 ADR 编号；未决策项标 TBD+ADR ID | 无未引用的技术选型 |
+| 7. 已知风险与缓解 | 至少 2 条风险 + 缓解策略 | 含 P0 级风险分析 |
+
+### 施工图命名与存放规范
+
+- **命名格式**：`construction-plan-{layer-code}-{layer-name}.md`（全小写 kebab-case，见 doc-naming-standard.md v2.0.0）
+- **强制存放路径**：`docs/04_CONSTRUCTION/PLANS/`（禁止放在其他位置）
+- **建立后必须同步**：
+  1. 更新 `docs/04_CONSTRUCTION/PLANS/INDEX.md`（加入新条目并标记状态）
+  2. 在 `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` 对应层行添加施工图链接
+  3. 在 `docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md` 注册
+  4. 将 `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` 中对应任务标记为 `[x]`
 
 ---
 
@@ -241,18 +304,17 @@ chore(cleanup): eliminate N files from {area}, extracted K knowledge entries
 - Tracker updated: docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
 ```
 
-### 5.5 波次执行顺序（从易到难）
+### 5.5 波次执行顺序
 
-| 波次 | 目标区域 | 预估文件数 | 处置策略 |
-|------|---------|-----------|---------|
-| Wave 1 | `docs/09_AUDIT/REPORTS/ARCHIVE/` 的 `openclaw-l2-*` | ~307 | 直接删除（批量扫描产物）|
-| Wave 2 | `docs/09_AUDIT/REPORTS/ARCHIVE/` 其他旧版本报告 | ~130 | 保留最新 3 版 |
-| Wave 3 | `docs/09_AUDIT/STATE/` 过期 JSON + 每日快照 | ~350 | TTL 30 天清理 |
-| Wave 4 | `integrated_from_*/` 空壳目录 | ~42 | 直接删除 |
-| Wave 5 | `01_FRAMEWORK/` 混入的审计/元文档 | ~40 | 评估后移至 `09_AUDIT` 或删除 |
-| Wave 6 | `01_FRAMEWORK/` 与 `05_IMPLEMENTATION/` 重叠蓝图 | ~163 | 提取知识 → 合并到 `03_BLUEPRINTS` |
-| Wave 7 | `01_FRAMEWORK/` 剩余蓝图 | ~170 | 提取知识 → 迁移/删除 |
-| Wave 8 | 其他散落低价值文件 | ~50 | 逐个评估 |
+> **波次详情（目标区域、预估文件数、当前进度）属于运行状态，不在本文件维护。**
+>
+> 见：docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
+>
+> 本节只记录永久性的执行原则：
+
+- 按「从易到难」推进：无唯一价值的批量产物 → 过期状态快照 → 空壳目录 → 有价值需提取知识的蓝图
+- 每个 wave 完成后必须运行 Sentinel 扫描，确认断链增量符合预期（见 §十一 链接维护契约）
+- 高价值文件（P0/P1 蓝图、设计决策）须先提取知识条目再处置
 
 ---
 
@@ -406,14 +468,55 @@ feat(knowledge): GH-Wave-X extract KE-XXX~KE-YYY from git history
 
 ## 八、编码安全规则（强制）
 
-> 背景：Cursor + Trae 双编辑器交替使用曾多次导致核心文件编码损坏（阿拉伯文乱码）。
+> **根因**：Trae 的 `files.autoGuessEncoding` 选项将 UTF-8 文件误判为 GBK/Latin-1，
+> 保存时以错误编码写回，产生双重编码乱码（表现为文件末尾出现阿拉伯文/西里尔文/
+> 波斯文字符）。Cursor 以 UTF-8 重新读取后，乱码字节暴露。
+
+### 根因机制
+
+```
+正常 UTF-8 文件
+    ↓ Trae autoGuessEncoding=true 误判为 GBK/Latin-1
+    ↓ 以错误编码写入磁盘
+    ↓ Cursor 以 UTF-8 读取
+显示乱码（文件末尾出现阿拉伯/西里尔字符）
+```
+
+### 必须遵守的规则
 
 - **切换编辑器前**：确保当前编辑器所有文件已保存并关闭
 - **切换编辑器后第一步**：运行 `python scripts/hooks/doc_guard_pre_commit.py --scan-encoding`
 - **禁止**在两个编辑器中同时打开同一文件进行编辑
-- **Trae 必须确认** `files.autoGuessEncoding` 设置为 `false`
+- **Trae 必须确认** `files.autoGuessEncoding` = `false`，`files.encoding` = `utf8`
 - **禁止**使用 `echo` 重定向或 PowerShell `Out-File` 默认参数创建 `.md` 文件（Windows 默认 UTF-16 LE 或 GBK）
-- 创建文件时必须显式指定 `encoding='utf-8'`
+- 所有 Python 脚本创建文件时必须显式指定 `encoding='utf-8'`
+
+### 发现编码损坏后的修复流程（唯一正确方式）
+
+```bash
+# 1. 确认损坏范围
+python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+
+# 2. 从 git 历史恢复（推荐，不要手动修改乱码字符）
+git checkout HEAD -- <损坏文件路径>
+
+# 3. 若 HEAD 也已损坏，找干净版本
+git log --oneline -- <损坏文件路径>
+git show <干净commit>:<损坏文件路径> > temp.md
+# 对比确认后替换
+
+# 4. 确认修复
+python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+```
+
+### 绝对禁止操作
+
+| 禁止操作 | 替代方案 |
+|---------|---------|
+| 用文本编辑器逐字修改乱码字符 | `git checkout -- <file>` 整文件还原 |
+| PowerShell `echo` / `Out-File` 默认参数写 `.md` | `Python Path(f).write_text(content, encoding='utf-8')` |
+| Python `open(f, 'w')` 不指定 encoding | 必须加 `encoding='utf-8'` |
+| 两个编辑器同时打开同一文件编辑 | 同一时刻只用一个编辑器 |
 
 ---
 
@@ -444,13 +547,99 @@ feat(knowledge): GH-Wave-X extract KE-XXX~KE-YYY from git history
 
 ---
 
-## 十一、禁止行为汇总
+## 十一、链接维护契约（强制）
+
+> **根因**：AI 工具执行"直接任务"（删除/移动文件）时，常遗漏"完整性副作用"（更新所有引用），
+> 导致断链在流水线操作后批量积累。
+
+### 删除文件的强制三步
+
+```bash
+# 第一步：找到所有指向目标文件的引用
+rg "目标文件名（不含扩展名）" docs/ --include="*.md" -l
+
+# 第二步：在同一 commit 内更新或移除所有引用
+# （不允许分两次 commit：先删文件、后清引用）
+
+# 第三步：删除后运行 Sentinel 扫描确认断链增量符合预期
+python scripts/audit/sentinel_l1_governance_scan.py
+```
+
+### 移动/归档文件的强制两步
+
+```bash
+# 第一步：git mv 后立即搜索旧路径的所有引用
+rg "旧文件路径或文件名" docs/ --include="*.md" -l
+
+# 第二步：批量替换旧路径为新路径，与 git mv 在同一 commit 提交
+```
+
+### 规划链接的写法规范
+
+尚不存在的文件若需要被引用，必须使用注释格式，禁止使用普通 Markdown 链接：
+
+```markdown
+<!-- PLANNED: ../04_CONSTRUCTION/PLANS/construction-plan-l01-data-processing.md -->
+```
+
+普通 Markdown 链接 `[文字](不存在的路径)` 会被检测器计为断链，推高阈值，影响治理信号可信度。
+
+### 断链阈值
+
+| 状态 | 目标阈值 |
+|------|---------|
+| 正常生产 | ≤ 100 条 |
+| 流水线重构过渡期 | ≤ 500 条（临时，需明确注释） |
+| 超出 500 | pre-commit 直接阻断 commit |
+
+---
+
+## 十二、标准文档完整性规则（强制）
+
+> **根因**：编码损坏后若对损坏文件进行"局部修补"（切除尾部、追加块、混合中英文段落），
+> 会产生混合编码文件，比全损文件更难处理，且内容真实性存疑。
+
+### 标准文档损坏时的唯一合法修复路径
+
+```
+检测损坏
+    │
+    ▼ git checkout HEAD -- <file>   ← 首选：从 HEAD 恢复
+    │   成功？→ 完成
+    │   失败（HEAD 也已损坏）？
+    │
+    ▼ git log --oneline -- <file>   ← 找到最近的干净版本
+       git show <commit>:<file> > temp.md
+       确认内容 → 覆盖替换
+       找不到干净版本？
+    │
+    ▼ 用健康同类文件为模板 + 按文件名/用途 人工重写全文  ← 最后手段
+```
+
+### 绝对禁止
+
+- **禁止**在损坏文件上追加"修复块"或混合段落（会产生混合编码）
+- **禁止**手动逐字替换乱码字符（字节层面无法对齐）
+- **禁止**将损坏标准文档当作参考资料使用（内容不可信）
+
+### 标准文档损坏的识别信号
+
+| 信号 | 含义 |
+|------|------|
+| frontmatter 字段值出现阿拉伯文/西里尔文字符 | 主体可能全部损坏 |
+| 正文标题出现非中英文字符 | 至少局部损坏 |
+| 尾部出现重复 frontmatter 块 | 双重编码追加导致 |
+| `python scripts/hooks/doc_guard_pre_commit.py --scan-encoding` 报告此文件 | 确认损坏 |
+
+---
+
+## 十三、禁止行为汇总
 
 | 禁止行为 | 原因 |
 |---------|------|
 | 删除锚点文件 | 治理系统崩溃风险 |
 | 写入废弃路径 | 导致路径分裂，破坏治理索引 |
-| `git commit --no-verify` | 绕过 23 个 pre-commit 钩子 |
+| `git commit --trailer "Made-with: Cursor" --no-verify` | 绕过 24 个 pre-commit 钩子（19 个本地 + 5 个社区）|
 | 单次处理 >20 个文件 | 超出免费模型上下文窗口，容易出错 |
 | 创建新的顶级目录 | 未经注册，破坏 subsystem-registry |
 | 修改 `.cursor/rules/` | Trae 无权修改 Cursor 专有规则 |

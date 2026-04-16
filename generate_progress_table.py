@@ -8,7 +8,7 @@ from pathlib import Path
 def extract_status(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     # 查找表格行，格式为：| 文档名称 | 优先级 | 状态 | 实施状态 | 说明 |
     # 使用正则表达式匹配
     pattern = r'\|\s*(?P<name>[^|]+)\s*\|\s*(?P<priority>[^|]+)\s*\|\s*(?P<status>[^|]+)\s*\|\s*(?P<impl_status>[^|]*)\s*\|\s*(?P<desc>[^|]*)\s*\|'
@@ -42,7 +42,7 @@ def extract_status(filepath):
 def main():
     filepath = Path('docs/11_STRATEGIC_DECISION/complete-blueprint-overview.md')
     records = extract_status(filepath)
-    
+
     # 输出为 Markdown 表格
     output = []
     output.append('## 📊 蓝图进度跟踪表')
@@ -51,10 +51,10 @@ def main():
     output.append('|----------|--------|------|----------|------|')
     for r in records:
         output.append(f'| {r["name"]} | {r["priority"]} | {r["status"]} | {r["impl_status"]} | {r["desc"]} |')
-    
+
     with open('progress_table.md', 'w', encoding='utf-8') as f:
         f.write('\n'.join(output))
-    
+
     print(f"生成了 {len(records)} 条记录，保存到 progress_table.md")
 
 if __name__ == '__main__':

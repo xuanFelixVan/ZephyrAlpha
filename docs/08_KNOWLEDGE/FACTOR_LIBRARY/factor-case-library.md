@@ -702,7 +702,7 @@ def calculate_roe_factor(net_income, equity):
 
 
 
-    
+
 
 
 
@@ -848,7 +848,7 @@ def calculate_low_volatility_factor(close_prices, window=20):
 
 
 
-    
+
 
 
 
@@ -1184,7 +1184,7 @@ def calculate_capital_flow_factor(buy_value, sell_value, window=5):
 
 
 
-    
+
 
 
 
@@ -1350,7 +1350,7 @@ def calculate_news_sentiment_factor(news_data, window=7):
 
 
 
-    
+
 
 
 
@@ -1520,7 +1520,7 @@ def combine_factors_equal_weight(factor_dict):
 
 
 
-    
+
 
 
 
@@ -1532,7 +1532,7 @@ def combine_factors_equal_weight(factor_dict):
 
 
 
-    
+
 
 
 
@@ -1710,7 +1710,7 @@ def calculate_ic_series(factor_series, forward_returns_series):
 
 
 
-    
+
 
 
 
@@ -1762,7 +1762,7 @@ def factor_group_backtest(factor, returns, num_groups=5):
 
 
 
-    
+
 
 
 
@@ -1786,7 +1786,7 @@ def factor_group_backtest(factor, returns, num_groups=5):
 
 
 
-    
+
 
 
 
@@ -1997,6 +1997,3 @@ def factor_group_backtest(factor, returns, num_groups=5):
 
 
 **ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮒﮒﮒ؟?**ﻝﭘﮔ?*: ﻗ?ﮔﺑﭨﻟﺓ
-
-
-

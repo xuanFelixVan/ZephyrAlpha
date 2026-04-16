@@ -8,17 +8,17 @@ from pathlib import Path
 
 def verify_protection_layers():
     """验证三层防护架构完整性"""
-    
+
     print("\n" + "="*70)
     print("【三层防护架构校验】")
     print("="*70 + "\n")
-    
+
     results = {
         "Layer 1 (Pre-commit)": {"status": "待验证", "details": []},
         "Layer 2 (编译器)": {"status": "待验证", "details": []},
         "Layer 3 (CI/CD)": {"status": "待验证", "details": []}
     }
-    
+
     # Layer 1: Pre-commit 校验
     print("🔍 Layer 1: Pre-commit 本地守卫")
     try:
@@ -39,9 +39,9 @@ def verify_protection_layers():
     except Exception as e:
         print(f"  ❌ 验证失败: {e}")
         results["Layer 1 (Pre-commit)"]["status"] = f"❌ {str(e)}"
-    
+
     print()
-    
+
     # Layer 2: 编译器完整性校验
     print("🔍 Layer 2: 编译时自动生成")
     try:
@@ -61,9 +61,9 @@ def verify_protection_layers():
     except Exception as e:
         print(f"  ❌ 验证失败: {e}")
         results["Layer 2 (编译器)"]["status"] = f"❌ {str(e)}"
-    
+
     print()
-    
+
     # Layer 3: CI/CD 工作流校验
     print("🔍 Layer 3: CI/CD 每小时验证")
     try:
@@ -84,22 +84,22 @@ def verify_protection_layers():
     except Exception as e:
         print(f"  ❌ 验证失败: {e}")
         results["Layer 3 (CI/CD)"]["status"] = f"❌ {str(e)}"
-    
+
     print()
-    
+
     # 综合评估
     print("="*70)
     print("【防护层综合评估】")
     print("="*70)
-    
+
     layer_statuses = [results[key]["status"] for key in results.keys()]
     success_count = sum(1 for status in layer_statuses if "✅" in status)
-    
+
     for layer, data in results.items():
         print(f"\n{layer}: {data['status']}")
-    
+
     print(f"\n综合防护有效率: {success_count * 100 // 3}% {'🛡️' if success_count == 3 else '⚠️'}")
-    
+
     if success_count == 3:
         print("\n✅ 三层防护架构完整，无缺陷！")
         return True

@@ -270,7 +270,7 @@ class CreditAssessmentEngine:
 
         self.rating_models = {}
 
-    
+
 
     def assess_credit(self, counterparty: Counterparty) -> CreditRating:
 
@@ -288,7 +288,7 @@ class CreditAssessmentEngine:
 
         )
 
-    
+
 
     def calculate_credit_score(self, counterparty: Counterparty) -> float:
 
@@ -312,7 +312,7 @@ class ExposureCalculator:
 
         self.positions = {}
 
-    
+
 
     def calculate_exposure(self, counterparty_id: str) -> float:
 
@@ -322,7 +322,7 @@ class ExposureCalculator:
 
         return total_exposure
 
-    
+
 
     def check_exposure_limit(self, counterparty_id: str, limit: float) -> bool:
 
@@ -346,7 +346,7 @@ class DefaultHandler:
 
         self.default_events = []
 
-    
+
 
     def handle_default(self, counterparty_id: str, event: DefaultEvent):
 
@@ -456,9 +456,8 @@ class DefaultHandler:
 
 
 
-**蓝图创建时间**: 2026-04-08  
+**蓝图创建时间**: 2026-04-08
 
-**蓝图版本**: 1.0.0  
+**蓝图版本**: 1.0.0
 
 **最后更新**: 2026-04-08
-

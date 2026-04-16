@@ -21,7 +21,7 @@ layer: layer_06
 
 
 > **核心职责**: 同时优化收益、风险、流动性等多个目标
-> **职责边界**: 
+> **职责边界**:
 
 
 ## 设计目标
@@ -116,10 +116,10 @@ graph LR
     A[组合优化引擎] --> B[多目标优化]
     C[数据质量监控] --> B
     D[组合约束管理] --> B
-    
+
     B --> F[场景分析]
     B --> G[风险平价策略]
-    
+
     style B fill:#ff6b6b
     style A fill:#4ecdc4
     style D fill:#45b7d1
@@ -139,10 +139,10 @@ from pymoo.operators.mutation.polynomial import PolynomialMutation
 
 class MultiObjectiveOptimizer:
     """多目标优化器"""
-    
+
     def __init__(self, n_assets: int):
         self.n_assets = n_assets
-        
+
     def optimize_weighted_sum(
         self,
         returns: np.ndarray,
@@ -150,25 +150,25 @@ class MultiObjectiveOptimizer:
         risk_weight: float = 0.5
     ) -> np.ndarray:
         """
-        
+
         Args:
-        
+
         Returns:
         """
         w = Variable(self.n_assets)
         portfolio_return = returns @ w
         portfolio_variance = quad_form(w, cov_matrix)
-        
-        objective = Maximize((1 - risk_weight) * portfolio_return 
+
+        objective = Maximize((1 - risk_weight) * portfolio_return
                            - risk_weight * portfolio_variance)
-        
+
         constraints = [sum(w) == 1, w >= 0]
-        
+
         problem = Problem(objective, constraints)
         problem.solve()
-        
+
         return w.value
-    
+
     def optimize_pareto_front(
         self,
         returns: np.ndarray,
@@ -177,23 +177,23 @@ class MultiObjectiveOptimizer:
     ) -> np.ndarray:
         """
         NSGA-II Pareto前沿优化
-        
+
         Returns:
         """
         problem = PortfolioProblem(returns, cov_matrix)
-        
+
         algorithm = NSGA2(
             pop_size=100,
             crossover=SBX(prob=0.9, eta=15),
             mutation=PolynomialMutation(eta=20),
             n_offsprings=10
         )
-        
+
         from pymoo.optimize import minimize
-        result = minimize(problem, algorithm, 
+        result = minimize(problem, algorithm,
                         ('n_gen', 200),
                         verbose=False)
-        
+
         return result.X
 ```
 
@@ -204,7 +204,7 @@ class MultiObjectiveOptimizer:
 ```python
 class MultiObjectiveAPI:
     """多目标优化API"""
-    
+
     @endpoint("/api/v1/multi_objective/weighted")
     async def optimize_weighted(
         self,
@@ -213,7 +213,7 @@ class MultiObjectiveAPI:
         risk_weight: float
     ) -> OptimizationResult:
         """加权求和优化"""
-        
+
     @endpoint("/api/v1/multi_objective/pareto")
     async def optimize_pareto(
         self,
@@ -222,7 +222,7 @@ class MultiObjectiveAPI:
         n_solutions: int = 50
     ) -> ParetoResult:
         """Pareto前沿优化"""
-        
+
     @endpoint("/api/v1/multi_objective/epsilon")
     async def optimize_epsilon(
         self,
@@ -335,6 +335,3 @@ class MultiObjectiveAPI:
 ### 5.3 版本管理
 
 |------|------|----------|--------|
-
-
-

@@ -9,11 +9,11 @@ Write-Host "1. Checking for QMT processes..." -ForegroundColor Yellow
 
 try {
     $processes = Get-Process -ErrorAction SilentlyContinue | Where-Object {
-        $_.ProcessName -like "*qmt*" -or 
+        $_.ProcessName -like "*qmt*" -or
         $_.ProcessName -like "*think*" -or
         $_.ProcessName -like "*guojin*"
     }
-    
+
     if ($processes) {
         Write-Host "   Found QMT processes:" -ForegroundColor Green
         foreach ($p in $processes) {

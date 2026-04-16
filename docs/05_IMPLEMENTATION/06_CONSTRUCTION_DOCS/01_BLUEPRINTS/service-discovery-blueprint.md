@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供动态的服务注册与发现机制，支持健康检查和负载均衡
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：服务注册、服务发现、健康检查、负载均衡
 
@@ -151,7 +151,7 @@ class ServiceRegistry:
 
     """服务注册器"""
 
-    
+
 
     def __init__(self, consul_host: str = "localhost", consul_port: int = 8500):
 
@@ -159,7 +159,7 @@ class ServiceRegistry:
 
         self.registered_services = {}
 
-    
+
 
     def register_service(
 
@@ -187,11 +187,11 @@ class ServiceRegistry:
 
             service_address = socket.gethostbyname(socket.gethostname())
 
-        
+
 
         service_id = f"{service_name}-{service_address}-{service_port}"
 
-        
+
 
         check = consul.Check.http(
 
@@ -205,7 +205,7 @@ class ServiceRegistry:
 
         )
 
-        
+
 
         success = self.client.agent.service.register(
 
@@ -225,7 +225,7 @@ class ServiceRegistry:
 
         )
 
-        
+
 
         if success:
 
@@ -241,11 +241,11 @@ class ServiceRegistry:
 
             }
 
-        
+
 
         return success
 
-    
+
 
     def deregister_service(self, service_id: str) -> bool:
 
@@ -253,17 +253,17 @@ class ServiceRegistry:
 
         success = self.client.agent.service.deregister(service_id)
 
-        
+
 
         if success and service_id in self.registered_services:
 
             del self.registered_services[service_id]
 
-        
+
 
         return success
 
-    
+
 
     def deregister_all(self):
 
@@ -287,7 +287,7 @@ class ServiceDiscovery:
 
     """服务发现器"""
 
-    
+
 
     def __init__(self, consul_host: str = "localhost", consul_port: int = 8500):
 
@@ -297,7 +297,7 @@ class ServiceDiscovery:
 
         self.cache_ttl = 30
 
-    
+
 
     def discover_service(
 
@@ -315,7 +315,7 @@ class ServiceDiscovery:
 
         cache_key = f"{service_name}:{tag}:{passing_only}"
 
-        
+
 
         if cache_key in self.cache:
 
@@ -325,7 +325,7 @@ class ServiceDiscovery:
 
                 return cached_data
 
-        
+
 
         _, services = self.client.health.service(
 
@@ -337,7 +337,7 @@ class ServiceDiscovery:
 
         )
 
-        
+
 
         instances = []
 
@@ -361,15 +361,15 @@ class ServiceDiscovery:
 
             })
 
-        
+
 
         self.cache[cache_key] = (instances, time.time())
 
-        
+
 
         return instances
 
-    
+
 
     def get_service_address(
 
@@ -385,21 +385,21 @@ class ServiceDiscovery:
 
         instances = self.discover_service(service_name, tag)
 
-        
+
 
         if not instances:
 
             return None
 
-        
+
 
         instance = self._select_instance(instances)
 
-        
+
 
         return f"{instance['address']}:{instance['port']}"
 
-    
+
 
     def _select_instance(self, instances: list) -> dict:
 
@@ -409,33 +409,33 @@ class ServiceDiscovery:
 
             return None
 
-        
+
 
         if not hasattr(self, '_round_robin_index'):
 
             self._round_robin_index = {}
 
-        
+
 
         service_name = instances[0]['name']
 
-        
+
 
         if service_name not in self._round_robin_index:
 
             self._round_robin_index[service_name] = 0
 
-        
+
 
         index = self._round_robin_index[service_name] % len(instances)
 
         self._round_robin_index[service_name] += 1
 
-        
+
 
         return instances[index]
 
-    
+
 
     def watch_service(
 
@@ -453,7 +453,7 @@ class ServiceDiscovery:
 
         index = None
 
-        
+
 
         while True:
 
@@ -471,7 +471,7 @@ class ServiceDiscovery:
 
                 )
 
-                
+
 
                 instances = [
 
@@ -489,11 +489,11 @@ class ServiceDiscovery:
 
                 ]
 
-                
+
 
                 callback(instances)
 
-            
+
 
             except Exception as e:
 
@@ -515,13 +515,13 @@ class HealthChecker:
 
     """健康检查器"""
 
-    
+
 
     def __init__(self, consul_host: str = "localhost", consul_port: int = 8500):
 
         self.client = consul.Consul(host=consul_host, port=consul_port)
 
-    
+
 
     def check_service_health(self, service_name: str) -> Dict[str, Any]:
 
@@ -529,7 +529,7 @@ class HealthChecker:
 
         _, checks = self.client.health.checks(service_name)
 
-        
+
 
         health_status = {
 
@@ -547,13 +547,13 @@ class HealthChecker:
 
         }
 
-        
+
 
         for check in checks:
 
             status = check['Status']
 
-            
+
 
             if status == "passing":
 
@@ -567,7 +567,7 @@ class HealthChecker:
 
                 health_status["critical"] += 1
 
-            
+
 
             health_status["instances"].append({
 
@@ -581,11 +581,11 @@ class HealthChecker:
 
             })
 
-        
+
 
         return health_status
 
-    
+
 
     def get_healthy_instances(self, service_name: str) -> list:
 
@@ -593,7 +593,7 @@ class HealthChecker:
 
         _, services = self.client.health.service(service_name, passing=True)
 
-        
+
 
         return [
 
@@ -611,7 +611,7 @@ class HealthChecker:
 
         ]
 
-    
+
 
     def register_health_check(
 
@@ -659,7 +659,7 @@ class HealthChecker:
 
             raise ValueError(f"Unsupported check type: {check_type}")
 
-        
+
 
         return self.client.agent.check.register(
 
@@ -691,7 +691,7 @@ class LoadBalancer:
 
     """负载均衡器"""
 
-    
+
 
     def __init__(self, service_discovery: ServiceDiscovery):
 
@@ -715,7 +715,7 @@ class LoadBalancer:
 
         self._round_robin_index = defaultdict(int)
 
-    
+
 
     def set_strategy(self, strategy: str):
 
@@ -727,7 +727,7 @@ class LoadBalancer:
 
         self.strategy = strategy
 
-    
+
 
     def get_instance(
 
@@ -743,19 +743,19 @@ class LoadBalancer:
 
         instances = self.discovery.discover_service(service_name, tag)
 
-        
+
 
         if not instances:
 
             return None
 
-        
+
 
         _fn = self.strategies[self.strategy]
 
         return _fn(instances, service_name)
 
-    
+
 
     def _round_robin(self, instances: List[Dict], service_name: str) -> Dict:
 
@@ -767,7 +767,7 @@ class LoadBalancer:
 
         return instances[index]
 
-    
+
 
     def _random(self, instances: List[Dict], service_name: str) -> Dict:
 
@@ -775,7 +775,7 @@ class LoadBalancer:
 
         return random.choice(instances)
 
-    
+
 
     def _least_connections(self, instances: List[Dict], service_name: str) -> Dict:
 
@@ -785,7 +785,7 @@ class LoadBalancer:
 
         selected = instances[0]
 
-        
+
 
         for instance in instances:
 
@@ -793,7 +793,7 @@ class LoadBalancer:
 
             conn_count = self.connections.get(instance_id, 0)
 
-            
+
 
             if conn_count < min_conn:
 
@@ -801,11 +801,11 @@ class LoadBalancer:
 
                 selected = instance
 
-        
+
 
         return selected
 
-    
+
 
     def _weighted(self, instances: List[Dict], service_name: str) -> Dict:
 
@@ -819,11 +819,11 @@ class LoadBalancer:
 
             weights.extend([instance] * weight)
 
-        
+
 
         return random.choice(weights)
 
-    
+
 
     def increment_connection(self, instance_id: str):
 
@@ -831,7 +831,7 @@ class LoadBalancer:
 
         self.connections[instance_id] += 1
 
-    
+
 
     def decrement_connection(self, instance_id: str):
 
@@ -959,7 +959,7 @@ def register_service(
 
             registry = ServiceRegistry(consul_host, consul_port)
 
-            
+
 
             registry.register_service(
 
@@ -973,7 +973,7 @@ def register_service(
 
             )
 
-            
+
 
             def cleanup(signum, frame):
 
@@ -983,13 +983,13 @@ def register_service(
 
                 sys.exit(0)
 
-            
+
 
             signal.signal(signal.SIGINT, cleanup)
 
             signal.signal(signal.SIGTERM, cleanup)
 
-            
+
 
             try:
 
@@ -999,7 +999,7 @@ def register_service(
 
                 registry.deregister_all()
 
-        
+
 
         return wrapper
 
@@ -1027,11 +1027,11 @@ def start_factor_engine():
 
     import uvicorn
 
-    
+
 
     app = FastAPI()
 
-    
+
 
     @app.get("/health")
 
@@ -1039,7 +1039,7 @@ def start_factor_engine():
 
         return {"status": "healthy"}
 
-    
+
 
     uvicorn.run(app, host="0.0.0.0", port=8001)
 
@@ -1063,7 +1063,7 @@ class ServiceClient:
 
     """服务客户端"""
 
-    
+
 
     def __init__(
 
@@ -1087,7 +1087,7 @@ class ServiceClient:
 
         self.load_balancer.set_strategy(load_balance_strategy)
 
-    
+
 
     def request(
 
@@ -1105,19 +1105,19 @@ class ServiceClient:
 
         instance = self.load_balancer.get_instance(self.service_name)
 
-        
+
 
         if not instance:
 
             raise Exception(f"No available instances for {self.service_name}")
 
-        
+
 
         instance_id = instance['id']
 
         url = f"http://{instance['address']}:{instance['port']}{path}"
 
-        
+
 
         try:
 
@@ -1131,7 +1131,7 @@ class ServiceClient:
 
             self.load_balancer.decrement_connection(instance_id)
 
-    
+
 
     def get(self, path: str, **kwargs) -> Optional[requests.Response]:
 
@@ -1139,7 +1139,7 @@ class ServiceClient:
 
         return self.request("GET", path, **kwargs)
 
-    
+
 
     def post(self, path: str, **kwargs) -> Optional[requests.Response]:
 
@@ -1147,7 +1147,7 @@ class ServiceClient:
 
         return self.request("POST", path, **kwargs)
 
-    
+
 
     def put(self, path: str, **kwargs) -> Optional[requests.Response]:
 
@@ -1155,7 +1155,7 @@ class ServiceClient:
 
         return self.request("PUT", path, **kwargs)
 
-    
+
 
     def delete(self, path: str, **kwargs) -> Optional[requests.Response]:
 
@@ -1601,7 +1601,7 @@ groups:
 
           description: "Consul服务已停止运行超过1分钟"
 
-      
+
 
       - alert: NoHealthyInstances
 
@@ -1774,4 +1774,3 @@ SERVICE_METADATA = {
 
 
 - 不同运行环境（K8s/VM/本地）服务发现机制存在差异；实施阶段需在契约真源或子契约中固化默认实现、回滚策略与兼容矩阵。
-

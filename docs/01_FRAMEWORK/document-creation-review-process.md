@@ -605,7 +605,7 @@ python scripts/check_links.py --report link_report.md
 
 
 
-**文档版本**: v1.0.0  
+**文档版本**: v1.0.0
 
 
 
@@ -614,6 +614,3 @@ python scripts/check_links.py --report link_report.md
 
 
 ```
-
-
-

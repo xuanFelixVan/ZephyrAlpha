@@ -289,7 +289,7 @@ class BacktestingPyAdapter:
 
 
 
-    
+
 
 
 
@@ -309,7 +309,7 @@ class BacktestingPyAdapter:
 
 
 
-    
+
 
 
 
@@ -353,7 +353,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -361,7 +361,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -393,7 +393,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -401,7 +401,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -409,7 +409,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -417,7 +417,7 @@ class BacktestingPyAdapter:
 
 
 
-    
+
 
 
 
@@ -465,7 +465,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -489,7 +489,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -497,7 +497,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -505,7 +505,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -553,7 +553,7 @@ class StrategyWrapper(Strategy):
 
 
 
-    
+
 
 
 
@@ -561,7 +561,7 @@ class StrategyWrapper(Strategy):
 
 
 
-    
+
 
 
 
@@ -593,7 +593,7 @@ class StrategyWrapper(Strategy):
 
 
 
-    
+
 
 
 
@@ -637,7 +637,7 @@ class StrategyWrapper(Strategy):
 
 
 
-            
+
 
 
 
@@ -645,7 +645,7 @@ class StrategyWrapper(Strategy):
 
 
 
-            
+
 
 
 
@@ -657,7 +657,7 @@ class StrategyWrapper(Strategy):
 
 
 
-    
+
 
 
 
@@ -677,7 +677,7 @@ class StrategyWrapper(Strategy):
 
 
 
-        
+
 
 
 
@@ -705,7 +705,7 @@ class StrategyWrapper(Strategy):
 
 
 
-    
+
 
 
 
@@ -729,7 +729,7 @@ class StrategyWrapper(Strategy):
 
 
 
-        
+
 
 
 
@@ -737,7 +737,7 @@ class StrategyWrapper(Strategy):
 
 
 
-        
+
 
 
 
@@ -785,7 +785,7 @@ class DataConverter:
 
 
 
-    
+
 
 
 
@@ -801,7 +801,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -833,7 +833,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -841,7 +841,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -861,7 +861,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -869,7 +869,7 @@ class DataConverter:
 
 
 
-    
+
 
 
 
@@ -885,7 +885,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -917,7 +917,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -925,7 +925,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -973,7 +973,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1013,7 +1013,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1061,7 +1061,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1077,7 +1077,7 @@ class ResultFormatter:
 
 
 
-        
+
 
 
 
@@ -1125,7 +1125,7 @@ class ResultFormatter:
 
 
 
-        
+
 
 
 
@@ -1133,7 +1133,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1157,7 +1157,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1181,7 +1181,7 @@ class ResultFormatter:
 
 
 
-    
+
 
 
 
@@ -1727,7 +1727,7 @@ class TestBacktestingPyAdapter:
 
 
 
-    
+
 
 
 
@@ -1739,7 +1739,7 @@ class TestBacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -1771,7 +1771,7 @@ class TestBacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -1779,7 +1779,7 @@ class TestBacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -1859,7 +1859,7 @@ class TestStrategy(BaseStrategy):
 
 
 
-    
+
 
 
 
@@ -1887,7 +1887,7 @@ class TestBacktestIntegration:
 
 
 
-    
+
 
 
 
@@ -1903,7 +1903,7 @@ class TestBacktestIntegration:
 
 
 
-        
+
 
 
 
@@ -1935,7 +1935,7 @@ class TestBacktestIntegration:
 
 
 
-        
+
 
 
 
@@ -1943,7 +1943,7 @@ class TestBacktestIntegration:
 
 
 
-        
+
 
 
 
@@ -2001,7 +2001,7 @@ class DataConverter:
 
 
 
-    
+
 
 
 
@@ -2013,7 +2013,7 @@ class DataConverter:
 
 
 
-    
+
 
 
 
@@ -2025,7 +2025,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -2037,7 +2037,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -2049,7 +2049,7 @@ class DataConverter:
 
 
 
-        
+
 
 
 
@@ -2089,7 +2089,7 @@ class BacktestingPyAdapter:
 
 
 
-    
+
 
 
 
@@ -2141,7 +2141,7 @@ class BacktestingPyAdapter:
 
 
 
-            
+
 
 
 
@@ -2149,7 +2149,7 @@ class BacktestingPyAdapter:
 
 
 
-        
+
 
 
 
@@ -2327,7 +2327,7 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 
 
-    
+
 
 
 
@@ -2347,7 +2347,7 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 
 
-    
+
 
 
 
@@ -2477,15 +2477,12 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 
 
 
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
 
 
 
 **ﻝﮔ؛**: v1.0
-
-
-

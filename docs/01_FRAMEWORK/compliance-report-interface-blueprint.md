@@ -24,7 +24,7 @@ responsibility: ''
 
 > **核心职责**: Compliance Report Interface蓝图设计
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：Compliance Report Interface蓝图设计相关内容
 
@@ -106,7 +106,7 @@ class ComplianceReportInterface:
 
     """合规报告界面"""
 
-    
+
 
     def __init__(self):
 
@@ -122,7 +122,7 @@ class ComplianceReportInterface:
 
         }
 
-    
+
 
     def render_status(self):
 
@@ -130,7 +130,7 @@ class ComplianceReportInterface:
 
         st.subheader("✅ 合规状态")
 
-        
+
 
         for item, status in self.compliance_status.items():
 
@@ -203,4 +203,3 @@ class ComplianceReportInterface:
 
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
-

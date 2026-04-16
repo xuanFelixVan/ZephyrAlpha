@@ -21,7 +21,7 @@ layer: layer_05
 
 > **核心职责**: 提供自动化的API文档生成和管理，确保API文档与代码同步
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：API文档生成、API规范定义、API测试、API版本管理
 
@@ -231,7 +231,7 @@ class FactorRequest(BaseModel):
 
     )
 
-    
+
 
     class Config:
 
@@ -263,7 +263,7 @@ class FactorResponse(BaseModel):
 
     created_at: datetime = Field(..., description="创建时间")
 
-    
+
 
     class Config:
 
@@ -383,7 +383,7 @@ async def calculate_factors(request: FactorRequest):
 
     task_id = f"task_{datetime.now().timestamp()}"
 
-    
+
 
     return {
 
@@ -575,7 +575,7 @@ def custom_openapi():
 
         return app.openapi_schema
 
-    
+
 
     openapi_schema = get_openapi(
 
@@ -657,7 +657,7 @@ Authorization: Bearer <your_token>
 
     )
 
-    
+
 
     openapi_schema["info"]["x-logo"] = {
 
@@ -665,7 +665,7 @@ Authorization: Bearer <your_token>
 
     }
 
-    
+
 
     app.openapi_schema = openapi_schema
 
@@ -709,13 +709,13 @@ class APIDocGenerator:
 
     """API文档生成器"""
 
-    
+
 
     def __init__(self, openapi_spec: Dict[str, Any]):
 
         self.spec = openapi_spec
 
-    
+
 
     def generate_markdown_doc(self, output_path: str):
 
@@ -723,7 +723,7 @@ class APIDocGenerator:
 
         doc = []
 
-        
+
 
         doc.append(f"# {self.spec['info']['title']}\n")
 
@@ -731,11 +731,11 @@ class APIDocGenerator:
 
         doc.append(f"\n{self.spec['info'].get('description', '')}\n")
 
-        
+
 
         doc.append("\n## API端点\n")
 
-        
+
 
         for path, methods in self.spec['paths'].items():
 
@@ -749,13 +749,13 @@ class APIDocGenerator:
 
                     doc.append(f"**详细**: {details.get('description', 'N/A')}\n")
 
-        
+
 
         output_file = Path(output_path)
 
         output_file.write_text('\n'.join(doc), encoding='utf-8')
 
-    
+
 
     def generate_postman_collection(self, output_path: str):
 
@@ -775,7 +775,7 @@ class APIDocGenerator:
 
         }
 
-        
+
 
         for path, methods in self.spec['paths'].items():
 
@@ -809,13 +809,13 @@ class APIDocGenerator:
 
                     collection['item'].append(item)
 
-        
+
 
         output_file = Path(output_path)
 
         output_file.write_text(json.dumps(collection, indent=2), encoding='utf-8')
 
-    
+
 
     def generate_openapi_yaml(self, output_path: str):
 
@@ -825,7 +825,7 @@ class APIDocGenerator:
 
         output_file.write_text(yaml.dump(self.spec, allow_unicode=True), encoding='utf-8')
 
-    
+
 
     def validate_spec(self) -> List[str]:
 
@@ -833,13 +833,13 @@ class APIDocGenerator:
 
         errors = []
 
-        
+
 
         if 'openapi' not in self.spec:
 
             errors.append("缺少openapi版本字段")
 
-        
+
 
         if 'info' not in self.spec:
 
@@ -855,13 +855,13 @@ class APIDocGenerator:
 
                 errors.append("缺少info.version字段")
 
-        
+
 
         if 'paths' not in self.spec:
 
             errors.append("缺少paths字段")
 
-        
+
 
         return errors
 
@@ -873,7 +873,7 @@ class APIVersionManager:
 
     """API版本管理器"""
 
-    
+
 
     def __init__(self, versions_dir: str = "docs/api/versions"):
 
@@ -881,7 +881,7 @@ class APIVersionManager:
 
         self.versions_dir.mkdir(parents=True, exist_ok=True)
 
-    
+
 
     def save_version(self, version: str, spec: Dict[str, Any]):
 
@@ -891,7 +891,7 @@ class APIVersionManager:
 
         version_file.write_text(json.dumps(spec, indent=2), encoding='utf-8')
 
-    
+
 
     def load_version(self, version: str) -> Dict[str, Any]:
 
@@ -905,7 +905,7 @@ class APIVersionManager:
 
         return None
 
-    
+
 
     def list_versions(self) -> List[str]:
 
@@ -921,7 +921,7 @@ class APIVersionManager:
 
         return sorted(versions, reverse=True)
 
-    
+
 
     def compare_versions(
 
@@ -939,13 +939,13 @@ class APIVersionManager:
 
         spec2 = self.load_version(version2)
 
-        
+
 
         if not spec1 or not spec2:
 
             return {"error": "版本不存在"}
 
-        
+
 
         diff = {
 
@@ -965,19 +965,19 @@ class APIVersionManager:
 
         }
 
-        
+
 
         paths1 = set(spec1.get('paths', {}).keys())
 
         paths2 = set(spec2.get('paths', {}).keys())
 
-        
+
 
         diff["changes"]["added_paths"] = list(paths2 - paths1)
 
         diff["changes"]["removed_paths"] = list(paths1 - paths2)
 
-        
+
 
         common_paths = paths1 & paths2
 
@@ -987,7 +987,7 @@ class APIVersionManager:
 
                 diff["changes"]["modified_paths"].append(path)
 
-        
+
 
         return diff
 
@@ -1025,13 +1025,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    
+
 
     steps:
 
     - uses: actions/checkout@v4
 
-    
+
 
     - name: Set up Python
 
@@ -1041,7 +1041,7 @@ jobs:
 
         python-version: '3.10'
 
-    
+
 
     - name: Install dependencies
 
@@ -1051,19 +1051,19 @@ jobs:
 
         pip install fastapi uvicorn pyyaml
 
-    
+
 
     - name: Generate OpenAPI spec
 
       run: python scripts/generate_openapi.py
 
-    
+
 
     - name: Generate Markdown docs
 
       run: python scripts/generate_api_docs.py
 
-    
+
 
     - name: Deploy to GitHub Pages
 
@@ -1322,4 +1322,3 @@ DELETE /api/v1/factors/{id}     # 删除因子
 **最后更新**: 2026-04-07
 
 **状态**: Active
-

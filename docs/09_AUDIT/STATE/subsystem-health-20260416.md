@@ -1,12 +1,17 @@
-# Subsystem Health Report - 2026-04-16 05:05
+# Subsystem Health Report - 2026-04-16 17:57
 
 ## 摘要
 
-- 磁盘子目录总数: 19
-- Canonical（已登记活跃）: 18
-- Planned（规划中）: 1
-- 幽灵子系统（未登记）: 0
+- 磁盘子目录总数: 21
+- Canonical（已登记活跃）: 19
+- Planned（规划中）: 0
+- 幽灵子系统（未登记）: 2
 - 残留子系统（应已清理）: 0
+
+## 幽灵子系统（需立即在 subsystem-registry.yaml 中登记或清理）
+
+- `docs/06_ARCHIVE` (38 文件)  ← 功能域重叠: ['archive']
+- `docs/07_RESEARCH` (15 文件)  ← 功能域重叠: ['research']
 
 ## 建议行动
 

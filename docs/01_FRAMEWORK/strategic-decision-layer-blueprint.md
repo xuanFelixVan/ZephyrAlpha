@@ -35,7 +35,7 @@ layer: Layer 2 (Alpha因子层)
 
 # Layer 11: 战略决策层蓝图
 > **核心职责**: Strategic Decision Layer蓝图设计
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Strategic Decision Layer蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
@@ -117,54 +117,54 @@ class AssetAllocation:
 
 class AssetAllocationEngine:
     """资产配置决策引擎"""
-    
+
     def __init__(self, llm_client, optimizer):
         self.llm_client = llm_client
         self.optimizer = optimizer
-        
-    def make_strategic_allocation(self, 
+
+    def make_strategic_allocation(self,
                                   economic_regime: Dict,
                                   risk_budget: float,
                                   investment_horizon: int = 365) -> Dict:
         """制定战略资产配置"""
-        
+
         prompt = f"""
-        作为资产配置专家，请根据以下信息制定战略资产配置?        
+        作为资产配置专家，请根据以下信息制定战略资产配置?
         经济范式：{economic_regime}
         风险预算：{risk_budget}
-        投资期限：{investment_horizon}?        
+        投资期限：{investment_horizon}?
         请输出：
         1. 资产配置方案（股?债券/现金/商品比例?        2. 配置理由
         3. 风险评估
         4. 预期收益
         5. 调整建议
-        
+
         以JSON格式输出?        """
-        
+
         response = self.llm_client.generate(prompt)
         allocation_decision = self._parse_allocation(response)
-        
+
         optimized_allocation = self.optimizer.optimize(
             allocation_decision,
             method='risk_parity'
         )
-        
+
         return {
             'allocation': optimized_allocation,
             'decision': allocation_decision,
             'created_at': datetime.now()
         }
-    
-    def make_tactical_allocation(self, 
+
+    def make_tactical_allocation(self,
                                 strategic_allocation: Dict,
                                 market_conditions: Dict) -> Dict:
         """制定战术资产配置"""
-        
+
         tactical_adjustment = self._calculate_tactical_adjustment(
             strategic_allocation,
             market_conditions
         )
-        
+
         return {
             'strategic_allocation': strategic_allocation,
             'tactical_adjustment': tactical_adjustment,
@@ -174,29 +174,29 @@ class AssetAllocationEngine:
             ),
             'created_at': datetime.now()
         }
-    
-    def make_dynamic_allocation(self, 
+
+    def make_dynamic_allocation(self,
                                current_allocation: Dict,
                                market_event: Dict) -> Dict:
         """制定动态资产配?""
-        
+
         prompt = f"""
         作为资产配置专家，请根据市场事件动态调整资产配置：
-        
+
         当前配置：{current_allocation}
         市场事件：{market_event}
-        
+
         请输出：
         1. 调整方案
         2. 调整理由
         3. 风险评估
         4. 预期影响
-        
+
         以JSON格式输出?        """
-        
+
         response = self.llm_client.generate(prompt)
         dynamic_adjustment = self._parse_adjustment(response)
-        
+
         return {
             'current_allocation': current_allocation,
             'dynamic_adjustment': dynamic_adjustment,
@@ -217,59 +217,59 @@ class AssetAllocationEngine:
 ```python
 class EconomicRegimeDetector:
     """经济范式判断系统"""
-    
+
     def __init__(self, llm_client, hmm_model):
         self.llm_client = llm_client
         self.hmm_model = hmm_model
-        
-    def detect_economic_regime(self, 
+
+    def detect_economic_regime(self,
                               economic_data: pd.DataFrame) -> Dict:
         """识别经济周期"""
-        
+
         regime_probs = self.hmm_model.predict_proba(economic_data)
-        
+
         current_regime = self.hmm_model.predict(economic_data)
-        
+
         prompt = f"""
         作为经济分析师，请分析当前经济周期：
-        
+
         经济数据?        {economic_data.tail(20).to_string()}
-        
+
         HMM模型预测试        当前范式：{current_regime}
         范式概率：{regime_probs}
-        
+
         请输出：
         1. 经济周期判断（扩?衰退/复苏/滞胀?        2. 判断依据
         3. 持续时间预测
         4. 投资建议
-        
+
         以JSON格式输出?        """
-        
+
         response = self.llm_client.generate(prompt)
         regime_analysis = self._parse_regime(response)
-        
+
         return {
             'current_regime': current_regime,
             'regime_probs': regime_probs,
             'analysis': regime_analysis,
             'detected_at': datetime.now()
         }
-    
-    def detect_market_environment(self, 
+
+    def detect_market_environment(self,
                                  market_data: pd.DataFrame) -> Dict:
         """判断市场环境"""
-        
+
         trend = self._calculate_trend(market_data)
         volatility = self._calculate_volatility(market_data)
         momentum = self._calculate_momentum(market_data)
-        
+
         if trend > 0.02 and momentum > 0:
             environment = 'bull_market'
         elif trend < -0.02 and momentum < 0:
             environment = 'bear_market'
         else:
             environment = 'sideways_market'
-        
+
         return {
             'environment': environment,
             'trend': trend,
@@ -277,30 +277,30 @@ class EconomicRegimeDetector:
             'momentum': momentum,
             'detected_at': datetime.now()
         }
-    
-    def detect_style_rotation(self, 
+
+    def detect_style_rotation(self,
                              market_data: pd.DataFrame) -> Dict:
         """判断风格轮动"""
-        
+
         style_returns = self._calculate_style_returns(market_data)
-        
+
         dominant_style = max(style_returns, key=style_returns.get)
-        
+
         return {
             'dominant_style': dominant_style,
             'style_returns': style_returns,
             'detected_at': datetime.now()
         }
-    
-    def predict_regime_change(self, 
+
+    def predict_regime_change(self,
                              economic_data: pd.DataFrame,
                              threshold: float = 0.7) -> Dict:
         """预测范式转换"""
-        
+
         regime_probs = self.hmm_model.predict_proba(economic_data)
-        
+
         regime_change_prob = max(regime_probs)
-        
+
         if regime_change_prob > threshold:
             return {
                 'regime_change_predicted': True,
@@ -328,49 +328,49 @@ class EconomicRegimeDetector:
 ```python
 class RiskBudgetAllocator:
     """风险预算分配引擎"""
-    
+
     def __init__(self, llm_client):
         self.llm_client = llm_client
         self.total_risk_budget = 0.10  # 总风险预?0%
-        
-    def allocate_risk_budget(self, 
+
+    def allocate_risk_budget(self,
                             strategies: List[Dict],
                             total_budget: float) -> Dict:
         """分配风险预算"""
-        
+
         prompt = f"""
-        作为风险管理专家，请分配风险预算?        
+        作为风险管理专家，请分配风险预算?
         策略列表?        {strategies}
-        
+
         总风险预算：{total_budget}
-        
+
         请输出：
         1. 各策略风险预算分?        2. 分配理由
         3. 风险分散效果
         4. 调整建议
-        
+
         以JSON格式输出?        """
-        
+
         response = self.llm_client.generate(prompt)
         allocation = self._parse_allocation(response)
-        
+
         return {
             'total_budget': total_budget,
             'strategy_budgets': allocation,
             'allocated_at': datetime.now()
         }
-    
-    def adjust_risk_budget(self, 
+
+    def adjust_risk_budget(self,
                           current_allocation: Dict,
                           market_conditions: Dict) -> Dict:
         """动态调整风险预?""
-        
+
         adjustment_factor = self._calculate_adjustment_factor(market_conditions)
-        
+
         adjusted_allocation = {}
         for strategy, budget in current_allocation['strategy_budgets'].items():
             adjusted_allocation[strategy] = budget * adjustment_factor
-        
+
         return {
             'original_allocation': current_allocation,
             'adjustment_factor': adjustment_factor,
@@ -390,15 +390,15 @@ class RiskBudgetAllocator:
 ```python
 class StrategyEvaluationEngine:
     """策略评估引擎"""
-    
+
     def __init__(self, llm_client):
         self.llm_client = llm_client
-        
-    def evaluate_strategy_performance(self, 
+
+    def evaluate_strategy_performance(self,
                                      strategy: Dict,
                                      performance_data: pd.DataFrame) -> Dict:
         """评估策略绩效"""
-        
+
         metrics = {
             'total_return': performance_data['returns'].sum(),
             'annual_return': performance_data['returns'].mean() * 252,
@@ -407,26 +407,26 @@ class StrategyEvaluationEngine:
             'max_drawdown': self._calculate_max_drawdown(performance_data),
             'win_rate': self._calculate_win_rate(performance_data)
         }
-        
+
         return {
             'strategy': strategy,
             'metrics': metrics,
             'evaluated_at': datetime.now()
         }
-    
-    def evaluate_strategy_adaptability(self, 
+
+    def evaluate_strategy_adaptability(self,
                                       strategy: Dict,
                                       market_environments: List[Dict]) -> Dict:
         """评估策略适应?""
-        
+
         adaptability_scores = []
-        
+
         for env in market_environments:
             performance = self._get_strategy_performance_in_env(strategy, env)
             adaptability_scores.append(performance)
-        
+
         avg_adaptability = np.mean(adaptability_scores)
-        
+
         return {
             'strategy': strategy,
             'adaptability_scores': adaptability_scores,
@@ -447,23 +447,23 @@ class StrategyEvaluationEngine:
 ```python
 class StrategicAdjustmentEngine:
     """战略调整引擎"""
-    
+
     def __init__(self, llm_client):
         self.llm_client = llm_client
-        
-    def trigger_strategic_adjustment(self, 
+
+    def trigger_strategic_adjustment(self,
                                     current_strategy: Dict,
                                     market_event: Dict) -> Dict:
         """触发战略调整"""
-        
+
         adjustment_needed = self._check_adjustment_needed(market_event)
-        
+
         if adjustment_needed:
             adjustment_plan = self.generate_adjustment_plan(
                 current_strategy,
                 market_event
             )
-            
+
             return {
                 'adjustment_triggered': True,
                 'trigger_reason': market_event,
@@ -476,29 +476,29 @@ class StrategicAdjustmentEngine:
                 'reason': 'No adjustment needed',
                 'triggered_at': datetime.now()
             }
-    
-    def generate_adjustment_plan(self, 
+
+    def generate_adjustment_plan(self,
                                 current_strategy: Dict,
                                 market_event: Dict) -> Dict:
         """生成调整方案"""
-        
+
         prompt = f"""
-        作为战略调整专家，请根据市场事件生成战略调整方案?        
+        作为战略调整专家，请根据市场事件生成战略调整方案?
         当前策略：{current_strategy}
         市场事件：{market_event}
-        
+
         请输出：
         1. 调整方案（具体调整内容）
         2. 调整理由
         3. 预期影响
         4. 风险评估
         5. 实施步骤
-        
+
         以JSON格式输出?        """
-        
+
         response = self.llm_client.generate(prompt)
         adjustment_plan = self._parse_plan(response)
-        
+
         return {
             'plan': adjustment_plan,
             'generated_at': datetime.now()

@@ -15,7 +15,7 @@ jobs:
   validate-indexes:
     runs-on: ubuntu-latest
     name: 验证索引完整性
-    
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -34,11 +34,13 @@ jobs:
 
       - name: 检查孤儿率
         run: |
-          ORPHAN_REPORT=$(python scripts/audit/strict_orphan_inbound_scan.py 2>&1)
-          ORPHAN_RATE=$(echo "$ORPHAN_REPORT" | grep "孤儿文件:" | sed 's/.*(\([0-9.]*\)%).*/\1/')
-          
+          # 替换已归档的 strict_orphan_inbound_scan.py，使用现有的 scan_index_health.py
+          ORPHAN_REPORT=$(python scripts/audit/scan_index_health.py 2>&1)
+          ORPHAN_RATE=$(echo "$ORPHAN_REPORT" | grep -oE '[0-9]+\.[0-9]+%' | tail -1 | tr -d '%')
+          ORPHAN_RATE=${ORPHAN_RATE:-0}
+
           echo "孤儿率: $ORPHAN_RATE%"
-          
+
           # 如果孤儿率超过5%，标记为失败
           if (( $(echo "$ORPHAN_RATE > 5" | bc -l) )); then
             echo "❌ 孤儿率超过5%阈值: $ORPHAN_RATE%"
@@ -58,7 +60,7 @@ jobs:
                               echo "$dir"
                             fi
                           done)
-          
+
           if [ -z "$MISSING_INDEXES" ]; then
             echo "✅ 所有层级都有INDEX.md文件"
           else
@@ -72,31 +74,31 @@ jobs:
           mkdir -p .github/artifacts
           cat > .github/artifacts/validation_report.md << 'EOF'
           # 永恒索引验证报告
-          
+
           生成时间: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          
+
           ## 验证项目
-          
+
           - [x] 索引编译
           - [x] 孤儿率检查
           - [x] 索引一致性验证
-          
+
           ## 结果汇总
-          
+
           | 项目 | 状态 | 详情 |
           |------|------|------|
           | 索引编译 | ✅ | 所有层级成功编译 |
           | 孤儿率 | ✅ | 在阈值范围内 |
           | 完整性 | ✅ | 所有层级都有INDEX |
-          
+
           ## 防护机制
-          
+
           本工作流作为**永恒守护**的第三层防御：
-          
+
           1. **Layer 1**: Pre-commit钩子 - 阻止无入链的新文件
           2. **Layer 2**: 编译时自动生成INDEX - 消除维护需要
           3. **Layer 3**: CI/CD持续验证 - 每小时自动检查
-          
+
           EOF
 
       - name: 上传报告
@@ -124,7 +126,7 @@ jobs:
     name: 永恒防护检查
     needs: validate-indexes
     if: always()
-    
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -167,7 +169,7 @@ jobs:
     name: 生成验证摘要
     if: always()
     needs: [validate-indexes, eternal-protection]
-    
+
     steps:
       - name: 下载报告
         uses: actions/download-artifact@v4

@@ -170,7 +170,7 @@ class TextEncoder:
 
 
 
-    
+
 
 
 
@@ -198,7 +198,7 @@ class TextEncoder:
 
 
 
-        
+
 
 
 
@@ -216,7 +216,7 @@ class TextEncoder:
 
 
 
-    
+
 
 
 
@@ -240,7 +240,7 @@ class TextEncoder:
 
 
 
-        
+
 
 
 
@@ -252,7 +252,7 @@ class TextEncoder:
 
 
 
-            
+
 
 
 
@@ -270,7 +270,7 @@ class TextEncoder:
 
 
 
-    
+
 
 
 
@@ -296,7 +296,7 @@ class TextEncoder:
 
 
 
-        
+
 
 
 
@@ -308,7 +308,7 @@ class TextEncoder:
 
 
 
-            
+
 
 
 
@@ -565,4 +565,3 @@ jieba>=0.42.0
 
 
 ```
-

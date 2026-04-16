@@ -179,7 +179,7 @@ import redis
 
 class RealtimeRiskMonitor:
 
-    
+
 
     def __init__(self, redis_client: redis.Redis):
 
@@ -201,9 +201,9 @@ class RealtimeRiskMonitor:
 
         }
 
-        
 
-    def monitor(self, 
+
+    def monitor(self,
 
                 positions: Dict[str, float],
 
@@ -213,7 +213,7 @@ class RealtimeRiskMonitor:
 
         risk_status = {}
 
-        
+
 
         # 监控价格风险
 
@@ -221,7 +221,7 @@ class RealtimeRiskMonitor:
 
         risk_status['price_risk'] = price_risk
 
-        
+
 
         # 监控仓位风险
 
@@ -229,19 +229,19 @@ class RealtimeRiskMonitor:
 
         risk_status['position_risk'] = position_risk
 
-        
+
 
         liquidity_risk = self._monitor_liquidity_risk(market_data)
 
         risk_status['liquidity_risk'] = liquidity_risk
 
-        
+
 
         volatility_risk = self._monitor_volatility_risk(market_data)
 
         risk_status['volatility_risk'] = volatility_risk
 
-        
+
 
         # 综合风险评估
 
@@ -249,17 +249,17 @@ class RealtimeRiskMonitor:
 
         risk_status['overall_risk'] = overall_risk
 
-        
+
 
         # 存储到Redis
 
         self.redis.setex('risk_status', 60, str(risk_status))
 
-        
+
 
         return risk_status
 
-    
+
 
     def _monitor_price_risk(self,
 
@@ -283,13 +283,13 @@ class RealtimeRiskMonitor:
 
                 single_stock_losses[symbol] = loss
 
-        
+
 
         # 计算组合亏损
 
         portfolio_loss = np.mean(list(single_stock_losses.values()))
 
-        
+
 
         # 判断风险等级
 
@@ -303,7 +303,7 @@ class RealtimeRiskMonitor:
 
             risk_level = 'MEDIUM'
 
-        
+
 
         return {
 
@@ -315,7 +315,7 @@ class RealtimeRiskMonitor:
 
         }
 
-    
+
 
     def _monitor_position_risk(self, positions: Dict[str, float]) -> Dict[str, Any]:
 
@@ -331,11 +331,11 @@ class RealtimeRiskMonitor:
 
         }
 
-        
+
 
         total_position = sum(single_stock_positions.values())
 
-        
+
 
         # 判断风险等级
 
@@ -349,7 +349,7 @@ class RealtimeRiskMonitor:
 
             risk_level = 'MEDIUM'
 
-        
+
 
         return {
 
@@ -361,7 +361,7 @@ class RealtimeRiskMonitor:
 
         }
 
-    
+
 
     def _monitor_liquidity_risk(self, market_data: pd.DataFrame) -> Dict[str, Any]:
 
@@ -371,7 +371,7 @@ class RealtimeRiskMonitor:
 
         volume_ratio = current_volume / volume_ma.iloc[-1]
 
-        
+
 
         # 判断风险等级
 
@@ -385,7 +385,7 @@ class RealtimeRiskMonitor:
 
             risk_level = 'MEDIUM'
 
-        
+
 
         return {
 
@@ -395,7 +395,7 @@ class RealtimeRiskMonitor:
 
         }
 
-    
+
 
     def _monitor_volatility_risk(self, market_data: pd.DataFrame) -> Dict[str, Any]:
 
@@ -403,7 +403,7 @@ class RealtimeRiskMonitor:
 
         volatility = returns.rolling(20).std() * np.sqrt(252 * 240)
 
-        
+
 
         # 计算波动率Z-Score
 
@@ -415,7 +415,7 @@ class RealtimeRiskMonitor:
 
         vol_z_score = (current_vol - vol_ma) / vol_std
 
-        
+
 
         # 判断风险等级
 
@@ -429,7 +429,7 @@ class RealtimeRiskMonitor:
 
             risk_level = 'MEDIUM'
 
-        
+
 
         return {
 
@@ -441,7 +441,7 @@ class RealtimeRiskMonitor:
 
         }
 
-    
+
 
     def _calculate_overall_risk(self, risk_status: Dict[str, Any]) -> Dict[str, Any]:
 
@@ -449,7 +449,7 @@ class RealtimeRiskMonitor:
 
         risk_levels = [r['risk_level'] for r in risk_status.values()]
 
-        
+
 
         # 综合风险等级
 
@@ -465,7 +465,7 @@ class RealtimeRiskMonitor:
 
             overall_level = 'LOW'
 
-        
+
 
         # 风险评分
 
@@ -477,7 +477,7 @@ class RealtimeRiskMonitor:
 
         risk_score = risk_score / len(risk_levels)
 
-        
+
 
         return {
 
@@ -497,19 +497,19 @@ class RealtimeRiskMonitor:
 
 class RiskAlerter:
 
-    
+
 
     def __init__(self):
 
         self.alert_channels = []
 
-        
+
 
     def check_and_alert(self, risk_status: Dict[str, Any]) -> List[Dict[str, Any]]:
 
         alerts = []
 
-        
+
 
         if risk_status['price_risk']['risk_level'] == 'HIGH':
 
@@ -525,7 +525,7 @@ class RiskAlerter:
 
             })
 
-        
+
 
         if risk_status['position_risk']['risk_level'] == 'HIGH':
 
@@ -541,7 +541,7 @@ class RiskAlerter:
 
             })
 
-        
+
 
         if risk_status['liquidity_risk']['risk_level'] == 'HIGH':
 
@@ -557,7 +557,7 @@ class RiskAlerter:
 
             })
 
-        
+
 
         # 检查波动率风险
 
@@ -575,17 +575,17 @@ class RiskAlerter:
 
             })
 
-        
+
 
         for alert in alerts:
 
             self._send_alert(alert)
 
-        
+
 
         return alerts
 
-    
+
 
     def _send_alert(self, alert: Dict[str, Any]) -> None:
 
@@ -603,7 +603,7 @@ class RiskAlerter:
 
 class RiskHandler:
 
-    
+
 
     def __init__(self, order_executor):
 
@@ -621,7 +621,7 @@ class RiskHandler:
 
         }
 
-        
+
 
     def handle(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
 
@@ -629,13 +629,13 @@ class RiskHandler:
 
         alert_type = alert['alert_type']
 
-        
+
 
         if alert_type in self.handlers:
 
             self.handlersalert_type
 
-    
+
 
     def _handle_price_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
 
@@ -649,7 +649,7 @@ class RiskHandler:
 
             self.order_executor.sell(symbol, reduce_amount)
 
-    
+
 
     def _handle_position_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
 
@@ -657,7 +657,7 @@ class RiskHandler:
 
         self.order_executor.set_max_position(0.90)
 
-    
+
 
     def _handle_liquidity_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
 
@@ -665,7 +665,7 @@ class RiskHandler:
 
         self.order_executor.pause()
 
-    
+
 
     def _handle_volatility_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
 
@@ -725,7 +725,7 @@ risk_thresholds:
 
       action: "reduce_position_50%"
 
-      
+
 
     portfolio_loss:
 
@@ -735,7 +735,7 @@ risk_thresholds:
 
       action: "close_all_positions"
 
-      
+
 
     daily_max_loss:
 
@@ -745,7 +745,7 @@ risk_thresholds:
 
       action: "pause_trading"
 
-      
+
 
   position_risk:
 
@@ -757,7 +757,7 @@ risk_thresholds:
 
       action: "limit_open"
 
-      
+
 
     total_position:
 
@@ -767,7 +767,7 @@ risk_thresholds:
 
       action: "limit_open"
 
-      
+
 
     sector_position:
 
@@ -777,7 +777,7 @@ risk_thresholds:
 
       action: "limit_open"
 
-      
+
 
   liquidity_risk:
 
@@ -789,7 +789,7 @@ risk_thresholds:
 
       action: "pause_trading"
 
-      
+
 
     turnover_anomaly:
 
@@ -799,7 +799,7 @@ risk_thresholds:
 
       action: "alert"
 
-      
+
 
   volatility_risk:
 
@@ -811,7 +811,7 @@ risk_thresholds:
 
       action: "reduce_position_30%"
 
-      
+
 
     correlation_spike:
 
@@ -849,7 +849,7 @@ risk_thresholds:
 
 class RiskActionExecutor:
 
-    
+
 
     def __init__(self, order_manager, position_manager):
 
@@ -873,7 +873,7 @@ class RiskActionExecutor:
 
         }
 
-    
+
 
     def execute(self, action: str, context: Dict[str, Any]) -> bool:
 
@@ -885,7 +885,7 @@ class RiskActionExecutor:
 
         return False
 
-    
+
 
     def _reduce_position_50(self, context: Dict[str, Any]) -> bool:
 
@@ -899,7 +899,7 @@ class RiskActionExecutor:
 
         return self.order_manager.sell(symbol, reduce_quantity)
 
-    
+
 
     def _reduce_position_30(self, context: Dict[str, Any]) -> bool:
 
@@ -913,7 +913,7 @@ class RiskActionExecutor:
 
         return True
 
-    
+
 
     def _close_all_positions(self, context: Dict[str, Any]) -> bool:
 
@@ -925,7 +925,7 @@ class RiskActionExecutor:
 
         return True
 
-    
+
 
     def _limit_open(self, context: Dict[str, Any]) -> bool:
 
@@ -933,7 +933,7 @@ class RiskActionExecutor:
 
         return True
 
-    
+
 
     def _pause_trading(self, context: Dict[str, Any]) -> bool:
 
@@ -943,7 +943,7 @@ class RiskActionExecutor:
 
         return True
 
-    
+
 
     def _send_alert(self, context: Dict[str, Any]) -> bool:
 
@@ -973,7 +973,7 @@ class RiskActionExecutor:
 
 class RiskMetricsCalculator:
 
-    
+
 
     def calculate_price_risk_metrics(
 
@@ -989,11 +989,11 @@ class RiskMetricsCalculator:
 
         metrics = {}
 
-        
+
 
         total_value = sum(p.market_value for p in positions.values())
 
-        
+
 
         single_stock_losses = {}
 
@@ -1007,7 +1007,7 @@ class RiskMetricsCalculator:
 
                 single_stock_losses[symbol] = loss
 
-        
+
 
         metrics["single_stock_losses"] = single_stock_losses
 
@@ -1021,11 +1021,11 @@ class RiskMetricsCalculator:
 
         )
 
-        
+
 
         return metrics
 
-    
+
 
     def calculate_position_risk_metrics(
 
@@ -1039,11 +1039,11 @@ class RiskMetricsCalculator:
 
         metrics = {}
 
-        
+
 
         total_value = sum(p.market_value for p in positions.values())
 
-        
+
 
         single_positions = {
 
@@ -1053,7 +1053,7 @@ class RiskMetricsCalculator:
 
         }
 
-        
+
 
         metrics["single_positions"] = single_positions
 
@@ -1061,11 +1061,11 @@ class RiskMetricsCalculator:
 
         metrics["total_position"] = sum(single_positions.values())
 
-        
+
 
         return metrics
 
-    
+
 
     def calculate_liquidity_risk_metrics(
 
@@ -1077,17 +1077,17 @@ class RiskMetricsCalculator:
 
         metrics = {}
 
-        
+
 
         volume_ma = market_data["volume"].rolling(20).mean()
 
         current_volume = market_data["volume"].iloc[-1]
 
-        
+
 
         metrics["volume_ratio"] = current_volume / volume_ma.iloc[-1]
 
-        
+
 
         turnover = market_data["volume"] / market_data["shares_outstanding"]
 
@@ -1095,7 +1095,7 @@ class RiskMetricsCalculator:
 
         turnover_std = turnover.rolling(20).std()
 
-        
+
 
         metrics["turnover_zscore"] = (
 
@@ -1103,11 +1103,11 @@ class RiskMetricsCalculator:
 
         ) / turnover_std.iloc[-1]
 
-        
+
 
         return metrics
 
-    
+
 
     def calculate_volatility_risk_metrics(
 
@@ -1119,35 +1119,35 @@ class RiskMetricsCalculator:
 
         metrics = {}
 
-        
+
 
         returns = market_data["close"].pct_change()
 
         volatility = returns.rolling(20).std() * np.sqrt(252 * 240)
 
-        
+
 
         vol_ma = volatility.mean()
 
         vol_std = volatility.std()
 
-        
+
 
         metrics["volatility"] = volatility.iloc[-1]
 
         metrics["vol_zscore"] = (volatility.iloc[-1] - vol_ma) / vol_std
 
-        
+
 
         returns_df = market_data.pct_change()
 
         correlation_matrix = returns_df.rolling(20).corr()
 
-        
+
 
         metrics["max_correlation"] = correlation_matrix.max().max()
 
-        
+
 
         return metrics
 
@@ -1366,10 +1366,3 @@ class RiskMetricsCalculator:
 
 
 - 风控口径与阈值需要与资金/合规统一；实施阶段需在契约真源或子契约中固化默认阈值、配置项与回滚策略。
-
-
-
-
-
-
-

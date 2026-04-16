@@ -27,3 +27,6 @@ priority: P0
 ## 快速链接：09_AUDIT/STANDARDS 中的完整标准列表
 
 详见 `docs/09_AUDIT/STANDARDS/INDEX.md`（34 个治理标准文档）
+
+<!-- orphan-link -->
+- [folder-charter-template](folder-charter-template.md)

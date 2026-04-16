@@ -44,7 +44,7 @@ layer: layer_08
 
 > **核心职责**: 自然语言交互界面设计和实现
 
-> **职责边界**: 
+> **职责边界**:
 
 > - ✅ 本文档负责：自然语言交互界面相关内容
 
@@ -54,13 +54,13 @@ layer: layer_08
 
 
 
-> **版本**: v1.0  
+> **版本**: v1.0
 
-> **创建日期**: 2026-04-07  
+> **创建日期**: 2026-04-07
 
-> **Layer**: Layer 8 - 人机交互层  
+> **Layer**: Layer 8 - 人机交互层
 
-> **实施周期**: 1周  
+> **实施周期**: 1周
 
 > **实施优先级**: P1重要模块
 
@@ -438,7 +438,7 @@ class DialogState:
 
     created_at: datetime = field(default_factory=datetime.now)
 
-    
+
 
     def update_slot(self, slot_name: str, slot_value: Any):
 
@@ -458,7 +458,7 @@ class DialogState:
 
         })
 
-    
+
 
     def is_slot_filled(self, slot_name: str) -> bool:
 
@@ -466,7 +466,7 @@ class DialogState:
 
         return slot_name in self.slots and self.slots[slot_name] is not None
 
-    
+
 
     def get_missing_slots(self, required_slots: List[str]) -> List[str]:
 
@@ -518,7 +518,7 @@ class DialogPolicy:
 
         }
 
-    
+
 
     def decide_action(self, state: DialogState) -> ActionType:
 
@@ -528,11 +528,11 @@ class DialogPolicy:
 
             return ActionType.CLARIFY
 
-        
+
 
         intent_name = state.current_intent.intent_type.value
 
-        
+
 
         # 检查是否有缺失的槽位
 
@@ -548,7 +548,7 @@ class DialogPolicy:
 
                 return ActionType.CLARIFY
 
-        
+
 
         # 高风险操作需要确认
 
@@ -556,7 +556,7 @@ class DialogPolicy:
 
             return ActionType.CONFIRM
 
-        
+
 
         # 低风险操作直接执行
 
@@ -600,7 +600,7 @@ class TradingAgent:
 
         self.agent = self._create_agent()
 
-    
+
 
     def _create_tools(self) -> List[Tool]:
 
@@ -652,7 +652,7 @@ class TradingAgent:
 
         return tools
 
-    
+
 
     def _create_agent(self) -> AgentExecutor:
 
@@ -660,7 +660,7 @@ class TradingAgent:
 
         from langchain.agents import initialize_agent
 
-        
+
 
         agent = initialize_agent(
 
@@ -676,7 +676,7 @@ class TradingAgent:
 
         return agent
 
-    
+
 
     def execute(self, intent: Intent, slots: dict) -> dict:
 
@@ -692,23 +692,23 @@ class TradingAgent:
 
                 return self._query_performance(slots)
 
-        
+
 
         elif intent.intent_type == IntentType.OPERATION:
 
             return self._execute_trade(slots)
 
-        
+
 
         elif intent.intent_type == IntentType.ANALYSIS:
 
             return self._analyze_attribution(slots)
 
-        
+
 
         return {"status": "unknown_intent"}
 
-    
+
 
     def _query_portfolio(self, slots: dict) -> dict:
 
@@ -730,7 +730,7 @@ class TradingAgent:
 
         }
 
-    
+
 
     def _query_performance(self, slots: dict) -> dict:
 
@@ -754,7 +754,7 @@ class TradingAgent:
 
         }
 
-    
+
 
     def _execute_trade(self, slots: dict) -> dict:
 
@@ -778,7 +778,7 @@ class TradingAgent:
 
         }
 
-    
+
 
     def _analyze_attribution(self, slots: dict) -> dict:
 
@@ -836,7 +836,7 @@ class ResponseGenerator:
 
         self.templates = self._create_templates()
 
-    
+
 
     def _create_templates(self) -> Dict[str, PromptTemplate]:
 
@@ -850,11 +850,11 @@ class ResponseGenerator:
 
                 根据以下持仓数据，生成自然语言回复：
 
-                
+
 
                 持仓数据：{portfolio_data}
 
-                
+
 
                 请用简洁、专业的语言描述当前持仓情况，包括：
 
@@ -864,7 +864,7 @@ class ResponseGenerator:
 
                 3. 持仓分布
 
-                
+
 
                 回复：
 
@@ -880,11 +880,11 @@ class ResponseGenerator:
 
                 根据以下收益数据，生成自然语言回复：
 
-                
+
 
                 收益数据：{performance_data}
 
-                
+
 
                 请用简洁、专业的语言描述收益表现，包括：
 
@@ -894,7 +894,7 @@ class ResponseGenerator:
 
                 3. 最大回撤
 
-                
+
 
                 回复：
 
@@ -908,7 +908,7 @@ class ResponseGenerator:
 
         return templates
 
-    
+
 
     def generate(self, result_type: str, data: dict) -> str:
 
@@ -1076,7 +1076,7 @@ nlu:
 
       - 查看我的股票
 
-      
+
 
   - intent: buy_stock
 
@@ -1088,7 +1088,7 @@ nlu:
 
       - 我想买苹果
 
-      
+
 
   - intent: query_performance
 
@@ -1264,13 +1264,12 @@ result = agent.run("查询我的持仓")
 
 
 
-**蓝图完成日期**: 2026-04-07  
+**蓝图完成日期**: 2026-04-07
 
-**实施周期**: 1周  
+**实施周期**: 1周
 
-**开源替代率**: 85%+ ✅  
+**开源替代率**: 85%+ ✅
 
-**个人适用性**: ⭐⭐⭐⭐⭐ ✅  
+**个人适用性**: ⭐⭐⭐⭐⭐ ✅
 
 **下一步**: 开始实施
-

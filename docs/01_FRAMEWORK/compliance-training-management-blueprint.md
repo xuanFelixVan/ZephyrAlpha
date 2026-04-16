@@ -147,7 +147,7 @@ class ComplianceTrainingInterface:
 
         pass
 
-    
+
 
     def track_progress(self, user_id: str, course_id: str) -> ProgressReport:
 
@@ -155,7 +155,7 @@ class ComplianceTrainingInterface:
 
         pass
 
-    
+
 
     def conduct_exam(self, exam: Exam) -> ExamResult:
 
@@ -163,7 +163,7 @@ class ComplianceTrainingInterface:
 
         pass
 
-    
+
 
     def issue_certification(self, user_id: str, certification: Certification) -> CertificationRecord:
 
@@ -171,7 +171,7 @@ class ComplianceTrainingInterface:
 
         pass
 
-    
+
 
     def generate_training_report(self, period: str) -> TrainingReport:
 
@@ -325,13 +325,13 @@ class TrainingTracking:
 
         completed_modules = self.get_completed_modules(user_id, course_id)
 
-        
+
 
         progress_percentage = len(completed_modules) / len(course.modules) * 100
 
         time_spent = self.calculate_time_spent(user_id, course_id)
 
-        
+
 
         return ProgressReport(
 
@@ -367,7 +367,7 @@ class ExamAssessment:
 
         total_questions = len(exam.questions)
 
-        
+
 
         for question in exam.questions:
 
@@ -375,13 +375,13 @@ class ExamAssessment:
 
                 correct_answers += 1
 
-        
+
 
         score = (correct_answers / total_questions) * 100
 
         passed = score >= exam.passing_score
 
-        
+
 
         return ExamResult(
 
@@ -473,7 +473,7 @@ class Course:
 
     passing_score: int
 
-    
+
 
 @dataclass
 
@@ -489,7 +489,7 @@ class ProgressReport:
 
     time_spent: int
 
-    
+
 
 @dataclass
 
@@ -505,7 +505,7 @@ class Exam:
 
     time_limit: int
 
-    
+
 
 @dataclass
 
@@ -911,11 +911,10 @@ create_user($user);
 
 
 
-**文档版本**: v1.0  
+**文档版本**: v1.0
 
-**最后更新**: 2026-04-07  
+**最后更新**: 2026-04-07
 
-**下次审核**: 2026-05-07  
+**下次审核**: 2026-05-07
 
 **负责人**: 首席架构师
-

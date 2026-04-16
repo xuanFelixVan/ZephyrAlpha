@@ -17,7 +17,7 @@ layer: layer_08
 
 
 
-> **职责边界**: 
+> **职责边界**:
 
 
 
@@ -225,7 +225,7 @@ class LiquidityConstrainedOptimizer:
 
     """
 
-    
+
 
     def calculate_liquidity_score(
 
@@ -241,7 +241,7 @@ class LiquidityConstrainedOptimizer:
 
         """
 
-        
+
 
         综合成交量、买卖价差、市值等因素
 
@@ -249,7 +249,7 @@ class LiquidityConstrainedOptimizer:
 
         pass
 
-    
+
 
     def set_liquidity_constraint(
 
@@ -265,7 +265,7 @@ class LiquidityConstrainedOptimizer:
 
         """
 
-        
+
 
 ?
 
@@ -273,7 +273,7 @@ class LiquidityConstrainedOptimizer:
 
         pass
 
-    
+
 
     def optimize_with_liquidity(
 
@@ -297,7 +297,7 @@ class LiquidityConstrainedOptimizer:
 
         pass
 
-    
+
 
     def generate_execution_plan(
 
@@ -343,13 +343,13 @@ liquidity_constrained_optimization:
 
     market_cap_weight: 0.3
 
-    
+
 
   constraints:
 
     max_days_to_liquidate: 5
 
-    
+
 
   # 执行计划
 
@@ -428,8 +428,3 @@ liquidity_constrained_optimization:
 |------|------|----------|--------|
 
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
-
-
-
-
-

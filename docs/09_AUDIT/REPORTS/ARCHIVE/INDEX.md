@@ -17,14 +17,14 @@ compliance_level: 专业标准
 
 ### 导航与上级入口
 
-- **本目录门面（短说明）**：~~[./README.md]~~  
-- **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260414.md（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 `20260412`  
-- **STATE 前缀健全性（另一份机器报告 · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260416.md（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 `20260413`（勿与上条 REPORTS `20260412/14` 混读）  
-- **STATE 子域索引**：~~[../STATE/INDEX.md]~~  
-- **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md  
-- **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md  
-- **L1 治理快照（20260408）**：../STATE/SENTINEL_L1_SCAN_20260408.md  
-- **审计域总索引**：[../INDEX.md](../INDEX.md)  
+- **本目录门面（短说明）**：~~[./README.md]~~
+- **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260414.md（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 `20260412`
+- **STATE 前缀健全性（另一份机器报告 · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260416.md（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 `20260413`（勿与上条 REPORTS `20260412/14` 混读）
+- **STATE 子域索引**：~~[../STATE/INDEX.md]~~
+- **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md
+- **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
+- **L1 治理快照（20260408）**：../STATE/SENTINEL_L1_SCAN_20260408.md
+- **审计域总索引**：[../INDEX.md](../INDEX.md)
 - **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
 ### 统计信息
