@@ -90,6 +90,7 @@ layer: cross_layer
 | `check_tdr_propagation.py` | TDR 变更时要求联动文件同批暂存 | `tech-decision-record-standard.md` |
 | `check_standards_index_registration.py` | STANDARDS 目录新增文件须在 INDEX.md 登记 | 标准登记政策 |
 | `pre-commit-governance-check.py` | 调用 Sentinel 执行 L1 健康快照 | 全库治理基线 |
+| `check_directory_budget.py` | **Write Gate 写入门禁**：检查 staged 新增文件所在目录是否超出预算上限（`docs/09_AUDIT/STATE/DAILY/` ≤10 等），并拦截含 `-v2`/`-v3`/`-round2` 的版本号文件名 | Write Gate Layer 2（2026-04-16） |
 
 ---
 

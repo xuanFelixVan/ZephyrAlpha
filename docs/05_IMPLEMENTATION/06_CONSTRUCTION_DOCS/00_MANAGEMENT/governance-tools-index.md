@@ -78,6 +78,27 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 更完整的脚本说明（含非治理类）见 [`scripts/README.md`](../../../../scripts/README.md)。
 
+### 1b. 写入门禁（Write Gate）钩子
+
+> **新增于 2026-04-16**。以下钩子属于反垃圾体系的 Layer 2，在 `git commit` 时自动拦截写入违规。
+
+| 钩子脚本 | 检查项 | 配置 |
+|---------|--------|------|
+| `scripts/hooks/check_directory_budget.py` | 目录文件数预算门禁（staged 新增文件所在目录超限则拒绝提交）+ 文件名版本号检查（`-v2`/`-round2` 等） | `.pre-commit-config.yaml` → `check-directory-budget` |
+
+**目录上限速查（完整配置在脚本 `BUDGETS` 字典中）**：
+
+| 目录 | 上限 | 说明 |
+|------|------|------|
+| `docs/09_AUDIT/STATE/DAILY/` | 10 | 仅保留 LATEST，覆盖写入 |
+| `docs/09_AUDIT/STATE/SESSION_LOGS/` | 60 | Session 完毕后定期清理 |
+| `docs/09_AUDIT/STATE/`（根级） | 60 | — |
+| `docs/09_AUDIT/REPORTS/ARCHIVE/` | 30 | 流水线清理后稳态上限 |
+| `docs/09_AUDIT/REPORTS/INCIDENT/` | 20 | 事故报告保留最近 20 份 |
+
+**禁止的文件名模式**：`-v2.md`、`_v3.json`、`-round2_fix`、`-final-...-final`。
+违规文件名应删去版本号后缀，用 `git log` 查历史版本。
+
 
 
 ```
@@ -166,6 +187,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 |------|------|------|
 
+| 1.3.0 | 2026-04-16 | 新增 §1b 写入门禁（Write Gate）钩子章节：`check_directory_budget.py` 目录预算 + 文件名版本号拦截 |
 | 1.2.8 | 2026-04-11 | 文首块增 **§0.1.4 / §0.2** 与 REPO_WIDE **§7.2 末**（两条线 + STATE 分提交） |
 
 | 1.2.6 | 2026-04-11 | 文首块互指 AI 交接 **§0.1**、REPO_WIDE **§1.2**、文档编码标准 |

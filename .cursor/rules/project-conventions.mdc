@@ -218,6 +218,43 @@ moved: old/path.md -> new/path.md | reason: 一句话理由
 
 ---
 
+## 写入门禁（Write Gate）— Cursor 必须遵守
+
+> 以下规则由 `scripts/hooks/check_directory_budget.py` 在 pre-commit 层强制执行，**Cursor AI 在写入前就必须自觉遵守**，不得依赖 hook 来发现违规。
+
+### 写入预算（硬限制）
+
+| 约束 | 规则 |
+|------|------|
+| 单次 session 新建文件数 | **≤ 5 个**（不含 SESSION_LOG 和流水线批量操作） |
+| 文件名禁止带版本号 | **禁止** `-v2`、`-v3`、`-round2`、`_v2` 等后缀；用 `git log` 查历史版本 |
+| 状态文件写入方式 | **必须覆盖写入**（LATEST 模式）；禁止按日期新建文件（例：`SENTINEL_L1_SCAN_LATEST.json`） |
+| AI 生成产物写入位置 | **必须写入 `.audit_cache/`**（已 gitignored）；禁止写入 `docs/09_AUDIT/REPORTS/ARCHIVE/` 等受版本控制目录 |
+| AI 生成文件 frontmatter | 必须包含 `type: generated` 和 `ttl: 7d\|30d\|permanent` |
+
+### 目录文件数硬上限（pre-commit 门禁阈值）
+
+| 目录 | 上限 |
+|------|------|
+| `docs/09_AUDIT/STATE/DAILY/` | 10 个 |
+| `docs/09_AUDIT/STATE/SESSION_LOGS/` | 60 个 |
+| `docs/09_AUDIT/STATE/`（根级） | 60 个 |
+| `docs/09_AUDIT/REPORTS/ARCHIVE/` | 30 个 |
+| `docs/09_AUDIT/REPORTS/INCIDENT/` | 20 个 |
+
+**超出上限时提交会被自动拒绝，必须先清理旧文件再提交新内容。**
+
+### 绝对禁止行为（Write Gate 层）
+
+| 禁止行为 | 原因 |
+|---------|------|
+| 文件名加版本号（`-v2`/`-v3`/`-round2`） | git 已提供历史，文件名版本号纯粹制造垃圾 |
+| 批量扫描结果直接写入 `docs/` | 扫描产物必须写入 `.audit_cache/`（已 gitignored） |
+| 每日新建状态快照文件 | 必须覆盖 LATEST 文件，历史靠 `git log` 查询 |
+| 单次 session 新建 >5 个文件 | 超出写入预算，必须先删等量旧文件再建新文件 |
+
+---
+
 ## Git 操作规范
 
 - 不使用 `git add -A` 或 `git add .`，始终精确指定路径
