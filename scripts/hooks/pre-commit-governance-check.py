@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Pre-commit hook: 自动运行 sentinel_l1_governance_scan
@@ -16,7 +16,7 @@ if sys.platform == "win32":
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SENTINEL_SCRIPT = REPO_ROOT / "scripts" / "audit" / "sentinel_l1_governance_scan.py"
-L1_STATE = REPO_ROOT / "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_LATEST.json"
+L1_STATE = REPO_ROOT / "docs/09_AUDIT/STATE/sentinel-l1-scan-latest.json"
 
 def check_governance_health():
     """运行扫描并检查健康度"""

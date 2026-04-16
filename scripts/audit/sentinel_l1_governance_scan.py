@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Sentinel L1：全库 md 链接可达性 + module_id 重复扫描（只读），输出到 docs/09_AUDIT/STATE/
 
@@ -33,7 +33,7 @@ LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)
 MAX_DETAIL = 20000  # 扩容至全量（Phase 2 需完整断链列表供 fix_dead_links.py 消费）
 # 本脚本覆写的 Markdown 报告：本轮扫描读到的仍是旧稿，勿计入「无 module_id」以免自指为 1
-L1_REPORT_MD_REL = "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_LATEST.md"
+L1_REPORT_MD_REL = "docs/09_AUDIT/STATE/sentinel-l1-scan-latest.md"
 
 
 def split_first_front_matter(raw: str) -> tuple[str, str, str] | None:
@@ -229,13 +229,13 @@ def main() -> None:
         "module_ids": scan_module_ids(all_files),
         "path_depth": path_depth_stats(all_files),
     }
-    json_path = out_dir / "SENTINEL_L1_SCAN_LATEST.json"
+    json_path = out_dir / "sentinel-l1-scan-latest.json"
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     s = payload["links"]["stats"]
     md_lines = [
         "---",
-        "module_id: AUDIT_SENTINEL_L1_SCAN_LATEST",
+        "module_id: AUDIT_sentinel-l1-scan-latest",
         "standard_type: audit_state",
         "generated_by: scripts/governance/sentinel_l1_governance_scan.py",
         "---",
@@ -283,8 +283,8 @@ def main() -> None:
     for item in payload["path_depth"]["deepest_30"][:10]:
         md_lines.append(f"- depth={item['depth']} `{item['path']}`")
 
-    (out_dir / "SENTINEL_L1_SCAN_LATEST.md").write_text("\n".join(md_lines), encoding="utf-8")
-    print(f"Wrote {json_path} and SENTINEL_L1_SCAN_LATEST.md")
+    (out_dir / "sentinel-l1-scan-latest.md").write_text("\n".join(md_lines), encoding="utf-8")
+    print(f"Wrote {json_path} and sentinel-l1-scan-latest.md")
 
 
 if __name__ == "__main__":

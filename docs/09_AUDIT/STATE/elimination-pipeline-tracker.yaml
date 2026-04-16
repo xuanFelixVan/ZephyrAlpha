@@ -277,7 +277,7 @@ blueprint_safety_pipeline:
     estimated_files: 163
     strategy: "比较两处副本 → 保留最完整版 → 修正 frontmatter → 迁移到 03_BLUEPRINTS → 删除副本"
     status: in_progress
-    files_processed: 72
+    files_processed: 81
     files_deduplicated: 10
     files_migrated: 0
     started_date: "2026-04-16"
@@ -328,6 +328,11 @@ blueprint_safety_pipeline:
         files_archived: 0
         files_deduplicated: 0
         notes: "扫描8组潜在重叠(Alpha因子/机器学习/数据预处理/战略决策/治理合规/研究创新/舆情分析)，评估12个文件全部功能互补，无重复文件需要归档"
+      - session_id: "2026-04-16-016"
+        date: "2026-04-16"
+        files_archived: 0
+        files_deduplicated: 0
+        notes: "扫描3组潜在重叠(模型管理/MLOps实验追踪/CI-CD)，评估9个文件全部功能互补或无对应文件，无重复文件需要归档"
     notes: "与文件消除流水线 Wave 6 同步执行"
 
   bp_wave_3:
@@ -488,6 +493,15 @@ sessions:
     knowledge_extracted: 0
     notes: "BP Wave 2 Session 015: 扫描8组潜在重叠(Alpha因子/机器学习/数据预处理/战略决策/治理合规/研究创新/舆情分析)，评估12个文件全部功能互补，无重复文件"
     session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-015.md"
+  - session_id: "2026-04-16-016"
+    date: "2026-04-16"
+    pipeline: "blueprint_safety"
+    wave: "bp_wave_2"
+    files_processed: 9
+    files_archived: 0
+    knowledge_extracted: 0
+    notes: "BP Wave 2 Session 016: 扫描3组潜在重叠(模型管理/MLOps实验追踪/CI-CD)，评估9个文件全部功能互补或无对应文件，无重复文件"
+    session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-016.md"
 
 # ============================================================
 # 流水线 C：Git 历史知识挖掘流水线（Git History Mining Pipeline）
