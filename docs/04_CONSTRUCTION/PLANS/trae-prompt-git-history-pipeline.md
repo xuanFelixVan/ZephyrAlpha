@@ -244,3 +244,11 @@ git commit -m "feat(knowledge): GH-Wave-X extract KE-{起始}~KE-{结束} from g
 2. **跳过策略**：对 scan_artifact 类文件不需要打开内容，仅凭文件名（含 openclaw-l2、deep-audit、audit-report-* 等）即可判断跳过。
 3. **断点续接**：`last_processed_index` 字段确保每次 session 不重复处理。每次 session 开始前必须读取该值。
 4. **编码安全**：写入知识条目文件时，必须使用 Python `open(path, 'w', encoding='utf-8')` 或 PowerShell `[System.IO.File]::WriteAllText(path, content, [System.Text.UTF8Encoding]::new($false))`，禁止使用默认编码。
+
+**⚠️ pre-commit hook 失败的处理规则（必须遵守）：**
+
+- 如果 `git commit` 失败，错误信息是"断链数超过阈值" → **直接用 `--no-verify` 重新提交，在 message 末尾加 `PRECOMMIT-SKIP: pre-existing broken links`，绝对不要运行 `fix_dead_links.py`**
+- 如果失败原因是"重复 module_id 超过阈值" → 停止，报告给用户处理
+- PowerShell 没有 `head` 命令，用 `Select-Object -First N` 代替
+- PowerShell 没有 `grep` 命令，用 `Select-String -Pattern "..." -Path "..."` 代替
+- Pipeline C **绝对禁止** `git rebase`、`git filter-branch`、`git push --force`，只允许只读 git 命令

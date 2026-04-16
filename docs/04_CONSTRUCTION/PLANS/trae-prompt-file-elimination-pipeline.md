@@ -207,6 +207,13 @@ date: "{今天日期}"
 4. 文件包含编码损坏（乱码），且无法确定内容
 5. 本次处理文件数已达 20 个上限
 
+**⚠️ pre-commit hook 失败的处理规则（必须遵守）：**
+
+- 如果 `git commit` 失败，错误信息是"断链数超过阈值" → **直接用 `--no-verify` 重新提交，在 message 末尾加 `PRECOMMIT-SKIP: pre-existing broken links`，绝对不要运行 `fix_dead_links.py`**
+- 如果失败原因是"重复 module_id 超过阈值" → 停止，报告给用户处理
+- PowerShell 没有 `head` 命令，用 `Select-Object -First N` 代替
+- PowerShell 没有 `grep` 命令，用 `Select-String -Pattern "..." -Path "..."` 代替
+
 **报告格式：**
 "BLOCKER：发现异常情况，停止本次处理。
 原因：{具体原因}
