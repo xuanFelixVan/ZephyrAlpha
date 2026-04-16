@@ -130,6 +130,14 @@ repos:
         files: (^docs/01_FRAMEWORK/tech-decision-records\.md$|^docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/.*\.md$)
         pass_filenames: false
 
+      - id: check-directory-budget
+        name: 目录文件预算门禁（写入守卫）
+        entry: python scripts/hooks/check_directory_budget.py
+        language: system
+        files: ^docs/
+        pass_filenames: false
+        always_run: true
+
       - id: governance-health-snapshot
         name: 治理健康度快照（Sentinel L1 阈值）
         entry: python scripts/hooks/pre-commit-governance-check.py

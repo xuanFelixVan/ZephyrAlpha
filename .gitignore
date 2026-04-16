@@ -169,3 +169,26 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/*.tmp
 # 3. ! 表示例外（不忽略）
 # 4. 环境变量文件必须忽略，防止密钥泄露
 # ============================================
+
+# --------------------------
+# AI 生成物隔离（2026-04-16 新增）
+# Write Gate Layer 3：阻断 AI 工具无管制产物入库
+# --------------------------
+
+# 批量扫描产物 — AI 工具应写入 .audit_cache/ 而非 docs/
+docs/09_AUDIT/REPORTS/ARCHIVE/openclaw-*/
+docs/09_AUDIT/REPORTS/ARCHIVE/openclaw-l2-*
+
+# 通用 AI 工具临时缓存目录（任何工具均可写入）
+.audit_cache/
+.trae_cache/
+
+# CI 构建产物（Actions artifacts 不入库）
+.github/artifacts/
+
+# 任何脚本生成的中间产物（后缀标记）
+*.generated.md
+*.generated.json
+*.scan_result.json
+*.tmp.md
+*.tmp.json

@@ -73,11 +73,17 @@ git log --diff-filter=D --no-renames --name-only --pretty=format:"" |
   Sort-Object -Unique |
   Select-Object -Skip {last_processed_index} -First 20
 
-▶ GH Wave 2 命令：
-git log --diff-filter=D --no-renames --name-only --pretty=format:"" |
-  Where-Object { $_ -match "^docs/01_FRAMEWORK" -and $_ -match "\.md$" } |
-  Sort-Object -Unique |
+▶ GH Wave 2 命令（使用预生成列表，不重新查 git log）：
+# ⚠️ Wave 2 使用固定文件列表（192个真正丢失文件），不用 git log 重新生成
+# 从预生成列表中按断点位置读取本批次文件
+Get-Content "docs/09_AUDIT/STATE/gh-wave2-lost-files.txt" |
   Select-Object -Skip {last_processed_index} -First 20
+
+# ⚠️ 关键 skip 规则（在第三步读取内容之前必须先检查）：
+# 对列表中每个文件，先检查小写版本是否存在：
+#   $lowerName = (Split-Path $file -Leaf).ToLower() -replace "_", "-"
+#   if (Test-Path "docs/01_FRAMEWORK/$lowerName") { skip，记录 skip_reason = "lowercase exists" }
+# 只有 Test-Path 返回 False 的文件才继续读取 git 历史内容
 
 ▶ GH Wave 3 命令：
 git log --diff-filter=D --no-renames --name-only --pretty=format:"" |
@@ -96,17 +102,16 @@ git log --diff-filter=D --no-renames --name-only --pretty=format:"" |
 
 【第三步：逐文件读取历史内容】
 
-对列表中的每个文件路径，执行：
+对列表中每个通过 skip 检查的文件路径，执行以下命令（两步法，已验证可用）：
 
-# 找到删除该文件的 commit hash
-$commit = git log --diff-filter=D --no-renames --pretty=format:"%H" -- "文件路径" |
-  Select-Object -First 1
+# 步骤 1：找到最近一次包含该文件的 commit（即删除前的最后状态）
+$hash = git log --all --format="%H" -- "文件路径" | Select-Object -First 1
 
-# 读取被删时的文件内容
-$content = git show "${commit}^:文件路径"
+# 步骤 2：读取该 commit 中的文件内容
+$content = git show "${hash}:文件路径"
 
-如果命令返回错误（文件不在该 commit 的父节点中），尝试：
-$content = git show "${commit}:文件路径"
+# 如果 $hash 为空（文件从未被 git 追踪），跳过并标记 skip_reason = "not in git history"
+if (-not $hash) { "SKIP: not tracked" }
 
 ---
 

@@ -14,11 +14,11 @@ owner: "ZephyrAlpha-Owner"
 overall_progress:
   baseline_file_count: 1999        # 流水线启动时的总文件数（2026-04-16）
   target_file_count: 900           # 进入 Phase 2 前的目标
-  current_file_count: 1979         # 每次 session 后更新 (1999 - 20)
-  files_eliminated: 20             # 累计已删除文件数
+  current_file_count: 1959         # 每次 session 后更新 (1979 - 20)
+  files_eliminated: 40             # 累计已删除文件数
   knowledge_entries_added: 0       # 累计已入库知识条目数
-  sessions_completed: 1             # 累计完成的 session 数
-  estimated_sessions_remaining: 34 # 预估剩余 session 数
+  sessions_completed: 2             # 累计完成的 session 数
+  estimated_sessions_remaining: 33 # 预估剩余 session 数
 
 # ============================================================
 # 流水线 A：文件消除流水线（File Elimination Pipeline）
@@ -32,8 +32,8 @@ file_elimination_pipeline:
     estimated_files: 307
     strategy: "直接删除（批量扫描产物，无唯一价值，不需要提取知识）"
     status: in_progress         # pending | in_progress | completed
-    files_processed: 20
-    files_deleted: 20
+    files_processed: 40
+    files_deleted: 40
     knowledge_extracted: 0
     started_date: "2026-04-16"
     completed_date: null
@@ -44,7 +44,13 @@ file_elimination_pipeline:
         files_deleted: 20
         knowledge_extracted: 0
         notes: "删除 20 个 openclaw-l2-docs-08-human-ai-interface-37x 到 56x 文件，更新 INDEX.md 移除死链"
-    notes: "Wave 1 进行中，预计需要 15-16 个 session 完成全部 307 个文件"
+      - session_id: "2026-04-16-002"
+        date: "2026-04-16"
+        files_processed: 20
+        files_deleted: 20
+        knowledge_extracted: 0
+        notes: "删除 20 个 openclaw-l2 文件（.trae-002 到 factor-library-03-risk-factors-022），引用检查无断链风险"
+    notes: "Wave 1 进行中，剩余约 237 个文件，预计需要 12-13 个 session 完成"
 
   wave_2:
     name: "旧版本审计报告清理"
@@ -165,18 +171,33 @@ blueprint_safety_pipeline:
     target_path: "docs/01_FRAMEWORK/"
     estimated_files: 40
     strategy: "识别并分流：审计报告 → 09_AUDIT；元文档（collection/supplement）→ 消除流水线处理"
-    status: in_progress
-    files_processed: 8
-    files_reclassified: 8
+    status: completed
+    files_processed: 30
+    files_reclassified: 30
     started_date: "2026-04-16"
-    completed_date: null
+    completed_date: "2026-04-16"
     sessions_log:
       - session_id: "2026-04-16-001"
         date: "2026-04-16"
         files_archived: 6
         files_deleted: 2
         notes: "归档6个P2文件到06_ARCHIVE，删除2个P3文件"
-    notes: "与文件消除流水线 Wave 5 协同执行"
+      - session_id: "2026-04-16-002"
+        date: "2026-04-16"
+        files_archived: 7
+        files_deleted: 1
+        notes: "归档7个P2文件到06_ARCHIVE，删除1个P3文件(blueprint-stage-final-completion-report)"
+      - session_id: "2026-04-16-003"
+        date: "2026-04-16"
+        files_archived: 8
+        files_deleted: 0
+        notes: "归档8个P2文件到06_ARCHIVE(collection和plan类型文件)"
+      - session_id: "2026-04-16-004"
+        date: "2026-04-16"
+        files_archived: 6
+        files_deleted: 0
+        notes: "归档6个P2文件到06_ARCHIVE(analysis和collection类型文件)，BP Wave 1完成"
+    notes: "BP Wave 1已完成，共处理30个非蓝图文件，剩余文件为真正的蓝图文件"
 
   bp_wave_2:
     name: "01_FRAMEWORK 与 05_IMPLEMENTATION 重叠蓝图去重"
@@ -233,6 +254,15 @@ sessions:
     knowledge_extracted: 0
     notes: "删除 20 个 openclaw-l2-docs-08-human-ai-interface-37x 到 56x 文件，更新 INDEX.md 移除死链"
     session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-001.md"
+  - session_id: "2026-04-16-002"
+    date: "2026-04-16"
+    pipeline: "file_elimination"
+    wave: "wave_1"
+    files_processed: 20
+    files_deleted: 20
+    knowledge_extracted: 0
+    notes: "删除 20 个 openclaw-l2 文件（.trae-002 到 factor-library-03-risk-factors-022），引用检查无断链风险"
+    session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-002.md"
 
 # ============================================================
 # 流水线 C：Git 历史知识挖掘流水线（Git History Mining Pipeline）
@@ -277,21 +307,35 @@ git_history_pipeline:
         notes: "第二批20个文件（ai-strategy-automation, alpha-factor-layer, algorithmic-trading-compliance等）均为现存文件同名副本，无独立价值"
 
   gh_wave_2:
-    name: "docs/01_FRAMEWORK 历史版本扫描"
-    description: "从 git 历史中读取 docs/01_FRAMEWORK/ 下被删除的蓝图迭代稿（大写旧格式 → 小写重命名时删除的版本）"
-    target_pattern: "docs/01_FRAMEWORK/**/*.md (deleted in git history)"
-    estimated_files: 444    # 实际确认值（2026-04-16）：git log --diff-filter=D | Where-Object {match 01_FRAMEWORK}
-    strategy: "读取 git history（用 git log --all --format=%H -- file | Select-Object -First 1 取最近版本） → 对比现存小写同名文件 → 仅提取现存版本中不存在的独立设计决策"
-    git_read_command: "git log --all --format='%H' -- 'path/to/file.md' | Select-Object -First 1"
-    status: pending
-    files_scanned: 0
-    files_high_value: 0
-    files_skipped: 0
-    knowledge_entries_added: 0
-    last_processed_index: 0
-    started_date: null
+    name: "docs/01_FRAMEWORK 历史版本扫描（仅真正丢失文件）"
+    description: "从 git 历史中读取 docs/01_FRAMEWORK/ 下被删除且当前无小写版本的文件（真正丢失，192个）"
+    target_pattern: "docs/09_AUDIT/STATE/gh-wave2-lost-files.txt （预生成列表，逐行读取）"
+    estimated_files: 192    # 修正值（2026-04-16）：444总删除 - 260有小写版本 = 192真正丢失
+    correction_note: "原估444文件，260个仍有小写版本存在，已移除。仅保留真正无现存版本的192个文件。"
+    strategy: "读取 gh-wave2-lost-files.txt 逐行取文件路径 → git log 找 commit → git show 读内容 → 价值评估 → 高价值写入 docs/08_KNOWLEDGE/"
+    skip_rule: "凡是在 docs/01_FRAMEWORK/ 下能找到同名小写文件（_ 换 -）的，直接 skip，不提取"
+    git_read_command: "$hash = git log --all --format='%H' -- '{path}' | Select-Object -First 1; git show \"${hash}:{path}\""
+    status: in_progress
+    files_scanned: 17    # 前两个session扫的是444列表，部分已是小写存在版本，不计入192进度
+    files_high_value: 10  # KE-001~KE-010，保留（部分为现存文件摘要，仍有参考价值）
+    files_skipped: 260    # 有小写版本存在，跳过
+    knowledge_entries_added: 10
+    last_processed_index: 0    # 重置：新列表从 gh-wave2-lost-files.txt 第 0 行开始
+    started_date: "2026-04-16"
     completed_date: null
-    sessions_log: []
+    sessions_log:
+      - session_id: "2026-04-16-003"
+        date: "2026-04-16"
+        files_scanned: 7
+        files_high_value: 5
+        knowledge_entries_added: 5
+        notes: "首批扫描（旧444列表），部分为现存文件摘要，KE-001-005已提取"
+      - session_id: "2026-04-16-004"
+        date: "2026-04-16"
+        files_scanned: 10
+        files_high_value: 9
+        knowledge_entries_added: 5
+        notes: "第二批扫描（旧444列表），KE-006-010已提取，发现260文件有小写等价版本，已修正策略"
 
   gh_wave_3:
     name: "全仓库 strategy/factor/design 相关被删文件"
