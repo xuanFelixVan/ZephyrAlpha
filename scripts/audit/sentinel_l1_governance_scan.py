@@ -207,6 +207,174 @@ def scan_module_ids(all_files: list[Path]) -> dict:
     }
 
 
+def scan_registry_diff() -> dict:
+    """
+    注册表差集比对（Registry Diff Logic）——Sentinel L1 漏网之鱼发现机制。
+
+    对比 governance-asset-inventory.yaml 中登记的文件 vs 磁盘实际存在的文件，检测：
+    1. 漏网之鱼（unregistered）：磁盘有但注册表无 → 潜在违规资产
+    2. 幽灵条目（ghost）：注册表有但磁盘无 → 注册表未同步更新
+
+    规则（来源：AGENTS.md 第八-B节 + audit-system.mdc 准入门禁）：
+    - scripts/audit/, scripts/governance/, scripts/hooks/, scripts/ci_audit/ 下所有 .py 文件
+      必须在 governance-asset-inventory.yaml 中有对应 name 条目
+    - .github/workflows/ 下所有 .yml 文件必须在 ci_workflows.files 中登记
+    - .cursor/rules/ 下所有 .mdc 文件必须在 cursor_rules_layers 中登记
+    - .trae/ 下活跃文件必须在 trae_assets 中登记
+    """
+    INVENTORY_PATH = REPO / "docs" / "01_GOVERNANCE" / "governance-asset-inventory.yaml"
+
+    result: dict = {
+        "inventory_found": INVENTORY_PATH.exists(),
+        "unregistered": [],   # 漏网之鱼：在磁盘上但未在注册表登记
+        "ghost_entries": [],  # 幽灵条目：在注册表中但磁盘上已不存在
+        "summary": {},
+    }
+
+    if not INVENTORY_PATH.exists():
+        result["error"] = "governance-asset-inventory.yaml 未找到，跳过注册表差集比对"
+        return result
+
+    try:
+        import yaml  # type: ignore[import]
+        raw = INVENTORY_PATH.read_text(encoding="utf-8", errors="replace")
+        # 去除 ## 开头的注释行（YAML 不允许以 # 开头的文件头部注释，只允许行内）
+        clean_lines = [ln for ln in raw.splitlines() if not ln.startswith("##")]
+        inventory = yaml.safe_load("\n".join(clean_lines)) or {}
+    except Exception as e:
+        result["error"] = f"解析 governance-asset-inventory.yaml 失败: {e}"
+        return result
+
+    # ─────────────────────────────────────────────
+    # 1. 受治理的脚本目录（.py 文件）
+    # ─────────────────────────────────────────────
+    # governance-asset-inventory.yaml 结构：顶层 tools → audit_scripts/governance_scripts/...
+    script_sections = {
+        "scripts/audit":      ("tools", "audit_scripts"),
+        "scripts/governance": ("tools", "governance_scripts"),
+        "scripts/hooks":      ("tools", "pre_commit_hooks"),
+        "scripts/ci_audit":   ("tools", "ci_audit_scripts"),
+    }
+
+    # 豁免清单：这些文件名不纳入漏网之鱼检查（工具生成 / 遗留 / 备份目录内）
+    EXEMPT_NAMES = {
+        "__pycache__", "__init__.py",
+        # _BACKUP_SCRIPTS 子目录内文件不强制注册
+    }
+
+    for rel_dir, (top_key, sub_key) in script_sections.items():
+        disk_dir = REPO / rel_dir
+        if not disk_dir.exists():
+            continue
+
+        # 获取注册表中已登记的文件名集合
+        registered_names: set[str] = set()
+        section = inventory.get(top_key, {}).get(sub_key, {})
+        for entry in section.get("files", []):
+            n = entry.get("name", "").strip()
+            if n:
+                registered_names.add(n)
+
+        # 扫描磁盘上的 .py 文件（只检查直接子文件，不递归）
+        for py_file in disk_dir.iterdir():
+            if not py_file.is_file():
+                continue
+            if py_file.suffix != ".py":
+                continue
+            if py_file.name in EXEMPT_NAMES:
+                continue
+            # 跳过 _BACKUP_SCRIPTS 子目录的文件（不在此路径内，备份在 scripts/_BACKUP_SCRIPTS/）
+            if py_file.name not in registered_names:
+                result["unregistered"].append({
+                    "type": "script",
+                    "path": f"{rel_dir}/{py_file.name}",
+                    "directory": rel_dir,
+                    "severity": "HIGH",
+                    "action": "立即走准入门禁6步手续，或删除",
+                })
+
+        # 检查注册表中的文件是否在磁盘上存在（幽灵条目）
+        for name in registered_names:
+            if not (disk_dir / name).exists():
+                result["ghost_entries"].append({
+                    "type": "script",
+                    "registered_path": f"{rel_dir}/{name}",
+                    "action": "从 governance-asset-inventory.yaml 中移除该条目",
+                })
+
+    # ─────────────────────────────────────────────
+    # 2. CI 工作流（.yml 文件）
+    # ─────────────────────────────────────────────
+    workflows_dir = REPO / ".github" / "workflows"
+    if workflows_dir.exists():
+        registered_workflows: set[str] = set()
+        for entry in inventory.get("tools", {}).get("ci_workflows", {}).get("files", []):
+            n = entry.get("name", "").strip()
+            if n:
+                registered_workflows.add(n)
+
+        for wf_file in workflows_dir.iterdir():
+            if wf_file.is_file() and wf_file.suffix in (".yml", ".yaml"):
+                if wf_file.name not in registered_workflows:
+                    result["unregistered"].append({
+                        "type": "ci_workflow",
+                        "path": f".github/workflows/{wf_file.name}",
+                        "severity": "MEDIUM",
+                        "action": "在 governance-asset-inventory.yaml ci_workflows.files 中登记",
+                    })
+        for name in registered_workflows:
+            if not (workflows_dir / name).exists():
+                result["ghost_entries"].append({
+                    "type": "ci_workflow",
+                    "registered_path": f".github/workflows/{name}",
+                    "action": "从 governance-asset-inventory.yaml ci_workflows.files 中移除",
+                })
+
+    # ─────────────────────────────────────────────
+    # 3. Cursor 规则文件（.mdc）
+    # ─────────────────────────────────────────────
+    rules_dir = REPO / ".cursor" / "rules"
+    if rules_dir.exists():
+        registered_rules: set[str] = set()
+        onboarding = inventory.get("ai_onboarding", {})
+        for layer_key in ("layer_0_always", "layer_1_glob_triggered", "layer_2_description_triggered"):
+            for entry in onboarding.get("cursor_rules_layers", {}).get(layer_key, {}).get("files", []):
+                p = entry.get("path", "").strip()
+                if p:
+                    registered_rules.add(Path(p).name)
+
+        for mdc_file in rules_dir.iterdir():
+            if mdc_file.is_file() and mdc_file.suffix == ".mdc":
+                if mdc_file.name not in registered_rules:
+                    result["unregistered"].append({
+                        "type": "cursor_rule",
+                        "path": f".cursor/rules/{mdc_file.name}",
+                        "severity": "LOW",
+                        "action": "在 governance-asset-inventory.yaml ai_onboarding 中登记",
+                    })
+
+    # ─────────────────────────────────────────────
+    # 4. 汇总
+    # ─────────────────────────────────────────────
+    unregistered_by_severity: dict[str, int] = {}
+    for item in result["unregistered"]:
+        sev = item.get("severity", "UNKNOWN")
+        unregistered_by_severity[sev] = unregistered_by_severity.get(sev, 0) + 1
+
+    result["summary"] = {
+        "total_unregistered": len(result["unregistered"]),
+        "total_ghost_entries": len(result["ghost_entries"]),
+        "unregistered_by_severity": unregistered_by_severity,
+        "registry_health": (
+            "CLEAN" if not result["unregistered"] and not result["ghost_entries"]
+            else "WARNING" if len(result["unregistered"]) <= 3
+            else "CRITICAL"
+        ),
+    }
+
+    return result
+
+
 def path_depth_stats(all_files: list[Path]) -> dict:
     depths = []
     for p in all_files:
@@ -235,6 +403,7 @@ def main() -> None:
         "links": scan_links(all_files),
         "module_ids": scan_module_ids(all_files),
         "path_depth": path_depth_stats(all_files),
+        "registry_diff": scan_registry_diff(),
     }
     json_path = out_dir / "sentinel-l1-scan-latest.json"
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -289,6 +458,40 @@ def main() -> None:
     md_lines.extend(["", "## 路径深度 Top 10", ""])
     for item in payload["path_depth"]["deepest_30"][:10]:
         md_lines.append(f"- depth={item['depth']} `{item['path']}`")
+
+    # ── 注册表差集比对区 ──────────────────────────────────────
+    rd = payload["registry_diff"]
+    rd_summary = rd.get("summary", {})
+    health = rd_summary.get("registry_health", "UNKNOWN")
+    health_emoji = {"CLEAN": "✅", "WARNING": "⚠️", "CRITICAL": "🚨"}.get(health, "❓")
+    md_lines.extend(
+        [
+            "",
+            "## 注册表差集比对（漏网之鱼检测）",
+            "",
+            f"> **注册表健康度**: {health_emoji} {health}",
+            f"> **漏网资产数（未登记）**: {rd_summary.get('total_unregistered', 0)}",
+            f"> **幽灵条目数（已删除但注册表未清）**: {rd_summary.get('total_ghost_entries', 0)}",
+        ]
+    )
+    if rd.get("error"):
+        md_lines.append(f"\n> ⚠️ 警告: {rd['error']}")
+
+    if rd.get("unregistered"):
+        md_lines.extend(["", "### 漏网资产（须立即走准入门禁或删除）", ""])
+        for item in rd["unregistered"]:
+            sev = item.get("severity", "")
+            md_lines.append(f"- [{sev}] `{item['path']}` → {item.get('action', '')}")
+
+    if rd.get("ghost_entries"):
+        md_lines.extend(["", "### 幽灵条目（注册表中存在但文件已删除）", ""])
+        for item in rd["ghost_entries"]:
+            md_lines.append(
+                f"- `{item['registered_path']}` → {item.get('action', '从注册表中移除')}"
+            )
+
+    if not rd.get("unregistered") and not rd.get("ghost_entries") and rd.get("inventory_found"):
+        md_lines.append("\n> 所有受治理目录的文件均已在注册表中登记，注册表与文件系统完全同步。")
 
     (out_dir / "sentinel-l1-scan-latest.md").write_text("\n".join(md_lines), encoding="utf-8")
     print(f"Wrote {json_path} and sentinel-l1-scan-latest.md")

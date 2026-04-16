@@ -59,9 +59,10 @@ def check_governance_health():
     # 降低计划：每完成 2 个 Wave 下调 50，Wave 全部完成后恢复至 100。
     # 决策日期：2026-04-17 | 下次复查：Pipeline A Wave 3 完成后
     BROKEN_LINK_THRESHOLD = 1100  # 允许的最大断链数（2026-04-16 历史债务清理期过渡阈值）
-    # NOTE: 2026-04-16 重复 module_id 约 144（蓝图批量迁移期副产物）；过渡期上调至 200。
-    # 恢复计划：运行 dedupe_active_module_ids.py 清理后逐步下调。
-    DUPLICATE_THRESHOLD = 200      # 允许的最大活跃重复组（2026-04-16 历史债务过渡阈值）
+    # NOTE: 2026-04-16 重复 module_id 约 141-144（大批 docs/01_FRAMEWORK/ 文件尚未 commit 删除，
+    #        这些文件与已迁移后的文件共存导致 module_id 重复）。
+    #        过渡期上调至 200。恢复计划：完成 docs/01_FRAMEWORK/ 等遗留删除的 commit 后下调。
+    DUPLICATE_THRESHOLD = 200      # 允许的最大活跃重复组（2026-04-16 历史文件删除过渡期阈值）
 
     print("[pre-commit] 📊 治理健康度快照:")
     print(f"  断链数         : {invalid}")

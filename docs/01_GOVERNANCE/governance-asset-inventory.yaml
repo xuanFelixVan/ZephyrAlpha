@@ -285,12 +285,10 @@ tools:
 
   audit_scripts:
     path: scripts/audit/
-    count: 17  # Phase 0 删除5个（temp_scan_module_ids, analyze_dup_module_ids, dedupe_active/archive_module_ids, scanner.py）
-               # Phase 3 删除2个（audit_10d_scan.py, audit_detail_scan.py）+ option_b_frontmatter_scan.py
-               # 实际: 25→17（含全部清理）
+    count: 17  # 2026-04-16 Phase 0/3 清理后；2026-04-16 Sentinel 差集补录9个漏网项（总数不变，只是之前未在文件列表中登记）
     files:
       - name: sentinel_l1_governance_scan.py
-        purpose: "Sentinel L1 治理扫描——全库合规性一键扫描"
+        purpose: "Sentinel L1 治理扫描——全库合规性一键扫描 + 注册表差集比对"
         trigger: "手动 / CI governance-audit.yml"
         output: docs/09_AUDIT/STATE/
       - name: purge_expired_state.py
@@ -307,15 +305,37 @@ tools:
         purpose: "扫描文件名冲突"
         output: docs/09_AUDIT/STATE/
       - name: fix_dead_links.py
-        purpose: "修复死链"
+        purpose: "修复死链（消费 sentinel-l1-scan-latest.json）"
       - name: resolve_orphan_files.py
         purpose: "处理孤儿文件"
       - name: scan_directory_naming_compliance.py
         purpose: "扫描目录命名违规"
+      - name: audit_10_dimensions_script.py
+        purpose: "10 维度文档审计脚本（链接/元数据/结构/命名等）"
+      - name: check_frontmatter_completeness.py
+        purpose: "检查 YAML frontmatter 字段完整性"
+      - name: mandatory_inbound_guard.py
+        purpose: "强制入链守卫——pre-commit hook，检查新文档是否有入链"
+        note: "物理位置在 scripts/audit/，作为 pre-commit entry 使用"
+      - name: report_basename_collisions.py
+        purpose: "生成文件名冲突报告"
+        output: docs/09_AUDIT/STATE/
+      - name: report_orphan_files.py
+        purpose: "生成孤儿文件报告"
+        output: docs/09_AUDIT/STATE/
+      - name: resolve_basename_collisions.py
+        purpose: "修复文件名冲突"
+      - name: resolve_tier_a_overlaps.py
+        purpose: "修复 Tier A 级别的文档重叠问题"
+      - name: scan_blueprint_d_overlap_candidates.py
+        purpose: "扫描蓝图 D 类（Domain-level）重叠候选对"
+        output: docs/09_AUDIT/STATE/
+      - name: triage_blueprint_d_overlap_pairs.py
+        purpose: "分类处理蓝图 D 类重叠对（与 scripts/governance/ 下的同名脚本不同入参）"
 
   governance_scripts:
     path: scripts/governance/
-    count: 20  # 含 __init__.py 和 hook_support.py
+    count: 22  # 含 __init__.py 和 hook_support.py；2026-04-16 Sentinel 差集补录 manual_cleanup_state + aggressive_cleanup_state
     files:
       - name: generate_blueprint_registry.py
         purpose: "从蓝图 frontmatter 提取信息，更新 BLUEPRINT_DOMAIN_INVENTORY.yaml"
@@ -338,7 +358,13 @@ tools:
       - name: verify_01_blueprints_index_links.py
         purpose: "验证蓝图索引链接有效性"
       - name: cleanup_audit_state.py
-        purpose: "清理 docs/09_AUDIT/STATE/ 中的过期文件"
+        purpose: "清理 docs/09_AUDIT/STATE/ 中的过期文件（自动模式，有 --dry-run/--execute 参数）"
+      - name: manual_cleanup_state.py
+        purpose: "手动清理 STATE/ 目录，按类型保留最新版本（原始版本，无参数模式）"
+        note: "与 cleanup_audit_state.py 功能重叠，TODO: 评估是否合并"
+      - name: aggressive_cleanup_state.py
+        purpose: "激进模式清理 STATE/ 目录，目标降至 ≤60 个文件（Trae 任务4专用）"
+        note: "比 cleanup_audit_state.py 更激进，仅在超限清理时使用"
       - name: consolidate_audit_standards.py
         purpose: "合并审计标准文档"
       - name: generate_project_health_dashboard.py
@@ -395,18 +421,19 @@ tools:
   ci_audit_scripts:
     path: scripts/ci_audit/
     count: 12  # Phase 3 删除2个（ci_cd_link_checker.py→link_checker.py替代, yaml_metadata_checker.py→document_structure_checker.py替代）
+               # 2026-04-16 Sentinel差集：yaml_metadata_checker 幽灵条目移除，补录 document_structure_checker
     files:
       - name: generate_quality_report.py
         purpose: "文档质量综合报告（链接25分+YAML25分+质量50分，A-F评级）"
         output: "JSON 质量报告"
       - name: duplicate_detector.py
-        purpose: "重复文档检测"
+        purpose: "重复文档检测（基于内容相似度 + module_id）"
       - name: link_checker.py
-        purpose: "链接检查"
+        purpose: "链接检查（替代已删除的 ci_cd_link_checker.py）"
       - name: blueprint_validator.py
         purpose: "蓝图格式验证"
-      - name: yaml_metadata_checker.py
-        purpose: "YAML 元数据完整性检查"
+      - name: document_structure_checker.py
+        purpose: "文档结构检查（替代已删除的 yaml_metadata_checker.py）"
       - name: check_compliance_rate.py
         purpose: "合规率是否达到 95% 阈值（CI 门禁）"
       - name: weekly_audit_optimized.py
