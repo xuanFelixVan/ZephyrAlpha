@@ -48,7 +48,9 @@ def check_governance_health():
     dup_count = mod_stats.get("duplicate_ids_count", 0)
     
     # 设定阈值
-    BROKEN_LINK_THRESHOLD = 100    # 允许的最大断链增幅
+    # NOTE: 临时上调至 200，原因：repo 处于 Phase 2 重构期（Wave 1-8 文件消除流水线进行中）
+    # 待 Wave 1 完成后恢复为 100。决策日期：2026-04-16
+    BROKEN_LINK_THRESHOLD = 200    # 允许的最大断链数（重构期临时阈值）
     DUPLICATE_THRESHOLD = 20       # 允许的最大活跃重复组
     
     print("[pre-commit] 📊 治理健康度快照:")
