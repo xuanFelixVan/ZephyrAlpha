@@ -143,69 +143,73 @@ ZephyrAlpha 系统层级对照表：
 
 ## 第六步：处置执行
 
-### 对 P0/P1 蓝图（迁移）
+### 对 P0/P1 蓝图（当场迁移）
 
-1. 修正 frontmatter（补全缺失字段，修正 layer）
+> **理由**：P0/P1 是"搬家"不是"删除"，git 完全可回滚，立即执行让系统越来越整洁。
+
+1. 修正 frontmatter（补全缺失字段，修正 layer 为 L00-L11 格式）
 2. 确认目标目录存在：`docs/03_BLUEPRINTS/L{XX}_{LAYER_NAME}/`
-   - 如不存在，先在 `docs/subsystem-registry.yaml` 登记，再创建目录
 3. 执行迁移：
    ```powershell
    git mv "旧路径/文件.md" "docs/03_BLUEPRINTS/L{XX}_{LAYER}/文件.md"
    ```
 4. **⚠️ 立即验证（每步操作后必须执行）**：
    ```powershell
-   # 验证源文件不存在，目标文件存在
-   Test-Path "旧路径/文件.md"          # 必须输出 False
-   Test-Path "docs/03_BLUEPRINTS/.../文件.md"  # 必须输出 True
-   git status --short | Select-String "文件名"  # 必须出现 R 重命名记录
+   Test-Path "旧路径/文件.md"                          # 必须输出 False
+   Test-Path "docs/03_BLUEPRINTS/L{XX}.../文件.md"     # 必须输出 True
+   git status --short | Select-String "文件名"          # 必须出现 R 重命名记录
    ```
-   如果验证失败，立即停止并报告，不继续处理下一个文件。
-5. 更新源目录的 INDEX.md（删除该条目）
-6. 更新 `docs/03_BLUEPRINTS/{layer}/INDEX.md`（添加新条目）
+   验证失败 → 立即停止，报告给用户，不处理下一个文件。
 
-### 对 P2 蓝图（提取知识后归档）
+---
 
-1. 提取 1-3 条知识条目到 `docs/08_KNOWLEDGE/`（格式见下方）
-2. 移动到归档区：
-   ```powershell
-   git mv "旧路径/文件.md" "docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"
-   ```
-3. **⚠️ 立即验证（每步操作后必须执行）**：
-   ```powershell
-   Test-Path "旧路径/文件.md"        # 必须输出 False
-   Test-Path "docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"  # 必须输出 True
-   git status --short | Select-String "文件名"  # 必须出现 R 重命名记录
-   ```
-   如果验证失败，立即停止并报告。
+### 对 P2/P3 蓝图（登记决策表，延迟执行）
 
-### 对 P3 蓝图（⚠️ 不执行删除 — 生成待裁决报告）
+> **理由**：P2 归档和 P3 删除都是"丢弃"决策，需要人工复查后统一执行。
 
-**P3 蓝图不由本 session 直接删除。** 执行以下步骤：
+**决策表文件**：`docs/09_AUDIT/STATE/blueprint-decision-table.md`
 
-1. 提取关键词/决策到知识条目（如果有任何有价值的内容）
-2. 将该蓝图的详细信息追加到本 session 对应的 **P3 待裁决报告**中（见下方格式）
-3. **不执行任何 git rm 操作**
-
-**P3 待裁决报告文件**：`docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md`
-
-如果该文件已存在（同一天的前一次 session），则追加到现有文件末尾。
-
-**每条 P3 条目必须包含以下字段**：
+如果文件不存在，先创建：
 
 ```markdown
-## P3-{序号}: {蓝图文件名}
+---
+title: "蓝图决策表 - P2/P3 待裁决"
+status: collecting
+created_date: {今天日期}
+note: "P2（归档）和 P3（删除）候选文件。所有 wave 扫描完成后，经 Kimi×2 复查 + Claude 裁决后统一执行。"
+---
 
-| 字段 | 内容 |
-|------|------|
-| 文件路径 | `{完整路径}` |
-| module_id | {值} |
-| layer | {值} |
-| P3 判定理由 | {具体原因，必须写清楚：是完全重复、是空壳、还是已被合并} |
-| 重复/替代文件 | `{重复内容的文件地址}` （若有多个，逐行列出） |
-| 重复度估算 | {百分比，如 95% 内容与 xxx.md 重叠} |
-| 知识是否已提取 | 是（KE-{编号}）/ 否（无独立知识价值） |
-| 引用检查结果 | {0 个引用 / N 个引用（已列出）} |
-| Trae 建议 | 删除 / 建议再次确认 |
+# Blueprint Decision Table
+
+| 序号 | 文件路径 | module_id | Layer | P级 | 处置方式 | 目标路径 | 判定理由 | 重复文件 | 知识条目 | 波次 | 日期 |
+|------|---------|----------|-------|-----|---------|---------|---------|---------|---------|------|------|
+```
+
+每个 P2/P3 蓝图追加一行：
+
+| 字段 | 填写规则 |
+|------|---------|
+| 序号 | 全局递增，读取当前表中最大序号 +1 |
+| 文件路径 | 完整相对路径 |
+| module_id | frontmatter 中的值，无则填 `-` |
+| Layer | 判定后的正确 Layer |
+| P级 | `P2` 或 `P3` |
+| 处置方式 | P2: `archive` / P3: `delete` |
+| 目标路径 | P2: `docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}` / P3: `-` |
+| 判定理由 | 一句话说明为什么 P2 或 P3 |
+| 重复文件 | P3 必填（重复文件的完整路径）；P2 填 `-` |
+| 知识条目 | 已提取填 `KE-{编号}`，否则填 `-` |
+| 波次 | BP Wave 编号 |
+| 日期 | 今天日期 |
+
+**⚠️ P3 条目额外要求**：在表格行后追加详情块（供 Kimi 复查用）：
+
+```markdown
+### P3 详情 - {序号}: {文件名}
+- 重复度估算：{百分比}（与哪个文件重复）
+- 引用检查：`Select-String -Path "docs" -Filter "*.md" -Pattern "{文件名不含路径}" -Recurse | Measure-Object` 结果：{N 个引用}
+- 是否有独立设计价值：{是/否，说明}
+- Trae 建议：删除 / 建议再次确认
 ```
 
 ### 知识条目格式
@@ -265,18 +269,27 @@ git status --short
 
 **只有在 `git status` 中实际出现的变更，才能写入汇报成果和 Session Log。**
 
+**本 session 允许 commit 的文件类型**：
+- `docs/03_BLUEPRINTS/` 下新增文件（P0/P1 迁移）
+- `docs/08_KNOWLEDGE/KE-*.md`（新增知识条目）
+- `docs/09_AUDIT/STATE/blueprint-decision-table.md`（P2/P3 决策登记）
+- `docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml`（进度更新）
+- `docs/09_AUDIT/STATE/SESSION_LOGS/session-*.md`（session 日志）
+
+**⚠️ 不允许出现的变更（出现则停止报告）**：
+- `docs/06_ARCHIVE/` 下新增文件（P2 归档在 Phase 2 才执行）
+- 任何蓝图文件的 `D`（删除）记录（P3 删除在 Phase 2 才执行）
+
 每处理完 5-10 个蓝图执行一次 commit：
 
 ```powershell
-git add -A  # 暂存所有变更
-git commit -m "chore(blueprint): process N blueprints in {BP Wave}, migrated M to 03_BLUEPRINTS
+git add -A
+git commit -m "chore(blueprint): {BP Wave} - migrate P0/P1, register P2/P3 for review
 
-- BP Wave {编号}: {Wave名称}
-- Migrated (P0/P1): M -> docs/03_BLUEPRINTS/
-- Archived (P2): A -> docs/06_ARCHIVE/
-- P3 report generated: docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
-- Layer corrections: C files
-- Registry updated: BLUEPRINT_DOMAIN_INVENTORY.yaml"
+- Migrated (P0/P1): M files -> docs/03_BLUEPRINTS/
+- Registered for review (P2): A files in decision table
+- Registered for review (P3): D files in decision table
+- Knowledge entries extracted: K"
 ```
 
 ---
@@ -287,11 +300,11 @@ git commit -m "chore(blueprint): process N blueprints in {BP Wave}, migrated M t
    - 对应 BP Wave 的进度数字
    - sessions 列表追加本次记录
 
-2. 创建 Session Log（`docs/09_AUDIT/STATE/SESSION_LOGS/session-{YYYYMMDD}-{NNN}.md`）：
+2. 创建 Session Log（`docs/09_AUDIT/STATE/SESSION_LOGS/session-{YYYYMMDD}-bp-{NNN}.md`）：
 
 ```markdown
 ---
-session_id: "{YYYYMMDD-NNN}"
+session_id: "{YYYYMMDD}-bp-{NNN}"
 pipeline: "blueprint_safety"
 wave: "{BP Wave编号}"
 model: "{使用的模型}"
@@ -299,27 +312,29 @@ date: "{今天日期}"
 ---
 
 ## 本次完成
-- 处理蓝图数：N
-- 迁移（P0/P1）：M 个到 docs/03_BLUEPRINTS/
-- 归档（P2）：A 个到 ARCHIVE/
-- 删除（P3）：D 个
-- layer 字段纠正：C 个
+- 扫描蓝图数：N
+- 迁移执行（P0/P1）：M 个 → docs/03_BLUEPRINTS/
+- 登记待裁决（P2）：A 个 → decision table
+- 登记待裁决（P3）：D 个 → decision table
+- 提取知识条目：K 个
 
-## 变更的文件
-| 操作 | 原路径 | 目标路径/处置 | P 级 | 理由 |
-|------|--------|------------|------|------|
-| 迁移 | ... | docs/03_BLUEPRINTS/... | P0 | ... |
+## 已迁移文件（P0/P1，本次已执行）
+| 原路径 | 目标路径 | P级 | 理由 |
+|--------|---------|-----|------|
+| ... | docs/03_BLUEPRINTS/... | P0 | ... |
+
+## 登记待裁决文件（P2/P3，等待 Phase 2）
+| 序号 | 文件路径 | P级 | 判定理由 |
+|------|---------|-----|---------|
 
 ## 提取的知识条目
 | KE-ID | 来源蓝图 | 知识类别 |
 |-------|---------|---------|
 
-## 关键决策（如有）
-- ...
-
 ## 未完成（继续点）
 - 下一次从文件 {文件名} 开始
 - 剩余蓝图数：{数字}
+- 决策表当前 P2/P3 行数：{数字}
 ```
 
 ---
@@ -403,30 +418,34 @@ Get-ChildItem -Path docs/08_KNOWLEDGE -Recurse -Filter "KE-*.md" | Select-Object
 
 ---
 
-## P3 蓝图三阶段裁决流程
+## Phase 2：P2/P3 全量裁决流程
 
-> **设计原则**：判断（Trae）、复查（Kimi 双轮）、执行（Claude）三个角色完全分离，防止单一模型的误判直接造成不可恢复的删除。
+> **设计原则**：P0/P1 当场迁移（可 git 回滚）。P2 归档和 P3 删除都是"丢弃"决策，需要人工复查后统一执行。
 
 ```
-Trae session（本 Prompt）
-  ↓ 生成 p3-deletion-report-{YYYYMMDD}.md
-  ↓ P0/P1/P2 正常迁移/归档（自动执行）
-  ↓ P3 只记录，不删除
+【触发条件】：所有 BP Wave 的 Phase 1 扫描全部完成
+             → elimination-pipeline-tracker.yaml 中所有 bp_wave 状态均为 in_progress 或 completed
+             → blueprint-decision-table.md 中已收集全部 P2/P3 条目
 
-Kimi 第一轮复查（使用下方 Kimi-Review-1 Prompt）
-  ↓ 逐条审核 P3 报告
-  ↓ 标注：✓ 同意删除 / ✗ 反对删除（需说明理由）
-  ↓ 在报告文件中追加 [KIMI-REVIEW-1] 标记
+阶段一：Kimi 第一轮复查（使用下方 Kimi-Review-1 Prompt）
+  ↓ 读取 blueprint-decision-table.md
+  ↓ 逐条审核 P2（归档是否合理？）和 P3（删除是否安全？）
+  ↓ 在文件中追加 [KIMI-REVIEW-1] 标记
 
-Kimi 第二轮复查（使用下方 Kimi-Review-2 Prompt，独立进行不看第一轮结论）
-  ↓ 重新独立审核原始报告（不参考第一轮结论）
-  ↓ 在报告文件中追加 [KIMI-REVIEW-2] 标记
+阶段二：Kimi 第二轮复查（新对话，不看第一轮结论）
+  ↓ 独立审核原始决策表（忽略 KIMI-REVIEW-1 标记）
+  ↓ 在文件中追加 [KIMI-REVIEW-2] 标记
 
-Claude 最终裁决（在 Cursor 中执行，使用下方 Claude-Final Prompt）
-  ↓ 对比两轮 Kimi 的结论
-  ↓ 两轮均同意 → 执行 git rm
-  ↓ 有分歧 → 标记为 [DISPUTED]，提示用户手动决定
-  ↓ 两轮均反对 → 降级为 P2 归档，不删除
+阶段三：Claude 最终裁决（在 Cursor 中执行）
+  P2 归档：
+    两轮均同意 → 执行 git mv 到 docs/06_ARCHIVE/
+    有分歧    → 标记 [DISPUTED-P2]，提示用户手动决定
+    两轮均反对 → 保留原文件，标记 [KEEP]
+
+  P3 删除：
+    两轮均同意 → 执行 git rm（最后安全检查：引用数 = 0）
+    有分歧    → 降级为 P2，执行归档
+    两轮均反对 → 降级为 P2，执行归档
 ```
 
 ---
@@ -436,25 +455,33 @@ Claude 最终裁决（在 Cursor 中执行，使用下方 Claude-Final Prompt）
 ```
 你是 ZephyrAlpha 项目蓝图安全审核员（第一轮复查）。
 
-请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+ZephyrAlpha 是个人量化交易系统，目前处于 Phase 2 施工前准备阶段（进行系统瘦身）。
 
-对其中每一条 P3 候选条目，独立判断：
+请读取文件：docs/09_AUDIT/STATE/blueprint-decision-table.md
 
-**审核标准**：
-1. 判定理由是否充分？（"完全重复"需要有重复文件地址；"空壳"需要内容确实为空或仅有 frontmatter）
-2. 列出的重复文件地址是否真实存在于当前仓库？（如果替代文件不存在，必须反对删除）
-3. 引用检查是否为 0？（若有引用未处理，必须反对删除）
+对其中每一条 P2（归档）和 P3（删除）条目，独立审核：
+
+**P2 归档审核标准**：
+1. 该文件真的是"低价值，可归档"吗？还是它其实含有 Phase 2 施工需要的设计细节？
+2. 判定理由是否具体充分？（"仅有高层概念无技术规格"是具体理由；"不重要"不是）
+3. 归档后如果将来发现有用，找回成本低吗？（docs/06_ARCHIVE/ 仍在 git 中，成本低）
+
+**P3 删除审核标准**：
+1. 判定理由是否充分？（"完全重复"需要有重复文件路径；"空壳"需要内容确实为空）
+2. 列出的重复文件是否真实存在于当前仓库？（替代文件不存在 → 必须反对删除）
+3. 引用检查结果是否为 0？（有引用未处理 → 必须反对删除）
 4. 这个蓝图的 module_id 是否在 src/ 代码中被引用？
 
-对每条条目，在报告文件的对应条目末尾追加：
+对每条条目，在文件的对应行后追加审核标注：
 
 [KIMI-REVIEW-1]
-结论: ✓ 同意删除 / ✗ 反对删除
+P级: P2 / P3
+结论: ✓ 同意执行 / ✗ 反对执行
 理由: {一句话说明}
 
 最后输出统计：
-- 同意删除：N 条
-- 反对删除：N 条（列出文件名）
+- P2 同意归档：N 条 / 反对：N 条
+- P3 同意删除：N 条 / 反对：N 条（列出文件名）
 - 需要用户确认：N 条
 ```
 
@@ -465,26 +492,31 @@ Claude 最终裁决（在 Cursor 中执行，使用下方 Claude-Final Prompt）
 ```
 你是 ZephyrAlpha 项目蓝图安全审核员（第二轮独立复查）。
 
-请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+ZephyrAlpha 是个人量化交易系统，目前处于 Phase 2 施工前准备阶段。
 
-⚠️ 重要：你只看【P3-X 条目的原始信息】，忽略文件中已有的任何 [KIMI-REVIEW-1] 标记，不受第一轮结论影响，独立作出判断。
+请读取文件：docs/09_AUDIT/STATE/blueprint-decision-table.md
 
-审核重点（与第一轮不同的视角）：
-1. 这个蓝图在未来 6-12 个月内是否可能被重新激活？（关注 layer 和 Phase 2 施工范围）
-2. 重复文件是否真的"完全覆盖"了该蓝图的内容？还是只有 80% 重叠、有 20% 独立价值？
-3. 如果将来发现删错了，恢复的代价是多少？（git history 可恢复，但注意编码问题）
+⚠️ 重要：忽略文件中已有的 [KIMI-REVIEW-1] 标记，完全独立作出判断。
+
+**第二轮审核的不同视角**：
+1. 这个蓝图在未来 6-12 个月内（Phase 2 施工期）是否可能被重新需要？
+2. P2 文件：归档后如有 5% 的独特内容，是否会影响施工决策？
+3. P3 文件：重复文件是否"完全覆盖"了该蓝图？还是有 10-20% 独立内容？
+4. 如果将来发现判断错误，恢复的代价是多少？
 
 对每条条目追加：
 
 [KIMI-REVIEW-2]
-结论: ✓ 同意删除 / ✗ 反对删除
+P级: P2 / P3
+结论: ✓ 同意执行 / ✗ 反对执行
 理由: {一句话说明}
-风险等级: 低（git可恢复，无独立价值）/ 中（有少量独立内容）/ 高（可能影响Phase2）
+风险: 低 / 中 / 高
 
-最后输出统计并与第一轮对比（根据文件中的 KIMI-REVIEW-1 标记）：
-- 两轮均同意：N 条 → 建议 Claude 直接删除
-- 有分歧：N 条 → 建议 Claude 提交用户裁决
-- 两轮均反对：N 条 → 建议降级为 P2 归档
+最后统计并与第一轮对比：
+- P2 两轮均同意归档：N 条 → 建议 Claude 执行归档
+- P2 有分歧：N 条 → 建议 Claude 提交用户裁决
+- P3 两轮均同意删除：N 条 → 建议 Claude 执行删除
+- P3 有分歧或两轮均反对：N 条 → 建议降级为 P2 归档
 ```
 
 ---
@@ -492,45 +524,51 @@ Claude 最终裁决（在 Cursor 中执行，使用下方 Claude-Final Prompt）
 ### Claude 最终裁决 Prompt（在 Cursor 中使用）
 
 ```
-你是 ZephyrAlpha 项目蓝图删除最终裁决者。
+你是 ZephyrAlpha 项目蓝图最终裁决者。
 
-请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+请读取文件：docs/09_AUDIT/STATE/blueprint-decision-table.md
 
-根据文件中 [KIMI-REVIEW-1] 和 [KIMI-REVIEW-2] 的标记，对每条 P3 条目执行以下裁决规则：
+根据 [KIMI-REVIEW-1] 和 [KIMI-REVIEW-2] 标记，按以下规则执行：
 
-裁决规则（严格按照此顺序）：
-- 两轮均 ✓ 同意 → 执行删除（git rm）
-- 第一轮 ✓ 第二轮 ✗（或反之）→ 标记为 [DISPUTED]，输出给用户手动决定，不执行
-- 两轮均 ✗ 反对 → 执行降级：git mv 到 docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}
+**P2 归档裁决**：
+- 两轮均 ✓ → 执行 git mv 到 docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}
+  验证：Test-Path "原路径" 必须输出 False
+- 有分歧 → 标记 [DISPUTED-P2]，输出给用户手动决定，不执行
+- 两轮均 ✗ → 标记 [KEEP]，不归档，原文件保留
 
-执行前，对每个"两轮均 ✓"的文件再做最后安全检查：
-1. 确认文件不在 AGENTS.md 锚点列表中
-2. 执行引用检查：
-   Select-String -Path "docs" -Filter "*.md" -Pattern "{文件名不含路径}" -Recurse | Measure-Object
-
-如果引用数 > 0，降级为 [DISPUTED]，不执行删除。
+**P3 删除裁决**：
+- 两轮均 ✓ → 执行最后安全检查，再执行 git rm：
+  Select-String -Path "docs" -Filter "*.md" -Pattern "{文件名不含路径}" -Recurse | Measure-Object
+  引用数 > 0 → 降级为 [DISPUTED-P3]
+  引用数 = 0 → 执行 git rm，验证 Test-Path 输出 False
+- 有分歧 → 降级为 P2，执行归档（git mv 到 docs/06_ARCHIVE/）
+- 两轮均 ✗ → 降级为 P2，执行归档
 
 执行完成后：
-1. 在 p3-deletion-report-{YYYYMMDD}.md 末尾追加 [CLAUDE-FINAL] 执行摘要
+1. 在 blueprint-decision-table.md 末尾追加 [CLAUDE-FINAL] 执行摘要
 2. 更新 docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
-3. 执行统一 commit：
-   git commit -m "chore(blueprint): P3 final deletion - {N} files removed after dual Kimi review"
+3. 将 blueprint-decision-table.md 的 status 改为 completed
+4. 执行统一 commit：
+   git commit -m "chore(blueprint): Phase 2 execution - archive P2, delete P3 after dual Kimi review
+
+- Archived (P2): A files -> docs/06_ARCHIVE/
+- Deleted (P3): D files
+- Disputed (manual): N files
+- Kept (both Kimi rejected): N files"
 ```
 
 ---
 
-### P3 待裁决报告文件位置
+### 裁决文件位置
 
+**Phase 1 收集期**（所有 BP Wave 扫描期间持续追加）：
 ```
-docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+docs/09_AUDIT/STATE/blueprint-decision-table.md
 ```
 
-该文件经历四个阶段的追加写入：
-1. Trae 写入原始 P3 候选条目
-2. Kimi 第一轮追加 [KIMI-REVIEW-1] 标记
-3. Kimi 第二轮追加 [KIMI-REVIEW-2] 标记
-4. Claude 追加 [CLAUDE-FINAL] 执行摘要
-
-文件完成后归档到 `docs/09_AUDIT/REPORTS/ARCHIVE/`。
+**Phase 2 完成后**，该文件归档到：
+```
+docs/09_AUDIT/REPORTS/ARCHIVE/blueprint-decision-table-{YYYYMMDD}-final.md
+```
 
 *本 Prompt 模板由 ZephyrAlpha Owner 维护。如需修改，更新本文件并同步 AGENTS.md 第六章。*
