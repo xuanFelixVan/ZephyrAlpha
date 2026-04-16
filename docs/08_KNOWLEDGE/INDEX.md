@@ -1,17 +1,17 @@
 ---
 module_id: INDEX_08_KNOWLEDGE
-version: "2.0.0"
+version: "2.1.0"
 status: Active
 layer: L00
 owner: ZephyrAlpha-Owner
 created_date: "2026-04-03"
 last_updated: "2026-04-16"
-description: "知识库总索引（v2.0 — 编码修复重建版）"
+description: "知识库总索引（v2.1 — GH Wave 3 完成后更新）"
 ---
 
 # 知识库总索引
 
-> **重建说明**：v1.0 版本因 Cursor+Trae 双编辑器交替使用导致严重编码损坏，已于 2026-04-16 重建为标准 UTF-8 版本。
+> **更新说明**：v2.1 版本在 GH Wave 3 完成后更新，新增 395 个 KE 条目（KE-031~KE-425），知识库总量达到 425 条。
 
 ---
 
@@ -28,10 +28,11 @@ docs/08_KNOWLEDGE/
 │   ├── INDEX.md
 │   ├── strategy-case-library.md
 │   └── multi-factor-strategy-library.md
-├── FACTOR_LIBRARY/        # 因子案例库
+├── FACTOR_LIBRARY/        # 因子案例库 + KE 条目（395个）
 │   ├── INDEX.md
 │   ├── factor-case-library.md
-│   └── momentum-factor-library.md
+│   ├── momentum-factor-library.md
+│   └── KE-031~KE-425.md   # GH Wave 3 提取的知识条目
 ├── DESIGN_PRINCIPLES/     # 设计原则
 │   └── L02-factor-design-principle-alpha-generation.md
 ├── PITFALLS/              # 陷阱与反模式
@@ -44,13 +45,47 @@ docs/08_KNOWLEDGE/
 
 ---
 
-## 知识条目（KE-XXX 格式，由流水线提取入库）
+## 知识条目统计（KE-XXX 格式）
 
-> 流水线执行后，在此处追加新条目索引。
+| 批次 | 范围 | 数量 | 来源 | 状态 |
+|------|------|------|------|------|
+| GH Wave 2 | KE-001~KE-030 | 30 | 01_FRAMEWORK 历史版本 | ✅ 已完成 |
+| GH Wave 3 | KE-031~KE-425 | 395 | 因子库/策略/蓝图被删文件 | ✅ 已完成 |
+| **总计** | **KE-001~KE-425** | **425** | Git 历史挖掘 | ✅ **完成** |
 
-| KE-ID | 标题 | 类别 | 来源蓝图 | 层级 |
-|-------|------|------|---------|------|
-| *(待流水线提取)* | — | — | — | — |
+### 分类统计
+
+| 类别 | 数量 | 占比 |
+|------|------|------|
+| blueprint_decision | 357 | 84.0% |
+| factor | 56 | 13.2% |
+| best_practice | 12 | 2.8% |
+| **总计** | **425** | **100%** |
+
+---
+
+## 技术领域覆盖
+
+### L01 数据层 (Data Layer)
+数据获取、存储、治理、质量、实时处理相关 KE 条目
+
+### L02 特征层 (Feature Layer)
+因子计算、挖掘、验证、合成、风险相关 KE 条目
+
+### L03 模型层 (Model Layer)
+优化器、风险模型、回测框架、ML 集成相关 KE 条目
+
+### L04 执行层 (Execution Layer)
+交易执行、成本控制、策略执行、实时监控相关 KE 条目
+
+### L05 组合层 (Portfolio Layer)
+组合构建、管理、风险管理、绩效评估相关 KE 条目
+
+### L06 监控层 (Monitoring Layer)
+监控系统、质量监控、风险监控相关 KE 条目
+
+### L07 治理层 (Governance Layer)
+蓝图管理、开发流程、架构设计相关 KE 条目
 
 ---
 
@@ -68,11 +103,25 @@ docs/08_KNOWLEDGE/
 | 因子设计原则 | `DESIGN_PRINCIPLES/L02-factor-design-principle-alpha-generation.md` | Alpha 生成设计原则 |
 | 陷阱（因子过拟合） | `PITFALLS/L02-pitfall-factor-overfitting-backtest.md` | 回测过拟合的识别与规避 |
 | AI 编辑器指南 | `01_TECHNICAL_KNOWLEDGE/ai-code-editors-complete-guide.md` | Cursor+Trae 使用最佳实践 |
-| 知识库使用指南 | `knowledge-base-platform-guide.md` | 如何使用本知识库 |
 
 ---
 
-*本文件是知识库总入口。流水线提取的新条目请追加到上方 KE 表格中。*
+## 快速检索
+
+### 按 KE 编号范围
+
+| 范围 | 内容主题 | 文件命名模式 |
+|------|---------|-------------|
+| KE-001~KE-030 | AI 架构、蓝图管理、数据质量 | 混合命名 |
+| KE-031~KE-100 | 因子管理、数据质量、另类数据 | 混合命名 |
+| KE-101~KE-200 | 因子库手册、蓝图规则、数据架构 | 混合命名 |
+| KE-201~KE-300 | L1-L7 架构蓝图、组合优化 | 混合命名 |
+| KE-301~KE-400 | 风险系统、策略引擎、数据库设计 | 混合命名 |
+| KE-401~KE-425 | UI 设计、Web 界面、开发流程 | 混合命名 |
+
+---
+
+*本文件是知识库总入口。GH Wave 3 清仓提交后更新于 2026-04-16。*
 
 <!-- orphan-link -->
 - [knowledge-base-case-studies](knowledge-base-case-studies.md)
