@@ -1,20 +1,25 @@
 {
-  "scan_time_utc": "20260416T081409Z",
+  "scan_time_utc": "20260416T082405Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 2368,
+  "md_file_count": 2367,
   "links": {
     "stats": {
-      "total_files_scanned": 2368,
+      "total_files_scanned": 2367,
       "total_md_links": 4135,
       "skipped_external": 709,
-      "valid": 3267,
-      "invalid": 159
+      "valid": 3265,
+      "invalid": 161
     },
     "invalid_details_sample": [
       {
         "source": "data/assessments/INDEX.md",
         "url": "../../docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/",
         "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
+      },
+      {
+        "source": "docs/00_OVERVIEW/INDEX.md",
+        "url": "../01_FRAMEWORK/blueprint-stage-complete-summary.md",
+        "resolved": "docs/01_FRAMEWORK/blueprint-stage-complete-summary.md"
       },
       {
         "source": "docs/00_OVERVIEW/INDEX.md",
@@ -473,6 +478,11 @@
       },
       {
         "source": "docs/09_AUDIT/STATE/ORPHAN_RESOLVE_20260413.md",
+        "url": "../../01_FRAMEWORK/blueprint-stage-complete-summary.md",
+        "resolved": "docs/01_FRAMEWORK/blueprint-stage-complete-summary.md"
+      },
+      {
+        "source": "docs/09_AUDIT/STATE/ORPHAN_RESOLVE_20260413.md",
         "url": "../../01_FRAMEWORK/blueprint-stage-complete-supplement-plan.md",
         "resolved": "docs/01_FRAMEWORK/blueprint-stage-complete-supplement-plan.md"
       },
@@ -810,7 +820,7 @@
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 2349,
+    "unique_module_ids": 2347,
     "duplicate_ids_count": 1,
     "duplicates": {
       "LAYER_04_INDEX_AUTO": [
@@ -833,12 +843,13 @@
       "docs/09_AUDIT/STATE/DASHBOARD/project-health-latest.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-001-pipeline-c.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-001.md",
+      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-002-pipeline-c.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave1-001.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-log-20260416-knowledge-folder.md",
       "docs/09_AUDIT/STATE/subsystem-health-20260416.md",
       "docs/INDEX.md"
     ],
-    "no_id_total": 18
+    "no_id_total": 19
   },
   "path_depth": {
     "deepest_30": [

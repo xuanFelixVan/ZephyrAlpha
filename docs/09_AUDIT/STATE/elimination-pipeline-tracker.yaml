@@ -251,14 +251,15 @@ git_history_pipeline:
     target_pattern: ".audit_fix_backup/**/*.md (deleted in git history)"
     estimated_files: 300
     strategy: "读取 git history → 价值评估 → 高价值内容写入 docs/08_KNOWLEDGE/"
-    status: in_progress
+    status: completed
     files_scanned: 40
     files_high_value: 0
     files_skipped: 40
     knowledge_entries_added: 0
     last_processed_index: 40    # 每次 session 更新，用于 Select-Object -Skip 断点续接
     started_date: "2026-04-16"
-    completed_date: null
+    completed_date: "2026-04-16"
+    completed_reason: ".audit_fix_backup 全部为 docs/01_FRAMEWORK 现存文件的备份副本，0 独立价值，无需继续扫描"
     sessions_log:
       - session_id: "2026-04-16-001"
         date: "2026-04-16"

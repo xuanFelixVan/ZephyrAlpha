@@ -6,22 +6,23 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260416T081409Z
-> **Markdown 文件数**: 2368
+> **UTC 时间**: 20260416T082405Z
+> **Markdown 文件数**: 2367
 
 ## 链接统计
 
 | 指标 | 数值 |
 |------|------|
-| 扫描文件 | 2368 |
+| 扫描文件 | 2367 |
 | Markdown 内链（非 http/锚点等已排除） | 4135 |
 | 跳过（外链/锚点等） | 709 |
-| 判定有效 | 3267 |
-| 判定无效 | 159 |
+| 判定有效 | 3265 |
+| 判定无效 | 161 |
 
 ### 无效链接样本（最多 20000 条）
 
 - `data/assessments/INDEX.md` → `../../docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
+- `docs/00_OVERVIEW/INDEX.md` → `../01_FRAMEWORK/blueprint-stage-complete-summary.md`
 - `docs/00_OVERVIEW/INDEX.md` → `../01_FRAMEWORK/blueprint-stage-complete-supplement-plan.md`
 - `docs/01_FRAMEWORK/integrated_from_Layer_1_数据源层/INDEX.md` → `../../06_ARCHIVE/reports/overlap-deep-review-report-20260407-20260407-190203.md`
 - `docs/01_GOVERNANCE/REGISTERS/folder-charters/01_FRAMEWORK_CHARTER.md` → `../../01_FRAMEWORK/INDEX.md`
@@ -70,13 +71,12 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 - `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../../../09_AUDIT/REPORTS/README.md`
 - `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../../../09_AUDIT/REPORTS/INDEX.md`
 - `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../../../09_AUDIT/REPORTS/INDEX.md`
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../../../09_ARCHIVE/duplicates/INDEX.md`
 
 ## module_id
 
-- 唯一 module_id 数: **2349**
+- 唯一 module_id 数: **2347**
 - 重复 id 数: **1**
-- 首道 front matter 无 `module_id` 的文件数: **18**
+- 首道 front matter 无 `module_id` 的文件数: **19**
 
 ### 重复模块（前 20 个）
 
