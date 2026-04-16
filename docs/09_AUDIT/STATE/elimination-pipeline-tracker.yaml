@@ -17,9 +17,9 @@ overall_progress:
   current_file_count: 1657         # 每次 session 后更新 (1767-110 migrated)
   files_eliminated: 232            # 累计已删除文件数
   files_migrated: 321              # BP Wave 3+4 迁移到 03_BLUEPRINTS 的文件数 (211+110)
-  knowledge_entries_added: 23      # 累计已入库知识条目数 (KE-001~KE-043，去重后)
-  sessions_completed: 28           # 累计完成的 session 数
-  estimated_sessions_remaining: 13 # 预估剩余 session 数
+  knowledge_entries_added: 83      # 累计已入库知识条目数 (KE-001~KE-083，去重后)
+  sessions_completed: 29           # 累计完成的 session 数
+  estimated_sessions_remaining: 7  # 预估剩余 session 数
 
 # ============================================================
 # 流水线 A：文件消除流水线（File Elimination Pipeline）
@@ -731,6 +731,16 @@ sessions:
     knowledge_extracted: 0
     notes: "BP Wave 4 Session 027: 治理散落蓝图。扫描10_AI_WORKFLOW(35), 08_HUMAN_AI_INTERFACE(58), 11_STRATEGIC_DECISION(20)共111个蓝图，成功迁移110个到03_BLUEPRINTS/对应layer目录。1个文件已存在跳过。BP Wave 4完成！"
     session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-027.md"
+  - session_id: "2026-04-16-029"
+    date: "2026-04-16"
+    pipeline: "git_history"
+    wave: "gh_wave_3"
+    files_processed: 50
+    files_high_value: 40
+    files_skipped: 10
+    knowledge_extracted: 40
+    notes: "GH Wave 3 Session 029: 第三批扫描（第100-149行），高价值40个，跳过10个内容过少文件。已提取KE-044~083共40个知识条目。"
+    session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-029.md"
 
 # ============================================================
 # 流水线 C：Git 历史知识挖掘流水线（Git History Mining Pipeline）
@@ -897,11 +907,11 @@ git_history_pipeline:
     strategy: "快速扫描（路径名过滤）→ 候选文件深度读取 → 价值评估 → 高价值写入 docs/08_KNOWLEDGE/; 完成后执行清仓提交"
     prompt_template: "docs/04_CONSTRUCTION/PLANS/trae-prompt-gh-wave3-and-cleanup.md"
     status: in_progress
-    files_scanned: 100          # 50 + 50
-    files_high_value: 67        # 48 + 19
-    files_skipped: 3            # 2 + 1 (DATA_ACQUISITION.md 空壳)
-    knowledge_entries_added: 13 # 3 + 10
-    last_processed_index: 100   # 已处理前100行
+    files_scanned: 150          # 50 + 50 + 50
+    files_high_value: 107       # 48 + 19 + 40
+    files_skipped: 13           # 2 + 1 + 10 (内容过少)
+    knowledge_entries_added: 53 # 3 + 10 + 40
+    last_processed_index: 150   # 已处理前150行
     started_date: "2026-04-16"
     completed_date: null
     post_completion_action: "执行清仓提交 — docs/04_CONSTRUCTION/PLANS/trae-prompt-gh-wave3-and-cleanup.md 阶段二"
@@ -920,6 +930,20 @@ git_history_pipeline:
         files_skipped: 1
         knowledge_entries_added: 10
         notes: "第二批扫描（第50-99行），高价值19个（Barra优化器、数据质量、另类数据、各类数据源蓝图等），跳过1个空壳文件。已提取KE-034~043（Barra优化器、数据质量控制、另类数据、尾部风险、数据调度器、血缘追踪、可观测性、A股数据处理、实时流、异常检测）。"
+      - session_id: "2026-04-16-029"
+        date: "2026-04-16"
+        files_scanned: 50
+        files_high_value: 40
+        files_skipped: 10
+        knowledge_entries_added: 40
+        notes: "第三批扫描（第100-149行），使用自动化脚本批量处理。修复编码问题（UTF-8被误判为GBK），提取高价值内容。已提取KE-044~083（SuperCMD连接器、免费数据源、时序存储、回测重组、因子衰减、分层回测、过拟合测试、因子验证蓝图、因子目录、AI因子代理、因子挖掘引擎、因子正交化、多因子合成、因子风险模型、因子版本控制、因子归因、因子回测增强、因子可视化、因子数据质量、因子基准、因子工作流、因子性能优化、因子ML集成、因子文档自动化、因子API服务、因子数据血缘、因子合规、因子的实时计算、因子组合优化、风格因子系统、因子中性化等）。"
+      - session_id: "2026-04-16-029"
+        date: "2026-04-16"
+        files_scanned: 50
+        files_high_value: 40
+        files_skipped: 10
+        knowledge_entries_added: 40
+        notes: "第三批扫描（第100-149行），高价值40个（回测框架、因子挖掘引擎、多因子合成、风险模型、归因分析、工作流、ML集成等），跳过10个内容过少文件。已提取KE-044~083（SuperCMD连接器、免费数据源、时序存储、回测重组、因子衰减、分层回测、过拟合测试、因子验证、市场宽度指标、因子目录、AI因子代理、因子监控、FAQ、因子挖掘引擎、正交化、多因子合成、风险模型、版本控制、归因分析、增强回测、可视化、数据质量、基准、工作流、性能优化、ML集成、文档自动化、API服务、数据血缘、合规、实时因子、组合优化、风格因子系统、中性化等）。"
 
 # ============================================================
 # 知识库积累追踪
@@ -927,11 +951,11 @@ git_history_pipeline:
 knowledge_base_stats:
   baseline_entries: 20      # 流水线启动时的知识条目数（2026-04-16）
   target_entries: 100       # 流水线完成后的目标
-  current_entries: 43       # 每次 session 后更新 (KE-001~KE-043)
+  current_entries: 83       # 每次 session 后更新 (KE-001~KE-083)
   entries_by_category:
     blueprint_decision: 15   # GH Wave 2+3 提取的蓝图决策
     strategy: 0
-    factor: 16              # GH Wave 2+3 提取的因子相关
+    factor: 56              # GH Wave 2+3 提取的因子相关 (16+40)
     best_practice: 12       # GH Wave 2+3 提取的最佳实践
     lesson_learned: 0
 
