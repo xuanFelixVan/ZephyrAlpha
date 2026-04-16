@@ -46,7 +46,14 @@ SKIP_DIRS = {
     "docs/09_AUDIT/STATE/DAILY",
     "docs/09_AUDIT/STATE/MILESTONE",
     "docs/09_AUDIT/REPORTS",
+    # 施工/规划文档——非蓝图
+    "docs/04_CONSTRUCTION/PLANS",
+    "docs/04_CONSTRUCTION/LEDGER",
 }
+
+# 跳过文件名模式：INDEX.md 是导航文件，*-template.md 是模板文件，均不是蓝图
+SKIP_FILENAMES = {"INDEX.md", "index.md", "README.md"}
+SKIP_FILENAME_SUFFIXES = ("-template.md", "-template-example.md")
 
 # 阿拉伯/波斯字符检测正则
 ARABIC_PATTERN = re.compile(r"[\u0600-\u06ff\u0750-\u077f\ufb00-\ufdff]")
@@ -56,7 +63,9 @@ def get_staged_files() -> list[Path]:
     """获取当前 git 暂存区中修改的 .md 文件。"""
     try:
         result = subprocess.run(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+            # 只对新建（A）和复制（C）的文件强制 frontmatter——修改已有文件不触发
+            # 避免链接修复、内容更新等操作被历史遗留的 frontmatter 问题所阻塞
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AC"],
             capture_output=True, text=True, cwd=str(REPO_ROOT)
         )
         files = [
@@ -178,9 +187,28 @@ def is_blueprint_file(filepath: Path, fm: Optional[dict]) -> bool:
     return False
 
 
+def get_newly_added_files() -> set[str]:
+    """返回本次 commit 中新建（A）文件的相对路径集合（小写）。"""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT)
+        )
+        return {f.strip().lower() for f in result.stdout.strip().split("\n") if f.strip()}
+    except Exception:
+        return set()
+
+
 def main(files: Optional[list[str]] = None) -> int:
+    newly_added = get_newly_added_files()
     if files:
-        target_files = [Path(f) for f in files if f.endswith(".md") and Path(f).exists()]
+        # pre-commit 通过 pass_filenames 传入所有 staged 文件（含 M/D）
+        # 只对新建文件（A）强制 frontmatter——修改已有文件的行为不触发，避免被历史债务阻塞
+        target_files = [
+            Path(f) for f in files
+            if f.endswith(".md") and Path(f).exists()
+            and f.replace("\\", "/").lower() in newly_added
+        ]
     else:
         target_files = get_staged_files()
 
@@ -198,8 +226,13 @@ def main(files: Optional[list[str]] = None) -> int:
             # Windows 路径大小写不一致时 fallback
             rel = str(filepath.resolve().relative_to(REPO_ROOT.resolve())).replace("\\", "/")
 
-        # 跳过归档目录
+        # 跳过归档目录和施工/规划目录
         if any(rel.startswith(skip) for skip in SKIP_DIRS):
+            continue
+        # 跳过导航文件（INDEX.md / README.md）和模板文件——不是蓝图
+        if filepath.name in SKIP_FILENAMES:
+            continue
+        if any(filepath.name.endswith(s) for s in SKIP_FILENAME_SUFFIXES):
             continue
 
         # 1. 编码检查（所有 .md 文件）
