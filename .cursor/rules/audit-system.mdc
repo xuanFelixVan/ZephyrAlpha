@@ -8,7 +8,7 @@
 ## 审计执行入口（首先读这里）
 
 **自包含操作手册**（复制粘贴级别的命令序列）：
-`docs/09_AUDIT/PROCEDURES/audit-execution-runbook.md`
+`docs/09_AUDIT/PROCEDURES/audit-execution-procedures.md`
 
 - 包含完整的 Phase 0-4 执行步骤
 - 包含所有脚本命令、预期输出、故障排除
@@ -43,7 +43,7 @@ scripts/hooks/ ← pre-commit 钩子
 在修复 INDEX、内链或导航中的**断链 / 幽灵引用**时：
 
 1. 先按 `information-architecture-standard.md` **第七章** 将引用分为：路径错误 / 前向引用 / 真幽灵。
-2. **真幽灵**：须先将词条中的**有价值名称或构想**提取到 `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md`、`docs/06_KNOWLEDGE_BASE/` 或 `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` 之一，再在索引中删除或改写该引用。
+2. **真幽灵**：须先将词条中的**有价值名称或构想**提取到 `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md`、`docs/08_KNOWLEDGE/` 或 `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` 之一，再在索引中删除或改写该引用。
 3. 提交说明中建议包含 `salvaged:` 留痕。
 
 ## 禁止行为

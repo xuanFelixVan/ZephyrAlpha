@@ -2187,28 +2187,3 @@ raise ValueError('ﮔ۴ﮔﮔﺙﮒﺙﮒﺟﻠ۰ﭨﻛﺕﭦYYYY-MM-DD')
 
 
 - [Pythonﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﮔﮒ](https://docs.python.org/zh-cn/3/library/typing.html)
-
-
-
-
-
-
-
-```
-```---
-```
-
-
-
-
-
-
-
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
-
-
-
-**ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-02
-
-
-

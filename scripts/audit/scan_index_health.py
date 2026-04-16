@@ -8,16 +8,16 @@
 - 入口文件、总门脸常会被报为孤儿，请用 --ignore-path / --ignore-glob 排除。
 
 仓库根执行示例:
-  python scripts/governance/scan_index_health.py
-  python scripts/governance/scan_index_health.py --prefix docs/05_IMPLEMENTATION/
-  python scripts/governance/scan_index_health.py --prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418
-  python scripts/governance/scan_index_health.py --link-source same-as-candidates --date 20260410
+  python scripts/audit/scan_index_health.py
+  python scripts/audit/scan_index_health.py --prefix docs/05_IMPLEMENTATION/
+  python scripts/audit/scan_index_health.py --prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418
+  python scripts/audit/scan_index_health.py --link-source same-as-candidates --date 20260410
 
 说明：默认排除 `docs/06_ARCHIVE/`、`docs/09_ARCHIVE/`（候选恒为空）。若 **所有** `--prefix` 均落在某一 archive 子树下，则自动取消对该 archive **根**的排除，仅扫描该子树。
 
 输出:
-  docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.json
-  docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.md
+  docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_LATEST.json
+  docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_LATEST.md
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ from datetime import date
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-GEN = "scripts/governance/scan_index_health.py"
+GEN = "scripts/audit/scan_index_health.py"
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 
 

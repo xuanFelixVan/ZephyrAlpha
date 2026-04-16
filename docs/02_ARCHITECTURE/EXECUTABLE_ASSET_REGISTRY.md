@@ -3,7 +3,7 @@ module_id: EXECUTABLE_ASSET_REGISTRY
 version: 1.1.0
 status: Active
 created_date: 2026-04-16
-last_updated: 2026-04-16
+last_updated: 2026-04-17
 owner: AI Assistant
 layer: cross_layer
 ---
@@ -73,24 +73,39 @@ layer: cross_layer
 | `generate_architecture_service_catalog.py` | 生成架构服务目录 + C4 视图 | 架构文档更新时运行 |
 | `export_repo_directory_rollup.py` | 按目录前缀聚合路径数量统计 | 定期统计仓库结构 |
 | `sample_docs_nav_coverage.py` | 抽样检查文档是否出现在导航中 | 导航完整性审查 |
+| `consolidate_audit_standards.py` | 合并/对齐审计标准文档结构 | 标准目录整理时 |
+| `trace_file_provenance.py` | 追溯文件来源与搬迁历史 | 删改高风险文件前 |
+| `generate_project_health_dashboard.py` | 生成项目健康度仪表盘数据 | 周期性治理报告 |
 
 ---
 
-## 三、Pre-commit 钩子 (`scripts/hooks/`)
+## 三、Pre-commit 钩子（与 `.pre-commit-config.yaml` 逐项对应）
 
-这些钩子在 `git commit` 时自动触发，配置见 `.pre-commit-config.yaml`。
+这些钩子在 `git commit` 时自动触发；下表 **entry** 列为 `.pre-commit-config.yaml` 中的可执行入口。
 
-| 钩子脚本 | 检查项 | 对应标准 |
-|---------|-------|---------|
-| `validate_blueprint_frontmatter.py` | 蓝图元数据完整性（module_id, version, status, layer, priority）| `blueprint-lifecycle-standard.md` |
-| `check_index_links.py` | INDEX.md 内部链接有效性 | `information-architecture-standard.md` |
-| `check_related_documents.py` | frontmatter parent_document / related_documents 路径存在性 | `frontmatter-standard.md` |
-| `mandatory_inbound_guard.py` | 强制入链检查（新文件必须被 INDEX 引用）| `orphan-file-prevention-policy.md` |
-| `check_body_script_refs.py` | 正文中 `python scripts/...` 引用的脚本是否存在 | 防幽灵命令 |
-| `check_tdr_propagation.py` | TDR 变更时要求联动文件同批暂存 | `tech-decision-record-standard.md` |
-| `check_standards_index_registration.py` | STANDARDS 目录新增文件须在 INDEX.md 登记 | 标准登记政策 |
-| `pre-commit-governance-check.py` | 调用 Sentinel 执行 L1 健康快照 | 全库治理基线 |
-| `check_directory_budget.py` | **Write Gate 写入门禁**：检查 staged 新增文件所在目录是否超出预算上限（`docs/09_AUDIT/STATE/DAILY/` ≤10 等），并拦截含 `-v2`/`-v3`/`-round2` 的版本号文件名 | Write Gate Layer 2（2026-04-16） |
+| Hook ID（节选） | entry | 检查项 / 职责 |
+|----------------|-------|--------------|
+| `validate-version-metadata` | `src/utils/validate_version_metadata.py` | 全库版本元数据阈值 |
+| `check-version-in-filename` | `src/utils/validate_version_metadata.py` | 文件名版本信息 |
+| `check-metadata-required-fields` | `src/utils/validate_version_metadata.py` | frontmatter 必选字段 |
+| `check-document-placement` | `scripts/hooks/check_document_placement.py` | 根目录杂散文档放置 |
+| `check-index-integrity` | `scripts/hooks/check_index_integrity.py` | 配置目录列表内索引存在性 |
+| `doc-guard-pre-commit` | `scripts/hooks/doc_guard_pre_commit.py` | 文档缺陷防护（D-01/D-02 等）|
+| `check-file-naming` | `scripts/hooks/doc_guard_pre_commit.py` | 文件命名规范 C-10 |
+| `check-directory-naming` | `scripts/hooks/check_directory_naming.py` | 目录命名规范 D-07 |
+| `source-guard` | `scripts/hooks/source_guard_pre_commit.py` | 双 YAML / module_id / frontmatter |
+| `mandatory-inbound-guard` | `scripts/audit/mandatory_inbound_guard.py` | 新 md 强制入链 |
+| `check-index-links` | `scripts/hooks/check_index_links.py` | INDEX 相对死链 G-02 |
+| `check-related-documents` | `scripts/hooks/check_related_documents.py` | parent/related 路径存在性 |
+| `check-standards-index-registration` | `scripts/hooks/check_standards_index_registration.py` | STANDARDS 新文件须登记 INDEX |
+| `check-body-script-refs` | `scripts/hooks/check_body_script_refs.py` | 正文幽灵脚本命令 |
+| `check-tdr-propagation` | `scripts/hooks/check_tdr_propagation.py` | TDR 变更联动暂存 |
+| `check-directory-budget` | `scripts/hooks/check_directory_budget.py` | Write Gate 目录预算 + 文件名版本号 |
+| `governance-health-snapshot` | `scripts/hooks/pre-commit-governance-check.py` | Sentinel L1 阈值门禁 |
+| `validate-blueprint-frontmatter` | `scripts/hooks/validate_blueprint_frontmatter.py` | 蓝图 frontmatter 完整性 |
+| `check-subsystem-registry` | `scripts/governance/scan_subsystem_duplicates.py` | 新建子目录须在 subsystem-registry 登记 |
+
+> 另含 `pre-commit-hooks` 仓库的 `trailing-whitespace`、`end-of-file-fixer`、`check-yaml` 等社区钩子，无本仓库脚本路径。
 
 ---
 
@@ -143,6 +158,82 @@ layer: cross_layer
 | 链接验证三重实现（sentinel / link_validator / hooks）| **三者保留，职责分工明确**：sentinel 是全库扫描，link_validator 是底层库，hooks 是提交门禁 | 在本清单中标注分工 |
 | 元数据验证三处（hooks / option_b / src/utils）| **三者保留，职责分工明确**：hooks 是门禁，option_b 是统计报告，utils 是底层库 | 在本清单中标注分工 |
 | CI Workflow `document_audit.yml` + `document_quality_check.yml` | **标注为遗留 Workflow**，调用已归档脚本，禁止新建依赖 | 在本清单 § 4.2 中标注 |
+
+---
+
+## 六-B、补充登记：CI 审计脚本 (`scripts/ci_audit/`)（2026-04-16 补录）
+
+> 以下脚本在 `.github/workflows/periodic-audit.yml` 中被调用，均为活跃状态。
+
+| 脚本名称 | 功能描述 | 调用场景 |
+|---------|---------|---------|
+| `monthly_audit.py` | 月度审计报告生成 | `periodic-audit.yml` 月度任务 |
+| `quarterly_audit.py` | 季度深度审计报告生成 | `periodic-audit.yml` 季度任务 |
+| `blueprint_validator.py` | 蓝图结构与元数据批量校验 | `periodic-audit.yml` 季度任务 |
+| `architecture_analyzer.py` | 架构健康度分析 | `periodic-audit.yml` 月度任务 |
+| `documentation_debt_assessor.py` | 文档债务量化评估 | `periodic-audit.yml` 季度任务 |
+| `link_checker.py` | CI/CD 链接有效性检查 | `periodic-audit.yml` 月度任务 |
+| `generate_quality_report.py` | 文档质量评分报告 | CI 触发 |
+| `boundary_checker.py` | 层级边界合规检查 | CI 触发 |
+| `check_compliance_rate.py` | 规范符合率统计 | CI 触发 |
+| `yaml_metadata_checker.py` | YAML frontmatter 批量校验 | CI 触发 |
+| `document_structure_checker.py` | 文档结构完整性检查 | CI 触发 |
+| `duplicate_detector.py` | 文档内容重复检测（ci_audit 版本） | CI 触发 |
+
+**注意**：`ci_cd_link_checker.py` 和 `weekly_audit_optimized.py` 属于遗留脚本（见 §4.2），调用已废弃路径，不可新建依赖。
+
+---
+
+## 六-C、补充登记：审计工具补充 (`scripts/audit/`)（2026-04-16 补录）
+
+| 脚本名称 | 功能描述 | 调用建议 |
+|---------|---------|---------|
+| `purge_expired_state.py` | 清理过期的状态文件（基于 TTL 策略）| 定期维护时运行 |
+| `check_frontmatter_completeness.py` | 批量检查文档 frontmatter 完整性 | 存量文件审计时运行 |
+| `scan_directory_naming_compliance.py` | 目录命名合规扫描（大写/下划线规范）| 调整目录结构前运行 |
+| `option_b_frontmatter_scan.py` | frontmatter 覆盖率统计（统计报告版本）| 周期报告时运行 |
+| `scan_blueprint_d_overlap_candidates.py` | D 类蓝图重叠候选识别（前置步骤）| `triage_blueprint_d_overlap_pairs.py` 之前运行 |
+| `resolve_tier_a_overlaps.py` | TIER_A 已确认重叠的自动消解 | 蓝图重叠处理流程 |
+| `audit_10_dimensions_script.py` | 10 维度蓝图质量评分脚本 | 蓝图批量评估时运行 |
+| `audit_10d_scan.py` | 10 维度快速扫描（简化版）| 快速审计时运行 |
+| `audit_detail_scan.py` | 单文件详细审计扫描 | 深度分析单个文档时运行 |
+| `scanner.py` | 基础扫描器（底层组件，被其他脚本导入）| 不直接调用 |
+| `temp_scan_module_ids.py` | 临时 module_id 扫描（deprecated 候选）| 标记为废弃，用 `analyze_dup_module_ids.py` 替代 |
+
+---
+
+## 六-D、补充登记：治理工具补充 (`scripts/governance/`)（2026-04-16 补录）
+
+| 脚本名称 | 功能描述 | 调用建议 |
+|---------|---------|---------|
+| `consolidate_audit_standards.py` | 审计标准文档整合工具 | 标准合并时运行 |
+| `trace_file_provenance.py` | 文件溯源分析（来源/历史路径）| 调查文件来历时运行 |
+| `generate_project_health_dashboard.py` | 生成项目健康仪表盘（P0 缺失，待激活）| 定期运行（当前 P0 缺失状态）|
+| `generate_01_blueprints_index.py` | 自动生成 01_FRAMEWORK 蓝图索引 | 蓝图批量变更后运行 |
+| `generate_scattered_blueprints_manifest_task1.py` | Task 1：生成散落蓝图清单 | 蓝图迁移流水线 |
+| `verify_scattered_blueprints_manifest_links.py` | 验证散落蓝图清单中的链接有效性 | 蓝图迁移流水线 |
+| `hook_support.py` | hooks 公共支持库（不直接调用）| 被 hooks/ 脚本导入 |
+
+---
+
+## 六-E、补充登记：根目录历史脚本（deprecated 候选）（2026-04-16 补录）
+
+> 以下脚本是历史上一次性任务遗留在 `scripts/` 根目录，均为潜在 deprecated 候选。
+> **标记**：带 `temp_` 前缀为推荐处置方式（归档），下次清理 Wave 中处理。
+
+| 脚本 | 推测用途 | 建议处置 |
+|------|---------|---------|
+| `index_compiler.py` | 索引编译器入口（CI 使用）| **保留**，在 `eternal-index-validation.yml` 中调用 |
+| `sync_authority_source.py` | 权威来源同步（历史一次性）| 归档候选 |
+| `integrate_p0_blueprints.py` | P0 蓝图集成（历史一次性）| 归档候选 |
+| `integrate_layer_directories.py` | Layer 目录整合（历史一次性）| 归档候选 |
+| `execute_phase1_cleanup.py` | Phase 1 清理（历史一次性）| 归档候选 |
+| `disaster_recovery.py` | 灾难恢复脚本（紧急用途）| 保留（备用）|
+| `cleanup_low_risk_directories.py` | 低风险目录清理（历史一次性）| 归档候选 |
+| `analyze_and_fix_folder_structure.py` | 文件夹结构分析（历史一次性）| 归档候选 |
+| `merge_blueprints.py` | 蓝图合并（历史一次性）| 归档候选 |
+| `extract_implementation_details.py` | 实现细节提取（历史一次性）| 归档候选 |
+| `comprehensive_system_cleanup_analysis.py` | 系统清理分析（历史一次性）| 归档候选 |
 
 ---
 

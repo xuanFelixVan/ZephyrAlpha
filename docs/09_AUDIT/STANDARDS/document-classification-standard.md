@@ -8,14 +8,12 @@ owner: 首席文档架构师
 responsibility:
   - DOCUMENT_CLASSIFICATION标准规范
 layer: layer_09
-standard_type: ﻝ؟۰ﻝﮔﮒ
-applicable_scope: "ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ"
+standard_type: 治理标准
+applicable_scope: 全库文档分类与元数据
+compliance_level: 强制执行
 parent_document: ../INDEX.md
-implementation_status: "ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?version: 1.0.0"
+implementation_status: 活跃
 ---
-```
-```---
-```
 
 
 
@@ -23,7 +21,7 @@ implementation_status: "ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?vers
 
 
 
-# ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔﮒ
+# 文档分类标准
 
 
 
@@ -1994,23 +1992,3 @@ ZephyrAlphaﻝﺏﭨﻝﭨﻠﻝ۷9ﻛﺕ۹ﻛﺕﻝﭦ۶ﮒﻝﺎﭨﻝ؟ﮒﺛ
 
 
 - ТќЄТАБТеАТЮ┐
-
-
-
-
-
-
-
-```---
-
-
-
-
-
-
-
-**ТќЄТАБуіХТђ?*: ТГБт╝ЈТаЄтЄє
-
-
-
-**СИІТгАтАТЪЦ**: 2026-07-02
