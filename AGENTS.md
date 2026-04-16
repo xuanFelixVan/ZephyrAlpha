@@ -165,6 +165,7 @@ AGENTS.md（本文件）
 || **在项目根目录创建新文件** | **禁止**。根目录只允许白名单文件（AGENTS.md, README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, pyproject.toml, requirements*.txt, .pre-commit-config.yaml, .env*, .gitignore, .editorconfig, .roomodes）。其他 .py/.txt/.json/.md 必须放入对应子目录（审计脚本→scripts/audit/, 工具→scripts/, 设计文档→docs/）。 |
 | **单次 session 新建文件数** | **≤ 5 个**（不含 SESSION_LOG 和流水线已规划的批量操作）超出必须先删除等量旧文件 |
 | **文件名禁止带版本号** | **禁止** `-v2`、`-v3`、`-round2` 等后缀；版本历史用 `git log` 查询 |
+| **新建 .md 文件命名** | **必须全小写 kebab-case**（my-doc.md）；大写字母禁止出现在新文件名中；违反则 pre-commit 阻断提交。详见 `docs/09_AUDIT/STANDARDS/doc-naming-standard.md` v2.0.0 |
 | **状态文件写入方式** | **必须覆盖写入**（LATEST 模式）；不得按日期新建文件（`SENTINEL_L1_SCAN_LATEST.json`，而非带日期的文件名） |
 | **AI 生成产物写入位置** | **必须写入 `.audit_cache/`**（已 gitignored），禁止写入 `docs/09_AUDIT/REPORTS/ARCHIVE/` 等受版本控制目录 |
 | **AI 生成文件 frontmatter** | 必须包含 `type: generated` 和 `ttl: 7d\|30d\|permanent` 字段 |
@@ -650,6 +651,7 @@ rg "旧文件路径或文件名" docs/ --include="*.md" -l
 || `git push --force` 或 `--force-with-lease` | 强制覆盖远端历史，不可恢复 |
 || Pipeline C session 中执行 `git rm` 或删除任何文件 | Pipeline C 是只读挖掘流水线，不得修改工作区 |
 | **文件名加版本号（-v2/-v3/-round2）** | git 已提供版本历史，文件名版本号是纯粹重复且破坏目录预算 |
+| **新建大写 .md 文件** | 单轨命名标准（v2.0.0）：新建文件必须全小写 kebab-case；大写字母触发 pre-commit C-10 硬阻断 |
 | **批量扫描结果直接写入 docs/** | 扫描产物必须写入 `.audit_cache/`（已 gitignored），禁止入库污染版本历史 |
 | **每日新建状态快照文件** | 必须覆盖 LATEST 文件；历史通过 `git log` 查询，不得在目录中堆积日期文件 |
 | **单次 session 新建 >5 个文件** | 超出写入预算；必须先删等量旧文件再建新文件，或在流水线 session 中申请豁免 |

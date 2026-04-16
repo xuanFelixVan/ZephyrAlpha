@@ -49,6 +49,7 @@
 
 > **禁止在上述路径之外写入任何非临时文件。禁止在仓库根目录创建 .md 文件。**
 > **禁止写入 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`（已废弃，正在合并）。**
+> **新建任何 `.md` 文件必须全小写 kebab-case**（如 `my-doc.md`）。大写字母触发 pre-commit C-10 硬阻断。命名标准：`docs/09_AUDIT/STANDARDS/doc-naming-standard.md` v2.0.0。
 
 ---
 
