@@ -1,5 +1,21 @@
 # ZephyrAlpha 项目约定
 
+## 工具权限层级（Tool Authority Hierarchy）
+
+本文件是 **Cursor 专用规则（Level 1 — 最高优先级）**。权限边界如下：
+
+| 层级 | 工具 | 规则文件 | 可修改范围 |
+|------|------|---------|-----------|
+| Level 1（最高） | **Cursor** | `.cursor/rules/*.mdc`（本文件） | 所有文件，含 AGENTS.md 和 .roomodes |
+| Level 2 | **Trae** | `.roomodes` → `zephyr-gov` 模式 | `docs/`、`scripts/`、`src/` |
+| Level 3（基准） | 所有工具 | `AGENTS.md` | 只读参考 |
+
+**Cursor 对 Trae 的管理权**：Cursor 可以更新 `.roomodes` 中的 `zephyr-gov` 模式规则，Trae 不得修改本文件（`.cursor/rules/`）。
+
+**Trae 进入项目时**：必须在 `.roomodes` 的 `zephyr-gov` 模式下工作，该模式已内置全套 Write Gate 和治理约束。
+
+---
+
 ## 会话启动强制协议（所有 AI 模型必须遵守）
 
 **每次会话开始，在执行任何操作之前，必须按顺序完成以下步骤**：

@@ -1,4 +1,127 @@
 customModes:
+  - slug: zephyr-gov
+    name: 🛡️ ZephyrAlpha 治理模式（Trae 默认入职模式）
+    roleDefinition: |
+      你是 ZephyrAlpha 量化交易系统的 AI 协作者。本项目处于 Phase 2（施工图纸阶段）。
+      你必须严格遵守本模式内的所有规则，这些规则与 AGENTS.md 的内容一致，
+      但针对 Trae 工具做了明确的权限边界约束。
+    whenToUse: |
+      Trae 中进行 ZephyrAlpha 项目任何工作时，必须使用此模式。
+      这是 Trae 在本项目的唯一合法工作模式。
+    description: ZephyrAlpha 项目专用治理约束（含 Write Gate 写入门禁）
+    groups:
+      - read
+      - edit
+      - command
+    source: project
+    customInstructions: |
+      # ══════════════════════════════════════════════════════════
+      # ZephyrAlpha Trae 入职协议 — 每次会话开始必须执行
+      # ══════════════════════════════════════════════════════════
+
+      ## 0. 会话启动强制协议（每次必读，顺序不可变）
+
+      1. 读取 `AGENTS.md` — 获取全部跨工具约束（本模式是其子集）
+      2. 读取 `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` — 找到当前 Phase 和下一个待完成任务
+      3. 读取 `docs/09_AUDIT/STATE/SESSION_LOGS/` 中日期最大的 session log — 还原上一次工作上下文
+      4. 报告：当前处于 Phase X，下一个任务是 Y，是否与用户本次指令一致
+
+      ## 1. 工具权限层级（硬性规则）
+
+      本项目存在双编辑器分工：
+
+      | 工具 | 规则文件 | 优先级 | 权限 |
+      |------|---------|--------|------|
+      | Cursor | `.cursor/rules/*.mdc` | 最高 | 可修改所有文件 |
+      | Trae（本工具） | `AGENTS.md` + `.roomodes` | 次高 | **禁止修改 `.cursor/rules/` 目录** |
+
+      **Trae 绝对禁止**：
+      - 修改 `.cursor/rules/` 目录下任何文件（`project-conventions.mdc`、`audit-system.mdc`、`code-conventions.mdc`）
+      - 修改 `AGENTS.md`（只有项目 Owner 可修改）
+      - 修改 `.roomodes`（只有 Cursor 模式下的 Owner 可修改）
+
+      ## 2. 写入门禁（Write Gate）— 四层防线
+
+      ### 2.1 写入预算硬限制
+
+      | 约束 | 规则 |
+      |------|------|
+      | 单次 session 新建文件数 | **≤ 5 个**（不含 SESSION_LOG 和流水线批量操作） |
+      | 文件名禁止带版本号 | **禁止** `-v2`、`-v3`、`-round2`、`_v2` 等后缀 |
+      | 状态文件写入方式 | **必须覆盖写入**（LATEST 模式），禁止按日期新建 |
+      | AI 生成产物写入位置 | **必须写入 `.audit_cache/`**（已 gitignored） |
+
+      ### 2.2 目录文件数上限（pre-commit 强制执行）
+
+      | 目录 | 上限 |
+      |------|------|
+      | `docs/09_AUDIT/STATE/DAILY/` | 10 个 |
+      | `docs/09_AUDIT/STATE/SESSION_LOGS/` | 60 个 |
+      | `docs/09_AUDIT/STATE/`（根级） | 60 个 |
+      | `docs/09_AUDIT/REPORTS/ARCHIVE/` | 30 个 |
+      | `docs/09_AUDIT/REPORTS/INCIDENT/` | 20 个 |
+
+      ### 2.3 绝对禁止写入行为
+
+      - 文件名加版本号（`-v2`/`-v3`/`-round2`）
+      - 批量扫描结果直接写入 `docs/`（必须写 `.audit_cache/`）
+      - 每日新建状态快照文件（覆盖 LATEST）
+      - 单次 session 新建 >5 个文件
+
+      ## 3. 强制写入路径表
+
+      | 操作类型 | 强制写入路径 |
+      |---------|------------|
+      | 写施工图纸 | `docs/04_CONSTRUCTION/PLANS/` |
+      | 写业务代码 | `src/zephyr/{layer_id}/` |
+      | 写治理标准 | `docs/01_GOVERNANCE/STANDARDS/` |
+      | 写审计报告 | `docs/09_AUDIT/STATE/` |
+      | 写蓝图文件 | `docs/01_FRAMEWORK/`（过渡期真源） |
+      | 记录技术选型 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` |
+      | 写 pre-commit 钩子 | `scripts/hooks/` |
+      | 写治理脚本 | `scripts/governance/` |
+      | AI 扫描产物 | `.audit_cache/`（绝不入 docs/） |
+      | Session 日志 | `docs/09_AUDIT/STATE/SESSION_LOGS/session-YYYYMMDD-NNN.md` |
+
+      **禁止在根目录创建任何新文件。**
+
+      ## 4. 不可触碰的锚点文件（任何情况下不得删除/重命名）
+
+      ```
+      AGENTS.md
+      .cursor/rules/project-conventions.mdc
+      .cursor/rules/audit-system.mdc
+      .cursor/rules/code-conventions.mdc
+      .pre-commit-config.yaml
+      docs/subsystem-registry.yaml
+      docs/01_GOVERNANCE/governance-asset-inventory.yaml
+      docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md
+      docs/02_ARCHITECTURE/BLUEPRINT_DOMAIN_INVENTORY.yaml
+      docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md
+      ```
+
+      ## 5. 文件操作安全门禁（删除前三问）
+
+      删除任何文件前必须回答：
+      1. 是否在锚点列表中？→ 是则停止
+      2. 是否已提取知识/价值？→ 否且含设计决策 → 先提取到 `docs/08_KNOWLEDGE/`
+      3. 是否有其他文件引用？→ 是 → 先更新所有引用
+
+      ## 6. Git 操作规范
+
+      - 不使用 `git add -A` 或 `git add .`，始终精确指定路径
+      - commit 前先 `git status` 确认暂存文件
+      - 不 push 到远程，除非用户明确要求
+      - **禁止** `git commit --no-verify`（绕过 pre-commit 钩子）
+      - **禁止** `--force` 推送
+
+      ## 7. 会话结束强制协议
+
+      每次会话结束前必须：
+      1. 按 `docs/09_AUDIT/FORM_STANDARDS/session-log-template.md` 创建 Session Log
+      2. 命名：`session-YYYYMMDD-NNN.md`，存入 `docs/09_AUDIT/STATE/SESSION_LOGS/`
+      3. 内容：本次完成、变更文件、关键决策、未完成事项、交接指令
+
   - slug: devops
     name: 🚀 DevOps
     roleDefinition: |

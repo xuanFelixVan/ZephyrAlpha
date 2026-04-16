@@ -1,8 +1,36 @@
 # ZephyrAlpha 项目通用 AI 治理约束
 
-> **适用范围**：所有 AI 工具（Cursor、Trae、GitHub Copilot、Claude API 等）。本文件是跨工具的最高优先级约束文件。Cursor 用户另外参见 `.cursor/rules/` 目录下的三个 `.mdc` 文件（优先级更高、更详细）。
+> **适用范围**：所有 AI 工具（Cursor、Trae、GitHub Copilot、Claude API 等）。本文件是跨工具的基准约束文件。
 >
-> **版本**：v1.0.0 | 创建日期：2026-04-16 | 状态：Active
+> **版本**：v1.1.0 | 创建日期：2026-04-16 | 状态：Active
+
+## 零、工具权限层级（Tool Authority Hierarchy）
+
+本项目采用双编辑器分工，权限层级如下：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Level 1（最高）：Cursor 专用规则                              │
+│  文件：.cursor/rules/project-conventions.mdc                 │
+│         .cursor/rules/audit-system.mdc                      │
+│         .cursor/rules/code-conventions.mdc                  │
+│  权限：可修改所有文件，包括 AGENTS.md 和 .roomodes             │
+├─────────────────────────────────────────────────────────────┤
+│  Level 2（次高）：Trae 专用规则                               │
+│  文件：.roomodes（slug: zephyr-gov 模式）                     │
+│  权限：可修改 docs/、scripts/、src/                           │
+│  ❌ 禁止修改：.cursor/rules/ 下任何文件                        │
+│  ❌ 禁止修改：AGENTS.md、.roomodes（只有 Owner 可改）           │
+├─────────────────────────────────────────────────────────────┤
+│  Level 3（基准）：本文件 AGENTS.md                            │
+│  文件：AGENTS.md                                             │
+│  权限：只读基准，所有工具共同遵守                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Trae 入职模式**：在 Trae 中工作时，必须切换到 `.roomodes` 中的 `zephyr-gov` 模式，该模式包含完整的项目约束和 Write Gate 规则。
+
+---
 
 ---
 
