@@ -293,7 +293,9 @@ def main() -> int:
 
     out_dir = REPO / args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
-    json_path = out_dir / f"INDEX_HEALTH_ORPHAN_{args.date}.json"
+    # LATEST 覆盖写入模式：始终覆盖同一文件，历史通过 git log 查询
+    # 如需保留带日期的副本，可手动执行：git show HEAD:docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_LATEST.json
+    json_path = out_dir / "INDEX_HEALTH_ORPHAN_LATEST.json"
     json_path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -309,7 +311,7 @@ def main() -> int:
         "",
         "# 索引健全性扫描报告（零入链候选）",
         "",
-        f"> **机器真源**：[`INDEX_HEALTH_ORPHAN_{args.date}.json`](./INDEX_HEALTH_ORPHAN_{args.date}.json)",
+        f"> **机器真源**：[`INDEX_HEALTH_ORPHAN_LATEST.json`](./INDEX_HEALTH_ORPHAN_LATEST.json)",
         f"> **候选范围**：`{', '.join(normalize_posix(p) for p in candidate_prefixes)}` ｜ **候选 md 数**：{len(candidates)} ｜ **入链来源**：{args.link_source}（{len(link_sources)} 个 md）",
         f"> **零入链（已应用 ignore 后）**：**{len(zero_inbound)}**",
         "",
@@ -329,7 +331,7 @@ def main() -> int:
         md_lines.append(f"> 仅列出前 {args.max_list} 条，共 {len(zero_inbound)} 条，详见 JSON。")
     md_lines.append("")
 
-    md_path = out_dir / f"INDEX_HEALTH_ORPHAN_{args.date}.md"
+    md_path = out_dir / "INDEX_HEALTH_ORPHAN_LATEST.md"
     md_path.write_text("\n".join(md_lines), encoding="utf-8")
 
     print(f"Wrote: {json_path.relative_to(REPO)}")

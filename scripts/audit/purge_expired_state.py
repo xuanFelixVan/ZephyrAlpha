@@ -50,6 +50,10 @@ def classify_and_cleanup_state():
             if "overnight" in item.lower():
                 target_subdir = "OVERNIGHT"
                 ttl = TTL_CONFIG["OVERNIGHT"]
+            elif item in ("INDEX_HEALTH_ORPHAN_LATEST.json", "INDEX_HEALTH_ORPHAN_LATEST.md",
+                          "SENTINEL_L1_SCAN_LATEST.json", "SENTINEL_L1_SCAN_LATEST.md"):
+                # LATEST 文件：覆盖写入模式，永不过期、永不移动
+                ttl = 9999
             elif re.search(r"INDEX_HEALTH_ORPHAN_\d{8}", item) or re.search(r"index-health-orphan-\d{8}", item):
                 target_subdir = "DAILY"
                 ttl = TTL_CONFIG["DAILY"]

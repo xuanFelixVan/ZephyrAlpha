@@ -38,7 +38,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-C3_JSON_GLOB_PATTERN = "INDEX_HEALTH_ORPHAN_*.json"
+C3_JSON_GLOB_PATTERN = "INDEX_HEALTH_ORPHAN_*.json"  # 兼容旧日期格式（LATEST 已统一覆盖写入）
 OUT_DIR = REPO / "docs" / "09_AUDIT" / "STATE"
 
 AUTO_GEN_PREFIXES = (
