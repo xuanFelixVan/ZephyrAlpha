@@ -1,0 +1,315 @@
+# ZephyrAlpha 文件消除流水线执行追踪
+# 更新规则：每次 Trae session 完成文件消除后，必须更新本文件
+# 路径：docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
+# 禁止删除本文件（治理锚点）
+
+schema_version: "1.0"
+created_date: "2026-04-16"
+last_updated: "2026-04-16"
+owner: "ZephyrAlpha-Owner"
+
+# ============================================================
+# 总体进度
+# ============================================================
+overall_progress:
+  baseline_file_count: 1999        # 流水线启动时的总文件数（2026-04-16）
+  target_file_count: 900           # 进入 Phase 2 前的目标
+  current_file_count: 1999         # 每次 session 后更新
+  files_eliminated: 0              # 累计已删除文件数
+  knowledge_entries_added: 0       # 累计已入库知识条目数
+  sessions_completed: 0            # 累计完成的 session 数
+  estimated_sessions_remaining: 35 # 预估剩余 session 数
+
+# ============================================================
+# 流水线 A：文件消除流水线（File Elimination Pipeline）
+# ============================================================
+file_elimination_pipeline:
+
+  wave_1:
+    name: "openclaw-l2-* 批量扫描产物清理"
+    target_path: "docs/09_AUDIT/REPORTS/ARCHIVE/"
+    target_pattern: "openclaw-l2-*"
+    estimated_files: 307
+    strategy: "直接删除（批量扫描产物，无唯一价值，不需要提取知识）"
+    status: pending            # pending | in_progress | completed
+    files_processed: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []           # 记录每次 session 的操作摘要
+    notes: ""
+
+  wave_2:
+    name: "旧版本审计报告清理"
+    target_path: "docs/09_AUDIT/REPORTS/ARCHIVE/"
+    target_pattern: "旧版本报告（排除 openclaw-l2-*，保留每类报告最新 3 版）"
+    estimated_files: 130
+    strategy: "每类报告保留最新 3 个版本，删除旧版本；deep-audit-report 等版本化文件删除 v1-vN-2"
+    status: pending
+    files_processed: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: ""
+
+  wave_3:
+    name: "STATE/ 过期 JSON 和每日快照清理"
+    target_path: "docs/09_AUDIT/STATE/"
+    target_pattern: "*.json + DAILY/*.md（30 天 TTL）"
+    estimated_files: 350
+    strategy: "JSON 状态文件和每日健康检查快照：创建日期超过 30 天的清理；MILESTONE/ 下的快照永久保留"
+    status: pending
+    files_processed: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "注意：module_id_registry.json 是锚点文件，不得删除"
+
+  wave_4:
+    name: "integrated_from_* 空壳目录清理"
+    target_path: "docs/"
+    target_pattern: "*/integrated_from_*/"
+    estimated_files: 42
+    strategy: "所有 integrated_from_* 目录仅含自动生成的 INDEX.md，集成完成后即为空壳，直接删除整个目录"
+    status: pending
+    files_processed: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "删除前确认：目录下是否只有 INDEX.md，INDEX.md 内容是否只有自动生成的条目"
+
+  wave_5:
+    name: "01_FRAMEWORK 中混入的审计/元文档清理"
+    target_path: "docs/01_FRAMEWORK/"
+    target_pattern: "gap-analysis、supplement、collection、audit-report、stage-complete 等非蓝图文件"
+    estimated_files: 40
+    strategy: "身份验证（是否真正的蓝图？）→ 非蓝图文件移至 09_AUDIT 或删除；含有价值信息则先提取"
+    status: pending
+    files_processed: 0
+    files_deleted: 0
+    files_moved: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "参考文件名模式：*-gap-analysis-*, *-supplement-*, *-collection-*, *-stage-complete-*"
+
+  wave_6:
+    name: "01_FRAMEWORK 与 05_IMPLEMENTATION 重叠蓝图合并"
+    target_path: "docs/01_FRAMEWORK/ + docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/"
+    target_pattern: "两个目录中同名或同模块的蓝图文件（约 163 个重叠）"
+    estimated_files: 163
+    strategy: "找到每个重叠蓝图的最新最完整版本 → 保留一份 → 迁移到 docs/03_BLUEPRINTS/{layer}/ → 删除旧副本"
+    status: pending
+    files_processed: 0
+    files_migrated: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "参考 BLUEPRINT_DOMAIN_INVENTORY.yaml 中的 duplicate_of 字段"
+
+  wave_7:
+    name: "01_FRAMEWORK 剩余蓝图价值提取与迁移"
+    target_path: "docs/01_FRAMEWORK/"
+    target_pattern: "Wave 6 处理后剩余的真正蓝图文件（约 130 个）"
+    estimated_files: 170
+    strategy: "按 P0/P1/P2/P3 评估 → P0/P1 迁移到 03_BLUEPRINTS → P2 提取知识后归档 → P3 提取知识后删除"
+    status: pending
+    files_processed: 0
+    files_migrated: 0
+    files_archived: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "P0/P1 判定标准：Phase 2 施工需要 + 有唯一设计决策 + 有可执行技术规格"
+
+  wave_8:
+    name: "其他散落低价值文件清理"
+    target_path: "docs/"
+    target_pattern: "未被前 7 个 Wave 覆盖的临时产物、重复文件、低价值存档"
+    estimated_files: 50
+    strategy: "逐个评估，按分类体系打标后处置"
+    status: pending
+    files_processed: 0
+    files_deleted: 0
+    knowledge_extracted: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: ""
+
+# ============================================================
+# 流水线 B：蓝图安全流水线（Blueprint Safety Pipeline）
+# ============================================================
+blueprint_safety_pipeline:
+
+  bp_wave_1:
+    name: "01_FRAMEWORK 中非蓝图文件分流"
+    target_path: "docs/01_FRAMEWORK/"
+    estimated_files: 40
+    strategy: "识别并分流：审计报告 → 09_AUDIT；元文档（collection/supplement）→ 消除流水线处理"
+    status: pending
+    files_processed: 0
+    files_reclassified: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "与文件消除流水线 Wave 5 协同执行"
+
+  bp_wave_2:
+    name: "01_FRAMEWORK 与 05_IMPLEMENTATION 重叠蓝图去重"
+    target_path: "docs/01_FRAMEWORK/ + docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/"
+    estimated_files: 163
+    strategy: "比较两处副本 → 保留最完整版 → 修正 frontmatter → 迁移到 03_BLUEPRINTS → 删除副本"
+    status: pending
+    files_processed: 0
+    files_deduplicated: 0
+    files_migrated: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "与文件消除流水线 Wave 6 同步执行"
+
+  bp_wave_3:
+    name: "01_FRAMEWORK 剩余蓝图按 layer 分类迁移"
+    target_path: "docs/01_FRAMEWORK/"
+    estimated_files: 130
+    strategy: "读取每个蓝图的 layer 字段 → 修正误标 → 迁移到 docs/03_BLUEPRINTS/L{XX}_{LAYER}/"
+    status: pending
+    files_processed: 0
+    files_migrated: 0
+    layer_corrections: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "约 60% 的 layer 字段被误标为 layer_01，需要修正"
+
+  bp_wave_4:
+    name: "其他目录散落蓝图统一治理"
+    target_path: "docs/10_AI_WORKFLOW/ + docs/08_HUMAN_AI_INTERFACE/ + docs/11_STRATEGIC_DECISION/"
+    estimated_files: 100
+    strategy: "评估是否需要迁移到 03_BLUEPRINTS；高价值蓝图迁移，其余原地更新注册信息"
+    status: pending
+    files_processed: 0
+    files_migrated: 0
+    files_updated: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+    notes: "这些目录的蓝图通常已有正确位置，主要任务是修正 frontmatter 和确认注册"
+
+# ============================================================
+# Session 记录（每次 Trae session 在此追加）
+# ============================================================
+sessions:
+  # 格式示例：
+  # - session_id: "2026-04-17-001"
+  #   date: "2026-04-17"
+  #   pipeline: "file_elimination"  # file_elimination | blueprint_safety
+  #   wave: "wave_1"
+  #   files_processed: 18
+  #   files_deleted: 18
+  #   knowledge_extracted: 0
+  #   notes: "删除 18 个 openclaw-l2-* 报告文件"
+  #   session_log_path: "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260417-001.md"
+  []
+
+# ============================================================
+# 流水线 C：Git 历史知识挖掘流水线（Git History Mining Pipeline）
+# 安全约束：只读操作，绝对禁止 git rebase / filter-branch / push --force
+# ============================================================
+git_history_pipeline:
+  description: "Pipeline C - 从 git 历史中挖掘被删除文件的知识价值，只读操作，不修改任何工作区现有文件"
+  safety_constraint: "READONLY - only git log/show/diff allowed. No git rm, no rebase, no force-push."
+  total_deleted_files_in_history: 6073   # git log --diff-filter=D 统计值（2026-04-16）
+  high_value_estimated: 2400             # blueprint + strategy/factor/design 相关（去重估算）
+  prompt_template: "docs/04_CONSTRUCTION/PLANS/trae-prompt-git-history-pipeline.md"
+
+  gh_wave_1:
+    name: ".audit_fix_backup 被删蓝图挖掘"
+    description: "从 git 历史中读取 .audit_fix_backup/docs/01_FRAMEWORK/ 下被删除的蓝图文件"
+    target_pattern: ".audit_fix_backup/**/*.md (deleted in git history)"
+    estimated_files: 300
+    strategy: "读取 git history → 价值评估 → 高价值内容写入 docs/08_KNOWLEDGE/"
+    status: in_progress
+    files_scanned: 20
+    files_high_value: 0
+    files_skipped: 20
+    knowledge_entries_added: 0
+    last_processed_index: 20    # 每次 session 更新，用于 Select-Object -Skip 断点续接
+    started_date: "2026-04-16"
+    completed_date: null
+    sessions_log:
+      - session_id: "2026-04-16-001"
+        date: "2026-04-16"
+        files_scanned: 20
+        files_high_value: 0
+        files_skipped: 20
+        skip_reason: "duplicate - 与现存 docs/01_FRAMEWORK/ 文件高度重复"
+        notes: "扫描了 .audit_fix_backup/docs/01_FRAMEWORK/ 下的20个被删文件，发现均为现存文件的备份副本，无独立价值需要提取"
+
+  gh_wave_2:
+    name: "docs/01_FRAMEWORK 历史版本扫描"
+    description: "从 git 历史中读取 docs/01_FRAMEWORK/ 下被删除的蓝图迭代稿"
+    target_pattern: "docs/01_FRAMEWORK/**/*.md (deleted in git history)"
+    estimated_files: 400
+    strategy: "读取 git history → 对比现存文件 → 提取差异中的独立设计决策"
+    status: pending
+    files_scanned: 0
+    files_high_value: 0
+    files_skipped: 0
+    knowledge_entries_added: 0
+    last_processed_index: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+
+  gh_wave_3:
+    name: "全仓库 strategy/factor/design 相关被删文件"
+    description: "从 git 历史中读取 docs/03_TRADING_TACTICS/、docs/02_FACTOR_LIBRARY/ 等目录被删的策略/因子文件"
+    target_pattern: "**/*strategy* | **/*factor* | **/*design* | **/*module* (deleted, excluding wave1/2 coverage)"
+    estimated_files: 500
+    strategy: "关键词过滤 → 读取 git history → 提取策略逻辑/因子设计到对应知识库分区"
+    status: pending
+    files_scanned: 0
+    files_high_value: 0
+    files_skipped: 0
+    knowledge_entries_added: 0
+    last_processed_index: 0
+    started_date: null
+    completed_date: null
+    sessions_log: []
+
+# ============================================================
+# 知识库积累追踪
+# ============================================================
+knowledge_base_stats:
+  baseline_entries: 20      # 流水线启动时的知识条目数（2026-04-16）
+  target_entries: 100       # 流水线完成后的目标
+  current_entries: 20       # 每次 session 后更新
+  entries_by_category:
+    blueprint_decision: 0
+    strategy: 0
+    factor: 0
+    best_practice: 0
+    lesson_learned: 0
+
+# ============================================================
+# 健康检查
+# ============================================================
+health_check:
+  last_file_count_check: "2026-04-16"
+  last_knowledge_count_check: "2026-04-16"
+  blockers: []              # 记录阻塞进展的问题
+  next_scheduled_review: "2026-04-23"   # 每周复查一次进度

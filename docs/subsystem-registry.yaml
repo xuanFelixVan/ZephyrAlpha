@@ -1,0 +1,390 @@
+# ZephyrAlpha 子系统注册表 (Subsystem Registry)
+# 版本: v1.1.0 | 创建: 2026-04-16 | 更新: 2026-04-16 | Owner: Project Owner
+# 用途: 管理所有系统的系统——记录 docs/ 下每个子目录的 canonical 状态、用途、重复标记
+# 规则: 新建目录前必须在此登记；废弃目录前必须标记 status: deprecated 并指定迁移路径
+
+schema_version: "1.1"
+last_updated: "2026-04-16"
+changelog:
+  - version: "1.2.0"
+    date: "2026-04-16"
+    changes:
+      - "ARCHITECTURE：目录已存在，更新为 canonical: true, status: active, file_count: 8"
+      - "BLUEPRINTS_BY_LAYER：创建 docs/03_BLUEPRINTS/（INDEX + README），更新为 canonical: true, status: active, file_count: 2"
+  - version: "1.1.0"
+    date: "2026-04-16"
+    changes:
+      - "删除 06_ARCHIVE 条目（730 文件，GBK 编码损坏，按价值提取协议直接删除）"
+      - "删除 09_ARCHIVE 条目（63 文件，已删除）"
+      - "删除 99_ARCHIVE 条目（81 文件，已删除）"
+      - "删除 09_RESEARCH_INNOVATION 条目（48 文件，已删除）"
+      - "更新 IMPLEMENTATION 条目（audit_state 421 文件已删除）"
+      - "更新 AI_WORKFLOW 条目（19 个迭代文件已删除）"
+      - "标记 .audit_fix_backup 为已删除"
+total_subsystems: 23
+active_canonical: 21
+deprecated_or_redundant: 4
+last_updated: "2026-04-16"
+
+# ========== 活跃子系统（Canonical = true）==========
+subsystems:
+
+  - id: OVERVIEW
+    canonical_path: docs/00_OVERVIEW/
+    canonical: true
+    status: active
+    purpose: "全库概述与导航（数据流图、系统全景）"
+    file_count: 4
+    layer: cross_layer
+    owner: TBD
+    notes: "小型目录，内容尚待完善"
+
+  - id: RESOURCES
+    canonical_path: docs/00_RESOURCES/
+    canonical: true
+    status: active
+    purpose: "共享资源（配置模板、参考数据）"
+    file_count: 6
+    layer: cross_layer
+    owner: TBD
+
+  - id: FRAMEWORK_BLUEPRINTS
+    canonical_path: docs/01_FRAMEWORK/
+    canonical: true
+    status: active
+    purpose: "主蓝图存储区——Layer 0-11 所有模块蓝图（~332 个文件）"
+    file_count: 332
+    layer: cross_layer
+    owner: TBD
+    known_issues:
+      - "~60% 文件的 layer 字段被误标为 layer_01（应按内容标注实际层）"
+      - "与 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ 存在 163 个文件重叠"
+    migration_plan: "Phase D: 修正 layer 误标；整合散落蓝图"
+
+  - id: GOVERNANCE_ACTIVE
+    canonical_path: docs/01_GOVERNANCE/
+    canonical: true
+    status: active
+    purpose: "治理标准、Playbooks、受控文档登记册（STANDARDS/ PLAYBOOKS/ REGISTERS/ 三子目录）"
+    file_count: 7
+    layer: cross_layer
+    owner: TBD
+    notes: "2026-04-16 已创建 STANDARDS/、PLAYBOOKS/、REGISTERS/ 子目录及关键文件；规则路径现与实际一致"
+    sub_paths:
+      - path: docs/01_GOVERNANCE/STANDARDS/
+        purpose: "治理标准文档（blueprint-lifecycle-standard.md 等）"
+      - path: docs/01_GOVERNANCE/PLAYBOOKS/
+        purpose: "操作 Playbooks 索引"
+      - path: docs/01_GOVERNANCE/REGISTERS/
+        purpose: "受控文档登记册、教训记录册"
+
+  - id: ARCHITECTURE
+    canonical_path: docs/02_ARCHITECTURE/
+    canonical: true
+    status: active
+    purpose: "系统架构核心文档（MODULE_INVENTORY, TECH_DECISION_RECORDS, DEV_ENV_SETUP, TECHNOLOGY_BACKLOG, SYSTEM_PANORAMA, EXECUTABLE_ASSET_REGISTRY, BLUEPRINT_DOMAIN_INVENTORY, INDEX）"
+    file_count: 8
+    layer: cross_layer
+    owner: TBD
+    notes: "2026-04-16 补 INDEX.md；与规则中 planned 状态对齐为 active"
+
+  - id: BLUEPRINTS_BY_LAYER
+    canonical_path: docs/03_BLUEPRINTS/
+    canonical: true
+    status: active
+    purpose: "按层组织的蓝图目录（L00-L11 子目录）——目标结构；过渡期真源仍为 docs/01_FRAMEWORK/"
+    file_count: 2
+    layer: cross_layer
+    owner: TBD
+    notes: "2026-04-16 创建目录与 INDEX/README；Phase D 从 01_FRAMEWORK 迁移蓝图至此"
+    migration_plan: "Phase D: 从 docs/01_FRAMEWORK/ 迁移蓝图至此，按 Layer 分类"
+
+  - id: CONSTRUCTION_PLANS
+    canonical_path: docs/04_CONSTRUCTION/
+    canonical: true
+    status: active
+    purpose: "施工阶段文档（MASTER_DEVELOPMENT_PLAN.md, 各层施工图 CONSTRUCTION_PLAN_*.md）"
+    file_count: 4
+    layer: cross_layer
+    owner: TBD
+    notes: "规则引用路径正确，此目录存在且内容正确"
+
+  - id: IMPLEMENTATION
+    canonical_path: docs/05_IMPLEMENTATION/
+    canonical: true
+    status: active
+    purpose: "实现层文档汇总（施工文档、技术规格、运维）"
+    file_count: ~487
+    layer: cross_layer
+    owner: TBD
+    known_issues:
+      - "包含 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ 与 docs/06_CONSTRUCTION_DOCS/ 重复"
+    cleanup_done:
+      - "audit_state/ (421 文件) 已于 2026-04-16 删除（与 09_AUDIT/STATE/ 重复）"
+    sub_paths:
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/
+        purpose: "治理/管理类文档（实际的 governance 文档存放地，25 个文件）"
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+        purpose: "图纸柜（163 个蓝图，有自动生成的 INDEX）"
+      - path: docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/
+        purpose: "技术规格（含 module-registry.md）"
+
+  # 06_ARCHIVE: 已于 2026-04-16 删除（730 文件，GBK 编码损坏导致内容不可读，按价值提取协议直接删除）
+  # 09_ARCHIVE: 已于 2026-04-16 删除（63 文件，空壳指针文件）
+  # 99_ARCHIVE: 已于 2026-04-16 删除（81 文件，时间戳 stub 目录）
+
+  - id: FACTOR_LIBRARY
+    canonical_path: docs/02_FACTOR_LIBRARY/
+    canonical: true
+    status: active
+    purpose: "因子库（Alpha 因子设计、因子研究文档）"
+    file_count: 175
+    layer: L02
+    owner: TBD
+
+  - id: TRADING_TACTICS
+    canonical_path: docs/03_TRADING_TACTICS/
+    canonical: true
+    status: active
+    purpose: "交易策略文档"
+    file_count: 64
+    layer: L05
+    owner: TBD
+
+  - id: EXECUTION
+    canonical_path: docs/04_EXECUTION/
+    canonical: true
+    status: active
+    purpose: "执行层文档"
+    file_count: 40
+    layer: L06
+    owner: TBD
+
+  - id: RESEARCH
+    canonical_path: docs/07_RESEARCH/
+    canonical: true
+    status: review_needed
+    purpose: "研究创新层（Layer 9）文档（环境研究、探索性分析、实验追踪）"
+    file_count: 16
+    layer: L09
+    owner: TBD
+    notes: "2026-04-16 已确认为 canonical，09_RESEARCH_INNOVATION 是重复目录待合并至此"
+    duplicates:
+      - path: docs/09_RESEARCH_INNOVATION/
+        file_count: 48
+        action: review_and_merge
+        priority: P2
+
+  - id: AI_REPORTING
+    canonical_path: docs/07_AI_REPORTING/
+    canonical: true
+    status: active
+    purpose: "AI 报告层文档（Layer 7）"
+    file_count: 8
+    layer: L07
+    owner: TBD
+    notes: "文件较少，主要蓝图可能在 docs/10_AI_WORKFLOW/"
+
+  # RESEARCH 重复条目已于 2026-04-16 合并，保留上方唯一条目
+        notes: "内容主要是审计报告而非研究，需区分"
+
+  - id: HUMAN_AI_INTERFACE
+    canonical_path: docs/08_HUMAN_AI_INTERFACE/
+    canonical: true
+    status: active
+    purpose: "人机交互层（Layer 8）模块蓝图，按子模块分目录"
+    file_count: 156
+    layer: L08
+    owner: TBD
+
+  - id: KNOWLEDGE_BASE
+    canonical_path: docs/08_KNOWLEDGE/
+    canonical: true
+    status: active
+    purpose: "统一知识库（Factor Library / Strategy Library / Best Practices / Lessons Learned）"
+    file_count: 13
+    layer: cross_layer
+    owner: TBD
+    known_issues:
+      - "INDEX.md 存在编码损坏（阿拉伯文乱码）"
+      - "实质内容极少（~10 篇），与 ~1400 个蓝图文件形成巨大反差"
+    duplicates:
+      - path: docs/08_KNOWLEDGE_BASE/
+        file_count: 6
+        action: merge_into_canonical
+        priority: P1
+        notes: "同编号同功能重复，08_KNOWLEDGE_BASE 应合并入 08_KNOWLEDGE"
+      - path: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/
+        action: retain_as_subsection
+        priority: P2
+        notes: "运维专属知识库，可保留为 08_KNOWLEDGE/operations/ 子目录"
+      - path: docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
+        action: review
+        priority: P2
+      - path: docs/08_HUMAN_AI_INTERFACE/53_KNOWLEDGE_BASE_SYSTEM/
+        action: keep_as_blueprint
+        priority: P2
+        notes: "这是蓝图文件，不是知识库内容，位置正确"
+
+  - id: AUDIT_SYSTEM
+    canonical_path: docs/09_AUDIT/
+    canonical: true
+    status: active
+    purpose: "审计体系（STANDARDS 34个标准、STATE 558个报告、PROCEDURES、GUIDES 等）"
+    file_count: 1172
+    layer: cross_layer
+    owner: TBD
+    known_issues:
+      - "规则文件错误引用为 docs/07_AUDIT/（实际是 09_AUDIT）"
+      - "STATE/ 有 558 个报告文件，无保留策略执行"
+    duplicates:
+      - path: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
+        action: merge_into_canonical
+        priority: P1
+        notes: "420 个文件重复存储，应统一到 docs/09_AUDIT/STATE/"
+
+  - id: AI_WORKFLOW
+    canonical_path: docs/10_AI_WORKFLOW/
+    canonical: true
+    status: active
+    purpose: "AI 工作流蓝图（Layer 7 AI 报告层 + Layer 3 舆情分析）"
+    file_count: ~45
+    layer: L07_L03
+    owner: TBD
+    known_issues:
+      - "混合了 Layer 7 和 Layer 3 两个不同层的内容"
+    cleanup_done:
+      - "19 个舆情迭代过程文档 + 1 个重复调度器蓝图于 2026-04-16 删除"
+      - "知识教训已提取至 lessons-learned-register.md (LL-006, LL-007)"
+
+  - id: GOVERNANCE_COMPLIANCE
+    canonical_path: docs/10_GOVERNANCE_COMPLIANCE/
+    canonical: true
+    status: active
+    purpose: "治理与合规层（Layer 10）文档"
+    file_count: 21
+    layer: L10
+    owner: TBD
+    duplicates:
+      - path: docs/07_GOVERNANCE_COMPLIANCE/
+        file_count: 1
+        action: delete_empty_shell
+        priority: P2
+        notes: "空壳，只有 INDEX.md"
+
+  - id: STRATEGIC_DECISION
+    canonical_path: docs/11_STRATEGIC_DECISION/
+    canonical: true
+    status: active
+    purpose: "战略决策层（Layer 11）蓝图"
+    file_count: 57
+    layer: L11
+    owner: TBD
+
+  - id: MODULE_DESIGNS
+    canonical_path: docs/12_MODULE_DESIGNS/
+    canonical: true
+    status: active
+    purpose: "模块级详细设计文档"
+    file_count: 3
+    layer: cross_layer
+    owner: TBD
+
+  # 09_RESEARCH_INNOVATION: 已于 2026-04-16 删除（48 文件，主要是运维产物，非研究内容）
+
+  - id: SENTIMENT_ANALYSIS_STUB
+    canonical_path: docs/11_Sentiment_Analysis/
+    canonical: false
+    status: deprecated
+    purpose: "舆情分析空壳目录（仅 1 个文件，内容在 10_AI_WORKFLOW/）"
+    file_count: 1
+    layer: L03
+    owner: TBD
+    canonical_replacement: docs/10_AI_WORKFLOW/
+    action_required: "Phase D: 合并到 10_AI_WORKFLOW 或 01_FRAMEWORK，删除空壳"
+
+  - id: CONSTRUCTION_DOCS_STUB
+    canonical_path: docs/06_CONSTRUCTION_DOCS/
+    canonical: false
+    status: deprecated
+    purpose: "施工文档空壳（4 个文件），与 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ 重复"
+    file_count: 4
+    layer: cross_layer
+    owner: TBD
+    canonical_replacement: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
+    action_required: "Phase D: 迁移 4 个文件后删除此目录"
+
+  - id: ARCHIVED_BACKUP_TIMESTAMPED
+    canonical_path: docs/08_ARCHIVED_BACKUP_20260413123038/
+    canonical: false
+    status: deprecated
+    purpose: "带时间戳的备份目录（AI 批量操作副作用）"
+    file_count: 2
+    layer: cross_layer
+    owner: TBD
+    action_required: "Phase D: 验证内容后删除"
+
+# ========== Scripts 子系统 ==========
+scripts_subsystems:
+
+  - id: SCRIPTS_GOVERNANCE
+    canonical_path: scripts/governance/
+    canonical: true
+    status: active
+    purpose: "常驻治理工具（CI 引用，扫描/修复/校验/报告）"
+    file_count: 12
+
+  - id: SCRIPTS_HOOKS
+    canonical_path: scripts/hooks/
+    canonical: true
+    status: active
+    purpose: "pre-commit 钩子脚本（含 doc_guard、source_guard、索引与放置检查）"
+    file_count: 13
+
+  - id: SCRIPTS_CI_AUDIT
+    canonical_path: scripts/ci_audit/
+    canonical: true
+    status: active
+    purpose: "GitHub Actions 引用的文档审计脚本（链接检查、重复检测、周期审计等）"
+    file_count: 14
+    notes: "2026-04-16 自 scripts/archive/ 迁移，路径已更新至 workflows"
+
+  - id: SCRIPTS_AUDIT
+    canonical_path: scripts/audit/
+    canonical: true
+    status: active
+    purpose: "手动审计辅助工具"
+    file_count: 23
+
+  - id: ARCHIVE
+    canonical_path: docs/06_ARCHIVE/
+    canonical: true
+    status: active
+    purpose: "P2 级文档归档区：蓝图安全流水线和文件消除流水线的归档目标路径"
+    file_count: 1
+    layer: L11
+    owner: ZephyrAlpha-Owner
+    notes: "2026-04-16 重建，原目录（730 文件，GBK 编码损坏）已于早期治理中删除"
+
+# ========== 根目录特殊文件 ==========
+root_level_docs:
+  - path: docs/SITEMAP.md
+    status: active
+    note: "v5.3 版本已过时（仅覆盖 12/26 个子目录），需更新"
+  - path: docs/system-manifest.md
+    status: active
+    note: "v5.9.0，记录 162+ 蓝图和 88 模块，是核心资产清单"
+  - path: docs/subsystem-registry.yaml
+    status: active
+    note: "本文件——子系统注册表（新建于 2026-04-16）"
+  - path: docs/01_GOVERNANCE/governance-asset-inventory.yaml
+    status: active
+    note: "治理资产总清单——管理所有管理系统的系统（新建于 2026-04-16）"
+
+# ========== 根目录意外文件（需治理）==========
+root_unexpected:
+  - path: .audit_fix_backup/
+    type: directory
+    file_count: 1398
+    status: deleted
+    note: "AI 批量修复操作的完整仓库备份，于 2026-04-16 清理删除"

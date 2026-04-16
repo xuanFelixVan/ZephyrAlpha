@@ -81,6 +81,8 @@ responsibility: STATE
 
 | **生效日期** | 2026-04-08 |
 
+|| ⚠️ **修订说明（2026-04-16）** | **本 ADR 路径决定已被治理重构废止。** 审计报告唯一权威路径已由 docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ **迁移至 docs/09_AUDIT/STATE/**（见 AGENTS.md v1.0.0、.cursor/rules/*.mdc、subsystem-registry.yaml）。旧路径全库已标注为 Deprecated。**执行时以 docs/09_AUDIT/STATE/ 为准，本条仅供历史溯源。** |
+
 
 
 ```
