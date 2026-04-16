@@ -71,6 +71,7 @@ AGENTS.md（本文件）
 | 修改 `.cursor/rules/` | **禁止**（Trae 等非 Cursor 工具不得修改 Cursor 规则文件） |
 | 修改 `AGENTS.md` | **禁止**（只有项目 Owner 可修改） |
 | 写入废弃目录 | **禁止**（见第六节废弃路径表） |
+|| **在项目根目录创建新文件** | **禁止**。根目录只允许白名单文件（AGENTS.md, README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, pyproject.toml, requirements*.txt, .pre-commit-config.yaml, .env*, .gitignore, .editorconfig, .roomodes）。其他 .py/.txt/.json/.md 必须放入对应子目录（审计脚本→scripts/audit/, 工具→scripts/, 设计文档→docs/）。 |
 
 ### 4.2 删除操作的安全门禁
 
