@@ -11,8 +11,13 @@
    - 修复日志 (FIX_REPORT, REPLACEMENT_LOG, MIGRATION, BATCH_FIX, SUPPLEMENT_REPORT): 超过 30 天删除。
    - 审计报告 (AUDIT_REPORT, DEEP_AUDIT): 超过 30 天删除（除非是最新版）。
 4. 废弃路径清理：清理 docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/。
+
+用法：
+  python cleanup_audit_state.py         # 直接执行清理
+  python cleanup_audit_state.py --dry-run  # 仅预览，不删除
 """
 
+import argparse
 import os
 import re
 import shutil
@@ -53,13 +58,15 @@ def get_type_prefix(name: str) -> str:
     name = re.sub(r"\.\w+$", "", name)
     return name
 
-def cleanup():
+def cleanup(dry_run: bool = False):
     now = datetime.now()
     deleted_count = 0
     kept_count = 0
     freed_space = 0
+    files_to_delete = []
 
-    print(f"开始清理审计状态目录: {STATE_DIR}")
+    mode_str = "[DRY-RUN 模式] " if dry_run else ""
+    print(f"{mode_str}开始清理审计状态目录: {STATE_DIR}")
     print(f"当前日期: {now.strftime('%Y-%m-%d')}")
     print("-" * 50)
 
@@ -70,7 +77,7 @@ def cleanup():
     # 1. 扫描所有文件并按类型分组以保留最新版
     all_files = [p for p in STATE_DIR.rglob("*") if p.is_file() and p.name != "INDEX.md"]
     files_by_type = {} # type_prefix -> [Path]
-    
+
     for p in all_files:
         prefix = get_type_prefix(p.stem)
         if prefix not in files_by_type:
@@ -88,7 +95,7 @@ def cleanup():
         file_name = p.name.upper()
         file_date = get_file_date(p)
         age_days = (now - file_date).days
-        
+
         # 核心保留规则
         keep = False
         reason = ""
@@ -116,21 +123,32 @@ def cleanup():
             # print(f"保留 [{reason}]: {p.name}")
         else:
             freed_space += p.stat().st_size
-            # print(f"删除: {p.name} (年龄: {age_days}天)")
-            p.unlink()
+            files_to_delete.append((p, age_days))
+            if not dry_run:
+                p.unlink()
             deleted_count += 1
 
     # 4. 清理废弃目录
-    if DEPRECATED_DIR.exists():
+    if DEPRECATED_DIR.exists() and not dry_run:
         print(f"清理废弃目录: {DEPRECATED_DIR}")
         shutil.rmtree(DEPRECATED_DIR)
         print("废弃目录已移除。")
 
+    # 打印将要删除的文件列表（dry-run 模式）
+    if dry_run and files_to_delete:
+        print("\n以下文件将被删除:")
+        for p, age_days in sorted(files_to_delete, key=lambda x: x[0].name):
+            print(f"  - {p.name} (年龄: {age_days}天)")
+
     print("-" * 50)
-    print(f"清理完成!")
+    if dry_run:
+        print(f"[DRY-RUN] 预览完成，未实际删除")
     print(f"删除文件数: {deleted_count}")
     print(f"保留文件数: {kept_count}")
     print(f"释放空间: {freed_space / 1024 / 1024:.2f} MB")
 
 if __name__ == "__main__":
-    cleanup()
+    parser = argparse.ArgumentParser(description="清理审计状态目录")
+    parser.add_argument("--dry-run", action="store_true", help="仅预览，不实际删除文件")
+    args = parser.parse_args()
+    cleanup(dry_run=args.dry_run)

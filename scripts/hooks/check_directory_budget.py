@@ -32,7 +32,7 @@ REPO = Path(__file__).resolve().parents[2]
 BUDGETS: dict[str, int] = {
     "docs/09_AUDIT/STATE/DAILY":          10,   # 只保留 LATEST，最多 10 个
     "docs/09_AUDIT/STATE/SESSION_LOGS":   60,   # session 日志，会话完毕后清理
-    "docs/09_AUDIT/STATE":               500,  # STATE 根目录（不含子目录递归）TODO: 2026-04-16 历史债务 ~450 个扫描产物待清理，目标 ≤60
+    "docs/09_AUDIT/STATE":                60,   # STATE 根目录（不含子目录递归）- 已清理至 60 以下
     "docs/09_AUDIT/REPORTS/ARCHIVE":     30,   # Wave 1-2 清理后的稳态上限
     "docs/09_AUDIT/REPORTS/INCIDENT":    20,   # 事故报告，保留最近 20 份
     "docs/09_AUDIT/REPORTS/QUALITY":     20,

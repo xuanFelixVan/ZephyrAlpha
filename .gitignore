@@ -192,3 +192,34 @@ docs/09_AUDIT/REPORTS/ARCHIVE/openclaw-l2-*
 *.scan_result.json
 *.tmp.md
 *.tmp.json
+
+# --------------------------
+# STATE 目录临时扫描产物（防止积累）
+# 只保留关键文件（LATEST, MASTER, INDEX, DECISION 等）
+# --------------------------
+# 历史 SENTINEL_L1 扫描结果（保留 latest）
+docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_*.json
+!docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_LATEST.json
+
+# 历史 SNAPSHOT 文件
+docs/09_AUDIT/STATE/*_SNAPSHOT_*.md
+docs/09_AUDIT/STATE/*_SNAPSHOT_*.json
+
+# 历史 SCAN 文件
+docs/09_AUDIT/STATE/*_SCAN_*.md
+docs/09_AUDIT/STATE/*_SCAN_*.json
+!docs/09_AUDIT/STATE/sentinel-l1-scan-latest.md
+
+# 历史 ANALYSIS 文件
+docs/09_AUDIT/STATE/*_ANALYSIS_*.md
+docs/09_AUDIT/STATE/*_ANALYSIS_*.json
+
+# 历史 AUDIT 报告（旧日期）
+docs/09_AUDIT/STATE/*-2026040[0-9]-*.md
+docs/09_AUDIT/STATE/*_2026040[0-9]_*.json
+
+# 多版本文件（ROUND2+, v2+）
+docs/09_AUDIT/STATE/*ROUND*.md
+docs/09_AUDIT/STATE/*ROUND*.json
+docs/09_AUDIT/STATE/*_V[0-9]_*.json
+docs/09_AUDIT/STATE/*-v[0-9]-*.md

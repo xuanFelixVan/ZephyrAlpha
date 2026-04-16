@@ -1036,9 +1036,9 @@ implementation_status: 蓝图阶段
 
 |------|------|
 
-| [ASSET_ALLOCATION_MODEL.md](./docs/11_STRATEGIC_DECISION/01_asset_allocation/asset-allocation-model.md) | 资产配置模型蓝图 |
+| [ASSET_ALLOCATION_MODEL.md](../../11_STRATEGIC_DECISION/01_asset_allocation/asset-allocation-model.md) | 资产配置模型蓝图 |
 
-| [ALLOCATION_OPTIMIZATION_METHOD.md](./docs/11_STRATEGIC_DECISION/01_asset_allocation/allocation-optimization-method.md) | 配置优化方法蓝图 |
+| [ALLOCATION_OPTIMIZATION_METHOD.md](../../11_STRATEGIC_DECISION/01_asset_allocation/allocation-optimization-method.md) | 配置优化方法蓝图 |
 
 
 
@@ -1051,7 +1051,7 @@ implementation_status: 蓝图阶段
 
 |------|------|
 
-| [完整系统蓝图总览](./docs/11_STRATEGIC_DECISION/complete-blueprint-overview.md) | 所有模块的完整清单 |
+| [完整系统蓝图总览](../../11_STRATEGIC_DECISION/complete-blueprint-overview.md) | 所有模块的完整清单 |
 
 | 蓝图补充方案 | 蓝图补充详细方案 |
 
