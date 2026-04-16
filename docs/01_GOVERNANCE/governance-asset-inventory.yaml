@@ -1,0 +1,464 @@
+## 治理资产总清单 (Governance Asset Inventory)
+##
+## 用途: 管理所有管理系统的系统。
+##       当任何 AI 说"我记得有个 XX 系统"时，先查此文件。
+##       如果清单里没有，则说明它不存在（或已被清理），应该通过 git log 查找历史。
+##
+## 规则: 新建任何治理工具/标准/脚本前，必须先在此清单登记；
+##        废弃时在此标记 status: deprecated 并记录 reason。
+##
+## Owner: Project Owner
+## 对标: Citadel Governance Register / Two Sigma Infrastructure Catalog
+
+schema_version: "1.0"
+created_date: "2026-04-16"
+last_updated: "2026-04-16"
+
+# ============================================================
+# 一、注册表类 (Registries) — 追踪特定类型资产的清单
+# ============================================================
+registries:
+
+  - id: SUBSYSTEM_REGISTRY
+    path: docs/subsystem-registry.yaml
+    manages: "docs/ 下所有子目录的 canonical 状态、用途、重复标记"
+    status: active
+    health_check_script: scripts/governance/scan_subsystem_duplicates.py
+    last_updated: "2026-04-16"
+    notes: "管理所有系统的系统——新建目录前必须先在此登记"
+
+  - id: SCRIPTS_TIER1_REGISTRY
+    path: docs/01_GOVERNANCE/REGISTERS/scripts-canonical-tier1.yaml
+    manages: "日常治理/CI/预提交优先调用的 30 个脚本入口（物理脚本数更多，避免重复建设）"
+    status: active
+    last_updated: "2026-04-16"
+    notes: "dedupe_archive_only_module_ids 已并入 dedupe_archive_module_ids --mode archive-only"
+
+  - id: DIRECTORY_NUMBERING_MAP
+    path: docs/01_GOVERNANCE/REGISTERS/directory-numbering-map-v1.yaml
+    manages: "docs/ 一级目录编号体系重设计的完整映射表（旧编号 → 新编号 + 迁移批次）"
+    status: proposed
+    related_doc: docs/11_STRATEGIC_DECISION/directory-numbering-redesign-plan.md
+    related_adr: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md#ADR-010
+    last_updated: "2026-04-16"
+    notes: "PROPOSED 状态——未经用户批准禁止执行 rename；批准后升级 plan_status 为 APPROVED"
+
+  - id: EXECUTABLE_ASSET_REGISTRY
+    path: docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md
+    manages: "全库所有脚本、pre-commit 钩子、CI 工作流的权威清单"
+    status: active
+    last_updated: "2026-04-16"
+    notes: "AI 创建新工具前必须先检索此文件，防止重复建设"
+
+  - id: CONTROLLED_DOCUMENTS_REGISTER
+    path: docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md
+    manages: "易混淆主题的唯一正式稿路径（真源登记）"
+    status: active
+    last_updated: "2026-04-16"
+
+  - id: BLUEPRINT_DOMAIN_INVENTORY
+    path: docs/02_ARCHITECTURE/BLUEPRINT_DOMAIN_INVENTORY.yaml
+    manages: "654 个蓝图的完整注册表（按层级、优先级、状态统计）"
+    status: active
+    last_updated: "2026-04-16"
+    notes: "P0:257 / P1:95 / P2:286 | Active:595 / AUDITED:59"
+
+  - id: MODULE_REGISTRY
+    path: docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/module-registry.md
+    manages: "Layer 0-11 所有模块定义、职责边界、依赖关系"
+    status: active
+    last_updated: "2026-04-16"
+
+  - id: MODULE_INVENTORY
+    path: docs/02_ARCHITECTURE/MODULE_INVENTORY.md
+    manages: "层→模块→技术栈→蓝图速查表"
+    status: active
+    last_updated: "2026-04-16"
+    notes: "P0-必读，涉及模块时先读"
+
+  - id: SYSTEM_MANIFEST
+    path: docs/system-manifest.md
+    manages: "全系统文档总清单（2308 行），模块映射与实施状态追踪"
+    status: active
+    last_updated: "2026-04-16"
+
+  - id: GOVERNANCE_ASSET_INVENTORY
+    path: docs/01_GOVERNANCE/governance-asset-inventory.yaml
+    manages: "本文件——所有治理资产的元注册表"
+    status: active
+    last_updated: "2026-04-16"
+
+# ============================================================
+# 二、治理标准类 (Standards) — 定义规则
+# ============================================================
+standards:
+  primary_path: docs/09_AUDIT/STANDARDS/
+  index: docs/09_AUDIT/STANDARDS/INDEX.md
+  governance_standards_path: docs/01_GOVERNANCE/STANDARDS/
+  total_count: 36  # 09_AUDIT/STANDARDS: 34 + 01_GOVERNANCE/STANDARDS: 2
+
+  key_standards:
+    - id: VALUE_EXTRACTION_PROTOCOL
+      path: docs/01_GOVERNANCE/STANDARDS/value-extraction-protocol.md
+      scope: "文件退役的唯一合法处置路径：提取+删除，git history 就是归档"
+      priority: P0
+
+    - id: BLUEPRINT_LIFECYCLE_STANDARD
+      path: docs/01_GOVERNANCE/STANDARDS/blueprint-lifecycle-standard.md
+      scope: "蓝图 6 态生命周期（Draft→Review→Active→Superseded→Deprecated→Retired）"
+      priority: P0
+
+    - id: FILE_NAMING_STANDARD
+      path: docs/09_AUDIT/STANDARDS/doc-naming-standard.md
+      scope: "文档命名 + 文件命名附录（原 file-naming-standard 已并入）"
+      priority: P0
+
+    - id: DECISION_RECORD_STANDARD
+      path: docs/09_AUDIT/STANDARDS/decision-record-standard.md
+      scope: "5 类决策记录（DR-TRADE/DR-STRATEGY/DR-RISK/DR-ARCH/DR-MODEL）"
+      priority: P0
+
+    - id: DOCUMENT_CLASSIFICATION_STANDARD
+      path: docs/09_AUDIT/STANDARDS/document-classification-standard.md
+      scope: "9 大主类目录的文档分类规则"
+      priority: P1
+
+    - id: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD
+      path: docs/09_AUDIT/STANDARDS/document-responsibility-boundary-standard.md
+      scope: "文档职责边界定义，防止职责重叠"
+      priority: P1
+
+# ============================================================
+# 三、治理工具类 (Tools) — 执行规则
+# ============================================================
+tools:
+
+  audit_scripts:
+    path: scripts/audit/
+    count: 21
+    files:
+      - name: sentinel_l1_governance_scan.py
+        purpose: "Sentinel L1 治理扫描——全库合规性一键扫描"
+        trigger: "手动 / CI governance-audit.yml"
+        output: docs/09_AUDIT/STATE/
+      - name: purge_expired_state.py
+        purpose: "STATE/ 和 REPORTS/ 的 TTL 自动清理 + 二级目录分类"
+        trigger: "定期手动执行（建议每月一次）"
+        output: "删除过期文件，归类现有文件"
+      - name: scan_index_health.py
+        purpose: "扫描 INDEX.md 健康度（孤儿文件、死链）"
+        output: docs/09_AUDIT/STATE/DAILY/
+      - name: scan_duplicate_file_content.py
+        purpose: "扫描重复文件内容"
+        output: docs/09_AUDIT/STATE/
+      - name: scan_basename_collisions.py
+        purpose: "扫描文件名冲突"
+        output: docs/09_AUDIT/STATE/
+      - name: fix_dead_links.py
+        purpose: "修复死链"
+      - name: resolve_orphan_files.py
+        purpose: "处理孤儿文件"
+      - name: scan_directory_naming_compliance.py
+        purpose: "扫描目录命名违规"
+
+  governance_scripts:
+    path: scripts/governance/
+    count: 16
+    files:
+      - name: generate_blueprint_registry.py
+        purpose: "从蓝图 frontmatter 提取信息，更新 BLUEPRINT_DOMAIN_INVENTORY.yaml"
+      - name: generate_architecture_service_catalog.py
+        purpose: "自动生成架构服务目录 + C4 视图摘要"
+        output: docs/09_AUDIT/STATE/
+      - name: scan_subsystem_duplicates.py
+        purpose: "子系统目录一致性检查，生成健康报告"
+        output: docs/09_AUDIT/STATE/
+      - name: export_repo_directory_rollup.py
+        purpose: "按目录前缀聚合路径数量统计"
+      - name: backfill_missing_module_id.py
+        purpose: "批量回填缺失的 module_id"
+      - name: backfill_blueprint_priority.py
+        purpose: "批量回填蓝图优先级"
+      - name: diagnose_blueprint_layer_mismatch.py
+        purpose: "诊断蓝图 layer 字段误标"
+      - name: generate_01_blueprints_index.py
+        purpose: "生成 docs/01_FRAMEWORK/INDEX.md"
+      - name: verify_01_blueprints_index_links.py
+        purpose: "验证蓝图索引链接有效性"
+
+  pre_commit_hooks:
+    path: scripts/hooks/
+    count: 12
+    files:
+      - name: doc_guard_pre_commit.py
+        purpose: "文档守卫——编码检查 + 格式校验"
+        check: "--scan-encoding 参数检查 UTF-8 合规"
+      - name: source_guard_pre_commit.py
+        purpose: "源码守卫"
+      - name: validate_blueprint_frontmatter.py
+        purpose: "蓝图 YAML frontmatter 格式强制验证"
+      - name: check_directory_naming.py
+        purpose: "目录命名合规性检查"
+      - name: check_document_placement.py
+        purpose: "文档放置位置校验"
+      - name: check_index_integrity.py
+        purpose: "INDEX.md 完整性检查"
+      - name: check_index_links.py
+        purpose: "索引链接有效性检查"
+      - name: check_standards_index_registration.py
+        purpose: "标准文档是否已在索引登记"
+      - name: check_tdr_propagation.py
+        purpose: "技术决策记录传播检查"
+      - name: pre-commit-governance-check.py
+        purpose: "治理合规性综合检查"
+
+  ci_audit_scripts:
+    path: scripts/ci_audit/
+    count: 14
+    files:
+      - name: generate_quality_report.py
+        purpose: "文档质量综合报告（链接25分+YAML25分+质量50分，A-F评级）"
+        output: "JSON 质量报告"
+      - name: duplicate_detector.py
+        purpose: "重复文档检测"
+      - name: link_checker.py
+        purpose: "链接检查"
+      - name: blueprint_validator.py
+        purpose: "蓝图格式验证"
+      - name: yaml_metadata_checker.py
+        purpose: "YAML 元数据完整性检查"
+      - name: check_compliance_rate.py
+        purpose: "合规率是否达到 95% 阈值（CI 门禁）"
+      - name: weekly_audit_optimized.py
+        purpose: "多线程优化版每周审计"
+      - name: monthly_audit.py
+        purpose: "每月完整三层审计"
+      - name: quarterly_audit.py
+        purpose: "每季度审计"
+      - name: documentation_debt_assessor.py
+        purpose: "文档债务评估"
+      - name: architecture_analyzer.py
+        purpose: "架构分析"
+      - name: boundary_checker.py
+        purpose: "边界检查"
+
+  ci_workflows:
+    path: .github/workflows/
+    count: 8
+    files:
+      - name: governance-audit.yml
+        purpose: "Sentinel L1 治理审计门禁（推送 docs/scripts 时触发）"
+        trigger: "push to docs/ or scripts/"
+      - name: document_audit.yml
+        purpose: "文档审计"
+      - name: doc-quality-check.yml
+        purpose: "文档质量检查"
+      - name: document_quality_check.yml
+        purpose: "文档质量检查（备用）"
+      - name: eternal-index-validation.yml
+        purpose: "永久索引验证"
+      - name: periodic-audit.yml
+        purpose: "周期性审计"
+      - name: code-quality.yml
+        purpose: "代码质量检查"
+      - name: version-validation.yml
+        purpose: "版本号格式验证"
+
+  scheduled_tasks:
+    description: "Windows 计划任务 + 内嵌定时脚本"
+    files:
+      - name: scripts/register_overnight_scheduled_task.ps1
+        purpose: "注册夜间审计 Windows 计划任务（每 8 小时）"
+      - name: scripts/deploy_scheduled_tasks.ps1
+        purpose: "部署每周/每月/季度审计计划任务"
+      - name: scripts/periodic_maintenance.ps1
+        purpose: "定期维护脚本（文档审计+链接检查+元数据检查）"
+      - name: docs/09_AUDIT/AUTOMATION/daily_check.py
+        purpose: "每日检查（YAML 完整性、死链、编码一致性）"
+        output: docs/09_AUDIT/STATE/DAILY/
+      - name: docs/09_AUDIT/AUTOMATION/weekly_check.py
+        purpose: "每周检查（Layer 归属、目录结构、命名规范）"
+        output: docs/09_AUDIT/STATE/
+      - name: docs/09_AUDIT/AUTOMATION/monthly_check.py
+        purpose: "每月检查（完整三层审计、合规率统计、趋势分析）"
+        output: docs/09_AUDIT/STATE/
+
+# ============================================================
+# 四、操作手册类 (Playbooks) — 应对特定场景的操作规程
+# ============================================================
+playbooks:
+  path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/
+
+  files:
+    - id: FILE_DELETION_OR_RETENTION_PLAYBOOK
+      path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/file-deletion-or-retention-playbook.md
+      scope: "文件删除 vs 保留的五步决策树"
+      use_when: "准备删除任何文件前"
+
+    - id: D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK
+      path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/d-class-blueprint-overlap-playbook.md
+      scope: "D 类蓝图重叠处置流程"
+      use_when: "发现蓝图功能重叠时"
+
+    - id: REPO_ROOT_GOVERNANCE_PLAYBOOK
+      path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/repo-root-governance-playbook.md
+      scope: "仓库根目录文件治理规范"
+      use_when: "根目录出现意外文件时"
+
+    - id: DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK
+      path: docs/09_AUDIT/STANDARDS/doc-orphan-and-duplicate-governance-playbook.md
+      scope: "孤儿文件和重复文件治理流程"
+      use_when: "孤儿文件或重复文件治理时"
+
+# ============================================================
+# 五、仪表盘类 (Dashboards) — 可视化治理状态
+# ============================================================
+dashboards:
+
+  - id: PROJECT_HEALTH_DASHBOARD
+    path: "(待创建: docs/09_AUDIT/STATE/DASHBOARD/project-health-latest.md)"
+    status: missing
+    priority: P0
+    generator_script: "(待创建: scripts/governance/generate_project_health_dashboard.py)"
+    tracks:
+      - 总文件数趋势
+      - STATE/ 过期文件数
+      - 知识库条目数
+      - YAML 合规率
+      - 蓝图注册覆盖率
+      - 高频搬迁文件
+
+  - id: QUALITY_REPORT_GENERATOR
+    path: scripts/ci_audit/generate_quality_report.py
+    status: active
+    output_format: "JSON（A-F 评级）"
+    dimensions: "链接有效性(25分) + YAML 完整性(25分) + 文档质量(50分)"
+
+  - id: SUBSYSTEM_HEALTH_SCANNER
+    path: scripts/governance/scan_subsystem_duplicates.py
+    status: active
+    output: docs/09_AUDIT/STATE/
+    last_run_output: docs/09_AUDIT/STATE/subsystem-health-20260416.md
+
+  - id: GOVERNANCE_DASHBOARD_BLUEPRINT
+    path: docs/01_FRAMEWORK/governance-dashboard-blueprint.md
+    status: blueprint_only
+    notes: "设计文档（P2），尚未实现，基于 Grafana 的合规可视化"
+
+# ============================================================
+# 六、AI 入职体系 (AI Onboarding System) — 跨会话连续性
+# ============================================================
+ai_onboarding:
+  description: "四层 AI 入职体系，保障每次会话的上下文连续性"
+
+  layer_1_auto_inject:
+    description: "强制规则层——Cursor 自动注入，每次会话必执行"
+    files:
+      - path: .cursor/rules/project-conventions.mdc
+        provides: "会话启动强制协议 + AI Context Loader + 路径锁定表 + Handoff Protocol"
+      - path: .cursor/rules/code-conventions.mdc
+        provides: "施工规范 + Session Artifact 清理规则 + AI 生成代码标记"
+      - path: .cursor/rules/audit-system.mdc
+        provides: "审计规则 + 死循环防护 + 编码安全"
+
+  layer_2_p0_reads:
+    description: "P0 必读文档层——每次会话开始时手动读取"
+    files:
+      - path: docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md
+        provides: "当前 Phase + 下一步任务"
+      - path: docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md
+        provides: "治理工具完整清单（AI 创建工具前必读）"
+      - path: docs/02_ARCHITECTURE/MODULE_INVENTORY.md
+        provides: "层→模块→技术栈速查"
+      - path: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
+        provides: "技术选型决策（5 条 ADR）"
+      - path: docs/subsystem-registry.yaml
+        provides: "所有子目录状态（创建/移动文件前必读）"
+      - path: docs/01_GOVERNANCE/governance-asset-inventory.yaml
+        provides: "本文件——所有治理资产入口"
+
+  layer_3_operation_manuals:
+    description: "操作手册层——特定任务时触发读取"
+    files:
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/project-office-ai-handoff.md
+        trigger: "接手项目 / 全面盘点时"
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/global-file-governance-session-handoff.md
+        trigger: "执行文件治理专项任务时"
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md
+        trigger: "创建目录或迁移文件前"
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-documents-navigation.md
+        trigger: "查找治理文档时"
+      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md
+        trigger: "查找治理脚本命令时"
+
+  layer_4_institutional_memory:
+    description: "制度记忆层——深度查询，防止重蹈历史错误"
+    files:
+      - path: docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md
+        provides: "7 条关键教训（LL-001~LL-007）"
+      - path: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
+        provides: "技术选型决策记录（ADR-001~ADR-005）"
+      - path: docs/01_FRAMEWORK/architecture-evolution-history.md
+        provides: "2039 行架构演进历史"
+      - path: docs/00_OVERVIEW/CHANGELOG.md
+        provides: "Keep a Changelog 格式变更记录"
+      - path: docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md
+        provides: "受控文档登记（易混淆主题的唯一正式稿）"
+
+  missing_components:
+    description: "当前缺失的 AI 入职体系组件（待建设）"
+    items:
+      - id: FILE_PROVENANCE_SYSTEM
+        description: "文件搬迁感知系统——AI 搬迁前查询文件搬迁历史"
+        status: partially_active
+        rule_path: ".cursor/rules/project-conventions.mdc （File Movement Protocol 章节，已写入 2026-04-16）"
+        script_path: "scripts/governance/trace_file_provenance.py"
+        script_usage: "python scripts/governance/trace_file_provenance.py <相对路径> [--rename-only]"
+        priority: P1
+
+      - id: SESSION_ARTIFACT_PATTERN
+        description: "会话产出物规范——Session Log 标准格式 + 固定存放位置"
+        status: active
+        standard_path: "docs/01_GOVERNANCE/STANDARDS/session-artifact-pattern-standard.md"
+        log_dir: "docs/09_AUDIT/STATE/SESSION_LOGS/"
+        template_path: "docs/09_AUDIT/FORM_STANDARDS/session-log-template.md"
+        ttl_days: 30
+        priority: P1
+        created_date: "2026-04-16"
+
+# ============================================================
+# 七、知识库资产 (Knowledge Assets)
+# ============================================================
+knowledge_assets:
+  primary_path: docs/08_KNOWLEDGE/
+  status: "严重空心化（仅约 13 个文件，目标 50+）"
+  five_buckets:
+    - id: B1_TECH_DECISIONS
+      path: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
+      current_count: 5
+    - id: B2_BEST_PRACTICES
+      path: docs/08_KNOWLEDGE/BEST_PRACTICES/
+      current_count: "~3"
+    - id: B3_LESSONS_LEARNED
+      path: docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md
+      current_count: 7
+    - id: B4_FACTOR_STRATEGY_LIBRARY
+      path: docs/08_KNOWLEDGE/FACTOR_LIBRARY/
+      current_count: "~2"
+    - id: B5_TERMINOLOGY
+      path: docs/08_KNOWLEDGE/
+      current_count: "~1"
+  extraction_protocol: docs/01_GOVERNANCE/STANDARDS/value-extraction-protocol.md
+  enrichment_plan: docs/09_AUDIT/CONFIG/knowledge-base-building-plan.md
+
+# ============================================================
+# 变更历史
+# ============================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-04-16"
+    changes:
+      - "初始创建，覆盖注册表/标准/工具/操作手册/仪表盘/AI入职/知识库七大类"
+      - "记录 22 个脚本（audit）、16 个脚本（governance）、14 个脚本（ci_audit）、12 个钩子、8 个 CI 工作流"
+      - "标记 PROJECT_HEALTH_DASHBOARD 为最高优先级缺失项"
+      - "记录 FILE_PROVENANCE_SYSTEM 和 SESSION_ARTIFACT_PATTERN 为待建设组件"

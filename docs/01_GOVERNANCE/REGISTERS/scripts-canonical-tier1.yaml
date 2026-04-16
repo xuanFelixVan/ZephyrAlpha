@@ -1,0 +1,85 @@
+# Tier-1 治理脚本登记（30 个 CLI 入口）
+# 说明：仓库 scripts/ 下物理 .py 文件多于 30；本表为「日常治理/CI/预提交」优先入口，
+#       避免重复造轮子。合并记录：dedupe_archive_only_module_ids 已并入 dedupe_archive_module_ids。
+# last_updated: 2026-04-16
+
+schema_version: "1.0"
+tier: 1
+count: 30
+
+scripts:
+  # audit/
+  - path: scripts/audit/sentinel_l1_governance_scan.py
+    role: Sentinel L1 全库扫描
+  - path: scripts/audit/scan_index_health.py
+    role: 索引健康 / 孤儿检测
+  - path: scripts/audit/scan_duplicate_file_content.py
+    role: 内容级重复
+  - path: scripts/audit/scan_basename_collisions.py
+    role: 同名不同路径
+  - path: scripts/audit/fix_dead_links.py
+    role: 死链修复
+  - path: scripts/audit/resolve_orphan_files.py
+    role: 孤儿执行
+  - path: scripts/audit/resolve_basename_collisions.py
+    role: basename 碰撞执行
+  - path: scripts/audit/mandatory_inbound_guard.py
+    role: 强制入链守卫
+  - path: scripts/audit/triage_blueprint_d_overlap_pairs.py
+    role: D 类蓝图重叠分档（第一步）
+  - path: scripts/audit/report_orphan_files.py
+    role: 孤儿报告
+  - path: scripts/audit/report_basename_collisions.py
+    role: basename 报告
+  - path: scripts/audit/purge_expired_state.py
+    role: STATE/REPORTS TTL 清理
+  - path: scripts/audit/dedupe_archive_module_ids.py
+    role: 归档重复 module_id（--mode mixed|archive-only）
+  - path: scripts/audit/dedupe_active_module_ids.py
+    role: 活跃重复 module_id 消解
+  - path: scripts/audit/scan_directory_naming_compliance.py
+    role: 目录命名合规
+
+  # governance/
+  - path: scripts/governance/generate_blueprint_registry.py
+    role: 蓝图注册表生成
+  - path: scripts/governance/backfill_missing_module_id.py
+    role: module_id 回填
+  - path: scripts/governance/scan_subsystem_duplicates.py
+    role: 子系统重复扫描
+  - path: scripts/governance/trace_file_provenance.py
+    role: 文件搬迁 git --follow
+  - path: scripts/governance/generate_project_health_dashboard.py
+    role: 项目健康仪表盘
+  - path: scripts/governance/triage_blueprint_d_overlap_pairs.py
+    role: D 类蓝图二审 JSONL（第二步）
+  - path: scripts/governance/consolidate_audit_standards.py
+    role: 审计标准合并（一次性维护）
+
+  # hooks/
+  - path: scripts/hooks/doc_guard_pre_commit.py
+    role: 文档守卫 / 编码扫描
+  - path: scripts/hooks/check_index_links.py
+    role: INDEX 链接检查
+  - path: scripts/hooks/validate_blueprint_frontmatter.py
+    role: 蓝图 frontmatter
+  - path: scripts/hooks/check_standards_index_registration.py
+    role: STANDARDS 索引登记
+  - path: scripts/hooks/pre-commit-governance-check.py
+    role: 预提交治理聚合
+
+  # ci_audit/
+  - path: scripts/ci_audit/link_checker.py
+    role: CI 链接检查
+  - path: scripts/ci_audit/blueprint_validator.py
+    role: CI 蓝图校验
+  - path: scripts/ci_audit/check_compliance_rate.py
+    role: 合规率门禁
+
+  # 根 scripts/
+  - path: scripts/index_compiler.py
+    role: INDEX 自动编译
+
+merged_into_above:
+  - obsolete: scripts/audit/dedupe_archive_only_module_ids.py
+    replacement: scripts/audit/dedupe_archive_module_ids.py --mode archive-only
