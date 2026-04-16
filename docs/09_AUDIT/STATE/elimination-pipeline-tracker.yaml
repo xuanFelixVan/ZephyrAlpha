@@ -278,10 +278,11 @@ git_history_pipeline:
 
   gh_wave_2:
     name: "docs/01_FRAMEWORK 历史版本扫描"
-    description: "从 git 历史中读取 docs/01_FRAMEWORK/ 下被删除的蓝图迭代稿"
+    description: "从 git 历史中读取 docs/01_FRAMEWORK/ 下被删除的蓝图迭代稿（大写旧格式 → 小写重命名时删除的版本）"
     target_pattern: "docs/01_FRAMEWORK/**/*.md (deleted in git history)"
-    estimated_files: 400
-    strategy: "读取 git history → 对比现存文件 → 提取差异中的独立设计决策"
+    estimated_files: 444    # 实际确认值（2026-04-16）：git log --diff-filter=D | Where-Object {match 01_FRAMEWORK}
+    strategy: "读取 git history（用 git log --all --format=%H -- file | Select-Object -First 1 取最近版本） → 对比现存小写同名文件 → 仅提取现存版本中不存在的独立设计决策"
+    git_read_command: "git log --all --format='%H' -- 'path/to/file.md' | Select-Object -First 1"
     status: pending
     files_scanned: 0
     files_high_value: 0
