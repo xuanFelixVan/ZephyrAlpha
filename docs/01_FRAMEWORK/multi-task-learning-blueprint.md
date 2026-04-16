@@ -2,6 +2,7 @@
 module_id: 01_FRAMEWORK_MULTI-TASK-LEARNING-BLUEPRINT_MD_001
 version: 1.0.0
 status: Active
+priority: P1
 owner: 待指定
 last_updated: '2026-04-13'
 ---

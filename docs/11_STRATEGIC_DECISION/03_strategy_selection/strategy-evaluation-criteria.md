@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
 - 策略评估标准蓝图文档
-layer: layer_03
+layer: layer_05
 priority: P1
 implementation_status: 蓝图阶段
 ---

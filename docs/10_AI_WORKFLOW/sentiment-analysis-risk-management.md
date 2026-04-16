@@ -2,6 +2,7 @@
 module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_RISK_MANAGEMENT_3464
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队

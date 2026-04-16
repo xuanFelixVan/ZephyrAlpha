@@ -1,3 +1,5 @@
+> **[ENCODING CORRUPTION NOTICE - 2026-04-16]**: 本文件因 Cursor/Trae 双编辑器编码问题导致 47 行中文内容损坏（阿拉伯文乱码），已将损坏字符替换为 [CORRUPTED] 标记。需 Owner 重新编写受损内容。
+
 ---
 module_id: DATA_FLOW
 version: 1.0.0
@@ -6,11 +8,11 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - DATA_FLOWmd  ﮔﺍﮔﮔﭖﻛﺕﮔ۷۰ﮒﻛﺝﻟﭖ文档
+  - DATA_FLOWmd  [CORRUPTED]ﺍ[CORRUPTED]ﻛﺕ[CORRUPTED]ﻛﺝﻟ[CORRUPTED]文档
 layer: layer_00
-applicable_scope: "ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ"
+applicable_scope: "[CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]?compliance_level: ﻛﺕﻛﺕ[CORRUPTED]"
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+implementation_status: ﻟﺟﻟ[CORRUPTED]ﻛﺕ?
 ---
 ```
 ```---
@@ -28,7 +30,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-# DATA_FLOW.md - ﮔﺍﮔ؟ﮔﭖﻛﺕﮔ۷۰ﮒﻛﺝﻟﭖ
+# DATA_FLOW.md - [CORRUPTED]ﺍ[CORRUPTED]ﻛﺕ[CORRUPTED]ﻛﺝﻟ[CORRUPTED]
 
 
 
@@ -56,15 +58,15 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-> **ﻝﮔ؛**ﺅﺙv5.3
+> **ﻝ[CORRUPTED]**ﺅﺙv5.3
 
 
 
-> **ﮔﺑﮔﺍﮔ۴ﮔ**ﺅﺙ?026-03-31
+> **[CORRUPTED]ﺑ[CORRUPTED]ﺍ[CORRUPTED]**ﺅﺙ?026-03-31
 
 
 
-> **ﻝﭘﮔ?*ﺅﺙﮒﺓﺎﮒ؟ﮔ
+> **ﻝ[CORRUPTED]?*ﺅﺙ[CORRUPTED]ﺓﺎ[CORRUPTED]
 
 
 
@@ -82,7 +84,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-## 1. ﮒ؟ﮔﺑﮔﺍﮔ؟ﮔﭖﮒﺝ
+## 1. [CORRUPTED]ﺑ[CORRUPTED]ﺍ[CORRUPTED]ﺝ
 
 
 
@@ -94,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                        ﮒ؟ﮔﺑﮔﺍﮔ؟ﮔﭖﺅﺙﻛﭨﮔﺍﮔ؟ﮒﺍﻛﭦ۳ﮔﺅﺙ?                             ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                                                                            ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?              ﻗ?ﻗ? ﻗ?  AkShare    ﻗﻗﻗﻗﻗﻗﭘﻗ    Baostock  ﻗﻗﻗﻗﻗﻗﭘﻗ   Tushare    ﻗ?              ﻗ?ﻗ? ﻗ? (ﮒ؟ﮔﭘﻟ۰ﮔ)  ﻗ?    ﻗ? (ﮒﮒﺎﮔﺍﮔ؟)  ﻗ?    ﻗ?  (ﻟﺑ۱ﮒ۰)     ﻗ?              ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?              ﻗ?ﻗ?          ﻗ?                  ﻗ?                  ﻗ?                       ﻗ?ﻗ?          ﻗ?                  ﻗ?                  ﻗ?                       ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 0: ﮔﺍﮔ؟ﮒﺎ?                              ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?  data_    ﻗ? ﻗ?  data_    ﻗ? ﻗ?  data_    ﻗ? ﻗ?  factor_  ﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?collector  ﻗﻗﻗﻗﭘﻗ  cleaner   ﻗﻗﻗﻗﭘﻗ  storage   ﻗﻗﻗﻗﭘﻗ registry   ﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 2: Alphaﮒﺎ?                            ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?  factor_  ﻗ? ﻗ? strategy_ ﻗ? ﻗ?  signal_ ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?calculator  ﻗﻗﻗﻗﭘﻗ   engine   ﻗﻗﻗﻗﭘﻗ generator ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 3: ﻠ۲ﻠ۸ﮒﺎ?                              ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?   risk_   ﻗ? ﻗ?  position ﻗ? ﻗ?  stop_    ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ? manager   ﻗﻗﻗﻗﭘﻗ  calculatorﻗﻗﻗﻗﭘﻗ   loss     ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 5: ﮔ۶ﻟ۰ﮒﺎ?                             ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗ?  order_   ﻗ? ﻗ?   trade_  ﻗ? ﻗ?  broker_  ﻗ? ﻗ?  order_   ﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗ? generator ﻗﻗﻗﻗﭘﻗ  executor  ﻗﻗﻗﻗﭘﻗ   adapter  ﻗﻗﻗﻗﭘﻗ   router   ﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ      ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                                                            ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                        [CORRUPTED]ﺑ[CORRUPTED]ﺍ[CORRUPTED]ﺅﺙﻛ[CORRUPTED]ﺍ[CORRUPTED]ﺍﻛ[CORRUPTED]ﺅﺙ?                             ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                                                                            ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?              ﻗ?ﻗ? ﻗ?  AkShare    ﻗﻗﻗﻗﻗﻗ[CORRUPTED]ﻗ    Baostock  ﻗﻗﻗﻗﻗﻗ[CORRUPTED]ﻗ   Tushare    ﻗ?              ﻗ?ﻗ? ﻗ? ([CORRUPTED]ﻟ[CORRUPTED])  ﻗ?    ﻗ? ([CORRUPTED]ﺎ[CORRUPTED]ﺍ[CORRUPTED])  ﻗ?    ﻗ?  (ﻟﺑ[CORRUPTED])     ﻗ?              ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?              ﻗ?ﻗ?          ﻗ?                  ﻗ?                  ﻗ?                       ﻗ?ﻗ?          ﻗ?                  ﻗ?                  ﻗ?                       ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 0: [CORRUPTED]ﺍ[CORRUPTED]ﺎ?                              ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?  data_    ﻗ? ﻗ?  data_    ﻗ? ﻗ?  data_    ﻗ? ﻗ?  factor_  ﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?collector  ﻗﻗﻗﻗ[CORRUPTED]ﻗ  cleaner   ﻗﻗﻗﻗ[CORRUPTED]ﻗ  storage   ﻗﻗﻗﻗ[CORRUPTED]ﻗ registry   ﻗ?  ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 2: Alpha[CORRUPTED]ﺎ?                            ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?  factor_  ﻗ? ﻗ? strategy_ ﻗ? ﻗ?  signal_ ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?calculator  ﻗﻗﻗﻗ[CORRUPTED]ﻗ   engine   ﻗﻗﻗﻗ[CORRUPTED]ﻗ generator ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 3: ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﺎ?                              ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ?   risk_   ﻗ? ﻗ?  position ﻗ? ﻗ?  stop_    ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗ? manager   ﻗﻗﻗﻗ[CORRUPTED]ﻗ  calculatorﻗﻗﻗﻗ[CORRUPTED]ﻗ   loss     ﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗ?     ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ?                                   ﻗ?                                         ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ? ﻗ?                     Layer 5: [CORRUPTED]ﻟ[CORRUPTED]ﺎ?                             ﻗ?     ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗ?  order_   ﻗ? ﻗ?   trade_  ﻗ? ﻗ?  broker_  ﻗ? ﻗ?  order_   ﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗ? generator ﻗﻗﻗﻗ[CORRUPTED]ﻗ  executor  ﻗﻗﻗﻗ[CORRUPTED]ﻗ   adapter  ﻗﻗﻗﻗ[CORRUPTED]ﻗ   router   ﻗﻗ      ﻗ?ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ      ﻗ?ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?ﻗ?                                                                            ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
 
 
@@ -110,11 +112,11 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-## 2. Layerﻠﺑﮔ۴ﮒ۲ﮒ؟ﻛﺗ?
+## 2. Layerﻠﺑ[CORRUPTED]ﻛﺗ?
 
 
 
-### 2.1 Layer 0 ﻗ?Layer 2 ﮔ۴ﮒ۲
+### 2.1 Layer 0 ﻗ?Layer 2 [CORRUPTED]
 
 
 
@@ -126,7 +128,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-# ﮔﺍﮔ؟ﻟﺝﮒﭦﮔﺙﮒﺙﺅﺙLayer 0 ﻟﺝﮒﭦﺅﺙ?DataOutput = {
+# [CORRUPTED]ﺍ[CORRUPTED]ﻟﺝ[CORRUPTED]ﺙ[CORRUPTED]ﺙﺅﺙLayer 0 ﻟﺝ[CORRUPTED]ﺅﺙ?DataOutput = {
 
 
 
@@ -190,7 +192,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-### 2.2 Layer 2 ﻗ?Layer 3 ﮔ۴ﮒ۲
+### 2.2 Layer 2 ﻗ?Layer 3 [CORRUPTED]
 
 
 
@@ -202,7 +204,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-# ﮒﮒﻟﺝﮒﭦﮔﺙﮒﺙﺅﺙLayer 2 ﻟﺝﮒﭦﺅﺙ?FactorOutput = {
+# [CORRUPTED]ﻟﺝ[CORRUPTED]ﺙ[CORRUPTED]ﺙﺅﺙLayer 2 ﻟﺝ[CORRUPTED]ﺅﺙ?FactorOutput = {
 
 
 
@@ -238,7 +240,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
-# ﻝﻝ۴ﻛﺟ۰ﮒﺓﮔﺙﮒﺙ
+# ﻝﻝ[CORRUPTED]ﻛﺟ[CORRUPTED]ﺓ[CORRUPTED]ﺙ[CORRUPTED]ﺙ
 
 
 
@@ -294,7 +296,7 @@ SignalOutput = {
 
 
 
-### 2.3 Layer 3 ﻗ?Layer 5 ﮔ۴ﮒ۲
+### 2.3 Layer 3 ﻗ?Layer 5 [CORRUPTED]
 
 
 
@@ -306,7 +308,7 @@ SignalOutput = {
 
 
 
-# ﻠ۲ﻠ۸ﮔ۰ﻠ۹ﮒﻛﺟ۰ﮒ?ValidatedSignal = {
+# ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻛﺟ[CORRUPTED]?ValidatedSignal = {
 
 
 
@@ -338,7 +340,7 @@ SignalOutput = {
 
 
 
-# ﻟ؟۱ﮒﮔﺙﮒﺙ
+# ﻟ[CORRUPTED]ﺙ[CORRUPTED]ﺙ
 
 
 
@@ -398,7 +400,7 @@ Order = {
 
 
 
-## 3. ﮔ۷۰ﮒﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+## 3. [CORRUPTED]ﻛﺝﻟ[CORRUPTED]ﺏﻝﺏ[CORRUPTED]
 
 
 
@@ -410,7 +412,7 @@ Order = {
 
 
 
-ﮔ۷۰ﮒﻛﺝﻟﭖﮒﺝﺅﺙ
+[CORRUPTED]ﻛﺝﻟ[CORRUPTED]ﺝﺅﺙ
 
 
 
@@ -418,7 +420,7 @@ Order = {
 
 
 
-data_collector ﻗﻗﻗ؛ﻗﻗﻗ?data_cleaner ﻗﻗﻗ؛ﻗﻗﻗ?data_storage
+data_collector ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?data_cleaner ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?data_storage
 
 
 
@@ -434,7 +436,7 @@ data_collector ﻗﻗﻗ؛ﻗﻗﻗ?data_cleaner ﻗﻗﻗ؛ﻗﻗﻗ?data_stora
 
 
 
-factor_registry ﻗﻗﻗ؛ﻗﻗﻗ?factor_calculator ﻗﻗﻗ؛ﻗﻗﻗ?strategy_engine
+factor_registry ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?factor_calculator ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?strategy_engine
 
 
 
@@ -446,7 +448,7 @@ factor_registry ﻗﻗﻗ؛ﻗﻗﻗ?factor_calculator ﻗﻗﻗ؛ﻗﻗﻗ?stra
 
 
 
-strategy_engine ﻗﻗﻗ؛ﻗﻗﻗ?risk_manager ﻗﻗﻗ؛ﻗﻗﻗ?position_calculator
+strategy_engine ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?risk_manager ﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?position_calculator
 
 
 
@@ -470,7 +472,7 @@ risk_manager ﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?backtest_framework
 
 
 
-trade_executor ﻗﻗﻗﻗ؛ﻗﻗﻗ?monitoring_system
+trade_executor ﻗﻗﻗﻗ[CORRUPTED]ﻗﻗﻗ?monitoring_system
 
 
 
@@ -518,7 +520,7 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 
 
-## 4. ﮔﺍﮔ؟ﮒﮒ۷ﻟ۶ﮔﺙ
+## 4. [CORRUPTED]ﺍ[CORRUPTED]ﻟ[CORRUPTED]ﺙ
 
 
 
@@ -526,7 +528,7 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 
 
-| ﮒﮒ۷ﮒﺎ?| ﮔﺙﮒﺙ | ﻛﺛﻝﺛ؟ | ﻟﺁﺑﮔ |
+| [CORRUPTED]ﺎ?| [CORRUPTED]ﺙ[CORRUPTED]ﺙ | ﻛﺛﻝﺛ[CORRUPTED] | ﻟﺁﺑ[CORRUPTED] |
 
 
 
@@ -534,27 +536,27 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 
 
-| ﮒﮒ۶ﮔﺍﮔ؟ | Parquet | `data/raw/{type}/{year}/` | ﮒﮒ۶ﻠﻠﮔﺍﮔ؟ |
+| [CORRUPTED]ﺍ[CORRUPTED] | Parquet | `data/raw/{type}/{year}/` | [CORRUPTED]ﻠﻠ[CORRUPTED]ﺍ[CORRUPTED] |
 
 
 
-| ﮒ۳ﻝﮒﮔﺍﮔ?| Parquet + SQLite | `data/processed/` | ﮔﺕﮔﺑﮒﮔﺍﮔ?|
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ[CORRUPTED]?| Parquet + SQLite | `data/processed/` | [CORRUPTED]ﺕ[CORRUPTED]ﺑ[CORRUPTED]ﺍ[CORRUPTED]?|
 
 
 
-| ﮒﮒﮔﺍﮔ؟ | Parquet | `data/factors/{factor_id}/` | ﮔﮒﮒﮒﮒ?|
+| [CORRUPTED]ﺍ[CORRUPTED] | Parquet | `data/factors/{factor_id}/` | [CORRUPTED]?|
 
 
 
-| ﻛﺟ۰ﮒﺓﮔﺍﮔ؟ | SQLite | `data/signals/` | ﻝﻝ۴ﻛﺟ۰ﮒﺓ |
+| ﻛﺟ[CORRUPTED]ﺓ[CORRUPTED]ﺍ[CORRUPTED] | SQLite | `data/signals/` | ﻝﻝ[CORRUPTED]ﻛﺟ[CORRUPTED]ﺓ |
 
 
 
-| ﻟ؟۱ﮒﮔﺍﮔ؟ | SQLite | `data/orders/` | ﻛﭦ۳ﮔﻟ؟۱ﮒ |
+| ﻟ[CORRUPTED]ﺍ[CORRUPTED] | SQLite | `data/orders/` | ﻛ[CORRUPTED]ﻟ[CORRUPTED] |
 
 
 
-| ﮒﮔﭖﻝﭨﮔ | Parquet | `data/backtest_results/` | ﮒﮔﭖﻝﭨ۸ﮔ |
+| [CORRUPTED]ﻝ[CORRUPTED] | Parquet | `data/backtest_results/` | [CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -570,7 +572,7 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 
 
-## 5. ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺏﻟ
+## 5. ﻠﻝﺛ[CORRUPTED]ﻛ[CORRUPTED]ﺏﻟ
 
 
 
@@ -582,7 +584,7 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 
 
-ﻠﻝﺛ؟ﮔﻛﭨﭘ ﻗ?ﮔ۷۰ﮒﮔﮒﺍﺅﺙ?
+ﻠﻝﺛ[CORRUPTED]ﻛ[CORRUPTED] ﻗ?[CORRUPTED]ﺍﺅﺙ?
 
 
 
@@ -646,7 +648,7 @@ config/
 
 
 
-## 6. ﻠﻟﺁﺁﮒ۳ﻝﮔﭦﮒﭘ
+## 6. ﻠﻟﺁﺁ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
@@ -658,27 +660,27 @@ config/
 
 
 
-# ﻠﻟﺁﺁﻛﺙﮔﻠ?
+# ﻠﻟﺁﺁﻛﺙ[CORRUPTED]ﻠ?
 
 
 
-Layer 0 (ﮔﺍﮔ؟ﮒﺎ?
+Layer 0 ([CORRUPTED]ﺍ[CORRUPTED]ﺎ?
 
 
 
-ﻗ?    ﻗﻗﻗ DataException ﻗﻗﻗﻗﻗﻗﻗ?ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ﺅﺙﻝﭨ۶ﻝﭨﮒ۳ﻝ?    ﻗ?    ﻗ?Layer 2 (Alphaﮒﺎ?
+ﻗ?    ﻗﻗﻗ DataException ﻗﻗﻗﻗﻗﻗﻗ?ﻟ[CORRUPTED]ﺍ[CORRUPTED]ﺛ[CORRUPTED]ﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ[CORRUPTED]ﺍ[CORRUPTED]ﺅﺙﻝ[CORRUPTED]ﻝ[CORRUPTED]ﻝ?    ﻗ?    ﻗ?Layer 2 (Alpha[CORRUPTED]ﺎ?
 
 
 
-ﻗ?    ﻗﻗﻗ FactorException ﻗﻗﻗﻗﻗ?ﻟﺓﺏﻟﺟﻟﺁ۴ﮒﮒﺅﺙﻛﺛﺟﻝ۷ﮒ۳ﻠﮒﮒ?    ﻗ?    ﻗ?Layer 3 (ﻠ۲ﻠ۸ﮒﺎ?
+ﻗ?    ﻗﻗﻗ FactorException ﻗﻗﻗﻗﻗ?ﻟﺓﺏﻟﺟﻟﺁ[CORRUPTED]ﺅﺙﻛﺛﺟﻝ[CORRUPTED]ﻠ[CORRUPTED]?    ﻗ?    ﻗ?Layer 3 (ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﺎ?
 
 
 
-    ﻗ?    ﻗﻗﻗ RiskException ﻗﻗﻗﻗﻗﻗﻗ?ﮔﻝﭨﻛﺟ۰ﮒﺓﺅﺙﻟ؟ﺍﮒﺛﻠ۲ﮔ۶ﮔ۴ﮒﺟ?    ﻗ?    ﻗ?Layer 5 (ﮔ۶ﻟ۰ﮒﺎ?
+    ﻗ?    ﻗﻗﻗ RiskException ﻗﻗﻗﻗﻗﻗﻗ?[CORRUPTED]ﻝ[CORRUPTED]ﻛﺟ[CORRUPTED]ﺓﺅﺙﻟ[CORRUPTED]ﺍ[CORRUPTED]ﺛﻠ[CORRUPTED]ﺟ?    ﻗ?    ﻗ?Layer 5 ([CORRUPTED]ﻟ[CORRUPTED]ﺎ?
 
 
 
-ﻗ?    ﻗﻗﻗ ExecutionException ﻗﻗ?ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ?```
+ﻗ?    ﻗﻗﻗ ExecutionException ﻗﻗ?ﻠﻟﺁ3[CORRUPTED]ﺅﺙ[CORRUPTED]ﺎﻟﺑ[CORRUPTED]ﻟ?```
 
 
 
@@ -696,11 +698,11 @@ Layer 0 (ﮔﺍﮔ؟ﮒﺎ?
 
 
 
-## 7. ﻝﮔ؛ﮒﺙﮒ؟ﺗﮔ۶ﻟ۶ﮒ?
+## 7. ﻝ[CORRUPTED]ﺙ[CORRUPTED]ﺗ[CORRUPTED]ﻟ[CORRUPTED]?
 
 
 
-| ﻟ۶ﮒ | ﻟﺁﺑﮔ |
+| ﻟ[CORRUPTED] | ﻟﺁﺑ[CORRUPTED] |
 
 
 
@@ -708,15 +710,15 @@ Layer 0 (ﮔﺍﮔ؟ﮒﺎ?
 
 
 
-| ﮔﺍﮔ؟ﮔﺙﮒﺙﻝﮔ؛ | ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺙﮒ؟ﺗﺅﺙﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ |
+| [CORRUPTED]ﺍ[CORRUPTED]ﺙ[CORRUPTED]ﺙﻝ[CORRUPTED] | ﻛﺕ[CORRUPTED]ﻝ[CORRUPTED]ﻛﺕ[CORRUPTED]ﺙ[CORRUPTED]ﺗﺅﺙ[CORRUPTED]ﻝ[CORRUPTED]ﺙ[CORRUPTED]ﺗ |
 
 
 
-| ﮔ۴ﮒ۲ﻝﮔ؛ | ﻠﻟﺟﻝﮔ؛ﮒﺓﮒﮒ?|
+| [CORRUPTED]ﻝ[CORRUPTED] | ﻠﻟﺟﻝ[CORRUPTED]ﺓ[CORRUPTED]?|
 
 
 
-| ﻠﻝﺛ؟ﻝﮔ؛ | ﻠﻟﺟﻠﻝﺛ؟ﻛﺕﻝversionﮒﮔ؟ﭖﮔﻟﺁ |
+| ﻠﻝﺛ[CORRUPTED]ﻝ[CORRUPTED] | ﻠﻟﺟﻠﻝﺛ[CORRUPTED]ﻛﺕﻝversion[CORRUPTED]ﻟﺁ |
 
 
 
@@ -734,7 +736,7 @@ Layer 0 (ﮔﺍﮔ؟ﮒﺎ?
 
 
 
-*ﮔﮒﮔﺑﮔﺍﺅﺙ2026-03-28*
+*[CORRUPTED]ﺑ[CORRUPTED]ﺍﺅﺙ2026-03-28*
 
 
 

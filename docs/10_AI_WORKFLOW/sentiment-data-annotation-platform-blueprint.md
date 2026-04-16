@@ -2,6 +2,7 @@
 module_id: 10_AI_WORKFLOW_SENTIMENT-DATA-ANNOTATION-PLATFORM-_001_6532
 version: 1.0.0
 status: Active
+priority: P1
 owner: 待指定
 last_updated: '2026-04-13'
 ---

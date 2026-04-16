@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_NEWLY_DISCOVERED_MODULES_BLUEPRINT_COLLECTION_6891
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
 - Newly Discovered Modules Blueprint Collection相关业务
 created_date: 2026-04-06

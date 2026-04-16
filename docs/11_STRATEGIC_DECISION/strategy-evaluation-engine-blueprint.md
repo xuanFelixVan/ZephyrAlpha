@@ -1,7 +1,8 @@
 ---
 module_id: 11_STRATEGIC_DECISION_STRATEGY_EVAL_ENGINE_REF
-layer: layer_11
+layer: layer_05
 status: Active
+priority: P0
 document_type: strategic_reference_entry
 reference_canonical: "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-performance-evaluation-blueprint.md"
 created_date: "2026-04-13"

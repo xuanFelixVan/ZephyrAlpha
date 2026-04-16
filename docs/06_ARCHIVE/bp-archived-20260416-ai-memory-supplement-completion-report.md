@@ -2,6 +2,7 @@
 module_id: AI_MEMORY_SUPPLEMENT_COMPLETION_REPORT_001_2856
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 首席架构师

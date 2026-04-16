@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_LAYER4_ML_YAML_COMPLETENESS_CHECK_REPORT
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Yaml Completeness Check Report相关业务
 created_date: 2026-04-07

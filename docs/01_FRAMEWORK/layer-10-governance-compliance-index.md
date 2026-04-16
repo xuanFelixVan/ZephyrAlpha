@@ -2,6 +2,7 @@
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX_001_7905
 version: 1.3.0
 status: Active
+priority: P2
 created_date: 2026-04-06
 last_updated: '2026-04-07'
 owner: 首席架构师

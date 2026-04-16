@@ -2,12 +2,13 @@
 module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION_0447
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
 - 验证Python版本文档
-layer: layer_00
+layer: layer_03
 ---
 ## 📋 文档目录
 

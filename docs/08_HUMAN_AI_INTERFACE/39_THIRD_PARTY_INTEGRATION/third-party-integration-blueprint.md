@@ -3,6 +3,7 @@ module_id: 08_HUMAN_AI_INTERFACE_39_THIRD_PARTY_INTEGRATION_THIRD_PARTY_INTEGRAT
 layer: layer_00
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - Third Party Integration Blueprint相关业务
 created_date: 2026-04-07

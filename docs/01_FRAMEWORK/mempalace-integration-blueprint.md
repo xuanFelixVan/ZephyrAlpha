@@ -2,6 +2,7 @@
 module_id: MEMPALACE_INTEGRATION_BLUEPRINT_001_5702
 version: 1.1.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 首席架构师

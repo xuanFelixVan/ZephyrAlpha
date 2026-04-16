@@ -1,6 +1,6 @@
 ---
 module_id: 01_FRAMEWORK_SENTIMENT_REALTIME_ANALYSIS_BLUEPRINT_1253
-layer: layer_01
+layer: layer_03
 version: 1.0.0
 status: Active
 responsibility: ''

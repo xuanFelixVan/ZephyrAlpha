@@ -2,6 +2,7 @@
 module_id: MODEL_MEMORY_001_0512
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 首席架构师

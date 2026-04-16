@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_ESG_COMPLIANCE_MONITORING_BLUEPRINT_8707
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-06'
 last_updated: '2026-04-07'

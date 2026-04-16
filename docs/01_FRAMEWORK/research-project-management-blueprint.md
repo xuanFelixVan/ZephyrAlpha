@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_RESEARCH_PROJECT_MANAGEMENT_BLUEPRINT
-layer: layer_01
+layer: layer_09
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Research Project Management Blueprint相关业务
 created_date: 2026-04-07

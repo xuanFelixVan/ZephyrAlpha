@@ -3,6 +3,7 @@ module_id: AUTO_20506
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P0
 last_updated: 2026-04-13
 ---
 ﻿---
@@ -67,7 +68,7 @@ open_source_alternatives:
 
     recommendation: 强烈推荐
 
-layer: layer_08
+layer: layer_06
 ```
 ```---
 ```

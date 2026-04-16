@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_DATA_SOURCE_COST_OPTIMIZATION_BLUEPRINT_5975
-layer: layer_01
+layer: layer_00
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

@@ -2,10 +2,11 @@
 module_id: STRESS_TEST_SCENARIO_LIBRARY_001_2269
 version: 1.0.1
 status: Active
+priority: P0
 created_date: '2026-04-06'
 last_updated: '2026-04-07'
 owner: 首席架构师
-layer: layer_10
+layer: layer_07
 standard_type: 专业量化机构级蓝图
 applicable_scope: 压力测试、极端情况模拟、风险管理
 compliance_level: 顶级专业标准

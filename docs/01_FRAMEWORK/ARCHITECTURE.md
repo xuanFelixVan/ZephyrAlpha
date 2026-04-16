@@ -2,6 +2,7 @@
 module_id: ARCHITECTURE_001
 version: 5.6.0
 status: Active
+priority: P2
 created_date: 2026-04-01
 last_updated: '2026-04-12'
 owner: 首席文档架构师

@@ -2,6 +2,7 @@
 module_id: INTERFACE_CONTRACT_001_4140
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-02'
 last_updated: '2026-04-07'
 owner: 首席架构师
@@ -9,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 三级时间框架架构
 compliance_level: 专业标准
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-layer: layer_02
+layer: layer_08
 responsibility_boundary: '''本文档负责三级时间框架接口契约设计，包括：'
 responsibility: ''
 ---

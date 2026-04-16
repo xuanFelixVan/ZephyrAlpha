@@ -2,12 +2,13 @@
 module_id: 10_AI_WORKFLOW_MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT_5207
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: 2026-04-10
 owner: 文档管理团队
 responsibility:
 - 安装MLflow文档
-layer: layer_00
+layer: layer_04
 ---
 ## 一、模块概述
 

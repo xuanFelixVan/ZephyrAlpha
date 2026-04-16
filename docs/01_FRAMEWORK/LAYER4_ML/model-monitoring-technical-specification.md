@@ -2,10 +2,11 @@
 module_id: MODEL_MONITORING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_04
 responsibility: LAYER4_ML
 spec_version: 1.0
 parent_doc: docs/01_FRAMEWORK/MODEL_MONITORING_BLUEPRINT.md

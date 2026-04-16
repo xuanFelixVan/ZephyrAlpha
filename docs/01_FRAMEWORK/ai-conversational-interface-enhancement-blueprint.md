@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT_7993
-layer: layer_01
+layer: layer_08
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

@@ -2,10 +2,11 @@
 module_id: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_08
 responsibility: 01_FRAMEWORK
 standard_type: 专业量化机构蓝图
 applicable_scope: "人机协作场景细化与动态调?compliance_level: 顶级专业标准"

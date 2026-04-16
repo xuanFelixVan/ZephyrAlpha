@@ -2,6 +2,7 @@
 module_id: 08_HUMAN_AI_INTERFACE_28_API_GATEWAY_001
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: '2026-04-10'
 owner: 文档负责人

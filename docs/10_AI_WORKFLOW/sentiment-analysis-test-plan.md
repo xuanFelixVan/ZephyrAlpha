@@ -2,12 +2,13 @@
 module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_TEST_PLAN_1352
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
 - 测试数据库配文档
-layer: layer_00
+layer: layer_03
 ---
 ## 📋 文档目录
 

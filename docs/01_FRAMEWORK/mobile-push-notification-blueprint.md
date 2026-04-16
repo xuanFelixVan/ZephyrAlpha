@@ -2,6 +2,7 @@
 module_id: MOBILE_PUSH_NOTIFICATION_001_0070
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-05'
 last_updated: '2026-04-07'
 owner: 系统架构师

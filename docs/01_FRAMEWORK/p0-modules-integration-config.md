@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_P0_MODULES_INTEGRATION_CONFIG
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - P0 Modules Integration Config相关业务
 created_date: 2026-04-06

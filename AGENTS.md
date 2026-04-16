@@ -248,7 +248,7 @@ chore(cleanup): eliminate N files from {area}, extracted K knowledge entries
 
 - **P0/P1**：修正 frontmatter → 迁移到 `docs/03_BLUEPRINTS/{layer}/`
 - **P2**：提取知识条目 → 归档到 `docs/09_AUDIT/REPORTS/ARCHIVE/`（注明 reason: p2-archive）
-- **P3**：提取知识条目（如有）→ 删除
+- **P3**：提取知识条目（如有）→ **不直接删除**，写入 `docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md`，进入三阶段裁决：Trae 生成报告 → Kimi 双轮独立复查 → Claude 最终裁决执行
 
 ### 6.4 Commit 格式（蓝图安全流水线专用）
 

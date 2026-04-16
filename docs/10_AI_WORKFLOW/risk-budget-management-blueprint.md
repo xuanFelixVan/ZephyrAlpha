@@ -7,7 +7,7 @@ last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
 - 风险预算管理蓝图 (RISK_BUDGET_MANAGEMENT)文档
-layer: layer_07
+layer: layer_10
 standard_type: 专业量化机构蓝图
 applicable_scope: 风险预算管理
 compliance_level: 专业标准

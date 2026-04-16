@@ -3,6 +3,7 @@ module_id: 08_HUMAN_AI_INTERFACE_32_USER_BEHAVIOR_ANALYTICS_USER_BEHAVIOR_ANALYT
 layer: layer_00
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - User Behavior Analytics Blueprint相关业务
 created_date: 2026-04-07

@@ -260,7 +260,7 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/01_TIME_SERIES/01_DAILY/01_ADJUSTED/INDEX.
 |------|------|
 | [`document-repository-layout-standard.md`](../STANDARDS/document-repository-layout-standard.md) | 仓库布局标准 |
 | [`ARCHITECTURE.md`](../../01_FRAMEWORK/ARCHITECTURE.md) | Layer架构定义 |
-| [`document-defect-prevention-standard.md`](../STANDARDS/document-defect-prevention-standard.md) | 缺陷预防标准 (D-06) |
+| [`testing-and-defect-prevention-standard.md`](../STANDARDS/testing-and-defect-prevention-standard.md) | 缺陷预防 + 测试驱动治理 (D-06) |
 
 ```
 ```---

@@ -3,6 +3,7 @@ module_id: AUTO_89355
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P2
 last_updated: 2026-04-13
 ---
 ﻿---
@@ -39,7 +40,7 @@ priority: P0
 
 estimated_effort: 50h
 
-layer: layer_00
+layer: layer_04
 ```
 ```---
 ```

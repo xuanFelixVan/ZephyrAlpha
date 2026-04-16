@@ -7,7 +7,7 @@ last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
 - 模型监控与漂移检测蓝图 (MODEL_MONITORING_DRIFT_DETECTION)文档
-layer: layer_07
+layer: layer_04
 standard_type: 专业量化机构蓝图
 applicable_scope: 模型性能监控与漂移检测
 compliance_level: 顶级专业标准

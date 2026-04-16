@@ -7,7 +7,7 @@ last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
 - 因子有效性监控蓝图 (FACTOR_EFFECTIVENESS_MONITORING)文档
-layer: layer_07
+layer: layer_02
 standard_type: 专业量化机构蓝图
 applicable_scope: 因子有效性监控
 compliance_level: 专业标准

@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_RESEARCH_METHODOLOGY_6047
-layer: layer_01
+layer: layer_09
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - Research Methodology相关业务
 standard_type: 核心文档

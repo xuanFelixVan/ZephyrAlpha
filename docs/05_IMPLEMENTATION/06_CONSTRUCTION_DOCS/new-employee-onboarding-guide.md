@@ -1,3 +1,5 @@
+> **[ENCODING CORRUPTION NOTICE - 2026-04-16]**: 本文件因 Cursor/Trae 双编辑器问题导致 201 行内容损坏，已替换为 [CORRUPTED] 标记。需 Owner 重新编写。
+
 ---
 module_id: NEW_EMPLOYEE_ONBOARDING_GUIDE
 version: 1.0.0
@@ -8,7 +10,7 @@ owner: 首席文档架构师
 responsibility:
   - NEW_EMPLOYEE_ONBOARDING操作指南
 layer: layer_05
-applicable_scope: "ﮔﮔﮔﺍﮒﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰"
+applicable_scope: "[CORRUPTED]ﺍ[CORRUPTED]ﻠﻝ[CORRUPTED]ﺙ[CORRUPTED]ﻛ[CORRUPTED]AI[CORRUPTED]ﻟﺛ?compliance_level: [CORRUPTED]ﺙ[CORRUPTED]ﻟ[CORRUPTED]"
 parent_document: ../README.md
 implementation_status: Active
 ---
@@ -26,7 +28,7 @@ implementation_status: Active
 
 
 
-# ﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
+# [CORRUPTED]ﺍﻛ[CORRUPTED]ﻟ[CORRUPTED]
 
 
 
@@ -78,23 +80,23 @@ implementation_status: Active
 
 
 
-> **ﻝﮔ؛**: v1.0
+> **ﻝ[CORRUPTED]**: v1.0
 
 
 
-> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **[CORRUPTED]**: 2026-04-02
 
 
 
-> **ﻟﻟﺑ۲**: ﮒﺕ؟ﮒ۸ﮔﺍﮔﮒﮒﺟ،ﻠﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﭘﮔﻙﮒﺙﮒﮔﭖﻝ۷ﮒﮔﮔ۰۲ﻟ۶ﻟ
+> **ﻟﻟﺑ[CORRUPTED]**: [CORRUPTED]ﺕ[CORRUPTED]ﺍ[CORRUPTED]ﺟ[CORRUPTED]ﻠﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻙ[CORRUPTED]ﺙ[CORRUPTED]ﻝ[CORRUPTED]ﻟ[CORRUPTED]ﻟ
 
 
 
-> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗﻝ
+> **ﻠﻝ[CORRUPTED]ﺁﺗﻟﺎ[CORRUPTED]**: [CORRUPTED]ﺍ[CORRUPTED]ﻝ[CORRUPTED]ﺙ[CORRUPTED]ﻛ[CORRUPTED]ﻙAI[CORRUPTED]ﻟﺛﻛﺛﻙ[CORRUPTED]ﻛﺗﻝ
 
 
 
-> **ﮒ؟ﮔﮔﭘﻠﺑ**: ﮒﭨﭦﻟ؟؟2ﮒ۷ﮒﮒ؟ﮔﮔﮔﮒﺟﻟﺁﭨﮒ?
+> **[CORRUPTED]ﻠﺑ**: [CORRUPTED]ﻟ[CORRUPTED]2[CORRUPTED]ﺟﻟﺁ[CORRUPTED]?
 
 
 
@@ -176,7 +178,7 @@ implementation_status: Active
 
 
 
-## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ**
+## ﻭﺁ **[CORRUPTED]ﻟﻝ[CORRUPTED]**
 
 
 
@@ -184,7 +186,7 @@ implementation_status: Active
 
 
 
-### **?ﮒ۷ﻝ؟?*
+### **?[CORRUPTED]ﻝ[CORRUPTED]?*
 
 
 
@@ -192,15 +194,15 @@ implementation_status: Active
 
 
 
-- [ ] ﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﺑﻛﺛﮔﭘﮔﮒﻟ؟ﺝﻟ؟۰ﻝ?- [ ] ﻝﮔﮔﮔ۰۲ﮔﺎﭨﻝﻟ۶ﻟ
+- [ ] ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﺑﻛﺛ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]ﻝ?- [ ] ﻝ[CORRUPTED]ﺎ[CORRUPTED]ﻝﻟ[CORRUPTED]ﻟ
 
 
 
-- [ ] ﮔﮔ۰ﮒﺙﮒﻝﺁﮒ۱ﻠ?- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ؟ﮒﻛﭨﭨ?
+- [ ] [CORRUPTED]ﺙ[CORRUPTED]ﻝﺁ[CORRUPTED]ﻠ?- [ ] [CORRUPTED]ﻝ[CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﻝ[CORRUPTED]ﻛ[CORRUPTED]?
 
 
 
-### **?ﮒ۷ﻝ؟?*
+### **?[CORRUPTED]ﻝ[CORRUPTED]?*
 
 
 
@@ -208,15 +210,15 @@ implementation_status: Active
 
 
 
-- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+- [ ] [CORRUPTED]ﺓﺎ[CORRUPTED]ﻝﻟ[CORRUPTED]ﺕ[CORRUPTED]ﺟ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]
 
 
 
-- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴
+- [ ] ﻝ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﻟ[CORRUPTED]ﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]?- [ ] [CORRUPTED]ﻛﺕﻛ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
-- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ؟ﮔﺑﮒ?
+- [ ] [CORRUPTED]ﻝ[CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﺑ[CORRUPTED]?
 
 
 
@@ -230,7 +232,7 @@ implementation_status: Active
 
 
 
-## ﻭ **ﮒﺟﻟﺁﭨﮔﮔ۰۲ﮔﺕﮒ**
+## ﻭ **[CORRUPTED]ﺟﻟﺁ[CORRUPTED]ﺕ[CORRUPTED]**
 
 
 
@@ -238,7 +240,7 @@ implementation_status: Active
 
 
 
-### **Day 1-2: ﻝﺏﭨﻝﭨﮔ۵ﻟ۶**
+### **Day 1-2: ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻟ[CORRUPTED]**
 
 
 
@@ -246,7 +248,7 @@ implementation_status: Active
 
 
 
-#### **1. ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲**
+#### **1. ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]**
 
 
 
@@ -254,7 +256,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -262,15 +264,15 @@ implementation_status: Active
 
 
 
-| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻟ[CORRUPTED]** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﻠﺑ[CORRUPTED]?* | docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md | 45[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﮒ؟ﮔﺛﻟﮒﺝ** | docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﺛﻟ[CORRUPTED]ﺝ** | docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md | 60[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -278,11 +280,11 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕﻟ۶ﻝﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
+- ﻝﻟ[CORRUPTED]Layer 0-11[CORRUPTED]ﺁﻝ[CORRUPTED]ﻠ[CORRUPTED]?- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻟ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﺎﻙﻛﺕﻟ[CORRUPTED]ﻝﻝ[CORRUPTED]ﺎﻙ[CORRUPTED]ﺝ[CORRUPTED]ﻟ[CORRUPTED]ﻟ[CORRUPTED]ﺎﻝﻟ[CORRUPTED]ﺝ?- [CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺑﻛﺛ[CORRUPTED]ﺛﻟ[CORRUPTED]?
 
 
 
@@ -296,7 +298,7 @@ implementation_status: Active
 
 
 
-#### **2. ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ**
+#### **2. [CORRUPTED]ﻟﻟﺑ[CORRUPTED]ﻟﺝﺗﻝ**
 
 
 
@@ -304,7 +306,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -312,7 +314,7 @@ implementation_status: Active
 
 
 
-| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﻟﻟﺑ[CORRUPTED]ﻟﺝﺗﻝ[CORRUPTED]ﻛﺗ** | docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md | 30[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -320,15 +322,15 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+- ﻝﻟ[CORRUPTED]ﺁﻛﺕ[CORRUPTED]ﻝﻟﻟﺑ[CORRUPTED]ﻟ?- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻠﺑﻝﻛﺝﻟ[CORRUPTED]ﺏﻝﺏ[CORRUPTED]
 
 
 
-- ﮔﮔ۰ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﻝﮒ?
+- [CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]ﻝ[CORRUPTED]?
 
 
 
@@ -342,7 +344,7 @@ implementation_status: Active
 
 
 
-### **Day 3-4: ﮒﺙﮒﻟ۶?*
+### **Day 3-4: [CORRUPTED]ﺙ[CORRUPTED]ﻟ[CORRUPTED]?*
 
 
 
@@ -350,7 +352,7 @@ implementation_status: Active
 
 
 
-#### **3. ﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲**
+#### **3. [CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﻟ[CORRUPTED]**
 
 
 
@@ -358,7 +360,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -366,11 +368,11 @@ implementation_status: Active
 
 
 
-| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻟ[CORRUPTED]ﺝ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟﺁﺑ[CORRUPTED]?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md | 45[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **AI[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﺟ[CORRUPTED]ﻠ[CORRUPTED]?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md | 15[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -378,15 +380,15 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
+- [CORRUPTED]ﻛ[CORRUPTED]ﺗﻝ[CORRUPTED]ﻟ[CORRUPTED]?- ﻝ[CORRUPTED]ﺛ[CORRUPTED]ﻟ[CORRUPTED]ﻟ
 
 
 
-- ﻛﭦﻟ۶۲ﮔﺛﮒﺓ۴ﮔﭖﻝ۷ﮒﻟﺑ۷ﻠﻠ۷?
+- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻝ[CORRUPTED]ﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]?
 
 
 
@@ -400,7 +402,7 @@ implementation_status: Active
 
 
 
-#### **4. ﮒﺙﮒﮔﮒﮔ?*
+#### **4. [CORRUPTED]ﺙ[CORRUPTED]?*
 
 
 
@@ -408,7 +410,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -416,15 +418,15 @@ implementation_status: Active
 
 
 
-| **ﮒﺙﮒﻟ۶?* | docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﺙ[CORRUPTED]ﻟ[CORRUPTED]?* | docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md | 30[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛ[CORRUPTED]ﻝﻟﺑ[CORRUPTED]ﻠ[CORRUPTED]** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md | 20[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﮔﭖﻟﺁﮔﮒ** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **[CORRUPTED]ﻟﺁ[CORRUPTED]** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md | 20[CORRUPTED]ﻠ | ﻭ[CORRUPTED] ﻠﻟ[CORRUPTED] |
 
 
 
@@ -432,19 +434,19 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﮔﮔ۰ﻛﭨ۲ﻝﻝﺙﮒﻟ۶ﻟ
+- [CORRUPTED]ﻛ[CORRUPTED]ﻝﻝﺙ[CORRUPTED]ﻟ[CORRUPTED]ﻟ
 
 
 
-- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﮒ
+- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
-- ﻝﮔﮔﭖﻟﺁﻟ۵ﮔﺎ
+- ﻝ[CORRUPTED]ﻟﺁﻟ[CORRUPTED]ﺎ
 
 
 
@@ -462,7 +464,7 @@ implementation_status: Active
 
 
 
-### **Day 5-7: ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
+### **Day 5-7: [CORRUPTED]ﺕ[CORRUPTED]ﺟ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]**
 
 
 
@@ -470,7 +472,7 @@ implementation_status: Active
 
 
 
-#### **5. ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟ**
+#### **5. ﻝﻝ[CORRUPTED]ﺙ[CORRUPTED]ﺕ[CORRUPTED]ﺟ**
 
 
 
@@ -478,7 +480,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -486,11 +488,11 @@ implementation_status: Active
 
 
 
-| **ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ** | docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﻝ[CORRUPTED]ﺙ[CORRUPTED]ﺕ[CORRUPTED]ﺟﻟ[CORRUPTED]ﺝ** | docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md | 60[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﻝ[CORRUPTED]ﺓ[CORRUPTED]ﺛ[CORRUPTED]** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md | 45[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -498,19 +500,19 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲ﻝﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
+- ﻝﻟ[CORRUPTED]ﻝﻝ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]ﺙ
 
 
 
-- ﮔﮔ۰BaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
+- [CORRUPTED]BaseStrategy[CORRUPTED]ﻝﺎ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]
 
 
 
-- ﻛﭦﻟ۶۲ﻝﻝ۴ﮔﺏ۷ﮒﮒﮒﻟﺛﺛﮔﭦ?
+- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻝﻝ[CORRUPTED]ﺏ[CORRUPTED]ﻟﺛﺛ[CORRUPTED]?
 
 
 
@@ -524,7 +526,7 @@ implementation_status: Active
 
 
 
-#### **6. ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨ**
+#### **6. ﻛ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]**
 
 
 
@@ -532,7 +534,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -540,7 +542,7 @@ implementation_status: Active
 
 
 
-| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]ﺟ[CORRUPTED]ﺛ[CORRUPTED]** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md | 45[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -548,19 +550,19 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
+- ﻝﻟ[CORRUPTED]ﻛ[CORRUPTED]ﻛ[CORRUPTED]ﻠ[CORRUPTED]ﺎ[CORRUPTED]
 
 
 
-- ﮔﮔ۰ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔﭦﮒﭘ
+- [CORRUPTED]ﻛ[CORRUPTED]ﻛ[CORRUPTED]ﺕﻟ[CORRUPTED]ﻠ[CORRUPTED]
 
 
 
-- ﻛﭦﻟ۶۲ﮒﺙﮔ۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
+- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﺙ[CORRUPTED]ﻛ[CORRUPTED]ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]
 
 
 
@@ -578,7 +580,7 @@ implementation_status: Active
 
 
 
-#### **7. ﮒﮔﭖﮒﺙﮔﻠﮔ**
+#### **7. [CORRUPTED]ﺙ[CORRUPTED]ﻠ[CORRUPTED]**
 
 
 
@@ -586,7 +588,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -594,7 +596,7 @@ implementation_status: Active
 
 
 
-| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﺙ[CORRUPTED]ﻠ[CORRUPTED]** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md | 45[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
@@ -602,15 +604,15 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
+- ﻝﻟ[CORRUPTED]Backtesting.pyﻠ[CORRUPTED]ﺗ[CORRUPTED]
 
 
 
-- ﮔﮔ۰ﻝﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔﺙﮒﺙﮒ
+- [CORRUPTED]ﻝﻝ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻟ[CORRUPTED]ﺝ?- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﺍ[CORRUPTED]ﻟﺛ[CORRUPTED]ﻝ[CORRUPTED]ﺙ[CORRUPTED]ﺙ[CORRUPTED]
 
 
 
@@ -628,7 +630,7 @@ implementation_status: Active
 
 
 
-### **Day 8-10: ﻟﺑ۷ﻠﻛﺟﻟﺁ**
+### **Day 8-10: ﻟﺑ[CORRUPTED]ﻠﻛﺟﻟﺁ**
 
 
 
@@ -636,7 +638,7 @@ implementation_status: Active
 
 
 
-#### **8. ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ**
+#### **8. ﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻝ[CORRUPTED]**
 
 
 
@@ -644,7 +646,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -652,15 +654,15 @@ implementation_status: Active
 
 
 
-| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **[CORRUPTED]ﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻝ[CORRUPTED]** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md | 30[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛ[CORRUPTED]ﻝ[CORRUPTED]ﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md | 20[CORRUPTED]ﻠ | ﻭﺑ [CORRUPTED]ﺟﻟﺁ[CORRUPTED] |
 
 
 
-| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻠ[CORRUPTED]ﻝﺛﺎ[CORRUPTED]ﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md | 20[CORRUPTED]ﻠ | ﻭ[CORRUPTED] ﻠﻟ[CORRUPTED] |
 
 
 
@@ -668,19 +670,19 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
+- ﻝﻟ[CORRUPTED]ﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
-- ﮔﮔ۰ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﮒ
+- [CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
-- ﻛﭦﻟ۶۲ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﻟ۵?
+- ﻛ[CORRUPTED]ﻟ[CORRUPTED]ﻠ[CORRUPTED]ﻝﺛﺎ[CORRUPTED]ﻟ[CORRUPTED]?
 
 
 
@@ -694,7 +696,7 @@ implementation_status: Active
 
 
 
-### **Day 11-14: ﮒ؟ﻟﺓﭖﻛﭨﭨﮒ۰**
+### **Day 11-14: [CORRUPTED]ﻟﺓ[CORRUPTED]ﻛ[CORRUPTED]**
 
 
 
@@ -702,7 +704,7 @@ implementation_status: Active
 
 
 
-#### **9. ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ**
+#### **9. ﻠﻝﺛ[CORRUPTED]ﺟ**
 
 
 
@@ -710,7 +712,7 @@ implementation_status: Active
 
 
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﺍ | ﻟﺓﺁ[CORRUPTED]ﺝ | ﻠﻟﺁ[CORRUPTED]ﻠﺑ | ﻠﻟ[CORRUPTED]ﻝ[CORRUPTED] |
 
 
 
@@ -718,15 +720,15 @@ implementation_status: Active
 
 
 
-| **ﻝﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﻝ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml | 15[CORRUPTED]ﻠ | ﻭ[CORRUPTED] ﻠﻟ[CORRUPTED] |
 
 
 
-| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml | 15[CORRUPTED]ﻠ | ﻭ[CORRUPTED] ﻠﻟ[CORRUPTED] |
 
 
 
-| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml | 15[CORRUPTED]ﻠ | ﻭ[CORRUPTED] ﻠﻟ[CORRUPTED] |
 
 
 
@@ -734,19 +736,19 @@ implementation_status: Active
 
 
 
-**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+**[CORRUPTED]ﻛﺗﻝ[CORRUPTED]**:
 
 
 
-- ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
+- ﻝ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]
 
 
 
-- ﻝﻟ۶۲ﻠﻝﺛ؟ﮒﮔﺍﮒ،ﻛﺗ
+- ﻝﻟ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﺍ[CORRUPTED]ﻛﺗ
 
 
 
-- ﮔﮔ۰ﻠﻝﺛ؟ﻛﺟ؟ﮔﺗﮔﺗﮔﺏ
+- [CORRUPTED]ﻠﻝﺛ[CORRUPTED]ﻛﺟ[CORRUPTED]ﺗ[CORRUPTED]ﺗ[CORRUPTED]ﺏ
 
 
 
@@ -764,7 +766,7 @@ implementation_status: Active
 
 
 
-## ﻭ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
+## ﻭ?**ﻝﺁ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]**
 
 
 
@@ -772,7 +774,7 @@ implementation_status: Active
 
 
 
-### **1. ﮒﺙﮒﻝﺁﮒ۱ﻟ۵?*
+### **1. [CORRUPTED]ﺙ[CORRUPTED]ﻝﺁ[CORRUPTED]ﻟ[CORRUPTED]?*
 
 
 
@@ -784,7 +786,7 @@ implementation_status: Active
 
 
 
-ﮔﻛﺛﻝﺏﭨﻝﭨ:
+[CORRUPTED]ﻛﺛﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]:
 
 
 
@@ -804,7 +806,7 @@ implementation_status: Active
 
 
 
-Pythonﻝﮔ؛:
+Pythonﻝ[CORRUPTED]:
 
 
 
@@ -812,7 +814,7 @@ Pythonﻝﮔ؛:
 
 
 
-  - ﮔ۷ﻟﻛﺛﺟﻝ۷Python 3.10
+  - [CORRUPTED]ﻟﻛﺛﺟﻝ[CORRUPTED]Python 3.10
 
 
 
@@ -820,7 +822,7 @@ Pythonﻝﮔ؛:
 
 
 
-ﮒﺟﻠﮒﺓ۴ﮒﺓ:
+[CORRUPTED]ﺟﻠ[CORRUPTED]ﺓ[CORRUPTED]ﺓ:
 
 
 
@@ -828,11 +830,11 @@ Pythonﻝﮔ؛:
 
 
 
-  - VS Code (ﮔ۷ﻟ)
+  - VS Code ([CORRUPTED]ﻟ)
 
 
 
-  - Docker (ﮒ?
+  - Docker ([CORRUPTED]?
 
 
 
@@ -840,7 +842,7 @@ Pythonﻝﮔ؛:
 
 
 
-Pythonﮒﻝ؟۰?
+Python[CORRUPTED]ﻝ[CORRUPTED]?
 
 
 
@@ -848,7 +850,7 @@ Pythonﮒﻝ؟۰?
 
 
 
-  - conda (ﮔ۷ﻟ)
+  - conda ([CORRUPTED]ﻟ)
 
 
 
@@ -860,7 +862,7 @@ Pythonﮒﻝ؟۰?
 
 
 
-### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ۴?*
+### **2. [CORRUPTED]ﺙ[CORRUPTED]ﻝﺁ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]?*
 
 
 
@@ -868,7 +870,7 @@ Pythonﮒﻝ؟۰?
 
 
 
-#### **Step 1: ﮒﻠﻛﭨ۲ﻝﻛﭨﮒﭦ**
+#### **Step 1: [CORRUPTED]ﻠﻛ[CORRUPTED]ﻝﻛ[CORRUPTED]**
 
 
 
@@ -880,7 +882,7 @@ Pythonﮒﻝ؟۰?
 
 
 
-# ﮒﻠﻛﭨﮒﭦ
+# [CORRUPTED]ﻠﻛ[CORRUPTED]
 
 
 
@@ -892,7 +894,7 @@ git clone [repository_url]
 
 
 
-# ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
+# ﻟﺟ[CORRUPTED]ﻠ[CORRUPTED]ﺗﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺛ
 
 
 
@@ -908,7 +910,7 @@ cd ZephyrAlpha
 
 
 
-#### **Step 2: ﮒﮒﭨﭦPythonﻟﮔﻝﺁﮒ۱**
+#### **Step 2: [CORRUPTED]Pythonﻟ[CORRUPTED]ﻝﺁ[CORRUPTED]**
 
 
 
@@ -920,7 +922,7 @@ cd ZephyrAlpha
 
 
 
-# ﻛﺛﺟﻝ۷condaﮒﮒﭨﭦﻟﮔﻝﺁﮒ۱
+# ﻛﺛﺟﻝ[CORRUPTED]conda[CORRUPTED]ﻟ[CORRUPTED]ﻝﺁ[CORRUPTED]
 
 
 
@@ -932,7 +934,7 @@ conda create -n zephyr python=3.10
 
 
 
-# ﮔﺟﮔﺑﭨﻟﮔﻝﺁ?conda activate zephyr
+# [CORRUPTED]ﺟ[CORRUPTED]ﺑ[CORRUPTED]ﻟ[CORRUPTED]ﻝﺁ?conda activate zephyr
 
 
 
@@ -944,7 +946,7 @@ conda create -n zephyr python=3.10
 
 
 
-#### **Step 3: ﮒ؟ﻟ۲ﻛﺝﻟﭖ?*
+#### **Step 3: [CORRUPTED]ﻟ[CORRUPTED]ﻛﺝﻟ[CORRUPTED]?*
 
 
 
@@ -956,7 +958,7 @@ conda create -n zephyr python=3.10
 
 
 
-# ﮒ؟ﻟ۲ﮒﺙﮒﻛﺝ?pip install -r requirements-dev.txt
+# [CORRUPTED]ﻟ[CORRUPTED]ﺙ[CORRUPTED]ﻛﺝ?pip install -r requirements-dev.txt
 
 
 
@@ -964,7 +966,7 @@ conda create -n zephyr python=3.10
 
 
 
-# ﮒ؟ﻟ۲ﻠ۰ﺗﻝ؟ﻛﺝﻟﭖ
+# [CORRUPTED]ﻟ[CORRUPTED]ﻠ[CORRUPTED]ﺗﻝ[CORRUPTED]ﻛﺝﻟ[CORRUPTED]
 
 
 
@@ -980,7 +982,7 @@ pip install -r requirements.txt
 
 
 
-#### **Step 4: ﻠﻝﺛ؟IDE**
+#### **Step 4: ﻠﻝﺛ[CORRUPTED]IDE**
 
 
 
@@ -988,7 +990,7 @@ pip install -r requirements.txt
 
 
 
-**VS Codeﮔ۷ﻟﮔ۸ﮒﺎ**:
+**VS Code[CORRUPTED]ﻟ[CORRUPTED]ﺎ**:
 
 
 
@@ -1016,7 +1018,7 @@ pip install -r requirements.txt
 
 
 
-**VS Codeﻠﻝﺛ؟**:
+**VS Codeﻠﻝﺛ[CORRUPTED]**:
 
 
 
@@ -1070,7 +1072,7 @@ pip install -r requirements.txt
 
 
 
-## ﻭ **ﻝ؛؛ﻛﺕﻛﺕ۹ﻛﭨﭨﮒ۰ﮔ?*
+## ﻭ **ﻝ[CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﻛ[CORRUPTED]?*
 
 
 
@@ -1078,7 +1080,7 @@ pip install -r requirements.txt
 
 
 
-### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝﻝ۴**
+### **ﻛ[CORRUPTED]1: [CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﻝ[CORRUPTED]ﻝﻝﻝ[CORRUPTED]**
 
 
 
@@ -1086,11 +1088,11 @@ pip install -r requirements.txt
 
 
 
-**ﻝ؟ﮔ**: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝﻝ۴ﺅﺙﻝﮔﻝﻝ۴ﮒﺙﮒﮔﭖ?
+**ﻝ[CORRUPTED]**: [CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝﻝ[CORRUPTED]ﺅﺙﻝ[CORRUPTED]ﻝﻝ[CORRUPTED]ﺙ[CORRUPTED]?
 
 
 
-**ﮔ۴ﻠ۹۳**:
+**[CORRUPTED]ﻠ[CORRUPTED]**:
 
 
 
@@ -1098,7 +1100,7 @@ pip install -r requirements.txt
 
 
 
-1. **ﻠﻟﺁﭨﻝﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
+1. **ﻠﻟﺁ[CORRUPTED]ﻝﻝ[CORRUPTED]ﻝﺎ[CORRUPTED]**
 
 
 
@@ -1106,7 +1108,7 @@ pip install -r requirements.txt
 
 
 
-   # ﻠﻟﺁﭨBaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
+   # ﻠﻟﺁ[CORRUPTED]BaseStrategy[CORRUPTED]ﻝﺎ[CORRUPTED]ﻟ[CORRUPTED]ﺝﻟ[CORRUPTED]
 
 
 
@@ -1122,7 +1124,7 @@ pip install -r requirements.txt
 
 
 
-2. **ﮒﮒﭨﭦﻝﻝ۴ﮔﻛﭨﭘ**
+2. **[CORRUPTED]ﻝﻝ[CORRUPTED]ﻛ[CORRUPTED]**
 
 
 
@@ -1130,7 +1132,7 @@ pip install -r requirements.txt
 
 
 
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: src/strategy/simple_ma_strategy.py
+   # [CORRUPTED]ﻛ[CORRUPTED]ﻛﺛﻝﺛ[CORRUPTED]: src/strategy/simple_ma_strategy.py
 
 
 
@@ -1154,11 +1156,11 @@ pip install -r requirements.txt
 
 
 
-"""ﻝ؟ﮒﮒﻝﭦﺟﻝ?
+"""ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?
 
 
 
-       ﻛﺛﺟﻝ۷ﮒﺟ،ﻠﮒﻝﭦﺟﮒﮔ۱ﻠﮒﻝﭦﺟﻛﭦ۳ﮒﻛﺛﻛﺕﭦﻛﭦ۳ﮔﻛﺟ۰?       """
+       ﻛﺛﺟﻝ[CORRUPTED]ﺟ[CORRUPTED]ﻠ[CORRUPTED]ﻝ[CORRUPTED]ﺟ[CORRUPTED]ﻠ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻛ[CORRUPTED]ﻛﺛﻛﺕ[CORRUPTED]ﻛ[CORRUPTED]ﻛﺟ[CORRUPTED]?       """
 
 
 
@@ -1190,19 +1192,19 @@ pip install -r requirements.txt
 
 
 
-"""ﮒﮒ۶ﮒﻝ?""
+"""[CORRUPTED]ﻝ?""
 
 
 
-self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
+self.logger.info(f"[CORRUPTED]ﻝ? {self.strategy_id}")
 
 
 
-           self.logger.info(f"ﮒﺟ،ﻠﮒﻝﭦﺟﮒ۷? {self.fast_period}")
+           self.logger.info(f"[CORRUPTED]ﺟ[CORRUPTED]ﻠ[CORRUPTED]ﻝ[CORRUPTED]ﺟ[CORRUPTED]? {self.fast_period}")
 
 
 
-           self.logger.info(f"ﮔ۱ﻠﮒﻝﭦﺟﮒ۷? {self.slow_period}")
+           self.logger.info(f"[CORRUPTED]ﻠ[CORRUPTED]ﻝ[CORRUPTED]ﺟ[CORRUPTED]? {self.slow_period}")
 
 
 
@@ -1214,11 +1216,11 @@ self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
 
 
 
-           """ﮒ۳ﻝKﻝﭦﺟﮔﺍ?""
+           """[CORRUPTED]ﻝKﻝ[CORRUPTED]ﺟ[CORRUPTED]ﺍ?""
 
 
 
-# ﮒ؟ﻝﺍﻝﻝ۴ﻠﭨﻟﺝ
+# [CORRUPTED]ﻝﺍﻝﻝ[CORRUPTED]ﻠ[CORRUPTED]ﻟﺝ
 
 
 
@@ -1234,7 +1236,7 @@ self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
 
 
 
-3. **ﮒﮒﭨﭦﻝﻝ۴ﻠﻝﺛ؟**
+3. **[CORRUPTED]ﻝﻝ[CORRUPTED]ﻠﻝﺛ[CORRUPTED]**
 
 
 
@@ -1242,7 +1244,7 @@ self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
 
 
 
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: config/strategies/simple_ma_strategy.yaml
+   # [CORRUPTED]ﻛ[CORRUPTED]ﻛﺛﻝﺛ[CORRUPTED]: config/strategies/simple_ma_strategy.yaml
 
 
 
@@ -1254,7 +1256,7 @@ self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
 
 
 
-strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
+strategy_name: ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﺟﻝ?   strategy_type: trend_following
 
 
 
@@ -1298,7 +1300,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-4. **ﻝﺙﮒﮒﮒﮔﭖﻟﺁ**
+4. **ﻝﺙ[CORRUPTED]ﻟﺁ**
 
 
 
@@ -1306,7 +1308,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: tests/unit/strategy/test_simple_ma_strategy.py
+   # [CORRUPTED]ﻛ[CORRUPTED]ﻛﺛﻝﺛ[CORRUPTED]: tests/unit/strategy/test_simple_ma_strategy.py
 
 
 
@@ -1330,7 +1332,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-"""ﮔﭖﻟﺁﻝﻝ۴ﮒﮒ۶?""
+"""[CORRUPTED]ﻟﺁﻝﻝ[CORRUPTED]?""
 
 
 
@@ -1370,7 +1372,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-5. **ﻟﺟﻟ۰ﮔﭖﻟﺁ**
+5. **ﻟﺟﻟ[CORRUPTED]ﻟﺁ**
 
 
 
@@ -1378,7 +1380,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-   # ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ
+   # ﻟﺟﻟ[CORRUPTED]ﻟﺁ
 
 
 
@@ -1404,7 +1406,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱FAQ**
+## ﻭ **[CORRUPTED]ﺕﺕﻟ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]FAQ**
 
 
 
@@ -1412,7 +1414,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
+### **Q1: [CORRUPTED]ﻛﺛ[CORRUPTED]ﺝ[CORRUPTED]ﺍﻝﺕ[CORRUPTED]ﺏ[CORRUPTED]?*
 
 
 
@@ -1420,11 +1422,11 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md
+**A**: ﻛﺛﺟﻝ[CORRUPTED]ﻝﺑ[CORRUPTED]ﺙ?- [CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻝﺑ[CORRUPTED]? docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md
 
 
 
-- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../INDEX.md)
+- ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻝﺑ[CORRUPTED]? [docs/INDEX.md](../INDEX.md)
 
 
 
@@ -1432,7 +1434,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
+### **Q2: [CORRUPTED]ﻛﺛ[CORRUPTED]ﺍ[CORRUPTED]ﺅﺙ**
 
 
 
@@ -1440,23 +1442,23 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
+**A**: ﻠ[CORRUPTED]ﺝ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﻟ?1. ﻠﻟﺁ[CORRUPTED]ﻟ[CORRUPTED]ﺝ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟﺁﺑ[CORRUPTED]ﻛﺗ[CORRUPTED]
 
 
 
-2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
+2. ﻛﺛﺟﻝ[CORRUPTED]LS[CORRUPTED]ﺛﻛ[CORRUPTED]ﻝﺍ[CORRUPTED]ﻛ[CORRUPTED]ﺗﻝ[CORRUPTED]
 
 
 
-3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
+3. ﻝ[CORRUPTED]ﻟ[CORRUPTED]ﻝ[CORRUPTED]ﻛﺛﻝﺛ[CORRUPTED]ﺛ?4. ﻛﺛﺟﻝ[CORRUPTED]ﺟ[CORRUPTED]ﻛ[CORRUPTED]
 
 
 
-5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
+5. ﻠﻟﺟﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻝ[CORRUPTED]?
 
 
 
-### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴?*
+### **Q3: [CORRUPTED]ﻛﺛ[CORRUPTED]ﻛﺕﻛ[CORRUPTED]ﻝ[CORRUPTED]?*
 
 
 
@@ -1464,15 +1466,15 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ
+**A**: ﻠ[CORRUPTED]ﺝ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]ﻝ[CORRUPTED]?1. ﻠﻟﺁ[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]ﺕ[CORRUPTED]
 
 
 
-2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
+2. [CORRUPTED]ﻛ[CORRUPTED]ﻝﻟ[CORRUPTED]ﻟﻙ[CORRUPTED]ﻙ[CORRUPTED]ﻟﺛ
 
 
 
-3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔﻠ۰ﺗﻠﻟﺟ
+3. [CORRUPTED]ﻟ[CORRUPTED]ﺝ[CORRUPTED]?4. ﻝ[CORRUPTED]ﻛﺟ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﺗﻠﻟﺟ
 
 
 
@@ -1480,7 +1482,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
+### **Q4: [CORRUPTED]ﻛﺛﻟﺟﻟ[CORRUPTED]?*
 
 
 
@@ -1488,19 +1490,19 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ
+**A**: ﻛﺛﺟﻝ[CORRUPTED]ﺙ[CORRUPTED]?1. ﻠﻟﺁ[CORRUPTED]ﺙ[CORRUPTED]ﻠ[CORRUPTED]
 
 
 
-2. ﮒﮒ۳ﻝﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
+2. [CORRUPTED]ﻝﻝ[CORRUPTED]ﺍ?3. ﻠﻝﺛ[CORRUPTED]ﺍ
 
 
 
-4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
+4. ﻟﺟﻟ[CORRUPTED]ﺗ[CORRUPTED]ﻝ[CORRUPTED]?
 
 
 
-### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
+### **Q5: [CORRUPTED]ﻛﺛ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]?*
 
 
 
@@ -1508,19 +1510,19 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**A**: ﻛﺛﺟﻝ۷ﻠ؟ﻠ۱ﻟﺓﻟﺕ۹ﻝﺏﭨﻝﭨ?1. ﮒ۷GitﻛﭨﮒﭦﮒﮒﭨﭦIssue
+**A**: ﻛﺛﺟﻝ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻟﺓﻟﺕ[CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]?1. [CORRUPTED]Gitﻛ[CORRUPTED]Issue
 
 
 
-2. ﮔﻟﺟﺍﻠ؟ﻠ۱ﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
+2. [CORRUPTED]ﻟﺟﺍﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻟﺁ[CORRUPTED]ﻝ[CORRUPTED]ﻛﺟ[CORRUPTED]ﺁ
 
 
 
-3. ﮔﻛﺝﮒ۳ﻝﺍﮔ۴ﻠ۹۳
+3. [CORRUPTED]ﻛﺝ[CORRUPTED]ﻝﺍ[CORRUPTED]ﻠ[CORRUPTED]
 
 
 
-4. ﮔﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
+4. [CORRUPTED]ﻟ[CORRUPTED]ﺍﻛﺙ[CORRUPTED]ﻝ[CORRUPTED]ﻝﺎ[CORRUPTED]
 
 
 
@@ -1538,7 +1540,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﮒ۵ﻛﺗﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
+## ﻭ **[CORRUPTED]ﻛﺗﻟﺟ[CORRUPTED]ﻟﺓﻟﺕ[CORRUPTED]**
 
 
 
@@ -1546,7 +1548,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
+### **?[CORRUPTED]ﻟﺟ[CORRUPTED]?*
 
 
 
@@ -1554,7 +1556,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
+| ﻛ[CORRUPTED] | [CORRUPTED]ﻝ?| ﻠ[CORRUPTED]ﻟﺁ[CORRUPTED]ﺗ[CORRUPTED]ﺙ |
 
 
 
@@ -1562,27 +1564,19 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| ﻠﻟﺁﭨﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍLayer 0-11ﮔﭘﮔ |
+| ﻠﻟﺁ[CORRUPTED]ﻝﺏ[CORRUPTED]ﻝ[CORRUPTED] | ?| ﻟﺛ[CORRUPTED]ﻟﺟﺍLayer 0-11[CORRUPTED] |
 
 
 
-| ﻠﻟﺁﭨﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲ | ?| ﻟﺛﻟﺁﺑﮒﭦﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶ﻟ |
+| ﻠﻟﺁ[CORRUPTED]ﺛ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﻟ[CORRUPTED] | ?| ﻟﺛﻟﺁﺑ[CORRUPTED]ﻛ[CORRUPTED]ﺗﻝ[CORRUPTED]ﻟ[CORRUPTED]ﻟ |
 
 
 
-| ﻠﻝﺛ؟ﮒﺙﮒﻝﺁ?| ?| ﻟﺛﻟﺟﻟ۰pytestﮔﭖﻟﺁ |
+| ﻠﻝﺛ[CORRUPTED]ﺙ[CORRUPTED]ﻝﺁ?| ?| ﻟﺛﻟﺟﻟ[CORRUPTED]pytest[CORRUPTED]ﻟﺁ |
 
 
 
-| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ?| ?| ﻛﭨ۲ﻝﻠﻟﺟﮒ؟۰ﮔ۴ |
-
-
-
-
-
-
-
-### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
+| [CORRUPTED]ﻝ[CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]ﻝ?| ?| ﻛ[CORRUPTED]ﻝﻠﻟﺟ[CORRUPTED] |
 
 
 
@@ -1590,7 +1584,15 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
+### **?[CORRUPTED]ﻟﺟ[CORRUPTED]?*
+
+
+
+
+
+
+
+| ﻛ[CORRUPTED] | [CORRUPTED]ﻝ?| ﻠ[CORRUPTED]ﻟﺁ[CORRUPTED]ﺗ[CORRUPTED]ﺙ |
 
 
 
@@ -1598,85 +1600,19 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| ﻠﻟﺁﭨﮔﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
+| ﻠﻟﺁ[CORRUPTED]ﺕ[CORRUPTED]ﺟ[CORRUPTED] | ?| ﻟﺛ[CORRUPTED]ﻟﺟﺍﻝﻝ[CORRUPTED]ﺓ[CORRUPTED]ﻟ[CORRUPTED]ﺝ?|
 
 
 
-| ﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝﮒ؟۰?|
+| [CORRUPTED]ﻛﺕﻛ[CORRUPTED]ﻝ[CORRUPTED] | ?| [CORRUPTED]1[CORRUPTED]ﻛ[CORRUPTED]ﻝ[CORRUPTED]?|
 
 
 
-| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ?| ?| ﮒﻟﺛﻠﻟﺟﮔﭖﻟﺁ |
+| [CORRUPTED]ﻝ[CORRUPTED]ﻛﺕﻛﺕ[CORRUPTED]?| ?| [CORRUPTED]ﻟﺛﻠﻟﺟ[CORRUPTED]ﻟﺁ |
 
 
 
-| ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ | ?| ﮔﮔﮔ۲ﮔ۴ﻠ۰ﺗﻠﻟﺟ |
-
-
-
-
-
-
-
-```
-```---
-```
-
-
-
-
-
-
-
-## ﻭﺁ **ﮒ۵ﻛﺗﻟﭖﮔﭦ**
-
-
-
-
-
-
-
-### **ﮒﻠ۷ﻟﭖﮔﭦ**
-
-
-
-
-
-
-
-- **ﻝ۴ﻟﺁ?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/
-
-
-
-- **ﮔ۰ﻛﺝﻝﻝ۸ﭘ**: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/
-
-
-
-- **ﮔﻛﺛﺏﮒ؟?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/
-
-
-
-
-
-
-
-### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
-
-
-
-
-
-
-
-- **Pythonﮒ؟ﮔﺗﮔﮔ۰۲**: https://docs.python.org/3/
-
-
-
-- **Backtesting.pyﮔﮔ۰۲**: https://kernc.github.io/backtesting.py/
-
-
-
-- **ﻠﮒﮔﻟﭖﮒ۴ﻠ۷**: https://www.quantstart.com/
+| ﻠﻟﺟﻟﺑ[CORRUPTED]ﻠﻠ[CORRUPTED]ﻝ[CORRUPTED] | ?| [CORRUPTED]ﻠ[CORRUPTED]ﺗﻠﻟﺟ |
 
 
 
@@ -1694,7 +1630,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﮔﺁﮔﻛﺕﮒﺕ؟?*
+## ﻭﺁ **[CORRUPTED]ﻛﺗﻟ[CORRUPTED]**
 
 
 
@@ -1702,7 +1638,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-### **ﻠﮒﺍﻠ؟ﻠ۱ﮔﻛﺗﮒﺅﺙ**
+### **[CORRUPTED]ﻠ[CORRUPTED]ﻟ[CORRUPTED]**
 
 
 
@@ -1710,11 +1646,15 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
+- **ﻝ[CORRUPTED]ﻟﺁ?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/
 
 
 
-### **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+- **[CORRUPTED]ﻛﺝﻝﻝ[CORRUPTED]**: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/
+
+
+
+- **[CORRUPTED]ﻛﺛﺏ[CORRUPTED]?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/
 
 
 
@@ -1722,11 +1662,23 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-- **ﮔﮔﺁﻠ؟?*: ﮒﮒﭨﭦGit Issue
+### **[CORRUPTED]ﻠ[CORRUPTED]ﻟ[CORRUPTED]**
 
 
 
-- **ﮔﮔ۰۲ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﮔﮔ۰۲ﻝﭨﺑﮔ۳?- **ﮔﭖﻝ۷ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﻠ۰ﺗﻝ؟ﻝﭨﻝ
+
+
+
+
+- **Python[CORRUPTED]ﺗ[CORRUPTED]**: https://docs.python.org/3/
+
+
+
+- **Backtesting.py[CORRUPTED]**: https://kernc.github.io/backtesting.py/
+
+
+
+- **ﻠ[CORRUPTED]ﻟ[CORRUPTED]ﻠ[CORRUPTED]**: https://www.quantstart.com/
 
 
 
@@ -1744,7 +1696,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
+## ﻭ **[CORRUPTED]ﺁ[CORRUPTED]ﻛﺕ[CORRUPTED]ﺕ[CORRUPTED]?*
 
 
 
@@ -1752,7 +1704,57 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍ?|
+### **ﻠ[CORRUPTED]ﺍﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻛﺗ[CORRUPTED]ﺅﺙ**
+
+
+
+
+
+
+
+1. **[CORRUPTED]ﻠ[CORRUPTED]**: [CORRUPTED]ﻠﻝﺕ[CORRUPTED]ﺏ[CORRUPTED]ﺅﺙ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻠﺛ[CORRUPTED]ﻝ?2. **[CORRUPTED]ﻝﺑ[CORRUPTED]Issue**: [CORRUPTED]Gitﻛ[CORRUPTED]ﻝﺑ[CORRUPTED]ﺁ[CORRUPTED]ﻝﺎ[CORRUPTED]ﻛﺙﺙﻠ[CORRUPTED]?3. **[CORRUPTED]ﻠ[CORRUPTED]**: [CORRUPTED]ﺍIssueﺅﺙﻟﺁ[CORRUPTED]ﻝ[CORRUPTED]ﻟﺟﺍﻠ[CORRUPTED]?4. **[CORRUPTED]ﺁ[CORRUPTED]ﺎ[CORRUPTED]ﺕ[CORRUPTED]**: ﻟﻝﺏ[CORRUPTED]ﺁﺙ[CORRUPTED]ﺕ[CORRUPTED]ﻠ[CORRUPTED]?
+
+
+
+### **ﻟﻝﺏ[CORRUPTED]ﺗ[CORRUPTED]ﺙ**
+
+
+
+
+
+
+
+- **[CORRUPTED]ﺁﻠ[CORRUPTED]?*: [CORRUPTED]Git Issue
+
+
+
+- **[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]**: ﻟﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﺑ[CORRUPTED]?- **[CORRUPTED]ﻝ[CORRUPTED]ﻠ[CORRUPTED]ﻠ[CORRUPTED]**: ﻟﻝﺏ[CORRUPTED]ﻠ[CORRUPTED]ﺗﻝ[CORRUPTED]ﻝ[CORRUPTED]ﻝ
+
+
+
+
+
+
+
+```
+```---
+```
+
+
+
+
+
+
+
+## ﻭ **[CORRUPTED]ﺑ[CORRUPTED]ﺍﻟ[CORRUPTED]ﺍ[CORRUPTED]ﺛ**
+
+
+
+
+
+
+
+| [CORRUPTED] | ﻝ[CORRUPTED] | [CORRUPTED]ﺑ[CORRUPTED]ﺍ[CORRUPTED]ﺗ | [CORRUPTED]ﺑ[CORRUPTED]ﺍ?|
 
 
 
@@ -1760,7 +1762,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕﮔﭘﮔ?|
+| 2026-04-02 | v1.0 | [CORRUPTED]ﺍﻛ[CORRUPTED]ﻟ[CORRUPTED] | ﻠ[CORRUPTED]ﺕ[CORRUPTED]?|
 
 
 
@@ -1778,7 +1780,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+## ﻭ **ﻟﻝﺏ[CORRUPTED]ﺗ[CORRUPTED]ﺙ**
 
 
 
@@ -1786,19 +1788,19 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﮔﭘﮔ?
+**[CORRUPTED]ﻝ[CORRUPTED]ﺑ[CORRUPTED]?*: ﻠ[CORRUPTED]ﺕ[CORRUPTED]?
 
 
 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**[CORRUPTED]**: 2026-04-02  
 
 
 
-**ﮔﮒﮔﺑ?*: 2026-04-02  
+**[CORRUPTED]ﺑ?*: 2026-04-02  
 
 
 
-**ﻝﮔ؛**: v1.0
+**ﻝ[CORRUPTED]**: v1.0
 
 
 
@@ -1816,7 +1818,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-## ﻭ **ﮔ؛۱ﻟﺟﮒﮒ۴?*
+## ﻭ **[CORRUPTED]ﻟﺟ[CORRUPTED]?*
 
 
 
@@ -1824,23 +1826,23 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-ﮔ؛۱ﻟﺟﮒﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ۵ﻛﺗﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
+[CORRUPTED]ﻟﺟ[CORRUPTED]ﺕﻠ[CORRUPTED]ﻠ[CORRUPTED]ﻠﺅﺙ[CORRUPTED]ﻛ[CORRUPTED]ﻝﺕﻛﺟ[CORRUPTED]ﺅﺙﻠﻟﺟﻝﺏ[CORRUPTED]ﻝ[CORRUPTED]ﻝ[CORRUPTED]ﻛﺗ[CORRUPTED]ﻟﺓ[CORRUPTED]ﺅﺙﻛﺛ[CORRUPTED]ﺍ[CORRUPTED]ﺟ[CORRUPTED]ﻠ[CORRUPTED]ﻠﺟﻛﺕ[CORRUPTED]ﻛﺕ[CORRUPTED]ﻛﺙﻝ[CORRUPTED]ﻝﻠ[CORRUPTED]ﺙ[CORRUPTED]ﺓ[CORRUPTED]ﻝ[CORRUPTED]ﺕ?
 
 
 
-**ﻟ؟ﺍﻛﺛ**: 
+**ﻟ[CORRUPTED]ﺍﻛﺛ**: 
 
 
 
-- ﻭ ﮔﮔ۰۲ﮔﺁﮔﮒ۴ﺛﻝﻟﮒﺕ
+- ﻭ [CORRUPTED]ﺁ[CORRUPTED]ﺛﻝﻟ[CORRUPTED]ﺕ
 
 
 
-- ﻭ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ۵ﻛﺗ
+- ﻭ?[CORRUPTED]ﻟﺓ[CORRUPTED]ﺁ[CORRUPTED]ﺛﻝ[CORRUPTED]ﻛﺗ
 
 
 
-- ﻭ۳ ﮒ۱ﻠﮔﺁﮔﮒ۴ﺛﻝﮔﺁﮔ
+- ﻭ[CORRUPTED] [CORRUPTED]ﻠ[CORRUPTED]ﺁ[CORRUPTED]ﺛﻝ[CORRUPTED]ﺁ[CORRUPTED]
 
 
 
@@ -1848,7 +1850,7 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 
 
-**ﻝ۴ﻛﺛﮒ۵ﻛﺗﻠ۰ﭦﮒ۸?* ﻭ
+**ﻝ[CORRUPTED]ﻛﺛ[CORRUPTED]ﻛﺗﻠ[CORRUPTED]?* ﻭ
 
 
 

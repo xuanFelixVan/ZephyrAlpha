@@ -1,22 +1,22 @@
 ---
-module_id: -_4276 层级_INDEX_AUTO
+module_id: LAYER01_LAYER_HIERARCHY_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
-last_updated: 2026-04-13
+last_updated: 2026-04-16
 owner: Auto-Index Compiler
 standard_type: 自动索引
-applicable_scope: - 层级
+applicable_scope: layer_01
 compliance_level: 强制标准
 priority: P0-CRITICAL
-layer: - 层级
+layer: layer_01
 responsibility:
   - 自动生成层级索引，保证文件可索引
   - 防止AI幻觉导致的索引不一致
   - 实时维护文件目录完整性
 ---
 
-# - 层级 自动索引
+# layer_01 自动索引（层级体系）
 
 > ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
 > 更新时间: 2026-04-13 12:39:05  

@@ -2,6 +2,7 @@
 module_id: DATA_VALIDATION_ENGINE_001_0154
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
@@ -9,7 +10,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 数据验证引擎
-layer: layer_05
+layer: layer_00
 ---
 
 

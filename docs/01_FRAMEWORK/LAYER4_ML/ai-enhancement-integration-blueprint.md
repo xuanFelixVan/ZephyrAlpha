@@ -4,6 +4,7 @@ responsibility:
 module_id: AI_ENHANCEMENT_INTEGRATION_001_6707
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 实施团队

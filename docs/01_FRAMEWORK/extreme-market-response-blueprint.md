@@ -2,6 +2,7 @@
 module_id: EXTREME_MARKET_RESPONSE_001_4571
 version: 1.0.1
 status: Active
+priority: P2
 created_date: '2026-04-03'
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师

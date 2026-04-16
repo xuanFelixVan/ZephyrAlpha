@@ -2,10 +2,11 @@
 module_id: AI_STRATEGY_AUTOMATION_001_7823
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-02'
 last_updated: '2026-04-07'
 owner: 首席架构师
-layer: layer_10
+layer: layer_05
 standard_type: 专业机构级AI自动化蓝图
 applicable_scope: AI策略自动化集成
 compliance_level: 顶级专业标准

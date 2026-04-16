@@ -1,7 +1,8 @@
 ---
 module_id: 11_STRATEGIC_DECISION_RISK_BUDGETING_REF
-layer: layer_11
+layer: layer_10
 status: Active
+priority: P0
 document_type: strategic_reference_entry
 reference_canonical: "docs/01_FRAMEWORK/dynamic-risk-budgeting-blueprint.md"
 created_date: "2026-04-13"

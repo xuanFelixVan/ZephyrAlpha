@@ -2,6 +2,7 @@
 module_id: PORTFOLIO_DIAGNOSTICS_TOOLKIT_001
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
@@ -13,7 +14,7 @@ responsibility:
   - 优化质量验证
   - 问题检测与修复
   - 诊断报告生成
-layer: layer_06
+layer: layer_07
 ---
 
 # 投资组合诊断工具蓝图

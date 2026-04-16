@@ -2,6 +2,7 @@
 module_id: ARCHITECTURE_REVIEW_HANDOVER_001_2684
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-XX
 last_updated: 2026-04-12
 owner: 架构师

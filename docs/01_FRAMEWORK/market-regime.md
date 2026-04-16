@@ -2,6 +2,7 @@
 module_id: MARKET_REGIME_001_2020
 version: 5.3.1
 status: Active
+priority: P2
 created_date: 2026-04-01
 last_updated: '2026-04-07'
 owner: 首席文档架构?

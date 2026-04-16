@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_AUDIT_TRAIL_SYSTEM_BLUEPRINT_5273
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-06'
 last_updated: '2026-04-07'

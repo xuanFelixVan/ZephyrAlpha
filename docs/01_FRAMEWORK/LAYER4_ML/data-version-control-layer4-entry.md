@@ -2,6 +2,7 @@
 module_id: 01_FRAMEWORK_LAYER4_DATA_VERSION_CONTROL_ENTRY_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-10
 last_updated: '2026-04-10'
 owner: 文档负责人

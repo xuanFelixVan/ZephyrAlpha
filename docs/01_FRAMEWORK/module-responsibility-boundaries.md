@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_MODULE_RESPONSIBILITY_BOUNDARIES
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Module Responsibility Boundaries相关业务
 created_date: 2026-04-01

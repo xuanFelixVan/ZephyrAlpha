@@ -16,7 +16,7 @@ parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
 - 系统框架设计与核心架构管理与优化维护
-layer: layer_03
+layer: layer_05
 ---
 **蓝图状态**: ✅ 完成
 

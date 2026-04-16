@@ -1,6 +1,6 @@
 ---
 module_id: 01_FRAMEWORK_FEATURE_STORE_BLUEPRINT_3480
-layer: layer_01
+layer: layer_04
 version: 1.0.0
 status: Active
 responsibility: ''

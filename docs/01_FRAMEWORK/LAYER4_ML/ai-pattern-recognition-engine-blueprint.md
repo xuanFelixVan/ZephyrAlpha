@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_LAYER4_ML_AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT_9383
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Ai Pattern Recognition Engine Blueprint相关业务
 created_date: 2026-04-07

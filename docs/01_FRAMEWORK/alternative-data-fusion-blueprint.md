@@ -2,10 +2,11 @@
 module_id: ALTERNATIVE_DATA_FUSION_BLUEPRINT
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_09
 responsibility: 01_FRAMEWORK
 standard_type: 专业量化机构级蓝图
 applicable_scope: 另类数据融合

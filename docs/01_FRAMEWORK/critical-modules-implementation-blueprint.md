@@ -2,6 +2,7 @@
 module_id: CRITICAL_MODULES_IMPLEMENTATION_001_2426
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-02
 last_updated: '2026-04-07'
 compliance_level: 顶级专业标准

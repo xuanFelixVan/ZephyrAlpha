@@ -3,6 +3,7 @@ module_id: 08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_DATA_EXPORT_TOOLS_BLUEPRIN
 layer: layer_00
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - Data Export Tools Blueprint相关业务
 created_date: 2026-04-07

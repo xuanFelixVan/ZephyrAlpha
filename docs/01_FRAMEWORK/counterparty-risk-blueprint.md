@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_COUNTERPARTY_RISK_BLUEPRINT_3984
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-06'
 last_updated: '2026-04-07'

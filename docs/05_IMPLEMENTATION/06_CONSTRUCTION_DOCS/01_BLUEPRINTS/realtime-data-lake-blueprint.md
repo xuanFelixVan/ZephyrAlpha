@@ -2,6 +2,7 @@
 module_id: REALTIME_DATA_LAKE_001_4839
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队

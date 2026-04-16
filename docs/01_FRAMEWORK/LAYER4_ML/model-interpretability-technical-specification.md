@@ -2,6 +2,7 @@
 module_id: MODEL_INTERPRETABILITY_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师

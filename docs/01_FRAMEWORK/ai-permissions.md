@@ -2,6 +2,7 @@
 module_id: AI_PERMISSIONS_001_8323
 version: 5.3.1
 status: Active
+priority: P2
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?

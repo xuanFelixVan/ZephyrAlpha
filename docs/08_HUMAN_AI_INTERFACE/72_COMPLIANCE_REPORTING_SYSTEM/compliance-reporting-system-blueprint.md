@@ -3,6 +3,7 @@ module_id: AUTO_30352
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P2
 last_updated: 2026-04-13
 ---
 ﻿---

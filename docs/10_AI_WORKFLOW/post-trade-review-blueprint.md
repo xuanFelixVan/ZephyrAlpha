@@ -2,6 +2,7 @@
 module_id: POST_TRADE_REVIEW_001_0806
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-02
 last_updated: '2026-04-07'
 owner: 首席架构师

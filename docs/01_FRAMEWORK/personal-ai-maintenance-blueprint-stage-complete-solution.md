@@ -2,6 +2,7 @@
 module_id: PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION_001_6119
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-06
 last_updated: '2026-04-07'
 owner: 首席架构师

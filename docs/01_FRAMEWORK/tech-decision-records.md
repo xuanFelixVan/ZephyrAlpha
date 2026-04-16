@@ -2,6 +2,7 @@
 module_id: TECH_DECISION_RECORDS_001_8141
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席蓝图架构师

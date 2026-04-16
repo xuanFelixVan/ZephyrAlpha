@@ -2,6 +2,7 @@
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001_1501
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队

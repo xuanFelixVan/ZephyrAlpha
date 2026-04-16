@@ -2,6 +2,7 @@
 module_id: AI_GOVERNANCE_001_5833
 version: 1.0.1
 status: Active
+priority: P0
 created_date: '2026-04-02'
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师

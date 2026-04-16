@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_P0_MODULES_DEV_PROCESS_QA
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - P0 Modules Dev Process Qa相关业务
 created_date: 2026-04-06

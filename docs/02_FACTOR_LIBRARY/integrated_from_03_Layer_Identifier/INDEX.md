@@ -1,22 +1,22 @@
 ---
-module_id: -_9433 层级标识_INDEX_AUTO
+module_id: LAYER02_LAYER_IDENTIFIER_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
-last_updated: 2026-04-13
+last_updated: 2026-04-16
 owner: Auto-Index Compiler
 standard_type: 自动索引
-applicable_scope: - 层级标识
+applicable_scope: layer_02
 compliance_level: 强制标准
 priority: P0-CRITICAL
-layer: - 层级标识
+layer: layer_02
 responsibility:
   - 自动生成层级索引，保证文件可索引
   - 防止AI幻觉导致的索引不一致
   - 实时维护文件目录完整性
 ---
 
-# - 层级标识 自动索引
+# layer_02 自动索引（层级标识）
 
 > ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
 > 更新时间: 2026-04-13 12:39:05  

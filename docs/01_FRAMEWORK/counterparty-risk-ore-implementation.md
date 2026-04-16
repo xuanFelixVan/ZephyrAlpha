@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_COUNTERPARTY_RISK_ORE_IMPLEMENTATION
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Counterparty Risk Ore Implementation相关业务
 created_date: 2026-04-06

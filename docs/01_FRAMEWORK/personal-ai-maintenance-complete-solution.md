@@ -3,6 +3,7 @@ module_id: EXAMPLE_001_7175
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
 - Personal Ai Maintenance Complete Solution相关业务
 created_date: 2026-04-06

@@ -2,6 +2,7 @@
 module_id: 10_AI_WORKFLOW_MARKET_REGIME_ENTRY_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-10
 last_updated: '2026-04-10'
 owner: 文档负责人

@@ -2,6 +2,7 @@
 module_id: SYSTEM_CLEANUP_PLAN_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 系统清理负责人

@@ -77,12 +77,12 @@ jobs:
     - name: 快速扫描 - 文件系统层检查
       run: |
         echo "开始每周快速扫描..."
-        python scripts/archive/link_checker.py --dir docs/ --quick --output reports/weekly_link_check.json
+        python scripts/ci_audit/link_checker.py --dir docs/ --quick --output reports/weekly_link_check.json
     - name: 生成周度扫描报告
       if: always()
       run: |
         DATE=$(date +%Y%m%d)
-        python scripts/archive/link_checker.py --dir docs/ --quick --output reports/WEEKLY_SCAN_REPORT_${DATE}.md
+        python scripts/ci_audit/link_checker.py --dir docs/ --quick --output reports/WEEKLY_SCAN_REPORT_${DATE}.md
     
     - name: 上传周度报告
       if: always()
@@ -140,15 +140,15 @@ jobs:
     - name: 标准审计 - 重复文档检测
       run: |
         echo "开始每月标准审计 - 重复文档检测..."
-        python scripts/archive/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/monthly_duplicate.json
+        python scripts/ci_audit/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/monthly_duplicate.json
     - name: 标准审计 - 链接有效性检查
       run: |
         echo "开始每月标准审计 - 链接有效性检查..."
-        python scripts/archive/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/monthly_link_check.json
+        python scripts/ci_audit/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/monthly_link_check.json
     - name: 标准审计 - 架构分析
       run: |
         echo "开始每月标准审计 - 架构分析..."
-        python scripts/archive/architecture_analyzer.py --output reports/monthly_architecture.json
+        python scripts/ci_audit/architecture_analyzer.py --output reports/monthly_architecture.json
     - name: 生成月度审计报告
       if: always()
       run: |
@@ -217,27 +217,27 @@ jobs:
     - name: 深度审计 - 重复文档检测
       run: |
         echo "开始每季度深度审计 - 重复文档检测..."
-        python scripts/archive/duplicate_detector.py --all --threshold 0.8 --output reports/quarterly_duplicate.json
+        python scripts/ci_audit/duplicate_detector.py --all --threshold 0.8 --output reports/quarterly_duplicate.json
     - name: 深度审计 - 链接有效性检查
       run: |
         echo "开始每季度深度审计 - 链接有效性检查..."
-        python scripts/archive/link_checker.py --all --max-depth 3 --timeout 10 --output reports/quarterly_link_check.json
+        python scripts/ci_audit/link_checker.py --all --max-depth 3 --timeout 10 --output reports/quarterly_link_check.json
     - name: 深度审计 - 架构分析
       run: |
         echo "开始每季度深度审计 - 架构分析..."
-        python scripts/archive/architecture_analyzer.py --all --output reports/quarterly_architecture.json
+        python scripts/ci_audit/architecture_analyzer.py --all --output reports/quarterly_architecture.json
     - name: 深度审计 - 职责边界检查
       run: |
         echo "开始每季度深度审计 - 职责边界检查..."
-        python scripts/archive/boundary_checker.py --all --output reports/quarterly_boundary.json
+        python scripts/ci_audit/boundary_checker.py --all --output reports/quarterly_boundary.json
     - name: 深度审计 - 文档债务评估
       run: |
         echo "开始每季度深度审计 - 文档债务评估..."
-        python scripts/archive/documentation_debt_assessor.py --all --output reports/quarterly_debt.json
+        python scripts/ci_audit/documentation_debt_assessor.py --all --output reports/quarterly_debt.json
     - name: 深度审计 - 蓝图质量验证
       run: |
         echo "开始每季度深度审计 - 蓝图质量验证..."
-        python scripts/archive/blueprint_validator.py --all --output reports/quarterly_blueprint.json
+        python scripts/ci_audit/blueprint_validator.py --all --output reports/quarterly_blueprint.json
     - name: 生成季度深度审计报告
       if: always()
       run: |

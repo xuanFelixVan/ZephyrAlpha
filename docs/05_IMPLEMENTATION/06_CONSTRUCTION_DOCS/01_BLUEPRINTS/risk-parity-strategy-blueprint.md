@@ -4,12 +4,13 @@ responsibility:
 module_id: RISK_PARITY_STRATEGY_001_2231
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-layer: layer_06
+layer: layer_05
 ---
 
 

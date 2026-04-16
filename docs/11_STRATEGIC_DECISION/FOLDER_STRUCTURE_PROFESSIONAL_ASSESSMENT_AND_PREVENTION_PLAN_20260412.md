@@ -2,6 +2,7 @@
 module_id: FOLDER_STRUCTURE_ASSESSMENT_001
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-12
 last_updated: 2026-04-12
 owner: 首席文档架构师

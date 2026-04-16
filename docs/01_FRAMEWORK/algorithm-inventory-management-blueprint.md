@@ -2,6 +2,7 @@
 module_id: ALGORITHM_INVENTORY_MANAGEMENT_001_2459
 version: 1.0.0
 status: Active
+priority: P0
 created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席架构师

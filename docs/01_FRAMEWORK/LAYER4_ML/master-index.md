@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_LAYER4_ML_MASTER_INDEX
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - Master Index相关业务
 created_date: 2026-04-07

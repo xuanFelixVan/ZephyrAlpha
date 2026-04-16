@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_BLUEPRINT_STAGE_FINAL_COMPLETION_REPORT_1131
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
 - Blueprint Stage Final Completion Report相关业务
 created_date: 2026-04-07

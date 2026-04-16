@@ -2,6 +2,7 @@
 module_id: AI_DECISION_AUDIT_BLUEPRINT_6351
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师

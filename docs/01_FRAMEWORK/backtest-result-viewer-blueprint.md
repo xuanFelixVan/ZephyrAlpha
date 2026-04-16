@@ -2,10 +2,11 @@
 module_id: BACKTEST_RESULT_VIEWER_001_4526
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席架构师
-layer: layer_08
+layer: layer_05
 standard_type: 专业量化机构蓝图
 applicable_scope: 回测结果查看器
 compliance_level: 顶级专业标准

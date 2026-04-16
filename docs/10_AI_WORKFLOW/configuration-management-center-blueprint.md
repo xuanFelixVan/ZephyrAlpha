@@ -7,7 +7,7 @@ last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
 - 配置管理中心蓝图 (CONFIGURATION_MANAGEMENT_CENTER)文档
-layer: layer_07
+layer: layer_01
 standard_type: 专业量化机构蓝图
 applicable_scope: 系统配置管理
 compliance_level: 顶级专业标准

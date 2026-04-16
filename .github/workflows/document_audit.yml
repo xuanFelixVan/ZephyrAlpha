@@ -28,7 +28,7 @@ jobs:
         
     - name: Run weekly audit
       run: |
-        python scripts/archive/weekly_audit_optimized.py
+        python scripts/ci_audit/weekly_audit_optimized.py
         
     - name: Upload audit report
       uses: actions/upload-artifact@v4
@@ -38,7 +38,7 @@ jobs:
         
     - name: Check compliance rate
       run: |
-        python scripts/archive/check_compliance_rate.py
+        python scripts/ci_audit/check_compliance_rate.py
         
   monthly-audit:
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
         
     - name: Run monthly audit
       run: |
-        python scripts/archive/monthly_audit.py
+        python scripts/ci_audit/monthly_audit.py
         
     - name: Upload audit report
       uses: actions/upload-artifact@v4
@@ -70,7 +70,7 @@ jobs:
         
     - name: Check compliance rate
       run: |
-        python scripts/archive/check_compliance_rate.py
+        python scripts/ci_audit/check_compliance_rate.py
         
   quarterly-audit:
     runs-on: ubuntu-latest
@@ -92,7 +92,7 @@ jobs:
         
     - name: Run quarterly audit
       run: |
-        python scripts/archive/quarterly_audit.py
+        python scripts/ci_audit/quarterly_audit.py
         
     - name: Upload audit report
       uses: actions/upload-artifact@v4
@@ -102,4 +102,4 @@ jobs:
         
     - name: Check compliance rate
       run: |
-        python scripts/archive/check_compliance_rate.py
+        python scripts/ci_audit/check_compliance_rate.py

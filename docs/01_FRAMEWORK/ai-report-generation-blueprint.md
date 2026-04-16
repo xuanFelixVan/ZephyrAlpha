@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_AI_REPORT_GENERATION_BLUEPRINT
-layer: layer_01
+layer: layer_07
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - Ai Report Generation Blueprint相关业务
 created_date: 2026-04-07

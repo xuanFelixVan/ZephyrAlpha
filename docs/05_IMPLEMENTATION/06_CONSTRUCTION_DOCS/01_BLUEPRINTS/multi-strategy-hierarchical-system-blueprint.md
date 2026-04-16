@@ -2,6 +2,7 @@
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-09
 owner: 实施团队
@@ -13,7 +14,7 @@ responsibility:
   - 策略权重分配
   - 信号融合
   - 策略协调优化
-layer: layer_06
+layer: layer_05
 ---
 
 ## 核心定位

@@ -2,12 +2,13 @@
 module_id: AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN_6618
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
 - AI虚拟研究团队实施计划文档
-layer: layer_01
+layer: layer_09
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准

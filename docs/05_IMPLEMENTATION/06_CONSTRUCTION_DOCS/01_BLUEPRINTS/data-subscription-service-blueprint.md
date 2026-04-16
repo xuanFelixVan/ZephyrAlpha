@@ -3,6 +3,7 @@ module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_DATA_SUBSCRIPTIO
 layer: layer_05
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - Data Subscription Service Blueprint相关业务
 created_date: 2026-04-07

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 # -*- coding: utf-8 -*-
+# [Phase2 裁决] 本脚本与 scripts/governance/triage_blueprint_d_overlap_pairs.py 同名但功能不同：
+#   本脚本（audit/）：按置信度评分将候选对分档（TIER_A/B/C），输出 JSON + MD 摘要。
+#   governance/ 版：提取每对文档的内容摘要，生成供大模型二审的 JSONL 队列。
+#   两者协作：先运行本脚本分档 → 再运行 governance/ 版对 TIER_B 二审。
 """
 D 类蓝图重叠候选 A 档分流脚本（F5）。
 消费 scan_blueprint_d_overlap_candidates.py 的 JSON 输出，

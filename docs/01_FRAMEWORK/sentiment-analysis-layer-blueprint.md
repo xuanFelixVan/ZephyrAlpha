@@ -2,12 +2,13 @@
 module_id: LAYER_008_5572
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
 - 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
-layer: layer_04
+layer: layer_03
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准

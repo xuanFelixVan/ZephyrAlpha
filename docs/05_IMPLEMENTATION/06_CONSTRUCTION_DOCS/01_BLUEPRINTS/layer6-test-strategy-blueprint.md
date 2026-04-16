@@ -2,6 +2,7 @@
 module_id: LAYER6_TEST_STRATEGY_001_7234
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 架构团队
@@ -10,7 +11,7 @@ applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
 - 测试策略设计
-layer: layer_06
+layer: layer_05
 ---
 
 

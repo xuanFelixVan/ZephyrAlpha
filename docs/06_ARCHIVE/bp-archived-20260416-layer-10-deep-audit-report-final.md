@@ -2,6 +2,7 @@
 module_id: LAYER_10_DEEP_AUDIT_REPORT_FINAL_001_5801
 version: 2.0.0
 status: Active
+priority: P0
 created_date: 2026-04-06
 last_updated: '2026-04-07'
 owner: 首席架构师

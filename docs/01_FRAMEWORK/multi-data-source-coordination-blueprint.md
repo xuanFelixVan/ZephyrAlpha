@@ -1,6 +1,6 @@
 ---
 module_id: 01_FRAMEWORK_MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT_4658
-layer: layer_01
+layer: layer_00
 version: 1.0.0
 status: Active
 responsibility: ''

@@ -2,6 +2,7 @@
 module_id: ARCHITECTURE_EVOLUTION_HISTORY_2393
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师

@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_AUDIT_LOG_VIEWER_BLUEPRINT_4692
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-06'
 last_updated: '2026-04-07'

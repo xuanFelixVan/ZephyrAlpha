@@ -2,6 +2,7 @@
 module_id: MACRO_FACTOR_SYSTEM_001_9072
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-08
 last_updated: '2026-04-08'
 owner: 战略与因子团队

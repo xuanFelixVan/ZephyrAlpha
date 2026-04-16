@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_REPORT_INTELLIGENT_QA_BLUEPRINT_5128
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

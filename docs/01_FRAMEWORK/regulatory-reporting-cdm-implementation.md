@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_REGULATORY_REPORTING_CDM_IMPLEMENTATION
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Regulatory Reporting Cdm Implementation相关业务
 created_date: 2026-04-06

@@ -1,8 +1,9 @@
 ---
 module_id: 08_HUMAN_AI_INTERFACE_25_STRATEGY_IDE_STRATEGY_IDE_BLUEPRINT
-layer: layer_00
+layer: layer_05
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - Strategy Ide Blueprint相关业务
 created_date: 2026-04-07

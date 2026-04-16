@@ -7,7 +7,7 @@ last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
 - 交易执行分析蓝图 (TRADE_EXECUTION_ANALYSIS)文档
-layer: layer_07
+layer: layer_06
 standard_type: 专业量化机构蓝图
 applicable_scope: 交易执行质量分析
 compliance_level: 顶级专业标准

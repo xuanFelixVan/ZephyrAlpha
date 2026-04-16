@@ -1,6 +1,6 @@
 ---
 module_id: 01_FRAMEWORK_TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT
-layer: layer_01
+layer: layer_06
 version: 1.0.0
 status: Active
 responsibility:

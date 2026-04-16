@@ -3,6 +3,7 @@ module_id: AUTO_77314
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P0
 last_updated: 2026-04-13
 ---
 # 外部审计模型安全评估报告

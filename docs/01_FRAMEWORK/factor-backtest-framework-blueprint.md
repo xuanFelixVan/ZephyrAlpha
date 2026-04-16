@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT
-layer: layer_01
+layer: layer_05
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Factor Backtest Framework Blueprint相关业务
 created_date: 2026-04-07

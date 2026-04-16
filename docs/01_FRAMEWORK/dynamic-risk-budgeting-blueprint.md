@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Dynamic Risk Budgeting Blueprint相关业务
 created_date: 2026-04-07

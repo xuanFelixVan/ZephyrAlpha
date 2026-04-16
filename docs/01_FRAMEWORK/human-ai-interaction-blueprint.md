@@ -2,6 +2,7 @@
 module_id: HUMAN_AI_INTERACTION_001_0426
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-02'
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师

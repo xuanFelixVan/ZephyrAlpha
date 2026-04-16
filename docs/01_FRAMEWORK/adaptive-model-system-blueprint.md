@@ -2,10 +2,11 @@
 module_id: ADAPTIVE_MODEL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_04
 responsibility: 01_FRAMEWORK
 responsibility_boundary: |
 standard_type: 专业机构级自适应模型蓝图

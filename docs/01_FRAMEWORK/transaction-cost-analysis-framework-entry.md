@@ -2,6 +2,7 @@
 module_id: 01_FRAMEWORK_TRANSACTION_COST_ANALYSIS_ENTRY_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-10
 last_updated: '2026-04-10'
 owner: 文档负责人
@@ -9,7 +10,7 @@ responsibility:
   - 框架目录下交易成本分析（TCA）主题入口：指向实现层正式蓝图（消解 C2 basename 碰撞）
 standard_type: 导航 stub
 applicable_scope: docs/01_FRAMEWORK
-layer: layer_01
+layer: layer_06
 ---
 
 

@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_SENTIMENT_DATA_INTEGRATION_BLUEPRINT
-layer: layer_01
+layer: layer_03
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - Sentiment Data Integration Blueprint相关业务
 created_date: 2026-04-07

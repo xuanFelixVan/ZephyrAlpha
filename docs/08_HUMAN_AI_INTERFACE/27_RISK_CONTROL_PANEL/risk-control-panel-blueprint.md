@@ -1,8 +1,9 @@
 ---
 module_id: 08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_RISK_CONTROL_PANEL_BLUEPRINT
-layer: layer_00
+layer: layer_06
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Risk Control Panel Blueprint相关业务
 created_date: 2026-04-07

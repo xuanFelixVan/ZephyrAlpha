@@ -3,6 +3,7 @@ module_id: AUTO_85181
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P1
 last_updated: 2026-04-13
 ---
 ﻿---

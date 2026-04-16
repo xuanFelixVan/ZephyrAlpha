@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_LAYER4_ML_MODEL_DRIFT_DETECTION_BLUEPRINT
-layer: layer_01
+layer: layer_04
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Model Drift Detection Blueprint相关业务
 created_date: 2026-04-07

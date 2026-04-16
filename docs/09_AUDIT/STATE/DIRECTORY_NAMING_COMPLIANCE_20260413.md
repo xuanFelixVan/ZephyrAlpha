@@ -238,4 +238,4 @@ last_updated: 2026-04-13
 ## 参考标准
 
 - [PATH_STANDARD.md](../../05_IMPLEMENTATION/02_DEVELOPMENT/path-standard.md) §1.1
-- [FILE_NAMING_STANDARD.md](../STANDARDS/file-naming-standard.md)
+- [doc-naming-standard.md](../STANDARDS/doc-naming-standard.md)（含原 file-naming-standard 附录）

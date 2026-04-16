@@ -2,6 +2,7 @@
 module_id: DOCUMENT_RESPONSIBILITY_BOUNDARIES_001_4942
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席架构师

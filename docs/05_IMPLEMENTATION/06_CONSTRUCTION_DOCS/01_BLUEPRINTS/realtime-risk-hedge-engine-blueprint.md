@@ -2,6 +2,7 @@
 module_id: REALTIME_RISK_HEDGE_ENGINE_001_6416
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队

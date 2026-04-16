@@ -4,6 +4,7 @@ responsibility:
 module_id: SYSTEM_ENHANCEMENT_001_0999
 version: 1.0.1
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-08
 owner: 实施团队

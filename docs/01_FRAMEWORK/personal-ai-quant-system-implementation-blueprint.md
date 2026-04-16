@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_PERSONAL_AI_QUANT_SYSTEM_IMPLEMENTATION_BLUEPRINT
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility:
   - Personal Ai Quant System Implementation Blueprint相关业务
 created_date: 2026-04-06

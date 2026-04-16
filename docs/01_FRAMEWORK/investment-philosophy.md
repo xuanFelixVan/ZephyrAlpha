@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_INVESTMENT_PHILOSOPHY_6833
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Investment Philosophy相关业务
 standard_type: 核心文档

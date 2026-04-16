@@ -3,6 +3,7 @@ module_id: 08_HUMAN_AI_INTERFACE_29_WEBSOCKET_REALTIME_WEBSOCKET_REALTIME_BLUEPR
 layer: layer_00
 version: 1.0.0
 status: Active
+priority: P1
 responsibility:
   - Websocket Realtime Blueprint相关业务
 created_date: 2026-04-07

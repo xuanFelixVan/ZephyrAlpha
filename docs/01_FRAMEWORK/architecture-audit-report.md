@@ -2,6 +2,7 @@
 module_id: ARCHITECTURE_AUDIT_REPORT_001_2987
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-02
 last_updated: '2026-04-07'
 responsibility:

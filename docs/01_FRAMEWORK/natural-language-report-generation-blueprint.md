@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_NATURAL_LANGUAGE_REPORT_GENERATION_BLUEPRINT_0190
-layer: layer_01
+layer: layer_07
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

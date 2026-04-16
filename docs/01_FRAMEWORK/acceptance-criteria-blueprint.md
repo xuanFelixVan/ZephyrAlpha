@@ -2,6 +2,7 @@
 module_id: ACCEPTANCE_CRITERIA_001_9324
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-02
 last_updated: '2026-04-08'
 responsibility:

@@ -1,6 +1,6 @@
 ---
 module_id: 11_STRATEGIC_DECISION_02_RISK_BUDGETING_RISK_BUDGETING_FRAMEWORK
-layer: layer_11
+layer: layer_10
 version: 1.0.0
 status: Active
 responsibility:

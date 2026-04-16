@@ -2,6 +2,7 @@
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE__001_3020
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 standard_type: 专业量化机构文档

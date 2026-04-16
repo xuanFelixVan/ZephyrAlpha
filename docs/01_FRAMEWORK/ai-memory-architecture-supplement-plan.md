@@ -2,6 +2,7 @@
 module_id: AI_MEMORY_ARCHITECTURE_SUPPLEMENT_PLAN_001_8731
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 首席架构师

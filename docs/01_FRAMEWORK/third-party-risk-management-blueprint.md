@@ -2,6 +2,7 @@
 module_id: THIRD_PARTY_RISK_MANAGEMENT_001_7458
 version: 1.0.0
 status: Active
+priority: P0
 created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席架构师

@@ -2,6 +2,7 @@
 module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT_0325
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
@@ -9,7 +10,7 @@ responsibility:
 - 统一数据基础设施
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-layer: layer_05
+layer: layer_01
 ---
 
 

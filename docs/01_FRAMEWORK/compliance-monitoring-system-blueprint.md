@@ -2,12 +2,13 @@
 module_id: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - COMPLIANCE_MONITORING_SYSTEM蓝图设计
-layer: layer_01
+layer: layer_10
 standard_type: "专业机构级合规监控系统蓝图专业机构级合规监控系统蓝?applicable_scope: 全系统合规管理框架设?compliance_level: 顶级专业标准"
 reference_models: ["Citadel Compliance", "Two Sigma Compliance", "Goldman Sachs Risk Compliance"]
 parent_document: ../INDEX.md

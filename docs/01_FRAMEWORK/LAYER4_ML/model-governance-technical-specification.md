@@ -2,10 +2,11 @@
 module_id: MODEL_GOVERNANCE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_10
 responsibility: LAYER4_ML
 spec_version: 1.0
 index: MODEL_GOVERNANCE_001

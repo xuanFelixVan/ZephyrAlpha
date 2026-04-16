@@ -2,6 +2,7 @@
 module_id: STREAMLIT_BACKTEST_INTERFACE_001_7738
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-05'
 last_updated: '2026-04-07'
 owner: 系统架构师

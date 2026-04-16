@@ -2,6 +2,7 @@
 module_id: DATA_OBSERVABILITY_001_ARCHIVED_1_2377
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队

@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_COMPLIANCE_DOCUMENT_MANAGEMENT_BLUEPRINT_2569
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

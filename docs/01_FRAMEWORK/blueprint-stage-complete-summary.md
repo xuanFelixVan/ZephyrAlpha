@@ -2,6 +2,7 @@
 module_id: BLUEPRINT_STAGE_COMPLETE_SUMMARY_001_2967
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: '2026-04-10'
 owner: 首席蓝图架构师

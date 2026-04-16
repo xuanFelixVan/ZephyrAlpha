@@ -2,6 +2,7 @@
 module_id: 08_HUMAN_AI_INTERFACE_79_TRANSACTION_COST_ANALYSIS_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-10
 last_updated: '2026-04-10'
 owner: 文档负责人
@@ -9,7 +10,7 @@ responsibility:
   - Layer 8 模块 79 入口：指向实现层正式 TCA 蓝图（消解 C2 basename 碰撞）
 standard_type: 导航 stub
 applicable_scope: docs/08_HUMAN_AI_INTERFACE/79_TRANSACTION_COST_ANALYSIS
-layer: layer_08
+layer: layer_06
 ---
 
 

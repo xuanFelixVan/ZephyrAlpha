@@ -35,12 +35,12 @@ jobs:
     - name: 运行重复文档检测
       id: duplicate_check
       run: |
-        python scripts/archive/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/duplicate_check.json
+        python scripts/ci_audit/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/duplicate_check.json
     
     - name: 生成重复文档检测报告
       if: always()
       run: |
-        python scripts/archive/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/DUPLICATE_DETECTION_REPORT.md
+        python scripts/ci_audit/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/DUPLICATE_DETECTION_REPORT.md
     
     - name: 上传检测报告
       if: always()
@@ -139,12 +139,12 @@ jobs:
     - name: 运行链接有效性检查
       id: link_check
       run: |
-        python scripts/archive/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/link_check.json
+        python scripts/ci_audit/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/link_check.json
     
     - name: 生成链接检查报告
       if: always()
       run: |
-        python scripts/archive/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/LINK_CHECK_REPORT.md
+        python scripts/ci_audit/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/LINK_CHECK_REPORT.md
     
     - name: 上传检查报告
       if: always()

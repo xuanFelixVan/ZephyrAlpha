@@ -2,6 +2,7 @@
 module_id: BLUEPRINT_V2_0_1_BACKUP
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师

@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT_5185
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Personal Ai Quant Complete Solution Blueprint相关业务
 created_date: 2026-04-06

@@ -1,9 +1,9 @@
 ---
 module_id: DOC_SYSTEM_SITEMAP_001
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-03
-last_updated: '2026-04-12'
+last_updated: '2026-04-16'
 owner: 首席文档架构师
 standard_type: 专业量化机构文档地图
 applicable_scope: 全系统文档导航
@@ -27,31 +27,54 @@ layer: layer_00
 ```---
 ```
 
-## 📍 文档位置导航 (v5.3)
+## 📍 文档位置导航 (v1.2 — 2026-04-16 更新)
 
-### 一级目录
+> **子系统完整登记**：详见 `docs/subsystem-registry.yaml`（每个目录的 canonical 状态、用途、重复标记）
+
+### 一级目录（23 个活跃目录）
 
 ```
 docs/
-├── 核心文档 (6个)
-│   ├── INDEX.md                   # 快速入口
-│   ├── SITEMAP.md                 # 完整地图 ←────────────── 你在这里
-│   └── ...
+├── subsystem-registry.yaml        # 子系统注册表（管理所有系统的系统）
+├── SITEMAP.md                     # 完整地图 ←── 你在这里
+├── system-manifest.md             # 系统资产清单（162+ 蓝图、88 模块）
 │
-├── 00_OVERVIEW/                   # Layer 0: 系统总览
-├── 00_RESOURCES/                  # Layer 0: 资源文档
-├── 01_FRAMEWORK/                  # Layer 1: 框架设计 (三级时间框架)
-├── 02_FACTOR_LIBRARY/             # Layer 2: 因子库 (5700+因子)
-├── 03_TRADING_TACTICS/            # Layer 3: 交易战术
-├── 04_EXECUTION/                  # Layer 4-6: 执行引擎
-├── 05_IMPLEMENTATION/             # 实施指南
-├── 06_ARCHIVE/                    # 归档文档
-├── 06_CONSTRUCTION_DOCS/          # 施工文档 (蓝图图纸柜)
-├── 07_AI_REPORTING/               # Layer 7: AI报告与分析
-├── 08_KNOWLEDGE/                  # 知识库
-├── 09_AUDIT/                      # 系统治理审计
-├── 11_STRATEGIC_DECISION/         # Layer 11: 战略决策层
-└── 12_MODULE_DESIGNS/                # 模块设计草图
+├── 00_OVERVIEW/                   # 全库概述与导航（数据流、系统全景）
+├── 00_RESOURCES/                  # 共享资源（配置模板、参考数据）
+├── 01_FRAMEWORK/                  # 蓝图主存储（~332 个蓝图，过渡期真源）
+├── 01_GOVERNANCE/                 # 治理标准/Playbooks/受控文档登记 [NEW 2026-04-16]
+│   ├── STANDARDS/                 #   - blueprint-lifecycle-standard.md 等
+│   ├── PLAYBOOKS/                 #   - 操作 Playbooks 索引
+│   └── REGISTERS/                 #   - controlled-documents-register.md, lessons-learned-register.md
+├── 02_ARCHITECTURE/               # 系统架构核心文档 [NEW 2026-04-16]
+│   ├── MODULE_INVENTORY.md        #   - 模块清单（L00-L11）
+│   ├── TECH_DECISION_RECORDS.md   #   - 技术决策记录（ADR）
+│   ├── TECH_DECISION_RECORDS.md   #   - 技术选型决策
+│   ├── SYSTEM_PANORAMA.md         #   - 系统全景图
+│   ├── TECHNOLOGY_BACKLOG.md      #   - P2 能力清单
+│   ├── DEV_ENV_SETUP.md           #   - 开发环境设置
+│   └── BLUEPRINT_DOMAIN_INVENTORY.yaml  # - 蓝图注册表（自动生成）
+├── 02_FACTOR_LIBRARY/             # 因子库（Alpha 因子研究文档）
+├── 03_TRADING_TACTICS/            # 交易策略文档
+├── 04_CONSTRUCTION/               # 施工阶段文档（MASTER_DEVELOPMENT_PLAN.md 等）
+├── 04_EXECUTION/                  # 执行层（L06）文档
+├── 05_IMPLEMENTATION/             # 实现层文档汇总（908 文件）
+│   └── 06_CONSTRUCTION_DOCS/      #   - 施工文档真源（图纸柜 + 管理文档）
+│       ├── 00_MANAGEMENT/         #     - 治理/管理文档（25 个文件）
+│       └── 01_BLUEPRINTS/         #     - 蓝图图纸柜（163 个蓝图）
+├── 06_ARCHIVE/                    # 统一归档区（唯一合法归档路径，730 文件）
+├── 07_AI_REPORTING/               # AI 报告层（L07）蓝图（8 文件）
+├── 07_RESEARCH/                   # 研究创新层（L09）（16 文件）
+├── 08_HUMAN_AI_INTERFACE/         # 人机交互层（L08）蓝图（156 文件）
+├── 08_KNOWLEDGE/                  # 统一知识库（FACTOR_LIBRARY/STRATEGY_LIBRARY/BEST_PRACTICES）
+├── 09_AUDIT/                      # 审计体系（STANDARDS 35+标准，STATE 558+报告）
+├── 09_ARCHIVE/                    # [DEPRECATED] 待合并入 06_ARCHIVE（63 文件）
+├── 09_RESEARCH_INNOVATION/        # [DEPRECATED] 待合并入 07_RESEARCH 或 09_AUDIT/STATE（48 文件）
+├── 10_AI_WORKFLOW/                # AI 工作流蓝图（L07+L03，64 文件）
+├── 10_GOVERNANCE_COMPLIANCE/      # 治理合规层（L10）（21 文件）
+├── 11_STRATEGIC_DECISION/         # 战略决策层（L11）蓝图（57 文件）
+├── 12_MODULE_DESIGNS/             # 模块详细设计（3 文件）
+└── 99_ARCHIVE/                    # [DEPRECATED] 待合并入 06_ARCHIVE（81 文件）
 ```
 
 ```

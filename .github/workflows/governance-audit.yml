@@ -38,6 +38,9 @@ jobs:
       - name: Sentinel L1 governance scan
         run: python scripts/audit/sentinel_l1_governance_scan.py
 
+      - name: UTF-8 / 编码一致性全量扫描（D-05）
+        run: python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
+
       - name: Upload Sentinel L1 JSON artifact
         if: always()
         uses: actions/upload-artifact@v4

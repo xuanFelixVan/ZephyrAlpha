@@ -2,12 +2,13 @@
 module_id: STRATEGY_AUTHORING_ASSISTANT_001_7728
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 产品/研究协作组
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-layer: layer_08
+layer: layer_05
 responsibility:
 - 将用户“文字/对话”意图转译为可执行的策略配置（Schema 约束）
 ---

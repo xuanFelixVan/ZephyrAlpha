@@ -3,6 +3,7 @@ module_id: 11_STRATEGIC_DECISION_TECHNOLOGY_SELECTION_DECISION
 layer: layer_11
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Technology Selection Decision相关业务
 created_date: 2026-04-06

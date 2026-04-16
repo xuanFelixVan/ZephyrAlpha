@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_SMART_ORDER_ROUTING_BLUEPRINT
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Smart Order Routing Blueprint相关业务
 created_date: 2026-04-07

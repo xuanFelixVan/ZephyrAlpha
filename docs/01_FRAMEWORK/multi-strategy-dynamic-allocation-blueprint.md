@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT_6383
-layer: layer_01
+layer: layer_05
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

@@ -2,6 +2,7 @@
 module_id: 11_STRATEGIC_DECISION_MARKET_ENV_MONITORING_REF
 layer: layer_11
 status: Active
+priority: P0
 document_type: strategic_reference_entry
 reference_canonical: "docs/01_FRAMEWORK/LAYER4_ML/market-regime-blueprint.md"
 created_date: "2026-04-13"

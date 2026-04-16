@@ -2,6 +2,7 @@
 module_id: RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师

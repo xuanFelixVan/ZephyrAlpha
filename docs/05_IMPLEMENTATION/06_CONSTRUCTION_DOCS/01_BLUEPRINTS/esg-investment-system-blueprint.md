@@ -2,6 +2,7 @@
 module_id: ESG_INVESTMENT_SYSTEM_001_6366
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-08
 last_updated: '2026-04-08'
 owner: 战略与合规团队

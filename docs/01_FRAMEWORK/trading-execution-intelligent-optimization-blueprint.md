@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_TRADING_EXECUTION_INTELLIGENT_OPTIMIZATION_BLUEPRINT_5628
-layer: layer_01
+layer: layer_06
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

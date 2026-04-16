@@ -2,6 +2,7 @@
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
@@ -14,7 +15,7 @@ responsibility:
   - 数据清洗与标准化
   - 特征提取与因子构建
   - 数据质量控制
-layer: layer_06
+layer: layer_09
 ---
 
 ## 核心定位

@@ -2,6 +2,7 @@
 module_id: LAYER4_P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION_001_8573
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-06
 last_updated: '2026-04-07'
 owner: 首席架构师

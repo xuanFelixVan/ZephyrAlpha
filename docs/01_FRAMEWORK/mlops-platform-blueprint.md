@@ -2,6 +2,7 @@
 module_id: MLOPS_PLATFORM_001_4075
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-03
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师

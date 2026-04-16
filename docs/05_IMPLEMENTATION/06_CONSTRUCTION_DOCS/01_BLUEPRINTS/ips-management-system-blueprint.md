@@ -2,6 +2,7 @@
 module_id: IPS_MANAGEMENT_SYSTEM_001_9635
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-08
 last_updated: '2026-04-08'
 owner: 战略与治理团队

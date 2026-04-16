@@ -2,6 +2,7 @@
 module_id: LAYER_10_MISSING_MODULES_IMPLEMENTATION_PLAN_001_5443
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席架构师

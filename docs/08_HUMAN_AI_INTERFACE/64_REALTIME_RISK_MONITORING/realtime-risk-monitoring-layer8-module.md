@@ -2,6 +2,7 @@
 module_id: 08_HUMAN_AI_INTERFACE_64_REALTIME_RISK_MONITORING_001
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-10
 last_updated: '2026-04-10'
 owner: 首席架构师

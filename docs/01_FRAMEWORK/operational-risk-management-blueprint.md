@@ -2,12 +2,13 @@
 module_id: OPERATIONAL_RISK_MANAGEMENT_BLUEPRINT_0339
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
 - OPERATIONAL_RISK_MANAGEMENT蓝图设计
-layer: layer_01
+layer: layer_10
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 操作风险管理系统架构设计
 compliance_level: 顶级专业标准

@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT_5888
-layer: layer_01
+layer: layer_11
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

@@ -2,6 +2,7 @@
 module_id: LAYER6_DATA_FLOW_DESIGN_001_7786
 version: 1.0.0
 status: Active
+priority: P2
 created_date: 2026-04-08
 last_updated: 2026-04-08
 owner: 架构团队

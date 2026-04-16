@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Professional Multi Timeframe Architecture相关业务
 created_date: 2026-04-02

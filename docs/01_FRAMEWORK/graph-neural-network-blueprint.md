@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
-layer: layer_01
+layer: layer_04
 responsibility: 01_FRAMEWORK
 standard_type: 高层架构蓝图
 priority: P1

@@ -35,26 +35,26 @@ jobs:
     
     - name: Check document links
       run: |
-        python scripts/archive/ci_cd_link_checker.py
+        python scripts/ci_audit/ci_cd_link_checker.py
     
     - name: Check YAML metadata
       run: |
-        python scripts/archive/yaml_metadata_checker.py
+        python scripts/ci_audit/yaml_metadata_checker.py
     
     - name: Check document structure
       run: |
-        python scripts/archive/document_structure_checker.py
+        python scripts/ci_audit/document_structure_checker.py
     
     - name: Generate quality report
       run: |
-        python scripts/archive/generate_quality_report.py
+        python scripts/ci_audit/generate_quality_report.py
     
     - name: Upload quality report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: document-quality-report
-        path: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
+        path: docs/09_AUDIT/STATE/
         if-no-files-found: ignore
     
     - name: Comment on PR
@@ -63,7 +63,7 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const reportPath = 'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/QUALITY_REPORT_LATEST.md';
+          const reportPath = 'docs/09_AUDIT/STATE/QUALITY_REPORT_LATEST.md';
           
           if (fs.existsSync(reportPath)) {
             const report = fs.readFileSync(reportPath, 'utf8');

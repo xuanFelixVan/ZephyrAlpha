@@ -2,6 +2,7 @@
 module_id: MODEL_RISK_MANAGEMENT_001_7367
 version: 1.0.1
 status: Active
+priority: P0
 created_date: '2026-04-06'
 last_updated: '2026-04-10'
 owner: 首席架构师

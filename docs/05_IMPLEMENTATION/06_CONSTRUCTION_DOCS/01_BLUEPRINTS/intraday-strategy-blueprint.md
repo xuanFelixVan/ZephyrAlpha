@@ -3,6 +3,7 @@ module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_INTRADAY_STRATEG
 layer: layer_05
 version: 1.0.0
 status: Active
+priority: P0
 responsibility:
   - Intraday Strategy Blueprint相关业务
 created_date: 2026-04-07

@@ -3,6 +3,7 @@ module_id: AUTO_25635
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P0
 last_updated: 2026-04-13
 ---
 ﻿---
@@ -37,7 +38,7 @@ last_updated: 2026-04-07
 
 owner: 首席文档架构师
 
-layer: layer_01
+layer: layer_10
 ```
 ```---
 ```

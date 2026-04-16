@@ -11,7 +11,7 @@ standard_type: 模块入口（stub）
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准
 priority: P1
-layer: layer_08
+layer: layer_07
 ---
 
 

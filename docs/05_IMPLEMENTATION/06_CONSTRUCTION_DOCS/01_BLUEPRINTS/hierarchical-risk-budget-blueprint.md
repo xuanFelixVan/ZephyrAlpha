@@ -2,6 +2,7 @@
 module_id: HIERARCHICAL_RISK_BUDGET_001_2710
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
@@ -10,7 +11,7 @@ applicable_scope: Layer 5.3 风险管理
 compliance_level: 专业标准
 responsibility:
 - 层级风险预算
-layer: layer_05
+layer: layer_10
 ---
 
 

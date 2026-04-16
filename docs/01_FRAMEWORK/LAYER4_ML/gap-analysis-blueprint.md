@@ -2,6 +2,7 @@
 module_id: LAYER4_GAP_ANALYSIS_001_8018
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 系统架构师

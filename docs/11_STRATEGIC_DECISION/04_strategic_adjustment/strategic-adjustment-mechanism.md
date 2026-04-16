@@ -16,7 +16,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
 - 11 STRATEGIC DECISION模块文档管理与维护
-layer: layer_04
+layer: layer_11
 ---
 
 

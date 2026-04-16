@@ -2,12 +2,13 @@
 module_id: 10_AI_WORKFLOW_AI_WORK_REPORTER_BLUEPRINT_1818
 version: 1.0.0
 status: Active
+priority: P1
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
 - AI工作日报文档
-layer: layer_00
+layer: layer_07
 ---
 ## 一、概
 

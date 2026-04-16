@@ -2,6 +2,7 @@
 module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_001
 version: 1.0.1
 status: Active
+priority: P2
 created_date: 2026-04-07
 last_updated: '2026-04-10'
 owner: 文档负责人
@@ -9,7 +10,7 @@ responsibility:
   - Layer 8 合规监控模块入口：指向实现层正式蓝图（消解 C2 basename 碰撞）
 standard_type: 导航 stub
 applicable_scope: docs/08_HUMAN_AI_INTERFACE/30_COMPLIANCE_MONITORING
-layer: layer_08
+layer: layer_10
 ---
 
 

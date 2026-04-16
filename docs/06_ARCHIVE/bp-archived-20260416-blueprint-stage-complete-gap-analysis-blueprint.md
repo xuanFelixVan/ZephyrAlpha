@@ -3,6 +3,7 @@ module_id: 01_FRAMEWORK_BLUEPRINT_STAGE_COMPLETE_GAP_ANALYSIS_BLUEPRINT_6450
 layer: layer_01
 version: 1.0.0
 status: Active
+priority: P2
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

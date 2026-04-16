@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 # -*- coding: utf-8 -*-
+# [Phase2 裁决] 本脚本与 scripts/audit/triage_blueprint_d_overlap_pairs.py 同名但功能不同：
+#   本脚本（governance/）：提取每对文档的内容摘要（heading、body excerpt、responsibility），
+#                          生成供大模型二审的 JSONL 队列，消费 audit/ 版的 TIER_B 输出。
+#   audit/ 版：按置信度评分分档，输出 TIER_A/B/C 裁决。
+#   两者协作：先运行 audit/ 版分档 → 再运行本脚本对 TIER_B 生成二审包。
 import sys
 import io
 if sys.platform == "win32":

@@ -3,6 +3,7 @@ module_id: AUTO_12360
 owner: System_Guardian
 version: 1.0
 status: AUDITED
+priority: P2
 last_updated: 2026-04-13
 ---
 ﻿---
@@ -57,7 +58,7 @@ open_source_alternatives:
 
     recommendation: 推荐
 
-layer: layer_08
+layer: layer_07
 ```
 ```---
 ```

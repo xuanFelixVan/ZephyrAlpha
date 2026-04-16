@@ -48,7 +48,8 @@ ZephyrAlpha 是个人量化交易系统，当前处于 Phase 2 准备阶段（�
 2. frontmatter 中 priority: P0 的蓝图
 3. 文件名最能描述一个具体模块的蓝图（避免集合文件如 *-collection、*-supplement）
 
-列出选中的 5-10 个文件，等待确认后继续。
+列出选中的 5-10 个文件，直接进入第三步处理（无需等待确认）。
+P3 候选文件不执行删除，写入 p3-deletion-report-{YYYYMMDD}.md 后进入三阶段裁决流程。
 
 **注意**：以下类型文件不属于"蓝图"，需要移交文件消除流水线处理：
 - 文件名含 `-gap-analysis-`
@@ -150,13 +151,35 @@ ZephyrAlpha 系统层级对照表：
    git mv "旧路径/文件.md" "docs/09_AUDIT/REPORTS/ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"
    ```
 
-### 对 P3 蓝图（提取知识后删除）
+### 对 P3 蓝图（⚠️ 不执行删除 — 生成待裁决报告）
+
+**P3 蓝图不由本 session 直接删除。** 执行以下步骤：
 
 1. 提取关键词/决策到知识条目（如果有任何有价值的内容）
-2. 执行删除：
-   ```bash
-   git rm "文件路径"
-   ```
+2. 将该蓝图的详细信息追加到本 session 对应的 **P3 待裁决报告**中（见下方格式）
+3. **不执行任何 git rm 操作**
+
+**P3 待裁决报告文件**：`docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md`
+
+如果该文件已存在（同一天的前一次 session），则追加到现有文件末尾。
+
+**每条 P3 条目必须包含以下字段**：
+
+```markdown
+## P3-{序号}: {蓝图文件名}
+
+| 字段 | 内容 |
+|------|------|
+| 文件路径 | `{完整路径}` |
+| module_id | {值} |
+| layer | {值} |
+| P3 判定理由 | {具体原因，必须写清楚：是完全重复、是空壳、还是已被合并} |
+| 重复/替代文件 | `{重复内容的文件地址}` （若有多个，逐行列出） |
+| 重复度估算 | {百分比，如 95% 内容与 xxx.md 重叠} |
+| 知识是否已提取 | 是（KE-{编号}）/ 否（无独立知识价值） |
+| 引用检查结果 | {0 个引用 / N 个引用（已列出）} |
+| Trae 建议 | 删除 / 建议再次确认 |
+```
 
 ### 知识条目格式
 
@@ -331,5 +354,137 @@ Get-ChildItem -Path docs/08_KNOWLEDGE -Recurse -Filter "KE-*.md" | Select-Object
 | `lesson_learned` | `docs/08_KNOWLEDGE/BEST_PRACTICES/` |
 
 ---
+
+---
+
+## P3 蓝图三阶段裁决流程
+
+> **设计原则**：判断（Trae）、复查（Kimi 双轮）、执行（Claude）三个角色完全分离，防止单一模型的误判直接造成不可恢复的删除。
+
+```
+Trae session（本 Prompt）
+  ↓ 生成 p3-deletion-report-{YYYYMMDD}.md
+  ↓ P0/P1/P2 正常迁移/归档（自动执行）
+  ↓ P3 只记录，不删除
+
+Kimi 第一轮复查（使用下方 Kimi-Review-1 Prompt）
+  ↓ 逐条审核 P3 报告
+  ↓ 标注：✓ 同意删除 / ✗ 反对删除（需说明理由）
+  ↓ 在报告文件中追加 [KIMI-REVIEW-1] 标记
+
+Kimi 第二轮复查（使用下方 Kimi-Review-2 Prompt，独立进行不看第一轮结论）
+  ↓ 重新独立审核原始报告（不参考第一轮结论）
+  ↓ 在报告文件中追加 [KIMI-REVIEW-2] 标记
+
+Claude 最终裁决（在 Cursor 中执行，使用下方 Claude-Final Prompt）
+  ↓ 对比两轮 Kimi 的结论
+  ↓ 两轮均同意 → 执行 git rm
+  ↓ 有分歧 → 标记为 [DISPUTED]，提示用户手动决定
+  ↓ 两轮均反对 → 降级为 P2 归档，不删除
+```
+
+---
+
+### Kimi 第一轮复查 Prompt（Kimi-Review-1）
+
+```
+你是 ZephyrAlpha 项目蓝图安全审核员（第一轮复查）。
+
+请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+
+对其中每一条 P3 候选条目，独立判断：
+
+**审核标准**：
+1. 判定理由是否充分？（"完全重复"需要有重复文件地址；"空壳"需要内容确实为空或仅有 frontmatter）
+2. 列出的重复文件地址是否真实存在于当前仓库？（如果替代文件不存在，必须反对删除）
+3. 引用检查是否为 0？（若有引用未处理，必须反对删除）
+4. 这个蓝图的 module_id 是否在 src/ 代码中被引用？
+
+对每条条目，在报告文件的对应条目末尾追加：
+
+[KIMI-REVIEW-1]
+结论: ✓ 同意删除 / ✗ 反对删除
+理由: {一句话说明}
+
+最后输出统计：
+- 同意删除：N 条
+- 反对删除：N 条（列出文件名）
+- 需要用户确认：N 条
+```
+
+---
+
+### Kimi 第二轮复查 Prompt（Kimi-Review-2）
+
+```
+你是 ZephyrAlpha 项目蓝图安全审核员（第二轮独立复查）。
+
+请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+
+⚠️ 重要：你只看【P3-X 条目的原始信息】，忽略文件中已有的任何 [KIMI-REVIEW-1] 标记，不受第一轮结论影响，独立作出判断。
+
+审核重点（与第一轮不同的视角）：
+1. 这个蓝图在未来 6-12 个月内是否可能被重新激活？（关注 layer 和 Phase 2 施工范围）
+2. 重复文件是否真的"完全覆盖"了该蓝图的内容？还是只有 80% 重叠、有 20% 独立价值？
+3. 如果将来发现删错了，恢复的代价是多少？（git history 可恢复，但注意编码问题）
+
+对每条条目追加：
+
+[KIMI-REVIEW-2]
+结论: ✓ 同意删除 / ✗ 反对删除
+理由: {一句话说明}
+风险等级: 低（git可恢复，无独立价值）/ 中（有少量独立内容）/ 高（可能影响Phase2）
+
+最后输出统计并与第一轮对比（根据文件中的 KIMI-REVIEW-1 标记）：
+- 两轮均同意：N 条 → 建议 Claude 直接删除
+- 有分歧：N 条 → 建议 Claude 提交用户裁决
+- 两轮均反对：N 条 → 建议降级为 P2 归档
+```
+
+---
+
+### Claude 最终裁决 Prompt（在 Cursor 中使用）
+
+```
+你是 ZephyrAlpha 项目蓝图删除最终裁决者。
+
+请读取文件：docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+
+根据文件中 [KIMI-REVIEW-1] 和 [KIMI-REVIEW-2] 的标记，对每条 P3 条目执行以下裁决规则：
+
+裁决规则（严格按照此顺序）：
+- 两轮均 ✓ 同意 → 执行删除（git rm）
+- 第一轮 ✓ 第二轮 ✗（或反之）→ 标记为 [DISPUTED]，输出给用户手动决定，不执行
+- 两轮均 ✗ 反对 → 执行降级：git mv 到 docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}
+
+执行前，对每个"两轮均 ✓"的文件再做最后安全检查：
+1. 确认文件不在 AGENTS.md 锚点列表中
+2. 执行引用检查：
+   Select-String -Path "docs" -Filter "*.md" -Pattern "{文件名不含路径}" -Recurse | Measure-Object
+
+如果引用数 > 0，降级为 [DISPUTED]，不执行删除。
+
+执行完成后：
+1. 在 p3-deletion-report-{YYYYMMDD}.md 末尾追加 [CLAUDE-FINAL] 执行摘要
+2. 更新 docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
+3. 执行统一 commit：
+   git commit -m "chore(blueprint): P3 final deletion - {N} files removed after dual Kimi review"
+```
+
+---
+
+### P3 待裁决报告文件位置
+
+```
+docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
+```
+
+该文件经历四个阶段的追加写入：
+1. Trae 写入原始 P3 候选条目
+2. Kimi 第一轮追加 [KIMI-REVIEW-1] 标记
+3. Kimi 第二轮追加 [KIMI-REVIEW-2] 标记
+4. Claude 追加 [CLAUDE-FINAL] 执行摘要
+
+文件完成后归档到 `docs/09_AUDIT/REPORTS/ARCHIVE/`。
 
 *本 Prompt 模板由 ZephyrAlpha Owner 维护。如需修改，更新本文件并同步 AGENTS.md 第六章。*

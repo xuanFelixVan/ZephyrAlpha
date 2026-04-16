@@ -1,8 +1,9 @@
 ---
 module_id: 01_FRAMEWORK_ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT_0152
-layer: layer_01
+layer: layer_10
 version: 1.0.0
 status: Active
+priority: P0
 responsibility: ''
 created_date: '2026-04-07'
 last_updated: '2026-04-07'

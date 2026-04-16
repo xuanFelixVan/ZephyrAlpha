@@ -2,6 +2,7 @@
 module_id: MOBILE_INTERFACE_COVERAGE_001_7278
 version: 1.0.0
 status: Active
+priority: P2
 created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席架构师

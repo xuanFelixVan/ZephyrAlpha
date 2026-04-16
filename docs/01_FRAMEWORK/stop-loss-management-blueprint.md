@@ -2,12 +2,13 @@
 module_id: STOP_LOSS_MANAGEMENT_BLUEPRINT_7412
 version: 1.0.0
 status: Active
+priority: P0
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
 - STOP_LOSS_MANAGEMENT蓝图设计
-layer: layer_01
+layer: layer_06
 standard_type: 专业量化机构级蓝图
 applicable_scope: 止损管理系统架构设计
 compliance_level: 顶级专业标准
