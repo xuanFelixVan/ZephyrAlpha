@@ -42,7 +42,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-L1_JSON = REPO / "docs" / "09_AUDIT" / "STATE" / "SENTINEL_L1_SCAN_20260408.json"
+L1_JSON = REPO / "docs" / "09_AUDIT" / "STATE" / "sentinel-l1-scan-latest.json"
 OUT_DIR = REPO / "docs" / "09_AUDIT" / "STATE"
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 
