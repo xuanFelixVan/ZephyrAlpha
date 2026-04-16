@@ -1,5 +1,5 @@
 ---
-module_id: BACKTEST_RESULTS_MANAGEMENT_001_5178
+module_id: BACKTEST_RESULTS_MANAGEMENT_001_5178_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

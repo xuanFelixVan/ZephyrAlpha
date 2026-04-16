@@ -1,5 +1,5 @@
 ---
-module_id: TRADE_EXECUTION_ANALYSIS_001_7358
+module_id: TRADE_EXECUTION_ANALYSIS_001_7358_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

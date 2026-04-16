@@ -1,5 +1,5 @@
 ---
-module_id: INTELLIGENT_REPORT_DISTRIBUTION_001_2975
+module_id: INTELLIGENT_REPORT_DISTRIBUTION_001_2975_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

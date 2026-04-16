@@ -1,5 +1,5 @@
 ---
-module_id: MARKET_MICROSTRUCTURE_ANALYSIS_001_6577
+module_id: MARKET_MICROSTRUCTURE_ANALYSIS_001_6577_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

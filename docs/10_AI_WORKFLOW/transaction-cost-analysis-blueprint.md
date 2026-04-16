@@ -1,5 +1,5 @@
 ---
-module_id: TRANSACTION_COST_ANALYSIS_001_7928
+module_id: TRANSACTION_COST_ANALYSIS_001_7928_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

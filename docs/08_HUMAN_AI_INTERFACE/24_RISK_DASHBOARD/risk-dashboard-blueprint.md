@@ -1,5 +1,5 @@
 ---
-module_id: RISK_DASHBOARD_BLUEPRINT
+module_id: RISK_DASHBOARD_BLUEPRINT_ALT
 version: 1.0.0
 status: Active
 priority: P0

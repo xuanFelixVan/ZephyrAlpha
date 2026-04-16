@@ -1,5 +1,5 @@
 ---
-module_id: BACKTEST_UI_BLUEPRINT
+module_id: BACKTEST_UI_BLUEPRINT_ALT
 version: 1.0.0
 status: Active
 priority: P1

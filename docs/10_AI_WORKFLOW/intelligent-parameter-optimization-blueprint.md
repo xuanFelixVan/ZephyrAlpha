@@ -1,5 +1,5 @@
 ---
-module_id: INTELLIGENT_PARAMETER_OPTIMIZATION_001_5194
+module_id: INTELLIGENT_PARAMETER_OPTIMIZATION_001_5194_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

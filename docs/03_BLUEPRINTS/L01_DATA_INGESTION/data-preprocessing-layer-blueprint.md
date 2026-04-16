@@ -2046,7 +2046,7 @@ class DataQualityReport:
 
 | DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量监控蓝图 |
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
+| [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md) | 系统架构文档 |
 
 
 

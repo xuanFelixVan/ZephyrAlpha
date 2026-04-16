@@ -1,5 +1,5 @@
 ---
-module_id: PORTFOLIO_DIAGNOSTICS_001_9413
+module_id: PORTFOLIO_DIAGNOSTICS_001_9413_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

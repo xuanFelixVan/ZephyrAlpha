@@ -1,5 +1,5 @@
 ---
-module_id: STRATEGY_VERSION_CONTROL_001_8142
+module_id: STRATEGY_VERSION_CONTROL_001_8142_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

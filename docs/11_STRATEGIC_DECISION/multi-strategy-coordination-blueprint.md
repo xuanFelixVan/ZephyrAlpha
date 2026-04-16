@@ -1,5 +1,5 @@
 ---
-module_id: MULTISTRATEGYCOORDINATIONBL_001_1183
+module_id: MULTISTRATEGYCOORDINATIONBL_001_1183_ALT
 version: 1.0.0
 status: Active
 priority: P2

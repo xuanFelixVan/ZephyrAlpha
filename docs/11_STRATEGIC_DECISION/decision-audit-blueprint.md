@@ -1,5 +1,5 @@
 ---
-module_id: DECISIONAUDITBLUEPRINT_001_3800
+module_id: DECISIONAUDITBLUEPRINT_001_3800_ALT
 version: 1.0.0
 status: Active
 priority: P2

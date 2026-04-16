@@ -1,5 +1,5 @@
 ---
-module_id: CAPITALALLOCATIONBLUEPRINT_001_4695
+module_id: CAPITALALLOCATIONBLUEPRINT_001_4695_ALT
 version: 1.0.0
 status: Active
 priority: P0

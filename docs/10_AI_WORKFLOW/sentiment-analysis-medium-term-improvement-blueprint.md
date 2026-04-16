@@ -1,5 +1,5 @@
 ---
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001_9734
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001_9734_ALT
 version: 1.0.0
 status: Active
 priority: P2

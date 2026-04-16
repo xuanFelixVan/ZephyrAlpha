@@ -1,5 +1,5 @@
 ---
-module_id: INVESTMENTCONSTRAINTBLUEPRIN_001_0427
+module_id: INVESTMENTCONSTRAINTBLUEPRIN_001_0427_ALT
 version: 1.0.0
 status: Active
 priority: P0

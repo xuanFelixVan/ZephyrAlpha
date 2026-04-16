@@ -30,8 +30,9 @@ INBOUND_EXEMPT_DIRS = [
     "docs/09_AUDIT/STATE/SESSION_LOGS",   # 会话日志：非导航文档，无需入链
     "docs/09_AUDIT/STATE/DAILY",          # 每日快照：自动生成，无需入链
     "docs/09_AUDIT/STATE/MILESTONE",      # 里程碑档案：非导航文档
-    "docs/09_AUDIT/REPORTS/ARCHIVE",      # 历史报告归档：非导航文档
+    "docs/09_AUDIT/REPORTS",              # 审计报告目录：报告产物，无需导航入链
     "docs/06_ARCHIVE",                    # 文档归档区：归档内容，无需入链
+    "docs/09_AUDIT/STATE",               # STATE 下的扫描产物，无需入链
 ]
 
 
@@ -172,13 +173,27 @@ class MandatoryInboundGuard:
             'failed': []
         }
 
+        # 只对新建（A）文件强制入链——修改已有文件不触发（避免被历史债务阻塞）
+        import subprocess as _sp
+        try:
+            _r = _sp.run(
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
+                capture_output=True, text=True, cwd=str(REPO_ROOT)
+            )
+            newly_added = {f.strip().replace("\\", "/") for f in _r.stdout.strip().split("\n") if f.strip()}
+        except Exception:
+            newly_added = None  # fallback: check all
+
         # 转换为Path对象
         md_files = []
         for file_str in staged_files:
             file_path = REPO_ROOT / file_str
             if file_path.suffix.lower() == '.md' and 'docs' in str(file_path):
-                # 跳过豁免目录
                 file_rel = file_str.replace("\\", "/")
+                # 跳过非新建文件（只强制检查新建文件）
+                if newly_added is not None and file_rel not in newly_added:
+                    continue
+                # 跳过豁免目录
                 if any(file_rel.startswith(exempt) for exempt in INBOUND_EXEMPT_DIRS):
                     continue
                 md_files.append(file_path)

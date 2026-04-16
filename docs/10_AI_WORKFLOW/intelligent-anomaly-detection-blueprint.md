@@ -1,5 +1,5 @@
 ---
-module_id: INTELLIGENT_ANOMALY_DETECTION_001_3319
+module_id: INTELLIGENT_ANOMALY_DETECTION_001_3319_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

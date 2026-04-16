@@ -20,7 +20,7 @@ recovery_date: "2026-04-16"
 
 从 git 历史恢复的文档定义了人机交互层的技术实现细节，作为清风量化系统的**交互中枢**。
 
-> **归档说明**: 本文档已归档 (status: Archived)，内容仅供参考。如需最新信息，请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md)
+> **归档说明**: 本文档已归档 (status: Archived)，内容仅供参考。如需最新信息，请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](../../03_BLUEPRINTS/L08_EXECUTION/human-ai-interaction-blueprint.md)
 
 ## Module ID
 - `HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT_001`

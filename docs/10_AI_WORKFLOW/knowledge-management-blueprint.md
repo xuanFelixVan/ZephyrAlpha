@@ -1,5 +1,5 @@
 ---
-module_id: KNOWLEDGE_MANAGEMENT_AI_001_8348
+module_id: KNOWLEDGE_MANAGEMENT_AI_001_8348_ALT
 version: 1.0.0
 status: Active
 priority: P2

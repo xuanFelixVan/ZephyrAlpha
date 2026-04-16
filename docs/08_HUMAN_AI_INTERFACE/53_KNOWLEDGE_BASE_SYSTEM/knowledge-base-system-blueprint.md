@@ -1,5 +1,5 @@
 ---
-module_id: AUTO_98803
+module_id: AUTO_98803_ALT
 owner: System_Guardian
 version: 1.0
 status: AUDITED

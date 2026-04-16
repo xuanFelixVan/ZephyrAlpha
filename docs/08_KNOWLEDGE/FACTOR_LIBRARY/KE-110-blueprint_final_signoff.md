@@ -1,6 +1,6 @@
 ---
 module_id: KE-110
-title: "> ************ [](./01_BLUEPRINTS_REPOSITORY_RULES.md)[](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)"
+title: "> ************ [](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01-blueprints-repository-rules.md)[](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md)"
 category: blueprint_decision
 source_file: "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_FINAL_SIGNOFF.md"
 source_git_deleted: true
@@ -14,7 +14,7 @@ layer: L01
 owner: ZephyrAlpha-Owner
 ---
 
-# > ************ [](./01_BLUEPRINTS_REPOSITORY_RULES.md)[](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)
+# > ************ [](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01-blueprints-repository-rules.md)[](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md)
 
 ## 核心内容摘要
 **** ****

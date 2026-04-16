@@ -1,5 +1,5 @@
 ---
-module_id: INTELLIGENT_SCHEDULING_SYSTEM_001_5091
+module_id: INTELLIGENT_SCHEDULING_SYSTEM_001_5091_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

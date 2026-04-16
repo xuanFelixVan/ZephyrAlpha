@@ -1,5 +1,5 @@
 ---
-module_id: MODEL_MONITORING_DRIFT_DETECTION_001_6106
+module_id: MODEL_MONITORING_DRIFT_DETECTION_001_6106_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

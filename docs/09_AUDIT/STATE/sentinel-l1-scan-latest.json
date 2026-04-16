@@ -1,14 +1,14 @@
 {
-  "scan_time_utc": "20260416T131755Z",
+  "scan_time_utc": "20260416T142822Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 2487,
+  "md_file_count": 2287,
   "links": {
     "stats": {
-      "total_files_scanned": 2487,
-      "total_md_links": 4326,
+      "total_files_scanned": 2287,
+      "total_md_links": 4310,
       "skipped_external": 606,
-      "valid": 3156,
-      "invalid": 564
+      "valid": 3066,
+      "invalid": 638
     },
     "invalid_details_sample": [
       {
@@ -60,6 +60,21 @@
         "source": "docs/00_OVERVIEW/INDEX.md",
         "url": "../01_FRAMEWORK/missing-modules-blueprint-collection.md",
         "resolved": "docs/01_FRAMEWORK/missing-modules-blueprint-collection.md"
+      },
+      {
+        "source": "docs/00_OVERVIEW/INDEX.md",
+        "url": "../09_AUDIT/STATE/orphan_eradication_execution_guide_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/orphan_eradication_execution_guide_20260413.md"
+      },
+      {
+        "source": "docs/00_OVERVIEW/INDEX.md",
+        "url": "../09_AUDIT/STATE/orphan_eradication_execution_summary_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/orphan_eradication_execution_summary_20260413.md"
+      },
+      {
+        "source": "docs/00_OVERVIEW/INDEX.md",
+        "url": "../09_AUDIT/STATE/phase_4_eternal_guardian_patrol_report_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/phase_4_eternal_guardian_patrol_report_20260413.md"
       },
       {
         "source": "docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/INDEX.md",
@@ -933,6 +948,11 @@
       },
       {
         "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
+        "url": "../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
+        "resolved": "docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
+      },
+      {
+        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
         "url": "../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt",
         "resolved": "docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt"
       },
@@ -963,6 +983,11 @@
       },
       {
         "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
+        "url": "../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
+        "resolved": "docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
+      },
+      {
+        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
         "url": "../../../../../09_ARCHIVE/duplicates/INDEX.md",
         "resolved": "docs/09_ARCHIVE/duplicates/INDEX.md"
       },
@@ -975,6 +1000,11 @@
         "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
         "url": "../../../../../09_RESEARCH_INNOVATION/INDEX.md",
         "resolved": "docs/09_RESEARCH_INNOVATION/INDEX.md"
+      },
+      {
+        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
+        "url": "../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
+        "resolved": "docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
       },
       {
         "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
@@ -1260,6 +1290,26 @@
         "source": "docs/07_AI_REPORTING/INDEX.md",
         "url": "../09_AUDIT/REPORTS/ARCHIVE/layer-7-deep-audit-report-v12-20260407.md",
         "resolved": "docs/09_AUDIT/REPORTS/ARCHIVE/layer-7-deep-audit-report-v12-20260407.md"
+      },
+      {
+        "source": "docs/07_AI_REPORTING/INDEX.md",
+        "url": "../09_AUDIT/STATE/ai-workflow-complete-blueprint-supplement-report.md",
+        "resolved": "docs/09_AUDIT/STATE/ai-workflow-complete-blueprint-supplement-report.md"
+      },
+      {
+        "source": "docs/07_AI_REPORTING/INDEX.md",
+        "url": "../09_AUDIT/STATE/ai-workflow-deleted-content-review-report.md",
+        "resolved": "docs/09_AUDIT/STATE/ai-workflow-deleted-content-review-report.md"
+      },
+      {
+        "source": "docs/07_AI_REPORTING/INDEX.md",
+        "url": "../09_AUDIT/STATE/ai-workflow-deleted-files-recovery-assessment-report.md",
+        "resolved": "docs/09_AUDIT/STATE/ai-workflow-deleted-files-recovery-assessment-report.md"
+      },
+      {
+        "source": "docs/07_AI_REPORTING/INDEX.md",
+        "url": "../09_AUDIT/STATE/ai-workflow-layer-7-final-completeness-assessment-report.md",
+        "resolved": "docs/09_AUDIT/STATE/ai-workflow-layer-7-final-completeness-assessment-report.md"
       },
       {
         "source": "docs/07_RESEARCH/INDEX.md",
@@ -2233,8 +2283,38 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/active-scattered-blueprints-manifest-task1.md",
+        "resolved": "docs/09_AUDIT/STATE/active-scattered-blueprints-manifest-task1.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/alpha-factor-p1-p2-fix-report.md",
+        "resolved": "docs/09_AUDIT/STATE/alpha-factor-p1-p2-fix-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/arch-module-gap-register-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/arch-module-gap-register-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/architecture-service-catalog-20260410.md",
         "resolved": "docs/09_AUDIT/STATE/architecture-service-catalog-20260410.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/architecture-service-catalog-20260411.md",
+        "resolved": "docs/09_AUDIT/STATE/architecture-service-catalog-20260411.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/audit_comparison_report_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/audit_comparison_report_20260413.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/automated-check-report-20260407-031229.md",
+        "resolved": "docs/09_AUDIT/STATE/automated-check-report-20260407-031229.md"
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
@@ -2245,6 +2325,11 @@
         "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/basename-collisions-20260411.md",
         "resolved": "docs/09_AUDIT/STATE/basename-collisions-20260411.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "./STATE/batch-metadata-supplement-report-20260413-001455.md",
+        "resolved": "docs/09_AUDIT/STATE/batch-metadata-supplement-report-20260413-001455.md"
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
@@ -2268,6 +2353,41 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/blueprint-d-overlap-triage-20260412.md",
+        "resolved": "docs/09_AUDIT/STATE/blueprint-d-overlap-triage-20260412.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/comprehensive-optimization-completion-report-20260407.md",
+        "resolved": "docs/09_AUDIT/STATE/comprehensive-optimization-completion-report-20260407.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/comprehensive-optimization-final-report-20260407.md",
+        "resolved": "docs/09_AUDIT/STATE/comprehensive-optimization-final-report-20260407.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/continuous-audit-workflow.md",
+        "resolved": "docs/09_AUDIT/STATE/continuous-audit-workflow.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/continuous-improvement-completion-report-20260407-175400.md",
+        "resolved": "docs/09_AUDIT/STATE/continuous-improvement-completion-report-20260407-175400.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/data-source-p2-final-fix-report.md",
+        "resolved": "docs/09_AUDIT/STATE/data-source-p2-final-fix-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/data-source-p2-fix-report.md",
+        "resolved": "docs/09_AUDIT/STATE/data-source-p2-fix-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/directory-naming-compliance-20260411.md",
         "resolved": "docs/09_AUDIT/STATE/directory-naming-compliance-20260411.md"
       },
@@ -2278,8 +2398,18 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/directory_naming_violations_report_20260412.md",
+        "resolved": "docs/09_AUDIT/STATE/directory_naming_violations_report_20260412.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "./STATE/directory-structure-analysis-report-20260412-222910.md",
         "resolved": "docs/09_AUDIT/STATE/directory-structure-analysis-report-20260412-222910.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/docs-nav-coverage-sample-20260410.md",
+        "resolved": "docs/09_AUDIT/STATE/docs-nav-coverage-sample-20260410.md"
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
@@ -2293,13 +2423,98 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/fifth-comprehensive-audit-report.md",
+        "resolved": "docs/09_AUDIT/STATE/fifth-comprehensive-audit-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/final-metadata-supplement-report-20260407-180300.md",
+        "resolved": "docs/09_AUDIT/STATE/final-metadata-supplement-report-20260407-180300.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/fourth-comprehensive-audit-report-20260407-213318.md",
+        "resolved": "docs/09_AUDIT/STATE/fourth-comprehensive-audit-report-20260407-213318.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/git-tracked-path-anomalies-20260411.md",
+        "resolved": "docs/09_AUDIT/STATE/git-tracked-path-anomalies-20260411.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/handoff-orphan-governance-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/handoff-orphan-governance-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/immediate-action-completion-report-20260407.md",
         "resolved": "docs/09_AUDIT/STATE/immediate-action-completion-report-20260407.md"
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/immediate-action-completion-report-20260407-183300.md",
+        "resolved": "docs/09_AUDIT/STATE/immediate-action-completion-report-20260407-183300.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer11-capability-to-blueprint-map-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/layer11-capability-to-blueprint-map-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-architecture-completeness-analysis.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-architecture-completeness-analysis.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-blueprint-generation-report.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-blueprint-generation-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-complete-blueprint-supplement-report.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-complete-blueprint-supplement-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-complete-implementation-plan.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-complete-implementation-plan.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-complete-supplement-plan.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-complete-supplement-plan.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-deep-missing-analysis.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-deep-missing-analysis.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/layer2-ultra-deep-missing-analysis.md",
+        "resolved": "docs/09_AUDIT/STATE/layer2-ultra-deep-missing-analysis.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/manifest-path-audit-blueprint-stage-complete-summary.md",
+        "resolved": "docs/09_AUDIT/STATE/manifest-path-audit-blueprint-stage-complete-summary.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/md-files-by-subdirectory-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/md-files-by-subdirectory-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "./STATE/metadata-completeness-check-report-20260412-235835.md",
         "resolved": "docs/09_AUDIT/STATE/metadata-completeness-check-report-20260412-235835.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "./STATE/metadata-completeness-check-report-20260413-005721.md",
+        "resolved": "docs/09_AUDIT/STATE/metadata-completeness-check-report-20260413-005721.md"
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
@@ -2338,6 +2553,46 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/orphan_governance_program_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/orphan_governance_program_20260413.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/p1-p2-fix-final-report.md",
+        "resolved": "docs/09_AUDIT/STATE/p1-p2-fix-final-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/p1-p2-fix-report.md",
+        "resolved": "docs/09_AUDIT/STATE/p1-p2-fix-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/p2-issues-fix-report.md",
+        "resolved": "docs/09_AUDIT/STATE/p2-issues-fix-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/periodic-check-mechanism-report-20260407-161212.md",
+        "resolved": "docs/09_AUDIT/STATE/periodic-check-mechanism-report-20260407-161212.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "./STATE/phase-1-scan-completion-report-20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/phase-1-scan-completion-report-20260413.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/precommit-failure-log-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/precommit-failure-log-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/reference_open_source_projects.md",
+        "resolved": "docs/09_AUDIT/STATE/reference_open_source_projects.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/repo-directory-rollup-20260410.md",
         "resolved": "docs/09_AUDIT/STATE/repo-directory-rollup-20260410.md"
       },
@@ -2358,8 +2613,128 @@
       },
       {
         "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/responsibility-boundary-map.md",
+        "resolved": "docs/09_AUDIT/STATE/responsibility-boundary-map.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/responsibility-overlap-analysis.md",
+        "resolved": "docs/09_AUDIT/STATE/responsibility-overlap-analysis.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-after-p0a-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-after-p0a-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-after-p0b-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-after-p0b-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-after-p1a-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-after-p1a-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-after-p1b-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-after-p1b-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-p1c-readme-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-p1c-readme-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-post-remediation-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-post-remediation-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-pre-construction-20260409.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-pre-construction-20260409.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sentinel-l1-scan-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/sentinel-l1-scan-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/seven-dimensional-penetration-audit-report-20260412.md",
+        "resolved": "docs/09_AUDIT/STATE/seven-dimensional-penetration-audit-report-20260412.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/short-term-improvement-completion-report-20260407-170900.md",
+        "resolved": "docs/09_AUDIT/STATE/short-term-improvement-completion-report-20260407-170900.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/short-term-improvement-final-report-20260407-173400.md",
+        "resolved": "docs/09_AUDIT/STATE/short-term-improvement-final-report-20260407-173400.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sixth-comprehensive-audit-report.md",
+        "resolved": "docs/09_AUDIT/STATE/sixth-comprehensive-audit-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sparse-directory-analysis-20260412-203547.md",
+        "resolved": "docs/09_AUDIT/STATE/sparse-directory-analysis-20260412-203547.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sparse-directory-fix-final-report.md",
+        "resolved": "docs/09_AUDIT/STATE/sparse-directory-fix-final-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/sparse-directory-strategy-report.md",
+        "resolved": "docs/09_AUDIT/STATE/sparse-directory-strategy-report.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
         "url": "STATE/strict-orphan-files-report-regen-20260408.md",
         "resolved": "docs/09_AUDIT/STATE/strict-orphan-files-report-regen-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/third-comprehensive-audit-report-20260407-210318.md",
+        "resolved": "docs/09_AUDIT/STATE/third-comprehensive-audit-report-20260407-210318.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/third-comprehensive-audit-report-fixed-20260407-210703.md",
+        "resolved": "docs/09_AUDIT/STATE/third-comprehensive-audit-report-fixed-20260407-210703.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/trae-blueprint-task-ledger-20260408.md",
+        "resolved": "docs/09_AUDIT/STATE/trae-blueprint-task-ledger-20260408.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/trae-line-task-backlog-20260409.md",
+        "resolved": "docs/09_AUDIT/STATE/trae-line-task-backlog-20260409.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/w2-secret-pattern-spotcheck-20260410.md",
+        "resolved": "docs/09_AUDIT/STATE/w2-secret-pattern-spotcheck-20260410.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/weekly-audit-report-20260407-022518.md",
+        "resolved": "docs/09_AUDIT/STATE/weekly-audit-report-20260407-022518.md"
+      },
+      {
+        "source": "docs/09_AUDIT/INDEX.md",
+        "url": "STATE/yaml_error_files_list_20260413.md",
+        "resolved": "docs/09_AUDIT/STATE/yaml_error_files_list_20260413.md"
       },
       {
         "source": "docs/09_AUDIT/REPORTS/ARCHIVE/INDEX.md",
@@ -2385,11 +2760,6 @@
         "source": "docs/09_AUDIT/STANDARDS/INDEX.md",
         "url": "document-governance-process-standard.md",
         "resolved": "docs/09_AUDIT/STANDARDS/document-governance-process-standard.md"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/active-scattered-blueprints-manifest-task1.md",
-        "url": "../../09_RESEARCH_INNOVATION/BLUEPRINT.md",
-        "resolved": "docs/09_RESEARCH_INNOVATION/BLUEPRINT.md"
       },
       {
         "source": "docs/09_AUDIT/STATE/index-health-orphan-latest.md",
@@ -2835,7 +3205,7 @@
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 2404,
+    "unique_module_ids": 2259,
     "duplicate_ids_count": 1,
     "duplicates": {
       "AUDIT_sentinel-l1-scan-latest": [
@@ -2858,63 +3228,9 @@
       "docs/09_AUDIT/REPORTS/gh-wave3-completion-report.md",
       "docs/09_AUDIT/REPORTS/GH_WAVE_2_COMPLETION_REPORT.md",
       "docs/09_AUDIT/REPORTS/WORK_REPORT_20260416.md",
-      "docs/09_AUDIT/STATE/basename-collisions-20260416.md",
-      "docs/09_AUDIT/STATE/blueprint-layer-mismatch-20260416.md",
       "docs/09_AUDIT/STATE/blueprint-registry-report-20260416.md",
       "docs/09_AUDIT/STATE/DASHBOARD/project-health-latest.md",
       "docs/09_AUDIT/STATE/index-health-orphan-latest.md",
-      "docs/09_AUDIT/STATE/repo-directory-rollup-20260416.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/gh-wave3-completion-report.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-001-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-002-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-002.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-003-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-003.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-004-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-004.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-005-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-005.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-006-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-006.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-007-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-007.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-008-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-008.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-009-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-009.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-010-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-010.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-011-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-011-wave1-final.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-011.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-012-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-012-wave2.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-012.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-013-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-013-wave3.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-013.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-014-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-014-wave4.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-014.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-015-pipeline-c-supplement.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-015.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-016.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-017.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-018.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-019.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-020.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-021.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-022.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-023.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-024.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-025.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-026.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-027-gh-wave3.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-027.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-028-pipeline-c.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-029.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-037-cleanup.md",
-      "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave1-001.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave1-002.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave1-003.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave1-004.md",
@@ -2924,10 +3240,9 @@
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave2-004.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-20260416-bp-wave2-005.md",
       "docs/09_AUDIT/STATE/SESSION_LOGS/session-log-20260416-knowledge-folder.md",
-      "docs/09_AUDIT/STATE/subsystem-health-20260416.md",
       "docs/INDEX.md"
     ],
-    "no_id_total": 82
+    "no_id_total": 27
   },
   "path_depth": {
     "deepest_30": [

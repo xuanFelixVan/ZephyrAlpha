@@ -1106,7 +1106,7 @@ class AnalystForecast:
 
 | DATA_PREPROCESSING_LAYER_BLUEPRINT.md | 数据预处理层蓝图 |
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
+| [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md) | 系统架构文档 |
 
 
 

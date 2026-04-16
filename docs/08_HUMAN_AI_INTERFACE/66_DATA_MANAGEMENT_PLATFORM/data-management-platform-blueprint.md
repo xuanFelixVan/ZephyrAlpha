@@ -1,5 +1,5 @@
 ---
-module_id: AUTO_26405
+module_id: AUTO_26405_ALT
 owner: System_Guardian
 version: 1.0
 status: AUDITED

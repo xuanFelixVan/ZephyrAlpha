@@ -804,7 +804,7 @@ class TradingAuthorizationSystem:
 
 **参考文档**:
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md)
+- [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md)
 
 - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
 

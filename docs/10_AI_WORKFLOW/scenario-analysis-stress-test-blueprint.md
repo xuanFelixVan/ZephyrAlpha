@@ -1,5 +1,5 @@
 ---
-module_id: SCENARIO_ANALYSIS_STRESS_TEST_001_0013
+module_id: SCENARIO_ANALYSIS_STRESS_TEST_001_0013_ALT
 version: 1.0.0
 status: Active
 priority: P0

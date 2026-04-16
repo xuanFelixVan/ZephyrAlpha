@@ -74,7 +74,7 @@ python -m src.main
 | [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
 | [架构服务目录 + C4 摘要](./docs/09_AUDIT/STATE/architecture-service-catalog-20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/governance/generate_architecture_service_catalog.py` |
 | [内容重复扫描报告](./docs/09_AUDIT/STATE/duplicate-content-by-hash-20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
-| [索引健全性（零入链）](./docs/09_AUDIT/STATE/index-health-orphan-20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) **§5.2** |
+| [索引健全性（零入链）](./docs/09_AUDIT/STATE/DAILY/index-health-orphan-20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) **§5.2** |
 
 ```---
 

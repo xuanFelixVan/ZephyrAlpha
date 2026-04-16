@@ -1,5 +1,5 @@
 ---
-module_id: MACROFACTORBLUEPRINT_001_8001
+module_id: MACROFACTORBLUEPRINT_001_8001_ALT
 version: 1.0.0
 status: Active
 priority: P2

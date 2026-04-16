@@ -1,5 +1,5 @@
 ---
-module_id: RESEARCH_WORKFLOW_MANAGEMENT_001
+module_id: RESEARCH_WORKFLOW_MANAGEMENT_001_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

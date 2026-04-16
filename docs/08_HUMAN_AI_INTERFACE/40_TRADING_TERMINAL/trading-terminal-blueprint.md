@@ -1,5 +1,5 @@
 ---
-module_id: 08_HUMAN_AI_INTERFACE_40_TRADING_TERMINAL_6909
+module_id: 08_HUMAN_AI_INTERFACE_40_TRADING_TERMINAL_6909_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

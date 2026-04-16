@@ -1,5 +1,5 @@
 ---
-module_id: IPS_001_6170
+module_id: IPS_001_6170_ALT
 version: 1.0.0
 status: Active
 priority: P0

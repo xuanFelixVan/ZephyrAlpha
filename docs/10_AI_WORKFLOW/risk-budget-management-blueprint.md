@@ -1,5 +1,5 @@
 ---
-module_id: RISK_BUDGET_MANAGEMENT_001_4607
+module_id: RISK_BUDGET_MANAGEMENT_001_4607_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

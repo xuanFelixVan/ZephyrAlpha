@@ -814,7 +814,7 @@ compliance_level: 专业标准
 
 
 
-- [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md)
+- [ARCHITECTURE.md](../../../01_FRAMEWORK/architecture.md)
 
 
 

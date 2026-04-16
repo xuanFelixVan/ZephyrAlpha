@@ -1,5 +1,5 @@
 ---
-module_id: TAXMANAGEMENTBLUEPRINT_001_3838
+module_id: TAXMANAGEMENTBLUEPRINT_001_3838_ALT
 version: 1.0.0
 status: Active
 priority: P2

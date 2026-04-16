@@ -1,5 +1,5 @@
 ---
-module_id: CONFIGURATION_MANAGEMENT_CENTER_001_4782
+module_id: CONFIGURATION_MANAGEMENT_CENTER_001_4782_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

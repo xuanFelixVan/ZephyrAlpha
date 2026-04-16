@@ -1,5 +1,5 @@
 ---
-module_id: AIWF_DSE_001_9607
+module_id: AIWF_DSE_001_9607_ALT
 version: 1.0.0
 status: Active
 created_date: 2026-04-05

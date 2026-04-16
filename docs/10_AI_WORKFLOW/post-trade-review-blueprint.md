@@ -1,5 +1,5 @@
 ---
-module_id: POST_TRADE_REVIEW_001_0806
+module_id: POST_TRADE_REVIEW_001_0806_ALT
 version: 1.0.0
 status: Active
 priority: P0

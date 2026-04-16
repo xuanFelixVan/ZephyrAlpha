@@ -3134,7 +3134,7 @@ class KnowledgeManagementAPI:
 
 |------|------|
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 主架构文档 |
+| [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md) | 主架构文档 |
 
 | PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md | 专业多时间框架架构 |
 

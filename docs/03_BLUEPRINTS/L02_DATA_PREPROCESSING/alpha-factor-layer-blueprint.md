@@ -954,7 +954,7 @@ class FactorEvaluation:
 
 | FACTOR_RESEARCH_BLUEPRINT.md | 因子研究蓝图 |
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
+| [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md) | 系统架构文档 |
 
 
 

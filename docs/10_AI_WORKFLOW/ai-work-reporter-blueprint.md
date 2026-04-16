@@ -1,5 +1,5 @@
 ---
-module_id: 10_AI_WORKFLOW_AI_WORK_REPORTER_BLUEPRINT_1818
+module_id: 10_AI_WORKFLOW_AI_WORK_REPORTER_BLUEPRINT_1818_ALT
 version: 1.0.0
 status: Active
 priority: P1

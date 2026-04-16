@@ -2646,7 +2646,7 @@ class ComplianceReporter:
 
 
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11主架?| ⭐⭐⭐⭐?|
+| [ARCHITECTURE.md](../../01_FRAMEWORK/architecture.md) | Layer 0-11主架?| ⭐⭐⭐⭐?|
 
 
 

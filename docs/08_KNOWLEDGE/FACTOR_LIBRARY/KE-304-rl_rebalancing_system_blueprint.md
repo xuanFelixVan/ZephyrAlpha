@@ -17,18 +17,18 @@ owner: ZephyrAlpha-Owner
 # RL REBALANCING SYSTEM BLUEPRINT
 
 ## 核心内容摘要
-**Layer**: Layer 6 - 
+**Layer**: Layer 6 -
 
-****: 
+****:
 
 **PORTFOLIO_REBALANCING**:
 - ****PPO/SAC
-- [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md)****
+- [PORTFOLIO_REBALANCING_BLUEPRINT.md](../../03_BLUEPRINTS/L10_HUMAN_AI_INTERFACE/portfolio-rebalancing-blueprint.md)****
 - ****: AI
 - ****: 40h200h
 
-****: 
-- 
+****:
+-
 - ?- ?
 
 ## 关键设计要点

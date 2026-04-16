@@ -1,5 +1,5 @@
 ---
-module_id: REPORTING_BLUEPRINT
+module_id: REPORTING_BLUEPRINT_ALT
 version: 1.0.0
 status: Active
 priority: P1
