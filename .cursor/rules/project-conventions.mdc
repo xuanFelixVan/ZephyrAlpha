@@ -1,110 +1,16 @@
-﻿# ZephyrAlpha 项目约定
+﻿---
+description: Cursor 专用规则（方案输出规范、交接协议、双编辑器防护）— 补充 core-governance.mdc
+alwaysApply: true
+---
 
-## 工具权限层级（Tool Authority Hierarchy）
+# ZephyrAlpha 项目约定（Layer 0 补充）
 
-本文件是 **Cursor 专用规则（Level 1 — 最高优先级）**。权限边界如下：
-
-| 层级 | 工具 | 规则文件 | 可修改范围 |
-|------|------|---------|-----------|
-| Level 1（最高） | **Cursor** | `.cursor/rules/*.mdc`（本文件） | 所有文件，含 AGENTS.md 和 .roomodes |
-| Level 2 | **Trae** | `.roomodes` → `zephyr-gov` 模式 | `docs/`、`scripts/`、`src/` |
-| Level 3（基准） | 所有工具 | `AGENTS.md` | 只读参考 |
-
-**Cursor 对 Trae 的管理权**：Cursor 可以更新 `.roomodes` 中的 `zephyr-gov` 模式规则，Trae 不得修改本文件（`.cursor/rules/`）。
-
-**Trae 进入项目时**：必须在 `.roomodes` 的 `zephyr-gov` 模式下工作，该模式已内置全套 Write Gate 和治理约束。
+> 注意：核心治理规则已移至 `core-governance.mdc`。本文件仅保留 Cursor 特有的规范。
 
 ---
 
-## 会话启动强制协议（所有 AI 模型必须遵守）
-
-**每次会话开始，在执行任何操作之前，必须按顺序完成以下步骤**：
-
-1. **读取** `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` → 找到当前 Phase 和下一个待完成任务
-2. **报告**：当前处于 Phase X，下一个任务是 Y
-3. **确认**：用户本次指令是否属于当前 Phase 范围
-4. **如不属于**：停止执行并提醒用户——"此操作属于 Phase Z，当前 Phase X 未完成，请确认是否跳过"
-
-> 此协议防止低端模型跳跃执行、破坏施工顺序。任何模型均不得跳过。
-
----
-
-## 路径锁定表（强制写入规则）
-
-任何 AI 在创建或修改文件时，**必须遵守以下写入路径**：
-
-| 操作类型 | 强制写入路径 | 必须先读 |
-|----|---|---|
-| 写施工图纸 | `docs/04_CONSTRUCTION/PLANS/` | 对应蓝图 + API_Contract.md |
-| 写业务代码 | `src/zephyr/{layer_id}/` | 对应施工图 + MODULE_INVENTORY.md |
-| 写治理标准 | `docs/01_GOVERNANCE/STANDARDS/` | 现有同类标准（`docs/09_AUDIT/STANDARDS/` 中的真源）|
-| 写审计报告 | `docs/09_AUDIT/STATE/` | 审计执行 Runbook |
-| 写蓝图文件（当前过渡期）| `docs/01_FRAMEWORK/` | 蓝图格式标准 + `docs/01_FRAMEWORK/INDEX.md` |
-| 写蓝图文件（长期目标）| `docs/03_BLUEPRINTS/L{XX}_{LAYER}/`（目录已建，按层子目录待 Phase D）| 同上 |
-| 记录 P2 设想 | `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md` | 现有 BACKLOG |
-| 记录技术选型 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | 现有 TDR |
-| 写 pre-commit 钩子 | `scripts/hooks/` | file-governance-automation-rules.md |
-| 写治理脚本 | `scripts/governance/` | 治理工具索引 |
-| 新建子系统/目录 | 须先在 `docs/subsystem-registry.yaml` 登记 | subsystem-registry.yaml |
-
-> **禁止在上述路径之外写入任何非临时文件。禁止在仓库根目录创建 .md 文件。**
-> **禁止写入 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`（已废弃，正在合并）。**
-> **新建任何 `.md` 文件必须全小写 kebab-case**（如 `my-doc.md`）。大写字母触发 pre-commit C-10 硬阻断。命名标准：`docs/09_AUDIT/STANDARDS/doc-naming-standard.md` v2.0.0。
-
----
-
-## 文件搬迁前置检查（File Movement Protocol）
-
-对**单个文件**或**目录**执行 **移动、重命名、删除**（含 `git mv`、资源管理器拖拽、IDE 重构改名）前，必须遵守下列顺序；**不得**在未完成 Step 1 的情况下批量搬迁。
-
-### Step 1：搬迁历史查询（强制）
-
-在仓库根目录执行（将 `{path}` 换为相对路径，使用正斜杠）：
-
-```bash
-git log --follow --diff-filter=R --name-status --oneline -- "{path}"
-```
-
-若上式无输出或不足以判断，可补充：
-
-```bash
-git log --follow --oneline -- "{path}"
-```
-
-**判定规则**：
-
-- 若 `--diff-filter=R` 结果中 **重命名类提交条数 ≥ 2**（表示该路径在历史上已被搬迁至少两次），**必须停止**，向用户说明：已出现的搬迁次数、相关 commit 摘要；**仅在用户明确确认后继续**。
-- 若用户明确要求继续搬迁，须在执行前在对话中**简要复述**已知的搬迁历史，避免重复「凭感觉」改路径。
-
-### Step 2：版本控制留痕（强制）
-
-凡涉及搬迁的提交，commit message 中须包含可检索前缀，例如：
-
-```
-moved: old/path.md -> new/path.md | reason: 一句话理由
-```
-
-删除类操作使用 `removed:` 或 `deleted:` 前缀并写明理由亦可。
-
-### Step 3：联动更新（强制）
-
-搬迁后必须按本文件 **Change Propagation Map** 更新索引、`docs/subsystem-registry.yaml`（若涉及目录）、全库引用与 `parent_document` 等；**禁止**只移动物理文件不更新文档与登记信息。
-
-### 例外（可跳过 Step 1）
-
-- 用户明确指令「无需搬迁历史检查」；
-- 确认为**本次会话内新建且从未提交过**的文件。
-
-例外情况下仍建议保留 Step 2/3 中的理由说明与引用一致性。
-
----
-
-## 语言规则
-
-- **始终使用中文**与用户沟通
-- 代码中的专业术语（变量名、函数名、金融量化名词）保留英文原称
-- 解释逻辑时使用中文
-- 所有生成的文档默认提供中文版本
+> 会话启动协议见 `core-governance.mdc` 第六节。
+> 路径锁定表、File Movement Protocol、Change Propagation Map 见 `doc-governance.mdc`（编辑 docs/*.md 时自动触发）。
 
 ## 方案输出规范（强制）
 
@@ -137,76 +43,13 @@ moved: old/path.md -> new/path.md | reason: 一句话理由
 3. **平台归集**：同平台任务打成一个批次；**依赖关系优先于固定顺序**。
 4. **会话合并**：同档位、同平台、无依赖冲突的相邻步骤合并为一轮会话。
 
-## 双编辑器防护规则（Cursor + Trae 交替使用）
+## 双编辑器防护规则（快速参考）
 
-- **切换编辑器前**：确保当前编辑器所有文件已保存并关闭
-- **切换编辑器后第一步**：运行编码检查 `python scripts/hooks/doc_guard_pre_commit.py --scan-encoding`
-- **禁止**在两个编辑器中同时打开同一文件进行编辑
-- **Trae 设置要求**：确认 `files.autoGuessEncoding` 为 false
+- **切换编辑器前**：确保所有文件已保存并关闭
+- **切换编辑器后第一步**：运行 `python scripts/hooks/doc_guard_pre_commit.py --scan-encoding`
+- **详细流程**：见 `encoding-safety.mdc`（按需触发）
 
-## 施工阶段会话管理规则
-
-> 蓝图阶段已于 2026-04-15 完成冻结，当前处于**第 2 阶段（施工文档编写）**。
-
-### AI Context Loader — 快速上下文入口（按优先级读取）
-
-**新会话必读（按顺序）**：
-
-| 优先级 | 文件 | 提供信息 | 何时读 |
-|-----|---|---|-----|
-| P0-必读 | `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` | 当前 Phase + 下一步任务 | 每次会话开始 |
-| P0-必读 | `docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md` | 治理工具、脚本、工作流完整清单 | 查找/创建工具前 |
-| P0-必读 | `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` | 层→模块→技术栈→蓝图速查 | 涉及模块时 |
-| P0-必读 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | 技术选型决策（为什么用 X） | 引入新技术时 |
-| P0-必读 | `docs/04_CONSTRUCTION/PLANS/INDEX.md` | 施工计划当前状态 | 每次会话开始 |
-| P0-必读 | `docs/subsystem-registry.yaml` | 所有子系统路径和状态 | 创建/移动任何文件前 |
-|| P0-必读 | `docs/01_GOVERNANCE/governance-asset-inventory.yaml` | 所有治理资产总清单（注册表/工具/仪表盘/入职体系） | 说到某个治理系统不知道在哪时先查此文件 |
-| P1-按需 | `docs/01_GOVERNANCE/STANDARDS/INDEX.md` | 治理标准索引 | 创建/移动文件时 |
-| P1-按需 | `docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md` | 受控文档登记 | 查找特定文档时 |
-| P1-按需 | `docs/02_ARCHITECTURE/SYSTEM_PANORAMA.md` | L00-L11 全系统模块全景 | 架构决策时 |
-| P1-按需 | `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md` | P1/P2 未来能力清单 | 评估新模块时 |
-| P1-按需 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md` | 仓库结构卫生规则 | 创建目录/迁移文件时 |
-| P2-深度 | `docs/09_AUDIT/PROCEDURES/audit-execution-runbook.md` | 审计执行流程 | 运行审计时 |
-| P2-深度 | `docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md` | 历史错误教训（防止重蹈覆辙） | 遇到疑似历史问题时 |
-| P2-深度 | `docs/08_KNOWLEDGE/` 各索引 | 因子库、策略库、术语表 | 开发信号/因子时 |
-
-### Change Propagation Map（联动更新速查）
-
-修改任何文档后，必须同步更新以下关联文档：
-
-| 改动类型 | 必须同步更新 |
-|----|---|
-| 移动/重命名/删除任意文件或目录 | 先完成上一节 **File Movement Protocol**；再按下表对应行联动更新 |
-| `docs/02_ARCHITECTURE/` 任意文件 | `docs/02_ARCHITECTURE/MODULE_INVENTORY.md`, `docs/subsystem-registry.yaml` |
-| `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | `docs/02_ARCHITECTURE/MODULE_INVENTORY.md`, `docs/02_ARCHITECTURE/DEV_ENV_SETUP.md` |
-| 蓝图文件内容变更 | `docs/01_FRAMEWORK/INDEX.md`；P 级变更时更新 `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` |
-| `API_Contract.md` | `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` |
-| 新增/删除蓝图文件 | `docs/01_FRAMEWORK/INDEX.md` |
-| P2 模块变更 | `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md` |
-| 新增代码模块（`src/`） | `docs/02_ARCHITECTURE/MODULE_INVENTORY.md`, 对应层 `INDEX.md` |
-| `pyproject.toml` 变更 | `docs/02_ARCHITECTURE/DEV_ENV_SETUP.md` |
-| 新增 `docs/` 文档 | 对应目录 `INDEX.md` |
-| 新增/修改治理标准文档 | `docs/01_GOVERNANCE/STANDARDS/INDEX.md`, `docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md` |
-| 新增 KMS 条目（因子/策略/术语）| `docs/08_KNOWLEDGE/` 对应分类 `INDEX.md` |
-| 新增施工图纸 | `docs/04_CONSTRUCTION/PLANS/INDEX.md`, `docs/02_ARCHITECTURE/MODULE_INVENTORY.md`（施工状态列）|
-| 创建/删除目录 | `docs/subsystem-registry.yaml`（必须先登记/更新）, `docs/SITEMAP.md` |
-| 重命名任何 `.md` 文件 | 搜索全库 `parent_document` 字段，更新所有引用 |
-| 新增 pre-commit 钩子 | `.pre-commit-config.yaml` + `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md` |
-| `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` 新增 P0 模块 | `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` 的施工任务列表 |
-| 新增 lessons-learned 教训条目 | `docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md` |
-
-### 会话规则
-
-- **每次会话开始前**：
-  1. 读取 `docs/04_CONSTRUCTION/PLANS/INDEX.md` 了解施工计划当前状态
-  2. 读取 `docs/09_AUDIT/STATE/SESSION_LOGS/` 目录下**日期最大**的一份 Session Log，还原上一次的工作上下文（可用 `dir docs/09_AUDIT/STATE/SESSION_LOGS/ /O-D` 按时间倒序列出）
-- **每次会话结束前**：
-  1. 按 `docs/09_AUDIT/FORM_STANDARDS/session-log-template.md` 创建 Session Log（命名：`session-YYYYMMDD-NNN.md`），存入 `docs/09_AUDIT/STATE/SESSION_LOGS/`
-  2. Session Log 必须包含：本次完成、本次变更的文件（含搬迁台账）、关键决策、未完成事项、交接指令
-  3. 重要决策须同步升级到 `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` 或 `docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md`
-- **多轮施工任务**：若任务跨越多个会话，在 `docs/04_CONSTRUCTION/PLANS/` 下维护对应计划文档的状态标记
-
-## 跨模型/跨编辑器任务交接协议（Handoff Protocol）
+## 任务交接协议（Handoff Protocol）
 
 当需要切换模型或切换编辑器执行下一步时，必须输出标准化交接指令，格式如下：
 
@@ -235,40 +78,7 @@ moved: old/path.md -> new/path.md | reason: 一句话理由
 
 ---
 
-## 写入门禁（Write Gate）— Cursor 必须遵守
-
-> 以下规则由 `scripts/hooks/check_directory_budget.py` 在 pre-commit 层强制执行，**Cursor AI 在写入前就必须自觉遵守**，不得依赖 hook 来发现违规。
-
-### 写入预算（硬限制）
-
-| 约束 | 规则 |
-|------|------|
-| 单次 session 新建文件数 | **≤ 5 个**（不含 SESSION_LOG 和流水线批量操作） |
-| 文件名禁止带版本号 | **禁止** `-v2`、`-v3`、`-round2`、`_v2` 等后缀；用 `git log` 查历史版本 |
-| 状态文件写入方式 | **必须覆盖写入**（LATEST 模式）；禁止按日期新建文件（例：`SENTINEL_L1_SCAN_LATEST.json`） |
-| AI 生成产物写入位置 | **必须写入 `.audit_cache/`**（已 gitignored）；禁止写入 `docs/09_AUDIT/REPORTS/ARCHIVE/` 等受版本控制目录 |
-| AI 生成文件 frontmatter | 必须包含 `type: generated` 和 `ttl: 7d\|30d\|permanent` |
-
-### 目录文件数硬上限（pre-commit 门禁阈值）
-
-| 目录 | 上限 |
-|------|------|
-| `docs/09_AUDIT/STATE/DAILY/` | 10 个 |
-| `docs/09_AUDIT/STATE/SESSION_LOGS/` | 60 个 |
-| `docs/09_AUDIT/STATE/`（根级） | 60 个 |
-| `docs/09_AUDIT/REPORTS/ARCHIVE/` | 30 个 |
-| `docs/09_AUDIT/REPORTS/INCIDENT/` | 20 个 |
-
-**超出上限时提交会被自动拒绝，必须先清理旧文件再提交新内容。**
-
-### 绝对禁止行为（Write Gate 层）
-
-| 禁止行为 | 原因 |
-|---------|------|
-| 文件名加版本号（`-v2`/`-v3`/`-round2`） | git 已提供历史，文件名版本号纯粹制造垃圾 |
-| 批量扫描结果直接写入 `docs/` | 扫描产物必须写入 `.audit_cache/`（已 gitignored） |
-| 每日新建状态快照文件 | 必须覆盖 LATEST 文件，历史靠 `git log` 查询 |
-| 单次 session 新建 >5 个文件 | 超出写入预算，必须先删等量旧文件再建新文件 |
+> Write Gate 详细规则见 `doc-governance.mdc`（编辑 docs/*.md 时自动触发）。
 
 ---
 
@@ -286,35 +96,4 @@ moved: old/path.md -> new/path.md | reason: 一句话理由
 - Markdown 文件使用 UTF-8 编码（不加 BOM）
 - 不创建 README.md 或文档文件，除非用户明确要求
 
-## 仓库目录约定
-
-| 目录 | 用途 |
-|---|---|
-| `docs/00_OVERVIEW/` | 全库概述与导航 |
-| `docs/01_GOVERNANCE/` | 治理标准、程序、工具索引（子目录：STANDARDS/ PLAYBOOKS/ REGISTERS/）|
-| `docs/02_ARCHITECTURE/` | 系统架构核心文档（MODULE_INVENTORY, TECH_DECISION_RECORDS 等）|
-| `docs/03_BLUEPRINTS/` | 按层组织的蓝图（目标结构；过渡期真源仍为 `docs/01_FRAMEWORK/`）|
-| `docs/04_CONSTRUCTION/` | 施工阶段文档（MASTER_DEVELOPMENT_PLAN 等）|
-| `docs/01_FRAMEWORK/` | 当前蓝图主存储（过渡期真源，~332 个蓝图）|
-| `docs/05_IMPLEMENTATION/` | 实现层文档汇总 |
-| `docs/06_ARCHIVE/` | 统一归档区（唯一合法归档路径）|
-| `docs/08_KNOWLEDGE/` | 统一知识库（因子/策略/最佳实践/教训）|
-| `docs/09_AUDIT/` | 审计体系（标准、程序、状态报告）|
-| `docs/subsystem-registry.yaml` | 子系统注册表（管理所有系统的系统）|
-| `scripts/hooks/` | pre-commit 钩子脚本 |
-| `scripts/governance/` | 常驻治理工具（CI 引用）|
-| `scripts/audit/` | 手动审计辅助工具 |
-
-路径前缀数字（`00_`、`01_`）是**物理目录编号**，≠ 系统架构 Layer 编号（L0-L11）。
-
-## 已废弃路径（禁止写入）
-
-| 废弃路径 | 替代路径 | 原因 |
-|---------|---------|------|
-| `docs/07_AUDIT/` | `docs/09_AUDIT/` | 编号错误 |
-| `docs/06_KNOWLEDGE_BASE/` | `docs/08_KNOWLEDGE/` | 路径错误 |
-| `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/` | `docs/09_AUDIT/STATE/` | 重复，正在合并 |
-| `docs/08_KNOWLEDGE_BASE/` | `docs/08_KNOWLEDGE/` | 重复，待合并 |
-| `docs/07_GOVERNANCE_COMPLIANCE/` | `docs/10_GOVERNANCE_COMPLIANCE/` | 空壳 |
-| `docs/07_ARCHIVED/` | `docs/06_ARCHIVE/` | 空壳 |
-| `docs/ARCHIVE/` | `docs/06_ARCHIVE/` | 路径错误 |
+> 仓库目录约定和废弃路径列表见 `core-governance.mdc` 第八节（常驻加载）或 `doc-governance.mdc` 最后一节。

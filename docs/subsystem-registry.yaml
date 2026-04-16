@@ -163,7 +163,7 @@ subsystems:
   - id: RESEARCH
     canonical_path: docs/07_RESEARCH/
     canonical: true
-    status: review_needed
+    status: active
     purpose: "研究创新层（Layer 9）文档（环境研究、探索性分析、实验追踪）"
     file_count: 16
     layer: L09
@@ -323,6 +323,16 @@ subsystems:
     owner: TBD
     action_required: "Phase D: 验证内容后删除"
 
+  - id: ARCHIVE
+    canonical_path: docs/06_ARCHIVE/
+    canonical: true
+    status: active
+    purpose: "P2 级文档归档区：蓝图安全流水线和文件消除流水线的归档目标路径"
+    file_count: 38
+    layer: L11
+    owner: ZephyrAlpha-Owner
+    notes: "2026-04-16 重建，原目录（730 文件，GBK 编码损坏）已于早期治理中删除。曾被误放入 scripts_subsystems，已修正。"
+
 # ========== Scripts 子系统 ==========
 scripts_subsystems:
 
@@ -354,16 +364,6 @@ scripts_subsystems:
     status: active
     purpose: "手动审计辅助工具"
     file_count: 23
-
-  - id: ARCHIVE
-    canonical_path: docs/06_ARCHIVE/
-    canonical: true
-    status: active
-    purpose: "P2 级文档归档区：蓝图安全流水线和文件消除流水线的归档目标路径"
-    file_count: 1
-    layer: L11
-    owner: ZephyrAlpha-Owner
-    notes: "2026-04-16 重建，原目录（730 文件，GBK 编码损坏）已于早期治理中删除"
 
 # ========== 根目录特殊文件 ==========
 root_level_docs:

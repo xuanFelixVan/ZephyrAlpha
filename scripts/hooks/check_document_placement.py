@@ -33,7 +33,11 @@ ALLOWED_PATTERNS = [
     "requirements_extensions.txt",
     # 入口脚本
     "run_api.py",
-    # 其他必要的项目根级别文件（可根据需要扩展）
+    # AI 工具和跨工具治理锚点文件（永久性根级文件）
+    "AGENTS.md",           # 跨工具 AI 治理约束文件（不可移动，Cursor/Trae/OpenCode 共享）
+    ".roomodes",           # Cursor/Roo 工具模式配置（工具需求，必须在根目录）
+    ".coverage",           # pytest 覆盖率数据库（工具生成，根目录标准位置）
+    "generate_progress_table.py",  # 项目进度表生成脚本（根目录辅助工具）
 ]
 
 # 目录映射：文件名/模式 -> 目标目录（用于识别错放的文件）

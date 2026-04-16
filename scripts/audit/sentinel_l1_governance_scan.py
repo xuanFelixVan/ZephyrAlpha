@@ -217,7 +217,14 @@ def path_depth_stats(all_files: list[Path]) -> dict:
 
 
 def main() -> None:
-    out_dir = REPO / "docs" / "09_AUDIT" / "STATE"
+    import sys as _sys
+    import os as _os
+    # 如果在 pre-commit 环境（PRECOMMIT=1）或传入 --cache 参数，写入 .audit_cache/ 避免修改 docs/
+    use_cache = "--cache" in _sys.argv or _os.environ.get("PRECOMMIT") == "1"
+    if use_cache:
+        out_dir = REPO / ".audit_cache"
+    else:
+        out_dir = REPO / "docs" / "09_AUDIT" / "STATE"
     out_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     all_files = iter_md_files()

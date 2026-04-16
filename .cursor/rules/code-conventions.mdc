@@ -1,4 +1,10 @@
-# ZephyrAlpha 代码施工规范
+---
+description: 代码施工规范、AI 生成代码标准、测试要求（编辑 src/**/*.py 时自动触发）
+globs: src/**/*.py,src/**/*.pyi
+alwaysApply: false
+---
+
+# ZephyrAlpha 代码施工规范（Layer 1 — src 触发）
 
 ## 施工前必读（每次开始代码施工前执行）
 

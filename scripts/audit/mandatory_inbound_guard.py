@@ -16,7 +16,7 @@ import re
 import json
 from pathlib import Path
 from collections import defaultdict
-from typing import List, Set, Dict
+from typing import List, Set, Dict, Tuple
 
 # Windows UTF-8
 if sys.platform == "win32":
@@ -24,6 +24,15 @@ if sys.platform == "win32":
 
 DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# 豁免目录：这些目录下的文件不强制要求入链（日志、会话记录、审计快照等运营文档）
+INBOUND_EXEMPT_DIRS = [
+    "docs/09_AUDIT/STATE/SESSION_LOGS",   # 会话日志：非导航文档，无需入链
+    "docs/09_AUDIT/STATE/DAILY",          # 每日快照：自动生成，无需入链
+    "docs/09_AUDIT/STATE/MILESTONE",      # 里程碑档案：非导航文档
+    "docs/09_AUDIT/REPORTS/ARCHIVE",      # 历史报告归档：非导航文档
+    "docs/06_ARCHIVE",                    # 文档归档区：归档内容，无需入链
+]
 
 
 class MandatoryInboundGuard:
@@ -168,6 +177,10 @@ class MandatoryInboundGuard:
         for file_str in staged_files:
             file_path = REPO_ROOT / file_str
             if file_path.suffix.lower() == '.md' and 'docs' in str(file_path):
+                # 跳过豁免目录
+                file_rel = file_str.replace("\\", "/")
+                if any(file_rel.startswith(exempt) for exempt in INBOUND_EXEMPT_DIRS):
+                    continue
                 md_files.append(file_path)
 
         if not md_files:

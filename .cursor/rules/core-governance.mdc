@@ -1,0 +1,105 @@
+---
+description: ZephyrAlpha 项目核心治理规则（Layer 0 — 永远加载）
+alwaysApply: true
+---
+
+# ZephyrAlpha 核心治理规则（Layer 0）
+
+> 个人开发 | AI 维护 | 第六版系统 | 蓝图阶段 → 施工阶段过渡中
+
+---
+
+## 一、工具权限层级
+
+| 层级 | 工具 | 规则文件 | 可修改范围 |
+|------|------|---------|-----------|
+| Level 1（最高） | **Cursor** | `.cursor/rules/*.mdc` | 所有文件，含 AGENTS.md |
+| Level 2 | **Trae** | `.roomodes → zephyr-gov` | `docs/`, `scripts/`, `src/` |
+| Level 3（基准） | 所有工具 | `AGENTS.md` | 只读参考 |
+
+---
+
+## 二、系统发现路由表（遇到 X → 读 Y）
+
+| 场景 | 立即读取 | 备注 |
+|------|---------|------|
+| 不知道有没有某个工具/系统 | `docs/01_GOVERNANCE/governance-asset-inventory.yaml` | 全景注册表，AI 入职第一读 |
+| 要创建任何文件/目录 | `docs/subsystem-registry.yaml` | 先查是否存在重叠 |
+| 要创建新治理工具 | `docs/02_ARCHITECTURE/executable-asset-registry.md` | 先查是否有同功能工具 |
+| 要运行审计 | `docs/09_AUDIT/PROCEDURES/audit-execution-procedures.md` | 自包含操作手册 |
+| 要开始代码施工 | `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` | 确认 Phase + 任务 |
+| 要处理蓝图 | `audit-operations.mdc`（自动触发于 scripts/**） | 蓝图格式规范 |
+| 要修改 config/ | `config-safety.mdc`（自动触发于 config/**） | 风控配置锁定 |
+| 编码损坏问题 | `encoding-safety.mdc`（按需描述触发） | 双编辑器根因分析 |
+| 文件治理/路径规则 | `doc-governance.mdc`（自动触发于 docs/**/*.md） | 路径锁定 + 联动规则 |
+| 要写代码 | `code-construction.mdc`（自动触发于 src/**/*.py） | 施工规范 |
+
+---
+
+## 三、绝对禁止行为（10 条硬限制）
+
+| # | 禁止行为 | 原因 |
+|---|---------|------|
+| 1 | 文件名加版本号（`-v2/-v3/-round2/_v2`） | git 已提供历史，版本号文件名只制造垃圾 |
+| 2 | 在仓库根目录创建 `.md` 文件 | 根目录白名单仅限 README/AGENTS 等固定文件 |
+| 3 | 创建与现有工具功能重复的新脚本 | 先查注册表，禁止重复建设 |
+| 4 | 不走准入手续创建治理资产 | 违规资产由审计发现后直接删除 |
+| 5 | 跳过 pre-commit hooks（`--no-verify`） | Hooks 是最后防线 |
+| 6 | `git add .` 或 `git add -A` | 必须精确指定暂存路径 |
+| 7 | 批量扫描结果写入 `docs/` 受版控目录 | 必须写 `.audit_cache/`（已 gitignored）|
+| 8 | 每日新建日期化状态快照文件 | 必须覆盖 LATEST 文件，历史靠 git log |
+| 9 | 使用 `echo` / PowerShell `Out-File` 默认参数创建文件 | Windows 默认 GBK/UTF-16，会损坏文件 |
+| 10 | 修改 `config/risk/` 时 commit message 不含 `risk-config-change:` 前缀 | 风控配置变更必须可追溯 |
+
+---
+
+## 四、零残留原则（永久性规则）
+
+1. **文件名禁令（pre-commit 拦截）**：`temp_*`、`*.backup`、`*-v2.*` 模式文件**不得入库**
+2. **一次性脚本自毁**：标记 `ttl: session` 的脚本必须在**同一 commit** 中删除
+3. **单次 session 新建文件 ≤ 5 个**（不含 SESSION_LOG 和流水线批量操作）
+4. **状态文件覆盖写**：使用 LATEST 模式，禁止按日期堆积
+
+---
+
+## 五、注册表同步原则（最高优先级）
+
+`docs/01_GOVERNANCE/governance-asset-inventory.yaml` 是**全景注册表**：
+
+- **新建任何文件** → 必须在同一 commit 中更新此文件
+- **删除任何文件** → 必须在同一 commit 中从此文件移除条目
+- **修改文件路径** → 必须在同一 commit 中更新此文件中的 path
+- **每个 AI session 第一件事** → 读此文件了解全局
+
+---
+
+## 六、会话启动强制协议
+
+每次会话开始，**在执行任何操作之前**，必须按顺序完成：
+
+1. 读 `docs/01_GOVERNANCE/governance-asset-inventory.yaml` → 了解全局资产状态
+2. 读 `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` → 找到当前 Phase 和下一任务
+3. 报告：当前 Phase X，下一任务是 Y
+4. 确认：用户指令是否属于当前 Phase 范围
+
+---
+
+## 七、语言规则
+
+- **始终使用中文**与用户沟通
+- 代码专业术语（变量名、函数名、量化名词）保留英文
+- 所有生成文档默认中文版本
+
+---
+
+## 八、关键路径速查
+
+| 目录 | 用途 |
+|------|------|
+| `docs/01_GOVERNANCE/governance-asset-inventory.yaml` | **全景注册表（每 session 第一读）** |
+| `docs/02_ARCHITECTURE/MODULE_INVENTORY.md` | 层→模块→技术栈速查 |
+| `docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md` | 当前施工进度 |
+| `docs/09_AUDIT/PROCEDURES/audit-execution-procedures.md` | 审计自包含操作手册 |
+| `docs/subsystem-registry.yaml` | 子系统注册表（创建目录前必读）|
+| `docs/02_ARCHITECTURE/executable-asset-registry.md` | 治理工具清单（建工具前必读）|
+| `docs/06_ARCHIVE/` | 唯一合法归档路径 |

@@ -4,6 +4,7 @@
 验证文档元数据是否符合专业量化机构标准
 """
 
+import io
 import os
 import re
 import sys
@@ -13,6 +14,10 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Set
 import argparse
 from datetime import datetime
+
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 class VersionMetadataValidator:
     """版本元数据验证器"""
@@ -412,7 +417,15 @@ class VersionMetadataValidator:
     def generate_report(self, results: List[Dict], output_format: str = 'text') -> str:
         """生成验证报告"""
         if output_format == 'json':
-            return json.dumps(results, ensure_ascii=False, indent=2)
+            from datetime import date, datetime as _dt
+
+            class _DateEncoder(json.JSONEncoder):
+                def default(self, obj):
+                    if isinstance(obj, (date, _dt)):
+                        return obj.isoformat()
+                    return super().default(obj)
+
+            return json.dumps(results, ensure_ascii=False, indent=2, cls=_DateEncoder)
 
         # 文本格式报告
         report_lines = []

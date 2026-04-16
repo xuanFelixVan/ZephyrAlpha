@@ -1,0 +1,150 @@
+---
+description: 文档创建、移动、删除的治理规则（编辑 docs/**/*.md 时自动触发）
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+# ZephyrAlpha 文档治理规则（Layer 1 — docs 触发）
+
+---
+
+## 路径锁定表（强制写入规则）
+
+任何 AI 在创建或修改文件时，**必须遵守以下写入路径**：
+
+| 操作类型 | 强制写入路径 | 必须先读 |
+|----|---|---|
+| 写施工图纸 | `docs/04_CONSTRUCTION/PLANS/` | 对应蓝图 + API_Contract.md |
+| 写业务代码 | `src/zephyr/{layer_id}/` | 对应施工图 + MODULE_INVENTORY.md |
+| 写治理标准 | `docs/01_GOVERNANCE/STANDARDS/` | 现有同类标准（`docs/09_AUDIT/STANDARDS/` 中的真源）|
+| 写审计报告 | `docs/09_AUDIT/STATE/` | 审计执行 Runbook |
+| 写蓝图文件（当前过渡期）| `docs/01_FRAMEWORK/` | 蓝图格式标准 + `docs/01_FRAMEWORK/INDEX.md` |
+| 写蓝图文件（长期目标）| `docs/03_BLUEPRINTS/L{XX}_{LAYER}/` | 同上 |
+| 记录 P2 设想 | `docs/02_ARCHITECTURE/TECHNOLOGY_BACKLOG.md` | 现有 BACKLOG |
+| 记录技术选型 | `docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md` | 现有 TDR |
+| 写 pre-commit 钩子 | `scripts/hooks/` | file-governance-automation-rules.md |
+| 写治理脚本 | `scripts/governance/` | 治理工具索引 |
+| 新建子系统/目录 | 须先在 `docs/subsystem-registry.yaml` 登记 | subsystem-registry.yaml |
+
+> **禁止在上述路径之外写入任何非临时文件。禁止在仓库根目录创建 .md 文件。**
+> **新建任何 `.md` 文件必须全小写 kebab-case**（如 `my-doc.md`）。大写字母触发 pre-commit C-10 硬阻断。
+
+---
+
+## 文件搬迁前置检查（File Movement Protocol）
+
+对**单个文件**或**目录**执行 **移动、重命名、删除** 前，必须按顺序完成：
+
+### Step 1：搬迁历史查询（强制）
+
+```bash
+git log --follow --diff-filter=R --name-status --oneline -- "{path}"
+```
+
+**判定规则**：
+- 重命名类提交条数 ≥ 2 → **必须停止**，向用户说明搬迁历史，仅在用户明确确认后继续
+- 继续搬迁须在对话中**复述**已知搬迁历史
+
+### Step 2：版本控制留痕（强制）
+
+```
+moved: old/path.md -> new/path.md | reason: 一句话理由
+```
+
+删除类操作使用 `removed:` 或 `deleted:` 前缀并写明理由。
+
+### Step 3：联动更新（强制）
+
+搬迁后必须按下方 **Change Propagation Map** 更新所有关联。
+
+### 例外（可跳过 Step 1）
+
+- 用户明确指令「无需搬迁历史检查」
+- 确认为**本次会话内新建且从未提交**的文件
+
+---
+
+## Change Propagation Map（联动更新速查）
+
+修改任何文档后，必须同步更新以下关联文档：
+
+| 改动类型 | 必须同步更新 |
+|----|---|
+| 移动/重命名/删除任意文件或目录 | 先完成 File Movement Protocol；再按下表联动 |
+| `docs/02_ARCHITECTURE/` 任意文件 | `MODULE_INVENTORY.md`, `docs/subsystem-registry.yaml` |
+| 蓝图文件内容变更 | `docs/01_FRAMEWORK/INDEX.md`；P 级变更时更新 `MODULE_INVENTORY.md` |
+| 新增/删除蓝图文件 | `docs/01_FRAMEWORK/INDEX.md` |
+| 新增 `docs/` 文档 | 对应目录 `INDEX.md` |
+| 新增/修改治理标准文档 | `docs/01_GOVERNANCE/STANDARDS/INDEX.md`, `controlled-documents-register.md` |
+| 新增 KMS 条目 | `docs/08_KNOWLEDGE/` 对应分类 `INDEX.md` |
+| 新增施工图纸 | `docs/04_CONSTRUCTION/PLANS/INDEX.md`, `MODULE_INVENTORY.md`（施工状态列）|
+| 创建/删除目录 | `docs/subsystem-registry.yaml`（必须先登记）, `docs/SITEMAP.md` |
+| 重命名任何 `.md` 文件 | 全库搜索 `parent_document` 字段，更新所有引用 |
+| 新增/修改任何文件 | `docs/01_GOVERNANCE/governance-asset-inventory.yaml`（注册表同步，最高优先级）|
+
+---
+
+## 写入门禁（Write Gate）
+
+### 写入预算（硬限制）
+
+| 约束 | 规则 |
+|------|------|
+| 单次 session 新建文件数 | **≤ 5 个**（不含 SESSION_LOG 和流水线批量操作） |
+| 文件名禁止带版本号 | **禁止** `-v2`、`-v3`、`-round2`、`_v2` 等后缀 |
+| 状态文件写入方式 | **必须覆盖写入**（LATEST 模式） |
+| AI 生成产物写入位置 | **必须写入 `.audit_cache/`**（已 gitignored） |
+| AI 生成文件 frontmatter | 必须包含 `type: generated` 和 `ttl: 7d|30d|permanent` |
+
+### 目录文件数硬上限
+
+| 目录 | 上限 |
+|------|------|
+| `docs/09_AUDIT/STATE/DAILY/` | 10 个 |
+| `docs/09_AUDIT/STATE/SESSION_LOGS/` | 60 个 |
+| `docs/09_AUDIT/STATE/`（根级） | 60 个 |
+| `docs/09_AUDIT/REPORTS/ARCHIVE/` | 30 个 |
+
+---
+
+## 新建文档必须包含
+
+- 完整的 YAML frontmatter（含 `module_id`、`version`、`status`、`layer`、`owner`）
+- 遵循蓝图格式标准（见 `docs/01_GOVERNANCE/STANDARDS/blueprint-lifecycle-standard.md`）
+- 在对应目录的 `INDEX.md` 中登记
+
+---
+
+## 审计报告存放规则
+
+- 所有审计产出必须存放在 `docs/09_AUDIT/STATE/`
+- **禁止写入 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`**（已废弃）
+- 报告文件名格式：`{scan_type}-{YYYYMMDD}.md`
+- 保留策略：日常扫描 7 天；AI 修复记录 30 天；验证报告永久保留
+
+---
+
+## 已废弃路径（禁止写入）
+
+| 废弃路径 | 替代路径 |
+|---------|---------|
+| `docs/07_AUDIT/` | `docs/09_AUDIT/` |
+| `docs/06_KNOWLEDGE_BASE/` | `docs/08_KNOWLEDGE/` |
+| `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/` | `docs/09_AUDIT/STATE/` |
+| `docs/08_KNOWLEDGE_BASE/` | `docs/08_KNOWLEDGE/` |
+| `docs/07_GOVERNANCE_COMPLIANCE/` | `docs/10_GOVERNANCE_COMPLIANCE/` |
+| `docs/07_ARCHIVED/` | `docs/06_ARCHIVE/` |
+| `docs/ARCHIVE/` | `docs/06_ARCHIVE/` |
+
+---
+
+## 会话管理规则
+
+**每次会话开始前**：
+1. 读 `docs/04_CONSTRUCTION/PLANS/INDEX.md` 了解施工计划当前状态
+2. 读 `docs/09_AUDIT/STATE/SESSION_LOGS/` 目录下**日期最大**的一份 Session Log
+
+**每次会话结束前**：
+1. 按 `docs/09_AUDIT/FORM_STANDARDS/session-log-template.md` 创建 Session Log（命名：`session-YYYYMMDD-NNN.md`），存入 `docs/09_AUDIT/STATE/SESSION_LOGS/`
+2. Session Log 必须包含：本次完成事项、变更文件台账、关键决策、未完成事项、交接指令
+3. 重要决策须同步升级到 `TECH_DECISION_RECORDS.md` 或 `lessons-learned-register.md`

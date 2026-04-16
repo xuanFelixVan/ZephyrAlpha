@@ -18,9 +18,10 @@ if sys.platform == "win32":
 REQUIRED_FIELDS = {'module_id', 'version', 'status', 'owner'}
 
 def check_double_yaml(content: str) -> bool:
-    """检查是否存在双YAML块"""
+    """检查是否存在双YAML块（一个合法的 frontmatter 需要恰好 2 个 --- 分隔符）"""
     yaml_blocks = list(re.finditer(r'^---\s*\n', content, re.MULTILINE))
-    return len(yaml_blocks) > 1
+    # 合法的单 YAML frontmatter = 2 个 --- (开头 + 结尾)；>2 才是双 YAML
+    return len(yaml_blocks) > 2
 
 def check_double_module_id(content: str) -> bool:
     """检查是否存在双module_id"""

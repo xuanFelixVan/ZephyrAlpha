@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "bandit-security-scanner": {
-      "command": "bandit",
-      "args": ["-r", "src/", "-f", "json"],
-      "description": "Python安全漏洞扫描工具，用于审计代码中的安全问题"
-    }
-  }
-}

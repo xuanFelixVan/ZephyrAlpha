@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "pydocstyle-doc-checker": {
-      "command": "pydocstyle",
-      "args": ["src/"],
-      "description": "Python文档一致性检查工具，验证文档字符串格式"
-    }
-  }
-}

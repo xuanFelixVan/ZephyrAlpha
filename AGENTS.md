@@ -30,9 +30,12 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Level 1（最高）：Cursor 专用规则                              │
-│  文件：.cursor/rules/project-conventions.mdc                 │
-│         .cursor/rules/audit-system.mdc                      │
-│         .cursor/rules/code-conventions.mdc                  │
+│  文件：.cursor/rules/core-governance.mdc（Layer 0，永远加载）  │
+│         .cursor/rules/doc-governance.mdc（Layer 1，docs触发） │
+│         .cursor/rules/audit-system.mdc（Layer 1，scripts触发）│
+│         .cursor/rules/code-conventions.mdc（Layer 1，src触发）│
+│         .cursor/rules/config-safety.mdc（Layer 1，config触发）│
+│         .cursor/rules/encoding-safety.mdc（Layer 2，按需触发）│
 │  权限：可修改所有文件，包括 AGENTS.md 和 .roomodes             │
 ├─────────────────────────────────────────────────────────────┤
 │  Level 2（次高）：Trae 专用规则                               │
@@ -73,8 +76,8 @@ ZephyrAlpha 是一个**个人量化交易系统**，当前处于 **Phase 2（施
 
 ```
 docs/subsystem-registry.yaml
-docs/01_GOVERNANCE/governance-asset-inventory.yaml
-docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md
+docs/01_GOVERNANCE/governance-asset-inventory.yaml          ← 全景注册表（每 session 第一读）
+docs/02_ARCHITECTURE/executable-asset-registry.md
 docs/02_ARCHITECTURE/BLUEPRINT_DOMAIN_INVENTORY.yaml
 docs/02_ARCHITECTURE/MODULE_INVENTORY.md
 docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
@@ -85,9 +88,13 @@ docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md
 docs/09_AUDIT/STANDARDS/INDEX.md
 docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
 docs/09_AUDIT/STATE/module_id_registry.json
-.cursor/rules/project-conventions.mdc
-.cursor/rules/audit-system.mdc
-.cursor/rules/code-conventions.mdc
+.cursor/rules/core-governance.mdc                           ← Layer 0（永远加载）
+.cursor/rules/project-conventions.mdc                       ← Layer 0 补充（永远加载）
+.cursor/rules/doc-governance.mdc                            ← Layer 1（docs/**/*.md 触发）
+.cursor/rules/audit-system.mdc                              ← Layer 1（scripts/** 触发）
+.cursor/rules/code-conventions.mdc                          ← Layer 1（src/**/*.py 触发）
+.cursor/rules/config-safety.mdc                             ← Layer 1（config/** 触发）
+.cursor/rules/encoding-safety.mdc                           ← Layer 2（按需触发）
 .pre-commit-config.yaml
 AGENTS.md（本文件）
 ```
@@ -200,7 +207,9 @@ git log --follow --diff-filter=R --name-status --oneline -- "{path}"
 | **禁止历史改写** | **绝对禁止** `git rebase`、`git filter-branch`、`git replace`、`BFG Repo Cleaner` 等任何改写历史的操作 |
 | **禁止强制推送** | **绝对禁止** `git push --force` 或 `git push --force-with-lease` |
 | **禁止在 Pipeline C session 中删除文件** | Pipeline C session 唯一允许的写操作是在 `docs/08_KNOWLEDGE/` 下新增知识条目 |
-| **每 session 限量** | 每个 Pipeline C session 最多读取 **20 个**历史文件，提取 **≤10 个**知识条目 |
+| **每 session 扫描预算** | 快速扫描上限 **50 个**文件/session（仅读文件名+前50行判断类型，不占深度预算） |
+| **每 session 深度预算** | 深度精读上限 **20 个**候选文件/session（经快速扫描确认为高价值后才深读） |
+| **每 session 写入预算** | 最多写入 **≤10 个** KE/session；三项预算独立计算，互不占用 |
 | **commit 格式** | `feat(knowledge): GH-Wave-X extract KE-XXX~KE-YYY from git history` |
 
 **读取被删文件的标准命令（PowerShell）**：
@@ -518,6 +527,71 @@ python scripts/hooks/doc_guard_pre_commit.py --scan-encoding
 | PowerShell `echo` / `Out-File` 默认参数写 `.md` | `Python Path(f).write_text(content, encoding='utf-8')` |
 | Python `open(f, 'w')` 不指定 encoding | 必须加 `encoding='utf-8'` |
 | 两个编辑器同时打开同一文件编辑 | 同一时刻只用一个编辑器 |
+
+---
+
+## 八-B、永久性治理规则（Phase 0 整改后硬编码）
+
+### B1. 注册表同步原则（最高优先级）
+
+`docs/01_GOVERNANCE/governance-asset-inventory.yaml` 是**全景注册表**：
+
+- **新建任何文件** → 必须在同一 commit 中更新此文件
+- **删除任何文件** → 必须在同一 commit 中从此文件移除对应条目
+- **修改文件路径** → 必须在同一 commit 中更新此文件中的 path
+- **每个 AI session 第一件事** → 读此文件了解全局
+
+### B2. 零残留原则
+
+- `temp_*`、`*.backup`、`*-v2.*` 模式文件 **不得入库**（pre-commit 拦截）
+- 标记 `ttl: session` 的脚本必须在**同一 commit** 中删除
+- 临时文件用完立刻删除，不产生任何冗余文件
+
+### B3. 治理资产准入门禁（新增任何治理工具/标准/工作流必须走完 6 步）
+
+```
+Step 1: 必要性证明
+  → 在 executable-asset-registry.md 中搜索是否已有同功能工具
+  → 如已有：驳回，使用现有工具
+  → 如确无：记录"为什么现有工具无法覆盖"的一句话理由
+
+Step 2: 在 governance-asset-inventory.yaml 登记
+  → 新增条目，包含：id、path、manages、status: proposed
+  → 未登记直接创建文件 = 违规，审计扫描时直接删除
+
+Step 3: 写入规定位置
+  → 治理脚本 → scripts/governance/ 或 scripts/audit/
+  → pre-commit 钩子 → scripts/hooks/
+  → CI 工作流 → .github/workflows/
+  → 治理标准 → docs/09_AUDIT/STANDARDS/ 或 docs/01_GOVERNANCE/STANDARDS/
+
+Step 4: 关联索引更新（在同一 commit 中完成）
+  → 更新对应目录的 INDEX.md
+  → 更新 governance-asset-inventory.yaml 状态为 active
+
+Step 5: 规则触发节点注册（如需 AI 知道该工具的存在）
+  → 在对应 .mdc Layer 1 规则文件中添加一行引用
+
+Step 6: 纳入审计范围
+  → 新工具在下一次 Sentinel L1 扫描中必须可被检测到
+```
+
+**任何一步未通过 → 驳回或直接删除该资产。**
+
+### B4. 审计发现未知资产原则
+
+Sentinel L1 扫描必须包含"注册表差集比对"：
+- 扫描实际文件系统（scripts/**/*.py, .github/workflows/*.yml, docs/09_AUDIT/STANDARDS/*.md 等）
+- 与 `governance-asset-inventory.yaml` 做差集
+- 差集（实际存在但未登记的）= 漏网之鱼
+- 有价值的 → 报备补办手续；不合格的 → 直接删除
+
+### B5. 风控配置变更审计
+
+`config/risk/` 的任何修改：
+- commit message 必须含 `risk-config-change:` 前缀
+- session log 中必须记录变更理由
+- 禁止 AI 无用户指令自主修改风控参数
 
 ---
 

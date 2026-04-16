@@ -28,7 +28,9 @@ from datetime import datetime
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 REGISTRY_PATH = REPO_ROOT / "docs/subsystem-registry.yaml"
-REPORT_DIR = REPO_ROOT / "docs/09_AUDIT/STATE"
+# 在 pre-commit 环境中写入 .audit_cache/（gitignored），避免修改 docs/ 触发 pre-commit 失败
+# 手动运行时可指定 --output-dir docs/09_AUDIT/STATE 覆盖
+REPORT_DIR = REPO_ROOT / ".audit_cache"
 
 # 功能域关键词（用于重叠检测）
 DOMAIN_KEYWORDS = {

@@ -597,8 +597,8 @@ class DocGuardChecker:
             self.blocking_errors.append(dr)
             has_blocking = True
 
-        # D-03: 内链检查（全量模式委托给 ci_cd_link_checker.py）
-        print("  提示: 内链全量检查请运行 python scripts/ci_cd_link_checker.py")
+        # D-03: 内链检查（全量模式委托给 link_checker.py）
+        print("  提示: 内链全量检查请运行 python scripts/ci_audit/link_checker.py")
 
         self._print_results()
 
@@ -664,7 +664,7 @@ class DocGuardChecker:
         return 1 if dup_results else 0
 
     def scan_links(self) -> int:
-        """全量内链扫描（增量版，完整版请用 ci_cd_link_checker.py）"""
+        """全量内链扫描（增量版，完整版请用 scripts/ci_audit/link_checker.py）"""
         self.reset()
         all_md_files = list(self.docs_root.rglob('*.md'))
         count = 0

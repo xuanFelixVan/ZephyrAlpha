@@ -1,18 +1,168 @@
 ## 治理资产总清单 (Governance Asset Inventory)
 ##
-## 用途: 管理所有管理系统的系统。
-##       当任何 AI 说"我记得有个 XX 系统"时，先查此文件。
-##       如果清单里没有，则说明它不存在（或已被清理），应该通过 git log 查找历史。
+## ★★★ 强制同步规则（最高优先级）★★★
+##   新建任何文件 → 必须在同一 commit 中更新本文件
+##   删除任何文件 → 必须在同一 commit 中从本文件移除对应条目
+##   修改文件路径 → 必须在同一 commit 中更新本文件中的 path
+##   每个 AI session 第一件事 → 读本文件了解全局（20 大系统 + 所有资产）
 ##
-## 规则: 新建任何治理工具/标准/脚本前，必须先在此清单登记；
-##        废弃时在此标记 status: deprecated 并记录 reason。
+## 用途: 实时全景注册表——AI 任何时候读此文件，即可一次性了解：
+##       • 20 个治理系统的名称、位置、功能
+##       • 所有脚本（audit/ci_audit/governance/hooks）的职责
+##       • 所有 CI 工作流的触发条件
+##       • 所有配置文件的用途
+##       • 当任何 AI 说"我记得有个 XX 系统"时，先查此文件
+##       • 如果清单里没有，则说明它不存在，应通过 git log 查找历史
+##
+## 准入门禁: 新建任何治理工具/标准/脚本必须先在此登记（status: proposed）
+##           走完 6 步准入手续链后升级为 status: active
+##           未登记直接创建 = 违规 → 审计扫描时直接删除
+##           废弃时标记 status: deprecated 并记录 reason
 ##
 ## Owner: Project Owner
 ## 对标: Citadel Governance Register / Two Sigma Infrastructure Catalog
 
-schema_version: "1.0"
+schema_version: "1.2"
 created_date: "2026-04-16"
-last_updated: "2026-04-16"
+last_updated: "2026-04-16T14:00"
+
+# ============================================================
+# 零、20 大治理系统概览（Governance Systems Overview）
+# ============================================================
+# 用途：AI 读此区块即可一次性了解全部治理系统的名称、位置、功能
+# 来源：rule-system-scan-report-20260416.md 十二轮扫描结论
+# ============================================================
+systems_overview:
+  description: "ZephyrAlpha 当前运行的 20 个治理系统（经 Phase 0 清理后）"
+  total_count: 20
+
+  systems:
+    - id: S01
+      name: "子系统注册表"
+      core_file: docs/subsystem-registry.yaml
+      function: "管理所有系统的系统——新建目录前必须先在此登记"
+      status: active
+
+    - id: S02
+      name: "全景治理资产注册表"
+      core_file: docs/01_GOVERNANCE/governance-asset-inventory.yaml
+      function: "本文件——所有治理资产的元注册表，AI 入职第一读"
+      status: active
+
+    - id: S03
+      name: "可执行资产注册表"
+      core_file: docs/02_ARCHITECTURE/executable-asset-registry.md
+      function: "全库脚本/钩子/CI工作流的权威清单，创建工具前必读"
+      status: active
+
+    - id: S04
+      name: "蓝图注册表"
+      core_file: docs/02_ARCHITECTURE/BLUEPRINT_DOMAIN_INVENTORY.yaml
+      function: "654 个蓝图的完整注册（P0:257/P1:95/P2:286）"
+      status: active
+
+    - id: S05
+      name: "模块清单"
+      core_file: docs/02_ARCHITECTURE/MODULE_INVENTORY.md
+      function: "Layer 0-11 全系统模块速查表"
+      status: active
+
+    - id: S06
+      name: "Sentinel L1 治理扫描"
+      core_file: scripts/audit/sentinel_l1_governance_scan.py
+      function: "全库合规性一键扫描，输出到 docs/09_AUDIT/STATE/"
+      trigger: "手动 / CI governance-audit.yml"
+      status: active
+
+    - id: S07
+      name: "Pre-commit 守卫系统"
+      core_file: scripts/hooks/doc_guard_pre_commit.py
+      function: "文档守卫（19个本地钩子+5个社区钩子）"
+      config: .pre-commit-config.yaml
+      status: active
+
+    - id: S08
+      name: "CI 质量门禁系统"
+      core_file: .github/workflows/governance-audit.yml
+      function: "6 个 GitHub Actions 工作流（文档质量+索引验证+代码质量等）"
+      status: active
+
+    - id: S09
+      name: "文档治理标准库"
+      core_file: docs/09_AUDIT/STANDARDS/INDEX.md
+      function: "35 个治理标准文档（命名/分类/职责边界/决策记录等）"
+      status: active
+
+    - id: S10
+      name: "审计执行操作手册"
+      core_file: docs/09_AUDIT/PROCEDURES/audit-execution-procedures.md
+      function: "自包含操作手册，复制粘贴级别命令序列"
+      status: active
+
+    - id: S11
+      name: "会话日志系统"
+      core_file: docs/09_AUDIT/STATE/SESSION_LOGS/
+      function: "AI 跨会话连续性，session-log-template.md 模板"
+      status: active
+
+    - id: S12
+      name: "知识库"
+      core_file: docs/08_KNOWLEDGE/
+      function: "五桶知识（技术决策/最佳实践/教训/因子库/策略库）"
+      status: active
+      health: "严重空心化（~13个文件，目标50+）"
+
+    - id: S13
+      name: "文件消除流水线追踪器"
+      core_file: docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml
+      function: "按 Wave 追踪文件消除进度，Trae 执行前必读"
+      status: active
+
+    - id: S14
+      name: "受控文档登记"
+      core_file: docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md
+      function: "易混淆主题的唯一正式稿路径（真源登记）"
+      status: active
+
+    - id: S15
+      name: "教训登记册"
+      core_file: docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md
+      function: "7 条关键教训（LL-001~LL-007），防止重蹈覆辙"
+      status: active
+
+    - id: S16
+      name: "技术决策记录"
+      core_file: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
+      function: "5 条 ADR 技术选型决策，引入新技术前必读"
+      status: active
+
+    - id: S17
+      name: "蓝图生命周期管理"
+      core_file: docs/01_GOVERNANCE/STANDARDS/blueprint-lifecycle-standard.md
+      function: "蓝图 6 态生命周期（Draft→Review→Active→Superseded→Deprecated→Retired）"
+      status: active
+
+    - id: S18
+      name: "操作手册库（Playbooks）"
+      core_file: docs/01_GOVERNANCE/PLAYBOOKS/INDEX.md
+      function: "特定场景的操作规程（文件删除/蓝图重叠/根目录治理等）"
+      status: active
+
+    - id: S19
+      name: "分层规则加载系统"
+      core_file: .cursor/rules/core-governance.mdc
+      function: "Layer 0/1/2 三层 Cursor 规则（解决上下文膨胀）"
+      status: active
+      created_date: "2026-04-16"
+      note: "Phase 1 新建，6个.mdc文件实现上下文节省~83%"
+
+    - id: S20
+      name: "治理资产准入门禁"
+      core_file: .cursor/rules/audit-system.mdc
+      function: "6 步准入手续链 + 注册表差集比对（漏网之鱼发现机制）"
+      status: active
+      created_date: "2026-04-16"
+      note: "Phase 4 新建"
 
 # ============================================================
 # 一、注册表类 (Registries) — 追踪特定类型资产的清单
@@ -135,7 +285,9 @@ tools:
 
   audit_scripts:
     path: scripts/audit/
-    count: 21
+    count: 17  # Phase 0 删除5个（temp_scan_module_ids, analyze_dup_module_ids, dedupe_active/archive_module_ids, scanner.py）
+               # Phase 3 删除2个（audit_10d_scan.py, audit_detail_scan.py）+ option_b_frontmatter_scan.py
+               # 实际: 25→17（含全部清理）
     files:
       - name: sentinel_l1_governance_scan.py
         purpose: "Sentinel L1 治理扫描——全库合规性一键扫描"
@@ -163,7 +315,7 @@ tools:
 
   governance_scripts:
     path: scripts/governance/
-    count: 16
+    count: 20  # 含 __init__.py 和 hook_support.py
     files:
       - name: generate_blueprint_registry.py
         purpose: "从蓝图 frontmatter 提取信息，更新 BLUEPRINT_DOMAIN_INVENTORY.yaml"
@@ -185,14 +337,36 @@ tools:
         purpose: "生成 docs/01_FRAMEWORK/INDEX.md"
       - name: verify_01_blueprints_index_links.py
         purpose: "验证蓝图索引链接有效性"
+      - name: cleanup_audit_state.py
+        purpose: "清理 docs/09_AUDIT/STATE/ 中的过期文件"
+      - name: consolidate_audit_standards.py
+        purpose: "合并审计标准文档"
+      - name: generate_project_health_dashboard.py
+        purpose: "生成项目健康仪表盘"
+        output: docs/09_AUDIT/STATE/DASHBOARD/
+      - name: generate_scattered_blueprints_manifest_task1.py
+        purpose: "生成散落蓝图清单（Phase B 蓝图整理 Task 1）"
+      - name: sample_docs_nav_coverage.py
+        purpose: "采样文档导航覆盖率"
+      - name: trace_file_provenance.py
+        purpose: "追踪文件搬迁历史（防止重复搬迁）"
+      - name: triage_blueprint_d_overlap_pairs.py
+        purpose: "D 类蓝图重叠对分级处理（TIER_A/B/C）"
+      - name: verify_manifest_paths_strict.py
+        purpose: "严格验证清单中的文件路径"
+      - name: verify_scattered_blueprints_manifest_links.py
+        purpose: "验证散落蓝图清单链接"
+      - name: hook_support.py
+        purpose: "Pre-commit 钩子公共支持库"
+      - name: __init__.py
+        purpose: "模块初始化"
 
   pre_commit_hooks:
     path: scripts/hooks/
-    count: 19
+    count: 13  # 本地钩子（另有 5 个社区钩子在 .pre-commit-config.yaml）
     files:
       - name: doc_guard_pre_commit.py
-        purpose: "文档守卫——编码检查 + 格式校验"
-        check: "--scan-encoding 参数检查 UTF-8 合规"
+        purpose: "文档守卫——编码检查 + 格式校验（--scan-encoding 参数检查 UTF-8 合规）"
       - name: source_guard_pre_commit.py
         purpose: "源码守卫"
       - name: validate_blueprint_frontmatter.py
@@ -211,10 +385,16 @@ tools:
         purpose: "技术决策记录传播检查"
       - name: pre-commit-governance-check.py
         purpose: "治理合规性综合检查"
+      - name: check_body_script_refs.py
+        purpose: "检查脚本引用完整性"
+      - name: check_directory_budget.py
+        purpose: "目录文件数预算检查（硬上限门禁）"
+      - name: check_related_documents.py
+        purpose: "关联文档完整性检查"
 
   ci_audit_scripts:
     path: scripts/ci_audit/
-    count: 14
+    count: 12  # Phase 3 删除2个（ci_cd_link_checker.py→link_checker.py替代, yaml_metadata_checker.py→document_structure_checker.py替代）
     files:
       - name: generate_quality_report.py
         purpose: "文档质量综合报告（链接25分+YAML25分+质量50分，A-F评级）"
@@ -244,21 +424,18 @@ tools:
 
   ci_workflows:
     path: .github/workflows/
-    count: 8
+    count: 6
     files:
       - name: governance-audit.yml
         purpose: "Sentinel L1 治理审计门禁（推送 docs/scripts 时触发）"
         trigger: "push to docs/ or scripts/"
-      - name: document_audit.yml
-        purpose: "文档审计"
       - name: doc-quality-check.yml
-        purpose: "文档质量检查"
-      - name: document_quality_check.yml
-        purpose: "文档质量检查（备用）"
+        purpose: "文档质量检查（重复检测+链接检查+周一定时扫描）"
+        trigger: "push/PR to docs/**/*.md + schedule Monday 8am"
       - name: eternal-index-validation.yml
         purpose: "永久索引验证"
       - name: periodic-audit.yml
-        purpose: "周期性审计"
+        purpose: "周期性审计（weekly/monthly/quarterly 三档）"
       - name: code-quality.yml
         purpose: "代码质量检查"
       - name: version-validation.yml
@@ -273,15 +450,79 @@ tools:
         purpose: "部署每周/每月/季度审计计划任务"
       - name: scripts/periodic_maintenance.ps1
         purpose: "定期维护脚本（文档审计+链接检查+元数据检查）"
+    deleted_tasks:
       - name: docs/09_AUDIT/AUTOMATION/daily_check.py
-        purpose: "每日检查（YAML 完整性、死链、编码一致性）"
-        output: docs/09_AUDIT/STATE/DAILY/
+        deleted_date: "2026-04-16"
+        reason: "已被 CI periodic-audit.yml weekly-scan job 替代"
       - name: docs/09_AUDIT/AUTOMATION/weekly_check.py
-        purpose: "每周检查（Layer 归属、目录结构、命名规范）"
-        output: docs/09_AUDIT/STATE/
+        deleted_date: "2026-04-16"
+        reason: "已被 CI periodic-audit.yml monthly-audit job 替代"
       - name: docs/09_AUDIT/AUTOMATION/monthly_check.py
-        purpose: "每月检查（完整三层审计、合规率统计、趋势分析）"
-        output: docs/09_AUDIT/STATE/
+        deleted_date: "2026-04-16"
+        reason: "已被 CI periodic-audit.yml quarterly-deep-audit job 替代"
+
+# ============================================================
+# 三-B、配置文件资产（Configuration Files）
+# ============================================================
+configuration_files:
+  description: "项目配置文件清单（新建配置文件时必须在此登记）"
+  files:
+    - name: .pre-commit-config.yaml
+      path: .pre-commit-config.yaml
+      purpose: "Pre-commit 钩子配置（19本地+5社区钩子）"
+      status: active
+
+    - name: pyproject.toml
+      path: pyproject.toml
+      purpose: "Python 项目配置（工具链、依赖、版本）"
+      status: active
+
+    - name: config/risk/
+      path: config/risk/
+      purpose: "风控参数配置（仓位限制/止损/VaR）— 高风险，修改须含 risk-config-change: 前缀"
+      status: active
+      governance_rule: "任何修改须在 commit message 含 risk-config-change: 前缀"
+
+    - name: .roomodes
+      path: .roomodes
+      purpose: "Trae 工作模式配置（zephyr-gov 模式）"
+      status: active
+
+# ============================================================
+# 三-C、Trae 工具资产（.trae/）
+# ============================================================
+trae_assets:
+  description: ".trae/ 目录下的活跃配置文件（经 Phase 0 清理后）"
+  files:
+    - name: mcp-servers.json
+      path: .trae/mcp-servers.json
+      purpose: "MCP 服务配置（含 bandit/pylint/mypy/safety/pydocstyle/yamllint 等审计服务）"
+      status: active
+
+    - name: audit-mcp-wrapper.ps1
+      path: .trae/audit-mcp-wrapper.ps1
+      purpose: "MCP 服务 PowerShell 包装器（解决 Connection closed 问题）"
+      status: active
+
+    - name: MCP_WRAPPER_SOLUTION.md
+      path: .trae/MCP_WRAPPER_SOLUTION.md
+      purpose: "MCP 包装器方案文档"
+      status: active
+
+    - name: setup-audit-mcp.bat
+      path: .trae/setup-audit-mcp.bat
+      purpose: "审计 MCP 服务初始化脚本"
+      status: active
+
+    - name: verify-mcp-tools.ps1
+      path: .trae/verify-mcp-tools.ps1
+      purpose: "验证 MCP 工具可用性"
+      status: active
+
+    - name: SKILL.md
+      path: .trae/skills/audit-sentinel/SKILL.md
+      purpose: "Trae Audit Sentinel 技能定义"
+      status: active
 
 # ============================================================
 # 四、操作手册类 (Playbooks) — 应对特定场景的操作规程
@@ -349,61 +590,74 @@ dashboards:
 # 六、AI 入职体系 (AI Onboarding System) — 跨会话连续性
 # ============================================================
 ai_onboarding:
-  description: "四层 AI 入职体系，保障每次会话的上下文连续性"
+  description: "分层 AI 入职体系（Phase 1 升级后）——通过分层规则加载解决上下文膨胀"
+  upgrade_date: "2026-04-16"
+  context_saving: "Layer 0 仅 ~200 行（原来 ~1200 行，节省 ~83%），其余按需触发"
 
-  layer_1_auto_inject:
-    description: "强制规则层——Cursor 自动注入，每次会话必执行"
-    files:
-      - path: .cursor/rules/project-conventions.mdc
-        provides: "会话启动强制协议 + AI Context Loader + 路径锁定表 + Handoff Protocol"
-      - path: .cursor/rules/code-conventions.mdc
-        provides: "施工规范 + Session Artifact 清理规则 + AI 生成代码标记"
-      - path: .cursor/rules/audit-system.mdc
-        provides: "审计规则 + 死循环防护 + 编码安全"
+  cursor_rules_layers:
+    description: "Cursor 分层规则加载系统（Phase 1 新建）"
+    layer_0_always:
+      description: "永远加载层（<200 行）——不知道会出事的内容"
+      files:
+        - path: .cursor/rules/core-governance.mdc
+          provides: "项目身份、20系统路由表、绝对禁止行为、零残留原则、注册表同步规则"
+          status: active
+          created: "2026-04-16"
+        - path: .cursor/rules/project-conventions.mdc
+          provides: "方案输出规范、Handoff Protocol、双编辑器防护（精简版）、Git规范"
+          status: active
 
-  layer_2_p0_reads:
-    description: "P0 必读文档层——每次会话开始时手动读取"
-    files:
-      - path: docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md
-        provides: "当前 Phase + 下一步任务"
-      - path: docs/02_ARCHITECTURE/EXECUTABLE_ASSET_REGISTRY.md
-        provides: "治理工具完整清单（AI 创建工具前必读）"
-      - path: docs/02_ARCHITECTURE/MODULE_INVENTORY.md
-        provides: "层→模块→技术栈速查"
-      - path: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
-        provides: "技术选型决策（5 条 ADR）"
-      - path: docs/subsystem-registry.yaml
-        provides: "所有子目录状态（创建/移动文件前必读）"
-      - path: docs/01_GOVERNANCE/governance-asset-inventory.yaml
-        provides: "本文件——所有治理资产入口"
+    layer_1_glob_triggered:
+      description: "文件类型触发层——编辑对应文件时自动加载"
+      files:
+        - path: .cursor/rules/doc-governance.mdc
+          globs: "docs/**/*.md"
+          provides: "路径锁定表、File Movement Protocol、Change Propagation Map、Write Gate"
+          status: active
+          created: "2026-04-16"
+        - path: .cursor/rules/audit-system.mdc
+          globs: "scripts/**/*.py, .github/workflows/*.yml"
+          provides: "审计系统规则、脚本修改禁令、死循环防护、准入门禁6步手续链"
+          status: active
+        - path: .cursor/rules/code-conventions.mdc
+          globs: "src/**/*.py"
+          provides: "施工规范、AI代码标准、测试要求、Commit格式"
+          status: active
+        - path: .cursor/rules/config-safety.mdc
+          globs: "config/**/*.yaml, .env*"
+          provides: "风控配置锁定、编码安全（config专属）、单一配置源"
+          status: active
+          created: "2026-04-16"
 
-  layer_3_operation_manuals:
-    description: "操作手册层——特定任务时触发读取"
-    files:
-      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/project-office-ai-handoff.md
-        trigger: "接手项目 / 全面盘点时"
-      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/global-file-governance-session-handoff.md
-        trigger: "执行文件治理专项任务时"
-      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md
-        trigger: "创建目录或迁移文件前"
-      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-documents-navigation.md
-        trigger: "查找治理文档时"
-      - path: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md
-        trigger: "查找治理脚本命令时"
+    layer_2_description_triggered:
+      description: "按需触发层——AI 根据任务性质自主判断"
+      files:
+        - path: .cursor/rules/encoding-safety.mdc
+          description: "双编辑器编码损坏的根因分析、检测和修复流程"
+          status: active
+          created: "2026-04-16"
 
-  layer_4_institutional_memory:
-    description: "制度记忆层——深度查询，防止重蹈历史错误"
-    files:
-      - path: docs/01_GOVERNANCE/REGISTERS/lessons-learned-register.md
-        provides: "7 条关键教训（LL-001~LL-007）"
-      - path: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
-        provides: "技术选型决策记录（ADR-001~ADR-005）"
-      - path: docs/01_FRAMEWORK/architecture-evolution-history.md
-        provides: "2039 行架构演进历史"
-      - path: docs/00_OVERVIEW/CHANGELOG.md
-        provides: "Keep a Changelog 格式变更记录"
-      - path: docs/01_GOVERNANCE/REGISTERS/controlled-documents-register.md
-        provides: "受控文档登记（易混淆主题的唯一正式稿）"
+  session_startup_sequence:
+    description: "每次 AI session 的标准启动顺序"
+    steps:
+      - "1. 读 docs/01_GOVERNANCE/governance-asset-inventory.yaml（本文件）—— 了解全局20系统"
+      - "2. 读 docs/04_CONSTRUCTION/PLANS/MASTER_DEVELOPMENT_PLAN.md —— 当前 Phase + 任务"
+      - "3. 报告：当前 Phase X，下一任务是 Y"
+      - "4. 确认：用户指令是否属于当前 Phase 范围"
+
+  p0_reads_by_task:
+    description: "P0 必读文档——按任务类型触发"
+    items:
+      - trigger: "要创建任何文件/目录"
+        read: docs/subsystem-registry.yaml
+      - trigger: "要创建新治理工具"
+        read: docs/02_ARCHITECTURE/executable-asset-registry.md
+      - trigger: "要运行审计"
+        read: docs/09_AUDIT/PROCEDURES/audit-execution-procedures.md
+      - trigger: "涉及模块开发"
+        read: docs/02_ARCHITECTURE/MODULE_INVENTORY.md
+      - trigger: "引入新技术"
+        read: docs/02_ARCHITECTURE/TECH_DECISION_RECORDS.md
 
   missing_components:
     description: "当前缺失的 AI 入职体系组件（待建设）"
@@ -455,6 +709,41 @@ knowledge_assets:
 # 变更历史
 # ============================================================
 changelog:
+  - version: "1.3.0"
+    date: "2026-04-16"
+    changes:
+      - "Phase 5 全景升级：新增 systems_overview 区（20 大治理系统一览）"
+      - "Phase 5 全景升级：补全 governance_scripts 至 20 条（含所有文件）"
+      - "Phase 5 全景升级：补全 pre_commit_hooks 至 13 条（本地钩子）"
+      - "Phase 5 全景升级：新增 configuration_files 区（配置文件登记）"
+      - "Phase 5 全景升级：新增 trae_assets 区（.trae/ 活跃文件登记）"
+      - "Phase 5 全景升级：在文件头部写入强制同步规则声明"
+      - "Phase 5 分层规则系统登记：core-governance/doc-governance/config-safety/encoding-safety.mdc 全部登记"
+      - "schema 版本从 1.1 升级到 1.2"
+  - version: "1.2.0"
+    date: "2026-04-16"
+    changes:
+      - "Phase 3 脚本合并：删除 ci_cd_link_checker.py（link_checker.py 替代），yaml_metadata_checker.py（document_structure_checker.py 替代）"
+      - "Phase 3 脚本合并：删除 audit_10d_scan.py（audit_10_dimensions_script.py 替代，更完整）"
+      - "Phase 3 脚本合并：删除 audit_detail_scan.py、option_b_frontmatter_scan.py（一次性分析脚本）"
+      - "audit+ci_audit+governance 脚本总数从 ~77 精简到 49 个（达成 ≤50 目标）"
+      - "更新 doc_guard_pre_commit.py 注释：ci_cd_link_checker.py 引用 → link_checker.py"
+  - version: "1.1.0"
+    date: "2026-04-16"
+    changes:
+      - "Phase 0 清理：删除4个临时/一次性脚本（temp_scan_module_ids.py、analyze_dup_module_ids.py、dedupe_active_module_ids.py、dedupe_archive_module_ids.py）"
+      - "Phase 0 清理：删除1个误放的第三方库文件（scripts/audit/scanner.py，Pygments内部模块）"
+      - "Phase 0 清理：删除3个已被CI替代的旧脚本（docs/09_AUDIT/AUTOMATION/daily/weekly/monthly_check.py）"
+      - "Phase 0 清理：删除2个根目录临时文件（temp_bp_wave4_classify/migrate.py）"
+      - "Phase 0 清理：删除1个backup文件（complete-blueprint-overview.md.backup）"
+      - "Phase 0 清理：删除空目录 docs/09_AUDIT/CONFIGURATION/"
+      - "Phase 0 清理：删除 notebooks/.gitkeep（目录已有实际内容）"
+      - "Phase 0 清理：删除 .trae/ 下11个废弃迭代文件（7个mcp-server-*-fixed.json + 4个wrapper JSON）"
+      - "Phase 0 清理：删除 .trae/ 下3个旧版/测试PS1脚本"
+      - "Phase 0 清理：合并CI工作流——删除 document_quality_check.yml（合并进 doc-quality-check.yml）"
+      - "Phase 0 清理：合并CI工作流——删除 document_audit.yml（保留更完整的 periodic-audit.yml）"
+      - "CI工作流数量从8个精简到6个"
+      - "audit_scripts 数量从21个更新为17个"
   - version: "1.0.0"
     date: "2026-04-16"
     changes:

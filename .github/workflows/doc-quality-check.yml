@@ -9,6 +9,10 @@ on:
     branches: [ main, master ]
     paths:
       - 'docs/**/*.md'
+  schedule:
+    # 每周一早上8点执行全量检查（合并自 document_quality_check.yml）
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
 
 jobs:
   duplicate-detection:

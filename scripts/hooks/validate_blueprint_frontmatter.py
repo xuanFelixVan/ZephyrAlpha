@@ -16,6 +16,7 @@ Blueprint Frontmatter Validator (pre-commit hook)
 如果无文件参数，从 git status 读取修改的文件。
 """
 
+import io
 import sys
 import os
 import re
@@ -23,6 +24,10 @@ import subprocess
 import yaml
 from pathlib import Path
 from typing import Optional
+
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -33,7 +38,15 @@ VALID_PRIORITIES = {"P0", "P1", "P2"}
 VALID_LAYERS = {f"layer_{i:02d}" for i in range(12)} | {"cross_layer", "cross-layer"}
 
 # 不校验的目录
-SKIP_DIRS = {"docs/06_ARCHIVE", "docs/09_ARCHIVE", "docs/99_ARCHIVE", ".audit_fix_backup", "scripts"}
+SKIP_DIRS = {
+    "docs/06_ARCHIVE", "docs/09_ARCHIVE", "docs/99_ARCHIVE",
+    ".audit_fix_backup", "scripts",
+    # 运营类文档目录——非蓝图，不需要 layer/priority 字段
+    "docs/09_AUDIT/STATE/SESSION_LOGS",
+    "docs/09_AUDIT/STATE/DAILY",
+    "docs/09_AUDIT/STATE/MILESTONE",
+    "docs/09_AUDIT/REPORTS",
+}
 
 # 阿拉伯/波斯字符检测正则
 ARABIC_PATTERN = re.compile(r"[\u0600-\u06ff\u0750-\u077f\ufb00-\ufdff]")
@@ -121,7 +134,10 @@ def check_new_directory(filepath: Path) -> list[str]:
     registry_path = REPO_ROOT / "docs/subsystem-registry.yaml"
 
     # 只检查 docs/ 直接子目录
-    rel = filepath.relative_to(REPO_ROOT)
+    try:
+        rel = filepath.relative_to(REPO_ROOT)
+    except ValueError:
+        rel = filepath.resolve().relative_to(REPO_ROOT.resolve())
     parts = rel.parts
     if len(parts) < 2 or parts[0] != "docs":
         return errors
@@ -176,7 +192,11 @@ def main(files: Optional[list[str]] = None) -> int:
 
     for filepath in target_files:
         errors = []
-        rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        try:
+            rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        except ValueError:
+            # Windows 路径大小写不一致时 fallback
+            rel = str(filepath.resolve().relative_to(REPO_ROOT.resolve())).replace("\\", "/")
 
         # 跳过归档目录
         if any(rel.startswith(skip) for skip in SKIP_DIRS):
