@@ -17,9 +17,9 @@ overall_progress:
   current_file_count: 1657         # 每次 session 后更新 (1767-110 migrated)
   files_eliminated: 232            # 累计已删除文件数
   files_migrated: 321              # BP Wave 3+4 迁移到 03_BLUEPRINTS 的文件数 (211+110)
-  knowledge_entries_added: 281     # 累计已入库知识条目数 (KE-001~KE-281，去重后)
-  sessions_completed: 33           # 累计完成的 session 数
-  estimated_sessions_remaining: 3  # 预估剩余 session 数
+  knowledge_entries_added: 330     # 累计已入库知识条目数 (KE-001~KE-330，去重后)
+  sessions_completed: 34           # 累计完成的 session 数
+  estimated_sessions_remaining: 2  # 预估剩余 session 数
 
 # ============================================================
 # 流水线 A：文件消除流水线（File Elimination Pipeline）
@@ -907,11 +907,11 @@ git_history_pipeline:
     strategy: "快速扫描（路径名过滤）→ 候选文件深度读取 → 价值评估 → 高价值写入 docs/08_KNOWLEDGE/; 完成后执行清仓提交"
     prompt_template: "docs/04_CONSTRUCTION/PLANS/trae-prompt-gh-wave3-and-cleanup.md"
     status: in_progress
-    files_scanned: 350          # 50 x 7
-    files_high_value: 305       # 48 + 19 + 40 + 49 + 50 + 50 + 49
-    files_skipped: 15           # 2 + 1 + 10 + 1 + 0 + 0 + 1
-    knowledge_entries_added: 251 # 3 + 10 + 40 + 49 + 50 + 50 + 49
-    last_processed_index: 350   # 已处理前350行
+    files_scanned: 400          # 50 x 8
+    files_high_value: 354       # 48 + 19 + 40 + 49 + 50 + 50 + 49 + 49
+    files_skipped: 16           # 2 + 1 + 10 + 1 + 0 + 0 + 1 + 1
+    knowledge_entries_added: 300 # 3 + 10 + 40 + 49 + 50 + 50 + 49 + 49
+    last_processed_index: 400   # 已处理前400行
     started_date: "2026-04-16"
     completed_date: null
     post_completion_action: "执行清仓提交 — docs/04_CONSTRUCTION/PLANS/trae-prompt-gh-wave3-and-cleanup.md 阶段二"
@@ -965,6 +965,13 @@ git_history_pipeline:
         files_skipped: 1
         knowledge_entries_added: 49
         notes: "第七批扫描（第300-349行），使用自动化脚本批量处理。覆盖监控告警系统、监控仪表板增强、多资产配置、多资产相关性建模、多目标优化、多期动态优化、多策略分层系统、对象存储集成、开盘策略、优化历史追踪器、优化结果验证器、优化器诊断、订单流分析、P0/P1蓝图完成报告、基础设施蓝图完成报告、性能测试、组合归因、组合容量估计器、组合比较工具、组合约束管理、组合诊断工具包、组合分散度指标、组合漂移监控、组合健康评分、组合保险策略、组合优化、组合优化诊断、组合优化器集成、组合绩效评估、组合再平衡、组合情景分析、生产组合管道、质量报告自动化、质量评分系统、季度再平衡、实时数据湖、实时质量监控、实时风险对冲引擎、Redis缓存层、各类蓝图报告等。已提取KE-233~281。"
+      - session_id: "2026-04-16-034"
+        date: "2026-04-16"
+        files_scanned: 50
+        files_high_value: 49
+        files_skipped: 1
+        knowledge_entries_added: 49
+        notes: "第八批扫描（第350-399行），使用自动化脚本批量处理。覆盖L5层完整性深度分析、L5架构完整性分析、L5蓝图完整性最终分析、L5蓝图覆盖重分析、缺失蓝图检查清单、P0/P1蓝图完成报告、风险归因系统、风险贡献分析、风险控制、风险平价策略、RL再平衡系统、鲁棒优化、密钥管理、安全扫描、敏感性分析、服务发现、信号衰减分析器、简化风险预算系统、简化时间框架协调、滑点模型、智能执行引擎、智能订单路由、统计套利模块、随机优化、战略配置引擎、战略权重、策略编写助手、策略引擎、策略参数优化、策略组合优化、策略选择、压力测试、压力测试系统、系统增强、系统集成等。已提取KE-282~330。"
 
 # ============================================================
 # 知识库积累追踪
@@ -972,9 +979,9 @@ git_history_pipeline:
 knowledge_base_stats:
   baseline_entries: 20      # 流水线启动时的知识条目数（2026-04-16）
   target_entries: 100       # 流水线完成后的目标
-  current_entries: 281      # 每次 session 后更新 (KE-001~KE-281)
+  current_entries: 330      # 每次 session 后更新 (KE-001~KE-330)
   entries_by_category:
-    blueprint_decision: 213  # GH Wave 2+3 提取的蓝图决策 (164+49)
+    blueprint_decision: 262  # GH Wave 2+3 提取的蓝图决策 (213+49)
     strategy: 0
     factor: 56              # GH Wave 2+3 提取的因子相关
     best_practice: 12       # GH Wave 2+3 提取的最佳实践
