@@ -33,11 +33,23 @@ ZephyrAlpha 是个人量化交易系统，当前处于 Phase 2 准备阶段（�
 3. 读取 `docs/subsystem-registry.yaml` → 确认目标目录状态
 4. 读取 `docs/09_AUDIT/STATE/elimination-pipeline-tracker.yaml` → 确认当前 BP Wave 进度
 
+**⚠️ 关键：在读取文件后，必须立即运行以下命令建立"本次 session 基线"：**
+
+```powershell
+# 记录当前 git 状态（本次 session 开始前的状态）
+git status --short
+git log --oneline -5
+```
+
+将上述命令输出的结果完整写入你的报告。这是区分"本次操作"与"历史已有操作"的唯一依据。
+**任何在 `git status` 输出中不出现的变更，都不是本次 session 做的，不得当作本次成果汇报。**
+
 报告格式：
 - 当前 BP Wave：{BP Wave 编号}，状态：{pending/in_progress}
 - 目标目录：{路径}
 - 已迁移蓝图数：{数字} / 目标 {数字}
 - BLUEPRINT_DOMAIN_INVENTORY 中本批次蓝图状态概况
+- **本次 session 基线（git status 输出）**：{粘贴输出结果}
 
 ---
 
@@ -137,19 +149,34 @@ ZephyrAlpha 系统层级对照表：
 2. 确认目标目录存在：`docs/03_BLUEPRINTS/L{XX}_{LAYER_NAME}/`
    - 如不存在，先在 `docs/subsystem-registry.yaml` 登记，再创建目录
 3. 执行迁移：
-   ```bash
+   ```powershell
    git mv "旧路径/文件.md" "docs/03_BLUEPRINTS/L{XX}_{LAYER}/文件.md"
    ```
-4. 更新源目录的 INDEX.md（删除该条目）
-5. 更新 `docs/03_BLUEPRINTS/{layer}/INDEX.md`（添加新条目）
+4. **⚠️ 立即验证（每步操作后必须执行）**：
+   ```powershell
+   # 验证源文件不存在，目标文件存在
+   Test-Path "旧路径/文件.md"          # 必须输出 False
+   Test-Path "docs/03_BLUEPRINTS/.../文件.md"  # 必须输出 True
+   git status --short | Select-String "文件名"  # 必须出现 R 重命名记录
+   ```
+   如果验证失败，立即停止并报告，不继续处理下一个文件。
+5. 更新源目录的 INDEX.md（删除该条目）
+6. 更新 `docs/03_BLUEPRINTS/{layer}/INDEX.md`（添加新条目）
 
 ### 对 P2 蓝图（提取知识后归档）
 
 1. 提取 1-3 条知识条目到 `docs/08_KNOWLEDGE/`（格式见下方）
 2. 移动到归档区：
-   ```bash
-   git mv "旧路径/文件.md" "docs/09_AUDIT/REPORTS/ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"
+   ```powershell
+   git mv "旧路径/文件.md" "docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"
    ```
+3. **⚠️ 立即验证（每步操作后必须执行）**：
+   ```powershell
+   Test-Path "旧路径/文件.md"        # 必须输出 False
+   Test-Path "docs/06_ARCHIVE/bp-archived-{YYYYMMDD}-{文件名}"  # 必须输出 True
+   git status --short | Select-String "文件名"  # 必须出现 R 重命名记录
+   ```
+   如果验证失败，立即停止并报告。
 
 ### 对 P3 蓝图（⚠️ 不执行删除 — 生成待裁决报告）
 
@@ -224,18 +251,30 @@ owner: ZephyrAlpha-Owner
 
 ---
 
-## 第八步：Commit
+## 第八步：Commit 前核对 + Commit
+
+**⚠️ 在执行 `git commit` 之前，必须先运行以下核对命令：**
+
+```powershell
+# 核对 1：确认本次 session 实际产生的变更（与第一步基线对比）
+git status --short
+
+# 核对 2：确认每个声称已操作的文件确实出现在 git status 中
+# 如果某个文件"不在 git status 中"，则该操作未完成，不得写入汇报成果
+```
+
+**只有在 `git status` 中实际出现的变更，才能写入汇报成果和 Session Log。**
 
 每处理完 5-10 个蓝图执行一次 commit：
 
-```bash
-git add -p  # 精确暂存
+```powershell
+git add -A  # 暂存所有变更
 git commit -m "chore(blueprint): process N blueprints in {BP Wave}, migrated M to 03_BLUEPRINTS
 
 - BP Wave {编号}: {Wave名称}
 - Migrated (P0/P1): M -> docs/03_BLUEPRINTS/
-- Archived (P2): A -> docs/09_AUDIT/REPORTS/ARCHIVE/
-- Deleted (P3): D files
+- Archived (P2): A -> docs/06_ARCHIVE/
+- P3 report generated: docs/09_AUDIT/STATE/p3-deletion-report-{YYYYMMDD}.md
 - Layer corrections: C files
 - Registry updated: BLUEPRINT_DOMAIN_INVENTORY.yaml"
 ```

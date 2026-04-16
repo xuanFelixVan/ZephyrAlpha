@@ -46,10 +46,20 @@ safety_level: "READONLY - No file deletion, no git history modification"
        Select-Object Name | Sort-Object Name -Descending | Select-Object -First 1
    - 本次 session 从该编号 +1 开始分配 KE 编号
 
+**⚠️ 关键：读取文件后，立即运行以下命令建立"本次 session 基线"：**
+
+```powershell
+git status --short
+git log --oneline -5
+```
+
+将输出完整写入报告。**任何不在 `git status` 中的变更都是历史已有操作，不得当作本次成果汇报。**
+
 报告：
 - 当前执行 Wave：GH Wave {X}
 - 断点续接位置：第 {last_processed_index} 个文件起
 - 当前最大 KE 编号：KE-{NNN}，本次从 KE-{NNN+1} 开始
+- **本次 session 基线（git status 输出）**：{粘贴输出}
 
 ---
 

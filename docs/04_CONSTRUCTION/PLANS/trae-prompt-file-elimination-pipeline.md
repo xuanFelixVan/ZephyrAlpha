@@ -31,11 +31,21 @@ description: "供 Trae 免费模型每次 session 使用的标准化 Prompt，�
 3. 读取 `docs/subsystem-registry.yaml` → 确认目标目录的存活状态
 4. 读取 `docs/01_GOVERNANCE/governance-asset-inventory.yaml` → 确认治理资产总清单状态
 
+**⚠️ 关键：读取文件后，立即运行以下命令建立"本次 session 基线"：**
+
+```powershell
+git status --short
+git log --oneline -5
+```
+
+将输出完整写入报告。**任何不在 `git status` 中的变更都是历史已有操作，不得当作本次成果汇报。**
+
 报告格式：
 - 当前 Wave：{Wave 编号}，状态：{pending/in_progress}
 - 目标目录：{路径}
 - 上次 session 处理文件数：{数字}
 - 累计已删除：{数字} / 总目标 ~{数字}
+- **本次 session 基线（git status 输出）**：{粘贴输出}
 
 ---
 
@@ -134,12 +144,23 @@ git rm "文件路径"
 
 ---
 
-## 第六步：Commit
+## 第六步：Commit 前核对 + Commit
+
+**⚠️ 在执行 `git commit` 之前，必须先运行核对命令：**
+
+```powershell
+# 核对：确认本次 session 实际产生的变更
+git status --short
+# 对每个声称已删除的文件，验证其不存在：
+# Test-Path "文件路径"  # 必须输出 False
+```
+
+**只有在 `git status` 中实际出现的变更（D 删除 / A 新增），才能写入汇报成果。**
 
 每批次（10-20 个文件）执行一次 commit：
 
-```bash
-git add -p  # 精确暂存，不用 git add .
+```powershell
+git add -A
 git commit -m "chore(cleanup): eliminate N files from {Wave区域}, extracted K knowledge entries
 
 - Wave {编号}: {Wave名称}
