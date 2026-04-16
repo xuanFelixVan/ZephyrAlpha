@@ -252,11 +252,11 @@ git_history_pipeline:
     estimated_files: 300
     strategy: "读取 git history → 价值评估 → 高价值内容写入 docs/08_KNOWLEDGE/"
     status: in_progress
-    files_scanned: 20
+    files_scanned: 40
     files_high_value: 0
-    files_skipped: 20
+    files_skipped: 40
     knowledge_entries_added: 0
-    last_processed_index: 20    # 每次 session 更新，用于 Select-Object -Skip 断点续接
+    last_processed_index: 40    # 每次 session 更新，用于 Select-Object -Skip 断点续接
     started_date: "2026-04-16"
     completed_date: null
     sessions_log:
@@ -267,6 +267,13 @@ git_history_pipeline:
         files_skipped: 20
         skip_reason: "duplicate - 与现存 docs/01_FRAMEWORK/ 文件高度重复"
         notes: "扫描了 .audit_fix_backup/docs/01_FRAMEWORK/ 下的20个被删文件，发现均为现存文件的备份副本，无独立价值需要提取"
+      - session_id: "2026-04-16-002"
+        date: "2026-04-16"
+        files_scanned: 20
+        files_high_value: 0
+        files_skipped: 20
+        skip_reason: "duplicate - 与现存 docs/01_FRAMEWORK/ 文件同名"
+        notes: "第二批20个文件（ai-strategy-automation, alpha-factor-layer, algorithmic-trading-compliance等）均为现存文件同名副本，无独立价值"
 
   gh_wave_2:
     name: "docs/01_FRAMEWORK 历史版本扫描"
