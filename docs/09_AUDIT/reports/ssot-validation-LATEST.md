@@ -2,14 +2,14 @@
 type: generated
 ttl: 7d
 generated_by: scripts/governance/validate_ssot.py
-scan_time: 2026-05-04 22:24:51
+scan_time: 2026-05-04 23:09:36
 ---
 
 # SSoT 矛盾扫描报告
 
-> **扫描目录**：`docs`
-> **扫描时间**：2026-05-04 22:24:51
-> **扫描文件**：265 个 .md 文件，246 个含 frontmatter
+> **扫描目录**：`docs`  
+> **扫描时间**：2026-05-04 23:09:36  
+> **扫描文件**：265 个 .md 文件，245 个含 frontmatter  
 
 ---
 
@@ -18,9 +18,9 @@ scan_time: 2026-05-04 22:24:51
 | 严重级别 | 数量 | 处置要求 |
 |---------|------|---------|
 | 🔴 P0（严重）| 30 | 必须立即修复，阻塞 Phase 2 完成门禁 |
-| 🟡 P1（重要）| 56 | 需尽快修复，影响可信度 |
+| 🟡 P1（重要）| 55 | 需尽快修复，影响可信度 |
 | 🔵 P2（建议）| 0 | 低优先级，可按计划处理 |
-| **合计** | **86** | |
+| **合计** | **85** | |
 
 ---
 
@@ -268,7 +268,7 @@ scan_time: 2026-05-04 22:24:51
 
 ---
 
-## 🟡 P1 矛盾（56 条）
+## 🟡 P1 矛盾（55 条）
 
 ### P1-1：status 字段值 `draft` 不在有效状态集合中
 
@@ -702,15 +702,7 @@ scan_time: 2026-05-04 22:24:51
 - **矛盾值**：`retired`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-55：status 字段值 `archived` 不在有效状态集合中
-
-- **检查 ID**：`P1-1`
-- **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/capacity-assurance/delivery/construction-plan-v3.1-archived.md`
-- **矛盾值**：`archived`
-- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
-
-### P1-56：module_id `MOD-INF-017` 在不同文件中 layer 字段不一致：`l01_infrastructure` in ['docs/03_mod
+### P1-55：module_id `MOD-INF-017` 在不同文件中 layer 字段不一致：`l01_infrastructure` in ['docs/03_mod
 
 - **检查 ID**：`P1-2`
 - **涉及文件**：
@@ -724,4 +716,4 @@ scan_time: 2026-05-04 22:24:51
 ## 下一步行动
 
 1. **立即修复 30 条 P0 矛盾**（阻塞 Phase 2 完成门禁）
-2. 安排修复 56 条 P1 矛盾（本 sprint 内完成）
+2. 安排修复 55 条 P1 矛盾（本 sprint 内完成）
