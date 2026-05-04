@@ -60,7 +60,7 @@ verifiability: manual
 │
 ├── operational/                 ← 过程式操作手册（"怎么做"）
 │   ├── devops/                  ← DevOps 操作（pre-commit、CI、架构变更 playbook）
-│   ├── migration/               ← 迁移操作（老树→新树审计）
+│   ├── migration/               ← 迁移操作（老树→当前项目审计）
 │   └── vibe_coding/             ← Vibe Coding 操作（上下文规则、状态机、应急手册）
 │
 ├── domains/                     ← 层/域特定规则
@@ -191,7 +191,7 @@ verifiability: manual
 | **修改/优化规则文件** | `meta/rule-lifecycle-and-change-standard.md` | ~1500 |
 | **创建新标准文档** | `meta/document-structure-standard.md` + `meta/metadata-registry.md` §1~§4 | ~2500 |
 | **审查规则体系** | `meta/rule-verification-standard.md` + `_registry/catalogs/rule-registry.md` | ~2000 |
-| **操作具体文件夹** | 对应子目录下的规则文件 | ~1000 |
+| **操作具体文件夹** | 对应规则文件 | ~1000 |
 
 > 以上路径对齐 AGENTS.md §8.2 三层记忆模型。
 

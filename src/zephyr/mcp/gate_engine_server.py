@@ -38,7 +38,6 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 # 路径白名单模式（G1 写入防护示例规则）
 _BLACKLISTED_PATH_FRAGMENTS = frozenset({"scripts/archive", "working-designs", "temp_", ".backup"})
 
-
 def _make_gate_run_report(
     gate_id: str,
     passed: bool,
@@ -59,7 +58,6 @@ def _make_gate_run_report(
         "artifact_path": artifact_path,
         "created_at": now_iso(),
     }
-
 
 class GateEngineServer(BaseMCPServer):
     """gate_engine MCP Server 实现。
@@ -278,11 +276,9 @@ class GateEngineServer(BaseMCPServer):
         }
         return {"exemption_id": exemption_id, "accepted": True}
 
-
 def create_server() -> GateEngineServer:
     """工厂函数，返回配置好的 GateEngineServer 实例。"""
     return GateEngineServer()
-
 
 if __name__ == "__main__":
     create_server().run()

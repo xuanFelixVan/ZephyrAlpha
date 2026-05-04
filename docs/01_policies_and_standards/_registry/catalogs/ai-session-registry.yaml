@@ -69,7 +69,6 @@ _schema:
     - code             # src/ 下代码模块
     - refactor         # 重构（移动/重命名/合并文件）
 
-
 # ============================================================================
 # Session 记录
 # ============================================================================
@@ -90,18 +89,16 @@ _schema:
 
 sessions: []
 
-
 # ============================================================================
 # 当前 Session 记录的替代方式（过渡期——本登记表未激活）
 # ============================================================================
 transition_period:
-  note: "Phase 0-2 过渡期——session 记录以两种方式存在"
+  note: "2 过渡期——session 记录以两种方式存在"
   current_methods:
     - {method: "Session Log .md", path: "外部开发工作区/session-logs/*", format: "markdown prose"}
     - {method: "auto-handoff-log.py", path: "scripts/hooks/auto-handoff-log.py", format: "hook-generated structured text"}
   migration_phase: "Phase 2"
   migration_trigger: "当 Session Log 条数> 50 时，脚本自动抽取摘要填充本 YAML"
-
 
 # ============================================================================
 # 变更记录

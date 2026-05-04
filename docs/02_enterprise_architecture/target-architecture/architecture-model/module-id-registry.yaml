@@ -425,7 +425,7 @@ registered_ids:
 # population_status: deferred_until_phase1 — 当前不阻塞施工，Phase 1 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
 # planned_count: ~110（估算：14 层 ~90 + shared ~5 + frontend ~7 + scripts ~8）
 registered_modules: []  # Phase 1 填充——当前 112 个代码模块在各分区 YAML 中定义但未注册
-# TODO(Phase1): 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
+# TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）
 reserved_ranges:

@@ -14,9 +14,9 @@ DRAFT → QUEUED → ASSIGNED → RUNNING → REVIEWING → COMPLETED
 
 基础设施
 --------
-任务队列 : SQLite + asyncio.Queue（Phase 1-2）
+任务队列 : SQLite + asyncio.Queue（2）
           NATS JetStream（Phase 3+ 升级）
-沙箱     : Windows ACL + 只读挂载（Phase 1）
+沙箱     : Windows ACL + 只读挂载
           Docker Desktop（Phase 3+ 升级）
 
 P0 降级红线

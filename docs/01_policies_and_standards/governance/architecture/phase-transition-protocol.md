@@ -11,7 +11,7 @@ classification: confidential
 language: zh
 last_updated: 2026-05-01
 created_by: human_plus_agent
-summary: 定义 Phase 0-4 之间过渡的"退出-准入"双门协议。每个 Phase 必须同时声明 exit_criteria（DoD）+ next_phase_entry_criteria（前置验证），并由 validate_ssot.py 扩展的 validate_phase_transition.py 自动化校验，防止 Phase 之间偷跑/压栈/漂移。
+summary: 定义 4 之间过渡的"退出-准入"双门协议。每个 Phase 必须同时声明 exit_criteria（DoD）+ next_phase_entry_criteria（前置验证），并由 validate_ssot.py 扩展的 validate_phase_transition.py 自动化校验，防止 Phase 之间偷跑/压栈/漂移。
 rule_form: declarative
 scope: global
 stability: stable
@@ -49,7 +49,7 @@ ttl: permanent
 ### 0.2 本文档不是
 
 - ❌ 任务卡的总规划文档 → 见 `模块候选池/开发流程/任务卡/README.md`
-- ❌ 具体 Phase 任务清单 → 见 `phase-0-taskbook.md` / `phase-1-taskbook.md` 等
+- ❌ 具体 Phase 任务清单 → 见 `-taskbook.md` / `-taskbook.md` 等
 - ❌ SSoT Validator 的实现 → 见 `scripts/governance/validate_ssot.py`（Phase 0 产出）
 - ❌ 架构总览 → 见 `vibe-coding-infrastructure-architecture.md`
 
@@ -163,8 +163,8 @@ next_phase_entry_criteria:
     blocking: true
 
   - id: ENTRY-N+1-03
-    description: "影子快照 _reorg_snapshots/snapshot-phase-0-post/ 已创建"
-    validator: "scripts/governance/validate_snapshot.py --label phase-0-post"
+    description: "影子快照 _reorg_snapshots/snapshot--post/ 已创建"
+    validator: "scripts/governance/validate_snapshot.py --label -post"
     machine_verifiable: true
     blocking: true
 ```
@@ -183,7 +183,7 @@ next_phase_entry_criteria:
 
 ---
 
-## 3. Phase 0-4 具体双门内容
+## 3. 4 具体双门内容
 
 ### 3.1 Phase 0 → Phase 1
 
@@ -195,14 +195,14 @@ next_phase_entry_criteria:
 | EXIT-0-02 | 11 处 SSoT 矛盾（Kimi #7 根因）已全部修复 | `scripts/governance/validate_ssot.py --check conflicts` |
 | EXIT-0-03 | `ssot-authority-map.md` 已写入权威路径，无指向老树的链接 | `grep-scan` for `docs/02_ARCHITECTURE/` |
 | EXIT-0-04 | B-E 阶段的原子事务 change_log 已完整归档到 `reference-remap-table.yaml` | 人工审核 |
-| EXIT-0-05 | Phase 0 验收会议纪要已写入 `docs/09_audit/phase-0-acceptance.md` | 文件存在性 |
+| EXIT-0-05 | Phase 0 验收会议纪要已写入 `docs/09_audit/-acceptance.md` | 文件存在性 |
 
 #### Phase 1 entry_criteria
 
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-1-01 | Phase 0 全部 EXIT 通过 | EXIT-0-01~05 |
-| ENTRY-1-02 | 影子快照 `_reorg_snapshots/snapshot-phase-0-post/` 已创建 | - |
+| ENTRY-1-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
 | ENTRY-1-03 | Phase 1 骨架任务卡 T-1-01 ~ T-1-20 已创建且 status=queued | - |
 | ENTRY-1-04 | 5 份服务接口规范的 ADR-0015~0020 全部 status=accepted | - |
 
@@ -223,7 +223,7 @@ next_phase_entry_criteria:
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-2-01 | Phase 1 全部 EXIT 通过 | EXIT-1-01~05 |
-| ENTRY-2-02 | 影子快照 `_reorg_snapshots/snapshot-phase-1-post/` 已创建 | - |
+| ENTRY-2-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
 | ENTRY-2-03 | Phase 2 骨架完善任务卡已创建 | - |
 
 ### 3.3 Phase 2 → Phase 3
@@ -245,7 +245,7 @@ next_phase_entry_criteria:
 |----|------|----------|
 | ENTRY-3-01 | Phase 2 全部 EXIT 通过 | EXIT-2-01~06 |
 | ENTRY-3-02 | 升级触发条件至少一项达成 | 看板 `technology-landscape.yaml::upgrade_watchboard` |
-| ENTRY-3-03 | 影子快照 `_reorg_snapshots/snapshot-phase-2-post/` 已创建 | - |
+| ENTRY-3-03 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
 | ENTRY-3-04 | 服务化迁移任务卡 T-3-XX 已创建 | - |
 
 ### 3.4 Phase 3 → Phase 4
@@ -263,7 +263,7 @@ next_phase_entry_criteria:
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-4-01 | Phase 3 全部 EXIT 通过 | EXIT-3-01~03 |
-| ENTRY-4-02 | 影子快照 `_reorg_snapshots/snapshot-phase-3-post/` 已创建 | - |
+| ENTRY-4-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
 | ENTRY-4-03 | Phase 4 实盘生产任务卡已创建 | - |
 
 ### 3.5 Phase 4（无下一 Phase）
@@ -307,8 +307,8 @@ next_phase_entry_criteria:
     blocking: true
   # ... （见 §3 具体内容）
 
-rollback_snapshot_path: "_reorg_snapshots/snapshot-phase-0-post/"
-phase_acceptance_doc: "docs/09_audit/phase-0-acceptance.md"
+rollback_snapshot_path: "_reorg_snapshots/snapshot--post/"
+phase_acceptance_doc: "docs/09_audit/-acceptance.md"
 ---
 ```
 
@@ -382,7 +382,7 @@ python scripts/governance/validate_ssot.py --check phase_schema
  "remediation": "Fix violations in tasks/T-0-01/ before proceeding."}
 
 {"level": "INFO", "phase": 0, "criterion": "EXIT-0-05", "status": "PASS",
- "evidence": "docs/09_audit/phase-0-acceptance.md exists"}
+ "evidence": "docs/09_audit/-acceptance.md exists"}
 ```
 
 ---
@@ -479,4 +479,4 @@ validate_phase_transition.py
 | 日期 | 版本 | 作者 | 说明 |
 |------|------|------|------|
 | 2026-05-01 | 1.1.0 | AI Architect | **目录迁移**：从 `02_enterprise_architecture/target-architecture/` 移至 `01_policies_and_standards/governance/architecture/`，`reference` 类文档按 PS-STD-001 §3.4 规定归入治理目录。 |
-| 2026-04-24 | 1.0.0 | opus47_architect | 初版。基于 vibe-coding-audit-merged.md §Opus §五 M-02 "双门协议"建议落地。Phase 0-4 全部双门内容 + validate_phase_*.py 接口规范 + HiL 流程。|
+| 2026-04-24 | 1.0.0 | opus47_architect | 初版。基于 vibe-coding-audit-merged.md §Opus §五 M-02 "双门协议"建议落地。4 全部双门内容 + validate_phase_*.py 接口规范 + HiL 流程。|

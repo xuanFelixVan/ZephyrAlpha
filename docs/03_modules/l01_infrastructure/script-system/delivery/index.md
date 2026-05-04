@@ -14,7 +14,7 @@ generated: '2026-05-02'
 
 | 版本 | 日期 | Phase | 交付物 |
 |------|------|-------|--------|
-| v0.1.0-phase-0-mvp | 2026-05-02 | Phase-0-MVP | `src/zephyr/script_system/__init__.py` |
+| v0.1.0--mvp | 2026-05-02 | -MVP | `src/zephyr/script_system/__init__.py` |
 | | | | `src/zephyr/script_system/finding.py`（Finding Schema + FindingCollection） |
 | | | | `scripts/governance/__init__.py` |
 | | | | `scripts/governance/run_all.py`（40个审计脚本统一编排入口） |

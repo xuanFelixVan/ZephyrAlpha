@@ -23,7 +23,6 @@ if sys.stdout.encoding != "utf-8":
 
 DOCS_ROOT = Path(__file__).resolve().parent.parent / "docs"
 
-
 def extract_sections(body) -> Optional[str]:
     """Extract key sections from index.md body."""
     sections = {}
@@ -43,7 +42,6 @@ def extract_sections(body) -> Optional[str]:
         sections[current_section] = "\n".join(current_lines).strip()
 
     return sections
-
 
 def merge_pair(index_path, readme_path) -> None:
     """Merge README.md into index.md, return merged content."""
@@ -147,7 +145,6 @@ def merge_pair(index_path, readme_path) -> None:
 
     return f"---\n{frontmatter_str}\n---\n\n{body_str}\n"
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
@@ -191,7 +188,6 @@ def main() -> None:
     print(f"Errors: {errors}")
     remaining = len(pairs) - merged - errors
     print(f"Remaining pairs: {remaining}")
-
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

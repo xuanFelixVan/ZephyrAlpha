@@ -7,7 +7,6 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-
 from zephyr.core.models import TaskCard
 from zephyr.pipeline import (
     M_MODULE_SPECS,
@@ -15,7 +14,6 @@ from zephyr.pipeline import (
     PipelineOrchestrator,
     PipelineStatus,
 )
-
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
     from zephyr.shared.schemas import Priority, TaskNamespace
@@ -61,7 +59,6 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
     defaults.update(overrides)
     return TaskCard(**defaults)
 
-
 class TestMModules:
     def test_all_modules_loaded(self) -> None:
         assert len(M_MODULES) == 11
@@ -77,7 +74,6 @@ class TestMModules:
     def test_glm_modules(self) -> None:
         glm_m = [m for m in M_MODULES if M_MODULE_SPECS[m]["model"] == "glm"]
         assert glm_m == ["M5", "M7"]
-
 
 class TestPipelineDispatch:
     def test_a_pipeline_dispatch(self) -> None:

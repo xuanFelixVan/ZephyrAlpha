@@ -29,7 +29,6 @@ from _shared.constants import REPO_ROOT, SRC_DIR
 
 SKIP_NAMES = {"__future__.annotations", "__future__.division", "__future__.print_function"}
 
-
 def _collect_used_names(tree: ast.AST) -> set[str]:
     used = set()
     for node in ast.walk(tree):
@@ -46,7 +45,6 @@ def _collect_used_names(tree: ast.AST) -> set[str]:
                     used.add(node.func.value.id)
     return used
 
-
 def _get_imported_names(tree: ast.AST) -> list[tuple[int, str, str]]:
     imports = []
     for node in ast.iter_child_nodes(tree):
@@ -61,7 +59,6 @@ def _get_imported_names(tree: ast.AST) -> list[tuple[int, str, str]]:
                 name = alias.asname or alias.name
                 imports.append((node.lineno, name, f"{node.module}.{alias.name}" if node.module else alias.name))
     return imports
-
 
 def scan_unused_imports(source_path: Path) -> list[tuple[int, str, str]]:
     """扫描未使用的 import."""
@@ -82,7 +79,6 @@ def scan_unused_imports(source_path: Path) -> list[tuple[int, str, str]]:
             unused.append((lineno, name, full_name))
     return unused
     """扫描未使用的 import."""
-
 
 def main() -> None:
     """入口函数."""
@@ -115,7 +111,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

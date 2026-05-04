@@ -34,7 +34,6 @@ CONTRACTS_YAML = (
     / "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml"
 )
 
-
 def load_contracts() -> dict:
     """加载合约定义"""
     if not CONTRACTS_YAML.exists():
@@ -42,14 +41,12 @@ def load_contracts() -> dict:
         sys.exit(2)
     return yaml.safe_load(CONTRACTS_YAML.read_text(encoding="utf-8"))
 
-
 def find_contract(data: dict, contract_id: str) -> dict | None:
     """查找合约"""
     for ctr in data.get("contracts", []):
         if ctr["id"] == contract_id:
             return ctr
     return None
-
 
 def find_consumers_in_source(data: dict, contract_id: str) -> list[str]:
     """查找源码中的消费者"""
@@ -74,7 +71,6 @@ def find_consumers_in_source(data: dict, contract_id: str) -> list[str]:
                 consumers.append(rel)
     return consumers
 
-
 def find_field_consumers(data: dict, contract_id: str, field_name: str) -> list[str]:
     """查找字段消费者"""
     target = find_contract(data, contract_id)
@@ -96,7 +92,6 @@ def find_field_consumers(data: dict, contract_id: str, field_name: str) -> list[
                 consumers.append(rel)
     return consumers
 
-
 def build_impact_matrix(data: dict) -> dict[str, dict]:
     """构建影响矩阵"""
     matrix: dict[str, dict] = {}
@@ -112,7 +107,6 @@ def build_impact_matrix(data: dict) -> dict[str, dict]:
             "field_count": len(ctr.get("fields", [])),
         }
     return matrix
-
 
 def main() -> None:
     """入口函数"""
@@ -174,7 +168,6 @@ def main() -> None:
     print("  2. 运行 python scripts/context/generate_architecture_context.py 重新生成上下文包")
     print("  3. 运行 pytest tests/architecture/ 确认架构适应度函数仍然通过")
     print("  4. 运行 python -m pytest tests/unit/test_enforcer.py 确认 enforcer 测试通过")
-
 
 if __name__ == "__main__":
     main()

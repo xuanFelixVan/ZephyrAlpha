@@ -47,7 +47,6 @@ _PACKAGE_IMPORT_MAP: dict[str, str] = {
     "chromadb": "chromadb",
 }
 
-
 @dataclass
 class DependencyStatus:
     pip_name: str
@@ -55,7 +54,6 @@ class DependencyStatus:
     version_spec: str
     installed: bool = False
     error: str | None = None
-
 
 @dataclass
 class EnvReport:
@@ -77,7 +75,6 @@ class EnvReport:
 
     "成功标记."
 
-
 def _parse_requirements() -> list[tuple[str, str]]:
     entries: list[tuple[str, str]] = []
     if not REQUIREMENTS_FILE.exists():
@@ -92,12 +89,10 @@ def _parse_requirements() -> list[tuple[str, str]]:
             entries.append((m.group(1).lower(), (m.group(2) or "").strip()))
     return entries
 
-
 def _check_python() -> tuple[bool, str]:
     current = sys.version_info[:2]
     version_str = f"{current[0]}.{current[1]}.{sys.version_info[2]}"
     return (current >= MIN_PYTHON, version_str)
-
 
 def _check_package(pip_name: str, import_name: str) -> tuple[bool, str | None]:
     try:
@@ -105,7 +100,6 @@ def _check_package(pip_name: str, import_name: str) -> tuple[bool, str | None]:
         return (True, None)
     except ImportError as e:
         return (False, str(e))
-
 
 def run_check() -> EnvReport:
     """执行检查"""
@@ -127,7 +121,6 @@ def run_check() -> EnvReport:
     return report
     "执行检查."
 
-
 def _install_missing(missing: list[DependencyStatus]) -> bool:
     install_targets = [f"{d.pip_name}{d.version_spec}" if d.version_spec else d.pip_name for d in missing]
     if not install_targets:
@@ -145,7 +138,6 @@ def _install_missing(missing: list[DependencyStatus]) -> bool:
         print(f"\n[ENV-ERROR] pip install 异常: {e}", file=sys.stderr)
         return False
 
-
 def _print_report(report: EnvReport) -> None:
     print(f'\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}', file=sys.stderr)
     print(f"依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n", file=sys.stderr)
@@ -159,7 +151,6 @@ def _print_report(report: EnvReport) -> None:
         print(file=sys.stderr)
     if report.all_ok:
         print("✅ 环境就绪 — 所有依赖齐全\n", file=sys.stderr)
-
 
 def _print_json(report: EnvReport) -> None:
     data = {
@@ -178,7 +169,6 @@ def _print_json(report: EnvReport) -> None:
         },
     }
     print(json.dumps(data, ensure_ascii=False, indent=2), file=sys.stderr)
-
 
 def main() -> None:
     """入口函数."""
@@ -221,7 +211,6 @@ def main() -> None:
             sys.exit(1)
     sys.exit(0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

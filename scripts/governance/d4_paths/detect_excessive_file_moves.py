@@ -29,7 +29,6 @@ import argparse
 
 MOVE_THRESHOLD = 2
 
-
 def get_staged_renames() -> list[str]:
     """获取暂存区重命名列表"""
     try:
@@ -46,7 +45,6 @@ def get_staged_renames() -> list[str]:
         pass
     return []
     "get staged renames."
-
 
 def count_file_moves(filepath: str) -> int:
     """统计文件移动次数"""
@@ -66,7 +64,6 @@ def count_file_moves(filepath: str) -> int:
         pass
     return 0
     "count file moves."
-
 
 def main() -> None:
     """入口函数."""
@@ -88,7 +85,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

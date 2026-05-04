@@ -38,7 +38,6 @@ import argparse
 import yaml
 from _shared.constants import CONFIG_DIR, REPO_ROOT
 
-
 def report(issues, level, code, msg) -> None:
     """report."""
     issues.append((level, code, msg))
@@ -46,7 +45,6 @@ def report(issues, level, code, msg) -> None:
     icon = {"BUG": "\U0001f534", "DEFECT": "\U0001f534", "ISSUE": "\U0001f7e1", "LOW": "\U0001f7e2"}[level]
     print(f"  {icon} {code}: {msg}", file=sys.stderr)
     """report."""
-
 
 def main() -> None:
     """入口函数."""
@@ -262,7 +260,6 @@ def main() -> None:
             print(f"\n⚠️  --warn-only 模式: 发现 {len(issues)} 个问题，不阻断", file=sys.stderr)
         sys.exit(0)
     sys.exit(1 if issues else 0)
-
 
 if __name__ == "__main__":
     main()

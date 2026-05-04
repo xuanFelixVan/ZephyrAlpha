@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-
 def utc_now() -> datetime:
     """返回当前 UTC 时间。
 
@@ -24,14 +23,12 @@ def utc_now() -> datetime:
     """
     return datetime.now(UTC)
 
-
 def now_iso() -> str:
     """返回当前 UTC 时间的 ISO 8601 字符串。
 
     替代 9 处分散的 _now_iso() 定义。
     """
     return utc_now().isoformat()
-
 
 def default_now() -> datetime:
     """Pydantic Field default_factory 用的 UTC 时间工厂。
@@ -43,7 +40,6 @@ def default_now() -> datetime:
         created_at: datetime = Field(default_factory=default_now)
     """
     return utc_now()
-
 
 __all__ = [
     "utc_now",

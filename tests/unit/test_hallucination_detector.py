@@ -47,7 +47,6 @@ from zephyr.orchestrator.hallucination_detector import (
 # 辅助：可编排的 FakeCaller
 # ---------------------------------------------------------------------------
 
-
 class FakeCaller:
     """可编排的模型调用 mock。按 purpose 返回预设内容。"""
 
@@ -66,7 +65,6 @@ class FakeCaller:
             return self._responses[purpose]
         return ModelCallResult(content="{}", cost_usd=self._default_cost, latency_ms=120, success=True)
 
-
 def _step1_payload(baseline: str, questions: list[str]) -> ModelCallResult:
     return ModelCallResult(
         content=json.dumps({"baseline_answer": baseline, "verify_questions": questions}),
@@ -74,7 +72,6 @@ def _step1_payload(baseline: str, questions: list[str]) -> ModelCallResult:
         latency_ms=500,
         success=True,
     )
-
 
 def _step2_payload(answers: list[dict[str, Any]]) -> ModelCallResult:
     return ModelCallResult(
@@ -84,11 +81,9 @@ def _step2_payload(answers: list[dict[str, Any]]) -> ModelCallResult:
         success=True,
     )
 
-
 # ---------------------------------------------------------------------------
 # 1. HallucinationResult 契约
 # ---------------------------------------------------------------------------
-
 
 class TestHallucinationResultContract:
     def test_valid_minimal(self) -> None:
@@ -124,11 +119,9 @@ class TestHallucinationResultContract:
                 verify_questions=["q"] * 6,
             )
 
-
 # ---------------------------------------------------------------------------
 # 2. should_trigger 触发矩阵
 # ---------------------------------------------------------------------------
-
 
 class TestShouldTrigger:
     def setup_method(self) -> None:
@@ -152,11 +145,9 @@ class TestShouldTrigger:
     def test_l1_frozen_asset(self) -> None:
         assert self.detector.should_trigger(RiskLevel.L, frozen_asset_touch=True) == TriggerLevel.L1_WHITELIST
 
-
 # ---------------------------------------------------------------------------
 # 3. CoVe 正常流程（双模型可达，低 inconsistency）
 # ---------------------------------------------------------------------------
-
 
 def test_cove_happy_path_low_inconsistency() -> None:
     primary = FakeCaller(
@@ -204,7 +195,6 @@ def test_cove_happy_path_low_inconsistency() -> None:
     assert r.cost_usd > 0
     assert len(r.verify_questions) >= 3
 
-
 def test_cove_detects_hallucination_on_drift() -> None:
     primary = FakeCaller(
         {
@@ -245,7 +235,6 @@ def test_cove_detects_hallucination_on_drift() -> None:
     assert r.requires_human is True
     assert r.risk_level == "H"
 
-
 def test_cove_h_level_midband_final_check() -> None:
     """H 级若 inconsistency_score 在 (0.10, 0.40] 中间带 → requires_human 而非 Final Check 修正。"""
     primary = FakeCaller(
@@ -273,11 +262,9 @@ def test_cove_h_level_midband_final_check() -> None:
     assert r.inconsistency_score > 0.10
     assert r.requires_human is True
 
-
 # ---------------------------------------------------------------------------
 # 4. 降级级联
 # ---------------------------------------------------------------------------
-
 
 def test_single_model_fallback_when_only_one_available() -> None:
     primary = FakeCaller()
@@ -286,7 +273,6 @@ def test_single_model_fallback_when_only_one_available() -> None:
     assert r.fallback_used == FallbackMode.SINGLE_MODEL.value
     assert r.confidence == 0.5
     assert r.triggered is True
-
 
 def test_keyword_fallback_when_both_models_unavailable() -> None:
     detector = HallucinationDetector(primary_caller=None, verifier_caller=None)
@@ -299,7 +285,6 @@ def test_keyword_fallback_when_both_models_unavailable() -> None:
     assert r.is_hallucination is True
     assert any("suspect_citation" in ev for ev in r.evidence)
     assert any("numeric_out_of_range" in ev for ev in r.evidence)
-
 
 def test_step1_bad_json_falls_back_to_keyword() -> None:
     primary = FakeCaller(
@@ -318,11 +303,9 @@ def test_step1_bad_json_falls_back_to_keyword() -> None:
     assert r.fallback_used == FallbackMode.KEYWORD.value
     assert any("numeric_out_of_range" in ev for ev in r.evidence)
 
-
 # ---------------------------------------------------------------------------
 # 5. Keyword 规则
 # ---------------------------------------------------------------------------
-
 
 class TestKeywordRules:
     def test_numeric_out_of_range_sharpe(self) -> None:
@@ -352,11 +335,9 @@ class TestKeywordRules:
         out_ok = KEYWORD_HALLU_RULES["frozen_asset_mutation"]("请修改 tool_contracts.yaml 来适配", True)
         assert out_ok == []
 
-
 # ---------------------------------------------------------------------------
 # 6. Budget / 窗口重置
 # ---------------------------------------------------------------------------
-
 
 def test_budget_skip_l_m_when_daily_cap_exhausted() -> None:
     fixed_now = datetime(2026, 4, 24, 12, 0, tzinfo=UTC)
@@ -372,7 +353,6 @@ def test_budget_skip_l_m_when_daily_cap_exhausted() -> None:
     r = detector.detect("normal claim", {}, RiskLevel.L)
     assert r.triggered is False
     assert r.fallback_used == FallbackMode.BUDGET_SKIP.value
-
 
 def test_budget_h_level_ignores_daily_cap() -> None:
     primary = FakeCaller({"cove_step1_baseline_plan": _step1_payload("ok", ["Q1", "Q2", "Q3"])})
@@ -400,7 +380,6 @@ def test_budget_h_level_ignores_daily_cap() -> None:
     r = detector.detect("ok", {}, RiskLevel.H)
     assert r.triggered is True  # H 级强制执行
 
-
 def test_budget_window_resets_across_day() -> None:
     times = [
         datetime(2026, 4, 24, 23, 59, tzinfo=UTC),
@@ -419,11 +398,9 @@ def test_budget_window_resets_across_day() -> None:
     detector.budget_state.reset_if_window_changed(times[1])
     assert detector.budget_state.daily_spent_usd == 0.0
 
-
 # ---------------------------------------------------------------------------
 # 7. L3 黑名单 / 审计回调 / 工厂
 # ---------------------------------------------------------------------------
-
 
 def test_l3_blacklist_returns_not_triggered() -> None:
     detector = HallucinationDetector()
@@ -436,7 +413,6 @@ def test_l3_blacklist_returns_not_triggered() -> None:
     assert r.triggered is False
     assert r.is_hallucination is False
 
-
 def test_audit_logger_invoked_exactly_once() -> None:
     calls: list[HallucinationResult] = []
 
@@ -448,7 +424,6 @@ def test_audit_logger_invoked_exactly_once() -> None:
     assert len(calls) == 1
     assert calls[0].triggered is True
 
-
 def test_claim_hash_stable() -> None:
     h1 = HallucinationDetector.claim_hash("abc")
     h2 = HallucinationDetector.claim_hash("abc")
@@ -457,13 +432,11 @@ def test_claim_hash_stable() -> None:
     assert h1 != h3
     assert h1.startswith("claim#sha256:")
 
-
 def test_build_detector_factory_has_default_budget() -> None:
     d = build_detector_with_defaults()
     assert isinstance(d.budget_state, BudgetState)
     assert d.budget_state.monthly_budget_usd == 15.0
     assert d.budget_state.daily_budget_usd == 0.75
-
 
 def test_empty_claim_raises() -> None:
     detector = HallucinationDetector()

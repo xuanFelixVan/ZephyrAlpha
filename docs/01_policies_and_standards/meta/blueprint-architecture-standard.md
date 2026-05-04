@@ -165,7 +165,7 @@ ai_autonomy: immutable_core
 - `MOD-DOMAIN-GOV-001`：L00 数据 + L10 合规 + L12 可观测性 + L01 基础设施 域集成蓝图（横向治理层）
 
 > ⚠️ **重要说明**：`MOD-MASTER-001` 当前同时承担了"12 个 L01 系统集成总蓝图"的角色。
-> 这在 Phase 0-1 阶段是可接受的——因为目前所有蓝图都在 L01 基础设施层。
+> 这在 1 阶段是可接受的——因为目前所有蓝图都在 L01 基础设施层。
 > 当 L02-L13 模块开始创建蓝图时，需要做**重命名/升级**：`MOD-MASTER-001` → `MOD-DOMAIN-L01-001`，并新建真正的 `SYS-MASTER-001`。
 > 这个升级动作的触发条件见 §3.3。
 
@@ -188,13 +188,13 @@ ai_autonomy: immutable_core
 
 > 不是任何时候都需要立即创建所有三级蓝图。以下条件触发对应级别的蓝图创建。
 
-| 蓝图层级 | 创建条件 | 示例场景 | Phase 0-1 当前 |
+| 蓝图层级 | 创建条件 | 示例场景 | 1 当前 |
 |:----|---------|---------|:---:|
 | **Level 0** | 系统 ≥ 3 个功能域且出现跨域数据契约需求 | L02 因子开始产出 → L04 风控消费，需要 CTR 合同 | ⚠️ 仅有 MOD-MASTER-001（L01 域级），缺真正的全系统总蓝图 |
 | **Level 1** | 某一域内模块 ≥ 5 且出现 ≥ 3 组跨模块交互 | L02/L03 域内模块超过 5 个后，因子和信号的集成需要独立域蓝图 | ⚠️ 仅有 L01 域级（MOD-MASTER-001），缺 L02-L03、L04-L07、L11-L13 域蓝图 |
 | **Level 2** | 每创建一个新的功能模块 | 当前已满足——19 个模块蓝图均已创建 | ✅ 已完成 |
 
-> **Phase 0-1 约束**：当前阶段，只创建 Level 0 `MOD-MASTER-001` + 已有的 19 个 Level 2 模块蓝图。
+> **1 约束**：当前阶段，只创建 Level 0 `MOD-MASTER-001` + 已有的 19 个 Level 2 模块蓝图。
 > `SYS-MASTER-001`（真正的全系统总蓝图）留待 Phase 2 创建——触发条件为任一 L02+ 模块蓝图开始创建时。
 
 ---
@@ -338,10 +338,10 @@ belongs_to: "MOD-MASTER-001"     #  ← 关联域蓝图 ID（必填）
 
 | 如果... | `belongs_to` 值 | 何时 |
 |------|------|------|
-| 在 Phase 0-1 期创建的模块蓝图 | `MOD-MASTER-001` | 因为当前只有这个域蓝图 |
+| 在 1 期创建的模块蓝图 | `MOD-MASTER-001` | 因为当前只有这个域蓝图 |
 | 在 Phase 2+ 创建的 L02 因子蓝图 | `MOD-DOMAIN-SIG-001` | 信号域集成蓝图（待创建）|
 | 在 Phase 2+ 创建的 L06 执行蓝图 | `MOD-DOMAIN-RISK-001` | 执行域集成蓝图（待创建）|
-| 跨层基础设施模块（如 Telemetry）| `SYS-MASTER-001` | 全系统总蓝图（Phase 2）|
+| 跨层基础设施模块（如 Telemetry）| `SYS-MASTER-001` | 全系统总蓝图|
 
 ### 6.2 域蓝图的 `belongs_to`（MUST）
 
@@ -445,8 +445,8 @@ blueprints:
 
 | `blueprint_level` | 含义 | 对应 ID 前缀 |
 |:--|------|------|
-| `system` | Level 0 全系统总蓝图 | `SYS-MASTER` 或 `MOD-MASTER`（Phase 0-1 变体）|
-| `domain` | Level 1 功能域集成蓝图 | `MOD-DOMAIN` 或 `MOD-MASTER`（Phase 0-1 变体）|
+| `system` | Level 0 全系统总蓝图 | `SYS-MASTER` 或 `MOD-MASTER`（1 变体）|
+| `domain` | Level 1 功能域集成蓝图 | `MOD-DOMAIN` 或 `MOD-MASTER`（1 变体）|
 | `module` | Level 2 单模块蓝图 | `MOD-{LAYER/DOMAIN}` |
 
 ### 8.2 `module-registry.yaml` 扩展（SHOULD）
@@ -466,7 +466,7 @@ modules:
 
 ## 9. 既存蓝图的归属映射
 
-> 本章是过渡性声明——Phase 0-1 既存的 19 份蓝图的归属（按 §6.1 规则声明 `belongs_to`）。
+> 本章是过渡性声明——1 既存的 19 份蓝图的归属（按 §6.1 规则声明 `belongs_to`）。
 
 | module_id | title | `belongs_to` | blueprint_level |
 |------|------|------|:---:|
@@ -490,7 +490,7 @@ modules:
 | MOD-INF-016 | Shared+Core | MOD-MASTER-001 | module |
 | MOD-INF-017 | Code Dedup Engine | MOD-MASTER-001 | module |
 
-> **说明**：Phase 0-1 阶段，所有 Level 2 模块蓝图的上级都是 `MOD-MASTER-001`（即 L01 基础设施域集成蓝图）。
+> **说明**：1 阶段，所有 Level 2 模块蓝图的上级都是 `MOD-MASTER-001`（即 L01 基础设施域集成蓝图）。
 > Phase 2+ 时，L02+ 的模块蓝图将归属到新建的对应 Level 1 域蓝图。
 
 ---
@@ -545,11 +545,11 @@ modules:
 
 ## 13. 异常豁免机制
 
-本标准的异常豁免机制适用于**临时性违反**——如 Phase 0-1 过渡期内暂时无法升级既存蓝图 frontmatter 的情况。
+本标准的异常豁免机制适用于**临时性违反**——如 1 过渡期内暂时无法升级既存蓝图 frontmatter 的情况。
 
 | 豁免级别 | 定义 | 触发条件 | 审批 |
 |------|------|------|------|
-| 瞬态豁免 | Phase 0-1 既有蓝图**不强制**立即声明 `belongs_to` | 现有蓝图 > 20 份且 Owner 判断立即声明成本过高 | 本声明即可——Owner 已知 |
+| 瞬态豁免 | 1 既有蓝图**不强制**立即声明 `belongs_to` | 现有蓝图 > 20 份且 Owner 判断立即声明成本过高 | 本声明即可——Owner 已知 |
 | 建设豁免 | 目录迁移中**允许暂时**存在双目录（旧目录 + 新目录）| 目录迁移过程中必须不能一次切换 | Owner 口头批准 |
 
 **瞬态豁免的失效条件**：本标准发布后，Phase 1 结束时（任务系统 v0.3.0 升级完成 + GateEngine G7 完整度门禁激活），所有既存蓝图 MUST 已声明 `belongs_to`。届时瞬态豁免自动失它。
@@ -593,4 +593,4 @@ modules:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|------|
-| 1.0.0 | 2026-05-04 | 初始版本。建立蓝图三级金字塔体系：(1) Level 0 ⇒ 全系统总蓝图 `_system-master/`，(2) Level 1 ⇒ 域集成蓝图 `_domain-{layers}/`，(3) Level 2 ⇒ 模块蓝图 `l{NN}_{name}/{module}/blueprint.md`。定义 `belongs_to` frontmatter 字段、14 层 ID 前缀表、既有 19 份蓝图归属清单。AI 冷启动 6 步定位路径。对标 Codified Context 三层内存模型。禁止行为 6 条。Phase 0-1 瞬态豁免——既存蓝图不强制立即声明 `belongs_to`，Phase 1 结束时触发。关联决策线：`R85`（本决策在 architecture-rationale-log.md 中的记录）|
+| 1.0.0 | 2026-05-04 | 初始版本。建立蓝图三级金字塔体系：(1) Level 0 ⇒ 全系统总蓝图 `_system-master/`，(2) Level 1 ⇒ 域集成蓝图 `_domain-{layers}/`，(3) Level 2 ⇒ 模块蓝图 `l{NN}_{name}/{module}/blueprint.md`。定义 `belongs_to` frontmatter 字段、14 层 ID 前缀表、既有 19 份蓝图归属清单。AI 冷启动 6 步定位路径。对标 Codified Context 三层内存模型。禁止行为 6 条。1 瞬态豁免——既存蓝图不强制立即声明 `belongs_to`，Phase 1 结束时触发。关联决策线：`R85`（本决策在 architecture-rationale-log.md 中的记录）|

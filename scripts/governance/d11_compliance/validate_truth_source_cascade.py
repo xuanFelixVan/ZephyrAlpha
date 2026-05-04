@@ -65,13 +65,12 @@ RATIONALE_LOG_PATH: Path = (
 )
 REPORTS_DIR: Path = REPO_ROOT / ".runtime" / "reports"
 
-# Phase 1：仅扫描 R-86 起
+# 仅扫描 R-86 起
 MIN_R_NUMBER: int = 86
 
 # ---------------------------------------------------------------------------
 # Pydantic 模型
 # ---------------------------------------------------------------------------
-
 
 @dataclass(frozen=True)
 class RationaleDecision:
@@ -82,7 +81,6 @@ class RationaleDecision:
     decision_summary: str
     affected_files: list[str] = field(default_factory=list)
 
-
 @dataclass(frozen=True)
 class TruthSourceCascadeResult:
     """影响追踪全局结果。"""
@@ -92,7 +90,6 @@ class TruthSourceCascadeResult:
     files_impacted: int
     warnings: list[str]
     cascade_rows: list[dict]
-
 
 # ---------------------------------------------------------------------------
 # 解析层
@@ -116,7 +113,6 @@ _AF_YAML_BLOCK_PATTERN = re.compile(r"affected_files:\s*\n((?:[ \t]*[-*]\s+\S[^\
 
 # 表格行分隔符（跳过）
 _SEPARATOR_PATTERN = re.compile(r"^\s*\|[-\s|:]+\|\s*$")
-
 
 def _extract_affected_files(cell_text: str) -> list[str]:
     """从 rationale-log 单元格文本中提取 affected_files 列表。
@@ -143,7 +139,6 @@ def _extract_affected_files(cell_text: str) -> list[str]:
 
     return []
 
-
 def _extract_date(cell_text: str) -> date | None:
     """从单元格文本中提取最早出现的 YYYY-MM-DD 日期。"""
     matches = _DATE_PATTERN.findall(cell_text)
@@ -153,7 +148,6 @@ def _extract_date(cell_text: str) -> date | None:
         except ValueError:
             continue
     return None
-
 
 def _parse_row(line: str) -> RationaleDecision | None:
     """将 rationale-log 中的一行解析为 RationaleDecision。
@@ -197,7 +191,6 @@ def _parse_row(line: str) -> RationaleDecision | None:
         affected_files=affected,
     )
 
-
 def parse_rationale_log(
     path: Path | None = None,
 ) -> list[RationaleDecision]:
@@ -230,11 +223,9 @@ def parse_rationale_log(
 
     return decisions
 
-
 # ---------------------------------------------------------------------------
 # 反向链表构建
 # ---------------------------------------------------------------------------
-
 
 def build_cascade_map(
     decisions: list[RationaleDecision],
@@ -262,11 +253,9 @@ def build_cascade_map(
 
     return dict(cascade)
 
-
 # ---------------------------------------------------------------------------
 # 真源 frontmatter 解析
 # ---------------------------------------------------------------------------
-
 
 def _parse_frontmatter_date(file_path: Path) -> date | None:
     """读取文件 frontmatter 中的 last_updated 字段。
@@ -293,11 +282,9 @@ def _parse_frontmatter_date(file_path: Path) -> date | None:
     except (ValueError, TypeError):
         return None
 
-
 # ---------------------------------------------------------------------------
 # 过时真源检测
 # ---------------------------------------------------------------------------
-
 
 def detect_outdated_truth_sources(
     cascade: dict[str, list[RationaleDecision]],
@@ -356,11 +343,9 @@ def detect_outdated_truth_sources(
 
     return warnings, rows
 
-
 # ---------------------------------------------------------------------------
 # 报告生成
 # ---------------------------------------------------------------------------
-
 
 def generate_report(
     result: TruthSourceCascadeResult,
@@ -450,11 +435,9 @@ def generate_report(
     candidate.write_text(report_text, encoding="utf-8", newline="\n")
     return candidate
 
-
 # ---------------------------------------------------------------------------
 # 主入口
 # ---------------------------------------------------------------------------
-
 
 def run(
     rationale_log_path: Path | None = None,
@@ -510,7 +493,6 @@ def run(
 
     return result
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="V-15 真源级联验证器")
@@ -523,7 +505,6 @@ def main() -> None:
     if result.warnings:
         sys.exit(1)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

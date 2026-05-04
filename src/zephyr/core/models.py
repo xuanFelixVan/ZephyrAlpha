@@ -31,7 +31,6 @@ __all__ = [
     "TaskAuditFinding",
 ]
 
-
 class GateLevel(str, Enum):
     """全生命周期门禁 G0-G7——蓝图 MOD-INF-006 §3.2.1"""
 
@@ -43,7 +42,6 @@ class GateLevel(str, Enum):
     G4 = "G4"
     G5 = "G5"
     G6 = "G6"
-
 
 class TaskAuditFinding(BaseModel):
     """任务专属审计发现——蓝图 MOD-INF-006 §3.2.2
@@ -61,7 +59,6 @@ class TaskAuditFinding(BaseModel):
     source_task: str
     resolved: bool = False
     resolution_note: str | None = None
-
 
 class TaskCard(Task):
     """
@@ -133,7 +130,6 @@ class TaskCard(Task):
     construction_status: str = Field(default="pending")
     verification_status: str = Field(default="unverified")
 
-
 class DecompositionResult(BaseModel):
     """蓝图拆解结果——蓝图 MOD-INF-006 §3.2.2"""
 
@@ -144,7 +140,6 @@ class DecompositionResult(BaseModel):
     dependency_graph: dict[str, list[str]] = Field(default_factory=dict)
     unassigned_items: list[str] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
-
 
 class GateCheckResult(BaseModel):
     """门禁检查结果——蓝图 MOD-INF-006 §3.2.2"""

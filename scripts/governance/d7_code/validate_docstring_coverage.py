@@ -42,7 +42,6 @@ SKIP_MODULES = {
     "l13_experimentation",
 }
 
-
 def _has_docstring(node: ast.AST) -> bool:
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
         body = node.body
@@ -55,12 +54,10 @@ def _has_docstring(node: ast.AST) -> bool:
             return True
     return False
 
-
 def _is_public(name: str) -> bool:
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
-
 
 def scan_docstrings(source_path: Path) -> tuple[bool, list[str]]:
     """扫描 docstring 覆盖率."""
@@ -92,7 +89,6 @@ def scan_docstrings(source_path: Path) -> tuple[bool, list[str]]:
 
     return _has_docstring(tree), missing
     """扫描 docstring 覆盖率."""
-
 
 def main() -> None:
     """入口函数."""
@@ -139,7 +135,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

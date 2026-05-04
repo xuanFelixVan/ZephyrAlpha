@@ -63,7 +63,6 @@ pytest.skip(
 # 辅助：JSON-RPC 请求构造 + 结果解析
 # ---------------------------------------------------------------------------
 
-
 def _req(
     method: str,
     params: dict[str, Any] | None = None,
@@ -75,7 +74,6 @@ def _req(
         r["params"] = params
     return r
 
-
 def _call(
     server: BaseMCPServer,
     method: str,
@@ -84,7 +82,6 @@ def _call(
 ) -> dict[str, Any]:
     """向 Server 发送请求并返回原始响应。"""
     return cast(dict[str, Any], server.handle_request(_req(method, params, req_id)))
-
 
 def _tool(
     server: BaseMCPServer,
@@ -95,18 +92,15 @@ def _tool(
     """封装 tools/call 调用。"""
     return _call(server, "tools/call", {"name": name, "arguments": arguments}, req_id)
 
-
 def _result(resp: dict[str, Any]) -> Any:
     """断言无 error，返回 result。"""
     assert "error" not in resp, f"Unexpected error: {resp.get('error')}"
     return resp["result"]
 
-
 def _error(resp: dict[str, Any]) -> dict[str, Any]:
     """断言有 error，返回 error 字段。"""
     assert "error" in resp, f"Expected error, got result: {resp.get('result')}"
     return cast(dict[str, Any], resp["error"])
-
 
 def _tool_result_text(resp: dict[str, Any]) -> Any:
     """提取 tools/call 成功响应中 content[0].text 并 JSON 解析。"""
@@ -114,7 +108,6 @@ def _tool_result_text(resp: dict[str, Any]) -> Any:
     assert r["isError"] is False
     text: str = r["content"][0]["text"]
     return json.loads(text)
-
 
 def _stdio_roundtrip(
     server: BaseMCPServer,
@@ -128,11 +121,9 @@ def _stdio_roundtrip(
     raw = out.getvalue().strip()
     return [json.loads(line) for line in raw.splitlines() if line.strip()]
 
-
 # ===========================================================================
 # 1. JSON-RPC 2.0 协议合规性验证
 # ===========================================================================
-
 
 class TestProtocolCompliance:
     """JSON-RPC 2.0 协议合规性——与 Server 无关的通用约束。"""
@@ -210,11 +201,9 @@ class TestProtocolCompliance:
         ids = [r["id"] for r in responses]
         assert ids == [10, 20, 30]
 
-
 # ===========================================================================
 # 2. TaskManagerServer 完整生命周期
 # ===========================================================================
-
 
 class TestLifecycleTaskManager:
     """task_manager Server: initialize → tools/list → CRUD → 状态流转。"""
@@ -277,11 +266,9 @@ class TestLifecycleTaskManager:
         final = _tool_result_text(_tool(self.server, "task_manager.get_task", {"task_id": "T-0-LC-001"}))
         assert final["status"] == "READY"
 
-
 # ===========================================================================
 # 3. KnowledgeBaseServer 完整生命周期
 # ===========================================================================
-
 
 class TestLifecycleKnowledgeBase:
     """knowledge_base Server: initialize → tools/list → upsert → search → rebuild。"""
@@ -355,11 +342,9 @@ class TestLifecycleKnowledgeBase:
         assert got["ke_id"] == "KE-100"
         assert got["title"] == "GetKE test"
 
-
 # ===========================================================================
 # 4. GateEngineServer 完整生命周期
 # ===========================================================================
-
 
 class TestLifecycleGateEngine:
     """gate_engine Server: initialize → tools/list → G1/G2/G4 → exemption。"""
@@ -433,11 +418,9 @@ class TestLifecycleGateEngine:
         assert r["accepted"] is True
         assert r["exemption_id"].startswith("EX-G1.1-")
 
-
 # ===========================================================================
 # 5. DocGuardServer 完整生命周期
 # ===========================================================================
-
 
 class TestLifecycleDocGuard:
     """session_handoff Server: initialize → tools/list → create_package → validate。"""
@@ -499,11 +482,9 @@ class TestLifecycleDocGuard:
         assert "event_id" in r
         assert "delivered_at" in r
 
-
 # ===========================================================================
 # 6. SentinelServer 完整生命周期
 # ===========================================================================
-
 
 class TestLifecycleSentinel:
     """intent_router Server: initialize → tools/list → map_intent → golden_set。"""
@@ -572,11 +553,9 @@ class TestLifecycleSentinel:
         )
         assert map_r["primary_domain"] == "D0"
 
-
 # ===========================================================================
 # 7. stdio 传输层模拟测试
 # ===========================================================================
-
 
 class TestStdioTransport:
     """stdio 传输层：多请求批量、无效 JSON 恢复、空行跳过。"""
@@ -616,11 +595,9 @@ class TestStdioTransport:
         assert len(lines) == 1
         assert json.loads(lines[0])["id"] == 7
 
-
 # ===========================================================================
 # 8. 跨 Server 调用链测试（task_manager → gate_engine → knowledge_base）
 # ===========================================================================
-
 
 class TestCrossServerChain:
     """

@@ -15,7 +15,6 @@ from zephyr.shared.dos_launcher import (
     _parse_frontmatter,
 )
 
-
 def _write_directive(
     base: Path, name: str, directive_id: str, title: str = "", domain: str = "", safety: str = "L", body: str = ""
 ) -> Path:
@@ -26,7 +25,6 @@ def _write_directive(
     )
     p.write_text(content, encoding="utf-8")
     return p
-
 
 class TestParseFrontmatter:
     def test_valid_frontmatter(self) -> None:
@@ -42,7 +40,6 @@ class TestParseFrontmatter:
     def test_empty_string(self) -> None:
         assert _parse_frontmatter("") == {}
 
-
 class TestParseBody:
     def test_body_after_frontmatter(self) -> None:
         text = "---\ndirective_id: 325\n---\nHello world"
@@ -51,7 +48,6 @@ class TestParseBody:
     def test_no_frontmatter_returns_full(self) -> None:
         text = "Just content here"
         assert _parse_body(text) == "Just content here"
-
 
 class TestDOSLauncher:
     def test_load_directive_found(self, tmp_path: Path) -> None:

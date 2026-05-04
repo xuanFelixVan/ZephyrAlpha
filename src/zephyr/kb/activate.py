@@ -42,7 +42,6 @@ FUTURE_DIR_NAME = "04_future_capabilities"
 
 _UTC = UTC
 
-
 @dataclass
 class ActivateResult:
     passed: bool
@@ -53,7 +52,6 @@ class ActivateResult:
     proposal: str | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
-
 
 class ActivateGate:
     def __init__(

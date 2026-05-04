@@ -31,7 +31,6 @@ import argparse
 
 DATED_PATTERN = re.compile(r"-\d{4}-\d{2}-\d{2}\.(json|yaml|yml|md)$", re.IGNORECASE)
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="带日期快照文件检测（GOV-DOC-006 §三）")
@@ -69,7 +68,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

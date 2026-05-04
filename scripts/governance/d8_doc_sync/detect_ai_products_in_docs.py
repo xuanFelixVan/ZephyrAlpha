@@ -29,7 +29,6 @@ ensure_utf8_stdout()
 
 import argparse
 
-
 def scan_ai_products() -> list[dict]:
     """扫描文档中的 AI 生成标记."""
     findings = []
@@ -57,7 +56,6 @@ def scan_ai_products() -> list[dict]:
     return findings
     """扫描文档中的 AI 生成标记."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="AI 产物位置检测（GOV-DOC-006 §六）")
@@ -77,7 +75,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

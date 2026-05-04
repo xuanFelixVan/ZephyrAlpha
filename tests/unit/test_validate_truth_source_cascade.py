@@ -34,7 +34,6 @@ from scripts.governance.d11_compliance.validate_truth_source_cascade import (
 # 辅助工厂
 # ---------------------------------------------------------------------------
 
-
 def _make_decision(
     decision_id: str,
     decision_date: date,
@@ -47,7 +46,6 @@ def _make_decision(
         decision_summary=decision_summary,
         affected_files=affected_files,
     )
-
 
 def _write_md_with_fm(path: Path, last_updated: str | None) -> None:
     """在给定路径写入带 frontmatter 的 markdown 文件。"""
@@ -69,11 +67,9 @@ def _write_md_with_fm(path: Path, last_updated: str | None) -> None:
         )
     path.write_text(content, encoding="utf-8", newline="\n")
 
-
 # ---------------------------------------------------------------------------
 # 1. _extract_affected_files 格式解析测试
 # ---------------------------------------------------------------------------
-
 
 class TestExtractAffectedFiles:
     def test_inline_list_format(self):
@@ -121,11 +117,9 @@ class TestExtractAffectedFiles:
         result = _extract_affected_files(cell)
         assert result == ["docs/only_one.md"]
 
-
 # ---------------------------------------------------------------------------
 # 2. parse_rationale_log 测试
 # ---------------------------------------------------------------------------
-
 
 class TestParseRationaleLog:
     def test_empty_file_returns_empty_list(self, tmp_path: Path):
@@ -196,11 +190,9 @@ class TestParseRationaleLog:
         result = parse_rationale_log(log_file)
         assert len(result) == 1
 
-
 # ---------------------------------------------------------------------------
 # 3. build_cascade_map 测试
 # ---------------------------------------------------------------------------
-
 
 class TestBuildCascadeMap:
     def test_empty_decisions_returns_empty_map(self):
@@ -236,11 +228,9 @@ class TestBuildCascadeMap:
         assert cascade["docs/a.md"] == [d1]
         assert cascade["docs/b.md"] == [d2]
 
-
 # ---------------------------------------------------------------------------
 # 4. _parse_frontmatter_date 测试
 # ---------------------------------------------------------------------------
-
 
 class TestParseFrontmatterDate:
     def test_valid_date(self, tmp_path: Path):
@@ -261,11 +251,9 @@ class TestParseFrontmatterDate:
         f.write_text("# 无 frontmatter\n正文。\n", encoding="utf-8", newline="\n")
         assert _parse_frontmatter_date(f) is None
 
-
 # ---------------------------------------------------------------------------
 # 5. detect_outdated_truth_sources 测试
 # ---------------------------------------------------------------------------
-
 
 class TestDetectOutdatedTruthSources:
     def test_outdated_file_triggers_warn(self, tmp_path: Path):
@@ -320,11 +308,9 @@ class TestDetectOutdatedTruthSources:
         assert warnings == []
         assert rows == []
 
-
 # ---------------------------------------------------------------------------
 # 6. generate_report 测试
 # ---------------------------------------------------------------------------
-
 
 class TestGenerateReport:
     def _make_result(
@@ -396,11 +382,9 @@ class TestGenerateReport:
         content = path.read_text(encoding="utf-8")
         assert "测试文件" in content
 
-
 # ---------------------------------------------------------------------------
 # 7. run() 集成测试
 # ---------------------------------------------------------------------------
-
 
 class TestRunIntegration:
     def _make_log(self, tmp_path: Path, entries: list[str]) -> Path:

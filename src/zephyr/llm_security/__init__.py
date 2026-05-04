@@ -22,8 +22,8 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 
 Phase 路线
 ----------
-Phase 0  : defer
-Phase 1  : LocalLLMSecurityGateway（Pydantic + OWASP LLM Top 10 规则集）
-Phase 2  : 红队语料库 ≥150 条 + 绕过率 ≤5%
+defer
+LocalLLMSecurityGateway（Pydantic + OWASP LLM Top 10 规则集）
+红队语料库 ≥150 条 + 绕过率 ≤5%
 Phase 3+ : 服务化（若需要）
 """

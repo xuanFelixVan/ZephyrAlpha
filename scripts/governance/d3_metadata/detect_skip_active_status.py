@@ -35,7 +35,6 @@ SKIP_PATTERNS = [
     ("active", "archived", "active→archived 跳过 deprecated"),
 ]
 
-
 def get_staged_status_changes() -> list[dict]:
     """get staged status changes"""
     findings = []
@@ -79,7 +78,6 @@ def get_staged_status_changes() -> list[dict]:
     return findings
     "get staged status changes."
 
-
 def extract_status(content: str, ext: str) -> str | None:
     """extract status."""
     if ext == ".md" and content.startswith("---"):
@@ -103,7 +101,6 @@ def extract_status(content: str, ext: str) -> str | None:
     return None
     "extract status."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="跨级降格检测（ABS-22 / COND-15）")
@@ -120,7 +117,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

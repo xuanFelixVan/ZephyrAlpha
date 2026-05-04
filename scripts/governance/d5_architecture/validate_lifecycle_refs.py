@@ -28,7 +28,6 @@ from _shared.walk import iter_files
 
 LRC_HIGH_REF_THRESHOLD = 3
 
-
 def _resolve_target(
     target: str, source_file: Path, module_id_to_file: dict[str, Path], file_to_fm: dict[str, dict]
 ) -> tuple[Path | None, dict | None]:
@@ -47,7 +46,6 @@ def _resolve_target(
         return (candidate, fm)
     return (None, None)
 
-
 def _build_index(docs_dir: Path) -> tuple[dict[str, Path], dict[str, dict], dict[str, str]]:
     module_id_to_file: dict[str, Path] = {}
     file_to_fm: dict[str, dict] = {}
@@ -63,7 +61,6 @@ def _build_index(docs_dir: Path) -> tuple[dict[str, Path], dict[str, dict], dict
         if mid:
             module_id_to_file[mid] = filepath
     return (module_id_to_file, file_to_fm, file_to_status)
-
 
 def scan_lifecycle_violations(docs_dir: Path) -> tuple[list[dict], int, int]:
     """扫描生命周期引用违规"""
@@ -129,7 +126,6 @@ def scan_lifecycle_violations(docs_dir: Path) -> tuple[list[dict], int, int]:
     return (findings, files_scanned, len(active_files))
     "扫描生命周期引用违规."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="生命周期引用约束合规检查（LRC-001~005）")
@@ -172,7 +168,6 @@ def main() -> None:
     print("\n✅ 无生命周期引用违规", file=sys.stderr)
     sys.exit(0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

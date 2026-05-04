@@ -44,7 +44,6 @@ SKIP_MODULES = {
 
 ALLOWED_RELATIVE = {"test_schemas.py"}
 
-
 def _has_relative_import(tree: ast.AST) -> list[int]:
     lines = []
     for node in ast.iter_child_nodes(tree):
@@ -52,7 +51,6 @@ def _has_relative_import(tree: ast.AST) -> list[int]:
             if node.level is not None and node.level > 0:
                 lines.append(node.lineno)
     return lines
-
 
 def scan_import_style(source_path: Path) -> list[int]:
     """扫描 import 风格合规性."""
@@ -63,7 +61,6 @@ def scan_import_style(source_path: Path) -> list[int]:
     tree = ast.parse(source, filename=str(source_path))
     return _has_relative_import(tree)
     """扫描 import 风格合规性."""
-
 
 def main() -> None:
     """入口函数."""
@@ -108,7 +105,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

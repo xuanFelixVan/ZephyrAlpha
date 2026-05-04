@@ -31,7 +31,6 @@ ensure_utf8_stdout()
 
 import argparse
 
-
 def scan_superseded_by() -> list[dict]:
     """scan superseded by."""
     findings = []
@@ -92,7 +91,6 @@ def scan_superseded_by() -> list[dict]:
     return findings
     """scan superseded by."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="废弃文件 superseded_by 检测（LFC-002 / PS-STD-009 §2.2）")
@@ -112,7 +110,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

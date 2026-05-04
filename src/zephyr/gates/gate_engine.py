@@ -73,12 +73,10 @@ _DEPRECATED_PATHS_YAML = (
     Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
 )
 
-
 def _load_deprecated_patterns() -> list[str]:
     with open(_DEPRECATED_PATHS_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return list(data.get("blacklist_patterns", []))
-
 
 _BUILTIN_DEPRECATED_PATTERNS: list[str] = _load_deprecated_patterns()
 
@@ -92,11 +90,9 @@ _PLACEHOLDER_PATTERNS: list[str] = [
     r"raise NotImplementedError",
 ]
 
-
 # ---------------------------------------------------------------------------
 # 数据模型
 # ---------------------------------------------------------------------------
-
 
 @dataclass
 class GateViolation:
@@ -107,7 +103,6 @@ class GateViolation:
     severity: str  # P0 / P1 / P2
     message: str
     detail: str | None = None
-
 
 @dataclass
 class GateResult:
@@ -136,11 +131,9 @@ class GateResult:
         total = len(self.violations)
         return f"[FAIL] Gate {self.gate_id} task={self.task_id} " f"violations={total} (P0={p0})"
 
-
 # ---------------------------------------------------------------------------
 # 配置模型（轻量 dataclass，不用 Pydantic 避免循环依赖）
 # ---------------------------------------------------------------------------
-
 
 @dataclass
 class CheckConfig:
@@ -150,7 +143,6 @@ class CheckConfig:
     description: str
     severity: str
     params: dict[str, Any]
-
 
 @dataclass
 class GateConfig:
@@ -163,15 +155,12 @@ class GateConfig:
     on_failure: str
     on_pass: str
 
-
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
-
 class GateEngineError(RuntimeError):
     """GateEngine 基础异常。"""
-
 
 class GateViolationError(GateEngineError):
     """任务被门禁阻断时抛出（含 GateResult）。"""
@@ -180,11 +169,9 @@ class GateViolationError(GateEngineError):
         self.result = result
         super().__init__(result.summary())
 
-
 # ---------------------------------------------------------------------------
 # 内部：检查实现
 # ---------------------------------------------------------------------------
-
 
 def _check_encoding(
     file_path: Path,
@@ -202,7 +189,6 @@ def _check_encoding(
         return f"编码损坏（非 UTF-8）：{file_path} — {exc}"
     return None
 
-
 def _check_line_ending(
     file_path: Path,
     params: dict[str, Any],
@@ -215,7 +201,6 @@ def _check_line_ending(
         count = raw.count(b"\r\n")
         return f"文件含 CRLF 换行（{count} 处）：{file_path}"
     return None
-
 
 def _check_path_blacklist(
     paths: list[str],
@@ -231,7 +216,6 @@ def _check_path_blacklist(
                 violations.append(f"废弃路径命中 '{pattern}'：{p}")
                 break
     return violations
-
 
 def _check_empty_shell(
     file_path: Path,
@@ -262,7 +246,6 @@ def _check_empty_shell(
             return f"空壳文件（占位符比例 {ratio:.1%} > {max_ratio:.0%}）：{file_path}"
     return None
 
-
 def _check_content_length(
     file_path: Path,
     params: dict[str, Any],
@@ -281,7 +264,6 @@ def _check_content_length(
     if body_len < min_chars:
         return f"内容过短（{body_len} 字符 < {min_chars}）：{file_path}"
     return None
-
 
 def _check_frontmatter(
     file_path: Path,
@@ -307,11 +289,9 @@ def _check_frontmatter(
         return f"frontmatter 缺少必填字段 {missing}：{file_path}"
     return None
 
-
 # ---------------------------------------------------------------------------
 # 统一调度函数
 # ---------------------------------------------------------------------------
-
 
 def _run_check(
     check: CheckConfig,
@@ -452,11 +432,9 @@ def _run_check(
 
     return violations
 
-
 # ---------------------------------------------------------------------------
 # GateEngine
 # ---------------------------------------------------------------------------
-
 
 class GateEngine:
     """
@@ -670,7 +648,6 @@ class GateEngine:
             on_failure=str(raw.get("on_failure", "reject")),
             on_pass=str(raw.get("on_pass", "pass")),
         )
-
 
 def _check_blueprint_read_compliance(
     target_blueprint: str,

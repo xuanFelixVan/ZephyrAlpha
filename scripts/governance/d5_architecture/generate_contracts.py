@@ -65,7 +65,6 @@ _STANDARD_IMPORTS = [
 
 DT_FACTORY_NEEDED = False
 
-
 def _path_to_module(physical_path: str) -> str:
     """_path_to_module implementation."""
     if not physical_path or not physical_path.endswith(".py"):
@@ -75,7 +74,6 @@ def _path_to_module(physical_path: str) -> str:
         rel = rel[4:]
     return rel.replace("/", ".")
 
-
 def _import_to_module(import_line: str) -> str:
     """_import_to_module implementation."""
     if not import_line.startswith("from "):
@@ -83,7 +81,6 @@ def _import_to_module(import_line: str) -> str:
     after_from = import_line[5:]
     module = after_from.split(" import ")[0].strip()
     return module
-
 
 def _extract_type_tokens(type_str: str) -> list[str]:
     """_extract_type_tokens implementation."""
@@ -93,7 +90,6 @@ def _extract_type_tokens(type_str: str) -> list[str]:
         if token and token not in ("Optional", "List", "Dict", "str", "int", "float", "bool"):
             tokens.append(token)
     return tokens
-
 
 def _collect_imports(fields: list[dict], physical_path: str = "") -> list[str]:
     """_collect_imports implementation."""
@@ -143,7 +139,6 @@ def _collect_imports(fields: list[dict], physical_path: str = "") -> list[str]:
 
     return imports
 
-
 def _resolve_base_type(type_str: str) -> str:
     """_resolve_base_type implementation."""
     base = type_str.replace("Optional[", "").replace("]", "").split(",")[0].strip()
@@ -151,9 +146,7 @@ def _resolve_base_type(type_str: str) -> str:
         base = base.split("[")[0].strip()
     return base
 
-
 _STANDARD_TYPES = {"str", "int", "float", "bool", "datetime", "Decimal", "UUID", "Any"}
-
 
 def _format_default(field: dict) -> str:
     """_format_default implementation."""
@@ -193,13 +186,11 @@ def _format_default(field: dict) -> str:
     else:
         return f" = {default}"
 
-
 def _format_ai_prompt(ai_prompt: str, indent: int = 4) -> str:
     """_format_ai_prompt implementation."""
     prefix = " " * indent
     lines = ai_prompt.strip().split("\n")
     return "\n".join(f"{prefix}{line.strip()}" for line in lines)
-
 
 def _generate_file_header(
     contract_id: str,
@@ -242,7 +233,6 @@ def _generate_file_header(
     header.append('"""')
     return "\n".join(header)
 
-
 def _generate_dataclass(
     contract_id: str,
     contract_name: str,
@@ -282,10 +272,8 @@ def _generate_dataclass(
 
     return "\n".join(lines)
 
-
 CODGEN_BEGIN = "# ==== BEGIN CODGEN:{contract_id} ===="
 CODGEN_END = "# ==== END CODGEN:{contract_id} ===="
-
 
 def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     """Generate output from input data."""
@@ -348,7 +336,6 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
 
     return str(output_path)
 
-
 def _extract_hand_maintained(source: str, begin_marker: str) -> str:
     """_extract_hand_maintained implementation."""
     lines = source.rstrip().split("\n")
@@ -398,7 +385,6 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
 
     return "\n".join(result).rstrip() + "\n"
 
-
 def generate_directory_init(directory: Path, module_names: list[str], dry_run: bool = False) -> None:
     """Generate output from input data."""
     init_file = directory / "__init__.py"
@@ -416,7 +402,6 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
     content = "\n".join(init_lines) + "\n"
     if not dry_run:
         init_file.write_text(content, encoding="utf-8")
-
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
@@ -473,7 +458,6 @@ def main() -> None:
         print("  2. python -m pytest tests/architecture/ -v                   # 验证一致性")
 
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

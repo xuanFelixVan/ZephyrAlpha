@@ -75,7 +75,6 @@ _HISTORICAL_TYPOS: frozenset[str] = frozenset(
 )
 _TEMPLATE_PLACEHOLDERS: frozenset[str] = frozenset({"layer_XX"})
 
-
 def _load_valid_layers_from_authority_map() -> frozenset[str]:
     canonical: set[str] = set()
     if AUTHORITY_MAP_PATH.exists():
@@ -102,16 +101,13 @@ def _load_valid_layers_from_authority_map() -> frozenset[str]:
                         in_layer_section = False
     return frozenset(canonical | _HISTORICAL_TYPOS | _TEMPLATE_PLACEHOLDERS)
 
-
 _VALID_LAYERS_CACHE: frozenset[str] | None = None
-
 
 def _get_valid_layers() -> frozenset[str]:
     global _VALID_LAYERS_CACHE
     if _VALID_LAYERS_CACHE is None:
         _VALID_LAYERS_CACHE = _load_valid_layers_from_authority_map()
     return _VALID_LAYERS_CACHE
-
 
 VALID_STATUSES: frozenset[str] = frozenset(
     {"Draft", "Review", "Active", "Superseded", "Deprecated", "Retired", "proposed", "active", "deprecated"}
@@ -122,7 +118,6 @@ LEGACY_LAYERS: frozenset[str] = frozenset({"layer_01"})
 SEVERITY_P0_STATUS_CONFLICT = frozenset(
     {("Active", "Deprecated"), ("Active", "Retired"), ("Deprecated", "Active"), ("Retired", "Active")}
 )
-
 
 @dataclass
 class FileMeta:
@@ -135,7 +130,6 @@ class FileMeta:
     version: str | None = None
     owner: str | None = None
 
-
 @dataclass
 class Contradiction:
     severity: str
@@ -144,7 +138,6 @@ class Contradiction:
     files: list[str] = field(default_factory=list)
     values: list[str] = field(default_factory=list)
     suggestion: str = ""
-
 
 @dataclass
 class ScanReport:
@@ -179,7 +172,6 @@ class ScanReport:
         """判断是否有 P0 级别发现"""
         return self.p0_count > 0
 
-
 def parse_file(path: Path, repo_root: Path) -> FileMeta | None:
     """
     解析单个 Markdown 文件，返回 FileMeta；若无 frontmatter 则返回 None。
@@ -206,7 +198,6 @@ def parse_file(path: Path, repo_root: Path) -> FileMeta | None:
         owner=fm.get("owner"),
     )
 
-
 def scan_directory(scan_dir: Path, repo_root: Path) -> list[FileMeta]:
     """scan directory"""
     metas: list[FileMeta] = []
@@ -215,7 +206,6 @@ def scan_directory(scan_dir: Path, repo_root: Path) -> list[FileMeta]:
         if meta is not None:
             metas.append(meta)
     return metas
-
 
 def check_p0_layer_invalid(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P0 层级违规"""
@@ -235,7 +225,6 @@ def check_p0_layer_invalid(metas: list[FileMeta]) -> list[Contradiction]:
                 )
             )
     return result
-
 
 def check_p0_duplicate_active_module_id(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P0 重复活跃 module_id"""
@@ -260,7 +249,6 @@ def check_p0_duplicate_active_module_id(metas: list[FileMeta]) -> list[Contradic
             )
     return result
 
-
 def check_p1_status_invalid(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P1 状态违规"""
     result: list[Contradiction] = []
@@ -279,7 +267,6 @@ def check_p1_status_invalid(metas: list[FileMeta]) -> list[Contradiction]:
                 )
             )
     return result
-
 
 def check_p1_module_id_layer_conflict(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P1 module_id 层级冲突"""
@@ -305,7 +292,6 @@ def check_p1_module_id_layer_conflict(metas: list[FileMeta]) -> list[Contradicti
                 )
             )
     return result
-
 
 def check_p1_module_id_status_conflict(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P1 module_id 状态冲突"""
@@ -336,7 +322,6 @@ def check_p1_module_id_status_conflict(metas: list[FileMeta]) -> list[Contradict
             )
     return result
 
-
 def check_p2_priority_invalid(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P2 优先级违规"""
     result: list[Contradiction] = []
@@ -356,7 +341,6 @@ def check_p2_priority_invalid(metas: list[FileMeta]) -> list[Contradiction]:
             )
     return result
 
-
 def check_p2_version_format(metas: list[FileMeta]) -> list[Contradiction]:
     """检查 P2 版本格式违规"""
     result: list[Contradiction] = []
@@ -375,7 +359,6 @@ def check_p2_version_format(metas: list[FileMeta]) -> list[Contradiction]:
                 )
             )
     return result
-
 
 class SsotValidator:
     """
@@ -414,9 +397,7 @@ class SsotValidator:
             report.contradictions.extend(check_fn(metas))
         return report
 
-
 _SEVERITY_ICON = {"P0": "🔴", "P1": "🟡", "P2": "🔵"}
-
 
 def render_report(report: ScanReport) -> str:
     """渲染报告"""
@@ -482,13 +463,11 @@ def render_report(report: ScanReport) -> str:
         lines.append(f"3. 记录 {report.p2_count} 条 P2 建议（下 sprint 处理）")
     return "\n".join(lines)
 
-
 def write_report(report: ScanReport, output_path: Path) -> None:
     """写入报告"""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     content = render_report(report)
     output_path.write_text(content, encoding="utf-8")
-
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="SSoT 矛盾扫描器（ZephyrAlpha T-2-33）")
@@ -503,7 +482,6 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-report", action="store_true", help="跳过写入报告文件（仅输出到 stdout）")
     parser.add_argument("--warn-only", action="store_true", help="警告模式：发现不阻塞（exit 0）")
     return parser
-
 
 def main() -> None:
     """入口函数"""
@@ -533,7 +511,6 @@ def main() -> None:
     else:
         print(f"⚠️  发现 {report.total_count} 条矛盾，详见报告。", file=sys.stderr)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

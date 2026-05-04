@@ -13,7 +13,6 @@ from scripts.governance.d5_architecture.validate_authority_registry import (
     validate_section_coverage,
 )
 
-
 class TestAuthorityEntry:
     def test_valid_authority_immutable_core(self):
         e = AuthorityEntry(module="L00", authority="Immutable Core", rationale="核心数据")
@@ -35,7 +34,6 @@ class TestAuthorityEntry:
         e = AuthorityEntry(module="X00", authority="", rationale="")
         assert not e.is_valid_authority()
 
-
 class TestValidateAuthorityValues:
     def test_all_valid(self):
         entries = [
@@ -56,7 +54,6 @@ class TestValidateAuthorityValues:
         errors = validate_authority_values(entries)
         assert len(errors) == 1
         assert "无效权限值" in errors[0]
-
 
 class TestValidateDuplicateModules:
     def test_no_duplicates(self):
@@ -83,7 +80,6 @@ class TestValidateDuplicateModules:
         errors = validate_duplicate_modules(entries)
         assert len(errors) == 1
 
-
 class TestValidateSectionCoverage:
     def test_all_sections_present(self):
         entries = [
@@ -101,7 +97,6 @@ class TestValidateSectionCoverage:
         assert len(errors) == 1
         assert "2.2" in errors[0]
 
-
 class TestValidateRequiredFields:
     def test_immutable_core_without_rationale(self):
         entries = [AuthorityEntry(module="L00", authority="Immutable Core", rationale="", section="2.1")]
@@ -118,7 +113,6 @@ class TestValidateRequiredFields:
         errors = validate_required_fields(entries)
         assert any("模块名为空" in e for e in errors)
 
-
 class TestValidateImmutableCoreCoverage:
     def test_sufficient_immutable(self):
         entries = [AuthorityEntry(module=f"L0{i}", authority="Immutable Core", rationale="r") for i in range(6)]
@@ -132,7 +126,6 @@ class TestValidateImmutableCoreCoverage:
         errors = validate_immutable_core_coverage(entries)
         assert len(errors) == 1
         assert "Immutable Core 模块数过少" in errors[0]
-
 
 class TestParseRegistryTables:
     def test_parse_simple_table(self, tmp_path: Path):
@@ -165,7 +158,6 @@ class TestParseRegistryTables:
         md.write_text("", encoding="utf-8")
         entries = parse_registry_tables(md)
         assert entries == []
-
 
 class TestRunValidation:
     def test_missing_registry_file(self, tmp_path: Path):

@@ -35,7 +35,6 @@ IMPLEMENTATION_PATTERNS = {
 }
 ALLOW_LIST = {"zephyr.shared.contracts", "zephyr.__init__", "zephyr.script_system"}
 
-
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -78,7 +77,6 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
-
 def _is_impl_import(module: str) -> bool:
     if not module.startswith("zephyr"):
         return False
@@ -89,7 +87,6 @@ def _is_impl_import(module: str) -> bool:
     if len(parts) <= 3:
         return False
     return True
-
 
 def scan_src() -> tuple[list[dict], int]:
     """扫描源码目录并返回发现列表."""
@@ -107,7 +104,6 @@ def scan_src() -> tuple[list[dict], int]:
     return (findings, files_scanned)
     "扫描源码目录并返回发现列表."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="FLE import 接口合规检测")
@@ -124,7 +120,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

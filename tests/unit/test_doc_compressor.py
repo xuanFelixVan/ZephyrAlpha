@@ -35,14 +35,12 @@ from zephyr.context_engine.doc_compressor import (
 # Fixture
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture(autouse=True)
 def reset_singleton():
     """每个测试前后重置 DocCompressor 单例，避免测试间污染。"""
     DocCompressor.reset_instance()
     yield
     DocCompressor.reset_instance()
-
 
 @pytest.fixture
 def strict_policy():
@@ -54,16 +52,13 @@ def strict_policy():
         preserve_immutable_blocks=["<!-- IMMUTABLE_START -->"],
     )
 
-
 @pytest.fixture
 def compressor(strict_policy):
     return DocCompressor(policy=strict_policy)
 
-
 # ---------------------------------------------------------------------------
 # 1. CompressionPolicy — Pydantic v2 frozen
 # ---------------------------------------------------------------------------
-
 
 class TestCompressionPolicy:
     def test_frozen_cannot_mutate(self):
@@ -102,11 +97,9 @@ class TestCompressionPolicy:
         assert p.min_chars == 100
         assert p.preserve_immutable_blocks == ["<!-- CUSTOM_START -->"]
 
-
 # ---------------------------------------------------------------------------
 # 2. CompressionInvariantError
 # ---------------------------------------------------------------------------
-
 
 class TestCompressionInvariantError:
     def test_error_attributes(self):
@@ -123,11 +116,9 @@ class TestCompressionInvariantError:
         with pytest.raises(CompressionInvariantError):
             raise CompressionInvariantError("min_chars", "原始", "压缩")
 
-
 # ---------------------------------------------------------------------------
 # 3. DocCompressor 单例
 # ---------------------------------------------------------------------------
-
 
 class TestDocCompressorSingleton:
     def test_instance_returns_same_object(self):
@@ -151,11 +142,9 @@ class TestDocCompressorSingleton:
         b = DocCompressor.instance(reset=True)
         assert a is not b
 
-
 # ---------------------------------------------------------------------------
 # 4. compress() 正常流程
 # ---------------------------------------------------------------------------
-
 
 class TestCompressNormal:
     def _make_text(self, n_chars: int = 600) -> str:
@@ -182,11 +171,9 @@ class TestCompressNormal:
         result = c.compress(text)
         assert "标题" in result
 
-
 # ---------------------------------------------------------------------------
 # 5. 不变量 1：preserve_structure
 # ---------------------------------------------------------------------------
-
 
 class TestInvariantPreserveStructure:
     def test_headers_preserved_in_output(self):
@@ -223,11 +210,9 @@ class TestInvariantPreserveStructure:
         result = c.compress(original)
         assert result == result_text
 
-
 # ---------------------------------------------------------------------------
 # 6. 不变量 2：preserve_provenance
 # ---------------------------------------------------------------------------
-
 
 class TestInvariantPreserveProvenance:
     def test_frontmatter_preserved(self):
@@ -283,11 +268,9 @@ class TestInvariantPreserveProvenance:
         result = c.compress(original)
         assert result == result_text
 
-
 # ---------------------------------------------------------------------------
 # 7. 不变量 3：preserve_immutable_blocks
 # ---------------------------------------------------------------------------
-
 
 class TestInvariantPreserveImmutableBlocks:
     def test_immutable_marker_preserved(self):
@@ -317,11 +300,9 @@ class TestInvariantPreserveImmutableBlocks:
             c.compress(original)
         assert exc_info.value.field == "preserve_immutable_blocks"
 
-
 # ---------------------------------------------------------------------------
 # 8. 不变量 4：min_chars
 # ---------------------------------------------------------------------------
-
 
 class TestInvariantMinChars:
     def test_min_chars_violation_raises(self, monkeypatch):
@@ -342,11 +323,9 @@ class TestInvariantMinChars:
         result = c.compress(short_text)
         assert isinstance(result, str)
 
-
 # ---------------------------------------------------------------------------
 # 9. load_policy_from_yaml
 # ---------------------------------------------------------------------------
-
 
 class TestLoadPolicyFromYaml:
     @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -372,11 +351,9 @@ class TestLoadPolicyFromYaml:
         result = load_policy_from_yaml(policy_file)
         assert result == DEFAULT_POLICY
 
-
 # ---------------------------------------------------------------------------
 # 10. ContextBudgetTracker DocCompressor 注入接口
 # ---------------------------------------------------------------------------
-
 
 class TestBudgetTrackerDocCompressorIntegration:
     def _make_tracker(self):
@@ -448,11 +425,9 @@ class TestBudgetTrackerDocCompressorIntegration:
         assert len(l2_payloads) == 1
         assert l2_payloads[0]["compression_suggested"] is True
 
-
 # ---------------------------------------------------------------------------
 # 11. 工具函数
 # ---------------------------------------------------------------------------
-
 
 class TestHelperFunctions:
     def test_extract_headers_empty(self):

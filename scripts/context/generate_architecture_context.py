@@ -49,7 +49,6 @@ LAYER_NAMES = {
     "l13": "实验层",
 }
 
-
 def main() -> None:
     context = {
         "generated_at": datetime.now(UTC).isoformat(),
@@ -73,7 +72,6 @@ def main() -> None:
     print(f"  - P1 契约: {len(context.get('contracts', {}).get('p1', []))} 条")
     print(f"  - 层定义: {len(context.get('layers', []))} 层")
     print(f"  - ADR: {len(context.get('adrs', []))} 份")
-
 
 def _extract_contracts_summary(context: dict) -> None:
     if not CONTRACTS_YAML.exists():
@@ -113,7 +111,6 @@ def _extract_contracts_summary(context: dict) -> None:
         "version_negotiation_rules": [r["text"] for r in neg.get("rules", [])],
     }
 
-
 def _extract_layer_summary(context: dict) -> None:
     layers: list[dict] = []
     for key, name in LAYER_NAMES.items():
@@ -125,7 +122,6 @@ def _extract_layer_summary(context: dict) -> None:
             }
         )
     context["layers"] = layers
-
 
 def _extract_adr_summary(context: dict) -> None:
     adrs: list[dict] = []
@@ -153,7 +149,6 @@ def _extract_adr_summary(context: dict) -> None:
 
     context["adrs"] = adrs
 
-
 def _extract_governance_rules(context: dict) -> None:
     gov_dir = REPO_ROOT / "docs/01_policies_and_standards/governance"
     rules: list[dict] = []
@@ -177,7 +172,6 @@ def _extract_governance_rules(context: dict) -> None:
         "documents": len(rules),
         "rule_files": rules,
     }
-
 
 if __name__ == "__main__":
     main()

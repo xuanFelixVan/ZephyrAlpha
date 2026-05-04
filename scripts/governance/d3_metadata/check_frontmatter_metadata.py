@@ -40,7 +40,6 @@ from typing import Any
 import yaml as _yaml_lib
 from _shared.constants import REPO_ROOT
 
-
 def _load_vocabulary_values(yaml_path: Path) -> set[str]:
     """从词汇表 YAML 加载当前活跃（非 deprecated）的合法值集合。
 
@@ -71,7 +70,6 @@ def _load_vocabulary_values(yaml_path: Path) -> set[str]:
         if val and v.get("value", "").strip() not in deprecated:
             active.add(val)
     return active
-
 
 _VOCAB_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
@@ -171,9 +169,7 @@ DOC_TYPE_PATH_RULES = {
     },
 }
 
-
 from _shared.frontmatter import parse_frontmatter_from_file as parse_frontmatter
-
 
 def _check_template_integrity(fm: dict[str, Any], filepath: Path, rel_str: str) -> list[tuple[str, str, str]]:
     """防御纵深：模板文件的交叉验证。
@@ -208,7 +204,6 @@ def _check_template_integrity(fm: dict[str, Any], filepath: Path, rel_str: str) 
 
     return errors
 
-
 def _check_yaml_integrity(filepath: Path) -> list[tuple[str, str, str]]:
     errors: list[tuple[str, str, str]] = []
     try:
@@ -222,7 +217,6 @@ def _check_yaml_integrity(filepath: Path) -> list[tuple[str, str, str]]:
     except Exception as e:
         errors.append(("META-V26", "P2", f"YAML 解析失败: {e}"))
     return errors
-
 
 def check_file(filepath: Path, warn_only: bool) -> list[Any]:
     """check file."""
@@ -351,7 +345,6 @@ def check_file(filepath: Path, warn_only: bool) -> list[Any]:
     return errors
     """check file."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="GATE-15: Frontmatter 元数据校验")
@@ -392,7 +385,6 @@ def main() -> None:
     if total_errors > 0 and not args.warn_only:
         sys.exit(1)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

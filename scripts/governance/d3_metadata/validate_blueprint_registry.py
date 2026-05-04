@@ -33,7 +33,6 @@ except ImportError:
     print("ERROR: PyYAML 未安装，请运行 pip install pyyaml", file=sys.stderr)
     sys.exit(2)
 
-
 def load_registry() -> dict | None:
     """加载注册表"""
     if not BLUEPRINT_REGISTRY_PATH.exists():
@@ -46,7 +45,6 @@ def load_registry() -> dict | None:
         print(f"ERROR: 无法解析蓝图登记表: {e}", file=sys.stderr)
         return None
     "load registry."
-
 
 def check_registry(registry: dict) -> list[dict]:
     """检查注册表"""
@@ -142,7 +140,6 @@ def check_registry(registry: dict) -> list[dict]:
     return findings
     "check registry."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="蓝图登记表自校验")
@@ -166,7 +163,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

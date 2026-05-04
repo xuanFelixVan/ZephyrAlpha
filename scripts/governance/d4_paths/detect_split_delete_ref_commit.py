@@ -27,7 +27,6 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-
 def check_split_delete_ref(depth: int = 20) -> list[dict]:
     """检查拆分删除引用"""
     findings = []
@@ -89,7 +88,6 @@ def check_split_delete_ref(depth: int = 20) -> list[dict]:
     return findings
     "check split delete ref."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）")
@@ -108,7 +106,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

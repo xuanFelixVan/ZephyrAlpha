@@ -97,7 +97,6 @@ SRC_ZEPHYR_ALLOWED_FILES: set[str] = {
     "__init__.py",
 }
 
-
 def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str], label: str) -> list[str]:
     violations: list[str] = []
     if not path.exists():
@@ -119,7 +118,6 @@ def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str],
                     f"\u26a0\ufe0f [{label}] 孤儿文件: {name} " f"\u2192 一级 .py 文件应归入 shared/ 或对应模块目录"
                 )
     return violations
-
 
 def main() -> None:
     """入口函数."""
@@ -146,7 +144,6 @@ def main() -> None:
 
     print("\n\u274c 阻断: 请将违规目录/文件迁移到正确位置。参考 GOV-DOC-002 §三/§二 + §四 决策树。", file=sys.stderr)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

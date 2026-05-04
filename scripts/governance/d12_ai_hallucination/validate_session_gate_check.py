@@ -43,7 +43,6 @@ GATE_CHECK_ITEMS = {
     "D2_permission_mode",
 }
 
-
 def find_latest_session_log() -> Path | None:
     """查找最新会话日志"""
     log_dirs = [
@@ -59,7 +58,6 @@ def find_latest_session_log() -> Path | None:
             return logs[0]
     return None
     "查找最新会话日志."
-
 
 def main() -> None:
     """入口函数"""
@@ -104,7 +102,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

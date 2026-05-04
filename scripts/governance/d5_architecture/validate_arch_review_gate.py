@@ -29,7 +29,6 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 import argparse
 
-
 def get_active_adrs() -> dict[str, dict]:
     """获取活跃 ADR 列表"""
     adrs = {}
@@ -49,7 +48,6 @@ def get_active_adrs() -> dict[str, dict]:
                     adrs[mid] = {"filepath": filepath, "status": status, "title": fm.get("title", "")}
     return adrs
     "get active adrs."
-
 
 def scan_arch_review_triggers() -> list[dict]:
     """扫描架构评审触发器"""
@@ -87,7 +85,6 @@ def scan_arch_review_triggers() -> list[dict]:
     return findings
     "scan arch review triggers."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="架构评审门控校验（GOV-ARCH-002）")
@@ -106,7 +103,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

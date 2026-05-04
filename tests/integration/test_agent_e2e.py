@@ -26,7 +26,6 @@ from zephyr.orchestrator.agent_orchestrator import (
     RoutingStrategy,
 )
 
-
 def _ok_invoker(log: list[tuple[str, dict[str, Any]]]):
     def _invoke(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         log.append((tool_name, arguments))
@@ -34,18 +33,14 @@ def _ok_invoker(log: list[tuple[str, dict[str, Any]]]):
 
     return _invoke
 
-
 def _failing_invoker(_name: str, _args: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError("backend down")
-
 
 def _cove_pass(claim: str, context: Any = None) -> dict[str, Any]:
     return {"is_hallucination": False, "confidence": 0.95, "risk_level": "L"}
 
-
 def _cove_fail(claim: str, context: Any = None) -> dict[str, Any]:
     return {"is_hallucination": True, "confidence": 0.3, "risk_level": "H"}
-
 
 MAPPING = {
     "325": [("task_manager.get_task", {"task_id": "T-3-10"})],
@@ -53,11 +48,9 @@ MAPPING = {
     "999": [("sentinel.run_scan", {})],
 }
 
-
 # ---------------------------------------------------------------------------
 # AgentRouter 路由测试（6 角色 × 10 域）
 # ---------------------------------------------------------------------------
-
 
 class TestAgentRouterRouting:
     def test_all_domains_route_to_some_role(self) -> None:
@@ -111,11 +104,9 @@ class TestAgentRouterRouting:
         )
         assert decision.primary_role == AgentRole.ARCHITECT
 
-
 # ---------------------------------------------------------------------------
 # Orchestrator 编排测试（directive → MCP tool chain）
 # ---------------------------------------------------------------------------
-
 
 class TestOrchestratorE2E:
     def test_full_directive_chain_success(self) -> None:
@@ -164,11 +155,9 @@ class TestOrchestratorE2E:
         assert res.success is False
         assert any("unmapped_directive" in e for e in res.errors)
 
-
 # ---------------------------------------------------------------------------
 # Health Monitor 集成测试
 # ---------------------------------------------------------------------------
-
 
 class TestHealthMonitorIntegration:
     def test_orchestrator_feeds_health_monitor(self) -> None:
@@ -223,11 +212,9 @@ class TestHealthMonitorIntegration:
         status = ahm.evaluate()
         assert status.state == HealthState.DEGRADED
 
-
 # ---------------------------------------------------------------------------
 # 幻觉检测 post-hook 测试
 # ---------------------------------------------------------------------------
-
 
 class TestHallucinationPostHook:
     def test_cove_pass_chain_succeeds(self) -> None:
@@ -264,11 +251,9 @@ class TestHallucinationPostHook:
         assert res.hallucination is None
         assert res.success is True
 
-
 # ---------------------------------------------------------------------------
 # 端到端通过率测试
 # ---------------------------------------------------------------------------
-
 
 class TestE2EPassRate:
     def test_overall_pass_rate_above_80_percent(self) -> None:

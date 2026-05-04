@@ -28,7 +28,6 @@ DOCS_DIR = REPO_ROOT / "docs"
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 DEFAULT_MAX_DEPTH = 3
 
-
 def resolve_target_to_file(target: str, module_id_to_file: dict[str, Path], docs_dir: Path) -> Path | None:
     """解析 depends_on 目标为实际文件路径。"""
     clean_target = target.rsplit("#", maxsplit=1)[0].rstrip("/").rstrip(".md")
@@ -44,7 +43,6 @@ def resolve_target_to_file(target: str, module_id_to_file: dict[str, Path], docs
         if filepath.name == Path(clean_target).name:
             return filepath
     return None
-
 
 def build_dependency_graph() -> tuple[dict[str, set[str]], dict[str, set[str]], dict[str, str], set[str], int]:
     """构建有向依赖图。"""
@@ -92,7 +90,6 @@ def build_dependency_graph() -> tuple[dict[str, set[str]], dict[str, set[str]], 
             reverse_adj[resolved_rel].add(rel)
     return (adjacency, reverse_adj, file_to_module_id, files_with_deps, total_files)
 
-
 def compute_chain_depths(adjacency: dict[str, set[str]], files_with_deps: set[str]) -> dict[str, int]:
     """计算每个节点的最长依赖深度。"""
     depths: dict[str, int] = {}
@@ -118,7 +115,6 @@ def compute_chain_depths(adjacency: dict[str, set[str]], files_with_deps: set[st
         if file_path not in depths:
             dfs(file_path, set())
     return depths
-
 
 def analyze_chains(
     adjacency: dict[str, set[str]],
@@ -172,7 +168,6 @@ def analyze_chains(
             )
     return findings
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="depends_on 依赖链路深度审计")
@@ -215,7 +210,6 @@ def main() -> None:
     else:
         print("\n[DEP-CHAIN] PASS", file=sys.stderr)
     sys.exit(1 if violations and (not args.warn_only) else 0)
-
 
 if __name__ == "__main__":
     main()

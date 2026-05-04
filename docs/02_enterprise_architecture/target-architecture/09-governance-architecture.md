@@ -37,7 +37,7 @@ tags:
 - ai-autonomy
 - runtime-planes-boundary
 - ssot-validator
-- phase-0-gate
+- -gate
 - 6-core-services-governance
 summary: TOGAF 第 9 视图——治理架构。三层治理边界（Policy/Factory/Runtime）横切整个系统， 承载 D1-D4 + OQ-026
   拍板。46 治理系统分层归属（A21+B1+C17+VB1+D6）。 v2.0.0 重组织：物理位置树 → 合并表引用 scripts-model.yaml；接口描述

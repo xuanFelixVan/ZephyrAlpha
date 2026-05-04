@@ -28,7 +28,6 @@ import argparse
 
 import yaml
 
-
 def get_staged_modified_files() -> list[str]:
     """get staged modified files"""
     try:
@@ -44,7 +43,6 @@ def get_staged_modified_files() -> list[str]:
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         pass
     return []
-
 
 def extract_version_date(content: str, ext: str) -> tuple[str | None, str | None]:
     """get staged modified files."""
@@ -70,7 +68,6 @@ def extract_version_date(content: str, ext: str) -> tuple[str | None, str | None
             pass
     return (version, date_val)
     "extract version date."
-
 
 def check_stale_versions() -> list[dict]:
     """check stale versions"""
@@ -124,7 +121,6 @@ def check_stale_versions() -> list[dict]:
     return findings
     "check stale versions."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="版本号未更新检测（PS-STD-009 §9）")
@@ -142,7 +138,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

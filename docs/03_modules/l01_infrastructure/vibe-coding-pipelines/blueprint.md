@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-004
-title: Vibe Coding 双管线 + 脚本系统 + M1-M11 模块蓝图（B4 · Phase 0-3）
+title: Vibe Coding 双管线 + 脚本系统 + M1-M11 模块蓝图（B4 · 3）
 doc_type: blueprint
 status: retired
 version: 1.0.1
@@ -23,11 +23,11 @@ tags:
   - script-system
   - m1-m11-modules
   - infrastructure
-  - phase-0
-summary: ZephyrAlpha Vibe Coding 双管线（起草+审计）+ 脚本系统 + M1-M11 模块完整蓝图。覆盖 11 个 AI 基础设施模块的 Phase 0-3 渐进落地路径。Wave 0 终审落地：M2 SQLite-VSS (Phase 1) → ChromaDB (Phase 2)，M3 自研轻量 Orchestrator，M5 自研安全网关。
+  -
+summary: ZephyrAlpha Vibe Coding 双管线（起草+审计）+ 脚本系统 + M1-M11 模块完整蓝图。覆盖 11 个 AI 基础设施模块的 3 渐进落地路径。Wave 0 终审落地：M2 SQLite-VSS  → ChromaDB ，M3 自研轻量 Orchestrator，M5 自研安全网关。
 ---
 
-# Vibe Coding 双管线 + 脚本系统 + M1-M11 模块蓝图（B4 · Phase 0-3）
+# Vibe Coding 双管线 + 脚本系统 + M1-M11 模块蓝图（B4 · 3）
 
 > **真源声明**：本蓝图是 Vibe Coding 双管线 + 脚本系统 + 11 模块（M1-M11）的唯一真源。原始施工图文档 `construction-plan-vibe-coding-pipelines.md` 经历 Wave 0 三轮审计 + Claude-Opus-4.7 终审，本文档承载终审裁定后的最终方案。
 

@@ -57,11 +57,9 @@ from zephyr.feedback_loop.fitness_functions import (
 # Fixtures / helpers
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture
 def apply_log() -> list[EvolutionProposal]:
     return []
-
 
 @pytest.fixture
 def make_engine(
@@ -89,7 +87,6 @@ def make_engine(
         )
 
     return _factory
-
 
 def _make_fitness(
     *,
@@ -121,18 +118,15 @@ def _make_fitness(
     )
     return ff.run_all(inputs)
 
-
 def _clock(dt: datetime) -> Callable[[], datetime]:
     def _f() -> datetime:
         return dt
 
     return _f
 
-
 # ---------------------------------------------------------------------------
 # 1. Trigger detection
 # ---------------------------------------------------------------------------
-
 
 class TestTriggerDetection:
     def test_no_trigger_when_all_metrics_healthy(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
@@ -197,11 +191,9 @@ class TestTriggerDetection:
         triggers = eng.detect_triggers()
         assert all(t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
 
-
 # ---------------------------------------------------------------------------
 # 2. run_auto_cycle
 # ---------------------------------------------------------------------------
-
 
 class TestRunAutoCycle:
     def test_cycle_without_triggers_applies_base_only(
@@ -257,11 +249,9 @@ class TestRunAutoCycle:
         )
         assert out.history_length == 1
 
-
 # ---------------------------------------------------------------------------
 # 3. Safety gate
 # ---------------------------------------------------------------------------
-
 
 class TestSafetyGate:
     def test_hallucination_upgrade_blocked_without_owner(
@@ -324,11 +314,9 @@ class TestSafetyGate:
         assert out.applied_count >= 1
         assert any(p.severity == Severity.MEDIUM for p in apply_log)
 
-
 # ---------------------------------------------------------------------------
 # 4. Fitness integration
 # ---------------------------------------------------------------------------
-
 
 class TestFitnessIntegration:
     def test_record_fitness_reads_three_metrics(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
@@ -351,11 +339,9 @@ class TestFitnessIntegration:
         triggers = eng.detect_triggers()
         assert triggers, "低拦截率 FitnessReport 应驱动至少一个 trigger"
 
-
 # ---------------------------------------------------------------------------
 # 5. History / Config
 # ---------------------------------------------------------------------------
-
 
 class TestHistoryAndConfig:
     def test_default_config_matches_spec(self) -> None:

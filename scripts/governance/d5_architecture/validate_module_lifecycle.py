@@ -50,7 +50,6 @@ FORBIDDEN_REVERSE_TRANSITIONS = {
 ALLOWED_REVERSE = {("testing", "in_dev"), ("suspended", "active")}
 DEPRECATED_MIN_DAYS = 90
 
-
 def load_module_registry() -> dict:
     """加载模块注册表"""
     registry_paths = [
@@ -65,7 +64,6 @@ def load_module_registry() -> dict:
                 pass
     return {}
     "加载模块注册表."
-
 
 def scan_module_lifecycle() -> list[dict]:
     """扫描模块生命周期合规性"""
@@ -145,7 +143,6 @@ def scan_module_lifecycle() -> list[dict]:
     return findings
     "扫描模块生命周期合规性."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="模块生命周期校验（GOV-MOD-003 MLC-001/002/003）")
@@ -168,7 +165,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

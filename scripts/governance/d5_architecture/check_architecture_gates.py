@@ -69,11 +69,9 @@ VIEW_FILES = [
     "10-frontend-architecture.md",
 ]
 
-
 import subprocess
 
 from _shared.yaml_utils import load_yaml
-
 
 def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
     """GATE-SUM 通过 subprocess 调用 validate_yaml_summaries.py"""
@@ -97,7 +95,6 @@ def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
         if stripped.startswith("[") and "]" in stripped:
             errors.append(stripped)
     return len(errors) == 0, errors
-
 
 def gate_01_index_reachable() -> tuple[bool, list[str]]:
     """GATE-01: _index.yaml 存在且所有分区文件可达"""
@@ -131,7 +128,6 @@ def gate_01_index_reachable() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def _collect_layer_ids() -> set[str]:
     """收集所有 layer YAML 分区的 partition.id（如 l00, l01, ..., shared）。"""
     ids: set[str] = set()
@@ -163,7 +159,6 @@ def _collect_layer_ids() -> set[str]:
                     ids.add(pid)
     return ids
 
-
 def _collect_contract_ids() -> set[str]:
     """收集 cross-layer-contracts.yaml 中所有 contract / ocp / external 的 id。"""
     ids: set[str] = set()
@@ -192,7 +187,6 @@ def _collect_contract_ids() -> set[str]:
             if isinstance(c, dict) and "id" in c:
                 ids.add(c["id"])
     return ids
-
 
 def gate_02_p0_interfaces() -> tuple[bool, list[str]]:
     """GATE-02: 所有 P0 模块的 interface_contract 非空 + contract_id 在 contracts YAML 中存在"""
@@ -237,7 +231,6 @@ def gate_02_p0_interfaces() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def gate_03_invariants_owner() -> tuple[bool, list[str]]:
     """GATE-03: invariants.yaml 每条不变量有 owner"""
     errors = []
@@ -262,7 +255,6 @@ def gate_03_invariants_owner() -> tuple[bool, list[str]]:
             errors.append(f"不变量 {inv_id} 缺少 owner")
 
     return len(errors) == 0, errors
-
 
 def gate_04_view_line_count() -> tuple[bool, list[str]]:
     """GATE-04: 视图文件行数 ≤ 800（硬线）"""
@@ -289,7 +281,6 @@ def gate_04_view_line_count() -> tuple[bool, list[str]]:
         print(f"  ⚠ {w}")
 
     return len(errors) == 0, errors
-
 
 def gate_05_adr_accepted() -> tuple[bool, list[str]]:
     """GATE-05: 所有 P0 级 ADR 状态为 accepted 或 active"""
@@ -319,7 +310,6 @@ def gate_05_adr_accepted() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def extra_01_no_duplicate_ids() -> tuple[bool, list[str]]:
     """EXTRA-01: YAML 模型 module_id 无重复"""
     errors = []
@@ -347,7 +337,6 @@ def extra_01_no_duplicate_ids() -> tuple[bool, list[str]]:
                     all_ids[mod_id] = yaml_file.name
 
     return len(errors) == 0, errors
-
 
 def extra_02_interface_refs_exist() -> tuple[bool, list[str]]:
     """EXTRA-02: interfaces 的 source/target 引用存在"""
@@ -393,7 +382,6 @@ def extra_02_interface_refs_exist() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
     """GATE-06: domain-events.yaml 每个事件的 publisher 层 ID 在 layer YAML 分区中存在"""
     errors = []
@@ -438,7 +426,6 @@ def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
     """GATE-07: ddd-model.yaml 每个 aggregate 的 layer 在 layer YAML 分区中存在"""
     errors = []
@@ -475,7 +462,6 @@ def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def gate_08_technology_quadrant_valid() -> tuple[bool, list[str]]:
     """GATE-08: technology-landscape.yaml 每个条目的 quadrant 值合法"""
     errors = []
@@ -509,7 +495,6 @@ def gate_08_technology_quadrant_valid() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def _extract_schema_enums(schema_data: dict) -> dict[str, set[str]]:
     """从 _schema.yaml operational_schema 中提取所有 type=enum 字段的合法值集合。
     返回: {"status": {planned, deferred, ...}, "interfaces.role": {producer, consumer, both}, ...}
@@ -536,7 +521,6 @@ def _extract_schema_enums(schema_data: dict) -> dict[str, set[str]]:
                         enums[f"{field_name}.{sub_name}"] = set(sub_def.get("values", []))
 
     return enums
-
 
 def gate_sc_schema_compliance() -> tuple[bool, list[str]]:
     """GATE-SC: 模块所有枚举字段值在 _schema.yaml 合法值列表内（v3.1.0+ 全字段校验）"""
@@ -615,7 +599,6 @@ def gate_sc_schema_compliance() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def extra_03_summary_total_consistent() -> tuple[bool, list[str]]:
     """EXTRA-03: 每个 layer YAML 的 summary.total 与实际 modules 列表长度一致"""
     errors = []
@@ -641,7 +624,6 @@ def extra_03_summary_total_consistent() -> tuple[bool, list[str]]:
                 )
 
     return len(errors) == 0, errors
-
 
 def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     """GATE-A: src/zephyr/ ↔ architecture-model/ 代码与YAML双层对账
@@ -763,7 +745,6 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     has_critical = any(e.startswith("CRITICAL:") for e in errors)
     return not has_critical, errors
 
-
 def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
     """GATE-B: YAML SSoT ↔ Markdown 视图对齐
 
@@ -825,7 +806,6 @@ def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
         print(f"  ⚠ {w}")
 
     return len(errors) == 0, errors
-
 
 def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
     """GATE-D: docs/ 下每个活跃子目录必须有 index.md 入口文件
@@ -933,7 +913,6 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     """GATE-E: Session Log 变更对齐自检——决策→受影响文件同步验证
 
@@ -1032,7 +1011,6 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def extra_04_ssot_issue_trend() -> tuple[bool, list[str]]:
     """EXTRA-04: SSoT 问题追踪——跨文件不一致问题数量趋势
 
@@ -1097,7 +1075,6 @@ def extra_04_ssot_issue_trend() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-
 def main() -> None:
     """运行所有 GATE 检查，返回失败数。"""
     print("=" * 60)
@@ -1155,7 +1132,6 @@ def main() -> None:
         print("\n✅ 所有自动 GATE 通过！剩余 GATE-09/10 需人工确认。")
 
     return total_fail
-
 
 if __name__ == "__main__":
     sys.exit(main())

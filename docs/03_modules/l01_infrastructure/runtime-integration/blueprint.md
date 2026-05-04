@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-002
-title: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · Phase 0-2）
+title: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 2）
 doc_type: blueprint
 status: approved
 version: 1.0.1
@@ -23,11 +23,11 @@ tags:
   - ri-modules
   - event-bus
   - infrastructure
-  - phase-0
-summary: ZephyrAlpha 运行时集成 6 核心 RI 模块 + Cross-Layer 缺口填补蓝图。覆盖事件总线、模块生命周期、配置中心、错误处理、健康检查、Telemetry 等标准化跨层横切能力。Phase 0-2 渐进落地，所有设计按 1500 模块极限容量考虑。
+  -
+summary: ZephyrAlpha 运行时集成 6 核心 RI 模块 + Cross-Layer 缺口填补蓝图。覆盖事件总线、模块生命周期、配置中心、错误处理、健康检查、Telemetry 等标准化跨层横切能力。2 渐进落地，所有设计按 1500 模块极限容量考虑。
 ---
 
-# 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · Phase 0-2）
+# 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 2）
 
 > **真源声明**：本蓝图是 ZephyrAlpha 运行时集成体系的唯一真源。原始施工图文档 `construction-plan-runtime-integration-and-cl-gaps.md` 经历 Wave 0 三轮审计 + Claude-Opus-4.7 终审，本文档承载终审裁定后的最终方案。
 
@@ -198,7 +198,7 @@ class BaseModule(ABC):
 
 ```
 Phase 1b: asyncio.Queue（本地）
-Phase 3:   Kafka/RabbitMQ（远程）── 通过 EventBus Protocol 抽象层无缝切换
+Kafka/RabbitMQ（远程）── 通过 EventBus Protocol 抽象层无缝切换
 ```
 
 ---

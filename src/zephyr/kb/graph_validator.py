@@ -36,12 +36,10 @@ from pydantic import BaseModel, Field
 
 from zephyr.shared.schemas import BASE_CONFIG
 
-
 class ValidationSeverity(str, Enum):
     ERROR = "ERROR"
     WARNING = "WARNING"
     INFO = "INFO"
-
 
 class ValidationIssue(BaseModel):
     model_config = BASE_CONFIG
@@ -51,7 +49,6 @@ class ValidationIssue(BaseModel):
     description: str
     ke_id: str | None = None
     details: dict[str, Any] = Field(default_factory=dict)
-
 
 class ValidationReport(BaseModel):
     model_config = BASE_CONFIG
@@ -63,7 +60,6 @@ class ValidationReport(BaseModel):
     issues: list[ValidationIssue] = Field(default_factory=list)
     passed: bool = True
     validated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-
 
 class GraphValidator:
     def __init__(

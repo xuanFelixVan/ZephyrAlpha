@@ -274,7 +274,7 @@ ai_autonomy: human_gated
 |------|-----|
 | **审计规则** | 08-operations-architecture.md（SLI/SLO 定义）、OpenTelemetry 集成要求 |
 | **审计文件范围** | `src/zephyr/` 运维相关代码 + `docs/02_enterprise_architecture/target-architecture/08-operations-architecture.md` |
-| **审计脚本** | 当前无专项脚本（Phase 3-4 落地后补充） |
+| **审计脚本** | 当前无专项脚本（4 落地后补充） |
 | **门禁** | 无独立门禁 |
 | **期望效果** | 5 项 SLI/SLO 已定义；OpenTelemetry traces/metrics/logs 三支柱覆盖 |
 | **快速扫描命令** | 手动检查 `08-operations-architecture.md` 内容完整性 |
@@ -744,9 +744,9 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 | KMS 管道门禁 G1-G5 | 运行时门禁，非静态扫描——依赖 gate_engine.py 在线状态 | 低 | §5 步骤3 人工复核 + CI governance.yml 管道回归 |
 | ARG-001~005 架构评审 | 纯人工评审门禁，大多为 draft 状态 | 中 | Phase 3 落地后可能转为工作流 + checklist 半自动 |
 | 准入门禁 MOD-ADMIT/FACTOR/FILE | 需 Owner 审批，无法全自动 | 低 | 已有机审流程 + 门禁登记表确认 |
-| AGENTS.md §6.7/6.8/6.13 | 回滚策略/渐进式信任/知识衰减——概念性强，无自动化脚本 | 中 | Phase 3-4 考虑落地对应检查脚本 |
-| D10 运维架构 | 无专项脚本 | 中 | Phase 3-4 补充 |
-| 24 张登记表缺少 health_check_script | registry-master-index.yaml 中标注 uncovered | 低 | Phase 2-3 补齐 |
+| AGENTS.md §6.7/6.8/6.13 | 回滚策略/渐进式信任/知识衰减——概念性强，无自动化脚本 | 中 | 4 考虑落地对应检查脚本 |
+| D10 运维架构 | 无专项脚本 | 中 | 4 补充 |
+| 24 张登记表缺少 health_check_script | registry-master-index.yaml 中标注 uncovered | 低 | 3 补齐 |
 
 ---
 

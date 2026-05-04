@@ -339,7 +339,7 @@ entry_conditions:
 3. 运行 test_intent_parser.py + test_intent_keyword_mapper.py
 ```
 
-### 11.2 实现缺失的3个文件 (Phase 2)
+### 11.2 实现缺失的3个文件
 
 ```
 P1: vector_bridge.py — CE↔VMS检索桥接 (Connect CT-CE-VMS-001)

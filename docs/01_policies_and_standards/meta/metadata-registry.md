@@ -1235,7 +1235,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 | 字段 | 类型 | 必填 | 格式规则 | 说明 |
 |------|------|:----:|---------|------|
-| `tags` | string[] | 否 | kebab-case 全小写 | `{前缀}:{值}` 或裸标签。如 `wave0-arbitrated`、`phase-1`、`origin:b5-s2.1` |
+| `tags` | string[] | 否 | kebab-case 全小写 | `{前缀}:{值}` 或裸标签。如 `wave0-arbitrated`、``、`origin:b5-s2.1` |
 | `acceptance` | string[] | 否 | 量化验收指标 | 如 `CRUD 全覆盖`、`10 状态机转换全部实现`。建议用共享度量标签（coverage/build/lint/files/diff） |
 
 ### 7.10 task_id 格式与命名空间规则

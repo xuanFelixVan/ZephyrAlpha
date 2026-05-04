@@ -38,11 +38,11 @@ implementation_status: "Phase 1 active — consumed by doc_compressor.py at runt
 
 policy:
   # 压缩后正文最小字符数（≥ 100）
-  # Phase 1：200 为保守下界，确保压缩结果可读
+  # 200 为保守下界，确保压缩结果可读
   min_chars: 200
 
   # 压缩后正文最大字符数（≤ 10000）
-  # Phase 1：4000 字符约 = 1000 tokens（cl100k_base）
+  # 4000 字符约 = 1000 tokens（cl100k_base）
   max_chars: 4000
 
   # 保留所有 Markdown 章节标题（#、##、### 等）

@@ -57,11 +57,9 @@ LAYER_ORDER = [
     "l07_post_trade_analytics",
 ]
 
-
 def _is_money_name(name: str) -> bool:
     lower = name.lower()
     return any(p in lower for p in MONEY_PATTERNS)
-
 
 def _annotation_is_float(node: ast.expr) -> bool:
     if isinstance(node, ast.Name) and node.id == "float":
@@ -73,7 +71,6 @@ def _annotation_is_float(node: ast.expr) -> bool:
     if isinstance(node, ast.Attribute) and node.attr == "float":
         return True
     return False
-
 
 class TestNoFloatInMoneyPaths:
     """LF04: 金额相关路径不允许 float。"""
@@ -106,7 +103,6 @@ class TestNoFloatInMoneyPaths:
 
         if violations:
             pytest.fail(f"检测到 {len(violations)} 处 float 违规:\n" + "\n".join(f"  - {v}" for v in violations[:20]))
-
 
 class TestDocumentFrontmatterCompleteness:
     """LF05: 模块文件有完整的 frontmatter 元数据。"""

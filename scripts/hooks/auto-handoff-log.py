@@ -36,11 +36,9 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 HANDOFF_DIR: Path = REPO_ROOT / "docs" / "19_development_workspace" / "handoff-logs"
 TIMEZONE_CST = timezone(timedelta(hours=8))
 
-
 # ---------------------------------------------------------------------------
 # Git 辅助函数
 # ---------------------------------------------------------------------------
-
 
 def _run_git(args: list[str]) -> str:
     """执行 git 命令并返回 stdout（UTF-8 解码）。
@@ -76,7 +74,6 @@ def _run_git(args: list[str]) -> str:
         print("[ERROR] 未找到 git 命令，请确认 git 已安装并在 PATH 中。", file=sys.stderr)
         sys.exit(1)
 
-
 def get_changed_files() -> list[str]:
     """获取当前工作区相对于 HEAD 的改动文件列表。
 
@@ -90,7 +87,6 @@ def get_changed_files() -> list[str]:
         return []
     return output.splitlines()
 
-
 def get_diff_stat() -> str:
     """获取 ``git diff --stat HEAD`` 的统计摘要。
 
@@ -101,11 +97,9 @@ def get_diff_stat() -> str:
     """
     return _run_git(["diff", "--stat", "HEAD"])
 
-
 # ---------------------------------------------------------------------------
 # Markdown 生成
 # ---------------------------------------------------------------------------
-
 
 def build_handoff_markdown(
     changed_files: list[str],
@@ -179,11 +173,9 @@ def build_handoff_markdown(
 
     return "\n".join(lines)
 
-
 # ---------------------------------------------------------------------------
 # 主入口
 # ---------------------------------------------------------------------------
-
 
 def main() -> None:
     """主函数：收集 git diff 信息，生成交接日志并写入文件。"""
@@ -228,7 +220,6 @@ def main() -> None:
         for line in diff_stat.splitlines()[-3:]:
             print(f"    {line}")
     print("=" * 60)
-
 
 if __name__ == "__main__":
     main()

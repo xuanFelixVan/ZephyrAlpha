@@ -71,7 +71,6 @@ BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registr
 # Server
 # ---------------------------------------------------------------------------
 
-
 class BlueprintSearchServer(BaseMCPServer):
     """MCP server for discovering relevant blueprint documents."""
 
@@ -195,11 +194,9 @@ class BlueprintSearchServer(BaseMCPServer):
 
         return config.get("routes", [])
 
-
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
-
 
 def main() -> None:
     """Start the blueprint search MCP server on stdio."""
@@ -213,7 +210,6 @@ def main() -> None:
 
     server = BlueprintSearchServer()
     server.run()
-
 
 if __name__ == "__main__":
     main()

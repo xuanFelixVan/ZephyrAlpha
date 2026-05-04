@@ -49,12 +49,10 @@ __all__ = [
     "AgentHealthMonitor",
 ]
 
-
 class HealthState(str, Enum):
     HEALTHY = "HEALTHY"
     DEGRADED = "DEGRADED"
     UNHEALTHY = "UNHEALTHY"
-
 
 class SLOConfig(BaseModel):
     model_config = BASE_CONFIG
@@ -70,7 +68,6 @@ class SLOConfig(BaseModel):
     context_utilization_hard: float = 0.60
     context_utilization_soft: float = 0.70
 
-
 class SLOViolation(BaseModel):
     """SLO 违规记录模型（指标名 + 实际值 + 阈值 + 违规方向）。
 
@@ -85,7 +82,6 @@ class SLOViolation(BaseModel):
     threshold: float
     severity: str = Field(description="hard or soft")
 
-
 class HealthStatus(BaseModel):
     model_config = BASE_CONFIG
 
@@ -98,7 +94,6 @@ class HealthStatus(BaseModel):
     context_utilization: float = 0.0
     sample_count: int = 0
     evaluated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-
 
 class AgentHealthMonitor:
     """三态 Agent 健康监控器，消费 OrchestrationResult 事件。

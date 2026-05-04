@@ -28,7 +28,6 @@ AI Prompt
 
 """
 
-
 @dataclass(frozen=True)
 class SystemConfiguration:
     config_id: str

@@ -28,7 +28,6 @@ AI Prompt
     当 L00 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。 每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。 禁止静默丢弃——必须显式抛出，让 L02 和 L12 Telemetry 感知。
 """
 
-
 @dataclass(frozen=True)
 class DataQualityError:
     error_id: str

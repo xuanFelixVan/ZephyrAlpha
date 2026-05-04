@@ -86,10 +86,8 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-
 class TransactionError(RuntimeError):
     """ATM 内部状态错误（如嵌套、double-commit、未初始化等）。"""
-
 
 def _utf8_lf_bytes(content: str | bytes) -> bytes:
     """按项目编码规范序列化：UTF-8 无 BOM + LF。
@@ -106,11 +104,9 @@ def _utf8_lf_bytes(content: str | bytes) -> bytes:
     data = data.replace(b"\r\n", b"\n")
     return data
 
-
 def _new_tx_id() -> str:
     """生成单次事务 ID：``tx-<unix_ms>-<hex8>``（毫秒精度 + 64bit 随机）。"""
     return f"tx-{int(time.time() * 1000):013d}-{secrets.token_hex(4)}"
-
 
 def _fsync_dir(path: Path) -> None:
     """对目录 fsync（POSIX 上保证 rename 持久化；Windows 上跳过）。"""
@@ -121,7 +117,6 @@ def _fsync_dir(path: Path) -> None:
         os.fsync(fd)
     finally:
         os.close(fd)
-
 
 class TransactionScope:
     """单次事务作用域。由 ``AtomicTransactionManager.transaction()`` 构造。
@@ -224,7 +219,6 @@ class TransactionScope:
             raise TransactionError(f"[{self.tx_id}] transaction already rolled back")
         if self._atm._active_tx is not self:
             raise TransactionError(f"[{self.tx_id}] not the currently active transaction in ATM")
-
 
 class AtomicTransactionManager:
     """对单个 SQLite 文件 + 其相关文件系统操作的原子事务封装。
@@ -433,6 +427,5 @@ class AtomicTransactionManager:
             raise
         except PathTraversalError:
             raise
-
 
 __version__ = "1.0.0"

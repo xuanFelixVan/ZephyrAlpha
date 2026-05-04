@@ -26,7 +26,6 @@ if str(_src_path) not in sys.path:
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-
 @pytest.fixture
 def tmp_db(tmp_path):
     """返回已初始化的 SQLite 数据库路径（临时目录）。
@@ -40,7 +39,6 @@ def tmp_db(tmp_path):
     init_db(db_path)
     return db_path
 
-
 @pytest.fixture
 def tmp_project_dir(tmp_path):
     """返回一个模拟项目根目录，包含 docs/ 和 src/zephyr/ 子目录。
@@ -53,14 +51,12 @@ def tmp_project_dir(tmp_path):
     (tmp_path / ".audit_cache").mkdir()
     return tmp_path
 
-
 @pytest.fixture
 def sanitizer(tmp_project_dir):
     """返回绑定 tmp_project_dir 的 InputSanitizer 实例。"""
     from zephyr.llm_security.input_sanitizer import InputSanitizer
 
     return InputSanitizer(root=str(tmp_project_dir))
-
 
 @pytest.fixture()
 def kb_root(tmp_path: Path) -> Path:

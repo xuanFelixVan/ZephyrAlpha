@@ -28,7 +28,6 @@ __all__ = [
     "FileEntry",
 ]
 
-
 class FileEntry(BaseModel):
     """manifest 中的单条文件记录"""
 
@@ -40,7 +39,6 @@ class FileEntry(BaseModel):
     exists: bool = Field(default=False)
     readable: bool = Field(default=False)
     encoding: str = Field(default="utf-8")
-
 
 class AssembledContext(BaseModel):
     """装配后的上下文结构"""
@@ -70,10 +68,8 @@ class AssembledContext(BaseModel):
     def is_within_budget(self) -> bool:
         return self.token_estimate <= self.token_budget
 
-
 class AssemblyError(Exception):
     """上下文装配异常"""
-
 
 class ContextAssembler:
     """从 TaskCard 的 context_assembly_manifest 装配执行上下文
@@ -329,7 +325,6 @@ class ContextAssembler:
         ctx.budget_remaining = max(token_budget - ctx.token_estimate, 0)
 
         return ctx
-
 
 def estimate_tokens(text: str) -> int:
     """快速 token 估算（chars ÷ 4）"""

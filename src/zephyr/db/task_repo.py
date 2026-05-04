@@ -77,18 +77,14 @@ _STARTUP_GATE_ID = "G1"
 # 异常
 # ---------------------------------------------------------------------------
 
-
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
-
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
 
-
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
-
 
 # ---------------------------------------------------------------------------
 # 状态机转换表
@@ -150,10 +146,8 @@ _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
     TaskStatus.CANCELLED: frozenset(),  # 终态
 }
 
-
 def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool:
     return to_status in _ALLOWED_TRANSITIONS.get(from_status, frozenset())
-
 
 # ---------------------------------------------------------------------------
 # 工具函数
@@ -161,17 +155,14 @@ def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool
 
 _UTC = UTC
 
-
 def now_iso() -> str:
     """返回当前 UTC 时间的 ISO 8601 字符串。"""
     return datetime.now(_UTC).isoformat()
-
 
 def _new_id(prefix: str = "") -> str:
     """生成带可选前缀的 UUID4 字符串。"""
     uid = str(uuid.uuid4())
     return f"{prefix}{uid}" if prefix else uid
-
 
 def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 52 字段）。"""
@@ -222,11 +213,9 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
 
     return TaskCard.model_validate(d)
 
-
 # ---------------------------------------------------------------------------
 # TaskRepository
 # ---------------------------------------------------------------------------
-
 
 class TaskRepository:
     """
@@ -899,18 +888,15 @@ class TaskRepository:
         assert row is not None
         return _row_to_taskcard(row)
 
-
 # ---------------------------------------------------------------------------
 # 状态机查询助手（不依赖实例）
 # ---------------------------------------------------------------------------
-
 
 def allowed_transitions(status: TaskStatus | str) -> frozenset[TaskStatus]:
     """返回给定状态的合法目标状态集合。"""
     if isinstance(status, str):
         status = TaskStatus(status)
     return _ALLOWED_TRANSITIONS.get(status, frozenset())
-
 
 def is_terminal(status: TaskStatus | str) -> bool:
     """判断是否为终态（VERIFIED / CANCELLED）。"""

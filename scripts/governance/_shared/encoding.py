@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import sys
 
-
 def ensure_utf8_stdout() -> None:
     """强制 stdout/stderr 使用 UTF-8 编码。
 

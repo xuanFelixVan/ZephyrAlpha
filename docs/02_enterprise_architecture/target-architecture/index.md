@@ -227,7 +227,6 @@ This document set was split and promoted from `DW-IA-DESIGN-001` (`target-inform
 | 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**，其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture-model/layers/_schema.yaml` v2.1。(b) **by-domain 双轨结构调整**：§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除。(c) **同步 06/08 视图状态**：`06-security-architecture.md` skeleton → active v1.0.0；`08-operations-architecture.md` skeleton → draft v0.2.0。 |
 | 2026-04-21 | **v1.9.0（catalogs → YAML SSoT 迁移）**：删除 `catalogs/` 目录（9 文件）和 `_toc-cards/` 目录（8 文件），所有结构化数据迁移到 `architecture-model/` YAML 分区。`check_architecture_gates.py` 升级至 v2.0.0。 |
 
-
 ## 排除规则（不应放入本目录的内容）
 
 - ❌ 治理规范 → `01_policies_and_standards/`

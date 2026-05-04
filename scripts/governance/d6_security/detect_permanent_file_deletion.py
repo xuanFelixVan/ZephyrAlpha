@@ -27,7 +27,6 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-
 def get_deleted_files() -> list[str]:
     """获取已删除文件列表"""
     deleted = []
@@ -44,7 +43,6 @@ def get_deleted_files() -> list[str]:
             pass
     return list(set(deleted))
 
-
 def get_file_content_at_head(rel_path: str) -> str | None:
     """获取已删除文件列表."""
     try:
@@ -57,7 +55,6 @@ def get_file_content_at_head(rel_path: str) -> str | None:
         pass
     return None
     "获取 HEAD 版本文件内容."
-
 
 def check_permanent_deletions() -> list[dict]:
     """检查永久文件删除"""
@@ -95,7 +92,6 @@ def check_permanent_deletions() -> list[dict]:
     return findings
     "检查永久文件删除."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="永久文件删除检测（PS-STD-012 V1 / PS-STD-009 §7）")
@@ -113,7 +109,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

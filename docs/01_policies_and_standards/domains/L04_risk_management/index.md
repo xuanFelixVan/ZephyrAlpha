@@ -57,7 +57,6 @@ title: L04 风控管理层域层入口
 - [audit-trail-policy.md](../../governance/compliance/audit-trail-policy.md) — 风控决策审计追踪
 - [data-quality-policy.md](../../governance/data/data-quality-policy.md) — 风控输入数据质量
 
-
 ## 排除规则（不应放入本目录的内容）
 
 - ❌ 全局规则 → `01_policies_and_standards/governance/`

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-003
-title: 任务卡系统 + KMS 蓝图（B5 · Phase 0-2）
+title: 任务卡系统 + KMS 蓝图（B5 · 2）
 doc_type: blueprint
 status: retired
 version: 2.0.1
@@ -22,11 +22,11 @@ tags:
   - kms
   - knowledge-management
   - infrastructure
-  - phase-0
+  -
 summary: ZephyrAlpha 任务卡制度 + KMS 知识管理体系蓝图。覆盖 10 状态机（GOV-TASK-004 审定）、G0-G6 门禁系统、超时与升级规则、KMS 三层漏斗架构、KE 模板、代码消费者注册表。v2.0.0：合并 construction-plan-task-card-and-kms.md 的施工实现细节。
 ---
 
-# 任务卡系统 + KMS 蓝图（B5 · Phase 0-2）
+# 任务卡系统 + KMS 蓝图（B5 · 2）
 
 > **真源声明**：本蓝图是 ZephyrAlpha 任务卡制度与 KMS 知识管理体系的唯一真源。原始施工图文档 `construction-plan-task-card-and-kms.md`，本文档承载终审裁定后的最终方案。
 
@@ -216,7 +216,7 @@ CANCELLED   → （终态）
 | 维度 | 指标 | 目标 |
 |------|------|------|
 | 任务卡 | 任务卡颗粒度 | ≤ 1 天/卡 |
-| 知识库 | KE 条目数（Phase 2） | ≥ 50 |
+| 知识库 | KE 条目数 | ≥ 50 |
 | 追踪 | Session 产物链完整性 | 100% |
 | 自动化 | KE 自动入库占比 | ≥ 70% |
 

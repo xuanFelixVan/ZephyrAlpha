@@ -16,7 +16,6 @@ from pathlib import Path
 
 import yaml
 
-
 def parse_frontmatter(content: str) -> dict | None:
     """从 Markdown 文本中解析 YAML frontmatter。
 
@@ -37,7 +36,6 @@ def parse_frontmatter(content: str) -> dict | None:
     except yaml.YAMLError:
         return None
 
-
 def parse_frontmatter_from_file(filepath: Path) -> dict | None:
     """从文件路径读取并解析 YAML frontmatter。
 
@@ -52,7 +50,6 @@ def parse_frontmatter_from_file(filepath: Path) -> dict | None:
     except (OSError, UnicodeDecodeError):
         return None
     return parse_frontmatter(content)
-
 
 def parse_frontmatter_raw_from_file(filepath: Path) -> tuple[dict | None, str | None]:
     """从文件路径读取并解析 YAML frontmatter，同时返回原始全文。
@@ -71,7 +68,6 @@ def parse_frontmatter_raw_from_file(filepath: Path) -> tuple[dict | None, str | 
         return None, None
     fm = parse_frontmatter(content)
     return fm, content
-
 
 def parse_yaml_header(content: str) -> dict | None:
     """从 YAML 文件内容中提取头部字段（注释行 + 顶层字段）。

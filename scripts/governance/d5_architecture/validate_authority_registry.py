@@ -86,7 +86,6 @@ SKIP_FIRST_CELL_PATTERNS = [
 ]
 DATA_TABLE_SECTIONS_PREFIX = "2."
 
-
 class AuthorityEntry(BaseModel):
     module: str
     authority: str
@@ -97,17 +96,14 @@ class AuthorityEntry(BaseModel):
         """判断 authority 值是否合法"""
         return self.authority in VALID_AUTHORITIES
 
-
 def _is_header_row(cells: list[str]) -> bool:
     non_empty = [c for c in cells if c.strip()]
     if not non_empty:
         return False
     return any(c.strip() in HEADER_ROW_KEYWORDS for c in non_empty[:3])
 
-
 def _is_separator_row(stripped: str) -> bool:
     return bool(re.match("^\\|[\\s\\-:]+\\|", stripped))
-
 
 def _extract_authority(cells: list[str]) -> str:
     for cell in cells[1:]:
@@ -123,7 +119,6 @@ def _extract_authority(cells: list[str]) -> str:
             return "AI-Modifiable"
     return ""
 
-
 def _extract_rationale(cells: list[str], authority_col_idx: int) -> str:
     for i in range(authority_col_idx + 1, len(cells)):
         val = cells[i].strip()
@@ -135,7 +130,6 @@ def _extract_rationale(cells: list[str], authority_col_idx: int) -> str:
             if val and "Immutable" not in val and ("Human-Gated" not in val) and ("AI-Modifiable" not in val):
                 return val
     return ""
-
 
 def parse_registry_tables(path: Path) -> list[AuthorityEntry]:
     """解析注册表表格"""
@@ -180,7 +174,6 @@ def parse_registry_tables(path: Path) -> list[AuthorityEntry]:
             )
     return entries
 
-
 def validate_authority_values(entries: list[AuthorityEntry]) -> list[str]:
     """校验 authority 值"""
     errors: list[str] = []
@@ -190,7 +183,6 @@ def validate_authority_values(entries: list[AuthorityEntry]) -> list[str]:
         elif not e.is_valid_authority():
             errors.append(f"[{e.section}] {e.module}: 无效权限值 '{e.authority}'，必须 ∈ {VALID_AUTHORITIES}")
     return errors
-
 
 def validate_duplicate_modules(entries: list[AuthorityEntry]) -> list[str]:
     """校验重复模块"""
@@ -207,7 +199,6 @@ def validate_duplicate_modules(entries: list[AuthorityEntry]) -> list[str]:
             errors.append(f"重复模块: '{module}' 出现在 {len(sections)} 个章节: {sections}")
     return errors
 
-
 def validate_section_coverage(entries: list[AuthorityEntry]) -> list[str]:
     """校验段落覆盖"""
     errors: list[str] = []
@@ -220,7 +211,6 @@ def validate_section_coverage(entries: list[AuthorityEntry]) -> list[str]:
         errors.append(f"缺少必要章节的权限标注: {missing}")
     return errors
 
-
 def validate_required_fields(entries: list[AuthorityEntry]) -> list[str]:
     """校验必填字段"""
     errors: list[str] = []
@@ -231,7 +221,6 @@ def validate_required_fields(entries: list[AuthorityEntry]) -> list[str]:
             errors.append(f"[{e.section}] {e.module}: {e.authority} 权限缺少判定理由")
     return errors
 
-
 def validate_immutable_core_coverage(entries: list[AuthorityEntry]) -> list[str]:
     """校验不可变核心覆盖"""
     errors: list[str] = []
@@ -239,7 +228,6 @@ def validate_immutable_core_coverage(entries: list[AuthorityEntry]) -> list[str]
     if len(immutable_modules) < 5:
         errors.append(f"Immutable Core 模块数过少: {len(immutable_modules)} 个（预期 ≥5），可能存在权限标注遗漏")
     return errors
-
 
 def run_validation(verbose: bool = False) -> tuple[list[str], int]:
     """执行校验"""
@@ -257,7 +245,6 @@ def run_validation(verbose: bool = False) -> tuple[list[str], int]:
     all_errors.extend(validate_required_fields(entries))
     all_errors.extend(validate_immutable_core_coverage(entries))
     return (all_errors, len(entries))
-
 
 def main() -> None:
     """入口函数"""
@@ -279,7 +266,6 @@ def main() -> None:
     if args.ci:
         sys.exit(1)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

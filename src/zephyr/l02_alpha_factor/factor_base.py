@@ -28,7 +28,6 @@ import pandas as pd
 # FactorMeta — 因子元数据
 # ---------------------------------------------------------------------------
 
-
 @dataclass
 class FactorMeta:
     """因子注册元数据。每个因子类必须定义 meta 类属性。"""
@@ -54,11 +53,9 @@ class FactorMeta:
     tags: list[str] = field(default_factory=list)
     """标签，如 ['short-term', 'price-action']。"""
 
-
 # ---------------------------------------------------------------------------
 # FactorBase — 因子抽象基类
 # ---------------------------------------------------------------------------
-
 
 class FactorBase(abc.ABC):
     """
@@ -104,11 +101,9 @@ class FactorBase(abc.ABC):
     def __repr__(self) -> str:
         return f"<Factor id={self.meta.factor_id} v={self.meta.version}>"
 
-
 # ---------------------------------------------------------------------------
 # FactorRegistry — 因子注册表
 # ---------------------------------------------------------------------------
-
 
 class FactorRegistry:
     """
@@ -173,11 +168,9 @@ class FactorRegistry:
     def __len__(cls) -> int:
         return len(cls._registry)
 
-
 # ---------------------------------------------------------------------------
 # autodiscover_factors — 自动发现
 # ---------------------------------------------------------------------------
-
 
 def autodiscover_factors(package_path: str | None = None) -> None:
     """

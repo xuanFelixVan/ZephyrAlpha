@@ -52,7 +52,6 @@ tags:
 > **定位**：Vibe Coding 2.0 五大核心服务中的"任务引擎"。接管任务全生命周期——任务入队、Agent 拉取、沙箱执行、幻觉检测、指标上报、收尾归档。
 >
 
-
 ---
 
 ## 0. 读者指南
@@ -102,7 +101,7 @@ tags:
 **解法**：
 - **SQLite + asyncio.Queue 队列**：零外部依赖、轻量、持久化
 - **Python enum + dataclass 状态机**：状态变迁强校验，非法转移即抛
-- **Windows ACL + 只读挂载沙箱**（Phase 1）：Agent 写操作必经沙箱代理
+- **Windows ACL + 只读挂载沙箱**：Agent 写操作必经沙箱代理
 - **规则引擎 + 阈值幻觉检测**：同一文件 N 次无进展编辑即终止
 - **任务完成自动写 VMS `task_history`**：后续任务可通过 VMS `multi_search` 检索"类似任务如何完成"
 
@@ -146,10 +145,8 @@ class OrchestratorProtocol(Protocol):
     # 健康与统计
     async def stats(self) -> OrchestratorStats: ...
 
-
 class InProcessOrchestrator:
     """Phase 1（当前目标）：SQLite + asyncio.Queue，单进程。"""
-
 
 class DistributedOrchestrator:
     """Phase 3+：ARQ + Redis，多 worker。"""
@@ -167,7 +164,7 @@ class DistributedOrchestrator:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选（Phase 1） | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
 |------|----------------|------|-------|---------|---------|----------|
 | 任务队列 | **SQLite (WAL) + asyncio.Queue** | Redis + arq | Celery（重）/ Airflow（重） | 零外部依赖，Windows 原生 | 任务量 > 100/天 或并发 > 10 | ADR-0017 |
 | 状态机 | **Python enum + dataclass** | `transitions` 库 | FSM 框架 | 最小依赖，静态类型可校验 | 状态数 > 20 | ADR-0017 |
@@ -228,7 +225,6 @@ from pydantic import BaseModel, Field
 from typing import Literal, Optional
 from datetime import datetime
 
-
 class TaskSubmit(BaseModel):
     task_card_path: str = Field(description="任务卡 YAML 文件路径")
     priority: int = Field(default=5, ge=1, le=10)
@@ -237,7 +233,6 @@ class TaskSubmit(BaseModel):
         description="Agent 必备能力，如 ['python', 'pandas', 'backtest']")
     timeout_seconds: int = Field(default=3600, ge=60, le=86400)
     sandbox_policy: Optional["SandboxPolicy"] = None
-
 
 class Task(BaseModel):
     task_id: str
@@ -257,14 +252,12 @@ class Task(BaseModel):
     last_progress_at: Optional[datetime] = None
     metrics: dict = Field(default_factory=dict)
 
-
 class AgentSpec(BaseModel):
     agent_id: str
     agent_kind: Literal["implementer", "reviewer", "tester", "planner", "generic"]
     capabilities: list[str]
     max_concurrent_tasks: int = Field(default=1, ge=1, le=10)
     heartbeat_interval_seconds: int = Field(default=30)
-
 
 class AgentProgress(BaseModel):
     task_id: str
@@ -276,7 +269,6 @@ class AgentProgress(BaseModel):
     observation_hash: str = Field(description="本次进度观测指纹，用于幻觉循环检测")
     timestamp: datetime
 
-
 class TaskResult(BaseModel):
     task_id: str
     output_files: list[str]
@@ -284,7 +276,6 @@ class TaskResult(BaseModel):
     test_report_path: Optional[str] = None
     metrics: dict
     summary: str = Field(description="自然语言摘要，入 VMS task_history")
-
 
 class TaskFailure(BaseModel):
     task_id: str
@@ -301,7 +292,6 @@ class TaskFailure(BaseModel):
     retryable: bool
     stack_trace: Optional[str] = None
 
-
 class SandboxPolicy(BaseModel):
     writable_paths: list[str] = Field(description="白名单可写路径（相对 repo root）")
     readable_paths: list[str] = Field(default_factory=list,
@@ -311,7 +301,6 @@ class SandboxPolicy(BaseModel):
     max_cpu_seconds: int = Field(default=3600)
     allowed_commands: list[str] = Field(default_factory=list,
         description="白名单可执行命令，为空=拒绝所有命令执行")
-
 
 class Sandbox(BaseModel):
     sandbox_id: str
@@ -763,7 +752,7 @@ except VMError:
 
 ## 12. 性能 SLO
 
-### 12.1 稳态 SLO（Phase 1）
+### 12.1 稳态 SLO
 
 | 指标 | 目标 | 条件 |
 |------|------|------|
@@ -774,7 +763,7 @@ except VMError:
 | `provision_sandbox()` Windows ACL p95 | ≤ 800 ms | - |
 | `provision_sandbox()` Docker p95 | ≤ 3000 ms | - |
 | 幻觉检测实时性 | ≤ 1 心跳周期内触发 | - |
-| 最大并发 Task（Phase 1） | 10 | 单进程 |
+| 最大并发 Task | 10 | 单进程 |
 
 ### 12.2 冷启动 SLO
 
@@ -848,4 +837,4 @@ except VMError:
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
-| 2026-04-24 | 1.0.0 | 初版（B-a-3）。基于 VMS v1.2 模板 + ADR-0017/0018。重点：① 完整 TaskState 状态机强校验；② §3.3 幻觉检测规则引擎；③ §6 Windows ACL 沙箱（Phase 1）+ Docker Desktop 升级；④ §11.2 DEGRADE-003 沙箱创建失败不降级（安全红线）；⑤ FLE/VMS 单向 Protocol 依赖，挂了可降级不阻塞。 |
+| 2026-04-24 | 1.0.0 | 初版（B-a-3）。基于 VMS v1.2 模板 + ADR-0017/0018。重点：① 完整 TaskState 状态机强校验；② §3.3 幻觉检测规则引擎；③ §6 Windows ACL 沙箱+ Docker Desktop 升级；④ §11.2 DEGRADE-003 沙箱创建失败不降级（安全红线）；⑤ FLE/VMS 单向 Protocol 依赖，挂了可降级不阻塞。 |

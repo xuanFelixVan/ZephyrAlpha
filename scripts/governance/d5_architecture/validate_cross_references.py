@@ -53,19 +53,15 @@ ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
 _errors: list[str] = []
 _warnings: list[str] = []
 
-
 def _err(msg: str) -> None:
     _errors.append(msg)
-
 
 def _warn(msg: str) -> None:
     _warnings.append(msg)
 
-
 # =============================================================================
 # 数据采集层
 # =============================================================================
-
 
 def _load_all_layer_yamls() -> list[tuple[str, dict]]:
     """扫描 layers/ infra/ scripts/ frontend/ 下所有模块 YAML，返回 (文件名, 数据) 列表"""
@@ -88,20 +84,16 @@ def _load_all_layer_yamls() -> list[tuple[str, dict]]:
                 _warn(f"无法加载 {yf.name}: {e}")
     return results
 
-
 def _get_modules(data: dict) -> list[dict]:
     """从层 YAML 数据中提取模块列表（兼容 modules / services 字段名）"""
     return data.get("modules", data.get("services", []))
 
-
 def _get_invariants(data: dict) -> list[dict]:
     return data.get("invariants", [])
-
 
 # =============================================================================
 # DIM-1: contract_id 引用链
 # =============================================================================
-
 
 def _build_contract_registry() -> set[str]:
     """从 cross-layer-contracts.yaml 构建合同 ID 集合"""
@@ -125,7 +117,6 @@ def _build_contract_registry() -> set[str]:
             contract_ids.add(section["id"])
     return contract_ids
 
-
 def check_dim1_contract_refs() -> None:
     """DIM-1: 所有 layers/interfaces.contract_id → 存在合同定义"""
     contract_ids = _build_contract_registry()
@@ -145,11 +136,9 @@ def check_dim1_contract_refs() -> None:
                         f"DIM-1 [{fname}] 模块 {module_id} 引用的 contract_id='{cid}' 在 cross-layer-contracts.yaml 中不存在"
                     )
 
-
 # =============================================================================
 # DIM-2: invariant_id 引用链
 # =============================================================================
-
 
 def _build_invariant_registry() -> set[str]:
     iv_path = ARCH_MODEL / "cross-cutting" / "invariants.yaml"
@@ -158,7 +147,6 @@ def _build_invariant_registry() -> set[str]:
         return set()
     data = load_yaml(iv_path)
     return {iv["id"] for iv in data.get("invariants", [])}
-
 
 def check_dim2_invariant_refs() -> None:
     """DIM-2: 所有 layers/invariants.id → 存在不变量定义"""
@@ -174,11 +162,9 @@ def check_dim2_invariant_refs() -> None:
             if iid not in invariant_ids:
                 _err(f"DIM-2 [{fname}] 引用的 invariant_id='{iid}' 在 invariants.yaml 中不存在")
 
-
 # =============================================================================
 # DIM-3: adr_ref 引用链
 # =============================================================================
-
 
 def _build_adr_registry() -> set[str]:
     adr_ids: set[str] = set()
@@ -190,7 +176,6 @@ def _build_adr_registry() -> set[str]:
         if m:
             adr_ids.add(f"ADR-{m.group(1)}")
     return adr_ids
-
 
 def _collect_all_adr_refs() -> list[tuple[str, str, str]]:
     """扫描所有架构 YAML 中的 adr_ref 引用 → [(文件名, 模块id, adr值)]"""
@@ -228,7 +213,6 @@ def _collect_all_adr_refs() -> list[tuple[str, str, str]]:
 
     return refs
 
-
 def check_dim3_adr_refs() -> None:
     """DIM-3: 所有 adr_ref → 存在 ADR 文件"""
     adr_ids = _build_adr_registry()
@@ -239,11 +223,9 @@ def check_dim3_adr_refs() -> None:
         if adr not in adr_ids:
             _err(f"DIM-3 [{fname}] 模块 {mid} 引用的 adr_ref='{adr}' 在 adr/ 目录中无对应文件")
 
-
 # =============================================================================
 # DIM-4: invariant.owner → _index.yaml partition
 # =============================================================================
-
 
 def _build_partition_registry() -> set[str]:
     idx_path = ARCH_MODEL / "_index.yaml"
@@ -257,7 +239,6 @@ def _build_partition_registry() -> set[str]:
         if pid:
             pids.add(pid)
     return pids
-
 
 def check_dim4_invariant_owner() -> None:
     """DIM-4: 每个 invariant.owner → 对应 _index.yaml 中的 partition id"""
@@ -280,11 +261,9 @@ def check_dim4_invariant_owner() -> None:
         if base not in partition_ids:
             _err(f"DIM-4 [{iid}] invariant owner='{owner}' 的根分区 '{base}' 不在 _index.yaml partitions 中")
 
-
 # =============================================================================
 # DIM-5: contract.source_layer → _index.yaml partition
 # =============================================================================
-
 
 def check_dim5_contract_source_layer() -> None:
     """DIM-5: 每个 contract.source_layer → 对应 _index.yaml 中的 partition id"""
@@ -306,11 +285,9 @@ def check_dim5_contract_source_layer() -> None:
         if sl not in partition_ids:
             _err(f"DIM-5 [{cid}] source_layer='{sl}' 不在 _index.yaml partitions 中")
 
-
 # =============================================================================
 # DIM-6: 聚合根 events_published → domain-events.yaml
 # =============================================================================
-
 
 def _build_event_registry() -> set[str]:
     ev_path = ARCH_MODEL / "events" / "domain-events.yaml"
@@ -319,7 +296,6 @@ def _build_event_registry() -> set[str]:
         return set()
     data = load_yaml(ev_path)
     return {e["id"] for e in data.get("events", [])}
-
 
 def check_dim6_aggregate_events() -> None:
     """DIM-6: 聚合根 events_published → domain-events.yaml 中的事件 ID"""
@@ -337,11 +313,9 @@ def check_dim6_aggregate_events() -> None:
             if ep not in event_ids:
                 _err(f"DIM-6 [{agg_id}] events_published='{ep}' 不在 domain-events.yaml 中")
 
-
 # =============================================================================
 # DIM-7: 反向扫描 — 合同孤儿检测
 # =============================================================================
-
 
 def _collect_all_referenced_contract_ids() -> set[str]:
     """从所有层 YAML 的 interfaces.contract_id 收集已引用的合同 ID"""
@@ -354,7 +328,6 @@ def _collect_all_referenced_contract_ids() -> set[str]:
                 if cid:
                     refs.add(cid)
     return refs
-
 
 def check_dim7_orphan_contracts() -> None:
     """DIM-7: cross-layer-contracts.yaml 中未被任何层引用的合同（P1 级别警告，P0 报错）"""
@@ -370,11 +343,9 @@ def check_dim7_orphan_contracts() -> None:
             else:
                 _err(f"DIM-7 合同 '{cid}' 未被任何层 YAML 引用（P0 核心合同必须分配层归属）")
 
-
 # =============================================================================
 # DIM-8: module_id 注册链
 # =============================================================================
-
 
 def _build_module_id_registry() -> set[str]:
     reg_path = ARCH_MODEL / "module-id-registry.yaml"
@@ -383,7 +354,6 @@ def _build_module_id_registry() -> set[str]:
         return set()
     data = load_yaml(reg_path)
     return {entry["module_id"] for entry in data.get("registered_ids", [])}
-
 
 def check_dim8_module_id_registry() -> None:
     """DIM-8: layers 模块 id 是否在 module-id-registry.yaml 中登记（P1 警告）"""
@@ -402,7 +372,6 @@ def check_dim8_module_id_registry() -> None:
             if mid not in registered:
                 _warn(f"DIM-8 [{fname}] 模块 id='{mid}' 未在 module-id-registry.yaml 登记（可能是新模块待注册）")
 
-
 # =============================================================================
 # DIM-9: 废弃文件引用检测
 # =============================================================================
@@ -416,7 +385,6 @@ _DEPRECATED_FILE_PATTERNS = [
     re.compile(r"master-document-inventory\.yaml"),
     re.compile(r"governance-rules-master-registry\.yaml"),
 ]
-
 
 def _build_deprecated_file_set() -> dict[str, Path]:
     """扫描 01_policies_and_standards/ 下所有 status: deprecated 的文件，
@@ -434,7 +402,6 @@ def _build_deprecated_file_set() -> dict[str, Path]:
             if candidate.exists():
                 deprecated[name] = candidate
     return deprecated
-
 
 def check_dim9_deprecated_refs() -> None:
     """DIM-9: 所有 .md/.yaml 中引用已废弃文件（status: deprecated）
@@ -507,7 +474,6 @@ def check_dim9_deprecated_refs() -> None:
         if found_in_file:
             _warn(f"DIM-9 [{rel}] 引用已废弃文件: {', '.join(sorted(found_in_file))}")
 
-
 # =============================================================================
 # DIM-10: 断裂路径引用检测
 # =============================================================================
@@ -520,7 +486,6 @@ _PATH_REF_PATTERN = re.compile(
 _ANCHOR_PATTERN = re.compile(
     r"\[([^\]]*)\]\(([^)]+)\)",
 )
-
 
 def _resolve_ref(ref_path: str, source_file: Path) -> Path | None:
     """将引用路径解析为绝对路径
@@ -539,7 +504,6 @@ def _resolve_ref(ref_path: str, source_file: Path) -> Path | None:
     if ref_path.startswith("/"):
         return REPO_ROOT / ref_path.lstrip("/")
     return source_file.parent / ref_path
-
 
 def check_dim10_broken_path_refs() -> None:
     """DIM-10: 所有 .md 中的文件路径引用 → 目标文件存在性
@@ -587,11 +551,9 @@ def check_dim10_broken_path_refs() -> None:
                 rel = f.relative_to(GOV_DOCS_DIR)
                 _warn(f"DIM-10 [{rel}] Markdown 链接断裂: [{link_text}]({link_target})")
 
-
 # =============================================================================
 # 主入口
 # =============================================================================
-
 
 def main() -> None:
     """入口函数."""
@@ -658,7 +620,6 @@ def main() -> None:
     else:
         print(f"🟡 GATE-XREF 通过（有 {len(_warnings)} 个设计性警告）")
         return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

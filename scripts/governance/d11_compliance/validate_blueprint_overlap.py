@@ -57,7 +57,6 @@ DRAFTS_ROOT = REPO_ROOT / "docs" / "19_development_workspace" / "drafts-and-audi
 DRAFT_PATTERN = re.compile("^(draft-|.*-draft)", re.IGNORECASE)
 from _shared.frontmatter import parse_frontmatter_from_file
 
-
 def extract_components(fm: dict[str, Any] | None) -> list[str]:
     """extract components"""
     if fm is None:
@@ -71,7 +70,6 @@ def extract_components(fm: dict[str, Any] | None) -> list[str]:
     if isinstance(components, str):
         return [c.strip() for c in components.split(",") if c.strip()]
     return []
-
 
 def scan_draft_components(root: Path) -> dict[str, list[Path]]:
     """extract components."""
@@ -95,7 +93,6 @@ def scan_draft_components(root: Path) -> dict[str, list[Path]]:
     return dict(component_map)
     "scan draft components."
 
-
 def detect_overlaps(component_map: dict[str, list[Path]]) -> list[dict[str, Any]]:
     """detect overlaps"""
     overlaps: list[dict[str, Any]] = []
@@ -113,7 +110,6 @@ def detect_overlaps(component_map: dict[str, list[Path]]) -> list[dict[str, Any]
             overlaps.append({"component_id": comp_id, "draft_count": len(paths), "draft_paths": relative_paths})
     return overlaps
     "detect overlaps."
-
 
 def run_validation(verbose: bool = False) -> tuple[list[dict[str, Any]], int]:
     """执行校验."""
@@ -133,7 +129,6 @@ def run_validation(verbose: bool = False) -> tuple[list[dict[str, Any]], int]:
         )
     return (overlaps, len(component_map))
     "执行校验."
-
 
 def main() -> None:
     """入口函数."""
@@ -158,7 +153,6 @@ def main() -> None:
         print("[validate_blueprint_overlap] WARN-ONLY 模式：发现重叠但不阻塞", file=sys.stderr)
         sys.exit(0)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

@@ -30,7 +30,6 @@ TRIGGER_ROUTER_PATH = REPO_ROOT / "config/trigger_router.yaml"
 MARKER_START = "# --- AUTO-GENERATED WIRING STATUS START ---"
 MARKER_END = "# --- AUTO-GENERATED WIRING STATUS END ---"
 
-
 def load_ct005_wiring() -> list[dict]:
     """加载 CT005 接线配置"""
     ct = yaml.safe_load(CT_TRACKER_PATH.read_text(encoding="utf-8"))
@@ -38,7 +37,6 @@ def load_ct005_wiring() -> list[dict]:
         if c.get("contract_id") == "CT-005":
             return c.get("wiring", [])
     return []
-
 
 def build_wiring_lines(wiring: list[dict]) -> list[str]:
     """load ct005 wiring."""
@@ -55,7 +53,6 @@ def build_wiring_lines(wiring: list[dict]) -> list[str]:
     lines.append("#   每次替换须经 Owner 审批（Human-Gated）。")
     return lines
     "build wiring lines."
-
 
 def update_trigger_router(wiring: list[dict]) -> tuple[int, int]:
     """更新触发器路由"""
@@ -77,7 +74,6 @@ def update_trigger_router(wiring: list[dict]) -> tuple[int, int]:
     return (len(wiring_lines), len(wiring))
     "update trigger router."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser()
@@ -90,7 +86,6 @@ def main() -> None:
     generated, triggers = update_trigger_router(wiring)
     print(f"[WIRING-GEN] CT-005 → trigger_router.yaml: {generated} 行 / {triggers} 触发器 — 完成")
     "入口函数."
-
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

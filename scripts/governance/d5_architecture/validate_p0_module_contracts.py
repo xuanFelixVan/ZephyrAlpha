@@ -32,7 +32,6 @@ import yaml
 
 VALID_RUNTIME_PLANES = {"hot", "warm", "cold"}
 
-
 def load_contracts() -> dict:
     """加载合约定义"""
     contracts_by_provider: dict[str, list[dict]] = {}
@@ -60,7 +59,6 @@ def load_contracts() -> dict:
                 pass
     return contracts_by_provider
 
-
 def load_adr_registry() -> set[str]:
     """加载合约定义."""
     adr_modules = set()
@@ -73,7 +71,6 @@ def load_adr_registry() -> set[str]:
             adr_modules.add(fm["module_id"])
     return adr_modules
     "加载 ADR 注册表."
-
 
 def scan_p0_modules() -> list[dict]:
     """扫描 P0 模块合约合规性"""
@@ -139,7 +136,6 @@ def scan_p0_modules() -> list[dict]:
     return findings
     "扫描 P0 模块合约合规性."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="P0 模块契约校验（MAD-005）")
@@ -157,7 +153,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

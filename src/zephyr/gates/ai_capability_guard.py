@@ -36,12 +36,10 @@ from typing import Any
 
 _logger = logging.getLogger("zephyr.gates.capability_guard")
 
-
 class CapabilityLevel(str, Enum):
     IMMUTABLE = "IMMUTABLE"
     EXTEND = "EXTEND"
     FULL = "FULL"
-
 
 def _level_meets_min(actual: CapabilityLevel, minimum: CapabilityLevel) -> bool:
     level_order = {
@@ -50,7 +48,6 @@ def _level_meets_min(actual: CapabilityLevel, minimum: CapabilityLevel) -> bool:
         CapabilityLevel.FULL: 2,
     }
     return level_order[actual] >= level_order[minimum]
-
 
 def _get_caller_file() -> str | None:
     import inspect
@@ -61,7 +58,6 @@ def _get_caller_file() -> str | None:
             if "ai_capability_guard.py" not in filename:
                 return filename
     return None
-
 
 def require_capability(
     operation: str,
@@ -115,7 +111,6 @@ def require_capability(
         return wrapper
 
     return decorator
-
 
 def _check_file_level(filepath: str) -> CapabilityLevel:
     rel = str(Path(filepath).resolve()).replace("\\", "/").lower()

@@ -63,14 +63,11 @@ VOCAB_FIELD_MAP = {
 _errors: list[str] = []
 _warnings: list[str] = []
 
-
 def _err(msg: str) -> None:
     _errors.append(msg)
 
-
 def _warn(msg: str) -> None:
     _warnings.append(msg)
-
 
 def check_dim1_field_registry() -> None:
     """DIM-1: frontmatter-field-registry.yaml 中 enum 类型字段必须有 derived_from"""
@@ -99,7 +96,6 @@ def check_dim1_field_registry() -> None:
             )
         elif not derived.endswith(VOCAB_FIELD_MAP[fname]):
             _warn(f"DIM-1 field_registry.{fname}: derived_from='{derived}' " f"未指向 {VOCAB_FIELD_MAP[fname]}")
-
 
 def check_dim2_arch_contract() -> None:
     """DIM-2: architecture-contract.yaml 中 allowed_values 字段必须有 derived_from"""
@@ -130,7 +126,6 @@ def check_dim2_arch_contract() -> None:
         elif not derived.endswith(VOCAB_FIELD_MAP[fname]):
             _warn(f"DIM-2 arch_contract.{fname}: derived_from='{derived}' " f"未指向 {VOCAB_FIELD_MAP[fname]}")
 
-
 def check_dim3_schema_json() -> None:
     """DIM-3: frontmatter-schema.json 中 enum 属性应能追溯到 vocabulary"""
     if not SCHEMA_JSON_PATH.exists():
@@ -156,14 +151,12 @@ def check_dim3_schema_json() -> None:
                 f"（JSON Schema 中可添加 derived_from 作为扩展属性）"
             )
 
-
 def check_dim4_derived_from_exists() -> None:
     """DIM-4: derived_from 指向的 vocabulary YAML 文件必须存在"""
     for fname, vocab_file in VOCAB_FIELD_MAP.items():
         vocab_path = VOCAB_DIR / vocab_file
         if not vocab_path.exists():
             _err(f"DIM-4: {fname} 的 vocabulary 文件不存在: {vocab_path}")
-
 
 def check_dim5_vocab_contains_field() -> None:
     """DIM-5: derived_from 指向的 vocabulary YAML 中对应字段必须存在"""
@@ -183,7 +176,6 @@ def check_dim5_vocab_contains_field() -> None:
         values = data.get("values", [])
         if not values:
             _warn(f"DIM-5 {vocab_file}: values 列表为空")
-
 
 def main() -> None:
     """入口函数."""
@@ -252,7 +244,6 @@ def main() -> None:
     else:
         print(f"🟡 GATE-DERIVED 通过（有 {len(_warnings)} 个标注性警告）")
         return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

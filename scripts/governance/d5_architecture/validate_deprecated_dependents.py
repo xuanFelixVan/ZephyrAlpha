@@ -31,7 +31,6 @@ ensure_utf8_stdout()
 
 import argparse
 
-
 def scan_deprecated_dependents() -> list[dict]:
     """扫描已废弃模块的依赖者."""
     findings = []
@@ -97,7 +96,6 @@ def scan_deprecated_dependents() -> list[dict]:
     return findings
     """扫描已废弃模块的依赖者."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="废弃文件活跃引用检测（LFC-001 / PS-STD-009 §5）")
@@ -117,7 +115,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

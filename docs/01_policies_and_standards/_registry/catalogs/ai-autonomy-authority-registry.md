@@ -208,7 +208,7 @@ related_rationale:
 | CapabilityChecker | `src/zephyr/shared/capability.py` | Immutable Core | 校验逻辑核心 | Owner + R-XXX |
 | CircuitBreakerGateway | `src/zephyr/gates/circuit_breaker.py` | Immutable Core | 熔断不可由 AI 禁用 | Owner + R-XXX |
 | circuit_breaker_state 表 | `data/circuit_breaker.db` | Immutable Core（追加专用） | 状态历史不可改写 | Owner |
-| AlignmentMonitor（Phase 3）| `src/zephyr/feedback_loop/alignment_monitor.py` | Human-Gated | 评估算法可演进，阈值需审批 | Owner 审批 |
+| AlignmentMonitor| `src/zephyr/feedback_loop/alignment_monitor.py` | Human-Gated | 评估算法可演进，阈值需审批 | Owner 审批 |
 | L2b 沙箱 ACL（ADR-0018）| 项目外 OS 级 | Immutable Core | OS 级 ACL 不由 RI 改（**Wave 1 C-03 裁决**）| Owner |
 
 ### 2.11 基础设施缺口组件（CL-017~021，**Wave 1 R83/R84 增补**）
@@ -219,7 +219,7 @@ related_rationale:
 | CL-018 DocCompressor | `src/zephyr/context_engine/doc_compressor.py` | Human-Gated | 压缩规则需审批 |
 | **CL-018 CompressionPolicy YAML** | `config/compression/policy.yaml` | **Immutable Core**（**Wave 1 V-14 兜底**：防 Self-Modification）| 规则不可由 AI 改 |
 | CL-019 ai-onboarding-guide.md 核心思想章 | `docs/01_policies_and_standards/ai-onboarding-guide.md` | Human-Gated | 文档可演进 |
-| CL-020 master-registry-index（Phase 2）| `docs/01_policies_and_standards/master-registry-index.md` | Human-Gated | 注册表 schema 演进 |
+| CL-020 master-registry-index| `docs/01_policies_and_standards/master-registry-index.md` | Human-Gated | 注册表 schema 演进 |
 | CL-021 EditorConfigGate（同 RI-05）| 见 §2.9 | Immutable Core | 编码规则核心 |
 | **Wave 1 V-14 BlueprintOverlapMergeGate** | `scripts/governance/validate_blueprint_overlap.py` | Immutable Core（**Wave 1 兜底**）| 治理门禁，自身不可被绕过 |
 | **Wave 1 V-15 TruthSourceCascadeValidator** | `scripts/governance/validate_truth_source_cascade.py` | AI-Modifiable（**Wave 1 兜底**）| 追踪报告，需 Owner 审批同步 |

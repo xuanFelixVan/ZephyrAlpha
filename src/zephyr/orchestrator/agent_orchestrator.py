@@ -80,11 +80,9 @@ __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",
 ]
 
-
 # ---------------------------------------------------------------------------
 # 枚举与常量
 # ---------------------------------------------------------------------------
-
 
 class AgentRole(str, Enum):
     """ADR-0032 §3 — 6 个 Agent 角色。"""
@@ -96,7 +94,6 @@ class AgentRole(str, Enum):
     RESEARCHER = "researcher"  # 研究员：因子/策略/实验
     OPERATOR = "operator"  # 运营员：运行/监控/回放
 
-
 class RoutingStrategy(str, Enum):
     """四种路由策略。"""
 
@@ -104,7 +101,6 @@ class RoutingStrategy(str, Enum):
     LOAD_BALANCE = "load_balance"
     SPECIALIST_FIRST = "specialist_first"
     FALLBACK_CHAIN = "fallback_chain"
-
 
 # ADR-0032 §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
@@ -183,11 +179,9 @@ DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
     },
 }
 
-
 # ---------------------------------------------------------------------------
 # 数据契约
 # ---------------------------------------------------------------------------
-
 
 class AgentProfile(BaseModel):
     """单个 Agent 实例的状态画像（用于 load_balance 策略）。"""
@@ -205,7 +199,6 @@ class AgentProfile(BaseModel):
         """当前负载率 = current_load / max_load。"""
         return self.current_load / self.max_load if self.max_load else 1.0
 
-
 class RouteDecision(BaseModel):
     """路由器决策输出。"""
 
@@ -219,7 +212,6 @@ class RouteDecision(BaseModel):
     capability_score: float = Field(ge=0.0, le=1.0, description="首选角色在该域的能力分")
     rationale: str = Field(default="", description="决策解释")
 
-
 class ToolCallRecord(BaseModel):
     """单次 MCP 工具调用记录。"""
 
@@ -232,7 +224,6 @@ class ToolCallRecord(BaseModel):
     latency_ms: int = Field(ge=0, description="耗时毫秒")
     error: str | None = Field(default=None, description="失败原因")
     result_preview: str = Field(default="", description="结果摘要（截断 400 字符）")
-
 
 class OrchestrationResult(BaseModel):
     """单次 orchestrate() 的最终输出。"""
@@ -257,7 +248,6 @@ class OrchestrationResult(BaseModel):
     def _strip_claim(cls, v: str) -> str:
         return v.strip()
 
-
 class SLOSnapshot(BaseModel):
     """5 项 SLO 快照。"""
 
@@ -271,11 +261,9 @@ class SLOSnapshot(BaseModel):
     window_size: int = Field(ge=0)
     healthy: bool = Field(description="是否全部 SLO 达标")
 
-
 # ---------------------------------------------------------------------------
 # 协议：依赖注入（解耦 MCP 与 CoVe）
 # ---------------------------------------------------------------------------
-
 
 @runtime_checkable
 class ToolInvoker(Protocol):
@@ -283,7 +271,6 @@ class ToolInvoker(Protocol):
 
     def __call__(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
-
 
 @runtime_checkable
 class HallucinationCaller(Protocol):
@@ -294,11 +281,9 @@ class HallucinationCaller(Protocol):
     ) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
 
-
 # ---------------------------------------------------------------------------
 # AgentRouter — 无状态路由
 # ---------------------------------------------------------------------------
-
 
 class AgentRouter:
     """6 角色 × 10 域的无状态路由器。
@@ -471,11 +456,9 @@ class AgentRouter:
         candidates.sort(key=lambda a: (a.utilization, a.agent_id))
         return candidates[0].agent_id
 
-
 # ---------------------------------------------------------------------------
 # HealthMonitor — 5 项 SLO
 # ---------------------------------------------------------------------------
-
 
 class HealthMonitor:
     """滑窗口累计 5 项 SLO 的健康监控器。
@@ -608,15 +591,12 @@ class HealthMonitor:
     def sample_count(self) -> int:
         return len(self._latencies)
 
-
 # ---------------------------------------------------------------------------
 # Orchestrator — directive ↔ MCP 工具链编排
 # ---------------------------------------------------------------------------
 
-
 # directive -> (tool_name, 默认参数构造器) 映射。生产可替换注入。
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
-
 
 class AgentOrchestrator:
     """Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。
@@ -801,7 +781,6 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 error=f"{type(exc).__name__}: {exc}",
             )
-
 
 # ---------------------------------------------------------------------------
 # 仅用于静态检查：statistics 被保留以便未来扩展 p50/p95；防止 ruff unused

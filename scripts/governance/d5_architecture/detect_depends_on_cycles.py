@@ -30,7 +30,6 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 import argparse
 
-
 def build_depends_on_graph() -> tuple[dict[str, list[str]], dict[str, str]]:
     """构建 depends_on 关系图"""
     graph: dict[str, list[str]] = defaultdict(list)
@@ -74,7 +73,6 @@ def build_depends_on_graph() -> tuple[dict[str, list[str]], dict[str, str]]:
                     graph[module_id].append(target)
     return (dict(graph), file_map)
 
-
 def detect_cycles(graph: dict[str, list[str]]) -> list[list[str]]:
     """检测循环依赖"""
     cycles = []
@@ -105,7 +103,6 @@ def detect_cycles(graph: dict[str, list[str]]) -> list[list[str]]:
             dfs(node)
     return cycles
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="depends_on 环检测（DOC-009#1）")
@@ -132,7 +129,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if unique_cycles else 0)
-
 
 if __name__ == "__main__":
     main()

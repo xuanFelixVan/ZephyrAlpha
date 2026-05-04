@@ -45,7 +45,6 @@ from _shared.constants import MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
 
 FINDINGS_FILE = REPO_ROOT / "scripts" / "governance" / "reports" / "findings.jsonl"
 
-
 def _load_script_health_checks() -> dict[str, Any]:
     """从 script_manifest.yaml 加载脚本健康检查配置（惰性加载）。
 
@@ -68,9 +67,7 @@ def _load_script_health_checks() -> dict[str, Any]:
         }
     return checks
 
-
 _SCRIPT_HEALTH_CACHE: dict | None = None
-
 
 def _get_script_health_checks() -> dict[str, Any]:
     """获取脚本健康检查配置（惰性加载，支持缓存）。
@@ -83,7 +80,6 @@ def _get_script_health_checks() -> dict[str, Any]:
         _SCRIPT_HEALTH_CACHE = _load_script_health_checks()
     return _SCRIPT_HEALTH_CACHE
 
-
 def _get_all_dimensions() -> list[str]:
     """从 manifest 动态提取所有维度标识（替代硬编码 DIMENSIONS_ALL）。
 
@@ -95,7 +91,6 @@ def _get_all_dimensions() -> list[str]:
         for d in meta["dim"].split("/"):
             dims.add(d)
     return sorted(dims)
-
 
 def check_script_health(script_name: str, args: list[str]) -> dict[str, Any]:
     """检查单个脚本的可执行性并返回健康状态。
@@ -134,7 +129,6 @@ def check_script_health(script_name: str, args: list[str]) -> dict[str, Any]:
     except OSError as e:
         return {"status": "CRASH", "exit_code": None, "error": str(e)[:200]}
 
-
 def load_findings_history() -> list[dict]:
     """加载历史 Finding 记录（从 findings.jsonl）。
 
@@ -154,7 +148,6 @@ def load_findings_history() -> list[dict]:
                     pass
     return findings
 
-
 def compute_dimension_coverage() -> dict[str, list[str]]:
     """计算各审计维度的脚本覆盖情况。
 
@@ -167,7 +160,6 @@ def compute_dimension_coverage() -> dict[str, list[str]]:
         for d in dims:
             covered[d].append(script_name.replace(".py", ""))
     return dict(covered)
-
 
 def render_dashboard(
     health: dict,
@@ -273,7 +265,6 @@ def render_dashboard(
     print(f"  仪表盘刷新: {datetime.now(UTC).strftime('%H:%M:%S UTC')}", file=sys.stderr)
     print(f"{'─' * 65}\n", file=sys.stderr)
 
-
 def render_json(health: dict, coverage: dict) -> None:
     """渲染 JSON 格式健康状态到 stdout。
 
@@ -292,7 +283,6 @@ def render_json(health: dict, coverage: dict) -> None:
         "healthy": all(h["status"] == "OK" for h in health.values()),
     }
     print(json.dumps(output, ensure_ascii=False, indent=2), file=sys.stderr)
-
 
 def run_scan(dimensions: list[str] | None = None) -> float:
     """运行全维度或指定维度审计扫描。
@@ -315,7 +305,6 @@ def run_scan(dimensions: list[str] | None = None) -> float:
     if result.returncode not in (0, 1, 2, 3):
         print(f"⚠ run_all.py 异常退出（exit={result.returncode}）", file=sys.stderr)
     return elapsed
-
 
 def main() -> None:
     """入口——解析命令行参数并渲染审计系统健康仪表盘。
@@ -345,7 +334,6 @@ def main() -> None:
         render_json(health, coverage)
     else:
         render_dashboard(health, findings, coverage, scan_time)
-
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

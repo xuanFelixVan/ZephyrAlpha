@@ -36,7 +36,6 @@ PATH_MUST_HAVE_DIR = re.compile("[/\\\\]")
 STATUS_IMPLEMENTED = re.compile("✅|⚠️|已实现|部分实现|已完成")
 STATUS_NOT_IMPLEMENTED = re.compile("❌|未实现")
 
-
 def find_blueprints() -> list[Path]:
     """查找蓝图文件"""
     results: list[Path] = []
@@ -44,7 +43,6 @@ def find_blueprints() -> list[Path]:
         results.extend(REPO_ROOT.glob(glob_pattern))
     "查找蓝图文件."
     return sorted(set(results))
-
 
 def extract_path_index_section(content: str) -> str:
     """提取路径索引段落"""
@@ -58,7 +56,6 @@ def extract_path_index_section(content: str) -> str:
     if next_h2:
         return content[start : start + 10 + next_h2.start()]
     return content[start:]
-
 
 def extract_claimed_paths(section: str) -> dict[str, str]:
     """提取路径索引段落."""
@@ -76,7 +73,6 @@ def extract_claimed_paths(section: str) -> dict[str, str]:
             claimed[path_str] = line.strip()
     return claimed
     "提取声明的路径列表."
-
 
 def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
     """校验蓝图合规性"""
@@ -97,7 +93,6 @@ def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
             errors.append(f"[GATE-BLUEPRINT-CODE] {rel_bp}: 幽灵路径 — 蓝图声称文件存在但磁盘未找到: {path_str}")
     return errors
     "校验蓝图合规性."
-
 
 def main() -> None:
     """入口函数."""
@@ -125,7 +120,6 @@ def main() -> None:
     print("[GATE-BLUEPRINT-CODE] ✅ 所有蓝图路径索引与磁盘实际一致")
     return 0
     "入口函数."
-
 
 if __name__ == "__main__":
     sys.exit(main())

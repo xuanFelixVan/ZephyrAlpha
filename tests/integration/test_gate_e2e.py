@@ -45,7 +45,6 @@ GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
 # 工具函数
 # ---------------------------------------------------------------------------
 
-
 def _make_task(
     task_id: str = "ADR-001",
     deliverables: list[str] | None = None,
@@ -70,7 +69,6 @@ def _make_task(
         updated_at="2026-01-01T00:00:00+00:00",
     )
 
-
 def _make_repo(
     tmp_path: Path,
     db_name: str = "e2e.db",
@@ -83,7 +81,6 @@ def _make_repo(
         project_root=tmp_path,
         enable_gate=enable_gate,
     )
-
 
 def _write_valid_file(directory: Path, name: str) -> Path:
     """写一个通过 G1 所有检查的 UTF-8 LF 文件（含 frontmatter + 足够正文）。"""
@@ -103,11 +100,9 @@ def _write_valid_file(directory: Path, name: str) -> Path:
     path.write_bytes((frontmatter + body).encode("utf-8"))
     return path
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
-
 
 @pytest.fixture()
 def engine(tmp_path: Path) -> Generator[GateEngine, None, None]:
@@ -116,11 +111,9 @@ def engine(tmp_path: Path) -> Generator[GateEngine, None, None]:
     yield ge
     ge.close()
 
-
 # ===========================================================================
 # 1. 完整流水线（task_repo 集成）
 # ===========================================================================
-
 
 class TestFullPipeline:
     """端到端流程：task 创建 → G1 → IN_PROGRESS → COMPLETED → VERIFIED。"""
@@ -172,11 +165,9 @@ class TestFullPipeline:
         assert final.status == TaskStatus.VERIFIED
         repo.close()
 
-
 # ===========================================================================
 # 2. 门禁阻断场景（G1 P0 violations）
 # ===========================================================================
-
 
 class TestGateBlockingE2E:
     """不合规 task 被 G1 阻断。"""
@@ -253,11 +244,9 @@ class TestGateBlockingE2E:
         assert len(p0s) >= 2
         repo.close()
 
-
 # ===========================================================================
 # 3. 门禁降级（P1 WARNING 允许通过）
 # ===========================================================================
-
 
 class TestGateDegradation:
     """P1/P2 级别违规不阻断任务启动，但记录到 violations。"""
@@ -309,11 +298,9 @@ class TestGateDegradation:
         result = engine.evaluate(task, "G1")
         assert result.summary().startswith("[PASS]")
 
-
 # ===========================================================================
 # 4. G1~G5 门禁直接调用（engine 层烟雾测试）
 # ===========================================================================
-
 
 class TestG1ToG5ViaEngine:
     """通过 GateEngine 直接调用各门禁，验证基本语义。"""
@@ -363,11 +350,9 @@ class TestG1ToG5ViaEngine:
         with pytest.raises(GateEngineError, match="未知 gate_id"):
             engine.evaluate(_make_task("ADR-120"), "G99")
 
-
 # ===========================================================================
 # 5. Rollback 语义 + 集成
 # ===========================================================================
-
 
 class TestRollbackAndIntegration:
     """门禁失败后 task 状态保持不变（rollback 语义）。"""

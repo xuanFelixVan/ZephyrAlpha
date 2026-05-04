@@ -26,20 +26,17 @@ from zephyr.shared.observer import EventType, Observer
 if TYPE_CHECKING:
     from zephyr.context_engine.doc_compressor import DocCompressor
 
-
 @unique
 class BudgetLevel(str, Enum):
     L1_WARNING = "budget_l1_warning"
     L2_THROTTLE = "budget_l2_throttle"
     L3_HARD_STOP = "budget_l3_hard_stop"
 
-
 DEFAULT_THRESHOLDS = {
     BudgetLevel.L1_WARNING: 0.80,
     BudgetLevel.L2_THROTTLE: 0.90,
     BudgetLevel.L3_HARD_STOP: 0.95,
 }
-
 
 class ContextBudgetTracker:
     """Per-session token budget tracker with threshold events.
@@ -202,9 +199,7 @@ class ContextBudgetTracker:
             return None
         return compressor.compress(text, session_id=session_id)
 
-
 _default_tracker: ContextBudgetTracker | None = None
-
 
 def handle_compression_needed(payload: dict[str, Any], **context: Any) -> str | None:
     """Module-level entry point for TriggerRouter dispatch.
@@ -219,7 +214,6 @@ def handle_compression_needed(payload: dict[str, Any], **context: Any) -> str | 
     text = payload.get("text", "")
     session_id = payload.get("session_id", "default")
     return _default_tracker.compress_session_context(text, session_id=session_id)
-
 
 def set_default_tracker(tracker: ContextBudgetTracker) -> None:
     """Register the default tracker for trigger dispatch."""

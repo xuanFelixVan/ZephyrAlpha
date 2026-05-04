@@ -67,7 +67,6 @@ _schema:
     - hard     # 崩溃级——不可用导致系统停止
     - soft     # 降级级——不可用时降级运行
 
-
 # ============================================================================
 # 基础设施登记
 # ============================================================================
@@ -117,7 +116,7 @@ infrastructure:
     sla: "99.5% uptime, < 5s task pickup delay"
     status: planned
     provisioned_at: null
-    note: "脚本系统离线阶段（Phase 2）依赖此队列"
+    note: "脚本系统离线阶段依赖此队列"
 
   # ── 关系数据库（SQLite 任务库）──
   - infra_id: "INFRA-DB-001"
@@ -199,7 +198,7 @@ infrastructure:
     provisioned_at: null
     note: "RI-04 ConfigCenter——runtime-integration blueprint §4.2.4"
 
-  # ── 服务注册（Phase 3——1500+模块后的服务发现）──
+  # ── 服务注册（1500+模块后的服务发现）──
   - infra_id: "INFRA-SVC-001"
     name: "zephyr-service-registry"
     type: service_registry
@@ -213,7 +212,6 @@ infrastructure:
     status: planned
     provisioned_at: null
     note: "Phase 3 1500+ 模块后启用。当前 5 模块阶段手动管理即可"
-
 
 # ============================================================================
 # 汇总统计
@@ -241,7 +239,6 @@ summary:
     MOD-INF-003: [INFRA-MQ-001, INFRA-DB-001, INFRA-DB-002, INFRA-STORE-001]
     MOD-INF-004: [INFRA-DB-002, INFRA-CACHE-001, INFRA-CFG-001]
     MOD-INF-005: [INFRA-MQ-001, INFRA-DB-001, INFRA-STORE-001]
-
 
 # ============================================================================
 # 变更记录

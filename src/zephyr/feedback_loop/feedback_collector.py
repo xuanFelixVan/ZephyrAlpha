@@ -32,7 +32,6 @@ __all__ = [
 
 _VALID_SCORE_RANGE = (1, 5)
 
-
 class FeedbackEntry(BaseModel):
     model_config = BASE_CONFIG
 
@@ -54,7 +53,6 @@ class FeedbackEntry(BaseModel):
                 result.append(tag)
         return result
 
-
 class FeedbackSummary(BaseModel):
     model_config = BASE_CONFIG
 
@@ -63,7 +61,6 @@ class FeedbackSummary(BaseModel):
     average_score: float = Field(ge=0.0, le=5.0, description="Average score (0.0 when no entries)")
     tag_frequencies: dict[str, int] = Field(default_factory=dict, description="Tag occurrence counts")
     latest_comment: str = Field(default="", description="Most recent comment")
-
 
 class FeedbackCollector:
     """Collect and manage task execution feedback.

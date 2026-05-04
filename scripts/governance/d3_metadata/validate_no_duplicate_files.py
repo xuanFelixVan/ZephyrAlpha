@@ -30,13 +30,11 @@ REGISTRY_DIR = GOV_DOCS_DIR / "_registry"
 _errors: list[str] = []
 _warnings: list[str] = []
 
-
 def _file_hash(path: Path) -> str:
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
     except Exception:
         return ""
-
 
 def check_migration_duplicates() -> list[dict]:
     """检查迁移重复"""
@@ -74,7 +72,6 @@ def check_migration_duplicates() -> list[dict]:
             )
     "check migration duplicates."
 
-
 def check_content_duplicates() -> list[dict]:
     """check content duplicates."""
     hash_map: dict[str, list[Path]] = {}
@@ -88,7 +85,6 @@ def check_content_duplicates() -> list[dict]:
             rels = [str(p.relative_to(GOV_DOCS_DIR)) for p in paths]
             _warnings.append(f'Content duplicate (hash={h}): {', '.join(rels)}')
     "check content duplicates."
-
 
 def main() -> None:
     """入口函数."""
@@ -116,7 +112,6 @@ def main() -> None:
     else:
         print("ALL files pass duplicate detection")
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

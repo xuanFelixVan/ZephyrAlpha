@@ -73,14 +73,12 @@ _ROOT_SCRIPTS = [
     ("quality-standard.md", "审计脚本质量标准"),
 ]
 
-
 def _load_manifest() -> list[dict]:
     import yaml
 
     with open(MANIFEST, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return list(data.get("scripts", []))
-
 
 def _counts_per_dir(manifest: list[dict]) -> dict[str, int]:
     counts: dict[str, int] = {d: 0 for d in _DIR_ORDER}
@@ -93,7 +91,6 @@ def _counts_per_dir(manifest: list[dict]) -> dict[str, int]:
         elif len(parts) == 1:
             root_count += 1
     return counts, root_count
-
 
 def _generate_tree_lines(manifest: list[dict]) -> list[str]:
     counts, _root_count = _counts_per_dir(manifest)
@@ -127,7 +124,6 @@ def _generate_tree_lines(manifest: list[dict]) -> list[str]:
     lines.append(f"{TREE_END_MARKER}")
     return lines
 
-
 def _replace_tree_section(current: str, tree_lines: list[str]) -> str:
     tree_block = "\n".join(tree_lines) + "\n"
 
@@ -148,7 +144,6 @@ def _replace_tree_section(current: str, tree_lines: list[str]) -> str:
         else:
             print("ERROR: 找不到 index.md 中的树形代码块", file=sys.stderr)
             sys.exit(1)
-
 
 def _generate_coverage_lines(manifest: list[dict]) -> list[str]:
     active_dims = set()
@@ -184,7 +179,6 @@ def _generate_coverage_lines(manifest: list[dict]) -> list[str]:
     ]
     return lines
 
-
 def _replace_coverage_section(current: str, coverage_lines: list[str]) -> str:
     coverage_block = "\n".join(coverage_lines) + "\n"
 
@@ -197,7 +191,6 @@ def _replace_coverage_section(current: str, coverage_lines: list[str]) -> str:
     else:
         print("ERROR: 找不到 index.md 中的 COVERAGE-AUTO 标记", file=sys.stderr)
         sys.exit(1)
-
 
 def sync(manifest: list[dict], check_only: bool = False) -> int:
     """同步索引."""
@@ -227,7 +220,6 @@ def sync(manifest: list[dict], check_only: bool = False) -> int:
     return 0
     """sync."""
 
-
 def main() -> None:
     """入口函数."""
     parser = ArgumentParser(description="从 manifest SSoT 同步 index.md 脚本数量")
@@ -247,7 +239,6 @@ def main() -> None:
 
     code = sync(manifest, check_only=args.check)
     sys.exit(code)
-
 
 if __name__ == "__main__":
     main()

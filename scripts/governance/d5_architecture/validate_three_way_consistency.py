@@ -33,7 +33,6 @@ from _shared.walk import iter_files
 
 BLOCKQUOTE_PATTERN = re.compile("module_id:\\s*(\\S+).*?version:\\s*(\\S+).*?status:\\s*(\\S+)")
 
-
 def _extract_blockquote_info(content: str) -> dict[str, str] | None:
     for line in content.split("\n"):
         line_stripped = line.strip()
@@ -44,7 +43,6 @@ def _extract_blockquote_info(content: str) -> dict[str, str] | None:
         if m:
             return {"module_id": m.group(1), "version": m.group(2), "status": m.group(3)}
     return None
-
 
 def _load_registry_index(registry_path: Path) -> dict[str, dict]:
     index: dict[str, dict] = {}
@@ -62,10 +60,8 @@ def _load_registry_index(registry_path: Path) -> dict[str, dict]:
             index[mid] = entry
     return index
 
-
 def _resolve_registry_status(raw_status: str) -> str:
     return raw_status.strip()
-
 
 def scan_three_way_consistency(docs_dir: Path, registry_path: Path) -> tuple[list[dict], int, int]:
     """扫描三方一致性"""
@@ -150,7 +146,6 @@ def scan_three_way_consistency(docs_dir: Path, registry_path: Path) -> tuple[lis
     return (findings, files_scanned, files_with_mid)
     "扫描三方一致性."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="三方一致性检查（frontmatter vs blockquote vs registry）")
@@ -186,7 +181,6 @@ def main() -> None:
     print("\n✅ 三方一致！", file=sys.stderr)
     sys.exit(0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

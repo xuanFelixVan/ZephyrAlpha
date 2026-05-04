@@ -194,7 +194,7 @@ modules:
     runtime_plane: cold
     blueprint_ref: MOD-INF-005
     description: >
-      CI 审计结果输出；流入 docs/18_audit_and_evidence/（新树路径）。
+      CI 审计结果输出；流入 docs/18_audit_and_evidence/（当前项目路径）。
       LATEST 覆盖写入模式，不按日期堆积文件。
     interfaces: []
     adr_ref: []

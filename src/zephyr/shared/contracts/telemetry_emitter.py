@@ -27,7 +27,6 @@ AI Prompt
 
 """
 
-
 @dataclass(frozen=True)
 class TelemetryEmitter:
     emitter_id: str

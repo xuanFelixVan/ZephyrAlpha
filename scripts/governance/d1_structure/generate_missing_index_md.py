@@ -27,14 +27,12 @@ ensure_utf8_stdout()
 INDEX_TEMPLATE = '---\ndoc_type: index\nstatus: active\ntitle: "{dir_name} — 目录索引"\nversion: "1.0.0"\ncreated: "{today}"\nupdated: "{today}"\n---\n\n# {dir_name}\n\n> 本文件由 `generate_missing_index_md.py` 自动生成\n> 生成日期：{today}\n\n## 目录内容\n\n| 文件/目录 | 类型 | 说明 |\n|-----------|------|------|\n{rows}\n\n## 导航\n\n- [上级目录](../index.md)\n- [项目根](../../index.md)\n'
 EXCLUDE_NAMES = {".git", "__pycache__", ".obsidian", "_DO_NOT_USE", "node_modules", ".mypy_cache"}
 
-
 def _safe_read_dir(parent: Path) -> list[Path]:
     try:
         entries = sorted(p for p in parent.iterdir() if p.name not in EXCLUDE_NAMES)
         return entries
     except PermissionError:
         return []
-
 
 def _try_read_title(md_path: Path) -> str | None:
     try:
@@ -49,7 +47,6 @@ def _try_read_title(md_path: Path) -> str | None:
         if line.startswith("# "):
             return line[2:].strip()
     return None
-
 
 def _build_file_rows(parent: Path) -> str:
     rows: list[str] = []
@@ -76,7 +73,6 @@ def _build_file_rows(parent: Path) -> str:
             rows.append(f"| [{name}]({name}) | 文件 | |")
     return "\n".join(rows) if rows else "| (空目录) | | |"
 
-
 def generate_index(parent: Path, dry_run: bool = False) -> bool:
     """generate index"""
     index_path = parent / "index.md"
@@ -99,7 +95,6 @@ def generate_index(parent: Path, dry_run: bool = False) -> bool:
         print(f"  ERROR: 无法写入 {index_path}: {e}", file=sys.stderr)
         return False
     "generate index."
-
 
 def scan_and_generate(root_dir: Path, dry_run: bool = False, auto_yes: bool = False) -> tuple[int, int]:
     """scan and generate."""
@@ -137,7 +132,6 @@ def scan_and_generate(root_dir: Path, dry_run: bool = False, auto_yes: bool = Fa
     return (created, checked)
     "scan and generate."
 
-
 def main() -> None:
     """入口函数."""
     parser = ArgumentParser(description="为缺失 index.md 的目录自动生成索引文件")
@@ -152,7 +146,6 @@ def main() -> None:
         sys.exit(2)
     created, checked = scan_and_generate(root_dir, dry_run=args.dry_run, auto_yes=args.yes)
     sys.exit(0 if created == 0 else 0)
-
 
 if __name__ == "__main__":
     main()

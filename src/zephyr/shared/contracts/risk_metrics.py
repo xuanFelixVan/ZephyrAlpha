@@ -27,7 +27,6 @@ AI Prompt
 
 """
 
-
 @dataclass(frozen=True)
 class RiskMetricsReport:
     portfolio_id: str

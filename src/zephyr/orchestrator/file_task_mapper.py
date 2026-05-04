@@ -40,7 +40,6 @@ __all__ = [
     "classify_file_to_namespace",
 ]
 
-
 def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     """
     从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。
@@ -76,14 +75,12 @@ def classify_file_to_namespace(file_path: str) -> TaskNamespace:
 
     return TaskNamespace.OPS
 
-
 @dataclass
 class RegisterReport:
     total: int = 0
     inserted: int = 0
     skipped_existing: int = 0
     errors: list[str] = field(default_factory=list)
-
 
 @dataclass
 class SyncInconsistency:
@@ -94,13 +91,11 @@ class SyncInconsistency:
     task_status: str
     issue: str
 
-
 @dataclass
 class SyncReport:
     checked: int = 0
     consistent: int = 0
     inconsistencies: list[SyncInconsistency] = field(default_factory=list)
-
 
 class FileTaskMapper:
     """

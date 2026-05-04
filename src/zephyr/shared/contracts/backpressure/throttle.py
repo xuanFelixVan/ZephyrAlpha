@@ -28,7 +28,6 @@ AI Prompt
     THROTTLE 比 PAUSE 轻：不是完全暂停，而是降到每秒 max_rate_per_sec 条。 典型的场景是下游队列开始堆积但还没满——先降速观察，如果仍然堆积再升级为 PAUSE。
 """
 
-
 @dataclass(frozen=True)
 class BackpressureThrottle:
     signal_id: str

@@ -54,7 +54,6 @@ _schema:
     - Tier_2  # 优化消费者 ——知识错误会降低质量但不导致合规违规
     - Tier_3  # 探索消费者——知识错误影响有限
 
-
 # ============================================================================
 # 知识条目登记
 # ============================================================================
@@ -72,7 +71,6 @@ _schema:
 # ============================================================================
 
 knowledge_entries: []
-
 
 # ============================================================================
 # 预留 KE 编号段（未来填充参考）
@@ -95,19 +93,17 @@ reserved_ranges:
     domain: "task_card"
     blueprint_anchor: "MOD-INF-003 §5.2"
 
-
 # ============================================================================
 # 当前知识存储的实际位置（过渡期——KE 编号体系未激活）
 # ============================================================================
 transition_period:
-  note: "Phase 0-2 过渡期——知识以 blueprint.md + ADR 形式存在，非 KE 编号"
+  note: "2 过渡期——知识以 blueprint.md + ADR 形式存在，非 KE 编号"
   knowledge_sources:
     - {type: blueprint, count: 5, path: "docs/03_modules/l01_infrastructure/*/"}
     - {type: adr, count: 39, path: "docs/02_enterprise_architecture/adr/"}
     - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
     - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
   migration_phase: "Phase 3"
-
 
 # ============================================================================
 # 变更记录

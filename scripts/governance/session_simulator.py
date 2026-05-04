@@ -167,7 +167,6 @@ AGENT_MODELS = [
     "claude-sonnet-4-20250514",
 ]
 
-
 def simulate() -> dict:
     """运行 30 个 session 的模拟，返回摘要 JSON。"""
 
@@ -223,9 +222,7 @@ def simulate() -> dict:
 
     return summary
 
-
 # ── 合规检查（GATE-16 模拟） ──
-
 
 def check_compliance(metrics_path: Path) -> dict:
     """读取 JSONL 并对每个 scenario 做合规检查。"""
@@ -273,9 +270,7 @@ def check_compliance(metrics_path: Path) -> dict:
 
     return report
 
-
 # ── 入口 ──
-
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
@@ -321,7 +316,6 @@ def main() -> None:
     with open(report_path, "w", encoding="utf-8") as fh:
         json.dump(full_report, fh, ensure_ascii=False, indent=2)
     print(f"\nFull report → {report_path}")
-
 
 if __name__ == "__main__":
     main()

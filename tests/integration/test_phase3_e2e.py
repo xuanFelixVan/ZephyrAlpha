@@ -7,7 +7,7 @@ Task ID     : T-3-19 (A25)
 依赖        : T-3-05(B16) + T-3-08(C58) + T-3-12 + T-3-15 + T-3-18
 safety_level: H
 
-验收目标（对齐 phase-3-cards.md T-3-19）
+验收目标（对齐 -cards.md T-3-19）
 ----------------------------------------
 1. MCP Server 全链路：5 Server 生命周期 + 跨 Server 调用链
 2. 幻觉检测：CoVe 四步 + 降级级联 + 拦截率 ≥ 70%
@@ -83,18 +83,15 @@ pytest.skip(
     allow_module_level=True,
 )
 
-
 # ---------------------------------------------------------------------------
 # JSON-RPC 辅助（与 tests/unit/test_mcp_e2e.py 风格一致）
 # ---------------------------------------------------------------------------
-
 
 def _req(method: str, params: dict[str, Any] | None = None, req_id: Any = 1) -> dict[str, Any]:
     r: dict[str, Any] = {"jsonrpc": JSONRPC_VERSION, "id": req_id, "method": method}
     if params is not None:
         r["params"] = params
     return r
-
 
 def _call(
     server: BaseMCPServer,
@@ -104,26 +101,21 @@ def _call(
 ) -> dict[str, Any]:
     return cast(dict[str, Any], server.handle_request(_req(method, params, req_id)))
 
-
 def _tool(server: BaseMCPServer, name: str, arguments: dict[str, Any], req_id: Any = 1) -> dict[str, Any]:
     return _call(server, "tools/call", {"name": name, "arguments": arguments}, req_id)
-
 
 def _result(resp: dict[str, Any]) -> Any:
     assert "error" not in resp, f"Unexpected error: {resp.get('error')}"
     return resp["result"]
-
 
 def _tool_result_text(resp: dict[str, Any]) -> Any:
     r = _result(resp)
     assert r["isError"] is False
     return json.loads(r["content"][0]["text"])
 
-
 # ===========================================================================
 # 1. MCP Server 全链路：5 Server 生命周期 + 跨 Server 调用链
 # ===========================================================================
-
 
 class TestPhase3MCPLifecycle:
     """验收点 1：5 个 MCP Server 全部可 initialize + tools/list + tools/call。"""
@@ -217,11 +209,9 @@ class TestPhase3MCPLifecycle:
         )
         assert ke_r["ke_id"] == "KE-301-phase3-e2e"
 
-
 # ===========================================================================
 # 2. 幻觉检测：CoVe 四步 + 降级级联 + 拦截率 ≥ 70%
 # ===========================================================================
-
 
 def _fake_primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
     """主模型：一致的 baseline + 5 条 verify_questions。"""
@@ -241,7 +231,6 @@ def _fake_primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
         success=True,
     )
 
-
 def _fake_verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     """验证模型：5 条与 baseline 方向一致的答复。"""
     answers = [
@@ -253,7 +242,6 @@ def _fake_verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     ]
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
 
-
 def _fake_verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
     """验证模型：全部否定 baseline。"""
     answers = [
@@ -264,7 +252,6 @@ def _fake_verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
         {"question": "q5", "answer": "wrong, there are multiple breaks", "confidence_self": 0.9},
     ]
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
-
 
 class TestPhase3HallucinationDetector:
     """验收点 2：CoVe 四步 + 降级级联 + 拦截率 ≥ 70%。"""
@@ -336,11 +323,9 @@ class TestPhase3HallucinationDetector:
         rate = intercepted / len(hallu_claims)
         assert rate >= 0.70, f"interception_rate={rate:.2f} must be ≥ 0.70"
 
-
 # ===========================================================================
 # 3. Agent 编排：AgentRouter + Orchestrator + Health Monitor
 # ===========================================================================
-
 
 class TestPhase3AgentOrchestrator:
     """验收点 3：AgentRouter 路由 + Orchestrator 编排 + Health Monitor。"""
@@ -415,11 +400,9 @@ class TestPhase3AgentOrchestrator:
         )
         assert dec.primary_role == AgentRole.GOVERNOR
 
-
 # ===========================================================================
 # 4. 进化引擎：evolve() 纯函数 + 三层反馈 + 五类信号
 # ===========================================================================
-
 
 class TestPhase3EvolutionEngine:
     """验收点 4：三层反馈 + 五类进化信号。"""
@@ -506,11 +489,9 @@ class TestPhase3EvolutionEngine:
         l1 = [p for p in report.proposals if p.layer == FeedbackLayer.L1_TASK]
         assert l1 and l1[0].severity == Severity.HIGH
 
-
 # ===========================================================================
 # 5. 意图解析：三阶段 + 置信度阈值
 # ===========================================================================
-
 
 class TestPhase3IntentParserThreeStages:
     """验收点 5：keyword → embedding → LLM 三阶段级联。"""
@@ -607,11 +588,9 @@ class TestPhase3IntentParserThreeStages:
         result = parser.parse("some extremely obscure phrase")
         assert result.requires_human is True
 
-
 # ===========================================================================
 # 6. 知识流水线 + 契约（G1/G3/G4 片段）
 # ===========================================================================
-
 
 class TestPhase3KnowledgePipelineContracts:
     """验收点 6：知识流水线契约片段（G3 phase / G4 contract / G1 blacklist）。"""
@@ -660,11 +639,9 @@ class TestPhase3KnowledgePipelineContracts:
         tool_names = [t["name"] for t in tools]
         assert "knowledge_base.upsert_ke" in tool_names
 
-
 # ===========================================================================
 # 7. Fitness Functions：5 类度量全部可产出
 # ===========================================================================
-
 
 class TestPhase3FitnessFunctions:
     """验收点 7：5 类 fitness 度量报告。"""

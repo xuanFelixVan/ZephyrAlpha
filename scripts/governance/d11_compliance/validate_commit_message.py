@@ -31,7 +31,6 @@ PATTERN = re.compile(
     r"^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)" r"(\([a-zA-Z0-9_.-]+\))?" r": .{1,200}$"
 )
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="Conventional Commits 格式校验（commit-msg hook）")
@@ -75,7 +74,6 @@ def main() -> None:
         sys.exit(1)
 
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

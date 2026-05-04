@@ -42,7 +42,6 @@ __all__ = [
     "GhostTask",
 ]
 
-
 @dataclass
 class SyncResult:
     task_id: str
@@ -52,19 +51,16 @@ class SyncResult:
     new_status: str
     reason: str
 
-
 @dataclass
 class OrphanFile:
     file_path: str
     suggested_task_id: str
-
 
 @dataclass
 class GhostTask:
     task_id: str
     file_path: str
     task_status: str
-
 
 class StateSynchronizer:
     """

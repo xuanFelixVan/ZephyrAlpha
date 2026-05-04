@@ -56,7 +56,6 @@ FILE_PATH_RE = re.compile(
     r"`(src/zephyr/[^`*]+\.(?:py|yaml|yml|json|toml))`|`(tests/[^`*]+\.py)`|`(config/[^`*]+\.(?:yaml|yml|json))`"
 )
 
-
 def _has_negative_indicator(content: str, path: str) -> bool:
     """检查文件路径附近是否有 ❌ 或 未实现 等否定标记。"""
     idx = content.find(path)
@@ -69,14 +68,12 @@ def _has_negative_indicator(content: str, path: str) -> bool:
         )
     )
 
-
 def find_blueprints() -> list[Path]:
     """find_blueprints implementation."""
     modules_dir = REPO_ROOT / "docs" / "03_modules"
     if not modules_dir.exists():
         return []
     return list(modules_dir.rglob("blueprint.md"))
-
 
 def extract_claimed_file_paths(content: str) -> list[str]:
     """extract_claimed_file_paths implementation."""
@@ -88,7 +85,6 @@ def extract_claimed_file_paths(content: str) -> list[str]:
                 paths.append(g)
     return list(dict.fromkeys(paths))
 
-
 def resolve_source_dir_from_claimed_paths(paths: list[str]) -> str | None:
     """resolve_source_dir_from_claimed_paths implementation."""
     for p in paths:
@@ -97,7 +93,6 @@ def resolve_source_dir_from_claimed_paths(paths: list[str]) -> str | None:
             if len(parts) >= 3:
                 return "/".join(parts[:3])
     return None
-
 
 def check_blueprint(bp_path: Path) -> dict:
     """Check compliance and report findings."""
@@ -124,7 +119,6 @@ def check_blueprint(bp_path: Path) -> dict:
         "disk_results": disk_results,
         "content": content,
     }
-
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
@@ -250,7 +244,6 @@ def main() -> None:
         print(f"\nFAIL: {len(errors)} blueprint(s) with implementation documentation or path drift issues.")
         sys.exit(1)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

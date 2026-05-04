@@ -323,7 +323,6 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
 }
 
-
 def _scan_dir_for_files(rel_dir: str) -> list[str]:
     abs_dir = REPO_ROOT / rel_dir
     if not abs_dir.exists():
@@ -337,10 +336,8 @@ def _scan_dir_for_files(rel_dir: str) -> list[str]:
             results.append(rel)
     return results
 
-
 def _check_file_exists(rel_path: str) -> bool:
     return (REPO_ROOT / rel_path).exists()
-
 
 def _is_skeleton_file(rel_path: str) -> bool:
     abs_path = REPO_ROOT / rel_path
@@ -353,14 +350,12 @@ def _is_skeleton_file(rel_path: str) -> bool:
     except Exception:
         return True
 
-
 def _determine_impl_status(rel_path: str) -> str:
     if not _check_file_exists(rel_path):
         return "❌ 未实现"
     if _is_skeleton_file(rel_path):
         return "⚠️ 骨架"
     return "✅ 已实现"
-
 
 def _get_existing_files(module_name: str) -> dict[str, list[str]]:
     mapping = BLUEPRINT_MODULE_MAP.get(module_name, {})
@@ -403,12 +398,10 @@ def _get_existing_files(module_name: str) -> dict[str, list[str]]:
 
     return all_files
 
-
 def _find_max_section_number(content: str) -> int:
     pattern = re.compile(r"^##\s+(\d+)\.\s+", re.MULTILINE)
     nums = [int(m.group(1)) for m in pattern.finditer(content)]
     return max(nums) if nums else 0
-
 
 def _bump_version(version_str: str) -> str:
     parts = version_str.split(".")
@@ -416,7 +409,6 @@ def _bump_version(version_str: str) -> str:
         patch = int(parts[2]) + 1
         return f"{parts[0]}.{parts[1]}.{patch}"
     return version_str
-
 
 def _generate_path_index_section(section_num: int, module_name: str) -> str:
     mapping = BLUEPRINT_MODULE_MAP.get(module_name, {})
@@ -503,7 +495,6 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
 
     return "\n".join(lines)
 
-
 def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, list[str]]:
     content = bp_path.read_text(encoding="utf-8")
     rel_bp = bp_path.relative_to(REPO_ROOT)
@@ -550,7 +541,6 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
     actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")
     return True, actions
 
-
 def sync(check_only: bool = False) -> int:
     """同步索引."""
     blueprints: list[Path] = []
@@ -586,7 +576,6 @@ def sync(check_only: bool = False) -> int:
     return 0
     """sync."""
 
-
 def main() -> None:
     """入口函数."""
     parser = ArgumentParser(description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.14）")
@@ -600,7 +589,6 @@ def main() -> None:
 
     code = sync(check_only=args.check)
     sys.exit(code)
-
 
 if __name__ == "__main__":
     main()

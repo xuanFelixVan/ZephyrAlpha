@@ -60,10 +60,8 @@ RE_MD_LINK = re.compile(r"(?<!\\)\[[^\]]+\]\(([^)\s]+?)(?:\s+\"[^\"]*\")?\)")
 # Inline code span：`...`，其中的内容不算真实链接（教学示例/占位符）
 RE_INLINE_CODE = re.compile(r"`[^`\n]*`")
 
-
 def _strip_inline_code(line: str) -> str:
     return RE_INLINE_CODE.sub(lambda _m: " " * len(_m.group(0)), line)
-
 
 def _is_under_excluded(path_posix: str) -> bool:
     for sub in EXCLUDE_PATH_SUBSTRINGS:
@@ -71,14 +69,12 @@ def _is_under_excluded(path_posix: str) -> bool:
             return True
     return False
 
-
 def _iter_markdown_files(root: Path) -> Iterable[Path]:
     for p in iter_files(root, extensions=SCAN_EXTENSIONS_MD, exclude_dirs=_EXTRA_EXCLUDE):
         rel_posix = p.relative_to(root).as_posix()
         if _is_under_excluded(rel_posix):
             continue
         yield p
-
 
 def _resolve_link_target(link: str, source_file: Path, root: Path) -> Path | None:
     """将 Markdown 链接解析为仓库内绝对路径。外链/fragment 返回 None。"""
@@ -93,7 +89,6 @@ def _resolve_link_target(link: str, source_file: Path, root: Path) -> Path | Non
         return root / s.lstrip("/")
     # 相对于当前文件
     return (source_file.parent / s).resolve()
-
 
 def audit(root: Path) -> list[tuple[str, int, str]]:
     """返回 (rel_source, line_no, broken_link) 列表。"""
@@ -128,7 +123,6 @@ def audit(root: Path) -> list[tuple[str, int, str]]:
                 rel_src = md.relative_to(root).as_posix()
                 broken.append((rel_src, ln_idx, url))
     return broken
-
 
 def main() -> None:
     """入口函数."""
@@ -169,7 +163,6 @@ def main() -> None:
         print(f"    L{ln:<4d}  {url}", file=sys.stderr)
         shown += 1
     sys.exit(0 if args.warn_only else 1)
-
 
 if __name__ == "__main__":
     main()

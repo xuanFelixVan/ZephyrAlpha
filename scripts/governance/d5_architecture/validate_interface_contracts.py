@@ -37,7 +37,6 @@ VALID_CONTRACT_STATUSES = {"draft", "frozen", "deprecated"}
 CONTRACT_ID_PATTERN = re.compile("^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")
 SEMVER_PATTERN = re.compile("^\\d+\\.\\d+\\.\\d+$")
 
-
 def load_contracts() -> list[dict]:
     """加载合约定义"""
     paths = [
@@ -62,7 +61,6 @@ def load_contracts() -> list[dict]:
                 pass
     return []
     "加载合约定义."
-
 
 def validate_contracts() -> list[dict]:
     """校验合约"""
@@ -129,7 +127,6 @@ def validate_contracts() -> list[dict]:
     return findings
     "校验合约."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="接口契约校验（GOV-MOD-004 IFC-001~007）")
@@ -154,7 +151,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

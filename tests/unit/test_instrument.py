@@ -58,7 +58,6 @@ from zephyr.shared.contracts.instrument import (
     make_stock_identifier,
 )
 
-
 class TestInstrumentBase:
     def test_minimal_construction(self):
         inst = Instrument(
@@ -114,7 +113,6 @@ class TestInstrumentBase:
         assert "SSE:600000" in repr(inst)
         assert "Instrument" in repr(inst)
 
-
 class TestStock:
     @pytest.mark.financial
     def test_a_share(self):
@@ -151,7 +149,6 @@ class TestStock:
         assert stock.lot_size == 1
         assert stock.currency == "USD"
 
-
 class TestETF:
     @pytest.mark.financial
     def test_index_etf(self):
@@ -177,7 +174,6 @@ class TestETF:
         )
         assert etf.leverage_factor == Decimal("2.0")
 
-
 class TestFuture:
     @pytest.mark.financial
     def test_index_future(self):
@@ -196,7 +192,6 @@ class TestFuture:
         )
         assert future.contract_multiplier == 300
         assert future.delivery_method == "cash"
-
 
 class TestOption:
     @pytest.mark.financial
@@ -228,7 +223,6 @@ class TestOption:
         )
         assert opt.option_type == "put"
 
-
 class TestBond:
     @pytest.mark.financial
     def test_government_bond(self):
@@ -249,7 +243,6 @@ class TestBond:
         assert bond.coupon_rate == Decimal("0.0285")
         assert bond.coupon_frequency == "semi_annual"
 
-
 class TestFX:
     @pytest.mark.financial
     def test_usdcny(self):
@@ -265,7 +258,6 @@ class TestFX:
         assert fx.base_currency == "USD"
         assert fx.quote_currency == "CNY"
         assert fx.lot_size == 100_000
-
 
 class TestCrypto:
     @pytest.mark.financial
@@ -298,14 +290,12 @@ class TestCrypto:
         assert crypto.contract_type == "perpetual"
         assert crypto.funding_interval_hours == 8
 
-
 class TestMakeStockIdentifier:
     def test_sse_stock(self):
         assert make_stock_identifier("SSE", "600000") == "SSE:600000"
 
     def test_nyse_stock(self):
         assert make_stock_identifier("NYSE", "AAPL") == "NYSE:AAPL"
-
 
 class TestEnumCompleteness:
     def test_asset_class_values(self):

@@ -38,13 +38,11 @@ from zephyr.db.sqlite_schema import (
     view_names,
 )
 
-
 @pytest.fixture
 def db(tmp_path):
     db_path = tmp_path / "test_schema.db"
     init_db(db_path)
     return db_path
-
 
 class TestInitDb:
     def test_creates_database_file(self, tmp_path):
@@ -76,7 +74,6 @@ class TestInitDb:
         assert "idx_gates_gate_id" in indexes
         assert "idx_tf_task" in indexes
         assert "idx_cb_state" in indexes
-
 
 class TestGetDbConnection:
     def test_pragma_wal(self, db):
@@ -112,7 +109,6 @@ class TestGetDbConnection:
         assert row["id"] == 1
         assert row["name"] == "test"
 
-
 class TestTableNames:
     def test_returns_list(self, db):
         result = table_names(db)
@@ -123,13 +119,11 @@ class TestTableNames:
         result = table_names(db)
         assert result == sorted(result)
 
-
 class TestViewNames:
     def test_returns_list(self, db):
         result = view_names(db)
         assert isinstance(result, list)
         assert len(result) >= 3
-
 
 class TestTasksConstraints:
     def test_valid_status(self, db):
@@ -192,7 +186,6 @@ class TestTasksConstraints:
             )
         conn.close()
 
-
 class TestCircuitBreakerConstraints:
     def test_valid_state(self, db):
         conn = sqlite3.connect(str(db))
@@ -212,7 +205,6 @@ class TestCircuitBreakerConstraints:
             )
         conn.close()
 
-
 class TestTaskFilesForeignKey:
     def test_foreign_key_enforcement(self, db):
         conn = sqlite3.connect(str(db))
@@ -222,7 +214,6 @@ class TestTaskFilesForeignKey:
                 "INSERT INTO task_files (task_id, file_path, role) " "VALUES ('NONEXISTENT-999', 'test.py', 'in_scope')"
             )
         conn.close()
-
 
 class TestMigrationIdempotency:
     def test_migrate_namespace_and_seq_idempotent(self, db):

@@ -7,7 +7,7 @@ Vibe Coding 2.0 基础设施 · L12 跨层支撑层 · 5 大核心服务之一
 Phase 3 计划：kb/ 能力整合入 vector_memory/ 的 InProcessVectorMemory 实现。
 
 规划架构（未实现）：
-- 存储后端 : ChromaDB 0.6（Phase 1-2 进程内库，Phase 3+ HTTP 服务）
+- 存储后端 : ChromaDB 0.6（2 进程内库，Phase 3+ HTTP 服务）
 - 嵌入模型 : BGE-M3 ONNX（本地推理，零外部依赖）
 - 分块策略 : 递归字符分块（Recursive Character Chunking）
 - 5 大 Collection : decisions / code_context / lessons / knowledge / runtime_logs

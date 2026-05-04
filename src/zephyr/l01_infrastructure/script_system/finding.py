@@ -36,7 +36,6 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Literal
 
-
 class Dimension(str, Enum):
     D1 = "D1"
     D2 = "D2"
@@ -69,7 +68,6 @@ class Dimension(str, Enum):
         }
         return _labels[self.value]
 
-
 class Severity(str, Enum):
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
@@ -88,13 +86,11 @@ class Severity(str, Enum):
         }
         return _deadlines[self.value]
 
-
 class BlastRadius(str, Enum):
     FILE = "file"
     MODULE = "module"
     LAYER = "layer"
     SYSTEM = "system"
-
 
 class RemediationAction(str, Enum):
     FIX = "FIX"
@@ -104,7 +100,6 @@ class RemediationAction(str, Enum):
     CREATE = "CREATE"
     INVESTIGATE = "INVESTIGATE"
 
-
 class LifecycleStatus(str, Enum):
     OPEN = "OPEN"
     IN_PROGRESS = "IN_PROGRESS"
@@ -112,7 +107,6 @@ class LifecycleStatus(str, Enum):
     WONTFIX = "WONTFIX"
     FALSE_POSITIVE = "FALSE_POSITIVE"
     DEFERRED = "DEFERRED"
-
 
 class Finding:
     def __init__(
@@ -216,7 +210,6 @@ class Finding:
             description=message,
             remediation_action=RemediationAction.FIX,
         )
-
 
 class FindingCollection:
     def __init__(self, findings: list[Finding] | None = None):

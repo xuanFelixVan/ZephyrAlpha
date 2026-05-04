@@ -29,7 +29,6 @@ MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
 # 状态提取
 STATUS_RE = re.compile(r"^status:\s*(.+)$", re.MULTILINE)
 
-
 def extract_module_id(blueprint_path: Path) -> str | None:
     """从 blueprint.md 的 YAML frontmatter 中提取 module_id。"""
     text = blueprint_path.read_text(encoding="utf-8")
@@ -38,7 +37,6 @@ def extract_module_id(blueprint_path: Path) -> str | None:
         return m.group(1).strip()
     return None
 
-
 def extract_status(blueprint_path: Path) -> str | None:
     """提取蓝图 doc status。"""
     text = blueprint_path.read_text(encoding="utf-8")
@@ -46,7 +44,6 @@ def extract_status(blueprint_path: Path) -> str | None:
     if m:
         return m.group(1).strip()
     return None
-
 
 def scan_blueprints() -> list[dict]:
     """扫描所有模块蓝图，提取路径注册信息。"""
@@ -82,7 +79,6 @@ def scan_blueprints() -> list[dict]:
         )
 
     return entries
-
 
 def generate_yaml(entries: list[dict]) -> str:
     """生成 system-pathway-registry.yaml 内容。"""
@@ -134,14 +130,12 @@ def generate_yaml(entries: list[dict]) -> str:
 
     return buf.getvalue()
 
-
 def cmd_write() -> None:
     """覆写 registry 文件。"""
     entries = scan_blueprints()
     content = generate_yaml(entries)
     REGISTRY_FILE.write_text(content, encoding="utf-8")
     print(f"[OK] Written {len(entries)} modules to {REGISTRY_FILE}")
-
 
 def cmd_check() -> None:
     """CI 模式：比对当前 registry 和自动生成结果，不一致时报错。"""
@@ -155,7 +149,6 @@ def cmd_check() -> None:
         sys.exit(1)
     else:
         print("[OK] system-pathway-registry.yaml is in sync.")
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate system-pathway-registry.yaml")
@@ -172,7 +165,6 @@ def main() -> None:
     else:
         entries = scan_blueprints()
         print(generate_yaml(entries))
-
 
 if __name__ == "__main__":
     main()

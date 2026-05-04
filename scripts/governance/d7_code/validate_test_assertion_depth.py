@@ -36,7 +36,6 @@ from _shared.constants import REPO_ROOT
 
 TESTS_DIR = REPO_ROOT / "tests"
 
-
 def _has_raises_without_match(tree: ast.AST) -> list[int]:
     lines = []
     for node in ast.walk(tree):
@@ -52,7 +51,6 @@ def _has_raises_without_match(tree: ast.AST) -> list[int]:
                         lines.append(node.lineno)
     return lines
 
-
 def _has_bare_assert_boolean(tree: ast.AST) -> list[int]:
     lines = []
     for node in ast.walk(tree):
@@ -61,7 +59,6 @@ def _has_bare_assert_boolean(tree: ast.AST) -> list[int]:
                 if isinstance(node.test.value, bool):
                     lines.append(node.lineno)
     return lines
-
 
 def _has_swallowed_exceptions(tree: ast.AST) -> list[int]:
     lines = []
@@ -79,7 +76,6 @@ def _has_swallowed_exceptions(tree: ast.AST) -> list[int]:
                         lines.append(handler.lineno)
     return lines
 
-
 def scan_assertion_depth(test_path: Path) -> dict[str, Any]:
     """扫描断言深度."""
     with open(test_path, encoding="utf-8") as f:
@@ -94,7 +90,6 @@ def scan_assertion_depth(test_path: Path) -> dict[str, Any]:
         "swallowed": _has_swallowed_exceptions(tree),
     }
     """扫描断言深度."""
-
 
 def main() -> None:
     """入口函数."""
@@ -137,7 +132,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

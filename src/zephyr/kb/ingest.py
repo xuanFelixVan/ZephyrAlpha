@@ -63,7 +63,6 @@ _RAW_INTAKE_DIR_NAME = "01_raw_intake"
 
 _UTC = UTC
 
-
 @dataclass
 class IngestResult:
     passed: bool
@@ -71,7 +70,6 @@ class IngestResult:
     target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
-
 
 class IngestGate:
     def __init__(

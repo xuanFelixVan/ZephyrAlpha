@@ -67,7 +67,6 @@ ARCHIVE_DAYS = 60
 STATUS_ARBITRATED = "arbitrated"
 from _shared.frontmatter import parse_frontmatter_from_file
 
-
 def scan_drafts(root: Path, warn_days: int = WARN_DAYS, archive_days: int = ARCHIVE_DAYS) -> list[dict[str, Any]]:
     """scan drafts"""
     results: list[dict[str, Any]] = []
@@ -116,7 +115,6 @@ def scan_drafts(root: Path, warn_days: int = WARN_DAYS, archive_days: int = ARCH
         )
     return results
 
-
 def compute_archive_target(draft_path: Path, arbitrated_date_str: str) -> Path:
     """compute archive target"""
     try:
@@ -126,7 +124,6 @@ def compute_archive_target(draft_path: Path, arbitrated_date_str: str) -> Path:
         month_dir = "undated"
     draft_name = draft_path.parent.name if draft_path.parent != DRAFTS_ROOT else draft_path.stem
     return ARCHIVE_ROOT / month_dir / draft_name
-
 
 def write_audit_log(entry: dict[str, Any]) -> None:
     """write audit log"""
@@ -140,7 +137,6 @@ def write_audit_log(entry: dict[str, Any]) -> None:
     }
     with open(AUDIT_LOG_PATH, "a", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
-
 
 def execute_archive(drafts: list[dict[str, Any]], confirm: bool = False) -> list[str]:
     """execute archive"""
@@ -163,7 +159,6 @@ def execute_archive(drafts: list[dict[str, Any]], confirm: bool = False) -> list
             actions_taken.append(msg)
             write_audit_log({**draft, "action": "archive" if confirm else "proposed"})
     return actions_taken
-
 
 def main() -> None:
     """入口函数"""
@@ -198,7 +193,6 @@ def main() -> None:
         print("[drafts_zone_archiver] WARN-ONLY 模式：发现归档提议但不阻塞", file=sys.stderr)
         sys.exit(0)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

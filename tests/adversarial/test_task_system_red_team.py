@@ -19,7 +19,6 @@ _PROJECT_ROOT = Path("D:/ZephyrAlpha/")
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 sys.path.insert(0, str(_PROJECT_ROOT))
 
-
 def _assert_results(results):
     failed = [(name, err) for status, name, *err in results if status == "FAIL"]
     warnings_list = [(name, msg) for status, name, *msg in results if status == "WARN"]
@@ -28,11 +27,9 @@ def _assert_results(results):
             print(f"  [WARN] {name}: {msg}")
     assert not failed, f"Red team failures ({len(failed)}): {failed}"
 
-
 # ============================================================================
 # 阶段0：基础导入测试
 # ============================================================================
-
 
 def test_00_imports():
     """测试所有核心模块能否正常导入"""
@@ -59,11 +56,9 @@ def test_00_imports():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段1：TaskCard 模型构造 + 校验
 # ============================================================================
-
 
 def test_01_taskcard_creation():
     """测试 TaskCard 最小构造 + 边界条件"""
@@ -245,11 +240,9 @@ def test_01_taskcard_creation():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段2：TaskRepo 集成测试
 # ============================================================================
-
 
 def test_02_task_repo():
     """测试 TaskRepo CRUD + 状态机"""
@@ -374,11 +367,9 @@ def test_02_task_repo():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段3：PipelineOrchestrator 集成测试
 # ============================================================================
-
 
 def test_03_pipeline_orchestrator():
     """测试管线编排器"""
@@ -544,11 +535,9 @@ def test_03_pipeline_orchestrator():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段4：ContextAssembler 集成测试
 # ============================================================================
-
 
 def test_04_context_assembler():
     """测试上下文装配器"""
@@ -608,11 +597,9 @@ def test_04_context_assembler():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段5：BlueprintDecomposer 集成测试
 # ============================================================================
-
 
 def test_05_blueprint_decomposer():
     """测试蓝图拆解器"""
@@ -703,11 +690,9 @@ def test_05_blueprint_decomposer():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段6：TaskManagerMCP 接口测试
 # ============================================================================
-
 
 def test_06_task_manager_mcp():
     """测试 MCP Server 接口"""
@@ -830,11 +815,9 @@ def test_06_task_manager_mcp():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段7：集成度检查
 # ============================================================================
-
 
 def test_07_integration_scan():
     """扫描任务系统与其他系统的连接点"""
@@ -878,11 +861,9 @@ def test_07_integration_scan():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 阶段8：TriageGate 构造测试
 # ============================================================================
-
 
 def test_08_triage_integration():
     """测试 TriageGate 内部 Task 构造是否正确"""
@@ -931,11 +912,9 @@ def test_08_triage_integration():
 
     _assert_results(results)
 
-
 # ============================================================================
 # 汇总输出
 # ============================================================================
-
 
 def run_all_tests():
     all_results = {
@@ -1002,7 +981,6 @@ def run_all_tests():
     print("=" * 80)
 
     return total_fail == 0
-
 
 if __name__ == "__main__":
     success = run_all_tests()

@@ -6,23 +6,20 @@
 
 ```
 ZephyrAlpha/
-├──           # 活跃开发（新树）
-│   ├── src/zephyr/           # 核心源码
-│   ├── docs/                 # 项目文档
-│   ├── scripts/              # 治理与工具脚本
-│   ├── config/               # 配置文件
-│   ├── tests/                # 测试代码
+├── src/zephyr/               # 核心源码
+├── docs/                     # 项目文档
+├── scripts/                  # 治理与工具脚本
+├── config/                   # 配置文件
+├── tests/                    # 测试代码
 ├── 模块候选池/                # 专题讨论与候选模块
 ├── AGENTS.md                 # AI 基准文件
 └── _DO_NOT_USE_old_tree/     # 旧树归档（禁止使用）
 ```
 
-你可以先在本地 fork / clone 本仓库，再进入 `` 目录。
-
 ## 快速开始
 
 ```bash
-cd
+cd D:\ZephyrAlpha
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt

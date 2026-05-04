@@ -54,7 +54,6 @@ MASTER_INDEX_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
 )
 
-
 def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
     """读取 YAML 文件"""
     if not path.exists():
@@ -72,7 +71,6 @@ def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
         return (None, f"{path} 不是 YAML mapping")
     return (data, "")
 
-
 def count_yaml_entries(data: dict[str, Any], entry_key: str) -> int:
     """read yaml."""
     entries = data.get(entry_key, [])
@@ -80,7 +78,6 @@ def count_yaml_entries(data: dict[str, Any], entry_key: str) -> int:
         return len(entries)
     return 0
     "count yaml entries."
-
 
 def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[list[str], list[dict[str, Any]]]:
     """校验主索引"""
@@ -197,10 +194,8 @@ def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[
     return (errors, findings)
     "validate master index."
 
-
 def _entry_key_for_registry(registry_id: str) -> str | None:
     return None
-
 
 def _auto_detect_entry_key(data: dict[str, Any]) -> str | None:
     skip_keys = {
@@ -225,7 +220,6 @@ def _auto_detect_entry_key(data: dict[str, Any]) -> str | None:
             best_key = key
             best_len = len(value)
     return best_key
-
 
 def main() -> None:
     """入口函数."""
@@ -264,7 +258,6 @@ def main() -> None:
         sys.exit(2)
     sys.exit(0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

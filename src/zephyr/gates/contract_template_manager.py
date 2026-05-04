@@ -29,7 +29,6 @@ __all__ = [
     "ContractTemplateManager",
 ]
 
-
 class ContractParameter(BaseModel):
     model_config = BASE_CONFIG
 
@@ -46,7 +45,6 @@ class ContractParameter(BaseModel):
         if v not in allowed:
             raise ValueError(f"param_type must be one of {allowed}, got '{v}'")
         return v
-
 
 class ContractTemplate(BaseModel):
     model_config = BASE_CONFIG
@@ -72,7 +70,6 @@ class ContractTemplate(BaseModel):
     @classmethod
     def updated_not_before_created_check(cls, v: datetime) -> datetime:
         return v
-
 
 class ContractTemplateManager:
     """Manage MCP tool contract templates.

@@ -29,10 +29,8 @@ from check_naming_convention import (  # noqa: E402
     check_file,
 )
 
-
 def _rules(violations: list) -> set[str]:
     return {v.rule for v in violations}
-
 
 class TestN01Uppercase:
     def test_lowercase_passes(self) -> None:
@@ -53,7 +51,6 @@ class TestN01Uppercase:
     def test_all_whitelist_entries_passthrough(self) -> None:
         for name in FILENAME_UPPERCASE_WHITELIST:
             assert "N-01" not in _rules(check_file(f"docs/{name}")), name
-
 
 class TestN02VersionSuffix:
     def test_v1_suffix_detected(self) -> None:
@@ -77,7 +74,6 @@ class TestN02VersionSuffix:
         for tok in TECH_VERSION_TOKENS:
             assert tok == tok.lower(), tok
 
-
 class TestN03DateSuffix:
     def test_date_suffix_detected(self) -> None:
         assert "N-03" in _rules(check_file("docs/audit-20260421.md"))
@@ -88,7 +84,6 @@ class TestN03DateSuffix:
     def test_iso_date_with_dashes_passes(self) -> None:
         assert "N-03" not in _rules(check_file("docs/audit-2026-04-21.md"))
 
-
 class TestN04AdrNestedNumber:
     def test_nested_adr_detected(self) -> None:
         assert "N-04" in _rules(check_file("docs/adr/adr-011-013.md"))
@@ -96,7 +91,6 @@ class TestN04AdrNestedNumber:
     def test_flat_adr_passes(self) -> None:
         vs = check_file("docs/adr/adr-0038-file-as-task-paradigm.md")
         assert "N-04" not in _rules(vs)
-
 
 class TestN05AdrMissingSuffix:
     def test_missing_suffix_detected(self) -> None:
@@ -108,7 +102,6 @@ class TestN05AdrMissingSuffix:
     def test_with_suffix_passes(self) -> None:
         vs = check_file("docs/adr/adr-0042-some-decision.md")
         assert "N-05" not in _rules(vs)
-
 
 class TestN06ModuleIdScope:
     def test_ea_prefix_detected(self, tmp_path: Path) -> None:
@@ -131,7 +124,6 @@ class TestN06ModuleIdScope:
         fake.write_text("---\nmodule_id: ADR-0001\n---\n", encoding="utf-8")
         assert "N-06" not in _rules(check_file("adr-0001-something.md", fake))
 
-
 class TestN07AdrIdFilenameMismatch:
     def test_mismatch_detected(self, tmp_path: Path) -> None:
         fake = tmp_path / "adr-0005-something.md"
@@ -142,7 +134,6 @@ class TestN07AdrIdFilenameMismatch:
         fake = tmp_path / "adr-0005-something.md"
         fake.write_text("---\nmodule_id: ADR-0005\n---\n", encoding="utf-8")
         assert "N-07" not in _rules(check_file("adr-0005-something.md", fake))
-
 
 class TestPathExemption:
     def test_archive_dir_exempt(self) -> None:
@@ -156,7 +147,6 @@ class TestPathExemption:
 
     def test_session_logs_exempt(self) -> None:
         assert check_file("docs/19_development_workspace/session-logs/session-20260422-001.md") == []
-
 
 class TestIntegration:
     def test_multiple_violations_in_one_file(self, tmp_path: Path) -> None:

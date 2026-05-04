@@ -270,14 +270,12 @@ from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, Field, ConfigDict
 
-
 class EndedReason(str, Enum):
     NORMAL_SHUTDOWN = "normal_shutdown"
     USER_COMMAND = "user_command"
     CRASH = "crash"
     IDLE_TIMEOUT = "idle_timeout"
     IDE_CLOSE = "ide_close"
-
 
 class HallucinationRule(str, Enum):
     LOOP_SAME_OBSERVATION = "loop_same_observation"
@@ -288,7 +286,6 @@ class HallucinationRule(str, Enum):
     FABRICATED_API = "fabricated_api"
     OTHER = "other"
 
-
 class OpenTask(BaseModel):
     model_config = ConfigDict(extra='forbid')
     task_id: str
@@ -298,14 +295,12 @@ class OpenTask(BaseModel):
     last_observation: str | None = Field(default=None, max_length=500)
     next_action_hint: str | None = Field(default=None, max_length=300)
 
-
 class Blocker(BaseModel):
     model_config = ConfigDict(extra='forbid')
     task_id: str
     reason: str = Field(max_length=500)
     requires_user: bool
     suggested_prompt: str | None = None
-
 
 class HallucinationEvent(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -316,7 +311,6 @@ class HallucinationEvent(BaseModel):
     mitigation_applied: str | None = None
     timestamp: datetime
 
-
 class ContextState(BaseModel):
     model_config = ConfigDict(extra='forbid')
     active_collections: list[Literal["decisions", "code_context", "lessons",
@@ -326,14 +320,12 @@ class ContextState(BaseModel):
     mcp_channels_active: list[Literal["tools", "resources", "prompts", "sampling"]] = \
         Field(default_factory=list)
 
-
 class TokenBudget(BaseModel):
     model_config = ConfigDict(extra='forbid')
     session_total_used: int = Field(default=0, ge=0)
     session_remaining: int | None = None
     daily_quota_consumed: int | None = None
     opus_calls_today: int = Field(default=0, ge=0, le=10)   # Opus M-03 日配额
-
 
 class EnvironmentSnapshot(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -343,13 +335,11 @@ class EnvironmentSnapshot(BaseModel):
     ruff_status: Literal["clean", "warnings", "errors"] | None = None
     pytest_last_result: Literal["pass", "fail", "not_run"] | None = None
 
-
 class IDEInfo(BaseModel):
     model_config = ConfigDict(extra='forbid')
     ide_id: Literal["cursor", "trae", "claude_desktop", "generic_mcp"]
     ide_version: str | None = None
     os: str | None = None
-
 
 class SessionCarryover(BaseModel):
     """Session 接续的权威 schema，由 Context Engine 写入 .runtime/sessions/session_carryover.json"""

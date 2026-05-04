@@ -42,7 +42,6 @@ from typing import Any
 
 _logger = logging.getLogger("zephyr.contracts.registry")
 
-
 @dataclass
 class ContractMeta:
     contract_id: str
@@ -56,7 +55,6 @@ class ContractMeta:
     physical_path: str = ""
     description: str = ""
 
-
 @dataclass
 class VersionTransition:
     contract_id: str
@@ -65,7 +63,6 @@ class VersionTransition:
     announced_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     migration_window_ms: int = 2_592_000_000  # 30 days in ms
     active: bool = True
-
 
 class VersionMismatchError(ValueError):
     """VER-R2: MAJOR 版本不匹配时抛出。"""
@@ -77,7 +74,6 @@ class VersionMismatchError(ValueError):
         super().__init__(
             f"{contract_id}: MAJOR 版本不匹配 — " f"期望 MAJOR={expected_major}, 实际 MAJOR={actual_major}"
         )
-
 
 class ContractRegistry:
     """运行时契约注册表。
@@ -330,11 +326,9 @@ class ContractRegistry:
         except (ValueError, IndexError):
             return 0
 
-
 from collections import defaultdict
 
 _registry: ContractRegistry | None = None
-
 
 def get_registry(repo_root: Path | None = None) -> ContractRegistry:
     global _registry
@@ -342,7 +336,6 @@ def get_registry(repo_root: Path | None = None) -> ContractRegistry:
         _registry = ContractRegistry(repo_root=repo_root)
         _registry.initialize()
     return _registry
-
 
 def reset_registry() -> None:
     global _registry

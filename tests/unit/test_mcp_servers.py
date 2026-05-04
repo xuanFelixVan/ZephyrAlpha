@@ -33,7 +33,6 @@ from zephyr.mcp.sentinel_server import create_server as make_sentinel_server
 # 辅助函数
 # ---------------------------------------------------------------------------
 
-
 def _call(server: BaseMCPServer, method: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
     """构造 JSON-RPC 请求并调用 handle_request。"""
     request: dict[str, Any] = {"jsonrpc": "2.0", "id": 1, "method": method}
@@ -41,23 +40,19 @@ def _call(server: BaseMCPServer, method: str, params: dict[str, Any] | None = No
         request["params"] = params
     return server.handle_request(request)
 
-
 def _tool_call(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """调用 tools/call。"""
     return _call(server, "tools/call", {"name": tool_name, "arguments": arguments})
-
 
 def _ok(response: dict[str, Any]) -> Any:
     """断言无 error 并返回 result。"""
     assert "error" not in response, f"Unexpected error: {response.get('error')}"
     return response["result"]
 
-
 def _err(response: dict[str, Any]) -> dict[str, Any]:
     """断言有 error 并返回 error 字段。"""
     assert "error" in response, f"Expected error, got: {response}"
     return response["error"]
-
 
 def _tool_result(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any]) -> Any:
     """调用 tools/call 并解析 JSON 内容层，返回工具实际结果字典。"""
@@ -65,11 +60,9 @@ def _tool_result(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any
     result = _ok(resp)
     return json.loads(result["content"][0]["text"])
 
-
 # ===========================================================================
 # BaseMCPServer 测试
 # ===========================================================================
-
 
 class TestBaseMCPServer:
     def _make_server(self) -> BaseMCPServer:
@@ -144,11 +137,9 @@ class TestBaseMCPServer:
         response = json.loads(out.read().strip())
         assert "error" in response
 
-
 # ===========================================================================
 # TaskManagerServer 测试
 # ===========================================================================
-
 
 @pytest.mark.skip(
     reason="BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——当前 task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待步骤5-6补齐后可取消 skip 并重写测试适配 FastMCP API"
@@ -274,11 +265,9 @@ class TestTaskManagerServer:
         task_ids = [t["task_id"] for t in result["items"]]
         assert task_ids.count("T-2-00") == 1
 
-
 # ===========================================================================
 # KnowledgeBaseServer 测试
 # ===========================================================================
-
 
 class TestKnowledgeBaseServer:
     def setup_method(self) -> None:
@@ -360,11 +349,9 @@ class TestKnowledgeBaseServer:
         )
         assert "ZA-KB-0001" in err["message"]
 
-
 # ===========================================================================
 # GateEngineServer 测试
 # ===========================================================================
-
 
 class TestGateEngineServer:
     def setup_method(self) -> None:
@@ -470,11 +457,9 @@ class TestGateEngineServer:
         )
         assert result["passed"] is True
 
-
 # ===========================================================================
 # DocGuardServer 测试
 # ===========================================================================
-
 
 class TestDocGuardServer:
     def setup_method(self) -> None:
@@ -589,11 +574,9 @@ class TestDocGuardServer:
         )
         assert "error" in str(err).lower() or err["code"] != 0
 
-
 # ===========================================================================
 # SentinelServer 测试
 # ===========================================================================
-
 
 class TestSentinelServer:
     def setup_method(self) -> None:

@@ -75,7 +75,6 @@ MULTI_VERSION_YAML = textwrap.dedent("""\
         template_text: "v2: analyze {task_id} context={context}"
 """)
 
-
 class TestEstimateTokens:
     def test_non_empty_text(self) -> None:
         assert estimate_tokens("hello world") > 0
@@ -88,7 +87,6 @@ class TestEstimateTokens:
 
     def test_long_text_scales_linearly(self) -> None:
         assert estimate_tokens("a" * 400) == 100
-
 
 class TestSemver:
     def test_tuple_parsing(self) -> None:
@@ -103,11 +101,9 @@ class TestSemver:
     def test_compare_higher(self) -> None:
         assert _compare_semver("2.1.0", "2.0.9") == 1
 
-
 # ---------------------------------------------------------------------------
 # PromptVariable 测试
 # ---------------------------------------------------------------------------
-
 
 class TestPromptVariable:
     def test_required_default(self) -> None:
@@ -119,11 +115,9 @@ class TestPromptVariable:
         v = PromptVariable(name="ctx", required=False, default="none")
         assert v.default == "none"
 
-
 # ---------------------------------------------------------------------------
 # PromptVersion 测试
 # ---------------------------------------------------------------------------
-
 
 class TestPromptVersion:
     def test_valid_version(self) -> None:
@@ -138,11 +132,9 @@ class TestPromptVersion:
         with pytest.raises(Exception):
             PromptVersion(version="1.0.0", stability="unknown_level")
 
-
 # ---------------------------------------------------------------------------
 # PromptTemplate 测试
 # ---------------------------------------------------------------------------
-
 
 class TestPromptTemplate:
     def _make_template(
@@ -221,11 +213,9 @@ class TestPromptTemplate:
         result = tpl2.render({"a": "1", "b": "2"})
         assert "b=2" in result.rendered_text
 
-
 # ---------------------------------------------------------------------------
 # PromptRegistry 测试
 # ---------------------------------------------------------------------------
-
 
 class TestPromptRegistryLoadYaml:
     def test_load_yaml_text_basic(self) -> None:
@@ -252,7 +242,6 @@ class TestPromptRegistryLoadYaml:
         reg.load_yaml_text(MULTI_VERSION_YAML)
         versions = reg.list_versions("analyze")
         assert versions == ["1.0.0", "2.0.0"]
-
 
 class TestPromptRegistryRegister:
     def _make_tpl(self, tid: str, version: str) -> PromptTemplate:
@@ -288,7 +277,6 @@ class TestPromptRegistryRegister:
         reg.register(self._make_tpl("bar", "2.0.0"))
         assert reg.get_latest_version("bar") == "3.0.0"
 
-
 class TestPromptRegistryGet:
     def _load(self) -> PromptRegistry:
         reg = PromptRegistry()
@@ -315,7 +303,6 @@ class TestPromptRegistryGet:
         with pytest.raises(TemplateNotFoundError):
             reg.get("analyze", version="9.9.9")
 
-
 class TestPromptRegistryRender:
     def _load(self) -> PromptRegistry:
         reg = PromptRegistry()
@@ -337,7 +324,6 @@ class TestPromptRegistryRender:
         reg = self._load()
         result = reg.render("greet", {"user": "Alice"})
         assert result.token_count > 0
-
 
 class TestPromptRegistryRenderWithContext:
     def _make_registry(self) -> PromptRegistry:

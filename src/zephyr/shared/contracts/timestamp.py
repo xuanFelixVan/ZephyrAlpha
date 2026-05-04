@@ -57,11 +57,9 @@ Timestamp = pd.Timestamp
     def process(ts: "pandas.Timestamp", data: pd.DataFrame) -> None: ...  # 使用原名而非别名
 """
 
-
 # ═══════════════════════════════════════════════════════════════════
 # 异常类
 # ═══════════════════════════════════════════════════════════════════
-
 
 class NaiveDatetimeError(ValueError):
     """
@@ -70,11 +68,9 @@ class NaiveDatetimeError(ValueError):
     所有进入 ZephyrAlpha 系统的时间戳**必须 tz-aware**。
     """
 
-
 # ═══════════════════════════════════════════════════════════════════
 # 工厂函数
 # ═══════════════════════════════════════════════════════════════════
-
 
 def utcnow() -> Timestamp:
     """
@@ -93,7 +89,6 @@ def utcnow() -> Timestamp:
         'UTC'
     """
     return pd.Timestamp.now(tz="UTC")
-
 
 def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
     """
@@ -160,11 +155,9 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
         " 支持的类型：pd.Timestamp / datetime / str(ISO 8601) / int(Unix 秒) / float。"
     )
 
-
 # ═══════════════════════════════════════════════════════════════════
 # 便捷工具（可选使用）
 # ═══════════════════════════════════════════════════════════════════
-
 
 def to_local(ts: Timestamp, tz: str) -> Timestamp:
     """
@@ -178,7 +171,6 @@ def to_local(ts: Timestamp, tz: str) -> Timestamp:
     if ts.tz is None:
         raise NaiveDatetimeError(f"to_local 的输入必须 tz-aware，收到 naive Timestamp: {ts!r}")
     return ts.tz_convert(tz)
-
 
 def from_unix_ns(ns: int) -> Timestamp:
     """

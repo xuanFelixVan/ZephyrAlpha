@@ -33,7 +33,6 @@ import argparse
 
 PLACEHOLDER_PATTERNS = ["TODO", "PLACEHOLDER", "FILL ME", "TBD", "WIP", "# ...", "pass\n", "...", '"""TODO"""']
 
-
 def check_orphan_shell(filepath: Path) -> dict | None:
     """check orphan shell"""
     if filepath.name == "__init__.py":
@@ -67,7 +66,6 @@ def check_orphan_shell(filepath: Path) -> dict | None:
         }
     return None
 
-
 def check_stale_imports(filepath: Path, src_dir: Path) -> list[dict]:
     """check orphan shell."""
     findings = []
@@ -98,7 +96,6 @@ def check_stale_imports(filepath: Path, src_dir: Path) -> list[dict]:
                         )
     return findings
     "check stale imports."
-
 
 def check_legacy_test(filepath: Path, src_dir: Path) -> list[dict]:
     """check legacy test"""
@@ -133,7 +130,6 @@ def check_legacy_test(filepath: Path, src_dir: Path) -> list[dict]:
     return findings
     "check legacy test."
 
-
 def check_duplicates(scan_dir: Path) -> list[dict]:
     """check duplicates."""
     findings = []
@@ -159,7 +155,6 @@ def check_duplicates(scan_dir: Path) -> list[dict]:
                 )
     return findings
     "check duplicates."
-
 
 def main() -> None:
     """入口函数."""
@@ -198,7 +193,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

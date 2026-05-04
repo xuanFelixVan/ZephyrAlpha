@@ -65,7 +65,6 @@ _schema:
     - addressed_with_manual  # 手动应对（有流程但无代码）
     - addressed_with_auto    # 自动应对（pre-commit/CI/GATE强制执行）
 
-
 # ============================================================================
 # 风险登记
 # ============================================================================
@@ -185,7 +184,7 @@ risks:
     mitigation:
       - "capacity-assurance MOD-INF-001——SLI/SLO 阈值 + 分批验证机制"
       - "ContractBus 分批迁移——按 Phase 分批校验，不一次全量"
-      - "validate_architecture.py 增量模式——仅扫描变更文件（Phase 1）"
+      - "validate_architecture.py 增量模式——仅扫描变更文件"
     mitigation_status: partially_addressed
     related_gate: null
     related_adr: null
@@ -251,7 +250,6 @@ risks:
     related_adr: "MOD-INF-004 §4.3"
     last_reviewed: "2026-05-02"
 
-
 # ============================================================================
 # 风险热力矩阵（Risk Heatmap）
 # ============================================================================
@@ -272,7 +270,6 @@ heatmap:
     - {risk_id: AI-RSK-008, score: 9, label: "自审计闸缺失"}
   low_zone: []     # < 5 —— 监控即可
 
-
 # ============================================================================
 # 汇总统计
 # ============================================================================
@@ -292,7 +289,6 @@ summary:
     addressed_with_auto: 2     # AI-RSK-004/006(partial→Phase 1 full)
   avg_risk_score: 10.75
   max_risk_score: 16
-
 
 # ============================================================================
 # 变更记录

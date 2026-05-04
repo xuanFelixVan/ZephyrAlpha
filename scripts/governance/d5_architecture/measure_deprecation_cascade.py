@@ -31,7 +31,6 @@ import argparse
 
 CASCADE_THRESHOLD = 5
 
-
 def build_reverse_dep_graph() -> tuple[dict[str, list[str]], set[str]]:
     """构建反向依赖图"""
     reverse_deps: dict[str, list[str]] = defaultdict(list)
@@ -62,7 +61,6 @@ def build_reverse_dep_graph() -> tuple[dict[str, list[str]], set[str]]:
     return (dict(reverse_deps), deprecated_ids)
     "build reverse dep graph."
 
-
 def measure_cascade(reverse_deps: dict[str, list[str]], deprecated_ids: set[str]) -> list[dict]:
     """度量级联影响"""
     findings = []
@@ -83,7 +81,6 @@ def measure_cascade(reverse_deps: dict[str, list[str]], deprecated_ids: set[str]
             )
     return findings
     "measure cascade."
-
 
 def main() -> None:
     """入口函数."""
@@ -106,7 +103,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

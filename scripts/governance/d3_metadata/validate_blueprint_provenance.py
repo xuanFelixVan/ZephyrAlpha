@@ -93,7 +93,6 @@ EXEMPT_DOC_TYPES = {
 EXEMPT_FILENAMES = {"README.md", "DEPRECATED.md", "_template.md", "index.md"}
 from _shared.frontmatter import parse_frontmatter_from_file
 
-
 def validate_provenance(fm: dict[str, Any], file_label: str) -> list[str]:
     """校验溯源信息"""
     errors: list[str] = []
@@ -135,7 +134,6 @@ def validate_provenance(fm: dict[str, Any], file_label: str) -> list[str]:
     return errors
     "validate provenance."
 
-
 def is_exempt(path: Path, fm: dict[str, Any] | None) -> bool:
     """判断是否豁免"""
     if path.name in EXEMPT_FILENAMES:
@@ -151,7 +149,6 @@ def is_exempt(path: Path, fm: dict[str, Any] | None) -> bool:
         return True
     return False
     "is exempt."
-
 
 def scan_truth_source_dirs(verbose: bool = False) -> tuple[list[str], int]:
     """扫描真源目录"""
@@ -180,7 +177,6 @@ def scan_truth_source_dirs(verbose: bool = False) -> tuple[list[str], int]:
     return (all_errors, scanned)
     "scan truth source dirs."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="V-12 蓝图真源准入门禁（Wave 0 终审 R73）")
@@ -201,7 +197,6 @@ def main() -> None:
     if args.ci:
         sys.exit(1)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

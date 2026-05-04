@@ -47,7 +47,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-
 class FakeInputSanitizer:
     def __init__(self, root: str):
         self._root = Path(root).resolve()
@@ -60,18 +59,14 @@ class FakeInputSanitizer:
             raise PathTraversalError(f"Path escapes root: {path}")
         return resolved
 
-
 class FakePathTraversalError(Exception):
     pass
-
 
 class FakeSanitizationError(Exception):
     pass
 
-
 PathTraversalError = FakePathTraversalError
 SanitizationError = FakeSanitizationError
-
 
 infra_mock = MagicMock()
 infra_mock.InputSanitizer = FakeInputSanitizer
@@ -87,7 +82,6 @@ from zephyr.db.atomic_transaction_manager import (
     _utf8_lf_bytes,
 )
 
-
 @pytest.fixture
 def atm(tmp_path):
     db_path = tmp_path / "test.db"
@@ -98,7 +92,6 @@ def atm(tmp_path):
     )
     yield manager
     manager.close()
-
 
 class TestUtf8LfBytes:
     def test_str_to_utf8(self):
@@ -117,7 +110,6 @@ class TestUtf8LfBytes:
         data = _utf8_lf_bytes(b"\x00\x01\x02")
         assert data == b"\x00\x01\x02"
 
-
 class TestNewTxId:
     def test_format(self):
         tx_id = _new_tx_id()
@@ -127,7 +119,6 @@ class TestNewTxId:
         ids = {_new_tx_id() for _ in range(100)}
         assert len(ids) == 100
 
-
 class TestATMConstruction:
     def test_basic_construction(self, atm, tmp_path):
         assert atm.root == tmp_path.resolve()
@@ -135,7 +126,6 @@ class TestATMConstruction:
 
     def test_db_path_property(self, atm):
         assert atm.db_path.name == "test.db"
-
 
 class TestTransactionExecute:
     def test_execute_sql(self, atm):
@@ -158,7 +148,6 @@ class TestTransactionExecute:
         count = conn.execute("SELECT COUNT(*) FROM items").fetchone()[0]
         conn.close()
         assert count == 3
-
 
 class TestTransactionWriteFile:
     def test_write_new_file(self, atm, tmp_path):
@@ -199,7 +188,6 @@ class TestTransactionWriteFile:
             tx.write_file("docs/b.md", "b")
             assert tx.staged_file_count() == 2
 
-
 class TestTransactionCommit:
     def test_commit_persists_sql_and_file(self, atm, tmp_path):
         docs_dir = tmp_path / "docs"
@@ -213,7 +201,6 @@ class TestTransactionCommit:
         rows = conn.execute("SELECT id FROM t").fetchall()
         conn.close()
         assert rows == [(42,)]
-
 
 class TestTransactionRollback:
     def test_rollback_on_exception(self, atm, tmp_path):
@@ -251,7 +238,6 @@ class TestTransactionRollback:
                 raise RuntimeError("force rollback")
         assert target.read_text(encoding="utf-8") == "original"
 
-
 class TestNestedTransactionForbidden:
     def test_nested_raises_error(self, atm):
         with atm.transaction() as tx1:
@@ -259,14 +245,12 @@ class TestNestedTransactionForbidden:
                 with atm.transaction() as tx2:
                     pass
 
-
 class TestPostCommitOperationsForbidden:
     def test_execute_after_commit_raises(self, atm):
         with atm.transaction() as tx:
             tx.execute("CREATE TABLE post_commit (id INTEGER)")
         with pytest.raises(TransactionError, match="already committed"):
             tx.execute("INSERT INTO post_commit VALUES (1)")
-
 
 class TestATMClose:
     def test_close_idempotent(self, atm):
@@ -285,7 +269,6 @@ class TestATMClose:
             tx.execute("INSERT INTO close_test VALUES (1)")
         manager.close()
         manager.close()
-
 
 class TestValidateWritePath:
     def test_valid_write_path(self, atm, tmp_path):

@@ -279,7 +279,7 @@ agent_sandbox:
     category: "Agent Sandbox - 执行隔离"
     purpose: "限制 Agent 的文件读写、命令执行范围"
     primary:
-      choice: "Windows ACL + 只读挂载（Phase 1-2）"
+      choice: "Windows ACL + 只读挂载（2）"
       rationale:
         - "Windows 原生机制，零额外依赖"
         - "配合 allowed_commands 白名单"
@@ -307,7 +307,7 @@ feedback_loop:
       choice: "SQLite + 时间索引表"
       rationale:
         - "零依赖"
-        - "Phase 1-2 数据量（≤ 100k 条/天）完全够用"
+        - "2 数据量（≤ 100k 条/天）完全够用"
         - "备份/迁移简单"
     alternatives:
       - {name: "InfluxDB", why_not: "Phase 4+ 升级候选"}
@@ -368,7 +368,7 @@ llm_security_gateway:
     category: "LLM Security Gateway - Prompt Injection 检测"
     purpose: "L1 输入分类（TRUSTED/UNTRUSTED/HOSTILE）"
     primary:
-      choice: "正则 Pattern 库 + 规则集（Phase 1-2）"
+      choice: "正则 Pattern 库 + 规则集（2）"
       rationale:
         - "可审计、可解释"
         - "快速响应（延迟 < 50ms）"

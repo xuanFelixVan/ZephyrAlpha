@@ -65,7 +65,6 @@ _schema:
     - id: "blueprint_registry"
       description: "blueprint-registry.yaml 的 blueprints[] 条目——completeness_pct、generation 等的评估源"
 
-
 # ============================================================================
 # 登记表清单
 # ============================================================================
@@ -101,7 +100,6 @@ registries:
       - "construction_detail"
       - "purpose"
       - "file_lines"
-
 
 # ============================================================================
 # 跨登记表一致性规则
@@ -220,7 +218,6 @@ cross_registry_rules:
     consistency: derived
     derivation_rule: "generation == int(version major)"
     violation_action: warn
-
 
 # ============================================================================
 # 变更记录

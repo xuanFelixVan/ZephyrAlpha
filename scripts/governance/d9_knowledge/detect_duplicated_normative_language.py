@@ -31,7 +31,6 @@ import argparse
 
 NORMATIVE_PATTERNS = [re.compile("(?:必须|禁止|不得|应当|MUST|SHALL|SHALL NOT|MUST NOT|SHOULD|SHOULD NOT)\\s+.+")]
 
-
 def extract_normative_sentences(content: str) -> list[str]:
     """提取规范性语句"""
     sentences = []
@@ -49,7 +48,6 @@ def extract_normative_sentences(content: str) -> list[str]:
                 break
     return sentences
     "提取规范性语句."
-
 
 def scan_duplicated_normative() -> list[dict]:
     """扫描重复规范性语言."""
@@ -74,7 +72,6 @@ def scan_duplicated_normative() -> list[dict]:
     return findings
     "扫描重复规范性语言."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="规范用语重复定义检测（DOC-007）")
@@ -94,7 +91,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

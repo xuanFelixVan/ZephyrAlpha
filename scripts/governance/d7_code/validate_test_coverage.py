@@ -52,7 +52,6 @@ SKIP_MODULES = {
     "l13_experimentation",
 }
 
-
 def _is_skeleton_module(filepath: Path) -> bool:
     parts = filepath.parts
     if "__init__.py" in parts:
@@ -61,7 +60,6 @@ def _is_skeleton_module(filepath: Path) -> bool:
         if part in SKIP_MODULES:
             return True
     return False
-
 
 def _find_test_file(source_file: Path) -> Path | None:
     stem = source_file.stem
@@ -82,7 +80,6 @@ def _find_test_file(source_file: Path) -> Path | None:
         if candidate.exists():
             return candidate
     return None
-
 
 def scan_coverage() -> tuple[list[dict], int, int]:
     """扫描测试覆盖率."""
@@ -119,7 +116,6 @@ def scan_coverage() -> tuple[list[dict], int, int]:
     return untested, total_sources, tested_count
     """扫描测试覆盖率."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="测试覆盖率治理校验器")
@@ -151,7 +147,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if untested else 0)
-
 
 if __name__ == "__main__":
     main()

@@ -29,7 +29,6 @@ from datetime import UTC, datetime
 
 _logger = logging.getLogger("zephyr.telemetry.contract_metrics")
 
-
 @dataclass
 class SlaRecord:
     contract_id: str
@@ -40,7 +39,6 @@ class SlaRecord:
     passed: bool
     recorded_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
-
 @dataclass
 class DriftAlert:
     contract_id: str
@@ -50,7 +48,6 @@ class DriftAlert:
     baseline_value: float
     deviation_pct: float
     detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
-
 
 class ContractMetricsCollector:
     """L12 Telemetry: 契约 SLA + 漂移检测采集器。
@@ -174,9 +171,7 @@ class ContractMetricsCollector:
             "tracked_contracts": len(self._field_baselines),
         }
 
-
 _collector: ContractMetricsCollector | None = None
-
 
 def get_contract_metrics() -> ContractMetricsCollector:
     global _collector

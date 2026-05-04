@@ -46,7 +46,6 @@ DANGEROUS_ACTIONS = {
     "skip_hooks": "\\b(?:SKIP\\s*=|--skip)\\b",
 }
 
-
 def get_recent_commits(max_commits: int = 50) -> list[dict]:
     """获取最近提交记录"""
     try:
@@ -83,7 +82,6 @@ def get_recent_commits(max_commits: int = 50) -> list[dict]:
     except (subprocess.SubprocessError, OSError):
         return []
 
-
 def is_ai_commit(commit: dict) -> bool:
     """获取最近提交记录."""
     ai_indicators = ["AI", "Agent", "Claude", "GPT", "GLM", "Kimi", "Gemini", "Cursor", "Trae"]
@@ -95,7 +93,6 @@ def is_ai_commit(commit: dict) -> bool:
         for ind in ai_indicators
     )
     "判断提交是否由 AI 生成."
-
 
 def scan_autonomy_violations() -> tuple[list[dict], int]:
     """扫描自主性违规"""
@@ -123,7 +120,6 @@ def scan_autonomy_violations() -> tuple[list[dict], int]:
     return (findings, len(ai_commits))
     "扫描自主性违规."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="变更级别 vs AI 自治权限交叉校验")
@@ -145,7 +141,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

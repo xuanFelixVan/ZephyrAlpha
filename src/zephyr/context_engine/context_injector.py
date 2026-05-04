@@ -30,12 +30,10 @@ __all__ = [
     "ContextInjector",
 ]
 
-
 class RetrievalMode(str, Enum):
     TASK_ID = "task_id"
     MODULE_ID = "module_id"
     KEYWORD = "keyword"
-
 
 class InjectedContext(BaseModel):
     model_config = BASE_CONFIG
@@ -46,7 +44,6 @@ class InjectedContext(BaseModel):
     retrieval_mode: str = Field(description="Retrieval mode used")
     query: str = Field(default="", description="Original query string")
     budget_remaining: int = Field(default=0, ge=0, description="Remaining token budget")
-
 
 class ContextInjector:
     """Retrieve and inject knowledge context from KbRepo.

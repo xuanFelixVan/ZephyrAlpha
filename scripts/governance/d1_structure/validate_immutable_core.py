@@ -35,7 +35,6 @@ IMMUTABLE_MARKERS = ["immutable_core", "immutable", "readonly_ai", "ai_cannot_mo
 AI_AUTONOMY_MARKERS = ["ai_autonomy", "autonomy_level"]
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 
-
 def is_immutable(frontmatter: dict) -> bool:
     """is immutable"""
     for marker in IMMUTABLE_MARKERS:
@@ -47,7 +46,6 @@ def is_immutable(frontmatter: dict) -> bool:
         return True
     return False
     "is immutable."
-
 
 def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict]:
     """get recent modifications"""
@@ -82,7 +80,6 @@ def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict
         return []
     "get recent modifications."
 
-
 def scan_docs() -> tuple[list[dict], int]:
     """scan docs"""
     findings = []
@@ -106,7 +103,6 @@ def scan_docs() -> tuple[list[dict], int]:
         findings.append(finding)
     return (findings, files_scanned)
     "scan docs."
-
 
 def main() -> None:
     """入口函数."""
@@ -133,7 +129,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if violated else 0)
-
 
 if __name__ == "__main__":
     main()

@@ -147,7 +147,6 @@ _LESSON_KEYWORDS = [
 
 _UTC = UTC
 
-
 @dataclass
 class TriageResult:
     passed: bool
@@ -158,7 +157,6 @@ class TriageResult:
     target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
-
 
 class TriageGate:
     def __init__(

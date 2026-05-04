@@ -32,7 +32,6 @@ ensure_utf8_stdout()
 
 import argparse
 
-
 def scan_lifecycle_violations() -> list[dict]:
     """扫描生命周期引用违规."""
     findings = []
@@ -105,7 +104,6 @@ def scan_lifecycle_violations() -> list[dict]:
     return findings
     """扫描生命周期引用违规."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六）")
@@ -125,7 +123,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

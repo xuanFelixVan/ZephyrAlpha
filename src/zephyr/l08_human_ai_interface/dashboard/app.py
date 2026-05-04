@@ -9,7 +9,7 @@ Depends     : T-4-04（fitness_functions）、T-4-05（olap_engine）、
 safety_level: L
 
 5 个页面：
-1. 任务进度看板（Phase 0-4 进度）
+1. 任务进度看板（4 进度）
 2. 知识库概览（条目数/状态分布/激活率）
 3. 门禁统计（通过率/阻断率/趋势）
 4. Fitness Functions（5 类度量仪表盘）
@@ -60,7 +60,6 @@ __all__ = [
     "DashboardApp",
     "create_app",
 ]
-
 
 class DashboardApp:
     """Streamlit 仪表盘应用。
@@ -119,14 +118,12 @@ class DashboardApp:
         else:
             return {"error": f"Unknown page: {page_name}"}
 
-
 def create_app(
     task_repo: Any | None = None,
     kb_repo: Any | None = None,
     olap_engine: Any | None = None,
 ) -> DashboardApp:
     return DashboardApp(task_repo=task_repo, kb_repo=kb_repo, olap_engine=olap_engine)
-
 
 def main() -> None:
     if st is None:
@@ -155,7 +152,7 @@ def main() -> None:
     app = create_app()
 
     if page == "Task Progress":
-        st.header("Task Progress (Phase 0-4)")
+        st.header("Task Progress (4)")
         data = app.get_task_progress()
         st.metric("Overall Completion Rate", f"{data.overall_rate:.1%}")
         st.metric("Total Tasks", data.total_tasks)
@@ -208,7 +205,6 @@ def main() -> None:
         if data.knowledge_activation:
             st.subheader("Knowledge Activation Trend")
             st.dataframe(data.knowledge_activation)
-
 
 if __name__ == "__main__":
     main()

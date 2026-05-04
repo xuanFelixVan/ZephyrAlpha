@@ -50,7 +50,6 @@ _ITEM_PATTERN = re.compile(
     r")\s+\*\*(?P<module>[^*]+)\*\*\s*—?\s*(?P<desc>.+?)(?:\s*$)",
 )
 
-
 class BlueprintDecomposer:
     """
     治理文档 → 逐条拆解 → 生成 TaskCard 列表。

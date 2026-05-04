@@ -99,7 +99,6 @@ except ImportError:
             }
             return _LABELS.get(self.value, self.value)
 
-
 if FINDING_AVAILABLE:
     _P_TO_SEVERITY = {
         "P0": Severity.CRITICAL,
@@ -128,7 +127,6 @@ _FILE_PATH_PATTERN = re.compile(r"((?:src|tests|scripts|docs|config|schemas)[/\\
 # ---------------------------------------------------------------------------
 
 _REGISTRY_CACHE: dict | None = None
-
 
 def _load_script_registry() -> dict[str, Any]:
     """加载脚本注册表并从 script_manifest.yaml 解析元数据。
@@ -165,7 +163,6 @@ def _load_script_registry() -> dict[str, Any]:
     _REGISTRY_CACHE = registry
     return registry
 
-
 def _get_registry() -> dict[str, Any]:
     """获取脚本注册表（惰性加载，支持缓存）。
 
@@ -173,7 +170,6 @@ def _get_registry() -> dict[str, Any]:
         dict: 脚本名 -> 元数据映射
     """
     return _load_script_registry()
-
 
 def _str_to_dimension(dim_str: str) -> Dimension:
     """将维度字符串转换为 Dimension 枚举值。
@@ -192,7 +188,6 @@ def _str_to_dimension(dim_str: str) -> Dimension:
         raise KeyError(f"非法维度值 '{dim_str}'。合法值: {sorted(dim_map.keys())}")
     return dim_map[dim_str]
 
-
 def _is_skip_line(line: str) -> bool:
     """检查输出行是否属于应跳过的统计摘要行。
 
@@ -203,7 +198,6 @@ def _is_skip_line(line: str) -> bool:
         bool: True 表示应跳过，False 表示应解析为 Finding
     """
     return any(p.match(line) for p in SKIP_PATTERNS)
-
 
 def _has_error_indicator(line: str) -> bool:
     """检查输出行是否包含错误指示符。
@@ -225,7 +219,6 @@ def _has_error_indicator(line: str) -> bool:
         return True
     return False
 
-
 def list_registered_scripts() -> None:
     """列出所有注册脚本及其维度映射。
 
@@ -243,7 +236,6 @@ def list_registered_scripts() -> None:
         print(f"    维度: {dims}  |  优先级: {meta['priority']}  |  超时: {meta['timeout_seconds']}s", file=sys.stderr)
         print(f"    {meta['description']}", file=sys.stderr)
         print(file=sys.stderr)
-
 
 def run_script(script_name: str, meta: dict, warn_only: bool = False) -> tuple[int, str, str]:
     """执行单个审计脚本并捕获输出。
@@ -281,7 +273,6 @@ def run_script(script_name: str, meta: dict, warn_only: bool = False) -> tuple[i
     except OSError as e:
         return 2, "", f"OS 错误: {e}"
 
-
 def _extract_file_path(line: str) -> tuple[str, str]:
     """从输出行中提取文件路径和描述文本。
 
@@ -299,7 +290,6 @@ def _extract_file_path(line: str) -> tuple[str, str]:
         rest = line[: m.start()].strip() + " " + line[m.end() :].strip()
         return path, rest.strip().strip(":")
     return "", line
-
 
 def _parse_jsonl_to_findings(
     jsonl_text: str,
@@ -356,7 +346,6 @@ def _parse_jsonl_to_findings(
         except (json.JSONDecodeError, KeyError, ValueError):
             continue
     return findings
-
 
 def parse_script_output_to_findings(
     script_name: str,
@@ -443,7 +432,6 @@ def parse_script_output_to_findings(
 
     return findings
 
-
 def _run_env_check() -> None:
     env_check_path = SCRIPTS_DIR / "env_check.py"
     if not env_check_path.exists():
@@ -478,7 +466,6 @@ def _run_env_check() -> None:
         print("请手动运行: python scripts/governance/env_check.py --install", file=sys.stderr)
         sys.exit(1)
 
-
 def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> list[Finding] | None:
     """尝试以 --jsonl 模式运行脚本，返回 Finding 列表。
 
@@ -508,7 +495,6 @@ def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> lis
         return None
 
     return _parse_jsonl_to_findings(result.stdout, meta["dimensions"], script_name)
-
 
 def run_all_dimensions(
     dimensions_to_run: list[Dimension],
@@ -594,7 +580,6 @@ def run_all_dimensions(
         "total_unique_scripts": len(seen_scripts),
     }
     return collection, overall
-
 
 def main() -> None:
     """入口——解析命令行参数并编排审计扫描执行。
@@ -709,7 +694,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if total_findings > 0 else 0)
-
 
 if __name__ == "__main__":
     main()

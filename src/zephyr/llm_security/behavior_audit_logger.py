@@ -37,18 +37,15 @@ __all__ = [
 
 _MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
 
-
 class AuditAction(str, Enum):
     MODEL_CALL = "model_call"
     FILE_WRITE = "file_write"
     RULE_TRIGGER = "rule_trigger"
     GATE_DECISION = "gate_decision"
 
-
 class RotationPolicy(str, Enum):
     SIZE = "size"
     DATE = "date"
-
 
 class AuditEvent:
     __slots__ = (
@@ -96,7 +93,6 @@ class AuditEvent:
     def to_jsonl(self) -> str:
         return json.dumps(self.to_dict(), ensure_ascii=False, separators=(",", ":"))
 
-
 class AuditQuery:
     __slots__ = (
         "session_id",
@@ -133,7 +129,6 @@ class AuditQuery:
         if self.time_to is not None and event.timestamp > self.time_to:
             return False
         return True
-
 
 class AuditLogger:
     """
@@ -331,7 +326,6 @@ class AuditLogger:
                     if line.strip():
                         count += 1
         return count
-
 
 def open_audit_log(
     *,

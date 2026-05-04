@@ -31,14 +31,12 @@ from _shared.constants import REPO_ROOT
 CONTRACT_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
 DOC_TYPE_VOCAB_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml"
 
-
 def load_contract() -> dict:
     """加载合约定义"""
     with open(CONTRACT_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
         "加载数据."
     "load contract."
-
 
 def load_doc_type_vocab_values() -> dict:
     """加载文档类型词汇值"""
@@ -47,7 +45,6 @@ def load_doc_type_vocab_values() -> dict:
         vocab = yaml.safe_load(f)
     return {entry["value"] for entry in vocab.get("values", [])}
     "加载文档类型词汇值."
-
 
 def check_dim1_module_id_regex(contract) -> list[dict]:
     """DIM-1: frontmatter_schema module_id regex must match VR-001 regex."""
@@ -73,7 +70,6 @@ def check_dim1_module_id_regex(contract) -> list[dict]:
     if fms_regex != vr001_regex:
         return ("FAIL", f"module_id regex mismatch: frontmatter_schema={fms_regex}, VR-001={vr001_regex}")
     return ("PASS", "module_id regex consistent")
-
 
 def check_dim2_doc_type_consistency(contract) -> list[dict]:
     """DIM-2: VR-002 doc_type list must match frontmatter_schema doc_type allowed_values."""
@@ -111,7 +107,6 @@ def check_dim2_doc_type_consistency(contract) -> list[dict]:
         return ("FAIL", "doc_type values mismatch: " + "; ".join(parts))
     return ("PASS", "doc_type values consistent")
 
-
 def check_dim3_vr_sequential(contract) -> list[dict]:
     """DIM-3: VR rules must be sequentially numbered."""
     vr_ids = []
@@ -122,7 +117,6 @@ def check_dim3_vr_sequential(contract) -> list[dict]:
         return ("FAIL", f"Non-sequential VR IDs: {vr_ids} (expected {expected})")
     return ("PASS", "VR rules sequentially numbered")
 
-
 def check_dim4_total_vr_count(contract) -> list[dict]:
     """DIM-4: total_vr_rules must match actual VR count."""
     declared = contract.get("total_vr_rules")
@@ -130,7 +124,6 @@ def check_dim4_total_vr_count(contract) -> list[dict]:
     if declared != actual:
         return ("FAIL", f"total_vr_rules={declared}, actual={actual}")
     return ("PASS", "total_vr_rules matches actual")
-
 
 def check_dim5_field_stage_completeness(contract) -> list[dict]:
     """DIM-5: All required_fields must have stage indicators, sums must match PS-STD-001 §2.2."""
@@ -155,7 +148,6 @@ def check_dim5_field_stage_completeness(contract) -> list[dict]:
         f'stage counts: draft={stage_counts['draft']}, active={stage_counts['active']}, deprecated_only={stage_counts['deprecated_only']}',
     )
 
-
 def check_dim6_vocab_derived_from(contract) -> list[dict]:
     """DIM-6: Each field with allowed_values/derived_from must have a reachable vocabulary."""
     vocab_dir = CONTRACT_PATH.parent.parent / "vocabularies"
@@ -173,7 +165,6 @@ def check_dim6_vocab_derived_from(contract) -> list[dict]:
     if failures:
         return ("FAIL", "; ".join(failures))
     return ("PASS", "all derived_from vocabularies reachable")
-
 
 def check_dim7_doc_type_subset(contract) -> list[dict]:
     """DIM-7: doc_type in frontmatter_schema must be a subset of vocabulary."""
@@ -194,7 +185,6 @@ def check_dim7_doc_type_subset(contract) -> list[dict]:
     if not_in_vocab:
         return ("FAIL", f"contract values not in vocabulary: {sorted(not_in_vocab)}")
     return ("PASS", f"contract doc_type ({len(fms_values)}) is subset of vocabulary ({len(vocab_values)})")
-
 
 def main() -> None:
     """入口函数."""
@@ -229,7 +219,6 @@ def main() -> None:
     else:
         print(f"ALL {len(dimensions)}/{len(dimensions)} dimensions PASS")
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

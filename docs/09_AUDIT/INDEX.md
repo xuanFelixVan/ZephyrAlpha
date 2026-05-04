@@ -66,7 +66,6 @@ depends_on:
 | 2026-05-01 | 1.1.0 | 移除 10_compliance/ 引用——合规规范归 01_policies_and_standards/ 管辖 |
 | 2026-05-01 | 1.0.0 | 初始创建——补齐缺失的目录入口文件 |
 
-
 ## 排除规则（不应放入本目录的内容）
 
 - ❌ 治理规范/合规标准 → `01_policies_and_standards/`

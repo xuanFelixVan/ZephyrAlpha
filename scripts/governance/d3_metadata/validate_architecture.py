@@ -36,12 +36,10 @@ DEFAULT_CONTRACT = (
 )
 DEFAULT_SCAN_DIR = REPO_ROOT / "docs" / "01_policies_and_standards"
 
-
 def load_contract(contract_path: str) -> dict[str, Any]:
     """加载合约定义"""
     with open(contract_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
-
 
 class ValidationResult:
     def __init__(self):
@@ -76,7 +74,6 @@ class ValidationResult:
             lines.append("\n✅ All checks passed!")
         return "\n".join(lines)
 
-
 def get_required_fields_for_doc_type(doc_type: str) -> set[str]:
     """get required fields for doc type"""
     common = {"module_id", "title", "doc_type", "status", "version"}
@@ -108,7 +105,6 @@ def get_required_fields_for_doc_type(doc_type: str) -> set[str]:
         "contract": common,
     }
     return mapping.get(doc_type, common)
-
 
 def validate_frontmatter(fm: dict, file_path: str, contract: dict, result: ValidationResult):
     """validate frontmatter"""
@@ -143,7 +139,6 @@ def validate_frontmatter(fm: dict, file_path: str, contract: dict, result: Valid
         if not fm.get("superseded_by"):
             result.add_error("VR-006", file_path, "Deprecated file missing 'superseded_by' field")
 
-
 def load_rule_form_vocabulary(scan_dir: str) -> dict[str, Any] | None:
     """load rule form vocabulary"""
     vocab_path = Path(scan_dir) / "_registry" / "vocabularies" / "rule_form-vocabulary.yaml"
@@ -151,7 +146,6 @@ def load_rule_form_vocabulary(scan_dir: str) -> dict[str, Any] | None:
         return None
     data = yaml.safe_load(vocab_path.read_text(encoding="utf-8", errors="replace"))
     return data if isinstance(data, dict) else None
-
 
 def build_doc_type_rule_form_mapping(vocab: dict | None) -> dict[str, str]:
     """build doc type rule form mapping"""
@@ -165,7 +159,6 @@ def build_doc_type_rule_form_mapping(vocab: dict | None) -> dict[str, str]:
         for dt in entry.get("doc_types", []):
             mapping[dt] = rule_form
     return mapping
-
 
 def validate_doc_type_rule_form_consistency(
     fm: dict, file_path: str, result: ValidationResult, rule_form_mapping: dict[str, str]
@@ -183,7 +176,6 @@ def validate_doc_type_rule_form_consistency(
             "VR-004", file_path, f"doc_type='{doc_type}' should have rule_form='{expected}', got '{rule_form}'"
         )
 
-
 def validate_directory_placement(file_rel_path: str, fm: dict, contract: dict, result: ValidationResult):
     """validate directory placement"""
     dir_schema = contract.get("directory_schema", {})
@@ -198,7 +190,6 @@ def validate_directory_placement(file_rel_path: str, fm: dict, contract: dict, r
     elif top_dir == "operational":
         if doc_type != "operational_rule":
             result.add_error("VR-009", file_rel_path, f"{doc_type} file found under operational/ directory")
-
 
 def main() -> None:
     """入口函数"""
@@ -268,7 +259,6 @@ def main() -> None:
             sys.exit(0)
         sys.exit(1)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

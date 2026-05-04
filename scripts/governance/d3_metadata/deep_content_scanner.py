@@ -36,7 +36,6 @@ PROCEDURAL_KEYWORDS = re.compile(r"(?:Step\s+\d|步骤\s*\d|第一步|第二步|
 POLICY_KEYWORDS = re.compile(r"(?:如果.*则|如果.*那么|当.*时|若.*则|条件|触发条件|适用场景)")
 DECLARATIVE_KEYWORDS = re.compile(r"(?:定义|规范|标准|枚举|合法值|格式|模板|约束)")
 
-
 def scan_content_type_mismatch() -> list[dict]:
     """scan content type mismatch."""
     findings = []
@@ -94,7 +93,6 @@ def scan_content_type_mismatch() -> list[dict]:
     return findings
     """scan content type mismatch."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="深度内容扫描器（PS-STD-012 §7.3）")
@@ -114,7 +112,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

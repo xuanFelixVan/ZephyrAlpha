@@ -28,7 +28,6 @@ from zephyr.llm_security.process_sandbox import (
 # Fixture
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture
 def sandbox(tmp_path):
     """返回以 tmp_path 为 repo_root 的 L2aSandbox（避免写入真实仓库）。"""
@@ -38,11 +37,9 @@ def sandbox(tmp_path):
     (tmp_path / "docs").mkdir()
     return L2aSandbox(repo_root=tmp_path)
 
-
 # ---------------------------------------------------------------------------
 # 1. CWD 白名单
 # ---------------------------------------------------------------------------
-
 
 class TestCwdWhitelist:
     def test_scripts_dir_allowed(self, sandbox, tmp_path):
@@ -98,11 +95,9 @@ class TestCwdWhitelist:
                 cwd=Path("/tmp"),
             )
 
-
 # ---------------------------------------------------------------------------
 # 2. ENV 白名单
 # ---------------------------------------------------------------------------
-
 
 class TestEnvWhitelist:
     def test_non_whitelist_extra_env_raises_violation(self, sandbox, tmp_path):
@@ -151,11 +146,9 @@ class TestEnvWhitelist:
         finally:
             del os.environ["__CBG_TEST_SECRET__"]
 
-
 # ---------------------------------------------------------------------------
 # 3. Timeout 强制
 # ---------------------------------------------------------------------------
-
 
 class TestTimeout:
     def test_timeout_raises_sandbox_timeout(self, sandbox, tmp_path):
@@ -173,11 +166,9 @@ class TestTimeout:
             sandbox.run(cmd=cmd, cwd=tmp_path / "scripts", timeout=0.5)
         assert exc_info.value.cmd == cmd
 
-
 # ---------------------------------------------------------------------------
 # 4. 正常执行结果
 # ---------------------------------------------------------------------------
-
 
 class TestNormalExecution:
     def test_returncode_zero_on_success(self, sandbox, tmp_path):
@@ -220,11 +211,9 @@ class TestNormalExecution:
         result = sandbox.run(cmd=cmd, cwd=tmp_path / "scripts")
         assert result.cmd == cmd
 
-
 # ---------------------------------------------------------------------------
 # 5. 配置自定义
 # ---------------------------------------------------------------------------
-
 
 class TestCustomConfig:
     def test_custom_cwd_whitelist(self, tmp_path):

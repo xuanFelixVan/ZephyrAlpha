@@ -43,7 +43,6 @@ B_TRACK_DIRS = {
 
 REQUIRED_FILES = {"interface.md"}
 
-
 def scan_b_track_packages() -> list[dict]:
     """扫描 B-track 包合规性."""
     findings = []
@@ -78,7 +77,6 @@ def scan_b_track_packages() -> list[dict]:
     return findings
     """扫描 B-track 包合规性."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="B 轨包完整性校验（GOV-DOC-002 §四）")
@@ -98,7 +96,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

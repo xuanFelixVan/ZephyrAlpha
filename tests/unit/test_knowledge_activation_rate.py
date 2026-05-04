@@ -43,11 +43,9 @@ _STANDARD_QUERIES: list[str] = [
     "蓝图治理流程",
 ]
 
-
 # ---------------------------------------------------------------------------
 # 工具函数
 # ---------------------------------------------------------------------------
-
 
 def _make_chroma_result(
     ids: list[str],
@@ -63,7 +61,6 @@ def _make_chroma_result(
         "metadatas": [metadatas],
     }
 
-
 def _mock_client_always_hit(n: int = 2) -> MagicMock:
     """返回始终命中 n 条结果的 mock ChromaDB client。"""
     client = MagicMock()
@@ -77,7 +74,6 @@ def _mock_client_always_hit(n: int = 2) -> MagicMock:
     client.get_collection.return_value = col
     return client
 
-
 def _mock_client_no_hit() -> MagicMock:
     """返回始终空结果的 mock ChromaDB client。"""
     client = MagicMock()
@@ -86,18 +82,15 @@ def _mock_client_no_hit() -> MagicMock:
     client.get_collection.return_value = col
     return client
 
-
 def _mock_client_collection_missing() -> MagicMock:
     """collection 不存在时抛出异常的 mock client。"""
     client = MagicMock()
     client.get_collection.side_effect = Exception("Collection not found")
     return client
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
-
 
 @pytest.fixture()
 def db_path(tmp_path: Path) -> Path:
@@ -105,16 +98,13 @@ def db_path(tmp_path: Path) -> Path:
     init_db(p)
     return p
 
-
 @pytest.fixture()
 def repo(db_path: Path) -> KbRepo:
     return KbRepo(db_path=db_path, vector_dir=None)
 
-
 # ---------------------------------------------------------------------------
 # 1. 命中率 ≥ 70%（三种检索模式）
 # ---------------------------------------------------------------------------
-
 
 class TestHitRate:
     """对 10 条标准查询验证命中率 ≥ 70%。"""
@@ -202,11 +192,9 @@ class TestHitRate:
         rate = hits / len(_STANDARD_QUERIES)
         assert rate >= 0.70, f"命中率 {rate:.1%} < 70%（hybrid mode）"
 
-
 # ---------------------------------------------------------------------------
 # 2. 空库、单条、满库场景
 # ---------------------------------------------------------------------------
-
 
 class TestLibraryScenarios:
     """测试不同库容量下的检索行为。"""
@@ -281,11 +269,9 @@ class TestLibraryScenarios:
 
         assert hits == len(_STANDARD_QUERIES)
 
-
 # ---------------------------------------------------------------------------
 # 3. token 预算截断（n_results）
 # ---------------------------------------------------------------------------
-
 
 class TestTokenBudget:
     """n_results 参数控制返回条数上限。"""
@@ -355,11 +341,9 @@ class TestTokenBudget:
         assert len(results) == 1  # 只有 score=0.95 通过 0.7 阈值
         assert results[0].score >= 0.7
 
-
 # ---------------------------------------------------------------------------
 # 4. RetrievalHit 结构与异常容错
 # ---------------------------------------------------------------------------
-
 
 class TestRetrievalHitStructure:
     """验证 RetrievalHit 字段及异常容错行为。"""

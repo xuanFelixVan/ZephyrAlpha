@@ -54,7 +54,6 @@ ALLOWED_DECORATORS = {
     "computed_field",
 }
 
-
 def check_contract_purity(filepath: Path) -> list[dict]:
     """检查合约纯度."""
     findings = []
@@ -115,7 +114,6 @@ def check_contract_purity(filepath: Path) -> list[dict]:
     return findings
     """检查合约纯度."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="契约纯度校验（COND-32）")
@@ -143,7 +141,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

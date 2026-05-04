@@ -76,7 +76,6 @@ TRACE_PATTERNS = [
     "service_name",
 ]
 
-
 class TraceContextVisitor(ast.NodeVisitor):
     def __init__(self, layer: str, filename: str):
         """__init__ implementation."""
@@ -222,7 +221,6 @@ class TraceContextVisitor(ast.NodeVisitor):
             if hasattr(kw, "arg") and kw.arg == "trace_context":
                 self._propagates_tc = True
 
-
 def scan_layer(layer: str) -> list[dict]:
     """scan_layer implementation."""
     src_dir = REPO_ROOT / "src" / "zephyr"
@@ -247,11 +245,9 @@ def scan_layer(layer: str) -> list[dict]:
 
     return all_findings
 
-
 def _check_has_trace_context_attr(source: str) -> bool:
     """_check_has_trace_context_attr implementation."""
     return any(pattern in source for pattern in TRACE_PATTERNS)
-
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
@@ -320,7 +316,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

@@ -37,7 +37,6 @@ from d11_compliance.validate_script_quality import CLAUSE_CHECKS, ClauseCheck
 _SELF_REL = "scripts/governance/d11_compliance/validate_manifest_admission.py"
 MANIFEST_REL = "scripts/governance/script_manifest.yaml"
 
-
 def _run_git(*args: str, timeout: int = 15) -> tuple[int, str, str]:
     try:
         result = subprocess.run(
@@ -52,7 +51,6 @@ def _run_git(*args: str, timeout: int = 15) -> tuple[int, str, str]:
         return (result.returncode, result.stdout, result.stderr)
     except (subprocess.SubprocessError, OSError) as exc:
         return (-1, "", str(exc))
-
 
 def extract_new_scripts() -> list[str]:
     """extract new scripts"""
@@ -79,7 +77,6 @@ def extract_new_scripts() -> list[str]:
     return new_names
     "extract new scripts."
 
-
 def validate_scripts(script_names: list[str]) -> tuple[list[ClauseCheck], int]:
     """validate scripts"""
     results: list[ClauseCheck] = []
@@ -105,7 +102,6 @@ def validate_scripts(script_names: list[str]) -> tuple[list[ClauseCheck], int]:
                     break
     return (results, len(script_names))
     "validate scripts."
-
 
 def main() -> None:
     """入口函数."""
@@ -151,7 +147,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if total_failures > 0 else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

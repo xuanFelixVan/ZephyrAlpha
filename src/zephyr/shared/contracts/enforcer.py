@@ -48,11 +48,9 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 _logger = logging.getLogger("zephyr.contracts.enforcer")
 
-
 class EnforcementMode(str, Enum):
     STRICT = "strict"
     WARN = "warn"
-
 
 class ContractViolationError(TypeError):
     """CTR-ERR-006: 运行时跨层数据契约校验失败。
@@ -94,7 +92,6 @@ class ContractViolationError(TypeError):
             msg_parts.append(f"  expected={expected_type}, actual={actual_type}")
         msg_parts.append(f"  {detail}")
         super().__init__("\n".join(msg_parts))
-
 
 def enforce_output(
     contract_type: type[Any],
@@ -147,7 +144,6 @@ def enforce_output(
         return wrapper  # type: ignore[return-value]
 
     return decorator
-
 
 def enforce_input(
     contract_type: type[Any],
@@ -229,7 +225,6 @@ def enforce_input(
 
     return decorator
 
-
 def enforce(
     contract_type: type[Any],
     input_param: str | None = None,
@@ -248,7 +243,6 @@ def enforce(
         return fn
 
     return decorator
-
 
 def _validate_value(
     value: Any,
@@ -280,7 +274,6 @@ def _validate_value(
 
     return violations
 
-
 def _validate_dataclass_fields(
     value: Any,
     contract_type: type[Any],
@@ -305,7 +298,6 @@ def _validate_dataclass_fields(
         declared_type = type_hints.get(fld.name)
         if field_value is not None and declared_type is not None:
             _check_field_type(fld.name, field_value, declared_type, violations)
-
 
 def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
     """解析 dataclass 的类型注解（处理 PEP 563 字符串注解）。"""
@@ -335,7 +327,6 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
             hints[fld.name] = ftype
     return hints
 
-
 def _check_field_type(
     field_name: str,
     value: Any,
@@ -362,7 +353,6 @@ def _check_field_type(
             if value is not None:
                 _check_field_type(field_name, value, non_none, violations)
 
-
 def _is_required(fld: dataclasses.Field) -> bool:
     """判断 dataclass 字段是否必填（无默认值且非 Optional 包裹）。"""
 
@@ -379,7 +369,6 @@ def _is_required(fld: dataclasses.Field) -> bool:
 
     return True
 
-
 def _get_trace_context(value: Any) -> Any | None:
     """从数据对象中提取 trace_context 字段。"""
 
@@ -387,7 +376,6 @@ def _get_trace_context(value: Any) -> Any | None:
         return getattr(value, "trace_context", None)
     except Exception:
         return None
-
 
 def _check_deep_mutable_nesting(
     value: Any,
@@ -427,7 +415,6 @@ def _check_deep_mutable_nesting(
             "跨层传递时建议做 deep copy 防护，防止下游意外修改嵌套容器"
         )
 
-
 def _find_param_by_type(
     arguments: dict[str, Any],
     contract_type: type[Any],
@@ -466,7 +453,6 @@ def _find_param_by_type(
                             return name
 
     return None
-
 
 def _format_violations(
     contract_name: str,

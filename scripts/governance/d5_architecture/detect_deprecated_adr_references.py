@@ -31,7 +31,6 @@ import argparse
 
 ADR_REF_PATTERN = re.compile("(?:ADR|adr)[-_]?\\d{1,4}", re.IGNORECASE)
 
-
 def build_adr_status_map() -> dict[str, str]:
     """构建 ADR 状态映射"""
     status_map = {}
@@ -56,7 +55,6 @@ def build_adr_status_map() -> dict[str, str]:
                     status_map[f"adr-{name_match.group().zfill(4)}"] = status
     return status_map
     "build adr status map."
-
 
 def scan_deprecated_adr_refs() -> list[dict]:
     """扫描废弃 ADR 引用"""
@@ -84,7 +82,6 @@ def scan_deprecated_adr_refs() -> list[dict]:
     return findings
     "scan deprecated adr refs."
 
-
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="废弃 ADR 引用检测（COND-38）")
@@ -102,7 +99,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

@@ -43,7 +43,6 @@ _ANTI_CORRUPTION_CHECKS = [
     "AC5:from_session_matches_current_session",
 ]
 
-
 class DocGuardServer(BaseMCPServer):
     """session_handoff MCP Server 实现（DocGuard）。
 
@@ -260,11 +259,9 @@ class DocGuardServer(BaseMCPServer):
         self._events.append(event)
         return {"event_id": event["event_id"], "delivered_at": event["delivered_at"]}
 
-
 def create_server() -> DocGuardServer:
     """工厂函数，返回配置好的 DocGuardServer 实例。"""
     return DocGuardServer()
-
 
 if __name__ == "__main__":
     create_server().run()

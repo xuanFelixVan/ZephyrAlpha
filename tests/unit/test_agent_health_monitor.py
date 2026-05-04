@@ -21,7 +21,6 @@ from zephyr.orchestrator.agent_orchestrator import (
     RoutingStrategy,
 )
 
-
 def _make_result(
     *,
     success: bool = True,
@@ -49,13 +48,11 @@ def _make_result(
         errors=[],
     )
 
-
 class TestHealthState:
     def test_three_states_exist(self) -> None:
         assert HealthState.HEALTHY.value == "HEALTHY"
         assert HealthState.DEGRADED.value == "DEGRADED"
         assert HealthState.UNHEALTHY.value == "UNHEALTHY"
-
 
 class TestSLOConfig:
     def test_default_thresholds(self) -> None:
@@ -70,7 +67,6 @@ class TestSLOConfig:
         cfg = SLOConfig(latency_p99_ms_hard=8000.0, error_rate_soft=0.02)
         assert cfg.latency_p99_ms_hard == 8000.0
         assert cfg.error_rate_soft == 0.02
-
 
 class TestAgentHealthMonitor:
     def test_empty_monitor_is_healthy(self) -> None:

@@ -73,7 +73,6 @@ _SHARED_SYMBOL_MAP: dict[str, tuple[str, str]] = {
     "iter_files": ("_shared.walk", "iter_files"),
 }
 
-
 class FixResult:
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
@@ -94,11 +93,9 @@ class FixResult:
         return len(self.fixes) > 0
         "判断是否存在修复."
 
-
 def _is_shared_file(filepath: Path) -> bool:
     rel = str(filepath).replace("\\", "/")
     return "_shared/" in rel
-
 
 def _detect_violations(content: str, filepath: Path) -> list[tuple[str, str, str]]:
     """检测本地重定义 _shared API 的违规。
@@ -134,7 +131,6 @@ def _detect_violations(content: str, filepath: Path) -> list[tuple[str, str, str
         module, canonical = _SHARED_SYMBOL_MAP[local_name]
         violations.append((local_name, canonical, module))
     return violations
-
 
 def _remove_local_definition(content: str, symbol_name: str) -> tuple[str, list[int]]:
     """从源码中删除本地定义（函数或常量赋值）。
@@ -184,7 +180,6 @@ def _remove_local_definition(content: str, symbol_name: str) -> tuple[str, list[
         i += 1
     return ("\n".join(result_lines), removed)
 
-
 def _add_import(content: str, module: str, symbol: str) -> str:
     """在源码中添加 from module import symbol 语句。"""
     import_line = f"from {module} import {symbol}"
@@ -206,7 +201,6 @@ def _add_import(content: str, module: str, symbol: str) -> str:
     lines.insert(insert_idx, import_line)
     return "\n".join(lines)
 
-
 def _replace_calls(content: str, local_name: str, canonical_name: str) -> str:
     """替换调用点：local_name → canonical_name。"""
     if local_name == canonical_name:
@@ -217,7 +211,6 @@ def _replace_calls(content: str, local_name: str, canonical_name: str) -> str:
     content = content.replace(f"= {local_name}", f"= {canonical_name}")
     content = re.sub(f"\\b{re.escape(local_name)}\\b", canonical_name, content)
     return content
-
 
 def fix_file(filepath: Path, dry_run: bool = False, backup: bool = True) -> FixResult:
     """扫描并修复单个文件。
@@ -261,7 +254,6 @@ def fix_file(filepath: Path, dry_run: bool = False, backup: bool = True) -> FixR
         filepath.write_text(modified, encoding="utf-8")
     return result
 
-
 def scan_and_fix(scan_dir: Path, fix: bool = False, dry_run: bool = False, backup: bool = True) -> tuple[int, int, int]:
     """扫描目录下所有 .py 文件并报告/修复违规。
 
@@ -286,7 +278,6 @@ def scan_and_fix(scan_dir: Path, fix: bool = False, dry_run: bool = False, backu
                 for fx in result.fixes:
                     print(f"    FIX: {fx}")
     return (total, violations, fixes)
-
 
 def main() -> None:
     """入口函数."""
@@ -313,7 +304,6 @@ def main() -> None:
     if violation_count > 0 and (not args.warn_only) and (not args.fix):
         return 1
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

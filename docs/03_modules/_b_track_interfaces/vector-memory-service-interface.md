@@ -38,7 +38,6 @@ tags:
 > **定位**：Vibe Coding 2.0 基础设施五大核心服务之一。替代老 `memory-interface-contract.md` 的 KMS 六层文件流水线方案。
 >
 
-
 ---
 
 ## 0. 读者指南
@@ -123,7 +122,6 @@ class VectorMemoryProtocol(Protocol):
     async def reindex(self, **kwargs) -> ReindexResult: ...
     async def gc(self, **kwargs) -> GCResult: ...
 
-
 class InProcessVectorMemory:
     """Phase 1（当前目标）：直接调 ChromaDB SDK，进程内异步协调。"""
 
@@ -143,14 +141,14 @@ class RemoteVectorMemory:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选（Phase 1） | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
 |------|----------------|------|-------|---------|---------|----------|
 | 向量数据库 | **ChromaDB 0.6** | Qdrant 本地模式 | Weaviate / Pinecone（网络依赖） | 纯 Python、零外部依赖、Windows 原生支持 | 数据 > 10GB 或 chunks > 500k | ADR-0016 |
 | Embedding 模型 | **BAAI/bge-m3 ONNX 量化** | text-embedding-3-small（OpenAI） | Ada-002（已淘汰） | 本地推理、多语言、1024 维、MIT License | 本地质量 < API 质量 20% | ADR-0016 |
 | 分块策略 | **递归字符分块** | 语义分块（spaCy） | 固定长度分块 | 自动保留语义单元；spaCy 重量级 | 召回率 < 80% 或长文 > 50KB 频繁出现 | ADR-0016 |
 | multi_search 合并策略 | **RRF 倒数排名融合**（Cormack 2009） | 加权分数融合（需配权重） | 级联串行检索（延迟高） | 不同 Collection 向量距离尺度不同，RRF 只看排名不看分数 | - | ADR-0016 |
-| 进程内并发（Phase 1） | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环）| 项目全异步栈 | 服务化后废除 | - |
-| 跨进程并发（Phase 1） | **`filelock.FileLock`** | `msvcrt.locking`（Windows Only） | 全局单例 | pytest 并发 + 多 Agent 场景 | 服务化后废除 | - |
+| 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环）| 项目全异步栈 | 服务化后废除 | - |
+| 跨进程并发 | **`filelock.FileLock`** | `msvcrt.locking`（Windows Only） | 全局单例 | pytest 并发 + 多 Agent 场景 | 服务化后废除 | - |
 | 服务运行时（Phase 3 启用） | FastAPI | gRPC | Flask | FastAPI 原生 async + OpenAPI | RPS > 500 → gRPC | - |
 
 ---
@@ -221,7 +219,6 @@ from typing import Optional, Literal
 from datetime import datetime
 from enum import Enum
 
-
 class DocumentSourceType(str, Enum):
     MARKDOWN_DOC = "markdown_doc"
     CODE = "code"
@@ -231,13 +228,11 @@ class DocumentSourceType(str, Enum):
     AUDIT_REPORT = "audit_report"
     EXTERNAL = "external"
 
-
 class CollectionName(str, Enum):
     DECISIONS = "decisions"
     CODE_CONTEXT = "code_context"
     TASK_HISTORY = "task_history"
     LESSONS = "lessons"
-
 
 class Document(BaseModel):
     doc_id: str = Field(..., description="全局唯一，推荐 sha1(source_path)")
@@ -255,7 +250,6 @@ class Document(BaseModel):
     updated_at: datetime
     version: int = Field(default=1, description="同 doc_id 下版本号，update 时 +1")
 
-
 class Chunk(BaseModel):
     chunk_id: str = Field(..., description="{doc_id}::v{version}::c{chunk_index}")
     doc_id: str
@@ -265,7 +259,6 @@ class Chunk(BaseModel):
     char_start: int
     char_end: int
     overlap_with_prev_chars: int = 0
-
 
 class SearchResult(BaseModel):
     chunk_id: str
@@ -280,7 +273,6 @@ class SearchResult(BaseModel):
     doc_title: Optional[str] = None
     degraded: bool = Field(default=False, description="若为 True 表示此结果来自降级路径")
 
-
 class MultiSearchResult(BaseModel):
     query_text: str
     results_by_collection: dict[CollectionName, list[SearchResult]]
@@ -289,7 +281,6 @@ class MultiSearchResult(BaseModel):
     total_matched_by_collection: dict[CollectionName, int]
     elapsed_ms: int
     degraded: bool = Field(default=False)
-
 
 class SyncResult(BaseModel):
     """git hook / 手动单文件同步结果"""
@@ -574,7 +565,7 @@ vector-memory = [
 | **Context Engine**（主消费者） | 组装 Agent 上下文 | `await vm.multi_search(query, collections, merge_strategy="rrf")` |
 | MCP `knowledge_base_server.py` | Cursor/Claude 的 MCP 工具 | `await vm.search(...)` / `multi_search(...)` |
 | Dashboard `knowledge_overview.py` | 可视化统计 | `await vm.stats()` |
-| Phase 0-4 验收脚本 | 合规检查（是否全量入库） | `await vm.stats()` vs 源文件数 |
+| 4 验收脚本 | 合规检查（是否全量入库） | `await vm.stats()` vs 源文件数 |
 
 ### 7.3 Collection 路由规则（git hook 默认）
 
@@ -616,7 +607,7 @@ class VMValidationError(VMError): ...                # schema 校验失败
 class VMDegradedError(VMError): ...                  # 可降级但记录用（通常被 catch 后返回空结果）
 ```
 
-HTTP 映射（Phase 3）：`VMConfigError`→503 / `VMEmbeddingError`→422 / `VMStorageError`→500 / `VMConflictError`→409 / `VMNotFoundError`→404 / `VMValidationError`→400
+HTTP 映射：`VMConfigError`→503 / `VMEmbeddingError`→422 / `VMStorageError`→500 / `VMConflictError`→409 / `VMNotFoundError`→404 / `VMValidationError`→400
 
 ### 9.2 P0 级降级条款
 

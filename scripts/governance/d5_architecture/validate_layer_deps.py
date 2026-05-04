@@ -54,7 +54,6 @@ CONTRACT_FORBIDDEN_DIRS = {
 
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 
-
 def scan_layer_violations() -> tuple[list[dict], int]:
     """扫描层级依赖违规."""
     findings: list[dict] = []
@@ -110,7 +109,6 @@ def scan_layer_violations() -> tuple[list[dict], int]:
     return findings, files_scanned
     """扫描层级依赖违规."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="\u8de8\u5c42\u4f9d\u8d56\u8fdd\u89c4\u68c0\u6d4b")
@@ -142,7 +140,6 @@ def main() -> None:
 
     print("\n\u2705 \u65e0\u5c42\u4f9d\u8d56\u8fdd\u89c4", file=sys.stderr)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

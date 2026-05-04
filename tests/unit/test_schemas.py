@@ -42,11 +42,9 @@ _UTC = UTC
 _NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=_UTC)
 _LATER = datetime(2026, 4, 24, 12, 0, 0, tzinfo=_UTC)
 
-
 # ---------------------------------------------------------------------------
 # 辅助函数
 # ---------------------------------------------------------------------------
-
 
 def _task(**kwargs: Any) -> Task:
     defaults: dict[str, Any] = dict(
@@ -64,7 +62,6 @@ def _task(**kwargs: Any) -> Task:
     defaults.update(kwargs)
     return Task(**defaults)
 
-
 def _ke(**kwargs: Any) -> KnowledgeEntry:
     defaults: dict[str, Any] = dict(
         ke_id="KE-001",
@@ -76,11 +73,9 @@ def _ke(**kwargs: Any) -> KnowledgeEntry:
     defaults.update(kwargs)
     return KnowledgeEntry(**defaults)
 
-
 # ---------------------------------------------------------------------------
 # Task 模型
 # ---------------------------------------------------------------------------
-
 
 class TestTask:
     """5 × 3 有效 + 3 无效 + validator 反例。"""
@@ -143,11 +138,9 @@ class TestTask:
         t = _task(title="  Task Name  ")
         assert t.title == "Task Name"
 
-
 # ---------------------------------------------------------------------------
 # AuditReport 模型
 # ---------------------------------------------------------------------------
-
 
 class TestAuditReport:
     def _report(self, **kwargs: Any) -> AuditReport:
@@ -212,11 +205,9 @@ class TestAuditReport:
         assert r.p1_count == 1
         assert r.p2_count == 1
 
-
 # ---------------------------------------------------------------------------
 # KnowledgeEntry 模型
 # ---------------------------------------------------------------------------
-
 
 class TestKnowledgeEntry:
     # 有效输入
@@ -256,11 +247,9 @@ class TestKnowledgeEntry:
         with pytest.raises(ValidationError, match="updated_at"):
             _ke(created_at=_LATER, updated_at=_NOW)
 
-
 # ---------------------------------------------------------------------------
 # FailurePattern 模型
 # ---------------------------------------------------------------------------
-
 
 class TestFailurePattern:
     def _fp(self, **kwargs: Any) -> FailurePattern:
@@ -311,11 +300,9 @@ class TestFailurePattern:
         with pytest.raises(ValidationError, match="updated_at"):
             self._fp(created_at=_LATER, updated_at=_NOW)
 
-
 # ---------------------------------------------------------------------------
 # HandoffPackage 模型
 # ---------------------------------------------------------------------------
-
 
 class TestHandoffPackage:
     def _pkg(self, **kwargs: Any) -> HandoffPackage:
@@ -387,11 +374,9 @@ class TestHandoffPackage:
         assert isinstance(d["created_at"], str)
         assert "T" in d["created_at"]  # ISO 格式
 
-
 # ---------------------------------------------------------------------------
 # BASE_CONFIG 验证
 # ---------------------------------------------------------------------------
-
 
 class TestBaseConfig:
     def test_validate_assignment_works(self) -> None:

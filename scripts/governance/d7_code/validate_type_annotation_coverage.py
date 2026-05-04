@@ -42,16 +42,13 @@ SKIP_MODULES = {
     "l13_experimentation",
 }
 
-
 def _is_public(name: str) -> bool:
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
 
-
 def _has_return_annotation(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     return node.returns is not None
-
 
 def _missing_param_annotations(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
     missing = []
@@ -63,7 +60,6 @@ def _missing_param_annotations(node: ast.FunctionDef | ast.AsyncFunctionDef) -> 
         if arg.annotation is None:
             missing.append(arg.arg)
     return missing
-
 
 def scan_type_annotations(source_path: Path) -> list[str]:
     """扫描类型注解覆盖率."""
@@ -105,7 +101,6 @@ def scan_type_annotations(source_path: Path) -> list[str]:
 
     return issues
     """扫描类型注解覆盖率."""
-
 
 def main() -> None:
     """入口函数."""
@@ -152,7 +147,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

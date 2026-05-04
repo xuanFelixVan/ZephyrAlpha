@@ -42,7 +42,6 @@ DEPRECATED_PATH_PREFIXES = [
 ]
 ALLOWED_IN_DOCS_ROOT = {"docs/migration-declaration.md", "docs/index.md", "docs/README.md"}
 
-
 def get_new_files() -> list[str]:
     """获取新增文件列表"""
     new_files = []
@@ -62,7 +61,6 @@ def get_new_files() -> list[str]:
     return list(set(new_files))
     "get new files."
 
-
 def check_deprecated_path_writes() -> list[dict]:
     """check deprecated path writes."""
     findings = []
@@ -80,7 +78,6 @@ def check_deprecated_path_writes() -> list[dict]:
     return findings
     "check deprecated path writes."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="废弃路径写入检测（ABS-18）")
@@ -97,7 +94,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

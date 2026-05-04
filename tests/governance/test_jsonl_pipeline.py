@@ -10,10 +10,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 GOV_DIR = REPO_ROOT / "scripts" / "governance"
 
-
 def _test_script_path() -> Path:
     return GOV_DIR / "_test_jsonl_verify.py"
-
 
 def setup_module():
     content = '''"""临时验证脚本 — 继承 BaseAuditScript 输出 JSONL"""
@@ -47,12 +45,10 @@ if __name__ == "__main__":
 '''
     _test_script_path().write_text(content, encoding="utf-8")
 
-
 def teardown_module():
     p = _test_script_path()
     if p.exists():
         p.unlink()
-
 
 def test_base_script_outputs_jsonl():
     r = subprocess.run(
@@ -75,7 +71,6 @@ def test_base_script_outputs_jsonl():
     assert data["severity"] == "MEDIUM"
     assert "finding_id" in data
 
-
 def test_run_all_imports_jsonl_parser():
     sys.path.insert(0, str(GOV_DIR))
     sys.path.insert(0, str(REPO_ROOT / "src"))
@@ -84,7 +79,6 @@ def test_run_all_imports_jsonl_parser():
     assert callable(_parse_jsonl_to_findings)
     assert callable(_try_jsonl_run)
     print("  run_all.py JSONL API 导入正常")
-
 
 def test_jsonl_parse_roundtrip():
     sys.path.insert(0, str(GOV_DIR))
@@ -111,7 +105,6 @@ def test_jsonl_parse_roundtrip():
     assert parsed[0].description == "测试解析"
     assert parsed[0].severity.value == "HIGH"
     assert parsed[0].finding_id == "FIND-D7-20260504-test1234"
-
 
 def test_jsonl_fallback_on_invalid():
     sys.path.insert(0, str(GOV_DIR))

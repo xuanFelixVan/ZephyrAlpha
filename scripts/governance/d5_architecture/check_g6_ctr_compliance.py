@@ -91,7 +91,6 @@ LAYER_DIRS = [
     "l07_post_trade_analytics",
 ]
 
-
 def load_gate_config() -> dict | None:
     """加载门禁配置"""
     gate_path = REPO_ROOT / GATE_CONFIG_REL
@@ -101,7 +100,6 @@ def load_gate_config() -> dict | None:
         return yaml.safe_load(gate_path.read_text(encoding="utf-8"))
     except yaml.YAMLError:
         return None
-
 
 def scan_forbidden_class_names() -> list[dict]:
     """扫描禁止的类名"""
@@ -133,7 +131,6 @@ def scan_forbidden_class_names() -> list[dict]:
                             }
                         )
     return findings
-
 
 def scan_float_in_money_fields() -> list[dict]:
     """扫描金额字段中的浮点数"""
@@ -184,7 +181,6 @@ def scan_float_in_money_fields() -> list[dict]:
                                 )
     return findings
 
-
 def scan_cross_layer_imports() -> list[dict]:
     """scan float in money fields."""
     findings: list[dict] = []
@@ -217,7 +213,6 @@ def scan_cross_layer_imports() -> list[dict]:
     return findings
     "scan cross layer imports."
 
-
 def _get_field_name(node: ast.AnnAssign) -> str | None:
     if isinstance(node.target, ast.Name):
         return node.target.id
@@ -225,11 +220,9 @@ def _get_field_name(node: ast.AnnAssign) -> str | None:
         return node.target.attr
     return None
 
-
 def _is_money_field(name: str) -> bool:
     name_lower = name.lower()
     return any(pattern in name_lower for pattern in MONEY_FIELD_PATTERNS)
-
 
 def _annotation_is_float(annotation: ast.expr) -> bool:
     if isinstance(annotation, ast.Name) and annotation.id == "float":
@@ -243,7 +236,6 @@ def _annotation_is_float(annotation: ast.expr) -> bool:
             return True
     return False
 
-
 def _get_import_path(node: ast.Import | ast.ImportFrom) -> str:
     parts: list[str] = []
     if isinstance(node, ast.ImportFrom):
@@ -253,7 +245,6 @@ def _get_import_path(node: ast.Import | ast.ImportFrom) -> str:
         for alias in node.names:
             parts.append(alias.name)
     return ".".join(parts)
-
 
 def _is_cross_layer_import(import_path: str, current_layer: str) -> bool:
     normalized = import_path.replace(".", "/").replace("\\", "/")
@@ -265,7 +256,6 @@ def _is_cross_layer_import(import_path: str, current_layer: str) -> bool:
         if other_layer in normalized or other_layer.replace("_", "/") in normalized:
             return True
     return False
-
 
 def check_required_imports() -> list[dict]:
     """检查必需的 import"""
@@ -305,7 +295,6 @@ def check_required_imports() -> list[dict]:
     return findings
     "check required imports."
 
-
 def _all_py_files(layer_dir: Path) -> list[Path]:
     files: list[Path] = []
     try:
@@ -315,7 +304,6 @@ def _all_py_files(layer_dir: Path) -> list[Path]:
     except OSError:
         pass
     return files
-
 
 def main() -> None:
     """入口函数"""
@@ -362,7 +350,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

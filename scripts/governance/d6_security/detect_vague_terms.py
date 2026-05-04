@@ -52,7 +52,6 @@ VAGUE_TERMS_EN = [
 EXCLUDE_FILES = {"detect_vague_terms.py"}
 TARGET_DIR = REPO_ROOT / "docs" / "01_policies_and_standards"
 
-
 def is_in_code_block(lines: list[str], line_idx: int) -> bool:
     """判断是否在代码块内"""
     in_block = False
@@ -64,15 +63,12 @@ def is_in_code_block(lines: list[str], line_idx: int) -> bool:
             return in_block
     return False
 
-
 def is_in_quote(line: str) -> bool:
     """判断是否在代码块内."""
     return bool(re.match("^\\s*>\\s", line))
     "判断是否在引用块内."
 
-
 "判断条件."
-
 
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
@@ -102,7 +98,6 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
-
 def scan_target_dir(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描目标目录并返回发现列表"""
     if scan_dir is None:
@@ -125,7 +120,6 @@ def scan_target_dir(scan_dir: Path | None = None) -> tuple[list[dict], int, int]
     return (all_findings, files_scanned, 0)
     "扫描目标目录并返回发现列表."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="模糊术语检测（规则文件精度检查）")
@@ -144,7 +138,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

@@ -40,7 +40,6 @@ ensure_utf8_stdout()
 ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
 REQUIRED_FIELDS = ["module_id", "title", "doc_type", "status", "version", "layer", "owner", "summary"]
 
-
 def extract_index_statuses(index_content: str) -> dict[str, str]:
     """提取索引状态."""
     result = {}
@@ -56,7 +55,6 @@ def extract_index_statuses(index_content: str) -> dict[str, str]:
             result[f"ADR-{num}"] = status
     return result
     """extract index statuses."""
-
 
 def main() -> None:
     """入口函数."""
@@ -172,7 +170,6 @@ def main() -> None:
         print(f"  DIM-{f['dim']} {f['adr']}: {f['msg']}")
 
     return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

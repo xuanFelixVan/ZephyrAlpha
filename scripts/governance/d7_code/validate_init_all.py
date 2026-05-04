@@ -47,13 +47,11 @@ SKELETON_PACKAGES = {
 
 EXEMPT_PACKAGES = {"shared", "l00_data_source"}
 
-
 def _has_imports(tree: ast.AST) -> bool:
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             return True
     return False
-
 
 def _has_all_definition(tree: ast.AST) -> bool:
     for node in ast.iter_child_nodes(tree):
@@ -62,7 +60,6 @@ def _has_all_definition(tree: ast.AST) -> bool:
                 if isinstance(target, ast.Name) and target.id == "__all__":
                     return True
     return False
-
 
 def scan_init_all(init_path: Path) -> tuple[bool, bool]:
     """扫描 __init__.py 导出完整性."""
@@ -75,7 +72,6 @@ def scan_init_all(init_path: Path) -> tuple[bool, bool]:
     has_all = _has_all_definition(tree)
     return has_imports, has_all
     """扫描 __init__.py 导出完整性."""
-
 
 def main() -> None:
     """入口函数."""
@@ -119,7 +115,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

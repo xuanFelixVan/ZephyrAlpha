@@ -304,7 +304,6 @@ BOOTSTRAP_LAYER_MAP = {
 for k, v in MODULE_LAYER_MAP.items():
     BOOTSTRAP_LAYER_MAP[k] = f"过渡期 {v.split('—')[1].strip() if '—' in v else v} 施工图（历史）"
 
-
 def get_file_description(filename, dir_path) -> Optional[str]:
     """Generate a human-readable description for a file."""
     name = filename.lower()
@@ -381,7 +380,6 @@ def get_file_description(filename, dir_path) -> Optional[str]:
         return "Schema 定义"
 
     return "文档"
-
 
 def build_index_content(rel_dir, files) -> dict:
     """Build index.md content for a directory."""
@@ -510,7 +508,6 @@ def build_index_content(rel_dir, files) -> dict:
 
     return "\n".join(lines)
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
@@ -555,7 +552,6 @@ def main() -> None:
     print(f"Created: {created}")
     print(f"Skipped (already exist): {skipped}")
     print(f"Total directories: {len(all_dirs)}")
-
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

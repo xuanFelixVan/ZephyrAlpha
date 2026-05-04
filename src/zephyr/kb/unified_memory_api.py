@@ -81,11 +81,9 @@ DEFAULT_EMBEDDING_MODELS: tuple[str, ...] = (
 )
 """嵌入模型尝试顺序：中文优先（bge）→ 通用回退（MiniLM）→ Mock（InMemoryBackend）。"""
 
-
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
-
 
 class WriteTraceMissing(Exception):
     """``kb.write()`` 缺失或 provenance 字段不完整时抛出。
@@ -103,15 +101,12 @@ class WriteTraceMissing(Exception):
         self.detail = detail
         super().__init__(f"WriteTraceMissing: topic='{topic}' — {detail}")
 
-
 class MemoryBackendError(RuntimeError):
     """记忆后端不可用 / 操作失败时抛出（包装底层异常）。"""
-
 
 # ---------------------------------------------------------------------------
 # Pydantic 数据模型
 # ---------------------------------------------------------------------------
-
 
 class WriteTrace(BaseModel):
     """RI-02 写入溯源（Pydantic v2 frozen 不可变）。
@@ -133,7 +128,6 @@ class WriteTrace(BaseModel):
     audit_chain: list[str] = Field(min_length=1, description="审计链路（至少 1 项）")
     arbitration: str | None = Field(default=None, max_length=100, description="架构裁决标识")
 
-
 class MemoryRecord(BaseModel):
     """记忆条目（kb.recall / kb.search 的统一返回类型）。"""
 
@@ -146,11 +140,9 @@ class MemoryRecord(BaseModel):
     written_at: str = Field(default="", description="UTC ISO 8601 写入时间")
     metadata: dict[str, Any] = Field(default_factory=dict, description="附加元数据（含 provenance 字段）")
 
-
 # ---------------------------------------------------------------------------
 # 后端协议（依赖注入）
 # ---------------------------------------------------------------------------
-
 
 @runtime_checkable
 class MemoryBackend(Protocol):
@@ -168,11 +160,9 @@ class MemoryBackend(Protocol):
     def count(self) -> int:  # pragma: no cover
         ...
 
-
 # ---------------------------------------------------------------------------
 # InMemoryMemoryBackend — 测试 / 兜底降级
 # ---------------------------------------------------------------------------
-
 
 class InMemoryMemoryBackend:
     """纯 Python 字典实现的兜底后端（无 ChromaDB 依赖）。
@@ -254,7 +244,6 @@ class InMemoryMemoryBackend:
             self._order.clear()
             self._counter = 0
 
-
 def _simple_tokens(text: str) -> list[str]:
     """非常简化的分词：按非中英数字字符切分 + 中文按字符切分。"""
     if not text:
@@ -274,11 +263,9 @@ def _simple_tokens(text: str) -> list[str]:
         tokens.append("".join(buf))
     return [t for t in tokens if t]
 
-
 # ---------------------------------------------------------------------------
 # ChromaMemoryBackend — 默认生产后端
 # ---------------------------------------------------------------------------
-
 
 class ChromaMemoryBackend:
     """ChromaDB 持久化后端（生产默认）。
@@ -457,7 +444,6 @@ class ChromaMemoryBackend:
         except Exception:
             return -1
 
-
 def _flatten_metadata(meta: dict[str, Any]) -> dict[str, Any]:
     """ChromaDB metadata 仅接受 str/int/float/bool；将 list/dict 序列化为 CSV/JSON。"""
     flat: dict[str, Any] = {}
@@ -472,11 +458,9 @@ def _flatten_metadata(meta: dict[str, Any]) -> dict[str, Any]:
             flat[key] = str(val)
     return flat
 
-
 # ---------------------------------------------------------------------------
 # UnifiedMemoryAPI — 三件套公开接口
 # ---------------------------------------------------------------------------
-
 
 class UnifiedMemoryAPI:
     """RI-02 统一记忆 API（三件套：recall / write / search）。
@@ -650,15 +634,12 @@ class UnifiedMemoryAPI:
         except Exception:
             return -1
 
-
 # ---------------------------------------------------------------------------
 # 模块级单例与辅助函数
 # ---------------------------------------------------------------------------
 
-
 _singleton_lock = threading.RLock()
 _singleton_api: UnifiedMemoryAPI | None = None
-
 
 def get_unified_memory_api(
     *,
@@ -686,13 +667,11 @@ def get_unified_memory_api(
             )
         return _singleton_api
 
-
 def reset_unified_memory_api() -> None:
     """重置模块级单例（仅测试使用）。"""
     global _singleton_api
     with _singleton_lock:
         _singleton_api = None
-
 
 def build_provenance(
     *,

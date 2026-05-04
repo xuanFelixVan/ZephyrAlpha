@@ -69,11 +69,9 @@ __all__ = [
     "DEFAULT_THRESHOLDS",
 ]
 
-
 # ---------------------------------------------------------------------------
 # 枚举与阈值常量
 # ---------------------------------------------------------------------------
-
 
 class EvolutionSignal(str, Enum):
     """五类进化信号（ADR-0034 §3.1）。"""
@@ -84,7 +82,6 @@ class EvolutionSignal(str, Enum):
     DEPENDENCY_BOTTLENECK = "dependency_bottleneck"
     ACCEPTANCE_DRIFT = "acceptance_drift"
 
-
 class Severity(str, Enum):
     """严重度（与 safety_level 对齐）。"""
 
@@ -93,14 +90,12 @@ class Severity(str, Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
-
 class FeedbackLayer(str, Enum):
     """三层反馈闭环（ADR-0034 §3.2）。"""
 
     L1_TASK = "L1_task"
     L2_PATTERN = "L2_pattern"
     L3_ARCHITECTURE = "L3_architecture"
-
 
 # 信号 → 触发标签的映射（可注入覆盖）
 DEFAULT_SIGNAL_TAG_MAP: dict[EvolutionSignal, frozenset[str]] = {
@@ -123,11 +118,9 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
     "ratio_threshold": 0.30,
 }
 
-
 # ---------------------------------------------------------------------------
 # Pydantic 契约
 # ---------------------------------------------------------------------------
-
 
 class EvolutionProposal(BaseModel):
     """单个进化提案。Owner 审批门禁的最小原子单位。"""
@@ -149,7 +142,6 @@ class EvolutionProposal(BaseModel):
     dry_run: bool = Field(default=True, description="是否 dry-run（不真正 apply）")
     created_at: datetime = Field(description="创建时间 UTC")
 
-
 class EvolutionReport(BaseModel):
     """一次 evolve() 的汇总报告。"""
 
@@ -164,11 +156,9 @@ class EvolutionReport(BaseModel):
     dry_run: bool = Field(default=True)
     generated_at: datetime = Field(description="生成时间 UTC")
 
-
 # ---------------------------------------------------------------------------
 # 回调类型
 # ---------------------------------------------------------------------------
-
 
 LowScoreHook = Callable[[FeedbackEntry], None]
 """任务级 low-score 实时回路：score ≤ 阈值的 entry 会被喂给该回调。"""
@@ -176,11 +166,9 @@ LowScoreHook = Callable[[FeedbackEntry], None]
 ApplyFn = Callable[[EvolutionProposal], bool]
 """生产环境的 apply 动作：成功返回 True，否则 False。"""
 
-
 # ---------------------------------------------------------------------------
 # EvolutionEngine
 # ---------------------------------------------------------------------------
-
 
 class EvolutionEngine:
     """封装 evolve() 的实例版本，便于注入回调 / 阈值。
@@ -475,11 +463,9 @@ class EvolutionEngine:
             created_at=self._now(),
         )
 
-
 # ---------------------------------------------------------------------------
 # 默认 action / impact 文本
 # ---------------------------------------------------------------------------
-
 
 _DEFAULT_ACTIONS: dict[EvolutionSignal, str] = {
     EvolutionSignal.HIGH_RETRY_RATE: "排查失败重试根因，考虑引入幂等重试或提高上游稳定性。",
@@ -497,11 +483,9 @@ _DEFAULT_IMPACTS: dict[EvolutionSignal, str] = {
     EvolutionSignal.ACCEPTANCE_DRIFT: "恢复任务验收质量。",
 }
 
-
 # ---------------------------------------------------------------------------
 # 纯函数入口
 # ---------------------------------------------------------------------------
-
 
 def evolve(
     collector: FeedbackCollector,
@@ -537,7 +521,6 @@ def evolve(
         baseline_avg_score=baseline_avg_score,
         baseline_low_score_rate=baseline_low_score_rate,
     )
-
 
 # 兼容占位：保留 Literal 以便未来在 __all__ 中公开 severity 字符串字面量
 _SEV_LITERAL: Literal["low", "medium", "high", "critical"] = "low"

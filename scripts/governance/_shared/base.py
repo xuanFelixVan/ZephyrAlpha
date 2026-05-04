@@ -55,7 +55,6 @@ try:
 except ImportError:
     _FINDING_AVAILABLE = False
 
-
 class BaseAuditScript(ABC):
     """所有治理脚本的基类。
 

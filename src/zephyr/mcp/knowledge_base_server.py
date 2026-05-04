@@ -44,7 +44,6 @@ _VALID_CATEGORIES = frozenset(
     }
 )
 
-
 class KnowledgeBaseServer(BaseMCPServer):
     """knowledge_base MCP Server 实现。
 
@@ -228,11 +227,9 @@ class KnowledgeBaseServer(BaseMCPServer):
         chunks = sum(max(1, len(e.get("content", "")) // 512) for e in self._entries.values())
         return {"chunks_indexed": chunks, "duration_seconds": 0.0}
 
-
 def create_server() -> KnowledgeBaseServer:
     """工厂函数，返回配置好的 KnowledgeBaseServer 实例。"""
     return KnowledgeBaseServer()
-
 
 if __name__ == "__main__":
     create_server().run()

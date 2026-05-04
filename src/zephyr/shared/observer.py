@@ -15,7 +15,6 @@ from enum import Enum, unique
 from threading import RLock
 from typing import Any
 
-
 @unique
 class EventType(str, Enum):
     FILE_EVENT = "file_event"
@@ -24,9 +23,7 @@ class EventType(str, Enum):
     MANUAL_EVENT = "manual_event"
     METRIC_EVENT = "metric_event"
 
-
 EventHandler = Callable[[EventType, dict[str, Any]], None]
-
 
 class Observer:
     """Thread-safe publish-subscribe event bus.

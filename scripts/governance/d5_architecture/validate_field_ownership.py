@@ -39,7 +39,6 @@ SSOT_AUTHORITY_FILES = {
 }
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 
-
 def parse_ssot_field_definitions() -> dict[str, str]:
     """解析 SSoT 字段定义"""
     if not METADATA_REGISTRY_PATH.exists():
@@ -64,7 +63,6 @@ def parse_ssot_field_definitions() -> dict[str, str]:
             in_table = False
     return fields
     "解析 SSoT 字段定义."
-
 
 def scan_field_usage() -> tuple[list[dict], int]:
     """扫描字段使用情况"""
@@ -105,7 +103,6 @@ def scan_field_usage() -> tuple[list[dict], int]:
     return (findings, files_scanned)
     "扫描字段使用情况."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="frontmatter 字段归属校验")
@@ -131,7 +128,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

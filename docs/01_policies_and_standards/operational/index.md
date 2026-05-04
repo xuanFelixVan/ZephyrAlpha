@@ -34,7 +34,7 @@ ai_autonomy: human_gated
 |--------|------|:---:|
 | [`vibe_coding/`](vibe_coding/index.md) | Vibe Coding 操作——上下文规则、session 状态机、门禁清单、应急手册 | 4 |
 | [`devops/`](devops/index.md) | DevOps 操作——pre-commit、CI、架构变更 playbook | 2 |
-| [`migration/`](migration/index.md) | 迁移操作——老树→新树审计 | 1 |
+| [`migration/`](migration/index.md) | 迁移操作——老树→当前项目审计 | 1 |
 
 > **合计**：3 个子目录，8 个文件（含索引入口 4 个）。
 

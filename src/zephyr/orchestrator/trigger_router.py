@@ -90,15 +90,12 @@ PHASE1D_TRIGGER_TYPES: frozenset[str] = frozenset(
     }
 )
 
-
 # ---------------------------------------------------------------------------
 # 异常与枚举
 # ---------------------------------------------------------------------------
 
-
 class TriggerRouterConfigError(RuntimeError):
     """``config/trigger_router.yaml`` 加载或校验失败。"""
-
 
 class TriggerSafety(str, Enum):
     """触发器安全等级（与 schemas.SafetyLevel 一致：L/M/H，向后兼容别名）。"""
@@ -107,11 +104,9 @@ class TriggerSafety(str, Enum):
     M = "M"
     H = "H"
 
-
 # ---------------------------------------------------------------------------
 # 数据契约
 # ---------------------------------------------------------------------------
-
 
 class TriggerHandlerSpec(BaseModel):
     """单条 trigger_type 的处理器规格（YAML 反序列化目标）。"""
@@ -122,7 +117,6 @@ class TriggerHandlerSpec(BaseModel):
     description: str = Field(default="", max_length=200)
     safety: TriggerSafety = Field(default=TriggerSafety.M)
     enabled: bool = Field(default=True)
-
 
 class RouterDispatchResult(BaseModel):
     """``TriggerRouter.dispatch`` 的统一返回类型。"""
@@ -139,11 +133,9 @@ class RouterDispatchResult(BaseModel):
     dispatched_at: str = Field(default="", description="UTC ISO 8601 分派时间")
     latency_ms: int = Field(default=0, ge=0)
 
-
 # ---------------------------------------------------------------------------
 # YAML 加载器
 # ---------------------------------------------------------------------------
-
 
 def load_router_config(
     path: Path | None = None,
@@ -194,11 +186,9 @@ def load_router_config(
 
     return specs
 
-
 # ---------------------------------------------------------------------------
 # TriggerRouter 主类
 # ---------------------------------------------------------------------------
-
 
 class TriggerRouter:
     """触发路由器：根据 trigger_type 分派到处理器函数。
@@ -536,15 +526,12 @@ class TriggerRouter:
             result.latency_ms,
         )
 
-
 # ---------------------------------------------------------------------------
 # 模块级单例
 # ---------------------------------------------------------------------------
 
-
 _singleton_lock = RLock()
 _singleton_router: TriggerRouter | None = None
-
 
 def get_trigger_router(
     *,
@@ -570,20 +557,17 @@ def get_trigger_router(
             )
         return _singleton_router
 
-
 def reset_trigger_router() -> None:
     """清空模块级单例（仅测试使用）。"""
     global _singleton_router
     with _singleton_lock:
         _singleton_router = None
 
-
 # ---------------------------------------------------------------------------
 # 默认 stub 处理器
 # ---------------------------------------------------------------------------
 # Phase 1d 占位：真实处理器由后续 Phase 实现并在 YAML 中替换为 zephyr.<module>.<func>
 # 这些 stub 保证 trigger_router.yaml 默认配置可被解析 + dispatch 不会失败。
-
 
 def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
     return {
@@ -593,26 +577,21 @@ def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
         "note": "Phase 1d 占位处理器 — 真实实现见后续 Phase",
     }
 
-
 def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``onboarding`` trigger_type 的 Phase 1d 占位处理器。"""
     return _stub_response("onboarding", payload)
-
 
 def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``drift_detected`` trigger_type 的 Phase 1d 占位处理器。"""
     return _stub_response("drift_detected", payload)
 
-
 def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``cleanup_due`` trigger_type 的 Phase 1d 占位处理器。"""
     return _stub_response("cleanup_due", payload)
 
-
 def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_published`` trigger_type 的 Phase 1d 占位处理器。"""
     return _stub_response("blueprint_published", payload)
-
 
 def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_lookup`` — 根据文件路径/任务关键字匹配蓝图路由。

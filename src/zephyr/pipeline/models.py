@@ -24,7 +24,6 @@ __all__ = [
     "PipelineStatus",
 ]
 
-
 class PipelineStatus(str, Enum):
     PENDING = "pending"
     RUNNING = "running"
@@ -33,14 +32,12 @@ class PipelineStatus(str, Enum):
     FAILURE = "failure"
     CLAUDE_RESCUE = "claude_rescue"
 
-
 class ModuleStatus(str, Enum):
     PENDING = "pending"
     RUNNING = "running"
     SUCCESS = "success"
     FAILURE = "failure"
     SKIPPED = "skipped"
-
 
 class ModuleResult(BaseModel):
     """单模块执行结果"""
@@ -58,7 +55,6 @@ class ModuleResult(BaseModel):
     started_at: str | None = None
     finished_at: str | None = None
 
-
 class PipelineResult(BaseModel):
     """管线执行结果"""
 
@@ -73,7 +69,6 @@ class PipelineResult(BaseModel):
     started_at: str = Field(default_factory=lambda: datetime.now().isoformat())
     finished_at: str | None = None
 
-
 class ClaudeRescueTrigger(BaseModel):
     """Claude 特种救援触发记录——GOV-AI-002 §三"""
 
@@ -87,7 +82,6 @@ class ClaudeRescueTrigger(BaseModel):
     has_security_tag: bool = False
     is_experimental: bool = False
 
-
 class PipelineOrchestratorConfig(BaseModel):
     """管线编排器配置"""
 
@@ -98,7 +92,6 @@ class PipelineOrchestratorConfig(BaseModel):
     glm_rejection_threshold: int = 2
     default_timeout_s: int = 300
     enable_parallel_modules: bool = False
-
 
 # ============================================================================
 # M1-M11 模块静态规格——GOV-AI-002 决策树的具体化

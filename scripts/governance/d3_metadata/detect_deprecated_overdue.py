@@ -32,7 +32,6 @@ from datetime import datetime
 
 ARCHIVE_THRESHOLD_DAYS = 180
 
-
 def scan_deprecated_overdue() -> list[dict]:
     """scan deprecated overdue."""
     findings = []
@@ -75,7 +74,6 @@ def scan_deprecated_overdue() -> list[dict]:
     return findings
     """scan deprecated overdue."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="废弃超期检测（PS-STD-009 §7）")
@@ -95,7 +93,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

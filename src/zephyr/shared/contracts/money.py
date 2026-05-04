@@ -71,7 +71,6 @@ _CURRENCY_PRECISION: dict[str, int] = {
 扩展方式：新增货币时在此表添加，同时更新 instrument.CurrencyCode Literal。
 """
 
-
 def get_currency_precision(currency: str) -> int:
     """
     查询货币精度（小数位数）。
@@ -89,24 +88,19 @@ def get_currency_precision(currency: str) -> int:
         return 2
     return _CURRENCY_PRECISION[currency]
 
-
 # ═══════════════════════════════════════════════════════════════════
 # 异常类
 # ═══════════════════════════════════════════════════════════════════
 
-
 class MoneyPrecisionError(ValueError):
     """金额精度错误（如试图用 float 构造 Money）。"""
-
 
 class MoneyCurrencyMismatchError(ValueError):
     """币种不匹配错误（如 CNY Money 与 USD Money 直接相加）。"""
 
-
 # ═══════════════════════════════════════════════════════════════════
 # Money 值对象
 # ═══════════════════════════════════════════════════════════════════
-
 
 @dataclass(frozen=True)
 class Money:

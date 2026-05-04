@@ -11,11 +11,9 @@ import pytest
 from zephyr.db.sqlite_schema import get_db_connection
 from zephyr.orchestrator.state_synchronizer import StateSynchronizer
 
-
 @pytest.fixture
 def syncer(tmp_db: Path) -> StateSynchronizer:
     return StateSynchronizer(db_path=tmp_db)
-
 
 def _insert_task(conn, task_id: str, file_path: str, status: str = "PENDING") -> None:
     now = "2026-04-24T00:00:00+00:00"
@@ -28,7 +26,6 @@ def _insert_task(conn, task_id: str, file_path: str, status: str = "PENDING") ->
         (task_id, task_id.split("-")[0], int(task_id.split("-")[-1]), task_id, status, files_json, now, now),
     )
     conn.execute("COMMIT")
-
 
 class TestStateSynchronizerSync:
     def test_sync_all_empty_db(self, syncer: StateSynchronizer) -> None:
@@ -72,7 +69,6 @@ class TestStateSynchronizerSync:
     def test_sync_nonexistent_task(self, syncer: StateSynchronizer) -> None:
         result = syncer.sync_task("ADR-999")
         assert result is None
-
 
 class TestDetectGhosts:
     def test_detect_ghosts(self, syncer: StateSynchronizer, tmp_db: Path) -> None:

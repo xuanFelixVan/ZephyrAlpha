@@ -70,14 +70,11 @@ REGISTRY_MASTER_INDEX_PATH = CATALOGS_DIR / "registry-master-index.yaml"
 _errors: list[str] = []
 _warnings: list[str] = []
 
-
 def _err(msg: str) -> None:
     _errors.append(msg)
 
-
 def _warn(msg: str) -> None:
     _warnings.append(msg)
-
 
 def _load_vocabularies() -> dict[str, dict]:
     """扫描 vocabularies/ 目录，返回 {vocabulary_name: {values: set, path: Path}}"""
@@ -120,7 +117,6 @@ def _load_vocabularies() -> dict[str, dict]:
         }
     return vocabs
 
-
 def _extract_enum_from_field_registry(field_name: str) -> tuple[set[str], str | None]:
     """从 frontmatter-field-registry.yaml 提取指定字段的枚举值和 derived_from
     支持 allowed_values（简单列表）和 enum_values（对象列表）两种格式"""
@@ -153,7 +149,6 @@ def _extract_enum_from_field_registry(field_name: str) -> tuple[set[str], str | 
             return set(), derived
     return set(), None
 
-
 def _extract_enum_from_arch_contract(field_name: str) -> tuple[set[str], str | None]:
     """从 architecture-contract.yaml 提取指定字段的枚举值和 derived_from"""
     if not ARCH_CONTRACT_PATH.exists():
@@ -171,7 +166,6 @@ def _extract_enum_from_arch_contract(field_name: str) -> tuple[set[str], str | N
             derived = field.get("derived_from")
             return set(str(v) for v in allowed), derived
     return set(), None
-
 
 def _extract_enum_from_schema_json(field_name: str) -> set[str]:
     """从 frontmatter-schema.json 提取指定字段的 enum 或 oneOf+const 值"""
@@ -193,9 +187,7 @@ def _extract_enum_from_schema_json(field_name: str) -> set[str]:
             values.add(str(const))
     return values
 
-
 SUBSET_VOCABS = {"doc_type", "layer", "ttl"}
-
 
 def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
     """DIM-1: vocabulary YAML ↔ frontmatter-field-registry.yaml
@@ -231,7 +223,6 @@ def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
                 f"不在 vocabulary 中: {sorted(extra_in_registry)[:5]}"
             )
 
-
 def check_dim2_arch_contract(vocabs: dict[str, dict]) -> None:
     """DIM-2: vocabulary YAML ↔ architecture-contract.yaml
 
@@ -258,7 +249,6 @@ def check_dim2_arch_contract(vocabs: dict[str, dict]) -> None:
                 f"不在 vocabulary 中: {sorted(extra_in_contract)[:5]}"
             )
 
-
 def check_dim3_schema_json(vocabs: dict[str, dict]) -> None:
     """DIM-3: vocabulary YAML ↔ frontmatter-schema.json (enum + oneOf+const)
 
@@ -284,7 +274,6 @@ def check_dim3_schema_json(vocabs: dict[str, dict]) -> None:
                 f"不在 vocabulary 中: {sorted(extra_in_schema)[:5]}"
             )
 
-
 def check_dim4_missing_derived_from(vocabs: dict[str, dict]) -> None:
     """DIM-4: 派生文件中有枚举列表但缺少 derived_from 标注"""
     for vocab_name, field_name in VOCAB_TO_FIELD.items():
@@ -302,7 +291,6 @@ def check_dim4_missing_derived_from(vocabs: dict[str, dict]) -> None:
                 f"DIM-4 arch_contract.{field_name}: 缺少 derived_from 标注"
                 f"（应标注 derived_from: '_registry/vocabularies/{vocab_name}-vocabulary.yaml'）"
             )
-
 
 def check_dim5_vocab_registration(vocabs: dict[str, dict]) -> None:
     """DIM-5: vocabulary YAML 文件必须在 registry-master-index.yaml 登记"""
@@ -327,7 +315,6 @@ def check_dim5_vocab_registration(vocabs: dict[str, dict]) -> None:
         if vocab_rel not in registered_paths:
             _warn(f"DIM-5 {vocab_name}-vocabulary.yaml: " f"未在 registry-master-index.yaml 登记（路径: {vocab_rel}）")
 
-
 def check_dim6_field_registry_enum_values(vocabs: dict[str, dict]) -> None:
     """DIM-6: field-registry.yaml 中所有 enum_values 字段必须与对应 vocabulary 一致
     For SUBSET_VOCABS, missing values from vocabulary are OK (subset relationship)."""
@@ -351,7 +338,6 @@ def check_dim6_field_registry_enum_values(vocabs: dict[str, dict]) -> None:
                 f"不在 vocabulary 中: {sorted(extra)[:5]}"
             )
 
-
 def check_dim7_schema_json_oneof(vocabs: dict[str, dict]) -> None:
     """DIM-7: frontmatter-schema.json 中所有 oneOf+const 必须与对应 vocabulary 一致
     For SUBSET_VOCABS, missing values from vocabulary are OK (subset relationship)."""
@@ -374,7 +360,6 @@ def check_dim7_schema_json_oneof(vocabs: dict[str, dict]) -> None:
                 f"DIM-7 schema_json.{field_name}: schema.json 有 {len(extra)} 个值"
                 f"不在 vocabulary 中: {sorted(extra)[:5]}"
             )
-
 
 def main() -> None:
     """入口函数."""
@@ -455,7 +440,6 @@ def main() -> None:
     else:
         print(f"🟡 GATE-ENUM 通过（有 {len(_warnings)} 个标注性警告）")
         return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -9,7 +9,7 @@ Vibe Coding 2.0 基础设施 · L12 跨层支撑层 · 5 大核心服务之一
 
 基础设施
 --------
-存储      : SQLite 时间序列（Phase 1-2）
+存储      : SQLite 时间序列（2）
            InfluxDB（Phase 4+ 升级）
 异常检测  : EMA（指数移动平均）+ 阈值 + 持续时间
 

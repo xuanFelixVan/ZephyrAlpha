@@ -40,11 +40,9 @@ TYPE_MAP = {
     "UUID": "uuid.UUID",
 }
 
-
 def _load_contracts() -> list[dict]:
     data = yaml.safe_load(YAML_PATH.read_text(encoding="utf-8"))
     return data.get("contracts", [])
-
 
 def _resolve_python_type(type_str: str) -> str:
     resolved = TYPE_MAP.get(type_str, type_str)
@@ -53,14 +51,12 @@ def _resolve_python_type(type_str: str) -> str:
     resolved = resolved.replace("List[", "").replace("]", "")
     return resolved
 
-
 def _python_type_display(py_type: type | str) -> str:
     if hasattr(py_type, "__name__"):
         return py_type.__name__
     if hasattr(py_type, "_name"):
         return str(py_type._name)
     return str(py_type)
-
 
 class TestContractYamlPythonConsistency:
     """LC01~LC04: YAML SSoT 与 Python 实现一致。"""

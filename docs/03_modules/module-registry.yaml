@@ -141,7 +141,6 @@ _schema:
     - build            # 构建时依赖（构建/测试需要对方存在）
     - contract         # 接口契约依赖（实现对方的接口）
 
-
 # ============================================================================
 # 模块登记（按 module_id 排序）
 # ============================================================================
@@ -178,7 +177,7 @@ modules:
       history: []
     dependencies: []
     priority: P0
-    tags: ["capacity-assurance", "slo", "ai-audit-guard", "infrastructure", "phase-0", "error-budget", "token-budget", "kill-switch", "sandbox", "graceful-degradation", "otel", "disaster-recovery", "capacity-prediction", "cross-module-integration"]
+    tags: ["capacity-assurance", "slo", "ai-audit-guard", "infrastructure", "", "error-budget", "token-budget", "kill-switch", "sandbox", "graceful-degradation", "otel", "disaster-recovery", "capacity-prediction", "cross-module-integration"]
 
   - module_id: "MOD-INF-002"
     name: "runtime-integration"
@@ -226,7 +225,7 @@ modules:
       - module_id: "MOD-INF-002"
         type: runtime
     priority: P1
-    tags: ["task-card", "kms", "knowledge-management", "infrastructure", "phase-0", "retired"]
+    tags: ["task-card", "kms", "knowledge-management", "infrastructure", "", "retired"]
 
   - module_id: "MOD-INF-004"
     name: "vibe-coding-pipelines"
@@ -255,7 +254,7 @@ modules:
       - module_id: "MOD-INF-005"
         type: runtime
     priority: P0
-    tags: ["vibe-coding", "dual-pipelines", "script-system", "m1-m11-modules", "infrastructure", "phase-0", "retired"]
+    tags: ["vibe-coding", "dual-pipelines", "script-system", "m1-m11-modules", "infrastructure", "", "retired"]
 
   - module_id: "MOD-INF-005"
     name: "script-system"
@@ -272,11 +271,11 @@ modules:
       status: partial_30
       note: "Phase 0 MVP 已交付。施工指引见 blueprint.md §12。"
     delivery:
-      latest_version: "0.1.0-phase-0-mvp"
+      latest_version: "0.1.0--mvp"
       history:
-        - version: "0.1.0-phase-0-mvp"
+        - version: "0.1.0--mvp"
           date: "2026-05-02"
-          phase: "Phase-0-MVP"
+          phase: "-MVP"
           artifacts:
             - "src/zephyr/script_system/__init__.py"
             - "src/zephyr/script_system/finding.py（Finding Schema + FindingCollection）"
@@ -291,7 +290,7 @@ modules:
       - module_id: "MOD-INF-004"
         type: contract
     priority: P0
-    tags: ["script-system", "vibe-coding", "governance", "pre-commit", "automation", "scripts-system", "quality-gate", "infrastructure", "phase-0"]
+    tags: ["script-system", "vibe-coding", "governance", "pre-commit", "automation", "scripts-system", "quality-gate", "infrastructure", ""]
 
   - module_id: "MOD-INF-006"
     name: "task-system"
@@ -314,7 +313,7 @@ modules:
       - module_id: "MOD-INF-005"
         type: runtime
     priority: P0
-    tags: ["task-system", "task-card", "orchestrator", "agent-orchestrator", "10-state-machine", "infrastructure", "phase-0"]
+    tags: ["task-system", "task-card", "orchestrator", "agent-orchestrator", "10-state-machine", "infrastructure", ""]
 
   - module_id: "MOD-KB-001"
     name: "knowledge-base"
@@ -337,7 +336,7 @@ modules:
       - module_id: "MOD-INF-005"
         type: data
     priority: P0
-    tags: ["knowledge-base", "kb", "ke", "chromadb", "kms", "g1-g5", "infrastructure", "phase-1"]
+    tags: ["knowledge-base", "kb", "ke", "chromadb", "kms", "g1-g5", "infrastructure", ""]
 
   - module_id: "MOD-MASTER-001"
     name: "master-blueprint"
@@ -364,7 +363,7 @@ modules:
       - module_id: "MOD-KB-001"
         type: contract
     priority: P0
-    tags: ["master-blueprint", "integration-contracts", "closed-loop", "ssoT", "cross-system", "phase-0"]
+    tags: ["master-blueprint", "integration-contracts", "closed-loop", "ssoT", "cross-system", ""]
 
   - module_id: "MOD-INF-007"
     name: "gate-engine"
@@ -389,7 +388,7 @@ modules:
       - module_id: "MOD-INF-006"
         type: runtime
     priority: P0
-    tags: ["gate-engine", "gates", "g0-g7", "g1-g5", "circuit-breaker", "admission-controller", "infrastructure", "phase-0"]
+    tags: ["gate-engine", "gates", "g0-g7", "g1-g5", "circuit-breaker", "admission-controller", "infrastructure", ""]
 
   - module_id: "MOD-INF-008"
     name: "context-engine"
@@ -414,7 +413,7 @@ modules:
       - module_id: "MOD-INF-006"
         type: runtime
     priority: P0
-    tags: ["context-engine", "ce", "context-injection", "rag", "token-budget", "infrastructure", "phase-0"]
+    tags: ["context-engine", "ce", "context-injection", "rag", "token-budget", "infrastructure", ""]
 
   - module_id: "MOD-INF-009"
     name: "pipeline"
@@ -437,7 +436,7 @@ modules:
       - module_id: "MOD-INF-006"
         type: runtime
     priority: P0
-    tags: ["pipeline", "task-pipeline", "m1-m11", "dual-pipeline", "model-routing", "infrastructure", "phase-0"]
+    tags: ["pipeline", "task-pipeline", "m1-m11", "dual-pipeline", "model-routing", "infrastructure", ""]
 
   - module_id: "MOD-INF-010"
     name: "feedback-loop"
@@ -462,7 +461,7 @@ modules:
       - module_id: "MOD-INF-007"
         type: runtime
     priority: P0
-    tags: ["feedback-loop", "fle", "self-improvement", "anomaly-detection", "auto-evolution", "infrastructure", "phase-0"]
+    tags: ["feedback-loop", "fle", "self-improvement", "anomaly-detection", "auto-evolution", "infrastructure", ""]
 
   - module_id: "MOD-INF-011"
     name: "vector-memory"
@@ -487,7 +486,7 @@ modules:
       - module_id: "MOD-INF-008"
         type: runtime
     priority: P1
-    tags: ["vector-memory", "vms", "chromadb", "bge-m3", "vector-db", "infrastructure", "phase-1"]
+    tags: ["vector-memory", "vms", "chromadb", "bge-m3", "vector-db", "infrastructure", ""]
 
   - module_id: "MOD-INF-012"
     name: "database"
@@ -510,7 +509,7 @@ modules:
       - module_id: "MOD-INF-006"
         type: runtime
     priority: P1
-    tags: ["database", "db", "sqlite", "atm", "task-repo", "infrastructure", "phase-1"]
+    tags: ["database", "db", "sqlite", "atm", "task-repo", "infrastructure", ""]
 
   - module_id: "MOD-INF-013"
     name: "mcp-servers"
@@ -537,7 +536,7 @@ modules:
       - module_id: "MOD-INF-007"
         type: contract
     priority: P1
-    tags: ["mcp", "mcp-servers", "stdio", "model-context-protocol", "external-api", "infrastructure", "phase-1"]
+    tags: ["mcp", "mcp-servers", "stdio", "model-context-protocol", "external-api", "infrastructure", ""]
 
   - module_id: "MOD-INF-014"
     name: "llm-security"
@@ -560,7 +559,7 @@ modules:
       - module_id: "MOD-INF-008"
         type: runtime
     priority: P2
-    tags: ["llm-security", "lsg", "security-gateway", "fail-closed", "input-sanitizer", "infrastructure", "phase-2"]
+    tags: ["llm-security", "lsg", "security-gateway", "fail-closed", "input-sanitizer", "infrastructure", ""]
 
   - module_id: "MOD-INF-015"
     name: "system-telemetry"
@@ -583,7 +582,7 @@ modules:
       - module_id: "MOD-INF-010"
         type: data
     priority: P2
-    tags: ["telemetry", "system-telemetry", "l12", "metrics", "logs", "traces", "observability", "infrastructure", "phase-2"]
+    tags: ["telemetry", "system-telemetry", "l12", "metrics", "logs", "traces", "observability", "infrastructure", ""]
 
   - module_id: "MOD-INF-016"
     name: "shared-core"
@@ -604,4 +603,4 @@ modules:
       history: []
     dependencies: []
     priority: P2
-    tags: ["shared", "core", "cross-layer", "contracts", "ssot-guard", "event-bus", "infrastructure", "phase-2"]
+    tags: ["shared", "core", "cross-layer", "contracts", "ssot-guard", "event-bus", "infrastructure", ""]

@@ -63,7 +63,6 @@ _KE_PATTERN = re.compile(r"KE-(\d{3,})")
 
 _UTC = UTC
 
-
 @dataclass
 class ExtractResult:
     passed: bool
@@ -73,7 +72,6 @@ class ExtractResult:
     adr_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
-
 
 class ExtractGate:
     def __init__(

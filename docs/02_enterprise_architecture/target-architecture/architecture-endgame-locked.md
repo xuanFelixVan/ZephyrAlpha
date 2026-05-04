@@ -20,12 +20,12 @@ ttl: permanent
 
 | 条件 | 验收标准 | 当前状态 |
 |------|---------|---------|
-| 所有 P0/P1 模块已注入 | `module-id-registry.yaml` 中 P0/P1 模块全部 status ≠ planned | ⏳ 待完成（Phase 1） |
-| 所有 P0 模块接口契约已定义 | `cross-layer-contracts.yaml` 中 P0 模块契约全部 frozen | ⏳ 待完成（Phase 2） |
-| 依赖图完整且无环 | `check_dependency_direction.py` PASS，DAG 无环 | ⏳ 待完成（Phase 2） |
+| 所有 P0/P1 模块已注入 | `module-id-registry.yaml` 中 P0/P1 模块全部 status ≠ planned | ⏳ 待完成 |
+| 所有 P0 模块接口契约已定义 | `cross-layer-contracts.yaml` 中 P0 模块契约全部 frozen | ⏳ 待完成 |
+| 依赖图完整且无环 | `check_dependency_direction.py` PASS，DAG 无环 | ⏳ 待完成 |
 | SSoT 矛盾清零 | `validate_ssot.py` 报告矛盾 = 0 | ⏳ 待完成（Phase 0c-3） |
-| 五大目标全部 PASS | D1~D5 验收标准全部满足 | ⏳ 待完成（Phase 2） |
-| 基线指纹已生成 | `architecture-baseline-fingerprint.yaml` 存在 | ⏳ 待完成（Phase 2） |
+| 五大目标全部 PASS | D1~D5 验收标准全部满足 | ⏳ 待完成 |
+| 基线指纹已生成 | `architecture-baseline-fingerprint.yaml` 存在 | ⏳ 待完成 |
 
 ## 二、锁定后的变更规则
 

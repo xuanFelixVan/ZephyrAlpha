@@ -45,7 +45,6 @@ scripts/governance/
 ```
 <!-- TREE-AUTO-END -->
 
-
 ## 维度覆盖率
 
 <!-- COVERAGE-AUTO-START -->

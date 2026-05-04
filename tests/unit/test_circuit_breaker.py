@@ -29,14 +29,12 @@ from zephyr.gates.circuit_breaker import (
 # Fixture：每个测试使用独立内存数据库
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture
 def db(tmp_path):
     """返回已初始化的 SQLite 数据库路径（临时目录）。"""
     db_path = tmp_path / "test_cbg.db"
     init_db(db_path)
     return db_path
-
 
 @pytest.fixture
 def manager(db):
@@ -45,11 +43,9 @@ def manager(db):
     yield mgr
     mgr.close()
 
-
 # ---------------------------------------------------------------------------
 # 1. 初始状态：记录不存在视为 CLOSED
 # ---------------------------------------------------------------------------
-
 
 class TestInitialState:
     def test_get_state_nonexistent_returns_none(self, manager):
@@ -58,11 +54,9 @@ class TestInitialState:
     def test_is_open_nonexistent_returns_false(self, manager):
         assert manager.is_open("RI-05", "L2a") is False
 
-
 # ---------------------------------------------------------------------------
 # 2. 失败累积
 # ---------------------------------------------------------------------------
-
 
 class TestFailureAccumulation:
     def test_first_failure_creates_record(self, manager):
@@ -86,11 +80,9 @@ class TestFailureAccumulation:
         assert record is not None
         assert "TimeoutError" in (record.reason or "")
 
-
 # ---------------------------------------------------------------------------
 # 3. CLOSED → OPEN 状态转移
 # ---------------------------------------------------------------------------
-
 
 class TestCircuitOpenTransition:
     def test_open_triggered_at_threshold(self, manager):
@@ -124,11 +116,9 @@ class TestCircuitOpenTransition:
         assert manager.is_open("A", "B") is True
         assert manager.is_open("C", "D") is False
 
-
 # ---------------------------------------------------------------------------
 # 4. OPEN 状态下调用被阻断
 # ---------------------------------------------------------------------------
-
 
 class TestOpenBlocking:
     def test_circuit_open_error_raised(self, manager):
@@ -145,11 +135,9 @@ class TestOpenBlocking:
         assert "module_A" in str(err)
         assert "module_B" in str(err)
 
-
 # ---------------------------------------------------------------------------
 # 5. 手动重置
 # ---------------------------------------------------------------------------
-
 
 class TestManualReset:
     def test_reset_restores_closed_state(self, manager):
@@ -180,11 +168,9 @@ class TestManualReset:
         assert record.failure_count == 1
         assert record.state == CircuitBreakerState.CLOSED
 
-
 # ---------------------------------------------------------------------------
 # 6. list_open_circuits
 # ---------------------------------------------------------------------------
-
 
 class TestListOpenCircuits:
     def test_no_open_circuits_returns_empty(self, manager):
@@ -204,11 +190,9 @@ class TestListOpenCircuits:
         manager.record_failure("E", "F", threshold=10)
         assert manager.list_open_circuits() == []
 
-
 # ---------------------------------------------------------------------------
 # 7. CircuitBreakerCheck GateEngine 接口
 # ---------------------------------------------------------------------------
-
 
 class TestCircuitBreakerCheck:
     def test_is_open_false_when_no_record(self, db):
@@ -242,11 +226,9 @@ class TestCircuitBreakerCheck:
         assert "RI-05" in msg
         assert "L2a" in msg
 
-
 # ---------------------------------------------------------------------------
 # 8. L08 注册表
 # ---------------------------------------------------------------------------
-
 
 class TestL08Registry:
     def test_register_and_get_policy(self):

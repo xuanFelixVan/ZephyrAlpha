@@ -36,7 +36,7 @@ depends_on:
 2. 架构评审门控——什么变更必须经过架构评审、评审清单、否决条件
 3. 架构文档版本化策略——版本号规则、变更日志要求、与代码版本的关系
 4. KMS 门禁策略——5 级知识管道门禁（Ingest/Triage/Evaluate/Activate/Extract）的 SSoT
-5. Phase 过渡双门协议——Phase 0-4 之间过渡的退出-准入条件与自动化校验
+5. Phase 过渡双门协议——4 之间过渡的退出-准入条件与自动化校验
 
 **负向责任**（本目录不管的事，去对应目录找）：
 - 架构决策记录的具体内容 → `docs/02_enterprise_architecture/adr/`

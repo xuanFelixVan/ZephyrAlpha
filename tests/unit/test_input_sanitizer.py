@@ -30,7 +30,6 @@ from zephyr.llm_security.input_sanitizer import (
     TokenBudgetExceededError,
 )
 
-
 class TestValidatePathRead:
     def test_read_docs_path(self, sanitizer, tmp_project_dir):
         result = sanitizer.validate_path("docs/readme.md", mode="read")
@@ -43,7 +42,6 @@ class TestValidatePathRead:
     def test_read_any_subdirectory(self, sanitizer, tmp_project_dir):
         result = sanitizer.validate_path("config/settings.yaml", mode="read")
         assert result == tmp_project_dir / "config" / "settings.yaml"
-
 
 class TestValidatePathWrite:
     def test_write_docs_path(self, sanitizer, tmp_project_dir):
@@ -61,7 +59,6 @@ class TestValidatePathWrite:
     def test_write_audit_cache(self, sanitizer, tmp_project_dir):
         result = sanitizer.validate_path(".audit_cache/report.jsonl", mode="write")
         assert result == tmp_project_dir / ".audit_cache" / "report.jsonl"
-
 
 class TestValidatePathTraversal:
     @pytest.mark.security
@@ -105,7 +102,6 @@ class TestValidatePathTraversal:
         with pytest.raises(PathTraversalError, match="Dangerous pattern"):
             sanitizer.validate_path(dangerous)
 
-
 class TestValidateCommand:
     def test_python_command(self, sanitizer):
         result = sanitizer.validate_command("python scripts/run.py")
@@ -144,7 +140,6 @@ class TestValidateCommand:
         with pytest.raises(CommandInjectionError, match="Unparseable"):
             sanitizer.validate_command("python 'unclosed quote")
 
-
 class TestCheckTokenBudget:
     def test_within_budget(self, sanitizer):
         assert sanitizer.check_token_budget(used=5000, limit=10000) is True
@@ -162,7 +157,6 @@ class TestCheckTokenBudget:
         with pytest.raises(TokenBudgetExceededError, match="Token budget exceeded"):
             sanitizer.check_token_budget(used=15000, limit=10000)
 
-
 class TestSanitizeFilename:
     def test_normal_filename(self, sanitizer):
         assert sanitizer.sanitize_filename("report_2026.md") == "report_2026.md"
@@ -179,7 +173,6 @@ class TestSanitizeFilename:
         result = sanitizer.sanitize_filename(".hidden")
         assert result.startswith("sanitized_")
 
-
 class TestExceptionHierarchy:
     def test_path_traversal_is_sanitization_error(self):
         assert issubclass(PathTraversalError, SanitizationError)
@@ -189,7 +182,6 @@ class TestExceptionHierarchy:
 
     def test_token_budget_is_sanitization_error(self):
         assert issubclass(TokenBudgetExceededError, SanitizationError)
-
 
 class TestCustomWhitelist:
     def test_custom_write_dirs(self, tmp_path):

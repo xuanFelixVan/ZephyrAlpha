@@ -91,7 +91,6 @@ from __future__ import annotations
 from enum import Enum
 from typing import Final
 
-
 class RuntimePlane(str, Enum):
     """
     Runtime Plane 三档枚举（正交视图 04bis 的规范类型）。
@@ -107,7 +106,6 @@ class RuntimePlane(str, Enum):
     def __str__(self) -> str:  # pragma: no cover - trivial
         return self.value
 
-
 HOT_PATH_LATENCY_BUDGET_MS: Final[float] = 10.0
 """Hot Path 延迟硬预算上限（毫秒，tick-to-trade 端到端）。"""
 
@@ -116,7 +114,6 @@ WARM_PATH_LATENCY_BUDGET_MS: Final[float] = 1000.0
 
 COLD_PATH_LATENCY_BUDGET_MS: Final[float] = float("inf")
 """Cold Path 无硬上限（批处理作业），但 SLA 建议按作业类型分档（秒/分钟/小时）。"""
-
 
 HOT_PATH_ACTIVATED: Final[bool] = False
 """
@@ -132,7 +129,6 @@ Hot Path 全局激活开关。
 **禁止**在本常量为 False 时调用任何自称 Hot Path 的代码路径——违反即 CI gate 驳回。
 """
 
-
 COLD_PATH_PARTIAL_ACTIVATED: Final[bool] = True
 """
 Cold Path 部分激活开关。
@@ -141,7 +137,6 @@ Cold Path 部分激活开关。
 独立 Cold Path cluster）。Cold Path 作业在 Warm 进程内跑时，**必须**标注为
 `RuntimePlane.COLD` 并通过 shield pattern 隔离（避免阻塞 Warm 主事件循环）。
 """
-
 
 __all__ = [
     "RuntimePlane",

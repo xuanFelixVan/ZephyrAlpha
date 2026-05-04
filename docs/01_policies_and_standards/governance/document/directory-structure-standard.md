@@ -174,7 +174,7 @@ src/zephyr/
 ├── feedback_loop/                       # FLE  · ADR-0019
 ├── gates/                               # 合规门禁（G1-GN 运行时）
 ├── db/                                  # SQLite schema / atomic 事务
-├── kb/                                  # Phase 1-2 过渡期知识库（Phase 3 并入 vector_memory）
+├── kb/                                  # 2 过渡期知识库（Phase 3 并入 vector_memory）
 ├── mcp/                                 # Model Context Protocol 客户端
 └── shared/                              # 跨层契约 / 共享工具
 ```
@@ -480,7 +480,7 @@ Q4: 这条过程式规则影响所有层，还是只影响特定层？
 ```
 
 **准入规则**：
-- ✅ `l<NN>_*/` 子目录下的模块目录
+- ✅ `l<NN>_*/` 模块目录
 - ✅ 模块目录下 `blueprint.md` / `delivery/`
 - ❌ 非 C 轨业务层的文档
 - ❌ 5 大 AI 服务的接口文档（→ `03_modules/_b_track_interfaces/`）
@@ -584,7 +584,7 @@ Q4: 这条过程式规则影响所有层，还是只影响特定层？
 
 | 规则 | 与本标准的关系 |
 |------|-------------|
-| file-naming-standard.md（GOV-DOC-003） | 文件命名规范规定了子目录下的文件命名格式（如 governance/ 下用 `-standard.md`，operational/ 下用 `-runbook.md`） |
+| file-naming-standard.md（GOV-DOC-003） | 文件命名规范规定了文件命名格式（如 governance/ 下用 `-standard.md`，operational/ 下用 `-runbook.md`） |
 | file-path-standard.md（GOV-DOC-004） | 路径规范以本标准的目录定义为锚——每种文件类型的强制路径必落在本标准定义的某个子目录下 |
 | document-lifecycle-standard.md（GOV-DOC-006） | 生命周期管理中的归档路径（如 09_audit/archive/）由本标准定义 |
 | file-operation-safety-policy.md（GOV-DOC-007） | 不可触碰锚点文件清单与本标准的 §5.1.2 锚点文件表对齐 |

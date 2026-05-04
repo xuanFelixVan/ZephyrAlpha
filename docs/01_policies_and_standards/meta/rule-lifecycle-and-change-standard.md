@@ -30,7 +30,7 @@ ai_autonomy: human_gated
 
 > **合并声明**：v3.0.0 合并原 PS-STD-010（rule-lifecycle-standard.md）。理由：生命周期定义"规则有哪些状态"，变更门控定义"状态迁移要谁批准"——数据和算子的供需关系，分开存储增加 AI 的上下文翻页成本。合并后 meta/ 从 13 减为 12 个文件。
 
-> **老树教训**：老树中 AI 可以自由修改规则文档。旧版（v1.x）分级基于文件路径（`.cursor/rules/`、`.roomodes`等），新树统一路径后失效。
+> **老树教训**：老树中 AI 可以自由修改规则文档。旧版（v1.x）分级基于文件路径（`.cursor/rules/`、`.roomodes`等），当前项目统一路径后失效。
 
 > **治根方案**：分级基于声明属性（stability+scope）。属性来源：[PS-STD-004 rule-classification-and-arbitration-standard.md](rule-classification-and-arbitration-standard.md)。
 

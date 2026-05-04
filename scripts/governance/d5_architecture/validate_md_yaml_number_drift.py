@@ -37,7 +37,6 @@ ensure_utf8_stdout()
 EA_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
 ARCH_MODEL = EA_DIR / "target-architecture" / "architecture-model"
 
-
 def get_yaml_truth() -> dict:
     """获取 YAML 中的真实数值"""
     truth = {}
@@ -61,7 +60,6 @@ def get_yaml_truth() -> dict:
         truth["core_services"] = len(modules) if modules else 0
     return truth
     "获取 YAML 中的真实数值."
-
 
 def scan_md_files(truth: dict) -> list[dict]:
     """扫描 Markdown 文件数字漂移."""
@@ -93,7 +91,6 @@ def scan_md_files(truth: dict) -> list[dict]:
     return findings
     "扫描 Markdown 文件数字漂移."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
@@ -114,7 +111,6 @@ def main() -> None:
     for f in findings:
         print(f'  DIM-{f['dim']} {f['file']}: 发现 {f['found']}（期望 {f['expected']}）—— "{f['context']}"')
     return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

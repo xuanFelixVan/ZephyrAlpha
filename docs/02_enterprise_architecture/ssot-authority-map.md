@@ -27,7 +27,7 @@ tags:
 > **用途**：定义跨文件受保护字段的权威来源（Authority Source）与合法值集合。
 > `scripts/governance/d5_architecture/validate_ssot.py` 使用本文件作为校验规则配置。
 > 每次修改本文件需同步更新上述脚本并重新运行验收测试。
-> **Stage H（2026-04-25）路径对齐完成**：全部 6 处老树 `docs/02_ARCHITECTURE/*` / `docs/09_audit/state/module_id_registry.json` 引用已替换为新树真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
+> **Stage H（2026-04-25）路径对齐完成**：全部 6 处老树 `docs/02_ARCHITECTURE/*` / `docs/09_audit/state/module_id_registry.json` 引用已替换为项目真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
 > **v2.0（2026-05-03）**：`docs/09_audit/state/` 已废弃——SQLite DB 迁移至 `data/zalpha_metadata.db`（ADR-0030 §4.1）。上述 Stage H 引用中的 `docs/09_audit/state/module_id_registry.json` 的历史上下文保留于此作为审计追踪。
 
 ---
@@ -225,7 +225,7 @@ violation_severity: P2
 
 ## 八、活跃 SSoT 矛盾追踪清单
 
-> ⚠️ **scope 声明**：本节是【临时审计追踪】——记录尚未解决的矛盾，便于日常施工时快速查找。本文件的 canonical 职责是"定义受保护字段的权威来源与合法值"，矛盾追踪是附加功能。**未来（Phase 2）计划提取至独立 `ssot-contradiction-tracker.yaml`，本节届时仅保留引用链接。** 矛盾解决后应移入 §八（附）已解决归档，不应长期驻留活跃清单。
+> ⚠️ **scope 声明**：本节是【临时审计追踪】——记录尚未解决的矛盾，便于日常施工时快速查找。本文件的 canonical 职责是"定义受保护字段的权威来源与合法值"，矛盾追踪是附加功能。**未来计划提取至独立 `ssot-contradiction-tracker.yaml`，本节届时仅保留引用链接。** 矛盾解决后应移入 §八（附）已解决归档，不应长期驻留活跃清单。
 >
 > 🔴 **SRP 违规标记（R5 审计 2026-05-03）**：本节违反单一职责原则——权威定义与运营追踪混合在同一文件。当前保留是因为拆分需要新建文件 + 更新 5+ 个索引（§6.11 索引-实际同步），成本高于收益。当活跃矛盾数 > 10 或本文件总行数 > 300 时，应强制执行拆分。
 
@@ -234,7 +234,7 @@ violation_severity: P2
 
 | ID | 矛盾描述 | 权威来源 | 修复方案 | 状态 | 执行阶段 | 负责人 |
 |:---|:---|:---|:---|:---:|:---|:---:|
-| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 新树 L00-L13） | 新树 L00-L13 编号系统 | Phase 3 统一迁移，老树编号标记 deprecated alias | ⏳ | Phase 3 | Owner |
+| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | Phase 3 统一迁移，老树编号标记 deprecated alias | ⏳ | Phase 3 | Owner |
 | SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module-id-registry.yaml | Phase 1 填充时统一注册 | ⏳ | Phase 1 | Owner |
 | SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | Phase 0c | AI |
 | SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | Phase 1 填充时声明 | 🔧 | Phase 1 | AI |

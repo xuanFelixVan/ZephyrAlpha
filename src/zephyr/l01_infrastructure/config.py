@@ -13,7 +13,6 @@ ZephyrAlpha — L01 Infrastructure Layer — Configuration Management
 
 from dataclasses import dataclass
 
-
 @dataclass(frozen=True)
 class AppConfig:
     """应用配置数据类。
@@ -28,11 +27,9 @@ class AppConfig:
     def __post_init__(self):
         object.__setattr__(self, "data_source_priority", self.data_source_priority or ["akshare", "tushare"])
 
-
 def load_config(config_path: str | None = None, env_override: bool = True) -> AppConfig:
     """[STUB — Phase 2 实现] 加载应用配置。"""
     raise NotImplementedError("load_config: STUB — Phase 2 实现")
-
 
 def reload_config(current: AppConfig) -> AppConfig:
     """[STUB — Phase 2 实现] 热重载配置。"""

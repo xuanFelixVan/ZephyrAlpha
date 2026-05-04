@@ -32,14 +32,12 @@ ensure_utf8_stdout()
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY, SRC_DIR
 from _shared.walk import iter_files
 
-
 def _file_to_module_path(filepath: Path) -> str:
     rel = filepath.relative_to(SRC_DIR)
     parts = list(rel.parts[:-1])
     if parts:
         return "zephyr." + ".".join(parts)
     return "zephyr"
-
 
 def _parse_import_targets(filepath: Path) -> set[str]:
     try:
@@ -56,7 +54,6 @@ def _parse_import_targets(filepath: Path) -> set[str]:
             if node.module:
                 targets.add(node.module)
     return targets
-
 
 def _parse_public_symbols(filepath: Path) -> set[str]:
     try:
@@ -76,7 +73,6 @@ def _parse_public_symbols(filepath: Path) -> set[str]:
                 if isinstance(target, ast.Name) and not target.id.startswith("_"):
                     symbols.add(target.id)
     return symbols
-
 
 def _analyze_pair(file_a: Path, file_b: Path) -> tuple[str, str, str | None]:
     pkg_a = _file_to_module_path(file_a)
@@ -146,7 +142,6 @@ def _analyze_pair(file_a: Path, file_b: Path) -> tuple[str, str, str | None]:
         f"同名文件 {file_a.name} 在不同目录，但公共符号无重叠",
     )
 
-
 def scan() -> tuple[list[dict], int]:
     """scan."""
     findings: list[dict] = []
@@ -179,7 +174,6 @@ def scan() -> tuple[list[dict], int]:
 
     return findings, files_scanned
     """scan."""
-
 
 def main() -> None:
     """入口函数."""
@@ -228,7 +222,6 @@ def main() -> None:
         sys.exit(0)
 
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

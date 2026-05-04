@@ -27,14 +27,12 @@ import yaml
 
 MATRIX_PATH = REPO_ROOT / "config/ai_capability_matrix.yaml"
 
-
 def load_matrix() -> dict | None:
     """加载能力矩阵"""
     if not MATRIX_PATH.exists():
         return None
     "加载能力矩阵."
     return yaml.safe_load(MATRIX_PATH.read_text(encoding="utf-8"))
-
 
 def get_immutable_scopes() -> list[str]:
     """加载能力矩阵."""
@@ -53,7 +51,6 @@ def get_immutable_scopes() -> list[str]:
     return scopes
     "获取不可变作用域列表."
 
-
 def _matches_scope(file_rel: str, scope: str) -> bool:
     import fnmatch
 
@@ -69,7 +66,6 @@ def _matches_scope(file_rel: str, scope: str) -> bool:
         prefix = scope_normalized[:-5]
         return file_normalized.startswith(prefix) and file_normalized.endswith(".md")
     return fnmatch.fnmatch(file_normalized, scope_normalized)
-
 
 def find_capability_violations() -> list[dict]:
     """查找能力边界违规"""
@@ -93,7 +89,6 @@ def find_capability_violations() -> list[dict]:
                 )
     return violations
     "find capability violations."
-
 
 def main() -> None:
     """入口函数."""
@@ -121,7 +116,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if violations else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

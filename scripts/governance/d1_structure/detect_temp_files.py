@@ -47,7 +47,6 @@ TEMP_FILE_PATTERNS = [
 
 TEMP_DIR_NAMES = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 
-
 def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
     """scan temp files."""
     if scan_dir is None:
@@ -99,7 +98,6 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
     return findings, files_scanned
     """scan temp files."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="临时文件检测（GOV-TASK-005 §4.2）")
@@ -121,7 +119,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

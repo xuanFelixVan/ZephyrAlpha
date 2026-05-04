@@ -29,12 +29,10 @@ __all__ = [
     "WaveStatus",
 ]
 
-
 @dataclass
 class Wave:
     wave_id: int
     task_ids: list[str] = field(default_factory=list)
-
 
 @dataclass
 class WaveStatus:
@@ -45,7 +43,6 @@ class WaveStatus:
     pending: int = 0
     blocked: int = 0
     other: int = 0
-
 
 class WaveGenerator:
     """

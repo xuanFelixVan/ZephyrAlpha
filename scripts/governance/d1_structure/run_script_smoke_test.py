@@ -31,7 +31,6 @@ ensure_utf8_stdout()
 _SELF_NAME = "d1_structure/run_script_smoke_test.py"
 import argparse
 
-
 def load_manifest() -> list[dict]:
     """load manifest"""
     with open(MANIFEST_PATH, encoding="utf-8") as f:
@@ -39,7 +38,6 @@ def load_manifest() -> list[dict]:
     "加载数据."
     return manifest.get("scripts", [])
     "load manifest."
-
 
 def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
     """执行扫描"""
@@ -63,7 +61,6 @@ def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
     except OSError as e:
         return (-2, "", f"OS 错误: {e}")
     "执行扫描."
-
 
 def main() -> None:
     """入口函数."""
@@ -103,7 +100,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings or errors else 0)
-
 
 if __name__ == "__main__":
     main()

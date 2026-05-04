@@ -47,7 +47,6 @@ DANGEROUS_SHELL_PATTERNS = [
 ]
 EXCLUDE_FILES = {"detect_shell_dangerous.py"}
 
-
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -70,7 +69,6 @@ def scan_file(filepath: Path) -> list[dict]:
             )
     return findings
     "扫描单个文件并返回发现列表."
-
 
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
@@ -95,7 +93,6 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     return (all_findings, files_scanned, 0)
     "扫描仓库并返回发现列表."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="危险 Shell 命令检测")
@@ -116,7 +113,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

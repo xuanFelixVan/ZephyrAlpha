@@ -132,10 +132,8 @@ class FeedbackLoopProtocol(Protocol):
     async def query_timeseries(self, metric_name: str, since: datetime, until: datetime) -> list[Metric]: ...
     async def stats(self) -> FLEStats: ...
 
-
 class InProcessFeedbackLoop:
-    """Phase 1：SQLite 时间序列 + 规则引擎。"""
-
+    """SQLite 时间序列 + 规则引擎。"""
 
 class DistributedFeedbackLoop:
     """Phase 3+：InfluxDB + 分布式分析器。"""
@@ -153,7 +151,7 @@ class DistributedFeedbackLoop:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选（Phase 1） | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
 |------|----------------|------|-------|---------|---------|----------|
 | 时间序列存储 | **SQLite 时间序列表（WAL）** | InfluxDB 2.x | Parquet 文件 | 零外部依赖 + 事务 | 数据点 > 100 万 或跨机查询 | ADR-0019 |
 | 趋势分析算法 | **移动平均（EMA）+ 阈值** | SPC（Shewhart 控制图） | 单点阈值（误报高） | 实现简单、可解释 | 误报率 > 20% | ADR-0019 |
@@ -176,7 +174,6 @@ from pydantic import BaseModel, Field
 from typing import Literal, Optional
 from datetime import datetime
 
-
 class Metric(BaseModel):
     metric_name: str = Field(..., description="命名空间化，如 'orc.task.duration_ms' / 'vms.search.hit_rate'")
     value: float
@@ -187,7 +184,6 @@ class Metric(BaseModel):
     observed_at: datetime
     correlation_id: Optional[str] = Field(None, description="关联 task_id / request_id，用于根因追溯")
 
-
 class Baseline(BaseModel):
     metric_name: str
     window: str = Field(description="'7d' / '24h' / '1h'")
@@ -197,7 +193,6 @@ class Baseline(BaseModel):
     ema_alpha: float = Field(default=0.2)
     sample_count: int
     computed_at: datetime
-
 
 class Anomaly(BaseModel):
     anomaly_id: str
@@ -222,7 +217,6 @@ class Anomaly(BaseModel):
     suggested_actions: list[str] = Field(default_factory=list,
         description="根据 anomaly_kind 映射建议动作 ID")
 
-
 class PendingAction(BaseModel):
     action_id: str
     anomaly_id: str
@@ -239,7 +233,6 @@ class PendingAction(BaseModel):
     payload: dict
     dispatched_at: Optional[datetime] = None
     expires_at: datetime = Field(description="超时未执行自动丢弃")
-
 
 class ActionOutcome(BaseModel):
     action_id: str
@@ -705,7 +698,7 @@ except Exception as e:
 
 ## 12. 性能 SLO
 
-### 12.1 稳态 SLO（Phase 1）
+### 12.1 稳态 SLO
 
 | 指标 | 目标 | 条件 |
 |------|------|------|

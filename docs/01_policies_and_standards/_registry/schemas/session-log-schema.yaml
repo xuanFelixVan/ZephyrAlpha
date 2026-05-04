@@ -95,7 +95,7 @@ required_fields:
     type: string
     example: "Phase 0b"
     description: "本次 session 所处的开发 Phase"
-    usage: "标识当前项目阶段，确保 AI 不会跨阶段执行任务。读取 AGENTS.md §1 确认当前新树位置。"
+    usage: "标识当前项目阶段，确保 AI 不会跨阶段执行任务。读取 AGENTS.md §1 确认当前项目根目录。"
 
   - field: "tasks_completed"
     type: list
@@ -291,6 +291,6 @@ template: |
   - **下一个任务**：P0B1-003 - 创建 ai-hallucination-self-check-policy.md
   - **阻塞项**：无
   - **下一个 session 需要读取**：
-    - AGENTS.md（当前新树位置和总体安全规则）
+    - AGENTS.md（当前项目根目录和总体安全规则）
     - governance/ai/ 目录下已创建的文件（了解上下文）
   - **注意事项**：无

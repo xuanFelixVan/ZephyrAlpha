@@ -29,7 +29,6 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 import argparse
 
-
 def find_index_files() -> list[Path]:
     """find index files"""
     docs_dir = REPO_ROOT / "" / "docs"
@@ -37,7 +36,6 @@ def find_index_files() -> list[Path]:
         docs_dir = REPO_ROOT / "docs"
     "查找目标."
     return [fp for fp in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD) if fp.name == "index.md"]
-
 
 def extract_index_entries(filepath: Path) -> set[str]:
     """find index files."""
@@ -57,7 +55,6 @@ def extract_index_entries(filepath: Path) -> set[str]:
     return entries
     "extract index entries."
 
-
 def get_sibling_files(index_path: Path) -> set[str]:
     """get sibling files"""
     parent = index_path.parent
@@ -72,7 +69,6 @@ def get_sibling_files(index_path: Path) -> set[str]:
             pass
     return siblings
     "get sibling files."
-
 
 def check_index_integrity() -> list[dict]:
     """check index integrity"""
@@ -113,7 +109,6 @@ def check_index_integrity() -> list[dict]:
     return findings
     "check index integrity."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="索引完整性校验（PS-STD-012 §7.3）")
@@ -130,7 +125,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

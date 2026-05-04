@@ -28,15 +28,10 @@ depends_on:
 
 ```
 19_development_workspace/
-├── index.md              ← 本文件
-└── session-logs/         ← AI Session 交接日志
-    ├── session-20260502-002.md
-    ├── session-20260502-003.md
-    ├── session-20260502-004.md
-    ├── session-20260502-005.md
-    ├── session-20260502-006.md
-    └── session-20260503-001.md
+└── index.md              ← 本文件
 ```
+
+> **注意**：`session-logs/` 目录及所有 session 日志文件已于 2026-05-04 扁平化迁移后删除。Session 历史保留在 Git log 中。
 
 ---
 
@@ -61,8 +56,8 @@ depends_on:
 
 ## 准入规则
 
-- ✅ AI Session 交接日志（`session-logs/`）
 - ✅ 临时调试记录、实验数据
+- ✅ 开发过程中的分析文档
 - ❌ 治理规范/标准/协议 → `01_policies_and_standards/`
 - ❌ 架构决策记录 → `02_enterprise_architecture/adr/`
 - ❌ 模块蓝图/施工图 → `03_modules/`
@@ -163,8 +158,8 @@ depends_on:
 **五家机构的共同模式——双阶段写入（Two-Phase Write）**：
 
 ```
-Phase 1: WRITE → 执行变更
-Phase 2: READ  → 读回结果，确认变更已落地
+WRITE → 执行变更
+READ  → 读回结果，确认变更已落地
             ├── 成功 → 操作完成
             └── 失败 → 重试/告警/回滚
 ```

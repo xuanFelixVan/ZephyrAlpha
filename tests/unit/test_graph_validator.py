@@ -12,7 +12,6 @@ from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.graph_validator import GraphValidator, ValidationSeverity
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 
-
 @pytest.fixture
 def env(tmp_path: Path):
     db = tmp_path / "test.db"
@@ -26,7 +25,6 @@ def env(tmp_path: Path):
 
     mod._chroma_client = None
 
-
 class TestGraphValidatorEmpty:
     def test_empty_db_passes(self, env) -> None:
         _, validator = env
@@ -34,7 +32,6 @@ class TestGraphValidatorEmpty:
         assert report.passed is True
         assert report.total_checked == 0
         assert report.error_count == 0
-
 
 class TestGraphValidatorOrphanNodes:
     def test_indexed_ke_in_vector(self, env) -> None:
@@ -65,7 +62,6 @@ class TestGraphValidatorOrphanNodes:
         assert len(gv002) == 1
         assert gv002[0].severity == ValidationSeverity.ERROR
 
-
 class TestGraphValidatorDuplicateFingerprints:
     def test_duplicate_fingerprint(self, env) -> None:
         repo, validator = env
@@ -76,7 +72,6 @@ class TestGraphValidatorDuplicateFingerprints:
         gv005 = [i for i in report.issues if i.check_id == "GV-005"]
         assert len(gv005) == 1
         assert gv005[0].severity == ValidationSeverity.WARNING
-
 
 class TestGraphValidatorVectorStatus:
     def test_vector_metadata_mismatch(self, env) -> None:
@@ -99,7 +94,6 @@ class TestGraphValidatorVectorStatus:
         report = validator.validate()
         gv006 = [i for i in report.issues if i.check_id == "GV-006"]
         assert len(gv006) == 1
-
 
 class TestGraphValidatorClean:
     def test_clean_db_no_errors(self, env) -> None:

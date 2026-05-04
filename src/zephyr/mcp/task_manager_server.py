@@ -29,7 +29,6 @@ from zephyr.shared.schemas import Priority, SafetyLevel, TaskNamespace
 
 logger = logging.getLogger(__name__)
 
-
 class TaskManagerMCP:
     """
     MCP Server for Task System.
@@ -298,9 +297,7 @@ class TaskManagerMCP:
 
         asyncio.run(_run())
 
-
 _TRIAGE_TITLE_PATTERN = re.compile(r"^#\s+(.+)$", re.MULTILINE)
-
 
 def _extract_triage_profile(content: str, task_id: str) -> dict:
     profile: dict = {"title": task_id, "description": content[:800]}
@@ -312,20 +309,17 @@ def _extract_triage_profile(content: str, task_id: str) -> dict:
             profile["description"] = body[:800]
     return profile
 
-
 def _parse_md_status(content: str) -> str | None:
     for line in content.split("\n"):
         if line.startswith("**状态**："):
             return line.split("：", 1)[1].strip()
     return None
 
-
 _MD_KV_PATTERN = re.compile(r"^\*\*(.+?)\*\*[：:]\s*(.+)$")
 _MD_LIST_ITEM = re.compile(r"^-\s+(.+)$")
 _MD_GATE_PASSED = re.compile(r"已通过:\s*\[(.*?)\]")
 _MD_GATE_BLOCKED = re.compile(r"阻塞:\s*(.+)$")
 _MD_TIME_ITEM = re.compile(r"^-\s*(创建|更新)[：:]\s*(.+)$")
-
 
 def _parse_md_to_taskcard(content: str) -> TaskCard | None:
     lines = content.split("\n")
@@ -455,7 +449,6 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
         updated_at=updated_at,
     )
 
-
 def _parse_time(s: str) -> datetime:
     if not s:
         return datetime.now()
@@ -465,7 +458,6 @@ def _parse_time(s: str) -> datetime:
         except ValueError:
             continue
     return datetime.now()
-
 
 def _taskcard_to_md(tc: TaskCard) -> str:
     dt_fmt = "%Y-%m-%d %H:%M"

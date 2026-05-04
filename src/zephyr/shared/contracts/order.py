@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from enum import Enum
 
-
 class OrderSide(Enum):
     BUY = "BUY"
     SELL = "SELL"
-
 
 class OrderType(Enum):
     LIMIT = "LIMIT"
@@ -14,7 +12,6 @@ class OrderType(Enum):
     STOP = "STOP"
     STOP_LIMIT = "STOP_LIMIT"
     TRAILING_STOP = "TRAILING_STOP"
-
 
 class OrderStatus(Enum):
     PENDING = "PENDING"
@@ -24,7 +21,6 @@ class OrderStatus(Enum):
     CANCELLED = "CANCELLED"
     REJECTED = "REJECTED"
     EXPIRED = "EXPIRED"
-
 
 # ==== BEGIN CODGEN:CTR-004 ====
 
@@ -58,7 +54,6 @@ AI Prompt
     当你需要在 L05 中生成订单或在 L06 中处理订单时，MUST 使用 Order 类型。 Order 是可变对象（frozen=false），状态通过 OrderStatus 状态机驱动。 状态转移路径为：PENDING → SUBMITTED → PARTIAL → FILLED / CANCELLED / REJECTED。 不允许从 FILLED/CANCELLED/REJECTED 回到 SUBMITTED（单向不可逆）。 quantity 和 limit_price 使用 Decimal 类型，禁止 float。 L05 生成订单时 status 默认为 PENDING，L06 在执行过程中更新状态。 订单被券商拒绝时，status MUST 变为 REJECTED，并抛出 ExecutionRejectionError（CTR-ERR-005）。
 """
 
-
 @dataclass
 class Order:
     order_id: str
@@ -76,6 +71,5 @@ class Order:
     updated_at: Optional[datetime] = None
     broker_order_id: Optional[str] = None
     trace_context: Optional[TraceContext] = None
-
 
 # ==== END CODGEN:CTR-004 ====

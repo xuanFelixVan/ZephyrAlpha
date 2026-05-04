@@ -29,7 +29,6 @@ from zephyr.orchestrator.agent_orchestrator import (
 # AgentRouter
 # ---------------------------------------------------------------------------
 
-
 class TestAgentRouterCapabilityMatch:
     def setup_method(self) -> None:
         self.router = AgentRouter()
@@ -60,7 +59,6 @@ class TestAgentRouterCapabilityMatch:
         assert len(decision.fallback_roles) == 2
         assert AgentRole.ARCHITECT not in decision.fallback_roles
 
-
 class TestAgentRouterSpecialistFirst:
     def test_specialist_first_respects_required_role(self) -> None:
         router = AgentRouter()
@@ -77,7 +75,6 @@ class TestAgentRouterSpecialistFirst:
         router = AgentRouter()
         with pytest.raises(ValueError):
             router.route("D1", strategy=RoutingStrategy.SPECIALIST_FIRST)
-
 
 class TestAgentRouterLoadBalance:
     def test_load_balance_picks_less_loaded_agent(self) -> None:
@@ -96,7 +93,6 @@ class TestAgentRouterLoadBalance:
         assert decision.primary_agent_id is None
         assert decision.primary_role == AgentRole.RESEARCHER
 
-
 class TestAgentRouterFallbackChain:
     def test_fallback_chain_contains_all_roles(self) -> None:
         router = AgentRouter()
@@ -105,7 +101,6 @@ class TestAgentRouterFallbackChain:
         # primary + fallback 合起来应覆盖 6 角色
         all_roles = {decision.primary_role, *decision.fallback_roles}
         assert all_roles == set(AgentRole)
-
 
 class TestAgentRouterPoolHelpers:
     def test_register_overwrites_same_id(self) -> None:
@@ -128,11 +123,9 @@ class TestAgentRouterPoolHelpers:
         assert router.score(AgentRole.GOVERNOR, "D6") == pytest.approx(1.0)
         assert router.score(AgentRole.GOVERNOR, "D99") == 0.0
 
-
 # ---------------------------------------------------------------------------
 # HealthMonitor
 # ---------------------------------------------------------------------------
-
 
 def _make_result(
     *,
@@ -160,7 +153,6 @@ def _make_result(
         token_budget=token_budget,
         errors=[],
     )
-
 
 class TestHealthMonitor:
     def test_empty_snapshot_is_healthy(self) -> None:
@@ -237,11 +229,9 @@ class TestHealthMonitor:
         with pytest.raises(ValueError):
             HealthMonitor(window_size=0)
 
-
 # ---------------------------------------------------------------------------
 # AgentOrchestrator — directive ↔ tool chain + CoVe
 # ---------------------------------------------------------------------------
-
 
 def _ok_invoker(calls_log: list[tuple[str, dict[str, Any]]]):
     def _invoke(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -250,10 +240,8 @@ def _ok_invoker(calls_log: list[tuple[str, dict[str, Any]]]):
 
     return _invoke
 
-
 def _failing_invoker(_name: str, _args: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError("backend down")
-
 
 class TestAgentOrchestrator:
     def setup_method(self) -> None:
@@ -391,11 +379,9 @@ class TestAgentOrchestrator:
         assert snap.context_utilization == pytest.approx(0.5)
         assert res.token_budget == 8000
 
-
 # ---------------------------------------------------------------------------
 # smoke: __all__ exports
 # ---------------------------------------------------------------------------
-
 
 def test_exports_present() -> None:
     from zephyr.orchestrator import agent_orchestrator as m

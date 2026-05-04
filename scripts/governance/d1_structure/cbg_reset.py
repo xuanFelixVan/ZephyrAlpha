@@ -34,7 +34,6 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
@@ -51,7 +50,6 @@ except ImportError as e:
     print(f"[SKIP] cbg_reset.py 无法加载 CBGManager（依赖缺失: {e}）", file=sys.stderr)
     print("       此脚本需要 zephyr.gates.circuit_breaker 及相关依赖存在时才能运行", file=sys.stderr)
     sys.exit(0 if _warn_only else 2)
-
 
 def main() -> None:
     """入口函数."""
@@ -148,7 +146,6 @@ def main() -> None:
     else:
         print(f"[cbg_reset] RESET FAIL: {args.caller} → {args.target}", file=sys.stderr)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

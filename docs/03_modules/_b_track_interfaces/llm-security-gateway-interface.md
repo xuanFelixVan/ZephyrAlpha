@@ -130,10 +130,8 @@ class LLMSecurityGatewayProtocol(Protocol):
     async def get_strictness(self) -> StrictnessSnapshot: ...
     async def stats(self) -> LSGStats: ...
 
-
 class InProcessLLMSecurityGateway:
     """Phase 1（当前目标）：进程内调用，规则 + Pydantic。"""
-
 
 class RemoteLLMSecurityGateway:
     """Phase 3+（按需启用）：独立 HTTP 服务，便于多进程共享策略。"""
@@ -151,7 +149,7 @@ class RemoteLLMSecurityGateway:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选（Phase 1） | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
 |------|----------------|------|-------|---------|---------|----------|
 | Prompt Injection 防护 | **System Prompt 隔离 + 输入分类 + Schema 验证** | 轻量规则引擎（补充） | 重型 NLP 分类器（误报 + 依赖重） | 确定性、可审计、零外部依赖 | bypass 率 > 5% | ADR-0020 |
 | 输入分类 | **规则 + 来源标签（trusted/semi/untrusted）** | 轻量分类器 | 人工标注 | 规则足够应对前 80% 场景 | 规则漏报 > 10% | ADR-0020 |
@@ -401,7 +399,6 @@ class InputPayload(BaseModel):
     metadata: dict = Field(default_factory=dict)
     correlation_id: Optional[str] = None
 
-
 class InputVerdict(BaseModel):
     allow: bool
     trust_level: InputTrustLevel
@@ -409,13 +406,11 @@ class InputVerdict(BaseModel):
     reason: Optional[str] = None
     matched_rules: list[str] = Field(default_factory=list)
 
-
 class OutputPayload(BaseModel):
     raw_text: str
     parsed_json: Optional[dict] = None
     source_tool: Optional[str] = None
     correlation_id: Optional[str] = None
-
 
 class OutputVerdict(BaseModel):
     allow: bool
@@ -425,16 +420,13 @@ class OutputVerdict(BaseModel):
     pattern_hits: list[dict] = Field(default_factory=list)
     quarantine: bool = Field(default=False, description="严重违规，记录并隔离 correlation_id")
 
-
 class SecretScanResult(BaseModel):
     hits: list[dict]
     redacted_text: str = Field(description="命中 secret 部分被 [REDACTED] 替换后文本")
 
-
 class PatternScanResult(BaseModel):
     hits: list[dict]
     severity: Literal["info", "warn", "error", "critical"]
-
 
 class StrictnessSnapshot(BaseModel):
     baseline: float = Field(default=1.0, description="1.0 为默认严格度")
@@ -464,7 +456,7 @@ class StrictnessSnapshot(BaseModel):
 | LLM01 Prompt Injection | 恶意输入劫持指令 | **L1 分类 + L2 隔离 + L3 Schema** | Agent Sandbox（双层） |
 | LLM02 Sensitive Info Disclosure | 凭据/PII 泄漏 | **L4 secret 扫描 + redact** | detect-secrets / git-secrets |
 | LLM03 Supply Chain | 恶意依赖 / 模型 | pre-commit `pip-audit` + `safety` | 供应链 Hook |
-| LLM04 Data/Model Poisoning | 训练/检索数据污染 | VMS 入库需经 LSG `validate_input`（trusted）；签名校验（Phase 3） | VMS |
+| LLM04 Data/Model Poisoning | 训练/检索数据污染 | VMS 入库需经 LSG `validate_input`（trusted）；签名校验 | VMS |
 | LLM05 Improper Output Handling | 输出执行 | **L3 Pydantic + L4 命令/URL 扫描** | Orchestrator Sandbox |
 | LLM06 Excessive Agency | Agent 越权 | **L3 工具调用 schema**（extra='forbid'）+ Sandbox 白名单 | Orchestrator |
 | LLM07 System Prompt Leakage | 系统提示泄漏 | L4 `secret_hints` 扩展 system prompt 特征识别 + 拒绝回显 | L4 |
@@ -704,7 +696,7 @@ async def validate_input(self, payload):
 
 ## 11. 性能 SLO
 
-### 11.1 稳态 SLO（Phase 1）
+### 11.1 稳态 SLO
 
 | 指标 | 目标 | 条件 |
 |------|------|------|

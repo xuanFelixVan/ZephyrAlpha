@@ -28,7 +28,6 @@ AI Prompt
     当之前的 PAUSE/THROTTLE 条件解除后（如队列清空、GC 完成），MUST 发送 RESUME 恢复信号。 不要在 RESUME 后立即取消——先观察一个周期确认稳定。
 """
 
-
 @dataclass(frozen=True)
 class BackpressureResume:
     signal_id: str

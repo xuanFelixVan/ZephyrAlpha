@@ -26,7 +26,6 @@ AI Prompt
 
 """
 
-
 @dataclass(frozen=True)
 class BrokerInterface:
     pass

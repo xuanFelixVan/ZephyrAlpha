@@ -73,9 +73,8 @@ DEFAULT_THRESHOLD: int = 3
 _CALLER_UNKNOWN: str = "__unknown__"
 
 # ---------------------------------------------------------------------------
-# 状态枚举（Phase 1：仅 CLOSED / OPEN）
+# 状态枚举（仅 CLOSED / OPEN）
 # ---------------------------------------------------------------------------
-
 
 class CircuitBreakerState(str, Enum):
     """熔断器状态枚举。
@@ -90,11 +89,9 @@ class CircuitBreakerState(str, Enum):
     OPEN = "OPEN"
     HALF_OPEN = "HALF_OPEN"  # Phase 3 预留，Phase 1 不写入数据库
 
-
 # ---------------------------------------------------------------------------
 # 数据模型
 # ---------------------------------------------------------------------------
-
 
 @dataclass
 class CircuitBreakerRecord:
@@ -110,11 +107,9 @@ class CircuitBreakerRecord:
     created_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
     updated_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
 
-
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
-
 
 class CircuitOpenError(RuntimeError):
     """OPEN 状态下调用被阻断时抛出。"""
@@ -128,11 +123,9 @@ class CircuitOpenError(RuntimeError):
             msg += f" ({reason})"
         super().__init__(msg)
 
-
 # ---------------------------------------------------------------------------
 # CircuitBreakerCheck（GateEngine 第 17 种 CheckType 接口）
 # ---------------------------------------------------------------------------
-
 
 @dataclass
 class CircuitBreakerCheck:
@@ -169,11 +162,9 @@ class CircuitBreakerCheck:
             f"（调用被熔断，请由 Owner 执行 `cbg.reset()` 后重试）"
         )
 
-
 # ---------------------------------------------------------------------------
 # CBGManager — 状态读写核心
 # ---------------------------------------------------------------------------
-
 
 class CBGManager:
     """熔断器状态管理器：SQLite circuit_breaker_state 表的 CRUD 封装。
@@ -391,11 +382,9 @@ class CBGManager:
     def __exit__(self, *_: object) -> None:
         self.close()
 
-
 # ---------------------------------------------------------------------------
 # @circuit_breaker 装饰器
 # ---------------------------------------------------------------------------
-
 
 def circuit_breaker(
     target_module: str,
@@ -473,14 +462,12 @@ def circuit_breaker(
 
     return decorator
 
-
 # ---------------------------------------------------------------------------
 # L08 注册入口（重试 + 限流策略写入 gate_engine 注册表）
 # ---------------------------------------------------------------------------
 
 #: L08 注册表：(caller_module, target_module) → 策略配置
 _L08_REGISTRY: dict[tuple[str, str], dict[str, Any]] = {}
-
 
 def register_l08_policy(
     caller_module: str,
@@ -521,7 +508,6 @@ def register_l08_policy(
         "rate_limit_per_min": rate_limit_per_min,
         "threshold": threshold,
     }
-
 
 def get_l08_policy(caller_module: str, target_module: str) -> dict[str, Any] | None:
     """查询 L08 策略注册表。"""

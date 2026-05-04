@@ -6,9 +6,9 @@
 
 ---
 
-## 1. 新树位置
+## 1. 项目根目录
 
-所有活跃开发在 `` 下进行。
+所有活跃开发在项目根目录 `D:\ZephyrAlpha\` 下进行。
 
 - **路径标准**：`docs/01_policies_and_standards/governance/document/directory-structure-standard.md`
 - **规则注册表**：`docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml`（auto-generated，取代旧 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）
@@ -82,7 +82,6 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | **⑥ 验收** | 施工产出物验收 + Owner 审批审批卡。新增模块须通过 GOV-MOD-001 四级准入门控 | 1️⃣ run_all.py --warn-only 是否零失败？<br>2️⃣ CI governance.yml 全量回归是否全绿？<br>3️⃣ validate_manifest_admission.py：新增脚本是否通过准入审核？<br>4️⃣ 新增模块是否通过 MAD-001~005 四级筛选（GOV-MOD-001）？ | run_all.py --warn-only、CI .github/workflows/governance.yml（push触发全量回归）、`d11_compliance/validate_manifest_admission.py` | GOV-MOD-001 |
 | **⑦ 持续审计** | 定期/触发式全量审计（push→CI / 手动→run_all.py），发现漂移 → §6.15 漂移免疫自检 → 追问"为什么漂移没被拦截" | 1️⃣ D1~D12 十二维度是否零漂移？<br>2️⃣ 发现漂移 → 是否执行了 MTH-015 漂移免疫自检 + MTH-006 5 Whys 根源分析？<br>3️⃣ 是否治根而非治标？<br>4️⃣ Session Log 是否已交接（做了什么+为什么做+下一步）？<br>5️⃣ 审计日志是否完整（GOV-CMP-002 AUD-001~004）？ | run_all.py、CI .github/workflows/governance.yml | PS-STD-012、GOV-CMP-002、`scripts/governance/quality-standard.md`、`scripts/governance/index.md` |
 
-
 ### 5.2.2 十维审计清单：每次施工后必须过一遍
 
 > **触发条件**：任何涉及文件创建/修改/删除/移动的操作完成后。对标 §6.15 漂移免疫架构原则——漂移不是"可能发生"，而是"必然发生"，唯一问题是"什么时候被发现"。
@@ -102,7 +101,6 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | **I** | **代码质量** | 代码是否符合项目工程标准？ | 1️⃣ 每个 src/zephyr/ .py 是否有对应 test_*.py？<br>2️⃣ open()是否缺encoding='utf-8'？<br>3️⃣ import风格是否一致（绝对导入）？<br>4️⃣ __init__.py __all__是否完整？<br>5️⃣ 测试断言是否有深度（无assert True/False）？<br>6️⃣ docstring/类型注解覆盖率？<br>7️⃣ 是否直接调用了LLM SDK（跨层违规）？<br>8️⃣ contracts/是否纯度合规（仅数据结构）？ | `d7_code/validate_test_coverage.py`、`d7_code/detect_missing_encoding.py`、`d7_code/validate_import_style.py`、`d7_code/validate_init_all.py`、`d7_code/validate_test_assertion_depth.py`、`d7_code/validate_docstring_coverage.py`、`d7_code/validate_type_annotation_coverage.py`、`d7_code/detect_direct_llm_calls.py`、`d7_code/validate_contracts_purity.py` | §4 源码-测试同步铁律、§6.7 |
 | **J** | **文档同步** | 文档元数据/lifecycle是否与磁盘实际一致？ | 1️⃣ TTL是否过期？<br>2️⃣ 文档frontmatter status↔lifecycle是否合规？<br>3️⃣ 是否有superseded_by但缺少双向链接？<br>4️⃣ 是否有废弃文件被活跃引用？<br>5️⃣ 版本号/date是否已更新（内容变更但version未同步）？<br>6️⃣ 是否有废弃≥180天未归档？ | `d8_doc_sync/validate_document_ttl.py`、`d8_doc_sync/validate_document_lifecycle.py`、`d3_metadata/validate_superseded_by.py`、`d3_metadata/detect_skip_active_status.py`、`d3_metadata/detect_stale_version.py`、`d5_architecture/validate_deprecated_dependents.py`、`d3_metadata/detect_deprecated_overdue.py` | GOV-DOC-006, PS-STD-009 |
 
-
 ### 5.2.3 快速自检口诀
 
 > 每次施工后默念这十句话，任何一句答"否"就必须修复后才能继续：
@@ -117,7 +115,6 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 8. 代码里没藏密码和危险命令？→ H
 9. 每个源文件都有测试？→ I
 10. 文档的版本号和状态都更新了？→ J
-
 
 ### 5.2.4 关键方法论文件速查
 
@@ -452,8 +449,8 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 
 - **终极解决方案（Backlog）**：
   - 当前所有索引数字和文件清单均为手动维护，这是漂移的根因
-  - Phase 2：创建 `validate_index_reality.py` CI 脚本——自动扫描目录 ↔ 交叉对比所有 index.md 中声称的文件数
-  - Phase 3：所有"手动维护的数字"改为从 auto-generated registry 派生，消除二次漂移可能
+  -  `validate_index_reality.py` CI 脚本——自动扫描目录 ↔ 交叉对比所有 index.md 中声称的文件数
+  - "手动维护的数字"改为从 auto-generated registry 派生，消除二次漂移可能
 
 - **专业参考**：ITIL SACM → CMDB 与实际基础设施必须定期对账（reconciliation）/ AWS Config → 持续评估资源配置与期望状态的偏差 / Git `git ls-files` → 任何时刻都能精确回答"仓库里到底有什么文件"
 
@@ -505,8 +502,8 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
   - `architecture-model/layers/lXX.yaml` → YAML canonical SSoT（§6.9）
 
 - **未来增强方向**：
-  - Phase 2：所有"人类可读文档中硬编码的数字"改为从 YAML SSoT 自动派生（消除二次漂移）
-  - Phase 3：YAML 变更 → 自动触发 `generate_md_from_yaml.py` → Markdown 人类视图自动更新
+  - "人类可读文档中硬编码的数字"改为从 YAML SSoT 自动派生（消除二次漂移）
+  - YAML 变更 → 自动触发 `generate_md_from_yaml.py` → Markdown 人类视图自动更新
   - 远期：所有手工维护类索引（PS-IDX-001 等）的数字改为 auto-generated——消除手动维护数字的根本性漂移
 
 - **专业参考**：OpenAPI → Machine-First spec + Human-Second docs（spec 是 canonical，Swagger UI 是派生）/ Terraform → `.tf.json` Machine-First + `terraform-docs` Human-Second / K8s CRD → YAML for API Server + `kubectl explain` for human / ISO 42010 → Architecture Description 可以有多种 View，但 Canonical Model 必须是精确可追溯的
@@ -537,7 +534,7 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
      - `_registry/schemas/frontmatter-schema.json`（派生——JSON Schema）
      - `meta/metadata-registry.md`（派生——速查引用）
      - `_registry/catalogs/registry-master-index.yaml`（派生——entry_count）
-  4. **CI 门禁强制校验**（Phase 2）：`validate_enum_consistency.py` 自动比对 vocabulary YAML 与所有派生文件的枚举列表，不一致 → CI 失败
+  4. **CI 门禁强制校验**：`validate_enum_consistency.py` 自动比对 vocabulary YAML 与所有派生文件的枚举列表，不一致 → CI 失败
 
 - **专业参考**：OpenAPI → `spec.yaml` 是 canonical，`swagger-ui` 是派生（spec 改了 UI 自动更新）/ Terraform → `.tf.json` 是 canonical，`terraform-docs` 是派生（state 改了 docs 自动更新）/ K8s → CRD YAML 是 canonical，`kubectl explain` 是派生（CRD 改了 explain 自动更新）/ ITIL SACM → CI 属性变更必须同步到所有消费该属性的 CMDB 视图
 

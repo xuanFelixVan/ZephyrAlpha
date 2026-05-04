@@ -27,7 +27,6 @@ AI Prompt
 
 """
 
-
 @dataclass(frozen=True)
 class ComplianceRule:
     rule_id: str

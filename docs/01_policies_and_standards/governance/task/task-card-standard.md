@@ -188,7 +188,7 @@ acceptance:
   - "CRUD 全覆盖（INSERT/SELECT/UPDATE/DELETE）"
   - "10 状态机转换全部实现"
 tags:
-  - phase-2
+  -
   - datalayer
   - origin:#17
 

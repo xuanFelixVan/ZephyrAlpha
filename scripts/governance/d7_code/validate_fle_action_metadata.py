@@ -31,7 +31,6 @@ import argparse
 
 REQUIRED_ACTION_FIELDS = {"effective_from", "ttl"}
 
-
 def check_fle_actions(filepath: Path) -> list[dict]:
     """检查 FLE action 元数据."""
     findings = []
@@ -85,7 +84,6 @@ def check_fle_actions(filepath: Path) -> list[dict]:
     return findings
     """检查 FLE action 元数据."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="FLE Action 元数据校验（COND-44）")
@@ -113,7 +111,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

@@ -42,12 +42,10 @@ from zephyr.feedback_loop.fitness_functions import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture()
 def ff() -> FitnessFunctionFramework:
     """使用默认阈值的框架实例。"""
     return FitnessFunctionFramework()
-
 
 @pytest.fixture()
 def default_inputs() -> FitnessInputs:
@@ -64,11 +62,9 @@ def default_inputs() -> FitnessInputs:
         hallucination_intercepted=25,
     )
 
-
 # ---------------------------------------------------------------------------
 # 1. FitnessThresholds
 # ---------------------------------------------------------------------------
-
 
 class TestFitnessThresholds:
     def test_default_values(self) -> None:
@@ -86,11 +82,9 @@ class TestFitnessThresholds:
         assert th.test_coverage_min == 80.0
         assert th.compliance_rate_min == 0.95
 
-
 # ---------------------------------------------------------------------------
 # 2. measure_module_coupling
 # ---------------------------------------------------------------------------
-
 
 class TestModuleCoupling:
     def test_single_module_zero_density(self, ff: FitnessFunctionFramework) -> None:
@@ -143,11 +137,9 @@ class TestModuleCoupling:
         assert m.value == pytest.approx(1 / 10, abs=1e-6)
         assert m.status == MetricStatus.PASS
 
-
 # ---------------------------------------------------------------------------
 # 3. measure_test_coverage
 # ---------------------------------------------------------------------------
-
 
 class TestTestCoverage:
     def test_above_threshold_passes(self, ff: FitnessFunctionFramework) -> None:
@@ -171,11 +163,9 @@ class TestTestCoverage:
         m = ff.measure_test_coverage(50.0)
         assert m.status == MetricStatus.FAIL
 
-
 # ---------------------------------------------------------------------------
 # 4. measure_compliance_rate
 # ---------------------------------------------------------------------------
-
 
 class TestComplianceRate:
     def test_all_passed_is_pass(self, ff: FitnessFunctionFramework) -> None:
@@ -200,11 +190,9 @@ class TestComplianceRate:
         m = ff.measure_compliance_rate(gate_total=100, gate_passed=86)
         assert m.status == MetricStatus.WARN
 
-
 # ---------------------------------------------------------------------------
 # 5. measure_knowledge_activation_rate
 # ---------------------------------------------------------------------------
-
 
 class TestKnowledgeActivationRate:
     def test_good_activation_passes(self, ff: FitnessFunctionFramework) -> None:
@@ -222,11 +210,9 @@ class TestKnowledgeActivationRate:
         m = ff.measure_knowledge_activation_rate(ke_total=100, ke_activated=26)
         assert m.status == MetricStatus.WARN
 
-
 # ---------------------------------------------------------------------------
 # 6. measure_hallucination_interception_rate
 # ---------------------------------------------------------------------------
-
 
 class TestHallucinationInterceptionRate:
     def test_high_interception_passes(self, ff: FitnessFunctionFramework) -> None:
@@ -244,11 +230,9 @@ class TestHallucinationInterceptionRate:
         m = ff.measure_hallucination_interception_rate(hallucination_total=100, hallucination_intercepted=50)
         assert m.status == MetricStatus.FAIL
 
-
 # ---------------------------------------------------------------------------
 # 7. run_all / overall_status
 # ---------------------------------------------------------------------------
-
 
 class TestRunAll:
     def test_all_pass_overall_pass(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
@@ -293,11 +277,9 @@ class TestRunAll:
         report = ff.run_all(default_inputs)
         assert report.get_metric("nonexistent_metric") is None
 
-
 # ---------------------------------------------------------------------------
 # 8. to_json_report / to_trend_data
 # ---------------------------------------------------------------------------
-
 
 class TestOutputFormats:
     def test_to_json_report_valid_json(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
@@ -343,11 +325,9 @@ class TestOutputFormats:
             assert METRIC_KNOWLEDGE_ACTIVATION in row
             assert METRIC_HALLUCINATION_INTERCEPTION in row
 
-
 # ---------------------------------------------------------------------------
 # 9. from_gate_results 工厂函数
 # ---------------------------------------------------------------------------
-
 
 class TestFromGateResults:
     def test_counts_passed_correctly(self) -> None:

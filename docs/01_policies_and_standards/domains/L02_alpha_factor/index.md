@@ -32,8 +32,8 @@ title: L02 Alpha 因子层域层入口
 
 ## 不管什么（Out of Scope）
 
-- 因子信号的生成与计算 → `../../domains/L03_signal_generation/`（Phase 2）
-- 因子组合与权重优化 → `../../domains/L05_portfolio_construction/`（Phase 2）
+- 因子信号的生成与计算 → `../../domains/L03_signal_generation/`
+- 因子组合与权重优化 → `../../domains/L05_portfolio_construction/`
 - 因子数据的底层存储 → `../../governance/data/`
 
 ## 依赖关系
@@ -55,7 +55,6 @@ title: L02 Alpha 因子层域层入口
 
 - [data-quality-policy.md](../../governance/data/data-quality-policy.md) — 数据质量标准
 - [data-lineage-policy.md](../../governance/data/data-lineage-policy.md) — 因子计算数据血缘
-
 
 ## 排除规则（不应放入本目录的内容）
 

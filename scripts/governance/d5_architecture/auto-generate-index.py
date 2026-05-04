@@ -32,7 +32,6 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
 IGNORE_FILE_MARKER = "_IGNORE_THIS_DIRECTORY_"
 
-
 def _count_disk_files(directory):
     count = 0
     names = []
@@ -46,7 +45,6 @@ def _count_disk_files(directory):
                 count += 1
                 names.append(item.name)
     return count, names
-
 
 def _count_disk_subdirs(directory):
     count = 0
@@ -63,7 +61,6 @@ def _count_disk_subdirs(directory):
             names.append(item.name)
     return count, names
 
-
 def _parse_frontmatter_summary_counts(text):
     """Extract claimed counts from frontmatter summary like 'X 个子目录 + Y 个文件 = 共 Z 项'."""
     patterns = [
@@ -78,7 +75,6 @@ def _parse_frontmatter_summary_counts(text):
             return m.group(0)
     return None
 
-
 def _parse_file_table_files(text):
     """Extract file names from index.md file listing table."""
     files = set()
@@ -86,14 +82,12 @@ def _parse_file_table_files(text):
         files.add(m.group(1))
     return files
 
-
 def _parse_subdir_table_entries(text):
     """Extract subdirectory names and claimed file counts from index.md subdir table."""
     entries = {}
     for m in re.finditer(r"\|\s*`([^`]+)/`\s*\|\s*(\d+)\s*\|", text):
         entries[m.group(1)] = int(m.group(2))
     return entries
-
 
 def check_index(directory) -> list[dict]:
     """Check a single directory's index.md against disk reality. Returns list of issues."""
@@ -136,7 +130,6 @@ def check_index(directory) -> list[dict]:
 
     return issues
 
-
 def fix_index(directory) -> None:
     """Surgically fix index.md counts without destroying prose."""
     index_path = directory / "index.md"
@@ -174,7 +167,6 @@ def fix_index(directory) -> None:
         index_path.write_text(updated, encoding="utf-8")
         return "FIXED", f"counts corrected ({disk_subdir_count} subdirs + {disk_file_count} files = {total})"
     return "OK", "already correct"
-
 
 def scan_tree(root, mode="check") -> list[dict]:
     """scan tree."""
@@ -227,7 +219,6 @@ def scan_tree(root, mode="check") -> list[dict]:
     return results
     """scan tree."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="Validate/fix index.md factual accuracy against disk reality")
@@ -272,7 +263,6 @@ def main() -> None:
     else:
         print(f"Fixed: {ok_count} directories verified/corrected")
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

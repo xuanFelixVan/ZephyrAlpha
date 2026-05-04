@@ -119,7 +119,7 @@ This view is **driven by** the Application Architecture (application characteris
 
 > 当前架构为**单进程演进式**，所有层在同一 Python 进程内运行，通过函数调用传递契约对象。
 
-### 3.1 Process inventory / 进程清单（Phase 1 — 单进程）
+### 3.1 Process inventory / 进程清单（单进程）
 
 | 进程 | 运行环境 | 职责 | 启动方式 |
 |------|---------|------|---------|
@@ -172,7 +172,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 ## 6. Deployment and operations / 部署与运维
 
-### 6.1 当前阶段拓扑：单机本地（Phase 1）
+### 6.1 当前阶段拓扑：单机本地
 
 > **📊 Phase 1 部署拓扑图**：见 [`diagrams/deployment-phase1.mmd`](diagrams/deployment-phase1.mmd)
 
@@ -318,7 +318,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 | 组件 | 用途 | 后端 |
 |------|------|------|
 | `opentelemetry-sdk` (Python) | Metrics + Traces | OTLP gRPC → Collector |
-| OTel Collector (Agent) | 接收 + 路由 | 本地进程（Phase 1）/ 独立 Gateway（Post-Activation） |
+| OTel Collector (Agent) | 接收 + 路由 | 本地进程/ 独立 Gateway（Post-Activation） |
 | Prometheus | Metrics 存储 | `:9090` |
 | Grafana Tempo | Traces 存储 | `:3200` |
 | Loki | Logs 聚合 | `:3100` |

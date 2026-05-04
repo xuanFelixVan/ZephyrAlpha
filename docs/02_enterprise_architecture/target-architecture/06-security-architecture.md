@@ -296,7 +296,7 @@ Cursor / Trae / Claude Desktop
 - **可观测**：Windows Security Event Log 原生记录违规访问
 - **可升级**：Phase 2 可切到 Docker Desktop（同一接口，TECH-12 watchboard）
 
-**沙箱规则（Phase 1）**：
+**沙箱规则**：
 
 | 资源类别 | 权限 | 实现 |
 |---------|:----:|------|
@@ -322,7 +322,7 @@ Cursor / Trae / Claude Desktop
 
 ## §6 Secret Management / 密钥管理
 
-### 6.1 当前资产清单（Phase 1）
+### 6.1 当前资产清单
 
 | 密钥类型 | 来源 | 存储位置 | 轮换频率 | Phase 1 保护 |
 |---------|------|---------|:--------:|-------------|
@@ -476,8 +476,6 @@ L1: .env + .gitignore   →   L2: git-secrets    →        L3: LSG Output Scann
 - `request_id`（跨服务链路追踪）
 
 ### 9.3 防篡改机制（Phase 1 轻量 → Phase 2 加强）
-
-**Phase 1**：
 
 - SQLite WAL + 周期全库哈希（每日 00:00 UTC 写入 `audit.db.sha256`）
 - 哈希文件 git commit（形成外部锚点）

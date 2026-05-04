@@ -51,12 +51,10 @@ DIMENSION_DIRS: dict[str, str] = {
     "D12": "d12_ai_hallucination",
 }
 
-
 def _count_py_files(dir_path: Path) -> int:
     if not dir_path.exists():
         return 0
     return len([f for f in dir_path.glob("*.py") if f.name != "__init__.py" and f.is_file()])
-
 
 def _extract_index_claims(index_content: str) -> dict[str, int]:
     claims: dict[str, int] = {}
@@ -70,7 +68,6 @@ def _extract_index_claims(index_content: str) -> dict[str, int]:
         claims["manifest"] = int(manifest_m.group(1))
     return claims
 
-
 def _count_manifest_entries() -> int:
     try:
         with open(MANIFEST_PATH, encoding="utf-8") as f:
@@ -80,7 +77,6 @@ def _count_manifest_entries() -> int:
     except (yaml.YAMLError, OSError, KeyError):
         pass
     return -1
-
 
 def main() -> None:
     """入口函数."""
@@ -125,7 +121,6 @@ def main() -> None:
 
     print("[IDX-OK] index.md 数字与磁盘实际一致", file=sys.stderr)
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

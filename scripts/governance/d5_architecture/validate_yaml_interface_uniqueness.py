@@ -39,7 +39,6 @@ ensure_utf8_stdout()
 
 ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
 
-
 def scan_partition_yaml(yaml_path: Path) -> list[dict]:
     """扫描 YAML 接口唯一性."""
     findings = []
@@ -92,7 +91,6 @@ def scan_partition_yaml(yaml_path: Path) -> list[dict]:
     return findings
     """扫描 YAML 接口唯一性."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
@@ -127,7 +125,6 @@ def main() -> None:
         )
 
     return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

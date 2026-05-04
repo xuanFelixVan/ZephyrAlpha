@@ -59,7 +59,6 @@ __all__ = [
 # 枚举
 # ---------------------------------------------------------------------------
 
-
 class TaskStatus(str, Enum):
     """任务状态机（ADR-0030 §2）。"""
 
@@ -74,14 +73,12 @@ class TaskStatus(str, Enum):
     RETRY = "RETRY"
     CANCELLED = "CANCELLED"
 
-
 class SafetyLevel(str, Enum):
     """任务安全等级。"""
 
     L = "L"
     M = "M"
     H = "H"
-
 
 class Classification(str, Enum):
     """访问分类。"""
@@ -90,14 +87,12 @@ class Classification(str, Enum):
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
 
-
 class EvolutionPolicy(str, Enum):
     """文件演进策略。"""
 
     FROZEN = "frozen"
     EXTENDABLE = "extendable"
     REWRITABLE = "rewritable"
-
 
 class TaskNamespace(str, Enum):
     """任务命名空间（#21 裁定：分类字段，不是 ID 的一部分）。"""
@@ -110,14 +105,12 @@ class TaskNamespace(str, Enum):
     SRC = "SRC"
     OPS = "OPS"
 
-
 class AuditSeverity(str, Enum):
     """审计严重性级别（向后兼容别名，真源为 Priority）。"""
 
     P0 = "P0"
     P1 = "P1"
     P2 = "P2"
-
 
 class Priority(str, Enum):
     """优先级（task-card-standard.md §3.1 真源，P0-P3 四级，对齐 Jira Priority）。"""
@@ -126,7 +119,6 @@ class Priority(str, Enum):
     P1 = "P1"
     P2 = "P2"
     P3 = "P3"
-
 
 class KeCategory(str, Enum):
     """知识条目内容类型（metadata-registry.md §9.1 真源，10 值）。"""
@@ -142,7 +134,6 @@ class KeCategory(str, Enum):
     operations = "operations"
     compliance = "compliance"
 
-
 class FailureType(str, Enum):
     """失败类型分类。"""
 
@@ -151,7 +142,6 @@ class FailureType(str, Enum):
     INFRASTRUCTURE = "infrastructure"
     TIMEOUT = "timeout"
     UNKNOWN = "unknown"
-
 
 # ---------------------------------------------------------------------------
 # 公共 ConfigDict 基线（ADR-0040 §4.2）
@@ -169,7 +159,6 @@ BASE_CONFIG = ConfigDict(
 # ---------------------------------------------------------------------------
 
 _TASK_ID_PATTERN = r"^(ADR|CP|KE|STD|DW|SRC|OPS)-\d+$"
-
 
 class Task(BaseModel):
     """
@@ -223,11 +212,9 @@ class Task(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
-
 # ---------------------------------------------------------------------------
 # 2. AuditReport 模型
 # ---------------------------------------------------------------------------
-
 
 class AuditFinding(BaseModel):
     """单条审计发现。"""
@@ -239,7 +226,6 @@ class AuditFinding(BaseModel):
     description: str = Field(min_length=1, max_length=1000)
     file_path: str | None = None
     suggestion: str | None = None
-
 
 class AuditReport(BaseModel):
     """
@@ -281,11 +267,9 @@ class AuditReport(BaseModel):
             object.__setattr__(self, "passed", p0 == 0)
         return self
 
-
 # ---------------------------------------------------------------------------
 # 3. KnowledgeEntry 模型
 # ---------------------------------------------------------------------------
-
 
 class KnowledgeEntry(BaseModel):
     """
@@ -325,11 +309,9 @@ class KnowledgeEntry(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
-
 # ---------------------------------------------------------------------------
 # 4. FailurePattern 模型
 # ---------------------------------------------------------------------------
-
 
 class FailurePattern(BaseModel):
     """
@@ -359,11 +341,9 @@ class FailurePattern(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
-
 # ---------------------------------------------------------------------------
 # 5. HandoffPackage 模型（及子类型）
 # ---------------------------------------------------------------------------
-
 
 class BlockedItem(BaseModel):
     """交接包中的阻塞项。"""
@@ -375,7 +355,6 @@ class BlockedItem(BaseModel):
     blocked_since: datetime | None = None
     unblock_condition: str | None = Field(default=None, max_length=300)
 
-
 class Decision(BaseModel):
     """交接包中的决策记录。"""
 
@@ -386,7 +365,6 @@ class Decision(BaseModel):
     rationale: str = Field(min_length=1, max_length=1000)
     adr_ref: str | None = Field(default=None, description="关联 ADR 编号，如 ADR-0030")
 
-
 class NextAction(BaseModel):
     """交接包中的下一步行动。"""
 
@@ -396,7 +374,6 @@ class NextAction(BaseModel):
     action: str = Field(min_length=1, max_length=300)
     owner: str | None = Field(default=None, description="建议执行者（模型或 Owner）")
     task_ref: str | None = Field(default=None, description="关联 task_id")
-
 
 class HandoffPackage(BaseModel):
     """

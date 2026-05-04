@@ -54,7 +54,6 @@ VOCAB_FIELD_MAP = {
 _errors: list[str] = []
 _warnings: list[str] = []
 
-
 def _load_vocab_values(vocab_name: str) -> set[str]:
     path = VOCAB_DIR / vocab_name
     if not path.exists():
@@ -72,7 +71,6 @@ def _load_vocab_values(vocab_name: str) -> set[str]:
         elif isinstance(entry, str):
             values.add(entry)
     return values
-
 
 def check_frontmatter_values() -> list[dict]:
     """check frontmatter values."""
@@ -114,7 +112,6 @@ def check_frontmatter_values() -> list[dict]:
     return checked
     """check frontmatter values."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
@@ -139,7 +136,6 @@ def main() -> None:
     else:
         print(f"ALL {checked} files pass vocabulary validation")
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

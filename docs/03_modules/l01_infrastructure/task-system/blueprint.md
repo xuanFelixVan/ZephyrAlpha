@@ -13,7 +13,7 @@ date: "2026-05-02"
 ttl: permanent
 construction_progress: phase_1_complete
 summary: "ZephyrAlpha 任务系统全链路蓝图 v0.3.0。覆盖从草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的完整工作流。v0.3.0 融合两套设计的各自最优部分：旧规则体系在任务管理基础（ID格式/状态机/SQLite存储）上更专业，新蓝图在 Vibe Coding 执行层（防漂移字段/G0-G7门禁/M1-M11管线/规则引用）上更创新。TaskCard 模型继承 shared/schemas.py Task（28字段基座）+ 24个扩展字段 = 52字段总线（全部存入 SQLite data/zalpha_metadata.db——单源存储零丢失）。task_id 格式 {NAMESPACE}-{SEQ}，标签改为扁平 tags[] 保留五轴推荐约定。v0.3.1：移除 .md 双轨→SQLite 单源存储，MCP 6 Tool→5 Tool（删除 sync_file_state），DB 路径迁移 docs/09_audit/state/ → data/。"
-tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, phase-0, emergent-design, path-compliance, anti-drift]
+tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, , emergent-design, path-compliance, anti-drift]
 depends_on:
   - {target: PS-STD-001, at: "§7.10", why: "任务卡 task_id 格式 + 28字段定义——本蓝图 §3.2.1 的真源"}
   - {target: PS-STD-011, at: "MTH-012|MTH-013", why: "涌现式设计+路径合规创建——本蓝图编写方法论"}
@@ -695,7 +695,7 @@ class AuditFinding(BaseModel):
 
 ### 11.3 实施步骤
 
-#### Phase 0 — 善后：注册表 + 元数据同步
+#### 善后：注册表 + 元数据同步
 
 ##### 步骤 1：更新蓝图注册表
 
@@ -717,7 +717,7 @@ class AuditFinding(BaseModel):
 
 ---
 
-#### Phase 1 — 补给：三大核心 .py 同步重写
+#### 补给：三大核心 .py 同步重写
 
 > ⚠️ v0.3.0 是破坏性变更——以下 3 个文件的旧版本（v0.2.0 时期）与新版契约不兼容，必须同步重写。
 

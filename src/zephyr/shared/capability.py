@@ -36,11 +36,9 @@ try:
 except ImportError:
     raise ImportError("PyYAML 未安装，请运行 `pip install pyyaml`")
 
-
 from zephyr.shared.paths import REPO_ROOT
 
 CAPABILITIES_YAML_PATH = REPO_ROOT / "config" / "capabilities.yaml"
-
 
 class CapabilityDenied(Exception):
     def __init__(self, action: str, target_path: str, rule_name: str, reason: str = "deny"):
@@ -52,13 +50,11 @@ class CapabilityDenied(Exception):
             f"CapabilityDenied: action='{action}' target='{target_path}' " f"rule='{rule_name}' reason='{reason}'"
         )
 
-
 class Capability(BaseModel, frozen=True):
     name: str = Field(min_length=1)
     description: str = ""
     allow: list[str] = Field(default_factory=list)
     deny: list[str] = Field(default_factory=list)
-
 
 class CapabilityRegistry:
     _instance: CapabilityRegistry | None = None
@@ -194,7 +190,6 @@ class CapabilityRegistry:
             "reason": "no_matching_rule",
             "provenance": False,
         }
-
 
 def capability_check(action: str, target_path: str) -> tuple[bool, dict[str, Any]]:
     registry = CapabilityRegistry()

@@ -48,7 +48,6 @@ SCAN_ENTRIES = [
     ("technology", ARCH_MODEL / "technology", True),
 ]
 
-
 def _count_by(items: list[dict], field: str) -> dict[str, int]:
     counts: dict[str, int] = {}
     for item in items:
@@ -59,7 +58,6 @@ def _count_by(items: list[dict], field: str) -> dict[str, int]:
             val = "(empty)"
         counts[val] = counts.get(val, 0) + 1
     return counts
-
 
 def validate_yaml_summaries() -> tuple[bool, list[str]]:
     """校验 YAML 摘要一致性"""
@@ -226,7 +224,6 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                 _check_global("total_modules_deferred", global_stats.get("total_modules_deferred"), cross_deferred)
     return (len(errors) == 0, errors)
 
-
 def main() -> None:
     """入口函数."""
     import argparse
@@ -252,7 +249,6 @@ def main() -> None:
         print("   修复方法：根据实际数据条目逐项更新对应 YAML 的 summary 字段")
         print("   或运行：python scripts/governance/d5_architecture/validate_yaml_summaries.py --warn-only")
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

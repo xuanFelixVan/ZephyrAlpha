@@ -23,10 +23,8 @@ from zephyr.feedback_loop.evolution_engine import (
 )
 from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
-
 def _fixed_now() -> datetime:
     return datetime(2026, 4, 24, 12, 0, 0, tzinfo=UTC)
-
 
 class TestEvolveFullFlow:
     def test_signal_detection_to_proposal_to_action(self) -> None:
@@ -59,7 +57,6 @@ class TestEvolveFullFlow:
         assert report.l2_triggered == 0
         assert report.l3_triggered == 0
 
-
 class TestL1TaskLevel:
     def test_low_score_triggers_l1(self) -> None:
         collector = FeedbackCollector()
@@ -79,7 +76,6 @@ class TestL1TaskLevel:
         engine = EvolutionEngine(collector, now=_fixed_now)
         report = engine.evolve()
         assert report.l1_triggered == 0
-
 
 class TestL2PatternLevel:
     def test_high_retry_rate_signal(self) -> None:
@@ -135,7 +131,6 @@ class TestL2PatternLevel:
         report = engine.evolve()
         assert report.l2_triggered == 0
 
-
 class TestL3ArchitectureLevel:
     def test_score_drop_triggers_l3(self) -> None:
         collector = FeedbackCollector()
@@ -152,7 +147,6 @@ class TestL3ArchitectureLevel:
         engine = EvolutionEngine(collector, now=_fixed_now)
         report = engine.evolve()
         assert report.l3_triggered == 0
-
 
 class TestDryRunMode:
     def test_dry_run_never_applies(self) -> None:
@@ -182,7 +176,6 @@ class TestDryRunMode:
         )
         report = engine.evolve(dry_run=False, owner_approved=False)
         assert report.applied_count == 0
-
 
 class TestFeedbackCollectorIntegration:
     def test_evolve_reads_from_collector(self) -> None:

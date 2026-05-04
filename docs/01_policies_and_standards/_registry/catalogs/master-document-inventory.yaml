@@ -1,6 +1,6 @@
 # ZephyrAlpha 2.0 完整文档清单（DEPRECATED）
 # 已废弃——由 document-metadata-index.yaml 取代
-# 本文件保留作为 Phase 0-1 历史参考桩文件
+# 本文件保留作为 1 历史参考桩文件
 
 schema_version: "1.1.0"
 doc_type: register

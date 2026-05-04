@@ -49,30 +49,25 @@ DANGEROUS_PATTERNS: tuple[re.Pattern, ...] = (
     re.compile(r"!\s*"),
 )
 
-
 class SanitizationError(Exception):
     """输入清洗器基础设施异常基类（InputSanitizer 所有异常由此派生）。"""
 
     pass
-
 
 class PathTraversalError(SanitizationError):
     """检测到路径穿越攻击（目标路径不在白名单目录范围内）。"""
 
     pass
 
-
 class CommandInjectionError(SanitizationError):
     """检测到命令注入攻击（输入含 OS 命令拼接特征如 `$(...)`、`;` 等）。"""
 
     pass
 
-
 class TokenBudgetExceededError(SanitizationError):
     """输入 Token 预算超标（超过 safety limits 配置的 max 阈值）。"""
 
     pass
-
 
 class InputSanitizer:
     """Validates file paths and shell commands against whitelists.

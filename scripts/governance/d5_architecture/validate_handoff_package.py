@@ -40,7 +40,6 @@ REQUIRED_HANDOFF_FIELDS = {
     "owner_notes",
 }
 
-
 def check_handoff_package(filepath: Path) -> list[dict]:
     """检查交接包完整性."""
     findings = []
@@ -78,7 +77,6 @@ def check_handoff_package(filepath: Path) -> list[dict]:
     return findings
     """检查交接包完整性."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="HandoffPackage 完整性校验（COND-47）")
@@ -106,7 +104,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

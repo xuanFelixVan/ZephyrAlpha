@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-001
-title: 容量保障体系蓝图（B3 · Phase 0-2）
+title: 容量保障体系蓝图（B3 · 2）
 doc_type: blueprint
 status: approved
 version: 2.1.0
@@ -22,17 +22,17 @@ tags:
   - ai-audit-guard
   - contractbus
   - infrastructure
-  - phase-0
+  -
   - error-budget
   - token-budget
   - kill-switch
   - sandbox
   - graceful-degradation
   - otel
-summary: ZephyrAlpha 容量保障体系 Phase 0-2 完整蓝图 v2.1.0。覆盖 SLI/SLO 注册表（含 Saturation 四黄金信号）、Error Budget 五级响应（含 Burn Rate 多窗口监控）、AI 审计守卫、容量治理闭环、ContractBus 分批迁移、SSoT 校验、多级 Token Budget、Kill Switch、Sandbox 沙箱、Graceful Degradation 降级链、Reasoning Spans 推理追踪、语义缓存、灾难恢复策略、容量预测模型、跨模块集成设计等关键能力。所有设计按 1500 模块极限容量考虑。v2.1.0 补齐 Phase 0-2 施工所需的所有前置设计。
+summary: ZephyrAlpha 容量保障体系 2 完整蓝图 v2.1.0。覆盖 SLI/SLO 注册表（含 Saturation 四黄金信号）、Error Budget 五级响应（含 Burn Rate 多窗口监控）、AI 审计守卫、容量治理闭环、ContractBus 分批迁移、SSoT 校验、多级 Token Budget、Kill Switch、Sandbox 沙箱、Graceful Degradation 降级链、Reasoning Spans 推理追踪、语义缓存、灾难恢复策略、容量预测模型、跨模块集成设计等关键能力。所有设计按 1500 模块极限容量考虑。v2.1.0 补齐 2 施工所需的所有前置设计。
 ---
 
-# 容量保障体系蓝图（B3 · Phase 0-2）
+# 容量保障体系蓝图（B3 · 2）
 
 > **真源声明**：本蓝图是 ZephyrAlpha 容量保障体系的唯一真源。v1.0.0 由原始施工图 Wave 0 三轮审计 + Claude-Opus-4.7 终审产出。v2.0.0 对齐专业机构实践（Google SRE / OpenTelemetry）与 Vibe Coding 社区前沿。v2.1.0 补齐施工前置设计——Error Budget 三级→五级升级 + 灾难恢复策略 + 容量预测模型 + 跨模块集成设计。
 
@@ -842,7 +842,7 @@ class CapacityPredictor:
 | `atomic_transaction_manager` ↔ `sqlite_schema` | ATM 保证 DB 操作原子性 | ✅ 已集成 |
 | `agent_health_monitor` ↔ orchestrator | orchestrator 产出 Result → health_monitor 消费并判定 | ✅ 已集成 |
 
-### 18.2 🔧 待实现集成（需 Phase 0-2 施工）
+### 18.2 🔧 待实现集成（需 2 施工）
 
 #### 集成 1：Kill Switch ↔ Circuit Breaker（Phase 1a）
 

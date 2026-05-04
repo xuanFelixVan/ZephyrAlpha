@@ -45,7 +45,7 @@ systems:
     items_freeze_rule: 只读，禁止新增、禁止修改（Owner OBSOLETE/SUPERSEDED 标注除外）
     migration_target: sqlite_task_db
     migration_phase: Phase-1b
-    evaluation_phase: Phase-2
+    evaluation_phase:
     evaluation_rule: by-task-by-task 评估迁移价值，无价值标 abandoned
     notes: |
       Stage A→H 重组前的 PRE-REORG 设计材料。
@@ -126,7 +126,7 @@ migration_rules:
   - rule_id: MR-04
     description: legacy 任务卡 by-task-by-task 评估迁移价值，无价值的标 abandoned
     applies_to: legacy_task_cards
-    enforcement: Phase-2 任务清单
+    enforcement:  任务清单
   - rule_id: MR-05
     description: 三套并行系统数量永久锁定为 4 套（含 development_workspace_taskbooks）
     applies_to: 整体
@@ -140,10 +140,10 @@ state_machines:
   legacy_task_cards:
     states:
       - FROZEN-LEGACY (current)
-      - LEGACY-EVALUATING (Phase-2)
-      - LEGACY-MIGRATED (Phase-2 末)
+      - LEGACY-EVALUATING ()
+      - LEGACY-MIGRATED ( 末)
     transitions:
-      - {from: FROZEN-LEGACY, to: LEGACY-EVALUATING, trigger: Phase-2 启动}
+      - {from: FROZEN-LEGACY, to: LEGACY-EVALUATING, trigger:  启动}
       - {from: LEGACY-EVALUATING, to: LEGACY-MIGRATED, trigger: 全部任务评估完毕}
   v2_staging_zone:
     states:

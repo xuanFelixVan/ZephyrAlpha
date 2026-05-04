@@ -60,11 +60,9 @@ METRIC_COMPLIANCE_RATE = "compliance_rate"
 METRIC_KNOWLEDGE_ACTIVATION = "knowledge_activation_rate"
 METRIC_HALLUCINATION_INTERCEPTION = "hallucination_interception_rate"
 
-
 # ---------------------------------------------------------------------------
 # 数据模型
 # ---------------------------------------------------------------------------
-
 
 class MetricStatus:
     """度量状态枚举（字符串常量）。"""
@@ -72,7 +70,6 @@ class MetricStatus:
     PASS = "PASS"
     WARN = "WARN"
     FAIL = "FAIL"
-
 
 @dataclass
 class FitnessThresholds:
@@ -101,7 +98,6 @@ class FitnessThresholds:
     hallucination_interception_min: float = 0.70
     warn_margin: float = 0.05  # 5% 缓冲区
 
-
 @dataclass
 class FitnessMetric:
     """单条适应度度量结果。
@@ -128,7 +124,6 @@ class FitnessMetric:
     status: str
     detail: str | None = None
     measured_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
-
 
 @dataclass
 class FitnessReport:
@@ -165,7 +160,6 @@ class FitnessReport:
             if m.metric_name == metric_name:
                 return m
         return None
-
 
 @dataclass
 class FitnessInputs:
@@ -204,11 +198,9 @@ class FitnessInputs:
     hallucination_total: int = 0
     hallucination_intercepted: int = 0
 
-
 # ---------------------------------------------------------------------------
 # 便利工厂：从 GateEngine 结果构建 FitnessInputs
 # ---------------------------------------------------------------------------
-
 
 def from_gate_results(
     gate_rows: Sequence[dict[str, Any]],
@@ -258,11 +250,9 @@ def from_gate_results(
         hallucination_intercepted=hallucination_intercepted,
     )
 
-
 # ---------------------------------------------------------------------------
 # 核心框架
 # ---------------------------------------------------------------------------
-
 
 class FitnessFunctionFramework:
     """架构适应度函数执行框架。

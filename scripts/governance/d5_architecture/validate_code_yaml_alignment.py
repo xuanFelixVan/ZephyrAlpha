@@ -31,11 +31,9 @@ import argparse
 
 import yaml
 
-
 def _load_yaml(path: Path) -> dict:
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
-
 
 def _list_top_dirs(code_dir: Path) -> dict[str, Path]:
     dirs: dict[str, Path] = {}
@@ -47,14 +45,12 @@ def _list_top_dirs(code_dir: Path) -> dict[str, Path]:
         dirs[p.name] = p
     return dirs
 
-
 def _collect_actual_files(dir_path: Path) -> frozenset[str]:
     files: set[str] = set()
     for p in dir_path.rglob("*"):
         if p.is_file() and p.suffix in (".py", ".yaml", ".yml"):
             files.add(p.name)
     return frozenset(files)
-
 
 def _parse_index(index_path: Path) -> dict:
     index = _load_yaml(index_path)
@@ -72,7 +68,6 @@ def _parse_index(index_path: Path) -> dict:
                 "index_status": part.get("status", "unknown"),
             }
     return partitions
-
 
 def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str], list[str], int, int]:
     """扫描代码-YAML 对齐一致性."""
@@ -175,7 +170,6 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
     return criticals, highs, mediums, total, aligned
     """扫描代码-YAML 对齐一致性."""
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="GATE-A: src/zephyr/ ↔ architecture-model/ 双层对账")
@@ -238,7 +232,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if criticals or highs else 0)
-
 
 if __name__ == "__main__":
     main()

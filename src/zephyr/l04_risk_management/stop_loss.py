@@ -13,16 +13,13 @@ ZephyrAlpha — L04 Risk Management Layer — Stop-Loss Rules & Kill Switch
 
 from decimal import Decimal
 
-
 def evaluate_stop_loss(position: dict, current_price: Decimal, rules: dict) -> bool:
     """[STUB — Phase 3 实现] 评估持仓是否触发止损条件。"""
     raise NotImplementedError("evaluate_stop_loss: STUB — Phase 3 实现")
 
-
 def trigger_kill_switch(reason: str, scope: str = "all") -> dict:
     """[STUB — Phase 3 实现] 触发 Kill Switch，强制暂停交易。"""
     raise NotImplementedError("trigger_kill_switch: STUB — Phase 3 实现")
-
 
 def reset_kill_switch(confirmation: dict) -> bool:
     """[STUB — Phase 3 实现] 重置 Kill Switch（需人工确认）。"""

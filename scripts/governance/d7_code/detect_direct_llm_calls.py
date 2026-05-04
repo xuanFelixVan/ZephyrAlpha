@@ -55,7 +55,6 @@ B_TRACK_DIRS = {
     "shared",
 }
 
-
 def is_business_layer(filepath: Path, src_dir: Path) -> bool:
     """判断是否为业务层"""
     try:
@@ -73,7 +72,6 @@ def is_business_layer(filepath: Path, src_dir: Path) -> bool:
         return True
     return False
     "判断是否为业务层."
-
 
 def check_llm_imports(filepath: Path) -> list[dict]:
     """检查 LLM 直接调用"""
@@ -97,7 +95,6 @@ def check_llm_imports(filepath: Path) -> list[dict]:
                     findings.append({"line": node.lineno, "import_name": f"from {node.module}"})
     return findings
     "检查 LLM 直接调用."
-
 
 def main() -> None:
     """入口函数."""
@@ -126,7 +123,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if all_findings else 0)
-
 
 if __name__ == "__main__":
     main()

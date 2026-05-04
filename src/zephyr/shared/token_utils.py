@@ -11,7 +11,6 @@ token_utils.py — Token 估算工具 SSoT
 
 from __future__ import annotations
 
-
 def estimate_tokens(text: str) -> int:
     """估算文本的 token 数量。
 
@@ -27,7 +26,6 @@ def estimate_tokens(text: str) -> int:
     if not text:
         return 0
     return max(len(text) // 4, 1)
-
 
 __all__ = [
     "estimate_tokens",

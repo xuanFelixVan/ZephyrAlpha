@@ -18,7 +18,6 @@ from zephyr.gates.contract_template_manager import (
 
 _TS = datetime(2026, 4, 24, 12, 0, 0)
 
-
 def _make_template(
     tool_name: str = "test_tool",
     version: str = "1.0.0",
@@ -33,7 +32,6 @@ def _make_template(
         created_at=_TS,
         updated_at=_TS,
     )
-
 
 class TestContractParameter:
     def test_valid_parameter(self) -> None:
@@ -51,7 +49,6 @@ class TestContractParameter:
         assert p.required is True
         assert p.description == ""
         assert p.default is None
-
 
 class TestContractTemplate:
     def test_valid_template(self) -> None:
@@ -88,7 +85,6 @@ class TestContractTemplate:
                 created_at=_TS,
                 updated_at=_TS,
             )
-
 
 class TestContractTemplateManager:
     def test_register_and_get(self) -> None:

@@ -737,7 +737,6 @@ scripts:
     warn_only: false
     description: 索引-实际同步校验（AGENTS.md §6.11 — index.md声称脚本数 vs 磁盘实际 .py 文件数）
 
-
   - name: d5_architecture/validate_blueprint_code_sync.py
     dimensions: [D5, D8]
     priority: P0

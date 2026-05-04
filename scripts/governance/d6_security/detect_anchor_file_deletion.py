@@ -36,7 +36,6 @@ ANCHOR_FILES = [
     ".roomodes",
 ]
 
-
 def get_staged_deletions() -> list[str]:
     """获取暂存区删除文件列表"""
     try:
@@ -52,7 +51,6 @@ def get_staged_deletions() -> list[str]:
         return [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         return []
-
 
 def get_working_tree_deletions() -> list[str]:
     """获取暂存区删除文件列表."""
@@ -71,7 +69,6 @@ def get_working_tree_deletions() -> list[str]:
         return []
     "获取工作树删除文件列表."
 
-
 def check_anchor_deletions() -> list[dict]:
     """检查锚点文件删除"""
     findings = []
@@ -89,7 +86,6 @@ def check_anchor_deletions() -> list[dict]:
                 )
     return findings
     "检查锚点文件删除."
-
 
 def main() -> None:
     """入口函数."""
@@ -110,7 +106,6 @@ def main() -> None:
         sys.exit(0)
     sys.exit(1 if findings else 0)
     "入口函数."
-
 
 if __name__ == "__main__":
     main()

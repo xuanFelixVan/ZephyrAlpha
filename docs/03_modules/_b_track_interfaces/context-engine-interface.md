@@ -43,7 +43,6 @@ depends_on:
 > **定位**：Vibe Coding 2.0 基础设施五大核心服务之一。AI 编码的"中枢神经"——接收任务请求，从 VMS / entity-graph / 源码目录三源汇聚上下文，压缩到 token budget 内，注入到 MCP 通道让 AI IDE 消费。
 >
 
-
 ---
 
 ## 0. 读者指南
@@ -128,10 +127,8 @@ class ContextEngineProtocol(Protocol):
     async def probe_ide_capabilities(self, ide_id: str) -> IDECapabilities: ...
     async def stats(self) -> CEStats: ...
 
-
 class InProcessContextEngine:
     """Phase 1（当前目标）：进程内调用，直接依赖 VectorMemoryProtocol + NetworkX。"""
-
 
 class RemoteContextEngine:
     """Phase 3+（按需启用）：HTTP/gRPC Client。"""
@@ -149,7 +146,7 @@ class RemoteContextEngine:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选（Phase 1） | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
 |------|----------------|------|-------|---------|---------|----------|
 | entity-graph 存储 | **NetworkX + JSON** | Neo4j 社区版 | Neptune / Dgraph | 纯 Python、节点 < 10k 场景内存足够 | 节点 > 10k 或需多进程共享 | ADR-0015 |
 | 向量检索入口 | **VMS `multi_search`（ChromaDB 后端）** | - | 直接调 ChromaDB（破坏分层） | 分层合约，VMS 降级时本层自动感知 | - | ADR-0015 / 0016 |
@@ -157,8 +154,8 @@ class RemoteContextEngine:
 | 压缩降级 | **规则-based 摘要（LLM 挂时自动启用）** | 简单截断 | 丢弃 | LLM 挂也能产可用上下文 | - | ADR-0015 |
 | token 计数 | **tiktoken（cl100k_base）** | transformers 本地 tokenizer | 字符数粗估 | tiktoken 对 GPT / Claude 近似度高 | 目标模型非 OpenAI/Anthropic 系时换 transformers | - |
 | MCP 通道路由 | **能力矩阵 + 多通道并发注入** | 单 prompts 通道 | 硬编码 Cursor | 三家 IDE 能力不一，能力探测后按需注入 | 新增 IDE 直接加一行矩阵 | ADR-0015 |
-| 进程内并发（Phase 1） | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环） | 项目全异步栈 | 服务化后废除 | - |
-| 跨进程并发（Phase 1） | **`filelock.FileLock`** | - | 全局单例 | pytest 并发 + 多 Agent | 服务化后废除 | - |
+| 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环） | 项目全异步栈 | 服务化后废除 | - |
+| 跨进程并发 | **`filelock.FileLock`** | - | 全局单例 | pytest 并发 + 多 Agent | 服务化后废除 | - |
 
 ---
 
@@ -244,7 +241,6 @@ from pydantic import BaseModel, Field
 from typing import Optional, Literal
 from datetime import datetime
 
-
 class ContextRequest(BaseModel):
     task_id: str
     task_kind: Literal["feature", "refactor", "bugfix", "review", "architecture", "research"]
@@ -256,14 +252,12 @@ class ContextRequest(BaseModel):
         default=None,
         description="动态覆盖默认 slot 预算占比，如 {'code_refs': 0.45, 'lessons': 0.05}")
 
-
 class SlotContent(BaseModel):
     slot: str
     items: list[dict]
     token_count: int
     source_traces: list[str] = Field(description="可追溯源，如 ['vms://decisions/ADR-0016', 'file://src/...']")
     degraded_sources: list[str] = Field(default_factory=list, description="本 slot 遇到的降级源")
-
 
 class ContextBundle(BaseModel):
     request_id: str
@@ -277,7 +271,6 @@ class ContextBundle(BaseModel):
     degraded: bool = Field(default=False, description="任一 slot 触发降级则为 True")
     degrade_reasons: list[str] = Field(default_factory=list)
 
-
 class ValidationReport(BaseModel):
     passed: bool
     token_within_budget: bool
@@ -285,13 +278,11 @@ class ValidationReport(BaseModel):
     no_stale_references: bool
     violations: list[str] = Field(default_factory=list)
 
-
 class InjectResult(BaseModel):
     channels_used: list[IDEChannel]
     channels_skipped: list[tuple[IDEChannel, str]] = Field(description="[(channel, skip_reason)]")
     injected_at: datetime
     ack_received: bool
-
 
 # 遗漏 #5：Feedback Loop → Context Engine 反馈通道 schema
 class FeedbackSignal(BaseModel):
@@ -313,7 +304,6 @@ class FeedbackSignal(BaseModel):
     target_slot: Optional[str] = None
     adjustment_magnitude: float = Field(default=0.1, description="权重调整幅度，0.1 = ±10%")
     observed_at: datetime
-
 
 class AdjustResult(BaseModel):
     applied: bool
@@ -475,7 +465,7 @@ IDE 能力未知 / 探测失败
 
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
-| `src/zephyr/vector_memory/` 包（Phase 1） | ⏳ 待建 | VMS Phase 1 T-1-XX |
+| `src/zephyr/vector_memory/` 包 | ⏳ 待建 | VMS Phase 1 T-1-XX |
 | `src/zephyr/context_engine/` 包创建 | ⏳ 待建 | Phase 1 T-1-XX |
 | Qwen2.5-3B-Instruct GGUF 下载到 `.models/qwen2.5-3b/` | ⏳ 待建 | Phase 1 T-1-XX |
 | llama.cpp Python 绑定（`llama-cpp-python`） | ⏳ 待建 | Phase 1 T-1-XX |
@@ -591,7 +581,6 @@ from typing import Protocol
 class ContextAdjustAction(Protocol):
     """FLE 只知道这个 Protocol，不 import ContextEngine 具体实现。"""
     async def adjust_strategy(self, task_id: str, signal: FeedbackSignal) -> AdjustResult: ...
-
 
 # 注入时：
 #   fle = FeedbackLoopEngine(context_adjust=get_ce())

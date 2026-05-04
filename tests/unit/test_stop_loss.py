@@ -25,7 +25,6 @@ from zephyr.l04_risk_management.stop_loss import (
     trigger_kill_switch,
 )
 
-
 class TestEvaluateStopLossStub:
     """验证 evaluate_stop_loss stub 正确抛出 NotImplementedError。"""
 
@@ -36,7 +35,6 @@ class TestEvaluateStopLossStub:
         with pytest.raises(NotImplementedError, match="STUB"):
             evaluate_stop_loss(position, current_price=9.0, rules=rules)
 
-
 class TestTriggerKillSwitchStub:
     """验证 trigger_kill_switch stub 正确抛出 NotImplementedError。"""
 
@@ -44,7 +42,6 @@ class TestTriggerKillSwitchStub:
     def test_raises_not_implemented(self):
         with pytest.raises(NotImplementedError, match="STUB"):
             trigger_kill_switch(reason="max drawdown exceeded")
-
 
 class TestResetKillSwitchStub:
     """验证 reset_kill_switch stub 正确抛出 NotImplementedError。"""

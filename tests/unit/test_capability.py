@@ -10,13 +10,11 @@ from zephyr.shared.capability import (
     capability_check,
 )
 
-
 @pytest.fixture(autouse=True)
 def reset_registry():
     CapabilityRegistry.reset()
     yield
     CapabilityRegistry.reset()
-
 
 class TestCapability:
     def test_frozen_model(self):
@@ -28,7 +26,6 @@ class TestCapability:
         cap = Capability(name="test")
         assert cap.allow == []
         assert cap.deny == []
-
 
 class TestCapabilityRegistry:
     def test_load_from_yaml(self, tmp_path: Path):
@@ -81,7 +78,6 @@ class TestCapabilityRegistry:
             CapabilityRegistry.reset()
             r2 = CapabilityRegistry()
             assert r1 is not r2
-
 
 class TestCapabilityCheck:
     def _make_registry(self, tmp_path: Path, rules_yaml: str) -> CapabilityRegistry:

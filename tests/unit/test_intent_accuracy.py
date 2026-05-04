@@ -32,7 +32,6 @@ STANDARD_QUERIES: list[tuple[str, str]] = [
     ("chat interface prompt command", "D8"),
 ]
 
-
 class TestKeywordStageAccuracy:
     def test_keyword_accuracy_above_60_percent(self) -> None:
         mapper = IntentKeywordMapper()
@@ -79,7 +78,6 @@ class TestKeywordStageAccuracy:
         for query, _ in STANDARD_QUERIES:
             result = mapper.map_intent(query)
             assert result.latency_ms < 100
-
 
 class TestSemanticStageMocked:
     def _mock_semantic_stage(
@@ -136,7 +134,6 @@ class TestSemanticStageMocked:
         if result.source_stage == "semantic":
             assert result.confidence >= 0.70
 
-
 class TestFallbackChain:
     def test_keyword_high_confidence_no_fallback(self) -> None:
         mapper = IntentKeywordMapper()
@@ -191,7 +188,6 @@ class TestFallbackChain:
         )
         assert result.requires_human is True
         assert result.primary_domain == "UNKNOWN"
-
 
 class TestBoundaryConditions:
     def test_empty_input(self) -> None:

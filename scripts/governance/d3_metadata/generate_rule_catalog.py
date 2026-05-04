@@ -33,7 +33,6 @@ from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
-
 def extract_yaml_header(content: str) -> dict | None:
     """Extract header fields from a .yaml file (comment-based header)."""
     fields: dict = {}
@@ -72,7 +71,6 @@ def extract_yaml_header(content: str) -> dict | None:
         except yaml.YAMLError:
             pass
     return fields if fields else None
-
 
 def scan_directory(scan_dir: str) -> list[dict]:
     """Scan directory for .md and .yaml files, extract frontmatter."""
@@ -120,7 +118,6 @@ def scan_directory(scan_dir: str) -> list[dict]:
 
     return results
 
-
 def generate_catalog(entries: list[dict], output_path: str) -> str:
     """Generate rule-catalog.yaml from scanned entries."""
     catalog = {
@@ -137,7 +134,6 @@ def generate_catalog(entries: list[dict], output_path: str) -> str:
         yaml.dump(catalog, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
     print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
-
 
 def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> int:
     """Compare auto-generated catalog with manual registry."""
@@ -204,7 +200,6 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
 
     return len(only_in_catalog) + len(differences)
 
-
 def main() -> None:
     """入口函数."""
     repo_root = Path(__file__).resolve().parent.parent.parent.parent
@@ -245,7 +240,6 @@ def main() -> None:
             sys.exit(1)
 
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

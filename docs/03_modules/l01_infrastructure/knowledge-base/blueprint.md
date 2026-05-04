@@ -13,7 +13,7 @@ date: "2026-05-02"
 valid_from: "2026-05-02"
 ttl: permanent
 construction_progress: phase_1_partial
-summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵) → 存储(§7三层存储+§7.8灾备) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨18类知识分类（A1-A8+B1-B7+C1-C3）+ Track D AI-AI协作预留（D1-D3，Phase 3实现）+ KO→KE→KB三级漏斗 + KE Schema字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。Phase 1代码已实现(12模块/3600行)，Phase 2-4持续建设。"
+summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵) → 存储(§7三层存储+§7.8灾备) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨18类知识分类（A1-A8+B1-B7+C1-C3）+ Track D AI-AI协作预留（D1-D3，Phase 3实现）+ KO→KE→KB三级漏斗 + KE Schema字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。Phase 1代码已实现(12模块/3600行)，4持续建设。"
 tags: [knowledge-base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline]
 priority: P0
 depends_on:
@@ -674,7 +674,7 @@ def record_multi_agent_vote(
 > **预留原则**：分类桩已在蓝图中注册（= "这个地方以后会有内容"），`KeCategory` 枚举先不加 D1-D3（避免 `schemas.py` 出现未实现的枚举值导致运行时 KeyError），待 Phase 3 统一启用。蓝图 = 设计图，代码 = 施工成果——设计图可以先画，施工可以分批。
 > **对标**：Terraform provider contract —— 接口先定义、实现可分批 / K8s API versioning —— `planned` 状态的 API 不进 `v1` 但已在设计文档中注册
 
-> **大白话**：未来会有多个 AI 互相讨论、互相审查、互相投票——它们之间的互动也会产生知识（哪个 Agent 更擅长什么、两个 Agent 讨论后谁的方案更好）。但现在没到那个阶段——现在只有 Owner+AI 两个人，不需要多个 AI 之间的协作知识。所以我们先在蓝图里画好"预留停车位"（Track D + 接口），等真需要的时候（Phase 3）再盖车库——不用回头拆墙重建。
+> **大白话**：未来会有多个 AI 互相讨论、互相审查、互相投票——它们之间的互动也会产生知识（哪个 Agent 更擅长什么、两个 Agent 讨论后谁的方案更好）。但现在没到那个阶段——现在只有 Owner+AI 两个人，不需要多个 AI 之间的协作知识。所以我们先在蓝图里画好"预留停车位"（Track D + 接口），等真需要的时候再盖车库——不用回头拆墙重建。
 
 ### 3.9 知识来源矩阵与全自动获取决策模型
 
@@ -1167,7 +1167,7 @@ src/zephyr/kb/
 ├── graph_validator.py         # 图谱完整性校验：depends_on→DAG→深度≤3（275行）✅
 ├── embedding_migrate.py       # Embedding 模型迁移管线：升级/降级/回滚（313行）✅
 │
-└── _future/                   # Phase 3-4 未来模块（规划中）
+└── _future/                   # 4 未来模块（规划中）
     ├── mcp_server_kb.py       # KB MCP Server 独立部署
     ├── query_understanding.py # Query expansion + 查询分解 + jieba分词优化
     ├── memory_consolidation.py# KE聚类 + 知识摘要 + 冗余检测
@@ -1275,7 +1275,7 @@ src/zephyr/db/chroma/
 | `blueprints` | 蓝图文档向量 | 384d | 蓝图检索 |
 | `failure_patterns` | 失败模式/反模式 | 384d | 历史教训检索 |
 
-> **Embedding 模型版本**：当前 Phase 1-2 默认 `all-MiniLM-L6-v2`（384d，ChromaDB 默认），中文场景降级到 `BGE-small-zh-v1.5`（512d），Phase 3 目标 `BGE-M3`（1024d）。详见 [embedding_model_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/config/embedding_model_registry.yaml)。
+> **Embedding 模型版本**：当前 2 默认 `all-MiniLM-L6-v2`（384d，ChromaDB 默认），中文场景降级到 `BGE-small-zh-v1.5`（512d），Phase 3 目标 `BGE-M3`（1024d）。详见 [embedding_model_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/config/embedding_model_registry.yaml)。
 
 ---
 
@@ -2082,7 +2082,7 @@ finding_to_ke = {
 | Windows 支持 | ✅ 完美 | ⚠️ 需 WSL/Docker |
 | Python 集成 | 原生 API | 官方 Python client |
 
-> **Phase 1-2 决策**：ChromaDB 嵌入式。触发迁移到 Qdrant 的条件：向量数量 > 10万 or 检索延迟 > 500ms。
+> **2 决策**：ChromaDB 嵌入式。触发迁移到 Qdrant 的条件：向量数量 > 10万 or 检索延迟 > 500ms。
 
 ### 7.3 Embedding 模型选型
 
@@ -2420,7 +2420,7 @@ rejection_reason: null          # Owner 驳回时记录理由
 │  → 删除旧 Collection → 重新创建               │
 │  → 逐 KE 调用 embedding_model.encode(body)   │
 │  → 批量 upsert 向量 + metadata                │
-│  → Phase 3：使用 BGE-M3（rebuilt with better │
+│  →  BGE-M3（rebuilt with better │
 │     model than the original one）             │
 └──────────────────┬───────────────────────────┘
                    ▼
@@ -2876,7 +2876,7 @@ G2 Triage 做单条 vs 单条相似度 > 0.80 去重。规模效应下不行：�
 | Multi-Query (§9.3) | ~15 | 1500 | 22,500 | ¥0.03 |
 | HyDE (§9.3) | ~15 | 2000 | 30,000 | ¥0.04 |
 | HDBSCAN 聚类 (§9.9) | ~1 | 5000 | 5,000 | ¥0.01 |
-| 四模型审计（Phase 3） | ~12 | 12000 | 144,000 | ¥0.17 |
+| 四模型审计 | ~12 | 12000 | 144,000 | ¥0.17 |
 | **月度总计** | **~95** | — | **~327,500** | **¥0.40** |
 
 **硬预算上限**：¥5.00/月。超 80% 时 WARN 日志 + 降级：HyDE → 关闭 / Multi-Query → 关闭 / 审计 → 仅 V-12 快速通道。
@@ -2916,7 +2916,7 @@ LLM API 429 (Rate Limit) / 月预算超 80%
 
 **存储**：图片 base64 嵌入 KE frontmatter 的 `attachments` 字段，或外部路径引用到 `data/multimodal/`。
 
-> **对标**：CLIP (OpenAI, 2021) — 图文跨模态检索 / CogVLM (THU/Zhipu, 2023) — 中文多模态理解 / GPT-4V — 截图直接喂给模型分析。但**Phase 1-2 不实现**——当前知识库主要处理结构化文本，多模态 ROI 在 Phase 3+ 才显现。
+> **对标**：CLIP (OpenAI, 2021) — 图文跨模态检索 / CogVLM (THU/Zhipu, 2023) — 中文多模态理解 / GPT-4V — 截图直接喂给模型分析。但**2 不实现**——当前知识库主要处理结构化文本，多模态 ROI 在 Phase 3+ 才显现。
 > **大白话**：暂时先不搞——文本知识本身就够用。未来某个 session 里你贴了一张"为什么选 ChromaDB 而不是 Milvus"的白板照片——系统会把它 OCR 成文字描述+原始图作为附件一起入库。AI 以后搜"向量数据库选型"时，能在文字结果里看到那张图。
 
 ### 9.12 三级记忆模型（Three-Tier Memory: Hot/Warm/Cold）
@@ -3200,10 +3200,10 @@ Bottom 3 最没用的KE：
 | 6 | `vibe-coding-infrastructure-7-modules-design.md` §M3 | M3记忆系统（短期/中期/长期三层）、kb/代码状态、vector_memory差距、统一API(remember/learn/forget/recall)、知识归属决策（蓝图→KE系统）、知识库存放架构参考 | KB部分已提取，其余7模块设计保留 |
 | 7 | D0-knowledge四指令（011/022/033/044） | 四模型审计分工方法论（GLM扫描→Kimi结构→Qwen索引→Opus裁决）、知识提取六维矩阵（K1-K6）、知识去重策略、知识入库4步法 | 方法论已参考纳入，源文件保留作为施工执行指令 |
 
-### 10.3 kb/→VMS 整合路径（Phase 3）
+### 10.3 kb/→VMS 整合路径
 
 ```
-Phase 1-2（当前）：kb/ 独立运行
+2（当前）：kb/ 独立运行
   src/zephyr/kb/  →  12模块 ✅
   vector_memory/  →  空包（__init__.py only）
 
@@ -3427,7 +3427,7 @@ Phase 3 (🔮 计划)
 
 | 触发条件 | 操作 | 联动 |
 |------|------|------|
-| `half_life_days` 到期 | KE status → DEPRECATED | `knowledge_decay_engine.py` (Phase 3) |
+| `half_life_days` 到期 | KE status → DEPRECATED | `knowledge_decay_engine.py`  |
 | DEPRECATED 30 天后 | KE status → ARCHIVED | 向量删除，MD 保留 |
 | ARCHIVED KE 占库 > 20% | 触发 `_archive/` 清理审批 | Owner 人工裁决物理删除 |
 

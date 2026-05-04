@@ -75,7 +75,6 @@ _GATE_FILES: dict[str, str] = {
 # 数据模型
 # ---------------------------------------------------------------------------
 
-
 class SystemSnapshot(BaseModel):
     """M1 系统状态镜像（Pydantic v2 frozen）。
 
@@ -102,20 +101,16 @@ class SystemSnapshot(BaseModel):
     registry_hashes: dict[str, str]
     blueprint_v12_pass_rate: float = Field(ge=-1.0, le=1.0)
 
-
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
-
 class SnapshotBuildError(RuntimeError):
     """系统快照构建失败（不抛出到 M1 主流程，仅内部记录）。"""
-
 
 # ---------------------------------------------------------------------------
 # SystemSnapshotter
 # ---------------------------------------------------------------------------
-
 
 class SystemSnapshotter:
     """M1 内部组件：在 build() pipeline 末尾生成系统状态镜像。
@@ -199,8 +194,8 @@ class SystemSnapshotter:
     def _collect_module_versions(self) -> dict[str, str]:
         """收集关键子模块版本。
 
-        Phase 1：使用静态 manifests 字典（真实版本由 Owner 更新）。
-        Phase 2：升级为读取 pyproject.toml 或 importlib.metadata。
+        使用静态 manifests 字典（真实版本由 Owner 更新）。
+        升级为读取 pyproject.toml 或 importlib.metadata。
         """
         versions: dict[str, str] = {}
         for module_name, version in self._module_manifests.items():

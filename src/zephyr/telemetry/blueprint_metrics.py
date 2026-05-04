@@ -40,7 +40,6 @@ _FILE = Path(__file__).resolve()
 REPO_ROOT = _FILE.parents[3]
 METRICS_FILE = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
 
-
 class BlueprintReadEvent:
     """单次蓝图读取事件。"""
 
@@ -56,7 +55,6 @@ class BlueprintReadEvent:
         self.task_id = task_id
         self.agent_model = agent_model
         self.timestamp = datetime.now(_UTC).isoformat()
-
 
 def record_blueprint_read(
     blueprint_id: str,

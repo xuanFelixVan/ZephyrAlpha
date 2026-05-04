@@ -57,7 +57,6 @@ SHARED_DIRS = {
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
-
 def _layer_of_file(filepath: Path) -> str | None:
     """返回文件所属的层名，如果不在层目录中则返回 None。"""
     rel = str(filepath.relative_to(SRC_DIR)).replace("\\", "/")
@@ -68,7 +67,6 @@ def _layer_of_file(filepath: Path) -> str | None:
         if rel.startswith(shared + "/") or rel == shared:
             return shared
     return None
-
 
 def _imports_in_file(filepath: Path) -> list[tuple[str, int]]:
     """提取文件中所有的 import 路径和行号。"""
@@ -88,7 +86,6 @@ def _imports_in_file(filepath: Path) -> list[tuple[str, int]]:
                 imports.append((node.module, node.lineno))
     return imports
 
-
 def _all_layer_files() -> list[Path]:
     """返回所有层目录下的 .py 文件。"""
     files: list[Path] = []
@@ -100,7 +97,6 @@ def _all_layer_files() -> list[Path]:
             if f.is_file() and f.name != "__init__.py":
                 files.append(f)
     return files
-
 
 class TestLayerIsolation:
     """LF01: 层依赖方向正确。"""
@@ -153,7 +149,6 @@ class TestLayerIsolation:
         if violations:
             rel = filepath.relative_to(REPO_ROOT)
             pytest.fail(f"{rel}:\n" + "\n".join(f"  - {v}" for v in violations))
-
 
 class TestNoImportCycles:
     """LF03: 模块间无循环依赖。"""

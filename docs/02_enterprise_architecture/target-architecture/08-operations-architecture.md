@@ -141,7 +141,7 @@ Operations Architecture（运维架构视图）回答：
         │ metrics.emit()
         ▼
 ┌────────────────────────┐
-│   FLE collect_metric() │ ──→ SQLite .runtime/sqlite/feedback.db (Phase 1)
+│   FLE collect_metric() │ ──→ SQLite .runtime/sqlite/feedback.db
 └───────┬────────────────┘     （数据量 > 100 万/天 触发 TECH-13 升级 InfluxDB）
         │
         ▼
@@ -156,7 +156,7 @@ Operations Architecture（运维架构视图）回答：
 └────────────────────────────────────┘
 ```
 
-**导出通道（Phase 1）**：
+**导出通道**：
 
 - `l12_system_telemetry/` 定期从 FLE 导出到本地文件（JSON Lines）
 - Phase 2 启用 OpenTelemetry Collector → Prometheus/Grafana 标准栈
@@ -267,7 +267,7 @@ class ServiceHealthProtocol(Protocol):
 
 **巡检频率**：Phase 1 由 FLE 每 60 秒轮询一次，异常立即进入 detect_anomaly 流程。
 
-### 8A.3 降级矩阵（Phase 1）
+### 8A.3 降级矩阵
 
 | 服务 | 降级条件 | 降级行为 | 恢复条件 |
 |------|---------|---------|---------|
@@ -341,5 +341,5 @@ class ServiceHealthProtocol(Protocol):
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-04-19 | v0.1.0：初版骨架建立（S14-Phase2-G4，批次 A）。§1 Purpose + 与 04-TA §6 边界说明；§2 八运维域总表；§3-§8 六域占位（3-5 行现状 + 占位标记）；§9 Runbook Catalog 11 条占位清单；§10 Activation Triggers 8 条触发条件。R39 登记理由。 |
+| 2026-04-19 | v0.1.0：初版骨架建立（S14-G4，批次 A）。§1 Purpose + 与 04-TA §6 边界说明；§2 八运维域总表；§3-§8 六域占位（3-5 行现状 + 占位标记）；§9 Runbook Catalog 11 条占位清单；§10 Activation Triggers 8 条触发条件。R39 登记理由。 |
 | 2026-04-24 | v0.2.0：B-d-5 增量加固。§4 D2 Monitoring 实质化：Phase 1 SLI/SLO 基线 9 项（含 SLO 阈值+告警动作）+ 指标采集拓扑（FLE 为中枢）；新增 §8A "6 大核心服务运维治理"（生命周期 DAG 序 + health check 合约 + 降级矩阵 + 日常巡检清单）；§9 Runbook Catalog 新增 5 条服务类 Runbook（RB-SVC-01~05）；§8 D6 补充与 06-security §11 对齐链接。文档保留 skeleton 身份，待 Phase 2 升级为 active。 |

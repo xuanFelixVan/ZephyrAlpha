@@ -65,7 +65,6 @@ _SUBDIRS = [
     ),
 ]
 
-
 def _count_files(root: Path) -> int:
     count = 0
     for entry in sorted(root.iterdir()):
@@ -82,7 +81,6 @@ def _count_files(root: Path) -> int:
             count += 1
     return count
 
-
 def _count_recursive(root: Path) -> int:
     total = 0
     for entry in sorted(root.rglob("*")):
@@ -93,7 +91,6 @@ def _count_recursive(root: Path) -> int:
         if entry.is_file() and entry.suffix in (".md", ".yaml", ".yml", ".json"):
             total += 1
     return total
-
 
 def _generate_table() -> list[str]:
     lines = [TABLE_START_MARKER]
@@ -117,7 +114,6 @@ def _generate_table() -> list[str]:
     lines.append(TABLE_END_MARKER)
     return lines
 
-
 def _find_table_range(content: str) -> tuple[int, int] | None:
     """Find the old table block: starts with '| 子目录' and ends with 'master-document-inventory.yaml）。'"""
     start = content.find("| 子目录 ")
@@ -139,7 +135,6 @@ def _find_table_range(content: str) -> tuple[int, int] | None:
     else:
         prev_nl += 1
     return (prev_nl, end)
-
 
 def sync(check_only: bool = False) -> int:
     """同步索引."""
@@ -181,7 +176,6 @@ def sync(check_only: bool = False) -> int:
     return 0
     """sync."""
 
-
 def main() -> None:
     """入口函数."""
     parser = ArgumentParser(description="从磁盘扫描同步 PS-IDX-001 §二 文件数量表格")
@@ -191,7 +185,6 @@ def main() -> None:
 
     code = sync(check_only=args.check)
     sys.exit(code)
-
 
 if __name__ == "__main__":
     main()

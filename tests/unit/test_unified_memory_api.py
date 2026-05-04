@@ -42,7 +42,6 @@ from zephyr.shared.capability import CapabilityDenied, CapabilityRegistry
 # Fixtures
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture(autouse=True)
 def reset_singleton():
     """每个测试前后重置单例。"""
@@ -50,17 +49,14 @@ def reset_singleton():
     yield
     reset_unified_memory_api()
 
-
 @pytest.fixture
 def memory_backend() -> InMemoryMemoryBackend:
     return InMemoryMemoryBackend()
-
 
 @pytest.fixture
 def api(memory_backend) -> UnifiedMemoryAPI:
     """默认 API 实例：使用内存后端 + 关闭 CBAC（避免依赖 capabilities.yaml 中无 write_kb 规则）。"""
     return UnifiedMemoryAPI(backend=memory_backend, enforce_capability=False)
-
 
 @pytest.fixture
 def sample_provenance() -> WriteTrace:
@@ -69,7 +65,6 @@ def sample_provenance() -> WriteTrace:
         audit_chain=["T-V2-007", "RI-02"],
         arbitration="R84",
     )
-
 
 @pytest.fixture
 def cbac_yaml(tmp_path: Path) -> Path:
@@ -91,11 +86,9 @@ def cbac_yaml(tmp_path: Path) -> Path:
     )
     return yaml_path
 
-
 # ---------------------------------------------------------------------------
 # 1. WriteTrace 模型
 # ---------------------------------------------------------------------------
-
 
 class TestWriteTrace:
     def test_frozen_immutable(self):
@@ -133,7 +126,6 @@ class TestWriteTrace:
         assert prov.audit_chain == ["T-V2-007", "RI-03"]
         assert prov.arbitration == "R84"
 
-
 class TestBuildWriteTrace:
     def test_factory_returns_frozen(self):
         prov = build_provenance(origin="M2", audit_chain=["T-V2-007"])
@@ -145,11 +137,9 @@ class TestBuildWriteTrace:
         prov = build_provenance(origin="M2", audit_chain=["T-V2-007"], arbitration="R84")
         assert prov.arbitration == "R84"
 
-
 # ---------------------------------------------------------------------------
 # 2. InMemoryMemoryBackend
 # ---------------------------------------------------------------------------
-
 
 class TestInMemoryBackend:
     def test_write_and_list(self, memory_backend, sample_provenance):
@@ -236,11 +226,9 @@ class TestInMemoryBackend:
         memory_backend.clear()
         assert memory_backend.count() == 0
 
-
 # ---------------------------------------------------------------------------
 # 3. UnifiedMemoryAPI.write
 # ---------------------------------------------------------------------------
-
 
 class TestWriteWriteTraceEnforcement:
     def test_write_success_returns_chunk_id(self, api, sample_provenance):
@@ -290,11 +278,9 @@ class TestWriteWriteTraceEnforcement:
         rec = memory_backend.list_by_topic("t", 1)[0]
         assert rec.metadata["arbitration"] == ""
 
-
 # ---------------------------------------------------------------------------
 # 4. UnifiedMemoryAPI.recall
 # ---------------------------------------------------------------------------
-
 
 class TestRecall:
     def test_recall_empty_topic_returns_empty(self, api):
@@ -328,11 +314,9 @@ class TestRecall:
         api = UnifiedMemoryAPI(backend=bad_backend, enforce_capability=False)
         assert api.recall(topic="t", k=5) == []
 
-
 # ---------------------------------------------------------------------------
 # 5. UnifiedMemoryAPI.search
 # ---------------------------------------------------------------------------
-
 
 class TestSearch:
     def test_search_empty_query_returns_empty(self, api):
@@ -358,11 +342,9 @@ class TestSearch:
         api = UnifiedMemoryAPI(backend=bad_backend, enforce_capability=False)
         assert api.search(query="x", k=5) == []
 
-
 # ---------------------------------------------------------------------------
 # 6. CBAC 集成
 # ---------------------------------------------------------------------------
-
 
 class TestCbacIntegration:
     def test_cbac_allow_passes(self, memory_backend, cbac_yaml, sample_provenance):
@@ -404,11 +386,9 @@ class TestCbacIntegration:
         chunk_id = api.write(topic="any_topic", content="x", provenance=sample_provenance)
         assert chunk_id.startswith("any_topic::")
 
-
 # ---------------------------------------------------------------------------
 # 7. 单例
 # ---------------------------------------------------------------------------
-
 
 class TestSingleton:
     def test_get_returns_same_instance(self, memory_backend):
@@ -421,11 +401,9 @@ class TestSingleton:
         b = get_unified_memory_api(backend=memory_backend, enforce_capability=False, reset=True)
         assert a is not b
 
-
 # ---------------------------------------------------------------------------
 # 8. ChromaMemoryBackend mock
 # ---------------------------------------------------------------------------
-
 
 class TestChromaBackendMock:
     """通过 mock chroma client 验证 ChromaMemoryBackend 调用契约。"""

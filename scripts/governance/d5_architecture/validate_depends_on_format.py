@@ -37,7 +37,6 @@ DOCS_DIR = REPO_ROOT / "docs"
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 REQUIRED_KEYS = {"target", "at", "why"}
 
-
 def check_depends_on_format(depends_on, filepath_str: str) -> list[dict]:
     """检查 depends_on 字段格式"""
     findings = []
@@ -95,7 +94,6 @@ def check_depends_on_format(depends_on, filepath_str: str) -> list[dict]:
             )
     return findings
 
-
 def fix_old_format(content: str, filepath_str: str) -> tuple[str | None, int]:
     """检查 depends_on 字段格式."""
     fixed_count = 0
@@ -115,7 +113,6 @@ def fix_old_format(content: str, filepath_str: str) -> tuple[str | None, int]:
     return (new_content, fixed_count)
     "修复旧格式."
 
-
 def replace_string_list(match) -> str:
     """替换字符串列表格式"""
     indent = match.group(1)
@@ -131,7 +128,6 @@ def replace_string_list(match) -> str:
             )
     return "\n".join(lines)
     "替换字符串列表格式."
-
 
 def scan_all_files() -> tuple[list[dict], dict[str, int]]:
     """scan all files."""
@@ -159,7 +155,6 @@ def scan_all_files() -> tuple[list[dict], dict[str, int]]:
             stats["all_structured"] += 1
     return (all_findings, stats)
     "scan all files."
-
 
 def main() -> None:
     """入口函数."""
@@ -237,7 +232,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

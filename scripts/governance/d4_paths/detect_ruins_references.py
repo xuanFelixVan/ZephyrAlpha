@@ -44,7 +44,6 @@ _WHITELIST_FILES = {
 _RUINS_PATTERNS: list[tuple[str, str]] | None = None
 _OBSOLETE_PATH_MARKERS: list[str] | None = None
 
-
 def _get_ruins_patterns() -> list[tuple[str, str]]:
     global _RUINS_PATTERNS
     if _RUINS_PATTERNS is None:
@@ -53,7 +52,6 @@ def _get_ruins_patterns() -> list[tuple[str, str]]:
         _RUINS_PATTERNS = [(entry["pattern"], entry["label"]) for entry in data.get("ruins_regex_patterns", [])]
     return _RUINS_PATTERNS
 
-
 def _get_obsolete_markers() -> list[str]:
     global _OBSOLETE_PATH_MARKERS
     if _OBSOLETE_PATH_MARKERS is None:
@@ -61,7 +59,6 @@ def _get_obsolete_markers() -> list[str]:
             data = yaml.safe_load(f)
         _OBSOLETE_PATH_MARKERS = list(data.get("obsolete_markers", []))
     return _OBSOLETE_PATH_MARKERS
-
 
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
@@ -100,7 +97,6 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
-
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
@@ -122,7 +118,6 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     return (all_findings, files_scanned, 0)
     "扫描仓库并返回发现列表."
 
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="残骸/废弃路径引用检测")
@@ -141,7 +136,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

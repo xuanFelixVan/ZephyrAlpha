@@ -67,12 +67,10 @@ except ImportError:
 
 from _shared.constants import REPO_ROOT
 
-
 class Violation(NamedTuple):
     rule: str
     file: str
     detail: str
-
 
 FILENAME_UPPERCASE_WHITELIST: set[str] = {
     "AGENTS.md",
@@ -152,11 +150,9 @@ TECH_VERSION_TOKENS: tuple[str, ...] = (
     "oauth-v",
 )
 
-
 def _has_tech_version_token(filename_lower: str) -> bool:
     """Whitelist real technology product versions (e.g. pydantic-v2) from N-02 detection."""
     return any(tok in filename_lower for tok in TECH_VERSION_TOKENS)
-
 
 RE_DATE_SUFFIX = re.compile(r"-\d{8}(?:[-.]|$)")
 RE_LATEST = re.compile(r"-LATEST(?:[-.]|$)", re.IGNORECASE)
@@ -165,11 +161,9 @@ RE_ADR_NO_SUFFIX = re.compile(r"^adr-\d+\.md$", re.IGNORECASE)
 RE_ADR_FILE = re.compile(r"^adr-(\d{4})-[\w\-]+\.md$", re.IGNORECASE)
 RE_FRONTMATTER_MODULE_ID = re.compile(r"^module_id:\s*([^\s#]+)", re.MULTILINE)
 
-
 def _is_path_exempt(rel_path: str) -> bool:
     rp = rel_path.replace("\\", "/")
     return any(rp.startswith(p) for p in PATH_EXEMPT_PREFIXES)
-
 
 def _read_frontmatter_module_id(filepath: Path) -> str | None:
     try:
@@ -184,7 +178,6 @@ def _read_frontmatter_module_id(filepath: Path) -> str | None:
     fm = content[3:end]
     m = RE_FRONTMATTER_MODULE_ID.search(fm)
     return m.group(1).strip().strip("\"'") if m else None
-
 
 def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
     """对单个相对路径做 7 条规则检测；返回违规列表。"""
@@ -276,7 +269,6 @@ def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
 
     return violations
 
-
 def iter_all_files(root: Path) -> Iterable[Path]:
     """iter all files."""
     for p in root.rglob("*"):
@@ -292,7 +284,6 @@ def iter_all_files(root: Path) -> Iterable[Path]:
         yield p
     """iter all files."""
 
-
 def _git_staged_files() -> list[str]:
     try:
         out = subprocess.check_output(
@@ -305,7 +296,6 @@ def _git_staged_files() -> list[str]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         return []
     return [line.strip() for line in out.splitlines() if line.strip()]
-
 
 def _print_report(violations: list[Violation]) -> None:
     if not violations:
@@ -326,7 +316,6 @@ def _print_report(violations: list[Violation]) -> None:
             print(f"    ... (+{len(items) - 20} more)", file=sys.stderr)
         print(file=sys.stderr)
     print("[GATE-11] 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md §五")
-
 
 def main() -> None:
     """入口函数."""
@@ -372,7 +361,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if violations else 0)
-
 
 if __name__ == "__main__":
     main()

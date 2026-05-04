@@ -87,9 +87,9 @@ ZephyrAlpha 2.0 架构在当前阶段处于**"物理架构冻结 + 模块边界�
 | **14 层物理架构（L00-L13）** | ✅ **已冻结** | 11 源审计共识，不再讨论删减或增加层 |
 | **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | ✅ **已定稿** | 2026-04-24 产出（`03-application-architecture.md §4A`）；接口规范 6 份齐备（见 `docs/03_modules/_b_track_interfaces/`）|
 | **17 项技术选型** | ✅ **已定稿** | 见 `technology-landscape.yaml`（SSoT）|
-| **Phase 0-4 路线图** | ✅ **已定稿** | 见 `phase-transition-protocol.md` |
+| **4 路线图** | ✅ **已定稿** | 见 `phase-transition-protocol.md` |
 | **模块内部边界（具体文件/函数级）** | ⏳ **讨论中** | Phase 1 落地时细化，不在本阶段冻结 |
-| **任务卡路径（老树→新树迁移）** | 🔧 **重组中** | 当前重组阶段 A-F，预计 Phase 0 内完成 |
+| **任务卡路径（旧树→当前项目迁移）** | 🔧 **重组中** | 当前重组阶段 A-F，预计 Phase 0 内完成 |
 
 **架构消费者须知**：
 
@@ -185,7 +185,7 @@ ZephyrAlpha 2.0 仓库有三棵主树，每棵对应一个主要架构视图：
 | ADR-0015 | Context Engine：NetworkX + JSON + 本地 LLM 压缩 (Qwen2.5-3B) | 6 大核心服务之一 |
 | ADR-0016 | Vector Memory：ChromaDB 0.6 + BGE-M3 ONNX + 递归分块 | 6 大核心服务之一 |
 | ADR-0017 | Agent Orchestrator：SQLite + asyncio.Queue 起步，NATS 升级 | 6 大核心服务之一 |
-| ADR-0018 | Agent Sandbox：Windows ACL + 只读挂载（Phase 1）；Docker Desktop（升级）| Orchestrator 配套 |
+| ADR-0018 | Agent Sandbox：Windows ACL + 只读挂载；Docker Desktop（升级）| Orchestrator 配套 |
 | ADR-0019 | Feedback Loop Engine：SQLite 时间序列 + EMA 异常检测 | 6 大核心服务之一 |
 | ADR-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed + 四层防御 | 6 大核心服务之一 |
 | ADR-0021 | SSoT Validator：Phase 0 唯一任务，阻塞下游 | Phase 0 门禁 |
@@ -224,7 +224,7 @@ L12 跨层支撑层
 
 ### 5A.3 详细架构
 
-完整架构图 / 服务间依赖 DAG / 降级协调矩阵 / 与 14 层集成方式 / Phase 0-4 落地路线 → 见 [`03-application-architecture.md §4A`](./03-application-architecture.md)。
+完整架构图 / 服务间依赖 DAG / 降级协调矩阵 / 与 14 层集成方式 / 4 落地路线 → 见 [`03-application-architecture.md §4A`](./03-application-architecture.md)。
 
 ---
 

@@ -271,17 +271,14 @@ _PRAGMAS = [
     "PRAGMA temp_store = MEMORY",
 ]
 
-
 def _apply_pragmas(conn: sqlite3.Connection) -> None:
     """对连接应用 ADR-0030 §4.3 PRAGMA 基线。"""
     for pragma in _PRAGMAS:
         conn.execute(pragma)
 
-
 # ---------------------------------------------------------------------------
 # 公共 API
 # ---------------------------------------------------------------------------
-
 
 def get_db_connection(
     db_path: Optional[Path | str] = None,
@@ -316,7 +313,6 @@ def get_db_connection(
     conn.row_factory = sqlite3.Row
     _apply_pragmas(conn)
     return conn
-
 
 def init_db(
     db_path: Optional[Path | str] = None,
@@ -381,7 +377,6 @@ def init_db(
 
     return resolved.resolve()
 
-
 def _migrate_namespace_and_seq(conn: sqlite3.Connection) -> None:
     """#21 裁定：幂等添加 namespace + seq 列到 tasks 表，创建 task_files 表。"""
     cursor = conn.execute("PRAGMA table_info(tasks)")
@@ -399,7 +394,6 @@ def _migrate_namespace_and_seq(conn: sqlite3.Connection) -> None:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_tf_task ON task_files(task_id)")
     if "idx_tf_file" not in existing_indexes:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_tf_file ON task_files(file_path)")
-
 
 def _migrate_v2_fields(conn: sqlite3.Connection) -> None:
     """#12 裁定：幂等添加 v2.0 新字段 + name→title 重命名 + 重建依赖视图。"""
@@ -424,7 +418,6 @@ def _migrate_v2_fields(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE tasks ADD COLUMN completed_at TEXT")
     _rebuild_views(conn)
 
-
 def _rebuild_views(conn: sqlite3.Connection) -> None:
     """销毁并重建全部视图——防止 RENAME COLUMN 后视图引用旧列名导致崩溃。"""
     conn.execute("DROP VIEW IF EXISTS event_log")
@@ -433,7 +426,6 @@ def _rebuild_views(conn: sqlite3.Connection) -> None:
     conn.execute(_DDL_VIEW_EVENT_LOG.strip())
     conn.execute(_DDL_VIEW_ACTIVE_TASKS.strip())
     conn.execute(_DDL_VIEW_RECENT_SESSIONS.strip())
-
 
 def _migrate_knowledge_status(conn: sqlite3.Connection) -> None:
     """T-2-11-A: 幂等添加 status 列到 knowledge 表。"""
@@ -448,7 +440,6 @@ def _migrate_knowledge_status(conn: sqlite3.Connection) -> None:
             "))"
         )
 
-
 def _migrate_circuit_breaker_state(conn: sqlite3.Connection) -> None:
     """T-V2-005: 幂等创建 circuit_breaker_state 表及配套索引。
 
@@ -460,7 +451,6 @@ def _migrate_circuit_breaker_state(conn: sqlite3.Connection) -> None:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_cb_state " "ON circuit_breaker_state(state)")
     if "idx_cb_caller" not in existing_indexes:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_cb_caller " "ON circuit_breaker_state(caller_module)")
-
 
 def _migrate_taskcard_columns(conn: sqlite3.Connection) -> None:
     """MOD-INF-006 v0.3.0：幂等添加 TaskCard 24 个扩展列到 tasks 表。
@@ -502,7 +492,6 @@ def _migrate_taskcard_columns(conn: sqlite3.Connection) -> None:
         if col_name not in columns:
             conn.execute(f"ALTER TABLE tasks ADD COLUMN {col_name} {col_def}")
 
-
 def table_names(db_path: Optional[Path | str] = None) -> list[str]:
     """返回数据库中所有表名（不含视图）。"""
     resolved = Path(db_path) if db_path is not None else DB_PATH
@@ -513,7 +502,6 @@ def table_names(db_path: Optional[Path | str] = None) -> list[str]:
     finally:
         conn.close()
 
-
 def view_names(db_path: Optional[Path | str] = None) -> list[str]:
     """返回数据库中所有视图名。"""
     resolved = Path(db_path) if db_path is not None else DB_PATH
@@ -523,7 +511,6 @@ def view_names(db_path: Optional[Path | str] = None) -> list[str]:
         return [row[0] for row in cursor.fetchall()]
     finally:
         conn.close()
-
 
 # ---------------------------------------------------------------------------
 # CLI 入口（便于直接运行 python -m zephyr.db.sqlite_schema 初始化）

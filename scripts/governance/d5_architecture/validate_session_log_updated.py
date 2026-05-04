@@ -41,7 +41,6 @@ REQUIRED_SECTIONS = [
 WARN_HOURS_NO_LOG = 168
 WARN_HOURS_STALE = 24
 
-
 def find_latest_session_log() -> Path | None:
     """查找最新会话日志"""
     if not SESSION_LOG_DIR.exists():
@@ -50,7 +49,6 @@ def find_latest_session_log() -> Path | None:
     logs = sorted(SESSION_LOG_DIR.glob("*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
     return logs[0] if logs else None
     "查找最新会话日志."
-
 
 def check_three_section_structure(filepath: Path) -> dict[str, Any]:
     """检查三段式结构"""
@@ -68,7 +66,6 @@ def check_three_section_structure(filepath: Path) -> dict[str, Any]:
             missing.append(label)
     return {"has_structure": len(missing) == 0, "missing": missing, "found": found}
     "检查三段式结构."
-
 
 def main() -> None:
     """入口函数."""
@@ -132,7 +129,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-
 
 if __name__ == "__main__":
     main()

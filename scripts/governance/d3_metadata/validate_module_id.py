@@ -33,7 +33,6 @@ POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
 MODULE_ID_PATTERN = re.compile("^[A-Z]+(-[A-Z0-9]+)+$")
 FRONTMATTER_ID_RE = re.compile("^module_id:\\s*(.+)$", re.MULTILINE)
 
-
 def extract_frontmatter_module_id(filepath: Path) -> str | None:
     """提取 frontmatter 中的 module_id"""
     try:
@@ -44,7 +43,6 @@ def extract_frontmatter_module_id(filepath: Path) -> str | None:
     if m:
         return m.group(1).strip().strip('"').strip("'")
     return None
-
 
 def scan_all_module_ids() -> dict[str, list[Path]]:
     """扫描所有 module_id"""
@@ -57,7 +55,6 @@ def scan_all_module_ids() -> dict[str, list[Path]]:
             id_map[mid].append(f)
     return id_map
 
-
 def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
     """检查 D1 维度"""
     errors = []
@@ -66,7 +63,6 @@ def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
             rels = [str(p.relative_to(POLICIES_ROOT)) for p in paths]
             errors.append(f"DIM-1 FAIL: module_id '{mid}' assigned to {len(paths)} files: {rels}")
     return errors
-
 
 def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
     """检查 D3 维度"""
@@ -79,7 +75,6 @@ def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
                 f"DIM-3 FAIL: module_id '{mid}' in {paths[0].relative_to(POLICIES_ROOT)} does not match DOMAIN-TYPE-NNN format"
             )
     return errors
-
 
 def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
     """检查 D4 维度"""
@@ -104,7 +99,6 @@ def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
                         f"DIM-4 WARN: {prefix} has gap at {prefix}-{gap_start:03d} (found {prefix}-{nums[i]:03d} then {prefix}-{nums[i + 1]:03d})"
                     )
     return errors
-
 
 def check_dim2() -> list[str]:
     """检查 D2 维度"""
@@ -133,7 +127,6 @@ def check_dim2() -> list[str]:
                     f"DIM-2 FAIL: {rel_idx} claims {ref_path_str}={claimed_id}, but file has module_id={actual_id}"
                 )
     return errors
-
 
 def main() -> int:
     """入口函数"""
@@ -173,7 +166,6 @@ def main() -> int:
         return 1
     print("\nGATE-MODULEID: ALL PASS")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
