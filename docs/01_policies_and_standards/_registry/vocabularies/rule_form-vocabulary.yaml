@@ -1,0 +1,129 @@
+# rule_form 受控词表
+# ZephyrAlpha 2.0 规则形式唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.2.0
+# 创建日期：2026-04-30
+#
+# 本词表定义 rule_form 字段的所有合法值（4 种）。
+# rule_form 描述规则的表达形式，决定 AI 如何消费和执行该规则。
+#
+# 对标标准：
+#   - SchemaStore：enum + description + deprecated flag 三元组
+#   - K8s API conventions：声明式 Spec vs 命令式执行
+#   - Cursor Rules：结构分类决定触发方式
+#   - PS-STD-001 §2.5：受控词表速查 + §2.6 一致性约束
+
+schema_version: "1.2.0"
+doc_type: vocabulary
+module_id: PS-VOC-002
+version: "1.2.0"
+title: "rule_form 受控词表"
+status: active
+vocabulary_name: rule_form
+total_values: 4
+source: "PS-STD-001 §2.5（受控词表速查：4 值）+ §2.6（一致性约束：doc_type → rule_form 映射）"
+depends_on:
+  - target: PS-STD-001
+    at: "§2.5 + §2.6 + §2.8 #1"
+    why: "rule_form 受控词表定义真源 + 一致性约束真源"
+derived_from:
+  - source: "_registry/vocabularies/doc_type-vocabulary.yaml"
+    relationship: "mapping_rules 中引用的 doc_type 值由 doc_type-vocabulary.yaml 唯一定义"
+    fields: ["mapping_rules.rule"]
+
+values:
+  - value: declarative
+    definition: "声明式规则——定义'是什么/必须/禁止'，不定义'如何做'"
+    ai_consumption: "AI 读取并遵守，不执行步骤"
+    examples: ["ABS-001: 所有数据源连接必须认证", "COND-001: P0 模块额外条件"]
+    doc_types: ["policy", "standard", "protocol", "adr", "index", "declaration", "gate", "design", "plan", "roadmap", "readme", "service_spec", "architecture_view"]
+
+  - value: procedural
+    definition: "过程式规则——定义'如何做'的步骤、检查清单、回滚方案"
+    ai_consumption: "AI 按步骤执行，每步验证"
+    examples: ["Step 1: 确认数据源准入", "Step 2: 创建连接器模块"]
+    doc_types: ["operational_rule"]
+
+  - value: data
+    definition: "数据类规则——结构化数据清单，用于发现和索引"
+    ai_consumption: "AI 查询和引用，不执行"
+    examples: ["rule-registry.md", "master-document-inventory.yaml"]
+    doc_types: ["register", "vocabulary", "contract", "terminology", "reference", "schema", "log", "knowledge_entry", "audit_report", "config"]
+
+  - value: structural
+    definition: "结构类规则——定义文档/文件的结构骨架"
+    ai_consumption: "AI 按模板生成文档"
+    examples: ["blueprint-template.md", "session-log-schema.yaml"]
+    doc_types: ["template", "blueprint", "construction_plan"]
+
+# ============================================================
+# AI 决策辅助：选择 rule_form 的判断标准
+# ============================================================
+# 你不需要手动选 rule_form——它是 doc_type 的自动推导字段。
+# 规则：每种 doc_type 强制绑定一种 rule_form（PS-STD-001 §2.6）。
+#
+# | 如果你的文件 doc_type 是... | rule_form 自动等于... |
+# | policy / standard / protocol / adr / index / declaration / gate / design / plan / roadmap / readme / service_spec / architecture_view | declarative |
+# | operational_rule               | procedural            |
+# | register / vocabulary / contract / terminology / reference / schema / log / knowledge_entry / audit_report / config | data                  |
+# | template / blueprint / construction_plan | structural            |
+# ============================================================
+
+deprecated_values: []
+# rule_form 词表自 1.0.0 起无废弃值——四分类（声明式/过程式/数据/结构）稳定不变。
+
+mapping_rules:
+  - rule: "doc_type: policy → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: declaration → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: reference → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: standard → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: adr → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: index → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: operational_rule → rule_form: procedural"
+    exceptions: []
+  - rule: "doc_type: register → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: vocabulary → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: contract → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: terminology → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: protocol → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: template → rule_form: structural"
+    exceptions: []
+  - rule: "doc_type: gate → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: schema → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: blueprint → rule_form: structural"
+    exceptions: []
+  - rule: "doc_type: construction_plan → rule_form: structural"
+    exceptions: []
+  - rule: "doc_type: design → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: plan → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: roadmap → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: readme → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: log → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: knowledge_entry → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: audit_report → rule_form: data"
+    exceptions: []
+  - rule: "doc_type: service_spec → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: architecture_view → rule_form: declarative"
+    exceptions: []
+  - rule: "doc_type: config → rule_form: data"
+    exceptions: []

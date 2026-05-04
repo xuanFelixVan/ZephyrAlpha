@@ -1,0 +1,296 @@
+# ZephyrAlpha 2.0 Session Log 标准 Schema
+# 定义每次 AI session 结束时必须写入的 Session Log 格式
+# 维护者：ZephyrAlpha-Owner
+
+schema_version: "2.1.0"
+module_id: GOV-AI-007
+doc_type: schema
+title: "Session Log 标准 Schema"
+status: active
+version: "2.1.0"
+date: "2026-05-03"
+owner: ZephyrAlpha-Owner
+language: zh
+created_by: human_plus_agent
+ttl: permanent
+summary: "定义每次 AI session 结束时必须写入的 Session Log 的字段 schema、存放路径和命名规范。v2.1.0：从 governance/ai/ 迁移至 _registry/schemas/。"
+rule_form: data
+supersedes:
+  - path: "governance/ai/session-log-schema.yaml"
+    version: "2.0.0"
+    reason: "文件从 governance/ai/ 迁移至 _registry/schemas/（物理位置变更，内容不变）"
+depends_on:
+  - {target: PS-STD-001, at: "§2.5", why: "frontmatter 字段分类清单"}
+  - {target: AGENTS.md, at: "§4.2", why: "原子事务模式——files_deleted 字段的安全验证规则"}
+
+# ============================================================
+# Session Log 存放位置
+# ============================================================
+storage:
+  path: "已迁至项目外部独立目录（2026-05-02）。`docs/19_development_workspace/session-logs/` 目录已删除。"
+  naming_format: "session-YYYYMMDD-NNN.md"
+  naming_example: "session-20260422-001.md"
+  note: "NNN 为当日序号，从 001 开始。如果 session-logs/ 目录不存在，AI 必须先创建目录再写文件。"
+
+# ============================================================
+# 字段间关系说明（AI 必读）
+# ============================================================
+#
+# 本 Schema 中的字段存在以下关系，AI 写 Session Log 时必须理解：
+#
+# 1. knowledge_extracted vs construction_deviations（最容易混淆）
+#    - knowledge_extracted：计数器。记录"本次 session 总共提取了几条知识条目（KE）"
+#      用途：给管理层看趋势——"这个月知识沉淀量够不够"
+#      例子：knowledge_extracted: 3（表示本次提取了 3 条 KE）
+#    - construction_deviations：明细列表。记录"施工中发现了哪些偏差，每条偏差怎么处理"
+#      用途：给工程师看细节——"下次遇到类似问题怎么办"
+#      例子：construction_deviations 列表中有一条 recommended_action 为"提取 KE"
+#    - 关系：construction_deviations 中 recommended_action 为"提取 KE"的条目数
+#      应该 ≤ knowledge_extracted 的值（因为不是所有 KE 都来自施工偏差）
+#    - 打个比方：knowledge_extracted 是"今天赚了 500 块"，
+#      construction_deviations 是"今天修了 3 个 bug，其中 2 个值得记录"
+#
+# 2. decisions vs construction_deviations
+#    - decisions：本次 session 做出的决策（如"选 SQLite 不选 DuckDB"）
+#    - construction_deviations：施工中发现的偏差（如"蓝图接口设计有缺陷"）
+#    - 区别：decisions 是主动选择，construction_deviations 是被动发现
+#
+# 3. files_changed vs files_deleted
+#    - files_changed：创建/编辑/移动的文件
+#    - files_deleted：删除的文件（单独列出，因为删除是不可逆操作，需要特别关注）
+#
+# 4. construction_deviations.recommended_action 的 4 个选项
+#    - extract_ke：提取为知识条目（KE），写入 docs/08_knowledge/
+#    - update_decision_record：更新决策记录——修正技术选型（参见 MOD-KB-001 §3.9.5 三层决策记录模型）
+#    - modify_blueprint：修改蓝图，修正设计缺陷
+#    - record_only：仅记录，暂不处理（列入遗留事项/punch list）
+#
+# ============================================================
+
+# ============================================================
+# 必填字段
+# ============================================================
+required_fields:
+  - field: "session_id"
+    type: string
+    format: "session-YYYYMMDD-NNN"
+    example: "session-20260422-001"
+    description: "唯一 session 标识符"
+    usage: "用于跨 session 追溯和引用。格式必须是 session-日期-序号，序号从 001 开始。"
+
+  - field: "date"
+    type: string
+    format: "YYYY-MM-DD"
+    example: "2026-04-22"
+    description: "session 日期"
+    usage: "记录本次 session 的执行日期，用于按日期检索和排序。"
+
+  - field: "author_agent"
+    type: string
+    example: "见 model-capability-contract.yaml（GOV-AI-006）中登记的模型名称"
+    description: "执行本次 session 的 AI 模型"
+    usage: "标识是哪个 AI 模型执行的。必须使用 GOV-AI-006 中登记的模型名称，不能自创。"
+
+  - field: "current_phase"
+    type: string
+    example: "Phase 0b"
+    description: "本次 session 所处的开发 Phase"
+    usage: "标识当前项目阶段，确保 AI 不会跨阶段执行任务。读取 AGENTS.md §1 确认当前新树位置。"
+
+  - field: "tasks_completed"
+    type: list
+    description: "本次 session 完成的任务列表（含任务 ID）"
+    example:
+      - "P0B1-001: 创建 ai-onboarding-guide.md"
+      - "P0B1-002: 创建 model-capability-contract.yaml"
+    usage: "每条必须包含任务 ID + 任务名称。未完成的任务不写在这里，写在 next_session_handover.blockers 中。"
+
+  - field: "files_changed"
+    type: list
+    description: "本次 session 变更的文件（含操作类型：创建/编辑/移动）"
+    example:
+      - "创建: docs/01_policies_and_standards/governance/ai/ai-onboarding-guide.md"
+      - "编辑: docs/01_policies_and_standards/governance/_registry/catalogs/document-metadata-index.yaml"
+    usage: "每条必须以操作类型开头（创建/编辑/移动），后跟完整绝对路径。删除的文件不写在这里，写在 files_deleted 中。"
+
+  - field: "decisions"
+    type: list
+    description: "本次 session 做出的关键决策（如有）"
+    example:
+      - "决定将 governance/ai/ 目录放在 01_policies_and_standards/ 下而非独立目录"
+    usage: "记录主动做出的选择（如技术选型、方案取舍），不是被动发现的问题。被动发现的问题写在 construction_deviations 中。"
+
+  - field: "context_budget_used"
+    type: string
+    description: "本次 session 消耗的上下文预算估计"
+    example: "约 50k tokens，读取了 8 个文件"
+    usage: "估算消耗的 token 数和读取的文件数，帮助后续 session 评估上下文预算。"
+
+  - field: "next_session_handover"
+    type: object
+    description: "交接给下一个 session 的信息"
+    usage: "下一个 AI 接手时必须先读这部分，确保工作连续性。"
+    sub_fields:
+      - name: "next_task"
+        description: "下一个待完成的任务 ID 和名称"
+        usage: "必须包含任务 ID，不能只写任务名。"
+      - name: "blockers"
+        description: "阻塞项（如有）"
+        usage: "列出阻止继续执行的障碍，如依赖未完成、需要 Owner 决策等。"
+      - name: "context_needed"
+        description: "下一个 session 需要读取的文件列表"
+        usage: "列出下一个 AI 必须先读的文件路径，减少上下文浪费。"
+      - name: "warnings"
+        description: "需要注意的风险或问题"
+        usage: "列出坑点和注意事项，防止下一个 AI 重蹈覆辙。"
+
+# ============================================================
+# 可选字段
+# ============================================================
+optional_fields:
+  - field: "knowledge_extracted"
+    type: integer
+    description: "本次 session 提取的知识条目数量"
+    example: 3
+    usage: |
+      计数器——记录本次 session 总共提取了几条知识条目（KE）。
+      用途：给管理层看趋势——"这个月知识沉淀量够不够"。
+      注意：这是汇总数字，不是明细。明细写在 construction_deviations 中。
+      与 construction_deviations 的关系：construction_deviations 中 recommended_action
+      为"提取 KE"的条目数应该 ≤ 此值（因为不是所有 KE 都来自施工偏差）。
+      打个比方：knowledge_extracted 是"今天赚了 500 块"，
+      construction_deviations 是"今天修了 3 个 bug，其中 2 个值得记录"。
+
+  - field: "construction_deviations"
+    type: list_of_objects
+    description: "施工偏差明细列表"
+    usage: |
+      明细列表——记录施工中发现的每一个偏差及其处理方式。
+      用途：给工程师看细节——"下次遇到类似问题怎么办"。
+      与 knowledge_extracted 的关系：knowledge_extracted 是汇总计数，
+      construction_deviations 是明细列表，两者互补而非替代。
+      与施工图 §9.7 的关系：施工图 §9.7 记录"这份图的偏差"（文档级），
+      Session Log 的 construction_deviations 记录"这次 session 的所有偏差"（session 级），
+      一个 session 可能涉及多份施工图，两个层面各记各的，不冲突。
+      参照：Google Post-Mortem（明细）+ 统计仪表盘（计数）、
+      丰田 A3 报告（明细）+ 统计报表（计数）。
+    example:
+      - deviation_type: "blueprint_defect"
+        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        description: "蓝图 §4 接口契约定义的返回类型与实际业务需求不一致"
+        recommended_action: "modify_blueprint"
+      - deviation_type: "tech_choice_infeasible"
+        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        description: "蓝图选型的 DuckDB 在高频小写入场景性能不足"
+        recommended_action: "update_decision_record"
+    sub_fields:
+      - name: "deviation_type"
+        type: enum
+        description: "偏差类型"
+        allowed_values:
+          - value: "blueprint_defect"
+            meaning: "蓝图设计有缺陷——蓝图的接口/约束/边界与实际需求不一致"
+          - value: "tech_choice_infeasible"
+            meaning: "技术选型不可行——蓝图选型的技术方案在实施时发现无法落地"
+          - value: "interface_change"
+            meaning: "接口变更——施工中不得不修改蓝图定义的接口签名"
+          - value: "scope_change"
+            meaning: "范围变更——施工中发现了蓝图未覆盖的需求或可省略的需求"
+        usage: "必须从以上 4 个值中选择，不能自创。"
+
+      - name: "blueprint_ref"
+        type: string
+        description: "偏差来源蓝图的完整路径"
+        usage: "必须写完整物理路径，不能只写文件名。如果偏差不来自蓝图（如纯代码 bug），写 N/A。"
+
+      - name: "description"
+        type: string
+        description: "偏差的具体描述"
+        usage: "必须写清楚：发现了什么问题、为什么是偏差（与蓝图的什么约定冲突）。不能只写'有问题'。"
+
+      - name: "recommended_action"
+        type: enum
+        description: "建议的处理动作"
+        allowed_values:
+          - value: "extract_ke"
+            meaning: "提取为知识条目（KE），写入 docs/08_knowledge/——教训值得沉淀"
+          - value: "update_decision_record"
+            meaning: "更新决策记录——技术选型需要修正（参见 MOD-KB-001 §3.9.5 三层决策记录模型）"
+          - value: "modify_blueprint"
+            meaning: "修改蓝图——设计有缺陷需要修正"
+          - value: "record_only"
+            meaning: "仅记录，暂不处理——列入遗留事项/punch list，后续再处理"
+        usage: "必须从以上 4 个值中选择。一条偏差只能选一个主要动作。如果需要多个动作，拆成两条偏差。"
+
+  - field: "files_deleted"
+    type: list
+    description: "本次 session 删除的文件列表"
+    example:
+      - "删除: docs/09_audit/archive/obsolete-draft.md"
+    usage: "删除是不可逆操作，必须单独列出。每条必须以'删除:'开头，后跟完整绝对路径。删除前必须确认无引用（参见 AGENTS.md §4.2）。"
+
+  - field: "owner_decisions_needed"
+    type: list
+    description: "需要 Owner 决策的事项列表"
+    example:
+      - "是否将 38 个 reference 文件全部改为 architecture_view？"
+    usage: "列出 AI 无法自行决定、需要 Owner 介入的事项。AI 不得跳过这些事项自行决策。"
+
+# ============================================================
+# Session Log 模板
+# ============================================================
+template: |
+  ---
+  doc_type: log
+  session_id: "session-YYYYMMDD-NNN"
+  date: "YYYY-MM-DD"
+  author_agent: "Cursor-Premium"
+  current_phase: "Phase 0b"
+  ttl: permanent
+  ---
+
+  # Session Log: session-YYYYMMDD-NNN
+
+  ## 完成的任务
+
+  - [x] P0B1-001: 创建 ai-onboarding-guide.md
+  - [x] P0B1-002: 创建 model-capability-contract.yaml
+
+  ## 变更的文件
+
+  | 操作 | 文件路径 |
+  |------|---------|
+  | 创建 | docs/01_policies_and_standards/governance/ai/ai-onboarding-guide.md |
+  | 编辑 | docs/01_policies_and_standards/governance/_registry/catalogs/document-metadata-index.yaml |
+  | 编辑 | docs/01_policies_and_standards/governance/_registry/catalogs/master-document-inventory.yaml |
+  | 创建 | docs/09_audit/session-logs/session-20260501-001.md |
+
+  ## 关键决策
+
+  （如有——主动做出的选择，如技术选型、方案取舍）
+
+  ## 施工偏差
+
+  > 记录施工中发现的偏差（被动发现的问题，不是主动决策）。
+  > 与 knowledge_extracted 的区别：这里是明细列表，knowledge_extracted 是汇总计数。
+
+  | # | 偏差类型 | 来源蓝图 | 描述 | 建议动作 |
+  |---|---------|---------|------|---------|
+  | 1 | {blueprint_defect/tech_choice_infeasible/interface_change/scope_change} | {蓝图完整路径或 N/A} | {具体描述} | {extract_ke/update_decision_record/modify_blueprint/record_only} |
+
+  ## 知识提取
+
+  本次提取 {N} 条知识条目（KE）。
+
+  ## 上下文预算
+
+  约 XX k tokens，读取了 N 个文件。
+
+  ## 交接给下一个 Session
+
+  - **下一个任务**：P0B1-003 - 创建 ai-hallucination-self-check-policy.md
+  - **阻塞项**：无
+  - **下一个 session 需要读取**：
+    - AGENTS.md（当前新树位置和总体安全规则）
+    - governance/ai/ 目录下已创建的文件（了解上下文）
+  - **注意事项**：无

@@ -1,0 +1,137 @@
+{
+  "summary": {
+    "sessions_total": 30,
+    "sessions_compliant": 18,
+    "sessions_partial": 6,
+    "sessions_none": 6,
+    "events_total": 37,
+    "events_by_blueprint": {
+      "MOD-INF-007": 5,
+      "MOD-INF-005": 2,
+      "MOD-INF-008": 4,
+      "MOD-INF-001": 2,
+      "MOD-INF-011": 3,
+      "MOD-INF-009": 4,
+      "MOD-MASTER-001": 2,
+      "MOD-INF-014": 4,
+      "MOD-INF-013": 1,
+      "MOD-INF-006": 2,
+      "MOD-INF-010": 3,
+      "MOD-INF-012": 1,
+      "MOD-INF-015": 1,
+      "MOD-INF-017": 1,
+      "MOD-KB-001": 1,
+      "MOD-INF-016": 1
+    },
+    "started_at": "2026-05-04T14:01:13.286091+00:00",
+    "finished_at": "2026-05-04T14:01:13.292113+00:00"
+  },
+  "compliance": {
+    "total_scenarios": 30,
+    "warnings": 10,
+    "passes": 20,
+    "violations": [
+      {
+        "session_id": "sim-004",
+        "task": "修复 gate_engine 的 YAML 解析 bug——G1 ingest 返回空 checks",
+        "expected": [
+          "MOD-INF-007"
+        ],
+        "actually_read": [
+          "MOD-INF-005"
+        ],
+        "level": "partial"
+      },
+      {
+        "session_id": "sim-005",
+        "task": "给熔断器加个 cooldown 计数器",
+        "expected": [
+          "MOD-INF-007"
+        ],
+        "actually_read": [],
+        "level": "none"
+      },
+      {
+        "session_id": "sim-010",
+        "task": "Context Engine 初始化时读不到 config 文件",
+        "expected": [
+          "MOD-INF-008"
+        ],
+        "actually_read": [],
+        "level": "none"
+      },
+      {
+        "session_id": "sim-014",
+        "task": "Pipeline 的 dispatch 阶段超时后没有回退到 A 区",
+        "expected": [
+          "MOD-INF-009"
+        ],
+        "actually_read": [
+          "MOD-INF-006"
+        ],
+        "level": "partial"
+      },
+      {
+        "session_id": "sim-015",
+        "task": "M6-M11 B 区增加 Claude 特种救援入口",
+        "expected": [
+          "MOD-INF-009"
+        ],
+        "actually_read": [],
+        "level": "none"
+      },
+      {
+        "session_id": "sim-019",
+        "task": "Feedback Loop 的 dispatch 发错了任务类型——发给了 Gate Engine 而非 Orchestrator",
+        "expected": [
+          "MOD-INF-010"
+        ],
+        "actually_read": [
+          "MOD-INF-007"
+        ],
+        "level": "partial"
+      },
+      {
+        "session_id": "sim-020",
+        "task": "FLE 的正反馈循环——检测到异常后 dispatch 了一个会产生更多异常的任务",
+        "expected": [
+          "MOD-INF-010"
+        ],
+        "actually_read": [],
+        "level": "none"
+      },
+      {
+        "session_id": "sim-024",
+        "task": "Security Gateway 的 fail-closed 模式下拒绝了一个合法 LLM 请求",
+        "expected": [
+          "MOD-INF-014"
+        ],
+        "actually_read": [
+          "MOD-INF-007"
+        ],
+        "level": "partial"
+      },
+      {
+        "session_id": "sim-025",
+        "task": "LLM Security L4 审计日志格式与 Telemetry 不兼容",
+        "expected": [
+          "MOD-INF-014",
+          "MOD-INF-015"
+        ],
+        "actually_read": [],
+        "level": "none"
+      },
+      {
+        "session_id": "sim-030",
+        "task": "MCPServers 的 BlueprintSearchServer 注册到 task_manager 的统一入口",
+        "expected": [
+          "MOD-INF-013",
+          "MOD-MASTER-001"
+        ],
+        "actually_read": [],
+        "level": "none"
+      }
+    ],
+    "warning_rate": 33.3
+  }
+}

@@ -1,0 +1,100 @@
+schema_version: "1.0"
+doc_type: gate
+title: "G1 Ingest Gate"
+status: active
+ttl: permanent
+
+gate_id: G1
+gate_name: ingest
+description: "Ingest stage admission gate - validates file existence, encoding compliance, and frontmatter completeness before document enters the pipeline"
+
+entry_conditions:
+  - id: G1-C00
+    name: no_deprecated_path
+    type: path_blacklist
+    description: "Deliverable paths must not reference deprecated/legacy directories"
+    check: "path does not start with deprecated prefixes (_legacy/, ARCHIVE/, deprecated/, _trash/, zephyralpha-1-0/, old_tree/)"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with _legacy/ and ARCHIVE/ paths"
+
+  - id: G1-C01
+    name: file_exists
+    type: condition
+    description: "Source file must exist on disk and be accessible"
+    check: "os.path.exists(file_path) and os.access(file_path, os.R_OK)"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with non-existent file path"
+
+  - id: G1-C02
+    name: encoding_compliant
+    type: encoding
+    description: "File must be UTF-8 encoded without BOM"
+    check: "file starts with no BOM bytes (EF BB BF) and decodes as UTF-8"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with BOM file and GBK file"
+
+  - id: G1-C03
+    name: line_ending_compliant
+    type: line_ending
+    description: "File must use LF line endings (no CRLF)"
+    check: "no 0D 0A byte sequences in file content"
+    severity: warning
+    on_failure: auto_fix
+    auto_fix_action: "Convert CRLF to LF"
+    verifiable: true
+    verification_method: "Unit test with CRLF file"
+
+  - id: G1-C04
+    name: frontmatter_present
+    type: frontmatter
+    description: "Markdown files must have YAML frontmatter delimited by ---"
+    check: "content.startswith('---') and second '---' found"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with file lacking frontmatter"
+
+  - id: G1-C05
+    name: frontmatter_required_fields
+    type: frontmatter
+    description: "Frontmatter must contain all required fields: doc_type, title, version, status, date, owner, ttl"
+    check: "all required fields present in frontmatter"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with incomplete frontmatter"
+
+  - id: G1-C06
+    name: file_size_within_limit
+    type: content_length
+    description: "File size must not exceed 500KB for .md files"
+    check: "os.path.getsize(file_path) <= 512000"
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "Unit test with oversized file"
+
+  - id: G1-C07
+    name: no_binary_content
+    type: content_quality
+    description: "Markdown files must not contain binary/non-text content"
+    check: "file content passes chardet text detection"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with binary file"
+
+severity_levels:
+  error: "Document is rejected and cannot enter pipeline"
+  warning: "Document enters pipeline but flagged for review"
+
+failure_actions:
+  reject: "Return error, document stays at source"
+  auto_fix: "Automatically fix issue and proceed"
+  flag: "Proceed but add warning flag to document metadata"

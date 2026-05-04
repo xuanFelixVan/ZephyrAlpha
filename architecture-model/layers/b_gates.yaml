@@ -1,0 +1,36 @@
+schema_version: "1.0.0"
+partition:
+  id: gates
+  name: Gates
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: gates-engine
+    name: Gate Engine
+    submodule_path: src/zephyr/gates/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: Phase 2 G1-G5 KMS 决策门 + 任务启动前合规门禁
+    files:
+      - circuit_breaker.py
+      - contract_template_manager.py
+      - gate_engine.py
+      - task_completion_gate.py
+      - g1_ingest.yaml
+      - g2_triage.yaml
+      - g3_evaluate.yaml
+      - g4_activate.yaml
+      - g5_extract.yaml
+    interfaces:
+      - contract_id: P0-GATE-PRECOMMIT
+        role: producer
+        description: GATE-18 pre-commit 门禁 — 拦截收集失败的代码
+    adr_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

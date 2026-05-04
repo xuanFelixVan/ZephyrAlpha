@@ -1,0 +1,217 @@
+schema_version: "1.1.0"
+module_id: PS-REG-004
+doc_type: register
+title: "任务卡元层登记表"
+status: active
+version: "1.1.0"
+last_updated: '2026-05-01'
+ai_autonomy: human_gated
+depends_on:
+  - target: PS-STD-001
+    at: "§1.5.3 Tier 3"
+    why: "任务卡元数据注册为 Tier 3 消费者"
+provenance:
+  origin_drafts:
+    - 模块候选池/开发流程/氛围编程基础设施/vibe-coding-task-card-and-knowledge-base-design.md
+  audit_chain:
+    - {round: 1, model: GLM-5.1, date: '2026-04-25'}
+    - {round: 2, model: Kimi-K2.6, date: '2026-04-26'}
+    - {round: 3, model: Qwen-3.6-Plus, date: '2026-04-26'}
+  arbitration:
+    model: Claude-Opus-4.7
+    date: '2026-04-27'
+    rationale_log: R77
+  arbitration_wave1:
+    model: Claude-Opus-4.7
+    date: '2026-04-27'
+    rationale_log: R86
+    decision: |
+      v2_staging_zone item_limit 5 → 15（提升原因：Wave 1 新增 RI-01~07 + V-14/V-15/V-16
+      共 10 张施工任务卡，旧 5 张限额无法承载 Wave 1 终审产出）；
+      MR-02 同步从 5 调整为 15。
+
+# ----------------------------------------------------------------------------
+# 1. 三套并行任务卡系统登记
+# ----------------------------------------------------------------------------
+
+systems:
+
+  # 1.1 老卡系统（项目外，已冻结）
+  legacy_task_cards:
+    location: 模块候选池/开发流程/任务卡/
+    status: FROZEN-LEGACY
+    frozen_at: '2026-04-27'
+    item_count_estimate: 143
+    items_freeze_rule: 只读，禁止新增、禁止修改（Owner OBSOLETE/SUPERSEDED 标注除外）
+    migration_target: sqlite_task_db
+    migration_phase: Phase-1b
+    evaluation_phase: Phase-2
+    evaluation_rule: by-task-by-task 评估迁移价值，无价值标 abandoned
+    notes: |
+      Stage A→H 重组前的 PRE-REORG 设计材料。
+      legacy 任务卡详细诊断见 task-card-review-report.md（任务卡诊断报告）。
+
+  # 1.2 v2 隔离区（Wave 0 + Wave 1 终审产出的临时存放）
+  v2_staging_zone:
+    location: 模块候选池/开发流程/任务卡/v2-终审-生成/
+    status: STAGING
+    created_at: '2026-04-27'
+    purpose: Wave 0 + Wave 1 终审产出的新任务在 SQLite 任务库建成前的临时存放区
+    item_limit: 15  # R86: 5 → 15（Wave 1 新增 10 张施工任务卡）
+    current_items:
+      # ── Wave 0 P0 兜底任务（V-11/V-12/V-13）──
+      - {task_id: T-V2-001, title: V-12 蓝图真源准入门禁骨架, priority: P0, est_hours: 4-6, status: done, model: Sonnet, source: Wave-0}
+      - {task_id: T-V2-002, title: V-13 任务卡元层登记表落地, priority: P0, est_hours: 2-3, status: done, model: Opus, source: Wave-0}
+      - {task_id: T-V2-003, title: V-11 登记表 pre-commit 自校验集成, priority: P0, est_hours: 2-4, status: ready, model: GLM-5.1, source: Wave-0}
+      # ── Wave 1 Phase 1a-1g 施工任务（B6 落地）──
+      - {task_id: T-V2-004, title: Phase 1a CBAC 最小版（capabilities.yaml + capability.py）, priority: P0, est_hours: 16, status: ready, model: GLM-5.1, source: Wave-1}
+      - {task_id: T-V2-005, title: Phase 1b CBG + L2a 沙箱 + L08 注册, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-006, title: Phase 1c M1 扩展 + CL-017 system_snapshot + CL-018 DocCompressor, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-007, title: Phase 1d RI-02 unified_memory_api + RI-03 trigger_router, priority: P0, est_hours: 40, status: ready, model: Opus, source: Wave-1}
+      - {task_id: T-V2-008, title: Phase 1e RI-04 reflection_loop + RI-05 sandbox + CL-021 EditorConfigGate, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-009, title: Phase 1f RI-06 auto_loader + RI-07 drift_detector, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-010, title: Phase 1g CL-019 升级 ai-onboarding-guide.md 核心思想章, priority: P1, est_hours: 8, status: ready, model: GLM-5.1, source: Wave-1}
+      # ── Wave 1 V-14/V-15/V-16 兜底任务 ──
+      - {task_id: T-V2-011, title: V-14 BlueprintOverlapMergeGate 骨架 + GATE-13（warn-only）, priority: P1, est_hours: 12, status: ready, model: GLM-5.1, source: Wave-1}
+      - {task_id: T-V2-012, title: V-15 TruthSourceCascadeValidator 骨架 + 影响追踪报告, priority: P1, est_hours: 16, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-013, title: V-16 DraftsZoneLifecycleArchiver 30/60 天归档脚本, priority: P2, est_hours: 8, status: ready, model: GLM-5.1, source: Wave-1}
+    migration_target: sqlite_task_db
+    migration_phase: Phase-1b
+    cleanup_rule: |
+      SQLite 任务库建成后，本目录任务批量导入 + 本目录所有 .md 归档到外部开发工作区，
+      仅保留 README.md 作历史标记。
+    model_selection_policy:
+      reference: "外部开发工作区 architecture-rationale-log.md#R86（已迁出项目）"
+      glm5.1: 机械任务（Pydantic frozen 模型 / YAML 起草 / 文档纯写 / 脚本骨架 / cron-like 任务）
+      sonnet: 中等复杂度（gate_engine 扩展 / M1-M7 跨集成 / 沙箱安全审阅 / 反向链表设计 / Schema 复核）
+      opus: 关键架构（M2 ChromaDB + M3 Router 跨模块 / ADR 终审 / 复杂调试 / 终审裁决）
+
+  # 1.3 SQLite 任务库（待建）
+  sqlite_task_db:
+    location: .runtime/db/tasks.db
+    status: PENDING-CREATION
+    target_phase: Phase-1b
+    schema_source: docs/03_modules/l01_infrastructure/task-card-kms/blueprint.md
+    schema_section: §2.1
+    expected_creation_date: TBD
+    notes: 待 Phase-1a 完成后，由 T-V2-002 + 其他 v2 任务推动落地
+
+  # 1.4 高层任务簿（项目内，永久保留）
+  development_workspace_taskbooks:
+    location: "外部开发工作区（已迁出项目）"
+    status: HIGH-LEVEL-PLANNING
+    purpose: 高层规划任务簿（serial-execution-plan / sprint-N-taskbook）
+    relationship_with_sqlite_db: |
+      高层规划留 markdown，运行时状态在 SQLite。
+      两者通过 task_id 关联（markdown 引用 SQLite task_id）。
+    not_subject_to_migration: true
+
+# ----------------------------------------------------------------------------
+# 2. 治理规则（Immutable Core）
+# ----------------------------------------------------------------------------
+
+migration_rules:
+  - rule_id: MR-01
+    description: 旧卡冻结后不得新增、不得修改，只读
+    applies_to: legacy_task_cards
+    enforcement: 文件系统只读 + Owner 审批例外
+  - rule_id: MR-02
+    description: "v2 隔离区不得超过 15 张任务卡（R86 调整 5 → 15，承载 Wave 1 终审 10 张新卡）"
+    applies_to: v2_staging_zone
+    enforcement: pre-commit 钩子计数
+  - rule_id: MR-03
+    description: SQLite 任务库建成后，v2 隔离区任务批量导入，导入后隔离区清空
+    applies_to: [v2_staging_zone, sqlite_task_db]
+    enforcement: Phase-1b 任务清单
+  - rule_id: MR-04
+    description: legacy 任务卡 by-task-by-task 评估迁移价值，无价值的标 abandoned
+    applies_to: legacy_task_cards
+    enforcement: Phase-2 任务清单
+  - rule_id: MR-05
+    description: 三套并行系统数量永久锁定为 4 套（含 development_workspace_taskbooks）
+    applies_to: 整体
+    enforcement: 修改本规则需 R-XXX 决策日志 + Owner 审批
+
+# ----------------------------------------------------------------------------
+# 3. 各系统状态机
+# ----------------------------------------------------------------------------
+
+state_machines:
+  legacy_task_cards:
+    states:
+      - FROZEN-LEGACY (current)
+      - LEGACY-EVALUATING (Phase-2)
+      - LEGACY-MIGRATED (Phase-2 末)
+    transitions:
+      - {from: FROZEN-LEGACY, to: LEGACY-EVALUATING, trigger: Phase-2 启动}
+      - {from: LEGACY-EVALUATING, to: LEGACY-MIGRATED, trigger: 全部任务评估完毕}
+  v2_staging_zone:
+    states:
+      - STAGING (current)
+      - DRAINING (Phase-1b 进行中)
+      - DRAINED (Phase-1b 末)
+    transitions:
+      - {from: STAGING, to: DRAINING, trigger: SQLite 任务库就绪}
+      - {from: DRAINING, to: DRAINED, trigger: 全部 v2 任务批量导入完毕}
+  sqlite_task_db:
+    states:
+      - PENDING-CREATION (current)
+      - INITIALIZED (Phase-1b 中)
+      - ACTIVE (Phase-1b 末)
+    transitions:
+      - {from: PENDING-CREATION, to: INITIALIZED, trigger: schema 创建完毕}
+      - {from: INITIALIZED, to: ACTIVE, trigger: v2 任务批量导入完毕}
+
+# ----------------------------------------------------------------------------
+# 4. 修订记录
+# ----------------------------------------------------------------------------
+
+revision_history:
+  - version: 1.0.0
+    date: '2026-04-27'
+    author: Claude-Opus-4.7（Wave 0 终审）
+    changes: |
+      初版。登记三套并行任务卡系统 + 治理规则 5 条 + 三套状态机。
+      关联 R77（兜底缺口 V-13）。
+  - version: 1.1.0
+    date: '2026-04-27'
+    author: Claude-Opus-4.7（Wave 1 终审）
+    changes: |
+      Wave 1 终审下发 10 张施工任务卡（T-V2-004~T-V2-013），导致 v2_staging_zone 限额从 5 提升到 15：
+      - 新增 7 张 Phase 1a-1g 施工卡（CBAC / CBG / M1 扩展 / RI-02 RI-03 / RI-04 RI-05 / RI-06 RI-07 / CL-019）
+      - 新增 3 张 V-14/V-15/V-16 兜底卡（BlueprintOverlapMergeGate / TruthSourceCascadeValidator / DraftsZoneLifecycleArchiver）
+      - 每张任务卡 frontmatter 新增 model 字段（GLM-5.1 / Sonnet / Opus 三选一）
+      - 现有 T-V2-001/002 状态 ready → done（artifact 已落地）
+      - MR-02 同步从 5 调整为 15。
+      关联 R86（v2 区限额调整 + Wave 1 任务卡下发）。
+
+# ----------------------------------------------------------------------------
+# 5. Pydantic schema（注释参考，pre-commit 自校验时使用）
+# ----------------------------------------------------------------------------
+#
+# class System(BaseModel):
+#     location: str
+#     status: Literal['FROZEN-LEGACY', 'STAGING', 'PENDING-CREATION', 'HIGH-LEVEL-PLANNING', ...]
+#     migration_target: str | None = None
+#     migration_phase: str | None = None
+#     ...
+#
+# class MigrationRule(BaseModel):
+#     rule_id: str = Field(pattern=r'^MR-\d+$')
+#     description: str
+#     applies_to: str | list[str]
+#     enforcement: str
+#
+# class Registry(BaseModel):
+#     schema_version: str
+#     doc_type: str
+#     title: str
+#     version: str
+#     status: str
+#     last_updated: str
+#     ai_autonomy: Literal['immutable_core', 'human_gated', 'ai_modifiable']
+#     systems: dict[str, System]
+#     migration_rules: list[MigrationRule]
+#     state_machines: dict
+#     revision_history: list
+# ============================================================================

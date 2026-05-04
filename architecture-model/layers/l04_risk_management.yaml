@@ -1,0 +1,26 @@
+schema_version: "1.0.0"
+partition:
+  id: l04
+  name: Risk Management
+  track: c_track
+  layer_position: 4
+  runtime_plane: hot
+  status: implemented
+
+modules:
+  - id: l04-stop-loss
+    name: Stop Loss
+    submodule_path: src/zephyr/l04_risk_management/
+    status: implemented
+    priority: P0
+    runtime_plane: hot
+    description: 止损执行引擎
+    files:
+      - stop_loss.py
+    interfaces: []
+    adr_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

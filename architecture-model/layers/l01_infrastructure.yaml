@@ -1,0 +1,41 @@
+schema_version: "1.0.0"
+partition:
+  id: l01
+  name: Infrastructure
+  track: c_track
+  layer_position: 1
+  runtime_plane: warm
+  status: implemented
+
+modules:
+  - id: l01-script-system
+    name: Script System
+    submodule_path: src/zephyr/l01_infrastructure/script_system/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 脚本系统——审计发现 (Finding) 的结构化 Schema 定义与输出格式化
+    files:
+      - finding.py
+    interfaces:
+      - contract_id: P0-FINDING-SCHEMA
+        role: producer
+        description: Finding 数据模型供给所有治理脚本的标准输出格式
+    adr_ref: []
+
+  - id: l01-config
+    name: Infrastructure Config
+    submodule_path: src/zephyr/l01_infrastructure/
+    status: implemented
+    priority: P1
+    runtime_plane: warm
+    description: 基础设施层全局配置——数据库路径、日志级别、缓存策略等运行时配置参数
+    files:
+      - config.py
+    interfaces: []
+    adr_ref: []
+
+summary:
+  total: 2
+  by_status:
+    implemented: 2

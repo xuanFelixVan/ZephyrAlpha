@@ -1,0 +1,16 @@
+schema_version: "1.0.0"
+partition:
+  id: l13
+  name: Experimentation
+  track: c_track
+  layer_position: 13
+  runtime_plane: cold
+  status: skeleton
+  note: "与 L11(ML平台)、L12(遥测) 共同构成 AI/ML Platform 三件套"
+
+modules:
+  []
+
+summary:
+  total: 0
+  note: "骨架占位层——仅 __init__.py (A/B 实验框架 + 实验管线编排，尚未实现)"

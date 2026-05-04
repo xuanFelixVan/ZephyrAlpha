@@ -1,0 +1,38 @@
+---
+doc_type: index
+title: "_registry/vocabularies/ 目录索引"
+status: active
+version: "1.0.1"
+module_id: REG-VOC-IDX
+generated: '2026-05-02'
+---
+
+# Vocabularies — 目录索引
+
+## 责任声明（Single Responsibility）
+
+本目录只存放：**AI 消费的 YAML 受控词表（doc_type / rule_form / status / ttl / layer）**。
+
+## 文件清单
+
+| 文件 | 说明 |
+|------|------|
+| doc_type-vocabulary.yaml | 文档类型受控词表（27 值） |
+| rule_form-vocabulary.yaml | 规则表达形式受控词表（4 值） |
+| status-vocabulary.yaml | 文档状态受控词表（3 值） |
+| ttl-vocabulary.yaml | 保留期限受控词表（5 值） |
+| layer-vocabulary.yaml | 架构层归属受控词表（16 值） |
+| classification-vocabulary.yaml | 文件密级受控词表（2 值） |
+| language-vocabulary.yaml | 文件语言受控词表（3 值） |
+| created_by-vocabulary.yaml | 创建者类型受控词表（3 值） |
+| scope-vocabulary.yaml | 规则作用范围受控词表（4 值） |
+| stability-vocabulary.yaml | 规则稳定性受控词表（4 值） |
+| verifiability-vocabulary.yaml | 规则可验证性受控词表（3 值） |
+
+## 排除规则（不应放入本目录的内容）
+
+- ❌ .md 文件 → `governance/`
+
+## 父级目录
+
+- 父级：[_registry](../../_registry/index.md)

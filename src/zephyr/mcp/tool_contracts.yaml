@@ -1,0 +1,894 @@
+# ZephyrAlpha MCP Tool Contracts
+#
+# 5 MCP Server 的工具契约定义，为 T-3-04（MCP Server 实现）与 T-2-29（contract_template_manager）提供前置 schema。
+#
+# 契约 SSoT 原则：
+#   1. 本文件是 MCP 工具契约的权威 schema；任何 server 实现必须与本文件字段严格对齐；
+#   2. 字段命名遵循 ADR-0040（Pydantic v2）snake_case；
+#   3. 错误码命名空间 ZA-{SERVER}-{NNNN}，对齐 ZephyrBaseError（ADR-004）层次；
+#   4. 每个工具必须有 stability: experimental | beta | stable | frozen（对齐 T-2-29 契约模板）；
+#   5. frozen 工具 schema 不允许 AI 修改（pre-commit 校验）；
+#   6. 版本号遵循 semver；Breaking change 必须升主版本号 + 迁移说明。
+#
+# 依赖：
+#   - ADR-0030（SQLite tasks/events/gates 表）
+#   - ADR-0031（ChromaDB 4 collection）
+#   - ADR-0038（File-as-Task）
+#   - ADR-0040（Pydantic 契约）
+#   - ADR-0041（Handoff Protocol）
+#   - ADR-0035（意图三阶段）
+#   - docs/02_enterprise_architecture/gate-strategy-standard.md（5 道 Gate）
+#   - T-2-23-A Session 状态机规则（已完成）
+#
+# 关联任务：T-2-23-C 本文件 → T-2-29（contract_template_manager.py）→ T-3-04（MCP Server 实现）
+
+schema_version: "1.0.0"
+spec_version: "MCP/0.3"               # Model Context Protocol 协议版本
+created_by: "Claude Opus 4.7"
+created_date: "2026-04-24"
+owner: "ZephyrAlpha-Owner"
+classification: "internal"
+
+# ──────────────────────────────────────────────────────────────────────
+# 全局约定
+# ──────────────────────────────────────────────────────────────────────
+
+global_conventions:
+  naming:
+    tool_id: "{server_id}.{action}"           # e.g. task_manager.create_task
+    resource_id: "zephyr://{server_id}/{path}" # e.g. zephyr://task_manager/tasks/T-2-16
+  error_code_format: "ZA-{SERVER}-{NNNN}"
+  safety_levels:                              # 对齐 Phase 2 任务卡的 safety_level 约定
+    - L      # 低：只读
+    - M      # 中：写入非关键数据
+    - H      # 高：写入关键数据或触发不可逆动作
+  stability_lifecycle:
+    - experimental   # 可能随时变更
+    - beta           # 接口稳定，仍在打磨
+    - stable         # 兼容性承诺：minor 版本向后兼容
+    - frozen         # 禁止 AI 修改；人类 Owner 审批后方可动
+  rate_limit_defaults:
+    default_qps: 10
+    default_burst: 30
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 1 · task_manager
+# ──────────────────────────────────────────────────────────────────────
+
+task_manager:
+  server_id: task_manager
+  version: "1.0.0"
+  description: "任务系统（tasks/events）对外 MCP 接口；包装 task_repo.py + file_task_mapper.py"
+  status: stable
+  backend:
+    - "src/zephyr/db/task_repo.py (ADR-0030)"
+    - "src/zephyr/core/file_task_mapper.py (ADR-0038)"
+  error_namespace: "ZA-TSK"
+  error_codes:
+    - code: "ZA-TSK-0001"
+      message: "task_id not found"
+      http_status: 404
+    - code: "ZA-TSK-0002"
+      message: "invalid status transition"
+      http_status: 409
+    - code: "ZA-TSK-0003"
+      message: "file_path unique constraint violated"
+      http_status: 409
+    - code: "ZA-TSK-0004"
+      message: "budget exceeded (>20 files/session)"
+      http_status: 429
+    - code: "ZA-TSK-0005"
+      message: "stale task three-state mismatch"
+      http_status: 409
+
+  resources:
+    - id: "zephyr://task_manager/tasks/{task_id}"
+      description: "单任务详情（JSON）"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 30
+    - id: "zephyr://task_manager/tasks?phase={phase}&status={status}"
+      description: "按 phase/status 过滤的任务列表"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 10
+    - id: "zephyr://task_manager/events/{task_id}"
+      description: "任务关联事件流"
+      mime_type: application/json
+      cacheable: false
+    - id: "zephyr://task_manager/phase_summary"
+      description: "Phase 级别进度聚合视图"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 60
+
+  tools:
+
+    - name: task_manager.get_task
+      description: "按 task_id 获取任务详情"
+      safety_level: L
+      stability: stable
+      rate_limit_qps: 50
+      input_schema:
+        type: object
+        required: [task_id]
+        additionalProperties: false
+        properties:
+          task_id:
+            type: string
+            pattern: "^(ADR|CP|KE|STD|DW|SRC|OPS)-\\d+$"
+      output_schema:
+        $ref: "#/definitions/Task"
+      errors: ["ZA-TSK-0001"]
+      examples:
+        - input: { task_id: "T-2-16" }
+          output_snippet:
+            task_id: "T-2-16"
+            phase: 2
+            status: "COMPLETED"
+
+    - name: task_manager.list_tasks
+      description: "按条件筛选任务列表"
+      safety_level: L
+      stability: stable
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          phase: { type: integer, minimum: 0, maximum: 5 }
+          status:
+            type: string
+            enum: [PENDING, IN_PROGRESS, COMPLETED, VERIFIED, FAILED, BLOCKED, WAITING, READY, RETRY, CANCELLED]
+          session_id: { type: string }
+          file_path_glob: { type: string, description: "e.g. docs/01_policies_and_standards/**/*.md" }
+          limit: { type: integer, minimum: 1, maximum: 500, default: 50 }
+      output_schema:
+        type: object
+        properties:
+          items: { type: array, items: { $ref: "#/definitions/Task" } }
+          total: { type: integer }
+
+    - name: task_manager.create_task
+      description: "创建新任务（#21 裁定：{NAMESPACE}-{SEQ} 格式，N:N 文件映射，#12 裁定：字段对齐 task-card-standard.md v2.0）"
+      safety_level: H
+      stability: stable
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [namespace, phase, title, directive]
+        additionalProperties: false
+        properties:
+          namespace: { type: string, enum: [ADR, CP, KE, STD, DW, SRC, OPS] }
+          phase: { type: integer, minimum: 0, maximum: 9 }
+          title: { type: string, minLength: 1, maxLength: 200, description: "任务标题（对齐 Jira Summary）" }
+          priority: { type: string, enum: [P0, P1, P2, P3], default: P2 }
+          files:
+            type: array
+            items:
+              type: object
+              required: [file_path]
+              properties:
+                file_path: { type: string }
+                role: { type: string, enum: [primary, in_scope, output] }
+            description: "任务关联的文件列表（N:N 映射）"
+          directive: { type: string, description: "e.g. '266+325+999'" }
+          depends_on: { type: array, items: { type: string } }
+          execution_model: { type: string }
+          model_rationale: { type: string, description: "选模型理由（防 AI 乱选贵模型）" }
+          safety_level: { type: string, enum: [L, M, H] }
+          idempotent: { type: boolean, default: true }
+          classification: { type: string, enum: [public, internal, confidential] }
+          tags: { type: array, items: { type: string }, description: "标签列表（对齐 Jira Labels）" }
+          files_in_scope: { type: array, items: { type: string }, description: "本任务需读取的文件列表" }
+      output_schema:
+        $ref: "#/definitions/Task"
+      errors: ["ZA-TSK-0003", "ZA-TSK-0004"]
+
+    - name: task_manager.update_status
+      description: "推进任务状态（受 10 状态机约束）"
+      safety_level: H
+      stability: stable
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        required: [task_id, new_status]
+        additionalProperties: false
+        properties:
+          task_id: { type: string }
+          new_status:
+            type: string
+            enum: [PENDING, IN_PROGRESS, COMPLETED, VERIFIED, FAILED, BLOCKED, WAITING, READY, RETRY, CANCELLED]
+          reason: { type: string }
+          actor_session_id: { type: string }
+      output_schema:
+        type: object
+        properties:
+          task_id: { type: string }
+          previous_status: { type: string }
+          new_status: { type: string }
+          event_id: { type: string }
+      errors: ["ZA-TSK-0001", "ZA-TSK-0002"]
+
+    - name: task_manager.register_from_triage
+      description: "从 -triage-result.yaml 批量注册任务"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        required: [yaml_path]
+        additionalProperties: false
+        properties:
+          yaml_path: { type: string }
+          dry_run: { type: boolean, default: false }
+      output_schema:
+        type: object
+        properties:
+          created: { type: integer }
+          skipped: { type: integer }
+          errors: { type: array, items: { type: string } }
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 2 · knowledge_base
+# ──────────────────────────────────────────────────────────────────────
+
+knowledge_base:
+  server_id: knowledge_base
+  version: "1.0.0"
+  description: "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 4 个 collection）；包装 knowledge_indexer.py"
+  status: beta
+  backend:
+    - "src/zephyr/kb/chromadb_init.py (ADR-0031 ChromaDB, Phase 1 VMS 过渡实现)"
+    - "SQLite knowledge 表（事实层）"
+  error_namespace: "ZA-KB"
+  error_codes:
+    - code: "ZA-KB-0001"
+      message: "collection not found"
+      http_status: 404
+    - code: "ZA-KB-0002"
+      message: "embedding model unavailable"
+      http_status: 503
+    - code: "ZA-KB-0003"
+      message: "query latency exceeded (>500ms)"
+      http_status: 504
+    - code: "ZA-KB-0004"
+      message: "index rebuild required"
+      http_status: 409
+    - code: "ZA-KB-0005"
+      message: "ke_id not found"
+      http_status: 404
+
+  resources:
+    - id: "zephyr://knowledge_base/collections"
+      description: "4 个 collection 元信息"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 300
+    - id: "zephyr://knowledge_base/ke/{ke_id}"
+      description: "KE 条目原文"
+      mime_type: text/markdown
+      cacheable: true
+      cache_ttl_seconds: 60
+    - id: "zephyr://knowledge_base/health"
+      description: "向量索引健康度（4/4 可查询）"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 30
+
+  tools:
+
+    - name: knowledge_base.search
+      description: "跨 collection 语义检索"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        required: [query_text]
+        additionalProperties: false
+        properties:
+          query_text: { type: string, minLength: 1, maxLength: 1000 }
+          collection:
+            type: string
+            enum: [ke_entries, vibe_rules, blueprints, failure_patterns]
+            default: ke_entries
+          where:
+            type: object
+            description: "ChromaDB metadata filter; e.g. {category: best_practice, layer: L01}"
+          n_results: { type: integer, minimum: 1, maximum: 20, default: 5 }
+          score_threshold: { type: number, minimum: 0.0, maximum: 1.0, default: 0.6 }
+      output_schema:
+        type: object
+        properties:
+          hits:
+            type: array
+            items: { $ref: "#/definitions/RetrievalHit" }
+          total_scanned: { type: integer }
+          latency_ms: { type: integer }
+      errors: ["ZA-KB-0001", "ZA-KB-0002", "ZA-KB-0003"]
+
+    - name: knowledge_base.upsert_ke
+      description: "新增 / 更新知识条目并入库向量"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [ke_id, title, category, content, source_file]
+        additionalProperties: false
+        properties:
+          ke_id: { type: string, pattern: "^KE-[0-9]{3}(-.+)?$" }
+          title: { type: string }
+          category:
+            type: string
+            enum: [blueprint_decision, strategy, factor, best_practice, lesson_learned, architecture, risk_control, data_governance, operations, compliance]
+          content: { type: string, description: "markdown 正文，由 chunker 切片" }
+          source_file: { type: string }
+          source_git_deleted: { type: boolean, default: false }
+          layer: { type: string }
+      output_schema:
+        type: object
+        properties:
+          ke_id: { type: string }
+          chunks_indexed: { type: integer }
+          fingerprint_sha256: { type: string }
+
+    - name: knowledge_base.rebuild_index
+      description: "重建 collection 向量索引（幂等）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        required: [collection]
+        additionalProperties: false
+        properties:
+          collection:
+            type: string
+            enum: [ke_entries, vibe_rules, blueprints, failure_patterns, ALL]
+          force: { type: boolean, default: false }
+      output_schema:
+        type: object
+        properties:
+          chunks_indexed: { type: integer }
+          duration_seconds: { type: number }
+      errors: ["ZA-KB-0004"]
+
+    - name: knowledge_base.get_ke
+      description: "按 ke_id 获取条目"
+      safety_level: L
+      stability: stable
+      rate_limit_qps: 50
+      input_schema:
+        type: object
+        required: [ke_id]
+        additionalProperties: false
+        properties:
+          ke_id: { type: string }
+      output_schema:
+        type: object
+        properties:
+          ke_id: { type: string }
+          title: { type: string }
+          category: { type: string }
+          content: { type: string }
+          source_file: { type: string }
+          fingerprint_sha256: { type: string }
+      errors: ["ZA-KB-0005"]
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 3 · gate_engine
+# ──────────────────────────────────────────────────────────────────────
+
+gate_engine:
+  server_id: gate_engine
+  version: "1.0.0"
+  description: "门禁裁决服务；包装 gate_engine.py 的 5 道 Gate（详见 docs/02_enterprise_architecture/gate-strategy-standard.md）"
+  status: beta
+  backend:
+    - "src/zephyr/gates/gate_engine.py (T-2-17, Sonnet B10)"
+  error_namespace: "ZA-GT"
+  error_codes:
+    - code: "ZA-GT-0001"
+      message: "gate blocked (P0)"
+      http_status: 412
+    - code: "ZA-GT-0002"
+      message: "gate policy yaml invalid"
+      http_status: 500
+    - code: "ZA-GT-0003"
+      message: "exemption signature invalid"
+      http_status: 403
+    - code: "ZA-GT-0004"
+      message: "runtime budget exceeded"
+      http_status: 429
+
+  resources:
+    - id: "zephyr://gate_engine/policies/{gate_id}"
+      description: "某 Gate 的策略配置（YAML 原文）"
+      mime_type: text/yaml
+      cacheable: true
+      cache_ttl_seconds: 60
+    - id: "zephyr://gate_engine/runs?gate_id={gate_id}&limit={n}"
+      description: "Gate 运行历史"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 15
+
+  tools:
+
+    - name: gate_engine.run_g1_write
+      description: "写入防护 Gate（UTF-8 / 命名 / 路径白名单）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 50
+      input_schema:
+        type: object
+        required: [target_path, content_preview]
+        additionalProperties: false
+        properties:
+          target_path: { type: string }
+          content_preview: { type: string, description: "前 500 字节，用于编码扫描" }
+          session_id: { type: string }
+      output_schema: { $ref: "#/definitions/GateRunReport" }
+      errors: ["ZA-GT-0001"]
+
+    - name: gate_engine.run_g2_commit
+      description: "提交门禁 Gate（等价 pre-commit 汇总）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [files]
+        additionalProperties: false
+        properties:
+          files: { type: array, items: { type: string } }
+          commit_message: { type: string }
+      output_schema: { $ref: "#/definitions/GateRunReport" }
+      errors: ["ZA-GT-0001"]
+
+    - name: gate_engine.run_g3_phase
+      description: "阶段验收 Gate（触发 Sentinel L1）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        required: [phase_id]
+        additionalProperties: false
+        properties:
+          phase_id: { type: integer, minimum: 0, maximum: 5 }
+          target_phase: { type: integer, description: "准备切换到的目标 Phase" }
+      output_schema: { $ref: "#/definitions/GateRunReport" }
+      errors: ["ZA-GT-0001"]
+
+    - name: gate_engine.run_g4_contract
+      description: "结构化输出契约校验（Pydantic + frontmatter）"
+      safety_level: M
+      stability: stable
+      rate_limit_qps: 50
+      input_schema:
+        type: object
+        required: [payload, model_name]
+        additionalProperties: false
+        properties:
+          payload: { type: object, description: "要校验的对象（JSON）" }
+          model_name:
+            type: string
+            enum: [Task, AuditReport, KnowledgeEntry, FailurePattern, HandoffPackage, IntentResult]
+      output_schema:
+        type: object
+        properties:
+          passed: { type: boolean }
+          errors: { type: array, items: { type: string } }
+          suggested_fix: { type: [string, "null"] }
+
+    - name: gate_engine.submit_exemption
+      description: "提交 Owner 签发的豁免（仅 Owner 生效）"
+      safety_level: H
+      stability: experimental
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        required: [check_id, reason, valid_until, signer_email]
+        additionalProperties: false
+        properties:
+          check_id: { type: string, description: "e.g. G2.4" }
+          reason: { type: string, minLength: 10 }
+          valid_until: { type: string, format: date }
+          signer_email: { type: string, format: email }
+      output_schema:
+        type: object
+        properties:
+          exemption_id: { type: string }
+          accepted: { type: boolean }
+      errors: ["ZA-GT-0003"]
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 4 · session_handoff
+# ──────────────────────────────────────────────────────────────────────
+
+session_handoff:
+  server_id: session_handoff
+  version: "1.0.0"
+  description: "跨会话交接协议服务；包装 HandoffPackage / SessionCarryover 与 5 项反腐败校验"
+  status: stable
+  backend:
+    - "docs/01_policies_and_standards/governance/ai/handoff-protocol.md (T-1-17)"
+    - "ADR-0041 Handoff Protocol"
+    - "Pydantic HandoffPackage 模型"
+  error_namespace: "ZA-HF"
+  error_codes:
+    - code: "ZA-HF-0001"
+      message: "handoff package schema invalid"
+      http_status: 400
+    - code: "ZA-HF-0002"
+      message: "anti-corruption check failed"
+      http_status: 409
+    - code: "ZA-HF-0003"
+      message: "carryover not found"
+      http_status: 404
+    - code: "ZA-HF-0004"
+      message: "context size exceeds limit"
+      http_status: 413
+
+  resources:
+    - id: "zephyr://session_handoff/packages/{session_id}"
+      description: "某 session 的 HandoffPackage"
+      mime_type: application/json
+      cacheable: false
+    - id: "zephyr://session_handoff/carryover/latest"
+      description: "最新一份 SessionCarryover（机读）"
+      mime_type: application/json
+      cacheable: false
+    - id: "zephyr://session_handoff/anti_corruption_report/{session_id}"
+      description: "该 session 的 5 项校验结果"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 60
+
+  tools:
+
+    - name: session_handoff.create_package
+      description: "生成 HandoffPackage（8 必填字段 + P0-P3 压缩）"
+      safety_level: H
+      stability: stable
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [from_session, to_model, completed_tasks, next_tasks, open_files]
+        additionalProperties: false
+        properties:
+          from_session: { type: string }
+          to_model: { type: string }
+          to_platform: { type: string, enum: [cursor, trae-cn, cli] }
+          completed_tasks: { type: array, items: { type: string } }
+          next_tasks: { type: array, items: { type: string } }
+          open_files: { type: array, items: { type: string } }
+          decisions_log: { type: array, items: { type: string } }
+          blocked_items: { type: array, items: { type: string } }
+          context_priority:
+            type: string
+            enum: [P0, P1, P2, P3]
+            default: P1
+      output_schema: { $ref: "#/definitions/HandoffPackage" }
+      errors: ["ZA-HF-0001", "ZA-HF-0004"]
+
+    - name: session_handoff.validate_package
+      description: "执行 5 项反腐败校验"
+      safety_level: M
+      stability: stable
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        required: [package]
+        additionalProperties: false
+        properties:
+          package: { $ref: "#/definitions/HandoffPackage" }
+      output_schema:
+        type: object
+        properties:
+          passed: { type: boolean }
+          failed_checks: { type: array, items: { type: string } }
+          warnings: { type: array, items: { type: string } }
+      errors: ["ZA-HF-0002"]
+
+    - name: session_handoff.get_carryover
+      description: "获取当前 session 的入职 carryover（替代旧 session log 读取）"
+      safety_level: L
+      stability: stable
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          session_id: { type: [string, "null"], description: "null = latest" }
+      output_schema:
+        type: object
+        description: "压缩后的 P0-P3 上下文块"
+      errors: ["ZA-HF-0003"]
+
+    - name: session_handoff.emit_manual_event
+      description: "触发人工介入通道（用于 Gate P0 / Intent UNKNOWN / 任务 BLOCKED）"
+      safety_level: H
+      stability: stable
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        required: [task_id, priority, reason]
+        additionalProperties: false
+        properties:
+          task_id: { type: string }
+          priority: { type: string, enum: [LOW, NORMAL, HIGH, CRITICAL] }
+          reason: { type: string, minLength: 10 }
+          suggested_action: { type: [string, "null"] }
+      output_schema:
+        type: object
+        properties:
+          event_id: { type: string }
+          delivered_at: { type: string, format: date-time }
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 5 · intent_router
+# ──────────────────────────────────────────────────────────────────────
+
+intent_router:
+  server_id: intent_router
+  version: "1.0.0"
+  description: "自然语言 → 10 域 + directive 链路由；包装 intent_keyword_mapper（Stage 1）/ embedding / llm 三阶段（ADR-0035）"
+  status: beta
+  backend:
+    - "src/zephyr/context_engine/intent_keyword_mapper.py (Stage 1, T-2-21)"
+    - "src/zephyr/context_engine/intent_embedding_mapper.py (Stage 2, Phase 3 引入)"
+    - "src/zephyr/context_engine/intent_llm_router.py (Stage 3, Phase 4 引入)"
+  error_namespace: "ZA-INT"
+  error_codes:
+    - code: "ZA-INT-0001"
+      message: "all three stages failed (UNKNOWN)"
+      http_status: 422
+    - code: "ZA-INT-0002"
+      message: "query too long (>1000 chars)"
+      http_status: 400
+    - code: "ZA-INT-0003"
+      message: "llm budget exceeded (Stage 3)"
+      http_status: 429
+    - code: "ZA-INT-0004"
+      message: "domain not in D0-D9"
+      http_status: 400
+
+  resources:
+    - id: "zephyr://intent_router/keywords"
+      description: "10 域关键词词典"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 3600
+    - id: "zephyr://intent_router/golden_set"
+      description: "黄金评测集（只读）"
+      mime_type: application/yaml
+      cacheable: true
+      cache_ttl_seconds: 3600
+    - id: "zephyr://intent_router/metrics"
+      description: "三阶段 hit / miss / latency / cost 指标"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 30
+
+  tools:
+
+    - name: intent_router.map_intent
+      description: "核心意图路由；自动级联 Stage 1 → 2 → 3"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        required: [query]
+        additionalProperties: false
+        properties:
+          query: { type: string, minLength: 1, maxLength: 1000 }
+          max_stage:
+            type: integer
+            minimum: 1
+            maximum: 3
+            default: 3
+            description: "只跑到第 N 阶段；Phase 2 默认 1"
+          require_directives: { type: boolean, default: true }
+      output_schema: { $ref: "#/definitions/IntentResult" }
+      errors: ["ZA-INT-0001", "ZA-INT-0002", "ZA-INT-0003"]
+      examples:
+        - input: { query: "帮我审一下这份 ADR 有没有遗漏" }
+          output_snippet:
+            primary_domain: "D2"
+            confidence: 0.88
+            source_stage: "keyword"
+            suggested_directives: ["244", "999"]
+
+    - name: intent_router.reload_keywords
+      description: "热加载关键词词典（修改 000-task-router.md 后使用）"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          source_file:
+            type: string
+            default: "resources/DOS/directives/000-task-router.md"
+      output_schema:
+        type: object
+        properties:
+          domains_loaded: { type: integer }
+          keywords_loaded: { type: integer }
+
+    - name: intent_router.evaluate_golden_set
+      description: "在黄金集上跑评测并返回 top-1 accuracy / top-3 recall / confusion matrix"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          max_stage: { type: integer, minimum: 1, maximum: 3, default: 1 }
+          sample_size: { type: [integer, "null"], description: "null = 全量" }
+      output_schema:
+        type: object
+        properties:
+          total: { type: integer }
+          top1_accuracy: { type: number }
+          top3_recall: { type: number }
+          confusion_matrix:
+            type: array
+            items:
+              type: object
+              properties:
+                expected: { type: string }
+                predicted: { type: string }
+                count: { type: integer }
+          duration_seconds: { type: number }
+
+# ──────────────────────────────────────────────────────────────────────
+# 共享 Pydantic Schema 定义
+# ──────────────────────────────────────────────────────────────────────
+
+definitions:
+
+  Task:
+    type: object
+    required: [task_id, namespace, seq, title, status, priority, phase, directive]
+    properties:
+      task_id: { type: string, description: "{NAMESPACE}-{SEQ} 格式（#21 裁定，对齐 metadata-registry.md）" }
+      namespace: { type: string, enum: [ADR, CP, KE, STD, DW, SRC, OPS] }
+      seq: { type: integer }
+      title: { type: string, description: "任务标题（对齐 Jira Summary / Linear Title）" }
+      status:
+        type: string
+        enum: [PENDING, IN_PROGRESS, COMPLETED, VERIFIED, FAILED, BLOCKED, WAITING, READY, RETRY, CANCELLED]
+      priority: { type: string, enum: [P0, P1, P2, P3], description: "优先级（对齐 Jira Priority）" }
+      phase: { type: integer }
+      directive: { type: string }
+      execution_model: { type: string }
+      model_rationale: { type: string, description: "选模型理由" }
+      fallback_model: { type: string }
+      safety_level: { type: string, enum: [L, M, H] }
+      idempotent: { type: boolean }
+      classification: { type: string, enum: [public, internal, confidential] }
+      evolution_policy: { type: string, enum: [frozen, extendable, rewritable] }
+      estimate_hours: { type: number }
+      actual_hours: { type: number }
+      files_in_scope: { type: array, items: { type: string } }
+      deliverables: { type: array, items: { type: string } }
+      acceptance: { type: array, items: { type: string } }
+      depends_on: { type: array, items: { type: string } }
+      tags: { type: array, items: { type: string } }
+      session_id: { type: string }
+      waiting_for: { type: string }
+      ready_at: { type: string, format: date-time }
+      completed_at: { type: string, format: date-time }
+      created_at: { type: string, format: date-time }
+      updated_at: { type: string, format: date-time }
+
+  RetrievalHit:
+    type: object
+    required: [chunk_id, score, content]
+    properties:
+      chunk_id: { type: string }
+      score: { type: number, minimum: 0.0, maximum: 1.0 }
+      content: { type: string }
+      metadata: { type: object }
+      ke_id: { type: [string, "null"] }
+
+  GateRunReport:
+    type: object
+    required: [gate_run_id, gate_id, passed, details]
+    properties:
+      gate_run_id: { type: string, description: "UUIDv7" }
+      gate_id: { type: string, enum: [G1, G2, G3, G4, G5] }
+      passed: { type: boolean }
+      details:
+        type: object
+        properties:
+          checks_run: { type: integer }
+          checks_failed: { type: array, items: { type: string } }
+          level_distribution:
+            type: object
+            properties:
+              P0: { type: integer }
+              P1: { type: integer }
+              P2: { type: integer }
+      artifact_path: { type: [string, "null"] }
+      created_at: { type: string, format: date-time }
+
+  HandoffPackage:
+    type: object
+    required: [from_session, to_model, completed_tasks, next_tasks, open_files, decisions_log, blocked_items, context_priority]
+    properties:
+      from_session: { type: string }
+      to_model: { type: string }
+      to_platform: { type: string, enum: [cursor, trae-cn, cli] }
+      completed_tasks: { type: array, items: { type: string } }
+      next_tasks: { type: array, items: { type: string } }
+      open_files: { type: array, items: { type: string } }
+      decisions_log: { type: array, items: { type: string } }
+      blocked_items: { type: array, items: { type: string } }
+      context_priority: { type: string, enum: [P0, P1, P2, P3] }
+      anti_corruption_report:
+        type: object
+        properties:
+          passed: { type: boolean }
+          failed_checks: { type: array, items: { type: string } }
+      created_at: { type: string, format: date-time }
+
+  IntentResult:
+    type: object
+    required: [query, primary_domain, confidence, source_stage]
+    properties:
+      query: { type: string }
+      primary_domain:
+        type: string
+        enum: [D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, UNKNOWN]
+      secondary_domains: { type: array, items: { type: string } }
+      confidence: { type: number, minimum: 0.0, maximum: 1.0 }
+      matched_keywords: { type: array, items: { type: string } }
+      source_stage: { type: string, enum: [keyword, embedding, llm] }
+      suggested_directives: { type: array, items: { type: string } }
+      requires_human: { type: boolean }
+      rationale: { type: [string, "null"] }
+      latency_ms: { type: integer }
+      cost_usd: { type: number }
+
+# ──────────────────────────────────────────────────────────────────────
+# 变更记录
+# ──────────────────────────────────────────────────────────────────────
+
+changelog:
+  - version: "1.2.0"
+    date: "2026-04-29"
+    author: "Trae GLM-5.1 (#12 裁定执行)"
+    changes:
+      - "#12 裁定：字段对齐 task-card-standard.md v2.0"
+      - "name → title（对齐 Jira Summary / Linear Title）"
+      - "新增 priority 字段（P0-P3，对齐 Jira Priority）"
+      - "新增 model_rationale / actual_hours / files_in_scope / tags / completed_at 字段"
+      - "definitions.Task 新增所有 v2.0 字段"
+      - "create_task required 改为 [namespace, phase, title, directive]"
+  - version: "1.1.0"
+    date: "2026-04-28"
+    author: "Trae GLM-5.1 (#21 裁定执行)"
+    changes:
+      - "#21 裁定修订：task_id 格式从 T-{SEQ} 改为 {NAMESPACE}-{SEQ}（对齐真源文件 metadata-registry.md §7.2）"
+      - "新增 namespace 字段（ADR/CP/KE/STD/DW/SRC/OPS）和 seq 字段"
+      - "create_task 接口：required 改为 [namespace, phase, name, directive]，新增 files 参数（N:N 映射）"
+      - "definitions.Task：删 file_path，加 namespace/seq，修正 classification 枚举（restricted→confidential），修正 evolution_policy 枚举（experimental→rewritable）"
+      - "get_task 的 task_id pattern 改为 ^T-\\d+$"
+  - version: "1.0.0"
+    date: "2026-04-24"
+    author: "Claude Opus 4.7"
+    changes:
+      - "初版：定义 5 个 MCP Server（task_manager / knowledge_base / gate_engine / session_handoff / intent_router）"
+      - "合计 20 tools + 13 resources + 25 error codes"
+      - "全部工具标注 stability / safety_level / rate_limit"
+      - "共享 5 类 Schema（Task / RetrievalHit / GateRunReport / HandoffPackage / IntentResult）与 ADR-0040 Pydantic 模型对齐"
+      - "依赖 ADR-0030/002/010/013/019/020 + gate-strategy-standard.md 全部锁定"

@@ -1,0 +1,33 @@
+# 废弃路径共享清单（SSoT）
+# 本文件是 src/zephyr/gates/gate_engine.py 和 detect_ruins_references.py 的共享真源。
+# 新增废弃路径只需在此注册，两个消费者自动同步。
+# 对标：AGENTS.md §2（旧树已归档）+ PS-STD-003 ABS-44（禁止引用废墟目录）
+
+# src/zephyr/gates/gate_engine.py 用（简单子串匹配，用于 PENDING→IN_PROGRESS 门禁阻断）
+blacklist_patterns:
+  - "_legacy/"
+  - "ARCHIVE/"
+  - "deprecated/"
+  - "_trash/"
+  - "zephyralpha-1-0/"
+  - "old_tree/"
+  - "docs/09_audit/state/"
+
+# detect_ruins_references.py 用（正则匹配 + 人类可读标签）
+ruins_regex_patterns:
+  - pattern: "_DO_NOT_USE_old_tree[/\\\\]"
+    label: "禁止引用废墟目录 _DO_NOT_USE_old_tree/"
+  - pattern: "模块候选池[/\\\\]"
+    label: "禁止引用模块候选池作为正式规则来源"
+  - pattern: "\\\\\\\\?D:\\\\ZephyrAlpha\\\\模块候选池"
+    label: "禁止引用候选池绝对路径作为权威来源"
+  - pattern: "\\\"
+    label: "路径双重嵌套（旧脚本残留 bug）"
+  - pattern: "docs/09_audit/state[/\\\\]"
+    label: "v2.0 废弃——DB 已迁移至 data/zalpha_metadata.db（ADR-0030 §4.1）"
+
+# 废弃跳转占位符检测
+obsolete_markers:
+  - "此文件已废弃，请参见"
+  - "本文件已废弃"
+  - "this file is deprecated"

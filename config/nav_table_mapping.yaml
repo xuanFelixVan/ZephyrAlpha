@@ -1,0 +1,428 @@
+# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
+# 本文件是 AGENTS.md §5.2 的 SSoT。
+# 新增规则/脚本时：更新本文件 → 运行 scripts/governance/generate_nav_table.py → §5.2 自动刷新。
+# 设计原则：本文件只定义"什么规则/脚本出现在导航表中、对应哪个阶段/维度"，
+#           不重复 registries 中已有的路径/版本/状态信息（这些由 generate_nav_table.py 从 registries 自动拉取）。
+
+seven_stages:
+  - id: "①"
+    name: "想法"
+    actions: "记录碎片想法，明确问题定义。思维起点：PS-STD-011 总则——先判断最优方案，再检查规则约束"
+    check_items:
+      - "想法是否有\"问题→目标→约束\"三要素？"
+      - "是否已执行 PS-STD-011 未来成本评估（§6.3决策矩阵）？"
+      - "是否查阅了 PS-STD-011 §3 专业框架映射表做机构对标？"
+    scripts:
+      - "人工"
+    rule_module_ids:
+      - PS-STD-011
+      - GOV-DOC-010
+    manual_files:
+      - "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
+
+  - id: "②"
+    name: "草稿"
+    actions: "将想法写成结构化草稿（讨论型文档+Phase 0 扫描盘点）。遵守 DOC-001~008 文档控制8原则"
+    check_items:
+      - "草稿是否遵循专题讨论模板？"
+      - "是否覆盖5个裁定维度（规则vs目标冲突/过度工程/Vibe Coding合理性/AI自治/集成方式）？"
+      - "创建文件前是否执行了 GOV-DOC-009 DOC-005\"创建前必查\"（查重+查索引+查命名规范）？"
+      - "是否引用而非复制（DOC-008）？"
+    scripts:
+      - "人工"
+      - "d3_metadata/deep_content_scanner.py"
+    rule_module_ids:
+      - GOV-DOC-009
+    manual_files:
+      - "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
+
+  - id: "③"
+    name: "审计裁定"
+    actions: "多模型审计（GLM→Kimi→Qwen→Claude，按 GOV-AI-002 路由）→ Final Judge 仲裁争议 → Owner 裁定结论固化"
+    check_items:
+      - "是否使用了 升级版指令集-v4.md 定义的四步串行流水线？"
+      - "Step 0 是否已执行动态项目扫描？"
+      - "每条裁定结论是否已写入文档（✅/❌/⚠️）？"
+      - "是否有未关闭的⏳待裁定条目？"
+      - "规则冲突时是否按 PS-STD-004 五维分类推导链裁决（stability→layer→scope→Owner）？"
+    scripts:
+      - "人工"
+      - "d5_architecture/validate_session_gate_check.py"
+    rule_module_ids:
+      - PS-STD-004
+      - GOV-AI-002
+    manual_files:
+      - "模块候选池/审计流程/升级版指令集-v4.md"
+      - "模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md"
+
+  - id: "④"
+    name: "蓝图"
+    actions: "将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 ADR（GOV-ARCH-001）"
+    check_items:
+      - "蓝图是否自包含（AI读完蓝图≈读完整个项目）？"
+      - "§6.9 YAML优先——架构事实是否先在 architecture-model/layers/ YAML 中登记？"
+      - "§6.14 蓝图§16路径索引是否与磁盘一致？"
+      - "provenance三件套是否完整（origin_drafts + audit_chain≥3 + arbitration）？"
+      - "若涉及新增/删除模块、修改接口、换技术栈、改数据流 → 是否已触发 GOV-ARCH-002 架构评审？"
+      - "模块状态是否符合 GOV-MOD-003 生命周期8阶段？"
+      - "接口契约是否已注册到 cross-layer-contracts.yaml（GOV-MOD-004）？"
+    scripts:
+      - "d5_architecture/validate_blueprint_code_sync.py"
+      - "d3_metadata/validate_blueprint_provenance.py"
+      - "d5_architecture/validate_code_yaml_alignment.py"
+    rule_module_ids:
+      - PS-STD-002
+      - GOV-ARCH-001
+      - GOV-ARCH-002
+      - GOV-MOD-003
+      - GOV-MOD-004
+    manual_files:
+      - "docs/01_policies_and_standards/templates/blueprint-template.md"
+
+  - id: "⑤"
+    name: "施工"
+    actions: "按蓝图施工（写代码/写规则/写脚本）。代码写成后必须通过两部分门禁：① 编写时（pre-commit）→ ② 推送前（CI governance.yml）。遵守 GOV-AI-004 双编辑器协作规则"
+    check_items:
+      - "§6.2 原子事务：联动修改是否在同一批完成？"
+      - "§6.5 脚本入库：新建.py是否已在 script_manifest.yaml 注册？"
+      - "§4 源码-测试同步：改 src/zephyr/ 后是否同步更新测试并跑通全量？"
+      - "§6.11 索引-实际同步：文件变更后是否已更新所有 index.md？"
+      - "§6.13 枚举同步：vocabulary YAML 变更后是否已同步所有 derived_from 标注的派生文件？"
+      - "§6.14 蓝图§16是否已更新？"
+      - "删除操作是否执行了 §6.6 质量对比预检？"
+      - "是否遵守 GOV-AI-003 幻觉自检6项（路径/模块ID/接口/依赖/SSoT/编号）？"
+      - "编辑器配置是否符合 GOV-AI-004（Trae autoGuessEncoding=false）？"
+      - "是否遵守 PS-STD-003 ABS 绝对禁止条款（48条）？"
+    scripts:
+      - "pre-commit 全量（GATE-01~18 + SQ + ADM + IDX + DD07）"
+      - "d7_code/validate_test_coverage.py"
+      - "d1_structure/validate_index_reality.py"
+      - "d3_metadata/validate_enum_consistency.py"
+    rule_module_ids:
+      - PS-STD-003
+      - GOV-AI-003
+      - GOV-AI-004
+      - GOV-DOC-005
+    manual_files:
+      - "docs/01_policies_and_standards/governance/document/encoding-safety-standard.md"
+
+  - id: "⑥"
+    name: "验收"
+    actions: "施工产出物验收 + Owner 审批审批卡。新增模块须通过 GOV-MOD-001 四级准入门控"
+    check_items:
+      - "run_all.py --warn-only 是否零失败？"
+      - "CI governance.yml 全量回归是否全绿？"
+      - "validate_manifest_admission.py：新增脚本是否通过准入审核？"
+      - "新增模块是否通过 MAD-001~005 四级筛选（GOV-MOD-001）？"
+    scripts:
+      - "run_all.py --warn-only"
+      - "CI .github/workflows/governance.yml（push触发全量回归）"
+      - "d11_compliance/validate_manifest_admission.py"
+    rule_module_ids:
+      - GOV-MOD-001
+    manual_files: []
+
+  - id: "⑦"
+    name: "持续审计"
+    actions: "定期/触发式全量审计（push→CI / 手动→run_all.py），发现漂移 → §6.15 漂移免疫自检 → 追问\"为什么漂移没被拦截\""
+    check_items:
+      - "D1~D12 十二维度是否零漂移？"
+      - "发现漂移 → 是否执行了 MTH-015 漂移免疫自检 + MTH-006 5 Whys 根源分析？"
+      - "是否治根而非治标？"
+      - "Session Log 是否已交接（做了什么+为什么做+下一步）？"
+      - "审计日志是否完整（GOV-CMP-002 AUD-001~004）？"
+    scripts:
+      - "run_all.py"
+      - "CI .github/workflows/governance.yml"
+    rule_module_ids:
+      - PS-STD-012
+      - GOV-CMP-002
+    manual_files:
+      - "scripts/governance/quality-standard.md"
+      - "scripts/governance/index.md"
+
+audit_dimensions:
+  - id: "A"
+    name: "责任单一"
+    scope: "文件/文件夹/概念是否只做一件事？"
+    check_items:
+      - "文件名=职责？"
+      - "同一概念是否只在1处定义？"
+      - "是否有万能文件夹？"
+    script_names:
+      - "d5_architecture/validate_field_ownership.py"
+      - "d5_architecture/detect_duplicate_module_names.py"
+      - "d5_architecture/validate_directory_structure.py"
+    linked_rules: "§5.1原则2、§6.4、§6.9"
+
+  - id: "B"
+    name: "真源清晰"
+    scope: "每个事实是否只有一个SSoT？YAML是否为canonical？"
+    check_items:
+      - "找到同一事实的所有定义位置→只能有1个canonical→其余标注derived_from"
+      - "vocabulary YAML↔所有派生文件枚举是否一致？"
+      - "Markdown是否与YAML冲突（冲突→YAML为准）？"
+    script_names:
+      - "d5_architecture/validate_ssot.py"
+      - "d3_metadata/validate_enum_consistency.py"
+      - "d3_metadata/validate_derived_from.py"
+      - "d5_architecture/validate_code_yaml_alignment.py"
+    linked_rules: "§6.9、§6.13、§6.15"
+
+  - id: "C"
+    name: "内容无冲突"
+    scope: "不同文件对同一事实的描述是否一致？"
+    check_items:
+      - "frontmatter status=正文blockquote status=document-metadata-index.yaml status（三方对齐）？"
+      - "YAML版本>MD引用版本（MD落后于YAML）？"
+      - "跨登记表共享字段是否一致？"
+      - "YAML Summary声称数字与实际是否一致？"
+    script_names:
+      - "d5_architecture/validate_three_way_consistency.py"
+      - "d5_architecture/validate_cross_references.py"
+      - "d11_compliance/validate_truth_source_cascade.py"
+      - "d5_architecture/validate_yaml_summaries.py"
+      - "check_registry_consistency.py"
+    linked_rules: "§6.10、§6.15"
+
+  - id: "D"
+    name: "文件夹职责清晰"
+    scope: "每个目录是否只有一个职责？"
+    check_items:
+      - "目录名=职责（能否一句话说清\"放什么\"）？"
+      - "目录内是否有不属于该职责的文件？"
+      - "是否有\"源码↔YAML↔MD\"三层漂移？"
+      - "一级目录是否符合白名单？"
+    script_names:
+      - "d5_architecture/validate_directory_structure.py"
+      - "d1_structure/audit_directory_integrity.py"
+      - "d5_architecture/validate_code_yaml_alignment.py"
+    linked_rules: "GOV-DOC-002, §6.10"
+
+  - id: "E"
+    name: "无废话"
+    scope: "文档是否每个字都有用？"
+    check_items:
+      - "是否引用而非复制？"
+      - "是否有\"等等\"\"类似\"等模糊词？"
+      - "是否有空壳文件/临时文件/残留物？"
+      - "是否有孤立文档（无入边引用）？"
+    script_names:
+      - "d9_knowledge/detect_duplicated_normative_language.py"
+      - "d6_security/detect_vague_terms.py"
+      - "d1_structure/detect_residual_files.py"
+      - "d1_structure/detect_temp_files.py"
+      - "d9_knowledge/detect_orphan_documents.py"
+    linked_rules: "§5.1原则1、§6.12"
+
+  - id: "F"
+    name: "蓝图-代码同步"
+    scope: "蓝图§16路径索引 ↔ 磁盘实际是否一致？"
+    check_items:
+      - "蓝图声称\"已实现\"的文件是否存在（幽灵路径）？"
+      - "磁盘新增文件是否已在蓝图§16登记（遗漏登记）？"
+      - "蓝图路径 vs 实际路径是否一致（路径漂移）？"
+      - "completed蓝图是否含实际代码实现情况节？"
+    script_names:
+      - "d5_architecture/validate_blueprint_code_sync.py"
+      - "d5_architecture/sync_blueprint_code_index.py"
+      - "d5_architecture/validate_blueprint_implementation_docs.py"
+    linked_rules: "§6.14"
+
+  - id: "G"
+    name: "链接完整"
+    scope: "项目内所有跨文件引用是否可达？"
+    check_items:
+      - "所有.md/.yaml中的路径引用→目标文件是否存在（断链检测）？"
+      - "是否有相对路径引用（应使用绝对路径）？"
+      - "depends_on引用链是否≤3层？是否有环？"
+    script_names:
+      - "d2_links/audit_broken_links.py"
+      - "d2_links/detect_relative_references.py"
+      - "d5_architecture/audit_depends_on_chain_depth.py"
+      - "d5_architecture/detect_depends_on_cycles.py"
+    linked_rules: "§5.1原则3、§6.2"
+
+  - id: "H"
+    name: "安全红线"
+    scope: "代码中是否存在不可接受的安全漏洞？"
+    check_items:
+      - "密钥/Token/凭证硬编码？"
+      - "shell=True/os.system()？"
+      - "危险Git命令（push --force/reset --hard）？"
+      - "日志输出敏感关键词？"
+      - "锚点文件删除？"
+      - "永久文件（ttl:permanent）删除？"
+      - "threading.Lock（全局异步架构违规）？"
+    script_names:
+      - "d6_security/detect_secrets.py"
+      - "d6_security/detect_shell_true.py"
+      - "d6_security/detect_git_dangerous.py"
+      - "d6_security/detect_keywords_in_logs.py"
+      - "d6_security/detect_anchor_file_deletion.py"
+      - "d6_security/detect_permanent_file_deletion.py"
+      - "d6_security/detect_threading_lock.py"
+      - "d6_security/detect_shell_dangerous.py"
+    linked_rules: "§4 编码安全"
+
+  - id: "I"
+    name: "代码质量"
+    scope: "代码是否符合项目工程标准？"
+    check_items:
+      - "每个 src/zephyr/ .py 是否有对应 test_*.py？"
+      - "open()是否缺encoding='utf-8'？"
+      - "import风格是否一致（绝对导入）？"
+      - "__init__.py __all__是否完整？"
+      - "测试断言是否有深度（无assert True/False）？"
+      - "docstring/类型注解覆盖率？"
+      - "是否直接调用了LLM SDK（跨层违规）？"
+      - "contracts/是否纯度合规（仅数据结构）？"
+    script_names:
+      - "d7_code/validate_test_coverage.py"
+      - "d7_code/detect_missing_encoding.py"
+      - "d7_code/validate_import_style.py"
+      - "d7_code/validate_init_all.py"
+      - "d7_code/validate_test_assertion_depth.py"
+      - "d7_code/validate_docstring_coverage.py"
+      - "d7_code/validate_type_annotation_coverage.py"
+      - "d7_code/detect_direct_llm_calls.py"
+      - "d7_code/validate_contracts_purity.py"
+    linked_rules: "§4 源码-测试同步铁律、§6.7"
+
+  - id: "J"
+    name: "文档同步"
+    scope: "文档元数据/lifecycle是否与磁盘实际一致？"
+    check_items:
+      - "TTL是否过期？"
+      - "文档frontmatter status↔lifecycle是否合规？"
+      - "是否有superseded_by但缺少双向链接？"
+      - "是否有废弃文件被活跃引用？"
+      - "版本号/date是否已更新（内容变更但version未同步）？"
+      - "是否有废弃≥180天未归档？"
+    script_names:
+      - "d8_doc_sync/validate_document_ttl.py"
+      - "d8_doc_sync/validate_document_lifecycle.py"
+      - "d3_metadata/validate_superseded_by.py"
+      - "d3_metadata/detect_skip_active_status.py"
+      - "d3_metadata/detect_stale_version.py"
+      - "d5_architecture/validate_deprecated_dependents.py"
+      - "d3_metadata/detect_deprecated_overdue.py"
+    linked_rules: "GOV-DOC-006, PS-STD-009"
+
+mantra:
+  - { num: 1, text: "一个文件只做一件事？", dim: "A" }
+  - { num: 2, text: "一个事实只有一个真源？", dim: "B" }
+  - { num: 3, text: "所有文件说的都对得上？", dim: "C" }
+  - { num: 4, text: "每个文件夹名字=职责？", dim: "D" }
+  - { num: 5, text: "每个字都有用？", dim: "E" }
+  - { num: 6, text: "蓝图和代码对得上？", dim: "F" }
+  - { num: 7, text: "所有引用都能打开？", dim: "G" }
+  - { num: 8, text: "代码里没藏密码和危险命令？", dim: "H" }
+  - { num: 9, text: "每个源文件都有测试？", dim: "I" }
+  - { num: 10, text: "文档的版本号和状态都更新了？", dim: "J" }
+
+methodology_files:
+  - name: "PS-STD-011 治理方法论"
+    path: "docs/01_policies_and_standards/meta/governance-methodology-standard.md"
+    stage: "全局前提"
+    description: "所有阶段的思维基线——最优先行原则（先判断最优→再检查约束）+ 项目清爽原则（能删就删）+ MTH-001~013"
+  - name: "PS-STD-000 元标准宪法"
+    path: "docs/01_policies_and_standards/meta/meta-standard-constitution.md"
+    stage: "全局前提"
+    description: "规则体系最高元规则——什么进宪法（ABS）、什么进登记表（COND/REC）"
+  - name: "从想法到粗稿-起草流水线指令集-v1"
+    path: "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
+    stage: "①~③"
+    description: "从碎片想法到结构化草稿的起草流程"
+  - name: "GOV-DOC-010 文档可发现性策略"
+    path: "docs/01_policies_and_standards/governance/document/document-discovery-policy.md"
+    stage: "①~⑦"
+    description: "文档发现机制——index.md是一切发现的起点、module_id是通用钥匙"
+  - name: "PS-STD-002 标准文档模板"
+    path: "docs/01_policies_and_standards/meta/document-structure-standard.md"
+    stage: "②~④"
+    description: "标准文档模板元标准——L1/L2/L3三层模板体系、SSoT声明、消费者注册表"
+  - name: "GOV-DOC-009 文档控制原则"
+    path: "docs/01_policies_and_standards/governance/document/document-control-policy.md"
+    stage: "②~⑤"
+    description: "文档控制8原则——SSoT唯一、责任二选一、安全删除、完整路径引用、创建前必查、先读后改、引用不复制、上下文预算意识"
+  - name: "升级版指令集-v4"
+    path: "模块候选池/审计流程/升级版指令集-v4.md"
+    stage: "③"
+    description: "四步串行多模型审计流水线（GLM→Kimi→Qwen→Claude）+ Step 0 动态项目扫描"
+  - name: "GOV-AI-002 模型路由策略"
+    path: "docs/01_policies_and_standards/governance/ai/model-routing-policy.md"
+    stage: "③"
+    description: "模型路由策略——DeepSeek主力+GLM审查+Claude救援三层防御"
+  - name: "PS-STD-004 规则分类与冲突裁决"
+    path: "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md"
+    stage: "③"
+    description: "规则冲突裁决——五维分类+推导链（stability→layer→scope→Owner）"
+  - name: "蓝图与施工图流程断裂问题分析"
+    path: "模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md"
+    stage: "③"
+    description: "全流程逐环节审查——从\"为什么蓝图、草稿、施工图之间有断裂\"出发分析15+个问题"
+  - name: "开发流程七合一方案"
+    path: "模块候选池/开发流程/开发流程七合一方案.md"
+    stage: "②~⑦"
+    description: "7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+Phase 0~5）"
+  - name: "Gate Strategy Standard"
+    path: "docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md"
+    stage: "④~⑤"
+    description: "5级门禁策略（G0~G4）+ Gate Pipeline 触发条件"
+  - name: "Phase Transition Protocol"
+    path: "docs/01_policies_and_standards/governance/architecture/phase-transition-protocol.md"
+    stage: "④~⑤"
+    description: "阶段转换协议（开发阶段之间的切换规则）"
+  - name: "GOV-ARCH-002 架构评审门控"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
+    stage: "④~⑤"
+    description: "架构评审门控——触发条件、评审清单（6项）、否决条件（7项）"
+  - name: "GOV-ARCH-001 ADR协议"
+    path: "docs/01_policies_and_standards/governance/architecture/adr-protocol.md"
+    stage: "④~⑤"
+    description: "ADR协议——谁提ADR、怎么审批、怎么归档"
+  - name: "GOV-MOD-001 模块准入门控"
+    path: "docs/01_policies_and_standards/governance/module/module-admission-policy.md"
+    stage: "④~⑥"
+    description: "模块准入门控——四级筛选（MAD-001~005）+ P0额外条件"
+  - name: "GOV-MOD-003 模块生命周期"
+    path: "docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md"
+    stage: "④~⑥"
+    description: "模块生命周期——8阶段状态机（planned→archived）"
+  - name: "GOV-MOD-004 模块接口契约"
+    path: "docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md"
+    stage: "④~⑥"
+    description: "模块接口契约——7必填字段、语义化版本、契约注册表、退役级联"
+  - name: "GOV-AI-003 AI幻觉自检"
+    path: "docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md"
+    stage: "⑤"
+    description: "AI幻觉自检清单——session开始前6项自检（路径/模块ID/接口/依赖/SSoT/编号）"
+  - name: "GOV-AI-004 双编辑器协作"
+    path: "docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md"
+    stage: "⑤"
+    description: "双编辑器协作规则——Cursor vs Trae分工、编码安全、切换检查清单"
+  - name: "GOV-DOC-005 编码安全标准"
+    path: "docs/01_policies_and_standards/governance/document/encoding-safety-standard.md"
+    stage: "⑤"
+    description: "编码安全标准——UTF-8强制、BOM禁止、LF换行符、PowerShell陷阱"
+  - name: "PS-STD-003 行为边界标准"
+    path: "docs/01_policies_and_standards/meta/behavior-boundaries-standard.md"
+    stage: "⑤"
+    description: "行为边界标准——ABS绝对禁止（48条）+ COND条件禁止 + REC推荐做法"
+  - name: "GOV-AI-008 跨会话交接协议"
+    path: "docs/01_policies_and_standards/governance/ai/handoff-protocol.md"
+    stage: "⑤"
+    description: "跨会话交接协议——HandoffPackage 8必填字段"
+  - name: "PS-STD-012 规则验证标准"
+    path: "docs/01_policies_and_standards/meta/rule-verification-standard.md"
+    stage: "⑦"
+    description: "规则验证标准——V1~V4四级验证（自动化阻断/警告/人工审查/审计抽样）"
+  - name: "GOV-CMP-002 审计追踪策略"
+    path: "docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md"
+    stage: "⑦"
+    description: "审计追踪策略——6类操作必须审计、日志不可篡改、访问受限"
+  - name: "审计脚本体系总入口"
+    path: "scripts/governance/index.md"
+    stage: "⑤~⑦"
+    description: "80+审计脚本体系总入口 + run_all.py调度 + 12维度审计框架"

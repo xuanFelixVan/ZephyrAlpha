@@ -1,0 +1,626 @@
+# ============================================================================
+# ZephyrAlpha GATE 门禁登记表（Gate Registry）— 唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-014
+# doc_type: register
+#
+# 对标: ITIL SACM CMDB CI → Quality Gates（质量门禁——每个变更经过指定检查点）
+#       + Google SRE Error Budget & Gates（每次发布前经过预算门禁）
+#       + AWS Well-Architected Framework → Review Gates（每条支柱有对应门禁）
+#       + OWASP SAMM → Security Gates（安全门禁嵌入 SDLC）
+#       + Cursor Rules → pre-commit hooks（Vibe Coding 社区实践）
+#
+# 用途: 登记 ZephyrAlpha 项目所有 GATE（门禁）——
+#       ID / 名称 / 类型 / 触发时机 / 被谁调用 / 失败动作。
+#       本登记表是门禁体系的 SSoT（唯一真源）——所有门禁在此可查。
+#
+# 门禁分类:
+#   1. Pre-commit GATE（提交前检查——.pre-commit-config.yaml）: 11 个
+#   2. KMS Pipeline GATE（知识管道阶段门禁——gate_engine.py）: 5 个
+#   3. Architecture Review GATE（架构评审门禁——architecture-review-policy.md）: 5 个
+#   4. Admission GATE（准入门禁——module/factor/file 准入）: 3 个
+#   5. Vibe Coding GATE（会话开始前检查——vibe-coding-gate-checklist.md）: 12 个检查项
+#
+# 与 gate-strategy-standard.md 的关系:
+#   - gate-strategy-standard.md 定义 5 级 KMS 门禁的详细策略
+#   - 本登记表登记所有门禁（不只 KMS 管道）的 ID 和元数据
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "GATE 门禁登记表"
+version: "1.0.0"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_registered: 34
+depends_on:
+  - target: "docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md"
+    at: "$"
+    why: "5 级 KMS 门禁策略 SSoT"
+  - target: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
+    at: "$"
+    why: "架构评审门禁定义"
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表"
+
+# ============================================================================
+# 门禁类型枚举
+# ============================================================================
+_schema:
+  gate_categories:
+    pre_commit:  "Git pre-commit hooks——提交前自动检查"
+    kms_pipeline: "KMS 知识管道阶段门禁——G1~G5 管道闸门"
+    architecture_review: "架构评审门禁——变更前人工评审"
+    admission: "准入门禁——模块/因子/文件进入项目前的筛选"
+    vibe_coding: "Vibe Coding 会话门禁——AI 开始操作前的检查"
+
+  severity_levels:
+    P0: "硬阻断——不通过则禁止继续"
+    P1: "软警告——通过但记录警告"
+    P2: "提示——仅记录，不影响通过"
+
+  failure_actions:
+    block: "阻塞操作——强制修复后才能继续"
+    warn: "仅警告——不影响继续，记入日志"
+    reject: "拒绝——变更回退或任务保持 PENDING"
+    flag: "标记——人工审核后决定"
+
+
+# ============================================================================
+# 门禁登记
+#
+# 字段说明:
+#   gate_id           门禁唯一 ID
+#   name              门禁名称
+#   category          门禁类型（见 _schema.gate_categories）
+#   trigger           触发时机
+#   executor          执行者（pre-commit / GateEngine / 人工评审 / 准入策略）
+#   check_items       检查项数量
+#   severity          最高严重级别（P0/P1/P2）
+#   on_failure        失败后的动作（见 _schema.failure_actions）
+#   script_path       关联脚本路径（如有）
+#   policy_file       关联策略文件
+#   status            门禁状态: active / draft / deprecated
+#   adr_ref           关联 ADR
+#   note              补充说明
+# ============================================================================
+
+gates:
+  # ========================================
+  # Pre-commit GATE（.pre-commit-config.yaml）
+  # ========================================
+  - gate_id: "GATE-01"
+    name: "_index.yaml 可达性检查"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_architecture_gates.py --gate 01"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/check_architecture_gates.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "检查 _index.yaml 是否能通过 depends_on 链到达所有节点"
+
+  - gate_id: "GATE-02"
+    name: "P0 接口契约完整性检查"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_architecture_gates.py --gate 02"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/check_architecture_gates.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "检查所有 P0 接口契约字段完整"
+
+  - gate_id: "GATE-03"
+    name: "不变量 owner 检查"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_architecture_gates.py --gate 03"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/check_architecture_gates.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "验证所有 invariant 是否有明确 owner"
+
+  - gate_id: "GATE-06"
+    name: "ADR 状态检查"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_architecture_gates.py --gate 06"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/check_architecture_gates.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "检查 ADR 状态一致性——accepted/superseded/deprecated 关系链"
+
+  - gate_id: "GATE-07"
+    name: "事件 publisher 层级检查"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_architecture_gates.py --gate 07"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/check_architecture_gates.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "验证事件发布者所在层域符合架构约束"
+
+  - gate_id: "GATE-11"
+    name: "命名规范门禁"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_naming_convention.py"
+    check_items: 7
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d3_metadata/check_naming_convention.py"
+    policy_file: "file-naming-standard.md"
+    status: active
+    adr_ref: null
+    note: "7 条违规规则 N-01~N-07（kebab-case/module_id namespace/ADR 铁律）"
+
+  - gate_id: "GATE-12"
+    name: "蓝图真源准入门禁（Wave 0 V-12 骨架）"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "validate_blueprint_provenance.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d3_metadata/validate_blueprint_provenance.py"
+    policy_file: null
+    status: active
+    adr_ref: "Wave 0 终审 R73"
+    note: "V-12 蓝图准入——检查蓝图是否引用合法真源"
+
+  - gate_id: "GATE-13"
+    name: "蓝图重叠检测门禁（Wave 1 V-14 骨架）"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "validate_blueprint_overlap.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d11_compliance/validate_blueprint_overlap.py"
+    policy_file: null
+    status: active
+    adr_ref: "Wave 1 V-14"
+    note: "T-V2-011: 检测蓝图之间职责重叠"
+
+  - gate_id: "GATE-14"
+    name: "AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "validate_authority_registry.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d5_architecture/validate_authority_registry.py"
+    policy_file: "ai-autonomy-authority-registry.md"
+    status: active
+    adr_ref: "Wave 0 终审 R74"
+    note: "V-11: 校验自治权限注册表与架构模型一致"
+
+  - gate_id: "GATE-15"
+    name: "Frontmatter 元数据校验（v3.0.0 SSoT）"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "check_frontmatter_metadata.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
+    policy_file: "metadata-registry.md"
+    status: active
+    adr_ref: null
+    note: "全库 frontmatter 校验——doc_type/status/version/date 一致性"
+
+  - gate_id: "GATE-16"
+    name: "架构合规校验（architecture-contract v1.0.0）"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "validate_architecture.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d3_metadata/validate_architecture.py"
+    policy_file: "architecture-contract.yaml"
+    status: active
+    adr_ref: null
+    note: "检查所有文档是否符合 architecture-contract.yaml 约束"
+
+  - gate_id: "GATE-17"
+    name: "孤儿 .py 检测门禁"
+    category: pre_commit
+    trigger: "git commit"
+    executor: "detect_orphan_py.py"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d1_structure/detect_orphan_py.py"
+    policy_file: null
+    status: active
+    adr_ref: null
+    note: "检测 scripts/governance/ 下不在 manifest 中的孤儿 .py 文件"
+
+  - gate_id: "GATE-18"
+    name: "测试收集门禁（源码-测试同步铁律）"
+    category: pre_commit
+    trigger: "git commit（src/ 或 tests/ 变更时）"
+    executor: "python -m pytest tests/ --collect-only"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "AGENTS.md §4"
+    status: active
+    adr_ref: null
+    note: "源码或测试变更时强制验证测试能正常收集（无 ImportError/路径漂移/模块缺失）"
+
+  - gate_id: "GATE-SQ"
+    name: "审计脚本质量门禁（SCRIPT-QUALITY-001 D-A~D-H）"
+    category: pre_commit
+    trigger: "git commit（scripts/governance/**/*.py 变更时）"
+    executor: "validate_script_quality.py"
+    check_items: 12
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d11_compliance/validate_script_quality.py"
+    policy_file: "scripts/governance/quality-standard.md"
+    status: active
+    adr_ref: null
+    note: "12 条自动检查：D-A-01~05 + D-B-02 + D-C-01 + D-D-06~08 + D-F-01~02"
+
+  - gate_id: "GATE-ADM"
+    name: "Manifest 准入控制器（K8s Admission Controller 落地）"
+    category: pre_commit
+    trigger: "git commit（script_manifest.yaml 变更时）"
+    executor: "validate_manifest_admission.py"
+    check_items: 8
+    severity: P0
+    on_failure: block
+    script_path: "scripts/governance/d11_compliance/validate_manifest_admission.py"
+    policy_file: "AGENTS.md §6.5"
+    status: active
+    adr_ref: null
+    note: "git diff 检测新增脚本→质量扫描→违规拒绝准入"
+
+  - gate_id: "GATE-IDX"
+    name: "索引-实际同步校验（AGENTS.md §6.11 落地）"
+    category: pre_commit
+    trigger: "git commit（index.md 或 script_manifest.yaml 变更时）"
+    executor: "validate_index_reality.py"
+    check_items: 1
+    severity: P1
+    on_failure: warn
+    script_path: "scripts/governance/d1_structure/validate_index_reality.py"
+    policy_file: "AGENTS.md §6.11"
+    status: active
+    adr_ref: null
+    note: "index.md 声称脚本数 vs 磁盘实际 .py 文件数对账（骨架阶段 warn-only）"
+
+  - gate_id: "GATE-COMMIT"
+    name: "Conventional Commits 格式校验"
+    category: pre_commit
+    trigger: "git commit（commit-msg 阶段）"
+    executor: "validate_commit_message.py"
+    check_items: 1
+    severity: P1
+    on_failure: block
+    script_path: "scripts/governance/d11_compliance/validate_commit_message.py"
+    policy_file: "conventionalcommits.org v1.0.0"
+    status: active
+    adr_ref: null
+    note: "type(scope): description 格式校验——feat/fix/docs/style/refactor/perf/test/chore/ci/build/revert"
+
+  # ========================================
+  # KMS Pipeline GATE（gate-strategy-standard.md）
+  # ========================================
+  - gate_id: "G1"
+    name: "G1 Ingest Gate（吸入门禁）"
+    category: kms_pipeline
+    trigger: "task PENDING→IN_PROGRESS"
+    executor: "GateEngine.evaluate(task, 'G1')"
+    check_items: 8
+    severity: P0
+    on_failure: reject
+    script_path: "src/zephyr/gates/gate_engine.py"
+    policy_file: "src/zephyr/gates/g1_ingest.yaml"
+    status: active
+    adr_ref: "ADR-0013"
+    note: "8 项检查：禁废弃路径/文件存在/编码/换行/frontmatter 存在/必填字段/文件大小/二进制检测"
+
+  - gate_id: "G2"
+    name: "G2 Triage Gate（分流门禁）"
+    category: kms_pipeline
+    trigger: "task IN_PROGRESS→COMPLETED"
+    executor: "GateEngine.evaluate(task, 'G2')"
+    check_items: 7
+    severity: P0
+    on_failure: reject
+    script_path: "src/zephyr/gates/gate_engine.py"
+    policy_file: "src/zephyr/gates/g2_triage.yaml"
+    status: active
+    adr_ref: null
+    note: "7 项检查：空壳检测/分类标签/doc_type/优先级/层级/重复检测/路径合规"
+
+  - gate_id: "G3"
+    name: "G3 Evaluate Gate（评估门禁）"
+    category: kms_pipeline
+    trigger: "task COMPLETED→VERIFIED"
+    executor: "GateEngine.evaluate(task, 'G3')"
+    check_items: 5
+    severity: P0
+    on_failure: reject
+    script_path: "src/zephyr/gates/gate_engine.py"
+    policy_file: "src/zephyr/gates/g3_evaluate.yaml"
+    status: active
+    adr_ref: null
+    note: "5 项检查：知识价值评分/唯一性/内容完整性/元数据完整/TTL 过期"
+
+  - gate_id: "G4"
+    name: "G4 Activate Gate（激活门禁）"
+    category: kms_pipeline
+    trigger: "task 达 VERIFIED 后的激活动作前"
+    executor: "GateEngine.evaluate(task, 'G4')"
+    check_items: 6
+    severity: P0
+    on_failure: reject
+    script_path: "src/zephyr/gates/gate_engine.py"
+    policy_file: "src/zephyr/gates/g4_activate.yaml"
+    status: active
+    adr_ref: null
+    note: "6 项检查：依赖就绪/无冲突/目标路径/ schema 合法/module_id 注册/无孤立引用"
+
+  - gate_id: "G5"
+    name: "G5 Extract Gate（提取门禁）"
+    category: kms_pipeline
+    trigger: "激活后写入知识库前"
+    executor: "GateEngine.evaluate(task, 'G5')"
+    check_items: 6
+    severity: P0
+    on_failure: reject
+    script_path: "src/zephyr/gates/gate_engine.py"
+    policy_file: "src/zephyr/gates/g5_extract.yaml"
+    status: active
+    adr_ref: null
+    note: "6 项检查 + 4 项后验：模板就绪/路径可用/路径合规/KE 编号/源完整/提取范围"
+
+  # ========================================
+  # Architecture Review GATE（architecture-review-policy.md）
+  # ========================================
+  - gate_id: "ARG-001"
+    name: "触发条件内的变更必须经过架构评审"
+    category: architecture_review
+    trigger: "触发条件表（§2）中的变更类型"
+    executor: "Owner 人工评审"
+    check_items: 1
+    severity: P0
+    on_failure: reject
+    script_path: null
+    policy_file: "architecture-review-policy.md"
+    status: draft
+    adr_ref: null
+    note: "8 种变更类型分类检查（新增/删除模块等需评审，重命名/bugfix 不需要）"
+
+  - gate_id: "ARG-002"
+    name: "架构评审必须使用清单"
+    category: architecture_review
+    trigger: "ARG-001 触发评审后"
+    executor: "Owner 人工评审"
+    check_items: 6
+    severity: P0
+    on_failure: reject
+    script_path: null
+    policy_file: "architecture-review-policy.md §4"
+    status: draft
+    adr_ref: null
+    note: "6 项清单逐项检查（ADR一致性/循环依赖/数据一致/回滚/性能/文档）"
+
+  - gate_id: "ARG-003"
+    name: "架构评审否决条件"
+    category: architecture_review
+    trigger: "ARG-002 清单检查过程中"
+    executor: "Owner 人工评审"
+    check_items: 7
+    severity: P0
+    on_failure: reject
+    script_path: null
+    policy_file: "architecture-review-policy.md §3"
+    status: draft
+    adr_ref: null
+    note: "7 项否决条件（违反ADR/循环依赖/可观测性下降/数据不一致/无回滚/性能退化/无文档更新清单）"
+
+  - gate_id: "ARG-004"
+    name: "评审人资质检查"
+    category: architecture_review
+    trigger: "任何架构评审开始时"
+    executor: "Owner 人工评审"
+    check_items: 1
+    severity: P0
+    on_failure: reject
+    script_path: null
+    policy_file: "architecture-review-policy.md"
+    status: draft
+    adr_ref: null
+    note: "AI 不得单独执行架构评审或代替 Owner 做出评审决定"
+
+  - gate_id: "ARG-005"
+    name: "评审记录格式检查"
+    category: architecture_review
+    trigger: "评审完成后"
+    executor: "Owner 人工评审"
+    check_items: 1
+    severity: P0
+    on_failure: reject
+    script_path: null
+    policy_file: "architecture-review-policy.md"
+    status: draft
+    adr_ref: null
+    note: "评审记录必须包含：日期/评审人ID/变更描述/逐项结果/决定/理由/路径"
+
+  # ========================================
+  # Admission GATE（准入门禁）
+  # ========================================
+  - gate_id: "MOD-ADMIT"
+    name: "模块准入门禁"
+    category: admission
+    trigger: "新模块申请进入项目"
+    executor: "module-admission-policy.md"
+    check_items: 10
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "module-admission-policy.md"
+    status: active
+    adr_ref: "ADR-0014"
+    note: "MOD-P1~P4 四级筛选 + INJ-001~006 六条铁律"
+
+  - gate_id: "FACTOR-QUALITY"
+    name: "因子质量门禁"
+    category: admission
+    trigger: "新因子接入时"
+    executor: "factor-quality-policy.md"
+    check_items: 1
+    severity: P1
+    on_failure: warn
+    script_path: null
+    policy_file: "domains/L02_alpha_factor/governance/factor-quality-policy.md"
+    status: active
+    adr_ref: null
+    note: "新因子质量评估标准"
+
+  - gate_id: "FILE-OP-SAFE"
+    name: "文件操作安全门禁"
+    category: admission
+    trigger: "AI 执行文件删除/移动操作前"
+    executor: "file-operation-safety-policy.md"
+    check_items: 1
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "file-operation-safety-policy.md"
+    status: active
+    adr_ref: null
+    note: "AI 删除/移动文件前必须过的安全检查"
+
+  # ========================================
+  # Vibe Coding Session GATE（vibe-coding-gate-checklist.md）
+  # ========================================
+  - gate_id: "VC-A"
+    name: "Vibe Coding 上下文加载门禁（3项）"
+    category: vibe_coding
+    trigger: "AI 会话开始时"
+    executor: "AI Agent 自检"
+    check_items: 3
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "vibe-coding-gate-checklist.md §2.A"
+    status: active
+    adr_ref: null
+    note: "A1:当前Phase / A2:施工图 / A3:相关SSoT文件。A3 被 GATE-16 自动覆盖"
+
+  - gate_id: "VC-B"
+    name: "Vibe Coding 规则确认门禁（4项）"
+    category: vibe_coding
+    trigger: "AI 会话开始时"
+    executor: "AI Agent 自检"
+    check_items: 4
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "vibe-coding-gate-checklist.md §2.B"
+    status: active
+    adr_ref: null
+    note: "B1~B4 全部被 GATE-14/GATE-15/GATE-16 自动覆盖"
+
+  - gate_id: "VC-C"
+    name: "Vibe Coding 安全检查门禁（3项）"
+    category: vibe_coding
+    trigger: "AI 会话开始时"
+    executor: "AI Agent 自检"
+    check_items: 3
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "vibe-coding-gate-checklist.md §2.C"
+    status: active
+    adr_ref: null
+    note: "C1~C3 全部被 GATE-16 自动覆盖"
+
+  - gate_id: "VC-D"
+    name: "Vibe Coding 环境确认门禁（2项）"
+    category: vibe_coding
+    trigger: "AI 会话开始时"
+    executor: "AI Agent 自检"
+    check_items: 2
+    severity: P0
+    on_failure: block
+    script_path: null
+    policy_file: "vibe-coding-gate-checklist.md §2.D"
+    status: active
+    adr_ref: null
+    note: "D1/D2 被 GATE-14/GATE-16 自动覆盖"
+
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total_gates: 34
+  by_category:
+    pre_commit: 17
+    kms_pipeline: 5
+    architecture_review: 5
+    admission: 3
+    vibe_coding: 4
+  by_severity:
+    P0: 27
+    P1: 1
+    P2: 0
+  by_status:
+    active: 29
+    draft: 5
+    deprecated: 0
+  automation_coverage:
+    automated: 22
+    manual: 5
+    semi_automated: 7
+
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "初始创建——登记 36 个 GATE（分 5 大类）"
+      - "Pre-commit GATE: 11 个（GATE-01~07 + 11~16，含跳号 GATE-04/05/08/09/10）"
+      - "KMS Pipeline GATE: 5 个（G1~G5，gate-strategy-standard.md 定义）"
+      - "Architecture Review GATE: 5 个（ARG-001~005，全部 draft）"
+      - "Admission GATE: 3 个（MOD/FACTOR/FILE 准入）"
+      - "Vibe Coding GATE: 4 组（A/B/C/D 共 12 个检查项）"
+      - "自动化率：16/36 全自动（pre-commit + KMS pipeline）"

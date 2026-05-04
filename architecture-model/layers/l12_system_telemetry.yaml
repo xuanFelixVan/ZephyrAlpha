@@ -1,0 +1,74 @@
+schema_version: "1.0.0"
+partition:
+  id: l12
+  name: System Telemetry
+  track: c_track
+  layer_position: 12
+  runtime_plane: warm
+  status: implemented
+  note: >
+    全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档，
+    为 L00-L11 + L13 所有业务层提供可观测性数据底座。
+    归入 C 轨（业务脊柱层内子系统），与 5 大 AI 核心服务不同。
+
+modules:
+  - id: l12-ai-behavior
+    name: AI Behavior Telemetry
+    submodule_path: src/zephyr/l12_system_telemetry/ai_behavior/
+    status: skeleton
+    priority: P1
+    runtime_plane: warm
+    description: AI 行为遥测：幻觉率、token 消耗、规则触发统计
+    files: []
+    interfaces: []
+    adr_ref: []
+
+  - id: l12-metrics
+    name: Metrics Stream
+    submodule_path: src/zephyr/l12_system_telemetry/metrics/
+    status: skeleton
+    priority: P1
+    runtime_plane: warm
+    description: 指标流：SLI/SLO、业务度量
+    files: []
+    interfaces: []
+    adr_ref: []
+
+  - id: l12-logs
+    name: Logs Stream
+    submodule_path: src/zephyr/l12_system_telemetry/logs/
+    status: skeleton
+    priority: P1
+    runtime_plane: warm
+    description: 结构化日志流
+    files: []
+    interfaces: []
+    adr_ref: []
+
+  - id: l12-traces
+    name: Traces Stream
+    submodule_path: src/zephyr/l12_system_telemetry/traces/
+    status: skeleton
+    priority: P1
+    runtime_plane: warm
+    description: 分布式链路追踪
+    files: []
+    interfaces: []
+    adr_ref: []
+
+  - id: l12-archive
+    name: Archive
+    submodule_path: src/zephyr/l12_system_telemetry/archive/
+    status: skeleton
+    priority: P2
+    runtime_plane: cold
+    description: 历史数据归档
+    files: []
+    interfaces: []
+    adr_ref: []
+
+summary:
+  total: 5
+  by_status:
+    implemented: 1
+    skeleton: 4

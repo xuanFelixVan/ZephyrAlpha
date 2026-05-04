@@ -1,130 +1,52 @@
----
-standard_type: 技术文档
-applicable_scope: 全系统
-compliance_level: 初始标准
-parent_document: docs/INDEX.md
-implementation_status: 设计阶段
-owner: 文档维护者
-version: 1.0.1
-module_id: DOC_README
-created_date: 2026-03-28
-last_updated: 2026-04-10
----
-# 清风量化交易系统 v5.1
+# ZephyrAlpha v2.0
 
-> 清风量化系统 v5.1 - 专业级量化交易系统（个人开发者适配版）
-
-```---
-
-## 快速开始（3步）
-
-### 1. 环境配置
-```bash
-cd ZephyrAlpha
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. 配置文件
-```bash
-copy .env.example .env
-# 编辑 .env 填入API密钥
-```
-
-### 3. 运行系统
-```bash
-python -m src.main
-```
-
-```---
-
-## 核心文档
-
-> 全库文档的**统一入口**为 **[文档索引 `docs/INDEX.md`](docs/INDEX.md)**；下表为常用直达链接（接口与策略规格仍位于 `03_TRADING_TACTICS`，与仓库目录结构一致）。
-
-| 文档 | 说明 |
-|------|------|
-| [文档索引](docs/INDEX.md) | 全库导航与分类（推荐首访） |
-| [统一架构](docs/01_FRAMEWORK/ARCHITECTURE.md) | Layer 0–11 权威分层 |
-| [系统站点图](docs/05_IMPLEMENTATION/SITEMAP.md) | 实施层站点图与导航 |
-| [接口规范](./docs/03_TRADING_TACTICS/api-contract.md) | API 契约 |
-| [策略定义](./docs/03_TRADING_TACTICS/strategy-spec-s001.md) | 示例策略规格 |
-| [常见问题](./docs/02_FACTOR_LIBRARY/FAQ.md) | FAQ |
-| [项目办公室 AI 交接说明](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/project-office-ai-handoff.md) | 蓝图/建设文档治理：给 AI 或新协作者快速上手 |
-
-### 治理与建设文档（canonical）
-
-| 入口 | 说明 |
-|------|------|
-| [建设文档总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md) | `06_CONSTRUCTION_DOCS` 档案室大门（须与真实子目录一致） |
-| [项目办公室 README](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/README.md) | 规章、任务清单、交付标准、CANON 门禁导航 |
-| [治理工具总索引](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md) | **一条表**查：链检查、rollup、verify、架构目录、内容重复扫描等命令与产出 |
-| [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) | **文档地图 + 放置规则**与扫描/§7 衔接；真源为 [LAYOUT 标准](./docs/09_AUDIT/STANDARDS/document-repository-layout-standard.md) |
-| [蓝图交付标准（机构精华版）](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-delivery-standard-institutional-lite.md) | 机构式目标态与 §1.5 全仓库分层 |
-| [全库蓝图终稿任务清单](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
-| [施工门禁](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/construction-gate-criteria-20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
-
-### 开源协作与架构索引（生成物）
-
-| 入口 | 说明 |
-|------|------|
-| [LICENSE](LICENSE) | MIT（与 `pyproject.toml` 声明一致） |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与办公室入口 |
-| [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
-| [架构服务目录 + C4 摘要](./docs/09_AUDIT/STATE/architecture-service-catalog-20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/governance/generate_architecture_service_catalog.py` |
-| [内容重复扫描报告](./docs/09_AUDIT/STATE/duplicate-content-by-hash-20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
-| [索引健全性（零入链）](./docs/09_AUDIT/STATE/DAILY/index-health-orphan-20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) **§5.2** |
-
-```---
-
-## 系统架构
-
-```
-Layer 0: 数据层 → Layer 1: 前置层 → Layer 2: Alpha层 → Layer 3: 风险层
-  ↓
-Layer 4: 组合层 → Layer 5: 执行层 → Layer 6: 监控层 → Layer 7: 归因层
-```
-
-详见: [docs/01_FRAMEWORK/ARCHITECTURE.md](docs/01_FRAMEWORK/ARCHITECTURE.md)
-
-```---
+> 专业级量化交易系统 — 第二代架构
 
 ## 项目结构
 
 ```
 ZephyrAlpha/
-├── config/          # 配置文件
-├── src/            # 源代码（模块索引见 src/README.md）
-├── data/           # 数据存储
-├── logs/           # 日志文件
-├── tests/          # 测试代码
-├── docs/           # 完整文档
-├── scripts/        # 脚本工具
-├── notebooks/      # Jupyter笔记本
-├── requirements.txt
-└── .env.example
+├──           # 活跃开发（新树）
+│   ├── src/zephyr/           # 核心源码
+│   ├── docs/                 # 项目文档
+│   ├── scripts/              # 治理与工具脚本
+│   ├── config/               # 配置文件
+│   ├── tests/                # 测试代码
+├── 模块候选池/                # 专题讨论与候选模块
+├── AGENTS.md                 # AI 基准文件
+└── _DO_NOT_USE_old_tree/     # 旧树归档（禁止使用）
 ```
 
-```---
+你可以先在本地 fork / clone 本仓库，再进入 `` 目录。
+
+## 快速开始
+
+```bash
+cd 
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+## 核心文档
+
+| 文档 | 路径 |
+|------|------|
+| 目录结构标准 | [directory-structure-standard.md](docs/01_policies_and_standards/governance/document/directory-structure-standard.md) |
+| 规则注册表 | [governance-rules-master-registry.yaml](docs/01_policies_and_standards/_registry/catalogs/governance-rules-master-registry.yaml) |
+| 文档清单 | [master-document-inventory.yaml](docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml) |
+| 架构概览 | [00-overview.md](docs/02_enterprise_architecture/target-architecture/00-overview.md) |
+| ADR 索引 | [adr/index.md](docs/02_enterprise_architecture/adr/index.md) |
+| 知识库 | [08_knowledge/](docs/08_knowledge/) |
 
 ## 技术栈
 
 - **语言**: Python 3.10+
-- **数据**: pandas, numpy, scipy
-- **数据库**: SQLite, DuckDB
-- **调度**: APScheduler
-- **日志**: loguru
+- **数据库**: SQLite, ChromaDB
+- **异步**: asyncio
+- **验证**: Pydantic v2
 
-```---
+## 许可证
 
-## 相关资源
-
-- **文档导航入口**: [docs/INDEX.md](docs/INDEX.md)
-- **因子库**: [docs/02_FACTOR_LIBRARY/](docs/02_FACTOR_LIBRARY/)
-- **策略与执行（战术层目录）**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
-- **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](./docs/00_OVERVIEW/CHANGELOG.md)
-
-```---
-
-**版本**: v5.1 | **更新**: 2026-04-10（含根目录 LICENSE / CONTRIBUTING / SECURITY 与架构服务目录生成物）
+MIT — 见 [LICENSE](LICENSE)

@@ -1,161 +1,299 @@
-# A1: 仅注册磁盘上真实存在的入口；文档治理钩子位于 scripts/hooks/，审计辅助位于 scripts/audit/
-# 说明：check_metadata_completeness 含硬编码绝对路径且无 --pre-commit 模式，已移除。
-# 社区钩子：基础卫生与 YAML 语法，不依赖本仓库脚本。
-
-default_language_version:
-  python: python3.12
+# ZephyrAlpha 2.0 — Pre-commit GATE 门禁配置
+# Sprint 0 批次F (F-03): 接入5个核心架构GATE检查
+#
+# 使用方式:
+#   cd 
+#   pre-commit install
+#   pre-commit run --all-files
+#
+# GATE 脚本路径:
+#   scripts/governance/d5_architecture/check_architecture_gates.py
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
+        name: "修剪行尾空格"
       - id: end-of-file-fixer
+        name: "确保文件末尾换行"
       - id: check-yaml
-        args: [--unsafe]
-        # 以下为带 Python 风格文档字符串的「伪 YAML」，非标准 YAML 文档
-        exclude: ^src/modules/ai_factor_miner/config/ai_factor_miner_config\.yaml$
-      - id: check-added-large-files
-        args: [--maxkb=1024]
+        name: "YAML 语法检查"
+        args: ["--unsafe"]
+      - id: check-json
+        name: "JSON 语法检查"
       - id: check-merge-conflict
+        name: "检测未解决的合并冲突标记"
+      - id: detect-private-key
+        name: "检测意外提交的私钥"
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.8
+    hooks:
+      - id: ruff
+        name: "Ruff Lint"
+        args: ["--fix"]
+      - id: ruff-format
+        name: "Ruff Format"
 
   - repo: local
     hooks:
-      - id: validate-version-metadata
-        name: 验证版本元数据（全库阈值）
-        entry: python src/utils/validate_version_metadata.py
-        language: system
-        files: \.md$
-        # 输出到 .audit_cache/ 避免 Windows GBK 终端 UnicodeEncodeError
-        # NOTE: 2026-04-16 全库文档元数据合规率约 15%（历史债务）；过渡期阈值 10
-        # 恢复计划：每完成一批文档元数据补全后上调（目标 70）
-        args: [docs, --recursive, --threshold, "10", --format, json, --output, .audit_cache/vm-report.json]
-        pass_filenames: false
-
-      - id: check-version-in-filename
-        name: 检查文件名中的版本信息（由 check-directory-budget BANNED_FILENAME_PATTERNS 覆盖）
-        # 使用 python -c 空操作；原 validate_version_metadata.py 不接受多文件 positional args
-        entry: python -c "import sys; sys.exit(0)"
-        language: system
-        pass_filenames: false
-
-      - id: check-metadata-required-fields
-        name: 检查元数据必选字段（由 source_guard_pre_commit.py REQUIRED_FIELDS 覆盖）
-        entry: python -c "import sys; sys.exit(0)"
-        language: system
-        pass_filenames: false
-
-      - id: check-document-placement
-        name: 检查根目录杂散文档放置
-        entry: python scripts/hooks/check_document_placement.py
-        language: system
-        files: \.(md|txt|json)$
-        pass_filenames: true
-
-      - id: check-index-integrity
-        name: 检查索引文件存在性（配置目录列表）
-        entry: python scripts/hooks/check_index_integrity.py
-        language: system
-        files: \.md$
-        pass_filenames: false
-
-      - id: doc-guard-pre-commit
-        name: 文档缺陷防护 (D-01/D-02/D-05 等)
-        entry: python scripts/hooks/doc_guard_pre_commit.py --check staged
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: false
-
-      - id: check-file-naming
-        name: 检查文件命名规范 (C-10)
-        entry: python scripts/hooks/doc_guard_pre_commit.py --check-naming
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: true
-
-      - id: check-directory-naming
-        name: 检查目录命名规范 (D-07)
-        entry: python scripts/hooks/check_directory_naming.py --staged
-        language: system
-        files: ^docs/
-        pass_filenames: false
-
-      - id: source-guard
-        name: 真源卫兵（双 YAML / module_id / frontmatter）
-        entry: python scripts/hooks/source_guard_pre_commit.py
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: false
-
-      - id: mandatory-inbound-guard
-        name: 强制入链守卫（docs 新文件）
-        entry: python scripts/audit/mandatory_inbound_guard.py
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: true
-
-      # ── 红队 A2 专项（Batch A2）────────────────────────────────────
-      - id: check-index-links
-        name: INDEX.md 相对死链检查（G-02）
-        entry: python scripts/hooks/check_index_links.py
-        language: system
-        files: (^docs/.*/INDEX\.md$)
-        pass_filenames: true
-
-      - id: check-related-documents
-        name: frontmatter parent/related 路径存在性
-        entry: python scripts/hooks/check_related_documents.py
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: true
-
-      - id: check-standards-index-registration
-        name: STANDARDS 新文件须登记 INDEX
-        entry: python scripts/hooks/check_standards_index_registration.py
-        language: system
-        files: ^docs/(09_AUDIT/STANDARDS|01_GOVERNANCE/STANDARDS)/.*\.md$
-        pass_filenames: true
-
-      - id: check-body-script-refs
-        name: 正文幽灵脚本命令检查
-        entry: python scripts/hooks/check_body_script_refs.py
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: true
-
-      - id: check-tdr-propagation
-        name: TDR 变更联动暂存检查
-        entry: python scripts/hooks/check_tdr_propagation.py
-        language: system
-        files: (^docs/02_ARCHITECTURE/TECH_DECISION_RECORDS\.md$|^docs/02_ARCHITECTURE/TECH_DECISION_RECORDS/.*\.md$)
-        pass_filenames: false
-
-      - id: check-directory-budget
-        name: 目录文件预算门禁（写入守卫）
-        entry: python scripts/hooks/check_directory_budget.py
-        language: system
-        files: ^docs/
-        pass_filenames: false
-        always_run: true
-
-      - id: governance-health-snapshot
-        name: 治理健康度快照（Sentinel L1 阈值）
-        entry: python scripts/hooks/pre-commit-governance-check.py
-        language: system
-        pass_filenames: false
-        always_run: true
-
-      - id: validate-blueprint-frontmatter
-        name: 蓝图 frontmatter 完整性校验（priority/layer/status）
-        entry: python scripts/hooks/validate_blueprint_frontmatter.py
-        language: system
-        files: ^docs/.*\.md$
-        pass_filenames: true
-
-      - id: check-subsystem-registry
-        name: 新建子目录须在 subsystem-registry.yaml 中登记
-        entry: python scripts/governance/scan_subsystem_duplicates.py --fail-on-ghost
-        language: system
-        files: ^docs/
+      # ── GATE-01: _index.yaml 可达性检查 ──
+      - id: gate-01-index-reachability
+        name: "GATE-01: _index.yaml 可达性检查"
+        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        args: ["--gate", "01"]
+        language: python
         pass_filenames: false
         always_run: false
+        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        description: "检查所有 _index.yaml 文件的引用可达性，确保无断链"
+
+      # ── GATE-02: P0 接口契约完整性检查 ──
+      - id: gate-02-p0-contract-integrity
+        name: "GATE-02: P0 接口契约完整性检查"
+        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        args: ["--gate", "02"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        description: "验证所有 P0 接口契约的字段完整性（schema_version / fields / owner）"
+
+      # ── GATE-03: 不变量 owner 检查 ──
+      - id: gate-03-invariant-owner
+        name: "GATE-03: 不变量 owner 检查"
+        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        args: ["--gate", "03"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        description: "检查每条不变量是否有且仅有一个 owner 层，防止职责模糊"
+
+      # ── GATE-06: ADR 状态检查 ──
+      - id: gate-06-adr-status
+        name: "GATE-06: ADR 状态检查"
+        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        args: ["--gate", "06"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        description: "验证所有 ADR 的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）"
+
+      # ── GATE-07: 事件 publisher 层级检查 ──
+      - id: gate-07-event-publisher-layer
+        name: "GATE-07: 事件 publisher 层级检查"
+        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        args: ["--gate", "07"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        description: "检查每条领域事件的 publisher 层级是否与事件所属域一致"
+
+      # ── GATE-11: 命名规范门禁（Stage G 落地）──
+      # 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md v2.0.1 §五
+      # 续号于 Architecture-as-Code GATE-01 ~ GATE-10（避让 AaC 编号空间）
+      # 检测 7 条 N-01 ~ N-07 违规：文件名大小写 / 版本号后缀 / 日期后缀 /
+      #   ADR 嵌套编号 / ADR kebab 尾缀 / module_id scope 前缀 / ADR 编号一致性
+      - id: gate-11-naming-convention
+        name: "GATE-11: 命名规范门禁"
+        entry: python scripts/governance/d3_metadata/check_naming_convention.py
+        args: ["--staged"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^.*"
+        description: "全库命名规范门禁（kebab-case / module_id namespace / ADR 铁律），违规即 block commit"
+
+      # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
+      # 权威依据：metadata-registry.md §10.3（provenance 字段格式）
+      # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
+      # 校验范围：docs/02_enterprise_architecture/target-architecture/ + 04_construction_plans/ + 01_policies_and_standards/
+      # 校验内容：frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）+ 物理路径存在性
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      - id: gate-12-blueprint-provenance
+        name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
+        entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/(02_enterprise_architecture/target-architecture|04_construction_plans|01_policies_and_standards)/.*\\.md$"
+        description: "蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段 warn-only"
+
+      # ── GATE-14: AI 自治权限注册表自校验（Wave 0 终审 R74 · V-11）──
+      # 权威依据：docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md
+      # 真源声明：rationale-log R74 兜底缺口 V-11 / T-V2-003
+      # 校验范围：ai-autonomy-authority-registry.md 中的权限标注
+      # 校验内容：三层权限值合法 / 必填字段完整 / 模块无重复 / 章节覆盖率 / Immutable Core 最低数量
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      - id: gate-14-authority-registry
+        name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
+        entry: python scripts/governance/d5_architecture/validate_authority_registry.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/01_policies_and_standards/ai-autonomy-authority-registry\\.md$"
+        description: "权限注册表自校验（三层权限值 / 必填字段 / 重复模块 / 章节覆盖 / Immutable Core 最低数量），骨架阶段 warn-only"
+
+      # ── GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 · T-V2-011）──
+      # 权威依据：docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md §2.11
+      # 真源声明：Wave 1 V-14 兜底 / T-V2-011
+      # 校验范围：docs/19_development_workspace/drafts-and-audits/ 下草稿的 components 字段
+      # 校验内容：同一 component_id 出现在 2+ 草稿时 warn
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      - id: gate-13-blueprint-overlap
+        name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）"
+        entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/19_development_workspace/drafts-and-audits/.*\\.md$"
+        description: "蓝图重叠检测（同一 component_id 出现在多个草稿时 warn），骨架阶段 warn-only"
+
+      # ── GATE-15: Frontmatter 元数据校验（metadata-registry.md v3.0.0）──
+      # 权威依据：docs/01_policies_and_standards/meta/metadata-registry.md v3.0.0
+      # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter-schema.json R4
+      # 校验范围：docs/ 下所有 .md 和 .yaml 文件
+      # 校验内容：doc_type 合法值（17种）/ status 合法值（7种）/ 必填字段 / module_id 格式 / AI 生成文件标记
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      - id: gate-15-frontmatter-metadata
+        name: "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）"
+        entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/.*\\.(md|yaml|yml)$"
+        description: "Frontmatter 元数据校验（doc_type 17种合法值 / status 7种 / 必填字段 / module_id 格式 / AI 生成标记），骨架阶段 warn-only"
+
+      # ── GATE-16: 架构合规校验（architecture-contract.yaml v1.0.0）──
+      # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
+      # 真源声明：Phase 4 D-008/D-011 产出
+      # 校验范围：docs/01_policies_and_standards/ 下所有 .md 和 .yaml 文件
+      # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下无operational_rule / operational下无policy
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），待验证稳定后转 --ci 强制
+      - id: gate-16-architecture-compliance
+        name: "GATE-16: 架构合规校验（architecture-contract v1.0.0）"
+        entry: python scripts/governance/d3_metadata/validate_architecture.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/01_policies_and_standards/.*\\.(md|yaml|yml)$"
+        description: "架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance无operational_rule / operational无policy），骨架阶段 warn-only"
+
+      # ── GATE-17: 孤儿.py文件检测（AGENTS.md §6.5）──
+      # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定）
+      # 真源声明：Session 20260502-005 根因审计产出
+      # 检测范围：项目根目录（）一级目录下的所有 .py 文件
+      # 检测内容：任何出现在根目录的 .py 文件视为违规（.py只能放在 scripts/governance/ / src/zephyr/ / tests/）
+      # 模式：--fix 自动删除孤儿文件
+      - id: gate-17-orphan-py
+        name: "GATE-17: 孤儿.py文件检测（§6.5 根目录零.py）"
+        entry: python scripts/governance/d1_structure/detect_orphan_py.py
+        args: ["--fix"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^.*\\.py$"
+        description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
+
+      # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
+      # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
+      # 真源声明：Session 20260502-006 六环根因分析 → 根源：源码重构未同步测试 → 治根措施
+      # 检测范围：src/zephyr/**/*.py 或 tests/**/*.py 变更时触发
+      # 检测内容：pytest --collect-only → 零收集失败 = 通过；任何 ImportError / 路径漂移 / 模块缺失 = 阻塞提交
+      # 执行频率：always_run=true（源码或测试任一变更即触发）
+      # 耗时：~1-2s（仅收集阶段，不执行测试体）
+      - id: gate-18-test-collection
+        name: "GATE-18: 测试收集门禁（源码-测试同步铁律）"
+        entry: python -m pytest tests/ --collect-only -q --tb=line
+        language: python
+        pass_filenames: false
+        always_run: true
+        files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
+        description: "源码或测试文件变更时强制验证测试能正常收集（无 ImportError / 路径漂移 / 模块缺失），AGENTS.md §4 源码-测试同步铁律自动化执行层"
+
+      # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
+      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality-standard.md
+      # 真源声明：Session 20260502-007 五轮审计修复 → D-D-07/D-D-08 checker 系统性防护 → 接入 pre-commit 强制执行层
+      # 检测范围：scripts/governance/**/*.py 变更时触发
+      # 检测内容：D-A~D-H 八维度质量检查（编码安全 / 退出码 / 短路模式 /
+      #   异常规范 / 模块封装 / _shared API 重复定义 / os.walk 绕过 / 其他异味）
+      # 模式：硬阻断（warn-only=false）—— 任何 D-A~D-H 违规禁止提交
+      - id: gate-sq-script-quality
+        name: "GATE-SQ: 审计脚本质量门禁（D-D-07/D-D-08 强制执行）"
+        entry: python scripts/governance/d11_compliance/validate_script_quality.py
+        args: ["--scripts-dir", "scripts/governance"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^scripts/governance/.*\\.py$"
+        description: "审计脚本八维度质量检查（编码安全/退出码/_shared API重复/os.walk绕过），任何违规禁止提交，AGENTS.md §8.2.1 强制执行层"
+
+      # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §6.5 K8s Admission Controller 落地）──
+      # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定——任何.py创建必须通过准入审核）
+      # 真源声明：Session 20260502-005 Manifest Admission Controller 创建 → 接入 pre-commit → 零例外
+      # 检测范围：script_manifest.yaml 变更时触发
+      # 检测内容：git diff HEAD -- script_manifest.yaml → 发现新条目 →
+      #   自动运行 validate_script_quality.py 质量扫描 → 违规拒绝准入
+      # 模式：硬阻断（warn-only=false）
+      - id: gate-adm-manifest-admission
+        name: "GATE-ADM: Manifest 准入控制器（K8s Admission落地）"
+        entry: python scripts/governance/d11_compliance/validate_manifest_admission.py
+        args: []
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^scripts/governance/script_manifest\\.yaml$"
+        description: "新脚本 Manifest 准入审核（git diff 检测新条目→质量扫描→违规拒绝准入），AGENTS.md §6.5 准入控制器落地"
+
+      # ── GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 自动化执行层）──
+      # 权威依据：AGENTS.md §6.11（索引-实际同步强制约定——index.md声称数字必须与磁盘实际一致）
+      # 真源声明：Session 20260502-007 索引漂移 → 新建 validate_index_reality.py → 接入 pre-commit
+      # 检测范围：index.md 或 script_manifest.yaml 变更时触发
+      # 检测内容：各维度声称脚本数 vs 磁盘实际 .py 文件数 / 声称 manifest 条目数 vs 实际
+      # 模式：第一次上线用 warn-only（骨架阶段），验证稳定后转硬阻断
+      - id: gate-idx-index-reality
+        name: "GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 落地）"
+        entry: python scripts/governance/d1_structure/validate_index_reality.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^scripts/governance/(index\\.md|script_manifest\\.yaml)$"
+        description: "index.md声称脚本数 vs 磁盘实际 .py 文件数对账（AGENTS.md §6.11 CMDB reconciliation 自动化执行层），骨架阶段 warn-only"
+
+  # ── GATE-DD07: _shared API 本地重定义检测+自动修复（D-D-07 强制执行）──
+      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + SCRIPT-QUALITY-001 D-D-07
+      # 真源声明：Session 20260503 根因审计 → fix_shared_bypass.py 创建 → 接入 pre-commit
+      # 检测范围：scripts/governance/**/*.py 变更时触发
+      # 检测内容：AST 级别检测本地重定义 _shared API 符号（REPO_ROOT/EXCLUDE_DIRS/SRC_DIR/SCAN_EXTENSIONS 等）
+      # 模式：warn-only（检测+报告），需修复时运行 fix_shared_bypass.py --fix
+      - id: gate-dd07-shared-bypass
+        name: "GATE-DD07: _shared API 本地重定义检测（D-D-07）"
+        entry: python scripts/governance/d11_compliance/fix_shared_bypass.py
+        args: ["--warn-only"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^scripts/governance/.*\\.py$"
+        description: "AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py --fix"
+
+      # ── Commit Message 校验（Conventional Commits v1.0.0）──
+  # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
+  # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
+  - repo: local
+    hooks:
+      - id: commit-msg-conventional
+        name: "Conventional Commits"
+        entry: python scripts/governance/d11_compliance/validate_commit_message.py
+        language: python
+        stages: [commit-msg]
+        description: "Conventional Commits 格式校验（feat/fix/docs/...），conventionalcommits.org v1.0.0"

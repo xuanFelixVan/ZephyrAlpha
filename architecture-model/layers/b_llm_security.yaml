@@ -1,0 +1,33 @@
+schema_version: "1.0.0"
+partition:
+  id: llm_security
+  name: LLM Security Gateway (LSG)
+  track: b_track
+  bounded_context: true
+  umbrella_layer: l12
+  status: implemented
+
+modules:
+  - id: lsg-core
+    name: LLM Security Gateway
+    submodule_path: src/zephyr/llm_security/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: LLM 四层安全防御 — L1 输入分类 / L2 System Prompt 隔离 / L3 输出 Schema 验证 / L4 Pattern 巡检。原则：fail-closed
+    files:
+      - behavior_audit_logger.py
+      - input_sanitizer.py
+      - process_sandbox.py
+    interfaces:
+      - contract_id: P0-LSG-FAIL-CLOSED
+        role: producer
+        description: LSG 不可用 → 所有 LLM 流量 reject 而非 bypass
+    adr_ref:
+      - ADR-0020
+      - ADR-0022
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

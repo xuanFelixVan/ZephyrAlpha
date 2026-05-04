@@ -1,0 +1,41 @@
+---
+doc_type: register
+register_id: REG-AUDIT-003
+schema_version: "1.0.0"
+title: "SSoT 问题跟踪登记表"
+summary: "记录每次 SSoT 校验（validate_ssot.py）的扫描结果，追踪跨文件不一致问题的闭环修复进度。对标 ITIL Problem Management — 已知问题必须记录并追踪。"
+responsible_role: governance_team
+depends_on:
+  - target: validate_ssot.py
+    at: "scripts/governance/d5_architecture/"
+    why: "扫描结果来源"
+  - target: check_architecture_gates.py
+    at: "scripts/governance/d5_architecture/"
+    why: "EXTRA-04 闸门读取本文件"
+
+entries:
+  # ---- 扫描历史 ----
+  - scan_date: "2026-05-03"
+    scanner_version: "validate_ssot.py v1.2.0"
+    file: "09_audit/reports/ssot-validation-LATEST.md"
+    issue_totals:
+      critical_issues: 28
+      warning_issues: 51
+      total: 79
+    status: open
+    note: >
+      审计发现大量跨 docs/01_policies_and_standards/ 和 docs/02_enterprise_architecture/
+      的 frontmatter 字段值非法问题——layer 字段使用了非受控值（domain/l00_data_source/L1等），
+      status 字段使用了非受控值（draft/approved/created/archived等）。
+      本次审计范围（03_modules/ + 07_ai_engineering/ + 08_knowledge/ + 09_audit/ + 19_development_workspace）
+      已在本 session 中完成修复，但 01_policies_and_standards/ 和 02_enterprise_architecture/
+      下的问题待逐一核查。
+    fixed_in_scope: true
+    fix_scope_note: "03_modules 目录内所有 blueprint frontmatter + module-registry.yaml
+      construction_plan 字段 + l01_infrastructure/index.md 退役状态 + 19_development_workspace/index.md
+      创建 + docs/index.md 过时信息修复 = 全部完成"
+
+migration_instructions: |
+  每次运行 validate_ssot.py 扫描后，将新条目追加到 entries 列表中。
+  在 entry 中记录 scan_date、issue_totals、与前次扫描的差异（delta）。
+  若 total 连续两次扫描未减少 → 需触发 Owner 决策。

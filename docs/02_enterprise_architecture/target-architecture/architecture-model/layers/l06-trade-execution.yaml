@@ -1,0 +1,88 @@
+schema_version: '2.0'
+partition:
+  id: l06
+  name: Trade Execution
+  layer_position: 6
+  runtime_plane: warm
+  view_file: 03-application-architecture.md
+  view_section: §4.1 l06_trade_execution/
+modules:
+- id: l06-oms
+  name: Order Management System
+  submodule_path: src/zephyr/l06_trade_execution/oms/
+  status: planned
+  priority: P0
+  runtime_plane: warm
+  description: 订单管理系统：委托生命周期状态机；新建/提交/成交/取消完整状态机，幂等 Key 保护（INV-007）
+  interfaces:
+  - contract_id: CTR-004
+    role: producer
+    description: 生产 Order 事件供风控监控、交易后分析与遥测消费
+  - contract_id: CTR-005
+    role: producer
+    description: 生产 Fill 成交事件供交易后分析与遥测消费
+  adr_ref:
+  - ADR-0009
+- id: l06-sor
+  name: Smart Order Router
+  submodule_path: src/zephyr/l06_trade_execution/sor/
+  status: planned
+  priority: P0
+  runtime_plane: hot
+  description: 智能委托路由：路由规则与券商选择；T1 激活后走 Hot（INV-005 Broker ACL 边界）
+  interfaces:
+  - contract_id: CTR-004
+    role: consumer
+    description: 消费Order进行智能路由决策
+  - contract_id: OCP-003
+    role: consumer
+    description: 消费BrokerInterface扩展点获取可用券商适配器
+  adr_ref:
+  - ADR-0008
+  - ADR-0009
+  plane_note: T1 激活后走 Hot；T0 阶段 Warm 逻辑
+- id: l06-pre-trade
+  name: Pre-Trade Risk Checks
+  submodule_path: src/zephyr/l06_trade_execution/pre_trade/
+  status: planned
+  priority: P0
+  runtime_plane: warm
+  description: 执行前风控检查（持仓限额、合规规则）；调用 L04 limits，不可绕过
+  interfaces:
+  - contract_id: CTR-003
+    role: consumer
+    description: 消费 RiskLimits 执行 pre-trade 风控检查
+  adr_ref:
+  - ADR-0009
+- id: l06-adapters-default
+  name: Broker API Adapters (Default)
+  submodule_path: src/zephyr/l06_trade_execution/adapters/
+  status: planned
+  priority: P0
+  runtime_plane: warm
+  description: 券商 API 适配器（委托发送与回调处理）；每个券商实现 BrokerInterface，配置驱动加载，OCP 扩展
+  interfaces:
+  - contract_id: OCP-003
+    role: producer
+    description: 定义 BrokerInterface 抽象基类，所有券商适配器实现此扩展点
+  adr_ref:
+  - ADR-0008
+  - ADR-0009
+  plane_note: 默认 Warm；T1 后高频券商扩展 adapters/*_hot.py 走 Hot（l06-adapters-hot）
+summary:
+  total: 4
+  by_status:
+    planned: 4
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 4
+    P1: 0
+    P2: 0
+    P3: 0
+  by_runtime_plane:
+    hot: 1
+    warm: 3
+    cold: 0
+  t1_activation_note: l06-sor Hot 标注当前 T0 阶段运行在 Warm，T1 真实资金接入后首激活 Hot

@@ -1,0 +1,105 @@
+schema_version: "1.0"
+doc_type: gate
+title: "G2 Triage Gate"
+status: active
+ttl: permanent
+
+gate_id: G2
+gate_name: triage
+description: "Triage stage admission gate - validates classification labels and priority scoring before document proceeds to evaluation"
+
+entry_conditions:
+  - id: G2-C00
+    name: content_not_empty_shell
+    type: content_quality
+    description: "Document must not be an empty shell or placeholder-only file"
+    check: "file has non-empty, non-placeholder content"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with empty file and TODO-only file"
+
+  - id: G2-C01
+    name: classification_label_valid
+    description: "Document must have a valid classification label from the approved taxonomy"
+    check: "doc.classification in APPROVED_LABELS"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with invalid classification label"
+
+  - id: G2-C02
+    name: doc_type_valid
+    description: "doc_type must be one of the approved values from frontmatter-standard"
+    check: "doc.doc_type in VALID_DOC_TYPES"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with unrecognized doc_type"
+
+  - id: G2-C03
+    name: priority_score_assigned
+    description: "Document must have a priority score (P0-P3) assigned"
+    check: "doc.priority in ['P0', 'P1', 'P2', 'P3']"
+    severity: error
+    on_failure: auto_assign
+    auto_assign_rule: "Default to P2 if no priority specified"
+    verifiable: true
+    verification_method: "Unit test with missing priority"
+
+  - id: G2-C04
+    name: layer_assignment_valid
+    description: "Document must be assigned to a valid architecture layer"
+    check: "doc.layer in VALID_LAYERS or doc.layer == 'cross_layer'"
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "Unit test with invalid layer"
+
+  - id: G2-C05
+    name: no_duplicate_ingest
+    description: "Document must not be a duplicate of an already-ingested document"
+    check: "doc.content_hash not in INGESTED_HASHES"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with duplicate content hash"
+
+  - id: G2-C06
+    name: source_path_compliant
+    description: "Document source path must follow the project directory structure standard"
+    check: "doc.source_path matches directory-structure-standard.md patterns"
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "Unit test with non-compliant path"
+
+approved_labels:
+  - BLUEPRINT
+  - MODULE_SPEC
+  - STRATEGY
+  - AUDIT_REPORT
+  - STATE_SNAPSHOT
+  - GOVERNANCE_STD
+  - KNOWLEDGE_ENTRY
+  - TEMP_ARTIFACT
+  - ORPHAN_SHELL
+  - ENCODING_BROKEN
+
+valid_layers:
+  - l00_data_source
+  - l01_infrastructure
+  - l02_alpha_factor
+  - l03_signal_generation
+  - l04_risk_management
+  - l05_portfolio_construction
+  - l06_trade_execution
+  - l07_post_trade_analytics
+  - l08_human_ai_interface
+  - l09_research_innovation
+  - l10_compliance
+  - l11_ml_platform
+  - l12_system_telemetry
+  - l13_experiment_pipeline
+  - shared
+  - cross_layer

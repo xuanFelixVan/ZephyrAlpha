@@ -1,0 +1,457 @@
+# ============================================================================
+# ZephyrAlpha 脚本健康与清单登记表（Script Health & Inventory Registry）— 唯一真源
+# ============================================================================
+# 版本: 3.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-008
+# doc_type: register
+#
+# 对标: ITIL Operations Management → Script Inventory
+#       + Google SRE → Runbook Automation（每个脚本有 owner/dimension/SLA）
+#
+# v3.0.0 更新（2026-05-02）：
+#   - scripts/audit/ 与 scripts/governance/ 合并为单一 scripts/governance/ 目录
+#   - 从 script_manifest.yaml（SSoT）同步全部 39 个维度脚本
+#   - 补全 D1/D3/D5/D7 维度共 15 个缺失脚本登记
+#   - 修正 detect_keywords_in_logs.py 优先级 P1→P0（与 manifest 对齐）
+#
+# 与 script_manifest.yaml 的关系:
+#   - script_manifest.yaml 是执行真源（39 个脚本）
+#   - 本登记表为独立 YAML 镜像——供 status.py 仪表盘和快速查询
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "脚本健康与清单登记表"
+version: "3.0.0"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: ai_modifiable
+ttl: permanent
+total_scripts: 39
+source_of_truth: "scripts/governance/script_manifest.yaml（39 scripts）"
+depends_on:
+  - target: MOD-INF-005
+    at: "blueprint.md §4.4"
+    why: "脚本系统蓝图定义脚本编排架构"
+  - target: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    at: "VR-001"
+    why: "登记表 frontmatter 须通过契约 VR 规则校验"
+
+_schema:
+  script_status_values:
+    - ok / ok_findings / warn / error / timeout / missing
+
+  audit_dimensions: &dims
+    D1:  {id: D1, label: "结构完整性", subdir: "d1_structure"}
+    D2:  {id: D2, label: "链接完整性", subdir: "d2_links"}
+    D3:  {id: D3, label: "元数据合规", subdir: "d3_metadata"}
+    D4:  {id: D4, label: "路径有效性", subdir: "d4_paths"}
+    D5:  {id: D5, label: "架构合规", subdir: "d5_architecture"}
+    D6:  {id: D6, label: "安全漏洞", subdir: "d6_security"}
+    D7:  {id: D7, label: "代码质量", subdir: "d7_code"}
+    D11: {id: D11, label: "合规完整性", subdir: "d11_compliance"}
+
+
+# ============================================================================
+# 脚本登记（按维度子目录分组）
+# ============================================================================
+scripts:
+
+  # ── D1: 结构完整性 ──
+  - script_id: "d1_structure/validate_immutable_core.py"
+    dimensions: ["D1", "D5"]
+    description: "immutable_core 文件修改检测（ABS-01 — P1治理完整性）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d1_structure/validate_config_integrity.py"
+    dimensions: ["D1", "D4", "D5", "D6"]
+    description: "运行时配置完整性六层纵深审计（YAML语法+Schema+交叉引用+CBAC安全+路径常量）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d1_structure/audit_directory_integrity.py"
+    dimensions: ["D1", "D4"]
+    description: "目录结构完整性审计（AGENTS.md §8.2 规定目录 vs 实际文件系统对账）"
+    priority: P0
+    timeout_seconds: 60
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d1_structure/cbg_reset.py"
+    dimensions: ["D1"]
+    description: "CBG上下文预算重置工具"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d1_structure/drafts_zone_archiver.py"
+    dimensions: ["D1", "D4"]
+    description: "草稿区归档检查"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D2: 链接完整性 ──
+  - script_id: "d2_links/audit_broken_links.py"
+    dimensions: ["D2"]
+    description: "内部链接与交叉引用有效性检查"
+    priority: P0
+    timeout_seconds: 60
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D3: 元数据合规 ──
+  - script_id: "d3_metadata/validate_architecture.py"
+    dimensions: ["D3", "D4", "D5"]
+    description: "架构合规校验（frontmatter + 目录放置 + doc_type一致性）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-16"
+
+  - script_id: "d3_metadata/check_frontmatter_metadata.py"
+    dimensions: ["D3"]
+    description: "Frontmatter 元数据合规扫描（doc_type合法值 / status / 必填字段）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-15"
+
+  - script_id: "d3_metadata/check_naming_convention.py"
+    dimensions: ["D3"]
+    description: "文件命名规范检查（kebab-case / module_id namespace / ADR铁律）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-11"
+
+  - script_id: "d3_metadata/validate_blueprint_provenance.py"
+    dimensions: ["D3", "D4"]
+    description: "蓝图真源Provenance三件套校验（origin_drafts + audit_chain + arbitration）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-12"
+
+  - script_id: "d3_metadata/validate_blueprint_registry.py"
+    dimensions: ["D11"]
+    description: "蓝图登记表自校验——登记状态与实际文件对账"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d3_metadata/validate_registry_master_index.py"
+    dimensions: ["D11"]
+    description: "登记表总索引自校验——17张登记表文件存在性+条目数+depends_on交叉验证"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d3_metadata/generate_rule_catalog.py"
+    dimensions: ["D3"]
+    description: "规则目录自动生成工具"
+    priority: P2
+    timeout_seconds: 60
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D4: 路径有效性 ──
+  - script_id: "d4_paths/detect_ruins_references.py"
+    dimensions: ["D1", "D4"]
+    description: "残骸/废弃路径引用检测（ABS-44 — 禁止引用废墟目录）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D5: 架构合规 ──
+  - script_id: "d5_architecture/validate_ssot.py"
+    dimensions: ["D5"]
+    description: "SSoT单一真源一致性校验"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/validate_authority_registry.py"
+    dimensions: ["D5"]
+    description: "AI自治权限注册表自校验（三层权限 / 必填字段 / 重复检测）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-14"
+
+  - script_id: "d5_architecture/validate_field_ownership.py"
+    dimensions: ["D5"]
+    description: "frontmatter 字段归属校验（ABS-19/20 — SSoT原则）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/validate_autonomy_gate.py"
+    dimensions: ["D5", "D11"]
+    description: "AI 自治权限门禁校验（ABS-05~10 — 越权检测）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/validate_layer_deps.py"
+    dimensions: ["D5"]
+    description: "跨层依赖违规检测（COND-30~32 — 层纪律）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/audit_depends_on_chain_depth.py"
+    dimensions: ["D5"]
+    description: "depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）"
+    priority: P1
+    timeout_seconds: 60
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/validate_depends_on_format.py"
+    dimensions: ["D5"]
+    description: "depends_on 条目结构化格式校验（PS-STD-001 §3.1 — {target, at, why} 结构）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d5_architecture/validate_session_log_updated.py"
+    dimensions: ["D5"]
+    description: "Session Log 更新状态校验（COND-16~17 — 三段论结构 + 时效性）"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D6: 安全漏洞 ──
+  - script_id: "d6_security/detect_secrets.py"
+    dimensions: ["D6"]
+    description: "密钥/Token/凭证硬编码检测（ABS-29/32 — P0安全红线）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_shell_true.py"
+    dimensions: ["D6"]
+    description: "shell=True / os.system() 调用检测（ABS-43 — P0安全红线）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_threading_lock.py"
+    dimensions: ["D6"]
+    description: "threading.Lock 导入检测（ABS-40 — 全局异步架构违规）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_git_dangerous.py"
+    dimensions: ["D6"]
+    description: "危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_keywords_in_logs.py"
+    dimensions: ["D6"]
+    description: "日志输出敏感关键词检测（ABS-31 — 禁止 print/log 密钥密码）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_shell_dangerous.py"
+    dimensions: ["D6"]
+    description: "危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）"
+    priority: P0
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d6_security/detect_vague_terms.py"
+    dimensions: ["D6"]
+    description: "模糊术语检测（ABS-49 — 禁止规则文件使用「等等」「类似」等模糊词）"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D7: 代码质量 ──
+  - script_id: "d7_code/validate_fle_imports.py"
+    dimensions: ["D7"]
+    description: "FLE import 接口合规检测（COND-43 — import纪律）"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_test_coverage.py"
+    dimensions: ["D7"]
+    description: "测试覆盖率校验——每个 src/zephyr/ 下 .py 文件必须有对应 test_*.py"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_unused_imports.py"
+    dimensions: ["D7"]
+    description: "未使用导入检测——AST 级扫描，检查 import 了但未引用的模块"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_import_style.py"
+    dimensions: ["D7"]
+    description: "导入风格一致性校验——相对导入 vs 绝对导入，项目主风格为绝对导入"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_init_all.py"
+    dimensions: ["D7"]
+    description: "__init__.py __all__ 完整性校验——有 import 的包必须定义 __all__"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_test_assertion_depth.py"
+    dimensions: ["D7"]
+    description: "测试断言深度校验——raises 有没有 match、有没有 assert True/False、try/except是否静默吞异常"
+    priority: P1
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_docstring_coverage.py"
+    dimensions: ["D7"]
+    description: "Docstring 覆盖率校验——模块/类/公共函数必须有 docstring"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  - script_id: "d7_code/validate_type_annotation_coverage.py"
+    dimensions: ["D7"]
+    description: "类型注解覆盖率校验——公共函数参数和返回值必须有类型注解"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+  # ── D11: 合规完整性 ──
+  - script_id: "d11_compliance/validate_blueprint_overlap.py"
+    dimensions: ["D11"]
+    description: "蓝图重叠检测（同一component_id出现多草稿时warn）"
+    priority: P2
+    timeout_seconds: 30
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: "GATE-13"
+
+  - script_id: "d11_compliance/validate_truth_source_cascade.py"
+    dimensions: ["D11"]
+    description: "真源级联验证器（上下游引用一致性）"
+    priority: P2
+    timeout_seconds: 60
+    exit_code_mapping: {0: pass, 1: findings, 2: error}
+    auto_gate: null
+
+
+# ============================================================================
+# 维度覆盖矩阵
+# ============================================================================
+dimension_coverage:
+  D1:  {covered: true, scripts: ["validate_immutable_core", "validate_config_integrity", "audit_directory_integrity", "cbg_reset", "drafts_zone_archiver", "detect_ruins_references"], count: 6}
+  D2:  {covered: true, scripts: ["audit_broken_links"], count: 1}
+  D3:  {covered: true, scripts: ["validate_architecture", "check_frontmatter_metadata", "check_naming_convention", "validate_blueprint_provenance", "generate_rule_catalog"], count: 5}
+  D4:  {covered: true, scripts: ["validate_architecture", "validate_config_integrity", "audit_directory_integrity", "validate_blueprint_provenance", "detect_ruins_references", "drafts_zone_archiver"], count: 6}
+  D5:  {covered: true, scripts: ["validate_architecture", "validate_immutable_core", "validate_config_integrity", "validate_ssot", "validate_authority_registry", "validate_field_ownership", "validate_autonomy_gate", "validate_layer_deps", "audit_depends_on_chain_depth", "validate_depends_on_format", "validate_session_log_updated"], count: 11}
+  D6:  {covered: true, scripts: ["validate_config_integrity", "detect_secrets", "detect_shell_true", "detect_threading_lock", "detect_git_dangerous", "detect_keywords_in_logs", "detect_shell_dangerous", "detect_vague_terms"], count: 8}
+  D7:  {covered: true, scripts: ["validate_fle_imports", "validate_test_coverage", "validate_unused_imports", "validate_import_style", "validate_init_all", "validate_test_assertion_depth", "validate_docstring_coverage", "validate_type_annotation_coverage"], count: 8}
+  D11: {covered: true, scripts: ["validate_blueprint_registry", "validate_registry_master_index", "validate_autonomy_gate", "validate_blueprint_overlap", "validate_truth_source_cascade"], count: 5}
+
+  summary:
+    total_dimensions: 8
+    covered: 8
+    uncovered: 0
+    coverage_pct: 100
+    note: "D8/D9/D10/D12 未正式定义脚本子目录——Phase 2~3 补齐"
+
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total_scripts: 39
+  by_priority:
+    P0: 15
+    P1: 13
+    P2: 11
+  by_dimension:
+    D1: 6
+    D2: 1
+    D3: 5
+    D4: 6
+    D5: 11
+    D6: 8
+    D7: 8
+    D11: 5
+  # 跨维度脚本（计入多个维度）使得 sum(by_dimension) > total_scripts
+  by_auto_gate:
+    GATE-11: "check_naming_convention"
+    GATE-12: "validate_blueprint_provenance"
+    GATE-13: "validate_blueprint_overlap"
+    GATE-14: "validate_authority_registry"
+    GATE-15: "check_frontmatter_metadata"
+    GATE-16: "validate_architecture"
+
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "3.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "v3.0.0：scripts/audit/ 与 scripts/governance/ 合并为单一 scripts/governance/ 目录"
+      - "从 script_manifest.yaml（SSoT）同步全部 39 个维度脚本登记"
+      - "补全 D1/D3/D5/D7 维度共 15 个缺失脚本"
+      - "修正 detect_keywords_in_logs.py 优先级 P1→P0（与 manifest 对齐）"
+      - "维度覆盖率 8/8（100%），P0 脚本 15 个"
+  - version: "2.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "v2.0.0 大更新：脚本系统按维度重组为 d1~d7+d11 子目录"
+      - "新增 5 个脚本：detect_git_dangerous, detect_keywords_in_logs, detect_shell_dangerous, detect_vague_terms, validate_session_log_updated"
+      - "全部 24 个脚本登记——维度覆盖率 8/8（100%）"
+      - "路径格式统一为 {subdir}/{script_name}.py"
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "初始创建——从 run_all.py SCRIPT_REGISTRY 提取 9 个脚本"

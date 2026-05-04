@@ -1,0 +1,29 @@
+schema_version: "1.0.0"
+partition:
+  id: pipeline
+  name: Pipeline
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: pipeline-core
+    name: Pipeline Orchestrator
+    submodule_path: src/zephyr/pipeline/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: M1-M11 双管线 — A区(M1-M5)生产管线 + B区(M6-M11)审计管线。模型路由依据 GOV-AI-002 决策树
+    files:
+      - models.py
+      - pipeline_orchestrator.py
+    interfaces:
+      - contract_id: P0-PIPELINE-ROUTE
+        role: producer
+        description: 管线路由决策 — 根据任务类型分派到生产管线或审计管线
+    adr_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

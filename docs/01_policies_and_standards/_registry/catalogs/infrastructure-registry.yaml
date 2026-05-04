@@ -1,0 +1,258 @@
+# ============================================================================
+# ZephyrAlpha 运行时基础设施登记表（Infrastructure Registry）— 唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-006
+# doc_type: register
+#
+# 对标: ITIL SACM CMDB CI → Infrastructure
+#       + Google SRE Infrastructure as Code（每个 infra 组件有唯一声明式定义）
+#       + AWS CloudFormation Resource Registry（每个资源类型有唯一 Schema）
+#
+# 用途: 登记 ZephyrAlpha 运行时所有基础设施组件——
+#       事件总线 / 消息队列 / 数据库连接 / 缓存 / 存储 / 配置中心。
+#       每个组件一条记录，包含类型、地址、健康检查端点、依赖、SLA。
+#
+# 与 runtime-integration 蓝图的关系:
+#   - runtime-integration(RI-01~07) 定义了"需要哪些基础设施"
+#   - 本登记表登记"这些基础设施的实例和状态"
+#
+# 自校验: （Phase 1 补齐——scan infrastructure connectivity）
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "运行时基础设施登记表"
+version: "1.0.0"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_registered: 8
+depends_on:
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表 + register 类型合法字段定义"
+
+# ============================================================================
+# 字段 Schema
+# ============================================================================
+_schema:
+  infra_types:
+    - event_bus         # 事件总线
+    - message_queue     # 消息队列
+    - relational_db     # 关系数据库
+    - vector_db         # 向量数据库
+    - cache             # 缓存（Redis/Memcached）
+    - object_storage    # 对象存储（S3/MinIO）
+    - config_center     # 配置中心
+    - service_registry  # 服务注册发现
+
+  runtime_planes:
+    - hot     # < 100ms 延迟预算
+    - warm    # 100ms ~ 1s
+    - cold    # > 1s（离线批处理）
+
+  status_values:
+    - planned      # 已规划但未创建
+    - provisioned  # 已创建但未接入
+    - connected    # 已接入运行
+    - degraded     # 性能下降
+    - failed       # 故障
+    - retired       # 退役
+
+  dependency_strength:
+    - hard     # 崩溃级——不可用导致系统停止
+    - soft     # 降级级——不可用时降级运行
+
+
+# ============================================================================
+# 基础设施登记
+# ============================================================================
+# 字段说明:
+#   infra_id            唯一标识，格式 INFRA-{TYPE}-{NNN}
+#   name                组件名称
+#   type                类型（见 _schema.infra_types）
+#   description         一句话说明
+#   runtime_plane       运行时平面（hot/warm/cold）
+#   host                host:port 或连接串（Phase 1 填充具体值）
+#   health_check        健康检查方式: ping/http/tcp/query
+#   dependency_of[]      被哪些模块依赖（module_id）
+#   sla                 SLA 承诺（如 99.9% uptime / 50ms p99 latency）
+#   status              状态（planned → provisioned → connected → ...）
+#   provisioned_at      创建时间（为空 = planned）
+#   note                备注
+# ============================================================================
+
+infrastructure:
+  # ── 事件总线（RI-01 EventBus）──
+  - infra_id: "INFRA-EVT-001"
+    name: "zephyr-event-bus"
+    type: event_bus
+    description: "跨模块事件分发——基于 Redis Pub/Sub 或 RabbitMQ"
+    runtime_plane: hot
+    host: null
+    health_check: ping
+    dependency_of:
+      - "MOD-INF-002"
+      - "MOD-INF-001"
+    sla: "99.9% uptime, < 100ms publish-delivery"
+    status: planned
+    provisioned_at: null
+    note: "RI-01 EventBus 定义在 runtime-integration blueprint §4.2.1"
+
+  # ── 消息队列（离线批处理 + 异步任务）──
+  - infra_id: "INFRA-MQ-001"
+    name: "zephyr-task-queue"
+    type: message_queue
+    description: "离线批处理 + 异步AI审计任务队列——基于 Celery + Redis"
+    runtime_plane: cold
+    host: null
+    health_check: ping
+    dependency_of:
+      - "MOD-INF-005"
+      - "MOD-INF-003"
+    sla: "99.5% uptime, < 5s task pickup delay"
+    status: planned
+    provisioned_at: null
+    note: "脚本系统离线阶段（Phase 2）依赖此队列"
+
+  # ── 关系数据库（SQLite 任务库）──
+  - infra_id: "INFRA-DB-001"
+    name: "zephyr-sqlite-task-db"
+    type: relational_db
+    description: "SQLite 任务库——存储 TaskCard、状态迁移历史、Audit Trail"
+    runtime_plane: cold
+    host: ".runtime/db/tasks.db"
+    health_check: query
+    dependency_of:
+      - "MOD-INF-003"
+      - "MOD-INF-005"
+    sla: "persisted, ACID, < 30ms read p50"
+    status: planned
+    provisioned_at: null
+    note: "Schema 源：task-card-kms/blueprint.md §2.1。迁移路径见 task-card-meta-registry.yaml"
+
+  # ── 向量数据库（ChromaDB）──
+  - infra_id: "INFRA-DB-002"
+    name: "zephyr-chroma-vector-db"
+    type: vector_db
+    description: "ChromaDB 向量存储——文档语义检索 + KMS 知识检索"
+    runtime_plane: cold
+    host: null
+    health_check: http
+    dependency_of:
+      - "MOD-INF-004"
+      - "MOD-INF-003"
+    sla: "< 200ms retrieval p95, index rebuild < 10 min"
+    status: planned
+    provisioned_at: null
+    note: "ADR-0031：ChromaDB 选型。vibe-coding-pipelines M2 模块"
+
+  # ── 缓存（Redis）──
+  - infra_id: "INFRA-CACHE-001"
+    name: "zephyr-redis-cache"
+    type: cache
+    description: "Redis 缓存——Session Context / SSoT 校验缓存 / Embedding Cache"
+    runtime_plane: warm
+    host: null
+    health_check: ping
+    dependency_of:
+      - "MOD-INF-001"
+      - "MOD-INF-004"
+    sla: "99.9% uptime, < 5ms GET p99"
+    status: planned
+    provisioned_at: null
+    note: "capacity-assurance Phase 1 引入 Redis 缓存 SLI/SLO"
+
+  # ── 对象存储（MinIO/S3）──
+  - infra_id: "INFRA-STORE-001"
+    name: "zephyr-object-storage"
+    type: object_storage
+    description: "MinIO/S3 对象存储——Session Log 归档 / KMS KO 文件 / 审计快照"
+    runtime_plane: cold
+    host: null
+    health_check: http
+    dependency_of:
+      - "MOD-INF-005"
+      - "MOD-INF-003"
+    sla: "99.9% durability, < 100MB/s write"
+    status: planned
+    provisioned_at: null
+    note: "Phase 2 脚本系统归档依赖 S3。开发期可用本地 MinIO"
+
+  # ── 配置中心（RI-04 ConfigCenter）──
+  - infra_id: "INFRA-CFG-001"
+    name: "zephyr-config-center"
+    type: config_center
+    description: "配置中心——YAML配置集中管理 + 热加载 + 版本化"
+    runtime_plane: hot
+    host: null
+    health_check: http
+    dependency_of:
+      - "MOD-INF-002"
+      - "MOD-INF-004"
+    sla: "99.9% uptime, < 100ms config read"
+    status: planned
+    provisioned_at: null
+    note: "RI-04 ConfigCenter——runtime-integration blueprint §4.2.4"
+
+  # ── 服务注册（Phase 3——1500+模块后的服务发现）──
+  - infra_id: "INFRA-SVC-001"
+    name: "zephyr-service-registry"
+    type: service_registry
+    description: "模块服务注册发现——K8s DNS + module-registry.yaml 元数据联动"
+    runtime_plane: hot
+    host: null
+    health_check: http
+    dependency_of:
+      - "MOD-INF-002"
+    sla: "99.9% uptime, < 50ms service lookup"
+    status: planned
+    provisioned_at: null
+    note: "Phase 3 1500+ 模块后启用。当前 5 模块阶段手动管理即可"
+
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total: 8
+  by_type:
+    event_bus: 1
+    message_queue: 1
+    relational_db: 1
+    vector_db: 1
+    cache: 1
+    object_storage: 1
+    config_center: 1
+    service_registry: 1
+  by_plane:
+    hot: 3    # 事件总线 / 配置中心 / 服务注册
+    warm: 1   # Redis 缓存
+    cold: 4   # 任务队列 / SQLite / ChromaDB / S3
+  by_status:
+    planned: 8  # Phase 0 全部为 planned
+  dependency_map:
+    MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
+    MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
+    MOD-INF-003: [INFRA-MQ-001, INFRA-DB-001, INFRA-DB-002, INFRA-STORE-001]
+    MOD-INF-004: [INFRA-DB-002, INFRA-CACHE-001, INFRA-CFG-001]
+    MOD-INF-005: [INFRA-MQ-001, INFRA-DB-001, INFRA-STORE-001]
+
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "初始创建——登记 8 个运行时基础设施组件"
+      - "全部组件 status=planned——Phase 0 无实际运行时基础设施"
+      - "7 种 infra_type 全覆盖（不含 kubernetes/cluster 类）"
+      - "4 个 rime_plane 分层（hot/warm/cold）"
+      - "dependency_map 标注 5 个模块到 8 个基础设施的依赖"

@@ -1,0 +1,105 @@
+# ZephyrAlpha 2.0 — CI Governance Pipeline
+# 对标: DevOps CI/CD best practice — server-side enforcement
+#        GitHub Actions — push/PR trigger → full regression sweep
+#        ITIL SACM — 每次变更后自动对账 CMDB
+#
+# 与 pre-commit 的关系:
+#   pre-commit: 客户端侧，只检查用户本次变更的文件（快，~5s）
+#   CI pipeline: 服务端侧，全量回归扫描所有脚本（全，~60s）
+#   pre-commit 漏过的不合规代码 → CI 作为最后一道防线拦截
+
+name: Governance Audit
+
+on:
+  push:
+    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
+    paths:
+      - "scripts/governance/**"
+      - "docs/**"
+      - "src/zephyr/**"
+      - "config/**"
+      - ".pre-commit-config.yaml"
+      - "pyproject.toml"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "scripts/governance/**"
+      - "docs/**"
+      - "src/zephyr/**"
+      - "config/**"
+  workflow_dispatch:
+
+jobs:
+  governance-sweep:
+    name: Full Governance Regression
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml pytest
+
+      - name: Script Quality Gate (GATE-SQ)
+        run: python scripts/governance/d11_compliance/validate_script_quality.py --scripts-dir scripts/governance
+        continue-on-error: false
+
+      - name: Manifest Admission (GATE-ADM)
+        run: python scripts/governance/d11_compliance/validate_manifest_admission.py
+        continue-on-error: false
+
+      - name: Index-Reality Sync (GATE-IDX)
+        run: python scripts/governance/d1_structure/validate_index_reality.py
+        continue-on-error: false
+
+      - name: Architecture Gates (GATE-01~08+A+B+SC)
+        run: python scripts/governance/d5_architecture/check_architecture_gates.py
+
+      - name: Test Collection Gate (GATE-18)
+        run: python -m pytest tests/ --collect-only -q --tb=line
+
+      - name: Full Regression Sweep
+        run: python scripts/governance/run_all.py --warn-only
+
+      - name: G6 CTR Compliance Gate
+        run: python scripts/governance/d5_architecture/check_g6_ctr_compliance.py
+        continue-on-error: false
+
+      - name: TraceContext Propagation Check
+        run: python scripts/governance/d5_architecture/check_trace_context_propagation.py
+        continue-on-error: false
+
+      - name: AI Capability Boundary Guard
+        run: python scripts/governance/d7_code/check_ai_capability_boundary.py
+        continue-on-error: false
+
+      - name: Pre-compile Architecture Context
+        run: python scripts/context/generate_architecture_context.py
+
+      - name: SSoT→Codegen Consistency Check
+        run: python scripts/governance/d5_architecture/generate_contracts.py --dry-run
+        continue-on-error: false
+
+      - name: Architectural Fitness Functions
+        run: python -m pytest tests/architecture/ -v --tb=short
+
+      - name: Contract Impact Analysis
+        run: python scripts/governance/d5_architecture/analyze_contract_impact.py --all
+        continue-on-error: true
+
+      - name: Upload Audit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-audit-report
+          path: |
+            scripts/governance/reports/

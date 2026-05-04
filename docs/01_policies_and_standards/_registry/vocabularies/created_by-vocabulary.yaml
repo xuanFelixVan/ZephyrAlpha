@@ -1,0 +1,25 @@
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-008
+version: "1.0.0"
+title: "created_by 受控词表"
+status: active
+vocabulary_name: created_by
+total_values: 3
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "PS-STD-001"
+    relationship: "created_by 合法值定义"
+    at: "§2.4"
+depends_on:
+  - target: PS-STD-001
+    at: "§4.4"
+    why: "created_by 合法值规则定义真源"
+
+values:
+  - value: human_plus_agent
+    definition: "人类+AI 协同创建"
+  - value: agent
+    definition: "AI 独立创建"
+  - value: human
+    definition: "人类独立创建"

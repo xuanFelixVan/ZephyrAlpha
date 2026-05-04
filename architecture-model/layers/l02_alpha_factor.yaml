@@ -1,0 +1,26 @@
+schema_version: "1.0.0"
+partition:
+  id: l02
+  name: Alpha Factor
+  track: c_track
+  layer_position: 2
+  runtime_plane: hot
+  status: implemented
+
+modules:
+  - id: l02-factor-ops
+    name: Factor Operations
+    submodule_path: src/zephyr/l02_alpha_factor/
+    status: implemented
+    priority: P0
+    runtime_plane: hot
+    description: Alpha 因子计算引擎核心操作
+    files:
+      - factor_base.py
+    interfaces: []
+    adr_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

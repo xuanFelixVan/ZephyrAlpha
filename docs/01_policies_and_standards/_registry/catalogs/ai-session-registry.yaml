@@ -1,0 +1,117 @@
+# ============================================================================
+# ZephyrAlpha AI Session/Agent 登记表（Session & Agent Registry）— 唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-011
+# doc_type: register
+#
+# 对标: NIST AI RMF → Accountability（AI 操作须有完整的问责链）
+#       + ITIL Change Management → Change Record（每次变更谁做的/做了什么/为什么）
+#       + vibe-coding-session-state-machine.md（Session生命周期——Start→Work→Done）
+#
+# 用途: 为每次 AI session 建立结构化摘要记录——
+#       模型名称 / Session ID / 时间段 / 主要任务 / 产出物 / Owner审批。
+#       构建"谁操作了什么 → 产出什么 → 决定是什么"的完整问责链。
+#
+# 当前状态: planned——Phase 2 落地。Phase 0 Session Log 以 .md 形式存在
+#          （已移出项目至外部工作区）。本登记表为未来结构化记录提供 Schema。
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "AI Session/Agent 登记表"
+version: "1.0.0"
+status: draft
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_sessions: 0
+note: "Phase 2 落地前为空登记表——仅 Schema 骨架。当前 session 记录以 .md 格式存放在外部开发工作区 session-logs/ 下。scripts/hooks/auto-handoff-log.py 在每次 session 末尾自动生成交接工单。"
+depends_on:
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表 + register 类型合法字段定义"
+
+# ============================================================================
+# 字段 Schema
+# ============================================================================
+_schema:
+  session_types:
+    - quick_fix        # 快速修复——单文件修改，无需 Owner 审批
+    - routine_task     # 日常施工——单模块施工（写蓝图/脚本/配置）| 可能需要 Owner 审批
+    - major_change     # 大改——跨文件修改 / 架构调整——**必须** Owner 审批
+    - audit_pass       # 审计扫描——被动运行 pre-commit / run_all.py
+    - arbitration      # 终审裁决——Wave 终审 / SSoT 冲突裁决——**必须** Owner 审批
+
+  agent_models:
+    - GLM-5.1
+    - Claude-Opus-4.7
+    - Claude-Sonnet-4.7
+    - Kimi-K2.6
+    - Qwen-3.6-Plus
+    - human_plus_agent  # 人+AI 协同
+
+  outcome_values:
+    - completed        # 完成——任务落地，artifact 生成
+    - blocked          # 阻塞——遇到无法自行解决的问题
+    - needs_owner      # 需要 Owner 审批才能继续
+    - partial          # 部分完成——Phase 的一部分完成，其他推迟
+    - failed           # 失败——任务无法完成
+
+  artifacts_types:
+    - blueprint        # .md 蓝图文档
+    - registry         # .yaml 登记表
+    - script           # .py 脚本
+    - config           # .yaml 配置文件
+    - documentation    # 非架构类文档
+    - code             # src/ 下代码模块
+    - refactor         # 重构（移动/重命名/合并文件）
+
+
+# ============================================================================
+# Session 记录
+# ============================================================================
+# 字段说明:
+#   session_id         格式 SESSION-YYYYMMDD-NNN
+#   model_name         使用的 AI 模型
+#   tool               AI 工具：Cursor / Trae / Kimi / Claude
+#   session_type       类型（见 _schema.session_types）
+#   start_time         开始时间
+#   end_time           结束时间
+#   duration_minutes   耗时分钟
+#   task_summary       一句话——这个 session 做了什么
+#   artifacts[]        产出物列表（文件路径）
+#   outcome            结果（completed / blocked / needs_owner等）
+#   notes              补充说明——为什么这样做 / 遇到什么困难 / 下一步建议
+#   owner_approved     是否经过了 Owner 审批
+# ============================================================================
+
+sessions: []
+
+
+# ============================================================================
+# 当前 Session 记录的替代方式（过渡期——本登记表未激活）
+# ============================================================================
+transition_period:
+  note: "Phase 0-2 过渡期——session 记录以两种方式存在"
+  current_methods:
+    - {method: "Session Log .md", path: "外部开发工作区/session-logs/*", format: "markdown prose"}
+    - {method: "auto-handoff-log.py", path: "scripts/hooks/auto-handoff-log.py", format: "hook-generated structured text"}
+  migration_phase: "Phase 2"
+  migration_trigger: "当 Session Log 条数> 50 时，脚本自动抽取摘要填充本 YAML"
+
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "初始创建——登记 Schema 骨架（7 个核心字段）"
+      - "status=planned——Phase 2 落地前为空表"
+      - "5 种 session_type + 7 种 artifact_type + 5 种 agent_model"
+      - "transition_period 标注当前的 .md 日志为过渡方案"

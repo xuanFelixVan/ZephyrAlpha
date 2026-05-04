@@ -1,0 +1,17 @@
+# ZephyrAlpha 2.0 完整文档清单（DEPRECATED）
+# 已废弃——由 document-metadata-index.yaml 取代
+# 本文件保留作为 Phase 0-1 历史参考桩文件
+
+schema_version: "1.1.0"
+doc_type: register
+module_id: PS-REG-003
+version: "1.2.0"
+title: "完整文档登记表（Master Document Inventory）"
+status: deprecated
+superseded_by: "document-metadata-index.yaml（auto-generated, 127 files）"
+superseded_reason: "手动维护覆盖率仅 19%（25/131）——ITIL SACM 标准：CMDB 覆盖率 <50% 产生虚假信心。auto-generated document-metadata-index.yaml 覆盖率 97%（127/131）且零维护成本。"
+ttl: permanent
+
+documents: []
+# 所有文档条目已迁移至 document-metadata-index.yaml
+# 新文档登记：python scripts/governance/d3_metadata/generate_rule_catalog.py

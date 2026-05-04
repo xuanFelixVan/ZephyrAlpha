@@ -1,0 +1,154 @@
+# _registry.yaml — ZephyrAlpha 全部门禁注册表 (SSoT) v1.0.0
+# 本文件是门禁体系的 canonical SSoT——所有门禁必须在此登记
+# AI agent 新建门禁时必须在此注册；退役门禁不删除，标记 status: deprecated
+# 对标: K8s plugin registry + OPA policy index + Cursor Rules index
+
+schema_version: "1.0"
+doc_type: registry
+ttl: permanent
+last_updated: "2026-05-04"
+
+gates:
+
+  # ─── KMS 知识管道门禁 ───
+  - gate_id: G1
+    gate_name: ingest
+    title: "G1 Ingest Gate"
+    category: kms
+    file: "kms/g1_ingest.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+
+  - gate_id: G2
+    gate_name: triage
+    title: "G2 Triage Gate"
+    category: kms
+    file: "kms/g2_triage.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+
+  - gate_id: G3
+    gate_name: evaluate
+    title: "G3 Evaluate Gate"
+    category: kms
+    file: "kms/g3_evaluate.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+
+  - gate_id: G4
+    gate_name: activate
+    title: "G4 Activate Gate"
+    category: kms
+    file: "kms/g4_activate.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+
+  - gate_id: G5
+    gate_name: extract
+    title: "G5 Extract Gate"
+    category: kms
+    file: "kms/g5_extract.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+
+  # ─── 任务生命周期门禁（当前为蓝图中的自然语言，待结构化）───
+  - gate_id: G0
+    gate_name: task_entry
+    title: "G0 Task Entry Gate"
+    category: task
+    file: "task/g0_entry.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 落地 — 7 条准入规则（task_type/layer_target/dependency/contract/ai_capability）"
+
+  - gate_id: G7
+    gate_name: task_delivery
+    title: "G7 Task Delivery Gate"
+    category: task
+    file: "task_completion_gate.py"
+    status: implemented
+    scope: global
+    execution_plane: warm
+    note: "部分代码实现，但门禁规则仍在蓝图自然语言中"
+
+  # ─── 合规门禁 ───
+  - gate_id: G6
+    gate_name: ctr_compliance
+    title: "G6 CTR Compliance Gate"
+    category: compliance
+    file: "compliance/g6_ctr_compliance.yaml"
+    status: implemented
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 执行引擎落地 — scripts/governance/d5_architecture/check_g6_ctr_compliance.py"
+
+  # ─── 生命周期守卫 ───
+  - gate_id: GATE-18
+    gate_name: precommit
+    title: "GATE-18 Pre-Commit Gate"
+    category: lifecycle
+    file: ".pre-commit-config.yaml"
+    status: active
+    scope: global
+    execution_plane: hot
+    note: "非YAML格式——由.pre-commit-config.yaml定义"
+
+  # ─── 模块准入门禁 ───
+  - gate_id: MAD-001
+    gate_name: architecture_necessity
+    title: "MAD-001 Architecture Necessity"
+    category: admission
+    file: "admission/mad_001_architecture_necessity.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 落地 — 4 条准入规则（problem_statement/existing_capability/layer_assignment/phase_relevance）"
+
+  - gate_id: MAD-002
+    gate_name: phase_relevance
+    title: "MAD-002 Phase Relevance"
+    category: admission
+    file: "admission/mad_002_phase_relevance.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 落地 — 4 条准入规则（phase_match/load_bearing/deferred_not_rejected/context）"
+
+  - gate_id: MAD-003
+    gate_name: dependency_compliance
+    title: "MAD-003 Dependency Compliance"
+    category: admission
+    file: "admission/mad_003_dependency_compliance.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 落地 — 5 条准入规则（downward/contracts/versioned/no_circular/version_check）"
+
+  - gate_id: MAD-004
+    gate_name: interface_definability
+    title: "MAD-004 Interface Definability"
+    category: admission
+    file: "admission/mad_004_interface_definability.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-04 落地 — 6 条准入规则（public_api/input/output/error/config/extension_points）"
+
+summary:
+  total: 13
+  by_category:
+    kms: 5
+    task: 2
+    compliance: 1
+    lifecycle: 1
+    admission: 4
+  by_status:
+    active: 11
+    implemented: 2
+    draft: 0

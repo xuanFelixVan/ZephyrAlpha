@@ -1,0 +1,61 @@
+%%{init: {'theme': 'default'}}%%
+C4Component
+    title C4 Level 3 — L11 ML Platform Layer Components
+    title (L11 ML 平台层组件分解 / H5)
+
+    Container_Boundary(l11, "L11 ML Platform / ML 平台层 (src/zephyr/l11_ml_platform/)") {
+
+        Component(feature_store, "Feature Store", "Python / feature_store/", "特征物化层：按 entity_id × asof_date PIT 对齐；写入供训练、读取供 inference")
+
+        Component(pit_query, "PIT Query Engine", "Python / pit_query.py", "反 Survivorship 查询：强制带 asof_date + knowledge_date 双游标（05-DA §5 铁律）")
+
+        Component(training_pipeline, "Training Pipeline", "Python / training/", "模型训练编排：数据集切分 + CV + metric 记录，输出 model artifact")
+
+        Component(model_registry, "Model Registry", "Python / model_registry.py", "模型版本化 + lifecycle：draft/staging/prod/archived；每版绑定训练数据快照 id")
+
+        Component(inference_engine, "Inference Engine", "Python / inference/", "生产推理：load by model_id + version + stage，emit metric 延迟/吞吐")
+
+        Component(drift_monitor, "Drift Monitor", "Python / monitoring/drift.py", "feature drift / label drift / concept drift 三类监控；超阈值触发回滚或重训")
+
+        Component(shadow_mode, "Shadow / Canary Mode", "Python / deployment/shadow.py", "新模型对比生产模型：影子跑不写下游 / 金丝雀 5-10% 流量")
+
+        Boundary(ai_operator_slot, "ai_operator/ 预留口子（OQ-063 C-1）") {
+            Component(ai_op_reserved, "AI Operator Slot", "Python / l11/_ai_operator/ (reserved)", "AI Operator 激活口子：OQ-063 P4 未来态，当前为空 skeleton")
+        }
+    }
+
+    Container_Ext(l02, "L02 Alpha Factor", "Python / l02_alpha_factor/", "因子供 feature 来源")
+
+    Container_Ext(l00, "L00 Data Source", "Python / l00_data_source/", "原始数据 via IDataSource")
+
+    Container_Ext(l03_l05, "L03/L05 Signal & Portfolio", "Python / l03_signal_generation + l05_portfolio_construction/", "下游推理消费者")
+
+    Container_Ext(l13_experiment, "L13 Experiment Pipeline", "Python / l13_experiment_pipeline/", "A/B 实验与批跑研究")
+
+    ContainerDb_Ext(artifact_storage, "Model Artifact Storage", "MLflow / 本地 + S3", "模型文件 + training dataset snapshot hash")
+
+    ContainerDb_Ext(feature_storage, "Feature Storage", "Parquet / DuckDB", "按 entity × asof_date 分区")
+
+    Container_Ext(l12_telemetry, "L12 System Telemetry", "OTel + Prometheus", "训练/推理 metric + 漂移 metric")
+
+    Rel(l02, feature_store, "writes factors as features", "feature ingest")
+    Rel(l00, feature_store, "writes raw features", "via pit_query")
+    Rel(feature_store, feature_storage, "persists", "Parquet partition")
+    Rel(feature_store, pit_query, "uses PIT semantics", "asof + knowledge")
+
+    Rel(training_pipeline, feature_store, "reads training data", "PIT window")
+    Rel(training_pipeline, model_registry, "registers artifact", "new version draft")
+    Rel(model_registry, artifact_storage, "stores artifact", "versioned")
+
+    Rel(inference_engine, model_registry, "loads model", "by stage")
+    Rel(inference_engine, feature_store, "reads live features", "for scoring")
+    Rel(inference_engine, l03_l05, "serves predictions", "signal input")
+
+    Rel(drift_monitor, feature_store, "observes distribution")
+    Rel(drift_monitor, inference_engine, "observes predictions")
+    Rel(drift_monitor, l12_telemetry, "emits drift metric", "zephyr_model_drift_score")
+
+    Rel(shadow_mode, inference_engine, "duplicates traffic", "5-10% canary")
+    Rel(l13_experiment, training_pipeline, "triggers experiments", "A/B job")
+
+    Rel(ai_op_reserved, model_registry, "future: auto-promote/rollback", "OQ-063 P4")

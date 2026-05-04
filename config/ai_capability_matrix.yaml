@@ -1,0 +1,81 @@
+# AI 能力边界矩阵 — SSoT 定义文件
+#
+# 定义每个模块/目录的 AI 自治等级和操作边界。配合 @require_capability
+# 装饰器和 CI 检查脚本使用。
+#
+# 自治等级
+# --------
+# - IMMUTABLE : AI 只读，不可修改。违反 = 构建阻断。
+#   → shared/contracts/ 下的所有 CTR 定义
+#   → 已冻结的 ADR 文档
+#   → 治理核心文件（铁律、注册表）
+#
+# - EXTEND    : AI 可追加新内容，不可修改已有内容。
+#   → 因子注册表（append new factor, keep existing）
+#   → 策略注册表
+#   → 测试套件（add tests, don't remove）
+#
+# - FULL      : AI 完全自主。
+#   → 新建的层实现代码
+#   → 新模块
+#   → 实验性代码
+#
+# SSoT: IRN-001~010 AI行为铁律 → 结构化执行
+
+matrix:
+  version: "1.0"
+  created: "2026-05-04"
+  description: "AI 能力边界矩阵——将 IRN-001~010 铁律转化为结构化可执行约束"
+
+  entries:
+    - scope: "shared/contracts/*.py"
+      level: IMMUTABLE
+      description: "跨层数据契约定义（CTR-001~006 + 辅助类型）"
+      rationale: "CTR 是承重墙，变动会影响所有下游消费者"
+      enforcement: "CI build-block"
+
+    - scope: "shared/contracts/*"
+      level: IMMUTABLE
+      description: "contracts/ 目录下所有文件"
+      rationale: "整个 contracts/ 目录为 Immutable Core"
+
+    - scope: "docs/02_enterprise_architecture/adr/*.md"
+      level: IMMUTABLE
+      description: "已冻结的 ADR 文档"
+      rationale: "ADR 体系已冻结，不再新增"
+      enforcement: "CI build-block"
+
+    - scope: "docs/01_policies_and_standards/governance/ai/*"
+      level: IMMUTABLE
+      description: "AI 行为铁律 IRN-001~010"
+      rationale: "铁律是系统最高安全约束"
+
+    - scope: "gates/_registry.yaml"
+      level: IMMUTABLE
+      description: "门禁注册表"
+      rationale: "注册表定义了所有安全门禁的入口"
+
+    - scope: "scripts/governance/"
+      level: EXTEND
+      description: "治理脚本目录"
+      rationale: "AI 可以添加新检查，不能修改现有核心检查逻辑"
+
+    - scope: "tests/architecture/"
+      level: EXTEND
+      description: "架构适应度函数"
+      rationale: "AI 可以添加新测试，不能修改现有不变式"
+
+    - scope: "tests/unit/test_enforcer.py"
+      level: EXTEND
+      description: "ContractEnforcer 单元测试"
+      rationale: "可以添加新用例，不能删除或弱化现有用例"
+
+    - scope: "l02_alpha_factor/factor_registry.*"
+      level: EXTEND
+      description: "因子注册表"
+      rationale: "AI 可以注册新因子，不能删除已有因子"
+
+    - scope: "src/zephyr/l[0-1][0-9]_*/"
+      level: FULL
+      description: "层实现代码"
+      rationale: "层实现是 AI 的主要工作区"

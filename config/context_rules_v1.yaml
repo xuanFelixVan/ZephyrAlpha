@@ -1,0 +1,130 @@
+version: "1.0.0"
+schema_version: "1.0.0"
+doc_type: rule
+title: "Context Rules v1"
+status: active
+ttl: permanent
+implementation_status: "Phase 1 declarative contract — no runtime consumer yet. See context_budget_tracker.py for the active implementation."
+
+description: "15 context management rules for AI agent sessions covering token budget allocation, priority decay, and window sliding strategies"
+
+rules:
+  - id: CR-001
+    name: token_budget_allocation
+    condition: "Session starts with a defined token budget"
+    action: "Allocate 40% to system prompt, 30% to working context, 20% to output buffer, 10% to reserve"
+    priority: P0
+    verifiable: true
+    verification_method: "Verify token allocation ratios at session start"
+
+  - id: CR-002
+    name: context_window_sliding
+    condition: "Working context exceeds 80% of allocated token budget"
+    action: "Slide window: evict lowest-priority items first, preserve P0 items always"
+    priority: P0
+    verifiable: true
+    verification_method: "Trigger context >80% and verify eviction order"
+
+  - id: CR-003
+    name: priority_decay_with_time
+    condition: "Context item has not been referenced for N turns"
+    action: "Decay priority by 0.1 per turn; items below 0.2 are eviction candidates"
+    priority: P1
+    verifiable: true
+    verification_method: "Track reference count and verify decay calculation"
+
+  - id: CR-004
+    name: p0_item_pin
+    condition: "Item is classified as P0 (safety invariants, active task spec)"
+    action: "Pin item in context; never evict regardless of recency or token pressure"
+    priority: P0
+    verifiable: true
+    verification_method: "Attempt to evict P0 item and verify it remains"
+
+  - id: CR-005
+    name: task_context_preload
+    condition: "New task is assigned to session"
+    action: "Preload task-related documents (blueprint, ADR, relevant KEs) into working context"
+    priority: P1
+    verifiable: true
+    verification_method: "Verify task documents loaded within 2 turns of assignment"
+
+  - id: CR-006
+    name: cross_reference_resolution
+    condition: "Document references another document not in context"
+    action: "Load referenced document summary (not full content) into context if token budget allows"
+    priority: P2
+    verifiable: true
+    verification_method: "Verify referenced document summary appears in context"
+
+  - id: CR-007
+    name: session_log_checkpoint
+    condition: "Every 10 turns or on state transition"
+    action: "Write checkpoint to session log with current context summary and progress"
+    priority: P1
+    verifiable: true
+    verification_method: "Verify checkpoint entries in session log at correct intervals"
+
+  - id: CR-008
+    name: duplicate_context_dedup
+    condition: "New context item has >0.95 similarity to existing item"
+    action: "Merge items, keep the more recent version, add delta from older version"
+    priority: P1
+    verifiable: true
+    verification_method: "Insert near-duplicate and verify merge behavior"
+
+  - id: CR-009
+    name: error_context_preservation
+    condition: "An error occurs during task processing"
+    action: "Preserve error context (error message, stack trace, state at failure) in context with P0 priority"
+    priority: P0
+    verifiable: true
+    verification_method: "Trigger error and verify error context preserved"
+
+  - id: CR-010
+    name: governance_rules_always_loaded
+    condition: "Session is in any active state"
+    action: "Ensure AGENTS.md core constraints and relevant gate rules are always in system prompt"
+    priority: P0
+    verifiable: true
+    verification_method: "Verify governance rules present in system prompt"
+
+  - id: CR-011
+    name: layer_context_isolation
+    condition: "Task involves multiple architecture layers"
+    action: "Load only the relevant layer context; avoid loading all layers simultaneously"
+    priority: P2
+    verifiable: true
+    verification_method: "Verify only task-relevant layer YAML is loaded"
+
+  - id: CR-012
+    name: output_buffer_flush
+    condition: "Output buffer reaches 80% capacity"
+    action: "Flush buffer: write accumulated output to target file, clear buffer"
+    priority: P1
+    verifiable: true
+    verification_method: "Fill output buffer and verify flush triggers"
+
+  - id: CR-013
+    name: reserve_token_guard
+    condition: "Available tokens (including reserve) drop below 15% of total budget"
+    action: "Pause processing, checkpoint progress, request user guidance"
+    priority: P0
+    verifiable: true
+    verification_method: "Consume tokens to threshold and verify pause behavior"
+
+  - id: CR-014
+    name: context_version_tracking
+    condition: "A context item is updated or modified"
+    action: "Track version number; keep only latest version in working context, archive previous versions"
+    priority: P2
+    verifiable: true
+    verification_method: "Update context item and verify version increment"
+
+  - id: CR-015
+    name: session_handoff_context
+    condition: "Session is being handed off to another session or model"
+    action: "Serialize full context state including priorities, versions, and pending actions to handoff document"
+    priority: P0
+    verifiable: true
+    verification_method: "Verify handoff document contains all required fields"

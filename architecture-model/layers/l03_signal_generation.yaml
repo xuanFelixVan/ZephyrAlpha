@@ -1,0 +1,18 @@
+schema_version: "1.0.0"
+partition:
+  id: l03
+  name: Signal Generation
+  track: c_track
+  layer_position: 3
+  runtime_plane: hot
+  status: skeleton
+
+modules:
+  []
+
+summary:
+  total: 0
+  by_status:
+    skeleton: 0
+    implemented: 0
+  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"

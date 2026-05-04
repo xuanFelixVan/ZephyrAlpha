@@ -1,0 +1,15 @@
+schema_version: "1.0.0"
+partition:
+  id: l05
+  name: Portfolio Construction
+  track: c_track
+  layer_position: 5
+  runtime_plane: hot
+  status: skeleton
+
+modules:
+  []
+
+summary:
+  total: 0
+  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"

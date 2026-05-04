@@ -1,0 +1,65 @@
+# ============================================================================
+# ZephyrAlpha 模板登记表 — 唯一真源（Template Registry SSoT）
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-04 | owner: ZephyrAlpha-Owner
+#
+# 对标: TOGAF TRM（Technical Reference Model——可复用模板目录）
+#
+# 用途: 登记 ZephyrAlpha 项目中所有可复用的文档/代码模板。
+#       AI 在"新建 X 类文件"时，先查本表找到对应模板，再按模板格式创建。
+#
+# AI 使用方式:
+#   1. 查 templates → 找到对应 template_id
+#   2. 读 path → 定位到模板定义文件
+#   3. 按模板格式创建新文件
+#
+# 与 blueprint-registry.yaml 的关系:
+#   - blueprint-registry.yaml：追踪蓝图状态（施工进度/完整度/代际）
+#   - 本文件 template-registry.yaml：追踪模板定义（格式/版本/使用者）
+#   两张表职责互补，不重叠。
+#
+# 维护约定:
+#   - 模板种类不随模块数增长（按"文档类型"分类，非按"模块数"）
+#   - 新增模板 → 在本文件追加一条记录
+#   - 模板废弃 → status 设为 deprecated，保留历史记录
+# ============================================================================
+
+registry:
+  version: "1.0.0"
+  created: "2026-05-04"
+  last_updated: "2026-05-04"
+  total_templates: 4
+  note: "模板的实际文件仍在各自原有位置，本文件仅做索引登记"
+
+templates:
+  - template_id: "TPL-BLUEPRINT-001"
+    name: "模块蓝图模板"
+    path: "AGENTS.md §6.14"
+    version: "2.0.0"
+    for: "所有 MOD-* 蓝图的创建——含 13 节点标准结构"
+    status: "active"
+    last_updated: "2026-04-27"
+
+  - template_id: "TPL-TASK-001"
+    name: "任务卡模板"
+    path: "templates/task-card-template.md"
+    version: "1.0.0"
+    for: "MOD-INF-006 task-system 的 TaskCard 创建"
+    status: "active"
+    last_updated: "2026-04-20"
+
+  - template_id: "TPL-KE-001"
+    name: "知识条目 KE 模板"
+    path: "MOD-KB-001 §3.2.2"
+    version: "1.0.0"
+    for: "知识库 KE 条目的创建——含 YAML frontmatter 18 字段 + body 5 段模板"
+    status: "active"
+    last_updated: "2026-05-03"
+
+  - template_id: "TPL-KO-001"
+    name: "知识观察 KO 模板"
+    path: "MOD-KB-001 §3.10"
+    version: "1.0.0"
+    for: "知识库 KO 条目的创建——含 4 状态机 + 轻量模板"
+    status: "active"
+    last_updated: "2026-05-03"

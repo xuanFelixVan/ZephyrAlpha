@@ -1,0 +1,40 @@
+schema_version: "1.0.0"
+partition:
+  id: feedback_loop
+  name: Feedback Loop Engine (FLE)
+  track: b_track
+  bounded_context: true
+  umbrella_layer: l12
+  status: implemented
+
+modules:
+  - id: fle-core
+    name: Feedback Loop Core
+    submodule_path: src/zephyr/feedback_loop/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 系统自调节闭环 — collect_metric→detect_anomaly→dispatch_action。SQLite 时间序列 + EMA 异常检测
+    files:
+      - auto_evolution.py
+      - eval_harness.py
+      - evolution_engine.py
+      - feedback_collector.py
+      - fitness_functions.py
+      - metrics_collector.py
+    interfaces:
+      - contract_id: P0-FLE-PROTOCOL
+        role: producer
+        description: 单向依赖 — FLE 通过 Protocol 适配器 fire-and-forget 调用其他服务，防止循环依赖
+      - contract_id: P0-FLE-DASHBOARD
+        role: producer
+        description: fitness_functions.py 被 l08 dashboard 作为 Facade 消费
+    adr_ref:
+      - ADR-0019
+      - ADR-0022
+      - ADR-0034
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

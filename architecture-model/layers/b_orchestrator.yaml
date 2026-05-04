@@ -1,0 +1,53 @@
+schema_version: "1.0.0"
+partition:
+  id: orchestrator
+  name: Agent Orchestrator (Orc)
+  track: b_track
+  bounded_context: true
+  umbrella_layer: l12
+  status: implemented
+
+modules:
+  - id: orc-core
+    name: Agent Orchestrator Core
+    submodule_path: src/zephyr/orchestrator/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 任务生命周期 + Agent 调度 + 沙箱执行 + 幻觉检测。状态机 DRAFT→QUEUED→ASSIGNED→RUNNING→REVIEWING→COMPLETED
+    files:
+      - agent_health_monitor.py
+      - agent_orchestrator.py
+      - deferred_queue.py
+      - file_task_mapper.py
+      - hallucination_detector.py
+      - rollback_manager.py
+      - state_synchronizer.py
+      - trigger_router.py
+      - wave_generator.py
+    interfaces:
+      - contract_id: P0-ORC-CE
+        role: consumer
+        description: 依赖 CE 进行上下文构建
+      - contract_id: P0-ORC-VMS
+        role: consumer
+        description: 任务输出写入 VMS
+      - contract_id: P0-ORC-LSG
+        role: consumer
+        description: 工具调用前由 LSG 验证
+      - contract_id: P0-ORC-SANDBOX
+        role: producer
+        description: 沙箱创建失败 → 任务 FAIL，拒绝无沙箱运行
+    adr_ref:
+      - ADR-0017
+      - ADR-0018
+      - ADR-0022
+      - ADR-0032
+      - ADR-0036
+      - ADR-0038
+      - ADR-0039
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

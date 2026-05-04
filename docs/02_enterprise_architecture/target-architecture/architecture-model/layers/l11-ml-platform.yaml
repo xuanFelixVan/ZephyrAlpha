@@ -1,0 +1,93 @@
+schema_version: "2.0"
+partition:
+  id: l11
+  name: ML Platform
+  layer_position: 11
+  runtime_plane: warm
+  view_file: 03-application-architecture.md
+  view_section: "§4.1 l11_ml_platform/"
+
+modules:
+
+  - id: l11-model-registry-read
+    name: Model Registry (Read)
+    submodule_path: src/zephyr/l11_ml_platform/model_registry/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: 模型版本管理、元数据与血缘（只读路径）；Warm 在线推理查询模型元数据
+    interfaces: []
+    adr_ref: []
+    plane_note: 只读查询 Warm；写入操作走 Cold（l11-model-registry-write）
+
+  - id: l11-model-registry-write
+    name: Model Registry (Write)
+    submodule_path: src/zephyr/l11_ml_platform/model_registry/
+    status: planned
+    priority: P1
+    runtime_plane: cold
+    description: 模型版本管理、元数据与血缘（写入路径）；训练后模型注册、版本锁定，Cold batch
+    interfaces: []
+    adr_ref: []
+
+  - id: l11-training
+    name: Training Orchestration
+    submodule_path: src/zephyr/l11_ml_platform/training/
+    status: planned
+    priority: P1
+    runtime_plane: cold
+    description: 训练编排（分布式训练 / 基础模型微调 / 超参搜索）；Cold batch，大计算负载
+    interfaces: []
+    adr_ref: []
+
+  - id: l11-serving-default
+    name: Model Serving & Inference (Default)
+    submodule_path: src/zephyr/l11_ml_platform/serving/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: 模型服务化与推理封装（默认 Python Warm）；为 L03 predictions/ 提供推理接口
+    interfaces: []
+    adr_ref: []
+    plane_note: 默认 Warm Python；T3 阶段高频推理路径扩展 serving_hot.py 走 Hot（l11-serving-hot）
+
+  - id: l11-evaluation
+    name: Offline Model Evaluation
+    submodule_path: src/zephyr/l11_ml_platform/evaluation/
+    status: planned
+    priority: P1
+    runtime_plane: cold
+    description: 离线模型评估与冠军挑战者评分；Cold batch，评估后结果推送 L13 champion_challenger
+    interfaces: []
+    adr_ref: []
+
+  - id: l11-scout
+    name: Scout Agent (AI Information Scout)
+    submodule_path: src/zephyr/l11_ml_platform/scout/
+    status: planned
+    priority: P2
+    runtime_plane: cold
+    description: >
+      Scout Agent（AI 情报员）：自动抓取外部资讯（arXiv/SSRN/GitHub Trending/业界博客）+ 内部 repo diff，喂养 KMS L1 事实层；
+      预留依据：OQ-079 closed / J0-d / archive/reorg-2026-04-24/draft-abandoned/working-designs/ai-autonomy-architecture-design.md v1.3.0 §12.3（ARC-20260424-007）；
+      T3 commodity 模型 + 每日 1 次 cron；所有抓取必须走 AISG（network jail + 防外泄）。
+    interfaces: []
+    adr_ref: [ADR-0009, ADR-0010]
+    plane_note: Cold batch（每日 cron），D-02 Scout Agent 定义
+
+summary:
+  total: 6
+  by_status:
+    planned: 6
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 0
+    P1: 5
+    P2: 1
+    P3: 0
+  by_runtime_plane:
+    hot: 0
+    warm: 2
+    cold: 4

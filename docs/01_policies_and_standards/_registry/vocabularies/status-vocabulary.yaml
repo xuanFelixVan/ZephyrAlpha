@@ -1,0 +1,131 @@
+# status 受控词表
+# ZephyrAlpha 2.0 文档状态唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.1.0
+# 创建日期：2026-04-30
+#
+# 本词表定义 status 字段的所有合法值（3 种）。
+# 任何文件 frontmatter 中的 status 必须是以下值之一（小写）。
+#
+# 对标标准：
+#   - ITIL Change Enablement：变更生命周期（draft→active→deprecated）
+#   - K8s conditions：Status 是对 Spec 当前实现状态的观测
+#   - SchemaStore：enum + description + deprecated flag 三元组
+#   - PS-STD-001 §4.1：DocStatus 精简为 3 值
+
+schema_version: "1.1.0"
+doc_type: vocabulary
+module_id: PS-VOC-003
+version: "1.1.0"
+title: "status 受控词表"
+status: active
+vocabulary_name: status
+total_values: 3
+source: "PS-STD-001 §4.1（DocStatus：3 值，archived 已否决——归档是文件操作，不是文档状态）"
+depends_on:
+  - target: PS-STD-001
+    at: "§4.1"
+    why: "status 受控词表定义真源"
+  - target: PS-STD-009
+    at: "§2.1 + §2.2"
+    why: "status 生命周期与状态迁移定义真源"
+
+values:
+  - value: draft
+    definition: "草稿，正在编写中。不可被 active 文件通过 depends_on 引用（LRC-001/002）"
+    ai_consumption: "AI 可以自由创建/编辑/删除 draft 文件，无需审批。但 AI 不得将 draft 文件作为 depends_on 目标写入 active 文件——违者 GATE-VC-012 拦截。"
+    ai_keywords: ["草稿", "draft", "编写中", "未完成", "初稿"]
+    allowed_operations: ["编辑", "删除", "提交审批"]
+    lifecycle_constraint: "LRC-001: 不可被 active 文件 depends_on 引用 | LRC-002: 不可被 active 文件正文规范引用 | LRC-004: 被 3 个以上活跃文件引用时应评估升格"
+    next_states: ["active"]
+    frontmatter_color: "🟡"
+
+  - value: active
+    definition: "已生效，当前有效"
+    ai_consumption: "AI 必须遵守 active 文件的规则。修改 active 文件必须通过变更门控（不可直接编辑）"
+    ai_keywords: ["生效", "active", "当前", "执行中", "enforced"]
+    allowed_operations: ["引用", "变更（走变更门控）"]
+    required_fields: ["rule_form", "verifiability"]
+    next_states: ["deprecated"]
+    frontmatter_color: "🟢"
+
+  - value: deprecated
+    definition: "已废弃，有替代品或已合并"
+    ai_consumption: "AI 不应再参考 deprecated 文件（除非 superseded_by 指向的文件也查不到）。不可修改"
+    ai_keywords: ["废弃", "deprecated", "旧版", "已替换", "superseded"]
+    allowed_operations: ["只读引用", "不可修改"]
+    next_states: []
+    required_fields: ["superseded_by"]
+    frontmatter_color: "🔴"
+
+# ============================================================
+# AI 决策辅助：什么时候改 status？
+# ============================================================
+# 作为 AI，你只能在以下情况下改 status：
+#
+# 1. 创建新文件 → 设为 draft
+#    条件：Owner 要求创建新文件
+#    动作：frontmatter 写 status: draft
+#
+# 2. draft → active
+#    条件：Owner 明确说"批准/签收/生效"
+#    动作：status 改为 active，补全 active 必填字段
+#    不可擅自做：Owner 没说批准就自己改了
+#
+# 3. active → deprecated
+#    条件：Owner 明确说"这个旧文件不用了/用新文件替代"
+#    动作：status 改为 deprecated，填写 superseded_by
+#    不可擅自做：自己判断文件过时就废弃了
+#
+# 4. 任何状态回退（active→draft、deprecated→active）
+#    必须走：Owner 明确批准 + ADR 记录
+# ============================================================
+
+deprecated_values:
+  - value: Active
+    reason: "大小写不统一，统一为小写 active"
+    migrated_to: "active"
+    date: "2026-04-30"
+
+  - value: archived
+    reason: "归档是文件操作（移动到 archive 目录），不是文档状态。PS-STD-001 §4.1 明确否决"
+    migrated_to: "N/A"
+    date: "2026-05-01"
+
+  - value: in_discussion
+    reason: "与 draft 语义重叠，AI 经常混淆。PS-STD-001 §4.1 精简为 3 种"
+    migrated_to: "draft"
+    date: "2026-05-01"
+
+  - value: review_ready
+    reason: "审阅由 review_status 字段单独管，不需要在 DocStatus 中重复。PS-STD-001 §4.1"
+    migrated_to: "active"
+    date: "2026-05-01"
+
+  - value: accepted
+    reason: "与 active 语义重叠，AI 经常混淆。PS-STD-001 §4.1 精简"
+    migrated_to: "active"
+    date: "2026-05-01"
+
+  - value: superseded
+    reason: "废弃原因靠 superseded_by 字段区分，不需要单独的状态值"
+    migrated_to: "deprecated"
+    date: "2026-05-01"
+
+transition_rules:
+  - from: draft
+    to: active
+    condition: "Owner 批准 + 必填字段齐全"
+    approval: "Owner 签收"
+
+  - from: active
+    to: deprecated
+    condition: "新版本发布 / 规则合并 / 规则删除"
+    approval: "Owner 批准"
+    required: "superseded_by 已填写；依赖方已迁移"
+
+  - from: draft
+    to: draft
+    condition: "审批不通过，返工"
+    approval: "无"
+    required: "返工原因已记录"

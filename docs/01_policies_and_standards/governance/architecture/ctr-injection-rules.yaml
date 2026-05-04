@@ -1,0 +1,199 @@
+schema_version: "1.0"
+doc_type: policy
+title: "CTR 承重墙注入规则表"
+status: active
+ttl: permanent
+module_id: GOV-ARC-CTR-001
+version: "1.0.0"
+layer: cross_layer
+stability: frozen
+verifiability: automated
+summary: "定义 AI Agent 在各层开发时必须注入的 CTR 承重墙上下文——确保 Agent 知道并使用标准化数据契约"
+
+# ============================================================
+# 注入规则
+# ============================================================
+# 当 AI Agent 被分配到某个 Layer 的任务时，Context Engine 将根据
+# 本规则表自动注入相关的 CTR 契约文件路径和强制使用规则。
+#
+# 每条规则定义：
+#   target_layer: 适用层域
+#   inject_files: 注入到 AI 上下文中的文件列表
+#   inject_rules: 注入的强制规则文本
+#   priority: 注入优先级（1=最高，在 token budget 紧张时优先保留）
+#   trigger_keywords: 当任务描述包含这些关键词时触发注入
+# ============================================================
+
+injection_rules:
+  # --- L00 Data Source ---
+  - rule_id: CTR-INJ-001
+    target_layer: l00_data_source
+    priority: 1
+    trigger_keywords:
+      - "data source"
+      - "数据接入"
+      - "WebSocket"
+      - "market data"
+      - "行情"
+      - "akshare"
+      - "数据源"
+      - "NormalizedMarketData"
+    inject_files:
+      - "src/zephyr/shared/contracts/market_data.py"
+      - "src/zephyr/shared/contracts/timestamp.py"
+      - "src/zephyr/shared/contracts/instrument.py"
+      - "src/zephyr/shared/contracts/money.py"
+    inject_rules:
+      - "L00 的产出 MUST 是 NormalizedMarketData（CTR-001），不可自定义 MarketData 等价类型"
+      - "价格字段 MUST 使用 Decimal（来自 money.py），禁止 float"
+      - "时间字段 MUST 使用 Timestamp（纳秒精度 UTC），禁止 datetime.datetime 裸用"
+      - "标的字段 MUST 使用 Instrument 或其子类（来自 instrument.py），禁止裸 str"
+      - "所有产出必须通过质量门禁（quality_score >= threshold），停牌标的 is_suspended=True 不参与后续计算"
+
+  # --- L02 Alpha Factor ---
+  - rule_id: CTR-INJ-002
+    target_layer: l02_alpha_factor
+    priority: 1
+    trigger_keywords:
+      - "factor"
+      - "因子"
+      - "alpha"
+      - "因子计算"
+      - "feature"
+      - "特征"
+      - "indicator"
+      - "指标计算"
+    inject_files:
+      - "src/zephyr/shared/contracts/market_data.py"
+      - "src/zephyr/shared/contracts/factor_signal.py"
+      - "src/zephyr/shared/contracts/timestamp.py"
+    inject_rules:
+      - "L02 消费 NormalizedMarketData（CTR-001），产出 FactorSignal（CTR-002）"
+      - "每个因子必须有唯一 factor_id，对应 FactorRegistry 的注册条目"
+      - "raw_value 是原始值，normalized_value 是截面标准化后的 z-score"
+      - "confidence 表示信号置信度，数据缺漏时降低 confidence 而不直接设 is_valid=False"
+      - "因子版本变更时必须递增 factor_version 并同步 FactorRegistry"
+
+  # --- L03 Signal Generation ---
+  - rule_id: CTR-INJ-003
+    target_layer: l03_signal_generation
+    priority: 2
+    trigger_keywords:
+      - "signal"
+      - "信号"
+      - "signal generation"
+      - "信号合成"
+      - "signal combination"
+      - "ensemble"
+    inject_files:
+      - "src/zephyr/shared/contracts/factor_signal.py"
+      - "src/zephyr/shared/contracts/order.py"
+    inject_rules:
+      - "L03 消费 FactorSignal（CTR-002），产出 Order（CTR-004）或其他交易指令"
+      - "信号合成时必须处理 is_valid=False 的因子（跳过或降权）"
+      - "信号方向（BUY/SELL）必须有明确置信度阈值"
+
+  # --- L04 Risk Management ---
+  - rule_id: CTR-INJ-004
+    target_layer: l04_risk_management
+    priority: 1
+    trigger_keywords:
+      - "risk"
+      - "风控"
+      - "风险管理"
+      - "止损"
+      - "stop loss"
+      - "circuit breaker"
+      - "熔断"
+      - "position limit"
+      - "仓位"
+    inject_files:
+      - "src/zephyr/shared/contracts/factor_signal.py"
+      - "src/zephyr/shared/contracts/risk_limits.py"
+      - "src/zephyr/shared/contracts/position.py"
+      - "src/zephyr/shared/contracts/money.py"
+    inject_rules:
+      - "L04 消费 FactorSignal（CTR-002），产出 RiskLimits（CTR-003）"
+      - "L04 也可消费 PositionSnapshot（CTR-006）用于实时风控监控"
+      - "RiskLimits 中的 max_single_position、max_gross_leverage 等百分比字段使用 float（非货币）"
+      - "symbol_overrides 可覆盖个股限制，优先于 max_single_position"
+      - "风控触发时必须有明确的熔断/降级策略（circuit_breaker.py 联动）"
+
+  # --- L05 Portfolio Construction ---
+  - rule_id: CTR-INJ-005
+    target_layer: l05_portfolio_construction
+    priority: 1
+    trigger_keywords:
+      - "portfolio"
+      - "组合构建"
+      - "组合优化"
+      - "optimization"
+      - "optimizer"
+      - "allocation"
+      - "仓位分配"
+      - "rebalance"
+      - "调仓"
+    inject_files:
+      - "src/zephyr/shared/contracts/factor_signal.py"
+      - "src/zephyr/shared/contracts/risk_limits.py"
+      - "src/zephyr/shared/contracts/order.py"
+      - "src/zephyr/shared/contracts/money.py"
+    inject_rules:
+      - "L05 消费 FactorSignal（CTR-002）+ RiskLimits（CTR-003），产出 Order（CTR-004）"
+      - "Order 是可变对象（frozen=False），生命周期状态通过 status 字段流转"
+      - "订单状态机：PENDING → SUBMITTED → PARTIAL → FILLED / CANCELLED / REJECTED"
+      - "limit_price 仅 LIMIT 单必填；MARKET 单为 None"
+      - "quantity 使用 Decimal：精确股数/张数，禁止 float"
+
+  # --- L06 Trade Execution ---
+  - rule_id: CTR-INJ-006
+    target_layer: l06_trade_execution
+    priority: 1
+    trigger_keywords:
+      - "execution"
+      - "交易执行"
+      - "order"
+      - "订单"
+      - "trade"
+      - "成交"
+      - "broker"
+      - "brokerage"
+    inject_files:
+      - "src/zephyr/shared/contracts/order.py"
+      - "src/zephyr/shared/contracts/fill.py"
+      - "src/zephyr/shared/contracts/position.py"
+      - "src/zephyr/shared/contracts/money.py"
+      - "src/zephyr/shared/contracts/timestamp.py"
+    inject_rules:
+      - "L06 消费 Order（CTR-004），产出 Fill（CTR-005）+ PositionSnapshot（CTR-006）"
+      - "Fill 是不可变对象（frozen=True），每条成交记录不变"
+      - "Order.filled_quantity = Σ Fill.filled_quantity（不变量约束）"
+      - "Order.avg_fill_price 是加权均价，在 filled_quantity > 0 时必填"
+      - "commission 默认为 0，在 TCA 分析时必须包含真实佣金"
+      - "slippage 正值为不利滑点（买入价高于参考价，卖出价低于参考价）"
+
+  # --- L07 Post-Trade Analytics ---
+  - rule_id: CTR-INJ-007
+    target_layer: l07_post_trade_analytics
+    priority: 2
+    trigger_keywords:
+      - "post-trade"
+      - "analytics"
+      - "分析"
+      - "TCA"
+      - "transaction cost"
+      - "PnL"
+      - "attribution"
+      - "归因"
+      - "performance"
+      - "sharpe"
+    inject_files:
+      - "src/zephyr/shared/contracts/fill.py"
+      - "src/zephyr/shared/contracts/position.py"
+      - "src/zephyr/shared/contracts/money.py"
+      - "src/zephyr/shared/contracts/timestamp.py"
+    inject_rules:
+      - "L07 消费 Fill（CTR-005）+ PositionSnapshot（CTR-006）"
+      - "TCA 分析维度：滑点（slippage）、佣金（commission）、时机成本"
+      - "PnL 归因必须区分 alpha 收益和 beta 收益"
+      - "PositionSnapshot.as_of_timestamp 是快照时间，用于时序对齐"

@@ -1,0 +1,68 @@
+version: "1.0.0"
+schema_version: "1.0.0"
+doc_type: register
+title: "Embedding Model Registry"
+status: active
+ttl: permanent
+implementation_status: "Phase 1 declarative contract — EmbeddingMigrator uses KNOWN_MODELS hardcoded dict (must stay in sync). Future: load from this YAML."
+
+models:
+  # constraint: exactly one model must have default: true (SSoT for default model selection)
+  - name: all-MiniLM-L6-v2
+    dimension: 384
+    provider: sentence-transformers
+    max_length: 256
+    default: false
+    description: "MiniLM multilingual model, lightweight and fast for English-dominant text"
+    runtime_plane: cold
+    latency_budget_ms: 30
+    tags: [english, multilingual, lightweight]
+
+  - name: bge-small-zh
+    dimension: 512
+    provider: BAAI
+    max_length: 512
+    default: true
+    description: "BGE small Chinese model, optimized for Chinese text retrieval"
+    runtime_plane: cold
+    latency_budget_ms: 50
+    tags: [chinese, retrieval, lightweight]
+
+  - name: bge-m3
+    dimension: 1024
+    provider: BAAI
+    max_length: 8192
+    default: false
+    description: "BGE M3 multilingual model, supports dense/sparse/colbert"
+    runtime_plane: cold
+    latency_budget_ms: 100
+    tags: [multilingual, retrieval, dense-sparse]
+
+  - name: text2vec-base-chinese
+    dimension: 768
+    provider: shibing624
+    max_length: 512
+    default: false
+    description: "text2vec base Chinese model, general purpose Chinese embeddings"
+    runtime_plane: cold
+    latency_budget_ms: 50
+    tags: [chinese, general-purpose]
+
+selection_rules:
+  - priority: 1
+    condition: "input_language == 'zh' and not multilingual_required and latency_budget_ms < 80"
+    recommended: "bge-small-zh"
+  - priority: 2
+    condition: "input_language != 'zh' or multilingual_required == true"
+    recommended: "bge-m3"
+  - priority: 3
+    condition: "dimension_budget <= 768 and general_purpose == true"
+    recommended: "text2vec-base-chinese"
+  - priority: 4
+    condition: "input_language == 'en' and latency_budget_ms < 50"
+    recommended: "all-MiniLM-L6-v2"
+
+constraints:
+  - "All models must be loaded lazily on first request"
+  - "Model switching requires config reload, not hot-swap"
+  - "Embedding cache TTL: 24h for cold path, 1h for warm path"

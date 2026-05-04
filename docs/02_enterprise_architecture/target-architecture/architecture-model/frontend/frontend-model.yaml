@@ -1,0 +1,255 @@
+schema_version: '2.0'
+partition:
+  id: frontend
+  name: Frontend Platform
+  layer_position: null
+  runtime_plane: warm
+  view_file: 10-frontend-architecture.md
+  view_section: §3
+modules:
+- id: fe-app-trading-terminal
+  name: Trading Terminal / 交易终端
+  submodule_path: frontend/apps/trading-terminal/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: '交易终端核心视图；面向日常交易操作场景（行情、下单、持仓、成交）。 Warm 主（React 渲染 + 用户交互，< 100ms 目标）； WebSocket 行情/成交订阅路径为 Hot-adjacent（< 20ms 回路，对接 L08 /ws/v1/ticker）。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: Warm 主 + Hot-adjacent（WebSocket 行情/下单路径）
+- id: fe-app-research-ide
+  name: Research IDE / 研究 IDE
+  submodule_path: frontend/apps/research-ide/
+  status: planned
+  priority: P2
+  runtime_plane: warm
+  description: '研究 IDE；与 L09 research_innovation 对接，交互式但非极限低延迟（100-500ms）。 承载策略研究、因子探索、回测配置等研究工作流。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-app-risk-dashboard
+  name: Risk Dashboard / 风控仪表盘
+  submodule_path: frontend/apps/risk-dashboard/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: '风控仪表盘；实时风险指标展示（Warm 100-500ms）+ 报表导出（Cold 走后端批处理）。 对接 L04 risk_management + L12 system_telemetry。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: Warm 实时指标 + Cold 报表导出（PDF/Excel 批量走后端）
+- id: fe-app-monitoring-center
+  name: Monitoring Center / 监控中心
+  submodule_path: frontend/apps/monitoring-center/
+  status: planned
+  priority: P2
+  runtime_plane: warm
+  description: '监控中心；Grafana iframe 嵌入 + L12 telemetry 对接（100-500ms）。 系统健康、性能指标、AI 行为可观测面板。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-app-ai-cockpit
+  name: AI Cockpit / AI 驾驶舱
+  submodule_path: frontend/apps/ai-cockpit/
+  status: deferred
+  priority: P3
+  runtime_plane: warm
+  description: 'AI 驾驶舱（G4 激活，当前未建）；与 D-03 Decision Engine / D-06 Market Regime 对接（100-500ms）。 承载 AI Operator 前端交互界面。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  activation_trigger: OQ-063 F-1/F-2/F-3 AI Operator 启用到 frontend 域（G4 档位）
+- id: fe-app-reports-center
+  name: SSR Reports Center / SSR 报表中心
+  submodule_path: frontend/apps/reports-center/
+  status: deferred
+  priority: P3
+  runtime_plane: cold
+  description: 'SSR 报表导出服务（非前端 App，后端配套）；Cold 批生成（1-300s，cron 或 on-demand）。 承载 PDF / Excel / 周报批量生成。Node.js + Puppeteer / Python + WeasyPrint。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  activation_trigger: G3+ 激活，外部干系人报表需求成熟
+  plane_note: Cold（报表批生成 1-300s），对应 runtime-planes.yaml fe-ssr-reports
+- id: fe-platform-shell
+  name: Platform App Shell / 平台应用壳
+  submodule_path: frontend/platform/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: '微前端宿主（Module Federation host）+ 全局 App Shell（Sidebar / Topbar / CommandPalette）； 跨 App 通信总线；统一 Auth / Theme / i18n / Error / Telemetry。 全局壳 + 路由 + 权限 + 事件总线 < 50ms 切换目标。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  - ADR-0008
+- id: fe-pkg-ui-kit
+  name: UI Kit / 组件库
+  submodule_path: frontend/packages/ui-kit/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 'Ant Design v5 扩展 + Design Tokens（颜色/字体/间距/阴影/圆角/动效时长）； Primitive Components（Button/Input/Select/Modal/Table/Form 等原子组件）； Pattern Library（OrderForm/RiskCard/PnLChart/CandlestickChart 等业务组合模式）。 暗色优先主题策略。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-pkg-chart-engine
+  name: Chart Engine / 图表引擎
+  submodule_path: frontend/packages/chart-engine/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: '金融图表引擎；TradingView lightweight-charts v4（K 线/深度/分时）+ Recharts + D3（PnL/Risk 仪表）。 浏览器渲染 + Canvas / WebGL，帧率 60fps 目标（16ms 单帧预算）。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-pkg-data-client
+  name: Data Client / 数据客户端
+  submodule_path: frontend/packages/data-client/
+  status: planned
+  priority: P0
+  runtime_plane: warm
+  description: 'SWR/TanStack Query v5 + OpenAPI 代码生成客户端 + WebSocket 封装。 所有前后端 HTTP/WebSocket 调用的唯一出口，通过 L08 api_gateway 对接后端。 Hot-adjacent（WebSocket 路径 10-50ms）+ Warm（REST 路径 50-200ms）双栖。 单连接多路复用 + 反压机制 + 断线自动重连 + 消息 gap 追补。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: Hot-adjacent（WebSocket 路径）+ Warm（REST 路径）双栖
+- id: fe-pkg-auth
+  name: Auth SDK / 认证 SDK
+  submodule_path: frontend/packages/auth/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 'JWT/OIDC SDK；前端认证能力封装。 当前单用户单角色，未来激活 OQ-069 细粒度 RBAC/ABAC 时升级。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-pkg-shared-types
+  name: Shared Types / 前后端共享类型
+  submodule_path: frontend/packages/shared-types/
+  status: planned
+  priority: P0
+  runtime_plane: warm
+  description: '前后端共享 TypeScript 类型，由 tools/codegen 从后端 OpenAPI Spec 自动生成。 禁止手写 DTO（FE-P3 契约先行原则）。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+- id: fe-pkg-kbar-actions
+  name: kbar Actions / 命令注册协议
+  submodule_path: frontend/packages/kbar-actions/
+  status: deferred
+  priority: P2
+  runtime_plane: warm
+  description: '命令注册协议；kbar 快捷键 / 命令面板的 Action 定义与注册。 G4 AI Operator 集成时激活。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  activation_trigger: G4 AI Operator 集成时激活
+- id: fe-tool-vite-config
+  name: Vite Config / 统一 Vite 配置
+  submodule_path: frontend/tools/vite-config/
+  status: planned
+  priority: P1
+  runtime_plane: cold
+  description: '统一 Vite 构建配置；纯 dev-time 工具，不产生运行时代码。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: 不入运行平面（纯 dev-time），归类 Cold 仅表示构建期
+- id: fe-tool-codegen
+  name: Codegen / OpenAPI 代码生成
+  submodule_path: frontend/tools/codegen/
+  status: planned
+  priority: P0
+  runtime_plane: cold
+  description: 'OpenAPI Spec → TypeScript 类型自动生成工具；FE-P3 契约先行原则的核心执行器。 纯 dev-time / CI 内使用。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: 不入运行平面（纯 dev-time），对应 runtime-planes.yaml fe-codegen Cold
+- id: fe-tool-e2e
+  name: E2E Test Config / 端到端测试配置
+  submodule_path: frontend/tools/e2e/
+  status: planned
+  priority: P2
+  runtime_plane: cold
+  description: 'Playwright 配置 + Page Object 基类；端到端测试基础设施。 纯 dev-time / CI 内使用。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: 不入运行平面（纯 dev-time）
+- id: fe-tool-lint-config
+  name: Lint Config / 代码规范配置
+  submodule_path: frontend/tools/lint-config/
+  status: planned
+  priority: P1
+  runtime_plane: cold
+  description: 'ESLint / Prettier / tsconfig 基线配置；统一前端代码规范。 纯 dev-time / CI 内使用。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  plane_note: 不入运行平面（纯 dev-time）
+- id: fe-tool-storybook
+  name: Storybook / 组件工作台
+  submodule_path: frontend/tools/storybook/
+  status: deferred
+  priority: P3
+  runtime_plane: cold
+  description: '组件工作台；ui-kit 组件的可视化开发与文档。 纯 dev-time 工具。
+
+    '
+  interfaces: []
+  adr_ref:
+  - ADR-0007
+  activation_trigger: G2+ 激活，packages/ui-kit 组件数量 ≥ 20
+  plane_note: 不入运行平面（纯 dev-time）
+summary:
+  total: 18
+  by_status:
+    planned: 14
+    active: 0
+    deferred: 4
+    deprecated: 0
+  by_priority:
+    P0: 3
+    P1: 8
+    P2: 4
+    P3: 3
+  by_runtime_plane:
+    hot: 0
+    warm: 12
+    cold: 6

@@ -1,0 +1,74 @@
+schema_version: "1.0"
+doc_type: gate
+title: "G3 Evaluate Gate"
+status: active
+ttl: permanent
+
+gate_id: G3
+gate_name: evaluate
+description: "Evaluate stage admission gate - ensures knowledge value score meets threshold before document is considered for knowledge extraction"
+
+entry_conditions:
+  - id: G3-C01
+    name: knowledge_value_score_threshold
+    description: "Document knowledge value score must meet or exceed the minimum threshold"
+    check: "doc.knowledge_value_score >= THRESHOLD"
+    severity: error
+    on_failure: reject
+    threshold: 0.4
+    verifiable: true
+    verification_method: "Unit test with score below and above threshold"
+
+  - id: G3-C02
+    name: uniqueness_check
+    description: "Document must contain unique knowledge not already captured in the knowledge base"
+    check: "doc.embedding_similarity_to_existing < SIMILARITY_THRESHOLD"
+    severity: warning
+    on_failure: flag
+    similarity_threshold: 0.95
+    verifiable: true
+    verification_method: "Unit test with near-duplicate document"
+
+  - id: G3-C03
+    name: content_integrity_verified
+    description: "Document content must pass integrity check (no encoding corruption, no mixed encoding)"
+    check: "doc.encoding_status == 'clean' and no mixed_encoding detected"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with corrupted content"
+
+  - id: G3-C04
+    name: metadata_complete
+    description: "All metadata fields required for knowledge extraction must be present"
+    check: "doc has module_id, layer, and classification"
+    severity: warning
+    on_failure: auto_fill
+    auto_fill_rule: "Derive from file path and naming conventions"
+    verifiable: true
+    verification_method: "Unit test with incomplete metadata"
+
+  - id: G3-C05
+    name: no_expired_ttl
+    description: "Document with expired TTL must not enter evaluation"
+    check: "doc.ttl == 'permanent' or doc.ttl_expiry > now()"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with expired TTL document"
+
+scoring_dimensions:
+  - dimension: design_decision_density
+    weight: 0.3
+    description: "Density of unique design decisions in the document"
+  - dimension: technical_specificity
+    weight: 0.25
+    description: "Level of technical detail and specificity"
+  - dimension: reuse_potential
+    weight: 0.25
+    description: "Potential for reuse across other modules or projects"
+  - dimension: irreplaceability
+    weight: 0.2
+    description: "Whether this knowledge exists elsewhere in the project"
+
+scoring_formula: "weighted_sum(design_decision_density, technical_specificity, reuse_potential, irreplaceability)"

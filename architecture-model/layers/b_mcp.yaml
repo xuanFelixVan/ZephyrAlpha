@@ -1,0 +1,36 @@
+schema_version: "1.0.0"
+partition:
+  id: mcp
+  name: MCP Servers
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: mcp-servers
+    name: MCP Protocol Servers
+    submodule_path: src/zephyr/mcp/
+    status: implemented
+    priority: P1
+    runtime_plane: warm
+    description: MCP 协议服务端集合 — task_manager (已实现 decompose_blueprint) + knowledge_base / gate_engine / doc_guard / sentinel (stub/规划中)
+    files:
+      - _base_server.py
+      - doc_guard_server.py
+      - gate_engine_server.py
+      - knowledge_base_server.py
+      - sentinel_server.py
+      - task_manager_server.py
+      - tool_contracts.yaml
+    interfaces:
+      - contract_id: P1-MCP-STDIO
+        role: producer
+        description: MCP stdio 通信协议
+    adr_ref:
+      - ADR-0033
+      - ADR-0040
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

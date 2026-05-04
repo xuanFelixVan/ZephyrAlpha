@@ -1,100 +1,66 @@
-[project]
-name = "quant-system-v5"
-version = "5.1.0"
-description = "清风量化交易系统 v5.1 - 专业级量化交易系统"
-authors = [
-    {name = "Quant Developer"}
-]
-requires-python = ">=3.10"
-license = {text = "MIT"}
-readme = "README.md"
-homepage = "https://github.com/your-repo/quant_system_v5"
-
-dependencies = [
-    "pandas>=1.5.0",
-    "numpy>=1.23.0",
-    "scipy>=1.9.0",
-    "sqlalchemy>=2.0.0",
-    "duckdb>=0.8.0",
-    "pyarrow>=12.0.0",
-    "akshare>=1.12.0",
-    "baostock>=0.8.8",
-    "efinance>=0.6.0",
-    "tushare>=1.3.0",
-    "ta-lib>=0.4.0",
-    "pyyaml>=6.0",
-    "python-dotenv>=1.0.0",
-    "loguru>=0.7.0",
-    "apscheduler>=3.10.0",
-]
-
-[project.optional-dependencies]
-api = [
-    "fastapi>=0.100.0",
-    "uvicorn>=0.23.0",
-    "pydantic>=2.0.0",
-]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "flake8>=6.0.0",
-    "mypy>=1.5.0",
-]
-jupyter = [
-    "jupyter>=1.0.0",
-    "ipykernel>=6.25.0",
-]
-
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
 
-[tool.black]
-line-length = 100
-target-version = ['py310']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | __pycache__
-  | build
-  | dist
-)/
-'''
-
-[tool.isort]
-profile = "black"
-line_length = 100
-skip = [".venv", "build", "dist"]
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = false
-ignore_missing_imports = true
+[project]
+name = "zephyralpha"
+version = "2.0.0"
+description = "ZephyrAlpha 2.0 — AI-native quantitative research platform"
+requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+]
+markers = [
+    "e2e: marks end-to-end tests (deselect with '-m \"not e2e\"')",
+    "security: marks security-critical tests",
+    "financial: marks financial calculation tests",
+    "filterwarnings: marks tests that suppress specific warnings (required by --strict-markers)",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
 
 [tool.coverage.run]
-source = ["src"]
-omit = ["*/tests/*", "*/test_*.py"]
+source = ["zephyr"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/migrations/*",
+]
 
 [tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
+show_missing = true
+fail_under = 70
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes (includes F811: redefinition of unused name)
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific rules
 ]
+ignore = ["E501"]
+
+[tool.ruff.lint.flake8-import-conventions]
+extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" = "time_utils" }
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

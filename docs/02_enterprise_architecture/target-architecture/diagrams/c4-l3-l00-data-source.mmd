@@ -1,0 +1,55 @@
+%%{init: {'theme': 'default'}}%%
+C4Component
+    title C4 Level 3 — L00 Data Source Layer Components
+    title (L00 数据源层组件分解 / H5)
+
+    Container_Boundary(l00, "L00 Data Source / 数据源层 (src/zephyr/l00_data_source/)") {
+
+        Component(vendor_registry, "Vendor Registry", "Python / vendor_registry.py", "Vendor 统一注册中心：按 asset_class/jurisdiction/data_domain 解析可用 Vendor，含优先级排序与健康状态上报<br/>Vendor Registry: register / resolve / healthcheck_all")
+
+        Component(vendor_base, "IDataSource Base", "Python / vendor_base.py", "抽象接口锁定：fetch_bars / fetch_fundamentals / fetch_corp_actions / healthcheck<br/>所有 Vendor facade 必须实现")
+
+        Component(failover_policy, "Failover Policy", "YAML / failover_policy.yaml", "故障转移策略配置：circuit_breaker 参数 / primary+fallbacks 链 / data_quality_degraded 标志")
+
+        Boundary(connectors, "connectors/ ACL 扩展区") {
+            Component(ifind_facade, "iFinD Facade", "Python / stock/cn_ifind/facade.py", "Primary vendor (L0 contractual SLA, ¥2000/mo)：实现 IDataSource，内含 retry + breaker + OTel span")
+
+            Component(ifind_mapper, "iFinD Mapper", "Python / stock/cn_ifind/mapper.py", "外部 iFinD DTO → canonical schema 翻译：单位/时区/PIT 三字段补全")
+
+            Component(ifind_raw, "iFinD Raw Client", "Python / stock/cn_ifind/raw_client.py", "原始 SDK 包装：网络重试、反序列化 Vendor 原生 DTO（不可被 L01+ import）")
+
+            Component(tushare_facade, "Tushare Pro Facade", "Python / stock/cn_tushare_pro/facade.py", "Fallback priority 1（UAT 激活后就绪）：同三段结构")
+
+            Component(akshare_facade, "AKShare Facade", "Python / stock/cn_akshare/facade.py", "Fallback priority 2（免费备源）：同三段结构")
+        }
+
+        Component(loader, "Autoload Bootstrapper", "Python / __init__.py loader", "启动时遍历 connectors/ 子包，触发 VendorRegistry.register 装饰器")
+
+        ComponentDb(cache, "Raw Data Cache", "DuckDB / Parquet", "按 asof_date 分区的 PIT 原始数据快照（可选缓存层）")
+    }
+
+    Container_Ext(shared_contracts, "shared/contracts/", "Python / canonical schema", "Instrument / Bar / Tick / CorporateAction / FundamentalSnapshot")
+
+    Container_Ext(l02, "L02 Alpha Factor", "Python / src/zephyr/l02_alpha_factor/", "因子消费侧（通过 IDataSource）")
+
+    System_Ext(vendor_ext, "External Vendors", "iFinD / Tushare / AKShare / Polygon / ...")
+
+    System_Ext(l12_telemetry, "L12 System Telemetry", "OTel Collector / Prometheus", "metrics + traces 接收")
+
+    Rel(l02, vendor_registry, "resolve(asset_class, jurisdiction, data_domain)", "解析可用 Vendor")
+    Rel(vendor_registry, ifind_facade, "returns (primary)")
+    Rel(vendor_registry, tushare_facade, "returns (fallback 1)")
+    Rel(vendor_registry, akshare_facade, "returns (fallback 2)")
+    Rel(vendor_registry, failover_policy, "reads policy")
+
+    Rel(ifind_facade, ifind_mapper, "applies mapper", "canonical 翻译")
+    Rel(ifind_mapper, ifind_raw, "calls raw_client", "Vendor 原生 DTO")
+    Rel(ifind_mapper, shared_contracts, "outputs canonical", "Bar / Instrument / ...")
+    Rel(ifind_raw, vendor_ext, "HTTPS / SDK", "REST / WebSocket")
+
+    Rel(loader, vendor_registry, "bootstraps registration", "autodiscover on import")
+    Rel(ifind_facade, failover_policy, "circuit breaker config")
+    Rel(ifind_facade, cache, "read/write snapshot", "PIT 缓存")
+    Rel(ifind_facade, l12_telemetry, "emits trace + metric", "zephyr_vendor_hit / zephyr_vendor_failure")
+
+    UpdateRelStyle(l02, vendor_registry, $offsetX="-40", $offsetY="-10")

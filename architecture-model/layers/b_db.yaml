@@ -1,0 +1,33 @@
+schema_version: "1.1.0"
+partition:
+  id: db
+  name: Database
+  track: b_track
+  bounded_context: false
+  status: implemented
+  db_file_path: data/zalpha_metadata.db
+
+modules:
+  - id: db-persistence
+    name: Metadata Persistence Layer
+    submodule_path: src/zephyr/db/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: SQLite 元数据持久化层 + 跨 SQLite/文件系统的原子事务管理器 (ATM)
+    files:
+      - atomic_transaction_manager.py
+      - olap_engine.py
+      - sqlite_schema.py
+      - task_repo.py
+    interfaces:
+      - contract_id: P0-DB-ATM
+        role: producer
+        description: ATM 提供 BEGIN/COMMIT/ROLLBACK + 文件系统两阶段提交
+    adr_ref:
+      - ADR-0030
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

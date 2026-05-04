@@ -1,0 +1,48 @@
+schema_version: "1.0.0"
+partition:
+  id: shared
+  name: Shared
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: shared-contracts
+    name: Shared Contracts
+    submodule_path: src/zephyr/shared/contracts/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 跨层共享数据契约 — Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
+    files:
+      - instrument.py
+      - money.py
+      - runtime_plane_tag.py
+      - timestamp.py
+    interfaces: []
+    adr_ref:
+      - ADR-0040
+
+  - id: shared-infra
+    name: Shared Infrastructure
+    submodule_path: src/zephyr/shared/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 跨层共享基础设施 — SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动器
+    files:
+      - capability.py
+      - content_fingerprint.py
+      - dos_launcher.py
+      - observer.py
+      - schemas.py
+      - ssot_guard.py
+    interfaces: []
+    adr_ref:
+      - ADR-0021
+      - ADR-0037
+
+summary:
+  total: 2
+  by_status:
+    implemented: 2

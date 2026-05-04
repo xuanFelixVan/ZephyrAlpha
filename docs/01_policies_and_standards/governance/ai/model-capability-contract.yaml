@@ -1,0 +1,14 @@
+---
+module_id: DEPRECATED-GOV-AI-006
+title: "（已迁移）AI 模型能力矩阵契约"
+doc_type: contract
+status: deprecated
+version: "1.1.0"
+superseded_by: "_registry/contracts/model-capability-contract.yaml（v1.2.0）"
+layer: cross_layer
+owner: ZephyrAlpha-Owner
+date: "2026-05-03"
+---
+
+> ⚠️ 本文件已迁移至 [_registry/contracts/model-capability-contract.yaml](../_registry/contracts/model-capability-contract.yaml)（v1.2.0）。
+> 本桩文件保留 90 天后归档。请勿引用本文件——所有更新在新位置进行。

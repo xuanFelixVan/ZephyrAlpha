@@ -1,0 +1,1047 @@
+schema_version: "3.0"
+srp_note: "本文件现已覆盖 6 种契约类型（P0-DATA/P0-PROTOCOL/P0-ERROR/P0-BP/P1/OCP/EXT/AI-GOV），2026-05-04 架构盲点补全批次新增 10 条 P0 契约 + 版本协商规则 + ai_prompt 字段"
+
+partition:
+  id: cross-cutting-contracts
+  name: "Cross-Layer Contracts / 跨层数据契约"
+  type: cross-cutting
+  ssot_policy: >
+    本 YAML 文件是所有跨层数据契约的 Single Source of Truth (SSoT)。
+    各契约条目中的 physical_path 字段为 codegen 目标路径——对应的 Python
+    接口文件由 codegen 工具从本 YAML 自动生成，不得手工编辑。
+    任何字段变更必须先修改本文件，再重新生成 Python 文件。
+  description: >
+    跨层数据契约 SSoT。P0 六大数据契约（CTR-001~006）+ P0 全链路追踪契约
+    （CTR-TRACE-001）+ P0 六大跨层错误契约（CTR-ERR-001~006）+ P0 三大背压
+    契约（CTR-BP-001~003）+ P1 蓝图签名 13 条 + 三个 OCP 扩展点基类 +
+    外部系统契约 4 条 + AI 治理三接口（已 superseded）。
+    来源：interface-contracts.md v1.1.0 迁移 + 2026-05-04 架构盲点补全。
+  source_views:
+    - 03-application-architecture.md
+    - 04-technology-architecture.md
+  related_adrs:
+    - ADR-0004
+    - ADR-0009
+
+versioning_strategy:
+  approach: semantic-versioning-on-contracts
+  breaking_change_policy: never-break-P0-within-5yr
+  deprecation_flow: mark-deprecated-then-30d-grace
+  schema_version_format: "{major}.{minor}"
+  rules:
+    - "已发布的 P0 接口签名字段不允许删除或修改类型，只允许追加新的可选字段"
+    - "任何签名变更必须先建立 ADR，评审通过后方可执行"
+    - "新版本必须能处理旧版本对象（缺省字段使用默认值）"
+  cross_layer_version_negotiation:
+    id: CTR-VER-001
+    name: "ContractVersionNegotiation / 契约版本协商"
+    priority: P0
+    description: "跨层契约版本不匹配时的系统行为规范。确保升级期间消费者与生产者的兼容性。"
+    rules:
+      - rule_id: VER-R1
+        name: "同 MAJOR 兼容性"
+        text: "同 MAJOR 版本 MUST 前后兼容。生产者可以发送新字段，消费者 MUST 忽略未知可选字段。"
+      - rule_id: VER-R2
+        name: "MAJOR 不匹配拒绝"
+        text: "MAJOR 版本不匹配时，消费者 MUST 拒绝处理并触发 ContractViolationError（CTR-ERR-006），上报至 L12 Telemetry。"
+      - rule_id: VER-R3
+        name: "升级预通知"
+        text: "生产者 MUST 在新 MAJOR 版本发布前提前 30 天通知所有注册消费者。通知通过 L12 Telemetry 的 contract_version_change 事件发布。"
+      - rule_id: VER-R4
+        name: "双版本过渡期"
+        text: "消费者在升级过渡窗口内 MUST 同时支持新旧两个 MAJOR 版本。过渡窗口 = MIN（30天，生产者指定的 migration_window_ms）。"
+      - rule_id: VER-R5
+        name: "契约注册表版本查询"
+        text: "所有消费者必须在启动时通过 ContractRegistry 查询依赖契约的当前 active 版本，并据此选择适配器。"
+
+# =============================================================================
+# P0 六大跨层数据契约（frozen dataclass）
+# =============================================================================
+contracts:
+  # --- CTR-001: NormalizedMarketData ---
+  - id: CTR-001
+    name: "NormalizedMarketData / 标准化行情数据"
+    priority: P0
+    frozen: true
+    source_layer: l00
+    target_layers: [l02, l03, l09]
+    flow: "L00 Data Source → L02 Alpha Factor"
+    physical_path: src/zephyr/shared/contracts/market_data.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L00 → L02 核心数据契约。质量门禁通过后的标准化行情数据。"
+    ai_prompt: >
+      当你需要在 L02 中使用来自 L00 的行情数据时，MUST 使用 NormalizedMarketData 类型。
+      该类型的 symbol 字段已由 L00 标准化为 "600519.SH" 格式（证券代码.交易所），你不需要再做格式转换。
+      所有价格字段（open/high/low/close）和成交量（volume）使用 Decimal 类型——禁止用 float 做任何算术运算。
+      如果 quality_score < 0.7，该数据可能不可靠，请标记为低置信度。
+      如果 is_suspended = True，不要基于该数据生成任何信号，跳过该标的。
+      ingested_at 为数据入库时间，不一定等于 timestamp（数据时间戳），请使用 timestamp 做截面对齐。
+    sla:
+      p99_latency_ms: 10
+      sla_scope: "L00:WS recv → L02:on_market_data 接收（含 parse + quality_gate）"
+      timeout_action: DROP_AND_ALERT
+      measurement: "L00 emit_timestamp → L02 receive_timestamp，通过 TraceContext（CTR-TRACE-001）的 span_id 关联"
+    fields:
+      - {name: symbol, type: str, required: true, description: "标准化证券代码（如 600519.SH）"}
+      - {name: data_source, type: str, required: true, description: "数据源标识（如 akshare, wind）"}
+      - {name: timestamp, type: datetime, required: true, description: "数据时间戳（UTC）"}
+      - {name: open, type: Decimal, required: true, description: "开盘价"}
+      - {name: high, type: Decimal, required: true, description: "最高价"}
+      - {name: low, type: Decimal, required: true, description: "最低价"}
+      - {name: close, type: Decimal, required: true, description: "收盘价"}
+      - {name: volume, type: Decimal, required: true, description: "成交量"}
+      - {name: amount, type: "Optional[Decimal]", required: false, description: "成交额（A 股必填）"}
+      - {name: adj_factor, type: "Optional[Decimal]", required: false, description: "复权因子"}
+      - {name: quality_score, type: float, required: false, default: 1.0, description: "质量门禁结果 0.0-1.0"}
+      - {name: is_suspended, type: bool, required: false, default: false, description: "停牌标记"}
+      - {name: ingested_at, type: "Optional[datetime]", required: false, description: "入库时间"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: timeout_ms, type: int, required: false, default: 5000, description: "操作超时时间（毫秒）"}
+      - {name: retry_policy, type: str, required: false, default: "exponential_backoff", description: "重试策略：none | linear | exponential_backoff"}
+      - {name: config_load_timeout_ms, type: int, required: false, default: 1000, description: "配置加载超时时间（毫秒）"}
+      - {name: config_load_retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
+      - {name: max_retries, type: int, required: false, default: 3, description: "最大重试次数"}
+      - {name: exceptions, type: "List[str]", required: false, description: "预期异常类型列表"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-002: FactorSignal ---
+  - id: CTR-002
+    name: "FactorSignal / 因子信号"
+    priority: P0
+    frozen: true
+    source_layer: l02
+    target_layers: [l03, l04, l05]
+    flow: "L02 Alpha Factor → L03/L04/L05"
+    physical_path: src/zephyr/shared/contracts/factor_signal.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L02 → L03/L04/L05 核心数据契约。单个因子在单个时间截面对单个标的的信号值。"
+    ai_prompt: >
+      当你需要在 L02 中生成因子信号时，MUST 使用 FactorSignal 类型。
+      不要自行定义因子信号的数据结构。factor_id 必须对应 FactorRegistry 中已注册的因子 key。
+      raw_value 是因子原始计算结果，normalized_value 是截面标准化后的 z-score，rank_pct 是 0-1 分位数排名。
+      如果因子计算失败，不要产出 FactorSignal——应该抛出 FactorComputationError（CTR-ERR-002）。
+      如果 confidence < 0.5，该信号可能不可靠，下游（L03/L04/L05）可以忽略。
+      is_valid = False 时下游 MUST 跳过该信号。
+      extra 字段用于放非标准化的扩展数据，不要滥用——能用标准字段就用标准字段。
+    sla:
+      p99_latency_ms: 50
+      sla_scope: "L02 单个因子的 compute() 调用（从接收 NormalizedMarketData 到产出 FactorSignal）"
+      timeout_action: SKIP_FACTOR_AND_DEGRADE
+      measurement: "L02 receive_timestamp → L02 emit_timestamp，通过 TraceContext 的 span_id 关联"
+    fields:
+      - {name: factor_id, type: str, required: true, description: "因子唯一 ID（对应 FactorRegistry 的 key）"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: as_of_date, type: datetime, required: true, description: "信号计算截面日期"}
+      - {name: raw_value, type: float, required: true, description: "原始因子值"}
+      - {name: normalized_value, type: "Optional[float]", required: false, description: "截面标准化后的值（z-score）"}
+      - {name: rank_pct, type: "Optional[float]", required: false, description: "分位数排名 0-1"}
+      - {name: confidence, type: float, required: false, default: 1.0, description: "信号置信度 0.0-1.0"}
+      - {name: is_valid, type: bool, required: false, default: true, description: "信号有效性"}
+      - {name: factor_version, type: str, required: false, default: "1.0", description: "因子版本"}
+      - {name: extra, type: "Dict[str, Any]", required: false, description: "扩展字段"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: timeout_ms, type: int, required: false, default: 3000, description: "因子计算超时时间（毫秒）"}
+      - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
+      - {name: max_retries, type: int, required: false, default: 2, description: "最大重试次数"}
+      - {name: exceptions, type: "List[str]", required: false, description: "预期异常类型列表"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-003: RiskLimits ---
+  - id: CTR-003
+    name: "RiskLimits / 风险限额"
+    priority: P0
+    frozen: true
+    source_layer: l04
+    target_layers: [l05]
+    flow: "L04 Risk Management → L05 Portfolio Construction"
+    physical_path: src/zephyr/shared/contracts/risk_limits.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L04 → L05 核心数据契约。风险限额约束集合，由 L05 组合优化器强制执行。"
+    ai_prompt: >
+      当你需要在 L04 中定义风险限额或在 L05 中使用风险限额时，MUST 使用 RiskLimits 类型。
+      max_single_position 是单标的权重上限（如 0.10 = 10%），L05 组合优化器 MUST 确保不超此值。
+      max_gross_leverage 是总杠杆上限，默认为 1.0（满仓不加杠杆）。
+      symbol_overrides 用于个股特殊限制，key 为 symbol，value 为 max_weight。
+      如果 L05 组合优化器检测到任何约束被突破，MUST 抛出 RiskLimitViolationError（CTR-ERR-004），阻止订单生成。
+      max_drawdown_limit 触发时，系统应进入风控熔断状态。
+    sla:
+      p99_latency_ms: 5
+      sla_scope: "L04 风控检查（从接收 FactorSignal 到产出 RiskLimits）"
+      timeout_action: USE_CACHED_LIMITS
+      measurement: "L04 receive_timestamp → L04 emit_timestamp"
+    fields:
+      - {name: as_of_date, type: datetime, required: true, description: "限额生效日期"}
+      - {name: max_single_position, type: float, required: false, default: 0.10, description: "单标的最大权重（如 0.10 = 10%）"}
+      - {name: min_single_position, type: float, required: false, default: 0.0, description: "单标的最小权重"}
+      - {name: max_gross_leverage, type: float, required: false, default: 1.0, description: "总杠杆上限"}
+      - {name: max_sector_concentration, type: float, required: false, default: 0.30, description: "单行业集中度上限"}
+      - {name: max_portfolio_var_1d, type: "Optional[float]", required: false, description: "日度 VaR 上限（绝对值）"}
+      - {name: max_drawdown_limit, type: "Optional[float]", required: false, description: "最大回撤触发线"}
+      - {name: symbol_overrides, type: "Dict[str, float]", required: false, description: "个股特殊限制 {symbol: max_weight}"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-004: Order ---
+  - id: CTR-004
+    name: "Order / 委托指令"
+    priority: P0
+    frozen: false
+    source_layer: l05
+    target_layers: [l06]
+    flow: "L05 Portfolio Construction → L06 Trade Execution"
+    physical_path: src/zephyr/shared/contracts/order.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L05 → L06 核心数据契约。单笔委托指令（可变对象，随生命周期更新状态）。"
+    ai_prompt: >
+      当你需要在 L05 中生成订单或在 L06 中处理订单时，MUST 使用 Order 类型。
+      Order 是可变对象（frozen=false），状态通过 OrderStatus 状态机驱动。
+      状态转移路径为：PENDING → SUBMITTED → PARTIAL → FILLED / CANCELLED / REJECTED。
+      不允许从 FILLED/CANCELLED/REJECTED 回到 SUBMITTED（单向不可逆）。
+      quantity 和 limit_price 使用 Decimal 类型，禁止 float。
+      L05 生成订单时 status 默认为 PENDING，L06 在执行过程中更新状态。
+      订单被券商拒绝时，status MUST 变为 REJECTED，并抛出 ExecutionRejectionError（CTR-ERR-005）。
+    sla:
+      p99_latency_ms: 5
+      sla_scope: "L05 组合优化器生成订单列表（所有标的的 Order 生成完毕）"
+      timeout_action: SKIP_REBALANCE_CYCLE
+      measurement: "L05 receive_timestamp → L05 emit_timestamp"
+    fields:
+      - {name: order_id, type: str, required: true, description: "全局唯一 ID（UUID）"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: strategy_id, type: str, required: true, description: "来源策略 ID"}
+      - {name: side, type: "OrderSide", required: true, description: "方向：BUY / SELL"}
+      - {name: order_type, type: "OrderType", required: true, description: "类型：MARKET / LIMIT / STOP"}
+      - {name: quantity, type: Decimal, required: true, description: "目标数量（股数）"}
+      - {name: limit_price, type: "Optional[Decimal]", required: false, description: "LIMIT 单必填"}
+      - {name: status, type: "OrderStatus", required: false, default: "PENDING", description: "状态机：PENDING/SUBMITTED/PARTIAL/FILLED/CANCELLED/REJECTED"}
+      - {name: filled_quantity, type: Decimal, required: false, default: "0", description: "已成交数量"}
+      - {name: avg_fill_price, type: "Optional[Decimal]", required: false, description: "加权平均成交价"}
+      - {name: created_at, type: "Optional[datetime]", required: false, description: "创建时间"}
+      - {name: updated_at, type: "Optional[datetime]", required: false, description: "更新时间"}
+      - {name: broker_order_id, type: "Optional[str]", required: false, description: "券商侧委托号（回填）"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-005: Fill ---
+  - id: CTR-005
+    name: "Fill / 成交回报"
+    priority: P0
+    frozen: true
+    source_layer: l06
+    target_layers: [l07]
+    flow: "L06 Trade Execution → L07 Post-Trade Analytics"
+    physical_path: src/zephyr/shared/contracts/fill.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L06 → L07 核心数据契约。单次成交回报（不可变）。"
+    ai_prompt: >
+      当你需要在 L06 中记录成交或在 L07 中分析成交时，MUST 使用 Fill 类型。
+      Fill 是不可变对象（frozen=true），一旦创建不得修改。
+      fill_id 是全局唯一 ID，order_id 关联 CTR-004 Order。
+      fill_price 和 filled_quantity 使用 Decimal 类型，禁止 float。
+      slippage 为可选项，计算方式为 (fill_price - decision_price) / decision_price，用于 TCA 分析。
+      佣金 commission 从券商回报中提取，保留券商原始精度。
+      每个 Order 可能对应多个 Fill（部分成交场景）。
+    sla:
+      p99_latency_ms: 100
+      sla_scope: "L06 券商成交推送 → L07 接收 Fill（含异步补传窗口）"
+      timeout_action: ASYNC_RETRY
+      measurement: "L06 receive_timestamp → L07 emit_timestamp"
+    fields:
+      - {name: fill_id, type: str, required: true, description: "全局唯一成交 ID"}
+      - {name: order_id, type: str, required: true, description: "关联委托 ID"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: strategy_id, type: str, required: true, description: "来源策略 ID"}
+      - {name: filled_quantity, type: Decimal, required: true, description: "成交数量"}
+      - {name: fill_price, type: Decimal, required: true, description: "成交价格"}
+      - {name: fill_timestamp, type: datetime, required: true, description: "成交时间"}
+      - {name: commission, type: Decimal, required: false, default: "0", description: "佣金"}
+      - {name: slippage, type: "Optional[Decimal]", required: false, description: "滑点（实际 vs 预期）"}
+      - {name: broker_fill_id, type: "Optional[str]", required: false, description: "券商侧成交 ID"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-006: PositionSnapshot ---
+  - id: CTR-006
+    name: "PositionSnapshot / 持仓快照"
+    priority: P0
+    frozen: true
+    source_layer: l06
+    target_layers: [l04, l07, l11]
+    flow: "L06 OMS / L07 Analytics → L04 Risk Monitor / L11 Strategic Decision"
+    physical_path: src/zephyr/shared/contracts/position.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "持仓快照。不可变，代表某一时刻的完整持仓状态。"
+    ai_prompt: >
+      当你需要查询或记录当前持仓时，MUST 使用 PositionSnapshot 类型。
+      PositionSnapshot 是不可变对象（frozen=true），代表某一时刻的完整持仓状态。
+      holdings 是 {symbol: quantity} 的映射，quantity 使用 Decimal 类型。
+      market_values 是 {symbol: market_value} 的映射，market_value 使用 Decimal 类型。
+      total_market_value + cash = 组合总资产。
+      gross_leverage 用于风控监控和 L11 策略决策。
+      快照由 L06 OMS 或 L07 Analytics 产生，由 L04 Risk Monitor 和 L11 Strategic Decision 消费。
+      注意：holdings 和 market_values 虽然是 Dict，但持有的是引用——跨层传递时建议做 deep copy 防护。
+    sla:
+      p99_latency_ms: 50
+      sla_scope: "L06/L07 持仓快照生成（含券商查询 + 计算）"
+      timeout_action: USE_LAST_SNAPSHOT
+      measurement: "L06/L07 query_timestamp → emit_timestamp"
+    fields:
+      - {name: as_of_timestamp, type: datetime, required: true, description: "快照时间"}
+      - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
+      - {name: holdings, type: "Dict[str, Decimal]", required: false, description: "{symbol: quantity}"}
+      - {name: market_values, type: "Dict[str, Decimal]", required: false, description: "{symbol: market_value}"}
+      - {name: total_market_value, type: Decimal, required: false, default: "0", description: "总市值"}
+      - {name: cash, type: Decimal, required: false, default: "0", description: "现金"}
+      - {name: gross_leverage, type: float, required: false, default: 1.0, description: "总杠杆"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # =====================================================
+  # P0 全链路追踪上下文 + 六大跨层错误契约 + 三大背压契约
+  # =====================================================
+
+  # --- CTR-TRACE-001: TraceContext ---
+  - id: CTR-TRACE-001
+    name: "TraceContext / 全链路追踪上下文"
+    priority: P0
+    frozen: true
+    source_layer: l00
+    target_layers: [l02, l03, l04, l05, l06, l07, l11]
+    flow: "L00 → L02 → L03 → L05 → L06 → L07（贯穿全链路）"
+    physical_path: src/zephyr/shared/contracts/trace_context.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "跨所有数据层的全链路追踪上下文。L00 在首次产生数据时生成，后续每层追加 span。支持反向追溯：'这笔订单是因为哪个因子的哪个信号在哪个时刻产生的'。"
+    ai_prompt: >
+      所有跨层传递的数据对象中都嵌入了一个可选的 trace_context 字段。
+      如果你是 L00（数据入口），你 MUST 在首次产生 NormalizedMarketData 时创建新的 TraceContext，生成 UUID 作为 trace_id。
+      如果你是 L02/L03/L05/L06/L07（中间层），你在处理数据时 MUST：
+      1. 从上游数据中取出 trace_context；
+      2. 为本层创建一个新的 span（span_id 用 UUID，记录 parent_span_id 指向上游）；
+      3. 设置 root_cause_layer 为本层的标识（如 "l02_alpha_factor"）；
+      4. 将更新后的 trace_context 嵌入到本层产出的数据对象中。
+      不要丢掉 trace_context——没有它，排障等于瞎猜。
+    fields:
+      - {name: trace_id, type: str, required: true, description: "全局唯一追踪 ID（UUID），L00 生成，永不改变"}
+      - {name: span_id, type: str, required: true, description: "本层 span ID（UUID），每层重新生成"}
+      - {name: service_name, type: str, required: true, description: "本层标识：l00_data_source / l02_alpha_factor / l03_signal / ..."}
+      - {name: created_at, type: datetime, required: true, description: "本 span 创建时间（UTC 纳秒精度）"}
+      - {name: parent_span_id, type: "Optional[str]", required: false, description: "上游 span_id，NULL 表示这是链头"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+# =============================================================================
+# P0 六大跨层错误契约
+# =============================================================================
+
+  # --- CTR-ERR-001: DataQualityError ---
+  - id: CTR-ERR-001
+    name: "DataQualityError / 行情质量门禁不通过错误"
+    priority: P0
+    frozen: true
+    source_layer: l00
+    target_layers: [l02]
+    flow: "L00 Data Source → L02 Alpha Factor（错误路径）"
+    physical_path: src/zephyr/shared/contracts/errors/data_quality_error.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L00 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。"
+    ai_prompt: >
+      当 L00 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。
+      每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。
+      禁止静默丢弃——必须显式抛出，让 L02 和 L12 Telemetry 感知。
+    fields:
+      - {name: error_id, type: str, required: true, description: "错误唯一 ID（UUID）"}
+      - {name: symbol, type: str, required: true, description: "出问题的标的代码"}
+      - {name: failure_reason, type: str, required: true, description: "missing_tick | stale_data | outlier_price | timestamp_future | suspension_detected | volume_zero"}
+      - {name: quality_score, type: float, required: true, description: "实际质量分（< 0.7）"}
+      - {name: recovery_hint, type: str, required: true, description: "RETRY | SKIP_SYMBOL | SWITCH_SOURCE | HALT"}
+      - {name: failed_field, type: "Optional[str]", required: false, description: "触发的具体字段名"}
+      - {name: failed_value, type: "Optional[str]", required: false, description: "触发时的实际值（字符串表示）"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-ERR-002: FactorComputationError ---
+  - id: CTR-ERR-002
+    name: "FactorComputationError / 因子计算失败错误"
+    priority: P0
+    frozen: true
+    source_layer: l02
+    target_layers: [l03]
+    flow: "L02 Alpha Factor → L03 Signal Generation（错误路径）"
+    physical_path: src/zephyr/shared/contracts/errors/factor_computation_error.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L02 因子计算过程中遇到无法处理的异常时抛出的错误。"
+    ai_prompt: >
+      当 L02 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。
+      常见 failure_reason：input_missing（缺少所需行情）、division_by_zero（除零）、window_insufficient（历史窗口不足）、
+      memory_exceeded（内存超限）、invalid_parameter（参数非法）。
+      不要吞掉错误返回一个 is_valid=False 的 FactorSignal——后者用于逻辑判断（如低置信度），前者用于系统级故障。
+    fields:
+      - {name: error_id, type: str, required: true, description: "错误唯一 ID"}
+      - {name: factor_id, type: str, required: true, description: "出问题的因子 ID"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: failure_reason, type: str, required: true, description: "input_missing | division_by_zero | window_insufficient | memory_exceeded | invalid_parameter | timeout"}
+      - {name: recovery_hint, type: str, required: true, description: "RETRY | SKIP_FACTOR | DEGRADE_TO_DEFAULT | ESCALATE"}
+      - {name: detail, type: "Optional[str]", required: false, description: "详细错误堆栈摘要"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-ERR-003: SignalDegradationWarning ---
+  - id: CTR-ERR-003
+    name: "SignalDegradationWarning / 信号质量下降警告"
+    priority: P0
+    frozen: true
+    source_layer: l03
+    target_layers: [l04, l05]
+    flow: "L03 Signal Generation → L04/L05（降级通知）"
+    physical_path: src/zephyr/shared/contracts/errors/signal_degradation_warning.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L03 检测到信号质量显著下降时发出的警告。非致命，但 L04/L05 应据此调低仓位或暂停交易。"
+    ai_prompt: >
+      当 L03 信号合成引擎检测到以下情况时，MUST 发布 SignalDegradationWarning：
+      - confidence_below_threshold：合成后的信号置信度低于阈值
+      - regime_change_detected：检测到市场状态切换（如趋势→震荡）
+      - factor_decay_triggered：某个依赖的因子 ICIR 大幅下降
+      这不是错误——信号仍然产出，但 L04/L05 应对此做降级处理（如减半仓位）。
+    fields:
+      - {name: warning_id, type: str, required: true, description: "警告唯一 ID"}
+      - {name: reason, type: str, required: true, description: "confidence_below_threshold | regime_change_detected | factor_decay_triggered | signal_conflict | throughput_drop"}
+      - {name: affected_factor_ids, type: "List[str]", required: false, description: "受影响的因子 ID 列表"}
+      - {name: degradation_level, type: str, required: true, description: "MILD | MODERATE | SEVERE"}
+      - {name: suggested_action, type: str, required: true, description: "REDUCE_POSITION | PAUSE_SIGNAL | CONTINUE_WITH_FLAG"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-ERR-004: RiskLimitViolationError ---
+  - id: CTR-ERR-004
+    name: "RiskLimitViolationError / 风险限额突破错误"
+    priority: P0
+    frozen: true
+    source_layer: l04
+    target_layers: [l05, l06]
+    flow: "L04 Risk Management → L05/L06（拒绝交易）"
+    physical_path: src/zephyr/shared/contracts/errors/risk_limit_violation_error.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L04 检测到当前或计划操作将突破风险限额时抛出的硬错误。L05/L06 MUST 据此阻止订单生成和执行。"
+    ai_prompt: >
+      当 L04 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。
+      这是一个 HALT 级别的错误——下游（L05/L06）MUST 拒绝继续处理并停止当前调仓周期。
+      violated_constraint 精确指出是哪条规则被突破（position_limit / leverage_limit / var_breach / drawdown_trigger / sector_concentration）。
+      不要降级为 WARNING——如果这是代码逻辑导致的，降级等于资金安全风险。
+    fields:
+      - {name: error_id, type: str, required: true, description: "错误唯一 ID"}
+      - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
+      - {name: violated_constraint, type: str, required: true, description: "position_limit | leverage_limit | var_breach | drawdown_trigger | sector_concentration | concentration_limit"}
+      - {name: violation_detail, type: str, required: true, description: "人类可读的违规描述（如 'BTC 仓位 12.3% 超过 10% 限额'）"}
+      - {name: limit_value, type: float, required: true, description: "限额值"}
+      - {name: actual_value, type: float, required: true, description: "实际值"}
+      - {name: recovery_hint, type: str, required: true, description: "REDUCE_AND_RETRY | HALT_AND_ESCALATE | MANUAL_OVERRIDE_REQUIRED"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-ERR-005: ExecutionRejectionError ---
+  - id: CTR-ERR-005
+    name: "ExecutionRejectionError / 执行拒绝错误"
+    priority: P0
+    frozen: true
+    source_layer: l06
+    target_layers: [l05, l07]
+    flow: "L06 Trade Execution → L05/L07（执行失败反馈）"
+    physical_path: src/zephyr/shared/contracts/errors/execution_rejection_error.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "L06 订单执行过程中被券商或市场拒绝时抛出的错误。"
+    ai_prompt: >
+      当 L06 的订单被券商/交易所拒绝时，MUST 抛出 ExecutionRejectionError。
+      拒绝原因通过 rejection_source（BROKER / EXCHANGE / CIRCUIT_BREAKER / INTERNAL）和 rejection_reason 字段精确标识。
+      L05 可以根据此错误决定是否重新生成订单（如降低数量、改用 LIMIT 单）。
+      如果 rejection_reason 为 market_circuit_breaker，不要重试——等待下一周期。
+    fields:
+      - {name: error_id, type: str, required: true, description: "错误唯一 ID"}
+      - {name: order_id, type: str, required: true, description: "被拒绝的 Order ID"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: rejection_source, type: str, required: true, description: "BROKER | EXCHANGE | CIRCUIT_BREAKER | INTERNAL"}
+      - {name: rejection_reason, type: str, required: true, description: "insufficient_balance | quantity_exceeds_limit | price_out_of_range | market_closed | timeout | broker_error"}
+      - {name: broker_message, type: "Optional[str]", required: false, description: "券商原始错误信息（保留原文）"}
+      - {name: recovery_hint, type: str, required: true, description: "RETRY | RETRY_WITH_REDUCED_QTY | CANCEL_AND_REPORT | WAIT_NEXT_CYCLE"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-ERR-006: ContractViolationError ---
+  - id: CTR-ERR-006
+    name: "ContractViolationError / 契约违反错误"
+    priority: P0
+    frozen: true
+    source_layer: shared
+    target_layers: ["*"]
+    flow: "shared/contracts/ → ALL LAYERS（运行时强制校验失败）"
+    physical_path: src/zephyr/shared/contracts/errors/contract_violation_error.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "运行时跨层数据契约校验失败时抛出的通用错误。任何层的数据入站/出站校验均可抛出。"
+    ai_prompt: >
+      当 ContractEnforcer 装饰器检测到数据不符合 CRT 契约定义时，MUST 抛出 ContractViolationError。
+      你的代码不需要手动抛出这个错误——ContractEnforcer 自动完成。
+      如果你收到这个错误，说明上游传递的数据格式不符合 YAML 契约定义——检查数据来源，而不是修改校验逻辑。
+    fields:
+      - {name: error_id, type: str, required: true, description: "错误唯一 ID"}
+      - {name: contract_id, type: str, required: true, description: "被违反的契约 ID（如 CTR-001）"}
+      - {name: violation_type, type: str, required: true, description: "schema_mismatch | field_type_error | missing_required | version_incompatible | value_out_of_range | extra_field_forbidden"}
+      - {name: field_name, type: "Optional[str]", required: false, description: "触发的具体字段名"}
+      - {name: expected_type, type: "Optional[str]", required: false, description: "契约期望的类型"}
+      - {name: actual_type, type: "Optional[str]", required: false, description: "实际收到的类型"}
+      - {name: detail, type: str, required: true, description: "详细校验失败描述"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+# =============================================================================
+# P0 三大背压控制契约
+# =============================================================================
+
+  # --- CTR-BP-001: Pause ---
+  - id: CTR-BP-001
+    name: "BackpressurePause / 背压暂停信号"
+    priority: P0
+    frozen: true
+    source_layer: l02
+    target_layers: [l00]
+    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    physical_path: src/zephyr/shared/contracts/backpressure/pause.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "下游（L02/L03）处理能力不足时，向上游（L00）发出暂停信号。L00 暂停该标的的数据下发。"
+    ai_prompt: >
+      如果下游处理速度跟不上上游产生速度，你可以通过 emit PAUSE 背压信号来告诉上游暂停。
+      PAUSE 会暂停指定标的的数据下发 duration_ms 毫秒，到期后自动恢复。
+      不要静默丢弃数据——上游不知道下游爆了，只会继续发，最终内存溢出。
+    fields:
+      - {name: signal_id, type: str, required: true, description: "信号唯一 ID"}
+      - {name: symbol, type: str, required: true, description: "暂停的标的"}
+      - {name: action, type: str, required: false, default: "PAUSE", description: "固定值 PAUSE"}
+      - {name: duration_ms, type: int, required: true, description: "暂停时长（毫秒），到期自动恢复"}
+      - {name: reason, type: str, required: true, description: "暂停原因：buffer_full | processing_overload | gc_pause | downstream_unavailable"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-BP-002: Throttle ---
+  - id: CTR-BP-002
+    name: "BackpressureThrottle / 背压降速信号"
+    priority: P0
+    frozen: true
+    source_layer: l02
+    target_layers: [l00]
+    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    physical_path: src/zephyr/shared/contracts/backpressure/throttle.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "下游处理压力较大但不至于暂停时，向上游发出降速信号。上游将下发速率降至指定值。"
+    ai_prompt: >
+      THROTTLE 比 PAUSE 轻：不是完全暂停，而是降到每秒 max_rate_per_sec 条。
+      典型的场景是下游队列开始堆积但还没满——先降速观察，如果仍然堆积再升级为 PAUSE。
+    fields:
+      - {name: signal_id, type: str, required: true, description: "信号唯一 ID"}
+      - {name: symbol, type: str, required: true, description: "降速的标的"}
+      - {name: action, type: str, required: false, default: "THROTTLE", description: "固定值 THROTTLE"}
+      - {name: max_rate_per_sec, type: int, required: true, description: "降速后的最大速率（条/秒）"}
+      - {name: reason, type: str, required: true, description: "降速原因"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-BP-003: Resume ---
+  - id: CTR-BP-003
+    name: "BackpressureResume / 背压恢复信号"
+    priority: P0
+    frozen: true
+    source_layer: l02
+    target_layers: [l00]
+    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    physical_path: src/zephyr/shared/contracts/backpressure/resume.py
+    stability: locked-5yr
+    schema_version: "1.0"
+    description: "下游处理能力恢复后，向上游发出恢复信号。上游恢复正常下发速率。"
+    ai_prompt: >
+      当之前的 PAUSE/THROTTLE 条件解除后（如队列清空、GC 完成），MUST 发送 RESUME 恢复信号。
+      不要在 RESUME 后立即取消——先观察一个周期确认稳定。
+    fields:
+      - {name: signal_id, type: str, required: true, description: "信号唯一 ID"}
+      - {name: symbol, type: str, required: true, description: "恢复的标的"}
+      - {name: action, type: str, required: false, default: "RESUME", description: "固定值 RESUME"}
+      - {name: reason, type: str, required: true, description: "恢复原因：buffer_cleared | capacity_restored | gc_complete | upstream_recovered"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- P1 蓝图跨层接口签名（8 条）---
+  - id: CTR-P1-001
+    name: "FactorMonitorReport / 因子有效性监控报告"
+    priority: P1
+    frozen: true
+    source_layer: l02
+    target_layers: [l07]
+    flow: "L02 Alpha Factor → L07 Post-trade Analytics"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L02 → L07 因子有效性监控报告。定期评估已注册因子的预测有效性。"
+    source_blueprint: "L02_ALPHA_FACTOR/factor-effectiveness-monitoring-blueprint.md"
+    fields:
+      - {name: factor_id, type: str, required: true, description: "因子 ID"}
+      - {name: evaluation_date, type: str, required: true, description: "评估日期 YYYY-MM-DD"}
+      - {name: ic_mean, type: float, required: true, description: "信息系数均值（近 N 期）"}
+      - {name: ic_std, type: float, required: true, description: "IC 标准差"}
+      - {name: ic_ir, type: float, required: true, description: "ICIR = IC_mean / IC_std"}
+      - {name: rank_ic, type: float, required: true, description: "Rank IC（Spearman 相关）"}
+      - {name: half_life_days, type: "Optional[int]", required: false, description: "因子半衰期（天）"}
+      - {name: is_effective, type: bool, required: true, description: "True = IC 显著 + ICIR > 0.5"}
+      - {name: decay_alert, type: bool, required: true, description: "True = 因子衰减告警"}
+      - {name: evaluation_window, type: int, required: false, default: 63, description: "评估窗口（交易日数）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-002
+    name: "MacroFactorSignal / 宏观因子信号"
+    priority: P1
+    frozen: true
+    source_layer: l02
+    target_layers: [l03, l05]
+    flow: "L02（宏观因子计算）→ L03/L05"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L02 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。"
+    source_blueprint: "L02_ALPHA_FACTOR/macro-factor-blueprint.md"
+    fields:
+      - {name: factor_id, type: str, required: true, description: "宏观因子 ID（如 macro.pmi.cn.v1）"}
+      - {name: as_of_date, type: str, required: true, description: "信号日期"}
+      - {name: macro_regime, type: str, required: true, description: "expansion | contraction | neutral"}
+      - {name: signal_value, type: float, required: true, description: "标准化信号值（-3 到 3）"}
+      - {name: data_source, type: str, required: true, description: "宏观数据来源（如 wind_macro, nbs）"}
+      - {name: release_lag_days, type: int, required: true, description: "数据发布滞后天数"}
+      - {name: confidence, type: float, required: false, default: 1.0, description: "置信度"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-003
+    name: "CapitalAllocationResult / 资本配置结果"
+    priority: P1
+    frozen: true
+    source_layer: l03
+    target_layers: [l05]
+    flow: "L03 Signal Generation → L05 Portfolio Construction"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L03 → L05 资本配置结果契约。多策略资本分配的中间产物。"
+    source_blueprint: "L03_SIGNAL_GENERATION/capital-allocation-blueprint.md"
+    fields:
+      - {name: allocation_date, type: str, required: true, description: "配置日期"}
+      - {name: strategy_allocations, type: "Dict[str, float]", required: true, description: "{strategy_id: capital_weight}"}
+      - {name: total_allocated_weight, type: float, required: true, description: "总权重（通常 = 1.0）"}
+      - {name: allocation_method, type: str, required: true, description: "equal_weight | sharpe_weight | risk_parity"}
+      - {name: rebalance_threshold, type: float, required: false, default: 0.05, description: "触发再平衡的权重漂移阈值"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-004
+    name: "ModelServingRequest / 模型推理请求"
+    priority: P1
+    frozen: true
+    source_layer: l11
+    target_layers: [l03, l05]
+    flow: "L11 ML Platform → L03/L05"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "跨层模型推理请求契约。L11 ML Platform 提供推理服务，L03/L05 消费。"
+    source_blueprint: "L11_ML_PLATFORM/model-serving-blueprint.md"
+    fields:
+      - {name: model_id, type: str, required: true, description: "已注册模型 ID"}
+      - {name: model_version, type: str, required: true, description: "模型版本"}
+      - {name: input_features, type: "Dict[str, float]", required: true, description: "特征名 → 特征值"}
+      - {name: request_id, type: str, required: true, description: "UUID，用于异步匹配"}
+
+  - id: CTR-P1-005
+    name: "ModelServingResponse / 模型推理响应"
+    priority: P1
+    frozen: true
+    source_layer: l11
+    target_layers: [l03, l05]
+    flow: "L11 ML Platform → L03/L05"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。"
+    source_blueprint: "L11_ML_PLATFORM/model-serving-blueprint.md"
+    fields:
+      - {name: request_id, type: str, required: true, description: "请求 ID"}
+      - {name: model_id, type: str, required: true, description: "模型 ID"}
+      - {name: prediction, type: float, required: true, description: "预测值"}
+      - {name: prediction_type, type: str, required: true, description: "factor_value | return | probability"}
+      - {name: confidence, type: float, required: true, description: "预测置信度 0.0-1.0"}
+      - {name: inference_ms, type: int, required: true, description: "推理耗时（毫秒）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-006
+    name: "StrategyLifecycleEvent / 策略生命周期事件"
+    priority: P1
+    frozen: true
+    source_layer: l05
+    target_layers: [l07, l10]
+    flow: "L05 Portfolio Construction → L07/L10"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L05 → L07/L10 策略生命周期事件契约。"
+    source_blueprint: "L05_PORTFOLIO_CONSTRUCTION/strategy-lifecycle-management-blueprint.md"
+    fields:
+      - {name: strategy_id, type: str, required: true, description: "策略 ID"}
+      - {name: event_type, type: str, required: true, description: "created | activated | paused | deprecated | retired"}
+      - {name: event_timestamp, type: str, required: true, description: "ISO 8601 UTC"}
+      - {name: triggered_by, type: str, required: true, description: "human | agent | system"}
+      - {name: reason, type: str, required: true, description: "事件触发原因"}
+      - {name: previous_status, type: str, required: true, description: "变更前状态"}
+      - {name: new_status, type: str, required: true, description: "变更后状态"}
+      - {name: performance_snapshot, type: "Optional[Dict[str, float]]", required: false, description: "事件时的关键绩效指标"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-007
+    name: "ExecutionReport / 执行分析报告"
+    priority: P1
+    frozen: true
+    source_layer: l06
+    target_layers: [l07]
+    flow: "L06 Trade Execution → L07 Post-trade Analytics"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L06 → L07 执行分析报告契约（TCA 输入）。"
+    source_blueprint: "L06_TRADE_EXECUTION/execution-management-system-blueprint.md"
+    fields:
+      - {name: order_id, type: str, required: true, description: "委托 ID"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: direction, type: str, required: true, description: "BUY | SELL"}
+      - {name: intended_quantity, type: int, required: true, description: "意图成交数量"}
+      - {name: actual_quantity, type: int, required: true, description: "实际成交数量"}
+      - {name: intended_price, type: Decimal, required: true, description: "意图价格（决策价）"}
+      - {name: vwap_price, type: Decimal, required: true, description: "实际成交 VWAP"}
+      - {name: slippage_bps, type: float, required: true, description: "滑点（基点）"}
+      - {name: commission, type: Decimal, required: true, description: "佣金"}
+      - {name: execution_start, type: str, required: true, description: "执行开始时间 ISO 8601 UTC"}
+      - {name: execution_end, type: str, required: true, description: "执行结束时间 ISO 8601 UTC"}
+      - {name: broker_id, type: str, required: true, description: "执行券商"}
+      - {name: algo_type, type: str, required: false, default: "NONE", description: "算法类型 TWAP | VWAP | NONE"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-008
+    name: "RiskDashboardSnapshot / 风险仪表板快照"
+    priority: P1
+    frozen: true
+    source_layer: l04
+    target_layers: [l08]
+    flow: "L04 Risk Management → L08 Human-AI Interface"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L04 → L08 风险仪表板实时快照契约。"
+    source_blueprint: "L04_RISK_MANAGEMENT/risk-dashboard-blueprint.md"
+    fields:
+      - {name: snapshot_time, type: str, required: true, description: "快照时间 ISO 8601 UTC"}
+      - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
+      - {name: portfolio_var_1d, type: float, required: true, description: "日度 VaR"}
+      - {name: max_drawdown_current, type: float, required: true, description: "当前最大回撤"}
+      - {name: gross_leverage, type: float, required: true, description: "总杠杆"}
+      - {name: top_position_concentration, type: float, required: true, description: "最大单仓集中度"}
+      - {name: sector_concentrations, type: "Dict[str, float]", required: true, description: "{sector: weight}"}
+      - {name: active_alerts, type: "List[str]", required: true, description: "当前激活的风险告警 rule_id 列表"}
+      - {name: overall_risk_score, type: float, required: true, description: "综合风险分 0-10"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CTR-P1-009
+    name: "PerformanceAttributionReport / 绩效归因报告"
+    priority: P1
+    frozen: true
+    source_layer: l07
+    target_layers: [l08, l10]
+    flow: "L07 Post-trade Analytics → L08/L10"
+    physical_path: null
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L07 → L08/L10 绩效归因报告契约。"
+    source_blueprint: "L07_POST_TRADE/performance-attribution-blueprint.md"
+    fields:
+      - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
+      - {name: period_start, type: str, required: true, description: "YYYY-MM-DD"}
+      - {name: period_end, type: str, required: true, description: "YYYY-MM-DD"}
+      - {name: total_return, type: float, required: true, description: "总收益率"}
+      - {name: allocation_effect, type: float, required: true, description: "配置效应（Brinson 归因）"}
+      - {name: selection_effect, type: float, required: true, description: "选股效应"}
+      - {name: interaction_effect, type: float, required: true, description: "交互效应"}
+      - {name: factor_contributions, type: "Dict[str, float]", required: true, description: "{factor_id: contribution}"}
+      - {name: transaction_cost_drag, type: float, required: true, description: "交易成本拖累（bps）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-P1-010: SystemConfiguration ---
+  - id: CTR-P1-010
+    name: "SystemConfiguration / 系统配置"
+    priority: P1
+    frozen: true
+    source_layer: l01
+    target_layers: [l02, l03, l04, l05, l06, l07, l08, l09, l10, l11, l12]
+    flow: "L01 Configuration Management → 全系统"
+    physical_path: src/zephyr/shared/contracts/system_configuration.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L01 → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。"
+    fields:
+      - {name: config_id, type: str, required: true, description: "配置唯一ID"}
+      - {name: config_type, type: str, required: true, description: "配置类型：risk | trading | data | system"}
+      - {name: version, type: str, required: true, description: "配置版本"}
+      - {name: environment, type: str, required: true, description: "环境：dev | test | prod"}
+      - {name: config_data, type: "Dict[str, Any]", required: true, description: "配置数据"}
+      - {name: created_at, type: datetime, required: true, description: "创建时间"}
+      - {name: updated_at, type: datetime, required: true, description: "更新时间"}
+      - {name: is_active, type: bool, required: true, description: "是否激活"}
+      - {name: timeout_ms, type: int, required: false, default: 1000, description: "配置加载超时时间（毫秒）"}
+      - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
+      - {name: max_retries, type: int, required: false, default: 3, description: "最大重试次数"}
+      - {name: exceptions, type: "List[str]", required: false, description: "预期异常类型列表"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-P1-011: RiskMetricsReport ---
+  - id: CTR-P1-011
+    name: "RiskMetricsReport / 风险指标报告"
+    priority: P1
+    frozen: true
+    source_layer: l04
+    target_layers: [l05, l07, l08, l10]
+    flow: "L04 Risk Metrics → L05/L07/L08/L10"
+    physical_path: src/zephyr/shared/contracts/risk_metrics.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L04 → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。"
+    fields:
+      - {name: portfolio_id, type: str, required: true, description: "组合ID"}
+      - {name: as_of_date, type: datetime, required: true, description: "计算日期"}
+      - {name: var_1d_95, type: float, required: true, description: "日度95% VaR"}
+      - {name: var_1d_99, type: float, required: true, description: "日度99% VaR"}
+      - {name: cvar_1d_95, type: float, required: true, description: "日度95% CVaR"}
+      - {name: cvar_1d_99, type: float, required: true, description: "日度99% CVaR"}
+      - {name: max_drawdown, type: float, required: true, description: "最大回撤"}
+      - {name: current_drawdown, type: float, required: true, description: "当前回撤"}
+      - {name: beta, type: float, required: true, description: "Beta系数"}
+      - {name: sharpe_ratio, type: float, required: true, description: "夏普比率"}
+      - {name: sortino_ratio, type: float, required: true, description: "索提诺比率"}
+      - {name: volatility_1d, type: float, required: true, description: "日度波动率"}
+      - {name: volatility_1m, type: float, required: true, description: "月度波动率"}
+      - {name: calculation_method, type: str, required: true, description: "计算方法：historical | parametric | monte_carlo"}
+      - {name: confidence_level, type: float, required: true, description: "置信水平"}
+      - {name: lookback_period, type: int, required: true, description: "回看期（交易日）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+# =============================================================================
+# OCP 扩展点契约（3 个基类 + 注册表）
+# =============================================================================
+
+  # --- CTR-P1-012: ComplianceRule ---
+  - id: CTR-P1-012
+    name: "ComplianceRule / 合规规则"
+    priority: P1
+    frozen: true
+    source_layer: l10
+    target_layers: [l04, l06, l10]
+    flow: "L10 Compliance Rule Definitions → L04/L06/L10"
+    physical_path: src/zephyr/shared/contracts/compliance_rule.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L10 → 合规规则定义契约。包含规则注册、评估接口和规则元数据。"
+    fields:
+      - {name: rule_id, type: str, required: true, description: "规则唯一ID"}
+      - {name: rule_name, type: str, required: true, description: "规则名称"}
+      - {name: rule_type, type: str, required: true, description: "规则类型：regulatory | internal_policy | jurisdiction"}
+      - {name: jurisdiction, type: str, required: true, description: "适用辖区：cn_a_share | us_share | eu_mifid2 | crypto_global"}
+      - {name: description, type: str, required: true, description: "规则描述"}
+      - {name: severity, type: str, required: true, description: "严重程度：critical | high | medium | low"}
+      - {name: enforcement_action, type: str, required: true, description: "执行动作：block | warn | log"}
+      - {name: rule_logic, type: str, required: true, description: "规则逻辑（Python表达式或规则语言）"}
+      - {name: version, type: str, required: true, description: "规则版本"}
+      - {name: is_active, type: bool, required: true, description: "是否激活"}
+      - {name: created_at, type: datetime, required: true, description: "创建时间"}
+      - {name: updated_at, type: datetime, required: true, description: "更新时间"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: OCP-002
+    name: "StrategyBase + StrategyRegistry / 策略扩展点"
+    layer: l05
+    registry: StrategyRegistry
+    autodiscover: null
+    physical_path: src/zephyr/l05_portfolio_construction/strategy_base.py
+    registry_path: src/zephyr/l05_portfolio_construction/strategy_registry.py
+    related_adr: ADR-0004
+    description: "L05 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。"
+    abstract_methods:
+      - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
+      - {name: generate_target_weights, type: method, returns: "List[Order]", description: "生成目标权重并转换为委托指令列表"}
+    optional_methods:
+      - {name: on_fill, type: method, returns: None, description: "成交回调钩子"}
+      - {name: on_risk_alert, type: method, returns: None, description: "风险告警回调钩子"}
+    meta_fields:
+      - {name: strategy_id, type: str, required: true, description: "全局唯一，命名规范：{type}_{name}_v{version}"}
+      - {name: name, type: str, required: true, description: "人类可读名称"}
+      - {name: strategy_type, type: str, required: true, description: "策略类型：equity_ls / stat_arb / macro / cta / custom"}
+      - {name: version, type: str, required: true, description: "语义版本"}
+      - {name: description, type: str, required: true, description: "策略说明"}
+      - {name: factor_dependencies, type: "List[str]", required: false, description: "依赖的 factor_id 列表"}
+      - {name: author, type: str, required: false, default: "agent", description: "创建者"}
+      - {name: tags, type: "List[str]", required: false, description: "自由标签"}
+
+  - id: OCP-003
+    name: "BrokerInterface / 券商扩展点"
+    layer: l06
+    registry: null
+    autodiscover: null
+    physical_path: src/zephyr/l06_trade_execution/broker_interface.py
+    related_adr: ADR-0004
+    description: "L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。"
+    abstract_methods:
+      - {name: broker_id, type: property, returns: str, description: "券商唯一标识（如 ib, futu, longport, simulation）"}
+      - {name: connect, type: method, returns: bool, description: "建立连接"}
+      - {name: disconnect, type: method, returns: None, description: "断开连接"}
+      - {name: submit_order, type: method, returns: str, description: "发送委托，返回 broker_order_id"}
+      - {name: cancel_order, type: method, returns: bool, description: "撤单"}
+      - {name: query_order, type: method, returns: Order, description: "查询委托状态"}
+      - {name: get_positions, type: method, returns: PositionSnapshot, description: "查询当前持仓"}
+    optional_methods:
+      - {name: register_fill_callback, type: method, returns: None, description: "注册成交回调（支持主动推送）"}
+      - {name: supports_realtime_fills, type: property, returns: bool, description: "是否支持实时成交推送（默认 False）"}
+  # --- CTR-P1-013: TelemetryEmitter ---
+  - id: CTR-P1-013
+    name: "TelemetryEmitter / 遥测发射器"
+    priority: P1
+    frozen: true
+    source_layer: l12
+    target_layers: [l01, l04, l06, l07, l10, l12]
+    flow: "L12 Metrics → 全系统"
+    physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L12 → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。"
+    fields:
+      - {name: emitter_id, type: str, required: true, description: "发射器唯一ID"}
+      - {name: emitter_type, type: str, required: true, description: "发射器类型：metrics | logs | traces"}
+      - {name: metric_name, type: str, required: true, description: "指标名称"}
+      - {name: metric_value, type: float, required: true, description: "指标值"}
+      - {name: metric_type, type: str, required: true, description: "指标类型：counter | gauge | histogram | summary"}
+      - {name: labels, type: "Dict[str, str]", required: true, description: "标签键值对"}
+      - {name: timestamp, type: datetime, required: true, description: "时间戳"}
+      - {name: source_module, type: str, required: true, description: "来源模块"}
+      - {name: correlation_id, type: str, required: true, description: "关联ID"}
+      - {name: severity, type: str, required: false, description: "严重程度：debug | info | warning | error | critical"}
+      - {name: message, type: str, required: false, description: "消息内容"}
+      - {name: span_id, type: str, required: false, description: "追踪Span ID"}
+      - {name: trace_id, type: str, required: false, description: "追踪Trace ID"}
+      - {name: parent_span_id, type: str, required: false, description: "父Span ID"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+# =============================================================================
+# 外部系统接口契约（4 条）
+# =============================================================================
+external_contracts:
+  - id: EXT-001
+    name: "Broker API / 券商交易接口"
+    interface_type: "交易委托 / 成交回报"
+    direction: bidirectional
+    protocol: "REST / FIX 4.2+"
+    description: "发单前必须通过 pre_trade/ 风控；成交回报必须触发 Fill 契约并回调策略"
+
+  - id: EXT-002
+    name: "Market Data Provider / 行情数据接口"
+    interface_type: "历史行情 / 实时行情"
+    direction: inbound
+    protocol: "REST / WebSocket"
+    description: "入站数据必须经过 l00_data_source/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError"
+
+  - id: EXT-003
+    name: "LLM Providers / 大模型推理接口"
+    interface_type: "AI 推理"
+    direction: outbound
+    protocol: "REST (OpenAI-compatible)"
+    description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，L02-L07 禁止直接调用"
+
+  - id: EXT-004
+    name: "Feishu / 飞书通知接口"
+    interface_type: "通知分发"
+    direction: outbound
+    protocol: "REST Webhook"
+    description: "非关键路径；发送失败不影响主流程；重试 3 次后记录日志"
+
+# =============================================================================
+# AI 治理三接口签名摘要
+# =============================================================================
+
+ocp_extension_points:
+  - id: OCP-001
+    name: "FactorBase + FactorRegistry / 因子扩展点"
+    layer: l02
+    registry: FactorRegistry
+    autodiscover: autodiscover_factors
+    physical_path: src/zephyr/l02_alpha_factor/base.py
+    registry_path: src/zephyr/l02_alpha_factor/registry.py
+    loader_path: src/zephyr/l02_alpha_factor/loader.py
+    related_adr: ADR-0004
+    description: "L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。"
+    abstract_methods:
+      - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}
+      - {name: compute, type: method, returns: "List[FactorSignal]", description: "计算因子信号（禁止 look-ahead bias）"}
+    optional_methods:
+      - {name: validate_inputs, type: method, returns: bool, description: "输入验证钩子"}
+    meta_fields:
+      - {name: factor_id, type: str, required: true, description: "全局唯一，命名规范：{domain}_{name}_v{version}"}
+      - {name: name, type: str, required: true, description: "人类可读名称"}
+      - {name: domain, type: str, required: true, description: "因子域：value / momentum / quality / sentiment / macro / custom"}
+      - {name: version, type: str, required: true, description: "语义版本（如 1.0.0）"}
+      - {name: description, type: str, required: true, description: "因子逻辑说明"}
+      - {name: author, type: str, required: false, default: "agent", description: "创建者（human / agent）"}
+      - {name: tags, type: "List[str]", required: false, description: "自由标签"}
+
+ai_governance_interfaces:
+  - id: AI-GOV-001
+    name: "Tool Interface / 工具接口"
+    status: superseded
+    superseded_on: "2026-04-24"
+    superseded_by:
+      - "03_modules/_b_track_interfaces/llm-security-gateway-interface.md  # §3.4 L3 输出 Schema 校验，工具调用参数强约束"
+      - "03_modules/_b_track_interfaces/context-engine-interface.md        # §5 MCP 能力矩阵，工具通道路由"
+      - "03_modules/_b_track_interfaces/agent-orchestrator-interface.md    # §3.2 Agent capabilities + §6 sandbox allowed_commands"
+    detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/tool-interface-contract.md"
+    physical_path: src/zephyr/{llm_security,context_engine,orchestrator}/  # 拆分到三个新服务
+    description: "【已废弃】原 ToolBase/ToolRegistry 单一契约。2026-04-24 按职责拆分到三个新服务：工具 schema 校验归 LSG L3，MCP 通道路由归 Context Engine，Agent 能力与沙箱命令白名单归 Orchestrator。"
+    migration_note: "p0_tools 清单本身仍是有效业务需求，将在 B-d 阶段重构为具体服务的 P0 tool schema"
+
+  - id: AI-GOV-002
+    name: "Memory Interface / 记忆接口"
+    status: superseded
+    superseded_on: "2026-04-24"
+    superseded_by: "03_modules/_b_track_interfaces/vector-memory-service-interface.md"
+    detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md"
+    physical_path: src/zephyr/vector_memory/  # 新路径，原 l10_compliance/agent_ops/memory/ 废弃
+    description: "【已废弃】原 AI Agent 持久化记忆契约（MemoryReader/Writer + KMS 六层）。2026-04-24 被 Vector Memory Service 替代：ChromaDB 0.6 + BGE-M3 + 递归分块。详见 vector-memory-service-interface.md。"
+    migration_note: "整段 AI-GOV-* 映射将于 B-d 阶段按五大核心服务（VMS/CE/Orc/FLE/LSG）重构"
+
+  - id: AI-GOV-003
+    name: "Workflow Interface / 工作流接口"
+    status: superseded
+    superseded_on: "2026-04-24"
+    superseded_by: "03_modules/_b_track_interfaces/agent-orchestrator-interface.md"
+    detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md"
+    physical_path: src/zephyr/orchestrator/   # 新路径，原 l10_compliance/agent_ops/workflow/ 废弃
+    description: "【已废弃】原 AI Agent 工作流编排契约（WorkflowBase/WorkflowRegistry + KMS G1-G5 五决策门）。2026-04-24 被 Agent Orchestrator 替代：TaskState 状态机 + SQLite 任务队列 + 幻觉检测 + Windows ACL 沙箱。详见 agent-orchestrator-interface.md。"
+    migration_note: "p0_workflows 清单（KMS G1-G5 + strategy_research + trade_execution）本身仍是有效业务需求，将在 B-d 阶段重构为 Orchestrator 的 P0 任务模板"
+
+# =============================================================================
+# 契约版本状态总览
+# =============================================================================

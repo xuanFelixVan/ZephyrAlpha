@@ -1,0 +1,217 @@
+"""
+BlueprintSearchServer — MCP Server for blueprint discovery
+=============================================================
+Task ID  : T-V2-010 (Phase 1e RI-07 — Blueprint Routing MCP Server)
+Spec     : MOD-INF-013 §3（MCP Tool 清单）+ MOD-INF-009 §8（蓝图触发路由表）
+Protocol : MCP/0.3 (JSON-RPC 2.0 over stdio, ADR-0033)
+关联决策  : R90 (蓝图三级金字塔架构) + R91 (MCP 蓝图检索 tool 落地)
+
+This MCP server provides **AI agents** with the capability to discover which
+blueprint documents are relevant to the current task—resolving the P0 gap
+identified in the PS-STD-005 architecture audit: "AI agent has no way to
+know which blueprint to read."
+
+对标
+----
+Codified Context (arXiv 2602.20478) §3.3.1 Knowledge Retrieval Service:
+  find_relevant_context(task) → queries Tier 3 (Cold Memory) via keyword search
+
+This server extends the pattern from Tier-3 document retrieval to
+**blueprint-level** routing: given a task description, it ranks all
+19 blueprints by keyword relevance and returns the top candidates.
+
+Usage
+-----
+::
+
+    python src/zephyr/mcp/blueprint_search_server.py
+
+The server listens on stdio for JSON-RPC 2.0 requests.
+
+Registered Tools
+----------------
+- ``blueprint_search.find_relevant_blueprint``:
+    Input: task_description (str), optional num_results (int, default=5)
+    Output: ranked list of {blueprint_id, title, relevance_score, description}
+    Source: ``config/blueprint_routing.yaml`` §routes
+"""
+
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+from zephyr.mcp._base_server import BaseMCPServer
+
+__all__ = ["BlueprintSearchServer", "main"]
+
+_logger = logging.getLogger(__name__)
+
+SERVER_ID = "blueprint_search"
+SERVER_VERSION = "1.0.0"
+SERVER_DESCRIPTION = (
+    "Blueprint discovery MCP server — finds relevant blueprint documents "
+    "for a given task via keyword matching over config/blueprint_routing.yaml. "
+    "Phase 1e (T-V2-010)."
+)
+
+# ---------------------------------------------------------------------------
+# Path resolution
+# ---------------------------------------------------------------------------
+
+_FILE = Path(__file__).resolve()
+REPO_ROOT = _FILE.parents[3]
+ROUTING_YAML_PATH = REPO_ROOT / "config" / "blueprint_routing.yaml"
+BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+
+# ---------------------------------------------------------------------------
+# Server
+# ---------------------------------------------------------------------------
+
+
+class BlueprintSearchServer(BaseMCPServer):
+    """MCP server for discovering relevant blueprint documents."""
+
+    def __init__(self) -> None:
+        super().__init__(SERVER_ID, SERVER_VERSION, SERVER_DESCRIPTION)
+
+        self.register_tool(
+            name="blueprint_search.find_relevant_blueprint",
+            description=(
+                "给定任务描述，返回与之最相关的蓝图列表（按相关性排序）。"
+                "AI agent 应在任务开始前调用此 tool 以确定需要阅读哪些蓝图。"
+                "对标 Codified Context (arXiv 2602.20478) 的 find_relevant_context MCP tool。"
+            ),
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "task_description": {
+                        "type": "string",
+                        "description": "任务的自然语言描述（中英文均可）",
+                    },
+                    "num_results": {
+                        "type": "integer",
+                        "description": "返回的最大蓝图数（默认 5）",
+                        "default": 5,
+                    },
+                    "include_retired": {
+                        "type": "boolean",
+                        "description": "是否包含已退役的蓝图（默认 false）",
+                        "default": False,
+                    },
+                },
+                "required": ["task_description"],
+            },
+            handler=self._find_relevant_blueprint,
+        )
+
+    # ------------------------------------------------------------------
+    # Tool handlers
+    # ------------------------------------------------------------------
+
+    def _find_relevant_blueprint(
+        self,
+        task_description: str,
+        num_results: int = 5,
+        include_retired: bool = False,
+    ) -> dict[str, Any]:
+        """Find blueprints relevant to the given task description.
+
+        Two-phase matching:
+        1. Load keyword routes from config/blueprint_routing.yaml
+        2. Score each route by keyword overlap with task_description
+        3. Return top-N ranked results
+        """
+        routes = self._load_routes()
+        if not routes:
+            _logger.warning("No routes loaded from %s", ROUTING_YAML_PATH)
+            return {"results": [], "count": 0, "source": "blueprint_routing.yaml", "error": "no_routes_loaded"}
+
+        task_lower = task_description.lower()
+        scored: list[tuple[int, dict[str, Any]]] = []
+
+        for route in routes:
+            if not route.get("enabled", True):
+                continue
+            if not include_retired and route.get("enabled") is False:
+                continue
+
+            keywords: list[str] = route.get("task_keywords", []) or []
+            score = 0
+            for kw in keywords:
+                kw_lower = kw.lower()
+                if kw_lower in task_lower:
+                    score += 5
+                elif any(word in task_lower for word in kw_lower.split()):
+                    score += 2
+
+            if score > 0:
+                scored.append((score, route))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        top_n = scored[:max(1, num_results)]
+
+        results = []
+        for score, route in top_n:
+            results.append({
+                "blueprint_id": route.get("blueprint_id", ""),
+                "blueprint_level": route.get("blueprint_level", "module"),
+                "route_id": route.get("route_id", ""),
+                "relevance_score": score,
+                "priority": route.get("priority", 50),
+                "description": route.get("description", ""),
+                "path_patterns": route.get("path_patterns", []),
+            })
+
+        return {
+            "results": results,
+            "count": len(results),
+            "source": "config/blueprint_routing.yaml",
+            "strategy": "keyword_fuzzy_match",
+            "hint": "AI agent SHOULD read the top-3 blueprints' §1 (system boundary + topology) before code changes",
+        }
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    def _load_routes(self) -> list[dict[str, Any]]:
+        """Load route definitions from blueprint_routing.yaml."""
+        if not ROUTING_YAML_PATH.exists():
+            _logger.warning("blueprint_routing.yaml not found at %s", ROUTING_YAML_PATH)
+            return []
+
+        try:
+            with open(ROUTING_YAML_PATH, "r", encoding="utf-8") as fh:
+                config = yaml.safe_load(fh)
+        except Exception as exc:
+            _logger.error("Failed to load blueprint_routing.yaml: %s", exc)
+            return []
+
+        return config.get("routes", [])
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+
+def main() -> None:
+    """Start the blueprint search MCP server on stdio."""
+    import sys as _sys
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(name)s] %(levelname)s %(message)s",
+        stream=_sys.stderr,
+    )
+
+    server = BlueprintSearchServer()
+    server.run()
+
+
+if __name__ == "__main__":
+    main()

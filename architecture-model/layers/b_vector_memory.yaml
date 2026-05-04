@@ -1,0 +1,33 @@
+schema_version: "1.0.0"
+partition:
+  id: vector_memory
+  name: Vector Memory Service (VMS)
+  track: b_track
+  bounded_context: true
+  umbrella_layer: l12
+  status: skeleton
+  note: "Phase 1 过渡期 — 现由 src/zephyr/kb/ 承担部分能力，Phase 3 整合"
+
+modules:
+  - id: vms-core
+    name: Vector Memory Service Core
+    submodule_path: src/zephyr/vector_memory/
+    status: skeleton
+    priority: P0
+    runtime_plane: warm
+    description: >
+      向量化存储与检索 — ChromaDB 0.6 + BGE-M3 ONNX (本地推理)。
+      5大 Collection: decisions / code_context / lessons / knowledge / runtime_logs。
+      Phase 3 整合 kb/ 能力入 InProcessVectorMemory 实现。
+    files: []
+    interfaces: []
+    adr_ref:
+      - ADR-0016
+      - ADR-0022
+      - ADR-0031
+
+summary:
+  total: 1
+  by_status:
+    skeleton: 1
+  note: "含完整 __init__.py docstring，已登记但代码尚未填充"

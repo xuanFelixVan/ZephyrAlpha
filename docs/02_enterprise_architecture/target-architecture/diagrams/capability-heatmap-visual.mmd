@@ -1,0 +1,36 @@
+%% Source: 04ter-capability-heatmap.md §3.4
+%%{init: {'theme': 'default'}}%%
+graph LR
+    subgraph Layer["业务层 × 能力域（当前 v1.0.0 基线）"]
+        L00["L00 data_source<br/>C1:🟡L2 C7:🔵L1"]
+        L01["L01 infrastructure<br/>C1:🔵L1 C7:🔵L1"]
+        L02["L02 alpha_factor<br/>C2:🔵L1 C7:🔵L1"]
+        L03["L03 signal_generation<br/>C2:🔵L1 C6:🔵L1"]
+        L04["L04 risk_management<br/>C3:🔵L1 C7:🔵L1"]
+        L05["L05 portfolio_construction<br/>C4:🔵L1 C7:🔵L1"]
+        L06["L06 trade_execution<br/>C3:🔵L1 C5:🔵L1"]
+        L07["L07 post_trade_analytics<br/>C5:🔵L1 C7:🔵L1"]
+        L08["L08 human_ai_interface<br/>C6:⚪L0"]
+        L09["L09 research_innovation<br/>C2:🔵L1 C6:⚪L0"]
+        L10["L10 compliance<br/>C6:🔵L1 C7:🟡L2"]
+        L11["L11 ml_platform<br/>C6:🔵L1 C7:🔵L1"]
+        L12["L12 system_telemetry<br/>CC2:🔵L1"]
+        L13["L13 experiment_pipeline<br/>C6:🔵L1 C7:🔵L1"]
+        SH["shared/<br/>C1:🟡L2 C7:🔵L1"]
+    end
+
+    style L00 fill:#fde68a
+    style L01 fill:#bfdbfe
+    style L02 fill:#bfdbfe
+    style L03 fill:#bfdbfe
+    style L04 fill:#bfdbfe
+    style L05 fill:#bfdbfe
+    style L06 fill:#bfdbfe
+    style L07 fill:#bfdbfe
+    style L08 fill:#e5e7eb
+    style L09 fill:#e5e7eb
+    style L10 fill:#fde68a
+    style L11 fill:#bfdbfe
+    style L12 fill:#bfdbfe
+    style L13 fill:#bfdbfe
+    style SH fill:#fde68a

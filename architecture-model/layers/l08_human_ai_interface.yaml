@@ -1,0 +1,35 @@
+schema_version: "1.0.0"
+partition:
+  id: l08
+  name: Human-AI Interface
+  track: c_track
+  layer_position: 8
+  runtime_plane: warm
+  status: implemented
+
+modules:
+  - id: l08-dashboard
+    name: Dashboard
+    submodule_path: src/zephyr/l08_human_ai_interface/dashboard/
+    status: implemented
+    priority: P1
+    runtime_plane: warm
+    description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势图
+    files:
+      - app.py
+    components:
+      - fitness_functions.py
+      - gate_statistics.py
+      - knowledge_overview.py
+      - olap_trend.py
+      - task_progress.py
+    interfaces:
+      - contract_id: P1-DASHBOARD-FITNESS
+        role: consumer
+        description: 从 feedback_loop/fitness_functions.py 导入，封装为 Dashboard 展示组件 (Facade 模式)
+    adr_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

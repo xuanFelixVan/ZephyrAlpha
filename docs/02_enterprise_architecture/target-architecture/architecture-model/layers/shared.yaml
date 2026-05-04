@@ -1,0 +1,103 @@
+schema_version: '2.0'
+partition:
+  id: shared
+  name: Shared Contracts & Foundations
+  layer_position: null
+  runtime_plane: all
+  view_file: 03-application-architecture.md
+  view_section: §4.1 shared/
+modules:
+- id: shared-contracts
+  name: Inter-Layer Data Contracts
+  submodule_path: src/zephyr/shared/contracts/
+  status: planned
+  priority: P0
+  runtime_plane: all
+  description: 跨层数据契约与接口定义；包含 MarketData / FillEvent / OrderBook / WeightPortfolio 等 canonical schema
+  interfaces:
+  - contract_id: CTR-001
+    role: both
+    description: 物理承载 NormalizedMarketData 契约定义（frozen dataclass）
+  - contract_id: CTR-002
+    role: both
+    description: 物理承载 FactorSignal 契约定义（frozen dataclass）
+  - contract_id: CTR-003
+    role: both
+    description: 物理承载 RiskLimits 契约定义（frozen dataclass）
+  - contract_id: CTR-004
+    role: both
+    description: 物理承载 Order 契约定义（frozen dataclass）
+  - contract_id: CTR-005
+    role: both
+    description: 物理承载 Fill 契约定义（frozen dataclass）
+  - contract_id: CTR-006
+    role: both
+    description: 物理承载 PositionSnapshot 契约定义（frozen dataclass）
+  - contract_id: OCP-001
+    role: both
+    description: 物理承载 FactorBase 抽象基类定义
+  - contract_id: OCP-002
+    role: both
+    description: 物理承载 StrategyBase 抽象基类定义
+  - contract_id: OCP-003
+    role: both
+    description: 物理承载 BrokerInterface 抽象基类定义
+  adr_ref:
+  - ADR-0004
+  - ADR-0011
+- id: shared-runtime-plane-tag
+  name: Runtime Plane Tag
+  submodule_path: src/zephyr/shared/contracts/runtime_plane_tag.py
+  status: planned
+  priority: P1
+  runtime_plane: hot
+  description: Hot/Warm/Cold 运行平面枚举定义；所有平面共用契约，enum 本身跨三平面
+  interfaces: []
+  plane_note: 2026-05-03 修复：原引用 CTR-001（NormalizedMarketData）与运行平面标签语义不匹配——两者无关。待新增平面标签专用契约。
+  adr_ref:
+  - ADR-0011
+- id: shared-utils
+  name: Pure Utility Functions
+  submodule_path: src/zephyr/shared/utils/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 纯工具函数（无业务逻辑），被所有层依赖
+  interfaces: []
+  adr_ref: []
+- id: shared-exceptions
+  name: Base Exception Hierarchy
+  submodule_path: src/zephyr/shared/exceptions/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 基础异常体系；所有层共用的异常基类与异常分类
+  interfaces: []
+  adr_ref: []
+- id: shared-types
+  name: Shared Type Definitions
+  submodule_path: src/zephyr/shared/types/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 共享类型定义；跨层使用的 TypeAlias / TypedDict / Protocol 等
+  interfaces: []
+  adr_ref: []
+summary:
+  total: 5
+  by_status:
+    planned: 5
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 1
+    P1: 4
+    P2: 0
+    P3: 0
+  by_runtime_plane:
+    hot: 1
+    warm: 3
+    cold: 0
+    all: 1
+invariants_ref: 'Canonical SSoT: cross-cutting/invariants.yaml (3 invariants moved)'

@@ -1,0 +1,33 @@
+---
+doc_type: index
+module_id: AUDIT-REPORTS-IDX-001
+title: "审计报告目录索引"
+layer: cross_layer
+status: Active
+version: "1.0.0"
+owner: ZephyrAlpha-Owner
+date: "2026-05-02"
+ttl: permanent
+---
+
+# Reports — 目录索引
+
+## 责任声明（Single Responsibility）
+
+本目录只存放：**审计报告 — 架构合规性审计、SSoT 验证扫描报告**。
+
+## 文件清单
+
+| 文件 | 说明 |
+|------|------|
+| architecture-alignment-audit.md | 架构对齐审计报告 — 文档体系全局合规检查（2026-04-25） |
+| ssot-validation-LATEST.md | SSoT 矛盾扫描报告 — frontmatter 字段一致性自动化扫描（2026-05-02） |
+
+## 排除规则（不应放入本目录的内容）
+
+- ❌ 治理规范 → `01_policies_and_standards/`
+- ❌ 审计状态数据 → `09_audit/state/`
+
+## 父级目录
+
+- 父级：[09_audit](../index.md)

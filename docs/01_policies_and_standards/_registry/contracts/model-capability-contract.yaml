@@ -1,0 +1,290 @@
+# ZephyrAlpha 2.0 AI 模型能力矩阵契约
+# 定义每个 AI 模型的能力边界、禁止操作、推荐任务类型
+# 维护者：ZephyrAlpha-Owner
+
+schema_version: "1.2.0"
+module_id: GOV-AI-006
+doc_type: contract
+title: "AI 模型能力矩阵契约"
+status: active
+version: "1.2.0"
+date: "2026-05-03"
+owner: ZephyrAlpha-Owner
+language: zh
+created_by: human_plus_agent
+ttl: permanent
+summary: "定义 Cursor-Premium 和 Trae-Free 等多种 AI 模型的模型能力边界、禁止操作清单和推荐任务类型。任务级路由以 GOV-AI-002 决策树为准——本文件仅定义编辑器级能力边界。v1.2.0：从 governance/ai/ 迁移至 _registry/contracts/，doc_type register→contract。"
+rule_form: data
+ai_autonomy: human_gated
+depends_on:
+  - {target: PS-STD-001, at: "§2.5", why: "frontmatter 字段分类清单"}
+
+# 老树教训：AI 模型在塞模块时经常越权操作（如 Trae 修改 Cursor 规则文件、
+# 免费模型执行复杂架构设计），导致治理层级混乱。
+
+models:
+  - name: "Cursor-Premium"
+    tier: "premium"
+    description: "Cursor 编辑器中的高级 AI 模型（Claude Sonnet/Opus 等）"
+    max_files_per_session: 20
+    max_new_files_per_session: 5
+    max_blueprints_per_session: 10
+    allowed_paths:
+      - "docs/**"
+      - "scripts/**"
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "_DO_NOT_USE_old_tree/**"  # 老树体系，只读
+    recommended_tasks:
+      - "架构设计"
+      - "契约定义"
+      - "ADR 编写"
+      - "规范文档编写"
+      - "代码实现"
+      - "复杂推理"
+    forbidden_tasks:
+      - "批量文件操作（>20 个文件）"
+      - "git push --force"
+      - "修改 Cursor 规则文件"
+      - "修改 AGENTS.md"
+
+  - name: "Trae-Free"
+    tier: "basic"
+    description: "Trae 编辑器中的免费 AI 模型"
+    max_files_per_session: 5
+    max_new_files_per_session: 3
+    max_blueprints_per_session: 5
+    allowed_paths:
+      - "docs/**"
+      - "scripts/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "_DO_NOT_USE_old_tree/**"
+      - "src/**"   # 代码修改需要 Cursor
+
+    recommended_tasks:
+      - "简单脚本运行"
+      - "文件操作（批量）"
+      - "校验执行"
+      - "编码扫描"
+      - "文件消除流水线"
+      - "蓝图安全流水线"
+    forbidden_tasks:
+      - "架构设计"
+      - "ADR 编写"
+      - "复杂推理"
+      - "修改 Cursor 规则文件"
+      - "修改 AGENTS.md"
+      - "修改 .roomodes"
+
+  - name: "Kimi-1M"
+    tier: "standard"
+    description: "Kimi 长上下文模型（1M+ token 窗口）"
+    max_files_per_session: 50
+    max_new_files_per_session: 5
+    context_window: "1M+"
+    allowed_paths:
+      - "docs/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "src/**"
+    recommended_tasks:
+      - "批量搜索"
+      - "长文本处理"
+      - "候选池筛选"
+      - "文档审查"
+      - "跨文件一致性检查"
+    forbidden_tasks:
+      - "复杂架构推理"
+      - "契约定义"
+      - "代码实现"
+
+  - name: "Claude-API"
+    tier: "premium"
+    description: "通过 API 调用的 Claude 模型"
+    max_files_per_session: 20
+    max_new_files_per_session: 5
+    allowed_paths:
+      - "docs/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+    recommended_tasks:
+      - "架构审查"
+      - "文档审查"
+      - "复杂推理"
+      - "规范制定"
+    forbidden_tasks:
+      - "直接文件操作（通过 API 无法直接操作文件）"
+      - "修改 Cursor 规则文件"
+
+  - name: "GLM-5.1"
+    tier: "standard"
+    description: "智谱 GLM-5.1 模型——擅长机械任务和结构化输出，适合批量数据处理与模板化生成"
+    max_files_per_session: 15
+    max_new_files_per_session: 5
+    max_blueprints_per_session: 3
+    allowed_paths:
+      - "docs/**"
+      - "scripts/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "_DO_NOT_USE_old_tree/**"
+      - "src/**"
+    recommended_tasks:
+      - "Pydantic frozen 模型定义"
+      - "YAML 起草与校验"
+      - "文档纯写"
+      - "脚本骨架生成"
+      - "cron-like 定时任务"
+    forbidden_tasks:
+      - "架构设计"
+      - "ADR 终审"
+      - "复杂跨模块集成"
+      - "修改 Cursor 规则文件"
+
+  - name: "Claude-Sonnet"
+    tier: "premium"
+    description: "Anthropic Claude Sonnet 模型——中等复杂度任务的主力，平衡质量与效率"
+    max_files_per_session: 20
+    max_new_files_per_session: 5
+    max_blueprints_per_session: 10
+    allowed_paths:
+      - "docs/**"
+      - "scripts/**"
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "_DO_NOT_USE_old_tree/**"
+    recommended_tasks:
+      - "gate_engine 扩展"
+      - "M1-M7 跨模块集成"
+      - "沙箱安全审阅"
+      - "反向链表设计"
+      - "Schema 复核"
+      - "中等复杂度代码实现"
+    forbidden_tasks:
+      - "终审裁决（由 Opus 承担）"
+      - "批量文件操作（>20 个文件）"
+
+  - name: "Claude-Opus"
+    tier: "premium"
+    description: "Anthropic Claude Opus 模型——关键架构与终审裁决专用，最高推理能力"
+    max_files_per_session: 10
+    max_new_files_per_session: 3
+    max_blueprints_per_session: 5
+    allowed_paths:
+      - "docs/**"
+      - "scripts/**"
+      - "src/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "_DO_NOT_USE_old_tree/**"
+    recommended_tasks:
+      - "M2 ChromaDB 架构"
+      - "M3 Router 跨模块设计"
+      - "ADR 终审"
+      - "复杂调试"
+      - "终审裁决"
+      - "关键架构决策"
+    forbidden_tasks:
+      - "机械重复任务"
+      - "批量文件操作"
+      - "简单脚本编写"
+
+  - name: "Kimi-K2.6"
+    tier: "standard"
+    description: "Moonshot Kimi K2.6 模型——Kimi-1M 的升级版，超长上下文（1M+ token 窗口），适用大规模文档审查与审计轮次"
+    max_files_per_session: 50
+    max_new_files_per_session: 5
+    context_window: "1M+"
+    allowed_paths:
+      - "docs/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "src/**"
+    recommended_tasks:
+      - "批量搜索"
+      - "长文本处理"
+      - "候选池筛选"
+      - "文档审查"
+      - "跨文件一致性检查"
+      - "审计轮次审查"
+    forbidden_tasks:
+      - "复杂架构推理"
+      - "契约定义"
+      - "代码实现"
+
+  - name: "Qwen-3.6-Plus"
+    tier: "standard"
+    description: "阿里通义千问 Qwen-3.6-Plus 模型——通用型模型，适用审计轮次审查与文档一致性验证"
+    max_files_per_session: 15
+    max_new_files_per_session: 5
+    max_blueprints_per_session: 5
+    allowed_paths:
+      - "docs/**"
+      - "模块候选池/**"
+    forbidden_paths:
+      - ".cursor/rules/**"
+      - "AGENTS.md"
+      - ".roomodes"
+      - "src/**"
+    recommended_tasks:
+      - "文档审查"
+      - "审计轮次审查"
+      - "跨文件一致性检查"
+      - "编码扫描"
+    forbidden_tasks:
+      - "架构设计"
+      - "ADR 编写"
+      - "复杂推理"
+
+# 通用约束（所有模型）
+universal_constraints:
+  forbidden_git_operations:
+    - "git add ."
+    - "git add -A"
+    - "git commit --no-verify"
+    - "git push --force"
+    - "git push --force-with-lease"
+    - "git rebase"
+    - "git filter-branch"
+  forbidden_file_operations:
+    - "在 _DO_NOT_USE_old_tree/ 下新建或修改文件"
+    - "修改 .cursor/rules/ 下任何文件（Trae 禁止，Cursor 需 Owner 批准）"
+    - "修改 AGENTS.md（只有 Owner 可修改）"
+    - "单次 session 新建 >5 个文件"
+    - "文件名使用版本号后缀（-v2/-v3/-round2）"
+    - "两个编辑器同时打开同一文件编辑"
+  session_end_requirements:
+    - "写 Session Log（格式参见 GOV-AI-007 session-log-schema.yaml）"
+    - "如有新建或修改文件，更新对应的注册表文件"
+    - "在 Session Log 中明确标注不确定性级别和未完成任务"

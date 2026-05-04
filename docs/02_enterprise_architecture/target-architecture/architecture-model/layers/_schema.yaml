@@ -1,0 +1,209 @@
+# Module Operational Schema v3.0
+# 所有 layers/*.yaml 中的模块条目必须符合此 schema
+#
+# v3.0 (2026-05-03) — 重大重构：
+#   根据 GATE-SUM 和第四轮全量审计的结论，原 v2.x schema 定义与实际模块的
+#   数据模型存在系统性漂移——字段名不同、值模式不同、数据结构不同。
+#   本节将 schema 重构为"运营 Schema（实际模型）"+"抱负扩展（计划添加）"两段式，
+#   消除 schema 定义与现实之间的鸿沟。以后新增字段先在"抱负扩展"中声明，
+#   填充达到 100% 后晋升到"运营 Schema"。
+#
+# 设计原则：
+#   - 运营 Schema 定义的是 ALL 模块当前使用的字段结构
+#   - 抱负扩展定义的是计划添加但尚未全覆盖的字段
+#   - 两者之间的"gap"应在 changelog 中追踪
+
+schema_version: "3.1.0"
+data_schema_version_note: "数据文件中的 schema_version: 2.0 是数据格式版本（与 _schema.yaml 版本独立），不需要同步升级"
+description: "ZephyrAlpha 2.0 模块运营 Schema 定义（GATE-SUM 对账基准）"
+
+# ============================================================================
+# 运营 Schema（当前所有 112 个模块实际使用（含 4 deferred）——代码真实状态）
+# ============================================================================
+operational_schema:
+
+  # === 模块标识 ===
+  id:
+    type: string
+    required: true
+    pattern: "^[a-z0-9]+-[a-z0-9-]+$"
+    description: "模块唯一标识符，格式 {layer}-{name}，如 l00-connectors-default、l10-security-gateway"
+    example: "l00-connectors-default"
+
+  name:
+    type: string
+    required: true
+    description: "模块中文名称"
+    example: "连接器模块"
+
+  description:
+    type: string
+    required: true
+    description: "模块功能描述"
+    example: "标准化接入外部数据源，统一转换为内部 NormalizedMarketData 格式"
+
+  # === 状态与优先级 ===
+  status:
+    type: enum
+    required: true
+    values: [planned, deferred, active, deprecated]
+    description: >
+      模块实现状态（代码级生命周期）。
+      planned = 已规划设计但尚未编码（TOGAF 渐进式填充，骨架文件合法状态）。
+      deferred = 已规划设计但显式推迟至未来阶段（区别于 planned：不在当前路线图上）。
+      active = 已编码并通过测试，当前运行中。
+      deprecated = 已废弃，保留历史记录。
+    note: >
+      与 ssot-authority-map.md §二 定义的【文档生命周期状态】（Draft/Review/Active/Superseded/Deprecated/Retired）
+      是两个完全不同的领域。字段名相同（都叫 status），但适用对象不同。
+
+  priority:
+    type: enum
+    required: true
+    values: [P0, P1, P2, P3]
+    description: "优先级，P0=核心必须（缺失系统不可用），P1=重要（不应缺失），P2=增强，P3=可选"
+    note: "2026-05-03 审计发现：108 个模块中 P3=3，P0=34，P1=54，P2=17"
+
+  # === 运行时平面 ===
+  runtime_plane:
+    type: enum
+    required: true
+    values: [hot, warm, cold, all]
+    description: "运行时平面归属。all 为跨平面共享模块（如 shared/ 下的共享类型/工具）"
+
+  # === 路径 ===
+  submodule_path:
+    type: string
+    required: true
+    description: "模块源码目录，格式 src/zephyr/l{NN}_{name}/ 或 src/zephyr/shared/{name}/"
+    example: "src/zephyr/l00_data_ingestion/connectors/"
+    note: >
+      2026-05-03 审计：shared-runtime-plane-tag 使用文件路径而非目录路径（唯一例外）；
+      l10/l11 各有一组模块共享同一目录（ai_security / model_registry）
+
+  # === 接口 ===
+  interfaces:
+    type: array
+    required: false
+    default: []
+    description: "本模块参与（提供或消费）的跨层契约列表"
+    items:
+      contract_id:
+        type: string
+        required: true
+        pattern: "^(CTR|OCP|EXT|AI-GOV)-[A-Z0-9-]+$"
+        description: "跨层契约 ID，必须在 cross-layer-contracts.yaml 中存在"
+      role:
+        type: enum
+        required: true
+        values: [producer, consumer, both]
+        description: "producer=提供接口（数据/事件的生产方），consumer=消费接口（数据/事件消费方），both=双向"
+      description:
+        type: string
+        required: false
+        description: "接口用途说明"
+
+  # === 可选字段 ===
+  adr_ref:
+    type: array
+    items:
+      type: string
+    required: false
+    default: []
+    description: "关联的 ADR 编号列表（如 [ADR-0009, ADR-0011]），可为空"
+    note: "2026-05-03 审计：多数模块 adr_ref 为空数组"
+
+  plane_note:
+    type: string
+    required: false
+    description: "运行时平面归属的补充说明（为什么放在这个平面）"
+
+  note:
+    type: string
+    required: false
+    description: "补充说明（如子模块区分、特殊逻辑）"
+
+# ============================================================================
+# 抱负扩展（计划添加但尚未全覆盖的字段——Phase 2）
+# ============================================================================
+aspirational_extensions:
+  description: "以下字段为 v2.x schema 设计时规划的能力，当前所有 112 个模块（含 4 deferred）均未填充。填充率达 100% 后晋升到运营 Schema。"
+
+  depends_on:
+    type: array
+    coverage: "0/112 (0%)"
+    phase: Phase2
+    description: "依赖的其他模块 ID 列表（强依赖，缺失则无法运行）。填充需配合模块间依赖分析。"
+    items:
+      type: string
+
+  implementation_phase:
+    type: enum
+    values: [phase1_mvp, phase2_core, phase3_advanced, phase4_optional, tbd]
+    coverage: "0/112 (0%)"
+    phase: Phase2
+    description: "计划实现阶段"
+
+  owner:
+    type: string
+    coverage: "0/112 (0%)"
+    phase: Phase3
+    description: "模块负责人"
+
+  activation_trigger:
+    type: string
+    coverage: "18/18 (100% frontend)"
+    phase: Phase1
+    description: "前端模块激活触发条件"
+  blueprint_ref:
+    type: string
+    coverage: "13/13 (100% scripts)"
+    phase: Phase1
+    description: "脚本模块蓝图引用路径"
+  tags:
+    type: array
+    coverage: "0/112 (0%)"
+    phase: Phase3
+    description: "标签列表（如 microservice, critical, experimental）"
+
+# ============================================================================
+# 变更日志
+# ============================================================================
+changelog:
+  - version: "3.1.0"
+    date: "2026-05-03"
+    changes:
+      - "P0 修复：interfaces.role 枚举从 [provides,consumes,both] 改为 [producer,consumer,both]——与全部 57+ 模块实际数据对齐"
+      - "P0 修复：adr_ref 类型从 string 改为 array of string——与全部模块实际使用对齐"
+      - "P2 修复：描述中'57 个模块'更新为'112 个模块'（含 infra/frontend/scripts 分区）"
+  - version: "3.0.0"
+    date: "2026-05-03"
+    changes:
+      - "重大重构：将 schema 拆分为运营 Schema（实际模型）+ 抱负扩展（计划添加）两段式"
+      - "运营 Schema 基于 108 个模块的实际字段结构：id/name/description/status/priority/runtime_plane/submodule_path/interfaces(对象数组)"
+      - "废弃 v2.x 中与实际不符的字段名：module_id→id, module_name→name, layer(模块级冗余)→移除"
+      - "废弃 interfaces_provided/interfaces_consumed（flat array）→ interfaces（object array with contract_id/role/description）"
+      - "v2.x 新增字段（depends_on/depends_on_confidence/implementation_phase/oss_candidate/owner/tags）移至抱负扩展，标注覆盖率 0%"
+      - "schema_version 从 2.1.1 升级到 3.0.0（semver 三段式）"
+  - version: "2.1.1"
+    date: "2026-05-02"
+    changes:
+      - "GATE-SC 运行后修复：新增 deferred 状态（前端 4 个模块使用 deferred = 显式推迟至未来阶段）"
+  - version: "2.1.0"
+    date: "2026-05-02"
+    changes:
+      - "P0 修复：status 枚举新增 planned + active（对齐实际 YAML 使用）"
+      - "P0 修复：schema_version 从 2.0 改为 2.1.0（符合 semver 三段式 X.Y.Z）"
+      - "新增 scope 声明：明确本 schema 的 status 是代码模块实现状态 ≠ 文档生命周期状态"
+  - version: "2.0.1"
+    date: "2026-05-01"
+    changes:
+      - "新增 depends_on_confidence 字段（依赖置信度分级 L1/L2/L3）"
+  - version: "2.0"
+    date: "2026-04-22"
+    changes:
+      - "新增 depends_on / interfaces_provided / interfaces_consumed / implementation_phase / oss_candidate"
+  - version: "1.0"
+    date: "2026-04-01"
+    changes:
+      - "初始版本"

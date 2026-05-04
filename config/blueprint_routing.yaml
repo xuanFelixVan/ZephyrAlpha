@@ -1,0 +1,514 @@
+# ZephyrAlpha 2.0 — 蓝图触发路由表（Blueprint Routing Table）
+#
+# 创建日期   : 2026-05-04
+# 关联标准   : PS-STD-005 §7（AI Agent 蓝图定位规则）
+# 关联蓝图   : MOD-INF-009（Task Pipeline, §触发式路由表）
+# 关联决策   : R90（蓝图三级金字塔架构决策）
+# 权限层级   : Human-Gated（路由映射变更 = 关键架构变更）
+# 真源声明   : 本文件是蓝图路由分派的 SSoT —— AI Agent 在决定"读哪份蓝图"时 MUST 查询本表
+#
+# 对标       : Codified Context (arXiv 2602.20478) §3.1.1 Orchestration Protocols
+#              — 论文中触发表用于路由 domain-expert agents，
+#              — 本表扩展为 route domain documents (blueprints) + agents
+#
+# 文件模式语法
+# ------------
+# path_pattern:  glob 模式（相对于项目根）
+#                 支持 ** 递归通配，* 单级通配
+#                 示例: "src/zephyr/orchestrator/**" → 所有 orchestrator 文件
+# task_keywords: Python 列表，关键字匹配（任意一个命中即触发）
+#                支持中英文混合
+# scope:         pre_change（修改前加载） / post_change（修改后加载） / always
+# safety:        L / M / H —— 路由安全等级
+# priority:      1-100 —— 并发匹配时取最高优先级（参考 COBIT APO03）
+
+version: "1.0.0"
+schema_version: "1.0.0"
+doc_type: rule
+title: "Blueprint Routing Table"
+status: active
+ttl: permanent
+belongs_to: "MOD-INF-009"
+
+# =========================================================================
+# §1  路由映射表
+# =========================================================================
+
+routes:
+
+  # ---- Level 1: 域蓝图（先于模块蓝图加载）----
+  - route_id: "R001"
+    blueprint_id: "MOD-MASTER-001"
+    blueprint_level: domain
+    path_patterns:
+      - "src/zephyr/orchestrator/**"
+      - "src/zephyr/tasks/**"
+      - "config/trigger_router.yaml"
+    task_keywords:
+      - "集成"
+      - "蓝图"
+      - "架构"
+      - "跨系统"
+      - "integration"
+      - "architecture"
+      - "overview"
+      - "总览"
+      - "总蓝图"
+      - "master blueprint"
+    scope: pre_change
+    safety: "L"
+    priority: 100
+    description: "基础设施层 12 系统集成总蓝图 — 任何涉及架构/集成/跨系统的问题先查此表"
+
+  # ---- Level 2: 模块蓝图 ----
+
+  # -- INF-001 容量保障体系 --
+  - route_id: "R002"
+    blueprint_id: "MOD-INF-001"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/core/capacity_planner.py"
+      - "src/zephyr/core/budget_allocator.py"
+      - "src/zephyr/core/throttle.py"
+      - "src/zephyr/core/quota_manager.py"
+      - "scripts/capacity/**"
+    task_keywords:
+      - "容量"
+      - "预算"
+      - "配额"
+      - "限流"
+      - "capacity"
+      - "budget"
+      - "throttle"
+      - "quota"
+      - "rate limit"
+      - "token budget"
+      - "QPS"
+    scope: pre_change
+    safety: "M"
+    priority: 90
+    description: "容量保障体系 — 配额/限流/降级/容量规划"
+
+  # -- INF-002 运行时集成 --
+  - route_id: "R003"
+    blueprint_id: "MOD-INF-002"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/runtime/**"
+      - "src/zephyr/integration/**"
+      - "src/zephyr/hooks/**"
+      - "src/zephyr/adapters/**"
+    task_keywords:
+      - "运行时"
+      - "集成"
+      - "adapter"
+      - "hook"
+      - "runtime"
+      - "integration"
+      - "接线"
+      - "cross-layer"
+      - "跨层"
+    scope: pre_change
+    safety: "M"
+    priority: 85
+
+  # -- INF-003 任务卡+KMS (retired) --
+  - route_id: "R004"
+    blueprint_id: "MOD-INF-003"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/task_card/**"
+      - "src/zephyr/kms/**"
+    task_keywords:
+      - "任务卡"
+      - "KMS"
+      - "task card"
+    scope: pre_change
+    safety: "L"
+    priority: 30
+    enabled: false
+    description: "已退役 — 仅历史参考"
+
+  # -- INF-004 Vibe Coding双管线 (retired) --
+  - route_id: "R005"
+    blueprint_id: "MOD-INF-004"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/vibe_coding/**"
+    task_keywords:
+      - "vibe coding"
+      - "双管线"
+      - "dual pipeline"
+    scope: pre_change
+    safety: "L"
+    priority: 30
+    enabled: false
+    description: "已退役 — 仅历史参考"
+
+  # -- INF-005 脚本系统 --
+  - route_id: "R006"
+    blueprint_id: "MOD-INF-005"
+    blueprint_level: module
+    path_patterns:
+      - "scripts/quality_checks/**"
+      - "scripts/validation/**"
+      - "scripts/ci/**"
+      - "scripts/devops/**"
+      - "src/zephyr/core/script_registry.py"
+      - "src/zephyr/core/script_executor.py"
+    task_keywords:
+      - "脚本"
+      - "shell"
+      - "script"
+      - "lint"
+      - "format"
+      - "quality check"
+      - "格式化"
+      - "pre-commit"
+      - "governance"
+    scope: pre_change
+    safety: "H"
+    priority: 88
+    description: "脚本系统 — 第三条生产线的自动化脚本与门禁"
+
+  # -- INF-006 任务系统 --
+  - route_id: "R007"
+    blueprint_id: "MOD-INF-006"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/orchestrator/**"
+      - "src/zephyr/tasks/**"
+      - "src/zephyr/core/task_manager.py"
+      - "src/zephyr/core/task_state_machine.py"
+      - "config/session_state_machine.yaml"
+      - "docs/19_development_workspace/**"
+    task_keywords:
+      - "任务"
+      - "task"
+      - "开发"
+      - "实施"
+      - "delivery"
+      - "交付"
+      - "phase"
+      - "milestone"
+      - "里程碑"
+      - "施工"
+      - "construction"
+      - "todo"
+    scope: pre_change
+    safety: "H"
+    priority: 95
+    description: "任务系统 — 全链路草稿→蓝图→任务卡→双管线→脚本"
+
+  # -- KB-001 知识库 --
+  - route_id: "R008"
+    blueprint_id: "MOD-KB-001"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/kb/**"
+      - "config/knowledge_base/**"
+    task_keywords:
+      - "知识"
+      - "knowledge"
+      - "文档"
+      - "document"
+      - "spec"
+      - "standard"
+      - "标准"
+      - "规范"
+      - "policy"
+      - "KE"
+      - "knowledge entry"
+      - "索引"
+      - "index"
+    scope: pre_change
+    safety: "M"
+    priority: 90
+
+  # -- INF-007 Gate Engine --
+  - route_id: "R009"
+    blueprint_id: "MOD-INF-007"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/gates/**"
+      - "src/zephyr/mcp/gate_engine_server.py"
+      - "config/gates/**"
+    task_keywords:
+      - "门禁"
+      - "gate"
+      - "校验"
+      - "validate"
+      - "check"
+      - "GATE"
+      - "准入"
+      - "审批"
+      - "approval"
+      - "准入"
+      - "compliance"
+      - "合规"
+      - "熔断"
+      - "circuit breaker"
+    scope: pre_change
+    safety: "H"
+    priority: 92
+
+  # -- INF-008 Context Engine --
+  - route_id: "R010"
+    blueprint_id: "MOD-INF-008"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/context_engine/**"
+      - "config/context_rules_v1.yaml"
+      - "config/compression/**"
+    task_keywords:
+      - "上下文"
+      - "context"
+      - "压缩"
+      - "compress"
+      - "RAG"
+      - "检索"
+      - "retrieval"
+      - "token"
+      - "提示词"
+      - "prompt"
+      - "注入"
+      - "inject"
+    scope: pre_change
+    safety: "M"
+    priority: 91
+
+  # -- INF-009 Pipeline --
+  - route_id: "R011"
+    blueprint_id: "MOD-INF-009"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/pipeline/**"
+      - "config/pipeline/**"
+      - "src/zephyr/orchestrator/trigger_router.py"
+    task_keywords:
+      - "管线"
+      - "pipeline"
+      - "路由"
+      - "router"
+      - "dispatch"
+      - "分派"
+      - "模型选择"
+      - "model selection"
+      - "DeepSeek"
+      - "GLM"
+      - "Claude"
+      - "M1-M11"
+    scope: pre_change
+    safety: "H"
+    priority: 91
+
+  # -- INF-010 Feedback Loop --
+  - route_id: "R012"
+    blueprint_id: "MOD-INF-010"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/feedback_loop/**"
+      - "src/zephyr/decision_engine.py"
+    task_keywords:
+      - "反馈"
+      - "feedback"
+      - "自进化"
+      - "self-improving"
+      - "反思"
+      - "reflect"
+      - "detect"
+      - "检测"
+      - "异常"
+      - "anomaly"
+      - "EMA"
+      - "学习"
+      - "learning"
+    scope: pre_change
+    safety: "M"
+    priority: 85
+
+  # -- INF-011 Vector Memory --
+  - route_id: "R013"
+    blueprint_id: "MOD-INF-011"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/kb/chromadb_client.py"
+      - "src/zephyr/kb/vector_store.py"
+      - "src/zephyr/kb/bge_m3_onnx.py"
+      - "config/embedding_model_registry.yaml"
+    task_keywords:
+      - "向量"
+      - "vector"
+      - "embedding"
+      - "ChromaDB"
+      - "BGE"
+      - "语义搜索"
+      - "semantic search"
+      - "similarity"
+      - "相似度"
+    scope: pre_change
+    safety: "M"
+    priority: 80
+
+  # -- INF-012 Database --
+  - route_id: "R014"
+    blueprint_id: "MOD-INF-012"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/db/**"
+      - "src/zephyr/kb/atomic_transaction_manager.py"
+    task_keywords:
+      - "数据库"
+      - "database"
+      - "SQLite"
+      - "SQL"
+      - "事务"
+      - "transaction"
+      - "ATM"
+      - "atomic"
+      - "schema"
+      - "migration"
+      - "迁移"
+      - "存储"
+      - "storage"
+    scope: pre_change
+    safety: "H"
+    priority: 88
+
+  # -- INF-013 MCP Servers --
+  - route_id: "R015"
+    blueprint_id: "MOD-INF-013"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/mcp/**"
+    task_keywords:
+      - "MCP"
+      - "server"
+      - "tool"
+      - "API"
+      - "JSON-RPC"
+      - "接口"
+      - "interface"
+      - "protocol"
+      - "协议"
+    scope: pre_change
+    safety: "H"
+    priority: 87
+
+  # -- INF-014 LLM Security --
+  - route_id: "R016"
+    blueprint_id: "MOD-INF-014"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/security/**"
+      - "src/zephyr/llm/guard.py"
+      - "src/zephyr/llm/sanitizer.py"
+    task_keywords:
+      - "安全"
+      - "security"
+      - "LLM"
+      - "guard"
+      - "sanitize"
+      - "注入"
+      - "injection"
+      - "prompt injection"
+      - "输入验证"
+      - "分类"
+      - "classifier"
+      - "审计"
+      - "audit"
+    scope: pre_change
+    safety: "H"
+    priority: 93
+
+  # -- INF-015 System Telemetry --
+  - route_id: "R017"
+    blueprint_id: "MOD-INF-015"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/telemetry/**"
+      - "src/zephyr/core/metrics.py"
+      - "src/zephyr/core/logging_config.py"
+    task_keywords:
+      - "遥测"
+      - "telemetry"
+      - "监控"
+      - "monitor"
+      - "metrics"
+      - "指标"
+      - "logging"
+      - "日志"
+      - "observability"
+      - "可观测"
+      - "SLI"
+      - "SLO"
+      - "tracing"
+      - "链路追踪"
+    scope: pre_change
+    safety: "M"
+    priority: 86
+
+  # -- INF-016 Shared+Core --
+  - route_id: "R018"
+    blueprint_id: "MOD-INF-016"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/_shared/**"
+      - "src/zephyr/_core/**"
+    task_keywords:
+      - "共享"
+      - "shared"
+      - "core"
+      - "基础设施"
+      - "infrastructure"
+      - "公共"
+      - "common"
+      - "基类"
+      - "base class"
+      - "工具类"
+      - "utility"
+    scope: pre_change
+    safety: "M"
+    priority: 84
+
+  # -- INF-017 Code Dedup Engine --
+  - route_id: "R019"
+    blueprint_id: "MOD-INF-017"
+    blueprint_level: module
+    path_patterns:
+      - "src/zephyr/core/code_dedup.py"
+      - "src/zephyr/core/duplicate_detector.py"
+    task_keywords:
+      - "去重"
+      - "dedup"
+      - "重复代码"
+      - "duplicate"
+      - "重构"
+      - "refactor"
+      - "_now_iso"
+    scope: pre_change
+    safety: "L"
+    priority: 75
+
+# =========================================================================
+# §2  关键字兜底映射（无文件模式匹配时）
+# =========================================================================
+
+# 当 path_patterns 全部不匹配时，按 task_keywords 模糊匹配
+# 匹配算法：取 task_keywords 命中数最多的路由（tie-break: priority）
+
+fallback:
+  enabled: true
+  strategy: "keyword_count_then_priority"
+  min_keyword_hits: 1
+
+# =========================================================================
+# §3  Agent 差异化提示（Phase 3 起用）
+# =========================================================================
+# 根据当前 session 使用的 LLM 模型，加载不同深度的蓝图指引
+# GOV-AI-002 决策树 → Agent 能力矩阵 → 本节指定每份蓝图"给 DeepSeek 读全量 / 给 GLM 读架构约束"
+
+agent_hints:
+  enabled: false
+  activated_in: "Phase_3"
+  description: "Phase 3 启用后，不同模型读同一蓝图的不同节选"

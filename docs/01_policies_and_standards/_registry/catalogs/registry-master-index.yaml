@@ -1,0 +1,954 @@
+# ============================================================================
+# ZephyrAlpha 登记表总索引（Registry Master Index）— 唯一真源
+# ============================================================================
+# 版本: 1.3.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-005
+# doc_type: register
+#
+# 对标: ITIL SACM CMDB Master Index（所有 CI 登记的集中发现入口）
+#       + K8s API Discovery（/apis 端点列出所有可用资源组）
+#       + SchemaStore catalog.json（集中注册 + url + description）
+#
+# 用途: 一张表列出 ZephyrAlpha 项目中所有登记表/清单的——
+#       位置 / 管辖范围 / 维护方式 / 健康检查脚本 / pre-commit 门禁。
+#       任何 AI 或人类协作者仅凭读本文件即可找到任何登记表。
+#
+# 与 _registry/catalogs/ 的关系:
+#   - 本文件自身放在 catalogs/ 下（总索引是最上游的元登记表）
+#   - 部分被索引的登记表物理位置在其他目录（如 02_enterprise_architecture/）
+#     原因是它们与其他文件存在大量交叉引用，迁移需批量操作
+#   - 迁移计划见本文件 §migration_plan
+#
+# 自校验: scripts/governance/d3_metadata/validate_registry_index.py（Phase 1 落地）
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "登记表总索引（Registry Master Index）"
+version: "1.3.0"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_registries: 38
+depends_on:
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表——register 类型的合法字段定义"
+  - target: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    at: "full"
+    why: "登记表条目 frontmatter 须通过契约 VR 规则校验"
+  - target: GOV-DOC-002
+    at: "§5.1.2"
+    why: "目录结构规范——校准每个登记表的目标位置"
+
+# ============================================================================
+# 1. 登记表分类体系
+# ============================================================================
+# 按 ITIL CI 类型分类：
+#   governance_rule  — 治理规则登记
+#   document         — 文档/产物清单
+#   module           — 模块/蓝图/组件
+#   infrastructure   — 运行时基础设施
+#   dependency       — 跨模块依赖关系
+#   ai_asset          — AI 模型/Agent/Session
+#   risk              — 风险与合规
+#   operational       — 操作脚本/流程
+#   knowledge         — 知识库条目
+#   vocabulary        — 受控词表（辅助基础设施）
+#   contract          — 验证契约（辅助基础设施）
+# ============================================================================
+categories:
+  - id: governance_rule
+    label: "治理规则登记"
+    description: "登记治理规则文档、优先级、适用范围——规则体系的配置管理"
+  - id: document
+    label: "文档/产物清单"
+    description: "登记项目中所有需要创建的文档——文档体系的配置管理"
+  - id: module
+    label: "模块/蓝图"
+    description: "登记模块生命周期、蓝图深度评估——功能模块的配置管理"
+  - id: infrastructure
+    label: "运行时基础设施"
+    description: "登记事件总线/消息队列/数据库/缓存/存储等运行时组件"
+  - id: dependency
+    label: "跨模块依赖"
+    description: "登记模块间的 runtime/data/build/contract 四种依赖类型"
+  - id: ai_asset
+    label: "AI 资产"
+    description: "登记 AI 模型/Agent/Session/能力矩阵"
+  - id: risk
+    label: "风险与合规"
+    description: "登记 AI 操作风险与合规发现"
+  - id: operational
+    label: "操作脚本"
+    description: "登记脚本清单、健康状态、维度覆盖"
+  - id: knowledge
+    label: "知识库"
+    description: "登记 KMS 知识条目的索引元数据"
+  - id: vocabulary
+    label: "受控词表（辅助）"
+    description: "AI 消费的 YAML 词表——doc_type/status/rule_form 合法值"
+  - id: contract
+    label: "验证契约（辅助）"
+    description: "pre-commit/CI 消费的 YAML 契约——VR 规则定义"
+  - id: contract_tracking
+    label: "契约跟踪"
+    description: "登记 YAML 声明式承诺的实现状态——宣言 vs 实现的差距管理"
+  - id: meta_registry
+    label: "元登记表（自指）"
+    description: "登记表体系的元数据——总索引自身的自登记条目（对标 ITIL CMDB 自登记 / K8s API Server 自检）"
+
+
+# ============================================================================
+# 2. 登记表完整索引
+# ============================================================================
+# 字段说明:
+#   registry_id          唯一标识，格式 REG-{DOMAIN}-{NNN}
+#   name                 登记表名称
+#   category             所属分类（见 §1 categories）
+#   physical_path        物理文件路径（从  根开始）
+#   scope                管辖范围——这张表登记什么
+#   format               yaml | markdown | python_embedded
+#   maintenance          维护方式: manual | auto_generated | semi_auto
+#   generation_script    如果 auto_generated，指定生成脚本
+#   health_check_script  关联的自校验/健康检查脚本
+#   pre_commit_gate      关联的 pre-commit GATE 编号
+#   entry_count          当前登记条目数
+#   status               active | draft | planned | deprecated
+#   phase_created        在哪一期创建的
+# ============================================================================
+registries:
+
+  # ═══════════════════════════════════════════════════════════════
+  # A. 治理规则登记（governance_rule）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-GOV-001"
+    name: "规则文档主登记表"
+    category: governance_rule
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+    scope: "127 条治理规则文档——generate_rule_catalog.py 自动生成的全局规则/索引清单（files 键）"
+    format: yaml
+    maintenance: auto_generated
+    generation_script: "scripts/governance/d3_metadata/generate_rule_catalog.py"
+    health_check_script: "scripts/governance/d3_metadata/validate_architecture.py"
+    pre_commit_gate: "GATE-16"
+    entry_count: 127
+    status: active
+    phase_created: "Phase -2"
+
+  - registry_id: "REG-GOV-002"
+    name: "规则登记表（发现入口）"
+    category: governance_rule
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/rule-registry.md"
+    scope: "全部规则的集中发现入口——人类可读格式"
+    format: markdown
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 12
+    status: active
+    phase_created: "Phase 0a"
+
+  # ═══════════════════════════════════════════════════════════════
+  # B. 文档/产物清单（document）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-DOC-001"
+    name: "完整文档清单（已废弃）"
+    category: document
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml"
+    scope: "已废弃——由 document-metadata-index.yaml（auto-generated, 127 files, 97% 覆盖率）取代。本文件仅 25/131 文件（19% 覆盖率）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 25
+    status: deprecated
+    superseded_by: "document-metadata-index.yaml"
+    phase_created: "Phase 0a"
+
+  # ═══════════════════════════════════════════════════════════
+  # C. 模块/蓝图（module）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-MOD-001"
+    name: "模块ID登记表"
+    category: module
+    physical_path: "docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml"
+    scope: "66 个 module_id——MOD-/GOV-/DOM-/OPS-/PS- 五类编号池"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: "GATE-01"
+    entry_count: 68
+    status: active
+    last_verified: '2026-05-02'
+    phase_created: "Phase 0b"
+
+  - registry_id: "REG-MOD-002"
+    name: "模块生命周期登记表"
+    category: module
+    physical_path: "docs/03_modules/module-registry.yaml"
+    scope: "5 个模块——蓝图→施工→交付三阶段一条记录跟到底"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d3_metadata/validate_architecture.py"
+    pre_commit_gate: "GATE-16"
+    entry_count: 5
+    status: active
+    phase_created: "Phase 0b"
+    migration_note: "未来应迁入 _registry/catalogs/（与 REG-MOD-003 集中管理）。当前因 ~30 处跨文件引用暂不迁移——需批量更新后执行。"
+
+  - registry_id: "REG-MOD-003"
+    name: "蓝图深度评估登记表"
+    category: module
+    physical_path: "docs/03_modules/blueprint-registry.yaml"
+    scope: "6 个 approved 蓝图——施工进度% / 完整度% / 代际 / 功能域 / 依赖（含 2 个 retired 历史追溯）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d3_metadata/validate_blueprint_registry.py"
+    pre_commit_gate: null
+    entry_count: 6
+    status: active
+    phase_created: "Phase 0"
+    migration_note: "与 REG-MOD-002 一同迁入 _registry/catalogs/"
+
+  # ═══════════════════════════════════════════════════════════════
+  # D. AI 资产（ai_asset）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-AI-001"
+    name: "AI 自治权限登记表"
+    category: ai_asset
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
+    scope: "AI 自治权限——三层权限（immutable_core/human_gated/ai_modifiable）分配"
+    format: markdown
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d5_architecture/validate_authority_registry.py"
+    pre_commit_gate: "GATE-14"
+    entry_count: 8
+    status: active
+    phase_created: "Phase 0a"
+
+  - registry_id: "REG-AI-002"
+    name: "Embedding 模型登记表"
+    category: ai_asset
+    physical_path: "config/embedding_model_registry.yaml"
+    scope: "4 个 Embedding 模型——dimension/provider/max_length/selection_rules"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 4
+    status: active
+    phase_created: "Phase 0"
+
+  - registry_id: "REG-AI-003"
+    name: "AI 模型能力矩阵契约"
+    category: ai_asset
+    physical_path: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
+    scope: "AI 模型的能力边界——model/version/capabilities/limitations"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 9
+    status: active
+    phase_created: "Phase 0b"
+    migration_note: "应迁入 _registry/contracts/——是验证契约非治理文档"
+
+  - registry_id: "REG-AI-004"
+    name: "AI Session/Agent 登记表"
+    category: ai_asset
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml"
+    scope: "每次 AI session 的模型/任务/产出/决策摘要——问责链"
+    format: yaml
+    maintenance: semi_auto
+    generation_script: "scripts/hooks/auto-handoff-log.py"
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 0
+    status: draft
+    phase_created: "Phase 2（计划）"
+
+  # ═══════════════════════════════════════════════════════════════
+  # E. 风险与合规（risk）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-RSK-001"
+    name: "AI 风险登记表"
+    category: risk
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml"
+    scope: "AI 操作特有风险——幻觉/context leaking/prompt injection/模型退化/合规缺口"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 8
+    status: active
+    phase_created: "Phase 1"
+
+  # ═══════════════════════════════════════════════════════════════
+  # F. 运行时基础设施（infrastructure）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-INFRA-001"
+    name: "运行时基础设施登记表"
+    category: infrastructure
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml"
+    scope: "事件总线/消息队列/数据库连接/缓存/存储——每组件一条记录"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 8
+    status: active
+    phase_created: "Phase 1（计划）"
+
+  - registry_id: "REG-INFRA-002"
+    name: "测试标记依赖登记表"
+    category: infrastructure
+    physical_path: "pyproject.toml"
+    physical_path_format: toml
+    scope: "pytest markers — @pytest.mark.* 装饰器 ↔ pyproject.toml markers 双向同步（--strict-markers 强制要求）"
+    format: toml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d1_structure/validate_config_integrity.py（L10层）"
+    pre_commit_gate: null
+    entry_count: 4
+    status: active
+    phase_created: "Phase 2"
+    note: "LOW-12 根因修复——pyproject.toml markers 之前是未追踪的隐藏依赖，现在赋予登记表身份。添加 @pytest.mark 到测试时必须同步更新 pyproject.toml 的 [tool.pytest.ini_options] markers 列表。此条目在 validate_registry_master_index.py 中跳过 YAML 校验（TOML 格式需特殊处理）。"
+
+  - registry_id: "REG-INFRA-003"
+    name: "CI/CD 流水线登记表"
+    category: infrastructure
+    physical_path: ".github/workflows/"
+    scope: "GitHub Actions CI/CD 流水线——governance.yml 全量回归扫描（GATE-SQ/ADM/IDX/01~08/18 + run_all.py）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 1
+    status: active
+    phase_created: "Phase 2"
+    note: "对标 ITIL SACM：CI/CD pipeline 是基础设施配置项，必须注册到 CMDB。新增 workflow 文件时必须同步更新 entry_count。"
+
+  - registry_id: "REG-INFRA-004"
+    name: "Pre-commit 钩子配置登记表"
+    category: infrastructure
+    physical_path: ".pre-commit-config.yaml"
+    scope: "17 个 local hooks（GATE-01~03/06~07/11~18/SQ/ADM/IDX/COMMIT）+ 8 个第三方 hooks（trailing-whitespace/end-of-file-fixer/check-yaml/check-json/check-merge-conflict/detect-private-key/ruff/ruff-format）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 25
+    status: active
+    phase_created: "Phase 0a"
+    note: "对标 ITIL SACM：pre-commit 配置是基础设施配置项，必须注册到 CMDB。新增/删除 hook 时必须同步更新 entry_count + gate-registry.yaml。"
+
+  # ═══════════════════════════════════════════════════════════════
+  # G. 跨模块依赖（dependency）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-DEP-001"
+    name: "跨模块依赖登记表"
+    category: dependency
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"
+    scope: "模块间的 runtime/data/build/contract 四种依赖——含方向和强度"
+    format: yaml
+    maintenance: semi_auto
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 5
+    status: active
+    phase_created: "Phase 1（计划）"
+
+  - registry_id: "REG-DEP-002"
+    name: "脚本清单主登记表"
+    category: dependency
+    physical_path: "scripts/governance/script_manifest.yaml"
+    scope: "101 个治理脚本——dimensions/priority/timeout/args/description（run_all.py 和 status.py 的共享数据真源）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d1_structure/validate_config_integrity.py（L7层 manifest 对账）"
+    pre_commit_gate: null
+    entry_count: 101
+    status: active
+    phase_created: "Phase 0b"
+    note: "之前未在总索引中注册——原子事务遗漏（§6.2）。script_manifest.yaml 自身就是登记表，应出现在总索引中。"
+
+  # ═══════════════════════════════════════════════════════════════
+  # G2. 契约跟踪（contract_tracking）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-CTK-001"
+    name: "声明式契约跟踪登记表"
+    category: contract_tracking
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
+    scope: "5 条声明式契约——YAML 承诺 vs Python 实现的差距跟踪（CT-001~CT-005，4 条未解决，1 条已解决）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d1_structure/validate_config_integrity.py（L11层 契约-实现对账）"
+    pre_commit_gate: null
+    entry_count: 5
+    status: active
+    phase_created: "Phase 2"
+    note: "LOW-12 + F-01~F-05 根因修复——YAML 声明式承诺与 Python 实现之间的差距需要系统化追踪。任何修改 config/ YAML 的 implementation_status 时必须同步更新本登记表。"
+
+  # ═══════════════════════════════════════════════════════════════
+  # H. 操作脚本（operational）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-OPS-001"
+    name: "脚本健康与清单登记表"
+    category: operational
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml"
+    scope: "39 个治理脚本——维度映射/超时/最近运行/健康评分/退出码映射"
+    format: yaml
+    maintenance: semi_auto
+    generation_script: "scripts/governance/run_all.py"
+    health_check_script: "scripts/governance/status.py"
+    pre_commit_gate: "GATE-01~16"
+    entry_count: 39
+    status: active
+    phase_created: "Phase 1"
+
+  # ═══════════════════════════════════════════════════════════════
+  # I. 知识库（knowledge）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-KMS-001"
+    name: "知识条目登记表"
+    category: knowledge
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml"
+    scope: "KMS 知识条目索引骨架——KE 编号预留范围（4段）"
+    format: yaml
+    maintenance: semi_auto
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 4
+    status: draft
+    phase_created: "Phase 2"
+    note: "Phase 2 落地——本登记表为骨架，entries 列表为空，待 Phase 3 填充。reserved_ranges 有 4 段 KE 编号范围。"
+
+  # ═══════════════════════════════════════════════════════════════
+  # J. 任务卡（特殊——三套并行系统元层管理）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-TASK-001"
+    name: "任务卡元层登记表"
+    category: module
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml"
+    scope: "三套并行任务卡系统的元层管理——location/status/数量/迁移路径（systems 键）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d5_architecture/validate_authority_registry.py"
+    pre_commit_gate: "GATE-14"
+    entry_count: 5
+    status: active
+    phase_created: "Phase 0a"
+
+  # ═══════════════════════════════════════════════════════════════
+  # L. 字段定义（field_definition）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-FLD-001"
+    name: "Frontmatter 字段定义登记表"
+    category: field_definition
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+    scope: "40 个 frontmatter 字段——类型/必填性/枚举值/适用 doc_type/定义来源"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 40
+    status: active
+    phase_created: "Phase 1"
+    note: "VR-005 根因修复——建立唯一字段定义 SSoT。Phase 1 补齐 validate_frontmatter_field_registry.py"
+
+  # ═══════════════════════════════════════════════════════════════
+  # M. 目录结构（physical_structure）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-DIR-001"
+    name: "项目目录登记表"
+    category: physical_structure
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml"
+    scope: "82 个目录——职责声明/父目录/index.md 存在性/关联 module_id"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 86
+    status: active
+    phase_created: "Phase 1"
+    note: "Phase 1 补齐 validate_directory_registry.py——扫描实际目录 vs 登记表漂移检测"
+
+  # ═══════════════════════════════════════════════════════════════
+  # N. 质量门禁（quality_gate）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-GATE-001"
+    name: "GATE 门禁登记表"
+    category: quality_gate
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml"
+    scope: "42 个门禁分 5 大类——pre-commit(17)/KMS管道(5)/架构评审(5)/准入(3)/VC会话(4组12项)"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 34
+    status: active
+    phase_created: "Phase 1"
+
+  # ═══════════════════════════════════════════════════════════════
+  # O. 架构决策（architecture_decision）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-ADR-001"
+    name: "ADR 活跃状态登记表"
+    category: architecture_decision
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/adr-status-registry.yaml"
+    scope: "41 个 ADR——27 accepted/1 superseded/1 skipped/7 reserved"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "GATE-06（check_architecture_gates.py --gate 06）"
+    pre_commit_gate: "GATE-06"
+    entry_count: 41
+    status: deprecated
+    phase_created: "Phase 1"
+    deprecated_since: "2026-04-27"
+    note: "ADR 体系已于 2026-04-27 冻结废弃——不再新增、不再引用。替代机制：MOD-KB-001 §3.9.5 三层决策记录模型（L1=Owner画像 Track C / L2=AGENTS.md §10 历史决策 / L3=KE A2 architecture_decision）"
+
+  # ═══════════════════════════════════════════════════════════════
+  # P. 元登记表（meta_registry）——自指条目
+  # ═══════════════════════════════════════════════════════════════
+  # 对标: ITIL SACM → CMDB 自登记（CMDB 自身也是 CI，须有 CI ID）
+  #       K8s → API Server 自检端点（/healthz /metrics）
+  #       本条目 = 总索引给自己发的身份证——"发现层不是法外之地"
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-META-000"
+    name: "登记表总索引（自登记条目）"
+    category: meta_registry
+    physical_path: "docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml"
+    scope: "本文件自身的 registries 列表——38 张登记表（34 active / 2 draft / 2 deprecated）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d3_metadata/validate_registry_index.py（Phase 1 落地）"
+    pre_commit_gate: null
+    entry_count: 38
+    status: active
+    phase_created: "Phase 2"
+    note: "自指条目——总索引追踪 38 张登记表（含自身）。version 字段必须与 changelog 最新条目一致；categories 必须覆盖项目中所有实际使用的 doc_type 值。违反 = 自指元数据漂移（A-3/D-1 根因修复）。"
+
+  # ═══════════════════════════════════════════════════════════════
+  # K. 受控词表 + 验证契约（辅助基础设施）
+  # ═══════════════════════════════════════════════════════════════
+
+  - registry_id: "REG-VOC-001"
+    name: "doc_type 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml"
+    scope: "27 种 doc_type 合法值（全项目完整词表：01_policies_and_standards/ 子集 13 值 + 其他目录 14 值）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
+    pre_commit_gate: "GATE-15"
+    entry_count: 27
+    status: active
+    phase_created: "Phase 0a"
+
+  - registry_id: "REG-VOC-002"
+    name: "rule_form 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/rule_form-vocabulary.yaml"
+    scope: "4 种 rule_form 合法值（declarative/procedural/data/structural）+ 13条 mapping_rules"
+    format: yaml
+    maintenance: manual
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 13
+    status: active
+    phase_created: "Phase 0a"
+    note: "entry_count=13 匹配 _auto_detect_entry_key 检测到的 mapping_rules 列表大小（13条 doc_type→rule_form 映射规则）。"
+
+  - registry_id: "REG-VOC-003"
+    name: "status 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/status-vocabulary.yaml"
+    scope: "3 种 status 合法值（draft/active/deprecated）+ 6条 deprecated_values"
+    format: yaml
+    maintenance: manual
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 6
+    status: active
+    phase_created: "Phase 0a"
+    note: "entry_count=6 匹配 _auto_detect_entry_key 检测到的 deprecated_values 列表大小（6个已否决的 status 值）。"
+
+  - registry_id: "REG-VOC-004"
+    name: "ttl 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/ttl-vocabulary.yaml"
+    scope: "5 种 ttl 合法值（permanent/periodic_review_90d/30d/7d/session）"
+    format: yaml
+    maintenance: manual
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 5
+    status: active
+    phase_created: "Phase 1"
+    note: "2026-05-03 注册。"
+
+  - registry_id: "REG-VOC-005"
+    name: "layer 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/layer-vocabulary.yaml"
+    scope: "16 种 layer 合法值（l00~l13 + shared + cross_layer）"
+    format: yaml
+    maintenance: manual
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 16
+    status: active
+    phase_created: "Phase 1"
+    note: "2026-05-03 创建。canonical SSoT 派生自 architecture-model/layers/lXX-*.yaml。"
+
+  - registry_id: "REG-VOC-006"
+    name: "classification 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/classification-vocabulary.yaml"
+    scope: "2 种 classification 合法值（public / confidential）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 2
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-VOC-007"
+    name: "language 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/language-vocabulary.yaml"
+    scope: "3 种 language 合法值（zh / en / zh_en）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 3
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-VOC-008"
+    name: "created_by 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/created_by-vocabulary.yaml"
+    scope: "3 种 created_by 合法值（human_plus_agent / agent / human）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 3
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-VOC-009"
+    name: "scope 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/scope-vocabulary.yaml"
+    scope: "4 种 scope 合法值（global / domain / layer / module）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 4
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-VOC-010"
+    name: "stability 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/stability-vocabulary.yaml"
+    scope: "4 种 stability 合法值（frozen / stable / evolving / volatile）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 4
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-VOC-011"
+    name: "verifiability 受控词表"
+    category: vocabulary
+    physical_path: "docs/01_policies_and_standards/_registry/vocabularies/verifiability-vocabulary.yaml"
+    scope: "3 种 verifiability 合法值（automated / manual / inspection）"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: null
+    pre_commit_gate: null
+    entry_count: 3
+    status: active
+    phase_created: "Phase 2"
+
+  - registry_id: "REG-CTR-001"
+    name: "架构合规契约"
+    category: contract
+    physical_path: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    scope: "VR-001~VR-011 验证规则——目录合规/frontmatter必填/doc_type↔rule_form一致性"
+    format: yaml
+    maintenance: manual
+    generation_script: null
+    health_check_script: "scripts/governance/d3_metadata/validate_architecture.py"
+    pre_commit_gate: "GATE-16"
+    entry_count: 11
+    status: active
+    phase_created: "Phase 0a"
+
+
+# ============================================================================
+# 3. 快速查询——按分类过滤
+# ============================================================================
+# AI 使用方式:
+#   1. 先读本文件 §1 → 了解分类体系
+#   2. 按 category 过滤 registries → 定位目标登记表
+#   3. 读目标登记表的 physical_path → 获取详细数据
+#
+# 示例:
+#   查所有模块登记表 → 过滤 category=module → REG-MOD-001/002/003
+#   查 AI 资产 → 过滤 category=ai_asset → REG-AI-001/002/003/004
+# ============================================================================
+
+quick_lookup:
+  by_category:
+    governance_rule: ["REG-GOV-001", "REG-GOV-002"]
+    document: ["REG-DOC-001"]
+    module: ["REG-MOD-001", "REG-MOD-002", "REG-MOD-003", "REG-TASK-001"]
+    infrastructure: ["REG-INFRA-001", "REG-INFRA-002", "REG-INFRA-003", "REG-INFRA-004"]
+    dependency: ["REG-DEP-001", "REG-DEP-002"]
+    ai_asset: ["REG-AI-001", "REG-AI-002", "REG-AI-003", "REG-AI-004"]
+    risk: ["REG-RSK-001"]
+    operational: ["REG-OPS-001"]
+    knowledge: ["REG-KMS-001"]
+    vocabulary: ["REG-VOC-001", "REG-VOC-002", "REG-VOC-003", "REG-VOC-004", "REG-VOC-005", "REG-VOC-006", "REG-VOC-007", "REG-VOC-008", "REG-VOC-009", "REG-VOC-010", "REG-VOC-011"]
+    contract: ["REG-CTR-001"]
+    contract_tracking: ["REG-CTK-001"]
+    meta_registry: ["REG-META-000"]
+    field_definition: ["REG-FLD-001"]
+    physical_structure: ["REG-DIR-001"]
+    quality_gate: ["REG-GATE-001"]
+    architecture_decision: ["REG-ADR-001"]
+
+  by_status:
+    active: 34
+    draft: 2
+    deprecated: 2
+
+  by_format:
+    yaml: 35
+    markdown: 2
+    toml: 1
+    python_embedded: 0
+
+  health_check_coverage:
+    covered: 13
+    uncovered: 25
+    uncovered_ids:
+      - "REG-GOV-002"   # 规则登记表.md
+      - "REG-MOD-001"   # 模块ID登记表
+      - "REG-AI-002"    # Embedding模型登记表
+      - "REG-AI-003"    # AI模型能力矩阵
+      - "REG-AI-004"    # Session/Agent登记表
+      - "REG-RSK-001"   # AI风险登记表
+      - "REG-INFRA-001" # 基础设施登记表
+      - "REG-DEP-001"   # 跨模块依赖
+      - "REG-KMS-001"   # 知识条目登记表
+      - "REG-FLD-001"   # 字段定义登记表
+      - "REG-DIR-001"   # 目录登记表
+      - "REG-GATE-001"   # GATE登记表
+      - "REG-VOC-002"    # rule_form受控词表
+      - "REG-VOC-003"    # status受控词表
+
+
+# ============================================================================
+# 4. 迁移计划
+# ============================================================================
+# 部分登记表当前不在 _registry/catalogs/ 下，原因是：
+#   - 与其他文件存在大量交叉引用（如 module-registry.yaml 被 ~30 处引用）
+#   - 与代码紧密耦合（如 SCRIPT_REGISTRY 在 run_all.py 中）
+#   - 架构模型 YAML 有专用目录（02_enterprise_architecture/.../architecture-model/）
+#
+# 迁移条件：
+#   1. 所有交叉引用已确认并同步更新
+#   2. _registry/catalogs/index.md 已更新排除规则
+#   3. validate_architecture.py 已适配新路径
+#   4. 所有 pre-commit GATE 配置已更新 file glob
+# ============================================================================
+migration_plan:
+  - target: "REG-MOD-002（module-registry.yaml）"
+    from: "docs/03_modules/module-registry.yaml"
+    to: "docs/01_policies_and_standards/_registry/catalogs/module-registry.yaml"
+    blockers:
+      - "docs/03_modules/index.md（~10 处引用）"
+      - "docs/03_modules/l01_infrastructure/index.md（2 处引用）"
+      - "docs/03_modules/l01_infrastructure/script-system/blueprint.md（3 处绝对路径引用）"
+      - "docs/03_modules/l01_infrastructure/task-card-kms/blueprint.md（1 处引用）"
+    estimated_effort: "批量 SearchReplace x6 文件"
+    phase: "Phase 1"
+
+  - target: "REG-MOD-003（blueprint-registry.yaml）"
+    from: "docs/03_modules/blueprint-registry.yaml"
+    to: "docs/01_policies_and_standards/_registry/catalogs/blueprint-registry.yaml"
+    blockers:
+      - "blueprint-registry.yaml §L18-21 自身引用了 module-registry.yaml 的相对路径"
+      - "check_frontmatter_metadata.py 扫描 YAML 时发现缺少 frontmatter"
+    estimated_effort: "与 REG-MOD-002 一并迁移 + 修复 frontmatter 告警"
+    phase: "Phase 1"
+
+  - target: "REG-AI-003（model-capability-contract.yaml）"
+    from: "docs/01_policies_and_standards/governance/ai/model-capability-contract.yaml"
+    to: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
+    blockers: []
+    estimated_effort: "直接迁移"
+    phase: "Phase 1"
+
+  - target: "REG-OPS-001（script-health-registry.yaml — 从 run_all.py 代码中提取）"
+    from: "scripts/governance/run_all.py → script_manifest.yaml（YAML 登记表）"
+    to: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml"
+    blockers:
+      - "run_all.py 的 SCRIPT_REGISTRY 被 run_dimension() 函数消费"
+      - "提取后 run_all.py 需改为 YAML 文件读取模式"
+    estimated_effort: "中等——需修改 Python 代码 + 保持向后兼容"
+    phase: "Phase 2"
+
+
+# ============================================================================
+# 5. 汇总统计
+# ============================================================================
+summary:
+  total_registries: 38
+  active: 34
+  draft: 2
+  deprecated: 2
+  by_maintenance:
+    manual: 32
+    semi_auto: 4
+    auto_generated: 1
+    python_embedded: 0
+    planned_auto: 1  # REG-GOV-001 → Phase 2 generate_rule_catalog.py（已落地为 auto_generated）
+
+  health_compliance:
+    covered_pct: 34    # 13/38 有健康检查
+    target_pct: 80    # Phase 2 目标
+    critical_gap:
+      - "REG-RSK-001（AI风险登记表——无校验脚本）"
+      - "REG-INFRA-001（基础设施登记表——无校验脚本）"
+      - "REG-DEP-001（依赖登记表——无校验脚本）"
+
+  category_completeness:
+    covered_categories: 15  # 15/15 ITIL CI 类型 + 扩展类型全部覆盖
+    note: "全部 ITIL SACM 要求的 CI 类型均有对应的登记表。新增 4 个扩展分类：字段定义/物理结构/质量门禁/架构决策"
+
+
+# ============================================================================
+# 6. 变更记录
+# ============================================================================
+changelog:
+  - version: "1.3.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "新增 REG-META-000: 总索引自登记条目（meta_registry 分类）——对标 ITIL CMDB 自登记"
+      - "新增 meta_registry 分类——元登记表（自指）"
+      - "新增 rule 分类——应用配置规则（区别于 governance_rule）"
+      - "total_registries: 27→28, active: 25→26, yaml: 24→25"
+      - "version: 1.0.0→1.2.0（修复 A-3 版本漂移）"
+
+  - version: "1.2.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "新增 REG-CTK-001: 声明式契约跟踪登记表（declarative-contract-tracker.yaml）"
+      - "新增 contract_tracking 分类——YAML 承诺 vs Python 实现的差距管理"
+      - "total_registries: 26→27, active: 24→25, yaml: 23→24, manual: 22→23"
+      - "健康检查覆盖率: 46%→48%（13/27）"
+      - "根因修复——第 2 层（契约跟踪表）：解决 F-01~F-05 暴露的声明式契约无法自动发现的系统性缺陷"
+
+  - version: "1.1.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "新增 REG-INFRA-002: 测试标记依赖登记表（pyproject.toml markers → LOW-12 根因修复）"
+      - "新增 REG-DEP-002: 脚本清单主登记表（script_manifest.yaml 首次在总索引中注册，之前属原子事务遗漏 §6.2）"
+      - "total_registries: 24→26, active: 22→24, yaml: 22→23, toml: +1"
+      - "健康检查覆盖率: 42%→46%（12/26）"
+
+  - version: "1.0.2"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "深度审计修复——status词汇合规 + doc_type词汇合规"
+      - "REG-AI-004 / REG-KMS-001: status planned→draft（status-vocabulary 已废弃 planned）"
+      - "quick_lookup + summary: planned 统计替换为 draft 统计"
+      - "meta/terminology-mapping.md: doc_type standard→terminology（vocabulary 新增此类型）"
+
+  - version: "1.0.1"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "审计修复——所有汇总数字同步为实际值（§6.2 原子事务：4张新登记表入库时未同步更新索引数字）"
+      - "total_registries: 21→24, active: 20→22, planned: 1→2"
+      - "yaml: 17→22, markdown: 2→2, python_embedded: 1→0"
+      - "健康检查: 9/12→10/14, covered_pct: 43→42"
+      - "entry_count: REG-DOC-001 25→22, REG-MOD-001 62→66"
+      - "scope: REG-MOD-001 '55 个'→'66 个'"
+      - "uncovered_ids: +REG-VOC-002, +REG-VOC-003"
+      - "by_maintenance: manual 16→20, semi_auto 3→4"
+
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "初始创建——登记 24 张登记表（22 active + 2 planned）"
+      - "覆盖 15 个分类体系的完整索引"
+      - "4 个迁移计划登记（物理分散文件逐步集中到 _registry/catalogs/）"
+      - "健康检查覆盖率 42%，标注 3 个 critical gap"
+      - "快速查询 §3 按 category/status/format 三重索引"

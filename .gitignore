@@ -1,19 +1,17 @@
-# ============================================
-# 清风量化系统 .gitignore 配置
-# 版本: v2.0 (2026-04-01)
-# 维护: Audit Sentinel
+﻿# ============================================
+# ZephyrAlpha v2.0 .gitignore
 # ============================================
 
-# --------------------------
-# Python 运行时和编译文件
-# --------------------------
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
 
-# 包构建和分发
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
 build/
 develop-eggs/
 dist/
@@ -30,196 +28,98 @@ wheels/
 .installed.cfg
 *.egg
 
-# --------------------------
-# 虚拟环境
-# --------------------------
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Environments
+.env
+.env.local
+.env.*.local
+.env.qmt
+.venv
+env/
 venv/
 ENV/
-env/
-.venv/
+env.bak/
+venv.bak/
+.secrets/
+*.key
+*.pem
+*.cert
 
-# --------------------------
-# IDE 和编辑器文件
-# --------------------------
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# --------------------------
-# 数据文件（不提交到版本控制）
-# --------------------------
-data/raw/
-data/processed/
-data/factors/
-data/signals/
-data/orders/
-data/backtest_results/
-data/reports/
-logs/
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# SQLite
 *.db
-*.parquet
-A股数据/
+*.db-wal
+*.db-shm
+*.sqlite3
 
-# --------------------------
-# 环境变量和密钥（绝对不提交！）
-# --------------------------
-.env
-.env.local
-.env.*.local
-# QMT 账号密码配置（行尾注释会破坏上一行匹配，故单独一行）
-.env.qmt
-.secrets/
-*.key
-*.pem
-*.cert
-
-# --------------------------
-# 操作系统生成文件
-# --------------------------
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# --------------------------
-# 测试和覆盖率文件
-# --------------------------
-.pytest_cache/
-.mypy_cache/
-.coverage
-.coverage.*
-htmlcov/
-.tox/
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-
-# --------------------------
-# Python 代码质量工具
-# --------------------------
-.pylint.d/
-.flake8
-.mccabe
-*.cache
-.cache/
-
-# --------------------------
-# Jupyter Notebook 缓存
-# --------------------------
-.ipynb_checkpoints/
-*.ipynb_checkpoints/
-
-# --------------------------
-# 开发工具
-# --------------------------
-.trae/  # Trae IDE 工作区（保留）
-
-# --------------------------
-# Docker
-# --------------------------
-.dockerignore
-
-# --------------------------
-# 临时文件和备份文件
-# --------------------------
-*~
-*.bak
-*.tmp
-*.temp
-*.log
-*.log.*
-
-# --------------------------
-# 本地工具缓存（勿入库）
-# --------------------------
-.audit_cache/
-
-# QMT 下载队列目录误出现在仓库根时（目录名常为资金账号）
-8886156677/
-8887871993/
-
-# --------------------------
-# 项目特定忽略规则
-# --------------------------
-# 因子库中间文件
-docs/02_FACTOR_LIBRARY/05_BACKTEST/value_factors/  # 因子回测结果
-docs/02_FACTOR_LIBRARY/05_BACKTEST/ic_reports/     # IC分析报告
-docs/02_FACTOR_LIBRARY/05_BACKTEST/strategy_reports/ # 策略回测报告
-
-# 审计报告缓存（可定期清理）
-docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/*.tmp
-
-# --------------------------
-# 外部文档资源（大文件）
-# --------------------------
-# 注意：外部PDF文档已移动到 docs/00_RESOURCES/
-# 该目录下的PDF文件较大，但作为参考文档需要保留
-# 如需节省空间，可考虑外部存储
-
-# ============================================
-# 规则说明：
-# 1. 以 / 结尾表示忽略整个目录
-# 2. * 表示通配符
-# 3. ! 表示例外（不忽略）
-# 4. 环境变量文件必须忽略，防止密钥泄露
-# ============================================
-
-# --------------------------
-# AI 生成物隔离（2026-04-16 新增）
-# Write Gate Layer 3：阻断 AI 工具无管制产物入库
-# --------------------------
-
-# 批量扫描产物 — AI 工具应写入 .audit_cache/ 而非 docs/
-docs/09_AUDIT/REPORTS/ARCHIVE/openclaw-*/
-docs/09_AUDIT/REPORTS/ARCHIVE/openclaw-l2-*
-
-# 通用 AI 工具临时缓存目录（任何工具均可写入）
-.audit_cache/
+# Project-specific runtime artifacts
+.runtime/
 .trae_cache/
 
-# CI 构建产物（Actions artifacts 不入库）
-.github/artifacts/
-
-# 任何脚本生成的中间产物（后缀标记）
+# AI Generated files
 *.generated.md
 *.generated.json
 *.scan_result.json
 *.tmp.md
 *.tmp.json
 
-# --------------------------
-# STATE 目录临时扫描产物（防止积累）
-# 只保留关键文件（LATEST, MASTER, INDEX, DECISION 等）
-# --------------------------
-# 历史 SENTINEL_L1 扫描结果（保留 latest）
-docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_*.json
-!docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_LATEST.json
+# Temp and backup
+*.bak
+*.tmp
+*.temp
+*.log
+*.log.*
 
-# 历史 SNAPSHOT 文件
-docs/09_AUDIT/STATE/*_SNAPSHOT_*.md
-docs/09_AUDIT/STATE/*_SNAPSHOT_*.json
+# Legacy tree (DO NOT check in)
+_DO_NOT_USE_old_tree/
 
-# 历史 SCAN 文件
-docs/09_AUDIT/STATE/*_SCAN_*.md
-docs/09_AUDIT/STATE/*_SCAN_*.json
-!docs/09_AUDIT/STATE/sentinel-l1-scan-latest.md
+# Non-project auxiliary directories
+临时工作区/
+模块候选池/
 
-# 历史 ANALYSIS 文件
-docs/09_AUDIT/STATE/*_ANALYSIS_*.md
-docs/09_AUDIT/STATE/*_ANALYSIS_*.json
-
-# 历史 AUDIT 报告（旧日期）
-docs/09_AUDIT/STATE/*-2026040[0-9]-*.md
-docs/09_AUDIT/STATE/*_2026040[0-9]_*.json
-
-# 多版本文件（ROUND2+, v2+）
-docs/09_AUDIT/STATE/*ROUND*.md
-docs/09_AUDIT/STATE/*ROUND*.json
-docs/09_AUDIT/STATE/*_V[0-9]_*.json
-docs/09_AUDIT/STATE/*-v[0-9]-*.md
+# Migration artifact directories
+_backup_
+_migration_conflict_backup/

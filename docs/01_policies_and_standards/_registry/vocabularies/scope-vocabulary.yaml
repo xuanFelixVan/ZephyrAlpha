@@ -1,0 +1,27 @@
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-009
+version: "1.0.0"
+title: "scope 受控词表"
+status: active
+vocabulary_name: scope
+total_values: 4
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "PS-STD-001"
+    relationship: "scope 合法值定义"
+    at: "§2.4"
+depends_on:
+  - target: PS-STD-001
+    at: "§2.5"
+    why: "scope 合法值规则定义真源"
+
+values:
+  - value: global
+    definition: "全局——对所有文件生效"
+  - value: domain
+    definition: "域级——对某个治理域生效"
+  - value: layer
+    definition: "层级——对某个架构层生效"
+  - value: module
+    definition: "模块级——对特定模块生效"

@@ -1,0 +1,65 @@
+schema_version: "2.0"
+partition:
+  id: l03
+  name: Signal Generation
+  layer_position: 3
+  runtime_plane: warm
+  view_file: 03-application-architecture.md
+  view_section: "§4.1 l03_signal_generation/"
+
+modules:
+
+  - id: l03-sentiment
+    name: Sentiment Analysis
+    submodule_path: src/zephyr/l03_signal_generation/sentiment/
+    status: planned
+    priority: P2
+    runtime_plane: warm
+    description: 新闻与社交媒体舆情分析；实时 Warm 推理，历史批量分析 Cold
+    interfaces: []
+    adr_ref: []
+    plane_note: 在线舆情 Warm；历史批量舆情 Cold（l03-sentiment-batch）
+
+  - id: l03-signals-default
+    name: Composite Signal Construction
+    submodule_path: src/zephyr/l03_signal_generation/signals/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: 复合信号构建与提取；因子信号合成，生成投资信号
+    interfaces:
+      - contract_id: CTR-001
+        role: consumer
+        description: 消费 NormalizedMarketData 作为信号构建的原始输入
+      - contract_id: CTR-002
+        role: consumer
+        description: 消费 FactorSignal 进行复合信号合成
+    adr_ref: []
+    plane_note: 默认 Warm；T1 后低延迟信号路径扩展 signals_hot.py 走 Hot
+
+  - id: l03-predictions
+    name: Predictive Model Inference
+    submodule_path: src/zephyr/l03_signal_generation/predictions/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: 预测模型推理与信号输出；调用 L11 ML 平台 serving 接口获取 AI 推理信号
+    interfaces: []
+    adr_ref: []
+
+summary:
+  total: 3
+  by_status:
+    planned: 3
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 0
+    P1: 2
+    P2: 1
+    P3: 0
+  by_runtime_plane:
+    hot: 0
+    warm: 3
+    cold: 0

@@ -1,0 +1,188 @@
+# ============================================================================
+# ZephyrAlpha 全系统路径地图 — 唯一真源（System Pathway Registry SSoT）
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-04 | owner: ZephyrAlpha-Owner
+#
+# 对标: Google Monorepo 自动索引（Piper/CitC 文件级可见性）
+#       + ITIL SACM CMDB（每个 CI 一条记录，含路径/依赖/状态）
+#
+# 用途: 全系统所有模块的文件路径汇总表。
+#       一张表看清每个 module 的源码/蓝图/测试/配置文件的磁盘位置。
+#
+# 生成策略:
+#   - 手工种子（本文件的第一版）
+#   - 后续由 scripts/generate_pathway_registry.py 扫描各模块蓝图的 §路径索引 章节自动生成
+#   - CI pipeline 在每次 push 时校验本文件与自动生成结果的一致性
+#
+# 容量: 每模块一行，1500 模块 = 1500 行 ≈ 50KB。脚本 1 秒可生成。
+#
+# AI 使用方式:
+#   1. 按 layer 过滤 → 找到目标层级的所有模块路径
+#   2. 按 module_id 定位 → 找到指定模块的全部文件路径
+#   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint-registry.yaml 获取完整模块信息
+# ============================================================================
+
+registry:
+  version: "1.0.0"
+  created: "2026-05-04"
+  generation: "manual_seed"
+  auto_generated_by: "scripts/generate_pathway_registry.py"
+  last_updated: "2026-05-04"
+  total_modules: 19
+  note: "当前仅 L01 infrastructure 层有模块。后续各层模块建好后，运行 generate_pathway_registry.py 自动更新。"
+
+pathways:
+  # ---- L01 Infrastructure ----
+  - module_id: "MOD-INF-001"
+    name: "capacity-assurance"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md"
+    source_dir: "src/zephyr/capacity/"
+    test_dir: "tests/unit/capacity/"
+    config: "config/capacity_budget.yaml"
+
+  - module_id: "MOD-INF-002"
+    name: "runtime-integration"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/runtime-integration/blueprint.md"
+    source_dir: "src/zephyr/runtime/"
+    test_dir: "tests/unit/runtime/"
+    config: "config/runtime.yaml"
+
+  - module_id: "MOD-INF-004"
+    name: "vibe-coding-pipelines"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/vibe-coding-pipelines/blueprint.md"
+    status: "retired"
+    superseded_by: "MOD-INF-006"
+    note: "已退役，设计已迁入 MOD-INF-006 task-system"
+
+  - module_id: "MOD-INF-005"
+    name: "script-system"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/script-system/blueprint.md"
+    source_dir: "scripts/governance/"
+    test_dir: "tests/unit/scripts/"
+    config: ""
+
+  - module_id: "MOD-INF-006"
+    name: "task-system"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/task-system/blueprint.md"
+    source_dir: "src/zephyr/task/"
+    test_dir: "tests/unit/task/"
+    config: ""
+
+  - module_id: "MOD-INF-007"
+    name: "gate-engine"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/gate-engine/blueprint.md"
+    source_dir: "src/zephyr/gates/"
+    test_dir: "tests/unit/gates/"
+    config: ""
+
+  - module_id: "MOD-INF-008"
+    name: "context-engine"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/context-engine/blueprint.md"
+    source_dir: "src/zephyr/context/"
+    test_dir: "tests/unit/context/"
+    config: "config/context.yaml"
+
+  - module_id: "MOD-INF-009"
+    name: "pipeline"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/pipeline/blueprint.md"
+    source_dir: "src/zephyr/pipeline/"
+    test_dir: "tests/unit/pipeline/"
+    config: "config/pipeline.yaml"
+
+  - module_id: "MOD-INF-010"
+    name: "database"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/database/blueprint.md"
+    source_dir: "src/zephyr/database/"
+    test_dir: "tests/unit/database/"
+    config: "config/database.yaml"
+
+  - module_id: "MOD-INF-011"
+    name: "vector-memory"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/vector-memory/blueprint.md"
+    source_dir: "src/zephyr/vector_memory/"
+    test_dir: "tests/unit/vector_memory/"
+    config: "config/vector_memory.yaml"
+
+  - module_id: "MOD-INF-012"
+    name: "feedback-loop"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/feedback-loop/blueprint.md"
+    source_dir: "src/zephyr/feedback/"
+    test_dir: "tests/unit/feedback/"
+    config: ""
+
+  - module_id: "MOD-INF-013"
+    name: "mcp-servers"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/mcp-servers/blueprint.md"
+    source_dir: "src/zephyr/mcp/"
+    test_dir: "tests/unit/mcp/"
+    config: "config/mcp.yaml"
+
+  - module_id: "MOD-INF-014"
+    name: "llm-security"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/llm-security/blueprint.md"
+    source_dir: "src/zephyr/llm_security/"
+    test_dir: "tests/unit/llm_security/"
+    config: ""
+
+  - module_id: "MOD-INF-015"
+    name: "system-telemetry"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md"
+    source_dir: "src/zephyr/telemetry/"
+    test_dir: "tests/unit/telemetry/"
+    config: "config/telemetry.yaml"
+
+  - module_id: "MOD-INF-016"
+    name: "shared-core"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/shared-core/blueprint.md"
+    source_dir: "src/zephyr/shared/"
+    test_dir: "tests/unit/shared/"
+    config: "config/shared.yaml"
+
+  - module_id: "MOD-INF-017"
+    name: "code-dedup-engine"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/code-dedup-engine/blueprint.md"
+    source_dir: "src/zephyr/dedup/"
+    test_dir: "tests/unit/dedup/"
+    config: ""
+
+  - module_id: "MOD-INF-018"
+    name: "task-card-kms"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/task-card-kms/blueprint.md"
+    source_dir: "src/zephyr/kms/"
+    test_dir: "tests/unit/kms/"
+    config: ""
+
+  - module_id: "MOD-KB-001"
+    name: "knowledge-base"
+    layer: "L01"
+    blueprint: "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"
+    source_dir: "src/zephyr/kb/"
+    test_dir: "tests/unit/"
+    config: "config/embedding_model_registry.yaml"
+
+  # ---- Master Blueprint ----
+  - module_id: "MOD-MASTER-001"
+    name: "_master-blueprint"
+    layer: "cross_layer"
+    blueprint: "docs/03_modules/_master-blueprint/blueprint.md"
+    source_dir: ""
+    test_dir: ""
+    config: "docs/03_modules/_master-blueprint/blueprint.md"
+    note: "集成契约 SSoT——非代码模块，无源码目录"

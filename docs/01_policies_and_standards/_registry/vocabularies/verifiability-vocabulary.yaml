@@ -1,0 +1,25 @@
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-011
+version: "1.0.0"
+title: "verifiability 受控词表"
+status: active
+vocabulary_name: verifiability
+total_values: 3
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "_registry/vocabularies/rule_form-vocabulary.yaml"
+    relationship: "verifiability 字段定义与 rule_form 体系对齐"
+    at: "§2.5"
+depends_on:
+  - target: PS-STD-001
+    at: "§2.5"
+    why: "verifiability 合法值规则定义真源"
+
+values:
+  - value: automated
+    definition: "可自动化验证——CI 脚本可完整校验"
+  - value: manual
+    definition: "需人工验证——无自动化校验"
+  - value: inspection
+    definition: "需审查——人工+工具辅助"

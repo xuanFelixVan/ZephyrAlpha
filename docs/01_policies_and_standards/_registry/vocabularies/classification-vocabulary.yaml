@@ -1,0 +1,26 @@
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-006
+version: "1.0.0"
+title: "classification 受控词表"
+status: active
+vocabulary_name: classification
+total_values: 2
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "PS-STD-001"
+    relationship: "classification 合法值定义"
+    at: "§2.4"
+depends_on:
+  - target: PS-STD-001
+    at: "§4.6"
+    why: "classification 二分法规则定义真源"
+
+values:
+  - value: public
+    definition: "公开——可被项目内外任意访问"
+    forbidden_for: []
+
+  - value: confidential
+    definition: "机密——仅限项目成员访问"
+    forbidden_for: []
