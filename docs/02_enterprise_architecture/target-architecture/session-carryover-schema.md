@@ -401,7 +401,7 @@ class SessionCarryover(BaseModel):
 
 > 如果 Blocker 是"需要用户决策"，提供开场白模板，降低用户认知负担。
 
-示例：`"上次 Session 卡在 ChromaDB 并发写入的选择题：A) 加 filelock；B) 等 Phase 3 服务化。请选择。"`
+示例：`"上次 Session 卡在 ChromaDB 并发写入的选择题：A) 加 filelock；B) 等 beta 服务化。请选择。"`
 
 #### `HallucinationEvent.mitigation_applied`
 
@@ -546,7 +546,7 @@ class ContextEngineProtocol(Protocol):
 ├── session_carryover.json              # 主文件（最新一次 Session 结束时）
 ├── session_carryover.json.tmp          # 原子写入的临时文件（正常情况不应存在）
 ├── session_carryover.corrupted.<ts>.json  # 损坏归档
-└── history/                             # （Phase 2+ 可选）历史 carryover 归档
+└── history/                             # （beta+ 可选）历史 carryover 归档
     └── sess-20260424-153000-a1b2c3.json
 ```
 
@@ -620,7 +620,7 @@ class ContextEngineProtocol(Protocol):
   ],
   "user_intentions": [
     "修掉 RRF 测试后进入 T-1-06（bootstrap 断点续传）",
-    "周五前完成 Phase 1 骨架 6 大核心服务的 InProcess 实现"
+    "周五前完成 experimental 骨架 6 大核心服务的 InProcess 实现"
   ],
   "environment_snapshot": {
     "git_branch": "main",
@@ -664,9 +664,9 @@ class ContextEngineProtocol(Protocol):
 
 | OQ | 议题 | 何时闭合 |
 |----|------|---------|
-| OQ-SC-01 | 是否需要加密 `session_carryover.json`（含 user_intentions 等）| Phase 2 |
-| OQ-SC-02 | `history/` 的保留策略（时间 / 数量 / 尺寸）| Phase 2 |
-| OQ-SC-03 | 跨机器同步 Session（笔记本 ↔ 台式机）是否需要 | Phase 3+ |
+| OQ-SC-01 | 是否需要加密 `session_carryover.json`（含 user_intentions 等）| beta |
+| OQ-SC-02 | `history/` 的保留策略（时间 / 数量 / 尺寸）| beta |
+| OQ-SC-03 | 跨机器同步 Session（笔记本 ↔ 台式机）是否需要 | beta+ |
 
 ---
 

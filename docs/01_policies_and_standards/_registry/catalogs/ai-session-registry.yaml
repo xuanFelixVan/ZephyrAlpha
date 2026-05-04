@@ -14,7 +14,7 @@
 #       模型名称 / Session ID / 时间段 / 主要任务 / 产出物 / Owner审批。
 #       构建"谁操作了什么 → 产出什么 → 决定是什么"的完整问责链。
 #
-# 当前状态: planned——Phase 2 落地。Phase 0 Session Log 以 .md 形式存在
+# 当前状态: planned——beta 落地。scaffold Session Log 以 .md 形式存在
 #          （已移出项目至外部工作区）。本登记表为未来结构化记录提供 Schema。
 # ============================================================================
 
@@ -28,7 +28,7 @@ last_updated: "2026-05-02"
 ai_autonomy: human_gated
 ttl: permanent
 total_sessions: 0
-note: "Phase 2 落地前为空登记表——仅 Schema 骨架。当前 session 记录以 .md 格式存放在外部开发工作区 session-logs/ 下。scripts/hooks/auto-handoff-log.py 在每次 session 末尾自动生成交接工单。"
+note: "beta 落地前为空登记表——仅 Schema 骨架。当前 session 记录以 .md 格式存放在外部开发工作区 session-logs/ 下。scripts/hooks/auto-handoff-log.py 在每次 session 末尾自动生成交接工单。"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -97,7 +97,7 @@ transition_period:
   current_methods:
     - {method: "Session Log .md", path: "外部开发工作区/session-logs/*", format: "markdown prose"}
     - {method: "auto-handoff-log.py", path: "scripts/hooks/auto-handoff-log.py", format: "hook-generated structured text"}
-  migration_phase: "Phase 2"
+  migration_phase: "beta"
   migration_trigger: "当 Session Log 条数> 50 时，脚本自动抽取摘要填充本 YAML"
 
 # ============================================================================
@@ -109,6 +109,6 @@ changelog:
     author: "AI-GLM-5.1"
     changes:
       - "初始创建——登记 Schema 骨架（7 个核心字段）"
-      - "status=planned——Phase 2 落地前为空表"
+      - "status=planned——beta 落地前为空表"
       - "5 种 session_type + 7 种 artifact_type + 5 种 agent_model"
       - "transition_period 标注当前的 .md 日志为过渡方案"

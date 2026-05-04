@@ -1,6 +1,18 @@
 """
 草稿区生命周期归档器 (Drafts Zone Lifecycle Archiver · V-16)
 
+__manifest__ = """
+args: []
+description: 草稿区归档检查
+dimensions:
+- D1
+- D4
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 任务编号 : T-V2-013（Wave 1 V-16 兜底）
 权限层级 : Human-Gated
 创建日期 : 2026-04-27

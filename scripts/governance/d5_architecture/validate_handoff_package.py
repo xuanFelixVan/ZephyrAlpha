@@ -1,6 +1,17 @@
 """
 validate_handoff_package.py — HandoffPackage 完整性校验
 
+__manifest__ = """
+args: []
+description: HandoffPackage 完整性校验（COND-47 — 8必填字段）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：COND-47（HandoffPackage 8 必填字段缺失为条件禁止）
 
 检测内容：

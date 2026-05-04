@@ -13,7 +13,7 @@ partition:
   description: >
     跨层数据契约 SSoT。P0 六大数据契约（CTR-001~006）+ P0 全链路追踪契约
     （CTR-TRACE-001）+ P0 六大跨层错误契约（CTR-ERR-001~006）+ P0 三大背压
-    契约（CTR-BP-001~003）+ P1 蓝图签名 13 条 + 三个 OCP 扩展点基类 +
+    契约（CTR-BP-001~003）+ P1 蓝图签名 15 条 + 三个 OCP 扩展点基类 +
     外部系统契约 4 条 + AI 治理三接口（已 superseded）。
     来源：interface-contracts.md v1.1.0 迁移 + 2026-05-04 架构盲点补全。
   source_views:
@@ -96,6 +96,7 @@ contracts:
       - {name: quality_score, type: float, required: false, default: 1.0, description: "质量门禁结果 0.0-1.0"}
       - {name: is_suspended, type: bool, required: false, default: false, description: "停牌标记"}
       - {name: ingested_at, type: "Optional[datetime]", required: false, description: "入库时间"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: timeout_ms, type: int, required: false, default: 5000, description: "操作超时时间（毫秒）"}
       - {name: retry_policy, type: str, required: false, default: "exponential_backoff", description: "重试策略：none | linear | exponential_backoff"}
@@ -141,6 +142,7 @@ contracts:
       - {name: is_valid, type: bool, required: false, default: true, description: "信号有效性"}
       - {name: factor_version, type: str, required: false, default: "1.0", description: "因子版本"}
       - {name: extra, type: "Dict[str, Any]", required: false, description: "扩展字段"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: timeout_ms, type: int, required: false, default: 3000, description: "因子计算超时时间（毫秒）"}
       - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
@@ -181,6 +183,7 @@ contracts:
       - {name: max_portfolio_var_1d, type: "Optional[float]", required: false, description: "日度 VaR 上限（绝对值）"}
       - {name: max_drawdown_limit, type: "Optional[float]", required: false, description: "最大回撤触发线"}
       - {name: symbol_overrides, type: "Dict[str, float]", required: false, description: "个股特殊限制 {symbol: max_weight}"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -223,6 +226,7 @@ contracts:
       - {name: created_at, type: "Optional[datetime]", required: false, description: "创建时间"}
       - {name: updated_at, type: "Optional[datetime]", required: false, description: "更新时间"}
       - {name: broker_order_id, type: "Optional[str]", required: false, description: "券商侧委托号（回填）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -262,6 +266,7 @@ contracts:
       - {name: commission, type: Decimal, required: false, default: "0", description: "佣金"}
       - {name: slippage, type: "Optional[Decimal]", required: false, description: "滑点（实际 vs 预期）"}
       - {name: broker_fill_id, type: "Optional[str]", required: false, description: "券商侧成交 ID"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -299,6 +304,7 @@ contracts:
       - {name: total_market_value, type: Decimal, required: false, default: "0", description: "总市值"}
       - {name: cash, type: Decimal, required: false, default: "0", description: "现金"}
       - {name: gross_leverage, type: float, required: false, default: 1.0, description: "总杠杆"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -333,6 +339,7 @@ contracts:
       - {name: service_name, type: str, required: true, description: "本层标识：l00_data_source / l02_alpha_factor / l03_signal / ..."}
       - {name: created_at, type: datetime, required: true, description: "本 span 创建时间（UTC 纳秒精度）"}
       - {name: parent_span_id, type: "Optional[str]", required: false, description: "上游 span_id，NULL 表示这是链头"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================
@@ -363,6 +370,7 @@ contracts:
       - {name: recovery_hint, type: str, required: true, description: "RETRY | SKIP_SYMBOL | SWITCH_SOURCE | HALT"}
       - {name: failed_field, type: "Optional[str]", required: false, description: "触发的具体字段名"}
       - {name: failed_value, type: "Optional[str]", required: false, description: "触发时的实际值（字符串表示）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -390,6 +398,7 @@ contracts:
       - {name: failure_reason, type: str, required: true, description: "input_missing | division_by_zero | window_insufficient | memory_exceeded | invalid_parameter | timeout"}
       - {name: recovery_hint, type: str, required: true, description: "RETRY | SKIP_FACTOR | DEGRADE_TO_DEFAULT | ESCALATE"}
       - {name: detail, type: "Optional[str]", required: false, description: "详细错误堆栈摘要"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -417,6 +426,7 @@ contracts:
       - {name: affected_factor_ids, type: "List[str]", required: false, description: "受影响的因子 ID 列表"}
       - {name: degradation_level, type: str, required: true, description: "MILD | MODERATE | SEVERE"}
       - {name: suggested_action, type: str, required: true, description: "REDUCE_POSITION | PAUSE_SIGNAL | CONTINUE_WITH_FLAG"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -445,6 +455,7 @@ contracts:
       - {name: limit_value, type: float, required: true, description: "限额值"}
       - {name: actual_value, type: float, required: true, description: "实际值"}
       - {name: recovery_hint, type: str, required: true, description: "REDUCE_AND_RETRY | HALT_AND_ESCALATE | MANUAL_OVERRIDE_REQUIRED"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -473,6 +484,7 @@ contracts:
       - {name: rejection_reason, type: str, required: true, description: "insufficient_balance | quantity_exceeds_limit | price_out_of_range | market_closed | timeout | broker_error"}
       - {name: broker_message, type: "Optional[str]", required: false, description: "券商原始错误信息（保留原文）"}
       - {name: recovery_hint, type: str, required: true, description: "RETRY | RETRY_WITH_REDUCED_QTY | CANCEL_AND_REPORT | WAIT_NEXT_CYCLE"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -500,6 +512,7 @@ contracts:
       - {name: expected_type, type: "Optional[str]", required: false, description: "契约期望的类型"}
       - {name: actual_type, type: "Optional[str]", required: false, description: "实际收到的类型"}
       - {name: detail, type: str, required: true, description: "详细校验失败描述"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -529,6 +542,7 @@ contracts:
       - {name: action, type: str, required: false, default: "PAUSE", description: "固定值 PAUSE"}
       - {name: duration_ms, type: int, required: true, description: "暂停时长（毫秒），到期自动恢复"}
       - {name: reason, type: str, required: true, description: "暂停原因：buffer_full | processing_overload | gc_pause | downstream_unavailable"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -553,6 +567,7 @@ contracts:
       - {name: action, type: str, required: false, default: "THROTTLE", description: "固定值 THROTTLE"}
       - {name: max_rate_per_sec, type: int, required: true, description: "降速后的最大速率（条/秒）"}
       - {name: reason, type: str, required: true, description: "降速原因"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -576,10 +591,11 @@ contracts:
       - {name: symbol, type: str, required: true, description: "恢复的标的"}
       - {name: action, type: str, required: false, default: "RESUME", description: "固定值 RESUME"}
       - {name: reason, type: str, required: true, description: "恢复原因：buffer_cleared | capacity_restored | gc_complete | upstream_recovered"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
-  # --- P1 蓝图跨层接口签名（8 条）---
+  # --- P1 蓝图跨层接口签名（15 条：CTR-P1-001~CTR-P1-015）---
   - id: CTR-P1-001
     name: "FactorMonitorReport / 因子有效性监控报告"
     priority: P1
@@ -603,6 +619,7 @@ contracts:
       - {name: is_effective, type: bool, required: true, description: "True = IC 显著 + ICIR > 0.5"}
       - {name: decay_alert, type: bool, required: true, description: "True = 因子衰减告警"}
       - {name: evaluation_window, type: int, required: false, default: 63, description: "评估窗口（交易日数）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-002
@@ -625,6 +642,7 @@ contracts:
       - {name: data_source, type: str, required: true, description: "宏观数据来源（如 wind_macro, nbs）"}
       - {name: release_lag_days, type: int, required: true, description: "数据发布滞后天数"}
       - {name: confidence, type: float, required: false, default: 1.0, description: "置信度"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-003
@@ -645,6 +663,7 @@ contracts:
       - {name: total_allocated_weight, type: float, required: true, description: "总权重（通常 = 1.0）"}
       - {name: allocation_method, type: str, required: true, description: "equal_weight | sharpe_weight | risk_parity"}
       - {name: rebalance_threshold, type: float, required: false, default: 0.05, description: "触发再平衡的权重漂移阈值"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-004
@@ -684,6 +703,7 @@ contracts:
       - {name: prediction_type, type: str, required: true, description: "factor_value | return | probability"}
       - {name: confidence, type: float, required: true, description: "预测置信度 0.0-1.0"}
       - {name: inference_ms, type: int, required: true, description: "推理耗时（毫秒）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-006
@@ -707,6 +727,7 @@ contracts:
       - {name: previous_status, type: str, required: true, description: "变更前状态"}
       - {name: new_status, type: str, required: true, description: "变更后状态"}
       - {name: performance_snapshot, type: "Optional[Dict[str, float]]", required: false, description: "事件时的关键绩效指标"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-007
@@ -735,6 +756,7 @@ contracts:
       - {name: execution_end, type: str, required: true, description: "执行结束时间 ISO 8601 UTC"}
       - {name: broker_id, type: str, required: true, description: "执行券商"}
       - {name: algo_type, type: str, required: false, default: "NONE", description: "算法类型 TWAP | VWAP | NONE"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-008
@@ -759,6 +781,7 @@ contracts:
       - {name: sector_concentrations, type: "Dict[str, float]", required: true, description: "{sector: weight}"}
       - {name: active_alerts, type: "List[str]", required: true, description: "当前激活的风险告警 rule_id 列表"}
       - {name: overall_risk_score, type: float, required: true, description: "综合风险分 0-10"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-009
@@ -783,6 +806,7 @@ contracts:
       - {name: interaction_effect, type: float, required: true, description: "交互效应"}
       - {name: factor_contributions, type: "Dict[str, float]", required: true, description: "{factor_id: contribution}"}
       - {name: transaction_cost_drag, type: float, required: true, description: "交易成本拖累（bps）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   # --- CTR-P1-010: SystemConfiguration ---
@@ -810,6 +834,7 @@ contracts:
       - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
       - {name: max_retries, type: int, required: false, default: 3, description: "最大重试次数"}
       - {name: exceptions, type: "List[str]", required: false, description: "预期异常类型列表"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   # --- CTR-P1-011: RiskMetricsReport ---
@@ -841,6 +866,7 @@ contracts:
       - {name: calculation_method, type: str, required: true, description: "计算方法：historical | parametric | monte_carlo"}
       - {name: confidence_level, type: float, required: true, description: "置信水平"}
       - {name: lookback_period, type: int, required: true, description: "回看期（交易日）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================
@@ -872,6 +898,7 @@ contracts:
       - {name: is_active, type: bool, required: true, description: "是否激活"}
       - {name: created_at, type: datetime, required: true, description: "创建时间"}
       - {name: updated_at, type: datetime, required: true, description: "更新时间"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: OCP-002
@@ -945,6 +972,82 @@ contracts:
       - {name: span_id, type: str, required: false, description: "追踪Span ID"}
       - {name: trace_id, type: str, required: false, description: "追踪Trace ID"}
       - {name: parent_span_id, type: str, required: false, description: "父Span ID"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-P1-014: ExperimentResult ---
+  - id: CTR-P1-014
+    name: "ExperimentResult / 实验结论"
+    priority: P1
+    frozen: true
+    source_layer: l13
+    target_layers: [l09, l11]
+    flow: "L13 Experimentation → L09 Research / L11 ML Platform"
+    physical_path: src/zephyr/shared/contracts/experiment_result.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L13 → L09/L11 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。"
+    ai_prompt: >
+      当 L13 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。
+      每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。
+      confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。
+      L09 研究创新层读取历史实验结论指导研究方向。L11 ML Platform 读取实验结论调整模型策略。
+    fields:
+      - {name: experiment_id, type: str, required: true, description: "全局唯一实验 ID（UUID）"}
+      - {name: experiment_name, type: str, required: true, description: "人类可读实验名称"}
+      - {name: experiment_type, type: str, required: true, description: "ab_test | factor_ablation | strategy_variant | parameter_sweep | custom"}
+      - {name: hypothesis, type: str, required: true, description: "实验假设"}
+      - {name: variant_a_description, type: str, required: true, description: "A 组描述（对照组）"}
+      - {name: variant_b_description, type: str, required: true, description: "B 组描述（实验组）"}
+      - {name: start_timestamp, type: datetime, required: true, description: "实验开始时间（UTC）"}
+      - {name: end_timestamp, type: datetime, required: true, description: "实验结束时间（UTC）"}
+      - {name: sample_size, type: int, required: true, description: "样本数量"}
+      - {name: metrics, type: "Dict[str, float]", required: true, description: "关键指标 {metric_name: value}"}
+      - {name: variant_b_improvement, type: float, required: true, description: "B 组相对 A 组的改善（%）"}
+      - {name: p_value, type: float, required: true, description: "统计显著性 p-value"}
+      - {name: confidence, type: float, required: true, description: "结论置信度 0.0-1.0"}
+      - {name: conclusion, type: str, required: true, description: "supported | rejected | inconclusive"}
+      - {name: actionable_suggestions, type: "List[str]", required: true, description: "下游可操作建议列表"}
+      - {name: affected_factor_ids, type: "List[str]", required: false, description: "受影响的因子 ID"}
+      - {name: affected_strategy_ids, type: "List[str]", required: false, description: "受影响的策略 ID"}
+      - {name: archived_to_kms, type: bool, required: false, default: false, description: "已归档到 KMS"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-P1-015: SynthesizedSignal ---
+  - id: CTR-P1-015
+    name: "SynthesizedSignal / 合成交易信号"
+    priority: P1
+    frozen: true
+    source_layer: l03
+    target_layers: [l04, l05]
+    flow: "L03 Signal Generation → L04 Risk Management / L05 Portfolio Construction"
+    physical_path: src/zephyr/shared/contracts/synthesized_signal.py
+    stability: upgradable
+    schema_version: "1.0"
+    description: "L03 → L04/L05 合成交易信号契约。L03 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。"
+    ai_prompt: >
+      当 L03 信号合成引擎完成因子信号聚合后，MUST 产出 SynthesizedSignal。
+      每个 SynthesizedSignal 代表一个标的在一个时间截面上的综合交易判断。
+      signal_value 是标准化后的合成信号值（-3 到 3），正值为做多信号，负值为做空信号。
+      contributing_factors 记录参与合成的因子 ID 及其权重——用于归因分析。
+      L04 风控层使用此信号做 pre-trade risk check。L05 组合构建层使用此信号做组合优化输入。
+      generation_latency_ms 记录信号合成耗时，用于 SLO 监控。
+    fields:
+      - {name: signal_id, type: str, required: true, description: "全局唯一信号 ID（UUID）"}
+      - {name: symbol, type: str, required: true, description: "标的代码"}
+      - {name: as_of_timestamp, type: datetime, required: true, description: "信号截面时间（UTC）"}
+      - {name: signal_value, type: float, required: true, description: "标准化合成信号值（-3 到 3）"}
+      - {name: signal_direction, type: str, required: true, description: "LONG | SHORT | NEUTRAL"}
+      - {name: confidence, type: float, required: true, description: "合成置信度 0.0-1.0"}
+      - {name: contributing_factors, type: "Dict[str, float]", required: true, description: "{factor_id: weight}"}
+      - {name: regime, type: str, required: false, description: "市场状态：trending | mean_reverting | high_volatility | low_volatility"}
+      - {name: suggested_position_pct, type: float, required: false, description: "建议仓位百分比"}
+      - {name: generation_latency_ms, type: int, required: true, description: "信号合成耗时（毫秒）"}
+      - {name: is_degraded, type: bool, required: false, default: false, description: "是否降级信号"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================

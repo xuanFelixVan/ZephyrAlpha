@@ -1,6 +1,17 @@
 """
 validate_script_quality.py — 治理脚本质量合规检查
 
+__manifest__ = """
+args: []
+description: 治理脚本质量合规检查（SCRIPT-QUALITY-001 §10 — 10项可自动化MUST条款扫描）
+dimensions:
+- D11
+priority: P1
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：SCRIPT-QUALITY-001 §10 自检清单（38 项条款：22 MUST + 16 SHOULD）
       AGENTS.md §6.5（脚本自创入库强制约定）
 

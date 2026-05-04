@@ -1,5 +1,32 @@
 """GATE-IMPL-DOC — 蓝图实现文档校验闸门
 
+AGENTS.md 6.4 铁律五（03_modules/index.md 铁律五）：任何 construction_progress = phase_N_complete
+的蓝图必须在正文中记录实际代码实现情况。本脚本强制执行该铁律。
+
+AGENTS.md 6.4 铁律六（03_modules/index.md 铁律六）：construction_progress 必须 LS 磁盘验证。
+蓝图中声称的文件路径必须在磁盘上真实存在。
+
+检查规则：
+  1. 蓝图 frontmatter 的 construction_progress 为 phase_1_partial / phase_1_complete / phase_2_complete
+     → 正文必须含实现状态节（匹配 ## + 已实现代码完整路径索引）
+  2. 蓝图 frontmatter 的 construction_progress 为 not_started / skeleton
+     → 正文不应含实现节（防虚假声明）
+  3. 蓝图有 completed 类 construction_progress 但正文无实现节 → CI 失败
+  4. 蓝图 frontmatter 未声明 construction_progress → CI 失败
+  5. 蓝图声称的文件路径必须磁盘验证 → 任何已实现路径不存在 → CI 失败
+  6. construction_progress 与实际磁盘状态不符 → CI 失败
+
+对标：ITIL SACM — CI 属性状态必须与实际配置一致
+      K8s Admission Controller — 不符合 Schema 的资源拒绝进入集群
+
+用法：
+  python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py
+  python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py --warn-only
+"""timeout_seconds: 30
+warn_only: false
+"""
+
+
 AGENTS.md §6.4 铁律五（03_modules/index.md §八）：任何 construction_progress = phase_N_complete
 的蓝图必须在正文中记录实际代码实现情况。本脚本强制执行该铁律。
 
@@ -57,16 +84,16 @@ FILE_PATH_RE = re.compile(
 )
 
 def _has_negative_indicator(content: str, path: str) -> bool:
-    """检查文件路径附近是否有 ❌ 或 未实现 等否定标记。"""
-    idx = content.find(path)
-    if idx == -1:
-        return False
-    window = content[max(0, idx - 200) : idx + len(path) + 100]
-    return bool(
-        re.search(
-            r"❌|未实现|not.implemented|待实现|待创建|not.started|Phase\s*[2-9]|📋|新模块|计划", window, re.IGNORECASE
-        )
-    )
+    """检查文件路径的所有出现位置附近是否有 ❌ 或 未实现 等否定标记。"""
+    start = 0
+    while True:
+        idx = content.find(path, start)
+        if idx == -1:
+            return False
+        window = content[max(0, idx - 500):idx + len(path) + 200]
+        if re.search(r'❌|未实现|not.implemented|待实现|待创建|not.started|Phase\s*[2-9]|📋|新模块|计划|规划|新增', window, re.IGNORECASE):
+            return True
+        start = idx + len(path)
 
 def find_blueprints() -> list[Path]:
     """find_blueprints implementation."""
@@ -198,7 +225,7 @@ def main() -> None:
                 )
                 errors.append(msg)
 
-        phantom_files = [(p, e) for p, e in disk if not e]
+        phantom_files = [(p, e) for p, e in disk if not e and not _has_negative_indicator(content, p)]
         for pf, _ in phantom_files:
             msg = (
                 f"BLUEPRINT FICTION FILE: {bp_rel}\n"

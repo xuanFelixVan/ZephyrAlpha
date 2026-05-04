@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "operational/migration/ 目录的导航入口。存放迁移操作手册——迁移审计、迁移步骤。当前仅含本索引文件，迁移操作文件待 Phase 3 填充。"
+summary: "operational/migration/ 目录的导航入口。存放迁移操作手册——迁移审计、迁移步骤。当前仅含本索引文件，迁移操作文件待 beta 填充。"
 tags: [index, migration, operational, navigation]
 rule_form: declarative
 scope: global
@@ -30,7 +30,7 @@ ai_autonomy: human_gated
 
 ## 文件清单
 
-*（当前仅含本索引文件——迁移操作文件待 Phase 3 填充）*
+*（当前仅含本索引文件——迁移操作文件待 beta 填充）*
 
 ## 排除规则（不应放入本目录的内容）
 

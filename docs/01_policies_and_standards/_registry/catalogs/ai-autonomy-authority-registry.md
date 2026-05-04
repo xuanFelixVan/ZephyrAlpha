@@ -280,7 +280,7 @@ related_rationale:
 
 - v1.0.0（2026-04-27）：Wave 0 终审兜底缺口 V-11 产出，覆盖全 60+ 模块/组件，修正 13 处权限错误
 - **v1.1.0（2026-04-27 Wave 1 R84）**：增补 §2.9 RI-01~07 运行时集成模块（11 行）+ §2.10 CBAC/CBG/AlignmentMonitor 三件套（6 行）+ §2.11 CL-017~021 基础设施缺口组件（9 行）；修正 4 处 Wave 1 草稿权限误标（RI-02 偏松→Human-Gated / RI-03 偏松→Human-Gated / RI-04 拆分缺失→M4-A/M4-B 分层 / RI-07 偏紧→算法/阈值拆分）；引入 Wave 1 兜底 V-14/V-15/V-16 三个治理组件权限。frontmatter 同步追加 arbitration_wave1 块（Claude-Opus-4.7 / R-84）。
-- **v1.2.0（2026-04-30 Phase 2）**：新增 §七 dev/prod 双模式权限表，区分开发环境与生产环境的 AI 自治权限差异。
+- **v1.2.0（2026-04-30 beta）**：新增 §七 dev/prod 双模式权限表，区分开发环境与生产环境的 AI 自治权限差异。
 - **v1.2.1（2026-05-01 Phase 5）**：date/valid_from→2026-05-01；depends_on 补 ADR-0010（三层权限语义来源）。
 - **v1.2.2（2026-05-02）**：修复 F-A5 注册表内部冲突——kb 模块在 §2.2（AI-Modifiable）与 §2.3 M2（Human-Gated）权限矛盾。§2.2 删除 kb 行（过渡期知识库实现 → 已收敛至 §2.3 M2）；§2.3 M2 按子模块拆分 kb（基础设施 Human-Gated / 加工链 AI-Modifiable）；§4.3 新增路径唯一性约束（对标 ITIL SACM CMDB corruption → 同一路径双重登记 = 腐败）。
 

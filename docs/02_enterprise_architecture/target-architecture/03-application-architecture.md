@@ -132,7 +132,7 @@ This view is **driven by** the Information Architecture (data distribution deter
 | **Execution Engine** | Python | `l06_trade_execution` | OMS、SOR、委托路由、执行前风控 |
 | **Post-Trade Analytics** | Python | `l07_post_trade_analytics` | 绩效归因、交易复盘、报告生成 |
 | **AI Agent Ops** | Python | `l08_human_ai_interface` + `03_modules/_b_track_interfaces/` | Agent 规则、记忆管理、上下文服务、LLM 调用编排 |
-| **Data Storage** | PostgreSQL + TimescaleDB（主存储）/ DuckDB（分析）/ Parquet（归档） | — | 行情、因子信号、持仓、交易数据的持久化存储；Phase 1 确定选型见 04-TA §Q5-1 |
+| **Data Storage** | PostgreSQL + TimescaleDB（主存储）/ DuckDB（分析）/ Parquet（归档） | — | 行情、因子信号、持仓、交易数据的持久化存储；experimental 确定选型见 04-TA §Q5-1 |
 | **Documentation Store** | Git + Markdown | — | 架构文档、决策记录；`docs/` 即文档存储本身 |
 
 ### 3.3 Container diagram / 容器图
@@ -360,7 +360,7 @@ FLE ──────── 指标入向：所有服务上报；动作出向：
 
 除原有 L02/L05/L06 三个 OCP 扩展点外，**6 大核心服务均通过 Protocol 抽象基类暴露扩展点**：
 
-| Protocol | 扩展场景 | Phase 1 实现 | Phase 3+ 实现 |
+| Protocol | 扩展场景 | experimental 实现 | beta+ 实现 |
 |----------|---------|-------------|--------------|
 | `VectorMemoryProtocol` | 替换向量库 | `InProcessVectorMemory` (ChromaDB) | `RemoteVectorMemory` (HTTP Client) |
 | `ContextEngineProtocol` | 替换 CE 实现 | `InProcessContextEngine` | `RemoteContextEngine` |

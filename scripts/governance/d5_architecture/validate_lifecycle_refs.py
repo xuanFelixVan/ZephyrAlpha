@@ -1,6 +1,17 @@
 """
 validate_lifecycle_refs.py — 生命周期引用约束合规检查
 
+__manifest__ = """
+args: []
+description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-001 §4.1.1 LRC-001~005（生命周期引用约束）
      AGENTS.md §6.2（原子事务模式——引用链不超过3层）
 

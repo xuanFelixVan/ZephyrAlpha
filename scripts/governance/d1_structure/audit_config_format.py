@@ -1,6 +1,18 @@
 """
 audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 
+__manifest__ = """
+args: []
+description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
+dimensions:
+- D1
+- D4
+priority: P2
+timeout_seconds: 15
+warn_only: true
+"""
+
+
 对标：AGENTS.md §4（编码安全 — UTF-8 / 无BOM / 行尾一致性）
      AGENTS.md §6.2（原子事务模式 — 注释与实际内容一致性）
      ITIL SACM §4.5（Configuration Audit — 配置项格式合规性）

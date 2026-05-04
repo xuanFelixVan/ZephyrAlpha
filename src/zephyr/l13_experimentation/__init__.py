@@ -13,6 +13,16 @@ AI 时代的"自动化实验"层：Scout Agent 自动抓取外部资讯 + 内部
 docs/02_enterprise_architecture/target-architecture/
   03-application-architecture.md §4.3（AI/ML Platform：L11/L12/L13）
 
+CTR 契约依赖声明（承重墙标记）
+------------------------------
+生产者：
+  - CTR-P1-014 (ExperimentResult) — 实验结论，发布至 L09/L11
+
+消费者：
+  - CTR-001 (NormalizedMarketData) — 实验需要市场数据上下文
+  - CTR-P1-004/005 (ModelServing) — Scout Agent 调用 L11 模型推断
+  - CTR-P1-013 (TelemetryEmitter) — 实验运行数据上报 L12
+
 与 L11/L12 的关系
 -----------------
 L11 ml_platform       : ML 生命周期（训练/推理/模型注册）

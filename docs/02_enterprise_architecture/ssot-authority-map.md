@@ -145,7 +145,7 @@ registry_status_mapping: |
 
 | 值  | 含义                     |
 |-----|--------------------------|
-| P0  | 必须（Phase 2 施工必需）  |
+| P0  | 必须（beta 施工必需）  |
 | P1  | 重要（应该完成）          |
 | P2  | 可以（将来完成）          |
 | P3  | 可删除（永不会用）        |
@@ -217,7 +217,7 @@ violation_severity: P2
 
 | 级别 | 含义                               | 处置                              |
 |------|----------------------------------|----------------------------------|
-| P0   | 严重矛盾——阻塞 Phase 2 完成门禁     | `--ci` 模式 exit(1)；必须立即修复  |
+| P0   | 严重矛盾——阻塞 beta 完成门禁     | `--ci` 模式 exit(1)；必须立即修复  |
 | P1   | 重要矛盾——影响可信度，需尽快修复     | 报告并创建修复任务                 |
 | P2   | 建议改进——不影响功能，可按优先级处理  | 报告，低优先级处理                 |
 
@@ -234,11 +234,11 @@ violation_severity: P2
 
 | ID | 矛盾描述 | 权威来源 | 修复方案 | 状态 | 执行阶段 | 负责人 |
 |:---|:---|:---|:---|:---:|:---|:---:|
-| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | Phase 3 统一迁移，老树编号标记 deprecated alias | ⏳ | Phase 3 | Owner |
-| SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module-id-registry.yaml | Phase 1 填充时统一注册 | ⏳ | Phase 1 | Owner |
-| SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | Phase 0c | AI |
-| SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | Phase 1 填充时声明 | 🔧 | Phase 1 | AI |
-| SSoT-007 | OSS 候选信息分散 | _schema.yaml oss_candidate | Phase 1 填充时关联 | 🔧 | Phase 1 | AI |
+| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，老树编号标记 deprecated alias | ⏳ | beta | Owner |
+| SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module-id-registry.yaml | experimental 填充时统一注册 | ⏳ | experimental | Owner |
+| SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | scaffold | AI |
+| SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | experimental 填充时声明 | 🔧 | experimental | AI |
+| SSoT-007 | OSS 候选信息分散 | _schema.yaml oss_candidate | experimental 填充时关联 | 🔧 | experimental | AI |
 
 ### 八（附）已解决的矛盾（历史归档）
 

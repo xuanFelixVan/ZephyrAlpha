@@ -1,6 +1,18 @@
 """
 env_check.py — 环境就绪检查门禁 (Environment Readiness Gate)
 
+__manifest__ = """
+args:
+- --install
+description: 环境就绪检查门禁（Python版本 + requirements.txt三方依赖验证 + 自动安装）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 120
+warn_only: false
+"""
+
+
 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）
      AGENTS.md §7.2（根源分析 — 治根不治标）
 

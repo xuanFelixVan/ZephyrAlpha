@@ -1,6 +1,17 @@
 """
 validate_superseded_by.py — 废弃文件 superseded_by 检测
 
+__manifest__ = """
+args: []
+description: 废弃文件 superseded_by 检测（LFC-002 / PS-STD-009 §2.2）
+dimensions:
+- D3
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：LFC-002（退役文件 superseded_by 已填写）
      PS-STD-009 §2.2（active→deprecated 必须填写 superseded_by）
 

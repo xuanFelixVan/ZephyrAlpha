@@ -249,7 +249,7 @@ class PipelineOrchestrator:
 
         当前为模拟实现——返回结构化占位结果。
         实际 AI 调用由 context_engine → model_routing_policy 驱动，
-        属于 Phase 3+ 集成工作。
+        属于 beta+ 集成工作。
         """
         return {
             "module_id": module_id,

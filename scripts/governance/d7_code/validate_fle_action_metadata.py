@@ -1,6 +1,17 @@
 """
 validate_fle_action_metadata.py — FLE Action 元数据校验
 
+__manifest__ = """
+args: []
+description: FLE Action 元数据校验（COND-44 — effective_from+ttl必填）
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：COND-44（FLE Action 不记录 effective_from + ttl 为条件禁止）
 
 检测内容：

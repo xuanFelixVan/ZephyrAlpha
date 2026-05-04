@@ -77,9 +77,9 @@ tags:
 - ❌ **OWASP LLM Top 10 完整解读**——见 OWASP 官方
 - ❌ **Prompt Injection 攻击手册**——攻防知识库另存（内部红队）
 - ❌ **Agent Sandbox 实现**——见 `agent-orchestrator-interface.md` §6 + ADR-0018
-- ❌ **Secret 管理方案**——LSG 只做 secret 泄漏检测，Vault / HSM 是 Phase 3+ 另议
+- ❌ **Secret 管理方案**——LSG 只做 secret 泄漏检测，Vault / HSM 是 beta+ 另议
 - ❌ **供应链全流程**——LSG 在 pre-commit 调 `pip-audit` / `safety`，完整 SBOM 流程另出
-- ❌ **生产部署运维手册**——Phase 3+ 服务化时另出 SRE 文档
+- ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 
 ---
 
@@ -117,7 +117,7 @@ tags:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/llm_security/protocol.py (Phase 1 产出)
+# src/zephyr/llm_security/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -131,17 +131,17 @@ class LLMSecurityGatewayProtocol(Protocol):
     async def stats(self) -> LSGStats: ...
 
 class InProcessLLMSecurityGateway:
-    """Phase 1（当前目标）：进程内调用，规则 + Pydantic。"""
+    """experimental（当前目标）：进程内调用，规则 + Pydantic。"""
 
 class RemoteLLMSecurityGateway:
-    """Phase 3+（按需启用）：独立 HTTP 服务，便于多进程共享策略。"""
+    """beta+（按需启用）：独立 HTTP 服务，便于多进程共享策略。"""
 ```
 
 | Phase | 实施形态 | 运行方式 | 触发升级条件 |
 |:-:|---------|---------|-------------|
-| **Phase 1** | **`InProcessLLMSecurityGateway`（Python 库）** | 进程内异步调用 | - |
-| Phase 3 | `RemoteLLMSecurityGateway`（HTTP 服务） | FastAPI | 多进程共享策略 / 集中审计日志 |
-| Phase 4 | gRPC + 策略中心 | 服务化 | 多环境统一策略 |
+| **experimental** | **`InProcessLLMSecurityGateway`（Python 库）** | 进程内异步调用 | - |
+| beta | `RemoteLLMSecurityGateway`（HTTP 服务） | FastAPI | 多进程共享策略 / 集中审计日志 |
+| stable | gRPC + 策略中心 | 服务化 | 多环境统一策略 |
 
 **所有 API 均为 `async`**。进程内锁 `asyncio.Lock`，跨进程锁 `filelock.FileLock`。**严禁 `threading.Lock`**。
 
@@ -294,7 +294,7 @@ async def validate_output(self, payload, schema_id):
 ### 3.5 L4 异常模式扫描
 
 ```python
-# config/llm_security_patterns.yaml (Phase 1 产出)
+# config/llm_security_patterns.yaml (experimental 产出)
 
 pattern_profiles:
   default:
@@ -326,7 +326,7 @@ pattern_profiles:
 
 ## 4. API 设计
 
-### 4.1 Python 库 API（Phase 1 主用）
+### 4.1 Python 库 API（experimental 主用）
 
 ```python
 class InProcessLLMSecurityGateway:  # implements LLMSecurityGatewayProtocol
@@ -434,7 +434,7 @@ class StrictnessSnapshot(BaseModel):
     deltas: list[dict] = Field(default_factory=list, description="[{delta, ttl_minutes, reason, applied_at}]")
 ```
 
-### 4.3 HTTP API（Phase 3 预留骨架）
+### 4.3 HTTP API（beta 预留骨架）
 
 | Method + Path | 对应库方法 |
 |---------------|-----------|
@@ -472,8 +472,8 @@ class StrictnessSnapshot(BaseModel):
 |-------|:----:|
 | `src/zephyr/llm_security/` 包创建 | ⏳ 待建 |
 | `config/llm_security_patterns.yaml` + `config/llm_security.yaml` | ⏳ 待建 |
-| `detect-secrets` + `git-secrets` 安装与 pre-commit hook 注册 | ⏳ Phase 1 T-1-XX |
-| `pip-audit` / `safety` 加入 CI pipeline | ⏳ Phase 2 |
+| `detect-secrets` + `git-secrets` 安装与 pre-commit hook 注册 | ⏳ experimental T-1-XX |
+| `pip-audit` / `safety` 加入 CI pipeline | ⏳ beta |
 | ADR-0020 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
@@ -497,11 +497,11 @@ llm-security = [
 ```
 
 ├── src/zephyr/
-│   ├── llm_security/                               # ⏳ Phase 1 新建
+│   ├── llm_security/                               # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_lsg()
 │   │   ├── protocol.py                             # LLMSecurityGatewayProtocol
-│   │   ├── in_process.py                           # Phase 1 实现
-│   │   ├── remote.py                               # Phase 3+ 占位
+│   │   ├── in_process.py                           # experimental 实现
+│   │   ├── remote.py                               # beta+ 占位
 │   │   ├── schemas.py                              # InputPayload / OutputPayload / Verdict ...
 │   │   ├── layers/
 │   │   │   ├── l1_classifier.py                    # InputClassifier + HOSTILE_PATTERNS
@@ -598,11 +598,11 @@ L1-L4（LSG，Prompt/Schema 层）
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **Phase 0**（当前） | 接口规范 + ADR-0020 | status=Active |
-| **Phase 1** | `InProcessLSG` + L1-L4 四层基础 + MCP Server 前置接线 + pre-commit hooks | ① §12 P0 用例通过<br>② 红队 corpus bypass 率 < 5%<br>③ secret 泄漏 0 件 |
-| **Phase 2** | FLE 接入（指标 + bump_strictness） + Orchestrator/CE/VMS 全量接入 | 闭环：bypass 尖峰自动提升严格度 |
-| **Phase 3** | `RemoteLSG`（多进程策略共享） + SBOM 全流程 | 企业合规触发 |
-| **Phase 4** | 策略中心 + 多环境统一 + ML 补充分类器 | 规则漏报 > 10% 触发 |
+| **scaffold**（当前） | 接口规范 + ADR-0020 | status=Active |
+| **experimental** | `InProcessLSG` + L1-L4 四层基础 + MCP Server 前置接线 + pre-commit hooks | ① §12 P0 用例通过<br>② 红队 corpus bypass 率 < 5%<br>③ secret 泄漏 0 件 |
+| **beta** | FLE 接入（指标 + bump_strictness） + Orchestrator/CE/VMS 全量接入 | 闭环：bypass 尖峰自动提升严格度 |
+| **beta** | `RemoteLSG`（多进程策略共享） + SBOM 全流程 | 企业合规触发 |
+| **stable** | 策略中心 + 多环境统一 + ML 补充分类器 | 规则漏报 > 10% 触发 |
 
 ---
 
@@ -679,7 +679,7 @@ async def validate_input(self, payload):
 
 - LSG fail-closed 是 **安全优于可用性** 的刻意选择
 - 配套：健康检查每 30s 一次，`lsg_degrade.log` 主动告警，**要求运维 5 分钟内介入**
-- Phase 3+ 服务化后可以双活 LSG 实例消除 SPOF
+- beta+ 服务化后可以双活 LSG 实例消除 SPOF
 
 ### 10.5 降级条件速查表
 
@@ -706,7 +706,7 @@ async def validate_input(self, payload):
 | `validate_output()` p95 | ≤ 120 ms | 同上 |
 | `scan_secrets(10KB)` p95 | ≤ 80 ms | detect-secrets |
 | `inspect_patterns(10KB)` p95 | ≤ 40 ms | 正则库 |
-| bypass 率（红队 corpus） | ≤ 5% | Phase 1 交付门槛 |
+| bypass 率（红队 corpus） | ≤ 5% | experimental 交付门槛 |
 | secret 泄漏 | 0 件 | 生产环境 |
 
 ### 11.2 冷启动 SLO
@@ -778,7 +778,7 @@ async def validate_input(self, payload):
 
 ### 12.7 红队 corpus（独立目录，持续追加）
 
-| 类别 | Phase 1 最少用例数 |
+| 类别 | experimental 最少用例数 |
 |------|------------------|
 | Direct injection | 50 |
 | Indirect injection（工具返回含指令） | 30 |
@@ -803,4 +803,4 @@ async def validate_input(self, payload):
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
-| 2026-04-24 | 1.0.0 | 初版（B-a-5）。基于 VMS v1.2 模板 + ADR-0020 + OWASP LLM Top 10（2026.03）。重点：① §3 四层防护（L1 分类 + L2 隔离 + L3 Schema + L4 异常模式）；② §10.2 **fail-closed 原则**（与其他 4 份规范相反的降级方向，安全红线）；③ §8.3 与 Agent Sandbox 的双层防御；④ §5 OWASP LLM Top 10 对齐矩阵；⑤ §12.7 红队 corpus 持续测试框架（Phase 1 ≥ 150 用例，bypass 率 ≤ 5%）。 |
+| 2026-04-24 | 1.0.0 | 初版（B-a-5）。基于 VMS v1.2 模板 + ADR-0020 + OWASP LLM Top 10（2026.03）。重点：① §3 四层防护（L1 分类 + L2 隔离 + L3 Schema + L4 异常模式）；② §10.2 **fail-closed 原则**（与其他 4 份规范相反的降级方向，安全红线）；③ §8.3 与 Agent Sandbox 的双层防御；④ §5 OWASP LLM Top 10 对齐矩阵；⑤ §12.7 红队 corpus 持续测试框架（experimental ≥ 150 用例，bypass 率 ≤ 5%）。 |

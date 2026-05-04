@@ -1,0 +1,67 @@
+---
+doc_type: log
+session_id: "session-20260504-003"
+date: "2026-05-04"
+author_agent: "TraeIDE-DeepSeek-V4-Pro"
+current_phase: "experimental — 承重墙锁死 + SSoT 就位"
+ttl: permanent
+---
+# Session Log: session-20260504-003
+
+## 完成的任务
+
+- [x] 创建 tests/architecture/ 架构适应度函数（3 测试文件，7 不变式）
+- [x] 实现预编译架构上下文生成器（generate_architecture_context.py ~184行）
+- [x] 实现 AI 能力边界矩阵（ai_capability_matrix.yaml + ai_capability_guard.py + CI 脚本）
+- [x] 实现契约变更影响分析器（analyze_contract_impact.py ~160行）
+- [x] 增强 enforcer 深拷贝检查（_check_deep_mutable_nesting）
+- [x] 创建 L12 SLA 测量 + 契约漂移检测框架（contract_metrics.py ~180行）
+- [x] 创建 10 个新契约的 Python 文件（trace_context.py + errors/* + backpressure/*）
+- [x] 更新 CI pipeline 加入 5 个新门禁步骤
+
+## 变更的文件
+
+| 操作 | 文件路径 |
+|------|---------|
+| 创建 | tests/architecture/test_layer_isolation.py |
+| 创建 | tests/architecture/test_contract_consistency.py |
+| 创建 | tests/architecture/test_money_and_docs.py |
+| 创建 | tests/architecture/__init__.py |
+| 创建 | scripts/context/generate_architecture_context.py |
+| 创建 | config/ai_capability_matrix.yaml |
+| 创建 | src/zephyr/gates/ai_capability_guard.py |
+| 创建 | scripts/governance/d7_code/check_ai_capability_boundary.py |
+| 创建 | scripts/governance/d5_architecture/analyze_contract_impact.py |
+| 创建 | src/zephyr/l12_system_telemetry/contract_metrics.py |
+| 创建 | src/zephyr/shared/contracts/trace_context.py |
+| 创建 | src/zephyr/shared/contracts/errors/*.py (6 files) |
+| 创建 | src/zephyr/shared/contracts/backpressure/*.py (3 files) |
+| 编辑 | src/zephyr/shared/contracts/__init__.py |
+| 编辑 | src/zephyr/shared/contracts/enforcer.py |
+| 编辑 | .github/workflows/governance.yml |
+
+## 盲点发现
+
+- 4 个文件缺少 frontmatter（config.py/finding.py/factor_base.py/stop_loss.py）
+- ai_capability_matrix.yaml 有 Python docstring 格式——YAML 解析器不兼容
+- generate_architecture_context.py 的 REPO_ROOT 计算错误（parents[2] 差一层）
+- stop_loss.py 的 current_price 用 float 而非 Decimal
+
+## 关键决策
+
+- 选择 YAML frontmatter 改用 `# ---` 格式——bare `---` 在 .py 文件中是 SyntaxError
+- 架构上下文生成器独立于 _shared 导入——自计算 REPO_ROOT 避免循环依赖
+
+## 知识提取
+
+本次提取 0 条知识条目（KE）。
+
+## 上下文预算
+
+约 150k tokens，读取了全部 layer stub + 所有 scripts + CI pipeline。
+
+## 交接给下一个 Session
+
+- **下一个任务**：Codegen 管道 + ContractRegistry + TraceContext 强制执行 + 门禁推进
+- **阻塞项**：无
+- **注意事项**：L12 SLA 测量是框架模式（no-op）——beta 前不启用。frontmatter 格式已全部修复为 `# ---` 注释形式

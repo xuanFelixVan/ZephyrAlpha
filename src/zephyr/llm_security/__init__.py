@@ -25,5 +25,5 @@ Phase 路线
 defer
 LocalLLMSecurityGateway（Pydantic + OWASP LLM Top 10 规则集）
 红队语料库 ≥150 条 + 绕过率 ≤5%
-Phase 3+ : 服务化（若需要）
+beta+ : 服务化（若需要）
 """

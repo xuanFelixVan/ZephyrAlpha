@@ -69,10 +69,10 @@ depends_on:
 
 - ❌ **VMS 使用教程**——见 `vector-memory-service-interface.md`
 - ❌ **MCP 协议规范**——见 Anthropic MCP 官方文档（https://modelcontextprotocol.io）
-- ❌ **具体 Prompt 模板库**——见 `prompt_templates/`（Phase 1 产物，另出）
+- ❌ **具体 Prompt 模板库**——见 `prompt_templates/`（experimental 产物，另出）
 - ❌ **Agent 任务状态机**——见 `agent-orchestrator-interface.md`（B-a-3）
 - ❌ **IDE 插件开发手册**——本规范只描述 Context Engine 如何注入，不描述 IDE 如何渲染
-- ❌ **生产部署运维手册**——Phase 3+ 服务化时另出 SRE 文档
+- ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 
 ---
 
@@ -108,7 +108,7 @@ depends_on:
 ### 1.3 实施策略：Protocol + 双实现（库化优先，按需服务化）
 
 ```python
-# src/zephyr/context_engine/protocol.py (Phase 1 产出)
+# src/zephyr/context_engine/protocol.py (experimental 产出)
 
 from typing import Protocol, Literal
 
@@ -128,17 +128,17 @@ class ContextEngineProtocol(Protocol):
     async def stats(self) -> CEStats: ...
 
 class InProcessContextEngine:
-    """Phase 1（当前目标）：进程内调用，直接依赖 VectorMemoryProtocol + NetworkX。"""
+    """experimental（当前目标）：进程内调用，直接依赖 VectorMemoryProtocol + NetworkX。"""
 
 class RemoteContextEngine:
-    """Phase 3+（按需启用）：HTTP/gRPC Client。"""
+    """beta+（按需启用）：HTTP/gRPC Client。"""
 ```
 
 | Phase | 实施形态 | 运行方式 | 触发升级条件 |
 |:-:|---------|---------|-------------|
-| **Phase 1** | **`InProcessContextEngine`（Python 库，当前目标）** | `from zephyr.context_engine import get_ce` | - |
-| Phase 3 | `RemoteContextEngine`（HTTP 服务） | `POST /v1/*` FastAPI | ≥1 触发：① 多 IDE 实例并发 build ≥ 3；② entity-graph > 10k 节点不宜多进程加载 |
-| Phase 4 | gRPC | 按需 | RPS > 200 |
+| **experimental** | **`InProcessContextEngine`（Python 库，当前目标）** | `from zephyr.context_engine import get_ce` | - |
+| beta | `RemoteContextEngine`（HTTP 服务） | `POST /v1/*` FastAPI | ≥1 触发：① 多 IDE 实例并发 build ≥ 3；② entity-graph > 10k 节点不宜多进程加载 |
+| stable | gRPC | 按需 | RPS > 200 |
 
 **所有 API 均为 `async`**。进程内锁用 `asyncio.Lock`（事件循环友好），跨进程锁用 `filelock.FileLock`。**严禁 `threading.Lock`**。
 
@@ -180,7 +180,7 @@ class RemoteContextEngine:
 ### 3.2 IDE 能力矩阵
 
 ```python
-# src/zephyr/context_engine/ide_capabilities.py (Phase 1 产出)
+# src/zephyr/context_engine/ide_capabilities.py (experimental 产出)
 
 from enum import Enum
 
@@ -235,7 +235,7 @@ IDE_CAPABILITY_MATRIX: dict[IDEID, dict[IDEChannel, str]] = {
 ### 3.3 Pydantic Schemas
 
 ```python
-# src/zephyr/context_engine/schemas.py (Phase 1 产出)
+# src/zephyr/context_engine/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
@@ -316,10 +316,10 @@ class AdjustResult(BaseModel):
 
 ## 4. API 设计
 
-### 4.1 Python 库 API（Phase 1 主用，`InProcessContextEngine`）
+### 4.1 Python 库 API（experimental 主用，`InProcessContextEngine`）
 
 ```python
-# src/zephyr/context_engine/in_process.py (Phase 1 产出)
+# src/zephyr/context_engine/in_process.py (experimental 产出)
 
 class InProcessContextEngine:  # implements ContextEngineProtocol
     """所有方法均为 async。依赖 VectorMemoryProtocol + NetworkX + tiktoken + llama.cpp。"""
@@ -400,7 +400,7 @@ class InProcessContextEngine:  # implements ContextEngineProtocol
     async def clear_cache(self, task_id: str | None = None) -> None: ...
 ```
 
-### 4.2 HTTP API（Phase 3 按需启用，预留骨架）
+### 4.2 HTTP API（beta 按需启用，预留骨架）
 
 | Method + Path | 对应库方法 |
 |---------------|-----------|
@@ -465,10 +465,10 @@ IDE 能力未知 / 探测失败
 
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
-| `src/zephyr/vector_memory/` 包 | ⏳ 待建 | VMS Phase 1 T-1-XX |
-| `src/zephyr/context_engine/` 包创建 | ⏳ 待建 | Phase 1 T-1-XX |
-| Qwen2.5-3B-Instruct GGUF 下载到 `.models/qwen2.5-3b/` | ⏳ 待建 | Phase 1 T-1-XX |
-| llama.cpp Python 绑定（`llama-cpp-python`） | ⏳ 待建 | Phase 1 T-1-XX |
+| `src/zephyr/vector_memory/` 包 | ⏳ 待建 | VMS experimental T-1-XX |
+| `src/zephyr/context_engine/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| Qwen2.5-3B-Instruct GGUF 下载到 `.models/qwen2.5-3b/` | ⏳ 待建 | experimental T-1-XX |
+| llama.cpp Python 绑定（`llama-cpp-python`） | ⏳ 待建 | experimental T-1-XX |
 | ADR-0015 批准 | ⏳ pending | B-e 阶段 |
 
 ### 6.2 Python 依赖
@@ -487,7 +487,7 @@ context-engine = [
 ### 6.3 运行时依赖
 
 - **Vector Memory Service**（必须，通过 Protocol）
-- **MCP Server 实现**（下游消费，Phase 2 重构 `knowledge_base_server.py`）
+- **MCP Server 实现**（下游消费，beta 重构 `knowledge_base_server.py`）
 - **Feedback Loop Engine**（可选，通过 Protocol 单向推送 `FeedbackSignal`）
 
 ---
@@ -497,11 +497,11 @@ context-engine = [
 ```
 
 ├── src/zephyr/
-│   ├── context_engine/                             # ⏳ Phase 1 新建
+│   ├── context_engine/                             # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_ce() 工厂
 │   │   ├── protocol.py                             # ContextEngineProtocol 抽象
-│   │   ├── in_process.py                           # Phase 1 实现
-│   │   ├── remote.py                               # Phase 3+ 占位
+│   │   ├── in_process.py                           # experimental 实现
+│   │   ├── remote.py                               # beta+ 占位
 │   │   ├── schemas.py                              # Pydantic schemas（§3.3）
 │   │   ├── ide_capabilities.py                     # IDE_CAPABILITY_MATRIX（§3.2）
 │   │   ├── builders/
@@ -568,7 +568,7 @@ context-engine = [
 | 下游 | 关系 | 调用姿态 |
 |------|------|---------|
 | **Agent Orchestrator**（主消费者） | 必须 | 执行任务前 `bundle = await ce.build(req); await ce.inject(bundle, ide)` |
-| MCP Server `knowledge_base_server.py` | Phase 2 重构 | MCP 工具暴露 `/context/build` 给 IDE 主动查询 |
+| MCP Server `knowledge_base_server.py` | beta 重构 | MCP 工具暴露 `/context/build` 给 IDE 主动查询 |
 | Dashboard `context_overview.py` | 可选 | `await ce.stats()` 可视化 |
 
 ### 8.3 Feedback Loop 单向依赖（Protocol 引用，不硬编码）
@@ -594,11 +594,11 @@ class ContextAdjustAction(Protocol):
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **Phase 0**（当前） | 接口规范定稿 | ADR-0015 Active + 本规范 Active |
-| **Phase 1** | `InProcessContextEngine` 实现 + 默认权重 + Cursor 注入 | ① §12 P0 用例通过<br>② build 端到端 ≤ 1.5s（VMS 稳态）<br>③ Cursor 下 inject 成功率 ≥ 99% |
-| **Phase 2** | Trae / Claude-Desktop 通道适配 + Feedback Loop 接入 | 多 IDE 切换零重写 + `adjust_strategy` 动态生效 |
-| **Phase 3** | 服务化 `RemoteContextEngine` | 多 IDE 实例并发 build ≥ 3 时触发 |
-| **Phase 4** | 自适应 slot 预算（强化学习） | Feedback 数据量 > 10k 次 |
+| **scaffold**（当前） | 接口规范定稿 | ADR-0015 Active + 本规范 Active |
+| **experimental** | `InProcessContextEngine` 实现 + 默认权重 + Cursor 注入 | ① §12 P0 用例通过<br>② build 端到端 ≤ 1.5s（VMS 稳态）<br>③ Cursor 下 inject 成功率 ≥ 99% |
+| **beta** | Trae / Claude-Desktop 通道适配 + Feedback Loop 接入 | 多 IDE 切换零重写 + `adjust_strategy` 动态生效 |
+| **beta** | 服务化 `RemoteContextEngine` | 多 IDE 实例并发 build ≥ 3 时触发 |
+| **stable** | 自适应 slot 预算（强化学习） | Feedback 数据量 > 10k 次 |
 
 ---
 
@@ -624,7 +624,7 @@ class CEDegradedError(CEError): ...                  # 降级标记用，通常�
 
 触发场景：
 - VMS `multi_search` 返回 `degraded=True`
-- VMS 完全无法连接（Phase 3+ HTTP 模式）
+- VMS 完全无法连接（beta+ HTTP 模式）
 - ChromaDB 持久化文件损坏
 
 降级动作：
@@ -699,7 +699,7 @@ except (CECompressionError, asyncio.TimeoutError):
 
 ## 11. 性能 SLO
 
-### 11.1 稳态 SLO（Phase 1，VMS 健康前提下）
+### 11.1 稳态 SLO（experimental，VMS 健康前提下）
 
 | 指标 | 目标 | 测试条件 |
 |------|------|---------|
@@ -732,7 +732,7 @@ except (CECompressionError, asyncio.TimeoutError):
 
 ---
 
-## 12. 测试用例（P0，Phase 1 必须通过）
+## 12. 测试用例（P0，experimental 必须通过）
 
 ### 12.1 Build P0
 

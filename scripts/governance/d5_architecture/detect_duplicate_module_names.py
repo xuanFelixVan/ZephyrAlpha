@@ -1,6 +1,17 @@
 """
 detect_duplicate_module_names.py --- 同名模块语义关系分析
 
+__manifest__ = """
+args: []
+description: 同名模块语义关系分析——AST级导入链+符号重叠检测，区分适配器/Facade vs 真正重复
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：AGENTS.md §6.4（最有利于 AI 施工 --- 机器可读优于自然语言推理）
      §6.1（专业机构论证先行 --- 不能靠"感觉"判断冲突）
 

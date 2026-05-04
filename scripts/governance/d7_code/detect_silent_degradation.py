@@ -1,6 +1,17 @@
 """
 detect_silent_degradation.py — 静默降级检测
 
+__manifest__ = """
+args: []
+description: 静默降级检测（COND-45 — 降级路径必须有日志）
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：COND-45（服务降级不写入日志为条件禁止）
 
 检测内容：

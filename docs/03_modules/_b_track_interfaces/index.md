@@ -32,7 +32,7 @@ depends_on:
 |:--|:--|
 | 5 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 蓝图 → `l01_infrastructure/{module}/blueprint.md` |
 | 跨服务依赖拓扑声明 | 施工计划 → `l01_infrastructure/{module}/` |
-| 渐进路线（Phase 0→4）与 SLO | 具体实现代码 → `src/zephyr/` |
+| 渐进路线（scaffold→4）与 SLO | 具体实现代码 → `src/zephyr/` |
 | 错误码与降级策略 | 部署/CI/CD → `04_automation/` |
 
 ---

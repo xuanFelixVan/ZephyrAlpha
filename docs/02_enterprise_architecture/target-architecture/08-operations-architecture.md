@@ -118,7 +118,7 @@ Operations Architecture（运维架构视图）回答：
 - **Feedback Loop Engine (FLE)** 是 6 大核心服务的"自动化运维大脑"，所有服务指标→FLE→异常检测→动作分派
 - 两者关系：OpenTelemetry 面向"人工看板 + 外部工具"；FLE 面向"系统内部自调节"
 
-### 4.2 Phase 1 SLI/SLO 基线（P0 必采）
+### 4.2 experimental SLI/SLO 基线（P0 必采）
 
 | 服务 | SLI 指标 | SLO 阈值 | 告警动作 |
 |------|---------|:--------:|---------|
@@ -159,9 +159,9 @@ Operations Architecture（运维架构视图）回答：
 **导出通道**：
 
 - `l12_system_telemetry/` 定期从 FLE 导出到本地文件（JSON Lines）
-- Phase 2 启用 OpenTelemetry Collector → Prometheus/Grafana 标准栈
+- beta 启用 OpenTelemetry Collector → Prometheus/Grafana 标准栈
 
-> 🚧 **Phase 2 扩展**：Grafana Dashboard 模板、On-Call 流程、Alertmanager 规则集待 Phase 2 补齐（本文档届时升级为 v1.0.0 active）。
+> 🚧 **beta 扩展**：Grafana Dashboard 模板、On-Call 流程、Alertmanager 规则集待 beta 补齐（本文档届时升级为 v1.0.0 active）。
 
 ---
 
@@ -215,15 +215,15 @@ Operations Architecture（运维架构视图）回答：
 
 > 🚧 **占位**：P0/P1/P2/P3 告警分级定义、事件响应流程（Detection → Triage → Mitigate → Resolve → Post-Mortem）、Post-Mortem 模板（Runbook RB-D6-01）待激活后补齐。
 >
-> **参考**：安全类事件响应流程已在 [`06-security-architecture.md §11`](./06-security-architecture.md) Phase 1 启动，本域 D6 在非安全运维事件上做增量补齐。
+> **参考**：安全类事件响应流程已在 [`06-security-architecture.md §11`](./06-security-architecture.md) experimental 启动，本域 D6 在非安全运维事件上做增量补齐。
 
 ---
 
 ## §8A 6 Core Services — Runtime Operations / 6 大核心服务运维治理
 
-> 新增于 v0.2.0（2026-04-24）。本节专项描述 6 大核心服务（LSG/CE/Orc/VMS/FLE/KB）的 Phase 1 运维流程，是 §3-§8 的 8 大运维域在"AI 基础设施"上的具化。
+> 新增于 v0.2.0（2026-04-24）。本节专项描述 6 大核心服务（LSG/CE/Orc/VMS/FLE/KB）的 experimental 运维流程，是 §3-§8 的 8 大运维域在"AI 基础设施"上的具化。
 
-### 8A.1 服务生命周期（Phase 1 单机单进程）
+### 8A.1 服务生命周期（experimental 单机单进程）
 
 ```
 系统启动 (python -m zephyr.orchestrator.bootstrap)  # 未来实现点，LPC 双轨下由 Orchestrator 启动 DAG
@@ -265,7 +265,7 @@ class ServiceHealthProtocol(Protocol):
         }
 ```
 
-**巡检频率**：Phase 1 由 FLE 每 60 秒轮询一次，异常立即进入 detect_anomaly 流程。
+**巡检频率**：experimental 由 FLE 每 60 秒轮询一次，异常立即进入 detect_anomaly 流程。
 
 ### 8A.3 降级矩阵
 
@@ -281,11 +281,11 @@ class ServiceHealthProtocol(Protocol):
 
 ### 8A.4 配置热更新
 
-**Phase 1 约束**：配置文件修改需要重启服务（无热更新）。
+**experimental 约束**：配置文件修改需要重启服务（无热更新）。
 
-**Phase 2 目标**：LSG 策略表 + Orc 白名单 + FLE 阈值支持热更新，减少 AI 协作中断。
+**beta 目标**：LSG 策略表 + Orc 白名单 + FLE 阈值支持热更新，减少 AI 协作中断。
 
-### 8A.5 日常巡检清单（Phase 1 P0）
+### 8A.5 日常巡检清单（experimental P0）
 
 建议每日一次：
 
@@ -314,11 +314,11 @@ class ServiceHealthProtocol(Protocol):
 | RB-D6-01 | 事件 | Post-Mortem 模板 | 每次 P0/P1 事件后 | 🔲 待建 |
 | RB-D7-01 | 容量 | 资源用量月度报告 | 每月容量复盘 | 🔲 待建 |
 | RB-D8-01 | 成本 | LLM Token 费用报告 | 每月成本复盘 | 🔲 待建 |
-| RB-SVC-01 | 6大核心服务 | 冷启动 Runbook（依赖 DAG 序）| 系统重启 | 🔲 Phase 1 P0 |
-| RB-SVC-02 | 6大核心服务 | VMS ChromaDB 重建 Runbook | 持久化损坏 | 🔲 Phase 1 P0 |
-| RB-SVC-03 | 6大核心服务 | LSG 策略表更新 Runbook | 红队发现新攻击模式 | 🔲 Phase 1 P0 |
-| RB-SVC-04 | 6大核心服务 | FLE SQLite 归档 Runbook | 数据量 > 100MB | 🔲 Phase 1 P1 |
-| RB-SVC-05 | 6大核心服务 | Agent Sandbox 逃逸响应 | 沙箱违规告警 | 🔲 Phase 1 P0（→ IR-SEC-002）|
+| RB-SVC-01 | 6大核心服务 | 冷启动 Runbook（依赖 DAG 序）| 系统重启 | 🔲 experimental P0 |
+| RB-SVC-02 | 6大核心服务 | VMS ChromaDB 重建 Runbook | 持久化损坏 | 🔲 experimental P0 |
+| RB-SVC-03 | 6大核心服务 | LSG 策略表更新 Runbook | 红队发现新攻击模式 | 🔲 experimental P0 |
+| RB-SVC-04 | 6大核心服务 | FLE SQLite 归档 Runbook | 数据量 > 100MB | 🔲 experimental P1 |
+| RB-SVC-05 | 6大核心服务 | Agent Sandbox 逃逸响应 | 沙箱违规告警 | 🔲 experimental P0（→ IR-SEC-002）|
 
 ---
 
@@ -342,4 +342,4 @@ class ServiceHealthProtocol(Protocol):
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
 | 2026-04-19 | v0.1.0：初版骨架建立（S14-G4，批次 A）。§1 Purpose + 与 04-TA §6 边界说明；§2 八运维域总表；§3-§8 六域占位（3-5 行现状 + 占位标记）；§9 Runbook Catalog 11 条占位清单；§10 Activation Triggers 8 条触发条件。R39 登记理由。 |
-| 2026-04-24 | v0.2.0：B-d-5 增量加固。§4 D2 Monitoring 实质化：Phase 1 SLI/SLO 基线 9 项（含 SLO 阈值+告警动作）+ 指标采集拓扑（FLE 为中枢）；新增 §8A "6 大核心服务运维治理"（生命周期 DAG 序 + health check 合约 + 降级矩阵 + 日常巡检清单）；§9 Runbook Catalog 新增 5 条服务类 Runbook（RB-SVC-01~05）；§8 D6 补充与 06-security §11 对齐链接。文档保留 skeleton 身份，待 Phase 2 升级为 active。 |
+| 2026-04-24 | v0.2.0：B-d-5 增量加固。§4 D2 Monitoring 实质化：experimental SLI/SLO 基线 9 项（含 SLO 阈值+告警动作）+ 指标采集拓扑（FLE 为中枢）；新增 §8A "6 大核心服务运维治理"（生命周期 DAG 序 + health check 合约 + 降级矩阵 + 日常巡检清单）；§9 Runbook Catalog 新增 5 条服务类 Runbook（RB-SVC-01~05）；§8 D6 补充与 06-security §11 对齐链接。文档保留 skeleton 身份，待 beta 升级为 active。 |

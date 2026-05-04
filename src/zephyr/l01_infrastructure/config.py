@@ -28,9 +28,9 @@ class AppConfig:
         object.__setattr__(self, "data_source_priority", self.data_source_priority or ["akshare", "tushare"])
 
 def load_config(config_path: str | None = None, env_override: bool = True) -> AppConfig:
-    """[STUB — Phase 2 实现] 加载应用配置。"""
-    raise NotImplementedError("load_config: STUB — Phase 2 实现")
+    """[STUB — beta 实现] 加载应用配置。"""
+    raise NotImplementedError("load_config: STUB — beta 实现")
 
 def reload_config(current: AppConfig) -> AppConfig:
-    """[STUB — Phase 2 实现] 热重载配置。"""
-    raise NotImplementedError("reload_config: STUB — Phase 2 实现")
+    """[STUB — beta 实现] 热重载配置。"""
+    raise NotImplementedError("reload_config: STUB — beta 实现")

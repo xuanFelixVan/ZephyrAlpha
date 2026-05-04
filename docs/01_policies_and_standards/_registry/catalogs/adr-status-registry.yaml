@@ -256,10 +256,10 @@ adrs:
     note: "四层防御 + fail-closed + OWASP LLM Top 10 映射。替代已归档 tool-interface-contract.md"
 
   - adr_id: "ADR-0021"
-    title: "Phase 0 唯一强制门禁——SSoT Validator"
+    title: "scaffold 唯一强制门禁——SSoT Validator"
     status: accepted
     accepted_date: "2026-04-24"
-    source: "§Kimi 根因 #7 + §Qwen Phase 0 升级 + §Opus 4.7 §四"
+    source: "§Kimi 根因 #7 + §Qwen scaffold 升级 + §Opus 4.7 §四"
     superseded_by: null
     refines: null
     note: "三级违规分级 + pre-commit 阻塞 + 4-6 人日升级"

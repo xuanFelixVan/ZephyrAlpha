@@ -1,6 +1,6 @@
 # ZephyrAlpha 2.0 — 触发路由表（M3 TriggerRouter）
 #
-# 任务编号 : T-V2-007（Phase 1d RI-03）
+# 任务编号 : T-V2-007（experimental RI-03）
 # 权限层级 : Human-Gated（路由表修改 = 关键架构变更，R84 修正）
 # 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）+ §2.10（三件套）
 # 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
@@ -23,7 +23,7 @@
 # - context: 关键字参数（如 session_id / now / dry_run）
 # - 返回值通过 RouterDispatchResult.handler_result 返回给调用方
 #
-# Phase 1d 起始集（5 种 trigger_type）
+# experimental 起始集（5 种 trigger_type）
 # -----------------------------------
 # 1. onboarding         — 新会话/新 Agent 注册时触发上下文加载
 # 2. drift_detected     — Drift Detector 报告偏移时触发恢复
@@ -31,7 +31,7 @@
 # 4. cleanup_due        — 周期性清理任务（定时）
 # 5. blueprint_published — 新蓝图发布后触发反思 / KE 索引
 #
-# Phase 2 扩展须经 Owner 审批（Human-Gated）
+# beta 扩展须经 Owner 审批（Human-Gated）
 
 version: "1.0.0"
 schema_version: "1.0.0"
@@ -78,11 +78,11 @@ triggers:
     enabled: true
 
 # --- AUTO-GENERATED WIRING STATUS START ---
-# trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [Phase 1c（T-V2-006）]
-# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [Phase 1f（T-V2-009）]
-# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.gates.drift_detector.DriftDetector.trigger_recovery [Phase 1f（T-V2-009）]
-# trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.drafts_zone_archiver.archive_expired_drafts [Phase 1g+]
-# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [Phase 1e（T-V2-008）]
+# trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
+# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
+# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.gates.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
+# trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.drafts_zone_archiver.archive_expired_drafts [experimentalg+]
+# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
 #
 # 真实 handler 实施后:
 #   (1) 更新 trigger_router.yaml triggers.<type>.handler 为真实路径

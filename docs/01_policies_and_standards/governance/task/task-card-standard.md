@@ -59,7 +59,7 @@ related:
 1-3 句话说清楚：**为什么做、做什么、关键约束**。
 
 ✅ 正确示例：
-> 为 SQLite 任务仓库添加 CRUD 操作（INSERT/SELECT/UPDATE/DELETE）。本任务是 Phase 2 数据层核心，后续 3 个任务依赖此产出。
+> 为 SQLite 任务仓库添加 CRUD 操作（INSERT/SELECT/UPDATE/DELETE）。本任务是 beta 数据层核心，后续 3 个任务依赖此产出。
 
 ### 3.2 触发条件
 
@@ -195,7 +195,7 @@ tags:
 # 正文
 
 ## 目标
-为 SQLite 任务仓库添加完整 CRUD 操作和 10 状态机实现。这是 Phase 2 数据层核心组件，后续任务依赖此产出。
+为 SQLite 任务仓库添加完整 CRUD 操作和 10 状态机实现。这是 beta 数据层核心组件，后续任务依赖此产出。
 
 ## 触发条件
 - SRC-041（SQLite 基础框架搭建）已通过

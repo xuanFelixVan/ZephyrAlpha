@@ -23,7 +23,7 @@
     - _migrate_knowledge_status × 1
     - _migrate_circuit_breaker_state × 1
 
-Task: T-1-02 | Safety: M | Phase 1
+Task: T-1-02 | Safety: M | experimental
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 schema_version: 1.0.0
-generated_at: '2026-05-04T23:09:48.854441'
-total_files: 137
+generated_at: '2026-05-05T01:25:46.556242'
+total_files: 140
 files:
 - path: ZephyrAlpha\docs\01_policies_and_standards\index.md
   module_id: PS-IDX-001
@@ -629,6 +629,17 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
+- path: ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\index.md
+  module_id: ''
+  title: engineering — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
 - path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\ai-behavior-iron-policy.md
   module_id: GOV-MOD-002
   title: AI模型行为铁律
@@ -794,6 +805,17 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+- path: ZephyrAlpha\docs\01_policies_and_standards\meta\behavior-boundaries-standard.md
+  module_id: PS-STD-003
+  title: ZephyrAlpha 行为边界标准
+  doc_type: standard
+  status: active
+  version: 1.5.3
+  rule_form: declarative
+  scope: global
+  stability: stable
+  layer: cross_layer
+  superseded_by: ''
 - path: ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md
   module_id: PS-STD-005
   title: ZephyrAlpha 蓝图体系架构标准 — 三级金字塔与目录归属
@@ -870,6 +892,17 @@ files:
   scope: global
   stability: stable
   layer: cross_layer
+  superseded_by: ''
+- path: ZephyrAlpha\docs\01_policies_and_standards\meta\registry-of-registries.yaml
+  module_id: PS-REG-002
+  title: 登记表的登记表 — 跨登记表一致性契约
+  doc_type: contract
+  status: active
+  version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
   superseded_by: ''
 - path: ZephyrAlpha\docs\01_policies_and_standards\meta\rule-lifecycle-and-change-standard.md
   module_id: PS-STD-009

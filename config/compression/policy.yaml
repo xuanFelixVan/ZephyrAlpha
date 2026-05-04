@@ -1,6 +1,6 @@
-# ZephyrAlpha 2.0 — DocCompressor 压缩策略（Phase 1c 最小版）
+# ZephyrAlpha 2.0 — DocCompressor 压缩策略（experimental 最小版）
 # ============================================================
-# 任务编号 : T-V2-006（Phase 1c CL-018）
+# 任务编号 : T-V2-006（experimental CL-018）
 # 权限层级 : Immutable Core（不变量字段禁止 AI 自主修改）
 # 真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-018)
 # 关联决策 : rationale-log R83（CL-018 升级为 RI 扩展模式）
@@ -8,7 +8,7 @@
 # 创建日期 : 2026-04-27
 # 版本     : 1.0.0
 #
-# 子目录预留：Phase 2 扩展 algorithms / providers / multi_pass_rules 三文件
+# 子目录预留：beta 扩展 algorithms / providers / multi_pass_rules 三文件
 #
 # 重要约束（Human-Gated）
 # ----------------------
@@ -22,7 +22,7 @@
 # 修改上述字段须经 Owner 审批。算法实现细节（doc_compressor.py 内部）
 # 为 AI-Modifiable。
 #
-# Phase 2 扩展触发条件
+# beta 扩展触发条件
 # --------------------
 # 当压缩失败率 > 5% 时由 Owner 发起策略审查。
 
@@ -34,7 +34,7 @@ status: active
 ttl: permanent
 created: "2026-04-27"
 immutable_core: true
-implementation_status: "Phase 1 active — consumed by doc_compressor.py at runtime. Immutable Core fields (min_chars/max_chars/preserve_*) enforced by CompressionInvariantError."
+implementation_status: "experimental active — consumed by doc_compressor.py at runtime. Immutable Core fields (min_chars/max_chars/preserve_*) enforced by CompressionInvariantError."
 
 policy:
   # 压缩后正文最小字符数（≥ 100）

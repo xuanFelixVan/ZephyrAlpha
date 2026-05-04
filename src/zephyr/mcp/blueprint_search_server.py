@@ -1,7 +1,7 @@
 """
 BlueprintSearchServer — MCP Server for blueprint discovery
 =============================================================
-Task ID  : T-V2-010 (Phase 1e RI-07 — Blueprint Routing MCP Server)
+Task ID  : T-V2-010 (experimental RI-07 — Blueprint Routing MCP Server)
 Spec     : MOD-INF-013 §3（MCP Tool 清单）+ MOD-INF-009 §8（蓝图触发路由表）
 Protocol : MCP/0.3 (JSON-RPC 2.0 over stdio, ADR-0033)
 关联决策  : R90 (蓝图三级金字塔架构) + R91 (MCP 蓝图检索 tool 落地)
@@ -55,7 +55,7 @@ SERVER_VERSION = "1.0.0"
 SERVER_DESCRIPTION = (
     "Blueprint discovery MCP server — finds relevant blueprint documents "
     "for a given task via keyword matching over config/blueprint_routing.yaml. "
-    "Phase 1e (T-V2-010)."
+    "experimental (T-V2-010)."
 )
 
 # ---------------------------------------------------------------------------
@@ -81,7 +81,8 @@ class BlueprintSearchServer(BaseMCPServer):
             name="blueprint_search.find_relevant_blueprint",
             description=(
                 "给定任务描述，返回与之最相关的蓝图列表（按相关性排序）。"
-                "AI agent 应在任务开始前调用此 tool 以确定需要阅读哪些蓝图。"
+                "AI agent MUST 在任务开始前调用此 tool 以确定需要阅读哪些蓝图。"
+                "beta 硬合规：G6 门禁强制检查——未读蓝图则代码变更被 REJECT。"
                 "对标 Codified Context (arXiv 2602.20478) 的 find_relevant_context MCP tool。"
             ),
             input_schema={
@@ -93,8 +94,8 @@ class BlueprintSearchServer(BaseMCPServer):
                     },
                     "num_results": {
                         "type": "integer",
-                        "description": "返回的最大蓝图数（默认 5）",
-                        "default": 5,
+                        "description": "返回的最大蓝图数（默认 3，beta 建议 3-5）",
+                        "default": 3,
                     },
                     "include_retired": {
                         "type": "boolean",
@@ -114,7 +115,7 @@ class BlueprintSearchServer(BaseMCPServer):
     def _find_relevant_blueprint(
         self,
         task_description: str,
-        num_results: int = 5,
+        num_results: int = 3,
         include_retired: bool = False,
     ) -> dict[str, Any]:
         """Find blueprints relevant to the given task description.
@@ -123,6 +124,9 @@ class BlueprintSearchServer(BaseMCPServer):
         1. Load keyword routes from config/blueprint_routing.yaml
         2. Score each route by keyword overlap with task_description
         3. Return top-N ranked results
+
+        beta hard compliance: AI MUST read ALL top-N blueprints before code changes.
+        G6 gate enforces this — unread blueprint → REJECT.
         """
         routes = self._load_routes()
         if not routes:
@@ -154,6 +158,7 @@ class BlueprintSearchServer(BaseMCPServer):
         top_n = scored[: max(1, num_results)]
 
         results = []
+        cross_read_hints = []
         for score, route in top_n:
             results.append(
                 {
@@ -166,13 +171,22 @@ class BlueprintSearchServer(BaseMCPServer):
                     "path_patterns": route.get("path_patterns", []),
                 }
             )
+            cross_hint = route.get("cross_read_hint", "")
+            if cross_hint:
+                cross_read_hints.append(cross_hint)
 
         return {
             "results": results,
             "count": len(results),
             "source": "config/blueprint_routing.yaml",
             "strategy": "keyword_fuzzy_match",
-            "hint": "AI agent SHOULD read the top-3 blueprints' §1 (system boundary + topology) before code changes",
+            "phase": "P2_hard_compliance",
+            "hint": (
+                "beta 硬合规: AI MUST read ALL returned blueprints' §1 (system boundary + topology) "
+                "BEFORE any code change. G6 gate will REJECT unverified changes. "
+                "Use record_blueprint_read() to register blueprint consumption."
+            ),
+            "cross_read_hints": cross_read_hints if cross_read_hints else None,
         }
 
     # ------------------------------------------------------------------

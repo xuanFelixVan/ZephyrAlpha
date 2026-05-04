@@ -49,7 +49,7 @@ tags:
 | §1 | 服务定位与实施策略（含 Protocol 抽象基类） | 架构师 |
 | §2 | 技术选型表 | 架构师、运维 |
 | §3 | 核心数据模型（Collection / Document / Chunk / Cascade） | 开发者 |
-| §4 | API 设计（Python 库 Phase 1 + HTTP 预留骨架） | 所有集成方 |
+| §4 | API 设计（Python 库 experimental + HTTP 预留骨架） | 所有集成方 |
 | §5 | 前置条件与依赖 | 开发者 |
 | §6 | 文件清单与落位 | 开发者 |
 | §7 | 集成点 | 架构师、开发者 |
@@ -65,10 +65,10 @@ tags:
 
 - ❌ **ChromaDB 使用教程**——见 ChromaDB 官方文档（https://docs.trychroma.com）
 - ❌ **BGE-M3 模型训练指南**——本方案仅使用预训练量化模型，不涉及微调
-- ❌ **生产部署运维手册**——Phase 3+ 服务化时另出 SRE 文档
+- ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 - ❌ **Context Engine 设计文档**——见 `context-engine-interface.md`（B-a-2 产出）
 - ❌ **MCP 协议适配细则**——VMS 不碰 MCP，相关内容见 `context-engine-interface.md`
-- ❌ **具体施工计划**——见 Phase 1 `construction-plan-vms-*.md`（B 阶段后由 E 阶段任务卡覆盖）
+- ❌ **具体施工计划**——见 experimental `construction-plan-vms-*.md`（B 阶段后由 E 阶段任务卡覆盖）
 
 ---
 
@@ -103,7 +103,7 @@ tags:
 **关键决策**：定义 `VectorMemoryProtocol` 抽象基类，两种实现共享同一签名，业务层永远依赖 Protocol 而非具体实现，升级时零重写。
 
 ```python
-# src/zephyr/vector_memory/protocol.py (Phase 1 产出)
+# src/zephyr/vector_memory/protocol.py (experimental 产出)
 
 from typing import Protocol, Literal
 
@@ -123,17 +123,17 @@ class VectorMemoryProtocol(Protocol):
     async def gc(self, **kwargs) -> GCResult: ...
 
 class InProcessVectorMemory:
-    """Phase 1（当前目标）：直接调 ChromaDB SDK，进程内异步协调。"""
+    """experimental（当前目标）：直接调 ChromaDB SDK，进程内异步协调。"""
 
 class RemoteVectorMemory:
-    """Phase 3+（按需启用）：HTTP/gRPC Client，调独立 VMS 服务。"""
+    """beta+（按需启用）：HTTP/gRPC Client，调独立 VMS 服务。"""
 ```
 
 | Phase | 实施形态 | 运行方式 | 触发升级条件 |
 |:-:|---------|---------|-------------|
-| **Phase 1** | **`InProcessVectorMemory`（Python 库，当前目标）** | `from zephyr.vector_memory import get_vm` 进程内异步调用 | - |
-| Phase 3 | `RemoteVectorMemory`（HTTP 服务） | `POST /v1/*` FastAPI 进程，业务层切依赖即可 | ≥1 个触发：<br>① 数据量 > 10GB 或 chunks > 500k<br>② 并发写入 ≥ 3 进程同时需要<br>③ embedding 模型 > 2GB 不宜多进程加载 |
-| Phase 4 | `RemoteVectorMemory`（gRPC） | 同上但传输层换 gRPC | RPS > 500 |
+| **experimental** | **`InProcessVectorMemory`（Python 库，当前目标）** | `from zephyr.vector_memory import get_vm` 进程内异步调用 | - |
+| beta | `RemoteVectorMemory`（HTTP 服务） | `POST /v1/*` FastAPI 进程，业务层切依赖即可 | ≥1 个触发：<br>① 数据量 > 10GB 或 chunks > 500k<br>② 并发写入 ≥ 3 进程同时需要<br>③ embedding 模型 > 2GB 不宜多进程加载 |
+| stable | `RemoteVectorMemory`（gRPC） | 同上但传输层换 gRPC | RPS > 500 |
 
 **所有 API 均为 `async`**——项目用 asyncio 事件循环，进程内锁用 `asyncio.Lock()`（异步等待，不阻塞 loop），跨进程锁用 `filelock.FileLock()`（pytest 并发 / 多 Agent 共存）。**严禁使用 `threading.Lock`**（阻塞事件循环）。
 
@@ -149,7 +149,7 @@ class RemoteVectorMemory:
 | multi_search 合并策略 | **RRF 倒数排名融合**（Cormack 2009） | 加权分数融合（需配权重） | 级联串行检索（延迟高） | 不同 Collection 向量距离尺度不同，RRF 只看排名不看分数 | - | ADR-0016 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环）| 项目全异步栈 | 服务化后废除 | - |
 | 跨进程并发 | **`filelock.FileLock`** | `msvcrt.locking`（Windows Only） | 全局单例 | pytest 并发 + 多 Agent 场景 | 服务化后废除 | - |
-| 服务运行时（Phase 3 启用） | FastAPI | gRPC | Flask | FastAPI 原生 async + OpenAPI | RPS > 500 → gRPC | - |
+| 服务运行时（beta 启用） | FastAPI | gRPC | Flask | FastAPI 原生 async + OpenAPI | RPS > 500 → gRPC | - |
 
 ---
 
@@ -171,7 +171,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 update / delete 动作的级联策略，每种对应不同的业务触发：
 
 ```python
-# src/zephyr/vector_memory/cascade.py (Phase 1 产出)
+# src/zephyr/vector_memory/cascade.py (experimental 产出)
 
 from enum import Enum
 
@@ -212,7 +212,7 @@ CASCADE_SCENARIOS = {
 ### 3.3 Pydantic Schemas
 
 ```python
-# src/zephyr/vector_memory/schemas.py (Phase 1 产出)
+# src/zephyr/vector_memory/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
@@ -296,13 +296,13 @@ class SyncResult(BaseModel):
 
 ## 4. API 设计
 
-### 4.1 Python 库 API（Phase 1 主用，`InProcessVectorMemory` 实现）
+### 4.1 Python 库 API（experimental 主用，`InProcessVectorMemory` 实现）
 
 ```python
-# src/zephyr/vector_memory/in_process.py (Phase 1 产出)
+# src/zephyr/vector_memory/in_process.py (experimental 产出)
 
 class InProcessVectorMemory:  # implements VectorMemoryProtocol
-    """Phase 1 默认实现。所有方法均为 async，依赖 ChromaDB SDK。"""
+    """experimental 默认实现。所有方法均为 async，依赖 ChromaDB SDK。"""
 
     def __init__(self, config: VMConfig) -> None: ...
 
@@ -395,7 +395,7 @@ class InProcessVectorMemory:  # implements VectorMemoryProtocol
         跨 Collection 联合检索。遗漏 #3 补充。
         典型场景：AI 编写 L02 因子代码时需要 decisions(ADR) + code_context(接口) + lessons(教训)
 
-        merge_strategy（Phase 1 默认 rrf）：
+        merge_strategy（experimental 默认 rrf）：
           - "rrf"（推荐）：倒数排名融合 score = Σ 1/(k + rank_i)，k=60。
             理由：不同 Collection 向量距离尺度不同（维度/分布不同），RRF 只看排名规避尺度问题。
             参考：Cormack et al. 2009 "Reciprocal Rank Fusion outperforms Condorcet..."
@@ -420,7 +420,7 @@ class InProcessVectorMemory:  # implements VectorMemoryProtocol
     async def gc(self, older_than_days: int = 30) -> GCResult: ...
 ```
 
-### 4.2 HTTP API（Phase 3 按需启用，预留骨架）
+### 4.2 HTTP API（beta 按需启用，预留骨架）
 
 **现在不实现**，但固化 URL 与 schema，`RemoteVectorMemory` 将严格对齐：
 
@@ -449,10 +449,10 @@ HTTP 请求 / 响应 schema = 库方法入参 / 出参的 Pydantic JSON 序列�
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
 | `src/zephyr/config/embedding_model_registry.yaml` | ✅ 已存在 | - |
-| `src/zephyr/vector_memory/` 包创建 | ⏳ 待建 | Phase 1 T-1-XX |
-| BGE-M3 ONNX 模型下载到 `.models/bge-m3/` | ⏳ 待建 | Phase 1 T-1-XX |
+| `src/zephyr/vector_memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| BGE-M3 ONNX 模型下载到 `.models/bge-m3/` | ⏳ 待建 | experimental T-1-XX |
 | `.runtime/` 目录规范写入 `directory-structure-standard.md` | ⏳ 待修订 | B-d 阶段（B3/B4） |
-| `.gitignore` 追加 `.runtime/` + `.models/` | ⏳ 待追加 | Phase 1 T-1-XX 首步 |
+| `.gitignore` 追加 `.runtime/` + `.models/` | ⏳ 待追加 | experimental T-1-XX 首步 |
 | `vibe_config.yaml::runtime_root` 字段定义 | ⏳ 待修订 | B-d 阶段（B3） |
 | ADR-0016 批准 | ⏳ pending | B-e 阶段 |
 
@@ -472,7 +472,7 @@ vector-memory = [
 ### 5.3 运行时依赖（可选的消费者）
 
 - Context Engine（主消费者，见 `context-engine-interface.md`）
-- MCP `knowledge_base_server.py`（已存在，Phase 1 重构接入 `get_vm()`）
+- MCP `knowledge_base_server.py`（已存在，experimental 重构接入 `get_vm()`）
 
 ---
 
@@ -481,11 +481,11 @@ vector-memory = [
 ```
 
 ├── src/zephyr/
-│   ├── vector_memory/                              # ⏳ Phase 1 新建
+│   ├── vector_memory/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_vm() 工厂（按配置返回 InProcess 或 Remote 实现）
 │   │   ├── protocol.py                             # VectorMemoryProtocol 抽象基类（§1.3）
-│   │   ├── in_process.py                           # Phase 1 实现（ChromaDB SDK）
-│   │   ├── remote.py                               # Phase 3 实现占位（当前不开发）
+│   │   ├── in_process.py                           # experimental 实现（ChromaDB SDK）
+│   │   ├── remote.py                               # beta 实现占位（当前不开发）
 │   │   ├── schemas.py                              # Pydantic schemas（§3.3）
 │   │   ├── cascade.py                              # CascadeStrategy + CASCADE_SCENARIOS（§3.2）
 │   │   ├── chunker.py                              # 递归字符分块
@@ -500,7 +500,7 @@ vector-memory = [
 │   ├── config/
 │   │   ├── embedding_model_registry.yaml           # ✅ 已存在
 │   │   └── vector_memory.yaml                      # ⏳ 新建：runtime_root 引用 + ChromaDB 配置
-│   └── clients/                                    # Phase 3 启用时才建
+│   └── clients/                                    # beta 启用时才建
 │
 ├── vibe_config.yaml                                # ⏳ B-d 修订新增字段
 │   # 新增字段：
@@ -521,7 +521,7 @@ vector-memory = [
 ├── .models/                                        # ⏳ 本地模型（加 .gitignore）
 │   └── bge-m3/                                     # ONNX 模型文件 (~1.2GB)
 │
-├── tests/unit/vector_memory/                       # ⏳ Phase 1 新建
+├── tests/unit/vector_memory/                       # ⏳ experimental 新建
 │   ├── test_chunker.py
 │   ├── test_embedder.py
 │   ├── test_chroma_adapter.py
@@ -584,11 +584,11 @@ vector-memory = [
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **Phase 0**（当前） | 接口规范定稿（本文档） | ADR-0016 Active + 接口规范 Active |
-| **Phase 1** | `InProcessVectorMemory` 实现 + `bulk_bootstrap` 200+ 文档首次导入 | ① §11 P0 用例全通过<br>② 导入 `docs/**/*.md` 全量成功<br>③ Context Engine `multi_search` p50 < 200ms |
-| **Phase 2** | git post-commit hook 接 `sync_document` + MCP Server 重构 | ① commit 后 5s 内增量入库<br>② MCP `knowledge_base_server.py` 调用转发到 `get_vm()` |
-| **Phase 3** | `RemoteVectorMemory` 独立服务（按需触发才启动） | 触发条件满足时启动；业务层切 factory 即可，零重写 |
-| **Phase 4** | gRPC 升级（按需） | RPS > 500 时 |
+| **scaffold**（当前） | 接口规范定稿（本文档） | ADR-0016 Active + 接口规范 Active |
+| **experimental** | `InProcessVectorMemory` 实现 + `bulk_bootstrap` 200+ 文档首次导入 | ① §11 P0 用例全通过<br>② 导入 `docs/**/*.md` 全量成功<br>③ Context Engine `multi_search` p50 < 200ms |
+| **beta** | git post-commit hook 接 `sync_document` + MCP Server 重构 | ① commit 后 5s 内增量入库<br>② MCP `knowledge_base_server.py` 调用转发到 `get_vm()` |
+| **beta** | `RemoteVectorMemory` 独立服务（按需触发才启动） | 触发条件满足时启动；业务层切 factory 即可，零重写 |
+| **stable** | gRPC 升级（按需） | RPS > 500 时 |
 
 ---
 
@@ -649,13 +649,13 @@ except VMStorageError:
 | ChromaDB 写失败 | `ingest()/sync_document()` 抛 `VMStorageError` | 上游指数退避重试 |
 | 单次查询 > 2s | 超时返回已有结果 + `partial=True` | 日志告警 |
 | 首次启动未 bootstrap | 任何 search 返回 `[]` + `degraded=True` + reason="empty_collection" | **DEGRADE-001** 生效 |
-| 数据量 > 10GB | 告警触发 Phase 3 升级评估 | 运维 |
+| 数据量 > 10GB | 告警触发 beta 升级评估 | 运维 |
 
 ---
 
 ## 10. 性能 SLO
 
-### 10.1 稳态 SLO（Phase 1，ChromaDB 已加载完毕后）
+### 10.1 稳态 SLO（experimental，ChromaDB 已加载完毕后）
 
 | 指标 | 目标 | 测试条件 |
 |------|------|---------|
@@ -687,7 +687,7 @@ except VMStorageError:
 
 ---
 
-## 11. 测试用例（P0，Phase 1 必须通过）
+## 11. 测试用例（P0，experimental 必须通过）
 
 ### 11.1 Ingestion & Sync P0
 

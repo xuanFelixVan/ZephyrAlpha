@@ -2,6 +2,18 @@
 generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御）
 v1.0.0 — 2026-05-03
 
+__manifest__ = """
+args:
+- --check
+description: GATE-GENERATE — 枚举自动派生生成器（§6.14 Level 3 — vocabulary YAML → 派生文件枚举列表自动同步，--check/--apply/--diff）
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 AGENTS.md §6.14 漂移免疫架构原则 Level 3：
   从 vocabulary YAML（canonical SSoT）自动生成派生文件中的枚举列表，
   消除手动复制——物理上不可能漂移。

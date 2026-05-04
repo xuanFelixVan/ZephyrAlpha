@@ -4,7 +4,7 @@ doc_type: rule
 title: "Context Rules v1"
 status: active
 ttl: permanent
-implementation_status: "Phase 1 declarative contract — no runtime consumer yet. See context_budget_tracker.py for the active implementation."
+implementation_status: "experimental declarative contract — no runtime consumer yet. See context_budget_tracker.py for the active implementation."
 
 description: "15 context management rules for AI agent sessions covering token budget allocation, priority decay, and window sliding strategies"
 

@@ -15,6 +15,11 @@ Vibe Coding 2.0 基础设施 · L12 跨层支撑层 · 5 大核心服务之一
   DEGRADE-002: LLM 压缩失败 → 规则基
   DEGRADE-003: MCP 通道不可用 → 切换备用通道
 
+beta a 新增（2026-05-05）
+  - ContextRotModel  : n² 注意力衰减数学模型
+  - ContextEvictor   : 三维排序上下文逐出器
+  - context_injector : Provenance 溯源字段
+
 架构归属
 --------
 LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）

@@ -22,7 +22,7 @@ seven_stages:
 
   - id: "②"
     name: "草稿"
-    actions: "将想法写成结构化草稿（讨论型文档+Phase 0 扫描盘点）。遵守 DOC-001~008 文档控制8原则"
+    actions: "将想法写成结构化草稿（讨论型文档+scaffold 扫描盘点）。遵守 DOC-001~008 文档控制8原则"
     check_items:
       - "草稿是否遵循专题讨论模板？"
       - "是否覆盖5个裁定维度（规则vs目标冲突/过度工程/Vibe Coding合理性/AI自治/集成方式）？"
@@ -365,7 +365,7 @@ methodology_files:
   - name: "开发流程七合一方案"
     path: "模块候选池/开发流程/开发流程七合一方案.md"
     stage: "②~⑦"
-    description: "7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+Phase 0~5）"
+    description: "7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+scaffold~5）"
   - name: "Gate Strategy Standard"
     path: "docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md"
     stage: "④~⑤"

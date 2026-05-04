@@ -2,6 +2,17 @@
 """
 GATE-15: Frontmatter 元数据校验
 
+__manifest__ = """
+args: []
+description: Frontmatter 元数据合规扫描（doc_type合法值 / status / 必填字段）
+dimensions:
+- D3
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 SSoT 架构（v2.1.0）：
   校验器自身不再硬编码合法值——所有合法值从 YAML 词汇表文件动态加载。
   词汇表 = 唯一的真源，校验器 = 纯执行层。

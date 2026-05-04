@@ -12,7 +12,7 @@ safety_level: H
 --------
 
 提供一个 **可离线运行、零外部 LLM 依赖** 的评估框架，
-对 Phase 3 四大能力各自出 10/10/5/5 个用例共 30 条：
+对 beta 四大能力各自出 10/10/5/5 个用例共 30 条：
 
 - 10 条 意图解析（keyword / embedding / LLM 三阶段）
 - 10 条 Agent 编排（capability_match / load_balance / specialist_first /

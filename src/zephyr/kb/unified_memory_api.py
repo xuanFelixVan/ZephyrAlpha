@@ -1,7 +1,7 @@
 """
 UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）
 ====================================================
-任务编号 : T-V2-007（Phase 1d RI-02）
+任务编号 : T-V2-007（experimental RI-02）
 权限层级 : Human-Gated（M2 ChromaDB 操作 = 关键架构变更，R84 修正）
 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-01~07）+ §2.10（三件套）
 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
@@ -23,9 +23,9 @@ UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）
 - **provenance 强制**：``write()`` 必传 ``WriteTrace``（origin / audit_chain[≥1] / arbitration）
 - **CBAC 集成**：``write()`` 调用 ``capability_check("write_kb", f"unified_memory/{topic}")``
 - **Pydantic v2 frozen**：``WriteTrace`` 一旦构建即不可变（防回填污染）
-- **Phase 1d 嵌入选型**：bge-small-zh-v1.5（中文优先）→ all-MiniLM-L6-v2（fallback）→ Mock（兜底）
+- **experimental 嵌入选型**：bge-small-zh-v1.5（中文优先）→ all-MiniLM-L6-v2（fallback）→ Mock（兜底）
 
-集合 schema（不可变，Phase 2 升级须经 Owner 审批）
+集合 schema（不可变，beta 升级须经 Owner 审批）
 ------------------------------------------------
 Collection: ``unified_memory``
 - ids:        ``f"{topic}::{ts_safe}::{uuid12}"``

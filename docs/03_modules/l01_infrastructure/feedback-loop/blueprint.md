@@ -3,7 +3,7 @@ module_id: "MOD-INF-010"
 title: "Feedback Loop Engine 蓝图 — collect→detect→dispatch 自我改进闭环"
 doc_type: blueprint
 status: draft
-version: "0.1.1"
+version: "0.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -12,6 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
+construction_progress: phase_1_partial
 summary: "ZephyrAlpha Feedback Loop Engine 蓝图——定义系统自我改进闭环：collect_metric→detect_anomaly→dispatch_action。SQLite时序存储 + EMA异常检测 + 4种action_type（ESCALATE/REPAIR/NOTIFY_OWNER/ADJUST_GATE）。FLE通过Protocol适配器fire-and-forget调用其他系统，防止循环依赖。fitness_functions.py 被 l08 dashboard 消费。对标 ITIL Continual Improvement + K8s HPA (自动扩缩) + Netflix Chaos Monkey (自动恢复)。"
 tags: [feedback-loop, fle, self-improvement, anomaly-detection, metrics, auto-evolution, fitness-functions, infrastructure]
 priority: P0
@@ -143,9 +144,9 @@ def detect_anomaly(current: MetricSnapshot, baseline: EMA) -> AnomalyReport:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | 6 文件骨架 + metrics_collector + fitness_functions | ✅ implemented |
-| Phase 1 | 完整的 collect→detect→dispatch 链路 + EMA基线训练 | 📋 Backlog |
-| Phase 2 | ADJUST_GATE 自动阈值建议 + dashboard fitness展示 | 📋 Backlog |
+| scaffold | 6 文件骨架 + metrics_collector + fitness_functions | ✅ implemented |
+| experimental | 完整的 collect→detect→dispatch 链路 + EMA基线训练 | 📋 Backlog |
+| beta | ADJUST_GATE 自动阈值建议 + dashboard fitness展示 | 📋 Backlog |
 
 ---
 
@@ -191,6 +192,49 @@ def detect_anomaly(current: MetricSnapshot, baseline: EMA) -> AnomalyReport:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+---
+
+## 6. 依赖关系（结构化）
+
+| 依赖目标 | 关系类型 | 为什么 |
+|------|:--:|------|
+| MOD-INF-006 (Task System) | data_source | 收集任务执行结果 feedback_collector |
+| MOD-INF-007 (Gate Engine) | feedback_to | ADJUST_GATE 建议调门禁阈值 |
+| MOD-INF-012 (Database) | persistence | FLE 结果写入 SQLite → CT-FLE-DB-001 |
+| MOD-INF-015 (Telemetry) | emit_to | metrics/logs/traces → CT-TELE-FLE-001 |
+| MOD-INF-003 (Orchestrator) | action_target | REPAIR → 创建 OPS 任务；NOTIFY_OWNER → 暂停调度 |
+| MOD-INF-009 (Pipeline) | feedback_to | 反馈→调复杂度估计→重新路由 |
+| L08 (Human-AI Interface) | dashboard | fitness_functions → Dashboard 展示 |
+| `architecture-model/layers/b_feedback_loop.yaml` | ssoT | FLE YAML canonical source |
+
+## 7. 产出物存放目录
+
+| 产出物 | 路径 |
+|------|------|
+| 指标采集器 | `src/zephyr/feedback_loop/metrics_collector.py` |
+| 反馈采集器 | `src/zephyr/feedback_loop/feedback_collector.py` |
+| 异常检测 | `src/zephyr/feedback_loop/eval_harness.py` |
+| 进化调度 | `src/zephyr/feedback_loop/auto_evolution.py` |
+| 进化引擎 | `src/zephyr/feedback_loop/evolution_engine.py` |
+| 适应度函数 | `src/zephyr/feedback_loop/fitness_functions.py` |
+| FLE 测试 | `tests/unit/test_*.py` + `tests/integration/test_evolution_e2e.py` |
+
+## 8. 集成目标
+
+| 集成目标 | 状态 | 验证方式 |
+|------|:--:|------|
+| collect→detect→dispatch 完整链路 | 📋 Backlog | 端到端测试 |
+| EMA 基线训练 + 异常检测 | ✅ scaffold | eval_harness scaffold |
+| ADJUST_GATE 自动阈值建议 | 📋 Backlog | beta Phase |
+| Dashboard fitness 展示 | ✅ scaffold | fitness_functions 被 l08 consumer |
+
+## 9. 需要更新的相关内容
+
+当本蓝图变更时，同步更新：
+1. `docs/03_modules/blueprint-registry.yaml` — 版本号和完整度
+2. `src/zephyr/l08_human_ai_interface/dashboard/components/fitness_functions.py` — 若 metric schema 变更
+3. `docs/03_modules/_master-blueprint/blueprint.md` — MOD-MASTER-001 CT-FLE-* 契约
 
 ---
 

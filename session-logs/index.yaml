@@ -1,0 +1,49 @@
+# session-logs/index.yaml — Session Log 总索引
+#
+# 知识库绑定说明
+# ==============
+# 本索引是 session-logs/ 与架构知识库之间的桥梁：
+#   1. PS-REG-011 (ai-session-registry.yaml) — 在 _registry/catalogs/ 中统一登记
+#   2. GOV-AI-007 (session-log-schema.yaml) — 定义每条 log 的字段结构
+#   3. scripts/context/generate_architecture_context.py — 扫描最近 session 注入 AI 上下文
+#   4. scripts/governance/d5_architecture/analyze_contract_impact.py — 可查询"哪些 session 碰过 CTR-XXX"
+#   5. GATE-E 门禁 — 验证本目录存在且 index 完整性 >= threshold
+#
+# 规模设计
+# ========
+# - 日期分区（YYYY/MM/session-YYYYMMDD-NNN.yaml）：单月目录 ≤ 31×N 文件
+# - 单条 log 约 2KB YAML → 10,000 条 = ~20MB
+# - 索引文件 O(1) 按日期/模块/契约/agent 查找
+# - 1500 模块量级下，按模块索引保持亚毫秒查询
+# - 冷存储：2026 年前的 YYYY/ 目录可整体归档为 tar.gz 而不影响索引结构
+#
+# 版本
+# =====
+# index_version: 1.0  — 初始建立，覆盖 2026-05-04 的五轮架构审计 session
+
+index_version: "1.0"
+created: "2026-05-04"
+last_updated: "2026-05-04"
+total_sessions: 0
+
+# 全局统计
+stats:
+  total_files_created: 0
+  total_files_modified: 0
+  total_files_deleted: 0
+  total_decisions: 0
+  total_ke_extracted: 0
+  total_blind_spots_discovered: 0
+  total_contracts_touched: 0
+
+# 按模块维度的 session 索引（自动填充——每次 session 结束后更新）
+by_module: {}
+
+# 按契约维度的 session 索引
+by_contract: {}
+
+# 按日期的 session 列表
+by_date: {}
+
+# 盲点发现时间线
+blind_spot_timeline: []

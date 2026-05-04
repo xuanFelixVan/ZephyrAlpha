@@ -55,7 +55,7 @@ context_engine:
         - "与 ChromaDB 元数据交叉引用便利"
       install: "pip install networkx==3.2"
     alternatives:
-      - {name: "Neo4j Community", why_not: "运维成本高，Phase 3+ 考虑"}
+      - {name: "Neo4j Community", why_not: "运维成本高，beta+ 考虑"}
       - {name: "igraph", why_not: "C 扩展编译麻烦，跨平台不稳定"}
     not_recommended:
       - {name: "SQLite 邻接表自实现", reason: "重复造轮子，NetworkX 已有完整算法库"}
@@ -63,7 +63,7 @@ context_engine:
       - "节点数 > 50k"
       - "跨进程共享图结构"
       - "复杂图算法（社区发现 / PageRank）成为热路径"
-    upgrade_to: "Neo4j Community Edition（Phase 3+）"
+    upgrade_to: "Neo4j Community Edition（beta+）"
     related_adr: "ADR-0015"
 
   # ---------------------------------------------------------------------- #2
@@ -114,12 +114,12 @@ vector_memory:
       choice: "ChromaDB 0.6"
       version: "0.6.x"
       rationale:
-        - "Phase 1 进程内库 + Phase 3+ HTTP 服务同一 SDK，API 不变"
+        - "experimental 进程内库 + beta+ HTTP 服务同一 SDK，API 不变"
         - "持久化 SQLite 兼容，易备份"
         - "元数据过滤能力强"
       install: "pip install chromadb==0.6.*"
     alternatives:
-      - {name: "Qdrant", why_not: "Phase 3+ 升级候选，Phase 1 过重"}
+      - {name: "Qdrant", why_not: "beta+ 升级候选，experimental 过重"}
       - {name: "Milvus Lite", why_not: "文档较新，社区较小"}
     not_recommended:
       - {name: "FAISS 裸库", reason: "缺元数据过滤、缺持久化封装"}
@@ -128,7 +128,7 @@ vector_memory:
       - "持久化大小 > 500MB"
       - "并发写入冲突频发（filelock 争用 > 10% 请求）"
       - "需要分布式部署"
-    upgrade_to: "Qdrant 独立服务（Phase 3+）"
+    upgrade_to: "Qdrant 独立服务（beta+）"
     related_adr: "ADR-0016"
 
   # ---------------------------------------------------------------------- #5
@@ -165,7 +165,7 @@ vector_memory:
         - "LangChain 标准实现，社区验证"
         - "chunk_size=512 tokens + overlap=50"
     alternatives:
-      - {name: "Semantic Chunking（基于嵌入相似度）", why_not: "Phase 1 开销大，收益不明"}
+      - {name: "Semantic Chunking（基于嵌入相似度）", why_not: "experimental 开销大，收益不明"}
       - {name: "Markdown-aware Chunking", why_not: "作为递归分块的特化，已在 separators 覆盖"}
     not_recommended:
       - {name: "固定字符数分块（无 separator）", reason: "语义边界断裂严重"}
@@ -196,7 +196,7 @@ agent_orchestrator:
       - "并发 RUNNING 任务 > 20"
       - "需要跨主机任务分发"
       - "任务优先级策略复杂化"
-    upgrade_to: "NATS JetStream（Phase 3+）"
+    upgrade_to: "NATS JetStream（beta+）"
     related_adr: "ADR-0017"
 
   # ---------------------------------------------------------------------- #8
@@ -224,10 +224,10 @@ agent_orchestrator:
     primary:
       choice: "规则集（loop_same_observation / no_progress_timeout / repeated_same_file_edit / tool_repeat_without_result）"
       rationale:
-        - "Phase 1 起步，覆盖 80% 常见幻觉"
+        - "experimental 起步，覆盖 80% 常见幻觉"
         - "零 LLM 成本"
     alternatives:
-      - {name: "LLM-as-Judge 二阶判定", why_not: "Phase 2+ 补充，成本/延迟高"}
+      - {name: "LLM-as-Judge 二阶判定", why_not: "beta+ 补充，成本/延迟高"}
     not_recommended:
       - {name: "无检测依赖 Agent 自报", reason: "Agent 自我评估不可靠"}
     upgrade_trigger:
@@ -249,7 +249,7 @@ agent_orchestrator:
       - {name: "threading.Lock", why_not: "会阻塞事件循环"}
     not_recommended:
       - {name: "无锁乐观并发", reason: "状态机转移必须原子"}
-    upgrade_trigger: "跨进程场景（Phase 3+）"
+    upgrade_trigger: "跨进程场景（beta+）"
     upgrade_to: "filelock + Redis SETNX"
     related_adr: "ADR-0017"
 
@@ -269,7 +269,7 @@ agent_orchestrator:
       - {name: "portalocker", why_not: "filelock 更简洁"}
     not_recommended:
       - {name: "自己实现文件存在性检查", reason: "有 race condition"}
-    upgrade_trigger: "Phase 3+ 服务化后不再需要"
+    upgrade_trigger: "beta+ 服务化后不再需要"
     upgrade_to: "Redis SETNX"
     related_adr: "ADR-0016 / ADR-0017"
 
@@ -286,7 +286,7 @@ agent_sandbox:
         - "个人量化单机场景够用"
       implementation: "icacls + junction point + Python subprocess 白名单"
     alternatives:
-      - {name: "Docker Desktop", why_not: "Phase 3+ 升级候选，Phase 1 过重"}
+      - {name: "Docker Desktop", why_not: "beta+ 升级候选，experimental 过重"}
       - {name: "WSL2 独立用户", why_not: "跨 Win/Mac 一致性差"}
     not_recommended:
       - {name: "PowerShell 全权限运行", reason: "违反最小权限"}
@@ -295,7 +295,7 @@ agent_sandbox:
       - "需要网络隔离"
       - "需要资源配额（CPU/内存/磁盘）"
       - "多租户场景"
-    upgrade_to: "Docker Desktop / Podman（Phase 3+）"
+    upgrade_to: "Docker Desktop / Podman（beta+）"
     related_adr: "ADR-0018"
 
 feedback_loop:
@@ -310,14 +310,14 @@ feedback_loop:
         - "2 数据量（≤ 100k 条/天）完全够用"
         - "备份/迁移简单"
     alternatives:
-      - {name: "InfluxDB", why_not: "Phase 4+ 升级候选"}
+      - {name: "InfluxDB", why_not: "stable+ 升级候选"}
       - {name: "Prometheus + Grafana", why_not: "pull 模型不适合个人量化"}
     not_recommended:
       - {name: "CSV 文件追加", reason: "查询/聚合效率差"}
     upgrade_trigger:
       - "数据量 > 1M 条/天"
       - "需要多维度聚合查询"
-    upgrade_to: "InfluxDB 2.x（Phase 4+）"
+    upgrade_to: "InfluxDB 2.x（stable+）"
     related_adr: "ADR-0019"
 
   # ---------------------------------------------------------------------- #14
@@ -327,12 +327,12 @@ feedback_loop:
     primary:
       choice: "指数移动平均（EMA）+ 阈值 + 持续时间"
       rationale:
-        - "Phase 1 起步够用"
+        - "experimental 起步够用"
         - "零 LLM 成本"
         - "可解释性强（运维可直接读阈值）"
     alternatives:
-      - {name: "Prophet / ARIMA", why_not: "Phase 4 升级"}
-      - {name: "Isolation Forest", why_not: "适合多维异常检测，Phase 1 过重"}
+      - {name: "Prophet / ARIMA", why_not: "stable 升级"}
+      - {name: "Isolation Forest", why_not: "适合多维异常检测，experimental 过重"}
     not_recommended:
       - {name: "固定阈值无 EMA", reason: "对指标波动不鲁棒"}
     upgrade_trigger:
@@ -374,7 +374,7 @@ llm_security_gateway:
         - "快速响应（延迟 < 50ms）"
         - "OWASP LLM Top 10 已整理主要 pattern"
     alternatives:
-      - {name: "LLM-as-Judge 二阶检测", why_not: "Phase 3+ 考虑，延迟高"}
+      - {name: "LLM-as-Judge 二阶检测", why_not: "beta+ 考虑，延迟高"}
       - {name: "prompt-guard 模型（Meta）", why_not: "英文为主，中文弱"}
     not_recommended:
       - {name: "无检测全量放行", reason: "违反 fail-closed 原则"}
@@ -413,15 +413,15 @@ summary:
     agent_sandbox: 1        # TECH-12
     feedback_loop: 2        # TECH-13/14
     llm_security_gateway: 3 # TECH-15/16/17
-  zero_external_dependency_count: 17   # 所有首选方案 Phase 1 都不需要外部服务
-  upgrade_deferred_to_phase_3_plus: 8  # 8 项有 Phase 3+ 升级路径
+  zero_external_dependency_count: 17   # 所有首选方案 experimental 都不需要外部服务
+  upgrade_deferred_to_phase_3_plus: 8  # 8 项有 beta+ 升级路径
   upgrade_never: 3                     # TECH-03 / TECH-08 / TECH-15 永不升级
 
 # ============================================================================
 # 升级阈值总览（汇总看板）
 # ============================================================================
 upgrade_watchboard:
-  # Phase 1 监控的关键阈值，任一触发即启动升级讨论
+  # experimental 监控的关键阈值，任一触发即启动升级讨论
   - tech_id: TECH-01
     watch: "NetworkX 节点数"
     threshold: 50000

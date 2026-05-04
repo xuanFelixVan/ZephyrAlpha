@@ -1,7 +1,7 @@
 """
 L2a ProcessSandbox — subprocess 路径白名单沙箱
 ===============================================
-任务编号 : T-V2-005（Phase 1b）
+任务编号 : T-V2-005（experimental）
 权限层级 : Immutable Core（沙箱核心逻辑）
 真源声明 : ai-autonomy-authority-registry.md §2.10
 关联决策 : rationale-log R81 C-03（L2a 归 ADR-0018，RI 层协调 L2a）

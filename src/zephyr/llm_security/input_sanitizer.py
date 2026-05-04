@@ -3,7 +3,7 @@
 Prevents path traversal, command injection, and token budget overruns
 for AI agent operations.
 
-Task: T-1-23 | Phase 1 | GLM-5.1
+Task: T-1-23 | experimental | GLM-5.1
 Safety: HIGH
 Depends: T-1-04 (task_repo.py)
 """

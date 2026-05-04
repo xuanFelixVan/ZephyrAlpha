@@ -1,6 +1,17 @@
 """
 detect_dated_snapshots.py — 带日期快照文件检测
 
+__manifest__ = """
+args: []
+description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：GOV-DOC-006 §三（状态快照文件必须使用 LATEST 命名）
 
 检测内容：

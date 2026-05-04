@@ -47,19 +47,19 @@ technology_radar:
     - id: T-T01
       name: ChromaDB HTTP Service
       category: vector_db
-      description: Phase 3+ 升级 — 从进程内库迁移到 HTTP 服务
+      description: beta+ 升级 — 从进程内库迁移到 HTTP 服务
     - id: T-T02
       name: NATS JetStream
       category: messaging
-      description: Phase 3+ 任务队列升级 — 替代 SQLite + asyncio.Queue
+      description: beta+ 任务队列升级 — 替代 SQLite + asyncio.Queue
     - id: T-T03
       name: Docker Desktop
       category: sandbox
-      description: Phase 3+ 沙箱升级 — 替代 Windows ACL 只读挂载
+      description: beta+ 沙箱升级 — 替代 Windows ACL 只读挂载
     - id: T-T04
       name: InfluxDB
       category: time_series
-      description: Phase 4+ FLE 存储升级 — 替代 SQLite 时间序列
+      description: stable+ FLE 存储升级 — 替代 SQLite 时间序列
 
   assess:
     - id: T-AS01
@@ -124,4 +124,4 @@ infrastructure_summary:
     - mcp: MCP 协议服务器
     - pipeline: M1-M11 双管线
     - core: 蓝图分解器
-    - kb: 知识库 (→ Phase 3 整合入 VMS)
+    - kb: 知识库 (→ beta 整合入 VMS)

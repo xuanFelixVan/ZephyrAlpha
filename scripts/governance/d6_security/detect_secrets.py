@@ -1,6 +1,17 @@
 """
 detect_secrets.py — 密钥/Token/凭证硬编码检测
 
+__manifest__ = """
+args: []
+description: 密钥/Token/凭证硬编码检测（ABS-29/32 — P0安全红线）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-29（密钥不入库）/ ABS-32（不硬编码密钥）
      GOV-SEC-001 §2 SEC-001/004
 

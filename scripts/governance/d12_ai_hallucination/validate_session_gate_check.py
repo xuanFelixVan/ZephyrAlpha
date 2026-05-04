@@ -1,6 +1,17 @@
 """
 validate_session_gate_check.py — Session 门禁检查完整性校验
 
+__manifest__ = """
+args: []
+description: Session 门禁检查完整性校验（OPS-VC-005 §3 — 12项gate_check）
+dimensions:
+- D12
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：OPS-VC-005 §3（Session Log 中必须有 gate_check 记录）
 
 检测内容：

@@ -72,7 +72,7 @@ This view is **driven by** the Application Architecture (application characteris
 |------|----------------------------------------------------|---------------------------------------------------------|
 | 覆盖范围 | 6 大核心服务的 17 项 AI 基础设施选型 | 全技术栈 43 项（含业务层数据库、调度器等）|
 | 分类方式 | 按服务分组 + 升级阈值看板 + ADR 对应 | ThoughtWorks Radar 四象限（adopt/trial/assess/hold）|
-| 约束强度 | **强约束**（Phase 1 必须使用首选方案）| 推荐性（部分项目仍 pending）|
+| 约束强度 | **强约束**（experimental 必须使用首选方案）| 推荐性（部分项目仍 pending）|
 | 消费方 | ADR-0015 ~ ADR-0020 + 6 份接口规范 | 整体架构规划 + CI 审计 |
 | 关系 | 前者是后者的**聚焦子集**（特别关注 AI 基础设施部分）| — |
 
@@ -102,7 +102,7 @@ This view is **driven by** the Application Architecture (application characteris
 
 | Technology question / 技术问题 | Decision / 决策结果 | Status / 状态 |
 |-------------------------------|--------------------|--------------|
-| Q5-1: Data storage | **PostgreSQL + TimescaleDB** (Phase 1 primary: time-series + relational); **DuckDB** (analytics / ad-hoc queries); Parquet (cold archive) | ✅ Decided |
+| Q5-1: Data storage | **PostgreSQL + TimescaleDB** (experimental primary: time-series + relational); **DuckDB** (analytics / ad-hoc queries); Parquet (cold archive) | ✅ Decided |
 
 ### 2.3 Pending technology decisions / 待决定的技术决策
 
@@ -174,13 +174,13 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 ### 6.1 当前阶段拓扑：单机本地
 
-> **📊 Phase 1 部署拓扑图**：见 [`diagrams/deployment-phase1.mmd`](diagrams/deployment-phase1.mmd)
+> **📊 experimental 部署拓扑图**：见 [`diagrams/deployment-experimental.mmd`](diagrams/deployment-experimental.mmd)
 
 ### 6.2 Post-Activation 拓扑概要
 
 > 激活触发：接入真实资金 / 外部投资人 / 多账户 / SRE 抽屉激活。
 
-| 维度 | Phase 1（当前） | Post-Activation |
+| 维度 | experimental（当前） | Post-Activation |
 |------|----------------|----------------|
 | 运行环境 | Windows 本地单机 | Linux 云端 / 容器化（Q5-5） |
 | 数据存储 | PostgreSQL + TimescaleDB (primary) + DuckDB (analytics) + Parquet (archive) | 云端 DB + 对象存储 |
@@ -328,7 +328,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 ## 11. Capacity Model / 容量模型
 
-### 11.1 按 14 层资源预算（Phase 1 单机）
+### 11.1 按 14 层资源预算（experimental 单机）
 
 | 层 | CPU (core·h/日) | Memory 峰值 (GB) | Storage 年增 (GB) | IOPS 峰值 |
 |----|:-----:|:------:|:------:|:----:|
@@ -349,7 +349,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 | L2 Audit Log | 0.3 | 0.2 | 25 | 50 |
 | **合计峰值** | **~20-25** | **~12 / ~24 含 OS** | **~155** | **~1500** |
 
-**Phase 1 单机建议**：16-core / 32 GB / 500 GB SSD。GPU 当前不需要，Post-Activation 触发时 1× RTX 4090 class 足够。
+**experimental 单机建议**：16-core / 32 GB / 500 GB SSD。GPU 当前不需要，Post-Activation 触发时 1× RTX 4090 class 足够。
 
 ### 11.2 LLM Token 预算
 
@@ -376,11 +376,11 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 ## 12. Cost Architecture / 成本架构
 
-> **Phase 1 月度总预算目标 ≤ ¥3000（~$420）**。Post-Activation 接入真实资金前需重建预算。
+> **experimental 月度总预算目标 ≤ ¥3000（~$420）**。Post-Activation 接入真实资金前需重建预算。
 
 ### 12.1 三分类成本模型
 
-| 类别 | Phase 1 月度估算 | 主要项目 |
+| 类别 | experimental 月度估算 | 主要项目 |
 |-----|-----------------|---------|
 | **基础设施** | ~¥300 / $45 | 本地电费 + 外网带宽 + 备份存储 |
 | **LLM & AI 服务** | ~¥1500 / $200 | Cursor 订阅 + Runtime API + 便宜模型 |

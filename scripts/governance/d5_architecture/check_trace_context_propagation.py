@@ -1,6 +1,17 @@
 """
 check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
 
+__manifest__ = """
+args: []
+description: check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 扫描 L00~L07 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
 
 检测内容:

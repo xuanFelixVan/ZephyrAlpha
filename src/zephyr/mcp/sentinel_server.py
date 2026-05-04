@@ -6,8 +6,8 @@ Task ID  : T-3-04 (B15)
 Server   : intent_router (tool_contracts.yaml §Server 5)
 Protocol : ADR-0033（stdio 传输、JSON-RPC 2.0）
 Backend  : intent_keyword_mapper.py (Stage 1, T-2-21)
-           intent_embedding_mapper.py (Stage 2, Phase 3 引入)
-           intent_llm_router.py (Stage 3, Phase 4 引入)
+           intent_embedding_mapper.py (Stage 2, beta 引入)
+           intent_llm_router.py (Stage 3, stable 引入)
 
 文件命名说明
 -----------
@@ -72,12 +72,12 @@ def _keyword_match(query: str, keyword_dict: dict[str, list[str]]) -> tuple[str,
 class SentinelServer(BaseMCPServer):
     """intent_router MCP Server 实现（Sentinel 哨兵）。
 
-    Phase 2 仅实现 Stage 1（关键词匹配）；Stage 2/3 留接口。
+    beta 仅实现 Stage 1（关键词匹配）；Stage 2/3 留接口。
     """
 
     SERVER_ID = "intent_router"
     VERSION = "1.0.0"
-    DESCRIPTION = "自然语言 → 10 域 + directive 链路由；Stage 1 关键词已激活，Stage 2/3 待 Phase 3/4"
+    DESCRIPTION = "自然语言 → 10 域 + directive 链路由；Stage 1 关键词已激活，Stage 2/3 待 beta/stable"
 
     def __init__(self) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION)
@@ -163,12 +163,12 @@ class SentinelServer(BaseMCPServer):
         domain, confidence, matched_kws = _keyword_match(query, self._keyword_dict)
         source_stage = "keyword"
 
-        # Stage 2 占位（Phase 3 引入 embedding）
+        # Stage 2 占位（beta 引入 embedding）
         if domain == "UNKNOWN" and max_stage >= 2:
             source_stage = "embedding"
             # TODO: 调用 intent_embedding_mapper.py
 
-        # Stage 3 占位（Phase 4 引入 LLM）
+        # Stage 3 占位（stable 引入 LLM）
         if domain == "UNKNOWN" and max_stage >= 3:
             source_stage = "llm"
             # TODO(Phase4): 调用 intent_llm_router.py

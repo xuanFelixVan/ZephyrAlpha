@@ -13,7 +13,7 @@ date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: phase_1_partial
-summary: "ZephyrAlpha System Telemetry 蓝图——全系统可观测性平台：5个子系统(metrics/logs/traces/ai_behavior/archive)覆盖4大黄金信号(延迟/错误/流量/饱和度)。P2-1量化追踪落地：新增 `src/zephyr/telemetry/blueprint_metrics.py`（record_blueprint_read instrumentation）+ SLI表中新增 BLUEPRINT-READ-FREQ 和 BLUEPRINT-STALENESS 两项蓝图效能SLI。Phase 1e T-V2-011。"
+summary: "ZephyrAlpha System Telemetry 蓝图——全系统可观测性平台：5个子系统(metrics/logs/traces/ai_behavior/archive)覆盖4大黄金信号(延迟/错误/流量/饱和度)。P2-1量化追踪落地：新增 `src/zephyr/telemetry/blueprint_metrics.py`（record_blueprint_read instrumentation）+ SLI表中新增 BLUEPRINT-READ-FREQ 和 BLUEPRINT-STALENESS 两项蓝图效能SLI。experimental T-V2-011。"
 tags: [telemetry, system-telemetry, l12, metrics, logs, traces, ai-behavior, observability, infrastructure]
 priority: P2
 depends_on:
@@ -201,11 +201,11 @@ class Span:
 
 | 子系统 | 阶段 | 完成度 | 下一步 |
 |--------|------|:---:|------|
-| metrics | Phase 0 | ██ 20% | MetricPoint 数据类定义 + ring buffer |
-| logs | Phase 0 | ██ 20% | structlog 配置 + JSONL writer |
-| traces | Phase 0 | █░ 10% | Span 数据结构定义 |
-| ai_behavior | Phase 0 | ░░ 5% | 概念设计完成，代码未开工 |
-| archive | Phase 0 | ░░ 5% | gzip 归档脚本骨架 |
+| metrics | scaffold | ██ 20% | MetricPoint 数据类定义 + ring buffer |
+| logs | scaffold | ██ 20% | structlog 配置 + JSONL writer |
+| traces | scaffold | █░ 10% | Span 数据结构定义 |
+| ai_behavior | scaffold | ░░ 5% | 概念设计完成，代码未开工 |
+| archive | scaffold | ░░ 5% | gzip 归档脚本骨架 |
 
 ### 下一步施工
 
@@ -262,7 +262,7 @@ class Span:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/telemetry/blueprint_metrics.py` | ✅ 已实现 | T-V2-011 Phase 1e — `record_blueprint_read()` instrumentation |
+| `src/zephyr/telemetry/blueprint_metrics.py` | ✅ 已实现 | T-V2-011 experimental — `record_blueprint_read()` instrumentation |
 
 ### 11.5 路径索引使用指南
 

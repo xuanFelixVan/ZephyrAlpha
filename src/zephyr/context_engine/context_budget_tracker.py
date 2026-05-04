@@ -3,10 +3,10 @@
 Tracks token usage per session and emits Observer events when
 thresholds are crossed. Uses tiktoken for accurate counting.
 
-Task: T-1-24 | Phase 1 | GLM-5.1
+Task: T-1-24 | experimental | GLM-5.1
 Depends: T-1-04 (Sonnet), T-1-14 (Composer), observer.py
 
-T-V2-006 扩展（Phase 1c）
+T-V2-006 扩展（experimental）
 --------------------------
 新增 DocCompressor 注入接口：
 - register_doc_compressor(compressor)  — M1 build() 时注入单例
@@ -48,7 +48,7 @@ class ContextBudgetTracker:
         tracker.count_tokens("some text", session_id="s1")
         tracker.check_budget("s1")
 
-    T-V2-006 DocCompressor 集成（Phase 1c）
+    T-V2-006 DocCompressor 集成（experimental）
     ----------------------------------------
     M1 build() 结束时调用 register_doc_compressor(compressor)，
     之后 check_budget() 在 L2_THROTTLE 触发时在事件 payload 中追加
@@ -146,7 +146,7 @@ class ContextBudgetTracker:
             session["limit"] = limit
 
     # ------------------------------------------------------------------
-    # T-V2-006 DocCompressor 注入接口（Phase 1c 新增）
+    # T-V2-006 DocCompressor 注入接口（experimental 新增）
     # ------------------------------------------------------------------
 
     def register_doc_compressor(self, compressor: DocCompressor) -> None:

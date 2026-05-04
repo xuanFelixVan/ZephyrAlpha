@@ -3,6 +3,17 @@ SSoT 矛盾扫描器 (SSoT Contradiction Validator)
 任务 ID : T-2-33
 safety_level : M（治理脚本）
 
+__manifest__ = """
+args: []
+description: SSoT单一真源一致性校验
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 功能
 ----
 主动扫描 docs/ 目录下所有 Markdown 文件的 YAML frontmatter，
@@ -422,7 +433,7 @@ def render_report(report: ScanReport) -> str:
         "",
         "| 严重级别 | 数量 | 处置要求 |",
         "|---------|------|---------|",
-        f"| 🔴 P0（严重）| {report.p0_count} | 必须立即修复，阻塞 Phase 2 完成门禁 |",
+        f"| 🔴 P0（严重）| {report.p0_count} | 必须立即修复，阻塞 beta 完成门禁 |",
         f"| 🟡 P1（重要）| {report.p1_count} | 需尽快修复，影响可信度 |",
         f"| 🔵 P2（建议）| {report.p2_count} | 低优先级，可按计划处理 |",
         f"| **合计** | **{report.total_count}** | |",
@@ -456,7 +467,7 @@ def render_report(report: ScanReport) -> str:
                 lines.append("")
     lines += ["---", "", "## 下一步行动", ""]
     if report.p0_count > 0:
-        lines.append(f"1. **立即修复 {report.p0_count} 条 P0 矛盾**（阻塞 Phase 2 完成门禁）")
+        lines.append(f"1. **立即修复 {report.p0_count} 条 P0 矛盾**（阻塞 beta 完成门禁）")
     if report.p1_count > 0:
         lines.append(f"2. 安排修复 {report.p1_count} 条 P1 矛盾（本 sprint 内完成）")
     if report.p2_count > 0:
@@ -502,7 +513,7 @@ def main() -> None:
         sys.exit(0)
     if args.ci and report.has_p0:
         print(
-            f"\n❌ CI 门禁阻塞：发现 {report.p0_count} 条 P0 矛盾，必须修复后才能通过 Phase 2 完成门禁。",
+            f"\n❌ CI 门禁阻塞：发现 {report.p0_count} 条 P0 矛盾，必须修复后才能通过 beta 完成门禁。",
             file=sys.stderr,
         )
         sys.exit(1)

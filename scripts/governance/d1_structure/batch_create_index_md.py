@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 """Batch create index.md for all directories under docs/ that lack one."""
 
+__manifest__ = """
+args: []
+description: 批量创建 index.md（扫描缺失 index.md 的目录并生成）
+dimensions:
+- D1
+- D3
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 from __future__ import annotations
 
 import argparse

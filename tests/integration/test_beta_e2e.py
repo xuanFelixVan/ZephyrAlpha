@@ -1,6 +1,6 @@
-# AI-generated: T-3-19 (A25) Phase 3 端到端验收测试
+# AI-generated: T-3-19 (A25) beta 端到端验收测试
 """
-test_phase3_e2e · Phase 3 端到端联调验收测试集
+test_phase3_e2e · beta 端到端联调验收测试集
 ===============================================
 
 Task ID     : T-3-19 (A25)
@@ -202,7 +202,7 @@ class TestPhase3MCPLifecycle:
                     "ke_id": "KE-301-phase3-e2e",
                     "title": f"Phase3 e2e gate pass: {task['task_id']}",
                     "category": "best_practice",
-                    "content": "Phase 3 cross-server chain verified end-to-end",
+                    "content": "beta cross-server chain verified end-to-end",
                     "source_file": "test_phase3_e2e.py",
                 },
             )
@@ -629,7 +629,7 @@ class TestPhase3KnowledgePipelineContracts:
                     "ke_id": "KE-302-pipeline",
                     "title": "phase3 knowledge pipeline validation",
                     "category": "best_practice",
-                    "content": "Phase 3 knowledge pipeline contract testing",
+                    "content": "beta knowledge pipeline contract testing",
                     "source_file": "test_phase3_e2e.py",
                 },
             )

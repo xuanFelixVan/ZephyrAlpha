@@ -176,7 +176,7 @@ draft → active → deprecated
 
 ### LFC-003：级联影响 ≥ 5 个文件时需 Owner 批准
 
-> ⚠️ **待补充**：阈值"5"为工程经验值，尚未做专业机构对标论证（Google API Deprecation Policy / Kubernetes Deprecation Policy 影响面阈值）。Phase 3+ 统一验证并写入依据。
+> ⚠️ **待补充**：阈值"5"为工程经验值，尚未做专业机构对标论证（Google API Deprecation Policy / Kubernetes Deprecation Policy 影响面阈值）。beta+ 统一验证并写入依据。
 
 ---
 
@@ -187,7 +187,7 @@ draft → active → deprecated
 | deprecated 满 6 个月 | `status: deprecated` 且距今 ≥ 180 天 | `git mv` 移入 `archive/` 子目录，status 保持 `deprecated` |
 | 归档保留 | `ttl: permanent` 规则 | 永久保留，不删除 |
 
-> **对标状态**：阈值"5"对照 Google API Deprecation Policy（12个月默认，紧急 3 个月）→ 本项目取 5 因以下是 6 人微团队。归档期"6个月"对照 Kubernetes Deprecation Policy（~3 releases = ~9个月最短）→ 本项目 6 月为最低安全期。Phase 3+ 需做正式影响评估（ISO 42001 §8）。
+> **对标状态**：阈值"5"对照 Google API Deprecation Policy（12个月默认，紧急 3 个月）→ 本项目取 5 因以下是 6 人微团队。归档期"6个月"对照 Kubernetes Deprecation Policy（~3 releases = ~9个月最短）→ 本项目 6 月为最低安全期。beta+ 需做正式影响评估（ISO 42001 §8）。
 
 ---
 

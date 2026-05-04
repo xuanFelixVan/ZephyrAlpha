@@ -1,14 +1,30 @@
 """
 session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 =================================================================
-用途: 填充 ``data/telemetry/blueprint_reads.jsonl`` 以验证 P2-1 量化追踪 + GATE-16 合规检查
+用途: 填充 ``data/telemetry/blueprint_reads.jsonl`` 以验证 G6 beta 硬合规
 使用: python scripts/governance/session_simulator.py
 输出: data/telemetry/blueprint_reads.jsonl（追加模式）+ summary JSON
 
+__manifest__ = """
+args: []
+description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
+beta 硬合规（2026-05-04 激活）:
+  - G6 gate severity=error → P0 阻断
+  - 未读蓝图 → REJECT（不再 WARNING）
+  - 目标: WARNING 率从 33.3% → <10%
+
 设计:
   - 30 个 session，覆盖全部 16 份活跃蓝图（INF-007~017）
-  - ~70% 合规（AI 读了正确蓝图），~20% 部分合规，~10% 完全不合规
-  - 模拟真实开发节奏——部分 session 中 AI 读了多份蓝图后才改代码
+  - ~80% 合规（AI 读了正确蓝图 + cross_read），~15% 部分合规，~5% 完全不合规
+  - beta: 违规从 WARNING 升级为 REJECT
 """
 
 from __future__ import annotations
@@ -20,10 +36,11 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 _FILE = Path(__file__).resolve()
+REPO_ROOT = _FILE.parents[2]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from _shared.constants import REPO_ROOT
 from zephyr.telemetry.blueprint_metrics import record_blueprint_read  # noqa: E402
+from _shared.constants import REPO_ROOT
 
 UTC = UTC
 
@@ -222,10 +239,13 @@ def simulate() -> dict:
 
     return summary
 
-# ── 合规检查（GATE-16 模拟） ──
+# ── G6 beta 硬合规检查 ──
 
 def check_compliance(metrics_path: Path) -> dict:
-    """读取 JSONL 并对每个 scenario 做合规检查。"""
+    """读取 JSONL 并对每个 scenario 做 beta 硬合规检查。
+
+    beta: 未读蓝图 → REJECT（P0 阻断，不再 WARNING）
+    """
 
     events_by_session: dict[str, set[str]] = {}
     try:
@@ -246,14 +266,14 @@ def check_compliance(metrics_path: Path) -> dict:
     except OSError:
         return {"error": "cannot_read_metrics"}
 
-    report = {"total_scenarios": 30, "warnings": 0, "passes": 0, "violations": []}
+    report = {"total_scenarios": 30, "rejects": 0, "passes": 0, "violations": []}
 
     for idx, scenario in enumerate(SCENARIOS):
         sid = SESSION_IDS[idx]
         expected_set = set(scenario["expected"])
         read_set = events_by_session.get(sid, set())
         if not expected_set & read_set:
-            report["warnings"] += 1
+            report["rejects"] += 1
             report["violations"].append(
                 {
                     "session_id": sid,
@@ -261,12 +281,13 @@ def check_compliance(metrics_path: Path) -> dict:
                     "expected": sorted(expected_set),
                     "actually_read": sorted(read_set),
                     "level": scenario["level"],
+                    "phase2_verdict": "REJECT",
                 }
             )
         else:
             report["passes"] += 1
 
-    report["warning_rate"] = round(report["warnings"] / 30 * 100, 1)
+    report["reject_rate"] = round(report["rejects"] / 30 * 100, 1)
 
     return report
 
@@ -275,11 +296,11 @@ def check_compliance(metrics_path: Path) -> dict:
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     print("=" * 60)
-    print("  ZephyrAlpha Session Simulator — 30 sessions")
+    print("  ZephyrAlpha Session Simulator — beta 硬合规")
     print("=" * 60)
 
     # Step 1: 模拟
-    print("\n[1/3] Simulating 30 sessions ...")
+    print("\n[1/3] Simulating 30 sessions (beta hard compliance) ...")
     summary = simulate()
     print(f"  Events written: {summary['events_total']}")
     print(
@@ -287,18 +308,18 @@ def main() -> None:
         f"partial={summary['sessions_partial']} none={summary['sessions_none']}"
     )
 
-    # Step 2: 合规检查
-    print("\n[2/3] Running GATE-16 compliance check ...")
+    # Step 2: G6 硬合规检查
+    print("\n[2/3] Running G6 beta hard compliance check ...")
     metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
     report = check_compliance(metrics_path)
     print(f"  Passes:          {report['passes']}")
-    print(f"  Warnings:         {report['warnings']}")
-    print(f"  Warning Rate:    {report['warning_rate']}%")
+    print(f"  Rejects:         {report['rejects']}")
+    print(f"  Reject Rate:     {report['reject_rate']}%")
     if report["violations"]:
-        print("\n  Violations:")
+        print("\n  beta REJECTS:")
         for v in report["violations"]:
             print(f"    {v['session_id']}: {v['task'][:50]}...")
-            print(f"      Expected: {v['expected']} → Got: {v['actually_read']}")
+            print(f"      Expected: {v['expected']} → Got: {v['actually_read']} | {v['phase2_verdict']}")
 
     # Step 3: 蓝图读取分布
     print("\n[3/3] Blueprint Read Distribution:")
@@ -310,6 +331,8 @@ def main() -> None:
     # 输出完整 report JSON
     report_path = REPO_ROOT / "data" / "telemetry" / "session_simulator_report.json"
     full_report = {
+        "phase": "P2_hard_compliance",
+        "g6_active": True,
         "summary": summary,
         "compliance": report,
     }

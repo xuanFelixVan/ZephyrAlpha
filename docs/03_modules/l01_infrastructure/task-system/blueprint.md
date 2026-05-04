@@ -13,7 +13,7 @@ date: "2026-05-02"
 ttl: permanent
 construction_progress: phase_1_complete
 summary: "ZephyrAlpha 任务系统全链路蓝图 v0.3.0。覆盖从草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的完整工作流。v0.3.0 融合两套设计的各自最优部分：旧规则体系在任务管理基础（ID格式/状态机/SQLite存储）上更专业，新蓝图在 Vibe Coding 执行层（防漂移字段/G0-G7门禁/M1-M11管线/规则引用）上更创新。TaskCard 模型继承 shared/schemas.py Task（28字段基座）+ 24个扩展字段 = 52字段总线（全部存入 SQLite data/zalpha_metadata.db——单源存储零丢失）。task_id 格式 {NAMESPACE}-{SEQ}，标签改为扁平 tags[] 保留五轴推荐约定。v0.3.1：移除 .md 双轨→SQLite 单源存储，MCP 6 Tool→5 Tool（删除 sync_file_state），DB 路径迁移 docs/09_audit/state/ → data/。"
-tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, , emergent-design, path-compliance, anti-drift]
+tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, emergent-design, path-compliance, anti-drift]
 depends_on:
   - {target: PS-STD-001, at: "§7.10", why: "任务卡 task_id 格式 + 28字段定义——本蓝图 §3.2.1 的真源"}
   - {target: PS-STD-011, at: "MTH-012|MTH-013", why: "涌现式设计+路径合规创建——本蓝图编写方法论"}
@@ -55,17 +55,17 @@ depends_on:
 
 | # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 接收文件 | 安全删除方案 |
 |---|---------------|------------|---------|---------|------------|
-| 1 | MOD-INF-003 任务卡KMS蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-card-kms\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→Phase 4 物理删除 |
-| 2 | MOD-INF-004 双管线蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\vibe-coding-pipelines\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→Phase 4 物理删除 |
+| 1 | MOD-INF-003 任务卡KMS蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-card-kms\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→stable 物理删除 |
+| 2 | MOD-INF-004 双管线蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\vibe-coding-pipelines\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→stable 物理删除 |
 | 3 | 场外草稿（双管线+任务卡知识库） | `D:\ZephyrAlpha\模块候选池\开发流程\氛围编程基础设施\vibe-coding-two-pipelines-design.md` / `vibe-coding-task-card-and-knowledge-base-design.md` | 迁入完毕 | 本蓝图 | 内容已全部通过 MTH-012 Step 3 纳入——完成历史使命→Owner 决定删除或归档 |
-| 4 | v0.2.0 TaskCard 模型（core/models.py） | `D:\ZephyrAlpha\src\zephyr\core\models.py` | 覆盖型 | v0.3.0 TaskCard（继承 shared/schemas.py Task） | Phase 1 步骤3——重写 core/models.py 对齐新契约 |
+| 4 | v0.2.0 TaskCard 模型（core/models.py） | `D:\ZephyrAlpha\src\zephyr\core\models.py` | 覆盖型 | v0.3.0 TaskCard（继承 shared/schemas.py Task） | experimental 步骤3——重写 core/models.py 对齐新契约 |
 
 ### 删除铁律
 
 | # | 铁律 | 原因 |
 |---|------|------|
 | 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
-| 2 | 物理删除只能在 Phase 4 搬入阶段执行 | 给足缓冲期 |
+| 2 | 物理删除只能在 stable 搬入阶段执行 | 给足缓冲期 |
 | 3 | 物理删除必须人类确认 | AI 不得自行删除文件 |
 
 ---
@@ -132,7 +132,7 @@ ZephyrAlpha 项目当前面临三个核心问题，任务系统是解药：
 
 3. **管线未贯通**：蓝图→任务卡拆解→双管线执行→脚本系统 这条完整链路只存在于讨论中。
 
-4. **历史裁定遗留**：`D:\ZephyrAlpha\模块候选池\文档管理体系\任务系统专题讨论文档.md` 记录 23 个任务系统裁定（#1-#23），其中核心结论（task_id格式/字段集/状态机/存储）已在当前规则升级中吸收——但前期 Phase 1 施工代码（core/models.py / blueprint_decomposer.py）未对齐。
+4. **历史裁定遗留**：`D:\ZephyrAlpha\模块候选池\文档管理体系\任务系统专题讨论文档.md` 记录 23 个任务系统裁定（#1-#23），其中核心结论（task_id格式/字段集/状态机/存储）已在当前规则升级中吸收——但前期 experimental 施工代码（core/models.py / blueprint_decomposer.py）未对齐。
 
 > **对标**：SDD 论文——spec.md 应是自包含的。ITIL SACM——配置项关系图必须端到端可追踪。
 
@@ -200,7 +200,7 @@ ZephyrAlpha 项目当前面临三个核心问题，任务系统是解药：
 | 4 | **AI双管线执行**：A区 M1-M5（生产）+ B区 M6-M11（审计） | AI执行 = 引擎 |
 | 5 | **模型分工策略**：DeepSeek V4 Pro 主力 + GLM 深度审查 + Claude 特种救援 | 基于 REG-LLM-001 + GOV-AI-002 |
 | 6 | **脚本系统集成**：任务管线产出自动送审——C区 12 维度审计 | 对标 MOD-INF-005 |
-| 7 | **KMS 知识管理**（Phase 3+ 排除） | 接口预留——实现在后续版本独立讨论 |
+| 7 | **KMS 知识管理**（beta+ 排除） | 接口预留——实现在后续版本独立讨论 |
 
 ### 2.3 不包含的职责
 
@@ -210,7 +210,7 @@ ZephyrAlpha 项目当前面临三个核心问题，任务系统是解药：
 | 2 | Task 模型基座（Pydantic V2 28字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata-registry.md §7 真源 |
 | 3 | MCP Server Web 层 | `task_manager_server.py`（`src/zephyr/mcp/`）— 本蓝图更新后重写 |
 | 4 | 审计脚本 | MOD-INF-005 — 已有 9+ 脚本 |
-| 5 | context_engine | `context_engine/` — 已有 7 模块 + Phase 1 补齐 |
+| 5 | context_engine | `context_engine/` — 已有 7 模块 + experimental 补齐 |
 | 6 | dashboard | `dashboard/` — 已有代码 |
 | 7 | Phase 5 AI 自治 | 预留字段不实现 |
 
@@ -546,8 +546,8 @@ class AuditFinding(BaseModel):
 
 | # | 对象 | 当前位置 | 状态 | 迁移方案 |
 |---|------|---------|:--:|------|
-| 1 | MOD-INF-003 | `task-card-kms/blueprint.md` | deprecated | 内容已合并→Phase 4 物理删除 |
-| 2 | MOD-INF-004 | `vibe-coding-pipelines/blueprint.md` | deprecated | 内容已合并→Phase 4 物理删除 |
+| 1 | MOD-INF-003 | `task-card-kms/blueprint.md` | deprecated | 内容已合并→stable 物理删除 |
+| 2 | MOD-INF-004 | `vibe-coding-pipelines/blueprint.md` | deprecated | 内容已合并→stable 物理删除 |
 | 3 | v0.2.0 TaskCard 模型 | `src/zephyr/core/models.py` | deprecated | v0.3.0 TaskCard 继承 shared/schemas.py Task——重写 |
 | 4 | 场外草稿 2 份 | `模块候选池/...` | 内容已纳完 | 待 Owner 决定删除/归档 |
 
@@ -570,7 +570,7 @@ class AuditFinding(BaseModel):
 | shared/schemas.py | 必须 | Task 28字段模型（TaskCard 基座）| 现有代码 |
 | task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N task_files | 现有代码 |
 | task-completion-gate.py | 必须 | G7 门禁逻辑——需同步 | 现有代码 |
-| task-card-meta-registry.yaml | Phase 0 | 任务卡系统迁移追踪 | V-13 |
+| task-card-meta-registry.yaml | scaffold | 任务卡系统迁移追踪 | V-13 |
 
 ---
 
@@ -637,7 +637,7 @@ class AuditFinding(BaseModel):
 | 4 | **DeepSeek V4 Pro API 不可用** | 低 | 高 | fallback_model 明确降级——见 GOV-AI-002 §降级与容灾 |
 | 5 | **路径漂移**——AI 自作主张建目录 | 中 | 高 | MTH-013 零自主创建权——强制索引查询 |
 | 6 | **Change Folder 爆炸** | 低 | 低 | 任务卡状态 CANCELLED/VERIFIED 后 Change Folder 可归档/删除 |
-| 7 | **TaskCard 基座切换破坏已有代码** | 高 | 高 | Phase 1 步骤3——同步重写 `core/models.py`/`blueprint_decomposer.py`/`task_manager_server.py`；不留两套模型 |
+| 7 | **TaskCard 基座切换破坏已有代码** | 高 | 高 | experimental 步骤3——同步重写 `core/models.py`/`blueprint_decomposer.py`/`task_manager_server.py`；不留两套模型 |
 
 ---
 
@@ -678,7 +678,7 @@ class AuditFinding(BaseModel):
 
 | 项目 | 内容 |
 |------|------|
-| 施工阶段 | 2 个 Phase（Phase 0 善后 / Phase 1 补给——重写三个核心 .py） |
+| 施工阶段 | 2 个 Phase（scaffold 善后 / experimental 补给——重写三个核心 .py） |
 | 施工模式 | **重写型**——v0.2.0 代码（task_id格式/状态机/存储）与 v0.3.0 契约不兼容 |
 | 核心风险 | 破坏性变更——core/models.py / blueprint_decomposer.py / task_manager_server.py 需同步重写 |
 
@@ -742,7 +742,7 @@ class AuditFinding(BaseModel):
 | 内容变更 | ① MCP Server **必须初始化 task_repo 连接**（SQLite），禁止使用内存 dict 作为任务存储；② 实现 6 个 Tool（原有 4 + 新增 register_from_triage + sync_file_state）；③ decompose_blueprint Tool 调用步骤4 的 BlueprintDecomposer；④ create_task/update_status/list_tasks 直接对接 task_repo |
 | 验收标准 | ① A区管线输出的任务卡 task_repo.create()写入成功；② list_tasks() 返回 SQLite 中的真实任务列表；③ sync_file_state() 可检测 .md 副本与 SQLite 状态是否一致 |
 
-##### 步骤 6：补齐 context_engine + 确认 M1-M11（延续 v0.2.0 Phase 1）
+##### 步骤 6：补齐 context_engine + 确认 M1-M11（延续 v0.2.0 experimental）
 
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\context_engine\` / `pipeline\` |
 |---------|------|
@@ -803,7 +803,7 @@ class AuditFinding(BaseModel):
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 任务系统——v0.3.0融合最优，Phase 1待重写
+> 任务系统——v0.3.0融合最优，experimental待重写
 
 ### 13.1 源码文件
 
@@ -867,5 +867,5 @@ class AuditFinding(BaseModel):
 |------|------|---------|
 | 2026-05-03 | 0.3.1 | **路径修正 + 蓝图-代码同步**：① 修正 §6 产出物路径——task_metadata.db→data/zalpha_metadata.db、移除 .md 副本（双轨已废弃）、file_task_mapper.py 路径 core/→orchestrator/；② 新增 §12 已实现代码路径索引（对标 §6.14 蓝图-代码同步强制约定）——21 模块全路径登记含实现状态；③ §11.6 施工状态 pending_rewrite→completed、unverified→verified（全量测试 1530 passed）；④ 补充缺失路径：sqlite_schema.py、tool_contracts.yaml、triage.py、src/zephyr/pipeline/models.py、context_assembler.py、src/zephyr/gates/task_completion_gate.py、validate_blueprint_code_sync.py、b_db.yaml |
 | 2026-05-02 | 0.3.0 | **融合最优——取各家之长**：① TaskCard 模型基座从独立 BaseModel → 继承 src/zephyr/shared/schemas.py Task（28字段，metadata-registry.md §7 真源）——消除两套并行模型；② task_id 格式 TASK-INF-XXXX → {NAMESPACE}-{SEQ}（ADR-001/SRC-042）——对标 Jira 行业标准；③ TaskStatus 从 created/queued/.../closed → PENDING/IN_PROGRESS/.../CANCELLED——对齐 task_repo.py 10状态机（WAITING≠BLOCKED，有 FAILED→RETRY）；④ 标签从五轴强制字段 → 扁平 tags[]（五轴降格为推荐前缀约定）；⑤ **保留** 防漂移六维字段（upstream_files/downstream_outputs/allowed_touch/forbidden_touch/applicable_rules/context_assembly_manifest/rollback_instructions）——v0.2.0 的创新保留；⑥ **保留** G0-G7 全周期门禁 + M1-M11 管线 + Claude 救援；⑦ MCP Server 6 Tool（原有4+新增2）——强制对接 SQLite 真源(task_repo)；⑧ BlueprintDecomposer 输出改为 task_repo.create()为主 + .md同步为辅；⑨ 必备链接从8项扩展到14项（增加 task_repo/schemas/governance-tasks/task-card-meta-registry 等）；⑩ 施工指引 §11.3 重写——反映破坏性变更；⑪ **设计原则**：旧系统在任务管理基础上更专业→取其形；新系统在 Vibe Coding 执行层上更创新→取其神。融合而非取舍。 |
-| 2026-05-02 | 0.2.0 | **重大重写**：① 删除 §2 架构决策——蓝图只呈现最终设计结果；② 新建 TEMPLATE-TASK-001（34字段防漂移任务卡模板）；③ 新增 G7 完整度门禁（G0→G7→G1）；④ 新增 MTH-013 路径架构合规创建——写入 §4.1 约束 #9；⑤ 模型分工重分配：DeepSeek V4 Pro 主力 + GLM M7 深度审查 + Claude 特种救援（GOV-AI-002 v2.0.0）；⑥ KMS 排除 Phase 3+；⑦ 蓝图 12节→11节；⑧ 必备链接 +6（REG-LLM-001/GOV-AI-002/TEMPLATE-TASK-001 等）。遵循 MTH-012 涌现式设计——先填模板，后纳血肉。 |
+| 2026-05-02 | 0.2.0 | **重大重写**：① 删除 §2 架构决策——蓝图只呈现最终设计结果；② 新建 TEMPLATE-TASK-001（34字段防漂移任务卡模板）；③ 新增 G7 完整度门禁（G0→G7→G1）；④ 新增 MTH-013 路径架构合规创建——写入 §4.1 约束 #9；⑤ 模型分工重分配：DeepSeek V4 Pro 主力 + GLM M7 深度审查 + Claude 特种救援（GOV-AI-002 v2.0.0）；⑥ KMS 排除 beta+；⑦ 蓝图 12节→11节；⑧ 必备链接 +6（REG-LLM-001/GOV-AI-002/TEMPLATE-TASK-001 等）。遵循 MTH-012 涌现式设计——先填模板，后纳血肉。 |
 | 2026-05-02 | 0.1.0 | 初始版本——合并 MOD-INF-003+004 + 两份场外草稿为 12 节蓝图。 |

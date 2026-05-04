@@ -1,6 +1,17 @@
 """
 detect_deprecated_overdue.py — 废弃超期检测
 
+__manifest__ = """
+args: []
+description: 废弃超期检测（PS-STD-009 §7 — deprecated>=180天应归档）
+dimensions:
+- D3
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-009 §7（status:deprecated 距今 >= 180 天应自动归档）
 
 检测内容：

@@ -1,6 +1,17 @@
 """
 detect_excessive_file_moves.py — 文件过度搬迁检测
 
+__manifest__ = """
+args: []
+description: 文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三 — 搬迁>=2次告警）
+dimensions:
+- D4
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：ABS-17（不查搬迁历史直接移动文件为绝对禁止）
      GOV-DOC-007 §三（搬迁次数 >= 2 时阻断）
 

@@ -1,6 +1,17 @@
 """
 check_g6_ctr_compliance.py — G6 CTR 契约合规门禁执行引擎
 
+__manifest__ = """
+args: []
+description: check_g6_ctr_compliance.py — G6 CTR 契约合规门禁执行引擎
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：G6 CTR Compliance Gate（g6_ctr_compliance.yaml）
       CTR-001~006 跨层数据契约
 

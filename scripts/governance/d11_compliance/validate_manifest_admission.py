@@ -1,6 +1,17 @@
 """
 validate_manifest_admission.py — Manifest 准入控制器
 
+__manifest__ = """
+args: []
+description: Manifest 准入控制器（SCRIPT-QUALITY-001 — git diff 提取新增脚本 → 8 项 MUST 硬阻断）
+dimensions:
+- D11
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：AGENTS.md §6.5（脚本自创入库强制约定）
      ITIL SACM → Configuration Item Registration（配置项登记前必须通过校验）
      K8s Admission Controller → 不区分资源类型，所有创建请求一律进入审核链

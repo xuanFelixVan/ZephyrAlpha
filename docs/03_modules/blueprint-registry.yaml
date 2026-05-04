@@ -22,7 +22,7 @@
 # ============================================================================
 
 registry:
-  version: "2.1.0"
+  version: "2.2.0"
   created: "2026-05-02"
   last_updated: "2026-05-04"
   total_blueprints: 19
@@ -70,8 +70,8 @@ _schema:
     - merged             # 施工内容已合并进蓝图（原 construction-plan.md 被废除，内容迁入）
     - partial_<N>        # 部分完工，<N>=已完成的 Phase 百分比（如 partial_30）
     - completed          # 全部完工
-    - phase_0_completed  # Phase 0 完成——设计/架构/概念验证落地，代码骨架建立
-    - phase_1_complete   # Phase 1 完成——核心功能实现、生产可用
+    - phase_0_completed  # scaffold 完成——设计/架构/概念验证落地，代码骨架建立
+    - phase_1_complete   # experimental 完成——核心功能实现、生产可用
 
   # ---- 完整度评估维度 ----
   completeness_dimensions:
@@ -125,6 +125,43 @@ _schema:
 # ============================================================================
 
 blueprints:
+
+  # ==========================================================================
+  # SYS-MASTER-001 · _sys-master (Level 0 System Master)
+  # ==========================================================================
+  - module_id: "SYS-MASTER-001"
+    name: "sys-master"
+    title: "ZephyrAlpha 系统总蓝图 — 三级金字塔顶点"
+    layer: "cross_layer"
+    functional_domain: "infra"
+    blueprint_status: approved
+    blueprint_level: system
+    version: "0.1.0"
+    generation: 1
+    last_updated: "2026-05-04"
+    file_path: "03_modules/_sys-master/blueprint.md"
+    file_lines: 290
+    purpose: "系统级总蓝图（Level 0）——三级金字塔顶点：定义系统全景拓扑（14C+12B）、架构原则、ADR索引、蓝图导航链、令牌预算层级、运行时平面视图。所有子系统通过 belongs_to 指向本蓝图。AI agent 冷启动第一站。"
+    construction_progress: not_started
+    construction_detail: "蓝图文档完成——系统全景、架构原则、AI分派表、跨模块数据流已定义。代码实现由 MOD-MASTER-001 + 各模块蓝图承担。"
+    completeness_pct: 100
+    completeness_breakdown:
+      sections: 100
+      detail: 100
+      code_artifact: 100
+      delivery: 100
+    completeness_note: "beta 创建——SYS-MASTER-001 12 章节齐全。不需要代码产出（纯架构文档）。三级金字塔顶点就位——PS-STD-005 的设计得到完整实现。"
+    dependencies:
+      - "PS-STD-005"
+      - "MOD-MASTER-001"
+    priority: P0
+    tags:
+      - system-master
+      - blueprint
+      - three-tier-pyramid
+      - architecture-topology
+      - level0
+      - ssoT
 
   # ==========================================================================
   # MOD-INF-001 · capacity-assurance
@@ -207,7 +244,7 @@ blueprints:
       -
 
   # ==========================================================================
-  # MOD-INF-003 · task-card-kms (Phase 1 构建完成 — 已升级为 MOD-INF-006)
+  # MOD-INF-003 · task-card-kms (experimental 构建完成 — 已升级为 MOD-INF-006)
   # ==========================================================================
   - module_id: "MOD-INF-003"
     name: "task-card-kms"
@@ -223,9 +260,9 @@ blueprints:
     file_lines: 181
     purpose: "ZephyrAlpha 任务卡制度 + KMS 知识管理体系——10 状态机、G0-G6 门禁、超时升级、KMS 三层漏斗、KE 模板、代码消费者注册表"
     construction_progress: phase_1_complete
-    construction_detail: "Phase 1 构建完成——原 construction-plan-task-card-and-kms.md 施工实现细节已完整合并进本蓝图。内容已升级为 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留。"
+    construction_detail: "experimental 构建完成——原 construction-plan-task-card-and-kms.md 施工实现细节已完整合并进本蓝图。内容已升级为 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留。"
     superseded_by: "MOD-INF-006"
-    superseded_note: "内容已完整升级至 MOD-INF-006（任务系统蓝图）。本蓝图作为 Phase 1 完成状态的正式记录永久保留。新需求应在此基础上升级，不应新建同责蓝图。"
+    superseded_note: "内容已完整升级至 MOD-INF-006（任务系统蓝图）。本蓝图作为 experimental 完成状态的正式记录永久保留。新需求应在此基础上升级，不应新建同责蓝图。"
     completeness_pct: 85
     completeness_breakdown:
       sections: 90
@@ -249,7 +286,7 @@ blueprints:
       - superseded-by-MOD-INF-006
 
   # ==========================================================================
-  # MOD-INF-004 · vibe-coding-pipelines (Phase 0 构建完成 — 已升级为 MOD-INF-006)
+  # MOD-INF-004 · vibe-coding-pipelines (scaffold 构建完成 — 已升级为 MOD-INF-006)
   # ==========================================================================
   - module_id: "MOD-INF-004"
     name: "vibe-coding-pipelines"
@@ -265,9 +302,9 @@ blueprints:
     file_lines: 181
     purpose: "所有 AI 辅助开发的骨架——双管线流程（起草+审计）、脚本系统 12 维度审计、11 个核心 AI 基础设施模块（M1-M11）的 3 渐进落地"
     construction_progress: phase_0_completed
-    construction_detail: "Phase 0 构建完成——双管线方案 + 脚本系统架构 + M1-M11 模块定义已落地。内容已升级为 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留。"
+    construction_detail: "scaffold 构建完成——双管线方案 + 脚本系统架构 + M1-M11 模块定义已落地。内容已升级为 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留。"
     superseded_by: "MOD-INF-006"
-    superseded_note: "内容已完整升级至 MOD-INF-006（任务系统蓝图）。本蓝图作为 Phase 0 完成状态的正式记录永久保留。新需求应在此基础上升级，不应新建同责蓝图。"
+    superseded_note: "内容已完整升级至 MOD-INF-006（任务系统蓝图）。本蓝图作为 scaffold 完成状态的正式记录永久保留。新需求应在此基础上升级，不应新建同责蓝图。"
     completeness_pct: 75
     completeness_breakdown:
       sections: 85
@@ -308,7 +345,7 @@ blueprints:
     file_lines: 820
     purpose: "ZephyrAlpha 任务系统全链路蓝图 v0.3.0——融合两套设计最优部分：旧规则体系在任务管理基础（ID格式{NAMESPACE}-{SEQ}/10态状态机/SQLite存储）上更专业，新蓝图在 Vibe Coding 执行层（防漂移六维/G0-G7门禁/M1-M11管线/规则引用）上更创新。TaskCard 基座继承 shared/schemas.py Task（28字段，metadata-registry.md §7 真源），扩展 6 维防漂移字段。task_id 格式 {NAMESPACE}-{SEQ}（ADR-001/SRC-042）对标 Jira。标签从五轴强制→扁平 tags[] 保留推荐约定。MCP Server 6 Tool 强制对接 SQLite 真源。"
     construction_progress: pending_rewrite
-    construction_detail: "**v0.3.0 破坏性变更——待施工。** v0.2.0 TaskCard（独立34字段模型）→ v0.3.0 TaskCard（继承 shared/schemas.py Task）不兼容。Phase 1 需同步重写 core/models.py / blueprint_decomposer.py / task_manager_server.py 三个文件。v0.2.0 Phase 1 产物暂时保留作为参考，待重写后废弃。必备链接从 8 项扩展到 14 项（新增 task_repo/schemas/governance-tasks/task-card-meta-registry 等）。"
+    construction_detail: "**v0.3.0 破坏性变更——待施工。** v0.2.0 TaskCard（独立34字段模型）→ v0.3.0 TaskCard（继承 shared/schemas.py Task）不兼容。experimental 需同步重写 core/models.py / blueprint_decomposer.py / task_manager_server.py 三个文件。v0.2.0 experimental 产物暂时保留作为参考，待重写后废弃。必备链接从 8 项扩展到 14 项（新增 task_repo/schemas/governance-tasks/task-card-meta-registry 等）。"
     merged_from:
       - "MOD-INF-003"
       - "MOD-INF-004"
@@ -321,7 +358,7 @@ blueprints:
       detail: 95
       code_artifact: 60
       delivery: 0
-    completeness_note: "11 节全齐。§3 接口契约：TaskCard 继承 shared/schemas.py Task（28字段基座）+ 防漂移六维 + 门禁/管线扩展。§3.2.1 含字段源流对照表。§3.5 MCP 6 Tool（含 register_from_triage/sync_file_state）——强制对接 task_repo SQLite 真源。§11 施工指引含破坏性变更路线图——Phase 0 善后(注册表+元数据) + Phase 1 补给(三大.py重写)。code_artifact降至60%：旧 Phase 1 产物与 v0.3.0 契约不兼容，需重写。"
+    completeness_note: "11 节全齐。§3 接口契约：TaskCard 继承 shared/schemas.py Task（28字段基座）+ 防漂移六维 + 门禁/管线扩展。§3.2.1 含字段源流对照表。§3.5 MCP 6 Tool（含 register_from_triage/sync_file_state）——强制对接 task_repo SQLite 真源。§11 施工指引含破坏性变更路线图——scaffold 善后(注册表+元数据) + experimental 补给(三大.py重写)。code_artifact降至60%：旧 experimental 产物与 v0.3.0 契约不兼容，需重写。"
     dependencies:
       - "MOD-INF-001"
       - "MOD-INF-002"
@@ -366,14 +403,14 @@ blueprints:
     file_lines: 355
     purpose: "第三条独立生产线——横切全局对方案工厂和任务管线产出物进行 12 维度系统化审计。五阶段流水线（C1-C5）+ Finding Schema + pre-commit 门禁集成 + 17 个现有脚本统一编排"
     construction_progress: partial_30
-    construction_detail: "Phase 0 MVP 已交付（2026-05-02）——产出 Finding Schema、FindingCollection、9 个审计脚本统一编排入口（run_all.py）、OPS-VC-005 验证方式从 manual→semi-automated。Phase 1（扩展覆盖）和 Phase 2（系统化）未动工。整体约 30% 完工"
+    construction_detail: "scaffold MVP 已交付（2026-05-02）——产出 Finding Schema、FindingCollection、9 个审计脚本统一编排入口（run_all.py）、OPS-VC-005 验证方式从 manual→semi-automated。experimental（扩展覆盖）和 beta（系统化）未动工。整体约 30% 完工"
     completeness_pct: 90
     completeness_breakdown:
       sections: 95
       detail: 90
       code_artifact: 85
       delivery: 90
-    completeness_note: "12 个大章节 + 51 个子章节，全维度最完整的蓝图。唯一有 delivery 记录的蓝图（v0.1.0--mvp）。含 12 维度审计矩阵 + 完整 Finding Schema 定义 + 退出码约定 + Phase 0/1/2 详细路线图 + 风险矩阵 + 消费者注册表。小瑕疵：统一入口脚本接口略简（仅伪代码）"
+    completeness_note: "12 个大章节 + 51 个子章节，全维度最完整的蓝图。唯一有 delivery 记录的蓝图（v0.1.0--mvp）。含 12 维度审计矩阵 + 完整 Finding Schema 定义 + 退出码约定 + scaffold/1/2 详细路线图 + 风险矩阵 + 消费者注册表。小瑕疵：统一入口脚本接口略简（仅伪代码）"
     dependencies:
       - "MOD-INF-001"
       - "MOD-INF-003"
@@ -405,9 +442,9 @@ blueprints:
     last_updated: "2026-05-02"
     file_path: "03_modules/l01_infrastructure/knowledge-base/blueprint.md"
     file_lines: 215
-    purpose: "知识库全生命周期管理——G1→G2→G3→G4→G5 五门禁知识流水线 + 10状态KE状态机 + ChromaDB 4C架构。Phase 3 整合入 VMS。"
+    purpose: "知识库全生命周期管理——G1→G2→G3→G4→G5 五门禁知识流水线 + 10状态KE状态机 + ChromaDB 4C架构。beta 整合入 VMS。"
     construction_progress: partial_10
-    construction_detail: "蓝图已就绪，施工待 Phase 2。当前 kb/ 代码为 Phase 1 过渡实现——提供 API 骨架供上游调用。"
+    construction_detail: "蓝图已就绪，施工待 beta。当前 kb/ 代码为 experimental 过渡实现——提供 API 骨架供上游调用。"
     completeness_pct: 78
     completeness_breakdown:
       sections: 85
@@ -471,26 +508,26 @@ blueprints:
   # ==========================================================================
   - module_id: "MOD-INF-007"
     name: "gate-engine"
-    title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门"
+    title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + G6 硬合规"
     layer: "cross_layer"
     functional_domain: "infra"
     blueprint_status: draft
     blueprint_level: module
-    version: "0.1.0"
+    version: "0.3.0"
     generation: 1
-    last_updated: "2026-05-03"
+    last_updated: "2026-05-04"
     file_path: "03_modules/l01_infrastructure/gate-engine/blueprint.md"
-    file_lines: 145
-    purpose: "系统一致性守卫——G0-G7任务门禁 + G1-G5 KMS决策门 + 熔断器 circuit_breaker。脚本exit code→Gate判定映射。对标 K8s Admission Controller。"
-    construction_progress: partial_50
-    construction_detail: "gate_engine.py + 5 KMS YAML门禁(YAML配置)已实现。G0-G7完整判定逻辑待Phase 1落地。"
-    completeness_pct: 75
+    file_lines: 620
+    purpose: "系统一致性守卫——G0-G7任务门禁 + G1-G5 KMS决策门 + G6 beta 硬合规 (blueprint_read_check) + 熔断器 circuit_breaker。18种CheckType。脚本exit code→Gate判定映射。对标 K8s Admission Controller。"
+    construction_progress: phase_1_complete
+    construction_detail: "gate_engine.py + 6个KMS YAML门禁(YAML配置) + circuit_breaker + task_completion_gate 已实现。G0-G7完整判定逻辑待experimental落地。G6 beta 硬合规已激活(severity=error,P0阻断)。"
+    completeness_pct: 82
     completeness_breakdown:
-      sections: 80
-      detail: 75
-      code_artifact: 70
+      sections: 85
+      detail: 82
+      code_artifact: 80
       delivery: 0
-    completeness_note: "5 章节齐全。双门禁体系(G0-G7+G1-G5) + 熔断器模式 + CT-SCRIPT-GATE-001集成。delivery无记录。"
+    completeness_note: "16 章节齐全。双门禁体系(G0-G7+G1-G5) + G6 硬合规 + 熔断器 + 依赖关系/产出物/集成目标/需要更新等标准章节补齐。beta v0.3.0。"
     dependencies:
       - "MOD-MASTER-001"
       - "MOD-INF-005"
@@ -550,26 +587,26 @@ blueprints:
   # ==========================================================================
   - module_id: "MOD-INF-009"
     name: "pipeline"
-    title: "Task Pipeline 蓝图 — M1-M11 双管线路由"
+    title: "Task Pipeline 蓝图 — M1-M11 双管线路由 + 蓝图触发路由表"
     layer: "cross_layer"
     functional_domain: "infra"
     blueprint_status: draft
     blueprint_level: module
-    version: "0.1.0"
+    version: "0.2.0"
     generation: 1
-    last_updated: "2026-05-03"
+    last_updated: "2026-05-04"
     file_path: "03_modules/l01_infrastructure/pipeline/blueprint.md"
-    file_lines: 145
-    purpose: "任务快递分拣中心——A区M1-M5生产管线 + B区M6-M11审计管线。决策树决定任务用什么模型+什么沙箱+什么门禁。对标 K8s Scheduler。"
-    construction_progress: partial_20
-    construction_detail: "pipeline_orchestrator.py + models.py 骨架完成。M1-M11完整路由待GOV-AI-002决策树落地。"
-    completeness_pct: 72
+    file_lines: 245
+    purpose: "任务快递分拣中心——A区M1-M5生产管线 + B区M6-M11审计管线 + blueprint_routing.yaml 19条路由表 + G6 硬合规触发。决策树决定任务用什么模型+什么沙箱+什么门禁。对标 K8s Scheduler。"
+    construction_progress: partial_30
+    construction_detail: "pipeline_orchestrator.py + models.py 骨架完成 + blueprint_routing.yaml 19 routes + trigger_router.py blueprint_lookup handler。M1-M11完整路由待GOV-AI-002决策树落地。"
+    completeness_pct: 80
     completeness_breakdown:
-      sections: 80
-      detail: 75
-      code_artifact: 40
+      sections: 85
+      detail: 80
+      code_artifact: 45
       delivery: 0
-    completeness_note: "5 章节齐全。双管线M1-M11路由定义 + 决策树 + PipelineNode输出模型。待GOV-AI-002完整集成。"
+    completeness_note: "11 章节齐全。beta v0.2.0——依赖关系/产出物/集成目标/需要更新等标准章节补齐。"
     dependencies:
       - "MOD-MASTER-001"
       - "MOD-INF-006"
@@ -593,21 +630,21 @@ blueprints:
     functional_domain: "infra"
     blueprint_status: draft
     blueprint_level: module
-    version: "0.1.0"
+    version: "0.2.0"
     generation: 1
-    last_updated: "2026-05-03"
+    last_updated: "2026-05-04"
     file_path: "03_modules/l01_infrastructure/feedback-loop/blueprint.md"
-    file_lines: 130
+    file_lines: 240
     purpose: "系统免疫系统——三阶段自我改进闭环：30s轮询指标→EMA异常检测→4种action调度。Protocol适配器防循环依赖。对标 ITIL Continual Improvement。"
-    construction_progress: partial_20
+    construction_progress: partial_25
     construction_detail: "6 文件骨架 + metrics_collector + fitness_functions 已实现。完整的collect→detect→dispatch链路待施工。"
-    completeness_pct: 70
+    completeness_pct: 80
     completeness_breakdown:
-      sections: 80
-      detail: 75
-      code_artifact: 40
+      sections: 85
+      detail: 82
+      code_artifact: 42
       delivery: 0
-    completeness_note: "4 章节齐全。三阶段流水线 + 4种action_type + Protocol防循环依赖。待全链路施工。"
+    completeness_note: "9 章节齐全。beta v0.2.0——依赖关系/产出物/集成目标/需要更新等标准章节补齐。"
     dependencies:
       - "MOD-MASTER-001"
       - "MOD-INF-006"
@@ -637,9 +674,9 @@ blueprints:
     last_updated: "2026-05-03"
     file_path: "03_modules/l01_infrastructure/vector-memory/blueprint.md"
     file_lines: 100
-    purpose: "全系统统一向量记忆体——ChromaDB 0.6 + BGE-M3 ONNX。5大Collection：decisions/code_context/lessons/knowledge/runtime_logs。Phase 3整合kb/。"
+    purpose: "全系统统一向量记忆体——ChromaDB 0.6 + BGE-M3 ONNX。5大Collection：decisions/code_context/lessons/knowledge/runtime_logs。beta整合kb/。"
     construction_progress: skeleton
-    construction_detail: "仅目录+__init__.py docstring。Phase 3整合kb/能力。"
+    construction_detail: "仅目录+__init__.py docstring。beta整合kb/能力。"
     completeness_pct: 50
     completeness_breakdown:
       sections: 60
@@ -715,7 +752,7 @@ blueprints:
     file_lines: 100
     purpose: "对外服务窗口——6个MCP服务端(stdio协议)暴露任务管理/知识查询/门禁决策/DocGuard/哨兵能力。task_manager decompose_blueprint已实现。"
     construction_progress: partial_30
-    construction_detail: "task_manager decompose_blueprint已实现。kb/gate_engine MCP待Phase 1落地。"
+    construction_detail: "task_manager decompose_blueprint已实现。kb/gate_engine MCP待experimental落地。"
     completeness_pct: 65
     completeness_breakdown:
       sections: 75
@@ -754,7 +791,7 @@ blueprints:
     file_lines: 130
     purpose: "安全防火墙——L1输入分类/L2 System Prompt隔离/L3输出Schema验证/L4 Pattern巡检。fail-closed原则：LSG不可用时拒绝所有LLM流量。对标 OWASP Top 10 for LLM。"
     construction_progress: partial_30
-    construction_detail: "3文件骨架 + input_sanitizer已实现。L3/L4待Phase 1落地。"
+    construction_detail: "3文件骨架 + input_sanitizer已实现。L3/L4待experimental落地。"
     completeness_pct: 65
     completeness_breakdown:
       sections: 75
@@ -792,7 +829,7 @@ blueprints:
     file_lines: 105
     purpose: "全系统可观测性底座——5子模块(ai_behavior/metrics/logs/traces/archive) + 四大黄金信号(延迟/流量/错误/饱和度)。对标 OpenTelemetry + Google SRE。"
     construction_progress: skeleton
-    construction_detail: "5子模块目录结构已建。metrics/logs待Phase 1落地。"
+    construction_detail: "5子模块目录结构已建。metrics/logs待experimental落地。"
     completeness_pct: 50
     completeness_breakdown:
       sections: 60
@@ -868,7 +905,7 @@ blueprints:
     file_lines: 200
     purpose: "语义级代码重复检测引擎——AST相似度+归一化对比，消除Vibe Coding AI上下文失忆导致的重复代码（_now_iso 9文件重复等）。"
     construction_progress: not_started
-    construction_detail: "Phase 0 设计落地。归一化器+AST比较器尚未实现代码。"
+    construction_detail: "scaffold 设计落地。归一化器+AST比较器尚未实现代码。"
     completeness_pct: 40
     completeness_breakdown:
       sections: 50
@@ -888,24 +925,326 @@ blueprints:
       - code-quality
       - infrastructure
 
+  # ==========================================================================
+  # MOD-INF-018 · agent-rbac
+  # ==========================================================================
+  - module_id: "MOD-INF-018"
+    name: "agent-rbac"
+    title: "Agent 身份与权限系统蓝图 — RBAC Runtime + 权限执行器"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/agent-rbac/blueprint.md"
+    file_lines: 180
+    purpose: "将静态权限注册表(GOV-AI-001)升级为运行时强制执行器。Agent Identity + RBAC 三层权限(always_allow/needs_approval/blocked) + Permission Guard + 审批流。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 35
+    completeness_breakdown:
+      sections: 60
+      detail: 30
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "6 章节。§1-§5 已有骨架，§6-§13 待补全。P0 优先。对标 Anthropic Claude Code 三层权限 + K8s RBAC + ISACA 2025。"
+    dependencies:
+      - "MOD-INF-007"
+      - "MOD-INF-020"
+    priority: P0
+    tags:
+      - agent-rbac
+      - rbac
+      - permission-guard
+      - identity
+      - access-control
+      - governance
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-019 · agent-spec
+  # ==========================================================================
+  - module_id: "MOD-INF-019"
+    name: "agent-spec"
+    title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/agent-spec/blueprint.md"
+    file_lines: 160
+    purpose: "将 19 份静态蓝图升级为可加载、可版本化、可审计的 Agent Skill。对标 Codified Context 19 domain-expert agents（当前 19:0 差距）。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 30
+    completeness_breakdown:
+      sections: 50
+      detail: 25
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "5 章节。Skill 结构 + SkillLoader 已设计，§6-§13 待补全。P0 优先。对标 Codified Context + Anthropic Claude Skills。"
+    dependencies:
+      - "MOD-INF-007"
+      - "MOD-INF-008"
+      - "MOD-INF-009"
+      - "MOD-INF-018"
+    priority: P0
+    tags:
+      - agent-spec
+      - skill
+      - executable-blueprint
+      - codified-context
+      - agent-os
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-020 · audit-trail
+  # ==========================================================================
+  - module_id: "MOD-INF-020"
+    name: "audit-trail"
+    title: "审计追踪链蓝图 — 不可变动作审计 + Provenance 三件套"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/audit-trail/blueprint.md"
+    file_lines: 150
+    purpose: "每个 AI 动作的不可变审计记录：谁做的、什么时候、用了什么工具、基于什么决策。Provenance 三件套的运行时执行器。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 35
+    completeness_breakdown:
+      sections: 55
+      detail: 30
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "5 章节。审计事件模型 + 不可变存储已设计，§6-§13 待补全。P0 优先。对标 Goldman SecDB + ISACA 2025。"
+    dependencies:
+      - "MOD-INF-018"
+      - "MOD-INF-012"
+      - "MOD-INF-015"
+    priority: P0
+    tags:
+      - audit-trail
+      - provenance
+      - immutable-log
+      - traceability
+      - compliance
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-021 · rollback-system
+  # ==========================================================================
+  - module_id: "MOD-INF-021"
+    name: "rollback-system"
+    title: "回滚/撤销系统蓝图 — Checkpoint + Rollback + 验证"
+    layer: "L01"
+    functional_domain: "recovery"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/rollback-system/blueprint.md"
+    file_lines: 120
+    purpose: "AI 操作出错时的一键回退机制。Checkpoint 快照 + Rollback 执行器 + 回滚后验证。与现有 rollback_manager.py 集成升级。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 30
+    completeness_breakdown:
+      sections: 50
+      detail: 25
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "4 章节。Checkpoint 模型 + 三级回滚策略已设计，§6-§13 待补全。P1 优先。对标 K8s Rollout Undo + Terraform State Rollback。"
+    dependencies:
+      - "MOD-INF-020"
+      - "MOD-INF-012"
+      - "MOD-INF-007"
+    priority: P1
+    tags:
+      - rollback
+      - undo
+      - checkpoint
+      - recovery
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-022 · escalation-protocol
+  # ==========================================================================
+  - module_id: "MOD-INF-022"
+    name: "escalation-protocol"
+    title: "升级/委托协议蓝图 — Escalation + Delegation + 人工审批"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/escalation-protocol/blueprint.md"
+    file_lines: 120
+    purpose: "定义 AI 何时必须停下来问人、何时可以自主决策、何时必须拒绝。三级升级策略 + 委托协议 + 人工审批流。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 30
+    completeness_breakdown:
+      sections: 50
+      detail: 25
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "3 章节。三级升级策略 + 委托协议已设计，§6-§13 待补全。P1 优先。对标 Anthropic ask-before-act + Rasa escalation rules。"
+    dependencies:
+      - "MOD-INF-018"
+      - "MOD-INF-007"
+      - "MOD-INF-020"
+    priority: P1
+    tags:
+      - escalation
+      - delegation
+      - human-in-the-loop
+      - approval
+      - governance
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-023 · drift-detector
+  # ==========================================================================
+  - module_id: "MOD-INF-023"
+    name: "drift-detector"
+    title: "漂移运行时检测蓝图 — Runtime Drift Detection + 自动对账"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/drift-detector/blueprint.md"
+    file_lines: 130
+    purpose: "将静态 CI 门禁升级为运行时持续对账。代码与蓝图的实时漂移检测 + YAML 与磁盘的自动对账 + 漂移修复建议。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 30
+    completeness_breakdown:
+      sections: 50
+      detail: 25
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "4 章节。漂移检测维度 + 对账循环已设计，§6-§13 待补全。P1 优先。对标 Terraform drift detection + K8s reconciliation loop。"
+    dependencies:
+      - "MOD-INF-007"
+      - "MOD-INF-020"
+      - "MOD-INF-010"
+    priority: P1
+    tags:
+      - drift-detection
+      - reconciliation
+      - runtime-check
+      - consistency
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-024 · budget-enforcer
+  # ==========================================================================
+  - module_id: "MOD-INF-024"
+    name: "budget-enforcer"
+    title: "Token/Cost 预算强制执行蓝图 — Budget Enforcer + 降级策略"
+    layer: "L01"
+    functional_domain: "governance"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/budget-enforcer/blueprint.md"
+    file_lines: 110
+    purpose: "将 token 追踪升级为预算强制执行。会话级/任务级/全局级三级预算 + 超预算自动降级 + 成本审计。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。代码未施工。"
+    completeness_pct: 25
+    completeness_breakdown:
+      sections: 45
+      detail: 20
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "3 章节。三级预算体系 + 降级策略已设计，§6-§13 待补全。P2 优先。对标 Anthropic cache-aware token management + ISACA cost governance。"
+    dependencies:
+      - "MOD-INF-008"
+      - "MOD-INF-020"
+      - "MOD-INF-022"
+    priority: P2
+    tags:
+      - budget
+      - token
+      - cost
+      - enforcement
+      - degradation
+      - infrastructure
+
+  # ==========================================================================
+  # MOD-INF-025 · a2a-protocol
+  # ==========================================================================
+  - module_id: "MOD-INF-025"
+    name: "a2a-protocol"
+    title: "A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决"
+    layer: "L01"
+    functional_domain: "coordination"
+    blueprint_status: draft
+    blueprint_level: module
+    version: "0.1.0"
+    generation: 2
+    last_updated: "2026-05-05"
+    file_path: "03_modules/l01_infrastructure/a2a-protocol/blueprint.md"
+    file_lines: 90
+    purpose: "多 Agent 场景下的通信协议与冲突解决。Agent 发现 + 任务交接 + 冲突检测 + 仲裁。Hold 至 stable（R81 C-04）。"
+    construction_progress: not_started
+    construction_detail: "蓝图 v0.1.0 初始创建。Hold 状态，代码未施工。触发条件：Agent>=3 且出现冲突。"
+    completeness_pct: 20
+    completeness_breakdown:
+      sections: 35
+      detail: 15
+      code_artifact: 0
+      delivery: 0
+    completeness_note: "3 章节。预研架构已设计，Hold 至 stable。P2 优先。对标 Anthropic Subagent coordination + Google A2A Protocol。"
+    dependencies:
+      - "MOD-INF-018"
+      - "MOD-INF-022"
+      - "MOD-INF-020"
+    priority: P2
+    tags:
+      - a2a
+      - agent-coordination
+      - multi-agent
+      - conflict-resolution
+      - infrastructure
+
 # ============================================================================
 # 汇总统计
 # ============================================================================
 summary:
-  total: 19
+  total: 27
   by_blueprint_level:
-    system: 0
+    system: 1
     domain: 1
-    module: 18
+    module: 26
   by_status:
     approved: 5
-    draft: 12
+    draft: 20
     retired: 2
   by_generation:
     generation_1: 17
-    generation_2: 1
+    generation_2: 9
   by_construction_progress:
-    not_started: 3
+    not_started: 11
     merged: 0
     skeleton: 2
     partial_10: 1
@@ -917,13 +1256,13 @@ summary:
     phase_0_completed: 1
     phase_1_complete: 2
   by_priority:
-    P0: 10
-    P1: 3
-    P2: 5
+    P0: 13
+    P1: 6
+    P2: 7
     P3: 0
-  avg_completeness: 74.2
-  avg_lines: 178
-  total_lines: 3202
+  avg_completeness: 58.5
+  avg_lines: 155
+  total_lines: 4182
 
   # ---- 未登记的模块（不在本注册表中）----
   excluded:
@@ -940,7 +1279,7 @@ changelog:
     changes:
       - "blueprint_level 字段补充——全 19 份蓝图在此添加 PS-STD-005 定义的蓝图层级"
       - "domain: 1 (MOD-MASTER-001) / module: 18 (MOD-INF-001~017 + MOD-KB-001)"
-      - "system 层级暂缺——SYS-MASTER-001 计划 Phase 2 创建"
+      - "system 层级暂缺——SYS-MASTER-001 计划 beta 创建"
       - "schema 新增 blueprint_level_values 受控词表（system/domain/module）"
       - "关联决策：R90（architecture-rationale-log.md）"
   - version: "2.0.0"
@@ -957,7 +1296,7 @@ changelog:
   - version: "1.6.0"
     date: "2026-05-02"
     changes:
-      - "🎉 Phase 1 完成！任务系统核心六步骤全部交付"
+      - "🎉 experimental 完成！任务系统核心六步骤全部交付"
       - "步骤6完成：pipeline/ 包——PipelineOrchestrator + M1-M11 模块 + GOV-AI-002 决策树"
       - "A区 5 模块（M1-M5: DeepSeek 主力生产+GLM 打包）"
       - "B区 6 模块（M6-M11: M7 GLM深度审查 + 其余 DeepSeek）"
@@ -983,7 +1322,7 @@ changelog:
   - version: "1.3.0"
     date: "2026-05-02"
     changes:
-      - "Phase 1 步骤1-3完成：蓝图 approved + BlueprintDecomposer 实现 + 首批 6 张任务卡产出"
+      - "experimental 步骤1-3完成：蓝图 approved + BlueprintDecomposer 实现 + 首批 6 张任务卡产出"
       - "新增 src/zephyr/core/models.py（TaskCard/DecompositionResult Pydantic V2 模型）"
       - "新增 src/zephyr/core/blueprint_decomposer.py（§11.3→TaskCard 拆解引擎）"
       - "MOD-INF-006 自拆为 6 卡（TASK-INF-0001~0006）存放于 changes/MOD-INF-006/"
@@ -991,7 +1330,7 @@ changelog:
   - version: "1.2.0"
     date: "2026-05-02"
     changes:
-      - "Phase 0 完成：MOD-INF-006 状态 draft→approved，construction_progress→phase_0_completed"
+      - "scaffold 完成：MOD-INF-006 状态 draft→approved，construction_progress→phase_0_completed"
       - "task_completion_gate.py 新增 G7 完整度门禁（GateLevel 枚举 + G7CompletenessGate 类）"
       - "blueprint-template.md 同步修正：12节→11节，§3 接口契约升级 6 子节，Pydantic V2 强制"
   - version: "1.1.0"

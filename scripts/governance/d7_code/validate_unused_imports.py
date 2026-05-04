@@ -1,6 +1,17 @@
 """
 validate_unused_imports.py — 未使用导入检测
 
+__manifest__ = """
+args: []
+description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PEP 8 — imports should be used or removed
      PS-STD-003 COND-43（代码质量维度补全）
 

@@ -1,6 +1,6 @@
 """AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器（ATM）。
 
-Task       : T-2-30 | Phase 2 前移
+Task       : T-2-30 | beta 前移
 Safety     : HIGH（涉及数据库事务 + 文件系统落盘 + 路径安全校验）
 Depends    : T-1-23 (InputSanitizer) ✅
 References :

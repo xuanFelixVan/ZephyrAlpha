@@ -1,5 +1,18 @@
 """sync_blueprint_code_index.py — 蓝图 §19 已实现代码路径索引自动同步
 
+__manifest__ = """
+args: []
+description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
+  patch+1，--check模式仅检测漂移）
+dimensions:
+- D5
+- D8
+priority: P1
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：AGENTS.md §6.14 蓝图-代码同步强制约定
       validate_blueprint_code_sync.py（验证端）的修复端——验证查问题，同步修问题
 
@@ -163,7 +176,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
             "config/embedding_model_registry.yaml",
         ],
         "governance_scripts": [],
-        "note": "知识库——API骨架已实现，G1-G5门禁待Phase 2",
+        "note": "知识库——API骨架已实现，G1-G5门禁待beta",
     },
     "llm-security": {
         "module_id": "MOD-INF-014",
@@ -233,7 +246,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "test_patterns": [],
         "config_files": [],
         "governance_scripts": [],
-        "note": "脚本系统——第三条生产线，Phase 0 MVP已交付",
+        "note": "脚本系统——第三条生产线，scaffold MVP已交付",
     },
     "shared-core": {
         "module_id": "MOD-INF-016",
@@ -278,7 +291,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [],
         "governance_scripts": [],
-        "note": "任务卡+KMS——Phase 1构建完成，已升级为MOD-INF-006",
+        "note": "任务卡+KMS——experimental构建完成，已升级为MOD-INF-006",
     },
     "task-system": {
         "module_id": "MOD-INF-006",
@@ -299,7 +312,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [],
         "governance_scripts": [],
-        "note": "任务系统——v0.3.0融合最优，Phase 1待重写",
+        "note": "任务系统——v0.3.0融合最优，experimental待重写",
     },
     "vector-memory": {
         "module_id": "MOD-INF-011",
@@ -319,7 +332,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [],
         "governance_scripts": [],
-        "note": "Vibe Coding双管线——Phase 0构建完成，已升级为MOD-INF-006",
+        "note": "Vibe Coding双管线——scaffold构建完成，已升级为MOD-INF-006",
     },
 }
 

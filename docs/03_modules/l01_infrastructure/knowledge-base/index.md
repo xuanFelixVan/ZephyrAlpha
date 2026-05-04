@@ -31,7 +31,7 @@ depends_on:
 
 | 目录 | 说明 |
 |------|------|
-| `src/zephyr/kb/` | 12个Python模块（~3600行），Phase 1已实现 |
+| `src/zephyr/kb/` | 12个Python模块（~3600行），experimental已实现 |
 | `docs/08_knowledge/` | 知识数据存储 |
 | `architecture-model/layers/b_kb.yaml` | 架构YAML SSoT登记 |
 
@@ -39,7 +39,7 @@ depends_on:
 
 | Phase | 状态 | 说明 |
 |-------|:---:|------|
-| Phase 1 | ✅ 已完成 | G1-G5五门禁 + ChromaDB 4C + 10状态机 |
-| Phase 2 | 🔄 当前 | 知识填充 + 上下文集成 + 反馈闭环 |
-| Phase 3 | 🔮 计划 | MCP集成 + 四模型审计自动化 + BGE-M3 |
-| Phase 4 | 🔮 远期 | 知识生态 + 自进化 + 外部抓取 |
+| experimental | ✅ 已完成 | G1-G5五门禁 + ChromaDB 4C + 10状态机 |
+| beta | 🔄 当前 | 知识填充 + 上下文集成 + 反馈闭环 |
+| beta | 🔮 计划 | MCP集成 + 四模型审计自动化 + BGE-M3 |
+| stable | 🔮 远期 | 知识生态 + 自进化 + 外部抓取 |

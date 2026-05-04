@@ -71,11 +71,11 @@ tags:
 ### 0.2 本文档**不是**
 
 - ❌ **异常语义判定手册**——FLE 用规则 + 阈值，不承担深度语义判断（LLM 语义分析交给 Agent）
-- ❌ **Prometheus 部署指南**——Phase 1 用 SQLite 时间序列，Prometheus 是 Phase 3+ 升级选项
+- ❌ **Prometheus 部署指南**——experimental 用 SQLite 时间序列，Prometheus 是 beta+ 升级选项
 - ❌ **Context Engine / Orchestrator 实现文档**——见对应 interface.md
 - ❌ **报警通道实现**——通知是 Dashboard 职责，FLE 只输出 Anomaly 事件
 - ❌ **Dashboard UI 设计**——见 `dashboard-interface-spec.md`（未来另出）
-- ❌ **生产部署运维手册**——Phase 3+ 服务化时另出 SRE 文档
+- ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 
 ---
 
@@ -110,7 +110,7 @@ tags:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/feedback_loop/protocol.py (Phase 1 产出)
+# src/zephyr/feedback_loop/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -136,14 +136,14 @@ class InProcessFeedbackLoop:
     """SQLite 时间序列 + 规则引擎。"""
 
 class DistributedFeedbackLoop:
-    """Phase 3+：InfluxDB + 分布式分析器。"""
+    """beta+：InfluxDB + 分布式分析器。"""
 ```
 
 | Phase | 实施形态 | 运行方式 | 触发升级条件 |
 |:-:|---------|---------|-------------|
-| **Phase 1** | **`InProcessFeedbackLoop`（SQLite + 移动平均）** | 进程内异步 | - |
-| Phase 3 | `DistributedFeedbackLoop`（InfluxDB + SPC 算法） | HTTP 服务 | 数据点 > 100 万 或 误报率 > 20% |
-| Phase 4 | 强化学习 Evolve | RL Agent | Phase 3 数据充足后 |
+| **experimental** | **`InProcessFeedbackLoop`（SQLite + 移动平均）** | 进程内异步 | - |
+| beta | `DistributedFeedbackLoop`（InfluxDB + SPC 算法） | HTTP 服务 | 数据点 > 100 万 或 误报率 > 20% |
+| stable | 强化学习 Evolve | RL Agent | beta 数据充足后 |
 
 **所有 API 均为 `async`**。进程内锁 `asyncio.Lock`，跨进程锁 `filelock.FileLock`。**严禁 `threading.Lock`**。
 
@@ -168,7 +168,7 @@ class DistributedFeedbackLoop:
 ### 3.1 Metric / Baseline / Anomaly / Action
 
 ```python
-# src/zephyr/feedback_loop/schemas.py (Phase 1 产出)
+# src/zephyr/feedback_loop/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
@@ -281,7 +281,7 @@ ANOMALY_ACTION_ROUTING = {
 
 ## 4. API 设计
 
-### 4.1 Python 库 API（Phase 1 主用）
+### 4.1 Python 库 API（experimental 主用）
 
 ```python
 class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
@@ -317,7 +317,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
     ) -> list[Anomaly]:
         """
         扫描 since 之后的新指标，运行移动平均 + 阈值规则（§6），输出 anomalies。
-        Phase 1 同步调用（每次 record 后可触发增量检测）。
+        experimental 同步调用（每次 record 后可触发增量检测）。
         """
 
     # ───── Dispatch ─────
@@ -355,7 +355,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
     async def stats(self) -> FLEStats: ...
 ```
 
-### 4.2 HTTP API（Phase 3 预留骨架）
+### 4.2 HTTP API（beta 预留骨架）
 
 | Method + Path | 对应库方法 |
 |---------------|-----------|
@@ -378,7 +378,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
 > **原因**：
 > 1. 避免循环依赖（CE 未来可能订阅 FLE 的 `runtime_state` 作为 slot 输入）
 > 2. 测试时能用 Mock Protocol 脱钩真实服务
-> 3. Phase 3+ 服务化后只需换注入实现（HTTP Client / Remote Proxy），FLE 本体零改动
+> 3. beta+ 服务化后只需换注入实现（HTTP Client / Remote Proxy），FLE 本体零改动
 
 ### 5.1 FLE 侧定义的下游 Protocol
 
@@ -405,7 +405,7 @@ class LSGControlActionProtocol(Protocol):
     async def bump_strictness(self, delta: float, ttl_minutes: int, reason: str) -> None: ...
 ```
 
-### 5.2 Wiring 示例（Phase 1，单进程）
+### 5.2 Wiring 示例（experimental，单进程）
 
 ```python
 # src/zephyr/bootstrap.py
@@ -482,23 +482,23 @@ class CEAdjustAdapter:
 
 ```
 EMA_t = α · value_t + (1-α) · EMA_{t-1}
-其中 α ∈ [0.1, 0.3]（Phase 1 默认 0.2）
+其中 α ∈ [0.1, 0.3]（experimental 默认 0.2）
 ```
 
-新值偏离 EMA 超过 `k·stddev`（Phase 1 默认 k=2）即标记 `spike`/`drop`。
+新值偏离 EMA 超过 `k·stddev`（experimental 默认 k=2）即标记 `spike`/`drop`。
 
 ### 6.2 滑窗趋势检测
 
 ```
 窗口 w=10 个采样点
 取 w 内线性拟合斜率 slope
-|slope / baseline_mean| > threshold（Phase 1 默认 0.1）持续 3 个窗口 → trend_up/down
+|slope / baseline_mean| > threshold（experimental 默认 0.1）持续 3 个窗口 → trend_up/down
 ```
 
 ### 6.3 Flatline 检测
 
 ```
-连续 N 个窗口（Phase 1 默认 5）无新数据点 → flatline
+连续 N 个窗口（experimental 默认 5）无新数据点 → flatline
 （上游服务挂的早期信号）
 ```
 
@@ -513,9 +513,9 @@ EMA_t = α · value_t + (1-α) · EMA_{t-1}
 | 前置项 | 状态 |
 |-------|:----:|
 | `src/zephyr/feedback_loop/` 包创建 | ⏳ 待建 |
-| SQLite 时间序列 schema | ⏳ Phase 1 T-1-XX |
-| 上游 metrics sink 接线（Orchestrator/VMS/LSG/CE 都要调 FLE） | ⏳ Phase 2 接入 |
-| 下游 Action Protocol 适配器实现 | ⏳ Phase 2 接入 |
+| SQLite 时间序列 schema | ⏳ experimental T-1-XX |
+| 上游 metrics sink 接线（Orchestrator/VMS/LSG/CE 都要调 FLE） | ⏳ beta 接入 |
+| 下游 Action Protocol 适配器实现 | ⏳ beta 接入 |
 | ADR-0019 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
@@ -537,12 +537,12 @@ feedback-loop = [
 ```
 
 ├── src/zephyr/
-│   ├── feedback_loop/                              # ⏳ Phase 1 新建
+│   ├── feedback_loop/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_fle()
 │   │   ├── protocol.py                             # FeedbackLoopProtocol
 │   │   ├── action_protocols.py                     # §5.1 下游 Protocol 定义
-│   │   ├── in_process.py                           # Phase 1 实现
-│   │   ├── distributed.py                          # Phase 3+ 占位
+│   │   ├── in_process.py                           # experimental 实现
+│   │   ├── distributed.py                          # beta+ 占位
 │   │   ├── schemas.py                              # Metric / Baseline / Anomaly / Action
 │   │   ├── sink.py                                 # record_metric / record_batch
 │   │   ├── analyzer/
@@ -616,11 +616,11 @@ Dashboard --[query_timeseries / get_baseline / list_pending_actions]--> FLE
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **Phase 0**（当前） | 接口规范 + ADR-0019 | status=Active |
-| **Phase 1** | `InProcessFeedbackLoop` + SQLite 时间序列 + EMA/趋势 + ACTION_ROUTING 静态表 | ① §13 P0 用例通过<br>② Sink 吞吐 ≥ 1000 metric/s<br>③ 异常检测 P95 延迟 ≤ 200ms |
-| **Phase 2** | 上游接线（4 服务均推指标）+ 下游 Protocol 适配器全启 | 闭环：hallucination 尖峰 → quarantine_agent 自动生效 |
-| **Phase 3** | `DistributedFeedbackLoop`（InfluxDB + SPC） | 数据点 > 100 万触发 |
-| **Phase 4** | 强化学习 Evolve（slot 权重自动收敛） | Phase 3 数据充足 |
+| **scaffold**（当前） | 接口规范 + ADR-0019 | status=Active |
+| **experimental** | `InProcessFeedbackLoop` + SQLite 时间序列 + EMA/趋势 + ACTION_ROUTING 静态表 | ① §13 P0 用例通过<br>② Sink 吞吐 ≥ 1000 metric/s<br>③ 异常检测 P95 延迟 ≤ 200ms |
+| **beta** | 上游接线（4 服务均推指标）+ 下游 Protocol 适配器全启 | 闭环：hallucination 尖峰 → quarantine_agent 自动生效 |
+| **beta** | `DistributedFeedbackLoop`（InfluxDB + SPC） | 数据点 > 100 万触发 |
+| **stable** | 强化学习 Evolve（slot 权重自动收敛） | beta 数据充足 |
 
 ---
 
@@ -663,7 +663,7 @@ except Exception as e:
 **DEGRADE-002：下游 Action Protocol 未注入或调用失败时缓冲**
 
 触发场景：
-- Wiring 阶段某下游 Protocol 未注入（例如 Phase 1 暂不接 LSG）
+- Wiring 阶段某下游 Protocol 未注入（例如 experimental 暂不接 LSG）
 - 下游服务挂
 - 下游超时
 

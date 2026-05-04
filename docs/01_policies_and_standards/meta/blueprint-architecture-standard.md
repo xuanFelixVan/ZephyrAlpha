@@ -195,7 +195,7 @@ ai_autonomy: immutable_core
 | **Level 2** | 每创建一个新的功能模块 | 当前已满足——19 个模块蓝图均已创建 | ✅ 已完成 |
 
 > **1 约束**：当前阶段，只创建 Level 0 `MOD-MASTER-001` + 已有的 19 个 Level 2 模块蓝图。
-> `SYS-MASTER-001`（真正的全系统总蓝图）留待 Phase 2 创建——触发条件为任一 L02+ 模块蓝图开始创建时。
+> `SYS-MASTER-001`（真正的全系统总蓝图）留待 beta 创建——触发条件为任一 L02+ 模块蓝图开始创建时。
 
 ---
 
@@ -210,11 +210,11 @@ docs/03_modules/
 ├── blueprint-registry.yaml                     ← 蓝图深度评估登记表（已有）
 │
 ├── _system-master/                             ← Level 0: 全系统总蓝图目录
-│   └── system-master-blueprint.md             ← SYS-MASTER-001（待创建，Phase 2）
+│   └── system-master-blueprint.md             ← SYS-MASTER-001（待创建，beta）
 │
 ├── _master-blueprint/                          ← Level 1(Domain): L01 基础设施层集成蓝图
 │   └── blueprint.md                            ← MOD-MASTER-001（已有）
-│      （Phase 2 升级：→ _domain-l01/ → MOD-DOMAIN-L01-001）
+│      （beta 升级：→ _domain-l01/ → MOD-DOMAIN-L01-001）
 │
 ├── _domain-l02-l03/                            ← Level 1: L02+L03 信号域集成蓝图（待创建）
 │   └── domain-integration-blueprint.md        ← MOD-DOMAIN-SIG-001
@@ -313,14 +313,14 @@ docs/03_modules/
 
 | 既存 ID | 蓝图层级（新分类）| 兼容性说明 |
 |------|:---:|------|
-| `MOD-MASTER-001` | Level 1（当前）→ Level 0（Phase 2 升级后）| 当前它承担 L01 域集成蓝图职责。Phase 2 后升级为全系统总蓝图或降级为 DOMAIN-L01。兼容期内 ID 不动 |
+| `MOD-MASTER-001` | Level 1（当前）→ Level 0（beta 升级后）| 当前它承担 L01 域集成蓝图职责。beta 后升级为全系统总蓝图或降级为 DOMAIN-L01。兼容期内 ID 不动 |
 | `MOD-INF-001~017` | Level 2 MODULE | ✅ 不涉及不兼容 |
 | `MOD-KB-001` | Level 2 MODULE | ✅ 不涉及不兼容 |
 | `MOD-INF-003`（retired）| Level 2 MODULE | ✅ 已退役，兼容性不适用 |
 | `MOD-INF-004`（retired）| Level 2 MODULE | ✅ 已退役，兼容性不适用 |
 
 > **既存蓝图不强制改名**——新标准只要求新增蓝图遵循 ID 体系。
-> 既存蓝图在第一份该层的 Phase 1 升级**蓝图时，自然迁移**。
+> 既存蓝图在第一份该层的 experimental 升级**蓝图时，自然迁移**。
 
 ---
 
@@ -339,8 +339,8 @@ belongs_to: "MOD-MASTER-001"     #  ← 关联域蓝图 ID（必填）
 | 如果... | `belongs_to` 值 | 何时 |
 |------|------|------|
 | 在 1 期创建的模块蓝图 | `MOD-MASTER-001` | 因为当前只有这个域蓝图 |
-| 在 Phase 2+ 创建的 L02 因子蓝图 | `MOD-DOMAIN-SIG-001` | 信号域集成蓝图（待创建）|
-| 在 Phase 2+ 创建的 L06 执行蓝图 | `MOD-DOMAIN-RISK-001` | 执行域集成蓝图（待创建）|
+| 在 beta+ 创建的 L02 因子蓝图 | `MOD-DOMAIN-SIG-001` | 信号域集成蓝图（待创建）|
+| 在 beta+ 创建的 L06 执行蓝图 | `MOD-DOMAIN-RISK-001` | 执行域集成蓝图（待创建）|
 | 跨层基础设施模块（如 Telemetry）| `SYS-MASTER-001` | 全系统总蓝图|
 
 ### 6.2 域蓝图的 `belongs_to`（MUST）
@@ -348,7 +348,7 @@ belongs_to: "MOD-MASTER-001"     #  ← 关联域蓝图 ID（必填）
 Level 1 域蓝图 MUST 声明 `belongs_to` 指向 Level 0 总蓝图：
 
 ```yaml
-# 域蓝图 frontmatter（示例——Phase 2 创建时）
+# 域蓝图 frontmatter（示例——beta 创建时）
 module_id: "MOD-DOMAIN-SIG-001"
 belongs_to: "SYS-MASTER-001"     #  ← 全系统总蓝图
 ```
@@ -491,7 +491,7 @@ modules:
 | MOD-INF-017 | Code Dedup Engine | MOD-MASTER-001 | module |
 
 > **说明**：1 阶段，所有 Level 2 模块蓝图的上级都是 `MOD-MASTER-001`（即 L01 基础设施域集成蓝图）。
-> Phase 2+ 时，L02+ 的模块蓝图将归属到新建的对应 Level 1 域蓝图。
+> beta+ 时，L02+ 的模块蓝图将归属到新建的对应 Level 1 域蓝图。
 
 ---
 
@@ -552,7 +552,7 @@ modules:
 | 瞬态豁免 | 1 既有蓝图**不强制**立即声明 `belongs_to` | 现有蓝图 > 20 份且 Owner 判断立即声明成本过高 | 本声明即可——Owner 已知 |
 | 建设豁免 | 目录迁移中**允许暂时**存在双目录（旧目录 + 新目录）| 目录迁移过程中必须不能一次切换 | Owner 口头批准 |
 
-**瞬态豁免的失效条件**：本标准发布后，Phase 1 结束时（任务系统 v0.3.0 升级完成 + GateEngine G7 完整度门禁激活），所有既存蓝图 MUST 已声明 `belongs_to`。届时瞬态豁免自动失它。
+**瞬态豁免的失效条件**：本标准发布后，experimental 结束时（任务系统 v0.3.0 升级完成 + GateEngine G7 完整度门禁激活），所有既存蓝图 MUST 已声明 `belongs_to`。届时瞬态豁免自动失它。
 
 ---
 
@@ -593,4 +593,4 @@ modules:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|------|
-| 1.0.0 | 2026-05-04 | 初始版本。建立蓝图三级金字塔体系：(1) Level 0 ⇒ 全系统总蓝图 `_system-master/`，(2) Level 1 ⇒ 域集成蓝图 `_domain-{layers}/`，(3) Level 2 ⇒ 模块蓝图 `l{NN}_{name}/{module}/blueprint.md`。定义 `belongs_to` frontmatter 字段、14 层 ID 前缀表、既有 19 份蓝图归属清单。AI 冷启动 6 步定位路径。对标 Codified Context 三层内存模型。禁止行为 6 条。1 瞬态豁免——既存蓝图不强制立即声明 `belongs_to`，Phase 1 结束时触发。关联决策线：`R85`（本决策在 architecture-rationale-log.md 中的记录）|
+| 1.0.0 | 2026-05-04 | 初始版本。建立蓝图三级金字塔体系：(1) Level 0 ⇒ 全系统总蓝图 `_system-master/`，(2) Level 1 ⇒ 域集成蓝图 `_domain-{layers}/`，(3) Level 2 ⇒ 模块蓝图 `l{NN}_{name}/{module}/blueprint.md`。定义 `belongs_to` frontmatter 字段、14 层 ID 前缀表、既有 19 份蓝图归属清单。AI 冷启动 6 步定位路径。对标 Codified Context 三层内存模型。禁止行为 6 条。1 瞬态豁免——既存蓝图不强制立即声明 `belongs_to`，experimental 结束时触发。关联决策线：`R85`（本决策在 architecture-rationale-log.md 中的记录）|

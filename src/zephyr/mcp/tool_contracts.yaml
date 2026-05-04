@@ -38,7 +38,7 @@ global_conventions:
     tool_id: "{server_id}.{action}"           # e.g. task_manager.create_task
     resource_id: "zephyr://{server_id}/{path}" # e.g. zephyr://task_manager/tasks/T-2-16
   error_code_format: "ZA-{SERVER}-{NNNN}"
-  safety_levels:                              # 对齐 Phase 2 任务卡的 safety_level 约定
+  safety_levels:                              # 对齐 beta 任务卡的 safety_level 约定
     - L      # 低：只读
     - M      # 中：写入非关键数据
     - H      # 高：写入关键数据或触发不可逆动作
@@ -239,7 +239,7 @@ knowledge_base:
   description: "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 4 个 collection）；包装 knowledge_indexer.py"
   status: beta
   backend:
-    - "src/zephyr/kb/chromadb_init.py (ADR-0031 ChromaDB, Phase 1 VMS 过渡实现)"
+    - "src/zephyr/kb/chromadb_init.py (ADR-0031 ChromaDB, experimental VMS 过渡实现)"
     - "SQLite knowledge 表（事实层）"
   error_namespace: "ZA-KB"
   error_codes:
@@ -640,8 +640,8 @@ intent_router:
   status: beta
   backend:
     - "src/zephyr/context_engine/intent_keyword_mapper.py (Stage 1, T-2-21)"
-    - "src/zephyr/context_engine/intent_embedding_mapper.py (Stage 2, Phase 3 引入)"
-    - "src/zephyr/context_engine/intent_llm_router.py (Stage 3, Phase 4 引入)"
+    - "src/zephyr/context_engine/intent_embedding_mapper.py (Stage 2, beta 引入)"
+    - "src/zephyr/context_engine/intent_llm_router.py (Stage 3, stable 引入)"
   error_namespace: "ZA-INT"
   error_codes:
     - code: "ZA-INT-0001"
@@ -692,7 +692,7 @@ intent_router:
             minimum: 1
             maximum: 3
             default: 3
-            description: "只跑到第 N 阶段；Phase 2 默认 1"
+            description: "只跑到第 N 阶段；beta 默认 1"
           require_directives: { type: boolean, default: true }
       output_schema: { $ref: "#/definitions/IntentResult" }
       errors: ["ZA-INT-0001", "ZA-INT-0002", "ZA-INT-0003"]

@@ -2,6 +2,19 @@
 validate_derived_from.py — derived_from 标注完整性闸门（GATE-DERIVED）
 v1.0.0 — 2026-05-03
 
+__manifest__ = """
+args: []
+description: GATE-DERIVED — derived_from 标注完整性闸门（§6.14 Level 2 门禁 4/4 — 派生文件 derived_from
+  标注检测，5维检查）
+dimensions:
+- D3
+- D5
+priority: P1
+timeout_seconds: 15
+warn_only: false
+"""
+
+
 AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Level 2 门禁 4/4：
   根因：派生文件（frontmatter-field-registry、architecture-contract、frontmatter-schema.json）
         中有枚举列表但未标注 derived_from，导致无法追溯枚举值的 canonical SSoT。

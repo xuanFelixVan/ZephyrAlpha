@@ -1,6 +1,6 @@
 # AI-generated: T-4-01 (A28) · AutoEvolutionEngine 单元测试
 """
-test_auto_evolution · Phase 4 全自动进化引擎单元测试
+test_auto_evolution · stable 全自动进化引擎单元测试
 =====================================================
 
 Task ID     : T-4-01 (A28)

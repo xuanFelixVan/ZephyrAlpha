@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """audit_findings_by_scope.py — 按目录范围筛选 Finding 报告
 
+__manifest__ = """
+args: []
+description: 按目录范围筛选 Finding 报告（分析 run_all.py 输出，支持 scope 筛选 + 汇总统计）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 对标规则 : SCRIPT-QUALITY-001（审计脚本质量标准）
 创建日期 : 2026-05-02
 维度映射 : D1（结构完整性报告分析）

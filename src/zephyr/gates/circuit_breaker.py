@@ -1,24 +1,24 @@
 """
 CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 ===================================================
-任务编号 : T-V2-005（Phase 1b）
+任务编号 : T-V2-005（experimental）
 权限层级 : Immutable Core
 真源声明 : ai-autonomy-authority-registry.md §2.10
-关联决策 : rationale-log R81 C-02（Phase 1b 只实现 CLOSED→OPEN 单向）
+关联决策 : rationale-log R81 C-02（experimental 只实现 CLOSED→OPEN 单向）
            rationale-log R83（B6 §2.2 CBG 设计）
 创建日期 : 2026-04-27
 版本     : v1.0.0
 
 设计约束（C-02 裁决）
 --------------------
-- Phase 1 只实现 CLOSED → OPEN 单向（不实现 HALF_OPEN）
+- experimental 只实现 CLOSED → OPEN 单向（不实现 HALF_OPEN）
 - OPEN 状态后由 Owner 通过 CLI `cbg.reset(caller, target)` 手动恢复
-- Phase 3（Agent ≥ 3 时）升级为完整状态机（含 HALF_OPEN 探测）
+- beta（Agent ≥ 3 时）升级为完整状态机（含 HALF_OPEN 探测）
 - 零新外部依赖：全部基于 SQLite + stdlib
 
 功能说明
 --------
-1. CircuitBreakerState — 状态枚举（CLOSED / OPEN，Phase 1 无 HALF_OPEN）
+1. CircuitBreakerState — 状态枚举（CLOSED / OPEN，experimental 无 HALF_OPEN）
 2. CircuitBreakerRecord — SQLite circuit_breaker_state 表的内存镜像
 3. CircuitBreakerCheck  — 继承 gate_engine GateCheck 接口，注册第 17 种 CheckType
 4. @circuit_breaker(target_module)  — 装饰器，自动统计失败次数并触发 CLOSED→OPEN
@@ -79,15 +79,15 @@ _CALLER_UNKNOWN: str = "__unknown__"
 class CircuitBreakerState(str, Enum):
     """熔断器状态枚举。
 
-    Phase 1 约束（C-02 裁决）：
+    experimental 约束（C-02 裁决）：
     - CLOSED：正常放行，失败计数累积中
     - OPEN：熔断，调用立即被阻断
-    - HALF_OPEN：仅定义，Phase 1 不使用（Phase 3 升级时启用）
+    - HALF_OPEN：仅定义，experimental 不使用（beta 升级时启用）
     """
 
     CLOSED = "CLOSED"
     OPEN = "OPEN"
-    HALF_OPEN = "HALF_OPEN"  # Phase 3 预留，Phase 1 不写入数据库
+    HALF_OPEN = "HALF_OPEN"  # beta 预留，experimental 不写入数据库
 
 # ---------------------------------------------------------------------------
 # 数据模型

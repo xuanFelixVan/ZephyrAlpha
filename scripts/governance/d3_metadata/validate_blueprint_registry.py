@@ -1,6 +1,18 @@
 """
 validate_blueprint_registry.py — 蓝图登记表自校验
 
+__manifest__ = """
+args: []
+description: 蓝图登记表自校验——登记状态与实际文件对账
+dimensions:
+- D3
+- D11
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 D11（合规完整性 — 登记表与实际文件对账）
 
 检测内容：

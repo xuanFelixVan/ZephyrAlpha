@@ -16,7 +16,7 @@
     - 正常 × 2（合法文件名、含特殊字符）
     - 边界 × 2（空文件名、点开头文件名）
 
-Task: T-1-23 | Safety: HIGH | Phase 1
+Task: T-1-23 | Safety: HIGH | experimental
 """
 
 from __future__ import annotations

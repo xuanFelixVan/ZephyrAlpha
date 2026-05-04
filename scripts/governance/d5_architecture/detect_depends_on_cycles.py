@@ -1,6 +1,17 @@
 """
 detect_depends_on_cycles.py — depends_on 环检测
 
+__manifest__ = """
+args: []
+description: depends_on 环检测（DOC-009#1 — 循环依赖检测）
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：DOC-009#1（depends_on 无环）
      AGENTS.md §6.2（引用链不超过3层，环是极端违规）
 

@@ -1,6 +1,18 @@
 """
 validate_depends_on_format.py — depends_on 条目结构化格式校验
 
+__manifest__ = """
+args: []
+description: depends_on 条目结构化格式校验（PS-STD-001 §3.1 — {target, at, why} 结构 / 旧式 string[]
+  检测 / --fix 自动转换）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-001 §3.1（depends_on 字段定义——structured {target, at, why}）
      META-GLS-001 #19（depends_on 术语定义——三级分层链深体系）
      GOV-DOC-009 DOC-009（depends_on 必须用结构化格式声明引用链）

@@ -550,7 +550,7 @@ llm_provider_specialty:
     use_case: "夜间批处理 / 低优先级任务"
     cost_model: "GPU 电费"
     status: assess
-    constraint: "需 GPU 硬件（当前 0 GPU），Phase 2 激活"
+    constraint: "需 GPU 硬件（当前 0 GPU），beta 激活"
 
 # =============================================================================
 # 统计摘要

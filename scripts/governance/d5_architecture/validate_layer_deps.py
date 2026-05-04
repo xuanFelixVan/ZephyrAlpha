@@ -1,6 +1,17 @@
 """
 validate_layer_deps.py — 跨层依赖违规检测
 
+__manifest__ = """
+args: []
+description: 跨层依赖违规检测（COND-30~32 — 层纪律）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 COND-30~32（跨层调用 / contracts 放业务层）
      GOV-DOC-002 directory-structure-standard.md（层依赖纪律）
      MOD-INF-005 蓝图 §3.2（不包含的职责）

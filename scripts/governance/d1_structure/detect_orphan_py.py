@@ -1,6 +1,19 @@
 """
 detect_orphan_py.py — 项目根目录孤儿 .py 文件检测
 
+__manifest__ = """
+args:
+- --fix
+description: 项目根目录孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/governance/ / src/zephyr/
+  / tests/）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：AGENTS.md §6.5（脚本自创入库强制约定）：
     任何 .py 文件只允许放在 scripts/governance/、src/zephyr/、tests/ 三个位置。
     本脚本检测项目根目录下未放入合法位置的 .py 孤儿文件——

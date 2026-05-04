@@ -40,6 +40,7 @@ class InjectedContext(BaseModel):
 
     context: str = Field(default="", description="Assembled context string")
     sources: list[str] = Field(default_factory=list, description="Source file paths used")
+    provenances: list[str] = Field(default_factory=list, description="溯源信息 {blueprint_id}:{§}/{ke_id}")
     token_count: int = Field(default=0, ge=0, description="Estimated token count")
     retrieval_mode: str = Field(description="Retrieval mode used")
     query: str = Field(default="", description="Original query string")
@@ -130,14 +131,18 @@ class ContextInjector:
     ) -> InjectedContext:
         parts: list[str] = []
         sources: list[str] = []
+        provenances: list[str] = []
         total_tokens = 0
 
         for rec in records[: self._max_sources]:
             content = getattr(rec, "summary", "") or getattr(rec, "content", "")
             source = getattr(rec, "source_file", "") or getattr(rec, "ke_id", "")
             ke_id = getattr(rec, "ke_id", "unknown")
+            blueprint_id = getattr(rec, "blueprint_id", "")
+            section = getattr(rec, "section", "")
 
-            entry_text = f"[{ke_id}] {content}\n"
+            provenance = f"{blueprint_id}:{section}" if blueprint_id and section else ke_id
+            entry_text = f"[{provenance}] {content}\n"
             entry_tokens = estimate_tokens(entry_text)
 
             if total_tokens + entry_tokens > self._token_budget:
@@ -146,6 +151,7 @@ class ContextInjector:
             parts.append(entry_text)
             if source:
                 sources.append(source)
+            provenances.append(provenance)
             total_tokens += entry_tokens
 
         context_str = "".join(parts)
@@ -154,6 +160,7 @@ class ContextInjector:
         return InjectedContext(
             context=context_str,
             sources=sources,
+            provenances=provenances,
             token_count=total_tokens,
             retrieval_mode=mode.value,
             query=query,
@@ -168,14 +175,18 @@ class ContextInjector:
     ) -> InjectedContext:
         parts: list[str] = []
         sources: list[str] = []
+        provenances: list[str] = []
         total_tokens = 0
 
         for hit in hits[: self._max_sources]:
             content = getattr(hit, "content", "")
             source = getattr(hit, "ke_id", "") or ""
             chunk_id = getattr(hit, "chunk_id", "unknown")
+            blueprint_id = getattr(hit, "blueprint_id", "")
+            section = getattr(hit, "section", "")
 
-            entry_text = f"[{chunk_id}] {content}\n"
+            provenance = f"{blueprint_id}:{section}" if blueprint_id and section else (source or chunk_id)
+            entry_text = f"[{provenance}] {content}\n"
             entry_tokens = estimate_tokens(entry_text)
 
             if total_tokens + entry_tokens > self._token_budget:
@@ -184,6 +195,7 @@ class ContextInjector:
             parts.append(entry_text)
             if source:
                 sources.append(source)
+            provenances.append(provenance)
             total_tokens += entry_tokens
 
         context_str = "".join(parts)
@@ -192,6 +204,7 @@ class ContextInjector:
         return InjectedContext(
             context=context_str,
             sources=sources,
+            provenances=provenances,
             token_count=total_tokens,
             retrieval_mode=mode.value,
             query=query,

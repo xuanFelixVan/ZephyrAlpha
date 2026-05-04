@@ -1,7 +1,7 @@
 """
 CBAC 能力检查器 (Capability-Based Access Control)
 
-任务编号 : T-V2-004（Phase 1a CBAC 最小版）
+任务编号 : T-V2-004（experimental CBAC 最小版）
 权限层级 : Immutable Core（G1 §2.10 声明）
 真源声明 : ai-autonomy-authority-registry.md §2.10
 创建日期 : 2026-04-27

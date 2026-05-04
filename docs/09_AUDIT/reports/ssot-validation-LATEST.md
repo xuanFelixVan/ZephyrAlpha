@@ -2,14 +2,14 @@
 type: generated
 ttl: 7d
 generated_by: scripts/governance/validate_ssot.py
-scan_time: 2026-05-04 23:09:36
+scan_time: 2026-05-05 01:25:33
 ---
 
 # SSoT 矛盾扫描报告
 
-> **扫描目录**：`docs`
-> **扫描时间**：2026-05-04 23:09:36
-> **扫描文件**：265 个 .md 文件，245 个含 frontmatter
+> **扫描目录**：`docs`  
+> **扫描时间**：2026-05-05 01:25:33  
+> **扫描文件**：274 个 .md 文件，257 个含 frontmatter  
 
 ---
 
@@ -17,10 +17,10 @@ scan_time: 2026-05-04 23:09:36
 
 | 严重级别 | 数量 | 处置要求 |
 |---------|------|---------|
-| 🔴 P0（严重）| 30 | 必须立即修复，阻塞 Phase 2 完成门禁 |
-| 🟡 P1（重要）| 55 | 需尽快修复，影响可信度 |
+| 🔴 P0（严重）| 30 | 必须立即修复，阻塞 beta 完成门禁 |
+| 🟡 P1（重要）| 64 | 需尽快修复，影响可信度 |
 | 🔵 P2（建议）| 0 | 低优先级，可按计划处理 |
-| **合计** | **85** | |
+| **合计** | **94** | |
 
 ---
 
@@ -268,7 +268,7 @@ scan_time: 2026-05-04 23:09:36
 
 ---
 
-## 🟡 P1 矛盾（55 条）
+## 🟡 P1 矛盾（64 条）
 
 ### P1-1：status 字段值 `draft` 不在有效状态集合中
 
@@ -554,7 +554,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md`
+  - `docs/03_modules/_sys-master/blueprint.md`
 - **矛盾值**：`approved`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -562,7 +562,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/code-dedup-engine/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/a2a-protocol/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -570,7 +570,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/code-dedup-engine/index.md`
+  - `docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -578,7 +578,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/context-engine/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/agent-spec/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -586,7 +586,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/database/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/audit-trail/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -594,23 +594,23 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/feedback-loop/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-42：status 字段值 `draft` 不在有效状态集合中
+### P1-42：status 字段值 `approved` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/gate-engine/blueprint.md`
-- **矛盾值**：`draft`
+  - `docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md`
+- **矛盾值**：`approved`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
 ### P1-43：status 字段值 `draft` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/code-dedup-engine/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -618,7 +618,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/llm-security/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/code-dedup-engine/index.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -626,7 +626,7 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/mcp-servers/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/context-engine/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -634,31 +634,31 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/pipeline/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/database/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-47：status 字段值 `approved` 不在有效状态集合中
+### P1-47：status 字段值 `draft` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/runtime-integration/blueprint.md`
-- **矛盾值**：`approved`
+  - `docs/03_modules/l01_infrastructure/drift-detector/blueprint.md`
+- **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-48：status 字段值 `approved` 不在有效状态集合中
+### P1-48：status 字段值 `draft` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/script-system/blueprint.md`
-- **矛盾值**：`approved`
+  - `docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md`
+- **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
 ### P1-49：status 字段值 `draft` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
-  - `docs/03_modules/l01_infrastructure/shared-core/blueprint.md`
+  - `docs/03_modules/l01_infrastructure/feedback-loop/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
@@ -666,11 +666,83 @@ scan_time: 2026-05-04 23:09:36
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/gate-engine/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-51：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-52：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/llm-security/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-53：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/mcp-servers/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-54：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/pipeline/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-55：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/rollback-system/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-56：status 字段值 `approved` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/runtime-integration/blueprint.md`
+- **矛盾值**：`approved`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-57：status 字段值 `approved` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/script-system/blueprint.md`
+- **矛盾值**：`approved`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-58：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
+  - `docs/03_modules/l01_infrastructure/shared-core/blueprint.md`
+- **矛盾值**：`draft`
+- **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
+
+### P1-59：status 字段值 `draft` 不在有效状态集合中
+
+- **检查 ID**：`P1-1`
+- **涉及文件**：
   - `docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md`
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-51：status 字段值 `retired` 不在有效状态集合中
+### P1-60：status 字段值 `retired` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
@@ -678,7 +750,7 @@ scan_time: 2026-05-04 23:09:36
 - **矛盾值**：`retired`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-52：status 字段值 `approved` 不在有效状态集合中
+### P1-61：status 字段值 `approved` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
@@ -686,7 +758,7 @@ scan_time: 2026-05-04 23:09:36
 - **矛盾值**：`approved`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-53：status 字段值 `draft` 不在有效状态集合中
+### P1-62：status 字段值 `draft` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
@@ -694,7 +766,7 @@ scan_time: 2026-05-04 23:09:36
 - **矛盾值**：`draft`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-54：status 字段值 `retired` 不在有效状态集合中
+### P1-63：status 字段值 `retired` 不在有效状态集合中
 
 - **检查 ID**：`P1-1`
 - **涉及文件**：
@@ -702,7 +774,7 @@ scan_time: 2026-05-04 23:09:36
 - **矛盾值**：`retired`
 - **建议**：将 status 修改为有效值：Draft/Review/Active/Superseded/Deprecated/Retired
 
-### P1-55：module_id `MOD-INF-017` 在不同文件中 layer 字段不一致：`l01_infrastructure` in ['docs/03_mod
+### P1-64：module_id `MOD-INF-017` 在不同文件中 layer 字段不一致：`l01_infrastructure` in ['docs/03_mod
 
 - **检查 ID**：`P1-2`
 - **涉及文件**：
@@ -715,5 +787,5 @@ scan_time: 2026-05-04 23:09:36
 
 ## 下一步行动
 
-1. **立即修复 30 条 P0 矛盾**（阻塞 Phase 2 完成门禁）
-2. 安排修复 55 条 P1 矛盾（本 sprint 内完成）
+1. **立即修复 30 条 P0 矛盾**（阻塞 beta 完成门禁）
+2. 安排修复 64 条 P1 矛盾（本 sprint 内完成）

@@ -1,6 +1,18 @@
 """
 validate_index_reality.py — 索引-实际同步校验（AGENTS.md §6.11 自动化执行层）
 
+__manifest__ = """
+args:
+- --warn-only
+description: 索引-实际同步校验（AGENTS.md §6.11 — index.md声称脚本数 vs 磁盘实际 .py 文件数）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 15
+warn_only: false
+"""
+
+
 对标：AGENTS.md §6.11（索引-实际同步强制约定——索引文件声称的文件数和文件清单必须与磁盘实际情况一致）
      ITIL SACM → CMDB reconciliation（配置管理数据库与实际基础设施定期对账）
      AWS Config → 持续评估资源配置与期望状态的偏差

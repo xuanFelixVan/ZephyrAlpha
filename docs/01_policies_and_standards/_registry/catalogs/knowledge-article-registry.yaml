@@ -12,9 +12,9 @@
 #
 # 用途: 登记 KMS 知识库中每个 KE 编号的知识条目——
 #       标题 / 摘要 / 消费者（哪些模块消费此知识）/ TTL / 状态。
-#       为 Phase 3 自动知识抽取提供机器可读的索引基础。
+#       为 beta 自动知识抽取提供机器可读的索引基础。
 #
-# 当前状态: planned——Phase 3 落地。Phase 0 仅创建 Schema 骨架。
+# 当前状态: planned——beta 落地。scaffold 仅创建 Schema 骨架。
 # ============================================================================
 
 schema_version: "1.0.0"
@@ -27,7 +27,7 @@ last_updated: "2026-05-02"
 ai_autonomy: human_gated
 ttl: permanent
 total_entries: 0
-note: "Phase 3 KMS 落地前为空登记表——仅 Schema 骨架。当前项目中知识以 blueprint.md + ADR 形式存在，KE 编号体系尚未激活。"
+note: "beta KMS 落地前为空登记表——仅 Schema 骨架。当前项目中知识以 blueprint.md + ADR 形式存在，KE 编号体系尚未激活。"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -103,7 +103,7 @@ transition_period:
     - {type: adr, count: 39, path: "docs/02_enterprise_architecture/adr/"}
     - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
     - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
-  migration_phase: "Phase 3"
+  migration_phase: "beta"
 
 # ============================================================================
 # 变更记录
@@ -114,5 +114,5 @@ changelog:
     author: "AI-GLM-5.1"
     changes:
       - "初始创建——登记 Schema 骨架 + 预留 4个KE编号段（KE-001~KE-039）"
-      - "status=planned——Phase 3 KMS 三层漏斗落地前为空表"
+      - "status=planned——beta KMS 三层漏斗落地前为空表"
       - "transition_period 标注当前知识的实际存储位置——5蓝图+39ADR"

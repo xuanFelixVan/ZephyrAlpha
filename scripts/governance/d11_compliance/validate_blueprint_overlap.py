@@ -1,6 +1,17 @@
 """
 蓝图重叠检测门禁 (Blueprint Overlap Merge Gate · V-14)
 
+__manifest__ = """
+args: []
+description: 蓝图重叠检测（同一component_id出现多草稿时warn）
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 任务编号 : T-V2-011（Wave 1 V-14 兜底）
 权限层级 : Immutable Core
 创建日期 : 2026-04-27

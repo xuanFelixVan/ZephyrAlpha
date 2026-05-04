@@ -330,7 +330,7 @@ P0 模块（系统核心依赖）除上述通用规则外，额外受以下约�
 
 | 豁免场景 | 豁免内容 | 约束 |
 |---------|---------|------|
-| Phase 边界转换 | 临时跳过 testing→active 的集成测试前置条件 | Owner 审批，仅限 Phase 0→1 |
+| Phase 边界转换 | 临时跳过 testing→active 的集成测试前置条件 | Owner 审批，仅限 scaffold→1 |
 | testing→in_dev 回退 | 允许从 testing 退回 in_dev | 前提：因外部依赖不可用导致（已在 MLC-001 表中标注为允许例外） |
 | 紧急热修复 | 跳过 in_design→in_dev 的接口契约冻结条件 | 24h 内补齐契约 + Session Log 记录 |
 

@@ -1,11 +1,11 @@
 """
 TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 =====================================================
-任务编号 : T-V2-007（Phase 1d RI-03）
+任务编号 : T-V2-007（experimental RI-03）
 权限层级 : Human-Gated（M3 路由表修改 = 关键架构变更，R84 修正）
 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）+ §2.10（三件套）
 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
-           B6 §2.4（RI-03 设计）+ §3.4（Phase 1d 部署）
+           B6 §2.4（RI-03 设计）+ §3.4（experimental 部署）
 创建日期 : 2026-04-27
 版本     : v1.0.0
 
@@ -19,7 +19,7 @@ TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 4. **CBAC 兼容**：路由本身是读操作不走 ``capability_check``；处理器内部按需自查
 5. **审计可观察**：每次 dispatch 通过 ``AuditLogger.log_rule_trigger`` 写 JSONL（可选注入）
 
-Phase 1d 起始集（5 种 trigger_type）
+experimental 起始集（5 种 trigger_type）
 -----------------------------------
 - ``onboarding``         — 新会话/Agent 注册触发上下文加载
 - ``drift_detected``     — 偏移检测器报告偏移触发恢复
@@ -566,7 +566,7 @@ def reset_trigger_router() -> None:
 # ---------------------------------------------------------------------------
 # 默认 stub 处理器
 # ---------------------------------------------------------------------------
-# Phase 1d 占位：真实处理器由后续 Phase 实现并在 YAML 中替换为 zephyr.<module>.<func>
+# experimental 占位：真实处理器由后续 Phase 实现并在 YAML 中替换为 zephyr.<module>.<func>
 # 这些 stub 保证 trigger_router.yaml 默认配置可被解析 + dispatch 不会失败。
 
 def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -574,23 +574,23 @@ def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
         "handler": name,
         "phase": "1d-stub",
         "received_keys": sorted((payload or {}).keys()),
-        "note": "Phase 1d 占位处理器 — 真实实现见后续 Phase",
+        "note": "experimental 占位处理器 — 真实实现见后续 Phase",
     }
 
 def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``onboarding`` trigger_type 的 Phase 1d 占位处理器。"""
+    """``onboarding`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("onboarding", payload)
 
 def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``drift_detected`` trigger_type 的 Phase 1d 占位处理器。"""
+    """``drift_detected`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("drift_detected", payload)
 
 def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``cleanup_due`` trigger_type 的 Phase 1d 占位处理器。"""
+    """``cleanup_due`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("cleanup_due", payload)
 
 def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``blueprint_published`` trigger_type 的 Phase 1d 占位处理器。"""
+    """``blueprint_published`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("blueprint_published", payload)
 
 def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:

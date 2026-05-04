@@ -1,6 +1,17 @@
 """
 detect_threading_lock.py — threading.Lock 导入检测
 
+__manifest__ = """
+args: []
+description: threading.Lock 导入检测（ABS-40 — 全局异步架构违规）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-40（禁止 threading.Lock——项目全局异步架构）
      5 份 AI 工程接口规范一致声明（context-engine / agent-orchestrator / ...）
 

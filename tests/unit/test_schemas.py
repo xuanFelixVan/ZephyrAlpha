@@ -313,7 +313,7 @@ class TestHandoffPackage:
             blocked_items=[],
             decisions_made=[],
             next_actions=[],
-            context_summary="Session completed Phase 1 tasks.",
+            context_summary="Session completed experimental tasks.",
             open_questions=["Should we use Redis?"],
             created_at=_NOW,
         )

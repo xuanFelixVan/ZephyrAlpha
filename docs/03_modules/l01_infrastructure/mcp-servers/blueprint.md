@@ -74,8 +74,8 @@ depends_on:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | task_manager decompose_blueprint + _base_server | ✅ implemented |
-| Phase 1 | knowledge_base / gate_engine MCP 实现 | 📋 Backlog |
+| scaffold | task_manager decompose_blueprint + _base_server | ✅ implemented |
+| experimental | knowledge_base / gate_engine MCP 实现 | 📋 Backlog |
 
 ---
 
@@ -95,7 +95,7 @@ depends_on:
 | `src/zephyr/mcp/knowledge_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/mcp/sentinel_server.py` | ✅ 已实现 | |
 | `src/zephyr/mcp/task_manager_server.py` | ✅ 已实现 | |
-| `src/zephyr/mcp/blueprint_search_server.py` | ✅ 已实现 | P0-2 MCP 蓝图检索 tool —— Phase 1e T-V2-010 |
+| `src/zephyr/mcp/blueprint_search_server.py` | ✅ 已实现 | P0-2 MCP 蓝图检索 tool —— experimental T-V2-010 |
 | `src/zephyr/mcp/tool_contracts.yaml` | ✅ 已实现 | |
 
 ### 5.2 测试文件

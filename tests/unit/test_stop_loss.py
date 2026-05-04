@@ -9,11 +9,11 @@
   reset_kill_switch:
     - STUB 验证 × 1（确认 raise NotImplementedError）
 
-注意：stop_loss.py 当前为 Phase 3 骨架（raise NotImplementedError），
+注意：stop_loss.py 当前为 beta 骨架（raise NotImplementedError），
 本测试文件验证 stub 标记正确生效，不测试实际业务逻辑。
-Phase 3 实现完成后应添加完整业务测试。
+beta 实现完成后应添加完整业务测试。
 
-Task: l04-stop-loss | Safety: HIGH | Phase 3
+Task: l04-stop-loss | Safety: HIGH | beta
 """
 
 from __future__ import annotations

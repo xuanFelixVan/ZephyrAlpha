@@ -1,4 +1,6 @@
 {
+  "phase": "P2_hard_compliance",
+  "g6_active": true,
   "summary": {
     "sessions_total": 30,
     "sessions_compliant": 18,
@@ -23,12 +25,12 @@
       "MOD-KB-001": 1,
       "MOD-INF-016": 1
     },
-    "started_at": "2026-05-04T14:01:13.286091+00:00",
-    "finished_at": "2026-05-04T14:01:13.292113+00:00"
+    "started_at": "2026-05-04T16:52:02.793108+00:00",
+    "finished_at": "2026-05-04T16:52:02.798943+00:00"
   },
   "compliance": {
     "total_scenarios": 30,
-    "warnings": 10,
+    "rejects": 10,
     "passes": 20,
     "violations": [
       {
@@ -40,7 +42,8 @@
         "actually_read": [
           "MOD-INF-005"
         ],
-        "level": "partial"
+        "level": "partial",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-005",
@@ -49,7 +52,8 @@
           "MOD-INF-007"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-010",
@@ -58,7 +62,8 @@
           "MOD-INF-008"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-014",
@@ -69,7 +74,8 @@
         "actually_read": [
           "MOD-INF-006"
         ],
-        "level": "partial"
+        "level": "partial",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-015",
@@ -78,7 +84,8 @@
           "MOD-INF-009"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-019",
@@ -89,7 +96,8 @@
         "actually_read": [
           "MOD-INF-007"
         ],
-        "level": "partial"
+        "level": "partial",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-020",
@@ -98,7 +106,8 @@
           "MOD-INF-010"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-024",
@@ -109,7 +118,8 @@
         "actually_read": [
           "MOD-INF-007"
         ],
-        "level": "partial"
+        "level": "partial",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-025",
@@ -119,7 +129,8 @@
           "MOD-INF-015"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       },
       {
         "session_id": "sim-030",
@@ -129,9 +140,10 @@
           "MOD-MASTER-001"
         ],
         "actually_read": [],
-        "level": "none"
+        "level": "none",
+        "phase2_verdict": "REJECT"
       }
     ],
-    "warning_rate": 33.3
+    "reject_rate": 33.3
   }
 }

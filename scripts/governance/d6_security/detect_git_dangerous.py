@@ -1,6 +1,17 @@
 """
 detect_git_dangerous.py — 危险 Git 命令检测
 
+__manifest__ = """
+args: []
+description: 危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-26（禁止 git push --force 到保护分支）
               ABS-27（禁止 git reset --hard 在共享分支）
               ABS-28（禁止 git clean -fd 无确认）

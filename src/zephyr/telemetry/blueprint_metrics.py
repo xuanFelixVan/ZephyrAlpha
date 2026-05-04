@@ -1,7 +1,7 @@
 """
 blueprint_metrics — 蓝图使用追踪 instrumentation
 ==================================================
-Task ID  : T-V2-011（Phase 1e — 量化追踪 P2-1）
+Task ID  : T-V2-011（experimental — 量化追踪 P2-1）
 关联蓝图 : MOD-INF-015 §4（metrics 子系统, SLI 新增）
 关联决策 : R92（量化追踪 + 强制合规 + Retrospective 三件套）
 

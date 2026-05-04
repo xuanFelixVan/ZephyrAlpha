@@ -1,5 +1,17 @@
 """sync_policies_index.py — 从磁盘实际扫描，自动同步 PS-IDX-001 §二 文件数量表格。
 
+__manifest__ = """
+args:
+- --check
+description: 从磁盘扫描同步 PS-IDX-001 §二 文件数量表格（AGENTS.md §6.11——防止手动维护数字漂移）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 10
+warn_only: true
+"""
+
+
 对标：AGENTS.md §6.11 索引-实际同步强制约定（PS-IDX-001 文件数表格不得漂移）
       每次在 01_policies_and_standards/ 下新增/删除文件后运行一次。
 

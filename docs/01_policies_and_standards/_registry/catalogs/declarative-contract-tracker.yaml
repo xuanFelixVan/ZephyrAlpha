@@ -28,7 +28,7 @@ contracts:
     actual_consumer: "context_budget_tracker.py（部分——使用自己的硬编码逻辑，不读此 YAML）"
     gap: "YAML 规则不参与运行时决策；规则变更不会自动影响系统行为"
     status: "unresolved"
-    target_phase: "Phase 2"
+    target_phase: "beta"
     risk: "YAML 规则与代码逻辑独立演进，可能产生矛盾（如 F-05 CR-009 P0/P1 冲突）"
     last_reviewed: "2026-05-02"
 
@@ -38,7 +38,7 @@ contracts:
     actual_consumer: "embedding_migrate.py（使用硬编码 KNOWN_MODELS 字典 + _active_version）"
     gap: "YAML 不被运行时读取；模型数据有两份副本（YAML + Python KNOWN_MODELS），必须手动同步。已在 validate_config_integrity.py L8 层自动对账"
     status: "unresolved"
-    target_phase: "Phase 2"
+    target_phase: "beta"
     risk: "修改 YAML 默认模型但忘记改 Python → SSoT 漂移（F-04 同类风险）"
     last_reviewed: "2026-05-02"
 
@@ -48,7 +48,7 @@ contracts:
     actual_consumer: "无——SessionManager 尚未实现"
     gap: "状态机 YAML 是纯声明文档，无代码消费者"
     status: "unresolved"
-    target_phase: "Phase 2"
+    target_phase: "beta"
     risk: "实际的 session 状态管理与 YAML 定义脱节（如果已有临时实现）"
     last_reviewed: "2026-05-02"
 
@@ -59,7 +59,7 @@ contracts:
     gap: "特性明确标注为暂不支持；capability.py 已加入运行时检测 + warnings.warn（2026-05-02）"
     status: "resolved_as_not_supported"
     resolution: "2026-05-02: YAML 注释改为 ❌ 明确标注不支持；capability.py _load_from_yaml 新增花括号检测 → warn"
-    target_phase: "Phase 2（替换 glob 引擎为 bracex 后重新评估）"
+    target_phase: "beta（替换 glob 引擎为 bracex 后重新评估）"
     risk: "无——已加代码防护，含花括号的 pattern 会触发 warning"
     last_reviewed: "2026-05-02"
 
@@ -69,30 +69,30 @@ contracts:
     actual_consumer: "trigger_router.py:dispatch()"
     gap: "4 个 stub 函数返回固定值，不执行真正业务逻辑"
     status: "unresolved"
-    target_phase: "Phase 2"
+    target_phase: "beta"
     risk: "触发分发返回成功但实际未执行——静默失败"
     last_reviewed: "2026-05-02"
     wiring:
       - trigger: "compression_needed"
         current: "handle_compression_needed（✅ 真实）"
         goal: "(已兑现)"
-        phase: "Phase 1c（T-V2-006）"
+        phase: "experimental（T-V2-006）"
       - trigger: "onboarding"
         current: "handle_onboarding_stub（🔲 stub）"
         goal: "zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context"
-        phase: "Phase 1f（T-V2-009）"
+        phase: "experimentalf（T-V2-009）"
       - trigger: "drift_detected"
         current: "handle_drift_stub（🔲 stub）"
         goal: "zephyr.gates.drift_detector.DriftDetector.trigger_recovery"
-        phase: "Phase 1f（T-V2-009）"
+        phase: "experimentalf（T-V2-009）"
       - trigger: "cleanup_due"
         current: "handle_cleanup_stub（🔲 stub）"
         goal: "scripts.governance.drafts_zone_archiver.archive_expired_drafts"
-        phase: "Phase 1g+"
+        phase: "experimentalg+"
       - trigger: "blueprint_published"
         current: "handle_blueprint_stub（🔲 stub）"
         goal: "zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint"
-        phase: "Phase 1e（T-V2-008）"
+        phase: "experimental（T-V2-008）"
 
   - contract_id: "CT-006"
     source: "config/compression/policy.yaml"
@@ -101,7 +101,7 @@ contracts:
     gap: "已兑现——YAML 被 doc_compressor.py 直接消费，Immutable Core 字段有运行时强制校验"
     status: "resolved"
     resolution: "2026-05-02: 确认 doc_compressor.py 已消费 policy.yaml；添加 implementation_status 字段"
-    target_phase: "已兑现（Phase 1 active）"
+    target_phase: "已兑现（experimental active）"
     risk: "无——Immutable Core 字段有 CompressionInvariantError 运行时防护"
     last_reviewed: "2026-05-02"
 
@@ -111,7 +111,7 @@ contracts:
     actual_consumer: "无——`scripts/governance/meta/validate_script_system_health.py` 尚未创建"
     gap: "蓝图 V3 已写完整设计（自检项表 + 频率 + 异常行为），但代码为零。对标 ITIL 4 自动化系统自我监控——'不仅要监控业务，更要监控自动化系统本身'"
     status: "unresolved"
-    target_phase: "Phase 1"
+    target_phase: "experimental"
     risk: "P0——脚本系统自身出问题无人知晓 → 所有 12 维度门禁形同虚设。ServiceNow 2024 报告：40% 企业忽视自动化自身监控"
     last_reviewed: "2026-05-03"
 
@@ -121,7 +121,7 @@ contracts:
     actual_consumer: "无——`scripts/governance/meta/validate_emergency_bypass_log.py` 尚未创建"
     gap: "蓝图 V3 已定义三种绕过场景（脚本崩溃/紧急热修复/批量迁移）+ 安全阀规则，但缺少自动化审计脚本验证绕过是否合规"
     status: "unresolved"
-    target_phase: "Phase 1"
+    target_phase: "experimental"
     risk: "P0——没有自动化审计 → 绕过可能被滥用 → --no-verify 变成默认操作 → pre-commit 门禁退化"
     last_reviewed: "2026-05-03"
 
@@ -131,7 +131,7 @@ contracts:
     actual_consumer: "无——run_all.py 尚未实现 --tags 参数"
     gap: "蓝图 V3 已定义 6 个标签 + 使用方式，但 run_all.py 目前只支持 --dimensions 参数。对标 K8s Conformance [Disruptive]/[Conformance] 标签聚焦"
     status: "unresolved"
-    target_phase: "Phase 1"
+    target_phase: "experimental"
     risk: "中——缺少标签选择 → 每次必须全量运行 → 本地开发反馈慢 → 开发者可能跳过 pre-commit"
     last_reviewed: "2026-05-03"
 
@@ -141,7 +141,7 @@ contracts:
     actual_consumer: "无——run_all.py 尚未实现 --depth 参数"
     gap: "蓝图 V3 已定义三级深度 + 默认值（full），但代码中无此概念。对标 OWASP ASVS v5 L1/L2/L3 三级验证深度"
     status: "unresolved"
-    target_phase: "Phase 1"
+    target_phase: "experimental"
     risk: "中——缺少深度控制 → 所有扫描同一深度 → 小额修改也要等深扫 → 降低提交频率"
     last_reviewed: "2026-05-03"
 
@@ -151,7 +151,7 @@ contracts:
     actual_consumer: "无——Finding Schema 和 finding.py 均尚未添加 recommendation 字段"
     gap: "蓝图 V3 已定义三个子字段 + 枚举值，但 Finding 数据模型未扩展。对标 ITIL Level 2 决策辅助自动化——脚本建议但不执行"
     status: "unresolved"
-    target_phase: "Phase 1"
+    target_phase: "experimental"
     risk: "低——不影响门禁功能，但降低发现问题的可操作性——AI 知道'这里有问题'但不知道'怎么修'"
     last_reviewed: "2026-05-03"
 
@@ -159,7 +159,7 @@ summary:
   total_contracts: 11
   unresolved: 9
   resolved: 2
-  oldest_unresolved: "Phase 1"
+  oldest_unresolved: "experimental"
   next_review: "每次 Module Blueprint 变更时同步更新本登记表"
 
 changelog:
@@ -179,7 +179,7 @@ changelog:
     author: "AI-Trae-2026"
     changes:
       - "初始创建——登记 5 条声明式契约（CT-001~CT-005）"
-      - "CT-001~CT-003: config/ YAML 的 implementation_status = Phase 1 declarative contract"
+      - "CT-001~CT-003: config/ YAML 的 implementation_status = experimental declarative contract"
       - "CT-004: capabilities.yaml {a,b} 语法——已解决（标注不支持 + 代码防护）"
       - "CT-005: trigger_router.py stub 处理函数"
       - "4 条未解决，1 条已解决"

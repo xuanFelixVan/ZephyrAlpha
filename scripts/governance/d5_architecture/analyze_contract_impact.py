@@ -1,6 +1,17 @@
 """
 analyze_contract_impact.py — 契约变更影响分析器
 
+__manifest__ = """
+args: []
+description: analyze_contract_impact.py — 契约变更影响分析器
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 分析修改一个 CTR 字段后，哪些层/模块会受影响。
 基于 cross-layer-contracts.yaml 的 target_layers 字段进行静态影响分析。
 

@@ -11,7 +11,7 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 - 状态机转换（10 状态）+ 非法转换拒绝
 - 每次状态转换自动写 events 表（state_transition 事件）
 - 按 phase / status / session_id 列表查询
-- 批量 upsert（Phase 0 补录用）
+- 批量 upsert（scaffold 补录用）
 
 状态转换表（合法路径，#13 裁定：对齐 Jira/ITIL 标准）
 ---------------------
@@ -772,14 +772,14 @@ class TaskRepository:
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
     # ------------------------------------------------------------------
-    # UPSERT（Phase 0 批量补录）
+    # UPSERT（scaffold 批量补录）
     # ------------------------------------------------------------------
 
     def upsert(self, task: Task, *, files: list[dict[str, str]] | None = None) -> Task:
         """
         INSERT OR REPLACE 语义：task_id 已存在则全量覆盖，否则新建。
 
-        用于 Phase 0 任务补录（T-1-06）。
+        用于 scaffold 任务补录（T-1-06）。
         """
         with self._write_tx() as conn:
             conn.execute(

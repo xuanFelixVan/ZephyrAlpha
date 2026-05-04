@@ -1,7 +1,7 @@
 """
 SQLite 元数据层 Schema DDL + 初始化（T-1-02）
 ==============================================
-依据：ADR-0030（SQLite 作为 Phase 1 元数据层）
+依据：ADR-0030（SQLite 作为 experimental 元数据层）
 
 物理路径：data/zalpha_metadata.db
 Safety  : M（DDL 定义，init_db 幂等执行）
@@ -13,7 +13,7 @@ Safety  : M（DDL 定义，init_db 幂等执行）
 3. events                — 事件流（DeferredQueue 消费）
 4. knowledge             — KE 索引
 5. gates                 — 门禁运行记录
-6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 Phase 1b）
+6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 experimental）
 
 视图
 ----
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS gates (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — circuit_breaker_state 表（T-V2-005 Phase 1b CBG）
+# DDL — circuit_breaker_state 表（T-V2-005 experimental CBG）
 # ---------------------------------------------------------------------------
 
 _DDL_CIRCUIT_BREAKER_STATE = """

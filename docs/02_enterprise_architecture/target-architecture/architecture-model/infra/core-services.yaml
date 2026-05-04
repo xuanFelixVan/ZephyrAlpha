@@ -54,7 +54,7 @@ modules:
     description: 反馈闭环引擎——SQLite 时序 + EMA 异常检测 + Protocol 单向依赖
     note: >
       P1 而非 P0：FLE 依赖其他 4 个核心服务（LSG/VMS/CE/Orc）的接口输出作为输入，
-      在依赖就绪前无法独立验证。Phase 1 完成接口契约定义（Protocol），Phase 2 依赖就绪后升 P0。
+      在依赖就绪前无法独立验证。experimental 完成接口契约定义（Protocol），beta 依赖就绪后升 P0。
     adr_ref: [ADR-0019]
   - id: core-kb
     name: Knowledge Base (KB)
@@ -65,7 +65,7 @@ modules:
     description: 知识库——ChromaDB 持久化 + 递归分块 + unified_memory_api + 批量入库管线
     note: >
       P1 而非 P0：KB 依赖 VMS（向量存储）和 CE（配置引擎）的接口输出，
-      且 ChromaDB 嵌入模型选型待 ADR 确认。Phase 1 完成接口契约定义，Phase 2 依赖就绪后升 P0。
+      且 ChromaDB 嵌入模型选型待 ADR 确认。experimental 完成接口契约定义，beta 依赖就绪后升 P0。
     adr_ref: [ADR-0016]
 
 summary:

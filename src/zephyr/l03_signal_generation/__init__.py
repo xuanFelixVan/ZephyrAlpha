@@ -8,6 +8,27 @@
 Alpha 因子融合为交易信号：因子加权组合 → 信号打分 → 信号过滤/去重。
 [N/A — 骨架占位，尚未实现]
 
+CTR 契约依赖声明（承重墙标记）
+------------------------------
+本层是以下跨层数据契约的来源或目标——Phase B 实现前 MUST 阅读对应 YAML 定义。
+任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
+
+作为消费者（Consumer）：
+  - CTR-001  NormalizedMarketData      ← L00
+  - CTR-002  FactorSignal              ← L02
+  - CTR-ERR-002  FactorComputationError ← L02
+  - CTR-P1-001  FactorMonitorReport    ← L02
+  - CTR-P1-002  MacroFactorSignal      ← L02
+  - CTR-P1-004  ModelServingRequest    ← L11
+  - CTR-P1-005  ModelServingResponse   ← L11
+
+作为生产者（Producer）：
+  - CTR-P1-003  CapitalAllocationResult       → L05
+  - CTR-P1-015  SynthesizedSignal              → L04, L05
+  - CTR-ERR-003  SignalDegradationWarning  → L04, L05（信号质量下降时触发）
+
+SSoT: cross-layer-contracts.yaml v3.0
+
 架构归属
 --------
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）

@@ -3,7 +3,18 @@
 Architecture-as-Code GATE 检查脚本（GATE-01~08 + GATE-A/B/C/D/E + GATE-SC + GATE-SUM + EXTRA-01~03）
 v2.4.0 — 2026-05-03
 
-用途：验证架构终局完成度，作为进入 Phase 3 施工阶段的门禁。
+__manifest__ = """
+args: []
+description: 架构门禁检查（GATE-01~08 + GATE-A + GATE-B + GATE-SC + EXTRA-01~03）
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
+用途：验证架构终局完成度，作为进入 beta 施工阶段的门禁。
 来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §1.3 + AGENTS.md §6.10 双层对齐闸门 + 2026-05-03 审计反漂移升级
 
 GATE-01: _index.yaml 存在且所有分区文件可达
@@ -926,18 +937,20 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     3. 新建代码目录 → architecture-model YAML 应登记
     """
     errors = []
-    logs_dir = REPO_ROOT / "docs" / "19_development_workspace" / "session-logs"
+    logs_dir = REPO_ROOT / "session-logs"
     DOCS_ROOT = REPO_ROOT / "docs"
 
     if not logs_dir.exists():
         errors.append("session-logs/ 目录不存在")
         return False, errors
 
-    log_files = sorted(logs_dir.glob("session-*.md"), reverse=True)
+    log_files = sorted(logs_dir.rglob("session-*.yaml"), reverse=True)
+    if not log_files:
+        log_files = sorted(logs_dir.glob("session-*.md"), reverse=True)
     recent = log_files[:3]
 
     if not recent:
-        errors.append("未找到任何 session log")
+        errors.append("session-logs/ 存在但未找到任何 session log 文件")
         return False, errors
 
     for log_path in recent:
@@ -1127,7 +1140,7 @@ def main() -> None:
     print(f"{'=' * 60}")
 
     if total_fail > 0:
-        print("\n⛔ 存在未通过的 GATE，不满足进入 Phase 3 的条件。")
+        print("\n⛔ 存在未通过的 GATE，不满足进入 beta 的条件。")
     else:
         print("\n✅ 所有自动 GATE 通过！剩余 GATE-09/10 需人工确认。")
 

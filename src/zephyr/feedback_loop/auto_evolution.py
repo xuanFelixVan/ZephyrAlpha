@@ -1,17 +1,17 @@
 # AI-generated: T-4-01 (A28) 全自动进化引擎
 """
-auto_evolution · 全自动进化引擎（T-4-01 / Phase 4）
+auto_evolution · 全自动进化引擎（T-4-01 / stable）
 ====================================================
 
 Task ID     : T-4-01 (A28)
 依赖        : T-3-14（evolution_engine）+ T-3-16（fitness_functions）+ T-2-29（FeedbackCollector）
 safety_level: H
 
-Phase 3 的 :class:`zephyr.feedback_loop.evolution_engine.EvolutionEngine` 只产出
-**dry-run 风格的提案**——Owner 审批后才由外部流程手工 apply。Phase 4 在其
+beta 的 :class:`zephyr.feedback_loop.evolution_engine.EvolutionEngine` 只产出
+**dry-run 风格的提案**——Owner 审批后才由外部流程手工 apply。stable 在其
 之上增加 **全自动闭环**：
 
-1. ``dry_run`` 默认 *OFF*（区别于 Phase 3）
+1. ``dry_run`` 默认 *OFF*（区别于 beta）
 2. **H/CRITICAL 级提案仍强制 Owner 审批** —— 在没有 owner 授权时被阻塞
 3. **基于 Fitness 报告的自动触发**：
    - 知识激活率 < 30% **连续 3 天** → ``knowledge_expansion`` 提案
@@ -86,7 +86,7 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 class AutoTriggerType(str, Enum):
-    """Phase 4 自动触发类型（与 T-4-01 验收一一对应）。"""
+    """stable 自动触发类型（与 T-4-01 验收一一对应）。"""
 
     KNOWLEDGE_EXPANSION = "knowledge_expansion"
     GATE_TIGHTENING = "gate_tightening"
@@ -119,7 +119,7 @@ class AutoEvolutionOutcome:
 
 @dataclass(frozen=True)
 class AutoEvolutionConfig:
-    """Phase 4 自动触发阈值（与 phase-4-cards.md T-4-01 一致）。
+    """stable 自动触发阈值（与 phase-4-cards.md T-4-01 一致）。
 
     - ``knowledge_activation_floor = 0.30``：激活率低于此值算"异常"。
     - ``compliance_floor = 0.90``：合规率低于此值算"异常"。
@@ -157,11 +157,11 @@ class AutoEvolutionEngine:
     Parameters
     ----------
     evolution_engine : EvolutionEngine
-        已经构造好的 Phase 3 evolution 引擎（含 apply_fn / feedback collector）。
+        已经构造好的 beta evolution 引擎（含 apply_fn / feedback collector）。
     apply_fn : ApplyFn | None
         **可选** 覆盖 evolution_engine 的 apply_fn；None 时复用构造参数。
     config : AutoEvolutionConfig | None
-        Phase 4 触发阈值，None 时使用 :data:`DEFAULT_AUTO_CONFIG`。
+        stable 触发阈值，None 时使用 :data:`DEFAULT_AUTO_CONFIG`。
     now : Callable[[], datetime]
         时间注入（测试友好）。
     """
@@ -307,7 +307,7 @@ class AutoEvolutionEngine:
         apply_evolution_proposals: bool = True,
         baseline_avg_score: float | None = None,
     ) -> AutoEvolutionOutcome:
-        """Phase 4 一次完整自动闭环。
+        """stable 一次完整自动闭环。
 
         Parameters
         ----------
@@ -331,7 +331,7 @@ class AutoEvolutionEngine:
         triggers = self.detect_triggers()
         trigger_props = self.build_trigger_proposals(triggers)
 
-        # Phase 4 的关键：evolve() 在 dry_run=True 下只产出提案；apply 由
+        # stable 的关键：evolve() 在 dry_run=True 下只产出提案；apply 由
         # AutoEvolutionEngine **按 severity gate** 执行，确保 H/CRITICAL
         # 必须 owner_approved_high=True 才能真正落地。
         evolution_report: EvolutionReport | None = None

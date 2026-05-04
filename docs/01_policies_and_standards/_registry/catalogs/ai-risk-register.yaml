@@ -14,9 +14,9 @@
 #       幻觉 / Context泄漏 / Prompt注入 / 模型退化 / 合规缺口 / Token偷窃。
 #       每个风险含概率、影响、缓解措施、关联门禁。
 #
-# 触发条件: meta/index.md 标注 GOV-CMP-003 待 Phase 3+ 创建，
+# 触发条件: meta/index.md 标注 GOV-CMP-003 待 beta+ 创建，
 #          但根据 NIST AI RMF 的最佳实践，"风险登记册应随第一个 AI 功能一同创建"。
-#          本文在当前 Phase 0 提前创建骨架——Phase 1 脚本系统运行时填充实际数据。
+#          本文在当前 scaffold 提前创建骨架——experimental 脚本系统运行时填充实际数据。
 # ============================================================================
 
 schema_version: "1.0.0"
@@ -125,7 +125,7 @@ risks:
       - "llm_security/ LLM Security Gateway（LSG）——ADR-0020 定义"
       - "AI 操作铁律 #3——生成内容必须先过 self-check 清单（ai-hallucination-self-check-policy.md）"
     mitigation_status: partially_addressed
-    related_gate: null  # Phase 1 LSG 落地后关联
+    related_gate: null  # experimental LSG 落地后关联
     related_adr: "ADR-0020"
     last_reviewed: "2026-05-02"
 
@@ -175,8 +175,8 @@ risks:
     risk_name: "AI 产出容量溢出——模块数量爆炸导致登记表和校验脚本超时"
     category: governance
     owasp_llm_id: null
-    description: "当前 5 个模块→ Phase 3 预计 1500+ 模块。每个模块的登记表条目需要 validate_architecture.py 扫描。1500 个模块后全量扫描可能超时（> 30s），pre-commit 门禁会阻塞所有 commit"
-    probability: medium  # Phase 3 才会触发，但 Phase 0 需要埋解决点
+    description: "当前 5 个模块→ beta 预计 1500+ 模块。每个模块的登记表条目需要 validate_architecture.py 扫描。1500 个模块后全量扫描可能超时（> 30s），pre-commit 门禁会阻塞所有 commit"
+    probability: medium  # beta 才会触发，但 scaffold 需要埋解决点
     impact: significant
     risk_score: 12  # medium(3) × significant(4) = 12
     trigger_condition: "模块总数 > 100 时全量校验超时风险显著"
@@ -204,7 +204,7 @@ risks:
     mitigation:
       - "validate_blueprint_registry.py——蓝图登记表与实际目录对账"
       - "run_all.py + pre-commit——每次 commit 前全量对账"
-      - "Phase 2 auto-generation——登记表从脚本自动生成而非手动维护"
+      - "beta auto-generation——登记表从脚本自动生成而非手动维护"
     mitigation_status: partially_addressed  # validate_blueprint_registry.py 创建后升级为 addressed_with_auto
     related_gate: null
     related_adr: null
@@ -224,7 +224,7 @@ risks:
     mitigation:
       - "model-capability-contract.yaml——登记每个模型的替代方案"
       - "v2_staging_zone model_selection_policy——三模型分工（GLM/Sonnet/Opus）"
-      - "Phase 3 fallback——如果用不了一个模型，任务卡系统自动改写为另一个模型可执行的粒度"
+      - "beta fallback——如果用不了一个模型，任务卡系统自动改写为另一个模型可执行的粒度"
     mitigation_status: addressed_with_manual
     related_gate: null
     related_adr: "task-card-meta-registry.yaml §model_selection_policy"
@@ -242,9 +242,9 @@ risks:
     trigger_condition: "每次 AI 产出文档（blueprint.md/construction-plan.md）但未经自审计时"
     blast_radius: module
     mitigation:
-      - "Phase 1 脚本系统落地——script-system C1-C5 五阶段流水线"
+      - "experimental 脚本系统落地——script-system C1-C5 五阶段流水线"
       - "pre-commit GATE-12/15/16——阶段性自动校验"
-      - "Phase 2 自审计闸代码实现——嵌入 vibe-coding-pipelines 生产线"
+      - "beta 自审计闸代码实现——嵌入 vibe-coding-pipelines 生产线"
     mitigation_status: not_addressed
     related_gate: null
     related_adr: "MOD-INF-004 §4.3"
@@ -259,11 +259,11 @@ heatmap:
   # 最高 = 25（very_high × critical = 5×5=25）
   critical_zone:   # risk_score ≥ 15 —— 立即应对
     - {risk_id: AI-RSK-001, score: 16, label: "AI幻觉输出"}
-  high_zone:       # 10 ≤ risk_score < 15 —— Phase 1 应对
+  high_zone:       # 10 ≤ risk_score < 15 —— experimental 应对
     - {risk_id: AI-RSK-002, score: 12, label: "Prompt注入"}
     - {risk_id: AI-RSK-004, score: 12, label: "多模型质量不一致"}
     - {risk_id: AI-RSK-005, score: 12, label: "容量溢出"}
-  medium_zone:     # 5 ≤ risk_score < 10 —— Phase 2 应对
+  medium_zone:     # 5 ≤ risk_score < 10 —— beta 应对
     - {risk_id: AI-RSK-003, score: 8, label: "Context泄漏"}
     - {risk_id: AI-RSK-006, score: 9, label: "登记表漂移"}
     - {risk_id: AI-RSK-007, score: 8, label: "API不可用"}
@@ -286,7 +286,7 @@ summary:
     not_addressed: 1          # AI-RSK-008
     partially_addressed: 3    # AI-RSK-001/002/005
     addressed_with_manual: 2  # AI-RSK-003/007
-    addressed_with_auto: 2     # AI-RSK-004/006(partial→Phase 1 full)
+    addressed_with_auto: 2     # AI-RSK-004/006(partial→experimental full)
   avg_risk_score: 10.75
   max_risk_score: 16
 
@@ -298,7 +298,7 @@ changelog:
     date: "2026-05-02"
     author: "AI-GLM-5.1"
     changes:
-      - "初始创建——提前于 meta/index.md 规划的 Phase 3+"
+      - "初始创建——提前于 meta/index.md 规划的 beta+"
       - "登记 8 个 AI 操作特有风险——覆盖 OWASP LLM-01/04/06/09"
       - "风险评分范围 8-16，均分 10.75——以中等偏高为主"
       - "1 个 critical zone（AI-RSK-001 幻觉=16），3 个 high zone"

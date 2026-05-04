@@ -15,7 +15,7 @@ valid_from: 2026-05-01
 ttl: permanent
 construction_progress: phase_0_completed
 superseded_by: MOD-INF-006
-completion_note: "Phase 0 构建完成——双管线方案+M1-M11模块定义+脚本系统架构已落地。内容已于2026-05-02升级并入 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留，不可删除——有新需求应走蓝图升级流程重开(§八·铁律三)。"
+completion_note: "scaffold 构建完成——双管线方案+M1-M11模块定义+脚本系统架构已落地。内容已于2026-05-02升级并入 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留，不可删除——有新需求应走蓝图升级流程重开(§八·铁律三)。"
 priority: P0
 tags:
   - vibe-coding
@@ -115,30 +115,30 @@ Vibe Coding 基础设施是 ZephyrAlpha **所有 AI 辅助开发的"骨架"**—
 
 | 模块 | 名称 | 关键技术 | Phase | 权限 |
 |------|------|---------|:-----:|------|
-| **M1** | Context Engine | NetworkX + Qwen2.5-3B + 三级回退 | Phase 1 | Human-Gated |
-| **M2** | Vector Memory | SQLite-VSS+FTS5 (P1) → ChromaDB (P2) | Phase 1 起步 | Human-Gated |
-| **M2-P** | M2 Provenance | hash 链 + 只追加 SQLite | Phase 1a | Immutable Core |
-| **M3** | Orchestrator | dataclass+Pydantic (P1) → LangGraph (P2) | Phase 1 | Human-Gated |
-| **M4-A** | Feedback Engine | EMA + 阈值 + 持续时间 | Phase 1 | Human-Gated |
-| **M4-B** | Auto Fixer | sandbox ruff/mypy 修复 | Phase 1b | Immutable Core |
-| **M5** | Security Gateway | bandit + safety + regex + OWASP | Phase 1 | Immutable Core |
-| **M6** | Session Carryover | SQLite + TTL 7 天 + agent_role | Phase 1b | Human-Gated |
-| **M7** | Drift Detector | EMA-based 漂移检测 + YAML 阈值 | Phase 2 | AI-Modifiable |
-| **M8** | Code Health | 评分算法 + YAML 阈值 | Phase 2 | AI-Modifiable |
-| **M9** | Knowledge Base | M2 共享 collection + metadata.type | Phase 2 | AI-Modifiable |
-| **M10** | Kill Switch | 熔断器 + Owner 恢复 | Phase 1a | Immutable Core |
-| **M11** | Invariant Guard | Pydantic v2 运行时校验 | Phase 1a | Immutable Core |
+| **M1** | Context Engine | NetworkX + Qwen2.5-3B + 三级回退 | experimental | Human-Gated |
+| **M2** | Vector Memory | SQLite-VSS+FTS5 (P1) → ChromaDB (P2) | experimental 起步 | Human-Gated |
+| **M2-P** | M2 Provenance | hash 链 + 只追加 SQLite | experimental | Immutable Core |
+| **M3** | Orchestrator | dataclass+Pydantic (P1) → LangGraph (P2) | experimental | Human-Gated |
+| **M4-A** | Feedback Engine | EMA + 阈值 + 持续时间 | experimental | Human-Gated |
+| **M4-B** | Auto Fixer | sandbox ruff/mypy 修复 | experimental | Immutable Core |
+| **M5** | Security Gateway | bandit + safety + regex + OWASP | experimental | Immutable Core |
+| **M6** | Session Carryover | SQLite + TTL 7 天 + agent_role | experimental | Human-Gated |
+| **M7** | Drift Detector | EMA-based 漂移检测 + YAML 阈值 | beta | AI-Modifiable |
+| **M8** | Code Health | 评分算法 + YAML 阈值 | beta | AI-Modifiable |
+| **M9** | Knowledge Base | M2 共享 collection + metadata.type | beta | AI-Modifiable |
+| **M10** | Kill Switch | 熔断器 + Owner 恢复 | experimental | Immutable Core |
+| **M11** | Invariant Guard | Pydantic v2 运行时校验 | experimental | Immutable Core |
 
 ### 5.3 脚本系统（D1-D12）
 
 | 维度 | 名称 | Phase | 终选 |
 |------|------|:---:|------|
-| D1 | 缺口扫描 | Phase 1 | meta_auditor.py 抽样 10% |
-| D2 | 15 维度评分 | Phase 1 | YAML 评分模板 + Pydantic |
-| D3 | 根因分析 | Phase 1 | 5-Why + 类比库 |
-| D4 | 学术验证 | Phase 1 | KB 向量检索 |
-| D5 | 工业对标 | Phase 1 | KE-业界标准库 |
-| D12 | 幻觉检测 | Phase 1→2 | 阈值版 (P1) → LLM-as-Judge (P2) |
+| D1 | 缺口扫描 | experimental | meta_auditor.py 抽样 10% |
+| D2 | 15 维度评分 | experimental | YAML 评分模板 + Pydantic |
+| D3 | 根因分析 | experimental | 5-Why + 类比库 |
+| D4 | 学术验证 | experimental | KB 向量检索 |
+| D5 | 工业对标 | experimental | KE-业界标准库 |
+| D12 | 幻觉检测 | experimental→2 | 阈值版 (P1) → LLM-as-Judge (P2) |
 
 ### 5.4 自审计闸（防 OWASP LLM-04 自我闭环）
 
@@ -165,7 +165,7 @@ def knowledge_writer(content, source):
 | **2** | 升级完善 | 5-7 | M7 Drift / M8 Health / M9 KB / 触发条件评估 |
 | **3** | 服务化 | 按需 | 远程化 Vector/Orchestrator/Context |
 
-### 6.2 Phase 1 综合验收
+### 6.2 experimental 综合验收
 
 | 维度 | 指标 | 目标 |
 |------|------|------|
@@ -182,7 +182,7 @@ def knowledge_writer(content, source):
 
 ### 6.3 关键代码骨架
 
-**M2 Vector Memory (Phase 1 SQLite-VSS)**：
+**M2 Vector Memory (experimental SQLite-VSS)**：
 ```python
 class SQLiteVSSBackend:
     def __init__(self, db_path: str):
@@ -219,7 +219,7 @@ class LocalLLMSecurityGateway:
 | 并发 Agent > 3 | M3 引入 LangGraph |
 | OWASP LLM-04 命中 ≥3 次 | M5 引入 Guardrails |
 | 模块 > 300 且 AI 错误率 > 10% | D12 幻觉检测升级 LLM-as-Judge |
-| 并发 Agent > 20 或 P99 > 3s | Phase 3 远程化 |
+| 并发 Agent > 20 或 P99 > 3s | beta 远程化 |
 | Auto Fixer 修改含删除 | Reward Hacking 告警 |
 
 ---
@@ -229,7 +229,7 @@ class LocalLLMSecurityGateway:
 | 风险 | 概率 | 缓解 |
 |------|------|------|
 | sqlite-vss Windows 编译失败 | 中 | 预编译 .dll；fallback FTS5+余弦近似 |
-| 自研 Orchestrator 并发 >3 性能不足 | 低 | Phase 2 触发提前 LangGraph |
+| 自研 Orchestrator 并发 >3 性能不足 | 低 | beta 触发提前 LangGraph |
 | Auto Fixer 反向 reward hacking | 中 | sandbox + diff 必须含修改非删除 |
 | 脚本系统自审计死循环 | 低 | 隔离闸 + 抽样率 10% 上限 |
 
@@ -244,7 +244,7 @@ class LocalLLMSecurityGateway:
 
 ## 10. 实际代码实现情况（Code Implementation Status）
 
-> **本节记录蓝图对应的实际代码，证明 Phase 0 构建确实完成——非纸面设计。**
+> **本节记录蓝图对应的实际代码，证明 scaffold 构建确实完成——非纸面设计。**
 
 | 代码文件 | 对应蓝图节 | 实现内容 |
 |---------|:---:|------|
@@ -255,7 +255,7 @@ class LocalLLMSecurityGateway:
 | `src/zephyr/context_engine/doc_compressor.py` | §4.4 | M1 输入文档压缩 |
 | `scripts/governance/` (D1-D12) | §5 | 12 维度质量审计脚本全量落地 |
 
-**实现判定**：Phase 0 蓝图所述的双管线方案、脚本系统架构、M1-M11 模块定义均已落地——对应磁盘代码完整。
+**实现判定**：scaffold 蓝图所述的双管线方案、脚本系统架构、M1-M11 模块定义均已落地——对应磁盘代码完整。
 
 > **历史溯源**：原始施工图 Wave 0 终审产出（2026-04-27），三轮审计 GLM/Kimi/Qwen + Opus-4.7 裁决 5 条争议 + 兜底 V-11/V-12/V-13。2026-05-01 迁入 `03_modules/l01_infrastructure/vibe-coding-pipelines/blueprint.md`，内容保留，结构按蓝图模板重组。
 
@@ -265,7 +265,7 @@ class LocalLLMSecurityGateway:
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> Vibe Coding双管线——Phase 0构建完成，已升级为MOD-INF-006
+> Vibe Coding双管线——scaffold构建完成，已升级为MOD-INF-006
 
 ### 11.1 源码文件
 

@@ -3,6 +3,19 @@
 GATE-INDEX: Validate and auto-fix index.md factual accuracy.
 Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.
 
+__manifest__ = """
+args:
+- --check
+description: GATE-INDEX — 索引文件自动校验/修复（消除手动索引维护，--check/--apply）
+dimensions:
+- D3
+- D4
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 Modes:
   --check : Compare index.md facts (counts, lists) against disk reality
   --apply : Surgically fix frontmatter counts + file tables in index.md

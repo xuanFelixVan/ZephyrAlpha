@@ -1,6 +1,17 @@
 """
 detect_anchor_file_deletion.py — 锚点文件删除检测
 
+__manifest__ = """
+args: []
+description: 锚点文件删除检测（ABS-14 / GOV-DOC-007 §一 — 7个不可触碰锚点文件）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：ABS-14（删除锚点文件）、GOV-DOC-007 §一（不可触碰锚点文件清单）
 
 检测内容：

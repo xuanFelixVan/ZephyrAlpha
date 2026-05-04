@@ -1,6 +1,18 @@
 """
 validate_autonomy_gate.py — 变更级别 vs AI 自治权限交叉校验
 
+__manifest__ = """
+args: []
+description: AI 自治权限门禁校验（ABS-05~10 — 越权检测）
+dimensions:
+- D5
+- D11
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-05~10（AI 不可执行超出其自治等级的变更）
      GOV-AI-000（AI 自治权限注册表）
      任务系统 T3~T5（会话 range: 操作预算）

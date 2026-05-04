@@ -119,7 +119,7 @@ dependencies:
     target_name: "script-system"
     type: contract
     strength: hard
-    description: "双管线审计阶段（Phase 1审计）必须消费 script-system 定义的 Finding Schema。vibe-coding-pipelines 的 D1-D12 审计维度与 script-system 的 12 维度矩阵须一一对应"
+    description: "双管线审计阶段（experimental审计）必须消费 script-system 定义的 Finding Schema。vibe-coding-pipelines 的 D1-D12 审计维度与 script-system 的 12 维度矩阵须一一对应"
     contract_anchor: "architecture-contract.yaml §VR-005（审计维度对齐规则）"
     direction: upstream
     valid_since: "2026-05-02"

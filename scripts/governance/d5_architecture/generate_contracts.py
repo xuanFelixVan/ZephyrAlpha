@@ -1,6 +1,17 @@
 """
 generate_contracts.py — SSoT→Codegen 管道
 
+__manifest__ = """
+args: []
+description: generate_contracts.py — SSoT→Codegen 管道
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 从 cross-layer-contracts.yaml 自动生成 Python dataclass 文件。
 实现 YAML 中声明的 "Python 接口文件由 codegen 工具从本 YAML 自动生成，不得手工编辑"。
 

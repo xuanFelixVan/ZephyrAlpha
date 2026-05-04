@@ -45,7 +45,7 @@ generated: '2026-05-02'
 | business-value-stream.mmd | 业务价值流图（市场假设→研究→信号→组合→执行→监控闭环）|
 | data-flow.mmd | 跨域核心数据流图 |
 | dataflow-terminal.mmd | 终端数据流全景图（外部系统→L00→L02-L13→外部系统）|
-| deployment-phase1.mmd | Phase 1 部署拓扑（开发机单进程 + 本地存储）|
+| deployment-experimental.mmd | experimental 部署拓扑（开发机单进程 + 本地存储）|
 | frontend-build-pipeline.mmd | 前端构建流水线（changeset→CI→lint→test→build→publish）|
 
 ### 序列图

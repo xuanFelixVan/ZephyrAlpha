@@ -1,6 +1,17 @@
 """
 check_index_integrity.py — 索引完整性校验
 
+__manifest__ = """
+args: []
+description: 索引完整性校验（PS-STD-012 §7.3 — index.md清单vs磁盘双向差集）
+dimensions:
+- D1
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-012 §7.3（index.md 清单 vs 磁盘实际文件双向差集）
 
 检测内容：

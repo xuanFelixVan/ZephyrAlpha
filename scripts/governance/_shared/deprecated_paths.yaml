@@ -21,7 +21,7 @@ ruins_regex_patterns:
     label: "禁止引用模块候选池作为正式规则来源"
   - pattern: "\\\\\\\\?D:\\\\ZephyrAlpha\\\\模块候选池"
     label: "禁止引用候选池绝对路径作为权威来源"
-  - pattern: "\\\"
+  - pattern: "\\\\"
     label: "路径双重嵌套（旧脚本残留 bug）"
   - pattern: "docs/09_audit/state[/\\\\]"
     label: "v2.0 废弃——DB 已迁移至 data/zalpha_metadata.db（ADR-0030 §4.1）"

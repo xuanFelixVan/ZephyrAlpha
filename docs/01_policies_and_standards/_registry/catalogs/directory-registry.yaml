@@ -15,7 +15,7 @@
 #       路径 / 职责声明 / 父目录 / 是否有 index.md / 关联的 module_id。
 #       本登记表是目录结构的 SSoT（唯一真源），用于自动校验目录是否"有职无位"或"有位无责"。
 #
-# 自动驾驶化: Phase 1 补齐——
+# 自动驾驶化: experimental 补齐——
 #   - validate_directory_registry.py: 扫描实际目录 → 比对登记表 → 报告漂移
 #   - 新增目录时，AI 必须先查登记表确认是否有冲突
 #
@@ -183,14 +183,14 @@ directories:
     last_updated: "2026-05-03"
 
   - path: "docs/08_knowledge/"
-    responsibility: "KMS 知识条目存储——Phase 2 落地"
+    responsibility: "KMS 知识条目存储——beta 落地"
     parent: "docs/"
     has_index: true
     module_id: null
     adr_ref: "ADR-0005"
     track: B
     status: active
-    note: "Phase 0 为空目录，Phase 2 KMS 提取落盘"
+    note: "scaffold 为空目录，beta KMS 提取落盘"
 
   - path: "docs/09_audit/"
     responsibility: "审计报告与状态快照"

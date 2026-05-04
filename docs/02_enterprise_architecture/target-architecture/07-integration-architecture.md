@@ -249,4 +249,4 @@ MarketDataTick (raw)
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
 | 2026-04-19 | v1.0.0：初版建立（S14-G3，批次 A）。6 种集成风格分析 + 内外部集成拓扑（Mermaid）+ 接口契约版本管理 + Breaking Change 流程 + 废弃政策 + ACL 策略（引用 03-AA J5 已落盘设计）+ Event Backbone 占位 + Catalog 关联 + 视图关系图。R37 登记理由。 |
-| 2026-04-21 | v1.1.0：Phase 2 合并 catalogs/integration-catalog.md 的 EI 系列外部集成点枚举数据至 §3.2，新增 ACL 落盘位置列；更新 summary 为"完整集成视图"；§3.2 原内部层间数据流重编号为 §3.3。 |
+| 2026-04-21 | v1.1.0：beta 合并 catalogs/integration-catalog.md 的 EI 系列外部集成点枚举数据至 §3.2，新增 ACL 落盘位置列；更新 summary 为"完整集成视图"；§3.2 原内部层间数据流重编号为 §3.3。 |

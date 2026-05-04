@@ -151,26 +151,26 @@ tests/unit/
 
 | 阶段 | 内容 | 依赖 | 预估工作量 |
 |------|------|------|:---:|
-| **Phase 1** | Token 级扫描（MinHash + LSH） | 无 | 3 天 |
-| **Phase 2** | AST 级精确比对 | Phase 1 | 3 天 |
-| **Phase 3** | CLI 入口 + manifest 注册 | Phase 2 | 1 天 |
-| **Phase 4** | LLM 语义验证（可选） | Phase 2 + LLM API | 2 天 |
-| **Phase 5** | CI 集成 + Pre-commit Hook | Phase 3 | 1 天 |
+| **experimental** | Token 级扫描（MinHash + LSH） | 无 | 3 天 |
+| **beta** | AST 级精确比对 | experimental | 3 天 |
+| **beta** | CLI 入口 + manifest 注册 | beta | 1 天 |
+| **stable** | LLM 语义验证（可选） | beta + LLM API | 2 天 |
+| **Phase 5** | CI 集成 + Pre-commit Hook | beta | 1 天 |
 
 ## §6 风险评估
 
 | 风险 | 概率 | 影响 | 缓解 |
 |------|:---:|:---:|------|
 | 误报率高（相似但非重复的函数被标记） | 中 | 中 | 可调阈值 + 人工确认环节 |
-| LLM 语义判断不稳定 | 高 | 低 | Phase 4 可选，不依赖 LLM |
+| LLM 语义判断不稳定 | 高 | 低 | stable 可选，不依赖 LLM |
 | 扫描速度慢（大型代码库） | 低 | 中 | MinHash LSH 是近似算法，O(n) 而非 O(n²) |
 | 与现有 D-D-07 checker 功能重叠 | 低 | 低 | D-D-07 是词法级，本引擎是语义级，互补 |
 
 ## §7 成功标准
 
-1. 能检测出 `_now_iso()` / `now_iso()` / `_default_now()` 三者功能相同（Phase 2 验证）
+1. 能检测出 `_now_iso()` / `now_iso()` / `_default_now()` 三者功能相同（beta 验证）
 2. 误报率 < 20%（人工确认后）
-3. 扫描 `src/zephyr/` 全量代码 < 30 秒（Phase 1 性能目标）
+3. 扫描 `src/zephyr/` 全量代码 < 30 秒（experimental 性能目标）
 4. 报告格式与现有治理脚本一致（YAML + exit code）
 
 ## §8 与现有系统的关系
@@ -194,7 +194,7 @@ tests/unit/
 ## §9 开放问题
 
 1. **阈值如何确定？** AST 相似度 0.7 还是 0.8 算"重复"？需要用实际代码库调参
-2. **是否需要 LLM？** 2 不需要，Phase 4 可选。LLM 增加延迟和成本
+2. **是否需要 LLM？** 2 不需要，stable 可选。LLM 增加延迟和成本
 3. **与 SonarQube 的关系？** 如果项目未来引入 SonarQube，本引擎的部分功能可能被替代
 4. **增量扫描？** 当前设计是全量扫描，增量扫描需要 git diff 集成
 

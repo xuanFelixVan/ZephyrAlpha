@@ -174,7 +174,7 @@ src/zephyr/
 ├── feedback_loop/                       # FLE  · ADR-0019
 ├── gates/                               # 合规门禁（G1-GN 运行时）
 ├── db/                                  # SQLite schema / atomic 事务
-├── kb/                                  # 2 过渡期知识库（Phase 3 并入 vector_memory）
+├── kb/                                  # 2 过渡期知识库（beta 并入 vector_memory）
 ├── mcp/                                 # Model Context Protocol 客户端
 └── shared/                              # 跨层契约 / 共享工具
 ```
@@ -191,9 +191,9 @@ config/
 ├── trigger_router.yaml         # M3 触发器路由分派表（Human-Gated）
 ├── compression/                # DocCompressor 压缩策略
 │   └── policy.yaml             #   压缩不变量约束（Immutable Core）
-├── risk/                       # （Phase 1f/1g 规划中）风控阈值配置
-├── drift_thresholds.yaml       # （Phase 1f/1g 规划中）RI-07 DriftDetector 阈值
-└── app.yaml                    # （Phase 2 规划中）L01 基础设施应用配置
+├── risk/                       # （experimentalf/1g 规划中）风控阈值配置
+├── drift_thresholds.yaml       # （experimentalf/1g 规划中）RI-07 DriftDetector 阈值
+└── app.yaml                    # （beta 规划中）L01 基础设施应用配置
 ```
 
 ### 准入规则
@@ -229,7 +229,7 @@ allow:
 deny:
   - "config/capabilities.yaml"          # 自保：注册表不可改自身
   - "config/risk/**/*"                  # 风控配置不可改
-  - "config/drift_thresholds.yaml"      # 漂移阈值不可改（Phase 1f/1g 规划）
+  - "config/drift_thresholds.yaml"      # 漂移阈值不可改（experimentalf/1g 规划）
 ```
 
 - `capabilities.yaml` 自身禁止被 AI 修改 → 防止权限旁路
@@ -269,7 +269,7 @@ deny:
 **关键规则**：
 - **前缀 `l<NN>_` 是 C 轨的语法标识**。看到它就意味着"属于 14 层业务脊柱"，反之亦然。
 - **B 轨新包创建门槛**：独立顶级包 = BC 边界明确 + 至少 1 份 ADR + 至少 1 份接口合同 + 至少 1 个 Phase 路线。
-- **过渡期实现**：某能力 Phase 1 可先在 C 轨实现（如当前 `kb/`），Phase 3 升级为 B 轨独立包。升级动作需 ADR 记录。
+- **过渡期实现**：某能力 experimental 可先在 C 轨实现（如当前 `kb/`），beta 升级为 B 轨独立包。升级动作需 ADR 记录。
 
 ---
 
@@ -346,22 +346,22 @@ deny:
 | 2 | `docs/01_policies_and_standards/governance/document/` | 文档治理 | GOV-DOC-001~010 | 文档命名/路径/编码/生命周期/安全规则 | AI 治理（→ #3）、任务治理（→ #4） |
 | 3 | `docs/01_policies_and_standards/governance/ai/` | AI 治理 | GOV-AI-001~007 | AI 自治/入职/幻觉/模型契约/操作预算 | 任务卡（→ #4）、VC 操作步骤（→ #10） |
 | 4 | `docs/01_policies_and_standards/governance/task/` | 任务治理 | GOV-TASK-001~003 | 任务卡/交接/裁定/生命周期 | AI 操作预算（→ #3）、VC 操作（→ #10） |
-| 5 | `docs/01_policies_and_standards/governance/security/` | 安全治理 | （Phase 1 新建）GOV-SEC-001~003 | 密钥管理/访问控制/安全事件策略 | 安全操作手册（→ #11 或 #10） |
-| 6 | `docs/01_policies_and_standards/governance/compliance/` | 合规治理 | （Phase 1 新建）GOV-CMP-001~002 | 监管分类法/审计追踪策略 | 合规操作手册（→ #11）、L10 特定规则（→ #14 L10） |
-| 7 | `docs/01_policies_and_standards/governance/architecture/` | 架构治理 | （Phase 1 新建）GOV-ARCH-001~003 | ADR 协议/架构评审/架构版本化 | 架构视图（→ 02_enterprise_architecture/）、模块文档（→ 03_modules/） |
-| 8 | `docs/01_policies_and_standards/governance/data/` | 数据治理 | （Phase 1 新建）GOV-DATA-001~003 | 数据质量/血缘/保留策略 | 数据操作手册（→ #11）、L00 特定规则（→ #14 L00） |
-| 9 | `docs/01_policies_and_standards/governance/module/` | 模块治理 | （Phase 1 新建）GOV-MOD-001~005 | 模块准入/生命周期/接口契约/注入规则 | 模块文档（→ 03_modules/）、模块代码（→ src/zephyr/） |
+| 5 | `docs/01_policies_and_standards/governance/security/` | 安全治理 | （experimental 新建）GOV-SEC-001~003 | 密钥管理/访问控制/安全事件策略 | 安全操作手册（→ #11 或 #10） |
+| 6 | `docs/01_policies_and_standards/governance/compliance/` | 合规治理 | （experimental 新建）GOV-CMP-001~002 | 监管分类法/审计追踪策略 | 合规操作手册（→ #11）、L10 特定规则（→ #14 L10） |
+| 7 | `docs/01_policies_and_standards/governance/architecture/` | 架构治理 | （experimental 新建）GOV-ARCH-001~003 | ADR 协议/架构评审/架构版本化 | 架构视图（→ 02_enterprise_architecture/）、模块文档（→ 03_modules/） |
+| 8 | `docs/01_policies_and_standards/governance/data/` | 数据治理 | （experimental 新建）GOV-DATA-001~003 | 数据质量/血缘/保留策略 | 数据操作手册（→ #11）、L00 特定规则（→ #14 L00） |
+| 9 | `docs/01_policies_and_standards/governance/module/` | 模块治理 | （experimental 新建）GOV-MOD-001~005 | 模块准入/生命周期/接口契约/注入规则 | 模块文档（→ 03_modules/）、模块代码（→ src/zephyr/） |
 | 10 | `docs/01_policies_and_standards/operational/vibe_coding/` | VC 操作 | OPS-VC-001~003 | VC 上下文规则/session 状态机/可验证性操作 | VC 声明式约束（→ governance/ 对应子域） |
 | 11 | `docs/01_policies_and_standards/operational/devops/` | DevOps 操作 | OPS-DEV-001 | pre-commit/CI/部署流程 | DevOps 策略（→ governance/ 对应子域） |
 | 12 | `docs/01_policies_and_standards/operational/migration/` | 迁移操作 | OPS-MIG-001 | 迁移审计/迁移步骤 | 迁移策略（→ governance/ 对应子域） |
-| 13 | `docs/01_policies_and_standards/domains/L00_data_source/` | L00 层域 | （Phase 2 新建）DOM-L00-001~002 | L00 层的 governance/ + operational/ | 全局规则（→ governance/） |
-| 14 | `docs/01_policies_and_standards/domains/L02_alpha_factor/` | L02 层域 | （Phase 2 新建）DOM-L02-001~002 | L02 层的 governance/ + operational/ | 全局规则（→ governance/） |
-| 15 | `docs/01_policies_and_standards/domains/L04_risk_management/` | L04 层域 | （Phase 2 新建）DOM-L04-001~002 | L04 层的 governance/ + operational/ | 全局规则（→ governance/） |
-| 16 | `docs/01_policies_and_standards/domains/L07_post_trade_analytics/` | L07 层域 | （Phase 2 新建）DOM-L07-001~002 | L07 层的 governance/ + operational/ | 全局规则（→ governance/） |
-| 17 | `docs/01_policies_and_standards/_registry/contracts/` | 验证契约 | （Phase 4 新建） | CI 消费的 YAML 契约 | .md 文件（→ governance/） |
-| 18 | `docs/01_policies_and_standards/_registry/catalogs/` | 自动注册表 | （Phase 2 新建） | 脚本生成的 YAML 注册表 | **手动编辑的文件** |
-| 19 | `docs/01_policies_and_standards/_registry/vocabularies/` | 受控词表 | （Phase 2 新建） | AI 消费的 YAML 词表 | .md 文件（→ governance/） |
-| 20 | `docs/01_policies_and_standards/_registry/schemas/` | JSON Schema | （Phase 4 新建） | 脚本生成的 JSON Schema | **手动编辑的文件** |
+| 13 | `docs/01_policies_and_standards/domains/L00_data_source/` | L00 层域 | （beta 新建）DOM-L00-001~002 | L00 层的 governance/ + operational/ | 全局规则（→ governance/） |
+| 14 | `docs/01_policies_and_standards/domains/L02_alpha_factor/` | L02 层域 | （beta 新建）DOM-L02-001~002 | L02 层的 governance/ + operational/ | 全局规则（→ governance/） |
+| 15 | `docs/01_policies_and_standards/domains/L04_risk_management/` | L04 层域 | （beta 新建）DOM-L04-001~002 | L04 层的 governance/ + operational/ | 全局规则（→ governance/） |
+| 16 | `docs/01_policies_and_standards/domains/L07_post_trade_analytics/` | L07 层域 | （beta 新建）DOM-L07-001~002 | L07 层的 governance/ + operational/ | 全局规则（→ governance/） |
+| 17 | `docs/01_policies_and_standards/_registry/contracts/` | 验证契约 | （stable 新建） | CI 消费的 YAML 契约 | .md 文件（→ governance/） |
+| 18 | `docs/01_policies_and_standards/_registry/catalogs/` | 自动注册表 | （beta 新建） | 脚本生成的 YAML 注册表 | **手动编辑的文件** |
+| 19 | `docs/01_policies_and_standards/_registry/vocabularies/` | 受控词表 | （beta 新建） | AI 消费的 YAML 词表 | .md 文件（→ governance/） |
+| 20 | `docs/01_policies_and_standards/_registry/schemas/` | JSON Schema | （stable 新建） | 脚本生成的 JSON Schema | **手动编辑的文件** |
 | 21 | `docs/01_policies_and_standards/templates/` | 模板 | blueprint-template.md（已合并施工指引） | policy/standard/runbook/playbook 模板 | 正式规则文件（→ governance/ 或 operational/） |
 
 **反向映射表（文件类型 → 唯一目标目录）**：

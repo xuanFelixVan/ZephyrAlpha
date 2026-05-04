@@ -47,7 +47,7 @@ verifiability: manual
 - ❌ .md 治理文档 → `01_policies_and_standards/governance/` 或 `operational/`
 - ❌ 架构模型 YAML → `02_enterprise_architecture/target-architecture/architecture-model/`
 - ❌ 运行时配置 YAML → `config/` 或 `src/zephyr/`
-- ❌ Python 脚本中的注册表（如 SCRIPT_REGISTRY 代码嵌入）→ Phase 2 后统一提取至 catalogs/
+- ❌ Python 脚本中的注册表（如 SCRIPT_REGISTRY 代码嵌入）→ beta 后统一提取至 catalogs/
 
 ## 父级目录
 

@@ -1,5 +1,5 @@
 schema_version: "2.0"
-payload_contract_note: "9/22 事件 payload_contract 为 null（设计缺口，Phase 1 填充时补齐）"
+payload_contract_note: "9/22 事件 payload_contract 为 null（设计缺口，experimental 填充时补齐）"
 
 partition:
   id: cross-cutting-events
@@ -31,8 +31,8 @@ message_bus:
   current: null
   description: "单进程架构，事件通过进程内同步/异步回调分发"
   upgrade_triggers:
-    - {condition: "多个独立运行进程", solution: "Phase 2 引入轻量 Pub/Sub（首选 Redis Streams 或 NATS）"}
-    - {condition: "跨机房容灾需要事件持久化", solution: "Phase 3 引入 Kafka（对齐 DR/BCP §8.3）"}
+    - {condition: "多个独立运行进程", solution: "beta 引入轻量 Pub/Sub（首选 Redis Streams 或 NATS）"}
+    - {condition: "跨机房容灾需要事件持久化", solution: "beta 引入 Kafka（对齐 DR/BCP §8.3）"}
 
 frequency_levels:
   L1:

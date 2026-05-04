@@ -93,7 +93,7 @@ required_fields:
 
   - field: "current_phase"
     type: string
-    example: "Phase 0b"
+    example: "scaffold"
     description: "本次 session 所处的开发 Phase"
     usage: "标识当前项目阶段，确保 AI 不会跨阶段执行任务。读取 AGENTS.md §1 确认当前项目根目录。"
 
@@ -245,7 +245,7 @@ template: |
   session_id: "session-YYYYMMDD-NNN"
   date: "YYYY-MM-DD"
   author_agent: "Cursor-Premium"
-  current_phase: "Phase 0b"
+  current_phase: "scaffold"
   ttl: permanent
   ---
 

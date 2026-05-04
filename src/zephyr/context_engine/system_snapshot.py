@@ -1,7 +1,7 @@
 """
 SystemSnapshotter — M1 系统状态镜像（CL-017 RI 扩展模式）
 ==========================================================
-任务编号 : T-V2-006（Phase 1c）
+任务编号 : T-V2-006（experimental）
 权限层级 : AI-Modifiable（快照输出）/ Human-Gated（门禁通过率阈值）
 真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-017)
 关联决策 : rationale-log R83（CL-017 升级为 RI 扩展模式）

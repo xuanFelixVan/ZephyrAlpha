@@ -4,7 +4,7 @@ Implements a thread-safe publish-subscribe event bus using only the
 Python standard library.  This module is the messaging layer for
 DeferredQueue (T-1-09).
 
-Task: T-1-08 | Phase 1 | GLM-5.1
+Task: T-1-08 | experimental | GLM-5.1
 ADR ref: ADR-0037 (pending Opus authoring)
 """
 

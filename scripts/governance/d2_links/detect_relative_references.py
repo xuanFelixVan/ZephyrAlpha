@@ -1,6 +1,17 @@
 """
 detect_relative_references.py — 相对路径引用检测
 
+__manifest__ = """
+args: []
+description: 相对路径引用检测（DOC-004 — 应使用绝对路径）
+dimensions:
+- D2
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：DOC-004（引用使用绝对路径，非仅 module_id 或相对路径）
 
 检测内容：

@@ -46,9 +46,9 @@ ttl: permanent
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
 - **安全红线**：4 条不可撤销（详见 [architecture-principles.md](architecture-principles.md) §1）
 - **技术栈**：Python 3.12 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
-- **当前阶段**：Phase 1 启动，14 层已冻结，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
+- **当前阶段**：experimental 启动，14 层已冻结，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
 
-**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 14-layer physical architecture (L00→L13), Python full-stack, Vibe Coding driven. Current: Phase 1 kickoff — layers frozen, 6 core services under construction. Tech: Python 3.12 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI + MCP. Safety red lines: see [architecture-principles.md](architecture-principles.md) §1.
+**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 14-layer physical architecture (L00→L13), Python full-stack, Vibe Coding driven. Current: experimental kickoff — layers frozen, 6 core services under construction. Tech: Python 3.12 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI + MCP. Safety red lines: see [architecture-principles.md](architecture-principles.md) §1.
 
 ---
 
@@ -88,13 +88,13 @@ ZephyrAlpha 2.0 架构在当前阶段处于**"物理架构冻结 + 模块边界�
 | **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | ✅ **已定稿** | 2026-04-24 产出（`03-application-architecture.md §4A`）；接口规范 6 份齐备（见 `docs/03_modules/_b_track_interfaces/`）|
 | **17 项技术选型** | ✅ **已定稿** | 见 `technology-landscape.yaml`（SSoT）|
 | **4 路线图** | ✅ **已定稿** | 见 `phase-transition-protocol.md` |
-| **模块内部边界（具体文件/函数级）** | ⏳ **讨论中** | Phase 1 落地时细化，不在本阶段冻结 |
-| **任务卡路径（旧树→当前项目迁移）** | 🔧 **重组中** | 当前重组阶段 A-F，预计 Phase 0 内完成 |
+| **模块内部边界（具体文件/函数级）** | ⏳ **讨论中** | experimental 落地时细化，不在本阶段冻结 |
+| **任务卡路径（旧树→当前项目迁移）** | 🔧 **重组中** | 当前重组阶段 A-F，预计 scaffold 内完成 |
 
 **架构消费者须知**：
 
 - 引用本架构时，14 层分层 + 6 大核心服务 + 17 项选型可以作为**强约束**写入蓝图
-- 模块内部组件边界（C4-L3 以下）保持**灵活**，Phase 1 落地时可调整
+- 模块内部组件边界（C4-L3 以下）保持**灵活**，experimental 落地时可调整
 - "Vibe Coding 2.0 基础设施"和"14 层量化业务"是**正交**关系：前者是 L12 跨层支撑；后者是 L00-L11 + L13 业务层
 
 ---
@@ -188,7 +188,7 @@ ZephyrAlpha 2.0 仓库有三棵主树，每棵对应一个主要架构视图：
 | ADR-0018 | Agent Sandbox：Windows ACL + 只读挂载；Docker Desktop（升级）| Orchestrator 配套 |
 | ADR-0019 | Feedback Loop Engine：SQLite 时间序列 + EMA 异常检测 | 6 大核心服务之一 |
 | ADR-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed + 四层防御 | 6 大核心服务之一 |
-| ADR-0021 | SSoT Validator：Phase 0 唯一任务，阻塞下游 | Phase 0 门禁 |
+| ADR-0021 | SSoT Validator：scaffold 唯一任务，阻塞下游 | scaffold 门禁 |
 
 Full ADR index: `../adr/index.md`
 

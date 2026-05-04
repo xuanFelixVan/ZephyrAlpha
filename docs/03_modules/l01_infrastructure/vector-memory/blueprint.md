@@ -12,12 +12,12 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
-summary: "ZephyrAlpha VMS 蓝图——ChromaDB 0.6 + BGE-M3 ONNX本地推理。5大Collection: decisions / code_context / lessons / knowledge / runtime_logs。Phase 3整合 kb/ 能力入 InProcessVectorMemory。当前 skeleton——代码目录存在但文件为空。对标 ChromaDB 官方最佳实践 + VectorDB设计模式。"
+summary: "ZephyrAlpha VMS 蓝图——ChromaDB 0.6 + BGE-M3 ONNX本地推理。5大Collection: decisions / code_context / lessons / knowledge / runtime_logs。beta整合 kb/ 能力入 InProcessVectorMemory。当前 skeleton——代码目录存在但文件为空。对标 ChromaDB 官方最佳实践 + VectorDB设计模式。"
 tags: [vector-memory, vms, chromadb, bge-m3, embedding, vector-db, collections, infrastructure]
 priority: P1
 depends_on:
   - {target: "MOD-MASTER-001", at: "§2.6", why: "CT-CE-VMS-001 集成契约——CE→VMS向量检索"}
-  - {target: "MOD-KB-001", at: "§1.5", why: "知识库——Phase 3 VMS整合目标"}
+  - {target: "MOD-KB-001", at: "§1.5", why: "知识库——beta VMS整合目标"}
   - {target: "MOD-INF-008", at: "§2.1", why: "CE——VMS的主要消费方"}
   - {target: "architecture-model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML SSoT——本蓝图真源"}
 ---
@@ -28,7 +28,7 @@ depends_on:
 
 > **真源声明**：本蓝图的 canonical SSoT 为 [b_vector_memory.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_vector_memory.yaml)。
 > 代码落位：`src/zephyr/vector_memory/`。当前 skeleton——目录+`__init__.py` docstring 存在，代码文件未填充。
-> Phase 1 过渡期由 `src/zephyr/kb/` 承担部分能力，Phase 3 整合。
+> experimental 过渡期由 `src/zephyr/kb/` 承担部分能力，beta 整合。
 
 > **对标**：ChromaDB 0.6 官方最佳实践 + BGE-M3 ONNX 本地推理 + VectorDB 四层设计模式（Collection→Index→Embedding→Query）。
 
@@ -41,8 +41,8 @@ depends_on:
 | module_id | MOD-INF-011 |
 | 代码落位 | `src/zephyr/vector_memory/` |
 | 当前状态 | skeleton（目录存在但文件空白）|
-| 过渡期能力承载 | `src/zephyr/kb/` Phase 2 |
-| 整合时间线 | Phase 3 → kb/ 并入 VMS |
+| 过渡期能力承载 | `src/zephyr/kb/` beta |
+| 整合时间线 | beta → kb/ 并入 VMS |
 
 ### 核心职能
 
@@ -78,9 +78,9 @@ depends_on:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 1 | `__init__.py` docstring + 空目录骨架 | ✅ skeleton |
-| Phase 2 | ChromaDB 初始化 + BGE-M3 ONNX 加载 | 📋 Backlog |
-| Phase 3 | kb/ 能力整合 → 5 Collection 完整实现 | 📋 Backlog |
+| experimental | `__init__.py` docstring + 空目录骨架 | ✅ skeleton |
+| beta | ChromaDB 初始化 + BGE-M3 ONNX 加载 | 📋 Backlog |
+| beta | kb/ 能力整合 → 5 Collection 完整实现 | 📋 Backlog |
 
 ---
 

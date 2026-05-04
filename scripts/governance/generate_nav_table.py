@@ -1,6 +1,17 @@
 """
 generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 
+__manifest__ = """
+args: []
+description: generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 读取 config/nav_table_mapping.yaml（SSoT）→ 交叉验证 registries → 生成 AGENTS.md §5.2。
 
 用法：

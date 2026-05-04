@@ -1,6 +1,17 @@
 """
 detect_deprecated_adr_references.py — 废弃 ADR 引用检测
 
+__manifest__ = """
+args: []
+description: 废弃 ADR 引用检测（COND-38 — 禁止引用deprecated ADR）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：COND-38（引用 Deprecated ADR 作为当前决策依据为条件禁止）
 
 检测内容：

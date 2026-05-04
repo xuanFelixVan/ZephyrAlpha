@@ -1,6 +1,17 @@
 """
 validate_test_coverage.py — 测试覆盖率治理校验器
 
+__manifest__ = """
+args: []
+description: 测试覆盖率校验——每个 src/zephyr/ 下 .py 文件必须有对应 test_*.py
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：AGENTS.md §7.2（根源分析优先 — 测试缺口是系统性风险，非个案）
      PS-STD-003 COND-43（代码质量维度补全）
 

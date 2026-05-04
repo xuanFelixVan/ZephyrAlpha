@@ -18,6 +18,8 @@ ZephyrAlpha — shared/contracts/
 
 **运行时契约强制执行**（CTR-ERR-006，2026-05-04 新建）：
   - enforcer.py            — ContractEnforcer（@enforce_output / @enforce_input）
+  - registry.py            — ContractRegistry（单例，契约注册与查询）
+  - base_event.py          — BaseEvent（幂等 Key 基类，INV-007）
 
 **已锁基础契约**（Immutable Core，首批 3 铁板 + runtime_plane_tag 预留）：
   - instrument.py          — 全球证券标识（14 字段，覆盖 12 市场 × 7 资产类）

@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 """Merge README.md content into index.md, then delete README.md.
 
+__manifest__ = """
+args: []
+description: 合并 README 到 index.md（目录文档整合工具）
+dimensions:
+- D1
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 Strategy:
 - index.md provides the structure (responsibility, file listing, exclusions, parent)
 - README.md provides richer human-written description/intro

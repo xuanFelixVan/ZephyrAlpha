@@ -844,7 +844,7 @@ def build_detector_with_defaults(
     repo_root: Path | None = None,
 ) -> HallucinationDetector:
     """
-    便捷构造：使用默认预算 / 模型名，主要用于 Phase 3 联调阶段。
+    便捷构造：使用默认预算 / 模型名，主要用于 beta 联调阶段。
     单元测试应直接使用 ``HallucinationDetector(...)`` 以便显式注入参数。
     """
     return HallucinationDetector(

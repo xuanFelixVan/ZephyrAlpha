@@ -1,6 +1,19 @@
 """
 validate_architecture.py - Validate rule files against architecture-contract.yaml
 
+__manifest__ = """
+args: []
+description: 架构合规校验（frontmatter + 目录放置 + doc_type一致性）
+dimensions:
+- D3
+- D4
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 Reads architecture-contract.yaml and validates all .md/.yaml files under
 01_policies_and_standards/ for compliance with directory, frontmatter,
 and consistency rules.

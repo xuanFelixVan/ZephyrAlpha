@@ -1,7 +1,7 @@
 """
 DocCompressor — 文档压缩服务（CL-018 RI 扩展模式）
 ===================================================
-任务编号 : T-V2-006（Phase 1c）
+任务编号 : T-V2-006（experimental）
 权限层级 : Immutable Core（CompressionPolicy 不变量字段）
            AI-Modifiable（压缩算法实现）
 真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-018)
@@ -77,13 +77,13 @@ class CompressionPolicy(BaseModel):
 
     Immutable Core 说明
     -------------------
-    本模型的所有字段是 Phase 1c 最小不变量集合：
+    本模型的所有字段是 experimental 最小不变量集合：
       - min_chars / max_chars        : 长度约束
       - preserve_structure           : 章节标题不可压缩
       - preserve_provenance          : frontmatter 块不可压缩
       - preserve_immutable_blocks    : 指定标记块不可压缩
 
-    Phase 2 扩展时须通过 Owner 审批（Human-Gated）。
+    beta 扩展时须通过 Owner 审批（Human-Gated）。
     """
 
     model_config = ConfigDict(frozen=True)
@@ -301,11 +301,11 @@ class DocCompressor:
         return compressed
 
     # ------------------------------------------------------------------
-    # 内部：规则基压缩（Phase 1 实现）
+    # 内部：规则基压缩（experimental 实现）
     # ------------------------------------------------------------------
 
     def _rule_based_compress(self, text: str, policy: CompressionPolicy) -> str:
-        """Phase 1 规则基压缩算法（无 LLM 依赖）。
+        """experimental 规则基压缩算法（无 LLM 依赖）。
 
         算法流程
         --------

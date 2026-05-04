@@ -57,10 +57,10 @@ depends_on: []
 >
 > | # | 问题 | 严重度 | 状态 | 影响范围 |
 > |---|------|:------:|------|---------|
-> | 1 | ~~**旧 doc_type 长名未迁移**~~ | ~~🔴~~ | 📋 迁移方案已定 | 迁移方案见 §3.7，施工 Phase 2 批量执行 |
+> | 1 | ~~**旧 doc_type 长名未迁移**~~ | ~~🔴~~ | 📋 迁移方案已定 | 迁移方案见 §3.7，施工 beta 批量执行 |
 > | 2 | **`internal` classification 值待迁移**：100 个文件标 `classification: internal`，已裁定删除 `internal` 改为 `confidential`，但尚未批量执行 | 🟡 | 待迁移 | 100 个 .md 文件 + 2 个 Python 文件 + 数据库 DDL |
 >
-> **处理原则**：问题 1 迁移方案已定义（§3.7），施工 Phase 2 批量执行。问题 2 在后续 session 批量执行迁移。**在问题解决之前，不得新增使用旧长名或 `internal` 的文件。**
+> **处理原则**：问题 1 迁移方案已定义（§3.7），施工 beta 批量执行。问题 2 在后续 session 批量执行迁移。**在问题解决之前，不得新增使用旧长名或 `internal` 的文件。**
 >
 > > 拆分预判条件见 §6（文件末尾）👉 `metadata-registry.md#split-conditions`
 
@@ -624,7 +624,7 @@ draft → active → deprecated
 当前 `status` 字段是**描述性**的——它描述文件当前状态，但不约束文件的交互行为。
 对标 Kubernetes：alpha API 不能被 stable API 依赖——不是因为手动标了 `status: alpha`，而是因为它没通过 graduation gate。
 
-**未来方向**（Phase 2+）：引入 `lifecycle_stage` 字段，由门禁系统自动推进：
+**未来方向**（beta+）：引入 `lifecycle_stage` 字段，由门禁系统自动推进：
 
 ```
 draft_stage  →  blueprint_review  →  construction_review  →  active_stage
@@ -637,7 +637,7 @@ draft_stage  →  blueprint_review  →  construction_review  →  active_stage
 
 > **大白话**：现在的 status 是自己贴的标签——贴了跟没贴一样。将来的 stage 是门禁系统盖的章——没过蓝图门就是 draft，过了就是 active。这样就不会出现"明明还是个草稿却被到处引用"的尴尬了。
 
-##### `lifecycle_stage` 字段定义（Phase 2 落地）
+##### `lifecycle_stage` 字段定义（beta 落地）
 
 | stage 值 | 含义 | 对应的门 | 等价 status |
 |:---------|:-----|:--------|:-----------:|
@@ -907,7 +907,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 #### 5.2.5 容量验证
 
-| DOMAIN | 当前文件数 | Phase 1 目标 | 极限容量（NNN=999） | 够不够 |
+| DOMAIN | 当前文件数 | experimental 目标 | 极限容量（NNN=999） | 够不够 |
 |--------|:--------:|:----------:|:-----------------:|:-----:|
 | PS-STD | 9 | 10 | 999 | ✅ |
 | PS-REG | 1 | 2 | 999 | ✅ |
@@ -993,7 +993,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 ### 5.7 废弃格式迁移说明
 
-以下格式**全部废弃**，对应文件在施工 Phase 2 统一改为新前缀：
+以下格式**全部废弃**，对应文件在施工 beta 统一改为新前缀：
 
 | 废弃格式 | 文件 | 新 ID | 废弃原因 |
 |---------|------|-------|---------|
@@ -1031,7 +1031,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | `operational/vibe_coding/` | OPS-VC | 001, 002, 003 | — |
 | `operational/devops/` | OPS-DEV | 001 | — |
 | `operational/migration/` | OPS-MIG | 001 | — |
-| `domains/` | DOM-L## | L00-001~002, L02-001~002, L04-001~002, L07-001~002 | Phase 2 扩展 |
+| `domains/` | DOM-L## | L00-001~002, L02-001~002, L04-001~002, L07-001~002 | beta 扩展 |
 
 > 详细文件对应用表见各目录的 `index.md`。
 
@@ -1039,7 +1039,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 `module-id-registry.yaml` 当前使用 `MOD-{LAYER_CODE}-{SEQ}` 格式，与本文件 §5.1 的 `<DOMAIN>-<TYPE>-<NNN>` 格式不一致。
 
-**处理方案**：施工 Phase 4 时将 module-id-registry.yaml 的格式对齐到本文件 §5.1，当前不处理（该注册表为空壳，无实际影响）。
+**处理方案**：施工 stable 时将 module-id-registry.yaml 的格式对齐到本文件 §5.1，当前不处理（该注册表为空壳，无实际影响）。
 
 ---
 
@@ -2140,7 +2140,7 @@ derived_from:
 |------|------|---------|
 | 5.9.0 | 2026-05-02 | **SSoT 根治——单层真源**：§3.2 完整表（23 行）→速查引用（10+13 的速查列表 + vocabulary YAML 指针）。§3.3 移除 2 个已废弃类型行（ai_governance/reference），标注"完整映射见 YAML"。§3.4 移除 4 个已废弃类型行（ai_governance/candidate_pool/discussion_draft/reference），新增 operational_rule/protocol/vocabulary/contract/terminology/template/declaration/service_spec 行，标注 YAML 优先。§3.5 流程简化："改 YAML 即可，本表不需要手动同步"。根因：双层手动同步是结构性缺陷——对标 12 家专业机构（K8s/Terraform/OpenAPI/Google SRE/Anthropic/Cursor/AGENTS.md/ComfyUI 等），无一使用"人工同步双层真源"。方案选型详细论证见 Session Log。 |
 | 5.8.0 | 2026-05-02 | **vocabulary YAML 对齐**：§3.2 完整词表从 25→23 种——移除 5 个已废弃 doc_type（checklist/ai_governance/candidate_pool/discussion_draft/reference，已在 vocabulary deprecated_values 中），新增 3 个 vocabulary 已注册但本表缺失的类型（vocabulary/contract/declaration）。§3.2.1 子集从 8→10 值（新增 vocabulary/contract）。§6 TTL 表新增 periodic_review_90d（ttl-vocabulary.yaml 已有）。新增 YAML 优先声明——本表从 vocabulary YAML 派生，冲突以 YAML 为准。根因：词汇表清理/新增后 metadata 手动同步遗漏了 5 个 deprecated 删除 + 3 个新增。 |
-| 5.7.0 | 2026-05-02 | **生命周期引用约束（Lifecycle Reference Constraint）**：§4.1.1 新增 LRC-001~005 规则——draft 文件不可被 active 文件通过 depends_on 引用（对标 Kubernetes Admission Controller + ITIL Change Enablement）。定义 lifecycle_stage 字段（4 值：draft/blueprint_reviewed/construction_reviewed/active，Phase 2 落地）。动机：审计发现 GOV-MOD-002（draft）被 6 个 active 文件量产级引用——status 与 depends_on 之间没有互锁机制。 |
+| 5.7.0 | 2026-05-02 | **生命周期引用约束（Lifecycle Reference Constraint）**：§4.1.1 新增 LRC-001~005 规则——draft 文件不可被 active 文件通过 depends_on 引用（对标 Kubernetes Admission Controller + ITIL Change Enablement）。定义 lifecycle_stage 字段（4 值：draft/blueprint_reviewed/construction_reviewed/active，beta 落地）。动机：审计发现 GOV-MOD-002（draft）被 6 个 active 文件量产级引用——status 与 depends_on 之间没有互锁机制。 |
 | 5.6.0 | 2026-05-02 | §3.2 拆分 `design` 为 `architecture_view`（正式架构视图）+ `design`（工作级设计），消除"一个词两种文档"歧义。doc_type 25 种。(1) §3.2 #6 design 含义从"架构视图/设计文档"→"设计文档（工作级设计，非正式架构视图）"，路径从 `02_enterprise_architecture/`→`02_enterprise_architecture/designs/`。(2) §3.2 新增 #25 architecture_view（正式目标架构，TOGAF/ArchiMate 级），路径 `02_enterprise_architecture/target-architecture/`。(3) §3.3 组合示例 design+layer→architecture_view+layer。(4) §3.4 路径映射拆分为 architecture_view（target-architecture/）+ design（designs/），互禁对方目录。(5) §1.3 总种数、§2.5 表、§3.5、§14 各计数引用同步更新。(6) 相关 Python 脚本同步更新：check_frontmatter_metadata.py DOC_TYPE_LEGAL + architecture_view、doc_type-vocabulary.yaml + architecture_view |
 | 5.5.0 | 2026-05-01 | §3.2 拆分 `plan` 为 `plan`（任务书）+ `roadmap`（路线图），消除"三合一"歧义。`plan` 的"执行计划"语义归入 `construction_plan`。doc_type 24 种。(1) §3.2 完整词表拆分 plan #7 → plan #7（任务书）+ roadmap #8（路线图），#8~#23 顺移为 #9~#24。(2) §3.3 组合示例拆分 plan+layer→roadmap+layer。(3) §3.4 路径映射 plan 移除 `04_construction_plans/`，新增 roadmap 行。(4) §2.5 表新增 roadmap 列。(5) §2.6 新增一致性约束 #11（roadmap → declarative）。(6) §12 命名 plan 从 `construction-plan` 改为 `taskbook`，新增 roadmap 命名。(7) §11 正文模板 plan 改为"任务书"，新增 roadmap 模板。(8) §1.3 总种数、§5 B 域范围、各枚举引用同步更新。(9) 相关 Python 脚本同步更新：check_frontmatter_metadata.py DOC_TYPE_LEGAL + roadmap、triage.py VALID_DOC_TYPES + roadmap、doc_type-vocabulary.yaml + roadmap |
 | 5.4.0 | 2026-05-01 | §2.5 表扩展 +3 列（adr/blueprint/construction_plan）消除模板文件的 per-doc_type 字段约束盲区；§2.6 +3 条一致性约束（#8/#9/#10）对齐 rule_form-vocabulary.yaml 已有映射；条件说明表同步更新 5 行（补 layer/classification/verifiability/valid_from/evolution_policy 对新增 doc_type 的条件说明） |

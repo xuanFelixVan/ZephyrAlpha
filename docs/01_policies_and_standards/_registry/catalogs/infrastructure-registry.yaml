@@ -18,7 +18,7 @@
 #   - runtime-integration(RI-01~07) 定义了"需要哪些基础设施"
 #   - 本登记表登记"这些基础设施的实例和状态"
 #
-# 自校验: （Phase 1 补齐——scan infrastructure connectivity）
+# 自校验: （experimental 补齐——scan infrastructure connectivity）
 # ============================================================================
 
 schema_version: "1.0.0"
@@ -76,7 +76,7 @@ _schema:
 #   type                类型（见 _schema.infra_types）
 #   description         一句话说明
 #   runtime_plane       运行时平面（hot/warm/cold）
-#   host                host:port 或连接串（Phase 1 填充具体值）
+#   host                host:port 或连接串（experimental 填充具体值）
 #   health_check        健康检查方式: ping/http/tcp/query
 #   dependency_of[]      被哪些模块依赖（module_id）
 #   sla                 SLA 承诺（如 99.9% uptime / 50ms p99 latency）
@@ -164,7 +164,7 @@ infrastructure:
     sla: "99.9% uptime, < 5ms GET p99"
     status: planned
     provisioned_at: null
-    note: "capacity-assurance Phase 1 引入 Redis 缓存 SLI/SLO"
+    note: "capacity-assurance experimental 引入 Redis 缓存 SLI/SLO"
 
   # ── 对象存储（MinIO/S3）──
   - infra_id: "INFRA-STORE-001"
@@ -180,7 +180,7 @@ infrastructure:
     sla: "99.9% durability, < 100MB/s write"
     status: planned
     provisioned_at: null
-    note: "Phase 2 脚本系统归档依赖 S3。开发期可用本地 MinIO"
+    note: "beta 脚本系统归档依赖 S3。开发期可用本地 MinIO"
 
   # ── 配置中心（RI-04 ConfigCenter）──
   - infra_id: "INFRA-CFG-001"
@@ -211,7 +211,7 @@ infrastructure:
     sla: "99.9% uptime, < 50ms service lookup"
     status: planned
     provisioned_at: null
-    note: "Phase 3 1500+ 模块后启用。当前 5 模块阶段手动管理即可"
+    note: "beta 1500+ 模块后启用。当前 5 模块阶段手动管理即可"
 
 # ============================================================================
 # 汇总统计
@@ -232,7 +232,7 @@ summary:
     warm: 1   # Redis 缓存
     cold: 4   # 任务队列 / SQLite / ChromaDB / S3
   by_status:
-    planned: 8  # Phase 0 全部为 planned
+    planned: 8  # scaffold 全部为 planned
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
@@ -249,7 +249,7 @@ changelog:
     author: "AI-GLM-5.1"
     changes:
       - "初始创建——登记 8 个运行时基础设施组件"
-      - "全部组件 status=planned——Phase 0 无实际运行时基础设施"
+      - "全部组件 status=planned——scaffold 无实际运行时基础设施"
       - "7 种 infra_type 全覆盖（不含 kubernetes/cluster 类）"
       - "4 个 rime_plane 分层（hot/warm/cold）"
       - "dependency_map 标注 5 个模块到 8 个基础设施的依赖"

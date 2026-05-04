@@ -184,7 +184,7 @@ depends_on:
 | CT-SCRIPT-GATE-001 | Script System → Gates | 脚本exit code → GATE-n判定 | 部分实现 |
 | CT-CE-VMS-001 | CE → VMS | 知识向量检索 | 规划 |
 | CT-CE-LSG-001 | CE → LSG | 上下文注入前安全校验 | 规划 |
-| CT-KB-VMS-001 | KB → VMS | 知识条目向量化存储 | Phase 3 |
+| CT-KB-VMS-001 | KB → VMS | 知识条目向量化存储 | beta |
 | CT-FLE-ORC-001 | FLE → Orc | 异常检测→任务调度调整 | 规划 |
 | CT-FLE-DB-001 | FLE → db | 指标时序写入 | 规划 |
 | CT-TELE-FLE-001 | Telemetry → FLE | 全系统指标推送 | 规划 |

@@ -60,6 +60,7 @@ def main() -> None:
     _extract_layer_summary(context)
     _extract_adr_summary(context)
     _extract_governance_rules(context)
+    _extract_session_logs(context)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(
@@ -72,6 +73,9 @@ def main() -> None:
     print(f"  - P1 契约: {len(context.get('contracts', {}).get('p1', []))} 条")
     print(f"  - 层定义: {len(context.get('layers', []))} 层")
     print(f"  - ADR: {len(context.get('adrs', []))} 份")
+    sessions_count = len(context.get("sessions", {}).get("recent", []))
+    if sessions_count:
+        print(f"  - 最近 Session: {sessions_count} 条")
 
 def _extract_contracts_summary(context: dict) -> None:
     if not CONTRACTS_YAML.exists():
@@ -171,6 +175,48 @@ def _extract_governance_rules(context: dict) -> None:
         "domains": len({r["domain"] for r in rules}),
         "documents": len(rules),
         "rule_files": rules,
+    }
+
+
+def _extract_session_logs(context: dict) -> None:
+    session_dir = REPO_ROOT / "session-logs"
+    if not session_dir.exists():
+        context["sessions"] = {"recent": [], "total": 0}
+        return
+
+    index_file = session_dir / "index.yaml"
+    total = 0
+    stats = {}
+
+    if index_file.exists():
+        try:
+            index_data = yaml.safe_load(index_file.read_text(encoding="utf-8"))
+            total = index_data.get("total_sessions", 0)
+            stats = index_data.get("stats", {})
+        except Exception:
+            pass
+
+    recent: list[dict] = []
+    yaml_files = sorted(session_dir.rglob("session-*.yaml"))
+    yaml_files = yaml_files[:10]
+
+    for yf in yaml_files:
+        try:
+            data = yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
+            recent.append({
+                "id": data.get("session_id", yf.stem),
+                "date": data.get("date", ""),
+                "phase": data.get("current_phase", ""),
+                "agent": data.get("author_agent", ""),
+            })
+        except Exception:
+            pass
+
+    context["sessions"] = {
+        "recent": recent,
+        "total": total,
+        "stats": stats,
+        "index_version": stats.get("index_version", "1.0"),
     }
 
 if __name__ == "__main__":

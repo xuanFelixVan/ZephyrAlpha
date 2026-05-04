@@ -198,10 +198,10 @@ class TestLoadRouterConfig:
             load_router_config(bad)
 
     def test_repository_default_yaml_exists(self):
-        """`config/trigger_router.yaml` 真实存在且可解析（Phase 1d 起始集 5 种）。"""
+        """`config/trigger_router.yaml` 真实存在且可解析（experimental 起始集 5 种）。"""
         assert DEFAULT_ROUTER_YAML_PATH.exists(), f"trigger_router.yaml 缺失：{DEFAULT_ROUTER_YAML_PATH}"
         specs = load_router_config(DEFAULT_ROUTER_YAML_PATH)
-        # 至少包含 Phase 1d 起始集 5 种
+        # 至少包含 experimental 起始集 5 种
         assert set(specs.keys()) >= PHASE1D_TRIGGER_TYPES
 
 # ---------------------------------------------------------------------------

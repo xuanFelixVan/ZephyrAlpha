@@ -1,6 +1,18 @@
 """
 validate_immutable_core.py — immutable_core 文件修改检测
 
+__manifest__ = """
+args: []
+description: immutable_core 文件修改检测（ABS-01 — P1治理完整性）
+dimensions:
+- D1
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-01（AI 不可改 immutable_core 层）
      AGENTS.md §4（编码安全——唯一始终生效的硬规则）
      metadata-registry.md（immutable_core 标记字段）

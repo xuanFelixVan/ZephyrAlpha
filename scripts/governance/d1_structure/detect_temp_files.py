@@ -1,6 +1,17 @@
 """
 detect_temp_files.py — 临时文件检测
 
+__manifest__ = """
+args: []
+description: 临时文件检测（GOV-TASK-005 §4.2 — temp_*/tmp_*/*.backup/__pycache__）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：GOV-TASK-005 §4.2（临时文件清除标准）
 
 检测内容：

@@ -1,9 +1,9 @@
 """SHA-256 content fingerprint computation and verification.
 
-Provides file-level SHA-256 fingerprinting for Phase 0 legacy marking
-and Phase 2 migration verification.
+Provides file-level SHA-256 fingerprinting for scaffold legacy marking
+and beta migration verification.
 
-Task: T-1-10 | Phase 1 | Composer 2
+Task: T-1-10 | experimental | Composer 2
 ADR ref: ADR-0037 (pending Opus authoring)
 """
 

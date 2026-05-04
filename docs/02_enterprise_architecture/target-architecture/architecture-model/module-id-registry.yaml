@@ -4,7 +4,7 @@
 #
 # v2.0 更新说明（2026-04-30）：
 # - 新增 GOV-/DOM-/OPS-/PS- 前缀编号体系
-# - 注册 Phase 1~3 产出的 54 个 module_id
+# - 注册 experimental~3 产出的 54 个 module_id
 # - 保留 MOD-{LAYER_CODE}-{SEQ} 作为代码模块编号（architecture-model 层面）
 # - 文档规则模块使用 GOV-/DOM-/OPS-/PS- 前缀
 #
@@ -18,7 +18,7 @@
 
 registry_version: "2.1.1"
 last_updated: "2026-05-03"
-total_registered: 68
+total_registered: 67
 
 # ID 分配规则
 allocation_rules:
@@ -422,9 +422,9 @@ registered_ids:
     status: draft
 
 # 代码模块 ID 注册表
-# population_status: deferred_until_phase1 — 当前不阻塞施工，Phase 1 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
+# population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
 # planned_count: ~110（估算：14 层 ~90 + shared ~5 + frontend ~7 + scripts ~8）
-registered_modules: []  # Phase 1 填充——当前 112 个代码模块在各分区 YAML 中定义但未注册
+registered_modules: []  # experimental 填充——当前 112 个代码模块在各分区 YAML 中定义但未注册
 # TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）

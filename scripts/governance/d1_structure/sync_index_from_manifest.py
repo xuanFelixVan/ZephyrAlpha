@@ -1,6 +1,19 @@
 """sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.md 的脚本数量。
 
-对标：AGENTS.md §6.9（YAML canonical SSoT）+ §6.10 双层对齐闸门 Phase 4
+__manifest__ = """
+args:
+- --check
+description: 从 manifest SSoT 自动同步 index.md 脚本数量（AGENTS.md §6.10 stable — index.md
+  数字不再手动维护）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 10
+warn_only: true
+"""
+
+
+对标：AGENTS.md §6.9（YAML canonical SSoT）+ §6.10 双层对齐闸门 stable
       index.md 的数字不再手动维护——本脚本从 manifest 读取真源并写入。
 
 每次新脚本入库后运行一次，保证 index.md 树形图中的数字与 manifest 一致。

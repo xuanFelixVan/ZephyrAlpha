@@ -178,14 +178,14 @@ ai_autonomy: immutable_core
 | ARCH-016 | 知识库写入必须传 provenance | COND-46 | code | `src/zephyr/kb/unified_memory_api.py` L17 |
 | ARCH-017 | HandoffPackage 8 必填字段不得删减 | COND-47 | doc | `02_enterprise_architecture/adr/adr-0041-session-handoff-protocol.md` L83 |
 | ARCH-018 | 未经 ADR 审批禁止创建新正交视图 | COND-48 | doc | `02_enterprise_architecture/target-architecture/README.md` L120 |
-| ARCH-019 | Phase 2 接入真实资金前必须升级容器隔离 | COND-49 | doc | `02_enterprise_architecture/adr/adr-0018-agent-sandbox-windows-acl.md` L49 |
+| ARCH-019 | beta 接入真实资金前必须升级容器隔离 | COND-49 | doc | `02_enterprise_architecture/adr/adr-0018-agent-sandbox-windows-acl.md` L49 |
 | ARCH-020 | KMS G4 强制人工最终拍板，AI 不得自主激活知识 | — | doc | `02_enterprise_architecture/adr/adr-0005-kms-architecture.md` L172 |
 | ARCH-021 | YAML 门禁文件严禁直接写 P0/P1/P2，必须使用 error/warning/info | — | doc | `02_enterprise_architecture/gate-strategy-standard.md` L111 |
 | ARCH-022 | Pydantic 模型禁止 Any 类型字段（边界透传场景除外且需注释） | — | doc | `02_enterprise_architecture/adr/adr-0040-pydantic-v2-structured-contracts.md` L59 |
 | ARCH-023 | H/CRITICAL 级 FLE 提案强制 Owner 审批 | — | doc | `src/zephyr/feedback_loop/auto_evolution.py` L15 |
 | ARCH-024 | VMS/CE 失败必须返回空结果 + degraded 标记，不抛异常阻塞 | — | doc | `03_modules/_b_track_interfaces/vector-memory-service-interface.md` L657 |
 | ARCH-025 | 调用方必须检查 degraded 标记 | — | doc | `03_modules/_b_track_interfaces/vector-memory-service-interface.md` L658 |
-| ARCH-026 | 禁止在 Phase 2 强依赖云端 embedding API | — | doc | `02_enterprise_architecture/adr/adr-0031-chromadb-vector-retrieval.md` L52 |
+| ARCH-026 | 禁止在 beta 强依赖云端 embedding API | — | doc | `02_enterprise_architecture/adr/adr-0031-chromadb-vector-retrieval.md` L52 |
 | ARCH-027 | 激活条件触发前禁止向架构视图添加实质内容 | — | doc | `02_enterprise_architecture/target-architecture/08-operations-architecture.md` L53 |
 
 ---

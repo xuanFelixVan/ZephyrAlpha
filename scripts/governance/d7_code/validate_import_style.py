@@ -1,6 +1,17 @@
 """
 validate_import_style.py — 导入风格一致性校验
 
+__manifest__ = """
+args: []
+description: 导入风格一致性校验——相对导入 vs 绝对导入，项目主风格为绝对导入
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PEP 8 — absolute imports recommended over relative imports
      AGENTS.md §6.4 — AI-Construction-Friendliest: 显式优于隐式
 

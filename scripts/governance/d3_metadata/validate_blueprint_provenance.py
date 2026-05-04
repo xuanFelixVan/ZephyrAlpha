@@ -1,6 +1,18 @@
 """
 蓝图真源准入门禁 (Blueprint Provenance Gate · V-12)
 
+__manifest__ = """
+args: []
+description: 蓝图真源Provenance三件套校验（origin_drafts + audit_chain + arbitration）
+dimensions:
+- D3
+- D4
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 任务编号 : T-V2-001（Wave 0 终审 R73 兜底）
 权限层级 : Immutable Core
 作者     : ZephyrAlpha-Owner / Claude-Opus-4.7（Wave 0 终审）

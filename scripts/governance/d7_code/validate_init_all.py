@@ -1,6 +1,17 @@
 """
 validate_init_all.py — __init__.py __all__ 完整性校验
 
+__manifest__ = """
+args: []
+description: __init__.py __all__ 完整性校验——有 import 的包必须定义 __all__
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PEP 8 — __all__ should be defined for public API packages
      AGENTS.md §6.4 — 显式优于隐式（AI 需要显式知道包的公开接口）
 

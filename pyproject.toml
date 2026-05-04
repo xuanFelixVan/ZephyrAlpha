@@ -19,6 +19,7 @@ addopts = [
     "--strict-markers",
 ]
 markers = [
+    "slow: marks slow tests (deselect with '-m \"not slow\"')",
     "e2e: marks end-to-end tests (deselect with '-m \"not e2e\"')",
     "security: marks security-critical tests",
     "financial: marks financial calculation tests",

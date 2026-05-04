@@ -3,7 +3,7 @@ GateEngine — KMS G1-G5 门禁裁决引擎（T-2-17）
 ===============================================
 依据：
 - 知识库架构 §4（G1-G5 脚本接口设计）
-- execution-order-v1.md Phase 2.3（门禁策略引擎 P0）
+- execution-order-v1.md beta.3（门禁策略引擎 P0）
 - ADR-0030（SQLite gates 表）
 - 指令：325 + 344 + 999
 
@@ -31,8 +31,8 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
   classification   - 枚举值合法性
   temporal         - 时间约束（G5 专用）
   reference_check  - 关联引用存在性
-  circuit_breaker  - 模块间熔断状态检查（T-V2-005 第 17 种，CBG Phase 1b）
-  blueprint_read_check - 蓝图读取合规检查（T-V2-011 第 18 种，P1-2 强制合规）
+  circuit_breaker  - 模块间熔断状态检查（T-V2-005 第 17 种，CBG experimental）
+  blueprint_read_check - 蓝图读取合规检查（T-V2-011 第 18 种，G6 beta 硬合规）
 """
 
 from __future__ import annotations
@@ -359,7 +359,7 @@ def _run_check(
                 _add(f"不允许的文件扩展名 '{ext}'：{p}")
 
     elif ct == "circuit_breaker":
-        # 第 17 种 CheckType（T-V2-005 CBG Phase 1b）
+        # 第 17 种 CheckType（T-V2-005 CBG experimental）
         # 在 gate 配置 YAML 中通过 params.caller_module + params.target_module 指定
         caller = str(check.params.get("caller_module", ""))
         target = str(check.params.get("target_module", ""))
@@ -390,20 +390,25 @@ def _run_check(
                 )
 
     elif ct == "blueprint_read_check":
-        # 第 18 种 CheckType（T-V2-011 P1-2 强制合规 Phase 1）
+        # 第 18 种 CheckType（T-V2-011 G6 beta 硬合规）
         # 检查：AI 在修改目标模块文件前，是否已读取对应的蓝图
-        # Phase 1（软合规）：检查 session_carryover.db 或 blueprint_reads.jsonl
-        #   — 如果目标模块有蓝图但未被读取 → WARNING（不阻断，仅提醒）
-        # Phase 2（硬合规）：GATE-16 升级为 error severity，阻止未读蓝图的代码变更
+        # beta（硬合规，2026-05-04 激活）：
+        #   — severity=error → P0 阻断：未读蓝图就改代码的 task 直接 REJECT
+        #   — AI 必须调用 blueprint_search.find_relevant_blueprint() 定位蓝图
+        #   — 或在 session 日志中声明已手动阅读蓝图
         target_blueprint = str(check.params.get("target_blueprint", ""))
         target_files = list(check.params.get("target_files", []))
+        hard_compliance = bool(check.params.get("hard_compliance", False))
         if not target_blueprint:
             _add(
                 "blueprint_read_check 缺少 target_blueprint 参数",
                 detail=f"check_id={check.check_id}",
             )
         else:
-            _check_blueprint_read_compliance(target_blueprint, target_files, check, _add)
+            _check_blueprint_read_compliance(
+                target_blueprint, target_files, check, _add,
+                hard_compliance=hard_compliance,
+            )
 
     elif ct in {
         "score_threshold",
@@ -458,6 +463,7 @@ class GateEngine:
         "G3": "g3_evaluate.yaml",
         "G4": "g4_activate.yaml",
         "G5": "g5_extract.yaml",
+        "G6": "g6_blueprint_compliance.yaml",
     }
 
     def __init__(
@@ -654,24 +660,36 @@ def _check_blueprint_read_compliance(
     target_files: list[str],
     check: CheckConfig,
     _add: callable,
+    *,
+    hard_compliance: bool = False,
 ) -> None:
     """检查 AI 在修改目标文件前是否已读取对应的蓝图。
 
-    Phase 1（软合规）：
-    - 读取 ``data/telemetry/blueprint_reads.jsonl`` 查找匹配的蓝图读取记录
-    - 若未找到 → WARNING severity（不阻断，仅提醒）
-    - 若找到 → 静默 PASS
+    experimental（软合规，已退役）：
+    - severity=warning → 仅提醒，不阻断
 
-    Phase 2（硬合规，待部署）：
-    - severity 升级为 P0 → 阻断未读蓝图的代码变更
+    beta（硬合规，2026-05-04 激活）：
+    - severity=error → P0 硬阻断
+    - 未读蓝图则返回 GateViolationError
+    - AI 必须读蓝图后才能继续
     """
     metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
 
     if not metrics_path.exists():
-        _add(
-            f"未检测到蓝图读取记录——AI 在修改 {target_files[0] if target_files else '目标'} 前应读取 {target_blueprint} 蓝图",
-            detail="metrics file not found — first session? Add blueprint_read instrumentation",
+        msg = (
+            f"G6 硬合规阻断: 未检测到蓝图读取记录——"
+            f"AI 在修改 {target_files[0] if target_files else '目标'} 前 MUST 读取 {target_blueprint} 蓝图"
         )
+        if hard_compliance:
+            _add(
+                msg,
+                detail="beta hard compliance active — metrics file not found, blueprint read MANDATORY before code change",
+            )
+        else:
+            _add(
+                msg,
+                detail="metrics file not found — first session? Add blueprint_read instrumentation",
+            )
         return
 
     try:
@@ -690,13 +708,21 @@ def _check_blueprint_read_compliance(
                     break
     except OSError:
         _add(
-            f"无法读取 metrics 文件——AI 应确认已读取 {target_blueprint} 蓝图后再继续",
-            detail="blueprint_reads.jsonl unreadable",
+            f"G6 硬合规阻断: 无法读取 metrics 文件——AI MUST 确认已读取 {target_blueprint} 蓝图后再继续",
+            detail="blueprint_reads.jsonl unreadable — beta hard compliance REQUIRES blueprint read confirmation",
         )
         return
 
     if not found:
-        _add(
-            f"AI 未读取 {target_blueprint} 蓝图即修改了目标文件 {' + '.join(target_files[:3])}",
-            detail="Phase 1 软合规——WARNING 仅提醒，不阻断。Phase 2 将升级为硬阻断。",
-        )
+        if hard_compliance:
+            _add(
+                f"G6 硬合规阻断: AI 未读取 {target_blueprint} 蓝图即尝试修改 {' + '.join(target_files[:3])}。"
+                f"beta 硬合规生效——此 task 被 REJECT。",
+                detail=f"Action required: invoke blueprint_search.find_relevant_blueprint(task_description) "
+                       f"→ read {target_blueprint} blueprint §1-§5 → retry task",
+            )
+        else:
+            _add(
+                f"AI 未读取 {target_blueprint} 蓝图即修改了目标文件 {' + '.join(target_files[:3])}",
+                detail="experimental 软合规——WARNING 仅提醒，不阻断。升级到 beta 将以 error 阻断。",
+            )

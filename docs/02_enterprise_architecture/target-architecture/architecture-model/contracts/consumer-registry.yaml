@@ -1,0 +1,153 @@
+# consumer-registry.yaml — 跨层契约消费者注册表 (SSoT)
+# 对标 CTR-VER-001（契约版本协商）的 VER-R3 要求：
+# "生产者 MUST 在新 MAJOR 版本发布前提前 30 天通知所有注册消费者"
+#
+# 本文件是消费者注册的 canonical SSoT——所有契约变更前必须查询此表。
+# 注册方式：每层首次消费某契约时，必须在此登记。
+#
+# 与 ContractRegistry 的关系：
+#   ContractRegistry 管理契约定义——本文件管理契约消费者。
+#   两者共同支撑 CTR-VER-001 的版本协商流程。
+
+schema_version: "1.0"
+doc_type: registry
+ttl: permanent
+last_updated: "2026-05-05"
+
+consumers:
+  # ─── P0 数据契约消费者 ───
+  - contract_id: CTR-001
+    contract_name: NormalizedMarketData
+    registered_consumers:
+      - {layer: l02, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l03, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l09, module: "research_innovation", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+  - contract_id: CTR-002
+    contract_name: FactorSignal
+    registered_consumers:
+      - {layer: l03, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-003
+    contract_name: RiskLimits
+    registered_consumers:
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-004
+    contract_name: Order
+    registered_consumers:
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-005
+    contract_name: Fill
+    registered_consumers:
+      - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-006
+    contract_name: PositionSnapshot
+    registered_consumers:
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l07, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l11, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  # ─── P0 全链路追踪消费者 ───
+  - contract_id: CTR-TRACE-001
+    contract_name: TraceContext
+    registered_consumers:
+      - {layer: l02, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l03, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l11, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  # ─── P0 错误契约消费者 ───
+  - contract_id: CTR-ERR-001
+    contract_name: DataQualityError
+    registered_consumers:
+      - {layer: l02, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l12, module: "system_telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+  - contract_id: CTR-ERR-002
+    contract_name: FactorComputationError
+    registered_consumers:
+      - {layer: l03, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l12, module: "system_telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+  - contract_id: CTR-ERR-003
+    contract_name: SignalDegradationWarning
+    registered_consumers:
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-ERR-004
+    contract_name: RiskLimitViolationError
+    registered_consumers:
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-ERR-005
+    contract_name: ExecutionRejectionError
+    registered_consumers:
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-ERR-006
+    contract_name: ContractViolationError
+    registered_consumers:
+      - {layer: "*", module: "all", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  # ─── P0 背压契约消费者 ───
+  - contract_id: CTR-BP-001
+    contract_name: BackpressurePause
+    registered_consumers:
+      - {layer: l00, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-BP-002
+    contract_name: BackpressureThrottle
+    registered_consumers:
+      - {layer: l00, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  - contract_id: CTR-BP-003
+    contract_name: BackpressureResume
+    registered_consumers:
+      - {layer: l00, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+
+  # ─── P1 契约消费者 ───
+  - contract_id: CTR-P1-010
+    contract_name: SystemConfiguration
+    registered_consumers:
+      - {layer: l02, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l03, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+  - contract_id: CTR-P1-013
+    contract_name: TelemetryEmitter
+    registered_consumers:
+      - {layer: l01, module: "infrastructure", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l10, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+  - contract_id: CTR-P1-014
+    contract_name: ExperimentResult
+    registered_consumers:
+      - {layer: l09, module: "research_innovation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l11, module: "ml_platform", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+
+summary:
+  total_contracts_registered: 18
+  total_consumer_entries: 45
+  tier_distribution:
+    tier_1_critical: 35
+    tier_2_secondary: 10
+  note: >
+    消费者注册表是 CTR-VER-001 版本协商的前置基础设施。
+    任何 P0/P1 契约的 MAJOR 版本变更前，必须通过本表查询所有注册消费者并提前 30 天通知。
+    Tier 1 = 阻塞式消费者（MAJOR 不兼容会导致其不可用）。
+    Tier 2 = 非阻塞式消费者（可退化或延迟处理）。

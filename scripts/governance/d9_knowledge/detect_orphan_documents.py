@@ -1,6 +1,17 @@
 """
 detect_orphan_documents.py — 孤立文档检测
 
+__manifest__ = """
+args: []
+description: 孤立文档检测（DOC-008#4 — 无入边引用的文件）
+dimensions:
+- D9
+priority: P1
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：DOC-008#4（自创建后 > 30 天无任何文件依赖/引用的文件应审查）
 
 检测内容：

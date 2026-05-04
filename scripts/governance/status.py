@@ -1,6 +1,17 @@
 """
 status.py — 审计系统状态仪表盘
 
+__manifest__ = """
+args: []
+description: status.py — 审计系统状态仪表盘
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 输出整个脚本系统系统的实时健康状态（脚本注册表从 script_manifest.yaml SSoT 加载），包括：
 - 脚本可执行性检查（所有注册脚本是否全部可运行）
 - 各维度 Finding 分布（按严重度）
@@ -223,7 +234,7 @@ def render_dashboard(
             bar = "█" * min(len(scripts), 10)
             print(f"  ✅ {dim} {label:<12} {bar} ({len(scripts)} 脚本)", file=sys.stderr)
         else:
-            print(f"  ❌ {dim} {label:<12} ──── (无脚本 — Phase 1/2)", file=sys.stderr)
+            print(f"  ❌ {dim} {label:<12} ──── (无脚本 — experimental/2)", file=sys.stderr)
 
     dim_pct = len(covered_dims) / 12 * 100
     print(f"\n  已覆盖: {len(covered_dims)}/12 ({dim_pct:.0f}%)", file=sys.stderr)

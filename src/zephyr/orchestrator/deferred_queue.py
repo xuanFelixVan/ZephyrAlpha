@@ -3,7 +3,7 @@
 Manages deferred task execution with event-driven state transitions.
 Uses Observer as the messaging layer and SQLite for task persistence.
 
-Task: T-1-09 | Phase 1 | GLM-5.1
+Task: T-1-09 | experimental | GLM-5.1
 ADR ref: ADR-0036 (pending Opus authoring)
 Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 """

@@ -5,6 +5,17 @@ validate_directory_structure.py — LPC 双轨目录结构合规性扫描器
 依据：GOV-DOC-002 §三（src/zephyr/ 双轨结构）+ §二（docs/ 目录结构）
 GOV-DOC-002 §5.1.2 防幻觉路径映射表的自动化执行器。
 
+__manifest__ = """
+args: []
+description: LPC双轨目录结构合规性扫描（src/zephyr/ + docs/ 一级目录白名单校验）
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 检查项
 ------
 1. src/zephyr/ 下的所有一级子目录是否在 LPC 双轨受控列表中

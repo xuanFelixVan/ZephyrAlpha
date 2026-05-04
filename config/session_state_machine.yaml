@@ -4,7 +4,7 @@ doc_type: rule
 title: "Session State Machine"
 status: active
 ttl: permanent
-implementation_status: "Phase 1 declarative contract — no runtime consumer yet. Future: SessionManager will consume this."
+implementation_status: "experimental declarative contract — no runtime consumer yet. Future: SessionManager will consume this."
 
 description: "Defines the lifecycle states and transitions for AI agent sessions in the ZephyrAlpha pipeline"
 

@@ -1,6 +1,17 @@
 """
 run_script_smoke_test.py — 治理脚本冒烟测试运行器
 
+__manifest__ = """
+args: []
+description: 治理脚本冒烟测试（SCRIPT-QUALITY-001 D-H-01 — subprocess + --warn-only 全量运行）
+dimensions:
+- D1
+priority: P1
+timeout_seconds: 300
+warn_only: false
+"""
+
+
 对标：SCRIPT-QUALITY-001 D-H-01（冒烟测试：--warn-only 退出干净）
       AGENTS.md §6.5（脚本入库后必须验证）
 

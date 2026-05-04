@@ -3,7 +3,7 @@ module_id: "MOD-INF-007"
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 熔断器"
 doc_type: blueprint
 status: draft
-version: "0.2.2"
+version: "0.3.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -13,7 +13,7 @@ date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: phase_1_complete
-summary: "ZephyrAlpha Gate Engine 蓝图——定义 G0-G7 任务门禁 + G1-G5 KMS 决策门 + GATE-16 蓝图读取合规检查（P1-2强制合规，Phase 1软合规WARNING + Phase 2硬阻断P0）+ 熔断器 circuit_breaker 的完整架构。GATE-18 pre-commit 硬阻断。脚本 exit code → Gate 判定映射（CT-SCRIPT-GATE-001）。对标 ITIL Change Enablement 门禁 + K8s Admission Controller。"
+summary: "ZephyrAlpha Gate Engine 蓝图——定义 G0-G7 任务门禁 + G1-G5 KMS 决策门 + GATE-16 蓝图读取合规检查（P1-2强制合规，experimental软合规WARNING + beta硬阻断P0）+ 熔断器 circuit_breaker 的完整架构。GATE-18 pre-commit 硬阻断。脚本 exit code → Gate 判定映射（CT-SCRIPT-GATE-001）。对标 ITIL Change Enablement 门禁 + K8s Admission Controller。"
 tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure]
 priority: P0
 depends_on:
@@ -59,7 +59,7 @@ depends_on:
 | G0-G7 任务门禁：任务执行前/后的合规判定 | 门禁判定的具体检测逻辑 → 脚本系统 (MOD-INF-005) |
 | G1-G5 KMS 决策门：知识生命周期的阶段性判定 | 知识入库的具体规则 → 知识库 (MOD-KB-001) |
 | GATE-18 pre-commit：提交时全量测试收集 | pre-commit 钩子框架 → `.pre-commit-config.yaml` |
-| GATE-16 蓝图读取合规检查：AI 改代码前是否读了蓝图（P1-2 强制合规）| Phase 1 软合规 WARNING — Phase 2 硬阻断 P0 |
+| GATE-16 蓝图读取合规检查：AI 改代码前是否读了蓝图（P1-2 强制合规）| experimental 软合规 WARNING — beta 硬阻断 P0 |
 | 熔断器 circuit_breaker：异常传播阻断 | 熔断后的修复执行 → Orchestrator (MOD-INF-006) |
 
 ---
@@ -333,7 +333,7 @@ entry_conditions:
 | ID | 决策 | 理由 | 被否决替代方案 | 重新评估条件 |
 |----|------|------|--------------|------------|
 | DD1 | **G0-G7 八门禁而非五或十** | 覆盖任务生命周期DRAFT→COMPLETED的7个状态过渡点+1个准入门 | 五门禁——不足覆盖；十二门禁——过度细粒度 | 新增TaskStatus时重新评估 |
-| DD2 | **Validating-only（当前），Mutating为可选** | Phase 1优先实现硬阻断——自动修正是Phase 2增强 | "所有门禁都提供自动修正"——Phase 1不可行 | Phase 2引入时评估 |
+| DD2 | **Validating-only（当前），Mutating为可选** | experimental优先实现硬阻断——自动修正是beta增强 | "所有门禁都提供自动修正"——experimental不可行 | beta引入时评估 |
 | DD3 | **熔断器 threshold=5, cooldown=60s** | 连续5次FAIL表明系统性问题——单次FAIL可能是偶发；60s足够短暂恢复 | threshold=3（太敏感）, cooldown=300s（太慢恢复） | 生产环境运行数据收集后 |
 | DD4 | **G1-G5 KMS和G0-G7任务门共享同一gate_engine** | 减少引擎碎片化——同一判定接口(GateResult)复用 | "各自独立的门禁引擎"——增加维护负担 | 任务门和KMS门的check_type差异超过50%时 |
 | DD5 | **GATE-18 pre-commit独立于G0-G7** | pre-commit是git层守卫（hot路径≤50ms），G0-G7是任务层守卫（warm路径）| "统一为一个门禁列表"——hot/warm混合导致pre-commit过慢 | —无— |
@@ -428,9 +428,9 @@ entry_conditions:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | gate_engine.py + 5个KMS门禁YAML | ✅ implemented |
-| Phase 1 | G0-G7 完整判定逻辑 + CT-SCRIPT-GATE-001 落地 | 📋 Backlog |
-| Phase 2 | 熔断器全链路测试 + CI门禁自动交叉校验 | 📋 Backlog |
+| scaffold | gate_engine.py + 5个KMS门禁YAML | ✅ implemented |
+| experimental | G0-G7 完整判定逻辑 + CT-SCRIPT-GATE-001 落地 | 📋 Backlog |
+| beta | 熔断器全链路测试 + CI门禁自动交叉校验 | 📋 Backlog |
 
 ---
 
@@ -510,6 +510,7 @@ entry_conditions:
 | `src/zephyr/gates/g3_evaluate.yaml` | ✅ 已实现 | |
 | `src/zephyr/gates/g4_activate.yaml` | ✅ 已实现 | |
 | `src/zephyr/gates/g5_extract.yaml` | ✅ 已实现 | |
+| `src/zephyr/gates/g6_blueprint_compliance.yaml` | ✅ 已实现 | beta 硬合规——G6 蓝图读取合规门禁 |
 | `src/zephyr/gates/g6_ctr_compliance.yaml` | ✅ 已实现 | |
 | `src/zephyr/gates/gate_engine.py` | ✅ 已实现 | |
 | `src/zephyr/gates/task/g0_entry.yaml` | ✅ 已实现 | |
@@ -547,10 +548,55 @@ entry_conditions:
 
 ---
 
+## 十三、依赖关系（结构化）
+
+| 依赖目标 | 关系类型 | 为什么 |
+|------|:--:|------|
+| MOD-INF-006 (Task System) | runtime_call | 读取 TaskCard 28字段 → G0-G7 判定 |
+| MOD-INF-005 (Script System) | runtime_call | 脚本 exit code → GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) |
+| MOD-KB-001 (Knowledge Base) | data_flow | KE → G1-G5 KMS 门禁管道 |
+| MOD-INF-008 (Context Engine) | config_consume | blueprint_routing.yaml 上下文范围 |
+| MOD-INF-014 (LLM Security) | sibling_check | fail-closed 模式双门禁互校验 |
+| MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check → BLUEPRINT-READ-FREQ SLI |
+| `architecture-model/layers/b_gates.yaml` | ssoT | Gates YAML canonical source |
+
+## 十四、产出物存放目录
+
+| 产出物 | 路径 |
+|------|------|
+| 门禁引擎代码 | `src/zephyr/gates/gate_engine.py` |
+| 门禁 YAML 配置 | `src/zephyr/gates/g1_ingest.yaml` ~ `g6_blueprint_compliance.yaml` |
+| 熔断器 | `src/zephyr/gates/circuit_breaker.py` |
+| 门禁测试 | `tests/unit/test_gate_engine.py` 等 5 文件 |
+| 门禁治理脚本 | `scripts/governance/d6_security/validate_gate_discipline.py` |
+| 门禁注册表 | `src/zephyr/gates/_registry.yaml` |
+| 门禁模板 | `src/zephyr/gates/_template.yaml` |
+
+## 十五、集成目标
+
+| 集成目标 | 状态 | 验证方式 |
+|------|:--:|------|
+| G6 硬合规阻断 P0 | ✅ 已实现 | `session_simulator.py` beta 验证 |
+| G0-G7 全部 8 门禁 YAML 规则化 | ✅ 已实现 | G5 YAML §5.1-§5.4 |
+| CT-SCRIPT-GATE-001 落地 | 📋 Backlog | 脚本 exit code → Gate 判定链路 |
+| CT-ORC-GATE-001 落地 | 📋 Backlog | TaskCard.status transition → Gate 触发 |
+| 熔断器全链路测试 | 📋 Backlog | OPEN→HALF_OPEN→CLOSED 循环 |
+
+## 十六、需要更新的相关内容
+
+当本蓝图变更时，同步更新：
+1. `docs/03_modules/blueprint-registry.yaml` — 版本号和完整度
+2. `config/blueprint_routing.yaml` — R009 路由项 keywords/path_patterns
+3. `src/zephyr/mcp/gate_engine_server.py` — MCP 工具描述引用本蓝图
+4. `src/zephyr/mcp/blueprint_search_server.py` — 若 keyword 变更
+5. `docs/03_modules/_master-blueprint/blueprint.md` — MOD-MASTER-001 §2.8 CT-SCRIPT-GATE-001
+
+---
+
 ## 变更记录
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
 | 2026-05-03 | 0.1.0 | 初始创建——从 b_gates.yaml SSoT 派生。双门禁体系（G0-G7+G1-G5）+ 熔断器模式 + CT-SCRIPT-GATE-001 集成。 |
 | 2026-05-04 | 0.2.0 | 黄金标准补齐：(1)修正 construction_progress not_started→phase_1_complete（15个文件已实现）；(2)新增§五 核心流程——G0-G7从自然语言升级为确定性YAML规则；(3)新增§六 设计决策集中表——6条关键决策；(4)新增§七 Anti-Patterns——7条门禁场景绝对禁止行为；(5)新增§八 集成契约——CT-SCRIPT-GATE-001+CT-ORC-GATE-001；(6)新增§九 风险与缓解；(7)新增§十 施工/演进指南——添加/修改/升级三级流程；(8)同步创建 _template.yaml(门禁标准模板)+_registry.yaml(全部门禁注册表)。 |
-| 2026-05-04 | 0.2.1 | P1-2强制合规 GATE-16 蓝图读取合规检查落地——gate_engine.py 新增第 18 种 CheckType `blueprint_read_check`（含 `_check_blueprint_read_compliance` helper，读取 `data/telemetry/blueprint_reads.jsonl` 验证 AI 是否在改代码前读了对应蓝图）；Phase 1 软合规 WARNING（不阻断），Phase 2 升级为硬阻断 P0。关联模块：MOD-INF-015 Telemetry（BLUEPRINT-READ-FREQ SLI）+ MOD-INF-009 Pipeline（触发路由表）。关联决策：R92。 |
+| 2026-05-04 | 0.2.1 | P1-2强制合规 GATE-16 蓝图读取合规检查落地——gate_engine.py 新增第 18 种 CheckType `blueprint_read_check`（含 `_check_blueprint_read_compliance` helper，读取 `data/telemetry/blueprint_reads.jsonl` 验证 AI 是否在改代码前读了对应蓝图）；experimental 软合规 WARNING（不阻断），beta 升级为硬阻断 P0。关联模块：MOD-INF-015 Telemetry（BLUEPRINT-READ-FREQ SLI）+ MOD-INF-009 Pipeline（触发路由表）。关联决策：R92。 |

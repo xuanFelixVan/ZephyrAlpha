@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "Vibe Coding 会话开始前必须完成的检查清单——上下文加载、规则确认、安全检查。任何一项未通过，禁止开始操作。Phase 0 MVP 后已从纯手动升级为半自动化：10/12 项有对应的 pre-commit GATE 或自动化脚本覆盖。"
+summary: "Vibe Coding 会话开始前必须完成的检查清单——上下文加载、规则确认、安全检查。任何一项未通过，禁止开始操作。scaffold MVP 后已从纯手动升级为半自动化：10/12 项有对应的 pre-commit GATE 或自动化脚本覆盖。"
 tags: [vibe-coding, gate, checklist, operational]
 rule_form: procedural
 scope: global

@@ -33,7 +33,7 @@ depends_on:
 
 ## 当前状态
 
-`draft` — 蓝图已编写，施工待 Phase 2。
+`draft` — 蓝图已编写，施工待 beta。
 
 ## 排除规则
 

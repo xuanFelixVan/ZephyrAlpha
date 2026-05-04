@@ -80,9 +80,9 @@ tags:
 - ❌ **任务卡 YAML schema**——见 `docs/02_enterprise_architecture/task-card-schema.md`
 - ❌ **Context Engine 设计**——见 `context-engine-interface.md`
 - ❌ **沙箱内部实现**——本规范定义沙箱接口，具体 Windows ACL / Docker Desktop 实现另出施工图
-- ❌ **SQLite 表设计细则**——见 Phase 1 施工图 `construction-plan-orchestrator-*.md`
-- ❌ **幻觉检测规则库**——见 `hallucination_rules.yaml`（Phase 1 另出）
-- ❌ **生产部署运维手册**——Phase 3+ 服务化时另出 SRE 文档
+- ❌ **SQLite 表设计细则**——见 experimental 施工图 `construction-plan-orchestrator-*.md`
+- ❌ **幻觉检测规则库**——见 `hallucination_rules.yaml`（experimental 另出）
+- ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 
 ---
 
@@ -120,7 +120,7 @@ tags:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/orchestrator/protocol.py (Phase 1 产出)
+# src/zephyr/orchestrator/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -146,17 +146,17 @@ class OrchestratorProtocol(Protocol):
     async def stats(self) -> OrchestratorStats: ...
 
 class InProcessOrchestrator:
-    """Phase 1（当前目标）：SQLite + asyncio.Queue，单进程。"""
+    """experimental（当前目标）：SQLite + asyncio.Queue，单进程。"""
 
 class DistributedOrchestrator:
-    """Phase 3+：ARQ + Redis，多 worker。"""
+    """beta+：ARQ + Redis，多 worker。"""
 ```
 
 | Phase | 实施形态 | 运行方式 | 触发升级条件 |
 |:-:|---------|---------|-------------|
-| **Phase 1** | **`InProcessOrchestrator`（SQLite + asyncio.Queue）** | 单进程，多 Agent 协程 | - |
-| Phase 3 | `DistributedOrchestrator`（ARQ + Redis） | 多 worker 进程 | 任务量 > 100/天 或并发 Agent > 10 |
-| Phase 4 | NATS JetStream | 分布式 | 跨机 Agent / 实时通信 < 1s 需要 |
+| **experimental** | **`InProcessOrchestrator`（SQLite + asyncio.Queue）** | 单进程，多 Agent 协程 | - |
+| beta | `DistributedOrchestrator`（ARQ + Redis） | 多 worker 进程 | 任务量 > 100/天 或并发 Agent > 10 |
+| stable | NATS JetStream | 分布式 | 跨机 Agent / 实时通信 < 1s 需要 |
 
 **所有 API 均为 `async`**。进程内锁用 `asyncio.Lock`，跨进程锁用 `filelock.FileLock`。SQLite 使用 WAL 模式支持多协程并发读。**严禁 `threading.Lock`**。
 
@@ -184,7 +184,7 @@ class DistributedOrchestrator:
 ### 3.1 Task 状态机
 
 ```python
-# src/zephyr/orchestrator/state.py (Phase 1 产出)
+# src/zephyr/orchestrator/state.py (experimental 产出)
 
 from enum import Enum
 
@@ -315,7 +315,7 @@ class Sandbox(BaseModel):
 ### 3.3 幻觉循环检测规则
 
 ```python
-# src/zephyr/orchestrator/hallucination.py (Phase 1 产出)
+# src/zephyr/orchestrator/hallucination.py (experimental 产出)
 
 # 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环
 HALLUCINATION_RULES = {
@@ -468,7 +468,7 @@ class InProcessOrchestrator:
         """
 ```
 
-### 4.4 HTTP API（Phase 3 预留骨架）
+### 4.4 HTTP API（beta 预留骨架）
 
 | Method + Path | 对应库方法 |
 |---------------|-----------|
@@ -521,7 +521,7 @@ review 拒绝 → REVIEWING → RUNNING 或 FAILED（看 retryable）
 
 ## 6. 沙箱与安全隔离
 
-### 6.1 Windows ACL 沙箱实现要点（Phase 1 默认）
+### 6.1 Windows ACL 沙箱实现要点（experimental 默认）
 
 - repo 根目录整体 ACL 只读给 Agent 进程用户
 - `writable_paths` 每项创建 overlay 目录，softlink 到 `.runtime/sandboxes/<sid>/writable/<path>/`
@@ -553,10 +553,10 @@ review 拒绝 → REVIEWING → RUNNING 或 FAILED（看 retryable）
 | 前置项 | 状态 |
 |-------|:----:|
 | `src/zephyr/orchestrator/` 包创建 | ⏳ 待建 |
-| SQLite schema 脚本 | ⏳ Phase 1 T-1-XX |
-| Context Engine（上游，拉任务上下文） | ⏳ B-a-2 产出 + Phase 1 实现 |
-| LSG Protocol（审查 complete 结果 schema） | ⏳ B-a-5 产出 + Phase 2 实现 |
-| VMS（任务完成写 task_history） | ⏳ B-a-1 产出 + Phase 1 实现 |
+| SQLite schema 脚本 | ⏳ experimental T-1-XX |
+| Context Engine（上游，拉任务上下文） | ⏳ B-a-2 产出 + experimental 实现 |
+| LSG Protocol（审查 complete 结果 schema） | ⏳ B-a-5 产出 + beta 实现 |
+| VMS（任务完成写 task_history） | ⏳ B-a-1 产出 + experimental 实现 |
 | ADR-0017 / ADR-0018 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
@@ -578,11 +578,11 @@ orchestrator = [
 ```
 
 ├── src/zephyr/
-│   ├── orchestrator/                               # ⏳ Phase 1 新建
+│   ├── orchestrator/                               # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_orc()
 │   │   ├── protocol.py                             # OrchestratorProtocol
-│   │   ├── in_process.py                           # Phase 1 实现
-│   │   ├── distributed.py                          # Phase 3+ 占位
+│   │   ├── in_process.py                           # experimental 实现
+│   │   ├── distributed.py                          # beta+ 占位
 │   │   ├── schemas.py                              # Pydantic schemas
 │   │   ├── state.py                                # TaskState + ALLOWED_TRANSITIONS
 │   │   ├── queue.py                                # SQLite + asyncio.Queue
@@ -590,8 +590,8 @@ orchestrator = [
 │   │   ├── hallucination.py                        # 幻觉规则引擎
 │   │   ├── sandbox/
 │   │   │   ├── base.py                             # SandboxProtocol
-│   │   │   ├── windows_acl.py                      # Phase 1 默认
-│   │   │   ├── docker_desktop.py                   # Phase 2 升级
+│   │   │   ├── windows_acl.py                      # experimental 默认
+│   │   │   ├── docker_desktop.py                   # beta 升级
 │   │   │   └── noop.py                             # 测试/本地开发
 │   │   ├── db.py                                   # SQLite WAL schema
 │   │   └── config.py                               # OrchestratorConfig
@@ -670,11 +670,11 @@ class FeedbackSinkProtocol(Protocol):
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **Phase 0**（当前） | 接口规范 + ADR-0017/0018 | status=Active |
-| **Phase 1** | `InProcessOrchestrator` + Windows ACL sandbox + 幻觉基础规则 | ① §13 P0 用例通过<br>② 单进程 5 Agent 并发不死锁<br>③ 沙箱越界检测无漏报 |
-| **Phase 2** | LSG 接入 + FLE 反馈通道接入 + VMS task_history 归档 | 完整闭环；Docker Desktop 沙箱可选启用 |
-| **Phase 3** | `DistributedOrchestrator`（ARQ + Redis） | 任务量 > 100/天 触发；兼容单进程 API |
-| **Phase 4** | NATS JetStream + 跨机 Agent | 跨机实时协调 |
+| **scaffold**（当前） | 接口规范 + ADR-0017/0018 | status=Active |
+| **experimental** | `InProcessOrchestrator` + Windows ACL sandbox + 幻觉基础规则 | ① §13 P0 用例通过<br>② 单进程 5 Agent 并发不死锁<br>③ 沙箱越界检测无漏报 |
+| **beta** | LSG 接入 + FLE 反馈通道接入 + VMS task_history 归档 | 完整闭环；Docker Desktop 沙箱可选启用 |
+| **beta** | `DistributedOrchestrator`（ARQ + Redis） | 任务量 > 100/天 触发；兼容单进程 API |
+| **stable** | NATS JetStream + 跨机 Agent | 跨机实时协调 |
 
 ---
 

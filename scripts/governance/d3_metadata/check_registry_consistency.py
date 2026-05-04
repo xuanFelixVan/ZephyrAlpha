@@ -1,6 +1,19 @@
 """
 check_registry_consistency.py — 跨登记表一致性校验脚本
 
+__manifest__ = """
+args: []
+description: 跨登记表一致性校验（多注册表共享字段对账）
+dimensions:
+- D3
+- D5
+- D11
+priority: P1
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 读取 registry-of-registries.yaml，按其中定义的 cross_registry_rules
 逐条比对多个登记表和物理文件中的共享字段。
 

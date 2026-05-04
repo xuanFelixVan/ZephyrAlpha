@@ -236,10 +236,17 @@ routes:
     task_keywords:
       - "门禁"
       - "gate"
+      - "gate_engine"
+      - "gate engine"
       - "校验"
       - "validate"
       - "check"
       - "GATE"
+      - "G1 ingest"
+      - "G2 triage"
+      - "G3 evaluate"
+      - "G4 activate"
+      - "G5 extract"
       - "准入"
       - "审批"
       - "approval"
@@ -248,9 +255,16 @@ routes:
       - "合规"
       - "熔断"
       - "circuit breaker"
+      - "熔断器"
+      - "cooldown"
+      - "YAML parse"
+      - "gates/"
+      - "门禁bug"
+      - "gate bug"
     scope: pre_change
     safety: "H"
     priority: 92
+    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-014 (LLM Security) if modifying fail-closed logic"
 
   # -- INF-008 Context Engine --
   - route_id: "R010"
@@ -417,9 +431,17 @@ routes:
       - "classifier"
       - "审计"
       - "audit"
+      - "fail-closed"
+      - "fail-open"
+      - "四层防御"
+      - "L2 输入"
+      - "L3 Schema"
+      - "L4 审计"
+      - "L1~L4"
     scope: pre_change
     safety: "H"
     priority: 93
+    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
 
   # -- INF-015 System Telemetry --
   - route_id: "R017"
@@ -503,7 +525,7 @@ fallback:
   min_keyword_hits: 1
 
 # =========================================================================
-# §3  Agent 差异化提示（Phase 3 起用）
+# §3  Agent 差异化提示（beta 起用）
 # =========================================================================
 # 根据当前 session 使用的 LLM 模型，加载不同深度的蓝图指引
 # GOV-AI-002 决策树 → Agent 能力矩阵 → 本节指定每份蓝图"给 DeepSeek 读全量 / 给 GLM 读架构约束"
@@ -511,4 +533,4 @@ fallback:
 agent_hints:
   enabled: false
   activated_in: "Phase_3"
-  description: "Phase 3 启用后，不同模型读同一蓝图的不同节选"
+  description: "beta 启用后，不同模型读同一蓝图的不同节选"

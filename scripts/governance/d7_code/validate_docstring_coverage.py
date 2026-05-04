@@ -1,6 +1,17 @@
 """
 validate_docstring_coverage.py — Docstring 覆盖率校验
 
+__manifest__ = """
+args: []
+description: Docstring 覆盖率校验——模块/类/公共函数必须有 docstring
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PEP 257 — all public modules/classes/functions should have docstrings
      AGENTS.md §5.1 — 零记忆重启标准（AI 靠 docstring 理解代码意图）
 

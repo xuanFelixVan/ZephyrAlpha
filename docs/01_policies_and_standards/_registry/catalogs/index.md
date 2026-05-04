@@ -43,8 +43,8 @@ ai_autonomy: human_gated
 | `cross-module-dependency-registry.yaml` | 登记表 | 5条跨模块依赖——含正反向双图 | semi_auto |
 | `script-health-registry.yaml` | 登记表 | 39个治理脚本维度/超时/健康评分 | semi_auto |
 | `ai-risk-register.yaml` | 登记表 | 8个AI操作特有风险——含热力矩阵 | manual |
-| `knowledge-article-registry.yaml` | 登记表 | KMS知识条目索引（Phase 3 落地） | semi_auto |
-| `ai-session-registry.yaml` | 登记表 | AI Session摘要记录（Phase 2 落地） | semi_auto |
+| `knowledge-article-registry.yaml` | 登记表 | KMS知识条目索引（beta 落地） | semi_auto |
+| `ai-session-registry.yaml` | 登记表 | AI Session摘要记录（beta 落地） | semi_auto |
 | `frontmatter-field-registry.yaml` | 登记表 | 40个 frontmatter 字段的类型/必填性/枚举值 | manual |
 | `directory-registry.yaml` | 登记表 | 82个目录——职责声明/轨道归属/index.md 存在性 | manual |
 | `gate-registry.yaml` | 登记表 | 34个门禁分 5 类——pre-commit/KMS管道/架构评审/准入/VC | manual |

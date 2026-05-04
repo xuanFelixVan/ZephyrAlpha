@@ -130,8 +130,8 @@ _schema:
   # ---- 优先级 ----
   priority_values:
     - P0              # 核心路径，立即需要
-    - P1              # 高优先级，Phase 1 内完成
-    - P2              # 中优先级，Phase 2 内完成
+    - P1              # 高优先级，experimental 内完成
+    - P2              # 中优先级，beta 内完成
     - P3              # 低优先级，按需完成
 
   # ---- 依赖类型 ----
@@ -215,7 +215,7 @@ modules:
       created: "2026-05-01"
     construction:
       status: merged_into_blueprint
-      note: "Phase 1 构建完成（phase_1_complete）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
+      note: "experimental 构建完成（phase_1_complete）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
     delivery:
       latest_version: null
       history: []
@@ -240,7 +240,7 @@ modules:
       created: "2026-05-01"
     construction:
       status: merged_into_blueprint
-      note: "Phase 0 构建完成（phase_0_completed）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
+      note: "scaffold 构建完成（phase_0_completed）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
     delivery:
       latest_version: null
       history: []
@@ -269,7 +269,7 @@ modules:
       created: "2026-05-02"
     construction:
       status: partial_30
-      note: "Phase 0 MVP 已交付。施工指引见 blueprint.md §12。"
+      note: "scaffold MVP 已交付。施工指引见 blueprint.md §12。"
     delivery:
       latest_version: "0.1.0--mvp"
       history:
@@ -305,7 +305,7 @@ modules:
       created: "2026-05-02"
     construction:
       status: partial_30
-      note: "Phase 0 CONTEXT卡 MVP 已施工。施工指引见 blueprint.md §12。"
+      note: "scaffold CONTEXT卡 MVP 已施工。施工指引见 blueprint.md §12。"
     delivery:
       latest_version: null
       history: []
@@ -328,7 +328,7 @@ modules:
       created: "2026-05-02"
     construction:
       status: not_started
-      note: "蓝图已就绪，施工待 Phase 2。当前 kb/ 代码为 Phase 1 过渡实现。"
+      note: "蓝图已就绪，施工待 beta。当前 kb/ 代码为 experimental 过渡实现。"
     delivery:
       latest_version: null
       history: []
@@ -476,7 +476,7 @@ modules:
       created: "2026-05-03"
     construction:
       status: skeleton
-      note: "仅目录+__init__.py docstring。Phase 3 kb/ 整合。"
+      note: "仅目录+__init__.py docstring。beta kb/ 整合。"
     delivery:
       latest_version: null
       history: []

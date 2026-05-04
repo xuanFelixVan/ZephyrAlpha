@@ -12,6 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
+construction_progress: phase_1_partial
 summary: "ZephyrAlpha LLM Security Gateway (LSG) 蓝图——四层深度防御：L1输入净化(path/command/token白名单) → L2进程沙箱(subprocess路径白名单) → L3输出验证(待施工) → L4行为审计(structlog JSONL)。fail-closed原则：LSG不可用→拒绝所有LLM流量。当前施工30%：input_sanitizer已实现，其余骨架待填。对标 OWASP LLM Top 10 v3.0 + NIST AI RMF."
 tags: [llm-security, lsg, security-gateway, fail-closed, input-sanitizer, process-sandbox, infrastructure]
 priority: P2
@@ -66,7 +67,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
                      │
           ┌──────────▼──────────┐
           │ L3: OutputValidator │  Pydantic Schema 验证 + Secret Scanner
-          │   (待施工)          │  (Phase 1b: Pydantic + OWASP LLM Top 10 规则集)
+          │   (待施工)          │  (experimental: Pydantic + OWASP LLM Top 10 规则集)
           └──────────┬──────────┘
                      │ valid
           ┌──────────▼──────────┐
@@ -86,7 +87,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 | `__init__.py` | LSG 模块入口 + 架构文档注释 | ✅ 已实现 |
 | `behavior_audit_logger.py` | L4 审计日志——structlog JSONL + EMA 异常模式 | ✅ 骨架 |
 
-> L3（输出验证）尚未独立文件——Phase 1b 施工。
+> L3（输出验证）尚未独立文件——experimental 施工。
 
 ---
 
@@ -141,7 +142,7 @@ class ProcessSandbox:
 
 ## 6. L3 OutputValidator（待施工）
 
-> Phase 1b 施工范围
+> experimental 施工范围
 
 - **Pydantic Schema 验证**：LLM 返回的 JSON/YAML 必须符合预期 Schema
 - **Secret Scanner**：扫描输出中是否泄露 API key / token / 密码
@@ -174,7 +175,7 @@ class BehaviorAuditLogger:
 - Tamper-evident：JSONL 带 checksum，修改可检测
 - EMA 异常检测：攻击频率超过历史均值的 2σ → 告警
 
-**Phase 2 目标**：红队语料库 ≥150 条 + 绕过率 ≤5%.
+**beta 目标**：红队语料库 ≥150 条 + 绕过率 ≤5%.
 
 ---
 
@@ -199,10 +200,10 @@ LSG 健康检查失败
 
 | 阶段 | 完成度 | 说明 |
 |------|:---:|------|
-| Phase 0 | ✅ 100% | 4 文件骨架 + __init__.py 架构注释 |
-| Phase 1a | ██ 30% | input_sanitizer.py 已实现；process_sandbox 骨架 |
-| Phase 1b | ░░ 0% | output_validator.py 待创建；L3 规则集待定义 |
-| Phase 2 | ░░ 0% | 红队语料库 150+ 条；绕过率评估 |
+| scaffold | ✅ 100% | 4 文件骨架 + __init__.py 架构注释 |
+| experimental | ██ 30% | input_sanitizer.py 已实现；process_sandbox 骨架 |
+| experimental | ░░ 0% | output_validator.py 待创建；L3 规则集待定义 |
+| beta | ░░ 0% | 红队语料库 150+ 条；绕过率评估 |
 
 ### 下一步施工
 

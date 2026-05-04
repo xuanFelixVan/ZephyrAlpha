@@ -4,6 +4,18 @@ GATE-FRONTMATTER: Validate frontmatter enum values against vocabulary YAMLs.
 Prevents illegal enum values (like layer: L1 instead of l01_infrastructure)
 from reaching the codebase—closes the root cause of C8 (9 files with illegal layer values).
 
+__manifest__ = """
+args: []
+description: GATE-FRONTMATTER — frontmatter 枚举值 vs vocabulary YAML 校验（防止非法值如 layer=L1）
+dimensions:
+- D3
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 Dimensions:
   DIM-1: doc_type values in vocabulary
   DIM-2: status values in vocabulary

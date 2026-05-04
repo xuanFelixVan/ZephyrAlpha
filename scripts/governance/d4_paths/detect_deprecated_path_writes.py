@@ -1,6 +1,18 @@
 """
 detect_deprecated_path_writes.py — 废弃路径写入检测
 
+__manifest__ = """
+args: []
+description: 废弃路径写入检测（ABS-18 — 禁止在废弃路径下新建文件）
+dimensions:
+- D1
+- D4
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：ABS-18（在废弃路径下写入新文件为绝对禁止）
 
 检测内容：

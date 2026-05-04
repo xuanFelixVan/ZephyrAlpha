@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-04T12:58:47.887556+00:00",
+  "generated_at": "2026-05-04T16:38:03.549081+00:00",
   "version": "3.0",
   "schema": "zephyr-alpha-architecture-context/v1",
   "contracts": {
@@ -958,7 +958,7 @@
       {
         "domain": "task",
         "file": "task-card-standard.md",
-        "rules_approx": 30
+        "rules_approx": 29
       },
       {
         "domain": "task",
@@ -971,5 +971,19 @@
         "rules_approx": 11
       }
     ]
+  },
+  "sessions": {
+    "recent": [],
+    "total": 0,
+    "stats": {
+      "total_files_created": 0,
+      "total_files_modified": 0,
+      "total_files_deleted": 0,
+      "total_decisions": 0,
+      "total_ke_extracted": 0,
+      "total_blind_spots_discovered": 0,
+      "total_contracts_touched": 0
+    },
+    "index_version": "1.0"
   }
 }

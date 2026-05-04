@@ -2,6 +2,18 @@
 validate_yaml_summaries.py — YAML Summary 自动对账闸门（GATE-SUM）
 v1.0.0 — 2026-05-03
 
+__manifest__ = """
+args: []
+description: GATE-SUM — YAML Summary 自动对账闸门（根治 summary 手动维护漂移——扫描所有架构 YAML，从实际数据反算聚合值与声明的
+  summary 逐项对比）
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 AGENTS.md §6.10 双层对齐闸门的根治层：
   根因：所有 YAML summary 字段（by_status / by_priority / by_maturity /
         by_quadrant / total_registered / global_stats）均为手动维护，

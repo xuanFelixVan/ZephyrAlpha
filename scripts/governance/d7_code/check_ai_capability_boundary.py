@@ -1,6 +1,17 @@
 """
 check_ai_capability_boundary.py — AI 能力边界静态检查脚本
 
+__manifest__ = """
+args: []
+description: check_ai_capability_boundary.py — AI 能力边界静态检查脚本
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 在 CI 阶段扫描所有 Python 文件，检测是否有代码修改了 IMMUTABLE 级别的
 文件或绕过了能力边界。读取 config/ai_capability_matrix.yaml 获取边界定义。
 

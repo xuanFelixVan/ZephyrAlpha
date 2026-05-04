@@ -18,8 +18,8 @@ ZephyrAlpha 知识库子包
   - triage.py              知识分诊（优先级排序）
   - unified_memory_api.py  统一内存 API
 
-架构归属：B-track 独立能力，Phase 1 过渡期独立子包（不影响 C-track）。
-Phase 3 计划整合入 vector_memory/ (VMS)。
+架构归属：B-track 独立能力，experimental 过渡期独立子包（不影响 C-track）。
+beta 计划整合入 vector_memory/ (VMS)。
 
 注意：本包当前 bounded_context: false——直接暴露所有模块供
 orchestrator/ + l12/ 消费，不设受限边界。

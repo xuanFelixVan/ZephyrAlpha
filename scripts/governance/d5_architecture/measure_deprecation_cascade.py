@@ -1,6 +1,17 @@
 """
 measure_deprecation_cascade.py — 废弃级联影响度量
 
+__manifest__ = """
+args: []
+description: 废弃级联影响度量（LFC-003 — 级联>=5文件需Owner批准）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：LFC-003（级联影响 >= 5 个文件时需 Owner 批准）
 
 检测内容：

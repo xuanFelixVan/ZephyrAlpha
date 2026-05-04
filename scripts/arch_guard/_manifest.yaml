@@ -1,0 +1,137 @@
+# _manifest.yaml — Arch Guard 注册表 (SSoT)
+# 本文件是 arch_guard 体系的 canonical SSoT——所有 fitness function 必须在此登记
+# CI Pipeline 读取本文件决定执行哪些脚本
+# status: active = CI 执行 | stub = 桩文件，跳过 CI | deprecated = 已废弃
+
+schema_version: "1.0"
+doc_type: manifest
+ttl: permanent
+last_updated: "2026-05-05"
+
+fitness_functions:
+  - id: FF-001
+    invariant_id: INV-001
+    name: "Kill Switch 延迟检查"
+    path: fitness_functions/check_kill_switch_latency.py
+    status: stub
+    priority: P0
+    runtime_plane: hot
+    note: "需 T1 真实资金接入后激活——当前无真实 Kill Switch 硬件，experimental 桩文件"
+
+  - id: FF-004
+    invariant_id: INV-004
+    name: "PIT 铁律检查"
+    path: fitness_functions/check_pit_compliance.py
+    status: active
+    priority: P0
+    runtime_plane: cold
+    note: "扫描 L02 Alpha Factor 代码中的 look-ahead bias 模式"
+
+  - id: FF-005
+    invariant_id: INV-005
+    name: "Broker ACL 边界检查"
+    path: check_acl_boundary.py
+    status: active
+    priority: P0
+    runtime_plane: hot
+    note: "检查是否有非 L06 adapters/ 目录的代码直接调用 Broker API"
+
+  - id: FF-006
+    invariant_id: INV-006
+    name: "前端 ACL 边界检查"
+    path: check_fe_acl_boundary.py
+    status: stub
+    priority: P0
+    runtime_plane: warm
+    note: "需 L08 API Gateway 完整实现后激活"
+
+  - id: FF-007
+    invariant_id: INV-007
+    name: "幂等 Key 字段检查"
+    path: fitness_functions/check_idempotency_key.py
+    status: active
+    priority: P1
+    runtime_plane: all
+    note: "检查所有跨层事件契约是否包含 idempotency_key 字段"
+
+  - id: FF-008
+    invariant_id: INV-008
+    name: "层依赖方向检查"
+    path: import_linter/layer_boundary_check.py
+    status: active
+    priority: P0
+    runtime_plane: all
+    note: "检查所有 Python import 路径是否违反层依赖方向约束"
+
+  - id: FF-009
+    invariant_id: INV-009
+    name: "OCP 契约签名冻结检查"
+    path: fitness_functions/check_ocp_signatures.py
+    status: stub
+    priority: P0
+    runtime_plane: all
+    note: "需 OCP 契约首次 release + frozen_signatures/ 快照后激活"
+
+  - id: FF-010
+    invariant_id: INV-010
+    name: "Schema 三平面一致性检查"
+    path: check_schema_consistency.py
+    status: stub
+    priority: P0
+    runtime_plane: all
+    note: "需 Cold/Warm/Hot 三平面均有 active 代码后激活"
+
+  - id: FF-011
+    invariant_id: INV-011
+    name: "跨平面通信检查"
+    path: check_cross_plane_communication.py
+    status: stub
+    priority: P0
+    runtime_plane: cross
+    note: "需 Hot Path 有实际部署代码后激活"
+
+  - id: FF-012
+    invariant_id: INV-012
+    name: "Hot Path 纯度检查"
+    path: check_hot_path_purity.py
+    status: stub
+    priority: P0
+    runtime_plane: hot
+    note: "需 Hot Path 有 Python 代码后激活——当前 Hot Path 主要为配置/YAML"
+
+  - id: FF-013
+    invariant_id: INV-013
+    name: "风控参数一致性检查"
+    path: fitness_functions/check_risk_params_consistency.py
+    status: stub
+    priority: P0
+    runtime_plane: all
+    note: "需 config/risk_params.yaml 被多平面引用后激活"
+
+  - id: FF-014
+    invariant_id: INV-014
+    name: "Survivorship Bias 检查"
+    path: fitness_functions/check_survivorship_bias.py
+    status: stub
+    priority: P0
+    runtime_plane: cold
+    note: "需回测数据集有退市/停牌标的后激活——当前数据集规模尚小"
+
+  - id: FF-016
+    invariant_id: INV-016
+    name: "审计日志不可篡改检查"
+    path: fitness_functions/check_audit_log_immutability.py
+    status: active
+    priority: P1
+    runtime_plane: cold
+    note: "检查 policy_decision_ledger.jsonl 的 append-only 属性"
+
+summary:
+  total: 13
+  by_status:
+    active: 5
+    stub: 8
+    deprecated: 0
+  by_priority:
+    P0: 11
+    P1: 2

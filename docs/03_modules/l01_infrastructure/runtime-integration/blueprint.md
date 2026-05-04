@@ -13,7 +13,7 @@ language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 ttl: permanent
-construction_progress: merged
+construction_progress: phase_1_complete
 dependencies:
   - MOD-INF-001
 priority: P0
@@ -53,7 +53,7 @@ summary: ZephyrAlpha 运行时集成 6 核心 RI 模块 + Cross-Layer 缺口填�
 ## 2. 到需要做什么（回顾大盘 + 用户原意）
 
 **Owner 指示**：
-- 所有 Cross-Layer 缺口必须在 Phase 1 填平，不给未来埋雷
+- 所有 Cross-Layer 缺口必须在 experimental 填平，不给未来埋雷
 - "Layer 之间怎么通信？配置怎么统一管？错误怎么统一处理？"
 - RL-001 : 缺事件总线 → 引入 RI-01
 - RL-002 : 缺模块管理 → 引入 RI-02
@@ -115,7 +115,7 @@ summary: ZephyrAlpha 运行时集成 6 核心 RI 模块 + Cross-Layer 缺口填�
 | RI-05 HealthCheck | **async 探针 + 依赖传导** | 轻量级，可被 OTel 集成 |
 | RI-06 TelemetryCollector | **structlog 聚合 + 10s 推送** | 预聚合降低 I/O 压力 |
 
-**零依赖原则**：RI-01 ~ RI-04 纯 Python stdlib + Pydantic，不加 Redis/Kafka 等重量级依赖。Phase 3 服务化时 RI-01 可切换 Kafka/RabbitMQ（口子已保留）。
+**零依赖原则**：RI-01 ~ RI-04 纯 Python stdlib + Pydantic，不加 Redis/Kafka 等重量级依赖。beta 服务化时 RI-01 可切换 Kafka/RabbitMQ（口子已保留）。
 
 ### 5.2 关键代码骨架
 
@@ -150,15 +150,15 @@ class BaseModule(ABC):
 
 | 缺口 | 方案 | Phase | 验收 |
 |------|------|-------|------|
-| RL-001 跨层通信 | EventBus pub/sub | Phase 1b | 跨层消息延迟 P99 < 100ms |
-| RL-002 模块管理 | BaseModule ABC 注册 | Phase 1a | 500 模块 init < 2s |
-| RL-003 配置分层 | ConfigCente YAML+env | Phase 1a | 配置漂移检测 + 告警 |
-| RL-004 Telemetry | structlog 聚合 | Phase 1b | 预聚合准确率 100% |
-| RL-005 健康传导 | HealthCheck 依赖树 | Phase 2 | 故障域隔离 ≥3 域 |
-| RL-006 事件类型 | Pydantic 类型化事件 | Phase 1b | mypy 100% |
-| RL-007 依赖可视化 | ModuleGraph JSON 导出 | Phase 2 | D3.js 前端可视化 |
-| RL-008 配置漂移 | ConfigValidator 定时比对 | Phase 1b | 漂移告警延时 < 30s |
-| RL-009 错误传播链 | ErrorTracer trace_id 传递 | Phase 2 | 跨 3 层 trace_id 完整 |
+| RL-001 跨层通信 | EventBus pub/sub | experimental | 跨层消息延迟 P99 < 100ms |
+| RL-002 模块管理 | BaseModule ABC 注册 | experimental | 500 模块 init < 2s |
+| RL-003 配置分层 | ConfigCente YAML+env | experimental | 配置漂移检测 + 告警 |
+| RL-004 Telemetry | structlog 聚合 | experimental | 预聚合准确率 100% |
+| RL-005 健康传导 | HealthCheck 依赖树 | beta | 故障域隔离 ≥3 域 |
+| RL-006 事件类型 | Pydantic 类型化事件 | experimental | mypy 100% |
+| RL-007 依赖可视化 | ModuleGraph JSON 导出 | beta | D3.js 前端可视化 |
+| RL-008 配置漂移 | ConfigValidator 定时比对 | experimental | 漂移告警延时 < 30s |
+| RL-009 错误传播链 | ErrorTracer trace_id 传递 | beta | 跨 3 层 trace_id 完整 |
 
 ---
 
@@ -172,7 +172,7 @@ class BaseModule(ABC):
 | **1b** | 核心运行时 | 5-7 | RL-001 EventBus + RL-004 Telemetry + RL-006 类型化事件 + RL-008 ConfigValidator |
 | **2** | 完善集成 | 5-7 | RL-005 HealthCheck + RL-007 ModuleGraph + RL-009 ErrorTracer |
 
-### 6.2 验收标准（Phase 2 综合）
+### 6.2 验收标准（beta 综合）
 
 | 维度 | 指标 | 目标 |
 |------|------|------|
@@ -189,7 +189,7 @@ class BaseModule(ABC):
 
 | 条件 | 动作 |
 |------|------|
-| 模块 > 300 | Phase 3 RI-01 切 Kafka/RabbitMQ |
+| 模块 > 300 | beta RI-01 切 Kafka/RabbitMQ |
 | pub/sub 消费者 > 500/事件 | 触发 EventBus 分片 |
 | 配置项 > 1000 | ConfigCenter 加本地缓存层 |
 | 并发 Agent > 20 | TelemetryCollector 远程化 |
@@ -197,7 +197,7 @@ class BaseModule(ABC):
 **EventBus 演进路径**（零断链）：
 
 ```
-Phase 1b: asyncio.Queue（本地）
+experimental: asyncio.Queue（本地）
 Kafka/RabbitMQ（远程）── 通过 EventBus Protocol 抽象层无缝切换
 ```
 

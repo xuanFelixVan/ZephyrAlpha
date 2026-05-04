@@ -326,7 +326,7 @@ graph LR
 ### 5.3 跳级规则（明令禁止）
 
 - **禁止** 直接调用 `GateEngine.evaluate(task, "G3")` 而跳过 G1/G2：task 的 `gate_status` 字段必须按 `passed_g1 → passed_g2 → passed_g3 → …` 顺序推进
-- **例外**：Phase 0 补录（历史知识回填）允许 Owner 签发 `gate-exempt: G1 | reason: legacy-backfill | valid_until: <date>` 在 commit trailer 中豁免；见§九
+- **例外**：scaffold 补录（历史知识回填）允许 Owner 签发 `gate-exempt: G1 | reason: legacy-backfill | valid_until: <date>` 在 commit trailer 中豁免；见§九
 
 ---
 
@@ -362,7 +362,7 @@ if to_status == TaskStatus.IN_PROGRESS and self._enable_gate:
 1. **事务隔离**：门禁检查必须在 `task_repo._write_tx()` **之外**执行（`GateEngine` 持有独立 SQLite 连接；两个 `BEGIN IMMEDIATE` 会死锁）。当前 `task_repo.py:444-463` 已按此模式实现
 2. **幂等性**：同一 `(task_id, gate_id)` 重复 `evaluate` 必须产生独立 `gate_run_id`（UUIDv4），历史记录保留，**禁止** UPSERT 覆盖
 3. **事件写入**：门禁结果写入 `gates` 表的同时，`task_repo` 侧写入 `events` 表一条 `gate_evaluation` 事件（`payload={gate_id, passed, p0_count, p1_count}`），两表由 `events.task_id` 做外键关联
-4. **disable 开关**：`TaskRepository(enable_gate=False)` 时所有门禁跳过（单元测试/Phase 0 补录专用）；**生产禁止**关闭
+4. **disable 开关**：`TaskRepository(enable_gate=False)` 时所有门禁跳过（单元测试/scaffold 补录专用）；**生产禁止**关闭
 
 ### 6.4 与 `TaskStatus` 十状态的交互
 

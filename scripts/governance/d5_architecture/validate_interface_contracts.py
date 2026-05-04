@@ -1,6 +1,17 @@
 """
 validate_interface_contracts.py — 接口契约校验
 
+__manifest__ = """
+args: []
+description: 接口契约校验（GOV-MOD-004 IFC-001~007 — 7必填字段+semver+契约状态）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：GOV-MOD-004 IFC-001~007（模块接口契约策略）
 
 检测内容：

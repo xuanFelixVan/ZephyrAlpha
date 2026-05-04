@@ -12,6 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
+construction_progress: phase_1_complete
 summary: "ZephyrAlpha Database 蓝图——SQLite 元数据持久化 + 原子事务管理器(ATM)：跨SQLite/文件系统的两阶段提交。task_repo.py 提供10状态任务CRUD + N:N task_files映射 + events审计日志。olap_engine.py 提供FLE时序分析。对标 SQLite 官方WAL模式 + ITIL SACM CMDB（每个CI一条记录）。"
 tags: [database, db, sqlite, atm, atomic-transaction, task-repo, olap, infrastructure]
 priority: P1
@@ -97,8 +98,8 @@ class TaskRepo:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | task_repo.py + sqlite_schema.py + ATM | ✅ implemented |
-| Phase 1 | olap_engine 供 FLE 消费 | 📋 Backlog |
+| scaffold | task_repo.py + sqlite_schema.py + ATM | ✅ implemented |
+| experimental | olap_engine 供 FLE 消费 | 📋 Backlog |
 
 ---
 

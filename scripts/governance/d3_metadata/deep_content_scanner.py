@@ -1,6 +1,17 @@
 """
 deep_content_scanner.py — 深度内容扫描器
 
+__manifest__ = """
+args: []
+description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：PS-STD-012 §7.3（doc_type 与正文关键词启发式不匹配）
 
 检测内容：

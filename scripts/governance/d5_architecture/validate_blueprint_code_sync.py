@@ -1,5 +1,17 @@
 """GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门
 
+__manifest__ = """
+args: []
+description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
+dimensions:
+- D5
+- D8
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
 扫描所有蓝图 §19（已实现代码路径索引）中声称的文件路径，
 与磁盘实际文件交叉比对，检测三类漂移：

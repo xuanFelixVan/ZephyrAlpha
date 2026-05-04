@@ -113,7 +113,7 @@ repos:
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
       # 校验范围：docs/02_enterprise_architecture/target-architecture/ + 04_construction_plans/ + 01_policies_and_standards/
       # 校验内容：frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）+ 物理路径存在性
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-12-blueprint-provenance
         name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
         entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
@@ -129,7 +129,7 @@ repos:
       # 真源声明：rationale-log R74 兜底缺口 V-11 / T-V2-003
       # 校验范围：ai-autonomy-authority-registry.md 中的权限标注
       # 校验内容：三层权限值合法 / 必填字段完整 / 模块无重复 / 章节覆盖率 / Immutable Core 最低数量
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-14-authority-registry
         name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
         entry: python scripts/governance/d5_architecture/validate_authority_registry.py
@@ -145,7 +145,7 @@ repos:
       # 真源声明：Wave 1 V-14 兜底 / T-V2-011
       # 校验范围：docs/19_development_workspace/drafts-and-audits/ 下草稿的 components 字段
       # 校验内容：同一 component_id 出现在 2+ 草稿时 warn
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-13-blueprint-overlap
         name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）"
         entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
@@ -161,7 +161,7 @@ repos:
       # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter-schema.json R4
       # 校验范围：docs/ 下所有 .md 和 .yaml 文件
       # 校验内容：doc_type 合法值（17种）/ status 合法值（7种）/ 必填字段 / module_id 格式 / AI 生成文件标记
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），Phase 1a 转 --ci 强制
+      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-15-frontmatter-metadata
         name: "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
@@ -174,7 +174,7 @@ repos:
 
       # ── GATE-16: 架构合规校验（architecture-contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
-      # 真源声明：Phase 4 D-008/D-011 产出
+      # 真源声明：stable D-008/D-011 产出
       # 校验范围：docs/01_policies_and_standards/ 下所有 .md 和 .yaml 文件
       # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下无operational_rule / operational下无policy
       # 骨架阶段：--warn-only 模式（只警告不阻塞），待验证稳定后转 --ci 强制

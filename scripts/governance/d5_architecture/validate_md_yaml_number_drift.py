@@ -2,6 +2,18 @@
 validate_md_yaml_number_drift.py — MD 视图与 YAML SSoT 数字漂移检测闸门（GATE-NUM-DRIFT）
 v1.0.0 — 2026-05-03
 
+__manifest__ = """
+args: []
+description: MD/YAML 编号漂移检测（防止同一概念在 MD 和 YAML 中编号不一致）
+dimensions:
+- D3
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 根因（R6 审计 P0-01）：YAML SSoT 定义了 6 大核心服务，但 5 个 MD 视图文件仍使用"5 大"。
 R5 修复只改了 YAML 层，未全面扫描 MD 视图层。AI 上下文窗口有限，改 YAML 时看不到 MD。
 

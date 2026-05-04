@@ -3,7 +3,7 @@
 Records 5 metric types into a SQLite metrics table for CLI reporting
 and Evolution Engine consumption.
 
-Task: T-1-19 | Phase 1 | GLM-5.1
+Task: T-1-19 | experimental | GLM-5.1
 Depends: sqlite_schema.py (T-1-04), task_repo.py (T-1-04)
 """
 

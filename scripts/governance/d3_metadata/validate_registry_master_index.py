@@ -1,7 +1,19 @@
 """
 登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18)
 
-任务编号 : T-V4-001（Phase 0 登记表体系自我验证）
+__manifest__ = """
+args: []
+description: 登记表总索引自校验——17张登记表文件存在性+条目数+depends_on交叉验证
+dimensions:
+- D3
+- D11
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
+任务编号 : T-V4-001（scaffold 登记表体系自我验证）
 权限层级 : Human Gated
 作者     : AI-GLM-5.1
 创建日期 : 2026-05-02

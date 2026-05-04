@@ -1,6 +1,17 @@
 """
 detect_permanent_file_deletion.py — 永久文件删除检测
 
+__manifest__ = """
+args: []
+description: 永久文件删除检测（PS-STD-012 V1 / PS-STD-009 §7 — ttl:permanent禁止删除）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-012 V1（删除 ttl:permanent 文件为 V1 阻断级违规）
      PS-STD-009 §7（ttl:permanent 永久保留，不删除）
 

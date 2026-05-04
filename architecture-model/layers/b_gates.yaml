@@ -13,7 +13,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: Phase 2 G1-G5 KMS 决策门 + 任务启动前合规门禁
+    description: beta G1-G5 KMS 决策门 + 任务启动前合规门禁
     files:
       - circuit_breaker.py
       - contract_template_manager.py

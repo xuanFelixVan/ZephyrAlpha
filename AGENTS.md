@@ -1,6 +1,6 @@
 ﻿# ZephyrAlpha 项目 AI 基准文件
 
-> **版本**：v4.17.0 | 更新日期：2026-05-04 | 状态：Active
+> **版本**：v4.18.0 | 更新日期：2026-05-04 | 状态：Active
 >
 > **首要受众：AI** | 强制原则：§6.12 AI-First Audience Principle | 每次操作前自检：这个输出 AI 能零推理消费吗？
 
@@ -20,7 +20,7 @@
 
 ## 2. 旧树已归档
 
-旧树（Phase 0~2 早期）已物理归档到 `_DO_NOT_USE_old_tree/`。
+旧树（scaffold~2 早期）已物理归档到 `_DO_NOT_USE_old_tree/`。
 
 **禁止使用 `_DO_NOT_USE_old_tree/` 下的任何文件作为规则来源或操作目标。**
 
@@ -75,7 +75,7 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | 阶段 | 你要做什么 | 做完必须检查 | 检查工具/脚本 | 核心规则文件 |
 |:---:|---------|-----------|------------|--------|
 | **① 想法** | 记录碎片想法，明确问题定义。思维起点：PS-STD-011 总则——先判断最优方案，再检查规则约束 | 1️⃣ 想法是否有"问题→目标→约束"三要素？<br>2️⃣ 是否已执行 PS-STD-011 未来成本评估（§6.3决策矩阵）？<br>3️⃣ 是否查阅了 PS-STD-011 §3 专业框架映射表做机构对标？ | 人工 | PS-STD-011、GOV-DOC-010、`模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md` |
-| **② 草稿** | 将想法写成结构化草稿（讨论型文档+Phase 0 扫描盘点）。遵守 DOC-001~008 文档控制8原则 | 1️⃣ 草稿是否遵循专题讨论模板？<br>2️⃣ 是否覆盖5个裁定维度（规则vs目标冲突/过度工程/Vibe Coding合理性/AI自治/集成方式）？<br>3️⃣ 创建文件前是否执行了 GOV-DOC-009 DOC-005"创建前必查"（查重+查索引+查命名规范）？<br>4️⃣ 是否引用而非复制（DOC-008）？ | 人工、`d3_metadata/deep_content_scanner.py` | GOV-DOC-009、`模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md` |
+| **② 草稿** | 将想法写成结构化草稿（讨论型文档+scaffold 扫描盘点）。遵守 DOC-001~008 文档控制8原则 | 1️⃣ 草稿是否遵循专题讨论模板？<br>2️⃣ 是否覆盖5个裁定维度（规则vs目标冲突/过度工程/Vibe Coding合理性/AI自治/集成方式）？<br>3️⃣ 创建文件前是否执行了 GOV-DOC-009 DOC-005"创建前必查"（查重+查索引+查命名规范）？<br>4️⃣ 是否引用而非复制（DOC-008）？ | 人工、`d3_metadata/deep_content_scanner.py` | GOV-DOC-009、`模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md` |
 | **③ 审计裁定** | 多模型审计（GLM→Kimi→Qwen→Claude，按 GOV-AI-002 路由）→ Final Judge 仲裁争议 → Owner 裁定结论固化 | 1️⃣ 是否使用了 升级版指令集-v4.md 定义的四步串行流水线？<br>2️⃣ Step 0 是否已执行动态项目扫描？<br>3️⃣ 每条裁定结论是否已写入文档（✅/❌/⚠️）？<br>4️⃣ 是否有未关闭的⏳待裁定条目？<br>5️⃣ 规则冲突时是否按 PS-STD-004 五维分类推导链裁决（stability→layer→scope→Owner）？ | 人工、`d5_architecture/validate_session_gate_check.py` ⚠️ | PS-STD-004、GOV-AI-002、`模块候选池/审计流程/升级版指令集-v4.md`、`模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md` |
 | **④ 蓝图** | 将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 ADR（GOV-ARCH-001） | 1️⃣ 蓝图是否自包含（AI读完蓝图≈读完整个项目）？<br>2️⃣ §6.9 YAML优先——架构事实是否先在 architecture-model/layers/ YAML 中登记？<br>3️⃣ §6.14 蓝图§16路径索引是否与磁盘一致？<br>4️⃣ provenance三件套是否完整（origin_drafts + audit_chain≥3 + arbitration）？<br>5️⃣ 若涉及新增/删除模块、修改接口、换技术栈、改数据流 → 是否已触发 GOV-ARCH-002 架构评审？<br>6️⃣ 模块状态是否符合 GOV-MOD-003 生命周期8阶段？<br>7️⃣ 接口契约是否已注册到 cross-layer-contracts.yaml（GOV-MOD-004）？ | `d5_architecture/validate_blueprint_code_sync.py`、`d3_metadata/validate_blueprint_provenance.py`、`d5_architecture/validate_code_yaml_alignment.py` | PS-STD-002、GOV-ARCH-001、GOV-ARCH-002、GOV-MOD-003、GOV-MOD-004、`docs/01_policies_and_standards/templates/blueprint-template.md` |
 | **⑤ 施工** | 按蓝图施工（写代码/写规则/写脚本）。代码写成后必须通过两部分门禁：① 编写时（pre-commit）→ ② 推送前（CI governance.yml）。遵守 GOV-AI-004 双编辑器协作规则 | 1️⃣ §6.2 原子事务：联动修改是否在同一批完成？<br>2️⃣ §6.5 脚本入库：新建.py是否已在 script_manifest.yaml 注册？<br>3️⃣ §4 源码-测试同步：改 src/zephyr/ 后是否同步更新测试并跑通全量？<br>4️⃣ §6.11 索引-实际同步：文件变更后是否已更新所有 index.md？<br>5️⃣ §6.13 枚举同步：vocabulary YAML 变更后是否已同步所有 derived_from 标注的派生文件？<br>6️⃣ §6.14 蓝图§16是否已更新？<br>7️⃣ 删除操作是否执行了 §6.6 质量对比预检？<br>8️⃣ 是否遵守 GOV-AI-003 幻觉自检6项（路径/模块ID/接口/依赖/SSoT/编号）？<br>9️⃣ 编辑器配置是否符合 GOV-AI-004（Trae autoGuessEncoding=false）？<br>10️⃣ 是否遵守 PS-STD-003 ABS 绝对禁止条款（48条）？ | pre-commit 全量（GATE-01~18 + SQ + ADM + IDX + DD07）、`d7_code/validate_test_coverage.py`、`d1_structure/validate_index_reality.py`、`d3_metadata/validate_enum_consistency.py` | PS-STD-003、GOV-AI-003、GOV-AI-004、GOV-DOC-005、`docs/01_policies_and_standards/governance/document/encoding-safety-standard.md` |
@@ -132,7 +132,7 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | ③ | `docs/01_policies_and_standards/governance/ai/model-routing-policy.md` | 模型路由策略——DeepSeek主力+GLM审查+Claude救援三层防御 |
 | ③ | `docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md` | 规则冲突裁决——五维分类+推导链（stability→layer→scope→Owner） |
 | ③ | `模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md` | 全流程逐环节审查——从"为什么蓝图、草稿、施工图之间有断裂"出发分析15+个问题 |
-| ②~⑦ | `模块候选池/开发流程/开发流程七合一方案.md` | 7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+Phase 0~5） |
+| ②~⑦ | `模块候选池/开发流程/开发流程七合一方案.md` | 7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+scaffold~5） |
 | ④~⑤ | `docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md` | 5级门禁策略（G0~G4）+ Gate Pipeline 触发条件 |
 | ④~⑤ | `docs/01_policies_and_standards/governance/architecture/phase-transition-protocol.md` | 阶段转换协议（开发阶段之间的切换规则） |
 | ④~⑤ | `docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md` | 架构评审门控——触发条件、评审清单（6项）、否决条件（7项） |
@@ -264,7 +264,7 @@ AI 在完成任务过程中通过 Write 工具创建的任何 `.py` 文件，**�
 
 #### 6.6.4 健康检查脚本覆盖
 
-每张登记表应尽量配备健康检查脚本（在 `scripts/governance/` 中）。当前目标：从 42%（10/24）→ Phase 2 达 80%。新建登记表时必须评估健康检查必要性并在 Session Log 中注明。
+每张登记表应尽量配备健康检查脚本（在 `scripts/governance/` 中）。当前目标：从 42%（10/24）→ beta 达 80%。新建登记表时必须评估健康检查必要性并在 Session Log 中注明。
 
 #### 6.6.5 生成文件豁免
 
@@ -408,12 +408,12 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 
   | 阶段 | 内容 | 状态 |
   |------|------|:---:|
-  | **Phase 1（当前）** | AGENTS.md + index.md 写入原则——让 AI 每次施工前就知道双对齐是强制要求 | ✅ 本 session |
-  | **Phase 2** | 在 `check_architecture_gates.py` 中新增 GATE-A 骨架（`src/` 目录扫描 + 交叉比对） | 📋 Backlog |
-  | **Phase 3** | 在 `check_architecture_gates.py` 中新增 GATE-B（YAML 版本号 vs MD 引用版本比对） | 📋 Backlog |
-  | **Phase 4** | GATE-B 升级为自动生成：YAML 变更 → 触发 `generate_md_from_yaml.py` → MD 自动更新 | 📋 远期目标 |
+  | **experimental（当前）** | AGENTS.md + index.md 写入原则——让 AI 每次施工前就知道双对齐是强制要求 | ✅ 本 session |
+  | **beta** | 在 `check_architecture_gates.py` 中新增 GATE-A 骨架（`src/` 目录扫描 + 交叉比对） | 📋 Backlog |
+  | **beta** | 在 `check_architecture_gates.py` 中新增 GATE-B（YAML 版本号 vs MD 引用版本比对） | 📋 Backlog |
+  | **stable** | GATE-B 升级为自动生成：YAML 变更 → 触发 `generate_md_from_yaml.py` → MD 自动更新 | 📋 远期目标 |
 
-- **AI 施工即时约束（Phase 1 生效，无需等 CI 脚本）**：
+- **AI 施工即时约束（experimental 生效，无需等 CI 脚本）**：
   1. **创建新 `src/zephyr/lXX/` 目录时** → AI MUST 同时更新对应 `architecture-model/layers/lXX.yaml` + `_index.yaml`（如该层是新层）
   2. **修改 YAML 中模块状态/属性时** → AI MUST 同时检查对应 MD 视图是否需同步更新
   3. **发现 YAML 与 MD 不一致时** → AI MUST 按 §6.9 冲突裁决流程处理，以 YAML 为准
@@ -630,7 +630,7 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
   │  validate_cross_references.py → 引用链完整性            │
   │  对标：OpenAPI spec:check、Terraform drift detection   │
   │  效果：漂移在 CI 阶段被拦截，不会累积                    │
-  │  状态：📋 Phase 2（本节定义规格，下个 session 实施）      │
+  │  状态：📋 beta（本节定义规格，下个 session 实施）      │
   ├─────────────────────────────────────────────────────┤
   │  Level 1：建议性规则（当前防御）                         │
   │  AGENTS.md §6.9~§6.13 的 prose 规则                   │
@@ -641,7 +641,7 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
   └─────────────────────────────────────────────────────┘
   ```
 
-- **Level 2 CI 门禁规格**（Phase 2 实施时 MUST 遵循的规格定义）：
+- **Level 2 CI 门禁规格**（beta 实施时 MUST 遵循的规格定义）：
 
   | 门禁脚本 | 检查内容 | 失败条件 | 对标 |
   |---------|---------|---------|------|
@@ -650,7 +650,7 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
   | `validate_cross_references.py` | 所有文件中的路径引用 ↔ 目标文件存在 | 任一引用指向不存在的文件 | K8s Admission Controller |
   | `validate_derived_from.py` | 所有应标注 `derived_from` 的文件 ↔ 实际标注 | 任一派生文件缺少 `derived_from` 标注 | ITIL SACM CI 属性登记 |
 
-- **Level 3 自动派生规格**（远期目标，Phase 4+）：
+- **Level 3 自动派生规格**（远期目标，stable+）：
 
   | 派生链 | 输入（canonical） | 输出（派生） | 生成方式 |
   |-------|-----------------|------------|---------|
@@ -668,7 +668,51 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 
 - **专业参考**：K8s Admission Controller → 规则不执行 = 规则不存在 / K8s CEL → 声明式校验替代过程式检查 / OpenAPI CI drift guard → spec:lint + spec:check 不一致就合不进去 / Terraform drift detection → exit code 2 = drift 漂移立刻被发现 / ITIL SACM → CMDB 对账不是"建议"而是"必须定期执行" / Vibe Coding context engineering → 建议性规则是必要条件但不是充分条件
 
-> **大白话**：以前我们的治理是"写在纸上的法律"——AI 每次进来都是新员工，它不会记得上次签的合同，所以法律形同虚设。K8s、OpenAPI、Terraform 三家专业机构的共同做法是——法律不是写在纸上让人读的，是装在门禁里让人过的。你不过门禁，你就进不来。所以我们的防御分三层：第一层是"纸上的法律"（AGENTS.md prose 规则，已有），第二层是"门禁"（CI 脚本自动检测，Phase 2 要做），第三层是"自动门"（vocabulary 改了 → 派生文件自动更新，远期目标）。没有第二层，漂移是必然的——这不是 AI 不够认真，而是零记忆系统 + 手动同步 = 数学上的必然失败。
+> **大白话**：以前我们的治理是"写在纸上的法律"——AI 每次进来都是新员工，它不会记得上次签的合同，所以法律形同虚设。K8s、OpenAPI、Terraform 三家专业机构的共同做法是——法律不是写在纸上让人读的，是装在门禁里让人过的。你不过门禁，你就进不来。所以我们的防御分三层：第一层是"纸上的法律"（AGENTS.md prose 规则，已有），第二层是"门禁"（CI 脚本自动检测，beta 要做），第三层是"自动门"（vocabulary 改了 → 派生文件自动更新，远期目标）。没有第二层，漂移是必然的——这不是 AI 不够认真，而是零记忆系统 + 手动同步 = 数学上的必然失败。
+
+### 6.16 静态清单自动生成铁律（Static Manifest Auto-Generation Mandate）
+
+> **v1.0.0（2026-05-04）**：对标 K8s code-generator / Terraform terraform-docs / OpenAPI codegen——五家顶级机构一致：重复性清单不允许手工维护。
+
+任何文件若主要内容是"条目列表+计数"，必须为以下两类之一：
+- **A 类（生成物）**：脚本从 Schema 自动产出，标注 `generated_at`。AI 和人类均不得手工编辑。
+- **B 类（Schema 输入）**：手工定义字段和约束，标注 `schema_input: true` + `consumed_by: [生成器脚本路径]`。是生成器的输入数据。
+
+**两分类法**：
+- 事实清单（磁盘有什么 → 脚本扫描得知）→ 永远自动生成
+- 决策清单（人类决定应该有什么 → Schema 定义）→ 手工定义 Schema，脚本校验一致性
+
+**绝对禁止**：
+- 手工维护任何包含条目计数的清单
+- 手工在 index.md 中写"本目录含 N 个文件"
+- "以后改成自动生成"——不存在"以后"
+
+**生成管道模式**：Schema（手工决策）→ 生成器 → 派生文件（机器产物）+ CI 校验（防止漂移）
+
+### 6.17 Canonical 物理位置铁律（Canonical Physical Location Mandate）
+
+> **v1.0.0（2026-05-04）**：对标 OpenAPI spec.yaml 放 CI 消费点 / K8s types.go 放代码生成器消费点 / Cursor CLAUDE.md 放自动加载点。
+
+**核心原则**：Canonical 定义的物理位置 = AI 加载它的位置——不是"放在某处靠引用"，而是放在 AI 必然读到的地方。
+
+- Canonical 定义文件必须在 §8.2 热记忆或领域触发清单中
+- Canonical 定义文件禁止在 §8.3 冷记忆中 → 发现即 P0 缺陷，须同一 session 内提 ADR 迁移
+- 与 §6.9 关系：§6.9 定义"谁有权定义"（canonical 权威），§6.17 定义"定义放在哪"（物理位置）——互补
+- 多消费点需要同一信息 → 自动派生摘要（标注 `derived_from` + `derived_version`），不复制
+- 审查每对"热记忆摘要 vs 冷记忆 canonical"：如果热记忆摘要已足够完整 → 删冷记忆独立的 canonical 文件。少一份文档 = 少一个漂移风险
+
+### 6.18 AI 加载路径不可漂移铁律（AI Load Path Anti-Drift Mandate）
+
+> **v1.0.0（2026-05-04）**：对标 Cursor globs + alwaysApply + description 三层激活机制。
+
+**核心原则**：§8.2 任务菜单是 AI 找到规则文件的**唯一入口**。AI 不得依赖"搜索文件系统"来找规则——路径映射必须在 §8.2 中显式声明。
+
+- 任何规则文件创建/移动/删除 → AI MUST 同步更新 §8.2 任务菜单
+- 任何文件路径变更 → AI MUST 立即 grep 检查 §8.2 中是否引用旧路径
+- 任何新增规则文件 → AI MUST 判定归属任务类型并在 §8.2 添加路径
+- 任何不再有效的路径 → AI MUST 立即从 §8.2 移除
+
+**为什么不是重组目录结构**：业界一致做法——加载机制决定"AI 读什么"（globs/alwaysApply/progressive-disclosure），目录结构仍按人类逻辑组织。重组物理目录边际收益极低（§8.2 已实现按任务加载），但破坏性极大（82 目录 × 139+ 文档 × 80+ 脚本的全量引用链重构）。
 
 ## 7. AI 角色定位与思维方法论
 
@@ -766,7 +810,7 @@ AI 在本项目中的默认角色是**客观、不奉承的专业量化机构首
 | **修改/优化任何规则文件** | `meta/index.md` + `meta/glossary.md` + `meta/rule-lifecycle-and-change-standard.md` | ~2000 | ❌ 禁止全量读取 meta/ 下 12 个文件 |
 | **创建新标准文档** | `meta/index.md` + `meta/glossary.md` + `meta/document-structure-standard.md` + `meta/metadata-registry.md` §1~§4 | ~2500 | ❌ 禁止读 PS-STD-003 行为边界全文——仅按需查对应 ABS/COND 条目 |
 | **修改代码** | `meta/glossary.md` + `src/zephyr/shared/contracts/`；若修改 `scripts/governance/` 脚本 → 加读 `scripts/governance/quality-standard.md` | ~1500 | ❌ 禁止读 meta/ 其他规则文件——代码已有 pre-commit/CI 强制 |
-| **修改 config/ YAML 或审计配置** | `_registry/catalogs/declarative-contract-tracker.yaml`（必须先读） + `capabilities.yaml` + `validate_config_integrity.py`（跑基线） | ~800 | ❌ 禁止信任 config/ 下所有 YAML 都是运行时配置——3/6 个是声明式契约（CT-001~CT-003），代码不读它们 |
+| **修改 config/ YAML 或审计配置** | `_registry/catalogs/declarative-contract-tracker.yaml`（必须先读） + `capabilities.yaml` + `scripts/governance/d1_structure/validate_config_integrity.py`（跑基线） | ~800 | ❌ 禁止信任 config/ 下所有 YAML 都是运行时配置——3/6 个是声明式契约（CT-001~CT-003），代码不读它们 |
 | **审查规则体系一致性** | `meta/index.md` + `meta/glossary.md` + `meta/rule-classification-and-arbitration-standard.md` + `meta/rule-verification-standard.md` + `_registry/catalogs/rule-registry.md` | ~3500 | ❌ 禁止读 PS-STD-002 模板文件——审查读的是内容不是格式 |
 | **运行项目审计/扫描检查** | `scripts/governance/index.md` | ~600 | ❌ 禁止跳过审计直接施工——先跑 run_all.py 看当前状态 |
 | **查找/操作任何登记表/注册表** | `_registry/catalogs/registry-master-index.yaml` | ~800 | ❌ 禁止跨目录翻找 YAML——先查总索引再定位到具体登记表 |

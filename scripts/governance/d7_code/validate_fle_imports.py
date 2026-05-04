@@ -1,6 +1,17 @@
 """
 validate_fle_imports.py — FLE import 接口合规检测
 
+__manifest__ = """
+args: []
+description: FLE import 接口合规检测（COND-43 — import纪律）
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 COND-43~45（FLE import 实现类 / CoVe 异构）
      5 份 AI 工程接口规范（context-engine / agent-orchestrator / ...）
 

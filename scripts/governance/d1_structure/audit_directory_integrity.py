@@ -1,6 +1,21 @@
 """
 audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整性审计
 
+__manifest__ = """
+args: []
+description: 目录结构完整性审计（D1幽灵文件+D2 ID冲突+D3索引对账+D4命名规范+D5登记缺漏）
+dimensions:
+- D1
+- D2
+- D3
+- D4
+- D5
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 对标：ITIL 4 SACM §4.5（配置审计——CI登记完整性）
      ISO 11179 §5（元数据注册表——标识符唯一性）
      AGENTS.md §5.1（零记忆重启标准——索引↔磁盘一致）

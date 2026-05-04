@@ -13,7 +13,7 @@ language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_1_partial
 dependencies: []
 priority: P0
 tags:
@@ -81,8 +81,8 @@ summary: ZephyrAlpha 容量保障体系 2 完整蓝图 v2.1.0。覆盖 SLI/SLO �
 - L4-L8 交易业务层容量设计 → B5 任务系统
 - AI 自治权限全模块定义 → `_registry/catalogs/ai-autonomy-authority-registry.md`
 - 安全审计具体规则 → M5 LLM Security Gateway
-- Blameless Postmortem 流程 → `docs/01_policies_and_standards/governance/ai/`（Phase 2 补充）
-- Toil 量化指标 → `capacity_slo.yaml` Phase 2 补充
+- Blameless Postmortem 流程 → `docs/01_policies_and_standards/governance/ai/`（beta 补充）
+- Toil 量化指标 → `capacity_slo.yaml` beta 补充
 
 ---
 
@@ -110,9 +110,9 @@ summary: ZephyrAlpha 容量保障体系 2 完整蓝图 v2.1.0。覆盖 SLI/SLO �
 |---|------|------|------|------------|
 | 1 | SLO 配置 | YAML + Pydantic v2 | 零依赖运行时校验，Schema 即文档 | — |
 | 2 | 审计 Provenance 存储 | SQLite + hash 链 | 只追加 + 完整性校验，零运维 | — |
-| 3 | 容量指标采样 | structlog + OpenTelemetry SDK | 业界标准，Phase 1 即接入避免 Phase 4 重构 | — |
-| 4 | AI 审计守卫规则 | YAML 规则集 + Pydantic 校验 | 规则可演化，骨架 Phase 0 即上线 | — |
-| 5 | 治理闭环 | 自研 EMA + 阈值 + 持续时间 | 零依赖；Phase 4 升级 InfluxDB | — |
+| 3 | 容量指标采样 | structlog + OpenTelemetry SDK | 业界标准，experimental 即接入避免 stable 重构 | — |
+| 4 | AI 审计守卫规则 | YAML 规则集 + Pydantic 校验 | 规则可演化，骨架 scaffold 即上线 | — |
+| 5 | 治理闭环 | 自研 EMA + 阈值 + 持续时间 | 零依赖；stable 升级 InfluxDB | — |
 | 6 | 类型校验 | mypy + import-linter | 本地 + CI 双保险 | — |
 | 7 | 单元测试 | pytest + pytest-cov | 行业标准 | — |
 | 8 | 静态扫描 | ruff + bandit | 取代 pylint，速度快 100× | — |
@@ -176,7 +176,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 
 | 批次 | 文件数 | 触发条件 | 验收标准 |
 |------|-------|---------|---------|
-| 批 1 | 15 | Phase 1a 起步 | mypy 100% + ruff 0 + 单测 ≥80% |
+| 批 1 | 15 | experimental 起步 | mypy 100% + ruff 0 + 单测 ≥80% |
 | 批 2 | 15 | 批 1 验收 + 7 天稳定 | 同上 + 集成测试 |
 | 批 3 | 14 | 批 2 验收 + 14 天稳定 | 同上 + 跨批契约一致性 |
 
@@ -211,17 +211,17 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | M-19 | capacity_governance_loop.py | 容量治理闭环 | `src/zephyr/shared/capacity_governance_loop.py` | ❌ 未实现 | AI-Modifiable |
 | M-20 | ttl_cleanup_engine.py | 派生文件TTL清理 | `src/zephyr/shared/ttl_cleanup_engine.py` | ❌ 未实现 | AI-Modifiable |
 
-### 6.2 v2.0.0 新增模块（M-21~M-27）
+### 6.2 v2.0.0 新增模块（M-21~M-27）📋 全部规划中
 
-| 模块ID | 模块名称 | 职责 | 预期路径 | 对标来源 | AI自治权限 |
-|--------|---------|------|---------|---------|-----------|
-| M-21 | error_budget_tracker.py | Error Budget 五级响应追踪 + Burn Rate 多窗口监控 | `src/zephyr/shared/error_budget_tracker.py` | Google SRE Workbook | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） |
-| M-22 | kill_switch.py | 全局一键熔断 | `src/zephyr/shared/kill_switch.py` | AI Agent Observability Best Practices | Human-Gated |
-| M-23 | sandbox_executor.py | 高风险操作沙箱隔离 | `src/zephyr/shared/sandbox_executor.py` | AI Agent Observability Best Practices | Human-Gated |
-| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/capacity/degradation_chain.yaml` | AI Agent Cost Crisis Report | Human-Gated（链定义）/ AI-Modifiable（链选择） |
-| M-25 | reasoning_spans.py | Agent 推理步骤追踪（OTel 语义规范） | `src/zephyr/shared/reasoning_spans.py` | OpenTelemetry GenAI Semantic Conventions | AI-Modifiable |
-| M-26 | cost_estimator.py | 执行前成本预估（Pre-flight Estimation） | `src/zephyr/shared/cost_estimator.py` | AI Agent Rate Limiting | AI-Modifiable |
-| M-27 | semantic_cache.py | 语义缓存（复用 ChromaDB） | `src/zephyr/shared/semantic_cache.py` | Agent 成本控制实战 | AI-Modifiable |
+| 模块ID | 模块名称 | 职责 | 预期路径 | 对标来源 | AI自治权限 | 📋 |
+|--------|---------|------|---------|---------|-----------|----|
+| M-21 | error_budget_tracker.py | Error Budget 五级响应追踪 + Burn Rate 多窗口监控 | `src/zephyr/shared/error_budget_tracker.py` | Google SRE Workbook | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） | 规划中 |
+| M-22 | kill_switch.py | 全局一键熔断 | `src/zephyr/shared/kill_switch.py` | AI Agent Observability Best Practices | Human-Gated | 规划中 |
+| M-23 | sandbox_executor.py | 高风险操作沙箱隔离 | `src/zephyr/shared/sandbox_executor.py` | AI Agent Observability Best Practices | Human-Gated | 规划中 |
+| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/capacity/degradation_chain.yaml` | AI Agent Cost Crisis Report | Human-Gated（链定义）/ AI-Modifiable（链选择） | 规划中 |
+| M-25 | reasoning_spans.py | Agent 推理步骤追踪（OTel 语义规范） | `src/zephyr/shared/reasoning_spans.py` | OpenTelemetry GenAI Semantic Conventions | AI-Modifiable | 规划中 |
+| M-26 | cost_estimator.py | 执行前成本预估（Pre-flight Estimation） | `src/zephyr/shared/cost_estimator.py` | AI Agent Rate Limiting | AI-Modifiable | 规划中 |
+| M-27 | semantic_cache.py | 语义缓存（复用 ChromaDB） | `src/zephyr/shared/semantic_cache.py` | Agent 成本控制实战 | AI-Modifiable | 规划中 |
 
 ### 6.3 蓝图外已有实现（纳入蓝图管理）
 
@@ -283,7 +283,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | **2** | 完善集成 | 6-8 | ContractBus 批3 / fault_isolator / 故障域隔离 ≥3 / AISG 容量预算 | 成本预估器 + 语义缓存 + 容量预测模型 + Blameless Postmortem 模板 |
 | **3/4** | 服务化/实盘 | 按需 | 触发条件：模块 >300 OR 并发Agent >20 OR 真实资金接入 | VictoriaMetrics 后端选项 + Toil 量化指标 |
 
-### 7.3 Phase 0 验收标准（v2.0.0 更新）
+### 7.3 scaffold 验收标准（v2.0.0 更新）
 
 | 维度 | 标准 | 测量方式 |
 |------|------|---------|
@@ -572,11 +572,11 @@ async def trace_reasoning(agent_name: str, task: str, steps: list[str]):
 
 | 条件 | 动作 |
 |------|------|
-| 模块 > 300 OR 并发 Agent > 20 | Phase 3 服务化 |
-| 真实资金接入 | Phase 4 实盘生产 |
+| 模块 > 300 OR 并发 Agent > 20 | beta 服务化 |
+| 真实资金接入 | stable 实盘生产 |
 | 单进程 Python 500 模块极限 | 多进程 / 分布式事件总线 / 数据库分片 |
 | InfluxDB 成标准 | 替代自研 EMA 治理闭环 |
-| VictoriaMetrics 需求明确 | 替代 SQLite capacity_metrics 时序存储（Phase 3 选项） |
+| VictoriaMetrics 需求明确 | 替代 SQLite capacity_metrics 时序存储（beta 选项） |
 | Error Budget Critical 持续 1h | 自动触发 Kill Switch 保守模式 |
 
 **关键配置**：
@@ -663,7 +663,7 @@ slo_registry:
 | 风险 | 概率 | 缓解 | v2.0.0 变更 |
 |------|------|------|------------|
 | ContractBus 批 1 回归引发链式失败 | 中 | 分三批 + 7 天稳定期 + 自动回归 | — |
-| `ai_audit_guard` 误拦截阻断开发 | 低 | 骨架先上线（空规则）+ Phase 1b 增量 | — |
+| `ai_audit_guard` 误拦截阻断开发 | 低 | 骨架先上线（空规则）+ experimental 增量 | — |
 | 容量治理闭环 EMA 误报 | 中 | 阈值 + 持续时间双约束，调参周期 14 天 | — |
 | Error Budget 三级响应过度保守 | 中 | 阈值可调 + 14 天观察期 + Owner 可手动覆盖 | **v2.0.0 新增** |
 | Kill Switch 误触发 | 低 | 双通道确认（环境变量 + 文件信号）+ 触发需写 reason | **v2.0.0 新增** |
@@ -722,7 +722,7 @@ slo_registry:
 ### 16.3 自动恢复脚本
 
 ```bash
-# disaster_recovery.sh（Phase 0 骨架）
+# disaster_recovery.sh（scaffold 骨架）
 #!/bin/bash
 # 用法：bash scripts/governance/dr_recovery.sh [level]
 #   L1: 单文件恢复  L2: DB 恢复  L3: Provenance 恢复  L4: 全量恢复
@@ -789,7 +789,7 @@ esac
 ### 17.2 预测算法
 
 ```python
-# capacity_predictor.py（Phase 2 实现）
+# capacity_predictor.py（beta 实现）
 from typing import NamedTuple
 from datetime import timedelta
 
@@ -820,7 +820,7 @@ class CapacityPredictor:
 
 | 预测指标 | Warning 阈值 | Critical 阈值 | 触发动作 |
 |---------|------------|-------------|---------|
-| 预测模块数 30d | > 300 | > 500 | Critical → 启动 Phase 3 服务化准备 |
+| 预测模块数 30d | > 300 | > 500 | Critical → 启动 beta 服务化准备 |
 | 预测内存 30d | > 物理内存 70% | > 物理内存 90% | Critical → 触发 Kill Switch 保守模式 |
 | 预测成本 30d | > $150/day | > $300/day | Critical → 自动启用 Graceful Degradation |
 | 预测测试时长 30d | > 300s | > 600s | Warning → 并行化测试 |
@@ -844,7 +844,7 @@ class CapacityPredictor:
 
 ### 18.2 🔧 待实现集成（需 2 施工）
 
-#### 集成 1：Kill Switch ↔ Circuit Breaker（Phase 1a）
+#### 集成 1：Kill Switch ↔ Circuit Breaker（experimental）
 
 ```
 现有模块（circuit_breaker.py）  +  新模块（kill_switch.py）
@@ -872,7 +872,7 @@ class CBGManager:
                 cbg.force_open("kill_switch_readonly")
 ```
 
-#### 集成 2：Graceful Degradation ↔ Context Budget Tracker（Phase 1b）
+#### 集成 2：Graceful Degradation ↔ Context Budget Tracker（experimental）
 
 ```
 现有模块（context_budget_tracker.py）  +  新模块（degradation_chain.py）
@@ -899,7 +899,7 @@ def on_token_threshold(budget_state: BudgetState) -> DegradationAction:
         )
 ```
 
-#### 集成 3：Error Budget Tracker ↔ Agent Health Monitor（Phase 1b）
+#### 集成 3：Error Budget Tracker ↔ Agent Health Monitor（experimental）
 
 ```
 现有模块（agent_health_monitor.py）  +  新模块（error_budget_tracker.py）
@@ -924,7 +924,7 @@ def on_agent_health_changed(event: AgentHealthEvent):
         error_budget_tracker.set_burn_rate_multiplier(2.0, reason=f"{degraded_count} agents degraded")
 ```
 
-#### 集成 4：Sandbox ↔ Circuit Breaker + Kill Switch（Phase 1b）
+#### 集成 4：Sandbox ↔ Circuit Breaker + Kill Switch（experimental）
 
 ```
 新模块（sandbox_executor.py）  +  circuit_breaker.py  +  kill_switch.py

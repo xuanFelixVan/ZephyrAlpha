@@ -1,6 +1,22 @@
 """
 fix_shared_bypass.py — D-D-07 自动修复工具（validate_script_quality.py 的 --fix 搭档）
 
+__manifest__ = """
+args:
+- --fix
+- --dry-run
+- --no-backup
+description: D-D-07 自动修复——检测并修复本地重定义 _shared API 的违规（validate_script_quality.py 的
+  --fix 搭档）
+dimensions:
+- D11
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 对标：AGENTS.md §6.5（脚本自创入库强制约定）
       SCRIPT-QUALITY-001 D-D-07（禁止绕过 _shared 工具）
       ESLint --fix 模式（检测 + 自动修复）

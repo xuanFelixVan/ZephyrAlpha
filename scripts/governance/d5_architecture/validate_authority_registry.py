@@ -1,6 +1,17 @@
 """
 AI 自治权限注册表 pre-commit 自校验 (Authority Registry Validator · V-11)
 
+__manifest__ = """
+args: []
+description: AI自治权限注册表自校验（三层权限 / 必填字段 / 重复检测）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 任务编号 : T-V2-003（Wave 0 终审 R74 兜底）
 权限层级 : Immutable Core
 创建日期 : 2026-04-27

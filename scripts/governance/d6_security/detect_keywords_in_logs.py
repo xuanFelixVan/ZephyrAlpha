@@ -1,6 +1,17 @@
 """
 detect_keywords_in_logs.py — 日志输出敏感关键词检测
 
+__manifest__ = """
+args: []
+description: 日志输出敏感关键词检测（ABS-31 — 禁止 print/log 密钥密码）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-31（禁止在日志/print 中输出密钥、Token、密码等敏感信息）
 
 检测内容：

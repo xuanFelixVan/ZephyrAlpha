@@ -3,7 +3,7 @@ module_id: "MOD-INF-009"
 title: "Task Pipeline 蓝图 — M1-M11 双管线路由"
 doc_type: blueprint
 status: draft
-version: "0.1.1"
+version: "0.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -146,9 +146,9 @@ Orc.assign_session(node)
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | models.py + pipeline_orchestrator.py 骨架 | ✅ implemented |
-| Phase 1 | M1-M11 完整路由逻辑 + GOV-AI-002 决策树落地 | 📋 Backlog |
-| Phase 2 | 动态调路由——FLE反馈→调整复杂度估计→重新路由 | 📋 Backlog |
+| scaffold | models.py + pipeline_orchestrator.py 骨架 | ✅ implemented |
+| experimental | M1-M11 完整路由逻辑 + GOV-AI-002 决策树落地 | 📋 Backlog |
+| beta | 动态调路由——FLE反馈→调整复杂度估计→重新路由 | 📋 Backlog |
 
 ---
 
@@ -184,6 +184,47 @@ Orc.assign_session(node)
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+---
+
+## 8. 依赖关系（结构化）
+
+| 依赖目标 | 关系类型 | 为什么 |
+|------|:--:|------|
+| MOD-INF-006 (Task System) | runtime_call | 读取 TaskCard → route() → PipelineNode |
+| MOD-INF-007 (Gate Engine) | pre_check | route() 前 G6 检查——AI 是否已读蓝图 |
+| MOD-INF-008 (Context Engine) | config_consume | blueprint_routing.yaml → 触发路由匹配 |
+| MOD-INF-010 (Feedback Loop) | feedback_to | FLE 反馈→调复杂度估计→重新路由 |
+| MOD-INF-003 (Orchestrator) | upstream | Orc.create_task() → Pipeline.route() → Orc.assign_session() |
+| `architecture-model/layers/b_pipeline.yaml` | ssoT | Pipeline YAML canonical source |
+
+## 9. 产出物存放目录
+
+| 产出物 | 路径 |
+|------|------|
+| 管线编排器 | `src/zephyr/pipeline/pipeline_orchestrator.py` |
+| 管线模型 | `src/zephyr/pipeline/models.py` |
+| 蓝图路由配置 | `config/blueprint_routing.yaml` |
+| 触发路由器 | `src/zephyr/orchestrator/trigger_router.py` |
+| MCP 蓝图搜索 | `src/zephyr/mcp/blueprint_search_server.py` |
+| 管线测试 | `tests/unit/test_pipeline_orchestrator.py` |
+
+## 10. 集成目标
+
+| 集成目标 | 状态 | 验证方式 |
+|------|:--:|------|
+| M1-M11 完整路由逻辑 | 📋 Backlog | 路由决策树单元测试 |
+| G6 硬合规集成——route()前触发blueprint_read_check | ✅ 已实现 | beta session_simulator |
+| blueprint_routing.yaml 路由表 SSoT | ✅ 已实现 | 19 条 route + keyword 修复 |
+| 动态调路由（FLE反馈→重新路由） | 📋 Backlog | beta Phase |
+
+## 11. 需要更新的相关内容
+
+当本蓝图变更时，同步更新：
+1. `config/blueprint_routing.yaml` — 路由项 keywords/path_patterns/priority
+2. `src/zephyr/mcp/blueprint_search_server.py` — routing 配置路径
+3. `src/zephyr/orchestrator/trigger_router.py` — blueprint_lookup handler
+4. `docs/03_modules/_master-blueprint/blueprint.md` — MOD-MASTER-001 §2.7 CT-PIPE-ORC-001
 
 ---
 

@@ -1,6 +1,17 @@
 """
 validate_p0_module_contracts.py — P0 模块契约校验
 
+__manifest__ = """
+args: []
+description: P0 模块契约校验（MAD-005 — frozen契约+ADR+runtime_plane）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：MAD-005（P0 模块额外条件）
 
 检测内容：

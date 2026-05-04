@@ -1,5 +1,5 @@
 """
-批量入库 — Phase 0 P0/P1 知识候选批量入库（T-2-14）
+批量入库 — scaffold P0/P1 知识候选批量入库（T-2-14）
 =====================================================
 依据：AGENTS.md §5.2-5.3、
      docs/19_development_workspace/archive/old-tree-migration-input/old-tree-asset-triage-matrix.md

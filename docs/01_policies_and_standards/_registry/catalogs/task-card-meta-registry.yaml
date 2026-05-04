@@ -63,14 +63,14 @@ systems:
       - {task_id: T-V2-001, title: V-12 蓝图真源准入门禁骨架, priority: P0, est_hours: 4-6, status: done, model: Sonnet, source: Wave-0}
       - {task_id: T-V2-002, title: V-13 任务卡元层登记表落地, priority: P0, est_hours: 2-3, status: done, model: Opus, source: Wave-0}
       - {task_id: T-V2-003, title: V-11 登记表 pre-commit 自校验集成, priority: P0, est_hours: 2-4, status: ready, model: GLM-5.1, source: Wave-0}
-      # ── Wave 1 Phase 1a-1g 施工任务（B6 落地）──
-      - {task_id: T-V2-004, title: Phase 1a CBAC 最小版（capabilities.yaml + capability.py）, priority: P0, est_hours: 16, status: ready, model: GLM-5.1, source: Wave-1}
-      - {task_id: T-V2-005, title: Phase 1b CBG + L2a 沙箱 + L08 注册, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
-      - {task_id: T-V2-006, title: Phase 1c M1 扩展 + CL-017 system_snapshot + CL-018 DocCompressor, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
-      - {task_id: T-V2-007, title: Phase 1d RI-02 unified_memory_api + RI-03 trigger_router, priority: P0, est_hours: 40, status: ready, model: Opus, source: Wave-1}
-      - {task_id: T-V2-008, title: Phase 1e RI-04 reflection_loop + RI-05 sandbox + CL-021 EditorConfigGate, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
-      - {task_id: T-V2-009, title: Phase 1f RI-06 auto_loader + RI-07 drift_detector, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
-      - {task_id: T-V2-010, title: Phase 1g CL-019 升级 ai-onboarding-guide.md 核心思想章, priority: P1, est_hours: 8, status: ready, model: GLM-5.1, source: Wave-1}
+      # ── Wave 1 experimental-1g 施工任务（B6 落地）──
+      - {task_id: T-V2-004, title: experimental CBAC 最小版（capabilities.yaml + capability.py）, priority: P0, est_hours: 16, status: ready, model: GLM-5.1, source: Wave-1}
+      - {task_id: T-V2-005, title: experimental CBG + L2a 沙箱 + L08 注册, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-006, title: experimental M1 扩展 + CL-017 system_snapshot + CL-018 DocCompressor, priority: P0, est_hours: 24, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-007, title: experimental RI-02 unified_memory_api + RI-03 trigger_router, priority: P0, est_hours: 40, status: ready, model: Opus, source: Wave-1}
+      - {task_id: T-V2-008, title: experimental RI-04 reflection_loop + RI-05 sandbox + CL-021 EditorConfigGate, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-009, title: experimentalf RI-06 auto_loader + RI-07 drift_detector, priority: P0, est_hours: 40, status: ready, model: Sonnet, source: Wave-1}
+      - {task_id: T-V2-010, title: experimentalg CL-019 升级 ai-onboarding-guide.md 核心思想章, priority: P1, est_hours: 8, status: ready, model: GLM-5.1, source: Wave-1}
       # ── Wave 1 V-14/V-15/V-16 兜底任务 ──
       - {task_id: T-V2-011, title: V-14 BlueprintOverlapMergeGate 骨架 + GATE-13（warn-only）, priority: P1, est_hours: 12, status: ready, model: GLM-5.1, source: Wave-1}
       - {task_id: T-V2-012, title: V-15 TruthSourceCascadeValidator 骨架 + 影响追踪报告, priority: P1, est_hours: 16, status: ready, model: Sonnet, source: Wave-1}
@@ -178,7 +178,7 @@ revision_history:
     author: Claude-Opus-4.7（Wave 1 终审）
     changes: |
       Wave 1 终审下发 10 张施工任务卡（T-V2-004~T-V2-013），导致 v2_staging_zone 限额从 5 提升到 15：
-      - 新增 7 张 Phase 1a-1g 施工卡（CBAC / CBG / M1 扩展 / RI-02 RI-03 / RI-04 RI-05 / RI-06 RI-07 / CL-019）
+      - 新增 7 张 experimental-1g 施工卡（CBAC / CBG / M1 扩展 / RI-02 RI-03 / RI-04 RI-05 / RI-06 RI-07 / CL-019）
       - 新增 3 张 V-14/V-15/V-16 兜底卡（BlueprintOverlapMergeGate / TruthSourceCascadeValidator / DraftsZoneLifecycleArchiver）
       - 每张任务卡 frontmatter 新增 model 字段（GLM-5.1 / Sonnet / Opus 三选一）
       - 现有 T-V2-001/002 状态 ready → done（artifact 已落地）

@@ -4,7 +4,7 @@ doc_type: register
 title: "Embedding Model Registry"
 status: active
 ttl: permanent
-implementation_status: "Phase 1 declarative contract — EmbeddingMigrator uses KNOWN_MODELS hardcoded dict (must stay in sync). Future: load from this YAML."
+implementation_status: "experimental declarative contract — EmbeddingMigrator uses KNOWN_MODELS hardcoded dict (must stay in sync). Future: load from this YAML."
 
 models:
   # constraint: exactly one model must have default: true (SSoT for default model selection)

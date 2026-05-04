@@ -439,7 +439,7 @@ class TestRunIntegration:
         assert "docs/a.md" in result.warnings[0]
 
     def test_run_exit_code_is_always_zero(self, tmp_path: Path):
-        """Phase 1 warn-only：即使有告警，exit code = 0（本测试验证不抛出异常）。"""
+        """experimental warn-only：即使有告警，exit code = 0（本测试验证不抛出异常）。"""
         log = self._make_log(tmp_path, [])
         reports = tmp_path / "reports"
         try:

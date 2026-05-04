@@ -6,7 +6,7 @@ partition:
   bounded_context: true
   umbrella_layer: l12
   status: skeleton
-  note: "Phase 1 过渡期 — 现由 src/zephyr/kb/ 承担部分能力，Phase 3 整合"
+  note: "experimental 过渡期 — 现由 src/zephyr/kb/ 承担部分能力，beta 整合"
 
 modules:
   - id: vms-core
@@ -18,7 +18,7 @@ modules:
     description: >
       向量化存储与检索 — ChromaDB 0.6 + BGE-M3 ONNX (本地推理)。
       5大 Collection: decisions / code_context / lessons / knowledge / runtime_logs。
-      Phase 3 整合 kb/ 能力入 InProcessVectorMemory 实现。
+      beta 整合 kb/ 能力入 InProcessVectorMemory 实现。
     files: []
     interfaces: []
     adr_ref:

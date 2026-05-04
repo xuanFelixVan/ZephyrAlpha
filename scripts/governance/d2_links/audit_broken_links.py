@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """断链审计（Broken Link Auditor）- Stage H N-04 前置
 
+__manifest__ = """
+args: []
+description: 内部链接与交叉引用有效性检查
+dimensions:
+- D2
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 扫描整个  仓库中所有 Markdown 文件的链接：
   1. 相对路径链接 `[text](./xxx.md)` / `[text](../xxx.md)` / `[text](xxx.md)`
   2. 根相对链接 `[text](/path/xxx.md)` → 视为 repo-relative

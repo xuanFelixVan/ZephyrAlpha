@@ -1,6 +1,17 @@
 """
 detect_missing_encoding.py — open() 缺 encoding 检测
 
+__manifest__ = """
+args: []
+description: open() 缺 encoding 检测（ABS-24 — Python写文件必须指定encoding='utf-8'）
+dimensions:
+- D7
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：ABS-24（Python 写文件必须指定 encoding='utf-8'）
      AGENTS.md §4 编码安全（唯一始终生效的硬规则）
 

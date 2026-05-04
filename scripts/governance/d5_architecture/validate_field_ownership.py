@@ -1,6 +1,17 @@
 """
 validate_field_ownership.py — frontmatter 字段归属校验
 
+__manifest__ = """
+args: []
+description: frontmatter 字段归属校验（ABS-19/20 — SSoT原则）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：PS-STD-003 ABS-19~20（不在非权威文件改权威字段 / 不重复定义 PS-STD-001 字段）
      AGENTS.md §5.1（SSoT 原则——同一概念只在一个文件中定义）
 

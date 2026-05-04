@@ -15,7 +15,7 @@ valid_from: 2026-05-02
 ttl: permanent
 construction_progress: phase_1_complete
 superseded_by: MOD-INF-006
-completion_note: "Phase 1 构建完成——核心代码(task_card解析/serialize/schema/gates)已实现。内容已于2026-05-02升级并入 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留，不可删除——有新需求应走蓝图升级流程重开(§八·铁律三)。"
+completion_note: "experimental 构建完成——核心代码(task_card解析/serialize/schema/gates)已实现。内容已于2026-05-02升级并入 MOD-INF-006 task-system。本蓝图记录已完成工作，永久保留，不可删除——有新需求应走蓝图升级流程重开(§八·铁律三)。"
 priority: P1
 tags:
   - task-card
@@ -107,7 +107,7 @@ summary: ZephyrAlpha 任务卡制度 + KMS 知识管理体系蓝图。覆盖 10 
 task_id: "TASK-PH1-003"
 blueprint_ref: "03_modules/l01_infrastructure/capacity-assurance/blueprint.md"
 construction_plan_ref: "03_modules/l01_infrastructure/capacity-assurance/construction-plan.md"
-phase: "Phase 1a"
+phase: "experimental"
 status: in_progress
 deps:
   - TASK-PH0-002
@@ -175,7 +175,7 @@ CANCELLED   → （终态）
 
 | 消费者 | 依赖内容 | 同步要求 |
 |--------|---------|---------|
-| `src/zephyr/schemas.py` TaskStatus | 10 状态枚举 | 枚举变更同 commit 更新 |
+| `src/zephyr/shared/schemas.py` TaskStatus | 10 状态枚举 | 枚举变更同 commit 更新 |
 | `src/zephyr/db/sqlite_schema.py` | DDL CHECK 约束 | DDL 变更需迁移脚本 |
 | `scripts/governance/check_handoff_protocol.py` | 任务状态校验 | 状态语义变更需同步 |
 
@@ -253,7 +253,7 @@ CANCELLED   → （终态）
 
 ## 10. 实际代码实现情况（Code Implementation Status）
 
-> **本节记录蓝图对应的实际代码，证明 Phase 1 构建确实完成——非纸面设计。**
+> **本节记录蓝图对应的实际代码，证明 experimental 构建确实完成——非纸面设计。**
 
 | 代码文件 | 对应蓝图节 | 实现内容 |
 |---------|:---:|------|
@@ -264,7 +264,7 @@ CANCELLED   → （终态）
 | `src/zephyr/gates/task_completion_gate.py` | §5.3 G7 | G7 任务完成门禁 |
 | `src/zephyr/gates/g4_activate.yaml` | §5.3 G4 | KMS 条目 Schema 校验配置 |
 
-**实现判定**：Phase 1 蓝图所述的核心功能（任务卡 Schema、10 状态机、G0-G7 门禁、Pipeline 派发、KMS 三层漏斗）均有对应磁盘代码——非空设计文档。
+**实现判定**：experimental 蓝图所述的核心功能（任务卡 Schema、10 状态机、G0-G7 门禁、Pipeline 派发、KMS 三层漏斗）均有对应磁盘代码——非空设计文档。
 
 > **历史溯源**：原始施工图由 Wave 0 终审产出。2026-05-01 迁入 `03_modules/l01_infrastructure/task-card-kms/blueprint.md`，内容保留，结构按蓝图模板重组。
 
@@ -274,7 +274,7 @@ CANCELLED   → （终态）
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 任务卡+KMS——Phase 1构建完成，已升级为MOD-INF-006
+> 任务卡+KMS——experimental构建完成，已升级为MOD-INF-006
 
 ### 11.1 源码文件
 

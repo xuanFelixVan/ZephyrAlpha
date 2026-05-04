@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
+
+__manifest__ = """
+args: []
+description: 增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
+等价于: python run_all.py --diff-ref HEAD~1 --warn-only
+
+Usage:
+    python run_incremental.py [--diff-ref HEAD~1] [--verbose]
+"""
+from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(_SCRIPT_DIR.parent)
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from run_all import (
+    main,
+    _get_changed_files,
+    _map_files_to_dimensions,
+    _get_registry,
+    Dimension,
+)
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="增量扫描 — 仅扫描变更相关脚本")
+    parser.add_argument("--diff-ref", default="HEAD~1",
+                        help="git diff 参考点（默认 HEAD~1）")
+    parser.add_argument("--verbose", "-v", action="store_true",
+                        help="详细输出")
+    args = parser.parse_args()
+
+    changed = _get_changed_files(args.diff_ref)
+    if not changed:
+        print(f"git diff {args.diff_ref} 无变更，跳过", file=sys.stderr)
+        sys.exit(0)
+
+    dims = _map_files_to_dimensions(changed)
+    registry = _get_registry()
+    relevant_scripts = {
+        n for n, m in registry.items()
+        if frozenset(m["dimensions"]) & frozenset(Dimension(d) for d in dims)
+    }
+
+    print(f"\n[增量扫描] diff-ref={args.diff_ref}", file=sys.stderr)
+    print(f"  变更文件: {len(changed)}", file=sys.stderr)
+    for f in sorted(changed)[:10]:
+        print(f"    {f}", file=sys.stderr)
+    if len(changed) > 10:
+        print(f"    ... 共 {len(changed)} 个", file=sys.stderr)
+    print(f"  相关维度: {', '.join(sorted(dims))} ({len(dims)} 个)", file=sys.stderr)
+    print(f"  相关脚本: {len(relevant_scripts)}/{len(registry)}", file=sys.stderr)
+    print()
+
+    sys.argv = [
+        sys.argv[0],
+        "--dimensions", *sorted(dims),
+        "--warn-only",
+        "--output", f"reports/incremental_findings_{args.diff_ref.replace('/', '_').replace(' ', '_')}.jsonl",
+    ]
+    if args.verbose:
+        sys.argv.append("--verbose")
+
+    main()

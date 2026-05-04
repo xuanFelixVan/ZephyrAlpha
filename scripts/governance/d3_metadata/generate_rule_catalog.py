@@ -2,6 +2,17 @@
 """
 generate_rule_catalog.py - Scan frontmatter and generate rule-catalog.yaml
 
+__manifest__ = """
+args: []
+description: 规则目录自动生成工具
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 Scans all .md/.yaml files under 01_policies_and_standards/,
 parses their frontmatter, and generates a YAML catalog.
 

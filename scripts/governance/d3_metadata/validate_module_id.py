@@ -3,6 +3,17 @@ GATE-MODULEID: Validate module_id uniqueness and index/file consistency.
 Eliminates module_id collision and index-file mismatch—the root cause of
 MODULE_ID DRIFT identified in 6th audit.
 
+__manifest__ = """
+args: []
+description: 'GATE-MODULEID: Validate module_id uniqueness and index/file consistency.'
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 Dimensions:
   DIM-1: module_id uniqueness — no two files share the same module_id
   DIM-2: index-file consistency — index.md module_id claims match file frontmatter

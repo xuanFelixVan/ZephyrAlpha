@@ -26,7 +26,7 @@
 #   - 根因: 字段定义散落在 PS-STD-001 + vocabulary/ + schema.json 三处
 #   - 修复: 本登记表建立唯一字段定义真源 → VR-005 从此引用本表
 #
-# 自校验脚本: （Phase 1 补齐——validate_frontmatter_field_registry.py）
+# 自校验脚本: （experimental 补齐——validate_frontmatter_field_registry.py）
 # ============================================================================
 
 schema_version: "1.0.0"
@@ -157,7 +157,7 @@ fields:
     default: "ZephyrAlpha-Owner"
     note: ""
 
-  # ── 常用可选字段（Phase 0 起即广泛使用）──
+  # ── 常用可选字段（scaffold 起即广泛使用）──
   - field_name: layer
     type: enum
     required: optional
@@ -583,7 +583,7 @@ fields:
     applicable_docs: []
     description: "知识条目内容类型——10 值"
     source: "PS-STD-001 §9.1"
-    note: "KMS 知识条目专用，Phase 2 落地"
+    note: "KMS 知识条目专用，beta 落地"
 
   - field_name: domain
     type: enum
@@ -603,7 +603,7 @@ fields:
     applicable_docs: []
     description: "知识条目业务领域——10 值"
     source: "PS-STD-001 §9.2"
-    note: "KMS 知识条目专用，Phase 2 落地"
+    note: "KMS 知识条目专用，beta 落地"
 
 # ============================================================================
 # 汇总统计

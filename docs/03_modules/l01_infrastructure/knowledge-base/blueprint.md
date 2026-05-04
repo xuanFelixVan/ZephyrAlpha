@@ -13,7 +13,7 @@ date: "2026-05-02"
 valid_from: "2026-05-02"
 ttl: permanent
 construction_progress: phase_1_partial
-summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵) → 存储(§7三层存储+§7.8灾备) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨18类知识分类（A1-A8+B1-B7+C1-C3）+ Track D AI-AI协作预留（D1-D3，Phase 3实现）+ KO→KE→KB三级漏斗 + KE Schema字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。Phase 1代码已实现(12模块/3600行)，4持续建设。"
+summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵) → 存储(§7三层存储+§7.8灾备) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨18类知识分类（A1-A8+B1-B7+C1-C3）+ Track D AI-AI协作预留（D1-D3，beta实现）+ KO→KE→KB三级漏斗 + KE Schema字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。experimental代码已实现(12模块/3600行)，4持续建设。"
 tags: [knowledge-base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline]
 priority: P0
 depends_on:
@@ -76,7 +76,7 @@ depends_on:
 |-----------|---------|
 | 任务系统的 TaskCard 状态机和任务生命周期 | MOD-INF-006（任务系统蓝图） |
 | 上下文引擎的 Token 预算追踪和注入策略 | `context_engine/` 模块（ADR-0015） |
-| VMS（Vector Memory Service）的 `InProcessVectorMemory` | `src/zephyr/vector_memory/`（Phase 3 目标，当前空包） |
+| VMS（Vector Memory Service）的 `InProcessVectorMemory` | `src/zephyr/vector_memory/`（beta 目标，当前空包） |
 | Session Log 的结构和交接协议 | `_registry/schemas/session-log-schema.yaml` |
 | 蓝图的结构注册和治理 | 各模块 `blueprint.md`（本蓝图只管理知识库自身的蓝图） |
 | **脚本系统的 12 维度审计结果**（MEDIUM Finding → KB 入库） | **MOD-INF-005 §6.3 + §6.6**（脚本系统蓝图——C4→G1 数据流） |
@@ -189,7 +189,7 @@ depends_on:
 | `ke_id` | str | ✅ | 全局唯一标识，格式 `KE-{NNN}`（3位递增编号），代码真源在 `kb_repo.py` |
 | `title` | str (≤100) | ✅ | 知识标题 |
 | `body` | str | ✅ | 知识正文（Markdown 格式） |
-| `category` | enum | ✅ | 知识分类：15 类双轨体系（§3.8）。**Phase 2 迁移**（KB-INF-0022）：当前仍沿用旧 10 类枚举→逐步迁移至 Track A（8类）+ Track B（7类） |
+| `category` | enum | ✅ | 知识分类：15 类双轨体系（§3.8）。**beta 迁移**（KB-INF-0022）：当前仍沿用旧 10 类枚举→逐步迁移至 Track A（8类）+ Track B（7类） |
 | `domain` | enum | ✅ | 业务域：10域枚举（对齐 PS-STD-004 §5） |
 | `layer` | enum | ✅ | 架构层：14层枚举（对齐 `triage.py` VALID_LAYERS） |
 | `source_type` | enum | ✅ | 来源类型：`adr` / `blueprint` / `session_log` / `candidate_pool` / `external_paper` / `github_repo` |
@@ -216,7 +216,7 @@ depends_on:
 
 **字段稳定性分级**（对标 CTR-001~CTR-006 `stability: locked-5yr`）：
 
-KE Schema 的 28 个字段同样需要稳定性承诺——Phase 2/3 代码会依赖这些字段名和类型，随意变更会破坏下游消费者。
+KE Schema 的 28 个字段同样需要稳定性承诺——beta/3 代码会依赖这些字段名和类型，随意变更会破坏下游消费者。
 
 | 分级 | 字段 | 含义 | 变更规则 |
 |:---:|------|------|---------|
@@ -619,12 +619,12 @@ quality_score = (
 > **对标**：n1n.ai (2026) 三优先级分类——HIGH 直接 LTM、MID 走 MTM 晋升队列（"≥2 references → consolidate to LTM"）、LOW 丢弃。Vasilopoulos trigger table——"automatically routes tasks to appropriate specialized agents based on observable signals"。
 > 大白话：三轨各有分工——Track A（施工知识）是"怎么盖房子"，强制执行；Track B（金融知识）是"盖什么房子"，强制执行；Track C（Owner 画像）是"老板喜欢什么风格"，仅参考不强制——30 天没人提就自动过期，因为人的偏好会变。
 
-#### Track D：AI-AI 协作知识（Phase 3+ 预留接口）
+#### Track D：AI-AI 协作知识（beta+ 预留接口）
 
-> **状态**：`planned`——分类桩已就位，接口契约已定义，Phase 3 之前不实现提取/入库逻辑。
+> **状态**：`planned`——分类桩已就位，接口契约已定义，beta 之前不实现提取/入库逻辑。
 > **为什么现在就要定义**：§6.3 埋雷判定——如果等 1000+ KE 入库后再补 AI-AI 协作分类，全量重新打标的工量 = 埋雷。现在定义空壳 = 零成本的"接口预留位"。
 
-**场景**（Phase 3 未来状态）：
+**场景**（beta 未来状态）：
 
 | 场景 | 描述 | 产生什么知识 |
 |------|------|------------|
@@ -633,18 +633,18 @@ quality_score = (
 | Agent 交叉审查 | Agent A 写的 ADR → Agent B 审查 → 发现问题 | 审查发现（Agent B 发现了 Agent A 的什么盲区） |
 | 多 Agent 投票 | 3 个 Agent 对同一问题给出不同答案 → 投票裁决 | 投票模式（哪个 Agent 的方案更正确/更高效） |
 
-**Track D 分类桩（3 类，Phase 3 实现）**：
+**Track D 分类桩（3 类，beta 实现）**：
 
-| # | `category` | 含义 | 优先级 | `halflife_h` | 典型来源 | 示例（Phase 3 才产生） |
+| # | `category` | 含义 | 优先级 | `halflife_h` | 典型来源 | 示例（beta 才产生） |
 |:--:|-----------|------|:---:|:---:|---------|------|
 | D1 | `agent_collab_pattern` | Agent 协作模式 | — | — | 双 Agent 讨论日志 | "Agent B 挑战了 Agent A 的 SQLite 选型，最终 Agent A 引用 ChromaDB 官方文档胜出" |
 | D2 | `agent_expertise_profile` | Agent 能力画像 | — | — | 交叉审查记录 | "Agent Qwen 在编码约定类偏差最大（20% 违反 A1 规则），建议加强 A1 上下文注入" |
 | D3 | `multi_agent_decision` | 多 Agent 联合决策 | — | — | 投票日志 | "3/3 Agent 一致选择 ruff；2/3 Agent 建议 pytest -x 而非 pytest --lf" |
 
-**接口契约（现在定义，Phase 3 实现）**：
+**接口契约（现在定义，beta 实现）**：
 
 ```python
-# Phase 3 新建：src/zephyr/kb/agent_collab.py
+# beta 新建：src/zephyr/kb/agent_collab.py
 
 def extract_agent_discussion(
     agent_a_id: str,
@@ -671,7 +671,7 @@ def record_multi_agent_vote(
     ...
 ```
 
-> **预留原则**：分类桩已在蓝图中注册（= "这个地方以后会有内容"），`KeCategory` 枚举先不加 D1-D3（避免 `schemas.py` 出现未实现的枚举值导致运行时 KeyError），待 Phase 3 统一启用。蓝图 = 设计图，代码 = 施工成果——设计图可以先画，施工可以分批。
+> **预留原则**：分类桩已在蓝图中注册（= "这个地方以后会有内容"），`KeCategory` 枚举先不加 D1-D3（避免 `schemas.py` 出现未实现的枚举值导致运行时 KeyError），待 beta 统一启用。蓝图 = 设计图，代码 = 施工成果——设计图可以先画，施工可以分批。
 > **对标**：Terraform provider contract —— 接口先定义、实现可分批 / K8s API versioning —— `planned` 状态的 API 不进 `v1` 但已在设计文档中注册
 
 > **大白话**：未来会有多个 AI 互相讨论、互相审查、互相投票——它们之间的互动也会产生知识（哪个 Agent 更擅长什么、两个 Agent 讨论后谁的方案更好）。但现在没到那个阶段——现在只有 Owner+AI 两个人，不需要多个 AI 之间的协作知识。所以我们先在蓝图里画好"预留停车位"（Track D + 接口），等真需要的时候再盖车库——不用回头拆墙重建。
@@ -897,7 +897,7 @@ handoff_package_path: "docs/19_development_workspace/session-logs/handoff-047.md
 ```
 36 份旧 ADR (docs/02_enterprise_architecture/adr/)
       │
-      ▼ 首次运行 adr_migrate.py（Phase 2 单次执行）
+      ▼ 首次运行 adr_migrate.py（beta 单次执行）
       │
 每份 ADR → 提取一句结论 + category + priority
       │
@@ -1101,7 +1101,7 @@ kb:
 │   │   ├── index/                 #   Chroma 自动生成——HNSW 向量索引 binary
 │   │   └── {collection_uuids}/    #   Chroma 自动生成——每 Collection 独立 Segment
 │   └── cache/                     # 推理缓存（模型权重）
-│       └── bge-reranker-v2-m3/    #   Reranker 模型 (~1.2GB, Phase 2 下载)
+│       └── bge-reranker-v2-m3/    #   Reranker 模型 (~1.2GB, beta 下载)
 │
 ├── docs/
 │   └── 08_knowledge/              # Markdown KE 文件（图书馆——§4.2）
@@ -1163,7 +1163,7 @@ src/zephyr/kb/
 ├── [G5] extract.py            # G5 提取门禁：知识提取 + 外部注入（361行）✅
 │
 ├── batch_ingest.py            # 批量入库：Session Log→KE 自动提取（227行）✅
-├── reranker.py                # 两阶段检索重排序：Cross-Encoder BGE-reranker-v2-m3（Phase 2 新增）📋
+├── reranker.py                # 两阶段检索重排序：Cross-Encoder BGE-reranker-v2-m3（beta 新增）📋
 ├── graph_validator.py         # 图谱完整性校验：depends_on→DAG→深度≤3（275行）✅
 ├── embedding_migrate.py       # Embedding 模型迁移管线：升级/降级/回滚（313行）✅
 │
@@ -1176,7 +1176,7 @@ src/zephyr/kb/
     └── cross_agent_consistency.py # 跨Agent知识一致性校验
 ```
 
-> **✅ 表示 Phase 1 已实现**（12 个 Python 模块，约 3600 行代码）。
+> **✅ 表示 experimental 已实现**（12 个 Python 模块，约 3600 行代码）。
 
 ### 4.2 知识数据层（`docs/08_knowledge/`）——KE 物理文件
 
@@ -1275,7 +1275,7 @@ src/zephyr/db/chroma/
 | `blueprints` | 蓝图文档向量 | 384d | 蓝图检索 |
 | `failure_patterns` | 失败模式/反模式 | 384d | 历史教训检索 |
 
-> **Embedding 模型版本**：当前 2 默认 `all-MiniLM-L6-v2`（384d，ChromaDB 默认），中文场景降级到 `BGE-small-zh-v1.5`（512d），Phase 3 目标 `BGE-M3`（1024d）。详见 [embedding_model_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/config/embedding_model_registry.yaml)。
+> **Embedding 模型版本**：当前 2 默认 `all-MiniLM-L6-v2`（384d，ChromaDB 默认），中文场景降级到 `BGE-small-zh-v1.5`（512d），beta 目标 `BGE-M3`（1024d）。详见 [embedding_model_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/config/embedding_model_registry.yaml)。
 
 ---
 
@@ -1393,13 +1393,13 @@ AI Session 启动
        ▼
 [unified_memory_api.recall()]
        │
-       │  Phase 1 粗筛：向量语义检索 (ChromaDB ke_entries) → Top 50
+       │  experimental 粗筛：向量语义检索 (ChromaDB ke_entries) → Top 50
        │  + 标签过滤 (SQLite)
        │
        ▼
 [reranker.py]
        │
-       │  Phase 2 精排：Cross-Encoder (BGE-reranker-v2-m3)
+       │  beta 精排：Cross-Encoder (BGE-reranker-v2-m3)
        │  逐一打分 (query, each KE) → Top 10
        │  + 新鲜度排序
        │
@@ -1471,10 +1471,10 @@ AI Session 启动
 ```
 recall() 升级为两阶段检索
 
-Phase 1（粗筛）：ChromaDB 向量语义检索 → Top 50
+experimental（粗筛）：ChromaDB 向量语义检索 → Top 50
        │
        ▼
-Phase 2（精排）：本地 Cross-Encoder 重排序 → Top 10
+beta（精排）：本地 Cross-Encoder 重排序 → Top 10
        │  模型：BGE-reranker-v2-m3（~200MB，支持中英双语）
        │  延迟：50条 × ~4ms/条 ≈ 200ms
        │        总召回+重排 < 500ms ✅ 可接受
@@ -1483,15 +1483,15 @@ Phase 2（精排）：本地 Cross-Encoder 重排序 → Top 10
 ```
 
 **与 ChromaDB 的集成方式**：
-- Phase 1 保持现有 `kb_repo.query()` chrome 查询不变
-- Phase 2 在 `unified_memory_api.recall()` 中新增 `rerank()` 步骤
+- experimental 保持现有 `kb_repo.query()` chrome 查询不变
+- beta 在 `unified_memory_api.recall()` 中新增 `rerank()` 步骤
 - 新模块：`src/zephyr/kb/reranker.py`——CrossEncoder 包装层
 
 **降级策略**：
 - 若 `BGE-reranker-v2-m3` 加载失败（首次运行需下载）→ 降级为纯 ChromaDB Top-10（当前行为）
 - 若重排延迟 > 1s → 跳过重排，日志警告
 
-> **对标**：Cohere Rerank API 是行业标准——"不重排的 RAG 就像不校对的书"。Phase 2 500 KE 时不做重排，AI 拿到的 10 条 KE 中平均有 3-4 条不相关。
+> **对标**：Cohere Rerank API 是行业标准——"不重排的 RAG 就像不校对的书"。beta 500 KE 时不做重排，AI 拿到的 10 条 KE 中平均有 3-4 条不相关。
 > 大白话：现在检索是"从书架拿前 10 本书"。升级后是"先拿 50 本，再仔细挑出真正有用的 10 本"。多花 0.2 秒，给 AI 的资料质量升一个档次。
 
 ### 5.10 知识切片机制（Knowledge Slicing）
@@ -1591,10 +1591,10 @@ Phase 2（精排）：本地 Cross-Encoder 重排序 → Top 10
   │     │                                                    │
   │     ├─→ D0 四轮知识管理流水线（011 GLM→022 Kimi→033 Qwen→044 Opus）│
   │     │                                                      │
-  │     │   Phase 1（011 GLM）：  从原文提取知识块 → KO 草稿  │
-  │     │   Phase 2（022 Kimi）： 结构化——补全 category/tags  │
-  │     │   Phase 3（033 Qwen）： 索引——写入 ChromaDB+SQLite  │
-  │     │   Phase 4（044 Opus）： 终审——检查与前3轮的一致性   │
+  │     │   experimental（011 GLM）：  从原文提取知识块 → KO 草稿  │
+  │     │   beta（022 Kimi）： 结构化——补全 category/tags  │
+  │     │   beta（033 Qwen）： 索引——写入 ChromaDB+SQLite  │
+  │     │   stable（044 Opus）： 终审——检查与前3轮的一致性   │
   │     │                                                      │
   │     ├─→ G2 Triage → category: B1-B7                       │
   │     ├─→ priority: HIGH(B1-B3) → 直接 KE / MID(B4-B7) → KO 队列│
@@ -1625,7 +1625,7 @@ Phase 2（精排）：本地 Cross-Encoder 重排序 → Top 10
 **EXTRACTION_TEMPLATES 扩展**（15 类 → 15 模板）：
 
 ```python
-# extract.py EXTRACTION_TEMPLATES（Phase 2 更新为 15 模板）
+# extract.py EXTRACTION_TEMPLATES（beta 更新为 15 模板）
 EXTRACTION_TEMPLATES: dict[str, dict[str, list[str]]] = {
     # Track A — Vibe Coding 施工知识提取模板
     "session_log": {
@@ -1708,14 +1708,14 @@ EXTRACTION_TEMPLATES: dict[str, dict[str, list[str]]] = {
 | 层 | 哨兵 | 实现位置 | 检查频率 | 对标 |
 |:--:|------|---------|:---:|------|
 | **L1** | **Trigger Table**（触发式推送） | `context_assembler.py` → `unified_memory_api.recall()` 新增参数 `trigger_context` | 每次 AI 施工任务启动 | Vasilopoulos: "trigger tables that route tasks based on observable signals—primarily which files are being modified" |
-| **L2** | **Coverage Gap Analyzer**（搜索日志分析） | `detect_knowledge_gaps.py`（Phase 2 新增脚本） | 每周一次 | Google Vertex AI: "context_recall — whether all relevant KEs were retrieved" |
+| **L2** | **Coverage Gap Analyzer**（搜索日志分析） | `detect_knowledge_gaps.py`（beta 新增脚本） | 每周一次 | Google Vertex AI: "context_recall — whether all relevant KEs were retrieved" |
 | **L3** | **Rule-to-KE Sync Check**（规则对齐） | `detect_knowledge_gaps.py` L3 检查 | 每周一次 + AGENTS.md 变更时立即触发 | vibe-init: "every governance strategy maps to a KE" |
 | **L4** | **Quarterly Audit**（人工季度抽检） | 人工流程（非自动化脚本）| 每季度 | ITIL SACM: "Configuration Items must be periodically audited" |
 
 **L1 Trigger Table 工程细节**（对标 Vasilopoulos）：
 
 ```yaml
-# trigger_table.yaml — Phase 2 新增
+# trigger_table.yaml — beta 新增
 # 定义"修改哪些文件 → 加载哪些 KE"的映射关系
 triggers:
   - file_pattern: "src/zephyr/kb/**/*.py"
@@ -1742,7 +1742,7 @@ triggers:
 **L2 Coverage Gap 工程细节**：
 
 ```python
-# detect_knowledge_gaps.py — Phase 2 新增（伪代码骨架）
+# detect_knowledge_gaps.py — beta 新增（伪代码骨架）
 def analyze_coverage_gaps(search_log: SearchLog, ke_index: KEIndex) -> GapReport:
     gaps = []
 
@@ -1927,7 +1927,7 @@ def auto_ingest_external(source: ExternalSource) -> None:
 #### 5.13.3 自动调度表（APScheduler cron）
 
 ```python
-# scheduler.py — Phase 2 新增
+# scheduler.py — beta 新增
 # BackgroundScheduler 随 app 进程启动
 
 jobs = {
@@ -2088,16 +2088,16 @@ finding_to_ke = {
 
 | 阶段 | Embedding 模型 | 向量维度 | 模型大小 | 适用场景 | MTEB中文 |
 |------|--------------|:---:|------|---------|:---:|
-| **Phase 2 当前** | all-MiniLM-L6-v2（ChromaDB 默认） | 384 | ~80MB | 英文为主、快速原型 | N/A |
-| **Phase 2 中文** | BGE-small-zh-v1.5（降级启用） | 512 | ~100MB | 中文语义检索 | 62.3 |
-| **Phase 3 目标** | BGE-M3（多语言+稠密+稀疏混合） | 1024 | ~2GB | 生产级多语言、高精度 | 67.8 |
+| **beta 当前** | all-MiniLM-L6-v2（ChromaDB 默认） | 384 | ~80MB | 英文为主、快速原型 | N/A |
+| **beta 中文** | BGE-small-zh-v1.5（降级启用） | 512 | ~100MB | 中文语义检索 | 62.3 |
+| **beta 目标** | BGE-M3（多语言+稠密+稀疏混合） | 1024 | ~2GB | 生产级多语言、高精度 | 67.8 |
 
 **升级触发条件**：
 - all-MiniLM → BGE-small：中文语义检索召回率 < 70%
 - BGE-small → BGE-M3：检索准确率 < 80%（人工评估）
 
-> **历史冲突**（`知识库专题讨论文档.md` §KB-005）：ADR-0005 说用 `all-MiniLM`，ADR-0016 说用 `BGE-M3`。**裁决**：Phase 2 以代码实现为准（`chromadb_init.py` 用 `all-MiniLM-L6-v2`），Phase 3 升级到 BGE-M3。
-> **多语言支持**：BGE-M3 原生支持中英混合检索，无需额外语言检测或翻译层。Phase 2 中文场景降级启用 `BGE-small-zh-v1.5`，Phase 3 统一升级 BGE-M3 后自动获得多语言能力——当前无需额外设计。
+> **历史冲突**（`知识库专题讨论文档.md` §KB-005）：ADR-0005 说用 `all-MiniLM`，ADR-0016 说用 `BGE-M3`。**裁决**：beta 以代码实现为准（`chromadb_init.py` 用 `all-MiniLM-L6-v2`），beta 升级到 BGE-M3。
+> **多语言支持**：BGE-M3 原生支持中英混合检索，无需额外语言检测或翻译层。beta 中文场景降级启用 `BGE-small-zh-v1.5`，beta 统一升级 BGE-M3 后自动获得多语言能力——当前无需额外设计。
 
 ### 7.4 Reranker 模型选型
 
@@ -2231,7 +2231,7 @@ KE-{NNN}.md           knowledge_entries   Collection
 | **KO** | 仅 Markdown 文件（`docs/08_knowledge/ko/`） | 无需同步——KO 不入 SQLite、不入 ChromaDB。晋升为 KE 后走 KE 的三层同步 |
 | **KB** | YAML 文件（`docs/08_knowledge/kb/`） + 可选的 SQLite `kb_rules` 表 | KB 的 `rule` 字段需要被 pre-commit/CI 直接读取（YAML 文件），SQLite 仅用于追踪 `derived_from` 反向索引和 `last_triggered_at` |
 
-**KB SQLite 辅助表**（Phase 2 可选，非强制）：
+**KB SQLite 辅助表**（beta 可选，非强制）：
 
 ```sql
 CREATE TABLE IF NOT EXISTS kb_rules (
@@ -2436,9 +2436,9 @@ rejection_reason: null          # Owner 驳回时记录理由
 
 | 规模 | KE 数量 | SQLite 重建 | ChromaDB 重建 | 总 RTO |
 |------|:---:|:---:|:---:|:---:|
-| Phase 1（当前） | ~32 | <1s | ~30s | **<1min** |
-| Phase 2 | ~200 | <2s | ~3min | **<5min** |
-| Phase 3（满规模） | ~1,500 | <10s | ~20min | **<25min** |
+| experimental（当前） | ~32 | <1s | ~30s | **<1min** |
+| beta | ~200 | <2s | ~3min | **<5min** |
+| beta（满规模） | ~1,500 | <10s | ~20min | **<25min** |
 
 **恢复点目标（RPO）**：
 
@@ -2462,7 +2462,7 @@ tar -czf data/chroma/backups/chroma_$(date +%Y%m%d).tar.gz data/chroma/*/
 ```
 
 > **对标**：PostgreSQL pg_dump/pg_restore 全量恢复 / ChromaDB 官方 "reindex from source documents" 策略 / Kubernetes etcd snapshot restore / ITIL IT Service Continuity Management——RTO+RPO 双指标。四重对标都说明：只要 canonical source（MD文件+Git历史）完好，向量和元数据都是派生数据——丢了可以重建，时间成本可控。
-> **大白话**：最坏情况下——`data/sqlite/` 和 `data/chroma/` 全被删了——不要慌。运行 `python -m zephyr.kb.rebuild --all`，系统会扫一遍 `docs/08_knowledge/` 下所有 KE Markdown 文件，自动重建 SQLite 和 ChromaDB。Phase 1 不到 1 分钟就回来了。唯一丢的是最近 7 天的运行时统计（"这条 KE 被用了多少次"这类计数）——核心知识一文不少。因为 Markdown 文件在 Git 里，永远丢不了。
+> **大白话**：最坏情况下——`data/sqlite/` 和 `data/chroma/` 全被删了——不要慌。运行 `python -m zephyr.kb.rebuild --all`，系统会扫一遍 `docs/08_knowledge/` 下所有 KE Markdown 文件，自动重建 SQLite 和 ChromaDB。experimental 不到 1 分钟就回来了。唯一丢的是最近 7 天的运行时统计（"这条 KE 被用了多少次"这类计数）——核心知识一文不少。因为 Markdown 文件在 Git 里，永远丢不了。
 
 ---
 
@@ -2472,14 +2472,14 @@ tar -czf data/chroma/backups/chroma_$(date +%Y%m%d).tar.gz data/chroma/*/
 
 | 阶段 | KE 数量 | 来源 |
 |------|:---:|------|
-| Phase 1（当前） | ~32 KE | 手动录入的蓝图决策 + 最佳实践 |
-| Phase 2 末 | ~500 KE | Session Log 自动提取 + 候选池迁移 + GitHub 抓取 |
-| Phase 3 末 | ~2000 KE | arXiv 论文 + MCP 外部知识 + 多Agent交叉贡献 |
-| Phase 4+ | ~10000 KE | 长期积累 |
+| experimental（当前） | ~32 KE | 手动录入的蓝图决策 + 最佳实践 |
+| beta 末 | ~500 KE | Session Log 自动提取 + 候选池迁移 + GitHub 抓取 |
+| beta 末 | ~2000 KE | arXiv 论文 + MCP 外部知识 + 多Agent交叉贡献 |
+| stable+ | ~10000 KE | 长期积累 |
 
 ### 8.2 存储容量估算
 
-| 数据层 | Phase 2 (~500 KE) | Phase 3 (~2000 KE) | Phase 4+ (~10000 KE) |
+| 数据层 | beta (~500 KE) | beta (~2000 KE) | stable+ (~10000 KE) |
 |--------|:---:|:---:|:---:|
 | Markdown KE 文件 | ~50 MB | ~200 MB | ~1 GB |
 | ChromaDB 向量 (384d) | ~3 MB | ~12 MB | ~60 MB |
@@ -2569,7 +2569,7 @@ class RAGMetricEvaluator:
 
 ```python
 from rank_bm25 import BM25Okapi
-# Phase 2 只需对 18 类每类建一个 BM25 索引（<500 KE，内存 <10MB）
+# beta 只需对 18 类每类建一个 BM25 索引（<500 KE，内存 <10MB）
 ```
 
 **RRF 融合公式**：
@@ -2906,7 +2906,7 @@ LLM API 429 (Rate Limit) / 月预算超 80%
 
 所有 KE 目前纯文本。但 Vibe Coding 的 session 经常产出**截图**（UI 对比、架构白板、错误弹窗截图）和**代码 diff 截图**——这些视觉信息当前全部丢弃。
 
-**Phase 3 设计（预留，非当前施工）**：
+**beta 设计（预留，非当前施工）**：
 
 | 模态 | 提取方式 | Embedding | 检索 |
 |------|---------|---------|------|
@@ -2916,7 +2916,7 @@ LLM API 429 (Rate Limit) / 月预算超 80%
 
 **存储**：图片 base64 嵌入 KE frontmatter 的 `attachments` 字段，或外部路径引用到 `data/multimodal/`。
 
-> **对标**：CLIP (OpenAI, 2021) — 图文跨模态检索 / CogVLM (THU/Zhipu, 2023) — 中文多模态理解 / GPT-4V — 截图直接喂给模型分析。但**2 不实现**——当前知识库主要处理结构化文本，多模态 ROI 在 Phase 3+ 才显现。
+> **对标**：CLIP (OpenAI, 2021) — 图文跨模态检索 / CogVLM (THU/Zhipu, 2023) — 中文多模态理解 / GPT-4V — 截图直接喂给模型分析。但**2 不实现**——当前知识库主要处理结构化文本，多模态 ROI 在 beta+ 才显现。
 > **大白话**：暂时先不搞——文本知识本身就够用。未来某个 session 里你贴了一张"为什么选 ChromaDB 而不是 Milvus"的白板照片——系统会把它 OCR 成文字描述+原始图作为附件一起入库。AI 以后搜"向量数据库选型"时，能在文字结果里看到那张图。
 
 ### 9.12 三级记忆模型（Three-Tier Memory: Hot/Warm/Cold）
@@ -2949,7 +2949,7 @@ KO→KE→KB 是**知识内容漏斗**，但 AI 运行时还需要**记忆温度
 # 现有 API
 unified_memory_api.recall(query, top_k=10)
 
-# Phase 2 增强
+# beta 增强
 unified_memory_api.recall_with_tier(
     query=query,
     task_type="fix_bug",
@@ -3105,7 +3105,7 @@ Bottom 3 最没用的KE：
 
 ### 9.16 知识安全分级（Knowledge Safety Classification）
 
-> **触发缺口**：KE body 可能包含内部 URL（`http://192.168.1.x:8080`）、服务端口、测试用 API key、内部路径结构等。当前 G4 Activate 在注入 AI 上下文时不做安全过滤——这些信息直接进入 LLM 上下文，存在信息泄露风险。尤其在 Phase 3 MCP Server 对外开放知识查询时，安全风险指数级放大。
+> **触发缺口**：KE body 可能包含内部 URL（`http://192.168.1.x:8080`）、服务端口、测试用 API key、内部路径结构等。当前 G4 Activate 在注入 AI 上下文时不做安全过滤——这些信息直接进入 LLM 上下文，存在信息泄露风险。尤其在 beta MCP Server 对外开放知识查询时，安全风险指数级放大。
 
 **安全分级标准**：
 
@@ -3196,7 +3196,7 @@ Bottom 3 最没用的KE：
 | 2 | `知识库升级方案.md` | 5并行分类系统诊断、3阶段升级计划、419+ KE现状分析、10阶段学术对标 | 退役蓝图无此内容 |
 | 3 | `vibe-coding-task-card-and-knowledge-base-design.md` | 混合聚类架构（layer为主+domain为辅）、3阶段持续摄取策略、KB-Agent Harness集成、formal invariants、TagSchemaRegistry需求、Provenance Chain需求 | 候选池设计更系统化 |
 | 4 | `知识库专题讨论文档.md` | 30 KB问题（KB-001~030）、ADR矛盾裁决（ADR-0005 vs ADR-0016）、KE ID格式冲突裁决（KE-{NNN} vs KMS-{YYYYMMDD}-{SEQ}）、3并行分类系统文档、知识库空洞化诊断 | 退役蓝图无此类深度诊断 |
-| 5 | `01-脚本系统架构.md` §32~§40 | 14组件技术选型（#2 ChromaDB、#3 Embedding）、Phase 2 KMS交付物+验收标准、Phase 2 KB组件清单（triage/kb_repo/batch_ingest/chromadb_init）、Qwen务实修正（6条：向量DB/Embedding模型版本选择） | KB相关部分已提取，脚本系统部分保留 |
+| 5 | `01-脚本系统架构.md` §32~§40 | 14组件技术选型（#2 ChromaDB、#3 Embedding）、beta KMS交付物+验收标准、beta KB组件清单（triage/kb_repo/batch_ingest/chromadb_init）、Qwen务实修正（6条：向量DB/Embedding模型版本选择） | KB相关部分已提取，脚本系统部分保留 |
 | 6 | `vibe-coding-infrastructure-7-modules-design.md` §M3 | M3记忆系统（短期/中期/长期三层）、kb/代码状态、vector_memory差距、统一API(remember/learn/forget/recall)、知识归属决策（蓝图→KE系统）、知识库存放架构参考 | KB部分已提取，其余7模块设计保留 |
 | 7 | D0-knowledge四指令（011/022/033/044） | 四模型审计分工方法论（GLM扫描→Kimi结构→Qwen索引→Opus裁决）、知识提取六维矩阵（K1-K6）、知识去重策略、知识入库4步法 | 方法论已参考纳入，源文件保留作为施工执行指令 |
 
@@ -3207,7 +3207,7 @@ Bottom 3 最没用的KE：
   src/zephyr/kb/  →  12模块 ✅
   vector_memory/  →  空包（__init__.py only）
 
-Phase 3（计划）：kb/ 能力纳入 VMS
+beta（计划）：kb/ 能力纳入 VMS
   src/zephyr/kb/  →  DEPRECATED（不删，保留退役标记）
   src/zephyr/vector_memory/  →  InProcessVectorMemory 完整实现
   unified_memory_api.py  →  作为 VMS 的统一入口保留
@@ -3226,7 +3226,7 @@ Phase 3（计划）：kb/ 能力纳入 VMS
 
 ## §11 施工 Phase 规划
 
-### Phase 1（已完成 ✅）：核心门禁 + ChromaDB 初始化
+### experimental（已完成 ✅）：核心门禁 + ChromaDB 初始化
 
 **目标**：知识库核心引擎——让 AI 能"存知识"和"查知识"。
 
@@ -3254,11 +3254,11 @@ Phase 3（计划）：kb/ 能力纳入 VMS
 
 ---
 
-### Phase 2（当前 🔄）：知识填充 + 检索升级 + 反馈闭环 + 漏斗机制
+### beta（当前 🔄）：知识填充 + 检索升级 + 反馈闭环 + 漏斗机制
 
 **目标**：把空知识库填满 + 两阶段重排序上线 + 反馈数据闭环启动 + KO→KE→KB 三级漏斗自动化。
 
-**触发条件**：Phase 1 验收全部通过 + 本蓝图定稿（本 session）。
+**触发条件**：experimental 验收全部通过 + 本蓝图定稿（本 session）。
 
 **交付物**：
 
@@ -3293,11 +3293,11 @@ Phase 3（计划）：kb/ 能力纳入 VMS
 
 ---
 
-### Phase 3（中期 🔮）：MCP 集成 + 四模型审计自动化 + BGE-M3 升级
+### beta（中期 🔮）：MCP 集成 + 四模型审计自动化 + BGE-M3 升级
 
 **目标**：跨Agent知识互通 + 全自动审计 + 生产级向量检索
 
-**触发条件**：Phase 2 验收全部通过 + 向量库条目 > 100。
+**触发条件**：beta 验收全部通过 + 向量库条目 > 100。
 
 **交付物**：
 
@@ -3312,11 +3312,11 @@ Phase 3（计划）：kb/ 能力纳入 VMS
 
 ---
 
-### Phase 4（远期 🔮）：知识生态 + 自进化 + 外部抓取
+### stable（远期 🔮）：知识生态 + 自进化 + 外部抓取
 
 **目标**：知识库成为 AI 的"长期外置大脑"——自动从外部学习、自动进化、自动清理。
 
-**触发条件**：Phase 3 验收全部通过 + 累计 session > 50。
+**触发条件**：beta 验收全部通过 + 累计 session > 50。
 
 **交付物**：
 
@@ -3343,9 +3343,9 @@ Phase 3（计划）：kb/ 能力纳入 VMS
 ### 11.2 施工顺序依赖
 
 ```
-Phase 1 (✅ 已完成)
+experimental (✅ 已完成)
     │
-Phase 2 (🔄 当前)
+beta (🔄 当前)
     ├── KB-INF-0001~0010 (候选池KE迁移)
     │       └── 依赖：本蓝图定稿
     ├── KB-INF-0011 (Session Log 自动提取)
@@ -3355,8 +3355,8 @@ Phase 2 (🔄 当前)
     └── KB-INF-0013~0015 (反馈+索引+三记忆层)
             └── 依赖：KB-INF-0001~0010 完成后
     │
-Phase 3 (🔮 计划)
-    └── 依赖：Phase 2 全部验收通过 + 向量库 > 100 KE
+beta (🔮 计划)
+    └── 依赖：beta 全部验收通过 + 向量库 > 100 KE
 ```
 
 ### 11.3 文件创建约束
@@ -3370,13 +3370,13 @@ Phase 3 (🔮 计划)
 
 | 风险 | 概率 | 影响 | 缓解 |
 |------|:---:|:---:|------|
-| 知识库空洞化持续（引擎建了但没知识） | 高 | 🔴 高 | Phase 2 优先填充候选池KE+Session提取 |
+| 知识库空洞化持续（引擎建了但没知识） | 高 | 🔴 高 | beta 优先填充候选池KE+Session提取 |
 | 重排序模型下载失败（BGE-reranker首次需联网） | 中 | 🟡 中 | 降级策略：跳过重排→纯ChromaDB Top-10，日志警告 |
 | 反馈数据污染（自动化标记的adoption/helpfulness不准） | 低 | 🟡 中 | `quality_score` 公式中静态评分权重40%兜底；异常反馈率超50%时触发人工审计 |
 | KE漏斗堵死——KO大量创建但无人升格KE→KB | 中 | 🟡 中 | KB-INF-0018 自动化阀值触发 + 月度审计KO→KE→KB转化率 |
 | Embedding 模型升级导致向量不兼容 | 中 | 🟡 中 | `embedding_migrate.py` 已实现迁移管线 |
 | 多Agent知识冲突无法自动裁决 | 中 | 🟡 中 | Opus 4.7 终审裁决 + 冲突升级到人工 |
-| kb/→VMS 迁移破坏现有功能 | 低 | 🔴 高 | Phase 3 迁移期间 kb/ 保留运行，新写入双写，确认稳定后再 DEPRECATE |
+| kb/→VMS 迁移破坏现有功能 | 低 | 🔴 高 | beta 迁移期间 kb/ 保留运行，新写入双写，确认稳定后再 DEPRECATE |
 | 上下文注入过多导致 Token 超预算 | 低 | 🟡 中 | Top-K ≤ 10, token ≤ 2000 硬约束 |
 | KeCategory 枚举重构破坏现有 KE 分类查询 | 中 | 🟡 中 | 向后兼容迁移逻辑：`old_category → new_category` 映射表 + SQLite ALTER 而非 DROP |
 | 五轨提取某条轨道阻塞导致知识持续遗漏 | 中 | 🔴 高 | 每条轨道有独立日志+错误计数；轨道5定期巡检兜底发现异常 |
@@ -3385,7 +3385,7 @@ Phase 3 (🔮 计划)
 | Git hook 安装失败导致轨道1/2全静默停摆 | 高 | 🔴 高 | `install-hooks.py` 运行后自动验证 hook 文件存在+可执行；每次 session 开始 context_assembler 自检 hook 健康 |
 | 审批提醒推送失败 Owner 不知有知识待审 | 中 | 🟡 中 | KO 7d 无响应自动丢弃，不阻塞；推送失败日志报警 |
 | 自动 D0 流水线消耗大量 LLM token | 中 | 🟡 中 | 仅当 session 日志中出现新链接时触发（非每 session）；月度 Token 预算上限 |
-| 知识漂移（KE 渐近失真而非 binary 过期） | 高 | 🟡 中 | 当前 TTL 只处理"有效/过期"二元态。渐变失真（"ChromaDB 从最佳→还行→过时"）无法检测。Phase 3 `knowledge_decay_engine.py` 引入连续 `freshness` 评分+交叉验证触发降级 |
+| 知识漂移（KE 渐近失真而非 binary 过期） | 高 | 🟡 中 | 当前 TTL 只处理"有效/过期"二元态。渐变失真（"ChromaDB 从最佳→还行→过时"）无法检测。beta `knowledge_decay_engine.py` 引入连续 `freshness` 评分+交叉验证触发降级 |
 | 时间窗口 KE（B1-B7）在非活跃期仍被检索 | 中 | 🟡 中 | 新增 `valid_from`/`valid_until` 字段（§3.2），context_assembler 检索时自动过滤 `valid_until < today()` 的 KE |
 | KE 安全信息泄露（S1-S3 分级失效） | 低 | 🟡 中 | §9.16 S0-S3 安全分级 + G4 Activate 注入前过滤 + S3 REDACT 脱敏 |
 
@@ -3444,7 +3444,7 @@ Phase 3 (🔮 计划)
 
 对齐 `capacity-assurance` (MOD-INF-001) §17 容量预测模型：
 
-- **新增 KE 速率**：Phase 2 预计 ~50 KE/month（候选池迁移 + Session 提取）
+- **新增 KE 速率**：beta 预计 ~50 KE/month（候选池迁移 + Session 提取）
 - **衰减速率**：约 30% KE 的 `half_life_days` < 90d → 月衰减 ~15 KE
 - **净增长**：~35 KE/month → 2000 上限 / 35 = **57 个月**缓冲区
 - **审查频率**：每月 1 日在 Feedback Loop Engine 输出容量趋势报告
@@ -3456,11 +3456,11 @@ Phase 3 (🔮 计划)
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
 | 0.6.5 | 2026-05-04 | 第二轮盲点清零五合一：①**§9.15 知识合并冲突**——五轨并行同主题KE合并的三级策略（L1向量相似度>0.80拒绝/L2 Kimi主题聚类SAME_TOPIC|SUBSET|OVERLAP|DISTINCT/L3合并执行+ke_merge事件）；②**§9.16 知识安全分级**——S0-S3四级分类（PUBLIC/INTERNAL/RESTRICTED/SECRET）+正则自动检测+S3 REDACT脱敏+ChromDB索引降级策略；③**§9.17 Track C vs A/B冲突裁决**——每周Owner偏好vs累积证据矛盾扫描+ALIGNED/MISALIGNED判定+冲突冷却90d+Owner最终裁决权保留；④**§3.2 KE Schema 新增 valid_from/valid_until**——时间窗口有效性字段，Track B金融KE专用，检索时自动过滤过期KE；⑤**§7.3 多语言标注+BGE-M3原生中英混合** + **§11.4 风险表 +3条目**（知识漂移渐进失真+时间窗口检索污染+安全信息泄露）。联动：b_kb.yaml partition note同步更新 |
-| 0.6.4 | 2026-05-04 | 知识检索与演化回路（14子节补齐"出库+演化"空白）：①**§9.1 检索质量度量**——RAGAS四维指标(answer_relevance/faithfulness/context_precision/context_recall)+RAGMetricEvaluator实现+每周APScheduler cron全量评估；②**§9.2 混合检索**——BM25稀疏向量+ChromaDB稠密向量+RRF融合+Cross-Encoder重排；③**§9.3 查询改写**——Multi-Query生成+HyDE假答案embedding+去重合并（仅Top-1<0.60时启用）；④**§9.4 上下文预算动态分配**——6类task_type自适应Top-K+Token预算+注入焦点矩阵；⑤**§9.5 KB规则执行引擎**——pre-commit动态读取KB YAML→生成临时检查项→阻断溯源；⑥**§9.6 知识溯源**——W3C PROV三级(L1 KE溯源+L2引用追踪+L3 RAG Trace)+ke_usage_log表；⑦**§9.7 KE版本历史**——v1.0/v1.1/v2.0目录+versions.yaml+MAJOR.MINOR semver规则；⑧**§9.8 依赖级联**——deprecated→反向索引查询→GREEN/YELLOW/RED三级评估→自动标记NEEDS_REVIEW；⑨**§9.9 去重聚类**——UMAP降维+HDBSCAN聚类+Kimi cluster summary合并建议；⑩**§9.10 Token预算**——月度14管道预算明细(¥0.40/月)+¥5.00硬上限+P0-P3四级背压降级；⑪**§9.11 多模态知识**——Phase 3预留CLIP/CogVLM截图embedding；⑫**§9.12 三级记忆**——MemGPT对标Hot/Warm/Cold温度分层+unified_memory_api.recall_with_tier()；⑬**§9.13 检索自反思**——Self-RAG判定层(≥3条relevant→继续/<3条→HyDE重试/0条→answer_unsupported)；⑭**§9.14 效果A/B测试**——每周5task采样+Group A/B split+Delta分析+月度effectiveness报告。文档重编号：§9→§10～§12→§13。联动：b_kb.yaml partition note同步更新 |
+| 0.6.4 | 2026-05-04 | 知识检索与演化回路（14子节补齐"出库+演化"空白）：①**§9.1 检索质量度量**——RAGAS四维指标(answer_relevance/faithfulness/context_precision/context_recall)+RAGMetricEvaluator实现+每周APScheduler cron全量评估；②**§9.2 混合检索**——BM25稀疏向量+ChromaDB稠密向量+RRF融合+Cross-Encoder重排；③**§9.3 查询改写**——Multi-Query生成+HyDE假答案embedding+去重合并（仅Top-1<0.60时启用）；④**§9.4 上下文预算动态分配**——6类task_type自适应Top-K+Token预算+注入焦点矩阵；⑤**§9.5 KB规则执行引擎**——pre-commit动态读取KB YAML→生成临时检查项→阻断溯源；⑥**§9.6 知识溯源**——W3C PROV三级(L1 KE溯源+L2引用追踪+L3 RAG Trace)+ke_usage_log表；⑦**§9.7 KE版本历史**——v1.0/v1.1/v2.0目录+versions.yaml+MAJOR.MINOR semver规则；⑧**§9.8 依赖级联**——deprecated→反向索引查询→GREEN/YELLOW/RED三级评估→自动标记NEEDS_REVIEW；⑨**§9.9 去重聚类**——UMAP降维+HDBSCAN聚类+Kimi cluster summary合并建议；⑩**§9.10 Token预算**——月度14管道预算明细(¥0.40/月)+¥5.00硬上限+P0-P3四级背压降级；⑪**§9.11 多模态知识**——beta预留CLIP/CogVLM截图embedding；⑫**§9.12 三级记忆**——MemGPT对标Hot/Warm/Cold温度分层+unified_memory_api.recall_with_tier()；⑬**§9.13 检索自反思**——Self-RAG判定层(≥3条relevant→继续/<3条→HyDE重试/0条→answer_unsupported)；⑭**§9.14 效果A/B测试**——每周5task采样+Group A/B split+Delta分析+月度effectiveness报告。文档重编号：§9→§10～§12→§13。联动：b_kb.yaml partition note同步更新 |
 | 0.6.3 | 2026-05-04 | CTR跨层契约对齐+Schema稳定性+灾难恢复：①**§3.9.1 来源矩阵**——ADR定稿行→跨层契约(CTR)版本升级 + 新增第8条CTR运行时质量信号管线（CTR-001 quality_score/CTR-002 confidence/CTR-005 slippage连续超阈值→KE B1/B3）；②**§3.2 KE Schema字段稳定性分级**——对标CTR locked-5yr，28字段分frozen(11)/extendable(9)/runtime_only(5)三级，frozen字段3年不删不改类型；③**§7.8 灾难恢复**——从MD全量重建SQLite+ChromaDB的5步流程+RTO<25min/RPO=0（MD在Git零丢失）+每日SQLite备份cron。联动：b_kb.yaml partition note同步更新 |
 | 0.6.2 | 2026-05-04 | 技术债清零四合一：①**ISSUE-003**——5份治理规则旧ADR引用全量替换（registry-master-index.yaml REG-ADR-001 status→deprecated + session-log-schema.yaml update_adr→update_decision_record + doc_type-vocabulary.yaml adr doc_type标记废弃 + _registry/catalogs/index.md adr-status-registry标记冻结 + PS-IDX-001 index.md ADR行标注已冻结）；②**ISSUE-006**——§7.6.5 决策一致性检查（新A2 KE创建时Cross-Encoder扫描历史决策→Kimi K2.6矛盾断言→NO_CONFLICT/AMBIGUOUS/CONTRADICTION三级判定→Owner裁决+SUPERSEDED联动+semver版本链）；③**ISSUE-008**——§7.7 Human-Gated写入权限模型（AUTO/HUMAN_GATED/OWNER_ONLY三层权限矩阵+L2推送Owner yes/no流程+Owner月耗时≤12min预算+拒绝冷却机制+pending_approval字段）；④**ISSUE-009**——AGENTS.md §8.3新增知识库蓝图冷记忆引用（MOD-KB-001 §3.9.5 §3.9.1）。联动：b_kb.yaml partition note 同步更新 |
 | 0.6.1 | 2026-05-03 | ADR 体系废弃执行+决策记录模型修正：①新增 §3.9.5 三层决策记录模型（L1=Owner画像/Track C、L2=AGENTS.md §10 历史决策、L3=KE A2 深度决策），基于 8 个氛围编程社区调研（Claude Code/Cursor/vertu.com/CHOP——7/8 不用传统 ADR，一句话决策贴进上下文文件）；②§3.9.1 来源矩阵 ADR 行→决策记录分流（L2 AGENTS.md / L3 KE A2）；③§5.11 轨道3 ADR→决策信号检测；④旧 ADR 迁移方案（adr_migrate.py：36 份→一句结论→AGENTS.md §10 / 深度→KE A2 + 原文件归档）。联动：b_kb.yaml partition note 同步更新 |
-| 0.6.0 | 2026-05-03 | 分类体系升级 + 聊天知识自动化 + 数据库物理布局 + AI自治预留：①§3.8 双轨15类→三轨18类（+Track C：Owner决策画像 C1/C2/C3——全LOW priority、30d TTL、仅参考不强制执行，对标 Anthropic Claude implicit preference + GitHub Copilot user style learning）；②§3.8 Track D AI-AI协作知识预留桩（D1/D2/D3 + 接口契约，Phase 3实现，对标 Terraform provider contract / K8s planned API）；③§3.9.4 聊天记录→知识提取器（S1语义分段器+S2三元判定器+N-01~N-04噪音四门槛+三触发时机，对标 vibe-coding-mcp）；④§4.0 数据引擎物理布局（data/sqlite/+chroma/+cache/ 与 Markdown KE 物理分离 + 环境变量驱动 + .gitignore 三级策略，对标 12-Factor App §3 + ChromaDB 官方 + SQLite 最佳实践）。联动：b_kb.yaml partition note 同步更新 |
+| 0.6.0 | 2026-05-03 | 分类体系升级 + 聊天知识自动化 + 数据库物理布局 + AI自治预留：①§3.8 双轨15类→三轨18类（+Track C：Owner决策画像 C1/C2/C3——全LOW priority、30d TTL、仅参考不强制执行，对标 Anthropic Claude implicit preference + GitHub Copilot user style learning）；②§3.8 Track D AI-AI协作知识预留桩（D1/D2/D3 + 接口契约，beta实现，对标 Terraform provider contract / K8s planned API）；③§3.9.4 聊天记录→知识提取器（S1语义分段器+S2三元判定器+N-01~N-04噪音四门槛+三触发时机，对标 vibe-coding-mcp）；④§4.0 数据引擎物理布局（data/sqlite/+chroma/+cache/ 与 Markdown KE 物理分离 + 环境变量驱动 + .gitignore 三级策略，对标 12-Factor App §3 + ChromaDB 官方 + SQLite 最佳实践）。联动：b_kb.yaml partition note 同步更新 |
 | 0.5.0 | 2026-05-03 | KE/KO/KB 物理存储格式全部定稿：①§3.2.2 KE Markdown 物理格式（YAML frontmatter 18字段 + body 5段模板 + 6条 G1 格式校验规则 + 运行时字段 SQLite only 隔离）；②§3.10 KO 存储格式（4 状态机 + 轻量模板 + OBSERVED→PROMOTING→PROMOTED 晋升链路）；③§3.11 KB 存储格式（3 状态机 + YAML rule 定义 + MINOR 自动合并 + 90d 冷却机制）；④§4.2 目录结构重写——旧 5 分类目录（blueprint_decision/best_practice/factor/failure_pattern/guardrail）→§3.8 双轨 15 类体系（track_a_vibe_coding 8 类 + track_b_finance 7 类 + ko/ + kb/ + _archive/）；⑤文件命名规范（KE/KO/KB 三套独立编号池 + slug 生成规则）；⑥§7.6 三层存储同步机制（MD→SQLite→ChromaDB 派生链 + 5 道一致性校验闸门 + 冲突裁决规则 + KO/KB 同步策略差异）。联动：b_kb.yaml partition note 同步更新 |
 | 0.4.0 | 2026-05-02 | 知识来源与全自动化补入：①§3.9 七来源全自动获取决策矩阵（含聊天记录→KE决策树 + Session Log最小YAML格式约定，对标 Vasilopoulos/Horthy auto-handoff-log）；②§5.13 零Owner手动触发全自动提取策略（git hook驱动3触发器工程伪代码 + APScheduler cron三任务 + Owner月耗时≤25min预算）。同步更新 §10 Phase2（+2新任务）、§11.4（+3新风险）|
 | 0.3.0 | 2026-05-02 | 专业机构+氛围编程社区对标后补入：①§3.8 双轨15类知识分类体系（Track A 8类施工知识 + Track B 7类金融知识，对标 Vasilopoulos 65/35实证比例 + vibe-init 10类59策略 + n1n.ai 优先级三分法）；②§5.11 五轨并行知识提取管道（Session自动→门禁阻断→ADR变更→外部注入→差距巡检，对标 Vasilopoulos Trigger Table + OpenAI AGENTS.md动态反馈 + n1n.ai priority classification）；③§5.12 四层防遗漏哨兵体系（Trigger Table + Coverage Gap Analyzer + Rule-KE Sync + Quarterly Audit，含trigger_table.yaml和detect_knowledge_gaps.py工程细节）。同步更新 §10 Phase2（+4新任务）、§11.4（+4新风险）、EXTRACTION_TEMPLATES扩展 |
@@ -3473,7 +3473,7 @@ Phase 3 (🔮 计划)
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 知识库——API骨架已实现，G1-G5门禁待Phase 2
+> 知识库——API骨架已实现，G1-G5门禁待beta
 
 ### 6.1 源码文件
 

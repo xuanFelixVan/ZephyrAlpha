@@ -1,6 +1,17 @@
 """
 validate_b_track_packages.py — B 轨包完整性校验
 
+__manifest__ = """
+args: []
+description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 对标：GOV-DOC-002 §四（B 轨新包创建门槛）
 
 检测内容：

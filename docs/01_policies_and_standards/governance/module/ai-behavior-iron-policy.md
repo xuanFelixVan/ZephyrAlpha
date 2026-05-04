@@ -112,11 +112,11 @@ ai_autonomy: human_gated
 
 ### IRN-005：Phase Gate（铁律5）
 
-Phase 0（治理基础设施）未完成前，禁止进入 Phase 2（施工）或 Phase 3（编码）。
+scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 beta（编码）。
 
 - 验证方法：Phase Gate 检查
 - 违反后果：技术债务爆发，地基不稳
-- **落日条款**：本铁律在 Phase 0 验收通过后自动失效。Phase 0 结束时由 Owner 声明铁律5退役，届时更新本文件移除本条。
+- **落日条款**：本铁律在 scaffold 验收通过后自动失效。scaffold 结束时由 Owner 声明铁律5退役，届时更新本文件移除本条。
 
 ### IRN-006：模型能力边界（铁律6）
 
@@ -235,7 +235,7 @@ Phase 0（治理基础设施）未完成前，禁止进入 Phase 2（施工）�
 - IRN-010（受保护路径）→ 写入前对照受保护清单
 
 **依赖人类裁决的规则**：
-- IRN-005（Phase Gate）：Owner 声明 Phase 0 验收通过后本铁律退役
+- IRN-005（Phase Gate）：Owner 声明 scaffold 验收通过后本铁律退役
 - IRN-006（模型能力边界）：`model-capability-contract.yaml` 白名单由 Owner 维护
 - IRN-007（终局锁定）：Emergency Change Board 由 Owner 主持
 - IRN-009（双工具互斥）：流程纪律，技术锁为辅

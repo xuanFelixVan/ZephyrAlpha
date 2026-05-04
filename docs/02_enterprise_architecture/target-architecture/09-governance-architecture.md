@@ -283,7 +283,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | 时间窗 | 系统数 | 备注 |
 |---|---|---|
 | 已就位 | 8 | Policy 层基础（ADR/folder-charters/.cursor/rules 等）|
-| **Sprint 0 前硬闸门** | **1** | D-01 AISG Phase 0 最小集 5 件套（~21h） |
+| **Sprint 0 前硬闸门** | **1** | D-01 AISG scaffold 最小集 5 件套（~21h） |
 | Sprint 9（L3+L4）| 11 | A-05~09/14/16~18/21 + D-02 简易版 |
 | Sprint 10（AI Safety+L5）| 13 | A-10/11/15/19/20 + B-01 + VIB-03/05/08/09/11/17 + VIB-12 |
 | Sprint 11（L6 OPA）| 6 | A-12 + VIB-04/06/13/15/16 |
@@ -361,22 +361,22 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 
 ### 6.3 七条激活触发条件（T0-T6）
 
-> 本视图已 active v2.1.0。T0 为 Phase 0 强制门禁（最先激活），T1-T6 为后续局部子系统升级。
+> 本视图已 active v2.1.0。T0 为 scaffold 强制门禁（最先激活），T1-T6 为后续局部子系统升级。
 
 | 触发条件 | 触发后的动作 |
 |---|---|
-| **T0 Phase 0 基础奠基完成**（前置门禁）| **SSoT Validator 激活**（ADR-0021）：阻塞 Phase 1 下游任务直至全库 frontmatter + 路径 + 跨引用一致性 100% 通过 |
+| **T0 scaffold 基础奠基完成**（前置门禁）| **SSoT Validator 激活**（ADR-0021）：阻塞 experimental 下游任务直至全库 frontmatter + 路径 + 跨引用一致性 100% 通过 |
 | **T1 真实资金接入** | L7 SBOM + 06-SEC/08-OPS 从 skeleton→active |
 | **T2 多人协作** | VIB-01 升级 + B-01 GRB 激活 |
 | **T3 AI 自治升格** | D3-B 口子从"预留"→"实施" + VIB-14 激活 |
 | **T4 外部审计合规** | L7 SBOM + 06-SEC/08-OPS 实质化 |
 | **T5 F 函数 ≥25 条** | 25 条 F 函数进 CI Gate + 数据层 OQ-075 3 条合并 |
 | **T6 用户主动激活** | 按需激活对应子系统 |
-| **T7 6 大核心服务 D6 ≥ 5.5/10**（Phase 1 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作 |
+| **T7 6 大核心服务 D6 ≥ 5.5/10**（experimental 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作 |
 
-### 6.4 T0 — SSoT Validator（Phase 0 唯一治理任务）
+### 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）
 
-**定位**：ADR-0021 定义，是 Phase 0 → Phase 1 的**强制门禁**。没有 SSoT Validator 通过，任何 Phase 1 核心服务（LSG/CE/VMS/Orc/FLE）落地任务都被阻塞。
+**定位**：ADR-0021 定义，是 scaffold → experimental 的**强制门禁**。没有 SSoT Validator 通过，任何 experimental 核心服务（LSG/CE/VMS/Orc/FLE）落地任务都被阻塞。
 
 **治理归属**：
 
@@ -386,7 +386,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Factory** | Validator 实现 | `scripts/governance/d5_architecture/validate_ssot.py`（复用 11 维审计器骨架）|
 | **Runtime** | 每日/每 PR 扫描 | CI `ci_audit/ssot_daily.py` + pre-commit hook |
 
-**检查清单（Phase 0 出口必须 100% 通过）**：
+**检查清单（scaffold 出口必须 100% 通过）**：
 
 - [ ] 所有 frontmatter schema 符合 ADR-0002
 - [ ] 所有跨文档引用链接 Valid（无死链）
@@ -408,7 +408,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Orc** | 任务状态机 + Agent 白名单 | `OrchestratorProtocol` + Sandbox ACL 模板 | `agent_actions` + `sandbox_violations` 表 + 幻觉检测月报 |
 | **FLE** | 异常阈值策略 + 动作分派规则 | `FeedbackLoopProtocol` + EMA 参数 | FLE 自监控 anomaly_ledger + 阈值触发审计 |
 
-**治理一致性约束**：6 大核心服务的 Policy 文档必须在 Phase 1 末全部就位，否则 T7 门禁不通过。
+**治理一致性约束**：6 大核心服务的 Policy 文档必须在 experimental 末全部就位，否则 T7 门禁不通过。
 
 ### 6.6 边界声明
 
@@ -431,9 +431,9 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 |------|---------|------|------|
 | V-15 骨架 | `scripts/governance/validate_truth_source_cascade.py` | AI-Modifiable | 真源连锁回溯校验器 |
 | 影响追踪报告 | `.runtime/reports/truth_source_cascade_<date>.md` | AI-Modifiable | 运行时输出 |
-| 阈值告警 | 同上，CASCADE-WARN 输出 | Human-Gated | Phase 1 warn-only |
+| 阈值告警 | 同上，CASCADE-WARN 输出 | Human-Gated | experimental warn-only |
 
-**Phase 1 约束**：仅扫描 R-86 起，warn-only 模式（exit code = 0），不阻塞流程。
+**experimental 约束**：仅扫描 R-86 起，warn-only 模式（exit code = 0），不阻塞流程。
 
 ---
 
@@ -441,8 +441,8 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 
 | Date | Version | Description |
 |---|---|---|
-| 2026-04-27 | **v2.2.0** | CL-023 V-15 TruthSourceCascadeValidator 启动记录（§6.7）：R82 兜底缺口已实施，Phase 1 warn-only 模式。T-V2-012 Step 8 GLM-5.1 文档。 |
-| 2026-04-24 | **v2.1.0** | B-d-6 — 新增 T0 "Phase 0 基础奠基"强制门禁（ADR-0021 SSoT Validator）+ T7 "6 大核心服务 D6 ≥ 5.5"（Phase 1 出口）。新增 §6.4 SSoT Validator 三层归属与 Phase 0 出口检查清单（7 项）+ §6.5 6 大核心服务治理归属表（每个服务的 Policy/Factory/Runtime 三层产物）。激活条件从 6 条扩至 8 条（T0-T7）。|
+| 2026-04-27 | **v2.2.0** | CL-023 V-15 TruthSourceCascadeValidator 启动记录（§6.7）：R82 兜底缺口已实施，experimental warn-only 模式。T-V2-012 Step 8 GLM-5.1 文档。 |
+| 2026-04-24 | **v2.1.0** | B-d-6 — 新增 T0 "scaffold 基础奠基"强制门禁（ADR-0021 SSoT Validator）+ T7 "6 大核心服务 D6 ≥ 5.5"（experimental 出口）。新增 §6.4 SSoT Validator 三层归属与 scaffold 出口检查清单（7 项）+ §6.5 6 大核心服务治理归属表（每个服务的 Policy/Factory/Runtime 三层产物）。激活条件从 6 条扩至 8 条（T0-T7）。|
 | 2026-04-21 | **v2.0.0** | Architecture-as-Code 重组织：物理位置树→合并表引用 scripts-model.yaml；接口描述→表格化；frontmatter 精简。615→~490 行。 |
 | 2026-04-19 | v1.2.0 | J1 批次 R69/ADR-0011：§1.2bis Runtime Plane 正交标注。 |
 | 2026-04-19 | v1.1.0 | J0-sync：§4.5 D 家族 6 个 AI 治理基建。39→45 系统。 |

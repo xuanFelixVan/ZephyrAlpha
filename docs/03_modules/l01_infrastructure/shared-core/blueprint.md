@@ -12,6 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
+construction_progress: phase_1_complete
 summary: "ZephyrAlpha Shared + Core 蓝图——Shared: 跨层数据契约(Instrument/Money/Timestamp) + SSoT守卫 + 观察者事件总线 + 能力定义 + 内容指纹 + DOS启动器。Core: 蓝图分解器(blueprint_decomposer) + 核心数据模型(models.py)。对标 Google Monorepo shared/ 模式 + DDD Shared Kernel。"
 tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure]
 priority: P2
@@ -79,8 +80,8 @@ depends_on:
 
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
-| Phase 0 | 全部 12 文件已实现 | ✅ implemented |
-| Phase 1 | models.py 升级到 v0.3.0（继承 schemas.py Task 28字段）| 📋 Backlog |
+| scaffold | 全部 12 文件已实现 | ✅ implemented |
+| experimental | models.py 升级到 v0.3.0（继承 schemas.py Task 28字段）| 📋 Backlog |
 
 ---
 

@@ -2,6 +2,17 @@
 """
 CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command)
 
+__manifest__ = """
+args: []
+description: CBG熔断器重置工具（Owner-Gated——仅 Owner 可执行）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 任务编号 : T-V2-005 Step 4（GLM-5.1 子任务）
 权限层级 : Human-Gated（仅 Owner 可执行）
 创建日期 : 2026-04-27

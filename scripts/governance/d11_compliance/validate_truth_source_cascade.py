@@ -1,14 +1,25 @@
 """
 V-15 TruthSourceCascadeValidator — 真源连锁回溯校验器
 ======================================================
-任务编号 : T-V2-012（Phase 1a-parallel）
+任务编号 : T-V2-012（experimental-parallel）
 权限层级 : AI-Modifiable + Human-Gated
   - 影响追踪报告输出 = AI-Modifiable
-  - 阈值告警触发 = Human-Gated（warn-only，Phase 1 不阻塞）
+  - 阈值告警触发 = Human-Gated（warn-only，experimental 不阻塞）
 真源声明 : ai-autonomy-authority-registry.md §2.11 (V-15)
 关联决策 : rationale-log R82（兜底需求）、R86（任务卡下发）
 创建日期 : 2026-04-27
 版本     : v1.0.0
+
+__manifest__ = """
+args: []
+description: 真源级联验证器（上下游引用一致性）
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 功能说明
 --------
@@ -21,7 +32,7 @@ V-15 TruthSourceCascadeValidator — 真源连锁回溯校验器
 4. 真源 last_updated < 最新 R-XXX 日期时输出 CASCADE-WARN
 5. 生成影响追踪报告：.runtime/reports/truth_source_cascade_<date>.md
 
-Phase 1 约束
+experimental 约束
 -----------
 - 仅扫描 R-86 起（MIN_R_NUMBER = 86），向前不追溯历史
 - warn-only 模式：exit code = 0，不阻塞流程
@@ -153,7 +164,7 @@ def _parse_row(line: str) -> RationaleDecision | None:
     """将 rationale-log 中的一行解析为 RationaleDecision。
 
     返回 None 表示不是有效 R-XXX 行，或 R 号 < MIN_R_NUMBER，
-    或该行无 affected_files（Phase 1 跳过无影响文件的行）。
+    或该行无 affected_files（experimental 跳过无影响文件的行）。
     """
     if _SEPARATOR_PATTERN.match(line):
         return None
@@ -173,7 +184,7 @@ def _parse_row(line: str) -> RationaleDecision | None:
     # 提取 affected_files
     affected = _extract_affected_files(rest)
 
-    # 未标注 affected_files 的行在 Phase 1 跳过（不生成虚假告警）
+    # 未标注 affected_files 的行在 experimental 跳过（不生成虚假告警）
     if not affected:
         return None
 
@@ -197,7 +208,7 @@ def parse_rationale_log(
     """解析 architecture-rationale-log.md，返回所有 R-XXX 决策列表。
 
     仅返回满足以下条件的记录：
-    - R 号 >= MIN_R_NUMBER（Phase 1 约束）
+    - R 号 >= MIN_R_NUMBER（experimental 约束）
     - 包含 affected_files 字段（空列表的行被忽略）
 
     参数
@@ -426,7 +437,7 @@ def generate_report(
     lines += [
         "---",
         "",
-        "> Phase 1 warn-only 模式：本报告不阻塞流程。",
+        "> experimental warn-only 模式：本报告不阻塞流程。",
         "> 相关决策：R82（V-15 兜底需求）/ R86（T-V2-012 任务卡）",
         "",
     ]

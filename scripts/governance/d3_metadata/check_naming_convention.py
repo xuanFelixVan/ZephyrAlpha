@@ -3,6 +3,18 @@
 GATE-11：命名规范门禁（check_naming_convention.py）
 ======================================================
 
+__manifest__ = """
+args:
+- --all
+description: 文件命名规范检查（kebab-case / module_id namespace / ADR铁律）
+dimensions:
+- D3
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
+
 权威依据
 --------
 `docs/01_policies_and_standards/governance/document/file-naming-standard.md` v2.0.1 §五 违规检测规则

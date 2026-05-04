@@ -2,6 +2,18 @@
 GATE-DUP: Detect duplicate files after migration.
 Prevents the root cause of C6 (5 files duplicated after migration to _registry/).
 
+__manifest__ = """
+args: []
+description: GATE-DUP — 迁移后重复文件检测（防止迁移后原文件未删除）
+dimensions:
+- D3
+- D4
+priority: P1
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 Detection: Find files with DEPRECATED- module_id prefix or superseded_by field
            that still exist at their original location AND at _registry/ target.
            Also detect files with identical content at two paths.

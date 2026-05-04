@@ -1,6 +1,17 @@
 """
 run_all.py — 脚本系统统一入口脚本
 
+__manifest__ = """
+args: []
+description: run_all.py — 脚本系统统一入口脚本
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 根据 MOD-INF-005 蓝图 §4.4 定义，提供一键运行全维度或单维度审计扫描的入口。
 
 脚本注册表从 script_manifest.yaml（SSoT）加载，声明每个脚本覆盖的审计维度和参数，
@@ -403,17 +414,14 @@ def parse_script_output_to_findings(
         if _is_skip_line(line):
             continue
 
-        severity = Severity.LOW
         tag_match = SEVERITY_TAG_PATTERN.match(line)
         if tag_match:
             severity = _P_TO_SEVERITY[tag_match.group(1)]
             line = line[tag_match.end() :].strip()
-
-        if not tag_match:
-            if _has_error_indicator(line):
-                severity = Severity.HIGH
-            elif "WARNING" in line.upper() or "warn" in line.lower():
-                severity = Severity.MEDIUM
+        elif _has_error_indicator(line):
+            severity = Severity.MEDIUM
+        else:
+            continue
 
         file_path, description = _extract_file_path(line)
 
@@ -581,6 +589,64 @@ def run_all_dimensions(
     }
     return collection, overall
 
+
+def _get_changed_files(diff_ref: str = "HEAD~1") -> frozenset[str]:
+    result = subprocess.run(
+        ["git", "diff", "--name-only", diff_ref],
+        capture_output=True, text=True, timeout=30,
+        cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+    )
+    if result.returncode != 0:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "--cached"],
+            capture_output=True, text=True, timeout=30,
+            cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+        )
+    return frozenset(
+        line.strip().replace("\\", "/")
+        for line in result.stdout.split("\n") if line.strip()
+    )
+
+
+_FILE_DIMENSION_MAP: tuple[tuple[str, str], ...] = (
+    ("docs/01_policies_and_standards/", "D3"),
+    ("docs/03_modules/", "D5"),
+    ("docs/02_enterprise_architecture/", "D5"),
+    ("docs/", "D2"),
+    ("scripts/governance/d1_structure/", "D1"),
+    ("scripts/governance/d2_links/", "D2"),
+    ("scripts/governance/d3_metadata/", "D3"),
+    ("scripts/governance/d4_paths/", "D4"),
+    ("scripts/governance/d5_architecture/", "D5"),
+    ("scripts/governance/d6_security/", "D6"),
+    ("scripts/governance/d7_code/", "D7"),
+    ("scripts/governance/d8_tests/", "D8"),
+    ("scripts/governance/d9_vcs/", "D9"),
+    ("scripts/governance/d10_ci_cd/", "D10"),
+    ("scripts/governance/d11_infrastructure/", "D11"),
+    ("scripts/governance/d12_feedback/", "D12"),
+    ("scripts/governance/", "D1"),
+    ("src/zephyr/l01_infrastructure/", "D11"),
+    ("src/zephyr/", "D6"),
+    ("src/", "D7"),
+    ("config/", "D4"),
+    ("data/", "D4"),
+)
+
+
+def _map_files_to_dimensions(changed_files: frozenset[str]) -> frozenset[str]:
+    dims: set[str] = set()
+    for f in changed_files:
+        f = f.replace("\\", "/")
+        for prefix, dim in _FILE_DIMENSION_MAP:
+            if f.startswith(prefix):
+                dims.add(dim)
+                break
+        else:
+            dims.add("D12")
+    return frozenset(dims)
+
+
 def main() -> None:
     """入口——解析命令行参数并编排审计扫描执行。
 
@@ -623,6 +689,11 @@ def main() -> None:
         action="store_true",
         help="警告模式：传递 --warn-only 给所有子脚本，发现不阻塞（exit 0）",
     )
+    parser.add_argument(
+        "--diff-ref",
+        default="",
+        help="增量模式：仅扫描与 git diff <ref> 变更相关的脚本（如 HEAD~1 或 origin/main...HEAD）",
+    )
     args = parser.parse_args()
 
     if args.list:
@@ -634,6 +705,16 @@ def main() -> None:
         print("  run_all.py 仍可执行脚本，但不会生成结构化 Finding 输出", file=sys.stderr)
 
     dimensions_to_run = [Dimension(d) for d in args.dimensions] if args.dimensions else list(Dimension)
+
+    if args.diff_ref:
+        changed = _get_changed_files(args.diff_ref)
+        if not changed:
+            print(f"\n[增量模式] git diff {args.diff_ref} 无变更，跳过扫描", file=sys.stderr)
+            return
+        relevant_dims = _map_files_to_dimensions(changed)
+        dimensions_to_run = [d for d in dimensions_to_run if d.value in relevant_dims]
+        print(f"\n[增量模式] {len(changed)} 变更文件 → {len(relevant_dims)} 相关维度: "
+              f"{', '.join(sorted(relevant_dims))}", file=sys.stderr)
 
     if args.dry_run:
         registry = _get_registry()
