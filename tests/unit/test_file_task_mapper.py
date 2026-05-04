@@ -1,19 +1,15 @@
 """
 Unit tests for file_task_mapper.py (T-2-02)
 """
+
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 
 import pytest
 import yaml
-
 from zephyr.orchestrator.file_task_mapper import (
     FileTaskMapper,
-    RegisterReport,
-    SyncInconsistency,
-    SyncReport,
     classify_file_to_namespace,
 )
 from zephyr.shared.schemas import TaskNamespace
@@ -70,7 +66,15 @@ class TestClassifyFileToNamespace:
 class TestFileTaskMapperRegister:
     def test_register_file_returns_task_id(self, mapper: FileTaskMapper) -> None:
         tid = mapper.register_file("docs/test.md", phase=2, title="Test Task")
-        assert tid.startswith("OPS-") or tid.startswith("ADR-") or tid.startswith("CP-") or tid.startswith("KE-") or tid.startswith("STD-") or tid.startswith("DW-") or tid.startswith("SRC-")
+        assert (
+            tid.startswith("OPS-")
+            or tid.startswith("ADR-")
+            or tid.startswith("CP-")
+            or tid.startswith("KE-")
+            or tid.startswith("STD-")
+            or tid.startswith("DW-")
+            or tid.startswith("SRC-")
+        )
 
     def test_register_file_creates_mapping(self, mapper: FileTaskMapper) -> None:
         tid = mapper.register_file("docs/test.md")

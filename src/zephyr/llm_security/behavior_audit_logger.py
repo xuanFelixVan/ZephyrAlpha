@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from zephyr.shared.time_utils import now_iso
+
 """
 AI Behavior Audit Logger - structlog + JSONL
 Task ID : T-2-32
@@ -17,10 +18,11 @@ Features
 """
 
 import json
-from datetime import datetime, timezone
+from collections.abc import Iterator
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Iterator, Optional
+from typing import Any
 
 import structlog
 
@@ -68,7 +70,7 @@ class AuditEvent:
         target: str,
         result: str,
         session_id: str,
-        extra: Optional[dict[str, Any]] = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
         self.timestamp = timestamp
         self.model = model
@@ -107,11 +109,11 @@ class AuditQuery:
     def __init__(
         self,
         *,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        action: Optional[str] = None,
-        time_from: Optional[str] = None,
-        time_to: Optional[str] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        action: str | None = None,
+        time_from: str | None = None,
+        time_to: str | None = None,
     ) -> None:
         self.session_id = session_id
         self.model = model
@@ -168,17 +170,16 @@ class AuditLogger:
         self._log_dir.mkdir(parents=True, exist_ok=True)
 
         self._logger = structlog.get_logger("ai_audit")
-        self._current_file: Optional[Path] = None
-        self._current_date: Optional[str] = None
+        self._current_file: Path | None = None
+        self._current_date: str | None = None
 
     @property
     def log_dir(self) -> Path:
         return self._log_dir
 
-
     def _current_log_file(self) -> Path:
         if self._rotation == RotationPolicy.DATE:
-            today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            today = datetime.now(UTC).strftime("%Y-%m-%d")
             if self._current_date != today:
                 self._current_date = today
                 self._current_file = self._log_dir / f"audit-{today}.jsonl"
@@ -206,9 +207,9 @@ class AuditLogger:
         action: AuditAction,
         target: str,
         result: str,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        extra: Optional[dict[str, Any]] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
         sid = session_id or self._session_id
         mdl = model or self._model
@@ -231,44 +232,62 @@ class AuditLogger:
         target: str,
         result: str,
         *,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        extra: Optional[dict[str, Any]] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
-        self.log(action=AuditAction.MODEL_CALL, target=target, result=result, session_id=session_id, model=model, extra=extra)
+        self.log(
+            action=AuditAction.MODEL_CALL, target=target, result=result, session_id=session_id, model=model, extra=extra
+        )
 
     def log_file_write(
         self,
         target: str,
         result: str,
         *,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        extra: Optional[dict[str, Any]] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
-        self.log(action=AuditAction.FILE_WRITE, target=target, result=result, session_id=session_id, model=model, extra=extra)
+        self.log(
+            action=AuditAction.FILE_WRITE, target=target, result=result, session_id=session_id, model=model, extra=extra
+        )
 
     def log_rule_trigger(
         self,
         target: str,
         result: str,
         *,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        extra: Optional[dict[str, Any]] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
-        self.log(action=AuditAction.RULE_TRIGGER, target=target, result=result, session_id=session_id, model=model, extra=extra)
+        self.log(
+            action=AuditAction.RULE_TRIGGER,
+            target=target,
+            result=result,
+            session_id=session_id,
+            model=model,
+            extra=extra,
+        )
 
     def log_gate_decision(
         self,
         target: str,
         result: str,
         *,
-        session_id: Optional[str] = None,
-        model: Optional[str] = None,
-        extra: Optional[dict[str, Any]] = None,
+        session_id: str | None = None,
+        model: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
-        self.log(action=AuditAction.GATE_DECISION, target=target, result=result, session_id=session_id, model=model, extra=extra)
+        self.log(
+            action=AuditAction.GATE_DECISION,
+            target=target,
+            result=result,
+            session_id=session_id,
+            model=model,
+            extra=extra,
+        )
 
     def query(self, q: AuditQuery) -> list[AuditEvent]:
         results: list[AuditEvent] = []
@@ -285,7 +304,7 @@ class AuditLogger:
     def _iter_all_events(self) -> Iterator[AuditEvent]:
         jsonl_files = sorted(self._log_dir.glob("*.jsonl"))
         for jf in jsonl_files:
-            with open(jf, "r", encoding="utf-8") as fh:
+            with open(jf, encoding="utf-8") as fh:
                 for line in fh:
                     line = line.strip()
                     if not line:
@@ -307,7 +326,7 @@ class AuditLogger:
     def count_events(self) -> int:
         count = 0
         for jf in sorted(self._log_dir.glob("*.jsonl")):
-            with open(jf, "r", encoding="utf-8") as fh:
+            with open(jf, encoding="utf-8") as fh:
                 for line in fh:
                     if line.strip():
                         count += 1

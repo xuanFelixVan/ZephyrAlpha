@@ -19,19 +19,21 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
 import argparse
 
-MODULE_ID_PATTERN = re.compile(r"^[A-Z]{2,5}-(?:STD|REG|IDX|GLS|TERM|VOC|ARCH|MOD|DOC|SEC|DATA|TASK|DEV|MIG|VC|CMP|L\d{2})-\d{3}", re.IGNORECASE)
+MODULE_ID_PATTERN = re.compile(
+    r"^[A-Z]{2,5}-(?:STD|REG|IDX|GLS|TERM|VOC|ARCH|MOD|DOC|SEC|DATA|TASK|DEV|MIG|VC|CMP|L\d{2})-\d{3}", re.IGNORECASE
+)
 
 RELATIVE_PATH_PATTERN = re.compile(r"^\.\.?[\\/]")
 
@@ -62,24 +64,28 @@ def scan_relative_references() -> list[dict]:
                     continue
 
                 if MODULE_ID_PATTERN.match(link_target):
-                    findings.append({
-                        "file": rel,
-                        "line": i,
-                        "link": f"[{link_text}]({link_target})",
-                        "type": "MODULE_ID_ONLY",
-                        "detail": f"仅使用 module_id 引用（应使用绝对路径）",
-                        "severity": "LOW",
-                    })
+                    findings.append(
+                        {
+                            "file": rel,
+                            "line": i,
+                            "link": f"[{link_text}]({link_target})",
+                            "type": "MODULE_ID_ONLY",
+                            "detail": "仅使用 module_id 引用（应使用绝对路径）",
+                            "severity": "LOW",
+                        }
+                    )
 
                 if RELATIVE_PATH_PATTERN.match(link_target):
-                    findings.append({
-                        "file": rel,
-                        "line": i,
-                        "link": f"[{link_text}]({link_target})",
-                        "type": "RELATIVE_PATH",
-                        "detail": f"使用相对路径引用（应使用绝对路径）",
-                        "severity": "LOW",
-                    })
+                    findings.append(
+                        {
+                            "file": rel,
+                            "line": i,
+                            "link": f"[{link_text}]({link_target})",
+                            "type": "RELATIVE_PATH",
+                            "detail": "使用相对路径引用（应使用绝对路径）",
+                            "severity": "LOW",
+                        }
+                    )
 
     return findings
     """scan relative references."""

@@ -23,13 +23,13 @@ def ensure_utf8_stdout() -> None:
         if sys.stdout.encoding != 'utf-8':
             sys.stdout.reconfigure(encoding='utf-8')
     """
-    if sys.stdout.encoding != 'utf-8':
+    if sys.stdout.encoding != "utf-8":
         try:
-            sys.stdout.reconfigure(encoding='utf-8')
+            sys.stdout.reconfigure(encoding="utf-8")
         except (AttributeError, OSError):
             pass
-    if sys.stderr.encoding != 'utf-8':
+    if sys.stderr.encoding != "utf-8":
         try:
-            sys.stderr.reconfigure(encoding='utf-8')
+            sys.stderr.reconfigure(encoding="utf-8")
         except (AttributeError, OSError):
             pass

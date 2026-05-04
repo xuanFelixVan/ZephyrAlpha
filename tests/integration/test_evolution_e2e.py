@@ -6,30 +6,26 @@ Evolution 端到端测试 (T-3-15)
 
 最少测试：10 条。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import pytest
 
 pytestmark = pytest.mark.e2e
 
 from zephyr.feedback_loop.evolution_engine import (
-    DEFAULT_THRESHOLDS,
     EvolutionEngine,
-    EvolutionProposal,
-    EvolutionReport,
     EvolutionSignal,
     FeedbackLayer,
-    Severity,
     evolve,
 )
 from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
 
 def _fixed_now() -> datetime:
-    return datetime(2026, 4, 24, 12, 0, 0, tzinfo=timezone.utc)
+    return datetime(2026, 4, 24, 12, 0, 0, tzinfo=UTC)
 
 
 class TestEvolveFullFlow:

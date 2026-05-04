@@ -22,6 +22,7 @@ LifecycleSentinel      : initialize→tools_list→map_intent→evaluate_golden_
 StdioTransport         : multi-request / malformed JSON / empty-line skip
 CrossServerChain       : task_manager→gate_engine→knowledge_base 完整调用链
 """
+
 from __future__ import annotations
 
 import io
@@ -44,6 +45,7 @@ from zephyr.mcp.doc_guard_server import DocGuardServer
 from zephyr.mcp.gate_engine_server import GateEngineServer
 from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.mcp.sentinel_server import SentinelServer
+
 # TaskManagerServer refactored to FastMCP — skip E2E until steps 5-6 implemented
 # 当前状态: task_manager_server.py 的 create_task/list_tasks/update_status 均为 GATE_BLOCKED 空壳
 # 解除条件: 步骤5-6 TaskLifecycleManager 补齐后，tool 函数有真实逻辑，E2E 可重写适配 FastMCP Client
@@ -52,7 +54,10 @@ try:
 except ImportError:
     TaskManagerServer = None  # type: ignore[assignment]
 
-pytest.skip("BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待补齐后 E2E 可重写适配 FastMCP Client", allow_module_level=True)
+pytest.skip(
+    "BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待补齐后 E2E 可重写适配 FastMCP Client",
+    allow_module_level=True,
+)
 
 # ---------------------------------------------------------------------------
 # 辅助：JSON-RPC 请求构造 + 结果解析
@@ -269,9 +274,7 @@ class TestLifecycleTaskManager:
         assert upd_resp["id"] == "lc-3"
 
         # 4. 验证最新状态
-        final = _tool_result_text(
-            _tool(self.server, "task_manager.get_task", {"task_id": "T-0-LC-001"})
-        )
+        final = _tool_result_text(_tool(self.server, "task_manager.get_task", {"task_id": "T-0-LC-001"}))
         assert final["status"] == "READY"
 
 
@@ -348,9 +351,7 @@ class TestLifecycleKnowledgeBase:
                 },
             )
         )
-        got = _tool_result_text(
-            _tool(self.server, "knowledge_base.get_ke", {"ke_id": "KE-100"})
-        )
+        got = _tool_result_text(_tool(self.server, "knowledge_base.get_ke", {"ke_id": "KE-100"}))
         assert got["ke_id"] == "KE-100"
         assert got["title"] == "GetKE test"
 
@@ -469,9 +470,7 @@ class TestLifecycleDocGuard:
         assert pkg["anti_corruption_report"]["passed"] is True
 
         # 2. 获取 carryover
-        co = _tool_result_text(
-            _tool(self.server, "session_handoff.get_carryover", {})
-        )
+        co = _tool_result_text(_tool(self.server, "session_handoff.get_carryover", {}))
         assert co["session_id"] == "sess-e2e-001"
 
         # 3. 独立校验同一包
@@ -598,10 +597,7 @@ class TestStdioTransport:
 
     def test_malformed_json_followed_by_valid_request(self) -> None:
         """无效 JSON 行不中断后续合法请求处理。"""
-        inp = io.StringIO(
-            "not json at all\n"
-            + json.dumps(_req("ping", req_id=99)) + "\n"
-        )
+        inp = io.StringIO("not json at all\n" + json.dumps(_req("ping", req_id=99)) + "\n")
         out = io.StringIO()
         self.server.run(input_stream=inp, output_stream=out)
         lines = [ln for ln in out.getvalue().splitlines() if ln.strip()]
@@ -613,11 +609,7 @@ class TestStdioTransport:
 
     def test_empty_lines_are_skipped(self) -> None:
         """纯空行不产生响应。"""
-        inp = io.StringIO(
-            "\n\n\n"
-            + json.dumps(_req("ping", req_id=7)) + "\n"
-            + "\n"
-        )
+        inp = io.StringIO("\n\n\n" + json.dumps(_req("ping", req_id=7)) + "\n" + "\n")
         out = io.StringIO()
         self.server.run(input_stream=inp, output_stream=out)
         lines = [ln for ln in out.getvalue().splitlines() if ln.strip()]
@@ -678,9 +670,7 @@ class TestCrossServerChain:
         assert gate_r["passed"] is True
 
         # Step 3: knowledge_base 存储门禁结果作为知识条目
-        ke_content = (
-            f"Gate G4 passed for task {task['task_id']}: {gate_r}"
-        )
+        ke_content = f"Gate G4 passed for task {task['task_id']}: {gate_r}"
         ke_r = _tool_result_text(
             _tool(
                 self.kb,

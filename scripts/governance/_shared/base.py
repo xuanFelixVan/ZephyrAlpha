@@ -50,6 +50,7 @@ try:
         RemediationAction,
         Severity,
     )
+
     _FINDING_AVAILABLE = True
 except ImportError:
     _FINDING_AVAILABLE = False
@@ -98,7 +99,7 @@ class BaseAuditScript(ABC):
             exclude_files=exclude_files,
         )
 
-    def add_finding(  # noqa: PLR0913
+    def add_finding(
         self,
         dimension: Dimension,
         severity: Severity,
@@ -216,12 +217,9 @@ class BaseAuditScript(ABC):
         --jsonl-file: 将 JSONL 写入指定文件（不输出到 stdout）
         """
         parser = argparse.ArgumentParser(description=self.__class__.__doc__ or "")
-        parser.add_argument("--warn-only", action="store_true",
-                            help="警告模式：发现不阻塞（exit 0）")
-        parser.add_argument("--jsonl", action="store_true",
-                            help="输出结构化 JSONL（Finding Schema）到 stdout")
-        parser.add_argument("--jsonl-file", type=str, default="",
-                            help="JSONL 输出文件路径（不指定则输出到 stdout）")
+        parser.add_argument("--warn-only", action="store_true", help="警告模式：发现不阻塞（exit 0）")
+        parser.add_argument("--jsonl", action="store_true", help="输出结构化 JSONL（Finding Schema）到 stdout")
+        parser.add_argument("--jsonl-file", type=str, default="", help="JSONL 输出文件路径（不指定则输出到 stdout）")
         args = parser.parse_args()
         self.warn_only = args.warn_only
 
@@ -246,9 +244,8 @@ class BaseAuditScript(ABC):
             jl = self._collection.to_jsonl()
         else:
             import json
-            jl = "".join(
-                json.dumps(r, ensure_ascii=False) + "\n"
-                for r in self._findings_raw)
+
+            jl = "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in self._findings_raw)
 
         if file_path:
             Path(file_path).parent.mkdir(parents=True, exist_ok=True)

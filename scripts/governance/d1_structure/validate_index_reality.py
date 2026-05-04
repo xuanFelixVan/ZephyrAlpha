@@ -21,17 +21,18 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import MANIFEST_PATH, SCRIPTS_DIR
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
-import yaml
 
+import yaml
 
 INDEX_PATH = SCRIPTS_DIR / "index.md"
 
@@ -54,10 +55,7 @@ DIMENSION_DIRS: dict[str, str] = {
 def _count_py_files(dir_path: Path) -> int:
     if not dir_path.exists():
         return 0
-    return len([
-        f for f in dir_path.glob("*.py")
-        if f.name != "__init__.py" and f.is_file()
-    ])
+    return len([f for f in dir_path.glob("*.py") if f.name != "__init__.py" and f.is_file()])
 
 
 def _extract_index_claims(index_content: str) -> dict[str, int]:
@@ -75,7 +73,7 @@ def _extract_index_claims(index_content: str) -> dict[str, int]:
 
 def _count_manifest_entries() -> int:
     try:
-        with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
+        with open(MANIFEST_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         if data and "scripts" in data:
             return len(data["scripts"])
@@ -86,11 +84,10 @@ def _count_manifest_entries() -> int:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="索引-实际同步校验 — 对照 index.md 声称数字 vs 磁盘实际"
-    )
+    parser = argparse.ArgumentParser(description="索引-实际同步校验 — 对照 index.md 声称数字 vs 磁盘实际")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="警告模式：发现漂移不阻塞（exit 0）",
     )
     args = parser.parse_args()
@@ -109,18 +106,12 @@ def main() -> None:
         actual = _count_py_files(dir_path)
         claimed = claims.get(dim_key, -1)
         if claimed != actual and not (dim_key == "D10" and claimed == -1):
-            drift.append(
-                f"{dim_key} ({dir_name}/): index.md 声称 {claimed} 脚本, "
-                f"磁盘实际 {actual}"
-            )
+            drift.append(f"{dim_key} ({dir_name}/): index.md 声称 {claimed} 脚本, " f"磁盘实际 {actual}")
 
     actual_manifest = _count_manifest_entries()
     claimed_manifest = claims.get("manifest", -1)
     if claimed_manifest != actual_manifest and actual_manifest > 0:
-        drift.append(
-            f"manifest 条目: index.md 声称 {claimed_manifest}, "
-            f"实际 {actual_manifest}"
-        )
+        drift.append(f"manifest 条目: index.md 声称 {claimed_manifest}, " f"实际 {actual_manifest}")
 
     if drift:
         print(f"\n[IDX-DRIFT] index.md 与磁盘实际不一致 — {len(drift)} 项漂移：\n", file=sys.stderr)

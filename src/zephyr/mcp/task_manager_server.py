@@ -5,6 +5,7 @@ ZephyrAlpha MCP Task Manager Server
 注册：task_repo（SQLite） + BlueprintDecomposer（蓝图拆解）
 暴露：5 个 MCP Tool（create / get / update_status / decompose / register_from_triage）
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -13,7 +14,6 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
@@ -44,8 +44,8 @@ class TaskManagerMCP:
 
     def __init__(
         self,
-        task_repo: Optional[object] = None,
-        docs_dir: Optional[str] = None,
+        task_repo: object | None = None,
+        docs_dir: str | None = None,
     ):
         self.task_repo = task_repo
         self.decomposer = BlueprintDecomposer(
@@ -201,15 +201,19 @@ class TaskManagerMCP:
                 downstream_outputs=[],
                 allowed_touch=[],
                 forbidden_touch=[],
-                applicable_rules=[{
-                    "module_id": "MOD-INF-006",
-                    "section": "§5.3",
-                    "reason": "审阅池注册",
-                }],
-                context_assembly_manifest=[{
-                    "file_path": str(path.resolve()),
-                    "reason": "审阅源文件",
-                }],
+                applicable_rules=[
+                    {
+                        "module_id": "MOD-INF-006",
+                        "section": "§5.3",
+                        "reason": "审阅池注册",
+                    }
+                ],
+                context_assembly_manifest=[
+                    {
+                        "file_path": str(path.resolve()),
+                        "reason": "审阅源文件",
+                    }
+                ],
                 rollback_instructions="",
                 estimated_tokens=4000,
                 timeout_minutes=30,
@@ -253,7 +257,7 @@ class TaskManagerMCP:
             except Exception:
                 pass
 
-    def _load(self, task_id: str) -> Optional[TaskCard]:
+    def _load(self, task_id: str) -> TaskCard | None:
         if self.task_repo:
             try:
                 task = self.task_repo.get(task_id)
@@ -303,13 +307,13 @@ def _extract_triage_profile(content: str, task_id: str) -> dict:
     title_match = _TRIAGE_TITLE_PATTERN.search(content)
     if title_match:
         profile["title"] = title_match.group(1).strip()
-        body = content[title_match.end():].strip()
+        body = content[title_match.end() :].strip()
         if body:
             profile["description"] = body[:800]
     return profile
 
 
-def _parse_md_status(content: str) -> Optional[str]:
+def _parse_md_status(content: str) -> str | None:
     for line in content.split("\n"):
         if line.startswith("**状态**："):
             return line.split("：", 1)[1].strip()
@@ -323,7 +327,7 @@ _MD_GATE_BLOCKED = re.compile(r"阻塞:\s*(.+)$")
 _MD_TIME_ITEM = re.compile(r"^-\s*(创建|更新)[：:]\s*(.+)$")
 
 
-def _parse_md_to_taskcard(content: str) -> Optional[TaskCard]:
+def _parse_md_to_taskcard(content: str) -> TaskCard | None:
     lines = content.split("\n")
     title = ""
     kv: dict[str, str] = {}
@@ -465,16 +469,8 @@ def _parse_time(s: str) -> datetime:
 
 def _taskcard_to_md(tc: TaskCard) -> str:
     dt_fmt = "%Y-%m-%d %H:%M"
-    created = (
-        tc.created_at.strftime(dt_fmt)
-        if hasattr(tc.created_at, "strftime")
-        else str(tc.created_at)[:16]
-    )
-    updated = (
-        tc.updated_at.strftime(dt_fmt)
-        if hasattr(tc.updated_at, "strftime")
-        else str(tc.updated_at)[:16]
-    )
+    created = tc.created_at.strftime(dt_fmt) if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
+    updated = tc.updated_at.strftime(dt_fmt) if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
 
     lines = [
         f"# {tc.title}",
@@ -499,11 +495,13 @@ def _taskcard_to_md(tc: TaskCard) -> str:
     for f in tc.upstream_files:
         lines.append(f"- {f}")
 
-    lines.extend([
-        "",
-        "## 下游产出",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## 下游产出",
+            "",
+        ]
+    )
 
     for d in tc.downstream_outputs:
         if isinstance(d, dict):
@@ -511,24 +509,28 @@ def _taskcard_to_md(tc: TaskCard) -> str:
         else:
             lines.append(f"- {d}")
 
-    lines.extend([
-        "",
-        "## 门禁状态",
-        "",
-        f"已通过: {[g.value for g in tc.completed_gates]}",
-    ])
+    lines.extend(
+        [
+            "",
+            "## 门禁状态",
+            "",
+            f"已通过: {[g.value for g in tc.completed_gates]}",
+        ]
+    )
 
     if tc.blocked_gates:
         lines.append(f"阻塞: {tc.blocked_gates}")
 
-    lines.extend([
-        "",
-        "## 时间",
-        "",
-        f"- 创建：{created}",
-        f"- 更新：{updated}",
-        "",
-        "> 本文件由 MOD-INF-006 task_manager_server 自动同步生成。",
-    ])
+    lines.extend(
+        [
+            "",
+            "## 时间",
+            "",
+            f"- 创建：{created}",
+            f"- 更新：{updated}",
+            "",
+            "> 本文件由 MOD-INF-006 task_manager_server 自动同步生成。",
+        ]
+    )
 
     return "\n".join(lines)

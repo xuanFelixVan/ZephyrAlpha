@@ -16,19 +16,18 @@ Upsert        : 新建 / 覆盖更新
 Concurrency   : 多线程并发读（WAL 安全）/ 单 Writer 序列化
 Helpers       : allowed_transitions / is_terminal
 """
+
 from __future__ import annotations
 
-from threading import Thread
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+from threading import Thread
 
 import pytest
-
 from zephyr.db.task_repo import (
     InvalidTransitionError,
     TaskNotFoundError,
     TaskRepository,
-    TaskRepositoryError,
     allowed_transitions,
     is_terminal,
 )
@@ -41,7 +40,7 @@ from zephyr.shared.schemas import (
     TaskStatus,
 )
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 def _make_task(
@@ -120,9 +119,7 @@ class TestCreate:
 
         conn = sqlite3.connect(str(repo._db_path))
         conn.row_factory = sqlite3.Row
-        rows = conn.execute(
-            "SELECT * FROM events WHERE task_id = 'SRC-2' AND event_type = 'task_event'"
-        ).fetchall()
+        rows = conn.execute("SELECT * FROM events WHERE task_id = 'SRC-2' AND event_type = 'task_event'").fetchall()
         conn.close()
         assert len(rows) >= 1
         assert "created" in rows[0]["payload"]
@@ -286,11 +283,9 @@ class TestTransition:
             ("IN_PROGRESS", "PENDING"),
         ],
     )
-    def test_invalid_transition_raises(
-        self, repo: TaskRepository, from_s: str, to_s: str
-    ) -> None:
+    def test_invalid_transition_raises(self, repo: TaskRepository, from_s: str, to_s: str) -> None:
         now = datetime.now(_UTC)
-        tid = f"SRC-900"
+        tid = "SRC-900"
         t = Task(
             task_id=tid,
             namespace=TaskNamespace.SRC,
@@ -338,9 +333,7 @@ class TestDelete:
         repo.delete("SRC-42")
         conn = sqlite3.connect(str(repo._db_path))
         conn.row_factory = sqlite3.Row
-        rows = conn.execute(
-            "SELECT * FROM events WHERE task_id IS NULL"
-        ).fetchall()
+        rows = conn.execute("SELECT * FROM events WHERE task_id IS NULL").fetchall()
         conn.close()
         assert len(rows) >= 1
 

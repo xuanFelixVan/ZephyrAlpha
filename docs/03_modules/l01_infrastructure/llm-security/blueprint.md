@@ -207,7 +207,7 @@ LSG 健康检查失败
 ### 下一步施工
 
 1. **P0**：`process_sandbox.py` 补齐 authorize() 实现
-2. **P1**：`behavior_audit_logger.py` 补齐 log() + detect_anomaly() 
+2. **P1**：`behavior_audit_logger.py` 补齐 log() + detect_anomaly()
 3. **P2**：`output_validator.py` 创建 + Pydantic Schema Registry
 
 ---

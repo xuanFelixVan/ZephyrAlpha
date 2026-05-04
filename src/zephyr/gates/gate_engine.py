@@ -34,6 +34,7 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
   circuit_breaker  - 模块间熔断状态检查（T-V2-005 第 17 种，CBG Phase 1b）
   blueprint_read_check - 蓝图读取合规检查（T-V2-011 第 18 种，P1-2 强制合规）
 """
+
 from __future__ import annotations
 
 import json
@@ -41,9 +42,9 @@ import re
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 import yaml
 
@@ -66,13 +67,15 @@ __all__ = [
 GATES_DIR = Path(__file__).parent
 """门禁 YAML 文件所在目录（与本模块同级）。"""
 
-_UTC = timezone.utc
+_UTC = UTC
 
-_DEPRECATED_PATHS_YAML = Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
+_DEPRECATED_PATHS_YAML = (
+    Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
+)
 
 
 def _load_deprecated_patterns() -> list[str]:
-    with open(_DEPRECATED_PATHS_YAML, "r", encoding="utf-8") as f:
+    with open(_DEPRECATED_PATHS_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return list(data.get("blacklist_patterns", []))
 
@@ -101,9 +104,9 @@ class GateViolation:
 
     check_id: str
     check_name: str
-    severity: str          # P0 / P1 / P2
+    severity: str  # P0 / P1 / P2
     message: str
-    detail: Optional[str] = None
+    detail: str | None = None
 
 
 @dataclass
@@ -131,10 +134,7 @@ class GateResult:
             return f"[PASS] Gate {self.gate_id} task={self.task_id}"
         p0 = len(self.p0_violations)
         total = len(self.violations)
-        return (
-            f"[FAIL] Gate {self.gate_id} task={self.task_id} "
-            f"violations={total} (P0={p0})"
-        )
+        return f"[FAIL] Gate {self.gate_id} task={self.task_id} " f"violations={total} (P0={p0})"
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +189,7 @@ class GateViolationError(GateEngineError):
 def _check_encoding(
     file_path: Path,
     params: dict[str, Any],
-) -> Optional[str]:
+) -> str | None:
     """校验文件编码为 UTF-8 无 BOM。"""
     if not file_path.exists():
         return None
@@ -206,7 +206,7 @@ def _check_encoding(
 def _check_line_ending(
     file_path: Path,
     params: dict[str, Any],
-) -> Optional[str]:
+) -> str | None:
     """校验文件使用 LF 换行（无 CRLF）。"""
     if not file_path.exists():
         return None
@@ -236,7 +236,7 @@ def _check_path_blacklist(
 def _check_empty_shell(
     file_path: Path,
     params: dict[str, Any],
-) -> Optional[str]:
+) -> str | None:
     """检测空壳文件：文件为空或正文充满占位符。"""
     if not file_path.exists():
         return None
@@ -249,9 +249,7 @@ def _check_empty_shell(
     if not body:
         return f"空文件（0 字节有效内容）：{file_path}"
 
-    placeholder_patterns = params.get(
-        "placeholder_patterns", _PLACEHOLDER_PATTERNS
-    )
+    placeholder_patterns = params.get("placeholder_patterns", _PLACEHOLDER_PATTERNS)
     if isinstance(placeholder_patterns, list) and placeholder_patterns:
         total_chars = len(body)
         matched_chars = 0
@@ -261,16 +259,14 @@ def _check_empty_shell(
         ratio = matched_chars / max(total_chars, 1)
         max_ratio: float = float(params.get("max_placeholder_ratio", 0.5))
         if ratio > max_ratio:
-            return (
-                f"空壳文件（占位符比例 {ratio:.1%} > {max_ratio:.0%}）：{file_path}"
-            )
+            return f"空壳文件（占位符比例 {ratio:.1%} > {max_ratio:.0%}）：{file_path}"
     return None
 
 
 def _check_content_length(
     file_path: Path,
     params: dict[str, Any],
-) -> Optional[str]:
+) -> str | None:
     """校验正文长度 > min_chars（排除 frontmatter）。"""
     if not file_path.exists():
         return None
@@ -290,7 +286,7 @@ def _check_content_length(
 def _check_frontmatter(
     file_path: Path,
     params: dict[str, Any],
-) -> Optional[str]:
+) -> str | None:
     """校验 Markdown frontmatter 包含必填字段。"""
     if not file_path.exists() or file_path.suffix not in {".md", ".markdown"}:
         return None
@@ -327,7 +323,7 @@ def _run_check(
     deliverables: list[str] = list(task.deliverables or [])
     dep_paths = [project_root / p for p in deliverables]
 
-    def _add(msg: str, detail: Optional[str] = None) -> None:
+    def _add(msg: str, detail: str | None = None) -> None:
         violations.append(
             GateViolation(
                 check_id=check.check_id,
@@ -394,7 +390,7 @@ def _run_check(
             )
         else:
             try:
-                from zephyr.gates.circuit_breaker import CircuitBreakerCheck  # noqa: PLC0415
+                from zephyr.gates.circuit_breaker import CircuitBreakerCheck
 
                 cb_check = CircuitBreakerCheck(
                     caller_module=caller,
@@ -402,7 +398,7 @@ def _run_check(
                 )
                 if cb_check.is_open():
                     _add(cb_check.violation_message())
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 # CBGManager 初始化失败时降级为 P2 警告，不阻断门禁
                 violations.append(
                     GateViolation(
@@ -427,9 +423,7 @@ def _run_check(
                 detail=f"check_id={check.check_id}",
             )
         else:
-            _check_blueprint_read_compliance(
-                target_blueprint, target_files, check, _add
-            )
+            _check_blueprint_read_compliance(target_blueprint, target_files, check, _add)
 
     elif ct in {
         "score_threshold",
@@ -490,25 +484,19 @@ class GateEngine:
 
     def __init__(
         self,
-        gate_dir: Optional[Path | str] = None,
-        db_path: Optional[Path | str] = None,
-        project_root: Optional[Path | str] = None,
+        gate_dir: Path | str | None = None,
+        db_path: Path | str | None = None,
+        project_root: Path | str | None = None,
         *,
         auto_init: bool = True,
     ) -> None:
-        self._gate_dir: Path = (
-            Path(gate_dir) if gate_dir is not None else GATES_DIR
-        )
+        self._gate_dir: Path = Path(gate_dir) if gate_dir is not None else GATES_DIR
         self._db_path: Path = Path(db_path) if db_path is not None else DB_PATH
-        self._project_root: Path = (
-            Path(project_root)
-            if project_root is not None
-            else Path.cwd()
-        )
+        self._project_root: Path = Path(project_root) if project_root is not None else Path.cwd()
         if auto_init:
             init_db(self._db_path)
         self._conn: sqlite3.Connection = get_db_connection(self._db_path)
-        self._gate_cache: Optional[dict[str, GateConfig]] = None
+        self._gate_cache: dict[str, GateConfig] | None = None
 
     # ------------------------------------------------------------------
     # 公共 API
@@ -531,9 +519,7 @@ class GateEngine:
         for gate_id, filename in self._GATE_FILES.items():
             yaml_path = self._gate_dir / filename
             if not yaml_path.exists():
-                raise GateEngineError(
-                    f"门禁配置文件不存在：{yaml_path}"
-                )
+                raise GateEngineError(f"门禁配置文件不存在：{yaml_path}")
             with yaml_path.open(encoding="utf-8") as fh:
                 raw: dict[str, Any] = yaml.safe_load(fh)
             configs[gate_id] = self._parse_config(raw)
@@ -557,9 +543,7 @@ class GateEngine:
         """
         gates = self.load_gates()
         if gate_id not in gates:
-            raise GateEngineError(
-                f"未知 gate_id='{gate_id}'；可用：{list(gates)}"
-            )
+            raise GateEngineError(f"未知 gate_id='{gate_id}'；可用：{list(gates)}")
         config = gates[gate_id]
         all_violations: list[GateViolation] = []
 
@@ -589,7 +573,7 @@ class GateEngine:
         """关闭底层 SQLite 连接。"""
         self._conn.close()
 
-    def __enter__(self) -> "GateEngine":
+    def __enter__(self) -> GateEngine:
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
@@ -704,9 +688,7 @@ def _check_blueprint_read_compliance(
     Phase 2（硬合规，待部署）：
     - severity 升级为 P0 → 阻断未读蓝图的代码变更
     """
-    metrics_path = (
-        Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
-    )
+    metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
 
     if not metrics_path.exists():
         _add(
@@ -717,7 +699,7 @@ def _check_blueprint_read_compliance(
 
     try:
         found = False
-        with open(metrics_path, "r", encoding="utf-8") as fh:
+        with open(metrics_path, encoding="utf-8") as fh:
             for line in fh:
                 line = line.strip()
                 if not line:
@@ -726,10 +708,7 @@ def _check_blueprint_read_compliance(
                     record = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                if (
-                    record.get("blueprint_id") == target_blueprint
-                    and record.get("event") == "blueprint_read"
-                ):
+                if record.get("blueprint_id") == target_blueprint and record.get("event") == "blueprint_read":
                     found = True
                     break
     except OSError:

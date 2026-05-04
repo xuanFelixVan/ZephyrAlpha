@@ -9,13 +9,13 @@
 5. 无匹配模板被拒绝
 6. 完整提取流程
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
-from zephyr.kb.extract import ExtractGate, LESSONS_DIR_NAME, BEST_PRACTICES_DIR_NAME
+from zephyr.kb.extract import BEST_PRACTICES_DIR_NAME, LESSONS_DIR_NAME, ExtractGate
 
 
 @pytest.fixture()
@@ -78,9 +78,7 @@ def test_extract_best_practice(gate: ExtractGate, tmp_path: Path, kb_root: Path)
     assert BEST_PRACTICES_DIR_NAME in str(result.target_path)
 
 
-def test_extract_design_decision_writes_adr(
-    gate: ExtractGate, tmp_path: Path, adr_dir: Path
-) -> None:
+def test_extract_design_decision_writes_adr(gate: ExtractGate, tmp_path: Path, adr_dir: Path) -> None:
     body = (
         "# 架构决策\n\n"
         "## Design Decisions\n\nADR-0001 选择 SQLite 作为元数据层。\n\n"

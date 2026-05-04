@@ -14,6 +14,7 @@
 
 全程使用 mock ChromaDB（不依赖真实向量数据库）。
 """
+
 from __future__ import annotations
 
 import math
@@ -22,7 +23,6 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from zephyr.db.sqlite_schema import init_db
 from zephyr.kb.kb_repo import KbRepo
 
@@ -119,9 +119,7 @@ def repo(db_path: Path) -> KbRepo:
 class TestHitRate:
     """对 10 条标准查询验证命中率 ≥ 70%。"""
 
-    def test_keyword_mode_hit_rate_at_least_70_percent(
-        self, repo: KbRepo
-    ) -> None:
+    def test_keyword_mode_hit_rate_at_least_70_percent(self, repo: KbRepo) -> None:
         """关键词模式：前 8 条查询命中，后 2 条不命中 → 命中率 80% ≥ 70%。"""
         hit_set = set(_STANDARD_QUERIES[:8])
 
@@ -153,9 +151,7 @@ class TestHitRate:
         rate = hits / len(_STANDARD_QUERIES)
         assert rate >= 0.70, f"命中率 {rate:.1%} < 70%（keyword mode）"
 
-    def test_semantic_mode_hit_rate_at_least_70_percent(
-        self, repo: KbRepo
-    ) -> None:
+    def test_semantic_mode_hit_rate_at_least_70_percent(self, repo: KbRepo) -> None:
         """语义模式：宽松 score_threshold=0.5，9/10 命中 → 命中率 90%。"""
         hit_set = set(_STANDARD_QUERIES[:9])
 
@@ -187,9 +183,7 @@ class TestHitRate:
         rate = hits / len(_STANDARD_QUERIES)
         assert rate >= 0.70, f"命中率 {rate:.1%} < 70%（semantic mode）"
 
-    def test_hybrid_mode_hit_rate_all_queries_hit(
-        self, repo: KbRepo
-    ) -> None:
+    def test_hybrid_mode_hit_rate_all_queries_hit(self, repo: KbRepo) -> None:
         """混合模式：每次返回 2 条结果，所有查询命中 → 命中率 100%。"""
         with patch(
             "zephyr.kb.chromadb_init.get_chroma_client",
@@ -235,9 +229,7 @@ class TestLibraryScenarios:
             results = repo.search("回测过拟合")
         assert results == []
 
-    def test_single_entry_above_threshold_returns_one_hit(
-        self, repo: KbRepo
-    ) -> None:
+    def test_single_entry_above_threshold_returns_one_hit(self, repo: KbRepo) -> None:
         """单条库：score=0.9 超过默认阈值 0.6，命中 1 条。"""
         mock_client = MagicMock()
         col = MagicMock()
@@ -259,9 +251,7 @@ class TestLibraryScenarios:
         assert results[0].ke_id == "KE-001"
         assert results[0].score >= 0.6
 
-    def test_single_entry_below_threshold_returns_empty(
-        self, repo: KbRepo
-    ) -> None:
+    def test_single_entry_below_threshold_returns_empty(self, repo: KbRepo) -> None:
         """单条库：score=0.5 < 默认阈值 0.6，过滤后返回 []。"""
         mock_client = MagicMock()
         col = MagicMock()
@@ -287,11 +277,7 @@ class TestLibraryScenarios:
             "zephyr.kb.chromadb_init.get_chroma_client",
             return_value=_mock_client_always_hit(3),
         ):
-            hits = sum(
-                1
-                for q in _STANDARD_QUERIES
-                if repo.search(q)
-            )
+            hits = sum(1 for q in _STANDARD_QUERIES if repo.search(q))
 
         assert hits == len(_STANDARD_QUERIES)
 
@@ -334,10 +320,7 @@ class TestTokenBudget:
             ids=["k0", "k1", "k2"],
             distances=[0.1, 0.15, 0.2],
             documents=["d0", "d1", "d2"],
-            metadatas=[
-                {"ke_id": f"KE-{i:03d}", "status": "INDEXED"}
-                for i in range(3)
-            ],
+            metadatas=[{"ke_id": f"KE-{i:03d}", "status": "INDEXED"} for i in range(3)],
         )
         mock_client.get_collection.return_value = col
 
@@ -359,10 +342,7 @@ class TestTokenBudget:
             ids=["ke-0", "ke-1", "ke-2"],
             distances=[0.05, 0.35, 0.45],  # scores: 0.95, 0.65, 0.55
             documents=["d0", "d1", "d2"],
-            metadatas=[
-                {"ke_id": f"KE-{i:03d}", "status": "INDEXED"}
-                for i in range(3)
-            ],
+            metadatas=[{"ke_id": f"KE-{i:03d}", "status": "INDEXED"} for i in range(3)],
         )
         mock_client.get_collection.return_value = col
 
@@ -465,9 +445,7 @@ class TestRetrievalHitStructure:
         assert results[0].metadata["status"] == "VERIFIED"
         assert results[0].ke_id == "KE-042"
 
-    def test_chroma_query_exception_returns_empty_list(
-        self, repo: KbRepo
-    ) -> None:
+    def test_chroma_query_exception_returns_empty_list(self, repo: KbRepo) -> None:
         """ChromaDB query 抛出异常时，search 静默处理并返回 []。"""
         mock_client = MagicMock()
         col = MagicMock()
@@ -482,9 +460,7 @@ class TestRetrievalHitStructure:
 
         assert results == []
 
-    def test_where_filter_merged_with_status_filter(
-        self, repo: KbRepo
-    ) -> None:
+    def test_where_filter_merged_with_status_filter(self, repo: KbRepo) -> None:
         """传入 where 时，条件以 $and 与内置 status 过滤合并后传递给 ChromaDB。"""
         mock_client = MagicMock()
         col = MagicMock()
@@ -502,9 +478,7 @@ class TestRetrievalHitStructure:
         actual_where = call_kwargs["where"]
         assert "$and" in actual_where
 
-    def test_no_where_uses_status_visibility_filter_only(
-        self, repo: KbRepo
-    ) -> None:
+    def test_no_where_uses_status_visibility_filter_only(self, repo: KbRepo) -> None:
         """不传 where 时，仅使用内置 status 可见性过滤，无 $and。"""
         mock_client = MagicMock()
         col = MagicMock()

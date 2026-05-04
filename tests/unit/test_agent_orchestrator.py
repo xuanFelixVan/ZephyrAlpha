@@ -6,13 +6,13 @@ CoVe post-hook) + HealthMonitor (5 项 SLO)。
 
 最少测试：20 条。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import pytest
-
 from zephyr.orchestrator.agent_orchestrator import (
     DEFAULT_ROLE_DOMAIN_MATRIX,
     AgentOrchestrator,
@@ -23,9 +23,7 @@ from zephyr.orchestrator.agent_orchestrator import (
     OrchestrationResult,
     RouteDecision,
     RoutingStrategy,
-    ToolCallRecord,
 )
-
 
 # ---------------------------------------------------------------------------
 # AgentRouter
@@ -217,7 +215,7 @@ class TestHealthMonitor:
 
     def test_throughput_with_injected_clock(self) -> None:
         # 注入一个固定时钟，10 次完成同一秒 → 按 60s 窗口换算
-        fixed_now = datetime(2026, 4, 24, 0, 0, 0, tzinfo=timezone.utc)
+        fixed_now = datetime(2026, 4, 24, 0, 0, 0, tzinfo=UTC)
 
         class Clock:
             def __init__(self) -> None:
@@ -249,6 +247,7 @@ def _ok_invoker(calls_log: list[tuple[str, dict[str, Any]]]):
     def _invoke(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         calls_log.append((tool_name, arguments))
         return {"ok": True, "tool": tool_name}
+
     return _invoke
 
 
@@ -323,9 +322,7 @@ class TestAgentOrchestrator:
             directive_mapping=self.mapping,
             hallucination_caller=cove,
         )
-        res = orch.orchestrate(
-            domain="D6", directive_chain="325", claim="IC=2.5 in momentum factor"
-        )
+        res = orch.orchestrate(domain="D6", directive_chain="325", claim="IC=2.5 in momentum factor")
         assert res.hallucination is not None
         assert res.hallucination["is_hallucination"] is True
         # 工具链成功，但 CoVe 判定 hallucination → 整体 success=False
@@ -341,9 +338,7 @@ class TestAgentOrchestrator:
             directive_mapping=self.mapping,
             hallucination_caller=cove,
         )
-        res = orch.orchestrate(
-            domain="D6", directive_chain="325", claim="Normal claim"
-        )
+        res = orch.orchestrate(domain="D6", directive_chain="325", claim="Normal claim")
         assert res.hallucination is not None
         assert res.success is True
 

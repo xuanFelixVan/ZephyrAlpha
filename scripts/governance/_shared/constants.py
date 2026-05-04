@@ -30,37 +30,68 @@ def find_repo_root() -> Path:
     for parent in current.parents:
         if (parent / "src" / "zephyr" / "__init__.py").exists():
             return parent
-    raise FileNotFoundError(
-        f"Cannot find project root (no src/zephyr/__init__.py found) from {current}"
-    )
+    raise FileNotFoundError(f"Cannot find project root (no src/zephyr/__init__.py found) from {current}")
 
 
 REPO_ROOT: Path = find_repo_root()
 
-EXCLUDE_DIRS: frozenset[str] = frozenset({
-    "__pycache__", ".git", ".runtime", "node_modules", ".venv",
-    "_DO_NOT_USE_old_tree", ".pytest_cache", ".mypy_cache", ".ruff_cache",
-})
+EXCLUDE_DIRS: frozenset[str] = frozenset(
+    {
+        "__pycache__",
+        ".git",
+        ".runtime",
+        "node_modules",
+        ".venv",
+        "_DO_NOT_USE_old_tree",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+    }
+)
 
-SCAN_EXTENSIONS_MD_YAML: frozenset[str] = frozenset({
-    ".md", ".yaml", ".yml",
-})
+SCAN_EXTENSIONS_MD_YAML: frozenset[str] = frozenset(
+    {
+        ".md",
+        ".yaml",
+        ".yml",
+    }
+)
 
-SCAN_EXTENSIONS_CODE: frozenset[str] = frozenset({
-    ".py", ".yaml", ".yml", ".json", ".toml", ".md", ".sh", ".ps1",
-})
+SCAN_EXTENSIONS_CODE: frozenset[str] = frozenset(
+    {
+        ".py",
+        ".yaml",
+        ".yml",
+        ".json",
+        ".toml",
+        ".md",
+        ".sh",
+        ".ps1",
+    }
+)
 
-SCAN_EXTENSIONS_DOCS: frozenset[str] = frozenset({
-    ".md", ".yaml", ".yml", ".txt", ".rst",
-})
+SCAN_EXTENSIONS_DOCS: frozenset[str] = frozenset(
+    {
+        ".md",
+        ".yaml",
+        ".yml",
+        ".txt",
+        ".rst",
+    }
+)
 
 SCAN_EXTENSIONS_PY: frozenset[str] = frozenset({".py"})
 
 SCAN_EXTENSIONS_MD: frozenset[str] = frozenset({".md"})
 
-SCAN_EXTENSIONS_DATA: frozenset[str] = frozenset({
-    ".json", ".yaml", ".yml", ".md",
-})
+SCAN_EXTENSIONS_DATA: frozenset[str] = frozenset(
+    {
+        ".json",
+        ".yaml",
+        ".yml",
+        ".md",
+    }
+)
 
 GOV_DOCS_DIR: Path = REPO_ROOT / "docs" / "01_policies_and_standards"
 SRC_DIR: Path = REPO_ROOT / "src" / "zephyr"

@@ -3,6 +3,7 @@
 TaskProgressComponent · 任务进度看板（Phase 0-4 进度）
 ======================================================
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

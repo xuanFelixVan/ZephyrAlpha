@@ -25,6 +25,7 @@ _extract_declared_paths  正常提取 / 空文件 / 无匹配
 _validate_path_format    合法路径 / 绝对路径 / 反斜杠
 _is_watched              覆盖所有 WATCHED_PREFIXES / 非监控路径 / 非监控扩展名
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -33,7 +34,6 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-
 from zephyr.shared.ssot_guard import (
     REGISTRY_REL_PATH,
     CheckResult,
@@ -42,7 +42,6 @@ from zephyr.shared.ssot_guard import (
     _extract_declared_paths,
     _validate_path_format,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -121,10 +120,7 @@ class TestExtractDeclaredPaths:
         assert "docs/01_GOVERNANCE" in result
 
     def test_deduplicates(self) -> None:
-        content = (
-            "  path: scripts/hooks/a.py\n"
-            "  path: scripts/hooks/a.py\n"
-        )
+        content = "  path: scripts/hooks/a.py\n" "  path: scripts/hooks/a.py\n"
         result = _extract_declared_paths(content)
         assert result.count("scripts/hooks/a.py") == 1
 
@@ -208,10 +204,10 @@ class TestIsWatched:
     @pytest.mark.parametrize(
         "path",
         [
-            "src/core/exceptions.py",        # 非 zephyr 包
-            "docs/01_GOVERNANCE/some-doc.md", # 非 STANDARDS
-            "README.md",                      # 根目录
-            "tests/unit/test_core.py",        # 测试文件
+            "src/core/exceptions.py",  # 非 zephyr 包
+            "docs/01_GOVERNANCE/some-doc.md",  # 非 STANDARDS
+            "README.md",  # 根目录
+            "tests/unit/test_core.py",  # 测试文件
         ],
     )
     def test_non_watched_paths(self, guard: SsotGuard, path: str) -> None:
@@ -302,7 +298,9 @@ class TestCheckC2:
 
     def test_fail_missing_declared_path(self, tmp_repo: Path) -> None:
         # 往注册表中写一个不存在的文件路径
-        registry = tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        registry = (
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        )
         registry.write_text(
             "  path: scripts/hooks/nonexistent_hook.py\n",
             encoding="utf-8",
@@ -338,7 +336,9 @@ class TestCheckC4Format:
         assert result.passed is True
 
     def test_fail_absolute_path_in_registry(self, tmp_repo: Path) -> None:
-        registry = tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        registry = (
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        )
         registry.write_text(
             "  path: /absolute/path/to/file.py\n",
             encoding="utf-8",
@@ -348,7 +348,9 @@ class TestCheckC4Format:
         assert result.passed is False
 
     def test_fail_backslash_path_in_registry(self, tmp_repo: Path) -> None:
-        registry = tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        registry = (
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        )
         registry.write_text(
             "  path: scripts\\hooks\\hook.py\n",
             encoding="utf-8",
@@ -442,9 +444,7 @@ class TestExtractPerformance:
     def test_bulk_extraction_speed(self) -> None:
         import time
 
-        lines = "\n".join(
-            f"  path: scripts/hooks/hook_{i}.py" for i in range(1000)
-        )
+        lines = "\n".join(f"  path: scripts/hooks/hook_{i}.py" for i in range(1000))
         t0 = time.perf_counter()
         result = _extract_declared_paths(lines)
         elapsed = time.perf_counter() - t0

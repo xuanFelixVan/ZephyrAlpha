@@ -13,12 +13,14 @@ Spec     : MCP/0.3
 - initialize / ping 握手支持
 - 子类通过 register_tool() 注册工具处理函数
 """
+
 from __future__ import annotations
 
 import json
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Optional, TextIO
+from typing import Any, TextIO
 
 import structlog
 
@@ -56,7 +58,7 @@ ERR_TOOL_EXECUTION = -32002
 class MCPError(Exception):
     """MCP 协议层错误，携带 JSON-RPC error code。"""
 
-    def __init__(self, code: int, message: str, data: Optional[Any] = None) -> None:
+    def __init__(self, code: int, message: str, data: Any | None = None) -> None:
         self.code = code
         self.message = message
         self.data = data
@@ -170,7 +172,7 @@ class BaseMCPServer:
         req_id: Any,
         code: int,
         message: str,
-        data: Optional[Any] = None,
+        data: Any | None = None,
     ) -> dict[str, Any]:
         error: dict[str, Any] = {"code": code, "message": message}
         if data is not None:
@@ -251,8 +253,8 @@ class BaseMCPServer:
     def run(
         self,
         *,
-        input_stream: Optional[TextIO] = None,
-        output_stream: Optional[TextIO] = None,
+        input_stream: TextIO | None = None,
+        output_stream: TextIO | None = None,
     ) -> None:
         """启动 stdio 主循环，逐行读取 JSON-RPC 请求并写出响应。
 

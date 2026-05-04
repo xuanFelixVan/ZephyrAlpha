@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -30,8 +30,14 @@ ensure_utf8_stdout()
 import argparse
 
 REQUIRED_HANDOFF_FIELDS = {
-    "session_id", "timestamp", "context_summary", "pending_tasks",
-    "decisions_made", "files_modified", "next_steps", "owner_notes",
+    "session_id",
+    "timestamp",
+    "context_summary",
+    "pending_tasks",
+    "decisions_made",
+    "files_modified",
+    "next_steps",
+    "owner_notes",
 }
 
 
@@ -60,12 +66,14 @@ def check_handoff_package(filepath: Path) -> list[dict]:
 
         missing = REQUIRED_HANDOFF_FIELDS - class_fields
         if missing:
-            findings.append({
-                "file": rel,
-                "line": node.lineno,
-                "missing": sorted(missing),
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "line": node.lineno,
+                    "missing": sorted(missing),
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """检查交接包完整性."""

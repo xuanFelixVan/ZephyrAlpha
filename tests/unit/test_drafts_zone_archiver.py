@@ -1,22 +1,16 @@
-import json
 import textwrap
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
+from _shared.frontmatter import parse_frontmatter_from_file
 
 from scripts.governance.d1_structure.drafts_zone_archiver import (
-    compute_archive_target,
-    scan_drafts,
-    execute_archive,
-    DRAFTS_ROOT,
-    ARCHIVE_ROOT,
-    WARN_DAYS,
-    ARCHIVE_DAYS,
     STATUS_ARBITRATED,
+    compute_archive_target,
+    execute_archive,
+    scan_drafts,
 )
-from _shared.frontmatter import parse_frontmatter_from_file
 
 
 class TestParseFrontmatter:
@@ -54,7 +48,7 @@ class TestScanDrafts:
     def test_scan_with_arbitrated_old(self, tmp_path: Path):
         drafts_dir = tmp_path / "drafts"
         drafts_dir.mkdir()
-        old_date = (datetime.now(timezone.utc) - timedelta(days=65)).strftime("%Y-%m-%d")
+        old_date = (datetime.now(UTC) - timedelta(days=65)).strftime("%Y-%m-%d")
         (drafts_dir / "old-draft.md").write_text(
             f"---\naudit_status: arbitrated\narbitrated_date: '{old_date}'\n---\n# Old\n",
             encoding="utf-8",
@@ -66,7 +60,7 @@ class TestScanDrafts:
     def test_scan_with_arbitrated_warn(self, tmp_path: Path):
         drafts_dir = tmp_path / "drafts"
         drafts_dir.mkdir()
-        warn_date = (datetime.now(timezone.utc) - timedelta(days=35)).strftime("%Y-%m-%d")
+        warn_date = (datetime.now(UTC) - timedelta(days=35)).strftime("%Y-%m-%d")
         (drafts_dir / "warn-draft.md").write_text(
             f"---\naudit_status: arbitrated\narbitrated_date: '{warn_date}'\n---\n# Warn\n",
             encoding="utf-8",
@@ -78,7 +72,7 @@ class TestScanDrafts:
     def test_scan_with_arbitrated_recent(self, tmp_path: Path):
         drafts_dir = tmp_path / "drafts"
         drafts_dir.mkdir()
-        recent_date = (datetime.now(timezone.utc) - timedelta(days=10)).strftime("%Y-%m-%d")
+        recent_date = (datetime.now(UTC) - timedelta(days=10)).strftime("%Y-%m-%d")
         (drafts_dir / "recent-draft.md").write_text(
             f"---\naudit_status: arbitrated\narbitrated_date: '{recent_date}'\n---\n# Recent\n",
             encoding="utf-8",
@@ -125,14 +119,16 @@ class TestComputeArchiveTarget:
 
 class TestExecuteArchive:
     def test_warn_action(self, tmp_path: Path):
-        drafts = [{
-            "path": tmp_path / "warn.md",
-            "relative": Path("warn.md"),
-            "audit_status": STATUS_ARBITRATED,
-            "arbitrated_date": "2026-02-01",
-            "age_days": 35,
-            "action": "warn",
-        }]
+        drafts = [
+            {
+                "path": tmp_path / "warn.md",
+                "relative": Path("warn.md"),
+                "audit_status": STATUS_ARBITRATED,
+                "arbitrated_date": "2026-02-01",
+                "age_days": 35,
+                "action": "warn",
+            }
+        ]
         with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 1
@@ -141,17 +137,21 @@ class TestExecuteArchive:
     def test_archive_proposed_dry_run(self, tmp_path: Path):
         draft_file = tmp_path / "old-draft.md"
         draft_file.write_text("---\naudit_status: arbitrated\n---\n", encoding="utf-8")
-        drafts = [{
-            "path": draft_file,
-            "relative": Path("old-draft.md"),
-            "audit_status": STATUS_ARBITRATED,
-            "arbitrated_date": "2026-01-01",
-            "age_days": 65,
-            "action": "archive",
-        }]
-        with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"), \
-             patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path), \
-             patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", tmp_path / "archive"):
+        drafts = [
+            {
+                "path": draft_file,
+                "relative": Path("old-draft.md"),
+                "audit_status": STATUS_ARBITRATED,
+                "arbitrated_date": "2026-01-01",
+                "age_days": 65,
+                "action": "archive",
+            }
+        ]
+        with (
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"),
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path),
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", tmp_path / "archive"),
+        ):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 1
         assert "PROPOSED" in actions[0]
@@ -160,30 +160,36 @@ class TestExecuteArchive:
         draft_file = tmp_path / "old-draft.md"
         draft_file.write_text("---\naudit_status: arbitrated\n---\n", encoding="utf-8")
         archive_root = tmp_path / "archive"
-        drafts = [{
-            "path": draft_file,
-            "relative": Path("old-draft.md"),
-            "audit_status": STATUS_ARBITRATED,
-            "arbitrated_date": "2026-01-01",
-            "age_days": 65,
-            "action": "archive",
-        }]
-        with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"), \
-             patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path), \
-             patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", archive_root):
+        drafts = [
+            {
+                "path": draft_file,
+                "relative": Path("old-draft.md"),
+                "audit_status": STATUS_ARBITRATED,
+                "arbitrated_date": "2026-01-01",
+                "age_days": 65,
+                "action": "archive",
+            }
+        ]
+        with (
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"),
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path),
+            patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", archive_root),
+        ):
             actions = execute_archive(drafts, confirm=True)
         assert len(actions) == 1
         assert "ARCHIVED" in actions[0]
 
     def test_no_actions_for_skip(self, tmp_path: Path):
-        drafts = [{
-            "path": tmp_path / "skip.md",
-            "relative": Path("skip.md"),
-            "audit_status": "draft",
-            "arbitrated_date": None,
-            "age_days": None,
-            "action": "skip",
-        }]
+        drafts = [
+            {
+                "path": tmp_path / "skip.md",
+                "relative": Path("skip.md"),
+                "audit_status": "draft",
+                "arbitrated_date": None,
+                "age_days": None,
+                "action": "skip",
+            }
+        ]
         with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 0

@@ -35,11 +35,10 @@ SSoT: cross-layer-contracts.yaml → CTR-VER-001
 from __future__ import annotations
 
 import logging
-import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 _logger = logging.getLogger("zephyr.contracts.registry")
 
@@ -50,7 +49,7 @@ class ContractMeta:
     name: str
     schema_version: str
     source_layer: str
-    target_layers: List[str] = field(default_factory=list)
+    target_layers: list[str] = field(default_factory=list)
     stability: str = ""
     frozen: bool = True
     priority: str = "P0"
@@ -63,7 +62,7 @@ class VersionTransition:
     contract_id: str
     old_version: str
     new_version: str
-    announced_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    announced_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     migration_window_ms: int = 2_592_000_000  # 30 days in ms
     active: bool = True
 
@@ -76,8 +75,7 @@ class VersionMismatchError(ValueError):
         self.expected_major = expected_major
         self.actual_major = actual_major
         super().__init__(
-            f"{contract_id}: MAJOR 版本不匹配 — "
-            f"期望 MAJOR={expected_major}, 实际 MAJOR={actual_major}"
+            f"{contract_id}: MAJOR 版本不匹配 — " f"期望 MAJOR={expected_major}, 实际 MAJOR={actual_major}"
         )
 
 
@@ -95,33 +93,33 @@ class ContractRegistry:
     """
 
     _ssot_path: str = (
-        "docs/02_enterprise_architecture/target-architecture/"
-        "architecture-model/contracts/cross-layer-contracts.yaml"
+        "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
     )
 
-    def __init__(self, repo_root: Optional[Path] = None) -> None:
-        self._contracts: Dict[str, ContractMeta] = {}
-        self._consumers: Dict[str, List[str]] = defaultdict(list)
-        self._transitions: List[VersionTransition] = []
-        self._adapters: Dict[str, Dict[str, Any]] = {}
+    def __init__(self, repo_root: Path | None = None) -> None:
+        self._contracts: dict[str, ContractMeta] = {}
+        self._consumers: dict[str, list[str]] = defaultdict(list)
+        self._transitions: list[VersionTransition] = []
+        self._adapters: dict[str, dict[str, Any]] = {}
         self._initialized = False
 
         if repo_root is None:
             from pathlib import Path as _Path
+
             self._repo_root = _Path(__file__).resolve().parents[4]
         else:
             self._repo_root = repo_root
 
     @property
-    def contracts(self) -> Dict[str, ContractMeta]:
+    def contracts(self) -> dict[str, ContractMeta]:
         return dict(self._contracts)
 
     @property
-    def consumers(self) -> Dict[str, List[str]]:
+    def consumers(self) -> dict[str, list[str]]:
         return dict(self._consumers)
 
     @property
-    def transitions(self) -> List[VersionTransition]:
+    def transitions(self) -> list[VersionTransition]:
         return list(self._transitions)
 
     def initialize(self) -> None:
@@ -143,6 +141,7 @@ class ContractRegistry:
 
         try:
             import yaml
+
             data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
         except Exception as e:
             _logger.error("[ContractRegistry] YAML 加载失败: %s", e)
@@ -171,7 +170,7 @@ class ContractRegistry:
         )
         self._initialized = True
 
-    def get_active_version(self, contract_id: str) -> Optional[str]:
+    def get_active_version(self, contract_id: str) -> str | None:
         """VER-R5: 查询契约当前 active 版本。
 
         返回 schema_version 字符串 (如 "1.0")，如果契约不存在返回 None。
@@ -199,7 +198,9 @@ class ContractRegistry:
         if expected_major != actual_major:
             _logger.error(
                 "[ContractRegistry] VER-R2 触发: %s MAJOR=%d ≠ %d",
-                contract_id, expected_major, actual_major,
+                contract_id,
+                expected_major,
+                actual_major,
             )
             return False
 
@@ -220,7 +221,8 @@ class ContractRegistry:
             self._consumers.setdefault(contract_id, []).append(module_name)
             _logger.debug(
                 "[ContractRegistry] %s 注册消费者: %s",
-                contract_id, module_name,
+                contract_id,
+                module_name,
             )
 
     def announce_major_upgrade(self, contract_id: str, new_version: str) -> VersionTransition:
@@ -237,8 +239,7 @@ class ContractRegistry:
 
         consumers = self._consumers.get(contract_id, [])
         _logger.warning(
-            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s → %s — "
-            "通知 %d 个消费者，过渡窗口=%d ms",
+            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s → %s — " "通知 %d 个消费者，过渡窗口=%d ms",
             contract_id,
             transition.old_version,
             new_version,
@@ -248,6 +249,7 @@ class ContractRegistry:
 
         try:
             from zephyr.l12_system_telemetry.contract_metrics import get_contract_metrics
+
             metrics = get_contract_metrics()
             metrics.record_violation(contract_id)
         except Exception:
@@ -255,9 +257,9 @@ class ContractRegistry:
 
         return transition
 
-    def get_active_transitions(self) -> List[VersionTransition]:
+    def get_active_transitions(self) -> list[VersionTransition]:
         """返回当前进行中的版本迁移。"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         active = []
         for t in self._transitions:
             elapsed = (now - t.announced_at).total_seconds() * 1000
@@ -275,10 +277,11 @@ class ContractRegistry:
         self._adapters.setdefault(contract_id, {})[version] = adapter
         _logger.info(
             "[ContractRegistry] 注册适配器: %s v%s",
-            contract_id, version,
+            contract_id,
+            version,
         )
 
-    def get_adapter(self, contract_id: str, current_version: str) -> Optional[Any]:
+    def get_adapter(self, contract_id: str, current_version: str) -> Any | None:
         """获取适配器——优先精确版本，回退到最新兼容版本。"""
         adapters_for_contract = self._adapters.get(contract_id, {})
         if current_version in adapters_for_contract:
@@ -291,17 +294,17 @@ class ContractRegistry:
 
         return None
 
-    def get_contract_meta(self, contract_id: str) -> Optional[ContractMeta]:
+    def get_contract_meta(self, contract_id: str) -> ContractMeta | None:
         """查询契约元数据。"""
         return self._contracts.get(contract_id)
 
-    def list_p0_contracts(self) -> List[ContractMeta]:
+    def list_p0_contracts(self) -> list[ContractMeta]:
         """列出所有 P0 契约。"""
         return [m for m in self._contracts.values() if m.priority == "P0"]
 
-    def list_by_layer(self, layer: str) -> List[ContractMeta]:
+    def list_by_layer(self, layer: str) -> list[ContractMeta]:
         """列出指定层涉及的所有契约（作为 source 或 target）。"""
-        result: List[ContractMeta] = []
+        result: list[ContractMeta] = []
         for meta in self._contracts.values():
             if meta.source_layer == layer or layer in meta.target_layers:
                 result.append(meta)
@@ -330,10 +333,10 @@ class ContractRegistry:
 
 from collections import defaultdict
 
-_registry: Optional[ContractRegistry] = None
+_registry: ContractRegistry | None = None
 
 
-def get_registry(repo_root: Optional[Path] = None) -> ContractRegistry:
+def get_registry(repo_root: Path | None = None) -> ContractRegistry:
     global _registry
     if _registry is None:
         _registry = ContractRegistry(repo_root=repo_root)

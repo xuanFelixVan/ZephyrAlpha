@@ -33,12 +33,13 @@ templates:
       Analyze task {task_id}:
       {context}
 """
+
 from __future__ import annotations
 
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import structlog
 import yaml
@@ -125,7 +126,7 @@ class PromptVariable(BaseModel):
     name: str = Field(min_length=1, description="变量名称")
     description: str = Field(default="", description="变量用途说明")
     required: bool = Field(default=True, description="是否为必填变量")
-    default: Optional[str] = Field(default=None, description="非必填时的默认值")
+    default: str | None = Field(default=None, description="非必填时的默认值")
     var_type: str = Field(
         default="string",
         description="期望类型：string | integer | float | boolean",
@@ -194,7 +195,7 @@ class PromptTemplate(BaseModel):
         """从 template_text 中提取所有 {placeholder} 名称。"""
         return set(_PLACEHOLDER_RE.findall(self.template_text))
 
-    def render(self, variables: dict[str, str]) -> "RenderedPrompt":
+    def render(self, variables: dict[str, str]) -> RenderedPrompt:
         """用给定变量渲染模板。
 
         Parameters
@@ -217,9 +218,7 @@ class PromptTemplate(BaseModel):
             elif not var.required and var.default is not None:
                 effective[var.name] = var.default
             elif var.required:
-                raise VariableError(
-                    f"模板 '{self.template_id}' 缺少必填变量 '{var.name}'"
-                )
+                raise VariableError(f"模板 '{self.template_id}' 缺少必填变量 '{var.name}'")
 
         # 允许传入未声明的额外变量（透传）
         for k, v in variables.items():
@@ -229,21 +228,14 @@ class PromptTemplate(BaseModel):
         try:
             rendered_body = self.template_text.format_map(effective)
         except KeyError as exc:
-            raise VariableError(
-                f"模板 '{self.template_id}' 含未知占位符 {exc}"
-            ) from exc
+            raise VariableError(f"模板 '{self.template_id}' 含未知占位符 {exc}") from exc
 
-        full_text = (
-            f"{self.system_prefix}\n{rendered_body}".strip()
-            if self.system_prefix
-            else rendered_body
-        )
+        full_text = f"{self.system_prefix}\n{rendered_body}".strip() if self.system_prefix else rendered_body
         token_count = estimate_tokens(full_text)
 
         if token_count > self.token_budget:
             raise TokenBudgetExceededError(
-                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，"
-                f"超出预算 {self.token_budget}"
+                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，" f"超出预算 {self.token_budget}"
             )
 
         return RenderedPrompt(
@@ -301,7 +293,7 @@ class PromptRegistry:
     # 加载接口
     # ------------------------------------------------------------------
 
-    def load_yaml(self, path: "Path | str") -> int:
+    def load_yaml(self, path: Path | str) -> int:
         """从 YAML 文件加载模板，返回成功加载的模板数量。"""
         resolved = Path(path)
         raw: dict[str, Any] = yaml.safe_load(resolved.read_text(encoding="utf-8"))
@@ -340,8 +332,7 @@ class PromptRegistry:
         key = (template.template_id, template.version)
         if key in self._templates and not allow_overwrite:
             raise PromptRegistryError(
-                f"模板 '{template.template_id}' v{template.version} 已注册，"
-                "如需替换请使用 allow_overwrite=True"
+                f"模板 '{template.template_id}' v{template.version} 已注册，" "如需替换请使用 allow_overwrite=True"
             )
         self._templates[key] = template
 
@@ -356,7 +347,7 @@ class PromptRegistry:
             stability=template.stability,
         )
 
-    def get(self, template_id: str, version: Optional[str] = None) -> PromptTemplate:
+    def get(self, template_id: str, version: str | None = None) -> PromptTemplate:
         """按 ID 和可选版本获取模板（version=None 时取 latest）。
 
         Raises
@@ -364,7 +355,7 @@ class PromptRegistry:
         TemplateNotFoundError
             template_id 或指定版本未注册。
         """
-        resolved_version: Optional[str] = version
+        resolved_version: str | None = version
         if resolved_version is None:
             resolved_version = self._latest.get(template_id)
             if resolved_version is None:
@@ -405,7 +396,7 @@ class PromptRegistry:
         self,
         template_id: str,
         variables: dict[str, str],
-        version: Optional[str] = None,
+        version: str | None = None,
     ) -> RenderedPrompt:
         """渲染指定模板（不注入 KB 上下文）。
 
@@ -437,9 +428,9 @@ class PromptRegistry:
         self,
         template_id: str,
         variables: dict[str, str],
-        injector: "ContextInjector",
+        injector: ContextInjector,
         context_query: str,
-        version: Optional[str] = None,
+        version: str | None = None,
     ) -> RenderedPrompt:
         """渲染模板并注入 KB 上下文（与 ContextInjector 集成接口）。
 

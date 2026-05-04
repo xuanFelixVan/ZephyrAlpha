@@ -13,17 +13,17 @@
 
 Safety : M
 """
+
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.kb.ingest import IngestGate, IngestResult
+from zephyr.kb.ingest import IngestGate
 
 __all__ = [
     "BatchIngestReport",
@@ -31,7 +31,7 @@ __all__ = [
     "BatchIngestor",
 ]
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
@@ -42,7 +42,7 @@ class BatchIngestEntry:
     source_file: str
     priority: str = "P2"
     status: str = "pending"
-    error: Optional[str] = None
+    error: str | None = None
 
 
 @dataclass
@@ -81,7 +81,7 @@ class BatchIngestor:
     def __init__(
         self,
         ingest_gate: IngestGate,
-        repo_root: Optional[Path] = None,
+        repo_root: Path | None = None,
     ) -> None:
         self._ingest_gate = ingest_gate
         self._repo_root = repo_root or Path.cwd()
@@ -91,14 +91,16 @@ class BatchIngestor:
             return BatchIngestReport(
                 total=0,
                 failed=1,
-                entries=[BatchIngestEntry(
-                    ke_id="N/A",
-                    title="YAML 文件不存在",
-                    category="error",
-                    source_file=str(yaml_path),
-                    status="failed",
-                    error=f"文件不存在：{yaml_path}",
-                )],
+                entries=[
+                    BatchIngestEntry(
+                        ke_id="N/A",
+                        title="YAML 文件不存在",
+                        category="error",
+                        source_file=str(yaml_path),
+                        status="failed",
+                        error=f"文件不存在：{yaml_path}",
+                    )
+                ],
             )
 
         try:
@@ -108,28 +110,26 @@ class BatchIngestor:
             return BatchIngestReport(
                 total=0,
                 failed=1,
-                entries=[BatchIngestEntry(
-                    ke_id="N/A",
-                    title="YAML 解析失败",
-                    category="error",
-                    source_file=str(yaml_path),
-                    status="failed",
-                    error=str(exc),
-                )],
+                entries=[
+                    BatchIngestEntry(
+                        ke_id="N/A",
+                        title="YAML 解析失败",
+                        category="error",
+                        source_file=str(yaml_path),
+                        status="failed",
+                        error=str(exc),
+                    )
+                ],
             )
 
         candidates = self._extract_candidates(data)
         return self._process_candidates(candidates)
 
-    def ingest_from_list(
-        self, candidates: list[dict[str, Any]]
-    ) -> BatchIngestReport:
+    def ingest_from_list(self, candidates: list[dict[str, Any]]) -> BatchIngestReport:
         entries = [self._normalize_candidate(c) for c in candidates]
         return self._process_entries(entries)
 
-    def _extract_candidates(
-        self, data: Any
-    ) -> list[BatchIngestEntry]:
+    def _extract_candidates(self, data: Any) -> list[BatchIngestEntry]:
         if isinstance(data, list):
             return [self._normalize_candidate(item) for item in data if isinstance(item, dict)]
 
@@ -160,18 +160,14 @@ class BatchIngestor:
             priority=str(item.get("priority", "P2")),
         )
 
-    def _process_candidates(
-        self, candidates: list[BatchIngestEntry]
-    ) -> BatchIngestReport:
+    def _process_candidates(self, candidates: list[BatchIngestEntry]) -> BatchIngestReport:
         p0_p1 = [c for c in candidates if c.priority in ("P0", "P1")]
         if not p0_p1:
             p0_p1 = candidates
 
         return self._process_entries(p0_p1)
 
-    def _process_entries(
-        self, entries: list[BatchIngestEntry]
-    ) -> BatchIngestReport:
+    def _process_entries(self, entries: list[BatchIngestEntry]) -> BatchIngestReport:
         report = BatchIngestReport(
             total=len(entries),
             started_at=datetime.now(_UTC).isoformat(),
@@ -211,7 +207,7 @@ class BatchIngestor:
         report.finished_at = datetime.now(_UTC).isoformat()
         return report
 
-    def _resolve_source(self, source_file: str) -> Optional[Path]:
+    def _resolve_source(self, source_file: str) -> Path | None:
         if not source_file:
             return None
 

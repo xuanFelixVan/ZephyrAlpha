@@ -3,6 +3,7 @@ Unit tests for feedback_collector.py (T-2-29, C54)
 ===================================================
 Minimum: 10 tests
 """
+
 from __future__ import annotations
 
 import json
@@ -10,11 +11,9 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
-
 from zephyr.feedback_loop.feedback_collector import (
     FeedbackCollector,
     FeedbackEntry,
-    FeedbackSummary,
 )
 
 

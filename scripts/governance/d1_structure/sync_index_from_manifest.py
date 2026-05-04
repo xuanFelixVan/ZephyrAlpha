@@ -22,8 +22,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import SCRIPTS_DIR
+from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
@@ -36,38 +36,48 @@ COVERAGE_START_MARKER = "<!-- COVERAGE-AUTO-START -->"
 COVERAGE_END_MARKER = "<!-- COVERAGE-AUTO-END -->"
 
 _DIR_MAP = {
-    "d1_structure":       ("D1", "结构完整性"),
-    "d2_links":           ("D2", "链接完整性"),
-    "d3_metadata":        ("D3", "元数据合规"),
-    "d4_paths":           ("D4", "路径有效性"),
-    "d5_architecture":    ("D5", "架构合规"),
-    "d6_security":        ("D6", "安全漏洞"),
-    "d7_code":            ("D7", "代码质量"),
-    "d8_doc_sync":        ("D8", "文档代码同步"),
-    "d9_knowledge":       ("D9", "知识覆盖"),
-    "d10_performance":    ("D10", "性能容量"),
-    "d11_compliance":     ("D11", "合规完整性"),
+    "d1_structure": ("D1", "结构完整性"),
+    "d2_links": ("D2", "链接完整性"),
+    "d3_metadata": ("D3", "元数据合规"),
+    "d4_paths": ("D4", "路径有效性"),
+    "d5_architecture": ("D5", "架构合规"),
+    "d6_security": ("D6", "安全漏洞"),
+    "d7_code": ("D7", "代码质量"),
+    "d8_doc_sync": ("D8", "文档代码同步"),
+    "d9_knowledge": ("D9", "知识覆盖"),
+    "d10_performance": ("D10", "性能容量"),
+    "d11_compliance": ("D11", "合规完整性"),
     "d12_ai_hallucination": ("D12", "AI 幻觉"),
 }
 
 _DIR_ORDER = [
-    "d1_structure", "d2_links", "d3_metadata", "d4_paths",
-    "d5_architecture", "d6_security", "d7_code", "d8_doc_sync",
-    "d9_knowledge", "d10_performance", "d11_compliance", "d12_ai_hallucination",
+    "d1_structure",
+    "d2_links",
+    "d3_metadata",
+    "d4_paths",
+    "d5_architecture",
+    "d6_security",
+    "d7_code",
+    "d8_doc_sync",
+    "d9_knowledge",
+    "d10_performance",
+    "d11_compliance",
+    "d12_ai_hallucination",
 ]
 
 _ROOT_SCRIPTS = [
-    ("run_all.py",                     "全维度扫描入口"),
-    ("status.py",                      "健康仪表盘"),
-    ("check_registry_consistency.py",  "跨登记表一致性校验"),
-    ("script_manifest.yaml",           "脚本注册表"),
-    ("quality-standard.md",            "审计脚本质量标准"),
+    ("run_all.py", "全维度扫描入口"),
+    ("status.py", "健康仪表盘"),
+    ("check_registry_consistency.py", "跨登记表一致性校验"),
+    ("script_manifest.yaml", "脚本注册表"),
+    ("quality-standard.md", "审计脚本质量标准"),
 ]
 
 
 def _load_manifest() -> list[dict]:
     import yaml
-    with open(MANIFEST, "r", encoding="utf-8") as f:
+
+    with open(MANIFEST, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return list(data.get("scripts", []))
 
@@ -93,7 +103,7 @@ def _generate_tree_lines(manifest: list[dict]) -> list[str]:
     lines.append(f"{TREE_START_MARKER}")
     lines.append("```")
     lines.append("scripts/governance/")
-    lines.append(f"├── _shared/                        共用工具（5 文件）")
+    lines.append("├── _shared/                        共用工具（5 文件）")
 
     for i, dim_dir in enumerate(_DIR_ORDER):
         dim_id, dim_name = _DIR_MAP[dim_dir]
@@ -105,7 +115,7 @@ def _generate_tree_lines(manifest: list[dict]) -> list[str]:
         lines.append(f"├── {dim_dir:30s} {dim_id} {dim_name}（{label}）")
 
     for i, (path, desc) in enumerate(_ROOT_SCRIPTS):
-        is_last = (i == len(_ROOT_SCRIPTS) - 1)
+        is_last = i == len(_ROOT_SCRIPTS) - 1
         tree_char = "└──" if is_last else "├──"
         if path == "script_manifest.yaml":
             desc_text = f"脚本注册表（SSoT — {total} 条目）"
@@ -195,7 +205,7 @@ def sync(manifest: list[dict], check_only: bool = False) -> int:
     """sync."""
     coverage_lines = _generate_coverage_lines(manifest)
 
-    with open(INDEX_MD, "r", encoding="utf-8") as f:
+    with open(INDEX_MD, encoding="utf-8") as f:
         original = f.read()
 
     updated = _replace_tree_section(original, tree_lines)

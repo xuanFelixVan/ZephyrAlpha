@@ -15,18 +15,19 @@ OCP Extension Point: FactorBase + FactorRegistry
   - 扩展方式：继承 FactorBase，实现 compute()，用 @FactorRegistry.register 注册
   - 禁止方式：直接修改本文件中已有的抽象接口
 """
+
 from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Dict, List, Optional, Type
+from typing import ClassVar
 
 import pandas as pd
-
 
 # ---------------------------------------------------------------------------
 # FactorMeta — 因子元数据
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class FactorMeta:
@@ -47,16 +48,17 @@ class FactorMeta:
     description: str = ""
     """因子说明。"""
 
-    dependencies: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
     """依赖的其他因子 ID 列表（用于计算顺序排序）。"""
 
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
     """标签，如 ['short-term', 'price-action']。"""
 
 
 # ---------------------------------------------------------------------------
 # FactorBase — 因子抽象基类
 # ---------------------------------------------------------------------------
+
 
 class FactorBase(abc.ABC):
     """
@@ -107,6 +109,7 @@ class FactorBase(abc.ABC):
 # FactorRegistry — 因子注册表
 # ---------------------------------------------------------------------------
 
+
 class FactorRegistry:
     """
     因子全局注册表（单例）。
@@ -119,10 +122,10 @@ class FactorRegistry:
       - clear() 测试用，清空注册表
     """
 
-    _registry: ClassVar[Dict[str, Type[FactorBase]]] = {}
+    _registry: ClassVar[dict[str, type[FactorBase]]] = {}
 
     @classmethod
-    def register(cls, factor_cls: Type[FactorBase]) -> Type[FactorBase]:
+    def register(cls, factor_cls: type[FactorBase]) -> type[FactorBase]:
         """
         装饰器：将因子类注册到注册表。
 
@@ -145,22 +148,19 @@ class FactorRegistry:
         return factor_cls
 
     @classmethod
-    def get(cls, factor_id: str) -> Type[FactorBase]:
+    def get(cls, factor_id: str) -> type[FactorBase]:
         """按 ID 获取因子类，未找到时抛 KeyError。"""
         if factor_id not in cls._registry:
-            raise KeyError(
-                f"因子 '{factor_id}' 未在注册表中找到。"
-                f" 已注册因子：{list(cls._registry.keys())}"
-            )
+            raise KeyError(f"因子 '{factor_id}' 未在注册表中找到。" f" 已注册因子：{list(cls._registry.keys())}")
         return cls._registry[factor_id]
 
     @classmethod
-    def list_all(cls) -> List[FactorMeta]:
+    def list_all(cls) -> list[FactorMeta]:
         """返回所有已注册因子的 FactorMeta 列表。"""
         return [fc.meta for fc in cls._registry.values()]
 
     @classmethod
-    def list_by_domain(cls, domain: str) -> List[FactorMeta]:
+    def list_by_domain(cls, domain: str) -> list[FactorMeta]:
         """按域过滤，返回 FactorMeta 列表。"""
         return [fc.meta for fc in cls._registry.values() if fc.meta.domain == domain]
 
@@ -178,7 +178,8 @@ class FactorRegistry:
 # autodiscover_factors — 自动发现
 # ---------------------------------------------------------------------------
 
-def autodiscover_factors(package_path: Optional[str] = None) -> None:
+
+def autodiscover_factors(package_path: str | None = None) -> None:
     """
     扫描 l02_alpha_factor/factors/ 目录，自动 import 所有因子模块。
 
@@ -191,8 +192,8 @@ def autodiscover_factors(package_path: Optional[str] = None) -> None:
     注：此函数在 L02 初始化时（l02_alpha_factor/__init__.py）调用一次即可。
     """
     import importlib
-    import pkgutil
     import os
+    import pkgutil
 
     if package_path is None:
         package_path = os.path.join(os.path.dirname(__file__), "factors")
@@ -206,4 +207,5 @@ def autodiscover_factors(package_path: Optional[str] = None) -> None:
             importlib.import_module(full_name)
         except Exception as exc:
             import warnings
+
             warnings.warn(f"autodiscover_factors: 加载 {full_name} 失败：{exc}")

@@ -1,14 +1,14 @@
 """
 Unit tests for graph_validator.py (T-2-11-C)
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
 from zephyr.db.sqlite_schema import init_db
-from zephyr.kb.chromadb_init import init_chromadb, reset_chromadb
+from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.graph_validator import GraphValidator, ValidationSeverity
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 
@@ -22,8 +22,8 @@ def env(tmp_path: Path):
     repo = KbRepo(db_path=db, vector_dir=vec)
     validator = GraphValidator(db_path=db, vector_dir=vec)
     yield repo, validator
-    from zephyr.kb.chromadb_init import _chroma_client
     import zephyr.kb.chromadb_init as mod
+
     mod._chroma_client = None
 
 

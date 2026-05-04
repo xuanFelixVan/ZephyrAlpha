@@ -10,21 +10,20 @@ T-V2-005 单元测试 — CircuitBreakerGateway (CBG)
   - CircuitBreakerCheck.is_open 状态查询
   - CBGManager.list_open_circuits 列举 OPEN 记录
 """
+
 from __future__ import annotations
 
 import pytest
-
+from zephyr.db.sqlite_schema import init_db
 from zephyr.gates.circuit_breaker import (
+    DEFAULT_THRESHOLD,
     CBGManager,
     CircuitBreakerCheck,
     CircuitBreakerState,
     CircuitOpenError,
-    DEFAULT_THRESHOLD,
     get_l08_policy,
     register_l08_policy,
 )
-from zephyr.db.sqlite_schema import init_db
-
 
 # ---------------------------------------------------------------------------
 # Fixture：每个测试使用独立内存数据库

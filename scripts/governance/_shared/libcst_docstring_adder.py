@@ -14,6 +14,7 @@ Safety guarantees:
     - Only adds docstrings where missing; never modifies existing code
     - Inline comments, block comments, and formatting are 100% preserved
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,7 +26,7 @@ import libcst as cst
 from libcst import Expr, Newline, SimpleStatementLine, SimpleString, TrailingWhitespace
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / "_shared").exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
@@ -104,9 +105,7 @@ class FunctionDocstringAdder(cst.CSTTransformer):
             leading_lines=[],
             trailing_whitespace=TrailingWhitespace(newline=Newline()),
         )
-        new_body = updated_node.body.with_changes(
-            body=[docstring_node] + list(updated_node.body.body)
-        )
+        new_body = updated_node.body.with_changes(body=[docstring_node] + list(updated_node.body.body))
         return updated_node.with_changes(body=new_body)
 
 
@@ -127,16 +126,16 @@ def add_docstrings_lossless(filepath: Path, *, dry_run: bool = False) -> tuple[i
     if new_code == original_code:
         return 0, 0
 
-    module_added = not _has_docstring_cst(cst.parse_module(original_code)) and _has_docstring_cst(cst.parse_module(new_code))
+    module_added = not _has_docstring_cst(cst.parse_module(original_code)) and _has_docstring_cst(
+        cst.parse_module(new_code)
+    )
     func_with_doc_before = sum(
         1
         for node in ast.walk(ast.parse(original_code))
         if isinstance(node, ast.FunctionDef) and ast.get_docstring(node)
     )
     func_with_doc_after = sum(
-        1
-        for node in ast.walk(ast.parse(new_code))
-        if isinstance(node, ast.FunctionDef) and ast.get_docstring(node)
+        1 for node in ast.walk(ast.parse(new_code)) if isinstance(node, ast.FunctionDef) and ast.get_docstring(node)
     )
     func_added = func_with_doc_after - func_with_doc_before
 

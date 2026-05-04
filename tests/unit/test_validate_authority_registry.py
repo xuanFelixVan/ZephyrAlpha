@@ -2,18 +2,15 @@ import textwrap
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from scripts.governance.d5_architecture.validate_authority_registry import (
     AuthorityEntry,
     parse_registry_tables,
     run_validation,
     validate_authority_values,
     validate_duplicate_modules,
+    validate_immutable_core_coverage,
     validate_required_fields,
     validate_section_coverage,
-    validate_immutable_core_coverage,
-    VALID_AUTHORITIES,
 )
 
 
@@ -124,10 +121,7 @@ class TestValidateRequiredFields:
 
 class TestValidateImmutableCoreCoverage:
     def test_sufficient_immutable(self):
-        entries = [
-            AuthorityEntry(module=f"L0{i}", authority="Immutable Core", rationale="r")
-            for i in range(6)
-        ]
+        entries = [AuthorityEntry(module=f"L0{i}", authority="Immutable Core", rationale="r") for i in range(6)]
         assert validate_immutable_core_coverage(entries) == []
 
     def test_insufficient_immutable(self):

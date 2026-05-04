@@ -152,19 +152,21 @@ class BlueprintSearchServer(BaseMCPServer):
                 scored.append((score, route))
 
         scored.sort(key=lambda x: x[0], reverse=True)
-        top_n = scored[:max(1, num_results)]
+        top_n = scored[: max(1, num_results)]
 
         results = []
         for score, route in top_n:
-            results.append({
-                "blueprint_id": route.get("blueprint_id", ""),
-                "blueprint_level": route.get("blueprint_level", "module"),
-                "route_id": route.get("route_id", ""),
-                "relevance_score": score,
-                "priority": route.get("priority", 50),
-                "description": route.get("description", ""),
-                "path_patterns": route.get("path_patterns", []),
-            })
+            results.append(
+                {
+                    "blueprint_id": route.get("blueprint_id", ""),
+                    "blueprint_level": route.get("blueprint_level", "module"),
+                    "route_id": route.get("route_id", ""),
+                    "relevance_score": score,
+                    "priority": route.get("priority", 50),
+                    "description": route.get("description", ""),
+                    "path_patterns": route.get("path_patterns", []),
+                }
+            )
 
         return {
             "results": results,
@@ -185,7 +187,7 @@ class BlueprintSearchServer(BaseMCPServer):
             return []
 
         try:
-            with open(ROUTING_YAML_PATH, "r", encoding="utf-8") as fh:
+            with open(ROUTING_YAML_PATH, encoding="utf-8") as fh:
                 config = yaml.safe_load(fh)
         except Exception as exc:
             _logger.error("Failed to load blueprint_routing.yaml: %s", exc)

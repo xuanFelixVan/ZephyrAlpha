@@ -11,18 +11,13 @@ Test matrix:
   - boundary tests: empty, long, special chars
   - total >= 15 tests
 """
+
 from __future__ import annotations
-
-from typing import Any, Optional
-from unittest.mock import MagicMock
-
-import pytest
 
 from zephyr.context_engine.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,
 )
-
 
 STANDARD_QUERIES: list[tuple[str, str]] = [
     ("review the architecture blueprint", "D2"),
@@ -54,8 +49,17 @@ class TestKeywordStageAccuracy:
         for query, expected_domain in STANDARD_QUERIES:
             result = mapper.map_intent(query)
             assert result.primary_domain in (
-                "D0", "D1", "D2", "D3", "D4",
-                "D5", "D6", "D7", "D8", "D9", "UNKNOWN",
+                "D0",
+                "D1",
+                "D2",
+                "D3",
+                "D4",
+                "D5",
+                "D6",
+                "D7",
+                "D8",
+                "D9",
+                "UNKNOWN",
             )
 
     def test_keyword_stage_zero_cost(self) -> None:
@@ -122,17 +126,13 @@ class TestSemanticStageMocked:
 
     def test_semantic_stage_source_is_semantic(self) -> None:
         mapper = IntentKeywordMapper()
-        result = self._mock_semantic_stage(
-            mapper, "obscure query xyz", mock_domain="D2"
-        )
+        result = self._mock_semantic_stage(mapper, "obscure query xyz", mock_domain="D2")
         if result.source_stage == "semantic":
             assert result.source_stage == "semantic"
 
     def test_semantic_confidence_above_threshold(self) -> None:
         mapper = IntentKeywordMapper()
-        result = self._mock_semantic_stage(
-            mapper, "obscure query", mock_score=0.85, mock_domain="D6"
-        )
+        result = self._mock_semantic_stage(mapper, "obscure query", mock_score=0.85, mock_domain="D6")
         if result.source_stage == "semantic":
             assert result.confidence >= 0.70
 

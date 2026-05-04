@@ -15,6 +15,7 @@ T-V2-007 单元测试 — UnifiedMemoryAPI (RI-02)
   - build_provenance 便捷构造器
   - ChromaMemoryBackend mock：通过 mock chroma client 验证调用契约
 """
+
 from __future__ import annotations
 
 import textwrap
@@ -22,22 +23,20 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from zephyr.kb.unified_memory_api import (
+    UNIFIED_COLLECTION,
     ChromaMemoryBackend,
     InMemoryMemoryBackend,
     MemoryBackendError,
     MemoryRecord,
+    UnifiedMemoryAPI,
     WriteTrace,
     WriteTraceMissing,
-    UnifiedMemoryAPI,
-    UNIFIED_COLLECTION,
     build_provenance,
     get_unified_memory_api,
     reset_unified_memory_api,
 )
 from zephyr.shared.capability import CapabilityDenied, CapabilityRegistry
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -143,9 +142,7 @@ class TestBuildWriteTrace:
             prov.origin = "x"  # type: ignore[misc]
 
     def test_factory_arbitration_passthrough(self):
-        prov = build_provenance(
-            origin="M2", audit_chain=["T-V2-007"], arbitration="R84"
-        )
+        prov = build_provenance(origin="M2", audit_chain=["T-V2-007"], arbitration="R84")
         assert prov.arbitration == "R84"
 
 
@@ -201,12 +198,8 @@ class TestInMemoryBackend:
         assert len(out) == 2
 
     def test_list_by_topic_filters_topic(self, memory_backend):
-        memory_backend.write(
-            MemoryRecord(chunk_id="a::1", topic="a", content="x", written_at="2026-01-01")
-        )
-        memory_backend.write(
-            MemoryRecord(chunk_id="b::1", topic="b", content="y", written_at="2026-01-01")
-        )
+        memory_backend.write(MemoryRecord(chunk_id="a::1", topic="a", content="x", written_at="2026-01-01"))
+        memory_backend.write(MemoryRecord(chunk_id="b::1", topic="b", content="y", written_at="2026-01-01"))
         assert len(memory_backend.list_by_topic("a", 5)) == 1
         assert len(memory_backend.list_by_topic("c", 5)) == 0
 
@@ -222,33 +215,23 @@ class TestInMemoryBackend:
         assert out[0].chunk_id == "a::1"
 
     def test_query_with_topic_filter(self, memory_backend):
-        memory_backend.write(
-            MemoryRecord(chunk_id="a::1", topic="a", content="alpha factor", written_at="2026-01-01")
-        )
-        memory_backend.write(
-            MemoryRecord(chunk_id="b::1", topic="b", content="alpha factor", written_at="2026-01-01")
-        )
+        memory_backend.write(MemoryRecord(chunk_id="a::1", topic="a", content="alpha factor", written_at="2026-01-01"))
+        memory_backend.write(MemoryRecord(chunk_id="b::1", topic="b", content="alpha factor", written_at="2026-01-01"))
         out = memory_backend.query("alpha", k=5, topic="b")
         assert len(out) == 1
         assert out[0].topic == "b"
 
     def test_query_k_zero_returns_empty(self, memory_backend):
-        memory_backend.write(
-            MemoryRecord(chunk_id="a::1", topic="a", content="alpha", written_at="2026-01-01")
-        )
+        memory_backend.write(MemoryRecord(chunk_id="a::1", topic="a", content="alpha", written_at="2026-01-01"))
         assert memory_backend.query("alpha", k=0) == []
 
     def test_query_empty_query_returns_empty(self, memory_backend):
-        memory_backend.write(
-            MemoryRecord(chunk_id="a::1", topic="a", content="alpha", written_at="2026-01-01")
-        )
+        memory_backend.write(MemoryRecord(chunk_id="a::1", topic="a", content="alpha", written_at="2026-01-01"))
         assert memory_backend.query("", k=5) == []
 
     def test_count_and_clear(self, memory_backend):
         for i in range(3):
-            memory_backend.write(
-                MemoryRecord(chunk_id=f"a::{i}", topic="a", content=f"c{i}", written_at="2026-01-01")
-            )
+            memory_backend.write(MemoryRecord(chunk_id=f"a::{i}", topic="a", content=f"c{i}", written_at="2026-01-01"))
         assert memory_backend.count() == 3
         memory_backend.clear()
         assert memory_backend.count() == 0
@@ -386,9 +369,7 @@ class TestCbacIntegration:
         with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", cbac_yaml):
             CapabilityRegistry.reset()
             api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=True)
-            chunk_id = api.write(
-                topic="kb_topic", content="x", provenance=sample_provenance
-            )
+            chunk_id = api.write(topic="kb_topic", content="x", provenance=sample_provenance)
             assert chunk_id.startswith("kb_topic::")
         CapabilityRegistry.reset()
 
@@ -420,9 +401,7 @@ class TestCbacIntegration:
     def test_cbac_skipped_when_disabled(self, memory_backend, sample_provenance):
         # 不需要任何 CBAC 配置，因为 enforce_capability=False
         api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=False)
-        chunk_id = api.write(
-            topic="any_topic", content="x", provenance=sample_provenance
-        )
+        chunk_id = api.write(topic="any_topic", content="x", provenance=sample_provenance)
         assert chunk_id.startswith("any_topic::")
 
 
@@ -439,9 +418,7 @@ class TestSingleton:
 
     def test_reset_creates_new_instance(self, memory_backend):
         a = get_unified_memory_api(backend=memory_backend, enforce_capability=False)
-        b = get_unified_memory_api(
-            backend=memory_backend, enforce_capability=False, reset=True
-        )
+        b = get_unified_memory_api(backend=memory_backend, enforce_capability=False, reset=True)
         assert a is not b
 
 
@@ -462,9 +439,7 @@ class TestChromaBackendMock:
             return_value={
                 "ids": ["id1"],
                 "documents": ["hello"],
-                "metadatas": [
-                    {"topic": "t", "written_at": "2026-04-27", "origin": "M1"}
-                ],
+                "metadatas": [{"topic": "t", "written_at": "2026-04-27", "origin": "M1"}],
             }
         )
         mock_col.query = MagicMock(
@@ -527,9 +502,7 @@ class TestChromaBackendMock:
     def test_write_wraps_exception(self):
         backend, mock_col = self._make_backend_with_mock()
         mock_col.upsert.side_effect = RuntimeError("disk full")
-        rec = MemoryRecord(
-            chunk_id="id1", topic="t", content="x", written_at="2026-04-27"
-        )
+        rec = MemoryRecord(chunk_id="id1", topic="t", content="x", written_at="2026-04-27")
         with pytest.raises(MemoryBackendError):
             backend.write(rec)
 

@@ -38,10 +38,7 @@ def iter_files(
         return result
 
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [
-            d for d in dirnames
-            if d not in excl and not d.startswith(".")
-        ]
+        dirnames[:] = [d for d in dirnames if d not in excl and not d.startswith(".")]
         for filename in sorted(filenames):
             if filename in excl_files:
                 continue

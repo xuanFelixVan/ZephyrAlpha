@@ -22,14 +22,15 @@ Safety  : L（只读校验，不修改任何数据）
     for issue in report.issues:
         print(f"[{issue.severity}] {issue.check_id}: {issue.description}")
 """
+
 from __future__ import annotations
 
 import json
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -48,7 +49,7 @@ class ValidationIssue(BaseModel):
     check_id: str
     severity: ValidationSeverity
     description: str
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
     details: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -61,14 +62,14 @@ class ValidationReport(BaseModel):
     info_count: int = 0
     issues: list[ValidationIssue] = Field(default_factory=list)
     passed: bool = True
-    validated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    validated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class GraphValidator:
     def __init__(
         self,
-        db_path: Optional[Path | str] = None,
-        vector_dir: Optional[Path | str] = None,
+        db_path: Path | str | None = None,
+        vector_dir: Path | str | None = None,
     ) -> None:
         from zephyr.db.sqlite_schema import get_db_connection
 
@@ -120,9 +121,7 @@ class GraphValidator:
             return issues
 
         for ke_id in db_records:
-            if ke_id not in vector_ke_ids and db_records[ke_id] in (
-                "INDEXED", "VERIFIED", "DEPRECATED", "SUPERSEDED"
-            ):
+            if ke_id not in vector_ke_ids and db_records[ke_id] in ("INDEXED", "VERIFIED", "DEPRECATED", "SUPERSEDED"):
                 issues.append(
                     ValidationIssue(
                         check_id="GV-001",
@@ -195,7 +194,7 @@ class GraphValidator:
                 "WHERE event_type = 'state_transition' "
                 "ORDER BY created_at DESC LIMIT 100"
             )
-            latest_event_status: Optional[str] = None
+            latest_event_status: str | None = None
             for erow in event_cursor.fetchall():
                 try:
                     payload = json.loads(erow["payload"])

@@ -101,10 +101,25 @@ def parse_yaml_header(content: str) -> dict | None:
 
     if isinstance(full_yaml, dict):
         for k in (
-            "module_id", "doc_type", "status", "version", "title",
-            "rule_form", "scope", "stability", "layer", "owner",
-            "ttl", "superseded_by", "classification", "language",
-            "created_by", "date", "summary", "tags", "verifiability",
+            "module_id",
+            "doc_type",
+            "status",
+            "version",
+            "title",
+            "rule_form",
+            "scope",
+            "stability",
+            "layer",
+            "owner",
+            "ttl",
+            "superseded_by",
+            "classification",
+            "language",
+            "created_by",
+            "date",
+            "summary",
+            "tags",
+            "verifiability",
             "generated_at",
         ):
             if k in full_yaml and k not in fields:

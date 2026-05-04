@@ -1,15 +1,15 @@
 """
 Unit tests for wave_generator.py (ADR-003)
 """
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
 import pytest
-
-from zephyr.orchestrator.wave_generator import WaveGenerator, Wave, WaveStatus
 from zephyr.db.sqlite_schema import get_db_connection
+from zephyr.orchestrator.wave_generator import WaveGenerator
 
 
 @pytest.fixture

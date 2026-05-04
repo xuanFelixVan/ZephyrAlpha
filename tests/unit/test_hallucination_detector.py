@@ -21,28 +21,27 @@ Unit tests for hallucination_detector.py (T-3-07, ADR-0039)
 15. 审计回调被触发一次
 16. Step 1 返回非法 JSON → 自动降级到 keyword 兜底
 """
+
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
-
 from zephyr.orchestrator.hallucination_detector import (
+    KEYWORD_HALLU_RULES,
     BudgetState,
     FallbackMode,
     HallucinationDetector,
     HallucinationResult,
-    KEYWORD_HALLU_RULES,
     ModelCallResult,
     RiskLevel,
     TriggerLevel,
     build_detector_with_defaults,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助：可编排的 FakeCaller
@@ -54,7 +53,7 @@ class FakeCaller:
 
     def __init__(
         self,
-        responses: Optional[dict[str, ModelCallResult]] = None,
+        responses: dict[str, ModelCallResult] | None = None,
         default_cost: float = 0.005,
     ) -> None:
         self._responses = responses or {}
@@ -136,35 +135,22 @@ class TestShouldTrigger:
         self.detector = HallucinationDetector()
 
     def test_l3_pure_codegen(self) -> None:
-        assert (
-            self.detector.should_trigger(RiskLevel.L, pure_codegen=True)
-            == TriggerLevel.L3_BLACKLIST
-        )
+        assert self.detector.should_trigger(RiskLevel.L, pure_codegen=True) == TriggerLevel.L3_BLACKLIST
 
     def test_l1_high_risk(self) -> None:
-        assert (
-            self.detector.should_trigger(RiskLevel.H) == TriggerLevel.L1_WHITELIST
-        )
+        assert self.detector.should_trigger(RiskLevel.H) == TriggerLevel.L1_WHITELIST
 
     def test_l1_low_intent_confidence(self) -> None:
         assert (
-            self.detector.should_trigger(
-                RiskLevel.M, source_stage="semantic", intent_confidence=0.7
-            )
+            self.detector.should_trigger(RiskLevel.M, source_stage="semantic", intent_confidence=0.7)
             == TriggerLevel.L1_WHITELIST
         )
 
     def test_l2_doc_target(self) -> None:
-        assert (
-            self.detector.should_trigger(RiskLevel.L, target_is_doc=True)
-            == TriggerLevel.L2_GREY
-        )
+        assert self.detector.should_trigger(RiskLevel.L, target_is_doc=True) == TriggerLevel.L2_GREY
 
     def test_l1_frozen_asset(self) -> None:
-        assert (
-            self.detector.should_trigger(RiskLevel.L, frozen_asset_touch=True)
-            == TriggerLevel.L1_WHITELIST
-        )
+        assert self.detector.should_trigger(RiskLevel.L, frozen_asset_touch=True) == TriggerLevel.L1_WHITELIST
 
 
 # ---------------------------------------------------------------------------
@@ -243,7 +229,11 @@ def test_cove_detects_hallucination_on_drift() -> None:
             "cove_step2_verify": _step2_payload(
                 [
                     {"question": "因子 A 的 IC 具体数值是多少？", "answer": "不知道", "confidence_self": 0.3},
-                    {"question": "因子 A 的样本周期是什么？", "answer": "完全不相关的东西 banana apple", "confidence_self": 0.3},
+                    {
+                        "question": "因子 A 的样本周期是什么？",
+                        "answer": "完全不相关的东西 banana apple",
+                        "confidence_self": 0.3,
+                    },
                     {"question": "该 IC 是否显著？", "answer": "cucumber tomato", "confidence_self": 0.2},
                 ]
             )
@@ -347,9 +337,7 @@ class TestKeywordRules:
 
     def test_missing_file(self, tmp_path: Path) -> None:
         (tmp_path / "real.md").write_text("x", encoding="utf-8")
-        out_missing = KEYWORD_HALLU_RULES["missing_files"](
-            "See docs/does_not_exist.md for detail", tmp_path
-        )
+        out_missing = KEYWORD_HALLU_RULES["missing_files"]("See docs/does_not_exist.md for detail", tmp_path)
         assert out_missing
         out_found = KEYWORD_HALLU_RULES["missing_files"]("See real.md", tmp_path)
         assert out_found == []
@@ -359,13 +347,9 @@ class TestKeywordRules:
         assert out
 
     def test_frozen_asset_mutation_blocked(self) -> None:
-        out_blocked = KEYWORD_HALLU_RULES["frozen_asset_mutation"](
-            "请修改 tool_contracts.yaml 来适配", False
-        )
+        out_blocked = KEYWORD_HALLU_RULES["frozen_asset_mutation"]("请修改 tool_contracts.yaml 来适配", False)
         assert out_blocked
-        out_ok = KEYWORD_HALLU_RULES["frozen_asset_mutation"](
-            "请修改 tool_contracts.yaml 来适配", True
-        )
+        out_ok = KEYWORD_HALLU_RULES["frozen_asset_mutation"]("请修改 tool_contracts.yaml 来适配", True)
         assert out_ok == []
 
 
@@ -375,7 +359,7 @@ class TestKeywordRules:
 
 
 def test_budget_skip_l_m_when_daily_cap_exhausted() -> None:
-    fixed_now = datetime(2026, 4, 24, 12, 0, tzinfo=timezone.utc)
+    fixed_now = datetime(2026, 4, 24, 12, 0, tzinfo=UTC)
     detector = HallucinationDetector(
         primary_caller=FakeCaller(),
         verifier_caller=FakeCaller(),
@@ -391,13 +375,7 @@ def test_budget_skip_l_m_when_daily_cap_exhausted() -> None:
 
 
 def test_budget_h_level_ignores_daily_cap() -> None:
-    primary = FakeCaller(
-        {
-            "cove_step1_baseline_plan": _step1_payload(
-                "ok", ["Q1", "Q2", "Q3"]
-            )
-        }
-    )
+    primary = FakeCaller({"cove_step1_baseline_plan": _step1_payload("ok", ["Q1", "Q2", "Q3"])})
     verifier = FakeCaller(
         {
             "cove_step2_verify": _step2_payload(
@@ -409,7 +387,7 @@ def test_budget_h_level_ignores_daily_cap() -> None:
             )
         }
     )
-    fixed_now = datetime(2026, 4, 24, 12, 0, tzinfo=timezone.utc)
+    fixed_now = datetime(2026, 4, 24, 12, 0, tzinfo=UTC)
     detector = HallucinationDetector(
         primary_caller=primary,
         verifier_caller=verifier,
@@ -425,17 +403,15 @@ def test_budget_h_level_ignores_daily_cap() -> None:
 
 def test_budget_window_resets_across_day() -> None:
     times = [
-        datetime(2026, 4, 24, 23, 59, tzinfo=timezone.utc),
-        datetime(2026, 4, 25, 0, 0, 1, tzinfo=timezone.utc),
+        datetime(2026, 4, 24, 23, 59, tzinfo=UTC),
+        datetime(2026, 4, 25, 0, 0, 1, tzinfo=UTC),
     ]
 
     def clock() -> datetime:
         return times[min(len(times) - 1, clock.idx)]  # type: ignore[attr-defined]
 
     clock.idx = 0  # type: ignore[attr-defined]
-    detector = HallucinationDetector(
-        primary_caller=None, verifier_caller=None, now=clock
-    )
+    detector = HallucinationDetector(primary_caller=None, verifier_caller=None, now=clock)
     detector.budget_state.reset_if_window_changed(times[0])
     detector.budget_state.record(0.5)
     assert detector.budget_state.daily_spent_usd == 0.5

@@ -18,30 +18,31 @@ Blueprint: MOD-INF-005 §4.4
 
 from __future__ import annotations
 
-import sys
+import argparse
 import json
 import subprocess
-import argparse
+import sys
 import time
-from pathlib import Path
-from datetime import datetime, timezone
 from collections import defaultdict
-from typing import Any, Optional
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 import yaml
 
 # AGENTS.md §6.7: UTF-8 输出强制声明（防止 Windows GBK 编码 crash）
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SCRIPTS_DIR
-from _shared.constants import MANIFEST_PATH
+from _shared.constants import MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
+
 FINDINGS_FILE = REPO_ROOT / "scripts" / "governance" / "reports" / "findings.jsonl"
 
 
@@ -55,7 +56,7 @@ def _load_script_health_checks() -> dict[str, Any]:
         FileNotFoundError: script_manifest.yaml 不存在
         yaml.YAMLError: YAML 格式无效
     """
-    with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
+    with open(MANIFEST_PATH, encoding="utf-8") as f:
         manifest = yaml.safe_load(f)
 
     checks = {}
@@ -68,7 +69,7 @@ def _load_script_health_checks() -> dict[str, Any]:
     return checks
 
 
-_SCRIPT_HEALTH_CACHE: Optional[dict] = None
+_SCRIPT_HEALTH_CACHE: dict | None = None
 
 
 def _get_script_health_checks() -> dict[str, Any]:
@@ -81,6 +82,7 @@ def _get_script_health_checks() -> dict[str, Any]:
     if _SCRIPT_HEALTH_CACHE is None:
         _SCRIPT_HEALTH_CACHE = _load_script_health_checks()
     return _SCRIPT_HEALTH_CACHE
+
 
 def _get_all_dimensions() -> list[str]:
     """从 manifest 动态提取所有维度标识（替代硬编码 DIMENSIONS_ALL）。
@@ -112,8 +114,13 @@ def check_script_health(script_name: str, args: list[str]) -> dict[str, Any]:
     cmd = [sys.executable, str(script_path)] + args
     try:
         result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=60,
-            cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            cwd=str(REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
         error_msg = result.stderr[:200] if result.stderr else ""
         return {
@@ -137,7 +144,7 @@ def load_findings_history() -> list[dict]:
     if not FINDINGS_FILE.exists():
         return []
     findings = []
-    with open(FINDINGS_FILE, "r", encoding="utf-8") as f:
+    with open(FINDINGS_FILE, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -179,7 +186,7 @@ def render_dashboard(
     print(file=sys.stderr)
     print("=" * 65, file=sys.stderr)
     print("  ZephyrAlpha 审计系统 — 健康仪表盘", file=sys.stderr)
-    print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}", file=sys.stderr)
+    print(f"  {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}", file=sys.stderr)
     print("=" * 65, file=sys.stderr)
 
     # ── Section 1: Script Health ──
@@ -199,13 +206,21 @@ def render_dashboard(
     print(f"\n  可执行: {ok_count}/{len(health)}  |  异常: {err_count}/{len(health)}", file=sys.stderr)
 
     # ── Section 2: Dimension Coverage ──
-    print(f"\n── 2. 审计维度覆盖（12 个）──\n", file=sys.stderr)
+    print("\n── 2. 审计维度覆盖（12 个）──\n", file=sys.stderr)
 
     dim_labels = {
-        "D1": "结构完整性", "D2": "链接完整性", "D3": "元数据合规",
-        "D4": "路径有效性", "D5": "架构合规", "D6": "安全漏洞",
-        "D7": "代码质量", "D8": "文档代码同步", "D9": "知识覆盖",
-        "D10": "性能容量", "D11": "合规完整性", "D12": "AI幻觉检测",
+        "D1": "结构完整性",
+        "D2": "链接完整性",
+        "D3": "元数据合规",
+        "D4": "路径有效性",
+        "D5": "架构合规",
+        "D6": "安全漏洞",
+        "D7": "代码质量",
+        "D8": "文档代码同步",
+        "D9": "知识覆盖",
+        "D10": "性能容量",
+        "D11": "合规完整性",
+        "D12": "AI幻觉检测",
     }
 
     covered_dims = {d for d in coverage if coverage[d]}
@@ -233,15 +248,15 @@ def render_dashboard(
             sev_counts[sev] += 1
             dim_counts[dim] += 1
 
-        print(f"  按严重度：", file=sys.stderr)
+        print("  按严重度：", file=sys.stderr)
         for sev in ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]:
             count = sev_counts.get(sev, 0)
             bar = "█" * min(count, 40)
-            icon = "🔴" if sev == "CRITICAL" else "🟡" if sev in ("HIGH","MEDIUM") else "🟢"
+            icon = "🔴" if sev == "CRITICAL" else "🟡" if sev in ("HIGH", "MEDIUM") else "🟢"
             if count > 0:
                 print(f"    {icon} {sev:<10} {bar} {count}", file=sys.stderr)
 
-        print(f"\n  按维度：", file=sys.stderr)
+        print("\n  按维度：", file=sys.stderr)
         for dim in sorted(dim_counts.keys()):
             count = dim_counts[dim]
             label = dim_labels.get(dim, dim)
@@ -249,13 +264,13 @@ def render_dashboard(
             print(f"    {dim} {label:<12} {bar} {count}", file=sys.stderr)
 
     elif findings is not None:
-        print(f"\n── 3. Finding 摘要 ──\n  无历史或上次扫描存在 Finding，请运行 --scan 更新", file=sys.stderr)
+        print("\n── 3. Finding 摘要 ──\n  无历史或上次扫描存在 Finding，请运行 --scan 更新", file=sys.stderr)
 
     # ── Footer ──
     print(f"\n{'─' * 65}", file=sys.stderr)
     if scan_time > 0:
         print(f"  扫描耗时: {scan_time:.1f}s", file=sys.stderr)
-    print(f"  仪表盘刷新: {datetime.now(timezone.utc).strftime('%H:%M:%S UTC')}", file=sys.stderr)
+    print(f"  仪表盘刷新: {datetime.now(UTC).strftime('%H:%M:%S UTC')}", file=sys.stderr)
     print(f"{'─' * 65}\n", file=sys.stderr)
 
 
@@ -267,14 +282,12 @@ def render_json(health: dict, coverage: dict) -> None:
         coverage: 维度代码 -> 覆盖脚本列表
     """
     output = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "scripts": {
             name: {"status": h["status"], "exit_code": h["exit_code"], "has_findings": h.get("has_findings", False)}
             for name, h in health.items()
         },
-        "coverage": {
-            dim: len(scripts) for dim, scripts in coverage.items()
-        },
+        "coverage": {dim: len(scripts) for dim, scripts in coverage.items()},
         "uncovered": [d for d in _get_all_dimensions() if d not in coverage or not coverage[d]],
         "healthy": all(h["status"] == "OK" for h in health.values()),
     }

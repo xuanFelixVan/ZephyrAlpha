@@ -36,11 +36,13 @@ PRAGMA 基线（ADR-0030 §4.3）
     init_db()              # 幂等，可重复调用
     conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
 """
+
 from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from zephyr.shared.paths import DB_PATH, REPO_ROOT
+
+from zephyr.shared.paths import DB_PATH
 
 # ---------------------------------------------------------------------------
 # DDL — tasks 表
@@ -307,7 +309,7 @@ def get_db_connection(
     resolved: Path = Path(db_path) if db_path is not None else DB_PATH
     conn = sqlite3.connect(
         str(resolved),
-        isolation_level=None,   # 手动控制 BEGIN / COMMIT
+        isolation_level=None,  # 手动控制 BEGIN / COMMIT
         check_same_thread=check_same_thread,
         timeout=timeout,
     )
@@ -390,24 +392,13 @@ def _migrate_namespace_and_seq(conn: sqlite3.Connection) -> None:
             "CHECK(namespace IN ('ADR','CP','KE','STD','DW','SRC','OPS'))"
         )
     if "seq" not in columns:
-        conn.execute(
-            "ALTER TABLE tasks ADD COLUMN seq INTEGER NOT NULL DEFAULT 0 CHECK(seq >= 1)"
-        )
+        conn.execute("ALTER TABLE tasks ADD COLUMN seq INTEGER NOT NULL DEFAULT 0 CHECK(seq >= 1)")
     conn.execute(_DDL_TASK_FILES.strip())
-    existing_indexes = {
-        row[0]
-        for row in conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='index'"
-        ).fetchall()
-    }
+    existing_indexes = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()}
     if "idx_tf_task" not in existing_indexes:
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_tf_task ON task_files(task_id)"
-        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_tf_task ON task_files(task_id)")
     if "idx_tf_file" not in existing_indexes:
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_tf_file ON task_files(file_path)"
-        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_tf_file ON task_files(file_path)")
 
 
 def _migrate_v2_fields(conn: sqlite3.Connection) -> None:
@@ -464,22 +455,11 @@ def _migrate_circuit_breaker_state(conn: sqlite3.Connection) -> None:
     已存在时不重建（CREATE TABLE/INDEX IF NOT EXISTS 语义）。
     """
     conn.execute(_DDL_CIRCUIT_BREAKER_STATE.strip())
-    existing_indexes = {
-        row[0]
-        for row in conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='index'"
-        ).fetchall()
-    }
+    existing_indexes = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()}
     if "idx_cb_state" not in existing_indexes:
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_cb_state "
-            "ON circuit_breaker_state(state)"
-        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_cb_state " "ON circuit_breaker_state(state)")
     if "idx_cb_caller" not in existing_indexes:
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_cb_caller "
-            "ON circuit_breaker_state(caller_module)"
-        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_cb_caller " "ON circuit_breaker_state(caller_module)")
 
 
 def _migrate_taskcard_columns(conn: sqlite3.Connection) -> None:
@@ -528,9 +508,7 @@ def table_names(db_path: Optional[Path | str] = None) -> list[str]:
     resolved = Path(db_path) if db_path is not None else DB_PATH
     conn = sqlite3.connect(str(resolved))
     try:
-        cursor = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-        )
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         return [row[0] for row in cursor.fetchall()]
     finally:
         conn.close()
@@ -541,9 +519,7 @@ def view_names(db_path: Optional[Path | str] = None) -> list[str]:
     resolved = Path(db_path) if db_path is not None else DB_PATH
     conn = sqlite3.connect(str(resolved))
     try:
-        cursor = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='view' ORDER BY name"
-        )
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='view' ORDER BY name")
         return [row[0] for row in cursor.fetchall()]
     finally:
         conn.close()

@@ -3,11 +3,12 @@ Pipeline 数据模型
 =================
 依据：MOD-INF-006 §3.2.2 + GOV-AI-002 v2.0.0 模型路由策略
 """
+
 from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -43,6 +44,7 @@ class ModuleStatus(str, Enum):
 
 class ModuleResult(BaseModel):
     """单模块执行结果"""
+
     model_config = BASE_CONFIG
 
     module_id: str = Field(..., pattern=r"^M(1[0-1]|[1-9])$")
@@ -53,12 +55,13 @@ class ModuleResult(BaseModel):
     errors: list[str] = []
     tokens_used: int = 0
     duration_ms: int = 0
-    started_at: Optional[str] = None
-    finished_at: Optional[str] = None
+    started_at: str | None = None
+    finished_at: str | None = None
 
 
 class PipelineResult(BaseModel):
     """管线执行结果"""
+
     model_config = BASE_CONFIG
 
     task_id: str
@@ -68,11 +71,12 @@ class PipelineResult(BaseModel):
     needs_claude_rescue: bool = False
     rescue_reason: str = ""
     started_at: str = Field(default_factory=lambda: datetime.now().isoformat())
-    finished_at: Optional[str] = None
+    finished_at: str | None = None
 
 
 class ClaudeRescueTrigger(BaseModel):
     """Claude 特种救援触发记录——GOV-AI-002 §三"""
+
     model_config = BASE_CONFIG
 
     triggered: bool = False
@@ -86,6 +90,7 @@ class ClaudeRescueTrigger(BaseModel):
 
 class PipelineOrchestratorConfig(BaseModel):
     """管线编排器配置"""
+
     model_config = BASE_CONFIG
 
     max_retries: int = 3
@@ -100,15 +105,15 @@ class PipelineOrchestratorConfig(BaseModel):
 # ============================================================================
 
 M_MODULE_SPECS: dict[str, dict[str, str]] = {
-    "M1":  {"pipeline": "A", "model": "deepseek", "role": "任务卡解析→结构化执行计划"},
-    "M2":  {"pipeline": "A", "model": "deepseek", "role": "上下文装配→调用 context_engine"},
-    "M3":  {"pipeline": "A", "model": "deepseek", "role": "代码/文档生成——核心生产"},
-    "M4":  {"pipeline": "A", "model": "deepseek", "role": "格式校验"},
-    "M5":  {"pipeline": "A", "model": "glm",      "role": "产物打包"},
-    "M6":  {"pipeline": "B", "model": "deepseek", "role": "差异检测——产出 vs 期望"},
-    "M7":  {"pipeline": "B", "model": "glm",      "role": "深度审查——逐个文件逻辑/合规"},
-    "M8":  {"pipeline": "B", "model": "deepseek", "role": "标准合规——PS/GOV/ADR"},
-    "M9":  {"pipeline": "B", "model": "deepseek", "role": "风险评估——OWASP LLM Top 10"},
+    "M1": {"pipeline": "A", "model": "deepseek", "role": "任务卡解析→结构化执行计划"},
+    "M2": {"pipeline": "A", "model": "deepseek", "role": "上下文装配→调用 context_engine"},
+    "M3": {"pipeline": "A", "model": "deepseek", "role": "代码/文档生成——核心生产"},
+    "M4": {"pipeline": "A", "model": "deepseek", "role": "格式校验"},
+    "M5": {"pipeline": "A", "model": "glm", "role": "产物打包"},
+    "M6": {"pipeline": "B", "model": "deepseek", "role": "差异检测——产出 vs 期望"},
+    "M7": {"pipeline": "B", "model": "glm", "role": "深度审查——逐个文件逻辑/合规"},
+    "M8": {"pipeline": "B", "model": "deepseek", "role": "标准合规——PS/GOV/ADR"},
+    "M9": {"pipeline": "B", "model": "deepseek", "role": "风险评估——OWASP LLM Top 10"},
     "M10": {"pipeline": "B", "model": "deepseek", "role": "审计报告→Finding 格式"},
     "M11": {"pipeline": "B", "model": "deepseek", "role": "门禁裁决——G5/G6"},
 }

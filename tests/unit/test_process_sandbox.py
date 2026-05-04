@@ -11,21 +11,18 @@ T-V2-005 单元测试 — L2a ProcessSandbox
   - 成功执行：returncode / stdout / stderr 正确
   - shell=False 强制（命令列表传入）
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 import pytest
-
 from zephyr.llm_security.process_sandbox import (
-    ENV_WHITELIST,
     L2aSandbox,
-    SandboxResult,
     SandboxTimeout,
     SandboxViolation,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixture

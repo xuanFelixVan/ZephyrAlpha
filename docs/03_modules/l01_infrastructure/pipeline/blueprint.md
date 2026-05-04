@@ -88,22 +88,22 @@ routing_decision_tree:
   rules:
     - condition: "task_type == MODEL_BUILD AND estimated_complexity == HIGH"
       route: "M1 (Opus 4.5 + full sandbox + full_g0_g7)"
-    
+
     - condition: "task_type == MODEL_BUILD"
       route: "M2 (GPT-5.2 + standard sandbox + pre_commit_only)"
-    
+
     - condition: "task_type == AUDIT AND priority == P0"
       route: "M3 (Opus 4.5 复审 + audit sandbox + full_g0_g7)"
-    
+
     - condition: "task_type == AUDIT"
       route: "M4 (Claude 4.5 Sonnet + audit sandbox + post_exec_only)"
-    
+
     - condition: "task_type ∈ {DOC_WRITE, REFACTOR} AND target_layer ∈ {L00,L01,L10}"
       route: "M5 (GPT-5.2 + full sandbox + full_g0_g7)"
-    
+
     - condition: "task_type ∈ {DOC_WRITE, REFACTOR}"
       route: "M6 (Claude 4.5 Sonnet + standard sandbox + pre_commit_only)"
-    
+
     - condition: "task_type == AUTO_FIX"
       route: "M11 (Claude 4.5 Haiku + restricted + none)"
 ```

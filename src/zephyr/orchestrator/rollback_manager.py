@@ -16,13 +16,12 @@ RollbackManager — 实现状态回滚：记录操作日志、支持 undo（T-2-
 - 回滚时：恢复 tasks 表状态到检查点时刻
 - 不碰磁盘文件（只恢复数据库状态）
 """
+
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
 from zephyr.shared.time_utils import now_iso
@@ -46,9 +45,8 @@ class RollbackManager:
     实现状态回滚：记录操作日志、支持 undo。
     """
 
-    def __init__(self, db_path: Optional[Path] = None) -> None:
+    def __init__(self, db_path: Path | None = None) -> None:
         self._db_path = db_path or DB_PATH
-
 
     def checkpoint(self, description: str = "") -> str:
         """
@@ -72,20 +70,22 @@ class RollbackManager:
 
             snapshot: list[dict] = []
             for row in rows:
-                snapshot.append({
-                    "task_id": row["task_id"],
-                    "status": row["status"],
-                    "phase": row["phase"],
-                    "title": row["title"],
-                    "execution_model": row["execution_model"],
-                    "safety_level": row["safety_level"],
-                    "directive": row["directive"],
-                    "depends_on": row["depends_on"],
-                    "files_in_scope": row["files_in_scope"],
-                    "session_id": row["session_id"],
-                    "waiting_for": row["waiting_for"],
-                    "ready_at": row["ready_at"],
-                })
+                snapshot.append(
+                    {
+                        "task_id": row["task_id"],
+                        "status": row["status"],
+                        "phase": row["phase"],
+                        "title": row["title"],
+                        "execution_model": row["execution_model"],
+                        "safety_level": row["safety_level"],
+                        "directive": row["directive"],
+                        "depends_on": row["depends_on"],
+                        "files_in_scope": row["files_in_scope"],
+                        "session_id": row["session_id"],
+                        "waiting_for": row["waiting_for"],
+                        "ready_at": row["ready_at"],
+                    }
+                )
 
             payload = json.dumps(snapshot, ensure_ascii=False)
 
@@ -192,19 +192,21 @@ class RollbackManager:
                 try:
                     snapshot: list[dict] = json.loads(row["payload"])
                     if isinstance(snapshot, list):
-                        checkpoints.append(Checkpoint(
-                            checkpoint_id=row["event_id"],
-                            created_at=row["created_at"],
-                            description=f"Snapshot with {len(snapshot)} tasks",
-                            task_count=len(snapshot),
-                        ))
+                        checkpoints.append(
+                            Checkpoint(
+                                checkpoint_id=row["event_id"],
+                                created_at=row["created_at"],
+                                description=f"Snapshot with {len(snapshot)} tasks",
+                                task_count=len(snapshot),
+                            )
+                        )
                 except (json.JSONDecodeError, TypeError):
                     continue
             return checkpoints
         finally:
             conn.close()
 
-    def undo_last(self) -> Optional[str]:
+    def undo_last(self) -> str | None:
         """
         撤销最近一次操作（回滚到上一个检查点）。
 

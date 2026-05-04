@@ -26,12 +26,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / "_shared").exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -68,8 +68,11 @@ CTR_TYPES = {
 }
 
 TRACE_PATTERNS = [
-    "trace_context", "TraceContext",
-    "parent_span_id", "span_id", "trace_id",
+    "trace_context",
+    "TraceContext",
+    "parent_span_id",
+    "span_id",
+    "trace_id",
     "service_name",
 ]
 
@@ -106,32 +109,36 @@ class TraceContextVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
         if self.layer in PRODUCER_LAYERS and self._has_ctr_type and not self._propagates_tc:
-            self.findings.append({
-                "file": self.filename,
-                "layer": self.layer,
-                "function": node.name,
-                "line": node.lineno,
-                "violation": (
-                    f"生产者 '{node.name}' 产出 CTR 数据但未检测到 trace_context 传播 "
-                    f"— 每层 MUST 创建/更新 TraceContext span 并嵌入出站数据 "
-                    f"(CTR-TRACE-001)"
-                ),
-                "severity": "HIGH",
-            })
+            self.findings.append(
+                {
+                    "file": self.filename,
+                    "layer": self.layer,
+                    "function": node.name,
+                    "line": node.lineno,
+                    "violation": (
+                        f"生产者 '{node.name}' 产出 CTR 数据但未检测到 trace_context 传播 "
+                        f"— 每层 MUST 创建/更新 TraceContext span 并嵌入出站数据 "
+                        f"(CTR-TRACE-001)"
+                    ),
+                    "severity": "HIGH",
+                }
+            )
 
         if self.layer in CONSUMER_LAYERS and self._has_ctr_type and not self._extracts_tc and not self._creates_tc:
-            self.findings.append({
-                "file": self.filename,
-                "layer": self.layer,
-                "function": node.name,
-                "line": node.lineno,
-                "violation": (
-                    f"消费者 '{node.name}' 使用 CTR 数据但未提取 trace_context "
-                    f"— 应调用 getattr(data, 'trace_context', None) 或等效代码 "
-                    f"(CTR-TRACE-001)"
-                ),
-                "severity": "MEDIUM",
-            })
+            self.findings.append(
+                {
+                    "file": self.filename,
+                    "layer": self.layer,
+                    "function": node.name,
+                    "line": node.lineno,
+                    "violation": (
+                        f"消费者 '{node.name}' 使用 CTR 数据但未提取 trace_context "
+                        f"— 应调用 getattr(data, 'trace_context', None) 或等效代码 "
+                        f"(CTR-TRACE-001)"
+                    ),
+                    "severity": "MEDIUM",
+                }
+            )
 
         self._func_name = prev_name
         self._creates_tc = prev_creates
@@ -211,7 +218,7 @@ class TraceContextVisitor(ast.NodeVisitor):
                     self._creates_tc = True
                     self._propagates_tc = True
 
-        for kw in (getattr(node.value, "keywords", None) or []):
+        for kw in getattr(node.value, "keywords", None) or []:
             if hasattr(kw, "arg") and kw.arg == "trace_context":
                 self._propagates_tc = True
 
@@ -290,10 +297,7 @@ def main() -> None:
         is_producer = layer in PRODUCER_LAYERS
         tag = "[P]" if is_producer else "[C]"
 
-        print(
-            f"  {tag} {layer}: {has}/{total} 文件引用 TraceContext, "
-            f"{viols} 条违规"
-        )
+        print(f"  {tag} {layer}: {has}/{total} 文件引用 TraceContext, " f"{viols} 条违规")
 
         if is_producer and total > 0 and has < total:
             print(f"       ⚠  生产者层但 {total - has} 个文件未引用 TraceContext")

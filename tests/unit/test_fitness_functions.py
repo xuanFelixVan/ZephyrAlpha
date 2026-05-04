@@ -19,25 +19,24 @@ to_trend_data           : 多报告趋势转换
 from_gate_results       : 工厂函数正确计数
 FitnessReport.get_metric : 命中 / 未命中返回 None
 """
+
 from __future__ import annotations
 
 import json
 
 import pytest
-
 from zephyr.feedback_loop.fitness_functions import (
     METRIC_COMPLIANCE_RATE,
     METRIC_HALLUCINATION_INTERCEPTION,
     METRIC_KNOWLEDGE_ACTIVATION,
     METRIC_MODULE_COUPLING,
     METRIC_TEST_COVERAGE,
+    FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,
-    FitnessFunctionFramework,
     MetricStatus,
     from_gate_results,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -110,9 +109,18 @@ class TestModuleCoupling:
     def test_high_density_fails(self, ff: FitnessFunctionFramework) -> None:
         """高密度（> 0.35 含 warn_margin）应为 FAIL。"""
         # 全连接 5 模块：10 edges / 10 max = 1.0
-        edges = [("A", "B"), ("A", "C"), ("A", "D"), ("A", "E"),
-                 ("B", "C"), ("B", "D"), ("B", "E"),
-                 ("C", "D"), ("C", "E"), ("D", "E")]
+        edges = [
+            ("A", "B"),
+            ("A", "C"),
+            ("A", "D"),
+            ("A", "E"),
+            ("B", "C"),
+            ("B", "D"),
+            ("B", "E"),
+            ("C", "D"),
+            ("C", "E"),
+            ("D", "E"),
+        ]
         m = ff.measure_module_coupling(edges, module_count=5)
         assert m.status == MetricStatus.FAIL
         assert m.value > 0.30
@@ -223,23 +231,17 @@ class TestKnowledgeActivationRate:
 class TestHallucinationInterceptionRate:
     def test_high_interception_passes(self, ff: FitnessFunctionFramework) -> None:
         """25/30 ≈ 83% > 70% → PASS。"""
-        m = ff.measure_hallucination_interception_rate(
-            hallucination_total=30, hallucination_intercepted=25
-        )
+        m = ff.measure_hallucination_interception_rate(hallucination_total=30, hallucination_intercepted=25)
         assert m.status == MetricStatus.PASS
 
     def test_zero_total_defaults_pass(self, ff: FitnessFunctionFramework) -> None:
         """无检测记录时默认 rate=1.0 → PASS。"""
-        m = ff.measure_hallucination_interception_rate(
-            hallucination_total=0, hallucination_intercepted=0
-        )
+        m = ff.measure_hallucination_interception_rate(hallucination_total=0, hallucination_intercepted=0)
         assert m.status == MetricStatus.PASS
 
     def test_low_interception_fails(self, ff: FitnessFunctionFramework) -> None:
         """50% 拦截率 < 65%（70-5%）→ FAIL。"""
-        m = ff.measure_hallucination_interception_rate(
-            hallucination_total=100, hallucination_intercepted=50
-        )
+        m = ff.measure_hallucination_interception_rate(hallucination_total=100, hallucination_intercepted=50)
         assert m.status == MetricStatus.FAIL
 
 
@@ -249,9 +251,7 @@ class TestHallucinationInterceptionRate:
 
 
 class TestRunAll:
-    def test_all_pass_overall_pass(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_all_pass_overall_pass(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """全部 PASS 时 overall_status = PASS，report.passed = True。"""
         report = ff.run_all(default_inputs)
         assert report.overall_status == MetricStatus.PASS
@@ -275,26 +275,20 @@ class TestRunAll:
         assert report.overall_status == MetricStatus.FAIL
         assert report.passed is False
 
-    def test_report_has_unique_id(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_report_has_unique_id(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """每次 run_all 产生唯一 report_id（FF- 前缀）。"""
         r1 = ff.run_all(default_inputs)
         assert r1.report_id.startswith("FF-")
         # 两次调用时间间隔可能 < 1s，report_id 可能相同（秒级），跳过唯一性断言
 
-    def test_get_metric_by_name(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_get_metric_by_name(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """FitnessReport.get_metric 按名称查找正常返回。"""
         report = ff.run_all(default_inputs)
         m = report.get_metric(METRIC_TEST_COVERAGE)
         assert m is not None
         assert m.metric_name == METRIC_TEST_COVERAGE
 
-    def test_get_metric_unknown_returns_none(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_get_metric_unknown_returns_none(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """未知度量名称返回 None。"""
         report = ff.run_all(default_inputs)
         assert report.get_metric("nonexistent_metric") is None
@@ -306,9 +300,7 @@ class TestRunAll:
 
 
 class TestOutputFormats:
-    def test_to_json_report_valid_json(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_to_json_report_valid_json(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """to_json_report 返回合法 JSON，包含所有必要字段。"""
         report = ff.run_all(default_inputs)
         raw = FitnessFunctionFramework.to_json_report(report)
@@ -336,9 +328,7 @@ class TestOutputFormats:
         result = FitnessFunctionFramework.to_trend_data([])
         assert result == []
 
-    def test_to_trend_data_multiple_reports(
-        self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs
-    ) -> None:
+    def test_to_trend_data_multiple_reports(self, ff: FitnessFunctionFramework, default_inputs: FitnessInputs) -> None:
         """多份报告转为时序数据，每行含 5 类指标字段。"""
         r1 = ff.run_all(default_inputs)
         r2 = ff.run_all(default_inputs)
@@ -365,7 +355,7 @@ class TestFromGateResults:
         gate_rows = [
             {"passed": True},
             {"passed": False},
-            {"passed": 1},   # int 形式
+            {"passed": 1},  # int 形式
             {"passed": 0},
             {"passed": True},
         ]

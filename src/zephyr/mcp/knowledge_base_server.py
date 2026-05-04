@@ -14,12 +14,13 @@ Backend  : knowledge_indexer.py (ADR-0031 ChromaDB) + SQLite knowledge 表
 - knowledge_base.get_ke       — 按 ke_id 获取条目
 - knowledge_base.rebuild_index — 重建 collection 向量索引
 """
+
 from __future__ import annotations
 
 import hashlib
 import re
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from zephyr.mcp._base_server import BaseMCPServer, MCPError
 
@@ -29,8 +30,18 @@ _KE_ID_RE = re.compile(r"^KE-[0-9]{3}(-.+)?$")
 
 _VALID_COLLECTIONS = frozenset({"ke_entries", "vibe_rules", "blueprints", "failure_patterns"})
 _VALID_CATEGORIES = frozenset(
-    {"blueprint_decision", "strategy", "factor", "best_practice", "lesson_learned",
-     "architecture", "risk_control", "data_governance", "operations", "compliance"}
+    {
+        "blueprint_decision",
+        "strategy",
+        "factor",
+        "best_practice",
+        "lesson_learned",
+        "architecture",
+        "risk_control",
+        "data_governance",
+        "operations",
+        "compliance",
+    }
 )
 
 
@@ -140,7 +151,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         if collection not in _VALID_COLLECTIONS:
             raise MCPError(-32001, f"ZA-KB-0001: collection not found: {collection!r}")
 
-        start = datetime.now(tz=timezone.utc)
+        start = datetime.now(tz=UTC)
         hits = []
         for entry in self._entries.values():
             if query_text.lower() in entry.get("content", "").lower():
@@ -153,9 +164,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                         "ke_id": entry["ke_id"],
                     }
                 )
-        elapsed = int(
-            (datetime.now(tz=timezone.utc) - start).total_seconds() * 1000
-        )
+        elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
         filtered = [h for h in hits if h["score"] >= score_threshold]
         return {
             "hits": filtered[:n_results],
@@ -170,7 +179,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         category: str,
         content: str,
         source_file: str,
-        layer: Optional[str] = None,
+        layer: str | None = None,
         source_git_deleted: bool = False,
     ) -> dict[str, Any]:
         """新增或更新知识条目（幂等，按内容 SHA-256 去重）。"""
@@ -191,7 +200,7 @@ class KnowledgeBaseServer(BaseMCPServer):
             "layer": layer or "",
             "source_git_deleted": source_git_deleted,
             "fingerprint_sha256": fingerprint,
-            "updated_at": datetime.now(tz=timezone.utc).isoformat(),
+            "updated_at": datetime.now(tz=UTC).isoformat(),
         }
         self._entries[ke_id] = record
         return {"ke_id": ke_id, "chunks_indexed": chunks_count, "fingerprint_sha256": fingerprint}
@@ -216,10 +225,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         for col in targets:
             if col not in _VALID_COLLECTIONS:
                 raise MCPError(-32001, f"ZA-KB-0001: collection not found: {col!r}")
-        chunks = sum(
-            max(1, len(e.get("content", "")) // 512)
-            for e in self._entries.values()
-        )
+        chunks = sum(max(1, len(e.get("content", "")) // 512) for e in self._entries.values())
         return {"chunks_indexed": chunks, "duration_seconds": 0.0}
 
 

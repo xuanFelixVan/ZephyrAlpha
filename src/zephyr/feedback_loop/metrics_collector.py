@@ -6,6 +6,7 @@ and Evolution Engine consumption.
 Task: T-1-19 | Phase 1 | GLM-5.1
 Depends: sqlite_schema.py (T-1-04), task_repo.py (T-1-04)
 """
+
 from __future__ import annotations
 
 import json
@@ -13,7 +14,7 @@ import sqlite3
 import time
 import uuid
 from enum import Enum, unique
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @unique
@@ -39,7 +40,7 @@ class MetricsCollector:
 
     def __init__(self, db_path: str = ":memory:") -> None:
         self._db_path = db_path
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
         self._init_db()
 
     def _get_conn(self) -> sqlite3.Connection:
@@ -61,19 +62,15 @@ class MetricsCollector:
             )
             """
         )
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_metrics_type ON metrics(metric_type)"
-        )
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_metrics_created ON metrics(created_at)"
-        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_metrics_type ON metrics(metric_type)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_metrics_created ON metrics(created_at)")
         conn.commit()
 
     def record(
         self,
         metric_type: MetricType,
         value: float,
-        tags: Optional[Dict[str, Any]] = None,
+        tags: dict[str, Any] | None = None,
     ) -> str:
         metric_id = str(uuid.uuid4())
         tags_json = json.dumps(tags) if tags else None
@@ -85,7 +82,7 @@ class MetricsCollector:
         conn.commit()
         return metric_id
 
-    def bulk_record(self, records: List[Dict[str, Any]]) -> List[str]:
+    def bulk_record(self, records: list[dict[str, Any]]) -> list[str]:
         ids = []
         conn = self._get_conn()
         for r in records:
@@ -105,14 +102,14 @@ class MetricsCollector:
 
     def query(
         self,
-        metric_type: Optional[MetricType] = None,
-        since: Optional[float] = None,
-        until: Optional[float] = None,
+        metric_type: MetricType | None = None,
+        since: float | None = None,
+        until: float | None = None,
         limit: int = 1000,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         conn = self._get_conn()
-        clauses: List[str] = []
-        params: List[Any] = []
+        clauses: list[str] = []
+        params: list[Any] = []
 
         if metric_type is not None:
             clauses.append("metric_type = ?")
@@ -134,12 +131,12 @@ class MetricsCollector:
     def aggregate(
         self,
         metric_type: MetricType,
-        since: Optional[float] = None,
-        until: Optional[float] = None,
-    ) -> Dict[str, float]:
+        since: float | None = None,
+        until: float | None = None,
+    ) -> dict[str, float]:
         conn = self._get_conn()
         clauses = ["metric_type = ?"]
-        params: List[Any] = [metric_type.value]
+        params: list[Any] = [metric_type.value]
 
         if since is not None:
             clauses.append("created_at >= ?")

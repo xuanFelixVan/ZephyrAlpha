@@ -34,15 +34,16 @@ Safety  : M（写入 knowledge 表 + ChromaDB upsert/delete）
     repo.transition("KE-001", KeStatus.SUBMITTED)
     repo.search("如何避免过拟合", collection="ke_entries", n_results=5)
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -91,7 +92,7 @@ class RetrievalHit(BaseModel):
     score: float = Field(ge=0.0, le=1.0)
     content: str
     metadata: dict[str, Any] = Field(default_factory=dict)
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
 
 
 class KeRecord(BaseModel):
@@ -102,7 +103,7 @@ class KeRecord(BaseModel):
     category: str = Field(min_length=1, max_length=100, default="general")
     source_file: str = Field(min_length=1)
     source_git_deleted: bool = False
-    fingerprint_sha256: Optional[str] = None
+    fingerprint_sha256: str | None = None
     tags: list[str] = Field(default_factory=list)
     summary: str = Field(default="", max_length=2000)
     status: KeStatus = KeStatus.DRAFT
@@ -111,7 +112,7 @@ class KeRecord(BaseModel):
 
     @field_validator("fingerprint_sha256")
     @classmethod
-    def validate_sha256(cls, v: Optional[str]) -> Optional[str]:
+    def validate_sha256(cls, v: str | None) -> str | None:
         if v is not None and len(v) != 64:
             raise ValueError("fingerprint_sha256 must be 64 hex chars")
         return v
@@ -127,8 +128,6 @@ class TransitionResult(BaseModel):
     vector_action: str = ""
 
 
-
-
 def _compute_fingerprint(content: str) -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
@@ -136,8 +135,8 @@ def _compute_fingerprint(content: str) -> str:
 class KbRepo:
     def __init__(
         self,
-        db_path: Optional[Path | str] = None,
-        vector_dir: Optional[Path | str] = None,
+        db_path: Path | str | None = None,
+        vector_dir: Path | str | None = None,
     ) -> None:
         from zephyr.db.sqlite_schema import get_db_connection
 
@@ -152,7 +151,7 @@ class KbRepo:
         source_file: str,
         content: str,
         source_git_deleted: bool = False,
-        tags: Optional[list[str]] = None,
+        tags: list[str] | None = None,
         summary: str = "",
     ) -> KeRecord:
         now = now_iso()
@@ -197,7 +196,7 @@ class KbRepo:
             raise
         return rec
 
-    def get(self, ke_id: str) -> Optional[KeRecord]:
+    def get(self, ke_id: str) -> KeRecord | None:
         cursor = self._conn.execute(
             "SELECT ke_id, title, category, source_file, source_git_deleted, "
             "fingerprint_sha256, tags, summary, status, created_at, updated_at "
@@ -221,16 +220,13 @@ class KbRepo:
             updated_at=datetime.fromisoformat(row["updated_at"]),
         )
 
-    def transition(self, ke_id: str, to_status: KeStatus, content: Optional[str] = None) -> TransitionResult:
+    def transition(self, ke_id: str, to_status: KeStatus, content: str | None = None) -> TransitionResult:
         rec = self.get(ke_id)
         if rec is None:
             raise ValueError(f"KE not found: {ke_id}")
         from_status = rec.status
         if to_status not in _VALID_TRANSITIONS.get(from_status, set()):
-            raise ValueError(
-                f"Invalid transition: {from_status.value} → {to_status.value} "
-                f"for {ke_id}"
-            )
+            raise ValueError(f"Invalid transition: {from_status.value} → {to_status.value} " f"for {ke_id}")
         now = now_iso()
         event_id = f"KE-{uuid.uuid4().hex[:12]}"
         vector_action = self._determine_vector_action(from_status, to_status)
@@ -246,12 +242,14 @@ class KbRepo:
                 "VALUES (?, 'state_transition', ?, NULL, NULL, ?)",
                 (
                     event_id,
-                    json.dumps({
-                        "ke_id": ke_id,
-                        "from_status": from_status.value,
-                        "to_status": to_status.value,
-                        "vector_action": vector_action,
-                    }),
+                    json.dumps(
+                        {
+                            "ke_id": ke_id,
+                            "from_status": from_status.value,
+                            "to_status": to_status.value,
+                            "vector_action": vector_action,
+                        }
+                    ),
                     now,
                 ),
             )
@@ -277,7 +275,7 @@ class KbRepo:
         self,
         query_text: str,
         collection: str = "ke_entries",
-        where: Optional[dict[str, Any]] = None,
+        where: dict[str, Any] | None = None,
         n_results: int = 5,
         score_threshold: float = 0.6,
     ) -> list[RetrievalHit]:
@@ -310,7 +308,7 @@ class KbRepo:
         docs = results["documents"][0] if results.get("documents") else [""] * len(ids)
         metas = results["metadatas"][0] if results.get("metadatas") else [{}] * len(ids)
 
-        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas):
+        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas, strict=False):
             score = 1.0 - dist
             if score < score_threshold:
                 continue
@@ -325,7 +323,7 @@ class KbRepo:
             )
         return hits
 
-    def list_by_status(self, status: Optional[KeStatus] = None) -> list[KeRecord]:
+    def list_by_status(self, status: KeStatus | None = None) -> list[KeRecord]:
         if status is not None:
             cursor = self._conn.execute(
                 "SELECT ke_id, title, category, source_file, source_git_deleted, "

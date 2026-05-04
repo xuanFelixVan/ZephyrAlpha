@@ -20,16 +20,16 @@ PipelineOrchestrator — M1-M11 管线协调器
     orchestrator = PipelineOrchestrator(config)
     result = orchestrator.dispatch(task_card)
 """
+
 from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime
-from typing import Optional
 
 from zephyr.core.models import TaskCard
 from zephyr.pipeline.models import (
-    M_MODULES,
     M_MODULE_SPECS,
+    M_MODULES,
     ClaudeRescueTrigger,
     ModuleResult,
     ModuleStatus,
@@ -52,7 +52,7 @@ class PipelineOrchestrator:
 
     def __init__(
         self,
-        config: Optional[PipelineOrchestratorConfig] = None,
+        config: PipelineOrchestratorConfig | None = None,
     ) -> None:
         self._cfg = config or PipelineOrchestratorConfig()
         self._failure_log: dict[str, int] = {}
@@ -157,7 +157,7 @@ class PipelineOrchestrator:
         task: TaskCard,
     ) -> ModuleResult:
         started = datetime.now().isoformat()
-        last_error: Optional[str] = None
+        last_error: str | None = None
 
         for attempt in range(1, self._cfg.max_retries + 1):
             try:
@@ -177,9 +177,7 @@ class PipelineOrchestrator:
                 last_error = f"[{attempt}/{self._cfg.max_retries}] {type(exc).__name__}: {exc}"
 
         self._failure_log[module_id] = self._failure_log.get(module_id, 0) + 1
-        self._failure_log["_task_" + task.task_id] = (
-            self._failure_log.get("_task_" + task.task_id, 0) + 1
-        )
+        self._failure_log["_task_" + task.task_id] = self._failure_log.get("_task_" + task.task_id, 0) + 1
 
         return ModuleResult(
             module_id=module_id,
@@ -209,16 +207,8 @@ class PipelineOrchestrator:
         if task.ai_autonomy_level == "unsafe":
             trigger.is_owner_critical = True
 
-        deepseek_fail = sum(
-            1
-            for r in results
-            if r.model == "deepseek" and r.status == ModuleStatus.FAILURE
-        )
-        glm_reject = sum(
-            1
-            for r in results
-            if r.model == "glm" and r.status == ModuleStatus.FAILURE
-        )
+        deepseek_fail = sum(1 for r in results if r.model == "deepseek" and r.status == ModuleStatus.FAILURE)
+        glm_reject = sum(1 for r in results if r.model == "glm" and r.status == ModuleStatus.FAILURE)
         trigger.deepseek_failure_count = deepseek_fail
         trigger.glm_rejection_count = glm_reject
 

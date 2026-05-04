@@ -43,79 +43,80 @@ ZephyrAlpha — shared/contracts/
   - 2026-05-04-架构盲点补全分析.md
 """
 
-from zephyr.shared.contracts.market_data import NormalizedMarketData
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.shared.contracts.order import Order, OrderSide, OrderType, OrderStatus
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.position import PositionSnapshot
-
-from zephyr.shared.contracts.instrument import (
-    AssetClass,
-    Exchange,
-    Country,
-    CurrencyCode,
-    Jurisdiction,
-    TradingCalendarName,
-    Instrument,
-    Stock,
-    ETF,
-    Future,
-    Option,
-    OptionType,
-    Bond,
-    FX,
-    Crypto,
-    CryptoContractType,
-)
-from zephyr.shared.contracts.money import (
-    Money,
-    MoneyPrecisionError,
-    MoneyCurrencyMismatchError,
-)
-from zephyr.shared.contracts.timestamp import (
-    Timestamp,
-    utcnow,
-    ensure_utc,
-    NaiveDatetimeError,
-)
-from zephyr.shared.contracts.runtime_plane_tag import (
-    RuntimePlane,
-    HOT_PATH_LATENCY_BUDGET_MS,
-    WARM_PATH_LATENCY_BUDGET_MS,
-    COLD_PATH_LATENCY_BUDGET_MS,
-    HOT_PATH_ACTIVATED,
-    COLD_PATH_PARTIAL_ACTIVATED,
-)
-from zephyr.shared.contracts.trace_context import TraceContext
-from zephyr.shared.contracts.errors import (
-    DataQualityError,
-    FactorComputationError,
-    SignalDegradationWarning,
-    RiskLimitViolationError,
-    ExecutionRejectionError,
-    ContractViolationError as ContractErrViolationError,
-)
 from zephyr.shared.contracts.backpressure import (
     BackpressurePause,
-    BackpressureThrottle,
     BackpressureResume,
+    BackpressureThrottle,
 )
 from zephyr.shared.contracts.enforcer import (
-    enforce_output,
-    enforce_input,
-    enforce,
     ContractViolationError,
     EnforcementMode,
+    enforce,
+    enforce_input,
+    enforce_output,
 )
+from zephyr.shared.contracts.errors import (
+    ContractViolationError as ContractErrViolationError,
+)
+from zephyr.shared.contracts.errors import (
+    DataQualityError,
+    ExecutionRejectionError,
+    FactorComputationError,
+    RiskLimitViolationError,
+    SignalDegradationWarning,
+)
+from zephyr.shared.contracts.factor_signal import FactorSignal
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.instrument import (
+    ETF,
+    FX,
+    AssetClass,
+    Bond,
+    Country,
+    Crypto,
+    CryptoContractType,
+    CurrencyCode,
+    Exchange,
+    Future,
+    Instrument,
+    Jurisdiction,
+    Option,
+    OptionType,
+    Stock,
+    TradingCalendarName,
+)
+from zephyr.shared.contracts.market_data import NormalizedMarketData
+from zephyr.shared.contracts.money import (
+    Money,
+    MoneyCurrencyMismatchError,
+    MoneyPrecisionError,
+)
+from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.shared.contracts.registry import (
-    ContractRegistry,
     ContractMeta,
-    VersionTransition,
+    ContractRegistry,
     VersionMismatchError,
+    VersionTransition,
     get_registry,
     reset_registry,
 )
+from zephyr.shared.contracts.risk_limits import RiskLimits
+from zephyr.shared.contracts.runtime_plane_tag import (
+    COLD_PATH_LATENCY_BUDGET_MS,
+    COLD_PATH_PARTIAL_ACTIVATED,
+    HOT_PATH_ACTIVATED,
+    HOT_PATH_LATENCY_BUDGET_MS,
+    WARM_PATH_LATENCY_BUDGET_MS,
+    RuntimePlane,
+)
+from zephyr.shared.contracts.timestamp import (
+    NaiveDatetimeError,
+    Timestamp,
+    ensure_utc,
+    utcnow,
+)
+from zephyr.shared.contracts.trace_context import TraceContext
 
 __all__ = [
     "NormalizedMarketData",

@@ -17,7 +17,9 @@ env_check.py — 环境就绪检查门禁 (Environment Readiness Gate)
 
 exit codes: 0=环境就绪, 1=依赖缺失, 2=运行错误
 """
+
 from __future__ import annotations
+
 import importlib
 import json
 import re
@@ -25,18 +27,26 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / '_shared').exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 import argparse
-REQUIREMENTS_FILE = REPO_ROOT / 'requirements.txt'
+
+REQUIREMENTS_FILE = REPO_ROOT / "requirements.txt"
 MIN_PYTHON = (3, 10)
-_PACKAGE_IMPORT_MAP: dict[str, str] = {'pydantic': 'pydantic', 'pyyaml': 'yaml', 'pandas': 'pandas', 'chromadb': 'chromadb'}
+_PACKAGE_IMPORT_MAP: dict[str, str] = {
+    "pydantic": "pydantic",
+    "pyyaml": "yaml",
+    "pandas": "pandas",
+    "chromadb": "chromadb",
+}
+
 
 @dataclass
 class DependencyStatus:
@@ -44,12 +54,13 @@ class DependencyStatus:
     import_name: str
     version_spec: str
     installed: bool = False
-    error: Optional[str] = None
+    error: str | None = None
+
 
 @dataclass
 class EnvReport:
     python_ok: bool = False
-    python_version: str = ''
+    python_version: str = ""
     dependencies: list[DependencyStatus] = field(default_factory=list)
     all_ok: bool = False
 
@@ -57,44 +68,49 @@ class EnvReport:
     def missing(self) -> list[DependencyStatus]:
         """缺失标记"""
         return [d for d in self.dependencies if not d.installed]
-        '缺失标记.'
+        "缺失标记."
 
     @property
     def ok(self) -> list[DependencyStatus]:
         """缺失标记."""
         return [d for d in self.dependencies if d.installed]
-    '成功标记.'
+
+    "成功标记."
+
 
 def _parse_requirements() -> list[tuple[str, str]]:
     entries: list[tuple[str, str]] = []
     if not REQUIREMENTS_FILE.exists():
         return entries
-    line_pattern = re.compile('^([a-zA-Z0-9_-]+)\\s*([><=!]+\\s*[\\d.]+(?:\\s*,\\s*[><=!]+\\s*[\\d.]+)*)?')
-    for line in REQUIREMENTS_FILE.read_text(encoding='utf-8').splitlines():
-        line = line.split('#')[0].strip()
+    line_pattern = re.compile("^([a-zA-Z0-9_-]+)\\s*([><=!]+\\s*[\\d.]+(?:\\s*,\\s*[><=!]+\\s*[\\d.]+)*)?")
+    for line in REQUIREMENTS_FILE.read_text(encoding="utf-8").splitlines():
+        line = line.split("#")[0].strip()
         if not line:
             continue
         m = line_pattern.match(line)
         if m:
-            entries.append((m.group(1).lower(), (m.group(2) or '').strip()))
+            entries.append((m.group(1).lower(), (m.group(2) or "").strip()))
     return entries
+
 
 def _check_python() -> tuple[bool, str]:
     current = sys.version_info[:2]
-    version_str = f'{current[0]}.{current[1]}.{sys.version_info[2]}'
+    version_str = f"{current[0]}.{current[1]}.{sys.version_info[2]}"
     return (current >= MIN_PYTHON, version_str)
 
-def _check_package(pip_name: str, import_name: str) -> tuple[bool, Optional[str]]:
+
+def _check_package(pip_name: str, import_name: str) -> tuple[bool, str | None]:
     try:
         importlib.import_module(import_name)
         return (True, None)
     except ImportError as e:
         return (False, str(e))
 
+
 def run_check() -> EnvReport:
     """执行检查"""
     report = EnvReport()
-    '执行检查.'
+    "执行检查."
     py_ok, py_ver = _check_python()
     report.python_ok = py_ok
     report.python_version = py_ver
@@ -102,50 +118,74 @@ def run_check() -> EnvReport:
     for pip_name, version_spec in entries:
         import_name = _PACKAGE_IMPORT_MAP.get(pip_name, pip_name)
         installed, error = _check_package(pip_name, import_name)
-        report.dependencies.append(DependencyStatus(pip_name=pip_name, import_name=import_name, version_spec=version_spec, installed=installed, error=error))
-    report.all_ok = report.python_ok and all((d.installed for d in report.dependencies))
+        report.dependencies.append(
+            DependencyStatus(
+                pip_name=pip_name, import_name=import_name, version_spec=version_spec, installed=installed, error=error
+            )
+        )
+    report.all_ok = report.python_ok and all(d.installed for d in report.dependencies)
     return report
-    '执行检查.'
+    "执行检查."
+
 
 def _install_missing(missing: list[DependencyStatus]) -> bool:
-    install_targets = [f'{d.pip_name}{d.version_spec}' if d.version_spec else d.pip_name for d in missing]
+    install_targets = [f"{d.pip_name}{d.version_spec}" if d.version_spec else d.pip_name for d in missing]
     if not install_targets:
         return True
     print(f'\n[ENV-INSTALL] 安装缺失依赖: {', '.join(install_targets)}\n', file=sys.stderr)
     try:
-        result = subprocess.run([sys.executable, '-m', 'pip', 'install', *install_targets], capture_output=False, cwd=str(REPO_ROOT))
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", *install_targets], capture_output=False, cwd=str(REPO_ROOT)
+        )
         if result.returncode != 0:
-            print('\n[ENV-ERROR] pip install 失败，请手动运行: pip install -r requirements.txt', file=sys.stderr)
+            print("\n[ENV-ERROR] pip install 失败，请手动运行: pip install -r requirements.txt", file=sys.stderr)
             return False
         return True
     except (subprocess.SubprocessError, OSError) as e:
-        print(f'\n[ENV-ERROR] pip install 异常: {e}', file=sys.stderr)
+        print(f"\n[ENV-ERROR] pip install 异常: {e}", file=sys.stderr)
         return False
+
 
 def _print_report(report: EnvReport) -> None:
     print(f'\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}', file=sys.stderr)
-    print(f'依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n', file=sys.stderr)
+    print(f"依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n", file=sys.stderr)
     if report.missing:
-        print('缺失依赖:', file=sys.stderr)
+        print("缺失依赖:", file=sys.stderr)
         for d in report.missing:
             hint = _PACKAGE_IMPORT_MAP.get(d.pip_name, d.pip_name)
-            install_cmd = f'pip install {d.pip_name}{d.version_spec}'
+            install_cmd = f"pip install {d.pip_name}{d.version_spec}"
             print(f"  ❌ {d.pip_name}{d.version_spec}  →  import '{hint}' 失败", file=sys.stderr)
-            print(f'     修复: {install_cmd}', file=sys.stderr)
+            print(f"     修复: {install_cmd}", file=sys.stderr)
         print(file=sys.stderr)
     if report.all_ok:
-        print('✅ 环境就绪 — 所有依赖齐全\n', file=sys.stderr)
+        print("✅ 环境就绪 — 所有依赖齐全\n", file=sys.stderr)
+
 
 def _print_json(report: EnvReport) -> None:
-    data = {'ready': report.all_ok, 'python': {'ok': report.python_ok, 'version': report.python_version, 'required': f'>={MIN_PYTHON[0]}.{MIN_PYTHON[1]}'}, 'dependencies': {'total': len(report.dependencies), 'ok': len(report.ok), 'missing': [{'name': d.pip_name, 'import_name': d.import_name, 'spec': d.version_spec} for d in report.missing]}}
+    data = {
+        "ready": report.all_ok,
+        "python": {
+            "ok": report.python_ok,
+            "version": report.python_version,
+            "required": f">={MIN_PYTHON[0]}.{MIN_PYTHON[1]}",
+        },
+        "dependencies": {
+            "total": len(report.dependencies),
+            "ok": len(report.ok),
+            "missing": [
+                {"name": d.pip_name, "import_name": d.import_name, "spec": d.version_spec} for d in report.missing
+            ],
+        },
+    }
     print(json.dumps(data, ensure_ascii=False, indent=2), file=sys.stderr)
+
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description='环境就绪检查门禁')
-    parser.add_argument('--install', action='store_true', help='自动安装缺失依赖')
-    parser.add_argument('--json', action='store_true', help='结构化 JSON 输出（CI 消费）')
-    parser.add_argument('--warn-only', action='store_true', help='警告模式：环境未就绪不阻塞（exit 0）')
+    parser = argparse.ArgumentParser(description="环境就绪检查门禁")
+    parser.add_argument("--install", action="store_true", help="自动安装缺失依赖")
+    parser.add_argument("--json", action="store_true", help="结构化 JSON 输出（CI 消费）")
+    parser.add_argument("--warn-only", action="store_true", help="警告模式：环境未就绪不阻塞（exit 0）")
     args = parser.parse_args()
     report = run_check()
     if args.json:
@@ -154,7 +194,7 @@ def main() -> None:
         _print_report(report)
     if not report.all_ok:
         if args.install and report.missing:
-            print('[ENV-INSTALL] 正在自动安装...', file=sys.stderr)
+            print("[ENV-INSTALL] 正在自动安装...", file=sys.stderr)
             if _install_missing(report.missing):
                 report2 = run_check()
                 if args.json:
@@ -162,10 +202,10 @@ def main() -> None:
                 else:
                     _print_report(report2)
                 if report2.all_ok:
-                    print('✅ 安装完成，环境就绪', file=sys.stderr)
+                    print("✅ 安装完成，环境就绪", file=sys.stderr)
                     sys.exit(0)
                 else:
-                    print('❌ 安装后仍有依赖缺失，请手动排查', file=sys.stderr)
+                    print("❌ 安装后仍有依赖缺失，请手动排查", file=sys.stderr)
                     if args.warn_only:
                         sys.exit(0)
                     sys.exit(1)
@@ -175,11 +215,13 @@ def main() -> None:
                 sys.exit(1)
         else:
             if not args.json:
-                print('💡 提示: 运行 `python scripts/governance/env_check.py --install` 自动安装', file=sys.stderr)
+                print("💡 提示: 运行 `python scripts/governance/env_check.py --install` 自动安装", file=sys.stderr)
             if args.warn_only:
                 sys.exit(0)
             sys.exit(1)
     sys.exit(0)
-    '入口函数.'
-if __name__ == '__main__':
+    "入口函数."
+
+
+if __name__ == "__main__":
     main()

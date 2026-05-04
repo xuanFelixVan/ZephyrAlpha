@@ -6,25 +6,28 @@ and Phase 2 migration verification.
 Task: T-1-10 | Phase 1 | Composer 2
 ADR ref: ADR-0037 (pending Opus authoring)
 """
+
 from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import Dict, List, Optional
 
 
 class FingerprintError(Exception):
     """内容指纹系统异常基类（所有指纹相关异常由此派生）。"""
+
     pass
 
 
 class FingerprintNotFoundError(FingerprintError):
     """请求的指纹 key 在指纹库中不存在。"""
+
     pass
 
 
 class FingerprintPermissionError(FingerprintError):
     """无权读取或写入指定路径的指纹文件（文件系统权限不足）。"""
+
     pass
 
 
@@ -53,8 +56,8 @@ def verify_hash(path: str | Path, expected: str) -> bool:
     return actual == expected.lower()
 
 
-def compute_bulk(paths: List[str | Path]) -> Dict[str, Optional[str]]:
-    results: Dict[str, Optional[str]] = {}
+def compute_bulk(paths: list[str | Path]) -> dict[str, str | None]:
+    results: dict[str, str | None] = {}
     for p in paths:
         try:
             results[str(p)] = compute_hash(p)

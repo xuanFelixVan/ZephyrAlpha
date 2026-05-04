@@ -14,13 +14,13 @@ T-V2-006 单元测试 — DocCompressor + CompressionPolicy
   - load_policy_from_yaml：YAML 存在时正确加载，缺失时返回 DEFAULT_POLICY
   - ContextBudgetTracker DocCompressor 注入接口
 """
+
 from __future__ import annotations
 
 import textwrap
 from pathlib import Path
 
 import pytest
-
 from zephyr.context_engine.doc_compressor import (
     DEFAULT_POLICY,
     CompressionInvariantError,
@@ -30,7 +30,6 @@ from zephyr.context_engine.doc_compressor import (
     _has_frontmatter,
     load_policy_from_yaml,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixture
@@ -199,9 +198,7 @@ class TestInvariantPreserveStructure:
 
     def test_missing_header_in_output_raises_invariant_error(self, monkeypatch):
         """模拟压缩后标题被删除 → 触发 CompressionInvariantError。"""
-        policy = CompressionPolicy(
-            min_chars=100, max_chars=10000, preserve_structure=True
-        )
+        policy = CompressionPolicy(min_chars=100, max_chars=10000, preserve_structure=True)
         c = DocCompressor(policy=policy)
         # 原文须 >= min_chars=100 以触发不变量检查
         original = "## 重要标题\n\n" + "正文内容。" * 20
@@ -217,9 +214,7 @@ class TestInvariantPreserveStructure:
         assert "重要标题" in exc_info.value.original
 
     def test_preserve_structure_false_skips_check(self, monkeypatch):
-        policy = CompressionPolicy(
-            min_chars=100, max_chars=10000, preserve_structure=False
-        )
+        policy = CompressionPolicy(min_chars=100, max_chars=10000, preserve_structure=False)
         c = DocCompressor(policy=policy)
         # 原文较长确保不触发 min_chars 不变量
         original = "## 标题\n\n" + "正文内容正文内容正文内容。" * 20
@@ -237,8 +232,9 @@ class TestInvariantPreserveStructure:
 class TestInvariantPreserveProvenance:
     def test_frontmatter_preserved(self):
         c = DocCompressor(policy=CompressionPolicy(min_chars=100, max_chars=2000))
-        text = textwrap.dedent(
-            """\
+        text = (
+            textwrap.dedent(
+                """\
             ---
             title: 测试文档
             last_updated: 2026-04-27
@@ -247,7 +243,9 @@ class TestInvariantPreserveProvenance:
             ## 安装
 
             """
-        ) + "正文内容。" * 30
+            )
+            + "正文内容。" * 30
+        )
         result = c.compress(text)
         assert _has_frontmatter(result)
         assert "title: 测试文档" in result
@@ -255,8 +253,10 @@ class TestInvariantPreserveProvenance:
     def test_missing_frontmatter_in_output_raises(self, monkeypatch):
         # preserve_structure=False 确保标题不影响本测试的触发路径
         policy = CompressionPolicy(
-            min_chars=100, max_chars=10000,
-            preserve_provenance=True, preserve_structure=False,
+            min_chars=100,
+            max_chars=10000,
+            preserve_provenance=True,
+            preserve_structure=False,
         )
         c = DocCompressor(policy=policy)
         original = "---\ntitle: 测试\n---\n\n" + "正文内容。" * 20
@@ -271,8 +271,10 @@ class TestInvariantPreserveProvenance:
 
     def test_preserve_provenance_false_skips(self, monkeypatch):
         policy = CompressionPolicy(
-            min_chars=100, max_chars=10000,
-            preserve_provenance=False, preserve_structure=False,
+            min_chars=100,
+            max_chars=10000,
+            preserve_provenance=False,
+            preserve_structure=False,
         )
         c = DocCompressor(policy=policy)
         original = "---\ntitle: 测试\n---\n\n" + "正文内容。" * 20
@@ -295,11 +297,7 @@ class TestInvariantPreserveImmutableBlocks:
             preserve_immutable_blocks=["<!-- IMMUTABLE_START -->"],
         )
         c = DocCompressor(policy=policy)
-        text = (
-            "## 标题\n\n"
-            "<!-- IMMUTABLE_START -->不可压缩内容<!-- IMMUTABLE_END -->\n\n"
-            + "可压缩正文。" * 20
-        )
+        text = "## 标题\n\n" "<!-- IMMUTABLE_START -->不可压缩内容<!-- IMMUTABLE_END -->\n\n" + "可压缩正文。" * 20
         result = c.compress(text)
         assert "<!-- IMMUTABLE_START -->" in result
 
@@ -328,9 +326,7 @@ class TestInvariantPreserveImmutableBlocks:
 class TestInvariantMinChars:
     def test_min_chars_violation_raises(self, monkeypatch):
         # preserve_structure=False 确保标题检查不干扰本测试
-        policy = CompressionPolicy(
-            min_chars=200, max_chars=5000, preserve_structure=False
-        )
+        policy = CompressionPolicy(min_chars=200, max_chars=5000, preserve_structure=False)
         c = DocCompressor(policy=policy)
         original = "正文内容正文内容。" * 50  # 原文 >> 200 chars，无标题
         monkeypatch.setattr(c, "_rule_based_compress", lambda text, pol: "太短了")
@@ -385,11 +381,11 @@ class TestLoadPolicyFromYaml:
 class TestBudgetTrackerDocCompressorIntegration:
     def _make_tracker(self):
         from unittest.mock import MagicMock
+
         from zephyr.context_engine.context_budget_tracker import (
             ContextBudgetTracker,
-            BudgetLevel,
-            DEFAULT_THRESHOLDS,
         )
+
         observer = MagicMock()
         return ContextBudgetTracker(observer, session_limit=100)
 
@@ -420,11 +416,11 @@ class TestBudgetTrackerDocCompressorIntegration:
 
     def test_l2_throttle_event_includes_compression_suggested(self):
         from unittest.mock import MagicMock
+
         from zephyr.context_engine.context_budget_tracker import (
             BudgetLevel,
             ContextBudgetTracker,
         )
-        from zephyr.shared.observer import EventType
 
         captured_payloads = []
         observer = MagicMock()
@@ -448,10 +444,7 @@ class TestBudgetTrackerDocCompressorIntegration:
         }
         tracker.check_budget("s1")
 
-        l2_payloads = [
-            p for p in captured_payloads
-            if p.get("budget_level") == BudgetLevel.L2_THROTTLE.value
-        ]
+        l2_payloads = [p for p in captured_payloads if p.get("budget_level") == BudgetLevel.L2_THROTTLE.value]
         assert len(l2_payloads) == 1
         assert l2_payloads[0]["compression_suggested"] is True
 

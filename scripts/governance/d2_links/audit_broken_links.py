@@ -19,22 +19,22 @@
   - 所有链接按 "仓库根 = " 解析
   - 允许相对当前文件、根相对、或 src/ docs/ 等顶级目录
 """
+
 from __future__ import annotations
 
 import argparse
 import re
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
-
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXCLUDE_DIRS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import REPO_ROOT, EXCLUDE_DIRS
 
 ensure_utf8_stdout()
 
@@ -146,7 +146,8 @@ def main() -> None:
         help="最多打印多少条，0 表示不限",
     )
     ap.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="警告模式：发现不阻塞（exit 0）",
     )
     args = ap.parse_args()

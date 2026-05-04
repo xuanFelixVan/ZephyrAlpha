@@ -28,13 +28,14 @@ safety_level : M
 --------
 所有阈值在 `FitnessThresholds` dataclass 中集中定义，可按需覆盖。
 """
+
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Optional, Sequence
-
+from datetime import UTC, datetime
+from typing import Any
 
 __all__ = [
     "FitnessThresholds",
@@ -50,7 +51,7 @@ __all__ = [
 # 常量
 # ---------------------------------------------------------------------------
 
-_UTC = timezone.utc
+_UTC = UTC
 
 # 5 类度量名称（类型键）
 METRIC_MODULE_COUPLING = "module_coupling"
@@ -125,10 +126,8 @@ class FitnessMetric:
     value: float
     threshold: float
     status: str
-    detail: Optional[str] = None
-    measured_at: str = field(
-        default_factory=lambda: datetime.now(_UTC).isoformat()
-    )
+    detail: str | None = None
+    measured_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
 
 
 @dataclass
@@ -153,16 +152,14 @@ class FitnessReport:
     metrics: list[FitnessMetric]
     overall_status: str
     summary: str
-    generated_at: str = field(
-        default_factory=lambda: datetime.now(_UTC).isoformat()
-    )
+    generated_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
 
     @property
     def passed(self) -> bool:
         """整体是否通过（无 FAIL）。"""
         return self.overall_status != MetricStatus.FAIL
 
-    def get_metric(self, metric_name: str) -> Optional[FitnessMetric]:
+    def get_metric(self, metric_name: str) -> FitnessMetric | None:
         """按名称查找度量结果。"""
         for m in self.metrics:
             if m.metric_name == metric_name:
@@ -216,7 +213,7 @@ class FitnessInputs:
 def from_gate_results(
     gate_rows: Sequence[dict[str, Any]],
     *,
-    dependency_edges: Optional[list[tuple[str, str]]] = None,
+    dependency_edges: list[tuple[str, str]] | None = None,
     module_count: int = 0,
     coverage_pct: float = 0.0,
     ke_total: int = 0,
@@ -248,9 +245,7 @@ def from_gate_results(
         可直接传入 ``FitnessFunctionFramework.run_all``。
     """
     total = len(gate_rows)
-    passed = sum(
-        1 for row in gate_rows if bool(row.get("passed", row.get("passed", False)))
-    )
+    passed = sum(1 for row in gate_rows if bool(row.get("passed", row.get("passed", False))))
     return FitnessInputs(
         dependency_edges=dependency_edges or [],
         module_count=module_count,
@@ -294,7 +289,7 @@ class FitnessFunctionFramework:
 
     def __init__(
         self,
-        thresholds: Optional[FitnessThresholds] = None,
+        thresholds: FitnessThresholds | None = None,
     ) -> None:
         """初始化框架，可覆盖默认阈值。
 
@@ -336,9 +331,7 @@ class FitnessFunctionFramework:
         else:
             max_edges = module_count * (module_count - 1) / 2
             # 去重（无向图视角）
-            unique_edges = {
-                tuple(sorted(e)) for e in dependency_edges
-            }
+            unique_edges = {tuple(sorted(e)) for e in dependency_edges}
             density = len(unique_edges) / max_edges
             detail = (
                 f"edges={len(unique_edges)}, modules={module_count}, "
@@ -494,10 +487,7 @@ class FitnessFunctionFramework:
             detail = "无幻觉检测记录，默认拦截率 100%"
         else:
             rate = hallucination_intercepted / hallucination_total
-            detail = (
-                f"intercepted={hallucination_intercepted}, "
-                f"total={hallucination_total}, rate={rate:.4f}"
-            )
+            detail = f"intercepted={hallucination_intercepted}, " f"total={hallucination_total}, rate={rate:.4f}"
 
         th = self._th.hallucination_interception_min
         warn_limit = th - self._th.warn_margin
@@ -535,17 +525,11 @@ class FitnessFunctionFramework:
             含 5 条 FitnessMetric + overall_status + summary。
         """
         metrics: list[FitnessMetric] = [
-            self.measure_module_coupling(
-                inputs.dependency_edges, inputs.module_count
-            ),
+            self.measure_module_coupling(inputs.dependency_edges, inputs.module_count),
             self.measure_test_coverage(inputs.coverage_pct),
             self.measure_compliance_rate(inputs.gate_total, inputs.gate_passed),
-            self.measure_knowledge_activation_rate(
-                inputs.ke_total, inputs.ke_activated
-            ),
-            self.measure_hallucination_interception_rate(
-                inputs.hallucination_total, inputs.hallucination_intercepted
-            ),
+            self.measure_knowledge_activation_rate(inputs.ke_total, inputs.ke_activated),
+            self.measure_hallucination_interception_rate(inputs.hallucination_total, inputs.hallucination_intercepted),
         ]
 
         # 汇总状态：有 FAIL → FAIL；有 WARN → WARN；否则 PASS

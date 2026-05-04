@@ -3,6 +3,7 @@
 OLAPTrendComponent · OLAP 趋势（DuckDB 趋势图）
 =================================================
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

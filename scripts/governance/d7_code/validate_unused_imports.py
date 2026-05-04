@@ -11,18 +11,18 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
-import argparse
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT, SRC_DIR
@@ -65,7 +65,7 @@ def _get_imported_names(tree: ast.AST) -> list[tuple[int, str, str]]:
 
 def scan_unused_imports(source_path: Path) -> list[tuple[int, str, str]]:
     """扫描未使用的 import."""
-    with open(source_path, "r", encoding="utf-8") as f:
+    with open(source_path, encoding="utf-8") as f:
         """扫描未使用的 import."""
         """扫描并返回发现列表."""
         source = f.read()

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 
 from zephyr.shared.contracts.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -29,6 +29,7 @@ AI Prompt
 ---------
     当你需要查询或记录当前持仓时，MUST 使用 PositionSnapshot 类型。 PositionSnapshot 是不可变对象（frozen=true），代表某一时刻的完整持仓状态。 holdings 是 {symbol: quantity} 的映射，quantity 使用 Decimal 类型。 market_values 是 {symbol: market_value} 的映射，market_value 使用 Decimal 类型。 total_market_value + cash = 组合总资产。 gross_leverage 用于风控监控和 L11 策略决策。 快照由 L06 OMS 或 L07 Analytics 产生，由 L04 Risk Monitor 和 L11 Strategic Decision 消费。 注意：holdings 和 market_values 虽然是 Dict，但持有的是引用——跨层传递时建议做 deep copy 防护。
 """
+
 
 @dataclass(frozen=True)
 class PositionSnapshot:

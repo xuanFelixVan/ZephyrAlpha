@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -51,9 +51,13 @@ def check_kb_write_provenance(filepath: Path) -> list[dict]:
 
         if isinstance(func, ast.Attribute):
             if func.attr in ("write", "add", "store", "insert", "save"):
-                if isinstance(func.value, ast.Name) and any(k in func.value.id.lower() for k in ("kb", "knowledge", "knowledge_base")):
+                if isinstance(func.value, ast.Name) and any(
+                    k in func.value.id.lower() for k in ("kb", "knowledge", "knowledge_base")
+                ):
                     is_kb_write = True
-                if isinstance(func.value, ast.Attribute) and any(k in func.value.attr.lower() for k in ("kb", "knowledge")):
+                if isinstance(func.value, ast.Attribute) and any(
+                    k in func.value.attr.lower() for k in ("kb", "knowledge")
+                ):
                     is_kb_write = True
 
         if not is_kb_write:
@@ -66,11 +70,13 @@ def check_kb_write_provenance(filepath: Path) -> list[dict]:
                 break
 
         if not has_provenance:
-            findings.append({
-                "file": rel,
-                "line": node.lineno,
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "line": node.lineno,
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """检查 KB 写入溯源."""

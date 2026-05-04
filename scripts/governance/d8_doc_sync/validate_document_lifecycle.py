@@ -19,12 +19,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -60,39 +60,47 @@ def scan_lifecycle_violations() -> list[dict]:
         created_by = fm.get("created_by", "")
 
         if status == "active" and superseded_by:
-            findings.append({
-                "file": rel,
-                "type": "ACTIVE_WITH_SUPERSEDED_BY",
-                "detail": "active 文件不应有 superseded_by 字段",
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "type": "ACTIVE_WITH_SUPERSEDED_BY",
+                    "detail": "active 文件不应有 superseded_by 字段",
+                    "severity": "MEDIUM",
+                }
+            )
 
         if status == "deprecated" and not superseded_by:
-            findings.append({
-                "file": rel,
-                "type": "DEPRECATED_NO_SUPERSEDED_BY",
-                "detail": "deprecated 文件缺少 superseded_by 字段",
-                "severity": "HIGH",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "type": "DEPRECATED_NO_SUPERSEDED_BY",
+                    "detail": "deprecated 文件缺少 superseded_by 字段",
+                    "severity": "HIGH",
+                }
+            )
 
         if superseded_by and superseded_by in all_fm:
             target = all_fm[superseded_by]
             target_supersedes = target["fm"].get("supersedes", "")
             if target_supersedes != module_id:
-                findings.append({
-                    "file": rel,
-                    "type": "BROKEN_BIDIRECTIONAL_LINK",
-                    "detail": f"superseded_by='{superseded_by}' 但对方 supersedes='{target_supersedes}'（应为 '{module_id}'）",
-                    "severity": "MEDIUM",
-                })
+                findings.append(
+                    {
+                        "file": rel,
+                        "type": "BROKEN_BIDIRECTIONAL_LINK",
+                        "detail": f"superseded_by='{superseded_by}' 但对方 supersedes='{target_supersedes}'（应为 '{module_id}'）",
+                        "severity": "MEDIUM",
+                    }
+                )
 
         if created_by == "agent" and ".audit_cache" not in rel and "09_audit" not in rel:
-            findings.append({
-                "file": rel,
-                "type": "AI_PRODUCT_IN_DOCS",
-                "detail": "AI 生成产物（created_by:agent）不应在 docs/ 主目录",
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "type": "AI_PRODUCT_IN_DOCS",
+                    "detail": "AI 生成产物（created_by:agent）不应在 docs/ 主目录",
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """扫描生命周期引用违规."""

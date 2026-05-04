@@ -12,12 +12,12 @@ Manages MCP (Model Context Protocol) tool contract templates:
   - Validate tool invocations against registered contracts
   - Persist templates to disk as JSON
 """
+
 from __future__ import annotations
 
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -37,7 +37,7 @@ class ContractParameter(BaseModel):
     param_type: str = Field(min_length=1, description="Parameter type (str, int, float, bool, list, dict)")
     required: bool = Field(default=True, description="Whether parameter is required")
     description: str = Field(default="", max_length=500, description="Parameter description")
-    default: Optional[str] = Field(default=None, description="Default value as string representation")
+    default: str | None = Field(default=None, description="Default value as string representation")
 
     @field_validator("param_type")
     @classmethod
@@ -84,7 +84,7 @@ class ContractTemplateManager:
         If None, templates are kept in-memory only.
     """
 
-    def __init__(self, store_path: Optional[Path] = None) -> None:
+    def __init__(self, store_path: Path | None = None) -> None:
         self._templates: dict[str, ContractTemplate] = {}
         self._store_path = store_path
 
@@ -97,7 +97,7 @@ class ContractTemplateManager:
         self._templates[key] = template
         return template
 
-    def get(self, tool_name: str) -> Optional[ContractTemplate]:
+    def get(self, tool_name: str) -> ContractTemplate | None:
         return self._templates.get(tool_name)
 
     def list_templates(self) -> list[ContractTemplate]:
@@ -109,9 +109,7 @@ class ContractTemplateManager:
             return True
         return False
 
-    def validate_invocation(
-        self, tool_name: str, params: dict[str, object]
-    ) -> list[str]:
+    def validate_invocation(self, tool_name: str, params: dict[str, object]) -> list[str]:
         template = self.get(tool_name)
         if template is None:
             return [f"Unknown tool: {tool_name}"]
@@ -163,5 +161,5 @@ class ContractTemplateManager:
         return len(self._templates)
 
     @property
-    def store_path(self) -> Optional[Path]:
+    def store_path(self) -> Path | None:
         return self._store_path

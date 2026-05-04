@@ -22,7 +22,7 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
 
 @dataclass(frozen=True)

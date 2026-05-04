@@ -11,14 +11,15 @@
   7. gate_engine disabled 时跳过门禁
   8. 非法 gate_id 抛出 GateEngineError
 """
+
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
-
+from zephyr.db.task_repo import TaskRepository
 from zephyr.gates.gate_engine import (
     GateEngine,
     GateEngineError,
@@ -29,7 +30,6 @@ from zephyr.gates.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.db.task_repo import TaskRepository
 from zephyr.shared.schemas import Task, TaskStatus
 
 # ---------------------------------------------------------------------------
@@ -173,9 +173,7 @@ def test_deprecated_path_blocked(engine: GateEngine) -> None:
         "old_tree/blueprint.md",
     ],
 )
-def test_all_deprecated_patterns_blocked(
-    path: str, engine: GateEngine
-) -> None:
+def test_all_deprecated_patterns_blocked(path: str, engine: GateEngine) -> None:
     task = _make_task(deliverables=[path])
     result = engine.evaluate(task, "G1")
     assert result.passed is False, f"应拦截废弃路径：{path}"
@@ -215,9 +213,7 @@ def test_encoding_corrupted_blocked(tmp_dir: Path, engine: GateEngine) -> None:
 def test_encoding_valid_utf8_passes(tmp_dir: Path, engine: GateEngine) -> None:
     good_file = tmp_dir / "good.md"
     # 使用二进制写入确保 LF 换行；内容足够长；包含 frontmatter 必填字段
-    frontmatter = (
-        "---\nmodule_id: TEST_GOOD\ntitle: 测试文件\ncategory: test\n---\n"
-    )
+    frontmatter = "---\nmodule_id: TEST_GOOD\ntitle: 测试文件\ncategory: test\n---\n"
     body = "# 正常文件\n\n" + "这是正常的内容，包含足够的字符。" * 10
     good_file.write_bytes((frontmatter + body).encode("utf-8"))
     engine._project_root = tmp_dir
@@ -242,14 +238,10 @@ def test_empty_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     assert any("空文件" in v.message for v in result.violations)
 
 
-def test_placeholder_heavy_file_blocked_by_g2(
-    tmp_dir: Path, engine: GateEngine
-) -> None:
+def test_placeholder_heavy_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查拦截充满占位符的空壳文件。"""
     stub_file = tmp_dir / "stub.md"
-    stub_file.write_bytes(
-        b"# TODO\n\nTODO TODO TODO TODO TODO TODO TODO TODO\n"
-    )
+    stub_file.write_bytes(b"# TODO\n\nTODO TODO TODO TODO TODO TODO TODO TODO\n")
     engine._project_root = tmp_dir
     task = _make_task(deliverables=["stub.md"])
     result = engine.evaluate(task, "G2")
@@ -272,9 +264,7 @@ def test_g1_short_content_warning(tmp_dir: Path, engine: GateEngine) -> None:
 def test_content_rich_file_passes_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查：内容丰富的文件通过。"""
     rich_file = tmp_dir / "rich.md"
-    rich_file.write_bytes(
-        ("# 实现说明\n\n" + "这是丰富的内容描述，包含足够的字符数。" * 10).encode("utf-8")
-    )
+    rich_file.write_bytes(("# 实现说明\n\n" + "这是丰富的内容描述，包含足够的字符数。" * 10).encode("utf-8"))
     engine._project_root = tmp_dir
     task = _make_task(deliverables=["rich.md"])
     result = engine.evaluate(task, "G2")
@@ -287,9 +277,7 @@ def test_content_rich_file_passes_g2(tmp_dir: Path, engine: GateEngine) -> None:
 
 
 @pytest.mark.parametrize("gate_id", ["G2", "G3", "G4", "G5"])
-def test_g2_to_g5_no_block_for_plain_task(
-    gate_id: str, engine: GateEngine
-) -> None:
+def test_g2_to_g5_no_block_for_plain_task(gate_id: str, engine: GateEngine) -> None:
     """G2-G5 在任务层面的 path_blacklist 检查仍生效，但空交付物不阻断。"""
     task = _make_task()
     result = engine.evaluate(task, gate_id)
@@ -298,9 +286,7 @@ def test_g2_to_g5_no_block_for_plain_task(
 
 
 @pytest.mark.parametrize("gate_id", ["G2", "G3", "G4", "G5"])
-def test_g2_to_g5_deprecated_path_still_blocked(
-    gate_id: str, engine: GateEngine
-) -> None:
+def test_g2_to_g5_deprecated_path_still_blocked(gate_id: str, engine: GateEngine) -> None:
     """G2-G5 若包含 path_blacklist 检查，废弃路径仍被拦截。"""
     # 只有含 path_blacklist check 的门禁才会拦截（G1 有）
     # G2-G5 不含 path_blacklist，故此测试验证它们正常通过
@@ -325,9 +311,7 @@ def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
     assert rows[0]["gate_id"].startswith("G1:")
 
 
-def test_multiple_evaluations_all_persisted(
-    db_path: Path, engine: GateEngine
-) -> None:
+def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -> None:
     for i in range(3):
         task = _make_task(task_id=f"ADR-{100+i:03d}")
         engine.evaluate(task, "G1")

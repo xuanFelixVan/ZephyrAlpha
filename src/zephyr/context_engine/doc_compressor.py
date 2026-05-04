@@ -39,12 +39,13 @@ CBAC 集成
 compress() 在写文件时调用 capability_check("write", target_path)，
 确保目标路径在 capabilities.yaml allow 范围内。
 """
+
 from __future__ import annotations
 
 import re
 from pathlib import Path
 from threading import RLock
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -102,7 +103,7 @@ class CompressionPolicy(BaseModel):
     )
 
     @model_validator(mode="after")
-    def _validate_cross_fields(self) -> "CompressionPolicy":
+    def _validate_cross_fields(self) -> CompressionPolicy:
         if self.min_chars >= self.max_chars:
             raise ValueError(f"min_chars({self.min_chars}) must be less than max_chars({self.max_chars})")
         for marker in self.preserve_immutable_blocks:
@@ -143,9 +144,7 @@ class CompressionInvariantError(Exception):
         self.original = original
         self.compressed = compressed
         super().__init__(
-            f"CompressionInvariantError: field='{field}'\n"
-            f"  原始：{original}\n"
-            f"  压缩：{compressed}"
+            f"CompressionInvariantError: field='{field}'\n" f"  原始：{original}\n" f"  压缩：{compressed}"
         )
 
 
@@ -155,7 +154,7 @@ class CompressionInvariantError(Exception):
 
 
 def load_policy_from_yaml(
-    path: Optional[Path] = None,
+    path: Path | None = None,
 ) -> CompressionPolicy:
     """从 config/compression/policy.yaml 加载 CompressionPolicy。
 
@@ -169,6 +168,7 @@ def load_policy_from_yaml(
     resolved = path or DEFAULT_POLICY_PATH
     if not resolved.exists():
         import warnings
+
         warnings.warn(
             f"CompressionPolicy YAML not found: {resolved} — using DEFAULT_POLICY with hardcoded immutable blocks",
             stacklevel=2,
@@ -181,14 +181,16 @@ def load_policy_from_yaml(
         yaml_version = data.get("version")
         if yaml_version and str(yaml_version).split(".", 1)[0] != "1":
             import warnings
+
             warnings.warn(
                 f"policy.yaml version={yaml_version} — loader expects v1.x, possible schema mismatch",
                 stacklevel=2,
             )
         policy_dict = data.get("policy", {})
         return CompressionPolicy(**policy_dict)
-    except Exception:  # noqa: BLE001
+    except Exception:
         import warnings
+
         warnings.warn(
             f"CompressionPolicy YAML parse failed: {resolved} — using DEFAULT_POLICY",
             stacklevel=2,
@@ -210,13 +212,13 @@ class DocCompressor:
     线程安全：单例创建使用 threading.Lock，compress() 无状态可安全并发调用。
     """
 
-    _instance: Optional["DocCompressor"] = None
+    _instance: DocCompressor | None = None
     _lock: RLock = RLock()
 
     def __init__(
         self,
-        policy: Optional[CompressionPolicy] = None,
-        policy_path: Optional[Path] = None,
+        policy: CompressionPolicy | None = None,
+        policy_path: Path | None = None,
     ) -> None:
         if policy is not None:
             self._policy = policy
@@ -230,11 +232,11 @@ class DocCompressor:
     @classmethod
     def instance(
         cls,
-        policy: Optional[CompressionPolicy] = None,
-        policy_path: Optional[Path] = None,
+        policy: CompressionPolicy | None = None,
+        policy_path: Path | None = None,
         *,
         reset: bool = False,
-    ) -> "DocCompressor":
+    ) -> DocCompressor:
         """返回 DocCompressor 单例。
 
         参数
@@ -269,7 +271,7 @@ class DocCompressor:
     def compress(
         self,
         text: str,
-        target_path: Optional[str] = None,
+        target_path: str | None = None,
         session_id: str = "default",
     ) -> str:
         """对文本执行规则基压缩，检查不变量后返回结果。
@@ -331,7 +333,7 @@ class DocCompressor:
             fm_match = re.match(r"^(---\n.*?\n---\n?)", text, re.DOTALL)
             if fm_match:
                 frontmatter_block = fm_match.group(1)
-                body = text[len(frontmatter_block):]
+                body = text[len(frontmatter_block) :]
 
         # Step 2: 提取并保护 immutable_blocks
         protected: dict[str, str] = {}
@@ -369,6 +371,7 @@ class DocCompressor:
             end_marker = re.sub(r"_START\b", "_END", marker, flags=re.IGNORECASE)
             if end_marker == marker:
                 import warnings
+
                 warnings.warn(
                     f"preserve_immutable_blocks marker '{marker}' does not contain '_START' — "
                     f"cannot derive END marker. This block will NOT be protected. "
@@ -377,10 +380,12 @@ class DocCompressor:
                 )
                 continue
             pattern = re.escape(marker) + r"(.*?)" + re.escape(end_marker)
+
             def _replacer(m: re.Match, idx: int = i, sm: str = marker, em: str = end_marker) -> str:
                 placeholder = f"__IMMUTABLE_BLOCK_{idx}__"
                 protected[placeholder] = sm + m.group(1) + em
                 return placeholder
+
             text = re.sub(pattern, _replacer, text, flags=re.DOTALL)
 
         return text
@@ -497,11 +502,7 @@ class DocCompressor:
 
 def _extract_headers(text: str) -> list[str]:
     """从 Markdown 文本中提取所有 `#` 级标题（完整标题行）。"""
-    return [
-        line.strip()
-        for line in text.split("\n")
-        if re.match(r"^#{1,6}\s+\S", line)
-    ]
+    return [line.strip() for line in text.split("\n") if re.match(r"^#{1,6}\s+\S", line)]
 
 
 def _has_frontmatter(text: str) -> bool:

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from zephyr.shared.contracts.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -26,6 +27,7 @@ AI Prompt
 ---------
     当 L02 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。 常见 failure_reason：input_missing（缺少所需行情）、division_by_zero（除零）、window_insufficient（历史窗口不足）、 memory_exceeded（内存超限）、invalid_parameter（参数非法）。 不要吞掉错误返回一个 is_valid=False 的 FactorSignal——后者用于逻辑判断（如低置信度），前者用于系统级故障。
 """
+
 
 @dataclass(frozen=True)
 class FactorComputationError:

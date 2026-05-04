@@ -41,23 +41,22 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import ClassVar, Literal, Optional
-
+from typing import ClassVar, Literal
 
 # ═══════════════════════════════════════════════════════════════════
 # 核心枚举（Literal 类型，轻量且可静态检查）
 # ═══════════════════════════════════════════════════════════════════
 
 AssetClass = Literal[
-    "equity",              # 股票
-    "etf",                 # 交易所交易基金
-    "future",              # 期货
-    "option",              # 期权
-    "bond",                # 债券
-    "fx",                  # 外汇
-    "crypto",              # 加密货币
-    "index",               # 指数（只有行情，不可交易，如 CSI 300 指数）
-    "swap",                # 互换（P2 预留）
+    "equity",  # 股票
+    "etf",  # 交易所交易基金
+    "future",  # 期货
+    "option",  # 期权
+    "bond",  # 债券
+    "fx",  # 外汇
+    "crypto",  # 加密货币
+    "index",  # 指数（只有行情，不可交易，如 CSI 300 指数）
+    "swap",  # 互换（P2 预留）
     "structured_product",  # 结构化产品（P3 预留）
 ]
 """
@@ -72,44 +71,44 @@ AssetClass = Literal[
 
 Exchange = Literal[
     # 中国
-    "SSE",       # 上海证券交易所
-    "SZSE",      # 深圳证券交易所
-    "BSE",       # 北京证券交易所
-    "SHFE",      # 上海期货交易所
-    "DCE",       # 大连商品交易所
-    "CZCE",      # 郑州商品交易所
-    "CFFEX",     # 中国金融期货交易所
-    "INE",       # 上海国际能源交易中心
+    "SSE",  # 上海证券交易所
+    "SZSE",  # 深圳证券交易所
+    "BSE",  # 北京证券交易所
+    "SHFE",  # 上海期货交易所
+    "DCE",  # 大连商品交易所
+    "CZCE",  # 郑州商品交易所
+    "CFFEX",  # 中国金融期货交易所
+    "INE",  # 上海国际能源交易中心
     # 香港
-    "HKEX",      # 香港交易所
+    "HKEX",  # 香港交易所
     # 美国
-    "NYSE",      # 纽约证券交易所
-    "NASDAQ",    # 纳斯达克
-    "CBOE",      # 芝加哥期权交易所
-    "CME",       # 芝加哥商业交易所
-    "ICE",       # 洲际交易所
+    "NYSE",  # 纽约证券交易所
+    "NASDAQ",  # 纳斯达克
+    "CBOE",  # 芝加哥期权交易所
+    "CME",  # 芝加哥商业交易所
+    "ICE",  # 洲际交易所
     # 日本
-    "TSE",       # 东京证券交易所
-    "OSE",       # 大阪交易所（期货期权）
+    "TSE",  # 东京证券交易所
+    "OSE",  # 大阪交易所（期货期权）
     # 韩国
-    "KRX",       # 韩国交易所
+    "KRX",  # 韩国交易所
     # 新加坡
-    "SGX",       # 新加坡交易所
+    "SGX",  # 新加坡交易所
     # 台湾
-    "TWSE",      # 台湾证券交易所
+    "TWSE",  # 台湾证券交易所
     # 印度
-    "NSE",       # 印度国家证券交易所
-    "BSE_IN",    # 孟买证券交易所
+    "NSE",  # 印度国家证券交易所
+    "BSE_IN",  # 孟买证券交易所
     # 英国
-    "LSE",       # 伦敦证券交易所
+    "LSE",  # 伦敦证券交易所
     # 欧陆
-    "XETRA",     # 德国电子交易所
+    "XETRA",  # 德国电子交易所
     "EURONEXT",  # 泛欧交易所
-    "SIX",       # 瑞士交易所
+    "SIX",  # 瑞士交易所
     # 加拿大
-    "TSX",       # 多伦多交易所
+    "TSX",  # 多伦多交易所
     # 澳大利亚
-    "ASX",       # 澳交所
+    "ASX",  # 澳交所
     # 加密货币（去中心化或中心化平台）
     "BINANCE",
     "OKX",
@@ -117,7 +116,7 @@ Exchange = Literal[
     "KRAKEN",
     "BYBIT",
     # 外汇
-    "FX_OTC",    # 场外外汇（银行间/经纪商网络）
+    "FX_OTC",  # 场外外汇（银行间/经纪商网络）
     # 未知/其他
     "OTHER",
 ]
@@ -129,12 +128,33 @@ Kimi OSS 抓取阶段允许 "OTHER"，白天 Sonnet 合并时校准。
 
 
 Country = Literal[
-    "CN", "HK", "TW", "JP", "KR", "SG", "IN", "TH", "ID", "VN", "MY",  # 亚太
-    "US", "CA",                                                         # 北美
-    "UK", "DE", "FR", "CH", "NL", "ES", "IT", "SE", "NO",              # 欧洲
-    "AU", "NZ",                                                         # 大洋洲
-    "BR", "MX",                                                         # 拉美
-    "GLOBAL",                                                           # 加密货币等无国界
+    "CN",
+    "HK",
+    "TW",
+    "JP",
+    "KR",
+    "SG",
+    "IN",
+    "TH",
+    "ID",
+    "VN",
+    "MY",  # 亚太
+    "US",
+    "CA",  # 北美
+    "UK",
+    "DE",
+    "FR",
+    "CH",
+    "NL",
+    "ES",
+    "IT",
+    "SE",
+    "NO",  # 欧洲
+    "AU",
+    "NZ",  # 大洋洲
+    "BR",
+    "MX",  # 拉美
+    "GLOBAL",  # 加密货币等无国界
 ]
 """ISO 3166-1 alpha-2 国家代码（精简版，覆盖主要交易市场）。"""
 
@@ -155,24 +175,27 @@ CurrencyCode = Literal[
     "AUD",  # 澳元
     "NZD",  # 纽元
     # 加密
-    "BTC", "ETH", "USDT", "USDC",
+    "BTC",
+    "ETH",
+    "USDT",
+    "USDC",
 ]
 """ISO 4217 货币代码 + 主流加密货币。完整清单在 money.py 的 Currency 类中维护精度。"""
 
 
 Jurisdiction = Literal[
-    "CN_CSRC",     # 中国证监会
-    "HK_SFC",      # 香港证监会
-    "US_SEC",      # 美国证监会
-    "US_CFTC",     # 美国商品期货交易委员会（期货/期权/加密衍生品）
-    "UK_FCA",      # 英国金融行为监管局
-    "EU_ESMA",     # 欧盟证券与市场管理局（MiFID II）
-    "JP_FSA",      # 日本金融厅
-    "KR_FSC",      # 韩国金融委员会
-    "SG_MAS",      # 新加坡金管局
-    "AU_ASIC",     # 澳大利亚证券投资委员会
-    "CRYPTO_NONE", # 无监管（部分加密货币场景）
-    "MULTI",       # 多辖区（如跨境 ADR）
+    "CN_CSRC",  # 中国证监会
+    "HK_SFC",  # 香港证监会
+    "US_SEC",  # 美国证监会
+    "US_CFTC",  # 美国商品期货交易委员会（期货/期权/加密衍生品）
+    "UK_FCA",  # 英国金融行为监管局
+    "EU_ESMA",  # 欧盟证券与市场管理局（MiFID II）
+    "JP_FSA",  # 日本金融厅
+    "KR_FSC",  # 韩国金融委员会
+    "SG_MAS",  # 新加坡金管局
+    "AU_ASIC",  # 澳大利亚证券投资委员会
+    "CRYPTO_NONE",  # 无监管（部分加密货币场景）
+    "MULTI",  # 多辖区（如跨境 ADR）
 ]
 """
 监管辖区枚举。决定 L10 Governance 走哪套合规规则。
@@ -183,25 +206,25 @@ Jurisdiction = Literal[
 
 TradingCalendarName = Literal[
     # 股票日历
-    "SSE_A",           # 上交所 A股（T+1，11:30-13:00 午休）
-    "SZSE_A",          # 深交所 A股（同上）
-    "HKEX",            # 港交所（T+2，12:00-13:00 午休）
-    "NYSE",            # 纽交所（T+2，无午休，有盘前盘后）
-    "NASDAQ",          # 纳斯达克（同纽交所）
-    "TSE",             # 东交所（日股，T+2，11:30-12:30 午休）
-    "KRX",             # 韩交所
-    "SGX",             # 新交所
-    "LSE",             # 伦交所
-    "XETRA",           # 德交所
-    "EURONEXT",        # 泛欧
+    "SSE_A",  # 上交所 A股（T+1，11:30-13:00 午休）
+    "SZSE_A",  # 深交所 A股（同上）
+    "HKEX",  # 港交所（T+2，12:00-13:00 午休）
+    "NYSE",  # 纽交所（T+2，无午休，有盘前盘后）
+    "NASDAQ",  # 纳斯达克（同纽交所）
+    "TSE",  # 东交所（日股，T+2，11:30-12:30 午休）
+    "KRX",  # 韩交所
+    "SGX",  # 新交所
+    "LSE",  # 伦交所
+    "XETRA",  # 德交所
+    "EURONEXT",  # 泛欧
     # 期货日历
-    "CFFEX_INDEX",     # 中金所股指期货（T+0，有夜盘部分品种）
+    "CFFEX_INDEX",  # 中金所股指期货（T+0，有夜盘部分品种）
     "SHFE_COMMODITY",  # 上期所商品期货（T+0，有夜盘）
     "CME_ELECTRONIC",  # CME 电子盘（近 24×5）
     # 加密
-    "CRYPTO_24x7",     # 加密 7×24 连续
+    "CRYPTO_24x7",  # 加密 7×24 连续
     # 外汇
-    "FX_24x5",         # 外汇周一-周五 24 小时
+    "FX_24x5",  # 外汇周一-周五 24 小时
 ]
 """
 交易日历名称。实际日历实现延后到 trading_calendar.py（见 OQ-071 P0 待锁清单）。
@@ -213,6 +236,7 @@ TradingCalendarName = Literal[
 # ═══════════════════════════════════════════════════════════════════
 # Instrument 基类
 # ═══════════════════════════════════════════════════════════════════
+
 
 @dataclass(frozen=True)
 class Instrument:
@@ -300,7 +324,7 @@ class Instrument:
     asset_class: AssetClass
     """资产大类。"""
 
-    sub_class: Optional[str] = None
+    sub_class: str | None = None
     """
     子类（自由文本，约定俗成）。示例：
       - equity: "common_stock" / "preferred_stock" / "h_share" / "adr"
@@ -329,14 +353,14 @@ class Instrument:
     symbol: str = ""
     """交易所本地代码（如 A股 "600000"、美股 "AAPL"、日股 "7203"）。"""
 
-    isin: Optional[str] = None
+    isin: str | None = None
     """
     ISO 6166 国际证券标识码（12 位）。适用于大部分股票和债券。
 
     加密货币/外汇/本地期货通常无 ISIN。
     """
 
-    figi: Optional[str] = None
+    figi: str | None = None
     """
     Bloomberg FIGI 全球标准（12 位）。比 ISIN 覆盖更广（含期货期权加密）。
 
@@ -372,6 +396,7 @@ class Instrument:
 # 子类：按资产类承载特有字段
 # ═══════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class Stock(Instrument):
     """股票（普通股 / 优先股 / H股 / ADR 等）。"""
@@ -397,7 +422,7 @@ class ETF(Instrument):
     price_tick: Decimal = Decimal("0.001")
     """ETF 报价精度常高于股票（A股 ETF 0.001 元）。"""
 
-    underlying_index: Optional[str] = None
+    underlying_index: str | None = None
     """跟踪的标的指数（如 "000300.SH" 沪深300）。"""
 
     tracking_method: Literal["full_replication", "sampling", "synthetic"] = "full_replication"
@@ -411,7 +436,7 @@ class ETF(Instrument):
 class Future(Instrument):
     """期货合约。"""
 
-    underlying_identifier: Optional[str] = None
+    underlying_identifier: str | None = None
     """标的资产的 Instrument.identifier（如 "CSI:000300" 或 "CME:WTI"）。"""
 
     contract_month: str = ""
@@ -423,7 +448,7 @@ class Future(Instrument):
     price_tick: Decimal = Decimal("0.2")
     """最小变动价位。"""
 
-    tick_value: Optional[Decimal] = None
+    tick_value: Decimal | None = None
     """每跳对应的货币价值（= price_tick × contract_multiplier）。"""
 
     margin_rate: Decimal = Decimal("0.1")
@@ -432,10 +457,10 @@ class Future(Instrument):
     delivery_method: Literal["physical", "cash"] = "cash"
     """交割方式：实物交割 / 现金交割。"""
 
-    last_trading_date: Optional[date] = None
+    last_trading_date: date | None = None
     """最后交易日。"""
 
-    delivery_date: Optional[date] = None
+    delivery_date: date | None = None
     """交割日。"""
 
 
@@ -456,7 +481,7 @@ class Option(Instrument):
     strike_price: Decimal = Decimal("0")
     """行权价。"""
 
-    expiry_date: Optional[date] = None
+    expiry_date: date | None = None
     """到期日（YYYY-MM-DD）。"""
 
     contract_multiplier: int = 10000
@@ -476,7 +501,7 @@ class Bond(Instrument):
     issuer: str = ""
     """发行人。"""
 
-    maturity_date: Optional[date] = None
+    maturity_date: date | None = None
     """到期日。"""
 
     coupon_rate: Decimal = Decimal("0")
@@ -488,17 +513,17 @@ class Bond(Instrument):
     face_value: Decimal = Decimal("100")
     """面值（按面值 100 报价为业界惯例）。"""
 
-    credit_rating: Optional[str] = None
+    credit_rating: str | None = None
     """信用评级（"AAA" / "AA+" / "BBB-" 等，按评级机构原文）。"""
 
     bond_type: Literal[
-        "government",      # 政府债
-        "municipal",       # 市政债
-        "corporate",       # 公司债
-        "convertible",     # 可转债
-        "abs",             # 资产支持证券
-        "mbs",             # 抵押贷款支持证券
-        "perpetual",       # 永续债
+        "government",  # 政府债
+        "municipal",  # 市政债
+        "corporate",  # 公司债
+        "convertible",  # 可转债
+        "abs",  # 资产支持证券
+        "mbs",  # 抵押贷款支持证券
+        "perpetual",  # 永续债
     ] = "corporate"
 
 
@@ -520,10 +545,10 @@ class FX(Instrument):
 
 
 CryptoContractType = Literal[
-    "spot",         # 现货
-    "perpetual",    # 永续合约
-    "futures",      # 交割合约
-    "option",       # 加密期权
+    "spot",  # 现货
+    "perpetual",  # 永续合约
+    "futures",  # 交割合约
+    "option",  # 加密期权
 ]
 """加密货币合约类型。"""
 
@@ -535,7 +560,7 @@ class Crypto(Instrument):
     contract_type: CryptoContractType = "spot"
     """合约类型。"""
 
-    settlement_currency: Optional[CurrencyCode] = None
+    settlement_currency: CurrencyCode | None = None
     """
     结算币种。用于衍生品区分 USDT 本位 / 币本位。
       - USDT 本位永续：settlement_currency = "USDT"
@@ -546,16 +571,17 @@ class Crypto(Instrument):
     contract_multiplier: Decimal = Decimal("1")
     """合约乘数（现货=1，BTC 季度合约 CME=5 BTC，Bybit 反向合约通常=1 USD）。"""
 
-    expiry_date: Optional[date] = None
+    expiry_date: date | None = None
     """交割合约到期日。永续合约和现货为 None。"""
 
-    funding_interval_hours: Optional[int] = None
+    funding_interval_hours: int | None = None
     """永续合约资金费率结算间隔（小时）。典型 Binance=8h，Bybit=8h，OKX=8h。"""
 
 
 # ═══════════════════════════════════════════════════════════════════
 # 便捷辅助（仅供调试/测试，生产代码请显式构造子类）
 # ═══════════════════════════════════════════════════════════════════
+
 
 def make_stock_identifier(exchange: Exchange, symbol: str) -> str:
     """

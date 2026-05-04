@@ -1,4 +1,5 @@
 """M1-M11 Pipeline Orchestrator 单元测试"""
+
 from __future__ import annotations
 
 import sys
@@ -6,19 +7,18 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-import pytest
 
+from zephyr.core.models import TaskCard
 from zephyr.pipeline import (
+    M_MODULE_SPECS,
+    M_MODULES,
     PipelineOrchestrator,
     PipelineStatus,
-    M_MODULES,
-    M_MODULE_SPECS,
 )
-from zephyr.core.models import TaskCard
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
-    from zephyr.shared.schemas import TaskNamespace, Priority
+    from zephyr.shared.schemas import Priority, TaskNamespace
 
     parts = task_id.split("-", 2)
     ns_name = parts[0] if len(parts) >= 2 else "TASK"
@@ -38,12 +38,17 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
         phase=1,
         execution_model="deepseek",
         safety_level="L",
-        upstream_files=["D:\\ZephyrAlpha\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md"],
+        upstream_files=["D:\\ZephyrAlpha\\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md"],
         downstream_outputs=[{"path": "D:\\test\\output.py", "description": "test"}],
         allowed_touch=["D:\\test\\"],
         forbidden_touch=["D:\\system\\"],
         applicable_rules=[{"module_id": "ADR-0040", "section": "test", "reason": "test"}],
-        context_assembly_manifest=[{"file_path": "D:\\ZephyrAlpha\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md", "reason": "test"}],
+        context_assembly_manifest=[
+            {
+                "file_path": "D:\\ZephyrAlpha\\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md",
+                "reason": "test",
+            }
+        ],
         estimated_tokens=8000,
         timeout_minutes=5,
         rollback_instructions="所有产出均为临时文件，删除 D:\\test\\ 目录即可完全撤销所有修改",
@@ -84,9 +89,12 @@ class TestPipelineDispatch:
         assert all(m.status.value == "success" for m in r.modules_executed)
 
     def test_b_pipeline_dispatch(self) -> None:
-        task = _make_task("CP-0098", assigned_pipeline="B",
-                          title="M6-M11 B区审计管线测试",
-                          description="验证 B 区 6 个模块能正确调度，且 M7 必须指定 GLM 模型")
+        task = _make_task(
+            "CP-0098",
+            assigned_pipeline="B",
+            title="M6-M11 B区审计管线测试",
+            description="验证 B 区 6 个模块能正确调度，且 M7 必须指定 GLM 模型",
+        )
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.overall_status == PipelineStatus.SUCCESS

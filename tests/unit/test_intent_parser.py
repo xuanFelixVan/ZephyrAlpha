@@ -6,12 +6,12 @@ Unit tests for intent_parser.py (T-3-20, A26, V-09)
 
 最少测试：15 条。
 """
+
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import pytest
-
 from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper, IntentResult
 from zephyr.context_engine.intent_parser import (
     DEFAULT_STAGE_THRESHOLDS,
@@ -21,7 +21,6 @@ from zephyr.context_engine.intent_parser import (
     inject_context_for,
     plan_directive_chain,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助 mock
@@ -48,17 +47,13 @@ class FakeLLM:
         self.verdict = verdict
         self.called_with: list[str] = []
 
-    def __call__(
-        self, query: str, *, context: Optional[dict[str, Any]] = None
-    ) -> LLMIntentVerdict:
+    def __call__(self, query: str, *, context: dict[str, Any] | None = None) -> LLMIntentVerdict:
         self.called_with.append(query)
         return self.verdict
 
 
 class FailingLLM:
-    def __call__(
-        self, query: str, *, context: Optional[dict[str, Any]] = None
-    ) -> LLMIntentVerdict:
+    def __call__(self, query: str, *, context: dict[str, Any] | None = None) -> LLMIntentVerdict:
         raise RuntimeError("llm 5xx")
 
 
@@ -138,9 +133,7 @@ class TestStage2Semantic:
     def test_semantic_exception_falls_to_llm(self) -> None:
         mapper = IntentKeywordMapper(keywords={"D9": ["nonexistent"]})
         llm = FakeLLM(LLMIntentVerdict(primary_domain="D5", confidence=0.6))
-        parser = IntentParser(
-            mapper, embedding_searcher=FailingEmbedding(), llm_caller=llm
-        )
+        parser = IntentParser(mapper, embedding_searcher=FailingEmbedding(), llm_caller=llm)
         result = parser.parse("another query")
         assert result.source_stage == "llm"
         assert result.primary_domain == "D5"
@@ -232,9 +225,7 @@ class TestTraceAndCascade:
         mapper = IntentKeywordMapper()
         emb = FakeEmbedding([EmbeddingHit(domain="D1", score=0.4)])
         # 把 stage2 阈值调到 0.1 → 0.4 / 0.4 = 1.0，应直接采纳
-        parser = IntentParser(
-            mapper, embedding_searcher=emb, thresholds={"stage2_accept": 0.1}
-        )
+        parser = IntentParser(mapper, embedding_searcher=emb, thresholds={"stage2_accept": 0.1})
         # 先让 stage 1 UNKNOWN
         result = parser.parse("nothing-matches-keyword-list xyzzy qux")
         assert result.source_stage == "semantic"
@@ -273,8 +264,8 @@ class TestIntegrationHelpers:
     def test_inject_context_for_uses_module_id_when_known(self) -> None:
         class FakeInjector:
             def __init__(self) -> None:
-                self.module_id_called: Optional[str] = None
-                self.keyword_called: Optional[str] = None
+                self.module_id_called: str | None = None
+                self.keyword_called: str | None = None
 
             def inject_by_module_id(self, module_id: str) -> str:
                 self.module_id_called = module_id

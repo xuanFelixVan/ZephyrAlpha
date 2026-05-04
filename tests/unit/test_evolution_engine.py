@@ -5,12 +5,12 @@ Unit tests for evolution_engine.py (T-3-14, A24)
 
 最少测试：15 条。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
-
 from zephyr.feedback_loop.evolution_engine import (
     DEFAULT_THRESHOLDS,
     EvolutionEngine,
@@ -23,8 +23,7 @@ from zephyr.feedback_loop.evolution_engine import (
 )
 from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
-
-FIXED_NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=timezone.utc)
+FIXED_NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=UTC)
 
 
 def _clock() -> datetime:

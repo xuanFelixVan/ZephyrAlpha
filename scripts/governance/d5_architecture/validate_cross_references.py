@@ -32,20 +32,18 @@ AGENTS.md §6.10 双层对齐闸门 + §6.14 漂移免疫架构原则 Level 2 �
 import argparse
 import re
 import sys
-from collections import defaultdict
 from pathlib import Path
-from typing import Optional
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, GOV_DOCS_DIR, EXCLUDE_DIRS
+from _shared.constants import EXCLUDE_DIRS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.yaml_utils import load_yaml
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
+from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
 
@@ -67,6 +65,7 @@ def _warn(msg: str) -> None:
 # =============================================================================
 # 数据采集层
 # =============================================================================
+
 
 def _load_all_layer_yamls() -> list[tuple[str, dict]]:
     """扫描 layers/ infra/ scripts/ frontend/ 下所有模块 YAML，返回 (文件名, 数据) 列表"""
@@ -102,6 +101,7 @@ def _get_invariants(data: dict) -> list[dict]:
 # =============================================================================
 # DIM-1: contract_id 引用链
 # =============================================================================
+
 
 def _build_contract_registry() -> set[str]:
     """从 cross-layer-contracts.yaml 构建合同 ID 集合"""
@@ -141,12 +141,15 @@ def check_dim1_contract_refs() -> None:
                 if not cid:
                     continue
                 if cid not in contract_ids:
-                    _err(f"DIM-1 [{fname}] 模块 {module_id} 引用的 contract_id='{cid}' 在 cross-layer-contracts.yaml 中不存在")
+                    _err(
+                        f"DIM-1 [{fname}] 模块 {module_id} 引用的 contract_id='{cid}' 在 cross-layer-contracts.yaml 中不存在"
+                    )
 
 
 # =============================================================================
 # DIM-2: invariant_id 引用链
 # =============================================================================
+
 
 def _build_invariant_registry() -> set[str]:
     iv_path = ARCH_MODEL / "cross-cutting" / "invariants.yaml"
@@ -176,6 +179,7 @@ def check_dim2_invariant_refs() -> None:
 # DIM-3: adr_ref 引用链
 # =============================================================================
 
+
 def _build_adr_registry() -> set[str]:
     adr_ids: set[str] = set()
     if not ADR_DIR.exists():
@@ -191,7 +195,6 @@ def _build_adr_registry() -> set[str]:
 def _collect_all_adr_refs() -> list[tuple[str, str, str]]:
     """扫描所有架构 YAML 中的 adr_ref 引用 → [(文件名, 模块id, adr值)]"""
     refs: list[tuple[str, str, str]] = []
-    import re
 
     for fname, data in _load_all_layer_yamls():
         modules = _get_modules(data)
@@ -241,6 +244,7 @@ def check_dim3_adr_refs() -> None:
 # DIM-4: invariant.owner → _index.yaml partition
 # =============================================================================
 
+
 def _build_partition_registry() -> set[str]:
     idx_path = ARCH_MODEL / "_index.yaml"
     if not idx_path.exists():
@@ -281,6 +285,7 @@ def check_dim4_invariant_owner() -> None:
 # DIM-5: contract.source_layer → _index.yaml partition
 # =============================================================================
 
+
 def check_dim5_contract_source_layer() -> None:
     """DIM-5: 每个 contract.source_layer → 对应 _index.yaml 中的 partition id"""
     partition_ids = _build_partition_registry()
@@ -305,6 +310,7 @@ def check_dim5_contract_source_layer() -> None:
 # =============================================================================
 # DIM-6: 聚合根 events_published → domain-events.yaml
 # =============================================================================
+
 
 def _build_event_registry() -> set[str]:
     ev_path = ARCH_MODEL / "events" / "domain-events.yaml"
@@ -335,6 +341,7 @@ def check_dim6_aggregate_events() -> None:
 # =============================================================================
 # DIM-7: 反向扫描 — 合同孤儿检测
 # =============================================================================
+
 
 def _collect_all_referenced_contract_ids() -> set[str]:
     """从所有层 YAML 的 interfaces.contract_id 收集已引用的合同 ID"""
@@ -367,6 +374,7 @@ def check_dim7_orphan_contracts() -> None:
 # =============================================================================
 # DIM-8: module_id 注册链
 # =============================================================================
+
 
 def _build_module_id_registry() -> set[str]:
     reg_path = ARCH_MODEL / "module-id-registry.yaml"
@@ -421,9 +429,7 @@ def _build_deprecated_file_set() -> dict[str, Path]:
         if fm and fm.get("status") == "deprecated":
             deprecated[f.name] = f
     for name in _DEPRECATED_FILE_NAMES:
-        for parent in [GOV_DOCS_DIR / "_registry" / "catalogs",
-                       GOV_DOCS_DIR / "governance",
-                       GOV_DOCS_DIR / "meta"]:
+        for parent in [GOV_DOCS_DIR / "_registry" / "catalogs", GOV_DOCS_DIR / "governance", GOV_DOCS_DIR / "meta"]:
             candidate = parent / name
             if candidate.exists():
                 deprecated[name] = candidate
@@ -478,9 +484,18 @@ def check_dim9_deprecated_refs() -> None:
                     start = max(0, m.start() - 60)
                     end = min(len(content), m.end() + 60)
                     context = content[start:end].replace("\n", " ").strip()
-                    if any(kw in context for kw in ("superseded_by", "已迁移", "本桩文件",
-                                                     "已废弃", "取代旧的", "deprecated",
-                                                     "原 governance-rules")):
+                    if any(
+                        kw in context
+                        for kw in (
+                            "superseded_by",
+                            "已迁移",
+                            "本桩文件",
+                            "已废弃",
+                            "取代旧的",
+                            "deprecated",
+                            "原 governance-rules",
+                        )
+                    ):
                         in_redirect = True
                         break
                 if in_redirect:
@@ -490,9 +505,7 @@ def check_dim9_deprecated_refs() -> None:
                 found_in_file.add(dep_name)
 
         if found_in_file:
-            _warn(
-                f"DIM-9 [{rel}] 引用已废弃文件: {', '.join(sorted(found_in_file))}"
-            )
+            _warn(f"DIM-9 [{rel}] 引用已废弃文件: {', '.join(sorted(found_in_file))}")
 
 
 # =============================================================================
@@ -572,25 +585,18 @@ def check_dim10_broken_path_refs() -> None:
             resolved = _resolve_ref(link_target, f)
             if not resolved or not resolved.exists():
                 rel = f.relative_to(GOV_DOCS_DIR)
-                _warn(
-                    f"DIM-10 [{rel}] Markdown 链接断裂: [{link_text}]({link_target})"
-                )
+                _warn(f"DIM-10 [{rel}] Markdown 链接断裂: [{link_text}]({link_target})")
 
 
 # =============================================================================
 # 主入口
 # =============================================================================
 
+
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="架构模型 YAML 跨引用完整性闸门（GATE-XREF）"
-    )
-    parser.add_argument(
-        "--warn-only",
-        action="store_true",
-        help="即使发现错误也返回 exit 0（CI 审计模式，不阻塞）"
-    )
+    parser = argparse.ArgumentParser(description="架构模型 YAML 跨引用完整性闸门（GATE-XREF）")
+    parser.add_argument("--warn-only", action="store_true", help="即使发现错误也返回 exit 0（CI 审计模式，不阻塞）")
     args = parser.parse_args()
 
     print("=" * 72)

@@ -73,13 +73,29 @@ safety_level: H
 - 不调用任何真实 LLM；所有 caller 为纯函数 stub，保持确定性。
 - 不落盘；如需持久化，外层调用方自行 `harness.to_json(report)` 写入。
 """
+
 from __future__ import annotations
 
 import json
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
+from typing import Any
 
+from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper
+from zephyr.context_engine.intent_parser import (
+    EmbeddingHit,
+    IntentParser,
+    LLMIntentVerdict,
+)
+from zephyr.feedback_loop.evolution_engine import (
+    EvolutionEngine,
+    EvolutionProposal,
+    EvolutionSignal,
+    FeedbackLayer,
+    evolve,
+)
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentProfile,
@@ -90,26 +106,12 @@ from zephyr.orchestrator.agent_orchestrator import (
     RoutingStrategy,
     ToolInvoker,
 )
-from zephyr.feedback_loop.evolution_engine import (
-    EvolutionEngine,
-    EvolutionProposal,
-    EvolutionSignal,
-    FeedbackLayer,
-    evolve,
-)
-from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 from zephyr.orchestrator.hallucination_detector import (
     FallbackMode,
     HallucinationDetector,
     ModelCallResult,
     RiskLevel,
     TriggerLevel,
-)
-from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper
-from zephyr.context_engine.intent_parser import (
-    EmbeddingHit,
-    IntentParser,
-    LLMIntentVerdict,
 )
 
 __all__ = [
@@ -151,7 +153,7 @@ class EvalOutcome:
     passed: bool
     expected: Any
     actual: Any
-    error: Optional[str] = None
+    error: str | None = None
 
 
 @dataclass
@@ -175,7 +177,7 @@ class EvalResult:
     expected: Any
     actual: Any
     latency_ms: int
-    error: Optional[str] = None
+    error: str | None = None
 
 
 @dataclass
@@ -212,14 +214,12 @@ def _outcome(
     *,
     expected: Any,
     actual: Any,
-    error: Optional[str] = None,
+    error: str | None = None,
 ) -> EvalOutcome:
     """若 error 非空则 passed=False；否则根据 expected == actual 判定。"""
     if error is not None:
         return EvalOutcome(passed=False, expected=expected, actual=actual, error=error)
-    return EvalOutcome(
-        passed=bool(expected == actual), expected=expected, actual=actual
-    )
+    return EvalOutcome(passed=bool(expected == actual), expected=expected, actual=actual)
 
 
 # ---------------------------------------------------------------------------
@@ -233,14 +233,14 @@ def _empty_keyword_mapper() -> IntentKeywordMapper:
 
 
 def _build_stub_emb(hits: list[EmbeddingHit]) -> Callable[..., list[EmbeddingHit]]:
-    def _emb(query: str, top_k: int = 5) -> list[EmbeddingHit]:  # noqa: ARG001
+    def _emb(query: str, top_k: int = 5) -> list[EmbeddingHit]:
         return list(hits[:top_k])
 
     return _emb
 
 
 def _build_stub_llm(verdict: LLMIntentVerdict) -> Callable[..., LLMIntentVerdict]:
-    def _llm(query: str, context: Optional[dict[str, Any]] = None) -> LLMIntentVerdict:  # noqa: ARG001
+    def _llm(query: str, context: dict[str, Any] | None = None) -> LLMIntentVerdict:
         return verdict
 
     return _llm
@@ -253,9 +253,7 @@ def build_intent_cases() -> list[EvalCase]:
     # ---- keyword 强命中：D0 治理域 ----
     def case_i01() -> EvalOutcome:
         parser = IntentParser()
-        r = parser.parse(
-            "meta session handoff log status init bootstrap startup overview dashboard"
-        )
+        r = parser.parse("meta session handoff log status init bootstrap startup overview dashboard")
         return _outcome(expected="D0", actual=r.primary_domain)
 
     cases.append(EvalCase("IE-I-01", CATEGORY_INTENT, "keyword high-confidence → D0", case_i01))
@@ -263,9 +261,7 @@ def build_intent_cases() -> list[EvalCase]:
     # ---- keyword 强命中：D3 因子域 ----
     def case_i02() -> EvalOutcome:
         parser = IntentParser()
-        r = parser.parse(
-            "factor alpha signal indicator momentum volatility volume price return sharpe"
-        )
+        r = parser.parse("factor alpha signal indicator momentum volatility volume price return sharpe")
         return _outcome(expected="D3", actual=r.primary_domain)
 
     cases.append(EvalCase("IE-I-02", CATEGORY_INTENT, "keyword high-confidence → D3", case_i02))
@@ -273,9 +269,7 @@ def build_intent_cases() -> list[EvalCase]:
     # ---- keyword 强命中：D6 治理审计 ----
     def case_i03() -> EvalOutcome:
         parser = IntentParser()
-        r = parser.parse(
-            "governance audit compliance standard policy rule sentinel scan violation contradiction"
-        )
+        r = parser.parse("governance audit compliance standard policy rule sentinel scan violation contradiction")
         return _outcome(expected="D6", actual=r.primary_domain)
 
     cases.append(EvalCase("IE-I-03", CATEGORY_INTENT, "keyword high-confidence → D6", case_i03))
@@ -301,42 +295,30 @@ def build_intent_cases() -> list[EvalCase]:
         r = parser.parse("xyz 因子研究 随机短语")
         return _outcome(expected="semantic", actual=r.source_stage)
 
-    cases.append(
-        EvalCase("IE-I-05", CATEGORY_INTENT, "semantic stage accepts D3", case_i05)
-    )
+    cases.append(EvalCase("IE-I-05", CATEGORY_INTENT, "semantic stage accepts D3", case_i05))
 
     # ---- embedding 返回空 → LLM 接管 ----
     def case_i06() -> EvalOutcome:
         parser = IntentParser(
             keyword_mapper=_empty_keyword_mapper(),
             embedding_searcher=_build_stub_emb([]),
-            llm_caller=_build_stub_llm(
-                LLMIntentVerdict(primary_domain="D7", confidence=0.8, rationale="llm")
-            ),
+            llm_caller=_build_stub_llm(LLMIntentVerdict(primary_domain="D7", confidence=0.8, rationale="llm")),
         )
         r = parser.parse("完全无法识别的随机文本 abc")
         return _outcome(expected="llm", actual=r.source_stage)
 
-    cases.append(
-        EvalCase("IE-I-06", CATEGORY_INTENT, "empty embedding → llm fallback", case_i06)
-    )
+    cases.append(EvalCase("IE-I-06", CATEGORY_INTENT, "empty embedding → llm fallback", case_i06))
 
     # ---- LLM 低置信 → requires_human=True ----
     def case_i07() -> EvalOutcome:
         parser = IntentParser(
             keyword_mapper=_empty_keyword_mapper(),
-            llm_caller=_build_stub_llm(
-                LLMIntentVerdict(
-                    primary_domain="UNKNOWN", confidence=0.1, rationale="unsure"
-                )
-            ),
+            llm_caller=_build_stub_llm(LLMIntentVerdict(primary_domain="UNKNOWN", confidence=0.1, rationale="unsure")),
         )
         r = parser.parse("abc def")
         return _outcome(expected=True, actual=r.requires_human)
 
-    cases.append(
-        EvalCase("IE-I-07", CATEGORY_INTENT, "llm low-confidence → requires_human", case_i07)
-    )
+    cases.append(EvalCase("IE-I-07", CATEGORY_INTENT, "llm low-confidence → requires_human", case_i07))
 
     # ---- 三阶段均不可用（不注入 embedding/llm）→ 兜底 requires_human ----
     def case_i08() -> EvalOutcome:
@@ -344,9 +326,7 @@ def build_intent_cases() -> list[EvalCase]:
         r = parser.parse("完全未登记的关键词")
         return _outcome(expected=True, actual=r.requires_human)
 
-    cases.append(
-        EvalCase("IE-I-08", CATEGORY_INTENT, "no stage available → human review", case_i08)
-    )
+    cases.append(EvalCase("IE-I-08", CATEGORY_INTENT, "no stage available → human review", case_i08))
 
     # ---- embedding 聚合后 confidence 低于阈值 → 走 LLM ----
     def case_i09() -> EvalOutcome:
@@ -361,16 +341,12 @@ def build_intent_cases() -> list[EvalCase]:
                     EmbeddingHit(domain="D3", score=0.15),
                 ]
             ),
-            llm_caller=_build_stub_llm(
-                LLMIntentVerdict(primary_domain="D6", confidence=0.6, rationale="llm")
-            ),
+            llm_caller=_build_stub_llm(LLMIntentVerdict(primary_domain="D6", confidence=0.6, rationale="llm")),
         )
         r = parser.parse("some ambiguous sentence")
         return _outcome(expected="llm", actual=r.source_stage)
 
-    cases.append(
-        EvalCase("IE-I-09", CATEGORY_INTENT, "semantic below threshold → llm", case_i09)
-    )
+    cases.append(EvalCase("IE-I-09", CATEGORY_INTENT, "semantic below threshold → llm", case_i09))
 
     # ---- Stage 1 命中 UNKNOWN（空 query）→ 兜底 human review ----
     def case_i10() -> EvalOutcome:
@@ -379,9 +355,7 @@ def build_intent_cases() -> list[EvalCase]:
         # 空 query：primary_domain = UNKNOWN，requires_human=True
         return _outcome(expected="UNKNOWN", actual=r.primary_domain)
 
-    cases.append(
-        EvalCase("IE-I-10", CATEGORY_INTENT, "empty query → UNKNOWN", case_i10)
-    )
+    cases.append(EvalCase("IE-I-10", CATEGORY_INTENT, "empty query → UNKNOWN", case_i10))
 
     return cases
 
@@ -392,7 +366,7 @@ def build_intent_cases() -> list[EvalCase]:
 
 
 def _ok_invoker(
-    log: Optional[list[tuple[str, dict[str, Any]]]] = None,
+    log: list[tuple[str, dict[str, Any]]] | None = None,
 ) -> ToolInvoker:
     def _invoke(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if log is not None:
@@ -402,13 +376,13 @@ def _ok_invoker(
     return _invoke
 
 
-def _fail_invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # noqa: ARG001
+def _fail_invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError("invoker failure")
 
 
 def _hallu_hallu(
-    claim: str,  # noqa: ARG001
-    context: Optional[dict[str, Any]] = None,  # noqa: ARG001
+    claim: str,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {"is_hallucination": True, "confidence": 0.2}
 
@@ -431,43 +405,31 @@ def build_orchestrator_cases() -> list[EvalCase]:
         dec = AgentRouter().route("D6")
         return _outcome(expected=AgentRole.GOVERNOR, actual=dec.primary_role)
 
-    cases.append(
-        EvalCase("IE-O-01", CATEGORY_ORCHESTRATOR, "capability_match D6 → GOVERNOR", case_o01)
-    )
+    cases.append(EvalCase("IE-O-01", CATEGORY_ORCHESTRATOR, "capability_match D6 → GOVERNOR", case_o01))
 
     # ---- 路由：D3 → RESEARCHER ----
     def case_o02() -> EvalOutcome:
         dec = AgentRouter().route("D3")
         return _outcome(expected=AgentRole.RESEARCHER, actual=dec.primary_role)
 
-    cases.append(
-        EvalCase("IE-O-02", CATEGORY_ORCHESTRATOR, "capability_match D3 → RESEARCHER", case_o02)
-    )
+    cases.append(EvalCase("IE-O-02", CATEGORY_ORCHESTRATOR, "capability_match D3 → RESEARCHER", case_o02))
 
     # ---- 路由：D9 → IMPLEMENTER ----
     def case_o03() -> EvalOutcome:
         dec = AgentRouter().route("D9")
         return _outcome(expected=AgentRole.IMPLEMENTER, actual=dec.primary_role)
 
-    cases.append(
-        EvalCase("IE-O-03", CATEGORY_ORCHESTRATOR, "capability_match D9 → IMPLEMENTER", case_o03)
-    )
+    cases.append(EvalCase("IE-O-03", CATEGORY_ORCHESTRATOR, "capability_match D9 → IMPLEMENTER", case_o03))
 
     # ---- load_balance：两个 researcher，取低负载 ----
     def case_o04() -> EvalOutcome:
         router = AgentRouter()
-        router.register(
-            AgentProfile(agent_id="R1", role=AgentRole.RESEARCHER, current_load=5, max_load=5)
-        )
-        router.register(
-            AgentProfile(agent_id="R2", role=AgentRole.RESEARCHER, current_load=0, max_load=5)
-        )
+        router.register(AgentProfile(agent_id="R1", role=AgentRole.RESEARCHER, current_load=5, max_load=5))
+        router.register(AgentProfile(agent_id="R2", role=AgentRole.RESEARCHER, current_load=0, max_load=5))
         dec = router.route("D3", strategy=RoutingStrategy.LOAD_BALANCE)
         return _outcome(expected="R2", actual=dec.primary_agent_id)
 
-    cases.append(
-        EvalCase("IE-O-04", CATEGORY_ORCHESTRATOR, "load_balance picks low-load", case_o04)
-    )
+    cases.append(EvalCase("IE-O-04", CATEGORY_ORCHESTRATOR, "load_balance picks low-load", case_o04))
 
     # ---- specialist_first：强制 GOVERNOR ----
     def case_o05() -> EvalOutcome:
@@ -478,9 +440,7 @@ def build_orchestrator_cases() -> list[EvalCase]:
         )
         return _outcome(expected=AgentRole.GOVERNOR, actual=dec.primary_role)
 
-    cases.append(
-        EvalCase("IE-O-05", CATEGORY_ORCHESTRATOR, "specialist_first GOVERNOR", case_o05)
-    )
+    cases.append(EvalCase("IE-O-05", CATEGORY_ORCHESTRATOR, "specialist_first GOVERNOR", case_o05))
 
     # ---- fallback_chain：6 角色全覆盖 ----
     def case_o06() -> EvalOutcome:
@@ -488,9 +448,7 @@ def build_orchestrator_cases() -> list[EvalCase]:
         roles = {dec.primary_role, *dec.fallback_roles}
         return _outcome(expected=6, actual=len(roles))
 
-    cases.append(
-        EvalCase("IE-O-06", CATEGORY_ORCHESTRATOR, "fallback_chain covers 6 roles", case_o06)
-    )
+    cases.append(EvalCase("IE-O-06", CATEGORY_ORCHESTRATOR, "fallback_chain covers 6 roles", case_o06))
 
     # ---- orchestrate：directive 链成功 ----
     def case_o07() -> EvalOutcome:
@@ -502,9 +460,7 @@ def build_orchestrator_cases() -> list[EvalCase]:
         res = orch.orchestrate(domain="D6", directive_chain="325+344")
         return _outcome(expected=True, actual=res.success)
 
-    cases.append(
-        EvalCase("IE-O-07", CATEGORY_ORCHESTRATOR, "orchestrate success chain", case_o07)
-    )
+    cases.append(EvalCase("IE-O-07", CATEGORY_ORCHESTRATOR, "orchestrate success chain", case_o07))
 
     # ---- orchestrate：directive 未注册 → 失败 ----
     def case_o08() -> EvalOutcome:
@@ -516,9 +472,7 @@ def build_orchestrator_cases() -> list[EvalCase]:
         res = orch.orchestrate(domain="D0", directive_chain="111")
         return _outcome(expected=False, actual=res.success)
 
-    cases.append(
-        EvalCase("IE-O-08", CATEGORY_ORCHESTRATOR, "unmapped directive → failure", case_o08)
-    )
+    cases.append(EvalCase("IE-O-08", CATEGORY_ORCHESTRATOR, "unmapped directive → failure", case_o08))
 
     # ---- orchestrate + CoVe post-hook 判幻觉 → success=False ----
     def case_o09() -> EvalOutcome:
@@ -528,14 +482,10 @@ def build_orchestrator_cases() -> list[EvalCase]:
             hallucination_caller=_HALLU_CALLER_HALLU,
             directive_mapping=mapping,
         )
-        res = orch.orchestrate(
-            domain="D0", directive_chain="325", claim="bogus claim"
-        )
+        res = orch.orchestrate(domain="D0", directive_chain="325", claim="bogus claim")
         return _outcome(expected=False, actual=res.success)
 
-    cases.append(
-        EvalCase("IE-O-09", CATEGORY_ORCHESTRATOR, "cove post-hook hallucination fails", case_o09)
-    )
+    cases.append(EvalCase("IE-O-09", CATEGORY_ORCHESTRATOR, "cove post-hook hallucination fails", case_o09))
 
     # ---- HealthMonitor：多次 record 后 error_rate 合法 ----
     def case_o10() -> EvalOutcome:
@@ -551,9 +501,7 @@ def build_orchestrator_cases() -> list[EvalCase]:
         snap = mon.snapshot()
         return _outcome(expected=True, actual=snap.error_rate > 0.0)
 
-    cases.append(
-        EvalCase("IE-O-10", CATEGORY_ORCHESTRATOR, "health monitor error_rate > 0", case_o10)
-    )
+    cases.append(EvalCase("IE-O-10", CATEGORY_ORCHESTRATOR, "health monitor error_rate > 0", case_o10))
 
     return cases
 
@@ -563,17 +511,15 @@ def build_orchestrator_cases() -> list[EvalCase]:
 # ---------------------------------------------------------------------------
 
 
-def _primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
     payload = {
         "baseline_answer": "因子 IC 约为 0.05",
         "verify_questions": ["IC 是否正常", "是否超范围", "样本是否够"],
     }
-    return ModelCallResult(
-        content=json.dumps(payload, ensure_ascii=False), cost_usd=0.005, success=True
-    )
+    return ModelCallResult(content=json.dumps(payload, ensure_ascii=False), cost_usd=0.005, success=True)
 
 
-def _verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     answers = [
         {"question": "IC 是否正常", "answer": "因子 IC 约为 0.05 正常", "confidence_self": 0.85},
         {"question": "是否超范围", "answer": "IC 约 0.05 不超范围", "confidence_self": 0.8},
@@ -582,7 +528,7 @@ def _verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:  # no
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
 
 
-def _verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
     answers = [
         {"question": "q", "answer": "不是，不正常", "confidence_self": 0.9},
         {"question": "q", "answer": "不对，超范围", "confidence_self": 0.9},
@@ -597,9 +543,7 @@ def build_hallucination_cases() -> list[EvalCase]:
 
     # ---- CoVe 双模型一致 → 非幻觉 ----
     def case_h01() -> EvalOutcome:
-        det = HallucinationDetector(
-            primary_caller=_primary_ok, verifier_caller=_verifier_consistent
-        )
+        det = HallucinationDetector(primary_caller=_primary_ok, verifier_caller=_verifier_consistent)
         r = det.detect("因子 IC 约为 0.05", risk_level=RiskLevel.M)
         return _outcome(expected=False, actual=r.is_hallucination)
 
@@ -607,9 +551,7 @@ def build_hallucination_cases() -> list[EvalCase]:
 
     # ---- CoVe 双模型冲突 → 判幻觉 ----
     def case_h02() -> EvalOutcome:
-        det = HallucinationDetector(
-            primary_caller=_primary_ok, verifier_caller=_verifier_conflicting
-        )
+        det = HallucinationDetector(primary_caller=_primary_ok, verifier_caller=_verifier_conflicting)
         r = det.detect("因子 IC 约为 0.05", risk_level=RiskLevel.M)
         return _outcome(expected=True, actual=r.is_hallucination)
 
@@ -621,9 +563,7 @@ def build_hallucination_cases() -> list[EvalCase]:
         r = det.detect("因子 IC 约为 0.05", risk_level=RiskLevel.L)
         return _outcome(expected=FallbackMode.SINGLE_MODEL.value, actual=r.fallback_used)
 
-    cases.append(
-        EvalCase("IE-H-03", CATEGORY_HALLUCINATION, "single_model fallback", case_h03)
-    )
+    cases.append(EvalCase("IE-H-03", CATEGORY_HALLUCINATION, "single_model fallback", case_h03))
 
     # ---- keyword 兜底：数值越界 → 判幻觉 ----
     def case_h04() -> EvalOutcome:
@@ -636,9 +576,7 @@ def build_hallucination_cases() -> list[EvalCase]:
     # ---- L3 黑名单：triggered=False ----
     def case_h05() -> EvalOutcome:
         det = HallucinationDetector()
-        r = det.detect(
-            "纯代码补全", risk_level=RiskLevel.L, trigger_level=TriggerLevel.L3_BLACKLIST
-        )
+        r = det.detect("纯代码补全", risk_level=RiskLevel.L, trigger_level=TriggerLevel.L3_BLACKLIST)
         return _outcome(expected=False, actual=r.triggered)
 
     cases.append(EvalCase("IE-H-05", CATEGORY_HALLUCINATION, "L3 blacklist skip", case_h05))
@@ -663,9 +601,7 @@ def build_evolution_cases() -> list[EvalCase]:
         engine = EvolutionEngine(collector)
         report = engine.evolve()
         triggered = any(
-            p.signal == EvolutionSignal.ACCEPTANCE_DRIFT
-            and p.layer == FeedbackLayer.L1_TASK
-            for p in report.proposals
+            p.signal == EvolutionSignal.ACCEPTANCE_DRIFT and p.layer == FeedbackLayer.L1_TASK for p in report.proposals
         )
         return _outcome(expected=True, actual=triggered)
 
@@ -678,9 +614,7 @@ def build_evolution_cases() -> list[EvalCase]:
             collector.add(task_id=f"T-{i}", score=3, tags=["retry"])
         engine = EvolutionEngine(collector)
         report = engine.evolve()
-        triggered = any(
-            p.signal == EvolutionSignal.HIGH_RETRY_RATE for p in report.proposals
-        )
+        triggered = any(p.signal == EvolutionSignal.HIGH_RETRY_RATE for p in report.proposals)
         return _outcome(expected=True, actual=triggered)
 
     cases.append(EvalCase("IE-E-02", CATEGORY_EVOLUTION, "L2 pattern retry", case_e02))
@@ -706,9 +640,7 @@ def build_evolution_cases() -> list[EvalCase]:
             called.append(p.proposal_id)
             return True
 
-        report = evolve(
-            collector, dry_run=True, owner_approved=True, apply_fn=apply_fn
-        )
+        report = evolve(collector, dry_run=True, owner_approved=True, apply_fn=apply_fn)
         return _outcome(expected=0, actual=report.applied_count + len(called))
 
     cases.append(EvalCase("IE-E-04", CATEGORY_EVOLUTION, "dry_run does not apply", case_e04))
@@ -721,9 +653,7 @@ def build_evolution_cases() -> list[EvalCase]:
         def apply_fn(_p: EvolutionProposal) -> bool:
             return True
 
-        report = evolve(
-            collector, dry_run=False, owner_approved=True, apply_fn=apply_fn
-        )
+        report = evolve(collector, dry_run=False, owner_approved=True, apply_fn=apply_fn)
         return _outcome(expected=True, actual=report.applied_count >= 1)
 
     cases.append(EvalCase("IE-E-05", CATEGORY_EVOLUTION, "owner approved apply", case_e05))
@@ -753,7 +683,7 @@ class EvalHarness:
         CATEGORY_EVOLUTION: 5,
     }
 
-    def __init__(self, cases: Optional[list[EvalCase]] = None) -> None:
+    def __init__(self, cases: list[EvalCase] | None = None) -> None:
         self._cases: list[EvalCase] = list(cases) if cases is not None else self._default_cases()
 
     # ---- public API --------------------------------------------------
@@ -763,7 +693,7 @@ class EvalHarness:
         return list(self._cases)
 
     @classmethod
-    def build_default(cls) -> "EvalHarness":
+    def build_default(cls) -> EvalHarness:
         """工厂：构造包含 30 个默认用例的 harness。"""
         return cls(cls._default_cases())
 
@@ -823,19 +753,14 @@ class EvalHarness:
 
     @staticmethod
     def _default_cases() -> list[EvalCase]:
-        return (
-            build_intent_cases()
-            + build_orchestrator_cases()
-            + build_hallucination_cases()
-            + build_evolution_cases()
-        )
+        return build_intent_cases() + build_orchestrator_cases() + build_hallucination_cases() + build_evolution_cases()
 
     @staticmethod
     def _run_one(case: EvalCase) -> EvalResult:
         started = time.perf_counter()
         try:
             outcome = case.runner()
-        except Exception as exc:  # noqa: BLE001 - 收敛 runner 内部异常
+        except Exception as exc:  # - 收敛 runner 内部异常
             elapsed = int((time.perf_counter() - started) * 1000)
             return EvalResult(
                 case_id=case.case_id,

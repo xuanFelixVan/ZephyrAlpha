@@ -34,13 +34,14 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import GOV_DOCS_DIR
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
-import yaml
 
+import yaml
 from _shared.yaml_utils import load_yaml
 
 VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
@@ -111,7 +112,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
     if not FIELD_REGISTRY_PATH.exists():
         return False
     try:
-        with open(FIELD_REGISTRY_PATH, "r", encoding="utf-8") as f:
+        with open(FIELD_REGISTRY_PATH, encoding="utf-8") as f:
             content = f.read()
         data = yaml.safe_load(content)
     except Exception:
@@ -157,7 +158,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
     if not ARCH_CONTRACT_PATH.exists():
         return False
     try:
-        with open(ARCH_CONTRACT_PATH, "r", encoding="utf-8") as f:
+        with open(ARCH_CONTRACT_PATH, encoding="utf-8") as f:
             content = f.read()
         data = yaml.safe_load(content)
     except Exception:
@@ -176,10 +177,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         vocab_set = set(vocab_values)
         extra = current_set - vocab_set
         if extra:
-            _drift(
-                f"arch_contract.{field_name}: "
-                f"有 {len(extra)} 个值不在 vocabulary 中: {sorted(extra)[:5]}"
-            )
+            _drift(f"arch_contract.{field_name}: " f"有 {len(extra)} 个值不在 vocabulary 中: {sorted(extra)[:5]}")
             if apply:
                 valid_only = [v for v in current if str(v) in vocab_set]
                 field["allowed_values"] = valid_only
@@ -201,7 +199,7 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
     if not SCHEMA_JSON_PATH.exists():
         return False
     try:
-        with open(SCHEMA_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(SCHEMA_JSON_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError):
         return False
@@ -299,10 +297,12 @@ def main() -> None:
         if changes:
             total_changes += changes
             action = "已同步" if apply else "待同步"
-            print(f"    → {action}: field_registry={'✅' if c1 else '⏭️'} "
-                  f"arch_contract={'✅' if c2 else '⏭️'} schema_json={'✅' if c3 else '⏭️'}")
+            print(
+                f"    → {action}: field_registry={'✅' if c1 else '⏭️'} "
+                f"arch_contract={'✅' if c2 else '⏭️'} schema_json={'✅' if c3 else '⏭️'}"
+            )
         else:
-            print(f"    → ✅ 一致")
+            print("    → ✅ 一致")
 
     print()
 

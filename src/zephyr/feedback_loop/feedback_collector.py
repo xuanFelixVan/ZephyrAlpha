@@ -13,12 +13,12 @@ Collects feedback from task execution, supporting:
 Feedback entries are stored in-memory and can be flushed to disk
 as JSON for downstream analysis or audit logging.
 """
+
 from __future__ import annotations
 
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -61,9 +61,7 @@ class FeedbackSummary(BaseModel):
     task_id: str = Field(min_length=1, description="Task ID being summarized")
     count: int = Field(ge=0, description="Total number of feedback entries")
     average_score: float = Field(ge=0.0, le=5.0, description="Average score (0.0 when no entries)")
-    tag_frequencies: dict[str, int] = Field(
-        default_factory=dict, description="Tag occurrence counts"
-    )
+    tag_frequencies: dict[str, int] = Field(default_factory=dict, description="Tag occurrence counts")
     latest_comment: str = Field(default="", description="Most recent comment")
 
 
@@ -77,7 +75,7 @@ class FeedbackCollector:
         If None, feedback is kept in-memory only.
     """
 
-    def __init__(self, store_path: Optional[Path] = None) -> None:
+    def __init__(self, store_path: Path | None = None) -> None:
         self._entries: list[FeedbackEntry] = []
         self._store_path = store_path
         self._next_id: int = 1
@@ -87,8 +85,8 @@ class FeedbackCollector:
         task_id: str,
         score: int,
         comment: str = "",
-        tags: Optional[list[str]] = None,
-        created_at: Optional[datetime] = None,
+        tags: list[str] | None = None,
+        created_at: datetime | None = None,
     ) -> FeedbackEntry:
         entry = FeedbackEntry(
             entry_id=f"FB-{self._next_id:04d}",
@@ -102,7 +100,7 @@ class FeedbackCollector:
         self._next_id += 1
         return entry
 
-    def get_entries(self, task_id: Optional[str] = None) -> list[FeedbackEntry]:
+    def get_entries(self, task_id: str | None = None) -> list[FeedbackEntry]:
         if task_id is None:
             return list(self._entries)
         return [e for e in self._entries if e.task_id == task_id]
@@ -171,5 +169,5 @@ class FeedbackCollector:
         return len(self._entries)
 
     @property
-    def store_path(self) -> Optional[Path]:
+    def store_path(self) -> Path | None:
         return self._store_path

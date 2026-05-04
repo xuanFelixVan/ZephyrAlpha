@@ -20,11 +20,11 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
@@ -33,9 +33,7 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 # 常量
 # ---------------------------------------------------------------------------
 
-HANDOFF_DIR: Path = (
-    REPO_ROOT / "docs" / "19_development_workspace" / "handoff-logs"
-)
+HANDOFF_DIR: Path = REPO_ROOT / "docs" / "19_development_workspace" / "handoff-logs"
 TIMEZONE_CST = timezone(timedelta(hours=8))
 
 
@@ -134,7 +132,7 @@ def build_handoff_markdown(
     file_count: int = len(changed_files)
 
     lines: list[str] = [
-        f"# 交接日志 / Handoff Log",
+        "# 交接日志 / Handoff Log",
         "",
         f"> 生成时间: {ts_str}",
         f"> 改动文件数: {file_count}",
@@ -151,31 +149,33 @@ def build_handoff_markdown(
     else:
         lines.append("_（无改动文件）_")
 
-    lines.extend([
-        "",
-        "---",
-        "",
-        "## 统计摘要",
-        "",
-        "```",
-        diff_stat if diff_stat else "(无统计信息)",
-        "```",
-        "",
-        "---",
-        "",
-        "## 下一步建议",
-        "",
-        "<!-- TODO: 在此填写下一步工作建议 -->",
-        "",
-        "- [ ] 待补充：下一个 Sprint / 批次的优先任务",
-        "- [ ] 待补充：需要关注的风险或阻塞项",
-        "- [ ] 待补充：需要其他成员接手的事项",
-        "",
-        "---",
-        "",
-        f"*本文件由 `auto-handoff-log.py` 自动生成*",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "---",
+            "",
+            "## 统计摘要",
+            "",
+            "```",
+            diff_stat if diff_stat else "(无统计信息)",
+            "```",
+            "",
+            "---",
+            "",
+            "## 下一步建议",
+            "",
+            "<!-- TODO: 在此填写下一步工作建议 -->",
+            "",
+            "- [ ] 待补充：下一个 Sprint / 批次的优先任务",
+            "- [ ] 待补充：需要关注的风险或阻塞项",
+            "- [ ] 待补充：需要其他成员接手的事项",
+            "",
+            "---",
+            "",
+            "*本文件由 `auto-handoff-log.py` 自动生成*",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 

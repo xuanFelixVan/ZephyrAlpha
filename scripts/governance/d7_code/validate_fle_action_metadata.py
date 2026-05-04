@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -50,9 +50,12 @@ def check_fle_actions(filepath: Path) -> list[dict]:
 
         is_action = False
         for base in node.bases:
-            if isinstance(base, ast.Name) and "Action" in base.id:
-                is_action = True
-            elif isinstance(base, ast.Attribute) and "Action" in base.attr:
+            if (
+                isinstance(base, ast.Name)
+                and "Action" in base.id
+                or isinstance(base, ast.Attribute)
+                and "Action" in base.attr
+            ):
                 is_action = True
 
         if not is_action:
@@ -69,13 +72,15 @@ def check_fle_actions(filepath: Path) -> list[dict]:
 
         missing = REQUIRED_ACTION_FIELDS - class_fields
         if missing:
-            findings.append({
-                "file": rel,
-                "line": node.lineno,
-                "class": node.name,
-                "missing": sorted(missing),
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "line": node.lineno,
+                    "class": node.name,
+                    "missing": sorted(missing),
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """检查 FLE action 元数据."""

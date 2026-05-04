@@ -3,25 +3,27 @@ Unit tests for dos_launcher.py (T-2-27, C53)
 ==============================================
 Minimum: 10 tests
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.dos_launcher import (
     DOSLauncher,
     DOSResult,
-    DirectiveInfo,
-    _parse_frontmatter,
     _parse_body,
+    _parse_frontmatter,
 )
 
 
-def _write_directive(base: Path, name: str, directive_id: str, title: str = "", domain: str = "", safety: str = "L", body: str = "") -> Path:
+def _write_directive(
+    base: Path, name: str, directive_id: str, title: str = "", domain: str = "", safety: str = "L", body: str = ""
+) -> Path:
     p = base / name
     p.parent.mkdir(parents=True, exist_ok=True)
-    content = f"---\ndirective_id: {directive_id}\ntitle: {title}\ndomain: {domain}\nsafety_level: {safety}\n---\n{body}"
+    content = (
+        f"---\ndirective_id: {directive_id}\ntitle: {title}\ndomain: {domain}\nsafety_level: {safety}\n---\n{body}"
+    )
     p.write_text(content, encoding="utf-8")
     return p
 

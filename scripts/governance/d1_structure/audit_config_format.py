@@ -19,24 +19,24 @@ audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 exit codes: 0=pass, 1=findings
 """
 
-import sys
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT
-from _shared.constants import CONFIG_DIR
-import yaml
 import argparse
 
+import yaml
+from _shared.constants import CONFIG_DIR, REPO_ROOT
 
 
 def report(issues, level, code, msg) -> None:
@@ -50,11 +50,10 @@ def report(issues, level, code, msg) -> None:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="config/ 目录格式/注释/边界快速扫描"
-    )
+    parser = argparse.ArgumentParser(description="config/ 目录格式/注释/边界快速扫描")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="警告模式：发现违规不阻塞（exit 0）",
     )
     args = parser.parse_args()
@@ -77,22 +76,23 @@ def main() -> None:
         rel = yf.relative_to(REPO_ROOT)
         raw = yf.read_bytes()
 
-        if raw[:3] == b'\xef\xbb\xbf':
+        if raw[:3] == b"\xef\xbb\xbf":
             report(issues, "ISSUE", "F1-BOM", f"{rel}: UTF-8 BOM detected")
 
-        crlf_count = raw.count(b'\r\n')
-        lf_only_count = raw.count(b'\n') - crlf_count
+        crlf_count = raw.count(b"\r\n")
+        lf_only_count = raw.count(b"\n") - crlf_count
         if crlf_count > 0 and lf_only_count > 0:
-            report(issues, "ISSUE", "F1-MIXED-EOL", f"{rel}: mixed line endings (CRLF={crlf_count}, LF={lf_only_count})")
+            report(
+                issues, "ISSUE", "F1-MIXED-EOL", f"{rel}: mixed line endings (CRLF={crlf_count}, LF={lf_only_count})"
+            )
 
         text = raw.decode("utf-8", errors="replace")
-        trailing_ws_lines = [(i + 1) for i, line in enumerate(text.split("\n"))
-                             if line.rstrip("\r\n") != line.rstrip()]
+        trailing_ws_lines = [(i + 1) for i, line in enumerate(text.split("\n")) if line.rstrip("\r\n") != line.rstrip()]
         if trailing_ws_lines:
             report(issues, "LOW", "F1-TRAILING-WS", f"{rel}: trailing whitespace on lines {trailing_ws_lines[:5]}")
 
-        if '\t' in text:
-            tab_lines = [(i + 1) for i, line in enumerate(text.split("\n")) if '\t' in line]
+        if "\t" in text:
+            tab_lines = [(i + 1) for i, line in enumerate(text.split("\n")) if "\t" in line]
             report(issues, "LOW", "F1-TABS", f"{rel}: tab characters on lines {tab_lines[:5]}")
 
     print("  \u2705 BOM, EOL, whitespace scan complete", file=sys.stderr)
@@ -108,12 +108,16 @@ def main() -> None:
         cap_text = cap_path.read_text("utf-8")
         cap_data = yaml.safe_load(cap_text)
         rule_count = len(cap_data.get("rules", []))
-        count_comments = re.findall(r'(\d+)\s*条规则', cap_text)
+        count_comments = re.findall(r"(\d+)\s*条规则", cap_text)
         if count_comments:
             claimed = int(count_comments[0])
             if claimed != rule_count:
-                report(issues, "ISSUE", "F2-RULE-COUNT",
-                       f"capabilities.yaml: comment says {claimed} rules, actual={rule_count}")
+                report(
+                    issues,
+                    "ISSUE",
+                    "F2-RULE-COUNT",
+                    f"capabilities.yaml: comment says {claimed} rules, actual={rule_count}",
+                )
             else:
                 print(f"  \u2705 Rule count comment accurate: {rule_count}", file=sys.stderr)
         else:
@@ -124,12 +128,16 @@ def main() -> None:
         router_text = router_path.read_text(encoding="utf-8")
         router_data = yaml.safe_load(router_text)
         trigger_count = len(router_data.get("triggers", {}))
-        trigger_comments = re.findall(r'(\d+)\s*种\s*trigger_type', router_text)
+        trigger_comments = re.findall(r"(\d+)\s*种\s*trigger_type", router_text)
         if trigger_comments:
             claimed = int(trigger_comments[0])
             if claimed != trigger_count:
-                report(issues, "ISSUE", "F2-TRIGGER-COUNT",
-                       f"trigger_router.yaml: comment says {claimed} triggers, actual={trigger_count}")
+                report(
+                    issues,
+                    "ISSUE",
+                    "F2-TRIGGER-COUNT",
+                    f"trigger_router.yaml: comment says {claimed} triggers, actual={trigger_count}",
+                )
             else:
                 print(f"  \u2705 Trigger count comment accurate: {trigger_count}", file=sys.stderr)
 
@@ -145,12 +153,16 @@ def main() -> None:
     if emb_path.exists():
         emb_data = yaml.safe_load(emb_path.read_text(encoding="utf-8"))
         model_count = len(emb_data.get("models", []))
-        model_count_comments = re.findall(r'(\d+)\s*个.*?模型', emb_path.read_text(encoding="utf-8"))
+        model_count_comments = re.findall(r"(\d+)\s*个.*?模型", emb_path.read_text(encoding="utf-8"))
         if model_count_comments:
             claimed = int(model_count_comments[0])
             if claimed != model_count:
-                report(issues, "ISSUE", "F2-MODEL-COUNT",
-                       f"embedding_model_registry.yaml: comment says {claimed} models, actual={model_count}")
+                report(
+                    issues,
+                    "ISSUE",
+                    "F2-MODEL-COUNT",
+                    f"embedding_model_registry.yaml: comment says {claimed} models, actual={model_count}",
+                )
             else:
                 print(f"  \u2705 Model count comment accurate: {model_count}", file=sys.stderr)
 
@@ -172,8 +184,12 @@ def main() -> None:
         for trigger_name, trigger_conf in router_data.get("triggers", {}).items():
             safety = trigger_conf.get("safety", "")
             if safety not in ("L", "M", "H"):
-                report(issues, "ISSUE", "F3-SAFETY",
-                       f"trigger_router.yaml: {trigger_name} safety={safety!r} (expected L/M/H)")
+                report(
+                    issues,
+                    "ISSUE",
+                    "F3-SAFETY",
+                    f"trigger_router.yaml: {trigger_name} safety={safety!r} (expected L/M/H)",
+                )
 
     ctx_path = CONFIG_DIR / "context_rules_v1.yaml"
     if ctx_path.exists():
@@ -182,8 +198,12 @@ def main() -> None:
             threshold = rule.get("threshold", None)
             if threshold is not None:
                 if not (0.0 <= threshold <= 1.0):
-                    report(issues, "ISSUE", "F3-THRESHOLD",
-                           f"context_rules_v1.yaml: rule '{rule.get('name', '?')}' threshold={threshold}")
+                    report(
+                        issues,
+                        "ISSUE",
+                        "F3-THRESHOLD",
+                        f"context_rules_v1.yaml: rule '{rule.get('name', '?')}' threshold={threshold}",
+                    )
 
     ssm_path = CONFIG_DIR / "session_state_machine.yaml"
     if ssm_path.exists():
@@ -195,11 +215,10 @@ def main() -> None:
                 continue
             key = (t.get("from", ""), t.get("to", ""))
             if key in seen_transitions:
-                report(issues, "ISSUE", "F3-DUP-TRANSITION",
-                       f"session_state_machine.yaml: duplicate transition {key}")
+                report(issues, "ISSUE", "F3-DUP-TRANSITION", f"session_state_machine.yaml: duplicate transition {key}")
             seen_transitions.add(key)
 
-    print(f"  \u2705 Safety levels and thresholds checked", file=sys.stderr)
+    print("  \u2705 Safety levels and thresholds checked", file=sys.stderr)
 
     # =====================================================================
     # F4: Git tracking
@@ -209,18 +228,20 @@ def main() -> None:
 
     try:
         result = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard", "--"] +
-            [str(f.relative_to(REPO_ROOT)).replace("\\", "/") for f in all_yamls],
-            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=10,
+            ["git", "ls-files", "--others", "--exclude-standard", "--"]
+            + [str(f.relative_to(REPO_ROOT)).replace("\\", "/") for f in all_yamls],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            timeout=10,
         )
         if result.returncode == 0 and result.stdout.strip():
             untracked = [line.strip() for line in result.stdout.strip().splitlines() if line.strip()]
             if untracked:
-                report(issues, "ISSUE", "F4-UNTRACKED",
-                       f"{len(untracked)} config YAML not tracked by git: {untracked}")
-        print(f"  \u2705 Git tracking check complete", file=sys.stderr)
+                report(issues, "ISSUE", "F4-UNTRACKED", f"{len(untracked)} config YAML not tracked by git: {untracked}")
+        print("  \u2705 Git tracking check complete", file=sys.stderr)
     except (subprocess.SubprocessError, FileNotFoundError):
-        print(f"  \u26a0\ufe0f  Cannot check git tracking status", file=sys.stderr)
+        print("  \u26a0\ufe0f  Cannot check git tracking status", file=sys.stderr)
 
     # =====================================================================
     # FINAL

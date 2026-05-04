@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_DATA
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -50,11 +50,13 @@ def main() -> None:
         for filepath in iter_files(scan_dir, extensions=SCAN_EXTENSIONS_DATA):
             if DATED_PATTERN.search(filepath.name):
                 rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-                findings.append({
-                    "file": rel,
-                    "name": filepath.name,
-                    "severity": "LOW",
-                })
+                findings.append(
+                    {
+                        "file": rel,
+                        "name": filepath.name,
+                        "severity": "LOW",
+                    }
+                )
 
     if findings:
         print(f"\n[DATED-SNAPSHOT] {len(findings)} 个带日期的快照文件:", file=sys.stderr)

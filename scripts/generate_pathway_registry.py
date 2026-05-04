@@ -19,8 +19,6 @@ import re
 import sys
 from pathlib import Path
 
-import yaml
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 REGISTRY_FILE = MODULES_DIR / "system-pathway-registry.yaml"
@@ -71,15 +69,17 @@ def scan_blueprints() -> list[dict]:
         test_dir = ""
         config = ""
 
-        entries.append({
-            "module_id": mod_id,
-            "name": name,
-            "layer": "L01" if "l01_infrastructure" in parts else "cross_layer",
-            "blueprint": str(Path("docs/03_modules") / relative),
-            "source_dir": source_dir,
-            "test_dir": test_dir,
-            "config": config,
-        })
+        entries.append(
+            {
+                "module_id": mod_id,
+                "name": name,
+                "layer": "L01" if "l01_infrastructure" in parts else "cross_layer",
+                "blueprint": str(Path("docs/03_modules") / relative),
+                "source_dir": source_dir,
+                "test_dir": test_dir,
+                "config": config,
+            }
+        )
 
     return entries
 
@@ -89,7 +89,7 @@ def generate_yaml(entries: list[dict]) -> str:
     header = (
         "# ============================================================================\n"
         "# ZephyrAlpha 全系统路径地图 — 自动生成\n"
-        f"# 生成工具: scripts/generate_pathway_registry.py\n"
+        "# 生成工具: scripts/generate_pathway_registry.py\n"
         "# 手工修改将被下一次自动生成覆盖。\n"
         "# ============================================================================\n\n"
     )
@@ -105,14 +105,15 @@ def generate_yaml(entries: list[dict]) -> str:
     }
 
     import io
+
     buf = io.StringIO()
     buf.write(header)
 
     # 手写 YAML 以保持可读性，不用 yaml.dump
     buf.write("registry:\n")
-    buf.write(f"  version: \"1.0.0\"\n")
-    buf.write(f"  generation: \"auto\"\n")
-    buf.write(f"  auto_generated_by: \"scripts/generate_pathway_registry.py\"\n")
+    buf.write('  version: "1.0.0"\n')
+    buf.write('  generation: "auto"\n')
+    buf.write('  auto_generated_by: "scripts/generate_pathway_registry.py"\n')
     buf.write(f"  total_modules: {len(entries)}\n")
     buf.write("\npathways:\n")
 
@@ -124,7 +125,7 @@ def generate_yaml(entries: list[dict]) -> str:
         if entry["source_dir"]:
             buf.write(f"    source_dir: \"{entry['source_dir']}\"\n")
         else:
-            buf.write(f"    source_dir: \"\"\n")
+            buf.write('    source_dir: ""\n')
         if entry["test_dir"]:
             buf.write(f"    test_dir: \"{entry['test_dir']}\"\n")
         if entry["config"]:

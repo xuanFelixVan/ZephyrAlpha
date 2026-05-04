@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from zephyr.shared.contracts.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -26,6 +27,7 @@ AI Prompt
 ---------
     如果下游处理速度跟不上上游产生速度，你可以通过 emit PAUSE 背压信号来告诉上游暂停。 PAUSE 会暂停指定标的的数据下发 duration_ms 毫秒，到期后自动恢复。 不要静默丢弃数据——上游不知道下游爆了，只会继续发，最终内存溢出。
 """
+
 
 @dataclass(frozen=True)
 class BackpressurePause:

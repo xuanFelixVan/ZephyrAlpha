@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -55,7 +55,7 @@ def check_any_fields(filepath: Path) -> list[dict]:
             is_any = True
         elif isinstance(ann, ast.Subscript):
             if isinstance(ann.value, ast.Name) and ann.value.id in ("Optional", "Union"):
-                for elt in ([ann.slice] if not isinstance(ann.slice, ast.Tuple) else ann.slice.elts):
+                for elt in [ann.slice] if not isinstance(ann.slice, ast.Tuple) else ann.slice.elts:
                     if isinstance(elt, ast.Name) and elt.id == "Any":
                         is_any = True
 
@@ -63,12 +63,14 @@ def check_any_fields(filepath: Path) -> list[dict]:
             field_name = ""
             if isinstance(node.target, ast.Name):
                 field_name = node.target.id
-            findings.append({
-                "file": rel,
-                "line": node.lineno,
-                "field": field_name,
-                "severity": "LOW",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "line": node.lineno,
+                    "field": field_name,
+                    "severity": "LOW",
+                }
+            )
 
     return findings
     """检查 Pydantic Any 字段."""

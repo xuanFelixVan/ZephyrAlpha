@@ -25,6 +25,7 @@ Safety  : M（初始化目录 + 创建 collection，幂等）
     client = get_chroma_client()       # 返回 PersistentClient
     collection = client.get_collection("ke_entries")
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -32,7 +33,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.paths import MODELS_CACHE_DIR, REPO_ROOT, VECTOR_INDEX_DIR
+from zephyr.shared.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
 from zephyr.shared.schemas import BASE_CONFIG
 
 COLLECTION_NAMES = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")
@@ -96,9 +97,7 @@ def init_chromadb(persist_dir: Path | str | None = None) -> list[CollectionInfo]
             results.append(CollectionInfo(name=name, count=0, metadata=meta))
         else:
             col = client.get_collection(name=name)
-            results.append(
-                CollectionInfo(name=name, count=col.count(), metadata=meta)
-            )
+            results.append(CollectionInfo(name=name, count=col.count(), metadata=meta))
 
     return results
 
@@ -123,9 +122,7 @@ def collection_status(persist_dir: Path | str | None = None) -> list[CollectionI
         if name in existing:
             col = client.get_collection(name=name)
             meta = _COLLECTION_METADATA.get(name, {"hnsw:space": "cosine"})
-            results.append(
-                CollectionInfo(name=name, count=col.count(), metadata=meta)
-            )
+            results.append(CollectionInfo(name=name, count=col.count(), metadata=meta))
         else:
             results.append(CollectionInfo(name=name, count=-1))
     return results

@@ -13,33 +13,45 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
-import argparse
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT, SRC_DIR
 
 SKIP_MODULES = {
-    "l03_signal_generation", "l04_risk_management", "l05_portfolio_construction",
-    "l06_trade_execution", "l07_post_trade_analytics", "l08_human_ai_interface",
-    "l09_research_innovation", "l10_compliance", "l11_ml_platform", "l13_experimentation",
+    "l03_signal_generation",
+    "l04_risk_management",
+    "l05_portfolio_construction",
+    "l06_trade_execution",
+    "l07_post_trade_analytics",
+    "l08_human_ai_interface",
+    "l09_research_innovation",
+    "l10_compliance",
+    "l11_ml_platform",
+    "l13_experimentation",
 }
 
 
 def _has_docstring(node: ast.AST) -> bool:
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
         body = node.body
-        if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
+        if (
+            body
+            and isinstance(body[0], ast.Expr)
+            and isinstance(body[0].value, ast.Constant)
+            and isinstance(body[0].value.value, str)
+        ):
             return True
     return False
 
@@ -52,7 +64,7 @@ def _is_public(name: str) -> bool:
 
 def scan_docstrings(source_path: Path) -> tuple[bool, list[str]]:
     """扫描 docstring 覆盖率."""
-    with open(source_path, "r", encoding="utf-8") as f:
+    with open(source_path, encoding="utf-8") as f:
         """扫描 docstring 覆盖率."""
         """扫描并返回发现列表."""
         source = f.read()
@@ -114,7 +126,10 @@ def main() -> None:
             ok_files += 1
 
     if findings:
-        print(f"\n[DOCSTRING] {len(findings)} 个 docstring 缺失（扫描 {total_files} 文件，{ok_files} 合格）:\n", file=sys.stderr)
+        print(
+            f"\n[DOCSTRING] {len(findings)} 个 docstring 缺失（扫描 {total_files} 文件，{ok_files} 合格）:\n",
+            file=sys.stderr,
+        )
         for f_item in findings:
             print(f_item, file=sys.stderr)
         print(file=sys.stderr)

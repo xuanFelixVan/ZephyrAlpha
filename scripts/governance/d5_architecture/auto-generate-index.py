@@ -29,7 +29,6 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-
 POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
 IGNORE_FILE_MARKER = "_IGNORE_THIS_DIRECTORY_"
 
@@ -100,7 +99,7 @@ def check_index(directory) -> list[dict]:
     """Check a single directory's index.md against disk reality. Returns list of issues."""
     index_path = directory / "index.md"
     if not index_path.exists():
-        return [("MISSING", f"index.md does not exist")]
+        return [("MISSING", "index.md does not exist")]
 
     text = index_path.read_text(encoding="utf-8")
     issues = []
@@ -160,9 +159,7 @@ def fix_index(directory) -> None:
             if claimed != sd_count:
                 updated = pat.sub(rf"\g<1>{sd_count}\g<2>", updated)
 
-    pat_total_claimed = re.compile(
-        r"(\d+)\s*个子目录\s*\+\s*(\d+)\s*个文件\s*=\s*共\s*(\d+)\s*项"
-    )
+    pat_total_claimed = re.compile(r"(\d+)\s*个子目录\s*\+\s*(\d+)\s*个文件\s*=\s*共\s*(\d+)\s*项")
     m = pat_total_claimed.search(updated)
     if m:
         s_claimed = int(m.group(1))
@@ -202,14 +199,8 @@ def scan_tree(root, mode="check") -> list[dict]:
             continue
 
         has_content = any(
-            item.is_file()
-            for item in d.iterdir()
-            if item.name != "index.md"
-            and item.name != IGNORE_FILE_MARKER
-        ) or any(
-            item.is_dir() and not item.name.startswith(".")
-            for item in d.iterdir()
-        )
+            item.is_file() for item in d.iterdir() if item.name != "index.md" and item.name != IGNORE_FILE_MARKER
+        ) or any(item.is_dir() and not item.name.startswith(".") for item in d.iterdir())
         if not has_content:
             continue
 
@@ -239,9 +230,7 @@ def scan_tree(root, mode="check") -> list[dict]:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="Validate/fix index.md factual accuracy against disk reality"
-    )
+    parser = argparse.ArgumentParser(description="Validate/fix index.md factual accuracy against disk reality")
     parser.add_argument("--check", action="store_true", help="Detect drift (read-only)")
     parser.add_argument("--apply", action="store_true", help="Surgically fix counts")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show all checks")

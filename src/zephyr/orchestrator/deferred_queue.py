@@ -7,14 +7,14 @@ Task: T-1-09 | Phase 1 | GLM-5.1
 ADR ref: ADR-0036 (pending Opus authoring)
 Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 """
+
 from __future__ import annotations
 
 import sqlite3
-from threading import RLock
 import time
 from enum import Enum, unique
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from threading import RLock
+from typing import Any
 
 from zephyr.shared.observer import EventType, Observer
 
@@ -56,7 +56,7 @@ class DeferredQueue:
         self._observer = observer
         self._db_path = db_path
         self._lock = RLock()
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
         self._init_db()
 
         for et in EventType:
@@ -89,7 +89,7 @@ class DeferredQueue:
         self,
         task_id: str,
         waiting_for: str,
-        payload: Optional[str] = None,
+        payload: str | None = None,
     ) -> None:
         with self._lock:
             conn = self._get_conn()
@@ -99,7 +99,7 @@ class DeferredQueue:
             )
             conn.commit()
 
-    def _on_event(self, event_type: EventType, payload: Dict[str, Any]) -> None:
+    def _on_event(self, event_type: EventType, payload: dict[str, Any]) -> None:
         event_name = event_type.value
         with self._lock:
             conn = self._get_conn()
@@ -122,7 +122,7 @@ class DeferredQueue:
         self,
         waiting_for: str,
         event_name: str,
-        payload: Dict[str, Any],
+        payload: dict[str, Any],
     ) -> bool:
         if ":" in waiting_for:
             parts = waiting_for.split(":", 1)
@@ -133,7 +133,7 @@ class DeferredQueue:
             return False
         return waiting_for == event_name
 
-    def pop_ready(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def pop_ready(self, limit: int = 100) -> list[dict[str, Any]]:
         with self._lock:
             conn = self._get_conn()
             cursor = conn.execute(
@@ -170,15 +170,13 @@ class DeferredQueue:
             )
             conn.commit()
 
-    def count_by_status(self) -> Dict[str, int]:
+    def count_by_status(self) -> dict[str, int]:
         with self._lock:
             conn = self._get_conn()
-            cursor = conn.execute(
-                "SELECT status, COUNT(*) as cnt FROM deferred_tasks GROUP BY status"
-            )
+            cursor = conn.execute("SELECT status, COUNT(*) as cnt FROM deferred_tasks GROUP BY status")
             return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
-    def bulk_wake(self, event_type: EventType, payload: Optional[Dict[str, Any]] = None) -> int:
+    def bulk_wake(self, event_type: EventType, payload: dict[str, Any] | None = None) -> int:
         with self._lock:
             conn = self._get_conn()
             event_name = event_type.value

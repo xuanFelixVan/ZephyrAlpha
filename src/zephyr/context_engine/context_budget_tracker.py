@@ -13,12 +13,13 @@ T-V2-006 扩展（Phase 1c）
 - L2_THROTTLE 事件触发时，事件 payload 追加 compression_suggested=True
 - get_doc_compressor()                 — M3 触发器调用入口
 """
+
 from __future__ import annotations
 
-from threading import RLock
 import time
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from threading import RLock
+from typing import TYPE_CHECKING, Any
 
 from zephyr.shared.observer import EventType, Observer
 
@@ -61,16 +62,16 @@ class ContextBudgetTracker:
         self,
         observer: Observer,
         session_limit: int = 100000,
-        thresholds: Optional[Dict[BudgetLevel, float]] = None,
+        thresholds: dict[BudgetLevel, float] | None = None,
     ) -> None:
         self._observer = observer
         self._session_limit = session_limit
         self._thresholds = thresholds or DEFAULT_THRESHOLDS
         self._lock = RLock()
-        self._sessions: Dict[str, Dict[str, Any]] = {}
-        self._doc_compressor: Optional[Any] = None  # DocCompressor（TYPE_CHECKING 避免循环导入）
+        self._sessions: dict[str, dict[str, Any]] = {}
+        self._doc_compressor: Any | None = None  # DocCompressor（TYPE_CHECKING 避免循环导入）
 
-    def _get_session(self, session_id: str) -> Dict[str, Any]:
+    def _get_session(self, session_id: str) -> dict[str, Any]:
         if session_id not in self._sessions:
             self._sessions[session_id] = {
                 "token_count": 0,
@@ -83,6 +84,7 @@ class ContextBudgetTracker:
     def count_tokens(self, text: str, session_id: str = "default") -> int:
         try:
             import tiktoken
+
             enc = tiktoken.encoding_for_model("cl100k_base")
             count = len(enc.encode(text))
         except (ImportError, Exception):
@@ -107,7 +109,7 @@ class ContextBudgetTracker:
                     triggered = level
                     if level not in session["triggered_levels"]:
                         session["triggered_levels"].add(level)
-                        payload: Dict[str, Any] = {
+                        payload: dict[str, Any] = {
                             "budget_level": level.value,
                             "session_id": session_id,
                             "usage": usage,
@@ -117,15 +119,13 @@ class ContextBudgetTracker:
                         # T-V2-006: L2_THROTTLE 时追加压缩建议标志
                         if level == BudgetLevel.L2_THROTTLE:
                             payload["compression_suggested"] = True
-                            payload["doc_compressor_available"] = (
-                                self._doc_compressor is not None
-                            )
+                            payload["doc_compressor_available"] = self._doc_compressor is not None
                         self._observer.emit(EventType.METRIC_EVENT, payload)
                     break
 
         return triggered
 
-    def get_usage(self, session_id: str = "default") -> Dict[str, Any]:
+    def get_usage(self, session_id: str = "default") -> dict[str, Any]:
         with self._lock:
             session = self._get_session(session_id)
             usage = session["token_count"]
@@ -152,7 +152,7 @@ class ContextBudgetTracker:
     # T-V2-006 DocCompressor 注入接口（Phase 1c 新增）
     # ------------------------------------------------------------------
 
-    def register_doc_compressor(self, compressor: "DocCompressor") -> None:
+    def register_doc_compressor(self, compressor: DocCompressor) -> None:
         """注册 DocCompressor 单例（由 M1 build() 调用）。
 
         注册后，L2_THROTTLE 触发时事件 payload 中
@@ -167,7 +167,7 @@ class ContextBudgetTracker:
         with self._lock:
             self._doc_compressor = compressor
 
-    def get_doc_compressor(self) -> Optional[Any]:
+    def get_doc_compressor(self) -> Any | None:
         """返回已注册的 DocCompressor 实例（M3 触发器调用入口）。
 
         未注册时返回 None（M3 负责处理 None 情况，不抛出异常）。
@@ -179,7 +179,7 @@ class ContextBudgetTracker:
         self,
         text: str,
         session_id: str = "default",
-    ) -> Optional[str]:
+    ) -> str | None:
         """调用已注册的 DocCompressor 压缩文本（便捷方法）。
 
         未注册 DocCompressor 时返回 None（调用方负责降级处理）。
@@ -203,10 +203,10 @@ class ContextBudgetTracker:
         return compressor.compress(text, session_id=session_id)
 
 
-_default_tracker: Optional[ContextBudgetTracker] = None
+_default_tracker: ContextBudgetTracker | None = None
 
 
-def handle_compression_needed(payload: dict[str, Any], **context: Any) -> Optional[str]:
+def handle_compression_needed(payload: dict[str, Any], **context: Any) -> str | None:
     """Module-level entry point for TriggerRouter dispatch.
 
     Resolves the singleton ContextBudgetTracker and delegates to

@@ -1843,10 +1843,10 @@ def post_commit_hook():
 
     # 1. 自动生成 Session Log（§3.9.3 YAML 格式）
     handoff = auto_handoff_log.generate()
-    
+
     # 2. 自动 §5.10 五级切片
     chunks = knowledge_slicer.slice(handoff)
-    
+
     # 3. 自动 G1-G5 五门禁管道
     ke_count, ko_count = 0, 0
     for chunk in chunks:
@@ -1855,7 +1855,7 @@ def post_commit_hook():
             ke_count += 1
         else:
             ko_count += 1
-    
+
     # 4. 自动归档
     archive_handoff(handoff)
     logger.info(f"[轨道1] 完成: {len(chunks)} slices → {ke_count} KE + {ko_count} KO")
@@ -2521,7 +2521,7 @@ tar -czf data/chroma/backups/chroma_$(date +%Y%m%d).tar.gz data/chroma/*/
 
 ```python
 class RAGMetricEvaluator:
-    def evaluate(self, query: str, retrieved_kes: list[KeEntry], 
+    def evaluate(self, query: str, retrieved_kes: list[KeEntry],
                  generated_answer: str) -> RAGMetrics:
         """返回 answer_relevance / faithfulness / context_precision / context_recall"""
 ```

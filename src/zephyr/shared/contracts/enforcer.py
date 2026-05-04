@@ -38,10 +38,11 @@ import logging
 import sys
 import types
 import uuid
+from collections.abc import Callable
 from dataclasses import is_dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, get_origin, get_args
+from typing import Any, TypeVar, Union, get_args, get_origin
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -73,9 +74,9 @@ class ContractViolationError(TypeError):
         contract_id: str,
         violation_type: str,
         detail: str,
-        field_name: Optional[str] = None,
-        expected_type: Optional[str] = None,
-        actual_type: Optional[str] = None,
+        field_name: str | None = None,
+        expected_type: str | None = None,
+        actual_type: str | None = None,
     ) -> None:
         self.error_id = str(uuid.uuid4())
         self.contract_id = contract_id
@@ -84,7 +85,7 @@ class ContractViolationError(TypeError):
         self.expected_type = expected_type
         self.actual_type = actual_type
         self.detail = detail
-        self.timestamp = datetime.now(timezone.utc)
+        self.timestamp = datetime.now(UTC)
 
         msg_parts = [f"[{violation_type}] {contract_id}"]
         if field_name:
@@ -96,7 +97,7 @@ class ContractViolationError(TypeError):
 
 
 def enforce_output(
-    contract_type: Type[Any],
+    contract_type: type[Any],
     mode: EnforcementMode = EnforcementMode.STRICT,
     trace_required: bool = False,
 ) -> Callable[[F], F]:
@@ -123,9 +124,7 @@ def enforce_output(
             if result is None:
                 return result
 
-            violations = _validate_value(
-                result, contract_type, contract_name, trace_required
-            )
+            violations = _validate_value(result, contract_type, contract_name, trace_required)
 
             if violations:
                 report = _format_violations(contract_name, func.__qualname__, violations)
@@ -151,8 +150,8 @@ def enforce_output(
 
 
 def enforce_input(
-    contract_type: Type[Any],
-    param_name: Optional[str] = None,
+    contract_type: type[Any],
+    param_name: str | None = None,
     mode: EnforcementMode = EnforcementMode.STRICT,
     trace_required: bool = False,
 ) -> Callable[[F], F]:
@@ -205,9 +204,7 @@ def enforce_input(
             if value is None:
                 return func(*args, **kwargs)
 
-            violations = _validate_value(
-                value, contract_type, contract_name, trace_required
-            )
+            violations = _validate_value(value, contract_type, contract_name, trace_required)
 
             if violations:
                 report = _format_violations(contract_name, func.__qualname__, violations)
@@ -234,8 +231,8 @@ def enforce_input(
 
 
 def enforce(
-    contract_type: Type[Any],
-    input_param: Optional[str] = None,
+    contract_type: type[Any],
+    input_param: str | None = None,
     mode: EnforcementMode = EnforcementMode.STRICT,
     trace_required: bool = False,
 ) -> Callable[[F], F]:
@@ -255,19 +252,17 @@ def enforce(
 
 def _validate_value(
     value: Any,
-    contract_type: Type[Any],
+    contract_type: type[Any],
     contract_name: str,
     trace_required: bool,
-) -> List[str]:
+) -> list[str]:
     """校验单个值是否符合契约定义。返回违规描述列表（空列表 = 通过）。"""
 
-    violations: List[str] = []
+    violations: list[str] = []
 
     if not isinstance(value, contract_type):
         actual_type_name = type(value).__qualname__
-        violations.append(
-            f"类型不匹配: 期望 {contract_name} 或其子类，实际收到 {actual_type_name}"
-        )
+        violations.append(f"类型不匹配: 期望 {contract_name} 或其子类，实际收到 {actual_type_name}")
         return violations
 
     if is_dataclass(contract_type):
@@ -276,9 +271,7 @@ def _validate_value(
     if trace_required:
         trace_ctx = _get_trace_context(value)
         if trace_ctx is None:
-            violations.append(
-                "缺少 TraceContext: CTR-TRACE-001 强制要求非空 trace_context 字段"
-            )
+            violations.append("缺少 TraceContext: CTR-TRACE-001 强制要求非空 trace_context 字段")
 
     if is_dataclass(contract_type):
         is_frozen = getattr(contract_type, "__dataclass_params__", None)
@@ -290,8 +283,8 @@ def _validate_value(
 
 def _validate_dataclass_fields(
     value: Any,
-    contract_type: Type[Any],
-    violations: List[str],
+    contract_type: type[Any],
+    violations: list[str],
 ) -> None:
     """校验 dataclass 字段的类型和必填性。"""
 
@@ -314,7 +307,7 @@ def _validate_dataclass_fields(
             _check_field_type(fld.name, field_value, declared_type, violations)
 
 
-def _resolve_type_hints(contract_type: Type[Any]) -> Dict[str, Any]:
+def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
     """解析 dataclass 的类型注解（处理 PEP 563 字符串注解）。"""
 
     try:
@@ -324,7 +317,7 @@ def _resolve_type_hints(contract_type: Type[Any]) -> Dict[str, Any]:
     except Exception:
         pass
 
-    hints: Dict[str, Any] = {}
+    hints: dict[str, Any] = {}
     try:
         module = sys.modules.get(contract_type.__module__)
         globalns = getattr(module, "__dict__", {}) if module else {}
@@ -347,7 +340,7 @@ def _check_field_type(
     field_name: str,
     value: Any,
     declared_type: Any,
-    violations: List[str],
+    violations: list[str],
 ) -> None:
     """检查字段值的类型是否匹配声明类型。"""
 
@@ -359,8 +352,7 @@ def _check_field_type(
     if isinstance(origin_type, type) and origin_type is not type(None):
         if origin_type is not types.UnionType and not isinstance(value, origin_type):
             violations.append(
-                f"字段 '{field_name}' 类型不匹配: "
-                f"期望 {origin_type.__name__}, 实际 {type(value).__name__}"
+                f"字段 '{field_name}' 类型不匹配: " f"期望 {origin_type.__name__}, 实际 {type(value).__name__}"
             )
             return
 
@@ -388,7 +380,7 @@ def _is_required(fld: dataclasses.Field) -> bool:
     return True
 
 
-def _get_trace_context(value: Any) -> Optional[Any]:
+def _get_trace_context(value: Any) -> Any | None:
     """从数据对象中提取 trace_context 字段。"""
 
     try:
@@ -399,8 +391,8 @@ def _get_trace_context(value: Any) -> Optional[Any]:
 
 def _check_deep_mutable_nesting(
     value: Any,
-    contract_type: Type[Any],
-    violations: List[str],
+    contract_type: type[Any],
+    violations: list[str],
 ) -> None:
     """检测 frozen dataclass 中的可变容器字段（浅层不可变性陷阱）。
 
@@ -408,7 +400,7 @@ def _check_deep_mutable_nesting(
     那是运行时 ContractEnforcer 的职责。此检查提供静态阶段的告警。
     """
 
-    mutable_types = {dict, list, set, Dict, List}
+    mutable_types = {dict, list, set, dict, list}
 
     try:
         fields = dataclasses.fields(contract_type)
@@ -425,9 +417,7 @@ def _check_deep_mutable_nesting(
 
         origin = get_origin(declared_type)
         base = origin if origin is not None else declared_type
-        if base in mutable_types or (
-            hasattr(base, "__origin__") and base.__origin__ in mutable_types
-        ):
+        if base in mutable_types or (hasattr(base, "__origin__") and base.__origin__ in mutable_types):
             mutable_container_fields.append(fld.name)
 
     if mutable_container_fields:
@@ -439,10 +429,10 @@ def _check_deep_mutable_nesting(
 
 
 def _find_param_by_type(
-    arguments: Dict[str, Any],
-    contract_type: Type[Any],
-    sig: Optional[inspect.Signature] = None,
-) -> Optional[str]:
+    arguments: dict[str, Any],
+    contract_type: type[Any],
+    sig: inspect.Signature | None = None,
+) -> str | None:
     """在函数参数中找到 contract_type 对应的参数名。
 
     优先级：
@@ -481,7 +471,7 @@ def _find_param_by_type(
 def _format_violations(
     contract_name: str,
     func_name: str,
-    violations: List[str],
+    violations: list[str],
 ) -> str:
     """格式化违规报告。"""
 

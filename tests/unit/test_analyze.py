@@ -9,13 +9,13 @@
 5. 实现复杂度正确评估
 6. 无 frontmatter 文件被处理
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
-from zephyr.kb.analyze import AnalyzeGate, VALUE_SCORE_THRESHOLD, SCORING_DIMENSIONS
+from zephyr.kb.analyze import SCORING_DIMENSIONS, VALUE_SCORE_THRESHOLD, AnalyzeGate
 
 
 @pytest.fixture()
@@ -40,7 +40,7 @@ def _make_analyzed_md(
         "ADR-0002: 选择 ChromaDB 作为向量层，因为需要语义搜索能力。"
         "不采用 Pinecone 的原因是需要本地部署。\n\n"
         "## 接口定义\n\n"
-        "```python\ndef process(data: dict[str, Any]) -> Result:\n    \"\"\"处理数据并返回结果。\"\"\"\n    pass\n\nclass DataProcessor:\n    def __init__(self, config: Config):\n        self.config = config\n\n    def transform(self, raw: pd.DataFrame) -> pd.DataFrame:\n        pass\n```\n\n"
+        '```python\ndef process(data: dict[str, Any]) -> Result:\n    """处理数据并返回结果。"""\n    pass\n\nclass DataProcessor:\n    def __init__(self, config: Config):\n        self.config = config\n\n    def transform(self, raw: pd.DataFrame) -> pd.DataFrame:\n        pass\n```\n\n'
         "```yaml\nprocessor:\n  type: batch\n  batch_size: 1000\n  timeout: 30\n```\n\n"
         "## 复用性\n\n"
         "此模块可跨层复用（cross_layer），是核心不可替代的唯一实现。"

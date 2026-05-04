@@ -27,12 +27,11 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import GOV_DOCS_DIR
+from _shared.constants import EXCLUDE_DIRS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 from _shared.yaml_utils import load_yaml
-from _shared.constants import EXCLUDE_DIRS
 
 ensure_utf8_stdout()
 
@@ -119,8 +118,7 @@ def check_frontmatter_values() -> list[dict]:
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--warn-only", action="store_true",
-                        help="warn mode: exit 0 even if findings")
+    parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
     args = parser.parse_args()
 
     print("=" * 72)

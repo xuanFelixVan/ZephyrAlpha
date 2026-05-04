@@ -48,13 +48,13 @@ L2a 是 ZephyrAlpha RI（Runtime Integration）层的双层沙箱中的第一层
     )
     print(result.stdout)
 """
+
 from __future__ import annotations
 
 import os
 import subprocess
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 __all__ = [
     "L2aSandbox",
@@ -95,10 +95,10 @@ ENV_WHITELIST: frozenset[str] = frozenset(
         "LANG",
         "LC_ALL",
         "LC_CTYPE",
-        "SYSTEMROOT",        # Windows 必需
-        "SYSTEMDRIVE",       # Windows 必需
-        "WINDIR",            # Windows 必需
-        "COMSPEC",           # Windows cmd.exe 路径
+        "SYSTEMROOT",  # Windows 必需
+        "SYSTEMDRIVE",  # Windows 必需
+        "WINDIR",  # Windows 必需
+        "COMSPEC",  # Windows cmd.exe 路径
     }
 )
 
@@ -137,9 +137,7 @@ class SandboxTimeout(RuntimeError):
     def __init__(self, cmd: list[str], timeout: float) -> None:
         self.cmd = cmd
         self.timeout = timeout
-        super().__init__(
-            f"L2a SandboxTimeout: {cmd[0]!r} 超时（{timeout}s）"
-        )
+        super().__init__(f"L2a SandboxTimeout: {cmd[0]!r} 超时（{timeout}s）")
 
 
 # ---------------------------------------------------------------------------
@@ -164,16 +162,12 @@ class L2aSandbox:
 
     def __init__(
         self,
-        repo_root: Optional[Path] = None,
-        cwd_whitelist: Optional[tuple[str, ...]] = None,
-        env_whitelist: Optional[frozenset[str]] = None,
+        repo_root: Path | None = None,
+        cwd_whitelist: tuple[str, ...] | None = None,
+        env_whitelist: frozenset[str] | None = None,
         default_timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._repo_root: Path = (
-            repo_root
-            if repo_root is not None
-            else Path(__file__).resolve().parents[3]
-        )
+        self._repo_root: Path = repo_root if repo_root is not None else Path(__file__).resolve().parents[3]
         self._cwd_whitelist = cwd_whitelist or CWD_WHITELIST_SUFFIXES
         self._env_whitelist = env_whitelist or ENV_WHITELIST
         self._default_timeout = default_timeout
@@ -185,9 +179,9 @@ class L2aSandbox:
     def run(
         self,
         cmd: list[str],
-        cwd: Optional[str | Path] = None,
-        extra_env: Optional[dict[str, str]] = None,
-        timeout: Optional[float] = None,
+        cwd: str | Path | None = None,
+        extra_env: dict[str, str] | None = None,
+        timeout: float | None = None,
         *,
         allow_extra_env: bool = False,
     ) -> SandboxResult:
@@ -239,7 +233,7 @@ class L2aSandbox:
         # 5. 执行
         t0 = time.monotonic()
         try:
-            proc = subprocess.run(  # noqa: S603 — cmd 是 list，无 shell injection
+            proc = subprocess.run(  # — cmd 是 list，无 shell injection
                 cmd,
                 cwd=str(resolved_cwd),
                 env=safe_env,
@@ -266,7 +260,7 @@ class L2aSandbox:
     # 内部工具
     # ------------------------------------------------------------------
 
-    def _resolve_cwd(self, cwd: Optional[str | Path]) -> Path:
+    def _resolve_cwd(self, cwd: str | Path | None) -> Path:
         """将用户传入的 cwd 解析为绝对路径。"""
         if cwd is None:
             return self._repo_root
@@ -295,21 +289,16 @@ class L2aSandbox:
                 return
 
         raise SandboxViolation(
-            f"L2a SandboxViolation: cwd '{resolved_cwd}' 超出 CWD 白名单。\n"
-            f"允许前缀：{self._cwd_whitelist}"
+            f"L2a SandboxViolation: cwd '{resolved_cwd}' 超出 CWD 白名单。\n" f"允许前缀：{self._cwd_whitelist}"
         )
 
     def _build_env(
         self,
-        extra_env: Optional[dict[str, str]],
+        extra_env: dict[str, str] | None,
         allow_extra_env: bool,
     ) -> dict[str, str]:
         """从系统环境中提取白名单键，合并 extra_env。"""
-        safe: dict[str, str] = {
-            k: v
-            for k, v in os.environ.items()
-            if k in self._env_whitelist
-        }
+        safe: dict[str, str] = {k: v for k, v in os.environ.items() if k in self._env_whitelist}
 
         if extra_env:
             if not allow_extra_env:

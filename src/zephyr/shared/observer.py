@@ -7,11 +7,13 @@ DeferredQueue (T-1-09).
 Task: T-1-08 | Phase 1 | GLM-5.1
 ADR ref: ADR-0037 (pending Opus authoring)
 """
+
 from __future__ import annotations
 
-from threading import RLock
+from collections.abc import Callable
 from enum import Enum, unique
-from typing import Any, Callable, Dict, List, Optional, Set
+from threading import RLock
+from typing import Any
 
 
 @unique
@@ -23,7 +25,7 @@ class EventType(str, Enum):
     METRIC_EVENT = "metric_event"
 
 
-EventHandler = Callable[[EventType, Dict[str, Any]], None]
+EventHandler = Callable[[EventType, dict[str, Any]], None]
 
 
 class Observer:
@@ -39,12 +41,8 @@ class Observer:
 
     def __init__(self) -> None:
         self._lock = RLock()
-        self._subscribers: Dict[EventType, Set[EventHandler]] = {
-            et: set() for et in EventType
-        }
-        self._once_flags: Dict[EventType, Set[EventHandler]] = {
-            et: set() for et in EventType
-        }
+        self._subscribers: dict[EventType, set[EventHandler]] = {et: set() for et in EventType}
+        self._once_flags: dict[EventType, set[EventHandler]] = {et: set() for et in EventType}
 
     def subscribe(
         self,
@@ -66,7 +64,7 @@ class Observer:
     def emit(
         self,
         event_type: EventType,
-        payload: Optional[Dict[str, Any]] = None,
+        payload: dict[str, Any] | None = None,
     ) -> int:
         payload = payload or {}
         with self._lock:
@@ -90,7 +88,7 @@ class Observer:
         with self._lock:
             return len(self._subscribers[event_type])
 
-    def clear(self, event_type: Optional[EventType] = None) -> None:
+    def clear(self, event_type: EventType | None = None) -> None:
         with self._lock:
             if event_type is None:
                 for et in EventType:
@@ -104,6 +102,6 @@ class Observer:
         with self._lock:
             return handler in self._subscribers[event_type]
 
-    def event_types_with_subscribers(self) -> List[EventType]:
+    def event_types_with_subscribers(self) -> list[EventType]:
         with self._lock:
             return [et for et in EventType if self._subscribers[et]]

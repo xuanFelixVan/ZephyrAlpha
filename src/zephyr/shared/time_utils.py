@@ -10,9 +10,10 @@ _default_now() 在 5 个文件中重复定义。
   - Google Style Guide: "Don't repeat yourself"
   - Django: timezone.now() 作为唯一时间获取入口
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def utc_now() -> datetime:
@@ -21,7 +22,7 @@ def utc_now() -> datetime:
     替代 datetime.now(timezone.utc) 的分散调用，
     便于全局切换时间源（测试时可 mock 此函数）。
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def now_iso() -> str:

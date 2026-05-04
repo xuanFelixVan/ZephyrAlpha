@@ -15,6 +15,7 @@ CBAC 能力检查器 (Capability-Based Access Control)
 4. allow 规则支持 glob 多模式 OR 匹配
 5. ai_modifiable 能力调用带 provenance: True 标记
 """
+
 from __future__ import annotations
 
 import fnmatch
@@ -48,8 +49,7 @@ class CapabilityDenied(Exception):
         self.rule_name = rule_name
         self.reason = reason
         super().__init__(
-            f"CapabilityDenied: action='{action}' target='{target_path}' "
-            f"rule='{rule_name}' reason='{reason}'"
+            f"CapabilityDenied: action='{action}' target='{target_path}' " f"rule='{rule_name}' reason='{reason}'"
         )
 
 
@@ -81,17 +81,19 @@ class CapabilityRegistry:
     def _load_from_yaml(self) -> None:
         if not CAPABILITIES_YAML_PATH.exists():
             import warnings
+
             warnings.warn(
                 f"capabilities.yaml not found: {CAPABILITIES_YAML_PATH} — registry empty, all operations denied",
                 stacklevel=2,
             )
             return
-        with open(CAPABILITIES_YAML_PATH, "r", encoding="utf-8") as f:
+        with open(CAPABILITIES_YAML_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         if not data or "rules" not in data:
             import warnings
+
             warnings.warn(
-                f"capabilities.yaml empty or missing 'rules' key — registry empty, all operations denied",
+                "capabilities.yaml empty or missing 'rules' key — registry empty, all operations denied",
                 stacklevel=2,
             )
             return
@@ -104,6 +106,7 @@ class CapabilityRegistry:
             )
             if not cap.allow and not cap.deny:
                 import warnings
+
                 warnings.warn(
                     f"Capability rule '{cap.name}' has empty allow and deny — dead rule (matches nothing)",
                     stacklevel=2,
@@ -112,6 +115,7 @@ class CapabilityRegistry:
                 for pat in patterns:
                     if "{" in pat or "}" in pat:
                         import warnings
+
                         warnings.warn(
                             f"Capability rule '{cap.name}' {field_name} pattern '{pat}' "
                             f"contains {{ or }} — brace expansion not supported by fnmatch. "

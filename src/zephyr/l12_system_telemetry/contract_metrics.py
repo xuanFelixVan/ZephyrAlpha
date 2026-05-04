@@ -25,8 +25,7 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
 
 _logger = logging.getLogger("zephyr.telemetry.contract_metrics")
 
@@ -39,7 +38,7 @@ class SlaRecord:
     start_span_id: str
     end_span_id: str
     passed: bool
-    recorded_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    recorded_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -50,7 +49,7 @@ class DriftAlert:
     current_value: float
     baseline_value: float
     deviation_pct: float
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class ContractMetricsCollector:
@@ -63,8 +62,8 @@ class ContractMetricsCollector:
     def __init__(self) -> None:
         self._sla_buffer: list[SlaRecord] = []
         self._drift_buffer: list[DriftAlert] = []
-        self._violation_counts: Dict[str, int] = defaultdict(int)
-        self._field_baselines: Dict[str, Dict[str, float]] = defaultdict(dict)
+        self._violation_counts: dict[str, int] = defaultdict(int)
+        self._field_baselines: dict[str, dict[str, float]] = defaultdict(dict)
         self._enabled = False
 
     def enable(self) -> None:
@@ -95,7 +94,10 @@ class ContractMetricsCollector:
             if not passed:
                 _logger.warning(
                     "[SLA] %s 超限: %d us > %d us (trace=%s)",
-                    contract_id, latency_us, sla_p99_us, trace_id[:8],
+                    contract_id,
+                    latency_us,
+                    sla_p99_us,
+                    trace_id[:8],
                 )
 
             if len(self._sla_buffer) >= 100:
@@ -103,7 +105,8 @@ class ContractMetricsCollector:
                 if pass_count < 95:
                     _logger.warning(
                         "[SLA] %s 最近 100 次中通过率=%d%% (<95%%)",
-                        contract_id, pass_count,
+                        contract_id,
+                        pass_count,
                     )
 
         return record
@@ -113,9 +116,9 @@ class ContractMetricsCollector:
         contract_id: str,
         field_name: str,
         current_value: float,
-        baseline_median: Optional[float] = None,
-        baseline_std: Optional[float] = None,
-    ) -> Optional[DriftAlert]:
+        baseline_median: float | None = None,
+        baseline_std: float | None = None,
+    ) -> DriftAlert | None:
         if baseline_median is None or baseline_std is None:
             key = f"{contract_id}:{field_name}"
             if key in self._field_baselines:
@@ -143,7 +146,9 @@ class ContractMetricsCollector:
                 self._drift_buffer.append(alert)
                 _logger.warning(
                     "[Drift] %s.%s z-score=%.1f — 可能发生契约漂移",
-                    contract_id, field_name, deviation,
+                    contract_id,
+                    field_name,
+                    deviation,
                 )
             return alert
 
@@ -170,7 +175,7 @@ class ContractMetricsCollector:
         }
 
 
-_collector: Optional[ContractMetricsCollector] = None
+_collector: ContractMetricsCollector | None = None
 
 
 def get_contract_metrics() -> ContractMetricsCollector:

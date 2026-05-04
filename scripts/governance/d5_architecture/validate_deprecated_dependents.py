@@ -18,12 +18,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -52,13 +52,15 @@ def scan_deprecated_dependents() -> list[dict]:
         depends_on = fm.get("depends_on", [])
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
 
-        all_files.append({
-            "filepath": filepath,
-            "rel": rel,
-            "module_id": module_id,
-            "status": status,
-            "depends_on": depends_on,
-        })
+        all_files.append(
+            {
+                "filepath": filepath,
+                "rel": rel,
+                "module_id": module_id,
+                "status": status,
+                "depends_on": depends_on,
+            }
+        )
 
         if status == "deprecated" and module_id:
             deprecated_ids.add(module_id)
@@ -83,12 +85,14 @@ def scan_deprecated_dependents() -> list[dict]:
                 continue
 
             if target in deprecated_ids:
-                findings.append({
-                    "active_file": info["rel"],
-                    "active_module": info["module_id"],
-                    "deprecated_target": target,
-                    "severity": "HIGH",
-                })
+                findings.append(
+                    {
+                        "active_file": info["rel"],
+                        "active_module": info["module_id"],
+                        "deprecated_target": target,
+                        "severity": "HIGH",
+                    }
+                )
 
     return findings
     """扫描已废弃模块的依赖者."""

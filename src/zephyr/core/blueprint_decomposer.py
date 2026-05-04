@@ -12,12 +12,12 @@ ZephyrAlpha 蓝图拆解器
 
 task_id 格式（§3.2.1）：{NAMESPACE}-{SEQ}（SQLite auto-increment 保证唯一性）
 """
+
 from __future__ import annotations
 
 import logging
 import re
 from pathlib import Path
-from typing import Optional
 
 from zephyr.core.models import (
     DecompositionResult,
@@ -62,8 +62,8 @@ class BlueprintDecomposer:
 
     def __init__(
         self,
-        task_repo: Optional[object] = None,
-        docs_dir: Optional[str] = None,
+        task_repo: object | None = None,
+        docs_dir: str | None = None,
     ):
         self.task_repo = task_repo
         self.docs_dir = Path(docs_dir) if docs_dir else None
@@ -89,9 +89,7 @@ class BlueprintDecomposer:
 
         content = path.read_text(encoding="utf-8")
 
-        tasks, unassigned, warnings = self._extract_tasks(
-            content, blueprint_path, namespace, phase
-        )
+        tasks, unassigned, warnings = self._extract_tasks(content, blueprint_path, namespace, phase)
 
         dep_graph = self._build_dependency_graph(tasks)
 
@@ -182,7 +180,7 @@ class BlueprintDecomposer:
         blueprint_path: str,
         namespace: str,
         phase: int,
-    ) -> Optional[TaskCard]:
+    ) -> TaskCard | None:
         try:
             from zephyr.shared.schemas import TaskNamespace
 
@@ -216,15 +214,19 @@ class BlueprintDecomposer:
                 downstream_outputs=[],
                 allowed_touch=[],
                 forbidden_touch=[],
-                applicable_rules=[{
-                    "module_id": "MOD-INF-006",
-                    "section": "§3.2.1",
-                    "reason": "TaskCard Schema——任务格式合规",
-                }],
-                context_assembly_manifest=[{
-                    "file_path": blueprint_path,
-                    "reason": "源蓝图",
-                }],
+                applicable_rules=[
+                    {
+                        "module_id": "MOD-INF-006",
+                        "section": "§3.2.1",
+                        "reason": "TaskCard Schema——任务格式合规",
+                    }
+                ],
+                context_assembly_manifest=[
+                    {
+                        "file_path": blueprint_path,
+                        "reason": "源蓝图",
+                    }
+                ],
                 rollback_instructions="",
                 estimated_tokens=4000,
                 timeout_minutes=30,
@@ -247,9 +249,7 @@ class BlueprintDecomposer:
             logger.warning(f"TaskCard 构造失败: {name} — {e}")
             return None
 
-    def _build_dependency_graph(
-        self, tasks: list[TaskCard]
-    ) -> dict[str, list[str]]:
+    def _build_dependency_graph(self, tasks: list[TaskCard]) -> dict[str, list[str]]:
         graph: dict[str, list[str]] = {}
         for i, task in enumerate(tasks):
             if i > 0:
@@ -275,16 +275,9 @@ class BlueprintDecomposer:
                 encoding="utf-8",
             )
 
-    def check_gate(
-        self, gate_id: GateLevel, task: TaskCard
-    ) -> bool:
+    def check_gate(self, gate_id: GateLevel, task: TaskCard) -> bool:
         if gate_id == GateLevel.G0:
             return bool(task.source_blueprint and task.description)
         if gate_id == GateLevel.G7:
-            return (
-                task.verification_status == "verified"
-                and all(
-                    f.resolved for f in task.audit_findings
-                )
-            )
+            return task.verification_status == "verified" and all(f.resolved for f in task.audit_findings)
         return True

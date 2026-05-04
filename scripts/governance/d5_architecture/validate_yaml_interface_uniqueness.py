@@ -23,16 +23,16 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 from collections import Counter
+from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
@@ -69,21 +69,25 @@ def scan_partition_yaml(yaml_path: Path) -> list[dict]:
                     roles.add(iface.get("role", "?"))
 
             if len(roles) > 1:
-                findings.append({
-                    "type": "MERGE_TO_BOTH",
-                    "module": mod_id,
-                    "contract_id": cid,
-                    "roles": sorted(roles),
-                    "suggestion": f"合并为 role: both",
-                })
+                findings.append(
+                    {
+                        "type": "MERGE_TO_BOTH",
+                        "module": mod_id,
+                        "contract_id": cid,
+                        "roles": sorted(roles),
+                        "suggestion": "合并为 role: both",
+                    }
+                )
             else:
-                findings.append({
-                    "type": "EXACT_DUPLICATE",
-                    "module": mod_id,
-                    "contract_id": cid,
-                    "roles": sorted(roles),
-                    "suggestion": f"删除重复条目（保留一条即可）",
-                })
+                findings.append(
+                    {
+                        "type": "EXACT_DUPLICATE",
+                        "module": mod_id,
+                        "contract_id": cid,
+                        "roles": sorted(roles),
+                        "suggestion": "删除重复条目（保留一条即可）",
+                    }
+                )
 
     return findings
     """扫描 YAML 接口唯一性."""
@@ -92,8 +96,7 @@ def scan_partition_yaml(yaml_path: Path) -> list[dict]:
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--warn-only", action="store_true",
-                        help="warn mode: exit 0 even if findings")
+    parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
     args = parser.parse_args()
 
     print("=" * 72)
@@ -118,8 +121,10 @@ def main() -> None:
     print(f"\n🔴 发现 {len(all_findings)} 个接口唯一性问题：\n")
     for f in all_findings:
         icon = "⚠️" if f["type"] == "MERGE_TO_BOTH" else "🔴"
-        print(f"  {icon} {f['file']}: {f['module']} → {f['contract_id']} "
-              f"(roles: {', '.join(f['roles'])}) → {f['suggestion']}")
+        print(
+            f"  {icon} {f['file']}: {f['module']} → {f['contract_id']} "
+            f"(roles: {', '.join(f['roles'])}) → {f['suggestion']}"
+        )
 
     return 1
 

@@ -12,15 +12,15 @@ frontmatter_utils.py — Markdown/YAML frontmatter 解析 SSoT
   - scripts/governance/_shared/frontmatter.py（治理脚本侧的 SSoT）
   - DRY principle: Don't Repeat Yourself
 """
+
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
 
-def parse_frontmatter(content: str) -> Optional[dict]:
+def parse_frontmatter(content: str) -> dict | None:
     """解析 Markdown 文件的 YAML frontmatter。
 
     Args:
@@ -47,7 +47,7 @@ def parse_frontmatter(content: str) -> Optional[dict]:
         return None
 
 
-def parse_frontmatter_from_file(filepath: Path | str) -> Optional[dict]:
+def parse_frontmatter_from_file(filepath: Path | str) -> dict | None:
     """从文件路径解析 frontmatter。
 
     Args:
@@ -64,7 +64,7 @@ def parse_frontmatter_from_file(filepath: Path | str) -> Optional[dict]:
     return parse_frontmatter(content)
 
 
-def parse_yaml_header(content: str) -> Optional[dict]:
+def parse_yaml_header(content: str) -> dict | None:
     """解析 YAML 文件的注释头 + 顶层字段。
 
     用于 .yaml/.yml 文件（无 --- 分隔符），提取顶层键值对。
@@ -96,7 +96,7 @@ def extract_body(content: str) -> str:
     end = content.find("\n---", 3)
     if end == -1:
         return content
-    return content[end + 4:].lstrip("\n")
+    return content[end + 4 :].lstrip("\n")
 
 
 __all__ = [

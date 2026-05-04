@@ -42,11 +42,13 @@ safety_level: H
 
 零外部依赖：仅 ``pydantic`` + 标准库；不 import 任何 LLM / DB。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import datetime
 from enum import Enum
-from typing import Callable, Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -115,7 +117,7 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
     # L2：Pattern 级聚合阈值（同一信号 ≥ 3 次）
     "pattern_min_count": 3,
     # L3：架构级漂移阈值
-    "mom_score_drop": 0.5,        # 月环比平均分下滑 ≥ 0.5
+    "mom_score_drop": 0.5,  # 月环比平均分下滑 ≥ 0.5
     "mom_low_score_rate_rise": 0.15,  # 月环比 low-score 比例上升 ≥ 15%
     # signal 比例触发（用于 high_retry_rate 等）
     "ratio_threshold": 0.30,
@@ -180,8 +182,6 @@ ApplyFn = Callable[[EvolutionProposal], bool]
 # ---------------------------------------------------------------------------
 
 
-
-
 class EvolutionEngine:
     """封装 evolve() 的实例版本，便于注入回调 / 阈值。
 
@@ -207,10 +207,10 @@ class EvolutionEngine:
         self,
         collector: FeedbackCollector,
         *,
-        apply_fn: Optional[ApplyFn] = None,
-        on_low_score: Optional[LowScoreHook] = None,
-        signal_tag_map: Optional[dict[EvolutionSignal, frozenset[str]]] = None,
-        thresholds: Optional[dict[str, float]] = None,
+        apply_fn: ApplyFn | None = None,
+        on_low_score: LowScoreHook | None = None,
+        signal_tag_map: dict[EvolutionSignal, frozenset[str]] | None = None,
+        thresholds: dict[str, float] | None = None,
         now: Callable[[], datetime] = default_now,
     ) -> None:
         self._collector = collector
@@ -228,9 +228,9 @@ class EvolutionEngine:
         *,
         dry_run: bool = True,
         owner_approved: bool = False,
-        task_id: Optional[str] = None,
-        baseline_avg_score: Optional[float] = None,
-        baseline_low_score_rate: Optional[float] = None,
+        task_id: str | None = None,
+        baseline_avg_score: float | None = None,
+        baseline_low_score_rate: float | None = None,
     ) -> EvolutionReport:
         """生成 + 可选应用进化提案。
 
@@ -287,7 +287,7 @@ class EvolutionEngine:
                 try:
                     if self._apply_fn(p):
                         applied += 1
-                except Exception:  # noqa: BLE001 — apply 错误必须被收敛
+                except Exception:  # — apply 错误必须被收敛
                     continue
 
         report.proposals = proposals
@@ -376,8 +376,8 @@ class EvolutionEngine:
     def _layer3_drift(
         self,
         entries: list[FeedbackEntry],
-        baseline_avg: Optional[float],
-        baseline_low_rate: Optional[float],
+        baseline_avg: float | None,
+        baseline_low_rate: float | None,
     ) -> list[EvolutionProposal]:
         """MoM 漂移触发 ADR 重审。无 baseline 时跳过。"""
         if baseline_avg is None and baseline_low_rate is None:
@@ -394,17 +394,14 @@ class EvolutionEngine:
         if baseline_avg is not None:
             delta = baseline_avg - cur_avg
             if delta >= self._thresholds["mom_score_drop"]:
-                rationales.append(
-                    f"平均分 {baseline_avg:.2f} → {cur_avg:.2f}（下滑 {delta:.2f}）"
-                )
+                rationales.append(f"平均分 {baseline_avg:.2f} → {cur_avg:.2f}（下滑 {delta:.2f}）")
                 triggered = True
 
         if baseline_low_rate is not None:
             delta_r = cur_low_rate - baseline_low_rate
             if delta_r >= self._thresholds["mom_low_score_rate_rise"]:
                 rationales.append(
-                    f"low-score 比例 {baseline_low_rate:.0%} → {cur_low_rate:.0%}"
-                    f"（上升 {delta_r:.0%}）"
+                    f"low-score 比例 {baseline_low_rate:.0%} → {cur_low_rate:.0%}" f"（上升 {delta_r:.0%}）"
                 )
                 triggered = True
 
@@ -435,9 +432,7 @@ class EvolutionEngine:
 
     # ---- helpers -----------------------------------------------------
 
-    def _pattern_severity(
-        self, signal: EvolutionSignal, ratio: float, ratio_thresh: float
-    ) -> Severity:
+    def _pattern_severity(self, signal: EvolutionSignal, ratio: float, ratio_thresh: float) -> Severity:
         if signal in (EvolutionSignal.CONTEXT_OVERFLOW, EvolutionSignal.DEPENDENCY_BOTTLENECK):
             if ratio >= ratio_thresh * 2:
                 return Severity.CRITICAL
@@ -513,13 +508,13 @@ def evolve(
     *,
     dry_run: bool = True,
     owner_approved: bool = False,
-    apply_fn: Optional[ApplyFn] = None,
-    on_low_score: Optional[LowScoreHook] = None,
-    task_id: Optional[str] = None,
-    baseline_avg_score: Optional[float] = None,
-    baseline_low_score_rate: Optional[float] = None,
-    thresholds: Optional[dict[str, float]] = None,
-    signal_tag_map: Optional[dict[EvolutionSignal, frozenset[str]]] = None,
+    apply_fn: ApplyFn | None = None,
+    on_low_score: LowScoreHook | None = None,
+    task_id: str | None = None,
+    baseline_avg_score: float | None = None,
+    baseline_low_score_rate: float | None = None,
+    thresholds: dict[str, float] | None = None,
+    signal_tag_map: dict[EvolutionSignal, frozenset[str]] | None = None,
     now: Callable[[], datetime] = default_now,
 ) -> EvolutionReport:
     """无状态入口函数：构造 EvolutionEngine → 调用 evolve()。

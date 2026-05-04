@@ -9,8 +9,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 DOCS_ROOT = Path(__file__).resolve().parent.parent / "docs"
 
@@ -23,295 +23,236 @@ RESPONSIBILITY_MAP = {
     "": (
         "项目文档体系根目录（Drawer System 入口）",
         [
-            ("治理规范/标准/协议（非 migration-declaration 的其他 .md）",
-             "01_policies_and_standards/"),
-            ("架构视图/ADR",
-             "02_enterprise_architecture/"),
-            ("模块蓝图/施工图/交付",
-             "03_modules/"),
-            ("AI 服务接口合同",
-             "03_modules/_b_track_interfaces/"),
-            ("审计报告/状态",
-             "09_audit/"),
-        ]
+            ("治理规范/标准/协议（非 migration-declaration 的其他 .md）", "01_policies_and_standards/"),
+            ("架构视图/ADR", "02_enterprise_architecture/"),
+            ("模块蓝图/施工图/交付", "03_modules/"),
+            ("AI 服务接口合同", "03_modules/_b_track_interfaces/"),
+            ("审计报告/状态", "09_audit/"),
+        ],
     ),
     "02_enterprise_architecture": (
         "企业架构文档 — TOGAF 视图 + ADR + 架构模型 YAML + 架构快照",
         [
-            ("治理规范/标准/协议",
-             "01_policies_and_standards/"),
-            ("模块蓝图/施工图",
-             "03_modules/"),
-            ("代码文件",
-             "src/zephyr/"),
-        ]
+            ("治理规范/标准/协议", "01_policies_and_standards/"),
+            ("模块蓝图/施工图", "03_modules/"),
+            ("代码文件", "src/zephyr/"),
+        ],
     ),
     "03_modules": (
         "C 轨镜像：14 层模块生命周期文档（蓝图 → 施工图 → 交付记录）。每个模块一个子目录，所有阶段产物在同一目录下",
         [
-            ("5 大 AI 服务的接口文档",
-             "03_modules/_b_track_interfaces/"),
-            ("项目级元计划/DevOps 流程",
-             "01_policies_and_standards/operational/devops/"),
-            ("治理规范/标准",
-             "01_policies_and_standards/governance/"),
-            ("企业架构视图/ADR",
-             "02_enterprise_architecture/"),
-        ]
+            ("5 大 AI 服务的接口文档", "03_modules/_b_track_interfaces/"),
+            ("项目级元计划/DevOps 流程", "01_policies_and_standards/operational/devops/"),
+            ("治理规范/标准", "01_policies_and_standards/governance/"),
+            ("企业架构视图/ADR", "02_enterprise_architecture/"),
+        ],
     ),
     "08_knowledge": (
         "知识库 — 项目经验教训（KE）、最佳实践、可复用知识资产",
         [
-            ("治理规则/标准",
-             "01_policies_and_standards/"),
-            ("模块蓝图",
-             "03_modules/"),
-        ]
+            ("治理规则/标准", "01_policies_and_standards/"),
+            ("模块蓝图", "03_modules/"),
+        ],
     ),
     "09_audit": (
         "审计报告与审计状态数据（Ex-post — 执行得怎样）",
         [
-            ("治理规范/合规标准",
-             "01_policies_and_standards/"),
-            ("架构文档",
-             "02_enterprise_architecture/"),
-        ]
+            ("治理规范/合规标准", "01_policies_and_standards/"),
+            ("架构文档", "02_enterprise_architecture/"),
+        ],
     ),
-
     # === Level 2 ===
     "01_policies_and_standards/_registry": (
         "注册表体系 — catalogs（自动注册表）、contracts（验证契约）、schemas（JSON Schema）、vocabularies（受控词表）",
         [
-            (".md 治理文档",
-             "01_policies_and_standards/governance/ 或 operational/"),
-            ("手动编辑的注册表文件",
-             "01_policies_and_standards/governance/ 对应子域（非 catalogs）"),
-        ]
+            (".md 治理文档", "01_policies_and_standards/governance/ 或 operational/"),
+            ("手动编辑的注册表文件", "01_policies_and_standards/governance/ 对应子域（非 catalogs）"),
+        ],
     ),
     "01_policies_and_standards/domains": (
         "层域特定规则（L00/L02/L04/L07）— 每个层域下有 governance/ + operational/",
         [
-            ("全局规则（影响所有层）",
-             "01_policies_and_standards/governance/ 或 operational/"),
-        ]
+            ("全局规则（影响所有层）", "01_policies_and_standards/governance/ 或 operational/"),
+        ],
     ),
     "01_policies_and_standards/operational": (
         "过程式操作手册 — vibe_coding/（VC 操作）、devops/（CI/部署）、migration/（迁移）",
         [
-            ("声明式治理规则",
-             "01_policies_and_standards/governance/"),
-            ("层域特定规则",
-             "01_policies_and_standards/domains/"),
-        ]
+            ("声明式治理规则", "01_policies_and_standards/governance/"),
+            ("层域特定规则", "01_policies_and_standards/domains/"),
+        ],
     ),
     "01_policies_and_standards/scripts": (
         "自动化脚本 — governance/（治理脚本）",
         [
-            (".md 文档",
-             "01_policies_and_standards/governance/ 或 operational/"),
-            ("治理规则/标准",
-             "01_policies_and_standards/governance/"),
-        ]
+            (".md 文档", "01_policies_and_standards/governance/ 或 operational/"),
+            ("治理规则/标准", "01_policies_and_standards/governance/"),
+        ],
     ),
     "01_policies_and_standards/templates": (
         "文档模板 — policy/standard/runbook/playbook/ADT/blueprint/construction-plan/roadmap/risk-register 模板",
         [
-            ("正式规则文件",
-             "01_policies_and_standards/governance/ 或 operational/"),
-            ("模块文档",
-             "03_modules/"),
-        ]
+            ("正式规则文件", "01_policies_and_standards/governance/ 或 operational/"),
+            ("模块文档", "03_modules/"),
+        ],
     ),
     "02_enterprise_architecture/adr": (
         "架构决策记录（Architecture Decision Records）— adr-nnnn-*.md",
         [
-            ("治理规范",
-             "01_policies_and_standards/"),
-            ("模块蓝图",
-             "03_modules/"),
-        ]
+            ("治理规范", "01_policies_and_standards/"),
+            ("模块蓝图", "03_modules/"),
+        ],
     ),
     "02_enterprise_architecture/designs": (
         "设计决策框架 — build-vs-buy 等架构决策辅助文档",
         [
-            ("ADR",
-             "02_enterprise_architecture/adr/"),
-            ("架构视图",
-             "02_enterprise_architecture/target-architecture/"),
-        ]
+            ("ADR", "02_enterprise_architecture/adr/"),
+            ("架构视图", "02_enterprise_architecture/target-architecture/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture": (
         "目标架构视图（TOGAF）— 00-overview 到 12-dimension-audit-matrix + architecture-model/ + diagrams/ + by-domain/",
         [
-            ("治理规范",
-             "01_policies_and_standards/"),
-            ("ADR",
-             "02_enterprise_architecture/adr/"),
-        ]
+            ("治理规范", "01_policies_and_standards/"),
+            ("ADR", "02_enterprise_architecture/adr/"),
+        ],
     ),
     "09_audit/reports": (
         "审计报告 — 架构合规性审计、SSoT 验证扫描报告",
         [
-            ("治理规范",
-             "01_policies_and_standards/"),
-            ("审计状态数据",
-             "09_audit/state/"),
-        ]
+            ("治理规范", "01_policies_and_standards/"),
+            ("审计状态数据", "09_audit/state/"),
+        ],
     ),
     "09_audit/state": (
         "审计状态数据 — SQLite DB 等运行时状态",
         [
-            ("审计报告",
-             "09_audit/reports/"),
-            ("治理规范",
-             "01_policies_and_standards/"),
-        ]
+            ("审计报告", "09_audit/reports/"),
+            ("治理规范", "01_policies_and_standards/"),
+        ],
     ),
-
     # === Level 3 ===
     "01_policies_and_standards/_registry/catalogs": (
         "脚本自动生成的 YAML 注册表（document-metadata-index.yaml / master-document-inventory.yaml / task-card-meta-registry.yaml）",
         [
-            ("手动编辑的文件",
-             "governance/ 对应子域"),
-            (".md 文件",
-             "governance/ 或 operational/"),
-        ]
+            ("手动编辑的文件", "governance/ 对应子域"),
+            (".md 文件", "governance/ 或 operational/"),
+        ],
     ),
     "01_policies_and_standards/_registry/contracts": (
         "CI 消费的 YAML 验证契约",
         [
-            (".md 文件",
-             "governance/"),
-        ]
+            (".md 文件", "governance/"),
+        ],
     ),
     "01_policies_and_standards/_registry/schemas": (
         "脚本生成的 JSON Schema（如 frontmatter-schema.json）",
         [
-            ("手动编辑的文件",
-             "governance/"),
-        ]
+            ("手动编辑的文件", "governance/"),
+        ],
     ),
     "01_policies_and_standards/_registry/vocabularies": (
         "AI 消费的 YAML 受控词表（doc_type / rule_form / status）",
         [
-            (".md 文件",
-             "governance/"),
-        ]
+            (".md 文件", "governance/"),
+        ],
     ),
     "01_policies_and_standards/operational/architecture": (
         "架构操作文档",
         [
-            ("声明式架构治理规则",
-             "01_policies_and_standards/governance/architecture/"),
-        ]
+            ("声明式架构治理规则", "01_policies_and_standards/governance/architecture/"),
+        ],
     ),
     "01_policies_and_standards/operational/devops": (
         "DevOps 操作 — pre-commit/CI/部署流程",
         [
-            ("声明式 DevOps 策略",
-             "governance/module/ 或 governance/security/"),
-        ]
+            ("声明式 DevOps 策略", "governance/module/ 或 governance/security/"),
+        ],
     ),
     "01_policies_and_standards/operational/migration": (
         "迁移操作 — 迁移审计/迁移步骤",
         [
-            ("声明式迁移策略",
-             "governance/"),
-        ]
+            ("声明式迁移策略", "governance/"),
+        ],
     ),
     "01_policies_and_standards/operational/vibe_coding": (
         "Vibe Coding 操作 — 上下文规则/session 状态机/门禁清单/事件响应",
         [
-            ("VC 声明式约束",
-             "01_policies_and_standards/governance/ 对应子域"),
-        ]
+            ("VC 声明式约束", "01_policies_and_standards/governance/ 对应子域"),
+        ],
     ),
     "01_policies_and_standards/scripts/governance": (
         "治理相关自动化脚本",
         [
-            (".md 文档",
-             "01_policies_and_standards/governance/"),
-        ]
+            (".md 文档", "01_policies_and_standards/governance/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model": (
         "架构模型 YAML — layers/（14 层层定义）、contracts/（跨层契约）、events/（领域事件）、cross-cutting/（横切）、domain/（DDD）、frontend/（前端）、scripts/（脚本）、technology/（技术栈）",
         [
-            (".md 架构视图文档",
-             "02_enterprise_architecture/target-architecture/（上层）"),
-        ]
+            (".md 架构视图文档", "02_enterprise_architecture/target-architecture/（上层）"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/by-domain": (
         "按技术领域划分的架构文档 — docs-domain/ frontend-domain/ scripts-domain/ src-domain/",
         [
-            ("架构视图（TOGAF）",
-             "02_enterprise_architecture/target-architecture/（上层）"),
-        ]
+            ("架构视图（TOGAF）", "02_enterprise_architecture/target-architecture/（上层）"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/diagrams": (
         "架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图",
         [
-            ("架构文档 .md",
-             "02_enterprise_architecture/target-architecture/（上层）"),
-        ]
+            ("架构文档 .md", "02_enterprise_architecture/target-architecture/（上层）"),
+        ],
     ),
-
     # === Level 4 ===
     "02_enterprise_architecture/target-architecture/architecture-model/contracts": (
         "跨层契约 YAML",
         [
-            ("层定义 YAML",
-             "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
-        ]
+            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/cross-cutting": (
         "横切关注点 YAML — 能力热力图、运行时不变量、运行时平面",
         [
-            ("层定义 YAML",
-             "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
-        ]
+            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/domain": (
         "DDD 领域模型 YAML",
         [
-            ("层定义 YAML",
-             "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
-        ]
+            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/events": (
         "领域事件 YAML",
         [
-            ("DDD 领域模型",
-             "02_enterprise_architecture/target-architecture/architecture-model/domain/"),
-        ]
+            ("DDD 领域模型", "02_enterprise_architecture/target-architecture/architecture-model/domain/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/frontend": (
         "前端模型 YAML",
         [
-            ("技术栈定义",
-             "02_enterprise_architecture/target-architecture/architecture-model/technology/"),
-        ]
+            ("技术栈定义", "02_enterprise_architecture/target-architecture/architecture-model/technology/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/layers": (
         "14 层层定义 YAML（l00-data-source ~ l13-experiment-pipeline + shared + _schema）",
         [
-            ("跨层契约",
-             "02_enterprise_architecture/target-architecture/architecture-model/contracts/"),
-        ]
+            ("跨层契约", "02_enterprise_architecture/target-architecture/architecture-model/contracts/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/scripts": (
         "脚本模型 YAML + 架构门禁检查脚本",
         [
-            ("治理脚本",
-             "01_policies_and_standards/scripts/"),
-        ]
+            ("治理脚本", "01_policies_and_standards/scripts/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/architecture-model/technology": (
         "技术栈 YAML — 技术全景图 + Vibe Coding 基础设施技术栈",
         [
-            ("前端技术栈",
-             "02_enterprise_architecture/target-architecture/architecture-model/frontend/"),
-        ]
+            ("前端技术栈", "02_enterprise_architecture/target-architecture/architecture-model/frontend/"),
+        ],
     ),
     "02_enterprise_architecture/target-architecture/by-domain/docs-domain": (
         "文档域架构文档",
@@ -368,75 +309,75 @@ def get_file_description(filename, dir_path) -> Optional[str]:
     """Generate a human-readable description for a file."""
     name = filename.lower()
 
-    if name.endswith('.yaml') or name.endswith('.yml'):
-        if 'registry' in name:
+    if name.endswith(".yaml") or name.endswith(".yml"):
+        if "registry" in name:
             return "YAML 注册表"
-        if 'contract' in name:
+        if "contract" in name:
             return "YAML 契约"
-        if 'schema' in name:
+        if "schema" in name:
             return "YAML Schema"
-        if 'vocabulary' in name:
+        if "vocabulary" in name:
             return "受控词表"
-        if 'inventory' in name:
+        if "inventory" in name:
             return "文档清单"
         return "YAML 结构定义"
 
-    if name.endswith('.json'):
+    if name.endswith(".json"):
         return "JSON Schema"
 
-    if name.endswith('.mmd'):
+    if name.endswith(".mmd"):
         return "Mermaid 架构图"
 
-    if name.endswith('.py'):
+    if name.endswith(".py"):
         return "Python 自动化脚本"
 
-    if name.endswith('.ps1'):
+    if name.endswith(".ps1"):
         return "PowerShell 脚本"
 
-    if name == 'readme.md':
+    if name == "readme.md":
         return "目录说明（人类可读）"
-    if name == 'index.md':
+    if name == "index.md":
         return "目录索引（AI 入口）"
-    if name.startswith('adr-'):
-        nums = name.replace('adr-', '').replace('.md', '')
+    if name.startswith("adr-"):
+        nums = name.replace("adr-", "").replace(".md", "")
         return f"架构决策记录 ADR-{nums.upper()}"
-    if name == '_template.md':
+    if name == "_template.md":
         return "ADR 模板"
-    if name == 'blueprint.md':
+    if name == "blueprint.md":
         return "模块蓝图"
-    if name == 'construction.md' or name == 'construction-plan.md':
+    if name == "construction.md" or name == "construction-plan.md":
         return "模块施工图"
-    if name.endswith('-policy.md'):
+    if name.endswith("-policy.md"):
         return "策略文档"
-    if name.endswith('-standard.md'):
+    if name.endswith("-standard.md"):
         return "标准文档"
-    if name.endswith('-protocol.md'):
+    if name.endswith("-protocol.md"):
         return "协议文档"
-    if name.endswith('-template.md'):
+    if name.endswith("-template.md"):
         return "文档模板"
-    if name.endswith('-runbook.md'):
+    if name.endswith("-runbook.md"):
         return "操作手册"
-    if name.endswith('-playbook.md'):
+    if name.endswith("-playbook.md"):
         return "操作剧本"
-    if name.endswith('-checklist.md') or name.endswith('-gate.md'):
+    if name.endswith("-checklist.md") or name.endswith("-gate.md"):
         return "门禁清单"
-    if name.endswith('-rules.md'):
+    if name.endswith("-rules.md"):
         return "规则文档"
-    if name.endswith('-declaration.md'):
+    if name.endswith("-declaration.md"):
         return "声明文档"
-    if name.endswith('-state-machine.md'):
+    if name.endswith("-state-machine.md"):
         return "状态机定义"
-    if name.endswith('-taxonomy.md'):
+    if name.endswith("-taxonomy.md"):
         return "分类法"
-    if name.endswith('-architecture.md'):
+    if name.endswith("-architecture.md"):
         return "架构视图"
-    if name.endswith('-framework.md'):
+    if name.endswith("-framework.md"):
         return "决策框架"
-    if name.endswith('-log.md'):
+    if name.endswith("-log.md"):
         return "日志"
-    if name.endswith('-map.md'):
+    if name.endswith("-map.md"):
         return "权威映射"
-    if name.endswith('-schema.md'):
+    if name.endswith("-schema.md"):
         return "Schema 定义"
 
     return "文档"
@@ -455,28 +396,34 @@ def build_index_content(rel_dir, files) -> dict:
         idx = dir_name.upper()
         desc = DOMAIN_LAYER_MAP.get(dir_name) or DOMAIN_LAYER_MAP.get(idx, "")
         if desc:
-            resp_info = (desc, [
-                ("全局规则",
-                 "01_policies_and_standards/governance/"),
-            ])
+            resp_info = (
+                desc,
+                [
+                    ("全局规则", "01_policies_and_standards/governance/"),
+                ],
+            )
 
     # Check for module layers
     if not resp_info and dir_name.startswith("l") and dir_name[1:3].isdigit():
         desc = MODULE_LAYER_MAP.get(dir_name, "")
         if desc:
-            resp_info = (desc, [
-                ("非 C 轨业务层文档",
-                 "03_modules/_b_track_interfaces/ 或 01_policies_and_standards/"),
-            ])
+            resp_info = (
+                desc,
+                [
+                    ("非 C 轨业务层文档", "03_modules/_b_track_interfaces/ 或 01_policies_and_standards/"),
+                ],
+            )
 
     # Check for bootstrap layers
     if not resp_info:
         desc = BOOTSTRAP_LAYER_MAP.get(dir_name, "")
         if desc:
-            resp_info = (desc, [
-                ("新模块施工图",
-                 "03_modules/l<NN>_<layer>/<module>/"),
-            ])
+            resp_info = (
+                desc,
+                [
+                    ("新模块施工图", "03_modules/l<NN>_<layer>/<module>/"),
+                ],
+            )
 
     # Check sub-contexts: governance/operational under domains
     if not resp_info:
@@ -484,27 +431,22 @@ def build_index_content(rel_dir, files) -> dict:
         grandparent = os.path.basename(os.path.dirname(os.path.dirname(rel_dir))) if rel_dir.count("/") >= 2 else ""
 
         if dir_name == "governance" and parent_name.startswith("L"):
-            resp_info = (f"{parent_name} 层声明式治理规则",
-                         [("过程式操作规则", f"../operational/")])
+            resp_info = (f"{parent_name} 层声明式治理规则", [("过程式操作规则", "../operational/")])
         elif dir_name == "operational" and parent_name.startswith("L"):
-            resp_info = (f"{parent_name} 层过程式操作规则",
-                         [("声明式治理规则", f"../governance/")])
+            resp_info = (f"{parent_name} 层过程式操作规则", [("声明式治理规则", "../governance/")])
 
         # 03_modules module subdirectories
         elif parent_name.startswith("l") and parent_name[1:3].isdigit():
             module_desc = dir_name.replace("-", " ").replace("_", " ")
-            resp_info = (f"{parent_name} 层模块 — {module_desc}",
-                         [("其他模块文档", f"../")])
+            resp_info = (f"{parent_name} 层模块 — {module_desc}", [("其他模块文档", "../")])
 
         # delivery subdirectories under modules
         elif dir_name == "delivery":
             mod_name = parent_name.replace("-", " ").replace("_", " ")
-            resp_info = (f"模块交付记录 — {mod_name}",
-                         [("蓝图/施工图", f"../")])
+            resp_info = (f"模块交付记录 — {mod_name}", [("蓝图/施工图", "../")])
 
     if not resp_info:
-        resp_info = (f"{display_name}",
-                     [])
+        resp_info = (f"{display_name}", [])
 
     responsibility, exclusions = resp_info
 
@@ -531,7 +473,7 @@ def build_index_content(rel_dir, files) -> dict:
         lines.append("|------|------|")
 
         # Sort: index.md first, then README.md, then others
-        priority_order = {'index.md': 0, 'readme.md': 1}
+        priority_order = {"index.md": 0, "readme.md": 1}
         sorted_files = sorted(files, key=lambda f: (priority_order.get(f.lower(), 99), f.lower()))
 
         for f in sorted_files:
@@ -560,9 +502,9 @@ def build_index_content(rel_dir, files) -> dict:
         lines.append("## 父级目录")
         lines.append("")
         if parent == ".":
-            lines.append(f"- 父级：[docs 根目录](../index.md)")
+            lines.append("- 父级：[docs 根目录](../index.md)")
         else:
-            parent_index = f"../index.md"
+            parent_index = "../index.md"
             lines.append(f"- 父级：[{parent_name}]({parent_index})")
         lines.append("")
 
@@ -572,8 +514,7 @@ def build_index_content(rel_dir, files) -> dict:
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--warn-only", action="store_true",
-                        help="warn mode: exit 0 even if findings")
+    parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
     args = parser.parse_args()
 
     created = 0
@@ -598,7 +539,7 @@ def main() -> None:
             continue
 
         # Get non-index, non-readme files for listing
-        list_files = [f for f in files if not f.lower().startswith(('.git', 'thumbs.db', 'desktop.ini'))]
+        list_files = [f for f in files if not f.lower().startswith((".git", "thumbs.db", "desktop.ini"))]
 
         content = build_index_content(rel_dir, list_files)
 
@@ -610,7 +551,7 @@ def main() -> None:
         except OSError as e:
             print(f"  ERROR: {rel_dir or 'docs/'}/index.md — {e}", file=sys.stderr)
 
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"Created: {created}")
     print(f"Skipped (already exist): {skipped}")
     print(f"Total directories: {len(all_dirs)}")

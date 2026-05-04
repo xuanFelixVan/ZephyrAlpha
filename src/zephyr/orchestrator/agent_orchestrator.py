@@ -42,20 +42,19 @@ safety_level: H
   ``HealthMonitor`` 内部的固定窗口滑动队列中。
 - **可测试**：时间源 ``now`` 与 UUID 生成器 ``id_factory`` 均可注入。
 """
+
 from __future__ import annotations
 
 import statistics
 import time
 import uuid
 from collections import deque
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from enum import Enum
 from typing import (
     Any,
-    Callable,
-    Deque,
     Literal,
-    Optional,
     Protocol,
     runtime_checkable,
 )
@@ -90,12 +89,12 @@ __all__ = [
 class AgentRole(str, Enum):
     """ADR-0032 §3 — 6 个 Agent 角色。"""
 
-    ARCHITECT = "architect"       # 架构师：蓝图/ADR/模块拆分
-    IMPLEMENTER = "implementer"   # 实施者：代码产出与修复
-    REVIEWER = "reviewer"         # 复核者：评审/CoVe/SSoT 校对
-    GOVERNOR = "governor"         # 治理官：合规/标准/审计
-    RESEARCHER = "researcher"     # 研究员：因子/策略/实验
-    OPERATOR = "operator"         # 运营员：运行/监控/回放
+    ARCHITECT = "architect"  # 架构师：蓝图/ADR/模块拆分
+    IMPLEMENTER = "implementer"  # 实施者：代码产出与修复
+    REVIEWER = "reviewer"  # 复核者：评审/CoVe/SSoT 校对
+    GOVERNOR = "governor"  # 治理官：合规/标准/审计
+    RESEARCHER = "researcher"  # 研究员：因子/策略/实验
+    OPERATOR = "operator"  # 运营员：运行/监控/回放
 
 
 class RoutingStrategy(str, Enum):
@@ -110,18 +109,78 @@ class RoutingStrategy(str, Enum):
 # ADR-0032 §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
 DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
-    AgentRole.ARCHITECT:   {"D0": 0.8, "D1": 0.4, "D2": 1.0, "D3": 0.5, "D4": 0.5,
-                             "D5": 0.4, "D6": 0.6, "D7": 0.3, "D8": 0.4, "D9": 0.3},
-    AgentRole.IMPLEMENTER: {"D0": 0.5, "D1": 0.8, "D2": 0.6, "D3": 0.7, "D4": 0.7,
-                             "D5": 0.5, "D6": 0.3, "D7": 0.4, "D8": 0.6, "D9": 1.0},
-    AgentRole.REVIEWER:    {"D0": 0.6, "D1": 0.5, "D2": 0.7, "D3": 0.6, "D4": 0.6,
-                             "D5": 0.7, "D6": 0.9, "D7": 0.5, "D8": 0.4, "D9": 0.6},
-    AgentRole.GOVERNOR:    {"D0": 0.9, "D1": 0.4, "D2": 0.5, "D3": 0.2, "D4": 0.2,
-                             "D5": 0.6, "D6": 1.0, "D7": 0.3, "D8": 0.3, "D9": 0.3},
-    AgentRole.RESEARCHER:  {"D0": 0.3, "D1": 0.7, "D2": 0.4, "D3": 1.0, "D4": 0.9,
-                             "D5": 0.5, "D6": 0.2, "D7": 0.7, "D8": 0.2, "D9": 0.3},
-    AgentRole.OPERATOR:    {"D0": 0.7, "D1": 0.6, "D2": 0.2, "D3": 0.3, "D4": 0.4,
-                             "D5": 0.7, "D6": 0.4, "D7": 1.0, "D8": 0.8, "D9": 0.8},
+    AgentRole.ARCHITECT: {
+        "D0": 0.8,
+        "D1": 0.4,
+        "D2": 1.0,
+        "D3": 0.5,
+        "D4": 0.5,
+        "D5": 0.4,
+        "D6": 0.6,
+        "D7": 0.3,
+        "D8": 0.4,
+        "D9": 0.3,
+    },
+    AgentRole.IMPLEMENTER: {
+        "D0": 0.5,
+        "D1": 0.8,
+        "D2": 0.6,
+        "D3": 0.7,
+        "D4": 0.7,
+        "D5": 0.5,
+        "D6": 0.3,
+        "D7": 0.4,
+        "D8": 0.6,
+        "D9": 1.0,
+    },
+    AgentRole.REVIEWER: {
+        "D0": 0.6,
+        "D1": 0.5,
+        "D2": 0.7,
+        "D3": 0.6,
+        "D4": 0.6,
+        "D5": 0.7,
+        "D6": 0.9,
+        "D7": 0.5,
+        "D8": 0.4,
+        "D9": 0.6,
+    },
+    AgentRole.GOVERNOR: {
+        "D0": 0.9,
+        "D1": 0.4,
+        "D2": 0.5,
+        "D3": 0.2,
+        "D4": 0.2,
+        "D5": 0.6,
+        "D6": 1.0,
+        "D7": 0.3,
+        "D8": 0.3,
+        "D9": 0.3,
+    },
+    AgentRole.RESEARCHER: {
+        "D0": 0.3,
+        "D1": 0.7,
+        "D2": 0.4,
+        "D3": 1.0,
+        "D4": 0.9,
+        "D5": 0.5,
+        "D6": 0.2,
+        "D7": 0.7,
+        "D8": 0.2,
+        "D9": 0.3,
+    },
+    AgentRole.OPERATOR: {
+        "D0": 0.7,
+        "D1": 0.6,
+        "D2": 0.2,
+        "D3": 0.3,
+        "D4": 0.4,
+        "D5": 0.7,
+        "D6": 0.4,
+        "D7": 1.0,
+        "D8": 0.8,
+        "D9": 0.8,
+    },
 }
 
 
@@ -155,7 +214,7 @@ class RouteDecision(BaseModel):
     domain: str = Field(min_length=1, description="目标域 D0-D9")
     strategy: RoutingStrategy = Field(description="使用的路由策略")
     primary_role: AgentRole = Field(description="首选角色")
-    primary_agent_id: Optional[str] = Field(default=None, description="首选 Agent 实例 ID")
+    primary_agent_id: str | None = Field(default=None, description="首选 Agent 实例 ID")
     fallback_roles: list[AgentRole] = Field(default_factory=list, description="回退角色链")
     capability_score: float = Field(ge=0.0, le=1.0, description="首选角色在该域的能力分")
     rationale: str = Field(default="", description="决策解释")
@@ -171,7 +230,7 @@ class ToolCallRecord(BaseModel):
     arguments: dict[str, Any] = Field(default_factory=dict, description="调用参数")
     success: bool = Field(description="是否成功")
     latency_ms: int = Field(ge=0, description="耗时毫秒")
-    error: Optional[str] = Field(default=None, description="失败原因")
+    error: str | None = Field(default=None, description="失败原因")
     result_preview: str = Field(default="", description="结果摘要（截断 400 字符）")
 
 
@@ -184,7 +243,7 @@ class OrchestrationResult(BaseModel):
     route: RouteDecision
     tool_calls: list[ToolCallRecord] = Field(default_factory=list)
     claim: str = Field(default="", description="最终对外 claim（用于 CoVe 后置检测）")
-    hallucination: Optional[dict[str, Any]] = Field(
+    hallucination: dict[str, Any] | None = Field(
         default=None, description="CoVe post-hook 输出（HallucinationResult.model_dump）"
     )
     success: bool = Field(description="整链是否成功")
@@ -222,9 +281,7 @@ class SLOSnapshot(BaseModel):
 class ToolInvoker(Protocol):
     """MCP 工具调用协议。生产中由 MCP client 适配；测试传 mock。"""
 
-    def __call__(
-        self, tool_name: str, arguments: dict[str, Any]
-    ) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
+    def __call__(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
 
 
@@ -233,7 +290,7 @@ class HallucinationCaller(Protocol):
     """CoVe 检测器协议。生产传 ``HallucinationDetector.detect``。"""
 
     def __call__(
-        self, claim: str, context: Optional[dict[str, Any]] = None
+        self, claim: str, context: dict[str, Any] | None = None
     ) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
 
@@ -256,8 +313,8 @@ class AgentRouter:
 
     def __init__(
         self,
-        matrix: Optional[dict[AgentRole, dict[str, float]]] = None,
-        agent_pool: Optional[list[AgentProfile]] = None,
+        matrix: dict[AgentRole, dict[str, float]] | None = None,
+        agent_pool: list[AgentProfile] | None = None,
     ) -> None:
         self._matrix = matrix or DEFAULT_ROLE_DOMAIN_MATRIX
         self._pool: list[AgentProfile] = list(agent_pool or [])
@@ -287,7 +344,7 @@ class AgentRouter:
         domain: str,
         *,
         strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCH,
-        required_role: Optional[AgentRole] = None,
+        required_role: AgentRole | None = None,
     ) -> RouteDecision:
         """按策略返回路由决策。
 
@@ -339,7 +396,7 @@ class AgentRouter:
         ranked = self._ranked_roles(domain)
         best_role = ranked[0][0]
         best_score = ranked[0][1]
-        best_agent: Optional[AgentProfile] = None
+        best_agent: AgentProfile | None = None
         best_metric = -1.0
         for role, score in ranked:
             if score <= 0.0:
@@ -361,9 +418,9 @@ class AgentRouter:
             fallback_roles=[r for r, _ in ranked[1:3] if r != best_role],
             capability_score=best_score,
             rationale=(
-                f"load_balance: score={best_score:.2f} "
-                f"util={best_agent.utilization:.2f}" if best_agent else
-                "load_balance: no-agent"
+                f"load_balance: score={best_score:.2f} " f"util={best_agent.utilization:.2f}"
+                if best_agent
+                else "load_balance: no-agent"
             ),
         )
 
@@ -406,7 +463,7 @@ class AgentRouter:
         scored.sort(key=lambda x: (-x[1], x[0].value))
         return scored
 
-    def _pick_agent(self, role: AgentRole) -> Optional[str]:
+    def _pick_agent(self, role: AgentRole) -> str | None:
         """在池中挑选一个健康且负载最低的该角色 Agent。"""
         candidates = [a for a in self._pool if a.role == role and a.healthy]
         if not candidates:
@@ -438,7 +495,7 @@ class HealthMonitor:
     DEFAULT_THRESHOLDS: dict[str, float] = {
         "latency_p99_ms": 5000.0,
         "error_rate": 0.1,
-        "throughput_per_min": 1.0,   # 最低吞吐；低于此值视为停滞
+        "throughput_per_min": 1.0,  # 最低吞吐；低于此值视为停滞
         "hallucination_rate": 0.15,
         "context_utilization": 0.9,
     }
@@ -446,9 +503,9 @@ class HealthMonitor:
     def __init__(
         self,
         window_size: int = 100,
-        thresholds: Optional[dict[str, float]] = None,
+        thresholds: dict[str, float] | None = None,
         throughput_window_sec: int = 60,
-        now: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
+        now: Callable[[], datetime] = lambda: datetime.now(UTC),
     ) -> None:
         if window_size < 1:
             raise ValueError("window_size 必须 >= 1")
@@ -456,11 +513,11 @@ class HealthMonitor:
         self._thresholds = {**self.DEFAULT_THRESHOLDS, **(thresholds or {})}
         self._throughput_window_sec = throughput_window_sec
         self._now = now
-        self._latencies: Deque[float] = deque(maxlen=window_size)
-        self._errors: Deque[int] = deque(maxlen=window_size)
-        self._hallu: Deque[int] = deque(maxlen=window_size)
-        self._ctx_util: Deque[float] = deque(maxlen=window_size)
-        self._completions: Deque[datetime] = deque(maxlen=window_size * 4)
+        self._latencies: deque[float] = deque(maxlen=window_size)
+        self._errors: deque[int] = deque(maxlen=window_size)
+        self._hallu: deque[int] = deque(maxlen=window_size)
+        self._ctx_util: deque[float] = deque(maxlen=window_size)
+        self._completions: deque[datetime] = deque(maxlen=window_size * 4)
 
     # ---- public -------------------------------------------------------
 
@@ -468,10 +525,7 @@ class HealthMonitor:
         """注入一次 orchestrate 结果，自动累计 5 项指标。"""
         self._latencies.append(float(result.latency_ms))
         self._errors.append(0 if result.success else 1)
-        is_hallu = bool(
-            result.hallucination is not None
-            and result.hallucination.get("is_hallucination")
-        )
+        is_hallu = bool(result.hallucination is not None and result.hallucination.get("is_hallucination"))
         self._hallu.append(1 if is_hallu else 0)
         if result.token_budget > 0:
             self._ctx_util.append(result.token_used / result.token_budget)
@@ -484,9 +538,7 @@ class HealthMonitor:
         latency_p99 = self._percentile(list(self._latencies), 99) if self._latencies else 0.0
         error_rate = (sum(self._errors) / len(self._errors)) if self._errors else 0.0
         hallu_rate = (sum(self._hallu) / len(self._hallu)) if self._hallu else 0.0
-        ctx_util = (
-            sum(self._ctx_util) / len(self._ctx_util) if self._ctx_util else 0.0
-        )
+        ctx_util = sum(self._ctx_util) / len(self._ctx_util) if self._ctx_util else 0.0
         throughput = self._recent_throughput_per_min()
         healthy = self._evaluate_healthy(latency_p99, error_rate, throughput, hallu_rate, ctx_util)
         return SLOSnapshot(
@@ -566,8 +618,6 @@ class HealthMonitor:
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 
 
-
-
 class AgentOrchestrator:
     """Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。
 
@@ -596,12 +646,12 @@ class AgentOrchestrator:
         self,
         router: AgentRouter,
         *,
-        tool_invoker: Optional[ToolInvoker] = None,
-        hallucination_caller: Optional[HallucinationCaller] = None,
-        directive_mapping: Optional[dict[str, list[tuple[str, dict[str, Any]]]]] = None,
-        monitor: Optional[HealthMonitor] = None,
+        tool_invoker: ToolInvoker | None = None,
+        hallucination_caller: HallucinationCaller | None = None,
+        directive_mapping: dict[str, list[tuple[str, dict[str, Any]]]] | None = None,
+        monitor: HealthMonitor | None = None,
         now: Callable[[], datetime] = default_now,
-        id_factory: Optional[Callable[[], str]] = None,
+        id_factory: Callable[[], str] | None = None,
         default_token_budget: int = 8000,
     ) -> None:
         self._router = router
@@ -631,12 +681,12 @@ class AgentOrchestrator:
         domain: str,
         directive_chain: str,
         claim: str = "",
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
         strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCH,
-        required_role: Optional[AgentRole] = None,
+        required_role: AgentRole | None = None,
         token_used: int = 0,
-        token_budget: Optional[int] = None,
-        task_id: Optional[str] = None,
+        token_budget: int | None = None,
+        task_id: str | None = None,
     ) -> OrchestrationResult:
         """对一个 directive 链执行 MCP 工具编排 + CoVe post-hook。
 
@@ -663,9 +713,7 @@ class AgentOrchestrator:
         """
         started = time.perf_counter()
         t_id = task_id or self._id_factory()
-        route = self._router.route(
-            domain, strategy=strategy, required_role=required_role
-        )
+        route = self._router.route(domain, strategy=strategy, required_role=required_role)
         calls: list[ToolCallRecord] = []
         errors: list[str] = []
         chain_ok = True
@@ -698,7 +746,7 @@ class AgentOrchestrator:
         budget = token_budget if token_budget is not None else self._default_budget
         latency_ms = int((time.perf_counter() - started) * 1000)
 
-        hallu_payload: Optional[dict[str, Any]] = None
+        hallu_payload: dict[str, Any] | None = None
         if claim and self._cove is not None:
             hallu_payload = self._cove(claim, context or {})
 
@@ -719,9 +767,7 @@ class AgentOrchestrator:
 
     # ---- internal -----------------------------------------------------
 
-    def _invoke_tool(
-        self, directive: str, tool_name: str, arguments: dict[str, Any]
-    ) -> ToolCallRecord:
+    def _invoke_tool(self, directive: str, tool_name: str, arguments: dict[str, Any]) -> ToolCallRecord:
         """调用一次 MCP 工具；invoker=None 或抛错都返回失败记录。"""
         started = time.perf_counter()
         if self._invoker is None:
@@ -745,7 +791,7 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 result_preview=preview,
             )
-        except Exception as exc:  # noqa: BLE001 — 工具错误必须被收敛
+        except Exception as exc:  # — 工具错误必须被收敛
             elapsed = int((time.perf_counter() - started) * 1000)
             return ToolCallRecord(
                 directive=directive,

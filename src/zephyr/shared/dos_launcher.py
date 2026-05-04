@@ -19,12 +19,12 @@ Each directive file has a frontmatter with:
 
 Output: DOSResult with directives_loaded, execution_log, compliance.
 """
+
 from __future__ import annotations
 
 import os
 import re
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -134,12 +134,12 @@ class DOSLauncher:
 
     def __init__(
         self,
-        directive_dir: Optional[Path] = None,
+        directive_dir: Path | None = None,
     ) -> None:
         self._directive_dir = directive_dir or _DIRECTIVE_DIR
         self._cache: dict[str, DirectiveInfo] = {}
 
-    def load_directive(self, directive_id: str) -> Optional[DirectiveInfo]:
+    def load_directive(self, directive_id: str) -> DirectiveInfo | None:
         if directive_id in self._cache:
             return self._cache[directive_id]
 

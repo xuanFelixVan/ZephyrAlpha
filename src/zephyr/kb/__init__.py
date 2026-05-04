@@ -24,4 +24,5 @@ Phase 3 计划整合入 vector_memory/ (VMS)。
 注意：本包当前 bounded_context: false——直接暴露所有模块供
 orchestrator/ + l12/ 消费，不设受限边界。
 """
+
 from __future__ import annotations

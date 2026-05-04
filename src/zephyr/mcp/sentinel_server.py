@@ -21,10 +21,11 @@ sentinel_server.py 对应 tool_contracts.yaml 中的 intent_router server。
 - intent_router.reload_keywords   — 热加载关键词词典
 - intent_router.evaluate_golden_set — 黄金集评测
 """
+
 from __future__ import annotations
 
 import time
-from typing import Any, Optional
+from typing import Any
 
 from zephyr.mcp._base_server import BaseMCPServer, MCPError
 
@@ -210,8 +211,8 @@ class SentinelServer(BaseMCPServer):
 
     def _reload_keywords(
         self,
-        source_file: Optional[str] = None,
-        keyword_dict: Optional[dict[str, Any]] = None,
+        source_file: str | None = None,
+        keyword_dict: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """热加载关键词词典（骨架：支持直接传入 dict 或从文件读取）。"""
         if keyword_dict is not None:
@@ -233,7 +234,7 @@ class SentinelServer(BaseMCPServer):
     def _evaluate_golden_set(
         self,
         max_stage: int = 1,
-        sample_size: Optional[int] = None,
+        sample_size: int | None = None,
     ) -> dict[str, Any]:
         """在黄金评测集上运行评测，返回 top-1 accuracy 等指标。"""
         t0 = time.perf_counter()

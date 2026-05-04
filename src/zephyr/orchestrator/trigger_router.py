@@ -33,19 +33,20 @@ Phase 1d 起始集（5 种 trigger_type）
 - **失败即跳过**：所有失败路径返回 ``RouterDispatchResult(success=False, skipped=True)``
 - **可注入测试**：``handlers`` 参数允许直接注入 callable 字典，绕过 YAML/import
 """
+
 from __future__ import annotations
 
 import importlib
 import logging
-from threading import RLock
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Optional
-
-from pydantic import BaseModel, ConfigDict, Field
+from threading import RLock
+from typing import Any
 
 import yaml
+from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = [
     "TriggerSafety",
@@ -66,7 +67,7 @@ __all__ = [
 ]
 
 _logger = logging.getLogger(__name__)
-_UTC = timezone.utc
+_UTC = UTC
 
 # ---------------------------------------------------------------------------
 # 路径常量
@@ -129,11 +130,11 @@ class RouterDispatchResult(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     trigger_type: str = Field(min_length=1)
-    handler_path: Optional[str] = Field(default=None)
+    handler_path: str | None = Field(default=None)
     success: bool = Field(default=False)
     skipped: bool = Field(default=False, description="True 表示路由未匹配 / disabled / import 失败")
     skip_reason: str = Field(default="", description="跳过原因，便于审计追踪")
-    error: Optional[str] = Field(default=None, description="异常信息（成功时为 None）")
+    error: str | None = Field(default=None, description="异常信息（成功时为 None）")
     handler_result: Any = Field(default=None, description="处理器返回值（透传）")
     dispatched_at: str = Field(default="", description="UTC ISO 8601 分派时间")
     latency_ms: int = Field(default=0, ge=0)
@@ -145,7 +146,7 @@ class RouterDispatchResult(BaseModel):
 
 
 def load_router_config(
-    path: Optional[Path] = None,
+    path: Path | None = None,
 ) -> dict[str, TriggerHandlerSpec]:
     """从 ``config/trigger_router.yaml`` 加载触发器规格字典。
 
@@ -171,31 +172,25 @@ def load_router_config(
     try:
         with resolved.open(encoding="utf-8") as fh:
             data = yaml.safe_load(fh) or {}
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise TriggerRouterConfigError(f"YAML parse failed: {exc}") from exc
 
     triggers_raw = data.get("triggers")
     if not isinstance(triggers_raw, dict):
-        raise TriggerRouterConfigError(
-            "trigger_router.yaml 必须包含顶层 'triggers' 映射"
-        )
+        raise TriggerRouterConfigError("trigger_router.yaml 必须包含顶层 'triggers' 映射")
 
     specs: dict[str, TriggerHandlerSpec] = {}
     for trigger_type, raw in triggers_raw.items():
         if not isinstance(trigger_type, str) or not trigger_type.strip():
-            raise TriggerRouterConfigError(
-                f"trigger_type 必须为非空字符串，实际：{trigger_type!r}"
-            )
+            raise TriggerRouterConfigError(f"trigger_type 必须为非空字符串，实际：{trigger_type!r}")
         if not isinstance(raw, dict):
             raise TriggerRouterConfigError(
                 f"trigger_type='{trigger_type}' 的规格必须为映射，实际：{type(raw).__name__}"
             )
         try:
             specs[trigger_type] = TriggerHandlerSpec(**raw)
-        except Exception as exc:  # noqa: BLE001
-            raise TriggerRouterConfigError(
-                f"trigger_type='{trigger_type}' 规格非法：{exc}"
-            ) from exc
+        except Exception as exc:
+            raise TriggerRouterConfigError(f"trigger_type='{trigger_type}' 规格非法：{exc}") from exc
 
     return specs
 
@@ -229,9 +224,9 @@ class TriggerRouter:
 
     def __init__(
         self,
-        config_path: Optional[Path] = None,
+        config_path: Path | None = None,
         *,
-        handlers: Optional[dict[str, Callable[..., Any]]] = None,
+        handlers: dict[str, Callable[..., Any]] | None = None,
         audit_logger: Any | None = None,
         session_id: str = "",
         model: str = "M3:trigger_router",
@@ -268,9 +263,7 @@ class TriggerRouter:
             except TriggerRouterConfigError as exc:
                 if not self._injected_handlers:
                     raise
-                _logger.warning(
-                    "TriggerRouter YAML 加载失败但已注入 handlers，继续运行：%s", exc
-                )
+                _logger.warning("TriggerRouter YAML 加载失败但已注入 handlers，继续运行：%s", exc)
             self._specs = specs
 
             for ttype, fn in self._injected_handlers.items():
@@ -304,7 +297,7 @@ class TriggerRouter:
         with self._lock:
             return list(self._specs.keys())
 
-    def get_spec(self, trigger_type: str) -> Optional[TriggerHandlerSpec]:
+    def get_spec(self, trigger_type: str) -> TriggerHandlerSpec | None:
         """返回指定 trigger_type 的规格；不存在返回 None。"""
         with self._lock:
             return self._specs.get(trigger_type)
@@ -316,7 +309,7 @@ class TriggerRouter:
     # 处理器解析
     # ------------------------------------------------------------------
 
-    def _resolve_handler(self, trigger_type: str, spec: TriggerHandlerSpec) -> Optional[Callable[..., Any]]:
+    def _resolve_handler(self, trigger_type: str, spec: TriggerHandlerSpec) -> Callable[..., Any] | None:
         """按优先级解析处理器：注入字典 → import 字符串。失败返回 None。"""
         with self._lock:
             cached = self._resolved_handlers.get(trigger_type)
@@ -365,9 +358,9 @@ class TriggerRouter:
     def dispatch(
         self,
         trigger_type: str,
-        payload: Optional[dict[str, Any]] = None,
+        payload: dict[str, Any] | None = None,
         *,
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
         **context: Any,
     ) -> RouterDispatchResult:
         """根据 trigger_type 分派到处理器。
@@ -441,7 +434,7 @@ class TriggerRouter:
 
         try:
             handler_result = handler(payload, **context)
-        except Exception as exc:  # noqa: BLE001 — 处理器异常必须被收敛
+        except Exception as exc:  # — 处理器异常必须被收敛
             result = self._build_result(
                 trigger_type=trigger_type,
                 handler_path=spec.handler,
@@ -476,11 +469,11 @@ class TriggerRouter:
         self,
         *,
         trigger_type: str,
-        handler_path: Optional[str],
+        handler_path: str | None,
         success: bool,
         skipped: bool,
         skip_reason: str,
-        error: Optional[str],
+        error: str | None,
         handler_result: Any,
         started: datetime,
     ) -> RouterDispatchResult:
@@ -532,7 +525,7 @@ class TriggerRouter:
                     model=self._model,
                     extra=extra,
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 _logger.warning("TriggerRouter audit log 写入失败：%s", exc)
 
         _logger.info(
@@ -550,13 +543,13 @@ class TriggerRouter:
 
 
 _singleton_lock = RLock()
-_singleton_router: Optional[TriggerRouter] = None
+_singleton_router: TriggerRouter | None = None
 
 
 def get_trigger_router(
     *,
-    config_path: Optional[Path] = None,
-    handlers: Optional[dict[str, Callable[..., Any]]] = None,
+    config_path: Path | None = None,
+    handlers: dict[str, Callable[..., Any]] | None = None,
     audit_logger: Any | None = None,
     session_id: str = "",
     reset: bool = False,
@@ -632,7 +625,6 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
     对标 Codified Context (arXiv 2602.20478) §3.1.1 Orchestration Protocols。
     """
     import fnmatch
-    from pathlib import Path as _Path
 
     routing_yaml_path = REPO_ROOT / "config" / "blueprint_routing.yaml"
     if not routing_yaml_path.exists():
@@ -644,7 +636,7 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
         }
 
     try:
-        with open(routing_yaml_path, "r", encoding="utf-8") as fh:
+        with open(routing_yaml_path, encoding="utf-8") as fh:
             routing_config = yaml.safe_load(fh)
     except Exception as exc:
         _logger.error("failed to load blueprint_routing.yaml: %s", exc)
@@ -696,13 +688,15 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
 
     matched = []
     for _, _, route in scored:
-        matched.append({
-            "blueprint_id": route["blueprint_id"],
-            "blueprint_level": route.get("blueprint_level", "module"),
-            "route_id": route.get("route_id", ""),
-            "score": route.get("priority", 50),
-            "description": route.get("description", ""),
-        })
+        matched.append(
+            {
+                "blueprint_id": route["blueprint_id"],
+                "blueprint_level": route.get("blueprint_level", "module"),
+                "route_id": route.get("route_id", ""),
+                "score": route.get("priority", 50),
+                "description": route.get("description", ""),
+            }
+        )
 
     return {
         "matched": matched,

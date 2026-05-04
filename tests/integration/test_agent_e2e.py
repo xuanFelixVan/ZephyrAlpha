@@ -6,23 +6,21 @@ Health Monitor 集成、幻觉检测 post-hook、端到端通过率 ≥ 80%。
 
 最少测试：15 条。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState, SLOConfig
+from zephyr.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
 from zephyr.orchestrator.agent_orchestrator import (
-    DEFAULT_ROLE_DOMAIN_MATRIX,
     AgentOrchestrator,
     AgentProfile,
     AgentRole,
     AgentRouter,
-    HealthMonitor,
     OrchestrationResult,
     RouteDecision,
     RoutingStrategy,
@@ -33,6 +31,7 @@ def _ok_invoker(log: list[tuple[str, dict[str, Any]]]):
     def _invoke(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         log.append((tool_name, arguments))
         return {"ok": True, "tool": tool_name}
+
     return _invoke
 
 
@@ -92,10 +91,14 @@ class TestAgentRouterRouting:
         router = AgentRouter()
         for i in range(6):
             role = list(AgentRole)[i]
-            router.register(AgentProfile(
-                agent_id=f"agent-{i}", role=role,
-                current_load=i, max_load=5,
-            ))
+            router.register(
+                AgentProfile(
+                    agent_id=f"agent-{i}",
+                    role=role,
+                    current_load=i,
+                    max_load=5,
+                )
+            )
         decision = router.route("D6", strategy=RoutingStrategy.LOAD_BALANCE)
         assert decision.primary_agent_id is not None
 
@@ -186,11 +189,15 @@ class TestHealthMonitorIntegration:
             result = OrchestrationResult(
                 task_id="T-E2E",
                 route=RouteDecision(
-                    domain="D0", strategy=RoutingStrategy.CAPABILITY_MATCH,
-                    primary_role=AgentRole.GOVERNOR, capability_score=0.9,
+                    domain="D0",
+                    strategy=RoutingStrategy.CAPABILITY_MATCH,
+                    primary_role=AgentRole.GOVERNOR,
+                    capability_score=0.9,
                 ),
-                success=True, latency_ms=100,
-                token_used=6000, token_budget=8000,
+                success=True,
+                latency_ms=100,
+                token_used=6000,
+                token_budget=8000,
             )
             ahm.record(result)
         status = ahm.evaluate()
@@ -202,11 +209,15 @@ class TestHealthMonitorIntegration:
             result = OrchestrationResult(
                 task_id="T-E2E",
                 route=RouteDecision(
-                    domain="D0", strategy=RoutingStrategy.CAPABILITY_MATCH,
-                    primary_role=AgentRole.GOVERNOR, capability_score=0.9,
+                    domain="D0",
+                    strategy=RoutingStrategy.CAPABILITY_MATCH,
+                    primary_role=AgentRole.GOVERNOR,
+                    capability_score=0.9,
                 ),
-                success=True, latency_ms=3500,
-                token_used=5000, token_budget=8000,
+                success=True,
+                latency_ms=3500,
+                token_used=5000,
+                token_budget=8000,
             )
             ahm.record(result)
         status = ahm.evaluate()
@@ -226,9 +237,7 @@ class TestHallucinationPostHook:
             directive_mapping=MAPPING,
             hallucination_caller=_cove_pass,
         )
-        res = orch.orchestrate(
-            domain="D6", directive_chain="325", claim="Valid claim"
-        )
+        res = orch.orchestrate(domain="D6", directive_chain="325", claim="Valid claim")
         assert res.hallucination is not None
         assert res.hallucination["is_hallucination"] is False
         assert res.success is True
@@ -240,9 +249,7 @@ class TestHallucinationPostHook:
             directive_mapping=MAPPING,
             hallucination_caller=_cove_fail,
         )
-        res = orch.orchestrate(
-            domain="D6", directive_chain="325", claim="Suspicious claim"
-        )
+        res = orch.orchestrate(domain="D6", directive_chain="325", claim="Suspicious claim")
         assert res.hallucination is not None
         assert res.hallucination["is_hallucination"] is True
         assert res.success is False

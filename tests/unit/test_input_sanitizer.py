@@ -18,13 +18,11 @@
 
 Task: T-1-23 | Safety: HIGH | Phase 1
 """
+
 from __future__ import annotations
 
 import pytest
-
 from zephyr.llm_security.input_sanitizer import (
-    ALLOWED_COMMANDS,
-    ALLOWED_WRITE_DIRS,
     CommandInjectionError,
     InputSanitizer,
     PathTraversalError,
@@ -93,13 +91,16 @@ class TestValidatePathTraversal:
             sanitizer.validate_path("tmp/evil.py", mode="write")
 
     @pytest.mark.security
-    @pytest.mark.parametrize("dangerous", [
-        "docs/a;b.md",
-        "docs/a&b.md",
-        "docs/a|b.md",
-        "docs/a`b.md",
-        "docs/a$b.md",
-    ])
+    @pytest.mark.parametrize(
+        "dangerous",
+        [
+            "docs/a;b.md",
+            "docs/a&b.md",
+            "docs/a|b.md",
+            "docs/a`b.md",
+            "docs/a$b.md",
+        ],
+    )
     def test_dangerous_shell_characters(self, sanitizer, dangerous):
         with pytest.raises(PathTraversalError, match="Dangerous pattern"):
             sanitizer.validate_path(dangerous)

@@ -24,6 +24,7 @@ failure_count 归零、opened_at/reason 清空。
 重置所有 OPEN 熔断器：
     python scripts/governance/cbg_reset.py --reset-all
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,11 +36,12 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 _warn_only = "--warn-only" in sys.argv
@@ -53,9 +55,7 @@ except ImportError as e:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="CBG 熔断器重置 CLI（仅 Owner 可执行）"
-    )
+    parser = argparse.ArgumentParser(description="CBG 熔断器重置 CLI（仅 Owner 可执行）")
     parser.add_argument(
         "--caller",
         type=str,
@@ -79,7 +79,8 @@ def main() -> None:
         help="重置所有 OPEN 状态的熔断器",
     )
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="警告模式：操作失败不阻塞（exit 0）",
     )
     args = parser.parse_args()
@@ -97,7 +98,7 @@ def main() -> None:
                 f"failures={rec.failure_count}  "
                 f"opened_at={rec.opened_at}  "
                 f"reason={rec.reason}",
-                file=sys.stderr
+                file=sys.stderr,
             )
         sys.exit(0)
 
@@ -121,8 +122,11 @@ def main() -> None:
         if args.warn_only:
             print("[cbg_reset] --warn-only 模式：无操作指定，正常退出", file=sys.stderr)
             sys.exit(0)
-        print("[cbg_reset] 无操作指定——请使用 --list 查看、--reset-all 批量重置，或 --caller/--target 指定单个熔断器", file=sys.stderr)
-        print(f"  当前状态: 无 OPEN 熔断器（系统正常）", file=sys.stderr)
+        print(
+            "[cbg_reset] 无操作指定——请使用 --list 查看、--reset-all 批量重置，或 --caller/--target 指定单个熔断器",
+            file=sys.stderr,
+        )
+        print("  当前状态: 无 OPEN 熔断器（系统正常）", file=sys.stderr)
         sys.exit(0)
 
     with CBGManager() as mgr:
@@ -132,9 +136,8 @@ def main() -> None:
             sys.exit(0)
         if record.state != CircuitBreakerState.OPEN:
             print(
-                f"[cbg_reset] {args.caller} → {args.target} "
-                f"当前状态={record.state.value}，非 OPEN 无需重置",
-                file=sys.stderr
+                f"[cbg_reset] {args.caller} → {args.target} " f"当前状态={record.state.value}，非 OPEN 无需重置",
+                file=sys.stderr,
             )
             sys.exit(0)
         ok = mgr.reset(args.caller, args.target)

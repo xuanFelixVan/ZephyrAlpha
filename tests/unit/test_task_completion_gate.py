@@ -3,11 +3,10 @@ Unit tests for task_completion_gate.py (T-2-25, C52)
 =====================================================
 Minimum: 5 tests
 """
+
 from __future__ import annotations
 
 from pathlib import Path
-
-import pytest
 
 from zephyr.gates.task_completion_gate import (
     Disposition,

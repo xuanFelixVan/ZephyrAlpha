@@ -38,17 +38,19 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 单实例使用 threading.RLock 串行化写操作；读操作直接执行（WAL 允许并发读）。
 与 ADR-0030 §4.5 "单 Writer 假设"一致。
 """
+
 from __future__ import annotations
 
 import json
 import sqlite3
-from threading import RLock
 import uuid
+from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterator, Optional
+from threading import RLock
 
+from zephyr.core.models import TaskCard
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.gates.gate_engine import (
     GATES_DIR,
@@ -56,8 +58,7 @@ from zephyr.gates.gate_engine import (
     GateResult,
     GateViolationError,
 )
-from zephyr.core.models import TaskCard
-from zephyr.shared.schemas import Priority, SafetyLevel, Task, TaskNamespace, TaskStatus
+from zephyr.shared.schemas import Task, TaskNamespace, TaskStatus
 from zephyr.shared.time_utils import now_iso
 
 __all__ = [
@@ -94,32 +95,59 @@ class InvalidTransitionError(TaskRepositoryError):
 # ---------------------------------------------------------------------------
 
 _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
-    TaskStatus.PENDING: frozenset({
-        TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.CANCELLED,
-    }),
-    TaskStatus.IN_PROGRESS: frozenset({
-        TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.BLOCKED, TaskStatus.WAITING,
-    }),
-    TaskStatus.COMPLETED: frozenset({
-        TaskStatus.VERIFIED, TaskStatus.IN_PROGRESS,
-    }),
-    TaskStatus.VERIFIED: frozenset(),        # 终态
-    TaskStatus.FAILED: frozenset({
-        TaskStatus.RETRY, TaskStatus.CANCELLED,
-    }),
-    TaskStatus.BLOCKED: frozenset({
-        TaskStatus.READY, TaskStatus.CANCELLED,
-    }),
-    TaskStatus.WAITING: frozenset({
-        TaskStatus.READY, TaskStatus.CANCELLED,
-    }),
-    TaskStatus.READY: frozenset({
-        TaskStatus.IN_PROGRESS, TaskStatus.CANCELLED,
-    }),
-    TaskStatus.RETRY: frozenset({
-        TaskStatus.IN_PROGRESS, TaskStatus.FAILED,
-    }),
-    TaskStatus.CANCELLED: frozenset(),       # 终态
+    TaskStatus.PENDING: frozenset(
+        {
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.BLOCKED,
+            TaskStatus.CANCELLED,
+        }
+    ),
+    TaskStatus.IN_PROGRESS: frozenset(
+        {
+            TaskStatus.COMPLETED,
+            TaskStatus.FAILED,
+            TaskStatus.BLOCKED,
+            TaskStatus.WAITING,
+        }
+    ),
+    TaskStatus.COMPLETED: frozenset(
+        {
+            TaskStatus.VERIFIED,
+            TaskStatus.IN_PROGRESS,
+        }
+    ),
+    TaskStatus.VERIFIED: frozenset(),  # 终态
+    TaskStatus.FAILED: frozenset(
+        {
+            TaskStatus.RETRY,
+            TaskStatus.CANCELLED,
+        }
+    ),
+    TaskStatus.BLOCKED: frozenset(
+        {
+            TaskStatus.READY,
+            TaskStatus.CANCELLED,
+        }
+    ),
+    TaskStatus.WAITING: frozenset(
+        {
+            TaskStatus.READY,
+            TaskStatus.CANCELLED,
+        }
+    ),
+    TaskStatus.READY: frozenset(
+        {
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.CANCELLED,
+        }
+    ),
+    TaskStatus.RETRY: frozenset(
+        {
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.FAILED,
+        }
+    ),
+    TaskStatus.CANCELLED: frozenset(),  # 终态
 }
 
 
@@ -131,7 +159,7 @@ def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool
 # 工具函数
 # ---------------------------------------------------------------------------
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 def now_iso() -> str:
@@ -149,11 +177,24 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 52 字段）。"""
     d = dict(row)
     _json_array_fields = (
-        "files_in_scope", "deliverables", "acceptance", "depends_on", "tags",
-        "upstream_files", "downstream_outputs", "allowed_touch", "forbidden_touch",
-        "applicable_rules", "context_assembly_manifest", "completed_gates",
-        "pipeline_modules", "blocked_by", "artifact_paths", "audit_findings",
-        "ke_entries", "autonomy_checklist",
+        "files_in_scope",
+        "deliverables",
+        "acceptance",
+        "depends_on",
+        "tags",
+        "upstream_files",
+        "downstream_outputs",
+        "allowed_touch",
+        "forbidden_touch",
+        "applicable_rules",
+        "context_assembly_manifest",
+        "completed_gates",
+        "pipeline_modules",
+        "blocked_by",
+        "artifact_paths",
+        "audit_findings",
+        "ke_entries",
+        "autonomy_checklist",
     )
     for field in _json_array_fields:
         raw = d.get(field, "[]")
@@ -206,11 +247,11 @@ class TaskRepository:
 
     def __init__(
         self,
-        db_path: Optional[Path | str] = None,
+        db_path: Path | str | None = None,
         *,
         auto_init: bool = True,
-        gate_dir: Optional[Path | str] = None,
-        project_root: Optional[Path | str] = None,
+        gate_dir: Path | str | None = None,
+        project_root: Path | str | None = None,
         enable_gate: bool = True,
     ) -> None:
         self._db_path: Path = Path(db_path) if db_path is not None else DB_PATH
@@ -220,7 +261,7 @@ class TaskRepository:
         self._conn: sqlite3.Connection = get_db_connection(self._db_path)
         self._enable_gate = enable_gate
         if enable_gate:
-            self._gate_engine: Optional[GateEngine] = GateEngine(
+            self._gate_engine: GateEngine | None = GateEngine(
                 gate_dir=gate_dir if gate_dir is not None else GATES_DIR,
                 db_path=self._db_path,
                 project_root=project_root,
@@ -239,7 +280,7 @@ class TaskRepository:
             self._gate_engine.close()
         self._conn.close()
 
-    def __enter__(self) -> "TaskRepository":
+    def __enter__(self) -> TaskRepository:
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
@@ -266,8 +307,8 @@ class TaskRepository:
         conn: sqlite3.Connection,
         event_type: str,
         payload: dict[str, object],
-        task_id: Optional[str] = None,
-        session_id: Optional[str] = None,
+        task_id: str | None = None,
+        session_id: str | None = None,
     ) -> None:
         """在同一事务连接中写入 events 表。"""
         conn.execute(
@@ -290,18 +331,16 @@ class TaskRepository:
     # 内部：tasks 行读取
     # ------------------------------------------------------------------
 
-    def _fetch_row(
-        self, conn: sqlite3.Connection, task_id: str
-    ) -> Optional[sqlite3.Row]:
+    def _fetch_row(self, conn: sqlite3.Connection, task_id: str) -> sqlite3.Row | None:
         cursor = conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,))
-        result: Optional[sqlite3.Row] = cursor.fetchone()
+        result: sqlite3.Row | None = cursor.fetchone()
         return result
 
     # ------------------------------------------------------------------
     # CREATE
     # ------------------------------------------------------------------
 
-    def create(self, task: Task, *, files: Optional[list[dict[str, str]]] = None) -> TaskCard:
+    def create(self, task: Task, *, files: list[dict[str, str]] | None = None) -> TaskCard:
         """
         插入新任务。task_id 已存在时抛 sqlite3.IntegrityError。
 
@@ -391,11 +430,15 @@ class TaskRepository:
                     "allowed_touch": json.dumps(getattr(task, "allowed_touch", []), ensure_ascii=False),
                     "forbidden_touch": json.dumps(getattr(task, "forbidden_touch", []), ensure_ascii=False),
                     "applicable_rules": json.dumps(getattr(task, "applicable_rules", []), ensure_ascii=False),
-                    "context_assembly_manifest": json.dumps(getattr(task, "context_assembly_manifest", []), ensure_ascii=False),
+                    "context_assembly_manifest": json.dumps(
+                        getattr(task, "context_assembly_manifest", []), ensure_ascii=False
+                    ),
                     "rollback_instructions": getattr(task, "rollback_instructions", ""),
                     "estimated_tokens": getattr(task, "estimated_tokens", 0),
                     "timeout_minutes": getattr(task, "timeout_minutes", 0),
-                    "completed_gates": json.dumps(getattr(task, "completed_gates", []), ensure_ascii=False, default=str),
+                    "completed_gates": json.dumps(
+                        getattr(task, "completed_gates", []), ensure_ascii=False, default=str
+                    ),
                     "blocked_gates": json.dumps(getattr(task, "blocked_gates", {}), ensure_ascii=False),
                     "assigned_pipeline": getattr(task, "assigned_pipeline", ""),
                     "pipeline_modules": json.dumps(getattr(task, "pipeline_modules", []), ensure_ascii=False),
@@ -430,7 +473,7 @@ class TaskRepository:
     # READ
     # ------------------------------------------------------------------
 
-    def get(self, task_id: str) -> Optional[TaskCard]:
+    def get(self, task_id: str) -> TaskCard | None:
         """按 task_id 查询，不存在返回 None。"""
         cursor = self._conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,))
         row = cursor.fetchone()
@@ -451,16 +494,16 @@ class TaskRepository:
         self,
         task_id: str,
         *,
-        title: Optional[str] = None,
-        session_id: Optional[str] = None,
-        waiting_for: Optional[str] = None,
-        estimate_hours: Optional[float] = None,
-        actual_hours: Optional[float] = None,
-        deliverables: Optional[list[str]] = None,
-        acceptance: Optional[list[str]] = None,
-        files_in_scope: Optional[list[str]] = None,
-        tags: Optional[list[str]] = None,
-        model_rationale: Optional[str] = None,
+        title: str | None = None,
+        session_id: str | None = None,
+        waiting_for: str | None = None,
+        estimate_hours: float | None = None,
+        actual_hours: float | None = None,
+        deliverables: list[str] | None = None,
+        acceptance: list[str] | None = None,
+        files_in_scope: list[str] | None = None,
+        tags: list[str] | None = None,
+        model_rationale: str | None = None,
     ) -> TaskCard:
         """
         更新非状态字段。不触发状态机校验，也不写 state_transition 事件。
@@ -505,7 +548,7 @@ class TaskRepository:
             set_clause = ", ".join(f"{col} = ?" for col, _ in updates)
             values = [v for _, v in updates]
             conn.execute(
-                f"UPDATE tasks SET {set_clause} WHERE task_id = ?",  # noqa: S608
+                f"UPDATE tasks SET {set_clause} WHERE task_id = ?",
                 (*values, task_id),
             )
             updated_row = self._fetch_row(conn, task_id)
@@ -521,9 +564,9 @@ class TaskRepository:
         task_id: str,
         to_status: TaskStatus | str,
         *,
-        session_id: Optional[str] = None,
-        waiting_for: Optional[str] = None,
-        note: Optional[str] = None,
+        session_id: str | None = None,
+        waiting_for: str | None = None,
+        note: str | None = None,
     ) -> Task:
         """
         执行状态机转换。
@@ -551,18 +594,12 @@ class TaskRepository:
 
         # G1 门禁检查在事务外执行，避免两个连接同时争抢 BEGIN IMMEDIATE
         # （GateEngine 持有独立 SQLite 连接，需先完成写入再开启 task_repo 事务）
-        gate_result: Optional[GateResult] = None
-        if (
-            to_status == TaskStatus.IN_PROGRESS
-            and self._enable_gate
-            and self._gate_engine is not None
-        ):
+        gate_result: GateResult | None = None
+        if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
             # 先读任务对象（读操作不加锁）
             pre_conn = get_db_connection(self._db_path)
             pre_conn.row_factory = sqlite3.Row
-            pre_row = pre_conn.execute(
-                "SELECT * FROM tasks WHERE task_id = ?", (task_id,)
-            ).fetchone()
+            pre_row = pre_conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,)).fetchone()
             pre_conn.close()
             if pre_row is not None:
                 task_obj = _row_to_taskcard(pre_row)
@@ -577,9 +614,7 @@ class TaskRepository:
 
             from_status = TaskStatus(row["status"])
             if not _is_valid_transition(from_status, to_status):
-                raise InvalidTransitionError(
-                    f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
-                )
+                raise InvalidTransitionError(f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）")
 
             now = now_iso()
             set_ready_at = to_status == TaskStatus.READY
@@ -686,9 +721,7 @@ class TaskRepository:
     # task_files 读写（#21 裁定：N:N 映射）
     # ------------------------------------------------------------------
 
-    def add_file(
-        self, task_id: str, file_path: str, role: str = "in_scope"
-    ) -> None:
+    def add_file(self, task_id: str, file_path: str, role: str = "in_scope") -> None:
         """为任务添加文件映射。role 可选 primary/in_scope/output。"""
         with self._write_tx() as conn:
             conn.execute(
@@ -746,16 +779,14 @@ class TaskRepository:
 
     def count_by_status(self) -> dict[str, int]:
         """按状态统计任务数量。"""
-        cursor = self._conn.execute(
-            "SELECT status, COUNT(*) AS cnt FROM tasks GROUP BY status"
-        )
+        cursor = self._conn.execute("SELECT status, COUNT(*) AS cnt FROM tasks GROUP BY status")
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
     # ------------------------------------------------------------------
     # UPSERT（Phase 0 批量补录）
     # ------------------------------------------------------------------
 
-    def upsert(self, task: Task, *, files: Optional[list[dict[str, str]]] = None) -> Task:
+    def upsert(self, task: Task, *, files: list[dict[str, str]] | None = None) -> Task:
         """
         INSERT OR REPLACE 语义：task_id 已存在则全量覆盖，否则新建。
 
@@ -835,11 +866,15 @@ class TaskRepository:
                     "allowed_touch": json.dumps(getattr(task, "allowed_touch", []), ensure_ascii=False),
                     "forbidden_touch": json.dumps(getattr(task, "forbidden_touch", []), ensure_ascii=False),
                     "applicable_rules": json.dumps(getattr(task, "applicable_rules", []), ensure_ascii=False),
-                    "context_assembly_manifest": json.dumps(getattr(task, "context_assembly_manifest", []), ensure_ascii=False),
+                    "context_assembly_manifest": json.dumps(
+                        getattr(task, "context_assembly_manifest", []), ensure_ascii=False
+                    ),
                     "rollback_instructions": getattr(task, "rollback_instructions", ""),
                     "estimated_tokens": getattr(task, "estimated_tokens", 0),
                     "timeout_minutes": getattr(task, "timeout_minutes", 0),
-                    "completed_gates": json.dumps(getattr(task, "completed_gates", []), ensure_ascii=False, default=str),
+                    "completed_gates": json.dumps(
+                        getattr(task, "completed_gates", []), ensure_ascii=False, default=str
+                    ),
                     "blocked_gates": json.dumps(getattr(task, "blocked_gates", {}), ensure_ascii=False),
                     "assigned_pipeline": getattr(task, "assigned_pipeline", ""),
                     "pipeline_modules": json.dumps(getattr(task, "pipeline_modules", []), ensure_ascii=False),

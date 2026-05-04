@@ -15,10 +15,8 @@ SSoT: cross-layer-contracts.yaml + ADR index + governance structure
 from __future__ import annotations
 
 import json
-import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPTS_DIR.parents[1] / ""
@@ -28,10 +26,8 @@ if not REPO_ROOT.exists():
 
 import yaml
 
-
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
 )
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context_engine/architecture_context.json"
@@ -56,7 +52,7 @@ LAYER_NAMES = {
 
 def main() -> None:
     context = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "version": "3.0",
         "schema": "zephyr-alpha-architecture-context/v1",
     }
@@ -98,11 +94,7 @@ def _extract_contracts_summary(context: dict) -> None:
             "frozen": ctr.get("frozen", False),
             "stability": ctr.get("stability", ""),
             "description_summary": ctr.get("description", "")[:120],
-            "key_fields": [
-                f["name"]
-                for f in ctr.get("fields", [])
-                if f.get("required", False)
-            ][:5],
+            "key_fields": [f["name"] for f in ctr.get("fields", []) if f.get("required", False)][:5],
             "has_sla": "sla" in ctr,
             "has_ai_prompt": "ai_prompt" in ctr,
         }
@@ -118,20 +110,20 @@ def _extract_contracts_summary(context: dict) -> None:
         "total": len(contracts),
         "p0": p0_list,
         "p1": p1_list,
-        "version_negotiation_rules": [
-            r["text"] for r in neg.get("rules", [])
-        ],
+        "version_negotiation_rules": [r["text"] for r in neg.get("rules", [])],
     }
 
 
 def _extract_layer_summary(context: dict) -> None:
     layers: list[dict] = []
     for key, name in LAYER_NAMES.items():
-        layers.append({
-            "id": key,
-            "name": name,
-            "order": int(key[1:]),
-        })
+        layers.append(
+            {
+                "id": key,
+                "name": name,
+                "order": int(key[1:]),
+            }
+        )
     context["layers"] = layers
 
 
@@ -151,11 +143,13 @@ def _extract_adr_summary(context: dict) -> None:
                 title = stripped[2:].strip()
             if stripped.startswith("status:") or stripped.startswith("Status:"):
                 status = stripped.split(":", 1)[-1].strip()
-        adrs.append({
-            "id": md_file.stem,
-            "title": title[:100],
-            "status": status,
-        })
+        adrs.append(
+            {
+                "id": md_file.stem,
+                "title": title[:100],
+                "status": status,
+            }
+        )
 
     context["adrs"] = adrs
 
@@ -170,11 +164,13 @@ def _extract_governance_rules(context: dict) -> None:
         for md_file in sorted(domain_dir.glob("*.md")):
             content = md_file.read_text(encoding="utf-8", errors="replace")
             rule_count = sum(1 for line in content.split("\n") if line.strip().startswith("- "))
-            rules.append({
-                "domain": domain_dir.name,
-                "file": md_file.name,
-                "rules_approx": rule_count,
-            })
+            rules.append(
+                {
+                    "domain": domain_dir.name,
+                    "file": md_file.name,
+                    "rules_approx": rule_count,
+                }
+            )
 
     context["governance"] = {
         "domains": len({r["domain"] for r in rules}),

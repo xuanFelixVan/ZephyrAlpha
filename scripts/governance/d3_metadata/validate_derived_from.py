@@ -34,8 +34,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import GOV_DOCS_DIR
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
@@ -97,10 +98,7 @@ def check_dim1_field_registry() -> None:
                 f"（应标注 derived_from: '_registry/vocabularies/{VOCAB_FIELD_MAP[fname]}'）"
             )
         elif not derived.endswith(VOCAB_FIELD_MAP[fname]):
-            _warn(
-                f"DIM-1 field_registry.{fname}: derived_from='{derived}' "
-                f"未指向 {VOCAB_FIELD_MAP[fname]}"
-            )
+            _warn(f"DIM-1 field_registry.{fname}: derived_from='{derived}' " f"未指向 {VOCAB_FIELD_MAP[fname]}")
 
 
 def check_dim2_arch_contract() -> None:
@@ -130,10 +128,7 @@ def check_dim2_arch_contract() -> None:
                 f"（应标注 derived_from: '_registry/vocabularies/{VOCAB_FIELD_MAP[fname]}'）"
             )
         elif not derived.endswith(VOCAB_FIELD_MAP[fname]):
-            _warn(
-                f"DIM-2 arch_contract.{fname}: derived_from='{derived}' "
-                f"未指向 {VOCAB_FIELD_MAP[fname]}"
-            )
+            _warn(f"DIM-2 arch_contract.{fname}: derived_from='{derived}' " f"未指向 {VOCAB_FIELD_MAP[fname]}")
 
 
 def check_dim3_schema_json() -> None:
@@ -142,7 +137,7 @@ def check_dim3_schema_json() -> None:
         _warn("DIM-3: frontmatter-schema.json 不存在")
         return
     try:
-        with open(SCHEMA_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(SCHEMA_JSON_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         _err(f"DIM-3: 无法加载 frontmatter-schema.json: {e}")
@@ -167,9 +162,7 @@ def check_dim4_derived_from_exists() -> None:
     for fname, vocab_file in VOCAB_FIELD_MAP.items():
         vocab_path = VOCAB_DIR / vocab_file
         if not vocab_path.exists():
-            _err(
-                f"DIM-4: {fname} 的 vocabulary 文件不存在: {vocab_path}"
-            )
+            _err(f"DIM-4: {fname} 的 vocabulary 文件不存在: {vocab_path}")
 
 
 def check_dim5_vocab_contains_field() -> None:
@@ -186,10 +179,7 @@ def check_dim5_vocab_contains_field() -> None:
             continue
         vocab_name = data.get("vocabulary_name", "")
         if vocab_name != fname:
-            _warn(
-                f"DIM-5 {vocab_file}: vocabulary_name='{vocab_name}' "
-                f"与期望的字段名 '{fname}' 不匹配"
-            )
+            _warn(f"DIM-5 {vocab_file}: vocabulary_name='{vocab_name}' " f"与期望的字段名 '{fname}' 不匹配")
         values = data.get("values", [])
         if not values:
             _warn(f"DIM-5 {vocab_file}: values 列表为空")

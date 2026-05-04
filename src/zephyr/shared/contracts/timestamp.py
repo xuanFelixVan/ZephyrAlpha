@@ -33,11 +33,9 @@ ZephyrAlpha — shared/contracts/timestamp.py
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Union
+from datetime import datetime
 
 import pandas as pd
-
 
 # ═══════════════════════════════════════════════════════════════════
 # 统一类型别名
@@ -64,6 +62,7 @@ Timestamp = pd.Timestamp
 # 异常类
 # ═══════════════════════════════════════════════════════════════════
 
+
 class NaiveDatetimeError(ValueError):
     """
     试图使用 naive datetime（无 tzinfo）时抛出。
@@ -75,6 +74,7 @@ class NaiveDatetimeError(ValueError):
 # ═══════════════════════════════════════════════════════════════════
 # 工厂函数
 # ═══════════════════════════════════════════════════════════════════
+
 
 def utcnow() -> Timestamp:
     """
@@ -95,7 +95,7 @@ def utcnow() -> Timestamp:
     return pd.Timestamp.now(tz="UTC")
 
 
-def ensure_utc(ts: Union[Timestamp, datetime, str, int, float]) -> Timestamp:
+def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
     """
     将任意合法时间输入转为 UTC tz-aware Timestamp。
 
@@ -147,9 +147,9 @@ def ensure_utc(ts: Union[Timestamp, datetime, str, int, float]) -> Timestamp:
         if ts.tz is None:
             # pandas 允许 naive Timestamp，但系统禁止；这里按 UTC 补全并告警
             import warnings
+
             warnings.warn(
-                f"收到 naive pd.Timestamp: {ts!r}，已按 UTC 补全时区。"
-                " 请在调用方显式附加时区，避免时区歧义。",
+                f"收到 naive pd.Timestamp: {ts!r}，已按 UTC 补全时区。" " 请在调用方显式附加时区，避免时区歧义。",
                 stacklevel=2,
             )
             return ts.tz_localize("UTC")
@@ -165,6 +165,7 @@ def ensure_utc(ts: Union[Timestamp, datetime, str, int, float]) -> Timestamp:
 # 便捷工具（可选使用）
 # ═══════════════════════════════════════════════════════════════════
 
+
 def to_local(ts: Timestamp, tz: str) -> Timestamp:
     """
     将 UTC Timestamp 转为本地时区（仅用于展示，不用于存储）。
@@ -175,9 +176,7 @@ def to_local(ts: Timestamp, tz: str) -> Timestamp:
         >>> to_local(utc_ts, "America/New_York")  # 纽约时间
     """
     if ts.tz is None:
-        raise NaiveDatetimeError(
-            f"to_local 的输入必须 tz-aware，收到 naive Timestamp: {ts!r}"
-        )
+        raise NaiveDatetimeError(f"to_local 的输入必须 tz-aware，收到 naive Timestamp: {ts!r}")
     return ts.tz_convert(tz)
 
 

@@ -12,11 +12,12 @@
 
 使用真实 gate YAML（src/zephyr/gates/g1~g5.yaml）。
 """
+
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -238,9 +239,7 @@ class TestGateBlockingE2E:
         assert exc_info.value.result.summary().startswith("[FAIL]")
         repo.close()
 
-    def test_multiple_deprecated_deliverables_all_blocked(
-        self, tmp_path: Path
-    ) -> None:
+    def test_multiple_deprecated_deliverables_all_blocked(self, tmp_path: Path) -> None:
         """多个废弃路径交付物时，所有违规均被记录。"""
         repo = _make_repo(tmp_path, "multi_dep.db")
         task = _make_task(
@@ -263,9 +262,7 @@ class TestGateBlockingE2E:
 class TestGateDegradation:
     """P1/P2 级别违规不阻断任务启动，但记录到 violations。"""
 
-    def test_crlf_file_p1_warning_allows_in_progress(
-        self, tmp_path: Path
-    ) -> None:
+    def test_crlf_file_p1_warning_allows_in_progress(self, tmp_path: Path) -> None:
         """G1-C03 line_ending 为 warning(P1)：CRLF 文件不阻断任务，状态正常更新。"""
         crlf_file = tmp_path / "crlf_output.md"
         frontmatter = (
@@ -285,9 +282,7 @@ class TestGateDegradation:
         assert updated.status == TaskStatus.IN_PROGRESS
         repo.close()
 
-    def test_p1_violation_recorded_in_gate_result(
-        self, engine: GateEngine, tmp_path: Path
-    ) -> None:
+    def test_p1_violation_recorded_in_gate_result(self, engine: GateEngine, tmp_path: Path) -> None:
         """G1 evaluate：CRLF 触发 P1 警告，其余检查均通过 → passed=True。"""
         crlf_file = tmp_path / "crlf_check.md"
         # frontmatter 用 LF，body 用 CRLF（仅 line_ending 触发 P1，无 P0）
@@ -301,18 +296,14 @@ class TestGateDegradation:
         assert any(v.severity == "P1" for v in result.violations)
         assert any("CRLF" in v.message for v in result.violations)
 
-    def test_only_p0_causes_gate_failure(
-        self, engine: GateEngine, tmp_path: Path
-    ) -> None:
+    def test_only_p0_causes_gate_failure(self, engine: GateEngine, tmp_path: Path) -> None:
         """有 P1/P2 违规时 passed=True；只有 P0 违规时 passed=False。"""
         engine._project_root = tmp_path
         task = _make_task("ADR-112", deliverables=["nonexistent_file.md"])
         result = engine.evaluate(task, "G1")
         assert result.passed is True
 
-    def test_gate_result_summary_pass_tag(
-        self, engine: GateEngine
-    ) -> None:
+    def test_gate_result_summary_pass_tag(self, engine: GateEngine) -> None:
         """G1 evaluate：无 P0 违规时 summary() 以 [PASS] 开头。"""
         task = _make_task("ADR-113")
         result = engine.evaluate(task, "G1")
@@ -333,9 +324,7 @@ class TestG1ToG5ViaEngine:
         assert isinstance(result, GateResult)
         assert result.gate_id == "G1"
 
-    def test_g2_evaluate_blocks_empty_file(
-        self, engine: GateEngine, tmp_path: Path
-    ) -> None:
+    def test_g2_evaluate_blocks_empty_file(self, engine: GateEngine, tmp_path: Path) -> None:
         """G2-C00 content_quality: 空文件被 G2 拦截（P0）。"""
         empty = tmp_path / "empty.md"
         empty.write_bytes(b"")
@@ -343,9 +332,7 @@ class TestG1ToG5ViaEngine:
         result = engine.evaluate(_make_task("ADR-115", ["empty.md"]), "G2")
         assert result.passed is False
 
-    def test_g2_evaluate_rich_content_passes(
-        self, engine: GateEngine, tmp_path: Path
-    ) -> None:
+    def test_g2_evaluate_rich_content_passes(self, engine: GateEngine, tmp_path: Path) -> None:
         """G2-C00 content_quality: 内容丰富的文件通过 G2。"""
         rich = tmp_path / "rich.md"
         rich.write_bytes(("# Title\n\n" + "内容。" * 30).encode("utf-8"))
@@ -371,9 +358,7 @@ class TestG1ToG5ViaEngine:
         assert isinstance(result, GateResult)
         assert result.gate_id == "G5"
 
-    def test_unknown_gate_raises_engine_error(
-        self, engine: GateEngine
-    ) -> None:
+    def test_unknown_gate_raises_engine_error(self, engine: GateEngine) -> None:
         """非法 gate_id 抛出 GateEngineError。"""
         with pytest.raises(GateEngineError, match="未知 gate_id"):
             engine.evaluate(_make_task("ADR-120"), "G99")
@@ -387,9 +372,7 @@ class TestG1ToG5ViaEngine:
 class TestRollbackAndIntegration:
     """门禁失败后 task 状态保持不变（rollback 语义）。"""
 
-    def test_task_status_stays_pending_after_gate_failure(
-        self, tmp_path: Path
-    ) -> None:
+    def test_task_status_stays_pending_after_gate_failure(self, tmp_path: Path) -> None:
         """G1 失败后，task 状态仍为 PENDING（未发生状态机写入）。"""
         repo = _make_repo(tmp_path, "rb_pending.db")
         task = _make_task("ADR-121", deliverables=["_legacy/bad.md"])
@@ -401,9 +384,7 @@ class TestRollbackAndIntegration:
         assert task_after.status == TaskStatus.PENDING
         repo.close()
 
-    def test_gate_result_written_to_db_on_failure(
-        self, tmp_path: Path
-    ) -> None:
+    def test_gate_result_written_to_db_on_failure(self, tmp_path: Path) -> None:
         """G1 失败时，GateResult 写入 gates 表（持久化记录）。"""
         db_path = tmp_path / "rb_db_fail.db"
         init_db(db_path)
@@ -425,9 +406,7 @@ class TestRollbackAndIntegration:
         assert len(rows) >= 1
         assert any("G1" in (row["gate_id"] or "") for row in rows)
 
-    def test_gate_result_written_to_db_on_success(
-        self, tmp_path: Path
-    ) -> None:
+    def test_gate_result_written_to_db_on_success(self, tmp_path: Path) -> None:
         """G1 通过时，GateResult 也写入 gates 表。"""
         db_path = tmp_path / "rb_db_pass.db"
         init_db(db_path)
@@ -446,9 +425,7 @@ class TestRollbackAndIntegration:
         repo.close()
         assert len(rows) >= 1
 
-    def test_ready_to_in_progress_also_triggers_g1(
-        self, tmp_path: Path
-    ) -> None:
+    def test_ready_to_in_progress_also_triggers_g1(self, tmp_path: Path) -> None:
         """READY → IN_PROGRESS 同样触发 G1 检查（任意到 IN_PROGRESS 均触发）。"""
         repo = _make_repo(tmp_path, "ready_ip.db")
         bom_file = tmp_path / "bom_ready.md"
@@ -464,9 +441,7 @@ class TestRollbackAndIntegration:
         assert exc_info.value.result.passed is False
         repo.close()
 
-    def test_multiple_tasks_independent_gate_checks(
-        self, tmp_path: Path
-    ) -> None:
+    def test_multiple_tasks_independent_gate_checks(self, tmp_path: Path) -> None:
         """多个 task 独立执行 G1 检查，互不影响。"""
         repo = _make_repo(tmp_path, "multi_ind.db")
         clean_task = _make_task("ADR-125", deliverables=["src/clean.py"])
@@ -485,9 +460,7 @@ class TestRollbackAndIntegration:
         assert c125_after.status == TaskStatus.IN_PROGRESS
         repo.close()
 
-    def test_no_event_written_on_gate_failure(
-        self, tmp_path: Path
-    ) -> None:
+    def test_no_event_written_on_gate_failure(self, tmp_path: Path) -> None:
         """G1 失败时，events 表不写入 state_transition 事件（事务未提交）。"""
         db_path = tmp_path / "no_event.db"
         init_db(db_path)

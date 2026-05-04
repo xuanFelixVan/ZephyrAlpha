@@ -23,13 +23,13 @@ safety_level: H
 5. TestEvalHarnessBuilders         — 每个 build_*_cases 的独立契约
 6. TestEvalHarnessDefaultCases     — 默认 30 用例集成 PASS
 """
+
 from __future__ import annotations
 
 import json
 from typing import Any
 
 import pytest
-
 from zephyr.feedback_loop.eval_harness import (
     CATEGORIES,
     CATEGORY_EVOLUTION,
@@ -44,7 +44,6 @@ from zephyr.feedback_loop.eval_harness import (
     build_intent_cases,
     build_orchestrator_cases,
 )
-
 
 # ---------------------------------------------------------------------------
 # 1. Case count / distribution
@@ -102,9 +101,7 @@ class TestEvalHarnessExecution:
         def bad() -> EvalOutcome:
             raise RuntimeError("boom")
 
-        h = EvalHarness(
-            [EvalCase("BAD-01", CATEGORY_INTENT, "intentional crash", bad)]
-        )
+        h = EvalHarness([EvalCase("BAD-01", CATEGORY_INTENT, "intentional crash", bad)])
         report = h.run_all()
         assert report.failed == 1
         assert report.cases[0].error is not None
@@ -218,9 +215,7 @@ class TestEvalHarnessJSON:
         report = EvalHarness.build_default().run_all()
         data: dict[str, Any] = json.loads(EvalHarness.to_json(report))
         assert len(data["cases"]) == 30
-        assert {"case_id", "category", "passed", "expected", "actual", "latency_ms"}.issubset(
-            data["cases"][0].keys()
-        )
+        assert {"case_id", "category", "passed", "expected", "actual", "latency_ms"}.issubset(data["cases"][0].keys())
 
     def test_to_json_by_category_shape(self) -> None:
         report = EvalHarness.build_default().run_all()

@@ -25,11 +25,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 YAML_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
 )
 
 TYPE_MAP = {
@@ -79,9 +77,7 @@ class TestContractYamlPythonConsistency:
             physical = ctr.get("physical_path", "")
             py_file = REPO_ROOT / physical
             if not py_file.exists():
-                violations.append(
-                    f"{ctr['id']}: Python 文件不存在 — {physical}"
-                )
+                violations.append(f"{ctr['id']}: Python 文件不存在 — {physical}")
         if violations:
             pytest.fail("\n".join(violations))
 
@@ -105,10 +101,7 @@ class TestContractYamlPythonConsistency:
                 py_fields = {f.name for f in dataclasses.fields(cls)}
                 for yaml_field in ctr.get("fields", []):
                     if yaml_field["name"] not in py_fields:
-                        violations.append(
-                            f"{ctr['id']}.{yaml_field['name']}: "
-                            f"YAML 中有但 Python 中无此字段"
-                        )
+                        violations.append(f"{ctr['id']}.{yaml_field['name']}: " f"YAML 中有但 Python 中无此字段")
             except Exception as e:
                 violations.append(f"{ctr['id']}: 加载 Python 失败 — {e}")
 
@@ -145,8 +138,7 @@ class TestContractYamlPythonConsistency:
                             )
                             if has_default:
                                 violations.append(
-                                    f"{ctr['id']}.{yaml_field['name']}: "
-                                    f"YAML 标记 required=true 但 Python 有默认值"
+                                    f"{ctr['id']}.{yaml_field['name']}: " f"YAML 标记 required=true 但 Python 有默认值"
                                 )
             except Exception:
                 pass

@@ -16,12 +16,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -62,13 +62,15 @@ def scan_deprecated_overdue() -> list[dict]:
         days = (datetime.now() - dep_date).days
         if days >= ARCHIVE_THRESHOLD_DAYS:
             rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-            findings.append({
-                "file": rel,
-                "module_id": fm.get("module_id", ""),
-                "days": days,
-                "date": str(date_str),
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "module_id": fm.get("module_id", ""),
+                    "days": days,
+                    "date": str(date_str),
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """scan deprecated overdue."""
@@ -88,7 +90,7 @@ def main() -> None:
             print(f"  [{f['severity']}] {f['module_id']} ({f['file']})", file=sys.stderr)
             print(f"    已废弃 {f['days']} 天（日期: {f['date']}）", file=sys.stderr)
     else:
-        print(f"[DEPR-OVERDUE] 无超期废弃文件", file=sys.stderr)
+        print("[DEPR-OVERDUE] 无超期废弃文件", file=sys.stderr)
 
     if args.warn_only:
         sys.exit(0)

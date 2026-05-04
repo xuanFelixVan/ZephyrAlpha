@@ -4,15 +4,13 @@ Unit tests for intent_keyword_mapper.py (T-2-21)
 Coverage: IntentResult, IntentKeywordMapper, _tokenize
 Minimum: 10 tests
 """
+
 from __future__ import annotations
 
 import pytest
-
 from zephyr.context_engine.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,
-    _DOMAIN_KEYWORDS,
-    _DIRECTIVE_MAP,
     _tokenize,
 )
 

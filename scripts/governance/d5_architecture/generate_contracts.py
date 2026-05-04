@@ -22,30 +22,28 @@ Safety: 覆盖已有文件时显示 diff，dry-run 模式不写入磁盘
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / "_shared").exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
 import argparse
+
 import yaml
 
-
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
 )
 
-_TYPE_IMPORTS: Dict[str, str] = {
+_TYPE_IMPORTS: dict[str, str] = {
     "datetime": "from datetime import datetime",
     "Decimal": "from decimal import Decimal",
     "UUID": "from uuid import UUID",
@@ -87,9 +85,9 @@ def _import_to_module(import_line: str) -> str:
     return module
 
 
-def _extract_type_tokens(type_str: str) -> List[str]:
+def _extract_type_tokens(type_str: str) -> list[str]:
     """_extract_type_tokens implementation."""
-    tokens: List[str] = []
+    tokens: list[str] = []
     for token in type_str.replace("[", " ").replace("]", " ").replace(",", " ").split():
         token = token.strip()
         if token and token not in ("Optional", "List", "Dict", "str", "int", "float", "bool"):
@@ -97,7 +95,7 @@ def _extract_type_tokens(type_str: str) -> List[str]:
     return tokens
 
 
-def _collect_imports(fields: List[dict], physical_path: str = "") -> List[str]:
+def _collect_imports(fields: list[dict], physical_path: str = "") -> list[str]:
     """_collect_imports implementation."""
     global DT_FACTORY_NEEDED
     DT_FACTORY_NEEDED = False
@@ -122,13 +120,9 @@ def _collect_imports(fields: List[dict], physical_path: str = "") -> List[str]:
             DT_FACTORY_NEEDED = True
 
     base_types = {
-        t for t in types_needed
-        if "typing" not in t and "decimal" not in t and "datetime" not in t and "uuid" not in t
+        t for t in types_needed if "typing" not in t and "decimal" not in t and "datetime" not in t and "uuid" not in t
     }
-    stdlib_types = {
-        t for t in types_needed
-        if "typing" in t or "decimal" in t or "datetime" in t or "uuid" in t
-    }
+    stdlib_types = {t for t in types_needed if "typing" in t or "decimal" in t or "datetime" in t or "uuid" in t}
 
     imports = list(_STANDARD_IMPORTS)
     if stdlib_types:
@@ -191,7 +185,7 @@ def _format_default(field: dict) -> str:
     elif base_type in ("List", "Dict") or base_type.startswith("List[") or base_type.startswith("Dict["):
         return " = field(default_factory=list)" if "List" in base_type else " = field(default_factory=dict)"
     elif base_type == "datetime":
-        return ' = field(default_factory=lambda: datetime.now(timezone.utc))'
+        return " = field(default_factory=lambda: datetime.now(timezone.utc))"
     elif base_type not in _STANDARD_TYPES:
         if isinstance(default, str):
             return f" = {base_type}.{default}"
@@ -219,27 +213,27 @@ def _generate_file_header(
     filename = Path(physical_path).name
 
     header = [
-        '# ---',
-        '# layer: cross_cutting',
-        '# category: data_contract',
-        '# status: auto_generated',
-        f'# created: "{datetime.now(timezone.utc).strftime("%Y-%m-%d")}"',
-        '# generated_by: codegen from cross-layer-contracts.yaml',
-        '# ---',
+        "# ---",
+        "# layer: cross_cutting",
+        "# category: data_contract",
+        "# status: auto_generated",
+        f'# created: "{datetime.now(UTC).strftime("%Y-%m-%d")}"',
+        "# generated_by: codegen from cross-layer-contracts.yaml",
+        "# ---",
         '"""',
-        f'ZephyrAlpha — shared/contracts/{filename}',
-        '',
-        f'{contract_id}: {contract_name}',
-        '',
+        f"ZephyrAlpha — shared/contracts/{filename}",
+        "",
+        f"{contract_id}: {contract_name}",
+        "",
         description,
-        '',
-        f'SSoT: cross-layer-contracts.yaml → {contract_id}',
-        f'Version: {schema_version}',
-        'Status: AUTO-GENERATED — DO NOT EDIT BY HAND',
-        '       Any manual changes will be overwritten by codegen.',
-        '',
-        'AI Prompt',
-        '---------',
+        "",
+        f"SSoT: cross-layer-contracts.yaml → {contract_id}",
+        f"Version: {schema_version}",
+        "Status: AUTO-GENERATED — DO NOT EDIT BY HAND",
+        "       Any manual changes will be overwritten by codegen.",
+        "",
+        "AI Prompt",
+        "---------",
     ]
 
     for line in _format_ai_prompt(ai_prompt).split("\n"):
@@ -253,7 +247,7 @@ def _generate_dataclass(
     contract_id: str,
     contract_name: str,
     is_frozen: bool,
-    fields: List[dict],
+    fields: list[dict],
 ) -> str:
     """_generate_dataclass implementation."""
     class_name = contract_name.split(" / ")[0].strip()
@@ -293,7 +287,7 @@ CODGEN_BEGIN = "# ==== BEGIN CODGEN:{contract_id} ===="
 CODGEN_END = "# ==== END CODGEN:{contract_id} ===="
 
 
-def generate_contract_file(ctr: dict, dry_run: bool = False) -> Optional[str]:
+def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     """Generate output from input data."""
     physical = ctr.get("physical_path", "")
     if not physical:
@@ -307,39 +301,38 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> Optional[str]:
     is_frozen = ctr.get("frozen", True)
     fields = ctr.get("fields", [])
 
-    fields = sorted(fields, key=lambda f: (
-        0 if f.get("required", False) is True else (
-            1 if "default" in f else 2
-        ),
-    ))
+    fields = sorted(fields, key=lambda f: (0 if f.get("required", False) is True else (1 if "default" in f else 2),))
 
     imports = _collect_imports(fields, physical)
 
     header = _generate_file_header(
-        contract_id, contract_name, description,
-        schema_version, ai_prompt, physical,
+        contract_id,
+        contract_name,
+        description,
+        schema_version,
+        ai_prompt,
+        physical,
     )
 
     dataclass_code = _generate_dataclass(
-        contract_id, contract_name, is_frozen, fields,
+        contract_id,
+        contract_name,
+        is_frozen,
+        fields,
     )
 
     generated_block = "\n".join(imports[2:]) + "\n" + header + dataclass_code + "\n"
     begin_marker = CODGEN_BEGIN.format(contract_id=contract_id)
     end_marker = CODGEN_END.format(contract_id=contract_id)
-    wrapped_content = (
-        f"{begin_marker}\n"
-        f"{generated_block}\n"
-        f"{end_marker}\n"
-    )
+    wrapped_content = f"{begin_marker}\n" f"{generated_block}\n" f"{end_marker}\n"
 
     output_path = REPO_ROOT / physical
 
     if output_path.exists():
         existing = output_path.read_text(encoding="utf-8")
         if begin_marker in existing and end_marker in existing:
-            before = existing[:existing.index(begin_marker)]
-            after = existing[existing.index(end_marker) + len(end_marker):]
+            before = existing[: existing.index(begin_marker)]
+            after = existing[existing.index(end_marker) + len(end_marker) :]
             final_content = before + wrapped_content + after
         else:
             pre_existing = _extract_hand_maintained(existing, begin_marker)
@@ -387,7 +380,13 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
             continue
         if stripped.startswith("# ---"):
             continue
-        if stripped.startswith("# layer:") or stripped.startswith("# category:") or stripped.startswith("# status:") or stripped.startswith("# created:") or stripped.startswith("# generated_by:"):
+        if (
+            stripped.startswith("# layer:")
+            or stripped.startswith("# category:")
+            or stripped.startswith("# status:")
+            or stripped.startswith("# created:")
+            or stripped.startswith("# generated_by:")
+        ):
             continue
         if stripped.startswith('"""') or stripped.startswith("ZephyrAlpha"):
             in_enum = False
@@ -400,16 +399,16 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
     return "\n".join(result).rstrip() + "\n"
 
 
-def generate_directory_init(directory: Path, module_names: List[str], dry_run: bool = False) -> None:
+def generate_directory_init(directory: Path, module_names: list[str], dry_run: bool = False) -> None:
     """Generate output from input data."""
     init_file = directory / "__init__.py"
     init_lines = [
         '"""',
-        f'Auto-generated contracts package — {directory.name}',
-        '',
-        'Generated by: scripts/governance/d5_architecture/generate_contracts.py',
+        f"Auto-generated contracts package — {directory.name}",
+        "",
+        "Generated by: scripts/governance/d5_architecture/generate_contracts.py",
         '"""',
-        '',
+        "",
     ]
     for name in sorted(module_names):
         init_lines.append(f"from .{name} import *  # noqa: F403")
@@ -440,7 +439,7 @@ def main() -> None:
     generated_count = 0
     skipped_count = 0
 
-    subdir_modules: Dict[str, List[str]] = {}
+    subdir_modules: dict[str, list[str]] = {}
 
     for ctr in contracts:
         cid = ctr.get("id", "")

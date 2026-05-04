@@ -15,17 +15,18 @@ G5 Extract 门禁 — 知识升格（T-2-13-E）
 
 Safety : M
 """
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GateEngine, GateResult, GATES_DIR
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.schemas import Task, TaskStatus
 
@@ -60,16 +61,16 @@ EXTRACTION_TEMPLATES = {
 
 _KE_PATTERN = re.compile(r"KE-(\d{3,})")
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
 class ExtractResult:
     passed: bool
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
     extract_type: str = ""
-    target_path: Optional[Path] = None
-    adr_path: Optional[Path] = None
+    target_path: Path | None = None
+    adr_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
 
@@ -78,9 +79,9 @@ class ExtractGate:
     def __init__(
         self,
         kb_root: Path,
-        gate_engine: Optional[GateEngine] = None,
-        kb_repo: Optional[KbRepo] = None,
-        adr_dir: Optional[Path] = None,
+        gate_engine: GateEngine | None = None,
+        kb_repo: KbRepo | None = None,
+        adr_dir: Path | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._lessons_dir = kb_root / LESSONS_DIR_NAME
@@ -134,22 +135,16 @@ class ExtractGate:
 
         extracted_content = self._extract_fields(text, template["fields"])
 
-        target_path: Optional[Path] = None
-        adr_path: Optional[Path] = None
+        target_path: Path | None = None
+        adr_path: Path | None = None
 
         if extract_type == "lesson_learned":
-            target_path = self._write_to_lessons(
-                ke_id, fm, extracted_content, text
-            )
+            target_path = self._write_to_lessons(ke_id, fm, extracted_content, text)
         elif extract_type == "design_decision":
-            target_path = self._write_to_best_practices(
-                ke_id, fm, extracted_content, text
-            )
+            target_path = self._write_to_best_practices(ke_id, fm, extracted_content, text)
             adr_path = self._write_adr(ke_id, fm, extracted_content)
         else:
-            target_path = self._write_to_best_practices(
-                ke_id, fm, extracted_content, text
-            )
+            target_path = self._write_to_best_practices(ke_id, fm, extracted_content, text)
 
         if self._kb_repo is not None and ke_id:
             try:
@@ -168,16 +163,26 @@ class ExtractGate:
             details={"template_fields": template["fields"]},
         )
 
-    def _determine_extract_type(
-        self, category: str, classification: str, text: str
-    ) -> str:
+    def _determine_extract_type(self, category: str, classification: str, text: str) -> str:
         lesson_keywords = [
-            "教训", "踩坑", "修复", "根因", "postmortem",
-            "lesson", "pitfall", "fix", "root cause", "incident",
+            "教训",
+            "踩坑",
+            "修复",
+            "根因",
+            "postmortem",
+            "lesson",
+            "pitfall",
+            "fix",
+            "root cause",
+            "incident",
         ]
         design_keywords = [
-            "ADR", "设计决策", "架构决策", "技术选型",
-            "design decision", "architecture decision",
+            "ADR",
+            "设计决策",
+            "架构决策",
+            "技术选型",
+            "design decision",
+            "architecture decision",
         ]
 
         text_lower = text.lower()
@@ -215,9 +220,7 @@ class ExtractGate:
 
         return max_num + 1
 
-    def _extract_fields(
-        self, text: str, fields: list[str]
-    ) -> dict[str, str]:
+    def _extract_fields(self, text: str, fields: list[str]) -> dict[str, str]:
         body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
         result: dict[str, str] = {}
 
@@ -285,7 +288,7 @@ class ExtractGate:
         ke_id: str,
         fm: dict[str, Any],
         extracted: dict[str, str],
-    ) -> Optional[Path]:
+    ) -> Path | None:
         if self._adr_dir is None:
             return None
 
@@ -332,7 +335,7 @@ class ExtractGate:
 
         return "\n".join(parts)
 
-    def _parse_frontmatter(self, text: str) -> Optional[dict[str, Any]]:
+    def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
         m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
         if not m:
             return None
@@ -341,7 +344,7 @@ class ExtractGate:
         except yaml.YAMLError:
             return None
 
-    def _run_gate(self, source_path: Path) -> Optional[GateResult]:
+    def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
             task = Task(
                 task_id="T-2-13-E",

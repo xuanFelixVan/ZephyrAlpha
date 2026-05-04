@@ -1,14 +1,14 @@
 """
 Unit tests for rollback_manager.py (T-2-05)
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
-from zephyr.orchestrator.rollback_manager import Checkpoint, RollbackManager
 from zephyr.db.sqlite_schema import get_db_connection
+from zephyr.orchestrator.rollback_manager import RollbackManager
 
 
 @pytest.fixture

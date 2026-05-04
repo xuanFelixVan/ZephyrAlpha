@@ -15,18 +15,17 @@ knowledge_activation_trend : 空库 / 有数据 / category 过滤
 get_gate_summary / get_knowledge_summary : 空库 0 值 / 写入后统计
 降级模式         : fallback 表可查询（无 SQLite 文件时）
 """
+
 from __future__ import annotations
 
 import sqlite3
 from collections.abc import Iterator
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 import pytest
-
 from zephyr.db.olap_engine import OLAPEngine, OLAPEngineError
 from zephyr.db.sqlite_schema import init_db
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -51,7 +50,7 @@ def engine(tmp_sqlite: Path) -> Iterator[OLAPEngine]:
 
 def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> None:
     """向 SQLite tasks 表插入测试任务。"""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     conn = sqlite3.connect(str(db_path))
     try:
         conn.execute("BEGIN")
@@ -65,9 +64,25 @@ def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> No
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                task_id, task_id.split("-")[0], int(task_id.split("-")[-1]), f"task {task_id}", status, "P2", phase,
-                "claude", "L", "test", 1, "internal", "extendable",
-                1.0, "[]", "[]", "[]", now, now,
+                task_id,
+                task_id.split("-")[0],
+                int(task_id.split("-")[-1]),
+                f"task {task_id}",
+                status,
+                "P2",
+                phase,
+                "claude",
+                "L",
+                "test",
+                1,
+                "internal",
+                "extendable",
+                1.0,
+                "[]",
+                "[]",
+                "[]",
+                now,
+                now,
             ),
         )
         conn.execute("COMMIT")
@@ -77,13 +92,12 @@ def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> No
 
 def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
     """向 SQLite gates 表插入测试门禁记录。"""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     conn = sqlite3.connect(str(db_path))
     try:
         conn.execute("BEGIN")
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
             (gate_run_id, "G1:T-0-001", passed, "{}", now),
         )
         conn.execute("COMMIT")
@@ -91,11 +105,9 @@ def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
         conn.close()
 
 
-def _insert_knowledge(
-    db_path: Path, ke_id: str, status: str, category: str = "best_practice"
-) -> None:
+def _insert_knowledge(db_path: Path, ke_id: str, status: str, category: str = "best_practice") -> None:
     """向 SQLite knowledge 表插入测试知识条目。"""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     conn = sqlite3.connect(str(db_path))
     try:
         conn.execute("BEGIN")

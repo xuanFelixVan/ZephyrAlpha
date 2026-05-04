@@ -12,63 +12,83 @@ validate_immutable_core.py — immutable_core 文件修改检测
 
 exit codes: 0=pass, 1=findings, 2=error
 """
+
 from __future__ import annotations
-import os
-import re
+
 import sys
 from pathlib import Path
+
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / '_shared').exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import REPO_ROOT, EXCLUDE_DIRS, SCAN_EXTENSIONS_MD
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
+
 ensure_utf8_stdout()
-import yaml
 import argparse
 import subprocess
-IMMUTABLE_MARKERS = ['immutable_core', 'immutable', 'readonly_ai', 'ai_cannot_modify']
-AI_AUTONOMY_MARKERS = ['ai_autonomy', 'autonomy_level']
-_EXTRA_EXCLUDE = EXCLUDE_DIRS | {'scripts'}
+
+IMMUTABLE_MARKERS = ["immutable_core", "immutable", "readonly_ai", "ai_cannot_modify"]
+AI_AUTONOMY_MARKERS = ["ai_autonomy", "autonomy_level"]
+_EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
+
 
 def is_immutable(frontmatter: dict) -> bool:
     """is immutable"""
     for marker in IMMUTABLE_MARKERS:
         if marker in frontmatter:
             return True
-    '判断条件.'
-    autonomy = frontmatter.get('ai_autonomy', '')
-    if isinstance(autonomy, str) and 'immutable' in autonomy.lower():
+    "判断条件."
+    autonomy = frontmatter.get("ai_autonomy", "")
+    if isinstance(autonomy, str) and "immutable" in autonomy.lower():
         return True
     return False
-    'is immutable.'
+    "is immutable."
 
-def get_recent_modifications(filepath: Path, max_commits: int=10) -> list[dict]:
+
+def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict]:
     """get recent modifications"""
     try:
-        result = subprocess.run('获取数据.'['git', 'log', f'-n{max_commits}', '--pretty=format:%H|%an|%ae|%s|%ci', '--', str(filepath)], capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=str(REPO_ROOT))
+        result = subprocess.run(
+            "获取数据."["git", "log", f"-n{max_commits}", "--pretty=format:%H|%an|%ae|%s|%ci", "--", str(filepath)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO_ROOT),
+        )
         if result.returncode != 0:
             return []
         commits = []
-        for line in result.stdout.strip().split('\n'):
+        for line in result.stdout.strip().split("\n"):
             if not line:
                 continue
-            parts = line.split('|', 4)
+            parts = line.split("|", 4)
             if len(parts) >= 5:
-                commits.append({'hash': parts[0][:8], 'author': parts[1], 'email': parts[2], 'message': parts[3][:120], 'date': parts[4]})
+                commits.append(
+                    {
+                        "hash": parts[0][:8],
+                        "author": parts[1],
+                        "email": parts[2],
+                        "message": parts[3][:120],
+                        "date": parts[4],
+                    }
+                )
         return commits
     except (subprocess.SubprocessError, OSError):
         return []
-    'get recent modifications.'
+    "get recent modifications."
+
 
 def scan_docs() -> tuple[list[dict], int]:
     """scan docs"""
     findings = []
-    '扫描并返回发现列表.'
+    "扫描并返回发现列表."
     files_scanned = 0
-    docs_dir = REPO_ROOT / 'docs'
+    docs_dir = REPO_ROOT / "docs"
     for filepath in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD, exclude_dirs=_EXTRA_EXCLUDE):
         files_scanned += 1
         fm = parse_frontmatter_from_file(filepath)
@@ -76,35 +96,44 @@ def scan_docs() -> tuple[list[dict], int]:
             continue
         rel = str(filepath.relative_to(REPO_ROOT))
         commits = get_recent_modifications(filepath, max_commits=5)
-        finding = {'file': rel, 'immutable_marks': [m for m in IMMUTABLE_MARKERS if m in fm], 'ai_autonomy': fm.get('ai_autonomy', 'N/A'), 'recent_commits': commits, 'owner_is_committer': any(('ZephyrAlpha-Owner' in c['author'] or 'Owner' in c['author'] for c in commits))}
+        finding = {
+            "file": rel,
+            "immutable_marks": [m for m in IMMUTABLE_MARKERS if m in fm],
+            "ai_autonomy": fm.get("ai_autonomy", "N/A"),
+            "recent_commits": commits,
+            "owner_is_committer": any("ZephyrAlpha-Owner" in c["author"] or "Owner" in c["author"] for c in commits),
+        }
         findings.append(finding)
     return (findings, files_scanned)
-    'scan docs.'
+    "scan docs."
+
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description='immutable_core 文件修改检测')
-    parser.add_argument('--warn-only', action='store_true')
+    parser = argparse.ArgumentParser(description="immutable_core 文件修改检测")
+    parser.add_argument("--warn-only", action="store_true")
     args = parser.parse_args()
     findings, files_scanned = scan_docs()
     immutable_files = [f for f in findings]
-    violated = [f for f in immutable_files if f['recent_commits'] and (not f['owner_is_committer'])]
-    print(f'\n[IMMUTABLE-SCAN] 扫描 {files_scanned} 个 .md 文件', file=sys.stderr)
-    print(f'  不可变标记文件: {len(immutable_files)}', file=sys.stderr)
-    print(f'  疑似 AI 修改: {len(violated)}', file=sys.stderr)
+    violated = [f for f in immutable_files if f["recent_commits"] and (not f["owner_is_committer"])]
+    print(f"\n[IMMUTABLE-SCAN] 扫描 {files_scanned} 个 .md 文件", file=sys.stderr)
+    print(f"  不可变标记文件: {len(immutable_files)}", file=sys.stderr)
+    print(f"  疑似 AI 修改: {len(violated)}", file=sys.stderr)
     for f in immutable_files:
         print(f'\n  📄 {f['file']}', file=sys.stderr)
         print(f'     标记: {', '.join(f['immutable_marks'])}', file=sys.stderr)
         print(f'     AI自治: {f['ai_autonomy']}', file=sys.stderr)
-        if f['recent_commits']:
+        if f["recent_commits"]:
             print(f'     最近修改: {len(f['recent_commits'])} 次', file=sys.stderr)
-            for c in f['recent_commits'][:3]:
-                status = '✅ Owner' if 'Owner' in c['author'] else '⚠ NOT Owner'
+            for c in f["recent_commits"][:3]:
+                status = "✅ Owner" if "Owner" in c["author"] else "⚠ NOT Owner"
                 print(f'       [{status}] {c['hash']} {c['author']}: {c['message'][:80]}', file=sys.stderr)
     if violated:
-        print(f'\n⚠ {len(violated)} 个 immutable_core 文件被非 Owner 修改！', file=sys.stderr)
+        print(f"\n⚠ {len(violated)} 个 immutable_core 文件被非 Owner 修改！", file=sys.stderr)
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if violated else 0)
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()

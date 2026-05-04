@@ -7,16 +7,15 @@ Task: T-1-23 | Phase 1 | GLM-5.1
 Safety: HIGH
 Depends: T-1-04 (task_repo.py)
 """
+
 from __future__ import annotations
 
 import os
 import re
 import shlex
 from pathlib import Path
-from typing import Any, Dict, FrozenSet, List, Optional, Set, Tuple
 
-
-ALLOWED_WRITE_DIRS: Tuple[str, ...] = (
+ALLOWED_WRITE_DIRS: tuple[str, ...] = (
     "docs/",
     "scripts/governance/",
     "scripts/hooks/",
@@ -25,21 +24,23 @@ ALLOWED_WRITE_DIRS: Tuple[str, ...] = (
     "src/zephyr/",
 )
 
-ALLOWED_COMMANDS: FrozenSet[str] = frozenset({
-    "python",
-    "pip",
-    "git",
-    "ruff",
-    "mypy",
-    "pytest",
-    "echo",
-    "ls",
-    "cat",
-    "rg",
-    "fd",
-})
+ALLOWED_COMMANDS: frozenset[str] = frozenset(
+    {
+        "python",
+        "pip",
+        "git",
+        "ruff",
+        "mypy",
+        "pytest",
+        "echo",
+        "ls",
+        "cat",
+        "rg",
+        "fd",
+    }
+)
 
-DANGEROUS_PATTERNS: Tuple[re.Pattern, ...] = (
+DANGEROUS_PATTERNS: tuple[re.Pattern, ...] = (
     re.compile(r"\.\.[/\\]"),
     re.compile(r"[/\\]\.\.[/\\]"),
     re.compile(r"\0"),
@@ -51,21 +52,25 @@ DANGEROUS_PATTERNS: Tuple[re.Pattern, ...] = (
 
 class SanitizationError(Exception):
     """输入清洗器基础设施异常基类（InputSanitizer 所有异常由此派生）。"""
+
     pass
 
 
 class PathTraversalError(SanitizationError):
     """检测到路径穿越攻击（目标路径不在白名单目录范围内）。"""
+
     pass
 
 
 class CommandInjectionError(SanitizationError):
     """检测到命令注入攻击（输入含 OS 命令拼接特征如 `$(...)`、`;` 等）。"""
+
     pass
 
 
 class TokenBudgetExceededError(SanitizationError):
     """输入 Token 预算超标（超过 safety limits 配置的 max 阈值）。"""
+
     pass
 
 
@@ -83,8 +88,8 @@ class InputSanitizer:
     def __init__(
         self,
         root: str,
-        allowed_write_dirs: Optional[Tuple[str, ...]] = None,
-        allowed_commands: Optional[FrozenSet[str]] = None,
+        allowed_write_dirs: tuple[str, ...] | None = None,
+        allowed_commands: frozenset[str] | None = None,
         max_path_length: int = 512,
     ) -> None:
         self._root = Path(root).resolve()
@@ -153,9 +158,7 @@ class InputSanitizer:
         request: int = 0,
     ) -> bool:
         if used + request > limit:
-            raise TokenBudgetExceededError(
-                f"Token budget exceeded: used={used} + request={request} > limit={limit}"
-            )
+            raise TokenBudgetExceededError(f"Token budget exceeded: used={used} + request={request} > limit={limit}")
         return True
 
     def sanitize_filename(self, filename: str) -> str:

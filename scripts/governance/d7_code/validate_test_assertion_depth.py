@@ -14,24 +14,26 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
-import argparse
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
 from typing import Any
+
+from _shared.constants import REPO_ROOT
+
 TESTS_DIR = REPO_ROOT / "tests"
 
 
@@ -40,7 +42,11 @@ def _has_raises_without_match(tree: ast.AST) -> list[int]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Attribute):
-                if node.func.attr == "raises" and isinstance(node.func.value, ast.Name) and node.func.value.id == "pytest":
+                if (
+                    node.func.attr == "raises"
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id == "pytest"
+                ):
                     has_match = any(kw.arg == "match" for kw in node.keywords)
                     if not has_match:
                         lines.append(node.lineno)
@@ -76,7 +82,7 @@ def _has_swallowed_exceptions(tree: ast.AST) -> list[int]:
 
 def scan_assertion_depth(test_path: Path) -> dict[str, Any]:
     """扫描断言深度."""
-    with open(test_path, "r", encoding="utf-8") as f:
+    with open(test_path, encoding="utf-8") as f:
         """扫描断言深度."""
         """扫描并返回发现列表."""
         source = f.read()

@@ -5,18 +5,14 @@ Unit tests for embedding_migrate.py (T-4-06)
 
 最少测试：10 条。
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 import pytest
-
 from zephyr.kb.embedding_migrate import (
     EmbeddingMigrator,
-    EmbeddingVersion,
-    MigrationCheckpoint,
-    MigrationPlan,
-    MigrationResult,
     MigrationStatus,
 )
 
@@ -129,6 +125,7 @@ class TestExecuteMigration:
                 class FC:
                     def get(self, **kw: Any) -> dict[str, Any]:
                         return {"ids": [], "documents": [], "metadatas": []}
+
                 return FC()
 
         migrator = EmbeddingMigrator(chroma_client=FakeClient())

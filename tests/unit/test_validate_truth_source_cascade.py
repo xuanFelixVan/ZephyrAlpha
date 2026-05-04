@@ -11,13 +11,12 @@ T-V2-012 单元测试 — TruthSourceCascadeValidator
   - 报告文件输出（文件创建 + 内容校验）
   - affected_files 多种嵌入格式解析
 """
+
 from __future__ import annotations
 
 import textwrap
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
-
-import pytest
 
 from scripts.governance.d11_compliance.validate_truth_source_cascade import (
     RationaleDecision,
@@ -30,7 +29,6 @@ from scripts.governance.d11_compliance.validate_truth_source_cascade import (
     parse_rationale_log,
     run,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助工厂
@@ -159,8 +157,7 @@ class TestParseRationaleLog:
     def test_valid_entry_with_inline_affected_files(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "| R87 | **Wave 2** | **当前结论（2026-04-28）**："
-            " affected_files: [docs/a.md, src/b.py] |\n",
+            "| R87 | **Wave 2** | **当前结论（2026-04-28）**：" " affected_files: [docs/a.md, src/b.py] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -192,8 +189,7 @@ class TestParseRationaleLog:
     def test_separator_line_is_ignored(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "|------|------|------|\n"
-            "| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
+            "|------|------|------|\n" "| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -337,7 +333,7 @@ class TestGenerateReport:
         rows: list[dict] | None = None,
     ) -> TruthSourceCascadeResult:
         return TruthSourceCascadeResult(
-            report_date=datetime(2026, 4, 27, 10, 0, 0, tzinfo=timezone.utc),
+            report_date=datetime(2026, 4, 27, 10, 0, 0, tzinfo=UTC),
             decisions_scanned=3,
             files_impacted=2,
             warnings=warnings or [],
@@ -395,9 +391,7 @@ class TestGenerateReport:
         assert path1 != path2
 
     def test_report_utf8_encoding(self, tmp_path: Path):
-        result = self._make_result(
-            warnings=["[CASCADE-WARN] 真源 docs/测试文件.md 受 R87 影响但未更新"]
-        )
+        result = self._make_result(warnings=["[CASCADE-WARN] 真源 docs/测试文件.md 受 R87 影响但未更新"])
         path = generate_report(result, tmp_path)
         content = path.read_text(encoding="utf-8")
         assert "测试文件" in content
@@ -430,17 +424,14 @@ class TestRunIntegration:
         _write_md_with_fm(f, "2026-04-20")
         log = self._make_log(
             tmp_path,
-            [
-                "| R87 | A | **（2026-04-28）**："
-                " affected_files: [docs/x.md] |"
-            ],
+            ["| R87 | A | **（2026-04-28）**：" " affected_files: [docs/x.md] |"],
         )
         reports = tmp_path / "reports"
         result = run(log, reports, tmp_path, quiet=True)
         assert result.decisions_scanned == 1
         assert result.files_impacted == 1
         assert len(result.warnings) == 1
-        assert (reports / f"truth_source_cascade_").parent.exists()
+        assert (reports / "truth_source_cascade_").parent.exists()
 
     def test_run_with_multi_cascade(self, tmp_path: Path):
         f1 = tmp_path / "docs" / "a.md"

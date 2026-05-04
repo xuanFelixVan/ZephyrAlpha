@@ -41,10 +41,11 @@ safety_level: M
   Protocol 注入；LLM 调用通过 ``LLMIntentCaller`` Protocol 注入。
 - 生产环境的 ChromaDB / Anthropic SDK 由调用方适配。
 """
+
 from __future__ import annotations
 
 import time
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
 
@@ -118,9 +119,7 @@ class LLMIntentVerdict(BaseModel):
 class EmbeddingSearcher(Protocol):
     """ChromaDB 封装协议；生产适配器调用 chromadb.Collection.query。"""
 
-    def __call__(
-        self, query: str, *, top_k: int = 5
-    ) -> list[EmbeddingHit]:  # pragma: no cover - Protocol 签名
+    def __call__(self, query: str, *, top_k: int = 5) -> list[EmbeddingHit]:  # pragma: no cover - Protocol 签名
         ...
 
 
@@ -129,7 +128,7 @@ class LLMIntentCaller(Protocol):
     """LLM 深度理解协议；生产实现可以是 Sonnet 4.6 / GLM-5.1。"""
 
     def __call__(
-        self, query: str, *, context: Optional[dict[str, Any]] = None
+        self, query: str, *, context: dict[str, Any] | None = None
     ) -> LLMIntentVerdict:  # pragma: no cover - Protocol 签名
         ...
 
@@ -146,9 +145,9 @@ class IntentParseTrace(BaseModel):
 
     query: str = Field(min_length=1)
     stages: list[str] = Field(default_factory=list, description="实际经过的阶段顺序")
-    stage1_confidence: Optional[float] = Field(default=None)
-    stage2_confidence: Optional[float] = Field(default=None)
-    stage3_confidence: Optional[float] = Field(default=None)
+    stage1_confidence: float | None = Field(default=None)
+    stage2_confidence: float | None = Field(default=None)
+    stage3_confidence: float | None = Field(default=None)
     total_latency_ms: int = Field(default=0, ge=0)
     total_cost_usd: float = Field(default=0.0, ge=0.0)
 
@@ -175,17 +174,17 @@ class IntentParser:
 
     def __init__(
         self,
-        keyword_mapper: Optional[IntentKeywordMapper] = None,
+        keyword_mapper: IntentKeywordMapper | None = None,
         *,
-        embedding_searcher: Optional[EmbeddingSearcher] = None,
-        llm_caller: Optional[LLMIntentCaller] = None,
-        thresholds: Optional[dict[str, float]] = None,
+        embedding_searcher: EmbeddingSearcher | None = None,
+        llm_caller: LLMIntentCaller | None = None,
+        thresholds: dict[str, float] | None = None,
     ) -> None:
         self._kw = keyword_mapper or IntentKeywordMapper()
         self._emb = embedding_searcher
         self._llm = llm_caller
         self._thresh = {**DEFAULT_STAGE_THRESHOLDS, **(thresholds or {})}
-        self._last_trace: Optional[IntentParseTrace] = None
+        self._last_trace: IntentParseTrace | None = None
 
     # ---- accessors ---------------------------------------------------
 
@@ -194,7 +193,7 @@ class IntentParser:
         return dict(self._thresh)
 
     @property
-    def last_trace(self) -> Optional[IntentParseTrace]:
+    def last_trace(self) -> IntentParseTrace | None:
         return self._last_trace
 
     # ---- main --------------------------------------------------------
@@ -202,7 +201,7 @@ class IntentParser:
     def parse(
         self,
         query: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> IntentResult:
         """按三阶段级联解析 query，返回最终 IntentResult。"""
         start = time.perf_counter()
@@ -242,9 +241,7 @@ class IntentParser:
         # 兜底：三阶段都不可用 → 返回 Stage 2 或 Stage 1 的结果并 requires_human
         fallback_mid.requires_human = True
         fallback_mid.fallback_hint = fallback_mid.fallback_hint or "all-stages-unavailable"
-        return self._finalize(
-            fallback_mid, trace, total_cost, start, source_stage=fallback_mid.source_stage
-        )
+        return self._finalize(fallback_mid, trace, total_cost, start, source_stage=fallback_mid.source_stage)
 
     # ---- Stage 2 -----------------------------------------------------
 
@@ -253,10 +250,8 @@ class IntentParser:
         assert self._emb is not None
         try:
             hits = self._emb(query, top_k=5)
-        except Exception as exc:  # noqa: BLE001 — 检索失败降级到 Stage 3
-            return self._failed_stage(
-                query, stage="semantic", reason=f"semantic_error: {type(exc).__name__}: {exc}"
-            )
+        except Exception as exc:  # — 检索失败降级到 Stage 3
+            return self._failed_stage(query, stage="semantic", reason=f"semantic_error: {type(exc).__name__}: {exc}")
 
         if not hits:
             return self._failed_stage(query, stage="semantic", reason="semantic: no hits")
@@ -301,14 +296,14 @@ class IntentParser:
     def _run_stage3(
         self,
         query: str,
-        context: Optional[dict[str, Any]],
+        context: dict[str, Any] | None,
         mid: IntentResult,
     ) -> IntentResult:
         """调用注入的 LLM，返回兜底 IntentResult。"""
         assert self._llm is not None
         try:
             verdict = self._llm(query, context=context)
-        except Exception as exc:  # noqa: BLE001 — LLM 失败时保守兜底
+        except Exception as exc:  # — LLM 失败时保守兜底
             return self._failed_stage(
                 query,
                 stage="llm",
@@ -343,7 +338,7 @@ class IntentParser:
         *,
         stage: StageLiteral,
         reason: str,
-        prev: Optional[IntentResult] = None,
+        prev: IntentResult | None = None,
     ) -> IntentResult:
         if prev is not None:
             return IntentResult(

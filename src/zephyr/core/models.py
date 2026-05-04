@@ -5,11 +5,12 @@ ZephyrAlpha 任务系统核心数据模型
 基座：shared/schemas.py Task（28字段 + 10状态机 Pydantic V2）
 扩展：TaskCard 继承 Task + Vibe Coding 执行层字段（防漂移六维 + 门禁 + 管线）
 """
+
 from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Optional
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -33,6 +34,7 @@ __all__ = [
 
 class GateLevel(str, Enum):
     """全生命周期门禁 G0-G7——蓝图 MOD-INF-006 §3.2.1"""
+
     G0 = "G0"
     G7 = "G7"
     G1 = "G1"
@@ -49,6 +51,7 @@ class TaskAuditFinding(BaseModel):
     注意：这是任务执行上下文中记录的审计发现，不同于 shared/schemas.py 的
     AuditFinding（后者是扫描器产出的通用审计报告格式）。两者是不同概念，
     仅因历史命名冲突——本轮审计（2026-05-02）已裁决为独立实体。"""
+
     model_config = BASE_CONFIG
 
     finding_id: Annotated[str, Field(pattern=r"^F-\d{4}$")]
@@ -57,7 +60,7 @@ class TaskAuditFinding(BaseModel):
     description: str
     source_task: str
     resolved: bool = False
-    resolution_note: Optional[str] = None
+    resolution_note: str | None = None
 
 
 class TaskCard(Task):
@@ -73,6 +76,7 @@ class TaskCard(Task):
 
     本类追加 Vibe Coding 执行层字段——防漂移六维 + 门禁 + 管线
     """
+
     model_config = ConfigDict(extra="allow")
 
     source_blueprint: str = Field(min_length=1, description="来源蓝图 module_id")
@@ -115,9 +119,7 @@ class TaskCard(Task):
     blocked_gates: dict[str, str] = Field(default_factory=dict)
 
     assigned_pipeline: str = Field(default="A", description="A区（生产）/B区（审计）")
-    pipeline_modules: list[str] = Field(
-        default_factory=list, description="M1-M11 模块链"
-    )
+    pipeline_modules: list[str] = Field(default_factory=list, description="M1-M11 模块链")
 
     blocked_by: list[str] = Field(default_factory=list, description="被哪些任务阻塞")
 
@@ -134,6 +136,7 @@ class TaskCard(Task):
 
 class DecompositionResult(BaseModel):
     """蓝图拆解结果——蓝图 MOD-INF-006 §3.2.2"""
+
     model_config = BASE_CONFIG
 
     total_tasks: int = Field(ge=0)
@@ -145,6 +148,7 @@ class DecompositionResult(BaseModel):
 
 class GateCheckResult(BaseModel):
     """门禁检查结果——蓝图 MOD-INF-006 §3.2.2"""
+
     model_config = BASE_CONFIG
 
     gate_id: GateLevel

@@ -3,6 +3,7 @@
 KnowledgeOverviewComponent · 知识库概览（条目数/状态分布/激活率）
 ================================================================
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -39,8 +40,7 @@ def fetch_knowledge_overview(kb_repo: Any = None) -> KnowledgeOverviewData:
             s = r.status.value
             status_counts[s] = status_counts.get(s, 0) + 1
         data.status_distribution = [
-            KnowledgeStatusDistribution(status=s, count=c)
-            for s, c in sorted(status_counts.items())
+            KnowledgeStatusDistribution(status=s, count=c) for s, c in sorted(status_counts.items())
         ]
         cat_counts: dict[str, int] = {}
         for r in all_records:
@@ -56,9 +56,6 @@ def render_knowledge_overview(data: KnowledgeOverviewData) -> dict[str, Any]:
         "total_entries": data.total_entries,
         "activated_entries": data.activated_entries,
         "activation_rate": round(data.activation_rate, 4),
-        "status_distribution": [
-            {"status": d.status, "count": d.count}
-            for d in data.status_distribution
-        ],
+        "status_distribution": [{"status": d.status, "count": d.count} for d in data.status_distribution],
         "category_distribution": data.category_distribution,
     }

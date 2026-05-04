@@ -15,17 +15,18 @@ G3 Evaluate 门禁 — 深度评估（T-2-13-C）
 
 Safety : M
 """
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GateEngine, GateResult, GATES_DIR
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.schemas import Task, TaskStatus
 
@@ -87,17 +88,17 @@ _IRREPLACEABILITY_PATTERNS = [
     r"critical",
 ]
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
 class AnalyzeResult:
     passed: bool
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
     ai_value_score: float = 0.0
     activation_conditions: list[str] = field(default_factory=list)
     implementation_complexity: str = "medium"
-    target_path: Optional[Path] = None
+    target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
 
@@ -106,8 +107,8 @@ class AnalyzeGate:
     def __init__(
         self,
         kb_root: Path,
-        gate_engine: Optional[GateEngine] = None,
-        kb_repo: Optional[KbRepo] = None,
+        gate_engine: GateEngine | None = None,
+        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._analyzed_dir = kb_root / _ANALYZED_DIR_NAME
@@ -131,18 +132,14 @@ class AnalyzeGate:
             fm = {}
 
         scores = self._compute_dimension_scores(text)
-        weighted_score = sum(
-            scores[dim] * weight for dim, weight in SCORING_DIMENSIONS.items()
-        )
+        weighted_score = sum(scores[dim] * weight for dim, weight in SCORING_DIMENSIONS.items())
         ai_value_score = weighted_score * 10.0
 
         activation_conditions = self._derive_activation_conditions(fm, text)
         complexity = self._assess_complexity(text)
 
         if ai_value_score < VALUE_SCORE_THRESHOLD:
-            violations.append(
-                f"ai_value_score={ai_value_score:.1f} < {VALUE_SCORE_THRESHOLD}，归档"
-            )
+            violations.append(f"ai_value_score={ai_value_score:.1f} < {VALUE_SCORE_THRESHOLD}，归档")
             return AnalyzeResult(
                 passed=False,
                 ai_value_score=ai_value_score,
@@ -207,9 +204,7 @@ class AnalyzeGate:
             "irreplaceability": irrep_score,
         }
 
-    def _derive_activation_conditions(
-        self, fm: dict[str, Any], text: str
-    ) -> list[str]:
+    def _derive_activation_conditions(self, fm: dict[str, Any], text: str) -> list[str]:
         conditions: list[str] = []
 
         layer = fm.get("layer", "")
@@ -258,7 +253,7 @@ class AnalyzeGate:
             return "medium"
         return "low"
 
-    def _parse_frontmatter(self, text: str) -> Optional[dict[str, Any]]:
+    def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
         m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
         if not m:
             return None
@@ -267,7 +262,7 @@ class AnalyzeGate:
         except yaml.YAMLError:
             return None
 
-    def _run_gate(self, source_path: Path) -> Optional[GateResult]:
+    def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
             task = Task(
                 task_id="T-2-13-C",

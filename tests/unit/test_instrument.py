@@ -35,30 +35,26 @@
 
 Safety: HIGH（金融工具定义契约）
 """
+
 from __future__ import annotations
 
 from datetime import date
 from decimal import Decimal
 
 import pytest
-
 from zephyr.shared.contracts.instrument import (
+    ETF,
+    FX,
     AssetClass,
     Bond,
-    Country,
     Crypto,
-    CryptoContractType,
     CurrencyCode,
-    ETF,
     Exchange,
-    FX,
     Future,
     Instrument,
     Jurisdiction,
     Option,
-    OptionType,
     Stock,
-    TradingCalendarName,
     make_stock_identifier,
 )
 

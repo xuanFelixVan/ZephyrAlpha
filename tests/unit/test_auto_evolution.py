@@ -25,13 +25,13 @@ safety_level: H
 4. TestFitnessIntegration          — 与 fitness_functions.FitnessReport 集成
 5. TestHistoryAndConfig            — 历史环形缓冲 / 配置 / 导出
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Callable
+from collections.abc import Callable
+from datetime import UTC, datetime, timedelta
 
 import pytest
-
 from zephyr.feedback_loop.auto_evolution import (
     DEFAULT_AUTO_CONFIG,
     AutoEvolutionConfig,
@@ -52,7 +52,6 @@ from zephyr.feedback_loop.fitness_functions import (
     FitnessReport,
     FitnessThresholds,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures / helpers
@@ -86,7 +85,7 @@ def make_engine(
             ee,
             apply_fn=apply_fn or default_apply,
             config=config,
-            now=now_fn or (lambda: datetime(2026, 4, 24, 0, 0, tzinfo=timezone.utc)),
+            now=now_fn or (lambda: datetime(2026, 4, 24, 0, 0, tzinfo=UTC)),
         )
 
     return _factory
@@ -136,9 +135,7 @@ def _clock(dt: datetime) -> Callable[[], datetime]:
 
 
 class TestTriggerDetection:
-    def test_no_trigger_when_all_metrics_healthy(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_no_trigger_when_all_metrics_healthy(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.55, cr=0.95, hi=0.85))
         triggers = eng.detect_triggers()
@@ -147,10 +144,10 @@ class TestTriggerDetection:
     def test_knowledge_expansion_after_three_consecutive_days(
         self, make_engine: Callable[..., AutoEvolutionEngine]
     ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(3):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
         kinds = {t.trigger_type for t in triggers}
@@ -159,64 +156,46 @@ class TestTriggerDetection:
     def test_knowledge_expansion_does_not_fire_with_two_days(
         self, make_engine: Callable[..., AutoEvolutionEngine]
     ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
-        assert all(
-            t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers
-        )
+        assert all(t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
 
-    def test_gate_tightening_after_two_consecutive_days(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    def test_gate_tightening_after_two_consecutive_days(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.55, cr=0.50, hi=0.80))
         triggers = eng.detect_triggers()
         kinds = {t.trigger_type for t in triggers}
         assert AutoTriggerType.GATE_TIGHTENING in kinds
 
-    def test_gate_tightening_does_not_fire_with_one_day(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_gate_tightening_does_not_fire_with_one_day(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.55, cr=0.50, hi=0.80))
         triggers = eng.detect_triggers()
-        assert all(
-            t.trigger_type != AutoTriggerType.GATE_TIGHTENING for t in triggers
-        )
+        assert all(t.trigger_type != AutoTriggerType.GATE_TIGHTENING for t in triggers)
 
-    def test_hallucination_upgrade_fires_immediately(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_hallucination_upgrade_fires_immediately(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.55, cr=0.95, hi=0.40))
         triggers = eng.detect_triggers()
-        assert any(
-            t.trigger_type == AutoTriggerType.HALLUCINATION_UPGRADE for t in triggers
-        )
-        ht = next(
-            t for t in triggers if t.trigger_type == AutoTriggerType.HALLUCINATION_UPGRADE
-        )
+        assert any(t.trigger_type == AutoTriggerType.HALLUCINATION_UPGRADE for t in triggers)
+        ht = next(t for t in triggers if t.trigger_type == AutoTriggerType.HALLUCINATION_UPGRADE)
         assert ht.severity == Severity.CRITICAL
 
-    def test_consecutive_counter_resets_on_good_day(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    def test_consecutive_counter_resets_on_good_day(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset, ka in enumerate([0.10, 0.10, 0.50, 0.10]):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=ka, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
-        assert all(
-            t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers
-        )
+        assert all(t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
 
 
 # ---------------------------------------------------------------------------
@@ -248,11 +227,11 @@ class TestRunAutoCycle:
         make_engine: Callable[..., AutoEvolutionEngine],
         apply_log: list[EvolutionProposal],
     ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         # 连续 3 天低激活率
         for offset in range(3):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             out = eng.run_auto_cycle(
                 fitness_report=_make_fitness(ka=0.10, cr=0.95, hi=0.80),
                 owner_approved_high=True,
@@ -262,21 +241,15 @@ class TestRunAutoCycle:
         assert AutoTriggerType.KNOWLEDGE_EXPANSION in triggers
         assert any(p.proposal_id.startswith("AE-") for p in out.proposals)
         # 提案被 apply
-        assert any(
-            p.proposal_id.startswith("AE-") for p in apply_log
-        )
+        assert any(p.proposal_id.startswith("AE-") for p in apply_log)
 
-    def test_cycle_handles_no_fitness_report(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_cycle_handles_no_fitness_report(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         out = eng.run_auto_cycle(fitness_report=None, owner_approved_high=True)
         assert out.history_length == 0
         assert out.triggers == []
 
-    def test_cycle_stores_history_length_in_outcome(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_cycle_stores_history_length_in_outcome(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         out = eng.run_auto_cycle(
             fitness_report=_make_fitness(ka=0.55, cr=0.95, hi=0.80),
@@ -304,14 +277,9 @@ class TestSafetyGate:
         )
         # CRITICAL 被阻塞
         assert out.blocked_by_safety_gate >= 1
-        assert not any(
-            p.severity == Severity.CRITICAL and p.owner_approved for p in out.proposals
-        )
+        assert not any(p.severity == Severity.CRITICAL and p.owner_approved for p in out.proposals)
         # 没有任何 HI upgrade 提案被真的 apply
-        assert all(
-            not p.proposal_id.startswith("AE-") or p.severity != Severity.CRITICAL
-            for p in apply_log
-        )
+        assert all(not p.proposal_id.startswith("AE-") or p.severity != Severity.CRITICAL for p in apply_log)
 
     def test_hallucination_upgrade_applied_with_owner_approved(
         self,
@@ -331,10 +299,10 @@ class TestSafetyGate:
         self,
         make_engine: Callable[..., AutoEvolutionEngine],
     ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.55, cr=0.50, hi=0.80))
         triggers = eng.detect_triggers()
         gt = next(t for t in triggers if t.trigger_type == AutoTriggerType.GATE_TIGHTENING)
@@ -363,27 +331,21 @@ class TestSafetyGate:
 
 
 class TestFitnessIntegration:
-    def test_record_fitness_reads_three_metrics(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_record_fitness_reads_three_metrics(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         snap = eng.record_fitness(_make_fitness(ka=0.42, cr=0.92, hi=0.88))
         assert snap.knowledge_activation == pytest.approx(0.42, abs=1e-6)
         assert snap.compliance_rate == pytest.approx(0.92, abs=1e-6)
         assert snap.hallucination_interception == pytest.approx(0.88, abs=1e-6)
 
-    def test_record_fitness_overwrites_same_utc_day(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_record_fitness_overwrites_same_utc_day(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         eng.record_fitness(_make_fitness(ka=0.50, cr=0.95, hi=0.80))
         assert len(eng.history) == 1
         assert eng.history[-1].knowledge_activation == pytest.approx(0.50)
 
-    def test_fitness_report_failure_drives_trigger(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_fitness_report_failure_drives_trigger(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.55, cr=0.95, hi=0.40))
         triggers = eng.detect_triggers()
@@ -404,22 +366,18 @@ class TestHistoryAndConfig:
         assert c.knowledge_consecutive_days == 3
         assert c.compliance_consecutive_days == 2
 
-    def test_history_is_ring_buffer(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
-        base = datetime(2026, 3, 1, tzinfo=timezone.utc)
+    def test_history_is_ring_buffer(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
+        base = datetime(2026, 3, 1, tzinfo=UTC)
         eng = make_engine(
             config=AutoEvolutionConfig(history_max_days=5),
             now_fn=_clock(base),
         )
         for offset in range(10):
-            eng._now = _clock(base + timedelta(days=offset))  # noqa: SLF001
+            eng._now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.5, cr=0.95, hi=0.85))
         assert len(eng.history) == 5
 
-    def test_export_history_is_jsonable(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
+    def test_export_history_is_jsonable(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
         eng = make_engine()
         eng.record_fitness(_make_fitness(ka=0.55, cr=0.95, hi=0.88))
         blob = eng.export_history()
@@ -427,19 +385,15 @@ class TestHistoryAndConfig:
         assert blob[0]["knowledge_activation"] == pytest.approx(0.55, abs=1e-6)
         assert "taken_at" in blob[0]
 
-    def test_custom_config_changes_trigger_threshold(
-        self, make_engine: Callable[..., AutoEvolutionEngine]
-    ) -> None:
-        base = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    def test_custom_config_changes_trigger_threshold(self, make_engine: Callable[..., AutoEvolutionEngine]) -> None:
+        base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(
             config=AutoEvolutionConfig(knowledge_consecutive_days=1),
             now_fn=_clock(base),
         )
         eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
-        assert any(
-            t.trigger_type == AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers
-        )
+        assert any(t.trigger_type == AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
 
     def test_detect_triggers_returns_rationale_and_evidence(
         self, make_engine: Callable[..., AutoEvolutionEngine]

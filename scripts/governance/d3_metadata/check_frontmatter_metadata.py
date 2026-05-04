@@ -26,18 +26,19 @@ import re
 import sys
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
+
+from typing import Any
 
 import yaml as _yaml_lib
 from _shared.constants import REPO_ROOT
-from typing import Any
 
 
 def _load_vocabulary_values(yaml_path: Path) -> set[str]:
@@ -61,11 +62,7 @@ def _load_vocabulary_values(yaml_path: Path) -> set[str]:
     values = data.get("values", [])
     if not isinstance(values, list):
         return set()
-    deprecated = {
-        str(d.get("value", "")).strip()
-        for d in data.get("deprecated_values", [])
-        if isinstance(d, dict)
-    }
+    deprecated = {str(d.get("value", "")).strip() for d in data.get("deprecated_values", []) if isinstance(d, dict)}
     active = set()
     for v in values:
         if not isinstance(v, dict):
@@ -76,27 +73,19 @@ def _load_vocabulary_values(yaml_path: Path) -> set[str]:
     return active
 
 
-_VOCAB_DIR = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
-)
+_VOCAB_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
-STATUS_LEGAL_LOWER = _load_vocabulary_values(
-    _VOCAB_DIR / "status-vocabulary.yaml"
-)
+STATUS_LEGAL_LOWER = _load_vocabulary_values(_VOCAB_DIR / "status-vocabulary.yaml")
 if not STATUS_LEGAL_LOWER:
     STATUS_LEGAL_LOWER = {"draft", "active", "deprecated"}
 
 STATUS_LEGAL_TITLE = {v.title() for v in STATUS_LEGAL_LOWER}
 
-DOC_TYPE_LEGAL = _load_vocabulary_values(
-    _VOCAB_DIR / "doc_type-vocabulary.yaml"
-)
+DOC_TYPE_LEGAL = _load_vocabulary_values(_VOCAB_DIR / "doc_type-vocabulary.yaml")
 if not DOC_TYPE_LEGAL:
     DOC_TYPE_LEGAL = {"policy", "standard", "register", "index", "blueprint"}
 
-TTL_LEGAL = _load_vocabulary_values(
-    _VOCAB_DIR / "ttl-vocabulary.yaml"
-)
+TTL_LEGAL = _load_vocabulary_values(_VOCAB_DIR / "ttl-vocabulary.yaml")
 if not TTL_LEGAL:
     TTL_LEGAL = {"permanent", "30d", "7d", "session", "periodic_review_90d"}
 
@@ -113,13 +102,29 @@ GOVERNANCE_FAMILY_LEGAL = {"A", "B", "C", "D"}
 AI_CAPABILITY_SLOT_LEGAL = {"planned", "reserved", "active", "none"}
 
 CATEGORY_LEGAL = {
-    "blueprint_decision", "strategy", "factor", "best_practice", "lesson_learned",
-    "architecture", "risk_control", "data_governance", "operations", "compliance"
+    "blueprint_decision",
+    "strategy",
+    "factor",
+    "best_practice",
+    "lesson_learned",
+    "architecture",
+    "risk_control",
+    "data_governance",
+    "operations",
+    "compliance",
 }
 
 DOMAIN_LEGAL = {
-    "data", "feature", "model", "signal", "execution",
-    "risk", "portfolio", "reporting", "infrastructure", "other"
+    "data",
+    "feature",
+    "model",
+    "signal",
+    "execution",
+    "risk",
+    "portfolio",
+    "reporting",
+    "infrastructure",
+    "other",
 }
 
 REVIEW_STATUS_LEGAL = {"unreviewed", "reviewed", "approved", "rejected"}
@@ -129,9 +134,7 @@ MODULE_ID_PATTERN = re.compile(
 )
 
 DRAFT_REQUIRED = {"module_id", "title", "doc_type", "status", "version", "date", "owner"}
-ACTIVE_REQUIRED = DRAFT_REQUIRED | {
-    "layer", "classification", "language", "created_by", "ttl", "summary", "tags"
-}
+ACTIVE_REQUIRED = DRAFT_REQUIRED | {"layer", "classification", "language", "created_by", "ttl", "summary", "tags"}
 ACCEPTED_REQUIRED = ACTIVE_REQUIRED | {"valid_from"}
 
 INDEX_MINIMAL_REQUIRED = {"doc_type", "status"}
@@ -141,25 +144,38 @@ DOC_TYPE_PATH_RULES = {
     "standard": {"allowed": ["01_policies_and_standards/", "08_knowledge/"], "forbidden": ["03_blueprints/"]},
     "adr": {"allowed": ["02_enterprise_architecture/adr/"], "forbidden": []},
     "blueprint": {"allowed": ["03_blueprints/"], "forbidden": ["01_policies_and_standards/", "04_construction_plans/"]},
-    "construction_plan": {"allowed": ["04_construction_plans/"], "forbidden": ["01_policies_and_standards/", "03_blueprints/"]},
-    "design": {"allowed": ["02_enterprise_architecture/"], "forbidden": ["01_policies_and_standards/", "03_blueprints/", "04_construction_plans/"]},
+    "construction_plan": {
+        "allowed": ["04_construction_plans/"],
+        "forbidden": ["01_policies_and_standards/", "03_blueprints/"],
+    },
+    "design": {
+        "allowed": ["02_enterprise_architecture/"],
+        "forbidden": ["01_policies_and_standards/", "03_blueprints/", "04_construction_plans/"],
+    },
     "plan": {"allowed": ["19_development_workspace/"], "forbidden": ["01_policies_and_standards/"]},
     "roadmap": {"allowed": ["19_development_workspace/"], "forbidden": ["01_policies_and_standards/"]},
     "ai_governance": {"allowed": ["01_policies_and_standards/governance/ai/"], "forbidden": []},
     "knowledge_entry": {"allowed": ["08_knowledge/"], "forbidden": ["01_policies_and_standards/"]},
     "audit_report": {"allowed": ["09_audit/"], "forbidden": ["03_blueprints/"]},
-    "candidate_pool": {"allowed": ["19_development_workspace/migrated-from-pool/"], "forbidden": ["01_policies_and_standards/"]},
-    "discussion_draft": {"allowed": ["19_development_workspace/drafts-and-audits/"], "forbidden": ["01_policies_and_standards/", "02_enterprise_architecture/"]},
-    "reference": {"allowed": ["02_enterprise_architecture/", "19_development_workspace/"], "forbidden": ["01_policies_and_standards/"]},
+    "candidate_pool": {
+        "allowed": ["19_development_workspace/migrated-from-pool/"],
+        "forbidden": ["01_policies_and_standards/"],
+    },
+    "discussion_draft": {
+        "allowed": ["19_development_workspace/drafts-and-audits/"],
+        "forbidden": ["01_policies_and_standards/", "02_enterprise_architecture/"],
+    },
+    "reference": {
+        "allowed": ["02_enterprise_architecture/", "19_development_workspace/"],
+        "forbidden": ["01_policies_and_standards/"],
+    },
 }
 
 
 from _shared.frontmatter import parse_frontmatter_from_file as parse_frontmatter
 
 
-def _check_template_integrity(
-    fm: dict[str, Any], filepath: Path, rel_str: str
-) -> list[tuple[str, str, str]]:
+def _check_template_integrity(fm: dict[str, Any], filepath: Path, rel_str: str) -> list[tuple[str, str, str]]:
     """防御纵深：模板文件的交叉验证。
 
     模板设计模式：模板故意用其展示的目标 doc_type（如 adr-template.md → doc_type: adr）。
@@ -181,11 +197,14 @@ def _check_template_integrity(
         return errors
 
     if doc_type and doc_type != "template":
-        errors.append((
-            "META-V24", "P2",
-            f"文件在 templates/ 但 doc_type='{doc_type}' ≠ 'template'"
-            f"，且文件名 '{filename}' 非 '-template.md' 结尾——可能错放目录"
-        ))
+        errors.append(
+            (
+                "META-V24",
+                "P2",
+                f"文件在 templates/ 但 doc_type='{doc_type}' ≠ 'template'"
+                f"，且文件名 '{filename}' 非 '-template.md' 结尾——可能错放目录",
+            )
+        )
 
     return errors
 
@@ -194,6 +213,7 @@ def _check_yaml_integrity(filepath: Path) -> list[tuple[str, str, str]]:
     errors: list[tuple[str, str, str]] = []
     try:
         import yaml as _yaml
+
         data = _yaml.safe_load(filepath.read_text(encoding="utf-8", errors="replace"))
         if data is None:
             errors.append(("META-V26", "P3", "YAML 文件内容为空"))
@@ -210,7 +230,7 @@ def check_file(filepath: Path, warn_only: bool) -> list[Any]:
     """检查并返回违规列表."""
     fm = parse_frontmatter(filepath)
     if not fm:
-        if filepath.suffix in ('.yaml', '.yml'):
+        if filepath.suffix in (".yaml", ".yml"):
             yaml_errs = _check_yaml_integrity(filepath)
             errors.extend(yaml_errs)
             return errors
@@ -257,7 +277,9 @@ def check_file(filepath: Path, warn_only: bool) -> list[Any]:
 
     evolution_policy = fm.get("evolution_policy", "")
     if evolution_policy and evolution_policy not in EVOLUTION_POLICY_LEGAL:
-        errors.append(("META-V14", "P1", f"evolution_policy='{evolution_policy}' 不在合法值(frozen/extendable/rewritable)中"))
+        errors.append(
+            ("META-V14", "P1", f"evolution_policy='{evolution_policy}' 不在合法值(frozen/extendable/rewritable)中")
+        )
 
     governance_family = fm.get("governance_family", "")
     if governance_family and governance_family not in GOVERNANCE_FAMILY_LEGAL:
@@ -265,7 +287,9 @@ def check_file(filepath: Path, warn_only: bool) -> list[Any]:
 
     ai_capability_slot = fm.get("ai_capability_slot", "")
     if ai_capability_slot and ai_capability_slot not in AI_CAPABILITY_SLOT_LEGAL:
-        errors.append(("META-V19", "P2", f"ai_capability_slot='{ai_capability_slot}' 不在合法值(planned/reserved/active/none)中"))
+        errors.append(
+            ("META-V19", "P2", f"ai_capability_slot='{ai_capability_slot}' 不在合法值(planned/reserved/active/none)中")
+        )
 
     category = fm.get("category", "")
     if category and category not in CATEGORY_LEGAL:
@@ -277,7 +301,9 @@ def check_file(filepath: Path, warn_only: bool) -> list[Any]:
 
     review_status = fm.get("review_status", "")
     if review_status and review_status not in REVIEW_STATUS_LEGAL:
-        errors.append(("META-V22", "P1", f"review_status='{review_status}' 不在合法值(unreviewed/reviewed/approved/rejected)中"))
+        errors.append(
+            ("META-V22", "P1", f"review_status='{review_status}' 不在合法值(unreviewed/reviewed/approved/rejected)中")
+        )
 
     safety_level_val = fm.get("safety_level", "")
     if safety_level_val == "H" and review_status == "unreviewed":
@@ -358,7 +384,10 @@ def main() -> None:
                 total_warnings += 1
                 print(f"WARN   {code} {rel}: {msg}", file=sys.stderr)
 
-    print(f"\nGATE-15 结果: {len(md_files)} 文件扫描, {files_with_issues} 文件有问题, {total_errors} 阻断, {total_warnings} 警告", file=sys.stderr)
+    print(
+        f"\nGATE-15 结果: {len(md_files)} 文件扫描, {files_with_issues} 文件有问题, {total_errors} 阻断, {total_warnings} 警告",
+        file=sys.stderr,
+    )
 
     if total_errors > 0 and not args.warn_only:
         sys.exit(1)

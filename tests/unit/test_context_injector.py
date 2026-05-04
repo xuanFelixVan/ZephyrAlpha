@@ -3,23 +3,21 @@ Unit tests for context_injector.py (T-2-12, C39)
 =================================================
 Minimum: 10 tests
 """
+
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Optional
-from unittest.mock import MagicMock
 
 import pytest
-
 from zephyr.context_engine.context_injector import (
     ContextInjector,
     InjectedContext,
     RetrievalMode,
 )
-from zephyr.shared.token_utils import estimate_tokens
-from zephyr.kb.kb_repo import KbRepo, KeStatus
 from zephyr.db.sqlite_schema import init_db
 from zephyr.kb.chromadb_init import init_chromadb
+from zephyr.kb.kb_repo import KbRepo
+from zephyr.shared.token_utils import estimate_tokens
 
 
 @pytest.fixture
@@ -31,6 +29,7 @@ def kb_env(tmp_path: Path):
     repo = KbRepo(db_path=db, vector_dir=vec)
     yield repo
     import zephyr.kb.chromadb_init as mod
+
     mod._chroma_client = None
 
 

@@ -11,22 +11,21 @@ HandoffPackage : 有效 × 3 / 无效 × 3 / validator × 3
 
 额外：strict mode (extra="forbid")、枚举值校验、BASE_CONFIG 验证
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
 from pydantic import ValidationError
-
 from zephyr.shared.schemas import (
+    BASE_CONFIG,
     AuditFinding,
     AuditReport,
     AuditSeverity,
-    BASE_CONFIG,
     BlockedItem,
     Classification,
-    Decision,
     EvolutionPolicy,
     FailurePattern,
     FailureType,
@@ -39,7 +38,7 @@ from zephyr.shared.schemas import (
     TaskStatus,
 )
 
-_UTC = timezone.utc
+_UTC = UTC
 _NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=_UTC)
 _LATER = datetime(2026, 4, 24, 12, 0, 0, tzinfo=_UTC)
 
@@ -168,17 +167,13 @@ class TestAuditReport:
         assert r.p0_count == 0
 
     def test_valid_with_p1_findings(self) -> None:
-        findings = [
-            AuditFinding(finding_id="F-001", severity=AuditSeverity.P1, description="P1 issue")
-        ]
+        findings = [AuditFinding(finding_id="F-001", severity=AuditSeverity.P1, description="P1 issue")]
         r = self._report(findings=findings)
         assert r.passed is True  # P0=0 时 passed=True
         assert r.p1_count == 1
 
     def test_valid_with_p0_finding(self) -> None:
-        findings = [
-            AuditFinding(finding_id="F-002", severity=AuditSeverity.P0, description="Critical")
-        ]
+        findings = [AuditFinding(finding_id="F-002", severity=AuditSeverity.P0, description="Critical")]
         r = self._report(findings=findings)
         assert r.passed is False  # P0 > 0 → passed=False
         assert r.p0_count == 1

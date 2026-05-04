@@ -12,23 +12,20 @@ T-V2-006 单元测试 — SystemSnapshotter
   - M1 backward 兼容：capture() 内部失败时返回 (_empty_snapshot, None)
   - run_in_build() 类方法一行调用
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import warnings
-from datetime import date
 from pathlib import Path
 
 import pytest
-
 from zephyr.context_engine.system_snapshot import (
-    REPO_ROOT,
     SystemSnapshot,
     SystemSnapshotter,
 )
 from zephyr.db.sqlite_schema import init_db
-
 
 # ---------------------------------------------------------------------------
 # Fixture
@@ -47,12 +44,8 @@ def tmp_repo(tmp_path: Path):
     # gates YAMLs（只建 G1 / G2，G3/G4/G5 缺失用于测试 "missing"）
     gates_dir = tmp_path / "src" / "zephyr" / "gates"
     gates_dir.mkdir(parents=True)
-    (gates_dir / "g1_ingest.yaml").write_text(
-        "gate_id: G1\ntitle: G1 Ingest Gate\n", encoding="utf-8", newline="\n"
-    )
-    (gates_dir / "g2_triage.yaml").write_text(
-        "gate_id: G2\ntitle: G2 Triage Gate\n", encoding="utf-8", newline="\n"
-    )
+    (gates_dir / "g1_ingest.yaml").write_text("gate_id: G1\ntitle: G1 Ingest Gate\n", encoding="utf-8", newline="\n")
+    (gates_dir / "g2_triage.yaml").write_text("gate_id: G2\ntitle: G2 Triage Gate\n", encoding="utf-8", newline="\n")
 
     # snapshots dir
     snapshots_dir = tmp_path / ".runtime" / "snapshots"
@@ -222,13 +215,11 @@ class TestBlueprintPassRate:
         conn = sqlite3.connect(str(db))
         conn.execute("PRAGMA foreign_keys = ON")
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
             ("gr-001", "G4:task-001", 1, "{}", "2026-04-27T00:00:00"),
         )
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
             ("gr-002", "G4:task-002", 0, "{}", "2026-04-27T00:00:00"),
         )
         conn.commit()
@@ -305,6 +296,7 @@ class TestSnapshotPersistence:
 class TestBackwardCompatibility:
     def test_capture_never_raises(self, snapshotter, monkeypatch):
         """_build_snapshot 抛出任何异常时，capture() 不传播。"""
+
         def bad_build():
             raise RuntimeError("模拟内部错误")
 

@@ -3,6 +3,7 @@
 FitnessFunctionsComponent · Fitness Functions（5 类度量仪表盘）
 ===============================================================
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -11,8 +12,6 @@ from typing import Any
 from zephyr.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
-    FitnessReport,
-    from_gate_results,
 )
 
 

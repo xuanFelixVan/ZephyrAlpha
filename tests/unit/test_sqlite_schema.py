@@ -25,21 +25,13 @@
 
 Task: T-1-02 | Safety: M | Phase 1
 """
+
 from __future__ import annotations
 
 import sqlite3
-from pathlib import Path
 
 import pytest
-
 from zephyr.db.sqlite_schema import (
-    DB_PATH,
-    _DDL_CIRCUIT_BREAKER_STATE,
-    _DDL_EVENTS,
-    _DDL_GATES,
-    _DDL_KNOWLEDGE,
-    _DDL_TASK_FILES,
-    _DDL_TASKS,
     get_db_connection,
     init_db,
     table_names,
@@ -77,12 +69,7 @@ class TestInitDb:
 
     def test_indexes_created(self, db):
         conn = sqlite3.connect(str(db))
-        indexes = {
-            row[0]
-            for row in conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='index'"
-            ).fetchall()
-        }
+        indexes = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()}
         conn.close()
         assert "idx_tasks_status" in indexes
         assert "idx_events_type" in indexes
@@ -232,8 +219,7 @@ class TestTaskFilesForeignKey:
         conn.execute("PRAGMA foreign_keys = ON")
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
-                "INSERT INTO task_files (task_id, file_path, role) "
-                "VALUES ('NONEXISTENT-999', 'test.py', 'in_scope')"
+                "INSERT INTO task_files (task_id, file_path, role) " "VALUES ('NONEXISTENT-999', 'test.py', 'in_scope')"
             )
         conn.close()
 

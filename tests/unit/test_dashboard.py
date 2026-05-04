@@ -5,23 +5,16 @@ Unit tests for Streamlit Dashboard components (T-4-07)
 
 最少测试：5 条（组件级）。
 """
+
 from __future__ import annotations
 
-from typing import Any
-
 import pytest
-
-from zephyr.l08_human_ai_interface.dashboard.app import DashboardApp, create_app
-from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
-    PhaseProgress,
-    TaskProgressData,
-    fetch_task_progress,
-    render_task_progress,
-)
-from zephyr.l08_human_ai_interface.dashboard.components.knowledge_overview import (
-    KnowledgeOverviewData,
-    fetch_knowledge_overview,
-    render_knowledge_overview,
+from zephyr.feedback_loop.fitness_functions import FitnessInputs
+from zephyr.l08_human_ai_interface.dashboard.app import create_app
+from zephyr.l08_human_ai_interface.dashboard.components.fitness_functions import (
+    FitnessDashboardData,
+    fetch_fitness_data,
+    render_fitness_dashboard,
 )
 from zephyr.l08_human_ai_interface.dashboard.components.gate_statistics import (
     GateStat,
@@ -29,17 +22,22 @@ from zephyr.l08_human_ai_interface.dashboard.components.gate_statistics import (
     fetch_gate_statistics,
     render_gate_statistics,
 )
-from zephyr.l08_human_ai_interface.dashboard.components.fitness_functions import (
-    FitnessDashboardData,
-    fetch_fitness_data,
-    render_fitness_dashboard,
+from zephyr.l08_human_ai_interface.dashboard.components.knowledge_overview import (
+    KnowledgeOverviewData,
+    fetch_knowledge_overview,
+    render_knowledge_overview,
 )
 from zephyr.l08_human_ai_interface.dashboard.components.olap_trend import (
     OLAPTrendData,
     fetch_olap_trends,
     render_olap_trends,
 )
-from zephyr.feedback_loop.fitness_functions import FitnessInputs
+from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
+    PhaseProgress,
+    TaskProgressData,
+    fetch_task_progress,
+    render_task_progress,
+)
 
 
 class TestTaskProgressComponent:
@@ -75,7 +73,9 @@ class TestKnowledgeOverviewComponent:
 
     def test_render_knowledge_overview(self) -> None:
         data = KnowledgeOverviewData(
-            total_entries=50, activated_entries=20, activation_rate=0.4,
+            total_entries=50,
+            activated_entries=20,
+            activation_rate=0.4,
         )
         rendered = render_knowledge_overview(data)
         assert rendered["total_entries"] == 50
@@ -94,8 +94,11 @@ class TestGateStatisticsComponent:
 
     def test_render_gate_statistics(self) -> None:
         data = GateStatisticsData(
-            total_runs=100, total_passed=95, total_failed=5,
-            overall_pass_rate=0.95, overall_block_rate=0.05,
+            total_runs=100,
+            total_passed=95,
+            total_failed=5,
+            overall_pass_rate=0.95,
+            overall_block_rate=0.05,
         )
         rendered = render_gate_statistics(data)
         assert rendered["overall_pass_rate"] == pytest.approx(0.95)
@@ -105,9 +108,12 @@ class TestFitnessFunctionsComponent:
     def test_fetch_fitness_data(self) -> None:
         inputs = FitnessInputs(
             coverage_pct=72.0,
-            gate_total=100, gate_passed=95,
-            ke_total=50, ke_activated=20,
-            hallucination_total=30, hallucination_intercepted=25,
+            gate_total=100,
+            gate_passed=95,
+            ke_total=50,
+            ke_activated=20,
+            hallucination_total=30,
+            hallucination_intercepted=25,
         )
         data = fetch_fitness_data(inputs=inputs)
         assert data.overall_status in ("PASS", "WARN", "FAIL")

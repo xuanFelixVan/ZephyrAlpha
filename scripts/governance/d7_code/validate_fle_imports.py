@@ -9,30 +9,40 @@ validate_fle_imports.py — FLE import 接口合规检测
 
 exit codes: 0=pass, 1=findings, 2=error
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
+
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / '_shared').exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 import argparse
 import ast
+
 from _shared.constants import REPO_ROOT
 from _shared.walk import iter_files
-INTERFACE_PATTERNS = {'zephyr\\.shared\\.contracts\\.(abstract|protocol|interface)': 'import 来自 contracts（接口）✅'}
-IMPLEMENTATION_PATTERNS = {'from\\s+zephyr\\.\\w+\\.\\w+\\s+import\\s+': '跨模块 import（需确认是否为接口）', 'import\\s+zephyr\\.\\w+\\.\\w+\\.\\w+': '深层 import 具体实现'}
-ALLOW_LIST = {'zephyr.shared.contracts', 'zephyr.__init__', 'zephyr.script_system'}
+
+INTERFACE_PATTERNS = {"zephyr\\.shared\\.contracts\\.(abstract|protocol|interface)": "import 来自 contracts（接口）✅"}
+IMPLEMENTATION_PATTERNS = {
+    "from\\s+zephyr\\.\\w+\\.\\w+\\s+import\\s+": "跨模块 import（需确认是否为接口）",
+    "import\\s+zephyr\\.\\w+\\.\\w+\\.\\w+": "深层 import 具体实现",
+}
+ALLOW_LIST = {"zephyr.shared.contracts", "zephyr.__init__", "zephyr.script_system"}
+
 
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
-    '扫描单个文件并返回发现列表.'
+    "扫描单个文件并返回发现列表."
     try:
-        '扫描并返回发现列表.'
-        content = filepath.read_text(encoding='utf-8', errors='replace')
+        "扫描并返回发现列表."
+        content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
         return findings
     try:
@@ -45,55 +55,76 @@ def scan_file(filepath: Path) -> list[dict]:
             for alias in node.names:
                 module = alias.name
                 if _is_impl_import(module):
-                    findings.append({'file': rel, 'line': node.lineno, 'import': f'import {module}', 'severity': 'MEDIUM', 'reason': f'导入实现模块 `{module}`（应优先通过 contracts 导入接口）'})
+                    findings.append(
+                        {
+                            "file": rel,
+                            "line": node.lineno,
+                            "import": f"import {module}",
+                            "severity": "MEDIUM",
+                            "reason": f"导入实现模块 `{module}`（应优先通过 contracts 导入接口）",
+                        }
+                    )
         elif isinstance(node, ast.ImportFrom):
             if node.module and _is_impl_import(node.module):
-                findings.append({'file': rel, 'line': node.lineno, 'import': f'from {node.module} import {', '.join((n.name for n in node.names))}', 'severity': 'MEDIUM', 'reason': f'从 `{node.module}` 导入（可能引入实现类）'})
+                findings.append(
+                    {
+                        "file": rel,
+                        "line": node.lineno,
+                        "import": f'from {node.module} import {', '.join(n.name for n in node.names)}',
+                        "severity": "MEDIUM",
+                        "reason": f"从 `{node.module}` 导入（可能引入实现类）",
+                    }
+                )
     return findings
-    '扫描单个文件并返回发现列表.'
+    "扫描单个文件并返回发现列表."
+
 
 def _is_impl_import(module: str) -> bool:
-    if not module.startswith('zephyr'):
+    if not module.startswith("zephyr"):
         return False
     for allowed in ALLOW_LIST:
         if module.startswith(allowed):
             return False
-    parts = module.split('.')
+    parts = module.split(".")
     if len(parts) <= 3:
         return False
     return True
 
+
 def scan_src() -> tuple[list[dict], int]:
     """扫描源码目录并返回发现列表."""
     findings = []
-    '扫描并返回发现列表.'
+    "扫描并返回发现列表."
     files_scanned = 0
-    src_dir = REPO_ROOT / 'src'
+    src_dir = REPO_ROOT / "src"
     if not src_dir.exists():
         return (findings, 0)
     for filepath in iter_files(src_dir):
-        if filepath.suffix != '.py' or filepath.name.startswith('_'):
+        if filepath.suffix != ".py" or filepath.name.startswith("_"):
             continue
         files_scanned += 1
         findings.extend(scan_file(filepath))
     return (findings, files_scanned)
-    '扫描源码目录并返回发现列表.'
+    "扫描源码目录并返回发现列表."
+
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description='FLE import 接口合规检测')
-    parser.add_argument('--warn-only', action='store_true')
+    parser = argparse.ArgumentParser(description="FLE import 接口合规检测")
+    parser.add_argument("--warn-only", action="store_true")
     args = parser.parse_args()
     findings, files_scanned = scan_src()
-    impl_imports = [f for f in findings if '实现' in f.get('reason', '')]
-    non_contract_imports = [f for f in findings if 'contracts' not in f.get('import', '')]
-    print(f'\n[FLE-IMPORTS] 扫描 {files_scanned} 个 Python 文件', file=sys.stderr)
-    print(f'  实现类 import: {len(impl_imports)}', file=sys.stderr)
-    print(f'  非契约 import: {len(non_contract_imports)}', file=sys.stderr)
+    impl_imports = [f for f in findings if "实现" in f.get("reason", "")]
+    non_contract_imports = [f for f in findings if "contracts" not in f.get("import", "")]
+    print(f"\n[FLE-IMPORTS] 扫描 {files_scanned} 个 Python 文件", file=sys.stderr)
+    print(f"  实现类 import: {len(impl_imports)}", file=sys.stderr)
+    print(f"  非契约 import: {len(non_contract_imports)}", file=sys.stderr)
     for f in findings:
         print(f'[P2] {f['file']}:{f['line']}  {f['import']} – {f['reason']}', file=sys.stderr)
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()

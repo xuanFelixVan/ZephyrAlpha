@@ -37,6 +37,7 @@ Safety: HIGH（数据库事务 + 文件系统原子性）
 注意：atomic_transaction_manager.py 通过 sys.path 注入导入
 infra.input_sanitizer，测试中使用 FakeSanitizer 替代。
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -82,7 +83,6 @@ sys.modules["infra.input_sanitizer"] = infra_mock
 from zephyr.db.atomic_transaction_manager import (
     AtomicTransactionManager,
     TransactionError,
-    TransactionScope,
     _new_tx_id,
     _utf8_lf_bytes,
 )
@@ -226,9 +226,7 @@ class TestTransactionRollback:
                 tx.write_file("docs/rb_test.md", "should not persist")
                 raise RuntimeError("force rollback")
         conn = sqlite3.connect(str(atm.db_path))
-        tables = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='rb_test'"
-        ).fetchall()
+        tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rb_test'").fetchall()
         conn.close()
         assert tables == []
 

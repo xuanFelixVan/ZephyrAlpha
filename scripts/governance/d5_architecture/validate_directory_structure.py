@@ -27,17 +27,19 @@ Usage:
 - exit 0: 全部合规
 - exit 1: 发现违规（--warn-only 下仅打印警告，exit 0）
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT
@@ -108,17 +110,13 @@ def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str],
             continue
         if item.is_dir():
             if name not in allowed_dirs:
-                violations.append(
-                    f"\u274c [{label}] 未授权的目录: {name}/ "
-                    f"\u2192 GOV-DOC-002 §三/§二 未定义此目录"
-                )
+                violations.append(f"\u274c [{label}] 未授权的目录: {name}/ " f"\u2192 GOV-DOC-002 §三/§二 未定义此目录")
         elif item.is_file():
             if name.endswith(".pyc") or name == "__pycache__":
                 continue
             if name not in allowed_files:
                 violations.append(
-                    f"\u26a0\ufe0f [{label}] 孤儿文件: {name} "
-                    f"\u2192 一级 .py 文件应归入 shared/ 或对应模块目录"
+                    f"\u26a0\ufe0f [{label}] 孤儿文件: {name} " f"\u2192 一级 .py 文件应归入 shared/ 或对应模块目录"
                 )
     return violations
 
@@ -143,10 +141,10 @@ def main() -> None:
         print(f"  {v}", file=sys.stderr)
 
     if warn_only:
-        print(f"\n\u26a0\ufe0f  --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
+        print("\n\u26a0\ufe0f  --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
         sys.exit(0)
 
-    print(f"\n\u274c 阻断: 请将违规目录/文件迁移到正确位置。参考 GOV-DOC-002 §三/§二 + §四 决策树。", file=sys.stderr)
+    print("\n\u274c 阻断: 请将违规目录/文件迁移到正确位置。参考 GOV-DOC-002 §三/§二 + §四 决策树。", file=sys.stderr)
     sys.exit(1)
 
 

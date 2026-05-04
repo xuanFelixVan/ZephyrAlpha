@@ -20,8 +20,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import GOV_DOCS_DIR
+from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
@@ -31,17 +31,38 @@ TABLE_START_MARKER = "<!-- TABLE-AUTO-START -->"
 TABLE_END_MARKER = "<!-- TABLE-AUTO-END -->"
 
 EXCLUDE_NAMES = {
-    ".git", "__pycache__", ".obsidian", "index.md", "README.md", "drafts_zone",
-    ".DS_Store", "Thumbs.db",
+    ".git",
+    "__pycache__",
+    ".obsidian",
+    "index.md",
+    "README.md",
+    "drafts_zone",
+    ".DS_Store",
+    "Thumbs.db",
 }
 
 _SUBDIRS = [
-    ("meta/",       "元规则——定义\"规则怎么写、怎么管\"",  "meta/index.md", "[_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md)"),
-    ("governance/", "声明式全局规则——8 个治理域",           "governance/index.md", "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)"),
-    ("operational/","过程式操作手册——3 个操作域",           "operational/index.md", "同上"),
-    ("domains/",    "层域特定规则——4 个架构层",             "domains/index.md", "同上"),
-    ("_registry/",  "注册表+契约——4 个子目录",              "不需要（机器可读）", "自身即注册表"),
-    ("templates/",  "文档模板",                            "不需要（文件名自描述）", "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)"),
+    (
+        "meta/",
+        '元规则——定义"规则怎么写、怎么管"',
+        "meta/index.md",
+        "[_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md)",
+    ),
+    (
+        "governance/",
+        "声明式全局规则——8 个治理域",
+        "governance/index.md",
+        "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)",
+    ),
+    ("operational/", "过程式操作手册——3 个操作域", "operational/index.md", "同上"),
+    ("domains/", "层域特定规则——4 个架构层", "domains/index.md", "同上"),
+    ("_registry/", "注册表+契约——4 个子目录", "不需要（机器可读）", "自身即注册表"),
+    (
+        "templates/",
+        "文档模板",
+        "不需要（文件名自描述）",
+        "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)",
+    ),
 ]
 
 
@@ -52,7 +73,12 @@ def _count_files(root: Path) -> int:
             continue
         if entry.name.startswith("."):
             continue
-        if entry.name.endswith(".md") or entry.name.endswith(".yaml") or entry.name.endswith(".yml") or entry.name.endswith(".json"):
+        if (
+            entry.name.endswith(".md")
+            or entry.name.endswith(".yaml")
+            or entry.name.endswith(".yml")
+            or entry.name.endswith(".json")
+        ):
             count += 1
     return count
 
@@ -84,8 +110,10 @@ def _generate_table() -> list[str]:
         grand_total += n
         lines.append(f"| `{dir_name}` | {duty} | {n} | [{entry_point}]({entry_point}) | {registry} |")
 
-    lines.append(f"")
-    lines.append(f"> **合计**：6 个子目录，{grand_total} 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。")
+    lines.append("")
+    lines.append(
+        f"> **合计**：6 个子目录，{grand_total} 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。"
+    )
     lines.append(TABLE_END_MARKER)
     return lines
 
@@ -115,7 +143,7 @@ def _find_table_range(content: str) -> tuple[int, int] | None:
 
 def sync(check_only: bool = False) -> int:
     """同步索引."""
-    with open(PS_IDX_PATH, "r", encoding="utf-8") as f:
+    with open(PS_IDX_PATH, encoding="utf-8") as f:
         """sync."""
         """sync."""
         original = f.read()

@@ -39,9 +39,20 @@ LAYER_ORDER = [
 
 LAYER_INDEX = {name: i for i, name in enumerate(LAYER_ORDER)}
 
-SHARED_DIRS = {"shared", "core", "context_engine", "kb", "db",
-               "orchestrator", "gates", "mcp", "feedback_loop",
-               "llm_security", "pipeline", "vector_memory"}
+SHARED_DIRS = {
+    "shared",
+    "core",
+    "context_engine",
+    "kb",
+    "db",
+    "orchestrator",
+    "gates",
+    "mcp",
+    "feedback_loop",
+    "llm_security",
+    "pipeline",
+    "vector_memory",
+}
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src" / "zephyr"

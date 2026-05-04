@@ -13,17 +13,18 @@ G4 Activate 门禁 — 人工激活（T-2-13-D）
 
 Safety : M
 """
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GateEngine, GateResult, GATES_DIR
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.schemas import Task, TaskStatus
 
@@ -39,17 +40,17 @@ AUTO_ACTIVATE_THRESHOLD = 9.0
 ACTIVE_DIR_NAME = "05_active_research"
 FUTURE_DIR_NAME = "04_future_capabilities"
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
 class ActivateResult:
     passed: bool
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
     auto_activated: bool = False
     target_dir: str = ""
-    target_path: Optional[Path] = None
-    proposal: Optional[str] = None
+    target_path: Path | None = None
+    proposal: str | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
 
@@ -58,8 +59,8 @@ class ActivateGate:
     def __init__(
         self,
         kb_root: Path,
-        gate_engine: Optional[GateEngine] = None,
-        kb_repo: Optional[KbRepo] = None,
+        gate_engine: GateEngine | None = None,
+        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._active_dir = kb_root / ACTIVE_DIR_NAME
@@ -169,7 +170,7 @@ class ActivateGate:
                 missing.append(dep)
         return missing
 
-    def _validate_target_path(self, target_path: str) -> Optional[str]:
+    def _validate_target_path(self, target_path: str) -> str | None:
         pattern = r"^docs/08_knowledge/[a-z0-9-]+/ke-\d{3,}-[a-z0-9-]+\.md$"
         if not re.match(pattern, target_path):
             return f"目标路径不符合规范 '{target_path}'，应匹配 {pattern}"
@@ -211,7 +212,7 @@ class ActivateGate:
             f"- [ ] 驳回（附理由）\n"
         )
 
-    def _parse_frontmatter(self, text: str) -> Optional[dict[str, Any]]:
+    def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
         m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
         if not m:
             return None
@@ -220,7 +221,7 @@ class ActivateGate:
         except yaml.YAMLError:
             return None
 
-    def _run_gate(self, source_path: Path) -> Optional[GateResult]:
+    def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
             task = Task(
                 task_id="T-2-13-D",

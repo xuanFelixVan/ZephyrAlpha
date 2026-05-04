@@ -18,12 +18,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -57,31 +57,37 @@ def scan_superseded_by() -> list[dict]:
         if status == "deprecated":
             superseded_by = fm.get("superseded_by", "")
             if not superseded_by:
-                findings.append({
-                    "file": rel,
-                    "module_id": module_id,
-                    "type": "MISSING_SUPERSEDED_BY",
-                    "detail": "deprecated 文件缺少 superseded_by 字段",
-                    "severity": "HIGH",
-                })
+                findings.append(
+                    {
+                        "file": rel,
+                        "module_id": module_id,
+                        "type": "MISSING_SUPERSEDED_BY",
+                        "detail": "deprecated 文件缺少 superseded_by 字段",
+                        "severity": "HIGH",
+                    }
+                )
             elif superseded_by in all_fm:
                 target_status = all_fm[superseded_by]["fm"].get("status", "")
                 if target_status != "active":
-                    findings.append({
+                    findings.append(
+                        {
+                            "file": rel,
+                            "module_id": module_id,
+                            "type": "SUPERSEDED_BY_NOT_ACTIVE",
+                            "detail": f"superseded_by='{superseded_by}' status='{target_status}'（应为 active）",
+                            "severity": "MEDIUM",
+                        }
+                    )
+            else:
+                findings.append(
+                    {
                         "file": rel,
                         "module_id": module_id,
-                        "type": "SUPERSEDED_BY_NOT_ACTIVE",
-                        "detail": f"superseded_by='{superseded_by}' status='{target_status}'（应为 active）",
-                        "severity": "MEDIUM",
-                    })
-            else:
-                findings.append({
-                    "file": rel,
-                    "module_id": module_id,
-                    "type": "SUPERSEDED_BY_NOT_FOUND",
-                    "detail": f"superseded_by='{superseded_by}' 不存在",
-                    "severity": "HIGH",
-                })
+                        "type": "SUPERSEDED_BY_NOT_FOUND",
+                        "detail": f"superseded_by='{superseded_by}' 不存在",
+                        "severity": "HIGH",
+                    }
+                )
 
     return findings
     """scan superseded by."""

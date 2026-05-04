@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from datetime import datetime
 
-from datetime import datetime, timezone
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -24,8 +24,9 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class ComplianceRule:

@@ -13,13 +13,13 @@ Detects residual files that should not exist in a target directory:
 
 Output: list of residual files with suggested disposition (delete/move/keep)
 """
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 
 class Disposition(str, Enum):
@@ -92,6 +92,7 @@ class GateReport:
 
 class GateLevel(str, Enum):
     """G0-G7 门禁级别——从蓝图 MOD-INF-006 §3.2.1"""
+
     G0 = "G0"
     G7 = "G7"
     G1 = "G1"
@@ -181,8 +182,8 @@ class TaskCompletionGate:
     def __init__(
         self,
         scan_dir: Path,
-        files_in_scope: Optional[set[str]] = None,
-        extra_patterns: Optional[list[tuple[ResidualType, re.Pattern[str]]]] = None,
+        files_in_scope: set[str] | None = None,
+        extra_patterns: list[tuple[ResidualType, re.Pattern[str]]] | None = None,
     ) -> None:
         self._scan_dir = scan_dir
         self._files_in_scope = files_in_scope
@@ -256,7 +257,5 @@ class TaskCompletionGate:
             lines.append(f"{'Type':<15} {'Disposition':<12} {'Path'}")
             lines.append("-" * 60)
             for r in report.residuals:
-                lines.append(
-                    f"{r.residual_type.value:<15} {r.disposition.value:<12} {r.rel_path}"
-                )
+                lines.append(f"{r.residual_type.value:<15} {r.disposition.value:<12} {r.rel_path}")
         return "\n".join(lines)

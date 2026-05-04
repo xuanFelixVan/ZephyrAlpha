@@ -47,16 +47,17 @@ import argparse
 import re
 import subprocess
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, NamedTuple, Optional
-
+from typing import NamedTuple
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 try:
@@ -65,7 +66,6 @@ except ImportError:
     yaml = None
 
 from _shared.constants import REPO_ROOT
-
 
 
 class Violation(NamedTuple):
@@ -156,6 +156,8 @@ TECH_VERSION_TOKENS: tuple[str, ...] = (
 def _has_tech_version_token(filename_lower: str) -> bool:
     """Whitelist real technology product versions (e.g. pydantic-v2) from N-02 detection."""
     return any(tok in filename_lower for tok in TECH_VERSION_TOKENS)
+
+
 RE_DATE_SUFFIX = re.compile(r"-\d{8}(?:[-.]|$)")
 RE_LATEST = re.compile(r"-LATEST(?:[-.]|$)", re.IGNORECASE)
 RE_ADR_NESTED = re.compile(r"^adr-\d+-\d+\.md$", re.IGNORECASE)
@@ -169,7 +171,7 @@ def _is_path_exempt(rel_path: str) -> bool:
     return any(rp.startswith(p) for p in PATH_EXEMPT_PREFIXES)
 
 
-def _read_frontmatter_module_id(filepath: Path) -> Optional[str]:
+def _read_frontmatter_module_id(filepath: Path) -> str | None:
     try:
         content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
@@ -184,7 +186,7 @@ def _read_frontmatter_module_id(filepath: Path) -> Optional[str]:
     return m.group(1).strip().strip("\"'") if m else None
 
 
-def check_file(rel_path: str, abs_path: Optional[Path] = None) -> list[Violation]:
+def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
     """对单个相对路径做 7 条规则检测；返回违规列表。"""
     violations: list[Violation] = []
     if _is_path_exempt(rel_path):
@@ -323,9 +325,7 @@ def _print_report(violations: list[Violation]) -> None:
         if len(items) > 20:
             print(f"    ... (+{len(items) - 20} more)", file=sys.stderr)
         print(file=sys.stderr)
-    print(
-        "[GATE-11] 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md §五"
-    )
+    print("[GATE-11] 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md §五")
 
 
 def main() -> None:
@@ -339,9 +339,7 @@ def main() -> None:
     group.add_argument("--staged", action="store_true", help="仅扫描 git staged 文件")
     group.add_argument("--files", nargs="+", help="扫描指定文件列表")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻塞流程）")
-    parser.add_argument(
-        "--root", default=str(REPO_ROOT), help="仓库根目录（默认自动定位）"
-    )
+    parser.add_argument("--root", default=str(REPO_ROOT), help="仓库根目录（默认自动定位）")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()

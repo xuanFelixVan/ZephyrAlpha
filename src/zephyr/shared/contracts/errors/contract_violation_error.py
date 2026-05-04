@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from zephyr.shared.contracts.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -26,6 +27,7 @@ AI Prompt
 ---------
     当 ContractEnforcer 装饰器检测到数据不符合 CRT 契约定义时，MUST 抛出 ContractViolationError。 你的代码不需要手动抛出这个错误——ContractEnforcer 自动完成。 如果你收到这个错误，说明上游传递的数据格式不符合 YAML 契约定义——检查数据来源，而不是修改校验逻辑。
 """
+
 
 @dataclass(frozen=True)
 class ContractViolationError:

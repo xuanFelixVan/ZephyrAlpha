@@ -335,7 +335,7 @@ data_flow:
       action: "不入KB——仅记录到审计日志"
     - phase_C5_knowledge: |
         脚本系统 C5 知识沉淀阶段:
-        CRITICAL/HIGH Finding 修复完成 → 提取经验教训 → G3 Analyze → 
+        CRITICAL/HIGH Finding 修复完成 → 提取经验教训 → G3 Analyze →
         人工确认后 → G4 Activate → KE 进入活跃知识库
 
 quality_gate:
@@ -1026,25 +1026,25 @@ import pytest
 
 class TestIntegrationContract:
     """每个CT-*契约的通用验证模板"""
-    
+
     CONTRACT_ID: str  # 子类覆写
-    
+
     def test_producer_side_exists(self):
         """生产方实现文件存在"""
         ...
-    
+
     def test_consumer_side_exists(self):
         """消费方实现文件存在"""
         ...
-    
+
     def test_contract_payload_schema_matches(self):
         """payload字段与契约YAML声明一致"""
         ...
-    
+
     def test_circuit_breaker_fires_on_threshold(self):
         """熔断在failure_threshold触发"""
         ...
-    
+
     def test_circuit_breaker_recovers_after_timeout(self):
         """熔断在recovery_after_seconds恢复"""
         ...

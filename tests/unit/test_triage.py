@@ -9,13 +9,13 @@
 5. 优先级映射正确
 6. 空壳文件被 G2 门禁拦截
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
-from zephyr.kb.triage import TriageGate, HIGH_VALUE_THRESHOLD, REJECT_THRESHOLD
+from zephyr.kb.triage import HIGH_VALUE_THRESHOLD, TriageGate
 
 
 @pytest.fixture()
@@ -60,7 +60,9 @@ def test_triage_high_value_passes(tmp_path: Path, gate: TriageGate) -> None:
 
 def test_triage_low_score_rejected(tmp_path: Path, gate: TriageGate) -> None:
     p = tmp_path / "low.md"
-    p.write_text("---\nmodule_id: KE-201\ntitle: Low\ncategory: general\n---\n\nShort.\n", encoding="utf-8", newline="\n")
+    p.write_text(
+        "---\nmodule_id: KE-201\ntitle: Low\ncategory: general\n---\n\nShort.\n", encoding="utf-8", newline="\n"
+    )
     result = gate.triage(p)
     assert result.ai_triage_score < HIGH_VALUE_THRESHOLD
 
@@ -68,7 +70,9 @@ def test_triage_low_score_rejected(tmp_path: Path, gate: TriageGate) -> None:
 def test_triage_classification_auto_infer(tmp_path: Path, gate: TriageGate) -> None:
     p = tmp_path / "auto.md"
     body = "这是一个关于策略回测的设计决策文档，包含因子计算逻辑和 alpha 信号生成。\n" * 5
-    p.write_text(f"---\nmodule_id: KE-202\ntitle: Auto\ncategory: strategy\n---\n\n{body}", encoding="utf-8", newline="\n")
+    p.write_text(
+        f"---\nmodule_id: KE-202\ntitle: Auto\ncategory: strategy\n---\n\n{body}", encoding="utf-8", newline="\n"
+    )
     result = gate.triage(p)
     assert result.classification in ("STRATEGY", "BLUEPRINT")
 

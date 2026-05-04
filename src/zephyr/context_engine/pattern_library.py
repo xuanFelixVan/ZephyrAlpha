@@ -16,14 +16,14 @@ safety_level: M
 
 零外部依赖：仅 pydantic + 标准库。
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
-import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -57,7 +57,7 @@ class PatternEntry(BaseModel):
     solution: str = Field(default="", max_length=2000, description="解决方案（success）/ 避免方式（anti）")
     consequences: list[str] = Field(default_factory=list, description="后果/影响")
     tags: list[str] = Field(default_factory=list)
-    source_ke_id: Optional[str] = Field(default=None, description="来源 KE 编号")
+    source_ke_id: str | None = Field(default=None, description="来源 KE 编号")
     confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="置信度")
     occurrence_count: int = Field(default=1, ge=1, description="观测次数")
     created_at: datetime = Field(description="创建时间")
@@ -78,13 +78,11 @@ class PatternEntry(BaseModel):
 class PatternQuery(BaseModel):
     model_config = BASE_CONFIG
 
-    domain: Optional[str] = None
-    layer: Optional[str] = None
-    pattern_type: Optional[PatternType] = None
-    tags: Optional[list[str]] = None
-    keyword: Optional[str] = None
-
-
+    domain: str | None = None
+    layer: str | None = None
+    pattern_type: PatternType | None = None
+    tags: list[str] | None = None
+    keyword: str | None = None
 
 
 def _compute_fingerprint(content: str) -> str:
@@ -106,8 +104,8 @@ class PatternLibrary:
 
     def __init__(
         self,
-        persist_dir: Optional[Any] = None,
-        chroma_client: Optional[Any] = None,
+        persist_dir: Any | None = None,
+        chroma_client: Any | None = None,
     ) -> None:
         self._persist_dir = persist_dir
         self._chroma_client = chroma_client
@@ -123,9 +121,9 @@ class PatternLibrary:
         description: str,
         context: str = "",
         solution: str = "",
-        consequences: Optional[list[str]] = None,
-        tags: Optional[list[str]] = None,
-        source_ke_id: Optional[str] = None,
+        consequences: list[str] | None = None,
+        tags: list[str] | None = None,
+        source_ke_id: str | None = None,
         confidence: float = 1.0,
     ) -> PatternEntry:
         now_iso_val = now_iso()
@@ -152,7 +150,7 @@ class PatternLibrary:
         self._index_to_chroma(entry)
         return entry
 
-    def get(self, pattern_id: str) -> Optional[PatternEntry]:
+    def get(self, pattern_id: str) -> PatternEntry | None:
         return self._patterns.get(pattern_id)
 
     def query(self, query: PatternQuery) -> list[PatternEntry]:
@@ -169,10 +167,7 @@ class PatternLibrary:
         if query.keyword is not None:
             kw = query.keyword.lower()
             results = [
-                p for p in results
-                if kw in p.title.lower()
-                or kw in p.description.lower()
-                or kw in p.context.lower()
+                p for p in results if kw in p.title.lower() or kw in p.description.lower() or kw in p.context.lower()
             ]
         return results
 
@@ -187,7 +182,7 @@ class PatternLibrary:
         self,
         pattern_id: str,
         **fields: Any,
-    ) -> Optional[PatternEntry]:
+    ) -> PatternEntry | None:
         entry = self._patterns.get(pattern_id)
         if entry is None:
             return None
@@ -243,8 +238,8 @@ class PatternLibrary:
         self,
         query_text: str,
         n_results: int = 5,
-        pattern_type: Optional[PatternType] = None,
-        domain: Optional[str] = None,
+        pattern_type: PatternType | None = None,
+        domain: str | None = None,
     ) -> list[dict[str, Any]]:
         if self._chroma_client is None:
             return []
@@ -257,7 +252,7 @@ class PatternLibrary:
             where_conditions.append({"pattern_type": pattern_type.value})
         if domain is not None:
             where_conditions.append({"domain": domain})
-        chroma_where: Optional[dict[str, Any]] = None
+        chroma_where: dict[str, Any] | None = None
         if len(where_conditions) == 1:
             chroma_where = where_conditions[0]
         elif len(where_conditions) > 1:
@@ -279,11 +274,13 @@ class PatternLibrary:
         distances = results["distances"][0] if results.get("distances") else [0.0] * len(ids)
         docs = results["documents"][0] if results.get("documents") else [""] * len(ids)
         metas = results["metadatas"][0] if results.get("metadatas") else [{}] * len(ids)
-        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas):
-            hits.append({
-                "chunk_id": chunk_id,
-                "score": round(1.0 - dist, 4),
-                "content": doc,
-                "metadata": meta,
-            })
+        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas, strict=False):
+            hits.append(
+                {
+                    "chunk_id": chunk_id,
+                    "score": round(1.0 - dist, 4),
+                    "content": doc,
+                    "metadata": meta,
+                }
+            )
         return hits

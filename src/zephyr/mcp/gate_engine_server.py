@@ -16,12 +16,13 @@ Gate策略 : docs/02_enterprise_architecture/gate-strategy-standard.md
 - gate_engine.run_g4_contract  — 结构化输出契约校验
 - gate_engine.submit_exemption — 提交 Owner 签发的豁免
 """
+
 from __future__ import annotations
 
 import re
 import uuid
-from datetime import date, datetime, timezone
-from typing import Any, Optional
+from datetime import date
+from typing import Any
 
 from zephyr.mcp._base_server import BaseMCPServer, MCPError
 from zephyr.shared.time_utils import now_iso
@@ -35,11 +36,7 @@ _CONTRACT_MODELS = frozenset(
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # 路径白名单模式（G1 写入防护示例规则）
-_BLACKLISTED_PATH_FRAGMENTS = frozenset(
-    {"scripts/archive", "working-designs", "temp_", ".backup"}
-)
-
-
+_BLACKLISTED_PATH_FRAGMENTS = frozenset({"scripts/archive", "working-designs", "temp_", ".backup"})
 
 
 def _make_gate_run_report(
@@ -47,7 +44,7 @@ def _make_gate_run_report(
     passed: bool,
     checks_run: int,
     failed_checks: list[str],
-    artifact_path: Optional[str] = None,
+    artifact_path: str | None = None,
 ) -> dict[str, Any]:
     p0_count = sum(1 for c in failed_checks if "P0" in c)
     return {
@@ -161,7 +158,7 @@ class GateEngineServer(BaseMCPServer):
         self,
         target_path: str,
         content_preview: str,
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
     ) -> dict[str, Any]:
         """G1 写入防护：路径黑名单 + 内容编码检测（骨架规则）。"""
         failed: list[str] = []
@@ -187,7 +184,7 @@ class GateEngineServer(BaseMCPServer):
     def _run_g2_commit(
         self,
         files: list[str],
-        commit_message: Optional[str] = None,
+        commit_message: str | None = None,
     ) -> dict[str, Any]:
         """G2 提交门禁：文件命名规则 + commit message 格式校验。"""
         failed: list[str] = []
@@ -212,15 +209,13 @@ class GateEngineServer(BaseMCPServer):
     def _run_g3_phase(
         self,
         phase_id: int,
-        target_phase: Optional[int] = None,
+        target_phase: int | None = None,
     ) -> dict[str, Any]:
         """G3 阶段验收 Gate（骨架：仅检查 target_phase > phase_id）。"""
         failed: list[str] = []
 
         if target_phase is not None and target_phase <= phase_id:
-            failed.append(
-                f"P0:G3.1:target_phase {target_phase} must be > current phase {phase_id}"
-            )
+            failed.append(f"P0:G3.1:target_phase {target_phase} must be > current phase {phase_id}")
 
         passed = not bool(failed)
         report = _make_gate_run_report("G3", passed, 1, failed)

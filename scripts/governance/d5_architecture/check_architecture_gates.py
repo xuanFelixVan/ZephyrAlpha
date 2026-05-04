@@ -28,17 +28,18 @@ EXTRA-03: 每个 layer YAML 的 summary.total 与实际 modules 列表长度一�
 EXTRA-04: SSoT 问题追踪——跨文件不一致问题数量趋势（对标 ITIL Problem Management）
 """
 
-import sys
 import re
+import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
@@ -69,8 +70,9 @@ VIEW_FILES = [
 ]
 
 
-from _shared.yaml_utils import load_yaml
 import subprocess
+
+from _shared.yaml_utils import load_yaml
 
 
 def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
@@ -78,7 +80,10 @@ def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
     script_path = Path(__file__).resolve().parent / "validate_yaml_summaries.py"
     result = subprocess.run(
         [sys.executable, str(script_path), "--warn-only"],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
         cwd=str(REPO_ROOT),
     )
     output = result.stdout + result.stderr
@@ -269,7 +274,7 @@ def gate_04_view_line_count() -> tuple[bool, list[str]]:
         if not view_path.exists():
             continue  # skeleton 文件可能不存在
 
-        with open(view_path, "r", encoding="utf-8") as f:
+        with open(view_path, encoding="utf-8") as f:
             line_count = sum(1 for _ in f)
 
         if line_count > VIEW_LINE_LIMITS["hard"]:
@@ -295,7 +300,7 @@ def gate_05_adr_accepted() -> tuple[bool, list[str]]:
         return False, errors
 
     for adr_file in sorted(ADR_DIR.glob("ADR-*.md")):
-        with open(adr_file, "r", encoding="utf-8") as f:
+        with open(adr_file, encoding="utf-8") as f:
             in_frontmatter = False
             status = None
             for line in f:
@@ -409,9 +414,15 @@ def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
         return False, errors
 
     # 检查所有域的事件
-    for domain_key in ("research_domain", "signal_domain", "portfolio_domain",
-                       "execution_domain", "risk_domain", "ops_domain",
-                       "quantitative_red_lines"):
+    for domain_key in (
+        "research_domain",
+        "signal_domain",
+        "portfolio_domain",
+        "execution_domain",
+        "risk_domain",
+        "ops_domain",
+        "quantitative_red_lines",
+    ):
         domain_events = data.get(domain_key, [])
         if not isinstance(domain_events, list):
             continue
@@ -422,8 +433,7 @@ def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
             publisher = event.get("publisher", "")
             if publisher and publisher not in valid_layer_ids:
                 errors.append(
-                    f"事件 {event_id}: publisher={publisher} 不在 layer 分区中"
-                    f"（合法值: {sorted(valid_layer_ids)}）"
+                    f"事件 {event_id}: publisher={publisher} 不在 layer 分区中" f"（合法值: {sorted(valid_layer_ids)}）"
                 )
 
     return len(errors) == 0, errors
@@ -460,8 +470,7 @@ def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
         layer = agg.get("layer", "")
         if layer and layer not in valid_layer_ids:
             errors.append(
-                f"Aggregate {agg_id}: layer={layer} 不在 layer 分区中"
-                f"（合法值: {sorted(valid_layer_ids)}）"
+                f"Aggregate {agg_id}: layer={layer} 不在 layer 分区中" f"（合法值: {sorted(valid_layer_ids)}）"
             )
 
     return len(errors) == 0, errors
@@ -494,10 +503,7 @@ def gate_08_technology_quadrant_valid() -> tuple[bool, list[str]]:
         tech_id = tech.get("id", "unknown")
         quadrant = tech.get("quadrant", "")
         if quadrant and quadrant not in valid_quadrants:
-            errors.append(
-                f"技术条目 {tech_id}: quadrant={quadrant} 不合法"
-                f"（合法值: {sorted(valid_quadrants)}）"
-            )
+            errors.append(f"技术条目 {tech_id}: quadrant={quadrant} 不合法" f"（合法值: {sorted(valid_quadrants)}）")
         elif not quadrant:
             errors.append(f"技术条目 {tech_id}: 缺少 quadrant 字段")
 
@@ -581,9 +587,7 @@ def gate_sc_schema_compliance() -> tuple[bool, list[str]]:
                                 f"不合法（合法值: {sorted(valid_set)}）"
                             )
                         elif not val:
-                            errors.append(
-                                f"{dir_name}/{yaml_file.name}: 模块 {mod_id} 缺少 status 字段"
-                            )
+                            errors.append(f"{dir_name}/{yaml_file.name}: 模块 {mod_id} 缺少 status 字段")
                     elif field_path == "priority":
                         val = mod.get("priority", "")
                         if val and val not in valid_set:
@@ -633,8 +637,7 @@ def extra_03_summary_total_consistent() -> tuple[bool, list[str]]:
             actual_count = len(modules) if isinstance(modules, list) else 0
             if declared_total != actual_count:
                 errors.append(
-                    f"{yaml_file.name}: summary.total={declared_total} "
-                    f"但实际 modules 数量={actual_count}"
+                    f"{yaml_file.name}: summary.total={declared_total} " f"但实际 modules 数量={actual_count}"
                 )
 
     return len(errors) == 0, errors
@@ -685,9 +688,7 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     for dir_name in sorted(layer_dirs):
         layer_num = dir_name[:3]
         if layer_num not in part_map:
-            errors.append(
-                f"CRITICAL: src/zephyr/{dir_name}/ 存在但 _index.yaml 无对应分区 ({layer_num})"
-            )
+            errors.append(f"CRITICAL: src/zephyr/{dir_name}/ 存在但 _index.yaml 无对应分区 ({layer_num})")
 
     for pid in sorted(part_map):
         if not (pid.startswith("l") and len(pid) == 3 and pid[1:].isdigit()):
@@ -700,15 +701,9 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
             continue
 
         matching = [d for d in layer_dirs if d.startswith(pid + "_")]
-        has_implemented = any(
-            m.get("status") in ("implemented", "active")
-            for m in layer_data.get("modules", [])
-        )
+        has_implemented = any(m.get("status") in ("implemented", "active") for m in layer_data.get("modules", []))
         if not matching and has_implemented:
-            errors.append(
-                f"CRITICAL: 分区 {pid} 有 implemented/active 模块但 "
-                f"src/zephyr/{pid}_*/ 目录不存在"
-            )
+            errors.append(f"CRITICAL: 分区 {pid} 有 implemented/active 模块但 " f"src/zephyr/{pid}_*/ 目录不存在")
 
     for infra_id in ["core-services", "shared-infra"]:
         if infra_id not in part_map:
@@ -734,8 +729,7 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
             if mod_status in ("implemented", "active"):
                 if dir_name not in actual_dirs:
                     errors.append(
-                        f"CRITICAL: {infra_id}/{mod_id} status={mod_status} 但 "
-                        f"src/zephyr/{dir_name}/ 目录不存在"
+                        f"CRITICAL: {infra_id}/{mod_id} status={mod_status} 但 " f"src/zephyr/{dir_name}/ 目录不存在"
                     )
                 elif not actual_dirs.get(dir_name):
                     has_init = (src_zephyr / dir_name / "__init__.py").exists()
@@ -764,9 +758,7 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
 
     for dir_name in sorted(root_dirs):
         if dir_name not in known_root_dirs:
-            errors.append(
-                f"WARNING: src/zephyr/{dir_name}/ 未在任何 YAML 分区中登记"
-            )
+            errors.append(f"WARNING: src/zephyr/{dir_name}/ 未在任何 YAML 分区中登记")
 
     has_critical = any(e.startswith("CRITICAL:") for e in errors)
     return not has_critical, errors
@@ -794,9 +786,7 @@ def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
         if view_file:
             md_path = TARGET_ARCH / view_file
             if not md_path.exists():
-                errors.append(
-                    f"CRITICAL: {yaml_file.name} 引用 view_file={view_file} 不存在"
-                )
+                errors.append(f"CRITICAL: {yaml_file.name} 引用 view_file={view_file} 不存在")
                 continue
 
             if partition_name:
@@ -806,8 +796,7 @@ def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
                     content = ""
                 if partition_name.lower() not in content.lower():
                     warnings.append(
-                        f"WARNING: {yaml_file.name} partition.name={partition_name} "
-                        f"在 {view_file} 中未出现"
+                        f"WARNING: {yaml_file.name} partition.name={partition_name} " f"在 {view_file} 中未出现"
                     )
 
     scan_dirs = ["frontend", "scripts", "infra"]
@@ -827,9 +816,7 @@ def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
                 continue
             md_path = TARGET_ARCH / view_file
             if not md_path.exists():
-                errors.append(
-                    f"CRITICAL: {dir_name}/{yaml_file.name} 引用 view_file={view_file} 不存在"
-                )
+                errors.append(f"CRITICAL: {dir_name}/{yaml_file.name} 引用 view_file={view_file} 不存在")
 
     if not errors and not warnings:
         print(f"  ✅ 全部 {sum(1 for _ in layers_dir.glob('l*.yaml'))} 层 YAML → MD 视图对齐")
@@ -859,7 +846,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
     index_data = None
     if doc_index.exists():
         try:
-            with open(doc_index, "r", encoding="utf-8") as f:
+            with open(doc_index, encoding="utf-8") as f:
                 index_data = f.read()
         except Exception:
             pass
@@ -909,9 +896,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
                     f"（对标 Google OWNERS——活跃目录必须有入口文件声明责任）"
                 )
             else:
-                warnings.append(
-                    f"WARNING: docs/{dir_path.name}/ 为空目录且无 index.md"
-                )
+                warnings.append(f"WARNING: docs/{dir_path.name}/ 为空目录且无 index.md")
 
     # 检查 2: docs/index.md 声明的路径必须存在
     for num, declared_path in sorted(declared_dirs.items()):
@@ -920,21 +905,14 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
             declared_path = declared_path[:-1]
         resolved = DOCS_ROOT / declared_path
         if not resolved.exists():
-            errors.append(
-                f"CRITICAL: docs/index.md 声明抽屉 {num} = {declared_path} 但路径不存在"
-            )
+            errors.append(f"CRITICAL: docs/index.md 声明抽屉 {num} = {declared_path} 但路径不存在")
         elif not (resolved / "index.md").exists():
-            errors.append(
-                f"CRITICAL: docs/index.md 声明抽屉 {num} = {declared_path} 路径存在 "
-                f"但缺少 index.md"
-            )
+            errors.append(f"CRITICAL: docs/index.md 声明抽屉 {num} = {declared_path} 路径存在 " f"但缺少 index.md")
 
     # 检查 3: 实际存在但未在 docs/index.md 声明的目录
     for num, dir_path in sorted(actual_numbered_dirs.items()):
         if num not in declared_dirs:
-            warnings.append(
-                f"WARNING: docs/{dir_path.name}/ 实际存在但未在 docs/index.md 抽屉一览表中声明"
-            )
+            warnings.append(f"WARNING: docs/{dir_path.name}/ 实际存在但未在 docs/index.md 抽屉一览表中声明")
 
     # 检查 4: 声明的嵌套/特殊路径也必须有 index.md
     extra_check_dirs = [
@@ -944,8 +922,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
         check_path = DOCS_ROOT / rel_path
         if check_path.exists() and not (check_path / "index.md").exists():
             errors.append(
-                f"CRITICAL: {rel_path}/ 是活跃模块目录但缺少 index.md "
-                f"（对标 ITIL CMDB——每层目录必须有索引）"
+                f"CRITICAL: {rel_path}/ 是活跃模块目录但缺少 index.md " f"（对标 ITIL CMDB——每层目录必须有索引）"
             )
 
     if not errors and not warnings:
@@ -1069,14 +1046,11 @@ def extra_04_ssot_issue_trend() -> tuple[bool, list[str]]:
     tracking_path = REPO_ROOT / "docs" / "09_audit" / "state" / "ssot-issue-tracking.yaml"
 
     if not tracking_path.exists():
-        errors.append(
-            "EXTRA-04 SKIP: ssot-issue-tracking.yaml 不存在（对标 ITIL KEDB——"
-            "需要先创建问题追踪登记表）"
-        )
+        errors.append("EXTRA-04 SKIP: ssot-issue-tracking.yaml 不存在（对标 ITIL KEDB——" "需要先创建问题追踪登记表）")
         return True, errors  # 不存在不阻塞，仅提醒
 
     try:
-        with open(tracking_path, "r", encoding="utf-8") as f:
+        with open(tracking_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except Exception as e:
         errors.append(f"EXTRA-04 FAIL: 无法解析 ssot-issue-tracking.yaml: {e}")
@@ -1139,10 +1113,10 @@ def main() -> None:
         ("GATE-06", "事件 publisher 层 ID 存在", gate_06_event_publisher_exists),
         ("GATE-07", "aggregate layer 存在", gate_07_aggregate_layer_exists),
         ("GATE-08", "technology quadrant 合法", gate_08_technology_quadrant_valid),
-        ("GATE-A",  "src/zephyr/ ↔ YAML SSoT 代码对齐（§6.10 双层闸门）", gate_a_code_yaml_alignment),
-        ("GATE-B",  "YAML SSoT ↔ MD 视图对齐（§6.10 双层闸门）", gate_b_yaml_md_alignment),
-        ("GATE-D",  "docs/ 活跃子目录 index.md 强制存在（对标 Google OWNERS）", gate_d_doc_directory_index_required),
-        ("GATE-E",  "Session Log 变更对齐自检（对标 Google LSC）", gate_e_session_log_alignment),
+        ("GATE-A", "src/zephyr/ ↔ YAML SSoT 代码对齐（§6.10 双层闸门）", gate_a_code_yaml_alignment),
+        ("GATE-B", "YAML SSoT ↔ MD 视图对齐（§6.10 双层闸门）", gate_b_yaml_md_alignment),
+        ("GATE-D", "docs/ 活跃子目录 index.md 强制存在（对标 Google OWNERS）", gate_d_doc_directory_index_required),
+        ("GATE-E", "Session Log 变更对齐自检（对标 Google LSC）", gate_e_session_log_alignment),
         ("GATE-SC", "模块 status 在 _schema.yaml 合法值内", gate_sc_schema_compliance),
         ("GATE-SUM", "YAML Summary 自动对账（AGENTS.md §6.10 根治层）", _call_validate_yaml_summaries),
         ("EXTRA-01", "module_id 无重复", extra_01_no_duplicate_ids),
@@ -1159,7 +1133,7 @@ def main() -> None:
         print(f"[{gate_id}] {desc}")
         passed, errors = check_fn()
         if passed:
-            print(f"  ✅ PASS")
+            print("  ✅ PASS")
             total_pass += 1
         else:
             print(f"  ❌ FAIL ({len(errors)} 项)")
@@ -1170,7 +1144,9 @@ def main() -> None:
             total_fail += 1
 
     print(f"\n{'=' * 60}")
-    print(f"结果：{total_pass} PASS / {total_fail} FAIL / 2 人工确认（GATE-09/10）—— 含 GATE-A/B/D/E/SUM 五层闸门 + EXTRA-01~04")
+    print(
+        f"结果：{total_pass} PASS / {total_fail} FAIL / 2 人工确认（GATE-09/10）—— 含 GATE-A/B/D/E/SUM 五层闸门 + EXTRA-01~04"
+    )
     print(f"{'=' * 60}")
 
     if total_fail > 0:

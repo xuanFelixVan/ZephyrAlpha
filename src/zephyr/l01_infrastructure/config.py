@@ -12,7 +12,6 @@ ZephyrAlpha — L01 Infrastructure Layer — Configuration Management
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
 
 
 @dataclass(frozen=True)
@@ -21,17 +20,16 @@ class AppConfig:
 
     支持从 YAML 文件加载 + 环境变量覆盖 + 热重载。
     """
-    env: str = 'dev'
-    log_level: str = 'INFO'
+
+    env: str = "dev"
+    log_level: str = "INFO"
     data_source_priority: list = None
 
     def __post_init__(self):
-        object.__setattr__(
-            self, 'data_source_priority', self.data_source_priority or ['akshare', 'tushare']
-        )
+        object.__setattr__(self, "data_source_priority", self.data_source_priority or ["akshare", "tushare"])
 
 
-def load_config(config_path: Optional[str] = None, env_override: bool = True) -> AppConfig:
+def load_config(config_path: str | None = None, env_override: bool = True) -> AppConfig:
     """[STUB — Phase 2 实现] 加载应用配置。"""
     raise NotImplementedError("load_config: STUB — Phase 2 实现")
 

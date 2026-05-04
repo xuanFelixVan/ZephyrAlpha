@@ -18,27 +18,38 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT, SRC_DIR
+
 TESTS_DIR = REPO_ROOT / "tests"
 
 SKIP_MODULES = {
-    "l00_data_source", "l01_infrastructure", "l02_alpha_factor", "l03_signal_generation",
-    "l04_risk_management", "l05_portfolio_construction", "l06_trade_execution",
-    "l07_post_trade_analytics", "l08_human_ai_interface", "l09_research_innovation",
-    "l10_compliance", "l11_ml_platform", "l12_system_telemetry", "l13_experimentation",
+    "l00_data_source",
+    "l01_infrastructure",
+    "l02_alpha_factor",
+    "l03_signal_generation",
+    "l04_risk_management",
+    "l05_portfolio_construction",
+    "l06_trade_execution",
+    "l07_post_trade_analytics",
+    "l08_human_ai_interface",
+    "l09_research_innovation",
+    "l10_compliance",
+    "l11_ml_platform",
+    "l12_system_telemetry",
+    "l13_experimentation",
 }
 
 
@@ -95,11 +106,13 @@ def scan_coverage() -> tuple[list[dict], int, int]:
             rel_src = py_file
 
         if test_file is None:
-            untested.append({
-                "source": str(rel_src),
-                "test_expected": f"tests/unit/test_{py_file.stem}.py",
-                "module": py_file.parent.name,
-            })
+            untested.append(
+                {
+                    "source": str(rel_src),
+                    "test_expected": f"tests/unit/test_{py_file.stem}.py",
+                    "module": py_file.parent.name,
+                }
+            )
         else:
             tested_count += 1
 
@@ -117,7 +130,10 @@ def main() -> None:
     coverage_pct = (tested_count / total_sources * 100) if total_sources > 0 else 100
 
     if untested:
-        print(f"\n[TEST-COV] {len(untested)} 源文件缺少单元测试（共 {total_sources} 源文件，覆盖率 {coverage_pct:.0f}%）:\n", file=sys.stderr)
+        print(
+            f"\n[TEST-COV] {len(untested)} 源文件缺少单元测试（共 {total_sources} 源文件，覆盖率 {coverage_pct:.0f}%）:\n",
+            file=sys.stderr,
+        )
         for f in untested:
             source = f["source"]
             test_expected = f["test_expected"]
@@ -127,7 +143,10 @@ def main() -> None:
     else:
         print(f"\n[TEST-COV] 全部 {total_sources} 源文件已有对应单元测试 ✅\n", file=sys.stderr)
 
-    print(f"Scanned {total_sources} source files, {tested_count} tested ({coverage_pct:.0f}%), {len(untested)} untested", file=sys.stderr)
+    print(
+        f"Scanned {total_sources} source files, {tested_count} tested ({coverage_pct:.0f}%), {len(untested)} untested",
+        file=sys.stderr,
+    )
 
     if args.warn_only:
         sys.exit(0)

@@ -17,8 +17,8 @@ SSoT: cross-layer-contracts.yaml → CTR-SLA-001~006, CTR-TRACE-001
 
 from zephyr.l12_system_telemetry.contract_metrics import (
     ContractMetricsCollector,
-    SlaRecord,
     DriftAlert,
+    SlaRecord,
     get_contract_metrics,
 )
 

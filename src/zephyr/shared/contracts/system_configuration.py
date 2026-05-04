@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -25,8 +25,9 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class SystemConfiguration:

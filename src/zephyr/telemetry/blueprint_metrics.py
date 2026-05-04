@@ -28,14 +28,13 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 __all__ = ["record_blueprint_read", "BlueprintReadEvent", "METRICS_FILE"]
 
 _logger = logging.getLogger(__name__)
-_UTC = timezone.utc
+_UTC = UTC
 
 _FILE = Path(__file__).resolve()
 REPO_ROOT = _FILE.parents[3]

@@ -13,81 +13,94 @@ detect_orphan_py.py — 项目根目录孤儿 .py 文件检测
 
 exit codes: 0=pass, 1=findings, 2=error
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
+
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / '_shared').exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 import argparse
+
 from _shared.constants import REPO_ROOT
-LEGAL_DIRS: tuple[str, ...] = ('scripts/governance', 'src/zephyr', 'tests')
+
+LEGAL_DIRS: tuple[str, ...] = ("scripts/governance", "src/zephyr", "tests")
+
 
 def find_orphan_py_files() -> list[Path]:
     """find orphan py files"""
     findings: list[Path] = []
-    'find orphan py files.'
+    "find orphan py files."
     try:
-        '查找目标.'
+        "查找目标."
         for entry in sorted(REPO_ROOT.iterdir(), key=lambda e: (not e.is_dir(), e.name)):
             if not entry.is_file():
                 continue
             if entry.name in EXCLUDE_NAMES:
                 continue
-            if entry.suffix == '.py':
+            if entry.suffix == ".py":
                 findings.append(entry)
     except OSError as exc:
-        print(f'ERROR: Cannot scan {REPO_ROOT}: {exc}', file=sys.stderr)
+        print(f"ERROR: Cannot scan {REPO_ROOT}: {exc}", file=sys.stderr)
         raise
     return findings
-    'find orphan py files.'
+    "find orphan py files."
+
 
 def fix_orphans(files: list[Path]) -> int:
     """fix orphans."""
     removed = 0
-    'fix_orphans.'
+    "fix_orphans."
     for f in files:
         try:
             f.unlink()
-            print(f'  DELETED: {f.relative_to(REPO_ROOT)}')
+            print(f"  DELETED: {f.relative_to(REPO_ROOT)}")
             removed += 1
         except OSError as exc:
-            print(f'  ERROR deleting {f.relative_to(REPO_ROOT)}: {exc}', file=sys.stderr)
+            print(f"  ERROR deleting {f.relative_to(REPO_ROOT)}: {exc}", file=sys.stderr)
     return removed
-    'fix orphans.'
+    "fix orphans."
+
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description='检测并修复项目根目录下的孤儿 .py 文件（对标 AGENTS.md §6.5）')
-    parser.add_argument('--warn-only', action='store_true', default=False, help='仅警告不阻断（exit 0，即使发现孤儿文件）')
-    parser.add_argument('--fix', action='store_true', default=False, help='自动删除检测到的孤儿 .py 文件')
+    parser = argparse.ArgumentParser(description="检测并修复项目根目录下的孤儿 .py 文件（对标 AGENTS.md §6.5）")
+    parser.add_argument(
+        "--warn-only", action="store_true", default=False, help="仅警告不阻断（exit 0，即使发现孤儿文件）"
+    )
+    parser.add_argument("--fix", action="store_true", default=False, help="自动删除检测到的孤儿 .py 文件")
     args = parser.parse_args()
     try:
         orphans = find_orphan_py_files()
     except OSError:
         sys.exit(2)
     if not orphans:
-        print(f'OK: 项目根目录零孤儿 .py 文件')
+        print("OK: 项目根目录零孤儿 .py 文件")
         sys.exit(0)
-    print(f'FOUND {len(orphans)} orphan .py file(s) in project root:')
+    print(f"FOUND {len(orphans)} orphan .py file(s) in project root:")
     for f in orphans:
-        print(f'  {f.relative_to(REPO_ROOT)}')
+        print(f"  {f.relative_to(REPO_ROOT)}")
     if args.fix:
         removed = fix_orphans(orphans)
-        print(f'FIXED: {removed} file(s) deleted')
+        print(f"FIXED: {removed} file(s) deleted")
         sys.exit(0 if removed == len(orphans) else 1)
     print()
-    print(f'AGENTS.md §6.5 规定: .py 文件只允许放在三个位置:')
+    print("AGENTS.md §6.5 规定: .py 文件只允许放在三个位置:")
     for d in LEGAL_DIRS:
-        print(f'  - {REPO_ROOT / d}')
-    print(f'请删除上述孤儿文件，或移动至合法目录。')
-    print(f'提示: 使用 --fix 自动删除。')
+        print(f"  - {REPO_ROOT / d}")
+    print("请删除上述孤儿文件，或移动至合法目录。")
+    print("提示: 使用 --fix 自动删除。")
     if args.warn_only:
-        print('WARN-ONLY: 不阻断，exit 0')
+        print("WARN-ONLY: 不阻断，exit 0")
         sys.exit(0)
     sys.exit(1)
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()

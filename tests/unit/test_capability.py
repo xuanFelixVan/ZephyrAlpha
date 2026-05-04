@@ -3,7 +3,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-
 from zephyr.shared.capability import (
     Capability,
     CapabilityDenied,
@@ -92,38 +91,47 @@ class TestCapabilityCheck:
             return CapabilityRegistry()
 
     def test_allow_match(self, tmp_path: Path):
-        registry = self._make_registry(tmp_path, textwrap.dedent("""\
+        registry = self._make_registry(
+            tmp_path,
+            textwrap.dedent("""\
             rules:
               - name: write_src
                 allow:
                   - "src/zephyr/l02_alpha_factor/**/*.py"
                 deny: []
-        """))
+        """),
+        )
         allowed, info = registry.check("write", "src/zephyr/l02_alpha_factor/factor.py")
         assert allowed is True
         assert info["provenance"] is True
 
     def test_allow_overrides_deny_within_same_rule(self, tmp_path: Path):
-        registry = self._make_registry(tmp_path, textwrap.dedent("""\
+        registry = self._make_registry(
+            tmp_path,
+            textwrap.dedent("""\
             rules:
               - name: write_src
                 allow:
                   - "src/zephyr/l02_alpha_factor/**/*.py"
                 deny:
                   - "src/zephyr/l02_alpha_factor/secret.py"
-        """))
+        """),
+        )
         allowed, info = registry.check("write", "src/zephyr/l02_alpha_factor/secret.py")
         assert allowed is True
         assert info["reason"] == "allow"
 
     def test_default_deny(self, tmp_path: Path):
-        registry = self._make_registry(tmp_path, textwrap.dedent("""\
+        registry = self._make_registry(
+            tmp_path,
+            textwrap.dedent("""\
             rules:
               - name: write_src
                 allow:
                   - "src/zephyr/l02_alpha_factor/**/*.py"
                 deny: []
-        """))
+        """),
+        )
         allowed, info = registry.check("write", "src/zephyr/l04_risk_management/stop_loss.py")
         assert allowed is False
         assert info["reason"] == "no_matching_rule"
@@ -147,23 +155,29 @@ class TestCapabilityCheck:
             assert "deny" in str(exc_info.value)
 
     def test_glob_star_star(self, tmp_path: Path):
-        registry = self._make_registry(tmp_path, textwrap.dedent("""\
+        registry = self._make_registry(
+            tmp_path,
+            textwrap.dedent("""\
             rules:
               - name: write_src
                 allow:
                   - "src/zephyr/l02_alpha_factor/**/*.py"
                 deny: []
-        """))
+        """),
+        )
         allowed, _ = registry.check("write", "src/zephyr/l02_alpha_factor/sub/deep.py")
         assert allowed is True
 
     def test_path_outside_repo(self, tmp_path: Path):
-        registry = self._make_registry(tmp_path, textwrap.dedent("""\
+        registry = self._make_registry(
+            tmp_path,
+            textwrap.dedent("""\
             rules:
               - name: write_src
                 allow:
                   - "src/**/*.py"
                 deny: []
-        """))
+        """),
+        )
         allowed, info = registry.check("write", "/etc/passwd")
         assert allowed is False

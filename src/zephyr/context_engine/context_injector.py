@@ -13,6 +13,7 @@ string for prompt construction. Supports three retrieval modes:
 
 Respects token budget limits from ContextBudgetTracker.
 """
+
 from __future__ import annotations
 
 from enum import Enum
@@ -74,11 +75,14 @@ class ContextInjector:
         records = self._kb_repo.list_by_status()
         matching: list[Any] = []
         for rec in records:
-            if hasattr(rec, "tags") and task_id in rec.tags:
-                matching.append(rec)
-            elif hasattr(rec, "summary") and task_id in rec.summary:
-                matching.append(rec)
-            elif hasattr(rec, "source_file") and task_id in rec.source_file:
+            if (
+                hasattr(rec, "tags")
+                and task_id in rec.tags
+                or hasattr(rec, "summary")
+                and task_id in rec.summary
+                or hasattr(rec, "source_file")
+                and task_id in rec.source_file
+            ):
                 matching.append(rec)
 
         return self._assemble_context(matching, RetrievalMode.TASK_ID, task_id)
@@ -87,11 +91,14 @@ class ContextInjector:
         records = self._kb_repo.list_by_status()
         matching: list[Any] = []
         for rec in records:
-            if hasattr(rec, "category") and rec.category == module_id:
-                matching.append(rec)
-            elif hasattr(rec, "tags") and module_id in rec.tags:
-                matching.append(rec)
-            elif hasattr(rec, "ke_id") and module_id in rec.ke_id:
+            if (
+                hasattr(rec, "category")
+                and rec.category == module_id
+                or hasattr(rec, "tags")
+                and module_id in rec.tags
+                or hasattr(rec, "ke_id")
+                and module_id in rec.ke_id
+            ):
                 matching.append(rec)
 
         return self._assemble_context(matching, RetrievalMode.MODULE_ID, module_id)
@@ -128,7 +135,7 @@ class ContextInjector:
         sources: list[str] = []
         total_tokens = 0
 
-        for rec in records[:self._max_sources]:
+        for rec in records[: self._max_sources]:
             content = getattr(rec, "summary", "") or getattr(rec, "content", "")
             source = getattr(rec, "source_file", "") or getattr(rec, "ke_id", "")
             ke_id = getattr(rec, "ke_id", "unknown")
@@ -166,7 +173,7 @@ class ContextInjector:
         sources: list[str] = []
         total_tokens = 0
 
-        for hit in hits[:self._max_sources]:
+        for hit in hits[: self._max_sources]:
             content = getattr(hit, "content", "")
             source = getattr(hit, "ke_id", "") or ""
             chunk_id = getattr(hit, "chunk_id", "unknown")

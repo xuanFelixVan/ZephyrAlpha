@@ -15,12 +15,13 @@ Cascading logic:
 Data contract (ADR-0035 section 4.3):
   IntentResult with primary_domain, confidence, source_stage, etc.
 """
+
 from __future__ import annotations
 
 import re
 import time
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -39,64 +40,224 @@ _KEYWORD_CONFIDENCE_THRESHOLD = 0.75
 
 _DOMAIN_KEYWORDS: dict[str, list[str]] = {
     "D0": [
-        "meta", "session", "handoff", "log", "status",
-        "init", "bootstrap", "startup", "overview", "dashboard",
-        "system", "config", "setup", "register", "index",
-        "summary", "report", "context", "health", "check",
+        "meta",
+        "session",
+        "handoff",
+        "log",
+        "status",
+        "init",
+        "bootstrap",
+        "startup",
+        "overview",
+        "dashboard",
+        "system",
+        "config",
+        "setup",
+        "register",
+        "index",
+        "summary",
+        "report",
+        "context",
+        "health",
+        "check",
     ],
     "D1": [
-        "data", "source", "ingest", "connector", "normalize",
-        "quality", "storage", "fetch", "download", "api",
-        "feed", "stream", "csv", "json", "parquet",
-        "database", "import", "export", "pipeline", "etl",
+        "data",
+        "source",
+        "ingest",
+        "connector",
+        "normalize",
+        "quality",
+        "storage",
+        "fetch",
+        "download",
+        "api",
+        "feed",
+        "stream",
+        "csv",
+        "json",
+        "parquet",
+        "database",
+        "import",
+        "export",
+        "pipeline",
+        "etl",
     ],
     "D2": [
-        "architecture", "blueprint", "design", "module", "component",
-        "interface", "layer", "adr", "decision", "review",
-        "structure", "diagram", "spec", "specification", "contract",
-        "dependency", "coupling", "cohesion", "pattern", "rationale",
+        "architecture",
+        "blueprint",
+        "design",
+        "module",
+        "component",
+        "interface",
+        "layer",
+        "adr",
+        "decision",
+        "review",
+        "structure",
+        "diagram",
+        "spec",
+        "specification",
+        "contract",
+        "dependency",
+        "coupling",
+        "cohesion",
+        "pattern",
+        "rationale",
     ],
     "D3": [
-        "factor", "alpha", "signal", "indicator", "feature",
-        "momentum", "mean", "reversion", "volatility", "volume",
-        "price", "return", "sharpe", "sortino", "ic",
-        "rank", "zscore", "neutralize", "decay", "lag",
+        "factor",
+        "alpha",
+        "signal",
+        "indicator",
+        "feature",
+        "momentum",
+        "mean",
+        "reversion",
+        "volatility",
+        "volume",
+        "price",
+        "return",
+        "sharpe",
+        "sortino",
+        "ic",
+        "rank",
+        "zscore",
+        "neutralize",
+        "decay",
+        "lag",
     ],
     "D4": [
-        "strategy", "backtest", "trading", "portfolio", "position",
-        "entry", "exit", "signal", "order", "execution",
-        "profit", "loss", "drawdown", "benchmark", "alpha",
-        "beta", "correlation", "regime", "regime-switch", "trend",
+        "strategy",
+        "backtest",
+        "trading",
+        "portfolio",
+        "position",
+        "entry",
+        "exit",
+        "signal",
+        "order",
+        "execution",
+        "profit",
+        "loss",
+        "drawdown",
+        "benchmark",
+        "alpha",
+        "beta",
+        "correlation",
+        "regime",
+        "regime-switch",
+        "trend",
     ],
     "D5": [
-        "risk", "stop", "loss", "limit", "budget",
-        "exposure", "var", "cvar", "drawdown", "margin",
-        "leverage", "concentration", "correlation", "stress", "scenario",
-        "hedge", "protect", "safeguard", "threshold", "breach",
+        "risk",
+        "stop",
+        "loss",
+        "limit",
+        "budget",
+        "exposure",
+        "var",
+        "cvar",
+        "drawdown",
+        "margin",
+        "leverage",
+        "concentration",
+        "correlation",
+        "stress",
+        "scenario",
+        "hedge",
+        "protect",
+        "safeguard",
+        "threshold",
+        "breach",
     ],
     "D6": [
-        "governance", "audit", "compliance", "standard", "policy",
-        "rule", "sentinel", "scan", "violation", "contradiction",
-        "ssot", "registry", "inventory", "controlled", "document",
-        "validate", "verify", "check", "gate", "enforce",
+        "governance",
+        "audit",
+        "compliance",
+        "standard",
+        "policy",
+        "rule",
+        "sentinel",
+        "scan",
+        "violation",
+        "contradiction",
+        "ssot",
+        "registry",
+        "inventory",
+        "controlled",
+        "document",
+        "validate",
+        "verify",
+        "check",
+        "gate",
+        "enforce",
     ],
     "D7": [
-        "analytics", "report", "metric", "performance", "attribution",
-        "pnl", "return", "benchmark", "tearsheet", "analysis",
-        "statistics", "distribution", "correlation", "regression", "chart",
-        "visualization", "dashboard", "monitor", "alert", "kpi",
+        "analytics",
+        "report",
+        "metric",
+        "performance",
+        "attribution",
+        "pnl",
+        "return",
+        "benchmark",
+        "tearsheet",
+        "analysis",
+        "statistics",
+        "distribution",
+        "correlation",
+        "regression",
+        "chart",
+        "visualization",
+        "dashboard",
+        "monitor",
+        "alert",
+        "kpi",
     ],
     "D8": [
-        "human", "interface", "chat", "prompt", "command",
-        "cli", "terminal", "input", "output", "display",
-        "notification", "alert", "message", "feedback", "interaction",
-        "conversation", "query", "request", "response", "dialogue",
+        "human",
+        "interface",
+        "chat",
+        "prompt",
+        "command",
+        "cli",
+        "terminal",
+        "input",
+        "output",
+        "display",
+        "notification",
+        "alert",
+        "message",
+        "feedback",
+        "interaction",
+        "conversation",
+        "query",
+        "request",
+        "response",
+        "dialogue",
     ],
     "D9": [
-        "debug", "fix", "error", "bug", "issue",
-        "troubleshoot", "diagnose", "repair", "patch", "hotfix",
-        "crash", "exception", "traceback", "log", "fail",
-        "broken", "corrupt", "recover", "rollback", "restore",
+        "debug",
+        "fix",
+        "error",
+        "bug",
+        "issue",
+        "troubleshoot",
+        "diagnose",
+        "repair",
+        "patch",
+        "hotfix",
+        "crash",
+        "exception",
+        "traceback",
+        "log",
+        "fail",
+        "broken",
+        "corrupt",
+        "recover",
+        "rollback",
+        "restore",
     ],
 }
 
@@ -143,16 +304,17 @@ class IntentResult(BaseModel):
     source_stage: StageLiteral = Field(description="keyword, semantic, or llm")
     suggested_directives: list[str] = Field(default_factory=list)
     requires_human: bool = False
-    rationale: Optional[str] = None
+    rationale: str | None = None
     latency_ms: int = Field(ge=0)
     cost_usd: float = Field(default=0.0)
-    fallback_hint: Optional[str] = None
+    fallback_hint: str | None = None
 
 
 def _tokenize(query: str) -> list[str]:
     tokens: list[str] = []
     try:
         import jieba
+
         tokens = list(jieba.cut(query))
     except ImportError:
         tokens = re.findall(r"[a-zA-Z0-9]+|[\u4e00-\u9fff]", query)
@@ -185,7 +347,7 @@ class IntentKeywordMapper:
 
     def __init__(
         self,
-        keywords: Optional[dict[str, list[str]]] = None,
+        keywords: dict[str, list[str]] | None = None,
         confidence_threshold: float = _KEYWORD_CONFIDENCE_THRESHOLD,
     ) -> None:
         self._keywords = keywords or _DOMAIN_KEYWORDS
@@ -199,14 +361,12 @@ class IntentKeywordMapper:
                     domain_list.append(domain)
         for domain in self._keywords:
             if domain not in _DIRECTIVE_MAP:
-                raise ValueError(
-                    f"Domain {domain!r} has keywords but no entry in _DIRECTIVE_MAP"
-                )
+                raise ValueError(f"Domain {domain!r} has keywords but no entry in _DIRECTIVE_MAP")
 
     def map_intent(
         self,
         query: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> IntentResult:
         t0 = time.perf_counter()
         if not query or not query.strip():
@@ -269,7 +429,7 @@ class IntentKeywordMapper:
 
         suggested_directives = _DIRECTIVE_MAP.get(primary_domain, ["999"])
 
-        fallback_hint: Optional[str] = None
+        fallback_hint: str | None = None
         if confidence < self._threshold:
             fallback_hint = "stage-1-only"
 

@@ -12,21 +12,17 @@
 - L2 灰名单条件触发（落盘 .md / M 级 MCP）
 - L3 黑名单禁止（纯代码补全 / session 元信息）
 """
+
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
-
-import pytest
+from typing import Any
 
 from zephyr.orchestrator.hallucination_detector import (
-    BudgetState,
+    KEYWORD_HALLU_RULES,
     FallbackMode,
     HallucinationDetector,
-    HallucinationResult,
-    KEYWORD_HALLU_RULES,
     ModelCallResult,
     RiskLevel,
     TriggerLevel,
@@ -36,7 +32,7 @@ from zephyr.orchestrator.hallucination_detector import (
 class FakeCaller:
     def __init__(
         self,
-        responses: Optional[dict[str, ModelCallResult]] = None,
+        responses: dict[str, ModelCallResult] | None = None,
         default_cost: float = 0.005,
     ) -> None:
         self._responses = responses or {}
@@ -47,9 +43,7 @@ class FakeCaller:
         self.calls.append((purpose, prompt[:80]))
         if purpose in self._responses:
             return self._responses[purpose]
-        return ModelCallResult(
-            content="{}", cost_usd=self._default_cost, latency_ms=120, success=True
-        )
+        return ModelCallResult(content="{}", cost_usd=self._default_cost, latency_ms=120, success=True)
 
 
 def _step1_payload(baseline: str, questions: list[str]) -> ModelCallResult:
@@ -82,33 +76,21 @@ class TestL1WhitelistTrigger:
 
     def test_l1_mcp_h_safety_triggers(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.M, mcp_safety_level=RiskLevel.H)
-            == TriggerLevel.L1_WHITELIST
-        )
+        assert d.should_trigger(RiskLevel.M, mcp_safety_level=RiskLevel.H) == TriggerLevel.L1_WHITELIST
 
     def test_l1_frozen_asset_mutation_triggers(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.L, frozen_asset_touch=True)
-            == TriggerLevel.L1_WHITELIST
-        )
+        assert d.should_trigger(RiskLevel.L, frozen_asset_touch=True) == TriggerLevel.L1_WHITELIST
 
     def test_l1_low_intent_confidence_triggers(self) -> None:
         d = HallucinationDetector()
         assert (
-            d.should_trigger(
-                RiskLevel.M, source_stage="semantic", intent_confidence=0.5
-            )
-            == TriggerLevel.L1_WHITELIST
+            d.should_trigger(RiskLevel.M, source_stage="semantic", intent_confidence=0.5) == TriggerLevel.L1_WHITELIST
         )
 
     def test_l1_requires_human_triggers(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.M, requires_human=True)
-            == TriggerLevel.L1_WHITELIST
-        )
+        assert d.should_trigger(RiskLevel.M, requires_human=True) == TriggerLevel.L1_WHITELIST
 
 
 # ---------------------------------------------------------------------------
@@ -119,16 +101,11 @@ class TestL1WhitelistTrigger:
 class TestL2GreyTrigger:
     def test_l2_doc_target(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.L, target_is_doc=True) == TriggerLevel.L2_GREY
-        )
+        assert d.should_trigger(RiskLevel.L, target_is_doc=True) == TriggerLevel.L2_GREY
 
     def test_l2_mcp_m_safety(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.L, mcp_safety_level=RiskLevel.M)
-            == TriggerLevel.L2_GREY
-        )
+        assert d.should_trigger(RiskLevel.L, mcp_safety_level=RiskLevel.M) == TriggerLevel.L2_GREY
 
     def test_l2_m_risk(self) -> None:
         d = HallucinationDetector()
@@ -143,16 +120,11 @@ class TestL2GreyTrigger:
 class TestL3Blacklist:
     def test_l3_pure_codegen(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.L, pure_codegen=True)
-            == TriggerLevel.L3_BLACKLIST
-        )
+        assert d.should_trigger(RiskLevel.L, pure_codegen=True) == TriggerLevel.L3_BLACKLIST
 
     def test_l3_meta_info(self) -> None:
         d = HallucinationDetector()
-        assert (
-            d.should_trigger(RiskLevel.L, meta_info=True) == TriggerLevel.L3_BLACKLIST
-        )
+        assert d.should_trigger(RiskLevel.L, meta_info=True) == TriggerLevel.L3_BLACKLIST
 
     def test_l3_returns_not_triggered(self) -> None:
         d = HallucinationDetector()
@@ -226,13 +198,7 @@ class TestInterceptionRate:
 
 class TestDegradationCascade:
     def test_dual_model_cove(self) -> None:
-        primary = FakeCaller(
-            {
-                "cove_step1_baseline_plan": _step1_payload(
-                    "ok", ["Q1", "Q2", "Q3"]
-                )
-            }
-        )
+        primary = FakeCaller({"cove_step1_baseline_plan": _step1_payload("ok", ["Q1", "Q2", "Q3"])})
         verifier = FakeCaller(
             {
                 "cove_step2_verify": _step2_payload(
@@ -281,19 +247,13 @@ class TestKeywordRules:
         assert out
 
     def test_frozen_asset_mutation(self) -> None:
-        out = KEYWORD_HALLU_RULES["frozen_asset_mutation"](
-            "请修改 tool_contracts.yaml", False
-        )
+        out = KEYWORD_HALLU_RULES["frozen_asset_mutation"]("请修改 tool_contracts.yaml", False)
         assert out
 
     def test_frozen_asset_mutation_with_handoff(self) -> None:
-        out = KEYWORD_HALLU_RULES["frozen_asset_mutation"](
-            "请修改 tool_contracts.yaml", True
-        )
+        out = KEYWORD_HALLU_RULES["frozen_asset_mutation"]("请修改 tool_contracts.yaml", True)
         assert out == []
 
     def test_missing_file(self, tmp_path: Path) -> None:
-        out = KEYWORD_HALLU_RULES["missing_files"](
-            "See nonexistent_file.md", tmp_path
-        )
+        out = KEYWORD_HALLU_RULES["missing_files"]("See nonexistent_file.md", tmp_path)
         assert out

@@ -9,6 +9,7 @@ Unit tests for 5 MCP Servers (T-3-04, B15)
   - DocGuardServer: create_package、validate_package、emit_manual_event
   - SentinelServer: map_intent、reload_keywords、evaluate_golden_set
 """
+
 from __future__ import annotations
 
 import io
@@ -16,24 +17,17 @@ import json
 from typing import Any
 
 import pytest
-
 from zephyr.mcp._base_server import (
     ERR_METHOD_NOT_FOUND,
     ERR_TOOL_NOT_FOUND,
     BaseMCPServer,
-    ToolDefinition,
 )
-from zephyr.mcp.task_manager_server import (
-    TaskManagerMCP,
-)
+from zephyr.mcp.doc_guard_server import create_server as make_doc_server
+from zephyr.mcp.gate_engine_server import create_server as make_gate_server
 from zephyr.mcp.knowledge_base_server import (
-    KnowledgeBaseServer,
     create_server as make_kb_server,
 )
-from zephyr.mcp.gate_engine_server import GateEngineServer, create_server as make_gate_server
-from zephyr.mcp.doc_guard_server import DocGuardServer, create_server as make_doc_server
-from zephyr.mcp.sentinel_server import SentinelServer, create_server as make_sentinel_server
-
+from zephyr.mcp.sentinel_server import create_server as make_sentinel_server
 
 # ---------------------------------------------------------------------------
 # 辅助函数
@@ -156,7 +150,9 @@ class TestBaseMCPServer:
 # ===========================================================================
 
 
-@pytest.mark.skip(reason="BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——当前 task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待步骤5-6补齐后可取消 skip 并重写测试适配 FastMCP API")
+@pytest.mark.skip(
+    reason="BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——当前 task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待步骤5-6补齐后可取消 skip 并重写测试适配 FastMCP API"
+)
 class TestTaskManagerServer:
     # 旧 implementaion: make_task_server() → _tool_result(server, "task_manager.create_task", {...})
     # 新 implementaion: FastMCP @mcp.tool() 装饰器，无 TaskManagerServer class
@@ -172,68 +168,108 @@ class TestTaskManagerServer:
         assert "task_manager.create_task" in names
 
     def test_create_and_get_task(self) -> None:
-        create_result = _tool_result(self.server, "task_manager.create_task", {
-            "task_id": "T-2-28",
-            "phase": 2,
-            "directive": "266+325",
-        })
+        create_result = _tool_result(
+            self.server,
+            "task_manager.create_task",
+            {
+                "task_id": "T-2-28",
+                "phase": 2,
+                "directive": "266+325",
+            },
+        )
         assert create_result["task_id"] == "T-2-28"
         assert create_result["status"] == "PENDING"
 
-        get_result = _tool_result(self.server, "task_manager.get_task", {
-            "task_id": "T-2-28",
-        })
+        get_result = _tool_result(
+            self.server,
+            "task_manager.get_task",
+            {
+                "task_id": "T-2-28",
+            },
+        )
         assert get_result["task_id"] == "T-2-28"
 
     def test_get_task_not_found_returns_error(self) -> None:
-        err = _err(_tool_call(self.server, "task_manager.get_task", {
-            "task_id": "T-2-999",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "task_manager.get_task",
+                {
+                    "task_id": "T-2-999",
+                },
+            )
+        )
         assert "ZA-TSK-0001" in err["message"]
 
     def test_update_status_valid_transition(self) -> None:
-        _tool_result(self.server, "task_manager.create_task", {
-            "task_id": "T-2-28",
-            "phase": 2,
-            "directive": "266",
-        })
-        result = _tool_result(self.server, "task_manager.update_status", {
-            "task_id": "T-2-28",
-            "new_status": "READY",
-        })
+        _tool_result(
+            self.server,
+            "task_manager.create_task",
+            {
+                "task_id": "T-2-28",
+                "phase": 2,
+                "directive": "266",
+            },
+        )
+        result = _tool_result(
+            self.server,
+            "task_manager.update_status",
+            {
+                "task_id": "T-2-28",
+                "new_status": "READY",
+            },
+        )
         assert result["new_status"] == "READY"
         assert result["previous_status"] == "PENDING"
 
     def test_update_status_invalid_transition_returns_error(self) -> None:
-        _tool_result(self.server, "task_manager.create_task", {
-            "task_id": "T-2-28",
-            "phase": 2,
-            "directive": "266",
-        })
-        err = _err(_tool_call(self.server, "task_manager.update_status", {
-            "task_id": "T-2-28",
-            "new_status": "COMPLETED",  # PENDING → COMPLETED 不合法
-        }))
+        _tool_result(
+            self.server,
+            "task_manager.create_task",
+            {
+                "task_id": "T-2-28",
+                "phase": 2,
+                "directive": "266",
+            },
+        )
+        err = _err(
+            _tool_call(
+                self.server,
+                "task_manager.update_status",
+                {
+                    "task_id": "T-2-28",
+                    "new_status": "COMPLETED",  # PENDING → COMPLETED 不合法
+                },
+            )
+        )
         assert "ZA-TSK-0002" in err["message"]
 
     def test_list_tasks_by_phase(self) -> None:
-        _tool_result(self.server, "task_manager.create_task", {
-            "task_id": "T-2-28",
-            "phase": 2,
-            "directive": "266",
-        })
+        _tool_result(
+            self.server,
+            "task_manager.create_task",
+            {
+                "task_id": "T-2-28",
+                "phase": 2,
+                "directive": "266",
+            },
+        )
         result = _tool_result(self.server, "task_manager.list_tasks", {"phase": 2})
         assert result["total"] >= 1
         assert all(t["phase"] == 2 for t in result["items"])
 
     def test_create_task_idempotent(self) -> None:
         for _ in range(2):
-            _tool_result(self.server, "task_manager.create_task", {
-                "task_id": "T-2-00",
-                "phase": 2,
-                "directive": "266",
-                "idempotent": True,
-            })
+            _tool_result(
+                self.server,
+                "task_manager.create_task",
+                {
+                    "task_id": "T-2-00",
+                    "phase": 2,
+                    "directive": "266",
+                    "idempotent": True,
+                },
+            )
         result = _tool_result(self.server, "task_manager.list_tasks", {})
         task_ids = [t["task_id"] for t in result["items"]]
         assert task_ids.count("T-2-00") == 1
@@ -256,13 +292,17 @@ class TestKnowledgeBaseServer:
         assert "knowledge_base.get_ke" in names
 
     def test_upsert_and_get_ke(self) -> None:
-        upsert = _tool_result(self.server, "knowledge_base.upsert_ke", {
-            "ke_id": "KE-001",
-            "title": "Test Entry",
-            "category": "best_practice",
-            "content": "Use structlog for logging.",
-            "source_file": "docs/test.md",
-        })
+        upsert = _tool_result(
+            self.server,
+            "knowledge_base.upsert_ke",
+            {
+                "ke_id": "KE-001",
+                "title": "Test Entry",
+                "category": "best_practice",
+                "content": "Use structlog for logging.",
+                "source_file": "docs/test.md",
+            },
+        )
         assert upsert["ke_id"] == "KE-001"
         assert "fingerprint_sha256" in upsert
 
@@ -274,32 +314,50 @@ class TestKnowledgeBaseServer:
         assert "ZA-KB-0005" in err["message"]
 
     def test_search_returns_hits(self) -> None:
-        _tool_result(self.server, "knowledge_base.upsert_ke", {
-            "ke_id": "KE-002",
-            "title": "Prompt Registry",
-            "category": "best_practice",
-            "content": "YAML-driven prompt template registry with token budget.",
-            "source_file": "src/infra/prompt_registry.py",
-        })
-        result = _tool_result(self.server, "knowledge_base.search", {
-            "query_text": "YAML",
-            "score_threshold": 0.0,
-        })
+        _tool_result(
+            self.server,
+            "knowledge_base.upsert_ke",
+            {
+                "ke_id": "KE-002",
+                "title": "Prompt Registry",
+                "category": "best_practice",
+                "content": "YAML-driven prompt template registry with token budget.",
+                "source_file": "src/infra/prompt_registry.py",
+            },
+        )
+        result = _tool_result(
+            self.server,
+            "knowledge_base.search",
+            {
+                "query_text": "YAML",
+                "score_threshold": 0.0,
+            },
+        )
         assert result["total_scanned"] >= 1
         assert "latency_ms" in result
 
     def test_rebuild_index(self) -> None:
-        result = _tool_result(self.server, "knowledge_base.rebuild_index", {
-            "collection": "ke_entries",
-        })
+        result = _tool_result(
+            self.server,
+            "knowledge_base.rebuild_index",
+            {
+                "collection": "ke_entries",
+            },
+        )
         assert "chunks_indexed" in result
         assert "duration_seconds" in result
 
     def test_invalid_collection_returns_error(self) -> None:
-        err = _err(_tool_call(self.server, "knowledge_base.search", {
-            "query_text": "test",
-            "collection": "invalid_collection",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "knowledge_base.search",
+                {
+                    "query_text": "test",
+                    "collection": "invalid_collection",
+                },
+            )
+        )
         assert "ZA-KB-0001" in err["message"]
 
 
@@ -319,65 +377,97 @@ class TestGateEngineServer:
         assert "gate_engine.run_g4_contract" in names
 
     def test_g1_write_clean_path_passes(self) -> None:
-        result = _tool_result(self.server, "gate_engine.run_g1_write", {
-            "target_path": "src/zephyr/context_engine/prompt_registry.py",
-            "content_preview": "# clean file",
-        })
+        result = _tool_result(
+            self.server,
+            "gate_engine.run_g1_write",
+            {
+                "target_path": "src/zephyr/context_engine/prompt_registry.py",
+                "content_preview": "# clean file",
+            },
+        )
         assert result["passed"] is True
         assert result["gate_id"] == "G1"
 
     def test_g1_write_blacklisted_path_fails(self) -> None:
-        err = _err(_tool_call(self.server, "gate_engine.run_g1_write", {
-            "target_path": "scripts/archive/old_script.py",
-            "content_preview": "some content",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "gate_engine.run_g1_write",
+                {
+                    "target_path": "scripts/archive/old_script.py",
+                    "content_preview": "some content",
+                },
+            )
+        )
         assert "ZA-GT-0001" in err["message"]
 
     def test_g4_contract_valid_task(self) -> None:
-        result = _tool_result(self.server, "gate_engine.run_g4_contract", {
-            "payload": {
-                "task_id": "T-2-28",
-                "phase": 2,
-                "status": "PENDING",
-                "directive": "266+325",
+        result = _tool_result(
+            self.server,
+            "gate_engine.run_g4_contract",
+            {
+                "payload": {
+                    "task_id": "T-2-28",
+                    "phase": 2,
+                    "status": "PENDING",
+                    "directive": "266+325",
+                },
+                "model_name": "Task",
             },
-            "model_name": "Task",
-        })
+        )
         assert result["passed"] is True
         assert result["errors"] == []
 
     def test_g4_contract_missing_field(self) -> None:
-        result = _tool_result(self.server, "gate_engine.run_g4_contract", {
-            "payload": {"task_id": "T-2-28"},
-            "model_name": "Task",
-        })
+        result = _tool_result(
+            self.server,
+            "gate_engine.run_g4_contract",
+            {
+                "payload": {"task_id": "T-2-28"},
+                "model_name": "Task",
+            },
+        )
         assert result["passed"] is False
         assert len(result["errors"]) > 0
 
     def test_submit_exemption_valid(self) -> None:
-        result = _tool_result(self.server, "gate_engine.submit_exemption", {
-            "check_id": "G2.4",
-            "reason": "Emergency deployment override approved by owner.",
-            "valid_until": "2026-12-31",
-            "signer_email": "owner@example.com",
-        })
+        result = _tool_result(
+            self.server,
+            "gate_engine.submit_exemption",
+            {
+                "check_id": "G2.4",
+                "reason": "Emergency deployment override approved by owner.",
+                "valid_until": "2026-12-31",
+                "signer_email": "owner@example.com",
+            },
+        )
         assert result["accepted"] is True
         assert "EX-G2.4-" in result["exemption_id"]
 
     def test_submit_exemption_invalid_email(self) -> None:
-        err = _err(_tool_call(self.server, "gate_engine.submit_exemption", {
-            "check_id": "G1.1",
-            "reason": "Ten characters reason here.",
-            "valid_until": "2026-12-31",
-            "signer_email": "not-an-email",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "gate_engine.submit_exemption",
+                {
+                    "check_id": "G1.1",
+                    "reason": "Ten characters reason here.",
+                    "valid_until": "2026-12-31",
+                    "signer_email": "not-an-email",
+                },
+            )
+        )
         assert "ZA-GT-0003" in err["message"]
 
     def test_g3_phase_valid(self) -> None:
-        result = _tool_result(self.server, "gate_engine.run_g3_phase", {
-            "phase_id": 2,
-            "target_phase": 3,
-        })
+        result = _tool_result(
+            self.server,
+            "gate_engine.run_g3_phase",
+            {
+                "phase_id": 2,
+                "target_phase": 3,
+            },
+        )
         assert result["passed"] is True
 
 
@@ -397,13 +487,17 @@ class TestDocGuardServer:
         assert "session_handoff.validate_package" in names
 
     def test_create_package_basic(self) -> None:
-        result = _tool_result(self.server, "session_handoff.create_package", {
-            "from_session": "session-001",
-            "to_model": "claude-sonnet",
-            "completed_tasks": ["T-2-27"],
-            "next_tasks": ["T-2-28", "T-3-04"],
-            "open_files": ["src/zephyr/context_engine/prompt_registry.py"],
-        })
+        result = _tool_result(
+            self.server,
+            "session_handoff.create_package",
+            {
+                "from_session": "session-001",
+                "to_model": "claude-sonnet",
+                "completed_tasks": ["T-2-27"],
+                "next_tasks": ["T-2-28", "T-3-04"],
+                "open_files": ["src/zephyr/context_engine/prompt_registry.py"],
+            },
+        )
         assert result["from_session"] == "session-001"
         assert result["context_priority"] == "P1"
 
@@ -418,9 +512,13 @@ class TestDocGuardServer:
             "blocked_items": [],
             "context_priority": "P1",
         }
-        result = _tool_result(self.server, "session_handoff.validate_package", {
-            "package": package,
-        })
+        result = _tool_result(
+            self.server,
+            "session_handoff.validate_package",
+            {
+                "package": package,
+            },
+        )
         assert result["passed"] is True
 
     def test_validate_package_fail_missing_from_session(self) -> None:
@@ -434,9 +532,15 @@ class TestDocGuardServer:
             "blocked_items": [],
             "context_priority": "P1",
         }
-        err = _err(_tool_call(self.server, "session_handoff.validate_package", {
-            "package": package,
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "session_handoff.validate_package",
+                {
+                    "package": package,
+                },
+            )
+        )
         assert "ZA-HF-0002" in err["message"]
 
     def test_get_carryover_empty_raises_error(self) -> None:
@@ -444,31 +548,45 @@ class TestDocGuardServer:
         assert "ZA-HF-0003" in err["message"]
 
     def test_get_carryover_after_create(self) -> None:
-        _tool_result(self.server, "session_handoff.create_package", {
-            "from_session": "session-001",
-            "to_model": "claude-sonnet",
-            "completed_tasks": [],
-            "next_tasks": [],
-            "open_files": [],
-        })
+        _tool_result(
+            self.server,
+            "session_handoff.create_package",
+            {
+                "from_session": "session-001",
+                "to_model": "claude-sonnet",
+                "completed_tasks": [],
+                "next_tasks": [],
+                "open_files": [],
+            },
+        )
         result = _tool_result(self.server, "session_handoff.get_carryover", {})
         assert "session_id" in result
 
     def test_emit_manual_event(self) -> None:
-        result = _tool_result(self.server, "session_handoff.emit_manual_event", {
-            "task_id": "T-2-28",
-            "priority": "HIGH",
-            "reason": "Gate P0 blocked, owner approval needed.",
-        })
+        result = _tool_result(
+            self.server,
+            "session_handoff.emit_manual_event",
+            {
+                "task_id": "T-2-28",
+                "priority": "HIGH",
+                "reason": "Gate P0 blocked, owner approval needed.",
+            },
+        )
         assert "event_id" in result
         assert "delivered_at" in result
 
     def test_emit_event_short_reason_fails(self) -> None:
-        err = _err(_tool_call(self.server, "session_handoff.emit_manual_event", {
-            "task_id": "T-2-28",
-            "priority": "HIGH",
-            "reason": "short",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "session_handoff.emit_manual_event",
+                {
+                    "task_id": "T-2-28",
+                    "priority": "HIGH",
+                    "reason": "short",
+                },
+            )
+        )
         assert "error" in str(err).lower() or err["code"] != 0
 
 
@@ -489,42 +607,68 @@ class TestSentinelServer:
         assert "intent_router.evaluate_golden_set" in names
 
     def test_map_intent_data_domain(self) -> None:
-        result = _tool_result(self.server, "intent_router.map_intent", {
-            "query": "帮我获取 A 股 ohlcv 日线行情数据",
-        })
+        result = _tool_result(
+            self.server,
+            "intent_router.map_intent",
+            {
+                "query": "帮我获取 A 股 ohlcv 日线行情数据",
+            },
+        )
         assert result["primary_domain"] == "D0"
         assert result["confidence"] > 0.0
         assert result["source_stage"] == "keyword"
 
     def test_map_intent_governance_domain(self) -> None:
-        result = _tool_result(self.server, "intent_router.map_intent", {
-            "query": "查看 ADR 治理规则和审计蓝图",
-        })
+        result = _tool_result(
+            self.server,
+            "intent_router.map_intent",
+            {
+                "query": "查看 ADR 治理规则和审计蓝图",
+            },
+        )
         assert result["primary_domain"] == "D2"
 
     def test_map_intent_unknown_raises_error(self) -> None:
-        err = _err(_tool_call(self.server, "intent_router.map_intent", {
-            "query": "xyzzy florp quux 随机测试",
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "intent_router.map_intent",
+                {
+                    "query": "xyzzy florp quux 随机测试",
+                },
+            )
+        )
         assert "ZA-INT-0001" in err["message"]
 
     def test_reload_keywords_with_dict(self) -> None:
-        result = _tool_result(self.server, "intent_router.reload_keywords", {
-            "keyword_dict": {
-                "D0": ["custom_kw"],
+        result = _tool_result(
+            self.server,
+            "intent_router.reload_keywords",
+            {
+                "keyword_dict": {
+                    "D0": ["custom_kw"],
+                },
             },
-        })
+        )
         assert result["domains_loaded"] == 1
         assert result["keywords_loaded"] == 1
 
     def test_reload_keywords_restores_default(self) -> None:
-        _tool_result(self.server, "intent_router.reload_keywords", {
-            "keyword_dict": {"D0": ["only_kw"]},
-        })
+        _tool_result(
+            self.server,
+            "intent_router.reload_keywords",
+            {
+                "keyword_dict": {"D0": ["only_kw"]},
+            },
+        )
         _tool_result(self.server, "intent_router.reload_keywords", {})
-        result = _tool_result(self.server, "intent_router.map_intent", {
-            "query": "获取行情数据 akshare",
-        })
+        result = _tool_result(
+            self.server,
+            "intent_router.map_intent",
+            {
+                "query": "获取行情数据 akshare",
+            },
+        )
         assert result["primary_domain"] == "D0"
 
     def test_evaluate_golden_set(self) -> None:
@@ -535,7 +679,13 @@ class TestSentinelServer:
         assert 0.0 <= result["top1_accuracy"] <= 1.0
 
     def test_map_intent_too_long_query(self) -> None:
-        err = _err(_tool_call(self.server, "intent_router.map_intent", {
-            "query": "x" * 1001,
-        }))
+        err = _err(
+            _tool_call(
+                self.server,
+                "intent_router.map_intent",
+                {
+                    "query": "x" * 1001,
+                },
+            )
+        )
         assert "ZA-INT-0002" in err["message"]

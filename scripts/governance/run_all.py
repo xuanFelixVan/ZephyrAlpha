@@ -37,7 +37,7 @@ import yaml
 # AGENTS.md §6.7: UTF-8 输出强制声明（防止 Windows GBK 编码 crash）
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
@@ -59,6 +59,7 @@ try:
         RemediationAction,
         Severity,
     )
+
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
@@ -78,14 +79,23 @@ except ImportError:
         D10 = "D10"
         D11 = "D11"
         D12 = "D12"
+
         @property
         def label(self) -> str:
             """生成标签."""
             _LABELS = {
-                "D1":"结构完整性","D2":"链接完整性","D3":"元数据合规",
-                "D4":"路径有效性","D5":"架构合规","D6":"安全漏洞",
-                "D7":"代码质量","D8":"文档代码同步","D9":"知识覆盖",
-                "D10":"性能容量","D11":"合规完整性","D12":"AI幻觉检测"
+                "D1": "结构完整性",
+                "D2": "链接完整性",
+                "D3": "元数据合规",
+                "D4": "路径有效性",
+                "D5": "架构合规",
+                "D6": "安全漏洞",
+                "D7": "代码质量",
+                "D8": "文档代码同步",
+                "D9": "知识覆盖",
+                "D10": "性能容量",
+                "D11": "合规完整性",
+                "D12": "AI幻觉检测",
             }
             return _LABELS.get(self.value, self.value)
 
@@ -111,9 +121,7 @@ SKIP_PATTERNS = [
 
 SEVERITY_TAG_PATTERN = re.compile(r"^\s*\[(P[0123])\]\s*")
 
-_FILE_PATH_PATTERN = re.compile(
-    r"((?:src|tests|scripts|docs|config|schemas)[/\\][\w/\\._-]+\.\w+)(?::(\d+))?"
-)
+_FILE_PATH_PATTERN = re.compile(r"((?:src|tests|scripts|docs|config|schemas)[/\\][\w/\\._-]+\.\w+)(?::(\d+))?")
 
 # ---------------------------------------------------------------------------
 # 注册表惰性加载（Google Style §2.10: 禁止模块级副作用）
@@ -181,9 +189,7 @@ def _str_to_dimension(dim_str: str) -> Dimension:
     """
     dim_map = {d.value: d for d in Dimension}
     if dim_str not in dim_map:
-        raise KeyError(
-            f"非法维度值 '{dim_str}'。合法值: {sorted(dim_map.keys())}"
-        )
+        raise KeyError(f"非法维度值 '{dim_str}'。合法值: {sorted(dim_map.keys())}")
     return dim_map[dim_str]
 
 
@@ -290,7 +296,7 @@ def _extract_file_path(line: str) -> tuple[str, str]:
         path = m.group(1).replace("\\", "/")
         if m.group(2):
             path = f"{path}:{m.group(2)}"
-        rest = line[:m.start()].strip() + " " + line[m.end():].strip()
+        rest = line[: m.start()].strip() + " " + line[m.end() :].strip()
         return path, rest.strip().strip(":")
     return "", line
 
@@ -340,7 +346,9 @@ def _parse_jsonl_to_findings(
                 evidence=data.get("evidence", line)[:500],
                 blast_radius=BlastRadius.MODULE,
                 remediation_action=RemediationAction.FIX,
-                remediation_priority=data.get("remediation", {}).get("priority", "P2") if isinstance(data.get("remediation"), dict) else "P2",
+                remediation_priority=data.get("remediation", {}).get("priority", "P2")
+                if isinstance(data.get("remediation"), dict)
+                else "P2",
                 finding_id=data.get("finding_id"),
                 timestamp=data.get("timestamp"),
             )
@@ -410,7 +418,7 @@ def parse_script_output_to_findings(
         tag_match = SEVERITY_TAG_PATTERN.match(line)
         if tag_match:
             severity = _P_TO_SEVERITY[tag_match.group(1)]
-            line = line[tag_match.end():].strip()
+            line = line[tag_match.end() :].strip()
 
         if not tag_match:
             if _has_error_indicator(line):
@@ -443,8 +451,11 @@ def _run_env_check() -> None:
 
     result = subprocess.run(
         [sys.executable, str(env_check_path), "--json"],
-        capture_output=True, encoding='utf-8', errors='replace',
-        timeout=60, cwd=str(REPO_ROOT),
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=60,
+        cwd=str(REPO_ROOT),
     )
     if result.returncode == 0:
         return
@@ -452,8 +463,11 @@ def _run_env_check() -> None:
     print("\n[GATE-ENV] ⚠️  环境未就绪，尝试自动安装依赖...", file=sys.stderr)
     result2 = subprocess.run(
         [sys.executable, str(env_check_path), "--install"],
-        capture_output=True, encoding='utf-8', errors='replace',
-        timeout=120, cwd=str(REPO_ROOT),
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=120,
+        cwd=str(REPO_ROOT),
     )
     if result2.returncode == 0:
         print("[GATE-ENV] ✅ 安装完成，继续扫描\n", file=sys.stderr)
@@ -465,9 +479,7 @@ def _run_env_check() -> None:
         sys.exit(1)
 
 
-def _try_jsonl_run(
-    script_name: str, meta: dict, warn_only: bool = False
-) -> list[Finding] | None:
+def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> list[Finding] | None:
     """尝试以 --jsonl 模式运行脚本，返回 Finding 列表。
 
     若脚本不支持 --jsonl（exit 2），返回 None 触发 fallback。
@@ -481,9 +493,13 @@ def _try_jsonl_run(
     cmd.append("--jsonl")
     try:
         result = subprocess.run(
-            cmd, capture_output=True, text=True,
+            cmd,
+            capture_output=True,
+            text=True,
             timeout=meta["timeout_seconds"],
-            cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+            cwd=str(REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
     except (subprocess.TimeoutExpired, OSError):
         return None
@@ -491,9 +507,7 @@ def _try_jsonl_run(
     if result.returncode == 2:
         return None
 
-    return _parse_jsonl_to_findings(
-        result.stdout, meta["dimensions"], script_name
-    )
+    return _parse_jsonl_to_findings(result.stdout, meta["dimensions"], script_name)
 
 
 def run_all_dimensions(
@@ -530,10 +544,7 @@ def run_all_dimensions(
     for dim in dimensions_to_run:
         print(f"[{dim.value}] {dim.label} ...", end=" ", flush=True, file=sys.stderr)
 
-        scripts_for_dim = {
-            name: meta for name, meta in registry.items()
-            if dim in meta["dimensions"]
-        }
+        scripts_for_dim = {name: meta for name, meta in registry.items() if dim in meta["dimensions"]}
 
         dim_scripts_run = 0
         dim_scripts_failed = 0
@@ -562,7 +573,11 @@ def run_all_dimensions(
                     dim_findings += len(jl_result)
                 else:
                     parsed = parse_script_output_to_findings(
-                        script_name, meta["dimensions"], stdout, exit_code, warn_only,
+                        script_name,
+                        meta["dimensions"],
+                        stdout,
+                        exit_code,
+                        warn_only,
                     )
                     collection.extend(parsed)
                     dim_findings += len(parsed)
@@ -587,33 +602,40 @@ def main() -> None:
     支持全维度/指定维度扫描、脚本列表、干跑预览等模式。
     退出码遵循 POSIX 约定：0=通过 / 1=有发现 / 2=异常 / 3=配置错误。
     """
-    parser = argparse.ArgumentParser(
-        description="ZephyrAlpha 脚本系统统一入口 — 一键运行全维度或指定维度审计扫描"
-    )
+    parser = argparse.ArgumentParser(description="ZephyrAlpha 脚本系统统一入口 — 一键运行全维度或指定维度审计扫描")
     parser.add_argument(
-        "--dimensions", "-d", nargs="+",
+        "--dimensions",
+        "-d",
+        nargs="+",
         choices=[d.value for d in Dimension],
         help="指定扫描维度（可多个），不指定则全维度",
     )
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         default=str(DEFAULT_OUTPUT),
         help=f"输出 JSONL 文件路径（默认: {DEFAULT_OUTPUT}）",
     )
     parser.add_argument(
-        "--list", "-l", action="store_true",
+        "--list",
+        "-l",
+        action="store_true",
         help="列出所有注册脚本及其维度映射",
     )
     parser.add_argument(
-        "--dry-run", action="store_true",
+        "--dry-run",
+        action="store_true",
         help="预览模式：打印将要执行的脚本清单，不实际运行",
     )
     parser.add_argument(
-        "--verbose", "-v", action="store_true",
+        "--verbose",
+        "-v",
+        action="store_true",
         help="详细输出每个脚本的执行结果",
     )
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="警告模式：传递 --warn-only 给所有子脚本，发现不阻塞（exit 0）",
     )
     args = parser.parse_args()
@@ -626,21 +648,14 @@ def main() -> None:
         print("⚠ Finding Schema 不可用（src/zephyr/script_system/finding.py 未找到或导入失败）", file=sys.stderr)
         print("  run_all.py 仍可执行脚本，但不会生成结构化 Finding 输出", file=sys.stderr)
 
-    dimensions_to_run = (
-        [Dimension(d) for d in args.dimensions]
-        if args.dimensions
-        else list(Dimension)
-    )
+    dimensions_to_run = [Dimension(d) for d in args.dimensions] if args.dimensions else list(Dimension)
 
     if args.dry_run:
         registry = _get_registry()
         unique_scripts: set[str] = set()
         print(f"\n[DRY RUN] 将扫描 {len(dimensions_to_run)} 个维度：", file=sys.stderr)
         for dim in dimensions_to_run:
-            scripts = [
-                name for name, meta in registry.items()
-                if dim in meta["dimensions"]
-            ]
+            scripts = [name for name, meta in registry.items() if dim in meta["dimensions"]]
             unique_scripts.update(scripts)
             print(f"  {dim.value} ({dim.label}): {len(scripts)} 个脚本 → {', '.join(scripts)}", file=sys.stderr)
         print(f"\n  去重后实际执行: {len(unique_scripts)} 个唯一脚本", file=sys.stderr)
@@ -656,8 +671,10 @@ def main() -> None:
 
     start_time = time.time()
     collection, overall = run_all_dimensions(
-        dimensions_to_run, args.output,
-        verbose=args.verbose, warn_only=args.warn_only,
+        dimensions_to_run,
+        args.output,
+        verbose=args.verbose,
+        warn_only=args.warn_only,
     )
 
     elapsed = time.time() - start_time

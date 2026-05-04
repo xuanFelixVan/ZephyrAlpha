@@ -348,10 +348,7 @@ def _is_skeleton_file(rel_path: str) -> bool:
         return False
     try:
         content = abs_path.read_text(encoding="utf-8")
-        non_blank = [
-            l for l in content.split("\n")
-            if l.strip() and not l.strip().startswith("#")
-        ]
+        non_blank = [l for l in content.split("\n") if l.strip() and not l.strip().startswith("#")]
         return len(non_blank) < 10
     except Exception:
         return True
@@ -426,19 +423,13 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
     note = mapping.get("note", "")
     files = _get_existing_files(module_name)
 
-    has_any_code = any(
-        _check_file_exists(f) for category in files.values() for f in category
-    )
+    has_any_code = any(_check_file_exists(f) for category in files.values() for f in category)
 
     lines = []
     lines.append(f"## {section_num}. 已实现代码完整路径索引")
     lines.append("")
-    lines.append(
-        "> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。"
-    )
-    lines.append(
-        "> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。"
-    )
+    lines.append("> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。")
+    lines.append("> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。")
     lines.append(f"> {note}")
     lines.append("")
 
@@ -498,14 +489,12 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
     lines.append(f"### {section_num}.5 路径索引使用指南")
     lines.append("")
     lines.append("**新 AI session 读取顺序**：")
-    lines.append(
-        f"1. 读本蓝图 §{section_num}（本节）→ 知道「哪些已实现、在哪里」"
-    )
+    lines.append(f"1. 读本蓝图 §{section_num}（本节）→ 知道「哪些已实现、在哪里」")
     lines.append("2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」")
     lines.append("3. 读施工 Phase 规划 → 知道「下一步该做什么」")
     lines.append("")
     lines.append("**路径约定**：")
-    lines.append("- 所有路径相对于 `D:\\ZephyrAlpha\\\`")
+    lines.append("- 所有路径相对于 `D:\\ZephyrAlpha\\\\`")
     lines.append("- 源码在 `src/zephyr/` 下")
     lines.append("- 测试在 `tests/` 下")
     lines.append("- 配置在 `config/` 下")
@@ -541,14 +530,10 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
     changelog_pattern = re.compile(r"^##\s+变更记录", re.MULTILINE)
     governance_pattern = re.compile(r"^##\s+治理信息", re.MULTILINE)
 
-    insert_match = changelog_pattern.search(content) or governance_pattern.search(
-        content
-    )
+    insert_match = changelog_pattern.search(content) or governance_pattern.search(content)
     if insert_match:
         insert_pos = insert_match.start()
-        content = (
-            content[:insert_pos] + section_content + "\n---\n\n" + content[insert_pos:]
-        )
+        content = content[:insert_pos] + section_content + "\n---\n\n" + content[insert_pos:]
     else:
         content = content.rstrip() + "\n\n---\n\n" + section_content
 
@@ -591,12 +576,8 @@ def sync(check_only: bool = False) -> int:
 
     if check_only:
         if needs_sync > 0:
-            print(
-                f"\n[SYNC-BLUEPRINT-CODE] 🔴 发现 {needs_sync} 份蓝图需要同步"
-            )
-            print(
-                "       请运行 sync_blueprint_code_index.py 修复"
-            )
+            print(f"\n[SYNC-BLUEPRINT-CODE] 🔴 发现 {needs_sync} 份蓝图需要同步")
+            print("       请运行 sync_blueprint_code_index.py 修复")
             return 1
         print("[SYNC-BLUEPRINT-CODE] ✅ 所有蓝图路径索引已同步，无漂移")
         return 0
@@ -608,9 +589,7 @@ def sync(check_only: bool = False) -> int:
 
 def main() -> None:
     """入口函数."""
-    parser = ArgumentParser(
-        description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.14）"
-    )
+    parser = ArgumentParser(description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.14）")
     parser.add_argument(
         "--check",
         action="store_true",

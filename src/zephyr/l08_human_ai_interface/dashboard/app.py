@@ -20,41 +20,40 @@ safety_level: L
 启动方式：
     streamlit run src/zephyr/dashboard/app.py
 """
+
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 try:
     import streamlit as st
 except ImportError:
     st = None
 
-from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
-    TaskProgressData,
-    fetch_task_progress,
-    render_task_progress,
-)
-from zephyr.l08_human_ai_interface.dashboard.components.knowledge_overview import (
-    KnowledgeOverviewData,
-    fetch_knowledge_overview,
-    render_knowledge_overview,
+from zephyr.l08_human_ai_interface.dashboard.components.fitness_functions import (
+    FitnessDashboardData,
+    fetch_fitness_data,
+    render_fitness_dashboard,
 )
 from zephyr.l08_human_ai_interface.dashboard.components.gate_statistics import (
     GateStatisticsData,
     fetch_gate_statistics,
     render_gate_statistics,
 )
-from zephyr.l08_human_ai_interface.dashboard.components.fitness_functions import (
-    FitnessDashboardData,
-    fetch_fitness_data,
-    render_fitness_dashboard,
+from zephyr.l08_human_ai_interface.dashboard.components.knowledge_overview import (
+    KnowledgeOverviewData,
+    fetch_knowledge_overview,
+    render_knowledge_overview,
 )
 from zephyr.l08_human_ai_interface.dashboard.components.olap_trend import (
     OLAPTrendData,
     fetch_olap_trends,
     render_olap_trends,
+)
+from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
+    TaskProgressData,
+    fetch_task_progress,
+    render_task_progress,
 )
 
 __all__ = [
@@ -78,9 +77,9 @@ class DashboardApp:
 
     def __init__(
         self,
-        task_repo: Optional[Any] = None,
-        kb_repo: Optional[Any] = None,
-        olap_engine: Optional[Any] = None,
+        task_repo: Any | None = None,
+        kb_repo: Any | None = None,
+        olap_engine: Any | None = None,
     ) -> None:
         self._task_repo = task_repo
         self._kb_repo = kb_repo
@@ -122,9 +121,9 @@ class DashboardApp:
 
 
 def create_app(
-    task_repo: Optional[Any] = None,
-    kb_repo: Optional[Any] = None,
-    olap_engine: Optional[Any] = None,
+    task_repo: Any | None = None,
+    kb_repo: Any | None = None,
+    olap_engine: Any | None = None,
 ) -> DashboardApp:
     return DashboardApp(task_repo=task_repo, kb_repo=kb_repo, olap_engine=olap_engine)
 

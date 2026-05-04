@@ -2,7 +2,7 @@
 # Sprint 0 批次F (F-03): 接入5个核心架构GATE检查
 #
 # 使用方式:
-#   cd 
+#   cd
 #   pre-commit install
 #   pre-commit run --all-files
 #

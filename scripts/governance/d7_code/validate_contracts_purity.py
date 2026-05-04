@@ -18,12 +18,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -31,14 +31,27 @@ ensure_utf8_stdout()
 import argparse
 
 ALLOWED_BASE_CLASSES = {
-    "BaseModel", "Protocol", "Enum", "IntEnum", "StrEnum",
-    "TypedDict", "dataclass", "Generic",
+    "BaseModel",
+    "Protocol",
+    "Enum",
+    "IntEnum",
+    "StrEnum",
+    "TypedDict",
+    "dataclass",
+    "Generic",
 }
 
 ALLOWED_DECORATORS = {
-    "dataclass", "staticmethod", "classmethod", "property",
-    "field", "validator", "root_validator", "model_validator",
-    "field_validator", "computed_field",
+    "dataclass",
+    "staticmethod",
+    "classmethod",
+    "property",
+    "field",
+    "validator",
+    "root_validator",
+    "model_validator",
+    "field_validator",
+    "computed_field",
 }
 
 
@@ -72,12 +85,14 @@ def check_contract_purity(filepath: Path) -> list[dict]:
 
                 if not is_protocol_method:
                     rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-                    findings.append({
-                        "file": rel,
-                        "line": node.lineno,
-                        "name": node.name,
-                        "severity": "MEDIUM",
-                    })
+                    findings.append(
+                        {
+                            "file": rel,
+                            "line": node.lineno,
+                            "name": node.name,
+                            "severity": "MEDIUM",
+                        }
+                    )
 
         elif isinstance(node, ast.ClassDef):
             has_allowed_base = False

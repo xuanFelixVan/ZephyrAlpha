@@ -1,13 +1,12 @@
 """
 Unit tests for kb_repo.py (T-2-11-A)
 """
+
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 
 import pytest
-
 from zephyr.db.sqlite_schema import init_db
 from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.kb_repo import KbRepo, KeStatus
@@ -86,8 +85,7 @@ class TestKbRepoTransition:
             source_file="docs/lc.md",
             content="lifecycle content",
         )
-        for target in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED,
-                        KeStatus.INDEXED, KeStatus.VERIFIED]:
+        for target in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED, KeStatus.INDEXED, KeStatus.VERIFIED]:
             result = repo.transition("KE-011", target, content="lifecycle content")
             assert result.to_status == target
 
@@ -133,8 +131,14 @@ class TestKbRepoTransition:
             source_file="docs/dep.md",
             content="deprecated content",
         )
-        for s in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED,
-                   KeStatus.INDEXED, KeStatus.VERIFIED, KeStatus.DEPRECATED]:
+        for s in [
+            KeStatus.SUBMITTED,
+            KeStatus.REVIEWED,
+            KeStatus.ACCEPTED,
+            KeStatus.INDEXED,
+            KeStatus.VERIFIED,
+            KeStatus.DEPRECATED,
+        ]:
             repo.transition("KE-014", s, content="deprecated content")
 
         result = repo.transition("KE-014", KeStatus.ARCHIVED)
@@ -148,8 +152,14 @@ class TestKbRepoTransition:
             source_file="docs/sup.md",
             content="superseded content",
         )
-        for s in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED,
-                   KeStatus.INDEXED, KeStatus.VERIFIED, KeStatus.SUPERSEDED]:
+        for s in [
+            KeStatus.SUBMITTED,
+            KeStatus.REVIEWED,
+            KeStatus.ACCEPTED,
+            KeStatus.INDEXED,
+            KeStatus.VERIFIED,
+            KeStatus.SUPERSEDED,
+        ]:
             repo.transition("KE-015", s, content="superseded content")
 
         result = repo.transition("KE-015", KeStatus.ARCHIVED)
@@ -163,9 +173,15 @@ class TestKbRepoTransition:
             source_file="docs/term.md",
             content="terminal",
         )
-        for s in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED,
-                   KeStatus.INDEXED, KeStatus.VERIFIED, KeStatus.DEPRECATED,
-                   KeStatus.ARCHIVED]:
+        for s in [
+            KeStatus.SUBMITTED,
+            KeStatus.REVIEWED,
+            KeStatus.ACCEPTED,
+            KeStatus.INDEXED,
+            KeStatus.VERIFIED,
+            KeStatus.DEPRECATED,
+            KeStatus.ARCHIVED,
+        ]:
             repo.transition("KE-016", s, content="terminal")
 
         with pytest.raises(ValueError, match="Invalid transition"):
@@ -210,8 +226,14 @@ class TestVectorAction:
 
     def test_delete_on_archived(self, repo: KbRepo) -> None:
         repo.create(ke_id="KE-051", title="Vec2", category="g", source_file="v2.md", content="vec2")
-        for s in [KeStatus.SUBMITTED, KeStatus.REVIEWED, KeStatus.ACCEPTED,
-                   KeStatus.INDEXED, KeStatus.VERIFIED, KeStatus.DEPRECATED]:
+        for s in [
+            KeStatus.SUBMITTED,
+            KeStatus.REVIEWED,
+            KeStatus.ACCEPTED,
+            KeStatus.INDEXED,
+            KeStatus.VERIFIED,
+            KeStatus.DEPRECATED,
+        ]:
             repo.transition("KE-051", s, content="vec2")
         result = repo.transition("KE-051", KeStatus.ARCHIVED)
         assert result.vector_action == "delete"

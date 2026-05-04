@@ -130,7 +130,7 @@ logs 采集流程:
 
 | Level | 用途 | 示例 |
 |-------|------|------|
-| DEBUG | 开发调试信息 | Context Engine token count | 
+| DEBUG | 开发调试信息 | Context Engine token count |
 | INFO | 正常业务流程 | "Task T-001 dispatched to Pipeline A" |
 | WARNING | 阈值预警 | "VMS tokens bucket usage > 80%" |
 | ERROR | 可恢复错误 | "LLM API timeout, retry 3/5" |

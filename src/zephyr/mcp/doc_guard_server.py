@@ -19,11 +19,11 @@ doc_guard_server.py 对应 tool_contracts.yaml 中的 session_handoff server。
 - session_handoff.get_carryover    — 获取 session carryover
 - session_handoff.emit_manual_event — 触发人工介入通道
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any
 
 from zephyr.mcp._base_server import BaseMCPServer, MCPError
 from zephyr.shared.time_utils import now_iso
@@ -42,8 +42,6 @@ _ANTI_CORRUPTION_CHECKS = [
     "AC4:next_tasks_are_pending_or_ready",
     "AC5:from_session_matches_current_session",
 ]
-
-
 
 
 class DocGuardServer(BaseMCPServer):
@@ -145,8 +143,8 @@ class DocGuardServer(BaseMCPServer):
         next_tasks: list[str],
         open_files: list[str],
         to_platform: str = "cursor",
-        decisions_log: Optional[list[str]] = None,
-        blocked_items: Optional[list[str]] = None,
+        decisions_log: list[str] | None = None,
+        blocked_items: list[str] | None = None,
         context_priority: str = "P1",
     ) -> dict[str, Any]:
         """生成并存储 HandoffPackage。
@@ -220,7 +218,7 @@ class DocGuardServer(BaseMCPServer):
 
     def _get_carryover(
         self,
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
     ) -> dict[str, Any]:
         """获取最新或指定 session 的 carryover。
 
@@ -243,7 +241,7 @@ class DocGuardServer(BaseMCPServer):
         task_id: str,
         priority: str,
         reason: str,
-        suggested_action: Optional[str] = None,
+        suggested_action: str | None = None,
     ) -> dict[str, Any]:
         """触发人工介入通道（骨架：记录事件到内存）。"""
         if priority not in _VALID_PRIORITIES:

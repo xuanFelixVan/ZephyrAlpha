@@ -17,20 +17,20 @@ G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A）
 
 Safety : M（治理层代码，门禁失败阻断入库）
 """
+
 from __future__ import annotations
 
 import hashlib
 import re
-import shutil
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GateEngine, GateResult, GATES_DIR
-from zephyr.kb.kb_repo import KbRepo, KeStatus
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
+from zephyr.kb.kb_repo import KbRepo
 from zephyr.shared.schemas import Task, TaskStatus
 
 __all__ = [
@@ -61,14 +61,14 @@ _BLACKLIST_RES = [re.compile(p, re.IGNORECASE) for p in BLACKLIST_PATTERNS]
 
 _RAW_INTAKE_DIR_NAME = "01_raw_intake"
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
 class IngestResult:
     passed: bool
-    ke_id: Optional[str] = None
-    target_path: Optional[Path] = None
+    ke_id: str | None = None
+    target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
 
@@ -77,8 +77,8 @@ class IngestGate:
     def __init__(
         self,
         kb_root: Path,
-        gate_engine: Optional[GateEngine] = None,
-        kb_repo: Optional[KbRepo] = None,
+        gate_engine: GateEngine | None = None,
+        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._raw_intake_dir = kb_root / _RAW_INTAKE_DIR_NAME
@@ -86,7 +86,7 @@ class IngestGate:
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
         self._kb_repo = kb_repo
 
-    def ingest(self, source_path: Path, content: Optional[str] = None) -> IngestResult:
+    def ingest(self, source_path: Path, content: str | None = None) -> IngestResult:
         violations: list[str] = []
 
         if not source_path.exists():
@@ -181,7 +181,7 @@ class IngestGate:
             },
         )
 
-    def _check_encoding(self, raw: bytes) -> Optional[str]:
+    def _check_encoding(self, raw: bytes) -> str | None:
         if raw.startswith(b"\xef\xbb\xbf"):
             return "文件含 UTF-8 BOM"
         try:
@@ -190,14 +190,14 @@ class IngestGate:
             return f"编码损坏（非 UTF-8）：{exc}"
         return None
 
-    def _check_injection(self, text: str) -> Optional[str]:
+    def _check_injection(self, text: str) -> str | None:
         for pat in _BLACKLIST_RES:
             m = pat.search(text)
             if m:
                 return f"输入清洗拦截：检测到黑名单模式 '{m.group()}'"
         return None
 
-    def _check_frontmatter(self, text: str, ext: str) -> Optional[str]:
+    def _check_frontmatter(self, text: str, ext: str) -> str | None:
         if ext in {".yaml", ".yml"}:
             return None
         if not text.startswith("---"):
@@ -207,7 +207,7 @@ class IngestGate:
             return "Markdown 文件 frontmatter 格式不正确（缺少闭合 ---）"
         return None
 
-    def _parse_frontmatter(self, text: str, ext: str = ".md") -> Optional[dict[str, Any]]:
+    def _parse_frontmatter(self, text: str, ext: str = ".md") -> dict[str, Any] | None:
         m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
         if m:
             try:
@@ -221,14 +221,14 @@ class IngestGate:
                 return None
         return None
 
-    def _check_content_length(self, text: str) -> Optional[str]:
+    def _check_content_length(self, text: str) -> str | None:
         body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL)
         body_len = len(body.strip())
         if body_len < MIN_CONTENT_CHARS:
             return f"内容过短（{body_len} 字符 < {MIN_CONTENT_CHARS}）"
         return None
 
-    def _check_title_dedup(self, title: str) -> Optional[str]:
+    def _check_title_dedup(self, title: str) -> str | None:
         if not title or self._kb_repo is None:
             return None
         records = self._kb_repo.list_by_status()
@@ -237,7 +237,7 @@ class IngestGate:
                 return f"Title 去重失败：'{title}' 已存在于 {rec.ke_id}"
         return None
 
-    def _run_gate(self, source_path: Path) -> Optional[GateResult]:
+    def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
             task = Task(
                 task_id="T-2-13-A",
@@ -256,9 +256,7 @@ class IngestGate:
         except Exception:
             return None
 
-    def _write_to_raw_intake(
-        self, source_path: Path, text: str, fm: dict[str, Any]
-    ) -> Path:
+    def _write_to_raw_intake(self, source_path: Path, text: str, fm: dict[str, Any]) -> Path:
         ke_id = fm.get("module_id", "UNKNOWN")
         target_name = f"{ke_id}{source_path.suffix}"
         target = self._raw_intake_dir / target_name

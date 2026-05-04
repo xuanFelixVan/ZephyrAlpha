@@ -30,12 +30,11 @@ Usage:
 
 from __future__ import annotations
 
-import json
-import uuid
 import hashlib
-from datetime import datetime, timezone
+import json
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional, Literal
+from typing import Literal
 
 
 class Dimension(str, Enum):
@@ -79,7 +78,7 @@ class Severity(str, Enum):
     INFO = "INFO"
 
     @property
-    def fix_deadline_hours(self) -> Optional[int]:
+    def fix_deadline_hours(self) -> int | None:
         _deadlines = {
             "CRITICAL": 24,
             "HIGH": 168,
@@ -129,11 +128,11 @@ class Finding:
         remediation_action: RemediationAction = RemediationAction.FIX,
         remediation_priority: Literal["P0", "P1", "P2", "P3"] = "P2",
         lifecycle_status: LifecycleStatus = LifecycleStatus.OPEN,
-        related_adr: Optional[list[str]] = None,
-        related_ke: Optional[list[str]] = None,
-        related_finding: Optional[list[str]] = None,
-        finding_id: Optional[str] = None,
-        timestamp: Optional[str] = None,
+        related_adr: list[str] | None = None,
+        related_ke: list[str] | None = None,
+        related_finding: list[str] | None = None,
+        finding_id: str | None = None,
+        timestamp: str | None = None,
     ):
         self.dimension = dimension
         self.severity = severity
@@ -149,14 +148,14 @@ class Finding:
         self.related_adr = related_adr or []
         self.related_ke = related_ke or []
         self.related_finding = related_finding or []
-        self.timestamp = timestamp or datetime.now(timezone.utc).isoformat()
+        self.timestamp = timestamp or datetime.now(UTC).isoformat()
 
         if finding_id:
             self.finding_id = finding_id
         else:
             stable_content = f"{dimension.value}|{severity.value}|{target_file}|{description}"
             content_hash = hashlib.sha256(stable_content.encode()).hexdigest()[:12]
-            date_str = datetime.now(timezone.utc).strftime("%Y%m%d")
+            date_str = datetime.now(UTC).strftime("%Y%m%d")
             self.finding_id = f"FIND-{dimension.value}-{date_str}-{content_hash}"
 
     def to_dict(self) -> dict:
@@ -197,8 +196,7 @@ class Finding:
 
     def __repr__(self) -> str:
         return (
-            f"Finding({self.finding_id}, D={self.dimension.value}, "
-            f"SEV={self.severity.value}, {self.target_file})"
+            f"Finding({self.finding_id}, D={self.dimension.value}, " f"SEV={self.severity.value}, {self.target_file})"
         )
 
     @classmethod
@@ -209,7 +207,7 @@ class Finding:
         message: str,
         dimension: Dimension,
         severity: Severity = Severity.MEDIUM,
-    ) -> "Finding":
+    ) -> Finding:
         return cls(
             dimension=dimension,
             severity=severity,
@@ -221,7 +219,7 @@ class Finding:
 
 
 class FindingCollection:
-    def __init__(self, findings: Optional[list[Finding]] = None):
+    def __init__(self, findings: list[Finding] | None = None):
         self.findings: list[Finding] = findings or []
 
     def add(self, finding: Finding):
@@ -241,13 +239,13 @@ class FindingCollection:
         with open(path, "a", encoding="utf-8") as f:
             f.write(self.to_jsonl())
 
-    def by_dimension(self, dimension: Dimension) -> "FindingCollection":
+    def by_dimension(self, dimension: Dimension) -> FindingCollection:
         return FindingCollection([f for f in self.findings if f.dimension == dimension])
 
-    def by_severity(self, severity: Severity) -> "FindingCollection":
+    def by_severity(self, severity: Severity) -> FindingCollection:
         return FindingCollection([f for f in self.findings if f.severity == severity])
 
-    def critical_only(self) -> "FindingCollection":
+    def critical_only(self) -> FindingCollection:
         """返回仅含 CRITICAL 严重度的 FindingCollection 子集。"""
         return self.by_severity(Severity.CRITICAL)
 

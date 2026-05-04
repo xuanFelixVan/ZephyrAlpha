@@ -26,11 +26,12 @@ ConfigDict 基线（ADR-0040 §4.2）
   - 在模型里定义 DB 会话 / ORM 方法
   - 多处复制粘贴字段——必须从本文件统一 import
 """
+
 from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -180,7 +181,9 @@ class Task(BaseModel):
 
     model_config = BASE_CONFIG
 
-    task_id: Annotated[str, Field(pattern=_TASK_ID_PATTERN, description="任务 ID，格式 {NAMESPACE}-{SEQ}（命名空间内自增）")]
+    task_id: Annotated[
+        str, Field(pattern=_TASK_ID_PATTERN, description="任务 ID，格式 {NAMESPACE}-{SEQ}（命名空间内自增）")
+    ]
     namespace: TaskNamespace = Field(description="任务命名空间（#21 裁定：分类字段）")
     seq: int = Field(ge=1, description="命名空间内自增序号")
     title: str = Field(min_length=1, max_length=200, description="任务标题（对齐 Jira Summary / Linear Title）")
@@ -188,28 +191,24 @@ class Task(BaseModel):
     priority: Priority = Field(default=Priority.P2, description="优先级 P0-P3（对齐 Jira Priority）")
     phase: int = Field(ge=0, le=9, description="所属 Phase（0-9）")
     execution_model: str = Field(min_length=1, description="主执行模型")
-    model_rationale: Optional[str] = Field(default=None, description="选模型理由（防 AI 乱选贵模型）")
-    fallback_model: Optional[str] = Field(default=None, description="降级模型")
+    model_rationale: str | None = Field(default=None, description="选模型理由（防 AI 乱选贵模型）")
+    fallback_model: str | None = Field(default=None, description="降级模型")
     safety_level: SafetyLevel = Field(description="安全等级 L/M/H")
     directive: str = Field(default="", description="执行指令编号，如 '313+325+999'")
     idempotent: bool = Field(default=False, description="任务是否幂等")
-    classification: Classification = Field(
-        default=Classification.INTERNAL, description="访问分类"
-    )
-    evolution_policy: EvolutionPolicy = Field(
-        default=EvolutionPolicy.EXTENDABLE, description="文件演进策略"
-    )
+    classification: Classification = Field(default=Classification.INTERNAL, description="访问分类")
+    evolution_policy: EvolutionPolicy = Field(default=EvolutionPolicy.EXTENDABLE, description="文件演进策略")
     estimate_hours: float = Field(default=0.0, ge=0, description="预估工时（小时）")
-    actual_hours: Optional[float] = Field(default=None, ge=0, description="实际工时（对齐 Jira Time Spent）")
+    actual_hours: float | None = Field(default=None, ge=0, description="实际工时（对齐 Jira Time Spent）")
     files_in_scope: list[str] = Field(default_factory=list, description="本任务需读取的文件列表（防漂移核心字段）")
     deliverables: list[str] = Field(default_factory=list, description="交付物列表")
     acceptance: list[str] = Field(default_factory=list, description="验收标准列表")
     depends_on: list[str] = Field(default_factory=list, description="前置任务 ID 列表")
     tags: list[str] = Field(default_factory=list, description="标签列表（对齐 Jira Labels / Linear Labels）")
-    session_id: Optional[str] = Field(default=None, description="关联 session ID")
-    waiting_for: Optional[str] = Field(default=None, description="等待资源/事件描述")
-    ready_at: Optional[datetime] = Field(default=None, description="READY 状态触发时间")
-    completed_at: Optional[datetime] = Field(default=None, description="完成时间（对齐 Jira Resolution Date）")
+    session_id: str | None = Field(default=None, description="关联 session ID")
+    waiting_for: str | None = Field(default=None, description="等待资源/事件描述")
+    ready_at: datetime | None = Field(default=None, description="READY 状态触发时间")
+    completed_at: datetime | None = Field(default=None, description="完成时间（对齐 Jira Resolution Date）")
     created_at: datetime = Field(description="创建时间")
     updated_at: datetime = Field(description="最近更新时间")
 
@@ -219,7 +218,7 @@ class Task(BaseModel):
         return v.strip()
 
     @model_validator(mode="after")
-    def updated_not_before_created(self) -> "Task":
+    def updated_not_before_created(self) -> Task:
         if self.updated_at < self.created_at:
             raise ValueError("updated_at 不得早于 created_at")
         return self
@@ -238,8 +237,8 @@ class AuditFinding(BaseModel):
     finding_id: str = Field(min_length=1)
     severity: AuditSeverity
     description: str = Field(min_length=1, max_length=1000)
-    file_path: Optional[str] = None
-    suggestion: Optional[str] = None
+    file_path: str | None = None
+    suggestion: str | None = None
 
 
 class AuditReport(BaseModel):
@@ -259,18 +258,18 @@ class AuditReport(BaseModel):
     p1_count: int = Field(default=0, ge=0)
     p2_count: int = Field(default=0, ge=0)
     passed: bool = Field(default=True, description="整体是否通过（P0 数量为 0 则 True）")
-    session_id: Optional[str] = None
+    session_id: str | None = None
     created_at: datetime
 
     @model_validator(mode="after")
-    def sync_passed_with_p0(self) -> "AuditReport":
+    def sync_passed_with_p0(self) -> AuditReport:
         """passed 字段由 p0_count 决定，保持一致性。"""
         if self.p0_count > 0:
             object.__setattr__(self, "passed", False)
         return self
 
     @model_validator(mode="after")
-    def sync_counts(self) -> "AuditReport":
+    def sync_counts(self) -> AuditReport:
         """同步 findings 到计数字段。"""
         if self.findings:
             p0 = sum(1 for f in self.findings if f.severity == AuditSeverity.P0)
@@ -299,10 +298,12 @@ class KnowledgeEntry(BaseModel):
 
     ke_id: Annotated[str, Field(pattern=r"^KE-\d{3,}$", description="KE 编号，格式 KE-NNN")]
     title: str = Field(min_length=1, max_length=300)
-    category: KeCategory = Field(default=KeCategory.best_practice, description="知识条目内容类型（metadata-registry.md §9.1）")
+    category: KeCategory = Field(
+        default=KeCategory.best_practice, description="知识条目内容类型（metadata-registry.md §9.1）"
+    )
     source_file: str = Field(min_length=1, description="来源文件相对路径")
     source_git_deleted: bool = Field(default=False, description="来源文件是否已 git 删除")
-    fingerprint_sha256: Optional[str] = Field(
+    fingerprint_sha256: str | None = Field(
         default=None,
         description="来源文件 SHA-256 指纹",
     )
@@ -313,13 +314,13 @@ class KnowledgeEntry(BaseModel):
 
     @field_validator("fingerprint_sha256")
     @classmethod
-    def validate_sha256(cls, v: Optional[str]) -> Optional[str]:
+    def validate_sha256(cls, v: str | None) -> str | None:
         if v is not None and len(v) != 64:
             raise ValueError("fingerprint_sha256 必须是 64 位十六进制字符串")
         return v
 
     @model_validator(mode="after")
-    def updated_not_before_created(self) -> "KnowledgeEntry":
+    def updated_not_before_created(self) -> KnowledgeEntry:
         if self.updated_at < self.created_at:
             raise ValueError("updated_at 不得早于 created_at")
         return self
@@ -353,7 +354,7 @@ class FailurePattern(BaseModel):
     updated_at: datetime
 
     @model_validator(mode="after")
-    def updated_not_before_created(self) -> "FailurePattern":
+    def updated_not_before_created(self) -> FailurePattern:
         if self.updated_at < self.created_at:
             raise ValueError("updated_at 不得早于 created_at")
         return self
@@ -371,8 +372,8 @@ class BlockedItem(BaseModel):
 
     task_id: str = Field(min_length=1)
     reason: str = Field(min_length=1, max_length=500)
-    blocked_since: Optional[datetime] = None
-    unblock_condition: Optional[str] = Field(default=None, max_length=300)
+    blocked_since: datetime | None = None
+    unblock_condition: str | None = Field(default=None, max_length=300)
 
 
 class Decision(BaseModel):
@@ -383,7 +384,7 @@ class Decision(BaseModel):
     decision_id: str = Field(min_length=1)
     summary: str = Field(min_length=1, max_length=500)
     rationale: str = Field(min_length=1, max_length=1000)
-    adr_ref: Optional[str] = Field(default=None, description="关联 ADR 编号，如 ADR-0030")
+    adr_ref: str | None = Field(default=None, description="关联 ADR 编号，如 ADR-0030")
 
 
 class NextAction(BaseModel):
@@ -393,8 +394,8 @@ class NextAction(BaseModel):
 
     priority: int = Field(ge=1, le=10, description="优先级 1-10（1 最高）")
     action: str = Field(min_length=1, max_length=300)
-    owner: Optional[str] = Field(default=None, description="建议执行者（模型或 Owner）")
-    task_ref: Optional[str] = Field(default=None, description="关联 task_id")
+    owner: str | None = Field(default=None, description="建议执行者（模型或 Owner）")
+    task_ref: str | None = Field(default=None, description="关联 task_id")
 
 
 class HandoffPackage(BaseModel):
@@ -420,7 +421,7 @@ class HandoffPackage(BaseModel):
     )
     open_questions: list[str] = Field(description="待解决的开放问题")
     created_at: datetime = Field(description="交接包生成时间")
-    phase: Optional[int] = Field(default=None, ge=0, le=9, description="当前 Phase")
+    phase: int | None = Field(default=None, ge=0, le=9, description="当前 Phase")
 
     @field_validator("next_actions")
     @classmethod
@@ -429,13 +430,11 @@ class HandoffPackage(BaseModel):
         return sorted(v, key=lambda a: a.priority)
 
     @model_validator(mode="after")
-    def no_overlap_tasks(self) -> "HandoffPackage":
+    def no_overlap_tasks(self) -> HandoffPackage:
         """completed_tasks 和 in_progress_tasks 不得有交集。"""
         overlap = set(self.completed_tasks) & set(self.in_progress_tasks)
         if overlap:
-            raise ValueError(
-                f"任务 {overlap} 同时出现在 completed_tasks 和 in_progress_tasks 中"
-            )
+            raise ValueError(f"任务 {overlap} 同时出现在 completed_tasks 和 in_progress_tasks 中")
         return self
 
     def to_yaml_dict(self) -> dict[str, Any]:

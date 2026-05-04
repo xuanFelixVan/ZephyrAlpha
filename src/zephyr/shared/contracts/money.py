@@ -29,7 +29,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
-from typing import Union
 
 from zephyr.shared.contracts.instrument import CurrencyCode
 
@@ -43,9 +42,18 @@ getcontext().rounding = ROUND_HALF_EVEN  # 银行家舍入（金融业界标准�
 
 _CURRENCY_PRECISION: dict[str, int] = {
     # 法币（ISO 4217）
-    "CNY": 2, "HKD": 2, "USD": 2, "SGD": 2, "TWD": 2,
-    "INR": 2, "GBP": 2, "EUR": 2, "CHF": 2, "CAD": 2,
-    "AUD": 2, "NZD": 2,
+    "CNY": 2,
+    "HKD": 2,
+    "USD": 2,
+    "SGD": 2,
+    "TWD": 2,
+    "INR": 2,
+    "GBP": 2,
+    "EUR": 2,
+    "CHF": 2,
+    "CAD": 2,
+    "AUD": 2,
+    "NZD": 2,
     "JPY": 0,  # 日元无小数位
     "KRW": 0,  # 韩元无小数位
     # 加密货币
@@ -72,6 +80,7 @@ def get_currency_precision(currency: str) -> int:
     """
     if currency not in _CURRENCY_PRECISION:
         import warnings
+
         warnings.warn(
             f"货币 {currency!r} 未在精度表中注册，默认使用 2 位小数。"
             " 请在 shared/contracts/money.py 的 _CURRENCY_PRECISION 表中添加。",
@@ -85,6 +94,7 @@ def get_currency_precision(currency: str) -> int:
 # 异常类
 # ═══════════════════════════════════════════════════════════════════
 
+
 class MoneyPrecisionError(ValueError):
     """金额精度错误（如试图用 float 构造 Money）。"""
 
@@ -96,6 +106,7 @@ class MoneyCurrencyMismatchError(ValueError):
 # ═══════════════════════════════════════════════════════════════════
 # Money 值对象
 # ═══════════════════════════════════════════════════════════════════
+
 
 @dataclass(frozen=True)
 class Money:
@@ -153,8 +164,7 @@ class Money:
         # 禁止 float 进入
         if isinstance(self.amount, float):
             raise MoneyPrecisionError(
-                f"Money.amount 禁止使用 float（{self.amount}），"
-                " 请用 str 或 Decimal 构造：Money(\"1234.56\", \"CNY\")"
+                f"Money.amount 禁止使用 float（{self.amount}），" ' 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
             )
 
         # int / str / Decimal → Decimal（frozen=True 下用 object.__setattr__ 绕过）
@@ -162,9 +172,7 @@ class Money:
             try:
                 object.__setattr__(self, "amount", Decimal(str(self.amount)))
             except Exception as exc:
-                raise MoneyPrecisionError(
-                    f"Money.amount 无法转换为 Decimal: {self.amount!r}（{exc}）"
-                )
+                raise MoneyPrecisionError(f"Money.amount 无法转换为 Decimal: {self.amount!r}（{exc}）")
 
         # 按货币精度 quantize（银行家舍入）
         precision = get_currency_precision(self.currency)
@@ -176,64 +184,59 @@ class Money:
 
     # --- 运算符重载 ---
 
-    def _check_same_currency(self, other: "Money") -> None:
+    def _check_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:
             raise MoneyCurrencyMismatchError(
-                f"币种不匹配：{self.currency} vs {other.currency}。"
-                " 请先用 FXRateProvider 换算到相同货币后再运算。"
+                f"币种不匹配：{self.currency} vs {other.currency}。" " 请先用 FXRateProvider 换算到相同货币后再运算。"
             )
 
-    def __add__(self, other: "Money") -> "Money":
+    def __add__(self, other: Money) -> Money:
         self._check_same_currency(other)
         return Money(self.amount + other.amount, self.currency)
 
-    def __sub__(self, other: "Money") -> "Money":
+    def __sub__(self, other: Money) -> Money:
         self._check_same_currency(other)
         return Money(self.amount - other.amount, self.currency)
 
-    def __mul__(self, multiplier: Union[int, Decimal]) -> "Money":
+    def __mul__(self, multiplier: int | Decimal) -> Money:
         if isinstance(multiplier, float):
-            raise MoneyPrecisionError(
-                f"Money 乘法禁止使用 float（{multiplier}），请用 int 或 Decimal。"
-            )
+            raise MoneyPrecisionError(f"Money 乘法禁止使用 float（{multiplier}），请用 int 或 Decimal。")
         if not isinstance(multiplier, Decimal):
             multiplier = Decimal(str(multiplier))
         return Money(self.amount * multiplier, self.currency)
 
     __rmul__ = __mul__
 
-    def __truediv__(self, divisor: Union[int, Decimal]) -> "Money":
+    def __truediv__(self, divisor: int | Decimal) -> Money:
         if isinstance(divisor, float):
-            raise MoneyPrecisionError(
-                f"Money 除法禁止使用 float（{divisor}），请用 int 或 Decimal。"
-            )
+            raise MoneyPrecisionError(f"Money 除法禁止使用 float（{divisor}），请用 int 或 Decimal。")
         if not isinstance(divisor, Decimal):
             divisor = Decimal(str(divisor))
         if divisor == 0:
             raise ZeroDivisionError("Money 除以零")
         return Money(self.amount / divisor, self.currency)
 
-    def __neg__(self) -> "Money":
+    def __neg__(self) -> Money:
         return Money(-self.amount, self.currency)
 
-    def __abs__(self) -> "Money":
+    def __abs__(self) -> Money:
         return Money(abs(self.amount), self.currency)
 
     # --- 比较 ---
 
-    def __lt__(self, other: "Money") -> bool:
+    def __lt__(self, other: Money) -> bool:
         self._check_same_currency(other)
         return self.amount < other.amount
 
-    def __le__(self, other: "Money") -> bool:
+    def __le__(self, other: Money) -> bool:
         self._check_same_currency(other)
         return self.amount <= other.amount
 
-    def __gt__(self, other: "Money") -> bool:
+    def __gt__(self, other: Money) -> bool:
         self._check_same_currency(other)
         return self.amount > other.amount
 
-    def __ge__(self, other: "Money") -> bool:
+    def __ge__(self, other: Money) -> bool:
         self._check_same_currency(other)
         return self.amount >= other.amount
 

@@ -16,13 +16,13 @@ T-V2-007 单元测试 — TriggerRouter (RI-03)
   - 默认 stub 处理器签名正确 + 返回 dict
   - 审计日志通过 duck-typed audit_logger 注入
 """
+
 from __future__ import annotations
 
 import textwrap
 from pathlib import Path
 
 import pytest
-
 from zephyr.orchestrator.trigger_router import (
     DEFAULT_ROUTER_YAML_PATH,
     PHASE1D_TRIGGER_TYPES,
@@ -39,7 +39,6 @@ from zephyr.orchestrator.trigger_router import (
     load_router_config,
     reset_trigger_router,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -207,12 +206,10 @@ class TestLoadRouterConfig:
 
     def test_repository_default_yaml_exists(self):
         """`config/trigger_router.yaml` 真实存在且可解析（Phase 1d 起始集 5 种）。"""
-        assert DEFAULT_ROUTER_YAML_PATH.exists(), (
-            f"trigger_router.yaml 缺失：{DEFAULT_ROUTER_YAML_PATH}"
-        )
+        assert DEFAULT_ROUTER_YAML_PATH.exists(), f"trigger_router.yaml 缺失：{DEFAULT_ROUTER_YAML_PATH}"
         specs = load_router_config(DEFAULT_ROUTER_YAML_PATH)
         # 至少包含 Phase 1d 起始集 5 种
-        assert PHASE1D_TRIGGER_TYPES <= set(specs.keys())
+        assert set(specs.keys()) >= PHASE1D_TRIGGER_TYPES
 
 
 # ---------------------------------------------------------------------------
@@ -240,9 +237,7 @@ class TestTriggerRouterLoad:
             called["flag"] = True
             return {"custom": True}
 
-        router = TriggerRouter(
-            config_path=good_yaml, handlers={"onboarding": custom_onboarding}
-        )
+        router = TriggerRouter(config_path=good_yaml, handlers={"onboarding": custom_onboarding})
         result = router.dispatch("onboarding")
         assert called["flag"] is True
         assert result.handler_result == {"custom": True}
@@ -251,9 +246,7 @@ class TestTriggerRouterLoad:
         def my_trigger(payload, **_):
             return "ok"
 
-        router = TriggerRouter(
-            config_path=good_yaml, handlers={"my_custom_trigger": my_trigger}
-        )
+        router = TriggerRouter(config_path=good_yaml, handlers={"my_custom_trigger": my_trigger})
         result = router.dispatch("my_custom_trigger")
         assert result.success is True
         assert result.handler_result == "ok"
@@ -313,9 +306,7 @@ class TestDispatchSuccessPaths:
 
     def test_drift_detected(self, good_yaml):
         router = TriggerRouter(config_path=good_yaml)
-        result = router.dispatch(
-            "drift_detected", payload={"factor": "alpha_001", "z": 3.5}
-        )
+        result = router.dispatch("drift_detected", payload={"factor": "alpha_001", "z": 3.5})
         assert result.success is True
         assert result.handler_result["handler"] == "drift_detected"
 
@@ -327,9 +318,7 @@ class TestDispatchSuccessPaths:
 
     def test_blueprint_published(self, good_yaml):
         router = TriggerRouter(config_path=good_yaml)
-        result = router.dispatch(
-            "blueprint_published", payload={"blueprint_id": "B-007"}
-        )
+        result = router.dispatch("blueprint_published", payload={"blueprint_id": "B-007"})
         assert result.success is True
         assert result.handler_result["handler"] == "blueprint_published"
 
@@ -366,9 +355,7 @@ class TestDispatchSkipPaths:
         def raises_handler(payload, **_):
             raise RuntimeError("handler boom")
 
-        router = TriggerRouter(
-            config_path=good_yaml, handlers={"onboarding": raises_handler}
-        )
+        router = TriggerRouter(config_path=good_yaml, handlers={"onboarding": raises_handler})
         result = router.dispatch("onboarding")
         assert result.success is False
         assert result.skipped is False
@@ -403,9 +390,7 @@ class TestDispatchContextPassing:
             captured["ctx"] = ctx
             return "ok"
 
-        router = TriggerRouter(
-            config_path=good_yaml, handlers={"onboarding": my_handler}
-        )
+        router = TriggerRouter(config_path=good_yaml, handlers={"onboarding": my_handler})
         router.dispatch(
             "onboarding",
             payload={"key": "value"},
@@ -423,9 +408,7 @@ class TestDispatchContextPassing:
             captured["payload"] = payload
             return None
 
-        router = TriggerRouter(
-            config_path=good_yaml, handlers={"onboarding": my_handler}
-        )
+        router = TriggerRouter(config_path=good_yaml, handlers={"onboarding": my_handler})
         router.dispatch("onboarding")
         assert captured["payload"] == {}
 

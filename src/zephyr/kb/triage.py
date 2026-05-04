@@ -14,18 +14,18 @@ G2 Triage 门禁 — 知识分类评分（T-2-13-B）
 
 Safety : M
 """
+
 from __future__ import annotations
 
 import re
-import shutil
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GateEngine, GateResult, GATES_DIR
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.schemas import Task, TaskStatus
 
@@ -100,33 +100,62 @@ REJECT_THRESHOLD = 0.3
 _TRIAGED_DIR_NAME = "02_triaged"
 
 _DESIGN_KEYWORDS = [
-    "设计决策", "架构", "ADR", "接口定义", "约束",
-    "design decision", "architecture", "interface", "constraint",
+    "设计决策",
+    "架构",
+    "ADR",
+    "接口定义",
+    "约束",
+    "design decision",
+    "architecture",
+    "interface",
+    "constraint",
 ]
 _STRATEGY_KEYWORDS = [
-    "策略", "因子", "回测", "信号", "alpha",
-    "strategy", "factor", "backtest", "signal",
+    "策略",
+    "因子",
+    "回测",
+    "信号",
+    "alpha",
+    "strategy",
+    "factor",
+    "backtest",
+    "signal",
 ]
 _GOVERNANCE_KEYWORDS = [
-    "治理", "标准", "审计", "合规", "门禁",
-    "governance", "standard", "audit", "compliance", "gate",
+    "治理",
+    "标准",
+    "审计",
+    "合规",
+    "门禁",
+    "governance",
+    "standard",
+    "audit",
+    "compliance",
+    "gate",
 ]
 _LESSON_KEYWORDS = [
-    "教训", "踩坑", "修复", "根因", "postmortem",
-    "lesson", "pitfall", "fix", "root cause",
+    "教训",
+    "踩坑",
+    "修复",
+    "根因",
+    "postmortem",
+    "lesson",
+    "pitfall",
+    "fix",
+    "root cause",
 ]
 
-_UTC = timezone.utc
+_UTC = UTC
 
 
 @dataclass
 class TriageResult:
     passed: bool
-    ke_id: Optional[str] = None
+    ke_id: str | None = None
     classification: str = ""
     ai_triage_score: float = 0.0
     priority: str = "P2"
-    target_path: Optional[Path] = None
+    target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
 
@@ -135,8 +164,8 @@ class TriageGate:
     def __init__(
         self,
         kb_root: Path,
-        gate_engine: Optional[GateEngine] = None,
-        kb_repo: Optional[KbRepo] = None,
+        gate_engine: GateEngine | None = None,
+        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._triaged_dir = kb_root / _TRIAGED_DIR_NAME
@@ -254,9 +283,7 @@ class TriageGate:
             return "KNOWLEDGE_ENTRY"
         return best
 
-    def _compute_triage_score(
-        self, fm: dict[str, Any], text: str, classification: str
-    ) -> float:
+    def _compute_triage_score(self, fm: dict[str, Any], text: str, classification: str) -> float:
         score = 0.0
 
         has_module_id = bool(fm.get("module_id"))
@@ -319,7 +346,7 @@ class TriageGate:
             return "P2"
         return "P3"
 
-    def _parse_frontmatter(self, text: str) -> Optional[dict[str, Any]]:
+    def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
         m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
         if not m:
             return None
@@ -328,7 +355,7 @@ class TriageGate:
         except yaml.YAMLError:
             return None
 
-    def _run_gate(self, source_path: Path) -> Optional[GateResult]:
+    def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
             task = Task(
                 task_id="TRIAGE-GATE-0001",

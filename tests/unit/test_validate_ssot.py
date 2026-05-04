@@ -18,12 +18,14 @@ ScanReport             : p0/p1/p2 计数 / has_p0 / total_count
 render_report          : 无矛盾 / 有矛盾 / frontmatter 包含
 SsotValidator.run      : 集成测试（临时目录）
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 
+from scripts.governance._shared.frontmatter import parse_frontmatter as _parse_frontmatter
 from scripts.governance.d5_architecture.validate_ssot import (
     VALID_PRIORITIES,
     VALID_STATUSES,
@@ -41,10 +43,7 @@ from scripts.governance.d5_architecture.validate_ssot import (
     check_p2_version_format,
     parse_file,
     render_report,
-    scan_directory,
 )
-from scripts.governance._shared.frontmatter import parse_frontmatter as _parse_frontmatter
-
 
 # ---------------------------------------------------------------------------
 # 辅助：构造 FileMeta
@@ -445,8 +444,12 @@ class TestSsotValidatorIntegration:
         assert report.total_count == 0
 
     def test_valid_files_no_contradictions(self, tmp_path: Path) -> None:
-        _write_md(tmp_path, "a.md", "---\nmodule_id: A_001\nlayer: L00\nstatus: Active\npriority: P0\nversion: 1.0.0\n---\n")
-        _write_md(tmp_path, "b.md", "---\nmodule_id: B_001\nlayer: L01\nstatus: Draft\npriority: P1\nversion: 2.0.0\n---\n")
+        _write_md(
+            tmp_path, "a.md", "---\nmodule_id: A_001\nlayer: L00\nstatus: Active\npriority: P0\nversion: 1.0.0\n---\n"
+        )
+        _write_md(
+            tmp_path, "b.md", "---\nmodule_id: B_001\nlayer: L01\nstatus: Draft\npriority: P1\nversion: 2.0.0\n---\n"
+        )
         validator = SsotValidator(scan_dir=tmp_path, repo_root=tmp_path)
         report = validator.run()
         assert report.parsed_files == 2

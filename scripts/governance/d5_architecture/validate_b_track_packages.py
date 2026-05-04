@@ -17,20 +17,28 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
 import argparse
 
 B_TRACK_DIRS = {
-    "llm_security", "vector_memory", "context_engine", "orchestrator",
-    "feedback_loop", "gates", "db", "kb", "mcp", "shared",
+    "llm_security",
+    "vector_memory",
+    "context_engine",
+    "orchestrator",
+    "feedback_loop",
+    "gates",
+    "db",
+    "kb",
+    "mcp",
+    "shared",
 }
 
 REQUIRED_FILES = {"interface.md"}
@@ -55,17 +63,17 @@ def scan_b_track_packages() -> list[dict]:
         pkg_files = {f.name for f in pkg_dir.iterdir() if f.is_file()}
         pkg_subdirs = {f.name for f in pkg_dir.iterdir() if f.is_dir()}
 
-        has_interface = "interface.md" in pkg_files or any(
-            (pkg_dir / d / "interface.md").exists() for d in pkg_subdirs
-        )
+        has_interface = "interface.md" in pkg_files or any((pkg_dir / d / "interface.md").exists() for d in pkg_subdirs)
 
         if not has_interface:
-            findings.append({
-                "package": pkg_dir.name,
-                "type": "MISSING_INTERFACE",
-                "detail": f"B 轨包 '{pkg_dir.name}' 缺少 interface.md",
-                "severity": "LOW",
-            })
+            findings.append(
+                {
+                    "package": pkg_dir.name,
+                    "type": "MISSING_INTERFACE",
+                    "detail": f"B 轨包 '{pkg_dir.name}' 缺少 interface.md",
+                    "severity": "LOW",
+                }
+            )
 
     return findings
     """扫描 B-track 包合规性."""

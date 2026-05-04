@@ -35,15 +35,17 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 CLOSED 状态：装饰器零运行时开销（仅在抛出异常时写 SQLite）。
 OPEN 状态：调用立即抛出 CircuitOpenError，不执行被装饰函数。
 """
+
 from __future__ import annotations
 
 import functools
 import sqlite3
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, TypeVar
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.shared.capability import capability_check
@@ -59,7 +61,7 @@ __all__ = [
 ]
 
 _F = TypeVar("_F", bound=Callable[..., Any])
-_UTC = timezone.utc
+_UTC = UTC
 
 # ---------------------------------------------------------------------------
 # 配置常量
@@ -86,7 +88,7 @@ class CircuitBreakerState(str, Enum):
 
     CLOSED = "CLOSED"
     OPEN = "OPEN"
-    HALF_OPEN = "HALF_OPEN"   # Phase 3 预留，Phase 1 不写入数据库
+    HALF_OPEN = "HALF_OPEN"  # Phase 3 预留，Phase 1 不写入数据库
 
 
 # ---------------------------------------------------------------------------
@@ -102,15 +104,11 @@ class CircuitBreakerRecord:
     target_module: str
     state: CircuitBreakerState
     failure_count: int = 0
-    last_failure_at: Optional[str] = None
-    opened_at: Optional[str] = None
-    reason: Optional[str] = None
-    created_at: str = field(
-        default_factory=lambda: datetime.now(_UTC).isoformat()
-    )
-    updated_at: str = field(
-        default_factory=lambda: datetime.now(_UTC).isoformat()
-    )
+    last_failure_at: str | None = None
+    opened_at: str | None = None
+    reason: str | None = None
+    created_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
 
 
 # ---------------------------------------------------------------------------
@@ -121,7 +119,7 @@ class CircuitBreakerRecord:
 class CircuitOpenError(RuntimeError):
     """OPEN 状态下调用被阻断时抛出。"""
 
-    def __init__(self, caller: str, target: str, reason: Optional[str] = None) -> None:
+    def __init__(self, caller: str, target: str, reason: str | None = None) -> None:
         self.caller = caller
         self.target = target
         self.reason = reason
@@ -156,7 +154,7 @@ class CircuitBreakerCheck:
 
     caller_module: str
     target_module: str
-    db_path: Optional[Path] = None
+    db_path: Path | None = None
 
     def is_open(self) -> bool:
         """返回 True 表示熔断器当前处于 OPEN 状态。"""
@@ -190,7 +188,7 @@ class CBGManager:
 
     def __init__(
         self,
-        db_path: Optional[Path | str] = None,
+        db_path: Path | str | None = None,
         *,
         auto_init: bool = True,
     ) -> None:
@@ -203,16 +201,13 @@ class CBGManager:
     # 公共 API
     # ------------------------------------------------------------------
 
-    def get_state(
-        self, caller: str, target: str
-    ) -> Optional[CircuitBreakerRecord]:
+    def get_state(self, caller: str, target: str) -> CircuitBreakerRecord | None:
         """查询指定 (caller, target) 对的熔断状态。
 
         不存在记录时返回 None（视为 CLOSED）。
         """
         row = self._conn.execute(
-            "SELECT * FROM circuit_breaker_state "
-            "WHERE caller_module = ? AND target_module = ?",
+            "SELECT * FROM circuit_breaker_state " "WHERE caller_module = ? AND target_module = ?",
             (caller, target),
         ).fetchone()
         if row is None:
@@ -295,11 +290,7 @@ class CBGManager:
                 raise
         else:
             new_count = record.failure_count + 1
-            new_state = (
-                CircuitBreakerState.OPEN
-                if new_count >= threshold
-                else CircuitBreakerState.CLOSED
-            )
+            new_state = CircuitBreakerState.OPEN if new_count >= threshold else CircuitBreakerState.CLOSED
             opened_at = record.opened_at
             if new_state == CircuitBreakerState.OPEN and record.state == CircuitBreakerState.CLOSED:
                 opened_at = now
@@ -330,7 +321,7 @@ class CBGManager:
                 raise
 
         updated = self.get_state(caller, target)
-        assert updated is not None  # noqa: S101 — 刚刚写入，不应为 None
+        assert updated is not None  # — 刚刚写入，不应为 None
         return updated
 
     def reset(
@@ -373,8 +364,7 @@ class CBGManager:
     def list_open_circuits(self) -> list[CircuitBreakerRecord]:
         """列出所有当前处于 OPEN 状态的熔断记录。"""
         rows = self._conn.execute(
-            "SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' "
-            "ORDER BY opened_at DESC"
+            "SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' " "ORDER BY opened_at DESC"
         ).fetchall()
         return [
             CircuitBreakerRecord(
@@ -395,7 +385,7 @@ class CBGManager:
         """关闭底层 SQLite 连接。"""
         self._conn.close()
 
-    def __enter__(self) -> "CBGManager":
+    def __enter__(self) -> CBGManager:
         return self
 
     def __exit__(self, *_: object) -> None:
@@ -411,8 +401,8 @@ def circuit_breaker(
     target_module: str,
     *,
     threshold: int = DEFAULT_THRESHOLD,
-    caller_module: Optional[str] = None,
-    db_path: Optional[Path | str] = None,
+    caller_module: str | None = None,
+    db_path: Path | str | None = None,
 ) -> Callable[[_F], _F]:
     """装饰跨模块调用，自动统计失败并在达到阈值时触发 CLOSED→OPEN。
 
@@ -533,8 +523,6 @@ def register_l08_policy(
     }
 
 
-def get_l08_policy(
-    caller_module: str, target_module: str
-) -> Optional[dict[str, Any]]:
+def get_l08_policy(caller_module: str, target_module: str) -> dict[str, Any] | None:
     """查询 L08 策略注册表。"""
     return _L08_REGISTRY.get((caller_module, target_module))

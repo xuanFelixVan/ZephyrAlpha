@@ -29,9 +29,10 @@ from __future__ import annotations
 
 import functools
 import logging
+from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
 
 _logger = logging.getLogger("zephyr.gates.capability_guard")
 
@@ -51,8 +52,9 @@ def _level_meets_min(actual: CapabilityLevel, minimum: CapabilityLevel) -> bool:
     return level_order[actual] >= level_order[minimum]
 
 
-def _get_caller_file() -> Optional[str]:
+def _get_caller_file() -> str | None:
     import inspect
+
     for frame_info in inspect.stack():
         filename = frame_info.filename
         if not filename.startswith(str(Path(__file__).resolve().parent)):
@@ -84,11 +86,11 @@ def require_capability(
             caller_file = _get_caller_file() or "unknown"
 
             import os
+
             enforce = os.environ.get("ZEPHYR_ENFORCE_CAPABILITY", "").lower() == "true"
 
             _logger.debug(
-                "[CapabilityGuard] %s 调用 '%s' — "
-                "需要等级=%s, 调用位置=%s",
+                "[CapabilityGuard] %s 调用 '%s' — " "需要等级=%s, 调用位置=%s",
                 operation,
                 func.__qualname__,
                 min_level.value,
@@ -97,6 +99,7 @@ def require_capability(
 
             if enforce:
                 from zephyr.gates.ai_capability_guard import _check_file_level
+
                 actual_level = _check_file_level(caller_file)
                 if not _level_meets_min(actual_level, min_level):
                     raise PermissionError(

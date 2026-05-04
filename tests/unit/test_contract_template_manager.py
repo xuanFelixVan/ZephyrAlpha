@@ -3,20 +3,18 @@ Unit tests for contract_template_manager.py (T-2-31, C55)
 ==========================================================
 Minimum: 10 tests
 """
+
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from pathlib import Path
 
 import pytest
-
 from zephyr.gates.contract_template_manager import (
     ContractParameter,
     ContractTemplate,
     ContractTemplateManager,
 )
-
 
 _TS = datetime(2026, 4, 24, 12, 0, 0)
 

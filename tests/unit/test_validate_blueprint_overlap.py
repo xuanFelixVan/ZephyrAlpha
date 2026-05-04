@@ -2,17 +2,14 @@ import textwrap
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
+from _shared.frontmatter import parse_frontmatter_from_file
 
 from scripts.governance.d11_compliance.validate_blueprint_overlap import (
     detect_overlaps,
     extract_components,
-    scan_draft_components,
     run_validation,
-    DRAFTS_ROOT,
-    REPO_ROOT,
+    scan_draft_components,
 )
-from _shared.frontmatter import parse_frontmatter_from_file
 
 
 class TestParseFrontmatter:

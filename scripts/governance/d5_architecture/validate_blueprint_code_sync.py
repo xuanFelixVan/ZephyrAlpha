@@ -14,49 +14,56 @@ AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
   python scripts/governance/d5_architecture/validate_blueprint_code_sync.py
   python scripts/governance/d5_architecture/validate_blueprint_code_sync.py --warn-only
 """
+
 from __future__ import annotations
+
 import re
 import sys
 from pathlib import Path
+
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next((p for p in _SCRIPT_DIR.parents if (p / '_shared').exists())))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
-BLUEPRINT_GLOBS = ['docs/03_modules/*/blueprint.md', 'docs/03_modules/*/*/blueprint.md']
-SECTION_PATH_INDEX_PATTERN = re.compile('^##\\s+\\d+\\.\\s+已实现代码完整路径索引', re.MULTILINE)
-PATH_IN_TABLE_PATTERN = re.compile('`([^`]+\\.(?:py|yaml|yml|json|toml|md))`')
-PATH_MUST_HAVE_DIR = re.compile('[/\\\\]')
-STATUS_IMPLEMENTED = re.compile('✅|⚠️|已实现|部分实现|已完成')
-STATUS_NOT_IMPLEMENTED = re.compile('❌|未实现')
+BLUEPRINT_GLOBS = ["docs/03_modules/*/blueprint.md", "docs/03_modules/*/*/blueprint.md"]
+SECTION_PATH_INDEX_PATTERN = re.compile("^##\\s+\\d+\\.\\s+已实现代码完整路径索引", re.MULTILINE)
+PATH_IN_TABLE_PATTERN = re.compile("`([^`]+\\.(?:py|yaml|yml|json|toml|md))`")
+PATH_MUST_HAVE_DIR = re.compile("[/\\\\]")
+STATUS_IMPLEMENTED = re.compile("✅|⚠️|已实现|部分实现|已完成")
+STATUS_NOT_IMPLEMENTED = re.compile("❌|未实现")
+
 
 def find_blueprints() -> list[Path]:
     """查找蓝图文件"""
     results: list[Path] = []
     for glob_pattern in BLUEPRINT_GLOBS:
         results.extend(REPO_ROOT.glob(glob_pattern))
-    '查找蓝图文件.'
+    "查找蓝图文件."
     return sorted(set(results))
+
 
 def extract_path_index_section(content: str) -> str:
     """提取路径索引段落"""
     match = SECTION_PATH_INDEX_PATTERN.search(content)
-    '查找蓝图文件.'
-    '提取路径索引段落.'
+    "查找蓝图文件."
+    "提取路径索引段落."
     if not match:
-        return ''
+        return ""
     start = match.start()
-    next_h2 = re.search('^## \\d', content[start + 10:], re.MULTILINE)
+    next_h2 = re.search("^## \\d", content[start + 10 :], re.MULTILINE)
     if next_h2:
-        return content[start:start + 10 + next_h2.start()]
+        return content[start : start + 10 + next_h2.start()]
     return content[start:]
+
 
 def extract_claimed_paths(section: str) -> dict[str, str]:
     """提取路径索引段落."""
     claimed: dict[str, str] = {}
-    lines = section.split('\n')
+    lines = section.split("\n")
     for line in lines:
         if STATUS_NOT_IMPLEMENTED.search(line) and (not STATUS_IMPLEMENTED.search(line)):
             continue
@@ -64,53 +71,61 @@ def extract_claimed_paths(section: str) -> dict[str, str]:
             path_str = m.group(1)
             if not PATH_MUST_HAVE_DIR.search(path_str):
                 continue
-            if any((skip in path_str for skip in ['—', '未创建', '待实现', '未实现', '无独立'])):
+            if any(skip in path_str for skip in ["—", "未创建", "待实现", "未实现", "无独立"]):
                 continue
             claimed[path_str] = line.strip()
     return claimed
-    '提取声明的路径列表.'
+    "提取声明的路径列表."
+
 
 def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
     """校验蓝图合规性"""
     errors: list[str] = []
-    '校验蓝图合规性.'
-    content = bp_path.read_text(encoding='utf-8')
+    "校验蓝图合规性."
+    content = bp_path.read_text(encoding="utf-8")
     rel_bp = bp_path.relative_to(REPO_ROOT)
     section = extract_path_index_section(content)
     if not section:
-        errors.append(f'[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（AGENTS.md §6.14 要求蓝图 §16~§19 为路径索引）')
+        errors.append(
+            f"[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（AGENTS.md §6.14 要求蓝图 §16~§19 为路径索引）"
+        )
         return errors
     claimed = extract_claimed_paths(section)
     for path_str, context in claimed.items():
         full_path = REPO_ROOT / path_str
         if not full_path.exists():
-            errors.append(f'[GATE-BLUEPRINT-CODE] {rel_bp}: 幽灵路径 — 蓝图声称文件存在但磁盘未找到: {path_str}')
+            errors.append(f"[GATE-BLUEPRINT-CODE] {rel_bp}: 幽灵路径 — 蓝图声称文件存在但磁盘未找到: {path_str}")
     return errors
-    '校验蓝图合规性.'
+    "校验蓝图合规性."
+
 
 def main() -> None:
     """入口函数."""
-    warn_only = '--warn-only' in sys.argv
+    warn_only = "--warn-only" in sys.argv
     blueprints = find_blueprints()
     if not blueprints:
-        print('[GATE-BLUEPRINT-CODE] 未找到任何蓝图文件，跳过检查')
+        print("[GATE-BLUEPRINT-CODE] 未找到任何蓝图文件，跳过检查")
         return 0
     all_errors: list[str] = []
-    print(f'[GATE-BLUEPRINT-CODE] 扫描 {len(blueprints)} 份蓝图...')
+    print(f"[GATE-BLUEPRINT-CODE] 扫描 {len(blueprints)} 份蓝图...")
     for bp in blueprints:
         errors = validate_blueprint(bp, warn_only)
         all_errors.extend(errors)
     if all_errors:
-        print(f'\n[GATE-BLUEPRINT-CODE] 发现 {len(all_errors)} 个问题：')
+        print(f"\n[GATE-BLUEPRINT-CODE] 发现 {len(all_errors)} 个问题：")
         for err in all_errors:
             print(f'  {('⚠️' if warn_only else '🔴')} {err}')
         if warn_only:
-            print('\n[GATE-BLUEPRINT-CODE] --warn-only 模式，不阻断。请尽快修复上述问题。')
+            print("\n[GATE-BLUEPRINT-CODE] --warn-only 模式，不阻断。请尽快修复上述问题。")
             return 0
-        print('\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.14 更新蓝图路径索引章节。')
+        print(
+            "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.14 更新蓝图路径索引章节。"
+        )
         return 1
-    print('[GATE-BLUEPRINT-CODE] ✅ 所有蓝图路径索引与磁盘实际一致')
+    print("[GATE-BLUEPRINT-CODE] ✅ 所有蓝图路径索引与磁盘实际一致")
     return 0
-    '入口函数.'
-if __name__ == '__main__':
+    "入口函数."
+
+
+if __name__ == "__main__":
     sys.exit(main())

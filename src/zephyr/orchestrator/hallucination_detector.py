@@ -51,20 +51,20 @@ Depends      : ADR-0035（Intent 三阶段）、ADR-0039（CoVe 策略）、
 - LLM 调用通过 Protocol 注入，生产环境再提供真实 caller
 - 审计写入通过可选的 ``audit_logger`` 注入，默认跳过
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import re
 import time
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import (
     Any,
-    Callable,
     Literal,
-    Optional,
     Protocol,
     runtime_checkable,
 )
@@ -151,7 +151,7 @@ class ModelCallResult(BaseModel):
     cost_usd: float = Field(default=0.0, ge=0.0, description="单次费用（USD）")
     latency_ms: int = Field(default=0, ge=0, description="单次耗时（毫秒）")
     success: bool = Field(default=True, description="是否成功")
-    error: Optional[str] = Field(default=None, description="失败原因")
+    error: str | None = Field(default=None, description="失败原因")
 
 
 @runtime_checkable
@@ -190,10 +190,10 @@ class HallucinationResult(BaseModel):
     requires_human: bool = Field(default=False, description="是否需要 Handoff 人工介入")
     execution_model: str = Field(default="", description="主模型名称")
     verifier_model: str = Field(default="", description="验证模型名称")
-    corrected_answer: Optional[str] = Field(default=None, description="Step 4 修正后的答案")
+    corrected_answer: str | None = Field(default=None, description="Step 4 修正后的答案")
     latency_ms: int = Field(default=0, ge=0, description="端到端耗时")
     cost_usd: float = Field(default=0.0, ge=0.0, description="端到端费用")
-    fallback_used: Optional[str] = Field(default=None, description="降级模式，见 FallbackMode")
+    fallback_used: str | None = Field(default=None, description="降级模式，见 FallbackMode")
     triggered: bool = Field(default=True, description="CoVe 是否实际运行（L3 黑名单时为 False）")
 
     @field_validator("verify_questions")
@@ -254,9 +254,7 @@ _NUMERIC_FIELD_PATTERN = re.compile(
     r"\b(IC|Sharpe|win[_\s-]*rate|ic|sharpe)\s*[:=]\s*(-?\d+\.?\d*)",
     re.IGNORECASE,
 )
-_FILE_PATH_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9_/.-])([A-Za-z0-9_./-]+\.(?:md|py|yaml|yml))(?![A-Za-z0-9_/])"
-)
+_FILE_PATH_PATTERN = re.compile(r"(?<![A-Za-z0-9_/.-])([A-Za-z0-9_./-]+\.(?:md|py|yaml|yml))(?![A-Za-z0-9_/])")
 _FROZEN_ASSET_PATTERN = re.compile(
     r"(tool_contracts\.yaml|ADR-\d+-\d+\.md|ADR-\d{4}-[a-z0-9-]+\.md)",
     re.IGNORECASE,
@@ -288,7 +286,7 @@ def _numeric_out_of_range(claim: str) -> list[str]:
     return evidence
 
 
-def _missing_files(claim: str, repo_root: Optional[Path]) -> list[str]:
+def _missing_files(claim: str, repo_root: Path | None) -> list[str]:
     """claim 中提及的 .md/.py/.yaml 路径若 repo 下不存在则标红。"""
     if repo_root is None:
         return []
@@ -346,8 +344,6 @@ _THRESHOLDS: dict[RiskLevel, tuple[float, float]] = {
 """风险分级阈值：(非幻觉上限, 幻觉下限)。ADR-0039 §4.3。"""
 
 
-
-
 def _hash_claim(claim: str) -> str:
     return "claim#sha256:" + hashlib.sha256(claim.encode("utf-8")).hexdigest()[:16]
 
@@ -400,16 +396,16 @@ class HallucinationDetector:
     def __init__(
         self,
         *,
-        primary_caller: Optional[ModelCaller] = None,
-        verifier_caller: Optional[ModelCaller] = None,
+        primary_caller: ModelCaller | None = None,
+        verifier_caller: ModelCaller | None = None,
         execution_model_name: str = "Sonnet 4.6",
         verifier_model_name: str = "GLM-5.1",
         monthly_budget_usd: float = 15.0,
         daily_budget_usd: float = 0.75,
         per_call_max_usd: float = 0.02,
-        repo_root: Optional[Path] = None,
+        repo_root: Path | None = None,
         now: Callable[[], datetime] = default_now,
-        audit_logger: Optional[Callable[[HallucinationResult], None]] = None,
+        audit_logger: Callable[[HallucinationResult], None] | None = None,
     ) -> None:
         self._primary = primary_caller
         self._verifier = verifier_caller
@@ -436,9 +432,9 @@ class HallucinationDetector:
         self,
         risk_level: RiskLevel,
         *,
-        source_stage: Optional[Literal["keyword", "semantic", "llm"]] = None,
-        intent_confidence: Optional[float] = None,
-        mcp_safety_level: Optional[RiskLevel] = None,
+        source_stage: Literal["keyword", "semantic", "llm"] | None = None,
+        intent_confidence: float | None = None,
+        mcp_safety_level: RiskLevel | None = None,
         target_is_doc: bool = False,
         requires_human: bool = False,
         frozen_asset_touch: bool = False,
@@ -477,7 +473,7 @@ class HallucinationDetector:
     def detect(
         self,
         claim: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
         risk_level: RiskLevel | str = RiskLevel.M,
         *,
         handoff_approved: bool = False,
@@ -514,9 +510,7 @@ class HallucinationDetector:
             return self._skip_result(claim, rl, reason="L3_BLACKLIST", started_at=started_at)
 
         if not self._budget.can_afford(rl):
-            return self._skip_result(
-                claim, rl, reason=FallbackMode.BUDGET_SKIP.value, started_at=started_at
-            )
+            return self._skip_result(claim, rl, reason=FallbackMode.BUDGET_SKIP.value, started_at=started_at)
 
         primary_ok = self._primary is not None
         verifier_ok = self._verifier is not None
@@ -559,13 +553,11 @@ class HallucinationDetector:
         verify_answers, step2_cost = self._step2_verify(verify_questions)
         total_cost += step2_cost
 
-        inconsistency_score, evidence = self._step3_cross_check(
-            baseline_answer, verify_answers
-        )
+        inconsistency_score, evidence = self._step3_cross_check(baseline_answer, verify_answers)
 
-        corrected: Optional[str] = None
+        corrected: str | None = None
         requires_human = False
-        final_check_confidence: Optional[float] = None
+        final_check_confidence: float | None = None
 
         ok_upper, bad_lower = _THRESHOLDS[risk_level]
         is_hallu_pre = inconsistency_score > bad_lower
@@ -574,9 +566,7 @@ class HallucinationDetector:
         if is_midband and risk_level == RiskLevel.H:
             requires_human = True
         elif (is_midband and risk_level == RiskLevel.M) or (is_hallu_pre and risk_level == RiskLevel.H):
-            corrected, final_check_confidence, step4_cost = self._step4_final_check(
-                baseline_answer, evidence
-            )
+            corrected, final_check_confidence, step4_cost = self._step4_final_check(baseline_answer, evidence)
             total_cost += step4_cost
 
         # keyword 规则叠加一次，产出 evidence 但不改 inconsistency_score 除非已判幻觉
@@ -614,9 +604,7 @@ class HallucinationDetector:
             triggered=True,
         )
 
-    def _step1_baseline_plan(
-        self, claim: str, context: dict[str, Any]
-    ) -> tuple[str, list[str], float]:
+    def _step1_baseline_plan(self, claim: str, context: dict[str, Any]) -> tuple[str, list[str], float]:
         """Step 1：Baseline 回答 + N 条 verify_questions（合并单次调用）。"""
         assert self._primary is not None
         prompt = self._build_step1_prompt(claim, context)
@@ -651,7 +639,9 @@ class HallucinationDetector:
                     if isinstance(item, dict):
                         answers.append(
                             {
-                                "question": str(item.get("question", verify_questions[idx] if idx < len(verify_questions) else "")),
+                                "question": str(
+                                    item.get("question", verify_questions[idx] if idx < len(verify_questions) else "")
+                                ),
                                 "answer": str(item.get("answer", "")),
                                 "confidence_self": float(item.get("confidence_self", 0.5)),
                             }
@@ -696,15 +686,11 @@ class HallucinationDetector:
             overlap = _token_overlap(baseline_answer, answer)
             if overlap < 0.30:
                 inconsistent += 1
-                evidence.append(
-                    f"semantic_drift(q='{item.get('question')}'): overlap={overlap:.2f}"
-                )
+                evidence.append(f"semantic_drift(q='{item.get('question')}'): overlap={overlap:.2f}")
         score = inconsistent / max(1, len(verify_answers))
         return score, evidence
 
-    def _step4_final_check(
-        self, baseline_answer: str, inconsistencies: list[str]
-    ) -> tuple[str, float, float]:
+    def _step4_final_check(self, baseline_answer: str, inconsistencies: list[str]) -> tuple[str, float, float]:
         """Step 4：仅 H 级触发；主模型修正 baseline。"""
         assert self._primary is not None
         prompt = (
@@ -879,9 +865,9 @@ class HallucinationDetector:
 
 def build_detector_with_defaults(
     *,
-    primary_caller: Optional[ModelCaller] = None,
-    verifier_caller: Optional[ModelCaller] = None,
-    repo_root: Optional[Path] = None,
+    primary_caller: ModelCaller | None = None,
+    verifier_caller: ModelCaller | None = None,
+    repo_root: Path | None = None,
 ) -> HallucinationDetector:
     """
     便捷构造：使用默认预算 / 模型名，主要用于 Phase 3 联调阶段。

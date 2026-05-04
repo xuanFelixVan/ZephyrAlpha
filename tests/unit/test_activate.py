@@ -9,13 +9,13 @@
 5. 提案生成正确
 6. force 强制激活
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
-from zephyr.kb.activate import ActivateGate, AUTO_ACTIVATE_THRESHOLD
+from zephyr.kb.activate import ActivateGate
 
 
 @pytest.fixture()
@@ -35,6 +35,7 @@ def _make_analyzed_md(
     deps_yaml = ""
     if depends_on:
         import yaml
+
         deps_yaml = f"depends_on: {yaml.dump(depends_on, default_flow_style=False)}"
     body = "# 已分析文档\n\n内容丰富，包含设计决策和接口定义。\n" * 5
     content = (

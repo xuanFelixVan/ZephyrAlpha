@@ -24,18 +24,17 @@
 
 Safety: HIGH（金融精度契约）
 """
+
 from __future__ import annotations
 
 import warnings
 from decimal import Decimal
 
 import pytest
-
 from zephyr.shared.contracts.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
-    _CURRENCY_PRECISION,
     get_currency_precision,
 )
 

@@ -15,16 +15,16 @@ from __future__ import annotations
 
 import re
 import sys
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -53,12 +53,14 @@ def build_reference_graph() -> tuple[dict[str, set[str]], dict[str, str]]:
         if module_id:
             module_to_file[module_id] = rel
 
-        all_files.append({
-            "rel": rel,
-            "module_id": module_id,
-            "depends_on": depends_on,
-            "filepath": filepath,
-        })
+        all_files.append(
+            {
+                "rel": rel,
+                "module_id": module_id,
+                "depends_on": depends_on,
+                "filepath": filepath,
+            }
+        )
 
         try:
             content = filepath.read_text(encoding="utf-8", errors="replace")
@@ -112,11 +114,13 @@ def main() -> None:
             has_incoming = True
 
         if not has_incoming:
-            findings.append({
-                "file": rel,
-                "module_id": module_id,
-                "severity": "LOW",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "module_id": module_id,
+                    "severity": "LOW",
+                }
+            )
 
     if findings:
         print(f"\n[ORPHAN-DOC] {len(findings)} 个孤立文档（无入边引用）:", file=sys.stderr)

@@ -40,10 +40,11 @@ SQL 注入防护
     with OLAPEngine() as eng:
         report = eng.compliance_rate_trend(period="week")
 """
+
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import duckdb
 import structlog
@@ -110,14 +111,12 @@ class OLAPEngine:
 
     def __init__(
         self,
-        sqlite_path: Optional[Path | str] = None,
+        sqlite_path: Path | str | None = None,
         duckdb_path: str = ":memory:",
         *,
         auto_init_sqlite: bool = True,
     ) -> None:
-        self._sqlite_path: Path = (
-            Path(sqlite_path) if sqlite_path is not None else DB_PATH
-        )
+        self._sqlite_path: Path = Path(sqlite_path) if sqlite_path is not None else DB_PATH
         self._duckdb_path = duckdb_path
 
         if auto_init_sqlite:
@@ -141,9 +140,7 @@ class OLAPEngine:
             self._conn.execute("INSTALL sqlite; LOAD sqlite;")
             # 转义路径中的单引号（Windows 路径通常无单引号，此处为防御性处理）
             safe_path = str(self._sqlite_path).replace("'", "''")
-            self._conn.execute(
-                f"ATTACH '{safe_path}' AS sqlite_db (TYPE sqlite);"
-            )
+            self._conn.execute(f"ATTACH '{safe_path}' AS sqlite_db (TYPE sqlite);")
             _log.debug("sqlite_attached", path=str(self._sqlite_path))
         except Exception as exc:
             _log.warning(
@@ -201,9 +198,7 @@ class OLAPEngine:
             period 不在白名单时抛出。
         """
         if period not in _VALID_PERIODS:
-            raise OLAPEngineError(
-                f"period 参数无效: {period!r}；必须是 {sorted(_VALID_PERIODS)}"
-            )
+            raise OLAPEngineError(f"period 参数无效: {period!r}；必须是 {sorted(_VALID_PERIODS)}")
         return period
 
     @staticmethod
@@ -216,9 +211,7 @@ class OLAPEngine:
             limit 超出范围时抛出。
         """
         if not (1 <= limit <= 10_000):
-            raise OLAPEngineError(
-                f"limit 参数无效: {limit}；必须在 1–10000 之间"
-            )
+            raise OLAPEngineError(f"limit 参数无效: {limit}；必须在 1–10000 之间")
         return limit
 
     # ------------------------------------------------------------------
@@ -236,7 +229,7 @@ class OLAPEngine:
     def _execute(
         self,
         sql: str,
-        params: Optional[list[Any]] = None,
+        params: list[Any] | None = None,
     ) -> list[TrendRow]:
         """执行查询并返回行列表（dict 格式）。
 
@@ -256,7 +249,7 @@ class OLAPEngine:
             rel = self._conn.execute(sql, params or [])
             cols = [desc[0] for desc in rel.description or []]
             rows = rel.fetchall()
-            return [dict(zip(cols, row)) for row in rows]
+            return [dict(zip(cols, row, strict=False)) for row in rows]
         except duckdb.Error as exc:
             _log.error("olap_query_failed", sql=sql[:120], error=str(exc))
             raise OLAPEngineError(f"OLAP 查询失败: {exc}") from exc
@@ -269,7 +262,7 @@ class OLAPEngine:
         self,
         period: str = "day",
         limit: int = 30,
-        phase: Optional[int] = None,
+        phase: int | None = None,
     ) -> list[TrendRow]:
         """任务完成进度趋势。
 
@@ -342,7 +335,7 @@ class OLAPEngine:
         self,
         period: str = "day",
         limit: int = 30,
-        gate_id: Optional[str] = None,
+        gate_id: str | None = None,
     ) -> list[TrendRow]:
         """门禁合规率趋势。
 
@@ -406,7 +399,7 @@ class OLAPEngine:
         self,
         period: str = "month",
         limit: int = 12,
-        category: Optional[str] = None,
+        category: str | None = None,
     ) -> list[TrendRow]:
         """知识激活率趋势。
 
@@ -533,7 +526,7 @@ class OLAPEngine:
         except Exception:
             pass  # 关闭错误静默处理
 
-    def __enter__(self) -> "OLAPEngine":
+    def __enter__(self) -> OLAPEngine:
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:

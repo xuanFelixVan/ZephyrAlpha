@@ -14,23 +14,36 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.walk import iter_files
+from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.frontmatter import parse_frontmatter_from_file
-from _shared.constants import REPO_ROOT, EXCLUDE_DIRS, SCAN_EXTENSIONS_MD
+from _shared.walk import iter_files
 
 LAYER_NUMBERS = {
-    "L00": 0, "L01": 1, "L02": 2, "L03": 3, "L04": 4,
-    "L05": 5, "L06": 6, "L07": 7, "L08": 8, "L09": 9,
-    "L10": 10, "L11": 11, "L12": 12, "L13": 13, "L14": 14,
+    "L00": 0,
+    "L01": 1,
+    "L02": 2,
+    "L03": 3,
+    "L04": 4,
+    "L05": 5,
+    "L06": 6,
+    "L07": 7,
+    "L08": 8,
+    "L09": 9,
+    "L10": 10,
+    "L11": 11,
+    "L12": 12,
+    "L13": 13,
+    "L14": 14,
     "cross_layer": -1,
 }
 
@@ -49,10 +62,7 @@ def scan_layer_violations() -> tuple[list[dict], int]:
     files_scanned = 0
     docs_dir = REPO_ROOT / "docs"
 
-    for filepath in iter_files(
-            docs_dir,
-            extensions=SCAN_EXTENSIONS_MD,
-            exclude_dirs=_EXTRA_EXCLUDE):
+    for filepath in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD, exclude_dirs=_EXTRA_EXCLUDE):
         files_scanned += 1
         fm = parse_frontmatter_from_file(filepath)
         if not fm:
@@ -77,22 +87,25 @@ def scan_layer_violations() -> tuple[list[dict], int]:
 
                 dep_layer_num = LAYER_NUMBERS.get(dep_layer_str, -1)
                 if layer_num > 0 and dep_layer_num > 0 and dep_layer_num > layer_num:
-                    findings.append({
-                        "file": rel,
-                        "layer": layer,
-                        "depends_on_target": dep_target,
-                        "dep_layer": dep_layer_str,
-                        "violation": f"\u4f9d\u8d56\u5c42\u7ea7\u65b9\u5411\u9519\u8bef: {layer} \u2192 {dep_layer_str}\uff08\u4e0b\u7ea7\u4e0d\u80fd\u4f9d\u8d56\u4e0a\u7ea7\uff09",
-                        "severity": "MEDIUM",
-                    })
+                    findings.append(
+                        {
+                            "file": rel,
+                            "layer": layer,
+                            "depends_on_target": dep_target,
+                            "dep_layer": dep_layer_str,
+                            "violation": f"\u4f9d\u8d56\u5c42\u7ea7\u65b9\u5411\u9519\u8bef: {layer} \u2192 {dep_layer_str}\uff08\u4e0b\u7ea7\u4e0d\u80fd\u4f9d\u8d56\u4e0a\u7ea7\uff09",
+                            "severity": "MEDIUM",
+                        }
+                    )
 
-        if "contracts" in rel.lower() and any(
-                d in rel for d in CONTRACT_FORBIDDEN_DIRS):
-            findings.append({
-                "file": rel,
-                "violation": "contracts \u6587\u4ef6\u4e0d\u5728 _registry/contracts/ \u4e2d",
-                "severity": "HIGH",
-            })
+        if "contracts" in rel.lower() and any(d in rel for d in CONTRACT_FORBIDDEN_DIRS):
+            findings.append(
+                {
+                    "file": rel,
+                    "violation": "contracts \u6587\u4ef6\u4e0d\u5728 _registry/contracts/ \u4e2d",
+                    "severity": "HIGH",
+                }
+            )
 
     return findings, files_scanned
     """扫描层级依赖违规."""
@@ -106,10 +119,8 @@ def main() -> None:
 
     findings, files_scanned = scan_layer_violations()
 
-    direction_violations = [
-        f for f in findings if "\u65b9\u5411\u9519\u8bef" in f.get("violation", "")]
-    contract_violations = [
-        f for f in findings if "contracts" in f.get("violation", "")]
+    direction_violations = [f for f in findings if "\u65b9\u5411\u9519\u8bef" in f.get("violation", "")]
+    contract_violations = [f for f in findings if "contracts" in f.get("violation", "")]
 
     print(f"\n[LAYER-DEPS] \u626b\u63cf {files_scanned} \u4e2a .md \u6587\u4ef6", file=sys.stderr)
     print(f"  \u65b9\u5411\u8fdd\u89c4: {len(direction_violations)}", file=sys.stderr)

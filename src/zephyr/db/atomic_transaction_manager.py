@@ -61,11 +61,12 @@ import os
 import secrets
 import sqlite3
 import sys
-from threading import RLock
 import time
+from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Literal, Optional, Sequence, cast
+from threading import RLock
+from typing import Any, Literal, cast
 
 _SCRIPTS_DIR = Path(__file__).resolve().parents[3] / "scripts"
 if str(_SCRIPTS_DIR) not in sys.path:
@@ -134,10 +135,10 @@ class TransactionScope:
 
     __slots__ = ("_atm", "tx_id", "_staged_files", "_committed", "_rolled_back")
 
-    def __init__(self, atm: "AtomicTransactionManager", tx_id: str) -> None:
+    def __init__(self, atm: AtomicTransactionManager, tx_id: str) -> None:
         self._atm = atm
         self.tx_id: str = tx_id
-        self._staged_files: list[tuple[Path, Path, Optional[Path]]] = []
+        self._staged_files: list[tuple[Path, Path, Path | None]] = []
         self._committed: bool = False
         self._rolled_back: bool = False
 
@@ -187,15 +188,13 @@ class TransactionScope:
         data = _utf8_lf_bytes(content)
 
         tmp_path = target.with_name(f"{target.name}.atm-{self.tx_id}.tmp")
-        bak_path: Optional[Path] = None
+        bak_path: Path | None = None
         if target.exists():
             bak_path = target.with_name(f"{target.name}.atm-{self.tx_id}.bak")
             try:
                 os.replace(target, bak_path)
             except OSError as exc:  # pragma: no cover — 极端文件系统错
-                raise TransactionError(
-                    f"[{self.tx_id}] failed to stage existing file to .bak: {target}"
-                ) from exc
+                raise TransactionError(f"[{self.tx_id}] failed to stage existing file to .bak: {target}") from exc
 
         _flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         _binary_flag = getattr(os, "O_BINARY", 0)
@@ -224,9 +223,7 @@ class TransactionScope:
         if self._rolled_back:
             raise TransactionError(f"[{self.tx_id}] transaction already rolled back")
         if self._atm._active_tx is not self:
-            raise TransactionError(
-                f"[{self.tx_id}] not the currently active transaction in ATM"
-            )
+            raise TransactionError(f"[{self.tx_id}] not the currently active transaction in ATM")
 
 
 class AtomicTransactionManager:
@@ -259,9 +256,9 @@ class AtomicTransactionManager:
         db_path: str,
         root: str,
         *,
-        isolation_level: Optional[Literal["DEFERRED", "EXCLUSIVE", "IMMEDIATE"]] = None,
+        isolation_level: Literal["DEFERRED", "EXCLUSIVE", "IMMEDIATE"] | None = None,
         timeout: float = 30.0,
-        sanitizer: Optional[InputSanitizer] = None,
+        sanitizer: InputSanitizer | None = None,
     ) -> None:
         self._root: Path = Path(root).resolve()
         self._sanitizer: InputSanitizer = sanitizer or InputSanitizer(root=str(self._root))
@@ -271,8 +268,8 @@ class AtomicTransactionManager:
 
         self._isolation_level = isolation_level
         self._timeout = timeout
-        self._conn: Optional[sqlite3.Connection] = None
-        self._active_tx: Optional[TransactionScope] = None
+        self._conn: sqlite3.Connection | None = None
+        self._active_tx: TransactionScope | None = None
         self._lock = RLock()
 
         self._open_connection()
@@ -310,9 +307,7 @@ class AtomicTransactionManager:
         """
         with self._lock:
             if self._active_tx is not None:
-                raise TransactionError(
-                    f"nested transactions not supported; active={self._active_tx.tx_id}"
-                )
+                raise TransactionError(f"nested transactions not supported; active={self._active_tx.tx_id}")
             if self._conn is None:
                 self._open_connection()
 
@@ -342,7 +337,7 @@ class AtomicTransactionManager:
         except sqlite3.Error as exc:
             raise TransactionError(f"[{tx.tx_id}] SQLite COMMIT failed: {exc}") from exc
 
-        renamed: list[tuple[Path, Path, Optional[Path]]] = []
+        renamed: list[tuple[Path, Path, Path | None]] = []
         try:
             for target, tmp, bak in tx._staged_files:
                 os.replace(tmp, target)
@@ -373,9 +368,7 @@ class AtomicTransactionManager:
                         os.replace(bak, target)
                     except OSError:  # pragma: no cover
                         pass
-            raise TransactionError(
-                f"[{tx.tx_id}] file rename phase failed after SQLite COMMIT: {exc}"
-            ) from exc
+            raise TransactionError(f"[{tx.tx_id}] file rename phase failed after SQLite COMMIT: {exc}") from exc
 
         tx._committed = True
         self._active_tx = None
@@ -422,7 +415,7 @@ class AtomicTransactionManager:
                 self._conn.close()
                 self._conn = None
 
-    def __enter__(self) -> "AtomicTransactionManager":
+    def __enter__(self) -> AtomicTransactionManager:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

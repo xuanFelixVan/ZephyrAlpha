@@ -21,14 +21,15 @@ StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04�
 | 不存在 | — | COMPLETED/VERIFIED | ❌ | → PENDING |
 | 存在 | draft | VERIFIED | ❌ | → IN_PROGRESS |
 """
+
 from __future__ import annotations
 
 import json as _json
-import yaml
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+
+import yaml
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
 from zephyr.shared.paths import REPO_ROOT
@@ -40,6 +41,7 @@ __all__ = [
     "OrphanFile",
     "GhostTask",
 ]
+
 
 @dataclass
 class SyncResult:
@@ -69,7 +71,7 @@ class StateSynchronizer:
     同步 SQLite 状态与文件系统实际状态。
     """
 
-    def __init__(self, db_path: Optional[Path] = None) -> None:
+    def __init__(self, db_path: Path | None = None) -> None:
         self._db_path = db_path or DB_PATH
 
     def _iter_task_files(self, conn: Any) -> list[tuple[str, str, str]]:
@@ -106,13 +108,11 @@ class StateSynchronizer:
                 disk_path = REPO_ROOT / fp
                 disk_exists = disk_path.exists()
 
-                fm_status: Optional[str] = None
+                fm_status: str | None = None
                 if disk_exists and disk_path.suffix == ".md":
                     fm_status = self._read_frontmatter_status(disk_path)
 
-                result = self._check_and_fix(
-                    conn, tid, fp, disk_exists, fm_status, task_status, auto_fix
-                )
+                result = self._check_and_fix(conn, tid, fp, disk_exists, fm_status, task_status, auto_fix)
                 if result:
                     results.append(result)
         finally:
@@ -120,7 +120,7 @@ class StateSynchronizer:
 
         return results
 
-    def sync_task(self, task_id: str, auto_fix: bool = False) -> Optional[SyncResult]:
+    def sync_task(self, task_id: str, auto_fix: bool = False) -> SyncResult | None:
         """单任务同步。"""
         conn = get_db_connection(self._db_path)
         try:
@@ -145,13 +145,11 @@ class StateSynchronizer:
                 disk_path = REPO_ROOT / fp
                 disk_exists = disk_path.exists()
 
-                fm_status: Optional[str] = None
+                fm_status: str | None = None
                 if disk_exists and disk_path.suffix == ".md":
                     fm_status = self._read_frontmatter_status(disk_path)
 
-                return self._check_and_fix(
-                    conn, task_id, fp, disk_exists, fm_status, task_status, auto_fix
-                )
+                return self._check_and_fix(conn, task_id, fp, disk_exists, fm_status, task_status, auto_fix)
             return None
         finally:
             conn.close()
@@ -173,10 +171,13 @@ class StateSynchronizer:
                 ).fetchone()
                 if not row:
                     from zephyr.orchestrator.file_task_mapper import derive_task_id
-                    orphans.append(OrphanFile(
-                        file_path=rel,
-                        suggested_task_id=derive_task_id(rel),
-                    ))
+
+                    orphans.append(
+                        OrphanFile(
+                            file_path=rel,
+                            suggested_task_id=derive_task_id(rel),
+                        )
+                    )
         finally:
             conn.close()
 
@@ -203,17 +204,19 @@ class StateSynchronizer:
                         continue
                     disk_path = REPO_ROOT / fp
                     if not disk_path.exists():
-                        ghosts.append(GhostTask(
-                            task_id=row["task_id"],
-                            file_path=fp,
-                            task_status=row["status"],
-                        ))
+                        ghosts.append(
+                            GhostTask(
+                                task_id=row["task_id"],
+                                file_path=fp,
+                                task_status=row["status"],
+                            )
+                        )
         finally:
             conn.close()
 
         return ghosts
 
-    def _read_frontmatter_status(self, filepath: Path) -> Optional[str]:
+    def _read_frontmatter_status(self, filepath: Path) -> str | None:
         try:
             content = filepath.read_text(encoding="utf-8", errors="replace")
             if not content.startswith("---"):
@@ -235,17 +238,21 @@ class StateSynchronizer:
         task_id: str,
         file_path: str,
         disk_exists: bool,
-        frontmatter_status: Optional[str],
+        frontmatter_status: str | None,
         task_status: str,
         auto_fix: bool,
-    ) -> Optional[SyncResult]:
+    ) -> SyncResult | None:
         if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
             return None
 
         if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
             return None
 
-        if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status in ("COMPLETED", "VERIFIED"):
+        if (
+            disk_exists
+            and frontmatter_status in ("accepted", "Active", "active")
+            and task_status in ("COMPLETED", "VERIFIED")
+        ):
             return None
 
         if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status == "PENDING":

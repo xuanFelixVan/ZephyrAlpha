@@ -46,12 +46,13 @@ API 入口
 
     print(outcome.applied_count, outcome.blocked_by_safety_gate)
 """
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
-from typing import Callable, Optional
 
 from zephyr.feedback_loop.evolution_engine import (
     ApplyFn,
@@ -115,7 +116,7 @@ class AutoEvolutionOutcome:
 
     fitness_snapshot_date: datetime
     triggers: list[AutoTrigger] = field(default_factory=list)
-    evolution_report: Optional[EvolutionReport] = None
+    evolution_report: EvolutionReport | None = None
     proposals: list[EvolutionProposal] = field(default_factory=list)
     applied_count: int = 0
     blocked_by_safety_gate: int = 0
@@ -155,9 +156,9 @@ class _DailySnapshot:
     """一天的 fitness 指标切片。"""
 
     taken_at: datetime
-    knowledge_activation: Optional[float]
-    compliance_rate: Optional[float]
-    hallucination_interception: Optional[float]
+    knowledge_activation: float | None
+    compliance_rate: float | None
+    hallucination_interception: float | None
 
 
 class AutoEvolutionEngine:
@@ -179,8 +180,8 @@ class AutoEvolutionEngine:
         self,
         evolution_engine: EvolutionEngine,
         *,
-        apply_fn: Optional[ApplyFn] = None,
-        config: Optional[AutoEvolutionConfig] = None,
+        apply_fn: ApplyFn | None = None,
+        config: AutoEvolutionConfig | None = None,
         now: Callable[[], datetime] = default_now,
     ) -> None:
         self._engine = evolution_engine
@@ -209,13 +210,9 @@ class AutoEvolutionEngine:
             taken_at=self._now(),
             knowledge_activation=_read_metric_value(report, METRIC_KNOWLEDGE_ACTIVATION),
             compliance_rate=_read_metric_value(report, METRIC_COMPLIANCE_RATE),
-            hallucination_interception=_read_metric_value(
-                report, METRIC_HALLUCINATION_INTERCEPTION
-            ),
+            hallucination_interception=_read_metric_value(report, METRIC_HALLUCINATION_INTERCEPTION),
         )
-        self._history = [
-            s for s in self._history if s.taken_at.date() != snap.taken_at.date()
-        ]
+        self._history = [s for s in self._history if s.taken_at.date() != snap.taken_at.date()]
         self._history.append(snap)
         # ring buffer：历史长度上限
         if len(self._history) > self._config.history_max_days:
@@ -239,8 +236,7 @@ class AutoEvolutionEngine:
                     severity=Severity.HIGH,
                     consecutive_days=k_days,
                     evidence=tuple(
-                        f"day-{i}:ka={_fmt_rate(s.knowledge_activation)}"
-                        for i, s in enumerate(self._history[-k_days:])
+                        f"day-{i}:ka={_fmt_rate(s.knowledge_activation)}" for i, s in enumerate(self._history[-k_days:])
                     ),
                     rationale=(
                         f"知识激活率连续 {k_days} 天 < "
@@ -261,13 +257,9 @@ class AutoEvolutionEngine:
                     severity=Severity.HIGH,
                     consecutive_days=c_days,
                     evidence=tuple(
-                        f"day-{i}:cr={_fmt_rate(s.compliance_rate)}"
-                        for i, s in enumerate(self._history[-c_days:])
+                        f"day-{i}:cr={_fmt_rate(s.compliance_rate)}" for i, s in enumerate(self._history[-c_days:])
                     ),
-                    rationale=(
-                        f"合规率连续 {c_days} 天 < "
-                        f"{self._config.compliance_floor:.0%}，自动收紧门禁。"
-                    ),
+                    rationale=(f"合规率连续 {c_days} 天 < " f"{self._config.compliance_floor:.0%}，自动收紧门禁。"),
                 )
             )
 
@@ -283,9 +275,7 @@ class AutoEvolutionEngine:
                         trigger_type=AutoTriggerType.HALLUCINATION_UPGRADE,
                         severity=Severity.CRITICAL,
                         consecutive_days=1,
-                        evidence=(
-                            f"latest:hi={_fmt_rate(last.hallucination_interception)}",
-                        ),
+                        evidence=(f"latest:hi={_fmt_rate(last.hallucination_interception)}",),
                         rationale=(
                             f"幻觉拦截率 {last.hallucination_interception:.0%} "
                             f"< {self._config.hallucination_interception_floor:.0%}，"
@@ -295,9 +285,7 @@ class AutoEvolutionEngine:
                 )
         return triggers
 
-    def build_trigger_proposals(
-        self, triggers: list[AutoTrigger]
-    ) -> list[EvolutionProposal]:
+    def build_trigger_proposals(self, triggers: list[AutoTrigger]) -> list[EvolutionProposal]:
         """把 AutoTrigger 转成 EvolutionProposal（L3 架构层）。"""
         out: list[EvolutionProposal] = []
         for t in triggers:
@@ -324,10 +312,10 @@ class AutoEvolutionEngine:
     def run_auto_cycle(
         self,
         *,
-        fitness_report: Optional[FitnessReport] = None,
+        fitness_report: FitnessReport | None = None,
         owner_approved_high: bool = False,
         apply_evolution_proposals: bool = True,
-        baseline_avg_score: Optional[float] = None,
+        baseline_avg_score: float | None = None,
     ) -> AutoEvolutionOutcome:
         """Phase 4 一次完整自动闭环。
 
@@ -356,7 +344,7 @@ class AutoEvolutionEngine:
         # Phase 4 的关键：evolve() 在 dry_run=True 下只产出提案；apply 由
         # AutoEvolutionEngine **按 severity gate** 执行，确保 H/CRITICAL
         # 必须 owner_approved_high=True 才能真正落地。
-        evolution_report: Optional[EvolutionReport] = None
+        evolution_report: EvolutionReport | None = None
         base_props: list[EvolutionProposal] = []
         if apply_evolution_proposals:
             evolution_report = self._engine.evolve(
@@ -414,7 +402,7 @@ class AutoEvolutionEngine:
             count += 1
         return count
 
-    def _apply_target(self) -> Optional[ApplyFn]:
+    def _apply_target(self) -> ApplyFn | None:
         """解析真正执行的 apply_fn（外部覆盖优先）。"""
         if self._external_apply is not None:
             return self._external_apply
@@ -426,7 +414,7 @@ class AutoEvolutionEngine:
             return False
         try:
             return bool(fn(proposal))
-        except Exception:  # noqa: BLE001 — apply 错误必须被收敛
+        except Exception:  # — apply 错误必须被收敛
             return False
 
     def _next_proposal_id(self) -> str:
@@ -450,15 +438,9 @@ def _trigger_to_signal(trigger: AutoTriggerType) -> EvolutionSignal:
 
 
 _TRIGGER_ACTIONS: dict[AutoTriggerType, str] = {
-    AutoTriggerType.KNOWLEDGE_EXPANSION: (
-        "自动运行 KB 扩充脚本：补充缺失 KE / 重建向量索引 / 同步 SSOT 映射。"
-    ),
-    AutoTriggerType.GATE_TIGHTENING: (
-        "提升 G1/G2/G4 门禁阈值并锁定高风险目录，直到合规率恢复。"
-    ),
-    AutoTriggerType.HALLUCINATION_UPGRADE: (
-        "升级 CoVe 验证深度（多模型投票 + 延长验证链），提高幻觉拦截率。"
-    ),
+    AutoTriggerType.KNOWLEDGE_EXPANSION: ("自动运行 KB 扩充脚本：补充缺失 KE / 重建向量索引 / 同步 SSOT 映射。"),
+    AutoTriggerType.GATE_TIGHTENING: ("提升 G1/G2/G4 门禁阈值并锁定高风险目录，直到合规率恢复。"),
+    AutoTriggerType.HALLUCINATION_UPGRADE: ("升级 CoVe 验证深度（多模型投票 + 延长验证链），提高幻觉拦截率。"),
 }
 
 _TRIGGER_IMPACTS: dict[AutoTriggerType, str] = {
@@ -473,7 +455,7 @@ _TRIGGER_IMPACTS: dict[AutoTriggerType, str] = {
 # ---------------------------------------------------------------------------
 
 
-def _read_metric_value(report: FitnessReport, metric_name: str) -> Optional[float]:
+def _read_metric_value(report: FitnessReport, metric_name: str) -> float | None:
     metric = report.get_metric(metric_name)
     if metric is None:
         return None
@@ -484,7 +466,7 @@ def _read_metric_value(report: FitnessReport, metric_name: str) -> Optional[floa
     return float(metric.value)
 
 
-def _fmt_rate(value: Optional[float]) -> str:
+def _fmt_rate(value: float | None) -> str:
     if value is None:
         return "N/A"
     return f"{value:.0%}"

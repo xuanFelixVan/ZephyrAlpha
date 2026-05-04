@@ -26,6 +26,7 @@ SystemSnapshot 是 M1 build() pipeline 末尾生成的系统状态镜像，记�
 - 快照写入失败时仅 warn，不抛出异常（不阻断 M1 主流程）
 - TTL 30 天归档由 T-V2-013（V-16 归档脚本）负责
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -33,22 +34,22 @@ import json
 import logging
 import sqlite3
 import warnings
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.paths import (
     DB_PATH as DB_PATH_DEFAULT,
+)
+from zephyr.shared.paths import (
     GATES_DIR,
-    RATIONALE_LOG_PATH,
     REPO_ROOT,
     SNAPSHOTS_DIR,
 )
 
 _logger = logging.getLogger(__name__)
-_UTC = timezone.utc
+_UTC = UTC
 
 # 已知关键子模块（用于版本收集）
 _MODULE_MANIFESTS: dict[str, str] = {
@@ -140,11 +141,11 @@ class SystemSnapshotter:
 
     def __init__(
         self,
-        repo_root: Optional[Path] = None,
-        snapshots_dir: Optional[Path] = None,
-        db_path: Optional[Path] = None,
-        gates_dir: Optional[Path] = None,
-        module_manifests: Optional[dict[str, str]] = None,
+        repo_root: Path | None = None,
+        snapshots_dir: Path | None = None,
+        db_path: Path | None = None,
+        gates_dir: Path | None = None,
+        module_manifests: dict[str, str] | None = None,
     ) -> None:
         self._repo_root = repo_root or REPO_ROOT
         self._snapshots_dir = snapshots_dir or SNAPSHOTS_DIR
@@ -156,7 +157,7 @@ class SystemSnapshotter:
     # 公共 API
     # ------------------------------------------------------------------
 
-    def capture(self) -> tuple[SystemSnapshot, Optional[Path]]:
+    def capture(self) -> tuple[SystemSnapshot, Path | None]:
         """构建 SystemSnapshot 并持久化到 .runtime/snapshots/。
 
         返回
@@ -170,7 +171,7 @@ class SystemSnapshotter:
         """
         try:
             snapshot = self._build_snapshot()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             warnings.warn(
                 f"[SystemSnapshotter] 快照构建失败（非致命）：{exc}",
                 stacklevel=2,
@@ -265,14 +266,14 @@ class SystemSnapshotter:
             if row is None or row["total"] == 0:
                 return -1.0
             return round(row["passed"] / row["total"], 4)
-        except Exception:  # noqa: BLE001
+        except Exception:
             return -1.0
 
     # ------------------------------------------------------------------
     # 内部：持久化
     # ------------------------------------------------------------------
 
-    def _persist(self, snapshot: SystemSnapshot) -> Optional[Path]:
+    def _persist(self, snapshot: SystemSnapshot) -> Path | None:
         """将 SystemSnapshot 写入 JSON 文件。
 
         文件名：<timestamp_safe>Z.json（":"→"-"，适合文件名）
@@ -290,7 +291,7 @@ class SystemSnapshotter:
             )
             _logger.info("SystemSnapshot 已写入：%s", output_path)
             return output_path
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             warnings.warn(
                 f"[SystemSnapshotter] 快照写入失败（非致命）：{exc}",
                 stacklevel=3,
@@ -315,10 +316,10 @@ class SystemSnapshotter:
     def run_in_build(
         cls,
         *,
-        repo_root: Optional[Path] = None,
-        snapshots_dir: Optional[Path] = None,
-        db_path: Optional[Path] = None,
-    ) -> tuple[SystemSnapshot, Optional[Path]]:
+        repo_root: Path | None = None,
+        snapshots_dir: Path | None = None,
+        db_path: Path | None = None,
+    ) -> tuple[SystemSnapshot, Path | None]:
         """M1 build() pipeline 末尾的一行调用接口。
 
         示例（在 M1.build() 倒数第二步追加）：

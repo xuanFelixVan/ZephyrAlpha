@@ -31,6 +31,7 @@
 stdout: 结构化文本（可被 grep 解析）
 stderr: 诊断信息
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,7 +40,7 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
@@ -65,11 +66,10 @@ def _load_findings(findings_path: Path) -> list[dict]:
     """
     if not findings_path.exists():
         raise FileNotFoundError(
-            f"Finding 文件不存在: {findings_path}\n"
-            f"请先运行: python scripts/governance/run_all.py --warn-only"
+            f"Finding 文件不存在: {findings_path}\n" f"请先运行: python scripts/governance/run_all.py --warn-only"
         )
     findings: list[dict] = []
-    with open(findings_path, "r", encoding="utf-8") as f:
+    with open(findings_path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -130,7 +130,7 @@ def _print_details(findings: list[dict]) -> None:
     """
     if not findings:
         return
-    print(f"\n--- 详细列表 ---", file=sys.stderr)
+    print("\n--- 详细列表 ---", file=sys.stderr)
     for f in findings:
         sev = f.get("severity", "?")
         dim = f.get("dimension", "?")
@@ -143,25 +143,15 @@ def _print_details(findings: list[dict]) -> None:
 
 def main() -> None:
     """入口——解析参数并执行 Finding 筛选分析。"""
-    parser = argparse.ArgumentParser(
-        description="按目录范围筛选 Finding 报告（分析 run_all.py 输出）"
-    )
+    parser = argparse.ArgumentParser(description="按目录范围筛选 Finding 报告（分析 run_all.py 输出）")
     parser.add_argument(
         "--scope",
         type=str,
         default=None,
-        help="目录路径片段筛选（如 '02_enterprise_architecture'），不指定则显示全量汇总"
+        help="目录路径片段筛选（如 '02_enterprise_architecture'），不指定则显示全量汇总",
     )
-    parser.add_argument(
-        "--summary-only",
-        action="store_true",
-        help="仅显示汇总统计，不列出每条 Finding"
-    )
-    parser.add_argument(
-        "--warn-only",
-        action="store_true",
-        help="诊断发现问题但 exit 0（用于 CI 非阻断检查）"
-    )
+    parser.add_argument("--summary-only", action="store_true", help="仅显示汇总统计，不列出每条 Finding")
+    parser.add_argument("--warn-only", action="store_true", help="诊断发现问题但 exit 0（用于 CI 非阻断检查）")
     args = parser.parse_args()
 
     try:

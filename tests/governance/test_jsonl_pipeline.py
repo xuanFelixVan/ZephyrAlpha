@@ -1,5 +1,7 @@
 """端到端验证 JSONL 管道 — BaseAuditScript → stdout → run_all 解析"""
+
 from __future__ import annotations
+
 import json
 import subprocess
 import sys
@@ -55,8 +57,12 @@ def teardown_module():
 def test_base_script_outputs_jsonl():
     r = subprocess.run(
         [sys.executable, str(_test_script_path()), "--warn-only", "--jsonl"],
-        capture_output=True, text=True, timeout=30,
-        cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=30,
+        cwd=str(REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     assert r.returncode == 0, f"exit={r.returncode}, stderr={r.stderr[:200]}"
     assert r.stdout.strip(), "JSONL 输出为空"
@@ -74,7 +80,7 @@ def test_run_all_imports_jsonl_parser():
     sys.path.insert(0, str(GOV_DIR))
     sys.path.insert(0, str(REPO_ROOT / "src"))
     from run_all import _parse_jsonl_to_findings, _try_jsonl_run
-    from run_all import Dimension
+
     assert callable(_parse_jsonl_to_findings)
     assert callable(_try_jsonl_run)
     print("  run_all.py JSONL API 导入正常")
@@ -83,20 +89,22 @@ def test_run_all_imports_jsonl_parser():
 def test_jsonl_parse_roundtrip():
     sys.path.insert(0, str(GOV_DIR))
     sys.path.insert(0, str(REPO_ROOT / "src"))
-    from run_all import _parse_jsonl_to_findings
-    from run_all import Dimension
+    from run_all import Dimension, _parse_jsonl_to_findings
 
-    sample = json.dumps({
-        "finding_id": "FIND-D7-20260504-test1234",
-        "dimension": "D7",
-        "severity": "HIGH",
-        "category": "代码质量",
-        "target": {"file_path": "src/test.py", "line_range": "10-20"},
-        "description": "测试解析",
-        "evidence": "raw line",
-        "remediation": {"priority": "P1"},
-        "timestamp": "2026-05-04T00:00:00Z",
-    }, ensure_ascii=False)
+    sample = json.dumps(
+        {
+            "finding_id": "FIND-D7-20260504-test1234",
+            "dimension": "D7",
+            "severity": "HIGH",
+            "category": "代码质量",
+            "target": {"file_path": "src/test.py", "line_range": "10-20"},
+            "description": "测试解析",
+            "evidence": "raw line",
+            "remediation": {"priority": "P1"},
+            "timestamp": "2026-05-04T00:00:00Z",
+        },
+        ensure_ascii=False,
+    )
 
     parsed = _parse_jsonl_to_findings(sample + "\n", [Dimension.D7], "test.py")
     assert len(parsed) == 1, f"解析结果为空，sample={sample[:100]}"
@@ -107,7 +115,7 @@ def test_jsonl_parse_roundtrip():
 
 def test_jsonl_fallback_on_invalid():
     sys.path.insert(0, str(GOV_DIR))
-    from run_all import _parse_jsonl_to_findings, Dimension
+    from run_all import Dimension, _parse_jsonl_to_findings
 
     parsed = _parse_jsonl_to_findings("不是 JSON\n", [Dimension.D7], "test.py")
     assert len(parsed) == 0

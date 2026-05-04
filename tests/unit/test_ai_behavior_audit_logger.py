@@ -1,16 +1,15 @@
 """
 Unit tests for ai_behavior_audit_logger.py (T-2-32)
 """
+
 from __future__ import annotations
 
 import json
-import shutil
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import pytest
-
 from zephyr.llm_security.behavior_audit_logger import (
     AuditAction,
     AuditEvent,
@@ -204,7 +203,7 @@ class TestAuditLoggerRotation:
         logger_date_rotation.log_model_call(target="gpt-4", result="success")
         jsonl_files = list(tmp_log_dir.glob("audit-*.jsonl"))
         assert len(jsonl_files) == 1
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         assert today in jsonl_files[0].name
 
 
@@ -232,7 +231,7 @@ class TestAuditQuery:
 
     def test_query_by_time_range(self, logger: AuditLogger) -> None:
         logger.log_model_call(target="t1", result="ok")
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         results = logger.query(AuditQuery(time_from="2020-01-01T00:00:00+00:00", time_to=now))
         assert len(results) >= 1
 
@@ -265,7 +264,9 @@ class TestOpenAuditLog:
 
 class TestAppendOnly:
     def test_no_delete_or_update_methods(self) -> None:
-        public_methods = [m for m in dir(AuditLogger) if not m.startswith("_") and callable(getattr(AuditLogger, m, None))]
+        public_methods = [
+            m for m in dir(AuditLogger) if not m.startswith("_") and callable(getattr(AuditLogger, m, None))
+        ]
         for m in public_methods:
             assert "delete" not in m.lower(), f"Found delete method: {m}"
             assert "update" not in m.lower(), f"Found update method: {m}"

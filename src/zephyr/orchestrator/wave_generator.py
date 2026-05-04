@@ -14,12 +14,12 @@ Wave 定义
 同一 Wave 内的任务无互相依赖，可并行执行。
 Wave 编号从 0 开始，Wave 0 = 无前置依赖的任务。
 """
+
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
 
@@ -54,10 +54,10 @@ class WaveGenerator:
     拓扑排序算法：Kahn's algorithm，O(V+E)。
     """
 
-    def __init__(self, db_path: Optional[Path] = None) -> None:
+    def __init__(self, db_path: Path | None = None) -> None:
         self._db_path = db_path or DB_PATH
 
-    def generate_waves(self, phase: Optional[int] = None) -> list[Wave]:
+    def generate_waves(self, phase: int | None = None) -> list[Wave]:
         """
         从 tasks 表读取依赖图，拓扑排序生成 Wave 列表。
 
@@ -79,9 +79,7 @@ class WaveGenerator:
                     (phase,),
                 ).fetchall()
             else:
-                rows = conn.execute(
-                    "SELECT task_id, depends_on FROM tasks"
-                ).fetchall()
+                rows = conn.execute("SELECT task_id, depends_on FROM tasks").fetchall()
         finally:
             conn.close()
 
@@ -125,7 +123,7 @@ class WaveGenerator:
 
         return waves
 
-    def get_next_wave(self, phase: Optional[int] = None) -> Optional[Wave]:
+    def get_next_wave(self, phase: int | None = None) -> Wave | None:
         """返回当前可执行的下一个 Wave（第一个含非 COMPLETED/VERIFIED/CANCELLED 任务的 Wave）。"""
         terminal_statuses = {"COMPLETED", "VERIFIED", "CANCELLED"}
         waves = self.generate_waves(phase=phase)
@@ -135,9 +133,7 @@ class WaveGenerator:
             for wave in waves:
                 has_actionable = False
                 for tid in wave.task_ids:
-                    row = conn.execute(
-                        "SELECT status FROM tasks WHERE task_id = ?", (tid,)
-                    ).fetchone()
+                    row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (tid,)).fetchone()
                     if row and row["status"] not in terminal_statuses:
                         has_actionable = True
                         break
@@ -148,7 +144,7 @@ class WaveGenerator:
 
         return None
 
-    def wave_status(self, phase: Optional[int] = None) -> list[WaveStatus]:
+    def wave_status(self, phase: int | None = None) -> list[WaveStatus]:
         """查询各 Wave 的完成状态。"""
         waves = self.generate_waves(phase=phase)
         result: list[WaveStatus] = []
@@ -158,9 +154,7 @@ class WaveGenerator:
             for wave in waves:
                 ws = WaveStatus(wave_id=wave.wave_id, total=len(wave.task_ids))
                 for tid in wave.task_ids:
-                    row = conn.execute(
-                        "SELECT status FROM tasks WHERE task_id = ?", (tid,)
-                    ).fetchone()
+                    row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (tid,)).fetchone()
                     if not row:
                         ws.other += 1
                         continue

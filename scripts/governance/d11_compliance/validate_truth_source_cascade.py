@@ -37,6 +37,7 @@ affected_files 嵌入格式（在 rationale-log 表格行内）：
     - src/file2.py
     ```
 """
+
 from __future__ import annotations
 
 import argparse
@@ -44,29 +45,23 @@ import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Optional
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT
 from _shared.frontmatter import parse_frontmatter_from_file
 
-import yaml
-
 RATIONALE_LOG_PATH: Path = (
-    REPO_ROOT
-    / "docs"
-    / "19_development_workspace"
-    / "structure-and-mapping"
-    / "architecture-rationale-log.md"
+    REPO_ROOT / "docs" / "19_development_workspace" / "structure-and-mapping" / "architecture-rationale-log.md"
 )
 REPORTS_DIR: Path = REPO_ROOT / ".runtime" / "reports"
 
@@ -114,14 +109,10 @@ _DATE_PATTERN = re.compile(r"(\d{4}-\d{2}-\d{2})")
 _AF_INLINE_PATTERN = re.compile(r"affected_files:\s*\[([^\]]*)\]")
 
 # affected_files 代码块格式
-_AF_BLOCK_PATTERN = re.compile(
-    r"```affected_files\s*\n(.*?)```", re.DOTALL
-)
+_AF_BLOCK_PATTERN = re.compile(r"```affected_files\s*\n(.*?)```", re.DOTALL)
 
 # affected_files 块级 YAML 格式（在 cell 内）
-_AF_YAML_BLOCK_PATTERN = re.compile(
-    r"affected_files:\s*\n((?:[ \t]*[-*]\s+\S[^\n]*\n?)+)"
-)
+_AF_YAML_BLOCK_PATTERN = re.compile(r"affected_files:\s*\n((?:[ \t]*[-*]\s+\S[^\n]*\n?)+)")
 
 # 表格行分隔符（跳过）
 _SEPARATOR_PATTERN = re.compile(r"^\s*\|[-\s|:]+\|\s*$")
@@ -142,11 +133,7 @@ def _extract_affected_files(cell_text: str) -> list[str]:
     inline_m = _AF_INLINE_PATTERN.search(cell_text)
     if inline_m:
         raw = inline_m.group(1)
-        return [
-            f.strip().strip("\"'")
-            for f in raw.split(",")
-            if f.strip()
-        ]
+        return [f.strip().strip("\"'") for f in raw.split(",") if f.strip()]
 
     # 格式 C：YAML 块（多行，带 - 前缀）
     yaml_m = _AF_YAML_BLOCK_PATTERN.search(cell_text)
@@ -157,7 +144,7 @@ def _extract_affected_files(cell_text: str) -> list[str]:
     return []
 
 
-def _extract_date(cell_text: str) -> Optional[date]:
+def _extract_date(cell_text: str) -> date | None:
     """从单元格文本中提取最早出现的 YYYY-MM-DD 日期。"""
     matches = _DATE_PATTERN.findall(cell_text)
     for raw in matches:
@@ -168,7 +155,7 @@ def _extract_date(cell_text: str) -> Optional[date]:
     return None
 
 
-def _parse_row(line: str) -> Optional[RationaleDecision]:
+def _parse_row(line: str) -> RationaleDecision | None:
     """将 rationale-log 中的一行解析为 RationaleDecision。
 
     返回 None 表示不是有效 R-XXX 行，或 R 号 < MIN_R_NUMBER，
@@ -181,13 +168,13 @@ def _parse_row(line: str) -> Optional[RationaleDecision]:
     if not m:
         return None
 
-    raw_id: str = m.group(1)        # e.g. "R86" or "R-87" or "R59-F"
+    raw_id: str = m.group(1)  # e.g. "R86" or "R-87" or "R59-F"
     r_number: int = int(m.group(2))  # 纯数字部分
 
     if r_number < MIN_R_NUMBER:
         return None
 
-    rest: str = m.group(3)           # 第二列及后续全部内容
+    rest: str = m.group(3)  # 第二列及后续全部内容
 
     # 提取 affected_files
     affected = _extract_affected_files(rest)
@@ -212,7 +199,7 @@ def _parse_row(line: str) -> Optional[RationaleDecision]:
 
 
 def parse_rationale_log(
-    path: Optional[Path] = None,
+    path: Path | None = None,
 ) -> list[RationaleDecision]:
     """解析 architecture-rationale-log.md，返回所有 R-XXX 决策列表。
 
@@ -281,7 +268,7 @@ def build_cascade_map(
 # ---------------------------------------------------------------------------
 
 
-def _parse_frontmatter_date(file_path: Path) -> Optional[date]:
+def _parse_frontmatter_date(file_path: Path) -> date | None:
     """读取文件 frontmatter 中的 last_updated 字段。
 
     支持 ISO 8601 格式（YYYY-MM-DD）。
@@ -314,7 +301,7 @@ def _parse_frontmatter_date(file_path: Path) -> Optional[date]:
 
 def detect_outdated_truth_sources(
     cascade: dict[str, list[RationaleDecision]],
-    repo_root: Optional[Path] = None,
+    repo_root: Path | None = None,
 ) -> tuple[list[str], list[dict]]:
     """对反向链表中每个文件检查 last_updated 与最新 R-XXX 日期。
 
@@ -377,7 +364,7 @@ def detect_outdated_truth_sources(
 
 def generate_report(
     result: TruthSourceCascadeResult,
-    output_dir: Optional[Path] = None,
+    output_dir: Path | None = None,
 ) -> Path:
     """将影响追踪结果输出为 markdown 报告文件。
 
@@ -413,8 +400,8 @@ def generate_report(
         "",
         "## 汇总",
         "",
-        f"| 指标 | 值 |",
-        f"|------|-----|",
+        "| 指标 | 值 |",
+        "|------|-----|",
         f"| 扫描决策数 | {result.decisions_scanned} |",
         f"| 受影响文件数 | {result.files_impacted} |",
         f"| CASCADE-WARN 数 | {len(result.warnings)} |",
@@ -454,8 +441,8 @@ def generate_report(
     lines += [
         "---",
         "",
-        f"> Phase 1 warn-only 模式：本报告不阻塞流程。",
-        f"> 相关决策：R82（V-15 兜底需求）/ R86（T-V2-012 任务卡）",
+        "> Phase 1 warn-only 模式：本报告不阻塞流程。",
+        "> 相关决策：R82（V-15 兜底需求）/ R86（T-V2-012 任务卡）",
         "",
     ]
 
@@ -470,9 +457,9 @@ def generate_report(
 
 
 def run(
-    rationale_log_path: Optional[Path] = None,
-    reports_dir: Optional[Path] = None,
-    repo_root: Optional[Path] = None,
+    rationale_log_path: Path | None = None,
+    reports_dir: Path | None = None,
+    repo_root: Path | None = None,
     *,
     quiet: bool = False,
 ) -> TruthSourceCascadeResult:
@@ -498,7 +485,7 @@ def run(
     cascade = build_cascade_map(decisions)
     warnings, rows = detect_outdated_truth_sources(cascade, repo_root)
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     result = TruthSourceCascadeResult(
         report_date=now,
         decisions_scanned=len(decisions),
@@ -516,7 +503,7 @@ def run(
             f"  受影响文件：{result.files_impacted}\n"
             f"  CASCADE-WARN：{len(result.warnings)}\n"
             f"  报告输出：{report_path}",
-            file=sys.stderr
+            file=sys.stderr,
         )
         for w in result.warnings:
             print(f"  {w}", file=sys.stderr)

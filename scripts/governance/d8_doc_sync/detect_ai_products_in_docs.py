@@ -16,12 +16,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -47,10 +47,12 @@ def scan_ai_products() -> list[dict]:
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
 
         if created_by == "agent" and ".audit_cache" not in rel and "09_audit" not in rel:
-            findings.append({
-                "file": rel,
-                "severity": "MEDIUM",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "severity": "MEDIUM",
+                }
+            )
 
     return findings
     """扫描文档中的 AI 生成标记."""
@@ -68,7 +70,7 @@ def main() -> None:
         print(f"\n[AI-PRODUCTS] {len(findings)} 个 AI 产物在 docs/ 主目录:", file=sys.stderr)
         for f in findings:
             print(f"  [{f['severity']}] {f['file']}", file=sys.stderr)
-            print(f"    AI 生成产物应写入 .audit_cache/", file=sys.stderr)
+            print("    AI 生成产物应写入 .audit_cache/", file=sys.stderr)
     else:
         print("[AI-PRODUCTS] 无 AI 产物在 docs/ 主目录", file=sys.stderr)
 

@@ -37,13 +37,14 @@ Collection: ``unified_memory``
 - 不直接 import M1 / M3 / M4 模块（避免循环依赖）
 - 通过 ``get_chroma_client()`` 复用 ChromaDB 单例（与 kb_repo 共享）
 """
+
 from __future__ import annotations
 
 import logging
 import threading
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional, Protocol, runtime_checkable
+from datetime import UTC, datetime
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -65,7 +66,7 @@ __all__ = [
 ]
 
 _logger = logging.getLogger(__name__)
-_UTC = timezone.utc
+_UTC = UTC
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -130,7 +131,7 @@ class WriteTrace(BaseModel):
 
     origin: str = Field(min_length=1, max_length=200, description="来源模块/任务标识")
     audit_chain: list[str] = Field(min_length=1, description="审计链路（至少 1 项）")
-    arbitration: Optional[str] = Field(default=None, max_length=100, description="架构裁决标识")
+    arbitration: str | None = Field(default=None, max_length=100, description="架构裁决标识")
 
 
 class MemoryRecord(BaseModel):
@@ -161,7 +162,7 @@ class MemoryBackend(Protocol):
     def list_by_topic(self, topic: str, k: int) -> list[MemoryRecord]:  # pragma: no cover
         ...
 
-    def query(self, query_text: str, k: int, topic: Optional[str] = None) -> list[MemoryRecord]:  # pragma: no cover
+    def query(self, query_text: str, k: int, topic: str | None = None) -> list[MemoryRecord]:  # pragma: no cover
         ...
 
     def count(self) -> int:  # pragma: no cover
@@ -198,16 +199,12 @@ class InMemoryMemoryBackend:
 
     def list_by_topic(self, topic: str, k: int) -> list[MemoryRecord]:
         with self._lock:
-            matched = [
-                (self._order.get(r.chunk_id, 0), r)
-                for r in self._records.values()
-                if r.topic == topic
-            ]
+            matched = [(self._order.get(r.chunk_id, 0), r) for r in self._records.values() if r.topic == topic]
         # 主键 written_at 倒序，副键 insertion_seq 倒序（解决同 μs 时间戳并列）
         matched.sort(key=lambda item: (item[1].written_at, item[0]), reverse=True)
         return [r for _, r in matched[: max(0, k)]]
 
-    def query(self, query_text: str, k: int, topic: Optional[str] = None) -> list[MemoryRecord]:
+    def query(self, query_text: str, k: int, topic: str | None = None) -> list[MemoryRecord]:
         """简易"相似度"：词重合比例（仅用于 mock，不替代真实向量检索）。"""
         if not query_text:
             return []
@@ -301,7 +298,7 @@ class ChromaMemoryBackend:
     def __init__(
         self,
         collection_name: str = UNIFIED_COLLECTION,
-        persist_dir: Optional[Any] = None,
+        persist_dir: Any | None = None,
         embedding_models: tuple[str, ...] = DEFAULT_EMBEDDING_MODELS,
         score_threshold: float = 0.0,
     ) -> None:
@@ -319,12 +316,12 @@ class ChromaMemoryBackend:
                 return self._collection
             try:
                 from zephyr.kb.chromadb_init import get_chroma_client
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 raise MemoryBackendError(f"chromadb_init import failed: {exc}") from exc
 
             try:
                 client = get_chroma_client(self._persist_dir)
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 raise MemoryBackendError(f"ChromaDB client init failed: {exc}") from exc
 
             embedding_fn = self._build_embedding_function()
@@ -341,9 +338,9 @@ class ChromaMemoryBackend:
                 else:
                     try:
                         self._collection = client.get_collection(name=self._collection_name)
-                    except Exception:  # noqa: BLE001
+                    except Exception:
                         self._collection = client.create_collection(**kwargs)
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 raise MemoryBackendError(f"ChromaDB collection init failed: {exc}") from exc
 
             return self._collection
@@ -352,7 +349,7 @@ class ChromaMemoryBackend:
         """按 ``DEFAULT_EMBEDDING_MODELS`` 顺序尝试，全部失败时返回 None（使用 ChromaDB 默认）。"""
         try:
             from chromadb.utils import embedding_functions  # type: ignore[import-not-found]
-        except Exception:  # noqa: BLE001
+        except Exception:
             return None
 
         for model_name in self._embedding_models:
@@ -362,7 +359,7 @@ class ChromaMemoryBackend:
                 )
                 _logger.info("ChromaMemoryBackend embedding model loaded: %s", model_name)
                 return fn
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 _logger.warning(
                     "ChromaMemoryBackend embedding model load failed: %s (%s)",
                     model_name,
@@ -377,9 +374,11 @@ class ChromaMemoryBackend:
             col.upsert(
                 ids=[record.chunk_id],
                 documents=[record.content],
-                metadatas=[_flatten_metadata({"topic": record.topic, "written_at": record.written_at, **record.metadata})],
+                metadatas=[
+                    _flatten_metadata({"topic": record.topic, "written_at": record.written_at, **record.metadata})
+                ],
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise MemoryBackendError(f"ChromaDB upsert failed: {exc}") from exc
         return record.chunk_id
 
@@ -387,14 +386,14 @@ class ChromaMemoryBackend:
         col = self._ensure_collection()
         try:
             raw = col.get(where={"topic": topic})
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise MemoryBackendError(f"ChromaDB get failed: {exc}") from exc
 
         ids = raw.get("ids") or []
         docs = raw.get("documents") or []
         metas = raw.get("metadatas") or []
         records: list[MemoryRecord] = []
-        for chunk_id, doc, meta in zip(ids, docs, metas):
+        for chunk_id, doc, meta in zip(ids, docs, metas, strict=False):
             meta = meta or {}
             records.append(
                 MemoryRecord(
@@ -413,7 +412,7 @@ class ChromaMemoryBackend:
         self,
         query_text: str,
         k: int,
-        topic: Optional[str] = None,
+        topic: str | None = None,
     ) -> list[MemoryRecord]:
         col = self._ensure_collection()
         where = {"topic": topic} if topic is not None else None
@@ -423,7 +422,7 @@ class ChromaMemoryBackend:
                 n_results=max(1, k),
                 where=where,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise MemoryBackendError(f"ChromaDB query failed: {exc}") from exc
 
         if not raw.get("ids") or not raw["ids"][0]:
@@ -434,7 +433,7 @@ class ChromaMemoryBackend:
         metas = raw["metadatas"][0] if raw.get("metadatas") else [{}] * len(ids)
 
         records: list[MemoryRecord] = []
-        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas):
+        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas, strict=False):
             meta = meta or {}
             score = max(0.0, min(1.0, 1.0 - float(dist)))
             if score < self._score_threshold:
@@ -455,7 +454,7 @@ class ChromaMemoryBackend:
         try:
             col = self._ensure_collection()
             return int(col.count())
-        except Exception:  # noqa: BLE001
+        except Exception:
             return -1
 
 
@@ -504,7 +503,7 @@ class UnifiedMemoryAPI:
 
     def __init__(
         self,
-        backend: Optional[MemoryBackend] = None,
+        backend: MemoryBackend | None = None,
         *,
         enforce_capability: bool = True,
     ) -> None:
@@ -617,7 +616,7 @@ class UnifiedMemoryAPI:
         self,
         query: str,
         k: int = 5,
-        topic: Optional[str] = None,
+        topic: str | None = None,
     ) -> list[MemoryRecord]:
         """跨 topic 的语义相似度检索。
 
@@ -648,7 +647,7 @@ class UnifiedMemoryAPI:
         """返回当前后端的记忆总数（-1 表示不可用）。"""
         try:
             return int(self._backend.count())
-        except Exception:  # noqa: BLE001
+        except Exception:
             return -1
 
 
@@ -658,12 +657,12 @@ class UnifiedMemoryAPI:
 
 
 _singleton_lock = threading.RLock()
-_singleton_api: Optional[UnifiedMemoryAPI] = None
+_singleton_api: UnifiedMemoryAPI | None = None
 
 
 def get_unified_memory_api(
     *,
-    backend: Optional[MemoryBackend] = None,
+    backend: MemoryBackend | None = None,
     enforce_capability: bool = True,
     reset: bool = False,
 ) -> UnifiedMemoryAPI:
@@ -699,7 +698,7 @@ def build_provenance(
     *,
     origin: str,
     audit_chain: list[str],
-    arbitration: Optional[str] = None,
+    arbitration: str | None = None,
 ) -> WriteTrace:
     """便捷构造器：避免调用方重复 import WriteTrace。
 

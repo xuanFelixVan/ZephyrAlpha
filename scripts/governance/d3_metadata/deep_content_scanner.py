@@ -19,12 +19,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD
+from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
@@ -63,7 +63,7 @@ def scan_content_type_mismatch() -> list[dict]:
         if content.startswith("---"):
             end = content.find("---", 3)
             if end != -1:
-                body = content[end + 3:]
+                body = content[end + 3 :]
 
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
 
@@ -72,20 +72,24 @@ def scan_content_type_mismatch() -> list[dict]:
         has_declarative = bool(DECLARATIVE_KEYWORDS.search(body))
 
         if doc_type in ("policy", "standard") and has_procedural and not has_policy and not has_declarative:
-            findings.append({
-                "file": rel,
-                "doc_type": doc_type,
-                "hint": "正文含步骤式关键词（Step/步骤），可能应为 operational_rule",
-                "severity": "LOW",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "doc_type": doc_type,
+                    "hint": "正文含步骤式关键词（Step/步骤），可能应为 operational_rule",
+                    "severity": "LOW",
+                }
+            )
 
         if doc_type == "operational_rule" and has_declarative and not has_procedural:
-            findings.append({
-                "file": rel,
-                "doc_type": doc_type,
-                "hint": "正文含声明式关键词（定义/规范），可能应为 standard",
-                "severity": "LOW",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "doc_type": doc_type,
+                    "hint": "正文含声明式关键词（定义/规范），可能应为 standard",
+                    "severity": "LOW",
+                }
+            )
 
     return findings
     """scan content type mismatch."""

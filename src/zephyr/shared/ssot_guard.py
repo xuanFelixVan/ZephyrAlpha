@@ -54,15 +54,16 @@ pre-commit 钩子配置示例（.pre-commit-config.yaml）：
       pass_filenames: false
       stages: [commit]
 """
+
 from __future__ import annotations
 
 import io
 import re
 import subprocess
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import FrozenSet, List, Optional, Sequence
 
 
 def _fix_windows_console() -> None:
@@ -70,6 +71,7 @@ def _fix_windows_console() -> None:
     if sys.platform == "win32":
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -88,7 +90,7 @@ WATCHED_PREFIXES: tuple[str, ...] = (
     "docs/00_meta/",
 )
 
-WATCHED_EXTENSIONS: FrozenSet[str] = frozenset({".py", ".yml", ".yaml", ".md"})
+WATCHED_EXTENSIONS: frozenset[str] = frozenset({".py", ".yml", ".yaml", ".md"})
 
 # 注册表 YAML 中表示文件路径的字段名（用于路径提取）
 PATH_FIELD_PATTERNS: tuple[str, ...] = (
@@ -133,7 +135,7 @@ class CheckResult:
     check_id: str
     passed: bool
     message: str
-    details: List[str] = field(default_factory=list)
+    details: list[str] = field(default_factory=list)
 
     def __str__(self) -> str:
         icon = "✅" if self.passed else "❌"
@@ -146,7 +148,7 @@ class CheckResult:
 class GuardReport:
     """完整验收报告。"""
 
-    results: List[CheckResult] = field(default_factory=list)
+    results: list[CheckResult] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
@@ -216,7 +218,7 @@ def _staged_files(repo_root: Path) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 
-def _extract_declared_paths(registry_content: str) -> List[str]:
+def _extract_declared_paths(registry_content: str) -> list[str]:
     """
     从注册表 YAML 文本中提取所有声明的文件/目录路径。
     仅做正则提取，不做完整 YAML 解析（避免 pyyaml 不可用时崩溃）。
@@ -230,12 +232,12 @@ def _extract_declared_paths(registry_content: str) -> List[str]:
             if m:
                 raw = m.group(1).strip().rstrip("/")
                 if raw and not raw.startswith("#"):
-                    paths.append(raw)   # 保留原始路径，不做反斜杠替换
+                    paths.append(raw)  # 保留原始路径，不做反斜杠替换
                 break
     return list(dict.fromkeys(paths))  # 去重保序
 
 
-def _validate_path_format(path: str) -> Optional[str]:
+def _validate_path_format(path: str) -> str | None:
     """
     验证路径格式是否合法。
     返回 None 表示合法；返回错误说明字符串表示违规。
@@ -268,7 +270,7 @@ class SsotGuard:
 
     def __init__(
         self,
-        repo_root: Optional[Path] = None,
+        repo_root: Path | None = None,
         registry_rel: str = REGISTRY_REL_PATH,
         watched_prefixes: Sequence[str] = WATCHED_PREFIXES,
     ) -> None:
@@ -299,11 +301,7 @@ class SsotGuard:
         registry_staged = self._registry_rel in staged
 
         # 暂存区中的治理敏感文件列表
-        watched_staged = {
-            path: status
-            for path, status in staged.items()
-            if self._is_watched(path)
-        }
+        watched_staged = {path: status for path, status in staged.items() if self._is_watched(path)}
 
         report.add(self._check_c1(watched_staged, registry_staged))
         report.add(self._check_c3(watched_staged, registry_staged))

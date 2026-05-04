@@ -19,6 +19,7 @@ safety_level: H
 
 用例总数：≥ 20 条（按 class 组织，覆盖 7 个纬度）。
 """
+
 from __future__ import annotations
 
 import json
@@ -28,12 +29,11 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.orchestrator.agent_orchestrator import (
-    AgentOrchestrator,
-    AgentRole,
-    AgentRouter,
-    HealthMonitor,
-    RoutingStrategy,
+from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper
+from zephyr.context_engine.intent_parser import (
+    EmbeddingHit,
+    IntentParser,
+    LLMIntentVerdict,
 )
 from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
@@ -50,6 +50,18 @@ from zephyr.feedback_loop.fitness_functions import (
     MetricStatus,
     from_gate_results,
 )
+from zephyr.mcp._base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.mcp.doc_guard_server import DocGuardServer
+from zephyr.mcp.gate_engine_server import GateEngineServer
+from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
+from zephyr.mcp.sentinel_server import SentinelServer
+from zephyr.orchestrator.agent_orchestrator import (
+    AgentOrchestrator,
+    AgentRole,
+    AgentRouter,
+    HealthMonitor,
+    RoutingStrategy,
+)
 from zephyr.orchestrator.hallucination_detector import (
     FallbackMode,
     HallucinationDetector,
@@ -57,17 +69,7 @@ from zephyr.orchestrator.hallucination_detector import (
     RiskLevel,
     TriggerLevel,
 )
-from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper
-from zephyr.context_engine.intent_parser import (
-    EmbeddingHit,
-    IntentParser,
-    LLMIntentVerdict,
-)
-from zephyr.mcp._base_server import BaseMCPServer, JSONRPC_VERSION
-from zephyr.mcp.doc_guard_server import DocGuardServer
-from zephyr.mcp.gate_engine_server import GateEngineServer
-from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
-from zephyr.mcp.sentinel_server import SentinelServer
+
 # TaskManagerServer refactored to FastMCP — skip E2E until steps 5-6 implemented
 # 当前状态: task_manager_server.py 的 create_task/list_tasks/update_status 均为 GATE_BLOCKED 空壳
 # 解除条件: 步骤5-6 TaskLifecycleManager 补齐后，tool 函数有真实逻辑，E2E 可重写适配 FastMCP Client
@@ -76,7 +78,10 @@ try:
 except ImportError:
     TaskManagerServer = None  # type: ignore[assignment]
 
-pytest.skip("BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待补齐后 E2E 可重写适配 FastMCP Client", allow_module_level=True)
+pytest.skip(
+    "BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待补齐后 E2E 可重写适配 FastMCP Client",
+    allow_module_level=True,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -100,9 +105,7 @@ def _call(
     return cast(dict[str, Any], server.handle_request(_req(method, params, req_id)))
 
 
-def _tool(
-    server: BaseMCPServer, name: str, arguments: dict[str, Any], req_id: Any = 1
-) -> dict[str, Any]:
+def _tool(server: BaseMCPServer, name: str, arguments: dict[str, Any], req_id: Any = 1) -> dict[str, Any]:
     return _call(server, "tools/call", {"name": name, "arguments": arguments}, req_id)
 
 
@@ -220,7 +223,7 @@ class TestPhase3MCPLifecycle:
 # ===========================================================================
 
 
-def _fake_primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _fake_primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
     """主模型：一致的 baseline + 5 条 verify_questions。"""
     payload = {
         "baseline_answer": "因子 IC 在 0.05 附近，属于正常范围。",
@@ -239,7 +242,7 @@ def _fake_primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: 
     )
 
 
-def _fake_verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _fake_verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     """验证模型：5 条与 baseline 方向一致的答复。"""
     answers = [
         {"question": "IC 0.05 是否在合理范围", "answer": "因子 IC 在 0.05 附近，处于合理区间", "confidence_self": 0.85},
@@ -251,7 +254,7 @@ def _fake_verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult: 
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
 
 
-def _fake_verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:  # noqa: ARG001
+def _fake_verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
     """验证模型：全部否定 baseline。"""
     answers = [
         {"question": "q1", "answer": "不是，IC 不正常", "confidence_self": 0.9},
@@ -329,9 +332,7 @@ class TestPhase3HallucinationDetector:
             "Jane Street 内部策略也采用这种",
             "OpenAI 内部白皮书支持这一说法",
         ]
-        intercepted = sum(
-            1 for c in hallu_claims if det.detect(c, risk_level=RiskLevel.M).is_hallucination
-        )
+        intercepted = sum(1 for c in hallu_claims if det.detect(c, risk_level=RiskLevel.M).is_hallucination)
         rate = intercepted / len(hallu_claims)
         assert rate >= 0.70, f"interception_rate={rate:.2f} must be ≥ 0.70"
 
@@ -364,7 +365,7 @@ class TestPhase3AgentOrchestrator:
         def invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             return {"ok": True, "tool": tool_name, "args": arguments}
 
-        def hallu_caller(claim: str, context: dict[str, Any] | None = None) -> dict[str, Any]:  # noqa: ARG001
+        def hallu_caller(claim: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
             return {"is_hallucination": False, "confidence": 0.9}
 
         orch = AgentOrchestrator(
@@ -385,11 +386,9 @@ class TestPhase3AgentOrchestrator:
     def test_health_monitor_aggregates_slo(self) -> None:
         """HealthMonitor 在多次 orchestrate 后返回合法 SLO 快照。"""
         router = AgentRouter()
-        mapping: dict[str, list[tuple[str, dict[str, Any]]]] = {
-            "325": [("tm.get", {})]
-        }
+        mapping: dict[str, list[tuple[str, dict[str, Any]]]] = {"325": [("tm.get", {})]}
 
-        def invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # noqa: ARG001
+        def invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             return {"ok": True}
 
         mon = HealthMonitor(window_size=10)
@@ -435,9 +434,7 @@ class TestPhase3EvolutionEngine:
         report = engine.evolve()
         assert report.l1_triggered == 1
         assert any(
-            p.layer == FeedbackLayer.L1_TASK
-            and p.signal == EvolutionSignal.ACCEPTANCE_DRIFT
-            for p in report.proposals
+            p.layer == FeedbackLayer.L1_TASK and p.signal == EvolutionSignal.ACCEPTANCE_DRIFT for p in report.proposals
         )
 
     def test_l2_pattern_five_signals_all_detectable(self) -> None:
@@ -449,9 +446,7 @@ class TestPhase3EvolutionEngine:
                 collector.add(task_id=f"T-{tag}-{i}", score=4, tags=[tag])
         engine = EvolutionEngine(collector)
         report = engine.evolve()
-        signals_seen = {
-            p.signal for p in report.proposals if p.layer == FeedbackLayer.L2_PATTERN
-        }
+        signals_seen = {p.signal for p in report.proposals if p.layer == FeedbackLayer.L2_PATTERN}
         # 5 类信号都应可被触发（至少覆盖到 4 类；依赖 tag_map 默认实现）
         assert EvolutionSignal.HIGH_RETRY_RATE in signals_seen
         assert EvolutionSignal.LOW_KNOWLEDGE_HIT in signals_seen
@@ -473,7 +468,7 @@ class TestPhase3EvolutionEngine:
         collector.add(task_id="T-X", score=1)
         called: list[str] = []
 
-        def apply(p: Any) -> bool:  # noqa: ANN401
+        def apply(p: Any) -> bool:
             called.append(p.proposal_id)
             return True
 
@@ -524,10 +519,10 @@ class TestPhase3IntentParserThreeStages:
         """Stage 1 关键词 ≥ 0.90 → 直接返回，不走 Stage 2/3。"""
         parser = IntentParser()
 
-        def _fail_emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:  # noqa: ARG001
+        def _fail_emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:
             pytest.fail("Stage 2 不应被调用")
 
-        def _fail_llm(q: str, context: Any = None) -> LLMIntentVerdict:  # noqa: ARG001
+        def _fail_llm(q: str, context: Any = None) -> LLMIntentVerdict:
             pytest.fail("Stage 3 不应被调用")
 
         parser = IntentParser(
@@ -535,9 +530,7 @@ class TestPhase3IntentParserThreeStages:
             llm_caller=_fail_llm,
         )
         # 高密度 D0 关键词（meta session handoff log status init bootstrap）
-        result = parser.parse(
-            "meta session handoff log status init bootstrap startup overview dashboard"
-        )
+        result = parser.parse("meta session handoff log status init bootstrap startup overview dashboard")
         trace = parser.last_trace
         assert trace is not None
         assert trace.stages == ["keyword"]
@@ -547,7 +540,7 @@ class TestPhase3IntentParserThreeStages:
     def test_stage2_embedding_cascades_from_keyword(self) -> None:
         """Stage 1 confidence 低 → Stage 2 embedding 接管；≥ 0.70 时采纳。"""
 
-        def _emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:  # noqa: ARG001
+        def _emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:
             return [
                 EmbeddingHit(domain="D3", score=0.95, text="factor", source="KE-X"),
                 EmbeddingHit(domain="D3", score=0.85, text="alpha", source="KE-Y"),
@@ -565,7 +558,7 @@ class TestPhase3IntentParserThreeStages:
         """Stage 1/2 均不过阈值 → LLM 兜底并返回结果。"""
         empty_mapper = IntentKeywordMapper(keywords={"D0": ["__nope__"]})
 
-        def _emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:  # noqa: ARG001
+        def _emb(q: str, top_k: int = 5) -> list[EmbeddingHit]:
             # 分散到多域，使得最大域归一后 confidence 低于 0.70 阈值
             return [
                 EmbeddingHit(domain="D6", score=0.20, text="", source=""),
@@ -575,7 +568,7 @@ class TestPhase3IntentParserThreeStages:
                 EmbeddingHit(domain="D3", score=0.15, text="", source=""),
             ]
 
-        def _llm(q: str, context: Any = None) -> LLMIntentVerdict:  # noqa: ARG001
+        def _llm(q: str, context: Any = None) -> LLMIntentVerdict:
             return LLMIntentVerdict(
                 primary_domain="D6",
                 confidence=0.6,
@@ -601,7 +594,7 @@ class TestPhase3IntentParserThreeStages:
         """Stage 3 confidence < stage3_human_floor → requires_human=True。"""
         empty_mapper = IntentKeywordMapper(keywords={"D0": ["__nope__"]})
 
-        def _llm(q: str, context: Any = None) -> LLMIntentVerdict:  # noqa: ARG001
+        def _llm(q: str, context: Any = None) -> LLMIntentVerdict:
             return LLMIntentVerdict(
                 primary_domain="UNKNOWN",
                 confidence=0.1,
@@ -712,9 +705,7 @@ class TestPhase3FitnessFunctions:
 
     def test_fitness_fails_when_interception_below_threshold(self) -> None:
         """拦截率 30% → FAIL。"""
-        ff = FitnessFunctionFramework(
-            thresholds=FitnessThresholds(hallucination_interception_min=0.70)
-        )
+        ff = FitnessFunctionFramework(thresholds=FitnessThresholds(hallucination_interception_min=0.70))
         inputs = FitnessInputs(
             module_count=1,
             coverage_pct=100.0,

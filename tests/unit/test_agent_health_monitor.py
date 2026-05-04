@@ -5,19 +5,14 @@ Unit tests for agent_health_monitor.py (T-3-11)
 
 最少测试：10 条。
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Any
-
 import pytest
-
 from zephyr.orchestrator.agent_health_monitor import (
     AgentHealthMonitor,
     HealthState,
-    HealthStatus,
     SLOConfig,
-    SLOViolation,
 )
 from zephyr.orchestrator.agent_orchestrator import (
     AgentRole,
@@ -149,8 +144,10 @@ class TestAgentHealthMonitor:
     def test_integration_with_orchestrator_result(self) -> None:
         mon = AgentHealthMonitor(window_size=10)
         result = _make_result(
-            success=True, latency_ms=200,
-            token_used=6000, token_budget=8000,
+            success=True,
+            latency_ms=200,
+            token_used=6000,
+            token_budget=8000,
         )
         mon.record(result)
         status = mon.evaluate()

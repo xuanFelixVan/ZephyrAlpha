@@ -17,14 +17,13 @@ safety_level: M
 
 零外部依赖：仅 pydantic + 标准库。
 """
+
 from __future__ import annotations
 
-import hashlib
-import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -56,9 +55,7 @@ class EmbeddingVersion(BaseModel):
     dimension: int = Field(gt=0)
     provider: str = Field(min_length=1)
     is_active: bool = Field(default=False)
-    registered_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    registered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class MigrationPlan(BaseModel):
@@ -73,9 +70,7 @@ class MigrationPlan(BaseModel):
     trigger_reason: str = Field(default="")
     recall_rate: float = Field(default=1.0, ge=0.0, le=1.0)
     recall_threshold: float = Field(default=0.70, ge=0.0, le=1.0)
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class MigrationResult(BaseModel):
@@ -89,7 +84,7 @@ class MigrationResult(BaseModel):
     collections_processed: int = Field(default=0, ge=0)
     duration_seconds: float = Field(default=0.0, ge=0.0)
     error_message: str = Field(default="")
-    completed_at: Optional[datetime] = None
+    completed_at: datetime | None = None
 
 
 class MigrationCheckpoint(BaseModel):
@@ -101,9 +96,7 @@ class MigrationCheckpoint(BaseModel):
     status: MigrationStatus
     collections_completed: list[str] = Field(default_factory=list)
     documents_migrated: int = Field(default=0, ge=0)
-    saved_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    saved_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class EmbeddingMigrator:
@@ -131,20 +124,20 @@ class EmbeddingMigrator:
 
     def __init__(
         self,
-        chroma_client: Optional[Any] = None,
-        registry_path: Optional[Path | str] = None,
+        chroma_client: Any | None = None,
+        registry_path: Path | str | None = None,
         recall_threshold: float = 0.70,
     ) -> None:
         self._client = chroma_client
         self._registry_path = Path(registry_path) if registry_path else None
         self._recall_threshold = recall_threshold
         self._versions: dict[str, EmbeddingVersion] = {}
-        self._active_version: Optional[str] = None
+        self._active_version: str | None = None
         self._checkpoints: dict[str, MigrationCheckpoint] = {}
         self._init_known_models()
 
     def _init_known_models(self) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         for name, info in self.KNOWN_MODELS.items():
             self._versions[name] = EmbeddingVersion(
                 model_name=name,
@@ -155,7 +148,7 @@ class EmbeddingMigrator:
             )
         self._active_version = "bge-small-zh"
 
-    def get_active_version(self) -> Optional[EmbeddingVersion]:
+    def get_active_version(self) -> EmbeddingVersion | None:
         if self._active_version is None:
             return None
         return self._versions.get(self._active_version)
@@ -180,13 +173,13 @@ class EmbeddingMigrator:
         source_model: str,
         target_model: str,
         recall_rate: float = 1.0,
-        collections: Optional[list[str]] = None,
+        collections: list[str] | None = None,
     ) -> MigrationPlan:
         source = self._versions.get(source_model)
         target = self._versions.get(target_model)
         if source is None or target is None:
             raise ValueError(f"Unknown model: source={source_model}, target={target_model}")
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         plan_id = f"MP-{now.strftime('%Y%m%dT%H%M%S')}"
         return MigrationPlan(
             plan_id=plan_id,
@@ -195,7 +188,9 @@ class EmbeddingMigrator:
             target_model=target_model,
             target_dimension=target.dimension,
             collections=collections or list(self.DEFAULT_COLLECTIONS),
-            trigger_reason=f"recall_rate={recall_rate:.2f} < threshold={self._recall_threshold:.2f}" if recall_rate < self._recall_threshold else "manual",
+            trigger_reason=f"recall_rate={recall_rate:.2f} < threshold={self._recall_threshold:.2f}"
+            if recall_rate < self._recall_threshold
+            else "manual",
             recall_rate=recall_rate,
             recall_threshold=self._recall_threshold,
             created_at=now,
@@ -205,10 +200,10 @@ class EmbeddingMigrator:
         self,
         plan: MigrationPlan,
         *,
-        embed_fn: Optional[Any] = None,
+        embed_fn: Any | None = None,
         dry_run: bool = False,
     ) -> MigrationResult:
-        started = datetime.now(timezone.utc)
+        started = datetime.now(UTC)
         total_docs = 0
         migrated_docs = 0
         failed_docs = 0
@@ -280,8 +275,8 @@ class EmbeddingMigrator:
             migrated_documents=migrated_docs,
             failed_documents=failed_docs,
             collections_processed=collections_processed,
-            duration_seconds=(datetime.now(timezone.utc) - started).total_seconds(),
-            completed_at=datetime.now(timezone.utc),
+            duration_seconds=(datetime.now(UTC) - started).total_seconds(),
+            completed_at=datetime.now(UTC),
         )
 
     def rollback(self, plan: MigrationPlan) -> MigrationResult:
@@ -295,10 +290,16 @@ class EmbeddingMigrator:
         return MigrationResult(
             plan_id=plan.plan_id,
             status=MigrationStatus.ROLLED_BACK,
-            completed_at=datetime.now(timezone.utc),
+            completed_at=datetime.now(UTC),
         )
 
-    def save_checkpoint(self, plan: MigrationPlan, status: MigrationStatus, collections_completed: Optional[list[str]] = None, documents_migrated: int = 0) -> MigrationCheckpoint:
+    def save_checkpoint(
+        self,
+        plan: MigrationPlan,
+        status: MigrationStatus,
+        collections_completed: list[str] | None = None,
+        documents_migrated: int = 0,
+    ) -> MigrationCheckpoint:
         cp = MigrationCheckpoint(
             plan_id=plan.plan_id,
             source_model=plan.source_model,
@@ -310,5 +311,5 @@ class EmbeddingMigrator:
         self._checkpoints[plan.plan_id] = cp
         return cp
 
-    def get_checkpoint(self, plan_id: str) -> Optional[MigrationCheckpoint]:
+    def get_checkpoint(self, plan_id: str) -> MigrationCheckpoint | None:
         return self._checkpoints.get(plan_id)

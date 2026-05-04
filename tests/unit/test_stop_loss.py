@@ -15,10 +15,10 @@ Phase 3 实现完成后应添加完整业务测试。
 
 Task: l04-stop-loss | Safety: HIGH | Phase 3
 """
+
 from __future__ import annotations
 
 import pytest
-
 from zephyr.l04_risk_management.stop_loss import (
     evaluate_stop_loss,
     reset_kill_switch,

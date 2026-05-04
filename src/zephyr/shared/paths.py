@@ -18,6 +18,7 @@ REPO_ROOT，导致：
   - Google Style Guide: "Define constants in one place"（常量只在一处定义）
   - Terraform: provider 配置集中定义，模块引用而非重定义
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -39,9 +40,7 @@ def find_repo_root() -> Path:
     for parent in current.parents:
         if (parent / "src" / "zephyr" / "__init__.py").exists():
             return parent
-    raise FileNotFoundError(
-        f"Cannot find project root (no src/zephyr/__init__.py found) from {current}"
-    )
+    raise FileNotFoundError(f"Cannot find project root (no src/zephyr/__init__.py found) from {current}")
 
 
 REPO_ROOT: Path = find_repo_root()
@@ -52,11 +51,7 @@ DB_PATH: Path = DB_DIR / "zalpha_metadata.db"
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
 RATIONALE_LOG_PATH: Path = (
-    REPO_ROOT
-    / "docs"
-    / "19_development_workspace"
-    / "structure-and-mapping"
-    / "architecture-rationale-log.md"
+    REPO_ROOT / "docs" / "19_development_workspace" / "structure-and-mapping" / "architecture-rationale-log.md"
 )
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"

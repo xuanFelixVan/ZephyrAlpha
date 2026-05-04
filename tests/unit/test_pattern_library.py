@@ -5,11 +5,10 @@ Unit tests for pattern_library.py (T-3-21)
 
 最少测试：10 条。
 """
+
 from __future__ import annotations
 
-from typing import Any
-
-import pytest
+from datetime import UTC
 
 from zephyr.context_engine.pattern_library import (
     PatternEntry,
@@ -28,8 +27,9 @@ class TestPatternType:
 
 class TestPatternEntry:
     def test_valid_entry(self) -> None:
-        from datetime import datetime, timezone
-        now = datetime.now(timezone.utc)
+        from datetime import datetime
+
+        now = datetime.now(UTC)
         entry = PatternEntry(
             pattern_id="PAT-001",
             title="Momentum Factor Success",
@@ -45,8 +45,9 @@ class TestPatternEntry:
         assert entry.occurrence_count == 1
 
     def test_tags_deduplication(self) -> None:
-        from datetime import datetime, timezone
-        now = datetime.now(timezone.utc)
+        from datetime import datetime
+
+        now = datetime.now(UTC)
         entry = PatternEntry(
             pattern_id="PAT-002",
             title="Test",
@@ -112,15 +113,41 @@ class TestPatternLibrary:
 
     def test_query_by_tags(self) -> None:
         lib = PatternLibrary()
-        lib.create(title="A", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L00", description="a", tags=["momentum", "alpha"])
-        lib.create(title="B", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L00", description="b", tags=["risk"])
+        lib.create(
+            title="A",
+            pattern_type=PatternType.SUCCESS_PATTERN,
+            domain="D0",
+            layer="L00",
+            description="a",
+            tags=["momentum", "alpha"],
+        )
+        lib.create(
+            title="B",
+            pattern_type=PatternType.SUCCESS_PATTERN,
+            domain="D0",
+            layer="L00",
+            description="b",
+            tags=["risk"],
+        )
         results = lib.query(PatternQuery(tags=["momentum"]))
         assert len(results) == 1
 
     def test_query_by_keyword(self) -> None:
         lib = PatternLibrary()
-        lib.create(title="Momentum Factor", pattern_type=PatternType.SUCCESS_PATTERN, domain="D3", layer="L02", description="IC>0.05")
-        lib.create(title="Risk Control", pattern_type=PatternType.ANTI_PATTERN, domain="D4", layer="L04", description="Stop loss")
+        lib.create(
+            title="Momentum Factor",
+            pattern_type=PatternType.SUCCESS_PATTERN,
+            domain="D3",
+            layer="L02",
+            description="IC>0.05",
+        )
+        lib.create(
+            title="Risk Control",
+            pattern_type=PatternType.ANTI_PATTERN,
+            domain="D4",
+            layer="L04",
+            description="Stop loss",
+        )
         results = lib.query(PatternQuery(keyword="momentum"))
         assert len(results) == 1
 

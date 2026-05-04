@@ -19,12 +19,12 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -47,9 +47,8 @@ def check_open_encoding(filepath: Path) -> list[dict]:
             continue
 
         func = node.func
-        is_open = (
-            (isinstance(func, ast.Name) and func.id == "open") or
-            (isinstance(func, ast.Attribute) and func.attr == "open")
+        is_open = (isinstance(func, ast.Name) and func.id == "open") or (
+            isinstance(func, ast.Attribute) and func.attr == "open"
         )
         if not is_open:
             continue
@@ -74,11 +73,13 @@ def check_open_encoding(filepath: Path) -> list[dict]:
         if not has_encoding and not is_binary:
             rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
             line = node.lineno
-            findings.append({
-                "file": rel,
-                "line": line,
-                "severity": "HIGH",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "line": line,
+                    "severity": "HIGH",
+                }
+            )
 
     return findings
     """检查 open() 调用缺少 encoding."""
@@ -106,7 +107,10 @@ def main() -> None:
             all_findings.extend(findings)
 
     if all_findings:
-        print(f"\n[MISSING-ENC] {len(all_findings)} 个 open() 调用缺少 encoding（扫描 {files_scanned} 文件）:", file=sys.stderr)
+        print(
+            f"\n[MISSING-ENC] {len(all_findings)} 个 open() 调用缺少 encoding（扫描 {files_scanned} 文件）:",
+            file=sys.stderr,
+        )
         for f in all_findings:
             print(f"  [{f['severity']}] {f['file']}:{f['line']}", file=sys.stderr)
     else:

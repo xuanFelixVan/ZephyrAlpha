@@ -13,27 +13,36 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
-import argparse
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 from _shared.constants import REPO_ROOT, SRC_DIR
 
 SKELETON_PACKAGES = {
-    "l03_signal_generation", "l04_risk_management", "l05_portfolio_construction",
-    "l06_trade_execution", "l07_post_trade_analytics", "l08_human_ai_interface",
-    "l09_research_innovation", "l10_compliance", "l11_ml_platform", "l13_experimentation",
-    "hooks", "script_system", "shared/contracts",
+    "l03_signal_generation",
+    "l04_risk_management",
+    "l05_portfolio_construction",
+    "l06_trade_execution",
+    "l07_post_trade_analytics",
+    "l08_human_ai_interface",
+    "l09_research_innovation",
+    "l10_compliance",
+    "l11_ml_platform",
+    "l13_experimentation",
+    "hooks",
+    "script_system",
+    "shared/contracts",
 }
 
 EXEMPT_PACKAGES = {"shared", "l00_data_source"}
@@ -57,7 +66,7 @@ def _has_all_definition(tree: ast.AST) -> bool:
 
 def scan_init_all(init_path: Path) -> tuple[bool, bool]:
     """扫描 __init__.py 导出完整性."""
-    with open(init_path, "r", encoding="utf-8") as f:
+    with open(init_path, encoding="utf-8") as f:
         """扫描 __init__.py 导出完整性."""
         """扫描并返回发现列表."""
         source = f.read()
@@ -98,7 +107,9 @@ def main() -> None:
             ok_count += 1
 
     if findings:
-        print(f"\n[INIT-ALL] {len(findings)} 个 __init__.py 缺少 __all__（扫描 {total_inits} 个包）:\n", file=sys.stderr)
+        print(
+            f"\n[INIT-ALL] {len(findings)} 个 __init__.py 缺少 __all__（扫描 {total_inits} 个包）:\n", file=sys.stderr
+        )
         for f_item in findings:
             print(f_item, file=sys.stderr)
         print(file=sys.stderr)

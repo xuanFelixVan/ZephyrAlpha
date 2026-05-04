@@ -18,13 +18,12 @@ FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 4. resolve — 反向查询 file_path → task_id 列表（N:N，可能多个）
 5. resolve_reverse — 正向查询 task_id → file_path 列表（N:N，可能多个）
 """
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -40,6 +39,7 @@ __all__ = [
     "SyncInconsistency",
     "classify_file_to_namespace",
 ]
+
 
 def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     """
@@ -90,7 +90,7 @@ class SyncInconsistency:
     task_id: str
     file_path: str
     disk_exists: bool
-    frontmatter_status: Optional[str]
+    frontmatter_status: str | None
     task_status: str
     issue: str
 
@@ -110,7 +110,7 @@ class FileTaskMapper:
     取代 ADR-0038 的 1:1 双向映射。
     """
 
-    def __init__(self, db_path: Optional[Path] = None) -> None:
+    def __init__(self, db_path: Path | None = None) -> None:
         self._db_path = db_path or DB_PATH
         init_db(self._db_path)
 
@@ -200,7 +200,7 @@ class FileTaskMapper:
             report.errors.append(f"triage file not found: {yaml_path}")
             return report
 
-        with open(yaml_path, "r", encoding="utf-8") as fh:
+        with open(yaml_path, encoding="utf-8") as fh:
             data = yaml.safe_load(fh) or {}
 
         entries = data.get("files", [])
@@ -251,7 +251,7 @@ class FileTaskMapper:
 
         return report
 
-    def sync_file_state(self, task_id: Optional[str] = None) -> SyncReport:
+    def sync_file_state(self, task_id: str | None = None) -> SyncReport:
         """
         全量或单任务三态校验（磁盘/frontmatter/tasks）。
 
@@ -285,13 +285,11 @@ class FileTaskMapper:
                 disk_path = repo_root / fp
                 disk_exists = disk_path.exists()
 
-                fm_status: Optional[str] = None
+                fm_status: str | None = None
                 if disk_exists and disk_path.suffix == ".md":
                     fm_status = self._read_frontmatter_status(disk_path)
 
-                inconsistency = self._check_consistency(
-                    tid, fp, disk_exists, fm_status, task_status
-                )
+                inconsistency = self._check_consistency(tid, fp, disk_exists, fm_status, task_status)
                 if inconsistency:
                     report.inconsistencies.append(inconsistency)
                 else:
@@ -316,7 +314,7 @@ class FileTaskMapper:
         finally:
             conn.close()
 
-    def _read_frontmatter_status(self, filepath: Path) -> Optional[str]:
+    def _read_frontmatter_status(self, filepath: Path) -> str | None:
         try:
             content = filepath.read_text(encoding="utf-8", errors="replace")
             if not content.startswith("---"):
@@ -337,16 +335,20 @@ class FileTaskMapper:
         task_id: str,
         file_path: str,
         disk_exists: bool,
-        frontmatter_status: Optional[str],
+        frontmatter_status: str | None,
         task_status: str,
-    ) -> Optional[SyncInconsistency]:
+    ) -> SyncInconsistency | None:
         if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
             return None
 
         if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
             return None
 
-        if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status in ("COMPLETED", "VERIFIED"):
+        if (
+            disk_exists
+            and frontmatter_status in ("accepted", "Active", "active")
+            and task_status in ("COMPLETED", "VERIFIED")
+        ):
             return None
 
         if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status == "PENDING":

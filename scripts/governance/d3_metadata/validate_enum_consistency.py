@@ -34,8 +34,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import GOV_DOCS_DIR, REPO_ROOT
+from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
@@ -177,7 +178,7 @@ def _extract_enum_from_schema_json(field_name: str) -> set[str]:
     if not SCHEMA_JSON_PATH.exists():
         return set()
     try:
-        with open(SCHEMA_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(SCHEMA_JSON_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError):
         return set()
@@ -198,7 +199,7 @@ SUBSET_VOCABS = {"doc_type", "layer", "ttl"}
 
 def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
     """DIM-1: vocabulary YAML ↔ frontmatter-field-registry.yaml
-    
+
     For SUBSET_VOCABS (doc_type, layer, ttl), the field-registry only contains
     the 01_policies_and_standards/ subset — missing values are warnings, not errors.
     Extra values not in vocabulary are always errors.
@@ -260,7 +261,7 @@ def check_dim2_arch_contract(vocabs: dict[str, dict]) -> None:
 
 def check_dim3_schema_json(vocabs: dict[str, dict]) -> None:
     """DIM-3: vocabulary YAML ↔ frontmatter-schema.json (enum + oneOf+const)
-    
+
     For SUBSET_VOCABS, schema.json only contains the PS subset — missing is OK.
     """
     for vocab_name, field_name in VOCAB_TO_FIELD.items():
@@ -324,10 +325,7 @@ def check_dim5_vocab_registration(vocabs: dict[str, dict]) -> None:
     for vocab_name, info in vocabs.items():
         vocab_rel = str(info["path"].relative_to(REPO_ROOT)).replace("\\", "/")
         if vocab_rel not in registered_paths:
-            _warn(
-                f"DIM-5 {vocab_name}-vocabulary.yaml: "
-                f"未在 registry-master-index.yaml 登记（路径: {vocab_rel}）"
-            )
+            _warn(f"DIM-5 {vocab_name}-vocabulary.yaml: " f"未在 registry-master-index.yaml 登记（路径: {vocab_rel}）")
 
 
 def check_dim6_field_registry_enum_values(vocabs: dict[str, dict]) -> None:

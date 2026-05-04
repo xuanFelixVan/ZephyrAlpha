@@ -9,12 +9,12 @@ ContextAssembler — 上下文装配、校验、影子留档
   3. compress  — 超 token 预算时调用 DocCompressor
   4. shadow    — 生成影子副本供脚本系统 B 线复查
 """
+
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -31,6 +31,7 @@ __all__ = [
 
 class FileEntry(BaseModel):
     """manifest 中的单条文件记录"""
+
     model_config = BASE_CONFIG
 
     file_path: str = Field(..., description="文件完整绝对路径")
@@ -43,6 +44,7 @@ class FileEntry(BaseModel):
 
 class AssembledContext(BaseModel):
     """装配后的上下文结构"""
+
     model_config = BASE_CONFIG
 
     context_text: str = Field(default="", description="装配后的完整上下文字符串")
@@ -58,9 +60,7 @@ class AssembledContext(BaseModel):
     shadow_hash: str = Field(default="", description="影子副本 SHA-256")
     entries: list[FileEntry] = Field(default_factory=list, description="逐文件状态")
     errors: list[str] = Field(default_factory=list, description="装配过程中的错误")
-    assembled_at: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    assembled_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     @property
     def is_complete(self) -> bool:
@@ -145,11 +145,7 @@ class ContextAssembler:
           2. token 数 ≤ 预算（压缩后）
           3. file_count > 0（至少有一个文件）
         """
-        return (
-            len(ctx.errors) == 0
-            and ctx.is_within_budget
-            and ctx.file_count > 0
-        )
+        return len(ctx.errors) == 0 and ctx.is_within_budget and ctx.file_count > 0
 
     def shadow(
         self,
@@ -172,7 +168,7 @@ class ContextAssembler:
         out = Path(output_dir)
         out.mkdir(parents=True, exist_ok=True)
 
-        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         shadow_path = out / f"context-shadow-{ts}.md"
 
         sha = hashlib.sha256(ctx.context_text.encode("utf-8")).hexdigest()[:12]
@@ -192,18 +188,10 @@ class ContextAssembler:
         manifest_section = "## 文件清单\n\n"
         for e in ctx.entries:
             status = "OK" if (e.exists and e.readable) else ("ERR" if not e.exists else "UNREADABLE")
-            manifest_section += (
-                f"- [{status}] `{e.file_path}` — {e.reason} (est. {e.token_estimate} tokens)\n"
-            )
+            manifest_section += f"- [{status}] `{e.file_path}` — {e.reason} (est. {e.token_estimate} tokens)\n"
         manifest_section += "\n---\n\n"
 
-        sections = (
-            header
-            + manifest_section
-            + "## 完整上下文\n\n```text\n"
-            + ctx.context_text
-            + "\n```\n"
-        )
+        sections = header + manifest_section + "## 完整上下文\n\n```text\n" + ctx.context_text + "\n```\n"
 
         shadow_path.write_text(sections, encoding="utf-8")
 
@@ -283,9 +271,7 @@ class ContextAssembler:
             path = Path(entry.file_path)
             size = path.stat().st_size
             if size > self._max_bytes:
-                errors.append(
-                    f"FILE_TOO_LARGE: {entry.file_path} ({size:,} bytes > {self._max_bytes:,} max)"
-                )
+                errors.append(f"FILE_TOO_LARGE: {entry.file_path} ({size:,} bytes > {self._max_bytes:,} max)")
                 continue
 
             try:
@@ -299,9 +285,7 @@ class ContextAssembler:
             entry.token_estimate = est
 
             parts.append(
-                f"\n--- FILE: {path.name} ({entry.reason}) ---"
-                f"\nPATH: {entry.file_path}\n\n"
-                f"{content}\n"
+                f"\n--- FILE: {path.name} ({entry.reason}) ---" f"\nPATH: {entry.file_path}\n\n" f"{content}\n"
             )
 
         full_text = "\n".join(parts)

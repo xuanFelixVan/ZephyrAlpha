@@ -1,15 +1,15 @@
 """
 Unit tests for state_synchronizer.py (T-2-04)
 """
+
 from __future__ import annotations
 
 import json as _json
 from pathlib import Path
 
 import pytest
-
-from zephyr.orchestrator.state_synchronizer import StateSynchronizer, SyncResult, GhostTask
 from zephyr.db.sqlite_schema import get_db_connection
+from zephyr.orchestrator.state_synchronizer import StateSynchronizer
 
 
 @pytest.fixture

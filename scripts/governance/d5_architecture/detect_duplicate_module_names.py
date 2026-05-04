@@ -14,23 +14,22 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
-import argparse
-import os
-
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR, SCAN_EXTENSIONS_PY
+from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY, SRC_DIR
 from _shared.walk import iter_files
 
 
@@ -79,30 +78,24 @@ def _parse_public_symbols(filepath: Path) -> set[str]:
     return symbols
 
 
-def _analyze_pair(
-    file_a: Path, file_b: Path
-) -> tuple[str, str, str | None]:
+def _analyze_pair(file_a: Path, file_b: Path) -> tuple[str, str, str | None]:
     pkg_a = _file_to_module_path(file_a)
     pkg_b = _file_to_module_path(file_b)
 
     imports_a = _parse_import_targets(file_a)
     imports_b = _parse_import_targets(file_b)
 
-    a_consumes_b = any(
-        t == pkg_b or t.startswith(pkg_b + ".")
-        for t in imports_a
-    ) or any(
-        t == "zephyr" or t.startswith("zephyr.")
-        for t in imports_a
-    ) and _file_to_module_path(file_b) in str(imports_a)
+    a_consumes_b = (
+        any(t == pkg_b or t.startswith(pkg_b + ".") for t in imports_a)
+        or any(t == "zephyr" or t.startswith("zephyr.") for t in imports_a)
+        and _file_to_module_path(file_b) in str(imports_a)
+    )
 
-    b_consumes_a = any(
-        t == pkg_a or t.startswith(pkg_a + ".")
-        for t in imports_b
-    ) or any(
-        t == "zephyr" or t.startswith("zephyr.")
-        for t in imports_b
-    ) and _file_to_module_path(file_a) in str(imports_b)
+    b_consumes_a = (
+        any(t == pkg_a or t.startswith(pkg_a + ".") for t in imports_b)
+        or any(t == "zephyr" or t.startswith("zephyr.") for t in imports_b)
+        and _file_to_module_path(file_a) in str(imports_b)
+    )
 
     if a_consumes_b:
         symbols_a = _parse_public_symbols(file_a)
@@ -174,13 +167,15 @@ def scan() -> tuple[list[dict], int]:
                 severity, category, message = _analyze_pair(paths[i], paths[j])
                 rel_a = paths[i].relative_to(REPO_ROOT)
                 rel_b = paths[j].relative_to(REPO_ROOT)
-                findings.append({
-                    "severity": severity,
-                    "category": category,
-                    "file": str(rel_a),
-                    "peer": str(rel_b),
-                    "message": message,
-                })
+                findings.append(
+                    {
+                        "severity": severity,
+                        "category": category,
+                        "file": str(rel_a),
+                        "peer": str(rel_b),
+                        "message": message,
+                    }
+                )
 
     return findings, files_scanned
     """scan."""
@@ -188,9 +183,7 @@ def scan() -> tuple[list[dict], int]:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(
-        description="同名模块语义关系分析 --- 区分适配器 vs 真正重复"
-    )
+    parser = argparse.ArgumentParser(description="同名模块语义关系分析 --- 区分适配器 vs 真正重复")
     parser.add_argument(
         "--warn-only",
         action="store_true",

@@ -13,23 +13,23 @@ Usage:
     --compare FILE   Compare with existing registry file
 """
 
-from datetime import datetime
 import argparse
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import yaml
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.walk import iter_files
 from _shared.constants import EXCLUDE_DIRS, SCAN_EXTENSIONS_MD_YAML
-from _shared.frontmatter import parse_frontmatter, parse_yaml_header
 from _shared.encoding import ensure_utf8_stdout
+from _shared.frontmatter import parse_frontmatter
+from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
@@ -48,12 +48,27 @@ def extract_yaml_header(content: str) -> dict | None:
         try:
             full_yaml = yaml.safe_load(content)
             if isinstance(full_yaml, dict):
-                fields.update({
-                    k: v for k, v in full_yaml.items()
-                    if k in ("module_id", "doc_type", "status", "version",
-                             "title", "rule_form", "scope", "stability",
-                             "layer", "owner", "ttl", "superseded_by")
-                })
+                fields.update(
+                    {
+                        k: v
+                        for k, v in full_yaml.items()
+                        if k
+                        in (
+                            "module_id",
+                            "doc_type",
+                            "status",
+                            "version",
+                            "title",
+                            "rule_form",
+                            "scope",
+                            "stability",
+                            "layer",
+                            "owner",
+                            "ttl",
+                            "superseded_by",
+                        )
+                    }
+                )
         except yaml.YAMLError:
             pass
     return fields if fields else None
@@ -65,15 +80,12 @@ def scan_directory(scan_dir: str) -> list[dict]:
     scan_path = Path(scan_dir)
 
     if not scan_path.exists():
-        print(
-            f"ERROR: Scan directory does not exist: {scan_dir}",
-            file=sys.stderr)
+        print(f"ERROR: Scan directory does not exist: {scan_dir}", file=sys.stderr)
         return results
 
     for fpath in iter_files(
-            scan_path,
-            extensions=SCAN_EXTENSIONS_MD_YAML,
-            exclude_dirs=EXCLUDE_DIRS | {".audit_cache"}):
+        scan_path, extensions=SCAN_EXTENSIONS_MD_YAML, exclude_dirs=EXCLUDE_DIRS | {".audit_cache"}
+    ):
         fname = fpath.name
         rel_path = str(fpath.relative_to(scan_path.parent.parent.parent))
 
@@ -122,30 +134,19 @@ def generate_catalog(entries: list[dict], output_path: str) -> str:
     output.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output, "w", encoding="utf-8") as f:
-        yaml.dump(
-            catalog,
-            f,
-            allow_unicode=True,
-            default_flow_style=False,
-            sort_keys=False)
+        yaml.dump(catalog, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
-    print(
-        f"Generated catalog with {len(entries)} entries -> {output_path}",
-        file=sys.stderr)
+    print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
 
 
-def compare_with_registry(
-        catalog_entries: list[dict],
-        registry_path: str) -> int:
+def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> int:
     """Compare auto-generated catalog with manual registry."""
     reg_path = Path(registry_path)
     if not reg_path.exists():
-        print(
-            f"WARNING: Registry file not found: {registry_path}",
-            file=sys.stderr)
+        print(f"WARNING: Registry file not found: {registry_path}", file=sys.stderr)
         return 0
 
-    with open(reg_path, "r", encoding="utf-8") as f:
+    with open(reg_path, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
 
     if "rules" not in registry:
@@ -163,21 +164,18 @@ def compare_with_registry(
     for path in sorted(common):
         cat = cat_entries[path]
         reg = reg_entries[path]
-        for field in (
-            "module_id",
-            "doc_type",
-            "status",
-            "version",
-            "rule_form"):
+        for field in ("module_id", "doc_type", "status", "version", "rule_form"):
             cat_val = str(cat.get(field, "")).lower()
             reg_val = str(reg.get(field, "")).lower()
             if cat_val != reg_val and cat_val and reg_val:
-                differences.append({
-                    "path": path,
-                    "field": field,
-                    "catalog_value": cat_val,
-                    "registry_value": reg_val,
-                })
+                differences.append(
+                    {
+                        "path": path,
+                        "field": field,
+                        "catalog_value": cat_val,
+                        "registry_value": reg_val,
+                    }
+                )
 
     print(f"  Only in catalog:  {len(only_in_catalog)}", file=sys.stderr)
     print(f"  Only in registry: {len(only_in_registry)}", file=sys.stderr)
@@ -198,12 +196,11 @@ def compare_with_registry(
         for d in differences[:20]:
             print(
                 f"    {d['path']} [{d['field']}]: catalog={d['catalog_value']} vs registry={d['registry_value']}",
-                file=sys.stderr)
+                file=sys.stderr,
+            )
 
     if not only_in_catalog and not only_in_registry and not differences:
-        print(
-            "\n  \u2705 100% match! Auto-generated catalog is identical to manual registry.",
-            file=sys.stderr)
+        print("\n  \u2705 100% match! Auto-generated catalog is identical to manual registry.", file=sys.stderr)
 
     return len(only_in_catalog) + len(differences)
 
@@ -211,8 +208,7 @@ def compare_with_registry(
 def main() -> None:
     """入口函数."""
     repo_root = Path(__file__).resolve().parent.parent.parent.parent
-    parser = argparse.ArgumentParser(
-        description="Generate rule catalog from frontmatter")
+    parser = argparse.ArgumentParser(description="Generate rule catalog from frontmatter")
     parser.add_argument(
         "--scan-dir",
         default=str(repo_root / "docs" / "01_policies_and_standards"),
@@ -220,24 +216,14 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        default=str(
-            repo_root /
-            "docs" /
-            "01_policies_and_standards" /
-            "_registry" /
-            "catalogs" /
-            "rule-catalog.yaml"),
+        default=str(repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule-catalog.yaml"),
         help="Output YAML file",
     )
     parser.add_argument(
         "--compare",
         default=str(
-            repo_root /
-            "docs" /
-            "01_policies_and_standards" /
-            "_registry" /
-            "catalogs" /
-            "document-metadata-index.yaml"),
+            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        ),
         help="Compare with existing registry",
     )
     parser.add_argument(

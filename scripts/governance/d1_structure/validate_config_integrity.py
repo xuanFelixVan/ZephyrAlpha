@@ -27,28 +27,26 @@ exit codes: 0=pass, 1=findings, 2=error
 
 from __future__ import annotations
 
-import sys
 import os
 import re
 import subprocess
-
+import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / '_shared').exists()))
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
 from _shared.constants import CONFIG_DIR
-ensure_utf8_stdout()
-import yaml
-import argparse
+from _shared.encoding import ensure_utf8_stdout
 
+ensure_utf8_stdout()
+import argparse
+import tomllib
 from collections import Counter
 
-import tomllib
-
+import yaml
 from _shared.constants import REPO_ROOT, SRC_DIR
 
 EXCLUDE_DIRS: tuple[str, ...] = ()
@@ -56,10 +54,15 @@ EXCLUDE_DIRS: tuple[str, ...] = ()
 AUTH_REG_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
 DIR_STD_PATH = REPO_ROOT / "docs/01_policies_and_standards/governance/document/directory-structure-standard.md"
 
-PHASE1D_TRIGGER_TYPES = frozenset({
-    "onboarding", "drift_detected", "compression_needed",
-    "cleanup_due", "blueprint_published",
-})
+PHASE1D_TRIGGER_TYPES = frozenset(
+    {
+        "onboarding",
+        "drift_detected",
+        "compression_needed",
+        "cleanup_due",
+        "blueprint_published",
+    }
+)
 
 IMMUTABLE_SCHEMA = {
     "min_chars": {"type": int, "ge": 100, "le": 10000},
@@ -109,7 +112,9 @@ def l1_file_integrity() -> tuple[list[str], list[str], dict]:
             except UnicodeError:
                 text = ""
             if text:
-                trailing_ws = [(i + 1) for i, line in enumerate(text.split("\n")) if line.rstrip("\r\n") != line.rstrip()]
+                trailing_ws = [
+                    (i + 1) for i, line in enumerate(text.split("\n")) if line.rstrip("\r\n") != line.rstrip()
+                ]
                 if trailing_ws:
                     warnings.append(f"[L1] {rel}: 尾部空白行 {trailing_ws[:5]}")
                 if "\t" in text:
@@ -119,7 +124,7 @@ def l1_file_integrity() -> tuple[list[str], list[str], dict]:
     for f in sorted(yaml_files):
         rel = _rel(f)
         try:
-            with open(f, "r", encoding="utf-8") as fh:
+            with open(f, encoding="utf-8") as fh:
                 content = fh.read()
             data = yaml.safe_load(content)
             yaml_data[rel] = data
@@ -150,18 +155,18 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
         name = rule.get("name", f"<missing #{i}>")
         missing = RULE_REQUIRED_FIELDS - set(rule.keys())
         if missing:
-            errors.append(f"[L2] capabilities.yaml rule[{i}] \"{name}\": 缺少字段 {missing}")
+            errors.append(f'[L2] capabilities.yaml rule[{i}] "{name}": 缺少字段 {missing}')
 
         for field in ("allow", "deny"):
             val = rule.get(field)
             if val is not None and not isinstance(val, list):
-                errors.append(f"[L2] capabilities.yaml rule \"{name}\": {field} 不是 list")
+                errors.append(f'[L2] capabilities.yaml rule "{name}": {field} 不是 list')
 
         a = [x.strip() for x in rule.get("allow", []) if isinstance(x, str) and x.strip()]
         d = [x.strip() for x in rule.get("deny", []) if isinstance(x, str) and x.strip()]
         for path in a:
             if path in d:
-                errors.append(f"[L2] capabilities.yaml rule \"{name}\": allow=deny 自相矛盾 — {path}")
+                errors.append(f'[L2] capabilities.yaml rule "{name}": allow=deny 自相矛盾 — {path}')
 
     rule_names = [r.get("name", "") for r in rules]
     dups = [n for n, c in Counter(rule_names).items() if c > 1]
@@ -176,7 +181,7 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     for ttype, spec in triggers.items():
         if not isinstance(spec, dict):
-            errors.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": 值不是 dict")
+            errors.append(f'[L2] trigger_router.yaml trigger "{ttype}": 值不是 dict')
             continue
         handler = spec.get("handler", "")
         safety = spec.get("safety", "")
@@ -184,15 +189,15 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
         desc = spec.get("description", "")
 
         if not isinstance(handler, str) or not handler.strip():
-            errors.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": handler 为空")
+            errors.append(f'[L2] trigger_router.yaml trigger "{ttype}": handler 为空')
         elif "." not in handler:
-            warnings.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": handler 格式非 module.func — \"{handler}\"")
+            warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": handler 格式非 module.func — "{handler}"')
         if safety not in ("L", "M", "H"):
-            warnings.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": safety=\"{safety}\" 非 L/M/H")
+            warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": safety="{safety}" 非 L/M/H')
         if enabled is not None and not isinstance(enabled, bool):
-            errors.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": enabled 不是 bool")
+            errors.append(f'[L2] trigger_router.yaml trigger "{ttype}": enabled 不是 bool')
         if isinstance(desc, str) and len(desc) > 200:
-            warnings.append(f"[L2] trigger_router.yaml trigger \"{ttype}\": description={len(desc)} 字符（建议≤200）")
+            warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": description={len(desc)} 字符（建议≤200）')
 
     cp = yaml_data.get("/config/compression/policy.yaml", {})
     policy = cp.get("policy", {})
@@ -206,7 +211,9 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
             errors.append(f"[L2] compression/policy.yaml: 缺少 Immutable Core 字段 — {fname}")
             continue
         if not isinstance(val, constraints["type"]):
-            errors.append(f"[L2] compression/policy.yaml: {fname} 类型={type(val).__name__}，期望 {constraints['type'].__name__}")
+            errors.append(
+                f"[L2] compression/policy.yaml: {fname} 类型={type(val).__name__}，期望 {constraints['type'].__name__}"
+            )
         elif "ge" in constraints and val < constraints["ge"]:
             errors.append(f"[L2] compression/policy.yaml: {fname}={val} < 下限 {constraints['ge']}")
         elif "le" in constraints and val > constraints["le"]:
@@ -214,14 +221,20 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     if isinstance(policy.get("min_chars"), int) and isinstance(policy.get("max_chars"), int):
         if policy["max_chars"] < policy["min_chars"]:
-            errors.append(f"[L2] compression/policy.yaml: max_chars({policy['max_chars']}) < min_chars({policy['min_chars']}) — 矛盾")
+            errors.append(
+                f"[L2] compression/policy.yaml: max_chars({policy['max_chars']}) < min_chars({policy['min_chars']}) — 矛盾"
+            )
 
-    for key, label in [("/config/capabilities.yaml", "capabilities"), ("/config/trigger_router.yaml", "trigger_router"), ("/config/compression/policy.yaml", "compression/policy")]:
+    for key, label in [
+        ("/config/capabilities.yaml", "capabilities"),
+        ("/config/trigger_router.yaml", "trigger_router"),
+        ("/config/compression/policy.yaml", "compression/policy"),
+    ]:
         d = yaml_data.get(key, {})
         if d and "version" in d:
             v = str(d["version"])
             if not re.match(r"^\d+\.\d+\.\d+$", v):
-                warnings.append(f"[L2] {label}.yaml: version=\"{v}\" 非 semver (x.y.z)")
+                warnings.append(f'[L2] {label}.yaml: version="{v}" 非 semver (x.y.z)')
 
     return errors, warnings
 
@@ -254,15 +267,15 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
             mod = __import__(mod_path, fromlist=[attr])
             fn = getattr(mod, attr, None)
             if fn is None:
-                errors.append(f"[L3] trigger \"{ttype}\": handler \"{handler}\" — 函数 \"{attr}\" 不存在")
+                errors.append(f'[L3] trigger "{ttype}": handler "{handler}" — 函数 "{attr}" 不存在')
             elif not callable(fn):
-                errors.append(f"[L3] trigger \"{ttype}\": handler \"{handler}\" — 不是 callable")
+                errors.append(f'[L3] trigger "{ttype}": handler "{handler}" — 不是 callable')
         except ImportError:
             if is_stub:
                 try:
                     rt = __import__("zephyr.orchestrator.trigger_router", fromlist=[attr])
                     if not hasattr(rt, attr):
-                        errors.append(f"[L3] trigger \"{ttype}\": stub \"{attr}\" 不在 trigger_router 模块中")
+                        errors.append(f'[L3] trigger "{ttype}": stub "{attr}" 不在 trigger_router 模块中')
                 except ImportError:
                     pass
             else:
@@ -290,14 +303,20 @@ def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
     warnings = []
     fixes = []
 
-    all_py = [f for f in REPO_ROOT.rglob("*.py") if f.is_file()
-              and not any(excl in str(f) for excl in EXCLUDE_DIRS)
-              and ".venv" not in str(f) and "__pycache__" not in str(f)
-              and ".git" not in str(f) and "_DO_NOT_USE" not in str(f)]
+    all_py = [
+        f
+        for f in REPO_ROOT.rglob("*.py")
+        if f.is_file()
+        and not any(excl in str(f) for excl in EXCLUDE_DIRS)
+        and ".venv" not in str(f)
+        and "__pycache__" not in str(f)
+        and ".git" not in str(f)
+        and "_DO_NOT_USE" not in str(f)
+    ]
 
     for f in all_py:
         try:
-            with open(f, "r", encoding="utf-8", errors="replace") as fh:
+            with open(f, encoding="utf-8", errors="replace") as fh:
                 lines = fh.readlines()
         except (OSError, UnicodeDecodeError):
             continue
@@ -311,14 +330,18 @@ def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
             if m:
                 n = int(m.group(1))
                 if n != expected_parents_index:
-                    warnings.append(f"[L4] {rel}:{lno} REPO_ROOT 使用 parents[{n}]（期望 parents[{expected_parents_index}]）")
-                    fixes.append({
-                        "file": f,
-                        "line": lno,
-                        "old": f"parents[{n}]",
-                        "new": f"parents[{expected_parents_index}]",
-                        "desc": f"{rel}:{lno} parents[{n}] → parents[{expected_parents_index}]"
-                    })
+                    warnings.append(
+                        f"[L4] {rel}:{lno} REPO_ROOT 使用 parents[{n}]（期望 parents[{expected_parents_index}]）"
+                    )
+                    fixes.append(
+                        {
+                            "file": f,
+                            "line": lno,
+                            "old": f"parents[{n}]",
+                            "new": f"parents[{expected_parents_index}]",
+                            "desc": f"{rel}:{lno} parents[{n}] → parents[{expected_parents_index}]",
+                        }
+                    )
                 continue
 
             m = re.search(r"(?:REPO_ROOT|_REPO_ROOT|project_root|repo_root)\s*[:=].*?(\.parent(?:\.parent)+)$", line)
@@ -326,14 +349,18 @@ def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
                 chain = m.group(1)
                 depth = chain.count(".parent")
                 if depth != expected_parent_chain_depth:
-                    warnings.append(f"[L4] {rel}:{lno} REPO_ROOT 使用 .parent*{depth}（期望 .parent*{expected_parent_chain_depth}）")
-                    fixes.append({
-                        "file": f,
-                        "line": lno,
-                        "old": chain,
-                        "new": ".parent" * expected_parent_chain_depth,
-                        "desc": f"{rel}:{lno} .parent*{depth} → .parent*{expected_parent_chain_depth}"
-                    })
+                    warnings.append(
+                        f"[L4] {rel}:{lno} REPO_ROOT 使用 .parent*{depth}（期望 .parent*{expected_parent_chain_depth}）"
+                    )
+                    fixes.append(
+                        {
+                            "file": f,
+                            "line": lno,
+                            "old": chain,
+                            "new": ".parent" * expected_parent_chain_depth,
+                            "desc": f"{rel}:{lno} .parent*{depth} → .parent*{expected_parent_chain_depth}",
+                        }
+                    )
                 continue
 
     return errors, warnings, fixes
@@ -348,7 +375,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
         auth = AUTH_REG_PATH.read_text(encoding="utf-8", errors="replace")
         for ref in ["config/drift_thresholds.yaml", "config/capabilities.yaml", "config/compression/policy.yaml"]:
             if ref not in auth:
-                warnings.append(f"[L5] ai-autonomy-authority-registry.md 中未找到 \"{ref}\" 引用")
+                warnings.append(f'[L5] ai-autonomy-authority-registry.md 中未找到 "{ref}" 引用')
 
         table_rows = [l for l in auth.split("\n") if l.strip().startswith("|") and "|" in l[1:]]
         path_pattern = re.compile(r"`([^`]+)`")
@@ -361,7 +388,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
         duplicates = {p: idxs for p, idxs in path_to_lines.items() if len(idxs) > 1}
         if duplicates:
             for p, idxs in sorted(duplicates.items()):
-                errors.append(f"[L5] 注册表路径重复（= CMDB 腐败）: \"{p}\" 出现在 {len(idxs)} 行（行索引: {idxs}）")
+                errors.append(f'[L5] 注册表路径重复（= CMDB 腐败）: "{p}" 出现在 {len(idxs)} 行（行索引: {idxs}）')
 
         # ── 根源修复: capabilities.yaml allow globs ↔ registry 权限交叉比对 ──
         # 提取 registry 表格中所有 Human-Gated / Immutable Core 的 src/zephyr 路径
@@ -375,7 +402,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
                 continue
             for m in path_pattern.finditer(row):
                 raw_path = m.group(1)
-                if ("src/zephyr/" in raw_path or "scripts/" in raw_path):
+                if "src/zephyr/" in raw_path or "scripts/" in raw_path:
                     clean_path = raw_path.replace("\\", "/")
                     if "Immutable Core" in perm_cell:
                         hg_immutable_paths[clean_path] = "Immutable Core"
@@ -391,14 +418,14 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
                 for allow_glob in ws_allow:
                     allow_dir = allow_glob.replace("/**/*.py", "/").replace("/*.py", "/")
                     overlap = False
-                    if reg_path.startswith(allow_dir):
-                        overlap = True
-                    elif allow_dir.startswith(reg_path) or (allow_glob.replace("/**/*.py", "") == reg_path.rstrip("/")):
+                    if reg_path.startswith(allow_dir) or (
+                        allow_dir.startswith(reg_path) or (allow_glob.replace("/**/*.py", "") == reg_path.rstrip("/"))
+                    ):
                         overlap = True
                     if overlap:
                         errors.append(
-                            f"[L5] 权限冲突: registry 将 \"{reg_path}\" 标为 {reg_perm}，"
-                            f"但 capabilities.yaml write_src allow 包含 \"{allow_glob}\""
+                            f'[L5] 权限冲突: registry 将 "{reg_path}" 标为 {reg_perm}，'
+                            f'但 capabilities.yaml write_src allow 包含 "{allow_glob}"'
                             f" — 对标 ITIL SACM CMDB 腐败（同一资源双重冲突定义）"
                         )
                         break
@@ -408,7 +435,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     if DIR_STD_PATH.exists():
         dir_s = DIR_STD_PATH.read_text(encoding="utf-8", errors="replace")
         if "config/ — 运行时配置目录" not in dir_s:
-            errors.append(f"[L5] directory-structure-standard.md 缺少 config/ 目录结构定义")
+            errors.append("[L5] directory-structure-standard.md 缺少 config/ 目录结构定义")
     else:
         warnings.append(f"[L5] directory-structure-standard.md 不存在 — {DIR_STD_PATH}")
 
@@ -418,7 +445,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     wc_allow = set(write_config.get("allow", []))
 
     if "config/capabilities.yaml" not in wc_deny:
-        errors.append("[L5] capabilities.yaml 自保缺失：\"config/capabilities.yaml\" 不在 write_config.deny 中")
+        errors.append('[L5] capabilities.yaml 自保缺失："config/capabilities.yaml" 不在 write_config.deny 中')
     if "config/trigger_router.yaml" not in wc_deny:
         errors.append("[L5] trigger_router.yaml 保护缺失：不在 write_config.deny 中（Human-Gated但无CBAC显式保护）")
     if "config/compression/policy.yaml" not in wc_allow:
@@ -439,7 +466,7 @@ def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
         name = rule.get("name", "?")
         for pat in rule.get("allow", []):
             if pat in ("**", "*", "config/**", "src/**"):
-                errors.append(f"[L6] capabilities.yaml rule \"{name}\" allow=\"{pat}\" 过于宽泛 — 权限旁路风险")
+                errors.append(f'[L6] capabilities.yaml rule "{name}" allow="{pat}" 过于宽泛 — 权限旁路风险')
 
     selfp = any("config/capabilities.yaml" in r.get("deny", []) for r in rules)
     if not selfp:
@@ -450,7 +477,9 @@ def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
     imm = policy.get("preserve_immutable_blocks", [])
     empty_markers = [m for m in imm if not isinstance(m, str) or not m.strip()]
     if empty_markers:
-        warnings.append(f"[L6] compression/policy.yaml: preserve_immutable_blocks 含空标记 — 共 {len(empty_markers)} 个")
+        warnings.append(
+            f"[L6] compression/policy.yaml: preserve_immutable_blocks 含空标记 — 共 {len(empty_markers)} 个"
+        )
 
     return errors, warnings
 
@@ -465,11 +494,7 @@ def _str_distance(a: str, b: str) -> int:
     for i, ca in enumerate(a):
         curr = [i + 1]
         for j, cb in enumerate(b):
-            curr.append(min(
-                prev[j + 1] + 1,
-                curr[j] + 1,
-                prev[j] + (0 if ca == cb else 1)
-            ))
+            curr.append(min(prev[j + 1] + 1, curr[j] + 1, prev[j] + (0 if ca == cb else 1)))
         prev = curr
     return prev[-1]
 
@@ -487,7 +512,7 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
         return errors, warnings, fixes
 
     try:
-        with open(manifest_path, "r", encoding="utf-8") as fh:
+        with open(manifest_path, encoding="utf-8") as fh:
             manifest_data = yaml.safe_load(fh)
     except yaml.YAMLError as exc:
         errors.append(f"[L7] script_manifest.yaml 解析失败: {exc}")
@@ -532,12 +557,14 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
         for o in sorted(orphans):
             rel_path = o.replace("scripts/governance/", "", 1)
             dim_tag = rel_path.split("/")[0] if "/" in rel_path else "unknown"
-            fixes.append({
-                "type": "manifest_register",
-                "name": rel_path,
-                "dimension": dim_tag,
-                "desc": f"注册孤儿脚本: {rel_path}",
-            })
+            fixes.append(
+                {
+                    "type": "manifest_register",
+                    "name": rel_path,
+                    "dimension": dim_tag,
+                    "desc": f"注册孤儿脚本: {rel_path}",
+                }
+            )
 
     # 僵尸条目：manifest中有，文件系统没有
     zombies = manifest_registered - fs_scripts
@@ -552,7 +579,7 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
     for full_name, entry in manifest_entries.items():
         dims = entry.get("dimensions", [])
         if not dims or not isinstance(dims, list):
-            warnings.append(f"[L7] manifest条目 \"{full_name}\" dimensions 为空或非list")
+            warnings.append(f'[L7] manifest条目 "{full_name}" dimensions 为空或非list')
 
         # 检查对应的文件系统中是否存在
         fs_path = REPO_ROOT / full_name.replace("/", os.sep)
@@ -562,10 +589,12 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
             if parent_dir.exists():
                 expected_name = fs_path.name
                 candidates = [
-                    f.name for f in parent_dir.iterdir()
-                    if f.is_file() and f.name != "__init__.py"
-                       and _str_distance(f.name, expected_name) <= 2
-                       and f.name != expected_name
+                    f.name
+                    for f in parent_dir.iterdir()
+                    if f.is_file()
+                    and f.name != "__init__.py"
+                    and _str_distance(f.name, expected_name) <= 2
+                    and f.name != expected_name
                 ]
                 if candidates:
                     typo_candidates.append((full_name, expected_name, candidates))
@@ -580,12 +609,14 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
         warnings.extend(typo_lines)
         for full_name, expected, candidates in typo_candidates:
             rel_path = full_name.replace("scripts/governance/", "", 1)
-            fixes.append({
-                "type": "manifest_rename",
-                "old_name": rel_path,
-                "new_name": rel_path.rsplit("/", 1)[0] + "/" + candidates[0],
-                "desc": f"修正 manifest 笔误: {expected} → {candidates[0]}",
-            })
+            fixes.append(
+                {
+                    "type": "manifest_rename",
+                    "old_name": rel_path,
+                    "new_name": rel_path.rsplit("/", 1)[0] + "/" + candidates[0],
+                    "desc": f"修正 manifest 笔误: {expected} → {candidates[0]}",
+                }
+            )
 
     # === 7B: 预埋文件就绪检测 ===
     FORWARD_DECLARED = {
@@ -603,7 +634,9 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
         info_lines = [f"[L7] 预埋文件已就绪（之前是规划中，现已创建） — 共 {len(ready)} 个"]
         for path, desc in ready:
             info_lines.append(f"      {path} → {desc}")
-            info_lines.append(f"        ⚡ 行动提醒: 确认 capabilities.yaml write_config.deny 中的注释需更新 (移除「预埋」标记)")
+            info_lines.append(
+                "        ⚡ 行动提醒: 确认 capabilities.yaml write_config.deny 中的注释需更新 (移除「预埋」标记)"
+            )
         warnings.extend(info_lines)
 
     # 统计
@@ -630,18 +663,18 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
     if migrate_path.exists():
         try:
             code = migrate_path.read_text(encoding="utf-8")
-            known_match = re.search(r'KNOWN_MODELS\s*:\s*dict\[.*?\]\s*=\s*\{', code)
+            known_match = re.search(r"KNOWN_MODELS\s*:\s*dict\[.*?\]\s*=\s*\{", code)
             if known_match:
                 start = known_match.end()
                 depth = 1
                 end = start
                 while end < len(code) and depth > 0:
-                    if code[end] == '{':
+                    if code[end] == "{":
                         depth += 1
-                    elif code[end] == '}':
+                    elif code[end] == "}":
                         depth -= 1
                     end += 1
-                body = code[start:end - 1]
+                body = code[start : end - 1]
                 code_models = set(re.findall(r'"([^"]+)"\s*:\s*\{', body))
                 yaml_only = yaml_models - code_models
                 code_only = code_models - yaml_models
@@ -657,7 +690,9 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
             warnings.append(f"[L8] 无法读取 {migrate_path}")
 
     # 8B: registry-master-index.yaml 路径漂移检测
-    idx_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+    idx_path = (
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+    )
     if idx_path.exists():
         try:
             idx_text = idx_path.read_text(encoding="utf-8")
@@ -671,13 +706,17 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
                     if not phys:
                         continue
                     if phys.startswith("src/zephyr/config/"):
-                        errors.append(f"[L8] registry-master-index.yaml: \"{name}\" physical_path=\"{phys}\" 指向 src/zephyr/config/（应改为 config/）")
+                        errors.append(
+                            f'[L8] registry-master-index.yaml: "{name}" physical_path="{phys}" 指向 src/zephyr/config/（应改为 config/）'
+                        )
                     elif phys.startswith("config/"):
                         full = REPO_ROOT / phys.replace("/", os.sep)
                         if not full.exists():
-                            warnings.append(f"[L8] registry-master-index.yaml: \"{name}\" physical_path=\"{phys}\" 文件不存在")
+                            warnings.append(
+                                f'[L8] registry-master-index.yaml: "{name}" physical_path="{phys}" 文件不存在'
+                            )
         except (yaml.YAMLError, OSError, UnicodeDecodeError):
-            warnings.append(f"[L8] 无法解析 registry-master-index.yaml")
+            warnings.append("[L8] 无法解析 registry-master-index.yaml")
 
     # 8C: session_state_machine.yaml 状态机完整性
     ssm = yaml_data.get("/config/session_state_machine.yaml", {})
@@ -715,12 +754,16 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
             f = t.get("from", "")
             to = t.get("to", "")
             if f and f not in states:
-                errors.append(f"[L8] session_state_machine.yaml: transition from=\"{f}\" 不在 states 中")
+                errors.append(f'[L8] session_state_machine.yaml: transition from="{f}" 不在 states 中')
             if to and to not in states:
-                errors.append(f"[L8] session_state_machine.yaml: transition to=\"{to}\" 不在 states 中")
+                errors.append(f'[L8] session_state_machine.yaml: transition to="{to}" 不在 states 中')
 
     # 8D: implementation_status 标注检查
-    for cfg_rel in ["/config/context_rules_v1.yaml", "/config/embedding_model_registry.yaml", "/config/session_state_machine.yaml"]:
+    for cfg_rel in [
+        "/config/context_rules_v1.yaml",
+        "/config/embedding_model_registry.yaml",
+        "/config/session_state_machine.yaml",
+    ]:
         data = yaml_data.get(cfg_rel, {})
         if isinstance(data, dict) and "implementation_status" not in data:
             warnings.append(f"[L8] {cfg_rel}: 缺少 implementation_status 标注（声明式契约文件应标注实现状态）")
@@ -731,10 +774,10 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
             continue
         v = cfg_data.get("version")
         if v is not None and not re.match(r"^\d+\.\d+\.\d+$", str(v)):
-            warnings.append(f"[L8] {cfg_rel}: version=\"{v}\" 非 semver (x.y.z)")
+            warnings.append(f'[L8] {cfg_rel}: version="{v}" 非 semver (x.y.z)')
         sv = cfg_data.get("schema_version")
         if sv is not None and not re.match(r"^\d+\.\d+\.\d+$", str(sv)):
-            warnings.append(f"[L8] {cfg_rel}: schema_version=\"{sv}\" 非 semver (x.y.z)")
+            warnings.append(f'[L8] {cfg_rel}: schema_version="{sv}" 非 semver (x.y.z)')
 
     return errors, warnings
 
@@ -750,7 +793,7 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
         tr_text = tr_path.read_text(encoding="utf-8")
         tr_data = yaml_data.get("/config/trigger_router.yaml", {})
         trigger_count = len(tr_data.get("triggers", {})) if isinstance(tr_data, dict) else 0
-        count_match = re.search(r'(\d+)\s*种\s*trigger_type', tr_text)
+        count_match = re.search(r"(\d+)\s*种\s*trigger_type", tr_text)
         if count_match:
             claimed = int(count_match.group(1))
             if claimed != trigger_count:
@@ -763,7 +806,7 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
         if isinstance(ctx_data, dict):
             desc = ctx_data.get("description", "")
             rules = ctx_data.get("rules", [])
-            count_match = re.search(r'(\d+)\s+context management rules', desc)
+            count_match = re.search(r"(\d+)\s+context management rules", desc)
             if count_match:
                 claimed = int(count_match.group(1))
                 actual = len(rules) if isinstance(rules, list) else 0
@@ -771,7 +814,9 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
                     errors.append(f"[L9] context_rules_v1.yaml: description 声称 {claimed} rules，实际 {actual} 条")
 
     # 9C: registry-master-index.yaml entry_count 与 YAML 实际条目一致性
-    idx_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+    idx_path = (
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+    )
     if idx_path.exists():
         try:
             idx_data = yaml.safe_load(idx_path.read_text(encoding="utf-8"))
@@ -800,7 +845,9 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
                         else:
                             continue
                         if actual != entry_count:
-                            errors.append(f"[L9] registry-master-index.yaml: \"{name}\" entry_count={entry_count}，实际 {actual} 条")
+                            errors.append(
+                                f'[L9] registry-master-index.yaml: "{name}" entry_count={entry_count}，实际 {actual} 条'
+                            )
                     except (yaml.YAMLError, UnicodeDecodeError):
                         pass
         except (yaml.YAMLError, OSError, UnicodeDecodeError):
@@ -810,9 +857,12 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
     yaml_files = sorted(f for f in CONFIG_DIR.rglob("*.yaml") if f.is_file())
     try:
         result = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard", "--"] +
-            [str(f.relative_to(REPO_ROOT)).replace("\\", "/") for f in yaml_files],
-            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=10,
+            ["git", "ls-files", "--others", "--exclude-standard", "--"]
+            + [str(f.relative_to(REPO_ROOT)).replace("\\", "/") for f in yaml_files],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            timeout=10,
         )
         if result.returncode == 0 and result.stdout.strip():
             untracked = [line.strip() for line in result.stdout.strip().splitlines() if line.strip()]
@@ -825,16 +875,23 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
     emb_data = yaml_data.get("/config/embedding_model_registry.yaml", {})
     if isinstance(emb_data, dict):
         actual_models = len(emb_data.get("models", []))
-        scope_match = re.search(r'(\d+)\s*个', str(emb_data.get("scope", "")))
+        scope_match = re.search(r"(\d+)\s*个", str(emb_data.get("scope", "")))
         if not scope_match:
-            idx_path2 = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+            idx_path2 = (
+                REPO_ROOT
+                / "docs"
+                / "01_policies_and_standards"
+                / "_registry"
+                / "catalogs"
+                / "registry-master-index.yaml"
+            )
             if idx_path2.exists():
                 try:
                     idx2 = yaml.safe_load(idx_path2.read_text(encoding="utf-8"))
                     for entry in idx2.get("registries", []):
                         if "embedding" in entry.get("name", "").lower() or "Embedding" in entry.get("name", ""):
                             scope = entry.get("scope", "")
-                            scope_match = re.search(r'(\d+)\s*个', scope)
+                            scope_match = re.search(r"(\d+)\s*个", scope)
                             break
                 except (yaml.YAMLError, OSError):
                     pass
@@ -866,12 +923,7 @@ def l10_pytest_markers_sync() -> tuple[list[str], list[str]]:
         errors.append(f"[L10] pyproject.toml 解析失败: {exc}")
         return errors, warnings
 
-    toml_markers_raw = (
-        toml_data.get("tool", {})
-        .get("pytest", {})
-        .get("ini_options", {})
-        .get("markers", [])
-    )
+    toml_markers_raw = toml_data.get("tool", {}).get("pytest", {}).get("ini_options", {}).get("markers", [])
     toml_markers = set()
     for m in toml_markers_raw:
         name = m.split(":")[0].strip() if isinstance(m, str) else ""
@@ -913,13 +965,20 @@ def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
     errors = []
     warnings = []
 
-    tracker_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "declarative-contract-tracker.yaml"
+    tracker_path = (
+        REPO_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "declarative-contract-tracker.yaml"
+    )
     if not tracker_path.exists():
         warnings.append("[L11] declarative-contract-tracker.yaml 不存在 — 跳过契约对账")
         return errors, warnings
 
     try:
-        with open(tracker_path, "r", encoding="utf-8") as fh:
+        with open(tracker_path, encoding="utf-8") as fh:
             tracker = yaml.safe_load(fh)
     except Exception as exc:
         errors.append(f"[L11] 契约跟踪登记表解析失败: {exc}")
@@ -971,9 +1030,7 @@ def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
             warnings.append(f"[L11] 契约跟踪登记表中登记的 Python 源已不存在: {py_src}（请更新或删除条目）")
 
     if unresolved_count > 0:
-        warnings.append(
-            f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker.yaml）"
-        )
+        warnings.append(f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker.yaml）")
 
     return errors, warnings
 
@@ -1125,7 +1182,7 @@ def main() -> None:
         print(f"\n  [FIX-REPORT] 已应用: {applied}, 跳过: {skipped}", file=sys.stderr)
 
     elif args.fix and not all_fixes:
-        print(f"\n  [FIX] 无需修复 — 所有检查项已通过 ✅", file=sys.stderr)
+        print("\n  [FIX] 无需修复 — 所有检查项已通过 ✅", file=sys.stderr)
 
     # === 输出结果 ===
     print(f"\n{'=' * 60}", file=sys.stderr)
@@ -1134,14 +1191,14 @@ def main() -> None:
         for err in all_errors:
             print(f"    ❌ {err}", file=sys.stderr)
     else:
-        print(f"\n  ✅ ERRORS: 0", file=sys.stderr)
+        print("\n  ✅ ERRORS: 0", file=sys.stderr)
 
     if all_warnings:
         print(f"\n  WARNINGS ({len(all_warnings)}):", file=sys.stderr)
         for warn in all_warnings:
             print(f"    ⚠️  {warn}", file=sys.stderr)
     else:
-        print(f"\n  ✅ WARNINGS: 0", file=sys.stderr)
+        print("\n  ✅ WARNINGS: 0", file=sys.stderr)
 
     total = len(all_errors) + len(all_warnings)
     print(f"\n  [RESULT] {len(all_errors)} errors, {len(all_warnings)} warnings, {total} total", file=sys.stderr)
