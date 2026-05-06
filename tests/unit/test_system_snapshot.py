@@ -31,6 +31,7 @@ from zephyr.db.sqlite_schema import init_db
 # Fixture
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def tmp_repo(tmp_path: Path):
     """构造简化仓库结构（rationale-log + gates + db）。"""
@@ -64,6 +65,7 @@ def tmp_repo(tmp_path: Path):
         "db_path": db_path,
     }
 
+
 @pytest.fixture
 def snapshotter(tmp_repo):
     return SystemSnapshotter(
@@ -74,9 +76,11 @@ def snapshotter(tmp_repo):
         module_manifests={"zephyr.gates.gate_engine": "v1.0.0"},
     )
 
+
 # ---------------------------------------------------------------------------
 # 1. SystemSnapshot 数据模型
 # ---------------------------------------------------------------------------
+
 
 class TestSystemSnapshotModel:
     def test_frozen_raises_on_mutate(self):
@@ -110,9 +114,11 @@ class TestSystemSnapshotModel:
         )
         assert snap.blueprint_v12_pass_rate == -1.0
 
+
 # ---------------------------------------------------------------------------
 # 2. module_versions
 # ---------------------------------------------------------------------------
+
 
 class TestModuleVersions:
     def test_module_versions_populated(self, snapshotter):
@@ -131,9 +137,11 @@ class TestModuleVersions:
         snap, _ = s.capture()
         assert snap.module_versions == {}
 
+
 # ---------------------------------------------------------------------------
 # 3. provenance_fingerprint
 # ---------------------------------------------------------------------------
+
 
 class TestProvenanceFingerprint:
     def test_fingerprint_matches_sha256(self, tmp_repo, snapshotter):
@@ -153,9 +161,11 @@ class TestProvenanceFingerprint:
         snap, _ = s.capture()
         assert snap.provenance_fingerprint == "unavailable"
 
+
 # ---------------------------------------------------------------------------
 # 4. registry_hashes
 # ---------------------------------------------------------------------------
+
 
 class TestRegistryHashes:
     def test_existing_gates_have_hex_hashes(self, snapshotter):
@@ -177,9 +187,11 @@ class TestRegistryHashes:
         snap2, _ = snapshotter.capture()
         assert snap1.registry_hashes["G1"] != snap2.registry_hashes["G1"]
 
+
 # ---------------------------------------------------------------------------
 # 5. blueprint_v12_pass_rate
 # ---------------------------------------------------------------------------
+
 
 class TestBlueprintPassRate:
     def test_returns_sentinel_when_db_missing(self, tmp_repo):
@@ -222,9 +234,11 @@ class TestBlueprintPassRate:
         snap, _ = s.capture()
         assert snap.blueprint_v12_pass_rate == pytest.approx(0.5)
 
+
 # ---------------------------------------------------------------------------
 # 6. 快照写入（文件 IO）
 # ---------------------------------------------------------------------------
+
 
 class TestSnapshotPersistence:
     def test_snapshot_file_created(self, snapshotter, tmp_repo):
@@ -273,9 +287,11 @@ class TestSnapshotPersistence:
         finally:
             os.chmod(str(readonly_dir), stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
 
+
 # ---------------------------------------------------------------------------
 # 7. M1 backward 兼容
 # ---------------------------------------------------------------------------
+
 
 class TestBackwardCompatibility:
     def test_capture_never_raises(self, snapshotter, monkeypatch):

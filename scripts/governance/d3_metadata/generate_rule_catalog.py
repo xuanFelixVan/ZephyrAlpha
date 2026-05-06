@@ -1,33 +1,30 @@
 #!/usr/bin/env python3
-"""
-generate_rule_catalog.py - Scan frontmatter and generate rule-catalog.yaml
+"""Scan docs/01_policies_and_standards and emit _registry/catalogs/rule-catalog.yaml.
 
+Parses Markdown/YAML frontmatter (and YAML comment headers where applicable).
+
+CLI::
+
+    python generate_rule_catalog.py [--scan-dir DIR] [--output FILE] [--compare FILE]
+"""
+
+# Governance script manifest (YAML fragment for tooling/consumers; not evaluated as code).
 __manifest__ = """
 args: []
-description: 规则目录自动生成工具
+description: >
+  Scan policy tree; aggregate frontmatter into rule-catalog.yaml.
+  Aligns with static-manifest SSOT for governance scripts (section 6.16-style workflow).
 dimensions:
-- D3
+  - D3
 priority: P2
 timeout_seconds: 60
 warn_only: false
 """
 
-
-Scans all .md/.yaml files under 01_policies_and_standards/,
-parses their frontmatter, and generates a YAML catalog.
-
-Usage:
-    python generate_rule_catalog.py [--scan-dir DIR] [--output FILE] [--compare FILE]
-
-    Options:
-    --output FILE    Output YAML file (default: _registry/catalogs/rule-catalog.yaml)
-    --compare FILE   Compare with existing registry file
-"""
-
 import argparse
 import re
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -43,6 +40,7 @@ from _shared.frontmatter import parse_frontmatter
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
+
 
 def extract_yaml_header(content: str) -> dict | None:
     """Extract header fields from a .yaml file (comment-based header)."""
@@ -83,10 +81,12 @@ def extract_yaml_header(content: str) -> dict | None:
             pass
     return fields if fields else None
 
-def scan_directory(scan_dir: str) -> list[dict]:
+
+def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
     """Scan directory for .md and .yaml files, extract frontmatter."""
     results: list[dict] = []
-    scan_path = Path(scan_dir)
+    scan_path = Path(scan_dir).resolve()
+    repo_root = repo_root.resolve()
 
     if not scan_path.exists():
         print(f"ERROR: Scan directory does not exist: {scan_dir}", file=sys.stderr)
@@ -96,7 +96,13 @@ def scan_directory(scan_dir: str) -> list[dict]:
         scan_path, extensions=SCAN_EXTENSIONS_MD_YAML, exclude_dirs=EXCLUDE_DIRS | {".audit_cache"}
     ):
         fname = fpath.name
-        rel_path = str(fpath.relative_to(scan_path.parent.parent.parent))
+        try:
+            rel_path = str(fpath.resolve().relative_to(repo_root)).replace("\\", "/")
+        except ValueError:
+            try:
+                rel_path = str(fpath.resolve().relative_to(scan_path)).replace("\\", "/")
+            except ValueError:
+                rel_path = str(fpath.resolve())
 
         try:
             raw = fpath.read_text(encoding="utf-8")
@@ -129,11 +135,30 @@ def scan_directory(scan_dir: str) -> list[dict]:
 
     return results
 
-def generate_catalog(entries: list[dict], output_path: str) -> str:
-    """Generate rule-catalog.yaml from scanned entries."""
+
+SCOPE_NOTE_DOCUMENT_METADATA = (
+    "本文件仅索引 docs/01_policies_and_standards/ 下带治理 frontmatter 的 Markdown（及本树登记引用）。"
+    " docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture-model 施工树等不在此表——见各目录 "
+    "INDEX.md 与 architecture-model/SCOPE.yaml。"
+)
+
+
+def generate_catalog(
+    entries: list[dict],
+    output_path: str,
+    metadata_path: str | None = None,
+) -> None:
+    """Write rule-catalog.yaml and optionally document-metadata-index.yaml."""
+    gen_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     catalog = {
         "schema_version": "1.0.0",
-        "generated_at": datetime.now().isoformat(),
+        "module_id": "PS-REG-018",
+        "doc_type": "register",
+        "title": "规则路径目录",
+        "status": "active",
+        "generated_at": gen_ts,
+        "generated_by": "scripts/governance/d3_metadata/generate_rule_catalog.py",
         "total_files": len(entries),
         "files": entries,
     }
@@ -146,6 +171,26 @@ def generate_catalog(entries: list[dict], output_path: str) -> str:
 
     print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
 
+    if metadata_path:
+        meta_out = Path(metadata_path)
+        meta_out.parent.mkdir(parents=True, exist_ok=True)
+        document_metadata = {
+            "schema_version": 1.0,
+            "module_id": "PS-REG-002",
+            "doc_type": "register",
+            "title": "文档元数据索引",
+            "status": "active",
+            "generated_at": gen_ts,
+            "generated_from": "generate_rule_catalog.py（与 rule-catalog.yaml 同批同步）",
+            "scope_note": SCOPE_NOTE_DOCUMENT_METADATA,
+            "total_files": len(entries),
+            "files": entries,
+        }
+        with open(meta_out, "w", encoding="utf-8") as mf:
+            yaml.dump(document_metadata, mf, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        print(f"Generated document metadata index -> {metadata_path}", file=sys.stderr)
+
+
 def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> int:
     """Compare auto-generated catalog with manual registry."""
     reg_path = Path(registry_path)
@@ -156,11 +201,15 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
     with open(reg_path, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
 
-    if "rules" not in registry:
-        print("WARNING: Registry has no 'rules' key", file=sys.stderr)
+    reg_list = registry.get("files") or registry.get("rules") or []
+    if not reg_list:
+        print(
+            "WARNING: Registry has no 'files' or 'rules' list (skipped compare)",
+            file=sys.stderr,
+        )
         return 0
 
-    reg_entries = {r.get("path", ""): r for r in registry["rules"]}
+    reg_entries = {r.get("path", ""): r for r in reg_list}
     cat_entries = {e["path"]: e for e in catalog_entries}
 
     only_in_catalog = set(cat_entries.keys()) - set(reg_entries.keys())
@@ -211,6 +260,7 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
 
     return len(only_in_catalog) + len(differences)
 
+
 def main() -> None:
     """入口函数."""
     repo_root = Path(__file__).resolve().parent.parent.parent.parent
@@ -226,6 +276,18 @@ def main() -> None:
         help="Output YAML file",
     )
     parser.add_argument(
+        "--metadata-output",
+        default=str(
+            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+        ),
+        help="同步写出 document-metadata-index.yaml（默认启用）",
+    )
+    parser.add_argument(
+        "--no-metadata-output",
+        action="store_true",
+        help="不同步写出 document-metadata-index.yaml",
+    )
+    parser.add_argument(
         "--compare",
         default=str(
             repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
@@ -235,15 +297,16 @@ def main() -> None:
     parser.add_argument(
         "--warn-only",
         action="store_true",
-        help="\u4ec5\u62a5\u544a\u4e0d\u9000\u51fa\u975e\u96f6\u7801",
+        help="仅比对报告差异；不因差异而退出非零（CI 可加严）",
     )
     args = parser.parse_args()
 
     print(f"Scanning: {args.scan_dir}", file=sys.stderr)
-    entries = scan_directory(args.scan_dir)
+    entries = scan_directory(args.scan_dir, repo_root)
     print(f"Found {len(entries)} files with frontmatter", file=sys.stderr)
 
-    generate_catalog(entries, args.output)
+    meta_path = None if args.no_metadata_output else args.metadata_output
+    generate_catalog(entries, args.output, metadata_path=meta_path)
 
     if args.compare:
         diff_count = compare_with_registry(entries, args.compare)
@@ -251,6 +314,7 @@ def main() -> None:
             sys.exit(1)
 
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

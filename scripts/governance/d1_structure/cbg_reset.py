@@ -2,15 +2,6 @@
 """
 CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command)
 
-__manifest__ = """
-args: []
-description: CBG熔断器重置工具（Owner-Gated——仅 Owner 可执行）
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 30
-warn_only: true
-"""
 
 
 任务编号 : T-V2-005 Step 4（GLM-5.1 子任务）
@@ -37,6 +28,17 @@ failure_count 归零、opened_at/reason 清空。
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: CBG熔断器重置工具（Owner-Gated——仅 Owner 可执行）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
 
 import argparse
 import sys

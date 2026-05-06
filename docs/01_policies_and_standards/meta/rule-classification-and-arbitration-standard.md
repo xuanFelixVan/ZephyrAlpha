@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PS-STD-004
 title: ZephyrAlpha 规则分类与冲突裁决标准
 doc_type: standard

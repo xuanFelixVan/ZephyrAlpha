@@ -2,10 +2,13 @@
 # ZephyrAlpha 登记表的登记表 — 跨登记表一致性契约（Registry of Registries SSoT）
 # ============================================================================
 # 版本: 1.1.0 | 创建: 2026-05-02 | 更新: 2026-05-03 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-016
+# doc_type: contract
 
 # YAML canonical 字段（AI 零歧义消费——对标 §6.12 AI-First）
 schema_version: "1.1.0"
-module_id: PS-REG-002
+module_id: PS-REG-016
 doc_type: contract
 title: "登记表的登记表 — 跨登记表一致性契约"
 status: active
@@ -25,7 +28,7 @@ summary: "管理项目中所有登记表的跨表共享字段一致性规则。�
 #
 # 注意: 本文件仅覆盖共享字段一致性（version/module_id/layer/status/priority/generation）。
 #       创建工件时的全量登记目标清单见 GOV-MOD-007 MRS-001 矩阵。
-#       registry-master-index.yaml 提供 24 张登记表的存量清单。
+#       registry-master-index.yaml 按「脚本自动扫描 `_registry/catalogs/*.yaml`」生成 `total_registries`（数以该字段为准，勿写死）。
 #
 # AI 使用方式:
 #   1. 读本文件 → 了解项目中有哪些登记表、各自管什么字段

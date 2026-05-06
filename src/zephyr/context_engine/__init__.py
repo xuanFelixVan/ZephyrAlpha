@@ -31,4 +31,29 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 ----
 - VMS（vector_memory/）：检索
 - LSG（llm_security/）：注入前验证
+
+组合根（根因修复）
+----------------
+四段流水线的**单一编排入口**：``context_pipeline.run_context_four_stage``（见文末 re-export）。
 """
+from __future__ import annotations
+
+from zephyr.context_engine.architecture_context_loader import (
+    DEFAULT_ARCH_CONTEXT_PATH,
+    format_architecture_context_excerpt,
+    load_architecture_context_dict,
+)
+from zephyr.context_engine.context_pipeline import (
+    ContextFourStageResult,
+    run_context_four_stage,
+    run_context_four_stage_or_raise,
+)
+
+__all__ = [
+    "ContextFourStageResult",
+    "DEFAULT_ARCH_CONTEXT_PATH",
+    "format_architecture_context_excerpt",
+    "load_architecture_context_dict",
+    "run_context_four_stage",
+    "run_context_four_stage_or_raise",
+]

@@ -14,19 +14,61 @@ on:
   push:
     branches: [main, master, "phase/*", "sprint/*", "feature/*"]
     paths:
+      - ".github/workflows/**"
       - "scripts/governance/**"
       - "docs/**"
       - "src/zephyr/**"
       - "config/**"
+      - "architecture-model/**"
+      - "tests/**"
+      - "data/**"
+      - "infra/**"
       - ".pre-commit-config.yaml"
       - "pyproject.toml"
+      - "requirements.txt"
+      - "requirements-dev.txt"
+      - "requirements-demo.txt"
+      - "demo_e2e_pipeline.py"
+      - "docker-compose.yml"
+      - "AGENTS.md"
+      - "README.md"
+      - "SECURITY.md"
+      - "CONTRIBUTING.md"
+      - ".editorconfig"
+      - ".env.example"
+      - ".gitignore"
+      - "LICENSE"
+      - ".trae/**"
+      - "_patches/**"
   pull_request:
     branches: [main, master]
     paths:
+      - ".github/workflows/**"
       - "scripts/governance/**"
       - "docs/**"
       - "src/zephyr/**"
       - "config/**"
+      - "architecture-model/**"
+      - "tests/**"
+      - "data/**"
+      - "infra/**"
+      - ".pre-commit-config.yaml"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "requirements-dev.txt"
+      - "requirements-demo.txt"
+      - "demo_e2e_pipeline.py"
+      - "docker-compose.yml"
+      - "AGENTS.md"
+      - "README.md"
+      - "SECURITY.md"
+      - "CONTRIBUTING.md"
+      - ".editorconfig"
+      - ".env.example"
+      - ".gitignore"
+      - "LICENSE"
+      - ".trae/**"
+      - "_patches/**"
   workflow_dispatch:
 
 jobs:
@@ -46,8 +88,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml pytest
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+          pip install -e .
 
       - name: Script Quality Gate (GATE-SQ)
         run: python scripts/governance/d11_compliance/validate_script_quality.py --scripts-dir scripts/governance
@@ -63,6 +106,10 @@ jobs:
 
       - name: Architecture Gates (GATE-01~08+A+B+SC)
         run: python scripts/governance/d5_architecture/check_architecture_gates.py
+
+      - name: SSoT Validator (ADR-0001/0021 enforced)
+        run: python scripts/governance/d5_architecture/validate_ssot.py --ci
+        continue-on-error: false
 
       - name: Test Collection Gate (GATE-18)
         run: python -m pytest tests/ --collect-only -q --tb=line
@@ -82,6 +129,14 @@ jobs:
         run: python scripts/governance/d7_code/check_ai_capability_boundary.py
         continue-on-error: false
 
+      - name: GATE-19 Static Manifest Drift Check
+        run: python scripts/governance/d5_architecture/validate_static_manifest_drift.py --check
+        continue-on-error: false
+
+      - name: GATE-22 Load Path Integrity
+        run: python scripts/governance/d5_architecture/validate_load_path_integrity.py --check
+        continue-on-error: true
+
       - name: Pre-compile Architecture Context
         run: python scripts/context/generate_architecture_context.py
 
@@ -91,6 +146,16 @@ jobs:
 
       - name: Architectural Fitness Functions
         run: python -m pytest tests/architecture/ -v --tb=short
+
+      - name: Arch Guard — Invariant Enforcement
+        run: python scripts/arch_guard/run_all.py
+        continue-on-error: false
+
+      - name: Dependency Vulnerability Scan (pip-audit)
+        run: |
+          pip install pip-audit
+          pip-audit
+        continue-on-error: false
 
       - name: Contract Impact Analysis
         run: python scripts/governance/d5_architecture/analyze_contract_impact.py --all

@@ -9,6 +9,7 @@ partition:
 
 modules:
   - id: ce-core
+    module_id: MOD-INF-008
     name: Context Engine Core
     submodule_path: src/zephyr/context_engine/
     status: implemented
@@ -26,12 +27,12 @@ modules:
       - prompt_registry.py
       - system_snapshot.py
     interfaces:
-      - contract_id: P0-CE-VMS
+      - contract_id: CT-CE-VMS-001
         role: consumer
-        description: 依赖 VMS 进行上下文检索
-      - contract_id: P0-CE-LSG
+        description: 知识向量检索
+      - contract_id: CT-CE-LSG-001
         role: consumer
-        description: 注入前由 LSG 验证安全性
+        description: 上下文注入前安全校验
     adr_ref:
       - ADR-0015
       - ADR-0022

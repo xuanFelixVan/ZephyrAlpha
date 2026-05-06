@@ -8,7 +8,7 @@
 #
 # 对标: ITIL Knowledge Management → Knowledge Article Lifecycle
 #       + ISO 30401 Knowledge Management Systems（知识条目须有owner/状态/消费者）
-#       + task-card-kms blueprint §5.4（KMS 三层漏斗——50 KO→30 KE→10 KB）
+#       + MOD-INF-006 task-system blueprint §5.4（KMS 三层漏斗——50 KO→30 KE→10 KB）
 #
 # 用途: 登记 KMS 知识库中每个 KE 编号的知识条目——
 #       标题 / 摘要 / 消费者（哪些模块消费此知识）/ TTL / 状态。
@@ -83,7 +83,7 @@ knowledge_entries: []
 reserved_ranges:
   - range: "KE-001 ~ KE-009"
     domain: "vibe_coding"
-    blueprint_anchor: "MOD-INF-004 §5.4"
+    blueprint_anchor: "MOD-INF-006 §5.4"
   - range: "KE-010 ~ KE-019"
     domain: "document_governance"
   - range: "KE-020 ~ KE-029"
@@ -91,7 +91,7 @@ reserved_ranges:
     blueprint_anchor: "MOD-INF-005 §4"
   - range: "KE-030 ~ KE-039"
     domain: "task_card"
-    blueprint_anchor: "MOD-INF-003 §5.2"
+    blueprint_anchor: "MOD-INF-006 §5.2"
 
 # ============================================================================
 # 当前知识存储的实际位置（过渡期——KE 编号体系未激活）
@@ -100,7 +100,7 @@ transition_period:
   note: "2 过渡期——知识以 blueprint.md + ADR 形式存在，非 KE 编号"
   knowledge_sources:
     - {type: blueprint, count: 5, path: "docs/03_modules/l01_infrastructure/*/"}
-    - {type: adr, count: 39, path: "docs/02_enterprise_architecture/adr/"}
+    - {type: adr, count: 39, path: "KB:decisions namespace（Git-backed ADR；旧 docs/02_enterprise_architecture/adr/ 物理树已废弃）"}
     - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
     - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
   migration_phase: "beta"

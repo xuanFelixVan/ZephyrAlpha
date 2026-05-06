@@ -1,15 +1,6 @@
 """
 validate_layer_deps.py — 跨层依赖违规检测
 
-__manifest__ = """
-args: []
-description: 跨层依赖违规检测（COND-30~32 — 层纪律）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 COND-30~32（跨层调用 / contracts 放业务层）
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 跨层依赖违规检测（COND-30~32 — 层纪律）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import sys

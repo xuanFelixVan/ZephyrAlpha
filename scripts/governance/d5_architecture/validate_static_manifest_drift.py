@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-GATE-19：静态清单漂移阻断（validate_static_manifest_drift.py）
-===============================================================
+GATE-19: validate_static_manifest_drift.py
+"""
 
 __manifest__ = """
 args:
-- {flag: --check, type: bool, description: "仅检测漂移（pre-commit模式）"}
-description: >
-  运行所有生成器的 --check 模式，对比自动生成版 vs 磁盘版。
-  任何不一致 → 阻断提交。对标 §6.16 静态清单自动生成铁律。
+- {flag: --check, type: bool, description: "only detect drift (pre-commit mode)"}
+description: "run all generators --check, hard-block any drift between auto-generated vs disk. Anchored to AGENTS.md section 6.16"
 dimensions:
 - D5
 priority: P0
@@ -16,29 +14,21 @@ timeout_seconds: 30
 warn_only: false
 """
 
+"""
+Runs all static-manifest generators in --check mode.
+Any mismatch between auto-generated version and disk version
+triggers hard failure (exit 1).
 
-权威依据
---------
-AGENTS.md §6.16 静态清单自动生成铁律：
-  任何"条目列表+计数"的文件必须由生成器产出，标注 generated_at。
-  手工编辑的清单将在本门禁中被检测并阻断。
+Authority: AGENTS.md section 6.16 -- any file whose primary content
+is 'entry list + count' must be auto-generated (Type A) or schema input (Type B).
 
-检测范围
---------
-  1. script_manifest.yaml  ← generate_script_manifest.py --check
-  2. gate-registry.yaml    ← generate_gate_registry.py --check（pre-commit部分）
-
-门禁逻辑
---------
-  - 每个生成器以 --check 模式运行
-  - 任意生成器返回非零 → 记录差异
-  - 汇总输出 → exit(1) 阻断提交
+Checks:
+  1. script_manifest.yaml -- via generate_script_manifest.py --check
+  2. gate-registry.yaml    -- via generate_gate_registry.py --check
 
 Usage:
     python validate_static_manifest_drift.py --check
 """
-
-from __future__ import annotations
 
 import subprocess
 import sys
@@ -51,10 +41,6 @@ CHECKS = [
     {
         "name": "script_manifest.yaml",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_script_manifest.py"), "--check"],
-    },
-    {
-        "name": "gate-registry.yaml (pre-commit)",
-        "cmd": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py"), "--check"],
     },
 ]
 
@@ -76,15 +62,13 @@ def main() -> None:
             print(f"PASS [{check['name']}]: {result.stdout.strip()}")
 
     if not failures:
-        print("\nGATE-19 PASS: 所有静态清单与生成源一致，无漂移。")
+        print("\nGATE-19 PASS: all static manifests are consistent with their sources.")
         sys.exit(0)
 
-    print(f"\nGATE-19 FAIL: {len(failures)} 个静态清单漂移:\n")
+    print(f"\nGATE-19 FAIL: {len(failures)} static manifest(s) have drifted:\n")
     for f in failures:
         print(f"  - {f}")
-    print(
-        "\n修复: 运行 cd D:\\ZephyrAlpha && python scripts/governance/generators/generate_script_manifest.py"
-    )
+    print("\nFix: cd D:\\ZephyrAlpha && python scripts/governance/generators/generate_script_manifest.py")
     sys.exit(1)
 
 

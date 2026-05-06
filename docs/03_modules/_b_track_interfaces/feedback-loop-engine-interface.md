@@ -10,13 +10,12 @@ classification: internal
 language: zh
 created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
-last_updated: "2026-04-24"
+last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 13.5.2 Feedback Loop Engine"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Qwen 技术选型 #13-14"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Opus 4.7 最终裁定 - VG-07 反馈闭环"
+  - "03_modules/_cross_layer/feedback-loop/blueprint.md（MOD-INF-010 — 详细设计与闭环契约；Phase 5 真源）"
+  - "architecture-model/layers/b_feedback_loop.yaml（Feedback Loop YAML SSoT）"
 supersedes: []
 related_adrs:
   - "ADR-0019 Feedback Loop Engine 架构与技术选型（pending B-e）"
@@ -32,11 +31,16 @@ tags:
   - trend-analysis
   - protocol-coupling
   - vibe-coding-infrastructure
+mod_master_blueprint: "MOD-MASTER-001"
+mod_master_contracts:
+  - "CT-FLE-ORC-001"
+  - "CT-FLE-DB-001"
+  - "CT-TELE-FLE-001"
 ---
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 
-> **定位**：Vibe Coding 2.0 五大核心服务中的"闭环大脑"。补齐 Generate → Validate → **Analyze → Evolve** 四段的后两段，让系统能从历史数据学会自我调参。对应 `vibe-coding-audit-merged.md` 识别的 **VG-07 反馈闭环缺口**。
+> **定位**：反馈闭环引擎（FLE）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-010` 蓝图 + `architecture-model/layers/b_feedback_loop.yaml`）。补齐 Generate → Validate → **Analyze → Evolve** 四段的后两段，使系统能从历史数据学会自我调参。演进路线历史上曾以「VG-07 反馈闭环缺口」表述纳入优先级（仅作背景，**非**文档 SSoT）。
 >
 > **没有 FLE 的问题**：
 >

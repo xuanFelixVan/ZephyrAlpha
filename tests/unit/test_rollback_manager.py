@@ -10,9 +10,11 @@ import pytest
 from zephyr.db.sqlite_schema import get_db_connection
 from zephyr.orchestrator.rollback_manager import RollbackManager
 
+
 @pytest.fixture
 def manager(tmp_db: Path) -> RollbackManager:
     return RollbackManager(db_path=tmp_db)
+
 
 def _insert_task(conn, task_id: str, status: str = "PENDING") -> None:
     now = "2026-04-24T00:00:00+00:00"
@@ -20,10 +22,11 @@ def _insert_task(conn, task_id: str, status: str = "PENDING") -> None:
     conn.execute(
         """INSERT OR REPLACE INTO tasks
            (task_id, namespace, seq, title, status, priority, phase, execution_model, safety_level, depends_on, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, 'P2', 2, 'GLM-5.1', 'M', '[]', ?, ?)""",
+           VALUES (?, ?, ?, ?, ?, 'P2', 2, 'glm', 'M', '[]', ?, ?)""",
         (task_id, task_id.split("-")[0], int(task_id.split("-")[-1]), task_id, status, now, now),
     )
     conn.execute("COMMIT")
+
 
 class TestRollbackManagerCheckpoint:
     def test_checkpoint_returns_id(self, manager: RollbackManager, tmp_db: Path) -> None:
@@ -45,6 +48,7 @@ class TestRollbackManagerCheckpoint:
     def test_list_checkpoints_empty(self, manager: RollbackManager) -> None:
         cps = manager.list_checkpoints()
         assert cps == []
+
 
 class TestRollbackManagerRollback:
     def test_rollback_restores_status(self, manager: RollbackManager, tmp_db: Path) -> None:
@@ -71,6 +75,7 @@ class TestRollbackManagerRollback:
     def test_rollback_nonexistent_checkpoint_raises(self, manager: RollbackManager) -> None:
         with pytest.raises(ValueError, match="Checkpoint not found"):
             manager.rollback_to("CP-nonexistent")
+
 
 class TestRollbackManagerUndo:
     def test_undo_last(self, manager: RollbackManager, tmp_db: Path) -> None:

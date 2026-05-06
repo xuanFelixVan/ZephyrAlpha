@@ -12,8 +12,27 @@
 ------
 - dashboard/ : Streamlit 监控面板 (app.py + components/)
 
+CTR 契约依赖声明（承重墙标记）
+------------------------------
+本层是以下跨层数据契约的来源或目标——Phase B 实现前 MUST 阅读对应 YAML 定义。
+任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
+
+作为消费者（Consumer）：
+  - CTR-P1-008  RiskDashboardSnapshot      ← L04
+  - CTR-P1-009  PerformanceAttributionReport ← L07
+
+外部系统边界：
+  - EXT-004  Feishu / 飞书通知接口（输出：Webhook 通知）
+
+作为全局配置消费者（Consumer）：
+  - CTR-P1-010  SystemConfiguration    ← L01
+
 架构归属
 --------
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+__all__: list[str] = []

@@ -65,6 +65,7 @@ class PriorityLevel(IntEnum):
 
     数值越大优先级越高，越难被逐出。
     """
+
     LOW = 10
     NORMAL = 50
     HIGH = 80
@@ -132,11 +133,7 @@ class ContextBlock(BaseModel):
         rw = w.get("relevance_weight", 0.3)
 
         norm_priority = self.priority / PriorityLevel.PINNED
-        return (
-            pw * (1.0 - norm_priority)
-            + fw * (1.0 - self.freshness)
-            + rw * (1.0 - self.relevance)
-        )
+        return pw * (1.0 - norm_priority) + fw * (1.0 - self.freshness) + rw * (1.0 - self.relevance)
 
 
 @dataclass(frozen=True)
@@ -225,7 +222,9 @@ class ContextEvictor:
     def instance(cls, **kwargs: object) -> ContextEvictor:
         with cls._lock:
             if cls._instance is None:
-                cls._instance = cls(**{k: v for k, v in kwargs.items() if k in ("weights", "hard_overrun_ratio")} if kwargs else {})
+                cls._instance = cls(
+                    **{k: v for k, v in kwargs.items() if k in ("weights", "hard_overrun_ratio")} if kwargs else {}
+                )
         return cls._instance
 
     @classmethod

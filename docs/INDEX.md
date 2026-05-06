@@ -45,9 +45,8 @@ depends_on:
 | 07 | `03_modules/_b_track_interfaces/` | B 轨镜像：5 大 AI 核心服务接口合同（LSG/VMS/CE/Orc/FLE）——物理位于 03_modules/ 下，编号独立为 07 | K8s API · Terraform Provider Contract |
 | 08 | `08_knowledge/` | 知识库：项目经验教训（KE）、最佳实践 | — |
 | 09 | `09_audit/` | 审计总控与审计报告（Ex-post，对已发生事实的验证） | ITIL Audit · ISO 27001 内部审计 |
-| 19 | `19_development_workspace/` | 开发工作区：AI Session 交接日志 + 临时草稿 + 历史变迁记录 | K8s kubelet log · Git reflog |
 
-> **预留编号**：04-06（已合并/预留）、10-18（预留）、20-98（预留）、99（终态归档，待建）
+> **预留编号**：04-06（已合并/预留）、10-18（预留）、19（已移出项目至外部工作区）、20-98（预留）、99（终态归档，待建）
 
 ---
 
@@ -56,7 +55,7 @@ depends_on:
 1. **找文件**：查上表中对应抽屉 → 进入其 `index.md` → 继续下钻
 2. **放文件**：查 GOV-DOC-002 §5 防幻觉路径映射表 → 确定唯一目标目录 → 放进去
 3. **新建目录**：必须走 ADR 审批流程（GOV-DOC-002 §7）
-4. **不确定**：在 `19_development_workspace/open-questions/` 登记，不实施
+4. **不确定**：在 `open-questions-register.md`（`02_enterprise_architecture/`）登记，不实施
 
 ---
 
@@ -68,4 +67,3 @@ depends_on:
 - ❌ AI 服务接口合同 → `03_modules/_b_track_interfaces/`
 - ❌ 知识库条目 → `08_knowledge/`
 - ❌ 审计报告/状态 → `09_audit/`
-- ❌ 开发草稿/临时文件 → `19_development_workspace/`

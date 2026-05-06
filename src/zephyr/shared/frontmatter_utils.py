@@ -19,6 +19,7 @@ from pathlib import Path
 
 import yaml
 
+
 def parse_frontmatter(content: str) -> dict | None:
     """解析 Markdown 文件的 YAML frontmatter。
 
@@ -45,6 +46,7 @@ def parse_frontmatter(content: str) -> dict | None:
     except yaml.YAMLError:
         return None
 
+
 def parse_frontmatter_from_file(filepath: Path | str) -> dict | None:
     """从文件路径解析 frontmatter。
 
@@ -60,6 +62,7 @@ def parse_frontmatter_from_file(filepath: Path | str) -> dict | None:
     except (FileNotFoundError, UnicodeDecodeError):
         return None
     return parse_frontmatter(content)
+
 
 def parse_yaml_header(content: str) -> dict | None:
     """解析 YAML 文件的注释头 + 顶层字段。
@@ -78,6 +81,7 @@ def parse_yaml_header(content: str) -> dict | None:
     except yaml.YAMLError:
         return None
 
+
 def extract_body(content: str) -> str:
     """提取 Markdown 文件 frontmatter 之后的正文部分。
 
@@ -93,6 +97,7 @@ def extract_body(content: str) -> str:
     if end == -1:
         return content
     return content[end + 4 :].lstrip("\n")
+
 
 __all__ = [
     "parse_frontmatter",

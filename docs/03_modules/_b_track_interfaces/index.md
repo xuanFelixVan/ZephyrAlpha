@@ -3,23 +3,23 @@ module_id: BTRACK-IFACE-INDEX-001
 title: B 轨接口规范 — 目录索引
 doc_type: index
 status: active
-version: "2.0.0"
+version: "2.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh
 created_by: human_plus_agent
-date: "2026-05-03"
+date: "2026-05-06"
 ttl: permanent
-summary: "_b_track_interfaces/ 目录的责任声明与 5 大 B 轨核心服务接口规范的导航索引。v2.0.0：从 docs/07_ai_engineering/ 迁移至此——与蓝图、施工计划统一在 03_modules/ 下，实现 AI 冷启动单目录树遍历。"
+summary: "B 轨 6 大核心服务接口索引。v2.2.0：truth_source 统一指向各 MOD-INF 蓝图 + architecture-model b_*.yaml；目录说明对齐 Phase 5（l01 + _cross_layer）。"
 tags: [b-track, service-interface, index, ai-engineering, interface-spec]
 depends_on:
-  - {target: GOV-DOC-002, at: "§一", why: "目录定位——B轨接口规范在此，蓝图在 l01_infrastructure/"}
+  - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/l01_infrastructure/ 与 docs/03_modules/_cross_layer/（以 module-registry path 为准）"}
 ---
 
 # B 轨接口规范 — 目录索引
 
-> **目录定位**：`03_modules/_b_track_interfaces/` — 5 大 B 轨核心服务的接口合同存放处。
+> **目录定位**：`03_modules/_b_track_interfaces/` — 6 大 B 轨核心服务的接口合同存放处。
 >
 > **v2.0.0 迁移**：原位于 `docs/07_ai_engineering/`，2026-05-03 迁移至此。
 > 迁移理由见 [GOV-DOC-002 §一](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/directory-structure-standard.md)。
@@ -30,14 +30,16 @@ depends_on:
 
 | Yes（本目录管） | No（不管 → 正确位置） |
 |:--|:--|
-| 5 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 蓝图 → `l01_infrastructure/{module}/blueprint.md` |
-| 跨服务依赖拓扑声明 | 施工计划 → `l01_infrastructure/{module}/` |
+| 6 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 模块蓝图 → `docs/03_modules/l01_infrastructure/{module}/blueprint.md` **或** `docs/03_modules/_cross_layer/{module}/blueprint.md`（见 `module-registry.yaml` 的 path） |
+| 跨服务依赖拓扑声明 | 施工计划 → 同上模块目录 |
 | 渐进路线（scaffold→4）与 SLO | 具体实现代码 → `src/zephyr/` |
 | 错误码与降级策略 | 部署/CI/CD → `04_automation/` |
 
 ---
 
-## 二、5 大服务清单
+## 二、6 大服务清单
+
+各接口 frontmatter 已登记 `mod_master_blueprint: MOD-MASTER-001` 与 `mod_master_contracts`（CT-* 编号），与集成总蓝图 §2.1 契约总表对齐。
 
 | # | 文件 | module_id | 职责（一句话） |
 |:-:|------|-----------|------|
@@ -45,4 +47,5 @@ depends_on:
 | 2 | `context-engine-interface.md` | AI-ENG-CTX-001 | 上下文三源汇聚、压缩、校验、注入 |
 | 3 | `agent-orchestrator-interface.md` | AI-ENG-ORC-001 | 任务全生命周期编排 |
 | 4 | `feedback-loop-engine-interface.md` | AI-ENG-FLE-001 | 运营指标分析、异常检测、反馈闭环 |
-| 5 | `llm-security-gateway-interface.md` | AI-ENG-LSG-001 | LLM 流量四层安全防护（fail-closed） |
+| 5 | `llm-security-gateway-interface.md` | AI-ENG-LSG-001 | LLM 流量纵深安全防护（fail-closed） |
+| 6 | `task-pipeline-service-interface.md` | AI-ENG-PIP-001 | M1–M11 双管线路由与门禁剖面（真源 MOD-INF-009） |

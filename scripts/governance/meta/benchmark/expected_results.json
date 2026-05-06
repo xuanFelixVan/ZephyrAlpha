@@ -1,0 +1,11 @@
+{
+  "total_findings_min": 8,
+  "total_findings_max": 50,
+  "by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 3,
+    "MEDIUM": 5,
+    "LOW": 2
+  },
+  "severity_tolerance": 0.15
+}

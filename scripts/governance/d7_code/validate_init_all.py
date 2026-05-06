@@ -1,15 +1,6 @@
 """
 validate_init_all.py — __init__.py __all__ 完整性校验
 
-__manifest__ = """
-args: []
-description: __init__.py __all__ 完整性校验——有 import 的包必须定义 __all__
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PEP 8 — __all__ should be defined for public API packages
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: __init__.py __all__ 完整性校验——有 import 的包必须定义 __all__
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import ast

@@ -143,6 +143,7 @@ CATEGORIES: tuple[str, ...] = (
     CATEGORY_EVOLUTION,
 )
 
+
 @dataclass
 class EvalOutcome:
     """单个 runner 的输出。"""
@@ -152,6 +153,7 @@ class EvalOutcome:
     actual: Any
     error: str | None = None
 
+
 @dataclass
 class EvalCase:
     """单个评估用例。runner 在 EvalHarness 内部被调用。"""
@@ -160,6 +162,7 @@ class EvalCase:
     category: str
     description: str
     runner: Callable[[], EvalOutcome]
+
 
 @dataclass
 class EvalResult:
@@ -174,6 +177,7 @@ class EvalResult:
     latency_ms: int
     error: str | None = None
 
+
 @dataclass
 class CategoryStat:
     """按类别的统计。"""
@@ -183,6 +187,7 @@ class CategoryStat:
     failed: int = 0
     pass_rate: float = 0.0
     avg_latency_ms: float = 0.0
+
 
 @dataclass
 class EvalReport:
@@ -197,9 +202,11 @@ class EvalReport:
     by_category: dict[str, CategoryStat] = field(default_factory=dict)
     cases: list[EvalResult] = field(default_factory=list)
 
+
 # ---------------------------------------------------------------------------
 # 小工具
 # ---------------------------------------------------------------------------
+
 
 def _outcome(
     *,
@@ -212,13 +219,16 @@ def _outcome(
         return EvalOutcome(passed=False, expected=expected, actual=actual, error=error)
     return EvalOutcome(passed=bool(expected == actual), expected=expected, actual=actual)
 
+
 # ---------------------------------------------------------------------------
 # 意图解析：10 用例
 # ---------------------------------------------------------------------------
 
+
 def _empty_keyword_mapper() -> IntentKeywordMapper:
     """用于强制走 Stage 2/3 的空关键词字典。"""
     return IntentKeywordMapper(keywords={"D0": ["__nope__"]})
+
 
 def _build_stub_emb(hits: list[EmbeddingHit]) -> Callable[..., list[EmbeddingHit]]:
     def _emb(query: str, top_k: int = 5) -> list[EmbeddingHit]:
@@ -226,11 +236,13 @@ def _build_stub_emb(hits: list[EmbeddingHit]) -> Callable[..., list[EmbeddingHit
 
     return _emb
 
+
 def _build_stub_llm(verdict: LLMIntentVerdict) -> Callable[..., LLMIntentVerdict]:
     def _llm(query: str, context: dict[str, Any] | None = None) -> LLMIntentVerdict:
         return verdict
 
     return _llm
+
 
 def build_intent_cases() -> list[EvalCase]:
     """10 个意图解析评估用例（keyword / embedding / LLM 三阶段）。"""
@@ -345,9 +357,11 @@ def build_intent_cases() -> list[EvalCase]:
 
     return cases
 
+
 # ---------------------------------------------------------------------------
 # Agent 编排：10 用例
 # ---------------------------------------------------------------------------
+
 
 def _ok_invoker(
     log: list[tuple[str, dict[str, Any]]] | None = None,
@@ -359,8 +373,10 @@ def _ok_invoker(
 
     return _invoke
 
+
 def _fail_invoker(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError("invoker failure")
+
 
 def _hallu_hallu(
     claim: str,
@@ -368,8 +384,10 @@ def _hallu_hallu(
 ) -> dict[str, Any]:
     return {"is_hallucination": True, "confidence": 0.2}
 
+
 _HALLU_CALLER_HALLU: HallucinationCaller = _hallu_hallu
 _FAIL_INVOKER: ToolInvoker = _fail_invoker
+
 
 def build_orchestrator_cases() -> list[EvalCase]:
     """10 个 Agent 编排用例。"""
@@ -485,9 +503,11 @@ def build_orchestrator_cases() -> list[EvalCase]:
 
     return cases
 
+
 # ---------------------------------------------------------------------------
 # 幻觉检测：5 用例
 # ---------------------------------------------------------------------------
+
 
 def _primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
     payload = {
@@ -495,6 +515,7 @@ def _primary_ok(prompt: str, *, purpose: str) -> ModelCallResult:
         "verify_questions": ["IC 是否正常", "是否超范围", "样本是否够"],
     }
     return ModelCallResult(content=json.dumps(payload, ensure_ascii=False), cost_usd=0.005, success=True)
+
 
 def _verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     answers = [
@@ -504,6 +525,7 @@ def _verifier_consistent(prompt: str, *, purpose: str) -> ModelCallResult:
     ]
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
 
+
 def _verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
     answers = [
         {"question": "q", "answer": "不是，不正常", "confidence_self": 0.9},
@@ -511,6 +533,7 @@ def _verifier_conflicting(prompt: str, *, purpose: str) -> ModelCallResult:
         {"question": "q", "answer": "wrong, not enough", "confidence_self": 0.9},
     ]
     return ModelCallResult(content=json.dumps(answers), cost_usd=0.004, success=True)
+
 
 def build_hallucination_cases() -> list[EvalCase]:
     """5 个幻觉检测用例。"""
@@ -558,9 +581,11 @@ def build_hallucination_cases() -> list[EvalCase]:
 
     return cases
 
+
 # ---------------------------------------------------------------------------
 # 进化引擎：5 用例
 # ---------------------------------------------------------------------------
+
 
 def build_evolution_cases() -> list[EvalCase]:
     """5 个进化引擎用例。"""
@@ -633,9 +658,11 @@ def build_evolution_cases() -> list[EvalCase]:
 
     return cases
 
+
 # ---------------------------------------------------------------------------
 # EvalHarness 主类
 # ---------------------------------------------------------------------------
+
 
 class EvalHarness:
     """30 用例评估框架。
@@ -798,9 +825,11 @@ class EvalHarness:
             cases=results,
         )
 
+
 # ---------------------------------------------------------------------------
 # 辅助：安全序列化（enum / BaseModel → 可 JSON 输出的字符串）
 # ---------------------------------------------------------------------------
+
 
 def _safe_repr(value: Any) -> Any:
     """把 enum / BaseModel 等降级为 str；基本类型原样返回。"""

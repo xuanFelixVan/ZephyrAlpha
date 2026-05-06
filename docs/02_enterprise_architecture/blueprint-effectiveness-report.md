@@ -3,7 +3,7 @@ module_id: REP-001
 title: "ZephyrAlpha 蓝图效能回顾报告 — Codified Context 式 Retrospective"
 doc_type: report
 status: active
-version: "0.4.0"
+version: "0.4.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -12,13 +12,13 @@ created_by: human_plus_agent
 date: "2026-05-04"
 valid_from: "2026-05-04"
 ttl: evolving
-summary: "ZephyrAlpha 蓝图三级金字塔体系的回顾报告——对标 Codified Context (arXiv 2602.20478) §4 Evaluation。覆盖20份蓝图完整度分布、PS-STD-005三级金字塔、G6 beta硬合规、beta标准化补齐（四核心平均83.5%完整度）、SYS-MASTER-001创建。Phase结束增量更新。"
+summary: "蓝图效能回顾——对标 Codified Context §4。含 G6 beta、SYS-MASTER-001；2026-05-06 与 blueprint-registry v4.5.0（**41** 份，含 C 轨 L00/L02~L13 占位）对齐 §2 计数。"
 tags: [retrospective, blueprint-effectiveness, codified-context, evaluation, report, rep-001, phase2]
 belongs_to: "SYS-MASTER-001"
 ---
 # ZephyrAlpha 蓝图效能回顾报告
 
-> **module_id**: REP-001 | **version**: 0.3.0 | **date**: 2026-05-04 | **phase**: P2_hard_compliance
+> **module_id**: REP-001 | **version**: 0.4.1 | **date**: 2026-05-06 | **phase**: P2_hard_compliance
 
 > **对标**：Codified Context (arXiv 2602.20478) §4 Evaluation —— 定量指标 + 案例研究。
 > 本报告是该文献风格在 ZephyrAlpha 项目中的首次应用。
@@ -43,7 +43,8 @@ belongs_to: "SYS-MASTER-001"
 | 属性 | 值 |
 |------|-----|
 | 评估窗口 | 2026-04-27 → 2026-05-04（scaffold 末 → experimental 末） |
-| 蓝图层级 | 19 份蓝图（1 domain + 18 module） |
+| 蓝图登记（SSoT 校正口） | **41** 份（`docs/03_modules/blueprint-registry.yaml` v4.5.0，2026-05-06）——含 INF 主干 + SYS/MASTER/KB + **C 轨 13 占位**（L00/L02–L13）；与 §2 同口径 |
+| 蓝图层级（historical 口径） | 评估窗口内曾记 19 份（1 domain + 18 module）；现已扩展 MOD-INF-018~025 等 |
 | 新增决策 | R63-R89（experimental 周期）+ R90（三级金字塔架构决策）+ R92（量化追踪+强制合规+Retrospective） |
 | 代码增长 | ~45000 lines（2026-04-27） → ~55000 lines（2026-05-04 估算） |
 | 蓝图:代码比 | ~5000:55000 ≈ 1:11（远低于 Codified Context 的 1:4 黄金比——说明蓝图密度不足） |
@@ -54,21 +55,25 @@ belongs_to: "SYS-MASTER-001"
 
 ### 2.1 蓝图层级分布（PS-STD-005 分类）
 
+> **登记真源**：`docs/03_modules/blueprint-registry.yaml`（2026-05-06，v4.5.0）。
+
 | 层级 | 数量 | 蓝图 |
 |:---|:--:|------|
-| Level 0 SYSTEM | 0 | SYS-MASTER-001 待 beta 创建 |
-| Level 1 DOMAIN | 1 | MOD-MASTER-001（L01 基础设施域集成蓝图） |
-| Level 2 MODULE | 18 | INF-001~017 + KB-001 |
+| Level 0 SYSTEM | 1 | SYS-MASTER-001（`blueprint_status: approved`） |
+| Level 1 DOMAIN | 1 | MOD-MASTER-001（`blueprint_status: draft`） |
+| Level 2 MODULE | 39 | INF-001~025 + KB + **C 轨** MOD-L00-001 / MOD-L02–L13-001（占位）——与登记表 `by_blueprint_level.module` 一致 |
 
 ### 2.2 蓝图审批状态
 
 | status | 数量 | 蓝图 |
 |:---|:--:|------|
-| approved | 6 | INF-001/002/005/006 + KB-001 + MOD-MASTER-001（施工指引草案已转 approved） |
-| retired | 2 | INF-003（任务卡+KMS）、INF-004（Vibe Coding双管线） |
-| draft | 11 | INF-007~017（新拆分的 11 份独立系统蓝图） |
+| approved | 6 | SYS-MASTER-001 + MOD-INF-001 / 002 / 005 / 006 + MOD-KB-001 |
+| deprecated | 2 | MOD-INF-003（任务卡+KMS）、MOD-INF-004（Vibe Coding 双管线） |
+| draft | 33 | MOD-MASTER-001 + MOD-INF-007~025 + **MOD-L00/L02–L13 占位蓝图** |
 
 ### 2.3 蓝图完整度分布
+
+> **说明**：本节分布表仍为 **2026-05-04 评估窗口** 截面，**未**纳入 MOD-INF-018~025 重排行数；分项以登记表各条 `completeness_*` 为准。
 
 | completeness_pct | 数量 | 蓝图 |
 |:---|:--:|------|
@@ -76,7 +81,7 @@ belongs_to: "SYS-MASTER-001"
 | 85-99%（11-12 节）| 1 | INF-005（12/13，缺§13） |
 | 70-84%（9-10 节）| 1 | KB-001（9/13） |
 | 50-69%（7-8 节）| 8 | INF-001/002/007/008/009/010/014/015 |
-| < 50%（≤6 节）| 8 | INF-003/004(retired)+INF-011/012/013/016/017+MOD-MASTER-001 |
+| < 50%（≤6 节）| 8 | INF-003/004(deprecated)+INF-011/012/013/016/017+MOD-MASTER-001 |
 
 | 指标 | 值 |
 |------|-----|
@@ -97,7 +102,7 @@ belongs_to: "SYS-MASTER-001"
 | §7 | 安全 | 47% | 共 12 份蓝图缺 |
 | §8 | 性能/SLA | 37% | 共 13 份蓝图缺 |
 | §9 | 测试策略 | 42% | 共 12 份蓝图缺 |
-| §10 | 部署/运维 | 68% | INF-003/004(retired)+INF-007/008/009/010/011/012/013 |
+| §10 | 部署/运维 | 68% | INF-003/004(deprecated)+INF-007/008/009/010/011/012/013 |
 | §11 | 集成依赖 | 42% | 共 12 份蓝图缺 |
 | §12 | 施工指引 | 21% | 仅 INF-006/005/KB-001 有 |
 | §13 | 风险登记 | 21% | 仅 INF-006/005/KB-001 有 |
@@ -278,7 +283,7 @@ MOD-INF-017  ████████                              1  (Code Dedu
 MOD-KB-001   ████████                              1  (Knowledge Base)
 MOD-INF-016  ████████                              1  (Shared+Core)
 
-未读取的蓝图: MOD-INF-002 (Runtime Integration), MOD-INF-003/004 (retired)
+未读取的蓝图: MOD-INF-002 (Runtime Integration), MOD-INF-003/004 (deprecated)
 ```
 
 ### 9.3 GATE-16 违规分类
@@ -414,7 +419,7 @@ beta 以 INF-006 (Task System, 100% 完整) 为蓝本，将四份核心蓝图统
 ```
 Level 0: SYS-MASTER-001 ✅ (2026-05-04 创建, 12 章节)
   └── Level 1: MOD-MASTER-001 ✅ (12基础设施集成契约, 1330+行)
-        └── Level 2: 16 模块蓝图 (INF-005~017 + KB-001)
+        └── Level 2: 26 份模块蓝图登记 (MOD-INF-001~025 + MOD-KB-001；003/004 deprecated)
               ├── INF-006: 100% ✅
               ├── INF-008: 92% ✅
               ├── INF-007: 82% ✅ (beta)
@@ -442,3 +447,4 @@ Level 0: SYS-MASTER-001 ✅ (2026-05-04 创建, 12 章节)
 | 0.2.0 | 2026-05-04 | 30 session 模拟运行结果——`scripts/governance/session_simulator.py` 生成 37 个蓝图读取事件；GATE-16 合规检查 20 PASS / 10 WARNING (33.3% rate)；蓝图读取频次分布（16 份活跃蓝图中的 14 份被读取）；4 个问题模式识别（Gate Engine 40% 违规 / 关键字误匹配 / 跨模块 50% 不合规 / 边界模糊任务）。第一次产生了量化的蓝图效能数据。 |
 | 0.3.0 | 2026-05-04 | beta 硬合规激活——G6 门禁 YAML 创建（severity=error→P0阻断）；`gate_engine.py` 注册 G6 + `hard_compliance` 参数；`blueprint_routing.yaml` 修复 4 类 keyword 误匹配（Gate Engine +12 keywords, LLM Security +8 keywords, cross_read_hint 互引）；`blueprint_search_server.py` MCP 默认 top-3 + MUST read 语言 + `cross_read_hints` 传播；`session_simulator.py` beta 升级 WARNING→REJECT。项目从 `zephyralpha-2-0` 子目录移至 `d:\ZephyrAlpha` 根目录。30 session P2 模拟结果：20 PASS / 10 REJECT (33.3%)——违规率不变但严重度从 P1 升级为 P0。 |
 | 0.4.0 | 2026-05-04 | beta 标准化补齐——SYS-MASTER-001 Level 0 总蓝图创建（三级金字塔顶点就位）；INF-007 Gate Engine v0.3.0 (+§13-§16, 33%→82%)；INF-009 Pipeline v0.2.0 (+§8-§11, 58%→80%)；INF-010 Feedback Loop v0.2.0 (+§6-§9, 42%→80%)；blueprint-registry v2.2.0（新增 SYS-MASTER-001 + 版本/完整度更新）。四核心蓝图平均完整度 73.75%→83.5%（+9.75%）。三级金字塔从纯概念变成有物理载体闭环——PS-STD-005 设计完整实现。 |
+| 0.4.1 | 2026-05-05 | 企业架构审计修复：§1.2/§2.1/§2.2 与 `blueprint-registry.yaml`（v2.3.0，28 份登记、approved=6）对齐；§2.3 保留历史快照并加注；§11.4 Level 2 数量校正为 26。 |

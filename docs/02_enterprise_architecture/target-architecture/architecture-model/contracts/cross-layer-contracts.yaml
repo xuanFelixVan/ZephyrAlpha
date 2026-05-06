@@ -5,6 +5,12 @@ partition:
   id: cross-cutting-contracts
   name: "Cross-Layer Contracts / 跨层数据契约"
   type: cross-cutting
+  ownership_model: >
+    Producer（契约形态与 schema 演进）：由本文件每条契约的 source_layer 所指层承担；
+    实现责任以该层在 architecture-model（EA 树或施工树）中的模块登记为准。
+    Consumer（兼容、升级与 CTR-VER-001 通知受众）：由 contracts/consumer-registry.yaml
+    中同 contract_id 的 registered_consumers 列出之分层模块承担。
+    Accountable Owner（人因兜底，单人项目）：ZephyrAlpha-Owner。
   ssot_policy: >
     本 YAML 文件是所有跨层数据契约的 Single Source of Truth (SSoT)。
     各契约条目中的 physical_path 字段为 codegen 目标路径——对应的 Python
@@ -603,7 +609,7 @@ contracts:
     source_layer: l02
     target_layers: [l07]
     flow: "L02 Alpha Factor → L07 Post-trade Analytics"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/factor_monitor_report.py
     stability: upgradable
     schema_version: "1.0"
     description: "L02 → L07 因子有效性监控报告。定期评估已注册因子的预测有效性。"
@@ -629,7 +635,7 @@ contracts:
     source_layer: l02
     target_layers: [l03, l05]
     flow: "L02（宏观因子计算）→ L03/L05"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/macro_factor_signal.py
     stability: upgradable
     schema_version: "1.0"
     description: "L02 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。"
@@ -652,7 +658,7 @@ contracts:
     source_layer: l03
     target_layers: [l05]
     flow: "L03 Signal Generation → L05 Portfolio Construction"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/capital_allocation_result.py
     stability: upgradable
     schema_version: "1.0"
     description: "L03 → L05 资本配置结果契约。多策略资本分配的中间产物。"
@@ -673,7 +679,7 @@ contracts:
     source_layer: l11
     target_layers: [l03, l05]
     flow: "L11 ML Platform → L03/L05"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/model_serving_request.py
     stability: upgradable
     schema_version: "1.0"
     description: "跨层模型推理请求契约。L11 ML Platform 提供推理服务，L03/L05 消费。"
@@ -683,6 +689,7 @@ contracts:
       - {name: model_version, type: str, required: true, description: "模型版本"}
       - {name: input_features, type: "Dict[str, float]", required: true, description: "特征名 → 特征值"}
       - {name: request_id, type: str, required: true, description: "UUID，用于异步匹配"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID）"}
 
   - id: CTR-P1-005
     name: "ModelServingResponse / 模型推理响应"
@@ -691,7 +698,7 @@ contracts:
     source_layer: l11
     target_layers: [l03, l05]
     flow: "L11 ML Platform → L03/L05"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/model_serving_response.py
     stability: upgradable
     schema_version: "1.0"
     description: "跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。"
@@ -713,7 +720,7 @@ contracts:
     source_layer: l05
     target_layers: [l07, l10]
     flow: "L05 Portfolio Construction → L07/L10"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
     stability: upgradable
     schema_version: "1.0"
     description: "L05 → L07/L10 策略生命周期事件契约。"
@@ -737,7 +744,7 @@ contracts:
     source_layer: l06
     target_layers: [l07]
     flow: "L06 Trade Execution → L07 Post-trade Analytics"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/execution_report.py
     stability: upgradable
     schema_version: "1.0"
     description: "L06 → L07 执行分析报告契约（TCA 输入）。"
@@ -766,7 +773,7 @@ contracts:
     source_layer: l04
     target_layers: [l08]
     flow: "L04 Risk Management → L08 Human-AI Interface"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
     stability: upgradable
     schema_version: "1.0"
     description: "L04 → L08 风险仪表板实时快照契约。"
@@ -791,7 +798,7 @@ contracts:
     source_layer: l07
     target_layers: [l08, l10]
     flow: "L07 Post-trade Analytics → L08/L10"
-    physical_path: null
+    physical_path: src/zephyr/shared/contracts/performance_attribution_report.py
     stability: upgradable
     schema_version: "1.0"
     description: "L07 → L08/L10 绩效归因报告契约。"
@@ -909,7 +916,7 @@ contracts:
     physical_path: src/zephyr/l05_portfolio_construction/strategy_base.py
     registry_path: src/zephyr/l05_portfolio_construction/strategy_registry.py
     related_adr: ADR-0004
-    description: "L05 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。"
+    description: "L05 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
       - {name: generate_target_weights, type: method, returns: "List[Order]", description: "生成目标权重并转换为委托指令列表"}
@@ -933,7 +940,7 @@ contracts:
     autodiscover: null
     physical_path: src/zephyr/l06_trade_execution/broker_interface.py
     related_adr: ADR-0004
-    description: "L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。"
+    description: "L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: broker_id, type: property, returns: str, description: "券商唯一标识（如 ib, futu, longport, simulation）"}
       - {name: connect, type: method, returns: bool, description: "建立连接"}
@@ -1059,29 +1066,29 @@ external_contracts:
     interface_type: "交易委托 / 成交回报"
     direction: bidirectional
     protocol: "REST / FIX 4.2+"
-    description: "发单前必须通过 pre_trade/ 风控；成交回报必须触发 Fill 契约并回调策略"
-
+    description: "发单前必须通过 pre_trade/ 风控；成交回报必须触发 Fill 契约并回调策略 (INV-007: events crossing this boundary must carry idempotency_key)"
+    physical_path: src/zephyr/shared/contracts/external/ext_001.py
   - id: EXT-002
     name: "Market Data Provider / 行情数据接口"
     interface_type: "历史行情 / 实时行情"
     direction: inbound
     protocol: "REST / WebSocket"
-    description: "入站数据必须经过 l00_data_source/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError"
-
+    description: "入站数据必须经过 l00_data_source/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError (INV-007: events crossing this boundary must carry idempotency_key)"
+    physical_path: src/zephyr/shared/contracts/external/ext_002.py
   - id: EXT-003
     name: "LLM Providers / 大模型推理接口"
     interface_type: "AI 推理"
     direction: outbound
     protocol: "REST (OpenAI-compatible)"
-    description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，L02-L07 禁止直接调用"
-
+    description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，L02-L07 禁止直接调用 (INV-007: events crossing this boundary must carry idempotency_key)"
+    physical_path: src/zephyr/shared/contracts/external/ext_003.py
   - id: EXT-004
     name: "Feishu / 飞书通知接口"
     interface_type: "通知分发"
     direction: outbound
     protocol: "REST Webhook"
-    description: "非关键路径；发送失败不影响主流程；重试 3 次后记录日志"
-
+    description: "非关键路径；发送失败不影响主流程；重试 3 次后记录日志 (INV-007: events crossing this boundary must carry idempotency_key)"
+    physical_path: src/zephyr/shared/contracts/external/ext_004.py
 # =============================================================================
 # AI 治理三接口签名摘要
 # =============================================================================
@@ -1096,7 +1103,7 @@ ocp_extension_points:
     registry_path: src/zephyr/l02_alpha_factor/registry.py
     loader_path: src/zephyr/l02_alpha_factor/loader.py
     related_adr: ADR-0004
-    description: "L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。"
+    description: "L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}
       - {name: compute, type: method, returns: "List[FactorSignal]", description: "计算因子信号（禁止 look-ahead bias）"}

@@ -18,6 +18,7 @@ from typing import Any
 
 from zephyr.shared.observer import EventType, Observer
 
+
 @unique
 class DeferredTaskStatus(str, Enum):
     """DeferredQueue 内部任务状态（非全局 TaskStatus，仅 WAITING→READY→RUNNING→DONE/FAILED）。"""
@@ -28,7 +29,9 @@ class DeferredTaskStatus(str, Enum):
     DONE = "DONE"
     FAILED = "FAILED"
 
+
 DEFAULT_DB_PATH = ":memory:"
+
 
 class DeferredQueue:
     """Thread-safe deferred task queue with event-driven wake-up.

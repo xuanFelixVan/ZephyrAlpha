@@ -15,15 +15,15 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import REPO_ROOT
-from _shared.yaml_utils import load_yaml
 from _shared.encoding import ensure_utf8_stdout
+from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
 dimensions: [D1, D5]
@@ -55,10 +55,17 @@ CATEGORY_MAP = {
     "16": "architecture_compliance",
     "17": "orphan_detection",
     "18": "test_collection",
+    "19": "static_manifest_drift",
+    "22": "load_path_integrity",
+    "ZR": "zero_residue",
+    "SSOT": "ssot_guard",
+    "BP-PLACE": "blueprint_placement",
     "SQ": "script_quality",
     "ADM": "manifest_admission",
     "IDX": "index_sync",
     "DD07": "dedup_gate",
+    "C1": "ssot_status",
+    "C2": "contract_drift",
 }
 
 
@@ -69,21 +76,30 @@ def extract_gates(config: dict) -> list[dict]:
         if repo.get("repo") != "local":
             continue
         for hook in repo.get("hooks", []):
-            hook_id = hook.get("id", "")
-            match = re.match(r"gate-(\d+|SQ|ADM|IDX|DD07)", hook_id)
-            if not match:
-                continue
-            gate_num = match.group(1)
-            gates.append({
-                "gate_id": f"GATE-{gate_num}",
-                "name": hook.get("name", ""),
-                "entry": hook.get("entry", ""),
-                "description": hook.get("description", ""),
-                "files_trigger": hook.get("files", ""),
-                "always_run": hook.get("always_run", False),
-                "category": CATEGORY_MAP.get(gate_num, "unknown"),
-                "status": "active",
-            })
+            hook_name = hook.get("name", "")
+
+            gate_match = re.match(r"GATE-([A-Z0-9]+(?:-[A-Z0-9]+)*)(?::|$)", hook_name)
+            if gate_match:
+                gate_suffix = gate_match.group(1)
+            else:
+                hook_id = hook.get("id", "")
+                id_match = re.match(r"gate-(\d+)", hook_id)
+                if not id_match:
+                    continue
+                gate_suffix = id_match.group(1)
+
+            gates.append(
+                {
+                    "gate_id": f"GATE-{gate_suffix}",
+                    "name": hook_name,
+                    "entry": hook.get("entry", ""),
+                    "description": hook.get("description", ""),
+                    "files_trigger": hook.get("files", ""),
+                    "always_run": hook.get("always_run", False),
+                    "category": CATEGORY_MAP.get(gate_suffix, "unknown"),
+                    "status": "active",
+                }
+            )
     return gates
 
 
@@ -94,7 +110,11 @@ def generate(entry_count: int | None = None) -> dict:
         for g in gates:
             g["entry_count"] = entry_count
     return {
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "module_id": "PS-REG-014",
+        "doc_type": "register",
+        "title": "GATE 门禁登记表",
+        "status": "active",
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_by": "scripts/governance/generators/generate_gate_registry.py",
         "source": ".pre-commit-config.yaml",
         "total_gates": len(gates),
@@ -120,9 +140,11 @@ def main() -> None:
         return
 
     with open(args.output, "w", encoding="utf-8") as f:
+        f.write("# module_id: PS-REG-014\n")
+        f.write("# doc_type: register\n")
         f.write(f"# 自动生成于 {output['generated_at']}\n")
         f.write(f"# 来源: {PRE_COMMIT_PATH}\n")
-        f.write(f"# 手工编辑无效——修改请通过 .pre-commit-config.yaml\n\n")
+        f.write("# 手工编辑无效——修改请通过 .pre-commit-config.yaml\n\n")
         yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
     print(f"已生成 {output['total_gates']} 条门禁 → {args.output}")

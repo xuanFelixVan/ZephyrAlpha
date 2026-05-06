@@ -1,0 +1,58 @@
+# Prometheus Configuration — ZephyrAlpha
+# Phase B 可观测性基础设施
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files:
+  - "rules/*.yml"
+
+scrape_configs:
+  - job_name: "zephyr-core"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["zephyr-core:8000"]
+        labels:
+          service: "zephyr-core"
+          env: "development"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: "zephyr-core"
+
+  - job_name: "zephyr-kill-switch"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["zephyr-core:8000"]
+        labels:
+          service: "kill-switch"
+          component: "hardware-probe"
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: "kill_switch_.*"
+        action: keep
+
+  - job_name: "zephyr-arch-guard"
+    metrics_path: "/metrics/arch_guard"
+    static_configs:
+      - targets: ["zephyr-core:8000"]
+        labels:
+          service: "arch-guard"
+          type: "fitness-function"
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: "host-metrics"

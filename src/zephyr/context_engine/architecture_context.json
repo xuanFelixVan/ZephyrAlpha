@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-05-04T16:38:03.549081+00:00",
-  "version": "3.0",
+  "generated_at": "2026-05-05T13:27:16.089509+00:00",
+  "version": "3.3",
   "schema": "zephyr-alpha-architecture-context/v1",
   "contracts": {
-    "total": 31,
+    "total": 33,
     "p0": [
       {
         "id": "CTR-001",
@@ -33,7 +33,8 @@
           "factor_id",
           "symbol",
           "as_of_date",
-          "raw_value"
+          "raw_value",
+          "idempotency_key"
         ],
         "has_sla": true,
         "has_ai_prompt": true
@@ -46,7 +47,8 @@
         "stability": "locked-5yr",
         "description_summary": "L04 → L05 核心数据契约。风险限额约束集合，由 L05 组合优化器强制执行。",
         "key_fields": [
-          "as_of_date"
+          "as_of_date",
+          "idempotency_key"
         ],
         "has_sla": true,
         "has_ai_prompt": true
@@ -94,7 +96,8 @@
         "description_summary": "持仓快照。不可变，代表某一时刻的完整持仓状态。",
         "key_fields": [
           "as_of_timestamp",
-          "portfolio_id"
+          "portfolio_id",
+          "idempotency_key"
         ],
         "has_sla": true,
         "has_ai_prompt": true
@@ -110,7 +113,8 @@
           "trace_id",
           "span_id",
           "service_name",
-          "created_at"
+          "created_at",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -160,7 +164,8 @@
           "warning_id",
           "reason",
           "degradation_level",
-          "suggested_action"
+          "suggested_action",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -210,7 +215,8 @@
           "error_id",
           "contract_id",
           "violation_type",
-          "detail"
+          "detail",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -226,7 +232,8 @@
           "signal_id",
           "symbol",
           "duration_ms",
-          "reason"
+          "reason",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -242,7 +249,8 @@
           "signal_id",
           "symbol",
           "max_rate_per_sec",
-          "reason"
+          "reason",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -257,7 +265,8 @@
         "key_fields": [
           "signal_id",
           "symbol",
-          "reason"
+          "reason",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": true
@@ -309,7 +318,8 @@
           "allocation_date",
           "strategy_allocations",
           "total_allocated_weight",
-          "allocation_method"
+          "allocation_method",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": false
@@ -325,7 +335,8 @@
           "model_id",
           "model_version",
           "input_features",
-          "request_id"
+          "request_id",
+          "idempotency_key"
         ],
         "has_sla": false,
         "has_ai_prompt": false
@@ -482,6 +493,40 @@
         ],
         "has_sla": false,
         "has_ai_prompt": false
+      },
+      {
+        "id": "CTR-P1-014",
+        "name": "ExperimentResult / 实验结论",
+        "flow": "L13 Experimentation → L09 Research / L11 ML Platform",
+        "frozen": true,
+        "stability": "upgradable",
+        "description_summary": "L13 → L09/L11 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。",
+        "key_fields": [
+          "experiment_id",
+          "experiment_name",
+          "experiment_type",
+          "hypothesis",
+          "variant_a_description"
+        ],
+        "has_sla": false,
+        "has_ai_prompt": true
+      },
+      {
+        "id": "CTR-P1-015",
+        "name": "SynthesizedSignal / 合成交易信号",
+        "flow": "L03 Signal Generation → L04 Risk Management / L05 Portfolio Construction",
+        "frozen": true,
+        "stability": "upgradable",
+        "description_summary": "L03 → L04/L05 合成交易信号契约。L03 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。",
+        "key_fields": [
+          "signal_id",
+          "symbol",
+          "as_of_timestamp",
+          "signal_value",
+          "signal_direction"
+        ],
+        "has_sla": false,
+        "has_ai_prompt": true
       }
     ],
     "version_negotiation_rules": [
@@ -492,78 +537,995 @@
       "所有消费者必须在启动时通过 ContractRegistry 查询依赖契约的当前 active 版本，并据此选择适配器。"
     ]
   },
+  "invariants": {
+    "total": 16,
+    "items": [
+      {
+        "id": "INV-001",
+        "category": "capital_safety",
+        "statement": "Kill Switch 延迟 < 1ms：风控硬拦截必须在 1ms 内触发熔断",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_kill_switch_latency.py",
+        "owner": "l04-risk-management"
+      },
+      {
+        "id": "INV-002",
+        "category": "capital_safety",
+        "statement": "单一持仓限制 ≤ 5% NAV：任何单个仓位不得超过净资产价值的 5%",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_position_limit.py",
+        "owner": "l04-risk-management"
+      },
+      {
+        "id": "INV-003",
+        "category": "capital_safety",
+        "statement": "日损失限额触发自动暂停：当日亏损触及预设阈值时系统自动暂停交易",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_daily_loss_limit.py",
+        "owner": "l04-risk-management"
+      },
+      {
+        "id": "INV-004",
+        "category": "data_integrity",
+        "statement": "PIT（Point-in-Time）铁律：回测数据禁止未来信息泄露（Look-ahead Bias 零容忍）",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_pit_compliance.py",
+        "owner": "l02-alpha-factor"
+      },
+      {
+        "id": "INV-005",
+        "category": "boundary_integrity",
+        "statement": "Broker ACL 边界：只有 l06_trade_execution/adapters/ 可调用 Broker API，其他层禁止直接访问",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/check_acl_boundary.py",
+        "owner": "l06-trade-execution"
+      },
+      {
+        "id": "INV-006",
+        "category": "boundary_integrity",
+        "statement": "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服务",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/check_fe_acl_boundary.py",
+        "owner": "l08-human-ai-interface"
+      },
+      {
+        "id": "INV-007",
+        "category": "idempotency",
+        "statement": "所有跨层事件必须携带幂等 Key（Idempotency Key）：防止重复处理",
+        "priority": "P1",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_idempotency_key.py",
+        "owner": "shared-contracts"
+      },
+      {
+        "id": "INV-008",
+        "category": "boundary_integrity",
+        "statement": "跨层依赖方向：低层不得 import 高层（L00 不得 import L04+），依赖只能向上",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/import_linter/layer_boundary_check.py",
+        "owner": "l01-infrastructure"
+      },
+      {
+        "id": "INV-009",
+        "category": "capital_safety",
+        "statement": "OCP 契约冻结：shared/contracts/ 中的接口一旦 release，不得修改签名（只能扩展）",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_ocp_signatures.py",
+        "owner": "shared-contracts"
+      },
+      {
+        "id": "INV-010",
+        "category": "data_integrity",
+        "statement": "PIT 契约统一：Cold / Warm / Hot 三平面必须共享 shared/contracts/ canonical schema，不允许任何平面独立发明 schema",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/check_schema_consistency.py",
+        "owner": "shared-contracts"
+      },
+      {
+        "id": "INV-011",
+        "category": "boundary_integrity",
+        "statement": "Cold → Hot 禁止直接通信：Cold Path 输出必须先落 Warm Path 并经影子验证后方可进入 Hot Path",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/check_cross_plane_communication.py",
+        "owner": "l13-experiment-pipeline"
+      },
+      {
+        "id": "INV-012",
+        "category": "boundary_integrity",
+        "statement": "Hot Path 禁止同步调用 Python 代码：Hot 路径严禁直接调用任何 Python asyncio 代码",
+        "priority": "P0",
+        "enforcement": "arch_guard",
+        "fitness_function_path": "scripts/arch_guard/check_hot_path_purity.py",
+        "owner": "l04-risk-management"
+      },
+      {
+        "id": "INV-013",
+        "category": "capital_safety",
+        "statement": "风控参数三平面一致性：Cold 回测 / Warm 实盘 / Hot 拦截必须使用同一 config/risk_params.yaml 参数",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_risk_params_consistency.py",
+        "owner": "l04-risk-management"
+      },
+      {
+        "id": "INV-014",
+        "category": "data_integrity",
+        "statement": "Survivorship Bias 零容忍：回测数据集必须包含退市/停牌标的，不得使用存活者偏差数据",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_survivorship_bias.py",
+        "owner": "l00-data-source"
+      },
+      {
+        "id": "INV-015",
+        "category": "boundary_integrity",
+        "statement": "AISG 拦截门禁：所有 AI 生成的代码 / 指令必须经 L10 AISG security_gateway 拦截验证后才能执行",
+        "priority": "P0",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_aisg_gateway.py",
+        "owner": "l10-governance-compliance"
+      },
+      {
+        "id": "INV-016",
+        "category": "boundary_integrity",
+        "statement": "审计日志不可篡改：policy_decision_ledger.jsonl 仅允许 append-only 写入，禁止删除/修改历史记录",
+        "priority": "P1",
+        "enforcement": "fitness_function",
+        "fitness_function_path": "scripts/arch_guard/fitness_functions/check_audit_log_immutability.py",
+        "owner": "l10-governance-compliance"
+      }
+    ]
+  },
   "layers": [
     {
       "id": "l00",
-      "name": "数据源层",
-      "order": 0
+      "name": "Data Source",
+      "name_zh": "数据源层",
+      "layer_position": 0,
+      "runtime_plane": "warm",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 5,
+      "source_file": "architecture-model/layers/l00_data_source.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Data Source",
+          "name_zh": "数据源层",
+          "layer_position": 0,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 5,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l00-data-source.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Data Source",
+          "name_zh": "数据源层",
+          "layer_position": 0,
+          "runtime_plane": "warm",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l00_data_source.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l01",
-      "name": "基础设施层",
-      "order": 1
+      "name": "Infrastructure",
+      "name_zh": "基础设施层",
+      "layer_position": 1,
+      "runtime_plane": "warm",
+      "partition_status": "implemented",
+      "track": "c_track",
+      "module_count": 4,
+      "source_file": "architecture-model/layers/l01_infrastructure.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Infrastructure",
+          "name_zh": "基础设施层",
+          "layer_position": 1,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 4,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l01-infrastructure.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Infrastructure",
+          "name_zh": "基础设施层",
+          "layer_position": 1,
+          "runtime_plane": "warm",
+          "partition_status": "implemented",
+          "track": "c_track",
+          "module_count": 2,
+          "source_file": "architecture-model/layers/l01_infrastructure.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l02",
-      "name": "Alpha 因子层",
-      "order": 2
+      "name": "Alpha Factor",
+      "name_zh": "Alpha 因子层",
+      "layer_position": 2,
+      "runtime_plane": "hot",
+      "partition_status": "implemented",
+      "track": "c_track",
+      "module_count": 4,
+      "source_file": "architecture-model/layers/l02_alpha_factor.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Alpha Factor",
+          "name_zh": "Alpha 因子层",
+          "layer_position": 2,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 4,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l02-alpha-factor.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Alpha Factor",
+          "name_zh": "Alpha 因子层",
+          "layer_position": 2,
+          "runtime_plane": "hot",
+          "partition_status": "implemented",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l02_alpha_factor.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l03",
-      "name": "信号生成层",
-      "order": 3
+      "name": "Signal Generation",
+      "name_zh": "信号生成层",
+      "layer_position": 3,
+      "runtime_plane": "hot",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 3,
+      "source_file": "architecture-model/layers/l03_signal_generation.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Signal Generation",
+          "name_zh": "信号生成层",
+          "layer_position": 3,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 3,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l03-signal-generation.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Signal Generation",
+          "name_zh": "信号生成层",
+          "layer_position": 3,
+          "runtime_plane": "hot",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l03_signal_generation.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l04",
-      "name": "风险管理层",
-      "order": 4
+      "name": "Risk Management",
+      "name_zh": "风险管理层",
+      "layer_position": 4,
+      "runtime_plane": "hot",
+      "partition_status": "implemented",
+      "track": "c_track",
+      "module_count": 4,
+      "source_file": "architecture-model/layers/l04_risk_management.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Risk Management",
+          "name_zh": "风险管理层",
+          "layer_position": 4,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 4,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l04-risk-management.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Risk Management",
+          "name_zh": "风险管理层",
+          "layer_position": 4,
+          "runtime_plane": "hot",
+          "partition_status": "implemented",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l04_risk_management.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l05",
-      "name": "组合构建层",
-      "order": 5
+      "name": "Portfolio Construction",
+      "name_zh": "组合构建层",
+      "layer_position": 5,
+      "runtime_plane": "hot",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 6,
+      "source_file": "architecture-model/layers/l05_portfolio_construction.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Portfolio Construction",
+          "name_zh": "组合构建层",
+          "layer_position": 5,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 6,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l05-portfolio-construction.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Portfolio Construction",
+          "name_zh": "组合构建层",
+          "layer_position": 5,
+          "runtime_plane": "hot",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l05_portfolio_construction.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l06",
-      "name": "交易执行层",
-      "order": 6
+      "name": "Trade Execution",
+      "name_zh": "交易执行层",
+      "layer_position": 6,
+      "runtime_plane": "hot",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 4,
+      "source_file": "architecture-model/layers/l06_trade_execution.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Trade Execution",
+          "name_zh": "交易执行层",
+          "layer_position": 6,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 4,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l06-trade-execution.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Trade Execution",
+          "name_zh": "交易执行层",
+          "layer_position": 6,
+          "runtime_plane": "hot",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l06_trade_execution.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l07",
-      "name": "后交易分析层",
-      "order": 7
+      "name": "Post-Trade Analytics",
+      "name_zh": "后交易分析层",
+      "layer_position": 7,
+      "runtime_plane": "warm",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 3,
+      "source_file": "architecture-model/layers/l07_post_trade_analytics.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Post-Trade Analytics",
+          "name_zh": "后交易分析层",
+          "layer_position": 7,
+          "runtime_plane": "cold",
+          "partition_status": null,
+          "track": null,
+          "module_count": 3,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l07-post-trade-analytics.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Post-Trade Analytics",
+          "name_zh": "后交易分析层",
+          "layer_position": 7,
+          "runtime_plane": "warm",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l07_post_trade_analytics.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l08",
-      "name": "人机交互层",
-      "order": 8
+      "name": "Human-AI Interface",
+      "name_zh": "人机交互层",
+      "layer_position": 8,
+      "runtime_plane": "warm",
+      "partition_status": "implemented",
+      "track": "c_track",
+      "module_count": 3,
+      "source_file": "architecture-model/layers/l08_human_ai_interface.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Human-AI Interface",
+          "name_zh": "人机交互层",
+          "layer_position": 8,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 3,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l08-human-ai-interface.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Human-AI Interface",
+          "name_zh": "人机交互层",
+          "layer_position": 8,
+          "runtime_plane": "warm",
+          "partition_status": "implemented",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l08_human_ai_interface.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l09",
-      "name": "研究创新层",
-      "order": 9
+      "name": "Research & Innovation",
+      "name_zh": "研究创新层",
+      "layer_position": 9,
+      "runtime_plane": "cold",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 3,
+      "source_file": "architecture-model/layers/l09_research_innovation.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Research & Innovation",
+          "name_zh": "研究创新层",
+          "layer_position": 9,
+          "runtime_plane": "cold",
+          "partition_status": null,
+          "track": null,
+          "module_count": 3,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l09-research-innovation.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Research & Innovation",
+          "name_zh": "研究创新层",
+          "layer_position": 9,
+          "runtime_plane": "cold",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l09_research_innovation.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l10",
-      "name": "合规层",
-      "order": 10
+      "name": "Compliance",
+      "name_zh": "合规层",
+      "layer_position": 10,
+      "runtime_plane": "warm",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 7,
+      "source_file": "architecture-model/layers/l10_compliance.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Governance & Compliance",
+          "name_zh": "合规层",
+          "layer_position": 10,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 7,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l10-governance-compliance.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Compliance",
+          "name_zh": "合规层",
+          "layer_position": 10,
+          "runtime_plane": "warm",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l10_compliance.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l11",
-      "name": "ML 平台层",
-      "order": 11
+      "name": "ML Platform",
+      "name_zh": "ML 平台层",
+      "layer_position": 11,
+      "runtime_plane": "cold",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 6,
+      "source_file": "architecture-model/layers/l11_ml_platform.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "ML Platform",
+          "name_zh": "ML 平台层",
+          "layer_position": 11,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 6,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l11-ml-platform.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "ML Platform",
+          "name_zh": "ML 平台层",
+          "layer_position": 11,
+          "runtime_plane": "cold",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l11_ml_platform.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l12",
-      "name": "系统遥测层",
-      "order": 12
+      "name": "System Telemetry",
+      "name_zh": "系统遥测层",
+      "layer_position": 12,
+      "runtime_plane": "warm",
+      "partition_status": "implemented",
+      "track": "c_track",
+      "module_count": 6,
+      "source_file": "architecture-model/layers/l12_system_telemetry.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "System Telemetry",
+          "name_zh": "系统遥测层",
+          "layer_position": 12,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 5,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l12-system-telemetry.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "System Telemetry",
+          "name_zh": "系统遥测层",
+          "layer_position": 12,
+          "runtime_plane": "warm",
+          "partition_status": "implemented",
+          "track": "c_track",
+          "module_count": 6,
+          "source_file": "architecture-model/layers/l12_system_telemetry.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     },
     {
       "id": "l13",
-      "name": "实验层",
-      "order": 13
+      "name": "Experimentation",
+      "name_zh": "实验层",
+      "layer_position": 13,
+      "runtime_plane": "cold",
+      "partition_status": "skeleton",
+      "track": "c_track",
+      "module_count": 4,
+      "source_file": "architecture-model/layers/l13_experimentation.yaml",
+      "architecture_sources": {
+        "docs_canonical": {
+          "name": "Experiment Pipeline",
+          "name_zh": "实验层",
+          "layer_position": 13,
+          "runtime_plane": "warm",
+          "partition_status": null,
+          "track": null,
+          "module_count": 4,
+          "source_file": "docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l13-experiment-pipeline.yaml",
+          "schema_version": "2.0"
+        },
+        "workspace_root": {
+          "name": "Experimentation",
+          "name_zh": "实验层",
+          "layer_position": 13,
+          "runtime_plane": "cold",
+          "partition_status": "skeleton",
+          "track": "c_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/l13_experimentation.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "context_engine",
+      "name": "Context Engine (CE)",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_context_engine.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Context Engine (CE)",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_context_engine.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "core",
+      "name": "Core",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_core.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Core",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_core.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "db",
+      "name": "Database",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_db.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Database",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_db.yaml",
+          "schema_version": "1.1.0"
+        }
+      }
+    },
+    {
+      "id": "feedback_loop",
+      "name": "Feedback Loop Engine (FLE)",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_feedback_loop.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Feedback Loop Engine (FLE)",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_feedback_loop.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "gates",
+      "name": "Gates",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_gates.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Gates",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_gates.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "kb",
+      "name": "Knowledge Base",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_kb.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Knowledge Base",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_kb.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "llm_security",
+      "name": "LLM Security Gateway (LSG)",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_llm_security.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "LLM Security Gateway (LSG)",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_llm_security.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "mcp",
+      "name": "MCP Servers",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_mcp.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "MCP Servers",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_mcp.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "orchestrator",
+      "name": "Agent Orchestrator (Orc)",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_orchestrator.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Agent Orchestrator (Orc)",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_orchestrator.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "pipeline",
+      "name": "Pipeline",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_pipeline.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Pipeline",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_pipeline.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "shared",
+      "name": "Shared",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "implemented",
+      "track": "b_track",
+      "module_count": 2,
+      "source_file": "architecture-model/layers/b_shared.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Shared",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "implemented",
+          "track": "b_track",
+          "module_count": 2,
+          "source_file": "architecture-model/layers/b_shared.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
+    },
+    {
+      "id": "vector_memory",
+      "name": "Vector Memory Service (VMS)",
+      "name_zh": null,
+      "layer_position": null,
+      "runtime_plane": null,
+      "partition_status": "skeleton",
+      "track": "b_track",
+      "module_count": 1,
+      "source_file": "architecture-model/layers/b_vector_memory.yaml",
+      "architecture_sources": {
+        "workspace_root": {
+          "name": "Vector Memory Service (VMS)",
+          "name_zh": null,
+          "layer_position": null,
+          "runtime_plane": null,
+          "partition_status": "skeleton",
+          "track": "b_track",
+          "module_count": 1,
+          "source_file": "architecture-model/layers/b_vector_memory.yaml",
+          "schema_version": "1.0.0"
+        }
+      }
     }
   ],
+  "architecture_model_workspace_index": {
+    "present": true,
+    "path": "architecture-model/_index.yaml",
+    "schema_version": "1.0.0",
+    "governance": {
+      "canonical": true,
+      "derives_from": "AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律",
+      "derived_views": "docs/02_enterprise_architecture/target-architecture/00-10*.md",
+      "conflict_rule": "YAML 为准，Markdown 视图同步更新",
+      "gate_alignment": "AGENTS.md §6.10 — 双层对齐闸门 GATE-A (代码↔YAML) + GATE-B (YAML↔MD)",
+      "drift_root_cause": "审计漂移的病根是「双轨真源 + 门禁只盯一半」：(1) 企业架构树在 docs/.../architecture-model， 施工真源在仓库根 architecture-model/，二者 _schema 形状与枚举曾长期不一致；(2) check_architecture_gates 的 GATE-SC 原先只扫描 docs 树，施工树处于盲区；(3) module-registry.yaml 的 dependencies[].module_id 无词法闸门，易被粘贴为人类可读占位符并破坏 YAML 结构。修复：GATE-SC 现已并列扫描两套 layers + 各自 _schema；抽取 enum 支持 operational_schema 嵌套分组；新增 EXTRA-05 校验 MOD-*/SYS-*； 登记表尾部损坏与非法依赖需靠 EXTRA-05 + yaml 解析在 CI 内阻断复发。\n"
+    },
+    "partition_track_counts": {
+      "c_track": 14,
+      "b_track": 12
+    },
+    "system": {
+      "name": "ZephyrAlpha",
+      "architecture_style": "layered_event_driven_dual_track"
+    }
+  },
+  "architecture_model_scope": {
+    "present": true,
+    "path": "architecture-model/SCOPE.yaml",
+    "schema_version": "1.0",
+    "doc_type": "architecture_tree_scope",
+    "last_updated": "2026-05-05",
+    "this_tree": {
+      "path_relative": "architecture-model/",
+      "role": "implementation_partition_registry",
+      "aligns_with": [
+        "AGENTS.md §6.9（YAML canonical 原则）",
+        "AGENTS.md §6.10 GATE-A（src/zephyr ↔ 本树 _index.yaml + layers）"
+      ]
+    },
+    "paired_enterprise_architecture_tree": {
+      "path_relative": "docs/02_enterprise_architecture/target-architecture/architecture-model/",
+      "role": "adr0001_enterprise_registry",
+      "owns": [
+        "contracts/",
+        "cross-cutting/invariants.yaml",
+        "cross-cutting/capability-heatmap.yaml",
+        "module-id-registry.yaml（若存在于此树）"
+      ]
+    },
+    "rules": [
+      {
+        "id": "R1",
+        "text": "契约 / 不变量 / cross-layer-contracts 的修改 MUST 在 paired_enterprise_architecture_tree 下进行。"
+      },
+      {
+        "id": "R2",
+        "text": "代码目录登记、partition 施工状态、B 轨分区 MUST 在本树 _index.yaml + layers/ 下维护。"
+      },
+      {
+        "id": "R3",
+        "text": "同一 partition.id（如 l12）允许两侧各有 YAML：施工视图 vs EA 视图；禁止假定两侧文件字节级一致。"
+      }
+    ]
+  },
   "adrs": [
     {
       "id": "adr-0001-canonical-source-of-truth",
@@ -578,7 +1540,7 @@
     {
       "id": "adr-0003-dual-ai-collaboration-workflow",
       "title": "",
-      "status": "superseded"
+      "status": "Superseded"
     },
     {
       "id": "adr-0004-ocp-extension-points",
@@ -588,7 +1550,7 @@
     {
       "id": "adr-0005-kms-architecture",
       "title": "",
-      "status": "partially_superseded"
+      "status": "Superseded"
     },
     {
       "id": "adr-0007-frontend-platform",
@@ -733,7 +1695,7 @@
   ],
   "governance": {
     "domains": 9,
-    "documents": 47,
+    "documents": 48,
     "rule_files": [
       {
         "domain": "ai",
@@ -771,9 +1733,9 @@
         "rules_approx": 3
       },
       {
-        "domain": "architecture",
-        "file": "adr-protocol.md",
-        "rules_approx": 3
+        "domain": "decisions",
+        "file": "KB:namespace=decisions",
+        "rules_approx": 33
       },
       {
         "domain": "architecture",
@@ -901,6 +1863,11 @@
         "rules_approx": 18
       },
       {
+        "domain": "engineering",
+        "file": "index.md",
+        "rules_approx": 2
+      },
+      {
         "domain": "module",
         "file": "ai-behavior-iron-policy.md",
         "rules_approx": 56
@@ -985,5 +1952,153 @@
       "total_contracts_touched": 0
     },
     "index_version": "1.0"
+  },
+  "handoffs": {
+    "recent": [],
+    "total": 0
+  },
+  "capacity_slo": {
+    "path": "config/capacity/capacity_slo.yaml",
+    "schema_version": "1.0",
+    "module_ref": "MOD-INF-001",
+    "sli_count": 10,
+    "sli_ids": [
+      "CAP-001-startup-time",
+      "CAP-002-event-throughput",
+      "CAP-003-error-rate",
+      "CAP-004-memory-saturation",
+      "CAP-005-cpu-saturation",
+      "CAP-006-queue-depth-saturation",
+      "CAP-007-type-check-time",
+      "CAP-008-config-check-time",
+      "CAP-009-kill-switch-trigger-latency",
+      "CAP-010-aisg-intercept-latency"
+    ],
+    "arch_guard_keys": [
+      "min_slo_entries",
+      "invariant_numeric_alignment",
+      "deployment_topology",
+      "hot_path_python_scan",
+      "ai_security_gateway"
+    ]
+  },
+  "gate_registry": {
+    "path": "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml",
+    "total_gates": 15,
+    "source": ".pre-commit-config.yaml",
+    "gates_preview": [
+      {
+        "gate_id": "GATE-01",
+        "name": "GATE-01: _index.yaml 可达性检查",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-02",
+        "name": "GATE-02: P0 接口契约完整性检查",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-03",
+        "name": "GATE-03: 不变量 owner 检查",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-06",
+        "name": "GATE-06: ADR 状态检查",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-07",
+        "name": "GATE-07: 事件 publisher 层级检查",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-11",
+        "name": "GATE-11: 命名规范门禁",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-12",
+        "name": "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-14",
+        "name": "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-13",
+        "name": "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-15",
+        "name": "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-16",
+        "name": "GATE-16: 架构合规校验（architecture-contract v1.0.0）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-17",
+        "name": "GATE-17: 孤儿.py文件检测（§6.5 根目录零.py）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-18",
+        "name": "GATE-18: 测试收集门禁（源码-测试同步铁律）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-19",
+        "name": "GATE-19: 静态清单漂移阻断（§6.16）",
+        "status": "active"
+      },
+      {
+        "gate_id": "GATE-22",
+        "name": "GATE-22: AI加载路径完整性（§6.18）",
+        "status": "active"
+      }
+    ]
+  },
+  "module_registry": {
+    "path": "docs/03_modules/module-registry.yaml",
+    "module_count": 40,
+    "schema_layers": 14
+  },
+  "capability_heatmap": {
+    "path": "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/capability-heatmap.yaml",
+    "partition_id": "cross-cutting-capability-heatmap",
+    "partition_name": "Capability Maturity Heatmap",
+    "overall_maturity_level": "L1",
+    "overall_maturity_score": 1.12,
+    "capability_entries": 32
+  },
+  "arch_guard": {
+    "manifest_path": "scripts/arch_guard/_manifest.yaml",
+    "fitness_count": 17,
+    "fitness_active": 17,
+    "fitness_ids": [
+      "FF-000",
+      "FF-001",
+      "FF-004",
+      "FF-005",
+      "FF-006",
+      "FF-007",
+      "FF-008",
+      "FF-009",
+      "FF-010",
+      "FF-011",
+      "FF-012",
+      "FF-013",
+      "FF-014",
+      "FF-016",
+      "FF-002",
+      "FF-003",
+      "FF-015"
+    ]
   }
 }

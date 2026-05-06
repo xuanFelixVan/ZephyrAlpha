@@ -1,15 +1,34 @@
-schema_version: "1.0.0"
+schema_version: 1.1.0
 partition:
   id: l05
   name: Portfolio Construction
   track: c_track
   layer_position: 5
   runtime_plane: hot
-  status: skeleton
-
+  status: implemented
 modules:
-  []
-
+- id: l05-layer-ssot
+  module_id: MOD-L05-001
+  name: Portfolio Construction（层登记占位）
+  submodule_path: src/zephyr/l05_portfolio_construction/
+  status: implemented
+  priority: P0
+  runtime_plane: hot
+  description: 组合构建层。StrategyBase OCP-002 扩展点 + StrategyRegistry。
+  files:
+  - default_equity_strategy.py
+  - strategy_base.py
+  - strategy_registry.py
+  interfaces:
+  - contract_id: CTR-004
+    role: producer
+    description: Order → L06
+  - contract_id: CTR-P1-006
+    role: producer
+    description: StrategyLifecycleEvent → L07, L10
+  adr_ref: []
 summary:
-  total: 0
-  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"
+  total: 1
+  by_status:
+    implemented: 1
+  note: Phase B 骨架就位——OCP-002 StrategyBase + StrategyRegistry 已 codegen

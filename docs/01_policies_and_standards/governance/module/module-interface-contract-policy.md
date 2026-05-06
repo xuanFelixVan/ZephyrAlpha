@@ -4,7 +4,7 @@ title: 模块接口契约策略
 doc_type: policy
 status: active
 version: "1.0.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -151,7 +151,7 @@ ai_autonomy: human_gated
 - 接口用途说明（一段话）
 - 请求/响应示例
 - 错误码清单
-- 性能约束（P0 模块必填：延迟 p99 ≤ **TBD**（待 experimental 性能基线确定后填入具体值），吞吐 ≥ Y req/s；非 P0 选填）
+- 性能约束（P0 模块必填：**延迟 p99 与吞吐下限 MUST 在契约进入 `frozen` 之前**，由 Owner 写入 module-registry / cross-layer-contracts（或蓝图 SLA 小节）中的 SLA 字段；本策略正文不复制具体毫秒值或 qps。非 P0 选填）
 - 调用频率限制（P0 模块必填；非 P0 选填）
 
 ## 10. 契约发现与注册表

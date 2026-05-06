@@ -3,14 +3,14 @@ Unit tests for context_rot_model.py — beta a
 ==============================================
 Minimum: 12 tests
 """
+
 from __future__ import annotations
 
 import pytest
-
 from zephyr.context_engine.context_rot_model import (
-    AttentionScore,
     ContextRotModel,
 )
+
 
 class TestContextRotModel:
     def test_default_construction(self) -> None:

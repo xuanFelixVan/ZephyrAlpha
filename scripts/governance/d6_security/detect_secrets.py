@@ -1,15 +1,6 @@
 """
 detect_secrets.py — 密钥/Token/凭证硬编码检测
 
-__manifest__ = """
-args: []
-description: 密钥/Token/凭证硬编码检测（ABS-29/32 — P0安全红线）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-29（密钥不入库）/ ABS-32（不硬编码密钥）
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 密钥/Token/凭证硬编码检测（ABS-29/32 — P0安全红线）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

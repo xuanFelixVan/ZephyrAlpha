@@ -1,16 +1,6 @@
 """
 validate_manifest_admission.py — Manifest 准入控制器
 
-__manifest__ = """
-args: []
-description: Manifest 准入控制器（SCRIPT-QUALITY-001 — git diff 提取新增脚本 → 8 项 MUST 硬阻断）
-dimensions:
-- D11
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
-
 
 对标：AGENTS.md §6.5（脚本自创入库强制约定）
      ITIL SACM → Configuration Item Registration（配置项登记前必须通过校验）
@@ -27,6 +17,16 @@ exit codes: 0=pass（无新脚本或差量合规）, 1=新增脚本违规, 2=系
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: Manifest 准入控制器（SCRIPT-QUALITY-001 — git diff 提取新增脚本 → 8 项 MUST 硬阻断）
+dimensions:
+- D11
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
 
 import re
 import subprocess

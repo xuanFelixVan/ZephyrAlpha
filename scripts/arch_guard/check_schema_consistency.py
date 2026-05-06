@@ -1,21 +1,42 @@
 """
-check_schema_consistency.py — Schema 三平面一致性检查 (INV-010) [桩文件]
+check_schema_consistency.py — INV-010 契约物理路径存在性（Schema canonical 基线）
 
-INV-010: Cold / Warm / Hot 三平面必须共享 shared/contracts/ canonical schema。
-status: stub — 需 Cold/Warm/Hot 三平面均有 active 代码后激活。
+  - shared/contracts 中在 YAML 登记的 physical_path 对应的 Python 文件必须存在
 
-激活条件：
-  1. Cold 平面（回测）有完整的 Python 数据生成代码
-  2. Warm 平面（实盘）有数据消费代码
-  3. Hot 平面（实时风控）有数据校验代码
-  4. 可对比三个平面的 schema 定义是否一致
+exit: 0=pass, 1=fail
 """
+from __future__ import annotations
+
 import sys
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import CONTRACTS_PATH, REPO_ROOT, load_yaml  # noqa: E402
 
 
 def main() -> int:
-    print("⏭ INV-010 Schema 三平面一致性检查 —— [桩文件] 跳过")
-    print("   激活条件：Cold/Warm/Hot 三平面均有 active 代码。")
+    data = load_yaml(CONTRACTS_PATH)
+    contracts = data.get("contracts") or []
+    missing: list[str] = []
+    for c in contracts:
+        if not isinstance(c, dict):
+            continue
+        rel = c.get("physical_path") or ""
+        if not isinstance(rel, str) or not rel.startswith("src/zephyr/shared/contracts/"):
+            continue
+        if not (REPO_ROOT / rel).is_file():
+            missing.append(f"{c.get('id')} -> {rel}")
+
+    if missing:
+        print("FAIL: 以下契约 physical_path 缺失（INV-010）:")
+        for m in missing:
+            print(f"  - {m}")
+        return 1
+
+    print(f"OK: {len(contracts)} 条契约条目扫描，shared/contracts physical_path 均存在")
     return 0
 
 

@@ -4,93 +4,72 @@ source_blueprint: "MOD-INF-006"
 source_section: "§11.3 步骤6"
 
 # ===== 内容 =====
-title: "燃气 M1-M11 模块（A区 5 + B区 6）"
-description: "| 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\` |
-|---------|------|
+title: "补齐 context_engine + 落实 pipeline M1-M11（GOV-AI-002）"
+description: >-
+  产出区域：src/zephyr/context_engine/ 与 src/zephyr/pipeline/。
+  验收标准（蓝图 §11.3 步骤6）：G3 可用——context_assembly_manifest 所列文件可装配；
+  M1-M11 与 Vibe Coding 执行层字段对齐；管线执行事件写入 task_repo。
+  M 模块分工与 Claude 救援条件见蓝图 §11.3 步骤6 表格。
+priority: "P0"
 
-**M 模块分工表**（基于 GOV-AI-002 v2.0.0 模型路由策略）：
-
-| 模块 | 管线 | 职责 | 模型 | 为何用此模型 |
-|------|:---:|------|:---:|------|
-| M1 |"
-priority: "P1"
-
-# ===== 上游：执行前必须读取的文件 =====
 upstream_files:
   - "D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-system\blueprint.md"
+  - "D:\ZephyrAlpha\docs\01_policies_and_standards\governance\ai\model-routing-policy.md"
 
-# ===== 下游：执行后必须产出的文件 =====
 downstream_outputs:
+  - path: "D:\ZephyrAlpha\src\zephyr\context_engine\"
+    description: "Context 装配与注入能力"
   - path: "D:\ZephyrAlpha\src\zephyr\pipeline\"
-    description: "燃气 M1-M11 模块（A区 5 + B区 6）"
+    description: "M1-M11 管线与编排"
 
-# ===== 范围：允许和禁止触碰的文件 =====
 allowed_touch:
-  - "D:\ZephyrAlpha\src\zephyr\pipeline\"
+  - "D:\ZephyrAlpha\src\zephyr\context_engine\**"
+  - "D:\ZephyrAlpha\src\zephyr\pipeline\**"
 forbidden_touch:
   - "D:\ZephyrAlpha\docs\01_policies_and_standards\**\*.md"
   - "D:\ZephyrAlpha\docs\03_modules\**\blueprint.md"
 
-# ===== 规则：必须遵守的治理规则 =====
 applicable_rules:
-  - module_id: "PS-STD-001"
-    section: "§5"
-    reason: "任务卡编号格式"
-  - module_id: "ADR-0040"
+  - module_id: "GOV-AI-002"
     section: "全篇"
-    reason: "强制 Pydantic V2"
-  - module_id: "PS-STD-011"
-    section: "MTH-013"
-    reason: "路径架构合规创建"
+    reason: "模型路由与救援策略"
 
-# ===== 上下文：执行前必须装配进上下文的所有文件 =====
 context_assembly_manifest:
   - file_path: "D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-system\blueprint.md"
-    reason: "本蓝图——了解完整架构和施工步骤"
+    reason: "§11.3 步骤6"
 
-# ===== 资源 =====
-estimated_tokens: 8000
-timeout_minutes: 30
+estimated_tokens: 16000
+timeout_minutes: 90
 
-# ===== 验收标准 =====
 acceptance_criteria:
-  - "| 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\` |
-|---------|------|
+  - "G3：manifest 文件可读可装配"
+  - "pipeline_modules/assigned_pipeline 等与蓝图一致；必要时写入 task_repo events"
 
-**M 模块分工表**（基于"
+rollback_instructions: "git restore src/zephyr/context_engine src/zephyr/pipeline"
 
-# ===== 回滚 =====
-rollback_instructions: "删除本步骤新建的文件，恢复修改的文件。具体：D:\ZephyrAlpha\src\zephyr\pipeline\"
-
-# ===== 依赖 =====
-depends_on: ["TASK-INF-0005"]
+depends_on:
+  - "TASK-INF-0005"
 blocked_by: []
 
-# ===== 状态 =====
 status: "created"
 
-# ===== 五轴标签 =====
 tags_fn: ["infra"]
 tags_ly: "l01_infrastructure"
 tags_md: "deepseek"
 tags_st: "active"
 tags_mo: ["MOD-INF-006"]
 
-# ===== 门禁 =====
 completed_gates: []
 blocked_gates: {}
 
-# ===== 执行 =====
 assigned_model: "deepseek"
 assigned_pipeline: "A"
-pipeline_modules: ["M1", "M3"]
+pipeline_modules: ["M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11"]
 
-# ===== 产物/审计/知识 =====
 artifact_paths: []
 audit_findings: []
 ke_entries: []
 
-# ===== AI 自治 =====
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
 ---

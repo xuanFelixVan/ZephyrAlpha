@@ -4,7 +4,7 @@ title: 文件命名规范
 doc_type: standard
 status: active
 version: 2.5.0
-date: "2026-05-02"
+date: "2026-05-06"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -20,7 +20,7 @@ stability: stable
 verifiability: automated
 ---
 
-# 文件命名规范 v2.3.1
+# 文件命名规范 v2.5.0
 
 > **定位**：本文档是 ZephyrAlpha 2.0 **宪法层命名铁律**的唯一真源，所有目录、文件、module_id、编号空间的命名规则均以本文为准。
 > **门禁**：Stage G 通过 `GATE-11 命名规范门禁` pre-commit hook 强制校验本文档定义的规则（续号于既有 Architecture-as-Code `GATE-01 ~ GATE-10`）。
@@ -117,7 +117,7 @@ verifiability: automated
 |----------|-----------|------|------|
 | `policy` | `{subject}-policy.md` | `secret-management-policy.md` | 声明式"必须/禁止"规则 |
 | `standard` | `{subject}-standard.md` | `file-naming-standard.md` | 技术标准/度量规范 |
-| `protocol` | `{subject}-protocol.md` | `adr-protocol.md` | 多方交互规则 |
+| `protocol` | `{subject}-protocol.md` | `architecture-review-policy.md` | 多方交互规则 |
 | `operational_rule` | `{subject}-runbook.md` / `-playbook.md` / `-procedure.md` / `-checklist.md` | `architecture-change-playbook.md` | 过程式操作步骤——以上四个后缀均可，均属操作范畴 |
 | `register` | `{subject}-registry.md` / `-register.md` | `rule-registry.md` | 结构化数据清单 |
 | `index` | `index.md`（固定） | `index.md` | 目录导航入口，不可改名 |
@@ -128,7 +128,7 @@ verifiability: automated
 
 | 禁止 | 例子（违规 → 合规） | 原因 |
 |------|------|------|
-| 声明式规则用过程式后缀 | `adr-protocol-runbook.md` → `adr-protocol.md` | protocol 不能叫 runbook |
+| 声明式规则用过程式后缀 | `governance-runbook.md` → `governance-protocol.md` | protocol 不能叫 runbook |
 | 策略文件用操作后缀 | `security-incident-playbook.md` → `security-incident-response-policy.md` | policy 不能叫 playbook |
 | 策略文件用手册后缀 | `document-discovery-runbook.md` → `document-discovery-policy.md` | policy 不能叫 runbook |
 
@@ -224,7 +224,7 @@ Q2: 目录名是否用一个单词就能准确表达？
 #### 2.2.2 frontmatter `module_id`
 
 - **格式**：`ADR-NNNN`（**大写** 4 位数字，无 `EA-` / `PROD-` 等 scope 前缀）
-- **作用域由目录承载**（`02_enterprise_architecture/adr/`），不在 ID 中重复
+- **作用域与存放**：权威条目收录于 **`KB:decisions`**（Git-backed）；`ADR-NNNN` 仍用作条目编号前缀。**禁止**在文档或脚本中引用已移除的旧路径 `docs/02_enterprise_architecture/adr/` 作为主存放声明。
 - **示例**：`module_id: ADR-0011`
 
 #### 2.2.3 文件名 vs module_id 的正交性
@@ -247,18 +247,20 @@ Q2: 目录名是否用一个单词就能准确表达？
 6. **保留号**：`status: reserved`（有意识留空，如 ADR-0023~0029）
 7. **新决策编号选取**：取**当前最大编号 + 1**，不得回填 skipped/reserved
 
-#### 2.2.5 状态字段
+#### 2.2.5 状态字段（ADR 工作流语义）
 
 | 状态 | 含义 |
 |---|---|
-| `proposed` | 草稿阶段，推荐存放在 `docs/02_enterprise_architecture/adr/`，文件名加 `-draft` 后缀 |
-| `accepted` | 已拍板，放在本目录，**不可变** |
-| `superseded` | 被新 ADR 取代，原文保留，`superseded_by` 指向新 ADR |
-| `deprecated` | 已废弃但未被取代（极少使用） |
-| `skipped` | 跳号，编号被分配但未使用 |
-| `reserved` | 保留号，有意识留空 |
+| `proposed` | 讨论稿；Markdown 草稿仅存放于 Owner 批准的草稿区或外部工作区；文件名可加 `-draft`；**禁止**写入已移除的 `docs/02_enterprise_architecture/adr/` |
+| `accepted` | 已纳入 **`KB:decisions`** namespace；条目内容为 immutable |
+| `superseded` | 被新 ADR 取代；原文快照保留，`superseded_by` 指向继任条目 |
+| `deprecated` | 已废弃但暂无继任映射（极少使用） |
+| `skipped` | 跳号 |
+| `reserved` | 保留号 |
 
-`status` 字段首字母**大写**（Active/Accepted/Draft/Superseded/Withdrawn/Skipped/Reserved），不用小写形式。
+**与全局 DocStatus 的关系**：上表描述 ADR **工作流语义**。若同一 Markdown 另纳入全局文档治理，则 YAML frontmatter 中的 **`status`（draft/active/deprecated）** 必须以 **PS-STD-001 §4.1** 为准；与本节枚举并用时不得自相矛盾，冲突按 **PS-STD-004** 裁定。
+
+KB/decisions 条目的展示用状态标签大小写以 KB schema 为准；全局 DocStatus 仍为小写三值。
 
 ### 2.3 架构模型 YAML（层文件）
 
@@ -436,6 +438,7 @@ AI 新建目录时，必须逐项检查：
 | 2026-04-25 | 2.0.1 | **Stage G 开工纠偏（patch）**：编号冲突纠偏 `GATE-06` → `GATE-11`；新增 §2.8 技术栈专有名词版本白名单 |
 | 2026-04-30 | 2.1.0 | **文件夹命名规则补全（minor）**：新增 §一.1 文件夹命名风格选择规则（三种风格定义 + 决策树 + 防幻觉路径映射表 + 禁止风格）；新增 §六.1/§六.2 |
 | 2026-04-30 | 2.2.0 | 历史修订，见 header comment block |
-| 2026-05-02 | 2.4.0 | **文件名-doc_type 强制映射（minor）**。新增 §一.0：文件名后缀必须匹配 doc_type 字段——废除旧 doc_type-vocabulary.yaml v1.1.0 中"文件名不需要与 doc_type 一致"的约定。新增 GATE-11 N-08 检测规则（V1 阻断）。修正 3 个历史违规文件：adr-protocol-runbook.md → adr-protocol.md，security-incident-playbook.md → security-incident-response-policy.md，document-discovery-runbook.md → document-discovery-policy.md。 |
+| 2026-05-02 | 2.4.0 | **文件名-doc_type 强制映射（minor）**。新增 §一.0：文件名后缀必须匹配 doc_type 字段——废除旧 doc_type-vocabulary.yaml v1.1.0 中"文件名不需要与 doc_type 一致"的约定。新增 GATE-11 N-08 检测规则（V1 阻断）。修正 3 个历史违规文件：governance-runbook.md → governance-protocol.md，security-incident-playbook.md → security-incident-response-policy.md，document-discovery-runbook.md → document-discovery-policy.md。 |
+| 2026-05-06 | 2.5.0 | **ADR 真源对齐（minor）**。§2.2 等处明确 ADR 权威存放为 **KB:decisions**，禁止将已移除的 `docs/02_enterprise_architecture/adr/` 作为主路径声明；补充 ADR 工作流状态表与 PS-STD-001 DocStatus / PS-STD-004 仲裁关系；正文标题版本号与 frontmatter `version` 对齐。 |
 | 2026-05-01 | 2.3.1 | **元规对齐 (patch)**。新增 frontmatter `date` 字段——PS-STD-001 §2.2 规定 Draft+ 必填 7 字段含 `date`，此前仅有 `valid_from` 缺少 `date` 违反了元规必填要求。 |
 | 2026-05-01 | 2.3.0 | **结构对齐 + 矛盾消除（minor）**。（1）删除 §1.1"文件夹命名逻辑与原则"——该节与 §一.1 互相矛盾（snake_case vs kebab-case），§一.1 为 v2.1.0 新建的权威版本（有决策树 + 5 家机构对标 + 匹配磁盘真实状态）；（2）新增 §〇.2 管理内容 + §〇.3 不覆盖内容 + §〇.4 专业对标；（3）新增 §七 与其他规则的关系；（4）§七 → §八 更名"变更记录"；（5）版本 2.2.0 → 2.3.0。对齐 templates/policy-template.md 强制结构。全量修改符合 Vibe Coding 零记忆重启标准——每个文件现在 self-describing。 |

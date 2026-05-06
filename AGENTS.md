@@ -1,6 +1,6 @@
-﻿# ZephyrAlpha 项目 AI 基准文件
+# ZephyrAlpha 项目 AI 基准文件
 
-> **版本**：v4.18.0 | 更新日期：2026-05-04 | 状态：Active
+> **版本**：v4.21.0（治理与 AI 基准文档版本，与 `pyproject.toml` 中 Python 包 semver 无关） | 更新日期：2026-05-06 | 状态：Active
 >
 > **首要受众：AI** | 强制原则：§6.12 AI-First Audience Principle | 每次操作前自检：这个输出 AI 能零推理消费吗？
 
@@ -30,14 +30,21 @@
 
 ## 4. 编码安全（唯一始终生效的硬规则）
 
-> **SSoT 声明**：前两条编码安全规则的 canonical SSoT 为 [GOV-DOC-005 encoding-safety-standard.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/encoding-safety-standard.md)。以下为关键摘要——若发现不一致，以 GOV-DOC-005 为准。
+> **§6.17 Canonical 物理位置铁律**：本节为编码安全规则的 **canonical SSoT**（版本 v4.19.0）。下游派生文件 [GOV-DOC-005 encoding-safety-standard.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/encoding-safety-standard.md) 标注 `derived_from: AGENTS.md §4`，提供扩展阅读和修复流程。
 
-- 禁止用 PowerShell `echo`/`Out-File` 默认参数写 `.md` 文件（SSoT: GOV-DOC-005 §二.3）
-- Python 写文件必须指定 `encoding='utf-8'`（SSoT: GOV-DOC-005 §二.2）
-- 禁止在 Cursor 和 Trae 中同时打开同一文件编辑
-- 扫描器/校验脚本产生异常大量错误报告时，必须先暂停并检查扫描器本身——可能是正则表达式或校验逻辑写错了，而非文件真的有问题（KE-001 教训：3587 个误报源于一个多余的反斜杠）
-- **源码-测试同步铁律**（Source-Test Sync Rule）：任何对 `src/zephyr/` 下源码的修改（包括但不限于：重命名类/函数/变量、变更函数签名、修改返回值类型、重组目录结构、变更数据模型/Schema/字段默认值），必须在**同一 session 内**完成以下三件事：①同步更新所有受影响的测试文件 ②跑通全量测试 `python -m pytest tests/ -q` ③确认零失败。禁止"先把源码改了，测试以后再说"——不存在"以后"，必须一步到位。对标 ITIL Change Enablement：源码修改 = 变更请求，测试通过 = 变更影响评估通过；评估不通过不得视为变更完成。Pre-commit GATE-18 为自动化执行层——提交时自动拦截收集失败的代码（ImportError / 路径漂移 / 模块缺失）。
-- **大白话**：改源码的时候必须同时改测试，改完立刻跑一遍确认全绿。不要"先改源码，测试以后补"——跟借高利贷一样，拖越久利息越高，最后要花 10 倍时间还债。改代码和修测试是连体婴儿——必须生在一起，不能分开。
+| # | 规则 | 强/弱 | 对标 |
+|---|------|:---:|------|
+| 1 | 禁止 PowerShell `echo`/`Out-File` 默认参数写 `.md` 文件——必须用 `[System.IO.File]::WriteAllText($path, $content, [System.Text.Encoding]::UTF8)` | 🔴 硬 | Unicode §2.5 / W3C Character Model |
+| 2 | Python `open(path, 'w')` 禁止省略 `encoding`——必须显式 `encoding='utf-8'` | 🔴 硬 | PEP 8 §Source File Encoding |
+| 3 | Trae 编辑器：`files.autoGuessEncoding` 必须为 `false`，`files.encoding` 必须为 `utf8` | 🔴 硬 | ITIL Change Control（计划外变更风险） |
+| 4 | 禁止在 Cursor 和 Trae 中同时打开同一文件编辑 | 🔴 硬 | — |
+| 5 | 扫描器/校验脚本产生异常大量错误报告时，先暂停并检查扫描器本身——可能是正则表达式或校验逻辑写错了，而非文件真的有问题（KE-001：3587 个误报源于一个多余反斜杠） | 🟡 检查 | — |
+| 6 | **源码-测试同步铁律**：任何 `src/zephyr/` 下源码修改（重命名类/函数/变量、变更函数签名、修改返回值类型、重组目录结构、变更数据模型/Schema/字段默认值），必须在同一 session 内：①同步更新所有受影响的测试文件 ②跑通全量测试 `python -m pytest tests/ -q` ③确认零失败。禁止"先把源码改了，测试以后再说"。Pre-commit GATE-18 为自动化执行层。 | 🔴 硬 | ITIL Change Enablement |
+| 7 | **AI 对话文件锁协议**：任何文件写入操作（创建/修改/删除/重命名）前 MUST 执行：① `python scripts/lock_files.py check <file>` → 被锁则 STOP；② `python scripts/lock_files.py acquire <file> <session_id> --task "<简述>"` → 获取失败则 STOP；③ 操作完成后 `python scripts/lock_files.py release <file> <session_id>`。禁止跳过任何一步。禁止 check LOCKED 后强行写入。完整协议见 [.trae/rules/project_rules.md](file:///D:/ZephyrAlpha/.trae/rules/project_rules.md) RULE-ZERO。 | 🔴 硬 | K8s ResourceQuota / etcd 分布式锁 |
+
+> **大白话**：改源码的时候必须同时改测试，改完立刻跑一遍确认全绿。不要"先改源码，测试以后补"——跟借高利贷一样，拖越久利息越高。
+>
+> **大白话（锁协议）**：改任何文件之前，先问问"有没有其他 AI 在改这个文件？"——用 `python scripts/lock_files.py check <file>` 查。如果有人，你就碰不得。没人，你就抢锁——`python scripts/lock_files.py acquire <file> <你的编号>`。改完，还锁——`python scripts/lock_files.py release <file> <你的编号>`。跟机场行李柜一样：你开柜的时候别人开不了，你关柜了别人才开。跳过这三步 = 编码损坏，屡试不爽。
 
 ## 5. Owner 画像与沟通协议
 
@@ -94,7 +101,7 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | **B** | **真源清晰** | 每个事实是否只有一个SSoT？YAML是否为canonical？ | 1️⃣ 找到同一事实的所有定义位置→只能有1个canonical→其余标注derived_from<br>2️⃣ vocabulary YAML↔所有派生文件枚举是否一致？<br>3️⃣ Markdown是否与YAML冲突（冲突→YAML为准）？ | `d5_architecture/validate_ssot.py`、`d3_metadata/validate_enum_consistency.py`、`d3_metadata/validate_derived_from.py`、`d5_architecture/validate_code_yaml_alignment.py` | §6.9、§6.13、§6.15 |
 | **C** | **内容无冲突** | 不同文件对同一事实的描述是否一致？ | 1️⃣ frontmatter status=正文blockquote status=document-metadata-index.yaml status（三方对齐）？<br>2️⃣ YAML版本>MD引用版本（MD落后于YAML）？<br>3️⃣ 跨登记表共享字段是否一致？<br>4️⃣ YAML Summary声称数字与实际是否一致？ | `d5_architecture/validate_three_way_consistency.py`、`d5_architecture/validate_cross_references.py`、`d11_compliance/validate_truth_source_cascade.py`、`d5_architecture/validate_yaml_summaries.py`、`check_registry_consistency.py` | §6.10、§6.15 |
 | **D** | **文件夹职责清晰** | 每个目录是否只有一个职责？ | 1️⃣ 目录名=职责（能否一句话说清"放什么"）？<br>2️⃣ 目录内是否有不属于该职责的文件？<br>3️⃣ 是否有"源码↔YAML↔MD"三层漂移？<br>4️⃣ 一级目录是否符合白名单？ | `d5_architecture/validate_directory_structure.py`、`d1_structure/audit_directory_integrity.py`、`d5_architecture/validate_code_yaml_alignment.py` | GOV-DOC-002, §6.10 |
-| **E** | **无废话** | 文档是否每个字都有用？ | 1️⃣ 是否引用而非复制？<br>2️⃣ 是否有"等等""类似"等模糊词？<br>3️⃣ 是否有空壳文件/临时文件/残留物？<br>4️⃣ 是否有孤立文档（无入边引用）？ | `d9_knowledge/detect_duplicated_normative_language.py`、`d6_security/detect_vague_terms.py`、`d1_structure/detect_residual_files.py`、`d1_structure/detect_temp_files.py`、`d9_knowledge/detect_orphan_documents.py` | §5.1原则1、§6.12 |
+| **E** | **无废话** | 文档/文件是否每个字节都有存在必要？ | 1️⃣ 是否引用而非复制？<br>2️⃣ 是否有"等等""类似"等模糊词？<br>3️⃣ 是否有空壳文件/临时文件 (\_temp\*/\_check\*/\_phase\*)/残留物？<br>4️⃣ 是否有孤立文档（无入边引用）？<br>5️⃣ 是否有废墟引用（指向已删除的文件/目录）？<br>6️⃣ 是否有被替代但未删除的文件？<br>7️⃣ 新文件是否通过了准入门禁三问（内容不重复/跨phase有价值/不可替代）？ | `d1_structure/detect_residual_files.py`、`d1_structure/detect_temp_files.py`、`d1_structure/detect_orphan_py.py`、`d9_knowledge/detect_orphan_documents.py`、`d4_paths/detect_ruins_references.py`、`d6_security/detect_vague_terms.py`、ZERO-RESIDUE gate | IRN-011, §6.12, GOV-DOC-007 |
 | **F** | **蓝图-代码同步** | 蓝图§16路径索引 ↔ 磁盘实际是否一致？ | 1️⃣ 蓝图声称"已实现"的文件是否存在（幽灵路径）？<br>2️⃣ 磁盘新增文件是否已在蓝图§16登记（遗漏登记）？<br>3️⃣ 蓝图路径 vs 实际路径是否一致（路径漂移）？<br>4️⃣ completed蓝图是否含实际代码实现情况节？ | `d5_architecture/validate_blueprint_code_sync.py`、`d5_architecture/sync_blueprint_code_index.py`、`d5_architecture/validate_blueprint_implementation_docs.py` | §6.14 |
 | **G** | **链接完整** | 项目内所有跨文件引用是否可达？ | 1️⃣ 所有.md/.yaml中的路径引用→目标文件是否存在（断链检测）？<br>2️⃣ 是否有相对路径引用（应使用绝对路径）？<br>3️⃣ depends_on引用链是否≤3层？是否有环？ | `d2_links/audit_broken_links.py`、`d2_links/detect_relative_references.py`、`d5_architecture/audit_depends_on_chain_depth.py`、`d5_architecture/detect_depends_on_cycles.py` | §5.1原则3、§6.2 |
 | **H** | **安全红线** | 代码中是否存在不可接受的安全漏洞？ | 1️⃣ 密钥/Token/凭证硬编码？<br>2️⃣ shell=True/os.system()？<br>3️⃣ 危险Git命令（push --force/reset --hard）？<br>4️⃣ 日志输出敏感关键词？<br>5️⃣ 锚点文件删除？<br>6️⃣ 永久文件（ttl:permanent）删除？<br>7️⃣ threading.Lock（全局异步架构违规）？ | `d6_security/detect_secrets.py`、`d6_security/detect_shell_true.py`、`d6_security/detect_git_dangerous.py`、`d6_security/detect_keywords_in_logs.py`、`d6_security/detect_anchor_file_deletion.py`、`d6_security/detect_permanent_file_deletion.py`、`d6_security/detect_threading_lock.py`、`d6_security/detect_shell_dangerous.py` | §4 编码安全 |
@@ -148,6 +155,100 @@ Owner 为编程初学者（非技术背景），所有 AI 输出必须遵循**�
 | ⑦ | `docs/01_policies_and_standards/meta/rule-verification-standard.md` | 规则验证标准——V1~V4四级验证（自动化阻断/警告/人工审查/审计抽样） |
 | ⑦ | `docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md` | 审计追踪策略——6类操作必须审计、日志不可篡改、访问受限 |
 | ⑤~⑦ | `scripts/governance/index.md` | 80+审计脚本体系总入口 + run_all.py调度 + 12维度审计框架 |
+
+### 5.3 Session Continuity — 自动交接协议
+
+> **痛点**：AI 每次新 session 是零记忆的。你不知道上回做到哪了、哪些任务在等、哪些被阻塞了。
+>
+> **解决**：`src/zephyr/core/session_continuity.py` 提供自动交接机制——session 结束时自动汇总状态，下一个 session 开始时自动恢复上下文。
+>
+> **触发**：本节由 AI **在 session 结束前** 和 **session 开始时** 主动调用。这是第 11 条铁律级别的要求。
+
+#### 5.3.1 Session 结束时（保存交接包）
+
+```python
+from zephyr.core.session_continuity import SessionContinuity
+
+sc = SessionContinuity()
+sc.generate_and_save(session_id="2026-05-05-a", task_repo=task_repo)
+```
+
+这会自动从 `task_repo` 汇总统：
+- COMPLETED / VERIFIED 的任务 → `completed_tasks`
+- IN_PROGRESS 的任务 → `in_progress_tasks`
+- BLOCKED 的任务 + 阻塞原因 → `blocked_items`
+- READY / RETRY / PENDING 的任务 → `next_actions`（按 priority 排序，最多10个）
+- 自动生成的人类可读 `context_summary`
+
+写入 `handoffs` 表（同库 `data/zalpha_metadata.db`）。
+
+#### 5.3.2 Session 开始时（恢复上下文）
+
+```python
+from zephyr.core.session_continuity import SessionContinuity
+
+sc = SessionContinuity()
+sc.print_restore_summary()
+```
+
+输出样例：
+
+```
+============================================================
+  [Session Continuity] 欢迎回来！
+  上次 session: 2026-05-05-a
+  交接时间: 2026-05-05 14:30 UTC
+============================================================
+  ✅ 已完成: 3 个任务
+       CP-1
+       CP-2
+  🔄 进行中: 1 个任务
+       CP-3
+  🚫 阻塞: 0 个
+  📋 下一步行动:
+       [1] CP-3: [Session Continuity] HandoffPackage 自动生成 + session 恢复
+  📝 上下文摘要: 完成 2 个任务, 1 个进行中, 0 个阻塞. 总计 1 个任务有活动记录.
+============================================================
+```
+
+#### 5.3.3 AI 必须遵守的调用时机
+
+| 时机 | 调用 | 原因 |
+|:---:|------|------|
+| **工作快结束时** | `sc.generate_and_save(session_id=..., task_repo=...)` | 保存状态给下一次 session |
+| **工作快结束时** | `python scripts/lock_files.py release-all <session_id>` | **MANDATORY**——释放本 session 持有的所有文件锁，防止死锁阻塞其他对话 |
+| **工作快结束时** | `python scripts/lock_files.py status` | **MANDATORY**——确认所有锁已释放，输出必须为 CLEAN |
+| **工作快结束时** | `python -c "from zephyr.gates.invariants.zero_residue_check import ZeroResidueScanner; r=ZeroResidueScanner().scan(); print('MANDATORY-ZR:', 'CLEAN' if r.is_clean else f'{len(r.findings)} FINDINGS')"` | **MANDATORY**——Session结束前必须对磁盘做最后一次垃圾清理。对标IRN-011 §ZR-008 |
+| **刚打开 IDE 时** | `sc.print_restore_summary()` | 恢复上次上下文——30秒内知道"在哪、做什么" |
+| **刚打开 IDE 时** | `python scripts/lock_files.py cleanup` | 清理其他 session 可能遗留的死锁（TTL 过期/PID已死） |
+| **修改任务状态前** | 可选：`sc.get_latest_handoff()` | 确认是否有阻塞项需要优先处理 |
+
+#### 5.3.4 与 handoff-protocol.md 的关系
+
+本 §5.3 是 `handoff-protocol.md` 的**自动化实现**——`handoff-protocol.md` 定义协议规范（8必填字段），`session_continuity.py` 提供自动执行的代码。两者互补非重复：
+- `handoff-protocol.md` → 告诉 AI **"交接包里应该有什么"**
+- `session_continuity.py` → 告诉 AI **"怎么自动生成交接包"**
+- 本 §5.3 → 告诉 AI **"什么时候该调用它"**
+
+### 5.3.5 🔴 MANDATORY-ZR — Session 终了强制自净（IRN-011 · ZR-008）
+
+> **这不是"建议"——是GateEngine可硬阻断的强制条款，对标IRN-011零残留原则。**
+
+**触发时机**：每次 AI session **结束前**（在保存 session continuity handoff 包之后、最终确认完成之前）。
+
+**必须执行的操作**（以 `MANDATORY` 标记）：
+
+1. **MANDATORY**：运行临时文件扫描 → 发现 `_temp*` / `_check*` / `_phase_*` 前缀文件 → **立即 `DeleteFile`（物理删除）**——不允许"留给下一个session"。对标 ZR-001。
+2. **MANDATORY**：`python scripts/lock_files.py release-all <session_id>` → 释放本 session 持有的所有文件锁 → `python scripts/lock_files.py status` 确认 CLEAN。对标 §4 规则 7。
+3. **MANDATORY**：确认本次 session 产生的所有 `.py` 文件已在合法三目录（`scripts/governance/` / `src/zephyr/` / `tests/`）中——不存在根目录孤儿。对标 ZR-003 + ZR-007。
+4. **MANDATORY**：如果 session 中删除过任何文件或目录 → 检查是否有**废墟引用残留**（其他文件仍引用已删除的路径）。对标 ZR-005。
+5. **非阻断但建议**：用 `detect_residual_files.py` 做一次内容残留检测——确认没有被替代但未删除的旧文件。对标 ZR-006。
+
+**为什么这是铁律**：
+- AI session 的上下文记忆极短（§5.1）——你今天留下的临时文件，**永远不会被下一个 AI session 自动发现和清理**
+- 临时文件 = 磁盘噪音 = 下一个 AI session 的认知负担 = 冷启动时的"这个文件是干嘛的？"浪费 token 和时间
+- 对标：Boy Scout Rule（"Always leave it cleaner than you found it"）、vi2"文件即债务"、Google Dead Code Elimination Policy
+- **pre-commit GATE-ZR 为硬阻断执行层**——任何残留物尝试通过 git commit 入库，将直接被拒绝
 
 ## 6. AI 施工执行原则
 
@@ -342,6 +443,8 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 
 ### 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）
 
+> **v1.1.0（2026-05-06）**：增补双树口径——详见仓库根 **`architecture-model/SCOPE.yaml`**。简而言之：**EA 契约/不变量/完整技术雷达**在 `docs/02_enterprise_architecture/target-architecture/architecture-model/`；**施工分区（C/B 轨）与 GATE-A 对齐**在根目录 `architecture-model/`。本节泛称「`architecture-model/`」时，AI MUST 先读 SCOPE 再落笔，避免改错文件。
+
 > **v1.0.0（2026-05-02）**：架构数据的 canonical SSoT 必须是 YAML（`architecture-model/`），Markdown 视图（`00-10*.md`）是从 YAML 派生的人类可读呈现。对标 K8s CRD YAML / Terraform tf.json / OpenAPI spec.yaml —— 五家专业机构中四家用机器可读格式作为 canonical 真源。
 
 **核心原则**：**谁能被机器零人工干预消费，谁就是真源。** YAML 能被 AI 直接解析、CI 门禁强校验、代码生成器消费——Markdown 需要 NLP 推理，有歧义风险。因此 YAML 是真源，Markdown 是翻译。
@@ -349,7 +452,7 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 - **规则**：
   1. **YAML 优先**：任何架构事实（模块分层、技术选型、能力归属、接口契约、不变核心）必须先在 `architecture-model/` YAML 中定义，Markdown 视图可以引用、翻译、解释——但不得成为同一事实的独立定义源
   2. **冲突裁决**：YAML 与 Markdown 对同一事实描述不一致时 → **以 YAML 为准**。Markdown 视图需要同步更新以匹配 YAML。裁决记录写入 `architecture-rationale-log.md`
-  3. **新事实入库流程**：新模块/新属性/新技术条目 → 先写入对应 `architecture-model/layers/lXX.yaml` 或 `technology-landscape.yaml` → 再更新 Markdown 视图引用（如需叙事扩展）
+  3. **新事实入库流程**：新模块/新属性 → 先写入 **`SCOPE.yaml` 对应树** 下的 YAML：`architecture-model/layers/`（施工）或 `docs/02_enterprise_architecture/.../architecture-model/`（契约/雷达等 EA 条目）；**ThoughtWorks 风格完整技术雷达条目**仅以 `docs/.../architecture-model/technology/technology-landscape.yaml` 为真源——根目录 `architecture-model/technology-landscape.yaml` 仅为施工摘要，**条目 ID 使用 `IMPL-T-*`**（与 EA 树 `technologies[].id` 的 `T-*` 刻意隔离，禁止按同号对齐），语义（如 Python ≥3.11）须与 EA 对账。然后再更新 Markdown 视图引用（如需叙事扩展）
   4. **CI 门禁强制**：`check_architecture_gates.py` GATE-03 已校验"模块在 Markdown 视图中声明的分层 = YAML SSoT 中的分层"，不一致 → CI 失败。未来新增 Gate 应继续以此原则为基础
   5. **生成的文档标注**：从 YAML 自动生成的 Markdown 内容必须标注 `[generated from YAML SSoT]`，让读者知道这是派生内容、非独立定义
 
@@ -714,6 +817,38 @@ AI 在提议或执行文件删除操作前，MUST 完成以下两步预检流程
 
 **为什么不是重组目录结构**：业界一致做法——加载机制决定"AI 读什么"（globs/alwaysApply/progressive-disclosure），目录结构仍按人类逻辑组织。重组物理目录边际收益极低（§8.2 已实现按任务加载），但破坏性极大（82 目录 × 139+ 文档 × 80+ 脚本的全量引用链重构）。
 
+### 6.19 门禁-登记表原子同步铁律（Gate-Registry Atomic Sync Mandate）
+
+> **v1.0.0（2026-05-06）**：对标 K8s CRD 注册——自定义资源必须同时定义 CRD YAML + 注册到 apiextensions。gate-registry 与本规则同时诞生于"9 个 GATE 失联事故"的根因分析。
+
+**核心原则**：任何 pre-commit hook 的新增/修改/删除 → AI MUST 重新运行 `generate_gate_registry.py` 并确认 `--check` 通过。三文件**原子同步**——改一个不改另外两个 = bug。
+
+**原子同步三文件**：
+1. `.pre-commit-config.yaml` — hook 定义（id / name / entry / files）
+2. `gate-registry.yaml` — 自动生成物（运行 `generate_gate_registry.py`），不得手工编辑
+3. `registry-master-index.yaml` — REG-GATE-001 `entry_count` MUST 等于 gate-registry 的 `total_gates`
+
+**施工流程**：
+```
+ADD/MODIFY pre-commit hook
+    ↓
+python scripts/governance/generators/generate_gate_registry.py
+    ↓
+python scripts/governance/generators/generate_gate_registry.py --check  # MUST PASS
+    ↓
+更新 registry-master-index.yaml REG-GATE-001 entry_count
+    ↓
+git commit — pre-commit GATE-19 会再校验一遍漂移
+```
+
+**为什么生成器 regex 必须从 name 字段提取**：pre-commit hook 的 `id` 字段格式不统一（`gate-01-*` vs `gate-zr-*` vs `gate-ssot`）。`name` 字段永远以 `GATE-XX:` 开头，是唯一可靠的结构化 GATE ID 来源。**如果今后 hook name 格式改变 → 同时更新本脚本的 regex 匹配**。
+
+**事后检查机制**：
+- **GATE-19（静态清单漂移检测）**：commit 时运行 `generate_gate_registry.py --check`，硬阻断漂移
+- **防范能力**：只要 GATE-19 在 pre-commit 中保持 active，任何"加了 hook 忘了同步"的漂移都会被拦截
+
+**为什么不是 CI 阶段再查**：等 CI 发现漂移 = merge 已完成 = 回滚成本远高于 commit 时拦截。对标 GitHub's shift-left on security——Infracost / Trivy / tfsec 都在 pre-commit 跑。
+
 ## 7. AI 角色定位与思维方法论
 
 ### 7.1 首席架构师定位（Chief Architect Identity）
@@ -816,9 +951,11 @@ AI 在本项目中的默认角色是**客观、不奉承的专业量化机构首
 | **查找/操作任何登记表/注册表** | `_registry/catalogs/registry-master-index.yaml` | ~800 | ❌ 禁止跨目录翻找 YAML——先查总索引再定位到具体登记表 |
 | **了解未兑现的 YAML 承诺** | `_registry/catalogs/declarative-contract-tracker.yaml`（契约跟踪登记表） | ~500 | ❌ 禁止信任有 implementation_status 的 YAML 全部兑现——先查契约跟踪表确认 |
 | **创建新脚本工具** | `scripts/governance/index.md` + `scripts/governance/script_manifest.yaml` + **`_shared/` API 速查（见 §8.2.1）** | ~1000 | ❌ 禁止创建脚本后不注册——违反 §6.5 入库强制约定 / ❌ 禁止本地重定义 `_shared/` 已有函数/常量 / ❌ 禁止创建新 GATE/门禁后不注册到 `gate-registry.yaml` + 同步 `registry-master-index.yaml` entry_count |
-| **创建新门禁/GATE/钩子** | `gate-registry.yaml` + `registry-master-index.yaml`（REG-GATE-001）+ `.pre-commit-config.yaml` | ~800 | ❌ 禁止只加 pre-commit hook 不更新 gate-registry.yaml——三文件必须原子同步 / ❌ 禁止 entry_count 漂移——改完先数再写 |
+| **创建新门禁/GATE/钩子** | `gate-registry.yaml` + `registry-master-index.yaml`（REG-GATE-001）+ `.pre-commit-config.yaml` | ~800 | ❌ 禁止只加 pre-commit hook 不更新 gate-registry.yaml——三文件必须原子同步（§6.19）/ ❌ 禁止 entry_count 漂移——改完先数再写 / 施工流程: 改 hook → `generate_gate_registry.py` → `--check` → 更新 REG-GATE-001 entry_count → commit |
 | **创建/修改 CI pipeline 或基础设施配置** | `registry-master-index.yaml`（REG-INFRA-001）+ 对应登记表 | ~600 | ❌ 禁止创建 `.github/workflows/*.yml` 或 `.pre-commit-config.yaml` 等基础设施文件后不在 `registry-master-index.yaml` 中登记——对标 ITIL SACM：所有基础设施配置项必须注册到 CMDB / ❌ 禁止只改配置不更新 entry_count |
 | **添加/修改 @pytest.mark 装饰器** | `pyproject.toml [tool.pytest.ini_options] markers` + `registry-master-index.yaml` → REG-INFRA-002 | ~400 | ❌ 禁止只加装饰器不注册 marker——`--strict-markers` 模式下会导致 CI 失败 |
+| **修改 MCP Server / 工具契约 / IDE 集成** | `docs/03_modules/l01_infrastructure/mcp-servers/blueprint.md`（蓝图）+ `src/zephyr/mcp/tool_contracts.yaml`（契约 SSoT）+ `docs/02_enterprise_architecture/target-architecture/architecture-model/layers/b_mcp.yaml`（架构 YAML） | ~3500 | ❌ 禁止在 MCP server 代码中硬编码 input_schema——必须从 tool_contracts.yaml 读取<br>❌ 禁止新增 tool 前不先改 tool_contracts.yaml<br>❌ 禁止在 MCP 代码中使用 `print()`——日志必须走 `structlog` + `sys.stderr`<br>⚠️ `doc_guard_server.py` 的 server_id = `session_handoff`<br>⚠️ `sentinel_server.py` 的 server_id = `intent_router` |
+| **修改/调试 Pipeline 管线（MOD-INF-009）** | `docs/03_modules/l01_infrastructure/pipeline/blueprint.md`（蓝图）+ `src/zephyr/pipeline/models.py`（数据模型 SSoT）+ `src/zephyr/pipeline/pipeline_orchestrator.py`（编排器） | ~2500 | ❌ 禁止修改 M_MODULE_SPECS 的 model 字段而不同步更新蓝图 §2<br>❌ 禁止新增路由规则后不更新 `config/blueprint_routing.yaml` R011 的 keywords<br>❌ 禁止在 dispatch() 之外直接调用 _execute_module()——绕过 preempt/lock/zone_crossing 检查<br>❌ 禁止修改 Fallback 链 `_FALLBACK_CHAIN` 而不同步 `PipelineOrchestratorConfig`<br>⚠️ M1-M11 的 canonical 真源是 `models.py M_MODULE_SPECS`——蓝图 §2 是它的视图，冲突以代码为准 |
 | **不确定/未列出的任务** | `meta/index.md` + `meta/glossary.md`（最小对齐）→ **然后向 Owner 确认具体范围** | ~1100 | ❌ 禁止猜测任务类型后自行扩大读取范围 |
 
 ### 8.2.1 `_shared/` API 速查目录（创建脚本前 MUST 对照）
@@ -862,7 +999,6 @@ AI 在本项目中的默认角色是**客观、不奉承的专业量化机构首
 | `meta/governance-methodology-standard.md` | 需要做方法论决策（MTH-001~010）时才查对应条目 |
 | `governance/document/*` | 操作文档时才读 |
 | `governance/ai/*`（除 onboarding-guide） | 涉及 AI 治理具体场景时才查 |
-| `docs/03_modules/l01_infrastructure/audit-factory/blueprint.md` | 需要理解审计工厂架构设计时才读 |
 | `docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md` | 需要理解知识库架构设计、决策记录模型（§3.9.5）、来源矩阵（§3.9.1）时才读 |
 
 ### 8.4 如何找到不在表中的规则
@@ -870,3 +1006,60 @@ AI 在本项目中的默认角色是**客观、不奉承的专业量化机构首
 如果任务过程中需要某个不在上述列表中的规则，依赖链（`depends_on`）会自动指引你找到它。所有规则文件的 frontmatter 中都有 `depends_on` 字段，声明了本文件引用哪些上游文件——像一条"线索链"，跟着走就能找到需要的东西。
 
 > **大白话**：你就像去图书馆查资料——不是把所有书架逛一遍，而是先看"任务菜单"（§8.2），找到你该去的那个书架，拿 2-4 本书。其他书放在那里——如果真需要，书里会写着"参考文献见 XX"（depends_on），跟着找就行。这样你每次进来只需要读 2000-4000 字的规则，而不是 15000-20000 字——省下的脑力全用在干活上。
+
+
+### 8.5 Pipeline 管线专章（MOD-INF-009）—— AI agent 行为规则
+
+> **对标**：K8s Scheduler 的 Scheduling Framework + CI/CD Pipeline 的 Stage Gate
+>
+> Pipeline 是 ZephyrAlpha 的"任务快递分拣中心"——每条 TaskCard 进入后按 GOV-AI-002 决策树路由到 M1-M11 节点。
+> 以下规则定义了 AI agent 操作 Pipeline 时必须遵守的边界。
+
+#### 8.5.1 M1-M11 节点速查
+
+| 节点 | 管线 | 模型 | 职责（一句话） |
+|:---:|:---:|------|------|
+| M1 | A | DeepSeek | 任务卡解析→结构化执行计划 |
+| M2 | A | DeepSeek | 上下文装配→调用 context_engine |
+| M3 | A | DeepSeek | 代码/文档生成——核心生产 |
+| M4 | A | DeepSeek | 格式校验 |
+| M5 | A | GLM-5.1 | 产物打包 |
+| M6 | B | DeepSeek | 差异检测——产出 vs 期望（AP2边界标记） |
+| M7 | B | GLM-5.1 | 深度审查——逐个文件逻辑/合规 |
+| M8 | B | DeepSeek | 标准合规——PS/GOV/ADR |
+| M9 | B | DeepSeek | 风险评估——OWASP LLM Top 10 |
+| M10 | B | DeepSeek | 审计报告→Finding 格式 |
+| M11 | B | DeepSeek | 门禁裁决——G5/G6 |
+
+#### 8.5.2 AI agent 操作 Pipeline 的铁律
+
+1. **路由不可私自改变**——模型不可用应触发 Fallback 链（DeepSeek→GLM→Claude），而非静默改路由
+2. **A区产物不入B区**——A区(M1-M5)的输出必须经过 M6 边界标记（AP2）才能被 B 区消费
+3. **Preemption 先于执行**——P0/P1 任务执行前 MUST 先调用 _preempt_check() 检查是否需要抢占
+4. **Lock 获取后必须释放**——dispatch() 的 finally 块 MUST 调用 _release_pipeline_lock()
+5. **双盲审查不一致需升级**——M3(DeepSeek) 和 M7(GLM) verdict 不一致时，标记 consensus=False，升级到 Claude 仲裁
+6. **Fallback 链有终点**——Claude 失败后不再降级，直接标记 FAILURE
+7. **dry_run 不调用模型**——dry_run=True 时仅模拟路由和校验，不消耗 Token
+
+#### 8.5.3 常见 Pipeline 故障诊断
+
+| 症状 | 可能原因 | 诊断命令 |
+|------|---------|---------|
+| dispatch() 返回 LOCKED | 同层级或同文件有其他任务在跑 | 检查 `_pipeline_lock.list_all()` |
+| 任务卡在 IN_PROGRESS | 进程崩溃未释放锁 / 状态机未流转 | 检查 task_repo 中 IN_PROGRESS 任务 + `_preempt_log` |
+| Claude Rescue 反复触发 | DeepSeek/GLM API 全部不可用 | 检查 `_failure_log` 中 `deepseek_failure_count` / `glm_rejection_count` |
+| Artifact 链断裂 | 上游模块输出缺少 artifact_key | 检查 `manifest.artifacts` 中下游依赖的 key 是否存在 |
+| 蓝图路由命中错误蓝图 | blueprint_routing.yaml keyword 匹配歧义 | 检查 `config/blueprint_routing.yaml` R011 path_patterns + task_keywords |
+
+#### 8.5.4 Pipeline 代码位置速查
+
+| 组件 | 路径 |
+|------|------|
+| 数据模型 | `src/zephyr/pipeline/models.py` |
+| 编排器 | `src/zephyr/pipeline/pipeline_orchestrator.py` |
+| 路由插件 | `src/zephyr/pipeline/routing_plugins.py` |
+| CT-PIPE 路由 | `src/zephyr/pipeline/ct_pipe_routing.py` |
+| 并发锁 | `src/zephyr/pipeline/pipeline_lock.py` |
+| Agent 桥接 | `src/zephyr/pipeline/pipeline_agent_bridge.py` |
+| 蓝图路由配置 | `config/blueprint_routing.yaml` |
+| 模块蓝图 | `docs/03_modules/l01_infrastructure/pipeline/blueprint.md` |

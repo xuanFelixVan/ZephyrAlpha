@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class GateStat:
     gate_id: str
@@ -26,6 +27,7 @@ class GateStat:
     def block_rate(self) -> float:
         return 1.0 - self.pass_rate
 
+
 @dataclass
 class GateStatisticsData:
     total_runs: int = 0
@@ -34,6 +36,7 @@ class GateStatisticsData:
     overall_pass_rate: float = 1.0
     overall_block_rate: float = 0.0
     by_gate: list[GateStat] = field(default_factory=list)
+
 
 def fetch_gate_statistics(olap_engine: Any = None) -> GateStatisticsData:
     data = GateStatisticsData()
@@ -49,6 +52,7 @@ def fetch_gate_statistics(olap_engine: Any = None) -> GateStatisticsData:
     except Exception:
         pass
     return data
+
 
 def render_gate_statistics(data: GateStatisticsData) -> dict[str, Any]:
     return {

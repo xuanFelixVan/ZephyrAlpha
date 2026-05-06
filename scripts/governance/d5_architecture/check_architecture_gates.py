@@ -1,42 +1,23 @@
 #!/usr/bin/env python3
-"""
-Architecture-as-Code GATE 检查脚本（GATE-01~08 + GATE-A/B/C/D/E + GATE-SC + GATE-SUM + EXTRA-01~03）
+"""Architecture-as-Code GATE 检查脚本 (GATE-01~08 + GATE-A/B/C/D/E + GATE-SC + GATE-SUM + EXTRA-01~03)
 v2.4.0 — 2026-05-03
 
+用途：验证架构终局完成度，作为进入 beta 施工阶段的门禁。
+来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §1.3 + AGENTS.md §6.10 双层对齐闸门 + 2026-05-03 审计反漂移升级
+"""
+
+from __future__ import annotations
+
 __manifest__ = """
-args: []
-description: 架构门禁检查（GATE-01~08 + GATE-A + GATE-B + GATE-SC + EXTRA-01~03）
+args:
+  - --warn-only
+  - --jsonl
+description: Architecture GATE checker (GATE-01~08 + GATE-A + GATE-B + GATE-SC + EXTRA-01~03)
 dimensions:
 - D5
 priority: P0
 timeout_seconds: 30
 warn_only: false
-"""
-
-
-用途：验证架构终局完成度，作为进入 beta 施工阶段的门禁。
-来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §1.3 + AGENTS.md §6.10 双层对齐闸门 + 2026-05-03 审计反漂移升级
-
-GATE-01: _index.yaml 存在且所有分区文件可达
-GATE-02: 所有 P0 模块的 interface_contract 非空 + contract_id 在 contracts YAML 中存在
-GATE-03: invariants.yaml 每条不变量有 owner
-GATE-04: 视图文件行数 ≤ 800（硬线）/ ≤ 600（软线）
-GATE-05: 所有 P0 级 ADR 状态为 accepted 或 active
-GATE-06: domain-events.yaml 每个事件的 publisher 层 ID 在 layer YAML 分区中存在
-GATE-07: ddd-model.yaml 每个 aggregate 的 layer 在 layer YAML 分区中存在
-GATE-08: technology-landscape.yaml 每个条目的 quadrant 值合法（adopt/trial/assess/hold/build）
-GATE-A:  src/zephyr/ ↔ architecture-model/ 代码与YAML双层对账（§6.10）
-GATE-B:  YAML SSoT ↔ Markdown 视图对齐（§6.10）
-GATE-D:  docs/ 每个活跃子目录必须有 index.md（对标 Google OWNERS / ITIL CMDB）
-GATE-E:  Session Log 变更对齐自检（决策→受影响文件同步验证）
-GATE-SC: 模块 status 值在 _schema.yaml 合法值列表内（Schema Compliance Gate）
-GATE-SUM: YAML Summary 自动对账闸门（AGENTS.md §6.10 根治层）
-
-额外检查：
-EXTRA-01: YAML 模型 module_id 无重复
-EXTRA-02: interfaces 的 source/target 引用存在
-EXTRA-03: 每个 layer YAML 的 summary.total 与实际 modules 列表长度一致
-EXTRA-04: SSoT 问题追踪——跨文件不一致问题数量趋势（对标 ITIL Problem Management）
 """
 
 import re
@@ -83,6 +64,7 @@ VIEW_FILES = [
 import subprocess
 
 from _shared.yaml_utils import load_yaml
+from validate_blind_spot_status import run_gate_bs
 
 def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
     """GATE-SUM 通过 subprocess 调用 validate_yaml_summaries.py"""
@@ -294,32 +276,15 @@ def gate_04_view_line_count() -> tuple[bool, list[str]]:
     return len(errors) == 0, errors
 
 def gate_05_adr_accepted() -> tuple[bool, list[str]]:
-    """GATE-05: 所有 P0 级 ADR 状态为 accepted 或 active"""
+    """GATE-05: ADR 体系完整性检查。
+    2026-05-05 (session-012): 33 条 ADR 全部迁入 KB:decisions namespace，
+    物理 adr/ 目录已删除。检查 architecture-rationale-log.md 存在性。"""
     errors = []
-
-    if not ADR_DIR.exists():
-        errors.append(f"ADR 目录不存在: {ADR_DIR}")
+    rationale_log = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
+    if not rationale_log.exists():
+        errors.append(f"ADR 权威真源不存在: {rationale_log}")
         return False, errors
-
-    for adr_file in sorted(ADR_DIR.glob("ADR-*.md")):
-        with open(adr_file, encoding="utf-8") as f:
-            in_frontmatter = False
-            status = None
-            for line in f:
-                line = line.strip()
-                if line == "---":
-                    if in_frontmatter:
-                        break
-                    in_frontmatter = True
-                    continue
-                if in_frontmatter and line.startswith("status:"):
-                    status = line.split(":", 1)[1].strip()
-                    break
-
-        if status and status not in ("accepted", "active", "superseded", "partially_superseded"):
-            errors.append(f"{adr_file.name}: status={status}（期望 accepted/active/superseded/partially_superseded）")
-
-    return len(errors) == 0, errors
+    return True, errors
 
 def extra_01_no_duplicate_ids() -> tuple[bool, list[str]]:
     """EXTRA-01: YAML 模型 module_id 无重复"""
@@ -1088,8 +1053,16 @@ def extra_04_ssot_issue_trend() -> tuple[bool, list[str]]:
 
     return len(errors) == 0, errors
 
-def main() -> None:
+def main() -> int:
     """运行所有 GATE 检查，返回失败数。"""
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="Architecture-as-Code GATE v2.4.0")
+    parser.add_argument("--warn-only", action="store_true", help="有 FAIL 亦 exit 0")
+    parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要")
+    args = parser.parse_args()
+
     print("=" * 60)
     print("Architecture-as-Code GATE 检查 v2.4.0")
     print("=" * 60)
@@ -1109,6 +1082,7 @@ def main() -> None:
         ("GATE-E", "Session Log 变更对齐自检（对标 Google LSC）", gate_e_session_log_alignment),
         ("GATE-SC", "模块 status 在 _schema.yaml 合法值内", gate_sc_schema_compliance),
         ("GATE-SUM", "YAML Summary 自动对账（AGENTS.md §6.10 根治层）", _call_validate_yaml_summaries),
+        ("GATE-BS", "盲点现实对账——open 盲点 vs 代码实际状态", run_gate_bs),
         ("EXTRA-01", "module_id 无重复", extra_01_no_duplicate_ids),
         ("EXTRA-02", "interfaces source/target 存在", extra_02_interface_refs_exist),
         ("EXTRA-03", "summary.total 与 modules 数量一致", extra_03_summary_total_consistent),
@@ -1135,14 +1109,29 @@ def main() -> None:
 
     print(f"\n{'=' * 60}")
     print(
-        f"结果：{total_pass} PASS / {total_fail} FAIL / 2 人工确认（GATE-09/10）—— 含 GATE-A/B/D/E/SUM 五层闸门 + EXTRA-01~04"
+        f"结果：{total_pass} PASS / {total_fail} FAIL / 2 Phase B 待办（GATE-09/10）—— 含 GATE-A/B/D/E/SUM 五层闸门 + EXTRA-01~04"
     )
     print(f"{'=' * 60}")
 
     if total_fail > 0:
         print("\n⛔ 存在未通过的 GATE，不满足进入 beta 的条件。")
     else:
-        print("\n✅ 所有自动 GATE 通过！剩余 GATE-09/10 需人工确认。")
+        print("\n✅ 所有自动 GATE 通过！GATE-09/10 为 Phase B 待办项（需性能/发布基础设施就位后自动化）。")
+
+    if args.jsonl:
+        print(
+            json.dumps(
+                {
+                    "severity": "HIGH" if total_fail else "INFO",
+                    "check_id": "ARCH-GATES",
+                    "total_fail": total_fail,
+                    "total_pass": total_pass,
+                },
+                ensure_ascii=False,
+            )
+        )
+    if args.warn_only:
+        return 0
 
     return total_fail
 

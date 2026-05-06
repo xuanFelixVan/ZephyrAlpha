@@ -30,7 +30,6 @@ ai_autonomy: human_gated
 
 | 文件 | 说明 |
 |------|------|
-| adr-template.md | 架构决策记录 ADR-TEMPLATE |
 | blueprint-template.md | 文档模板 |
 | playbook-template.md | 文档模板 |
 | policy-template.md | 文档模板 |

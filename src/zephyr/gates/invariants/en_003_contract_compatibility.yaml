@@ -1,0 +1,22 @@
+gate_id: "EN-003"
+name: "EN-003 Contract Compatibility Checker"
+description: >
+  读取 cross-layer-contracts.yaml 中的字段定义，与 codegen 生成的 Python
+  dataclass 实际字段做 diff——检测字段缺失/类型不匹配/顺序错误。
+phase: "Phase D"
+auto: true
+on_failure: "reject"
+on_pass: "pass"
+
+checks:
+  - id: "EN-003-CHK-01"
+    name: "Field presence alignment between contract spec and Python dataclass"
+    type: "contract_compatibility_check"
+    severity: "error"
+    description: "对每条有 physical_path 的契约：加载对应的 Python dataclass，对比字段"
+    params:
+      contract_spec_path: "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml"
+      check_types: true
+      check_required: true
+      check_ordering: false
+      check_defaults: false

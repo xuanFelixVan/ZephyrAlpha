@@ -16,6 +16,7 @@ from pathlib import Path
 
 import yaml
 
+
 def parse_frontmatter(content: str) -> dict | None:
     """从 Markdown 文本中解析 YAML frontmatter。
 
@@ -25,6 +26,9 @@ def parse_frontmatter(content: str) -> dict | None:
     Returns:
         解析后的字典，无 frontmatter 或解析失败时返回 None。
     """
+    if content.startswith("\ufeff"):
+        content = content[1:]
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
     if not content.startswith("---"):
         return None
     match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
@@ -35,6 +39,7 @@ def parse_frontmatter(content: str) -> dict | None:
         return result if isinstance(result, dict) else None
     except yaml.YAMLError:
         return None
+
 
 def parse_frontmatter_from_file(filepath: Path) -> dict | None:
     """从文件路径读取并解析 YAML frontmatter。
@@ -50,6 +55,7 @@ def parse_frontmatter_from_file(filepath: Path) -> dict | None:
     except (OSError, UnicodeDecodeError):
         return None
     return parse_frontmatter(content)
+
 
 def parse_frontmatter_raw_from_file(filepath: Path) -> tuple[dict | None, str | None]:
     """从文件路径读取并解析 YAML frontmatter，同时返回原始全文。
@@ -68,6 +74,7 @@ def parse_frontmatter_raw_from_file(filepath: Path) -> tuple[dict | None, str | 
         return None, None
     fm = parse_frontmatter(content)
     return fm, content
+
 
 def parse_yaml_header(content: str) -> dict | None:
     """从 YAML 文件内容中提取头部字段（注释行 + 顶层字段）。
@@ -124,3 +131,41 @@ def parse_yaml_header(content: str) -> dict | None:
             fields["version"] = str(full_yaml["schema_version"])
 
     return fields if fields else None
+
+
+def extract_module_id(filepath: Path) -> str | None:
+    """从文件中提取 module_id 字段。
+
+    优先使用 parse_frontmatter_from_file 解析完整 frontmatter，
+    解析失败时降级为直接搜索 module_id: 行。
+
+    Args:
+        filepath: 文件路径。
+
+    Returns:
+        module_id 字符串，未找到时返回 None。
+    """
+    fm = parse_frontmatter_from_file(filepath)
+    if fm and isinstance(fm, dict):
+        mid = fm.get("module_id")
+        if mid:
+            return str(mid).strip().strip('"').strip("'")
+
+    try:
+        content = filepath.read_text(encoding="utf-8", errors="replace")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+    if content.startswith("---"):
+        end = content.find("\n---", 3)
+        if end != -1:
+            fm_text = content[3:end]
+            m = re.search(r"^module_id:\s*(\S.*)$", fm_text, re.MULTILINE)
+            if m:
+                return m.group(1).strip().strip('"').strip("'")
+
+    m = re.search(r"^module_id:\s*(\S.*)$", content, re.MULTILINE)
+    if m:
+        return m.group(1).strip().strip('"').strip("'")
+
+    return None

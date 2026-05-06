@@ -1,32 +1,22 @@
 """
 GATE-MODULEID: Validate module_id uniqueness and index/file consistency.
-Eliminates module_id collision and index-file mismatch—the root cause of
-MODULE_ID DRIFT identified in 6th audit.
+"""
+
+from __future__ import annotations
 
 __manifest__ = """
-args: []
-description: 'GATE-MODULEID: Validate module_id uniqueness and index/file consistency.'
+args:
+- {flag: --dim, type: int, description: "仅检查指定维度（1-4）"}
+- {flag: --warn-only, type: bool, description: "发现冲突时仅警告不阻断"}
+description: >
+  GATE-MODULEID 门禁——四维 module_id 校验（唯一性 + index.md 表-文件一致性 +
+  命名规范 DOMAIN-TYPE-NNN + 连续编号无意外缺口）。对标 §6.13 枚举同步 + §6.11 索引-实际同步。
 dimensions:
 - D3
 priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
-
-Dimensions:
-  DIM-1: module_id uniqueness — no two files share the same module_id
-  DIM-2: index-file consistency — index.md module_id claims match file frontmatter
-  DIM-3: naming convention — module_id follows DOMAIN-TYPE-NNN format
-  DIM-4: sequential coverage — no unexpected gaps in NNN numbering within a domain
-
-Usage:
-  python validate_module_id.py              # Check all dimensions
-  python validate_module_id.py --dim 1      # Check only DIM-1
-  python validate_module_id.py --fix-index  # Auto-fix index.md mismatches (DIM-2)
-"""
-
-from __future__ import annotations
 
 import argparse
 import re
@@ -39,35 +29,24 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT
+from _shared.frontmatter import extract_module_id
 
 POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
 MODULE_ID_PATTERN = re.compile("^[A-Z]+(-[A-Z0-9]+)+$")
-FRONTMATTER_ID_RE = re.compile("^module_id:\\s*(.+)$", re.MULTILINE)
 
-def extract_frontmatter_module_id(filepath: Path) -> str | None:
-    """提取 frontmatter 中的 module_id"""
-    try:
-        text = filepath.read_text(encoding="utf-8")
-    except Exception:
-        return None
-    m = FRONTMATTER_ID_RE.search(text)
-    if m:
-        return m.group(1).strip().strip('"').strip("'")
-    return None
 
 def scan_all_module_ids() -> dict[str, list[Path]]:
-    """扫描所有 module_id"""
     id_map: dict[str, list[Path]] = defaultdict(list)
     for f in POLICIES_ROOT.rglob("*"):
         if f.suffix not in (".md", ".yaml", ".yml"):
             continue
-        mid = extract_frontmatter_module_id(f)
+        mid = extract_module_id(f)
         if mid:
             id_map[mid].append(f)
     return id_map
 
+
 def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
-    """检查 D1 维度"""
     errors = []
     for mid, paths in sorted(id_map.items()):
         if len(paths) > 1:
@@ -75,8 +54,8 @@ def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
             errors.append(f"DIM-1 FAIL: module_id '{mid}' assigned to {len(paths)} files: {rels}")
     return errors
 
+
 def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
-    """检查 D3 维度"""
     errors = []
     for mid, paths in sorted(id_map.items()):
         if mid.startswith("DEPRECATED-"):
@@ -87,8 +66,8 @@ def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
             )
     return errors
 
+
 def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
-    """检查 D4 维度"""
     errors = []
     domain_nums: dict[str, list[int]] = defaultdict(list)
     for mid in id_map:
@@ -111,8 +90,8 @@ def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
                     )
     return errors
 
+
 def check_dim2() -> list[str]:
-    """检查 D2 维度"""
     errors = []
     for idx_file in POLICIES_ROOT.rglob("index.md"):
         try:
@@ -130,7 +109,7 @@ def check_dim2() -> list[str]:
             ref_path = idx_file.parent / ref_path_str
             if not ref_path.exists():
                 continue
-            actual_id = extract_frontmatter_module_id(ref_path)
+            actual_id = extract_module_id(ref_path)
             if actual_id and actual_id != claimed_id:
                 rel_idx = str(idx_file.relative_to(POLICIES_ROOT))
                 rel_ref = str(ref_path.relative_to(POLICIES_ROOT))
@@ -139,8 +118,8 @@ def check_dim2() -> list[str]:
                 )
     return errors
 
+
 def main() -> int:
-    """入口函数"""
     parser = argparse.ArgumentParser(description="GATE-MODULEID: Validate module_id uniqueness and consistency")
     parser.add_argument("--dim", type=int, choices=[1, 2, 3, 4], help="Check only this dimension")
     parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
@@ -177,6 +156,7 @@ def main() -> int:
         return 1
     print("\nGATE-MODULEID: ALL PASS")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

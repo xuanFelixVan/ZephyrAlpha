@@ -10,14 +10,13 @@ classification: internal
 language: zh
 created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
-last_updated: "2026-04-24"
+last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 11.6.1 双 P0 根因（Prompt Injection）"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Qwen 技术选型 #15-17"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §GLM D11 2.2/10（最薄弱）"
-  - "OWASP LLM Applications Top 10 (2026.03)"
+  - "03_modules/_cross_layer/llm-security/blueprint.md（MOD-INF-014 — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
+  - "architecture-model/layers/b_llm_security.yaml（LLM Security YAML SSoT）"
+  - "OWASP LLM Applications Top 10 (2026.03)（外部威胁分类参考，非项目内 SSoT）"
 supersedes: []
 related_adrs:
   - "ADR-0020 LLM Security Gateway 四层防护（pending B-e）"
@@ -34,11 +33,14 @@ tags:
   - fail-closed
   - owasp-llm-top10
   - vibe-coding-infrastructure
+mod_master_blueprint: "MOD-MASTER-001"
+mod_master_contracts:
+  - "CT-CE-LSG-001"
 ---
 
 # LLM Security Gateway Interface / LLM 安全网关接口规范
 
-> **定位**：Vibe Coding 2.0 五大核心服务中的"安全闸门"。对齐 OWASP LLM Top 10（2026.03），部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做四层防护。对应 `vibe-coding-audit-merged.md` 识别的 **SEC-01 Prompt Injection 缺口**，与 Agent Sandbox（ADR-0018）形成双层安全防线。
+> **定位**：LLM 安全网关（LSG）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-014` 蓝图 + `b_llm_security.yaml` + OWASP LLM Top 10 作外部威胁分类参考）。部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做 L1–L4 纵深防护并坚持 **fail-closed**。与 Agent Sandbox（ADR-0018）形成双层安全防线。
 >
 > **与其他 4 份规范的根本差异——fail-closed 原则**：
 >

@@ -1,14 +1,14 @@
 ---
 classification: confidential
-date: '2026-05-02'
+date: '2026-05-06'
 doc_type: index
-generated: '2026-05-02'
+generated: '2026-05-06'
 layer: cross_layer
 merged_from: README.md + index.md
 module_id: VIEW-README
 status: active
 title: Target Architecture — Navigation Guide / 目标架构导航
-version: 2.1.0
+version: 2.2.0
 depends_on:
   - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target-architecture 为其子目录，引用父级子目录一览"}
 ---
@@ -53,6 +53,8 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **TOGAF** — defines the four view layers: Business / Information / Application / Technology.
 - **C4 Model** — defines application-level visualization: System Context (L1) and Container (L2).
 
+> **Relation to `AGENTS.md` §6.9**: Markdown views here are the narrative *Architecture Description Set*; machine-consumable facts live under `architecture-model/` YAML with the dual-tree split declared in repo-root **`architecture-model/SCOPE.yaml`**. On conflict, YAML + SCOPE win; record rationale in `architecture-rationale-log.md`.
+
 ---
 
 本文档组是 ZephyrAlpha 2.0 的**架构描述集（Architecture Description Set）** canonical 真源。
@@ -62,6 +64,8 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **ISO 42010** — 定方法论：Architecture Description 由多个 View 组成，每个 View 针对特定 Stakeholder 的 Concern。
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology。
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）。
+
+> **与 `AGENTS.md` §6.9 的关系**：本目录下 **TOGAF/C4 视图 Markdown** 充当 *Architecture Description Set* 的阅读真源；**可机读事实**（分层登记、跨层契约、不变量、technology-landscape 全量等）以 `architecture-model/` 下 YAML + 仓库根 **`architecture-model/SCOPE.yaml`** 双树分工为准。二者冲突时——以 YAML + SCOPE 为机器裁决依据，并回写 rationale-log。
 
 ---
 
@@ -127,7 +131,7 @@ TOGAF 10 视图（00-10）按架构抽象层切分。正交视图按运行时特
 
 **Security / 安全合规**：`06-security-architecture.md`（安全架构全景 active v1.0.0）→ `09-governance-architecture.md`（治理三层边界 + 合规架构联动）→ `07-integration-architecture.md §5`（ACL 策略）→ `03-application-architecture.md §4.1`（ACL 落盘位置）
 
-**Governance / 治理工程师**：`09-governance-architecture.md`（三层边界定义 + 39 系统分层 + 激活时间表）→ `03-application-architecture.md §5`（scripts 治理代码拓扑）→ `06-security-architecture.md`（治理与安全交集）→ `adr/adr-0010-governance-three-layer-boundary.md`（治理架构三层边界 ADR，落地文档）→ 源讨论稿 `archive/reorg-2026-04-24/realized-as-adr/working-designs/governance-three-layer-boundary-design.md`（ARC-20260424-004，决策溯源）
+**Governance / 治理工程师**：`09-governance-architecture.md`（三层边界定义 + 39 系统分层 + 激活时间表）→ `03-application-architecture.md §5`（scripts 治理代码拓扑）→ `06-security-architecture.md`（治理与安全交集）→ KB:decisions namespace（ADR-0010 治理架构三层边界，原物理文件已迁入）→ 源讨论稿 `archive/reorg-2026-04-24/realized-as-adr/working-designs/governance-three-layer-boundary-design.md`（ARC-20260424-004，决策溯源）
 
 **AI collaborator / AI 协作者（推荐首选路径 v1.8.0）**：`architecture-model/_index.yaml`（全局索引，1 分钟定位任何模块）→ 按需读取 `architecture-model/layers/lXX.yaml`（模块属性 SSoT）→ `00-overview.md`（设计哲学）→ 按需读取视图正文（设计理由与叙事）
 
@@ -223,14 +227,14 @@ This document set was split and promoted from `DW-IA-DESIGN-001` (`target-inform
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
+| 2026-05-06 | **v2.2.0（AUDIT-04 / 治理收口）**：双树与 SCOPE/SSoT 地图对齐；Python ≥3.11 基线贯通；`09_audit/findings` 与契约 `ownership_model`；`validate_ssot` + 登记表 + `batch_create_index_md` 修正；INV-005 源码/EA 分层消歧。详情见 [revision-history.md](revision-history.md)。 |
 | 2026-05-02 | **v2.1.0（审计修复批次）**：修复 4 项 SSoT 对齐问题：(a) `architecture-model/infra/` 创建 core-services.yaml + shared-infra.yaml 骨架文件，消除 `_index.yaml` 引用不存在文件的问题；(b) `architecture-principles.md` v1.1.0 §0 新增安全红线 4 条（R1-R4），`00-overview.md` 同步改为引用链接，消除安全红线双源；(c) `ssot-authority-map.md` v2.3.0 移除 `layer_01` 历史误标、拆分矛盾追踪为活跃/已解决；(d) 修订历史归档至 `revision-history.md`，index.md 仅保留最近 3 条。 |
 | 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**，其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture-model/layers/_schema.yaml` v2.1。(b) **by-domain 双轨结构调整**：§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除。(c) **同步 06/08 视图状态**：`06-security-architecture.md` skeleton → active v1.0.0；`08-operations-architecture.md` skeleton → draft v0.2.0。 |
-| 2026-04-21 | **v1.9.0（catalogs → YAML SSoT 迁移）**：删除 `catalogs/` 目录（9 文件）和 `_toc-cards/` 目录（8 文件），所有结构化数据迁移到 `architecture-model/` YAML 分区。`check_architecture_gates.py` 升级至 v2.0.0。 |
 
 ## 排除规则（不应放入本目录的内容）
 
 - ❌ 治理规范 → `01_policies_and_standards/`
-- ❌ ADR → `02_enterprise_architecture/adr/`
+- ❌ ADR → KB:decisions namespace（原 `02_enterprise_architecture/adr/` 物理目录已删除）
 
 ## 父级目录
 

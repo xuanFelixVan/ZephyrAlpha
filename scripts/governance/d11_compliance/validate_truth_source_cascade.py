@@ -10,15 +10,6 @@ V-15 TruthSourceCascadeValidator — 真源连锁回溯校验器
 创建日期 : 2026-04-27
 版本     : v1.0.0
 
-__manifest__ = """
-args: []
-description: 真源级联验证器（上下游引用一致性）
-dimensions:
-- D11
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 功能说明
@@ -50,6 +41,17 @@ affected_files 嵌入格式（在 rationale-log 表格行内）：
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: 真源级联验证器（上下游引用一致性）
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import argparse
 import re

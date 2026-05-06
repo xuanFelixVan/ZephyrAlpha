@@ -2,9 +2,9 @@
 module_id: GOV-DATA-002
 title: 数据血缘策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

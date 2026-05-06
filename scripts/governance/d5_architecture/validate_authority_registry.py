@@ -1,25 +1,14 @@
 """
 AI 自治权限注册表 pre-commit 自校验 (Authority Registry Validator · V-11)
 
-__manifest__ = """
-args: []
-description: AI自治权限注册表自校验（三层权限 / 必填字段 / 重复检测）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
-
-
-任务编号 : T-V2-003（Wave 0 终审 R74 兜底）
+任务编号 : T-V2-003 (Wave 0 终审 R74 兜底)
 权限层级 : Immutable Core
 创建日期 : 2026-04-27
 
 功能说明
 --------
 作为 pre-commit 钩子运行，校验 ai-autonomy-authority-registry.md 中的权限标注：
-1. 三层权限值必须 ∈ {Immutable Core, Human-Gated, AI-Modifiable}
+1. 三层权限值必须属于 {Immutable Core, Human-Gated, AI-Modifiable}
 2. 每行必填字段：module / authority / rationale
 3. 同一 module_id 不得重复出现（禁止权限漂移）
 4. 模块覆盖率检查（业务核心 + 平台能力 + 基础设施 + 治理）
@@ -41,6 +30,16 @@ CI 模式（违规 exit 1）：
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: AI autonomy authority registry validator (3-tier auth / required fields / duplicate detection)
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
 
 import argparse
 import re
@@ -67,7 +66,12 @@ except ImportError:
 from _shared.constants import REPO_ROOT
 
 REGISTRY_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "governance" / "ai" / "ai-autonomy-authority-registry.md"
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "ai-autonomy-authority-registry.md"
 )
 VALID_AUTHORITIES = {"Immutable Core", "Human-Gated", "AI-Modifiable"}
 REQUIRED_SECTIONS = {"2.1", "2.2", "2.3"}
@@ -138,7 +142,7 @@ def _extract_rationale(cells: list[str], authority_col_idx: int) -> str:
     if len(cells) > 2:
         for i in range(2, len(cells)):
             val = cells[i].strip()
-            if val and "Immutable" not in val and ("Human-Gated" not in val) and ("AI-Modifiable" not in val):
+            if val and val not in VALID_AUTHORITIES:
                 return val
     return ""
 

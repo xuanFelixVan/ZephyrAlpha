@@ -1,16 +1,6 @@
 """
 validate_commit_message.py — Conventional Commits 校验（commit-msg hook）
 
-__manifest__ = """
-args:
-- --warn-only
-description: Conventional Commits 格式校验（commit-msg hook）— type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
-dimensions:
-- D11
-priority: P1
-timeout_seconds: 5
-warn_only: false
-"""
 
 
 对标: Conventional Commits v1.0.0 (conventionalcommits.org)
@@ -24,6 +14,17 @@ exit codes: 0=合法, 1=不合法
 """
 
 from __future__ import annotations
+__manifest__ = """
+args:
+- --warn-only
+description: Conventional Commits 格式校验（commit-msg hook）— type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
+dimensions:
+- D11
+priority: P1
+timeout_seconds: 5
+warn_only: false
+"""
+
 
 import argparse
 import re

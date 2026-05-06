@@ -1,16 +1,6 @@
 """
 audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 
-__manifest__ = """
-args: []
-description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
-dimensions:
-- D1
-- D4
-priority: P2
-timeout_seconds: 15
-warn_only: true
-"""
 
 
 对标：AGENTS.md §4（编码安全 — UTF-8 / 无BOM / 行尾一致性）
@@ -29,6 +19,19 @@ warn_only: true
 适合快速格式检查或 CI pre-commit hook。
 
 exit codes: 0=pass, 1=findings
+"""
+
+from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
+dimensions:
+- D1
+- D4
+priority: P2
+timeout_seconds: 15
+warn_only: true
 """
 
 import re
@@ -51,12 +54,10 @@ import yaml
 from _shared.constants import CONFIG_DIR, REPO_ROOT
 
 def report(issues, level, code, msg) -> None:
-    """report."""
+    """记录并打印一条格式化问题行。"""
     issues.append((level, code, msg))
-    """report."""
     icon = {"BUG": "\U0001f534", "DEFECT": "\U0001f534", "ISSUE": "\U0001f7e1", "LOW": "\U0001f7e2"}[level]
     print(f"  {icon} {code}: {msg}", file=sys.stderr)
-    """report."""
 
 def main() -> None:
     """入口函数."""

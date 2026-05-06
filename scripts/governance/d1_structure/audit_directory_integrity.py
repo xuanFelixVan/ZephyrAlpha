@@ -1,21 +1,6 @@
 """
 audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整性审计
 
-__manifest__ = """
-args: []
-description: 目录结构完整性审计（D1幽灵文件+D2 ID冲突+D3索引对账+D4命名规范+D5登记缺漏）
-dimensions:
-- D1
-- D2
-- D3
-- D4
-- D5
-priority: P0
-timeout_seconds: 60
-warn_only: false
-"""
-
-
 对标：ITIL 4 SACM §4.5（配置审计——CI登记完整性）
      ISO 11179 §5（元数据注册表——标识符唯一性）
      AGENTS.md §5.1（零记忆重启标准——索引↔磁盘一致）
@@ -38,6 +23,20 @@ exit codes: 0=pass, 1=findings, 2=script error
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 目录结构完整性审计（D1幽灵文件+D2 ID冲突+D3索引对账+D4命名规范+D5登记缺漏）
+dimensions:
+- D1
+- D2
+- D3
+- D4
+- D5
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
 import json
 import re
 import sys
@@ -58,6 +57,7 @@ try:
 except ImportError:
     yaml = None
 from _shared.constants import REPO_ROOT
+from _shared.frontmatter import extract_module_id
 
 _PS_ROOT = REPO_ROOT / "docs" / "01_policies_and_standards"
 _EXCLUDE_NAMES = frozenset({".git", "__pycache__", ".venv", "node_modules", ".mypy_cache"})
@@ -136,11 +136,6 @@ def _read_frontmatter(filepath: Path) -> dict[str, Any]:
             pass
     mid = _RE_FRONTMATTER_MODULE_ID.search(raw[: max(end, 500)])
     return {"module_id": mid.group(1).strip().strip("\"'")} if mid else {}
-
-def _extract_module_id(filepath: Path) -> str | None:
-    fm = _read_frontmatter(filepath)
-    mid = fm.get("module_id")
-    return str(mid).strip().strip("\"'") if mid else None
 
 def _list_md_files_recursive(root: Path) -> list[Path]:
     result = []
@@ -280,7 +275,7 @@ def check_d2_id_conflicts() -> list[Finding]:
     "check d1 ghost files."
     id_map: dict[str, list[str]] = defaultdict(list)
     for fpath in all_files:
-        mid = _extract_module_id(fpath)
+        mid = extract_module_id(fpath)
         if mid:
             id_map[mid].append(_rel(fpath))
     for mid, files in id_map.items():

@@ -1,14 +1,14 @@
-from __future__ import annotations
+# ==== BEGIN CODGEN:CTR-ERR-006 ====
+from dataclasses import dataclass, field
 
-from dataclasses import dataclass
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -18,9 +18,9 @@ CTR-ERR-006: ContractViolationError / 契约违反错误
 
 运行时跨层数据契约校验失败时抛出的通用错误。任何层的数据入站/出站校验均可抛出。
 
-SSoT: cross-layer-contracts.yaml → CTR-ERR-006
+SSoT: cross-layer-contracts.yaml -> CTR-ERR-006
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -30,12 +30,52 @@ AI Prompt
 
 @dataclass(frozen=True)
 class ContractViolationError:
-    error_id: str
     contract_id: str
-    violation_type: str
     detail: str
-    schema_version: str = "1.0"
-    field_name: Optional[str] = None
-    expected_type: Optional[str] = None
+    error_id: str
+    idempotency_key: str
+    violation_type: str
     actual_type: Optional[str] = None
+    expected_type: Optional[str] = None
+    field_name: Optional[str] = None
+    schema_version: str = "1.0"
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-ERR-006 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

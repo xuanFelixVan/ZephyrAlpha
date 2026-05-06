@@ -2,9 +2,9 @@
 module_id: STD-SSOT-AUTHORITY-MAP
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
 doc_type: reference
-version: 2.5.0
+version: 2.6.0
 status: active
-date: "2026-05-02"
+date: "2026-05-06"
 owner: ZephyrAlpha-Owner
 layer: cross_layer
 classification: confidential
@@ -34,7 +34,16 @@ tags:
 
 ## 一、层架构权威 (Layer Authority)
 
-**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/_index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer）
+> **🔷 双树声明（AUDIT-04 Remediation，对齐 `architecture-model/SCOPE.yaml`）**：仓库中存在两套 `architecture-model/`，职责**有意分离**，**禁止假定字节级一致**。
+>
+> | 树 | 路径 | SSoT 角色 |
+> |----|------|-----------|
+> | **EA 企业架构树** | `docs/02_enterprise_architecture/target-architecture/architecture-model/` | 跨层契约、不变量、能力热力图、`module-id-registry.yaml`（若仅存于此）、**完整** `technology/technology-landscape.yaml`、`events/`、`domain/`、`contracts/`、`cross-cutting/invariants.yaml` 等——**门禁与 validate_ssot 的层枚举权威仍以此树 `_index.yaml` + `layers/` 为真源**。 |
+> | **施工分区树** | 仓库根 `architecture-model/` | `implementation_partition_registry`：C/B 双轨分区、代码目录对齐状态、`layers/*` 施工视图（与 EA 同名 partition id 可对账，非同一份文件）。 |
+>
+> **`AGENTS.md` §6.9** 中的泛称 `architecture-model/` → 必须先读 **SCOPE.yaml** 再判断改哪一棵树；单纯说「layers YAML」在未限定路径时默认指 **施工树根** + **并列扫描 docs 树**（与 `check_architecture_gates` / GATE-SC 行为一致）。
+
+**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target-architecture/architecture-model/_index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer）
 
 > **大小写约定**：本节 `valid_values` 使用大写 `L00`~`L13`（架构标识符惯例）。`_index.yaml` 分区 `id` 使用小写 `l00`~`l13`（文件系统标识符惯例）。两者指代同一事物，大小写差异是有意设计：大写用于架构层 ID（受保护字段），小写用于 YAML 分区 id（文件系统路径组件）。（注：`_schema.yaml` v3.0.0 已移除 `layer` 字段——模块级 layer 冗余，层归属由 partition id 承载。此大小写约定仍适用于 frontmatter `layer` 字段。）
 
@@ -162,16 +171,15 @@ violation_severity: P1
 
 ## 四、技术决策权威 (ADR Authority)
 
-**权威来源**：`docs/02_enterprise_architecture/adr/index.md`
-- **编号空间**：ADR-0001 ~ ADR-0041（41 个编号，append-only 扁平编号）
-- **实际条目**：41 条（32 active/accepted + 1 superseded + 1 skipped + 7 reserved）
+**权威来源**：KB:decisions namespace（SQLite `knowledge` 表，category="architecture_decision"）
+- **编号空间**：ADR-0001 ~ ADR-0041（33 个 VERIFIED entries，已从物理 adr/ 目录迁入）
 - 41 个编号 ≠ 33 条 entry——前者是编号范围，后者是实际登记条目。8 个差值 = ADR-0006 (skipped) + ADR-0023~0029 (7 reserved)
 
 ### 受保护字段
 
 ```yaml
 protected_field: adr_reference
-authority_file: docs/02_enterprise_architecture/adr/index.md
+authority_file: KB:namespace=decisions（原 docs/02_enterprise_architecture/adr/index.md 已删除）
 check_rule: >
   任何文件引用 ADR-XXX 时，该 ADR 的 status 必须与权威来源一致。
   不得引用 Deprecated ADR 作为当前决策依据。
@@ -261,3 +269,4 @@ violation_severity: P2
 | 2.3.0 | 2026-05-02 | **审计修复批次**：(1) §一 移除 `layer_01` 历史误标（老树过渡期已结束，不再需要保留错误值）；(2) §八 拆分为"活跃矛盾清单"（5 条未解决）+ "已解决归档"（2 条已修复），解决权威定义与审计报告混合的责任漂移问题；(3) frontmatter `date` 同步更新至 2026-05-02。 |
 | 2.4.0 | 2026-05-02 | **审计修复批次 2**：(1) §二 新增 scope 声明——文档生命周期状态 ≠ 代码模块实现状态（_schema.yaml），消除字段名相同但枚举不同的歧义隐患；(2) §四 ADR 计数从模糊的"共 41 个编号"改为显式分解"41 编号 = 33 entry + 1 skipped + 7 reserved"，消除两个数字导致的困惑；(3) §八 新增 scope 声明——矛盾追踪是临时附加功能，非本文件 canonical 职责。 |
 | 2.5.0 | 2026-05-03 | **审计修复批次 3**：(1) §一 新增 `valid_values` 派生规则声明——明确此列表从 `_index.yaml` partitions 派生，新增层时必须先更新 `_index.yaml` 再据此更新本列表，消除独立维护导致的漂移风险；(2) 标记 `cross_layer` 为"架构级概念（非 partitions 直接条目）"，解释其为何不直接从 partitions 派生。 |
+| 2.6.0 | 2026-05-06 | **AUDIT-04 全量修复**：§一 增补双树（EA 树 vs 施工树）权威表 + 与 `SCOPE.yaml` / `AGENTS.md` §6.9 的读法约定，消除「单一路径」误读。 |

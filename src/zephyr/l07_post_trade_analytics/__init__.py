@@ -33,3 +33,17 @@ SSoT: cross-layer-contracts.yaml v3.0
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l07_post_trade_analytics.analytics_base import (
+    AttributionEngineBase,
+    PerformanceAttributionReport,
+    TCAEngineBase,
+)
+
+__all__ = [
+    "AttributionEngineBase",
+    "PerformanceAttributionReport",
+    "TCAEngineBase",
+]

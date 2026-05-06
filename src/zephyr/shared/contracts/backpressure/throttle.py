@@ -1,14 +1,14 @@
-from __future__ import annotations
+# ==== BEGIN CODGEN:CTR-BP-002 ====
+from dataclasses import dataclass, field
 
-from dataclasses import dataclass
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -18,9 +18,9 @@ CTR-BP-002: BackpressureThrottle / 背压降速信号
 
 下游处理压力较大但不至于暂停时，向上游发出降速信号。上游将下发速率降至指定值。
 
-SSoT: cross-layer-contracts.yaml → CTR-BP-002
+SSoT: cross-layer-contracts.yaml -> CTR-BP-002
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -30,10 +30,50 @@ AI Prompt
 
 @dataclass(frozen=True)
 class BackpressureThrottle:
-    signal_id: str
-    symbol: str
+    idempotency_key: str
     max_rate_per_sec: int
     reason: str
+    signal_id: str
+    symbol: str
     action: str = "THROTTLE"
     schema_version: str = "1.0"
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-BP-002 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

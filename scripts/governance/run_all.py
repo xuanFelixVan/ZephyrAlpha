@@ -1,15 +1,6 @@
 """
 run_all.py — 脚本系统统一入口脚本
 
-__manifest__ = """
-args: []
-description: run_all.py — 脚本系统统一入口脚本
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 根据 MOD-INF-005 蓝图 §4.4 定义，提供一键运行全维度或单维度审计扫描的入口。
@@ -24,14 +15,28 @@ Usage:
     python scripts/governance/run_all.py --output findings.jsonl  # 指定输出文件
     python scripts/governance/run_all.py --dry-run                # 不实际运行，打印预览
 
-Exit codes:
-    0 = 全部通过，0 Finding
-    1 = 扫描成功，有 Finding
-    2 = 扫描失败（脚本异常）
-    3 = 配置错误（缺少必要参数或文件）
+Exit codes（对齐 CT-SCRIPT-GATE-001 / MOD-INF-005 §4 编排语义）：
+    0 = 全部通过（无 Finding；--warn-only 下恒为 0）
+    1 = 有 Finding（子脚本报告违规）
+    2 = 扫描失败（子脚本崩溃/超时/kill-switch）
+    3 = 配置/真源错误（无法读取 script_manifest.yaml 等）
+
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: >
+  治理脚本系统统一入口——按维度/文件过滤执行全量治理脚本；
+  CT-SCRIPT-GATE-001 退出码语义（0/1/2/3）。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import argparse
 import json

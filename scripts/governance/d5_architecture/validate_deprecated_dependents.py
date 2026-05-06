@@ -1,15 +1,6 @@
 """
 validate_deprecated_dependents.py — 废弃文件活跃引用检测
 
-__manifest__ = """
-args: []
-description: 废弃文件活跃引用检测（LFC-001 / PS-STD-009 §5）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：LFC-001（退役前所有引用该 module_id 的文件已迁移）
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 废弃文件活跃引用检测（LFC-001 / PS-STD-009 §5）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path

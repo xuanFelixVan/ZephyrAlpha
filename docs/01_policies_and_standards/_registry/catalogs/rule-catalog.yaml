@@ -1,8 +1,13 @@
 schema_version: 1.0.0
-generated_at: '2026-05-05T01:25:46.556242'
+module_id: PS-REG-018
+doc_type: register
+title: 规则路径目录
+status: active
+generated_at: '2026-05-06T08:29:42Z'
+generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 total_files: 140
 files:
-- path: ZephyrAlpha\docs\01_policies_and_standards\index.md
+- path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
   title: 规则体系总索引
   doc_type: index
@@ -13,7 +18,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\index.md
+- path: docs/01_policies_and_standards/domains/index.md
   module_id: DOM-IDX-001
   title: 层域规则目录索引
   doc_type: index
@@ -24,7 +29,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L00_data_source\index.md
+- path: docs/01_policies_and_standards/domains/L00_data_source/index.md
   module_id: DOM-L00-000
   title: L00 数据源层域层入口
   doc_type: index
@@ -33,9 +38,9 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L00_data_source\governance\data-source-connection-policy.md
+- path: docs/01_policies_and_standards/domains/L00_data_source/governance/data-source-connection-policy.md
   module_id: DOM-L00-001
   title: 数据源连接策略
   doc_type: policy
@@ -44,9 +49,9 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L00_data_source\governance\index.md
+- path: docs/01_policies_and_standards/domains/L00_data_source/governance/index.md
   module_id: DOM-L00-GOV-IDX
   title: ''
   doc_type: index
@@ -57,7 +62,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L00_data_source\operational\connector-onboarding-runbook.md
+- path: docs/01_policies_and_standards/domains/L00_data_source/operational/connector-onboarding-runbook.md
   module_id: DOM-L00-002
   title: 连接器入职操作手册
   doc_type: operational_rule
@@ -66,9 +71,9 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L00_data_source\operational\index.md
+- path: docs/01_policies_and_standards/domains/L00_data_source/operational/index.md
   module_id: DOM-L00-OPS-IDX
   title: ''
   doc_type: index
@@ -79,7 +84,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L02_alpha_factor\index.md
+- path: docs/01_policies_and_standards/domains/L02_alpha_factor/index.md
   module_id: DOM-L02-IDX
   title: L02 Alpha 因子层域层入口
   doc_type: index
@@ -88,9 +93,9 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L02_alpha_factor\governance\factor-quality-policy.md
+- path: docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor-quality-policy.md
   module_id: DOM-L02-001
   title: 因子质量门控
   doc_type: policy
@@ -99,9 +104,9 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L02_alpha_factor\governance\index.md
+- path: docs/01_policies_and_standards/domains/L02_alpha_factor/governance/index.md
   module_id: DOM-L02-GOV-IDX
   title: ''
   doc_type: index
@@ -112,7 +117,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L02_alpha_factor\operational\factor-onboarding-runbook.md
+- path: docs/01_policies_and_standards/domains/L02_alpha_factor/operational/factor-onboarding-runbook.md
   module_id: DOM-L02-002
   title: 因子入职操作手册
   doc_type: operational_rule
@@ -121,9 +126,9 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L02_alpha_factor\operational\index.md
+- path: docs/01_policies_and_standards/domains/L02_alpha_factor/operational/index.md
   module_id: DOM-L02-OPS-IDX
   title: ''
   doc_type: index
@@ -134,7 +139,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L04_risk_management\index.md
+- path: docs/01_policies_and_standards/domains/L04_risk_management/index.md
   module_id: DOM-L04-000
   title: L04 风控管理层域层入口
   doc_type: index
@@ -143,9 +148,9 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L04_risk_management\governance\index.md
+- path: docs/01_policies_and_standards/domains/L04_risk_management/governance/index.md
   module_id: DOM-L04-GOV-IDX
   title: ''
   doc_type: index
@@ -156,7 +161,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L04_risk_management\governance\risk-limits-policy.md
+- path: docs/01_policies_and_standards/domains/L04_risk_management/governance/risk-limits-policy.md
   module_id: DOM-L04-001
   title: 风控限额策略
   doc_type: policy
@@ -165,9 +170,9 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L04_risk_management\operational\index.md
+- path: docs/01_policies_and_standards/domains/L04_risk_management/operational/index.md
   module_id: DOM-L04-OPS-IDX
   title: ''
   doc_type: index
@@ -178,7 +183,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L04_risk_management\operational\stop-loss-config-runbook.md
+- path: docs/01_policies_and_standards/domains/L04_risk_management/operational/stop-loss-config-runbook.md
   module_id: DOM-L04-002
   title: 止损配置操作手册
   doc_type: operational_rule
@@ -187,9 +192,9 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L07_post_trade_analytics\index.md
+- path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/index.md
   module_id: DOM-L07-000
   title: L07 盘后分析层域层入口
   doc_type: index
@@ -198,9 +203,9 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L07_post_trade_analytics\governance\index.md
+- path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/index.md
   module_id: DOM-L07-GOV-IDX
   title: ''
   doc_type: index
@@ -211,7 +216,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L07_post_trade_analytics\governance\post-trade-reporting-policy.md
+- path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/post-trade-reporting-policy.md
   module_id: DOM-L07-001
   title: 盘后报告策略
   doc_type: policy
@@ -220,9 +225,9 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L07_post_trade_analytics\operational\analytics-pipeline-runbook.md
+- path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md
   module_id: DOM-L07-002
   title: 分析管线操作手册
   doc_type: operational_rule
@@ -231,9 +236,9 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\domains\L07_post_trade_analytics\operational\index.md
+- path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/index.md
   module_id: DOM-L07-OPS-IDX
   title: ''
   doc_type: index
@@ -244,7 +249,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\index.md
+- path: docs/01_policies_and_standards/governance/index.md
   module_id: GOV-IDX-001
   title: 治理域总索引
   doc_type: index
@@ -255,7 +260,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\ai-autonomy-authority-registry.md
+- path: docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md
   module_id: DEPRECATED-GOV-AI-001
   title: （已迁移）AI 自治权限登记表
   doc_type: register
@@ -266,7 +271,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: _registry/catalogs/ai-autonomy-authority-registry.md（v1.3.0）
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\ai-hallucination-detection-rules.md
+- path: docs/01_policies_and_standards/governance/ai/ai-hallucination-detection-rules.md
   module_id: GOV-AI-009
   title: AI 幻觉自动检测规则集
   doc_type: policy
@@ -277,7 +282,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\ai-hallucination-self-check-policy.md
+- path: docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md
   module_id: GOV-AI-003
   title: AI 幻觉自检清单
   doc_type: policy
@@ -288,7 +293,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\dual-editor-collaboration-policy.md
+- path: docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md
   module_id: GOV-AI-004
   title: 双编辑器协作规则
   doc_type: policy
@@ -299,7 +304,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\handoff-protocol.md
+- path: docs/01_policies_and_standards/governance/ai/handoff-protocol.md
   module_id: GOV-AI-008
   title: Session Handoff Protocol（会话交接协议）
   doc_type: protocol
@@ -310,7 +315,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\index.md
+- path: docs/01_policies_and_standards/governance/ai/index.md
   module_id: GOV-AI-000
   title: AI 治理目录索引
   doc_type: index
@@ -321,7 +326,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\ai\model-routing-policy.md
+- path: docs/01_policies_and_standards/governance/ai/model-routing-policy.md
   module_id: GOV-AI-002
   title: 模型路由策略 — DeepSeek V4 Pro 主力 + GLM 审查 + Claude 特种
   doc_type: policy
@@ -332,18 +337,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\adr-protocol.md
-  module_id: GOV-ARCH-001
-  title: ADR 协议
-  doc_type: protocol
-  status: draft
-  version: 0.2.0
-  rule_form: declarative
-  scope: global
-  stability: evolving
-  layer: l01_infrastructure
-  superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\architecture-review-policy.md
+- path: docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md
   module_id: GOV-ARCH-002
   title: 架构评审门控
   doc_type: policy
@@ -352,9 +346,9 @@ files:
   rule_form: declarative
   scope: global
   stability: stable
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\architecture-versioning-policy.md
+- path: docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md
   module_id: GOV-ARCH-003
   title: 架构版本化策略
   doc_type: policy
@@ -363,9 +357,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\ctr-injection-rules.yaml
+- path: docs/01_policies_and_standards/governance/architecture/ctr-injection-rules.yaml
   module_id: GOV-ARC-CTR-001
   title: CTR 承重墙注入规则表
   doc_type: policy
@@ -376,7 +370,7 @@ files:
   stability: frozen
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\gate-strategy-standard.md
+- path: docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md
   module_id: GOV-ARCH-006
   title: ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）
   doc_type: standard
@@ -387,7 +381,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\index.md
+- path: docs/01_policies_and_standards/governance/architecture/index.md
   module_id: GOV-ARCH-000
   title: 架构治理目录索引
   doc_type: index
@@ -398,7 +392,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\phase-transition-protocol.md
+- path: docs/01_policies_and_standards/governance/architecture/phase-transition-protocol.md
   module_id: GOV-ARCH-005
   title: Phase Transition Protocol / 阶段过渡双门协议
   doc_type: protocol
@@ -409,7 +403,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: null
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\architecture\system-qualification-standard.md
+- path: docs/01_policies_and_standards/governance/architecture/system-qualification-standard.md
   module_id: GOV-ARCH-004
   title: 系统合格判定标准
   doc_type: standard
@@ -420,18 +414,18 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\compliance\audit-protocol.md
+- path: docs/01_policies_and_standards/governance/compliance/audit-protocol.md
   module_id: GOV-CMP-003
   title: 治理审计执行协议
   doc_type: policy
-  status: draft
+  status: active
   version: 1.2.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\compliance\audit-trail-policy.md
+- path: docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md
   module_id: GOV-CMP-002
   title: 审计追踪策略
   doc_type: policy
@@ -440,9 +434,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\compliance\index.md
+- path: docs/01_policies_and_standards/governance/compliance/index.md
   module_id: GOV-CMP-000
   title: 合规治理目录索引
   doc_type: index
@@ -453,7 +447,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\compliance\regulatory-taxonomy-policy.md
+- path: docs/01_policies_and_standards/governance/compliance/regulatory-taxonomy-policy.md
   module_id: GOV-CMP-001
   title: 监管分类法
   doc_type: policy
@@ -462,9 +456,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\data\data-lineage-policy.md
+- path: docs/01_policies_and_standards/governance/data/data-lineage-policy.md
   module_id: GOV-DATA-002
   title: 数据血缘策略
   doc_type: policy
@@ -473,9 +467,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\data\data-quality-policy.md
+- path: docs/01_policies_and_standards/governance/data/data-quality-policy.md
   module_id: GOV-DATA-001
   title: 数据质量策略
   doc_type: policy
@@ -484,9 +478,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\data\data-retention-policy.md
+- path: docs/01_policies_and_standards/governance/data/data-retention-policy.md
   module_id: GOV-DATA-003
   title: 数据保留策略
   doc_type: policy
@@ -495,9 +489,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\data\index.md
+- path: docs/01_policies_and_standards/governance/data/index.md
   module_id: GOV-DATA-000
   title: 数据治理目录索引
   doc_type: index
@@ -508,18 +502,18 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md
+- path: docs/01_policies_and_standards/governance/document/directory-structure-standard.md
   module_id: GOV-DOC-002
   title: 目录结构规范（docs/ + src/zephyr/ 双轨治理）
   doc_type: standard
   status: active
-  version: 3.3.0
+  version: 3.5.0
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\document-control-policy.md
+- path: docs/01_policies_and_standards/governance/document/document-control-policy.md
   module_id: GOV-DOC-009
   title: 文档控制原则
   doc_type: policy
@@ -530,7 +524,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\document-discovery-policy.md
+- path: docs/01_policies_and_standards/governance/document/document-discovery-policy.md
   module_id: GOV-DOC-010
   title: 文档可发现性策略
   doc_type: policy
@@ -541,7 +535,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\document-lifecycle-standard.md
+- path: docs/01_policies_and_standards/governance/document/document-lifecycle-standard.md
   module_id: GOV-DOC-006
   title: 文档生命周期管理规范
   doc_type: standard
@@ -552,18 +546,18 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\encoding-safety-standard.md
+- path: docs/01_policies_and_standards/governance/document/encoding-safety-standard.md
   module_id: GOV-DOC-005
   title: 编码安全规范
   doc_type: standard
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md
+- path: docs/01_policies_and_standards/governance/document/file-naming-standard.md
   module_id: GOV-DOC-003
   title: 文件命名规范
   doc_type: standard
@@ -574,7 +568,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-operation-safety-policy.md
+- path: docs/01_policies_and_standards/governance/document/file-operation-safety-policy.md
   module_id: GOV-DOC-007
   title: 文件删除/移动安全门禁
   doc_type: policy
@@ -585,18 +579,18 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-path-standard.md
+- path: docs/01_policies_and_standards/governance/document/file-path-standard.md
   module_id: GOV-DOC-004
   title: 文件路径规范
   doc_type: standard
   status: active
-  version: 1.1.2
+  version: 1.1.3
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\index.md
+- path: docs/01_policies_and_standards/governance/document/index.md
   module_id: GOV-DOC-000
   title: 文档治理目录索引
   doc_type: index
@@ -607,7 +601,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\document\unified-numbering-standard.md
+- path: docs/01_policies_and_standards/governance/document/unified-numbering-standard.md
   module_id: GOV-DOC-001
   title: ZephyrAlpha 2.0 全系统统一编号规范
   doc_type: standard
@@ -618,7 +612,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md
+- path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
   module_id: GOV-ENG-001
   title: 代码构建标准
   doc_type: standard
@@ -629,7 +623,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\index.md
+- path: docs/01_policies_and_standards/governance/engineering/index.md
   module_id: ''
   title: engineering — 目录索引
   doc_type: index
@@ -640,7 +634,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\ai-behavior-iron-policy.md
+- path: docs/01_policies_and_standards/governance/module/ai-behavior-iron-policy.md
   module_id: GOV-MOD-002
   title: AI模型行为铁律
   doc_type: policy
@@ -649,9 +643,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\index.md
+- path: docs/01_policies_and_standards/governance/module/index.md
   module_id: GOV-MOD-000
   title: 模块治理目录索引
   doc_type: index
@@ -662,18 +656,18 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\module-admission-policy.md
+- path: docs/01_policies_and_standards/governance/module/module-admission-policy.md
   module_id: GOV-MOD-001
   title: 模块准入门控策略
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\module-injection-rules.yaml
+- path: docs/01_policies_and_standards/governance/module/module-injection-rules.yaml
   module_id: GOV-MOD-005
   title: 模块注入检查规则
   doc_type: policy
@@ -684,7 +678,7 @@ files:
   stability: evolving
   layer: l01_infrastructure
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\module-interface-contract-policy.md
+- path: docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md
   module_id: GOV-MOD-004
   title: 模块接口契约策略
   doc_type: policy
@@ -693,31 +687,31 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\module-lifecycle-policy.md
+- path: docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md
   module_id: GOV-MOD-003
   title: 模块生命周期策略
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\module\multi-registry-synchronization-standard.md
+- path: docs/01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md
   module_id: GOV-MOD-007
   title: 多登记表同步标准
   doc_type: standard
   status: active
-  version: 2.1.0
+  version: 2.1.1
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\security\access-control-policy.md
+- path: docs/01_policies_and_standards/governance/security/access-control-policy.md
   module_id: GOV-SEC-002
   title: 访问控制策略
   doc_type: policy
@@ -726,9 +720,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\security\index.md
+- path: docs/01_policies_and_standards/governance/security/index.md
   module_id: GOV-SEC-000
   title: 安全治理目录索引
   doc_type: index
@@ -739,18 +733,18 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\security\secret-management-policy.md
+- path: docs/01_policies_and_standards/governance/security/secret-management-policy.md
   module_id: GOV-SEC-001
   title: 密钥管理策略
   doc_type: policy
   status: draft
-  version: 0.2.0
+  version: 0.2.1
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\security\security-incident-response-policy.md
+- path: docs/01_policies_and_standards/governance/security/security-incident-response-policy.md
   module_id: GOV-SEC-003
   title: 安全事件响应策略
   doc_type: policy
@@ -759,9 +753,9 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\task\index.md
+- path: docs/01_policies_and_standards/governance/task/index.md
   module_id: GOV-TASK-000
   title: 任务系统架构总览
   doc_type: index
@@ -772,7 +766,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\task\task-card-standard.md
+- path: docs/01_policies_and_standards/governance/task/task-card-standard.md
   module_id: GOV-TASK-001
   title: 任务卡操作指南
   doc_type: standard
@@ -783,7 +777,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\task\task-closure-standard.md
+- path: docs/01_policies_and_standards/governance/task/task-closure-standard.md
   module_id: GOV-TASK-005
   title: 任务关闭标准
   doc_type: standard
@@ -794,7 +788,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\governance\task\task-lifecycle-standard.md
+- path: docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md
   module_id: GOV-TASK-004
   title: 任务生命周期治理标准
   doc_type: standard
@@ -805,7 +799,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\behavior-boundaries-standard.md
+- path: docs/01_policies_and_standards/meta/behavior-boundaries-standard.md
   module_id: PS-STD-003
   title: ZephyrAlpha 行为边界标准
   doc_type: standard
@@ -816,18 +810,18 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md
-  module_id: PS-STD-005
-  title: ZephyrAlpha 蓝图体系架构标准 — 三级金字塔与目录归属
+- path: docs/01_policies_and_standards/meta/document-structure-standard.md
+  module_id: PS-STD-002
+  title: ZephyrAlpha 标准文档模板
   doc_type: standard
   status: active
-  version: 1.0.0
-  rule_form: structural
+  version: 3.2.0
+  rule_form: declarative
   scope: global
-  stability: evolving
+  stability: frozen
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\glossary.md
+- path: docs/01_policies_and_standards/meta/glossary.md
   module_id: META-GLS-001
   title: ZephyrAlpha 规则体系术语表
   doc_type: terminology
@@ -838,18 +832,18 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md
+- path: docs/01_policies_and_standards/meta/governance-methodology-standard.md
   module_id: PS-STD-011
   title: 治理方法论
   doc_type: standard
   status: active
-  version: 2.6.0
+  version: 2.7.0
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\governance-metrics-standard.md
+- path: docs/01_policies_and_standards/meta/governance-metrics-standard.md
   module_id: PS-STD-006
   title: ZephyrAlpha 治理度量标准
   doc_type: standard
@@ -860,7 +854,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\index.md
+- path: docs/01_policies_and_standards/meta/index.md
   module_id: META-IDX-001
   title: 元规则目录索引
   doc_type: index
@@ -871,7 +865,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\meta-standard-constitution.md
+- path: docs/01_policies_and_standards/meta/meta-standard-constitution.md
   module_id: PS-STD-000
   title: ZephyrAlpha 元标准宪法
   doc_type: standard
@@ -882,29 +876,29 @@ files:
   stability: frozen
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md
+- path: docs/01_policies_and_standards/meta/metadata-registry.md
   module_id: PS-STD-001
   title: ZephyrAlpha 元数据登记表
   doc_type: standard
   status: active
-  version: 5.9.0
+  version: 6.0.1
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\registry-of-registries.yaml
-  module_id: PS-REG-002
-  title: 登记表的登记表 — 跨登记表一致性契约
-  doc_type: contract
+- path: docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md
+  module_id: PS-STD-004
+  title: ZephyrAlpha 规则分类与冲突裁决标准
+  doc_type: standard
   status: active
-  version: 1.1.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
+  version: 2.0.2
+  rule_form: declarative
+  scope: global
+  stability: stable
+  layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\rule-lifecycle-and-change-standard.md
+- path: docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md
   module_id: PS-STD-009
   title: 规则治理标准
   doc_type: standard
@@ -915,29 +909,29 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\rule-verification-standard.md
+- path: docs/01_policies_and_standards/meta/rule-verification-standard.md
   module_id: PS-STD-012
   title: 规则验证标准
   doc_type: standard
   status: active
-  version: 1.2.0
+  version: 1.2.1
   rule_form: declarative
   scope: global
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\meta\terminology-mapping.md
+- path: docs/01_policies_and_standards/meta/terminology-mapping.md
   module_id: META-TERM-001
   title: 术语映射表（大白话 ↔ 行业术语）
   doc_type: reference
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: data
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\index.md
+- path: docs/01_policies_and_standards/operational/index.md
   module_id: OPS-IDX-001
   title: 操作手册目录索引
   doc_type: index
@@ -948,7 +942,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\devops\architecture-change-playbook.md
+- path: docs/01_policies_and_standards/operational/devops/architecture-change-playbook.md
   module_id: OPS-DEV-002
   title: 架构变更操作手册
   doc_type: operational_rule
@@ -959,7 +953,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\devops\index.md
+- path: docs/01_policies_and_standards/operational/devops/index.md
   module_id: OPS-DEV-000
   title: DevOps 操作目录索引
   doc_type: index
@@ -970,7 +964,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\migration\index.md
+- path: docs/01_policies_and_standards/operational/migration/index.md
   module_id: OPS-MIG-000
   title: 迁移操作目录索引
   doc_type: index
@@ -981,7 +975,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\vibe_coding\ai-incident-and-emergency-playbook.md
+- path: docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-playbook.md
   module_id: OPS-VC-004
   title: AI 与系统事故响应手册
   doc_type: operational_rule
@@ -992,7 +986,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\vibe_coding\index.md
+- path: docs/01_policies_and_standards/operational/vibe_coding/index.md
   module_id: OPS-VC-000
   title: Vibe Coding 操作目录索引
   doc_type: index
@@ -1003,18 +997,18 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\vibe_coding\vibe-coding-gate-checklist.md
+- path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md
   module_id: OPS-VC-005
   title: Vibe Coding 会话门禁检查清单
   doc_type: operational_rule
   status: active
-  version: 0.2.0
+  version: 0.3.0
   rule_form: procedural
   scope: global
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\operational\vibe_coding\vibe-coding-session-state-runbook.md
+- path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md
   module_id: OPS-VC-002
   title: Vibe Coding Session 状态机规则
   doc_type: operational_rule
@@ -1025,18 +1019,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\adr-template.md
-  module_id: ''
-  title: ''
-  doc_type: adr
-  status: draft
-  version: 0.1.0
-  rule_form: declarative
-  scope: global
-  stability: evolving
-  layer: cross_layer
-  superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md
+- path: docs/01_policies_and_standards/templates/blueprint-template.md
   module_id: ''
   title: ''
   doc_type: blueprint
@@ -1047,7 +1030,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\index.md
+- path: docs/01_policies_and_standards/templates/index.md
   module_id: TPL-IDX-001
   title: 文档模板目录索引
   doc_type: index
@@ -1058,7 +1041,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\playbook-template.md
+- path: docs/01_policies_and_standards/templates/playbook-template.md
   module_id: ''
   title: ''
   doc_type: operational_rule
@@ -1069,7 +1052,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\policy-template.md
+- path: docs/01_policies_and_standards/templates/policy-template.md
   module_id: ''
   title: ''
   doc_type: policy
@@ -1080,7 +1063,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\protocol-template.md
+- path: docs/01_policies_and_standards/templates/protocol-template.md
   module_id: ''
   title: ''
   doc_type: protocol
@@ -1091,7 +1074,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\register-template.md
+- path: docs/01_policies_and_standards/templates/register-template.md
   module_id: ''
   title: ''
   doc_type: register
@@ -1102,7 +1085,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\risk-register-template.md
+- path: docs/01_policies_and_standards/templates/risk-register-template.md
   module_id: DW-RISK-TEMPLATE
   title: <主题> 风险登记簿
   doc_type: register
@@ -1113,7 +1096,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\runbook-template.md
+- path: docs/01_policies_and_standards/templates/runbook-template.md
   module_id: ''
   title: ''
   doc_type: operational_rule
@@ -1124,7 +1107,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\standard-template.md
+- path: docs/01_policies_and_standards/templates/standard-template.md
   module_id: ''
   title: ''
   doc_type: standard
@@ -1135,7 +1118,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\templates\task-card-template.md
+- path: docs/01_policies_and_standards/templates/task-card-template.md
   module_id: TEMPLATE-TASK-001
   title: 任务卡模板 — 防漂移标准格式
   doc_type: template
@@ -1146,29 +1129,29 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\index.md
+- path: docs/01_policies_and_standards/_registry/index.md
   module_id: REG-IDX-001
   title: 登记表体系目录索引
   doc_type: index
   status: active
-  version: 2.1.0
+  version: 3.0.2
   rule_form: declarative
   scope: global
   stability: stable
-  layer: cross_layer
+  layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\adr-status-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/adr-status-registry.yaml
   module_id: PS-REG-015
-  title: ADR 活跃状态登记表
+  title: ADR 状态登记表（冻结壳）
   doc_type: register
-  status: active
+  status: deprecated
   version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md
+- path: docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md
   module_id: GOV-AI-001
   title: AI 自治权限登记表（全模块权限终表）
   doc_type: register
@@ -1179,18 +1162,18 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-risk-register.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml
   module_id: PS-REG-009
-  title: AI 风险登记表
+  title: AI 风险登记簿
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-session-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml
   module_id: PS-REG-011
   title: AI Session/Agent 登记表
   doc_type: register
@@ -1201,19 +1184,19 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml
   module_id: PS-REG-007
   title: 跨模块依赖登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.2
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\declarative-contract-tracker.yaml
-  module_id: PS-REG-014
+- path: docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml
+  module_id: PS-REG-019
   title: 声明式契约跟踪登记表
   doc_type: register
   status: active
@@ -1223,18 +1206,29 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml
   module_id: PS-REG-013
   title: 项目目录登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\frontier-llm-benchmark-ranking.md
+- path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+  module_id: PS-REG-002
+  title: 文档元数据索引
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/frontier-llm-benchmark-ranking.md
   module_id: REG-LLM-001
   title: 前沿大模型综合能力排名登记表
   doc_type: reference
@@ -1245,7 +1239,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\frontmatter-field-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
   module_id: PS-REG-012
   title: Frontmatter 字段定义登记表
   doc_type: register
@@ -1256,40 +1250,40 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\gate-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml
   module_id: PS-REG-014
   title: GATE 门禁登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\index.md
+- path: docs/01_policies_and_standards/_registry/catalogs/index.md
   module_id: CAT-IDX-001
   title: 登记表集中存储目录索引
   doc_type: index
   status: active
-  version: 2.0.0
+  version: 2.1.0
   rule_form: declarative
   scope: global
   stability: stable
-  layer: cross_layer
+  layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml
   module_id: PS-REG-006
   title: 运行时基础设施登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\knowledge-article-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml
   module_id: PS-REG-010
   title: 知识条目登记表
   doc_type: register
@@ -1300,30 +1294,19 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\master-document-inventory.yaml
-  module_id: PS-REG-003
-  title: 完整文档登记表（Master Document Inventory）
-  doc_type: register
-  status: deprecated
-  version: 1.2.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: document-metadata-index.yaml（auto-generated, 127 files）
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\registry-master-index.yaml
-  module_id: PS-REG-005
-  title: 登记表总索引（Registry Master Index）
-  doc_type: register
-  status: active
-  version: 1.3.0
+- path: docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\registry-of-registries.yaml
-  module_id: PS-REG-002
+- path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+  module_id: PS-REG-016
   title: 登记表的登记表 — 跨登记表一致性契约
   doc_type: contract
   status: active
@@ -1333,7 +1316,29 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\script-health-registry.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml
+  module_id: PS-REG-018
+  title: 规则路径目录
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/rule-registry.md
+  module_id: PS-REG-001
+  title: ZephyrAlpha 规则登记表
+  doc_type: register
+  status: active
+  version: 1.4.1
+  rule_form: data
+  scope: global
+  stability: stable
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml
   module_id: PS-REG-008
   title: 脚本健康与清单登记表
   doc_type: register
@@ -1344,18 +1349,18 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\task-card-meta-registry.yaml
-  module_id: PS-REG-004
+- path: docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml
+  module_id: PS-REG-017
   title: 任务卡元层登记表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\contracts\architecture-contract.yaml
+- path: docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
   module_id: PS-CTR-001
   title: Architecture Compliance Contract
   doc_type: contract
@@ -1366,7 +1371,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\contracts\index.md
+- path: docs/01_policies_and_standards/_registry/contracts/index.md
   module_id: REG-CON-IDX
   title: _registry/contracts/ 目录索引
   doc_type: index
@@ -1377,7 +1382,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\contracts\model-capability-contract.yaml
+- path: docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml
   module_id: GOV-AI-006
   title: AI 模型能力矩阵契约
   doc_type: contract
@@ -1388,7 +1393,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\schemas\index.md
+- path: docs/01_policies_and_standards/_registry/schemas/index.md
   module_id: ''
   title: _registry/schemas/ 目录索引
   doc_type: index
@@ -1399,29 +1404,29 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\schemas\session-log-schema.yaml
+- path: docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml
   module_id: GOV-AI-007
   title: Session Log 标准 Schema
   doc_type: schema
   status: active
-  version: 2.1.0
+  version: 2.2.0
   rule_form: data
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\classification-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/classification-vocabulary.yaml
   module_id: PS-VOC-006
   title: classification 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\created_by-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/created_by-vocabulary.yaml
   module_id: PS-VOC-008
   title: created_by 受控词表
   doc_type: vocabulary
@@ -1432,7 +1437,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\doc_type-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml
   module_id: PS-VOC-001
   title: doc_type 受控词表
   doc_type: vocabulary
@@ -1443,7 +1448,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\index.md
+- path: docs/01_policies_and_standards/_registry/vocabularies/index.md
   module_id: REG-VOC-IDX
   title: _registry/vocabularies/ 目录索引
   doc_type: index
@@ -1454,7 +1459,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\language-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/language-vocabulary.yaml
   module_id: PS-VOC-007
   title: language 受控词表
   doc_type: vocabulary
@@ -1465,7 +1470,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\layer-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/layer-vocabulary.yaml
   module_id: PS-VOC-005
   title: layer 受控词表
   doc_type: vocabulary
@@ -1476,7 +1481,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\rule_form-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/rule_form-vocabulary.yaml
   module_id: PS-VOC-002
   title: rule_form 受控词表
   doc_type: vocabulary
@@ -1487,7 +1492,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\scope-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/scope-vocabulary.yaml
   module_id: PS-VOC-009
   title: scope 受控词表
   doc_type: vocabulary
@@ -1498,7 +1503,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\stability-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/stability-vocabulary.yaml
   module_id: PS-VOC-010
   title: stability 受控词表
   doc_type: vocabulary
@@ -1509,7 +1514,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\status-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/status-vocabulary.yaml
   module_id: PS-VOC-003
   title: status 受控词表
   doc_type: vocabulary
@@ -1520,7 +1525,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\ttl-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/ttl-vocabulary.yaml
   module_id: PS-VOC-004
   title: ttl 受控词表
   doc_type: vocabulary
@@ -1531,7 +1536,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\verifiability-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/verifiability-vocabulary.yaml
   module_id: PS-VOC-011
   title: verifiability 受控词表
   doc_type: vocabulary

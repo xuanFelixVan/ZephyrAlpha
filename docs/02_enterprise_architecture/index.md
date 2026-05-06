@@ -32,16 +32,17 @@ depends_on:
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**企业架构文档 — TOGAF 视图（人类可读）+ ADR（决策记录）+ 架构模型 YAML（机器 SSoT）**。
+本目录只存放：**企业架构文档 — TOGAF 视图（人类可读）+ 架构模型 YAML（机器 SSoT）**。
 
 ## 子目录一览
 
 | 子目录 | 说明 | 入口 | 轨道 |
 |--------|------|------|:---:|
-| `adr/` | 架构决策记录 | [adr/index.md](adr/index.md) | 人类视图 |
 | `target-architecture/` | 目标架构视图（TOGAF 10 + 2 正交 + YAML SSoT + 图表） | [target-architecture/index.md](target-architecture/index.md) | 人 + 机 |
 
 > `designs/` 和 `by-domain/` 目录已于 2026-05-03 物理删除（僵尸目录——索引已移除引用但物理目录未删，现已彻底清除）。
+> 
+> `adr/` 目录已于 2026-05 前全量迁入 `knowledge` 表（33 条 ADR，全部 VERIFIED），物理目录及配套文件（registry、template、protocol、adr_ingest.py）已删除。ADR 现通过 KE 管线检索，不再作为独立子目录存在。
 
 ## 顶层文件清单
 

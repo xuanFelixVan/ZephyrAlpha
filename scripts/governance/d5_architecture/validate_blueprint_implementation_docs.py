@@ -1,50 +1,7 @@
 """GATE-IMPL-DOC — 蓝图实现文档校验闸门
 
-AGENTS.md 6.4 铁律五（03_modules/index.md 铁律五）：任何 construction_progress = phase_N_complete
-的蓝图必须在正文中记录实际代码实现情况。本脚本强制执行该铁律。
-
-AGENTS.md 6.4 铁律六（03_modules/index.md 铁律六）：construction_progress 必须 LS 磁盘验证。
+AGENTS.md 6.4 铁律五 + 铁律六：construction_progress 必须 LS 磁盘验证，
 蓝图中声称的文件路径必须在磁盘上真实存在。
-
-检查规则：
-  1. 蓝图 frontmatter 的 construction_progress 为 phase_1_partial / phase_1_complete / phase_2_complete
-     → 正文必须含实现状态节（匹配 ## + 已实现代码完整路径索引）
-  2. 蓝图 frontmatter 的 construction_progress 为 not_started / skeleton
-     → 正文不应含实现节（防虚假声明）
-  3. 蓝图有 completed 类 construction_progress 但正文无实现节 → CI 失败
-  4. 蓝图 frontmatter 未声明 construction_progress → CI 失败
-  5. 蓝图声称的文件路径必须磁盘验证 → 任何已实现路径不存在 → CI 失败
-  6. construction_progress 与实际磁盘状态不符 → CI 失败
-
-对标：ITIL SACM — CI 属性状态必须与实际配置一致
-      K8s Admission Controller — 不符合 Schema 的资源拒绝进入集群
-
-用法：
-  python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py
-  python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py --warn-only
-"""timeout_seconds: 30
-warn_only: false
-"""
-
-
-AGENTS.md §6.4 铁律五（03_modules/index.md §八）：任何 construction_progress = phase_N_complete
-的蓝图必须在正文中记录实际代码实现情况。本脚本强制执行该铁律。
-
-AGENTS.md §6.4 铁律六（03_modules/index.md §八）：construction_progress 必须 LS 磁盘验证。
-蓝图中声称的文件路径必须在磁盘上真实存在。
-
-检查规则：
-  1. 蓝图 frontmatter 的 construction_progress 为 phase_0_completed / phase_1_complete
-     → 正文必须含 "实际代码实现情况" 节（匹配 ## + Code Implementation Status）
-  2. 蓝图 frontmatter 的 construction_progress 为 not_started / skeleton
-     → 正文不应含实现节（防虚假声明）
-  3. 蓝图有 completed 类 construction_progress 但正文无实现节 → CI 失败
-  4. 蓝图 frontmatter 未声明 construction_progress 但有 completed/retired 前缀 → 警告
-  5. 【NEW 铁律六 L2】蓝图声称的文件路径必须磁盘验证——任何 "已实现" 路径不存在 → CI 失败
-  6. 【NEW】construction_progress 与实际磁盘状态不符 → CI 失败
-
-对标：ITIL SACM — CI 属性状态必须与实际配置一致（false declaration = audit finding）
-      K8s Admission Controller — 不符合 Schema 的资源拒绝进入集群
 
 用法：
   python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py
@@ -52,6 +9,18 @@ AGENTS.md §6.4 铁律六（03_modules/index.md §八）：construction_progress
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args:
+- --warn-only
+- --jsonl
+description: "validate that blueprint-claimed file paths actually exist on disk"
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
 
 import re
 import sys
@@ -83,6 +52,7 @@ FILE_PATH_RE = re.compile(
     r"`(src/zephyr/[^`*]+\.(?:py|yaml|yml|json|toml))`|`(tests/[^`*]+\.py)`|`(config/[^`*]+\.(?:yaml|yml|json))`"
 )
 
+
 def _has_negative_indicator(content: str, path: str) -> bool:
     """检查文件路径的所有出现位置附近是否有 ❌ 或 未实现 等否定标记。"""
     start = 0
@@ -90,10 +60,15 @@ def _has_negative_indicator(content: str, path: str) -> bool:
         idx = content.find(path, start)
         if idx == -1:
             return False
-        window = content[max(0, idx - 500):idx + len(path) + 200]
-        if re.search(r'❌|未实现|not.implemented|待实现|待创建|not.started|Phase\s*[2-9]|📋|新模块|计划|规划|新增', window, re.IGNORECASE):
+        window = content[max(0, idx - 500) : idx + len(path) + 200]
+        if re.search(
+            r"❌|未实现|not.implemented|待实现|待创建|待建|not.started|Phase\s*[2-9]|📋|新模块|计划|规划|新增|⚪",
+            window,
+            re.IGNORECASE,
+        ):
             return True
         start = idx + len(path)
+
 
 def find_blueprints() -> list[Path]:
     """find_blueprints implementation."""
@@ -101,6 +76,7 @@ def find_blueprints() -> list[Path]:
     if not modules_dir.exists():
         return []
     return list(modules_dir.rglob("blueprint.md"))
+
 
 def extract_claimed_file_paths(content: str) -> list[str]:
     """extract_claimed_file_paths implementation."""
@@ -112,6 +88,7 @@ def extract_claimed_file_paths(content: str) -> list[str]:
                 paths.append(g)
     return list(dict.fromkeys(paths))
 
+
 def resolve_source_dir_from_claimed_paths(paths: list[str]) -> str | None:
     """resolve_source_dir_from_claimed_paths implementation."""
     for p in paths:
@@ -120,6 +97,7 @@ def resolve_source_dir_from_claimed_paths(paths: list[str]) -> str | None:
             if len(parts) >= 3:
                 return "/".join(parts[:3])
     return None
+
 
 def check_blueprint(bp_path: Path) -> dict:
     """Check compliance and report findings."""
@@ -147,13 +125,35 @@ def check_blueprint(bp_path: Path) -> dict:
         "content": content,
     }
 
-def main() -> None:
+
+def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    warn_only = "--warn-only" in sys.argv[1:]
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="GATE-IMPL-DOC — blueprint ↔ disk consistency")
+    parser.add_argument("--warn-only", action="store_true")
+    parser.add_argument("--jsonl", action="store_true")
+    args = parser.parse_args()
+    warn_only = args.warn_only
+
     blueprints = find_blueprints()
     if not blueprints:
         print("No blueprints found under docs/03_modules/")
-        sys.exit(0)
+        if args.jsonl:
+            print(
+                json.dumps(
+                    {
+                        "severity": "INFO",
+                        "check_id": "IMPL-DOC",
+                        "errors": 0,
+                        "warnings": 0,
+                        "note": "no_blueprints",
+                    },
+                    ensure_ascii=False,
+                )
+            )
+        return 0
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -258,19 +258,35 @@ def main() -> None:
         for w in warnings:
             print(w)
             print()
+    blob = {
+        "severity": "HIGH" if errors else "INFO",
+        "check_id": "IMPL-DOC",
+        "errors": len(errors),
+        "warnings": len(warnings),
+    }
+
     if not errors and not warnings:
         print(
             f"OK: All {len(blueprints)} blueprints have consistent construction_progress ↔ implementation documentation + verified file paths."
         )
-        sys.exit(0)
+        if args.jsonl:
+            print(json.dumps(blob, ensure_ascii=False))
+        return 0
 
     if warn_only:
         print(f"\n[--warn-only] {len(errors)} error(s) suppressed, {len(warnings)} warning(s)")
-        sys.exit(0)
+        if args.jsonl:
+            print(json.dumps(blob, ensure_ascii=False))
+        return 0
     if errors:
         print(f"\nFAIL: {len(errors)} blueprint(s) with implementation documentation or path drift issues.")
-        sys.exit(1)
-    sys.exit(0)
+        if args.jsonl:
+            print(json.dumps(blob, ensure_ascii=False))
+        return 1
+    if args.jsonl:
+        print(json.dumps(blob, ensure_ascii=False))
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -16,6 +16,7 @@ from zephyr.feedback_loop.feedback_collector import (
     FeedbackEntry,
 )
 
+
 class TestFeedbackEntry:
     def test_valid_entry(self) -> None:
         entry = FeedbackEntry(
@@ -67,6 +68,7 @@ class TestFeedbackEntry:
                 created_at=datetime(2026, 4, 24),
                 unknown_field="oops",
             )
+
 
 class TestFeedbackCollector:
     def test_add_entry(self) -> None:

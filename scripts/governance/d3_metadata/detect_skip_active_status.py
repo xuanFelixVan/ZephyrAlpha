@@ -1,15 +1,6 @@
 """
 detect_skip_active_status.py — 跨级降格检测
 
-__manifest__ = """
-args: []
-description: 跨级降格检测（ABS-22 / COND-15 — draft→deprecated跳过active）
-dimensions:
-- D3
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：ABS-22（跨级降格文档状态为绝对禁止）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 跨级降格检测（ABS-22 / COND-15 — draft→deprecated跳过active）
+dimensions:
+- D3
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import subprocess
 import sys

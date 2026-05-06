@@ -1,25 +1,32 @@
 """
-check_ai_capability_boundary.py — AI 能力边界静态检查脚本
+行为说明
+--------
+- 合并三类路径：merge-base...HEAD（若可解析）、工作区相对 HEAD、暂存区。
+- 若变更路径落入矩阵中任一 IMMUTABLE scope，则判违规（须 Owner 审批）。
+- 写入 allow/deny 仍以 config/capabilities.yaml（CBAC）为准；本脚本不替代 CBAC。
 
-__manifest__ = """
-args: []
-description: check_ai_capability_boundary.py — AI 能力边界静态检查脚本
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
+manifest（供 script_manifest 登记）: dimensions D7, priority P2, warn_only 由 CLI 决定。
 
-
-在 CI 阶段扫描所有 Python 文件，检测是否有代码修改了 IMMUTABLE 级别的
-文件或绕过了能力边界。读取 config/ai_capability_matrix.yaml 获取边界定义。
-
-exit codes: 0=pass, 1=violations found, 2=error
+exit codes: 0=pass, 1=violations
 """
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: >
+  AI 能力边界检查——对比 git 变更与 config/ai_capability_matrix.yaml 中的 IMMUTABLE 路径，
+  变更路径落入 IMMUTABLE scope 则判违规。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
+
+import argparse
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,104 +36,184 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
 
 ensure_utf8_stdout()
-import argparse
 
 import yaml
 
 MATRIX_PATH = REPO_ROOT / "config/ai_capability_matrix.yaml"
 
+
+def _run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
+    try:
+        r = subprocess.run(
+            ["git", *args],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            encoding="utf-8",
+            errors="replace",
+        )
+        return r.returncode, r.stdout, r.stderr
+    except (OSError, subprocess.SubprocessError) as exc:
+        return -1, "", str(exc)
+
+
 def load_matrix() -> dict | None:
-    """加载能力矩阵"""
     if not MATRIX_PATH.exists():
         return None
-    "加载能力矩阵."
     return yaml.safe_load(MATRIX_PATH.read_text(encoding="utf-8"))
 
+
 def get_immutable_scopes() -> list[str]:
-    """加载能力矩阵."""
     matrix = load_matrix()
     if matrix is None:
         return [
-            "shared/contracts/",
-            "docs/02_enterprise_architecture/adr/",
-            "docs/01_policies_and_standards/governance/ai/",
-            "gates/_registry.yaml",
+            "src/zephyr/shared/contracts/**/*.py",
+            "docs/02_enterprise_architecture/ssot-authority-map.md",
+            "docs/01_policies_and_standards/governance/ai/**/*.md",
+            "src/zephyr/gates/_registry.yaml",
         ]
     scopes: list[str] = []
     for entry in matrix.get("matrix", {}).get("entries", []):
         if entry.get("level") == "IMMUTABLE":
             scopes.append(entry["scope"])
     return scopes
-    "获取不可变作用域列表."
+
 
 def _matches_scope(file_rel: str, scope: str) -> bool:
     import fnmatch
 
-    file_normalized = file_rel.replace("\\", "/")
-    scope_normalized = scope.replace("\\", "/")
-    if scope_normalized.endswith("/*"):
-        prefix = scope_normalized[:-2]
-        return file_normalized.startswith(prefix) or file_normalized == prefix.rstrip("/")
-    if scope_normalized.endswith("/*.py"):
-        prefix = scope_normalized[:-5]
-        return file_normalized.startswith(prefix) and file_normalized.endswith(".py")
-    if scope_normalized.endswith("/*.md"):
-        prefix = scope_normalized[:-5]
-        return file_normalized.startswith(prefix) and file_normalized.endswith(".md")
-    return fnmatch.fnmatch(file_normalized, scope_normalized)
+    f = file_rel.replace("\\", "/").strip()
+    s = scope.replace("\\", "/").strip()
 
-def find_capability_violations() -> list[dict]:
-    """查找能力边界违规"""
-    immutable_scopes = get_immutable_scopes()
-    "find capability violations."
-    src_dir = REPO_ROOT / "src" / "zephyr"
+    if s.endswith("/**"):
+        root = s[:-3].rstrip("/")
+        return f == root or f.startswith(root + "/")
+    if s.endswith("/**/*.md"):
+        root = s[:-7].rstrip("/")
+        return f.endswith(".md") and (f == root or f.startswith(root + "/"))
+    if s.endswith("/**/*.py"):
+        root = s[:-7].rstrip("/")
+        return f.endswith(".py") and (f == root or f.startswith(root + "/"))
+    if s.endswith("/*"):
+        prefix = s[:-2].rstrip("/")
+        if not f.startswith(prefix + "/"):
+            return f == prefix
+        rest = f[len(prefix) + 1 :]
+        return "/" not in rest
+    if s.endswith("/*.py"):
+        prefix = s[:-5].rstrip("/")
+        if not f.endswith(".py") or not f.startswith(prefix + "/"):
+            return f == prefix + ".py"
+        rest = f[len(prefix) + 1 :]
+        return "/" not in rest and rest.endswith(".py")
+    if s.endswith("/*.md"):
+        prefix = s[:-5].rstrip("/")
+        if not f.endswith(".md") or not f.startswith(prefix + "/"):
+            return f == prefix + ".md"
+        rest = f[len(prefix) + 1 :]
+        return "/" not in rest and rest.endswith(".md")
+    return fnmatch.fnmatch(f, s)
+
+
+def _default_merge_base() -> str | None:
+    for remote_base in ("origin/main", "origin/master"):
+        rc, _, _ = _run_git("rev-parse", "--verify", remote_base)
+        if rc != 0:
+            continue
+        rc_mb, out, _ = _run_git("merge-base", "HEAD", remote_base)
+        if rc_mb == 0 and out.strip():
+            return out.strip()
+    return None
+
+
+def get_changed_paths(merge_base: str | None) -> list[str]:
+    """合并 PR 范围 diff、未提交与暂存区变更路径（去重）。"""
+    chunks: list[str] = []
+    if merge_base:
+        rc, out, _ = _run_git("diff", "--name-only", "--diff-filter=ACMRT", f"{merge_base}...HEAD")
+        if rc == 0 and out.strip():
+            chunks.extend(out.splitlines())
+    for args in (
+        ("diff", "--name-only", "--diff-filter=ACMRT", "HEAD"),
+        ("diff", "--cached", "--name-only", "--diff-filter=ACMRT"),
+    ):
+        rc, out, _ = _run_git(*args)
+        if rc == 0 and out.strip():
+            chunks.extend(out.splitlines())
+
+    seen: set[str] = set()
+    unique: list[str] = []
+    for p in chunks:
+        norm = p.replace("\\", "/").strip()
+        if norm and norm not in seen:
+            seen.add(norm)
+            unique.append(norm)
+    return unique
+
+
+def find_capability_violations(merge_base: str | None) -> list[dict]:
+    immutable = get_immutable_scopes()
+    changed = get_changed_paths(merge_base)
+    if not changed:
+        return []
+
     violations: list[dict] = []
-    unchanged_files: list[str] = ["shared/contracts/__init__.py", "shared/contracts/enforcer.py", "shared/__init__.py"]
-    for py_file in iter_files(src_dir, extensions={".py"}):
-        rel = str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
-        is_immutable = any(_matches_scope(rel, scope) for scope in immutable_scopes)
-        if is_immutable and rel not in unchanged_files:
-            is_new = True
-            for unchanged in unchanged_files:
-                if unchanged in rel or unchanged.endswith(rel):
-                    is_new = False
-                    break
-            if is_new:
-                violations.append(
-                    {"file": rel, "violation": "IMMUTABLE 级文件被修改或新建——需要人工批准", "severity": "HIGH"}
-                )
+    for rel in changed:
+        rel_n = rel.replace("\\", "/")
+        if any(_matches_scope(rel_n, scope) for scope in immutable):
+            violations.append(
+                {
+                    "file": rel_n,
+                    "violation": "IMMUTABLE 路径出现在当前变更集中，须 Owner 审批后再合并",
+                    "severity": "HIGH",
+                }
+            )
     return violations
-    "find capability violations."
+
 
 def main() -> None:
-    """入口函数."""
-    parser = argparse.ArgumentParser(description="AI 能力边界静态检查")
+    parser = argparse.ArgumentParser(description="AI 能力边界（git diff vs IMMUTABLE 矩阵）")
     parser.add_argument("--warn-only", action="store_true")
-    parser.add_argument("--show-scopes", action="store_true", help="只显示 IMMUTABLE 范围")
+    parser.add_argument("--show-scopes", action="store_true", help="只打印 IMMUTABLE 作用域")
+    parser.add_argument(
+        "--merge-base",
+        default=None,
+        help="merge-base 提交：git diff <merge-base>...HEAD（默认自动探测与 origin/main 的 merge-base）",
+    )
     args = parser.parse_args()
+
     if args.show_scopes:
         for scope in get_immutable_scopes():
             print(f"  IMMUTABLE: {scope}")
         return
+
     matrix = load_matrix()
     if matrix is None:
-        print("[CapabilityGuard] ai_capability_matrix.yaml 未找到")
+        print("[CapabilityGuard] ai_capability_matrix.yaml 未找到 — 跳过")
         sys.exit(0)
-    print(f'[CapabilityGuard] 能力边界检查 — 矩阵 v{matrix.get('matrix', {}).get('version', '?')}')
-    violations = find_capability_violations()
-    if violations:
-        print(f"\n[CapabilityGuard] ⚠ {len(violations)} 条能力边界违规:")
-        for v in violations:
-            print(f'  [{v['severity']}] {v['file']} — {v['violation']}')
+
+    merge_base = args.merge_base if args.merge_base else _default_merge_base()
+    if merge_base:
+        print(f"[CapabilityGuard] merge-base: {merge_base}")
     else:
-        print("[CapabilityGuard] 能力边界 — 全部通过 ✅")
+        print("[CapabilityGuard] 未找到 origin/main|master — 仅检查工作区与暂存区 diff")
+
+    ver = matrix.get("matrix", {}).get("version", "?")
+    print(f"[CapabilityGuard] 能力边界检查 — 矩阵 v{ver}")
+    violations = find_capability_violations(merge_base)
+    if violations:
+        print(f"\n[CapabilityGuard] {len(violations)} 条 IMMUTABLE 路径变更:")
+        for v in violations:
+            print(f"  [{v['severity']}] {v['file']} — {v['violation']}")
+    else:
+        print("[CapabilityGuard] 无 IMMUTABLE 路径变更 — 通过")
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if violations else 0)
-    "入口函数."
+
 
 if __name__ == "__main__":
     main()

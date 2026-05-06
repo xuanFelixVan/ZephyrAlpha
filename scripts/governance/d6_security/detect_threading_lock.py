@@ -1,15 +1,6 @@
 """
 detect_threading_lock.py — threading.Lock 导入检测
 
-__manifest__ = """
-args: []
-description: threading.Lock 导入检测（ABS-40 — 全局异步架构违规）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-40（禁止 threading.Lock——项目全局异步架构）
@@ -21,6 +12,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: threading.Lock 导入检测（ABS-40 — 全局异步架构违规）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

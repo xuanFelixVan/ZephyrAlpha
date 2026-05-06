@@ -1,18 +1,35 @@
-schema_version: "1.0.0"
+schema_version: 1.1.0
 partition:
   id: l00
   name: Data Source
   track: c_track
   layer_position: 0
   runtime_plane: warm
-  status: skeleton
-
+  status: implemented
 modules:
-  []
-
+- id: l00-layer-ssot
+  module_id: MOD-L00-001
+  name: Data Source（层登记占位）
+  submodule_path: src/zephyr/l00_data_source/
+  status: phase_c_implemented
+  priority: P0
+  runtime_plane: warm
+  description: 外部数据源适配接入：行情、基本面、另类数据摄取与标准化
+  files:
+  - akshare_provider.py
+  - default_quality_gate.py
+  - provider_base.py
+  - quality_gate.py
+  interfaces:
+  - contract_id: CTR-001
+    role: producer
+    description: NormalizedMarketData → L02, L03, L09
+  - contract_id: CTR-TRACE-001
+    role: producer
+    description: TraceContext 链头
+  adr_ref: []
 summary:
-  total: 0
+  total: 1
   by_status:
-    skeleton: 0
-    implemented: 0
-  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"
+    implemented: 1
+  note: Phase B 骨架就位——DataSourceBase OCP 扩展点 + DataSourceMeta 已定义

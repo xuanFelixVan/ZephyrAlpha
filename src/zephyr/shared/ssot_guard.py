@@ -4,23 +4,14 @@ SSoT 锁定卫兵 (SSoT Guard) - Pre-commit Hook
 任务 ID : T-1-26
 safety_level : H（治理层代码）
 
-状态（Stage H 2026-04-25 注记）
------------------------------
-本 hook 设计基于老树路径：
-  - REGISTRY_REL_PATH = "docs/01_GOVERNANCE/governance-asset-inventory.yaml"
-  - WATCHED_PREFIXES 中的 "docs/09_audit/STANDARDS/"
-两个路径在 Stage D/E 重组后**在当前项目结构中不存在**（注册表未迁移、老树治理子目录已合并到
-`docs/01_policies_and_standards/`）。因此当前 hook 在当前项目环境下处于**低活状态**：
-  - `_check_c1/c3/c4` 仍按字符串前缀比对运行（安全无副作用）；
-  - `_check_c2` 仅在 registry 文件真正被 staged 时触发，项目根目录下永不触发。
-Stage K 计划：拆除或重构为指向新真源（如 `docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml`
-+ `architecture-model/scripts/scripts-model.yaml`），届时同步更新 test_ssot_guard.py。
-此期间保留老树字符串以维持历史兼容测试（tests/unit/test_ssot_guard.py 依赖）。
-
 功能
 ----
-检查 governance-asset-inventory.yaml（全景注册表）与实际文件之间的一致性，
-防止注册表与磁盘文件状态脱节。
+检查 ``document-metadata-index.yaml``（文档元数据索引）与暂存区治理敏感文件之间的一致性，
+防止注册表与磁盘状态脱节。
+
+真源
+----
+- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml``
 
 检查项
 ------
@@ -31,25 +22,23 @@ C-4  注册表路径声明格式必须合法（不允许绝对路径、反斜杠
 
 治理敏感路径（WATCHED_PREFIXES）
 ---------------------------------
-- scripts/hooks/
-- scripts/governance/
-- scripts/ci_audit/
-- .github/workflows/
-- docs/09_audit/STANDARDS/
-- src/zephyr/
+见本模块 ``WATCHED_PREFIXES`` 常量（含 ``src/zephyr/``、``docs/01_policies_and_standards/`` 等）。
 
 用法
 ----
-作为 pre-commit hook 直接执行：
-    python src/zephyr/hooks/ssot_guard.py
+作为 pre-commit hook 直接执行::
 
-作为模块导入（单元测试 / 集成测试）：
-    from src.zephyr.hooks.ssot_guard import SsotGuard, SsotViolation
+    python src/zephyr/shared/ssot_guard.py
 
-pre-commit 钩子配置示例（.pre-commit-config.yaml）：
+作为模块导入（单元测试 / 集成测试）::
+
+    from zephyr.shared.ssot_guard import SsotGuard, SsotViolation
+
+pre-commit 钩子配置示例（`.pre-commit-config.yaml`）::
+
     - id: ssot-guard
       name: SSoT 锁定卫兵
-      entry: python src/zephyr/hooks/ssot_guard.py
+      entry: python src/zephyr/shared/ssot_guard.py
       language: system
       pass_filenames: false
       stages: [commit]
@@ -65,11 +54,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
+
 def _fix_windows_console() -> None:
     """将 Windows 控制台 stdout/stderr 设置为 UTF-8，仅在脚本直接运行时调用。"""
     if sys.platform == "win32":
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -103,8 +94,10 @@ PATH_FIELD_PATTERNS: tuple[str, ...] = (
 # 例外类（独立声明，不依赖尚未完成的 ZephyrBaseError 体系）
 # ---------------------------------------------------------------------------
 
+
 class SsotError(Exception):
     """SSoT Guard 模块专属基类。"""
+
 
 class SsotViolation(SsotError):
     """SSoT 一致性违规——应阻断 commit。"""
@@ -114,12 +107,15 @@ class SsotViolation(SsotError):
         self.message = message
         super().__init__(f"[{check_id}] {message}")
 
+
 class RegistryParseError(SsotError):
     """注册表 YAML 解析失败。"""
+
 
 # ---------------------------------------------------------------------------
 # 数据结构
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class CheckResult:
@@ -135,6 +131,7 @@ class CheckResult:
         lines = [f"{icon} [{self.check_id}] {self.message}"]
         lines.extend(f"   • {d}" for d in self.details)
         return "\n".join(lines)
+
 
 @dataclass
 class GuardReport:
@@ -160,9 +157,11 @@ class GuardReport:
         lines.append(sep)
         return "\n".join(lines)
 
+
 # ---------------------------------------------------------------------------
 # Git 辅助函数
 # ---------------------------------------------------------------------------
+
 
 def _repo_root() -> Path:
     """返回 git 仓库根目录。"""
@@ -173,6 +172,7 @@ def _repo_root() -> Path:
         check=True,
     )
     return Path(result.stdout.strip())
+
 
 def _staged_files(repo_root: Path) -> dict[str, str]:
     """
@@ -201,9 +201,11 @@ def _staged_files(repo_root: Path) -> dict[str, str]:
             staged[parts[1].replace("\\", "/")] = status_char
     return staged
 
+
 # ---------------------------------------------------------------------------
 # 注册表路径提取
 # ---------------------------------------------------------------------------
+
 
 def _extract_declared_paths(registry_content: str) -> list[str]:
     """
@@ -223,6 +225,7 @@ def _extract_declared_paths(registry_content: str) -> list[str]:
                 break
     return list(dict.fromkeys(paths))  # 去重保序
 
+
 def _validate_path_format(path: str) -> str | None:
     """
     验证路径格式是否合法。
@@ -234,9 +237,11 @@ def _validate_path_format(path: str) -> str | None:
         return f"反斜杠分隔符不允许出现在注册表路径中: {path}"
     return None
 
+
 # ---------------------------------------------------------------------------
 # 主检查类
 # ---------------------------------------------------------------------------
+
 
 class SsotGuard:
     """
@@ -455,9 +460,11 @@ class SsotGuard:
             message="注册表路径格式全部合法",
         )
 
+
 # ---------------------------------------------------------------------------
 # CLI 入口
 # ---------------------------------------------------------------------------
+
 
 def main() -> int:
     """Pre-commit hook 入口，返回 0（通过）或 1（阻断）。"""
@@ -467,6 +474,7 @@ def main() -> int:
     report = guard.run()
     print(str(report))
     return 0 if report.passed else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

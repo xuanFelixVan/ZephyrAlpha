@@ -1,15 +1,6 @@
 """
 validate_kb_write_provenance.py — 知识库写入 provenance 校验
 
-__manifest__ = """
-args: []
-description: 知识库写入 provenance 校验（COND-46 — kb.write()必须传provenance）
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：COND-46（知识库写入不传 provenance 为条件禁止）
@@ -22,6 +13,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 知识库写入 provenance 校验（COND-46 — kb.write()必须传provenance）
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import sys

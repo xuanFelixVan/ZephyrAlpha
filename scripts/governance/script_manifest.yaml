@@ -1,14 +1,24 @@
-# 自动生成于 2026-05-04T17:27:54Z
+# 自动生成于 2026-05-06T08:16:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-05-04T17:27:54Z'
+generated_at: '2026-05-06T08:16:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 132
-with_manifest: 132
+total_scripts: 177
+with_manifest: 177
 missing_manifest: 0
 scripts:
+- name: check_registry_consistency.py
+  dimensions:
+  - D3
+  - D5
+  - D11
+  priority: P1
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 兼容入口：转发执行 d3_metadata/check_registry_consistency.py
 - name: d11_compliance/fix_shared_bypass.py
   dimensions:
   - D11
@@ -20,8 +30,8 @@ scripts:
   - --dry-run
   - --no-backup
   warn_only: true
-  description: D-D-07 自动修复——检测并修复本地重定义 _shared API 的违规（validate_script_quality.py
-    的 --fix 搭档）
+  description: D-D-07 auto-fix - detect and repair local redefinitions of _shared
+    API violations
 - name: d11_compliance/validate_blueprint_overlap.py
   dimensions:
   - D11
@@ -29,7 +39,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 蓝图重叠检测（同一component_id出现多草稿时warn）
+  description: Blueprint overlap detection (warn when same component_id appears in
+    multiple drafts)
 - name: d11_compliance/validate_commit_message.py
   dimensions:
   - D11
@@ -47,6 +58,22 @@ scripts:
   args: []
   warn_only: false
   description: Manifest 准入控制器（SCRIPT-QUALITY-001 — git diff 提取新增脚本 → 8 项 MUST 硬阻断）
+- name: d11_compliance/validate_no_utf8_bom.py
+  dimensions:
+  - D1
+  - D11
+  priority: P0
+  timeout_seconds: 5
+  args:
+  - --root
+  - --ci
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: '扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。 对标 AGENTS.md §4 编码安全 — open()
+    禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py BOM 免疫的编码层预防防线。
+
+    '
 - name: d11_compliance/validate_script_quality.py
   dimensions:
   - D11
@@ -55,6 +82,20 @@ scripts:
   args: []
   warn_only: false
   description: 治理脚本质量合规检查（SCRIPT-QUALITY-001 §10 — 10项可自动化MUST条款扫描）
+- name: d11_compliance/validate_task_decomposition_bypass.py
+  dimensions:
+  - D11
+  priority: P0
+  timeout_seconds: 45
+  args:
+  - --hours
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: 'Task decomposition bypass heuristic (deliverables overlap + depends_on
+    chains vs shared risk stems).
+
+    '
 - name: d11_compliance/validate_truth_source_cascade.py
   dimensions:
   - D11
@@ -63,6 +104,17 @@ scripts:
   args: []
   warn_only: false
   description: 真源级联验证器（上下游引用一致性）
+- name: d12_ai_hallucination/validate_gate_prompt_conflict.py
+  dimensions:
+  - D12
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Gate-Prompt 冲突检测——扫描门禁 YAML 规则与 AGENTS.md 项目 Prompt 指令之间的 语义冲突（门禁禁止
+    X 但 Prompt 鼓励 X，门禁要求检查但 Prompt 允许跳过等）。
+
+    '
 - name: d12_ai_hallucination/validate_session_budget.py
   dimensions:
   - D12
@@ -100,6 +152,14 @@ scripts:
   args: []
   warn_only: false
   description: 目录结构完整性审计（D1幽灵文件+D2 ID冲突+D3索引对账+D4命名规范+D5登记缺漏）
+- name: d1_structure/audit_directory_scalability.py
+  dimensions:
+  - D1
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: true
+  description: 物理结构可扩展性审计 [目录文件数上限/模块隔离/文件数阈值检查]
 - name: d1_structure/audit_findings_by_scope.py
   dimensions:
   - D1
@@ -185,7 +245,7 @@ scripts:
   timeout_seconds: 300
   args: []
   warn_only: false
-  description: 治理脚本冒烟测试（SCRIPT-QUALITY-001 D-H-01 — subprocess + --warn-only 全量运行）
+  description: 治理脚本冒烟测试 [SCRIPT-QUALITY-001 D-H-01 - subprocess + --warn-only 全量运行]
 - name: d1_structure/sync_index_from_manifest.py
   dimensions:
   - D1
@@ -235,7 +295,8 @@ scripts:
   args:
   - --warn-only
   warn_only: false
-  description: 索引-实际同步校验（AGENTS.md §6.11 — index.md声称脚本数 vs 磁盘实际 .py 文件数）
+  description: Index-reality sync check (AGENTS.md section 6.11 - index.md claimed
+    script count vs disk actual .py file count)
 - name: d2_links/audit_broken_links.py
   dimensions:
   - D2
@@ -259,7 +320,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: Frontmatter 元数据合规扫描（doc_type合法值 / status / 必填字段）
+  description: Frontmatter metadata compliance scan (doc_type valid values / status
+    / required fields)
 - name: d3_metadata/check_naming_convention.py
   dimensions:
   - D3
@@ -268,7 +330,7 @@ scripts:
   args:
   - --all
   warn_only: false
-  description: 文件命名规范检查（kebab-case / module_id namespace / ADR铁律）
+  description: 文件命名规范检查(kebab-case / module_id namespace / ADR铁律)
 - name: d3_metadata/check_registry_consistency.py
   dimensions:
   - D3
@@ -327,7 +389,10 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 规则目录自动生成工具
+  description: 'Scan policy tree; aggregate frontmatter into rule-catalog.yaml. Aligns
+    with static-manifest SSOT for governance scripts (section 6.16-style workflow).
+
+    '
 - name: d3_metadata/validate_architecture.py
   dimensions:
   - D3
@@ -337,7 +402,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 架构合规校验（frontmatter + 目录放置 + doc_type一致性）
+  description: Architecture compliance check (frontmatter + directory placement +
+    doc_type consistency)
 - name: d3_metadata/validate_blueprint_provenance.py
   dimensions:
   - D3
@@ -346,7 +412,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 蓝图真源Provenance三件套校验（origin_drafts + audit_chain + arbitration）
+  description: Blueprint provenance triple validation (origin_drafts + audit_chain
+    + arbitration)
 - name: d3_metadata/validate_blueprint_registry.py
   dimensions:
   - D3
@@ -355,7 +422,16 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 蓝图登记表自校验——登记状态与实际文件对账
+  description: Blueprint registry self-check (declared rows vs files on disk)
+- name: d3_metadata/validate_cross_module_dependencies.py
+  dimensions:
+  - D3
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 跨模块依赖登记表与 module-registry 的 module_id 对账
 - name: d3_metadata/validate_derived_from.py
   dimensions:
   - D3
@@ -389,9 +465,18 @@ scripts:
   - D3
   priority: P2
   timeout_seconds: 60
-  args: []
+  args:
+  - flag: --dim
+    type: int
+    description: 仅检查指定维度（1-4）
+  - flag: --warn-only
+    type: bool
+    description: 发现冲突时仅警告不阻断
   warn_only: false
-  description: 'GATE-MODULEID: Validate module_id uniqueness and index/file consistency.'
+  description: 'GATE-MODULEID 门禁——四维 module_id 校验（唯一性 + index.md 表-文件一致性 + 命名规范 DOMAIN-TYPE-NNN
+    + 连续编号无意外缺口）。对标 §6.13 枚举同步 + §6.11 索引-实际同步。
+
+    '
 - name: d3_metadata/validate_no_duplicate_files.py
   dimensions:
   - D3
@@ -409,7 +494,15 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 登记表总索引自校验——17张登记表文件存在性+条目数+depends_on交叉验证
+  description: 登记表总索引自校验：登记表文件存在性、条目数、depends_on 交叉验证
+- name: d3_metadata/validate_ssot_status.py
+  dimensions:
+  - D3
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: SSoT frontmatter status 字段枚举白名单——阻止 draft/active/review 等非法拼写
 - name: d3_metadata/validate_superseded_by.py
   dimensions:
   - D3
@@ -459,7 +552,10 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: analyze_contract_impact.py — 契约变更影响分析器
+  description: '契约变更影响分析器——当跨层契约 YAML 变更时，递归分析所有下游 depends_on 引用链， 输出受影响模块清单 + 变更范围评估。对标
+    §6.9 YAML canonical + §6.2 原子事务。
+
+    '
 - name: d5_architecture/audit_depends_on_chain_depth.py
   dimensions:
   - D5
@@ -483,17 +579,27 @@ scripts:
   - D5
   priority: P0
   timeout_seconds: 30
-  args: []
+  args:
+  - --warn-only
+  - --jsonl
   warn_only: false
-  description: 架构门禁检查（GATE-01~08 + GATE-A + GATE-B + GATE-SC + EXTRA-01~03）
-- name: d5_architecture/check_g6_ctr_compliance.py
+  description: Architecture GATE checker (GATE-01~08 + GATE-A + GATE-B + GATE-SC +
+    EXTRA-01~03)
+- name: d5_architecture/check_contract_code_drift.py
   dimensions:
   - D5
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 契约-代码双写漂移阻断——YAML修改后强制codegen一致，CI硬阻断
+- name: d5_architecture/check_g6_ctr_compliance.py
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: check_g6_ctr_compliance.py — G6 CTR 契约合规门禁执行引擎
+  description: ⚠ __manifest__ 缺失——请添加元数据块
 - name: d5_architecture/check_trace_context_propagation.py
   dimensions:
   - D5
@@ -501,7 +607,10 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
+  description: 'TraceContext 传播强制执行 CI 检查——确保所有跨模块调用链路中 trace_id/span_id 不丢失，验证 OpenTelemetry
+    上下文传播链完整。对标 GOV-MOD-004 接口契约 §可观测性。
+
+    '
 - name: d5_architecture/detect_depends_on_cycles.py
   dimensions:
   - D5
@@ -509,7 +618,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: depends_on 环检测（DOC-009#1 — 循环依赖检测）
+  description: depends_on 环检测 (DOC-009#1 - 循环依赖检测)
 - name: d5_architecture/detect_deprecated_adr_references.py
   dimensions:
   - D5
@@ -533,7 +642,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: generate_contracts.py — SSoT→Codegen 管道
+  description: generate_contracts.py -- SSoT to Codegen pipeline
 - name: d5_architecture/generate_trigger_wiring_view.py
   dimensions:
   - D5
@@ -557,7 +666,9 @@ scripts:
   - D5
   priority: P2
   timeout_seconds: 30
-  args: []
+  args:
+  - --warn-only
+  - --jsonl
   warn_only: true
   description: 合并 README 到 index.md（目录文档整合工具）
 - name: d5_architecture/sync_blueprint_code_index.py
@@ -570,6 +681,16 @@ scripts:
   warn_only: false
   description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
     patch+1，--check模式仅检测漂移）
+- name: d5_architecture/sync_registry_from_blueprints.py
+  dimensions:
+  - D5
+  priority: P0
+  timeout_seconds: 60
+  args:
+  - --write
+  - --no-changelog
+  warn_only: false
+  description: 同步 blueprint-registry.yaml [从 blueprint.md frontmatter 驱动]
 - name: d5_architecture/validate_adr_frontmatter_consistency.py
   dimensions:
   - D3
@@ -603,7 +724,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: AI自治权限注册表自校验（三层权限 / 必填字段 / 重复检测）
+  description: AI autonomy authority registry validator (3-tier auth / required fields
+    / duplicate detection)
 - name: d5_architecture/validate_autonomy_gate.py
   dimensions:
   - D5
@@ -621,24 +743,52 @@ scripts:
   args: []
   warn_only: false
   description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+- name: d5_architecture/validate_blind_spot_status.py
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: Blind Spot Reality Check - open blinds vs actual code status
 - name: d5_architecture/validate_blueprint_code_sync.py
   dimensions:
   - D5
   - D8
   priority: P0
   timeout_seconds: 30
-  args: []
+  args:
+  - --warn-only
+  - --jsonl
   warn_only: false
   description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
 - name: d5_architecture/validate_blueprint_implementation_docs.py
   dimensions:
   - D5
-  - D8
   priority: P0
+  timeout_seconds: 30
+  args:
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: validate that blueprint-claimed file paths actually exist on disk
+- name: d5_architecture/validate_blueprint_placement.py
+  dimensions:
+  - D5
+  priority: P1
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 蓝图实现文档校验闸门（铁律五——completed蓝图必须含实际代码实现情况节，防虚假声明）
+  description: 蓝图物理位置与归属链完整性校验（belongs_to + 物理目录 vs layer 一致性 + 金字塔链可达性）
+- name: d5_architecture/validate_blueprint_tag_uniqueness.py
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: true
+  description: 'GATE-TAG-UNIQUE: same tag must not appear in >=2 approved blueprints
+    (single source of truth enforcement)'
 - name: d5_architecture/validate_code_yaml_alignment.py
   dimensions:
   - D5
@@ -678,9 +828,11 @@ scripts:
   - D5
   priority: P0
   timeout_seconds: 30
-  args: []
+  args:
+  - --warn-only
+  - --jsonl
   warn_only: false
-  description: LPC双轨目录结构合规性扫描（src/zephyr/ + docs/ 一级目录白名单校验）
+  description: LPC双轨目录结构合规性扫描 [src/zephyr/ + docs/ 一级目录白名单校验]
 - name: d5_architecture/validate_field_ownership.py
   dimensions:
   - D5
@@ -689,6 +841,13 @@ scripts:
   args: []
   warn_only: false
   description: frontmatter 字段归属校验（ABS-19/20 — SSoT原则）
+- name: d5_architecture/validate_gate_yaml.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
 - name: d5_architecture/validate_handoff_package.py
   dimensions:
   - D5
@@ -721,6 +880,19 @@ scripts:
   args: []
   warn_only: false
   description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
+- name: d5_architecture/validate_load_path_integrity.py
+  dimensions:
+  - D5
+  priority: P0
+  timeout_seconds: 15
+  args:
+  - --check
+  - --fix
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: parse AGENTS.md section 8.2 task menu, verify every referenced file
+    exists on disk. Anchored to section 6.18
 - name: d5_architecture/validate_md_yaml_number_drift.py
   dimensions:
   - D3
@@ -746,6 +918,17 @@ scripts:
   args: []
   warn_only: false
   description: P0 模块契约校验（MAD-005 — frozen契约+ADR+runtime_plane）
+- name: d5_architecture/validate_session_log_index_integrity.py
+  dimensions:
+  - D5
+  - D11
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --generate
+  - --warn-only
+  warn_only: false
+  description: session-logs/index.yaml 与磁盘对账 + 自动生成盲点时间线
 - name: d5_architecture/validate_session_log_updated.py
   dimensions:
   - D5
@@ -762,6 +945,18 @@ scripts:
   args: []
   warn_only: false
   description: SSoT单一真源一致性校验
+- name: d5_architecture/validate_static_manifest_drift.py
+  dimensions:
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - flag: --check
+    type: bool
+    description: only detect drift (pre-commit mode)
+  warn_only: false
+  description: run all generators --check, hard-block any drift between auto-generated
+    vs disk. Anchored to AGENTS.md section 6.16
 - name: d5_architecture/validate_three_way_consistency.py
   dimensions:
   - D5
@@ -787,8 +982,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: GATE-SUM — YAML Summary 自动对账闸门（根治 summary 手动维护漂移——扫描所有架构 YAML，从实际数据反算聚合值与声明的
-    summary 逐项对比）
+  description: GATE-SUM - YAML Summary auto-reconciliation gate (scans all arch YAMLs,
+    computes aggregation from actual data, compares with declared summary)
 - name: d6_security/detect_anchor_file_deletion.py
   dimensions:
   - D6
@@ -873,10 +1068,13 @@ scripts:
   dimensions:
   - D7
   priority: P2
-  timeout_seconds: 60
+  timeout_seconds: 30
   args: []
   warn_only: false
-  description: check_ai_capability_boundary.py — AI 能力边界静态检查脚本
+  description: 'AI 能力边界检查——对比 git 变更与 config/ai_capability_matrix.yaml 中的 IMMUTABLE
+    路径， 变更路径落入 IMMUTABLE scope 则判违规。
+
+    '
 - name: d7_code/detect_direct_llm_calls.py
   dimensions:
   - D7
@@ -1054,6 +1252,18 @@ scripts:
   - --install
   warn_only: false
   description: 环境就绪检查门禁（Python版本 + requirements.txt三方依赖验证 + 自动安装）
+- name: gate_engine_selfcheck.py
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Gate Engine Bootstrap 自检——验证 MOD-INF-007 Gate Engine 自身的完整性， 包括核心文件存在性、YAML/DB
+    可用性、CheckType 覆盖率及熔断器验证。
+
+    '
 - name: generate_nav_table.py
   dimensions:
   - D1
@@ -1061,7 +1271,18 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
+  description: '全流程导航表自动生成器——从 config/nav_table_mapping.yaml + registries 自动生成 AGENTS.md
+    §5.2 七阶段导航表。对标 §6.16 静态清单自动生成铁律。
+
+    '
+- name: generators/fix_module_manifest_layout.py
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: 修复治理脚本模块 docstring 与 __manifest__ / from __future__ 顺序
 - name: generators/generate_gate_registry.py
   dimensions:
   - D1
@@ -1130,6 +1351,256 @@ scripts:
     §6.16 静态清单自动生成铁律。一次性迁移工具。
 
     '
+- name: meta/arbitrate_findings.py
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: arbitrate_findings.py — Finding 仲裁器（跨脚本冲突解决引擎）
+- name: meta/detect_hallucinated_packages.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/detect_script_rot.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/finding_state_machine.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Finding 全生命周期状态机——管理每个 Finding 从 OPEN→FIXED→VERIFIED 的完整生命周期， 包括 SLA
+    定时器、状态转换审计日志、跨 run 持久化。
+
+    '
+- name: meta/manage_baseline.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Finding 基线快照管理——保存/加载/对比 Finding 基线快照， 分类每个 Finding 为 NEW / RESOLVED
+    / PERSISTENT。
+
+    '
+- name: meta/manage_error_budget.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Error Budget + Burn Rate 管理引擎——管理可用性 Error Budget 和准确率 Error Budget
+    的消耗/监控/冻结， Burn Rate 超过阈值 → Alert，Error Budget 耗尽 → Feature Freeze。
+
+    '
+- name: meta/manage_finding_timeseries.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/manage_kill_switch.py
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: 'Kill Switch 管理工具——提供 CLI 命令禁用/启用脚本、查看状态、设置全局冻结。
+
+    '
+- name: meta/manage_script_ab_test.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/manage_script_retirement.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/manage_shadow_mode.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Shadow Mode 渐进激活管理——管理新脚本的 Phase1(Shadow)→Phase2(Warn)→Phase3(Active)
+    生命周期， Phase1 期间假阳性率超阈值则自动回退。
+
+    '
+- name: meta/phase_e_context_check.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/trace_finding_lifecycle.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Finding C1→C5 全链路追踪引擎——追踪每个 Finding 从 C1 扫描到 C5 知识沉淀的完整生命周期， 包括链路健康总览和瓶颈检测。
+
+    '
+- name: meta/track_script_costs.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/validate_cross_model_consensus.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/validate_end_to_end_benchmark.py
+  dimensions:
+  - D1
+  - D7
+  priority: P1
+  timeout_seconds: 60
+  args:
+  - --tolerance
+  - --setup
+  - --json
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: 'END-TO-END 基准测试引擎——维护已知标准测试项目，每次 run_all.py 扫描后对比已知预期产出， 实际产出偏离超阈值
+    → 脚本系统退化告警，可发现脚本静默失效。
+
+    '
+- name: meta/validate_environment_health.py
+  dimensions:
+  - D1
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: '脚本运行环境健康检查——检查 Python 版本、关键包版本、各维度 requirements、磁盘空间、内存， 在 run_all.py
+    启动时和 CI 中运行。
+
+    '
+- name: meta/validate_false_negatives.py
+  dimensions:
+  - D1
+  - D7
+  priority: P1
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: '假阴性检测引擎——维护已知缺陷测试用例库（golden set），定期验证脚本系统能否检出已知缺陷， 已知缺陷未被检出 → 假阴性
+    → Error Budget 消耗。
+
+    '
+- name: meta/validate_gate_engine_external.py
+  dimensions:
+  - D6
+  - D11
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Gate Engine 外部完整性验证——从独立进程执行哈希快照、Canary 注入、 Schema 验证、注册表一致性检查，确保
+    Gate Engine 未被篡改。
+
+    '
+- name: meta/validate_rules_file_backdoor.py
+  dimensions:
+  - D1
+  - D6
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Rules File Backdoor 检测器——检测关键规则文件中不可见控制字符（零宽符、双向文本标记等）， 防御 AI 规则文件隐形投毒攻击。
+
+    '
+- name: meta/validate_rules_integrity.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/validate_script_provenance.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: meta/validate_script_system_health.py
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 60
+  args:
+  - --warn-only
+  - --json
+  - --jsonl
+  warn_only: false
+  description: '脚本系统健康自检——检查六大自检项：run_all 可执行性、全脚本可运行性、manifest 一致性、 输出格式合规、依赖完整性、磁盘空间。在
+    run_all.py 启动时自动运行。
+
+    '
+- name: meta/validate_threshold_changes.py
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: '阈值变更审计——每次阈值文件被修改时，记录 old→new 的 diff 到 append-only 审计日志， 由 pre-commit
+    钩子自动触发。
+
+    '
+- name: meta/validate_trust_tier.py
+  dimensions:
+  - D1
+  - D11
+  priority: P2
+  timeout_seconds: 60
+  args:
+  - --policy-status
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: Trust-Tier 门禁（变更文件路径与策略 YAML 对账）
 - name: run_all.py
   dimensions:
   - D1
@@ -1137,7 +1608,9 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: run_all.py — 脚本系统统一入口脚本
+  description: '治理脚本系统统一入口——按维度/文件过滤执行全量治理脚本； CT-SCRIPT-GATE-001 退出码语义（0/1/2/3）。
+
+    '
 - name: run_incremental.py
   dimensions:
   - D1
@@ -1151,7 +1624,9 @@ scripts:
   - D1
   priority: P2
   timeout_seconds: 60
-  args: []
+  args:
+  - --warn-only
+  - --jsonl
   warn_only: false
   description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 - name: status.py
@@ -1162,3 +1637,17 @@ scripts:
   args: []
   warn_only: false
   description: status.py — 审计系统状态仪表盘
+- name: task_self_check.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+- name: task_summary.py
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块

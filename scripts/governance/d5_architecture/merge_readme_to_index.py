@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 """Merge README.md content into index.md, then delete README.md.
 
-__manifest__ = """
-args: []
-description: 合并 README 到 index.md（目录文档整合工具）
-dimensions:
-- D1
-- D5
-priority: P2
-timeout_seconds: 30
-warn_only: true
-"""
 
 
 Strategy:
@@ -21,21 +11,43 @@ Strategy:
 
 from __future__ import annotations
 
+__manifest__ = """
+args:
+  - --warn-only
+  - --jsonl
+description: 合并 README 到 index.md（目录文档整合工具）
+dimensions:
+- D1
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+
 import argparse
+import json
 import os
 import sys
 from datetime import date
 from pathlib import Path
 
 import yaml
+
+_SCRIPT = Path(__file__).resolve()
+_GOV = _SCRIPT.parents[1]
+if str(_GOV) not in sys.path:
+    sys.path.insert(0, str(_GOV))
+
 from _shared.frontmatter import parse_frontmatter
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-DOCS_ROOT = Path(__file__).resolve().parent.parent / "docs"
+DOCS_ROOT = _SCRIPT.parents[3] / "docs"
 
-def extract_sections(body) -> Optional[str]:
+
+def extract_sections(body: str) -> dict[str, str]:
     """Extract key sections from index.md body."""
     sections = {}
     current_section = "_intro"
@@ -157,10 +169,11 @@ def merge_pair(index_path, readme_path) -> None:
 
     return f"---\n{frontmatter_str}\n---\n\n{body_str}\n"
 
-def main() -> None:
+def main() -> int:
     """入口函数."""
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Merge README.md into index.md within docs/.")
     parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
+    parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要输出")
     args = parser.parse_args()
 
     pairs = []
@@ -201,5 +214,24 @@ def main() -> None:
     remaining = len(pairs) - merged - errors
     print(f"Remaining pairs: {remaining}")
 
+    exit_code = 1 if errors else 0
+    if args.jsonl:
+        print(
+            json.dumps(
+                {
+                    "severity": "HIGH" if errors else "INFO",
+                    "check_id": "MERGE-README-INDEX",
+                    "merged": merged,
+                    "errors": errors,
+                    "pairs": len(pairs),
+                },
+                ensure_ascii=False,
+            )
+        )
+    if args.warn_only:
+        return 0
+    return exit_code
+
+
 if __name__ == "__main__":
-    sys.exit(main() or 0)
+    raise SystemExit(main())

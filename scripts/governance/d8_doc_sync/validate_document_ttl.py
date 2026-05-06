@@ -1,15 +1,6 @@
 """
 validate_document_ttl.py — 文档 TTL 过期检测
 
-__manifest__ = """
-args: []
-description: 文档 TTL 过期检测（GOV-DOC-006 §一/§三 — TTL合法值+过期文件+LATEST命名）
-dimensions:
-- D8
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-DOC-006 §一（4 种合法 TTL 值）/ §三（LATEST 命名规范）
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 文档 TTL 过期检测（GOV-DOC-006 §一/§三 — TTL合法值+过期文件+LATEST命名）
+dimensions:
+- D8
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

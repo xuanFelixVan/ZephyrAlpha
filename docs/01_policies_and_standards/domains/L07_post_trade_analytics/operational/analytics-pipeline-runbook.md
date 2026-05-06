@@ -2,9 +2,9 @@
 module_id: DOM-L07-002
 title: 分析管线操作手册
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l07_post_trade_analytics
+layer: L07
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

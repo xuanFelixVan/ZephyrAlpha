@@ -1,8 +1,8 @@
 ---
 doc_type: index
-status: active
+status: Draft
 title: "budget-enforcer — 目录索引"
-version: "1.0.0"
+version: "1.1.0"
 created: "2026-05-05"
 updated: "2026-05-05"
 ---
@@ -16,7 +16,7 @@ updated: "2026-05-05"
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | Token/Cost 预算强制执行蓝图 — Budget Enforcer + 降级策略 |
+| [blueprint.md](blueprint.md) | Markdown | Token/Cost/Time 三维预算强制执行蓝图 v0.7.0 — 七级预算 + 全生命周期 + 信任根 + 抗对抗 |
 
 ## 导航
 

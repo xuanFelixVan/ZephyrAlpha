@@ -31,12 +31,14 @@ __all__ = [
     "Checkpoint",
 ]
 
+
 @dataclass
 class Checkpoint:
     checkpoint_id: str
     created_at: str
     description: str
     task_count: int
+
 
 class RollbackManager:
     """

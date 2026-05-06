@@ -3,7 +3,7 @@ module_id: PS-STD-012
 title: 规则验证标准
 doc_type: standard
 status: active
-version: "1.2.0"
+version: "1.2.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -24,7 +24,7 @@ ai_autonomy: human_gated
 
 # 规则验证标准
 
-> **module_id**: PS-STD-012 | **version**: 1.2.0 | **status**: active | **layer**: cross_layer
+> **module_id**: PS-STD-012 | **version**: 1.2.1 | **status**: active | **layer**: cross_layer
 
 ---
 
@@ -53,7 +53,7 @@ ai_autonomy: human_gated
 
 ## 2. 验证分级体系
 
-对标 OWASP ASVS v5 的三级体系 + 本项目特有需求，设定四级验证：
+对标 OWASP ASVS v5 的三级体系 + 本项目特有需求，设定 **V1–V4 四级自动化与制度化验证**；**§7 V5** 为额外安排的深度内容审计（语义与标签一致性），不计入同一套频率矩阵的「级别编号」扩展——文档开头 summary 所称「五级」= V1~V4 + V5。
 
 | 级别 | 名称 | 执行者 | 触发方式 | 响应时间 | 对标 |
 |:---:|------|--------|---------|:---:|------|
@@ -73,7 +73,7 @@ ai_autonomy: human_gated
 | 修改 `stability: frozen` 文件 | P0 变更 | PS-STD-009 §2 |
 | 删除 `ttl: permanent` 文件 | 禁止删除 | — |
 | `blueprint_refs` 引用的蓝图不存在 | META-V16 | PS-STD-001 §14 |
-| `index.md` 文件状态与实际 frontmatter `status` 不一致 | — | PS-STD-012 §2.1（待分配 META 违规 ID） |
+| `index.md` 文件状态与实际 frontmatter `status` 不一致 | META-V21 | PS-STD-012 §2.1 |
 
 **V1 阻断不可绕过**。任何 V1 阻断必须先修复问题，才能继续操作。
 
@@ -209,7 +209,7 @@ Step 4：判定与修复
 |---------|:---:|---------|------|------|
 | 蓝图（模块架构设计） | `policy` | 蓝图 | 🔴 标签+位置均错误 | 搬到 `03_modules/l*/模块名/blueprint.md` |
 | 施工图（实施步骤） | `operational_rule` | 模块施工图 | 🔴 内容非操作规则 | 搬到 `03_modules/l*/模块名/construction-plan.md` |
-| ADR 讨论稿 | `protocol` | 讨论草稿 | 🔴 内容类型错误 | 搬到 `docs/02_enterprise_architecture/adr/`（加 -draft 后缀）或归档 |
+| ADR 讨论稿 | `protocol` | 讨论草稿 | 🔴 内容类型错误 | 迁入 **`KB:decisions`** namespace（Git-backed）；若以 Markdown 草稿承载则在 `_development_workspace/` 或仓库批准的草稿路径撰写——禁止写入已删除的旧 `docs/02_enterprise_architecture/adr/` 树 |
 | 路线图 | `standard` | 路线图 | 🔴 内容类型错误 | 搬到 `02_enterprise_architecture/` 或归档 |
 | 会话日志 | `policy` | 会话记录 | 🔴 | 搬到 `session_logs/` |
 | 声明式规则 | `policy`/`standard`/`protocol` | 确实是规则 | ✅ | 原地不动 |
@@ -234,7 +234,8 @@ Step 4：判定与修复
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 1.2.1 | 2026-05-06 | §2：澄清 V1–V4 与 §7「V5 深度审计」关系；§2.1 `index.md` 失真阻断正式注册为 **META-V21**（PS-STD-001 §14.1）。§7.2：ADR 讨论稿处置改为 **KB:decisions**，移除对已删除 `docs/02_enterprise_architecture/adr/` 的指引。修正 §8 历史行 1.1.0 叙述（索引阻断不与 META-V17 混用）。版本号 patch +1。 |
 | 1.2.0 | 2026-05-02 | **新增 V5 深度内容审计（minor）**。新增 §7：定义四步审计流程（字段扫描→内容读取→交叉验证→判定修复）、审计判定速查表（7 种常见不一致类型）、可脚本化程度评估（4 级难度）。对标 ISO 42001 §8.2。废除旧 doc_type-vocabulary.yaml v1.1.0 中"文件名不需要与 doc_type 一致"条款。旧 §6~§6 升格为 §7~§8。版本号 minor +1。 |
-| 1.1.0 | 2026-05-01 | 新增 META-V17 V1 阻断项：`index.md` 文件状态与实际 frontmatter `status` 不一致（自反性闭环——验证标准本身确保索引入口不漂移）。版本号 minor +1。 |
+| 1.1.0 | 2026-05-01 | 新增 **索引一致性 / index 失真** V1 阻断项草案（后在 v1.2.1 正式编号为 **META-V21**，不得与 META-V17「废弃蓝图引用」混用）。版本号 minor +1。 |
 | 1.0.1 | 2026-05-01 | 状态升格：draft → active。V1~V4 已在 PS-STD-001 §14 META-V 规则中实现，正式激活为标准。版本号 patch +1。 |
 | 1.0.0 | 2026-05-01 | 初始创建——meta/ 目录系统审查后补齐。对标 OWASP ASVS v5 / Kubernetes Conformance / ISO 42001 §8 |

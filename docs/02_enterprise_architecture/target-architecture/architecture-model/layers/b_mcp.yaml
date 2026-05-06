@@ -1,0 +1,7 @@
+layer: b_mcp
+status: draft
+version: "0.1.0"
+description: "MCP 层架构模型 — 当前为占位文件"
+depends_on: []
+provides_to: []
+ocp_extension_points: []

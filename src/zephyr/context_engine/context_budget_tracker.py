@@ -22,9 +22,11 @@ from threading import RLock
 from typing import TYPE_CHECKING, Any
 
 from zephyr.shared.observer import EventType, Observer
+from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 if TYPE_CHECKING:
     from zephyr.context_engine.doc_compressor import DocCompressor
+
 
 @unique
 class BudgetLevel(str, Enum):
@@ -32,11 +34,13 @@ class BudgetLevel(str, Enum):
     L2_THROTTLE = "budget_l2_throttle"
     L3_HARD_STOP = "budget_l3_hard_stop"
 
+
 DEFAULT_THRESHOLDS = {
     BudgetLevel.L1_WARNING: 0.80,
     BudgetLevel.L2_THROTTLE: 0.90,
     BudgetLevel.L3_HARD_STOP: 0.95,
 }
+
 
 class ContextBudgetTracker:
     """Per-session token budget tracker with threshold events.
@@ -44,7 +48,7 @@ class ContextBudgetTracker:
     Usage::
 
         bus = Observer()
-        tracker = ContextBudgetTracker(bus, session_limit=100000)
+        tracker = ContextBudgetTracker(bus)  # 默认会话上限 DEFAULT_CONTEXT_TOKEN_BUDGET（8000）
         tracker.count_tokens("some text", session_id="s1")
         tracker.check_budget("s1")
 
@@ -58,7 +62,7 @@ class ContextBudgetTracker:
     def __init__(
         self,
         observer: Observer,
-        session_limit: int = 100000,
+        session_limit: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         thresholds: dict[BudgetLevel, float] | None = None,
     ) -> None:
         self._observer = observer
@@ -199,7 +203,9 @@ class ContextBudgetTracker:
             return None
         return compressor.compress(text, session_id=session_id)
 
+
 _default_tracker: ContextBudgetTracker | None = None
+
 
 def handle_compression_needed(payload: dict[str, Any], **context: Any) -> str | None:
     """Module-level entry point for TriggerRouter dispatch.
@@ -214,6 +220,7 @@ def handle_compression_needed(payload: dict[str, Any], **context: Any) -> str | 
     text = payload.get("text", "")
     session_id = payload.get("session_id", "default")
     return _default_tracker.compress_session_context(text, session_id=session_id)
+
 
 def set_default_tracker(tracker: ContextBudgetTracker) -> None:
     """Register the default tracker for trigger dispatch."""

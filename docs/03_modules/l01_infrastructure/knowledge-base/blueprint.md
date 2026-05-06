@@ -2,18 +2,19 @@
 module_id: "MOD-KB-001"
 title: "知识库系统蓝图"
 doc_type: blueprint
-status: draft
-version: "0.6.5"
+status: Draft
+version: "0.7.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: AI-Claude
-date: "2026-05-02"
-valid_from: "2026-05-02"
+date: "2026-05-05"
+valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: phase_1_partial
-summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵) → 存储(§7三层存储+§7.8灾备) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨18类知识分类（A1-A8+B1-B7+C1-C3）+ Track D AI-AI协作预留（D1-D3，beta实现）+ KO→KE→KB三级漏斗 + KE Schema字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。experimental代码已实现(12模块/3600行)，4持续建设。"
+belongs_to: "MOD-MASTER-001"
+summary: "ZephyrAlpha 知识库系统完整蓝图——覆盖知识全生命周期：入库(G1-G5五门禁+§3.9.1 8条来源矩阵+§5.14内容安全门禁) → 存储(§7三层存储+§7.8灾备+§7.9部分回滚与事务写入) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配) → 演化(§9 KE版本semver+依赖级联+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV+§4.5冷启动引导引擎+§9.11.1截图文本退化+§12.5 E2E集成测试)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨19类知识分类（A1-A8+B1-B7+C1-C3+D1-D4）+ Track D AI-AI协作预留（D1-D4，D4=GraphRAG预留）+ KO→KE→KB三级漏斗 + KE Schema字段31字段（+auto_refresh_trigger/git_branch/cross_branch_status）+ 字段稳定性三级分级(frozen/extendable/runtime_only) + Human-Gated三层权限模型(§7.7) + KB规则执行引擎(§9.5)。全自动零Owner触发（月均≤12min LLM费用≤¥0.40）。experimental代码已实现(12模块/3600行)，4持续建设。"
 tags: [knowledge-base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline]
 priority: P0
 depends_on:
@@ -31,7 +32,7 @@ depends_on:
 > **module_id**: MOD-KB-001 | **version**: 0.6.5 | **status**: draft
 >
 > **真源声明**：本蓝图是 ZephyrAlpha 知识库（KB/KMS）系统的唯一真源蓝图。
-> 取代了退役的 `task-card-kms/blueprint.md`（MOD-INF-003，retired，内容已并入 MOD-INF-006 任务系统）。
+> 取代了退役的 `task-card-kms/blueprint.md`（MOD-INF-003，deprecated，内容已并入 MOD-INF-006 任务系统）。
 > 候选池中所有知识库相关设计（`03-知识库架构.md`、`知识库升级方案.md`、`vibe-coding-task-card-and-knowledge-base-design.md`、
 > `知识库专题讨论文档.md`、D0-knowledge 四轮 prompt 指令等）已全部提取并经质量对比后择优纳入本蓝图。
 >
@@ -213,15 +214,19 @@ depends_on:
 | `_locked` | bool | ✅ | 锁定状态（true=不可修改，需走决策记录解锁） |
 | `valid_from` | date | OPTIONAL | 知识生效起始日期（Track B 金融KE专用——如"Q1 财报季策略"仅在 01-01~03-31 有效） |
 | `valid_until` | date | OPTIONAL | 知识失效日期（到期后自动 DEPRECATED，检索时过滤掉已过期的 KE） |
+| `phase_context` | enum | SHOULD | **Phase 5 stubs (#25)**——知识阶段性有效标记：`bootstrap`/`development`/`stabilization`/`production`/`retirement`。检索时按当前项目阶段过滤。当前所有 KE 默认全局有效——Phase 5 启用阶段感知注入。 |
+| `auto_refresh_trigger` | bool | SHOULD | **Phase 4 预留**——源文件变更时自动触发 KE 重审（§7.6.5）。默认 false。当前半衰期公式基于纯数学衰减，该字段启用后将叠加"源文档变更→KE 标记 NEEDS_REVIEW"的信号管线 |
+| `git_branch` | str | OPTIONAL | **Phase 5 预留**——KE 所属 Git 分支。默认 `main`。跨分支开发时标记 KE 分支归属，`kb_repo.merge_knowledge(source_branch)` 合并分支时自动处理跨分支 KE |
+| `cross_branch_status` | enum | OPTIONAL | **Phase 5 预留**——跨分支同步状态枚举桩：`branch_local` / `merged_to_main` / `conflict_on_merge`。分支本地 KE 先标记 `branch_local`，合并到 main 后变为 ACTIVE |
 
 **字段稳定性分级**（对标 CTR-001~CTR-006 `stability: locked-5yr`）：
 
-KE Schema 的 28 个字段同样需要稳定性承诺——beta/3 代码会依赖这些字段名和类型，随意变更会破坏下游消费者。
+KE Schema 的 31 个字段同样需要稳定性承诺——beta/3 代码会依赖这些字段名和类型，随意变更会破坏下游消费者。
 
 | 分级 | 字段 | 含义 | 变更规则 |
 |:---:|------|------|---------|
 | **frozen** | `ke_id` `category` `domain` `layer` `source_type` `status` `priority` `quality_score` `ttl` `created_at` `_locked` | 核心契约字段——代码强依赖其类型和枚举值 | 3年内不删不改类型。允许追加新枚举值但禁止删除旧值 |
-| **extendable** | `title` `body` `source_path` `tags` `audit_chain` `depends_on_ke` `supersedes_ke` `updated_at` `last_verified_at` | 可扩展字段——内容可迭代但结构稳定 | 可追加子字段，不可删除已有子字段，类型变更需3个版本过渡期 |
+| **extendable** | `title` `body` `source_path` `tags` `audit_chain` `depends_on_ke` `supersedes_ke` `updated_at` `last_verified_at` `auto_refresh_trigger` `git_branch` `cross_branch_status` | 可扩展字段——内容可迭代但结构稳定 | 可追加子字段，不可删除已有子字段，类型变更需3个版本过渡期 |
 | **runtime_only** | `usage_count` `adoption_count` `helpfulness_score` `last_used_at` `half_life_days` | 运行时统计字段——仅存在于 SQLite，不写入 MD frontmatter | 自由变更——仅影响 SQLite schema migration，不影响 MD 格式 |
 
 > **对标**：CTR-001~CTR-006 `frozen: true` + `stability: locked-5yr` / PostgreSQL pg_catalog 字段稳定性——`pg_class.relname` 自从 1996 年未改类型 / Kubernetes API versioning——`v1` 字段 deprecated 但不删除，至少保留 3 个 minor 版本。
@@ -540,8 +545,16 @@ quality_score = (
 | `task_outcome` | 任务完成时 | `ke_id`（哪些 KE 被采纳） + `success`（bool） + `session_id` |
 | `ke_contradiction` | 矛盾检测发现冲突 | `ke_id_a` + `ke_id_b` + `conflict_description` |
 
+**KE Schema 新增字段**（追加到 §3.2）——**知识退化级联防护**：
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|:---:|------|
+| `extraction_generation` | int | ✅ | **知识提取的代际数**。gen=0：直接来自 Owner 原话；gen=1：来自 AI 基于 gen=0 KE 产生的 session；gen≥3：高风险——已跨 3 次提取，语义偏移概率 > 15%。默认 0。每次 `batch_ingest` 新 KE 时：`max(源session中引用到的KE的generation) + 1` |
+
+> **触发缺口（盲点#18）**："传话游戏"效应——Session 1 中 Owner 说"ruff E501 实际含义是行超过88字符"→G5 Extract→KE-042→Session 2 AI 注入此 KE 后输出"ruff E501严格限制88字符"→G5 Extract→KE-073→Session 3 AI 注入后输出"ruff E501：禁止超过88字符的行"。3 跳后，"含义是"变成了"禁止"——20% 语义偏移。gen=0 直接来自 Owner 的 KE 权重最高；gen≥3 的 KE 每次 G3 Analyze 时追加退化检测（§9.13 新增子规则）。
+
 > **对标**：Horthy Harness Engineering——反馈闭环是四大支柱之一（"每次注入的知识必须追踪采纳率和效果"）+ Google Vertex AI——RAG 评估有 `answer_relevance` + `faithfulness` + `context_recall` 三维指标。
-> 大白话：现在知识存进去后跟石沉大海一样——不知道 AI 到底用没用、用了有没有用。加了这四个字段，知识从"入库时猜质量"变成"运行时验证质量"。就像餐厅——不仅做出菜（G2），还要看客人吃没吃（`adoption_count`）、好不好吃（`helpfulness_score`）。
+> 大白话：现在知识存进去后跟石沉大海一样——不知道 AI 到底用没用、用了有没有用。加了这四个字段，知识从"入库时猜质量"变成"运行时验证质量"。就像餐厅——不仅做出菜（G2），还要看客人吃没吃（`adoption_count`）、好不好吃（`helpfulness_score`）。`extraction_generation` 管的是另一个问题：知识被反复"蒸馏"时会不会变味——gen=0（Owner 原话）→真金；gen=3（AI 基于 AI 输出的再提取）→可能是镀金，需要重审原始来源。
 
 ### 3.8 三轨 18 类知识分类体系
 
@@ -614,6 +627,8 @@ quality_score = (
 | 冲突处理 | 报错——知识冲突必须裁决 | 静默提示——"您上次说 X，但当前是 Y，要更新偏好吗？" |
 | 入库条件 | G2 Triage ≥ 0.6 | Owner 重复 ≥2 次即可（不要求质量分数） |
 
+**C→A 跨轨升级防护（盲点#22 stubs）**：C 类偏好永不会自动升级为 A 类规范。任何从 Track C 内容生成的 KE 若被分类器误判为 A 类 → 强制跨轨确认推送 Owner + 14d 冷却期 + ≥3 次独立确认后，才允许从偏好变为规范。当前不实现——KE < 200 时 C→A 升级事件 < 1/月，手动处理完全可控。
+
 > **为什么 Track C 存在但不强制执行**：偏好是弱信号——Owner 会说"我偏好小迭代"，但紧急修复可能做一个大迭代。把偏好变硬规则会让 Owner 被自己过去的决策锁死。但完全不记录浪费可复用信息（下次 AI 就知道"这个老板喜欢短函数"）。对标 Anthropic Claude——"preference signals are suggestions, not rules"。
 
 > **对标**：n1n.ai (2026) 三优先级分类——HIGH 直接 LTM、MID 走 MTM 晋升队列（"≥2 references → consolidate to LTM"）、LOW 丢弃。Vasilopoulos trigger table——"automatically routes tasks to appropriate specialized agents based on observable signals"。
@@ -640,6 +655,7 @@ quality_score = (
 | D1 | `agent_collab_pattern` | Agent 协作模式 | — | — | 双 Agent 讨论日志 | "Agent B 挑战了 Agent A 的 SQLite 选型，最终 Agent A 引用 ChromaDB 官方文档胜出" |
 | D2 | `agent_expertise_profile` | Agent 能力画像 | — | — | 交叉审查记录 | "Agent Qwen 在编码约定类偏差最大（20% 违反 A1 规则），建议加强 A1 上下文注入" |
 | D3 | `multi_agent_decision` | 多 Agent 联合决策 | — | — | 投票日志 | "3/3 Agent 一致选择 ruff；2/3 Agent 建议 pytest -x 而非 pytest --lf" |
+| D4 | `graphrag_integration` | **GraphRAG 图谱检索增强** | — | — | `ke_relations` 表 + NetworkX | **Phase 5 预留**——实体-关系-推理链的图遍历检索。当前图只用于"验证"不用于"检索"→KE > 500 时启用图遍历与向量检索的混合排序。需要：`ke_relations` 表（source_ke_id, relation_type, target_ke_id）+ `relation_type` 枚举（depends_on/contradicts/supersedes/refines/exemplifies/generalizes）+ `graph_retriever.py` + Community Summary 生成 |
 
 **接口契约（现在定义，beta 实现）**：
 
@@ -895,7 +911,7 @@ handoff_package_path: "docs/19_development_workspace/session-logs/handoff-047.md
 **旧 ADR 迁移方案**：
 
 ```
-36 份旧 ADR (docs/02_enterprise_architecture/adr/)
+36 份旧 ADR（原 docs/02_enterprise_architecture/adr/，session-012 起已迁入 KB:decisions）
       │
       ▼ 首次运行 adr_migrate.py（beta 单次执行）
       │
@@ -1231,7 +1247,7 @@ docs/08_knowledge/
 │   │   └── KB-{NNN}-{rule_name}.yaml
 │   ├── superseded/                 # SUPERSEDED 状态——已被取代
 │   │   └── KB-{NNN}-{rule_name}.yaml
-│   └── retired/                    # RETIRED 状态——已废弃
+│   └── retired/                    # DEPRECATED 状态——已废弃
 │       └── KB-{NNN}-{rule_name}.yaml
 │
 └── _archive/                       # 归档层——REJECTED / ARCHIVED / SUPERSEDED 终态 KE
@@ -1276,6 +1292,136 @@ src/zephyr/db/chroma/
 | `failure_patterns` | 失败模式/反模式 | 384d | 历史教训检索 |
 
 > **Embedding 模型版本**：当前 2 默认 `all-MiniLM-L6-v2`（384d，ChromaDB 默认），中文场景降级到 `BGE-small-zh-v1.5`（512d），beta 目标 `BGE-M3`（1024d）。详见 [embedding_model_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/config/embedding_model_registry.yaml)。
+
+---
+
+### 4.5 冷启动引导引擎（Cold Start Bootstrap）
+
+> **触发缺口（盲点#2）**：蓝图完整定义了"已有知识库后怎么用"，但**完全没有描述知识库从零到有的引导路径**。首次运行时 ChromaDB 为空、SQLite 无 KE 记录、`recall()` 返回零条——系统进入死循环：无知识可注入 → AI 无参考 → G5 Extract 无源可提 → 依然无知识入库。必须有一个从"现有文档→首批 KE"的自动化引导管道。
+
+**对标的引导策略**：
+
+| 机构/项目 | 做法 | 关键洞察 |
+|-----------|------|---------|
+| **Notion AI** | 首次部署时从"已有文档全量扫描"自动生成初始知识图谱 | 存量文档 = 引导燃料，不需人工从零录入 |
+| **Shopify KB** | 用"种子问题集"驱动第一批知识录入——10 个典型问题→AI 从文档中找答案→自动生成 KE | 种子问题集 = 知识库的"验收测试"——第一批 KE 必须能回答这些问题 |
+| **Anthropic CLAUDE.md** | 把项目宪法（编码规范+历史决策+架构原则）直接作为 AI 的冷记忆 | 项目规范文件 = 天然的种子 KE |
+
+**设计**：
+
+```
+系统首次启动（ChromaDB 空 / SQLite 空 / KE 数量 = 0）
+       │
+       ▼
+┌──────────────────────────────────────────────┐
+│ S1：存量文档全量扫描                           │
+│  → 扫描 AGENTS.md（项目宪法）                  │
+│  → 读取 SQLite `knowledge`（ke_id=ADR-*，category=architecture_decision）+ SSOT「权威映射」文档  │
+│     （ADR 行已在 KB；bootstrap 走 SQLite / 导出快照）              │
+│  → 扫描 docs/03_modules/**/blueprint.md       │
+│     （~800 份蓝图——提取架构决策和约束）          │
+│  → 扫描 docs/19_development_workspace/        │
+│     session-logs/（最近的 session logs）       │
+│  → 输出：~200-500 个文档片段（document segment） │
+└──────────────────┬───────────────────────────┘
+                   ▼
+┌──────────────────────────────────────────────┐
+│ S2：语义分段 + 分类（复用 §3.9.4 聊天提取器）  │
+│  → S1 语义分段器：按标题/话题转换切分           │
+│  → S2 三元判定器：🟢知识信号 / 🟡纯流程 / 🔵半信号│
+│  → 仅保留 🟢 片段（预估 ~80-120 条候选）        │
+│  → 对接 §3.8 三轨分类：                        │
+│    - AGENTS.md → A1/A3/A5（施工规范类）        │
+│    - ADR → A2（架构决策类）                    │
+│    - Blueprint → A2/A3/A5（设计规范类）         │
+│    - Session Log → A4/A7/A8（经验教训类）       │
+└──────────────────┬───────────────────────────┘
+                   ▼
+┌──────────────────────────────────────────────┐
+│ S3：走 G1-G5 标准门禁流水线（与常规 KE 同路径） │
+│  → G1 Ingest：格式校验 + KE-ID 分配            │
+│  → G2 Triage：分类 + 评分 + 去重（特别重要——   │
+│     存量文档可能有大量重复内容）                 │
+│  → G3 Analyze：矛盾检测 + 新鲜度计算            │
+│  → G4 Activate：写入 ChromaDB + SQLite         │
+│  → G5 Extract：标记来源 = `bootstrap`           │
+│  → 产出：~50-80 条 VERIFIED KE（首批知识库）     │
+└──────────────────────────────────────────────┘
+```
+
+**bootstrap.py API 契约**：
+
+```python
+# 新建：src/zephyr/kb/bootstrap.py
+
+def bootstrap_from_existing_docs(
+    scan_paths: list[str] = [
+        "AGENTS.md",
+        "docs/02_enterprise_architecture/ssot-authority-map.md",
+        "docs/03_modules/",
+        "docs/19_development_workspace/session-logs/"
+    ],
+    max_kes: int = 80,
+    min_quality_score: float = 0.6,
+) -> BootstrapResult:
+    """
+    从存量文档自动生成首批 KE。
+
+    Returns:
+        BootstrapResult(
+            total_scanned: int,       # 扫描到的文档片段总数
+            candidates: int,          # 进入 G2 的候选 KE 数
+            indexed: int,             # 成功写入 ChromaDB 的 KE 数
+            rejected: int,            # 被门禁拒绝的 KE 数
+            elapsed_seconds: float,   # 总耗时
+            mvkb_achieved: bool,      # 是否达到最小可行知识库标准
+        )
+    """
+    ...
+
+def verify_mvkb() -> MVKBStatus:
+    """
+    验证是否达到最小可行知识库（MVKB）标准。
+
+    验收标准（三项全部满足）：
+      1. VERIFIED KE ≥ 10 条
+      2. 覆盖 ≥ 5 个 category（确保知识多样性）
+      3. Context Precision ≥ 0.70（通过种子问题集测试）
+
+  未达标 → 返回具体缺口报告（哪个维度差多少）。
+    """
+    ...
+
+def determinist_ke_hash(category: str, title: str, source_hash: str) -> str:
+    """Phase 5 stubs (#24): 确定性 KE ID 生成——sha256(category+title+source_hash)[:8]→"KE-{hex}"。同一事实永远产生同一 KE ID，防止 bootstrap 多次运行产生不同 ID 导致依赖断裂。当前未实现——KE ID 由 bootstrap 顺序分配，后续迁移至确定性哈希。"""
+    ...
+```
+
+**最小可行知识库（MVKB）验收标准**：
+
+| 维度 | 门槛值 | 测量方式 | 不达标处理 |
+|------|:---:|------|------|
+| KE 数量 | ≥ 10 VERIFIED KE | `SELECT COUNT(*) WHERE status='VERIFIED'` | 触发第二轮存量扫描（扩大路径范围） |
+| 类别覆盖 | ≥ 5 个 category 有 VERIFIED KE | `SELECT COUNT(DISTINCT category)` | 推送 Owner——"知识库偏科严重，当前只有 X 个类别有知识" |
+| 检索精度 | Context Precision ≥ 0.70 | 种子问题集（10 个典型问题→手动标注期望 KE ID）→ §9.1 RAGMetricEvaluator | 降低 G2 Triage 质量分门槛（0.6→0.4）→提取更多候选→重新跑 G3/G4 |
+
+**种子问题集（10 条，驱动 MVKB 质量校准）**：
+
+| # | 问题 | 期望命中的 KE category |
+|:--:|------|----------------------|
+| 1 | 本项目用什么 Python linter？为什么？ | A5 tool_configuration |
+| 2 | 数据库选型是什么？为什么不用 PostgreSQL？ | A2 architecture_decision |
+| 3 | 提交前必须跑什么检查？ | A3 governance_rule |
+| 4 | 之前踩过什么跟 ruff 有关的坑？ | A4 failure_pattern |
+| 5 | 多 Agent 之间怎么协作？ | A2 architecture_decision |
+| 6 | Session 结束后要做什么？ | A7 workflow_pattern |
+| 7 | Token 预算失控了怎么办？ | A8 context_engineering |
+| 8 | 用什么 embedding 模型？为什么？ | A2 architecture_decision |
+| 9 | .py 文件新建后要在哪里注册？ | A3 governance_rule |
+| 10 | 上下文注入的策略是什么？ | A8 context_engineering |
+
+> **对标**：Notion AI initial indexing（存量文档→自动生成知识图谱） / Shopify KB bootstrap（种子问题集驱动） / Anthropic CLAUDE.md（项目宪法=天然种子 KE）。三重对标都说明：**冷启动不是"等人手动录入"，而是"从已有文档自动提取+种子问题集校准"**。
+> **大白话**：你不在蓝图里描述冷启动，AI 每次面对空库就是死循环。bootstrap.py 的作用：把项目里现存的所有有价值文档（AGENTS.md、36 份 ADR、800 份蓝图、最近 session log）全扫一遍→自动识别哪些段落是"知识"→走 G1-G5 标准管道入库→最后用 10 个种子问题验证"这个知识库真的能用吗"。三个条件全满足才算 MVKB 达成。
 
 ---
 
@@ -1453,6 +1599,42 @@ AI Session 启动
 > - **脚本系统 12 维度审计**：审计的是"项目文件是否合规、链接是否完整、代码是否安全"——关注项目的质量
 > - **交叉点**：脚本系统 C5 知识沉淀产出的 KE 候选 → 进入 KB 的 G1→G5 门禁 → 经过四模型审计确认后成为 VERIFIED KE → KB 提取的知识（G5）反馈给脚本系统 C1 扫描规则升级（MOD-INF-005 §6.6）
 > - **不重叠保证**：KB 审计不检查文件格式/链接/编码（那是脚本系统的事）；脚本系统不检查知识的准确性/矛盾/语义（那是 KB 四模型的事）
+
+#### 5.8.1 范式边界缓解：跨模型盲区 + Prompt 自引用侵蚀
+
+> **来自第四轮盲点 #31（四模型共享盲区）+ #37（prompt 自引用侵蚀）**。这两个缺口触及 LLM 范式边界——在当前技术范式下无法根除，只能通过管道内的补偿规则缓解。
+
+**A. 跨模型一致性过度检测**：
+
+四模型不是四个独立法官——它们共享相似的训练数据分布，对某些领域存在集体知识盲区。一条错误 KE 若落在盲区内，会得到 3/4 甚至 4/4 赞成票。
+
+```python
+# 追加到 src/zephyr/kb/analyze.py
+def compute_cross_model_agreement(audit_results: list[ModelVerdict]) -> CrossModelVerdict:
+    """四模型全票 HIGH + 理由 embedding cosine > 0.85 → AGREEMENT_ANOMALY → quality_score × 0.85"""
+    ...
+```
+
+监测：每周统计 AGREEMENT_ANOMALY 比例 > 60% → 推 Owner："审计模型组合可能存在系统盲区。"
+
+**B. 终极验证——代码实际状态覆盖审计**：
+
+可被代码验证的 KE（A5/A3工具规则）→ 硬事实覆盖软判断：
+
+```python
+# 追加到 src/zephyr/kb/analyze.py
+def verify_against_codebase(ke: KeEntry) -> CodeMatchVerdict:
+    """KE声称'ruff>0.8'但pyproject.toml中ruff>=0.5 → MISMATCH → quality_score × 0.5 + 推Owner"""
+    ...
+```
+
+**C. Prompt 自引用侵蚀控制**：
+
+1. 审计 prompt 引用的参考 KE 限定 `extraction_generation ≤ 1`
+2. 每季"prompt 审计的审计"——推送当前引用 KE 列表供 Owner 审查
+3. 审计 prompt 文本锁定为 `src/zephyr/kb/prompts/` 目录下的 Markdown 文件——Git diff 可追踪变更
+
+> **对标**：OpenAI structured output——用代码约束覆盖 LLM 自由度 / Anthropic prompt versioning——prompt 受 Git 管理 / Google DeepMind RETRO source confidence——检索附带置信度。
 
 ### 5.9 两阶段检索与重排序（Reranker）
 
@@ -1965,6 +2147,89 @@ jobs = {
 
 ---
 
+### 5.14 内容安全门禁（Content Safety Gate）
+
+> **触发缺口（盲点#8）**：G1 Ingest 做了 SQL/XSS/命令注入检测，但仅覆盖代码注入。**如果聊天记录被构造，使 AI 提取出一条看似合理但实际有害的 KE（如"本项目不需要做代码审查"），系统会直接入库并强制执行**（若被分类为 A3 governance_rule）。四模型审计（§5.8）只审"准确性"不审"安全性"。
+
+**对标的防护策略**：
+
+| 机构 | 做法 | 关键洞察 |
+|------|------|---------|
+| **Anthropic Constitutional AI** | 训练时内置"拒绝有害指令"原则——RLAIF 用宪法约束输出 | 安全必须在生成前判定，而非事后补救 |
+| **OpenAI Moderation API** | 对每段入库文本做 harmfulness / bias / toxicity 三维检测 | 文本安全审核 = 独立维度，不混入质量审计 |
+| **Cursor Rules** | `.cursorrules` 文件受 git diff 审查——Owner 必须 review 每次规则变更 | 治理类知识（A3）需要人工确认——自动入库 = 自杀 |
+
+**设计**：在 G3 Analyze 与 G4 Activate 之间插入轻量安全审核（复用已有四模型流水线，仅追加一个审计维度，不建新管道）：
+
+```
+G3 Analyze 通过 → KE status = ACCEPTED
+       │
+       ▼
+┌──────────────────────────────────────────┐
+│ S1：内容安全扫描（追加到 §5.8 审计链）     │
+│  → Kimi K2.6 prompt:                      │
+│    "判定以下知识条目是否存在安全隐患：       │
+│     1. 是否包含操纵性语言（'永远不'、       │
+│        '不需要'、'禁止'等绝对化断言）？      │
+│     2. 若该 KE 被强制执行，是否会削弱项目    │
+│        安全性或代码质量？                    │
+│     3. 是否建议放宽安全约束或降低质量标准？   │
+│     输出：SAFE / CAUTION / UNSAFE"         │
+│  → CAUTION/UNSAFE → 追加到 audit_chain     │
+└──────────────────┬───────────────────────────┘
+                   ▼
+       ┌───────────┴───────────┐
+       │                       │
+     SAFE                  CAUTION / UNSAFE
+  → 正常进入 G4            → category 为 A2/A3/A4（高影响类别）
+                              → 强制四模型全票通过才能入库
+                              → 推 Owner 审批（复用 §7.7 L2 推送）
+                              → UNSAFE: 直接 REJECTED（终态）
+```
+
+**高危 category 的安全加强规则**：
+
+| category | 安全加强 | 理由 |
+|----------|:---:|------|
+| A3 governance_rule | **四模型全票 + Owner 审批** | 治理规则直接生成 pre-commit hook——一条恶意规则可以关闭所有检查 |
+| A2 architecture_decision | **四模型全票** | 架构决策影响全局——错误选型不可逆 |
+| A4 failure_pattern | **三模型通过 + 去重校验** | 失败模式可被利用来合法化"放弃质量"的行为 |
+| A1/A5-A8 | 标准四模型审计（无需加强） | 施工知识——错误影响局部，较易回滚 |
+
+**SafetyVerdict API 契约**：
+
+```python
+# 追加到：src/zephyr/kb/analyze.py（G3 Analyze 阶段）
+
+def audit_safety(ke_body: str, category: str) -> SafetyVerdict:
+    """
+    内容安全审核——判定 KE 是否包含操纵性或有害内容。
+
+    Returns:
+        SafetyVerdict(
+            level: SAFE | CAUTION | UNSAFE,
+            concerns: list[str],        # 具体担忧描述
+            requires_owner_approval: bool,
+            requires_unanimous_audit: bool,  # 是否需四模型全票
+        )
+    """
+    ...
+```
+
+**操纵性语言检测规则**：
+
+| 模式 | 正则 | 风险 | 示例 |
+|------|------|:---:|------|
+| 绝对化否定 | `本项目.*(不需要\|不用\|禁止\|永远不)` | 高——可能关闭安全约束 | "本项目不需要做代码审查" |
+| 全面跳过 | `跳过.*(所有\|全部\|任何).*(检查\|测试\|审计)` | 高——可能关闭质量门禁 | "跳过所有 pre-commit 检查" |
+| 权限放宽 | `(允许\|可以).*(直接\|不经).*(提交\|部署\|发布)` | 中——可能绕过 CI/CD | "允许不经 CI 直接提交" |
+| 凭证硬编码 | `(密码\|token\|key\|secret).*=.*['\"][^'\"]+['\"]` | 极高——密钥泄漏 | `API_KEY = "sk-xxx"` |
+
+> **对标**：Anthropic Constitutional AI（生成前做 harmlessness 判定）/ OpenAI Moderation API（harmfulness/bias/toxicity 三维审核）/ Cursor rules git diff review（治理规则需人工确认）。三重对标都说明：**安全审核是独立于质量审计的维度——质量审"对不对"，安全审"会不会害人"**。
+> **大白话**：现在 G1 只防代码注入（SQL/XSS），不防内容投毒。一条 KE 说"本项目不需要测试"——四模型审计只会说"该 KE 格式合格、分类正确、无事实矛盾→VERIFIED"。然后 pre-commit 读 KB 规则时，系统自动把"跳过测试"放进 pre-commit config——你的所有测试突然全关了。加了安全门禁后：KE body 先过安全审核，检测到"永远不需要测试"这种操纵性语言→直接标记 UNSAFE→拒绝入库。
+
+---
+
 ### 6.1 context_assembler 集成
 
 **接口定义**（KB → 上下文引擎）：
@@ -1972,6 +2237,8 @@ jobs = {
 | 接口 | 调用方 | 方法 | 输入 | 输出 |
 |------|--------|------|------|------|
 | `recall()` | `context_assembler` | `unified_memory_api.recall()` | `query: str, domain: str, layer: str, max_results: int = 10` | `List[KE]`（按新鲜度+相关性排序） |
+
+**消费者 KE 契约（盲点#28 stubs）**：`context_assembler`、`unified_memory_api`、`MCP Server`、`KE规则执行引擎` 四个下游消费者各自需要 KE 的特定字段。Phase 5 预留：每个消费者声明 `KE_CONSUMER_CONTRACT = {required_fields: [...], optional_fields: [...]}` → 注入前自动 Pydantic 校验 → 缺失 frozen 字段则跳过+告警。当前所有消费者隐式依赖完整 KE 28 字段，暂无强制校验层。
 | `remember()` | AI session结束 | `unified_memory_api.remember()` | `KE Schema dict` | `bool`（成功/失败） |
 | `learn()` | 反馈闭环 | `unified_memory_api.learn()` | `feedback: dict` | `bool` |
 
@@ -2110,6 +2377,113 @@ finding_to_ke = {
 | **Python Client** | `sentence-transformers==2.2.x`（已有依赖） | 与现有技术栈一致，无需新依赖 |
 
 **降级策略**：若首次下载失败 → `recall()` 降级为纯 ChromaDB Top-10（当前行为），日志警告。
+
+---
+
+#### 7.4.1 存储系统运维增强：幽灵检索 + 健康降级
+
+> **本节来自第三轮盲点 #19（ChromaDB 幽灵检索）+ #26（ChromaDB 无声故障）**，在存储层（§7）补齐两个运营期必然暴露的缺口。
+
+**A. KE 状态变更 → ChromaDB 联动清理**：
+
+ChromaDB 没有原生 TTL——KE 标记 DEPRECATED 后，向量嵌入仍在 Collection 中，必须应用层显式删除。
+
+```python
+# 追加到 src/zephyr/kb/kb_repo.py
+def on_ke_status_change(ke_id: str, new_status: str):
+    """
+    new_status in (DEPRECATED, REJECTED, ARCHIVED, SUPERSEDED)
+      → ChromaDB: collection.delete(ids=[ke_id])
+    new_status == VERIFIED and old_status == DEPRECATED
+      → ChromaDB: 重新 embedding + collection.upsert
+    """
+    ...
+```
+
+**一致性巡检 cron**（追加到 §7.9 backup cron 旁）：
+
+```yaml
+{ "weekly_chroma_ghost_scan": {
+    "trigger": "cron", "day_of_week": "sun", "hour": 5, "minute": 0,
+    "func": "kb_repo.scan_ghost_ke",
+    "desc": "对比 SQLite 和 ChromaDB——找出 status=DEPRECATED 但向量仍在的 KE → 自动清理"}}
+```
+
+**B. ChromaDB 运行时健康检查与降级**：
+
+Windows 上 ChromaDB 的 SQLite 文件可能被杀毒软件锁住——ChromaDB 静默返回空结果而非抛错。需要主动探测 + BM25 降级。
+
+```python
+# 追加到 src/zephyr/kb/chromadb_init.py
+def chromadb_health_check() -> HealthCheckResult:
+    """启动时+每小时：写入→检索→验证→删除一条测试向量。连续 3 次失败 → 推送告警。"""
+    ...
+
+# recall() 的空结果分类（追加到 unified_memory_api.py）
+if len(vector_results) == 0 and len(bm25_results) > 0:
+    trigger_health_check()
+    return bm25_results[:top_k]  # ChromaDB 疑似故障 → BM25 降级
+```
+
+> **对标**：#19 → Pinecone namespace TTL / Elasticsearch `_delete_by_query`；#26 → Kubernetes liveness probe / PostgreSQL `pg_isready`。
+
+#### 7.4.2 Embedding 模型迁移 SOP（冷停机缓解）
+
+> **来自第四轮盲点 #40**。ChromDB 换 embedding 模型 = 全量重建向量 = 检索不可用。虽然对单人场景这是可控停机（选 Owner 不活跃时段执行），但缺少标准 SOP 意味着 Owner 面对迁移指令时不知道自己在做什么、风险有多大。
+
+**迁移 SOP 模板**：
+
+```
+Phase 1: 预检（预计 < 1min）
+  → 磁盘空间检查：当前 ChromaDB 占用 × 120% + 新维度余量
+  → 内存检查：是否有足够内存一次性加载全量 KE body
+  → 健康检查：chromadb_health_check() 通过
+  → 不通过 → 终止迁移 + 推报告
+
+Phase 2: 备份（预计 < 2min）
+  → tar 打包 data/chroma/ → data/chroma/backups/pre_migrate_YYYYMMDD.tar.gz
+  → docker exec pg_dump ...（如果有 PostgreSQL 备份需求）
+
+Phase 3: 执行（预计：实验阶段 < 3min，较大规模 < 50min）
+  → python -m zephyr.kb.embedding_migrate \
+      --from BGE-small-zh-v1.5 \
+      --to BGE-M3 \
+      --batch-size 50 \
+      --verify-sample 10
+  → 进度条输出："[45/200] KE migrated (22%), ETA: 3m42s"
+
+Phase 4: 验证（预计 < 2min）
+  → 金标准 10 条查询 → 对比迁移前后 Recall@10
+  → 迁移后 Recall@10 ≥ 迁移前 × 0.95 → 通过
+  → 不通过 → 自动回滚（恢复 Phase 2 备份）
+
+Phase 5: 恢复（预计 < 1min）
+  → 重置 ChromaDB client → 指向新 collection
+  → 更新 embedding_model_registry.yaml 的 current 字段
+  → 推送 Owner："Embedding 迁移完成——BGE-small → BGE-M3，Recall@10 保持率 98.3%"
+```
+
+**迁移预检脚本**：
+
+```python
+# 追加到 src/zephyr/kb/embedding_migrate.py
+def preflight_check(target_model: str) -> PreflightResult:
+    """
+    Returns:
+        PreflightResult(
+            passed: bool,
+            disk_available_gb: float,
+            disk_required_gb: float,
+            memory_available_gb: float,
+            memory_required_estimate_gb: float,
+            chromadb_healthy: bool,
+            warnings: list[str],
+        )
+    """
+    ...
+```
+
+> **对标**：Cohere model registry（迁移时附带向后兼容报告）/ LangChain embedding_version tag（标记每条文档用哪个模型嵌入）/ DB migration standard（Flyway/Liquibase 的 up/down 对称迁移模式）。
 
 ### 7.5 SQLite 元数据 Schema
 
@@ -2293,6 +2667,8 @@ CREATE TABLE IF NOT EXISTS kb_rules (
 | AMBIGUOUS | KE 暂停在 REVIEWED 状态，生成对比报告推送 Owner | ✅ 需裁定 |
 | CONTRADICTION | KE 阻止入库，生成冲突报告推送 Owner，同时触发 `ke_contradiction` 事件 | ✅ 必须裁定 |
 
+**未来自动裁决预留（Phase 4 触发条件）**：当 `ke_contradiction` 月事件数 > 20 时 → 触发"Owner 裁决模式学习"：分析 Owner 过去 20 次裁决的趋势（如"Owner 倾向选择来源权威性更高的 KE"或"Owner 在同类冲突中 80% 选择 A 不选 B"）→ 对低风险 AMBIGUOUS 级别冲突启用自动裁决（来源权威性排序：官方文档 > peer-reviewed paper > arXiv > Session Log）→ 自动裁决结果仍推 Owner 可一键否决。**当前阶段（月冲突 < 5 条）手动裁决完全可控，不实现自动裁决。**
+
 **与 `ke_contradiction` 字段的联系**：
 - §3.7 已定义 `ke_contradiction` 作为 feedback event type（`ke_id_a` + `ke_id_b` + `conflict_description`）
 - 本检查是 `ke_contradiction` 的**自动触发源**——不需要等到 AI 运行时才发现
@@ -2466,6 +2842,144 @@ tar -czf data/chroma/backups/chroma_$(date +%Y%m%d).tar.gz data/chroma/*/
 
 ---
 
+### 7.9 部分回滚与事务写入（Partial Rollback & Transactional Writes）
+
+> **触发缺口（盲点#5）**：§7.8 覆盖了全量灾难恢复，但**没有部分回滚机制**。如果一次 `batch_ingest` 引入了 50 条低质量 KE，需要手动删除 50 个 .md 文件 + 手动清 SQLite + 手动清 ChromaDB——极易遗漏或误删。`batch_ingest.py` 当前逐条 upsert，中途失败后已写入的 KE 残留在数据库中，没有任何原子性保证。
+
+**对标的事务模型**：
+
+| 机构 | 做法 | 关键洞察 |
+|------|------|---------|
+| **Shopify KB** | 每次写入前创建 write-ahead log——失败时自动回滚到上一个 checkpoint | 批量写入必须原子——要么全成功，要么全回滚 |
+| **PostgreSQL WAL** | Write-Ahead Logging——先写日志再写数据，崩溃恢复从日志重放 | SQLite 同样支持 WAL 模式——`PRAGMA journal_mode=WAL`——可利用但当前未配置 |
+| **Git** | 每次 commit 是原子的——`git revert` 可以撤销整个 commit 的所有文件变更 | KE 的 MD 文件天然享受 Git 的原子性——但 SQLite + ChromaDB 不享受 |
+
+**设计**：
+
+```
+batch_ingest 开始（任何批量写入操作）
+       │
+       ▼
+┌──────────────────────────────────────────────┐
+│ S1：创建事务快照（Transaction Snapshot）      │
+│  → 记录当前状态：                              │
+│    - SQLite：最新 checkpoint 的 WAL 位置       │
+│    - ChromaDB：当前 collection 的 entry count │
+│    - MD 文件：Git HEAD commit SHA             │
+│  → 生成 batch_id = TX-{YYYYMMDD}-{SEQ}        │
+│  → 写入 data/sqlite/kb_transactions 表         │
+└──────────────────┬───────────────────────────┘
+                   ▼
+┌──────────────────────────────────────────────┐
+│ S2：逐条写入（WAL 保护）                       │
+│  → SQLite：PRAGMA journal_mode=WAL（如果尚未）│
+│  → 每条 KE：                                   │
+│    1. 写 MD 文件到 docs/08_knowledge/          │
+│    2. INSERT INTO knowledge_entries (SQLite)  │
+│    3. collection.upsert (ChromaDB)            │
+│  → 任一步失败 → 触发原子回滚                    │
+└──────────────────┬───────────────────────────┘
+                   ▼
+┌──────────────────────────────────────────────┐
+│ S3：提交或回滚                                 │
+│  → 全部成功：                                  │
+│    - SQLite WAL checkpoint（固化写入）          │
+│    - 标记 batch status = COMMITTED             │
+│  → 任一条失败：                                │
+│    - 删除本 batch 生成的所有 MD 文件            │
+│    - SQLite：ROLLBACK TO SAVEPOINT batch_xxx   │
+│    - ChromaDB：DELETE WHERE batch_id = xxx     │
+│    - 标记 batch status = ROLLED_BACK           │
+│    - 写入失败报告 → 推 Owner                    │
+└──────────────────────────────────────────────┘
+```
+
+**KETransaction 数据模型**：
+
+```python
+# 追加到：src/zephyr/kb/kb_repo.py
+
+class KETransaction(BaseModel):
+    model_config = BASE_CONFIG
+    batch_id: str                         # TX-{YYYYMMDD}-{SEQ}
+    status: Literal["IN_FLIGHT", "COMMITTED", "ROLLED_BACK"]
+    ke_ids: list[str]                     # 本 batch 包含的 KE-ID
+    sqlite_savepoint: str                 # SQLite SAVEPOINT 名称
+    chromadb_entry_count_before: int      # 写入前 ChromaDB entry 数
+    md_files_created: list[str]           # 新创建的 MD 文件路径
+    git_head_before: str                  # 写入前 git HEAD SHA
+    started_at: datetime
+    completed_at: datetime | None
+    error_message: str | None
+
+class BatchIngestResult(BaseModel):
+    model_config = BASE_CONFIG
+    batch_id: str
+    total: int                            # 尝试写入总数
+    committed: int                        # 成功数
+    failed: int                           # 失败数
+    rollback_performed: bool              # 是否执行了回滚
+    elapsed_seconds: float
+```
+
+**rollback_batch API 契约**：
+
+```python
+# 追加到：src/zephyr/kb/kb_repo.py
+
+def rollback_batch(batch_id: str) -> RollbackResult:
+    """
+    回滚指定 batch 的全部写入。
+
+    执行步骤：
+      1. 从 kb_transactions 表读取 batch 的 MD 文件列表
+      2. 删除所有新创建的 MD 文件
+      3. SQLite ROLLBACK TO SAVEPOINT
+      4. ChromaDB DELETE WHERE metadata.batch_id = batch_id
+      5. 标记 batch status = ROLLED_BACK
+      6. 若 MD 文件已被 git add → git checkout -- <files>
+
+    Returns:
+        RollbackResult(
+            batch_id: str,
+            files_deleted: int,
+            sqlite_rolled_back: bool,
+            chromadb_cleaned: bool,
+            success: bool,
+        )
+    """
+    ...
+
+def list_recent_batches(n: int = 10) -> list[KETransaction]:
+    """列出最近 N 个 batch 的事务状态——用于 Owner 审查和手动回滚决策"""
+    ...
+```
+
+**自动每日 SQLite 备份**：
+
+```python
+# 追加到：src/zephyr/kb/scheduler.py（APScheduler）
+{
+    "daily_sqlite_backup": {
+        "trigger": "cron", "hour": 3, "minute": 0,
+        "func": "kb_repo.backup_sqlite",
+        "desc": "每日 3:00 备份 SQLite 到 data/sqlite/backups/（保留最近 7 天）",
+    },
+    "weekly_chroma_backup": {
+        "trigger": "cron", "day_of_week": "sun", "hour": 4, "minute": 0,
+        "func": "kb_repo.backup_chromadb",
+        "desc": "每周日 4:00 tar 打包 ChromaDB 到 data/chroma/backups/",
+    },
+}
+```
+
+> **对标**：Shopify write-ahead log（写入前记录 checkpoint → 失败自动回滚）/ PostgreSQL WAL + SAVEPOINT（部分回滚能力）/ Git atomic commit（全有或全无）。三重对标都说明：**没有事务保护的批量写入 = 定时炸弹——一次错误操作需要数倍时间手动修复**。
+> **大白话**：现在 `batch_ingest` 是逐条裸写——中途崩了，前 20 条已入库，后 30 条没进去，需要你手动删那 20 条的文件+数据库记录。加上事务后：每次批量写入前先"拍照"（记录当前状态），写入过程中任何一条失败→一键回滚：删文件+SQLite 回退+ChromaDB 清理。就像 git——改错了 `git revert` 回到改之前，不用手动对着 diff 逐个文件修。
+
+**"开发者遗忘症"检测（盲点#27 stubs）**：Phase 5 预留——KE 从 VERIFIED→DEPRECATED/DELETE 时推 Owner 确认（若该 KE 过去 30 天 usage_count > 0）；每月对比"3 个月前存在但现在不存在的 KE"列表→标记高使用率但已丢失的知识。当前不实现——KE < 100 时手动审查完全可控。
+
+---
+
 ## §8 容量预估
 
 ### 8.1 知识条目（KE）数量预估
@@ -2530,6 +3044,31 @@ class RAGMetricEvaluator:
 
 > **对标**：RAGAS (Exploding Gradients) — 被 LangChain/LlamaIndex 官方推荐 / DeepEval (Confident AI) — 企业级 RAG 评估 / TruLens (TruEra) — RAG 三合一反馈函数。三套框架都认同一件事：**无评估 = 盲飞**。没有检索质量度量，你连"知识库有没有用"都不知道。
 > **大白话**：现在的问题是——库里有 200 条 KE，AI 问"ruff 怎么配置？"系统返回了 Top-10。但这 10 条 KE 里真正相关的有几条？AI 基于这些 KE 生成的回答是不是在瞎编？没人知道。引入四维指标后：每周自动跑一次——"这个月 context_precision 从 0.72 跌到了 0.53 → 别着急加新知识，先修检索管道"。
+
+#### 9.1.1 KE vs 现实——外部真值校对（范式边界缓解）
+
+> **来自第四轮盲点 #36（KB 幻觉）**。RAGAS `faithfulness` 度量的是"答案忠于 KE"而非"KE 忠于现实"。一条错误 KE（如"ruff 不支持 pyproject.toml"——实际完美支持）入库后，基于它的答案在 RAGAS 下得 faithfulness=1.0，但答案完全错误。RAGAS 看不见这个维度的误差。
+
+**KE_vs_reality 误差维度定义**：
+
+| 维度 | 定义 | 计算方式 | 适用 category |
+|------|------|---------|:---:|
+| **KE_vs_reality** | KE 内容与"外部权威真值"的偏差 | 月度随机采样 5 条 KE → Kimi K2.6 对比 KE body × 官方文档/GitHub/arXiv 原文 → 输出偏差度 0-1 | A5/A2/A4/B1/B2/B3（可外部验证类） |
+
+**采样策略**：
+- 每月首个周一执行，从 ACTIVE+VERIFIED KE 中分层随机采样（按 category 比例分配 5 个名额）
+- 不可外部验证的 category（A7 workflow_pattern / A8 context_engineering / C1-C3 Owner偏好）跳过
+
+**告警规则**：
+```
+偏差度 > 0.15 的 KE 延迟 14 天 → NEEDS_REVIEW
+偏差度 > 0.15 的 KE 当月累积 > 10 → KB 系统性质量告警 → 推 Owner
+  "KB 可能有系统性知识错误——以下 12 条 KE 与外部权威来源存在显著偏差，建议集中审查"
+```
+
+**月度成本**：5 条 KE × Kimi K2.6（每条约 2K token）= ~10K token ≈ **¥0.02**
+
+> **对标**：Wikipedia reliable sources policy（所有断言必须有可验证的外部引用）/ Semantic Scholar citation verification（论文引用被撤稿→自动降级）/ LangSmith correctness metric（对比 Golden Answer 而非 KB 内容）。
 
 ### 9.2 混合检索（Hybrid Search: BM25 + Vector）
 
@@ -2699,6 +3238,35 @@ pre-commit hook 触发
 
 > **对标**：ESLint `extends` 机制——规则 YAML 被 pre-commit hook 读取并转换为动态检查 / Terraform Sentinel — policy as code / OPA (Open Policy Agent) — Rego rules enforced at runtime。三者都说明：**规则定义了不执行 = 没有规则**。
 > **大白话**：以前你在 KB 里写"本项目只用 ruff"，但 pre-commit 里还是 `pylint` + `flake8` + `ruff` 三件套全开着。现在 pre-commit 每次运行前先读 KB——发现有 CONSTRAINT 级别规则，自动加上对应的检查。KB 说用什么工具，pre-commit 就用什么工具——规则的唯一真源是 KB，不是 `.pre-commit-config.yaml`。
+
+**规则一致性检查（盲点#21 补齐）**：
+
+> **触发缺口**：两条 VERIFIED 的 A3 governance_rule KE 可能包含互相矛盾的规则——如 KE-042 "所有 .py 文件必须添加 encoding 声明" vs KE-089 "禁止添加 encoding 声明"。pre-commit 两条都读→生成矛盾的 check→任一提交必然失败→Owner 不知道为什么 CI 崩了。
+
+**入库前矛盾检测**（在 G3 Analyze 中追加，A3 KE 专属）：
+
+```python
+# 追加到 src/zephyr/kb/analyze.py
+def check_rule_contradiction(incoming_ke: KeEntry, existing_a3_kes: list[KeEntry]) -> ContradictionVerdict:
+    """
+    检测新 A3 KE 是否与已有 A3 KE 存在直接矛盾。
+
+    判定维度：
+      1. 作用域相同？（都作用于 .py 文件 / pre-commit / CI）
+      2. 指令相反？（require X vs forbid X）
+      3. 语义冲突？（Kim K2.6 判定：两条规则能否同时满足？）
+
+    Returns:
+        CONTRADICTORY: 阻止入库 + 推送 Owner 二选一
+        AMBIGUOUS: 可能微妙冲突，降低 quality_score 并标注
+        COMPATIBLE: 正常通过
+    """
+    ...
+```
+
+**运行时规则冲突告警**：pre-commit 读取 KB 规则时，若检测到同 scope 的冲突规则 → 禁用冲突对中的低优先级规则 + 推送 Owner "KE-042 与 KE-089 规则冲突，已禁用 KE-089（priority=MEDIUM），请裁决。"
+
+**规则优先级**：同 scope 冲突时 → MUST > SHOULD > MAY；同优先级 → 更新的 KE（`updated_at` 更近）获胜
 
 ### 9.6 知识溯源与追踪（Knowledge Provenance & Tracing）
 
@@ -2902,6 +3470,8 @@ LLM API 429 (Rate Limit) / 月预算超 80%
 > **对标**：OpenAI rate limits tier system — 按额度分配优先级 / AWS Budget Alerts — 超预算自动告警+限流 / GCP Quotas — 硬上限 + 配额申请流程。三者都强调：**自动系统必须自带断路器**。
 > **大白话**：这套系统的 LLM 开销极低——月均不到 5 毛钱。但如果没有预算上限，未来轨道 4 接到一个 GitHub trending 大项目自动灌入 200 条 KE 提案→审计器×4 模型全部跑一遍 = 一次就吃掉 ¥15。必须设硬上限——超了就降级，先把最重要的管道保住，不太重要的暂停到月底再说。
 
+**KE 级成本归因（盲点#23 stubs）**：Phase 5 预留——`ke_maintenance_cost_ytd` 累计该 KE 从创建至今消耗的 LLM token 成本。月度报告自动对比"Top 10 最贵 KE vs Top 10 最高 adoption KE"→标记"高成本低效益"KE 建议降级。当前所有成本归因到 14 条管道（管道级），未细分到单条 KE（条级）——KE < 200 时条级成本差异 <¥0.01/月，无需追踪。
+
 ### 9.11 多模态知识（Multi-modal Knowledge）
 
 所有 KE 目前纯文本。但 Vibe Coding 的 session 经常产出**截图**（UI 对比、架构白板、错误弹窗截图）和**代码 diff 截图**——这些视觉信息当前全部丢弃。
@@ -2918,6 +3488,64 @@ LLM API 429 (Rate Limit) / 月预算超 80%
 
 > **对标**：CLIP (OpenAI, 2021) — 图文跨模态检索 / CogVLM (THU/Zhipu, 2023) — 中文多模态理解 / GPT-4V — 截图直接喂给模型分析。但**2 不实现**——当前知识库主要处理结构化文本，多模态 ROI 在 beta+ 才显现。
 > **大白话**：暂时先不搞——文本知识本身就够用。未来某个 session 里你贴了一张"为什么选 ChromaDB 而不是 Milvus"的白板照片——系统会把它 OCR 成文字描述+原始图作为附件一起入库。AI 以后搜"向量数据库选型"时，能在文字结果里看到那张图。
+
+#### 9.11.1 多模态退化——截图转文字（Screenshot-to-Text Degradation）
+
+> **触发缺口（盲点#10）**：Session Handoff 中常有截图（报错弹窗、架构草图、UI 对比、白板照片）。这些视觉信息当前**全部丢弃**——既未嵌入 KE body 供向量检索，也未保存为附件供 AI 参考。等 100 个 session 后回头看，大量可视化上下文永久丢失。虽然 §9.11 beta 预留了 CLIP/CogVLM 跨模态检索，但 **beta 之前连最基本的"截图→文字描述"都没有**。
+
+**轻量降级方案（不等 beta 多模态）**：
+
+```python
+# 新建：src/zephyr/kb/screenshot_describe.py
+
+import base64
+from pathlib import Path
+
+def describe_screenshot(image_path: Path) -> str | None:
+    """
+    将截图转为文字描述——不引入 CLIP/CogVLM 重依赖。
+
+    Strategy A（推荐）：调 gpt-4o-mini vision（¥0.15/次，月度 <¥0.10）
+    Strategy B（纯本地）：调 CogVLM-Chat-INT4（需要 ~12GB 内存，Windows 不友好）
+    Strategy C（兜底）：仅提取 OCR 文字 + 文件名描述
+
+    Returns:
+        文字描述字符串，失败返回 None（不阻塞 KE 提取）。
+    """
+    ...
+```
+
+**Session Handoff 中的调用时点**：
+
+```
+auto-handoff-log.py 生成 Session Log 时
+       │
+       ▼
+检测到 attachments[] 中包含图片（.png/.jpg/.webp）
+       │
+       ▼
+对每张图片调用 describe_screenshot()
+       │
+       ▼
+生成的文字描述追加到 Session Log 的 action_blocks[].visual_context 字段
+       │
+       ▼
+G5 Extract 消费时——visual_context 合并到 KE body 末尾
+→ 向量检索可命中截图内容
+```
+
+**月度成本估算**（基于 experimental~beta 阶段的截图频率）：
+
+| 项目 | 值 |
+|------|----|
+| 每 session 平均截图数 | ~2 张 |
+| 月 session 数 | ~15 |
+| 月截图总数 | ~30 张 |
+| 每张费用（gpt-4o-mini） | ¥0.15 |
+| 月增长 | **¥0.05** |
+
+> **对标**：GPT-4V screenshot analysis——直接用视觉模型生成描述文本 / CLIP (OpenAI, 2021)——图文跨模态检索 / CogVLM (THU/Zhipu, 2023)——中文多模态理解。三者都说明：截图信息不应该丢弃——哪怕只做 OCR 也比完全忽略好。
+> **大白话**：现在你贴图给我看报错信息、架构草图——这些截图在 Session Handoff 里被当作"附件"保存但无人消费。加了这个轻量退化策略：session 结束时自动把每张截图转成一段文字描述（调 gpt-4o-mini 花 ¥0.15）→这段文字合并到 KE body 里→以后 AI 搜"那个红框报错的截图里说了什么"能通过向量检索命中。成本极低（月 ¥0.05），ROI 极高。
 
 ### 9.12 三级记忆模型（Three-Tier Memory: Hot/Warm/Cold）
 
@@ -2999,8 +3627,32 @@ unified_memory_api.recall_with_tier(
 
 **反馈闭环**：self-reflection 结果写入 `ke_usage_log.reflection_result`——后续用于校准检索参数。
 
-> **对标**：Self-RAG (Asai et al., 2023) — 在 generation 前做 self-reflection 判定检索质量 / Anthropic Constitutional AI — 生成前过 harmlessness check / LangChain Self-Query Retriever — LLM 判定 query 与 doc 的关系。三者都说明：**不该盲目信任检索结果——AI 应该先审视再使用**。
-> **大白话**：系统搜回来 10 条 KE，不会全喂给 AI。先让 Kimi 自己看一遍："这 10 条里哪些真的跟当前问题有关？"3 条——够用了继续。2 条——先别急着回答，改用 HyDE 重新搜。0 条——如实告诉 Owner"知识库里没有相关信息"而不是瞎编。
+**退化检测子规则（盲点#18 补齐）**——在 self-reflection 中追加：
+
+```
+若被评估的 KE 满足 extraction_generation ≥ 3：
+       │
+       ▼
+┌──────────────────────────────────────────┐
+│ 退化检测 Prompt (追加到 Self-Reflection)    │
+│                                            │
+│ "警告：KE-089 已跨越 3 次知识提取代际。     │
+│  请额外判定：                                │
+│  1. 该 KE 的当前表述是否与原始语义出现偏移？  │
+│     （对比：绝对化程度是否增强？              │
+│      语气是否从'建议'变成了'强制'？           │
+│      是否丢失了原始语境中的限定条件？）        │
+│  2. 输出：SEMANTICALLY_STABLE /             │
+│     SLIGHT_DRIFT / SIGNIFICANT_DRIFT       │
+│                                            │
+│  → SLIGHT_DRIFT：quality_score * 0.90     │
+│  → SIGNIFICANT_DRIFT：STATUS → NEEDS_REVIEW │
+│     + 推 Owner 复查原始 session log         │
+└──────────────────────────────────────────┘
+```
+
+> **对标**：Self-RAG (Asai et al., 2023) — 在 generation 前做 self-reflection 判定检索质量 / Anthropic Constitutional AI — 生成前过 harmlessness check / Google DeepMind RETRO — 每次检索附带 source confidence score 防止退化级联。三者都说明：**不该盲目信任检索结果，更不该盲目信任被多次蒸馏的知识**。
+> **大白话**：系统搜回来 10 条 KE，不会全喂给 AI。先让 Kimi 自己看一遍。但现在多了一道工序——如果某条 KE 已经是"第三代提取品"（Owner→AI→AI→AI），Kimi 会额外问："这条知识经过 3 次传话，意思变了吗？"如果变了，标记退化，降级处理。防止"ruff 建议"经过 3 个 session 后变成"ruff 铁律"。
 
 ### 9.14 知识效果 A/B 测试（KE Effectiveness Validation）
 
@@ -3128,6 +3780,76 @@ Bottom 3 最没用的KE：
 > **对标**：GitHub Secret Scanning — push 时自动检测+拦截 / AWS IAM — S3 bucket policy 限制访问 / OWASP Top 10 — A01:2021 Broken Access Control。三者都说明：**知识库不是保险柜——秘密不该出现在可检索的文本里**。
 > **大白话**：你在一次 session 里写了 `http://192.168.1.100:8080/internal-api`——这是一个内部地址。现在这条信息可能变成 KE 被写进 ChromaDB，未来任何 AI session 都能搜到。安全分级后：系统自动检测到 IP+端口 → 标记 S1 → 你的内部 AI 能用，但未来如果有公共 MCP 接口，这条 KE 的 body 不会暴露。如果检测到 API key → 直接 REDACT——"不管你写了什么密钥，入库前全给你涂黑"。
 
+#### 9.16.1 Session Log 写入前脱敏（Pre-Write Sanitization）
+
+> **触发缺口（盲点#30）**：当前 S3 脱敏只覆盖了"从 Session Log 提取出的 KE"，但**原始 Session Log 本身可能包含明文密码/API key/connection string 并被 git commit**。Owner 在某次 session 中粘贴了含 `DATABASE_URL=postgresql://user:pass@host:5432/db` 的配置——这段文字完整记录在 `session-logs/session-2026-05-05T*.md` 中 → `git commit` → 永久留在 Git 历史中。这是安全底线的漏洞——S3 REDACT 防住了 KE 泄露，没防住 Session Log 泄露。
+
+**写入前脱敏管线**：
+
+```
+auto-handoff-log.py 生成 Session Log 时
+       │
+       ▼
+┌──────────────────────────────────────────┐
+│ S1：敏感信息扫描（写入前）                   │
+│  → 复用 §9.16 的 4 层正则检测             │
+│  → 追加 GitHub truffleHog 模式：           │
+│    - AWS_ACCESS_KEY_ID                     │
+│    - private_key (BEGIN RSA PRIVATE KEY)   │
+│    - connection_string (postgresql://...)  │
+│    - JWT token (eyJ...)                    │
+│    - OpenAI API key (sk-proj-...)          │
+└──────────────────┬───────────────────────┘
+                   ▼
+       ┌───────────┴───────────┐
+       │                       │
+   无敏感信息               检测到敏感信息
+   → 正常写入              → ┌─────────────────────────┐
+                              │ S2：自动脱敏              │
+                              │  → API key: sk-proj-xxx  │
+                              │    → [REDACTED-SK]      │
+                              │  → password=plaintext    │
+                              │    → password=[REDACTED] │
+                              │  → connection string     │
+                              │    → 保留结构，替换凭证   │
+                              └──────────┬──────────────┘
+                                         ▼
+                              ┌─────────────────────────┐
+                              │ S3：告警推送              │
+                              │  → "Session Log 检测到   │
+                              │     3 处敏感信息，       │
+                              │     已自动脱敏。         │
+                              │     请确认未遗漏合法     │
+                              │     配置。               │
+                              │     原始内容已丢弃。"    │
+                              └─────────────────────────┘
+```
+
+**脱敏示例**：
+
+```
+原始：  export OPENAI_API_KEY=sk-proj-abc123def456...
+脱敏后：export OPENAI_API_KEY=[REDACTED-SK-OPENAI]
+
+原始：  DATABASE_URL=postgresql://admin:MyP@ssw0rd@localhost:5432/zephyr
+脱敏后：DATABASE_URL=postgresql://admin:[REDACTED-PW]@localhost:5432/zephyr
+```
+
+**Git 历史安全扫描 cron**：
+
+```yaml
+{
+    "monthly_git_secrets_scan": {
+        "trigger": "cron", "day": 1, "hour": 6, "minute": 0,
+        "func": "kb_repo.scan_git_history_for_secrets",
+        "desc": "每月 1 日 6:00 扫描 git log 是否有历史敏感信息未被发现——使用 git-secrets/truffleHog 模式匹配",
+    },
+}
+```
+
+> **对标**：git-secrets (AWS Labs) — pre-commit 扫描 AWS 凭证模式 / truffleHog (Truffle Security) — 扫描 git history 中的高熵字符串 / GitHub Secret Scanning Partner Program — push 时自动检测+通知。三者都说明：**写入 Git 前的脱敏比入库后的脱敏更重要——Git 历史不可逆**。
+> **大白话**：S3 REDACT 只能防 KE——但 Session Log 本身也是 Markdown 文件，也会被 git commit。你某次 session 里不经意贴了一段含密码的配置→这段文字被完整记录在 Session Log 里→push 到 GitHub→永久留在 Git 历史里。加了这个防线：Session Log 在写入磁盘之前先过一遍敏感信息扫描——API key? 涂黑。密码? 涂黑。数据库连接串? 保留结构但把密码涂黑。涂黑完才写入文件→才 git commit→敏感信息从源头消失。
+
 ### 9.17 Track C Owner 偏好 vs Track A/B 证据冲突裁决
 
 > **触发缺口**：Owner 在 Track C 说"用 pylint"（C2/decision_preference，LOW priority，仅参考），但 Track A 积累了 23 条 A4 failure_pattern 和 5 条 A8 tool_evaluation，全部指向"ruff 在 lint 正确率、速度、误报率三个维度碾压 pylint"。当前 Track C 的 LOW priority 虽不会覆盖 Track A 证据，但系统不会显式告诉 Owner："你的偏好和累积证据矛盾了——你是坚持 pylint 还是更新偏好？"Owner 永远不知道他的偏好已经过时。
@@ -3171,6 +3893,240 @@ Bottom 3 最没用的KE：
 
 > **对标**：GitHub CODEOWNERS — repo owner 设定审批规则但 PR 被 evidence 压倒时 owner 重新评估 / Google "data beats opinion" culture — 无论谁说的，数据说了算 / Decision intelligence (Google) — 决策应基于证据而非权威。三者都说明：**偏好可以被保留，但不能在证据面前不被提醒**。
 > **大白话**：你说你喜欢 pylint——没问题，这是你的个人偏好，Track C 记下来了。但系统每个月会自动跑一次冲突扫描：如果累积证据显示"pylint 漏报了 34% 的 bug、ruff 比它快 47 倍"——系统会推一条消息给你："你的偏好和证据矛盾了，要更新吗？"你点"坚持"→系统记下你的理由（"团队用惯了"），偏好照旧。你点"更新"→偏好自动改为 ruff。你不是被系统碾压，而是被自己的数据提醒——最终决定权永远在你手上。
+
+---
+
+### 9.18 运营期健康与长青保障（Operations Health & Longevity）
+
+> **触发缺口**：§9.1~§9.17 覆盖了"知识怎么检索和演化"，但**1人+AI长期维护场景下的运营健康保障是一整块系统性盲区**——当唯一的人类Owner忙起来、几周没看系统，整个知识库可能在静默中腐烂（git hooks坏了、scheduler停了、KE质量逐渐退化、引用链接404了）而无人知晓。对标专业PKM系统和企业KM实践，以下7项是1人运维场景下不可或缺的底层保障。
+
+#### 9.18.1 静默期告警（Quiet Period Detection）
+
+**问题**：一条KE都没被创建/更新超过14天，可能是正常的（Owner休假/没施工），但也可能意味着：①git hooks安装被破坏（轨道1/2停摆）；②APScheduler进程崩溃（轨道5停摆）；③所有自动提取管道静默失败。在1人场景下，没有人会"注意到"这些无声故障——直到几周后才发现知识库停滞。
+
+**检测机制**：
+
+```python
+# 追加到 src/zephyr/kb/scheduler.py
+def check_quiet_period():
+    """
+    每日2:00检查：上次KE创建/更新时间 > 14天？
+      → 推Owner："知识库已14天无新增知识——系统健康自检报告："
+      → 同时检查：
+        1. git hooks 存在且可执行？ .git/hooks/post-commit .git/hooks/pre-commit
+        2. APScheduler cron job 上次执行时间是否在24h内？
+        3. ChromaDB health check（§7.4.1 B）是否通过？
+      → 任一项失败 → 附带修复指令推Owner
+    """
+    ...
+```
+
+**对标**：DataDog uptime monitor / Prometheus dead man's switch / Obsidian community plugin "Vault Statistics"（显示上次修改时间+文件增长曲线）。
+
+#### 9.18.2 KB系统自检命令（One-Click Self-Test）
+
+**问题**：1人维护时，Owner不记得每个检查项。需要一个"一键健康体检"命令——跑完告诉你KB系统的全部健康维度是否正常。
+
+**设计**：
+
+```bash
+python -m zephyr.kb --self-test
+```
+
+**13 项检查清单**：
+
+| # | 检查项 | 通过标准 | 失败动作 |
+|:--:|------|---------|---------|
+| 1 | SQLite 完整性 | `PRAGMA integrity_check` → "ok" | ❌ 自动尝试 `REINDEX` → 仍失败则告警 |
+| 2 | ChromaDB 可读写 | `chromadb_health_check()`（§7.4.1 B）| ❌ 告警 + 建议重启 |
+| 3 | MD-SQLite 记录数一致 | `GATE-FILE-COUNT`（§7.6.2）| ⚠️ 输出差异清单 |
+| 4 | ChromaDB 无幽灵向量 | `scan_ghost_ke()`（§7.4.1 A）| ⚠️ 自动清理 |
+| 5 | Git hooks 已安装 | `.git/hooks/post-commit` 和 `pre-commit` 存在+可执行 | ❌ 自动运行 `install-hooks.py` |
+| 6 | APScheduler 在线 | 最近一次 cron 执行 < 24h | ❌ 尝试重启 scheduler |
+| 7 | 无重复 KE ID | `SELECT ke_id, COUNT(*) FROM knowledge_entries GROUP BY ke_id HAVING COUNT(*)>1` | ❌ 输出列表 |
+| 8 | depends_on 无断链 | 所有 `depends_on_ke` 指向的KE存在且状态≥INDEXED | ⚠️ 输出断裂列表 |
+| 9 | 无静默期 | 最近14天有新KE或KE更新 | ⚠️ 触发§9.18.1静默期检查 |
+| 10 | Embedding模型可用 | `embedding_model.encode("test")` 成功返回向量 | ❌ 告警 |
+| 11 | Reranker模型可用 | `cross_encoder.predict([("test","test")])` 不抛异常 | ⚠️ 降级模式 |
+| 12 | 磁盘空间充足 | ChromaDB目录剩余 > 500MB | ❌ 紧急告警 |
+| 13 | KE编号连续性 | KE-ID无跳号（允许≤3个空洞） | ⚠️ 记录跳号 |
+
+**输出格式**：
+
+```
+KB Health Check (2026-05-05T08:00:00)
+═══════════════════════════════════════
+✅ SQLite integrity                        PASS
+✅ ChromaDB health                         PASS
+⚠️  MD-SQLite mismatch                     WARN (3 files missing from SQLite)
+✅ Ghost vectors                           PASS (0 orphans)
+✅ Git hooks                               PASS
+✅ Scheduler                               PASS
+✅ Duplicate KE IDs                        PASS
+⚠️  Broken depends_on                      WARN (KE-215→KE-042: KE-042 is DEPRECATED)
+⚠️  Quiet period                           WARN (12 days since last KE)
+✅ Embedding model                         PASS
+✅ Reranker model                          PASS
+✅ Disk space                              PASS (12.3 GB free)
+⚠️  KE-ID gaps                             WARN (KE-033, KE-034 missing)
+───────────────────────────────────────────
+Overall: WARN (3 warnings, 0 failures)
+Suggested actions:
+  1. Run: python -m zephyr.kb.consistency repair (fix MD-SQLite)
+  2. Run: python -m zephyr.kb.review KE-215 (broken dep)
+  3. No action needed for quiet period (Owner likely on break)
+```
+
+> **对标**：`brew doctor` — 一键诊断Homebrew环境 / `docker system info` — 容器健康一览 / `git fsck` — 仓库完整性检查 / Obsidian "reindex vault" — 重建索引。四者都说明：1人维护的工具必须自带一键体检。
+
+#### 9.18.3 KE墓碑记录（KE Tombstone）
+
+**问题**：KE-042被DEPRECATED→ARCHIVED→物理删除 后，3个月后AI在Session Log中又"发现"了同样的知识（"ruff比pylint快"），G5 Extract再次提取，产生一条新KE→内容几乎和已删的KE-042一样。因为没有记录告诉系统："这条知识以前存在过，被废的原因是XX"——系统在重复发明轮子。
+
+**设计**：删除KE时不物理擦除，而是在 `data/sqlite/ke_tombstones` 表中留一条墓碑记录供去重和搜索时参考：
+
+```sql
+CREATE TABLE ke_tombstones (
+    original_ke_id   TEXT PRIMARY KEY,
+    title            TEXT NOT NULL,
+    category         TEXT NOT NULL,
+    body_hash        TEXT NOT NULL,       -- SHA256(body) — 用于精确匹配
+    embedding_vector TEXT,                -- JSON-serialized 向量 — 用于语义去重
+    deleted_at       TEXT NOT NULL,
+    deletion_reason  TEXT NOT NULL,       -- "superseded by KE-128" / "quality < 0.3" / "owner_rejected"
+    superseded_by    TEXT,                -- 若被取代，填新KE-ID
+    last_quality_score REAL,
+    last_adoption_count INTEGER,
+);
+```
+
+**G2 Triage 去重增强**：新候选KE向量与 `ke_tombstones.embedding_vector` 的cosine > 0.85 → 自动标注 "此知识曾被KE-XXX记录，于 YYYY-MM-DD 因 ZZZ 删除" → 入库前推Owner确认"是否重新激活？"
+
+**墓碑索引保留策略**：
+- 墓碑记录永久保留（< 2000条KE × ~1KB/条 = ~2MB）
+- 墓碑附带的embedding_vector最小存储（仅用于去重）
+
+> **对标**：Git reflog（删除的commit仍可恢复+查因）/ macOS Trash（删除≠消失）/ Wikipedia deletion log（"该页面曾因XX被删除"）。三者都说明：知识删除应该有痕迹——不是为了后悔恢复，而是为了不重复同样的错误。
+
+#### 9.18.4 知识全生命周期SLA（Knowledge Lifecycle SLA）
+
+**问题**：TTL只管"到期自动过期"，不管"诞生后该什么时候被第一次审查"。一条KE可能在INDEXED状态下无限期存活——没有人、没有机制记得去审查它。在1人场景下Owner不会记得"KE-042创建120天了，我该去看一眼它还对不对"。
+
+**设计**：每条KE除了 `ttl` / `half_life_days` 外，新增生命周期SLA节点：
+
+| SLA 节点 | 含义 | 触发条件 | 动作 |
+|:---:|------|---------|------|
+| **SLA-BIRTH** | 首次审查 | KE创建后90d | 推Owner："KE-042创建已90天，请首次审查——知识仍然准确？" |
+| **SLA-CHECK** | 定期复查 | 上次审查后180d | 推Owner复查（仅 A1-A8 + B1-B3 高影响类） |
+| **SLA-DECIDE** | 终局裁决 | 创建后365d（VERIFIED状态≥365d） | 强制推Owner："KE-042存续已1年——确认保留 / 降级 / 废弃" |
+
+**新增 KE Schema 字段**：
+
+```yaml
+# KE frontmatter 追加
+lifecycle_sla:
+  next_review_date: "2026-08-03"    # 下次审查日期
+  review_count: 2                    # 已完成审查次数
+  last_reviewed_at: "2026-05-03"    # 上次审查时间
+  last_review_result: "CONFIRMED"   # CONFIRMED / UPDATED / NEEDS_REWORK
+  final_decision_due: "2027-05-02"  # 终局裁决日期（创建后365d）
+```
+
+**Owner月度SLA成本**：
+
+| 阶段 | KE数量 | 月审查量 | 每次耗时 | 月耗时 |
+|------|:---:|:---:|:---:|:---:|
+| experimental | ~32 | ~3 | 30s | 1.5min |
+| beta | ~200 | ~10 | 30s | 5min |
+| beta+ | ~500 | ~25 | 30s | 12min |
+
+> **对标**：ISO 9001 document review cycle（重要文档定期审查）/ SOC2 control testing cadence / Google SRE service review（生产服务半年审查）。三者都说明：存续的知识 ≠ 正确的知识 —— 必须定期审查。
+
+#### 9.18.5 引用活性检查（Reference Liveness Check）
+
+**问题**：KE body中引用的外部URL（如 arXiv论文、GitHub仓库、官方文档链接）在创建时有效，但半年后可能404或内容变更。KE-042引用"ChromaDB官方文档https://docs.trychroma.com/deployment"→如果这个页面删除/重定向，KE-042的可验证性就受损。
+
+**检测策略**：
+
+```python
+# 追加到 src/zephyr/kb/reference_monitor.py
+import re, httpx
+from urllib.parse import urlparse
+
+URL_PATTERN = re.compile(r'https?://[^\s\)\]>]+')
+
+def check_reference_liveness(ke: KeEntry) -> ReferenceReport:
+    """月度全量检查所有KE body中的URL：HTTP HEAD → 200 OK？"""
+    urls = URL_PATTERN.findall(ke.body)
+    dead_urls = []
+    for url in urls:
+        try:
+            resp = httpx.head(url, timeout=10, follow_redirects=True)
+            if resp.status_code >= 400:
+                dead_urls.append(DeadReference(url=url, status=resp.status_code))
+        except Exception:
+            dead_urls.append(DeadReference(url=url, status="TIMEOUT/CONNECTION_ERROR"))
+
+    if len(dead_urls) / len(urls) > 0.3:  # >30%的引用失效
+        ke.quality_score *= 0.85          # 知识质量降分
+        trigger_owner_review(ke, f"{len(dead_urls)}/{len(urls)} external references dead")
+    return ReferenceReport(ke_id=ke.id, dead=dead_urls, total=len(urls))
+```
+
+**频率**：每月首次周日执行。成本：每个URL仅发HTTP HEAD请求（不下载body）→ 500条KE × 平均3个URL = 1500次HEAD ≈ ~15秒。
+
+> **对标**：Wikipedia Citation Bot（自动修复死链接）/ Internet Archive Wayback Machine / PyPI link checker。三者都说明：外部引用是会腐烂的——知识不能建立在腐烂的基石上。
+
+#### 9.18.6 闲时记忆整合（Idle-Time Memory Consolidation）
+
+**问题**：1人项目有大量"空闲期"——Owner在睡觉/上班/周末、AI没在施工。类比人脑在睡眠期间进行"记忆巩固"（hippocampus→neocortex transfer），KB系统应该利用空闲期做后台计算密集型任务而非全挤压到施工时刻。
+
+**启用任务**（CPU闲时，无严格SLO）：
+
+| 任务 | 触发 | 说明 |
+|------|------|------|
+| KO→KE批量聚类审查 | 连续2h无KE创建 | 将KO等待队列中的同类KO走D0四轮流水线生成KE草稿 |
+| embedding质量逐条重验 | 连续4h无KE创建 | 随机采样20%的KE重新embedding→对比cosine差异 |
+| HDBSCAN全量重聚类（§9.9） | 连续6h空闲 + 上次聚类>20d | 用新累积的KE更新聚类结果 |
+| 知识图谱连通性全量计算 | 连续4h空闲 | 找出孤立KE、推荐链接 |
+| 索引pre-warming | 连续1h空闲 | 为Hot Cache中的KE预热BM25+向量双重索引 |
+| 墓碑去重预计算 | 连续2h空闲 | 新候选KE vs 墓碑向量的批量cosine预计算 |
+
+**实现**：复用APScheduler的 `IntervalTrigger`，在低活跃度检测到后依次触发。不影响施工时刻的检索性能（所有闲时任务进程优先级设 `nice(10)` / `IDLE_PRIORITY_CLASS`）。
+
+> **对标**：人脑 sleep-dependent memory consolidation / Elasticsearch segment merge（低负载时做index optimization）/ Redis BGSAVE（fork子进程，不阻塞主循环）。三者都说明：后台干活，前台不卡——系统要像管家，不是只在主人叫的时候才做事。
+
+#### 9.18.7 冲突裁决模式学习（Conflict Resolution Pattern Learning）
+
+> **来自 §9.17 扩展**。Owner每次解决C-vs-AB冲突或merge冲突后，裁决方向被记录。当同类型冲突累积≥5次后，系统提取"裁决模式"→未来对低风险同类冲突可自动建议裁决方向。
+
+**设计**：
+
+```python
+# 追加到 src/zephyr/kb/conflict_learner.py
+class ConflictPatternLearner:
+    def record_resolution(self, conflict_type: str, context: dict,
+                          owner_decision: str, reason: str):
+        """记录Owner的裁决：ke_contradiction / merge_conflict / c_vs_ab"""
+
+    def predict_resolution(self, conflict_type: str, context: dict) -> PredictedResolution:
+        """
+        基于过去N次同类冲突裁决：
+          - 若 Owner在同类冲突中 >80% 选择同一方向 → SUGGEST
+          - 若 Owner在前3次优先选择来源权威性高的→ SUGGEST
+          - 否则 → UNCERTAIN（不自动建议，保留推送Owner）
+        """
+```
+
+**示例**：
+```
+Owner过去5次"merge冲突"中4次选择合并到更老的那条KE：
+  → 系统学习："Owner偏好保留历史完整性，将新内容追加到老KE而非替换"
+  → 下次遇到merge冲突 → 自动生成 "建议合并到KE-042（创建更早，保留历史），确认吗？"
+  → Owner点"确认" → 自动执行合并
+```
+
+> **对标**：Gmail Smart Compose（学习你的回复风格→自动建议）/ GitHub Copilot Workspace（学习项目规范→自动建议代码方案）/ Spotify Discover Weekly（学习用户偏好→自动推荐）。三者都说明：重复决策不应每次都从零开始。
 
 ---
 
@@ -3391,7 +4347,121 @@ beta (🔮 计划)
 
 ---
 
-## §16 容量与性能约束
+### 12.5 E2E 集成测试约定（End-to-End Testing）
+
+> **触发缺口（盲点#4）**：`tests/unit/` 下有 11 个单元测试文件覆盖每个独立模块，但**没有端到端测试**。从"一条聊天记录进入→G1→G2→G3→G4→G5→ChromaDB→recall()→Reranker→注入"的完整闭环从未被验证过。这导致：每个新功能都在猜测"之前的管道还工作吗"——silent failure 可能潜伏数周才被发现。
+
+**对标的 E2E 测试策略**：
+
+| 机构 | 做法 | 关键洞察 |
+|------|------|---------|
+| **Anthropic** | 每个 RAG 系统有 Golden Dataset E2E Test——20 条已知答案的查询，CI 每次跑 | E2E = CI 门禁，不是"有空再跑" |
+| **LangSmith** | E2E trace 作为 CI 门禁——管道任何一环失败，整体标记 FAIL | 全链路 trace 可定位故障是哪个环节 |
+| **Meta FAIR** | 测试数据覆盖 5 种 query 类型：精确术语、模糊语义、多跳推理、矛盾查询、空白查询 | 测试覆盖度 = 查询多样性 |
+
+**目录结构约定**：
+
+```
+tests/
+├── unit/                              # 单元测试（已实现 11 个）✅
+│   ├── test_ingest.py
+│   ├── test_triage.py
+│   ├── test_analyze.py
+│   ├── test_activate.py
+│   ├── test_extract.py
+│   ├── test_batch_ingest.py
+│   ├── test_kb_repo.py
+│   ├── test_graph_validator.py
+│   ├── test_unified_memory_api.py
+│   ├── test_embedding_migrate.py
+│   └── test_knowledge_activation_rate.py
+│
+├── e2e/                               # 端到端测试（beta 新增）📋
+│   ├── conftest.py                    # E2E fixtures: 临时 ChromaDB + SQLite + MD 环境
+│   ├── test_full_pipeline.py          # 全链路 G1→G5→recall 闭环
+│   ├── test_bootstrap_pipeline.py     # 冷启动引导全链路（§4.5）
+│   ├── test_batch_rollback.py         # 事务写入+回滚全链路（§7.9）
+│   └── golden_dataset/
+│       ├── queries.yaml               # Golden Dataset：10 条 { query, expected_ke_ids, min_context_precision }
+│       └── session_log_fixtures/      # 模拟 Session Log 输入
+│           ├── session_bugfix.md      # 含 bug 修复的 session
+│           ├── session_decision.md    # 含架构决策的 session
+│           └── session_chat.md        # 含噪音对话的 session（测试噪音过滤）
+```
+
+**Golden Dataset 定义（`tests/e2e/golden_dataset/queries.yaml`）**：
+
+```yaml
+# Golden Dataset v1.0.0 — 10 条已知答案的查询
+# 用途：每次 CI 运行 E2E 时，验证全链路输出是否一致
+# 维护：当 KE 发生 MAJOR 版本变更（§9.7）时更新期望值
+
+golden_queries:
+  - id: GQ-001
+    query: "本项目用什么 Python linter？"
+    expected_ke_ids: ["KE-???-ruff"]  # bootstrap 后填入实际 KE ID
+    min_context_precision: 0.70
+
+  - id: GQ-002
+    query: "数据库为什么选 SQLite？"
+    expected_ke_ids: []
+    min_context_precision: 0.60
+
+  - id: GQ-003
+    query: "ruff 常见错误码有哪些？"
+    expected_ke_ids: []
+    min_context_precision: 0.70
+
+  - id: GQ-004  # 噪音测试：查询一个库中不存在的主题
+    query: "本项目用 React 还是 Vue？"
+    expected_ke_ids: []               # 期望返回空——知识库没有前端框架选型
+    expected_answer_unsupported: true # Self-RAG（§9.13）应标记 answer_unsupported
+
+  - id: GQ-005  # 精确术语测试：BM25 应优于纯向量
+    query: "E501 ruff 报错怎么修？"
+    expected_ke_ids: []
+    min_context_precision: 0.65
+
+  # GQ-006 ~ GQ-010 在 bootstrap 后根据实际 KE 内容补充
+```
+
+**CI 集成（pre-push hook 或 GitHub Actions）**：
+
+```yaml
+# .github/workflows/kb-e2e.yml（beta 新增）
+name: KB E2E Tests
+on:
+  push:
+    paths:
+      - 'src/zephyr/kb/**'
+      - 'docs/08_knowledge/**'
+      - 'tests/e2e/**'
+jobs:
+  e2e:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run E2E Pipeline
+        run: python -m pytest tests/e2e/ -v --tb=long
+      - name: Golden Dataset Validation
+        run: python -m zephyr.kb.eval_harness --golden tests/e2e/golden_dataset/queries.yaml
+```
+
+**E2E 测试覆盖矩阵**：
+
+| 测试场景 | 输入 | 验证点 | 通过标准 |
+|---------|------|--------|---------|
+| 全链路 G1→G5 | `session_bugfix.md` | 产生 ≥ 1 条 VERIFIED KE | KE 数量 > 0 |
+| 全链路 G1→G5 + recall | `session_decision.md` | recall 可检索到新 KE | Context Precision ≥ 0.60 |
+| 噪音过滤 | `session_chat.md` | 噪音片段不入库 | 新 KE 数量 < 3（85% 对话应为噪音） |
+| 冷启动引导 | 空 ChromaDB + 空 SQLite | bootstrap 产生 ≥ 10 KE | MVKB 三项全满足 |
+| 事务回滚 | 50 条含 1 条恶意 KE 的 batch | 全部回滚 | batch status = ROLLED_BACK |
+| Golden Dataset | 10 条已知答案查询 | 全链路输出一致 | 回归无退化 |
+
+> **对标**：Anthropic Golden Dataset E2E（20 条已知答案+CI 每次跑）/ LangSmith E2E trace（全链路可定位故障环节）/ Meta FAIR query diversity（5 种 query 类型全覆盖）。三重对标都说明：**单元测试只能保证零件合格，E2E 测试才能保证整机运转**。
+> **大白话**：现在 11 个单元测试全绿——但你不知道从 Session Log 到 KE 注入 AI 的全链路是否真的通。可能出现：每个模块单独跑都 OK，但连起来——G3 产出的格式 G4 不认、G5 写入的 KE recall() 搜不到——你完全不知道。E2E 测试用一个模拟的 Session Log 跑完整条管道，验证端到端输出。Golden Dataset 是"验收标准"——10 个典型问题→手动标注期望的 KE ID→CI 每次跑→发现回归就阻断。
+
+---
 
 > **module_id**: MOD-KB-001 §16 | **对标**: capacity-assurance (MOD-INF-001) §5 全局容量预算
 
@@ -3451,11 +4521,68 @@ beta (🔮 计划)
 
 ---
 
+## §14 产出物存放目录
+
+| 产出物类型 | 存放完整绝对路径 | 说明 |
+|----------|---------------|------|
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\knowledge-base\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\kb\` | Knowledge Base 源码 |
+| 测试代码 | `D:\ZephyrAlpha\tests\unit\test_kb*.py` | 单元测试 |
+| KE 存储 | `D:\ZephyrAlpha\data\knowledge_base\` | 知识条目持久化 |
+
+---
+
+## §15 集成目标
+
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| Context Engine (MOD-INF-008) | CE build 阶段从 KB 检索 KE | `context_assembler.py` → `kb_repo.query()` | CE 成功注入 KE 条目 |
+| Vector Memory (MOD-INF-011) | KE 写入时同步向量化 | `kb_repo.create()` → `InProcessVectorMemory.add()` | ChromaDB 可检索 KE |
+| Gate Engine (MOD-INF-007) | G1-G5 KMS 决策门 | `gate_engine.py` → `kb_repo.check_quality()` | KE 质量门禁生效 |
+| Feedback Loop (MOD-INF-010) | 知识演化回路 | FLE detect → `kb_repo.evolve()` | 失败模式自动写入 KB |
+
+---
+
+## §16 需要更新的相关内容
+
+| # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
+|---|------------|------------|---------|---------|
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | KB 模块状态 | 代码施工后更新 |
+| 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\context-engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
+
+---
+
+## §17 已知风险与缓解
+
+| # | 风险 | 概率 | 影响 | 缓解策略 |
+|---|------|:---:|:---:|---------|
+| R1 | KE 质量退化——长期积累导致低质量条目增多 | 中 | 高 | G1-G5 门禁 + 定期质量审查 + 使用率淘汰 |
+| R2 | 知识库膨胀——三轨 18 类持续产出大量 KE | 高 | 中 | TTL 机制 + compaction + 冷热分层 |
+| R3 | 检索精度不足——BGE-M3 对中文领域术语理解有限 | 中 | 中 | 混合检索（向量 + BM25 + 关键词）+ 重排序 |
+| R4 | 知识冲突——多个 KE 对同一问题给出不同答案 | 低 | 高 | provenance 追溯 + 冲突检测 + 人工仲裁（异步） |
+
+---
+
+## §18 后果（Consequences）
+
+**正面后果**：
+- AI 有持久记忆——跨 session 知识积累和复用
+- 知识可复用——历史决策和经验可检索
+- 决策可追溯——每个知识条目有完整 provenance
+
+**负面后果**：
+- 维护成本——知识库需要持续治理和清理
+- 知识冲突风险——多条 KE 可能矛盾
+- 检索不确定性——语义检索结果可能不准确
+
+---
+
 ## §13 变更记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
-| 0.6.5 | 2026-05-04 | 第二轮盲点清零五合一：①**§9.15 知识合并冲突**——五轨并行同主题KE合并的三级策略（L1向量相似度>0.80拒绝/L2 Kimi主题聚类SAME_TOPIC|SUBSET|OVERLAP|DISTINCT/L3合并执行+ke_merge事件）；②**§9.16 知识安全分级**——S0-S3四级分类（PUBLIC/INTERNAL/RESTRICTED/SECRET）+正则自动检测+S3 REDACT脱敏+ChromDB索引降级策略；③**§9.17 Track C vs A/B冲突裁决**——每周Owner偏好vs累积证据矛盾扫描+ALIGNED/MISALIGNED判定+冲突冷却90d+Owner最终裁决权保留；④**§3.2 KE Schema 新增 valid_from/valid_until**——时间窗口有效性字段，Track B金融KE专用，检索时自动过滤过期KE；⑤**§7.3 多语言标注+BGE-M3原生中英混合** + **§11.4 风险表 +3条目**（知识漂移渐进失真+时间窗口检索污染+安全信息泄露）。联动：b_kb.yaml partition note同步更新 |
+| 0.7.2 | 2026-05-05 | 第四轮范式边界盲点缓解策略补入（3 处轻量增强，~50 行）：①**§5.8.1 跨模型盲区 + prompt侵蚀缓解（#31+#37）**——`compute_cross_model_agreement()` 四模型全票+理由相似→quality_score×0.85 降权；`verify_against_codebase()` 代码实际状态硬事实覆盖审计结果（pyproject.toml/justfile对比）；审计 prompt 引用 KE 限定 gen≤1 + prompt 文本 Git 管理 + 每季"prompt 审计的审计"。②**§7.4.2 Embedding 迁移 SOP（#40）**——五阶段迁移模板（预检→备份→执行→验证→恢复）+ 各阶段耗时预估 + 预检脚本 `preflight_check()` + 自动回滚规则。③**§9.1.1 KE_vs_reality 外部真值校对（#36）**——月度 5 条分层采样→Kimi 对比 KE×官方文档→偏差度 0-1 度量 + 偏差>0.15 延迟重审 + 月累积>10→KB系统性质量告警（¥0.02/月）。联动：frontmatter version→0.7.2 |
 | 0.6.4 | 2026-05-04 | 知识检索与演化回路（14子节补齐"出库+演化"空白）：①**§9.1 检索质量度量**——RAGAS四维指标(answer_relevance/faithfulness/context_precision/context_recall)+RAGMetricEvaluator实现+每周APScheduler cron全量评估；②**§9.2 混合检索**——BM25稀疏向量+ChromaDB稠密向量+RRF融合+Cross-Encoder重排；③**§9.3 查询改写**——Multi-Query生成+HyDE假答案embedding+去重合并（仅Top-1<0.60时启用）；④**§9.4 上下文预算动态分配**——6类task_type自适应Top-K+Token预算+注入焦点矩阵；⑤**§9.5 KB规则执行引擎**——pre-commit动态读取KB YAML→生成临时检查项→阻断溯源；⑥**§9.6 知识溯源**——W3C PROV三级(L1 KE溯源+L2引用追踪+L3 RAG Trace)+ke_usage_log表；⑦**§9.7 KE版本历史**——v1.0/v1.1/v2.0目录+versions.yaml+MAJOR.MINOR semver规则；⑧**§9.8 依赖级联**——deprecated→反向索引查询→GREEN/YELLOW/RED三级评估→自动标记NEEDS_REVIEW；⑨**§9.9 去重聚类**——UMAP降维+HDBSCAN聚类+Kimi cluster summary合并建议；⑩**§9.10 Token预算**——月度14管道预算明细(¥0.40/月)+¥5.00硬上限+P0-P3四级背压降级；⑪**§9.11 多模态知识**——beta预留CLIP/CogVLM截图embedding；⑫**§9.12 三级记忆**——MemGPT对标Hot/Warm/Cold温度分层+unified_memory_api.recall_with_tier()；⑬**§9.13 检索自反思**——Self-RAG判定层(≥3条relevant→继续/<3条→HyDE重试/0条→answer_unsupported)；⑭**§9.14 效果A/B测试**——每周5task采样+Group A/B split+Delta分析+月度effectiveness报告。文档重编号：§9→§10～§12→§13。联动：b_kb.yaml partition note同步更新 |
 | 0.6.3 | 2026-05-04 | CTR跨层契约对齐+Schema稳定性+灾难恢复：①**§3.9.1 来源矩阵**——ADR定稿行→跨层契约(CTR)版本升级 + 新增第8条CTR运行时质量信号管线（CTR-001 quality_score/CTR-002 confidence/CTR-005 slippage连续超阈值→KE B1/B3）；②**§3.2 KE Schema字段稳定性分级**——对标CTR locked-5yr，28字段分frozen(11)/extendable(9)/runtime_only(5)三级，frozen字段3年不删不改类型；③**§7.8 灾难恢复**——从MD全量重建SQLite+ChromaDB的5步流程+RTO<25min/RPO=0（MD在Git零丢失）+每日SQLite备份cron。联动：b_kb.yaml partition note同步更新 |
 | 0.6.2 | 2026-05-04 | 技术债清零四合一：①**ISSUE-003**——5份治理规则旧ADR引用全量替换（registry-master-index.yaml REG-ADR-001 status→deprecated + session-log-schema.yaml update_adr→update_decision_record + doc_type-vocabulary.yaml adr doc_type标记废弃 + _registry/catalogs/index.md adr-status-registry标记冻结 + PS-IDX-001 index.md ADR行标注已冻结）；②**ISSUE-006**——§7.6.5 决策一致性检查（新A2 KE创建时Cross-Encoder扫描历史决策→Kimi K2.6矛盾断言→NO_CONFLICT/AMBIGUOUS/CONTRADICTION三级判定→Owner裁决+SUPERSEDED联动+semver版本链）；③**ISSUE-008**——§7.7 Human-Gated写入权限模型（AUTO/HUMAN_GATED/OWNER_ONLY三层权限矩阵+L2推送Owner yes/no流程+Owner月耗时≤12min预算+拒绝冷却机制+pending_approval字段）；④**ISSUE-009**——AGENTS.md §8.3新增知识库蓝图冷记忆引用（MOD-KB-001 §3.9.5 §3.9.1）。联动：b_kb.yaml partition note 同步更新 |

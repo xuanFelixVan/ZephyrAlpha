@@ -1,15 +1,5 @@
 """GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门
 
-__manifest__ = """
-args: []
-description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
-dimensions:
-- D5
-- D8
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
@@ -28,6 +18,19 @@ AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
 """
 
 from __future__ import annotations
+__manifest__ = """
+args:
+  - --warn-only
+  - --jsonl
+description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
+dimensions:
+- D5
+- D8
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys
@@ -104,34 +107,71 @@ def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
         if not full_path.exists():
             errors.append(f"[GATE-BLUEPRINT-CODE] {rel_bp}: 幽灵路径 — 蓝图声称文件存在但磁盘未找到: {path_str}")
     return errors
-    "校验蓝图合规性."
 
-def main() -> None:
-    """入口函数."""
-    warn_only = "--warn-only" in sys.argv
+
+def main() -> int:
+    """入口函数。"""
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="蓝图 §16~§19 路径索引与实际文件系统对账（AGENTS.md §6.14）")
+    parser.add_argument("--warn-only", action="store_true", help="告警模式，不阻断退出码")
+    parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要")
+    args = parser.parse_args()
+    warn_only = args.warn_only
+
     blueprints = find_blueprints()
     if not blueprints:
         print("[GATE-BLUEPRINT-CODE] 未找到任何蓝图文件，跳过检查")
-        return 0
+        code = 0
+        if args.jsonl:
+            print(
+                json.dumps(
+                    {
+                        "severity": "INFO",
+                        "check_id": "GATE-BLUEPRINT-CODE",
+                        "issues": 0,
+                        "note": "no_blueprints",
+                    },
+                    ensure_ascii=False,
+                )
+            )
+        return code
+
     all_errors: list[str] = []
     print(f"[GATE-BLUEPRINT-CODE] 扫描 {len(blueprints)} 份蓝图...")
     for bp in blueprints:
         errors = validate_blueprint(bp, warn_only)
         all_errors.extend(errors)
+
     if all_errors:
         print(f"\n[GATE-BLUEPRINT-CODE] 发现 {len(all_errors)} 个问题：")
         for err in all_errors:
-            print(f'  {('⚠️' if warn_only else '🔴')} {err}')
+            print(f'  {"⚠️" if warn_only else "🔴"} {err}')
         if warn_only:
             print("\n[GATE-BLUEPRINT-CODE] --warn-only 模式，不阻断。请尽快修复上述问题。")
-            return 0
+            code = 0
+        else:
+            print(
+                "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.14 更新蓝图路径索引章节。"
+            )
+            code = 1
+    else:
+        print("[GATE-BLUEPRINT-CODE] ✅ 所有蓝图路径索引与磁盘实际一致")
+        code = 0
+
+    if args.jsonl:
         print(
-            "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.14 更新蓝图路径索引章节。"
+            json.dumps(
+                {
+                    "severity": "HIGH" if all_errors else "INFO",
+                    "check_id": "GATE-BLUEPRINT-CODE",
+                    "issues": len(all_errors),
+                },
+                ensure_ascii=False,
+            )
         )
-        return 1
-    print("[GATE-BLUEPRINT-CODE] ✅ 所有蓝图路径索引与磁盘实际一致")
-    return 0
-    "入口函数."
+    return code
 
 if __name__ == "__main__":
     sys.exit(main())

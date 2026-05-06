@@ -38,6 +38,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 __all__ = [
     "TaskStatus",
     "TaskNamespace",
+    "ExecutionModel",
+    "normalize_execution_model",
     "SafetyLevel",
     "Classification",
     "EvolutionPolicy",
@@ -59,6 +61,7 @@ __all__ = [
 # 枚举
 # ---------------------------------------------------------------------------
 
+
 class TaskStatus(str, Enum):
     """任务状态机（ADR-0030 §2）。"""
 
@@ -73,12 +76,14 @@ class TaskStatus(str, Enum):
     RETRY = "RETRY"
     CANCELLED = "CANCELLED"
 
+
 class SafetyLevel(str, Enum):
     """任务安全等级。"""
 
     L = "L"
     M = "M"
     H = "H"
+
 
 class Classification(str, Enum):
     """访问分类。"""
@@ -87,12 +92,14 @@ class Classification(str, Enum):
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
 
+
 class EvolutionPolicy(str, Enum):
     """文件演进策略。"""
 
     FROZEN = "frozen"
     EXTENDABLE = "extendable"
     REWRITABLE = "rewritable"
+
 
 class TaskNamespace(str, Enum):
     """任务命名空间（#21 裁定：分类字段，不是 ID 的一部分）。"""
@@ -105,6 +112,42 @@ class TaskNamespace(str, Enum):
     SRC = "SRC"
     OPS = "OPS"
 
+
+class ExecutionModel(str, Enum):
+    """主执行模型——与 SQLite ``tasks.execution_model`` CHECK 严格对齐（ADR-0030）。"""
+
+    deepseek = "deepseek"
+    glm = "glm"
+    claude = "claude"
+    kimi = "kimi"
+    qwen = "qwen"
+
+
+def normalize_execution_model(value: str | ExecutionModel) -> ExecutionModel:
+    """将自由文本模型名映射为 ``ExecutionModel``（落库前与 SQLite CHECK 一致）。"""
+
+    if isinstance(value, ExecutionModel):
+        return value
+    v = str(value).strip().lower()
+    try:
+        return ExecutionModel(v)
+    except ValueError:
+        pass
+    if v.startswith("claude"):
+        return ExecutionModel.claude
+    if v.startswith("glm"):
+        return ExecutionModel.glm
+    if "deepseek" in v or v in ("ds", "deep_seek"):
+        return ExecutionModel.deepseek
+    if v.startswith("kimi"):
+        return ExecutionModel.kimi
+    if v.startswith("qwen"):
+        return ExecutionModel.qwen
+    if v == "system":
+        return ExecutionModel.qwen
+    return ExecutionModel.deepseek
+
+
 class AuditSeverity(str, Enum):
     """审计严重性级别（向后兼容别名，真源为 Priority）。"""
 
@@ -112,13 +155,16 @@ class AuditSeverity(str, Enum):
     P1 = "P1"
     P2 = "P2"
 
+
 class Priority(str, Enum):
-    """优先级（task-card-standard.md §3.1 真源，P0-P3 四级，对齐 Jira Priority）。"""
+    """优先级（GOV-TASK-004 §2.2 真源，P0-P4 五级，对齐 Jira Priority + ITIL Urgency）。"""
 
     P0 = "P0"
     P1 = "P1"
     P2 = "P2"
     P3 = "P3"
+    P4 = "P4"
+
 
 class KeCategory(str, Enum):
     """知识条目内容类型（metadata-registry.md §9.1 真源，10 值）。"""
@@ -134,6 +180,7 @@ class KeCategory(str, Enum):
     operations = "operations"
     compliance = "compliance"
 
+
 class FailureType(str, Enum):
     """失败类型分类。"""
 
@@ -142,6 +189,7 @@ class FailureType(str, Enum):
     INFRASTRUCTURE = "infrastructure"
     TIMEOUT = "timeout"
     UNKNOWN = "unknown"
+
 
 # ---------------------------------------------------------------------------
 # 公共 ConfigDict 基线（ADR-0040 §4.2）
@@ -160,12 +208,14 @@ BASE_CONFIG = ConfigDict(
 
 _TASK_ID_PATTERN = r"^(ADR|CP|KE|STD|DW|SRC|OPS)-\d+$"
 
+
 class Task(BaseModel):
     """
-    任务登记模型。
+    任务登记模型（31字段：28业务 + 3 DB追踪）。
 
     与 SQLite ``tasks`` 表字段严格对齐（ADR-0030 §4.2）。
-    字段变更必须同步更新：本文件 + sqlite_schema.py + task-card-standard.md。
+    字段变更必须同步更新：本文件、``sqlite_schema.py``、
+    PS-STD-001（``metadata-registry.md``）§7.1~§7.1.1、``task-card-standard.md``（操作指南）。
     """
 
     model_config = BASE_CONFIG
@@ -177,9 +227,9 @@ class Task(BaseModel):
     seq: int = Field(ge=1, description="命名空间内自增序号")
     title: str = Field(min_length=1, max_length=200, description="任务标题（对齐 Jira Summary / Linear Title）")
     status: TaskStatus = Field(default=TaskStatus.PENDING, description="任务状态")
-    priority: Priority = Field(default=Priority.P2, description="优先级 P0-P3（对齐 Jira Priority）")
+    priority: Priority = Field(default=Priority.P2, description="优先级 P0-P4（GOV-TASK-004 §2.2）")
     phase: int = Field(ge=0, le=9, description="所属 Phase（0-9）")
-    execution_model: str = Field(min_length=1, description="主执行模型")
+    execution_model: ExecutionModel = Field(description="主执行模型（与 sqlite_schema tasks.execution_model CHECK 一致）")
     model_rationale: str | None = Field(default=None, description="选模型理由（防 AI 乱选贵模型）")
     fallback_model: str | None = Field(default=None, description="降级模型")
     safety_level: SafetyLevel = Field(description="安全等级 L/M/H")
@@ -200,6 +250,9 @@ class Task(BaseModel):
     completed_at: datetime | None = Field(default=None, description="完成时间（对齐 Jira Resolution Date）")
     created_at: datetime = Field(description="创建时间")
     updated_at: datetime = Field(description="最近更新时间")
+    is_deleted: int = Field(default=0, ge=0, le=1, description="软删除标记（SQLite 0/1，MOD-INF-012）")
+    deleted_at: datetime | None = Field(default=None, description="软删除时间")
+    schema_version: str = Field(default="", description="数据库 schema 版本号（内部追踪用）")
 
     @field_validator("task_id")
     @classmethod
@@ -212,9 +265,11 @@ class Task(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
+
 # ---------------------------------------------------------------------------
 # 2. AuditReport 模型
 # ---------------------------------------------------------------------------
+
 
 class AuditFinding(BaseModel):
     """单条审计发现。"""
@@ -226,6 +281,7 @@ class AuditFinding(BaseModel):
     description: str = Field(min_length=1, max_length=1000)
     file_path: str | None = None
     suggestion: str | None = None
+
 
 class AuditReport(BaseModel):
     """
@@ -267,9 +323,11 @@ class AuditReport(BaseModel):
             object.__setattr__(self, "passed", p0 == 0)
         return self
 
+
 # ---------------------------------------------------------------------------
 # 3. KnowledgeEntry 模型
 # ---------------------------------------------------------------------------
+
 
 class KnowledgeEntry(BaseModel):
     """
@@ -309,9 +367,11 @@ class KnowledgeEntry(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
+
 # ---------------------------------------------------------------------------
 # 4. FailurePattern 模型
 # ---------------------------------------------------------------------------
+
 
 class FailurePattern(BaseModel):
     """
@@ -341,9 +401,11 @@ class FailurePattern(BaseModel):
             raise ValueError("updated_at 不得早于 created_at")
         return self
 
+
 # ---------------------------------------------------------------------------
 # 5. HandoffPackage 模型（及子类型）
 # ---------------------------------------------------------------------------
+
 
 class BlockedItem(BaseModel):
     """交接包中的阻塞项。"""
@@ -355,6 +417,7 @@ class BlockedItem(BaseModel):
     blocked_since: datetime | None = None
     unblock_condition: str | None = Field(default=None, max_length=300)
 
+
 class Decision(BaseModel):
     """交接包中的决策记录。"""
 
@@ -365,6 +428,7 @@ class Decision(BaseModel):
     rationale: str = Field(min_length=1, max_length=1000)
     adr_ref: str | None = Field(default=None, description="关联 ADR 编号，如 ADR-0030")
 
+
 class NextAction(BaseModel):
     """交接包中的下一步行动。"""
 
@@ -374,6 +438,7 @@ class NextAction(BaseModel):
     action: str = Field(min_length=1, max_length=300)
     owner: str | None = Field(default=None, description="建议执行者（模型或 Owner）")
     task_ref: str | None = Field(default=None, description="关联 task_id")
+
 
 class HandoffPackage(BaseModel):
     """

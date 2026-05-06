@@ -1,4 +1,4 @@
-schema_version: "1.0.0"
+schema_version: 1.0.0
 partition:
   id: l08
   name: Human-AI Interface
@@ -6,29 +6,34 @@ partition:
   layer_position: 8
   runtime_plane: warm
   status: implemented
-
 modules:
-  - id: l08-dashboard
-    name: Dashboard
-    submodule_path: src/zephyr/l08_human_ai_interface/dashboard/
-    status: implemented
-    priority: P1
-    runtime_plane: warm
-    description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势图
-    files:
-      - app.py
-    components:
-      - fitness_functions.py
-      - gate_statistics.py
-      - knowledge_overview.py
-      - olap_trend.py
-      - task_progress.py
-    interfaces:
-      - contract_id: P1-DASHBOARD-FITNESS
-        role: consumer
-        description: 从 feedback_loop/fitness_functions.py 导入，封装为 Dashboard 展示组件 (Facade 模式)
-    adr_ref: []
-
+- id: l08-dashboard
+  module_id: MOD-L08-001
+  name: Dashboard
+  submodule_path: src/zephyr/l08_human_ai_interface/dashboard/
+  status: implemented
+  priority: P1
+  runtime_plane: warm
+  description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势图
+  files:
+  - app.py
+  - fitness_functions.py
+  - gate_statistics.py
+  - interface_base.py
+  - knowledge_overview.py
+  - olap_trend.py
+  - task_progress.py
+  components:
+  - fitness_functions.py
+  - gate_statistics.py
+  - knowledge_overview.py
+  - olap_trend.py
+  - task_progress.py
+  interfaces:
+  - contract_id: EXT-DASHBOARD-FLE-001
+    role: consumer
+    description: 消费 FLE fitness Facade（与 EXT-FLE-DASHBOARD-001 成对）
+  adr_ref: []
 summary:
   total: 1
   by_status:

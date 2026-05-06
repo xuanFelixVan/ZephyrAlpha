@@ -5,16 +5,6 @@ validate_directory_structure.py — LPC 双轨目录结构合规性扫描器
 依据：GOV-DOC-002 §三（src/zephyr/ 双轨结构）+ §二（docs/ 目录结构）
 GOV-DOC-002 §5.1.2 防幻觉路径映射表的自动化执行器。
 
-__manifest__ = """
-args: []
-description: LPC双轨目录结构合规性扫描（src/zephyr/ + docs/ 一级目录白名单校验）
-dimensions:
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
-
 
 检查项
 ------
@@ -41,6 +31,18 @@ Usage:
 
 from __future__ import annotations
 
+__manifest__ = {
+    "args": ["--warn-only", "--jsonl"],
+    "description": "LPC双轨目录结构合规性扫描 [src/zephyr/ + docs/ 一级目录白名单校验]",
+    "dimensions": ["D5"],
+    "priority": "P0",
+    "timeout_seconds": 30,
+    "warn_only": False,
+}
+
+
+import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -82,6 +84,8 @@ B_TRACK_DIRS: set[str] = {
     "orchestrator",
     "feedback_loop",
     "gates",
+    "pipeline",
+    "core",
     "db",
     "kb",
     "mcp",
@@ -130,9 +134,34 @@ def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str],
                 )
     return violations
 
-def main() -> None:
-    """入口函数."""
-    warn_only = "--warn-only" in sys.argv
+def _scan_layer_internals() -> list[str]:
+    violations: list[str] = []
+    for layer_name in ALLOWED_SRC_ZEPHYR_DIRS:
+        layer_dir = SRC_ZEPHYR / layer_name
+        if not layer_dir.exists() or not layer_dir.is_dir():
+            continue
+        py_files = [f for f in layer_dir.iterdir() if f.is_file() and f.suffix == ".py" and f.name != "__init__.py" and not f.name.startswith("_")]
+        if len(py_files) >= 50:
+            violations.append(f"\u26a0\ufe0f [{layer_name}] {len(py_files)} 个平铺 .py 文件 -- 应采用 <module>/ 子目录隔离 (GOV-DOC-002 §三 C轨层内规范)")
+    docs_modules = DOCS / "03_modules"
+    if docs_modules.exists():
+        for layer_name in ALLOWED_SRC_ZEPHYR_DIRS:
+            layer_dir = docs_modules / layer_name
+            if not layer_dir.exists() or not layer_dir.is_dir():
+                continue
+            if (layer_dir / "blueprint.md").exists():
+                violations.append(f"\u274c [docs/{layer_name}] blueprint.md 直接平铺 -- 必须在 <module>/ 子目录下 (GOV-DOC-002 §三 C轨层内规范)")
+    return violations
+
+def main() -> int:
+    """入口函数。"""
+    parser = argparse.ArgumentParser(description="LPC 双轨目录结构合规扫描（GOV-DOC-002）")
+    parser.add_argument("--warn-only", action="store_true")
+    parser.add_argument("--jsonl", action="store_true")
+    args = parser.parse_args()
+
+    warn_only = args.warn_only
+
     all_violations: list[str] = []
 
     src_violations = _scan_directory(SRC_ZEPHYR, ALLOWED_SRC_ZEPHYR_DIRS, SRC_ZEPHYR_ALLOWED_FILES, "src/zephyr")
@@ -141,9 +170,20 @@ def main() -> None:
     docs_violations = _scan_directory(DOCS, ALLOWED_DOCS_DIRS, DOCS_ROOT_ALLOWED_FILES, "docs")
     all_violations.extend(docs_violations)
 
+    layer_violations = _scan_layer_internals()
+    all_violations.extend(layer_violations)
+
     if not all_violations:
         print("\u2705 目录结构合规: src/zephyr/ 和 docs/ 下无违规目录/文件", file=sys.stderr)
-        sys.exit(0)
+        code = 0
+        if args.jsonl:
+            print(
+                json.dumps(
+                    {"severity": "INFO", "check_id": "DIR-STRUCTURE", "violations": 0},
+                    ensure_ascii=False,
+                )
+            )
+        return code
 
     print(f"\u274c 发现 {len(all_violations)} 处目录结构违规:\n", file=sys.stderr)
     for v in all_violations:
@@ -151,10 +191,27 @@ def main() -> None:
 
     if warn_only:
         print("\n\u26a0\ufe0f  --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
-        sys.exit(0)
+        code = 0
+    else:
+        print(
+            "\n\u274c 阻断: 请将违规目录/文件迁移到正确位置。参考 GOV-DOC-002 §三/§二 + §四 决策树。",
+            file=sys.stderr,
+        )
+        code = 1
 
-    print("\n\u274c 阻断: 请将违规目录/文件迁移到正确位置。参考 GOV-DOC-002 §三/§二 + §四 决策树。", file=sys.stderr)
-    sys.exit(1)
+    if args.jsonl:
+        print(
+            json.dumps(
+                {
+                    "severity": "HIGH" if all_violations else "INFO",
+                    "check_id": "DIR-STRUCTURE",
+                    "violations": len(all_violations),
+                },
+                ensure_ascii=False,
+            )
+        )
+    return code
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

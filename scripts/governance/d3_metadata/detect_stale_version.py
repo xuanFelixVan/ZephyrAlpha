@@ -1,15 +1,6 @@
 """
 detect_stale_version.py — 版本号未更新检测
 
-__manifest__ = """
-args: []
-description: 版本号未更新检测（PS-STD-009 §9 — 内容变更但version/date未同步）
-dimensions:
-- D3
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-009 §9（AI 修改后不更新 version 和 date 为禁止行为）
@@ -22,6 +13,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 版本号未更新检测（PS-STD-009 §9 — 内容变更但version/date未同步）
+dimensions:
+- D3
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import subprocess
 import sys
@@ -43,7 +44,7 @@ def get_staged_modified_files() -> list[str]:
     """get staged modified files"""
     try:
         result = subprocess.run(
-            "get staged modified files."["git", "diff", "--cached", "--name-only", "--diff-filter=M"],
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=M"],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

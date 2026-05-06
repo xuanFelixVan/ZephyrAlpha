@@ -1,15 +1,6 @@
 """
 detect_vague_terms.py — 模糊/不确定术语检测
 
-__manifest__ = """
-args: []
-description: 模糊术语检测（ABS-49 — 禁止规则文件使用「等等」「类似」等模糊词）
-dimensions:
-- D6
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-49（禁止使用"等等""类似""大概"等模糊词，
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 模糊术语检测（ABS-49 — 禁止规则文件使用「等等」「类似」等模糊词）
+dimensions:
+- D6
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

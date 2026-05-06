@@ -42,10 +42,14 @@ ttl: permanent
 
 triggers:
   onboarding:
-    handler: "zephyr.orchestrator.trigger_router.handle_onboarding_stub"
+    handler: "zephyr.pipeline.layer_router:handle_layer_onboarding"
     description: "新会话或 Agent 注册时加载上下文与历史"
     safety: "M"
     enabled: true
+    priority: 0
+    required: true
+    retry: false
+    notes: "Phase C — 加载跨层路由表并返回拓扑序; 替换 handle_onboarding_stub"
 
   drift_detected:
     handler: "zephyr.orchestrator.trigger_router.handle_drift_stub"

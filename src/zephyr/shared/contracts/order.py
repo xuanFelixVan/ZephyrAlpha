@@ -1,10 +1,26 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
+
 
 class OrderSide(Enum):
     BUY = "BUY"
     SELL = "SELL"
+
 
 class OrderType(Enum):
     LIMIT = "LIMIT"
@@ -12,6 +28,7 @@ class OrderType(Enum):
     STOP = "STOP"
     STOP_LIMIT = "STOP_LIMIT"
     TRAILING_STOP = "TRAILING_STOP"
+
 
 class OrderStatus(Enum):
     PENDING = "PENDING"
@@ -22,19 +39,20 @@ class OrderStatus(Enum):
     REJECTED = "REJECTED"
     EXPIRED = "EXPIRED"
 
-# ==== BEGIN CODGEN:CTR-004 ====
 
-from dataclasses import dataclass
-from datetime import datetime
+# ==== BEGIN CODGEN:CTR-004 ====
+from dataclasses import dataclass, field
+
+from datetime import datetime, timezone
 from decimal import Decimal
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -44,9 +62,9 @@ CTR-004: Order / 委托指令
 
 L05 → L06 核心数据契约。单笔委托指令（可变对象，随生命周期更新状态）。
 
-SSoT: cross-layer-contracts.yaml → CTR-004
+SSoT: cross-layer-contracts.yaml -> CTR-004
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -56,20 +74,58 @@ AI Prompt
 
 @dataclass
 class Order:
+    idempotency_key: str
     order_id: str
-    symbol: str
-    strategy_id: str
-    side: OrderSide
     order_type: OrderType
     quantity: Decimal
-    status: OrderStatus = OrderStatus.PENDING
-    filled_quantity: Decimal = Decimal("0")
-    schema_version: str = "1.0"
-    limit_price: Optional[Decimal] = None
+    side: OrderSide
+    strategy_id: str
+    symbol: str
     avg_fill_price: Optional[Decimal] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
     broker_order_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    filled_quantity: Decimal = Decimal("0")
+    limit_price: Optional[Decimal] = None
+    schema_version: str = "1.0"
+    status: OrderStatus = OrderStatus.PENDING
     trace_context: Optional[TraceContext] = None
+    updated_at: Optional[datetime] = None
 
 # ==== END CODGEN:CTR-004 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,7 +3,7 @@ classification: confidential
 date: '2026-05-02'
 doc_type: index
 generated: '2026-05-02'
-layer: l04_risk_management
+layer: L04
 merged_from: README.md + index.md
 module_id: DOM-L04-000
 status: active

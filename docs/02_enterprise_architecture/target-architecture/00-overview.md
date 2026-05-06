@@ -45,10 +45,10 @@ ttl: permanent
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 正交划分开发态和运行态关注点
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
 - **安全红线**：4 条不可撤销（详见 [architecture-principles.md](architecture-principles.md) §1）
-- **技术栈**：Python 3.12 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
+- **技术栈**：Python >=3.11（以 `pyproject.toml` requires-python 为真源）+ Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
 - **当前阶段**：experimental 启动，14 层已冻结，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
 
-**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 14-layer physical architecture (L00→L13), Python full-stack, Vibe Coding driven. Current: experimental kickoff — layers frozen, 6 core services under construction. Tech: Python 3.12 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI + MCP. Safety red lines: see [architecture-principles.md](architecture-principles.md) §1.
+**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 14-layer physical architecture (L00→L13), Python full-stack, Vibe Coding driven. Current: experimental kickoff — layers frozen, 6 core services under construction. Tech: Python >=3.11 (see `pyproject.toml` requires-python) + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI + MCP. Safety red lines: see [architecture-principles.md](architecture-principles.md) §1.
 
 ---
 
@@ -190,7 +190,7 @@ ZephyrAlpha 2.0 仓库有三棵主树，每棵对应一个主要架构视图：
 | ADR-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed + 四层防御 | 6 大核心服务之一 |
 | ADR-0021 | SSoT Validator：scaffold 唯一任务，阻塞下游 | scaffold 门禁 |
 
-Full ADR index: `../adr/index.md`
+Full ADR index: KB:decisions namespace（33 ADRs, SQLite knowledge 表）
 
 ---
 
@@ -290,7 +290,7 @@ Directory: `target-architecture/` (TOGAF term). File names: `NN-kebab-case.md`. 
 1. **检查触发条件**：对照该条目 "激活触发条件" 列，所有条件是否已满足（AND 逻辑）
 2. **更新 activation_status**：在 `p3-blueprint-index.md` [待创建] 中将该条目 `activation_status` 从 `deferred` 改为 `ready`
 3. **人工拍板**：发起架构评审（Architect + AI Operator），确认资源预算（参考 04-TA §11/§12）
-4. **写入 ADR**：激活决策进 `adr/` 目录，并更新对应视图 Runway 条目为 "activated"
+4. **记录决策**：激活决策写入 KB decisions namespace（替代原 adr/ 目录）
 5. **Runway 条目归档**：激活后将该条目从视图 Runway 章节移除（或标注 `activated`），避免堆积
 
 **不应激活的信号（Hold 住）**：

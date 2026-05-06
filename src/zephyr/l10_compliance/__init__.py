@@ -6,7 +6,12 @@
 职责
 ----
 合规校验引擎：法规约束检查、持仓合规审计、前置审批门禁、监管报告生成。
-[N/A — 骨架占位，尚未实现]
+Phase F — SecurityGateway 三层防御 + ArtifactScanner 已落地。
+
+OCP-004 实现:
+  - DefaultSecurityGateway: L1 Prompt Injection + L2 危险代码 + L3 审计追踪
+  - ArtifactScanner: S-01~S-06 多类别 artifact 扫描器
+  - AISGSandbox: AI Safety Gateway 沙箱模式匹配
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
@@ -32,3 +37,40 @@ SSoT: cross-layer-contracts.yaml v3.0
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l10_compliance.aisg_sandbox import AISGSandbox
+from zephyr.l10_compliance.artifact_scanner import (
+    ArtifactFinding,
+    ArtifactScanner,
+    ScanReport,
+)
+from zephyr.l10_compliance.compliance_manager import ComplianceManagerBase, ComplianceRule
+from zephyr.l10_compliance.default_security_gateway import (
+    DefaultSecurityGateway,
+    ScanFinding,
+    SecurityContext,
+)
+from zephyr.l10_compliance.security_gateway_base import (
+    AuditAction,
+    AuditDecision,
+    ComplianceEngine,
+    SecurityGateway,
+)
+
+__all__ = [
+    "AISGSandbox",
+    "ArtifactFinding",
+    "ArtifactScanner",
+    "AuditAction",
+    "AuditDecision",
+    "ComplianceEngine",
+    "ComplianceManagerBase",
+    "ComplianceRule",
+    "DefaultSecurityGateway",
+    "ScanFinding",
+    "ScanReport",
+    "SecurityContext",
+    "SecurityGateway",
+]

@@ -1,15 +1,6 @@
 """
 detect_shell_true.py — shell=True 调用检测
 
-__manifest__ = """
-args: []
-description: shell=True / os.system() 调用检测（ABS-43 — P0安全红线）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-43（禁止使用 shell=True 执行子进程）
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: shell=True / os.system() 调用检测（ABS-43 — P0安全红线）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import re

@@ -1,0 +1,104 @@
+---
+doc_type: log
+session_id: "session-20260505-004"
+date: "2026-05-05"
+author_agent: "TraeIDE-DeepSeek-V4-Pro"
+current_phase: "Phase B 收尾 — 层骨架接口文件整合 + 架构模型同步"
+ttl: permanent
+---
+# Session Log: session-20260505-004
+
+## 完成的任务
+
+- [x] Phase B 审计：发现 8 个 skeleton 层的骨架文件已在更早 session 生成（被 B-SHADOW 盲点覆盖）
+- [x] 补齐 7 个层的 __init__.py 导入导出（L00/L03/L07/L09/L10/L11/L13）
+- [x] 更新 L01 __init__.py 导入（AppConfig / load_config / reload_config / KillSwitchSimulator / Finding）
+- [x] 更新 L04 __init__.py 导入——整合 risk_manager/risk_limits/risk_validator/risk_manager_base 四模块
+- [x] 解决 L04 重复定义冲突：
+  - risk_limits.py 中移除本地 RiskLimits → 改为从 risk_manager.py 导入
+  - risk_manager_base.py 中 RiskManagerBase → 重命名为 RiskManagerOrchestratorBase（避免与 risk_manager.py 冲突）
+- [x] 更新 L08 __init__.py（Streamlit dashboard 层——暂空导出）
+- [x] 同步 architecture-model/layers/：9 层状态 skeleton → implemented（L00/L03/L05/L06/L07/L09/L10/L11/L13）
+- [x] 补充各层 YAML 的 files/interfaces/contract_id 字段
+
+## 变更的文件
+
+| 操作 | 文件路径 |
+|------|---------|
+| 编辑 | src/zephyr/l00_data_source/__init__.py |
+| 编辑 | src/zephyr/l01_infrastructure/__init__.py |
+| 编辑 | src/zephyr/l03_signal_generation/__init__.py |
+| 编辑 | src/zephyr/l04_risk_management/__init__.py |
+| 编辑 | src/zephyr/l04_risk_management/risk_limits.py |
+| 编辑 | src/zephyr/l04_risk_management/risk_manager_base.py |
+| 编辑 | src/zephyr/l07_post_trade_analytics/__init__.py |
+| 编辑 | src/zephyr/l08_human_ai_interface/__init__.py |
+| 编辑 | src/zephyr/l09_research_innovation/__init__.py |
+| 编辑 | src/zephyr/l10_compliance/__init__.py |
+| 编辑 | src/zephyr/l11_ml_platform/__init__.py |
+| 编辑 | src/zephyr/l13_experimentation/__init__.py |
+| 编辑 | architecture-model/layers/l00_data_source.yaml |
+| 编辑 | architecture-model/layers/l03_signal_generation.yaml |
+| 编辑 | architecture-model/layers/l05_portfolio_construction.yaml |
+| 编辑 | architecture-model/layers/l06_trade_execution.yaml |
+| 编辑 | architecture-model/layers/l07_post_trade_analytics.yaml |
+| 编辑 | architecture-model/layers/l09_research_innovation.yaml |
+| 编辑 | architecture-model/layers/l10_compliance.yaml |
+| 编辑 | architecture-model/layers/l11_ml_platform.yaml |
+| 编辑 | architecture-model/layers/l13_experimentation.yaml |
+| 编辑 | session-logs/index.yaml |
+
+## Phase B 最终状态
+
+| 层 | 骨架文件 | 状态 |
+|---|---------|------|
+| L00 | provider_base.py (DataSourceBase + DataSourceMeta) | implemented |
+| L01 | config.py + kill_switch_sim.py + finding.py | implemented |
+| L02 | factor_base.py (FactorBase + FactorRegistry) | implemented |
+| L03 | aggregator_base.py (三 OCP 扩展点) | implemented |
+| L04 | stop_loss.py + risk_manager.py + risk_limits.py + risk_validator.py + risk_manager_base.py | implemented |
+| L05 | strategy_base.py (codegen OCP-002) + strategy_registry.py | implemented |
+| L06 | broker_interface.py (codegen OCP-003) + adapters/ | implemented |
+| L07 | analytics_base.py (TCAEngineBase + AttributionEngineBase) | implemented |
+| L08 | dashboard/app.py + components/ | implemented |
+| L09 | backtest_base.py (BacktestEngineBase) | implemented |
+| L10 | security_gateway_base.py + aisg_sandbox.py | implemented |
+| L11 | inference_base.py (InferenceEngineBase) | implemented |
+| L12 | contract_metrics.py + 5 子目录 | implemented |
+| L13 | pipeline_base.py (ExperimentPipelineBase + ScoutAgentBase) | implemented |
+
+**全部 14 层 Phase B 骨架已就位。**
+
+## 关键决策
+
+- L04 RiskManagerBase 保留 risk_manager.py 中的版本（CTR 对齐更完整），risk_manager_base.py 中的改名为 RiskManagerOrchestratorBase
+- L04 risk_limits.py 不再定义独立的 RiskLimits 数据类——统一从 risk_manager.py 导入
+- 所有层 __init__.py 统一采用 `from __future__ import annotations` + 显式 `__all__` 风格
+- L08 层目前无 Python 公共 API（Streamlit app.py 入口不同——__all__ 暂空）
+
+## 盲点发现
+
+- L04 存在两套 RiskLimits + 两套 RiskManagerBase 定义——在 Phase B 收尾过程中发现并解决
+- L01 __init__.py 引用了不存在的 `RuntimeConfig` / `ConfigLoader`——已修正为实际符号
+
+## 知识提取
+
+本次提取 0 条知识条目（KE）。
+
+## 上下文预算
+
+约 90k tokens，读取了全部 14 层的 __init__.py + 14 层 YAML + 骨架源码 + session-logs/index.yaml。
+
+## 交接给下一个 Session
+
+- **下一个任务**：Phase C — 运行端到端集成测试（验证所有层 __init__.py 导入无循环依赖、所有契约 dataclass 可实例化）
+- **阻塞项**：无
+- **下一个 session 需要读取**：
+  - 所有层 __init__.py（刚更新了导入导出）
+  - cross-layer-contracts.yaml（v3.0——31 条契约完整定义）
+  - gates/_registry.yaml（13/13 active 门禁状态）
+  - session-logs/index.yaml（Phase A + B 完成 → Phase C）
+- **注意事项**：
+  1. 14/14 层 Phase B 骨架已 100% 就位
+  2. 所有层均可通过 `from zephyr.l<NN>_<name> import <Base>` 导入
+  3. 下一步 Phase C 端到端验证——可能暴露循环导入或接口不匹配

@@ -3,7 +3,7 @@ Unit tests for 5 MCP Servers (T-3-04, B15)
 ==========================================
 验收标准：每个 Server ≥ 3 条单元测试，合计 ≥ 15 条，覆盖：
   - BaseMCPServer: tools/list、tools/call、initialize、ping、unknown method、stdio run
-  - TaskManagerServer: get_task、create_task、update_status
+  - Task Manager（FastMCP）→ tests/unit/test_task_manager_mcp.py
   - KnowledgeBaseServer: search、upsert_ke、get_ke
   - GateEngineServer: run_g1_write、run_g4_contract、submit_exemption
   - DocGuardServer: create_package、validate_package、emit_manual_event
@@ -16,7 +16,6 @@ import io
 import json
 from typing import Any
 
-import pytest
 from zephyr.mcp._base_server import (
     ERR_METHOD_NOT_FOUND,
     ERR_TOOL_NOT_FOUND,
@@ -33,6 +32,7 @@ from zephyr.mcp.sentinel_server import create_server as make_sentinel_server
 # 辅助函数
 # ---------------------------------------------------------------------------
 
+
 def _call(server: BaseMCPServer, method: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
     """构造 JSON-RPC 请求并调用 handle_request。"""
     request: dict[str, Any] = {"jsonrpc": "2.0", "id": 1, "method": method}
@@ -40,19 +40,23 @@ def _call(server: BaseMCPServer, method: str, params: dict[str, Any] | None = No
         request["params"] = params
     return server.handle_request(request)
 
+
 def _tool_call(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """调用 tools/call。"""
     return _call(server, "tools/call", {"name": tool_name, "arguments": arguments})
+
 
 def _ok(response: dict[str, Any]) -> Any:
     """断言无 error 并返回 result。"""
     assert "error" not in response, f"Unexpected error: {response.get('error')}"
     return response["result"]
 
+
 def _err(response: dict[str, Any]) -> dict[str, Any]:
     """断言有 error 并返回 error 字段。"""
     assert "error" in response, f"Expected error, got: {response}"
     return response["error"]
+
 
 def _tool_result(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any]) -> Any:
     """调用 tools/call 并解析 JSON 内容层，返回工具实际结果字典。"""
@@ -60,9 +64,11 @@ def _tool_result(server: BaseMCPServer, tool_name: str, arguments: dict[str, Any
     result = _ok(resp)
     return json.loads(result["content"][0]["text"])
 
+
 # ===========================================================================
 # BaseMCPServer 测试
 # ===========================================================================
+
 
 class TestBaseMCPServer:
     def _make_server(self) -> BaseMCPServer:
@@ -137,137 +143,10 @@ class TestBaseMCPServer:
         response = json.loads(out.read().strip())
         assert "error" in response
 
-# ===========================================================================
-# TaskManagerServer 测试
-# ===========================================================================
 
-@pytest.mark.skip(
-    reason="BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——当前 task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待步骤5-6补齐后可取消 skip 并重写测试适配 FastMCP API"
-)
-class TestTaskManagerServer:
-    # 旧 implementaion: make_task_server() → _tool_result(server, "task_manager.create_task", {...})
-    # 新 implementaion: FastMCP @mcp.tool() 装饰器，无 TaskManagerServer class
-    # 当前状态: create_task / list_tasks / update_status 均为 stub（返回 GATE_BLOCKED）
-    # 解除条件: 步骤5-6 TaskLifecycleManager 实现后，3 个 tool 函数有真实逻辑
-    def setup_method(self) -> None:
-        self.server = make_task_server()
-
-    def test_tools_list_has_four_tools(self) -> None:
-        result = _ok(_call(self.server, "tools/list"))
-        names = [t["name"] for t in result["tools"]]
-        assert "task_manager.get_task" in names
-        assert "task_manager.create_task" in names
-
-    def test_create_and_get_task(self) -> None:
-        create_result = _tool_result(
-            self.server,
-            "task_manager.create_task",
-            {
-                "task_id": "T-2-28",
-                "phase": 2,
-                "directive": "266+325",
-            },
-        )
-        assert create_result["task_id"] == "T-2-28"
-        assert create_result["status"] == "PENDING"
-
-        get_result = _tool_result(
-            self.server,
-            "task_manager.get_task",
-            {
-                "task_id": "T-2-28",
-            },
-        )
-        assert get_result["task_id"] == "T-2-28"
-
-    def test_get_task_not_found_returns_error(self) -> None:
-        err = _err(
-            _tool_call(
-                self.server,
-                "task_manager.get_task",
-                {
-                    "task_id": "T-2-999",
-                },
-            )
-        )
-        assert "ZA-TSK-0001" in err["message"]
-
-    def test_update_status_valid_transition(self) -> None:
-        _tool_result(
-            self.server,
-            "task_manager.create_task",
-            {
-                "task_id": "T-2-28",
-                "phase": 2,
-                "directive": "266",
-            },
-        )
-        result = _tool_result(
-            self.server,
-            "task_manager.update_status",
-            {
-                "task_id": "T-2-28",
-                "new_status": "READY",
-            },
-        )
-        assert result["new_status"] == "READY"
-        assert result["previous_status"] == "PENDING"
-
-    def test_update_status_invalid_transition_returns_error(self) -> None:
-        _tool_result(
-            self.server,
-            "task_manager.create_task",
-            {
-                "task_id": "T-2-28",
-                "phase": 2,
-                "directive": "266",
-            },
-        )
-        err = _err(
-            _tool_call(
-                self.server,
-                "task_manager.update_status",
-                {
-                    "task_id": "T-2-28",
-                    "new_status": "COMPLETED",  # PENDING → COMPLETED 不合法
-                },
-            )
-        )
-        assert "ZA-TSK-0002" in err["message"]
-
-    def test_list_tasks_by_phase(self) -> None:
-        _tool_result(
-            self.server,
-            "task_manager.create_task",
-            {
-                "task_id": "T-2-28",
-                "phase": 2,
-                "directive": "266",
-            },
-        )
-        result = _tool_result(self.server, "task_manager.list_tasks", {"phase": 2})
-        assert result["total"] >= 1
-        assert all(t["phase"] == 2 for t in result["items"])
-
-    def test_create_task_idempotent(self) -> None:
-        for _ in range(2):
-            _tool_result(
-                self.server,
-                "task_manager.create_task",
-                {
-                    "task_id": "T-2-00",
-                    "phase": 2,
-                    "directive": "266",
-                    "idempotent": True,
-                },
-            )
-        result = _tool_result(self.server, "task_manager.list_tasks", {})
-        task_ids = [t["task_id"] for t in result["items"]]
-        assert task_ids.count("T-2-00") == 1
-
-# ===========================================================================
 # KnowledgeBaseServer 测试
 # ===========================================================================
+
 
 class TestKnowledgeBaseServer:
     def setup_method(self) -> None:
@@ -349,9 +228,11 @@ class TestKnowledgeBaseServer:
         )
         assert "ZA-KB-0001" in err["message"]
 
+
 # ===========================================================================
 # GateEngineServer 测试
 # ===========================================================================
+
 
 class TestGateEngineServer:
     def setup_method(self) -> None:
@@ -457,9 +338,11 @@ class TestGateEngineServer:
         )
         assert result["passed"] is True
 
+
 # ===========================================================================
 # DocGuardServer 测试
 # ===========================================================================
+
 
 class TestDocGuardServer:
     def setup_method(self) -> None:
@@ -574,9 +457,11 @@ class TestDocGuardServer:
         )
         assert "error" in str(err).lower() or err["code"] != 0
 
+
 # ===========================================================================
 # SentinelServer 测试
 # ===========================================================================
+
 
 class TestSentinelServer:
     def setup_method(self) -> None:

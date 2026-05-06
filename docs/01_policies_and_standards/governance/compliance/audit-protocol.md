@@ -2,9 +2,9 @@
 module_id: GOV-CMP-003
 title: 治理审计执行协议
 doc_type: policy
-status: draft
+status: active
 version: "1.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-04"
 valid_from: "2026-05-04"
 ttl: permanent
-summary: "定义 ZephyrAlpha 治理审计的统一执行协议——审计类型、审计范围、审计规则、审计工具、审计频率、审计流程、审计报告模板、审计结果闭环。每次审计打开本文件即可按步骤执行。v1.2.0 经过与 script_manifest.yaml（91脚本）、gate-registry.yaml（34门禁）、registry-master-index.yaml（38登记表）、docs/01_policies_and_standards/ 下全部 37 个规则文件的四重交叉验证，depends_on 从 10 条扩展至 37 条，各维度审计规则栏补充完整路径链接，新增 §B 规则文件完整路径索引（13 类 60+ 文件）。"
+summary: "定义 ZephyrAlpha 治理审计的统一执行协议——审计类型、审计范围、审计规则、审计工具、审计频率、审计流程、审计报告模板、审计结果闭环。每次审计打开本文件即可按步骤执行。v1.2.0：**门禁数以 `gate-registry.yaml` 的 `total_gates` 为准**；**catalogs 登记表数以 `registry-master-index.yaml` 的 `total_registries` 为准**（勿依赖附录中的历史常量）；并与 script_manifest、`docs/01_policies_and_standards/` 规则文件交叉验证。"
 tags: [compliance, governance, audit, protocol, checklist]
 rule_form: declarative
 scope: global
@@ -44,7 +44,7 @@ depends_on:
   - {target: GOV-ARCH-002, at: "§2~§5", why: "架构评审门禁——ARG-001~005触发条件/清单/否决条件"}
   - {target: GOV-ARCH-003, at: "full", why: "架构版本化策略——版本号管理"}
   - {target: GOV-ARCH-005, at: "full", why: "Phase过渡双门禁协议——Phase退出门检查依据"}
-  - {target: ARCH-GATE-001, at: "G1-G5", why: "KMS管道5级门禁策略——G1~G5策略定义"}
+  - {target: GOV-ARCH-006, at: "G1-G5", why: "KMS管道5级门禁策略——G1~G5策略定义"}
   - {target: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml", at: "VR-001~VR-011", why: "架构合规契约——11条VR验证规则"}
   # === 模块治理（D5审计依据）===
   - {target: GOV-MOD-001, at: "full", why: "模块准入门禁策略——MOD-P1~P4四级筛选+INJ-001~006六条铁律"}
@@ -70,7 +70,7 @@ depends_on:
   # === 门禁与登记表（审计工具依据）===
   - {target: PS-REG-014, at: "gates", why: "GATE门禁登记表——34个门禁的SSoT"}
   - {target: OPS-VC-005, at: "§2", why: "Vibe Coding会话门禁检查清单——AI会话开始前检查"}
-  - {target: PS-REG-005, at: "registries", why: "登记表总索引——38张登记表的发现入口"}
+  - {target: PS-REG-005, at: "registries", why: "登记表总索引——`_registry/catalogs/registry-master-index.yaml` 的 `total_registries`（自动扫描 catalogs/*.yaml）；域外登记表另见 GOV-MOD-007 MRS-001"}
   # === 评分矩阵（审计效果依据）===
   - {target: VIEW-12-AUDIT-MATRIX, at: "§1-5", why: "12维架构评分矩阵——维度定义+权重+评分算法"}
 ai_autonomy: human_gated
@@ -78,7 +78,7 @@ ai_autonomy: human_gated
 
 # 治理审计执行协议
 
-> module_id: GOV-CMP-003 | version: 1.1.0 | status: draft | layer: L01
+> module_id: GOV-CMP-003 | version: 1.2.0 | status: active | layer: l01_infrastructure
 
 ---
 
@@ -153,7 +153,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | AGENTS.md §6.5（.py 只允许在 3 个目录）、§6.11（索引-实际同步）、[GOV-TASK-005](../01_policies_and_standards/governance/task/task-closure-standard.md) §4.2-4.3（临时/残留文件）、[GOV-MOD-002](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) ABS-01（immutable_core 不可变）、[PS-STD-012](../01_policies_and_standards/meta/rule-verification-standard.md) §7.3（index 完整性）、[GOV-DOC-006](../01_policies_and_standards/governance/document/document-lifecycle-standard.md) §三（LATEST 命名）、[GOV-DOC-002](../01_policies_and_standards/governance/document/directory-structure-standard.md)（目录结构规范）、[GOV-DOC-007](../01_policies_and_standards/governance/document/file-operation-safety-policy.md)（文件操作安全） |
+| **审计规则** | AGENTS.md §6.5（.py 只允许在 3 个目录）、§6.11（索引-实际同步）、[GOV-TASK-005](../../governance/task/task-closure-standard.md) §4.2-4.3（临时/残留文件）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-01（immutable_core 不可变）、[PS-STD-012](../../meta/rule-verification-standard.md) §7.3（index 完整性）、[GOV-DOC-006](../../governance/document/document-lifecycle-standard.md) §三（LATEST 命名）、[GOV-DOC-002](../../governance/document/directory-structure-standard.md)（目录结构规范）、[GOV-DOC-007](../../governance/document/file-operation-safety-policy.md)（文件操作安全） |
 | **审计文件范围** | 项目根目录 + `scripts/governance/` + `src/zephyr/` + `tests/` + `docs/` 各级 `index.md` + `config/` + `.pre-commit-config.yaml` + `.github/workflows/` |
 | **审计脚本** | |
 | **P0 (6个)** | `d1_structure/audit_directory_integrity.py`（D1-D5 五维）、`d1_structure/detect_orphan_py.py`（孤儿 .py）、`d1_structure/detect_temp_files.py`（临时文件）、`d1_structure/detect_residual_files.py`（残留文件）、`d1_structure/validate_index_reality.py`（index vs 磁盘）、`d1_structure/validate_config_integrity.py`（运行时配置 11 层纵深审计 + 自动修复） |
@@ -179,7 +179,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | [PS-STD-001](../01_policies_and_standards/meta/metadata-registry.md) §3（frontmatter 字段唯一真源）、§6.14 Level 2（枚举自动派生）、[PS-STD-009](../01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md) §2.2（superseded_by）、§7（deprecated ≥ 180 天归档）、§9（版本号同步）、[GOV-MOD-002](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) ABS-22/COND-15（跨级降格）、[GOV-DOC-004](../01_policies_and_standards/governance/document/file-path-standard.md)（绝对路径引用）、[GOV-DOC-001](../01_policies_and_standards/governance/document/unified-numbering-standard.md)（统一编号规范）、[GOV-DOC-003](../01_policies_and_standards/governance/document/file-naming-standard.md)（文件命名规范 N-01~N-07）、[PS-STD-004](../01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md)（规则分类与仲裁）、[GOV-MOD-007](../01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md)（多注册表同步） |
+| **审计规则** | [PS-STD-001](../../meta/metadata-registry.md) §3（frontmatter 字段唯一真源）、§6.14 Level 2（枚举自动派生）、[PS-STD-009](../../meta/rule-lifecycle-and-change-standard.md) §2.2（superseded_by）、§7（deprecated ≥ 180 天归档）、§9（版本号同步）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-22/COND-15（跨级降格）、[GOV-DOC-004](../../governance/document/file-path-standard.md)（绝对路径引用）、[GOV-DOC-001](../../governance/document/unified-numbering-standard.md)（统一编号规范）、[GOV-DOC-003](../../governance/document/file-naming-standard.md)（文件命名规范 N-01~N-07）、[PS-STD-004](../../meta/rule-classification-and-arbitration-standard.md)（规则分类与仲裁）、[GOV-MOD-007](../../governance/module/multi-registry-synchronization-standard.md)（多注册表同步） |
 | **审计文件范围** | `docs/` 所有含 frontmatter 的 .md 文件 + `_registry/vocabularies/*.yaml`（12个）+ `_registry/catalogs/*.yaml` + `_registry/contracts/*.yaml` |
 | **审计脚本** | |
 | **P0 (5个)** | `d3_metadata/check_frontmatter_metadata.py`（frontmatter 字段合规）、`d3_metadata/check_naming_convention.py`（命名规范 7 条 N-01~N-07）、`d3_metadata/validate_blueprint_provenance.py`（蓝图真源 Provenance 三件套）、`d3_metadata/validate_enum_consistency.py`（GATE-ENUM 枚举派生一致性）、`d3_metadata/validate_registry_master_index.py`（登记表总索引自校验——17+ 张登记表文件存在性 + depends_on 交叉验证） |
@@ -207,8 +207,8 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | AGENTS.md §6.2（depends_on ≤ 3 层）、§6.4（单一责任）、§6.9（YAML 为 canonical SSoT）、§6.10（代码↔YAML 双层对账）、§6.14（漂移免疫架构原则 Level 1-3）、§6.15（三层 AI 自治权限）、[GOV-MOD-002](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) ABS-05~10（AI 自治权限）、ABS-19/20（字段归属 SSoT）、COND-30~32（层纪律）、COND-33~37（门禁纪律）、COND-38（废弃 ADR 引用）、COND-47（HandoffPackage 完整性）、LRC-001~005（生命周期引用）、LFC-001~003（废弃级联）、MAD-005（P0 模块契约）、[GOV-MOD-004](../01_policies_and_standards/governance/module/module-interface-contract-policy.md) IFC-001~007（接口契约）、[GOV-MOD-003](../01_policies_and_standards/governance/module/module-lifecycle-policy.md) MLC-001~003（模块生命周期）、[GOV-ARCH-001](../01_policies_and_standards/governance/architecture/adr-protocol.md)（ADR 协议）、[GOV-ARCH-002](../01_policies_and_standards/governance/architecture/architecture-review-policy.md)（架构评审门禁）、[GOV-ARCH-003](../01_policies_and_standards/governance/architecture/architecture-versioning-policy.md)（架构版本化）、[GOV-ARCH-005](../01_policies_and_standards/governance/architecture/phase-transition-protocol.md)（Phase 过渡协议）、[GOV-MOD-001](../01_policies_and_standards/governance/module/module-admission-policy.md)（模块准入 MOD-ADMIT）、[ARCH-GATE-001](../01_policies_and_standards/governance/architecture/gate-strategy-standard.md)（KMS 管道门禁 G1-G5）、[GOV-DOC-002](../01_policies_and_standards/governance/document/directory-structure-standard.md)（目录结构规范） |
-| **审计文件范围** | `architecture-model/*.yaml` + `architecture-model/layers/*.yaml`（25+ YAML）+ `docs/03_modules/*/blueprint.md` + `src/zephyr/` 目录结构 + `docs/01_policies_and_standards/_registry/contracts/*.yaml` + `ai-autonomy-authority-registry.md` |
+| **审计规则** | AGENTS.md §6.2（depends_on ≤ 3 层）、§6.4（单一责任）、§6.9（YAML 为 canonical SSoT）、§6.10（代码↔YAML 双层对账）、§6.14（漂移免疫架构原则 Level 1-3）、§6.15（三层 AI 自治权限）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-05~10（AI 自治权限）、ABS-19/20（字段归属 SSoT）、COND-30~32（层纪律）、COND-33~37（门禁纪律）、COND-38（废弃 ADR 引用）、COND-47（HandoffPackage 完整性）、LRC-001~005（生命周期引用）、LFC-001~003（废弃级联）、MAD-005（P0 模块契约）、[GOV-MOD-004](../../governance/module/module-interface-contract-policy.md) IFC-001~007（接口契约）、[GOV-MOD-003](../../governance/module/module-lifecycle-policy.md) MLC-001~003（模块生命周期）、[GOV-ARCH-001]KB:decisions namespace（33 ADRs，原 adr-protocol.md 已删除）、[GOV-ARCH-002](../../governance/architecture/architecture-review-policy.md)（架构评审门禁）、[GOV-ARCH-003](../../governance/architecture/architecture-versioning-policy.md)（架构版本化）、[GOV-ARCH-005](../../governance/architecture/phase-transition-protocol.md)（Phase 过渡协议）、[GOV-MOD-001](../../governance/module/module-admission-policy.md)（模块准入 MOD-ADMIT）、[GOV-ARCH-006](../../governance/architecture/gate-strategy-standard.md)（KMS 管道门禁 G1-G5）、[GOV-DOC-002](../../governance/document/directory-structure-standard.md)（目录结构规范） |
+| **审计文件范围** | `architecture-model/*.yaml` + `architecture-model/layers/*.yaml`（25+ YAML）+ `docs/03_modules/*/blueprint.md` + `src/zephyr/` 目录结构 + `docs/01_policies_and_standards/_registry/contracts/*.yaml` + `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` |
 | **审计脚本** | |
 | **P0 (9个)** | `d5_architecture/check_architecture_gates.py`（GATE-01~08+A+B+SC+EXTRA-01~03）、`d5_architecture/validate_code_yaml_alignment.py`（GATE-A 代码↔YAML 对账）、`d5_architecture/validate_yaml_summaries.py`（GATE-SUM 自动对账）、`d5_architecture/validate_cross_references.py`（GATE-XREF 8维跨引用检查）、`d5_architecture/validate_blueprint_code_sync.py`（GATE-BLUEPRINT-CODE 蓝图-代码同步）、`d5_architecture/validate_blueprint_implementation_docs.py`（铁律五——completed 蓝图实现文档）、`d5_architecture/validate_directory_structure.py`（LPC 双轨目录合规）、`d5_architecture/detect_depends_on_cycles.py`（DOC-009#1 循环依赖检测）、`d5_architecture/validate_architecture_contract_internal.py`（GATE-CONTRACT 7维契约内部一致性） |
 | **P1 (14个)** | `d5_architecture/validate_ssot.py`（SSoT 一致性）、`d5_architecture/validate_authority_registry.py`（AI 自治权限注册表自校验 GATE-14）、`d5_architecture/validate_field_ownership.py`（字段归属 SSoT）、`d5_architecture/validate_autonomy_gate.py`（AI 自治权限门禁 ABS-05~10）、`d5_architecture/validate_layer_deps.py`（跨层依赖 COND-30~32）、`d5_architecture/audit_depends_on_chain_depth.py`（depends_on 链深度 AGENTS.md §6.2）、`d5_architecture/validate_depends_on_format.py`（depends_on 格式校验 PS-STD-001 §3.1 + --fix 自动转换）、`d5_architecture/validate_lifecycle_refs.py`（生命周期引用约束 LRC-001~005）、`d5_architecture/validate_three_way_consistency.py`（三方一致性——frontmatter vs 正文 vs document-metadata-index.yaml）、`d5_architecture/validate_module_lifecycle.py`（模块生命周期 MLC-001/002/003）、`d5_architecture/validate_interface_contracts.py`（接口契约 IFC-001~007）、`d5_architecture/validate_p0_module_contracts.py`（P0 模块契约 MAD-005）、`d5_architecture/validate_deprecated_dependents.py`（废弃文件活跃引用 LFC-001）、`d5_architecture/measure_deprecation_cascade.py`（废弃级联影响 LFC-003） |
@@ -222,7 +222,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | [GOV-MOD-002](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) ABS-29/32（密钥硬编码 P0 红线）、ABS-43（shell=True P0 红线）、ABS-40（threading.Lock 全局异步违规）、ABS-26~28（危险 Git 命令）、ABS-31（日志敏感词）、ABS-38~39（危险 Shell 命令）、ABS-14（锚点文件不可删除）、ABS-49（模糊术语）、[PS-STD-012](../01_policies_and_standards/meta/rule-verification-standard.md) V1（ttl:permanent 禁止删除）、[GOV-SEC-001](../01_policies_and_standards/governance/security/secret-management-policy.md)（密钥管理）、[GOV-SEC-002](../01_policies_and_standards/governance/security/access-control-policy.md)（访问控制）、[GOV-SEC-003](../01_policies_and_standards/governance/security/security-incident-response-policy.md)（安全事件响应）、[GOV-DOC-007](../01_policies_and_standards/governance/document/file-operation-safety-policy.md)（文件操作安全——FILE-OP-SAFE 门禁） |
+| **审计规则** | [GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-29/32（密钥硬编码 P0 红线）、ABS-43（shell=True P0 红线）、ABS-40（threading.Lock 全局异步违规）、ABS-26~28（危险 Git 命令）、ABS-31（日志敏感词）、ABS-38~39（危险 Shell 命令）、ABS-14（锚点文件不可删除）、ABS-49（模糊术语）、[PS-STD-012](../../meta/rule-verification-standard.md) V1（ttl:permanent 禁止删除）、[GOV-SEC-001](../../governance/security/secret-management-policy.md)（密钥管理）、[GOV-SEC-002](../../governance/security/access-control-policy.md)（访问控制）、[GOV-SEC-003](../../governance/security/security-incident-response-policy.md)（安全事件响应）、[GOV-DOC-007](../../governance/document/file-operation-safety-policy.md)（文件操作安全——FILE-OP-SAFE 门禁） |
 | **审计文件范围** | `src/zephyr/**/*.py` + `scripts/governance/**/*.py` + `tests/**/*.py` + 所有配置文件 + 21 个锚点文件 |
 | **审计脚本** | |
 | **P0 (9个)** | `d6_security/detect_secrets.py`（密钥/Token 硬编码）、`d6_security/detect_shell_true.py`（shell=True/os.system()）、`d6_security/detect_threading_lock.py`（threading.Lock 导入）、`d6_security/detect_git_dangerous.py`（危险 Git 命令 ABS-26~28）、`d6_security/detect_keywords_in_logs.py`（日志敏感词 ABS-31）、`d6_security/detect_shell_dangerous.py`（危险 Shell 命令 ABS-38~39）、`d6_security/detect_anchor_file_deletion.py`（锚点文件删除 ABS-14）、`d6_security/detect_permanent_file_deletion.py`（永久文件删除 PS-STD-012 V1） |
@@ -235,7 +235,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | COND-43（FLE import 纪律）、COND-30（L02-L07 禁止直接 import LLM SDK）、COND-32（contracts/ 仅允许数据结构定义）、[GOV-MOD-002](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) ABS-24（open() 必须指定 encoding）、COND-44~46（FLE Action 元数据/静默降级/KB 写入 provenance）、REC-11（禁止 Pydantic Any 类型）、[GOV-DOC-005](../01_policies_and_standards/governance/document/encoding-safety-standard.md)（编码安全规范——UTF-8 强制） |
+| **审计规则** | COND-43（FLE import 纪律）、COND-30（L02-L07 禁止直接 import LLM SDK）、COND-32（contracts/ 仅允许数据结构定义）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-24（open() 必须指定 encoding）、COND-44~46（FLE Action 元数据/静默降级/KB 写入 provenance）、REC-11（禁止 Pydantic Any 类型）、[GOV-DOC-005](../../governance/document/encoding-safety-standard.md)（编码安全规范——UTF-8 强制） |
 | **审计文件范围** | `src/zephyr/**/*.py` + `tests/**/*.py` |
 | **审计脚本** | |
 | **P0 (1个)** | `d7_code/detect_missing_encoding.py`（open() 缺 encoding ABS-24） |
@@ -250,7 +250,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | [GOV-DOC-006](../01_policies_and_standards/governance/document/document-lifecycle-standard.md) §一/§三（TTL 合法值 + 过期文件 + LATEST 命名）、§二/§四/§五/§六（superseded_by + 双向链接 + AI 产物位置）、[GOV-DOC-009](../01_policies_and_standards/governance/document/document-control-policy.md)（文档控制——版本控制/变更追踪）、[PS-STD-009](../01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md) §7（废弃 ≥ 180 天归档） |
+| **审计规则** | [GOV-DOC-006](../../governance/document/document-lifecycle-standard.md) §一/§三（TTL 合法值 + 过期文件 + LATEST 命名）、§二/§四/§五/§六（superseded_by + 双向链接 + AI 产物位置）、[GOV-DOC-009](../../governance/document/document-control-policy.md)（文档控制——版本控制/变更追踪）、[PS-STD-009](../../meta/rule-lifecycle-and-change-standard.md) §7（废弃 ≥ 180 天归档） |
 | **审计文件范围** | `docs/` 所有 .md 文件的 TTL / status / superseded_by / created_by 字段 |
 | **审计脚本** | **P1**: `d8_doc_sync/validate_document_ttl.py`（TTL 过期检测）、`d8_doc_sync/validate_document_lifecycle.py`（文档生命周期——superseded_by + 双向链接 + AI 产物位置）。**P2**: `d8_doc_sync/detect_dated_snapshots.py`（带日期快照——应使用 LATEST）、`d8_doc_sync/detect_ai_products_in_docs.py`（AI 产物不应在 docs/ 主目录） |
 | **门禁** | 无独立门禁（由 GATE-15/GATE-16 间接覆盖） |
@@ -261,7 +261,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | DOC-008#4（孤立文档检测——零入边引用）、DOC-007（规范用语引用不复制）、[GOV-DOC-010](../01_policies_and_standards/governance/document/document-discovery-policy.md)（文档可发现性——索引/搜索/导航） |
+| **审计规则** | DOC-008#4（孤立文档检测——零入边引用）、DOC-007（规范用语引用不复制）、[GOV-DOC-010](../../governance/document/document-discovery-policy.md)（文档可发现性——索引/搜索/导航） |
 | **审计文件范围** | `docs/` 所有 .md 文件的入边引用关系 |
 | **审计脚本** | **P1**: `d9_knowledge/detect_orphan_documents.py`（孤立文档检测）。**P2**: `d9_knowledge/detect_duplicated_normative_language.py`（规范用语重复定义） |
 | **门禁** | 无独立门禁 |
@@ -283,7 +283,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | SCRIPT-QUALITY-001 §10（10 项 MUST 条款 + D-A~F 条款）、AGENTS.md §6.5（manifest 准入——8 项硬阻断）、Conventional Commits v1.0.0、真源级联验证、[PS-STD-011](../01_policies_and_standards/meta/governance-methodology-standard.md)（治理方法论 MTH-001~MTH-015）、[PS-STD-012](../01_policies_and_standards/meta/rule-verification-standard.md)（规则验证标准）、[GOV-CMP-001](../01_policies_and_standards/governance/compliance/regulatory-taxonomy-policy.md)（监管分类策略）、[GOV-MOD-007](../01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md)（多注册表同步） |
+| **审计规则** | SCRIPT-QUALITY-001 §10（10 项 MUST 条款 + D-A~F 条款）、AGENTS.md §6.5（manifest 准入——8 项硬阻断）、Conventional Commits v1.0.0、真源级联验证、[PS-STD-011](../../meta/governance-methodology-standard.md)（治理方法论 MTH-001~MTH-015）、[PS-STD-012](../../meta/rule-verification-standard.md)（规则验证标准）、[GOV-CMP-001](../../governance/compliance/regulatory-taxonomy-policy.md)（监管分类策略）、[GOV-MOD-007](../../governance/module/multi-registry-synchronization-standard.md)（多注册表同步） |
 | **审计文件范围** | `scripts/governance/**/*.py` + `script_manifest.yaml` + git commit messages + `docs/` 真源引用链 |
 | **审计脚本** | |
 | **P0 (2个)** | `d11_compliance/validate_manifest_admission.py`（Manifest 准入控制器——git diff 提取新增脚本 → 8 项 MUST 硬阻断 GATE-ADM）、**跨维 P0**: `check_registry_consistency.py`（跨登记表一致性校验 D3+D5+D11） |
@@ -297,7 +297,7 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | [OPS-VC-005](../01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md) §3（12 项 gate_check）、AGENTS.md §6.1（边界先验）、§6.3（合同驱动的服务边界）、§6.6（AI 操作记录完整）、§6.7（回滚策略）、§6.8（渐进式信任）、§6.12（对齐验证）、§6.13（知识衰减检测）、[GOV-AI-003](../01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md)（AI 幻觉自检）、[GOV-AI-004](../01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md)（双编辑器协作）、[PS-STD-003](../01_policies_and_standards/meta/behavior-boundaries-standard.md)（行为边界标准） |
+| **审计规则** | [OPS-VC-005](../../operational/vibe_coding/vibe-coding-gate-checklist.md) §3（12 项 gate_check）、AGENTS.md §6.1（边界先验）、§6.3（合同驱动的服务边界）、§6.6（AI 操作记录完整）、§6.7（回滚策略）、§6.8（渐进式信任）、§6.12（对齐验证）、§6.13（知识衰减检测）、[GOV-AI-003](../../governance/ai/ai-hallucination-self-check-policy.md)（AI 幻觉自检）、[GOV-AI-004](../../governance/ai/dual-editor-collaboration-policy.md)（双编辑器协作）、[PS-STD-003](../../meta/behavior-boundaries-standard.md)（行为边界标准） |
 | **审计脚本** | **P2**: `d12_ai_hallucination/validate_session_gate_check.py`（Session 12 项 gate_check 完整性） |
 | **审计文件范围** | Session logs + `.runtime/logs/` + Vibe Coding 会话记录 |
 | **门禁** | VC-A/B/C/D（Vibe Coding 4 组 12 项会话门禁） |
@@ -746,7 +746,7 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 | 准入门禁 MOD-ADMIT/FACTOR/FILE | 需 Owner 审批，无法全自动 | 低 | 已有机审流程 + 门禁登记表确认 |
 | AGENTS.md §6.7/6.8/6.13 | 回滚策略/渐进式信任/知识衰减——概念性强，无自动化脚本 | 中 | 4 考虑落地对应检查脚本 |
 | D10 运维架构 | 无专项脚本 | 中 | 4 补充 |
-| 24 张登记表缺少 health_check_script | registry-master-index.yaml 中标注 uncovered | 低 | 3 补齐 |
+| 若干登记表缺少 health_check_script | 以各登记表 `maintenance` 及 CI 脚本覆盖为准；总量以 `registry-master-index.yaml` 为准 | 低 | 按模块补齐并可自 registry 派生监控 |
 
 ---
 
@@ -759,85 +759,85 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| PS-STD-000 | 元标准宪法 | [meta-standard-constitution.md](../01_policies_and_standards/meta/meta-standard-constitution.md) |
-| PS-STD-001 | 元数据登记表 | [metadata-registry.md](../01_policies_and_standards/meta/metadata-registry.md) |
-| PS-STD-002 | 标准文档模板 | [document-structure-standard.md](../01_policies_and_standards/meta/document-structure-standard.md) |
-| PS-STD-003 | 行为边界标准 | [behavior-boundaries-standard.md](../01_policies_and_standards/meta/behavior-boundaries-standard.md) |
-| PS-STD-004 | 规则分类与仲裁标准 | [rule-classification-and-arbitration-standard.md](../01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md) |
-| PS-STD-009 | 规则生命周期与变更标准 | [rule-lifecycle-and-change-standard.md](../01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md) |
-| PS-STD-011 | 治理方法论标准 | [governance-methodology-standard.md](../01_policies_and_standards/meta/governance-methodology-standard.md) |
-| PS-STD-012 | 规则验证标准 | [rule-verification-standard.md](../01_policies_and_standards/meta/rule-verification-standard.md) |
+| PS-STD-000 | 元标准宪法 | [meta-standard-constitution.md](../../meta/meta-standard-constitution.md) |
+| PS-STD-001 | 元数据登记表 | [metadata-registry.md](../../meta/metadata-registry.md) |
+| PS-STD-002 | 标准文档模板 | [document-structure-standard.md](../../meta/document-structure-standard.md) |
+| PS-STD-003 | 行为边界标准 | [behavior-boundaries-standard.md](../../meta/behavior-boundaries-standard.md) |
+| PS-STD-004 | 规则分类与仲裁标准 | [rule-classification-and-arbitration-standard.md](../../meta/rule-classification-and-arbitration-standard.md) |
+| PS-STD-009 | 规则生命周期与变更标准 | [rule-lifecycle-and-change-standard.md](../../meta/rule-lifecycle-and-change-standard.md) |
+| PS-STD-011 | 治理方法论标准 | [governance-methodology-standard.md](../../meta/governance-methodology-standard.md) |
+| PS-STD-012 | 规则验证标准 | [rule-verification-standard.md](../../meta/rule-verification-standard.md) |
 
 ### B.2 文档治理（governance/document/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-DOC-001 | 统一编号规范 | [unified-numbering-standard.md](../01_policies_and_standards/governance/document/unified-numbering-standard.md) |
-| GOV-DOC-002 | 目录结构规范 | [directory-structure-standard.md](../01_policies_and_standards/governance/document/directory-structure-standard.md) |
-| GOV-DOC-003 | 文件命名规范 | [file-naming-standard.md](../01_policies_and_standards/governance/document/file-naming-standard.md) |
-| GOV-DOC-004 | 文件路径规范 | [file-path-standard.md](../01_policies_and_standards/governance/document/file-path-standard.md) |
-| GOV-DOC-005 | 编码安全规范 | [encoding-safety-standard.md](../01_policies_and_standards/governance/document/encoding-safety-standard.md) |
-| GOV-DOC-006 | 文档生命周期管理规范 | [document-lifecycle-standard.md](../01_policies_and_standards/governance/document/document-lifecycle-standard.md) |
-| GOV-DOC-007 | 文件操作安全门禁 | [file-operation-safety-policy.md](../01_policies_and_standards/governance/document/file-operation-safety-policy.md) |
-| GOV-DOC-009 | 文档控制原则 | [document-control-policy.md](../01_policies_and_standards/governance/document/document-control-policy.md) |
-| GOV-DOC-010 | 文档可发现性策略 | [document-discovery-policy.md](../01_policies_and_standards/governance/document/document-discovery-policy.md) |
+| GOV-DOC-001 | 统一编号规范 | [unified-numbering-standard.md](../../governance/document/unified-numbering-standard.md) |
+| GOV-DOC-002 | 目录结构规范 | [directory-structure-standard.md](../../governance/document/directory-structure-standard.md) |
+| GOV-DOC-003 | 文件命名规范 | [file-naming-standard.md](../../governance/document/file-naming-standard.md) |
+| GOV-DOC-004 | 文件路径规范 | [file-path-standard.md](../../governance/document/file-path-standard.md) |
+| GOV-DOC-005 | 编码安全规范 | [encoding-safety-standard.md](../../governance/document/encoding-safety-standard.md) |
+| GOV-DOC-006 | 文档生命周期管理规范 | [document-lifecycle-standard.md](../../governance/document/document-lifecycle-standard.md) |
+| GOV-DOC-007 | 文件操作安全门禁 | [file-operation-safety-policy.md](../../governance/document/file-operation-safety-policy.md) |
+| GOV-DOC-009 | 文档控制原则 | [document-control-policy.md](../../governance/document/document-control-policy.md) |
+| GOV-DOC-010 | 文档可发现性策略 | [document-discovery-policy.md](../../governance/document/document-discovery-policy.md) |
 
 ### B.3 架构治理（governance/architecture/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-ARCH-001 | ADR 协议 | [adr-protocol.md](../01_policies_and_standards/governance/architecture/adr-protocol.md) |
-| GOV-ARCH-002 | 架构评审门禁 | [architecture-review-policy.md](../01_policies_and_standards/governance/architecture/architecture-review-policy.md) |
-| GOV-ARCH-003 | 架构版本化策略 | [architecture-versioning-policy.md](../01_policies_and_standards/governance/architecture/architecture-versioning-policy.md) |
-| ARCH-GATE-001 | KMS 管道门禁策略 | [gate-strategy-standard.md](../01_policies_and_standards/governance/architecture/gate-strategy-standard.md) |
-| GOV-ARCH-005 | Phase 过渡双门禁协议 | [phase-transition-protocol.md](../01_policies_and_standards/governance/architecture/phase-transition-protocol.md) |
+| GOV-ARCH-001 | 架构决策记录 | KB:decisions namespace（原 adr-protocol.md 已删除） |
+| GOV-ARCH-002 | 架构评审门禁 | [architecture-review-policy.md](../../governance/architecture/architecture-review-policy.md) |
+| GOV-ARCH-003 | 架构版本化策略 | [architecture-versioning-policy.md](../../governance/architecture/architecture-versioning-policy.md) |
+| GOV-ARCH-006 | KMS 管道门禁策略 | [gate-strategy-standard.md](../../governance/architecture/gate-strategy-standard.md) |
+| GOV-ARCH-005 | Phase 过渡双门禁协议 | [phase-transition-protocol.md](../../governance/architecture/phase-transition-protocol.md) |
 
 ### B.4 模块治理（governance/module/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-MOD-001 | 模块准入门禁策略 | [module-admission-policy.md](../01_policies_and_standards/governance/module/module-admission-policy.md) |
-| GOV-MOD-002 | AI 模型行为铁律 | [ai-behavior-iron-policy.md](../01_policies_and_standards/governance/module/ai-behavior-iron-policy.md) |
-| GOV-MOD-003 | 模块生命周期策略 | [module-lifecycle-policy.md](../01_policies_and_standards/governance/module/module-lifecycle-policy.md) |
-| GOV-MOD-004 | 模块接口契约策略 | [module-interface-contract-policy.md](../01_policies_and_standards/governance/module/module-interface-contract-policy.md) |
-| GOV-MOD-007 | 多注册表同步标准 | [multi-registry-synchronization-standard.md](../01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md) |
+| GOV-MOD-001 | 模块准入门禁策略 | [module-admission-policy.md](../../governance/module/module-admission-policy.md) |
+| GOV-MOD-002 | AI 模型行为铁律 | [ai-behavior-iron-policy.md](../../governance/module/ai-behavior-iron-policy.md) |
+| GOV-MOD-003 | 模块生命周期策略 | [module-lifecycle-policy.md](../../governance/module/module-lifecycle-policy.md) |
+| GOV-MOD-004 | 模块接口契约策略 | [module-interface-contract-policy.md](../../governance/module/module-interface-contract-policy.md) |
+| GOV-MOD-007 | 多注册表同步标准 | [multi-registry-synchronization-standard.md](../../governance/module/multi-registry-synchronization-standard.md) |
 
 ### B.5 AI 治理（governance/ai/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-AI-003 | AI 幻觉自检清单 | [ai-hallucination-self-check-policy.md](../01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md) |
-| GOV-AI-004 | 双编辑器协作规则 | [dual-editor-collaboration-policy.md](../01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md) |
+| GOV-AI-003 | AI 幻觉自检清单 | [ai-hallucination-self-check-policy.md](../../governance/ai/ai-hallucination-self-check-policy.md) |
+| GOV-AI-004 | 双编辑器协作规则 | [dual-editor-collaboration-policy.md](../../governance/ai/dual-editor-collaboration-policy.md) |
 
 ### B.6 安全治理（governance/security/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-SEC-001 | 密钥管理策略 | [secret-management-policy.md](../01_policies_and_standards/governance/security/secret-management-policy.md) |
-| GOV-SEC-002 | 访问控制策略 | [access-control-policy.md](../01_policies_and_standards/governance/security/access-control-policy.md) |
-| GOV-SEC-003 | 安全事件响应策略 | [security-incident-response-policy.md](../01_policies_and_standards/governance/security/security-incident-response-policy.md) |
+| GOV-SEC-001 | 密钥管理策略 | [secret-management-policy.md](../../governance/security/secret-management-policy.md) |
+| GOV-SEC-002 | 访问控制策略 | [access-control-policy.md](../../governance/security/access-control-policy.md) |
+| GOV-SEC-003 | 安全事件响应策略 | [security-incident-response-policy.md](../../governance/security/security-incident-response-policy.md) |
 
 ### B.7 任务治理（governance/task/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-TASK-001 | 任务卡操作指南 | [task-card-standard.md](../01_policies_and_standards/governance/task/task-card-standard.md) |
-| GOV-TASK-004 | 任务生命周期管理标准 | [task-lifecycle-standard.md](../01_policies_and_standards/governance/task/task-lifecycle-standard.md) |
-| GOV-TASK-005 | 任务关闭标准 | [task-closure-standard.md](../01_policies_and_standards/governance/task/task-closure-standard.md) |
+| GOV-TASK-001 | 任务卡操作指南 | [task-card-standard.md](../../governance/task/task-card-standard.md) |
+| GOV-TASK-004 | 任务生命周期管理标准 | [task-lifecycle-standard.md](../../governance/task/task-lifecycle-standard.md) |
+| GOV-TASK-005 | 任务关闭标准 | [task-closure-standard.md](../../governance/task/task-closure-standard.md) |
 
 ### B.8 合规治理（governance/compliance/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| GOV-CMP-001 | 监管分类策略 | [regulatory-taxonomy-policy.md](../01_policies_and_standards/governance/compliance/regulatory-taxonomy-policy.md) |
-| GOV-CMP-002 | 审计追踪策略 | [audit-trail-policy.md](../01_policies_and_standards/governance/compliance/audit-trail-policy.md) |
-| **GOV-CMP-003** | **治理审计执行协议（本文档）** | [audit-protocol.md](../01_policies_and_standards/governance/compliance/audit-protocol.md) |
+| GOV-CMP-001 | 监管分类策略 | [regulatory-taxonomy-policy.md](../../governance/compliance/regulatory-taxonomy-policy.md) |
+| GOV-CMP-002 | 审计追踪策略 | [audit-trail-policy.md](../../governance/compliance/audit-trail-policy.md) |
+| **GOV-CMP-003** | **治理审计执行协议（本文档）** | [audit-protocol.md](../../governance/compliance/audit-protocol.md) |
 
 ### B.9 操作规范（operational/）
 
 | module_id | 标题 | 完整路径 |
 |-----------|------|---------|
-| OPS-VC-005 | Vibe Coding 会话门禁检查清单 | [vibe-coding-gate-checklist.md](../01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md) |
+| OPS-VC-005 | Vibe Coding 会话门禁检查清单 | [vibe-coding-gate-checklist.md](../../operational/vibe_coding/vibe-coding-gate-checklist.md) |
 
 ### B.10 配置文件（config/）
 
@@ -851,15 +851,15 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 
 | 文件 | 用途 | 完整路径 |
 |------|------|---------|
-| registry-master-index.yaml | 登记表总索引 | [registry-master-index.yaml](../01_policies_and_standards/_registry/catalogs/registry-master-index.yaml) |
-| gate-registry.yaml | 34 个门禁 SSoT | [gate-registry.yaml](../01_policies_and_standards/_registry/catalogs/gate-registry.yaml) |
-| rule-registry.yaml | 规则注册表 | [rule-registry.yaml](../01_policies_and_standards/_registry/catalogs/rule-registry.yaml) |
-| ai-risk-register.yaml | AI 风险登记表 | [ai-risk-register.yaml](../01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml) |
-| frontmatter-field-registry.yaml | Frontmatter 字段注册表 | [frontmatter-field-registry.yaml](../01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml) |
-| document-metadata-index.yaml | 文档元数据索引 | [document-metadata-index.yaml](../01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml) |
-| declarative-contract-tracker.yaml | 声明式契约跟踪表 | [declarative-contract-tracker.yaml](../01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml) |
-| architecture-contract.yaml | 架构合规契约 | [architecture-contract.yaml](../01_policies_and_standards/_registry/contracts/architecture-contract.yaml) |
-| model-capability-contract.yaml | 模型能力契约 | [model-capability-contract.yaml](../01_policies_and_standards/_registry/contracts/model-capability-contract.yaml) |
+| registry-master-index.yaml | 登记表总索引 | [registry-master-index.yaml](../../_registry/catalogs/registry-master-index.yaml) |
+| gate-registry.yaml | 34 个门禁 SSoT | [gate-registry.yaml](../../_registry/catalogs/gate-registry.yaml) |
+| rule-registry.yaml | 规则注册表 | [rule-registry.yaml](../../_registry/catalogs/rule-registry.yaml) |
+| ai-risk-register.yaml | AI 风险登记表 | [ai-risk-register.yaml](../../_registry/catalogs/ai-risk-register.yaml) |
+| frontmatter-field-registry.yaml | Frontmatter 字段注册表 | [frontmatter-field-registry.yaml](../../_registry/catalogs/frontmatter-field-registry.yaml) |
+| document-metadata-index.yaml | 文档元数据索引 | [document-metadata-index.yaml](../../_registry/catalogs/document-metadata-index.yaml) |
+| declarative-contract-tracker.yaml | 声明式契约跟踪表 | [declarative-contract-tracker.yaml](../../_registry/catalogs/declarative-contract-tracker.yaml) |
+| architecture-contract.yaml | 架构合规契约 | [architecture-contract.yaml](../../_registry/contracts/architecture-contract.yaml) |
+| model-capability-contract.yaml | 模型能力契约 | [model-capability-contract.yaml](../../_registry/contracts/model-capability-contract.yaml) |
 
 ### B.12 架构模型（architecture-model/）
 

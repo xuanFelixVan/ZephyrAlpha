@@ -2,9 +2,9 @@
 module_id: GOV-CMP-001
 title: 监管分类法
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

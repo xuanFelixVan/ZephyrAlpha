@@ -89,14 +89,17 @@ rules:
       - "src/zephyr/kb/__init__.py"
 
   - name: write_script
-    description: "治理脚本：全局默认拒绝 + 单一允许 + 显式 deny 模式化保护"
+    description: "治理脚本：全局默认拒绝 + 唯一例外 + 显式 deny 模式化保护"
+    scope_note: >
+      本规则为 RUNTIME 保护层——禁止运行时 Agent 直接修改 scripts/governance/。
+      开发阶段（Agents 通过 IDE 施工）不受本规则约束——由 pre-commit GATE-19 + §6.19 门禁-登记表原子同步铁律管理。
+      AGENTS.md §6.5（脚本入库强制约定）适用于开发阶段代码提交流程，与本运行时 deny 互补不冲突。
     allow:
       - "scripts/governance/d11_compliance/validate_truth_source_cascade.py"
     deny:
       - "scripts/governance/**/*.py"
-      # ↑ 全局 deny 模式化（AGENTS.md §6.5 脚本入库强制约定 — 2026-05-02 更新）
+      # ↑ 全局 deny 模式化（运行时保护）
       #   allow 为唯一例外。新增脚本自动受 deny 保护，无需逐条列出。
-      #   对标 write_config 的 deny 全覆盖策略。
 
   - name: write_rules
     description: "规则文件（.cursor/rules / .trae/rules）禁止 AI 修改"

@@ -26,3 +26,13 @@ SSoT: cross-layer-contracts.yaml v3.0
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l09_research_innovation.backtest_base import BacktestEngineBase, BacktestResult, FactorDiscovery
+
+__all__ = [
+    "BacktestEngineBase",
+    "BacktestResult",
+    "FactorDiscovery",
+]

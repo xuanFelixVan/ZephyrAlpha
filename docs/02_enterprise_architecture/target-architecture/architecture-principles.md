@@ -3,7 +3,7 @@ module_id: VIEW-ARCH-PRINCIPLES
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: active
-version: 1.1.0
+version: 1.2.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -24,8 +24,8 @@ tags:
 - thin-adapter
 - safety-red-lines
 - security-principles
-summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.1.0 完整版含 §0 定位 + §1 安全红线 4 条（从 00-overview.md 归集）+ §2 "开源优先与 Build-vs-Buy" 五条子原则 + §3 BvB 五维评分法。未来扩展：OCP 扩展点原则、SSoT 原则、模块准入铁律。
-date: '2026-05-02'
+summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.2.0 在 §1bis 增补安全红线 R1–R4 的 CI/工件追溯表。v1.1.0：§0 + §1 安全红线 + §2 BvB。未来扩展：OCP、SSoT、模块准入铁律。
+date: '2026-05-06'
 ttl: permanent
 ---
 
@@ -59,6 +59,15 @@ ttl: permanent
 | **R2** | **日志不写 secret** | 任何日志系统（structlog/logging/print）的输出中不得包含密钥、token、私钥 | CI 门禁正则扫描 log 输出 |
 | **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | L04 风控层 hard check before L06 执行 |
 | **R4** | **PRD 永远不改** | 生产数据库（PRD）永远不做 DDL 变更/手动 UPDATE/DELETE；所有变更走迁移脚本 + 审计日志 | DB 权限只读连接 + 迁移脚本强制记录 |
+
+### §1bis 门禁追溯（CI / 本地工件）
+
+| # | gate_ref | 说明 |
+|---|----------|------|
+| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | 防私钥误提交；密钥字面量与轮换另见 `secret-management-policy.md` |
+| **R2** | **目标态**：运行时日志不得写出 secret、token、私钥。**当前**以 Code Review + `06-security-architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job | 若落地自动化，应在 `scripts/arch_guard/` 或专项 workflow 登记并回链本表 |
+| **R3** | 设计侧：`cross-layer-contracts.yaml` + `invariants.yaml`（L04 ↔ L06）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | T1 实盘后须满足 hard-check 与适应度函数阈值 |
+| **R4** | 数据治理策略（`data-retention-policy.md` 等）+ 迁移与审计流程；非单一脚本名 | 以权限与流程为主 |
 
 **红线优先级**：高于所有其他架构原则。在其他原则（如 §1 "开源优先"）与红线冲突时，**红线无条件优先**。
 

@@ -1,61 +1,50 @@
-"""AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器（ATM）。
+"""AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
 
-Task       : T-2-30 | beta 前移
+Task       : T-2-30 | MOD-INF-012 v2.0
 Safety     : HIGH（涉及数据库事务 + 文件系统落盘 + 路径安全校验）
 Depends    : T-1-23 (InputSanitizer) ✅
 References :
-    - ADR-0030 SQLite 元数据层决策（本文件是对 ``zalpha_metadata.db`` 的
-      所有"写路径"唯一入口；业务数据层 DuckDB 不走此模块）
-    - ADR-0041 Session Handoff Protocol（ATM 保证"Session 产物 + 元数据
-      记录"要么整体落盘，要么整体回滚，避免腐败上下文）
-    - src/zephyr/llm_security/input_sanitizer.py::InputSanitizer.validate_path（
-      写路径白名单的唯一 SSoT，本模块不再重复定义白名单）
+    - ADR-0030 SQLite 元数据层决策（本文件是对 SQLite 元数据库的"写路径"唯一入口）
+    - ADR-0041 Session Handoff Protocol（ATM 保证产物与元数据原子落盘）
 
-设计要点（见 ADR-0030 §5.3、ADR-0041 §4）：
+设计要点 v2.0（见 MOD-INF-012 blueprint v2.0）：
 
 1. **两阶段提交（2PC 简化版）**：
    - 阶段 1（in-transaction）：
      * SQLite 执行 ``BEGIN IMMEDIATE`` + 若干 ``execute()``
      * 文件操作写入临时文件 ``<target>.atm-<tx_id>.tmp``，并 ``fsync``
+     * 在 tx_idempotency 表登记为 PREPARED（防止重复提交）
    - 阶段 2（commit）：
-     * SQLite ``COMMIT``（成功则持久化；失败则进入 rollback 分支）
-     * 对所有 staged 文件执行 ``os.replace(tmp, target)``（POSIX 原子 rename）
-     * 对目录 ``fsync``（尽力而为：Windows 上跳过）
-   - 任一阶段失败 → SQLite ``ROLLBACK`` + 删除所有 ``.tmp`` + 恢复已被覆盖的
-     ``<target>.atm-<tx_id>.bak``。
-2. **路径守卫**：所有 ``write_file(path, ...)`` 必须通过
-   ``InputSanitizer.validate_path(mode="write")``；越白名单即抛
-   ``PathTraversalError``。
-3. **不可重入**：单个 ``AtomicTransactionManager`` 实例的 ``transaction()`` 上下文
-   不允许嵌套（抛 ``TransactionError``）。多线程请各自实例化。
-4. **幂等保证**：``tx_id`` 为 ULID 形态字符串；同一 ``tx_id`` 重复调用
-   ``commit()`` 抛 ``TransactionError``，避免上游误调用。
-5. **安全等级 HIGH**：所有抛出异常的分支都会触发完整清理；tmp / bak 文件
-   在任何退出路径上都不会泄漏到仓库。
+     * 预验证所有 tmp 文件存在且可读
+     * SQLite ``COMMIT``
+     * 对所有 staged 文件执行 ``os.replace(tmp, target)``
+     * 对目录 ``fsync``（POSIX）
+     * 更新 tx_idempotency 为 COMMITTED
+   - 任一阶段失败 → SQLite ``ROLLBACK`` + 删除 tmp + bak 恢复
+   - 文件 rename 失败但 SQLite 已 COMMIT → 写 compensation event + 标记 COMPENSATED
+
+2. **事务超时**：每个 transaction 有超时限制（默认 30s）。超时自动 ROLLBACK。
+
+3. **幂等保证**：同一 tx_id 重复调用 commit() 抛 TransactionError（tx_idempotency 去重）。
+
+4. **路径守卫**：所有 write_file(path, ...) 必须通过 InputSanitizer.validate_path。
 
 Usage::
 
     from zephyr.db.atomic_transaction_manager import AtomicTransactionManager
 
     atm = AtomicTransactionManager(
-        db_path="docs/09_audit/state/zalpha_metadata.db",
+        db_path="data/zalpha_metadata.db",
         root="D:/ZephyrAlpha",
     )
     with atm.transaction() as tx:
-        tx.execute(
-            "UPDATE tasks SET status=? WHERE task_id=?",
-            ("VERIFIED", "T-1-01"),
-        )
-        tx.write_file(
-            "docs/02_enterprise_architecture/adr/adr-0030-sqlite-task-metadata-store.md",
-            adr_markdown_content,
-        )
-    # 退出 with 块：若无异常 → SQLite COMMIT + 文件 rename
-    #               若有异常 → SQLite ROLLBACK + tmp 清理 + bak 恢复
+        tx.execute("UPDATE tasks SET status=? WHERE task_id=?", ("VERIFIED", "T-1-01"))
+        tx.write_file("docs/02_enterprise_architecture/architecture-rationale-log.md", content)
 """
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import secrets
@@ -81,20 +70,25 @@ from zephyr.llm_security.input_sanitizer import (
 __all__ = [
     "AtomicTransactionManager",
     "TransactionError",
+    "TransactionTimeoutError",
     "TransactionScope",
 ]
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_TIMEOUT_SECONDS: float = 30.0
+
+
 class TransactionError(RuntimeError):
-    """ATM 内部状态错误（如嵌套、double-commit、未初始化等）。"""
+    """ATM 内部状态错误（嵌套、double-commit、未初始化等）。"""
+
+
+class TransactionTimeoutError(TransactionError):
+    """事务超时。"""
+
 
 def _utf8_lf_bytes(content: str | bytes) -> bytes:
-    """按项目编码规范序列化：UTF-8 无 BOM + LF。
-
-    - ``str`` → ``content.encode("utf-8")`` 后将 ``\\r\\n`` 替换为 ``\\n``
-    - ``bytes`` → 去 BOM + 替换 CRLF
-    """
+    """序列化为 UTF-8 无 BOM + LF。"""
     if isinstance(content, str):
         data = content.encode("utf-8")
     else:
@@ -104,12 +98,14 @@ def _utf8_lf_bytes(content: str | bytes) -> bytes:
     data = data.replace(b"\r\n", b"\n")
     return data
 
+
 def _new_tx_id() -> str:
-    """生成单次事务 ID：``tx-<unix_ms>-<hex8>``（毫秒精度 + 64bit 随机）。"""
+    """生成单次事务 ID：tx-<unix_ms>-<hex8>。"""
     return f"tx-{int(time.time() * 1000):013d}-{secrets.token_hex(4)}"
 
+
 def _fsync_dir(path: Path) -> None:
-    """对目录 fsync（POSIX 上保证 rename 持久化；Windows 上跳过）。"""
+    """对目录 fsync（POSIX；Windows 跳过）。"""
     if os.name != "posix":
         return
     fd = os.open(path, os.O_RDONLY)
@@ -118,32 +114,53 @@ def _fsync_dir(path: Path) -> None:
     finally:
         os.close(fd)
 
+
+def _now_iso() -> str:
+    from datetime import UTC, datetime
+
+    return datetime.now(UTC).isoformat()
+
+
 class TransactionScope:
-    """单次事务作用域。由 ``AtomicTransactionManager.transaction()`` 构造。
+    """单次事务作用域。对 ATM 外部不可直接构造。"""
 
-    在 ``with`` 块内通过 ``execute`` / ``executemany`` / ``write_file`` 声明操作；
-    SQLite 写入即时进入活跃事务（未 COMMIT），文件写入则 stage 到临时文件。
-    退出 ``with`` 块时由 ATM 决定 COMMIT 或 ROLLBACK。
+    __slots__ = (
+        "_atm",
+        "tx_id",
+        "_staged_files",
+        "_committed",
+        "_rolled_back",
+        "_started_at",
+        "_timeout",
+    )
 
-    本类不对外直接构造，且方法在 ATM 的 ``_lock`` 保护下执行。
-    """
-
-    __slots__ = ("_atm", "tx_id", "_staged_files", "_committed", "_rolled_back")
-
-    def __init__(self, atm: AtomicTransactionManager, tx_id: str) -> None:
+    def __init__(
+        self,
+        atm: AtomicTransactionManager,
+        tx_id: str,
+        timeout: float,
+    ) -> None:
         self._atm = atm
         self.tx_id: str = tx_id
         self._staged_files: list[tuple[Path, Path, Path | None]] = []
         self._committed: bool = False
         self._rolled_back: bool = False
+        self._started_at: float = time.monotonic()
+        self._timeout: float = timeout
+
+    def _check_timeout(self) -> None:
+        elapsed = time.monotonic() - self._started_at
+        if elapsed > self._timeout:
+            raise TransactionTimeoutError(f"[{self.tx_id}] transaction timeout ({elapsed:.1f}s > {self._timeout}s)")
 
     def execute(
         self,
         sql: str,
         params: Sequence[Any] | dict[str, Any] = (),
     ) -> sqlite3.Cursor:
-        """在当前事务中执行单条 SQL（可带参数）。"""
+        """在当前事务中执行单条 SQL（参数化查询）。"""
         self._check_active()
+        self._check_timeout()
         assert self._atm._conn is not None
         return self._atm._conn.execute(sql, params)
 
@@ -154,6 +171,7 @@ class TransactionScope:
     ) -> sqlite3.Cursor:
         """在当前事务中批量执行 SQL。"""
         self._check_active()
+        self._check_timeout()
         assert self._atm._conn is not None
         return self._atm._conn.executemany(sql, seq_of_params)
 
@@ -162,14 +180,14 @@ class TransactionScope:
         rel_path: str,
         content: str | bytes,
     ) -> Path:
-        """将文件写入请求 stage 到临时文件，commit 时统一 rename。
+        """将文件写入 stage 到临时文件，commit 时统一 rename。
 
         参数
         ----
         rel_path : str
-            相对 ``ATM.root`` 的路径。必须命中 InputSanitizer 写白名单。
+            相对 ATM.root 的路径。必须命中 InputSanitizer 写白名单。
         content : str | bytes
-            文件内容；会被统一规范化为 UTF-8 无 BOM + LF。
+            文件内容；统一规范化为 UTF-8 无 BOM + LF。
 
         返回
         ----
@@ -177,6 +195,7 @@ class TransactionScope:
             规划中的目标绝对路径（commit 成功后生效）。
         """
         self._check_active()
+        self._check_timeout()
         target: Path = self._atm._sanitizer.validate_path(rel_path, mode="write")
         target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -188,16 +207,12 @@ class TransactionScope:
             bak_path = target.with_name(f"{target.name}.atm-{self.tx_id}.bak")
             try:
                 os.replace(target, bak_path)
-            except OSError as exc:  # pragma: no cover — 极端文件系统错
+            except OSError as exc:
                 raise TransactionError(f"[{self.tx_id}] failed to stage existing file to .bak: {target}") from exc
 
         _flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         _binary_flag = getattr(os, "O_BINARY", 0)
-        fd = os.open(
-            tmp_path,
-            _flags | _binary_flag,
-            0o644,
-        )
+        fd = os.open(tmp_path, _flags | _binary_flag, 0o644)
         try:
             os.write(fd, data)
             os.fsync(fd)
@@ -209,7 +224,7 @@ class TransactionScope:
         return target
 
     def staged_file_count(self) -> int:
-        """当前事务 staged 的文件数（便于外部断言/日志）。"""
+        """当前事务 staged 的文件数。"""
         return len(self._staged_files)
 
     def _check_active(self) -> None:
@@ -220,29 +235,29 @@ class TransactionScope:
         if self._atm._active_tx is not self:
             raise TransactionError(f"[{self.tx_id}] not the currently active transaction in ATM")
 
+
 class AtomicTransactionManager:
-    """对单个 SQLite 文件 + 其相关文件系统操作的原子事务封装。
+    """对 SQLite + 文件系统的原子事务封装 v2.0。
 
     参数
     ----
-    db_path : str
-        SQLite 数据库相对路径（相对 ``root``）。会被 InputSanitizer 写白名单
-        校验（必须位于 ``docs/`` / ``src/zephyr/`` / ``.audit_cache/`` 等下）。
-    root : str
-        项目根目录绝对路径；用于 InputSanitizer 的 ``root`` 构造。
-    isolation_level : str | None
-        传给 ``sqlite3.connect`` 的隔离等级，默认 ``None``（手动控制 BEGIN）。
-    timeout : float
-        ``sqlite3.connect`` 的忙等待超时，默认 30 秒（WAL 下已很少触发）。
-    sanitizer : InputSanitizer | None
-        可注入自定义 sanitizer（便于测试）；默认基于 ``root`` 新建。
+    db_path
+        SQLite 数据库相对路径（相对 root），由 InputSanitizer 校验。
+    root
+        项目根目录绝对路径。
+    isolation_level
+        sqlite3.connect 的隔离等级，默认 None（手动 BEGIN）。
+    timeout
+        sqlite3.connect 的 busy_timeout，默认 30s。
+    tx_timeout
+        事务级超时（秒），默认 30s。超时自动 ROLLBACK。
+    sanitizer
+        可注入自定义 InputSanitizer（便于测试）。
 
     线程模型
     --------
-    单实例内部使用 ``threading.RLock`` 串行化所有 ``transaction()`` 进入；
-    ``sqlite3.connect`` 使用 ``check_same_thread=False``，但实际执行路径
-    仍由锁保护，因此在跨线程复用时是安全的。高并发场景建议每线程一个
-    ATM 实例。
+    单实例内部使用 threading.RLock 串行化所有 transaction()。
+    跨线程复用安全。高并发建议每线程一个 ATM 实例。
     """
 
     def __init__(
@@ -252,6 +267,7 @@ class AtomicTransactionManager:
         *,
         isolation_level: Literal["DEFERRED", "EXCLUSIVE", "IMMEDIATE"] | None = None,
         timeout: float = 30.0,
+        tx_timeout: float = DEFAULT_TIMEOUT_SECONDS,
         sanitizer: InputSanitizer | None = None,
     ) -> None:
         self._root: Path = Path(root).resolve()
@@ -262,11 +278,13 @@ class AtomicTransactionManager:
 
         self._isolation_level = isolation_level
         self._timeout = timeout
+        self._tx_timeout = tx_timeout
         self._conn: sqlite3.Connection | None = None
         self._active_tx: TransactionScope | None = None
         self._lock = RLock()
 
         self._open_connection()
+        self._ensure_tx_idempotency_table()
 
     def _open_connection(self) -> None:
         conn = sqlite3.connect(
@@ -279,7 +297,25 @@ class AtomicTransactionManager:
         conn.execute("PRAGMA synchronous = NORMAL")
         conn.execute("PRAGMA foreign_keys = ON")
         conn.execute("PRAGMA busy_timeout = 5000")
+        conn.execute("PRAGMA wal_autocheckpoint = 4096")
         self._conn = conn
+
+    def _ensure_tx_idempotency_table(self) -> None:
+        """确保 tx_idempotency 表存在（幂等）。"""
+        assert self._conn is not None
+        self._conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tx_idempotency (
+                tx_id           TEXT PRIMARY KEY,
+                status          TEXT NOT NULL CHECK(status IN ('PREPARED','COMMITTED','ROLLED_BACK','COMPENSATED')),
+                started_at      TEXT NOT NULL,
+                committed_at    TEXT,
+                rolled_back_at  TEXT,
+                compensation_at TEXT,
+                note            TEXT NOT NULL DEFAULT ''
+            )
+            """
+        )
 
     @property
     def db_path(self) -> Path:
@@ -291,13 +327,14 @@ class AtomicTransactionManager:
 
     @contextmanager
     def transaction(self) -> Iterator[TransactionScope]:
-        """进入一次事务作用域（见类文档的 Usage 示例）。
+        """进入一次事务作用域。
 
         异常语义
         --------
-        - ``with`` 块内抛任何异常 → 捕获 → SQLite ROLLBACK + 文件清理 + 重新抛出
-        - ``with`` 块正常退出 → commit：SQLite COMMIT + 文件 rename + 目录 fsync
-        - ``commit`` 过程中失败 → rollback（尽力恢复）并抛 ``TransactionError``
+        - with 块内抛任何异常 → ROLLBACK + 文件清理 + 重新抛出
+        - with 块正常退出 → COMMIT
+        - commit 过程中失败 → ROLLBACK（尽力）+ compensating event + re-raise
+        - 超时 → ROLLBACK + TransactionTimeoutError
         """
         with self._lock:
             if self._active_tx is not None:
@@ -305,12 +342,26 @@ class AtomicTransactionManager:
             if self._conn is None:
                 self._open_connection()
 
-            tx = TransactionScope(atm=self, tx_id=_new_tx_id())
+            tx = TransactionScope(atm=self, tx_id=_new_tx_id(), timeout=self._tx_timeout)
             self._active_tx = tx
 
             assert self._conn is not None
             self._conn.execute("BEGIN IMMEDIATE")
-            logger.debug("[%s] BEGIN IMMEDIATE", tx.tx_id)
+
+            # 登记到幂等去重表
+            self._conn.execute(
+                "INSERT OR IGNORE INTO tx_idempotency (tx_id, status, started_at, note) "
+                "VALUES (?, 'PREPARED', ?, '')",
+                (tx.tx_id, _now_iso()),
+            )
+            # 检查是否重复（tx_id 已存在 → 重复提交）
+            row = self._conn.execute("SELECT status FROM tx_idempotency WHERE tx_id = ?", (tx.tx_id,)).fetchone()
+            if row and row[0] != "PREPARED":
+                self._conn.execute("ROLLBACK")
+                self._active_tx = None
+                raise TransactionError(f"[{tx.tx_id}] duplicate transaction: already {row[0]}")
+
+            logger.debug("[%s] BEGIN IMMEDIATE + PREPARED", tx.tx_id)
 
             try:
                 yield tx
@@ -318,19 +369,79 @@ class AtomicTransactionManager:
                 self._rollback(tx)
                 raise
 
+            # 超时检查
+            elapsed = time.monotonic() - tx._started_at
+            if elapsed > self._tx_timeout:
+                self._rollback(tx)
+                raise TransactionTimeoutError(
+                    f"[{tx.tx_id}] transaction timeout ({elapsed:.1f}s > {self._tx_timeout}s)"
+                )
+
             try:
                 self._commit(tx)
             except BaseException:
                 self._rollback(tx)
                 raise
 
+    def _pre_commit_verify(self, tx: TransactionScope) -> None:
+        """预验证所有 staged 的 tmp 文件存在且可读。"""
+        for target, tmp, _bak in tx._staged_files:
+            if not tmp.exists():
+                raise TransactionError(f"[{tx.tx_id}] pre-commit verify failed: tmp file missing {tmp}")
+            if tmp.stat().st_size == 0:
+                raise TransactionError(f"[{tx.tx_id}] pre-commit verify failed: tmp file empty {tmp}")
+
+    def _write_compensation_event(self, tx: TransactionScope) -> None:
+        """SQLite COMMIT 已成功但文件 rename 失败时，写入补偿事件。"""
+        assert self._conn is not None
+        try:
+            self._conn.execute(
+                """
+                INSERT INTO events
+                    (event_id, event_type, payload, task_id, session_id, created_at)
+                VALUES (?, 'compensation', ?, ?, ?, ?)
+                """,
+                (
+                    f"ev-{tx.tx_id}",
+                    json.dumps(
+                        {
+                            "action": "compensating_transaction",
+                            "tx_id": tx.tx_id,
+                            "note": "SQLite committed but file rename failed",
+                        },
+                        ensure_ascii=False,
+                    ),
+                    None,
+                    None,
+                    _now_iso(),
+                ),
+            )
+            self._conn.execute(
+                "UPDATE tx_idempotency SET status='COMPENSATED', compensation_at=? WHERE tx_id=?",
+                (_now_iso(), tx.tx_id),
+            )
+        except sqlite3.Error as exc:
+            logger.error("[%s] failed to write compensation event: %s", tx.tx_id, exc)
+
     def _commit(self, tx: TransactionScope) -> None:
         assert self._conn is not None
+
+        self._pre_commit_verify(tx)
+
         try:
             self._conn.execute("COMMIT")
         except sqlite3.Error as exc:
             raise TransactionError(f"[{tx.tx_id}] SQLite COMMIT failed: {exc}") from exc
 
+        try:
+            self._conn.execute(
+                "UPDATE tx_idempotency SET status='COMMITTED', committed_at=? WHERE tx_id=?",
+                (_now_iso(), tx.tx_id),
+            )
+        except sqlite3.Error:
+            pass  # 尽力更新，失败不影响事务已提交的事实
+
+        # 文件 rename 阶段
         renamed: list[tuple[Path, Path, Path | None]] = []
         try:
             for target, tmp, bak in tx._staged_files:
@@ -341,33 +452,35 @@ class AtomicTransactionManager:
             for d in dirs_to_fsync:
                 try:
                     _fsync_dir(d)
-                except OSError:  # pragma: no cover — Windows 不支持
+                except OSError:
                     pass
 
             for _, _, bak in renamed:
                 if bak is not None and bak.exists():
                     try:
                         bak.unlink()
-                    except OSError:  # pragma: no cover
+                    except OSError:
                         logger.warning("[%s] failed to unlink .bak: %s", tx.tx_id, bak)
+
         except OSError as exc:
             logger.error(
-                "[%s] post-COMMIT file rename failed; attempting bak restore: %s",
+                "[%s] post-COMMIT file rename failed; writing compensation event: %s",
                 tx.tx_id,
                 exc,
             )
+            self._write_compensation_event(tx)
             for target, _tmp, bak in renamed:
                 if bak is not None and bak.exists():
                     try:
                         os.replace(bak, target)
-                    except OSError:  # pragma: no cover
+                    except OSError:
                         pass
             raise TransactionError(f"[{tx.tx_id}] file rename phase failed after SQLite COMMIT: {exc}") from exc
 
         tx._committed = True
         self._active_tx = None
         logger.info(
-            "[%s] committed (sql_ops_tracked_by_sqlite, files=%d)",
+            "[%s] committed (files=%d)",
             tx.tx_id,
             len(tx._staged_files),
         )
@@ -375,24 +488,33 @@ class AtomicTransactionManager:
     def _rollback(self, tx: TransactionScope) -> None:
         if tx._rolled_back:
             return
-        if self._conn is not None:
-            try:
-                self._conn.execute("ROLLBACK")
-            except sqlite3.Error as exc:  # pragma: no cover
-                logger.error("[%s] SQLite ROLLBACK failed: %s", tx.tx_id, exc)
+
+        assert self._conn is not None
+        try:
+            self._conn.execute("ROLLBACK")
+        except sqlite3.Error as exc:
+            logger.error("[%s] SQLite ROLLBACK failed: %s", tx.tx_id, exc)
+
+        try:
+            self._conn.execute(
+                "UPDATE tx_idempotency SET status='ROLLED_BACK', rolled_back_at=? WHERE tx_id=?",
+                (_now_iso(), tx.tx_id),
+            )
+        except sqlite3.Error:
+            pass
 
         for target, tmp, bak in tx._staged_files:
             if tmp.exists():
                 try:
                     tmp.unlink()
-                except OSError:  # pragma: no cover
+                except OSError:
                     logger.warning("[%s] failed to unlink tmp: %s", tx.tx_id, tmp)
             if bak is not None and bak.exists():
                 try:
                     if target.exists():
                         target.unlink()
                     os.replace(bak, target)
-                except OSError:  # pragma: no cover
+                except OSError:
                     logger.error("[%s] failed to restore bak: %s", tx.tx_id, bak)
 
         tx._rolled_back = True
@@ -401,7 +523,7 @@ class AtomicTransactionManager:
         logger.info("[%s] rolled back", tx.tx_id)
 
     def close(self) -> None:
-        """关闭底层 SQLite 连接。若存在活跃事务则先 rollback。"""
+        """关闭底层 SQLite 连接。有活跃事务则先 rollback。"""
         with self._lock:
             if self._active_tx is not None:
                 self._rollback(self._active_tx)
@@ -416,11 +538,7 @@ class AtomicTransactionManager:
         self.close()
 
     def validate_write_path(self, rel_path: str) -> Path:
-        """对外暴露的路径守卫快捷方法（与 ``write_file`` 内部逻辑一致）。
-
-        用于调用方在构造事务前预校验文件路径，避免在事务中才失败。
-        未进入事务时即可调用。
-        """
+        """对外暴露的路径守卫快捷方法（与 write_file 内部逻辑一致）。"""
         try:
             return cast(Path, self._sanitizer.validate_path(rel_path, mode="write"))
         except SanitizationError:
@@ -428,4 +546,5 @@ class AtomicTransactionManager:
         except PathTraversalError:
             raise
 
-__version__ = "1.0.0"
+
+__version__ = "2.0.0"

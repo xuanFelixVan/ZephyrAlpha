@@ -8,6 +8,7 @@ partition:
 
 modules:
   - id: shared-contracts
+    module_id: MOD-INF-016
     name: Shared Contracts
     submodule_path: src/zephyr/shared/contracts/
     status: implemented
@@ -24,6 +25,7 @@ modules:
       - ADR-0040
 
   - id: shared-infra
+    module_id: MOD-INF-016
     name: Shared Infrastructure
     submodule_path: src/zephyr/shared/
     status: implemented

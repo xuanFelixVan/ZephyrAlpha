@@ -1,4 +1,4 @@
-schema_version: "1.0.0"
+schema_version: 1.0.0
 partition:
   id: l12
   name: System Telemetry
@@ -6,69 +6,87 @@ partition:
   layer_position: 12
   runtime_plane: warm
   status: implemented
-  note: >
-    全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档，
-    为 L00-L11 + L13 所有业务层提供可观测性数据底座。
+  note: '全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档， 为 L00-L11 + L13 所有业务层提供可观测性数据底座。
     归入 C 轨（业务脊柱层内子系统），与 5 大 AI 核心服务不同。
 
+    '
 modules:
-  - id: l12-ai-behavior
-    name: AI Behavior Telemetry
-    submodule_path: src/zephyr/l12_system_telemetry/ai_behavior/
-    status: skeleton
-    priority: P1
-    runtime_plane: warm
-    description: AI 行为遥测：幻觉率、token 消耗、规则触发统计
-    files: []
-    interfaces: []
-    adr_ref: []
-
-  - id: l12-metrics
-    name: Metrics Stream
-    submodule_path: src/zephyr/l12_system_telemetry/metrics/
-    status: skeleton
-    priority: P1
-    runtime_plane: warm
-    description: 指标流：SLI/SLO、业务度量
-    files: []
-    interfaces: []
-    adr_ref: []
-
-  - id: l12-logs
-    name: Logs Stream
-    submodule_path: src/zephyr/l12_system_telemetry/logs/
-    status: skeleton
-    priority: P1
-    runtime_plane: warm
-    description: 结构化日志流
-    files: []
-    interfaces: []
-    adr_ref: []
-
-  - id: l12-traces
-    name: Traces Stream
-    submodule_path: src/zephyr/l12_system_telemetry/traces/
-    status: skeleton
-    priority: P1
-    runtime_plane: warm
-    description: 分布式链路追踪
-    files: []
-    interfaces: []
-    adr_ref: []
-
-  - id: l12-archive
-    name: Archive
-    submodule_path: src/zephyr/l12_system_telemetry/archive/
-    status: skeleton
-    priority: P2
-    runtime_plane: cold
-    description: 历史数据归档
-    files: []
-    interfaces: []
-    adr_ref: []
-
+- id: l12-core
+  module_id: MOD-INF-015
+  name: Telemetry Core Utilities
+  submodule_path: src/zephyr/l12_system_telemetry/
+  status: implemented
+  priority: P0
+  runtime_plane: warm
+  description: 根包级遥测工具（契约指标等），与子目录流式模块并列
+  files:
+  - contract_metrics.py
+  interfaces:
+  - contract_id: CT-TELE-FLE-001
+    role: producer
+    description: 向 FLE 输出可消费遥测序列（MOD-MASTER-001 2.1 总表）
+  adr_ref: []
+- id: l12-ai-behavior
+  module_id: MOD-INF-015
+  name: AI Behavior Telemetry
+  submodule_path: src/zephyr/l12_system_telemetry/ai_behavior/
+  status: implemented
+  priority: P1
+  runtime_plane: warm
+  description: AI 行为遥测 Phase 1（event_sink）
+  files:
+  - event_sink.py
+  interfaces: []
+  adr_ref: []
+- id: l12-metrics
+  module_id: MOD-INF-015
+  name: Metrics Stream
+  submodule_path: src/zephyr/l12_system_telemetry/metrics/
+  status: implemented
+  priority: P1
+  runtime_plane: warm
+  description: 指标流（blueprint_metrics instrumentation）
+  files:
+  - blueprint_metrics.py
+  interfaces: []
+  adr_ref: []
+- id: l12-logs
+  module_id: MOD-INF-015
+  name: Logs Stream
+  submodule_path: src/zephyr/l12_system_telemetry/logs/
+  status: implemented
+  priority: P1
+  runtime_plane: warm
+  description: 结构化日志 JSONL（structured_sink）
+  files:
+  - structured_sink.py
+  interfaces: []
+  adr_ref: []
+- id: l12-traces
+  module_id: MOD-INF-015
+  name: Traces Stream
+  submodule_path: src/zephyr/l12_system_telemetry/traces/
+  status: implemented
+  priority: P1
+  runtime_plane: warm
+  description: 追踪占位（span_stub / 后续 OTEL）
+  files:
+  - span_stub.py
+  interfaces: []
+  adr_ref: []
+- id: l12-archive
+  module_id: MOD-INF-015
+  name: Archive
+  submodule_path: src/zephyr/l12_system_telemetry/archive/
+  status: implemented
+  priority: P2
+  runtime_plane: cold
+  description: 冷归档占位（cold_stub）
+  files:
+  - cold_stub.py
+  interfaces: []
+  adr_ref: []
 summary:
-  total: 5
+  total: 6
   by_status:
-    implemented: 1
-    skeleton: 4
+    implemented: 6

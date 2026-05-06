@@ -2,7 +2,7 @@
 module_id: DW-ROADMAP-TEMPLATE
 title: <季度或主题> 路线图
 doc_type: plan
-status: draft
+status: Draft
 version: 1.0.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner

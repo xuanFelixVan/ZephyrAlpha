@@ -1,606 +1,446 @@
-# ============================================================================
-# ZephyrAlpha 模块登记表 — 唯一真源（Module Registry SSoT）
-# ============================================================================
-# 版本: 1.0.0 | 创建: 2026-05-01 | owner: ZephyrAlpha-Owner
-#
-# 对标: ITIL SACM CMDB（每个 CI 一条记录） + Google Monorepo OWNERS/BUILD（项目根）
-#
-# 用途: 登记 ZephyrAlpha 全部 14 层模块的完整生命周期
-#       （蓝图（含施工指引）→ 交付记录），一条记录跟到底。
-#
-# AI 使用方式:
-#   1. 先读 _schema → 了解合法字段和枚举值
-#   2. 再查 modules → 按 layer / domain / status 过滤
-#   3. 定位到具体 module → 读对应目录下的 blueprint.md（§1-§11 架构设计 + §12 施工指引）
-#
-# 自动校验: pre-commit 脚本扫描 03_modules/ 下实际目录，与登记表比对
-# ============================================================================
-
+registry_version: 3.1.0
+last_updated: '2026-05-06'
 _schema:
-  description: "模块登记表的字段定义和受控词表（零歧义，AI 可直接使用）"
-
-  # ---- 层级定义（14 层）----
-  layers:
-    - id: "L00"
-      name: "data_source"
-      dir: "l00_data_source"
-      description: "数据接入层——行情/基本面/另类数据拉取、清洗、标准化"
-    - id: "L01"
-      name: "infrastructure"
-      dir: "l01_infrastructure"
-      description: "基础设施层——消息队列、缓存、数据库、存储"
-    - id: "L02"
-      name: "alpha_factor"
-      dir: "l02_alpha_factor"
-      description: "因子层——因子定义、计算、注册、评估"
-    - id: "L03"
-      name: "signal_generation"
-      dir: "l03_signal_generation"
-      description: "信号生成层——因子合成、信号加权、时间对齐"
-    - id: "L04"
-      name: "risk_management"
-      dir: "l04_risk_management"
-      description: "风控层——组合风险、头寸限制、压力测试"
-    - id: "L05"
-      name: "portfolio_construction"
-      dir: "l05_portfolio_construction"
-      description: "组合构建层——优化器、约束引擎、再平衡"
-    - id: "L06"
-      name: "trade_execution"
-      dir: "l06_trade_execution"
-      description: "交易执行层——订单路由、算法执行、滑点控制"
-    - id: "L07"
-      name: "post_trade_analytics"
-      dir: "l07_post_trade_analytics"
-      description: "归因分析层——绩效归因、交易成本分析、报告"
-    - id: "L08"
-      name: "human_ai_interface"
-      dir: "l08_human_ai_interface"
-      description: "人机界面层——前端、API、可视化、Dashboard"
-    - id: "L09"
-      name: "research_innovation"
-      dir: "l09_research_innovation"
-      description: "研究创新层——回测引擎、策略研究、模拟交易"
-    - id: "L10"
-      name: "compliance"
-      dir: "l10_compliance"
-      description: "合规层——合规检查、监管报告、审计追踪"
-    - id: "L11"
-      name: "ml_platform"
-      dir: "l11_ml_platform"
-      description: "ML 平台层——模型注册、训练管线、推理服务、Scout Agent"
-    - id: "L12"
-      name: "system_telemetry"
-      dir: "l12_system_telemetry"
-      description: "可观测层——日志、指标、追踪、告警"
-    - id: "L13"
-      name: "experimentation"
-      dir: "l13_experimentation"
-      description: "实验层——A/B 测试、特性开关、沙箱环境"
-
-  # ---- 功能域定义（跨层分组）----
-  functional_domains:
-    - id: "market_data"
-      name: "行情数据"
-      layers: ["L00", "L12"]
-    - id: "fundamental_data"
-      name: "基本面数据"
-      layers: ["L00"]
-    - id: "alpha_research"
-      name: "因子研究"
-      layers: ["L02", "L03", "L09"]
-    - id: "risk_control"
-      name: "风控"
-      layers: ["L04", "L10"]
-    - id: "portfolio_mgmt"
-      name: "组合管理"
-      layers: ["L05", "L07"]
-    - id: "execution"
-      name: "交易执行"
-      layers: ["L06"]
-    - id: "ui_ux"
-      name: "用户界面"
-      layers: ["L08"]
-    - id: "ml_ops"
-      name: "ML 运维"
-      layers: ["L11", "L13"]
-    - id: "infra"
-      name: "基础设施"
-      layers: ["L01"]
-    - id: "observability"
-      name: "可观测性"
-      layers: ["L12"]
-    - id: "compliance_gov"
-      name: "合规治理"
-      layers: ["L10"]
-
-  # ---- 状态受控词表 ----
-  status_values:
-    blueprint:
-      - drafting       # 起草中
-      - review         # 审核中
-      - approved       # 已通过（进入施工阶段）
-      - revision       # 修订中
-      - retired        # 已退役
-    delivery:
-      - pending        # 待交付
-      - delivered      # 已交付
-      - verified       # 已验证
-
-  # ---- 优先级 ----
+  description: 模块登记表字段——与 REG-001（registry-of-registries.yaml）及物理 blueprint.md 对齐
   priority_values:
-    - P0              # 核心路径，立即需要
-    - P1              # 高优先级，experimental 内完成
-    - P2              # 中优先级，beta 内完成
-    - P3              # 低优先级，按需完成
-
-  # ---- 依赖类型 ----
-  dependency_types:
-    - runtime          # 运行时依赖（模块启动必须对方存在）
-    - data             # 数据依赖（消费对方产出的数据）
-    - build            # 构建时依赖（构建/测试需要对方存在）
-    - contract         # 接口契约依赖（实现对方的接口）
-
-# ============================================================================
-# 模块登记（按 module_id 排序）
-# ============================================================================
-# 字段说明:
-#   module_id         唯一标识符，格式 MOD-{LAYER}-{NNN}（例 MOD-DS-001）
-#   name              模块名（全小写 kebab-case，与目录名一致）
-#   layer             所属层级 ID（L00-L13）
-#   functional_domain 所属功能域（见 _schema.functional_domains）
-#   path              相对路径（从 docs/ 根），指向模块目录
-#   blueprint         { status, file, version, author, created }
-#   delivery          { latest_version, history[] }
-#   dependencies[]    { module_id, type }
-#   priority          优先级（P0-P3）
-#   tags[]            自由标签
-# ============================================================================
-
+  - P0
+  - P1
+  - P2
+  - P3
+  construction_plan_status_values:
+  - not_started
+  - phase_1_partial
+  - phase_1_complete
+  - phase_2_complete
+  - blocked_by_infrastructure
+  - completed
 modules:
-  - module_id: "MOD-INF-001"
-    name: "capacity-assurance"
-    layer: "L01"
-    functional_domain: "observability"
-    path: "03_modules/l01_infrastructure/capacity-assurance/"
-    blueprint:
-      status: approved
-      file: "blueprint.md"
-      version: "2.1.0"
-      author: "AI-GLM-5.1"
-      created: "2026-05-01"
-    construction:
-      status: merged_into_blueprint
-      note: "v2.1.0 第 3 代升级——补齐施工前置设计：Error Budget 三级→五级（含 Burn Rate 多窗口监控）+ 灾难恢复策略（DR 四级 + 恢复脚本）+ 容量预测模型（6 维度 + 趋势外推）+ 跨模块集成设计（Kill Switch↔CBG / Degradation↔ContextBudget / EB↔AHM / Sandbox↔CBG）。蓝图即施工载体，无独立 construction-plan.md。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies: []
-    priority: P0
-    tags: ["capacity-assurance", "slo", "ai-audit-guard", "infrastructure", "", "error-budget", "token-budget", "kill-switch", "sandbox", "graceful-degradation", "otel", "disaster-recovery", "capacity-prediction", "cross-module-integration"]
-
-  - module_id: "MOD-INF-002"
-    name: "runtime-integration"
-    layer: "L01"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/runtime-integration/"
-    blueprint:
-      status: approved
-      file: "blueprint.md"
-      version: "1.0.0"
-      author: "AI-GLM-5.1"
-      created: "2026-05-01"
-    construction:
-      status: merged_into_blueprint
-      note: "蓝图即施工载体——施工指引已整合至 blueprint.md §12。无独立 construction-plan.md。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-001"
-        type: runtime
-    priority: P0
-    tags: ["runtime-integration", "cross-layer", "ri-modules", "event-bus", "infrastructure"]
-
-  - module_id: "MOD-INF-003"
-    name: "task-card-kms"
-    layer: "L01"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/task-card-kms/"
-    blueprint:
-      status: retired
-      file: "blueprint.md"
-      version: "2.0.0"
-      author: "AI-GLM-5.1"
-      created: "2026-05-01"
-    construction:
-      status: merged_into_blueprint
-      note: "experimental 构建完成（phase_1_complete）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-001"
-        type: runtime
-      - module_id: "MOD-INF-002"
-        type: runtime
-    priority: P1
-    tags: ["task-card", "kms", "knowledge-management", "infrastructure", "", "retired"]
-
-  - module_id: "MOD-INF-004"
-    name: "vibe-coding-pipelines"
-    layer: "L01"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/vibe-coding-pipelines/"
-    blueprint:
-      status: retired
-      file: "blueprint.md"
-      version: "1.0.0"
-      author: "AI-GLM-5.1"
-      created: "2026-05-01"
-    construction:
-      status: merged_into_blueprint
-      note: "scaffold 构建完成（phase_0_completed）。蓝图即施工载体——施工指引已整合至 blueprint.md §12。内容已升级为 MOD-INF-006 task-system。本模块为已完成工作，非失败废弃。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-001"
-        type: runtime
-      - module_id: "MOD-INF-002"
-        type: runtime
-      - module_id: "MOD-INF-003"
-        type: runtime
-      - module_id: "MOD-INF-005"
-        type: runtime
-    priority: P0
-    tags: ["vibe-coding", "dual-pipelines", "script-system", "m1-m11-modules", "infrastructure", "", "retired"]
-
-  - module_id: "MOD-INF-005"
-    name: "script-system"
-    layer: "L01"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/script-system/"
-    blueprint:
-      status: approved
-      file: "blueprint.md"
-      version: "1.0.0"
-      author: "human_plus_agent"
-      created: "2026-05-02"
-    construction:
-      status: partial_30
-      note: "scaffold MVP 已交付。施工指引见 blueprint.md §12。"
-    delivery:
-      latest_version: "0.1.0--mvp"
-      history:
-        - version: "0.1.0--mvp"
-          date: "2026-05-02"
-          phase: "-MVP"
-          artifacts:
-            - "src/zephyr/script_system/__init__.py"
-            - "src/zephyr/script_system/finding.py（Finding Schema + FindingCollection）"
-            - "scripts/governance/__init__.py"
-            - "scripts/governance/run_all.py（40个脚本统一编排入口）"
-            - "OPS-VC-005 verifiability: manual → semi-automated"
-    dependencies:
-      - module_id: "MOD-INF-001"
-        type: runtime
-      - module_id: "MOD-INF-003"
-        type: runtime
-      - module_id: "MOD-INF-004"
-        type: contract
-    priority: P0
-    tags: ["script-system", "vibe-coding", "governance", "pre-commit", "automation", "scripts-system", "quality-gate", "infrastructure", ""]
-
-  - module_id: "MOD-INF-006"
-    name: "task-system"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/task-system/"
-    blueprint:
-      status: approved
-      file: "blueprint.md"
-      version: "0.3.0"
-      author: "human_plus_agent"
-      created: "2026-05-02"
-    construction:
-      status: partial_30
-      note: "scaffold CONTEXT卡 MVP 已施工。施工指引见 blueprint.md §12。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-005"
-        type: runtime
-    priority: P0
-    tags: ["task-system", "task-card", "orchestrator", "agent-orchestrator", "10-state-machine", "infrastructure", ""]
-
-  - module_id: "MOD-KB-001"
-    name: "knowledge-base"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/knowledge-base/"
-    blueprint:
-      status: approved
-      file: "blueprint.md"
-      version: "0.2.0"
-      author: "human_plus_agent"
-      created: "2026-05-02"
-    construction:
-      status: not_started
-      note: "蓝图已就绪，施工待 beta。当前 kb/ 代码为 experimental 过渡实现。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-005"
-        type: data
-    priority: P0
-    tags: ["knowledge-base", "kb", "ke", "chromadb", "kms", "g1-g5", "infrastructure", ""]
-
-  - module_id: "MOD-MASTER-001"
-    name: "master-blueprint"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/_master-blueprint/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: not_started
-      note: "总蓝图——定义12系统集成契约(CT-*)+共享Schema。不产生代码，仅定义契约。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-005"
-        type: contract
-      - module_id: "MOD-INF-006"
-        type: contract
-      - module_id: "MOD-KB-001"
-        type: contract
-    priority: P0
-    tags: ["master-blueprint", "integration-contracts", "closed-loop", "ssoT", "cross-system", ""]
-
-  - module_id: "MOD-INF-007"
-    name: "gate-engine"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/gate-engine/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_50
-      note: "gate_engine.py + 5 KMS YAML门禁已实现。G0-G7完整判定待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-005"
-        type: data
-      - module_id: "MOD-INF-006"
-        type: runtime
-    priority: P0
-    tags: ["gate-engine", "gates", "g0-g7", "g1-g5", "circuit-breaker", "admission-controller", "infrastructure", ""]
-
-  - module_id: "MOD-INF-008"
-    name: "context-engine"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/context-engine/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_20
-      note: "9 文件骨架完成。build→inject完整链路待 VMS 集成。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-KB-001"
-        type: data
-      - module_id: "MOD-INF-006"
-        type: runtime
-    priority: P0
-    tags: ["context-engine", "ce", "context-injection", "rag", "token-budget", "infrastructure", ""]
-
-  - module_id: "MOD-INF-009"
-    name: "pipeline"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/pipeline/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_20
-      note: "pipeline_orchestrator.py + models.py 骨架完成。M1-M11完整路由待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-006"
-        type: runtime
-    priority: P0
-    tags: ["pipeline", "task-pipeline", "m1-m11", "dual-pipeline", "model-routing", "infrastructure", ""]
-
-  - module_id: "MOD-INF-010"
-    name: "feedback-loop"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/feedback-loop/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_20
-      note: "6 文件骨架完成。collect→detect→dispatch完整链路待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-006"
-        type: runtime
-      - module_id: "MOD-INF-007"
-        type: runtime
-    priority: P0
-    tags: ["feedback-loop", "fle", "self-improvement", "anomaly-detection", "auto-evolution", "infrastructure", ""]
-
-  - module_id: "MOD-INF-011"
-    name: "vector-memory"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/vector-memory/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: skeleton
-      note: "仅目录+__init__.py docstring。beta kb/ 整合。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-KB-001"
-        type: contract
-      - module_id: "MOD-INF-008"
-        type: runtime
-    priority: P1
-    tags: ["vector-memory", "vms", "chromadb", "bge-m3", "vector-db", "infrastructure", ""]
-
-  - module_id: "MOD-INF-012"
-    name: "database"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/database/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_80
-      note: "task_repo.py + sqlite_schema.py + ATM 已实现。olap_engine待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-006"
-        type: runtime
-    priority: P1
-    tags: ["database", "db", "sqlite", "atm", "task-repo", "infrastructure", ""]
-
-  - module_id: "MOD-INF-013"
-    name: "mcp-servers"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/mcp-servers/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_30
-      note: "task_manager decompose_blueprint 已实现。kb/gate_engine MCP 待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-006"
-        type: contract
-      - module_id: "MOD-KB-001"
-        type: contract
-      - module_id: "MOD-INF-007"
-        type: contract
-    priority: P1
-    tags: ["mcp", "mcp-servers", "stdio", "model-context-protocol", "external-api", "infrastructure", ""]
-
-  - module_id: "MOD-INF-014"
-    name: "llm-security"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/llm-security/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_30
-      note: "3 文件骨架 + input_sanitizer 已实现。L3/L4待施工。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-008"
-        type: runtime
-    priority: P2
-    tags: ["llm-security", "lsg", "security-gateway", "fail-closed", "input-sanitizer", "infrastructure", ""]
-
-  - module_id: "MOD-INF-015"
-    name: "system-telemetry"
-    layer: "L12"
-    functional_domain: "observability"
-    path: "03_modules/l01_infrastructure/system-telemetry/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: skeleton
-      note: "5 子模块目录结构已建。metrics/logs 待实现。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies:
-      - module_id: "MOD-INF-010"
-        type: data
-    priority: P2
-    tags: ["telemetry", "system-telemetry", "l12", "metrics", "logs", "traces", "observability", "infrastructure", ""]
-
-  - module_id: "MOD-INF-016"
-    name: "shared-core"
-    layer: "cross_layer"
-    functional_domain: "infra"
-    path: "03_modules/l01_infrastructure/shared-core/"
-    blueprint:
-      status: draft
-      file: "blueprint.md"
-      version: "0.1.0"
-      author: "human_plus_agent"
-      created: "2026-05-03"
-    construction:
-      status: partial_90
-      note: "全部 12 文件已实现。models.py 待 v0.3.0 升级。"
-    delivery:
-      latest_version: null
-      history: []
-    dependencies: []
-    priority: P2
-    tags: ["shared", "core", "cross-layer", "contracts", "ssot-guard", "event-bus", "infrastructure", ""]
+- module_id: DOM-GOV-001
+  name: _domain-governance
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_domain-governance
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-001
+  name: capacity-assurance
+  layer: L01
+  functional_domain: observability
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/capacity-assurance
+  blueprint:
+    status: Active
+    version: 2.6.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-002
+  name: runtime-integration
+  layer: L01
+  functional_domain: infra
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/runtime-integration
+  blueprint:
+    status: Active
+    version: 5.0.1
+  construction_plan:
+    status: phase_1_complete
+- module_id: MOD-INF-005
+  name: script-system
+  layer: L01
+  functional_domain: infra
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/script-system
+  blueprint:
+    status: Active
+    version: 5.2.1
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-006
+  name: task-system
+  layer: cross_layer
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/task-system
+  blueprint:
+    status: Active
+    version: 0.6.0
+  construction_plan:
+    status: phase_1_complete
+- module_id: MOD-INF-007
+  name: gate-engine
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_cross_layer/gate-engine
+  blueprint:
+    status: Draft
+    version: 0.5.0
+  construction_plan:
+    status: phase_1_complete
+- module_id: MOD-INF-008
+  name: context-engine
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_cross_layer/context-engine
+  blueprint:
+    status: Draft
+    version: 0.7.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-009
+  name: pipeline
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_cross_layer/pipeline
+  blueprint:
+    status: Draft
+    version: 0.35.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-010
+  name: feedback-loop
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_cross_layer/feedback-loop
+  blueprint:
+    status: Draft
+    version: 0.32.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-011
+  name: vector-memory
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/vector-memory
+  blueprint:
+    status: Draft
+    version: 0.7.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-012
+  name: database
+  layer: cross_layer
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/_cross_layer/database
+  blueprint:
+    status: Draft
+    version: 2.2.0
+  construction_plan:
+    status: phase_1_complete
+- module_id: MOD-INF-013
+  name: mcp-servers
+  layer: cross_layer
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/_cross_layer/mcp-servers
+  blueprint:
+    status: Draft
+    version: 0.3.36
+  construction_plan:
+    status: phase_2_complete
+- module_id: MOD-INF-014
+  name: llm-security
+  layer: cross_layer
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/_cross_layer/llm-security
+  blueprint:
+    status: Draft
+    version: 0.9.1
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-015
+  name: system-telemetry
+  layer: L12
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/system-telemetry
+  blueprint:
+    status: Draft
+    version: 0.9.0
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-INF-016
+  name: shared-core
+  layer: cross_layer
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/_cross_layer/shared-core
+  blueprint:
+    status: Draft
+    version: 0.14.0
+  construction_plan:
+    status: phase_2_complete
+- module_id: MOD-INF-017
+  name: code-dedup-engine
+  layer: L01
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/code-dedup-engine
+  blueprint:
+    status: Draft
+    version: 0.10.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-018
+  name: agent-rbac
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/agent-rbac
+  blueprint:
+    status: Draft
+    version: 0.14.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-019
+  name: agent-spec
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/agent-spec
+  blueprint:
+    status: Draft
+    version: 0.17.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-020
+  name: audit-trail
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/audit-trail
+  blueprint:
+    status: Draft
+    version: 1.4.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-021
+  name: rollback-system
+  layer: cross_layer
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/rollback-system
+  blueprint:
+    status: Draft
+    version: 0.10.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-022
+  name: escalation-protocol
+  layer: cross_layer
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/escalation-protocol
+  blueprint:
+    status: Draft
+    version: 0.14.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-023
+  name: drift-detector
+  layer: cross_layer
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/drift-detector
+  blueprint:
+    status: Draft
+    version: 0.7.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-024
+  name: budget-enforcer
+  layer: cross_layer
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/budget-enforcer
+  blueprint:
+    status: Draft
+    version: 0.7.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-INF-025
+  name: a2a-protocol
+  layer: cross_layer
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/a2a-protocol
+  blueprint:
+    status: Draft
+    version: 0.10.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-KB-001
+  name: knowledge-base
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/knowledge-base
+  blueprint:
+    status: Draft
+    version: 0.7.2
+  construction_plan:
+    status: phase_1_partial
+- module_id: MOD-L00-001
+  name: datasource-core
+  layer: L00
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l00_data_source/datasource-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L02-001
+  name: alpha-factor-core
+  layer: L02
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l02_alpha_factor/alpha-factor-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L03-001
+  name: signal-generation-core
+  layer: L03
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l03_signal_generation/signal-generation-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L04-001
+  name: risk-management-core
+  layer: L04
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l04_risk_management/risk-management-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L05-001
+  name: portfolio-core
+  layer: L05
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l05_portfolio_construction/portfolio-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L06-001
+  name: execution-core
+  layer: L06
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l06_trade_execution/execution-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L07-001
+  name: analytics-core
+  layer: L07
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l07_post_trade_analytics/analytics-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L08-001
+  name: hmi-core
+  layer: L08
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l08_human_ai_interface/hmi-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L09-001
+  name: research-core
+  layer: L09
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l09_research_innovation/research-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L10-001
+  name: compliance-core
+  layer: L10
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/l10_compliance/compliance-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L11-001
+  name: ml-core
+  layer: L11
+  functional_domain: ''
+  priority: P1
+  path: docs/03_modules/l11_ml_platform/ml-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L13-001
+  name: experiment-core
+  layer: L13
+  functional_domain: ''
+  priority: P2
+  path: docs/03_modules/l13_experimentation/experiment-core
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-MASTER-001
+  name: _master-blueprint
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_master-blueprint
+  blueprint:
+    status: Draft
+    version: 0.9.1
+  construction_plan:
+    status: not_started
+- module_id: SYS-MASTER-001
+  name: _sys-master
+  layer: cross_layer
+  functional_domain: ''
+  priority: P0
+  path: docs/03_modules/_sys-master
+  blueprint:
+    status: Active
+    version: 0.12.0
+  construction_plan:
+    status: not_started

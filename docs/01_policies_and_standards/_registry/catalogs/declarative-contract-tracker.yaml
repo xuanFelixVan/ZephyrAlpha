@@ -1,7 +1,7 @@
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: register
-module_id: PS-REG-014
+module_id: PS-REG-019
 title: "声明式契约跟踪登记表"
 status: active
 owner: system
@@ -108,12 +108,13 @@ contracts:
   - contract_id: "CT-007"
     source: "MOD-INF-005 §13.1 (script-system/blueprint.md V3.0.0)"
     promise: "脚本系统自我监控——Meta 维度脚本检查系统自身健康状态（6 项自检：run_all.py 可执行性、全脚本可运行性、manifest 一致性、输出格式合规、依赖完整性、磁盘空间）"
-    actual_consumer: "无——`scripts/governance/meta/validate_script_system_health.py` 尚未创建"
-    gap: "蓝图 V3 已写完整设计（自检项表 + 频率 + 异常行为），但代码为零。对标 ITIL 4 自动化系统自我监控——'不仅要监控业务，更要监控自动化系统本身'"
-    status: "unresolved"
-    target_phase: "experimental"
-    risk: "P0——脚本系统自身出问题无人知晓 → 所有 12 维度门禁形同虚设。ServiceNow 2024 报告：40% 企业忽视自动化自身监控"
-    last_reviewed: "2026-05-03"
+    actual_consumer: "scripts/governance/meta/validate_script_system_health.py"
+    gap: "已兑现——脚本执行 `python scripts/governance/meta/validate_script_system_health.py` 运行自检项"
+    status: "resolved"
+    resolution: "2026-05-06: 仓库已存在 validate_script_system_health.py；本登记表与 module_id PS-REG-019 对齐"
+    target_phase: "experimental active"
+    risk: "持续维护 manifest 与 run_all 入口同步"
+    last_reviewed: "2026-05-06"
 
   - contract_id: "CT-008"
     source: "MOD-INF-005 §13.2 (script-system/blueprint.md V3.0.0)"
@@ -157,12 +158,19 @@ contracts:
 
 summary:
   total_contracts: 11
-  unresolved: 9
-  resolved: 2
+  unresolved: 8
+  resolved: 3
   oldest_unresolved: "experimental"
   next_review: "每次 Module Blueprint 变更时同步更新本登记表"
 
 changelog:
+  - version: "1.2.0"
+    date: "2026-05-06"
+    author: "governance-audit"
+    changes:
+      - "module_id 纠正为 PS-REG-019（与 gate-registry 的 PS-REG-014 区分）"
+      - "CT-007 标为 resolved：validate_script_system_health.py 已存在并消费承诺"
+      - "summary unresolved/resolved 计数更新"
   - version: "1.1.0"
     date: "2026-05-03"
     author: "AI-Trae-2026"

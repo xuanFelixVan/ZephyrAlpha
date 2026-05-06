@@ -12,6 +12,7 @@ from pathlib import Path
 
 from _shared.constants import EXCLUDE_DIRS
 
+
 def iter_files(
     root: Path,
     extensions: frozenset[str] | None = None,

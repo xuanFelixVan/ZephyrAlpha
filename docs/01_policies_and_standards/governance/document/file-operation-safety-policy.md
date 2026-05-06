@@ -81,7 +81,7 @@ docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
 docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
 docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md
 docs/02_enterprise_architecture/target-architecture/architecture-model/_index.yaml
-docs/02_enterprise_architecture/adr/index.md
+# ADR 真源为 KB:decisions（已无 docs/02_enterprise_architecture/adr/ 物理锚点）
 AGENTS.md
 .pre-commit-config.yaml
 .roomodes

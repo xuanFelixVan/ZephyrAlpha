@@ -74,6 +74,15 @@ entry_conditions:
     verifiable: true
     verification_method: "Unit test with non-compliant path"
 
+  - id: G2-C07
+    name: dependency_status_ready
+    description: "TaskCard depends_on 中引用的所有上游任务必须状态就绪（COMPLETED 或 VERIFIED）"
+    check: "all task_ids in task.depends_on have status COMPLETED or VERIFIED in tasks table"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test with blocked upstream dependency"
+
 approved_labels:
   - BLUEPRINT
   - MODULE_SPEC

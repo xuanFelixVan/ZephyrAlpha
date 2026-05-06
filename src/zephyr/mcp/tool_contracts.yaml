@@ -1,6 +1,9 @@
 # ZephyrAlpha MCP Tool Contracts
 #
-# 5 MCP Server 的工具契约定义，为 T-3-04（MCP Server 实现）与 T-2-29（contract_template_manager）提供前置 schema。
+# 6 MCP Server（task_manager / knowledge_base / gate_engine / session_handoff / intent_router / blueprint_search）
+# + Task Manager 采用 FastMCP，工具注册名与下列 ``name:`` 字段一致（task_manager.* 前缀）。
+#
+# 工具契约为 T-3-04（MCP Server 实现）与 T-2-29（contract_template_manager）提供前置 schema。
 #
 # 契约 SSoT 原则：
 #   1. 本文件是 MCP 工具契约的权威 schema；任何 server 实现必须与本文件字段严格对齐；
@@ -37,6 +40,13 @@ global_conventions:
   naming:
     tool_id: "{server_id}.{action}"           # e.g. task_manager.create_task
     resource_id: "zephyr://{server_id}/{path}" # e.g. zephyr://task_manager/tasks/T-2-16
+  transport:
+    task_manager: "FastMCP（mcp.server.FastMCP）— JSON tool 名与下列 name 字段一致"
+    other_servers: "BaseMCPServer — ADR-0033 JSON-RPC 2.0 over stdio"
+  schema_alignment:
+    task_mcp_response: >-
+      task_manager.* 工具返回值为运行时的 TaskCard / SQLite 行子集序列化；
+      definitions.Task 为理想化契约超集，调用方 MUST 以实际返回字段为准（部分键如 directive 可能缺失）。
   error_code_format: "ZA-{SERVER}-{NNNN}"
   safety_levels:                              # 对齐 beta 任务卡的 safety_level 约定
     - L      # 低：只读
@@ -150,42 +160,55 @@ task_manager:
           total: { type: integer }
 
     - name: task_manager.create_task
-      description: "创建新任务（#21 裁定：{NAMESPACE}-{SEQ} 格式，N:N 文件映射，#12 裁定：字段对齐 task-card-standard.md v2.0）"
+      description: "创建 TaskCard（MOD-INF-006 §3.5；实现见 task_manager_server.FastMCP。注入 task_repo 时 task_id 由 {namespace}-{seq} 生成）"
       safety_level: H
       stability: stable
       rate_limit_qps: 5
       input_schema:
         type: object
-        required: [namespace, phase, title, directive]
+        required: [title, source_blueprint, source_section, description]
         additionalProperties: false
         properties:
-          namespace: { type: string, enum: [ADR, CP, KE, STD, DW, SRC, OPS] }
-          phase: { type: integer, minimum: 0, maximum: 9 }
-          title: { type: string, minLength: 1, maxLength: 200, description: "任务标题（对齐 Jira Summary）" }
+          title: { type: string, minLength: 1, maxLength: 500 }
+          source_blueprint: { type: string }
+          source_section: { type: string }
+          description: { type: string, minLength: 10 }
+          task_id:
+            type: string
+            description: "无 task_repo 时可指定；有 repo 时被覆盖"
+          namespace: { type: string, enum: [ADR, CP, KE, STD, DW, SRC, OPS], default: CP }
           priority: { type: string, enum: [P0, P1, P2, P3], default: P2 }
-          files:
-            type: array
-            items:
-              type: object
-              required: [file_path]
-              properties:
-                file_path: { type: string }
-                role: { type: string, enum: [primary, in_scope, output] }
-            description: "任务关联的文件列表（N:N 映射）"
-          directive: { type: string, description: "e.g. '266+325+999'" }
-          depends_on: { type: array, items: { type: string } }
-          execution_model: { type: string }
-          model_rationale: { type: string, description: "选模型理由（防 AI 乱选贵模型）" }
-          safety_level: { type: string, enum: [L, M, H] }
-          idempotent: { type: boolean, default: true }
-          classification: { type: string, enum: [public, internal, confidential] }
-          tags: { type: array, items: { type: string }, description: "标签列表（对齐 Jira Labels）" }
-          files_in_scope: { type: array, items: { type: string }, description: "本任务需读取的文件列表" }
+          phase: { type: integer, minimum: 0, maximum: 9, default: 1 }
+          execution_model: { type: string, default: deepseek }
+          safety_level: { type: string, enum: [L, M, H], default: L }
       output_schema:
-        $ref: "#/definitions/Task"
+        type: object
+        description: "TaskCard 序列化字典（与 SQLite 行一致子集）"
       errors: ["ZA-TSK-0003", "ZA-TSK-0004"]
 
-    - name: task_manager.update_status
+    - name: task_manager.decompose_blueprint
+      description: "拆解蓝图 Markdown → 子任务 ID 列表与依赖图"
+      safety_level: M
+      stability: stable
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        required: [blueprint_path]
+        additionalProperties: false
+        properties:
+          blueprint_path: { type: string, description: "蓝图 .md 路径" }
+          namespace: { type: string, default: CP }
+          phase: { type: integer, minimum: 0, maximum: 9, default: 1 }
+      output_schema:
+        type: object
+        properties:
+          total_tasks: { type: integer }
+          task_ids: { type: array, items: { type: string } }
+          dependency_graph: { type: object }
+          unassigned_items: { type: array }
+          warnings: { type: array, items: { type: string } }
+
+    - name: task_manager.update_task_status
       description: "推进任务状态（受 10 状态机约束）"
       safety_level: H
       stability: stable
@@ -211,23 +234,21 @@ task_manager:
       errors: ["ZA-TSK-0001", "ZA-TSK-0002"]
 
     - name: task_manager.register_from_triage
-      description: "从 -triage-result.yaml 批量注册任务"
+      description: "从审阅池文件注册 TaskCard（实现为单文件导入；须 task_repo）"
       safety_level: H
       stability: beta
       rate_limit_qps: 1
       input_schema:
         type: object
-        required: [yaml_path]
         additionalProperties: false
         properties:
-          yaml_path: { type: string }
-          dry_run: { type: boolean, default: false }
+          triage_path: { type: string, description: "审阅源文件路径（首选）" }
+          yaml_path: { type: string, description: "与 triage_path 二选一（历史契约别名）" }
+          namespace: { type: string, default: ADR }
+          phase: { type: integer, minimum: 0, maximum: 9, default: 1 }
       output_schema:
         type: object
-        properties:
-          created: { type: integer }
-          skipped: { type: integer }
-          errors: { type: array, items: { type: string } }
+        description: "TaskCard 序列化字典"
 
 # ──────────────────────────────────────────────────────────────────────
 # Server 2 · knowledge_base
@@ -750,6 +771,50 @@ intent_router:
           duration_seconds: { type: number }
 
 # ──────────────────────────────────────────────────────────────────────
+# Server 6 · blueprint_search（MOD-INF-013 · T-V2-010）
+# ──────────────────────────────────────────────────────────────────────
+
+blueprint_search:
+  server_id: blueprint_search
+  version: "1.0.0"
+  description: "任务描述 → 相关蓝图路由（关键词检索 config/blueprint_routing.yaml；stdio BaseMCPServer）"
+  status: experimental
+  backend:
+    - "src/zephyr/mcp/blueprint_search_server.py"
+    - "config/blueprint_routing.yaml"
+  error_namespace: "ZA-BPS"
+  error_codes:
+    - code: "ZA-BPS-0001"
+      message: "blueprint_routing.yaml missing or unreadable"
+      http_status: 503
+
+  tools:
+    - name: blueprint_search.find_relevant_blueprint
+      description: "返回与任务描述最相关的 blueprint 路由表项（MOD-INF-009 触发表）"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 30
+      input_schema:
+        type: object
+        required: [task_description]
+        additionalProperties: false
+        properties:
+          task_description: { type: string, minLength: 1, description: "自然语言任务描述（中英）" }
+          num_results: { type: integer, minimum: 1, maximum: 20, default: 3 }
+          include_retired: { type: boolean, default: false }
+      output_schema:
+        type: object
+        properties:
+          results: { type: array }
+          count: { type: integer }
+          source: { type: string }
+          strategy: { type: string }
+          phase: { type: string }
+          hint: { type: string }
+          cross_read_hints: { type: ["array", "null"] }
+          error: { type: string }
+
+# ──────────────────────────────────────────────────────────────────────
 # 共享 Pydantic Schema 定义
 # ──────────────────────────────────────────────────────────────────────
 
@@ -864,6 +929,20 @@ definitions:
 # ──────────────────────────────────────────────────────────────────────
 
 changelog:
+  - version: "1.4.0"
+    date: "2026-05-06"
+    author: "AUDIT-08 round-2"
+    changes:
+      - "global_conventions：补充 transport（FastMCP vs BaseMCPServer）说明"
+      - "global_conventions：schema_alignment.task_mcp_response（definitions.Task 与实际返回差异）"
+  - version: "1.3.0"
+    date: "2026-05-06"
+    author: "AUDIT-08 remediation"
+    changes:
+      - "新增 blueprint_search Server 与 find_relevant_blueprint 契约"
+      - "task_manager.create_task / register_from_triage schema 对齐 FastMCP 实现"
+      - "task_manager.update_status 更名为 update_task_status；补充 decompose_blueprint 契约"
+      - "注册工具名统一 task_manager.* 前缀（FastMCP name=）"
   - version: "1.2.0"
     date: "2026-04-29"
     author: "Trae GLM-5.1 (#12 裁定执行)"

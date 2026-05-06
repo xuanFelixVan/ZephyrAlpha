@@ -1,15 +1,6 @@
 """
 validate_module_lifecycle.py — 模块生命周期校验
 
-__manifest__ = """
-args: []
-description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-MOD-003 MLC-001/002/003（模块8阶段状态机）
@@ -26,6 +17,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from collections import defaultdict

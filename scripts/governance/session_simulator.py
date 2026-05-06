@@ -5,15 +5,6 @@ session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 使用: python scripts/governance/session_simulator.py
 输出: data/telemetry/blueprint_reads.jsonl（追加模式）+ summary JSON
 
-__manifest__ = """
-args: []
-description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 beta 硬合规（2026-05-04 激活）:
@@ -29,6 +20,19 @@ beta 硬合规（2026-05-04 激活）:
 
 from __future__ import annotations
 
+__manifest__ = """
+args:
+  - --warn-only
+  - --jsonl
+description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import random
 import sys
@@ -36,13 +40,18 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 _FILE = Path(__file__).resolve()
-REPO_ROOT = _FILE.parents[2]
-sys.path.insert(0, str(REPO_ROOT / "src"))
+_GOV_DIR = _FILE.parents[0]
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from zephyr.telemetry.blueprint_metrics import record_blueprint_read  # noqa: E402
 from _shared.constants import REPO_ROOT
 
-UTC = UTC
+_SRC = REPO_ROOT / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from zephyr.l12_system_telemetry.metrics.blueprint_metrics import record_blueprint_read  # noqa: E402
+
 
 # ── 30 个模拟 Session 场景 ──────────────────────────────────────────
 # 格式: (task_description, [expected_blueprint_ids], compliance_level)
@@ -293,8 +302,15 @@ def check_compliance(metrics_path: Path) -> dict:
 
 # ── 入口 ──
 
-def main() -> None:
+def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Session telemetry simulator (beta G6 drills)")
+    parser.add_argument("--warn-only", action="store_true", help="告警模式（exit 0）")
+    parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要输出")
+    args = parser.parse_args()
+
     print("=" * 60)
     print("  ZephyrAlpha Session Simulator — beta 硬合规")
     print("=" * 60)
@@ -340,5 +356,27 @@ def main() -> None:
         json.dump(full_report, fh, ensure_ascii=False, indent=2)
     print(f"\nFull report → {report_path}")
 
+    exit_code = 1 if report.get("rejects") else 0
+
+    if args.jsonl:
+        severity = "HIGH" if exit_code else "INFO"
+        print(
+            json.dumps(
+                {
+                    "severity": severity,
+                    "check_id": "SESSION-SIM",
+                    "rejects": report.get("rejects"),
+                    "passes": report.get("passes"),
+                    "reject_rate": report.get("reject_rate"),
+                },
+                ensure_ascii=False,
+            )
+        )
+
+    if args.warn_only:
+        return 0
+    return exit_code
+
+
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

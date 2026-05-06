@@ -57,6 +57,7 @@ _COLLECTION_METADATA: dict[str, dict[str, Any]] = {
     },
 }
 
+
 class CollectionInfo(BaseModel):
     model_config = BASE_CONFIG
 
@@ -64,7 +65,9 @@ class CollectionInfo(BaseModel):
     count: int = 0
     metadata: dict[str, Any] = Field(default_factory=dict)
 
+
 _chroma_client: Any | None = None
+
 
 def get_chroma_client(persist_dir: Path | str | None = None) -> Any:
     global _chroma_client
@@ -76,6 +79,7 @@ def get_chroma_client(persist_dir: Path | str | None = None) -> Any:
     resolved.mkdir(parents=True, exist_ok=True)
     _chroma_client = chromadb.PersistentClient(path=str(resolved))
     return _chroma_client
+
 
 def init_chromadb(persist_dir: Path | str | None = None) -> list[CollectionInfo]:
     resolved = Path(persist_dir) if persist_dir is not None else VECTOR_INDEX_DIR
@@ -97,6 +101,7 @@ def init_chromadb(persist_dir: Path | str | None = None) -> list[CollectionInfo]
 
     return results
 
+
 def reset_chromadb(persist_dir: Path | str | None = None) -> list[CollectionInfo]:
     global _chroma_client
     client = get_chroma_client(persist_dir)
@@ -107,6 +112,7 @@ def reset_chromadb(persist_dir: Path | str | None = None) -> list[CollectionInfo
 
     _chroma_client = None
     return init_chromadb(persist_dir)
+
 
 def collection_status(persist_dir: Path | str | None = None) -> list[CollectionInfo]:
     client = get_chroma_client(persist_dir)
@@ -120,6 +126,7 @@ def collection_status(persist_dir: Path | str | None = None) -> list[CollectionI
         else:
             results.append(CollectionInfo(name=name, count=-1))
     return results
+
 
 if __name__ == "__main__":
     infos = init_chromadb()

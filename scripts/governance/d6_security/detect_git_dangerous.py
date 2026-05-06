@@ -1,15 +1,6 @@
 """
 detect_git_dangerous.py — 危险 Git 命令检测
 
-__manifest__ = """
-args: []
-description: 危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-26（禁止 git push --force 到保护分支）
@@ -28,6 +19,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

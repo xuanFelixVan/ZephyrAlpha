@@ -37,6 +37,7 @@ from zephyr.shared.contracts.enforcer import (
     enforce_output,
 )
 
+
 @dataclass(frozen=True)
 class FakeTraceContext:
     trace_id: str = "test-trace-001"
@@ -46,6 +47,7 @@ class FakeTraceContext:
     created_at: str = "2026-05-04T00:00:00Z"
     schema_version: str = "1.0"
 
+
 @dataclass(frozen=True)
 class FakeContract:
     symbol: str
@@ -53,10 +55,12 @@ class FakeContract:
     trace_context: FakeTraceContext | None = None
     schema_version: str = "1.0"
 
+
 @dataclass(frozen=True)
 class OtherContract:
     symbol: str
     value: int
+
 
 class TestEnforceOutput:
     def test_matching_type_passes(self):
@@ -131,6 +135,7 @@ class TestEnforceOutput:
         result = producer()
         assert result is None
 
+
 class TestEnforceInput:
     def test_auto_match_param(self):
         @enforce_input(FakeContract)
@@ -190,6 +195,7 @@ class TestEnforceInput:
             consumer(missing_trace)
         assert "TraceContext" in str(exc_info.value)
 
+
 class TestEnforceCombined:
     def test_both_input_and_output_valid_passes(self):
         @enforce(FakeContract)
@@ -219,6 +225,7 @@ class TestEnforceCombined:
         with pytest.raises(ContractViolationError) as exc_info:
             passthrough(valid)
         assert "output_contract_violation" in exc_info.value.violation_type
+
 
 class TestContractViolationError:
     def test_all_fields_populated(self):

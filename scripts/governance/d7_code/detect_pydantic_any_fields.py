@@ -1,15 +1,6 @@
 """
 detect_pydantic_any_fields.py — Pydantic Any 类型字段检测
 
-__manifest__ = """
-args: []
-description: Pydantic Any 类型字段检测（REC-11 — 禁止Any类型字段）
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：REC-11（Pydantic 模型禁止 Any 类型字段）
@@ -22,6 +13,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: Pydantic Any 类型字段检测（REC-11 — 禁止Any类型字段）
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import sys

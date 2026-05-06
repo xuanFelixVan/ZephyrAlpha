@@ -1,16 +1,5 @@
 """generate_missing_index_md.py — 扫描目录树，为缺失 index.md 的目录自动生成索引文件。
 
-__manifest__ = """
-args:
-- --root
-- docs/
-description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（AGENTS.md §6.11 索引-实际同步强制约定）
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 120
-warn_only: true
-"""
 
 
 对标：AGENTS.md §6.11 索引-实际同步强制约定（index.md 必须与磁盘实际一致）
@@ -23,6 +12,19 @@ warn_only: true
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args:
+- --root
+- docs/
+description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（AGENTS.md §6.11 索引-实际同步强制约定）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 120
+warn_only: true
+"""
+
 
 import sys
 from argparse import ArgumentParser

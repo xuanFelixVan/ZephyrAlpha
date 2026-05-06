@@ -18,7 +18,7 @@
 
 registry_version: "2.1.1"
 last_updated: "2026-05-03"
-total_registered: 67
+total_registered: 72
 
 # ID 分配规则
 allocation_rules:
@@ -171,8 +171,28 @@ registered_ids:
     doc_type: register
     status: active
   - module_id: PS-REG-015
-    title: "ADR 活跃状态登记表"
+    title: "ADR 状态登记表（冻结壳）"
     path: "docs/01_policies_and_standards/_registry/catalogs/adr-status-registry.yaml"
+    doc_type: register
+    status: deprecated
+  - module_id: PS-REG-016
+    title: "登记表的登记表（跨登记表一致性契约）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml"
+    doc_type: contract
+    status: active
+  - module_id: PS-REG-017
+    title: "任务卡元层登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-018
+    title: "规则路径目录"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-019
+    title: "声明式契约跟踪登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
     doc_type: register
     status: active
 
@@ -289,10 +309,10 @@ registered_ids:
 
   # === GOV 架构层 ===
   - module_id: GOV-ARCH-001
-    title: "ADR协议"
-    path: "docs/01_policies_and_standards/governance/architecture/adr-protocol.md"
-    doc_type: policy
-    status: draft
+    title: "架构决策记录（已迁入 KB decisions namespace）"
+    path: "KB:namespace=decisions"
+    doc_type: kb_namespace
+    status: migrated_to_kb
   - module_id: GOV-ARCH-002
     title: "架构评审门控"
     path: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
@@ -376,8 +396,8 @@ registered_ids:
     title: "任务卡系统 + 知识库（KMS）蓝图与施工"
     path: "docs/03_modules/l01_infrastructure/task-card-kms/blueprint.md"
     doc_type: blueprint
-    status: active
-    note: "Wave 0 终审产出。v2.0.0：合并原 construction-plan-task-card-and-kms.md 施工实现细节。原 CP-TASK-CARD-KMS-001 已废除。"
+    status: retired
+    note: "已废弃——内容已被 MOD-INF-006 (任务系统) 和 MOD-KB-001 (知识库) 吸收。物理文件已于2026-05-06标记删除。"
 
   # === DOM 层域规则层 ===
   - module_id: DOM-L00-001

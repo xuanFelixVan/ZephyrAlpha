@@ -94,8 +94,10 @@ PHASE1D_TRIGGER_TYPES: frozenset[str] = frozenset(
 # 异常与枚举
 # ---------------------------------------------------------------------------
 
+
 class TriggerRouterConfigError(RuntimeError):
     """``config/trigger_router.yaml`` 加载或校验失败。"""
+
 
 class TriggerSafety(str, Enum):
     """触发器安全等级（与 schemas.SafetyLevel 一致：L/M/H，向后兼容别名）。"""
@@ -104,9 +106,11 @@ class TriggerSafety(str, Enum):
     M = "M"
     H = "H"
 
+
 # ---------------------------------------------------------------------------
 # 数据契约
 # ---------------------------------------------------------------------------
+
 
 class TriggerHandlerSpec(BaseModel):
     """单条 trigger_type 的处理器规格（YAML 反序列化目标）。"""
@@ -117,6 +121,11 @@ class TriggerHandlerSpec(BaseModel):
     description: str = Field(default="", max_length=200)
     safety: TriggerSafety = Field(default=TriggerSafety.M)
     enabled: bool = Field(default=True)
+    priority: int = Field(default=0, ge=0, description="调度优先级（数值小优先，与 YAML 对齐）")
+    required: bool = Field(default=False, description="若为 True，缺失处理器视为配置错误")
+    retry: bool = Field(default=False, description="失败时是否允许重试")
+    notes: str = Field(default="", max_length=2000, description="人读备注 / 真源 trace")
+
 
 class RouterDispatchResult(BaseModel):
     """``TriggerRouter.dispatch`` 的统一返回类型。"""
@@ -133,9 +142,11 @@ class RouterDispatchResult(BaseModel):
     dispatched_at: str = Field(default="", description="UTC ISO 8601 分派时间")
     latency_ms: int = Field(default=0, ge=0)
 
+
 # ---------------------------------------------------------------------------
 # YAML 加载器
 # ---------------------------------------------------------------------------
+
 
 def load_router_config(
     path: Path | None = None,
@@ -186,9 +197,11 @@ def load_router_config(
 
     return specs
 
+
 # ---------------------------------------------------------------------------
 # TriggerRouter 主类
 # ---------------------------------------------------------------------------
+
 
 class TriggerRouter:
     """触发路由器：根据 trigger_type 分派到处理器函数。
@@ -526,12 +539,14 @@ class TriggerRouter:
             result.latency_ms,
         )
 
+
 # ---------------------------------------------------------------------------
 # 模块级单例
 # ---------------------------------------------------------------------------
 
 _singleton_lock = RLock()
 _singleton_router: TriggerRouter | None = None
+
 
 def get_trigger_router(
     *,
@@ -557,17 +572,20 @@ def get_trigger_router(
             )
         return _singleton_router
 
+
 def reset_trigger_router() -> None:
     """清空模块级单例（仅测试使用）。"""
     global _singleton_router
     with _singleton_lock:
         _singleton_router = None
 
+
 # ---------------------------------------------------------------------------
 # 默认 stub 处理器
 # ---------------------------------------------------------------------------
 # experimental 占位：真实处理器由后续 Phase 实现并在 YAML 中替换为 zephyr.<module>.<func>
 # 这些 stub 保证 trigger_router.yaml 默认配置可被解析 + dispatch 不会失败。
+
 
 def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
     return {
@@ -577,21 +595,26 @@ def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
         "note": "experimental 占位处理器 — 真实实现见后续 Phase",
     }
 
+
 def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``onboarding`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("onboarding", payload)
+
 
 def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``drift_detected`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("drift_detected", payload)
 
+
 def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``cleanup_due`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("cleanup_due", payload)
 
+
 def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_published`` trigger_type 的 experimental 占位处理器。"""
     return _stub_response("blueprint_published", payload)
+
 
 def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_lookup`` — 根据文件路径/任务关键字匹配蓝图路由。
@@ -602,8 +625,10 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
 
     返回匹配的蓝图列表，按 priority 降序排列。
     对标 Codified Context (arXiv 2602.20478) §3.1.1 Orchestration Protocols。
+
+    统一打分逻辑：shared/blueprint_scorer.py（与 MCP blueprint_search_server 共用）。
     """
-    import fnmatch
+    from zephyr.shared.blueprint_scorer import score_and_rank_routes
 
     routing_yaml_path = REPO_ROOT / "config" / "blueprint_routing.yaml"
     if not routing_yaml_path.exists():
@@ -630,49 +655,17 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
     task_keywords = payload.get("task_keywords", []) or []
     task_text = payload.get("task_text", "") or ""
 
-    scored: list[tuple[int, int, dict[str, Any]]] = []
-
-    for route in routes:
-        if not route.get("enabled", True):
-            continue
-
-        score = 0
-
-        # Level 1: path_pattern 匹配（高权重）
-        route_patterns = route.get("path_patterns", []) or []
-        for pp in path_patterns:
-            for rp in route_patterns:
-                if fnmatch.fnmatch(pp, rp):
-                    score += 10
-                    break
-
-        # Level 2: task_keyword 匹配（中权重）
-        route_keywords = route.get("task_keywords", []) or []
-        kw_lower = [k.lower() for k in task_keywords]
-        for rk in route_keywords:
-            if rk.lower() in task_text.lower():
-                score += 3
-                continue
-            for k in kw_lower:
-                if rk.lower() in k or k in rk.lower():
-                    score += 2
-                    break
-
-        if score > 0:
-            priority = route.get("priority", 50)
-            scored.append((score, priority, route))
-
-    # 按 score 降序 → priority 降序
-    scored.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    scored = score_and_rank_routes(routes, path_patterns, task_keywords, task_text)
 
     matched = []
-    for _, _, route in scored:
+    for match_score, match_priority, route in scored:
         matched.append(
             {
                 "blueprint_id": route["blueprint_id"],
                 "blueprint_level": route.get("blueprint_level", "module"),
                 "route_id": route.get("route_id", ""),
-                "score": route.get("priority", 50),
+                "match_score": match_score,
+                "route_priority": match_priority,
                 "description": route.get("description", ""),
             }
         )
@@ -681,6 +674,6 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
         "matched": matched,
         "count": len(matched),
         "source": "config/blueprint_routing.yaml",
-        "strategy": "path_pattern_then_keyword",
+        "strategy": "unified_path_and_keyword_scorer",
         "hint": "AI SHOULD read top-3 blueprints §1 (system boundary + topology) before code changes",
     }

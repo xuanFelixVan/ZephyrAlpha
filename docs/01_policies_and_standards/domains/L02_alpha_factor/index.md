@@ -3,7 +3,7 @@ classification: confidential
 date: '2026-05-04'
 doc_type: index
 generated: '2026-05-02'
-layer: l02_alpha_factor
+layer: L02
 merged_from: README.md + index.md
 module_id: DOM-L02-IDX
 status: active

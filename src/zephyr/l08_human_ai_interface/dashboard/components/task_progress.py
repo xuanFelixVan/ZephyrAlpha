@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class PhaseProgress:
     phase: int
@@ -24,6 +25,7 @@ class PhaseProgress:
             return 0.0
         return self.completed_tasks / self.total_tasks
 
+
 @dataclass
 class TaskProgressData:
     phases: list[PhaseProgress] = field(default_factory=list)
@@ -35,6 +37,7 @@ class TaskProgressData:
         if self.total_tasks == 0:
             return 0.0
         return self.total_completed / self.total_tasks
+
 
 def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
     data = TaskProgressData()
@@ -54,6 +57,7 @@ def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
         data.total_tasks += pp.total_tasks
         data.total_completed += pp.completed_tasks
     return data
+
 
 def render_task_progress(data: TaskProgressData) -> dict[str, Any]:
     return {

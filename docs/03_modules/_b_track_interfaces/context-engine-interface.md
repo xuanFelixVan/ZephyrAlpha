@@ -3,20 +3,19 @@ module_id: AI-ENG-CTX-001
 title: Context Engine Interface / 上下文引擎接口规范
 doc_type: service_interface_spec
 status: Active
-version: "1.0.0"
+version: "1.0.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh
 created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
-last_updated: "2026-04-24"
+last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 9.7 Context Engine 核心架构"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Qwen 技术选型 #1-3"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Opus 4.7 最终裁定 - 零外部依赖优先"
+  - "03_modules/_cross_layer/context-engine/blueprint.md（MOD-INF-008 — 详细设计与 CT 锚点；Phase 5 真源）"
+  - "architecture-model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
   - "docs/03_modules/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
 related_adrs:
@@ -36,6 +35,11 @@ depends_on:
   - target: AI-ENG-VMS-001
     at: "§3"
     why: "Vector Memory Service — 上下文数据主源"
+mod_master_blueprint: "MOD-MASTER-001"
+mod_master_contracts:
+  - "CT-ORC-CE-001"
+  - "CT-CE-VMS-001"
+  - "CT-CE-LSG-001"
 ---
 
 # Context Engine Interface / 上下文引擎接口规范
@@ -635,7 +639,7 @@ if vms_result.degraded:
     # 降级到 filesystem_fallback.py
     fs_hits = await rg_search(
         pattern=derive_regex(request.tags + request.target_files),
-        scopes=["docs/02_enterprise_architecture", "src/", "模块候选池/开发流程/任务卡"],
+        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/l01_infrastructure/task-system/changes"],
         max_results_per_slot=20,
     )
     bundle.degraded = True
@@ -795,4 +799,5 @@ except (CECompressionError, asyncio.TimeoutError):
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
+| 2026-05-05 | 1.0.2 | 蓝图 v0.4.1 第三轮同步。新增 7 项深水区盲点已补齐（context poisoning OWASP ASI06 / compressor hallucination validator / memory echo detector / context curator "less docs same tokens" / relevance validator 门槛过滤 / active memory CRUD / typed memory router）。蓝图完整度 93→100/100（25项盲点全覆盖）。本接口规范在 experimental 施工前需与蓝图 v0.4.1 重新对轨——尤其 attention: poison_detect/compressor_validate/relevance_threshold 三条新增流水线节点在接口侧尚无对应 slot。 |
 | 2026-04-24 | 1.0.0 | 初版（B-a-2）。基于 VMS v1.2 模板。重点：① §5 MCP 能力矩阵（遗漏 #4）解决 Cursor/Trae/Claude-Desktop 差异；② §4.1 `adjust_strategy` + §3.3 `FeedbackSignal`（遗漏 #5）通过 Protocol 单向依赖接收 FLE 反馈；③ 三条 P0 降级 DEGRADE-001~003。 |

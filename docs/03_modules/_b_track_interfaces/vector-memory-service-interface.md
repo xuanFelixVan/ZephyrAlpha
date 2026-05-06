@@ -10,12 +10,11 @@ classification: internal
 language: zh
 created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
-last_updated: "2026-04-24"
+last_updated: "2026-05-06"
 ttl: permanent
 truth_source:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 7.5.2 Vector Memory Service"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Qwen 技术选型 #4-6"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Opus 4.7 最终裁定 - 零外部依赖优先"
+  - "03_modules/l01_infrastructure/vector-memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
+  - "architecture-model/layers/b_vector_memory.yaml（Vector Memory YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md (archived 2026-04-24)"
 related_adrs:
@@ -31,6 +30,11 @@ tags:
   - bge-m3
   - service-interface
   - vibe-coding-infrastructure
+mod_master_blueprint: "MOD-MASTER-001"
+mod_master_contracts:
+  - "CT-ORC-VMS-001"
+  - "CT-CE-VMS-001"
+  - "CT-KB-VMS-001"
 ---
 
 # Vector Memory Service Interface / 向量记忆服务接口规范
@@ -161,10 +165,10 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 
 | Collection | 用途 | 典型 Document 来源 |
 |-----------|------|-------------------|
-| `decisions` | 架构决策与合约 | `docs/02_enterprise_architecture/adr/*.md`、`03_modules/_b_track_interfaces/*interface*.md` |
-| `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_blueprints/` |
-| `task_history` | 任务卡与执行历史 | `模块候选池/开发流程/任务卡/*.yaml`、`19_development_workspace/taskbooks/` |
-| `lessons` | 经验教训与审计 | `docs/09_audit/reports/`、`19_development_workspace/session-logs/` |
+| `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_b_track_interfaces/*interface*.md` |
+| `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_modules/**/*.md` |
+| `task_history` | 任务卡与执行历史 | `docs/03_modules/l01_infrastructure/task-system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/db/task_repo.py` 持久化任务元数据（见 MOD-INF-006） |
+| `lessons` | 经验教训与审计 | `docs/09_audit/reports/`、`docs/09_audit/findings/` |
 
 ### 3.2 Cascade 语义表（4 种场景）
 
@@ -571,11 +575,11 @@ vector-memory = [
 
 | 源路径模式 | 目标 Collection |
 |-----------|----------------|
-| `docs/02_enterprise_architecture/adr/**` | `decisions` |
+| **KB:decisions**（SQLite ingest / MCP KB） | `decisions` |
 | `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
-| `src/**/*.py`, `src/**/*.yaml`, `docs/03_blueprints/**` | `code_context` |
-| `模块候选池/开发流程/任务卡/**`, `19_development_workspace/taskbooks/**` | `task_history` |
-| `docs/09_audit/reports/**`, `19_development_workspace/session-logs/**` | `lessons` |
+| `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
+| `docs/03_modules/l01_infrastructure/task-system/changes/**` | `task_history` |
+| `docs/09_audit/reports/**`, `docs/09_audit/findings/**` | `lessons` |
 | 其他 | `code_context`（保守默认） |
 
 ---

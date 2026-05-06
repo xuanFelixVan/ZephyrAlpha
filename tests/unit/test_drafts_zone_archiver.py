@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from _shared.frontmatter import parse_frontmatter_from_file
+from scripts.governance._shared.frontmatter import parse_frontmatter_from_file
 
 from scripts.governance.d1_structure.drafts_zone_archiver import (
     STATUS_ARBITRATED,

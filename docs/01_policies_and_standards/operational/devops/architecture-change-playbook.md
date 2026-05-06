@@ -2,7 +2,7 @@
 module_id: OPS-DEV-002
 title: 架构变更操作手册
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner

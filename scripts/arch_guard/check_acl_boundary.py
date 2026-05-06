@@ -6,7 +6,7 @@ INV-005: 只有 l06_trade_execution/adapters/ 可调用 Broker API，其他层�
 检测方式：
   - 扫描 src/zephyr/ 下所有 .py 文件
   - 搜索 Broker API 相关 import/call 模式
-  - 排除 l06_trade_execution/adapters/ 目录下的合法调用
+  - 排除 l06_trade_execution/adapters/ 目录、broker_interface.py 与 l06/__init__.py（公开重导出，无 SDK）
 
 Broker API 特征模式（匹配以下任一即标记）：
   - from .*broker.* import ...
@@ -24,7 +24,15 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-ALLOWED_DIR = SRC_ROOT / "l06_trade_execution" / "adapters"
+L06_ROOT = SRC_ROOT / "l06_trade_execution"
+# INV-005：仅 adapters/ 可直接触达券商 SDK；OCP 接口定义文件不含 SDK 调用，免检
+ADAPTERS_DIR = L06_ROOT / "adapters"
+L06_SDK_EXEMPT_FILES = frozenset(
+    {
+        L06_ROOT / "broker_interface.py",
+        L06_ROOT / "__init__.py",
+    }
+)
 
 BROKER_PATTERNS = [
     (re.compile(r"from\s+.*broker.*\s+import", re.IGNORECASE), "broker 模块 import"),
@@ -42,8 +50,11 @@ EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "shared", "gates", "mcp", "pipel
 
 
 def is_allowed(file_path: Path) -> bool:
+    resolved = file_path.resolve()
+    if resolved in {p.resolve() for p in L06_SDK_EXEMPT_FILES}:
+        return True
     try:
-        file_path.resolve().relative_to(ALLOWED_DIR.resolve())
+        resolved.relative_to(ADAPTERS_DIR.resolve())
         return True
     except ValueError:
         return False
@@ -85,16 +96,16 @@ def main() -> int:
         all_violations.extend(violations)
 
     if all_violations:
-        print(f"❌ INV-005 Broker ACL 边界违反 ({len(all_violations)} 处):")
+        print(f"[FAIL] INV-005 Broker ACL 边界违反 ({len(all_violations)} 处):")
         for v in all_violations:
             print(v)
         print()
-        print(f"只有 {ALLOWED_DIR.relative_to(REPO_ROOT)} 下的代码允许调用 Broker API。")
+        print(f"只有 {ADAPTERS_DIR.relative_to(REPO_ROOT)}/ 下的代码允许调用 Broker API。")
         print("其他层必须通过 L06 adapters/ 间接访问。")
         return 1
 
-    print("✅ INV-005 Broker ACL 边界 —— 无违反")
-    print(f"   已扫描 src/zephyr/ 下所有 .py 文件，Broker API 调用均通过 {ALLOWED_DIR.relative_to(REPO_ROOT)}/。")
+    print("[OK] INV-005 Broker ACL 边界 —— 无违反")
+    print(f"   已扫描 src/zephyr/ 下所有 .py 文件，Broker API 调用均位于 {ADAPTERS_DIR.relative_to(REPO_ROOT)}/。")
     return 0
 
 

@@ -1,0 +1,98 @@
+# Docker Compose — ZephyrAlpha 开发/测试环境
+# Phase B: 加入 Prometheus + Grafana 可观测性
+
+version: "3.9"
+
+services:
+  # ── 核心应用（Phase B 启动）──
+  zephyr-core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zephyr-core
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - ZEPHYR_ENV=development
+      - ZEPHYR_T1_KILL_SWITCH_PROBE=0
+      - ZEPHYR_METRICS_DIR=/data/metrics
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+    restart: unless-stopped
+    networks:
+      - zephyr-net
+    healthcheck:
+      test: ["CMD", "python", "-m", "zephyr.l01_infrastructure.health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Prometheus（可观测性）──
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: zephyr-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    restart: unless-stopped
+    networks:
+      - zephyr-net
+
+  # ── Grafana（仪表板可视化）──
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: zephyr-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-zephyr_admin}
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./infra/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    restart: unless-stopped
+    networks:
+      - zephyr-net
+    depends_on:
+      - prometheus
+
+  # ── Node Exporter（宿主机指标）──
+  node-exporter:
+    image: prom/node-exporter:v1.8.1
+    container_name: zephyr-node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+    restart: unless-stopped
+    networks:
+      - zephyr-net
+
+networks:
+  zephyr-net:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:

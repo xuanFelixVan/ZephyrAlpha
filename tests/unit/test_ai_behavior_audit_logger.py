@@ -19,11 +19,13 @@ from zephyr.llm_security.behavior_audit_logger import (
     open_audit_log,
 )
 
+
 @pytest.fixture
 def tmp_log_dir(tmp_path: Path) -> Path:
     log_dir = tmp_path / "audit_logs"
     log_dir.mkdir()
     return log_dir
+
 
 @pytest.fixture
 def logger(tmp_log_dir: Path) -> AuditLogger:
@@ -35,6 +37,7 @@ def logger(tmp_log_dir: Path) -> AuditLogger:
         model="GLM-5.1",
     )
 
+
 @pytest.fixture
 def logger_date_rotation(tmp_log_dir: Path) -> AuditLogger:
     return AuditLogger(
@@ -43,6 +46,7 @@ def logger_date_rotation(tmp_log_dir: Path) -> AuditLogger:
         session_id="test-session-002",
         model="Opus-4",
     )
+
 
 class TestAuditEvent:
     def test_to_dict_contains_all_required_fields(self) -> None:
@@ -102,12 +106,14 @@ class TestAuditEvent:
         line = event.to_jsonl()
         assert "\n" not in line
 
+
 class TestAuditAction:
     def test_all_four_actions_exist(self) -> None:
         assert AuditAction.MODEL_CALL.value == "model_call"
         assert AuditAction.FILE_WRITE.value == "file_write"
         assert AuditAction.RULE_TRIGGER.value == "rule_trigger"
         assert AuditAction.GATE_DECISION.value == "gate_decision"
+
 
 class TestAuditLoggerBasic:
     def test_log_creates_jsonl_file(self, logger: AuditLogger, tmp_log_dir: Path) -> None:
@@ -174,6 +180,7 @@ class TestAuditLoggerBasic:
             logger.log_model_call(target=f"target-{i}", result="ok")
         assert logger.count_events() == 5
 
+
 class TestAuditLoggerRotation:
     def test_size_rotation_creates_new_file(self, tmp_log_dir: Path) -> None:
         small_logger = AuditLogger(
@@ -198,6 +205,7 @@ class TestAuditLoggerRotation:
         assert len(jsonl_files) == 1
         today = datetime.now(UTC).strftime("%Y-%m-%d")
         assert today in jsonl_files[0].name
+
 
 class TestAuditQuery:
     def test_query_by_session_id(self, logger: AuditLogger) -> None:
@@ -245,12 +253,14 @@ class TestAuditQuery:
         results = logger.query(AuditQuery(session_id="s1", action="model_call"))
         assert len(results) == 2
 
+
 class TestOpenAuditLog:
     def test_open_audit_log_factory(self, tmp_log_dir: Path) -> None:
         al = open_audit_log(log_dir=tmp_log_dir, session_id="factory-test", model="GLM-5.1")
         assert isinstance(al, AuditLogger)
         al.log_model_call(target="t1", result="ok")
         assert al.count_events() == 1
+
 
 class TestAppendOnly:
     def test_no_delete_or_update_methods(self) -> None:
@@ -262,6 +272,7 @@ class TestAppendOnly:
             assert "update" not in m.lower(), f"Found update method: {m}"
             assert "remove" not in m.lower(), f"Found remove method: {m}"
             assert "modify" not in m.lower(), f"Found modify method: {m}"
+
 
 def _read_first_event(log_dir: Path) -> dict[str, Any]:
     jsonl_file = next(log_dir.glob("*.jsonl"))

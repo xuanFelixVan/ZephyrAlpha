@@ -9,6 +9,12 @@ Depends     : T-3-09（ADR-0032 决策）、T-3-04（MCP Server 基础设施）�
               T-3-07（hallucination_detector.CoVe 后置钩子）
 safety_level: H
 
+病根澄清（审计易混点）
+---------------------
+名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为 ADR-0032——多
+Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十态与合法迁移**
+见 ``zephyr.shared.schemas.TaskStatus`` 与 ``zephyr.db.task_repo.TaskRepository``。
+
 本模块职责
 ----------
 在**不外接**任何生产 LLM / 任务队列 SDK 的前提下，提供一个
@@ -45,6 +51,7 @@ safety_level: H
 
 from __future__ import annotations
 
+import json
 import statistics
 import time
 import uuid
@@ -52,6 +59,7 @@ from collections import deque
 from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 from typing import (
     Any,
     Literal,
@@ -61,8 +69,10 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
+from zephyr.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.shared.schemas import BASE_CONFIG
 from zephyr.shared.time_utils import default_now
+from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
     "AgentRole",
@@ -84,6 +94,7 @@ __all__ = [
 # 枚举与常量
 # ---------------------------------------------------------------------------
 
+
 class AgentRole(str, Enum):
     """ADR-0032 §3 — 6 个 Agent 角色。"""
 
@@ -94,6 +105,7 @@ class AgentRole(str, Enum):
     RESEARCHER = "researcher"  # 研究员：因子/策略/实验
     OPERATOR = "operator"  # 运营员：运行/监控/回放
 
+
 class RoutingStrategy(str, Enum):
     """四种路由策略。"""
 
@@ -101,6 +113,7 @@ class RoutingStrategy(str, Enum):
     LOAD_BALANCE = "load_balance"
     SPECIALIST_FIRST = "specialist_first"
     FALLBACK_CHAIN = "fallback_chain"
+
 
 # ADR-0032 §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
@@ -183,6 +196,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
 # 数据契约
 # ---------------------------------------------------------------------------
 
+
 class AgentProfile(BaseModel):
     """单个 Agent 实例的状态画像（用于 load_balance 策略）。"""
 
@@ -199,6 +213,7 @@ class AgentProfile(BaseModel):
         """当前负载率 = current_load / max_load。"""
         return self.current_load / self.max_load if self.max_load else 1.0
 
+
 class RouteDecision(BaseModel):
     """路由器决策输出。"""
 
@@ -212,6 +227,7 @@ class RouteDecision(BaseModel):
     capability_score: float = Field(ge=0.0, le=1.0, description="首选角色在该域的能力分")
     rationale: str = Field(default="", description="决策解释")
 
+
 class ToolCallRecord(BaseModel):
     """单次 MCP 工具调用记录。"""
 
@@ -224,6 +240,7 @@ class ToolCallRecord(BaseModel):
     latency_ms: int = Field(ge=0, description="耗时毫秒")
     error: str | None = Field(default=None, description="失败原因")
     result_preview: str = Field(default="", description="结果摘要（截断 400 字符）")
+
 
 class OrchestrationResult(BaseModel):
     """单次 orchestrate() 的最终输出。"""
@@ -248,6 +265,7 @@ class OrchestrationResult(BaseModel):
     def _strip_claim(cls, v: str) -> str:
         return v.strip()
 
+
 class SLOSnapshot(BaseModel):
     """5 项 SLO 快照。"""
 
@@ -261,9 +279,11 @@ class SLOSnapshot(BaseModel):
     window_size: int = Field(ge=0)
     healthy: bool = Field(description="是否全部 SLO 达标")
 
+
 # ---------------------------------------------------------------------------
 # 协议：依赖注入（解耦 MCP 与 CoVe）
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class ToolInvoker(Protocol):
@@ -271,6 +291,7 @@ class ToolInvoker(Protocol):
 
     def __call__(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
+
 
 @runtime_checkable
 class HallucinationCaller(Protocol):
@@ -281,9 +302,11 @@ class HallucinationCaller(Protocol):
     ) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
 
+
 # ---------------------------------------------------------------------------
 # AgentRouter — 无状态路由
 # ---------------------------------------------------------------------------
+
 
 class AgentRouter:
     """6 角色 × 10 域的无状态路由器。
@@ -456,9 +479,11 @@ class AgentRouter:
         candidates.sort(key=lambda a: (a.utilization, a.agent_id))
         return candidates[0].agent_id
 
+
 # ---------------------------------------------------------------------------
 # HealthMonitor — 5 项 SLO
 # ---------------------------------------------------------------------------
+
 
 class HealthMonitor:
     """滑窗口累计 5 项 SLO 的健康监控器。
@@ -591,12 +616,17 @@ class HealthMonitor:
     def sample_count(self) -> int:
         return len(self._latencies)
 
+
 # ---------------------------------------------------------------------------
 # Orchestrator — directive ↔ MCP 工具链编排
 # ---------------------------------------------------------------------------
 
 # directive -> (tool_name, 默认参数构造器) 映射。生产可替换注入。
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
+
+# agent_orchestrator.py 位于 src/zephyr/orchestrator/ → 仓库根为 parents[3]
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
 
 class AgentOrchestrator:
     """Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。
@@ -620,6 +650,12 @@ class AgentOrchestrator:
         task_id 工厂；默认生成 ``T-ORCH-<uuid4-hex12>``。
     default_token_budget : int
         token 预算默认值，用于 context_utilization 基准。
+    sanitize_llm_context : bool
+        True 时在未显式注入 ``input_sanitizer`` 的情况下，使用仓库根目录构造默认
+        ``InputSanitizer``，在编排与 CoVe 之前校验 ``claim`` / ``context``（CT-CE-LSG-001 L1）。
+    input_sanitizer : InputSanitizer | None
+        非 None 时始终使用该实例（与 ``sanitize_llm_context`` 独立）；若需完全关闭校验，请传
+        ``input_sanitizer=None`` 且 ``sanitize_llm_context=False``。
     """
 
     def __init__(
@@ -632,7 +668,9 @@ class AgentOrchestrator:
         monitor: HealthMonitor | None = None,
         now: Callable[[], datetime] = default_now,
         id_factory: Callable[[], str] | None = None,
-        default_token_budget: int = 8000,
+        default_token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
+        sanitize_llm_context: bool = True,
+        input_sanitizer: InputSanitizer | None = None,
     ) -> None:
         self._router = router
         self._invoker = tool_invoker
@@ -642,6 +680,12 @@ class AgentOrchestrator:
         self._now = now
         self._id_factory = id_factory or (lambda: f"T-ORCH-{uuid.uuid4().hex[:12]}")
         self._default_budget = default_token_budget
+        if input_sanitizer is not None:
+            self._input_sanitizer = input_sanitizer
+        elif sanitize_llm_context:
+            self._input_sanitizer = InputSanitizer(root=str(_REPO_ROOT))
+        else:
+            self._input_sanitizer = None
 
     # ---- accessors ---------------------------------------------------
 
@@ -694,6 +738,33 @@ class AgentOrchestrator:
         started = time.perf_counter()
         t_id = task_id or self._id_factory()
         route = self._router.route(domain, strategy=strategy, required_role=required_role)
+        ctx = context or {}
+        if self._input_sanitizer is not None:
+            try:
+                if claim:
+                    self._input_sanitizer.validate_llm_context(claim)
+                if ctx:
+                    self._input_sanitizer.validate_llm_context(
+                        json.dumps(ctx, ensure_ascii=False, default=str)
+                    )
+            except ContextInjectionError as exc:
+                budget = token_budget if token_budget is not None else self._default_budget
+                latency_ms = int((time.perf_counter() - started) * 1000)
+                result = OrchestrationResult(
+                    task_id=t_id,
+                    route=route,
+                    tool_calls=[],
+                    claim=claim,
+                    hallucination=None,
+                    success=False,
+                    latency_ms=latency_ms,
+                    token_used=token_used,
+                    token_budget=budget,
+                    errors=[f"context_sanitization_failed: {exc}"],
+                )
+                self._monitor.record(result)
+                return result
+
         calls: list[ToolCallRecord] = []
         errors: list[str] = []
         chain_ok = True
@@ -728,7 +799,7 @@ class AgentOrchestrator:
 
         hallu_payload: dict[str, Any] | None = None
         if claim and self._cove is not None:
-            hallu_payload = self._cove(claim, context or {})
+            hallu_payload = self._cove(claim, ctx)
 
         result = OrchestrationResult(
             task_id=t_id,
@@ -781,6 +852,7 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 error=f"{type(exc).__name__}: {exc}",
             )
+
 
 # ---------------------------------------------------------------------------
 # 仅用于静态检查：statistics 被保留以便未来扩展 p50/p95；防止 ruff unused

@@ -14,17 +14,20 @@ from zephyr.orchestrator.file_task_mapper import (
 )
 from zephyr.shared.schemas import TaskNamespace
 
+
 @pytest.fixture
 def tmp_db(tmp_path: Path) -> Path:
     return tmp_path / "test_metadata.db"
+
 
 @pytest.fixture
 def mapper(tmp_db: Path) -> FileTaskMapper:
     return FileTaskMapper(db_path=tmp_db)
 
+
 class TestClassifyFileToNamespace:
     def test_adr_pattern(self) -> None:
-        ns = classify_file_to_namespace("docs/02_enterprise_architecture/adr/adr-0038-file-as-task-paradigm.md")
+        ns = classify_file_to_namespace("docs/02_enterprise_architecture/architecture-rationale-log.md")
         assert ns == TaskNamespace.ADR
 
     def test_construction_plan_pattern(self) -> None:
@@ -58,6 +61,7 @@ class TestClassifyFileToNamespace:
     def test_windows_backslash(self) -> None:
         ns = classify_file_to_namespace("docs\\02_enterprise_architecture\\adr\\adr-0038-file-as-task-paradigm.md")
         assert ns == TaskNamespace.ADR
+
 
 class TestFileTaskMapperRegister:
     def test_register_file_returns_task_id(self, mapper: FileTaskMapper) -> None:
@@ -95,6 +99,7 @@ class TestFileTaskMapperRegister:
         files = mapper.resolve_reverse("OPS-99999")
         assert files == []
 
+
 class TestFileTaskMapperTriage:
     def test_register_from_triage(self, mapper: FileTaskMapper, tmp_path: Path) -> None:
         triage_file = tmp_path / "triage-result.yaml"
@@ -130,6 +135,7 @@ class TestFileTaskMapperTriage:
         report = mapper.register_from_triage(triage_file)
         assert len(report.errors) == 1
 
+
 class TestFileTaskMapperRollback:
     def test_rollback_removes_task(self, mapper: FileTaskMapper) -> None:
         tid = mapper.register_file("docs/rollback-test.md")
@@ -139,6 +145,7 @@ class TestFileTaskMapperRollback:
 
     def test_rollback_nonexistent_does_not_raise(self, mapper: FileTaskMapper) -> None:
         mapper.rollback("OPS-99999")
+
 
 class TestFileTaskMapperSync:
     def test_sync_pending_no_file_is_consistent(self, mapper: FileTaskMapper) -> None:

@@ -2,9 +2,9 @@
 module_id: GOV-CMP-002
 title: 审计追踪策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -75,7 +75,7 @@ ai_autonomy: human_gated
 
 | 编号 | 规则 | 违反后果 |
 |------|------|---------|
-| AUD-003 | 审计日志只有 Auditor 和 Owner 角色可读（角色定义见 [GOV-SEC-002](../01_policies_and_standards/governance/security/access-control-policy.md)），其他角色禁止访问 | 收回越权访问权限 |
+| AUD-003 | 审计日志只有 Auditor 和 Owner 角色可读（角色定义见 [GOV-SEC-002](../security/access-control-policy.md)），其他角色禁止访问 | 收回越权访问权限 |
 
 ### AUD-004：审计记录格式
 

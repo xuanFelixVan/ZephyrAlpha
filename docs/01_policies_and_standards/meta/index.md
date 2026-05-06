@@ -69,7 +69,7 @@ verifiability: manual
 | 具体领域的治理规则（编码、文档、任务等） | 这些是"规则实例"不是"元规则" | `governance/` 各子目录 |
 | 操作流程/施工手册 | 操作层面内容 | `operational/` |
 | 模板文件 | 模板是工具不是规则 | `templates/` |
-| 架构决策记录（ADR） | 架构决策不是规则标准 | `docs/02_enterprise_architecture/adr/` |
+| 架构决策记录（ADR） | 架构决策不是规则标准 | **`KB:decisions`**（旧 `docs/02_enterprise_architecture/adr/` 已移除） |
 | Session Log | 临时会话记录 | 已迁至项目外部独立目录（2026-05-02）。 |
 
 ### 2.3 目录命名逻辑

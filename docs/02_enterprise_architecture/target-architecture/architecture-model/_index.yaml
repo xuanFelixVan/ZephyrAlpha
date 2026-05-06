@@ -174,6 +174,11 @@ id_conventions:
   - prefix: T-{QUADRANT}{NN}
     scope: technology/technology-landscape.yaml
     example: T-A01
+    note: EA Technology Radar canonical；仓库根摘要使用 IMPL-T-*，不得与 T-* 混号等价
+  - prefix: IMPL-T-{QUADRANT}{NN}
+    scope: architecture-model/technology-landscape.yaml（repository root）
+    example: IMPL-T-A01
+    note: 施工树摘要专有 ID；可选用 mirrors_ea_id 指向 EA 同义项
   - prefix: DS{NN}
     scope: technology/technology-landscape.yaml — data_sources
     example: DS01

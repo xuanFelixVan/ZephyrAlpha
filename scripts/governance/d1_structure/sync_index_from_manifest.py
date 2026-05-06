@@ -1,16 +1,5 @@
 """sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.md 的脚本数量。
 
-__manifest__ = """
-args:
-- --check
-description: 从 manifest SSoT 自动同步 index.md 脚本数量（AGENTS.md §6.10 stable — index.md
-  数字不再手动维护）
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 10
-warn_only: true
-"""
 
 
 对标：AGENTS.md §6.9（YAML canonical SSoT）+ §6.10 双层对齐闸门 stable
@@ -24,6 +13,18 @@ warn_only: true
 """
 
 from __future__ import annotations
+__manifest__ = """
+args:
+- --check
+description: 从 manifest SSoT 自动同步 index.md 脚本数量（AGENTS.md §6.10 stable — index.md
+  数字不再手动维护）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 10
+warn_only: true
+"""
+
 
 import re
 import sys

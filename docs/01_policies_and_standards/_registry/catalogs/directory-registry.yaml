@@ -1,7 +1,7 @@
 # ============================================================================
 # ZephyrAlpha 项目目录登记表（Directory Registry）— 唯一真源
 # ============================================================================
-# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+# 版本: 1.0.1 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
 #
 # module_id: PS-REG-013
 # doc_type: register
@@ -27,10 +27,10 @@
 schema_version: "1.0.0"
 doc_type: register
 title: "项目目录登记表"
-version: "1.0.0"
+version: "1.0.1"
 status: active
 created: "2026-05-02"
-last_updated: "2026-05-02"
+last_updated: "2026-05-06"
 ai_autonomy: human_gated
 ttl: permanent
 total_registered: 83
@@ -200,7 +200,7 @@ directories:
     adr_ref: null
     track: B
     status: active
-    note: "reports/ + state/"
+    note: "reports/ + findings/ + state/(deprecated)"
 
   # ========================================
   # docs/01_policies_and_standards/ 子目录（二级）
@@ -471,14 +471,14 @@ directories:
   # 02_enterprise_architecture/ 子目录
   # ========================================
   - path: "docs/02_enterprise_architecture/adr/"
-    responsibility: "ADR 正式凭证——36 份架构决策记录（永久不变）"
+    responsibility: "【registry 历史路径键】ADR 物理树已移除——权威真源为 KB:decisions"
     parent: "docs/02_enterprise_architecture/"
-    has_index: true
+    has_index: false
     module_id: "ADR-INDEX"
     adr_ref: null
     track: C
-    status: frozen
-    note: "2026-04-27 起 ADR 体系冻结——不再新增"
+    status: deprecated
+    note: "禁止写入。脚本读到本条目不假定磁盘路径存在；新建决策仅经由 KB ingestion。"
 
   - path: "docs/02_enterprise_architecture/designs/"
     responsibility: "架构设计方案——买 vs 建决策框架等"
@@ -605,6 +605,16 @@ directories:
     track: B
     status: active
     note: ""
+
+  - path: "docs/09_audit/findings/"
+    responsibility: "安全与合规 Finding、事件初稿 Markdown 落盘（对齐 target-architecture/06-security-architecture.md）"
+    parent: "docs/09_audit/"
+    has_index: true
+    module_id: null
+    adr_ref: null
+    track: B
+    status: active
+    note: "命名约定见 findings/index.md；与 reports/ 区分"
 
   - path: "docs/09_audit/state/"
     responsibility: "审计状态快照——已废弃，DB 已迁移至 data/"

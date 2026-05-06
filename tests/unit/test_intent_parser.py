@@ -26,6 +26,7 @@ from zephyr.context_engine.intent_parser import (
 # 辅助 mock
 # ---------------------------------------------------------------------------
 
+
 class FakeEmbedding:
     def __init__(self, hits: list[EmbeddingHit]) -> None:
         self.hits = hits
@@ -35,9 +36,11 @@ class FakeEmbedding:
         self.called_with.append(query)
         return self.hits[:top_k]
 
+
 class FailingEmbedding:
     def __call__(self, query: str, *, top_k: int = 5) -> list[EmbeddingHit]:
         raise RuntimeError("chroma down")
+
 
 class FakeLLM:
     def __init__(self, verdict: LLMIntentVerdict) -> None:
@@ -48,13 +51,16 @@ class FakeLLM:
         self.called_with.append(query)
         return self.verdict
 
+
 class FailingLLM:
     def __call__(self, query: str, *, context: dict[str, Any] | None = None) -> LLMIntentVerdict:
         raise RuntimeError("llm 5xx")
 
+
 # ---------------------------------------------------------------------------
 # Stage 1 直通
 # ---------------------------------------------------------------------------
+
 
 class TestStage1Direct:
     def test_high_confidence_keyword_short_circuits_to_stage1(self) -> None:
@@ -78,9 +84,11 @@ class TestStage1Direct:
         assert result.primary_domain == "D3"
         assert emb.called_with == ["bar baz xyzzy"]
 
+
 # ---------------------------------------------------------------------------
 # Stage 2 语义
 # ---------------------------------------------------------------------------
+
 
 class TestStage2Semantic:
     def test_semantic_accepts_over_threshold(self) -> None:
@@ -130,9 +138,11 @@ class TestStage2Semantic:
         assert result.source_stage == "llm"
         assert result.primary_domain == "D5"
 
+
 # ---------------------------------------------------------------------------
 # Stage 3 LLM
 # ---------------------------------------------------------------------------
+
 
 class TestStage3LLM:
     def test_llm_low_confidence_requires_human(self) -> None:
@@ -175,9 +185,11 @@ class TestStage3LLM:
         assert result.requires_human is True
         assert "llm_error" in (result.rationale or "")
 
+
 # ---------------------------------------------------------------------------
 # 级联与 trace
 # ---------------------------------------------------------------------------
+
 
 class TestTraceAndCascade:
     def test_trace_records_stages(self) -> None:
@@ -218,9 +230,11 @@ class TestTraceAndCascade:
         result = parser.parse("nothing-matches-keyword-list xyzzy qux")
         assert result.source_stage == "semantic"
 
+
 # ---------------------------------------------------------------------------
 # 集成辅助函数
 # ---------------------------------------------------------------------------
+
 
 class TestIntegrationHelpers:
     def test_plan_directive_chain_joins(self) -> None:
@@ -305,10 +319,12 @@ class TestIntegrationHelpers:
         with pytest.raises(AttributeError):
             inject_context_for(r, Bad())
 
+
 def test_default_thresholds_exposed() -> None:
     assert "stage1_accept" in DEFAULT_STAGE_THRESHOLDS
     assert "stage2_accept" in DEFAULT_STAGE_THRESHOLDS
     assert DEFAULT_STAGE_THRESHOLDS["stage1_accept"] > DEFAULT_STAGE_THRESHOLDS["stage2_accept"]
+
 
 def test_exports_present() -> None:
     from zephyr.context_engine import intent_parser as m

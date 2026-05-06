@@ -15,10 +15,10 @@ docs/02_enterprise_architecture/target-architecture/
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
-生产者：
+作为生产者（Producer）：
   - CTR-P1-014 (ExperimentResult) — 实验结论，发布至 L09/L11
 
-消费者：
+作为消费者（Consumer）：
   - CTR-001 (NormalizedMarketData) — 实验需要市场数据上下文
   - CTR-P1-004/005 (ModelServing) — Scout Agent 调用 L11 模型推断
   - CTR-P1-013 (TelemetryEmitter) — 实验运行数据上报 L12
@@ -34,3 +34,19 @@ L13 experimentation   : 自动化实验（Scout + A/B + 结论沉淀）
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l13_experimentation.pipeline_base import (
+    ExperimentConfig,
+    ExperimentMetric,
+    ExperimentPipelineBase,
+    ScoutAgentBase,
+)
+
+__all__ = [
+    "ExperimentConfig",
+    "ExperimentMetric",
+    "ExperimentPipelineBase",
+    "ScoutAgentBase",
+]

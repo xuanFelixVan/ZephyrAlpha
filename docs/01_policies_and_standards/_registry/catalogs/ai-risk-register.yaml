@@ -1,278 +1,213 @@
 # ============================================================================
-# ZephyrAlpha AI 风险登记册（AI Risk Register）— 唯一真源
+# ZephyrAlpha AI 风险登记簿（AI Risk Register）— 唯一真源
 # ============================================================================
-# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+# 版本: 1.0.1 | 创建: 2026-05-02 | 更新: 2026-05-06 | owner: ZephyrAlpha-Owner
 #
 # module_id: PS-REG-009
 # doc_type: register
 #
-# 对标: NIST AI RMF 1.0 — AI Risk Register（AI系统必须维护风险登记册）
-#       + ISO 42001 §8 — AI System Impact Assessment（每次AI决策前评估风险）
-#       + OWASP Top 10 for LLM Applications（LLM-01~LLM-10 十大AI安全风险）
-#
-# 用途: 登记 ZephyrAlpha 项目中所有已识别的 AI 操作特有风险——
-#       幻觉 / Context泄漏 / Prompt注入 / 模型退化 / 合规缺口 / Token偷窃。
-#       每个风险含概率、影响、缓解措施、关联门禁。
-#
-# 触发条件: meta/index.md 标注 GOV-CMP-003 待 beta+ 创建，
-#          但根据 NIST AI RMF 的最佳实践，"风险登记册应随第一个 AI 功能一同创建"。
-#          本文在当前 scaffold 提前创建骨架——experimental 脚本系统运行时填充实际数据。
+# 对标: NIST AI RMF 1.0 / ISO 42001 §8 / OWASP LLM Top 10
 # ============================================================================
 
 schema_version: "1.0.0"
 doc_type: register
-title: "AI 风险登记表"
-version: "1.0.0"
+title: "AI 风险登记簿"
+version: "1.0.1"
 status: active
 created: "2026-05-02"
-last_updated: "2026-05-02"
+last_updated: "2026-05-06"
 ai_autonomy: human_gated
 ttl: permanent
 total_risks: 8
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
-    why: "doc_type 受控词表 + register 类型合法字段定义"
+    why: "doc_type 受控词表与 register 合法字段"
 
-# ============================================================================
-# 字段 Schema
-# ============================================================================
 _schema:
   risk_categories:
-    - llm_output      # LLM 输出风险（幻觉/偏见/恶意输出）
-    - prompt_injection  # Prompt 注入/操纵
-    - data_leakage    # Context/数据泄漏
-    - model_degradation  # 模型退化/OOD
-    - governance      # 治理合规
-    - supply_chain    # 供应链（模型/API依赖）
-
+    - llm_output
+    - prompt_injection
+    - data_leakage
+    - model_degradation
+    - governance
+    - supply_chain
   probability_values:
-    - very_low    # < 5%（极少触发条件）
-    - low         # 5~20%
-    - medium      # 20~50%
-    - high        # 50~80%
-    - very_high   # > 80%（每次 session 都可能触发）
-
+    - very_low
+    - low
+    - medium
+    - high
+    - very_high
   impact_values:
-    - minimal     # 影响可忽略——AI 产出一处错误，手工修正即可
-    - moderate    # 中等影响——影响一批文件的准确度，需要批量修复
-    - significant  # 显著影响——关键文件被污染，架构受损
-    - critical    # 严重影响——系统不可用、数据不可逆损坏、合规违规
-
+    - minimal
+    - moderate
+    - significant
+    - critical
   mitigation_status:
-    - not_addressed     # 未应对
-    - partially_addressed  # 部分应对（有概念但无自动化）
-    - addressed_with_manual  # 手动应对（有流程但无代码）
-    - addressed_with_auto    # 自动应对（pre-commit/CI/GATE强制执行）
-
-# ============================================================================
-# 风险登记
-# ============================================================================
-# 字段说明:
-#   risk_id             唯一标识，格式 AI-RSK-{NNN}
-#   risk_name           风险名称
-#   category            分类（见 _schema.risk_categories）
-#   owasp_llm_id        对应 OWASP LLM Top 10 编号
-#   description         风险描述——什么情况会发生
-#   probability         发生概率（very_low~very_high）
-#   impact              影响程度（minimal~critical）
-#   risk_score          综合评分 = probability × impact（1~25）
-#   trigger_condition   触发条件——什么操作会触发此风险
-#   blast_radius        影响范围：single_file / module / cross_module / system_wide
-#   mitigation          缓解措施
-#   mitigation_status   缓解状态
-#   related_gate        关联的 pre-commit GATE
-#   related_adr         关联的 ADR 决策
-#   last_reviewed       最近复审时间
-# ============================================================================
+    - not_addressed
+    - partially_addressed
+    - addressed_with_manual
+    - addressed_with_auto
 
 risks:
-
-  # ── AI-RSK-001: 幻觉——AI 生成不可信内容 ──
   - risk_id: "AI-RSK-001"
-    risk_name: "AI 幻觉输出——生成不存在路径/参数/API"
+    risk_name: "AI 幻觉输出 — 生成不可信路径 / 参数 / API"
     category: llm_output
     owasp_llm_id: "LLM-04"
-    description: "AI 生成的文件路径指向不存在的目录、引用的 module_id 未在注册表中登记、假定了不存在的参数名。vibe coding 逐文件生成时最常出现——AI'编造'了一个它认为应该存在但实际上不存在的东西"
+    description: "AI 生成文件路径指向不存在的目录、未登记的 module_id、虚构参数等。"
     probability: high
     impact: significant
-    risk_score: 16  # high(4) × significant(4) = 16
-    trigger_condition: "每次 AI 执行文件操作（创建/修改/删除）和路径引用时"
+    risk_score: 16
+    trigger_condition: "每次 AI 执行文件写入或路径引用时"
     blast_radius: module
     mitigation:
-      - "pre-commit GATE-01/02/03/06/07——架构模型 YAML 一致性校验"
-      - "validate_architecture.py——frontmatter + 路径放置校验"
-      - "validate_ssot.py——SSoT 一致性校验"
-      - "AI 操作前自检——必须读 blueprint.md + registry 确认 module_id 存在"
+      - "pre-commit GATE-01~07 与架构 YAML 一致性"
+      - "validate_ssot.py"
     mitigation_status: partially_addressed
     related_gate: ["GATE-01", "GATE-02", "GATE-03", "GATE-16"]
     related_adr: null
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-002: Prompt注入——恶意文档内容被当作指令 ──
   - risk_id: "AI-RSK-002"
-    risk_name: "Indirect Prompt Injection——文档内容被AI误读为操作指令"
+    risk_name: "Indirect Prompt Injection — 文档内容被误读为指令"
     category: prompt_injection
     owasp_llm_id: "LLM-01"
-    description: "ZephyrAlpha 用文档驱动 AI 施工——AI 读取 markdown 文档内容并据此生成代码/配置。如果某 .md 文件中嵌入了模仿 'AI 指令格式' 的内容（如伪装成系统提示），AI 可能将其误读为操作指令并执行"
+    description: "Markdown 中若嵌入类似系统提示的内容，可能被模型当作操作指令。"
     probability: medium
     impact: significant
-    risk_score: 12  # medium(3) × significant(4) = 12
-    trigger_condition: "AI 读取外部/用户生成的 .md 文件时（非本项目的治理文档）"
+    risk_score: 12
+    trigger_condition: "读取外部或用户提供的 .md 时"
     blast_radius: module
     mitigation:
-      - "script-system GATE——C5 终审阶段包含 Prompt Injection 检测"
-      - "llm_security/ LLM Security Gateway（LSG）——ADR-0020 定义"
-      - "AI 操作铁律 #3——生成内容必须先过 self-check 清单（ai-hallucination-self-check-policy.md）"
+      - "script-system 审查与 LSG（ADR-0020）"
+      - "ai-hallucination-self-check-policy"
     mitigation_status: partially_addressed
-    related_gate: null  # experimental LSG 落地后关联
+    related_gate: null
     related_adr: "ADR-0020"
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-003: Context泄漏——Token窗口中的敏感信息被传递 ──
   - risk_id: "AI-RSK-003"
-    risk_name: "Context窗口泄漏——敏感内容在Token剪枝中未被清除"
+    risk_name: "Context 窗口泄漏 — 敏感信息进入 token 窗口"
     category: data_leakage
     owasp_llm_id: "LLM-06"
-    description: "AGENTS.md 等基准文件自动注入 AI session 上下文。如果基准文件包含敏感信息（如 Owner 个人联系方式、具体 API 密钥），该信息会被注入到每次 session 中，无法从 context 中清除"
+    description: "基线文档自动注入会话；若含敏感信息将反复进入上下文。"
     probability: low
     impact: critical
-    risk_score: 8  # low(2) × critical(5) = 10 → 下调至 8（当前项目规模小）
-    trigger_condition: "每次 AI session 初始化时自动加载 AGENTS.md + 规则文件"
+    risk_score: 8
+    trigger_condition: "每次会话初始化加载 AGENTS.md 与规则树时"
     blast_radius: system_wide
     mitigation:
-      - "AGENTS.md 已声明 classification: confidential 但不暴露具体密钥"
-      - "密钥管理策略 GOV-SEC-001——不在文档中硬编码密钥"
-      - "M1 ContextBudgetTracker——监控Token窗口使用率，异常时告警"
+      - "GOV-SEC-001 密钥不入库"
+      - "ContextBudgetTracker 监控"
     mitigation_status: addressed_with_manual
     related_gate: null
     related_adr: "GOV-SEC-001"
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-004: 模型退化——不同AI模型产出质量不一致 ──
   - risk_id: "AI-RSK-004"
-    risk_name: "Vibe Coding 多模型质量不一致——不同AI模型对同一架构的理解偏差"
+    risk_name: "多模型质量不一致 — 同一架构理解偏差"
     category: model_degradation
-    owasp_llm_id: null  # 非LLM特有，但 Vibe Coding 社区高频问题
-    description: "项目使用多个 AI 模型（Cursor/Trae/Kimi/Claude/GLM）交替施工。模型 A 产出的架构文件，模型 B 可能误解其意图——导致后续施工的方向偏差、格式不一致、依赖链断裂"
+    owasp_llm_id: null
+    description: "多模型/多工具交替施工导致格式与依赖链漂移。"
     probability: high
     impact: moderate
-    risk_score: 12  # high(4) × moderate(3) = 12
-    trigger_condition: "每次切换 AI 模型/工具时——特别是新 session 的第一个操作"
+    risk_score: 12
+    trigger_condition: "切换模型或新 session 首次操作时"
     blast_radius: module
     mitigation:
-      - "Zero-Memory Restart Standard (§5.1)——所有文件必须自解释，不依赖session记忆"
-      - "Frontmatter 统一标准（metadata-registry.md）——所有文件头部有机器可读元数据"
-      - "Provenance 三件套（validate_blueprint_provenance.py）——每个关键决策可追溯"
-      - "Wave 终审仲裁制度（ADR-0003 dual-ai-collaboration）"
+      - "Zero-Memory Restart 与统一 frontmatter"
+      - "Provenance 三件套"
     mitigation_status: addressed_with_auto
     related_gate: ["GATE-12", "GATE-15", "GATE-16"]
     related_adr: "ADR-0003"
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-005: Capacity overflow——97→1500模块演进中AI产出物爆炸 ──
   - risk_id: "AI-RSK-005"
-    risk_name: "AI 产出容量溢出——模块数量爆炸导致登记表和校验脚本超时"
+    risk_name: "容量溢出 — 模块数增长导致全量校验超时"
     category: governance
     owasp_llm_id: null
-    description: "当前 5 个模块→ beta 预计 1500+ 模块。每个模块的登记表条目需要 validate_architecture.py 扫描。1500 个模块后全量扫描可能超时（> 30s），pre-commit 门禁会阻塞所有 commit"
-    probability: medium  # beta 才会触发，但 scaffold 需要埋解决点
+    description: "模块与登记表条目增长后，全量扫描可能超过 pre-commit 时限。"
+    probability: medium
     impact: significant
-    risk_score: 12  # medium(3) × significant(4) = 12
-    trigger_condition: "模块总数 > 100 时全量校验超时风险显著"
+    risk_score: 12
+    trigger_condition: "模块总数超过阈值时的全量校验"
     blast_radius: system_wide
     mitigation:
-      - "capacity-assurance MOD-INF-001——SLI/SLO 阈值 + 分批验证机制"
-      - "ContractBus 分批迁移——按 Phase 分批校验，不一次全量"
-      - "validate_architecture.py 增量模式——仅扫描变更文件"
+      - "capacity-assurance SLI/SLO"
+      - "增量校验（仅变更文件）"
     mitigation_status: partially_addressed
     related_gate: null
     related_adr: null
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-006: Drift——登记表与实际文件不一致 ──
   - risk_id: "AI-RSK-006"
-    risk_name: "登记表漂移——module-registry.yaml 中登记的状态与实际文件存在不一致"
+    risk_name: "登记表漂移 — registry 与物理文件不一致"
     category: governance
     owasp_llm_id: null
-    description: "登记表是手动维护的 YAML。当 AI 创建/修改文件后忘记同步更新登记表（或 Owner 手动创建了文件），登记表与实际物理文件存在差异——导致后续 AI session 基于过期状态做决策"
+    description: "手工维护 YAML 登记表时，文件变更未同步登记。"
     probability: medium
     impact: moderate
-    risk_score: 9  # medium(3) × moderate(3) = 9
-    trigger_condition: "每次文件创建/修改/删除但未同步更新对应登记表时"
+    risk_score: 9
+    trigger_condition: "创建/修改/删除文件但未同步登记表时"
     blast_radius: cross_module
     mitigation:
-      - "validate_blueprint_registry.py——蓝图登记表与实际目录对账"
-      - "run_all.py + pre-commit——每次 commit 前全量对账"
-      - "beta auto-generation——登记表从脚本自动生成而非手动维护"
-    mitigation_status: partially_addressed  # validate_blueprint_registry.py 创建后升级为 addressed_with_auto
+      - "validate_blueprint_registry.py"
+      - "run_all.py / pre-commit"
+    mitigation_status: partially_addressed
     related_gate: null
     related_adr: null
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-007: 供应链依赖——外部AI模型API不可用 ──
   - risk_id: "AI-RSK-007"
-    risk_name: "外部AI模型API不可用——Claude/GLM/Qwen API宕机或限流"
+    risk_name: "外部 AI API 不可用 — 供应商中断或限流"
     category: supply_chain
     owasp_llm_id: "LLM-09"
-    description: "ZephyrAlpha 依赖多个外部 AI API 进行施工（Wave 终审依赖 Claude Opus，日常施工依赖 GLM-5.1/Sonnet）。任一模型 API 不可用都可能阻塞某类任务。单模型依赖 = 单点故障"
+    description: "依赖外部模型 API，单点故障或配额用尽会阻塞任务。"
     probability: low
     impact: significant
-    risk_score: 8  # low(2) × significant(4) = 8
-    trigger_condition: "任一外部 AI API 返回 500/429（限流）/503/超时"
+    risk_score: 8
+    trigger_condition: "外部 API 返回 5xx/429 等"
     blast_radius: system_wide
     mitigation:
-      - "model-capability-contract.yaml——登记每个模型的替代方案"
-      - "v2_staging_zone model_selection_policy——三模型分工（GLM/Sonnet/Opus）"
-      - "beta fallback——如果用不了一个模型，任务卡系统自动改写为另一个模型可执行的粒度"
+      - "model-capability-contract.yaml 登记替代模型"
+      - "任务卡 model_selection_policy 多模型分工"
     mitigation_status: addressed_with_manual
     related_gate: null
-    related_adr: "task-card-meta-registry.yaml §model_selection_policy"
+    related_adr: null
     last_reviewed: "2026-05-02"
 
-  # ── AI-RSK-008: 自审计闸缺失——OVASP LLM-04 的 AI 自我审计缺口 ──
   - risk_id: "AI-RSK-008"
-    risk_name: "自审计闸仅概念设计——AI 产出物质量无自动化检查门禁"
+    risk_name: "自审查门禁缺失 — 输出质量无自动守门"
     category: governance
     owasp_llm_id: "LLM-04"
-    description: "vibe-coding-pipelines blueprint §4.3 定义了'自审计闸'（防 OWASP LLM-04——AI 自审计输出质量），但当前仅概念设计，无代码实现。AI 产出的架构文件没有自动质量检查——可能产出错误的设计文档但无系统能捕获"
+    description: "自审查流程若仅有设计无代码，则架构产出可能未经自动质检。"
     probability: medium
     impact: moderate
-    risk_score: 9  # medium(3) × moderate(3) = 9
-    trigger_condition: "每次 AI 产出文档（blueprint.md/construction-plan.md）但未经自审计时"
+    risk_score: 9
+    trigger_condition: "产出 blueprint 等文档但未跑门禁时"
     blast_radius: module
     mitigation:
-      - "experimental 脚本系统落地——script-system C1-C5 五阶段流水线"
-      - "pre-commit GATE-12/15/16——阶段性自动校验"
-      - "beta 自审计闸代码实现——嵌入 vibe-coding-pipelines 生产线"
+      - "script-system C1-C5 流水线"
+      - "GATE-12/15/16"
     mitigation_status: not_addressed
     related_gate: null
-    related_adr: "MOD-INF-004 §4.3"
+    related_adr: "MOD-INF-006 §4.3"
     last_reviewed: "2026-05-02"
 
-# ============================================================================
-# 风险热力矩阵（Risk Heatmap）
-# ============================================================================
 heatmap:
-  # 格式: probability × impact → risk_score → 颜色
-  # 最低 = 1（very_low × minimal = 1×1=1）
-  # 最高 = 25（very_high × critical = 5×5=25）
-  critical_zone:   # risk_score ≥ 15 —— 立即应对
-    - {risk_id: AI-RSK-001, score: 16, label: "AI幻觉输出"}
-  high_zone:       # 10 ≤ risk_score < 15 —— experimental 应对
-    - {risk_id: AI-RSK-002, score: 12, label: "Prompt注入"}
-    - {risk_id: AI-RSK-004, score: 12, label: "多模型质量不一致"}
+  critical_zone:
+    - {risk_id: AI-RSK-001, score: 16, label: "AI 幻觉输出"}
+  high_zone:
+    - {risk_id: AI-RSK-002, score: 12, label: "Prompt 注入"}
+    - {risk_id: AI-RSK-004, score: 12, label: "多模型不一致"}
     - {risk_id: AI-RSK-005, score: 12, label: "容量溢出"}
-  medium_zone:     # 5 ≤ risk_score < 10 —— beta 应对
-    - {risk_id: AI-RSK-003, score: 8, label: "Context泄漏"}
+  medium_zone:
+    - {risk_id: AI-RSK-003, score: 8, label: "Context 泄漏"}
     - {risk_id: AI-RSK-006, score: 9, label: "登记表漂移"}
-    - {risk_id: AI-RSK-007, score: 8, label: "API不可用"}
-    - {risk_id: AI-RSK-008, score: 9, label: "自审计闸缺失"}
-  low_zone: []     # < 5 —— 监控即可
+    - {risk_id: AI-RSK-007, score: 8, label: "API 不可用"}
+    - {risk_id: AI-RSK-008, score: 9, label: "自审查缺失"}
+  low_zone: []
 
-# ============================================================================
-# 汇总统计
-# ============================================================================
 summary:
   total_risks: 8
   by_category:
@@ -283,23 +218,19 @@ summary:
     governance: 3
     supply_chain: 1
   by_mitigation_status:
-    not_addressed: 1          # AI-RSK-008
-    partially_addressed: 3    # AI-RSK-001/002/005
-    addressed_with_manual: 2  # AI-RSK-003/007
-    addressed_with_auto: 2     # AI-RSK-004/006(partial→experimental full)
+    not_addressed: 1
+    partially_addressed: 3
+    addressed_with_manual: 2
+    addressed_with_auto: 2
   avg_risk_score: 10.75
   max_risk_score: 16
 
-# ============================================================================
-# 变更记录
-# ============================================================================
 changelog:
+  - version: "1.0.1"
+    date: "2026-05-06"
+    changes:
+      - "AUDIT-03：修复 UTF-8/YAML 语法并重写受污损段落"
   - version: "1.0.0"
     date: "2026-05-02"
-    author: "AI-GLM-5.1"
     changes:
-      - "初始创建——提前于 meta/index.md 规划的 beta+"
-      - "登记 8 个 AI 操作特有风险——覆盖 OWASP LLM-01/04/06/09"
-      - "风险评分范围 8-16，均分 10.75——以中等偏高为主"
-      - "1 个 critical zone（AI-RSK-001 幻觉=16），3 个 high zone"
-      - "缓解状态：1 未应对 + 3 部分应对 + 2 手动 + 2 自动"
+      - "初始创建，登记 8 条 AI 特有风险"

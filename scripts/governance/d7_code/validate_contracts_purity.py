@@ -1,15 +1,6 @@
 """
 validate_contracts_purity.py — 契约纯度校验
 
-__manifest__ = """
-args: []
-description: 契约纯度校验（COND-32 — contracts/仅允许数据结构定义）
-dimensions:
-- D7
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：COND-32（contracts 目录放业务逻辑为条件禁止）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 契约纯度校验（COND-32 — contracts/仅允许数据结构定义）
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import sys

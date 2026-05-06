@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-GATE-22：AI加载路径完整性门禁（validate_load_path_integrity.py）
-================================================================
+GATE-22: validate_load_path_integrity.py
+"""
 
 __manifest__ = """
 args:
-- {flag: --check, type: bool, description: "验证§8.2所有路径存在"}
-- {flag: --fix, type: bool, description: "报告缺失但不自动修复（路径需人工裁决）"}
-description: >
-  解析 AGENTS.md §8.2 任务菜单中的所有文件路径，逐条验证文件存在。
-  对标 §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确。
+- --check
+- --fix
+- --warn-only
+- --jsonl
+description: "parse AGENTS.md section 8.2 task menu, verify every referenced file exists on disk. Anchored to section 6.18"
 dimensions:
 - D5
 priority: P0
@@ -17,30 +17,17 @@ timeout_seconds: 15
 warn_only: false
 """
 
+"""
+Parses AGENTS.md section 8.2 task menu, extracts all file path
+references, and verifies each one exists on disk.
 
-权威依据
---------
-AGENTS.md §6.18 AI加载路径不可漂移铁律：
-  §8.2 任务菜单 = AI 找到规则文件的唯一入口。
-  路径变更 → MUST grep §8.2 确认无旧路径引用。
-
-检测范围
---------
-  AGENTS.md §8.2 任务菜单中所有声明的文件路径（含 base path 前缀
-  `D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\`）。
-
-门禁逻辑
---------
-  - 逐条读取 §8.2 表格
-  - 合并 base path + relative paths
-  - 验证每条路径对应的文件存在
-  - 缺失 → exit(1) 阻断提交
+Authority: AGENTS.md section 6.18 -- section 8.2 task menu is the
+single entry point for AI to find rule files. Path references in
+section 8.2 must never drift from actual file locations.
 
 Usage:
     python validate_load_path_integrity.py --check
 """
-
-from __future__ import annotations
 
 import re
 import sys
@@ -53,6 +40,7 @@ BASE_PATH = REPO_ROOT / "docs" / "01_policies_and_standards"
 
 PATH_MAP = {
     "config/": REPO_ROOT,
+    "docs/": REPO_ROOT,
     "scripts/": REPO_ROOT,
     "src/": REPO_ROOT,
     "pyproject.toml": REPO_ROOT,
@@ -62,8 +50,9 @@ PATH_MAP = {
 
 def extract_paths_from_agents_md() -> list[str]:
     content = AGENTS_PATH.read_text(encoding="utf-8")
-    paths = set()
+    paths: set[str] = set()
     pattern = re.compile(r"`([a-zA-Z0-9_/.\-]+)`")
+    blacklist = frozenset({".md", ".py", ".yaml", ".yml", ".md/.yaml/.yml", ".pre-commit-config"})
 
     in_section82 = False
     for line in content.split("\n"):
@@ -77,29 +66,46 @@ def extract_paths_from_agents_md() -> list[str]:
 
         for match in pattern.finditer(line):
             raw = match.group(1)
-            if "/" not in raw and "." not in raw:
+            if raw in blacklist:
                 continue
-            if any(raw.endswith(ext) for ext in (".md", ".yaml", ".yml", ".py", ".toml", ".yaml")):
-                paths.add(raw)
-            elif raw.endswith(".yaml"):
+            if "/" not in raw:
+                continue
+            if raw.endswith((".md", ".yaml", ".yml", ".py", ".toml")):
                 paths.add(raw)
 
     return list(paths)
 
 
-def resolve_path(ref: str) -> Path | None:
+def resolve_path(ref: str) -> Path:
     for prefix, root in PATH_MAP.items():
         if ref.startswith(prefix) or ref == prefix.rstrip("/"):
             return root / ref
     return BASE_PATH / ref.lstrip("/")
 
 
-def main() -> None:
+def main() -> int:
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="GATE-22: AGENTS.md §8.2 path drift check")
+    parser.add_argument("--check", action="store_true", help="显式检查（历史兼容，默认同理）")
+    parser.add_argument("--fix", action="store_true", help="无自动修复，仅保留接口")
+    parser.add_argument("--warn-only", action="store_true", help="告警模式")
+    parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要")
+    args = parser.parse_args()
+    _ = (args.check, args.fix)
     paths = extract_paths_from_agents_md()
 
     if not paths:
-        print("GATE-22 SKIP: 未在 §8.2 中找到可解析的路径引用。")
-        sys.exit(0)
+        print("GATE-22 SKIP: no parseable path references found in section 8.2.")
+        if args.jsonl:
+            print(
+                json.dumps(
+                    {"severity": "INFO", "check_id": "GATE-22", "missing": 0, "note": "skip"},
+                    ensure_ascii=False,
+                )
+            )
+        return 0
 
     missing = []
     found = 0
@@ -112,17 +118,39 @@ def main() -> None:
 
     total = len(paths)
     if not missing:
-        print(f"GATE-22 PASS: §8.2 中 {total} 条路径全部可访问。")
-        sys.exit(0)
+        print(f"GATE-22 PASS: all {total} paths in section 8.2 are reachable.")
+        if args.jsonl:
+            print(
+                json.dumps(
+                    {"severity": "INFO", "check_id": "GATE-22", "missing": 0, "total": total},
+                    ensure_ascii=False,
+                )
+            )
+        return 0
 
-    print(f"GATE-22 FAIL: {len(missing)}/{total} 条路径不存在:")
-    print(f"  已通过: {found}")
+    print(f"GATE-22 FAIL: {len(missing)}/{total} paths are missing:")
+    print(f"  passed: {found}")
     for m in missing[:10]:
-        print(f"  缺失:   {m}")
+        print(f"  missing: {m}")
     if len(missing) > 10:
-        print(f"  ... 及另外 {len(missing) - 10} 条")
-    sys.exit(1)
+        print(f"  ... and {len(missing) - 10} more")
+
+    if args.jsonl:
+        print(
+            json.dumps(
+                {
+                    "severity": "HIGH",
+                    "check_id": "GATE-22",
+                    "missing": len(missing),
+                    "total": total,
+                },
+                ensure_ascii=False,
+            )
+        )
+    if args.warn_only:
+        return 0
+    return 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -8,6 +8,7 @@ partition:
 
 modules:
   - id: core-blueprint
+    module_id: MOD-INF-006
     name: Blueprint Decomposer + Core Models
     submodule_path: src/zephyr/core/
     status: implemented

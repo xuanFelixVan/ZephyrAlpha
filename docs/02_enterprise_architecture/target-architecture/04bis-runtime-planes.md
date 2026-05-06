@@ -110,7 +110,7 @@ ttl: permanent
 | 平面 | 延迟上限 | 可中断性 | 调度模式 | 典型技术栈 | 典型业务 |
 |---|---|---|---|---|---|
 | **Hot Path** 🔥 | **< 10 ms**（目标 P99）| 🔴 **不可中断**（kernel-bypass + 预分配内存）| 事件驱动 / 固定轮询 | C++20 / Rust / DPDK / RDMA / FPGA / ZeroMQ / Aeron / LMAX Disruptor | 市场数据撮合 / 盘中 SOR 路由 / 高频做市 / 风控硬拦截 |
-| **Warm Path** 🌡️ | **10 ms - 1 s**（目标 P95）| 🟡 **可抢占**（asyncio / 协程）| Async event loop / Task queue | Python 3.12+ / asyncio / FastAPI / Redis Streams / Kafka / NumPy / pandas | 因子计算 / 信号生成 / 组合再平衡 / OMS 状态机 / AI 推理 / API 响应 |
+| **Warm Path** 🌡️ | **10 ms - 1 s**（目标 P95）| 🟡 **可抢占**（asyncio / 协程）| Async event loop / Task queue | Python >=3.11（基线见 `pyproject.toml`）/ asyncio / FastAPI / Redis Streams / Kafka / NumPy / pandas | 因子计算 / 信号生成 / 组合再平衡 / OMS 状态机 / AI 推理 / API 响应 |
 | **Cold Path** ❄️ | **> 1 s**（秒级到小时级）| 🟢 **完全可中断**（checkpointing）| 批调度 / 定时任务 / DAG | Spark / Dask / Ray / Airflow / Prefect / Parquet / DuckDB / Polars | 日终因子回测 / 月度归因 / 模型训练 / SBOM 扫描 / Scout Agent 夜间抓取 / 审计报表 |
 
 ### 2.2 三平面的量化指标（SLO）
@@ -363,7 +363,7 @@ class RuntimePlane(Enum):
 
 | 维度 | Hot Path 🔥 | Warm Path 🌡️ | Cold Path ❄️ |
 |---|---|---|---|
-| **语言** | C++20 / Rust (stable) / C (kernel modules) | Python 3.12+ / Rust CPython extensions (热点函数) | Python / Scala (Spark) / SQL |
+| **语言** | C++20 / Rust (stable) / C (kernel modules) | Python >=3.11 / Rust CPython extensions (热点函数) | Python / Scala (Spark) / SQL |
 | **运行时** | 裸金属 / 物理机 / DPDK userspace | Linux VM / 容器（K8s Pod）| Spark cluster / Dask cluster / Airflow workers |
 | **通信中间件** | Aeron / LMAX Disruptor / ZeroMQ (IPC) / RDMA | Redis Streams / Kafka / FastAPI HTTP / WebSocket | Parquet + S3 / MinIO / Airflow XCom |
 | **存储** | Shared Memory Ring Buffer / mmap files | Redis / PostgreSQL / Parquet (hot/warm border) | Parquet (columnar) / DuckDB / S3 object storage |
@@ -387,7 +387,7 @@ class RuntimePlane(Enum):
 
 ### 5.3 与 04-TA 技术架构的关系
 
-04-TA § 定义**全局技术基线**（Python 3.12 / Redis / PostgreSQL / Parquet 等），本视图 §5 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：L04 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**4bis 不替代 04-TA，是补充正交切面**。
+04-TA § 定义**全局技术基线**（Python >=3.11，见 `pyproject.toml` / Redis / PostgreSQL / Parquet 等），本视图 §5 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：L04 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**4bis 不替代 04-TA，是补充正交切面**。
 
 ### 5.4 预留：Ultra-Hot 子档（未激活）
 

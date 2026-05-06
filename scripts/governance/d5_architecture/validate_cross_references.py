@@ -3,16 +3,6 @@
 validate_cross_references.py — 架构模型 YAML + 治理文档跨引用完整性闸门（GATE-XREF）
 v2.0.0 — 2026-05-03
 
-__manifest__ = """
-args: []
-description: GATE-XREF — 架构模型 YAML 跨引用完整性闸门（8 维检查：contract_id/invariant_id/adr_ref/owner/source_layer/events_published/孤儿合同/module_id
-  注册链，根治引用漂移）
-dimensions:
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 AGENTS.md §6.10 双层对齐闸门 + §6.14 漂移免疫架构原则 Level 2 门禁 3/4：
@@ -39,6 +29,19 @@ AGENTS.md §6.10 双层对齐闸门 + §6.14 漂移免疫架构原则 Level 2 �
 对标：ITIL SACM → CMDB 跨配置项依赖关系必须显式登记
      AWS Config → 持续评估资源间引用关系的合规性
      K8s Admission Controller → 不允许引用不存在的资源
+"""
+
+from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: GATE-XREF — 架构模型 YAML 跨引用完整性闸门（8 维检查：contract_id/invariant_id/adr_ref/owner/source_layer/events_published/孤儿合同/module_id
+  注册链，根治引用漂移）
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
 """
 
 import argparse

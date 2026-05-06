@@ -3,12 +3,15 @@ ZephyrAlpha 蓝图拆解器
 =====================
 依据：MOD-INF-006 v0.3.0 §5 TaskCard 接口契约
 输入：治理文档（ADR/TD/CS/CP 等 blueprint.yaml），可选 task_repo
-输出：双向存储——SQLite（task_repo.create）+ .md（companion）
+输出：双向存储——SQLite（task_repo.create）+ ``docs_dir/decomposition/`` 下
+``decomposition_result.json`` 及逐任务 ``tasks/{task_id}.md``（human companion）。
 
-命名空间规则（§3.1）：
-  ADR-* → Architecture Decision Record     TD-* → Technical Debt
-  CS-*  → Coding Standard                  CP-* → Construction Plan
-  INFRA-* → Infrastructure Blueprint       SCRIPT-* → Script Governance
+蓝图前缀 → Task.namespace（task-card-standard / schemas.TaskNamespace）映射：
+  ADR-* → ADR     TD-* → DW（技术债登记）
+  CS-*  → STD     CP-* → CP
+  INFRA-* / SCRIPT-* → OPS（基础设施与脚本治理并入 OPS 序号空间）
+
+task_id 真源：`schemas.Task` 要求 `^(ADR|CP|KE|STD|DW|SRC|OPS)-\\d+$`
 
 task_id 格式（§3.2.1）：{NAMESPACE}-{SEQ}（SQLite auto-increment 保证唯一性）
 """
@@ -17,7 +20,10 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 from zephyr.core.models import (
     DecompositionResult,
@@ -25,19 +31,27 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
+from zephyr.shared.schemas import ExecutionModel, Priority, SafetyLevel, TaskNamespace
 
 logger = logging.getLogger(__name__)
 
-_NAMESPACE_MAP: dict[str, str] = {
-    "ADR": "ADR",
-    "TD": "TD",
-    "TECH-DEBT": "TD",
-    "CS": "CS",
-    "CODING-STANDARD": "CS",
-    "CP": "CP",
-    "CONSTRUCTION-PLAN": "CP",
-    "INFRA": "INFRA",
-    "SCRIPT": "SCRIPT",
+# 蓝图里出现的别名 → schemas.TaskNamespace（合法 task_id 前缀）
+_BLUEPRINT_LABEL_TO_NAMESPACE: dict[str, TaskNamespace] = {
+    "ADR": TaskNamespace.ADR,
+    "CP": TaskNamespace.CP,
+    "KE": TaskNamespace.KE,
+    "STD": TaskNamespace.STD,
+    "DW": TaskNamespace.DW,
+    "SRC": TaskNamespace.SRC,
+    "OPS": TaskNamespace.OPS,
+    "TD": TaskNamespace.DW,
+    "TECH-DEBT": TaskNamespace.DW,
+    "TECH_DEBT": TaskNamespace.DW,
+    "CS": TaskNamespace.STD,
+    "CODING-STANDARD": TaskNamespace.STD,
+    "CODING_STANDARD": TaskNamespace.STD,
+    "INFRA": TaskNamespace.OPS,
+    "SCRIPT": TaskNamespace.OPS,
 }
 
 _ITEM_PATTERN = re.compile(
@@ -46,17 +60,77 @@ _ITEM_PATTERN = re.compile(
     r"TD-\d+|"
     r"CS-\d+|"
     r"CP-\d+|"
-    r"INFRA-\d+"
-    r")\s+\*\*(?P<module>[^*]+)\*\*\s*—?\s*(?P<desc>.+?)(?:\s*$)",
+    r"INFRA-\d+|"
+    r"SCRIPT-\d+"
+    r")\s+\*\*(?P<module>[^*]+)\*\*\s*[—\-:]?\s*(?P<desc>.+?)(?:\s*$)",
 )
+
+_UNIVERSAL_ITEM_PATTERN = re.compile(
+    r"^\s*\d+\.\s+\*\*(?P<module>[^*]+)\*\*\s*[—\-:]\s*(?P<desc>.+?)$",
+)
+
+_DEPENDS_LINE_PATTERN = re.compile(
+    r"^\s*depends_on:\s*\[(.*?)\]\s*(?:#.*)?$",
+    re.IGNORECASE,
+)
+
+_TASK_ID_RE = re.compile(r"^(ADR|CP|KE|STD|DW|SRC|OPS)-\d+$")
+
+
+def _split_desc_and_depends(desc_lines: list[str]) -> tuple[list[str], list[str]]:
+    """从任务描述行中拆出叙事文本与 ``depends_on`` 列表。"""
+    narrative: list[str] = []
+    deps: list[str] = []
+    for line in desc_lines:
+        m = _DEPENDS_LINE_PATTERN.match(line.strip())
+        if m:
+            raw = m.group(1)
+            for part in raw.split(","):
+                part = part.strip().strip("\"'")
+                if part:
+                    deps.append(part)
+            continue
+        narrative.append(line)
+    return narrative, deps
+
+
+def _marker_to_blueprint_label(marker: str) -> str | None:
+    """从列表行 marker 解析蓝图前缀标签（如 TD、ADR）。"""
+    raw = marker.strip().strip("[]")
+    if raw.startswith("ADR-"):
+        return "ADR"
+    if raw.startswith("TD-"):
+        return "TD"
+    if raw.startswith("CS-"):
+        return "CS"
+    if raw.startswith("CP-"):
+        return "CP"
+    if raw.startswith("INFRA-"):
+        return "INFRA"
+    if raw.startswith("SCRIPT-"):
+        return "SCRIPT"
+    return None
+
+
+def _resolve_task_namespace(label: str) -> TaskNamespace | None:
+    """将调用方或 marker 得出的标签解析为合法 TaskNamespace。"""
+    key = label.upper().strip()
+    if key in _BLUEPRINT_LABEL_TO_NAMESPACE:
+        return _BLUEPRINT_LABEL_TO_NAMESPACE[key]
+    norm = key.replace("-", "_")
+    if norm in _BLUEPRINT_LABEL_TO_NAMESPACE:
+        return _BLUEPRINT_LABEL_TO_NAMESPACE[norm]
+    try:
+        return TaskNamespace[key]
+    except KeyError:
+        return None
+
 
 class BlueprintDecomposer:
     """
     治理文档 → 逐条拆解 → 生成 TaskCard 列表。
 
-    每个文档条目按优先级和命名空间分派：
-    - ADR-* → ADR     - TD-* → TD       - CS-* → CS
-    - CP-* → CP       - INFRA-* → INFRA  - SCRIPT-* → SCRIPT
+    每条列表项可从 marker 推断命名空间；否则使用 decompose_* 传入的 namespace。
     """
 
     def __init__(
@@ -66,7 +140,7 @@ class BlueprintDecomposer:
     ):
         self.task_repo = task_repo
         self.docs_dir = Path(docs_dir) if docs_dir else None
-        self._global_seq = 0
+        self._global_seq: dict[str, int] = {}
 
     def decompose_blueprint(
         self,
@@ -79,7 +153,7 @@ class BlueprintDecomposer:
 
         Args:
             blueprint_path: 蓝图文件路径
-            namespace: 命名空间前缀
+            namespace: 命名空间前缀（蓝图 marker 未识别时的默认值）
             phase: Phase 编号
         """
         path = Path(blueprint_path)
@@ -89,7 +163,7 @@ class BlueprintDecomposer:
         content = path.read_text(encoding="utf-8")
 
         tasks, unassigned, warnings = self._extract_tasks(content, blueprint_path, namespace, phase)
-
+        self._resolve_depends_on_ids(tasks)
         dep_graph = self._build_dependency_graph(tasks)
 
         result = DecompositionResult(
@@ -107,17 +181,25 @@ class BlueprintDecomposer:
     def decompose_blueprints_batch(
         self,
         blueprint_paths: list[str],
-        namespace: str = "INFRA",
+        namespace: str = "OPS",
         phase: int = 1,
     ) -> list[DecompositionResult]:
         """
         批量拆解多个蓝图文件。
+
+        默认 namespace 为 OPS（对应历史 INFRA/SCRIPT 批量拆解场景）；
+        仍可通过参数传入 CP/ADR 等。
         """
         results: list[DecompositionResult] = []
         for bp_path in blueprint_paths:
             result = self.decompose_blueprint(bp_path, namespace, phase)
             results.append(result)
         return results
+
+    def _next_global_seq(self, ns: TaskNamespace) -> int:
+        key = ns.value
+        self._global_seq[key] = self._global_seq.get(key, 0) + 1
+        return self._global_seq[key]
 
     def _extract_tasks(
         self,
@@ -134,17 +216,23 @@ class BlueprintDecomposer:
         task_name_buf: list[str] = []
         task_desc_buf: list[str] = []
         in_task = False
+        task_namespace_label: str | None = None
+
+        default_label = namespace.upper()
 
         for line in lines:
             item_match = _ITEM_PATTERN.match(line)
             if item_match:
                 if in_task and task_name_buf:
+                    label = task_namespace_label or default_label
+                    desc_lines, dep_ids = _split_desc_and_depends(task_desc_buf)
                     task = self._build_task_card(
                         name=" ".join(task_name_buf),
-                        description=" ".join(task_desc_buf),
+                        description=" ".join(desc_lines),
                         blueprint_path=blueprint_path,
-                        namespace=namespace.upper(),
+                        namespace_label=label,
                         phase=phase,
+                        depends_on=dep_ids,
                     )
                     if task:
                         tasks.append(task)
@@ -152,18 +240,22 @@ class BlueprintDecomposer:
                         warnings.append(f"无法解析任务: {task_name_buf}")
 
                 in_task = True
+                task_namespace_label = _marker_to_blueprint_label(item_match.group("marker"))
                 task_name_buf = [item_match.group("module").strip()]
                 task_desc_buf = [item_match.group("desc").strip()]
             elif in_task and line.strip():
                 task_desc_buf.append(line.strip())
 
         if in_task and task_name_buf:
+            label = task_namespace_label or default_label
+            desc_lines, dep_ids = _split_desc_and_depends(task_desc_buf)
             task = self._build_task_card(
                 name=" ".join(task_name_buf),
-                description=" ".join(task_desc_buf),
+                description=" ".join(desc_lines),
                 blueprint_path=blueprint_path,
-                namespace=namespace.upper(),
+                namespace_label=label,
                 phase=phase,
+                depends_on=dep_ids,
             )
             if task:
                 tasks.append(task)
@@ -177,38 +269,44 @@ class BlueprintDecomposer:
         name: str,
         description: str,
         blueprint_path: str,
-        namespace: str,
+        namespace_label: str,
         phase: int,
+        depends_on: list[str] | None = None,
     ) -> TaskCard | None:
         try:
-            from zephyr.shared.schemas import TaskNamespace
-
-            ns = getattr(TaskNamespace, namespace, None)
+            ns = _resolve_task_namespace(namespace_label)
             if ns is None:
+                logger.warning("未知命名空间标签 %r，跳过 TaskCard", namespace_label)
                 return None
 
             if self.task_repo:
                 seq = self.task_repo.next_seq(ns)
             else:
-                self._global_seq += 1
-                seq = self._global_seq
+                seq = self._next_global_seq(ns)
 
             task_id = f"{ns.value}-{seq}"
 
             bp_module_id = Path(blueprint_path).stem
+            now = datetime.now(UTC)
+
+            desc = description.strip()
+            if len(desc) < 10:
+                desc = (desc + "（蓝图条目摘要不足十字由拆解器补齐）")[:800]
 
             return TaskCard(
                 task_id=task_id,
                 namespace=ns,
                 seq=seq,
-                title=name,
+                title=name[:200],
                 status=TaskStatus.PENDING,
+                priority=Priority.P2,
                 phase=phase,
-                execution_model="deepseek",
-                safety_level="L",
+                execution_model=ExecutionModel.deepseek,
+                safety_level=SafetyLevel.L,
                 source_blueprint=bp_module_id,
                 source_section="auto-extracted",
-                description=description,
+                description=desc[:800],
+                files_in_scope=[blueprint_path],
                 upstream_files=[blueprint_path],
                 downstream_outputs=[],
                 allowed_touch=[],
@@ -237,25 +335,110 @@ class BlueprintDecomposer:
                 artifact_paths=[],
                 audit_findings=[],
                 ke_entries=[],
+                tags=[f"blueprint:{namespace_label.upper()}"],
+                depends_on=list(depends_on) if depends_on else [],
                 ai_autonomy_level="supervised",
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
-                created_at="2026-05-02T00:00:00",
-                updated_at="2026-05-02T00:00:00",
+                created_at=now,
+                updated_at=now,
             )
         except Exception as e:
             logger.warning(f"TaskCard 构造失败: {name} — {e}")
             return None
 
+    def _resolve_depends_on_ids(self, tasks: list[TaskCard]) -> None:
+        """将 ``depends_on`` 中的标题别名解析为 ``task_id``（若可解析）。"""
+        title_to_id = {t.title: t.task_id for t in tasks}
+        id_set = {t.task_id for t in tasks}
+        for t in tasks:
+            resolved: list[str] = []
+            for dep in t.depends_on:
+                s = dep.strip()
+                if s in id_set:
+                    resolved.append(s)
+                elif s in title_to_id:
+                    resolved.append(title_to_id[s])
+                elif _TASK_ID_RE.match(s):
+                    resolved.append(s)
+            t.depends_on = list(dict.fromkeys(resolved))
+
     def _build_dependency_graph(self, tasks: list[TaskCard]) -> dict[str, list[str]]:
         graph: dict[str, list[str]] = {}
         for i, task in enumerate(tasks):
-            if i > 0:
+            explicit = list(dict.fromkeys(task.depends_on))
+            if explicit:
+                graph[task.task_id] = explicit
+            elif i > 0:
                 graph[task.task_id] = [tasks[i - 1].task_id]
             else:
                 graph[task.task_id] = []
         return graph
+
+    def topology_sort(self, tasks: list[TaskCard]) -> list[TaskCard]:
+        """拓扑排序——按 depends_on 关系确保父任务在子任务之前。
+
+        循环依赖通过回边检测并报告为 warning。
+        """
+        adj: dict[str, list[str]] = {}
+        in_degree: dict[str, int] = {}
+        task_map: dict[str, TaskCard] = {}
+
+        for t in tasks:
+            adj[t.task_id] = []
+            in_degree[t.task_id] = 0
+            task_map[t.task_id] = t
+
+        for t in tasks:
+            for dep_id in t.depends_on:
+                if dep_id in task_map:
+                    adj[dep_id].append(t.task_id)
+                    in_degree[t.task_id] += 1
+
+        queue = [tid for tid, deg in in_degree.items() if deg == 0]
+        sorted_ids: list[str] = []
+
+        while queue:
+            tid = queue.pop(0)
+            sorted_ids.append(tid)
+            for child_id in adj.get(tid, []):
+                in_degree[child_id] -= 1
+                if in_degree[child_id] == 0:
+                    queue.append(child_id)
+
+        if len(sorted_ids) != len(tasks):
+            logger.warning(
+                "Cyclic dependency detected in %d tasks; falling back to insertion order",
+                len(tasks) - len(sorted_ids),
+            )
+            return list(tasks)
+
+        return [task_map[tid] for tid in sorted_ids]
+
+    def extract_depends_from_content(self, content: str) -> dict[str, list[str]]:
+        """从蓝图内容中提取 ``depends_on``，锚定为紧前一条列表项的 **module** 标题。
+
+        返回 ``{ 列表项标题: [依赖项, ...] }``；依赖项可为 ``task_id`` 或尚未解析的标题。
+        """
+        result: dict[str, list[str]] = {}
+        current_title: str | None = None
+        for line in content.split("\n"):
+            im = _ITEM_PATTERN.match(line)
+            if im:
+                current_title = im.group("module").strip()
+                continue
+            um = _UNIVERSAL_ITEM_PATTERN.match(line)
+            if um:
+                current_title = um.group("module").strip()
+                continue
+            m = _DEPENDS_LINE_PATTERN.match(line.strip())
+            if m and current_title:
+                raw = m.group(1)
+                deps = [d.strip().strip("\"'") for d in raw.split(",") if d.strip()]
+                if deps:
+                    result[current_title] = deps
+        return result
 
     def _write_tasks(self, result: DecompositionResult) -> None:
         if self.task_repo:
@@ -273,10 +456,37 @@ class BlueprintDecomposer:
                 result.model_dump_json(indent=2),
                 encoding="utf-8",
             )
+            tasks_dir = out_dir / "tasks"
+            tasks_dir.mkdir(parents=True, exist_ok=True)
+            for task in result.tasks:
+                self._write_task_companion_md(task, tasks_dir)
+
+    def _write_task_companion_md(self, task: TaskCard, md_dir: Path) -> None:
+        """每张 TaskCard 写一个可读 companion Markdown（frontmatter + 正文摘要）。"""
+        safe_id = task.task_id.replace("/", "_").replace("\\", "_")
+        path = md_dir / f"{safe_id}.md"
+        fm = {
+            "task_id": task.task_id,
+            "title": task.title,
+            "namespace": task.namespace.value if hasattr(task.namespace, "value") else str(task.namespace),
+            "status": task.status.value if hasattr(task.status, "value") else str(task.status),
+            "priority": task.priority.value if hasattr(task.priority, "value") else str(task.priority),
+            "source_blueprint": task.source_blueprint,
+            "source_section": task.source_section,
+            "phase": task.phase,
+        }
+        header = yaml.safe_dump(fm, allow_unicode=True, sort_keys=False)
+        body = f"\n## Description\n\n{task.description}\n"
+        path.write_text(f"---\n{header}---\n{body}", encoding="utf-8")
 
     def check_gate(self, gate_id: GateLevel, task: TaskCard) -> bool:
         if gate_id == GateLevel.G0:
-            return bool(task.source_blueprint and task.description)
+            return bool(
+                task.source_blueprint
+                and task.description
+                and len(task.description.strip()) >= 10
+                and task.priority is not None
+            )
         if gate_id == GateLevel.G7:
             return task.verification_status == "verified" and all(f.resolved for f in task.audit_findings)
         return True

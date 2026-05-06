@@ -1,15 +1,27 @@
-schema_version: "1.0.0"
+schema_version: 1.1.0
 partition:
   id: l09
   name: Research & Innovation
   track: c_track
   layer_position: 9
   runtime_plane: cold
-  status: skeleton
-
+  status: implemented
 modules:
-  []
-
+- id: l09-layer-ssot
+  module_id: MOD-L09-001
+  name: Research & Innovation（层登记占位）
+  submodule_path: src/zephyr/l09_research_innovation/
+  status: implemented
+  priority: P1
+  runtime_plane: cold
+  description: 研究创新层。BacktestEngineBase OCP 扩展点 + BacktestResult/FactorDiscovery 数据类。
+  files:
+  - backtest_base.py
+  - default_backtest_engine.py
+  interfaces: []
+  adr_ref: []
 summary:
-  total: 0
-  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"
+  total: 1
+  by_status:
+    implemented: 1
+  note: Phase B 骨架就位——BacktestEngineBase OCP 扩展点已定义

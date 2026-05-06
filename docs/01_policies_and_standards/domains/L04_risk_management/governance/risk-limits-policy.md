@@ -2,9 +2,9 @@
 module_id: DOM-L04-001
 title: 风控限额策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l04_risk_management
+layer: L04
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

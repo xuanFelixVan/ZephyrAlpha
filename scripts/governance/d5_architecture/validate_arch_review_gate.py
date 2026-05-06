@@ -1,15 +1,6 @@
 """
 validate_arch_review_gate.py — 架构评审门控校验
 
-__manifest__ = """
-args: []
-description: 架构评审门控校验（GOV-ARCH-002 — 5类触发变更需ADR）
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-ARCH-002（架构变更评审门控）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 架构评审门控校验（GOV-ARCH-002 — 5类触发变更需ADR）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

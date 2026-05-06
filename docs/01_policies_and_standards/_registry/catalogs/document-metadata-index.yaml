@@ -1,13 +1,21 @@
-schema_version: 1.0.0
-generated_at: '2026-05-04T17:44:35.940865'
-total_files: 139
+schema_version: 1.0
+module_id: PS-REG-002
+doc_type: register
+title: 文档元数据索引
+status: active
+generated_at: '2026-05-06T08:29:42Z'
+generated_from: generate_rule_catalog.py（与 rule-catalog.yaml 同批同步）
+scope_note: 本文件仅索引 docs/01_policies_and_standards/ 下带治理 frontmatter 的 Markdown（及本树登记引用）。
+  docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture-model 施工树等不在此表——见各目录
+  INDEX.md 与 architecture-model/SCOPE.yaml。
+total_files: 140
 files:
 - path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
   title: 规则体系总索引
   doc_type: index
   status: active
-  version: 1.3.0
+  version: 1.4.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -18,7 +26,7 @@ files:
   title: 层域规则目录索引
   doc_type: index
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: declarative
   scope: global
   stability: stable
@@ -33,7 +41,7 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L00_data_source/governance/data-source-connection-policy.md
   module_id: DOM-L00-001
@@ -44,14 +52,14 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L00_data_source/governance/index.md
-  module_id: ''
+  module_id: DOM-L00-GOV-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -66,14 +74,14 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l00_data_source
+  layer: L00
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L00_data_source/operational/index.md
-  module_id: ''
+  module_id: DOM-L00-OPS-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -84,11 +92,11 @@ files:
   title: L02 Alpha 因子层域层入口
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor-quality-policy.md
   module_id: DOM-L02-001
@@ -99,14 +107,14 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L02_alpha_factor/governance/index.md
-  module_id: ''
+  module_id: DOM-L02-GOV-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -121,14 +129,14 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l02_alpha_factor
+  layer: L02
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L02_alpha_factor/operational/index.md
-  module_id: ''
+  module_id: DOM-L02-OPS-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -143,14 +151,14 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L04_risk_management/governance/index.md
-  module_id: ''
+  module_id: DOM-L04-GOV-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -165,14 +173,14 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L04_risk_management/operational/index.md
-  module_id: ''
+  module_id: DOM-L04-OPS-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -187,7 +195,7 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l04_risk_management
+  layer: L04
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/index.md
   module_id: DOM-L07-000
@@ -198,14 +206,14 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/index.md
-  module_id: ''
+  module_id: DOM-L07-GOV-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -220,7 +228,7 @@ files:
   rule_form: declarative
   scope: domain
   stability: evolving
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md
   module_id: DOM-L07-002
@@ -231,14 +239,14 @@ files:
   rule_form: procedural
   scope: domain
   stability: evolving
-  layer: l07_post_trade_analytics
+  layer: L07
   superseded_by: ''
 - path: docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/index.md
-  module_id: ''
+  module_id: DOM-L07-OPS-IDX
   title: ''
   doc_type: index
   status: active
-  version: ''
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -249,7 +257,7 @@ files:
   title: 治理域总索引
   doc_type: index
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: declarative
   scope: ''
   stability: ''
@@ -266,6 +274,17 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: _registry/catalogs/ai-autonomy-authority-registry.md（v1.3.0）
+- path: docs/01_policies_and_standards/governance/ai/ai-hallucination-detection-rules.md
+  module_id: GOV-AI-009
+  title: AI 幻觉自动检测规则集
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
+  stability: stable
+  layer: cross_layer
+  superseded_by: ''
 - path: docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md
   module_id: GOV-AI-003
   title: AI 幻觉自检清单
@@ -321,27 +340,16 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/governance/architecture/adr-protocol.md
-  module_id: GOV-ARCH-001
-  title: ADR 协议
-  doc_type: protocol
-  status: draft
-  version: 0.2.0
-  rule_form: declarative
-  scope: global
-  stability: evolving
-  layer: l01_infrastructure
-  superseded_by: ''
 - path: docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md
   module_id: GOV-ARCH-002
   title: 架构评审门控
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: declarative
   scope: global
   stability: stable
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md
   module_id: GOV-ARCH-003
@@ -352,12 +360,12 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/architecture/ctr-injection-rules.yaml
   module_id: GOV-ARC-CTR-001
   title: CTR 承重墙注入规则表
-  doc_type: register
+  doc_type: policy
   status: active
   version: 1.0.0
   rule_form: ''
@@ -366,7 +374,7 @@ files:
   layer: cross_layer
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md
-  module_id: ARCH-GATE-001
+  module_id: GOV-ARCH-006
   title: ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）
   doc_type: standard
   status: active
@@ -398,16 +406,27 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: null
+- path: docs/01_policies_and_standards/governance/architecture/system-qualification-standard.md
+  module_id: GOV-ARCH-004
+  title: 系统合格判定标准
+  doc_type: standard
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: ''
 - path: docs/01_policies_and_standards/governance/compliance/audit-protocol.md
   module_id: GOV-CMP-003
   title: 治理审计执行协议
   doc_type: policy
-  status: draft
-  version: 1.0.0
+  status: active
+  version: 1.2.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md
   module_id: GOV-CMP-002
@@ -418,7 +437,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/compliance/index.md
   module_id: GOV-CMP-000
@@ -440,7 +459,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/data/data-lineage-policy.md
   module_id: GOV-DATA-002
@@ -451,7 +470,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/data/data-quality-policy.md
   module_id: GOV-DATA-001
@@ -462,7 +481,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/data/data-retention-policy.md
   module_id: GOV-DATA-003
@@ -473,7 +492,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/data/index.md
   module_id: GOV-DATA-000
@@ -491,7 +510,7 @@ files:
   title: 目录结构规范（docs/ + src/zephyr/ 双轨治理）
   doc_type: standard
   status: active
-  version: 3.3.0
+  version: 3.5.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -535,7 +554,7 @@ files:
   title: 编码安全规范
   doc_type: standard
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -568,7 +587,7 @@ files:
   title: 文件路径规范
   doc_type: standard
   status: active
-  version: 1.1.1
+  version: 1.1.3
   rule_form: declarative
   scope: global
   stability: stable
@@ -596,6 +615,28 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+- path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
+  module_id: GOV-ENG-001
+  title: 代码构建标准
+  doc_type: standard
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/governance/engineering/index.md
+  module_id: ''
+  title: engineering — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/ai-behavior-iron-policy.md
   module_id: GOV-MOD-002
   title: AI模型行为铁律
@@ -605,7 +646,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/index.md
   module_id: GOV-MOD-000
@@ -623,11 +664,11 @@ files:
   title: 模块准入门控策略
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/module-injection-rules.yaml
   module_id: GOV-MOD-005
@@ -638,7 +679,7 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: L1
+  layer: l01_infrastructure
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md
   module_id: GOV-MOD-004
@@ -649,40 +690,40 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md
   module_id: GOV-MOD-003
   title: 模块生命周期策略
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md
   module_id: GOV-MOD-007
   title: 多登记表同步标准
   doc_type: standard
   status: active
-  version: 2.1.0
+  version: 2.1.1
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/security/access-control-policy.md
   module_id: GOV-SEC-002
   title: 访问控制策略
   doc_type: policy
   status: draft
-  version: 0.2.0
+  version: 0.3.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/security/index.md
   module_id: GOV-SEC-000
@@ -700,22 +741,22 @@ files:
   title: 密钥管理策略
   doc_type: policy
   status: draft
-  version: 0.2.0
+  version: 0.2.1
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/security/security-incident-response-policy.md
   module_id: GOV-SEC-003
   title: 安全事件响应策略
   doc_type: policy
   status: draft
-  version: 0.2.0
+  version: 0.3.0
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: l01_infrastructure
+  layer: L01
   superseded_by: ''
 - path: docs/01_policies_and_standards/governance/task/index.md
   module_id: GOV-TASK-000
@@ -799,7 +840,7 @@ files:
   title: 治理方法论
   doc_type: standard
   status: active
-  version: 2.6.0
+  version: 2.7.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -843,7 +884,7 @@ files:
   title: ZephyrAlpha 元数据登记表
   doc_type: standard
   status: active
-  version: 5.9.0
+  version: 6.0.1
   rule_form: declarative
   scope: global
   stability: stable
@@ -871,23 +912,12 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/rule-registry.md
-  module_id: DEPRECATED-PS-REG-001
-  title: （已迁移）ZephyrAlpha 规则登记表
-  doc_type: register
-  status: deprecated
-  version: 1.3.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: cross_layer
-  superseded_by: _registry/catalogs/rule-registry.md（v1.4.0）
 - path: docs/01_policies_and_standards/meta/rule-verification-standard.md
   module_id: PS-STD-012
   title: 规则验证标准
   doc_type: standard
   status: active
-  version: 1.2.0
+  version: 1.2.1
   rule_form: declarative
   scope: global
   stability: evolving
@@ -898,7 +928,7 @@ files:
   title: 术语映射表（大白话 ↔ 行业术语）
   doc_type: reference
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: data
   scope: global
   stability: stable
@@ -975,7 +1005,7 @@ files:
   title: Vibe Coding 会话门禁检查清单
   doc_type: operational_rule
   status: active
-  version: 0.2.0
+  version: 0.3.0
   rule_form: procedural
   scope: global
   stability: evolving
@@ -990,17 +1020,6 @@ files:
   rule_form: procedural
   scope: global
   stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/templates/adr-template.md
-  module_id: ''
-  title: ''
-  doc_type: adr
-  status: draft
-  version: 0.1.0
-  rule_form: declarative
-  scope: global
-  stability: evolving
   layer: cross_layer
   superseded_by: ''
 - path: docs/01_policies_and_standards/templates/blueprint-template.md
@@ -1118,17 +1137,17 @@ files:
   title: 登记表体系目录索引
   doc_type: index
   status: active
-  version: 2.1.0
+  version: 3.0.2
   rule_form: declarative
   scope: global
   stability: stable
-  layer: cross_layer
+  layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/adr-status-registry.yaml
   module_id: PS-REG-015
-  title: ADR 活跃状态登记表
+  title: ADR 状态登记表（冻结壳）
   doc_type: register
-  status: active
+  status: deprecated
   version: 1.0.0
   rule_form: ''
   scope: ''
@@ -1148,10 +1167,10 @@ files:
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml
   module_id: PS-REG-009
-  title: AI 风险登记表
+  title: AI 风险登记簿
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -1173,14 +1192,14 @@ files:
   title: 跨模块依赖登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.2
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml
-  module_id: PS-REG-014
+  module_id: PS-REG-019
   title: 声明式契约跟踪登记表
   doc_type: register
   status: active
@@ -1195,7 +1214,18 @@ files:
   title: 项目目录登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+  module_id: PS-REG-002
+  title: 文档元数据索引
+  doc_type: register
+  status: active
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
@@ -1228,7 +1258,7 @@ files:
   title: GATE 门禁登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
@@ -1239,18 +1269,18 @@ files:
   title: 登记表集中存储目录索引
   doc_type: index
   status: active
-  version: 2.0.0
+  version: 2.1.0
   rule_form: declarative
   scope: global
   stability: stable
-  layer: cross_layer
+  layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml
   module_id: PS-REG-006
   title: 运行时基础设施登记表
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -1267,34 +1297,34 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml
-  module_id: PS-REG-003
-  title: 完整文档登记表（Master Document Inventory）
-  doc_type: register
-  status: deprecated
-  version: 1.2.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: document-metadata-index.yaml（auto-generated, 127 files）
 - path: docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml
-  module_id: PS-REG-005
-  title: 登记表总索引（Registry Master Index）
-  doc_type: register
-  status: active
-  version: 1.3.0
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
-  module_id: PS-REG-002
+  module_id: PS-REG-016
   title: 登记表的登记表 — 跨登记表一致性契约
   doc_type: contract
   status: active
   version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml
+  module_id: PS-REG-018
+  title: 规则路径目录
+  doc_type: register
+  status: active
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
@@ -1305,7 +1335,7 @@ files:
   title: ZephyrAlpha 规则登记表
   doc_type: register
   status: active
-  version: 1.4.0
+  version: 1.4.1
   rule_form: data
   scope: global
   stability: stable
@@ -1323,11 +1353,11 @@ files:
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml
-  module_id: PS-REG-004
+  module_id: PS-REG-017
   title: 任务卡元层登记表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -1345,11 +1375,11 @@ files:
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/contracts/index.md
-  module_id: ''
+  module_id: REG-CON-IDX
   title: _registry/contracts/ 目录索引
   doc_type: index
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -1382,7 +1412,7 @@ files:
   title: Session Log 标准 Schema
   doc_type: schema
   status: active
-  version: 2.1.0
+  version: 2.2.0
   rule_form: data
   scope: ''
   stability: ''
@@ -1393,7 +1423,7 @@ files:
   title: classification 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -1422,11 +1452,11 @@ files:
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/index.md
-  module_id: ''
+  module_id: REG-VOC-IDX
   title: _registry/vocabularies/ 目录索引
   doc_type: index
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -1459,7 +1489,7 @@ files:
   title: rule_form 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''

@@ -40,7 +40,11 @@ safety_level: H
    - ``on_low_score`` hook：任何 entry.score ≤ 2 时调用注入的回调
      （默认 no-op），便于实时回路。
 
-零外部依赖：仅 ``pydantic`` + 标准库；不 import 任何 LLM / DB。
+6. **可选背压联动（AUDIT-08）**
+   - 构造 ``EvolutionEngine(..., backpressure_manager=...)`` 后，若本次 ``evolve``
+     产生 CRITICAL 提案，将经 ``backpressure_bridge`` 对数据扇区发出节流信号。
+
+核心依赖：``pydantic`` + 标准库；可选依赖 ``zephyr.pipeline.backpressure_manager``（仅注入时）。
 """
 
 from __future__ import annotations
@@ -48,7 +52,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -73,6 +77,7 @@ __all__ = [
 # 枚举与阈值常量
 # ---------------------------------------------------------------------------
 
+
 class EvolutionSignal(str, Enum):
     """五类进化信号（ADR-0034 §3.1）。"""
 
@@ -82,6 +87,7 @@ class EvolutionSignal(str, Enum):
     DEPENDENCY_BOTTLENECK = "dependency_bottleneck"
     ACCEPTANCE_DRIFT = "acceptance_drift"
 
+
 class Severity(str, Enum):
     """严重度（与 safety_level 对齐）。"""
 
@@ -90,12 +96,14 @@ class Severity(str, Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
+
 class FeedbackLayer(str, Enum):
     """三层反馈闭环（ADR-0034 §3.2）。"""
 
     L1_TASK = "L1_task"
     L2_PATTERN = "L2_pattern"
     L3_ARCHITECTURE = "L3_architecture"
+
 
 # 信号 → 触发标签的映射（可注入覆盖）
 DEFAULT_SIGNAL_TAG_MAP: dict[EvolutionSignal, frozenset[str]] = {
@@ -122,6 +130,7 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
 # Pydantic 契约
 # ---------------------------------------------------------------------------
 
+
 class EvolutionProposal(BaseModel):
     """单个进化提案。Owner 审批门禁的最小原子单位。"""
 
@@ -142,6 +151,7 @@ class EvolutionProposal(BaseModel):
     dry_run: bool = Field(default=True, description="是否 dry-run（不真正 apply）")
     created_at: datetime = Field(description="创建时间 UTC")
 
+
 class EvolutionReport(BaseModel):
     """一次 evolve() 的汇总报告。"""
 
@@ -156,6 +166,7 @@ class EvolutionReport(BaseModel):
     dry_run: bool = Field(default=True)
     generated_at: datetime = Field(description="生成时间 UTC")
 
+
 # ---------------------------------------------------------------------------
 # 回调类型
 # ---------------------------------------------------------------------------
@@ -169,6 +180,7 @@ ApplyFn = Callable[[EvolutionProposal], bool]
 # ---------------------------------------------------------------------------
 # EvolutionEngine
 # ---------------------------------------------------------------------------
+
 
 class EvolutionEngine:
     """封装 evolve() 的实例版本，便于注入回调 / 阈值。
@@ -189,6 +201,9 @@ class EvolutionEngine:
         阈值字典，缺省字段使用 DEFAULT_THRESHOLDS。
     now : Callable[[], datetime]
         时间源（便于测试）。
+    backpressure_manager : Any | None
+        可选 ``BackpressureManager``。当本次 evolve 产生 CRITICAL 提案时，
+        经 ``backpressure_bridge`` 触发全局节流（``__fle_global__``）。
     """
 
     def __init__(
@@ -200,6 +215,7 @@ class EvolutionEngine:
         signal_tag_map: dict[EvolutionSignal, frozenset[str]] | None = None,
         thresholds: dict[str, float] | None = None,
         now: Callable[[], datetime] = default_now,
+        backpressure_manager: Any | None = None,
     ) -> None:
         self._collector = collector
         self._apply_fn = apply_fn
@@ -208,6 +224,7 @@ class EvolutionEngine:
         self._thresholds = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
         self._now = now
         self._proposal_seq = 1
+        self._backpressure_manager = backpressure_manager
 
     # ---- public entry ------------------------------------------------
 
@@ -280,6 +297,15 @@ class EvolutionEngine:
 
         report.proposals = proposals
         report.applied_count = applied
+        if self._backpressure_manager is not None and proposals:
+            try:
+                from zephyr.feedback_loop.backpressure_bridge import (
+                    sync_evolution_proposals_to_backpressure,
+                )
+
+                sync_evolution_proposals_to_backpressure(proposals, self._backpressure_manager)
+            except Exception:
+                pass
         return report
 
     # ---- layer 1 -----------------------------------------------------
@@ -411,7 +437,8 @@ class EvolutionEngine:
                 ],
                 affected_task_ids=sorted({e.task_id for e in entries}),
                 recommended_action=(
-                    "触发 ADR 重审流程（`docs/02_enterprise_architecture/adr/index.md`）"
+                    "触发 ADR 重审流程（检索 KB `architecture_decision` / "
+                    "参照 `docs/02_enterprise_architecture/ssot-authority-map.md`）"
                     "并冻结新增任务直到架构调整完成。"
                 ),
                 estimated_impact="预计影响范围：跨 wave 的所有后继任务。",
@@ -463,6 +490,7 @@ class EvolutionEngine:
             created_at=self._now(),
         )
 
+
 # ---------------------------------------------------------------------------
 # 默认 action / impact 文本
 # ---------------------------------------------------------------------------
@@ -487,6 +515,7 @@ _DEFAULT_IMPACTS: dict[EvolutionSignal, str] = {
 # 纯函数入口
 # ---------------------------------------------------------------------------
 
+
 def evolve(
     collector: FeedbackCollector,
     *,
@@ -500,6 +529,7 @@ def evolve(
     thresholds: dict[str, float] | None = None,
     signal_tag_map: dict[EvolutionSignal, frozenset[str]] | None = None,
     now: Callable[[], datetime] = default_now,
+    backpressure_manager: Any | None = None,
 ) -> EvolutionReport:
     """无状态入口函数：构造 EvolutionEngine → 调用 evolve()。
 
@@ -513,6 +543,7 @@ def evolve(
         signal_tag_map=signal_tag_map,
         thresholds=thresholds,
         now=now,
+        backpressure_manager=backpressure_manager,
     )
     return engine.evolve(
         dry_run=dry_run,
@@ -521,6 +552,7 @@ def evolve(
         baseline_avg_score=baseline_avg_score,
         baseline_low_score_rate=baseline_low_score_rate,
     )
+
 
 # 兼容占位：保留 Literal 以便未来在 __all__ 中公开 severity 字符串字面量
 _SEV_LITERAL: Literal["low", "medium", "high", "critical"] = "low"

@@ -1,15 +1,6 @@
 """
 detect_anchor_file_deletion.py — 锚点文件删除检测
 
-__manifest__ = """
-args: []
-description: 锚点文件删除检测（ABS-14 / GOV-DOC-007 §一 — 7个不可触碰锚点文件）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：ABS-14（删除锚点文件）、GOV-DOC-007 §一（不可触碰锚点文件清单）
@@ -22,6 +13,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 锚点文件删除检测（ABS-14 / GOV-DOC-007 §一 — 7个不可触碰锚点文件）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import subprocess
 import sys
@@ -51,7 +52,7 @@ def get_staged_deletions() -> list[str]:
     """获取暂存区删除文件列表"""
     try:
         result = subprocess.run(
-            "获取暂存区删除文件列表."["git", "diff", "--cached", "--name-only", "--diff-filter=D"],
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=D"],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

@@ -9,10 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class KnowledgeStatusDistribution:
     status: str
     count: int = 0
+
 
 @dataclass
 class KnowledgeOverviewData:
@@ -21,6 +23,7 @@ class KnowledgeOverviewData:
     activation_rate: float = 0.0
     status_distribution: list[KnowledgeStatusDistribution] = field(default_factory=list)
     category_distribution: dict[str, int] = field(default_factory=dict)
+
 
 def fetch_knowledge_overview(kb_repo: Any = None) -> KnowledgeOverviewData:
     data = KnowledgeOverviewData()
@@ -46,6 +49,7 @@ def fetch_knowledge_overview(kb_repo: Any = None) -> KnowledgeOverviewData:
     except Exception:
         pass
     return data
+
 
 def render_knowledge_overview(data: KnowledgeOverviewData) -> dict[str, Any]:
     return {

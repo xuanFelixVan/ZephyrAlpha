@@ -1,16 +1,16 @@
-from __future__ import annotations
+# ==== BEGIN CODGEN:CTR-005 ====
+from dataclasses import dataclass, field
 
-from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -20,9 +20,9 @@ CTR-005: Fill / 成交回报
 
 L06 → L07 核心数据契约。单次成交回报（不可变）。
 
-SSoT: cross-layer-contracts.yaml → CTR-005
+SSoT: cross-layer-contracts.yaml -> CTR-005
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -33,14 +33,54 @@ AI Prompt
 @dataclass(frozen=True)
 class Fill:
     fill_id: str
-    order_id: str
-    symbol: str
-    strategy_id: str
-    filled_quantity: Decimal
     fill_price: Decimal
     fill_timestamp: datetime
+    filled_quantity: Decimal
+    idempotency_key: str
+    order_id: str
+    strategy_id: str
+    symbol: str
+    broker_fill_id: Optional[str] = None
     commission: Decimal = Decimal("0")
     schema_version: str = "1.0"
     slippage: Optional[Decimal] = None
-    broker_fill_id: Optional[str] = None
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-005 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

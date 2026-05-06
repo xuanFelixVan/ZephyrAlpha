@@ -23,9 +23,7 @@ tags: [task, governance, guide]
 language: zh
 created_by: human_plus_agent
 depends_on:
-  - target: PS-STD-001
-    at: "§7"
-    why: "metadata-registry.md §7 定义了任务卡全部 28 个字段和 task_id 格式的权威规则"
+  - {target: PS-STD-001, at: "§7", why: "metadata-registry.md §7 定义了任务卡全部 28 个字段和 task_id 格式的权威规则"}
 summary: "任务卡的操作指南——正文结构规范、路径与依赖速查、门禁快速参考。字段定义以 metadata-registry.md §7 为准。v3.0.0：拆分——§3 字段定义全部归入 registry，本文件降格为操作指南。"
 related:
   - GOV-AI-008
@@ -142,7 +140,7 @@ related:
 
 ## 7. 门禁快速参考
 
-> 本节为快速参考。权威定义以 [task-lifecycle-standard.md](../../governance/task/task-lifecycle-standard.md)（治理规则）、[task-card-kms/blueprint.md](../../../03_modules/l01_infrastructure/task-card-kms/blueprint.md) §5.3（门禁细则）和 [task-closure-standard.md](../../governance/task/task-closure-standard.md)（关闭验证）为准。
+> 本节为快速参考。权威定义以 [task-lifecycle-standard.md](../../governance/task/task-lifecycle-standard.md)（治理规则）、[task-system/blueprint.md](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.3（门禁细则）和 [task-closure-standard.md](../../governance/task/task-closure-standard.md)（关闭验证）为准。
 
 ### 7.1 G0 创建门禁（创建任务卡前检查）
 
@@ -174,7 +172,7 @@ classification: public
 evolution_policy: rewritable
 estimate_hours: 2.5
 files_in_scope:
-  - D:\ZephyrAlpha\src\zephyr\schemas.py
+  - D:\ZephyrAlpha\src\zephyr\shared\schemas.py
   - D:\ZephyrAlpha\src\zephyr\db\sqlite_schema.py
   - D:\ZephyrAlpha\src\zephyr\db\task_repo.py
   - D:\ZephyrAlpha\src\zephyr\cli\task_cli.py
@@ -203,7 +201,7 @@ tags:
 ## 执行步骤
 
 ### 读
-- `schemas.py`（TaskCard & TaskNamespace 模型 + TaskStatus 枚举）
+- `shared/schemas.py`（`Task` / TaskNamespace 模型 + TaskStatus 枚举）
 - `sqlite_schema.py`（当前表结构）
 - `task_repo.py`（当前仓库实现）
 - `cli/task_cli.py`（CLI 接口定义）
@@ -239,7 +237,7 @@ pytest tests/test_task_repo.py -v
 | 规则 | 与本标准的关系 |
 |------|-------------|
 | [metadata-registry.md §7](../../meta/metadata-registry.md) | 任务卡字段定义的唯一真源（28 字段 + task_id 格式） |
-| [task-card-kms/blueprint.md §5.3](../../../03_modules/l01_infrastructure/task-card-kms/blueprint.md) | G0-G6 门禁的详细检查项 |
+| [task-system/blueprint.md §5.3](../../../03_modules/l01_infrastructure/task-system/blueprint.md) | G0-G6 门禁的详细检查项 |
 | [task-lifecycle-standard.md](../../governance/task/task-lifecycle-standard.md) | 治理规则：取消权限 + 优先级裁决 + 升级治理 |
 | [task-closure-standard.md](../../governance/task/task-closure-standard.md) | 关闭验证的完整流程 |
 | [handoff-protocol.md](../../governance/ai/handoff-protocol.md) | 任务交接时状态变更协议 |

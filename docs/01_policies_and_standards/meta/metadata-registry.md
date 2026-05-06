@@ -3,7 +3,7 @@ module_id: PS-STD-001
 title: ZephyrAlpha 元数据登记表
 doc_type: standard
 status: active
-version: "5.9.0"
+version: "6.0.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 valid_from: "2026-04-28"
-summary: "ZephyrAlpha 全项目元数据的唯一真源注册表。定义三域字段（文档 frontmatter / 任务卡 / AI 治理）、doc_type 受控词表（27 种，canonical SSoT = vocabulary YAML，本文件仅保留速查引用）、审计字段、字段改名记录、与专业机构对照表。v5.12.0：§3.2.1 子集 12→13 值（补 schema），总数 26→27 对齐 vocabulary YAML；§2.2 Active 14→18 对齐 architecture-contract.yaml。"
+summary: "ZephyrAlpha 全项目元数据的唯一真源注册表。定义三域字段（文档 frontmatter / 任务卡 / AI 治理）、doc_type 受控词表（27 种，canonical SSoT = vocabulary YAML，本文件仅保留速查引用）、审计字段、字段改名记录、与专业机构对照表。v6.0.1：§14.1 新增 META-V21（索引 entry vs frontmatter `status` 不一致）。v6.0.0：§4.6 classification 域A/域B 分层真源；§7.1 语义28 + §7.1.1 追踪3 = Task 共31；§9.7 Priority 与 P4/SQLite 对齐；废弃「删除 INTERNAL」迁移叙述；`shared/schemas.py` 路径全库统一。"
 ttl: permanent
 tags: [metadata, frontmatter, doc_type, schema, ssot, ai-governance, metadata-registry]
 rule_form: declarative
@@ -140,7 +140,7 @@ depends_on: []
 | 域 B 字段定义（任务卡） | **本文件 §7** | task-card-standard.md（字段定义以本注册表为准，该文件保留业务规则） |
 | 域 C 字段定义（AI 治理） | **本文件 §8** | ai-autonomous-company-endgame-design.md（设计文档，字段定义以本注册表为准） |
 | 受控枚举定义（category / domain / namespace / AgentRole） | **本文件 §9.1~§9.4** | — |
-| 受控枚举定义（layer / source_type / priority） | **本文件 §9.5~§9.7** | triage.py VALID_LAYERS（需对齐）、kms-entry-schema.md source_type（需对齐）、schemas.py AuditSeverity（需扩展重命名） |
+| 受控枚举定义（layer / source_type / priority） | **本文件 §9.5~§9.7** | triage.py VALID_LAYERS（需对齐）、kms-entry-schema.md source_type（需对齐）、**`src/zephyr/shared/schemas.py`** 中 AuditSeverity→Priority 演进（需随版本对齐） |
 | module_id 命名规范 | **本文件 §5** | unified-numbering-standard.md（层编号部分仍有效，模块 ID 格式以本文件为准） |
 | 状态语义 | **status-vocabulary.yaml**（canonical SSoT） | 本文件 §4（规范解释） |
 | rule_form 映射 | **rule_form-vocabulary.yaml**（canonical SSoT） | 本文件 §2.6（一致性约束） |
@@ -161,7 +161,7 @@ depends_on: []
 | 文件 | 依赖内容 | 同步要求 |
 |------|---------|---------|
 | `scripts/governance/check_frontmatter_metadata.py` | 全部枚举（doc_type 27值、status 3值、ttl 5值、safety_level 3值、evolution_policy 3值、governance_family 4值、ai_capability_slot 4值、category 10值、domain 10值、review_status 4值）+ 分阶段必填闸门 + 路径映射规则 | **最高优先级**：枚举变更必须同 commit 更新 |
-| `src/zephyr/schemas.py` | TaskStatus 10值、SafetyLevel 3值、Classification 3值、EvolutionPolicy 3值、TaskNamespace 7值、AuditSeverity 3值 | **高优先级**：域 B 枚举变更必须同 commit 更新 |
+| `src/zephyr/shared/schemas.py` | TaskStatus 10 值、SafetyLevel 3 值、Classification 3 值、EvolutionPolicy 3 值、TaskNamespace 7 值、AuditSeverity 3 值 | **高优先级**：域 B 枚举变更必须同 commit 更新 |
 | `src/zephyr/db/sqlite_schema.py` | DDL CHECK 约束硬编码了 status 10值、namespace 7值、safety_level 3值、classification 3值、evolution_policy 3值 | **高优先级**：DDL 变更需要数据库迁移脚本 |
 | `src/zephyr/mcp/knowledge_base_server.py` | `_VALID_CATEGORIES` 10值 | **中优先级**：category 枚举变更必须同步 |
 | `src/zephyr/mcp/tool_contracts.yaml` | category enum 10值、task_id 格式引用 §7.2 | **中优先级**：category 枚举变更必须同步 |
@@ -650,7 +650,7 @@ draft_stage  →  blueprint_review  →  construction_review  →  active_stage
 
 ### 4.2 TaskStatus（域 B：任务系统）
 
-> 代码真源：`src/zephyr/schemas.py` `TaskStatus` 枚举
+> 代码真源：`src/zephyr/shared/schemas.py` `TaskStatus` 枚举
 
 | status | 含义 | 终态？ |
 |--------|------|:------:|
@@ -711,7 +711,7 @@ DRAFT → SUBMITTED → REVIEWED → ACCEPTED → INDEXED → VERIFIED
 | 值数量 | 3 | 10 | 10 |
 | 大小写 | 枚举值小写 / 标识符大写 | 全大写 | 全大写 |
 | 终态 | deprecated / superseded | VERIFIED / CANCELLED | ARCHIVED |
-| 代码真源 | 本文件 §4.1 | schemas.py | kb_repo.py |
+| 代码真源 | 本文件 §4.1 | `src/zephyr/shared/schemas.py` | kb_repo.py |
 | 对标专业机构 | MLflow: status | IETF: task_status | OpenLineage: lifecycleState |
 
 ### 4.5 大小写约定：枚举值小写 + 标识符大写
@@ -755,7 +755,7 @@ DRAFT → SUBMITTED → REVIEWED → ACCEPTED → INDEXED → VERIFIED
 |------|------|:------:|------|
 | `status` | 枚举值 | 小写 | `draft` `active` `deprecated` |
 | `doc_type` | 枚举值 | 小写 | `standard` `policy` `blueprint` |
-| `classification` | 枚举值 | 小写 | `public` `confidential` |
+| `classification` | 枚举值 | 小写 | 域 A：`public` `confidential`（推荐）；域 B 任务另见 §4.6 / §7.1 |
 | `layer` | 枚举值 | 小写 | `l01_infrastructure` `cross_layer` |
 | `ai_autonomy_level` | 枚举值 | 小写 | `immutable_core` `ai_modifiable` `human_gated` |
 | `ttl` | 枚举值 | 小写 | `permanent` `30d` `7d` `session` `periodic_review_90d` |
@@ -778,42 +778,25 @@ DRAFT → SUBMITTED → REVIEWED → ACCEPTED → INDEXED → VERIFIED
 > 这是 Python 枚举的惯例，与 frontmatter 枚举值无关——它们是域 B/C 专用，不在 frontmatter 中使用。
 > pre-commit 校验时，域 A 枚举值只接受小写，标识符只接受大写。
 
-### 4.6 classification 二分法：public / confidential
+### 4.6 classification：域 A（文档）与域 B（任务）分层
 
-> **真元规则（Owner 裁定，2026-04-29）**：classification 只保留两种值。
+> **2026-05-05 裁定（闭合 §4 与 §7 冲突）**：不再执行「删除 `INTERNAL` / 强制枚举二分」的迁移。文档与任务对敏感度粒度需求不同——**分层真源**，禁止混读。
 
-| 值 | 含义 | AI 行为 |
-|----|------|--------|
-| `public` | 可以公开——泄露无影响 | 可自由分享 |
-| `confidential` | 不能泄露——泄露会造成损害 | 禁止外传，需访问控制 |
+| 上下文 | 合法值 | 真源 |
+|--------|--------|------|
+| **域 A** 文档 frontmatter | **`public` / `confidential`（推荐）**；历史文件可暂留 `internal` | 本表 + frontmatter 校验 |
+| **域 B** `Task.classification` | **`public` / `internal` / `confidential`（三值）** | **`src/zephyr/shared/schemas.py`** `Classification` + `_registry/vocabularies/classification-vocabulary.yaml`；字段表见 **§7.1** |
 
-> **两个维度各管各的**：`classification` 管"能不能公开"（二元），`ai_autonomy_level` 管"AI 能不能改"（三级）。
-> 编码规范和交易策略都标 `confidential`（都不能公开），但编码规范是 `ai_modifiable`（AI 可以改），交易策略是 `immutable_core`（AI 不能碰）。
-> 不要用 `classification` 来区分敏感程度——那是 `ai_autonomy_level` 的工作。
+**域 A 推荐二分**：降低 Vibe Coding 下 AI 决策成本。  
+**域 B 使用三值**：区分「项目内默认可见」（`internal`）与「明确机密」（`confidential`）；与代码枚举及 SQLite 对齐。  
+**与 `ai_autonomy_level` 正交**（不变）：`classification` 管外传边界，`ai_autonomy_level` 管「谁能改」。
 
-**选择理由（为什么只用两种）**：
+**以下为 2026-04-29 讨论的「仅文档域二分」论据摘要**（仍适用于**仅填 frontmatter 的文档**，不推翻域 B 三值）：
 
-1. **二分法最清晰**：一份文件要么可以公开，要么不能。没有中间地带。`internal`（内部使用）是一个模糊的灰色地带——"内部"到底能不能给合作方看？AI 无法判断，人类也经常拿不准。
+- 纯公开/不公开判断在部分商业合规语境中更简单。  
+- 军方 `secret` 分级本项目不使用。
 
-2. **Vibe Coding 语境**：AI 需要明确的二元判断。`public` = 可以放出去，`confidential` = 不能放出去。不需要想"这个 internal 到底算不算敏感"。行业实践佐证：（a）OWASP Agentic AI 安全指南的核心原则是"最小权限"——AI 只能访问它完成任务所需的数据，判断是二元的（能访问/不能访问），不是三级的；（b）GitHub 爆火的 Vibe Coding 中文指南（阿里云专家）将数据只分"能给 AI 的"和"不能给 AI 的"两类，无中间层；（c）Airbyte / Azure AI Agent 安全实践均采用二元授权模型——AI 要么被授权访问，要么不被授权，`internal` 在 AI Agent 语境下无意义；（d）三分法在 Vibe Coding 下会自然退化成二分法——AI 用着用着就会把 `internal` 当 `confidential` 处理，与其让它自然退化，不如一开始就用二分法。
-
-3. **商业标准对齐**：微软 Purview、AWS、CompTIA Security+ 商业分类体系的核心就是 public vs confidential 的二分。`internal` 是部分厂商添加的中间层，并非必需。
-
-4. **与 `secret` 的区别**：`secret` 是军方/政府术语（US Executive Order 13526），在军方体系里 `secret` 比 `confidential` 高一级。本项目是商业量化交易系统，不使用军方分级，避免术语混淆。
-
-5. **现有 `internal` 文件的处理**：当前 100 个标 `internal` 的文件，逻辑上都是"不能公开泄露"的，统一归入 `confidential`。批量迁移在后续 session 中执行。
-
-**否决方案**：
-
-| 方案 | 否决理由 |
-|------|---------|
-| 三分法 `public` / `internal` / `confidential`（旧规则） | `internal` 是灰色地带，AI 无法准确判断；100 个文件标了 internal 但语义模糊 |
-| 军方三分法 `public` / `confidential` / `secret` | `secret` 在军方体系里比 `confidential` 高一级，本项目不需要这个区分；术语混淆风险 |
-| 四分法 `public` / `internal` / `confidential` / `restricted` | 过度工程，个人项目不需要四级分类 |
-
-> **迁移说明**：`internal` 值从本版本起废弃。现有 `classification: internal` 的文件需批量改为 `classification: confidential`。
-> 代码真源 `schemas.py` `Classification` 枚举需删除 `INTERNAL`，默认值改为 `CONFIDENTIAL`。
-> 数据库 DDL CHECK 约束需同步更新。此迁移在后续 session 中执行。
+**已废止的叙述**：曾计划删除枚举 `INTERNAL`、批量把 `internal` 文件改为 `confidential`——**已撤销**；以本表分层为准。
 
 ---
 
@@ -1065,13 +1048,13 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 > 任务卡是 AI 执行任务的最小单元。字段的**唯一真源**是本 §7，取代所有其他文件中的重复定义（包括原 `task-card-standard.md` §3 的字段定义——已于 2026-05-01 拆分，字段定义全部吸收至本节）。
 >
-> 代码真源：`src/zephyr/schemas.py` `TaskCard` 模型 + `src/zephyr/db/sqlite_schema.py` tasks 表
+> 代码结构真源：**`src/zephyr/shared/schemas.py`** 的 `Task` 模型（Pydantic v2）。**计数口径**：**§7.1 本表列域 B 语义字段 28 个**；同一 `Task` 另含 **`is_deleted` / `deleted_at` / `schema_version` 共 3 个平台/存储追踪字段**（软删除与 schema 版本）→ **Pydantic `Task` 共 31 字段**，与 SQLite `tasks` 核心列一致。业务上可称 **TaskCard**（MOD-INF-006）——`Task` 基座 + 管线/模板扩展列（§7.12）。**禁止**以不存在的 `src/zephyr/schemas.py` 为据。
 >
 > 业务规则和操作指南（如何写任务卡正文、验收标准怎么写）见 `governance/task/task-card-standard.md`。
 
 ### 7.1 字段总表（快速索引）
 
-> 以下为域 B 全部字段一览。各字段的详细格式规则、枚举约束、验真逻辑见 §§7.2~7.11。
+> 下表为 **域 B 语义字段 28 项**（与门禁 G0「业务完整性」对齐）。**另 3 项平台追踪字段**（`is_deleted` / `deleted_at` / `schema_version`）见 §7.1.1，包含在同一 `Task` 模型内但不计入「语义 28」。各字段格式见 §§7.2~7.11。
 
 | # | 字段 | 类型 | 必填 | 所属分组 | 说明 |
 |---|------|------|:----:|---------|------|
@@ -1080,8 +1063,8 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 3 | `seq` | int | 是 | 标识 | 命名空间内自增序号 |
 | 4 | `title` | string | 是 | 标识 | 任务标题（1-200 字） |
 | 5 | `status` | enum | 是 | 状态 | 10 状态机枚举值，见 §4.2 |
-| 6 | `priority` | enum | 是 | 状态 | P0/P1/P2/P3/P4，见 §9.7 |
-| 7 | `phase` | enum | 是 | 状态 | 施工阶段：`design` / `implement` / `verify` / `deploy` |
+| 6 | `priority` | enum | 是 | 状态 | P0/P1/P2/P3/P4，与 `Priority` 枚举及 SQLite `CHECK` 一致；§9.7 与此对齐 |
+| 7 | `phase` | int | 是 | 状态 | **0–9 整数**，与 SQLite `tasks.phase` `CHECK` 一致；语义约定由任务系统蓝图/编排层定义——**禁止**与本表冲突地写作 `design`/`implement` 字符串 |
 | 8 | `execution_model` | enum | 是 | 模型 | 主力模型，合法值见 §7.3 |
 | 9 | `model_rationale` | string | 否 | 模型 | 选模型理由（1-3 句话） |
 | 10 | `fallback_model` | enum | 否 | 模型 | 备选模型（主力不可用时） |
@@ -1089,7 +1072,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 12 | `deliverables` | string[] | 否 | 路径 | 产出的文件（绝对路径） |
 | 13 | `depends_on` | string[] | 否 | 依赖 | 前置任务 task_id 列表 |
 | 14 | `safety_level` | enum | 是 | 安全 | H/M/L，判定准则见 §10.10 |
-| 15 | `classification` | enum | 是 | 安全 | public / confidential，见 §4.6 |
+| 15 | `classification` | enum | 是 | 安全 | `public` / `internal` / `confidential`，与 `Classification` 枚举及 **`_registry/vocabularies/classification-vocabulary.yaml`** 对齐 |
 | 16 | `evolution_policy` | enum | 是 | 安全 | frozen / extendable / rewritable，见 §10.11 |
 | 17 | `idempotent` | bool | 否 | 安全 | 任务是否可安全重试 |
 | 18 | `directive` | string | 否 | 执行 | 执行指令编号（如 `313+325+999`） |
@@ -1104,6 +1087,18 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 27 | `waiting_for` | string | 否 | 运行时 | WAITING 时等待的条件 |
 | 28 | `ready_at` | datetime | 否 | 运行时 | READY 触发时间 ISO 8601（系统自动） |
 
+#### 7.1.1 平台/存储追踪字段（不计入语义 28）
+
+以下字段同属 **`src/zephyr/shared/schemas.py`** `Task` 模型，用于**软删除与 schema 版本**（MOD-INF-012 等），统计口径常与「业务 28」区分：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `is_deleted` | int (0/1) | 软删除标记 |
+| `deleted_at` | datetime / 空 | 软删除时间 |
+| `schema_version` | string | 持久化层 schema 版本追踪 |
+
+**合计**：语义 **28** + 追踪 **3** = **`Task` 31 字段**（与 MOD-INF-006、`sqlite_schema` 核心列对齐）。
+
 ### 7.2 核心标识字段
 
 | 字段 | 格式规则 | 说明 |
@@ -1113,8 +1108,8 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | `seq` | int ≥ 1 | 命名空间内自增序号，由 `task_repo.py` `next_seq(namespace)` 自动分配 |
 | `title` | 1-200 字 | 一眼看懂干什么（对齐 Jira Summary / Linear Title） |
 | `status` | TaskStatus 10 值之一（§4.2） | PENDING / IN_PROGRESS / COMPLETED / VERIFIED / FAILED / BLOCKED / WAITING / READY / RETRY / CANCELLED |
-| `priority` | P0 / P1 / P2 / P3 / P4（§9.7） | P0=关键阻塞，P1=重要近期，P2=一般计划，P3=低优先，P4=可选 |
-| `phase` | `design` / `implement` / `verify` / `deploy` | 任务所处的施工阶段，非项目 Phase 编号 |
+| `priority` | P0 / P1 / P2 / P3 / P4 | P0=关键阻塞，P1=重要近期，P2=一般计划，P3=低优先，P4=可选（见 §9.7） |
+| `phase` | 整数 **0–9** | SQLite `INTEGER NOT NULL CHECK(phase BETWEEN 0 AND 9)`；业务含义由编排层/Task 系统蓝图定义 |
 | `directive` | 自由文本 | 执行指令编号，如 `313+325+999` |
 
 ### 7.3 模型执行字段
@@ -1167,7 +1162,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 文件类型 | 是否放入 | 判据 |
 |---------|:------:|------|
 | 本任务需修改的文件 | ✅ | 直接读写 |
-| 需理解接口/结构的只读文件 | ✅ | schemas.py / contracts/ |
+| 需理解接口/结构的只读文件 | ✅ | `shared/schemas.py` / contracts/ |
 | 同目录相邻但不需要改的 | ❌ | 除非联动修改 |
 | 下游消费者的文件 | ❌ | 不修改就不放 |
 
@@ -1195,7 +1190,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 字段 | 类型 | 必填 | 合法值 | 说明 |
 |------|------|:----:|--------|------|
 | `safety_level` | enum | 是 | H / M / L | H=高风险（架构/风控），M=中风险（代码修改），L=低风险（文档/测试）。判定准则见 §10.10 |
-| `classification` | enum | 是 | public / confidential | 访问分类，见 §4.6 |
+| `classification` | enum | 是 | `public` / `internal` / `confidential` | 访问分类。`internal`：项目内可见、不对外分发 |
 | `evolution_policy` | enum | 是 | frozen / extendable / rewritable | 文件演进策略，见 §10.11 |
 | `idempotent` | bool | 否 | true / false | true=重试不产生副作用；false 时必须解释原因 |
 
@@ -1246,7 +1241,6 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 
 | 命名空间 | 含义 | 文件路径模式 | 示例 |
 |---------|------|------------|------|
-| `ADR` | 架构决策记录 | `docs/02_enterprise_architecture/adr/adr-*` | ADR-001 |
 | `MOD` | 模块文档 | `docs/03_modules/l<NN>_<layer>/<module>/` | MOD-001 |
 | `KE` | 知识条目 | `docs/08_knowledge/` | KE-003 |
 | `STD` | 标准/规范 | `docs/01_policies_and_standards/` | STD-001 |
@@ -1284,7 +1278,11 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | `est_hours` | 字段名不规范 | → `estimate_hours` |
 | `created` | 字段名不规范 | → `created_at` |
 
-### 7.12 与域 A frontmatter 的关系
+### 7.12 SQLite `tasks` 表：语义 28 + 追踪列 + Vibe 扩展列
+
+> **§7.1 + §7.1.1** 对应 Pydantic `Task` **31 字段**（语义 28 + 追踪 3），与 `tasks` 表**核心列**对齐。`src/zephyr/db/sqlite_schema.py` 另含 **迁移追加列**（如 `upstream_files`、`downstream_outputs`、`assigned_pipeline`、`source_blueprint`、`rollback_instructions`、`completed_gates` 等），用于 Vibe Coding 任务卡 richer 视图与 MCP——**详尽列清单以 DDL + 迁移史为准**。扩展列不在 §7.1 语义 28 内，但未禁止写入；门禁与报表应标明读取的是**语义 28**、**Task 31** 还是**含富扩展列的全表**。
+
+### 7.13 与域 A frontmatter 的关系
 
 任务卡字段**不是**文档 frontmatter 字段。它们存储在 SQLite `tasks` 表中，通过 `task_id` 关联。
 
@@ -1396,7 +1394,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | `SRC` | 源码 | `src/zephyr/` |
 | `OPS` | 运维 | scripts/ |
 
-**代码真源**：`src/zephyr/schemas.py` `TaskNamespace` 枚举
+**代码真源**：`src/zephyr/shared/schemas.py` `TaskNamespace` 枚举
 
 ### 9.4 AgentRole 枚举（6 值）
 
@@ -1469,7 +1467,7 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展）
 | 4 | `P3` | 低优先——有空再做 | 可选功能、锦上添花 |
 | 5 | `P4` | 可选——不确定是否需要 | 探索性想法、远期规划 |
 
-**代码真源**：`src/zephyr/schemas.py` `AuditSeverity` 枚举（需扩展为 P0-P4 并重命名为 `Priority`）
+**代码真源**：`src/zephyr/shared/schemas.py` 中 `Priority`（**P0`–`P4**，与 SQLite `tasks.priority` `CHECK` 一致）。
 
 ---
 
@@ -1616,7 +1614,7 @@ AI 决策日志（`logs/ai/{employee_id}/YYYY-MM-DD.jsonl`）有自己的独立 
 
 ### 10.10 safety_level 字段
 
-标注文档/任务的安全风险等级，决定 AI 操作的防护策略。与 `task-card-standard.md` §3.5 和 `schemas.py` `SafetyLevel` 枚举对齐。
+标注文档/任务的安全风险等级，决定 AI 操作的防护策略。与 `task-card-standard.md` §3.5 和 **`src/zephyr/shared/schemas.py`** `SafetyLevel` 枚举对齐。
 
 | 值 | 含义 | AI 行为约束 |
 |----|------|-----------|
@@ -1628,7 +1626,7 @@ AI 决策日志（`logs/ai/{employee_id}/YYYY-MM-DD.jsonl`）有自己的独立 
 
 ### 10.11 evolution_policy 字段
 
-标注文件本身的演进策略——允不允许被改、怎么改。与 `schemas.py` `EvolutionPolicy` 枚举和 ADR-0040 对齐。
+标注文件本身的演进策略——允不允许被改、怎么改。与 **`src/zephyr/shared/schemas.py`** `EvolutionPolicy` 枚举和 ADR-0040 对齐。
 
 | 值 | 含义 | AI 行为约束 |
 |----|------|-----------|
@@ -2048,6 +2046,7 @@ derived_from:
 | META-V18 | `governance_family` 使用未定义值 | P2 | ❌ warn |
 | META-V19 | `ai_capability_slot` 使用未定义值 | P2 | ❌ warn |
 | META-V20 | 两个以上 `status: active` + `doc_type: standard` 文件对同一领域声明 `唯一真源`（SSoT） | P0 | ✅ |
+| META-V21 | `index.md` 清单条目描述的文件状态与实际文件的 frontmatter `status` 不一致 | P0 | ✅ |
 
 ### 14.2 人工审查项
 
@@ -2138,6 +2137,7 @@ derived_from:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 6.0.1 | 2026-05-06 | §14.1：新增 **META-V21**——`index.md` 清单条目与实际指向文件的 frontmatter `status` 不一致（P0，对齐 PS-STD-012 §2.1）。 |
 | 5.9.0 | 2026-05-02 | **SSoT 根治——单层真源**：§3.2 完整表（23 行）→速查引用（10+13 的速查列表 + vocabulary YAML 指针）。§3.3 移除 2 个已废弃类型行（ai_governance/reference），标注"完整映射见 YAML"。§3.4 移除 4 个已废弃类型行（ai_governance/candidate_pool/discussion_draft/reference），新增 operational_rule/protocol/vocabulary/contract/terminology/template/declaration/service_spec 行，标注 YAML 优先。§3.5 流程简化："改 YAML 即可，本表不需要手动同步"。根因：双层手动同步是结构性缺陷——对标 12 家专业机构（K8s/Terraform/OpenAPI/Google SRE/Anthropic/Cursor/AGENTS.md/ComfyUI 等），无一使用"人工同步双层真源"。方案选型详细论证见 Session Log。 |
 | 5.8.0 | 2026-05-02 | **vocabulary YAML 对齐**：§3.2 完整词表从 25→23 种——移除 5 个已废弃 doc_type（checklist/ai_governance/candidate_pool/discussion_draft/reference，已在 vocabulary deprecated_values 中），新增 3 个 vocabulary 已注册但本表缺失的类型（vocabulary/contract/declaration）。§3.2.1 子集从 8→10 值（新增 vocabulary/contract）。§6 TTL 表新增 periodic_review_90d（ttl-vocabulary.yaml 已有）。新增 YAML 优先声明——本表从 vocabulary YAML 派生，冲突以 YAML 为准。根因：词汇表清理/新增后 metadata 手动同步遗漏了 5 个 deprecated 删除 + 3 个新增。 |
 | 5.7.0 | 2026-05-02 | **生命周期引用约束（Lifecycle Reference Constraint）**：§4.1.1 新增 LRC-001~005 规则——draft 文件不可被 active 文件通过 depends_on 引用（对标 Kubernetes Admission Controller + ITIL Change Enablement）。定义 lifecycle_stage 字段（4 值：draft/blueprint_reviewed/construction_reviewed/active，beta 落地）。动机：审计发现 GOV-MOD-002（draft）被 6 个 active 文件量产级引用——status 与 depends_on 之间没有互锁机制。 |
@@ -2156,7 +2156,7 @@ derived_from:
 | 5.1.2 | 2026-05-01 | meta/ 系统性自审收尾。(1) §5.8.1 注册 META-GLS-001（glossary.md——术语表）和 PS-STD-006（governance-metrics-standard.md——治理度量标准）。(2) PS-STD-006 编号从 📋 可用→🆕 新建。 |
 | 5.1.1 | 2026-05-01 | meta/ 系统性自审。(1) frontmatter 字段修正：`version` number→string（加引号，防 YAML 解析为浮点数）、`date` 更新为 2026-05-01（同步实际修改日期）、`valid_from` 更新为 2026-04-28（首次注册生效日）。(2) §5.8.1 幽灵条目清理：删除声称存在但实际不存在的 PS-STD-006/007（错误标记为"✅ 已有，保留"），标注 PS-STD-005~007 为"📋 可用（待分配）"，编号可回收复用。(3) §5.8.1 新增 PS-STD-012（rule-verification-standard.md）和 META-IDX-001（index.md），均为 meta/ 系统审查补齐。 |
 | 5.1.0 | 2026-05-01 | B5 审查连带修复。(1) §2.1 字段表：修正 8 处过时节号引用（module_id §6→§5、status §7→§4、layer §6.3→§5.5、safety_level/evolution_policy/ai_autonomy/provenance/author_agent/governance_family 从 §8.x→§10.x）。(2) §2.8 禁止行为表与 §3.6 #5 去重：合并 #1+#2→跨域引用，互补不重叠。(3) §2.6 新增"架构公民原则"说明块：`stable + immutable_core` 合法（约束 #1 是单向的，逆面不成立），附合法映射光谱防误判。 |
-| 4.4.0 | 2026-04-29 | 新增 §9.5 layer 枚举（14值）、§9.6 source_type 枚举（7值）、§9.7 priority 枚举（5值）；§9 从 4 个跨域枚举扩展为 7 个；更新 §1.4 SSoT 声明拆分 §9.1~§9.4 和 §9.5~§9.7 两行；标注代码真源需同步对齐（triage.py VALID_LAYERS、kms-entry-schema.md source_type、schemas.py AuditSeverity→Priority） |
+| 4.4.0 | 2026-04-29 | 新增 §9.5 layer 枚举（14值）、§9.6 source_type 枚举（7值）、§9.7 priority 枚举（5值）；§9 从 4 个跨域枚举扩展为 7 个；更新 §1.4 SSoT 声明拆分 §9.1~§9.4 和 §9.5~§9.7 两行；标注代码真源需同步对齐（triage.py VALID_LAYERS、kms-entry-schema.md source_type、**shared/schemas** Priority 演进） |
 | 4.4.0 | 2026-04-29 | 新增文件头部"⚠️ 待解决重大问题"区域，记录 3 个已识别但未解决的问题（doc_type词表边界模糊、旧长名未迁移、internal待迁移），确保每次打开本文件都能看到 |
 | 4.3.0 | 2026-04-29 | **真元规则裁定**：§4.1 DocStatus 从 7 种精简为 3 种（draft/active/deprecated），删除 in_discussion/review_ready/accepted/superseded；理由：Vibe Coding语境下AI只需知道"能不能用"、废弃原因靠superseded_by字段区分、审阅由review_status单独管、不按doc_type分状态；§4.5 大小写约定从"统一小写"升级为"枚举值小写+标识符大写"二元规则（§4.5.1~§4.5.5）；§4.6 classification 二分法（public/confidential，删除internal）；§2.2 分阶段闸门删除Accepted行、Deprecated必填superseded_by；§13.3 降格规则同步更新 |
 | 4.2.0 | 2026-04-29 | 新增 §1.5 消费者注册表（对标 ISO 11179 §6.2 Stewardship），4 层分级（Tier 1 硬编码枚举/Tier 2 引用权威/Tier 3 字段对齐/Tier 4 已废弃）+ 变更同步规则矩阵 |

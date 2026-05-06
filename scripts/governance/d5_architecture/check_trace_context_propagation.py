@@ -1,15 +1,6 @@
 """
 check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
 
-__manifest__ = """
-args: []
-description: check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 扫描 L00~L07 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
@@ -31,6 +22,18 @@ SSoT: cross-layer-contracts.yaml → CTR-TRACE-001
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: >
+  TraceContext 传播强制执行 CI 检查——确保所有跨模块调用链路中 trace_id/span_id
+  不丢失，验证 OpenTelemetry 上下文传播链完整。对标 GOV-MOD-004 接口契约 §可观测性。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import ast
 import sys

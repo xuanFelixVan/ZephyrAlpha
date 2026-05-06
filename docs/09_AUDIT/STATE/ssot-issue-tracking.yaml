@@ -35,6 +35,35 @@ entries:
       construction_plan 字段 + l01_infrastructure/index.md 退役状态 + 19_development_workspace/index.md
       创建 + docs/index.md 过时信息修复 = 全部完成"
 
+  - scan_date: "2026-05-05"
+    scanner_version: "validate_ssot.py v1.2.0"
+    file: "09_audit/reports/ssot-validation-LATEST.md"
+    issue_totals:
+      critical_issues: 0
+      warning_issues: 0
+      total: 0
+    status: closed
+    note: >
+      2026-05-05 batch-fix 完成：122 文件中 141 个 frontmatter 字段修复。
+      layer 字段 snake_case→LXX 全量修正，status 字段 lowercase→PascalCase 全量修正。
+      rerun validate_ssot.py 确认 P0=0, P1=0, P2=0。
+    fixed_in_scope: true
+    fix_scope_note: "01_policies_and_standards/ + 02_enterprise_architecture/ + 03_modules/ 全域修复完成"
+
+  - scan_date: "2026-04-25"
+    scanner_version: "人工架构审计 AUDIT-ARCH-ALIGN-001 v1.1.0"
+    file: "09_audit/reports/architecture-alignment-audit.md"
+    issue_totals:
+      critical_issues: 0
+      warning_issues: 0
+      total: 0
+    status: superseded
+    note: >
+      历史报告已声明 Superseded；其中 L13 目录命名、B 轨未纳入架构 YAML、shared 文件缺口等结论
+      仍可作为技术债清单——若需正式闭环，应在 SSOT 扫描或专项 ADR 中逐条落 issue id。
+    fixed_in_scope: false
+    fix_scope_note: "不自动等同于 validate_ssot 条目；合并追踪需人工映射"
+
 migration_instructions: |
   每次运行 validate_ssot.py 扫描后，将新条目追加到 entries 列表中。
   在 entry 中记录 scan_date、issue_totals、与前次扫描的差异（delta）。

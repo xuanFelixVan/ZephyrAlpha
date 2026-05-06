@@ -4,16 +4,6 @@ Prevents internal inconsistencies (regex conflicts, doc_type gaps, VR skew)
 from reaching the codebase—closes the root cause of 3 CRITICAL issues in
 the third audit.
 
-__manifest__ = """
-args: []
-description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
-dimensions:
-- D3
-- D5
-priority: P0
-timeout_seconds: 15
-warn_only: false
-"""
 
 
 Dimensions:
@@ -27,6 +17,17 @@ Exit 1 on any FAIL → pre-commit blocks the commit.
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
+dimensions:
+- D3
+- D5
+priority: P0
+timeout_seconds: 15
+warn_only: false
+"""
+
 
 import argparse
 import re

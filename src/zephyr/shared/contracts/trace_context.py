@@ -1,13 +1,13 @@
-from __future__ import annotations
+# ==== BEGIN CODGEN:CTR-TRACE-001 ====
+from dataclasses import dataclass, field
 
-from dataclasses import dataclass
-from datetime import datetime
-
+from datetime import datetime, timezone
+from typing import Optional
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -17,9 +17,9 @@ CTR-TRACE-001: TraceContext / 全链路追踪上下文
 
 跨所有数据层的全链路追踪上下文。L00 在首次产生数据时生成，后续每层追加 span。支持反向追溯：'这笔订单是因为哪个因子的哪个信号在哪个时刻产生的'。
 
-SSoT: cross-layer-contracts.yaml → CTR-TRACE-001
+SSoT: cross-layer-contracts.yaml -> CTR-TRACE-001
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -29,9 +29,49 @@ AI Prompt
 
 @dataclass(frozen=True)
 class TraceContext:
-    trace_id: str
-    span_id: str
-    service_name: str
     created_at: datetime
-    schema_version: str = "1.0"
+    idempotency_key: str
+    service_name: str
+    span_id: str
+    trace_id: str
     parent_span_id: Optional[str] = None
+    schema_version: str = "1.0"
+
+# ==== END CODGEN:CTR-TRACE-001 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,16 +2,6 @@
 validate_enum_consistency.py — 枚举自动派生一致性闸门（GATE-ENUM）
 v1.0.0 — 2026-05-03
 
-__manifest__ = """
-args: []
-description: GATE-ENUM — 枚举自动派生一致性闸门（§6.14 Level 2 门禁 1/4 — vocabulary YAML ↔ 派生文件枚举列表交叉比对，5维检查）
-dimensions:
-- D3
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Level 2 门禁：
@@ -36,6 +26,18 @@ exit codes: 0=一致, 1=发现漂移, 2=系统错误
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: GATE-ENUM — 枚举自动派生一致性闸门（§6.14 Level 2 门禁 1/4 — vocabulary YAML ↔ 派生文件枚举列表交叉比对，5维检查）
+dimensions:
+- D3
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import json
 import sys

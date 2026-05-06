@@ -44,11 +44,13 @@ from zephyr.orchestrator.trigger_router import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(autouse=True)
 def reset_singleton():
     reset_trigger_router()
     yield
     reset_trigger_router()
+
 
 @pytest.fixture
 def good_yaml(tmp_path: Path) -> Path:
@@ -95,9 +97,11 @@ def good_yaml(tmp_path: Path) -> Path:
     )
     return yaml_path
 
+
 # ---------------------------------------------------------------------------
 # 1. TriggerHandlerSpec 数据模型
 # ---------------------------------------------------------------------------
+
 
 class TestTriggerHandlerSpec:
     def test_full_construction(self):
@@ -132,9 +136,10 @@ class TestTriggerHandlerSpec:
         with pytest.raises(Exception):
             spec.handler = "tampered"  # type: ignore[misc]
 
+
 class TestPhase1DTriggerTypes:
     def test_phase1d_set_size(self):
-        assert len(PHASE1D_TRIGGER_TYPES) == 5
+        assert len(PHASE1D_TRIGGER_TYPES) == 6
 
     def test_phase1d_contains_required(self):
         required = {
@@ -143,12 +148,15 @@ class TestPhase1DTriggerTypes:
             "compression_needed",
             "cleanup_due",
             "blueprint_published",
+            "blueprint_lookup",
         }
         assert required <= PHASE1D_TRIGGER_TYPES
+
 
 # ---------------------------------------------------------------------------
 # 2. load_router_config
 # ---------------------------------------------------------------------------
+
 
 class TestLoadRouterConfig:
     def test_loads_good_yaml(self, good_yaml):
@@ -204,9 +212,11 @@ class TestLoadRouterConfig:
         # 至少包含 experimental 起始集 5 种
         assert set(specs.keys()) >= PHASE1D_TRIGGER_TYPES
 
+
 # ---------------------------------------------------------------------------
 # 3. TriggerRouter 加载
 # ---------------------------------------------------------------------------
+
 
 class TestTriggerRouterLoad:
     def test_constructor_loads_yaml(self, good_yaml):
@@ -279,9 +289,11 @@ class TestTriggerRouterLoad:
         assert "onboarding" not in router.trigger_types
         assert "cleanup_due" in router.trigger_types
 
+
 # ---------------------------------------------------------------------------
 # 4. dispatch 路径：5 种 trigger_type 成功路径
 # ---------------------------------------------------------------------------
+
 
 class TestDispatchSuccessPaths:
     def test_onboarding(self, good_yaml):
@@ -311,9 +323,11 @@ class TestDispatchSuccessPaths:
         assert result.success is True
         assert result.handler_result["handler"] == "blueprint_published"
 
+
 # ---------------------------------------------------------------------------
 # 5. dispatch 路径：失败 / 跳过
 # ---------------------------------------------------------------------------
+
 
 class TestDispatchSkipPaths:
     def test_unknown_trigger_skipped_silently(self, good_yaml):
@@ -362,9 +376,11 @@ class TestDispatchSkipPaths:
         result = router.dispatch("x")
         assert result.success is False
 
+
 # ---------------------------------------------------------------------------
 # 6. dispatch 上下文与 payload 透传
 # ---------------------------------------------------------------------------
+
 
 class TestDispatchContextPassing:
     def test_payload_passed_to_handler(self, good_yaml):
@@ -397,9 +413,11 @@ class TestDispatchContextPassing:
         router.dispatch("onboarding")
         assert captured["payload"] == {}
 
+
 # ---------------------------------------------------------------------------
 # 7. 审计日志注入
 # ---------------------------------------------------------------------------
+
 
 class FakeAuditLogger:
     """Duck-typed AuditLogger 替身。"""
@@ -417,6 +435,7 @@ class FakeAuditLogger:
                 "extra": extra or {},
             }
         )
+
 
 class TestAuditLogIntegration:
     def test_audit_logged_on_success(self, good_yaml):
@@ -469,9 +488,11 @@ class TestAuditLogIntegration:
         result = router.dispatch("onboarding")
         assert result.success is True
 
+
 # ---------------------------------------------------------------------------
 # 8. 单例
 # ---------------------------------------------------------------------------
+
 
 class TestSingleton:
     def test_get_returns_same_instance(self, good_yaml):
@@ -484,9 +505,11 @@ class TestSingleton:
         b = get_trigger_router(config_path=good_yaml, reset=True)
         assert a is not b
 
+
 # ---------------------------------------------------------------------------
 # 9. 默认 stub 处理器
 # ---------------------------------------------------------------------------
+
 
 class TestDefaultStubHandlers:
     @pytest.mark.parametrize(
@@ -513,9 +536,11 @@ class TestDefaultStubHandlers:
         result = handle_cleanup_stub({})
         assert result["received_keys"] == []
 
+
 # ---------------------------------------------------------------------------
 # 10. RouterDispatchResult 契约
 # ---------------------------------------------------------------------------
+
 
 class TestRouterDispatchResultContract:
     def test_success_result_fields(self, good_yaml):

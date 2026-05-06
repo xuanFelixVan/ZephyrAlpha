@@ -14,11 +14,13 @@ from zephyr.feedback_loop.fitness_functions import (
     FitnessInputs,
 )
 
+
 @dataclass
 class FitnessDashboardData:
     overall_status: str = "PASS"
     metrics: list[dict[str, Any]] = field(default_factory=list)
     report: Any = None
+
 
 def fetch_fitness_data(
     inputs: FitnessInputs | None = None,
@@ -43,6 +45,7 @@ def fetch_fitness_data(
         report=report,
     )
     return data
+
 
 def render_fitness_dashboard(data: FitnessDashboardData) -> dict[str, Any]:
     return {

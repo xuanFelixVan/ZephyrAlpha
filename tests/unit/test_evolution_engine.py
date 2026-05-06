@@ -25,16 +25,20 @@ from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
 FIXED_NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=UTC)
 
+
 def _clock() -> datetime:
     return FIXED_NOW
+
 
 def _fill(collector: FeedbackCollector, items: list[tuple[str, int, list[str]]]) -> None:
     for task_id, score, tags in items:
         collector.add(task_id=task_id, score=score, tags=tags)
 
+
 # ---------------------------------------------------------------------------
 # EvolutionProposal 契约
 # ---------------------------------------------------------------------------
+
 
 class TestEvolutionProposal:
     def test_valid_proposal(self) -> None:
@@ -71,9 +75,11 @@ class TestEvolutionProposal:
                 unknown_field="oops",
             )
 
+
 # ---------------------------------------------------------------------------
 # L1 task-level
 # ---------------------------------------------------------------------------
+
 
 class TestLayer1Task:
     def test_low_score_triggers_hook(self) -> None:
@@ -111,9 +117,11 @@ class TestLayer1Task:
         report = engine.evolve()
         assert report.l1_triggered == 0
 
+
 # ---------------------------------------------------------------------------
 # L2 pattern-level
 # ---------------------------------------------------------------------------
+
 
 class TestLayer2Pattern:
     def test_retry_tag_aggregation(self) -> None:
@@ -193,9 +201,11 @@ class TestLayer2Pattern:
         signals = {p.signal for p in report.proposals}
         assert EvolutionSignal.LOW_KNOWLEDGE_HIT in signals
 
+
 # ---------------------------------------------------------------------------
 # L3 architecture-level
 # ---------------------------------------------------------------------------
+
 
 class TestLayer3Drift:
     def test_score_drop_triggers_adr_reaudit(self) -> None:
@@ -237,9 +247,11 @@ class TestLayer3Drift:
         report = engine.evolve(baseline_avg_score=4.2)
         assert report.l3_triggered == 0
 
+
 # ---------------------------------------------------------------------------
 # Owner 审批 + dry-run 门禁
 # ---------------------------------------------------------------------------
+
 
 class TestApprovalGate:
     def test_dry_run_never_applies(self) -> None:
@@ -293,9 +305,11 @@ class TestApprovalGate:
         report = engine.evolve(dry_run=False, owner_approved=True)
         assert report.applied_count == 0
 
+
 # ---------------------------------------------------------------------------
 # 通用场景
 # ---------------------------------------------------------------------------
+
 
 class TestEvolveEntry:
     def test_empty_collector_returns_empty_report(self) -> None:
@@ -332,6 +346,7 @@ class TestEvolveEntry:
     def test_default_thresholds_exposed(self) -> None:
         assert "low_score_threshold" in DEFAULT_THRESHOLDS
         assert "pattern_min_count" in DEFAULT_THRESHOLDS
+
 
 def test_exports_present() -> None:
     from zephyr.feedback_loop import evolution_engine as m

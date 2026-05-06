@@ -1,7 +1,7 @@
 ---
 doc_type: archive
 title: "target-architecture/ 完整修订历史"
-version: "2.0.0"
+version: "2.2.0"
 status: active
 layer: cross_layer
 module_id: EA-REV-HIST
@@ -32,3 +32,5 @@ summary: index.md §8 修订记录的完整归档。活跃修订见 index.md §8
 | 2026-04-21 | **v1.8.0（Architecture-as-Code v2.0）**：新增 `architecture-model/` 联邦制 YAML 模型（18 分区 SSoT）+ `check_architecture_gates.py` CI 门禁脚本 + `catalogs/immutable-core-inventory.md` 不变核心清单 + `adr/ADR-0013` 治理准入铁律。§2 文档清单 +3 行。§3 AI 协作者首选路径改为读 `_index.yaml`。视图正文重组织：03-AA 1076→532 / 04-TA 1070→465 / 09-GOV 615→454。 |
 | 2026-04-21 | **v1.9.0（catalogs → YAML SSoT 迁移）**：删除 `catalogs/` 目录（9 文件）和 `_toc-cards/` 目录（8 文件），所有结构化数据已迁移到 `architecture-model/` YAML 分区。17 个 YAML 分区文件移除 `catalog_file:` 残留字段。§5 标题从 "View vs Catalog" 改为 "View vs YAML SSoT"。`check_architecture_gates.py` 升级至 v2.0.0（+GATE-06/07/08 +EXTRA-03）。 |
 | 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**（旧 12 层命名依赖图，11/14 层与实际矛盾），其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture-model/layers/_schema.yaml` v2.1。未来依赖图从 YAML SSoT 自动生成（对标 K8s/Terraform 声明式）。 (b) **by-domain 双轨结构调整**：`by-domain/` 目录为提前预留的架构骨架（4 个子域目录 + 占位 index.md），待后续按域填充详细架构文档。§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除 + frontmatter tags/summary 同步清理（双轨说明从 README 移除，骨架保留）。v1.1.0/v1.5.0 修订记录保留为历史档案。 (c) **同步 06/08 视图状态**：`06-security-architecture.md` skeleton → active v1.0.0（2026-04-24 已升格，README 滞后）；`08-operations-architecture.md` skeleton → draft v0.2.0。§2 表格 / §3 阅读路径 / §4bis 段 / T1 触发条件联动修正。 |
+| 2026-05-02 | **v2.1.0（审计修复批次）**：修复 4 项 SSoT 对齐问题：(a) `architecture-model/infra/` 创建 `core-services.yaml`、`shared-infra.yaml` 骨架，`architecture-model/_index.yaml` 不再引用缺失文件；(b) `architecture-principles.md` v1.1.0 §0 新增安全红线 R1–R4，`00-overview.md` 改为引用链接，消除安全红线双源；(c) `ssot-authority-map.md` v2.3.0 移除 `layer_01` 历史误标、矛盾追踪拆分活跃/已解决；(d) 修订历史归档至本文，`index.md` §8 仅保留最近 3 条。 |
+| 2026-05-06 | **v2.2.0（AUDIT-04 / 治理收口批次）**：双树读法与 `architecture-model/SCOPE.yaml`、AGENTS §6.9 / `ssot-authority-map` 对齐；Python 基线统一到 ≥3.11（施工树 `technology-landscape.yaml` 与 EA 视图一致，勿混写 TECH-11）；新增 `docs/09_audit/findings/` 与审计导航；`cross-layer-contracts.yaml` `partition` 增补 `ownership_model`；`validate_ssot.py` 修复模块 docstring、`check_audit_navigation_wiring()` 与 `--ci` 行为；`document-metadata-index` / `directory-registry` / `registry-master-index` 同步；`batch_create_index_md.py` 移除过时 `by-domain` 责任映射并补全 `09_audit/findings`；`invariants.yaml` INV-005 明确源码路径 vs EA 分层文件名；`scripts/arch_guard/_manifest.yaml` 日期跟进。 |

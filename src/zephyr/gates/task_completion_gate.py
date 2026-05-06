@@ -21,10 +21,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
+
 class Disposition(str, Enum):
     DELETE = "delete"
     MOVE = "move"
     KEEP = "keep"
+
 
 class ResidualType(str, Enum):
     TEMP = "temp_file"
@@ -32,6 +34,7 @@ class ResidualType(str, Enum):
     VERSIONED = "versioned_file"
     PYCACHE = "pycache_dir"
     PYC = "compiled_pyc"
+
 
 _RESIDUAL_PATTERNS: list[tuple[ResidualType, re.Pattern[str]]] = [
     (ResidualType.TEMP, re.compile(r"^temp_")),
@@ -49,6 +52,7 @@ _DISPOSITION_MAP: dict[ResidualType, Disposition] = {
     ResidualType.PYC: Disposition.DELETE,
 }
 
+
 @dataclass
 class ResidualFile:
     path: Path
@@ -56,6 +60,7 @@ class ResidualFile:
     residual_type: ResidualType
     disposition: Disposition
     reason: str
+
 
 @dataclass
 class GateReport:
@@ -84,6 +89,7 @@ class GateReport:
             counts[key] = counts.get(key, 0) + 1
         return counts
 
+
 class GateLevel(str, Enum):
     """G0-G7 门禁级别——从蓝图 MOD-INF-006 §3.2.1"""
 
@@ -96,12 +102,14 @@ class GateLevel(str, Enum):
     G5 = "G5"
     G6 = "G6"
 
+
 @dataclass
 class G7CheckResult:
     gate_id: str = "G7"
     passed: bool = False
     violations: list[str] = field(default_factory=list)
     checked_fields: list[str] = field(default_factory=list)
+
 
 class G7CompletenessGate:
     """G7 完整度门禁——验证任务卡防漂移字段是否完整填充
@@ -155,6 +163,7 @@ class G7CompletenessGate:
             for v in result.violations:
                 lines.append(f"  - {v}")
         return "\n".join(lines)
+
 
 class TaskCompletionGate:
     """Scan a directory for residual files not in files_in_scope.

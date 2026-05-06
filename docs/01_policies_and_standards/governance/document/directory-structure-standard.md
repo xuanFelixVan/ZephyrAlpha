@@ -2,14 +2,14 @@
 module_id: GOV-DOC-002
 title: 目录结构规范（docs/ + src/zephyr/ 双轨治理）
 doc_type: standard
-status: active
-version: 3.3.0
+status: Active
+version: 3.5.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-01"
+date: "2026-05-06"
 ttl: permanent
 summary: "ZephyrAlpha 2.0 目录结构的唯一真源。定义 governance/operational/domains 三级治理架构、防幻觉路径映射、放置决策树。v3.0.0：合并 03_blueprints + 04_construction_plans + 05_delivery_and_construction → 03_modules（按层→模块两级组织，一个模块的所有生命周期产物在同一目录）。"
 tags: [directory-structure, governance, path-mapping]
@@ -77,7 +77,7 @@ depends_on:
 | 轨道 | 语义 | 编号前缀 | docs/ 镜像 | src/zephyr/ 物理位置 |
 |------|------|----------|------------|----------------------|
 | **C 轨（脊柱）** | Layered 业务过程（14 层 L00-L13）| **`l<NN>_`** | `docs/03_modules/l<NN>_*/` | `src/zephyr/l<NN>_*/` |
-| **B 轨（双翼）** | Bounded Context 平台能力 / 横切基础设施 | **无前缀** | 蓝图→`docs/03_modules/l01_infrastructure/`（与C轨L01蓝图统一存放）；接口规范→`docs/03_modules/_b_track_interfaces/` | `src/zephyr/{llm_security,vector_memory,context_engine,orchestrator,feedback_loop,gates,db,kb,mcp,shared}/` |
+| **B 轨（双翼）** | Bounded Context 平台能力 / 横切基础设施 | **无前缀** | 蓝图→`docs/03_modules/l01_infrastructure/`（与C轨L01蓝图统一存放）；接口规范→`docs/03_modules/_b_track_interfaces/` | `src/zephyr/{llm_security,vector_memory,context_engine,orchestrator,feedback_loop,gates,pipeline,core,db,kb,mcp,shared}/` |
 
 > **v3.2.0 澄清**：`07_ai_engineering/` 已废弃——其内容（5个B轨接口规范）已并入 `docs/03_modules/_b_track_interfaces/`。
 > 统一理由：蓝图、接口规范、施工计划三个维度的文档统一放在 `03_modules/` 下，
@@ -105,12 +105,15 @@ docs/
 │   ├── _registry/                       # 注册表+契约（catalogs/、contracts/、schemas/、vocabularies/）
 │   ├── domains/                         # 层域特定规则（L00/、L02/、L04/、L07/）
 │   └── templates/                       # 文档模板
-├── 02_enterprise_architecture/          # C/B 轨共享：企业架构（TOGAF 视图 + ADR + 架构模型）
-│   ├── adr/                             # 架构决策记录（adr-nnnn-*.md）
+├── 02_enterprise_architecture/          # C/B 轨共享：企业架构（TOGAF 视图 + 架构模型）
 │   ├── target-architecture/             # 目标架构视图（00-overview.md 等）
 │   │   └── architecture-model/          # 架构模型 YAML（layers/、contracts/、events/ 等）
+│   ├── architecture-rationale-log.md     # 架构决策推导链权威真源（ADR 已迁入 KB:decisions namespace）
 │   └── snapshots/                       # 架构快照（architecture-snapshot-*.yaml）
 ├── 03_modules/                          # C 轨镜像：14 层模块生命周期文档（按层→模块两级组织）
+│   ├── _b_track_interfaces/              # B 轨接口合同（原 07_ai_engineering 已合并）
+│   ├── _sys-master/                      # 系统级主蓝图（整体架构全貌）
+│   ├── _master-blueprint/                 # 系统级聚合蓝图（跨层视图）
 │   ├── l00_data_source/                 #   ├── <module>/blueprint.md + delivery/
 │   ├── l01_infrastructure/              #   每个模块一个子目录，所有生命周期产物放在一起
 │   ├── l02_alpha_factor/                #   （Google Monorepo / Linux FHS 风格：按主体分目录）
@@ -173,11 +176,48 @@ src/zephyr/
 ├── orchestrator/                        # Orc  · ADR-0017
 ├── feedback_loop/                       # FLE  · ADR-0019
 ├── gates/                               # 合规门禁（G1-GN 运行时）
+├── pipeline/                            # 管线编排 · ADR-00XX
+├── core/                                # 蓝图分解器+TaskCard核心模型 · ADR-00XX
 ├── db/                                  # SQLite schema / atomic 事务
 ├── kb/                                  # 2 过渡期知识库（beta 并入 vector_memory）
 ├── mcp/                                 # Model Context Protocol 客户端
 └── shared/                              # 跨层契约 / 共享工具
 ```
+
+### C 轨层内部结构规范（v3.5.0 新增）
+
+> **目标**：1500 个模块场景下，C 轨各层代码与文档均采用 `<module>/` 子目录隔离，防止平铺过大。
+
+**`src/zephyr/l<NN>_<layer>/` 内部结构**：
+
+```
+src/zephyr/l04_risk_management/
+├── __init__.py               # 层入口 + layer docstring
+├── <module-name>/            # 每个模块一个子目录（镜像 03_modules/）
+│   ├── __init__.py           # 模块入口
+│   ├── base.py               # Abstract / Protocol 基类
+│   ├── impl.py               # InProcess 实现
+│   └── contracts.py          # 模块级契约（可选）
+└── _shared/                  # 层内共享工具（可选）
+    └── ...
+```
+
+**`docs/03_modules/l<NN>_<layer>/` 内部结构**：
+
+```
+03_modules/l04_risk_management/
+├── <module-name>/            # 每个模块一个子目录
+│   ├── blueprint.md          # 蓝图：模块架构设计 + 施工指引
+│   └── delivery/             # 交付记录（按版本）
+│       └── v1.0.0.md
+├── index.md                  # 层模块导航表
+└── ...                       # 无直接 blueprint.md —— 禁止平铺
+```
+
+**门禁规则**：
+- `src/zephyr/` C 轨层内直接 `.py`（排除 `__init__.py`）> 10 → WARNING；> 50 → ERROR
+- `docs/03_modules/` C 轨层内存在直接 `blueprint.md` → ERROR（必须使用 `<module>/` 子目录）
+- 过渡期：新模块必须以 `<module>/` 子目录创建；旧模块逐步重构
 
 ---
 ## config/ — 运行时配置目录
@@ -449,15 +489,19 @@ Q4: 这条过程式规则影响所有层，还是只影响特定层？
 
 ### 5.2 `02_enterprise_architecture/`
 
-**用途**：企业架构文档（TOGAF 视图 + ADR + 架构模型 YAML）
+**用途**：企业架构文档（TOGAF 视图 + 架构模型 YAML）
+
+**ADR 变更说明**：2026-05-05（session-012），全部 33 条 ADR 已迁入 KB:decisions namespace，
+物理 `adr/` 目录已删除。架构决策的完整推导链见 `architecture-rationale-log.md`。
 
 **准入规则**：
 - ✅ TOGAF 架构视图（`0X-*-architecture.md`）
-- ✅ ADR（`adr-nnnn-*.md`，**文件名全小写**；frontmatter 内 `doc_id: ADR-NNNN` 保持大写）
+- ✅ 架构决策推导记录（`architecture-rationale-log.md`，ADR 权威真源）
 - ✅ 架构模型 YAML（`layers/l<NN>-*.yaml`、`contracts/*.yaml`、`events/*.yaml` 等）
 - ✅ 架构快照（`snapshots/architecture-snapshot-*.yaml`）
 - ❌ 治理规范（→ `01_policies_and_standards/`）
 - ❌ 模块蓝图（→ `03_modules/`）
+- ❌ 独立 ADR .md 文件（→ KB:decisions namespace，不经由此目录管理）
 
 ### 5.3 `03_modules/` (C 轨镜像)
 
@@ -505,7 +549,30 @@ Q4: 这条过程式规则影响所有层，还是只影响特定层？
 - ✅ `<service>-interface.md`（如 `llm-security-gateway-interface.md`）
 - ❌ 业务层蓝图（→ `03_modules/l01_infrastructure/<module>/`）
 
-### 5.5 `09_audit/`
+### 5.5 `03_modules/_cross_layer/` — 跨层模块
+
+**用途**：核心职责横跨 ≥2 个 C 轨层业务边界、任一单一层无法完整描述其接口的模块。
+
+**内部结构**（方案A——按关联层分组）：
+```
+_cross_layer/
+├── L02-L03/          # 因子→信号跨层
+├── L04-L05/          # 风控→组合跨层
+├── L03-L04-L05/      # 多跨层
+└── index.md          # 模块清单 + 迁移计划
+```
+
+> **方案B（备选）**：扁平结构，模块直放在 `_cross_layer/` 下。方案A更适合 1500 模块场景（扁平跨层目录会过大）。
+
+**准入规则**：
+- ✅ 模块 `layer` frontmatter 值为 `cross_layer`
+- ✅ 核心职责横跨 ≥2 个 C 轨层
+- ❌ 可归属单一 C 轨层的模块（→ `l<NN>_*/`）
+- ❌ 纯 B 轨平台能力（→ `l01_infrastructure/` 或 `_b_track_interfaces/`）
+
+**迁移清单**：8 个现有模块已声明 `layer: cross_layer`，物理仍居 `l01_infrastructure/` 下（详见 `_cross_layer/index.md`），计划由 Phase 5 迁移。
+
+### 5.6 `09_audit/`
 
 **用途**：审计报告与审计状态数据（Ex-post——"执行得怎样"）。
 
@@ -602,3 +669,4 @@ Q4: 这条过程式规则影响所有层，还是只影响特定层？
 | 2026-05-01 | 3.0.0 | **架构合并**：删除 `03_blueprints/`、`04_construction_plans/`、`05_delivery_and_construction/`，合并为 `03_modules/`（按层→模块两级组织，一个模块的所有生命周期产物在同一目录）。对齐 Google Monorepo / Linux FHS 的"按主体分目录，不按文档类型分目录"实践。`04_construction_plans/` 下 4 个项目级元计划迁移到 `01_policies_and_standards/operational/devops/bootstrap-plans/`。 |
 | 2026-05-02 | 3.1.0 | 删除 `19_development_workspace/`（开发工作区已迁至项目外部独立目录，项目内仅保留真源文件）。 |
 | 2026-05-03 | 3.3.0 | **07_ai_engineering 删除**：目录已物理删除，所有残留引用（树形图、决策树、准入规则、附录A）全部更新为 `03_modules/_b_track_interfaces/`。编号 07 加入保留策略清单。 |
+| 2026-05-06 | 3.4.0 | **全量审计对齐**：(1) `adr/` 树节点替换为 `architecture-rationale-log.md`（ADR 已迁入 KB:decisions namespace，session-012）；(2) 注册 `_b_track_interfaces/`、`_sys-master/`、`_master-blueprint/` 到 03_modules/ 树；(3) §5.2 ADR 准入规则更新；(4) `status` 从 `active` 更正为 `Active`（对标受控词表）。 |

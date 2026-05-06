@@ -1,15 +1,35 @@
-schema_version: "1.0.0"
+schema_version: 1.1.0
 partition:
   id: l06
   name: Trade Execution
   track: c_track
   layer_position: 6
   runtime_plane: hot
-  status: skeleton
-
+  status: phase_c_implemented
 modules:
-  []
-
+- id: l06-layer-ssot
+  module_id: MOD-L06-001
+  name: Trade Execution（层登记占位）
+  submodule_path: src/zephyr/l06_trade_execution/
+  status: implemented
+  priority: P0
+  runtime_plane: hot
+  description: 交易执行层。BrokerInterface OCP-003 扩展点 + adapters/ 骨架。
+  files:
+  - broker_interface.py
+  - execution_engine.py
+  - order_manager.py
+  - simulation_broker.py
+  interfaces:
+  - contract_id: CTR-005
+    role: producer
+    description: Fill → L07
+  - contract_id: CTR-006
+    role: producer
+    description: PositionSnapshot → L04, L07, L11
+  adr_ref: []
 summary:
-  total: 0
-  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"
+  total: 1
+  by_status:
+    implemented: 1
+  note: Phase B 骨架就位——OCP-003 BrokerInterface Phase B 已适配方法签名

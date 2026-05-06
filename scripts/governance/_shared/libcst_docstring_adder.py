@@ -36,6 +36,7 @@ from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
+
 def _has_docstring_cst(node: cst.FunctionDef | cst.Module) -> bool:
     """Check if a CST node already has a docstring."""
     if isinstance(node, cst.Module):
@@ -53,6 +54,7 @@ def _has_docstring_cst(node: cst.FunctionDef | cst.Module) -> bool:
         and isinstance(first.body[0], Expr)
         and isinstance(first.body[0].value, SimpleString)
     )
+
 
 def _infer_func_docstring(func_name: str) -> str:
     """Infer a docstring description from function name prefix."""
@@ -73,6 +75,7 @@ def _infer_func_docstring(func_name: str) -> str:
             return desc
     return f"{func_name} implementation."
 
+
 class ModuleDocstringAdder(cst.CSTTransformer):
     """CST transformer that adds module-level docstrings where missing."""
 
@@ -87,6 +90,7 @@ class ModuleDocstringAdder(cst.CSTTransformer):
         )
         new_body = (docstring_node,) + updated_node.body
         return updated_node.with_changes(body=new_body)
+
 
 class FunctionDocstringAdder(cst.CSTTransformer):
     """CST transformer that adds function docstrings where missing."""
@@ -103,6 +107,7 @@ class FunctionDocstringAdder(cst.CSTTransformer):
         )
         new_body = updated_node.body.with_changes(body=[docstring_node] + list(updated_node.body.body))
         return updated_node.with_changes(body=new_body)
+
 
 def add_docstrings_lossless(filepath: Path, *, dry_run: bool = False) -> tuple[int, int]:
     """Add missing docstrings to a Python file using lossless LibCST transformation."""
@@ -142,6 +147,7 @@ def add_docstrings_lossless(filepath: Path, *, dry_run: bool = False) -> tuple[i
     print(f"  ADDED: {filepath}: +{1 if module_added else 0} module, +{func_added} function docstrings")
     return module_added, func_added
 
+
 def main() -> int:
     """Entry point: scan files and add missing docstrings using LibCST."""
     parser = argparse.ArgumentParser(description="Lossless docstring addition using LibCST")
@@ -171,6 +177,7 @@ def main() -> int:
     if args.dry_run:
         print("(dry run — no files written)")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

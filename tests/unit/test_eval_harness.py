@@ -49,6 +49,7 @@ from zephyr.feedback_loop.eval_harness import (
 # 1. Case count / distribution
 # ---------------------------------------------------------------------------
 
+
 class TestEvalHarnessCaseCount:
     def test_default_harness_has_thirty_cases(self) -> None:
         h = EvalHarness.build_default()
@@ -75,9 +76,11 @@ class TestEvalHarnessCaseCount:
         for c in EvalHarness.build_default().cases:
             assert c.category in CATEGORIES
 
+
 # ---------------------------------------------------------------------------
 # 2. Execution behaviour
 # ---------------------------------------------------------------------------
+
 
 class TestEvalHarnessExecution:
     def test_run_all_returns_30_results(self) -> None:
@@ -123,9 +126,11 @@ class TestEvalHarnessExecution:
         assert report.passed == 1
         assert report.failed == 1
 
+
 # ---------------------------------------------------------------------------
 # 3. Report fields
 # ---------------------------------------------------------------------------
+
 
 class TestEvalHarnessReport:
     def test_pass_rate_is_fraction(self) -> None:
@@ -192,9 +197,11 @@ class TestEvalHarnessReport:
         report = EvalHarness.build_default().run_all()
         assert sum(s.total for s in report.by_category.values()) == report.total
 
+
 # ---------------------------------------------------------------------------
 # 4. JSON serialization
 # ---------------------------------------------------------------------------
+
 
 class TestEvalHarnessJSON:
     def test_to_json_roundtrip(self) -> None:
@@ -224,9 +231,11 @@ class TestEvalHarnessJSON:
             assert entry["total"] >= 1
             assert 0.0 <= entry["pass_rate"] <= 1.0
 
+
 # ---------------------------------------------------------------------------
 # 5. Builders
 # ---------------------------------------------------------------------------
+
 
 class TestEvalHarnessBuilders:
     def test_intent_cases_all_pass_smoke(self) -> None:
@@ -255,9 +264,11 @@ class TestEvalHarnessBuilders:
             assert c.description
             assert c.case_id.startswith("IE-")
 
+
 # ---------------------------------------------------------------------------
 # 6. Default integration
 # ---------------------------------------------------------------------------
+
 
 class TestEvalHarnessDefaultCases:
     def test_default_all_pass(self) -> None:

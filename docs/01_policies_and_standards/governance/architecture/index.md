@@ -39,7 +39,7 @@ depends_on:
 5. Phase 过渡双门协议——4 之间过渡的退出-准入条件与自动化校验
 
 **负向责任**（本目录不管的事，去对应目录找）：
-- 架构决策记录的具体内容 → `docs/02_enterprise_architecture/adr/`
+- 架构决策记录的具体内容 → **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 已移除）
 - 架构评审的具体执行步骤 → `operational/vibe_coding/`
 - 代码实现的架构契约 → `src/zephyr/shared/contracts/`
 - 企业架构模型（TOGAF）→ `docs/02_enterprise_architecture/`
@@ -50,7 +50,7 @@ depends_on:
 
 | 文件 | module_id | 一句话职责 |
 |------|-----------|-----------|
-| [adr-protocol.md](adr-protocol.md) | GOV-ARCH-001 | ADR 的创建、审批、状态机和归档规则 |
+| KB:decisions namespace | GOV-ARCH-001 | 架构决策记录——33 ADRs 已迁入 KB（原 adr-protocol.md 已删除） |
 | [architecture-review-policy.md](architecture-review-policy.md) | GOV-ARCH-002 | 架构评审门控——什么变更必须评审、否决条件 |
 | [architecture-versioning-policy.md](architecture-versioning-policy.md) | GOV-ARCH-003 | 架构文档版本号规则、变更日志要求 |
 | [ctr-injection-rules.yaml](ctr-injection-rules.yaml) | GOV-ARC-CTR-001 | CTR 注入规则 |
@@ -85,7 +85,7 @@ GOV-ARCH-005 (phase-transition-protocol) ← Phase 过渡双门协议
 每个新 AI session 进入本目录后，应按以下顺序建立认知：
 
 1. **先读本文件**（你正在读的这个）——了解全貌
-2. **再读 GOV-ARCH-001**（adr-protocol.md）——理解 ADR 是什么、怎么管理
+2. **再读 GOV-ARCH-001**（KB:decisions namespace）——ADR 已迁入 KB，33 个架构决策可直接检索
 3. **按需读取**：
    - 如果任务是"审查架构变更"→ 读 GOV-ARCH-002（review-gate）
    - 如果任务是"给架构文档定版本号"→ 读 GOV-ARCH-003（versioning）

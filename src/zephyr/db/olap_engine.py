@@ -50,6 +50,7 @@ import duckdb
 import structlog
 
 from zephyr.db.sqlite_schema import DB_PATH, init_db
+from zephyr.shared.paths import REPO_ROOT
 
 __all__ = [
     "OLAPEngine",
@@ -83,12 +84,15 @@ TrendRow = dict[str, Any]
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class OLAPEngineError(RuntimeError):
     """OLAPEngine 基础异常。"""
+
 
 # ---------------------------------------------------------------------------
 # 引擎主体
 # ---------------------------------------------------------------------------
+
 
 class OLAPEngine:
     """DuckDB OLAP 分析引擎，只读挂载 SQLite 数据库执行聚合查询。
@@ -113,6 +117,7 @@ class OLAPEngine:
     ) -> None:
         self._sqlite_path: Path = Path(sqlite_path) if sqlite_path is not None else DB_PATH
         self._duckdb_path = duckdb_path
+        self._fallback_mode: bool = False
 
         if auto_init_sqlite:
             init_db(self._sqlite_path)
@@ -149,20 +154,16 @@ class OLAPEngine:
     def _setup_fallback_tables(self) -> None:
         """当 sqlite_scanner 不可用时创建内存空表（测试 / CI 降级）。"""
         self._conn.execute("""
-            CREATE TABLE IF NOT EXISTS sqlite_db.tasks (
-                task_id TEXT, phase INTEGER, name TEXT, status TEXT,
-                created_at TEXT, updated_at TEXT
-            )
-        """) if False else None  # DuckDB 无法跨 ATTACH 创建，使用本地表
-        self._conn.execute("""
             CREATE TABLE IF NOT EXISTS tasks_fallback (
-                task_id TEXT, phase INTEGER, name TEXT, status TEXT,
-                created_at TEXT, updated_at TEXT
+                task_id TEXT, phase INTEGER, title TEXT, status TEXT,
+                completed_at TEXT, updated_at TEXT, created_at TEXT,
+                is_deleted INTEGER DEFAULT 0
             )
         """)
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS gates_fallback (
-                gate_run_id TEXT, gate_id TEXT, passed INTEGER, created_at TEXT
+                gate_run_id TEXT, gate_id TEXT, passed INTEGER,
+                details TEXT, created_at TEXT
             )
         """)
         self._conn.execute("""
@@ -508,6 +509,135 @@ class OLAPEngine:
             "total": int(row.get("total") or 0),
             "activated": int(row.get("activated") or 0),
         }
+
+    # ------------------------------------------------------------------
+    # 事件归档（MOD-INF-012 v2.0）
+    # ------------------------------------------------------------------
+
+    def archive_events(
+        self,
+        days: int = 30,
+        *,
+        archive_dir: Path | str | None = None,
+    ) -> dict:
+        """
+        将超过 N 天的 events 导出到 Parquet 归档并从 SQLite 删除。
+
+        参数
+        ----
+        days
+            保留最近 N 天的热数据在 SQLite 中，超期部分归档。
+        archive_dir
+            归档目录，默认 REPO_ROOT/data/warehouse/。
+
+        返回
+        ----
+        dict
+            ``{"archived_count": N, "archive_files": [...], "deleted_count": N}``
+        """
+        import sqlite3 as _sqlite3
+        from datetime import UTC, datetime, timedelta
+
+        archive_root = Path(archive_dir) if archive_dir else REPO_ROOT / "data" / "warehouse"
+        archive_root.mkdir(parents=True, exist_ok=True)
+
+        cutoff = datetime.now(UTC) - timedelta(days=days)
+        cutoff_iso = cutoff.isoformat()
+
+        if self._fallback_mode:
+            _log.warning("archive_events_skipped_fallback_mode")
+            return {"archived_count": 0, "archive_files": [], "deleted_count": 0}
+
+        # 步骤 1: 通过 DuckDB sqlite_scanner 读取超期 events 并写入 Parquet
+        archive_files: list[str] = []
+        total_archived = 0
+
+        try:
+            events_tbl = "sqlite_db.events"
+            rows = self._conn.execute(
+                f"SELECT * FROM {events_tbl} WHERE created_at <= ? ORDER BY created_at ASC",
+                [cutoff_iso],
+            ).fetchall()
+
+            if not rows:
+                _log.info("archive_events_no_data", cutoff=cutoff_iso)
+                return {"archived_count": 0, "archive_files": [], "deleted_count": 0}
+
+            cols = [desc[0] for desc in self._conn.description or []]
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+
+            table = pa.table({col: [row[i] for row in rows] for i, col in enumerate(cols)})
+            archive_path = archive_root / f"events_{cutoff.strftime('%Y%m%d')}.parquet"
+            pq.write_table(table, str(archive_path))
+            archive_files.append(str(archive_path))
+            total_archived = len(rows)
+
+            _log.info(
+                "events_archived_to_parquet",
+                count=total_archived,
+                path=str(archive_path),
+            )
+        except Exception as exc:
+            _log.error("archive_events_read_failed", error=str(exc))
+            raise OLAPEngineError(f"事件归档读取失败: {exc}") from exc
+
+        # 步骤 2: 从 SQLite 删除已归档的 events
+        deleted_count = 0
+        try:
+            sqlite_conn = _sqlite3.connect(str(self._sqlite_path))
+            cursor = sqlite_conn.execute("DELETE FROM events WHERE created_at <= ?", (cutoff_iso,))
+            deleted_count = cursor.rowcount
+            sqlite_conn.commit()
+            sqlite_conn.close()
+            _log.info("events_deleted_from_sqlite", count=deleted_count)
+        except _sqlite3.Error as exc:
+            _log.error("archive_events_delete_failed", error=str(exc))
+
+        return {
+            "archived_count": total_archived,
+            "archive_files": archive_files,
+            "deleted_count": deleted_count,
+        }
+
+    def query_unified_events(
+        self,
+        *,
+        limit: int = 1000,
+    ) -> list[TrendRow]:
+        """
+        统一查询热数据（SQLite）和冷数据（Parquet）中的 events。
+
+        通过 DuckDB 的 UNION ALL 语法合并两个数据源。
+
+        返回
+        ----
+        list[TrendRow]
+            合并后的 events 行列表。
+        """
+        self._validate_limit(limit)
+
+        archive_root = REPO_ROOT / "data" / "warehouse"
+
+        base_query = "SELECT * FROM sqlite_db.events"
+
+        parquet_files = sorted(archive_root.glob("events_*.parquet"))
+        if parquet_files:
+            parquet_paths = "', '".join(str(p) for p in parquet_files)
+            full_query = f"""
+                ({base_query}) UNION ALL
+                (SELECT * FROM read_parquet(['{parquet_paths}']))
+                ORDER BY created_at DESC
+                LIMIT {limit}
+            """
+        else:
+            full_query = f"""
+                {base_query}
+                ORDER BY created_at DESC
+                LIMIT {limit}
+            """
+
+        return self._execute(full_query)
 
     # ------------------------------------------------------------------
     # 生命周期

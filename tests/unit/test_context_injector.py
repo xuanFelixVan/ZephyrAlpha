@@ -19,6 +19,7 @@ from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.kb_repo import KbRepo
 from zephyr.shared.token_utils import estimate_tokens
 
+
 @pytest.fixture
 def kb_env(tmp_path: Path):
     db = tmp_path / "test.db"
@@ -31,6 +32,7 @@ def kb_env(tmp_path: Path):
 
     mod._chroma_client = None
 
+
 class TestEstimateTokens:
     def test_non_empty_string(self) -> None:
         assert estimate_tokens("hello world test") > 0
@@ -41,6 +43,7 @@ class TestEstimateTokens:
     def test_long_string(self) -> None:
         text = "a" * 400
         assert estimate_tokens(text) == 100
+
 
 class TestInjectedContext:
     def test_valid_context(self) -> None:
@@ -62,6 +65,7 @@ class TestInjectedContext:
         assert ctx.context == ""
         assert ctx.sources == []
         assert ctx.token_count == 0
+
 
 class TestContextInjector:
     def test_inject_by_task_id_no_results(self, kb_env: KbRepo) -> None:

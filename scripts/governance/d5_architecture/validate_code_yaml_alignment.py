@@ -1,15 +1,6 @@
 """
 validate_code_yaml_alignment.py — GATE-A: 实际代码 ↔ YAML SSoT 对账
 
-__manifest__ = """
-args: []
-description: GATE-A — 实际代码目录↔architecture-model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
-dimensions:
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：AGENTS.md §6.10 — 双层对齐闸门 GATE-A (代码↔YAML)
@@ -24,6 +15,16 @@ exit codes: 0=对齐, 1=发现漂移, 2=脚本错误
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: GATE-A — 实际代码目录↔architecture-model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path

@@ -1,26 +1,32 @@
-schema_version: "1.0.0"
+schema_version: "1.0.1"
 doc_type: vocabulary
 module_id: PS-VOC-006
-version: "1.0.0"
+version: "1.0.1"
 title: "classification 受控词表"
 status: active
 vocabulary_name: classification
-total_values: 2
-source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+total_values: 3
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema；任务域三值对齐 metadata-registry §7.6"
 derived_from:
   - source: "PS-STD-001"
     relationship: "classification 合法值定义"
-    at: "§2.4"
+    at: "§2.4、§7.6（Task）"
 depends_on:
   - target: PS-STD-001
     at: "§4.6"
-    why: "classification 二分法规则定义真源"
+    why: "文档 frontmatter classification 规则真源"
 
+# 文档 frontmatter 历史口径曾仅列 public/confidential。
+# Task / `Classification` enum 另有 internal——项目内默认可见、不对外，见 §7.6。
 values:
   - value: public
     definition: "公开——可被项目内外任意访问"
     forbidden_for: []
 
+  - value: internal
+    definition: "内部——仅限项目成员与受控链路；任务卡与代码枚举与 confidential 区分粒度"
+    forbidden_for: []
+
   - value: confidential
-    definition: "机密——仅限项目成员访问"
+    definition: "机密——严格成员范围，按治理策略降级分发"
     forbidden_for: []

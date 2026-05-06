@@ -85,6 +85,7 @@ __all__ = [
 # 枚举 & 数据模型
 # ---------------------------------------------------------------------------
 
+
 class AutoTriggerType(str, Enum):
     """stable 自动触发类型（与 T-4-01 验收一一对应）。"""
 
@@ -92,8 +93,10 @@ class AutoTriggerType(str, Enum):
     GATE_TIGHTENING = "gate_tightening"
     HALLUCINATION_UPGRADE = "hallucination_upgrade"
 
+
 # safety_level → 是否必须 Owner 审批
 _H_SEVERITIES: frozenset[Severity] = frozenset({Severity.HIGH, Severity.CRITICAL})
+
 
 @dataclass(frozen=True)
 class AutoTrigger:
@@ -104,6 +107,7 @@ class AutoTrigger:
     consecutive_days: int
     evidence: tuple[str, ...]
     rationale: str
+
 
 @dataclass
 class AutoEvolutionOutcome:
@@ -116,6 +120,7 @@ class AutoEvolutionOutcome:
     applied_count: int = 0
     blocked_by_safety_gate: int = 0
     history_length: int = 0
+
 
 @dataclass(frozen=True)
 class AutoEvolutionConfig:
@@ -136,11 +141,13 @@ class AutoEvolutionConfig:
     compliance_consecutive_days: int = 2
     history_max_days: int = 30
 
+
 DEFAULT_AUTO_CONFIG: AutoEvolutionConfig = AutoEvolutionConfig()
 
 # ---------------------------------------------------------------------------
 # AutoEvolutionEngine
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class _DailySnapshot:
@@ -150,6 +157,7 @@ class _DailySnapshot:
     knowledge_activation: float | None
     compliance_rate: float | None
     hallucination_interception: float | None
+
 
 class AutoEvolutionEngine:
     """全自动进化引擎。
@@ -412,9 +420,11 @@ class AutoEvolutionEngine:
         self._proposal_seq += 1
         return pid
 
+
 # ---------------------------------------------------------------------------
 # 文案映射
 # ---------------------------------------------------------------------------
+
 
 def _trigger_to_signal(trigger: AutoTriggerType) -> EvolutionSignal:
     """把 AutoTriggerType 映射到 EvolutionSignal（L3 层归类）。"""
@@ -423,6 +433,7 @@ def _trigger_to_signal(trigger: AutoTriggerType) -> EvolutionSignal:
         AutoTriggerType.GATE_TIGHTENING: EvolutionSignal.ACCEPTANCE_DRIFT,
         AutoTriggerType.HALLUCINATION_UPGRADE: EvolutionSignal.ACCEPTANCE_DRIFT,
     }[trigger]
+
 
 _TRIGGER_ACTIONS: dict[AutoTriggerType, str] = {
     AutoTriggerType.KNOWLEDGE_EXPANSION: ("自动运行 KB 扩充脚本：补充缺失 KE / 重建向量索引 / 同步 SSOT 映射。"),
@@ -440,6 +451,7 @@ _TRIGGER_IMPACTS: dict[AutoTriggerType, str] = {
 # 小工具
 # ---------------------------------------------------------------------------
 
+
 def _read_metric_value(report: FitnessReport, metric_name: str) -> float | None:
     metric = report.get_metric(metric_name)
     if metric is None:
@@ -449,6 +461,7 @@ def _read_metric_value(report: FitnessReport, metric_name: str) -> float | None:
         # 合规率 PASS 直接记录当前值
         return float(metric.value)
     return float(metric.value)
+
 
 def _fmt_rate(value: float | None) -> str:
     if value is None:

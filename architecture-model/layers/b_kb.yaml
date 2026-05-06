@@ -9,13 +9,14 @@ partition:
 
 modules:
   - id: kb-lifecycle
+    module_id: MOD-KB-001
     name: Knowledge Lifecycle Manager
     submodule_path: src/zephyr/kb/
     status: implemented
     priority: P1
     runtime_plane: warm
     description: 知识全生命周期管理——G1(摄取)→G2(分拣)→G3(分析)→G4(激活)→G5(提取) 五门禁 + 10状态KE状态机 + RI-02统一内存API。蓝图：knowledge-base/blueprint.md §5
-    blueprint_ref: "D:\\ZephyrAlpha\\\docs\\03_modules\\l01_infrastructure\\knowledge-base\\blueprint.md"
+    blueprint_ref: "D:/ZephyrAlpha/docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"
     files:
       - activate.py
       - analyze.py
@@ -29,9 +30,12 @@ modules:
       - triage.py
       - unified_memory_api.py
     interfaces:
-      - contract_id: P1-KB-VMS-TRANSITION
+      - contract_id: CT-SCRIPT-KB-001
+        role: consumer
+        description: MEDIUM Finding → KE 入库
+      - contract_id: CT-KB-VMS-001
         role: producer
-        description: beta 整合 — kb/ 能力纳入 vector_memory/ 的 InProcessVectorMemory
+        description: 知识条目向量化存储至 VMS
     adr_ref:
       - ADR-0005
 

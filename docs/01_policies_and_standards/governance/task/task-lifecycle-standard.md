@@ -12,16 +12,14 @@ created_by: human_plus_agent
 date: "2026-05-01"
 valid_from: "2026-05-01"
 ttl: permanent
-summary: "定义任务生命周期的治理规则：取消权限、优先级裁决、优先级变更权限、P0 通胀保护、超时豁免、升级治理。施工细节（状态机、门禁、超时检测）已迁移至 03_modules/l01_infrastructure/task-card-kms/blueprint.md §5.2-§5.5。"
+summary: "定义任务生命周期的治理规则：取消权限、优先级裁决、优先级变更权限、P0 通胀保护、超时豁免、升级治理。施工细节（状态机、门禁、超时检测）已迁移至 03_modules/l01_infrastructure/task-system/blueprint.md（MOD-INF-006）§5.2-§5.5。"
 tags: [task, lifecycle, priority, escalation, governance, cancellation, authority]
 rule_form: declarative
 scope: global
 stability: stable
 verifiability: manual
 depends_on:
-  - target: PS-STD-001
-    at: "§7"
-    why: "metadata-registry.md §7 定义的任务卡字段 schema 为优先级和状态枚举的 SSoT"
+  - {target: PS-STD-001, at: "§7", why: "metadata-registry.md §7 定义的任务卡字段 schema 为优先级和状态枚举的 SSoT"}
 ai_autonomy: immutable_core
 ---
 
@@ -31,7 +29,7 @@ ai_autonomy: immutable_core
 >
 > 本标准定义任务生命周期的**治理规则**——谁有权做什么决定、什么条件下必须升级到 Owner。
 >
-> **v2.0.0 重大变更**：施工内容（10 状态机、G0-G6 门禁细则、超时检测机制）已全部迁移至 [03_modules/l01_infrastructure/task-card-kms/blueprint.md](../../../03_modules/l01_infrastructure/task-card-kms/blueprint.md) §5.2-§5.5。本标准现在只保留治理决策层面的规则。
+> **v2.0.0 重大变更**：施工内容（10 状态机、G0-G6 门禁细则、超时检测机制）已全部迁移至 [03_modules/l01_infrastructure/task-system/blueprint.md](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.5。本标准现在只保留治理决策层面的规则。
 >
 > 对标：Jira Workflow + ServiceNow ITIL Lifecycle + Linear Cycle + Azure DevOps Process + GitHub Projects Workflow。
 
@@ -57,9 +55,9 @@ ai_autonomy: immutable_core
 
 | 内容 | 去这里找 |
 |------|---------|
-| 10 状态机的具体转换规则 | 03_modules/l01_infrastructure/task-card-kms/blueprint.md §5.2 |
-| G0-G6 门禁的详细检查项 | 03_modules/l01_infrastructure/task-card-kms/blueprint.md §5.3 |
-| 超时检测的实现方式 | 03_modules/l01_infrastructure/task-card-kms/blueprint.md §5.4 |
+| 10 状态机的具体转换规则 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.2 |
+| G0-G6 门禁的详细检查项 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.3 |
+| 超时检测的实现方式 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.4 |
 | 任务卡字段定义和格式规范 | task-card-standard.md |
 | 任务关闭验证和残留清扫 | task-closure-standard.md |
 
@@ -170,7 +168,7 @@ ai_autonomy: immutable_core
 | [handoff-protocol.md](../../governance/ai/handoff-protocol.md) | 交接是跨 session 的上下文传递。升级通知通过交接协议的 open_questions 传递给 Owner |
 | [metadata-registry.md](../../meta/metadata-registry.md) §7 | 优先级和状态的枚举值 SSoT。本标准引用但不重新定义 |
 | [task-closure-standard.md](../../governance/task/task-closure-standard.md) | 关闭是生命周期的终点。本标准定义"谁有权关闭"，关闭标准定义"关闭前要检查什么" |
-| [03_modules/l01_infrastructure/task-card-kms/blueprint.md](../../../03_modules/l01_infrastructure/task-card-kms/blueprint.md) §5.2-§5.5 | 施工细节——状态机实现、门禁检查逻辑、超时检测代码、消费者同步规则 |
+| [03_modules/l01_infrastructure/task-system/blueprint.md](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.5 | 施工细节——状态机实现、门禁检查逻辑、超时检测代码、消费者同步规则 |
 
 ---
 
@@ -178,5 +176,5 @@ ai_autonomy: immutable_core
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
-| 2.0.0 | 2026-05-01 | **施工内容拆分**：§2 10状态机、§3 门禁、§4 超时、§5 升级触发条件、§8 消费者注册表 全部迁移至 03_modules/l01_infrastructure/task-card-kms/blueprint.md §5.2-§5.5。本标准从 324 行精简至 ~130 行，仅保留治理决策规则 |
+| 2.0.0 | 2026-05-01 | **施工内容拆分**：§2 10状态机、§3 门禁、§4 超时、§5 升级触发条件、§8 消费者注册表 全部迁移至 03_modules/l01_infrastructure/task-system/blueprint.md §5.2-§5.5。本标准从 324 行精简至 ~130 行，仅保留治理决策规则 |
 | 1.0.0 | 2026-04-29 | 从 task-card-standard.md §6-§8 提取并扩展生命周期规则 |

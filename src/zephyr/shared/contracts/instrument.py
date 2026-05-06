@@ -231,6 +231,7 @@ TradingCalendarName = Literal[
 # Instrument 基类
 # ═══════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class Instrument:
     """
@@ -384,9 +385,11 @@ class Instrument:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.identifier}>"
 
+
 # ═══════════════════════════════════════════════════════════════════
 # 子类：按资产类承载特有字段
 # ═══════════════════════════════════════════════════════════════════
+
 
 @dataclass(frozen=True)
 class Stock(Instrument):
@@ -404,6 +407,7 @@ class Stock(Instrument):
     is_st: bool = False
     """是否特别处理股票（ST / *ST / 退市整理期），影响风控和涨跌停。"""
 
+
 @dataclass(frozen=True)
 class ETF(Instrument):
     """交易所交易基金。"""
@@ -420,6 +424,7 @@ class ETF(Instrument):
 
     leverage_factor: Decimal = Decimal("1.0")
     """杠杆倍数（普通 ETF=1，2×做多=2，3×做空=-3）。"""
+
 
 @dataclass(frozen=True)
 class Future(Instrument):
@@ -452,8 +457,10 @@ class Future(Instrument):
     delivery_date: date | None = None
     """交割日。"""
 
+
 OptionType = Literal["call", "put"]
 """期权类型：看涨 / 看跌。"""
+
 
 @dataclass(frozen=True)
 class Option(Instrument):
@@ -479,6 +486,7 @@ class Option(Instrument):
 
     settlement_style: Literal["physical", "cash"] = "physical"
     """结算方式。"""
+
 
 @dataclass(frozen=True)
 class Bond(Instrument):
@@ -512,6 +520,7 @@ class Bond(Instrument):
         "perpetual",  # 永续债
     ] = "corporate"
 
+
 @dataclass(frozen=True)
 class FX(Instrument):
     """外汇货币对。"""
@@ -528,6 +537,7 @@ class FX(Instrument):
     lot_size: int = 100_000
     """标准手（100,000 基础货币单位）。"""
 
+
 CryptoContractType = Literal[
     "spot",  # 现货
     "perpetual",  # 永续合约
@@ -535,6 +545,7 @@ CryptoContractType = Literal[
     "option",  # 加密期权
 ]
 """加密货币合约类型。"""
+
 
 @dataclass(frozen=True)
 class Crypto(Instrument):
@@ -560,9 +571,11 @@ class Crypto(Instrument):
     funding_interval_hours: int | None = None
     """永续合约资金费率结算间隔（小时）。典型 Binance=8h，Bybit=8h，OKX=8h。"""
 
+
 # ═══════════════════════════════════════════════════════════════════
 # 便捷辅助（仅供调试/测试，生产代码请显式构造子类）
 # ═══════════════════════════════════════════════════════════════════
+
 
 def make_stock_identifier(exchange: Exchange, symbol: str) -> str:
     """

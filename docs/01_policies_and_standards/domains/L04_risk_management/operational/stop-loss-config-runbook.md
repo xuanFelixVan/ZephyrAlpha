@@ -2,9 +2,9 @@
 module_id: DOM-L04-002
 title: 止损配置操作手册
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l04_risk_management
+layer: L04
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

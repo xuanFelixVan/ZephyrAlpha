@@ -1,16 +1,6 @@
 """
 validate_three_way_consistency.py — 三方一致性检查
 
-__manifest__ = """
-args: []
-description: 三方一致性检查（frontmatter vs 正文blockquote vs document-metadata-index.yaml 的
-  status/version 对账）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：AGENTS.md §6.2（原子事务模式）
@@ -27,6 +17,17 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 三方一致性检查（frontmatter vs 正文blockquote vs document-metadata-index.yaml 的
+  status/version 对账）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import re

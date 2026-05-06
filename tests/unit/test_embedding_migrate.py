@@ -16,6 +16,7 @@ from zephyr.kb.embedding_migrate import (
     MigrationStatus,
 )
 
+
 class TestEmbeddingVersion:
     def test_known_models_initialized(self) -> None:
         migrator = EmbeddingMigrator()
@@ -39,6 +40,7 @@ class TestEmbeddingVersion:
         assert ver.dimension == 256
         assert ver in migrator.list_versions()
 
+
 class TestShouldMigrate:
     def test_below_threshold_triggers(self) -> None:
         migrator = EmbeddingMigrator(recall_threshold=0.70)
@@ -51,6 +53,7 @@ class TestShouldMigrate:
     def test_at_threshold_no_migrate(self) -> None:
         migrator = EmbeddingMigrator(recall_threshold=0.70)
         assert migrator.should_migrate(0.70) is False
+
 
 class TestMigrationPlan:
     def test_create_plan(self) -> None:
@@ -73,6 +76,7 @@ class TestMigrationPlan:
                 source_model="unknown-model",
                 target_model="bge-m3",
             )
+
 
 class TestExecuteMigration:
     def test_dry_run_no_client(self) -> None:
@@ -131,6 +135,7 @@ class TestExecuteMigration:
         assert active is not None
         assert active.model_name == "bge-m3"
 
+
 class TestRollback:
     def test_rollback_restores_source(self) -> None:
         migrator = EmbeddingMigrator()
@@ -140,6 +145,7 @@ class TestRollback:
         active = migrator.get_active_version()
         assert active is not None
         assert active.model_name == "bge-small-zh"
+
 
 class TestCheckpoint:
     def test_save_and_get_checkpoint(self) -> None:

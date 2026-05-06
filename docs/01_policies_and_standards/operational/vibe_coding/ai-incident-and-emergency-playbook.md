@@ -2,7 +2,7 @@
 module_id: OPS-VC-004
 title: "AI 与系统事故响应手册"
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner

@@ -1,27 +1,18 @@
-# ZephyrAlpha 2.0 — 蓝图触发路由表（Blueprint Routing Table）
+# ZephyrAlpha 2.0 鈥?钃濆浘瑙﹀彂璺敱琛紙Blueprint Routing Table锛?#
+# 鍒涘缓鏃ユ湡   : 2026-05-04
+# 鍏宠仈鏍囧噯   : PS-STD-005 搂7锛圓I Agent 钃濆浘瀹氫綅瑙勫垯锛?# 鍏宠仈钃濆浘   : MOD-INF-009锛圱ask Pipeline, 搂瑙﹀彂寮忚矾鐢辫〃锛?# 鍏宠仈鍐崇瓥   : R90锛堣摑鍥句笁绾ч噾瀛楀鏋舵瀯鍐崇瓥锛?# 鏉冮檺灞傜骇   : Human-Gated锛堣矾鐢辨槧灏勫彉鏇?= 鍏抽敭鏋舵瀯鍙樻洿锛?# 鐪熸簮澹版槑   : 鏈枃浠舵槸钃濆浘璺敱鍒嗘淳鐨?SSoT 鈥斺€?AI Agent 鍦ㄥ喅瀹?璇诲摢浠借摑鍥?鏃?MUST 鏌ヨ鏈〃
 #
-# 创建日期   : 2026-05-04
-# 关联标准   : PS-STD-005 §7（AI Agent 蓝图定位规则）
-# 关联蓝图   : MOD-INF-009（Task Pipeline, §触发式路由表）
-# 关联决策   : R90（蓝图三级金字塔架构决策）
-# 权限层级   : Human-Gated（路由映射变更 = 关键架构变更）
-# 真源声明   : 本文件是蓝图路由分派的 SSoT —— AI Agent 在决定"读哪份蓝图"时 MUST 查询本表
+# 瀵规爣       : Codified Context (arXiv 2602.20478) 搂3.1.1 Orchestration Protocols
+#              鈥?璁烘枃涓Е鍙戣〃鐢ㄤ簬璺敱 domain-expert agents锛?#              鈥?鏈〃鎵╁睍涓?route domain documents (blueprints) + agents
 #
-# 对标       : Codified Context (arXiv 2602.20478) §3.1.1 Orchestration Protocols
-#              — 论文中触发表用于路由 domain-expert agents，
-#              — 本表扩展为 route domain documents (blueprints) + agents
-#
-# 文件模式语法
+# 鏂囦欢妯″紡璇硶
 # ------------
-# path_pattern:  glob 模式（相对于项目根）
-#                 支持 ** 递归通配，* 单级通配
-#                 示例: "src/zephyr/orchestrator/**" → 所有 orchestrator 文件
-# task_keywords: Python 列表，关键字匹配（任意一个命中即触发）
-#                支持中英文混合
-# scope:         pre_change（修改前加载） / post_change（修改后加载） / always
-# safety:        L / M / H —— 路由安全等级
-# priority:      1-100 —— 并发匹配时取最高优先级（参考 COBIT APO03）
-
+# path_pattern:  glob 妯″紡锛堢浉瀵逛簬椤圭洰鏍癸級
+#                 鏀寔 ** 閫掑綊閫氶厤锛? 鍗曠骇閫氶厤
+#                 绀轰緥: "src/zephyr/orchestrator/**" 鈫?鎵€鏈?orchestrator 鏂囦欢
+# task_keywords: Python 鍒楄〃锛屽叧閿瓧鍖归厤锛堜换鎰忎竴涓懡涓嵆瑙﹀彂锛?#                鏀寔涓嫳鏂囨贩鍚?# scope:         pre_change锛堜慨鏀瑰墠鍔犺浇锛?/ post_change锛堜慨鏀瑰悗鍔犺浇锛?/ always
+# safety:        L / M / H 鈥斺€?璺敱瀹夊叏绛夌骇
+# priority:      1-100 鈥斺€?骞跺彂鍖归厤鏃跺彇鏈€楂樹紭鍏堢骇锛堝弬鑰?COBIT APO03锛?
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
@@ -30,13 +21,19 @@ status: active
 ttl: permanent
 belongs_to: "MOD-INF-009"
 
+# -----------------------------------------------------------------------------
+# AUDIT-08 / route_manifest task_dual_pipeline — routing SSoT boundary
+# - M1-M11 entry decision tree: TaskCard + ct_pipe_routing + PipelineOrchestrator (CT-PIPE-ORC-001)
+# - This file (MOD-INF-009): keywords + path_pattern -> blueprint docs for humans/agents
+#   (incl. blueprint_search MCP). It does NOT select Mx module execution order.
+# -----------------------------------------------------------------------------
+
 # =========================================================================
-# §1  路由映射表
-# =========================================================================
+# 搂1  璺敱鏄犲皠琛?# =========================================================================
 
 routes:
 
-  # ---- Level 1: 域蓝图（先于模块蓝图加载）----
+  # ---- Level 1: 鍩熻摑鍥撅紙鍏堜簬妯″潡钃濆浘鍔犺浇锛?---
   - route_id: "R001"
     blueprint_id: "MOD-MASTER-001"
     blueprint_level: domain
@@ -45,24 +42,24 @@ routes:
       - "src/zephyr/tasks/**"
       - "config/trigger_router.yaml"
     task_keywords:
-      - "集成"
-      - "蓝图"
-      - "架构"
+      - "闆嗘垚"
+      - "钃濆浘"
+      - "鏋舵瀯"
       - "跨系统"
       - "integration"
       - "architecture"
       - "overview"
-      - "总览"
+      - "鎬昏"
       - "总蓝图"
       - "master blueprint"
     scope: pre_change
     safety: "L"
     priority: 100
-    description: "基础设施层 12 系统集成总蓝图 — 任何涉及架构/集成/跨系统的问题先查此表"
+    description: "鍩虹璁炬柦灞?12 绯荤粺闆嗘垚鎬昏摑鍥?鈥?浠讳綍娑夊強鏋舵瀯/闆嗘垚/璺ㄧ郴缁熺殑闂鍏堟煡姝よ〃"
 
-  # ---- Level 2: 模块蓝图 ----
+  # ---- Level 2: 妯″潡钃濆浘 ----
 
-  # -- INF-001 容量保障体系 --
+  # -- INF-001 瀹归噺淇濋殰浣撶郴 --
   - route_id: "R002"
     blueprint_id: "MOD-INF-001"
     blueprint_level: module
@@ -73,10 +70,10 @@ routes:
       - "src/zephyr/core/quota_manager.py"
       - "scripts/capacity/**"
     task_keywords:
-      - "容量"
-      - "预算"
-      - "配额"
-      - "限流"
+      - "瀹归噺"
+      - "棰勭畻"
+      - "閰嶉"
+      - "闄愭祦"
       - "capacity"
       - "budget"
       - "throttle"
@@ -87,9 +84,9 @@ routes:
     scope: pre_change
     safety: "M"
     priority: 90
-    description: "容量保障体系 — 配额/限流/降级/容量规划"
+    description: "瀹归噺淇濋殰浣撶郴 鈥?閰嶉/闄愭祦/闄嶇骇/瀹归噺瑙勫垝"
 
-  # -- INF-002 运行时集成 --
+  # -- INF-002 杩愯鏃堕泦鎴?--
   - route_id: "R003"
     blueprint_id: "MOD-INF-002"
     blueprint_level: module
@@ -100,52 +97,50 @@ routes:
       - "src/zephyr/adapters/**"
     task_keywords:
       - "运行时"
-      - "集成"
+      - "闆嗘垚"
       - "adapter"
       - "hook"
       - "runtime"
       - "integration"
-      - "接线"
+      - "鎺ョ嚎"
       - "cross-layer"
-      - "跨层"
+      - "璺ㄥ眰"
     scope: pre_change
     safety: "M"
     priority: 85
 
-  # -- INF-003 任务卡+KMS (retired) --
+  # -- INF-003 浠诲姟鍗?KMS (retired) --
   - route_id: "R004"
-    blueprint_id: "MOD-INF-003"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/task_card/**"
       - "src/zephyr/kms/**"
     task_keywords:
-      - "任务卡"
+      - "浠诲姟鍗?"
       - "KMS"
       - "task card"
     scope: pre_change
     safety: "L"
     priority: 30
     enabled: false
-    description: "已退役 — 仅历史参考"
+    description: "宸查€€褰?鈥?浠呭巻鍙插弬鑰?"
 
-  # -- INF-004 Vibe Coding双管线 (retired) --
+  # -- INF-004 Vibe Coding鍙岀绾?(retired) --
   - route_id: "R005"
-    blueprint_id: "MOD-INF-004"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/vibe_coding/**"
     task_keywords:
       - "vibe coding"
-      - "双管线"
+      - "鍙岀绾?"
       - "dual pipeline"
     scope: pre_change
     safety: "L"
     priority: 30
     enabled: false
-    description: "已退役 — 仅历史参考"
+    description: "宸查€€褰?鈥?浠呭巻鍙插弬鑰?"
 
-  # -- INF-005 脚本系统 --
+  # -- INF-005 鑴氭湰绯荤粺 --
   - route_id: "R006"
     blueprint_id: "MOD-INF-005"
     blueprint_level: module
@@ -157,21 +152,21 @@ routes:
       - "src/zephyr/core/script_registry.py"
       - "src/zephyr/core/script_executor.py"
     task_keywords:
-      - "脚本"
+      - "鑴氭湰"
       - "shell"
       - "script"
       - "lint"
       - "format"
       - "quality check"
-      - "格式化"
+      - "鏍煎紡鍖?"
       - "pre-commit"
       - "governance"
     scope: pre_change
     safety: "H"
     priority: 88
-    description: "脚本系统 — 第三条生产线的自动化脚本与门禁"
+    description: "鑴氭湰绯荤粺 鈥?绗笁鏉＄敓浜х嚎鐨勮嚜鍔ㄥ寲鑴氭湰涓庨棬绂?"
 
-  # -- INF-006 任务系统 --
+  # -- INF-006 浠诲姟绯荤粺 --
   - route_id: "R007"
     blueprint_id: "MOD-INF-006"
     blueprint_level: module
@@ -183,24 +178,24 @@ routes:
       - "config/session_state_machine.yaml"
       - "docs/19_development_workspace/**"
     task_keywords:
-      - "任务"
+      - "浠诲姟"
       - "task"
-      - "开发"
-      - "实施"
+      - "寮€鍙?"
+      - "瀹炴柦"
       - "delivery"
-      - "交付"
+      - "浜や粯"
       - "phase"
       - "milestone"
-      - "里程碑"
-      - "施工"
+      - "閲岀▼纰?"
+      - "鏂藉伐"
       - "construction"
       - "todo"
     scope: pre_change
     safety: "H"
     priority: 95
-    description: "任务系统 — 全链路草稿→蓝图→任务卡→双管线→脚本"
+    description: "浠诲姟绯荤粺 鈥?鍏ㄩ摼璺崏绋库啋钃濆浘鈫掍换鍔″崱鈫掑弻绠＄嚎鈫掕剼鏈?"
 
-  # -- KB-001 知识库 --
+  # -- KB-001 鐭ヨ瘑搴?--
   - route_id: "R008"
     blueprint_id: "MOD-KB-001"
     blueprint_level: module
@@ -208,18 +203,18 @@ routes:
       - "src/zephyr/kb/**"
       - "config/knowledge_base/**"
     task_keywords:
-      - "知识"
+      - "鐭ヨ瘑"
       - "knowledge"
-      - "文档"
+      - "鏂囨。"
       - "document"
       - "spec"
       - "standard"
-      - "标准"
-      - "规范"
+      - "鏍囧噯"
+      - "瑙勮寖"
       - "policy"
       - "KE"
       - "knowledge entry"
-      - "索引"
+      - "绱㈠紩"
       - "index"
     scope: pre_change
     safety: "M"
@@ -234,11 +229,11 @@ routes:
       - "src/zephyr/mcp/gate_engine_server.py"
       - "config/gates/**"
     task_keywords:
-      - "门禁"
+      - "闂ㄧ"
       - "gate"
       - "gate_engine"
       - "gate engine"
-      - "校验"
+      - "鏍￠獙"
       - "validate"
       - "check"
       - "GATE"
@@ -247,24 +242,24 @@ routes:
       - "G3 evaluate"
       - "G4 activate"
       - "G5 extract"
-      - "准入"
-      - "审批"
+      - "鍑嗗叆"
+      - "瀹℃壒"
       - "approval"
-      - "准入"
+      - "鍑嗗叆"
       - "compliance"
-      - "合规"
-      - "熔断"
+      - "鍚堣"
+      - "鐔旀柇"
       - "circuit breaker"
-      - "熔断器"
+      - "鐔旀柇鍣?"
       - "cooldown"
       - "YAML parse"
       - "gates/"
-      - "门禁bug"
+      - "闂ㄧbug"
       - "gate bug"
     scope: pre_change
     safety: "H"
     priority: 92
-    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-014 (LLM Security) if modifying fail-closed logic"
+    cross_read_hint: "璺ㄦā鍧椾换鍔℃椂 ALSO read MOD-INF-014 (LLM Security) if modifying fail-closed logic"
 
   # -- INF-008 Context Engine --
   - route_id: "R010"
@@ -275,17 +270,17 @@ routes:
       - "config/context_rules_v1.yaml"
       - "config/compression/**"
     task_keywords:
-      - "上下文"
+      - "涓婁笅鏂?"
       - "context"
-      - "压缩"
+      - "鍘嬬缉"
       - "compress"
       - "RAG"
-      - "检索"
+      - "妫€绱?"
       - "retrieval"
       - "token"
-      - "提示词"
+      - "鎻愮ず璇?"
       - "prompt"
-      - "注入"
+      - "娉ㄥ叆"
       - "inject"
     scope: pre_change
     safety: "M"
@@ -300,13 +295,13 @@ routes:
       - "config/pipeline/**"
       - "src/zephyr/orchestrator/trigger_router.py"
     task_keywords:
-      - "管线"
+      - "绠＄嚎"
       - "pipeline"
-      - "路由"
+      - "璺敱"
       - "router"
       - "dispatch"
-      - "分派"
-      - "模型选择"
+      - "鍒嗘淳"
+      - "妯″瀷閫夋嫨"
       - "model selection"
       - "DeepSeek"
       - "GLM"
@@ -324,18 +319,18 @@ routes:
       - "src/zephyr/feedback_loop/**"
       - "src/zephyr/decision_engine.py"
     task_keywords:
-      - "反馈"
+      - "鍙嶉"
       - "feedback"
-      - "自进化"
+      - "鑷繘鍖?"
       - "self-improving"
-      - "反思"
+      - "鍙嶆€?"
       - "reflect"
       - "detect"
-      - "检测"
-      - "异常"
+      - "妫€娴?"
+      - "寮傚父"
       - "anomaly"
       - "EMA"
-      - "学习"
+      - "瀛︿範"
       - "learning"
     scope: pre_change
     safety: "M"
@@ -351,15 +346,15 @@ routes:
       - "src/zephyr/kb/bge_m3_onnx.py"
       - "config/embedding_model_registry.yaml"
     task_keywords:
-      - "向量"
+      - "鍚戦噺"
       - "vector"
       - "embedding"
       - "ChromaDB"
       - "BGE"
-      - "语义搜索"
+      - "璇箟鎼滅储"
       - "semantic search"
       - "similarity"
-      - "相似度"
+      - "鐩镐技搴?"
     scope: pre_change
     safety: "M"
     priority: 80
@@ -372,18 +367,18 @@ routes:
       - "src/zephyr/db/**"
       - "src/zephyr/kb/atomic_transaction_manager.py"
     task_keywords:
-      - "数据库"
+      - "鏁版嵁搴?"
       - "database"
       - "SQLite"
       - "SQL"
-      - "事务"
+      - "浜嬪姟"
       - "transaction"
       - "ATM"
       - "atomic"
       - "schema"
       - "migration"
-      - "迁移"
-      - "存储"
+      - "杩佺Щ"
+      - "瀛樺偍"
       - "storage"
     scope: pre_change
     safety: "H"
@@ -401,10 +396,10 @@ routes:
       - "tool"
       - "API"
       - "JSON-RPC"
-      - "接口"
+      - "鎺ュ彛"
       - "interface"
       - "protocol"
-      - "协议"
+      - "鍗忚"
     scope: pre_change
     safety: "H"
     priority: 87
@@ -418,30 +413,30 @@ routes:
       - "src/zephyr/llm/guard.py"
       - "src/zephyr/llm/sanitizer.py"
     task_keywords:
-      - "安全"
+      - "瀹夊叏"
       - "security"
       - "LLM"
       - "guard"
       - "sanitize"
-      - "注入"
+      - "娉ㄥ叆"
       - "injection"
       - "prompt injection"
-      - "输入验证"
-      - "分类"
+      - "杈撳叆楠岃瘉"
+      - "鍒嗙被"
       - "classifier"
-      - "审计"
+      - "瀹¤"
       - "audit"
       - "fail-closed"
       - "fail-open"
-      - "四层防御"
-      - "L2 输入"
+      - "鍥涘眰闃插尽"
+      - "L2 杈撳叆"
       - "L3 Schema"
-      - "L4 审计"
+      - "L4 瀹¤"
       - "L1~L4"
     scope: pre_change
     safety: "H"
     priority: 93
-    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
+    cross_read_hint: "璺ㄦā鍧椾换鍔℃椂 ALSO read MOD-INF-007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
 
   # -- INF-015 System Telemetry --
   - route_id: "R017"
@@ -452,20 +447,20 @@ routes:
       - "src/zephyr/core/metrics.py"
       - "src/zephyr/core/logging_config.py"
     task_keywords:
-      - "遥测"
+      - "閬ユ祴"
       - "telemetry"
-      - "监控"
+      - "鐩戞帶"
       - "monitor"
       - "metrics"
-      - "指标"
+      - "鎸囨爣"
       - "logging"
-      - "日志"
+      - "鏃ュ織"
       - "observability"
-      - "可观测"
+      - "鍙娴?"
       - "SLI"
       - "SLO"
       - "tracing"
-      - "链路追踪"
+      - "閾捐矾杩借釜"
     scope: pre_change
     safety: "M"
     priority: 86
@@ -478,16 +473,16 @@ routes:
       - "src/zephyr/_shared/**"
       - "src/zephyr/_core/**"
     task_keywords:
-      - "共享"
+      - "鍏变韩"
       - "shared"
       - "core"
-      - "基础设施"
+      - "鍩虹璁炬柦"
       - "infrastructure"
-      - "公共"
+      - "鍏叡"
       - "common"
-      - "基类"
+      - "鍩虹被"
       - "base class"
-      - "工具类"
+      - "宸ュ叿绫?"
       - "utility"
     scope: pre_change
     safety: "M"
@@ -501,11 +496,11 @@ routes:
       - "src/zephyr/core/code_dedup.py"
       - "src/zephyr/core/duplicate_detector.py"
     task_keywords:
-      - "去重"
+      - "鍘婚噸"
       - "dedup"
-      - "重复代码"
+      - "閲嶅浠ｇ爜"
       - "duplicate"
-      - "重构"
+      - "閲嶆瀯"
       - "refactor"
       - "_now_iso"
     scope: pre_change
@@ -513,24 +508,21 @@ routes:
     priority: 75
 
 # =========================================================================
-# §2  关键字兜底映射（无文件模式匹配时）
-# =========================================================================
+# 搂2  鍏抽敭瀛楀厹搴曟槧灏勶紙鏃犳枃浠舵ā寮忓尮閰嶆椂锛?# =========================================================================
 
-# 当 path_patterns 全部不匹配时，按 task_keywords 模糊匹配
-# 匹配算法：取 task_keywords 命中数最多的路由（tie-break: priority）
-
+# 褰?path_patterns 鍏ㄩ儴涓嶅尮閰嶆椂锛屾寜 task_keywords 妯＄硦鍖归厤
+# 鍖归厤绠楁硶锛氬彇 task_keywords 鍛戒腑鏁版渶澶氱殑璺敱锛坱ie-break: priority锛?
 fallback:
   enabled: true
   strategy: "keyword_count_then_priority"
   min_keyword_hits: 1
 
 # =========================================================================
-# §3  Agent 差异化提示（beta 起用）
-# =========================================================================
-# 根据当前 session 使用的 LLM 模型，加载不同深度的蓝图指引
-# GOV-AI-002 决策树 → Agent 能力矩阵 → 本节指定每份蓝图"给 DeepSeek 读全量 / 给 GLM 读架构约束"
+# 搂3  Agent 宸紓鍖栨彁绀猴紙beta 璧风敤锛?# =========================================================================
+# 鏍规嵁褰撳墠 session 浣跨敤鐨?LLM 妯″瀷锛屽姞杞戒笉鍚屾繁搴︾殑钃濆浘鎸囧紩
+# GOV-AI-002 鍐崇瓥鏍?鈫?Agent 鑳藉姏鐭╅樀 鈫?鏈妭鎸囧畾姣忎唤钃濆浘"缁?DeepSeek 璇诲叏閲?/ 缁?GLM 璇绘灦鏋勭害鏉?
 
 agent_hints:
   enabled: false
   activated_in: "Phase_3"
-  description: "beta 启用后，不同模型读同一蓝图的不同节选"
+  description: "beta 鍚敤鍚庯紝涓嶅悓妯″瀷璇诲悓涓€钃濆浘鐨勪笉鍚岃妭閫?"

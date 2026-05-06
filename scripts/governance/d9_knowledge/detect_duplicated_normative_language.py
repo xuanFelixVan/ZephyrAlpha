@@ -1,15 +1,6 @@
 """
 detect_duplicated_normative_language.py — 规范用语重复定义检测
 
-__manifest__ = """
-args: []
-description: 规范用语重复定义检测（DOC-007 — 引用不复制）
-dimensions:
-- D9
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 对标：DOC-007（引用不复制——新增规范用语时该规范未在其他文件中定义过）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 规范用语重复定义检测（DOC-007 — 引用不复制）
+dimensions:
+- D9
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import re
 import sys

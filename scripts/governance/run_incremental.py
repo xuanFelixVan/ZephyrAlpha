@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
 
+等价于: python run_all.py --diff-ref HEAD~1 --warn-only
+
+Usage:
+    python run_incremental.py [--diff-ref HEAD~1] [--verbose]
+"""
+
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
@@ -10,14 +18,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
-
-等价于: python run_all.py --diff-ref HEAD~1 --warn-only
-
-Usage:
-    python run_incremental.py [--diff-ref HEAD~1] [--verbose]
-"""
-from __future__ import annotations
 import sys
 from pathlib import Path
 
@@ -27,21 +27,19 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from run_all import (
-    main,
-    _get_changed_files,
-    _map_files_to_dimensions,
-    _get_registry,
     Dimension,
+    _get_changed_files,
+    _get_registry,
+    _map_files_to_dimensions,
+    main,
 )
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="增量扫描 — 仅扫描变更相关脚本")
-    parser.add_argument("--diff-ref", default="HEAD~1",
-                        help="git diff 参考点（默认 HEAD~1）")
-    parser.add_argument("--verbose", "-v", action="store_true",
-                        help="详细输出")
+    parser.add_argument("--diff-ref", default="HEAD~1", help="git diff 参考点（默认 HEAD~1）")
+    parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
     args = parser.parse_args()
 
     changed = _get_changed_files(args.diff_ref)
@@ -52,8 +50,7 @@ if __name__ == "__main__":
     dims = _map_files_to_dimensions(changed)
     registry = _get_registry()
     relevant_scripts = {
-        n for n, m in registry.items()
-        if frozenset(m["dimensions"]) & frozenset(Dimension(d) for d in dims)
+        n for n, m in registry.items() if frozenset(m["dimensions"]) & frozenset(Dimension(d) for d in dims)
     }
 
     print(f"\n[增量扫描] diff-ref={args.diff_ref}", file=sys.stderr)
@@ -68,9 +65,11 @@ if __name__ == "__main__":
 
     sys.argv = [
         sys.argv[0],
-        "--dimensions", *sorted(dims),
+        "--dimensions",
+        *sorted(dims),
         "--warn-only",
-        "--output", f"reports/incremental_findings_{args.diff_ref.replace('/', '_').replace(' ', '_')}.jsonl",
+        "--output",
+        f"reports/incremental_findings_{args.diff_ref.replace('/', '_').replace(' ', '_')}.jsonl",
     ]
     if args.verbose:
         sys.argv.append("--verbose")

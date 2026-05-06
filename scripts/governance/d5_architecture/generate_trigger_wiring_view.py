@@ -1,16 +1,6 @@
 """
 generate_trigger_wiring_view.py — CT-005 → trigger_router.yaml 接线状态自动派生
 
-__manifest__ = """
-args: []
-description: CT-005 → trigger_router.yaml 接线状态自动派生（OpenAPI/Terraform模式——YAML canonical
-  → MD视图自动生成）
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标 AGENTS.md §6.12（AI受众优先——Canonical YAML → 自动生成 Markdown 视图）
@@ -25,6 +15,17 @@ warn_only: false
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: CT-005 → trigger_router.yaml 接线状态自动派生（OpenAPI/Terraform模式——YAML canonical
+  → MD视图自动生成）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import sys

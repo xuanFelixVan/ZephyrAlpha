@@ -17,9 +17,11 @@ from pathlib import Path
 import pytest
 from zephyr.kb.activate import ActivateGate
 
+
 @pytest.fixture()
 def gate(kb_root: Path) -> ActivateGate:
     return ActivateGate(kb_root=kb_root)
+
 
 def _make_analyzed_md(
     tmp_path: Path,
@@ -45,11 +47,13 @@ def _make_analyzed_md(
     p.write_text(content, encoding="utf-8", newline="\n")
     return p
 
+
 def test_activate_high_score_auto_activates(tmp_path: Path, gate: ActivateGate) -> None:
     md = _make_analyzed_md(tmp_path, ai_value_score=9.5)
     result = gate.activate(md)
     assert result.passed is True
     assert result.auto_activated is True
+
 
 def test_activate_low_score_needs_approval(tmp_path: Path, gate: ActivateGate) -> None:
     md = _make_analyzed_md(tmp_path, ai_value_score=5.0)
@@ -59,15 +63,18 @@ def test_activate_low_score_needs_approval(tmp_path: Path, gate: ActivateGate) -
     assert result.proposal is not None
     assert "审批" in result.proposal or "提案" in result.proposal
 
+
 def test_activate_force_overrides(tmp_path: Path, gate: ActivateGate) -> None:
     md = _make_analyzed_md(tmp_path, ai_value_score=5.0)
     result = gate.activate(md, force=True)
     assert result.passed is True
     assert result.auto_activated is True
 
+
 def test_activate_nonexistent_file_rejected(tmp_path: Path, gate: ActivateGate) -> None:
     result = gate.activate(tmp_path / "ghost.md")
     assert result.passed is False
+
 
 def test_activate_writes_to_correct_dir(tmp_path: Path, kb_root: Path, gate: ActivateGate) -> None:
     md = _make_analyzed_md(tmp_path, ai_value_score=9.5, priority="P0")
@@ -76,6 +83,7 @@ def test_activate_writes_to_correct_dir(tmp_path: Path, kb_root: Path, gate: Act
         assert result.target_dir in ("05_active_research", "04_future_capabilities")
         assert result.target_path is not None
         assert result.target_path.exists()
+
 
 def test_activate_proposal_contains_ke_id(tmp_path: Path, gate: ActivateGate) -> None:
     md = _make_analyzed_md(tmp_path, ai_value_score=5.0, module_id="KE-401")

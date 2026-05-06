@@ -10,13 +10,12 @@ classification: internal
 language: zh
 created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
-last_updated: "2026-04-24"
+last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 10.6.2 Agent Orchestrator"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Qwen 技术选型 #7-11"
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Kimi 11.6.1 双 P0 根因（Agent 沙箱）"
+  - "03_modules/l01_infrastructure/task-system/blueprint.md（MOD-INF-006 — Agent Orchestrator / 任务生命周期与状态机真源）"
+  - "architecture-model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md (archived 2026-04-24)"
 related_adrs:
@@ -38,6 +37,12 @@ depends_on:
   - target: AI-ENG-VMS-001
     at: "§4"
     why: "Vector Memory Service — 任务完成写 task_history"
+mod_master_blueprint: "MOD-MASTER-001"
+mod_master_contracts:
+  - "CT-ORC-SCRIPT-001"
+  - "CT-ORC-CE-001"
+  - "CT-ORC-VMS-001"
+  - "CT-ORC-GATE-001"
 tags:
   - agent-orchestrator
   - task-queue

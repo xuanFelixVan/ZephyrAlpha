@@ -3,16 +3,16 @@ module_id: GOV-MOD-003
 title: 模块生命周期策略
 doc_type: policy
 status: active
-version: "1.0.0"
-layer: l01_infrastructure
+version: "1.1.0"
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-02"
-valid_from: "2026-05-02"
+date: "2026-05-06"
+valid_from: "2026-05-06"
 ttl: permanent
-summary: "定义模块从创建到归档的全生命周期阶段、转换条件与退役流程。v1.0.0 升格：被 34 处引用（8 个文件），实质已达 active 成熟度。draft→active 升格由 2026-05-02 审计驱动。"
+summary: "定义模块从创建到归档的全生命周期阶段、转换条件与退役流程。v1.1.0：MLC-001 planned→in_design 前置条件强化——纳入 GOV-MOD-001 §7 #5 功能域不重叠检查——从生命周期层面堵住'planned 阶段无功能域检查→experimental 阶段才发现重叠→只能事后合并'的漏洞。"
 tags: [module, governance, lifecycle]
 rule_form: declarative
 scope: global
@@ -90,7 +90,7 @@ planned → in_design → in_dev → testing → active → suspended → deprec
 
 | 转换 | 前置条件 |
 |------|---------|
-| planned → in_design | 通过 GOV-MOD-001 准入门控 |
+| planned → in_design | 通过 GOV-MOD-001 准入门控（含 §7 #5 功能域不重叠检查）|
 | in_design → in_dev | 接口契约草案完成；P0 模块需接口契约状态为 `frozen`（P0 约束详见 §8） |
 | in_dev → testing | 代码实现完成，单元测试通过 |
 | testing → active | 集成测试通过，Owner 审批（P0 额外约束详见 §8） |
@@ -369,6 +369,7 @@ P0 模块（系统核心依赖）除上述通用规则外，额外受以下约�
 
 | 日期 | 版本 | 变更说明 |
 |------|------|---------|
+| 2026-05-06 | 1.1.0 | **SSoT 操作化——MLC-001 planned→in_design 前置条件纳入功能域不重叠检查**。根源：MOD-INF-003/004 在 planned 阶段未被拦截进入 experimental——当时生命周期规则只要求"通过 GOV-MOD-001 准入门控"，而准入规则缺少功能域重叠检查（GOV-MOD-001 §7 #5 为本次同步新增）。修复：MLC-001 前置条件从模糊的"通过准入门控"升级为"通过准入门控（含 §7 #5 功能域不重叠检查）"——堵住生命周期最早阶段无重叠检查的漏洞。版本号 minor +1。 |
 | 2026-05-01 | 0.6.4 | 交叉引用漂移修复：§7 b 迁移期限引用 GOV-MOD-004 §17→§18（GOV-MOD-004 插入 §6 禁止行为后废弃流程从 §17 变为 §18，第三轮全貌审计捕获） |
 | 2026-05-01 | 0.6.3 | 交叉引用事实性错误修复：§3/§4/§14 三处 MAD-004→§7 #3 准入否决条件（GOV-MOD-001 的 status 枚举消费者——MAD-004 是接口可定义性规则，不是 status 检查） + §5 MLC-001 两处 §6→§8（P0 额外约束集中定义在 §8，不在 §6） |
 | 2026-05-01 | 0.6.2 | 消费者通知机制交叉引用：§11 变更同步规则添加通知机制引用——消费者通知方式见 GOV-MOD-002 §10（Session Log/ADR/registry 三层体系） |

@@ -1,17 +1,6 @@
 """
 detect_orphan_py.py — 项目根目录孤儿 .py 文件检测
 
-__manifest__ = """
-args:
-- --fix
-description: 项目根目录孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/governance/ / src/zephyr/
-  / tests/）
-dimensions:
-- D1
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：AGENTS.md §6.5（脚本自创入库强制约定）：
@@ -28,6 +17,18 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args:
+- --fix
+description: 项目根目录孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/governance/ / src/zephyr/
+  / tests/）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path

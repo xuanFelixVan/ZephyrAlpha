@@ -15,6 +15,7 @@ from zephyr.pipeline import (
     PipelineStatus,
 )
 
+
 def _make_task(task_id: str, **overrides) -> TaskCard:
     from zephyr.shared.schemas import Priority, TaskNamespace
 
@@ -59,6 +60,7 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
     defaults.update(overrides)
     return TaskCard(**defaults)
 
+
 class TestMModules:
     def test_all_modules_loaded(self) -> None:
         assert len(M_MODULES) == 11
@@ -74,6 +76,7 @@ class TestMModules:
     def test_glm_modules(self) -> None:
         glm_m = [m for m in M_MODULES if M_MODULE_SPECS[m]["model"] == "glm"]
         assert glm_m == ["M5", "M7"]
+
 
 class TestPipelineDispatch:
     def test_a_pipeline_dispatch(self) -> None:
@@ -109,3 +112,224 @@ class TestPipelineDispatch:
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.needs_claude_rescue is True
+
+    def test_ct_pipe_ops_slices_from_m2(self) -> None:
+        task = _make_task(
+            "CP-0101",
+            tags=[
+                "test",
+                "l01_infrastructure",
+                "deepseek",
+                "MOD-INF-006",
+                "ct_pipe.task_type=OPS",
+            ],
+        )
+        r = PipelineOrchestrator().dispatch(task)
+        assert r.ct_pipe_route is not None
+        assert r.ct_pipe_route.node_id == "M2"
+        mids = [m.module_id for m in r.modules_executed]
+        assert mids == ["M2", "M3", "M4", "M5"]
+
+    def test_ct_pipe_audit_p0_vs_assigned_pipeline_b_warns(self) -> None:
+        from zephyr.shared.schemas import Priority
+
+        task = _make_task(
+            "CP-0102",
+            pipeline_task_type="AUDIT",
+            priority=Priority.P0,
+            assigned_pipeline="B",
+        )
+        r = PipelineOrchestrator().dispatch(task)
+        assert r.ct_pipe_route is not None
+        assert r.ct_pipe_route.node_id == "M3"
+        assert r.pipeline == "A"
+        assert any("CT-PIPE" in w or "assigned_pipeline" in w for w in r.ct_pipe_warnings)
+
+    def test_ct_pipe_doc_write_missing_layer_is_failure(self) -> None:
+        task = _make_task("CP-0103", pipeline_task_type="DOC_WRITE")
+        r = PipelineOrchestrator().dispatch(task)
+        assert r.overall_status == PipelineStatus.FAILURE
+        assert r.ct_pipe_warnings
+        assert r.modules_executed == []
+
+    def test_ct_pipe_model_build_high_enters_m1(self) -> None:
+        task = _make_task(
+            "CP-0104",
+            tags=[
+                "test",
+                "l01_infrastructure",
+                "MOD-INF-006",
+                "ct_pipe.task_type=MODEL_BUILD",
+                "ct_pipe.complexity=HIGH",
+            ],
+        )
+        r = PipelineOrchestrator().dispatch(task)
+        assert r.ct_pipe_route is not None
+        assert r.ct_pipe_route.node_id == "M1"
+        assert [m.module_id for m in r.modules_executed] == ["M1", "M2", "M3", "M4", "M5"]
+
+
+# ============================================================================
+# B171: v0.9.0 新特性测试覆盖
+# ============================================================================
+
+
+class TestIdempotency:
+    """B149: dispatch() 幂等防护"""
+
+    def test_duplicate_dispatch_rejected(self) -> None:
+        task = _make_task("CP-0030")
+        o = PipelineOrchestrator()
+        r1 = o.dispatch(task)
+        r2 = o.dispatch(task)
+        assert r1.overall_status == PipelineStatus.SUCCESS
+        assert r2.overall_status == PipelineStatus.FAILURE
+        assert any("IDEMPOTENCY" in w for w in (r2.ct_pipe_warnings or []))
+
+
+class TestCircuitBreaker:
+    """B151: 断路器三态"""
+
+    def test_initial_closed(self) -> None:
+        o = PipelineOrchestrator()
+        assert not o._circuit_breaker_states
+
+    def test_reset_returns_zero_if_no_breaker(self) -> None:
+        o = PipelineOrchestrator()
+        assert o.reset_circuit_breakers() == 0
+
+
+class TestEmergencyFallback:
+    """B147: 三模全失败降级"""
+
+    def test_no_fallback_on_success(self) -> None:
+        task = _make_task("CP-0031")
+        o = PipelineOrchestrator()
+        r = o.dispatch(task)
+        assert r.fallback_plan is None
+
+    def test_fallback_detects_all_failure(self) -> None:
+        task = _make_task("CP-0032")
+        o = PipelineOrchestrator()
+        r = o.dispatch(task)
+        plan = o._emergency_fallback(r.modules_executed, task)
+        assert not plan.activated
+
+
+class TestImpactAssessment:
+    """B157: AI 影响评估"""
+
+    def test_normal_task_is_low_risk(self) -> None:
+        task = _make_task("CP-0033")
+        o = PipelineOrchestrator()
+        impact = o._assess_impact(task)
+        assert impact.risk_tier == "low"
+        assert not impact.human_review_required
+
+    def test_security_tag_is_critical(self) -> None:
+        task = _make_task("CP-0034", tags=["security", "auth"])
+        o = PipelineOrchestrator()
+        impact = o._assess_impact(task)
+        assert impact.risk_tier == "critical"
+        assert impact.human_review_required
+
+
+class TestRateLimit:
+    """B162: 速率限制感知"""
+
+    def test_no_backpressure_for_first_call(self) -> None:
+        o = PipelineOrchestrator()
+        limited, wait = o._check_rate_limit("deepseek")
+        assert not limited
+        assert wait == 0.0
+
+
+class TestCostTracking:
+    """B161: $ 成本追踪"""
+
+    def test_dispatch_includes_cost(self) -> None:
+        task = _make_task("CP-0035", estimated_tokens=50000)
+        o = PipelineOrchestrator()
+        r = o.dispatch(task)
+        assert r.cost_total_usd >= 0.0
+        assert len(r.cost_records) > 0
+
+    def test_get_cost_summary(self) -> None:
+        task = _make_task("CP-0036")
+        o = PipelineOrchestrator()
+        o.dispatch(task)
+        summary = o.get_cost_summary()
+        assert "total_usd" in summary
+        assert "by_model" in summary
+
+
+class TestDeadLetterQueue:
+    """B169: 死信队列"""
+
+    def test_get_dead_letters_initially_empty(self) -> None:
+        o = PipelineOrchestrator()
+        assert o.get_dead_letters() == []
+
+
+class TestConfigPersistence:
+    """B153: Config 持久化"""
+
+    def test_save_state_includes_config(self) -> None:
+        o = PipelineOrchestrator()
+        state = o.save_state()
+        assert "config" in state
+        assert state["config"]["max_retries"] == 3
+
+    def test_load_state_restores_custom_config(self) -> None:
+        o = PipelineOrchestrator()
+        state = o.save_state()
+        state["config"]["max_retries"] = 7
+        o2 = PipelineOrchestrator()
+        o2.load_state(state)
+        assert o2._cfg.max_retries == 7
+
+
+class TestExperimentRouting:
+    """B159: A/B 实验路由"""
+
+    def test_no_experiment_returns_none(self) -> None:
+        o = PipelineOrchestrator()
+        task = _make_task("CP-0037")
+        assert o._resolve_experiment(task) is None
+
+    def test_register_experiment(self) -> None:
+        o = PipelineOrchestrator()
+        o.register_experiment("exp-test", "route-a", "route-b")
+        exps = o.get_experiments()
+        assert "exp-test" in exps
+
+
+class TestModelCollapseIntegration:
+    """B132+B158: 模型崩塌 + 置信度 集成"""
+
+    def test_dispatch_includes_collapse_field(self) -> None:
+        task = _make_task("CP-0038", tags=["l01_infrastructure", "test"])
+        o = PipelineOrchestrator()
+        r = o.dispatch(task)
+        assert r.model_collapse is None
+
+    def test_text_similarity_on_identical(self) -> None:
+        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator as PO
+        assert PO._text_similarity("hello world", "hello world") == 1.0
+
+    def test_text_similarity_on_different(self) -> None:
+        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator as PO
+        sim = PO._text_similarity("hello world", "foo bar baz")
+        assert sim < 0.5
+
+
+class TestHealthCheckSelfHealing:
+    """B168: health_check 含自愈建议"""
+
+    def test_health_check_includes_new_fields(self) -> None:
+        o = PipelineOrchestrator()
+        health = o.health_check()
+        assert "dead_letters" in health
+        assert "cost_total_usd" in health
+        assert "circuit_breakers_open" in health
+        assert "active_dispatches" in health

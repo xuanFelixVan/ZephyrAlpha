@@ -3,20 +3,18 @@ ZephyrAlpha MCP Task Manager Server
 ===================================
 依据：MOD-INF-006 v0.3.0 §5.3 MCP 接口契约
 注册：task_repo（SQLite） + BlueprintDecomposer（蓝图拆解）
-暴露：5 个 MCP Tool（create / get / update_status / decompose / register_from_triage）
+暴露：6 个 MCP Tool（create / get / list / update_status / decompose / register_from_triage；工具 ID 为 task_manager.*）
 """
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
-from mcp.server import Server
-from mcp.server.stdio import stdio_server
+from mcp.server import FastMCP
 
 from zephyr.core.blueprint_decomposer import BlueprintDecomposer
 from zephyr.core.models import (
@@ -25,62 +23,104 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schemas import Priority, SafetyLevel, TaskNamespace
+from zephyr.shared.schemas import Priority, SafetyLevel, TaskNamespace, normalize_execution_model
 
 logger = logging.getLogger(__name__)
+
 
 class TaskManagerMCP:
     """
     MCP Server for Task System.
 
-    5 Tools：
+    6 Tools（MCP 注册名含 ``task_manager.`` 前缀，与 MOD-INF-013 / tool_contracts.yaml 一致）：
       create_task          — 创建 TaskCard
       get_task             — 查询 TaskCard
       update_task_status   — 更新状态
       decompose_blueprint  — 拆解蓝图
-      register_from_triage — 从审阅池注册任务
+      list_tasks           — 条件筛选任务列表
     """
 
     def __init__(
         self,
         task_repo: object | None = None,
         docs_dir: str | None = None,
+        auth_check: callable | None = None,
     ):
+        """
+        Parameters
+        ----------
+        task_repo : TaskRepository | None
+            SQLite 任务仓库
+        docs_dir : str | None
+            .md 双轨同步目标目录
+        auth_check : callable | None
+            权限检查钩子。签名为 ``auth_check(action: str, task_id: str) -> bool``。
+            返回 False 表示拒绝操作，抛出异常同理。
+            为 None 时跳过所有权限检查（默认——兼容旧版无 RBAC）。
+        """
         self.task_repo = task_repo
         self.decomposer = BlueprintDecomposer(
             task_repo=task_repo,
             docs_dir=docs_dir,
         )
         self.docs_dir = Path(docs_dir) if docs_dir else None
-        self.server = Server("task-manager")
-
+        self._auth_check = auth_check
+        self.mcp = FastMCP("task-manager")
         self._register_tools()
+        self._global_seq = 0
+
+    @property
+    def server(self) -> object:
+        """向后兼容：指向 FastMCP 内部 lowlevel ``Server``（tests/ 与红队脚本读 ``.name``）。"""
+        return self.mcp._mcp_server  # type: ignore[attr-defined]
+
+    def _rbac_guard(self, action: str, task_id: str = "") -> None:
+        """权限守卫——调用注入的 auth_check 钩子。
+
+        若 auth_check 未注入（None），静默通过。
+        若 auth_check 返回 False 或抛异常，以 PermissionError 阻断。
+        """
+        if self._auth_check is None:
+            return
+        try:
+            if not self._auth_check(action, task_id):
+                raise PermissionError(f"RBAC 拒绝: action={action}, task_id={task_id}")
+        except PermissionError:
+            raise
+        except Exception as exc:
+            raise PermissionError(
+                f"RBAC 检查异常: action={action}, task_id={task_id} — {type(exc).__name__}: {exc}"
+            ) from exc
 
     def _register_tools(self) -> None:
-        server = self.server
+        mgr = self
+        mcp = self.mcp
 
-        @server.call_tool()
+        @mcp.tool(name="task_manager.create_task")
         async def create_task(
-            task_id: str,
             title: str,
             source_blueprint: str,
             source_section: str,
             description: str,
+            task_id: str = "",
             namespace: str = "CP",
             priority: str = "P2",
             phase: int = 1,
             execution_model: str = "deepseek",
             safety_level: str = "L",
         ) -> dict:
-            """创建 TaskCard——蓝图 MOD-INF-006 §5.3 Tool 1"""
+            """创建 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 1"""
+            mgr._rbac_guard("create_task")
             from zephyr.shared.schemas import Priority
 
             ns = getattr(TaskNamespace, namespace.upper(), TaskNamespace.CP)
-            seq = self._next_seq(ns) if self.task_repo else self._global_seq
-
-            if self.task_repo:
+            seq = mgr._next_seq(ns)
+            if mgr.task_repo:
+                task_id = f"{ns.value}-{seq}"
+            elif not task_id.strip():
                 task_id = f"{ns.value}-{seq}"
 
+            now = datetime.now(UTC)
             tc = TaskCard(
                 task_id=task_id,
                 namespace=ns,
@@ -89,7 +129,7 @@ class TaskManagerMCP:
                 status=TaskStatus.PENDING,
                 priority=getattr(Priority, priority, Priority.P2),
                 phase=phase,
-                execution_model=execution_model,
+                execution_model=normalize_execution_model(execution_model),
                 safety_level=getattr(
                     __import__("zephyr.shared.schemas", fromlist=["SafetyLevel"]).SafetyLevel,
                     safety_level,
@@ -119,45 +159,65 @@ class TaskManagerMCP:
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
-                created_at=datetime.now().isoformat(),
-                updated_at=datetime.now().isoformat(),
+                created_at=now,
+                updated_at=now,
             )
 
-            self._persist(tc)
-            return self._to_response(tc)
+            mgr._persist(tc)
+            return mgr._to_response(tc)
 
-        @server.call_tool()
+        @mcp.tool(name="task_manager.get_task")
         async def get_task(task_id: str) -> dict:
-            """查询 TaskCard——蓝图 MOD-INF-006 §5.3 Tool 2"""
-            tc = self._load(task_id)
+            """查询 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 2"""
+            mgr._rbac_guard("get_task", task_id)
+            tc = mgr._load(task_id)
             if tc is None:
                 raise ValueError(f"Task 不存在: {task_id}")
-            return self._to_response(tc)
+            return mgr._to_response(tc)
 
-        @server.call_tool()
+        @mcp.tool(name="task_manager.list_tasks")
+        async def list_tasks(
+            phase: int | None = None,
+            status: str | None = None,
+            session_id: str | None = None,
+            file_path_glob: str | None = None,
+            limit: int = 50,
+        ) -> dict:
+            """按条件列出任务（需 task_repo）。"""
+            mgr._rbac_guard("list_tasks")
+            if mgr.task_repo is None:
+                return {"items": [], "total": 0}
+            tasks = mgr.task_repo.query_tasks(
+                phase=phase,
+                status=status,
+                session_id=session_id,
+                file_path_glob=file_path_glob,
+                limit=limit,
+            )
+            items = [mgr._to_response(t) for t in tasks]
+            return {"items": items, "total": len(items)}
+
+        @mcp.tool(name="task_manager.update_task_status")
         async def update_task_status(task_id: str, new_status: str) -> dict:
-            """更新任务状态——蓝图 MOD-INF-006 §5.3 Tool 3"""
-            tc = self._load(task_id)
-            if tc is None:
-                raise ValueError(f"Task 不存在: {task_id}")
+            """更新任务状态——蓝图 MOD-INF-006 §3.5 Tool 3（使用状态机 transition）"""
+            mgr._rbac_guard("update_task_status", task_id)
+            if mgr.task_repo is None:
+                raise RuntimeError("update_task_status 需要注入 task_repo，当前为 None")
 
             new_st = getattr(TaskStatus, new_status.upper(), None)
             if new_st is None:
                 raise ValueError(f"无效状态: {new_status}，合法值: {[s.name for s in TaskStatus]}")
 
-            tc.status = new_st
-            tc.updated_at = datetime.now().isoformat()
+            updated = mgr.task_repo.transition(task_id, new_st)
+            if mgr.docs_dir:
+                mgr._sync_md(updated)
+            return mgr._to_response(updated)
 
-            if new_st == TaskStatus.COMPLETED:
-                tc.completed_at = datetime.now().isoformat()
-
-            self._persist(tc)
-            return self._to_response(tc)
-
-        @server.call_tool()
+        @mcp.tool(name="task_manager.decompose_blueprint")
         async def decompose_blueprint(blueprint_path: str, namespace: str = "CP", phase: int = 1) -> dict:
-            """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-INF-006 §5.3 Tool 4"""
-            result: DecompositionResult = self.decomposer.decompose_blueprint(
+            """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-INF-006 §3.5 Tool 4"""
+            mgr._rbac_guard("decompose_blueprint")
+            result: DecompositionResult = mgr.decomposer.decompose_blueprint(
                 blueprint_path=blueprint_path,
                 namespace=namespace,
                 phase=phase,
@@ -170,20 +230,30 @@ class TaskManagerMCP:
                 "warnings": result.warnings,
             }
 
-        @server.call_tool()
-        async def register_from_triage(triage_path: str, namespace: str = "ADR", phase: int = 1) -> dict:
-            """从审阅池注册任务——蓝图 MOD-INF-006 §5.3 Tool 5"""
-            path = Path(triage_path)
+        @mcp.tool(name="task_manager.register_from_triage")
+        async def register_from_triage(
+            triage_path: str = "",
+            namespace: str = "ADR",
+            phase: int = 1,
+            yaml_path: str = "",
+        ) -> dict:
+            """从审阅池注册任务——蓝图 MOD-INF-006 §3.5 Tool 5（yaml_path 为契约兼容别名）。"""
+            mgr._rbac_guard("register_from_triage")
+            src = (triage_path or yaml_path).strip()
+            if not src:
+                raise ValueError("必须提供 triage_path（或兼容别名 yaml_path）")
+            path = Path(src)
             if not path.exists():
-                raise FileNotFoundError(f"审阅文件不存在: {triage_path}")
+                raise FileNotFoundError(f"审阅文件不存在: {src}")
 
             content = path.read_text(encoding="utf-8")
             ns = getattr(TaskNamespace, namespace.upper(), TaskNamespace.ADR)
-            seq = self._next_seq(ns) if self.task_repo else self._global_seq
+            seq = mgr._next_seq(ns) if mgr.task_repo else mgr._global_seq
             task_id = f"{ns.value}-{seq}"
 
             profile = _extract_triage_profile(content, task_id)
 
+            now = datetime.now(UTC)
             tc = TaskCard(
                 task_id=task_id,
                 namespace=ns,
@@ -191,8 +261,8 @@ class TaskManagerMCP:
                 title=profile.get("title", f"审阅导入: {path.stem}"),
                 status=TaskStatus.PENDING,
                 phase=phase,
-                execution_model="deepseek",
-                safety_level="L",
+                execution_model=normalize_execution_model("deepseek"),
+                safety_level=SafetyLevel.L,
                 source_blueprint=path.stem,
                 source_section="triage",
                 description=profile.get("description", content[:800]),
@@ -228,14 +298,12 @@ class TaskManagerMCP:
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
-                created_at=datetime.now().isoformat(),
-                updated_at=datetime.now().isoformat(),
+                created_at=now,
+                updated_at=now,
             )
 
-            self._persist(tc)
-            return self._to_response(tc)
-
-        self._global_seq = 0
+            mgr._persist(tc)
+            return mgr._to_response(tc)
 
     def _next_seq(self, namespace: TaskNamespace) -> int:
         if self.task_repo:
@@ -244,28 +312,42 @@ class TaskManagerMCP:
         return self._global_seq
 
     def _persist(self, tc: TaskCard) -> None:
-        if self.task_repo:
-            try:
-                existing = self.task_repo.get(tc.task_id)
-                if existing:
-                    existing.status = tc.status
-                    existing.updated_at = tc.updated_at
-                    self.task_repo.update(existing)
-                else:
-                    self.task_repo.create(tc)
-            except Exception:
-                pass
+        if self.task_repo is None:
+            raise RuntimeError(
+                f"MCP _persist 失败: task_id={tc.task_id} — task_repo 未注入，"
+                f"数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+            )
+        try:
+            existing = self.task_repo.get(tc.task_id)
+            if existing:
+                existing.status = tc.status
+                existing.updated_at = tc.updated_at
+                self.task_repo.update(existing)
+            else:
+                self.task_repo.create(tc)
+        except Exception as exc:
+            raise RuntimeError(f"MCP _persist 失败: task_id={tc.task_id} — {type(exc).__name__}: {exc}") from exc
+
+        if self.docs_dir:
+            self._sync_md(tc)
+
+    def _sync_md(self, tc: TaskCard) -> None:
+        md_dir = self.docs_dir / "tasks"
+        md_dir.mkdir(parents=True, exist_ok=True)
+        md_path = md_dir / f"{tc.task_id}.md"
+        md_content = _taskcard_to_md(tc)
+        md_path.write_text(md_content, encoding="utf-8")
 
     def _load(self, task_id: str) -> TaskCard | None:
-        if self.task_repo:
-            try:
-                task = self.task_repo.get(task_id)
-                if task:
-                    return task
-            except Exception:
-                pass
-
-        return None
+        if self.task_repo is None:
+            raise RuntimeError(
+                f"MCP _load 失败: task_id={task_id} — task_repo 未注入，"
+                f"无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+            )
+        try:
+            return self.task_repo.get(task_id)
+        except Exception as exc:
+            raise RuntimeError(f"MCP _load 失败: task_id={task_id} — {type(exc).__name__}: {exc}") from exc
 
     @staticmethod
     def _to_response(tc: TaskCard) -> dict:
@@ -287,17 +369,11 @@ class TaskManagerMCP:
         }
 
     def run(self) -> None:
-        async def _run():
-            async with stdio_server() as (read_stream, write_stream):
-                await self.server.run(
-                    read_stream,
-                    write_stream,
-                    self.server.create_initialization_options(),
-                )
+        self.mcp.run(transport="stdio")
 
-        asyncio.run(_run())
 
 _TRIAGE_TITLE_PATTERN = re.compile(r"^#\s+(.+)$", re.MULTILINE)
+
 
 def _extract_triage_profile(content: str, task_id: str) -> dict:
     profile: dict = {"title": task_id, "description": content[:800]}
@@ -309,17 +385,20 @@ def _extract_triage_profile(content: str, task_id: str) -> dict:
             profile["description"] = body[:800]
     return profile
 
+
 def _parse_md_status(content: str) -> str | None:
     for line in content.split("\n"):
         if line.startswith("**状态**："):
             return line.split("：", 1)[1].strip()
     return None
 
+
 _MD_KV_PATTERN = re.compile(r"^\*\*(.+?)\*\*[：:]\s*(.+)$")
 _MD_LIST_ITEM = re.compile(r"^-\s+(.+)$")
 _MD_GATE_PASSED = re.compile(r"已通过:\s*\[(.*?)\]")
 _MD_GATE_BLOCKED = re.compile(r"阻塞:\s*(.+)$")
 _MD_TIME_ITEM = re.compile(r"^-\s*(创建|更新)[：:]\s*(.+)$")
+
 
 def _parse_md_to_taskcard(content: str) -> TaskCard | None:
     lines = content.split("\n")
@@ -435,7 +514,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
         status=status,
         priority=priority,
         phase=phase,
-        execution_model=execution_model,
+        execution_model=normalize_execution_model(str(execution_model)),
         safety_level=SafetyLevel.L,
         source_blueprint=source_blueprint,
         source_section=source_section,
@@ -449,6 +528,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
         updated_at=updated_at,
     )
 
+
 def _parse_time(s: str) -> datetime:
     if not s:
         return datetime.now()
@@ -458,6 +538,7 @@ def _parse_time(s: str) -> datetime:
         except ValueError:
             continue
     return datetime.now()
+
 
 def _taskcard_to_md(tc: TaskCard) -> str:
     dt_fmt = "%Y-%m-%d %H:%M"

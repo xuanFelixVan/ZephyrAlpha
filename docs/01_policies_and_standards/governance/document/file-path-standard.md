@@ -3,13 +3,13 @@ module_id: GOV-DOC-004
 title: 文件路径规范
 doc_type: standard
 status: active
-version: "1.1.2"
+version: "1.1.3"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-04"
+date: "2026-05-06"
 ttl: permanent
 summary: "定义 ZephyrAlpha 2.0 中所有文件的强制写入路径、废弃路径和根目录白名单，防止文件放错位置导致路径漂移。"
 tags: [file-path, governance, path-standard]
@@ -69,7 +69,7 @@ verifiability: automated
 | 架构治理规则 | `docs/01_policies_and_standards/governance/architecture/` |
 | 文档治理规则 | `docs/01_policies_and_standards/governance/document/` |
 | 企业架构视图（TOGAF） | `docs/02_enterprise_architecture/target-architecture/` |
-| ADR | `docs/02_enterprise_architecture/adr/` |
+| ADR | **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 物理树已移除） |
 | 架构模型 YAML | `docs/02_enterprise_architecture/target-architecture/architecture-model/` |
 | 架构快照 | `docs/02_enterprise_architecture/snapshots/` |
 | 模块生命周期文档 | `docs/03_modules/l{xx}_{layer}/{module}/` |
@@ -92,6 +92,7 @@ verifiability: automated
 | `docs/10_GOVERNANCE_COMPLIANCE/` | `docs/01_policies_and_standards/` |
 | `docs/08_KNOWLEDGE/` | `docs/08_knowledge/` |
 | `docs/04_CONSTRUCTION/` | `docs/03_modules/` |
+| `docs/02_enterprise_architecture/adr/` | **`KB:decisions`**（ADR 权威 namespace） |
 
 ## 三、根目录白名单
 
@@ -145,6 +146,7 @@ requirements*.txt
 | 日期 | 版本 | 修改内容 |
 |------|------|---------|
 | 2026-04-22 | 1.0.0 | 初始创建。定义 21 种文件类型的强制写入路径、废弃路径、根目录白名单、违规检测规则。 |
+| 2026-05-06 | 1.1.3 | ADR 路径：`§一` / `§二` 与 **KB:decisions** 对齐；与 **META-TERM-001**、**directory-registry.yaml**（adr 键 deprecated）交叉引用一致。版本号 patch +1。 |
 | 2026-05-04 | 1.1.2 | 审计修复。Session Log 和任务书 路径更新：`docs/19_development_workspace/` 已删除（迁至外部独立目录），行内容替换为迁移说明。版本号 patch +1。 |
 | 2026-05-01 | 1.1.1 | **元规对齐 + 描述修正 (patch)**。（1）`date` 更新为 2026-05-01——上次修改日与实际不一致；（2）§一 路径表中 `governance/document/` 描述从"文档格式标准"修正为"文档治理规则"——该目录覆盖 7 维度（Identity/Location/Encoding/Lifecycle/Safety/Discovery/Quality），不止"格式"。 |
 | 2026-05-01 | 1.1.0 | 结构对齐。（1）新增 §〇 目的与范围（§〇.2 管理内容 + §〇.3 不覆盖内容 + §〇.4 专业对标）；（2）新增 §六 与其他规则的关系 + §七 变更记录；（3）蓝图路径格式修正：`L{XX}_{LAYER}` → `l{xx}_{snake_case}`。对齐 templates/policy-template.md 强制结构。 |

@@ -25,13 +25,13 @@
       "MOD-KB-001": 1,
       "MOD-INF-016": 1
     },
-    "started_at": "2026-05-04T16:52:02.793108+00:00",
-    "finished_at": "2026-05-04T16:52:02.798943+00:00"
+    "started_at": "2026-05-06T08:30:14.845163+00:00",
+    "finished_at": "2026-05-06T08:30:14.858235+00:00"
   },
   "compliance": {
     "total_scenarios": 30,
-    "rejects": 10,
-    "passes": 20,
+    "rejects": 18,
+    "passes": 12,
     "violations": [
       {
         "session_id": "sim-004",
@@ -88,14 +88,23 @@
         "phase2_verdict": "REJECT"
       },
       {
+        "session_id": "sim-018",
+        "task": "FLE collect 阶段新增 BLUEPRINT-READ-FREQ SLI 信号采集",
+        "expected": [
+          "MOD-INF-010",
+          "MOD-INF-015"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
         "session_id": "sim-019",
         "task": "Feedback Loop 的 dispatch 发错了任务类型——发给了 Gate Engine 而非 Orchestrator",
         "expected": [
           "MOD-INF-010"
         ],
-        "actually_read": [
-          "MOD-INF-007"
-        ],
+        "actually_read": [],
         "level": "partial",
         "phase2_verdict": "REJECT"
       },
@@ -110,14 +119,43 @@
         "phase2_verdict": "REJECT"
       },
       {
+        "session_id": "sim-021",
+        "task": "LLM Security 的 L2 输入分类器误杀率过高——正则规则太严格",
+        "expected": [
+          "MOD-INF-014"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-022",
+        "task": "四层安全防御的 L3 Schema 验证增加 JSON 输出格式校验",
+        "expected": [
+          "MOD-INF-014",
+          "MOD-INF-017"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-023",
+        "task": "prompt injection 检测增加新的攻击模式（知乎-小红书-v4）",
+        "expected": [
+          "MOD-INF-014"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
         "session_id": "sim-024",
         "task": "Security Gateway 的 fail-closed 模式下拒绝了一个合法 LLM 请求",
         "expected": [
           "MOD-INF-014"
         ],
-        "actually_read": [
-          "MOD-INF-007"
-        ],
+        "actually_read": [],
         "level": "partial",
         "phase2_verdict": "REJECT"
       },
@@ -133,6 +171,52 @@
         "phase2_verdict": "REJECT"
       },
       {
+        "session_id": "sim-026",
+        "task": "任务系统 T-V2-010 需要走 Pipeline + Context Engine + Vector Memory 三模块联动",
+        "expected": [
+          "MOD-INF-006",
+          "MOD-INF-008",
+          "MOD-INF-009",
+          "MOD-INF-011"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-027",
+        "task": "全局容量预算检查——所有 12 个系统的 Token 使用量汇总",
+        "expected": [
+          "MOD-INF-001",
+          "MOD-MASTER-001"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-028",
+        "task": "知识库 KE-050 的 depends_on 引用展平——需要更新 Vector Memory 的 Collection namespace",
+        "expected": [
+          "MOD-INF-011",
+          "MOD-KB-001"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-029",
+        "task": "代码去重引擎发现 src/zephyr/core/ 下有 3 个重复的 `_now_iso` 实现",
+        "expected": [
+          "MOD-INF-016",
+          "MOD-INF-017"
+        ],
+        "actually_read": [],
+        "level": "partial",
+        "phase2_verdict": "REJECT"
+      },
+      {
         "session_id": "sim-030",
         "task": "MCPServers 的 BlueprintSearchServer 注册到 task_manager 的统一入口",
         "expected": [
@@ -144,6 +228,6 @@
         "phase2_verdict": "REJECT"
       }
     ],
-    "reject_rate": 33.3
+    "reject_rate": 60.0
   }
 }

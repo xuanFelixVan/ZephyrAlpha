@@ -10,7 +10,9 @@
 
 子模块
 ------
-- stop_loss.py : 止损执行引擎
+- stop_loss.py      : 止损执行引擎（与 kill_switch）
+- risk_limits.py    : 风险限额计算器 (RiskLimitsCalculator) — Phase B 骨架已生成
+- risk_validator.py : 风险校验器 (RiskValidator) — Phase B 骨架已生成
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
@@ -37,3 +39,45 @@ CTR 契约依赖声明（承重墙标记）
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l04_risk_management.risk_manager import (
+    RiskDashboardSnapshot,
+    RiskLimitViolationError,
+    RiskLimits,
+    RiskManagerBase,
+    RiskMetricsReport,
+)
+from zephyr.l04_risk_management.risk_limits import (
+    RiskLimitsCalculator,
+)
+from zephyr.l04_risk_management.risk_validator import (
+    RiskValidator,
+    ViolatedConstraint,
+    ViolationDetail,
+)
+from zephyr.l04_risk_management.risk_manager_base import (
+    PositionLimitCheckerBase,
+    RiskCheckResult,
+    RiskManagerOrchestratorBase,
+    RiskReport,
+    StopLossEngineBase,
+)
+
+__all__ = [
+    "RiskLimits",
+    "RiskLimitViolationError",
+    "RiskDashboardSnapshot",
+    "RiskMetricsReport",
+    "RiskManagerBase",
+    "RiskLimitsCalculator",
+    "RiskValidator",
+    "ViolatedConstraint",
+    "ViolationDetail",
+    "RiskManagerOrchestratorBase",
+    "StopLossEngineBase",
+    "PositionLimitCheckerBase",
+    "RiskCheckResult",
+    "RiskReport",
+]

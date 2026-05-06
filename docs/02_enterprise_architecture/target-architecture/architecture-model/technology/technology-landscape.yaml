@@ -46,7 +46,7 @@ technologies:
     layers: [all]
     rationale: "支持 Agent 模式 + Sonnet/Opus 双模型切换，架构设计与代码协作一体化"
     refresh_cycle: "半年"
-    related_ref: ADR-0003
+    related_ref: "architecture-rationale-log（R71+）— ADR-0003 已由双管线/V-12 门禁取代"
 
   - id: T-A02
     name: "Trae (Kimi) / AI IDE 辅助"
@@ -57,16 +57,16 @@ technologies:
     layers: [all]
     rationale: "长文档处理、发散研究，与 Cursor 互补"
     refresh_cycle: "半年"
-    related_ref: ADR-0003
+    related_ref: "architecture-rationale-log（R71+）— ADR-0003 已由双管线/V-12 门禁取代"
 
   - id: T-A03
     name: "Python / 主语言"
     quadrant: adopt
     category: language
-    version: "3.12+"
+    version: ">=3.11"
     owner: Architect
     layers: [all]
-    rationale: "量化/AI 生态最成熟，pandas/numpy/sklearn 原生支持"
+    rationale: "量化/AI 生态最成熟，pandas/numpy/sklearn 原生支持；语言最低版本以 pyproject.toml requires-python 为真源（当前 >=3.11）"
     refresh_cycle: "年度"
 
   - id: T-A04

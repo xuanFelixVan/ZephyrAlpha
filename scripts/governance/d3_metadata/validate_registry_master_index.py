@@ -1,48 +1,19 @@
-"""
-登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18)
+"""登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18).
 
-__manifest__ = """
-args: []
-description: 登记表总索引自校验——17张登记表文件存在性+条目数+depends_on交叉验证
-dimensions:
-- D3
-- D11
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
-
-
-任务编号 : T-V4-001（scaffold 登记表体系自我验证）
-权限层级 : Human Gated
-作者     : AI-GLM-5.1
-创建日期 : 2026-05-02
-
-功能说明
---------
-读取 registry-master-index.yaml（总索引），对其中声明的每一张登记表做基础真实性校验：
-
-1. 文件存在性：每张登记表的 physical_path 指向的文件是否真实存在
-2. 条目数一致性：entry_count 是否与 YAML 文件中实际条目数一致
-3. depends_on 有效性：depends_on 中引用的 target 文件是否存在
-4. 自引用一致性：总索引 §summary 中的 total_registries 与 registries 列表长度一致
-5. quick_lookup 交叉验证：by_category 中列出的 ID 是否都在 registries 中存在
-
-用法
-----
-正常扫描：
-    python scripts/governance/d3_metadata/validate_registry_master_index.py
-
-骨架阶段（只警告不阻塞）：
-    python scripts/governance/d3_metadata/validate_registry_master_index.py --warn-only
-
-参考
-----
-- PS-REG-005 registry-master-index.yaml
-- ITIL SACM CMDB Reconciliation（CI 登记与实际资产的定期对账）
+任务 T-V4-001：扫描 registry-master-index.yaml，校验登记表文件存在性、
+entry_count、depends_on 与 quick_lookup 交叉引用。
 """
 
 from __future__ import annotations
+
+__manifest__ = {
+    "args": [],
+    "description": "登记表总索引自校验：登记表文件存在性、条目数、depends_on 交叉验证",
+    "dimensions": ["D3", "D11"],
+    "priority": "P0",
+    "timeout_seconds": 30,
+    "warn_only": False,
+}
 
 import argparse
 import sys
@@ -58,6 +29,7 @@ _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.encoding import ensure_utf8_stdout
+from _shared.registry_entry_count import count_primary_registry_entries, primary_count_entry_key
 
 ensure_utf8_stdout()
 from _shared.constants import REPO_ROOT
@@ -70,7 +42,6 @@ def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
     """读取 YAML 文件"""
     if not path.exists():
         return (None, f"文件不存在: {path}")
-    "read yaml."
     try:
         text = path.read_text(encoding="utf-8")
     except (UnicodeDecodeError, OSError) as e:
@@ -83,18 +54,9 @@ def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
         return (None, f"{path} 不是 YAML mapping")
     return (data, "")
 
-def count_yaml_entries(data: dict[str, Any], entry_key: str) -> int:
-    """read yaml."""
-    entries = data.get(entry_key, [])
-    if isinstance(entries, list):
-        return len(entries)
-    return 0
-    "count yaml entries."
-
 def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[list[str], list[dict[str, Any]]]:
-    """校验主索引"""
+    """校验主索引。"""
     errors: list[str] = []
-    "validate master index."
     findings: list[dict[str, Any]] = []
     registries = data.get("registries", [])
     if not isinstance(registries, list) or not registries:
@@ -144,29 +106,32 @@ def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[
         if load_err:
             findings.append({"type": "warn", "registry_id": rid, "issue": f"无法读取登记表: {load_err}"})
             continue
-        entry_key = _auto_detect_entry_key(reg_data)
-        if entry_key:
-            actual_entries = count_yaml_entries(reg_data, entry_key)
-            if actual_entries > 0 and actual_entries != entry_count:
-                findings.append(
-                    {
-                        "type": "warn",
-                        "registry_id": rid,
-                        "name": name,
-                        "issue": f"entry_count 不一致: 声明={entry_count} 实际={actual_entries} (key='{entry_key}')",
-                    }
+        stem = full_path.stem
+        actual_entries = count_primary_registry_entries(reg_data, stem)
+        entry_key_label = primary_count_entry_key(reg_data, stem)
+        if actual_entries > 0 and actual_entries != entry_count:
+            findings.append(
+                {
+                    "type": "warn",
+                    "registry_id": rid,
+                    "name": name,
+                    "issue": f"entry_count 不一致: 声明={entry_count} 实际={actual_entries} (source='{entry_key_label}')",
+                }
+            )
+            if verbose:
+                print(
+                    f"  [WARN]  {rid}: entry_count 声明={entry_count} 实际={actual_entries}",
+                    file=sys.stderr,
                 )
-                if verbose:
-                    print(f"  [WARN]  {rid}: entry_count 声明={entry_count} 实际={actual_entries}", file=sys.stderr)
-            elif actual_entries == 0 and entry_count > 0:
-                findings.append(
-                    {
-                        "type": "info",
-                        "registry_id": rid,
-                        "name": name,
-                        "issue": f"entry_count 校验跳过——key='{entry_key}' 未在 YAML 中找到（可能是 key 名变更）",
-                    }
-                )
+        elif actual_entries == 0 and entry_count > 0:
+            findings.append(
+                {
+                    "type": "info",
+                    "registry_id": rid,
+                    "name": name,
+                    "issue": f"entry_count 校验信息——声明>0 但主列表为空 (source='{entry_key_label}')",
+                }
+            )
         depends_on = reg_data.get("depends_on", [])
         if isinstance(depends_on, list):
             for dep in depends_on:
@@ -204,34 +169,6 @@ def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[
                         }
                     )
     return (errors, findings)
-    "validate master index."
-
-def _entry_key_for_registry(registry_id: str) -> str | None:
-    return None
-
-def _auto_detect_entry_key(data: dict[str, Any]) -> str | None:
-    skip_keys = {
-        "depends_on",
-        "tags",
-        "keywords",
-        "aliases",
-        "uncovered_ids",
-        "changes",
-        "changelog",
-        "blockers",
-        "allowed_subdirs",
-        "forbidden_doc_types",
-        "allowed_doc_types",
-    }
-    best_key = None
-    best_len = 0
-    for key, value in data.items():
-        if key in skip_keys:
-            continue
-        if isinstance(value, list) and len(value) > best_len:
-            best_key = key
-            best_len = len(value)
-    return best_key
 
 def main() -> None:
     """入口函数."""
@@ -249,17 +186,24 @@ def main() -> None:
     errors, findings = validate_master_index(data, verbose=args.verbose)
     errs = sum(1 for f in findings if f["type"] == "error")
     warns = sum(1 for f in findings if f["type"] == "warn")
+    nreg = len(data.get("registries", []))
     print(
-        f'[validate_registry_master_index] {len(data.get('registries', []))} 张登记表, {errs} 错误, {warns} 警告',
+        f"[validate_registry_master_index] {nreg} 张登记表, {errs} 错误, {warns} 警告",
         file=sys.stderr,
     )
     if errors:
         for err in errors:
             print(f"  [CRIT] {err}", file=sys.stderr)
     for f in findings:
-        tag = "ERROR" if f["type"] == "error" else "WARN"
+        if f["type"] == "error":
+            tag = "ERROR"
+        elif f["type"] == "info":
+            tag = "INFO"
+        else:
+            tag = "WARN"
         rid = f.get("registry_id", "?")
-        print(f'  [{tag}] {rid}: {f['issue']}', file=sys.stderr)
+        issue = f.get("issue", "")
+        print(f"  [{tag}] {rid}: {issue}", file=sys.stderr)
     if not findings and (not errors):
         print("[validate_registry_master_index] PASS — 总索引自校验通过", file=sys.stderr)
         sys.exit(0)
@@ -269,7 +213,6 @@ def main() -> None:
     if errs > 0:
         sys.exit(2)
     sys.exit(0)
-    "入口函数."
 
 if __name__ == "__main__":
     main()

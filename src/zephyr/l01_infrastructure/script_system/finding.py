@@ -8,10 +8,16 @@
 Finding Schema — 审计发现标准化数据模型
 
 对照 ISO 19011 审计原则 + NASA-STD-8739.8 严重度分级。
-蓝图定义：MOD-INF-005 §4.3
+蓝图对齐：MOD-INF-005 §4.4 Plugin Contract（JSONL 输出 Finding Schema）；
+          §6.5 recommendation 扩展字段；§4.3 为三件套入库流程（非本 Schema 字段表）。
 
 所有审计脚本通过本 Schema 输出统一格式的 Finding，
 写入 findings.jsonl（一行一个 JSON），并通过 SQLite 做竖切查询。
+
+与 ``scripts/governance/meta/finding_state_machine.py`` 的关系：脚本侧持久化使用
+独立 JSON（``finding_state_db.json``）及状态字符串；合法状态枚举 MUST 与
+``LifecycleStatus`` / ``LIFECYCLE_STATUS_VALUES`` 对齐；``Finding.to_dict()`` 为
+JSONL 行形状，与状态机 DB 行字段 **非逐键等价**（消费方各自解析）。
 
 Usage:
     from zephyr.l01_infrastructure.script_system.finding import Finding, Severity, Dimension, LifecycleStatus
@@ -35,6 +41,7 @@ import json
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Literal
+
 
 class Dimension(str, Enum):
     D1 = "D1"
@@ -68,6 +75,7 @@ class Dimension(str, Enum):
         }
         return _labels[self.value]
 
+
 class Severity(str, Enum):
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
@@ -86,11 +94,13 @@ class Severity(str, Enum):
         }
         return _deadlines[self.value]
 
+
 class BlastRadius(str, Enum):
     FILE = "file"
     MODULE = "module"
     LAYER = "layer"
     SYSTEM = "system"
+
 
 class RemediationAction(str, Enum):
     FIX = "FIX"
@@ -100,13 +110,42 @@ class RemediationAction(str, Enum):
     CREATE = "CREATE"
     INVESTIGATE = "INVESTIGATE"
 
+
 class LifecycleStatus(str, Enum):
+    """Finding 生命周期 — 与 ``scripts/governance/meta/finding_state_machine.py`` 共用（SSoT）。"""
+
     OPEN = "OPEN"
     IN_PROGRESS = "IN_PROGRESS"
     FIXED = "FIXED"
-    WONTFIX = "WONTFIX"
+    VERIFIED = "VERIFIED"
     FALSE_POSITIVE = "FALSE_POSITIVE"
+    WONTFIX = "WONTFIX"
+    ACCEPTED_RISK = "ACCEPTED_RISK"
+    CLOSED = "CLOSED"
+    OVERDUE = "OVERDUE"
     DEFERRED = "DEFERRED"
+
+
+#: 状态机构造/校验用 — meta 脚本 MUST 从本元组派生，禁止独立硬编码列表。
+LIFECYCLE_STATUS_VALUES: tuple[str, ...] = tuple(m.value for m in LifecycleStatus)
+
+
+class RecommendationType(str, Enum):
+    """MOD-INF-005 §6.5 — recommendation_type"""
+
+    AUTO_FIXABLE = "auto_fixable"
+    MANUAL_ONLY = "manual_only"
+    NEEDS_REVIEW = "needs_review"
+
+
+class RecommendedAction(str, Enum):
+    """MOD-INF-005 §6.5 — recommended_action"""
+
+    MODIFY_FILE = "modify_file"
+    CREATE_TASK = "create_task"
+    CONSULT_OWNER = "consult_owner"
+    IGNORE = "ignore"
+
 
 class Finding:
     def __init__(
@@ -125,6 +164,9 @@ class Finding:
         related_adr: list[str] | None = None,
         related_ke: list[str] | None = None,
         related_finding: list[str] | None = None,
+        recommendation: str = "",
+        recommendation_type: RecommendationType | None = None,
+        recommended_action: RecommendedAction | None = None,
         finding_id: str | None = None,
         timestamp: str | None = None,
     ):
@@ -142,6 +184,9 @@ class Finding:
         self.related_adr = related_adr or []
         self.related_ke = related_ke or []
         self.related_finding = related_finding or []
+        self.recommendation = recommendation
+        self.recommendation_type = recommendation_type
+        self.recommended_action = recommended_action
         self.timestamp = timestamp or datetime.now(UTC).isoformat()
 
         if finding_id:
@@ -153,7 +198,7 @@ class Finding:
             self.finding_id = f"FIND-{dimension.value}-{date_str}-{content_hash}"
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "finding_id": self.finding_id,
             "dimension": self.dimension.value,
             "severity": self.severity.value,
@@ -181,6 +226,13 @@ class Finding:
             },
             "timestamp": self.timestamp,
         }
+        if self.recommendation or self.recommendation_type is not None or self.recommended_action is not None:
+            d["recommendation_block"] = {
+                "recommendation": self.recommendation,
+                "recommendation_type": self.recommendation_type.value if self.recommendation_type else None,
+                "recommended_action": self.recommended_action.value if self.recommended_action else None,
+            }
+        return d
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), ensure_ascii=False)
@@ -210,6 +262,7 @@ class Finding:
             description=message,
             remediation_action=RemediationAction.FIX,
         )
+
 
 class FindingCollection:
     def __init__(self, findings: list[Finding] | None = None):

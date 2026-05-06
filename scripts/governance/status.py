@@ -1,15 +1,6 @@
 """
 status.py — 审计系统状态仪表盘
 
-__manifest__ = """
-args: []
-description: status.py — 审计系统状态仪表盘
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 输出整个脚本系统系统的实时健康状态（脚本注册表从 script_manifest.yaml SSoT 加载），包括：
@@ -28,6 +19,17 @@ Blueprint: MOD-INF-005 §4.4
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: status.py — 审计系统状态仪表盘
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import argparse
 import json

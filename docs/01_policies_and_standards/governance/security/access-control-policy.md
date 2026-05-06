@@ -2,9 +2,9 @@
 module_id: GOV-SEC-002
 title: 访问控制策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.3.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -25,7 +25,7 @@ ai_autonomy: human_gated
 
 # 访问控制策略
 
-> module_id: GOV-SEC-002 | version: 0.3.0 | status: draft | layer: L1
+> module_id: GOV-SEC-002 | version: 0.3.0 | status: Draft | layer: L1
 
 ---
 
@@ -71,7 +71,7 @@ ai_autonomy: human_gated
 
 | 编号 | 规则 | 违反后果 |
 |------|------|---------|
-| ACS-003 | AI 代理的权限必须在 [GOV-AI-001](../01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md) 中明确注册，未注册的权限默认禁止 | AI 操作被拒绝；记录越权尝试 |
+| ACS-003 | AI 代理的权限必须在 [GOV-AI-001](../../_registry/catalogs/ai-autonomy-authority-registry.md) 中明确注册，未注册的权限默认禁止 | AI 操作被拒绝；记录越权尝试 |
 
 ### ACS-004：权限审批流程
 

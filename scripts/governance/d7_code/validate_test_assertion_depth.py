@@ -1,15 +1,6 @@
 """
 validate_test_assertion_depth.py — 测试断言深度校验
 
-__manifest__ = """
-args: []
-description: 测试断言深度校验——raises 有没有 match、有没有 assert True/False、try/except是否静默吞异常
-dimensions:
-- D7
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：ISTQB Foundation Level §4.3 — 测试断言应验证具体行为而非仅"抛出异常了"
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 测试断言深度校验——raises 有没有 match、有没有 assert True/False、try/except是否静默吞异常
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import ast

@@ -68,7 +68,7 @@ values:
     forbidden_directories: ["operational/"]
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry"]
-    examples: ["rule-registry.md", "master-document-inventory.yaml"]
+    examples: ["rule-registry.md", "document-metadata-index.yaml"]
 
   - value: index
     definition: "索引入口——目录级导航文件，声明子域的职责边界、文件清单和依赖关系。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"

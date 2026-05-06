@@ -1,18 +1,7 @@
 """
-蓝图重叠检测门禁 (Blueprint Overlap Merge Gate · V-14)
+蓝图重叠检测门禁 (Blueprint Overlap Merge Gate - V-14)
 
-__manifest__ = """
-args: []
-description: 蓝图重叠检测（同一component_id出现多草稿时warn）
-dimensions:
-- D11
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
-
-
-任务编号 : T-V2-011（Wave 1 V-14 兜底）
+任务编号 : T-V2-011 (Wave 1 V-14 兜底)
 权限层级 : Immutable Core
 创建日期 : 2026-04-27
 
@@ -22,9 +11,9 @@ warn_only: false
 检测同一 component_id 出现在多个草稿中的重叠情况：
 
 1. 从草稿 frontmatter 的 `components: [...]` 字段提取 component_id
-2. 构建跨草稿组件矩阵（component_id → [draft_path, ...]）
+2. 构建跨草稿组件矩阵 (component_id -> [draft_path, ...])
 3. 同一 component_id 出现在 2+ 草稿时发出警告
-4. warn-only 模式（exit code = 0，不阻塞 commit）
+4. warn-only 模式 (exit code = 0, 不阻塞 commit)
 
 校验目标
 --------
@@ -43,6 +32,16 @@ CI 模式（重叠 exit 1）：
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: Blueprint overlap detection (warn when same component_id appears in multiple drafts)
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
 
 import argparse
 import re

@@ -1,15 +1,6 @@
 """
 detect_split_delete_ref_commit.py — 删除引用分离提交检测
 
-__manifest__ = """
-args: []
-description: 删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）
-dimensions:
-- D4
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：ABS-15（先删文件后清引用分两次 commit 为绝对禁止）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）
+dimensions:
+- D4
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import subprocess
 import sys

@@ -1,3 +1,7 @@
+# CODEGEN-GUARD: CTR-declarations-manual
+# Phase D — codegen auto-override disabled.
+# All exports below are manually maintained.
+# DO NOT run generate_contracts.py without removing this guard.
 """
 ZephyrAlpha — shared/contracts/
 
@@ -59,8 +63,6 @@ from zephyr.shared.contracts.enforcer import (
 )
 from zephyr.shared.contracts.errors import (
     ContractViolationError as ContractErrViolationError,
-)
-from zephyr.shared.contracts.errors import (
     DataQualityError,
     ExecutionRejectionError,
     FactorComputationError,
@@ -119,6 +121,27 @@ from zephyr.shared.contracts.timestamp import (
     utcnow,
 )
 from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.system_configuration import SystemConfiguration
+from zephyr.shared.contracts.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.shared.contracts.risk_metrics import RiskMetricsReport
+from zephyr.shared.contracts.experiment_result import ExperimentResult
+from zephyr.shared.contracts.compliance_rule import ComplianceRule
+from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.execution_report import ExecutionReport
+from zephyr.shared.contracts.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.factories import (
+    make_factor_signal,
+    make_order,
+    make_risk_dashboard_snapshot,
+    make_risk_limits,
+    make_risk_metrics_report,
+    make_synthesized_signal,
+)
 
 __all__ = [
     "NormalizedMarketData",
@@ -180,4 +203,23 @@ __all__ = [
     "VersionMismatchError",
     "get_registry",
     "reset_registry",
+    "SynthesizedSignal",
+    "CapitalAllocationResult",
+    "PerformanceAttributionReport",
+    "SystemConfiguration",
+    "RiskDashboardSnapshot",
+    "RiskMetricsReport",
+    "ExperimentResult",
+    "ComplianceRule",
+    "StrategyLifecycleEvent",
+    "ExecutionReport",
+    "ModelServingRequest",
+    "ModelServingResponse",
+    "TelemetryEmitter",
+    "make_risk_limits",
+    "make_risk_dashboard_snapshot",
+    "make_risk_metrics_report",
+    "make_factor_signal",
+    "make_synthesized_signal",
+    "make_order",
 ]

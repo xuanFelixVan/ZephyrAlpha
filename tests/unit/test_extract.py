@@ -17,13 +17,16 @@ from pathlib import Path
 import pytest
 from zephyr.kb.extract import BEST_PRACTICES_DIR_NAME, LESSONS_DIR_NAME, ExtractGate
 
+
 @pytest.fixture()
 def adr_dir(tmp_path: Path) -> Path:
     return tmp_path / "adr"
 
+
 @pytest.fixture()
 def gate(kb_root: Path, adr_dir: Path) -> ExtractGate:
     return ExtractGate(kb_root=kb_root, adr_dir=adr_dir)
+
 
 def _make_active_md(
     tmp_path: Path,
@@ -49,6 +52,7 @@ def _make_active_md(
     p.write_text(content, encoding="utf-8", newline="\n")
     return p
 
+
 def test_extract_lesson_learned(gate: ExtractGate, tmp_path: Path, kb_root: Path) -> None:
     body = (
         "# 教训记录\n\n"
@@ -64,6 +68,7 @@ def test_extract_lesson_learned(gate: ExtractGate, tmp_path: Path, kb_root: Path
     assert result.target_path is not None
     assert LESSONS_DIR_NAME in str(result.target_path)
 
+
 def test_extract_best_practice(gate: ExtractGate, tmp_path: Path, kb_root: Path) -> None:
     md = _make_active_md(tmp_path, category="best_practice")
     result = gate.extract(md)
@@ -71,6 +76,7 @@ def test_extract_best_practice(gate: ExtractGate, tmp_path: Path, kb_root: Path)
     assert result.extract_type == "best_practice"
     assert result.target_path is not None
     assert BEST_PRACTICES_DIR_NAME in str(result.target_path)
+
 
 def test_extract_design_decision_writes_adr(gate: ExtractGate, tmp_path: Path, adr_dir: Path) -> None:
     body = (
@@ -89,6 +95,7 @@ def test_extract_design_decision_writes_adr(gate: ExtractGate, tmp_path: Path, a
     content = result.adr_path.read_text(encoding="utf-8")
     assert "ADR" in content
 
+
 def test_extract_ke_number_increments(gate: ExtractGate, tmp_path: Path, kb_root: Path) -> None:
     md1 = _make_active_md(tmp_path, name="first.md", module_id="KE-501", category="best_practice")
     result1 = gate.extract(md1)
@@ -98,9 +105,11 @@ def test_extract_ke_number_increments(gate: ExtractGate, tmp_path: Path, kb_root
     result2 = gate.extract(md2)
     assert result2.passed is True
 
+
 def test_extract_nonexistent_file_rejected(gate: ExtractGate, tmp_path: Path) -> None:
     result = gate.extract(tmp_path / "ghost.md")
     assert result.passed is False
+
 
 def test_extract_no_template_rejected(gate: ExtractGate, tmp_path: Path) -> None:
     p = tmp_path / "unknown.md"

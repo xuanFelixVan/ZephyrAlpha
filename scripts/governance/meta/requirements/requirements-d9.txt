@@ -1,0 +1,2 @@
+# requirements-d9.txt — D9 知识覆盖维度
+PyYAML>=6.0

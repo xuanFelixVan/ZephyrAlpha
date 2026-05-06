@@ -3,17 +3,6 @@ SSoT 矛盾扫描器 (SSoT Contradiction Validator)
 任务 ID : T-2-33
 safety_level : M（治理脚本）
 
-__manifest__ = """
-args: []
-description: SSoT单一真源一致性校验
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
-
-
 功能
 ----
 主动扫描 docs/ 目录下所有 Markdown 文件的 YAML frontmatter，
@@ -23,29 +12,46 @@ warn_only: false
 -----------------
 P0-1  layer 字段值不在有效集合中（L00-L13 / cross_layer）
 P0-2  同一 module_id 同时存在于多个 Active 状态文件（重复真源）
+P0-3  [--ci 附加] docs/09_audit/findings/index.md、docs/09_audit/INDEX.md 中对 findings/
+      的引用、architecture-model/SCOPE.yaml 落点（双树口径）
 P1-1  status 字段值不在有效集合中
 P1-2  同一 module_id 在多文件中 layer 字段不一致
 P1-3  同一 module_id 在多文件中 status 字段矛盾（一Active一Deprecated）
 P2-1  priority 字段值不在有效集合中
 P2-2  version 字段格式不符合 MAJOR.MINOR.PATCH
 
+相关路径（门禁引用，非 frontmatter 扫描）
+---------------------------------------
+- 层合法值：docs/02_enterprise_architecture/ssot-authority-map.md §一 valid_values
+- 双树：architecture-model/SCOPE.yaml
+- Finding 落盘：docs/09_audit/findings/index.md
+
 用法
 ----
 正常扫描（生成报告）：
-    python scripts/governance/validate_ssot.py
+    python scripts/governance/d5_architecture/validate_ssot.py
 
-CI 模式（P0 矛盾时 exit(1)）：
-    python scripts/governance/validate_ssot.py --ci
+CI 模式（P0 或导航检查失败时 exit(1)）：
+    python scripts/governance/d5_architecture/validate_ssot.py --ci
 
 指定扫描目录：
-    python scripts/governance/validate_ssot.py --scan-dir docs/02_enterprise_architecture
+    python scripts/governance/d5_architecture/validate_ssot.py --scan-dir docs/02_enterprise_architecture
 
 指定报告输出路径：
-    python scripts/governance/validate_ssot.py --report docs/09_audit/reports/ssot-validation-LATEST.md
+    python scripts/governance/d5_architecture/validate_ssot.py --report docs/09_audit/reports/ssot-validation-LATEST.md
 """
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: SSoT单一真源一致性校验
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
 import argparse
 import re
 import sys
@@ -66,6 +72,27 @@ from datetime import datetime
 DEFAULT_SCAN_DIR = REPO_ROOT / "docs"
 DEFAULT_REPORT_PATH = REPO_ROOT / "docs" / "09_audit" / "reports" / "ssot-validation-LATEST.md"
 AUTHORITY_MAP_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "ssot-authority-map.md"
+SCOPE_YAML_PATH = REPO_ROOT / "architecture-model" / "SCOPE.yaml"
+AUDIT_FINDINGS_INDEX_MD = REPO_ROOT / "docs" / "09_audit" / "findings" / "index.md"
+AUDIT_CONTROL_INDEX_MD = REPO_ROOT / "docs" / "09_audit" / "INDEX.md"
+
+
+def check_audit_navigation_wiring(repo_root: Path = REPO_ROOT) -> list[str]:
+    """CI：审计 Finding 导航 + 双树 SCOPE 物理落点。"""
+    errs: list[str] = []
+    if not SCOPE_YAML_PATH.exists():
+        errs.append(f"缺失 {SCOPE_YAML_PATH.relative_to(repo_root)}（architecture-model 双树边界真源）")
+    if not AUDIT_FINDINGS_INDEX_MD.exists():
+        errs.append(f"缺失 {AUDIT_FINDINGS_INDEX_MD.relative_to(repo_root)}（安全 Finding Markdown 入口）")
+    if AUDIT_CONTROL_INDEX_MD.exists():
+        txt = AUDIT_CONTROL_INDEX_MD.read_text(encoding="utf-8", errors="replace")
+        if "findings/" not in txt and "findings/index" not in txt:
+            errs.append(f"{AUDIT_CONTROL_INDEX_MD.relative_to(repo_root)} 未引用 findings/（导航断裂）")
+    else:
+        errs.append(f"缺失 {AUDIT_CONTROL_INDEX_MD.relative_to(repo_root)}")
+    return errs
+
+
 _HISTORICAL_TYPOS: frozenset[str] = frozenset(
     {
         "layer_00",
@@ -121,7 +148,7 @@ def _get_valid_layers() -> frozenset[str]:
     return _VALID_LAYERS_CACHE
 
 VALID_STATUSES: frozenset[str] = frozenset(
-    {"Draft", "Review", "Active", "Superseded", "Deprecated", "Retired", "proposed", "active", "deprecated"}
+    {"Draft", "Review", "Active", "Superseded", "Deprecated", "Retired", "draft", "proposed", "active", "deprecated"}
 )
 VALID_PRIORITIES: frozenset[str] = frozenset({"P0", "P1", "P2", "P3"})
 VERSION_PATTERN = re.compile("^'?\\d+\\.\\d+\\.\\d+'?$|^N/A$|^1\\.0$")
@@ -383,7 +410,7 @@ class SsotValidator:
 
     def __init__(self, scan_dir: Path | None = None, repo_root: Path | None = None) -> None:
         self._repo_root = repo_root or REPO_ROOT
-        self._scan_dir = scan_dir or DEFAULT_SCAN_DIR
+        self._scan_dir = (scan_dir or DEFAULT_SCAN_DIR).resolve()
 
     def run(self) -> ScanReport:
         """执行扫描"""
@@ -489,7 +516,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_REPORT_PATH,
         help=f"报告输出路径（默认：{DEFAULT_REPORT_PATH.relative_to(REPO_ROOT)}）",
     )
-    parser.add_argument("--ci", action="store_true", help="CI 模式：P0 矛盾时以 exit(1) 退出")
+    parser.add_argument("--ci", action="store_true", help="CI：P0 frontmatter 矛盾或审计导航(findings/SCOPE)失败则 exit(1)")
     parser.add_argument("--no-report", action="store_true", help="跳过写入报告文件（仅输出到 stdout）")
     parser.add_argument("--warn-only", action="store_true", help="警告模式：发现不阻塞（exit 0）")
     return parser
@@ -505,17 +532,25 @@ def main() -> None:
     report = validator.run()
     print(f"   扫描完成：{report.scanned_files} 个文件，{report.parsed_files} 个含 frontmatter", file=sys.stderr)
     print(f"   矛盾统计：P0={report.p0_count}  P1={report.p1_count}  P2={report.p2_count}", file=sys.stderr)
+    nav_issues: list[str] = []
+    if args.ci:
+        nav_issues = check_audit_navigation_wiring()
+        for msg in nav_issues:
+            print(f"   🔴 CI（导航）: {msg}", file=sys.stderr)
     if not args.no_report:
         write_report(report, args.report)
         print(f"   报告写入：{args.report}", file=sys.stderr)
     if args.warn_only:
         print(f"\n⚠ warn-only 模式：{report.total_count} 条矛盾未阻塞。", file=sys.stderr)
         sys.exit(0)
-    if args.ci and report.has_p0:
-        print(
-            f"\n❌ CI 门禁阻塞：发现 {report.p0_count} 条 P0 矛盾，必须修复后才能通过 beta 完成门禁。",
-            file=sys.stderr,
-        )
+    if args.ci and (report.has_p0 or nav_issues):
+        if report.has_p0:
+            print(
+                f"\n❌ CI 门禁阻塞：发现 {report.p0_count} 条 P0 矛盾，必须修复后才能通过 beta 完成门禁。",
+                file=sys.stderr,
+            )
+        if nav_issues:
+            print("\n❌ CI 门禁阻塞：审计/findings 或 SCOPE 导航检查失败。", file=sys.stderr)
         sys.exit(1)
     if report.total_count == 0:
         print("✅ 扫描通过：未发现 SSoT 矛盾。", file=sys.stderr)

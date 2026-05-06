@@ -36,6 +36,7 @@ __all__ = [
     "DOSLauncher",
 ]
 
+
 # ---------------------------------------------------------------------------
 # 默认 directive 目录解析
 # ---------------------------------------------------------------------------
@@ -53,6 +54,7 @@ def _resolve_default_directive_dir() -> Path:
     in_tree = project_root / "resources" / "DOS" / "directives"
     return in_tree
 
+
 _DIRECTIVE_DIR = _resolve_default_directive_dir()
 
 _CHAIN_SEPARATOR = "+"
@@ -60,6 +62,7 @@ _CHAIN_SEPARATOR = "+"
 _FM_OPEN = re.compile(r"^---\s*$")
 _FM_CLOSE = re.compile(r"^---\s*$")
 _FM_FIELD = re.compile(r"^(\w+)\s*:\s*(.+)$")
+
 
 class DirectiveInfo(BaseModel):
     model_config = BASE_CONFIG
@@ -71,6 +74,7 @@ class DirectiveInfo(BaseModel):
     file_path: str = Field(default="")
     content: str = Field(default="")
 
+
 class DOSResult(BaseModel):
     model_config = BASE_CONFIG
 
@@ -79,6 +83,7 @@ class DOSResult(BaseModel):
     compliance: bool = Field(default=True)
     chain: str = Field(default="")
     errors: list[str] = Field(default_factory=list)
+
 
 def _parse_frontmatter(text: str) -> dict[str, str]:
     lines = text.splitlines()
@@ -100,6 +105,7 @@ def _parse_frontmatter(text: str) -> dict[str, str]:
                 result[key] = val
     return result
 
+
 def _parse_body(text: str) -> str:
     lines = text.splitlines()
     if not lines or not _FM_OPEN.match(lines[0]):
@@ -114,6 +120,7 @@ def _parse_body(text: str) -> str:
     if not found_close:
         return ""
     return "\n".join(lines[body_start:]).strip()
+
 
 class DOSLauncher:
     """Load and execute DOS directive files.

@@ -59,7 +59,7 @@ depends_on:
 - 过程式操作步骤（"怎么执行"）→ `operational/`
 - 层域专属规则 → `domains/Lxx/`
 - 代码实现的 Schema 定义 → `src/zephyr/shared/contracts/`
-- 架构决策记录（ADR）→ `docs/02_enterprise_architecture/adr/`
+- 架构决策记录（ADR）的具体条目 → **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 已移除）
 
 ---
 

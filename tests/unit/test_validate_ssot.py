@@ -49,6 +49,7 @@ from scripts.governance.d5_architecture.validate_ssot import (
 # 辅助：构造 FileMeta
 # ---------------------------------------------------------------------------
 
+
 def _meta(
     path: str = "docs/test.md",
     module_id: str | None = None,
@@ -67,14 +68,17 @@ def _meta(
         version=version,
     )
 
+
 def _write_md(tmp_path: Path, filename: str, content: str) -> Path:
     p = tmp_path / filename
     p.write_text(content, encoding="utf-8")
     return p
 
+
 # ---------------------------------------------------------------------------
 # _parse_frontmatter
 # ---------------------------------------------------------------------------
+
 
 class TestParseFrontmatter:
     """P0：frontmatter 解析。"""
@@ -109,9 +113,11 @@ class TestParseFrontmatter:
         text = "---\nno close marker"
         assert _parse_frontmatter(text) is None
 
+
 # ---------------------------------------------------------------------------
 # parse_file
 # ---------------------------------------------------------------------------
+
 
 class TestParseFile:
     """P0：文件解析。"""
@@ -140,9 +146,11 @@ class TestParseFile:
         p = tmp_path / "nonexistent.md"
         assert parse_file(p, tmp_path) is None
 
+
 # ---------------------------------------------------------------------------
 # check_p0_layer_invalid
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP0LayerInvalid:
     """P0：layer 字段有效性。"""
@@ -170,9 +178,11 @@ class TestCheckP0LayerInvalid:
         result = check_p0_layer_invalid(metas)
         assert len(result) == 2
 
+
 # ---------------------------------------------------------------------------
 # check_p0_duplicate_active_module_id
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP0DuplicateActiveModuleId:
     """P0：module_id 重复真源检测。"""
@@ -207,9 +217,11 @@ class TestCheckP0DuplicateActiveModuleId:
         metas = [_meta(status="Active"), _meta(path="b.md", status="Active")]
         assert check_p0_duplicate_active_module_id(metas) == []
 
+
 # ---------------------------------------------------------------------------
 # check_p1_status_invalid
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP1StatusInvalid:
     """P1：status 字段有效性。"""
@@ -228,9 +240,11 @@ class TestCheckP1StatusInvalid:
     def test_no_status_field_skipped(self) -> None:
         assert check_p1_status_invalid([_meta()]) == []
 
+
 # ---------------------------------------------------------------------------
 # check_p1_module_id_layer_conflict
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP1ModuleIdLayerConflict:
     """P1：同 module_id 跨文件 layer 冲突。"""
@@ -262,9 +276,11 @@ class TestCheckP1ModuleIdLayerConflict:
         metas = [_meta(layer="L00"), _meta(path="b.md", layer="L01")]
         assert check_p1_module_id_layer_conflict(metas) == []
 
+
 # ---------------------------------------------------------------------------
 # check_p1_module_id_status_conflict
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP1ModuleIdStatusConflict:
     """P1：同 module_id 跨文件 status 矛盾。"""
@@ -299,9 +315,11 @@ class TestCheckP1ModuleIdStatusConflict:
         ]
         assert check_p1_module_id_status_conflict(metas) == []
 
+
 # ---------------------------------------------------------------------------
 # check_p2_priority_invalid
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP2PriorityInvalid:
     """P2：priority 字段有效性。"""
@@ -319,9 +337,11 @@ class TestCheckP2PriorityInvalid:
     def test_no_priority_field_skipped(self) -> None:
         assert check_p2_priority_invalid([_meta()]) == []
 
+
 # ---------------------------------------------------------------------------
 # check_p2_version_format
 # ---------------------------------------------------------------------------
+
 
 class TestCheckP2VersionFormat:
     """P2：version 字段格式。"""
@@ -344,9 +364,11 @@ class TestCheckP2VersionFormat:
     def test_no_version_field_skipped(self) -> None:
         assert check_p2_version_format([_meta()]) == []
 
+
 # ---------------------------------------------------------------------------
 # ScanReport
 # ---------------------------------------------------------------------------
+
 
 class TestScanReport:
     """P1：报告聚合逻辑。"""
@@ -370,9 +392,11 @@ class TestScanReport:
         assert report.total_count == 0
         assert report.has_p0 is False
 
+
 # ---------------------------------------------------------------------------
 # render_report
 # ---------------------------------------------------------------------------
+
 
 class TestRenderReport:
     """P1：报告渲染。"""
@@ -404,9 +428,11 @@ class TestRenderReport:
         text = render_report(report)
         assert "1" in text  # p0_count=1
 
+
 # ---------------------------------------------------------------------------
 # 集成测试：SsotValidator.run
 # ---------------------------------------------------------------------------
+
 
 class TestSsotValidatorIntegration:
     """Q2 集成测试：完整扫描流程。"""
@@ -462,9 +488,11 @@ class TestSsotValidatorIntegration:
         assert report.scanned_files == 2
         assert report.parsed_files == 1
 
+
 # ---------------------------------------------------------------------------
 # 性能测试：1000 个文件的扫描在 3s 内完成
 # ---------------------------------------------------------------------------
+
 
 class TestScanPerformance:
     """Q4 性能断言。"""

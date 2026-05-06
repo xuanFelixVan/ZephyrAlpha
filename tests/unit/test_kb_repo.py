@@ -11,6 +11,7 @@ from zephyr.db.sqlite_schema import init_db
 from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 
+
 @pytest.fixture
 def tmp_db(tmp_path: Path) -> Path:
     db = tmp_path / "test.db"
@@ -18,9 +19,11 @@ def tmp_db(tmp_path: Path) -> Path:
     init_chromadb(tmp_path / "vectors")
     return db
 
+
 @pytest.fixture
 def repo(tmp_db: Path, tmp_path: Path) -> KbRepo:
     return KbRepo(db_path=tmp_db, vector_dir=tmp_path / "vectors")
+
 
 class TestKbRepoCreate:
     def test_create_draft(self, repo: KbRepo) -> None:
@@ -55,6 +58,7 @@ class TestKbRepoCreate:
 
     def test_get_nonexistent(self, repo: KbRepo) -> None:
         assert repo.get("KE-999") is None
+
 
 class TestKbRepoTransition:
     def test_valid_forward_transition(self, repo: KbRepo) -> None:
@@ -183,6 +187,7 @@ class TestKbRepoTransition:
         with pytest.raises(ValueError, match="Invalid transition"):
             repo.transition("KE-016", KeStatus.DRAFT)
 
+
 class TestKbRepoList:
     def test_list_all(self, repo: KbRepo) -> None:
         repo.create(ke_id="KE-020", title="A", category="g", source_file="a.md", content="a")
@@ -200,6 +205,7 @@ class TestKbRepoList:
         assert len(drafts) == 1
         assert len(submitted) == 1
 
+
 class TestKbRepoDelete:
     def test_delete(self, repo: KbRepo) -> None:
         repo.create(ke_id="KE-040", title="Del", category="g", source_file="del.md", content="del")
@@ -208,6 +214,7 @@ class TestKbRepoDelete:
 
     def test_delete_nonexistent(self, repo: KbRepo) -> None:
         assert repo.delete("KE-999") is False
+
 
 class TestVectorAction:
     def test_upsert_on_indexed(self, repo: KbRepo) -> None:

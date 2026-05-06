@@ -2,9 +2,9 @@
 module_id: DOM-L00-002
 title: 连接器入职操作手册
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l00_data_source
+layer: L00
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

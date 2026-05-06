@@ -31,6 +31,7 @@ from zephyr.db.sqlite_schema import init_db
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture()
 def tmp_sqlite(tmp_path: Path) -> Path:
     """创建临时 SQLite 数据库并初始化 schema。"""
@@ -38,12 +39,14 @@ def tmp_sqlite(tmp_path: Path) -> Path:
     init_db(db_path)
     return db_path
 
+
 @pytest.fixture()
 def engine(tmp_sqlite: Path) -> Iterator[OLAPEngine]:
     """内存 DuckDB + 临时 SQLite 的 OLAPEngine 实例。"""
     eng = OLAPEngine(sqlite_path=tmp_sqlite, duckdb_path=":memory:", auto_init_sqlite=False)
     yield eng
     eng.close()
+
 
 def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> None:
     """向 SQLite tasks 表插入测试任务。"""
@@ -86,6 +89,7 @@ def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> No
     finally:
         conn.close()
 
+
 def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
     """向 SQLite gates 表插入测试门禁记录。"""
     now = datetime.now(UTC).isoformat()
@@ -99,6 +103,7 @@ def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
         conn.execute("COMMIT")
     finally:
         conn.close()
+
 
 def _insert_knowledge(db_path: Path, ke_id: str, status: str, category: str = "best_practice") -> None:
     """向 SQLite knowledge 表插入测试知识条目。"""
@@ -116,9 +121,11 @@ def _insert_knowledge(db_path: Path, ke_id: str, status: str, category: str = "b
     finally:
         conn.close()
 
+
 # ---------------------------------------------------------------------------
 # 1. 初始化与上下文管理器
 # ---------------------------------------------------------------------------
+
 
 class TestInit:
     def test_context_manager(self, tmp_sqlite: Path) -> None:
@@ -132,9 +139,11 @@ class TestInit:
         eng.close()
         eng.close()  # 第二次不应抛出
 
+
 # ---------------------------------------------------------------------------
 # 2. 参数校验（SQL 注入防护）
 # ---------------------------------------------------------------------------
+
 
 class TestParameterValidation:
     def test_invalid_period_raises(self, engine: OLAPEngine) -> None:
@@ -158,9 +167,11 @@ class TestParameterValidation:
             rows = engine.task_progress_trend(period=p, limit=1)
             assert isinstance(rows, list)
 
+
 # ---------------------------------------------------------------------------
 # 3. task_progress_trend
 # ---------------------------------------------------------------------------
+
 
 class TestTaskProgressTrend:
     def test_empty_db_returns_empty_list(self, engine: OLAPEngine) -> None:
@@ -190,9 +201,11 @@ class TestTaskProgressTrend:
         assert isinstance(rows_p0, list)
         assert isinstance(rows_p1, list)
 
+
 # ---------------------------------------------------------------------------
 # 4. compliance_rate_trend
 # ---------------------------------------------------------------------------
+
 
 class TestComplianceRateTrend:
     def test_empty_db_returns_empty_list(self, engine: OLAPEngine) -> None:
@@ -212,9 +225,11 @@ class TestComplianceRateTrend:
                 assert "compliance_rate" in row
                 assert 0.0 <= row["compliance_rate"] <= 1.0
 
+
 # ---------------------------------------------------------------------------
 # 5. knowledge_activation_trend
 # ---------------------------------------------------------------------------
+
 
 class TestKnowledgeActivationTrend:
     def test_empty_db_returns_empty_list(self, engine: OLAPEngine) -> None:
@@ -233,9 +248,11 @@ class TestKnowledgeActivationTrend:
                 assert "activation_rate" in row
                 assert 0.0 <= row["activation_rate"] <= 1.0
 
+
 # ---------------------------------------------------------------------------
 # 6. get_gate_summary / get_knowledge_summary
 # ---------------------------------------------------------------------------
+
 
 class TestSummaryMethods:
     def test_gate_summary_empty_db(self, engine: OLAPEngine) -> None:

@@ -3,7 +3,7 @@ module_id: OPS-VC-005
 title: Vibe Coding 会话门禁检查清单
 doc_type: operational_rule
 status: active
-version: "0.2.0"
+version: "0.3.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "Vibe Coding 会话开始前必须完成的检查清单——上下文加载、规则确认、安全检查。任何一项未通过，禁止开始操作。scaffold MVP 后已从纯手动升级为半自动化：10/12 项有对应的 pre-commit GATE 或自动化脚本覆盖。"
+summary: "Vibe Coding 会话开始前必须完成的检查清单——上下文加载、规则确认、安全检查。任何一项未通过，禁止开始操作。scaffold MVP 后已从纯手动升级为半自动化：v0.3.0 重新校准自动化覆盖映射——GATE 覆盖 = 代码结构合规性校验，不等同于 AI 已阅读对应政策文档。A1/A2 无法脚本化，D1 无 GATE 覆盖。"
 tags: [vibe-coding, gate, checklist, operational]
 rule_form: procedural
 scope: global
@@ -26,13 +26,13 @@ depends_on:
 
 # Vibe Coding 会话门禁检查清单
 
-> module_id: OPS-VC-005 | version: 0.2.0 | status: active | layer: cross_layer
+> module_id: OPS-VC-005 | version: 0.3.0 | status: active | layer: cross_layer
 
 ## 1. 目的
 
 本检查清单定义 Vibe Coding 会话开始前必须完成的检查项。任何一项未通过，禁止开始操作。
 
-**自动化状态（v0.2.0）**：10/12 项已由 pre-commit GATE 或审计脚本覆盖。AI 会话开始时不需手动逐项打勾——运行 `python scripts/governance/run_all.py --dimensions D3 D5` 即可自动校验大部分项目。剩余 2 项（A1/A2）为 AI 上下文加载确认，无法脚本化，仍需 AI 自检。
+**自动化状态（v0.3.0）**：重新校准自动化覆盖映射。"✅ GATE-XX" = 该 GATE 在校验对应领域的文件结构/格式合规性（如 UTF-8 编码、frontmatter 字段、目录位置）。"⚠️" = GATE 部分覆盖——结构校验通过，但 AI 仍需确认已读取对应政策文档。A1/A2/D1 无法脚本化，仍需 AI 自检。
 
 ## 2. 检查清单
 
@@ -50,7 +50,7 @@ depends_on:
 |---|--------|---------|-----------|:---:|
 | B1 | 行为边界已确认 | 已读取 PS-STD-003，知道哪些操作绝对禁止 | 读取 behavior-boundaries-standard.md | ✅ GATE-14 + GATE-16 |
 | B2 | 幻觉自检已通过 | 按幻觉自检流程执行 | 读取 ai-hallucination-self-check-policy.md | ✅ GATE-15 |
-| B3 | 双编辑器规则已确认 | 知道当前使用哪个编辑器、哪些文件可编辑 | 读取 dual-editor-collaboration-policy.md | ✅ GATE-16 |
+| B3 | 双编辑器规则已确认 | 知道当前使用哪个编辑器、哪些文件可编辑 | 读取 dual-editor-collaboration-policy.md | ⚠️ GATE-16（结构合规） |
 
 ### C. 安全检查（3 项）| 自动化：3/3
 
@@ -64,7 +64,7 @@ depends_on:
 
 | # | 检查项 | 通过条件 | 未通过处理 | 自动化 |
 |---|--------|---------|-----------|:---:|
-| D1 | 当前环境已确认 | 知道当前是 dev 还是 prod 环境 | 参见 GOV-AI-001 §7.1 | ✅ GATE-16 |
+| D1 | 当前环境已确认 | 知道当前是 dev 还是 prod 环境 | 参见 GOV-AI-001 §7.1 | ❌ 人工 |
 | D2 | 权限模式已确认 | 知道当前环境的 AI 自治权限 | 参见 GOV-AI-001 §7.2 | ✅ GATE-14 |
 
 ## 3. 检查结果记录

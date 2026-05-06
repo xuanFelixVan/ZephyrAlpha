@@ -1,6 +1,6 @@
 ---
 doc_type: index
-status: active
+status: Draft
 title: "rollback-system — 目录索引"
 version: "1.0.0"
 created: "2026-05-05"

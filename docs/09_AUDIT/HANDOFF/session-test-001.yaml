@@ -1,0 +1,22 @@
+---
+session_id: "test-001"
+created_at: "2026-05-06T08:23:19.321088+00:00"
+completed_tasks:
+  - "CP-1"
+  - "CP-2"
+in_progress_tasks:
+  - task_id: "CP-3"
+    step: "pending"
+    next_step: "CP-3: Session Continuity"
+blocked_items:
+  - task_id: "OPS-001"
+    reason: "depends on SRC-042"
+decisions_made:
+next_actions:
+  - priority: 1
+    action: "CP-4: Next task"
+    task_ref: "CP-4"
+context_summary: "完成 2 个任务, 1 个进行中, 1 个阻塞. 总计 4 个任务有活动记录."
+open_questions:
+  - "阻塞任务 OPS-001 的解除条件是否仍然有效？是否需要 Owner 介入？"
+  - "上一个 session 的变更是否需要同步更新对应的蓝图文档？"

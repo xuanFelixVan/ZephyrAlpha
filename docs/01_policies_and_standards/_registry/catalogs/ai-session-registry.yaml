@@ -28,7 +28,7 @@ last_updated: "2026-05-02"
 ai_autonomy: human_gated
 ttl: permanent
 total_sessions: 0
-note: "beta 落地前为空登记表——仅 Schema 骨架。当前 session 记录以 .md 格式存放在外部开发工作区 session-logs/ 下。scripts/hooks/auto-handoff-log.py 在每次 session 末尾自动生成交接工单。"
+note: "beta 落地前为空登记表——仅 Schema 骨架。交接日志：① post-commit 每次 commit 后生成（需 pre-commit install --hook-type post-commit）；② manual：pre-commit run handoff-log-generate --hook-stage manual（工作区 diff）。Session 主日志仍以 .md 存放于外部工作区 session-logs/。"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -96,7 +96,7 @@ transition_period:
   note: "2 过渡期——session 记录以两种方式存在"
   current_methods:
     - {method: "Session Log .md", path: "外部开发工作区/session-logs/*", format: "markdown prose"}
-    - {method: "auto-handoff-log.py", path: "scripts/hooks/auto-handoff-log.py", format: "hook-generated structured text"}
+    - {method: "auto-handoff-log.py（pre-commit manual）", path: "scripts/hooks/auto-handoff-log.py", format: "hook-generated structured text", trigger: "pre-commit run handoff-log-generate --hook-stage manual"}
   migration_phase: "beta"
   migration_trigger: "当 Session Log 条数> 50 时，脚本自动抽取摘要填充本 YAML"
 

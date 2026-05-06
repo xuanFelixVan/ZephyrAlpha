@@ -18,7 +18,7 @@ safety_level: L
 数据源：SQLite + DuckDB + ChromaDB
 
 启动方式：
-    streamlit run src/zephyr/dashboard/app.py
+    streamlit run src/zephyr/l08_human_ai_interface/dashboard/app.py
 """
 
 from __future__ import annotations
@@ -55,11 +55,14 @@ from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
     fetch_task_progress,
     render_task_progress,
 )
+from zephyr.db.task_repo import TaskRepository
+from zephyr.db.sqlite_schema import init_db
 
 __all__ = [
     "DashboardApp",
     "create_app",
 ]
+
 
 class DashboardApp:
     """Streamlit 仪表盘应用。
@@ -118,12 +121,14 @@ class DashboardApp:
         else:
             return {"error": f"Unknown page: {page_name}"}
 
+
 def create_app(
     task_repo: Any | None = None,
     kb_repo: Any | None = None,
     olap_engine: Any | None = None,
 ) -> DashboardApp:
     return DashboardApp(task_repo=task_repo, kb_repo=kb_repo, olap_engine=olap_engine)
+
 
 def main() -> None:
     if st is None:
@@ -149,7 +154,8 @@ def main() -> None:
         ],
     )
 
-    app = create_app()
+    init_db()
+    app = create_app(task_repo=TaskRepository())
 
     if page == "Task Progress":
         st.header("Task Progress (4)")
@@ -205,6 +211,7 @@ def main() -> None:
         if data.knowledge_activation:
             st.subheader("Knowledge Activation Trend")
             st.dataframe(data.knowledge_activation)
+
 
 if __name__ == "__main__":
     main()

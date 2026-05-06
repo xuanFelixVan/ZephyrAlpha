@@ -45,6 +45,7 @@ from typing import Any
 import yaml
 
 from zephyr.mcp._base_server import BaseMCPServer
+from zephyr.shared.paths import REPO_ROOT
 
 __all__ = ["BlueprintSearchServer", "main"]
 
@@ -59,11 +60,9 @@ SERVER_DESCRIPTION = (
 )
 
 # ---------------------------------------------------------------------------
-# Path resolution
+# Path resolution（与全仓 SSoT paths 对齐）
 # ---------------------------------------------------------------------------
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT = _FILE.parents[3]
 ROUTING_YAML_PATH = REPO_ROOT / "config" / "blueprint_routing.yaml"
 BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
 

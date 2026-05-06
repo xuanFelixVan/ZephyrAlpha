@@ -1,4 +1,4 @@
-﻿# ============================================
+# ============================================
 # ZephyrAlpha v2.0 .gitignore
 # ============================================
 
@@ -99,12 +99,19 @@ Thumbs.db
 .runtime/
 .trae_cache/
 
+# AI file lock registry (runtime state, not config)
+.ailocks/
+
 # AI Generated files
 *.generated.md
 *.generated.json
 *.scan_result.json
 *.tmp.md
 *.tmp.json
+
+# Root scratch from ad-hoc YAML/tooling (ZERO-RESIDUE; must not be committed)
+/_temp*.yaml
+/_temp*.py
 
 # Temp and backup
 *.bak
@@ -123,3 +130,7 @@ _DO_NOT_USE_old_tree/
 # Migration artifact directories
 _backup_
 _migration_conflict_backup/
+
+# Governance JSONL reports
+scripts/reports/*.jsonl
+

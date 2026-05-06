@@ -1,15 +1,32 @@
-schema_version: "1.0.0"
+schema_version: 1.1.0
 partition:
   id: l10
   name: Compliance
   track: c_track
   layer_position: 10
   runtime_plane: warm
-  status: skeleton
-
+  status: implemented
 modules:
-  []
-
+- id: l10-layer-ssot
+  module_id: MOD-L10-001
+  name: Compliance（层登记占位）
+  submodule_path: src/zephyr/l10_compliance/
+  status: implemented
+  priority: P0
+  runtime_plane: warm
+  description: 合规层。SecurityGateway + ComplianceEngine 双 OCP 扩展点 + AISG Sandbox 测试器。
+  files:
+  - aisg_sandbox.py
+  - compliance_manager.py
+  - default_security_gateway.py
+  - security_gateway_base.py
+  interfaces:
+  - contract_id: CTR-P1-012
+    role: both
+    description: ComplianceRule — 本层定义并发布至 L04, L06, L10
+  adr_ref: []
 summary:
-  total: 0
-  note: "骨架占位层——仅 __init__.py (N/A — 骨架占位，尚未实现)"
+  total: 1
+  by_status:
+    implemented: 1
+  note: Phase B 骨架就位——SecurityGateway + ComplianceEngine + AISG Sandbox 已定义

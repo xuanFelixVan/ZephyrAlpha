@@ -418,7 +418,7 @@ phase: N
 transition_to: N+1
 date: 2026-XX-XX
 reviewer: ZephyrAlpha-Owner
-status: approved
+status: Active
 ---
 
 # Phase N 验收记录

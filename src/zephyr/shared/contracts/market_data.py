@@ -1,16 +1,17 @@
-from __future__ import annotations
-
+# ==== BEGIN CODGEN:CTR-001 ====
 from dataclasses import dataclass, field
-from datetime import datetime
+
+from datetime import datetime, timezone
 from decimal import Decimal
+from typing import List
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -20,9 +21,9 @@ CTR-001: NormalizedMarketData / 标准化行情数据
 
 L00 → L02 核心数据契约。质量门禁通过后的标准化行情数据。
 
-SSoT: cross-layer-contracts.yaml → CTR-001
+SSoT: cross-layer-contracts.yaml -> CTR-001
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -32,24 +33,64 @@ AI Prompt
 
 @dataclass(frozen=True)
 class NormalizedMarketData:
-    symbol: str
-    data_source: str
-    timestamp: datetime
-    open: Decimal
-    high: Decimal
-    low: Decimal
     close: Decimal
+    data_source: str
+    high: Decimal
+    idempotency_key: str
+    low: Decimal
+    open: Decimal
+    symbol: str
+    timestamp: datetime
     volume: Decimal
-    quality_score: float = 1.0
-    is_suspended: bool = False
-    timeout_ms: int = 5000
-    retry_policy: str = "exponential_backoff"
-    config_load_timeout_ms: int = 1000
-    config_load_retry_policy: str = "linear"
-    max_retries: int = 3
-    schema_version: str = "1.0"
-    amount: Optional[Decimal] = None
     adj_factor: Optional[Decimal] = None
-    ingested_at: Optional[datetime] = None
-    trace_context: Optional[TraceContext] = None
+    amount: Optional[Decimal] = None
+    config_load_retry_policy: str = "linear"
+    config_load_timeout_ms: int = 1000
     exceptions: List[str] = field(default_factory=list)
+    ingested_at: Optional[datetime] = None
+    is_suspended: bool = False
+    max_retries: int = 3
+    quality_score: float = 1.0
+    retry_policy: str = "exponential_backoff"
+    schema_version: str = "1.0"
+    timeout_ms: int = 5000
+    trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-001 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

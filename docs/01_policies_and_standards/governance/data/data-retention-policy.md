@@ -2,9 +2,9 @@
 module_id: GOV-DATA-003
 title: 数据保留策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

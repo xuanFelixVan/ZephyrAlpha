@@ -8,7 +8,7 @@ graph TB
     end
 
     subgraph Warm["Warm Path 集群（容器 / K8s）"]
-        WH["Linux VM / 容器 Pod<br/>Python 3.12 + asyncio<br/>Gunicorn + Uvicorn workers"]
+        WH["Linux VM / 容器 Pod<br/>Python >=3.11 + asyncio<br/>Gunicorn + Uvicorn workers"]
         WSW["FastAPI / Celery / Redis Streams<br/>策略信号 / OMS 状态机 / AI Agents"]
         WH --> WSW
     end

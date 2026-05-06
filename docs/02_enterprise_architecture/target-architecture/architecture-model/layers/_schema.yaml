@@ -13,10 +13,20 @@
 #   - 抱负扩展定义的是计划添加但尚未全覆盖的字段
 #   - 两者之间的"gap"应在 changelog 中追踪
 
-schema_version: "3.1.0"
+schema_version: "3.2.1"
 data_schema_version_note: "数据文件中的 schema_version: 2.0 是数据格式版本（与 _schema.yaml 版本独立），不需要同步升级"
 description: "ZephyrAlpha 2.0 模块运营 Schema 定义（GATE-SUM 对账基准）"
+root_architecture_model_note: >
+  仓库根目录 architecture-model/layers/*.yaml 另有专用约束文件 layers/_schema.yaml
+  （v1.1：status 含 phase_1_partial、interfaces.role 含 internal、CT-* 集成契约）。
+  企业架构树与本文件并存时，按路径选用词表。
 
+
+id_namespace_note: >
+  本文件中模块条目的 id 字段（如 l00-connectors-default）为施工层 slug，与
+  docs/03_modules/module-registry.yaml 的 module_id（MOD-*）是不同命名空间：slug 用于
+  layers/*.yaml 文件内索引；MOD-* 用于蓝图与登记对账。二者通过 submodule_path / 路径
+  与业务含义关联，不得混用在同一条校验规则中。
 # ============================================================================
 # 运营 Schema（当前所有 112 个模块实际使用（含 4 deferred）——代码真实状态）
 # ============================================================================
@@ -46,13 +56,15 @@ operational_schema:
   status:
     type: enum
     required: true
-    values: [planned, deferred, active, deprecated]
+    values: [planned, deferred, active, deprecated, implemented, skeleton, phase_1_partial]
     description: >
       模块实现状态（代码级生命周期）。
       planned = 已规划设计但尚未编码（TOGAF 渐进式填充，骨架文件合法状态）。
       deferred = 已规划设计但显式推迟至未来阶段（区别于 planned：不在当前路线图上）。
       active = 已编码并通过测试，当前运行中。
       deprecated = 已废弃，保留历史记录。
+      implemented / skeleton = 仓库根 architecture-model 分区成熟度（与上列四态并列；校验时按 YAML 所在树选择解释）。
+      phase_1_partial = 长周期模块（如 FLE）施工中态，与根目录 architecture-model 对齐。
     note: >
       与 ssot-authority-map.md §二 定义的【文档生命周期状态】（Draft/Review/Active/Superseded/Deprecated/Retired）
       是两个完全不同的领域。字段名相同（都叫 status），但适用对象不同。
@@ -91,19 +103,30 @@ operational_schema:
       contract_id:
         type: string
         required: true
-        pattern: "^(CTR|OCP|EXT|AI-GOV)-[A-Z0-9-]+$"
-        description: "跨层契约 ID，必须在 cross-layer-contracts.yaml 中存在"
+        pattern: >-
+          ^(CT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|EXT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|CTR-[A-Z0-9-]+|OCP-[A-Z0-9-]+|AI-GOV-[A-Z0-9-]+|EXT-[A-Z0-9-]+)$
+        description: >
+          跨层或集成契约 ID。CT-*-*-*-NNN 登记于 MOD-MASTER-001；CTR-*
+          须在 cross-layer-contracts.yaml；EXT-* 为扩展登记（含 -NNN 或简短形式）。
       role:
         type: enum
         required: true
-        values: [producer, consumer, both]
-        description: "producer=提供接口（数据/事件的生产方），consumer=消费接口（数据/事件消费方），both=双向"
+        values: [producer, consumer, both, internal]
+        description: >
+          producer=提供接口；consumer=消费方；both=双向；
+          internal=系统内部子域耦合（根 architecture-model / FLE 扩展用法）。
       description:
         type: string
         required: false
         description: "接口用途说明"
 
   # === 可选字段 ===
+  module_id:
+    type: string
+    required: false
+    pattern: "^MOD-[A-Z0-9-]+$"
+    description: "可选。对应 docs/03_modules/module-registry.yaml（根 architecture-model 已采用）。"
+
   adr_ref:
     type: array
     items:
@@ -170,6 +193,18 @@ aspirational_extensions:
 # 变更日志
 # ============================================================================
 changelog:
+  - version: "3.2.1"
+    date: "2026-05-05"
+    changes:
+      - "status 枚举增加 phase_1_partial（与根 architecture-model FLE 对齐）"
+      - "interfaces.role 增加 internal"
+  - version: "3.2.0"
+    date: "2026-05-05"
+    changes:
+      - "status 枚举补充 implemented/skeleton（根 architecture-model 分区词表）"
+      - "contract_id 正则纳入 CT-*-*-*-NNN（MOD-MASTER-001）与 EXT-*-*-*-NNN"
+      - "新增可选 module_id 字段（module-registry 交叉引用）"
+      - "增加 root_architecture_model_note 指向仓库根 layers/_schema.yaml"
   - version: "3.1.0"
     date: "2026-05-03"
     changes:

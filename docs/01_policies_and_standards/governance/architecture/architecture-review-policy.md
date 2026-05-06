@@ -4,7 +4,7 @@ title: 架构评审门控
 doc_type: policy
 status: active
 version: "1.0.1"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

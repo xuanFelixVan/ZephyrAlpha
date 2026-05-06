@@ -1,15 +1,6 @@
 """
 validate_gate_discipline.py — 门禁纪律校验
 
-__manifest__ = """
-args: []
-description: 门禁纪律校验（COND-33~37 — enable_gate=False+Pydantic静默吞错）
-dimensions:
-- D6
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：COND-33~37（门禁级别动态升降/跳级/生产关闭门禁/AI自签豁免/Pydantic静默吞错）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 门禁纪律校验（COND-33~37 — enable_gate=False+Pydantic静默吞错）
+dimensions:
+- D6
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import sys

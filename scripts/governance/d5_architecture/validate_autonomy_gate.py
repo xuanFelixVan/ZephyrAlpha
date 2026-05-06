@@ -1,16 +1,6 @@
 """
 validate_autonomy_gate.py — 变更级别 vs AI 自治权限交叉校验
 
-__manifest__ = """
-args: []
-description: AI 自治权限门禁校验（ABS-05~10 — 越权检测）
-dimensions:
-- D5
-- D11
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-05~10（AI 不可执行超出其自治等级的变更）
@@ -26,6 +16,17 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: AI 自治权限门禁校验（ABS-05~10 — 越权检测）
+dimensions:
+- D5
+- D11
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys
@@ -62,7 +63,7 @@ def get_recent_commits(max_commits: int = 50) -> list[dict]:
     """获取最近提交记录"""
     try:
         result = subprocess.run(
-            "获取最近提交记录."["git", "log", f"-n{max_commits}", "--pretty=format:%H|%an|%ae|%s|%ci", "--name-only"],
+            ["git", "log", f"-n{max_commits}", "--pretty=format:%H|%an|%ae|%s|%ci", "--name-only"],
             capture_output=True,
             text=True,
             encoding="utf-8",

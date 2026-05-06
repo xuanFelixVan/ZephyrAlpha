@@ -46,22 +46,10 @@ from zephyr.mcp.gate_engine_server import GateEngineServer
 from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.mcp.sentinel_server import SentinelServer
 
-# TaskManagerServer refactored to FastMCP — skip E2E until steps 5-6 implemented
-# 当前状态: task_manager_server.py 的 create_task/list_tasks/update_status 均为 GATE_BLOCKED 空壳
-# 解除条件: 步骤5-6 TaskLifecycleManager 补齐后，tool 函数有真实逻辑，E2E 可重写适配 FastMCP Client
-try:
-    from zephyr.mcp.task_manager_server import TaskManagerMCP as TaskManagerServer
-except ImportError:
-    TaskManagerServer = None  # type: ignore[assignment]
-
-pytest.skip(
-    "BLOCKED: 依赖 TaskLifecycleManager（步骤5-6）——task_manager_server.py tool 函数均为 GATE_BLOCKED 空壳，待补齐后 E2E 可重写适配 FastMCP Client",
-    allow_module_level=True,
-)
-
 # ---------------------------------------------------------------------------
 # 辅助：JSON-RPC 请求构造 + 结果解析
 # ---------------------------------------------------------------------------
+
 
 def _req(
     method: str,
@@ -74,6 +62,7 @@ def _req(
         r["params"] = params
     return r
 
+
 def _call(
     server: BaseMCPServer,
     method: str,
@@ -82,6 +71,7 @@ def _call(
 ) -> dict[str, Any]:
     """向 Server 发送请求并返回原始响应。"""
     return cast(dict[str, Any], server.handle_request(_req(method, params, req_id)))
+
 
 def _tool(
     server: BaseMCPServer,
@@ -92,15 +82,18 @@ def _tool(
     """封装 tools/call 调用。"""
     return _call(server, "tools/call", {"name": name, "arguments": arguments}, req_id)
 
+
 def _result(resp: dict[str, Any]) -> Any:
     """断言无 error，返回 result。"""
     assert "error" not in resp, f"Unexpected error: {resp.get('error')}"
     return resp["result"]
 
+
 def _error(resp: dict[str, Any]) -> dict[str, Any]:
     """断言有 error，返回 error 字段。"""
     assert "error" in resp, f"Expected error, got result: {resp.get('result')}"
     return cast(dict[str, Any], resp["error"])
+
 
 def _tool_result_text(resp: dict[str, Any]) -> Any:
     """提取 tools/call 成功响应中 content[0].text 并 JSON 解析。"""
@@ -108,6 +101,7 @@ def _tool_result_text(resp: dict[str, Any]) -> Any:
     assert r["isError"] is False
     text: str = r["content"][0]["text"]
     return json.loads(text)
+
 
 def _stdio_roundtrip(
     server: BaseMCPServer,
@@ -121,15 +115,17 @@ def _stdio_roundtrip(
     raw = out.getvalue().strip()
     return [json.loads(line) for line in raw.splitlines() if line.strip()]
 
+
 # ===========================================================================
 # 1. JSON-RPC 2.0 协议合规性验证
 # ===========================================================================
+
 
 class TestProtocolCompliance:
     """JSON-RPC 2.0 协议合规性——与 Server 无关的通用约束。"""
 
     def setup_method(self) -> None:
-        self.server = TaskManagerServer()
+        self.server = KnowledgeBaseServer()
 
     def test_response_jsonrpc_version_always_2_0(self) -> None:
         """所有成功响应必须含 jsonrpc='2.0'。"""
@@ -177,12 +173,20 @@ class TestProtocolCompliance:
 
     def test_tools_call_content_is_json_serializable(self) -> None:
         """tools/call 返回的 content[0].text 必须是合法 JSON 字符串。"""
-        self.server._create_task(
-            task_id="T-0-E2E-1",
-            phase=0,
-            directive="test",
+        _tool_result_text(
+            _tool(
+                self.server,
+                "knowledge_base.upsert_ke",
+                {
+                    "ke_id": "KE-099",
+                    "title": "protocol json test",
+                    "category": "best_practice",
+                    "content": "json roundtrip content for mcp e2e",
+                    "source_file": "tests/integration/test_mcp_e2e.py",
+                },
+            )
         )
-        resp = _tool(self.server, "task_manager.get_task", {"task_id": "T-0-E2E-1"})
+        resp = _tool(self.server, "knowledge_base.get_ke", {"ke_id": "KE-099"})
         r = _result(resp)
         text = r["content"][0]["text"]
         parsed = json.loads(text)
@@ -201,74 +205,13 @@ class TestProtocolCompliance:
         ids = [r["id"] for r in responses]
         assert ids == [10, 20, 30]
 
-# ===========================================================================
-# 2. TaskManagerServer 完整生命周期
-# ===========================================================================
 
-class TestLifecycleTaskManager:
-    """task_manager Server: initialize → tools/list → CRUD → 状态流转。"""
+# Task Manager 已迁移至 FastMCP——JSON-RPC 生命周期测例见 tests/unit/test_task_manager_mcp.py
 
-    def setup_method(self) -> None:
-        self.server = TaskManagerServer()
 
-    def test_initialize_returns_server_info(self) -> None:
-        """initialize 响应含 serverInfo.name = 'task_manager'。"""
-        resp = _call(self.server, "initialize")
-        info = _result(resp)["serverInfo"]
-        assert info["name"] == TaskManagerServer.SERVER_ID
-
-    def test_tools_list_has_expected_tools(self) -> None:
-        """tools/list 必须包含 4 个工具。"""
-        resp = _call(self.server, "tools/list")
-        tools = _result(resp)["tools"]
-        names = {t["name"] for t in tools}
-        assert "task_manager.create_task" in names
-        assert "task_manager.get_task" in names
-        assert "task_manager.list_tasks" in names
-        assert "task_manager.update_status" in names
-
-    def test_full_lifecycle_create_get_update(self) -> None:
-        """create_task → get_task → update_status → verify 完整流程。"""
-        # 1. 创建任务
-        create_resp = _tool(
-            self.server,
-            "task_manager.create_task",
-            {"task_id": "T-0-LC-001", "phase": 0, "directive": "e2e lifecycle test"},
-            req_id="lc-1",
-        )
-        task = _tool_result_text(create_resp)
-        assert task["status"] == "PENDING"
-        assert create_resp["id"] == "lc-1"
-
-        # 2. 读取任务
-        get_resp = _tool(
-            self.server,
-            "task_manager.get_task",
-            {"task_id": "T-0-LC-001"},
-            req_id="lc-2",
-        )
-        fetched = _tool_result_text(get_resp)
-        assert fetched["task_id"] == "T-0-LC-001"
-        assert get_resp["id"] == "lc-2"
-
-        # 3. 推进状态
-        upd_resp = _tool(
-            self.server,
-            "task_manager.update_status",
-            {"task_id": "T-0-LC-001", "new_status": "READY"},
-            req_id="lc-3",
-        )
-        upd = _tool_result_text(upd_resp)
-        assert upd["new_status"] == "READY"
-        assert upd_resp["id"] == "lc-3"
-
-        # 4. 验证最新状态
-        final = _tool_result_text(_tool(self.server, "task_manager.get_task", {"task_id": "T-0-LC-001"}))
-        assert final["status"] == "READY"
-
-# ===========================================================================
 # 3. KnowledgeBaseServer 完整生命周期
 # ===========================================================================
+
 
 class TestLifecycleKnowledgeBase:
     """knowledge_base Server: initialize → tools/list → upsert → search → rebuild。"""
@@ -342,9 +285,11 @@ class TestLifecycleKnowledgeBase:
         assert got["ke_id"] == "KE-100"
         assert got["title"] == "GetKE test"
 
+
 # ===========================================================================
 # 4. GateEngineServer 完整生命周期
 # ===========================================================================
+
 
 class TestLifecycleGateEngine:
     """gate_engine Server: initialize → tools/list → G1/G2/G4 → exemption。"""
@@ -418,9 +363,11 @@ class TestLifecycleGateEngine:
         assert r["accepted"] is True
         assert r["exemption_id"].startswith("EX-G1.1-")
 
+
 # ===========================================================================
 # 5. DocGuardServer 完整生命周期
 # ===========================================================================
+
 
 class TestLifecycleDocGuard:
     """session_handoff Server: initialize → tools/list → create_package → validate。"""
@@ -482,9 +429,11 @@ class TestLifecycleDocGuard:
         assert "event_id" in r
         assert "delivered_at" in r
 
+
 # ===========================================================================
 # 6. SentinelServer 完整生命周期
 # ===========================================================================
+
 
 class TestLifecycleSentinel:
     """intent_router Server: initialize → tools/list → map_intent → golden_set。"""
@@ -553,9 +502,11 @@ class TestLifecycleSentinel:
         )
         assert map_r["primary_domain"] == "D0"
 
+
 # ===========================================================================
 # 7. stdio 传输层模拟测试
 # ===========================================================================
+
 
 class TestStdioTransport:
     """stdio 传输层：多请求批量、无效 JSON 恢复、空行跳过。"""
@@ -595,47 +546,31 @@ class TestStdioTransport:
         assert len(lines) == 1
         assert json.loads(lines[0])["id"] == 7
 
+
 # ===========================================================================
 # 8. 跨 Server 调用链测试（task_manager → gate_engine → knowledge_base）
 # ===========================================================================
 
+
 class TestCrossServerChain:
     """
-    跨服务调用链：
-      ① task_manager 创建任务
-      ② gate_engine G4 契约校验任务 payload
+    跨服务调用链（JSON-RPC BaseMCPServer）：
+      ① 合成 Task 形状 payload（与 Task Manager 工具解耦）
+      ② gate_engine G4 契约校验
       ③ knowledge_base 存储审计知识条目
-    模拟 AI Agent 调用多 MCP Server 的真实场景。
     """
 
     def setup_method(self) -> None:
-        self.tm = TaskManagerServer()
         self.ge = GateEngineServer()
         self.kb = KnowledgeBaseServer()
 
-    def test_chain_task_create_gate_validate_kb_store(self) -> None:
-        """完整三步调用链：创建任务 → 门禁验证 → 知识库存储。"""
-        # Step 1: task_manager 创建任务
-        task = _tool_result_text(
-            _tool(
-                self.tm,
-                "task_manager.create_task",
-                {
-                    "task_id": "T-0-CHAIN-001",
-                    "phase": 0,
-                    "directive": "cross-server chain test",
-                    "safety_level": "M",
-                },
-            )
-        )
-        assert task["status"] == "PENDING"
-
-        # Step 2: gate_engine G4 校验该任务 payload
+    def test_chain_task_payload_gate_validate_kb_store(self) -> None:
+        """G4 契约校验代表性 Task payload → knowledge_base upsert。"""
         gate_payload = {
-            "task_id": task["task_id"],
-            "phase": task["phase"],
-            "status": task["status"],
-            "directive": task["directive"],
+            "task_id": "SRC-001",
+            "phase": 0,
+            "status": "PENDING",
+            "directive": "cross-server chain test synthetic payload",
         }
         gate_r = _tool_result_text(
             _tool(
@@ -646,15 +581,14 @@ class TestCrossServerChain:
         )
         assert gate_r["passed"] is True
 
-        # Step 3: knowledge_base 存储门禁结果作为知识条目
-        ke_content = f"Gate G4 passed for task {task['task_id']}: {gate_r}"
+        ke_content = f"Gate G4 passed for task {gate_payload['task_id']}: {gate_r}"
         ke_r = _tool_result_text(
             _tool(
                 self.kb,
                 "knowledge_base.upsert_ke",
                 {
                     "ke_id": "KE-200",
-                    "title": f"Gate pass record: {task['task_id']}",
+                    "title": f"Gate pass record: {gate_payload['task_id']}",
                     "category": "best_practice",
                     "content": ke_content,
                     "source_file": "cross-server-chain",
@@ -693,18 +627,8 @@ class TestCrossServerChain:
         )
         assert "event_id" in event_r
 
-    def test_chain_task_status_progression_with_gate(self) -> None:
-        """任务状态流转结合门禁结果：PENDING → READY → IN_PROGRESS。"""
-        # 创建任务
-        _tool_result_text(
-            _tool(
-                self.tm,
-                "task_manager.create_task",
-                {"task_id": "T-0-CHAIN-003", "phase": 1, "directive": "status progression test"},
-            )
-        )
-
-        # 门禁 G3 阶段验收（phase 0 → 1 合法）
+    def test_chain_g3_phase_passes_standalone(self) -> None:
+        """G3 阶段门禁可独立通过（不依赖 task_manager JSON-RPC）。"""
         g3_r = _tool_result_text(
             _tool(
                 self.ge,
@@ -713,22 +637,3 @@ class TestCrossServerChain:
             )
         )
         assert g3_r["passed"] is True
-
-        # 门禁通过后推进任务状态
-        upd1 = _tool_result_text(
-            _tool(
-                self.tm,
-                "task_manager.update_status",
-                {"task_id": "T-0-CHAIN-003", "new_status": "READY"},
-            )
-        )
-        assert upd1["new_status"] == "READY"
-
-        upd2 = _tool_result_text(
-            _tool(
-                self.tm,
-                "task_manager.update_status",
-                {"task_id": "T-0-CHAIN-003", "new_status": "IN_PROGRESS"},
-            )
-        )
-        assert upd2["new_status"] == "IN_PROGRESS"

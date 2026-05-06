@@ -3,15 +3,9 @@ module_id: CAT-IDX-001
 title: "登记表集中存储目录索引"
 doc_type: index
 status: active
-version: "2.0.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
-classification: confidential
-language: zh
-created_by: human_plus_agent
-date: "2026-05-02"
-ttl: permanent
-summary: "_registry/catalogs/ 目录的导航入口。存放 ZephyrAlpha 项目所有登记表/注册表/清单类型的 YAML 文件。"
+version: "2.1.0"
+date: "2026-05-06"
+summary: "_registry/catalogs/ 导航入口。v2.1.0：**文件/条数与 `registry-master-index`、`rule-catalog`、各登记表 `total_*` 字段对账**；勿使用历史常数（如「38 张」）。"
 tags: [index, catalogs, registry, navigation]
 rule_form: declarative
 scope: global
@@ -31,25 +25,24 @@ ai_autonomy: human_gated
 > 优于按"谁创建了它"分类（对标 Linux FHS——同性质文件放同一目录）。
 > 详见 PS-REG-005 registry-master-index.yaml §1。
 
-## 文件清单（20 entries）
+## 文件清单（本目录 **20** 个文件：**19** 份登记/契约类工件 + **本 index.md**）
 
 | 文件 | 类型 | 说明 | 维护方式 |
 |------|:---:|------|:---:|
-| `registry-master-index.yaml` | 总索引 | 登记表总索引——一站式查找所有38张登记表 | manual |
-| `document-metadata-index.yaml` | 注册表 | 127个文件元数据索引（auto-generated）——取代旧的 master-document-inventory.yaml | auto |
-| `master-document-inventory.yaml` | 清单 | ⛔ deprecated——被 document-metadata-index.yaml 取代（手动 25/131 vs 自动 127/131） | — |
+| `registry-master-index.yaml` | 总索引 | 登记表总索引——`total_registries` / `registries[]` 以本文件为准（**勿写死**） | manual |
+| `document-metadata-index.yaml` | 注册表 | 与 `rule-catalog.yaml` 同步的规则树元数据索引（**141** 条，以生成器为准） | auto |
+| `adr-status-registry.yaml` | 登记表 | ADR 状态登记表（**冻结壳**；活跃决策见 KB / rationale） | manual |
 | `task-card-meta-registry.yaml` | 注册表 | 三套任务卡系统元层管理 | manual |
-| `infrastructure-registry.yaml` | 登记表 | 8个运行时基础设施组件 | manual |
+| `infrastructure-registry.yaml` | 登记表 | **9** 个运行时基础设施组件（以 `total_registered` 为准） | manual |
 | `cross-module-dependency-registry.yaml` | 登记表 | 5条跨模块依赖——含正反向双图 | semi_auto |
 | `script-health-registry.yaml` | 登记表 | 39个治理脚本维度/超时/健康评分 | semi_auto |
 | `ai-risk-register.yaml` | 登记表 | 8个AI操作特有风险——含热力矩阵 | manual |
 | `knowledge-article-registry.yaml` | 登记表 | KMS知识条目索引（beta 落地） | semi_auto |
 | `ai-session-registry.yaml` | 登记表 | AI Session摘要记录（beta 落地） | semi_auto |
 | `frontmatter-field-registry.yaml` | 登记表 | 40个 frontmatter 字段的类型/必填性/枚举值 | manual |
-| `directory-registry.yaml` | 登记表 | 82个目录——职责声明/轨道归属/index.md 存在性 | manual |
-| `gate-registry.yaml` | 登记表 | 34个门禁分 5 类——pre-commit/KMS管道/架构评审/准入/VC | manual |
-| `adr-status-registry.yaml` | 登记表 | 41个 ADR——accepted/superseded/skipped/reserved 状态 | manual |
-| `declarative-contract-tracker.yaml` | 登记表 | 5条声明式契约——YAML 承诺 vs Python 实现的差距跟踪 | manual |
+| `directory-registry.yaml` | 登记表 | **83** 个目录——职责声明/轨道归属/index.md 存在性 | manual |
+| `gate-registry.yaml` | 登记表 | **25** 个门禁（以 `total_gates` 为准）——pre-commit / 架构 / 元数据 等 | manual |
+| `declarative-contract-tracker.yaml` | 登记表 | **11** 条声明式契约跟踪（config 与蓝图承诺 vs 实现） | manual |
 | `frontier-llm-benchmark-ranking.md` | 登记表 | 前沿 LLM 基准排名——模型能力/价格/延迟对比 | manual |
 | `rule-registry.md` | 登记表 | 规则登记表——全部规则的集中发现入口（v1.4.0，从 meta/ 迁入） | manual |
 | `registry-of-registries.yaml` | 契约 | 登记表的登记表——跨登记表共享字段一致性契约（v1.1.0，从 meta/ 迁入） | manual |

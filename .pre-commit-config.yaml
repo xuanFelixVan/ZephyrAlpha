@@ -1,6 +1,59 @@
 # ZephyrAlpha 2.0 — Pre-commit GATE 门禁配置
 # Sprint 0 批次F (F-03): 接入5个核心架构GATE检查
 #
+# ============================================================================
+# Warn-Only → Hard-Block 过渡计划 (Phase A → Phase B)
+# ============================================================================
+#
+# 当前状态 (2026-05-05): 8 个 GATE 处于 warn-only 骨架阶段
+# 设计原则: Phase A 骨架阶段先跑数据收集，Phase B 施工阶段转为硬阻断
+#
+# 过渡触发条件 (每个 GATE 独立评估):
+#   a) warn-only 连续 30 天零新增违规 (稳定期)
+#   b) 所有存量违规清零或归档为已知问题并记录 Owner
+#   c) 对应层的 Phase B 实现代码达到 "functional" 状态
+#
+# 过渡时间表:
+#
+#   GATE-12 (蓝图真源准入)      → 目标 2026-Q3 转硬阻断
+#     依赖: L02/L03 蓝图全部完成 Provenance 标注
+#     当前违规数: 待扫描确认
+#
+#   GATE-13 (蓝图重叠检测)      → 目标 2026-Q3 转硬阻断
+#     依赖: Component Registry 建成
+#     当前违规数: 待扫描确认
+#
+#   GATE-14 (AI权限注册表)      → 目标 2026-Q2 转硬阻断
+#     依赖: 权限注册表完成三轮审计
+#     当前违规数: 待扫描确认
+#
+#   GATE-15 (Frontmatter元数据)  → 目标 2026-Q2 转硬阻断
+#     依赖: metadata-registry.md v3.0.0 全面推广
+#     当前违规数: 待扫描确认
+#
+#   GATE-16 (架构合规)          → 目标 2026-Q3 转硬阻断
+#     依赖: architecture-contract.yaml 全覆盖验证
+#     当前违规数: 待扫描确认
+#
+#   GATE-IDX (索引-实际同步)    → 目标 2026-Q2 转硬阻断
+#     依赖: 所有 index.md 完成自动生成改造
+#     当前违规数: 待扫描确认
+#
+#   GATE-DD07 (_shared API重定义) → 目标 2026-Q2 转硬阻断
+#     依赖: 所有 bypass 实例修复完成
+#     当前违规数: 待扫描确认
+#
+#   GATE-22 (AI加载路径完整性)  → 目标 2026-Q3 转硬阻断
+#     依赖: AGENTS.md §8.2 路径映射 100% 准确
+#     当前违规数: 待扫描确认
+#
+# 执行: 转硬阻断时只需将 args 中的 --warn-only 改为 --ci
+#       例如: args: ["--warn-only"] → args: ["--ci"]
+#
+# 负责人: Architecture Owner (需在 invariants.yaml 中指定)
+# 审查周期: 每两周一次 GATE health review
+# ============================================================================
+#
 # 使用方式:
 #   cd
 #   pre-commit install
@@ -8,6 +61,10 @@
 #
 # GATE 脚本路径:
 #   scripts/governance/d5_architecture/check_architecture_gates.py
+
+# 安装时同时注册 post-commit / commit-msg（Handoff / Conventional Commits）
+#   pre-commit install --hook-type pre-commit --hook-type post-commit --hook-type commit-msg
+default_install_hook_types: [pre-commit, post-commit, commit-msg]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -117,7 +174,7 @@ repos:
       - id: gate-12-blueprint-provenance
         name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
         entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
@@ -125,23 +182,24 @@ repos:
         description: "蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段 warn-only"
 
       # ── GATE-14: AI 自治权限注册表自校验（Wave 0 终审 R74 · V-11）──
-      # 权威依据：docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md
+      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md
+      # （governance/ai/ 下为 deprecated 桩，勿作为校验路径）
       # 真源声明：rationale-log R74 兜底缺口 V-11 / T-V2-003
-      # 校验范围：ai-autonomy-authority-registry.md 中的权限标注
+      # 校验范围：ai-autonomy-authority-registry.md（上述 catalogs 路径）中的权限标注
       # 校验内容：三层权限值合法 / 必填字段完整 / 模块无重复 / 章节覆盖率 / Immutable Core 最低数量
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-14-authority-registry
         name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
         entry: python scripts/governance/d5_architecture/validate_authority_registry.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
-        files: "^docs/01_policies_and_standards/ai-autonomy-authority-registry\\.md$"
+        files: "^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\\.md$"
         description: "权限注册表自校验（三层权限值 / 必填字段 / 重复模块 / 章节覆盖 / Immutable Core 最低数量），骨架阶段 warn-only"
 
       # ── GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 · T-V2-011）──
-      # 权威依据：docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md §2.11
+      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md §2.11
       # 真源声明：Wave 1 V-14 兜底 / T-V2-011
       # 校验范围：docs/19_development_workspace/drafts-and-audits/ 下草稿的 components 字段
       # 校验内容：同一 component_id 出现在 2+ 草稿时 warn
@@ -149,7 +207,7 @@ repos:
       - id: gate-13-blueprint-overlap
         name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）"
         entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
@@ -165,7 +223,7 @@ repos:
       - id: gate-15-frontmatter-metadata
         name: "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
@@ -181,7 +239,7 @@ repos:
       - id: gate-16-architecture-compliance
         name: "GATE-16: 架构合规校验（architecture-contract v1.0.0）"
         entry: python scripts/governance/d3_metadata/validate_architecture.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
@@ -204,6 +262,20 @@ repos:
         files: "^.*\\.py$"
         description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
 
+      # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
+      # 权威依据：IRN-011（ai-behavior-iron-policy.md）9 条零残留规则（ZR-001~009）
+      # 真源声明：Session 20260505 零残留原则落地
+      # 检测范围：全项目（always_run=true）
+      # 检测内容：ZeroResidueScanner 聚合 5 项检测（临时文件/孤儿文件/废墟引用/残留学债/代码级残留）
+      # 模式：--ci 硬阻断（零残留违规 = 拒绝提交）
+      - id: gate-zr-zero-residue
+        name: "GATE-ZR: 零残留强制门禁（IRN-011）"
+        entry: python -c "from zephyr.gates.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
+        language: python
+        pass_filenames: false
+        always_run: true
+        description: "全量零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库"
+
       # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
       # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
       # 真源声明：Session 20260502-006 六环根因分析 → 根源：源码重构未同步测试 → 治根措施
@@ -213,12 +285,43 @@ repos:
       # 耗时：~1-2s（仅收集阶段，不执行测试体）
       - id: gate-18-test-collection
         name: "GATE-18: 测试收集门禁（源码-测试同步铁律）"
-        entry: python -m pytest tests/ --collect-only -q --tb=line
+        entry: python -m pytest tests/ --collect-only -q --tb=line -m "not slow and not e2e"
         language: python
         pass_filenames: false
         always_run: true
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
-        description: "源码或测试文件变更时强制验证测试能正常收集（无 ImportError / 路径漂移 / 模块缺失），AGENTS.md §4 源码-测试同步铁律自动化执行层"
+        description: "源码或测试文件变更时强制验证测试能正常收集（排除 slow/e2e），AGENTS.md §4 源码-测试同步铁律自动化执行层"
+
+      # ── GATE-SSOT: SSoT 唯一真源门禁（ADR-0001 + ADR-0021 强制执行层）──
+      # 权威依据：ADR-0001（docs/ 为唯一 canonical 真源）+ ADR-0021（三级违规分级 + Phase 0 强制门禁）
+      # 真源声明：Session 20260417 + 20260424 ADR 拍板
+      # 检测范围：docs/ 下所有 .md 文件变更时触发
+      # 检测内容：P0（layer 无效 / module_id 重复活跃 / 死链 / 命名冲突）+ P1（status 漂移 / version 倒挂）+ P2（其他）
+      # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交），与 ADR-0021 §4.2 三级违规分级对齐
+      - id: gate-ssot
+        name: "GATE-SSOT: SSoT 唯一真源门禁（ADR-0001/0021 强制执行）"
+        entry: python scripts/governance/d5_architecture/validate_ssot.py
+        args: ["--ci"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/.*\\.md$"
+
+      # ── GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 §4+§6 强制执行层）──
+      # 权威依据：PS-STD-005 §4（目录结构规范）+ §6（belongs_to MUST）
+      # 创建日期：2026-05-06（Productized: P0-1~P0-5 修复驱动）
+      # 检测范围：docs/03_modules/ 下所有 blueprint.md 文件变更时触发
+      # 检测内容：P0-1(belongs_to缺失) + P0-2(cross_layer不在_cross_layer/) + P0-3(layer与路径前缀不匹配) + P1(belongs_to链完整性)
+      # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交）
+      - id: gate-bp-place
+        name: "GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 强制执行）"
+        entry: python scripts/governance/d5_architecture/validate_blueprint_placement.py
+        args: ["--ci"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/03_modules/.*blueprint\\.md$"
+        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），ADR-0001 + ADR-0021 §4.2 强制执行层"
 
       # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
       # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality-standard.md
@@ -263,7 +366,7 @@ repos:
       - id: gate-idx-index-reality
         name: "GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 落地）"
         entry: python scripts/governance/d1_structure/validate_index_reality.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
@@ -279,12 +382,99 @@ repos:
       - id: gate-dd07-shared-bypass
         name: "GATE-DD07: _shared API 本地重定义检测（D-D-07）"
         entry: python scripts/governance/d11_compliance/fix_shared_bypass.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: python
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/.*\\.py$"
         description: "AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py --fix"
+
+      # ── GATE-19: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
+      # 权威依据：AGENTS.md §6.16 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
+      # Session 20260504：三条AI架构铁律落地 → 新建 validate_static_manifest_drift.py + 接入 pre-commit
+      - id: gate-19-manifest-drift
+        name: "GATE-19: 静态清单漂移阻断（§6.16）"
+        entry: python scripts/governance/d5_architecture/validate_static_manifest_drift.py
+        args: ["--check"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
+        description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.16 静态清单自动生成铁律"
+
+      # ── GATE-22: AI加载路径完整性（AGENTS.md §6.18 自动化执行层）──
+      # 权威依据：AGENTS.md §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
+      # Session 20260504：三条AI架构铁律落地 → 新建 validate_load_path_integrity.py + 接入 pre-commit
+      # 模式：warn-only（骨架阶段，§8.2 部分路径需补全完整目录后转硬阻断）
+      - id: gate-22-load-path-integrity
+        name: "GATE-22: AI加载路径完整性（§6.18）"
+        entry: python scripts/governance/d5_architecture/validate_load_path_integrity.py
+        args: ["--check"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^AGENTS\\.md$"
+        description: "解析 §8.2 任务菜单中所有路径引用，逐条验证文件存在。warn-only骨架阶段，对标 §6.18"
+
+      # ── Handoff: 交接日志（manual stage，按需运行）──
+      # 说明：不在 pre-commit 默认阶段运行，避免每次提交刷 handoff 文件。
+      # 运行：pre-commit run handoff-log-generate --hook-stage manual
+      - id: handoff-log-generate
+        name: "Handoff: 生成交接日志（manual）"
+        entry: python scripts/hooks/auto-handoff-log.py
+        language: python
+        pass_filenames: false
+        always_run: false
+        stages: [manual]
+        description: "根据 git diff HEAD 生成交接 Markdown → docs/19_development_workspace/handoff-logs/"
+
+      - id: handoff-log-post-commit
+        name: "Handoff: 提交后交接快照（post-commit）"
+        entry: python scripts/hooks/auto-handoff-log.py --last-commit
+        language: python
+        pass_filenames: false
+        always_run: true
+        stages: [post-commit]
+        description: "每次 git commit 成功后记录 HEAD 变更清单到 handoff-logs/"
+
+      # ── GATE-C1: SSoT frontmatter status 枚举白名单（盲点 C1 修复）──
+      # 对标：盲点 C1 — SSoT status 大小写系统性脆弱，阻止 illusion/placeholder_c_track 等非法值
+      # 检测范围：docs/**/*.md 变更时触发
+      # 检测内容：提取 frontmatter status 字段 vs 白名单 {Draft,Review,Active,...,Created}
+      # 模式：大小写告警（warn）不阻断，非法值硬块（--ci）
+      - id: gate-c1-ssot-status-enum
+        name: "GATE-C1: SSoT status 字段枚举白名单"
+        entry: python scripts/governance/d3_metadata/validate_ssot_status.py
+        args: ["--ci"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^docs/.*\\.md$"
+        description: "SSoT frontmatter status 枚举白名单——阻止 illusion/placeholder_c_track 等非法值，大小写告警不阻断"
+
+      # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
+      # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
+      # 检测范围：cross-layer-contracts.yaml 或 contracts/*.py 变更时触发
+      # 检测内容：SHA256 快照对比 → YAML 变更但 .py 未同步 → exit 1
+      # 模式：--ci 硬块，首次运行 --freeze 建立基线
+      - id: gate-c2-contract-code-drift
+        name: "GATE-C2: 契约-代码双写漂移阻断"
+        entry: python scripts/governance/d5_architecture/check_contract_code_drift.py
+        args: ["--ci"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^(docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/|src/zephyr/shared/contracts/).*"
+        description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
+
+      - id: gate-bom-utf8-check
+        name: "GATE-BOM: UTF-8 BOM 检测"
+        entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py
+        language: python
+        pass_filenames: false
+        always_run: true
+        files: "\\.(yaml|md|py)$"
+        description: "检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全"
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage

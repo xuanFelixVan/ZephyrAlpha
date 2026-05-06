@@ -17,11 +17,13 @@ from zephyr.context_engine.pattern_library import (
     PatternType,
 )
 
+
 class TestPatternType:
     def test_three_types_exist(self) -> None:
         assert PatternType.SUCCESS_PATTERN.value == "success_pattern"
         assert PatternType.FAILURE_PATTERN.value == "failure_pattern"
         assert PatternType.ANTI_PATTERN.value == "anti_pattern"
+
 
 class TestPatternEntry:
     def test_valid_entry(self) -> None:
@@ -58,6 +60,7 @@ class TestPatternEntry:
             updated_at=now,
         )
         assert entry.tags == ["alpha", "beta"]
+
 
 class TestPatternLibrary:
     def test_create_and_get(self) -> None:

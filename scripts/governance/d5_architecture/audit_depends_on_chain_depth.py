@@ -1,6 +1,15 @@
 """
 audit_depends_on_chain_depth.py — depends_on 依赖链路深度审计
 
+
+
+对标：GOV-DOC-009 DOC-009 — 文档控制原则
+检测：扫描 docs/ 下所有 .md 文件的 depends_on 字段，构建依赖图，标记超过阈值（3 层）的链路
+
+exit codes: 0=pass, 1=findings, 2=error
+"""
+
+from __future__ import annotations
 __manifest__ = """
 args: []
 description: depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）
@@ -11,14 +20,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-对标：GOV-DOC-009 DOC-009 — 文档控制原则
-检测：扫描 docs/ 下所有 .md 文件的 depends_on 字段，构建依赖图，标记超过阈值（3 层）的链路
-
-exit codes: 0=pass, 1=findings, 2=error
-"""
-
-from __future__ import annotations
 
 import argparse
 import sys

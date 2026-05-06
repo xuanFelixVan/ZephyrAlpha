@@ -2,9 +2,9 @@
 module_id: DOM-L02-001
 title: 因子质量门控
 doc_type: policy
-status: draft
+status: Draft
 version: "0.1.1"
-layer: l02_alpha_factor
+layer: L02
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

@@ -426,8 +426,9 @@ review_cycle: quarterly
 2. **ADR 必须在 canonical 域，不能放在 workspace**
    - 背景：此前计划把 ADR 放在 `19_development_workspace/05_adr/`
    - 问题：ADR 是 canonical 凭证（accepted 后长期有效），不应与讨论沙盒混放
-   - 决策：ADR canonical 家 = `docs/02_enterprise_architecture/adr/`；草稿区 = `docs/19_development_workspace/adr-drafts/`
-   - 升格：落地为 ADR-0001 的一部分（真源的内部分层）
+   - 决策（历史）：ADR canonical 家曾映射为 `docs/02_enterprise_architecture/adr/`；草稿区 = `docs/19_development_workspace/adr-drafts/`
+   - **现行（2026-05-05 session-012）**：accepted 条目权威为 **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`）；物理 `adr/` 树已删除——映射见 `ssot-authority-map.md`
+   - 升格：落地为 ADR-0001 的一部分（真源的内部分层）；后续演进见 KB ingestion / GOV-DOC-003 §2.2
 
 3. **workspace 子目录采用语义命名，取消 `0N_` 数字前缀**
    - 背景：机构内部 workspace 惯例是语义命名（`taskbooks/` 而非 `00_taskbooks/`）

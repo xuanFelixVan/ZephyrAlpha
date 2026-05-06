@@ -1,15 +1,6 @@
 """
 detect_temp_files.py — 临时文件检测
 
-__manifest__ = """
-args: []
-description: 临时文件检测（GOV-TASK-005 §4.2 — temp_*/tmp_*/*.backup/__pycache__）
-dimensions:
-- D1
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-TASK-005 §4.2（临时文件清除标准）
@@ -25,6 +16,17 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: 临时文件检测（GOV-TASK-005 §4.2 — temp_*/tmp_*/*.backup/__pycache__）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys
@@ -59,10 +61,8 @@ TEMP_FILE_PATTERNS = [
 TEMP_DIR_NAMES = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 
 def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
-    """scan temp files."""
+    """扫描临时文件与缓存目录，返回 (发现列表, 已扫描文件数)。"""
     if scan_dir is None:
-        """scan temp files."""
-        """扫描并返回发现列表."""
         scan_dir = REPO_ROOT
 
     findings = []
@@ -107,7 +107,6 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
                 break
 
     return findings, files_scanned
-    """scan temp files."""
 
 def main() -> None:
     """入口函数."""

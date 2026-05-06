@@ -16,6 +16,7 @@ import uuid
 from enum import Enum, unique
 from typing import Any
 
+
 @unique
 class MetricType(str, Enum):
     TASK_DURATION_MS = "task_duration_ms"
@@ -23,6 +24,7 @@ class MetricType(str, Enum):
     TASK_COUNT = "task_count"
     FAILURE_RATE = "failure_rate"
     SESSION_ELAPSED_MS = "session_elapsed_ms"
+
 
 class MetricsCollector:
     """Append-only metrics recorder backed by SQLite.

@@ -398,7 +398,7 @@ src/zephyr/
 - **架构总纲**：本视图 §4A
 - **接口规范**：`docs/03_modules/_b_track_interfaces/*-interface.md`（5 份）
 - **技术选型**：[`technology-landscape.yaml`](./architecture-model/technology/technology-landscape.yaml)
-- **ADR**：`../adr/ADR-0015.md` ~ `ADR-0020.md`（6 条）
+- **ADR**：KB:decisions namespace（ADR-0015 ~ ADR-0020，6 条，原物理文件已迁入）
 
 ---
 

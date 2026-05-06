@@ -1,15 +1,6 @@
 """
 detect_residual_files.py — 残留物检测
 
-__manifest__ = """
-args: []
-description: 残留物检测（GOV-TASK-005 §4.3 — 空壳/不可达import/重复/遗留测试）
-dimensions:
-- D1
-priority: P0
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 对标：GOV-TASK-005 §4.3（残留物检测标准）
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 残留物检测（GOV-TASK-005 §4.3 — 空壳/不可达import/重复/遗留测试）
+dimensions:
+- D1
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import ast
 import hashlib

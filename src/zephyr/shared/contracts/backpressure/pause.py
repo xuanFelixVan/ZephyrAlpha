@@ -1,14 +1,14 @@
-from __future__ import annotations
+# ==== BEGIN CODGEN:CTR-BP-001 ====
+from dataclasses import dataclass, field
 
-from dataclasses import dataclass
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -18,9 +18,9 @@ CTR-BP-001: BackpressurePause / 背压暂停信号
 
 下游（L02/L03）处理能力不足时，向上游（L00）发出暂停信号。L00 暂停该标的的数据下发。
 
-SSoT: cross-layer-contracts.yaml → CTR-BP-001
+SSoT: cross-layer-contracts.yaml -> CTR-BP-001
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -30,10 +30,50 @@ AI Prompt
 
 @dataclass(frozen=True)
 class BackpressurePause:
+    duration_ms: int
+    idempotency_key: str
+    reason: str
     signal_id: str
     symbol: str
-    duration_ms: int
-    reason: str
     action: str = "PAUSE"
     schema_version: str = "1.0"
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-BP-001 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

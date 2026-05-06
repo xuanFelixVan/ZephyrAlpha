@@ -1,15 +1,6 @@
 """
 validate_docstring_coverage.py — Docstring 覆盖率校验
 
-__manifest__ = """
-args: []
-description: Docstring 覆盖率校验——模块/类/公共函数必须有 docstring
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PEP 257 — all public modules/classes/functions should have docstrings
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: Docstring 覆盖率校验——模块/类/公共函数必须有 docstring
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import ast

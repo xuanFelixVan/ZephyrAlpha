@@ -1,15 +1,6 @@
 """
 validate_lifecycle_refs.py — 生命周期引用约束合规检查
 
-__manifest__ = """
-args: []
-description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-001 §4.1.1 LRC-001~005（生命周期引用约束）
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import sys

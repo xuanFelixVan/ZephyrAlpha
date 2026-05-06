@@ -17,9 +17,11 @@ from pathlib import Path
 import pytest
 from zephyr.kb.analyze import SCORING_DIMENSIONS, VALUE_SCORE_THRESHOLD, AnalyzeGate
 
+
 @pytest.fixture()
 def gate(kb_root: Path) -> AnalyzeGate:
     return AnalyzeGate(kb_root=kb_root)
+
 
 def _make_analyzed_md(
     tmp_path: Path,
@@ -58,11 +60,13 @@ def _make_analyzed_md(
     p.write_text(content, encoding="utf-8", newline="\n")
     return p
 
+
 def test_analyze_high_value_passes(tmp_path: Path, gate: AnalyzeGate) -> None:
     md = _make_analyzed_md(tmp_path)
     result = gate.analyze(md)
     assert result.passed is True
     assert result.ai_value_score >= VALUE_SCORE_THRESHOLD
+
 
 def test_analyze_low_value_archived(tmp_path: Path, gate: AnalyzeGate) -> None:
     p = tmp_path / "low.md"
@@ -75,6 +79,7 @@ def test_analyze_low_value_archived(tmp_path: Path, gate: AnalyzeGate) -> None:
     assert result.passed is False
     assert result.ai_value_score < VALUE_SCORE_THRESHOLD
 
+
 def test_analyze_dimension_scores_computed(tmp_path: Path, gate: AnalyzeGate) -> None:
     md = _make_analyzed_md(tmp_path)
     result = gate.analyze(md)
@@ -84,19 +89,23 @@ def test_analyze_dimension_scores_computed(tmp_path: Path, gate: AnalyzeGate) ->
         assert dim in scores
         assert 0.0 <= scores[dim] <= 1.0
 
+
 def test_analyze_activation_conditions(tmp_path: Path, gate: AnalyzeGate) -> None:
     md = _make_analyzed_md(tmp_path)
     result = gate.analyze(md)
     assert len(result.activation_conditions) > 0
+
 
 def test_analyze_complexity_assessment(tmp_path: Path, gate: AnalyzeGate) -> None:
     md = _make_analyzed_md(tmp_path)
     result = gate.analyze(md)
     assert result.implementation_complexity in ("low", "medium", "high")
 
+
 def test_analyze_nonexistent_file_rejected(tmp_path: Path, gate: AnalyzeGate) -> None:
     result = gate.analyze(tmp_path / "ghost.md")
     assert result.passed is False
+
 
 def test_analyze_writes_to_analyzed_dir(tmp_path: Path, kb_root: Path, gate: AnalyzeGate) -> None:
     md = _make_analyzed_md(tmp_path)

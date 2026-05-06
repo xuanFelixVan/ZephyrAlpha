@@ -8,6 +8,7 @@
 用法::
 
     python scripts/hooks/auto-handoff-log.py
+    python scripts/hooks/auto-handoff-log.py --last-commit   # post-commit：记录刚提交的 HEAD
 
 运行后会：
 1. 在终端打印改动摘要
@@ -18,6 +19,7 @@
 
 from __future__ import annotations
 
+import argparse
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -39,6 +41,7 @@ TIMEZONE_CST = timezone(timedelta(hours=8))
 # ---------------------------------------------------------------------------
 # Git 辅助函数
 # ---------------------------------------------------------------------------
+
 
 def _run_git(args: list[str]) -> str:
     """执行 git 命令并返回 stdout（UTF-8 解码）。
@@ -74,6 +77,7 @@ def _run_git(args: list[str]) -> str:
         print("[ERROR] 未找到 git 命令，请确认 git 已安装并在 PATH 中。", file=sys.stderr)
         sys.exit(1)
 
+
 def get_changed_files() -> list[str]:
     """获取当前工作区相对于 HEAD 的改动文件列表。
 
@@ -87,6 +91,20 @@ def get_changed_files() -> list[str]:
         return []
     return output.splitlines()
 
+
+def get_last_commit_files() -> list[str]:
+    """``git show --name-only HEAD`` 本次提交涉及的文件列表。"""
+    output: str = _run_git(["show", "--name-only", "--pretty=format:", "HEAD"])
+    if not output:
+        return []
+    return [line.strip() for line in output.splitlines() if line.strip()]
+
+
+def get_last_commit_stat() -> str:
+    """``git show --stat HEAD``。"""
+    return _run_git(["show", "--stat", "HEAD"])
+
+
 def get_diff_stat() -> str:
     """获取 ``git diff --stat HEAD`` 的统计摘要。
 
@@ -97,9 +115,11 @@ def get_diff_stat() -> str:
     """
     return _run_git(["diff", "--stat", "HEAD"])
 
+
 # ---------------------------------------------------------------------------
 # Markdown 生成
 # ---------------------------------------------------------------------------
+
 
 def build_handoff_markdown(
     changed_files: list[str],
@@ -166,24 +186,38 @@ def build_handoff_markdown(
             "",
             "---",
             "",
-            "*本文件由 `auto-handoff-log.py` 自动生成*",
+            "*本文件由 `auto-handoff-log.py` 自动生成（工作区 diff 或 `--last-commit`）*",
             "",
         ]
     )
 
     return "\n".join(lines)
 
+
 # ---------------------------------------------------------------------------
 # 主入口
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     """主函数：收集 git diff 信息，生成交接日志并写入文件。"""
+    parser = argparse.ArgumentParser(description="生成交接日志 Markdown")
+    parser.add_argument(
+        "--last-commit",
+        action="store_true",
+        help="基于刚完成的 HEAD 提交（供 post-commit 钩子使用）",
+    )
+    args = parser.parse_args()
+
     now: datetime = datetime.now(tz=TIMEZONE_CST)
 
     # 1. 收集 git 信息
-    changed_files: list[str] = get_changed_files()
-    diff_stat: str = get_diff_stat()
+    if args.last_commit:
+        changed_files = get_last_commit_files()
+        diff_stat = get_last_commit_stat()
+    else:
+        changed_files = get_changed_files()
+        diff_stat = get_diff_stat()
 
     # 2. 构建 Markdown
     markdown: str = build_handoff_markdown(changed_files, diff_stat, now)
@@ -220,6 +254,7 @@ def main() -> None:
         for line in diff_stat.splitlines()[-3:]:
             print(f"    {line}")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

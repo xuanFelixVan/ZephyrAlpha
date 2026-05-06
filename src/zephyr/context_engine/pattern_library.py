@@ -37,10 +37,12 @@ __all__ = [
     "PatternLibrary",
 ]
 
+
 class PatternType(str, Enum):
     SUCCESS_PATTERN = "success_pattern"
     FAILURE_PATTERN = "failure_pattern"
     ANTI_PATTERN = "anti_pattern"
+
 
 class PatternEntry(BaseModel):
     model_config = BASE_CONFIG
@@ -72,6 +74,7 @@ class PatternEntry(BaseModel):
                 result.append(tag)
         return result
 
+
 class PatternQuery(BaseModel):
     model_config = BASE_CONFIG
 
@@ -81,8 +84,10 @@ class PatternQuery(BaseModel):
     tags: list[str] | None = None
     keyword: str | None = None
 
+
 def _compute_fingerprint(content: str) -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
 
 class PatternLibrary:
     """成功模式库，支持 CRUD + 向量检索。

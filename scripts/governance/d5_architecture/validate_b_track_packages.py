@@ -1,15 +1,6 @@
 """
 validate_b_track_packages.py — B 轨包完整性校验
 
-__manifest__ = """
-args: []
-description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-DOC-002 §四（B 轨新包创建门槛）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path
@@ -50,6 +51,8 @@ B_TRACK_DIRS = {
     "kb",
     "mcp",
     "shared",
+    "pipeline",
+    "core",
 }
 
 REQUIRED_FILES = {"interface.md"}

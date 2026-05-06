@@ -1,36 +1,20 @@
 """
-generate_contracts.py — SSoT→Codegen 管道
+generate_contracts.py -- SSoT to Codegen pipeline
 
-__manifest__ = """
-args: []
-description: generate_contracts.py — SSoT→Codegen 管道
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
-
-
-从 cross-layer-contracts.yaml 自动生成 Python dataclass 文件。
-实现 YAML 中声明的 "Python 接口文件由 codegen 工具从本 YAML 自动生成，不得手工编辑"。
-
-用法:
-    python scripts/governance/d5_architecture/generate_contracts.py
-    python scripts/governance/d5_architecture/generate_contracts.py --contract CTR-001
-    python scripts/governance/d5_architecture/generate_contracts.py --dry-run
-
-规则:
-    - 只生成 physical_path 非 null 的契约
-    - 自动推导 imports（datetime/Decimal/Optional/List/Dict/TraceContext/...）
-    - frozen dataclass 使用 @dataclass(frozen=True)
-    - 可选字段无默认值时默认 = None（针对 Optional 类型）
-    - ai_prompt 嵌入 docstring
-
-Safety: 覆盖已有文件时显示 diff，dry-run 模式不写入磁盘
+Auto-generate Python dataclass files from cross-layer-contracts.yaml.
 """
 
 from __future__ import annotations
+
+# Manifest metadata for governance scripts
+__manifest__ = {
+    "args": [],
+    "description": "generate_contracts.py -- SSoT to Codegen pipeline",
+    "dimensions": ["D5"],
+    "priority": "P2",
+    "timeout_seconds": 60,
+    "warn_only": False,
+}
 
 import sys
 from datetime import UTC, datetime
@@ -98,7 +82,7 @@ def _extract_type_tokens(type_str: str) -> list[str]:
     tokens: list[str] = []
     for token in type_str.replace("[", " ").replace("]", " ").replace(",", " ").split():
         token = token.strip()
-        if token and token not in ("Optional", "List", "Dict", "str", "int", "float", "bool"):
+        if token and token not in ("str", "int", "float", "bool"):
             tokens.append(token)
     return tokens
 
@@ -164,6 +148,7 @@ def _format_default(field: dict) -> str:
     default = field.get("default")
     type_str = field.get("type", "")
     base_type = _resolve_base_type(type_str)
+    is_required = field.get("required", True)
 
     if default is None:
         if type_str.startswith("Optional["):
@@ -172,6 +157,13 @@ def _format_default(field: dict) -> str:
             return " = field(default_factory=list)"
         if "Dict" in type_str or type_str == "Dict":
             return " = field(default_factory=dict)"
+        if not is_required:
+            if base_type == "str":
+                return ' = ""'
+            elif base_type in ("int", "float"):
+                return " = 0"
+            elif base_type == "bool":
+                return " = False"
         return ""
 
     if base_type == "Decimal":
@@ -196,6 +188,22 @@ def _format_default(field: dict) -> str:
         return f" = {default}"
     else:
         return f" = {default}"
+
+
+def _has_effective_default(field: dict) -> bool:
+    if "default" in field:
+        return True
+    if not field.get("required", True):
+        return True
+    type_str = field.get("type", "")
+    if "List" in type_str or type_str.strip() == "List":
+        return True
+    if "Dict" in type_str or type_str.strip() == "Dict":
+        return True
+    if type_str.startswith("Optional["):
+        return True
+    return False
+
 
 def _format_ai_prompt(ai_prompt: str, indent: int = 4) -> str:
     """_format_ai_prompt implementation."""
@@ -229,9 +237,9 @@ def _generate_file_header(
         "",
         description,
         "",
-        f"SSoT: cross-layer-contracts.yaml → {contract_id}",
+        f"SSoT: cross-layer-contracts.yaml -> {contract_id}",
         f"Version: {schema_version}",
-        "Status: AUTO-GENERATED — DO NOT EDIT BY HAND",
+        "Status: AUTO-GENERATED -- DO NOT EDIT BY HAND",
         "       Any manual changes will be overwritten by codegen.",
         "",
         "AI Prompt",
@@ -251,7 +259,11 @@ def _generate_dataclass(
     fields: list[dict],
 ) -> str:
     """_generate_dataclass implementation."""
-    class_name = contract_name.split(" / ")[0].strip()
+    import re
+    raw_name = contract_name.split(" / ")[0].strip()
+    # 安全提取第一个有效 Python 类名（处理 "StrategyBase + StrategyRegistry" 等）
+    match = re.match(r"[A-Za-z_][A-Za-z0-9_]*", raw_name)
+    class_name = match.group(0) if match else "UnknownContract"
     frozen_str = "frozen=True" if is_frozen else ""
 
     lines = [
@@ -293,6 +305,10 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
         return None
 
     contract_id = ctr.get("id", "")
+
+    # 跳过 OCP 扩展点——它们包含多类 + Registry 模式，无法自动生成
+    if contract_id.startswith("OCP-"):
+        return None
     contract_name = ctr.get("name", "")
     description = ctr.get("description", "")
     schema_version = ctr.get("schema_version", "1.0")
@@ -300,7 +316,7 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     is_frozen = ctr.get("frozen", True)
     fields = ctr.get("fields", [])
 
-    fields = sorted(fields, key=lambda f: (0 if f.get("required", False) is True else (1 if "default" in f else 2),))
+    fields = sorted(fields, key=lambda f: (0 if not _has_effective_default(f) else 1, f.get("name", "")))
 
     imports = _collect_imports(fields, physical)
 
@@ -399,6 +415,11 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
 def generate_directory_init(directory: Path, module_names: list[str], dry_run: bool = False) -> None:
     """Generate output from input data."""
     init_file = directory / "__init__.py"
+    if init_file.exists():
+        existing = init_file.read_text(encoding="utf-8")
+        if "CODEGEN-GUARD: CTR-declarations-manual" in existing:
+            print(f"  [Codegen] SKIP {init_file} (CODEGEN-GUARD active)")
+            return
     init_lines = [
         '"""',
         f"Auto-generated contracts package — {directory.name}",
@@ -416,11 +437,20 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="SSoT→Codegen: YAML → Python dataclass 自动生成")
+    parser = argparse.ArgumentParser(description="SSoT-to-Codegen: YAML -> Python dataclass auto-generator")
     parser.add_argument("--contract", type=str, help="仅生成指定契约（如 CTR-001）")
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写入磁盘")
-    parser.add_argument("--force", action="store_true", help="强制覆盖（跳过确认）")
+    parser.add_argument("--force", action="store_true", help="强制覆盖（跳过冻结检查）")
     args = parser.parse_args()
+
+    if not args.force:
+        init_py = REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "__init__.py"
+        if init_py.exists():
+            first_line = init_py.read_text(encoding="utf-8").split("\n")[0]
+            if "CODEGEN-GUARD" in first_line:
+                print("[Codegen] SKIPPED — CODEGEN-GUARD active in shared/contracts/__init__.py")
+                print("  Phase D codegen freeze is active. Use --force to override.")
+                sys.exit(0)
 
     if args.dry_run:
         print("[Codegen] DRY-RUN 模式 — 不会写入任何文件\n")

@@ -5,9 +5,12 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
+  note: >
+    MOD-MASTER-001 §0.2：MCP 无独占 CT-*；能力由各宿主系统契约暴露。传输与工具规范见 ADR-0033。
 
 modules:
   - id: mcp-servers
+    module_id: MOD-INF-013
     name: MCP Protocol Servers
     submodule_path: src/zephyr/mcp/
     status: implemented
@@ -22,10 +25,7 @@ modules:
       - sentinel_server.py
       - task_manager_server.py
       - tool_contracts.yaml
-    interfaces:
-      - contract_id: P1-MCP-STDIO
-        role: producer
-        description: MCP stdio 通信协议
+    interfaces: []
     adr_ref:
       - ADR-0033
       - ADR-0040

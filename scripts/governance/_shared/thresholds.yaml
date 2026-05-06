@@ -1,0 +1,167 @@
+# ---
+# module_id: THRESHOLDS-001
+# title: 脚本系统关键阈值集中配置
+# doc_type: config
+# status: active
+# version: "1.0.0"
+# layer: l01_infrastructure
+# owner: ZephyrAlpha-Owner
+# classification: confidential
+# language: zh
+# created_by: human_plus_agent
+# date: "2026-05-05"
+# valid_from: "2026-05-05"
+# ttl: permanent
+# summary: >
+#   脚本系统所有可调节阈值的唯一真源（SSoT）。
+#   任何脚本不得硬编码阈值——必须从此文件读取。
+#   对标 B16（关键阈值外置+变更审计）+ Google SRE Error Budget Policy + OWASP ASVS v5 threshold management。
+#   修改此文件 → 自动触发 validate_threshold_changes.py 审计日志。
+# ai_autonomy: human_gated
+# tags: [threshold, config, ssot, sre, error-budget, sla]
+# ---
+
+# ═══════════════════════════════════════════════════════════════════
+# 一、扫描与发现相关阈值
+# ═══════════════════════════════════════════════════════════════════
+
+scanning:
+  # 全局硬超时（秒）
+  global_hard_timeout_seconds: 600
+
+  # 各维度类型超时
+  timeout:
+    file_scan:
+      per_dimension_seconds: 30
+      full_seconds: 120
+    content_analysis:
+      per_dimension_seconds: 60
+      full_seconds: 240
+    knowledge_ai:
+      per_dimension_seconds: 120
+      full_seconds: 300
+
+  # 增量扫描触发阈值（变更文件数超过此值 → 建议全量扫描）
+  incremental_threshold_files: 50
+
+# ═══════════════════════════════════════════════════════════════════
+# 二、Finding 质量相关阈值
+# ═══════════════════════════════════════════════════════════════════
+
+finding_quality:
+  # 假阳性率上限（超过 → Error Budget 消耗）
+  false_positive_rate_max: 0.05
+
+  # 假阴性检测——已知坏用例的通过率要求
+  false_negative_detection_rate_min: 0.90
+
+  # Finding 置信度最低要求（低于此值的 Finding 标记为 LOW）
+  min_confidence_threshold: 0.5
+
+  # 单次扫描最大 Finding 数（超过 → 降级为 FULL → WARN-ONLY）
+  max_findings_per_scan: 500
+
+# ═══════════════════════════════════════════════════════════════════
+# 三、Error Budget 相关阈值（对标 Google SRE）
+# ═══════════════════════════════════════════════════════════════════
+
+error_budget:
+  # 系统可用性 SLO
+  availability_slo: 0.99
+
+  # Finding 准确率 SLO（1 - 假阳性率上限）
+  accuracy_slo: 0.95
+
+  # Error Budget 消耗速率告警
+  burn_rate:
+    # 1小时窗口内消耗 2% → 告警
+    critical_1h_percent: 0.02
+    # 6小时窗口内消耗 5% → 警告
+    warning_6h_percent: 0.05
+
+  # Error Budget 耗尽后的 Feature Freeze
+  feature_freeze_on_exhausted: true
+  freeze_auto_lift_after_hours: 72
+
+# ═══════════════════════════════════════════════════════════════════
+# 四、SLA 定时器相关阈值
+# ═══════════════════════════════════════════════════════════════════
+
+sla_timers:
+  # Finding 严重度 → 最大修复时间（小时）
+  fix_deadline_hours:
+    CRITICAL: 24
+    HIGH: 168
+    MEDIUM: 720
+    LOW: null
+    INFO: null
+
+  # 超时未修复 → 自动升级（小时）
+  overdue_escalation:
+    CRITICAL: 48
+    HIGH: 336
+    MEDIUM: 1440
+
+  # PERSISTENT Finding（连续存在超过 N 天）→ 升级严重度
+  persistent_upgrade_days:
+    MEDIUM_to_HIGH: 30
+    HIGH_to_CRITICAL: 60
+
+# ═══════════════════════════════════════════════════════════════════
+# 五、Shadow Mode 渐进激活阈值
+# ═══════════════════════════════════════════════════════════════════
+
+shadow_mode:
+  # 各阶段持续天数
+  phase_days:
+    phase1_shadow: 7
+    phase2_warn: 7
+    phase3_active: 0
+
+  # 假阳性率超过此值 → 自动回退到 Phase 1
+  auto_rollback_fpr_threshold: 0.20
+
+  # Shadow 期间最大允许误报数
+  max_false_positives_before_rollback: 50
+
+# ═══════════════════════════════════════════════════════════════════
+# 六、脚本健康与安全阈值
+# ═══════════════════════════════════════════════════════════════════
+
+script_health:
+  # 脚本连续失败次数 → Quarantine
+  consecutive_failures_before_quarantine: 3
+
+  # 脚本单次执行超时（秒）——超过此值即使 manifest 声明更长也 kill
+  hard_kill_timeout_seconds: 900
+
+  # 磁盘空间最低要求（MB）
+  min_disk_space_mb: 100
+
+  # 内存最低要求（MB）
+  min_memory_mb: 256
+
+# ═══════════════════════════════════════════════════════════════════
+# 七、AST 相似度 / 查重阈值
+# ═══════════════════════════════════════════════════════════════════
+
+ast_similarity:
+  # 新脚本与已有脚本的 AST 相似度 → 视为功能重复
+  duplicate_threshold: 0.80
+
+  # docstring 覆盖率最低要求
+  docstring_coverage_min: 0.60
+
+  # 类型注解覆盖率最低要求
+  type_annotation_coverage_min: 0.50
+
+# ═══════════════════════════════════════════════════════════════════
+# 八、蓝图-代码同步阈值
+# ═══════════════════════════════════════════════════════════════════
+
+blueprint_sync:
+  # 蓝图声称的文件数与磁盘实际文件数差异容忍度
+  max_file_count_drift: 5
+
+  # 蓝图 §14 路径索引与磁盘一致性检查——不一致 = 阻断
+  strict_path_index_check: true

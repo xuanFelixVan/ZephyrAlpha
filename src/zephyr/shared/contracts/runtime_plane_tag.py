@@ -91,6 +91,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Final
 
+
 class RuntimePlane(str, Enum):
     """
     Runtime Plane 三档枚举（正交视图 04bis 的规范类型）。
@@ -105,6 +106,7 @@ class RuntimePlane(str, Enum):
 
     def __str__(self) -> str:  # pragma: no cover - trivial
         return self.value
+
 
 HOT_PATH_LATENCY_BUDGET_MS: Final[float] = 10.0
 """Hot Path 延迟硬预算上限（毫秒，tick-to-trade 端到端）。"""

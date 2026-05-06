@@ -1,20 +1,37 @@
 """
-check_survivorship_bias.py — Survivorship Bias 检查 (INV-014) [桩文件]
+check_survivorship_bias.py — Survivorship 策略门禁 (INV-014)
 
-INV-014: 回测数据集必须包含退市/停牌标的，不得使用存活者偏差数据。
-status: stub — 需回测数据集有退市/停牌标的后激活。
+  - 读取 config/data/survivorship_policy.yaml
+  - 要求 require_delisted_symbols_in_backtest == true（声明级闭环）
 
-激活条件：
-  1. L00 Data Source 有完整的历史成分股/退市数据
-  2. 回测数据集包含足够的历史覆盖期
-  3. 可检测数据集中是否包含退市标的（通过对比指数成分股历史变动）
+exit: 0=pass, 1=fail
 """
+from __future__ import annotations
+
 import sys
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import SURVIVORSHIP_POLICY_PATH, load_yaml  # noqa: E402
 
 
 def main() -> int:
-    print("⏭ INV-014 Survivorship Bias 检查 —— [桩文件] 跳过")
-    print("   激活条件：回测数据集有完整退市/停牌标的。")
+    if not SURVIVORSHIP_POLICY_PATH.is_file():
+        print("FAIL: 缺少 config/data/survivorship_policy.yaml")
+        return 1
+
+    pol = load_yaml(SURVIVORSHIP_POLICY_PATH)
+    if pol.get("require_delisted_symbols_in_backtest") is not True:
+        print("FAIL: require_delisted_symbols_in_backtest 必须为 true")
+        return 1
+    if pol.get("require_suspend_flags_in_universe") is not True:
+        print("FAIL: require_suspend_flags_in_universe 必须为 true")
+        return 1
+
+    print("OK: survivorship 策略开关已启用（数据集证据由 L00 manifest 后续补强）")
     return 0
 
 

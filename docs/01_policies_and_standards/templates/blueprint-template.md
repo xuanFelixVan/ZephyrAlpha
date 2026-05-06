@@ -2,7 +2,7 @@
 module_id: ""
 title: ""
 doc_type: blueprint
-status: draft
+status: Draft
 version: "0.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -11,8 +11,11 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
+construction_progress: not_started
 summary: ""
 tags: []
+priority: P2
+belongs_to: "MOD-MASTER-001"
 rule_form: structural
 scope: global
 stability: evolving

@@ -54,6 +54,7 @@ ERR_INTERNAL_ERROR = -32603
 ERR_TOOL_NOT_FOUND = -32001
 ERR_TOOL_EXECUTION = -32002
 
+
 class MCPError(Exception):
     """MCP 协议层错误，携带 JSON-RPC error code。"""
 
@@ -63,9 +64,11 @@ class MCPError(Exception):
         self.data = data
         super().__init__(message)
 
+
 # ---------------------------------------------------------------------------
 # 工具定义
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class ToolDefinition:
@@ -76,9 +79,11 @@ class ToolDefinition:
     input_schema: dict[str, Any]
     handler: Callable[..., Any]
 
+
 # ---------------------------------------------------------------------------
 # 基类
 # ---------------------------------------------------------------------------
+
 
 class BaseMCPServer:
     """JSON-RPC 2.0 over stdio MCP Server 基类。

@@ -1,0 +1,3 @@
+# demo_e2e_pipeline（L00 AkshareProvider）可选依赖——与 pyproject [project.optional-dependencies] demo 对齐
+-r requirements.txt
+akshare>=1.12.0

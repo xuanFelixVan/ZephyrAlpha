@@ -75,6 +75,7 @@ _GATE_FILES: dict[str, str] = {
 # 数据模型
 # ---------------------------------------------------------------------------
 
+
 class SystemSnapshot(BaseModel):
     """M1 系统状态镜像（Pydantic v2 frozen）。
 
@@ -101,16 +102,20 @@ class SystemSnapshot(BaseModel):
     registry_hashes: dict[str, str]
     blueprint_v12_pass_rate: float = Field(ge=-1.0, le=1.0)
 
+
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class SnapshotBuildError(RuntimeError):
     """系统快照构建失败（不抛出到 M1 主流程，仅内部记录）。"""
+
 
 # ---------------------------------------------------------------------------
 # SystemSnapshotter
 # ---------------------------------------------------------------------------
+
 
 class SystemSnapshotter:
     """M1 内部组件：在 build() pipeline 末尾生成系统状态镜像。

@@ -276,6 +276,7 @@ _DIRECTIVE_MAP: dict[str, list[str]] = {
 
 _WORD_BOUNDARY_CACHE: dict[str, re.Pattern[str]] = {}
 
+
 class IntentDomain(str, Enum):
     """意图识别域（D0-D9 + UNKNOWN，与 metadata-registry.md §9.2 domain 枚举对齐）。"""
 
@@ -290,6 +291,7 @@ class IntentDomain(str, Enum):
     D8 = "D8"
     D9 = "D9"
     UNKNOWN = "UNKNOWN"
+
 
 class IntentResult(BaseModel):
     model_config = BASE_CONFIG
@@ -307,6 +309,7 @@ class IntentResult(BaseModel):
     cost_usd: float = Field(default=0.0)
     fallback_hint: str | None = None
 
+
 def _tokenize(query: str) -> list[str]:
     tokens: list[str] = []
     try:
@@ -322,12 +325,14 @@ def _tokenize(query: str) -> list[str]:
             cleaned.append(t.lower())
     return cleaned
 
+
 def _word_boundary_pattern(kw: str) -> re.Pattern[str]:
     pat = _WORD_BOUNDARY_CACHE.get(kw)
     if pat is None:
         pat = re.compile(r"\b" + re.escape(kw) + r"\b")
         _WORD_BOUNDARY_CACHE[kw] = pat
     return pat
+
 
 class IntentKeywordMapper:
     """Stage 1 keyword-based intent mapper (ADR-0035).

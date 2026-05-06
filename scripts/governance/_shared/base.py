@@ -10,7 +10,8 @@ base.py — 审计脚本基类
   D-G-01a: 路径从项目根推导（基类统一 REPO_ROOT）
   D-A-01: UTF-8 stdout 强制重声明（基类自动调用）
 
-所有治理脚本 SHOULD 继承此基类，只需实现 check() 方法。
+新编写的治理审计脚本**推荐**继承此基类，只需实现 check() 方法。
+存量脚本可在后续重构中逐步迁移，**不强制**一次性全量改写。
 
 Usage:
     class MyChecker(BaseAuditScript):
@@ -54,6 +55,7 @@ try:
     _FINDING_AVAILABLE = True
 except ImportError:
     _FINDING_AVAILABLE = False
+
 
 class BaseAuditScript(ABC):
     """所有治理脚本的基类。

@@ -3,16 +3,6 @@
 validate_yaml_interface_uniqueness.py — YAML 模块接口唯一性闸门（GATE-IFACE-UNIQ）
 v1.0.0 — 2026-05-03
 
-__manifest__ = """
-args: []
-description: YAML 接口唯一性校验（防止同一接口在多处重复定义）
-dimensions:
-- D3
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 根因（R6 审计 P0-09）：AI session 编写层 YAML 时，对同一 contract_id 同时添加
@@ -32,6 +22,18 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: YAML 接口唯一性校验（防止同一接口在多处重复定义）
+dimensions:
+- D3
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import sys

@@ -38,6 +38,7 @@ from zephyr.shared.contracts.money import (
     get_currency_precision,
 )
 
+
 class TestMoneyConstruction:
     def test_from_string(self):
         m = Money("1234.56", "CNY")
@@ -71,6 +72,7 @@ class TestMoneyConstruction:
     def test_float_construction_forbidden(self):
         with pytest.raises(MoneyPrecisionError, match="禁止使用 float"):
             Money(1234.56, "CNY")
+
 
 class TestMoneyArithmetic:
     def test_add_same_currency(self):
@@ -146,6 +148,7 @@ class TestMoneyArithmetic:
         with pytest.raises(MoneyCurrencyMismatchError, match="币种不匹配"):
             a - b
 
+
 class TestMoneyComparison:
     def test_lt(self):
         assert Money("50", "CNY") < Money("100", "CNY")
@@ -167,6 +170,7 @@ class TestMoneyComparison:
         with pytest.raises(MoneyCurrencyMismatchError):
             a < b
 
+
 class TestMoneyUnary:
     def test_neg(self):
         m = Money("100.50", "CNY")
@@ -181,6 +185,7 @@ class TestMoneyUnary:
     def test_abs_negative(self):
         m = Money("-100", "CNY")
         assert abs(m) == Money("100", "CNY")
+
 
 class TestMoneyDisplay:
     def test_str_cny(self):
@@ -207,6 +212,7 @@ class TestMoneyDisplay:
     def test_bool_zero(self):
         assert bool(Money("0", "CNY")) is False
 
+
 class TestMoneyUtility:
     def test_is_zero(self):
         assert Money("0", "CNY").is_zero() is True
@@ -221,6 +227,7 @@ class TestMoneyUtility:
         assert Money("-50", "CNY").is_negative() is True
         assert Money("100", "CNY").is_negative() is False
         assert Money("0", "CNY").is_negative() is False
+
 
 class TestGetCurrencyPrecision:
     def test_cny_precision(self):
@@ -239,6 +246,7 @@ class TestGetCurrencyPrecision:
             assert result == 2
             assert len(w) == 1
             assert "XYZ" in str(w[0].message)
+
 
 class TestMoneyFrozen:
     def test_frozen_immutable(self):

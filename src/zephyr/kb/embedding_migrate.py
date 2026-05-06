@@ -39,12 +39,14 @@ __all__ = [
     "EmbeddingMigrator",
 ]
 
+
 class MigrationStatus(str, Enum):
     NOT_STARTED = "NOT_STARTED"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     ROLLED_BACK = "ROLLED_BACK"
+
 
 class EmbeddingVersion(BaseModel):
     model_config = BASE_CONFIG
@@ -54,6 +56,7 @@ class EmbeddingVersion(BaseModel):
     provider: str = Field(min_length=1)
     is_active: bool = Field(default=False)
     registered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class MigrationPlan(BaseModel):
     model_config = BASE_CONFIG
@@ -69,6 +72,7 @@ class MigrationPlan(BaseModel):
     recall_threshold: float = Field(default=0.70, ge=0.0, le=1.0)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+
 class MigrationResult(BaseModel):
     model_config = BASE_CONFIG
 
@@ -82,6 +86,7 @@ class MigrationResult(BaseModel):
     error_message: str = Field(default="")
     completed_at: datetime | None = None
 
+
 class MigrationCheckpoint(BaseModel):
     model_config = BASE_CONFIG
 
@@ -92,6 +97,7 @@ class MigrationCheckpoint(BaseModel):
     collections_completed: list[str] = Field(default_factory=list)
     documents_migrated: int = Field(default=0, ge=0)
     saved_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class EmbeddingMigrator:
     """Embedding 版本管理 + 迁移管线。

@@ -26,8 +26,8 @@ from typing import Any
 import yaml
 
 from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
+from zephyr.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.kb.kb_repo import KbRepo, KeStatus
-from zephyr.shared.schemas import Task, TaskStatus
 
 __all__ = [
     "TriageResult",
@@ -147,6 +147,7 @@ _LESSON_KEYWORDS = [
 
 _UTC = UTC
 
+
 @dataclass
 class TriageResult:
     passed: bool
@@ -157,6 +158,7 @@ class TriageResult:
     target_path: Path | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
+
 
 class TriageGate:
     def __init__(
@@ -355,18 +357,10 @@ class TriageGate:
 
     def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
-            task = Task(
-                task_id="TRIAGE-GATE-0001",
-                namespace=TaskNamespace.CP,
-                seq=1,
-                phase=2,
+            task = build_kb_gate_eval_task(
+                gate_id="G2",
                 title="G2 Triage Gate",
-                status=TaskStatus.IN_PROGRESS,
-                execution_model="system",
-                safety_level="M",
-                deliverables=[str(source_path)],
-                created_at=datetime.now(_UTC),
-                updated_at=datetime.now(_UTC),
+                deliverable=source_path,
             )
             return self._gate_engine.evaluate(task, "G2")
         except Exception:

@@ -3,6 +3,12 @@ TaskRepository — 任务登记表 CRUD + 状态机（T-1-04）
 ====================================================
 依据：ADR-0030（SQLite 元数据层）+ ADR-0040（Pydantic v2 契约）
 
+根因约束（防再犯 PAUSED 类错误）
+-------------------------------
+``TaskStatus`` **仅允许**本文件 ``_ALLOWED_TRANSITIONS`` keys 与 SQLite
+``tasks.status`` CHECK 中出现的取值。其它模块（如 pipeline 抢占）**禁止**
+使用未在 ``TaskStatus`` 中声明的状态字面量；语义扩展须先改枚举 + DDL 迁移 + 本表。
+
 Safety : H（基础设施核心，状态机错误会影响整个任务流水线）
 
 功能
@@ -41,6 +47,7 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 
 from __future__ import annotations
 
+import fnmatch
 import json
 import sqlite3
 import uuid
@@ -66,6 +73,9 @@ __all__ = [
     "TaskNotFoundError",
     "InvalidTransitionError",
     "TaskRepositoryError",
+    "RejectedUpgradeCoolingOffError",
+    "P0InflationFrozenError",
+    "P0InflationWarning",
     "GateViolationError",
     "GateResult",
 ]
@@ -77,14 +87,30 @@ _STARTUP_GATE_ID = "G1"
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
+
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
 
+
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
+
+
+class RejectedUpgradeCoolingOffError(TaskRepositoryError):
+    """优先级升级被拒绝且仍在 48h 冷却期内。"""
+
+
+class P0InflationFrozenError(TaskRepositoryError):
+    """GOV-TASK-004 §2.5: P0 任务已达上限（5个），冻结新增 P0。"""
+
+
+class P0InflationWarning(TaskRepositoryError):
+    """GOV-TASK-004 §2.5: P0 任务 ≥3 个，新增 P0 需附带论证。"""
+
 
 # ---------------------------------------------------------------------------
 # 状态机转换表
@@ -146,8 +172,10 @@ _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
     TaskStatus.CANCELLED: frozenset(),  # 终态
 }
 
+
 def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool:
     return to_status in _ALLOWED_TRANSITIONS.get(from_status, frozenset())
+
 
 # ---------------------------------------------------------------------------
 # 工具函数
@@ -155,14 +183,17 @@ def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool
 
 _UTC = UTC
 
+
 def now_iso() -> str:
     """返回当前 UTC 时间的 ISO 8601 字符串。"""
     return datetime.now(_UTC).isoformat()
+
 
 def _new_id(prefix: str = "") -> str:
     """生成带可选前缀的 UUID4 字符串。"""
     uid = str(uuid.uuid4())
     return f"{prefix}{uid}" if prefix else uid
+
 
 def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 52 字段）。"""
@@ -206,16 +237,29 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         d["source_section"] = "unknown"
     if len(d.get("description", "") or "") < 10:
         d["description"] = d.get("title", "Untitled") + " — 自动恢复描述字段"
-    if d.get("estimated_tokens", 0) < 500:
-        d["estimated_tokens"] = 500
-    if d.get("timeout_minutes", 0) < 5:
-        d["timeout_minutes"] = 5
+    if d.get("estimated_tokens", 8000) < 500:
+        d["estimated_tokens"] = 8000
+    if d.get("timeout_minutes", 30) < 5:
+        d["timeout_minutes"] = 30
+
+    schema_ver = d.get("schema_version", "")
+    if schema_ver and schema_ver != "0.3.2":
+        import warnings
+
+        warnings.warn(
+            f"TaskCard {d.get('task_id','?')} schema_version={schema_ver} 与当前 0.3.2 不匹配，"
+            f"可能缺少新增字段（autonomy_checklist 等），数据完整性未经验证。",
+            UserWarning,
+            stacklevel=2,
+        )
 
     return TaskCard.model_validate(d)
+
 
 # ---------------------------------------------------------------------------
 # TaskRepository
 # ---------------------------------------------------------------------------
+
 
 class TaskRepository:
     """
@@ -346,6 +390,22 @@ class TaskRepository:
             插入后从 DB 重新读取的 TaskCard 对象（时间戳已规范化）。
         """
         with self._write_tx() as conn:
+            if task.priority.value == "P0":
+                p0_count = self._count_p0_tasks(conn)
+                if p0_count >= 5:
+                    raise P0InflationFrozenError(
+                        f"GOV-TASK-004 §2.5: 当前活跃 P0 任务 {p0_count} 个（已达上限 5），"
+                        f"冻结新增 P0。请将优先级降为 P1 或等待 Owner 手动解除冻结"
+                    )
+                if p0_count >= 3:
+                    import warnings
+
+                    warnings.warn(
+                        f"GOV-TASK-004 §2.5: 当前活跃 P0 任务 {p0_count} 个（≥3 黄色警戒），"
+                        f"新增 P0 任务 {task.task_id!r} 必须附带'为什么必须 P0 而非 P1 / 能不能拆成 P1+P2'的论证段落",
+                        UserWarning,
+                        stacklevel=2,
+                    )
             conn.execute(
                 """
                 INSERT INTO tasks (
@@ -363,7 +423,9 @@ class TaskRepository:
                     completed_gates, blocked_gates, assigned_pipeline,
                     pipeline_modules, blocked_by, artifact_paths,
                     audit_findings, ke_entries, ai_autonomy_level,
-                    autonomy_checklist, construction_status, verification_status
+                    autonomy_checklist, construction_status, verification_status,
+                    schema_version, approval_required, priority_proposed,
+                    rejection_cooldown_until
                 ) VALUES (
                     :task_id, :namespace, :seq, :title, :status, :priority, :phase,
                     :execution_model, :model_rationale, :fallback_model,
@@ -379,7 +441,9 @@ class TaskRepository:
                     :completed_gates, :blocked_gates, :assigned_pipeline,
                     :pipeline_modules, :blocked_by, :artifact_paths,
                     :audit_findings, :ke_entries, :ai_autonomy_level,
-                    :autonomy_checklist, :construction_status, :verification_status
+                    :autonomy_checklist, :construction_status, :verification_status,
+                    :schema_version, :approval_required, :priority_proposed,
+                    :rejection_cooldown_until
                 )
                 """,
                 {
@@ -423,8 +487,8 @@ class TaskRepository:
                         getattr(task, "context_assembly_manifest", []), ensure_ascii=False
                     ),
                     "rollback_instructions": getattr(task, "rollback_instructions", ""),
-                    "estimated_tokens": getattr(task, "estimated_tokens", 0),
-                    "timeout_minutes": getattr(task, "timeout_minutes", 0),
+                    "estimated_tokens": getattr(task, "estimated_tokens", 8000),
+                    "timeout_minutes": getattr(task, "timeout_minutes", 30),
                     "completed_gates": json.dumps(
                         getattr(task, "completed_gates", []), ensure_ascii=False, default=str
                     ),
@@ -439,6 +503,11 @@ class TaskRepository:
                     "autonomy_checklist": json.dumps(getattr(task, "autonomy_checklist", []), ensure_ascii=False),
                     "construction_status": getattr(task, "construction_status", "pending"),
                     "verification_status": getattr(task, "verification_status", "unverified"),
+                    "schema_version": "0.3.2",
+                    "approval_required": int(getattr(task, "approval_required", False)),
+                    "priority_proposed": getattr(task, "priority_proposed", None),
+                    "rejection_cooldown_until": getattr(task, "rejection_cooldown_until", None),
+                    "block_sessions_count": getattr(task, "block_sessions_count", 0),
                 },
             )
             if files:
@@ -463,8 +532,11 @@ class TaskRepository:
     # ------------------------------------------------------------------
 
     def get(self, task_id: str) -> TaskCard | None:
-        """按 task_id 查询，不存在返回 None。"""
-        cursor = self._conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,))
+        """按 task_id 查询有效任务（默认排除软删除行），不存在返回 None。"""
+        cursor = self._conn.execute(
+            "SELECT * FROM tasks WHERE task_id = ? AND is_deleted = 0",
+            (task_id,),
+        )
         row = cursor.fetchone()
         return _row_to_taskcard(row) if row else None
 
@@ -541,6 +613,189 @@ class TaskRepository:
                 (*values, task_id),
             )
             updated_row = self._fetch_row(conn, task_id)
+
+        assert updated_row is not None
+        return _row_to_taskcard(updated_row)
+
+    # ------------------------------------------------------------------
+    # PRIORITY GOVERNANCE（GOV-TASK-004 §2.4+§2.5）
+    # ------------------------------------------------------------------
+
+    def _count_p0_tasks(self, conn: sqlite3.Connection) -> int:
+        """统计当前活跃 P0 任务数（排除终态 CANCELLED/VERIFIED 和软删除）。"""
+        row = conn.execute(
+            "SELECT COUNT(*) FROM tasks "
+            "WHERE priority = 'P0' AND status NOT IN ('CANCELLED','VERIFIED') AND is_deleted = 0"
+        ).fetchone()
+        return row[0] if row else 0
+
+    def propose_priority_upgrade(
+        self,
+        task_id: str,
+        proposed_priority: str,
+    ) -> TaskCard:
+        """AI 提议优先级升级（P4→P3→P2→P1→P0）。
+
+        规则（GOV-TASK-004 §2.4）：
+        - 设置为 approval_required=True + priority_proposed=目标值
+        - 不直接修改 priority 字段
+        - 若已有拒绝且在 48h 冷却期内，抛出 RejectedUpgradeCoolingOffError
+        - 降级（如 P1→P2）直接生效，不走审批
+        """
+        from zephyr.shared.schemas import Priority as P
+
+        with self._write_tx() as conn:
+            row = self._fetch_row(conn, task_id)
+            if row is None:
+                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+
+            current_p = row["priority"]
+            proposed_p = getattr(P, proposed_priority, proposed_priority)
+            if isinstance(proposed_p, P):
+                proposed_p = proposed_p.value
+
+            if current_p == proposed_p:
+                return _row_to_taskcard(row)
+
+            current_idx = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "P4": 4}.get(current_p, 9)
+            proposed_idx = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "P4": 4}.get(proposed_p, 9)
+
+            if proposed_idx >= current_idx:
+                conn.execute(
+                    "UPDATE tasks SET priority = ?, updated_at = ? WHERE task_id = ?",
+                    (proposed_p, now_iso(), task_id),
+                )
+                updated_row = self._fetch_row(conn, task_id)
+                return _row_to_taskcard(updated_row)
+
+            current_approval = row["approval_required"]
+            if current_approval:
+                if row["priority_proposed"] and row["priority_proposed"] != proposed_p:
+                    conn.execute(
+                        "UPDATE tasks SET priority_proposed = ?, updated_at = ? WHERE task_id = ?",
+                        (proposed_p, now_iso(), task_id),
+                    )
+                    updated_row = self._fetch_row(conn, task_id)
+                    return _row_to_taskcard(updated_row)
+                return _row_to_taskcard(row)
+
+            cooldown_until = row["rejection_cooldown_until"]
+            if cooldown_until:
+                from datetime import datetime as dt
+
+                try:
+                    cooldown_dt = dt.fromisoformat(cooldown_until)
+                    if cooldown_dt > dt.now(UTC):
+                        raise RejectedUpgradeCoolingOffError(
+                            f"优先级升级被拒绝且仍在冷却期（至 {cooldown_until}），" f"请等待冷却期结束后重新提议"
+                        )
+                except (ValueError, TypeError):
+                    pass
+
+            if proposed_p == "P0":
+                p0_count = self._count_p0_tasks(conn)
+                if p0_count >= 5:
+                    raise P0InflationFrozenError(
+                        f"GOV-TASK-004 §2.5: 当前活跃 P0 任务 {p0_count} 个（已达上限 5），"
+                        f"冻结升级为 P0。请保持当前优先级或等待 Owner 手动解除冻结"
+                    )
+                if p0_count >= 3:
+                    import warnings
+
+                    warnings.warn(
+                        f"GOV-TASK-004 §2.5: 当前活跃 P0 任务 {p0_count} 个（≥3 黄色警戒），"
+                        f"任务 {task_id!r} 升级为 P0 必须附带'为什么必须 P0 而非 P1 / 能不能拆成 P1+P2'的论证段落",
+                        UserWarning,
+                        stacklevel=2,
+                    )
+
+            conn.execute(
+                "UPDATE tasks SET approval_required = 1, priority_proposed = ?, updated_at = ? WHERE task_id = ?",
+                (proposed_p, now_iso(), task_id),
+            )
+
+            conn.execute(
+                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
+                   VALUES (?, 'priority_upgrade_proposed', ?, ?, ?)""",
+                (
+                    f"ev-{task_id}-priority-{proposed_p}",
+                    json.dumps(
+                        {
+                            "current": current_p,
+                            "proposed": proposed_p,
+                            "action": "awaiting_owner_approval",
+                        },
+                        ensure_ascii=False,
+                    ),
+                    task_id,
+                    now_iso(),
+                ),
+            )
+
+            updated_row = self._fetch_row(conn, task_id)
+        assert updated_row is not None
+        return _row_to_taskcard(updated_row)
+
+    def approve_priority_upgrade(self, task_id: str) -> TaskCard:
+        """Owner 批准优先级升级。将 priority_proposed → priority，清除 approval 标记。"""
+        with self._write_tx() as conn:
+            row = self._fetch_row(conn, task_id)
+            if row is None:
+                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+
+            if not row["approval_required"]:
+                return _row_to_taskcard(row)
+
+            approved_p = row["priority_proposed"] or row["priority"]
+            conn.execute(
+                "UPDATE tasks SET priority = ?, approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = NULL, updated_at = ? WHERE task_id = ?",
+                (approved_p, now_iso(), task_id),
+            )
+
+            conn.execute(
+                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
+                   VALUES (?, 'priority_upgrade_approved', ?, ?, ?)""",
+                (
+                    f"ev-{task_id}-approved-{approved_p}",
+                    json.dumps({"approved": approved_p, "action": "owner_approved"}, ensure_ascii=False),
+                    task_id,
+                    now_iso(),
+                ),
+            )
+
+            updated_row = self._fetch_row(conn, task_id)
+        assert updated_row is not None
+        return _row_to_taskcard(updated_row)
+
+    def reject_priority_upgrade(self, task_id: str) -> TaskCard:
+        """Owner 拒绝优先级升级。设置 48h 冷却期。"""
+        from datetime import datetime as dt
+        from datetime import timedelta as td
+
+        cooldown = (dt.now(UTC) + td(hours=48)).isoformat()
+
+        with self._write_tx() as conn:
+            row = self._fetch_row(conn, task_id)
+            if row is None:
+                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+
+            conn.execute(
+                "UPDATE tasks SET approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = ?, updated_at = ? WHERE task_id = ?",
+                (cooldown, now_iso(), task_id),
+            )
+
+            conn.execute(
+                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
+                   VALUES (?, 'priority_upgrade_rejected', ?, ?, ?)""",
+                (
+                    f"ev-{task_id}-rejected",
+                    json.dumps({"cooldown_until": cooldown, "action": "owner_rejected"}, ensure_ascii=False),
+                    task_id,
+                    now_iso(),
+                ),
+            )
+
+            updated_row = self._fetch_row(conn, task_id)
         assert updated_row is not None
         return _row_to_taskcard(updated_row)
 
@@ -581,71 +836,291 @@ class TaskRepository:
         if isinstance(to_status, str):
             to_status = TaskStatus(to_status)
 
-        # G1 门禁检查在事务外执行，避免两个连接同时争抢 BEGIN IMMEDIATE
-        # （GateEngine 持有独立 SQLite 连接，需先完成写入再开启 task_repo 事务）
-        gate_result: GateResult | None = None
-        if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
-            # 先读任务对象（读操作不加锁）
-            pre_conn = get_db_connection(self._db_path)
-            pre_conn.row_factory = sqlite3.Row
-            pre_row = pre_conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,)).fetchone()
-            pre_conn.close()
-            if pre_row is not None:
-                task_obj = _row_to_taskcard(pre_row)
-                gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID)
-                if not gate_result.passed:
-                    raise GateViolationError(gate_result)
+        try:
+            with self._write_tx() as conn:
+                row = self._fetch_row(conn, task_id)
+                if row is None:
+                    raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
 
-        with self._write_tx() as conn:
-            row = self._fetch_row(conn, task_id)
-            if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                # G1 门禁检查在写事务内执行，与状态转换原子落盘
+                # GateEngine 接受外部 conn，不再管理独立事务
+                gate_result: GateResult | None = None
+                if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
+                    task_obj = _row_to_taskcard(row)
+                    gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
+                    if not gate_result.passed:
+                        raise GateViolationError(gate_result)
 
-            from_status = TaskStatus(row["status"])
-            if not _is_valid_transition(from_status, to_status):
-                raise InvalidTransitionError(f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）")
+                from_status = TaskStatus(row["status"])
+                if not _is_valid_transition(from_status, to_status):
+                    raise InvalidTransitionError(
+                        f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
+                    )
 
-            now = now_iso()
-            set_ready_at = to_status == TaskStatus.READY
-            set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
-            conn.execute(
-                """
-                UPDATE tasks
-                SET status = ?, session_id = COALESCE(?, session_id),
-                    waiting_for = ?,
-                    ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
-                    completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
-                    updated_at = ?
-                WHERE task_id = ?
-                """,
-                (
-                    to_status.value,
-                    session_id,
-                    waiting_for,
-                    1 if set_ready_at else 0,
-                    now if set_ready_at else None,
-                    1 if set_completed_at else 0,
-                    now if set_completed_at else None,
-                    now,
-                    task_id,
-                ),
-            )
-            self._record_event(
-                conn,
-                "state_transition",
-                {
-                    "from": from_status.value,
-                    "to": to_status.value,
-                    "task_id": task_id,
-                    "note": note or "",
-                },
-                task_id=task_id,
-                session_id=session_id,
-            )
-            updated_row = self._fetch_row(conn, task_id)
+                now = now_iso()
+                set_ready_at = to_status == TaskStatus.READY
+                set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
+                increment_block_count = to_status == TaskStatus.BLOCKED
+                conn.execute(
+                    """
+                    UPDATE tasks
+                    SET status = ?, session_id = COALESCE(?, session_id),
+                        waiting_for = ?,
+                        ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
+                        completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
+                        block_sessions_count = CASE WHEN ? THEN block_sessions_count + 1 ELSE block_sessions_count END,
+                        updated_at = ?
+                    WHERE task_id = ?
+                    """,
+                    (
+                        to_status.value,
+                        session_id,
+                        waiting_for,
+                        1 if set_ready_at else 0,
+                        now if set_ready_at else None,
+                        1 if set_completed_at else 0,
+                        now if set_completed_at else None,
+                        1 if increment_block_count else 0,
+                        now,
+                        task_id,
+                    ),
+                )
+                self._record_event(
+                    conn,
+                    "state_transition",
+                    {
+                        "from": from_status.value,
+                        "to": to_status.value,
+                        "task_id": task_id,
+                        "note": note or "",
+                    },
+                    task_id=task_id,
+                    session_id=session_id,
+                )
+                self._recalculate_dependent_status(conn, task_id, to_status)
+                updated_row = self._fetch_row(conn, task_id)
+
+        except GateViolationError as exc:
+            # 写事务 ROLLBACK 会撤销同 conn 下的 gates INSERT；用独立连接再写一条，保证失败可审计。
+            if self._gate_engine is not None:
+                self._gate_engine._persist_result(exc.result, conn=None)
+            raise
 
         assert updated_row is not None
+
+        from zephyr.hooks.event_hook import hook_registry, TransitionEvent
+        hook_registry.fire(TransitionEvent(
+            task_id=task_id,
+            from_status=from_status.value,
+            to_status=to_status.value,
+            note=note or "",
+            session_id=session_id,
+        ))
+
         return _row_to_taskcard(updated_row)
+
+    def _recalculate_dependent_status(
+        self,
+        conn: sqlite3.Connection,
+        changed_task_id: str,
+        new_status: TaskStatus,
+    ) -> None:
+        """当子任务状态变更时，重算依赖它的父任务状态。
+
+        规则（蓝图 MOD-INF-006 盲点#1）：
+        - 所有子任务 COMPLETED/VERIFIED → 父任务 READY（解锁继续施工）
+        - 任一子任务 FAILED/CANCELLED → 父任务 BLOCKED
+        - 否则不改变父任务状态
+        """
+        if new_status not in (
+            TaskStatus.COMPLETED,
+            TaskStatus.VERIFIED,
+            TaskStatus.FAILED,
+            TaskStatus.CANCELLED,
+        ):
+            return
+
+        cursor = conn.execute(
+            "SELECT task_id FROM tasks WHERE is_deleted = 0 AND depends_on LIKE ?",
+            (f"%{changed_task_id}%",),
+        )
+        parent_rows = cursor.fetchall()
+
+        for parent_row in parent_rows:
+            parent_task_id = parent_row["task_id"]
+            parent = _row_to_taskcard(self._fetch_row(conn, parent_task_id))
+            if parent is None or not parent.depends_on:
+                continue
+
+            child_statuses: list[TaskStatus] = []
+            all_resolved = True
+            any_failed = False
+            for dep_id in parent.depends_on:
+                child_row = self._fetch_row(conn, dep_id)
+                if child_row is None:
+                    continue
+                child_status = TaskStatus(child_row["status"])
+                child_statuses.append(child_status)
+                if child_status not in (TaskStatus.COMPLETED, TaskStatus.VERIFIED):
+                    all_resolved = False
+                if child_status in (TaskStatus.FAILED, TaskStatus.CANCELLED):
+                    any_failed = True
+
+            if not child_statuses:
+                continue
+
+            parent_status = TaskStatus(parent.status.value)
+            if all_resolved and parent_status in (TaskStatus.BLOCKED, TaskStatus.WAITING, TaskStatus.PENDING):
+                conn.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ? WHERE task_id = ?",
+                    (TaskStatus.READY.value, now_iso(), parent_task_id),
+                )
+                self._record_event(
+                    conn,
+                    "state_transition",
+                    {
+                        "from": parent_status.value,
+                        "to": TaskStatus.READY.value,
+                        "task_id": parent_task_id,
+                        "note": f"所有子任务已完成（触发者: {changed_task_id}）",
+                    },
+                    task_id=parent_task_id,
+                )
+            elif any_failed and parent_status not in (TaskStatus.BLOCKED, TaskStatus.CANCELLED, TaskStatus.VERIFIED):
+                conn.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?",
+                    (TaskStatus.BLOCKED.value, now_iso(), parent_task_id),
+                )
+                self._record_event(
+                    conn,
+                    "state_transition",
+                    {
+                        "from": parent_status.value,
+                        "to": TaskStatus.BLOCKED.value,
+                        "task_id": parent_task_id,
+                        "note": f"子任务失败触发阻塞（触发者: {changed_task_id}）",
+                    },
+                    task_id=parent_task_id,
+                )
+
+    # ------------------------------------------------------------------
+    # ESCALATION GOVERNANCE（GOV-TASK-004 §2.7）
+    # ------------------------------------------------------------------
+
+    def check_escalation(self, task_id: str) -> dict | None:
+        """检查任务是否需要升级到 Owner。
+
+        触发条件（GOV-TASK-004 §2.7）：
+        - P0 任务 BLOCKED 超过 2 次 → escalation:owner
+        - 任何任务 BLOCKED 超过 5 次 → escalation:owner
+        - P0 任务 FAILED 2 次 → escalation:owner
+
+        返回 None 表示无需升级；返回 dict 表示需要升级，含 reason 和 triggers 字段。
+        """
+        task = self.get(task_id)
+        if task is None:
+            return None
+
+        triggers = []
+        is_p0 = task.priority.value == "P0"
+
+        if is_p0 and task.block_sessions_count >= 2:
+            triggers.append(f"P0 任务已 BLOCKED {task.block_sessions_count} 次（≥2）")
+        elif task.block_sessions_count >= 5:
+            triggers.append(f"任务已 BLOCKED {task.block_sessions_count} 次（≥5）")
+
+        if is_p0:
+            failed_count = self._count_failed_events(task_id)
+            if failed_count >= 2:
+                triggers.append(f"P0 任务已 FAILED {failed_count} 次（≥2）")
+
+        if not triggers:
+            return None
+
+        return {
+            "task_id": task_id,
+            "priority": task.priority.value,
+            "status": task.status.value,
+            "block_sessions_count": task.block_sessions_count,
+            "triggers": triggers,
+            "escalation_level": "escalation:owner",
+            "governance_ref": "GOV-TASK-004 §2.7",
+        }
+
+    def check_all_escalations(self) -> list[dict]:
+        """检查所有活跃任务是否需要升级。"""
+        escalations = []
+        for task in self.list_active():
+            result = self.check_escalation(task.task_id)
+            if result is not None:
+                escalations.append(result)
+        return escalations
+
+    def _count_failed_events(self, task_id: str) -> int:
+        """统计任务在 events 表中 FAILED 的次数。"""
+        row = self._conn.execute(
+            "SELECT COUNT(*) FROM events "
+            "WHERE task_id = ? AND event_type = 'state_transition' "
+            "AND json_extract(payload, '$.to') = 'FAILED'",
+            (task_id,),
+        ).fetchone()
+        return row[0] if row else 0
+
+    # ------------------------------------------------------------------
+    # TIMEOUT GOVERNANCE（GOV-TASK-004 §2.6）
+    # ------------------------------------------------------------------
+
+    def _is_timeout_exempt(self, task_id: str) -> bool:
+        """检查任务是否携带 exempt:timeout 豁免标签（GOV-TASK-004 §2.6）。"""
+        task = self.get(task_id)
+        if task is None:
+            return False
+        tags = getattr(task, "tags", [])
+        return "exempt:timeout" in tags
+
+    def check_task_timeout(self, task_id: str) -> dict | None:
+        """检查任务是否超时，返回超时信息或 None。
+
+        GOV-TASK-004 §2.6 豁免规则：
+        - 标签含 exempt:timeout → 跳过超时检查
+        - 依赖外部第三方的任务（blocked_reason 注明"外部依赖"）→ 跳过超时检查
+        """
+        task = self.get(task_id)
+        if task is None:
+            return None
+
+        if self._is_timeout_exempt(task_id):
+            return None
+
+        waiting_for = getattr(task, "waiting_for", "") or ""
+        if "外部依赖" in waiting_for:
+            return None
+
+        timeout_minutes = getattr(task, "timeout_minutes", 30)
+        created_str = getattr(task, "created_at", None)
+        if not created_str:
+            return None
+        try:
+            from datetime import datetime as dt
+
+            created = dt.fromisoformat(str(created_str))
+            if created.tzinfo is None:
+                created = created.replace(tzinfo=UTC)
+            elapsed = (dt.now(UTC) - created).total_seconds() / 60
+        except (ValueError, TypeError):
+            return None
+
+        if elapsed > timeout_minutes:
+            return {
+                "task_id": task_id,
+                "status": task.status.value,
+                "priority": task.priority.value,
+                "timeout_minutes": timeout_minutes,
+                "elapsed_minutes": round(elapsed, 1),
+                "exempt": False,
+                "governance_ref": "GOV-TASK-004 §2.6",
+            }
+        return None
 
     # ------------------------------------------------------------------
     # DELETE
@@ -653,12 +1128,29 @@ class TaskRepository:
 
     def delete(self, task_id: str) -> bool:
         """
-        删除任务记录（级联 SET NULL events.task_id，级联删除 task_files）。
+        软删除任务记录。设置 is_deleted=1 + deleted_at 时间戳。
 
         返回
         ----
         bool
-            True 表示成功删除；False 表示 task_id 不存在。
+            True 表示成功标记删除；False 表示 task_id 不存在或已被删除。
+        """
+        with self._write_tx() as conn:
+            cursor = conn.execute(
+                "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? "
+                "WHERE task_id = ? AND is_deleted = 0",
+                (now_iso(), now_iso(), task_id),
+            )
+            deleted = cursor.rowcount > 0
+            if deleted:
+                conn.execute("DELETE FROM task_files WHERE task_id = ?", (task_id,))
+        return deleted
+
+    def hard_delete(self, task_id: str) -> bool:
+        """
+        物理删除任务记录（级联 SET NULL events.task_id，级联删除 task_files）。
+
+        仅在数据清理脚本中使用，日常开发用 soft delete。
         """
         with self._write_tx() as conn:
             conn.execute("DELETE FROM task_files WHERE task_id = ?", (task_id,))
@@ -675,7 +1167,7 @@ class TaskRepository:
         if isinstance(status, str):
             status = TaskStatus(status)
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE status = ? ORDER BY phase ASC, updated_at DESC",
+            "SELECT * FROM tasks WHERE status = ? AND is_deleted = 0 ORDER BY phase ASC, updated_at DESC",
             (status.value,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -683,7 +1175,7 @@ class TaskRepository:
     def list_by_phase(self, phase: int) -> list[TaskCard]:
         """查询指定 Phase 的所有任务（按 status ASC, task_id ASC 排序）。"""
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE phase = ? ORDER BY status ASC, task_id ASC",
+            "SELECT * FROM tasks WHERE phase = ? AND is_deleted = 0 ORDER BY status ASC, task_id ASC",
             (phase,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -691,17 +1183,61 @@ class TaskRepository:
     def list_by_session(self, session_id: str) -> list[TaskCard]:
         """查询指定 session_id 的所有任务。"""
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE session_id = ? ORDER BY updated_at DESC",
+            "SELECT * FROM tasks WHERE session_id = ? AND is_deleted = 0 ORDER BY updated_at DESC",
             (session_id,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
+
+    def query_tasks(
+        self,
+        *,
+        phase: int | None = None,
+        status: TaskStatus | str | None = None,
+        session_id: str | None = None,
+        file_path_glob: str | None = None,
+        limit: int = 50,
+    ) -> list[TaskCard]:
+        """复合条件列表（``task_manager.list_tasks`` / tool_contracts.yaml）。"""
+        clauses = ["is_deleted = 0"]
+        params: list[object] = []
+        if phase is not None:
+            clauses.append("phase = ?")
+            params.append(phase)
+        if status is not None:
+            st = status.value if isinstance(status, TaskStatus) else str(status)
+            clauses.append("status = ?")
+            params.append(st)
+        if session_id is not None:
+            clauses.append("session_id = ?")
+            params.append(session_id)
+        where_sql = " AND ".join(clauses)
+        cap = min(max(limit, 1), 500)
+        fetch_limit = min(cap * 20, 2000) if file_path_glob else cap
+        sql = f"SELECT * FROM tasks WHERE {where_sql} ORDER BY updated_at DESC LIMIT ?"
+        params.append(fetch_limit)
+        cursor = self._conn.execute(sql, tuple(params))
+        tasks = [_row_to_taskcard(r) for r in cursor.fetchall()]
+        if not file_path_glob:
+            return tasks[:cap]
+        matched: list[TaskCard] = []
+        for t in tasks:
+            for r in self._conn.execute(
+                "SELECT file_path FROM task_files WHERE task_id = ?",
+                (t.task_id,),
+            ):
+                if fnmatch.fnmatch(r["file_path"], file_path_glob):
+                    matched.append(t)
+                    break
+            if len(matched) >= cap:
+                break
+        return matched[:cap]
 
     def list_by_namespace(self, namespace: TaskNamespace | str) -> list[Task]:
         """查询指定命名空间的所有任务（按 seq ASC 排序）。"""
         if isinstance(namespace, TaskNamespace):
             namespace = namespace.value
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE namespace = ? ORDER BY seq ASC",
+            "SELECT * FROM tasks WHERE namespace = ? AND is_deleted = 0 ORDER BY seq ASC",
             (namespace,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -756,20 +1292,76 @@ class TaskRepository:
         return cursor.fetchone()["next_seq"]
 
     def list_active(self) -> list[Task]:
-        """查询活跃任务（IN_PROGRESS / READY / RETRY / WAITING）。"""
+        """查询活跃任务（IN_PROGRESS / READY / RETRY / WAITING），排除已删除。"""
         cursor = self._conn.execute(
             """
             SELECT * FROM tasks
             WHERE status IN ('IN_PROGRESS','READY','RETRY','WAITING')
+              AND is_deleted = 0
             ORDER BY phase ASC, updated_at DESC
             """
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
 
     def count_by_status(self) -> dict[str, int]:
-        """按状态统计任务数量。"""
-        cursor = self._conn.execute("SELECT status, COUNT(*) AS cnt FROM tasks GROUP BY status")
+        """按状态统计任务数量（排除已删除）。"""
+        cursor = self._conn.execute("SELECT status, COUNT(*) AS cnt FROM tasks WHERE is_deleted = 0 GROUP BY status")
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
+
+    # ------------------------------------------------------------------
+    # JSON1 查询（MOD-INF-012 v2.0）
+    # ------------------------------------------------------------------
+
+    def list_by_dependency(self, dependency_task_id: str) -> list[TaskCard]:
+        """查询所有依赖给定 task_id 的任务（利用 JSON1 扩展遍历 depends_on JSON 数组）。"""
+        cursor = self._conn.execute(
+            """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(depends_on)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(depends_on)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """,
+            (dependency_task_id,),
+        )
+        return [_row_to_taskcard(r) for r in cursor.fetchall()]
+
+    def list_by_tag(self, tag: str) -> list[TaskCard]:
+        """查询所有包含指定 tag 的任务（利用 JSON1 扩展遍历 tags JSON 数组）。"""
+        cursor = self._conn.execute(
+            """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(tags)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(tags)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """,
+            (tag,),
+        )
+        return [_row_to_taskcard(r) for r in cursor.fetchall()]
+
+    def list_by_blocked_by(self, blocker_task_id: str) -> list[TaskCard]:
+        """查询所有被给定 task_id 阻塞的任务（利用 JSON1 扩展遍历 blocked_by JSON 数组）。"""
+        cursor = self._conn.execute(
+            """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(blocked_by)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(blocked_by)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """,
+            (blocker_task_id,),
+        )
+        return [_row_to_taskcard(r) for r in cursor.fetchall()]
 
     # ------------------------------------------------------------------
     # UPSERT（scaffold 批量补录）
@@ -777,21 +1369,22 @@ class TaskRepository:
 
     def upsert(self, task: Task, *, files: list[dict[str, str]] | None = None) -> Task:
         """
-        INSERT OR REPLACE 语义：task_id 已存在则全量覆盖，否则新建。
+        ON CONFLICT DO UPDATE 语义：task_id 已存在则更新（保留 created_at），否则新建。
 
         用于 scaffold 任务补录（T-1-06）。
         """
+        now = now_iso()
         with self._write_tx() as conn:
             conn.execute(
                 """
-                INSERT OR REPLACE INTO tasks (
+                INSERT INTO tasks (
                     task_id, namespace, seq, title, status, priority, phase,
                     execution_model, model_rationale, fallback_model,
                     safety_level, directive, idempotent, classification,
                     evolution_policy, estimate_hours, actual_hours,
                     files_in_scope, deliverables, acceptance,
                     depends_on, tags, session_id, waiting_for, ready_at,
-                    completed_at, created_at, updated_at,
+                    completed_at, created_at, updated_at, is_deleted,
                     source_blueprint, source_section, description,
                     upstream_files, downstream_outputs, allowed_touch,
                     forbidden_touch, applicable_rules, context_assembly_manifest,
@@ -799,7 +1392,9 @@ class TaskRepository:
                     completed_gates, blocked_gates, assigned_pipeline,
                     pipeline_modules, blocked_by, artifact_paths,
                     audit_findings, ke_entries, ai_autonomy_level,
-                    autonomy_checklist, construction_status, verification_status
+                    autonomy_checklist, construction_status, verification_status,
+                    schema_version, approval_required, priority_proposed,
+                    rejection_cooldown_until, block_sessions_count
                 ) VALUES (
                     :task_id, :namespace, :seq, :title, :status, :priority, :phase,
                     :execution_model, :model_rationale, :fallback_model,
@@ -807,7 +1402,7 @@ class TaskRepository:
                     :evolution_policy, :estimate_hours, :actual_hours,
                     :files_in_scope, :deliverables, :acceptance,
                     :depends_on, :tags, :session_id, :waiting_for, :ready_at,
-                    :completed_at, :created_at, :updated_at,
+                    :completed_at, :created_at, :updated_at, 0,
                     :source_blueprint, :source_section, :description,
                     :upstream_files, :downstream_outputs, :allowed_touch,
                     :forbidden_touch, :applicable_rules, :context_assembly_manifest,
@@ -815,8 +1410,68 @@ class TaskRepository:
                     :completed_gates, :blocked_gates, :assigned_pipeline,
                     :pipeline_modules, :blocked_by, :artifact_paths,
                     :audit_findings, :ke_entries, :ai_autonomy_level,
-                    :autonomy_checklist, :construction_status, :verification_status
+                    :autonomy_checklist, :construction_status, :verification_status,
+                    :schema_version, :approval_required, :priority_proposed,
+                    :rejection_cooldown_until, :block_sessions_count
                 )
+                ON CONFLICT(task_id) DO UPDATE SET
+                    namespace = excluded.namespace,
+                    seq = excluded.seq,
+                    title = excluded.title,
+                    status = excluded.status,
+                    priority = excluded.priority,
+                    phase = excluded.phase,
+                    execution_model = excluded.execution_model,
+                    model_rationale = excluded.model_rationale,
+                    fallback_model = excluded.fallback_model,
+                    safety_level = excluded.safety_level,
+                    directive = excluded.directive,
+                    idempotent = excluded.idempotent,
+                    classification = excluded.classification,
+                    evolution_policy = excluded.evolution_policy,
+                    estimate_hours = excluded.estimate_hours,
+                    actual_hours = excluded.actual_hours,
+                    files_in_scope = excluded.files_in_scope,
+                    deliverables = excluded.deliverables,
+                    acceptance = excluded.acceptance,
+                    depends_on = excluded.depends_on,
+                    tags = excluded.tags,
+                    session_id = excluded.session_id,
+                    waiting_for = excluded.waiting_for,
+                    ready_at = excluded.ready_at,
+                    completed_at = excluded.completed_at,
+                    updated_at = excluded.updated_at,
+                    is_deleted = 0,
+                    deleted_at = NULL,
+                    source_blueprint = excluded.source_blueprint,
+                    source_section = excluded.source_section,
+                    description = excluded.description,
+                    upstream_files = excluded.upstream_files,
+                    downstream_outputs = excluded.downstream_outputs,
+                    allowed_touch = excluded.allowed_touch,
+                    forbidden_touch = excluded.forbidden_touch,
+                    applicable_rules = excluded.applicable_rules,
+                    context_assembly_manifest = excluded.context_assembly_manifest,
+                    rollback_instructions = excluded.rollback_instructions,
+                    estimated_tokens = excluded.estimated_tokens,
+                    timeout_minutes = excluded.timeout_minutes,
+                    completed_gates = excluded.completed_gates,
+                    blocked_gates = excluded.blocked_gates,
+                    assigned_pipeline = excluded.assigned_pipeline,
+                    pipeline_modules = excluded.pipeline_modules,
+                    blocked_by = excluded.blocked_by,
+                    artifact_paths = excluded.artifact_paths,
+                    audit_findings = excluded.audit_findings,
+                    ke_entries = excluded.ke_entries,
+                    ai_autonomy_level = excluded.ai_autonomy_level,
+                    autonomy_checklist = excluded.autonomy_checklist,
+                    construction_status = excluded.construction_status,
+                    verification_status = excluded.verification_status,
+                    schema_version = excluded.schema_version,
+                    approval_required = excluded.approval_required,
+                    priority_proposed = excluded.priority_proposed,
+                    rejection_cooldown_until = excluded.rejection_cooldown_until,
+                    block_sessions_count = excluded.block_sessions_count
                 """,
                 {
                     "task_id": task.task_id,
@@ -875,6 +1530,11 @@ class TaskRepository:
                     "autonomy_checklist": json.dumps(getattr(task, "autonomy_checklist", []), ensure_ascii=False),
                     "construction_status": getattr(task, "construction_status", "pending"),
                     "verification_status": getattr(task, "verification_status", "unverified"),
+                    "schema_version": "0.3.2",
+                    "approval_required": int(getattr(task, "approval_required", False)),
+                    "priority_proposed": getattr(task, "priority_proposed", None),
+                    "rejection_cooldown_until": getattr(task, "rejection_cooldown_until", None),
+                    "block_sessions_count": getattr(task, "block_sessions_count", 0),
                 },
             )
             if files:
@@ -888,15 +1548,18 @@ class TaskRepository:
         assert row is not None
         return _row_to_taskcard(row)
 
+
 # ---------------------------------------------------------------------------
 # 状态机查询助手（不依赖实例）
 # ---------------------------------------------------------------------------
+
 
 def allowed_transitions(status: TaskStatus | str) -> frozenset[TaskStatus]:
     """返回给定状态的合法目标状态集合。"""
     if isinstance(status, str):
         status = TaskStatus(status)
     return _ALLOWED_TRANSITIONS.get(status, frozenset())
+
 
 def is_terminal(status: TaskStatus | str) -> bool:
     """判断是否为终态（VERIFIED / CANCELLED）。"""

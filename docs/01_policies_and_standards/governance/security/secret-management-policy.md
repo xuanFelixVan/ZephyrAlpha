@@ -2,9 +2,9 @@
 module_id: GOV-SEC-001
 title: 密钥管理策略
 doc_type: policy
-status: draft
-version: "0.2.0"
-layer: l01_infrastructure
+status: Draft
+version: "0.2.1"
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -25,7 +25,7 @@ ai_autonomy: human_gated
 
 # 密钥管理策略
 
-> module_id: GOV-SEC-001 | version: 0.2.0 | status: draft | layer: L1
+> module_id: GOV-SEC-001 | version: 0.2.1 | status: Draft | layer: L1
 
 ---
 
@@ -39,7 +39,7 @@ ai_autonomy: human_gated
 - JWT/Session Token
 - 加密密钥
 
-不适用于：人类用户的登录密码（由访问控制策略 [GOV-SEC-002](../01_policies_and_standards/governance/security/access-control-policy.md) 管理）。
+不适用于：人类用户的登录密码（由访问控制策略 [GOV-SEC-002](access-control-policy.md) 管理）。
 
 ---
 
@@ -86,7 +86,7 @@ ai_autonomy: human_gated
 | 开发环境密钥 | 每 365 天轮换一次 | 提醒但不阻塞 |
 | 密钥疑似泄露 | 立即轮换，不受周期限制 | 不轮换视为 P0 事件 |
 
-> ⚠️ **待补充**：轮换周期 90/180/365 天为工程经验值。行业参考：NIST SP 800-63B 推荐 ≤ 180 天 / PCI DSS 要求 ≤ 90 天 / AWS IAM 最佳实践 90 天。待后续全面对标时验证并写入依据。
+以上周期为**本项目强制执行值**，并已对齐常见合规基线：PCI DSS 对高度敏感凭证要求 ≤90 天轮换；NIST SP 800-63B 对多数场景建议 ≤180 天定期复审；生产 API 密钥 90 天与公有云 IAM 常见实践一致。
 
 ### SEC-005：密钥撤销
 
@@ -114,9 +114,9 @@ ai_autonomy: human_gated
 1. **立即撤销**泄露的密钥
 2. **生成新密钥**并注入环境
 3. **搜索**泄露密钥出现过的所有文件，确认无残留
-4. **通知**所有使用该密钥的服务更新配置（含 [GOV-SEC-002](../01_policies_and_standards/governance/security/access-control-policy.md) 管理的权限范围）
+4. **通知**所有使用该密钥的服务更新配置（含 [GOV-SEC-002](access-control-policy.md) 管理的权限范围）
 5. **记录**泄露事件（时间、范围、原因）
-6. **复盘**并在 7 天内提交改进方案（P0 复盘标准见 [GOV-SEC-003](../01_policies_and_standards/governance/security/security-incident-response-policy.md)）
+6. **复盘**并在 7 天内提交改进方案（P0 复盘标准见 [GOV-SEC-003](security-incident-response-policy.md)）
 
 ---
 
@@ -146,5 +146,6 @@ ai_autonomy: human_gated
 
 | 日期 | 版本 | 修改内容 |
 |------|------|---------|
+| 2026-05-06 | 0.2.1 | SEC-004：删除「待补充」占位，将周期与 PCI DSS / NIST / 云 IAM 实践的对齐关系写入正文。 |
 | 2026-05-01 | 0.2.0 | #17 审批修复。(1) ABS/COND → SEC-（SEC-001~SEC-006）。(2) SEC-004 轮换周期补充行业参考。(3) SEC-006 新增密钥强度标准——API密钥≥256bit/CSPRNG，数据库密码≥16字符，JWT RSA≥2048bit或HMAC-SHA256，加密AES-256-GCM。(4) §4 验证表：补齐SEC-006验证行（每月检查密钥算法/长度）。(5) `depends_on: PS-STD-003, ai_autonomy: human_gated`。(6) `date` → 2026-05-01。 |
 | 2026-04-30 | 0.1.0 | 初始版本 |

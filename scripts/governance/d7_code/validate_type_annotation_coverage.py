@@ -1,15 +1,6 @@
 """
 validate_type_annotation_coverage.py — 类型注解覆盖率校验
 
-__manifest__ = """
-args: []
-description: 类型注解覆盖率校验——公共函数参数和返回值必须有类型注解
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PEP 484 — type hints improve code readability and enable static analysis
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 类型注解覆盖率校验——公共函数参数和返回值必须有类型注解
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import ast

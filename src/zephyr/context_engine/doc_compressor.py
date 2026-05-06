@@ -23,10 +23,9 @@ DocCompressor 是 M1 build() pipeline 注入的单例服务，向 M3 触发器�
 
 2. CompressionInvariantError — 不变量违反时抛出（含违反字段 + 原值/压缩值）
 
-3. DocCompressor.compress(text, ...) — 三级降级：
-   规则基压缩（无 LLM 依赖）
-   本地 LLM（Qwen2.5-3B-Instruct ONNX int8）
-   直接截断兜底
+3. DocCompressor.compress(text, ...) — 便捷入口，等价于 ``compress_with_provenance(...).compressed_text``。
+4. ``compress_with_provenance`` — **AP4 类型保障**：一并返回 ``raw_text`` 与 ``compressed_text``，
+   避免仅靠调用方手写备份。
 
 不变量 Immutable Core 约束
 --------------------------
@@ -53,6 +52,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from zephyr.shared.capability import capability_check
 
 __all__ = [
+    "CompressionOutcome",
     "CompressionPolicy",
     "CompressionInvariantError",
     "DocCompressor",
@@ -71,6 +71,7 @@ DEFAULT_POLICY_PATH: Path = REPO_ROOT / "config" / "compression" / "policy.yaml"
 # ---------------------------------------------------------------------------
 # 不变量模型（Immutable Core）
 # ---------------------------------------------------------------------------
+
 
 class CompressionPolicy(BaseModel):
     """DocCompressor 不变量约束（Pydantic v2 frozen）。
@@ -116,12 +117,14 @@ class CompressionPolicy(BaseModel):
                 )
         return self
 
+
 DEFAULT_POLICY: CompressionPolicy = CompressionPolicy()
 """默认策略（所有不变量启用，含 3 个 immutable_blocks 标记——与 policy.yaml 保持一致）。"""
 
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
+
 
 class CompressionInvariantError(Exception):
     """压缩不变量违反异常。
@@ -144,9 +147,20 @@ class CompressionInvariantError(Exception):
             f"CompressionInvariantError: field='{field}'\n" f"  原始：{original}\n" f"  压缩：{compressed}"
         )
 
+
+class CompressionOutcome(BaseModel):
+    """压缩结果（AP4：类型层同时携带原文与压缩稿，避免静默丢原文）。"""
+
+    model_config = ConfigDict(frozen=True)
+
+    raw_text: str = Field(description="输入原文")
+    compressed_text: str = Field(description="压缩后正文")
+
+
 # ---------------------------------------------------------------------------
 # YAML Policy 加载器
 # ---------------------------------------------------------------------------
+
 
 def load_policy_from_yaml(
     path: Path | None = None,
@@ -192,9 +206,11 @@ def load_policy_from_yaml(
         )
         return DEFAULT_POLICY
 
+
 # ---------------------------------------------------------------------------
 # DocCompressor
 # ---------------------------------------------------------------------------
+
 
 class DocCompressor:
     """文档压缩服务单例。
@@ -261,6 +277,24 @@ class DocCompressor:
         """返回当前激活的压缩策略（只读）。"""
         return self._policy
 
+    def compress_with_provenance(
+        self,
+        text: str,
+        target_path: str | None = None,
+        session_id: str = "default",
+    ) -> CompressionOutcome:
+        """规则基压缩，**同时**返回原文与压缩正文（AP4 类型保障）。
+
+        ``session_id`` 保留供未来与 ContextBudgetTracker / 遥测关联。
+        """
+        if target_path is not None:
+            capability_check("write", target_path)
+
+        policy = self._policy
+        compressed = self._rule_based_compress(text, policy)
+        self._check_invariants(text, compressed, policy)
+        return CompressionOutcome(raw_text=text, compressed_text=compressed)
+
     def compress(
         self,
         text: str,
@@ -291,14 +325,7 @@ class DocCompressor:
         CapabilityDenied（来自 zephyr.shared.capability）
             target_path 不在 CBAC allow 列表时抛出。
         """
-        # CBAC 检查（仅当提供 target_path 时）
-        if target_path is not None:
-            capability_check("write", target_path)
-
-        policy = self._policy
-        compressed = self._rule_based_compress(text, policy)
-        self._check_invariants(text, compressed, policy)
-        return compressed
+        return self.compress_with_provenance(text, target_path=target_path, session_id=session_id).compressed_text
 
     # ------------------------------------------------------------------
     # 内部：规则基压缩（experimental 实现）
@@ -487,17 +514,21 @@ class DocCompressor:
                 compressed=f"压缩结果 {len(compressed)} 字符 < min_chars={policy.min_chars}",
             )
 
+
 # ---------------------------------------------------------------------------
 # 内部工具函数
 # ---------------------------------------------------------------------------
+
 
 def _extract_headers(text: str) -> list[str]:
     """从 Markdown 文本中提取所有 `#` 级标题（完整标题行）。"""
     return [line.strip() for line in text.split("\n") if re.match(r"^#{1,6}\s+\S", line)]
 
+
 def _has_frontmatter(text: str) -> bool:
     """检查文本是否以 `---\n...\n---` 开头的 YAML frontmatter 块。"""
     return bool(re.match(r"^---\n", text))
+
 
 def _compress_long_paragraphs(body: str, max_lines: int = 4) -> str:
     """对连续纯文本段落（非标题、非代码块、非列表）压缩长段落。
@@ -544,6 +575,7 @@ def _compress_long_paragraphs(body: str, max_lines: int = 4) -> str:
         result.extend(_maybe_truncate_para(para_lines, max_lines))
 
     return "\n".join(result)
+
 
 def _maybe_truncate_para(para_lines: list[str], max_lines: int) -> list[str]:
     """如果段落超过 max_lines 行，截断并追加 "..."。"""

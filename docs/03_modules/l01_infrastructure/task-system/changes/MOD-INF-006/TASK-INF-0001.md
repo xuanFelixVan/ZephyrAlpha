@@ -7,7 +7,7 @@ source_section: "§11.3 步骤1"
 title: "更新注册表"
 description: "| 产出位置 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
 |---------|------|
-| 验收标准 | MOD-INF-006 条目 version→0.2.0，blueprint_status→approved |"
+| 验收标准 | MOD-INF-006 条目 version→**0.3.0**，blueprint_status→approved，registry changelog 追加 v0.3.0 说明（对齐蓝图 §11.3 步骤1） |"
 priority: "P1"
 
 # ===== 上游：执行前必须读取的文件 =====
@@ -50,7 +50,8 @@ timeout_minutes: 30
 
 # ===== 验收标准 =====
 acceptance_criteria:
-  - ""
+  - "MOD-INF-006 在 blueprint-registry.yaml 中 version=0.3.0 且 blueprint_status=approved"
+  - "变更记录或 note 中可见 v0.3.0 / Task 基座继承 相关说明"
 
 # ===== 回滚 =====
 rollback_instructions: "删除本步骤新建的文件，恢复修改的文件。具体：D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml"

@@ -1,0 +1,28 @@
+# 风控参数真源（INV-002 / INV-003 / INV-013）— 三平面须引用本文件，禁止漂移
+schema_version: "1.0"
+canonical_source: true
+last_updated: "2026-05-05"
+
+# INV-002 — 单一持仓 ≤ 5% NAV
+max_single_position_nav_ratio: 0.05
+
+# G10 行业集中度对照（门禁 YAML 中 max_sector_concentration_default 不得超过此值）
+max_sector_concentration_nav_ratio: 0.30
+
+# G11 总杠杆上限（nominal gross exposure / equity）
+max_gross_leverage: 1.0
+
+# G12 策略间相关性阈值（Pearson 等；门禁 correlation_threshold 不得宽于此值）
+max_strategy_correlation_threshold: 0.85
+
+# G12 因子集合重叠比例上限
+max_factor_overlap_threshold: 0.60
+
+# G12 股票池重叠比例上限（universe_overlap 类检查）
+max_universe_overlap_threshold: 0.70
+
+# G10 流动性：单标的 ADV 参与比例上限（可选对照）
+max_adv_participation_ratio: 0.05
+
+# INV-003 — 日损失限额（T0/T1 前可为 null，由 Owner 配置后不得静默变更）
+daily_loss_limit_nav_ratio: null

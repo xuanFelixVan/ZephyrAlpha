@@ -5,22 +5,20 @@ generated: '2026-05-02'
 status: active
 ---
 
-# L01 — 基础设施层（Infrastructure）
+# L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?
 
-**职责**：消息队列、缓存、数据库连接池、对象存储、API 网关等底层基础设施。也包括 Vibe Coding 双管线、脚本系统、任务卡系统等 AI 辅助开发基础设施。
+**鑱岃矗**锛氭秷鎭槦鍒椼€佺紦瀛樸€佹暟鎹簱杩炴帴姹犮€佸璞″瓨鍌ㄣ€丄PI 缃戝叧绛夊簳灞傚熀纭€璁炬柦銆備篃鍖呮嫭 Vibe Coding 鍙岀绾裤€佽剼鏈郴缁熴€佷换鍔″崱绯荤粺绛?AI 杈呭姪寮€鍙戝熀纭€璁炬柦銆?
 
-**功能域**：infra（基础设施）、observability（容量保障）
+**鍔熻兘鍩?*锛歩nfra锛堝熀纭€璁炬柦锛夈€乷bservability锛堝閲忎繚闅滐級
 
-**代码对应**：`src/zephyr/l01_infrastructure/`
+**浠ｇ爜瀵瑰簲**锛歚src/zephyr/l01_infrastructure/`
 
-**已登记模块**（详见 `../module-registry.yaml`）：
+**宸茬櫥璁版ā鍧?*锛堣瑙?`../module-registry.yaml`锛夛細
 
-| module_id | 名称 | 状态 | 优先级 |
+| module_id | 鍚嶇О | 鐘舵€?| 浼樺厛绾?|
 |-----------|------|------|:--:|
 | MOD-INF-001 | capacity-assurance | approved | P0 |
 | MOD-INF-002 | runtime-integration | approved | P0 |
-| MOD-INF-003 | task-card-kms | **retired** | P1 |
-| MOD-INF-004 | vibe-coding-pipelines | **retired** | P0 |
 | MOD-INF-005 | script-system | approved | P0 |
 | MOD-INF-006 | task-system | approved | P0 |
 | MOD-KB-001 | knowledge-base | approved | P0 |
@@ -37,22 +35,22 @@ status: active
 | MOD-INF-016 | shared-core | draft | P2 |
 | MOD-INF-017 | code-dedup-engine | draft | P2 |
 
-**模块登记**：见 `../module-registry.yaml`，按 `layer: "L01"` 或 `layer: "cross_layer"` 过滤。
+**妯″潡鐧昏**锛氳 `../module-registry.yaml`锛屾寜 `layer: "L01"` 鎴?`layer: "cross_layer"` 杩囨护銆?
 
-## 责任声明（Single Responsibility）
+## 璐ｄ换澹版槑锛圫ingle Responsibility锛?
 
-本目录只存放：**L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / 任务系统 / 脚本系统 / 知识库 / 门禁引擎 / 上下文引擎 / 管线 / 反馈循环 / 向量记忆 / 数据库 / MCP服务 / LLM安全 / 遥测 / 共享基础设施）**。
+鏈洰褰曞彧瀛樻斁锛?*L01 鍩虹璁炬柦灞?鈥?AI 鍩虹璁炬柦锛堝閲忎繚闅?/ 杩愯鏃堕泦鎴?/ 浠诲姟绯荤粺 / 鑴氭湰绯荤粺 / 鐭ヨ瘑搴?/ 闂ㄧ寮曟搸 / 涓婁笅鏂囧紩鎿?/ 绠＄嚎 / 鍙嶉寰幆 / 鍚戦噺璁板繂 / 鏁版嵁搴?/ MCP鏈嶅姟 / LLM瀹夊叏 / 閬ユ祴 / 鍏变韩鍩虹璁炬柦锛?*銆?
 
-## 文件清单
+## 鏂囦欢娓呭崟
 
-| 文件 | 说明 |
+| 鏂囦欢 | 璇存槑 |
 |------|------|
-| index.md | 本层级索引（唯一真源） |
+| index.md | 鏈眰绾х储寮曪紙鍞竴鐪熸簮锛?|
 
-## 排除规则（不应放入本目录的内容）
+## 鎺掗櫎瑙勫垯锛堜笉搴旀斁鍏ユ湰鐩綍鐨勫唴瀹癸級
 
-- ❌ 非 C 轨业务层文档 → `_b_track_interfaces/ 或 01_policies_and_standards/`
+- 鉂?闈?C 杞ㄤ笟鍔″眰鏂囨。 鈫?`_b_track_interfaces/ 鎴?01_policies_and_standards/`
 
-## 父级目录
+## 鐖剁骇鐩綍
 
-- 父级：[03_modules](../index.md)
+- 鐖剁骇锛歔03_modules](../index.md)

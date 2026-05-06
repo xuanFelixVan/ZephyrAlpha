@@ -1,15 +1,6 @@
 """
 validate_session_budget.py — Session 操作预算校验（已废弃）
 
-__manifest__ = """
-args: []
-description: Session 操作预算校验（已废弃——GOV-AI-005 已删除）
-dimensions:
-- D12
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 GOV-AI-005 已于 2026-05-04 删除。本脚本保留以供 reference，不再作为审计门禁使用。
@@ -24,6 +15,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: Session 操作预算校验（已废弃——GOV-AI-005 已删除）
+dimensions:
+- D12
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

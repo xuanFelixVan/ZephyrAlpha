@@ -6,7 +6,12 @@
 职责
 ----
 Alpha 因子融合为交易信号：因子加权组合 → 信号打分 → 信号过滤/去重。
-[N/A — 骨架占位，尚未实现]
+
+子模块
+------
+- aggregator_base.py     : 信号聚合器基类 (SignalAggregatorBase) — 通用聚合
+- signal_synthesizer.py  : 信号合成器基类 (SignalSynthesizerBase) — Phase B 骨架已生成
+- capital_allocator.py   : 资本配置器基类 (CapitalAllocatorBase) — Phase B 骨架已生成
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
@@ -34,3 +39,25 @@ SSoT: cross-layer-contracts.yaml v3.0
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l03_signal_generation.aggregator_base import (
+    DegradationMonitorBase,
+    SignalAggregatorBase,
+)
+from zephyr.l03_signal_generation.capital_allocator import (
+    CapitalAllocationResult,
+    CapitalAllocatorBase,
+)
+from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+
+__all__ = [
+    "CapitalAllocationResult",
+    "CapitalAllocatorBase",
+    "DegradationMonitorBase",
+    "SignalAggregatorBase",
+    "SignalSynthesizerBase",
+    "SynthesizedSignal",
+]

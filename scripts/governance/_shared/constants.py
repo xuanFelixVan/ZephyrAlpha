@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+
 def find_repo_root() -> Path:
     """从当前文件向上查找项目根目录（包含 src/zephyr/ 的目录）。
 
@@ -30,6 +31,7 @@ def find_repo_root() -> Path:
         if (parent / "src" / "zephyr" / "__init__.py").exists():
             return parent
     raise FileNotFoundError(f"Cannot find project root (no src/zephyr/__init__.py found) from {current}")
+
 
 REPO_ROOT: Path = find_repo_root()
 
@@ -96,3 +98,6 @@ SRC_DIR: Path = REPO_ROOT / "src" / "zephyr"
 CONFIG_DIR: Path = REPO_ROOT / "config"
 SCRIPTS_DIR: Path = REPO_ROOT / "scripts" / "governance"
 MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
+
+# 与 src/zephyr/shared/paths.DB_PATH 对齐（治理脚本不得各自硬编码库文件名）
+DB_PATH: Path = REPO_ROOT / "data" / "zalpha_metadata.db"

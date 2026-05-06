@@ -1,16 +1,5 @@
 """sync_blueprint_code_index.py — 蓝图 §19 已实现代码路径索引自动同步
 
-__manifest__ = """
-args: []
-description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
-  patch+1，--check模式仅检测漂移）
-dimensions:
-- D5
-- D8
-priority: P1
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 对标：AGENTS.md §6.14 蓝图-代码同步强制约定
@@ -27,6 +16,18 @@ warn_only: false
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
+  patch+1，--check模式仅检测漂移）
+dimensions:
+- D5
+- D8
+priority: P1
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import re
 import sys

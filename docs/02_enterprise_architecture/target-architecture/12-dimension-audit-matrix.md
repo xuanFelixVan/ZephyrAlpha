@@ -193,7 +193,7 @@ ttl: permanent
 | 指标 | 采集方式 | 评分贡献 |
 |------|---------|---------|
 | L00 元数据 schema 定义完整性 | schema 字段数 / 期望字段数 | 0.4 |
-| schema 演化 ADR 数量 | `grep ADR adr/` 按 schema 标签 | 0.3 |
+| schema 演化 ADR 数量 | KB:decisions namespace 按 schema 标签 | 0.3 |
 | 数据字典覆盖率 | 数据字典条目数 / 核心实体数 | 0.3 |
 
 ### 4.3 D3 应用架构

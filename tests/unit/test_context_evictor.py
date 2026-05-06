@@ -3,18 +3,15 @@ Unit tests for context_evictor.py — beta a
 ============================================
 Minimum: 12 tests
 """
+
 from __future__ import annotations
-
-import time
-
-import pytest
 
 from zephyr.context_engine.context_evictor import (
     ContextBlock,
     ContextEvictor,
-    EvictionResult,
     PriorityLevel,
 )
+
 
 def _make_block(
     block_id: str,

@@ -1,31 +1,77 @@
+# ---
+# layer: l06_trade_execution
+# category: broker_interface
+# status: active
+# created: "2026-05-05"
+# ---
+
+"""L06 — BrokerInterface
+
+Hand-maintained OCP extension point. DO NOT overwrite via codegen.
+
+CTR 契约：
+  OCP-003  BrokerInterface   券商扩展点
+
+SSoT: cross-layer-contracts.yaml v3.0 → OCP-003
+"""
 from __future__ import annotations
 
-from dataclasses import dataclass
+import abc
+from typing import Callable, Optional
 
-# ---
-# layer: cross_cutting
-# category: data_contract
-# status: auto_generated
-# created: "2026-05-04"
-# generated_by: codegen from cross-layer-contracts.yaml
-# ---
-"""
-ZephyrAlpha — shared/contracts/broker_interface.py
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.position import PositionSnapshot
 
-OCP-003: BrokerInterface / 券商扩展点
+FillCallback = Callable[[Fill], None]
 
-L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。
 
-SSoT: cross-layer-contracts.yaml → OCP-003
-Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
-       Any manual changes will be overwritten by codegen.
+class BrokerInterface(abc.ABC):
+    """券商接口抽象基类（OCP-003 OCP 扩展点）
 
-AI Prompt
----------
+    所有券商适配器 MUST 实现此接口。
+    支持同时接入多家券商，通过 SOR 路由选择最优执行通道。
+    """
 
-"""
+    @property
+    @abc.abstractmethod
+    def broker_id(self) -> str:
+        """券商唯一标识（如 ib, futu, longport, simulation）"""
+        ...
 
-@dataclass(frozen=True)
-class BrokerInterface:
-    pass
+    @abc.abstractmethod
+    def connect(self) -> bool:
+        """建立连接。返回 True = 成功。"""
+        ...
+
+    @abc.abstractmethod
+    def disconnect(self) -> None:
+        """断开连接"""
+        ...
+
+    @abc.abstractmethod
+    def submit_order(self, order: Order) -> str:
+        """发送委托。返回 broker_order_id。"""
+        ...
+
+    @abc.abstractmethod
+    def cancel_order(self, broker_order_id: str) -> bool:
+        """撤单。返回 True = 成功。"""
+        ...
+
+    @abc.abstractmethod
+    def query_order(self, broker_order_id: str) -> Optional[Order]:
+        """查询委托状态"""
+        ...
+
+    @abc.abstractmethod
+    def get_positions(self) -> PositionSnapshot:
+        """查询当前持仓"""
+        ...
+
+    def register_fill_callback(self, callback: FillCallback) -> None:
+        """注册成交回调（可选）"""
+        pass
+
+
+__all__ = ["BrokerInterface", "FillCallback"]

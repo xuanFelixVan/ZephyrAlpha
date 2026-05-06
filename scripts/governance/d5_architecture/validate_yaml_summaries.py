@@ -1,18 +1,5 @@
-"""
-validate_yaml_summaries.py — YAML Summary 自动对账闸门（GATE-SUM）
-v1.0.0 — 2026-05-03
-
-__manifest__ = """
-args: []
-description: GATE-SUM — YAML Summary 自动对账闸门（根治 summary 手动维护漂移——扫描所有架构 YAML，从实际数据反算聚合值与声明的
-  summary 逐项对比）
-dimensions:
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
-
+"""validate_yaml_summaries.py -- YAML Summary auto-reconciliation gate (GATE-SUM)
+v1.0.0 -- 2026-05-03
 
 AGENTS.md §6.10 双层对齐闸门的根治层：
   根因：所有 YAML summary 字段（by_status / by_priority / by_maturity /
@@ -20,22 +7,34 @@ AGENTS.md §6.10 双层对齐闸门的根治层：
         无自动化交叉校验。每次数据变更后 summary 漂移不可避免。
 
   本闸门：自动扫描 architecture-model/ 下所有 YAML 文件，从实际条目数据
-          反算聚合值 → 与声明的 summary 逐项对比 → 报告所有不一致。
+          反算聚合值 -> 与声明的 summary 逐项对比 -> 报告所有不一致。
 
 检查范围：
-  - layers/l*.yaml          → modules[].status/priority/runtime_plane vs summary
-  - infra/core-services.yaml → services[].status/priority vs summary
-  - infra/shared-infra.yaml  → modules[].status/priority vs summary
-  - scripts/scripts-model.yaml → modules[].status/priority/runtime_plane vs summary
-  - frontend/*.yaml           → modules[].status/priority vs summary
-  - cross-cutting/capability-heatmap.yaml → capabilities[].current_level vs summary.by_maturity
-  - technology/technology-landscape.yaml  → technologies[].quadrant vs summary.by_quadrant
-  - module-id-registry.yaml   → registered_ids 条目数 vs total_registered
-  - _index.yaml              → partitions 条目数 vs global_stats.total_partitions
-                              → 跨文件聚合 P0/P1/P2/P3/deferred vs global_stats
+  - layers/l*.yaml           -> modules[].status/priority/runtime_plane vs summary
+  - infra/core-services.yaml -> services[].status/priority vs summary
+  - infra/shared-infra.yaml  -> modules[].status/priority vs summary
+  - scripts/scripts-model.yaml -> modules[].status/priority/runtime_plane vs summary
+  - frontend/*.yaml           -> modules[].status/priority vs summary
+  - cross-cutting/capability-heatmap.yaml -> capabilities[].current_level vs summary.by_maturity
+  - technology/technology-landscape.yaml  -> technologies[].quadrant vs summary.by_quadrant
+  - module-id-registry.yaml   -> registered_ids 条目数 vs total_registered
+  - _index.yaml              -> partitions 条目数 vs global_stats.total_partitions
+                              -> 跨文件聚合 P0/P1/P2/P3/deferred vs global_stats
 
-对标：ITIL SACM → CMDB 与实际基础设施定期对账（reconciliation）
-     AWS Config → 持续评估资源配置与期望状态的偏差
+对标：ITIL SACM -> CMDB 与实际基础设施定期对账（reconciliation）
+     AWS Config -> 持续评估资源配置与期望状态的偏差
+"""
+
+from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: GATE-SUM - YAML Summary auto-reconciliation gate (scans all arch YAMLs, computes aggregation from actual data, compares with declared summary)
+dimensions:
+- D5
+priority: P0
+timeout_seconds: 30
+warn_only: false
 """
 
 import sys

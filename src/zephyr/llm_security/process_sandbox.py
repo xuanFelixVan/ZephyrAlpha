@@ -109,6 +109,7 @@ DEFAULT_TIMEOUT: float = 60.0
 # 数据类
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class SandboxResult:
     """subprocess 沙箱执行结果。"""
@@ -120,12 +121,15 @@ class SandboxResult:
     cwd: str
     elapsed_s: float = 0.0
 
+
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class SandboxViolation(RuntimeError):
     """沙箱策略违规（cwd 超出白名单 / shell=True 尝试 / ENV 超出白名单）。"""
+
 
 class SandboxTimeout(RuntimeError):
     """子进程执行超时。"""
@@ -135,9 +139,11 @@ class SandboxTimeout(RuntimeError):
         self.timeout = timeout
         super().__init__(f"L2a SandboxTimeout: {cmd[0]!r} 超时（{timeout}s）")
 
+
 # ---------------------------------------------------------------------------
 # L2aSandbox
 # ---------------------------------------------------------------------------
+
 
 class L2aSandbox:
     """L2a subprocess 白名单沙箱。

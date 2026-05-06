@@ -1,16 +1,18 @@
-from __future__ import annotations
-
+# ==== BEGIN CODGEN:CTR-002 ====
 from dataclasses import dataclass, field
-from datetime import datetime
+
+from datetime import datetime, timezone
 from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -20,9 +22,9 @@ CTR-002: FactorSignal / 因子信号
 
 L02 → L03/L04/L05 核心数据契约。单个因子在单个时间截面对单个标的的信号值。
 
-SSoT: cross-layer-contracts.yaml → CTR-002
+SSoT: cross-layer-contracts.yaml -> CTR-002
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -32,19 +34,59 @@ AI Prompt
 
 @dataclass(frozen=True)
 class FactorSignal:
-    factor_id: str
-    symbol: str
     as_of_date: datetime
+    factor_id: str
+    idempotency_key: str
     raw_value: float
+    symbol: str
     confidence: float = 1.0
-    is_valid: bool = True
+    exceptions: List[str] = field(default_factory=list)
+    extra: Dict[str, Any] = field(default_factory=dict)
     factor_version: str = "1.0"
-    timeout_ms: int = 3000
-    retry_policy: str = "linear"
+    is_valid: bool = True
     max_retries: int = 2
-    schema_version: str = "1.0"
     normalized_value: Optional[float] = None
     rank_pct: Optional[float] = None
-    extra: Dict[str, Any] = field(default_factory=dict)
+    retry_policy: str = "linear"
+    schema_version: str = "1.0"
+    timeout_ms: int = 3000
     trace_context: Optional[TraceContext] = None
-    exceptions: List[str] = field(default_factory=list)
+
+# ==== END CODGEN:CTR-002 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -49,25 +49,71 @@ DANGEROUS_PATTERNS: tuple[re.Pattern, ...] = (
     re.compile(r"!\s*"),
 )
 
+
 class SanitizationError(Exception):
     """输入清洗器基础设施异常基类（InputSanitizer 所有异常由此派生）。"""
 
     pass
+
 
 class PathTraversalError(SanitizationError):
     """检测到路径穿越攻击（目标路径不在白名单目录范围内）。"""
 
     pass
 
+
 class CommandInjectionError(SanitizationError):
     """检测到命令注入攻击（输入含 OS 命令拼接特征如 `$(...)`、`;` 等）。"""
 
     pass
 
+
 class TokenBudgetExceededError(SanitizationError):
     """输入 Token 预算超标（超过 safety limits 配置的 max 阈值）。"""
 
     pass
+
+
+class ContextInjectionError(SanitizationError):
+    """CT-CE-LSG-001 L1：即将注入 LLM 的上下文中含高危模式（代码执行/越权指令/疑似凭据）。"""
+
+    pass
+
+
+# L1 上下文注入防护：对标 MOD-MASTER CT-CE-LSG-001 input_sanitizer 检查项
+_CONTEXT_INJECTION_CHECKS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    (
+        "code_execution",
+        re.compile(
+            r"__import__\s*\(|eval\s*\(|exec\s*\(|compile\s*\(|"
+            r"subprocess\s*\.|os\.system\s*\(|importlib\.import_module\s*\(",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "prompt_injection",
+        re.compile(
+            r"(?is)(ignore\s+(all\s+)?(previous|prior|above)\s+"
+            r"(instructions|rules|directives)|disregard\s+(the\s+)?(above|previous)|"
+            r"you\s+are\s+now\s+(a|an|the)\s+|"
+            r"<\|im_start\|>|<\|assistant\|>|"
+            r"\[INST\]|\[/INST\]|\bsystem\s*:\s*(override|prompt)\b)",
+        ),
+    ),
+    (
+        "credential_pattern",
+        re.compile(
+            r"(?i)(\bsk-[a-zA-Z0-9]{20,}|"
+            r"api[_-]?key\s*[:=]\s*['\"]?\s*[a-zA-Z0-9_\-\.+]{16,}|"
+            r"password\s*[:=]\s*['\"]?\s*[^\s'\"]{8,}|"
+            r"bearer\s+[a-zA-Z0-9_\-\.]{24,}|"
+            r"-----BEGIN\s+(RSA\s+|OPENSSH\s+|EC\s+)?PRIVATE\s+KEY-----)",
+        ),
+    ),
+)
+
+_MAX_LLM_CONTEXT_CHARS = 500_000
+
 
 class InputSanitizer:
     """Validates file paths and shell commands against whitelists.
@@ -146,6 +192,14 @@ class InputSanitizer:
 
         return command
 
+    def validate_llm_context(self, text: str) -> None:
+        """上下文注入前安全校验（CT-CE-LSG-001 L1 子集）。"""
+        if len(text) > _MAX_LLM_CONTEXT_CHARS:
+            raise ContextInjectionError(f"LLM context too large: {len(text)} chars (max {_MAX_LLM_CONTEXT_CHARS})")
+        for name, pattern in _CONTEXT_INJECTION_CHECKS:
+            if pattern.search(text):
+                raise ContextInjectionError(f"Blocked pattern ({name}) in LLM context")
+
     def check_token_budget(
         self,
         used: int,
@@ -161,3 +215,16 @@ class InputSanitizer:
         if not filename or filename.startswith("."):
             filename = f"sanitized_{filename}"
         return filename[:255]
+
+
+__all__ = [
+    "ALLOWED_COMMANDS",
+    "ALLOWED_WRITE_DIRS",
+    "ContextInjectionError",
+    "CommandInjectionError",
+    "DANGEROUS_PATTERNS",
+    "InputSanitizer",
+    "PathTraversalError",
+    "SanitizationError",
+    "TokenBudgetExceededError",
+]

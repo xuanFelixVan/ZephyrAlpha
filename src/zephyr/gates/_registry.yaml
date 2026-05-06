@@ -2,6 +2,11 @@
 # 本文件是门禁体系的 canonical SSoT——所有门禁必须在此登记
 # AI agent 新建门禁时必须在此注册；退役门禁不删除，标记 status: deprecated
 # 对标: K8s plugin registry + OPA policy index + Cursor Rules index
+#
+# Gate ID 约定（与 GateEngine._GATE_FILES 对齐，避免 G8/G9 与历史 G1–G7 数字混淆）：
+# - 交易类 gate_id 为 G10–G12；磁盘 YAML 仍使用 g7_*/g8_*/g9_* 文件名（历史命名）。
+# - 不存在 gate_id=G8/G9；扩展类见 EN-001~003、ZERO-RESIDUE、MAD-* 等。
+# - 运行时加载清单以 gate_engine._GATE_FILES 为准；本 registry 为人机可读登记真源。
 
 schema_version: "1.0"
 doc_type: registry
@@ -15,7 +20,7 @@ gates:
     gate_name: ingest
     title: "G1 Ingest Gate"
     category: kms
-    file: "kms/g1_ingest.yaml"
+    file: "g1_ingest.yaml"
     status: active
     scope: global
     execution_plane: warm
@@ -24,7 +29,7 @@ gates:
     gate_name: triage
     title: "G2 Triage Gate"
     category: kms
-    file: "kms/g2_triage.yaml"
+    file: "g2_triage.yaml"
     status: active
     scope: global
     execution_plane: warm
@@ -33,7 +38,7 @@ gates:
     gate_name: evaluate
     title: "G3 Evaluate Gate"
     category: kms
-    file: "kms/g3_evaluate.yaml"
+    file: "g3_evaluate.yaml"
     status: active
     scope: global
     execution_plane: warm
@@ -42,7 +47,7 @@ gates:
     gate_name: activate
     title: "G4 Activate Gate"
     category: kms
-    file: "kms/g4_activate.yaml"
+    file: "g4_activate.yaml"
     status: active
     scope: global
     execution_plane: warm
@@ -51,38 +56,41 @@ gates:
     gate_name: extract
     title: "G5 Extract Gate"
     category: kms
-    file: "kms/g5_extract.yaml"
+    file: "g5_extract.yaml"
     status: active
     scope: global
     execution_plane: warm
 
-  # ─── 任务生命周期门禁（当前为蓝图中的自然语言，待结构化）───
+  # ─── 任务生命周期门禁（Orc YAML → GateEngine；叙述条目 → task/g0_entry.yaml）───
   - gate_id: G0
     gate_name: task_entry
     title: "G0 Task Entry Gate"
     category: task
-    file: "task/g0_entry.yaml"
+    file: "task/g0_orc_gate_engine.yaml"
     status: active
     scope: global
     execution_plane: warm
-    note: "2026-05-04 落地 — 7 条准入规则（task_type/layer_target/dependency/contract/ai_capability）"
+    note: >
+      GateEngine 入口（checks）；人读 rules 见 task/g0_entry.yaml。
+      旧 ZALPHA-* task_id 规则已废弃——真源见 shared/schemas.py Task。
 
   - gate_id: G7
     gate_name: task_delivery
     title: "G7 Task Delivery Gate"
     category: task
-    file: "task_completion_gate.py"
-    status: implemented
+    file: "task/g7_orc_gate_engine.yaml"
+    status: active
     scope: global
     execution_plane: warm
-    note: "部分代码实现，但门禁规则仍在蓝图自然语言中"
+    note: >
+      GateEngine 入口（verification + audit_findings）；残余目录扫描见 task_completion_gate.py。
 
   # ─── 合规门禁 ───
   - gate_id: G6
     gate_name: ctr_compliance
     title: "G6 CTR Compliance Gate"
     category: compliance
-    file: "compliance/g6_ctr_compliance.yaml"
+    file: "g6_blueprint_compliance.yaml"
     status: implemented
     scope: global
     execution_plane: warm
@@ -98,6 +106,68 @@ gates:
     scope: global
     execution_plane: hot
     note: "非YAML格式——由.pre-commit-config.yaml定义"
+
+  # ─── 交易领域门禁 ───
+  - gate_id: G10
+    gate_name: position_limits
+    title: "G10 Position Limits Gate"
+    category: trading
+    file: "g7_position_limits.yaml"
+    status: active
+    scope: trading
+    execution_plane: warm
+    note: "2026-05-05 落地 — 3 条仓位/集中度/流动性限制。activation_stage=shadow（先记录不阻断）"
+
+  - gate_id: G11
+    gate_name: leverage_limits
+    title: "G11 Leverage Limits Gate"
+    category: trading
+    file: "g8_leverage.yaml"
+    status: active
+    scope: trading
+    execution_plane: warm
+    note: "2026-05-05 落地 — 3 条杠杆/衍生品/日内限制。activation_stage=shadow"
+
+  - gate_id: G12
+    gate_name: strategy_correlation
+    title: "G12 Strategy Correlation Gate"
+    category: trading
+    file: "g9_strategy_correlation.yaml"
+    status: active
+    scope: trading
+    execution_plane: warm
+    note: "2026-05-05 落地 — 3 条相关性/因子重叠/股票池集中度。activation_stage=shadow"
+
+  # ─── 架构不变量门禁（EN-001~003）───
+  - gate_id: EN-001
+    gate_name: circular_dependency
+    title: "EN-001 Circular Dependency Scanner"
+    category: invariants
+    file: "invariants/en_001_circular_dependency.yaml"
+    status: implemented
+    scope: global
+    execution_plane: warm
+    note: "Phase D — Kahn algorithm topological sort over 15-node layer import DAG"
+
+  - gate_id: EN-002
+    gate_name: enforcement_validator
+    title: "EN-002 Enforcement Mode Validator"
+    category: invariants
+    file: "invariants/en_002_enforcement_validator.yaml"
+    status: implemented
+    scope: global
+    execution_plane: warm
+    note: "Phase D — validates enforcement_mode declared for all P0 contracts"
+
+  - gate_id: EN-003
+    gate_name: contract_compatibility
+    title: "EN-003 Contract Compatibility Checker"
+    category: invariants
+    file: "invariants/en_003_contract_compatibility.yaml"
+    status: implemented
+    scope: global
+    execution_plane: warm
+    note: "Phase D — diffs dataclass fields against cross-layer-contracts.yaml spec"
 
   # ─── 模块准入门禁 ───
   - gate_id: MAD-001
@@ -140,15 +210,28 @@ gates:
     execution_plane: warm
     note: "2026-05-04 落地 — 6 条准入规则（public_api/input/output/error/config/extension_points）"
 
+  - gate_id: ZERO-RESIDUE
+    gate_name: zero_residue
+    title: "ZERO-RESIDUE Zero Residue Principle"
+    category: residue
+    file: "ZERO-RESIDUE.yaml"
+    status: active
+    scope: global
+    execution_plane: warm
+    note: "2026-05-05 落地 — 7 条零残留规则（ZR-001~007）：临时文件/孤儿文件/废墟引用/残留学债/文件闭环/文件准入"
+
 summary:
-  total: 13
+  total: 20
   by_category:
     kms: 5
     task: 2
     compliance: 1
     lifecycle: 1
+    invariants: 3
     admission: 4
+    residue: 1
+    trading: 3
   by_status:
-    active: 11
-    implemented: 2
+    active: 15
+    implemented: 5
     draft: 0

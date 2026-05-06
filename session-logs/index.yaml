@@ -21,29 +21,222 @@
 # =====
 # index_version: 1.0  — 初始建立，覆盖 2026-05-04 的五轮架构审计 session
 
-index_version: "1.0"
-created: "2026-05-04"
-last_updated: "2026-05-04"
-total_sessions: 0
-
-# 全局统计
+index_version: '1.3'
+created: '2026-05-04'
+last_updated: '2026-05-06'
+total_sessions: 20
 stats:
-  total_files_created: 0
-  total_files_modified: 0
-  total_files_deleted: 0
-  total_decisions: 0
+  total_files_created: 57
+  total_files_modified: 212
+  total_files_deleted: 40
+  total_decisions: 74
   total_ke_extracted: 0
-  total_blind_spots_discovered: 0
-  total_contracts_touched: 0
-
-# 按模块维度的 session 索引（自动填充——每次 session 结束后更新）
-by_module: {}
-
-# 按契约维度的 session 索引
-by_contract: {}
-
-# 按日期的 session 列表
-by_date: {}
+  total_blind_spots_discovered: 15
+  total_contracts_touched: 36
+by_module:
+  l00_data_source:
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-006
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-011
+  - session-20260505-012
+  - session-20260505-014
+  l01_infrastructure:
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-012
+  - session-20260505-014
+  l02_alpha_factor:
+  - session-20260504-004
+  - session-20260504-005
+  - session-20260505-010
+  - session-20260505-012
+  l03_signal_generation:
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-012
+  l04_risk_management:
+  - session-20260504-003
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-008
+  - session-20260505-009
+  - session-20260505-012
+  l05_portfolio_construction:
+  - session-20260504-004
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-012
+  l06_trade_execution:
+  - session-20260504-004
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-012
+  l07_post_trade_analytics:
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-012
+  l08_human_ai_interface:
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-010
+  - session-20260505-012
+  l09_research_innovation:
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-009
+  - session-20260505-012
+  l10_compliance:
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-011
+  - session-20260505-012
+  l11_ml_platform:
+  - session-20260504-003
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-012
+  l12_system_telemetry:
+  - session-20260504-003
+  - session-20260505-004
+  - session-20260505-010
+  - session-20260505-012
+  l13_experimentation:
+  - session-20260504-004
+  - session-20260504-005
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-012
+  pipeline:
+  - session-20260505-007
+  - session-20260505-008
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-012
+  architecture_model:
+  - session-20260505-007
+  - session-20260505-012
+  gates:
+  - session-20260505-014
+  governance_codegen:
+  - session-20260505-014
+by_contract:
+  CTR-001:
+  - session-20260504-003
+  - session-20260504-004
+  CTR-002: []
+  CTR-003:
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-009
+  CTR-004:
+  - session-20260504-004
+  CTR-005: []
+  CTR-006:
+  - session-20260505-009
+  CTR-TRACE-001:
+  - session-20260504-003
+  - session-20260504-004
+  - session-20260505-006
+  CTR-ERR-001: []
+  CTR-ERR-003: []
+  CTR-ERR-004: []
+  CTR-ERR-005: []
+  CTR-P1-003:
+  - session-20260505-002
+  - session-20260505-009
+  CTR-P1-004:
+  - session-20260505-009
+  CTR-P1-005:
+  - session-20260505-009
+  CTR-P1-006: []
+  CTR-P1-007:
+  - session-20260505-009
+  CTR-P1-010:
+  - session-20260505-005
+  CTR-P1-013:
+  - session-20260505-005
+  CTR-P1-014:
+  - session-20260505-005
+  - session-20260505-009
+  CTR-P1-015:
+  - session-20260505-005
+  - session-20260505-009
+  - session-20260505-014
+  OCP-001:
+  - session-20260504-004
+  OCP-002:
+  - session-20260504-004
+  - session-20260505-010
+  OCP-003:
+  - session-20260504-004
+  - session-20260505-010
+  OCP-004:
+  - session-20260505-011
+  CTR-P1-012:
+  - session-20260505-002
+  - session-20260505-009
+  EXT-001: []
+  EXT-004: []
+by_date:
+  '2026-04-17':
+  - session-20260417-retrospective
+  '2026-05-04':
+  - session-20260504-001
+  - session-20260504-002
+  - session-20260504-003
+  - session-20260504-004
+  - session-20260504-005
+  '2026-05-05':
+  - session-20260505-002
+  - session-20260505-003
+  - session-20260505-004
+  - session-20260505-005
+  - session-20260505-006
+  - session-20260505-007
+  - session-20260505-008
+  - session-20260505-009
+  - session-20260505-010
+  - session-20260505-011
+  - session-20260505-012
+  - session-20260505-014
+  - session-20260505-015
+  - session-20260505-016
 
 # 盲点发现时间线
-blind_spot_timeline: []
+# → 已迁移至 session-logs/_auto/blind_spot_timeline.yaml（自动生成，由 session log YAML 派生）
+# 请勿在此处手动编写 blind_spot 条目。
+# 要记录盲点发现 → 写在对应 session log 的 blind_spots_discovered 字段中 → 脚本自动汇总

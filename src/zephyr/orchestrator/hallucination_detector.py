@@ -92,6 +92,7 @@ __all__ = [
 # 枚举与基础类型
 # ---------------------------------------------------------------------------
 
+
 class TriggerLevel(str, Enum):
     """三级触发矩阵（ADR-0039 §4.1）。"""
 
@@ -99,12 +100,14 @@ class TriggerLevel(str, Enum):
     L2_GREY = "L2"
     L3_BLACKLIST = "L3"
 
+
 class RiskLevel(str, Enum):
     """风险等级（与 schemas.SafetyLevel 一致：L/M/H，向后兼容别名）。"""
 
     L = "L"
     M = "M"
     H = "H"
+
 
 class FallbackMode(str, Enum):
     """降级模式枚举。"""
@@ -114,12 +117,15 @@ class FallbackMode(str, Enum):
     KEYWORD = "keyword"
     BUDGET_SKIP = "budget_skip"
 
+
 class CoVeStepError(RuntimeError):
     """CoVe 步骤执行失败异常。"""
+
 
 # ---------------------------------------------------------------------------
 # Protocol：模型调用者（由生产代码注入真实 LLM SDK）
 # ---------------------------------------------------------------------------
+
 
 class ModelCallResult(BaseModel):
     """
@@ -147,6 +153,7 @@ class ModelCallResult(BaseModel):
     success: bool = Field(default=True, description="是否成功")
     error: str | None = Field(default=None, description="失败原因")
 
+
 @runtime_checkable
 class ModelCaller(Protocol):
     """
@@ -159,9 +166,11 @@ class ModelCaller(Protocol):
     def __call__(self, prompt: str, *, purpose: str) -> ModelCallResult:  # pragma: no cover - Protocol 签名
         ...
 
+
 # ---------------------------------------------------------------------------
 # Pydantic 输出契约（HallucinationResult）
 # ---------------------------------------------------------------------------
+
 
 class HallucinationResult(BaseModel):
     """幻觉检测最终输出（ADR-0039 §4.3 契约）。"""
@@ -195,9 +204,11 @@ class HallucinationResult(BaseModel):
             raise ValueError("verify_questions 不得超过 5 条")
         return v
 
+
 # ---------------------------------------------------------------------------
 # 预算追踪
 # ---------------------------------------------------------------------------
+
 
 class BudgetState(BaseModel):
     """CoVe 月度 / 日度预算状态。"""
@@ -233,6 +244,7 @@ class BudgetState(BaseModel):
         self.daily_spent_usd += cost_usd
         self.monthly_spent_usd += cost_usd
 
+
 # ---------------------------------------------------------------------------
 # Keyword 规则兜底
 # ---------------------------------------------------------------------------
@@ -254,6 +266,7 @@ _SUSPECT_CITATIONS = [
     re.compile(r"Jane\s*Street\s*(?:内部|internal)", re.IGNORECASE),
 ]
 
+
 def _numeric_out_of_range(claim: str) -> list[str]:
     """IC/Sharpe/win_rate 超出 [-1, 1]（Sharpe 放宽到 ±5）。"""
     evidence: list[str] = []
@@ -271,6 +284,7 @@ def _numeric_out_of_range(claim: str) -> list[str]:
                 evidence.append(f"numeric_out_of_range: {field}={value}（超出 ±1）")
     return evidence
 
+
 def _missing_files(claim: str, repo_root: Path | None) -> list[str]:
     """claim 中提及的 .md/.py/.yaml 路径若 repo 下不存在则标红。"""
     if repo_root is None:
@@ -285,6 +299,7 @@ def _missing_files(claim: str, repo_root: Path | None) -> list[str]:
             evidence.append(f"missing_file: {path_str}")
     return evidence
 
+
 def _suspect_citations(claim: str) -> list[str]:
     """黑名单断言：Meta/Citadel/Google 等具体但不可验证的引用。"""
     evidence: list[str] = []
@@ -292,6 +307,7 @@ def _suspect_citations(claim: str) -> list[str]:
         if pattern.search(claim):
             evidence.append(f"suspect_citation: {pattern.pattern}")
     return evidence
+
 
 def _frozen_asset_mutation(claim: str, handoff_approved: bool) -> list[str]:
     """frozen 资产（tool_contracts.yaml / ADR-*.md）未经 Handoff 修改建议标红。"""
@@ -303,6 +319,7 @@ def _frozen_asset_mutation(claim: str, handoff_approved: bool) -> list[str]:
     ):
         evidence.append("frozen_asset_mutation: claim 建议修改 frozen 资产但未 Handoff")
     return evidence
+
 
 KEYWORD_HALLU_RULES: dict[str, Callable[..., list[str]]] = {
     "numeric_out_of_range": _numeric_out_of_range,
@@ -323,8 +340,10 @@ _THRESHOLDS: dict[RiskLevel, tuple[float, float]] = {
 }
 """风险分级阈值：(非幻觉上限, 幻觉下限)。ADR-0039 §4.3。"""
 
+
 def _hash_claim(claim: str) -> str:
     return "claim#sha256:" + hashlib.sha256(claim.encode("utf-8")).hexdigest()[:16]
+
 
 def _token_overlap(a: str, b: str) -> float:
     """简易 Jaccard token 相似度（兜底语义匹配，无 embedding 时使用）。"""
@@ -336,8 +355,10 @@ def _token_overlap(a: str, b: str) -> float:
         return 0.0
     return len(ta & tb) / len(ta | tb)
 
+
 def _contains_negation(text: str) -> bool:
     return bool(re.search(r"(不是|不对|不会|不能|错误|no\b|not\b|never\b|wrong)", text, re.IGNORECASE))
+
 
 class HallucinationDetector:
     """
@@ -833,9 +854,11 @@ class HallucinationDetector:
         """暴露 claim 指纹，便于外部审计日志复用。"""
         return _hash_claim(claim)
 
+
 # ---------------------------------------------------------------------------
 # 便捷工厂：当 BudgetState 需要历史持久化时使用（非本 Task 范围）
 # ---------------------------------------------------------------------------
+
 
 def build_detector_with_defaults(
     *,

@@ -8,6 +8,7 @@ partition:
 
 modules:
   - id: pipeline-core
+    module_id: MOD-INF-009
     name: Pipeline Orchestrator
     submodule_path: src/zephyr/pipeline/
     status: implemented
@@ -18,9 +19,9 @@ modules:
       - models.py
       - pipeline_orchestrator.py
     interfaces:
-      - contract_id: P0-PIPELINE-ROUTE
+      - contract_id: CT-PIPE-ORC-001
         role: producer
-        description: 管线路由决策 — 根据任务类型分派到生产管线或审计管线
+        description: 任务→M1-M11 管线节点路由
     adr_ref: []
 
 summary:

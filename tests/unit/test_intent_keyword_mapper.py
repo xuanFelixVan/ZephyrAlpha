@@ -14,6 +14,7 @@ from zephyr.context_engine.intent_keyword_mapper import (
     _tokenize,
 )
 
+
 class TestTokenize:
     def test_english_tokens(self) -> None:
         tokens = _tokenize("run sentinel scan")
@@ -31,6 +32,7 @@ class TestTokenize:
     def test_special_characters(self) -> None:
         tokens = _tokenize("hello! @world #test")
         assert "hello" in tokens or len(tokens) > 0
+
 
 class TestIntentResult:
     def test_valid_result(self) -> None:
@@ -67,6 +69,7 @@ class TestIntentResult:
                 source_stage="keyword",
                 latency_ms=1,
             )
+
 
 class TestIntentKeywordMapper:
     def setup_method(self) -> None:

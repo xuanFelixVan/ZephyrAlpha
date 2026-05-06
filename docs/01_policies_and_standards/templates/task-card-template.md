@@ -11,12 +11,13 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "ZephyrAlpha 任务卡唯一标准模板。21 个字段，强制填写——上游文件完整路径、下游产出完整路径、允许/禁止触碰范围、适用规则清单、上下文装配清单、回滚指令。设计目标：任何新 AI session 拿到一张按此模板填写的任务卡，无需查阅任何外部文件即可开始正确施工——零漂移、零幻觉。"
+summary: "ZephyrAlpha **`.md` 任务卡范例格式**——防漂移视图：除 **PS-STD-001 §7.1** 语义 **28** 字段外另有扩展键（SQLite 迁移列）；**必填 21**、速查表 **34** 个键位（含可选）。与 `sqlite_schema.tasks` 富迁移、`MOD-INF-006` §3.2.1 一致。**Pydantic 真源**：`metadata-registry.md` **§7.1~§7.1.1** + `src/zephyr/shared/schemas.py` `Task`。"
 tags: [task-card, template, anti-drift, vibe-coding, zero-hallucination]
 depends_on:
   - {target: PS-STD-001, at: "§5", why: "编号规则 task_id 格式"}
   - {target: GOV-DOC-002, at: "§5.1.2", why: "所有路径必须与路径映射一致"}
-  - {target: MOD-INF-006, at: "§4.2", why: "TaskCard 模型真源"}
+references:
+  - {id: MOD-INF-006, at: "§4.2", why: "TaskCard 与任务系统蓝图对齐（仅存 references，DOC-009 无环）"}
 ---
 
 # 任务卡模板
@@ -47,13 +48,13 @@ depends_on:
 ---
 task_id: "TASK-INF-0042"
 source_blueprint: "MOD-INF-006"
-source_section: "蓝图 §12.3 步骤4"
+source_section: "蓝图 §11.3 步骤4"
 
 # ===== 内容 =====
 title: "实现 BlueprintDecomposer.decompose() 核心逻辑"
 description: |
-  从蓝图 §12 施工指引自动拆解任务卡。
-  核心算法：正则解析 §12.3 → 每步骤1张任务卡 → 解析 §2.2 决策推导链 → depends_on 依赖图 → 按模型分工策略分配 assigned_model。
+  从蓝图 §11 施工指引自动拆解任务卡。
+  核心算法：正则解析 §11.3 → 每步骤1张任务卡 → 解析 §2.2 决策推导链 → depends_on 依赖图 → 按模型分工策略分配 assigned_model。
 priority: "P0"
 
 # ===== 上游：执行前必须读取的文件 =====
@@ -62,7 +63,7 @@ upstream_files:
   - "D:\\ZephyrAlpha\\\docs\\01_policies_and_standards\\meta\\metadata-registry.md"
   - "D:\\ZephyrAlpha\\\docs\\01_policies_and_standards\\templates\\task-card-template.md"
   - "D:\\ZephyrAlpha\\\docs\\01_policies_and_standards\\governance\\document\\directory-structure-standard.md"
-  - "D:\\ZephyrAlpha\\\src\\zephyr\\schemas.py"
+  - "D:\\ZephyrAlpha\\\src\\zephyr\\shared\\schemas.py"
 
 # ===== 下游：执行后必须产出的文件 =====
 downstream_outputs:
@@ -76,7 +77,7 @@ allowed_touch:
   - "D:\\ZephyrAlpha\\\src\\zephyr\\core\\blueprint_decomposer.py"
   - "D:\\ZephyrAlpha\\\tests\\core\\test_blueprint_decomposer.py"
 forbidden_touch:
-  - "D:\\ZephyrAlpha\\\src\\zephyr\\schemas.py"
+  - "D:\\ZephyrAlpha\\\src\\zephyr\\shared\\schemas.py"
   - "D:\\ZephyrAlpha\\\src\\zephyr\\db\\*.py"
   - "D:\\ZephyrAlpha\\\docs\\01_policies_and_standards\\**\\*.md"
 
@@ -95,7 +96,7 @@ applicable_rules:
 # ===== 上下文：执行前必须装配进上下文的所有文件 =====
 context_assembly_manifest:
   - file_path: "D:\\ZephyrAlpha\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md"
-    reason: "本蓝图——了解 §12 施工指引结构 + 模型分工策略"
+    reason: "本蓝图——了解 §11 施工指引结构 + 模型分工策略"
   - file_path: "D:\\ZephyrAlpha\\\docs\\01_policies_and_standards\\templates\\task-card-template.md"
     reason: "任务卡模板——知道生成的任务卡 .md 该长什么样子"
 
@@ -199,7 +200,7 @@ autonomy_checklist: []
 | 33 | `ai_autonomy_level` | `str` | ❌ | AI 自治级别——Phase 5 预留 | — |
 | 34 | `autonomy_checklist` | `list[str]` | ❌ | 自治清单——Phase 5 预留 | — |
 
-> **注**：共 34 个字段（含可选字段），其中 21 个为必填。`assigned_model` 合法值受模型注册表（`model-registry.yaml`，TBD）约束。
+> **注**：共 34 个字段（含可选字段），其中 21 个为必填。`assigned_model` 合法值以 `docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml` 声明的模型白名单为准；会话级收窄以当次 Session 加载的模型能力契约为准。
 
 ---
 
@@ -207,7 +208,7 @@ autonomy_checklist: []
 
 | 类型 | 格式 | 示例 | 非法示例 |
 |------|------|------|---------|
-| 项目内文件 | `D:\ZephyrAlpha\{相对路径}` | `D:\ZephyrAlpha\src\zephyr\schemas.py` | `src/zephyr/schemas.py`（无盘符，相对路径） |
+| 项目内文件 | `D:\ZephyrAlpha\{相对路径}` | `D:\ZephyrAlpha\src\zephyr\shared\schemas.py` | `src/zephyr/shared/schemas.py`（无盘符，相对路径） |
 | 多文件 glob | `D:\...\*.py` | `D:\ZephyrAlpha\src\zephyr\db\*.py` | `src/zephyr/db/*.py` |
 | 目录级 glob | `D:\...\**\*.md` | `D:\ZephyrAlpha\docs\**\*.md` | `docs/**/*.md` |
 

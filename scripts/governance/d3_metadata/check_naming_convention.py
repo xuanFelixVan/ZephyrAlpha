@@ -1,18 +1,8 @@
 #!/usr/bin/env python3
-"""
-GATE-11：命名规范门禁（check_naming_convention.py）
-======================================================
 
-__manifest__ = """
-args:
-- --all
-description: 文件命名规范检查（kebab-case / module_id namespace / ADR铁律）
-dimensions:
-- D3
-priority: P0
-timeout_seconds: 30
-warn_only: false
 """
+GATE-11：命名规范门禁(check_naming_convention.py)
+======================================================
 
 
 权威依据
@@ -27,33 +17,44 @@ warn_only: false
   # pre-commit / 指定文件
   python scripts/governance/check_naming_convention.py --files path/to/a.md path/to/b.md
 
-  # staged 文件（git diff --cached --name-only）
+  # staged 文件(git diff --cached --name-only)
   python scripts/governance/check_naming_convention.py --staged
 
 编号说明
 --------
-本门禁续号于 Architecture-as-Code 系列（`GATE-01 ~ GATE-10`，
-见 `docs/02_enterprise_architecture/target-architecture/architecture-model/scripts/check_architecture_gates.py v2.0.0`），
-命名为 `GATE-11` 避免编号空间碰撞（append-only 原则，对标 ADR-0006 跳号治理精神）。
+本门禁续号于 Architecture-as-Code 系列(`GATE-01 ~ GATE-10`,
+见 `docs/02_enterprise_architecture/target-architecture/architecture-model/scripts/check_architecture_gates.py v2.0.0`),
+命名为 `GATE-11` 避免编号空间碰撞(append-only 原则,对标 ADR-0006 跳号治理精神)。
 
-检测项（7 条）
+检测项(7 条)
 --------------
-N-01 新建文件名含大写字母（豁免白名单）
-N-02 新建文件名含版本号后缀（-v\\d+ / -round\\d+ / -iteration\\d+）
-N-03 新建状态快照文件带日期后缀（-\\d{8}，LATEST 白名单豁免）
-N-04 ADR 嵌套编号（adr-NNN-NNN.md 两段数字，禁止）
-N-05 ADR 缺失 kebab 尾缀（adr-NNNN.md 无尾缀，豁免 _template.md）
-N-06 module_id 含 scope 前缀（EA- / PROD- / DEV- 等）
+N-01 新建文件名含大写字母(豁免白名单)
+N-02 新建文件名含版本号后缀(-v\\d+ / -round\\d+ / -iteration\\d+)
+N-03 新建状态快照文件带日期后缀(-\\d{8},LATEST 白名单豁免)
+N-04 ADR 嵌套编号(adr-NNN-NNN.md 两段数字,禁止)
+N-05 ADR 缺失 kebab 尾缀(adr-NNNN.md 无尾缀,豁免 _template.md)
+N-06 module_id 含 scope 前缀(EA- / PROD- / DEV- 等)
 N-07 ADR module_id 与文件名编号不一致
 
 返回码
 ------
 0 = 全部通过
 1 = 存在违规
-2 = 脚本运行错误（如 git 命令失败、参数错误）
+2 = 脚本运行错误(如 git 命令失败、参数错误)
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args:
+- --all
+description: 文件命名规范检查(kebab-case / module_id namespace / ADR铁律)
+dimensions:
+- D3
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
 
 import argparse
 import re
@@ -78,6 +79,7 @@ except ImportError:
     yaml = None
 
 from _shared.constants import REPO_ROOT
+from _shared.frontmatter import extract_module_id
 
 class Violation(NamedTuple):
     rule: str
@@ -171,25 +173,9 @@ RE_LATEST = re.compile(r"-LATEST(?:[-.]|$)", re.IGNORECASE)
 RE_ADR_NESTED = re.compile(r"^adr-\d+-\d+\.md$", re.IGNORECASE)
 RE_ADR_NO_SUFFIX = re.compile(r"^adr-\d+\.md$", re.IGNORECASE)
 RE_ADR_FILE = re.compile(r"^adr-(\d{4})-[\w\-]+\.md$", re.IGNORECASE)
-RE_FRONTMATTER_MODULE_ID = re.compile(r"^module_id:\s*([^\s#]+)", re.MULTILINE)
-
 def _is_path_exempt(rel_path: str) -> bool:
     rp = rel_path.replace("\\", "/")
     return any(rp.startswith(p) for p in PATH_EXEMPT_PREFIXES)
-
-def _read_frontmatter_module_id(filepath: Path) -> str | None:
-    try:
-        content = filepath.read_text(encoding="utf-8", errors="replace")
-    except (OSError, UnicodeDecodeError):
-        return None
-    if not content.startswith("---"):
-        return None
-    end = content.find("\n---", 3)
-    if end == -1:
-        return None
-    fm = content[3:end]
-    m = RE_FRONTMATTER_MODULE_ID.search(fm)
-    return m.group(1).strip().strip("\"'") if m else None
 
 def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
     """对单个相对路径做 7 条规则检测；返回违规列表。"""
@@ -250,7 +236,7 @@ def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
     if abs_path is None:
         abs_path = REPO_ROOT / rel_path
     if abs_path.suffix == ".md" and abs_path.exists():
-        mid = _read_frontmatter_module_id(abs_path)
+        mid = extract_module_id(abs_path)
         if mid:
             for bad in MODULE_ID_SCOPE_BAD_PREFIXES:
                 if mid.upper().startswith(bad):
@@ -376,3 +362,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

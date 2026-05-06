@@ -16,11 +16,13 @@ from zephyr.gates.task_completion_gate import (
     TaskCompletionGate,
 )
 
+
 def _create_file(base: Path, rel: str, content: str = "") -> Path:
     p = base / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content, encoding="utf-8")
     return p
+
 
 class TestTaskCompletionGate:
     def test_detect_temp_files(self, tmp_path: Path) -> None:
@@ -86,6 +88,7 @@ class TestTaskCompletionGate:
         gate = TaskCompletionGate(tmp_path / "nonexistent")
         report = gate.scan()
         assert report.total_scanned == 0
+
 
 class TestGateReport:
     def test_by_type(self) -> None:

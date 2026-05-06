@@ -2,9 +2,9 @@
 module_id: GOV-ARCH-003
 title: 架构版本化策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -23,7 +23,7 @@ depends_on:
 ai_autonomy: human_gated
 ---
 # 架构版本化策略
-> module_id: GOV-ARCH-003 | version: 0.2.0 | status: draft | layer: L1
+> module_id: GOV-ARCH-003 | version: 0.2.0 | status: Draft | layer: L1
 
 ---
 
@@ -61,7 +61,7 @@ ai_autonomy: human_gated
 
 | 条件 | 规则 | 违反后果 |
 |------|------|---------|
-| 架构变更导致代码修改 | 代码变更的 PR 必须引用对应的架构文档版本。架构决策记录流程参见 [adr-protocol.md](adr-protocol.md)（GOV-ARCH-001） | PR 不被接受 |
+| 架构变更导致代码修改 | 代码变更的 PR 必须引用对应的架构文档版本。架构决策记录参见 KB:decisions namespace（原 adr-protocol.md 已删除） | PR 不被接受 |
 
 ---
 

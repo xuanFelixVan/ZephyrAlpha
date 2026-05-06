@@ -16,8 +16,9 @@ supersedes: ["GOV-AI-002 v1.0.0"]
 tags: [model-routing, strategy, deepseek-v4-pro, glm, claude, cost-optimization, task-assignment]
 depends_on:
   - {target: REG-LLM-001, at: "全篇", why: "模型基准排名——路由策略的数据依据"}
-  - {target: MOD-INF-006, at: "§12.3 步骤8", why: "M模块分工表——决定每个M模块用哪个模型"}
-  - {target: "TEMPLATE-TASK-001", at: "全篇", why: "任务卡模板——assigned_model 字段定义"}
+references:
+  - {id: "MOD-INF-006", at: "§12.3", why: "M模块分工与任务模型对齐（语义引用，不设为 depends_on DAG 上游）"}
+  - {id: "TEMPLATE-TASK-001", at: "全篇", why: "assigned_model 字段定义"}
 ---
 
 # 模型路由策略 v2.0.0

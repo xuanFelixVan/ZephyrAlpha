@@ -9,6 +9,7 @@ partition:
 
 modules:
   - id: orc-core
+    module_id: MOD-INF-006
     name: Agent Orchestrator Core
     submodule_path: src/zephyr/orchestrator/
     status: implemented
@@ -26,18 +27,21 @@ modules:
       - trigger_router.py
       - wave_generator.py
     interfaces:
-      - contract_id: P0-ORC-CE
+      - contract_id: CT-ORC-SCRIPT-001
+        role: both
+        description: 任务阻塞与 Finding↔任务卡（MOD-MASTER-001 §2.2）
+      - contract_id: CT-ORC-CE-001
         role: consumer
-        description: 依赖 CE 进行上下文构建
-      - contract_id: P0-ORC-VMS
+        description: 上下文构建请求
+      - contract_id: CT-ORC-VMS-001
         role: consumer
-        description: 任务输出写入 VMS
-      - contract_id: P0-ORC-LSG
+        description: 任务输出写入向量库
+      - contract_id: CT-ORC-GATE-001
         role: consumer
-        description: 工具调用前由 LSG 验证
-      - contract_id: P0-ORC-SANDBOX
+        description: 任务执行前/后门禁判定
+      - contract_id: EXT-ORC-SANDBOX-001
         role: producer
-        description: 沙箱创建失败 → 任务 FAIL，拒绝无沙箱运行
+        description: 沙箱执行边界（Windows ACL 等）；未单列入总表，扩展登记
     adr_ref:
       - ADR-0017
       - ADR-0018

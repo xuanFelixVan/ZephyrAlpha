@@ -4,7 +4,7 @@ title: AI模型行为铁律
 doc_type: policy
 status: active
 version: "1.0.0"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -47,7 +47,7 @@ ai_autonomy: human_gated
 本文档是 ZephyrAlpha 系统中 **AI 模型行为铁律**的唯一真源（SSoT）。
 
 **本文档定义了**：
-- 10 条 AI 行为铁律（IRN-001~010）——涵盖编码扫描、Session 预算、SSoT 唯一、断链清零、Phase Gate、能力边界、终局锁定、先读后写、双工具互斥、受保护路径
+- 11 条 AI 行为铁律（IRN-001~011）——涵盖编码扫描、Session 预算、SSoT 唯一、断链清零、Phase Gate、能力边界、终局锁定、先读后写、双工具互斥、受保护路径、零残留原则
 - 违规严重程度分级与处置方式（P0/P1/P2）
 - 与 GOV-MOD-005 的职责分工
 
@@ -60,7 +60,7 @@ ai_autonomy: human_gated
 
 ## 3. 受控枚举定义
 
-本文档定义了 **10 条铁律**（IRN-001~010）作为受控枚举。每条 IRN 是全局唯一标识符，被以下治理文件引用：
+本文档定义了 **11 条铁律**（IRN-001~011）作为受控枚举。每条 IRN 是全局唯一标识符，被以下治理文件引用：
 
 | 枚举项 | 被引用于 | 引用方式 |
 |--------|---------|---------|
@@ -161,6 +161,67 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 
 - 验证方法：写入前检查目标路径是否在受保护清单中（`check_protected_paths.py`——规格占位）
 - 违反后果：关键文件被覆盖 → 架构不可恢复
 
+### IRN-011：零残留原则（铁律11）
+
+> **对标**：Google Dead Code Elimination Policy · vi2 "文件即债务"原则 · Toyota Production System（Muda——消除浪费） · Extreme Programming YAGNI（You Aren't Gonna Need It）
+
+**定义**：项目的磁盘状态必须始终保持"刚刚施工完成"的整洁度——没有任何文件、代码行、注释是为已完成的 phase 的中间过程服务的。
+
+**核心规则**：
+
+| 规则编号 | 规则 | 检测方式 |
+|---------|------|---------|
+| ZR-001 | **临时文件即删**：`_temp*`、`_check*`、`_phase_*`、`_test_*` 等前缀的临时文件，phase 完成后立即物理删除——不留"测试时的脚手架" | `detect_temp_files.py` |
+| ZR-002 | **被替代即删**：任何文件（文档/代码/配置）的内容被新版本完全替代后，原文件物理删除——不留 superseded 副本 | `detect_ruins_references.py`（路径残留）+ 人工判断 |
+| ZR-003 | **孤儿即查**：零入边引用的文件（除锚点/蓝图/Session Log）标记为候选删除——AI 在每 phase 结束时主动报告 | `detect_orphan_py.py` + `detect_orphan_documents.py` |
+| ZR-004 | **废墟禁引**：禁止在任何文件中引用已删除/废弃的路径——所有引用必须指向当前存在的文件或 KB namespace | `detect_ruins_references.py` |
+| ZR-005 | **残留学债零容忍**：Session Log 中 `decisions` 字段记录的清理决定，必须在下一次 session 开始前核对执行状态——未执行的清理项 = P1 违规 | Session Log 自检 |
+| ZR-006 | **文件生命周期闭环**：新建文件 → `status: draft` → `status: active`。废弃路径必须与 GOV-DOC-006 对齐：`deprecated` 仅作为过渡期状态（须填 `superseded_by`、TTL、归档或删除）；**禁止**长期囤积无用的 deprecated 文档——过渡期满后 MUST 删除或归档。**例外**：Session Log / rationale-log（TTL: permanent）不走废弃滞留路径 | `document-lifecycle-standard.md` |
+| ZR-007 | **新文件准入门禁**：创建任何新文件前，AI 必须先回答三个问题——① 这个文件的内容是否已存在？② 这个文件在下一个 phase 是否仍有价值？③ 这个文件是否可以被已存在的文件通过引用覆盖？ | 行为纪律——每次 Write 前自检 |
+| ZR-008 | **Session 终了自净（Boy Scout Rule）**：每次 Session 结束时，AI MUST 至少执行 `detect_temp_files.py` + `detect_orphan_py.py`。发现的临时文件/垃圾文件 → 自动删除；孤儿文件 → 主动报告。对标：vibe coding 社区第一铁律——"Always leave the codebase cleaner than you found it" | Session 结束时强制自检 |
+| ZR-009 | **代码级残留自检（AI Artifact Hygiene）**：AI 生成的代码 MUST NOT 含有——① 幻觉 import（import 了不存在的包/模块）；② 空壳 stub 函数（`def foo(): pass` / `raise NotImplementedError`）；③ 被注释掉的死代码块；④ `console.log`/`print()` 调试残留。对标：`vibe-check`（BZPRCHNY）的 20 条 AI 代码气味检测规则 | `detect_residual_files.py`（ORPHAN_SHELL/STALE_IMPORT） + 人工审查 |
+
+**不可删除的例外**：
+- 锚点文件（GOV-DOC-007 定义）：`AGENTS.md`、`.trae/rules/project_rules.md`、`docs/01_policies_and_standards/_registry/` 等
+- Session Log（TTL: permanent）
+- architecture-rationale-log.md（appendix-only 推导链）
+- 蓝图文件（`docs/03_modules/**/blueprint.md`）
+- KB 中的结构化决策（`namespace=decisions`）
+
+**AI 可直接执行的自检**：
+- `detect_residual_files.py` — 检测残留文件
+- `detect_temp_files.py` — 检测临时文件
+- `detect_ruins_references.py` — 检测废墟路径引用
+- `detect_orphan_py.py` — 检测孤立 Python 文件
+- `detect_orphan_documents.py` — 检测孤立文档
+- `check_dead_links.py` — 检测断链
+
+**违反后果**：临时文件堆积 → 上下文噪音（下一个 AI session 加载时干扰决策质量）→ 架构模型与实际文件状态偏移 → SSoT 污染
+
+**专业对标矩阵**：
+
+| 来源 | 对标内容 |
+|------|---------|
+| Google SWE | "Dead code is a liability, not an asset"——每个无用文件都会在未来被误读、误改 |
+| Toyota Production System | Muda（無駄）——消除不产生价值的浪费。在软件中：每个不承载决策的文件都是 Muda |
+| XP / YAGNI | "You Aren't Gonna Need It"——不要为未来的你写代码。已完成的 phase 的脚手架就是不需要的 |
+| vi2 Framework | "文件即债务"——每个非代码文件都在为当下的施工便利付出未来的维护成本 |
+| ITIL Change Control | 变更后必须验证"所有中间产物已清理"——对标准确映射到 ZR-001/002 |
+| ISO 42001 §8 | AI system impact assessment——AI 清理文件前必须评估对系统的影响（对标 §6.8 删除前两步预检） |
+
+**氛围编程社区对标矩阵**：
+
+| 来源 | 对标内容 |
+|------|---------|
+| VIBEcoder Code Cleanup | AI 生成代码后必须专项清理冗余/无用片段——研究表明 AI 代码中 15-30% 为冗余（对标 ZR-009） |
+| `vibe-check`（BZPRCHNY） | 针对 AI 代码的 20 条规则：幻觉 import、废弃 API、空函数、死代码、console.log 残留——社区首个 AI 代码质量 linter（对标 ZR-009） |
+| ULAM Labs Vibe Cleanup | 5 大"需要清理"的信号：代码重复、文件结构混乱、AI 意大利面条代码、功能瘫痪、不一致模式（对标 ZR-001/003/006） |
+| 42coffeecups Vibe Cleanup | 4 支柱清理策略：Linting + Refactoring + Formatting + Testing——"AI 生成代码优化的是正确性，不是可维护性"（对标 ZR-008/009） |
+| Boy Scout Rule（社区共识） | "Always leave the campground cleaner than you found it"——应用到 AI：每次 session 结束时项目必须比开始时更干净（对标 ZR-008） |
+| Koder.ai Vibe Coding Practice | "Remove dead code, rename confusing variables, add TODOs where you knowingly cut corners"——5 分钟清理检查清单（对标 ZR-007/008） |
+| Questera Vibe Coding Tips | "Monitor and Clean Up Redundant Code"——定期审查 AI 生成代码中的冗余片段，调度重构（对标 ZR-003/006） |
+| Marvik Cursor Rules Pattern | "Do not create new functions, files, or imports that don't exist" + "Keep changes minimal and focused"——通过 prompt 约束预防残留（对标 ZR-007） |
+
 ### 铁律与 ABS 映射表
 
 以下显式映射每条铁律到 PS-STD-003 行为边界标准中的 ABS 条目，供 Vibe Coding AI 在无上下文 session 中直接定位宪法级边界：
@@ -177,6 +238,7 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 
 | IRN-008（先读后写） | ABS-52 | 未读取文件当前版本就修改 | 直接对应——社区第一安全准则，铁律是操作化落地 |
 | IRN-009（双工具互斥） | ABS-25 | 两个编辑器同时打开同一文件 | 直接对应——铁律禁止并发编辑 |
 | IRN-010（受保护路径不可写） | ABS-09, ABS-44, ABS-08 | 修改 AGENTS.md / 使用旧树文件 / 修改 Cursor rules | 直接对应——铁律将多个 ABS 合并为统一的受保护路径清单 |
+| IRN-011（零残留原则） | ABS-15, ABS-44 | 断链累积 / 引用废墟目录 | 延伸关系——铁律抽象了"清理"原则并定义了可编程执行点（ZR-001~007） |
 
 ## 6. 违反铁律的处置
 
@@ -184,9 +246,16 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 
 
 | 严重度 | 涉及铁律 | 处置方式 |
 |:---:|---------|---------|
-| P0 级 | 铁律 1, 8, 10 | **立即中止操作**，记录 Session Log，通知 Owner——违反后果不可逆（编码泄露、文件覆盖、关键路径删除） |
+| P0 级 | 铁律 1, 8, 10, 11 | **立即中止操作**，记录 Session Log，通知 Owner——违反后果不可逆（编码泄露、文件覆盖、关键路径删除、残留堆积） |
 | P1 级 | 铁律 2-4, 9 | **警告+自纠**——AI 必须立即重新执行操作并遵守铁律；连续 3 次不遵守 → 升级为 P0 |
 | P2 级 | 铁律 5-7 | **记录违规**，在 Session Log 中说明原因，Owner 裁决 |
+
+### 响应矩阵
+
+| **动作** | **关联铁律** | **处置** | **说明** |
+|----------|-------------|--------|--------|
+| **有覆盖文件写入** | 受保护路径（IRN-010） | **拒绝** | 若覆盖的是**规则或不可变文件** → P0；若覆盖的是**临时或测试文件** → 不阻拦 |
+| **废弃文件清理** | 零残留原则（IRN-011） | **主动执行** | 每 phase 结束时自动扫描临时文件/孤立文件/废墟路径；若**残留未清理** → P0 |
 
 ## 7. 与 GOV-MOD-005 的分工
 
@@ -196,11 +265,11 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 
 |------|----------------------|-------------|
 | 管辖范围 | AI 模型全部操作 | 模块注入操作 |
 | 规则性质 | 行为准则（声明式） | 技术检查（可自动化验证） |
-| 规则数量 | 10 条 | 8 条 |
+| 规则数量 | 11 条 | 8 条 |
 | 执行时机 | 所有操作 | 注入前 |
 
 模块注入前必须**同时满足**：
-1. 本策略的 10 条行为铁律（AI 行为合规）
+1. 本策略的 11 条行为铁律（AI 行为合规）
 2. GOV-MOD-005 的 8 条注入检查（技术合规）
 
 原铁律2（ID唯一性）、铁律3（契约先行）、铁律4（依赖可解析+依赖方向）已归入 GOV-MOD-005 的 INJ-001/003/002/008，本策略不再重复定义。
@@ -233,6 +302,7 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）或 
 - IRN-004（断链清零）→ `check_dead_links.py`
 - IRN-008（先读后写）→ 行为纪律：每次 Write 前确认已有 Read 记录
 - IRN-010（受保护路径）→ 写入前对照受保护清单
+- IRN-011（零残留）→ Phase 结束时全量扫描临时/孤立/废墟文件；清理所有 `_temp*`、`_check*`、`_phase_*` 文件
 
 **依赖人类裁决的规则**：
 - IRN-005（Phase Gate）：Owner 声明 scaffold 验收通过后本铁律退役

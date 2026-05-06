@@ -394,7 +394,8 @@ L{XX}-{MODULE_ABBR}-{NNN}
 | `AGG-{NNN}` | DDD 聚合根 | `AGG-001` |
 | `ENT-{NNN}` | DDD 实体 | `ENT-001` |
 | `VO-{NNN}` | DDD 值对象 | `VO-001` |
-| `T-{QUADRANT}{NN}` | 技术雷达条目 | `T-A01` |
+| `T-{QUADRANT}{NN}` | Technology Radar（**EA YAML**） | `T-A01` |
+| `IMPL-T-{QUADRANT}{NN}` | Technology Radar — **仓库根摘要**（与 `T-*` 隔离） | `IMPL-T-A01` |
 | `DS{NN}` | 数据源 | `DS01` |
 | `LLM{NN}` | LLM 供应商 | `LLM01` |
 | `ADR-{NNNN}` | 架构决策记录 | `ADR-0001` |

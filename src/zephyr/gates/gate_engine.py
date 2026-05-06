@@ -1,21 +1,34 @@
 """
-GateEngine — KMS G1-G5 门禁裁决引擎（T-2-17）
-===============================================
+GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁决引擎（T-2-17）
+======================================================================
 依据：
 - 知识库架构 §4（G1-G5 脚本接口设计）
 - execution-order-v1.md beta.3（门禁策略引擎 P0）
 - ADR-0030（SQLite gates 表）
+- CT-ORC-GATE-001（任务 G0/G7 → task/g0_orc_gate_engine.yaml、g7_orc_gate_engine.yaml）
+- 交易类门：``gate_id`` 为 G10/G11/G12，YAML 文件名保留历史前缀（g7_position_limits / g8_leverage / g9_strategy_correlation）
 - 指令：325 + 344 + 999
+
+病根（2026-05 归档）
+--------------------
+曾将 ``field_presence`` / ``classification`` 等 check_type 在任务路径上实现为空操作（``pass``），
+导致即便注册 G0 YAML 也无法生效；同时 ``task/g0_entry.yaml`` 使用不可执行的 ``rules:`` 叙述，
+与引擎的 ``checks`` schema 脱节。本引擎现已实现上述 check_type 的任务侧语义，并由 Orc 专用 YAML 承载 G0/G7。
 
 Safety : M（治理层代码，门禁失败阻断任务启动）
 
 功能
 ----
 - load_gates()   → 从 YAML 文件加载门禁配置，返回 dict[gate_id, GateConfig]
-- evaluate(task, gate_id) → 执行门禁检查，返回 GateResult，写入 gates 表
+- evaluate(task, gate_id[, conn=…]) → 执行门禁检查，返回 GateResult，写入 gates 表；
+  传入 ``conn`` 时使用调用方事务（例如 TaskRepository 写事务），不再单独 BEGIN/COMMIT。
 
 支持的 CheckType（三大核心场景 + 扩展）
 ---------------------------------------
+  field_presence   - Task/TaskCard 必填字段非空（Orc G0）
+  classification   - 枚举字段落在允许集合（Orc：priority / verification_status 等）
+  regex_pattern    - 单字段正则全匹配（Orc：task_id 对齐 schemas）
+  audit_findings_resolved — TaskCard.audit_findings 全部 resolved（Orc G7）
   encoding         - 文件 UTF-8 无 BOM 编码校验
   line_ending      - LF 换行符校验
   file_extension   - 文件扩展名白名单
@@ -49,6 +62,7 @@ from typing import Any, ClassVar
 import yaml
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.gates.risk_ssot import load_risk_params_ssot
 from zephyr.shared.schemas import Task
 
 __all__ = [
@@ -289,6 +303,85 @@ def _check_frontmatter(
         return f"frontmatter 缺少必填字段 {missing}：{file_path}"
     return None
 
+
+def _task_scalar_str(task: Task, field_name: str) -> str:
+    val = getattr(task, field_name, None)
+    if val is None:
+        return ""
+    return val.value if hasattr(val, "value") else str(val)
+
+
+def _check_field_presence_task(task: Task, params: dict[str, Any]) -> list[str]:
+    """校验 Task/TaskCard 上必填字段非空。"""
+    missing: list[str] = []
+    for fname in params.get("required_fields", []):
+        val = getattr(task, fname, None)
+        if val is None:
+            missing.append(fname)
+        elif isinstance(val, str) and len(val.strip()) == 0:
+            missing.append(fname)
+        elif isinstance(val, (list, dict)) and len(val) == 0:
+            missing.append(fname)
+    return missing
+
+
+def _check_classification_task(task: Task, params: dict[str, Any]) -> str | None:
+    """枚举字段必须落在 allowed_values 内；支持 skip_if_missing / require_present。"""
+    field_name = str(params.get("field", ""))
+    allowed_raw = params.get("allowed_values", [])
+    allowed: list[str] = [str(x) for x in allowed_raw]
+    require_present = bool(params.get("require_present", False))
+    skip_if_missing = bool(params.get("skip_if_missing", False))
+    if not field_name:
+        return None
+    if not hasattr(task, field_name):
+        if skip_if_missing:
+            return None
+        if require_present:
+            return f"字段 '{field_name}' 不存在（需要 TaskCard 或扩展 Task）"
+        return None
+    val = getattr(task, field_name)
+    if val is None:
+        if skip_if_missing:
+            return None
+        if require_present:
+            return f"字段 '{field_name}' 必填但为 None"
+        return None
+    sval = _task_scalar_str(task, field_name)
+    if allowed and sval not in allowed:
+        return f"字段 '{field_name}' 值 '{sval}' 不在允许集合 {allowed}"
+    return None
+
+
+def _check_regex_pattern_task(task: Task, params: dict[str, Any]) -> str | None:
+    """单字段正则全匹配（用于 task_id 等与 schemas 对齐的二次校验）。"""
+    field_name = str(params.get("field", "task_id"))
+    pattern = str(params.get("pattern", ""))
+    if not pattern:
+        return None
+    sval = _task_scalar_str(task, field_name)
+    try:
+        if re.fullmatch(pattern, sval) is None:
+            return f"字段 '{field_name}'={sval!r} 不匹配正则 {pattern!r}"
+    except re.error as exc:
+        return f"正则无效：{pattern!r} ({exc})"
+    return None
+
+
+def _check_audit_findings_messages(task: Task) -> list[str]:
+    """TaskCard.audit_findings 全部 resolved；无该字段则跳过。"""
+    if not hasattr(task, "audit_findings"):
+        return []
+    findings_raw = getattr(task, "audit_findings") or []
+    msgs: list[str] = []
+    for af in findings_raw:
+        if getattr(af, "resolved", False):
+            continue
+        fid = getattr(af, "finding_id", "?")
+        msgs.append(f"审计发现未关闭：{fid}")
+    return msgs
+
+
 # ---------------------------------------------------------------------------
 # 统一调度函数
 # ---------------------------------------------------------------------------
@@ -410,19 +503,199 @@ def _run_check(
                 hard_compliance=hard_compliance,
             )
 
+    elif ct == "field_presence":
+        missing = _check_field_presence_task(task, check.params)
+        for mf in missing:
+            _add(f"缺少或为空必填字段：{mf}")
+
+    elif ct == "classification":
+        err = _check_classification_task(task, check.params)
+        if err:
+            _add(err)
+
+    elif ct == "regex_pattern":
+        err = _check_regex_pattern_task(task, check.params)
+        if err:
+            _add(err)
+
+    elif ct == "audit_findings_resolved":
+        for msg in _check_audit_findings_messages(task):
+            _add(msg)
+
+    elif ct == "circular_dependency_scan":
+        try:
+            from zephyr.gates.invariants.en_001_circular_dependency import run_scan
+            result = run_scan()
+            if not result.passed:
+                for cycle in result.cycles:
+                    _add(
+                        f"Circular dependency: {' → '.join(cycle)} → {cycle[0]}",
+                        detail=f"Cycle length: {len(cycle)}",
+                    )
+        except Exception as exc:
+            _add(f"EN-001 scan failed: {exc}", detail=str(exc))
+
+    elif ct == "enforcement_mode_check":
+        try:
+            from zephyr.gates.invariants.en_002_enforcement_validator import run_check as en2_check
+            result = en2_check()
+            if not result.passed:
+                for v in result.violations:
+                    _add(v)
+        except Exception as exc:
+            _add(f"EN-002 check failed: {exc}", detail=str(exc))
+
+    elif ct == "contract_compatibility_check":
+        try:
+            from zephyr.gates.invariants.en_003_contract_compatibility import run_check as en3_check
+            result = en3_check()
+            if not result.passed:
+                for m in result.mismatches:
+                    _add(m)
+        except Exception as exc:
+            _add(f"EN-003 check failed: {exc}", detail=str(exc))
+
+    elif ct == "security_artifact_scan":
+        try:
+            from zephyr.l10_compliance.artifact_scanner import ArtifactScanner
+            scanner = ArtifactScanner()
+            scanner._RULES = []
+
+            scan_paths: list[str] = check.params.get("scan_paths", [])
+            target_patterns: list[str] = check.params.get("target_patterns", ["*.py"])
+
+            for sp in scan_paths:
+                path = Path(sp)
+                if not path.exists():
+                    _add(f"Artifact scan path not found: {sp}", severity="warning")
+                    continue
+                if path.is_file():
+                    report = scanner.scan_file(path)
+                else:
+                    py_files = list(path.rglob("*.py"))
+                    reports = scanner.scan_files(py_files)
+                    for report in reports:
+                        if not report.is_clean:
+                            for f in report.findings:
+                                _add(
+                                    f"{report.target}:L{f.line_number}: {f.message}",
+                                    detail=f"[{f.rule_id}] {f.snippet}",
+                                    severity=f.severity,
+                                )
+                    continue
+
+                if not report.is_clean:  # type: ignore[reportPossiblyUnbound]
+                    for f in report.findings:  # type: ignore[reportPossiblyUnbound]
+                        _add(
+                            f"{report.target}:L{f.line_number}: {f.message}",  # type: ignore[reportPossiblyUnbound]
+                            detail=f"[{f.rule_id}] {f.snippet}",
+                            severity=f.severity,
+                        )
+        except Exception as exc:
+            _add(f"Security artifact scan failed: {exc}", detail=str(exc))
+
+    elif ct == "position_limit":
+        ssot = load_risk_params_ssot(project_root)
+        p = check.params
+        nav = ssot.get("max_single_position_nav_ratio")
+        d_default = p.get("max_single_position_default")
+        if d_default is not None and nav is not None:
+            if float(d_default) > float(nav) + 1e-12:
+                _add(
+                    f"G10 与 risk_params SSoT 冲突：max_single_position_default={d_default} "
+                    f"> max_single_position_nav_ratio={nav}（{check.name}）",
+                )
+        sec_cap = ssot.get("max_sector_concentration_nav_ratio")
+        s_default = p.get("max_sector_concentration_default")
+        if s_default is not None and sec_cap is not None:
+            if float(s_default) > float(sec_cap) + 1e-12:
+                _add(
+                    f"G10 与 risk_params SSoT 冲突：max_sector_concentration_default={s_default} "
+                    f"> max_sector_concentration_nav_ratio={sec_cap}（{check.name}）",
+                )
+        adv_cap = ssot.get("max_adv_participation_ratio")
+        adv_p = p.get("max_adv_ratio")
+        if adv_p is not None and adv_cap is not None:
+            if float(adv_p) > float(adv_cap) + 1e-12:
+                _add(
+                    f"G10 与 risk_params SSoT 冲突：max_adv_ratio={adv_p} "
+                    f"> max_adv_participation_ratio={adv_cap}（{check.name}）",
+                )
+
+    elif ct == "leverage_limit":
+        ssot = load_risk_params_ssot(project_root)
+        p = check.params
+        lev = p.get("max_gross_leverage_default")
+        cap = ssot.get("max_gross_leverage")
+        if lev is not None and cap is not None:
+            if float(lev) > float(cap) + 1e-12:
+                _add(
+                    f"G11 与 risk_params SSoT 冲突：max_gross_leverage_default={lev} "
+                    f"> max_gross_leverage={cap}（{check.name}）",
+                )
+
+    elif ct == "strategy_correlation":
+        ssot = load_risk_params_ssot(project_root)
+        p = check.params
+        ct_thr = p.get("correlation_threshold")
+        ss_thr = ssot.get("max_strategy_correlation_threshold")
+        if ct_thr is not None and ss_thr is not None:
+            if float(ct_thr) > float(ss_thr) + 1e-12:
+                _add(
+                    f"G12 策略相关性阈值过于宽松：correlation_threshold={ct_thr} "
+                    f"> max_strategy_correlation_threshold={ss_thr}（{check.name}）",
+                )
+        mo = p.get("max_factor_overlap")
+        ss_mo = ssot.get("max_factor_overlap_threshold")
+        if mo is not None and ss_mo is not None:
+            if float(mo) > float(ss_mo) + 1e-12:
+                _add(
+                    f"G12 因子重叠上限过于宽松：max_factor_overlap={mo} "
+                    f"> max_factor_overlap_threshold={ss_mo}（{check.name}）",
+                )
+        uo = p.get("max_universe_overlap")
+        ss_uo = ssot.get("max_universe_overlap_threshold")
+        if uo is not None and ss_uo is not None:
+            if float(uo) > float(ss_uo) + 1e-12:
+                _add(
+                    f"G12 股票池重叠上限过于宽松：max_universe_overlap={uo} "
+                    f"> max_universe_overlap_threshold={ss_uo}（{check.name}）",
+                )
+
+    elif ct == "zero_residue_check":
+        try:
+            from zephyr.gates.invariants.zero_residue_check import ZeroResidueScanner
+            scanner = ZeroResidueScanner(project_root=project_root)
+            report = scanner.scan()
+            if not report.is_clean:
+                for fg in report.findings:
+                    sev: str = "P0" if fg.severity == "error" else "P1"
+                    _add(
+                        fg.message,
+                        detail=f"[{fg.rule_id}] {fg.file_rel}",
+                        severity=sev,
+                    )
+        except Exception as exc:
+            _add(f"Zero residue scan failed: {exc}", detail=str(exc))
+
     elif ct in {
         "score_threshold",
-        "classification",
         "deduplication",
         "manual_approval",
         "path_whitelist",
         "path_routing",
         "temporal",
         "reference_check",
-        "field_presence",
     }:
-        # 这些检查类型在任务层面为空操作（需要知识条目数据），跳过
-        pass
+        violations.append(
+            GateViolation(
+                check_id=check.check_id,
+                check_name=check.name,
+                severity="P2",
+                message=f"检查类型 '{ct}' 在任务门禁路径未实现（依赖 KMS / 额外数据），已跳过",
+                detail="gate_engine._run_check",
+            )
+        )
 
     else:
         # 未知 check_type：记为 P2 警告
@@ -448,7 +721,7 @@ class GateEngine:
     参数
     ----
     gate_dir
-        存放 g1_ingest.yaml ~ g5_extract.yaml 的目录；默认与本模块同级。
+        存放各门禁 YAML（含 ``task/*.yaml``）的目录；默认与本模块同级。
     db_path
         SQLite 数据库路径；默认使用 DB_PATH。
     project_root
@@ -458,12 +731,21 @@ class GateEngine:
     """
 
     _GATE_FILES: dict[str, str] = {
+        "G0": "task/g0_orc_gate_engine.yaml",
         "G1": "g1_ingest.yaml",
         "G2": "g2_triage.yaml",
         "G3": "g3_evaluate.yaml",
         "G4": "g4_activate.yaml",
         "G5": "g5_extract.yaml",
         "G6": "g6_blueprint_compliance.yaml",
+        "G7": "task/g7_orc_gate_engine.yaml",
+        "G10": "g7_position_limits.yaml",
+        "G11": "g8_leverage.yaml",
+        "G12": "g9_strategy_correlation.yaml",
+        "EN-001": "invariants/en_001_circular_dependency.yaml",
+        "EN-002": "invariants/en_002_enforcement_validator.yaml",
+        "EN-003": "invariants/en_003_contract_compatibility.yaml",
+        "ZERO-RESIDUE": "ZERO-RESIDUE.yaml",
     }
 
     def __init__(
@@ -510,7 +792,13 @@ class GateEngine:
         self._gate_cache = configs
         return configs
 
-    def evaluate(self, task: Task, gate_id: str) -> GateResult:
+    def evaluate(
+        self,
+        task: Task,
+        gate_id: str,
+        *,
+        conn: sqlite3.Connection | None = None,
+    ) -> GateResult:
         """
         对 task 执行指定门禁的所有检查，返回 GateResult。
 
@@ -523,7 +811,10 @@ class GateEngine:
         task : Task
             待检查的任务 Pydantic 模型。
         gate_id : str
-            "G1" ~ "G5"。
+            ``G0`` / ``G7``（Orc 任务门）或 ``G1`` ~ ``G6``（KMS + 合规）。
+        conn : sqlite3.Connection | None
+            若非空，在此连接上插入 gates 行且不开启新事务（须已由调用方 ``BEGIN``）。
+            为空时使用引擎自带连接并自行 ``BEGIN IMMEDIATE`` / ``COMMIT``。
         """
         gates = self.load_gates()
         if gate_id not in gates:
@@ -550,7 +841,7 @@ class GateEngine:
                 "p2_count": sum(1 for v in all_violations if v.severity == "P2"),
             },
         )
-        self._persist_result(result)
+        self._persist_result(result, conn=conn)
         return result
 
     def close(self) -> None:
@@ -567,7 +858,12 @@ class GateEngine:
     # 内部：持久化
     # ------------------------------------------------------------------
 
-    def _persist_result(self, result: GateResult) -> None:
+    def _persist_result(
+        self,
+        result: GateResult,
+        *,
+        conn: sqlite3.Connection | None = None,
+    ) -> None:
         """将 GateResult 写入 SQLite gates 表。"""
         violations_json = json.dumps(
             [
@@ -580,9 +876,12 @@ class GateEngine:
             ],
             ensure_ascii=False,
         )
-        self._conn.execute("BEGIN IMMEDIATE")
+        target = conn if conn is not None else self._conn
+        manage_tx = conn is None
+        if manage_tx:
+            target.execute("BEGIN IMMEDIATE")
         try:
-            self._conn.execute(
+            target.execute(
                 """
                 INSERT INTO gates
                     (gate_run_id, gate_id, passed, details, artifact_path, created_at)
@@ -597,9 +896,11 @@ class GateEngine:
                     result.evaluated_at,
                 ),
             )
-            self._conn.execute("COMMIT")
+            if manage_tx:
+                target.execute("COMMIT")
         except Exception:
-            self._conn.execute("ROLLBACK")
+            if manage_tx:
+                target.execute("ROLLBACK")
             raise
 
     # ------------------------------------------------------------------

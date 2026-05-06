@@ -11,9 +11,11 @@ import pytest
 from zephyr.db.sqlite_schema import get_db_connection
 from zephyr.orchestrator.wave_generator import WaveGenerator
 
+
 @pytest.fixture
 def generator(tmp_db: Path) -> WaveGenerator:
     return WaveGenerator(db_path=tmp_db)
+
 
 def _insert_task(conn, task_id: str, phase: int = 2, depends_on: list[str] | None = None) -> None:
     deps = json.dumps(depends_on or [])
@@ -24,10 +26,11 @@ def _insert_task(conn, task_id: str, phase: int = 2, depends_on: list[str] | Non
     conn.execute(
         """INSERT OR REPLACE INTO tasks
            (task_id, namespace, seq, title, status, priority, phase, execution_model, safety_level, depends_on, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'PENDING', 'P2', ?, 'GLM-5.1', 'M', ?, ?, ?)""",
+           VALUES (?, ?, ?, ?, 'PENDING', 'P2', ?, 'glm', 'M', ?, ?, ?)""",
         (task_id, namespace, seq, task_id, phase, deps, now, now),
     )
     conn.execute("COMMIT")
+
 
 class TestWaveGeneratorBasic:
     def test_empty_db_returns_empty(self, generator: WaveGenerator) -> None:
@@ -86,6 +89,7 @@ class TestWaveGeneratorBasic:
         assert "ADR-001" in waves[0].task_ids
         assert "STD-001" not in waves[0].task_ids
 
+
 class TestGetNextWave:
     def test_returns_first_pending_wave(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
@@ -103,13 +107,14 @@ class TestGetNextWave:
         conn.execute(
             """INSERT INTO tasks
                (task_id, namespace, seq, title, status, priority, phase, execution_model, safety_level, created_at, updated_at)
-               VALUES ('ADR-001', 'ADR', 1, 'test', 'COMPLETED', 'P2', 2, 'GLM-5.1', 'M', ?, ?)""",
+               VALUES ('ADR-001', 'ADR', 1, 'test', 'COMPLETED', 'P2', 2, 'glm', 'M', ?, ?)""",
             (now, now),
         )
         conn.execute("COMMIT")
         conn.close()
         wave = generator.get_next_wave()
         assert wave is None
+
 
 class TestWaveStatus:
     def test_wave_status_counts(self, generator: WaveGenerator, tmp_db: Path) -> None:

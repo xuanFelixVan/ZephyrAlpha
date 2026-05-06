@@ -1,33 +1,30 @@
 """
 run_script_smoke_test.py — 治理脚本冒烟测试运行器
-
-__manifest__ = """
-args: []
-description: 治理脚本冒烟测试（SCRIPT-QUALITY-001 D-H-01 — subprocess + --warn-only 全量运行）
-dimensions:
-- D1
-priority: P1
-timeout_seconds: 300
-warn_only: false
-"""
-
-
-对标：SCRIPT-QUALITY-001 D-H-01（冒烟测试：--warn-only 退出干净）
-      AGENTS.md §6.5（脚本入库后必须验证）
-
-检测内容：
-- 从 script_manifest.yaml 加载全部注册脚本
-- 用 subprocess + --warn-only 逐个运行
-- 报告 exit code 分布（0=通过 / 1=有发现 / 2=异常）
-- 输出失败和异常脚本清单
-
-exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
 
+__manifest__ = {
+    "args": [],
+    "description": "治理脚本冒烟测试 [SCRIPT-QUALITY-001 D-H-01 - subprocess + --warn-only 全量运行]",
+    "dimensions": ["D1"],
+    "priority": "P1",
+    "timeout_seconds": 300,
+    "warn_only": False,
+}
+
+# 对标: SCRIPT-QUALITY-001 D-H-01 (冒烟测试: --warn-only 退出干净)
+#       AGENTS.md §6.5 (脚本入库后必须验证)
+# 检测内容:
+# - 从 script_manifest.yaml 加载全部注册脚本
+# - 用 subprocess + --warn-only 逐个运行
+# - 报告 exit code 分布 (0=通过 / 1=有发现 / 2=异常)
+# - 输出失败和异常脚本清单
+# exit codes: 0=pass, 1=findings, 2=error
+
 import subprocess
 import sys
+import py_compile
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
@@ -43,17 +40,14 @@ _SELF_NAME = "d1_structure/run_script_smoke_test.py"
 import argparse
 
 def load_manifest() -> list[dict]:
-    """load manifest"""
+    """读取 script_manifest.yaml 脚本列表。"""
     with open(MANIFEST_PATH, encoding="utf-8") as f:
         manifest = yaml.safe_load(f)
-    "加载数据."
     return manifest.get("scripts", [])
-    "load manifest."
 
 def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
-    """执行扫描"""
+    """以 --warn-only 子进程执行注册脚本。"""
     script_path = SCRIPTS_DIR / script_name
-    "run_script."
     if not script_path.exists():
         return (-1, "", f"脚本不存在: {script_path}")
     try:
@@ -71,7 +65,17 @@ def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
         return (-1, "", f"超时（>{timeout}s）")
     except OSError as e:
         return (-2, "", f"OS 错误: {e}")
-    "执行扫描."
+
+def check_script_syntax(script_name: str) -> tuple[bool, str]:
+    """py_compile 语法检查——治理脚本防损坏的第一道防线"""
+    script_path = SCRIPTS_DIR / script_name
+    if not script_path.exists():
+        return (False, f"脚本不存在: {script_path}")
+    try:
+        py_compile.compile(str(script_path), doraise=True)
+        return (True, "")
+    except py_compile.PyCompileError as e:
+        return (False, str(e))
 
 def main() -> None:
     """入口函数."""
@@ -84,9 +88,14 @@ def main() -> None:
     passed = 0
     findings = []
     errors = []
+    compile_errors = []
     for entry in entries:
         name = entry["name"]
         if name == _SELF_NAME:
+            continue
+        ok_syntax, syntax_err = check_script_syntax(name)
+        if not ok_syntax:
+            compile_errors.append((name, syntax_err[:200]))
             continue
         rc, stdout, stderr = run_script(name, timeout=args.timeout)
         if rc == 0:
@@ -99,6 +108,11 @@ def main() -> None:
     print(f"  ✅ 通过 (exit 0): {passed}/{total}", file=sys.stderr)
     print(f"  ⚠ 有发现 (exit 1): {len(findings)}/{total}", file=sys.stderr)
     print(f"  ❌ 异常 (exit 2/-1): {len(errors)}/{total}", file=sys.stderr)
+    print(f"  💀 编译失败 (py_compile): {len(compile_errors)}/{total}", file=sys.stderr)
+    if compile_errors:
+        print(f"\n--- 编译失败清单 ({len(compile_errors)}) ---", file=sys.stderr)
+        for name, err in compile_errors:
+            print(f"  [{name}]: {err[:150]}", file=sys.stderr)
     if findings:
         print(f"\n--- 发现清单 ({len(findings)}) ---", file=sys.stderr)
         for name, out in findings:
@@ -110,7 +124,7 @@ def main() -> None:
     print(file=sys.stderr)
     if args.warn_only:
         sys.exit(0)
-    sys.exit(1 if findings or errors else 0)
+    sys.exit(1 if findings or errors or compile_errors else 0)
 
 if __name__ == "__main__":
     main()

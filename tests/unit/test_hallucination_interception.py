@@ -28,6 +28,7 @@ from zephyr.orchestrator.hallucination_detector import (
     TriggerLevel,
 )
 
+
 class FakeCaller:
     def __init__(
         self,
@@ -44,6 +45,7 @@ class FakeCaller:
             return self._responses[purpose]
         return ModelCallResult(content="{}", cost_usd=self._default_cost, latency_ms=120, success=True)
 
+
 def _step1_payload(baseline: str, questions: list[str]) -> ModelCallResult:
     return ModelCallResult(
         content=json.dumps({"baseline_answer": baseline, "verify_questions": questions}),
@@ -51,6 +53,7 @@ def _step1_payload(baseline: str, questions: list[str]) -> ModelCallResult:
         latency_ms=500,
         success=True,
     )
+
 
 def _step2_payload(answers: list[dict[str, Any]]) -> ModelCallResult:
     return ModelCallResult(
@@ -60,9 +63,11 @@ def _step2_payload(answers: list[dict[str, Any]]) -> ModelCallResult:
         success=True,
     )
 
+
 # ---------------------------------------------------------------------------
 # L1 白名单强制触发
 # ---------------------------------------------------------------------------
+
 
 class TestL1WhitelistTrigger:
     def test_l1_h_risk_always_triggers(self) -> None:
@@ -87,9 +92,11 @@ class TestL1WhitelistTrigger:
         d = HallucinationDetector()
         assert d.should_trigger(RiskLevel.M, requires_human=True) == TriggerLevel.L1_WHITELIST
 
+
 # ---------------------------------------------------------------------------
 # L2 灰名单条件触发
 # ---------------------------------------------------------------------------
+
 
 class TestL2GreyTrigger:
     def test_l2_doc_target(self) -> None:
@@ -104,9 +111,11 @@ class TestL2GreyTrigger:
         d = HallucinationDetector()
         assert d.should_trigger(RiskLevel.M) == TriggerLevel.L2_GREY
 
+
 # ---------------------------------------------------------------------------
 # L3 黑名单禁止
 # ---------------------------------------------------------------------------
+
 
 class TestL3Blacklist:
     def test_l3_pure_codegen(self) -> None:
@@ -123,9 +132,11 @@ class TestL3Blacklist:
         assert r.triggered is False
         assert r.is_hallucination is False
 
+
 # ---------------------------------------------------------------------------
 # 拦截率测试（>= 70%）
 # ---------------------------------------------------------------------------
+
 
 class TestInterceptionRate:
     HALLUCINOUS_CLAIMS = [
@@ -179,9 +190,11 @@ class TestInterceptionRate:
         rate = false_positives / total
         assert rate < 0.15, f"误报率 {rate:.1%} >= 15%"
 
+
 # ---------------------------------------------------------------------------
 # 降级级联测试
 # ---------------------------------------------------------------------------
+
 
 class TestDegradationCascade:
     def test_dual_model_cove(self) -> None:
@@ -214,9 +227,11 @@ class TestDegradationCascade:
         assert r.fallback_used == FallbackMode.KEYWORD.value
         assert r.is_hallucination is True
 
+
 # ---------------------------------------------------------------------------
 # Keyword 规则拦截
 # ---------------------------------------------------------------------------
+
 
 class TestKeywordRules:
     def test_numeric_out_of_range_sharpe(self) -> None:

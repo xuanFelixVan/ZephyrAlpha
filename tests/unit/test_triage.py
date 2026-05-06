@@ -17,9 +17,11 @@ from pathlib import Path
 import pytest
 from zephyr.kb.triage import HIGH_VALUE_THRESHOLD, TriageGate
 
+
 @pytest.fixture()
 def gate(kb_root: Path) -> TriageGate:
     return TriageGate(kb_root=kb_root)
+
 
 def _make_rich_md(
     tmp_path: Path,
@@ -47,12 +49,14 @@ def _make_rich_md(
     p.write_text(content, encoding="utf-8", newline="\n")
     return p
 
+
 def test_triage_high_value_passes(tmp_path: Path, gate: TriageGate) -> None:
     md = _make_rich_md(tmp_path)
     result = gate.triage(md)
     assert result.passed is True
     assert result.ai_triage_score >= HIGH_VALUE_THRESHOLD
     assert result.classification == "BLUEPRINT"
+
 
 def test_triage_low_score_rejected(tmp_path: Path, gate: TriageGate) -> None:
     p = tmp_path / "low.md"
@@ -61,6 +65,7 @@ def test_triage_low_score_rejected(tmp_path: Path, gate: TriageGate) -> None:
     )
     result = gate.triage(p)
     assert result.ai_triage_score < HIGH_VALUE_THRESHOLD
+
 
 def test_triage_classification_auto_infer(tmp_path: Path, gate: TriageGate) -> None:
     p = tmp_path / "auto.md"
@@ -71,6 +76,7 @@ def test_triage_classification_auto_infer(tmp_path: Path, gate: TriageGate) -> N
     result = gate.triage(p)
     assert result.classification in ("STRATEGY", "BLUEPRINT")
 
+
 def test_triage_priority_mapping(tmp_path: Path, gate: TriageGate) -> None:
     md = _make_rich_md(tmp_path, module_id="KE-203")
     result = gate.triage(md)
@@ -78,16 +84,19 @@ def test_triage_priority_mapping(tmp_path: Path, gate: TriageGate) -> None:
     if result.ai_triage_score >= HIGH_VALUE_THRESHOLD:
         assert result.priority == "P0"
 
+
 def test_triage_empty_shell_rejected(tmp_path: Path, gate: TriageGate) -> None:
     p = tmp_path / "empty.md"
     p.write_text("", encoding="utf-8")
     result = gate.triage(p)
     assert result.passed is False
 
+
 def test_triage_nonexistent_file_rejected(tmp_path: Path, gate: TriageGate) -> None:
     result = gate.triage(tmp_path / "ghost.md")
     assert result.passed is False
     assert any("不存在" in v for v in result.violations)
+
 
 def test_triage_writes_to_triaged_dir(tmp_path: Path, kb_root: Path, gate: TriageGate) -> None:
     md = _make_rich_md(tmp_path)

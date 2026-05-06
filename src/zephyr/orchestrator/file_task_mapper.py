@@ -40,6 +40,7 @@ __all__ = [
     "classify_file_to_namespace",
 ]
 
+
 def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     """
     从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。
@@ -56,6 +57,10 @@ def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     p = file_path.replace("\\", "/")
 
     if re.search(r"adr/adr-\d{4}", p, re.IGNORECASE):
+        return TaskNamespace.ADR
+
+    # 企业架构真源区（ADR / 架构叙事）——与 docs/02_enterprise_architecture 对齐
+    if "02_enterprise_architecture" in p:
         return TaskNamespace.ADR
 
     if "construction-plan-" in p:
@@ -75,12 +80,14 @@ def classify_file_to_namespace(file_path: str) -> TaskNamespace:
 
     return TaskNamespace.OPS
 
+
 @dataclass
 class RegisterReport:
     total: int = 0
     inserted: int = 0
     skipped_existing: int = 0
     errors: list[str] = field(default_factory=list)
+
 
 @dataclass
 class SyncInconsistency:
@@ -91,11 +98,13 @@ class SyncInconsistency:
     task_status: str
     issue: str
 
+
 @dataclass
 class SyncReport:
     checked: int = 0
     consistent: int = 0
     inconsistencies: list[SyncInconsistency] = field(default_factory=list)
+
 
 class FileTaskMapper:
     """
@@ -143,7 +152,7 @@ class FileTaskMapper:
         *,
         phase: int = 2,
         title: str = "",
-        execution_model: str = "unknown",
+        execution_model: str = "glm",
         safety_level: str = "M",
         role: str = "primary",
     ) -> str:
@@ -211,7 +220,7 @@ class FileTaskMapper:
                 namespace = classify_file_to_namespace(fp)
                 phase = entry.get("phase", 2)
                 title = entry.get("title") or entry.get("name") or Path(fp).stem
-                execution_model = entry.get("execution_model", "unknown")
+                execution_model = entry.get("execution_model", "glm")
                 safety_level = entry.get("safety_level", "M")
                 role = entry.get("role", "primary")
                 now = now_iso()

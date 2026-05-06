@@ -93,8 +93,7 @@ verifiability: manual
 │       ├── status-vocabulary.yaml                 ← 文档状态受控枚举
 │       └── ttl-vocabulary.yaml                    ← TTL 周期受控枚举
 │
-└── templates/                   ← 文档模板（11 个标准模板）
-    ├── adr-template.md           ← 架构决策记录模板
+└── templates/                   ← 文档模板（10 个标准模板，ADR 模板已迁入 KB）
     ├── blueprint-template.md     ← 蓝图 + 施工指引统一模板
     ├── playbook-template.md      ← 操作手册模板
     ├── policy-template.md        ← 策略模板
@@ -114,14 +113,14 @@ verifiability: manual
 <!-- TABLE-AUTO-START -->
 | 子目录 | 职责 | 管辖文件数 | 索引入口 | 注册表 |
 |--------|------|:---------:|---------|--------|
-| `meta/` | 元规则——定义"规则怎么写、怎么管" | 13 | [meta/index.md](meta/index.md) | [_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md) |
-| `governance/` | 声明式全局规则——8 个治理域 | 43 | [governance/index.md](governance/index.md) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
+| `meta/` | 元规则——定义"规则怎么写、怎么管" | 12 | [meta/index.md](meta/index.md) | [_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md) |
+| `governance/` | 声明式全局规则——8 个治理域 | 42 | [governance/index.md](governance/index.md) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
 | `operational/` | 过程式操作手册——3 个操作域 | 4 | [operational/index.md](operational/index.md) | 同上 |
 | `domains/` | 层域特定规则——4 个架构层 | 8 | [domains/index.md](domains/index.md) | 同上 |
-| `_registry/` | 注册表+契约——4 个子目录 | 35 | [不需要（机器可读）](不需要（机器可读）) | 自身即注册表 |
-| `templates/` | 文档模板 | 11 | [不需要（文件名自描述）](不需要（文件名自描述）) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
+| `_registry/` | 注册表+契约——4 个子目录 | 34 | [不需要（机器可读）](不需要（机器可读）) | 自身即注册表 |
+| `templates/` | 文档模板 | 10 | [不需要（文件名自描述）](不需要（文件名自描述）) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
 
-> **合计**：6 个子目录，114 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。
+> **合计**：6 个子目录，110 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。
 <!-- TABLE-AUTO-END -->
 
 ---
@@ -148,7 +147,7 @@ verifiability: manual
 | 文件类型 | 不在此目录的原因 | 正确位置 |
 |---------|---------------|---------|
 | 企业架构视图（TOGAF） | 架构模型不是规则 | `docs/02_enterprise_architecture/` |
-| 架构决策记录（ADR，已冻结 2026-04-27） | 架构决策不是规则标准，替代方案见 MOD-KB-001 §3.9.5 三层决策记录模型 | `docs/02_enterprise_architecture/adr/`（归档） |
+| 架构决策记录（ADR，已冻结 2026-04-27） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 已移除） |
 | 模块生命周期文档 | 蓝图+施工图+交付 | `docs/03_modules/` |
 | 知识库条目 | 经验积累不是规则 | `docs/08_knowledge/` |
 | 审计报告 | 事后评估不是规则 | `docs/09_audit/` |

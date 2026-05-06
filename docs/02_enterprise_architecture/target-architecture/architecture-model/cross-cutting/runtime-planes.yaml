@@ -75,7 +75,7 @@ planes:
     description: >
       策略计算 + 因子引擎 + AI 决策 + OMS 状态机。
       可抢占（asyncio / 协程）。Async event loop / Task queue。
-      语言：Python 3.12+ / asyncio。
+      语言：Python >=3.11 / asyncio。
       部署：Linux VM / 容器（K8s Pod）。
     activation_trigger: T0（当前已激活，全量）
     current_status: active
@@ -251,7 +251,7 @@ planes:
       availability_percent: 99.9
       failure_impact: 决策质量下降（信号延迟 / AI 响应慢）
     tech_stack:
-      languages: [Python 3.12+, Rust CPython extensions（热点函数，Assess）]
+      languages: ["Python >=3.11", "Rust CPython extensions（热点函数，Assess）"]
       runtime: Linux VM / 容器（K8s Pod）
       ipc: [Redis Streams, Kafka, FastAPI HTTP, WebSocket]
       storage: Redis / PostgreSQL / Parquet（hot/warm border）

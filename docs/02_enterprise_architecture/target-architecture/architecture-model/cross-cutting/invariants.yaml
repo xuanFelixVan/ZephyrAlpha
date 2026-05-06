@@ -33,8 +33,8 @@ invariants:
     statement: "单一持仓限制 ≤ 5% NAV：任何单个仓位不得超过净资产价值的 5%"
     owner: l04-risk-management
     sub_owner: l04-limits
-    enforcement: runtime_check
-    fitness_function_path: null
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_position_limit.py
     adr_ref: ADR-0009
     violation_action: reject_order
     priority: P0
@@ -46,8 +46,8 @@ invariants:
     statement: "日损失限额触发自动暂停：当日亏损触及预设阈值时系统自动暂停交易"
     owner: l04-risk-management
     sub_owner: l04-monitor
-    enforcement: runtime_check
-    fitness_function_path: null
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_daily_loss_limit.py
     adr_ref: ADR-0009
     violation_action: halt_trading
     priority: P0
@@ -71,7 +71,9 @@ invariants:
 
   - id: INV-005
     category: boundary_integrity
-    statement: "Broker ACL 边界：只有 l06_trade_execution/adapters/ 可调用 Broker API，其他层禁止直接访问"
+    statement: >
+      Broker ACL 边界：仅 `src/zephyr/l06_trade_execution/adapters/`（Python 包路径 `l06_trade_execution`；
+      EA 分层条目见 `layers/l06-trade-execution.yaml`）可调用 Broker API；其他层禁止直连。
     owner: l06-trade-execution
     sub_owner: l06-adapters
     enforcement: arch_guard
@@ -210,8 +212,8 @@ invariants:
     statement: "AISG 拦截门禁：所有 AI 生成的代码 / 指令必须经 L10 AISG security_gateway 拦截验证后才能执行"
     owner: l10-governance-compliance
     sub_owner: l10-security-gateway
-    enforcement: runtime_check
-    fitness_function_path: null
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_aisg_gateway.py
     adr_ref: ADR-0010
     violation_action: reject_ai_action
     priority: P0
@@ -250,4 +252,4 @@ summary:
     all: 5
     cross: 1
   gate_03_status: "GATE-03 前置条件：所有不变量均有 owner 和 enforcement 字段 ✓"
-  last_updated: "2026-04-21"
+  last_updated: "2026-05-06"

@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+
 def load_yaml(file_path: str | Path) -> Any:
     """加载 YAML 文件，返回解析后的任意类型对象。
 

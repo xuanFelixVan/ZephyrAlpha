@@ -1,15 +1,6 @@
 """
 generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 
-__manifest__ = """
-args: []
-description: generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
-dimensions:
-- D1
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 读取 config/nav_table_mapping.yaml（SSoT）→ 交叉验证 registries → 生成 AGENTS.md §5.2。
@@ -20,6 +11,20 @@ warn_only: false
 
 工作流：
     新增规则 → 更新 config/nav_table_mapping.yaml → 更新 registries → 运行本脚本 → §5.2 自动刷新
+"""
+
+from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: >
+  全流程导航表自动生成器——从 config/nav_table_mapping.yaml + registries
+  自动生成 AGENTS.md §5.2 七阶段导航表。对标 §6.16 静态清单自动生成铁律。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
 """
 
 import argparse

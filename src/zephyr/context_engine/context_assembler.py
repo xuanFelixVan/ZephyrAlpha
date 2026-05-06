@@ -19,7 +19,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.token_utils import estimate_tokens
+from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 __all__ = [
     "AssembledContext",
@@ -27,6 +27,7 @@ __all__ = [
     "ContextAssembler",
     "FileEntry",
 ]
+
 
 class FileEntry(BaseModel):
     """manifest 中的单条文件记录"""
@@ -40,17 +41,26 @@ class FileEntry(BaseModel):
     readable: bool = Field(default=False)
     encoding: str = Field(default="utf-8")
 
+
 class AssembledContext(BaseModel):
     """装配后的上下文结构"""
 
     model_config = BASE_CONFIG
 
-    context_text: str = Field(default="", description="装配后的完整上下文字符串")
+    context_text: str = Field(default="", description="装配后的完整上下文字符串（可能已压缩）")
+    raw_context_text: str = Field(
+        default="",
+        description="压缩前的原始全文；未压缩时为空串以省内存（Anti-Pattern AP4）",
+    )
     file_count: int = Field(default=0, ge=0, description="成功读取的文件数")
     total_chars: int = Field(default=0, ge=0, description="总字符数")
     token_estimate: int = Field(default=0, ge=0, description="预估 token 数（按 chars÷4）")
-    token_budget: int = Field(default=8000, ge=0, description="token 预算上限")
-    budget_remaining: int = Field(default=8000, ge=0, description="剩余 token 预算")
+    token_budget: int = Field(default=DEFAULT_CONTEXT_TOKEN_BUDGET, ge=0, description="token 预算上限")
+    budget_remaining: int = Field(
+        default=DEFAULT_CONTEXT_TOKEN_BUDGET,
+        ge=0,
+        description="剩余 token 预算",
+    )
     was_compressed: bool = Field(default=False, description="是否触发了压缩")
     compressed_size_before: int = Field(default=0, ge=0)
     compressed_size_after: int = Field(default=0, ge=0)
@@ -68,8 +78,10 @@ class AssembledContext(BaseModel):
     def is_within_budget(self) -> bool:
         return self.token_estimate <= self.token_budget
 
+
 class AssemblyError(Exception):
     """上下文装配异常"""
+
 
 class ContextAssembler:
     """从 TaskCard 的 context_assembly_manifest 装配执行上下文
@@ -83,7 +95,7 @@ class ContextAssembler:
     Using::
 
         assembler = ContextAssembler(max_file_size_mb=5)
-        ctx = assembler.assemble(manifest, token_budget=8000)
+        ctx = assembler.assemble(manifest, token_budget=DEFAULT_CONTEXT_TOKEN_BUDGET)
         if not ctx.is_complete:
             raise AssemblyError(ctx.errors)
         assembler.shadow(ctx, output_dir="changes/shadows/")
@@ -104,7 +116,7 @@ class ContextAssembler:
     def assemble(
         self,
         manifest: list[dict[str, str]],
-        token_budget: int = 8000,
+        token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         *,
         compress: bool = True,
     ) -> AssembledContext:
@@ -215,11 +227,15 @@ class ContextAssembler:
                 errors.append("MISSING_FILE_PATH: manifest 条目缺少 file_path")
                 continue
 
-            if self._require_absolute and not fp.startswith("D:\\"):
+            p_check = Path(fp)
+            if self._require_absolute and not p_check.is_absolute():
                 errors.append(f"NOT_ABSOLUTE: {fp}")
                 continue
 
-            normalized = str(Path(fp).resolve())
+            try:
+                normalized = str(p_check.resolve())
+            except OSError:
+                normalized = fp
             if normalized in seen:
                 continue
             seen.add(normalized)
@@ -277,7 +293,7 @@ class ContextAssembler:
                 continue
 
             read_count += 1
-            est = max(len(content) // 4, 1)
+            est = estimate_tokens(content)
             entry.token_estimate = est
 
             parts.append(
@@ -286,7 +302,7 @@ class ContextAssembler:
 
         full_text = "\n".join(parts)
         total_chars = len(full_text)
-        est_tokens = max(total_chars // 4, 1)
+        est_tokens = estimate_tokens(full_text)
 
         return AssembledContext(
             context_text=full_text,
@@ -308,24 +324,24 @@ class ContextAssembler:
         ctx: AssembledContext,
         token_budget: int,
     ) -> AssembledContext:
+        raw = ctx.context_text
         try:
             from zephyr.context_engine.doc_compressor import DocCompressor
 
-            compressor = DocCompressor.instance()
-            ctx.context_text = compressor.compress(ctx.context_text)
+            compressor = DocCompressor()
+            outcome = compressor.compress_with_provenance(raw)
+            ctx.raw_context_text = outcome.raw_text
+            ctx.context_text = outcome.compressed_text
         except (ImportError, Exception) as e:
             ctx.errors.append(f"COMPRESSION_FAILED: {e}")
             ctx.was_compressed = False
+            ctx.raw_context_text = ""
             return ctx
 
         ctx.was_compressed = True
         ctx.compressed_size_after = len(ctx.context_text)
         ctx.compressed_size_before = ctx.total_chars
-        ctx.token_estimate = max(len(ctx.context_text) // 4, 1)
+        ctx.token_estimate = estimate_tokens(ctx.context_text)
         ctx.budget_remaining = max(token_budget - ctx.token_estimate, 0)
 
         return ctx
-
-def estimate_tokens(text: str) -> int:
-    """快速 token 估算（chars ÷ 4）"""
-    return max(len(text) // 4, 1)

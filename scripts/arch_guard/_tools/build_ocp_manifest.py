@@ -1,0 +1,55 @@
+"""从 cross-layer-contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_ROOT))
+from _arch_ssot import CONTRACTS_PATH, REPO_ROOT  # noqa: E402
+
+MANIFEST_REL = Path("src/zephyr/shared/contracts/_frozen_signatures/ocp_manifest.json")
+
+
+def main() -> int:
+    import yaml
+
+    if not CONTRACTS_PATH.is_file():
+        print("FAIL: contracts yaml missing")
+        return 2
+
+    data = yaml.safe_load(CONTRACTS_PATH.read_text(encoding="utf-8"))
+    contracts = data.get("contracts") or []
+    fingerprints: dict[str, str] = {}
+    for c in contracts:
+        if not isinstance(c, dict) or not c.get("frozen"):
+            continue
+        rel = c.get("physical_path") or ""
+        if not isinstance(rel, str) or not rel.startswith("src/zephyr/shared/contracts/"):
+            continue
+        p = (REPO_ROOT / rel).resolve()
+        if not p.is_file():
+            print(f"SKIP: {rel} 不存在")
+            continue
+        h = hashlib.sha256(p.read_bytes()).hexdigest()
+        fingerprints[str(c.get("id", rel))] = h
+
+    out = {
+        "schema_version": "1.0",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "contract_source": str(CONTRACTS_PATH.relative_to(REPO_ROOT)).replace("\\", "/"),
+        "fingerprints": dict(sorted(fingerprints.items())),
+    }
+
+    out_path = REPO_ROOT / MANIFEST_REL
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"OK: wrote {len(fingerprints)} fingerprints → {MANIFEST_REL}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

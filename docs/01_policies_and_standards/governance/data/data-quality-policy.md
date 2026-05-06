@@ -2,9 +2,9 @@
 module_id: GOV-DATA-001
 title: 数据质量策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.2.1"
-layer: l01_infrastructure
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

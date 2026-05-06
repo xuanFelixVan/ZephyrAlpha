@@ -11,6 +11,7 @@ from scripts.governance.d11_compliance.validate_blueprint_overlap import (
     scan_draft_components,
 )
 
+
 class TestParseFrontmatter:
     def test_valid_frontmatter(self, tmp_path: Path):
         md = tmp_path / "test.md"
@@ -47,6 +48,7 @@ class TestParseFrontmatter:
         comps = extract_components(fm)
         assert len(comps) == 3
 
+
 class TestExtractComponents:
     def test_list_components(self):
         fm = {"components": ["comp-a", "comp-b"]}
@@ -66,6 +68,7 @@ class TestExtractComponents:
     def test_no_components_key(self):
         fm = {"name": "test"}
         assert extract_components(fm) == []
+
 
 class TestDetectOverlaps:
     def test_no_overlaps(self):
@@ -94,6 +97,7 @@ class TestDetectOverlaps:
         assert len(overlaps) == 1
         assert overlaps[0]["draft_count"] == 3
 
+
 class TestScanDraftComponents:
     def test_scan_with_components(self, tmp_path: Path):
         drafts_dir = tmp_path / "drafts"
@@ -121,6 +125,7 @@ class TestScanDraftComponents:
     def test_scan_nonexistent_dir(self, tmp_path: Path):
         result = scan_draft_components(tmp_path / "nonexistent")
         assert result == {}
+
 
 class TestRunValidation:
     def test_missing_drafts_root(self, tmp_path: Path):

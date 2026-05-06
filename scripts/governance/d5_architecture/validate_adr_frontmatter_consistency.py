@@ -3,16 +3,6 @@
 validate_adr_frontmatter_consistency.py — ADR frontmatter 一致性闸门（GATE-ADR-FM）
 v1.0.0 — 2026-05-03
 
-__manifest__ = """
-args: []
-description: ADR frontmatter 一致性校验（ADR 文档 frontmatter 字段与规范对齐）
-dimensions:
-- D3
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 根因（R6 审计 P1-11/P1-12/P2-11/P2-12）：ADR 分三批次产出（早期 0001~0013、
@@ -32,6 +22,18 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: ADR frontmatter 一致性校验（ADR 文档 frontmatter 字段与规范对齐）
+dimensions:
+- D3
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import argparse
 import re

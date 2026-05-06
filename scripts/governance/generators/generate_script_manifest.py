@@ -1,11 +1,21 @@
 """
 generate_script_manifest.py — 脚本清单自动生成器
 
-扫描 scripts/governance/ 下所有 .py 文件 → 提取 __manifest__ YAML 块 →
+扫描 scripts/governance/ 下所有 .py 文件 → 提取 __manifest__ →
 生成 script_manifest.yaml。
 
+**病根（历史问题）**：早期仅用正则匹配三引号 YAML；若开发者写成
+`__manifest__ = {"dimensions": [...], ...}` 的 **dict 字面量**，
+生成器会误判为「manifest 缺失」→ manifest/蓝图/run_all 全线漂移。
+
+**现行规则**（按顺序尝试，命中即止）：
+1. 三引号双引号包裹的 YAML：`__manifest__` + `=` + ASCII 三引号 `"`×3 …（canonical，推荐）
+2. 三引号单引号包裹的 YAML（同上，使用 `'`×3）
+3. 模块顶层的 `__manifest__ = { ... }` —— 仅限 dict / list / 常量等安全字面量（`ast` 解析）
+
 对标 §6.16 静态清单自动生成铁律。
-__manifest__ 块格式：
+
+__manifest__ 块格式（推荐）：
     __manifest__ = \"\"\"
     dimensions: [D5, D8]
     priority: P0
@@ -25,15 +35,15 @@ import argparse
 import ast
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import REPO_ROOT
-from _shared.yaml_utils import load_yaml
 from _shared.encoding import ensure_utf8_stdout
+from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
 dimensions: [D1, D5]
@@ -51,18 +61,79 @@ description: >
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
 DEFAULT_OUTPUT = SCRIPTS_DIR / "script_manifest.yaml"
 
-EXCLUDE_DIRS = frozenset({"_shared", "__pycache__"})
+EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures"})
 
 
-def extract_manifest_from_source(source: str) -> dict | None:
-    pattern = r'__manifest__\s*=\s*"""\s*\n(.*?)"""'
+def _extract_triple_quoted_yaml(source: str, delim: str) -> dict | None:
+    """delim 为三引号：`\"\"\"` 或 `'''`。"""
+    esc = re.escape(delim)
+    pattern = rf"__manifest__\s*=\s*{esc}\s*\n(.*?){esc}"
     match = re.search(pattern, source, re.DOTALL)
     if not match:
         return None
     try:
-        return yaml.safe_load(match.group(1))
+        data = yaml.safe_load(match.group(1))
     except yaml.YAMLError:
         return None
+    return data if isinstance(data, dict) else None
+
+
+def _manifest_literal_from_ast(node: ast.expr) -> object:
+    """将 AST 表达式转为 Python 字面量（仅限 manifest 允许的子集）。"""
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.List):
+        return [_manifest_literal_from_ast(e) for e in node.elts]
+    if isinstance(node, ast.Tuple):
+        return tuple(_manifest_literal_from_ast(e) for e in node.elts)
+    if isinstance(node, ast.Dict):
+        out: dict[str, object] = {}
+        for k, v in zip(node.keys, node.values):
+            if k is None or not isinstance(k, ast.Constant) or not isinstance(k.value, str):
+                raise ValueError("manifest dict keys must be string literals")
+            out[k.value] = _manifest_literal_from_ast(v)
+        return out
+    raise ValueError(f"unsupported manifest literal: {type(node).__name__}")
+
+
+def _extract_module_level_manifest_dict_safe(source: str) -> dict | None:
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return None
+    for node in tree.body:
+        expr: ast.expr | None = None
+        if isinstance(node, ast.Assign):
+            for t in node.targets:
+                if isinstance(t, ast.Name) and t.id == "__manifest__":
+                    expr = node.value
+                    break
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            if node.target.id == "__manifest__" and node.value is not None:
+                expr = node.value
+        if expr is None:
+            continue
+        if not isinstance(expr, ast.Dict):
+            continue
+        try:
+            data = _manifest_literal_from_ast(expr)
+        except ValueError:
+            continue
+        if isinstance(data, dict):
+            return data
+    return None
+
+
+def extract_manifest_from_source(source: str) -> dict | None:
+    """从源码提取 __manifest__；多形态兼容（消除 dict/yaml 分裂病根）。"""
+    for data in (
+        _extract_triple_quoted_yaml(source, '"""'),
+        _extract_triple_quoted_yaml(source, "'''"),
+        _extract_module_level_manifest_dict_safe(source),
+    ):
+        if data is not None:
+            return data
+    return None
 
 
 def scan_scripts() -> list[dict]:
@@ -79,27 +150,31 @@ def scan_scripts() -> list[dict]:
         manifest = extract_manifest_from_source(source)
 
         if manifest is None:
-            scripts.append({
-                "name": rel_path,
-                "dimensions": [],
-                "priority": "P2",
-                "timeout_seconds": 60,
-                "args": [],
-                "warn_only": False,
-                "description": "⚠ __manifest__ 缺失——请添加元数据块",
-                "_manifest_missing": True,
-            })
+            scripts.append(
+                {
+                    "name": rel_path,
+                    "dimensions": [],
+                    "priority": "P2",
+                    "timeout_seconds": 60,
+                    "args": [],
+                    "warn_only": False,
+                    "description": "⚠ __manifest__ 缺失——请添加元数据块",
+                    "_manifest_missing": True,
+                }
+            )
             continue
 
-        scripts.append({
-            "name": rel_path,
-            "dimensions": manifest.get("dimensions", []),
-            "priority": manifest.get("priority", "P2"),
-            "timeout_seconds": manifest.get("timeout_seconds", 60),
-            "args": manifest.get("args", []),
-            "warn_only": manifest.get("warn_only", False),
-            "description": manifest.get("description", ""),
-        })
+        scripts.append(
+            {
+                "name": rel_path,
+                "dimensions": manifest.get("dimensions", []),
+                "priority": manifest.get("priority", "P2"),
+                "timeout_seconds": manifest.get("timeout_seconds", 60),
+                "args": manifest.get("args", []),
+                "warn_only": manifest.get("warn_only", False),
+                "description": manifest.get("description", ""),
+            }
+        )
 
     return scripts
 
@@ -109,9 +184,9 @@ def generate() -> dict:
     missing = sum(1 for s in scripts if s.get("_manifest_missing"))
     total = len(scripts)
     return {
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_by": "scripts/governance/generators/generate_script_manifest.py",
-        "source": f"scripts/governance/**/*.py → __manifest__ 块",
+        "source": "scripts/governance/**/*.py → __manifest__ 块",
         "total_scripts": total,
         "with_manifest": total - missing,
         "missing_manifest": missing,
@@ -142,8 +217,8 @@ def main() -> None:
 
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(f"# 自动生成于 {result['generated_at']}\n")
-        f.write(f"# 来源: scripts/governance/**/*.py __manifest__ 块\n")
-        f.write(f"# 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块\n\n")
+        f.write("# 来源: scripts/governance/**/*.py __manifest__ 块\n")
+        f.write("# 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块\n\n")
         yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
     print(f"已生成 {result['total_scripts']} 个脚本清单 → {args.output}")

@@ -1,0 +1,49 @@
+"""
+architecture_context_loader — 加载 ``generate_architecture_context.py`` 产出的预编译 JSON
+
+真源文件默认路径：与本包同目录下的 ``architecture_context.json``（由脚本生成）。
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+DEFAULT_ARCH_CONTEXT_PATH = Path(__file__).resolve().parent / "architecture_context.json"
+
+__all__ = [
+    "DEFAULT_ARCH_CONTEXT_PATH",
+    "load_architecture_context_dict",
+    "format_architecture_context_excerpt",
+]
+
+
+def load_architecture_context_dict(path: Path | None = None) -> dict[str, Any]:
+    p = path or DEFAULT_ARCH_CONTEXT_PATH
+    if not p.is_file():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def format_architecture_context_excerpt(data: dict[str, Any], *, max_chars: int = 12_000) -> str:
+    """将 JSON 压成可注入 prompt 的摘录（避免整文件撑爆 token）。"""
+    if not data:
+        return ""
+    inv = data.get("invariants") or {}
+    slim: dict[str, Any] = {
+        "generated_at": data.get("generated_at"),
+        "version": data.get("version"),
+        "schema": data.get("schema"),
+        "contracts": data.get("contracts"),
+        "invariants": {
+            "total": inv.get("total"),
+            "items": (inv.get("items") or [])[:8],
+        },
+        "layers": (data.get("layers") or [])[:24],
+        "gate_registry": data.get("gate_registry"),
+    }
+    s = json.dumps(slim, ensure_ascii=False, indent=2)
+    if len(s) > max_chars:
+        s = s[: max_chars - 10] + "\n…[truncated]"
+    return "--- ZEPHYR_ARCH_CONTEXT ---\n" + s

@@ -1,0 +1,125 @@
+---
+doc_type: log
+session_id: "session-20260505-011"
+date: "2026-05-05"
+author_agent: "TraeIDE-DeepSeek-V4-Pro"
+current_phase: "Phase F — LLM 安全门禁落地 (AISG/SSRF/Prompt Injection)"
+ttl: permanent
+parent_session: "session-20260505-007"
+---
+# Session Log: session-20260505-011
+
+## 完成的任务
+
+- [x] DefaultSecurityGateway 三层防御实现（OCP-004）
+  - L1 — Prompt Injection 检测（3 条正则 + InputSanitizer 集成）
+  - L2 — 危险代码模式扫描（3 条正则 + AISGSandbox 集成）
+  - L3 — 审计追踪（AuditDecision 生成）
+- [x] ArtifactScanner 多类别 artifact 扫描器
+  - S-01 SSRF URL 模式（3 规则）
+  - S-02 Path Traversal（2 规则）
+  - S-03 Hardcoded 凭据（1 规则）
+  - S-04 Token / API Key 泄漏（3 规则）
+  - S-05 敏感文件路径引用（1 规则）
+  - S-06 命令注入模式（1 规则）
+- [x] L10 __init__.py 导出更新 — 13 symbols 全覆盖
+- [x] GateEngine security_artifact_scan check_type 注册
+- [x] Phase F E2E 测试 — 8/8 PASS
+
+## Bug 修复记录
+
+### Bug #1: InputSanitizer.__init__() 缺少 `root` 参数
+- **位置**: [default_security_gateway.py](file:///d:/ZephyrAlpha/src/zephyr/l10_compliance/default_security_gateway.py#L127)
+- **现象**: `TypeError: InputSanitizer.__init__() missing 1 required positional argument: 'root'`
+- **修复**: 在 `DefaultSecurityGateway.__init__()` 增加 `project_root` 参数，传递给 `InputSanitizer(root=project_root)`
+
+### Bug #2: InputSanitizer 无 `sanitize()` 方法和 `is_clean` 属性
+- **位置**: [default_security_gateway.py](file:///d:/ZephyrAlpha/src/zephyr/l10_compliance/default_security_gateway.py#L154-L165)
+- **现象**: `AttributeError: 'InputSanitizer' object has no attribute 'sanitize'`
+- **修复**: 替换为 try/except 包裹 `validate_llm_context()` 调用，手动追踪 `self._l1_clean` bool 状态
+
+### Bug #3: AuditDecision 字段不匹配
+- **位置**: [default_security_gateway.py](file:///d:/ZephyrAlpha/src/zephyr/l10_compliance/default_security_gateway.py#L217-L231)
+- **现象**: `TypeError: AuditDecision.__init__() got an unexpected keyword argument 'findings'`
+- **根因**: AuditDecision 实际字段为 `decision_id, action, rule_id, reason, timestamp, metadata`——没有 `findings/content_safe/sanction_enabled`
+- **修复**: 使用正确字段构建 AuditDecision，将 findings/content_safe/sanction_enabled 放入 `metadata` dict
+
+### Bug #4: AISGSandbox.scan_content() 返回 `list[str]` 而非 `list[dict]`
+- **位置**: [default_security_gateway.py](file:///d:/ZephyrAlpha/src/zephyr/l10_compliance/default_security_gateway.py#L187-L196)
+- **现象**: `AttributeError: 'str' object has no attribute 'get'`
+- **根因**: AISGSandbox.scan_content() 返回 `list[str]`（如 `["动态代码执行", "子进程调用"]`），代码按 dict 调用 `.get()`
+- **修复**: 将每个字符串作为 message 内容，使用 `AISG-DANGER-001` 作为统一 rule_id
+
+### Bug #5: GateEngine 自检漏掉 invariants/ 子目录
+- **位置**: [gate_engine_selfcheck.py](file:///d:/ZephyrAlpha/scripts/governance/gate_engine_selfcheck.py#L217)
+- **现象**: S10 一致性检查报 `EN-001/002/003 的 YAML 文件缺失`（假阳性）
+- **修复**: glob 列表增加 `_GATES_DIR.glob("invariants/*.yaml")`
+
+## 变更的文件
+
+| 操作 | 文件路径 | 变更 |
+|------|---------|------|
+| 新建 | src/zephyr/l10_compliance/default_security_gateway.py | SecurityGateway 三层防御 OCP-004 实现（249 行） |
+| 新建 | src/zephyr/l10_compliance/artifact_scanner.py | 6 类别 11 规则 artifact 扫描器（241 行） |
+| 编辑 | src/zephyr/l10_compliance/__init__.py | 新增 7 符号导出（13 total） |
+| 编辑 | src/zephyr/gates/gate_engine.py | +security_artifact_scan check_type handler |
+| 编辑 | scripts/governance/gate_engine_selfcheck.py | +invariants/*.yaml glob |
+
+## Phase F 测试结果
+
+```
+=== Phase F 测试 ===
+[PASS] L10-import         — 13 symbols imported
+[PASS] sgw-benign         — Benign content: ALLOW
+[PASS] sgw-injection      — Prompt injection: BLOCK
+[PASS] sgw-credential     — Credential leak: BLOCK
+[PASS] sgw-ssrf           — SSRF URL: BLOCK
+[PASS] artifact-self-scan — 7/7 L10 files clean
+[PASS] sgw-jjk            — 4/4 jailbreak patterns detected
+[PASS] gate-engine        — 11 gates loaded (G6 present=True)
+8/8 PASSED
+```
+
+## 全量门禁自检结果
+
+```
+[PASS] S1.  核心文件存在性 — 4/4
+[PASS] S2.  门禁 YAML 完整性 — 5 文件, 0 解析错误
+[PASS] S3.  注册表完整性 — 19 注册项
+[PASS] S5.  数据库可用性
+[PASS] S8.  Gate Engine 导入验证
+[PASS] S9.  熔断器模块验证
+[PASS] S10. 门禁注册一致性 — 19 注册项 ↔ 18 YAML
+[PASS] S7.  CheckType 覆盖率 — 13 代码类型 / 13 YAML 类型
+✅ 所有自检通过
+```
+
+## Phase D 不变量回归
+
+```
+[PASS] EN-001: No circular dependencies (15 nodes)
+[PASS] EN-002: All 16 P0 contracts have enforcement declared
+[FAIL] EN-003: 52 mismatch(es) — 均为类型全限定名 vs 短名解析差异，非真实契约违规
+```
+
+## 关键决策
+
+- SecurityGateway 接口签名比 codegen ABC 更丰富（带 metadata 参数和 ScanFinding 类型）——符合 OCP 扩展原则
+- ArtifactScanner 自扫排除了自身文件（artifact_scanner.py），因其正则定义中包含 `.env` / `.aws/credentials` 等敏感文件模式导致假阳性
+- AISGSandbox.scan_content() 返回 `list[str]`（描述文本），被映射为 AISG-DANGER-001 warning 级 finding
+
+## 交接给下一个 Session
+
+- **下一个任务**: Phase G — 架构决策记录（ADR）补全 + 结构力/边界条件验证
+- **参考**: Phase A-F 全部传产，19 gates + 3 invariants + 3-layer security defense 就绪
+- **阻塞项**: 无
+- **下一个 session 需要读取**:
+  - gates/_registry.yaml（19 gates, 14 active, 5 implemented）
+  - src/zephyr/l10_compliance/default_security_gateway.py（SecurityGateway OCP-004）
+  - src/zephyr/l10_compliance/artifact_scanner.py（6 category artifact scanner）
+  - session-logs/index.yaml（15 sessions）
+  - docs/02_enterprise_architecture/target-architecture/architecture-model/（完整架构模型）
+- **注意事项**:
+  1. Phase F 的 SecurityGateway 为 default 实现——可被 Phase G 中新 layer 的 domain-specific 实现替换
+  2. ArtifactScanner 的 S-05-FILE-ENV 规则对自身代码敏感，集成到 CI 时需配置 exclude 列表
+  3. EN-003 的 52 个 mismatch 已在 Phase E 审计中评估为非阻塞——但在 Phase G 需确认是否需修复

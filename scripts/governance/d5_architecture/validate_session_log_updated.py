@@ -1,15 +1,6 @@
 """
 validate_session_log_updated.py — Session Log 更新状态校验
 
-__manifest__ = """
-args: []
-description: Session Log 更新状态校验（COND-16~17 — 三段论结构 + 时效性）
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 COND-16（AI 施工 session 结束后必须写 session log）
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: Session Log 更新状态校验（COND-16~17 — 三段论结构 + 时效性）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

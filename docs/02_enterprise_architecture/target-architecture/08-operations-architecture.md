@@ -2,7 +2,7 @@
 module_id: VIEW-08-OPERATIONS-ARCH
 title: Target Architecture — Operations Architecture
 doc_type: architecture_view
-status: draft
+status: Draft
 version: 0.2.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner

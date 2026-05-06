@@ -39,6 +39,7 @@ from zephyr.l08_human_ai_interface.dashboard.components.task_progress import (
     render_task_progress,
 )
 
+
 class TestTaskProgressComponent:
     def test_phase_progress_completion_rate(self) -> None:
         pp = PhaseProgress(phase=0, total_tasks=10, completed_tasks=7)
@@ -63,6 +64,7 @@ class TestTaskProgressComponent:
         assert rendered["overall_rate"] == pytest.approx(0.6)
         assert len(rendered["phases"]) == 1
 
+
 class TestKnowledgeOverviewComponent:
     def test_fetch_without_repo(self) -> None:
         data = fetch_knowledge_overview(kb_repo=None)
@@ -78,6 +80,7 @@ class TestKnowledgeOverviewComponent:
         rendered = render_knowledge_overview(data)
         assert rendered["total_entries"] == 50
         assert rendered["activation_rate"] == pytest.approx(0.4)
+
 
 class TestGateStatisticsComponent:
     def test_gate_stat_rates(self) -> None:
@@ -99,6 +102,7 @@ class TestGateStatisticsComponent:
         )
         rendered = render_gate_statistics(data)
         assert rendered["overall_pass_rate"] == pytest.approx(0.95)
+
 
 class TestFitnessFunctionsComponent:
     def test_fetch_fitness_data(self) -> None:
@@ -124,6 +128,7 @@ class TestFitnessFunctionsComponent:
         assert rendered["overall_status"] == "PASS"
         assert len(rendered["metrics"]) == 1
 
+
 class TestOLAPTrendComponent:
     def test_fetch_without_engine(self) -> None:
         data = fetch_olap_trends(olap_engine=None)
@@ -138,6 +143,7 @@ class TestOLAPTrendComponent:
         )
         rendered = render_olap_trends(data)
         assert len(rendered["task_progress"]) == 1
+
 
 class TestDashboardApp:
     def test_create_app(self) -> None:

@@ -24,8 +24,8 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import REPO_ROOT
-from _shared.yaml_utils import load_yaml
 from _shared.encoding import ensure_utf8_stdout
+from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
 dimensions: [D1, D5]
@@ -94,7 +94,7 @@ def inject_manifest(content: str, manifest_data: dict) -> str:
         pos = content.find("\nfrom ")
     if pos == -1:
         return block + "\n" + content
-    return content[:pos + 1] + "\n" + block + "\n" + content[pos + 1:]
+    return content[: pos + 1] + "\n" + block + "\n" + content[pos + 1 :]
 
 
 def build_manifest_entry(entry: dict) -> dict:

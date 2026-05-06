@@ -2,9 +2,9 @@
 module_id: DOM-L07-001
 title: 盘后报告策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l07_post_trade_analytics
+layer: L07
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

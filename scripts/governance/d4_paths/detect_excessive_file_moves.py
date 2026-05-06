@@ -1,15 +1,6 @@
 """
 detect_excessive_file_moves.py — 文件过度搬迁检测
 
-__manifest__ = """
-args: []
-description: 文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三 — 搬迁>=2次告警）
-dimensions:
-- D4
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：ABS-17（不查搬迁历史直接移动文件为绝对禁止）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三 — 搬迁>=2次告警）
+dimensions:
+- D4
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import subprocess
 import sys
@@ -44,7 +45,7 @@ def get_staged_renames() -> list[str]:
     """获取暂存区重命名列表"""
     try:
         result = subprocess.run(
-            "get staged renames.获取数据."["git", "diff", "--cached", "--name-only", "--diff-filter=R"],
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=R"],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

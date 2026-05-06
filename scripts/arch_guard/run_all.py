@@ -5,12 +5,15 @@
 
 用法: python scripts/arch_guard/run_all.py [--strict]
 
-exit codes: 0=all pass, 1=one or more fitness functions failed, 2=error
+exit codes（本编排器语义，独立约定）：
+  0=all pass，1=存在失败的 fitness function，2=编排/执行层面的错误。
+与 `scripts/governance/run_all.py` 的 CT-SCRIPT-GATE-001 **四档语义（含 3=基础设施异常）并非同一标尺**——CI 中应分别解读，勿混用 exit code 数字含义。
 """
 from __future__ import annotations
 
 import subprocess
 import sys
+import os
 from pathlib import Path
 
 import yaml
@@ -30,12 +33,16 @@ def run_ff(ff: dict) -> tuple[bool, str]:
         return False, f"脚本不存在: {script_path}"
 
     try:
+        env = {"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
         result = subprocess.run(
             [sys.executable, str(script_path)],
             capture_output=True,
             text=True,
             timeout=60,
             cwd=str(ARCH_GUARD_ROOT.parent.parent),
+            encoding="utf-8",
+            errors="replace",
+            env={**dict(os.environ), **env} if hasattr(os, "environ") else env,
         )
         passed = result.returncode == 0
         msg = result.stdout.strip() or result.stderr.strip() or "(无输出)"
@@ -63,24 +70,27 @@ def main() -> int:
         print(f"  [{ff['id']}] {ff['name']} ... ", end="", flush=True)
         ok, msg = run_ff(ff)
         if ok:
-            print("✅ PASS")
+            print("[PASS]")
             passed.append(ff)
         else:
-            print("❌ FAIL")
+            print("[FAIL]")
             print(f"        {msg}")
             failed.append((ff, msg))
 
     print(f"\n{'=' * 60}")
-    print(f"结果：{len(passed)} PASS / {len(failed)} FAIL / {len(manifest['fitness_functions']) - len(active_ffs)} 桩文件跳过")
+    skipped_n = len(manifest["fitness_functions"]) - len(active_ffs)
+    print(
+        f"结果：{len(passed)} PASS / {len(failed)} FAIL / {skipped_n} 未激活"
+    )
     print(f"{'=' * 60}")
 
     if failed:
-        print("\n❌ 以下不变量被违反（阻塞 PR）：")
+        print("\n[FAIL] 以下不变量被违反（阻塞 PR）：")
         for ff, msg in failed:
             print(f"  - {ff['invariant_id']} {ff['name']}: {msg}")
         return 1
 
-    print("\n✅ 所有 active 不变量强制执行通过。")
+    print("\n[OK] 所有 active 不变量强制执行通过。")
     return 0
 
 

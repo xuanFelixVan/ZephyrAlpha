@@ -49,6 +49,7 @@ _DEFAULT_KEYWORD_DICT: dict[str, list[str]] = {
     "D9": ["交接", "handoff", "mcp", "server", "session", "context", "prompt"],
 }
 
+
 def _keyword_match(query: str, keyword_dict: dict[str, list[str]]) -> tuple[str, float, list[str]]:
     """Stage 1 关键词匹配，返回 (domain, confidence, matched_keywords)。"""
     query_lower = query.lower()
@@ -68,6 +69,7 @@ def _keyword_match(query: str, keyword_dict: dict[str, list[str]]) -> tuple[str,
     total_kw = len(keyword_dict.get(best_domain, []))
     confidence = min(scores[best_domain] / max(total_kw, 1), 1.0) * 0.9 + 0.1
     return best_domain, round(confidence, 4), matched.get(best_domain, [])
+
 
 class SentinelServer(BaseMCPServer):
     """intent_router MCP Server 实现（Sentinel 哨兵）。
@@ -260,9 +262,11 @@ class SentinelServer(BaseMCPServer):
             "duration_seconds": round(duration, 4),
         }
 
+
 def create_server() -> SentinelServer:
     """工厂函数，返回配置好的 SentinelServer 实例。"""
     return SentinelServer()
+
 
 if __name__ == "__main__":
     create_server().run()

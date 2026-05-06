@@ -3,7 +3,7 @@ classification: confidential
 date: '2026-05-02'
 doc_type: index
 generated: '2026-05-02'
-layer: l07_post_trade_analytics
+layer: L07
 merged_from: README.md + index.md
 module_id: DOM-L07-000
 status: active

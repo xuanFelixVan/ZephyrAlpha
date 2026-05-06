@@ -25,8 +25,8 @@ from typing import Any
 import yaml
 
 from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
+from zephyr.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.kb.kb_repo import KbRepo, KeStatus
-from zephyr.shared.schemas import Task, TaskStatus
 
 __all__ = [
     "ActivateResult",
@@ -42,6 +42,7 @@ FUTURE_DIR_NAME = "04_future_capabilities"
 
 _UTC = UTC
 
+
 @dataclass
 class ActivateResult:
     passed: bool
@@ -52,6 +53,7 @@ class ActivateResult:
     proposal: str | None = None
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
+
 
 class ActivateGate:
     def __init__(
@@ -221,18 +223,10 @@ class ActivateGate:
 
     def _run_gate(self, source_path: Path) -> GateResult | None:
         try:
-            task = Task(
-                task_id="T-2-13-D",
-                phase=2,
-                name="G4 Activate Gate",
-                status=TaskStatus.IN_PROGRESS,
-                execution_model="system",
-                safety_level="M",
-                deliverables=[str(source_path)],
-                acceptance=[],
-                depends_on=[],
-                created_at=datetime.now(_UTC).isoformat(),
-                updated_at=datetime.now(_UTC).isoformat(),
+            task = build_kb_gate_eval_task(
+                gate_id="G4",
+                title="G4 Activate Gate",
+                deliverable=source_path,
             )
             return self._gate_engine.evaluate(task, "G4")
         except Exception:

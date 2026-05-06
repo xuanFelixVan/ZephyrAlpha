@@ -2,9 +2,9 @@
 module_id: DOM-L00-001
 title: 数据源连接策略
 doc_type: policy
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l00_data_source
+layer: L00
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

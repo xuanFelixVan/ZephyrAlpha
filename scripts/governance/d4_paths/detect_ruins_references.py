@@ -1,16 +1,6 @@
 """
 detect_ruins_references.py — 残骸/废弃路径引用检测
 
-__manifest__ = """
-args: []
-description: 残骸/废弃路径引用检测（ABS-44 — 禁止引用废墟目录）
-dimensions:
-- D1
-- D4
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-44（禁止使用 _DO_NOT_USE_old_tree/ 作为规则来源）
@@ -26,6 +16,17 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 残骸/废弃路径引用检测（ABS-44 — 禁止引用废墟目录）
+dimensions:
+- D1
+- D4
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

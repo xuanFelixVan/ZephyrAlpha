@@ -22,7 +22,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.token_utils import estimate_tokens
+from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 __all__ = [
     "InjectedContext",
@@ -30,10 +30,12 @@ __all__ = [
     "ContextInjector",
 ]
 
+
 class RetrievalMode(str, Enum):
     TASK_ID = "task_id"
     MODULE_ID = "module_id"
     KEYWORD = "keyword"
+
 
 class InjectedContext(BaseModel):
     model_config = BASE_CONFIG
@@ -45,6 +47,7 @@ class InjectedContext(BaseModel):
     retrieval_mode: str = Field(description="Retrieval mode used")
     query: str = Field(default="", description="Original query string")
     budget_remaining: int = Field(default=0, ge=0, description="Remaining token budget")
+
 
 class ContextInjector:
     """Retrieve and inject knowledge context from KbRepo.
@@ -62,7 +65,7 @@ class ContextInjector:
     def __init__(
         self,
         kb_repo: Any,
-        token_budget: int = 8000,
+        token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         max_sources: int = 10,
     ) -> None:
         self._kb_repo = kb_repo

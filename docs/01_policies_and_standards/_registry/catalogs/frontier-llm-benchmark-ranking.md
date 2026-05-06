@@ -26,8 +26,7 @@ data_sources:
   - "KICS — GG3M — 2026年4月"
   - "DeepSeek V4 技术报告 — 2026年4月24日"
   - "TokenMix.ai Claude Opus 4.7 评测 — 2026年4月17日"
-depends_on:
-  - {target: GOV-AI-002, at: "全篇", why: "模型路由策略——以此排名为数据依据分配任务"}
+depends_on: []
 ---
 
 # 2026年4月前沿大模型综合能力排名

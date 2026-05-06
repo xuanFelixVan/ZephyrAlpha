@@ -1,7 +1,6 @@
 ---
 module_id: MOD-KB-001-IDX
-title: 知识库系统模块索引
-doc_type: index
+title: 鐭ヨ瘑搴撶郴缁熸ā鍧楃储寮?doc_type: index
 status: active
 version: "0.1.0"
 layer: cross_layer
@@ -10,36 +9,34 @@ classification: confidential
 language: zh
 created_by: AI-Claude
 date: "2026-05-02"
-summary: "知识库系统模块入口索引。蓝图：blueprint.md (MOD-KB-001)。"
+summary: "鐭ヨ瘑搴撶郴缁熸ā鍧楀叆鍙ｇ储寮曘€傝摑鍥撅細blueprint.md (MOD-KB-001)銆?
 tags: [knowledge-base, index]
 depends_on:
-  - {target: "MOD-KB-001", at: "全文", why: "本索引指向的蓝图"}
+  - {target: "MOD-KB-001", at: "鍏ㄦ枃", why: "鏈储寮曟寚鍚戠殑钃濆浘"}
 ---
 
-# 知识库系统模块（MOD-KB-001）
+# 鐭ヨ瘑搴撶郴缁熸ā鍧楋紙MOD-KB-001锛?
+> **钃濆浘**锛歔blueprint.md](blueprint.md) | **version**: 0.1.0 | **status**: active
 
-> **蓝图**：[blueprint.md](blueprint.md) | **version**: 0.1.0 | **status**: active
+## 鏂囦欢娓呭崟
 
-## 文件清单
-
-| 文件 | 说明 |
+| 鏂囦欢 | 璇存槑 |
 |------|------|
-| [blueprint.md](blueprint.md) | 知识库系统唯一真源蓝图（§1~§12） |
-| index.md（本文件） | 模块入口索引 |
+| [blueprint.md](blueprint.md) | 鐭ヨ瘑搴撶郴缁熷敮涓€鐪熸簮钃濆浘锛埪?~搂12锛?|
+| index.md锛堟湰鏂囦欢锛?| 妯″潡鍏ュ彛绱㈠紩 |
 
-## 代码落位
+## 浠ｇ爜钀戒綅
 
-| 目录 | 说明 |
+| 鐩綍 | 璇存槑 |
 |------|------|
-| `src/zephyr/kb/` | 12个Python模块（~3600行），experimental已实现 |
-| `docs/08_knowledge/` | 知识数据存储 |
-| `architecture-model/layers/b_kb.yaml` | 架构YAML SSoT登记 |
+| `src/zephyr/kb/` | 12涓狿ython妯″潡锛垀3600琛岋級锛宔xperimental宸插疄鐜?|
+| `docs/08_knowledge/` | 鐭ヨ瘑鏁版嵁瀛樺偍 |
+| `architecture-model/layers/b_kb.yaml` | 鏋舵瀯YAML SSoT鐧昏 |
 
-## 施工状态
-
-| Phase | 状态 | 说明 |
+## 鏂藉伐鐘舵€?
+| Phase | 鐘舵€?| 璇存槑 |
 |-------|:---:|------|
-| experimental | ✅ 已完成 | G1-G5五门禁 + ChromaDB 4C + 10状态机 |
-| beta | 🔄 当前 | 知识填充 + 上下文集成 + 反馈闭环 |
-| beta | 🔮 计划 | MCP集成 + 四模型审计自动化 + BGE-M3 |
-| stable | 🔮 远期 | 知识生态 + 自进化 + 外部抓取 |
+| experimental | 鉁?宸插畬鎴?| G1-G5浜旈棬绂?+ ChromaDB 4C + 10鐘舵€佹満 |
+| beta | 馃攧 褰撳墠 | 鐭ヨ瘑濉厖 + 涓婁笅鏂囬泦鎴?+ 鍙嶉闂幆 |
+| beta | 馃敭 璁″垝 | MCP闆嗘垚 + 鍥涙ā鍨嬪璁¤嚜鍔ㄥ寲 + BGE-M3 |
+| stable | 馃敭 杩滄湡 | 鐭ヨ瘑鐢熸€?+ 鑷繘鍖?+ 澶栭儴鎶撳彇 |

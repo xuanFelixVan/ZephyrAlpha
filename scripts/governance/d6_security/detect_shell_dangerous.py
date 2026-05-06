@@ -1,15 +1,6 @@
 """
 detect_shell_dangerous.py — 危险 Shell 命令检测
 
-__manifest__ = """
-args: []
-description: 危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）
-dimensions:
-- D6
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-38（禁止 rm -rf / 无确认破坏性删除）
@@ -27,6 +18,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）
+dimensions:
+- D6
+priority: P0
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

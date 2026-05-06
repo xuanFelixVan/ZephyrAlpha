@@ -1,0 +1,366 @@
+# ============================================================================
+# ZephyrAlpha — 模型冻结清单 (Freeze Manifest)
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-05
+# phase: C — 模型冻结与路由串联
+# owner: ZephyrAlpha-Owner
+#
+# 用途: Phase B 完成后，声明所有跨层契约、层接口文件及其冻结版本。
+#       任何对冻结接口的修改 MUST 通过 ContractImpactAnalyzer 评估影响范围。
+#
+# SSoT: cross-layer-contracts.yaml v3.0
+# ============================================================================
+
+freeze_version: "1.0.0"
+frozen_date: "2026-05-05"
+phase: "C"
+status: "models_frozen"
+
+overview:
+  total_contracts: 31
+  total_layers: 14
+  frozen_contracts: 31
+  frozen_interface_files: 11
+  frozen_shared_contracts: 18
+
+# ── P0 承重墙契约（不可变更，变更需 ADR）──
+p0_critical_contracts:
+  - contract_id: "CTR-001"
+    name: "NormalizedMarketData"
+    desc: "归一化行情数据 — L00 生产者 → L02, L03, L04 消费者"
+    producer: "L00"
+    consumers: ["L02", "L03", "L04"]
+    physical_path: "src/zephyr/shared/contracts/normalized_market_data.py"
+    status: "frozen"
+
+  - contract_id: "CTR-002"
+    name: "FactorSignal"
+    desc: "因子信号 — L02 生产者 → L03 消费者"
+    producer: "L02"
+    consumers: ["L03"]
+    physical_path: "src/zephyr/shared/contracts/factor_signal.py"
+    status: "frozen"
+
+  - contract_id: "CTR-003"
+    name: "Strategy"
+    desc: "策略定义 — L05 生产者 → L04, L06 消费者"
+    producer: "L05"
+    consumers: ["L04", "L06"]
+    physical_path: "src/zephyr/shared/contracts/strategy.py"
+    status: "frozen"
+
+  - contract_id: "CTR-004"
+    name: "Order"
+    desc: "委托单 — L05 生产者 → L06 消费者"
+    producer: "L05"
+    consumers: ["L06"]
+    physical_path: "src/zephyr/shared/contracts/order.py"
+    status: "frozen"
+
+  - contract_id: "CTR-005"
+    name: "Fill"
+    desc: "成交回报 — L06 生产者 → L04, L07 消费者"
+    producer: "L06"
+    consumers: ["L04", "L07"]
+    physical_path: "src/zephyr/shared/contracts/fill.py"
+    status: "frozen"
+
+  - contract_id: "CTR-006"
+    name: "PositionSnapshot"
+    desc: "持仓快照 — L06 生产者 → L04, L11 消费者"
+    producer: "L06"
+    consumers: ["L04", "L11"]
+    physical_path: "src/zephyr/shared/contracts/position.py"
+    status: "frozen"
+
+# ── 横切契约 ──
+cross_cutting_contracts:
+  - contract_id: "CTR-TRACE-001"
+    name: "TraceContext"
+    desc: "分布式追踪上下文 — 全层透传"
+    physical_path: "src/zephyr/shared/contracts/trace_context.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-001"
+    name: "CircuitBreakerTripped"
+    desc: "熔断器跳闸 — L01 生产 → 全层消费"
+    physical_path: "src/zephyr/shared/contracts/errors/circuit_breaker_tripped.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-002"
+    name: "OrderRejected"
+    desc: "委托拒绝 — L06 生产 → L04, L05, L08 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/order_rejected.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-003"
+    name: "SignalDegradationWarning"
+    desc: "信号降级告警 — L03 生产 → L04, L05 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/signal_degradation_warning.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-004"
+    name: "ConfigDriftWarning"
+    desc: "配置漂移告警 — L10 生产 → L01, L08 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/config_drift_warning.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-005"
+    name: "DataIngestionError"
+    desc: "数据接入错误 — L00 生产 → L01, L04, L08 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/data_ingestion_error.py"
+    status: "frozen"
+
+  - contract_id: "CTR-ERR-006"
+    name: "BudgetExhaustedWarning"
+    desc: "预算耗尽告警 — L10 生产 → L01, L08, L12 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/budget_exhausted_warning.py"
+    status: "frozen"
+
+# ── 反压契约 ──
+backpressure_contracts:
+  - contract_id: "CTR-BP-001"
+    name: "ThrottleRequest"
+    desc: "限流请求 — L04, L06 消费"
+    status: "frozen"
+
+  - contract_id: "CTR-BP-002"
+    name: "DegradeSignal"
+    desc: "降级信号 — L03, L04 消费"
+    status: "frozen"
+
+  - contract_id: "CTR-BP-003"
+    name: "CircuitBreakerState"
+    desc: "熔断状态 — 全层消费"
+    status: "frozen"
+
+# ── P1 蓝图级数据合约（与 cross-layer-contracts.yaml CTR-P1-001～015 对齐）──
+p1_blueprint_contracts:
+  - contract_id: "CTR-P1-001"
+    name: "FactorMonitorReport"
+    desc: "因子有效性监控报告 — L02→L07"
+    physical_path: "src/zephyr/shared/contracts/factor_monitor_report.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-002"
+    name: "MacroFactorSignal"
+    desc: "宏观因子信号 — L02→L03/L05"
+    physical_path: "src/zephyr/shared/contracts/macro_factor_signal.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-003"
+    name: "CapitalAllocationResult"
+    desc: "资本配置结果 — L03→L05"
+    physical_path: "src/zephyr/shared/contracts/capital_allocation_result.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-004"
+    name: "ModelServingRequest"
+    desc: "模型推理请求 — L11→L03/L05"
+    physical_path: "src/zephyr/shared/contracts/model_serving_request.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-005"
+    name: "ModelServingResponse"
+    desc: "模型推理响应 — L11→L03/L05"
+    physical_path: "src/zephyr/shared/contracts/model_serving_response.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-006"
+    name: "StrategyLifecycleEvent"
+    desc: "策略生命周期事件 — L05→L07/L10"
+    physical_path: "src/zephyr/shared/contracts/strategy_lifecycle_event.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-007"
+    name: "ExecutionReport"
+    desc: "执行分析报告 — L06→L07"
+    physical_path: "src/zephyr/shared/contracts/execution_report.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-008"
+    name: "RiskDashboardSnapshot"
+    desc: "风险仪表板快照 — L04→L08"
+    physical_path: "src/zephyr/shared/contracts/risk_dashboard_snapshot.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-009"
+    name: "PerformanceAttributionReport"
+    desc: "绩效归因报告 — L07→L08/L10"
+    physical_path: "src/zephyr/shared/contracts/performance_attribution_report.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-010"
+    name: "SystemConfiguration"
+    desc: "系统配置 — L01→全系统"
+    physical_path: "src/zephyr/shared/contracts/system_configuration.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-011"
+    name: "RiskMetricsReport"
+    desc: "风险指标报告 — L04→L05/L07/L08/L10"
+    physical_path: "src/zephyr/shared/contracts/risk_metrics.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-012"
+    name: "ComplianceRule"
+    desc: "合规规则 — L10→L04/L06/L10"
+    physical_path: "src/zephyr/shared/contracts/compliance_rule.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-013"
+    name: "TelemetryEmitter"
+    desc: "遥测发射器 — L12→全系统"
+    physical_path: "src/zephyr/shared/contracts/telemetry_emitter.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-014"
+    name: "ExperimentResult"
+    desc: "实验结论 — L13→L09/L11"
+    physical_path: "src/zephyr/shared/contracts/experiment_result.py"
+    status: "frozen"
+
+  - contract_id: "CTR-P1-015"
+    name: "SynthesizedSignal"
+    desc: "合成交易信号 — L03→L04/L05"
+    physical_path: "src/zephyr/shared/contracts/synthesized_signal.py"
+    status: "frozen"
+
+# ── 扩展点合约 (OCP) ──
+extension_contracts:
+  - contract_id: "OCP-001"
+    name: "FactorBase"
+    desc: "因子扩展点 — L02 因子基类"
+    physical_path: "src/zephyr/l02_alpha_factor/factor_base.py"
+    status: "frozen"
+
+  - contract_id: "OCP-002"
+    name: "StrategyBase"
+    desc: "策略扩展点 — L05 策略基类"
+    physical_path: "src/zephyr/l05_portfolio_construction/strategy_base.py"
+    status: "frozen"
+
+  - contract_id: "OCP-003"
+    name: "BrokerInterface"
+    desc: "券商接口扩展点 — L06 适配器基类"
+    physical_path: "src/zephyr/l06_trade_execution/broker_interface.py"
+    status: "frozen"
+
+# ── 外部系统合约 ──
+external_contracts:
+  - contract_id: "EXT-001"
+    name: "MarketDataProvider"
+    desc: "行情数据源接口"
+    status: "frozen"
+
+  - contract_id: "EXT-002"
+    name: "BrokerAdapter"
+    desc: "券商适配器接口 — 复用 OCP-003"
+    status: "frozen"
+
+  - contract_id: "EXT-003"
+    name: "PaymentGateway"
+    desc: "支付网关接口"
+    status: "frozen"
+
+  - contract_id: "EXT-004"
+    name: "RegulatoryReporting"
+    desc: "监管报告接口"
+    status: "frozen"
+
+# ── 层接口文件冻结清单（Phase B 产物）──
+frozen_layer_interfaces:
+  L00:
+    file: "src/zephyr/l00_data_source/provider_base.py"
+    class: "DataSourceBase"
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 就位 — provider_base 接口完整"
+
+  L03:
+    file: "src/zephyr/l03_signal_generation/aggregator_base.py"
+    classes: ["SignalAggregatorBase", "CapitalAllocatorBase", "DegradationMonitorBase"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 对齐 — SynthesizedSignal 契约对齐 + 新增 2 接口"
+
+  L05:
+    file: "src/zephyr/l05_portfolio_construction/strategy_base.py"
+    classes: ["StrategyBase", "StrategyRegistry"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 对齐 — OCP-002 codegen"
+
+  L06:
+    file: "src/zephyr/l06_trade_execution/broker_interface.py"
+    classes: ["BrokerInterface"]
+    version: "1.1"
+    status: "skeleton_frozen"
+    note: "Phase B 方法签名修复 — 补参数"
+
+  L07:
+    file: "src/zephyr/l07_post_trade_analytics/analytics_base.py"
+    classes: ["TCAEngineBase", "AttributionEngineBase"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 对齐 — ExecutionReport/PerformanceAttributionReport"
+
+  L09:
+    file: "src/zephyr/l09_research_innovation/backtest_base.py"
+    classes: ["BacktestEngineBase", "FactorDiscovery"]
+    version: "1.0"
+    status: "skeleton_frozen"
+
+  L10:
+    file: "src/zephyr/l10_compliance/security_gateway_base.py"
+    classes: ["SecurityGateway", "ComplianceEngine"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 补齐 — ComplianceEngine + ComplianceRule"
+
+  L11:
+    file: "src/zephyr/l11_ml_platform/inference_base.py"
+    classes: ["InferenceEngineBase", "ModelTrainerBase", "ModelRegistry"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 补齐 — ModelServingRequest/Response 对齐"
+
+  L13:
+    file: "src/zephyr/l13_experimentation/pipeline_base.py"
+    classes: ["ExperimentPipelineBase", "ScoutAgentBase"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 对齐 — ExperimentResult 冲突修复"
+
+  VMS:
+    file: "src/zephyr/vector_memory/interface.py"
+    classes: ["VectorMemoryBase", "EmbeddingEngineBase"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 新建 — VMS 接口骨架"
+
+  L00_meta:
+    file: "src/zephyr/l00_data_source/provider_base.py"
+    classes: ["DataSourceMeta"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "Phase B 就位 — 数据源元数据模板"
+
+# ── 变更控制规则 ──
+change_control:
+  frozen_means:
+    - "接口签名不可变更（新增方法/字段需走 ADR）"
+    - "字段类型不可变更（float → Decimal 除外）"
+    - "冻结类/接口的 docstring 不可缩减"
+    - "物理路径不可漂移"
+  allowed_changes:
+    - "Docstring 补充（非缩减）"
+    - "Type hint 精度提升（Any → 具体类型）"
+    - "Bug fix（如 dataclass 字段顺序修复）"
+    - "新增 OCP 扩展点（不影响已有契约）"
+  breaking_change_process:
+    - "1. 提交 ADR（Architecture Decision Record）"
+    - "2. 运行 ContractImpactAnalyzer 评估影响范围"
+    - "3. 通知所有 consumer 层 owner"
+    - "4. 更新 cross-layer-contracts.yaml + codegen 重新生成"
+    - "5. 更新本 freeze_manifest.yaml"

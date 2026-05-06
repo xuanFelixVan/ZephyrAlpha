@@ -1,18 +1,18 @@
----
+﻿---
 module_id: GOV-MOD-007
 title: 多登记表同步标准
 doc_type: standard
 status: active
-version: "2.1.0"
-layer: l01_infrastructure
+version: "2.1.1"
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-02"
+date: "2026-05-06"
 valid_from: "2026-05-02"
 ttl: permanent
-summary: "定义所有项目操作（创建规则/模块/脚本/ADR/文档/目录/门禁/知识条目等）后必须同步更新的登记表清单和同步顺序。覆盖 registry-master-index.yaml 中 15 个分类共 24 张登记表的操作-登记映射。对标 ITIL SACM CMDB 多登记表一致性 + AGENTS.md §6.2 原子事务模式。v2.1.0 升格：已被 registry-of-registries.yaml 量产级引用（MRS-001 矩阵），实质已达 active 成熟度。draft→active 升格由 2026-05-02 审计驱动。"
+summary: "定义所有项目操作（创建规则/模块/脚本/ADR/文档/目录/门禁/知识条目等）后必须同步更新的登记表清单和同步顺序。`catalogs/` 内自动收录数以 `registry-master-index.yaml` 的 `total_registries` 为准（勿写死常量）；MRS-001 矩阵仍按 15 类登记目标描述「写到哪里」。v2.1.1：更正历史文案中误用的「24 张」常数。对标 ITIL SACM + AGENTS.md §6.2。"
 tags: [module, governance, registry, synchronization, multi-registry, ssot, artifact-lifecycle]
 rule_form: declarative
 scope: global
@@ -20,8 +20,8 @@ stability: evolving
 verifiability: manual
 depends_on:
   - {target: PS-STD-001, at: "§2", why: "frontmatter 字段合法性——本文档所有 frontmatter 字段格式遵循其约束"}
-  - {target: PS-REG-006, at: "cross_registry_rules", why: "CR-001~006 定义的跨表共享字段和 SSoT 归属——本标准是 CR 规则的施工操作落地规范"}
-  - {target: PS-REG-005, at: "§2", why: "24 张登记表的完整清单——本标准 MRS-001 矩阵覆盖其全部可登记分类"}
+  - {target: PS-REG-002, at: "cross_registry_rules", why: "`registry-of-registries.yaml` 中的 CR 规则（跨表共享字段与 SSoT 归属）——本标准是其在登记表同步操作上的落地规范"}
+  - {target: PS-REG-005, at: "§2", why: "登记表总索引——`total_registries` 动态收录；本标准 MRS-001 覆盖全部可登记目标分类"}
   - {target: GOV-MOD-001, at: "§8", why: "准入记录写入——创建模块时 MRS-001 引用其准入记录模板"}
   - {target: GOV-MOD-003, at: "§3", why: "status 受控枚举——module-registry.yaml 的 blueprint.status 值来源于此"}
 ai_autonomy: ai_modifiable
@@ -29,7 +29,7 @@ ai_autonomy: ai_modifiable
 
 # 多登记表同步标准
 
-> module_id: GOV-MOD-007 | version: 2.1.0 | status: active | layer: L1
+> module_id: GOV-MOD-007 | version: 2.1.1 | status: active | layer: L1
 
 ---
 
@@ -37,7 +37,7 @@ ai_autonomy: ai_modifiable
 
 ### 1.1 目的
 
-ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml 登记），覆盖 15 个分类：
+**`docs/01_policies_and_standards/_registry/catalogs/*.yaml` 的自动收录清单**以 [registry-master-index.yaml](../../_registry/catalogs/registry-master-index.yaml) 的 **`total_registries`** 为唯一真源（**勿手写常数**；以 `generate_registry_master_index.py` 最近一次输出为准）。下表描述 **MRS-001 登记目标分类**（15 类工件域；含域外路径如 `03_modules/*.yaml`），**不得**与 `total_registries` 混为一谈。
 
 | 分类 | 登记表数 | 示例 |
 |------|:---:|------|
@@ -55,7 +55,7 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 | field_definition | 1 | frontmatter-field-registry.yaml |
 | physical_structure | 1 | directory-registry.yaml |
 | quality_gate | 1 | gate-registry.yaml |
-| architecture_decision | 1 | adr-status-registry.yaml |
+| architecture_decision | 1 | adr-status-registry.yaml（冻结壳；ADR 物理树已废弃，决策见 KB/rationale） |
 
 修改任何一个登记表的共享字段而不同步其他相关登记表，会导致数据不一致——这正是 4 轮审计抓住 25 个问题的共同根因（最初发生在模块登记表，但根本原因适用于所有分类）。
 
@@ -97,7 +97,7 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 - 6 条禁止行为（MRS-004）
 
 **本文档与以下文件互补**（非取代关系）：
-- [registry-master-index.yaml](../../_registry/catalogs/registry-master-index.yaml)：登记 24 张登记表——本标准是"创建 X 后怎么写"，它是"写到哪张表"
+- [registry-master-index.yaml](../../_registry/catalogs/registry-master-index.yaml)：列出 `total_registries` 条 catalogs 收录项——本标准是"创建 X 后怎么写"，它是"写到哪张表"
 - [registry-of-registries.yaml](../../_registry/catalogs/registry-of-registries.yaml)：共享字段和 SSoT 归属——本标准是"怎么同步"，它是"同步什么共享字段"
 - GOV-MOD-001 准入门控：创建模块时的审批流程——本标准是准入通过后登记数据的操作规范
 - GOV-MOD-003 生命周期策略：status 枚举值定义——本标准是 status 变更后的同步操作
@@ -131,7 +131,7 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 | module-registry.yaml | `03_modules/` | 1 | MRS-001 模块行——模块操作的登记要求 |
 | blueprint-registry.yaml | `03_modules/` | 1 | MRS-001 模块行 |
 | script-health-registry.yaml | `_registry/catalogs/` | 1 | MRS-001 脚本行 |
-| adr-status-registry.yaml | `_registry/catalogs/` | 1 | MRS-001 ADR 行 |
+| adr-status-registry.yaml（冻结壳） | `_registry/catalogs/` | 1 | MRS-001 ADR 行（占位对账；活跃决策不在此表逐条维护） |
 | directory-registry.yaml | `_registry/catalogs/` | 1 | MRS-001 目录行 |
 | gate-registry.yaml | `_registry/catalogs/` | 2 | MRS-001 门禁行 |
 | knowledge-article-registry.yaml | `_registry/catalogs/` | 2 | MRS-001 知识条目行 |
@@ -155,7 +155,7 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 | BPR | blueprint-registry.yaml | `03_modules/` |
 | TASK-META | task-card-meta-registry.yaml | `_registry/catalogs/` |
 | SCRIPT | script-health-registry.yaml | `_registry/catalogs/` |
-| ADR | adr-status-registry.yaml | `_registry/catalogs/` |
+| ADR | adr-status-registry.yaml（冻结壳） | `_registry/catalogs/` |
 | KMS | knowledge-article-registry.yaml | `_registry/catalogs/` |
 | DIR | directory-registry.yaml | `_registry/catalogs/` |
 | GATE | gate-registry.yaml | `_registry/catalogs/` |
@@ -400,7 +400,7 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 
 ## 16. 完整性自检清单
 
-- [ ] §1.1 目的：明确管辖 registry-master-index.yaml 中 24 张登记表的同步
+- [ ] §1.1 目的：`total_registries` 与 MRS-001 15 类登记目标的口径已区分（勿写死张数）
 - [ ] §2 SSoT 声明：互补关系覆盖 registry-master-index.yaml + registry-of-registries.yaml + GOV-MOD-001/003
 - [ ] §5.1 MRS-001：操作矩阵覆盖 12 种操作 × 14 个登记目标，标注排除的分类
 - [ ] §5.3 创建模块步骤：10 步完整流程（最复杂场景）
@@ -413,5 +413,6 @@ ZephyrAlpha 项目维护了 **24 张登记表**（按 registry-master-index.yaml
 
 | 日期 | 版本 | 变更说明 |
 |------|------|---------|
+| 2026-05-06 | 2.1.1 | 对齐 `registry-master-index.yaml`：移除误用的「24 张」常数，改为 `total_registries` 真源 + MRS-001 分类说明；自检清单同步。 |
 | 2026-05-02 | 2.0.0 | **重大扩展**：MRS-001 操作矩阵从 3 列（仅模块登记表）扩展到 14 列（覆盖 registry-master-index.yaml 的下全部可登记分类）。新增 8 种操作类型（创建规则/脚本/ADR/知识/目录/门禁/任务卡/字段）。MRS-004 禁止行为从 4 条扩展到 6 条（新增 SearchReplace 误匹配 + 新登记表不注册）。depends_on 新增 registry-master-index.yaml。Token 预算更新（2000→3000）。 |
 | 2026-05-02 | 1.0.0 | 初始版本——定义 MRS-001~004 四条核心规则，仅覆盖模块登记表（module-registry.yaml + blueprint-registry.yaml + 物理 blueprint.md） |

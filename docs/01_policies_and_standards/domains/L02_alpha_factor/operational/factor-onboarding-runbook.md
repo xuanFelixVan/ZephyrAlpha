@@ -2,9 +2,9 @@
 module_id: DOM-L02-002
 title: 因子入职操作手册
 doc_type: operational_rule
-status: draft
+status: Draft
 version: "0.1.0"
-layer: l02_alpha_factor
+layer: L02
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

@@ -3,7 +3,8 @@ module_id: GOV-DOC-005
 title: 编码安全规范
 doc_type: standard
 status: active
-version: 1.2.0
+version: 1.3.0
+derived_from: "AGENTS.md §4, version: 4.18.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -151,14 +152,16 @@ python scripts/hooks/check_encoding.py
 
 | 规则 | 与本标准的关系 |
 |------|-------------|
+| **AGENTS.md §4** | **Canonical SSoT**——本文档为 AGENTS.md §4 的派生视图（`derived_from: AGENTS.md §4, version: 4.18.0`）。以 AGENTS.md §4 为准，本文档提供详细展开。 |
 | file-naming-standard.md（GOV-DOC-003） | 本标准不管理文件命名——但要求文件名不含非 UTF-8 字符 |
 | document-lifecycle-standard.md（GOV-DOC-006） | 损坏文件的修复流程可能触发生命周期事件——如从 git 恢复后需重新审批 |
 | file-operation-safety-policy.md（GOV-DOC-007） | 修复损坏文件前需通过安全三问——确认无引用丢失 |
-| AGENTS.md §4 | 编码安全是三条硬规则之一——"禁止用 PowerShell echo/Out-File 默认参数写 .md 文件" |
 
 ## 七、变更记录
 
 | 日期 | 版本 | 修改内容 |
 |------|------|---------|
+| 2026-05-05 | 1.3.0 | Canonical 归位。新增 `derived_from: AGENTS.md §4` 标注——AGENTS.md §4（v4.18.0）已将编码安全升级为 canonical SSoT（6 条规则表格 + 强/弱指示 + 专业对标），本文档降为详细派生视图。§六 关系表同步更新。 |
 | 2026-04-22 | 1.0.0 | 初始创建。定义 UTF-8 强制编码规则、Trae/Cursor 配置要求、Python/PowerShell 编码规范、损坏识别与修复流程。 |
 | 2026-05-01 | 1.1.0 | 结构对齐。（1）新增 §〇 目的与范围（§〇.2 管理内容 + §〇.3 不覆盖内容 + §〇.4 专业对标）；（2）新增 §六 与其他规则的关系；（3）新增 §七 变更记录。对齐 templates/policy-template.md 强制结构。 |
+| 2026-05-02 | 1.2.0 | 修订维护职责与 TOC 路径。（1）owner 保持 ZephyrAlpha-Owner，新增 maintainer 字段独立记录；（2）修改主 TOC `index.md` 中的路径 `governance/policies/` → `governance/document/`。 |

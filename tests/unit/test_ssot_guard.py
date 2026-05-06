@@ -47,6 +47,7 @@ from zephyr.shared.ssot_guard import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def tmp_repo(tmp_path: Path) -> Path:
     """创建一个最小化的伪 git 仓库目录结构。"""
@@ -71,14 +72,17 @@ def tmp_repo(tmp_path: Path) -> Path:
     (tmp_path / "docs" / "subsystem-registry.yaml").write_text("# ok\n", encoding="utf-8")
     return tmp_path
 
+
 @pytest.fixture
 def guard(tmp_repo: Path) -> SsotGuard:
     """返回绑定到 tmp_repo 的 SsotGuard 实例。"""
     return SsotGuard(repo_root=tmp_repo)
 
+
 # ---------------------------------------------------------------------------
 # 辅助：模拟 _staged_files 返回值
 # ---------------------------------------------------------------------------
+
 
 def _make_guard_with_staged(
     tmp_repo: Path,
@@ -90,9 +94,11 @@ def _make_guard_with_staged(
     mock = patcher.start()
     return g, (patcher, mock)
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：_extract_declared_paths
 # ---------------------------------------------------------------------------
+
 
 class TestExtractDeclaredPaths:
     """P0：路径提取逻辑。"""
@@ -130,9 +136,11 @@ class TestExtractDeclaredPaths:
         result = _extract_declared_paths(content)
         assert not any("commented" in p for p in result)
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：_validate_path_format
 # ---------------------------------------------------------------------------
+
 
 class TestValidatePathFormat:
     """P0：路径格式校验。"""
@@ -168,9 +176,11 @@ class TestValidatePathFormat:
         # 单字符路径不应被误判为 Windows 绝对路径
         assert _validate_path_format("a") is None
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：SsotGuard._is_watched
 # ---------------------------------------------------------------------------
+
 
 class TestIsWatched:
     """P0：监控路径判断。"""
@@ -207,9 +217,11 @@ class TestIsWatched:
         # .txt 文件不在监控扩展名列表
         assert guard._is_watched("scripts/hooks/readme.txt") is False
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：C-1 检查
 # ---------------------------------------------------------------------------
+
 
 class TestCheckC1:
     """P0：新增治理文件时注册表必须同步暂存。"""
@@ -246,9 +258,11 @@ class TestCheckC1:
         result = guard._check_c1(watched_staged=watched, registry_staged=False)
         assert result.passed is True
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：C-3 检查
 # ---------------------------------------------------------------------------
+
 
 class TestCheckC3:
     """P0：删除治理文件时注册表必须同步暂存。"""
@@ -268,9 +282,11 @@ class TestCheckC3:
         assert result.passed is False
         assert "scripts/hooks/old_hook.py" in result.details
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：C-2 检查
 # ---------------------------------------------------------------------------
+
 
 class TestCheckC2:
     """P1：注册表暂存时声明路径必须存在。"""
@@ -300,9 +316,11 @@ class TestCheckC2:
         assert result.passed is False
         assert "不存在" in result.message
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：C-4 检查
 # ---------------------------------------------------------------------------
+
 
 class TestCheckC4Format:
     """P1：注册表路径格式合法性。"""
@@ -341,9 +359,11 @@ class TestCheckC4Format:
         result = guard._check_c4_format(registry_staged=True)
         assert result.passed is False
 
+
 # ---------------------------------------------------------------------------
 # 单元测试：GuardReport
 # ---------------------------------------------------------------------------
+
 
 class TestGuardReport:
     """P1：报告聚合逻辑。"""
@@ -366,9 +386,11 @@ class TestGuardReport:
         text = str(report)
         assert "✅" in text or "通过" in text
 
+
 # ---------------------------------------------------------------------------
 # 集成测试：SsotGuard.run() 完整流程
 # ---------------------------------------------------------------------------
+
 
 class TestSsotGuardRunIntegration:
     """Q2 集成测试：run() 完整流程（patch _staged_files）。"""
@@ -410,9 +432,11 @@ class TestSsotGuardRunIntegration:
         assert report.passed is False
         assert any(r.check_id == "GIT" for r in report.results)
 
+
 # ---------------------------------------------------------------------------
 # 性能测试：大量路径提取不超时
 # ---------------------------------------------------------------------------
+
 
 class TestExtractPerformance:
     """Q4 性能断言：路径提取 1000 行 YAML 在 0.5s 内完成。"""

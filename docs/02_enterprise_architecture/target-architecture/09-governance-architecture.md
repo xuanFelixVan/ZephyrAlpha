@@ -109,7 +109,7 @@ ttl: permanent
 | `src/zephyr/l00-l14/*.py` 业务代码 | ruff/mypy/bandit/PIT/fitness functions | Policy→Factory→Runtime |
 | `docs/**/*.md` 文档 | frontmatter schema/INDEX/孤儿检查 | Policy→Factory→Runtime |
 | `frontend/**/*.tsx` 前端代码 | ESLint/TypeScript strict/A11y | Policy→Factory→Runtime |
-| `adr/*.md` 架构决策 | append-only/14 天实现 Gate | Policy→Factory→Runtime |
+| KB:decisions namespace 架构决策 | append-only/14 天实现 Gate | Policy→Factory→Runtime |
 | `shared/contracts/*.py` 契约基类 | OCP 冻结（release 后不可改）| Policy→Factory→Runtime |
 | **治理层自己** | 治理规则变更 review/治理脚本测试 | Policy→Factory→Runtime（自治）|
 
@@ -131,7 +131,7 @@ ttl: permanent
 
 | 层 | 关键物理位置 | 代表产物 |
 |---|---|---|
-| **Policy** | `docs/01_policies_and_standards/` · `docs/02_enterprise_architecture/adr/` · `.cursor/rules/` · `.trae/rules/` · `AGENTS.md` | 规则文档、ADR-0001~0041、AI 协作规则 |
+| **Policy** | `docs/01_policies_and_standards/` · KB:decisions namespace · `.cursor/rules/` · `.trae/rules/` · `AGENTS.md` | 规则文档、ADR-0001~0041（33 VERIFIED）、AI 协作规则 |
 | **Factory** | `scripts/arch_guard/` · `scripts/governance/` · `scripts/quality/` · `pyproject.toml` | 25 条 F 函数、import_linter、ruff.toml/mypy.ini/bandit.yaml |
 | **Runtime** | `.pre-commit-config.yaml` · `.github/workflows/` · `src/zephyr/l10_compliance/` · `scripts/governance/audit_log/` · `scripts/governance/opa/` · `.metadata/` | pre-commit hooks、CI Gate、kill_switch、OPA policies |
 
@@ -310,7 +310,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 |---|---|---|
 | **Policy** | AI 员工花名册 | `docs/01_policies_and_standards/ai-operators-registry.md`（Stage K 待建） |
 | **Policy** | AI 行为规则 | `docs/01_policies_and_standards/ai-operator-guidelines.md`（Stage K 待建） |
-| **Policy** | AI 决策 ADR 模板 | `adr/_template_ai_decision.md` |
+| **Policy** | AI 决策记录模板 | KB:decisions namespace（Session Log decisions 结构化字段） |
 | **Policy** | AISG 红线过滤 | `.cursorignore` + `.cursorrules`（OQ-081 硬闸门）|
 | **Policy** | AISG 策略文档 | `docs/01_policies_and_standards/ai-security-gateway-policy.md`（Stage K 待建） |
 | **Policy** | Scout 抓取白名单 | `docs/01_policies_and_standards/scout-agent-whitelist.md`（Stage K 待建） |

@@ -44,13 +44,18 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, TypeVar, Union, get_args, get_origin
 
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ValidationError
+
 F = TypeVar("F", bound=Callable[..., Any])
 
 _logger = logging.getLogger("zephyr.contracts.enforcer")
 
+
 class EnforcementMode(str, Enum):
     STRICT = "strict"
     WARN = "warn"
+
 
 class ContractViolationError(TypeError):
     """CTR-ERR-006: 运行时跨层数据契约校验失败。
@@ -93,6 +98,7 @@ class ContractViolationError(TypeError):
         msg_parts.append(f"  {detail}")
         super().__init__("\n".join(msg_parts))
 
+
 def enforce_output(
     contract_type: type[Any],
     mode: EnforcementMode = EnforcementMode.STRICT,
@@ -103,7 +109,7 @@ def enforce_output(
     参数
     ----
     contract_type : type
-        契约 dataclass 类型（如 NormalizedMarketData）
+        契约类型：frozen dataclass，或 Pydantic v2 BaseModel（如 Task）
     mode : EnforcementMode
         STRICT = 抛出 ContractViolationError
         WARN   = 记录 warning 日志，继续执行
@@ -145,6 +151,7 @@ def enforce_output(
 
     return decorator
 
+
 def enforce_input(
     contract_type: type[Any],
     param_name: str | None = None,
@@ -156,7 +163,7 @@ def enforce_input(
     参数
     ----
     contract_type : type
-        契约 dataclass 类型
+        契约类型：dataclass 或 Pydantic BaseModel 子类
     param_name : str or None
         要校验的参数名。为 None 时自动取第一个匹配 contract_type 的参数。
     mode : EnforcementMode
@@ -225,6 +232,7 @@ def enforce_input(
 
     return decorator
 
+
 def enforce(
     contract_type: type[Any],
     input_param: str | None = None,
@@ -244,6 +252,7 @@ def enforce(
 
     return decorator
 
+
 def _validate_value(
     value: Any,
     contract_type: type[Any],
@@ -253,6 +262,24 @@ def _validate_value(
     """校验单个值是否符合契约定义。返回违规描述列表（空列表 = 通过）。"""
 
     violations: list[str] = []
+
+    if inspect.isclass(contract_type) and issubclass(contract_type, PydanticBaseModel):
+        if not isinstance(value, contract_type):
+            violations.append(
+                f"类型不匹配: 期望 {contract_name} 或其子类，实际收到 {type(value).__qualname__}",
+            )
+            return violations
+        try:
+            contract_type.model_validate(value.model_dump(mode="python"))
+        except ValidationError as exc:
+            for err in exc.errors():
+                loc = ".".join(str(x) for x in err.get("loc", ()))
+                violations.append(f"Pydantic [{loc}]: {err.get('msg')}")
+        if trace_required:
+            trace_ctx = _get_trace_context(value)
+            if trace_ctx is None:
+                violations.append("缺少 TraceContext: CTR-TRACE-001 强制要求非空 trace_context 字段")
+        return violations
 
     if not isinstance(value, contract_type):
         actual_type_name = type(value).__qualname__
@@ -273,6 +300,7 @@ def _validate_value(
             _check_deep_mutable_nesting(value, contract_type, violations)
 
     return violations
+
 
 def _validate_dataclass_fields(
     value: Any,
@@ -298,6 +326,7 @@ def _validate_dataclass_fields(
         declared_type = type_hints.get(fld.name)
         if field_value is not None and declared_type is not None:
             _check_field_type(fld.name, field_value, declared_type, violations)
+
 
 def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
     """解析 dataclass 的类型注解（处理 PEP 563 字符串注解）。"""
@@ -327,6 +356,7 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
             hints[fld.name] = ftype
     return hints
 
+
 def _check_field_type(
     field_name: str,
     value: Any,
@@ -353,6 +383,7 @@ def _check_field_type(
             if value is not None:
                 _check_field_type(field_name, value, non_none, violations)
 
+
 def _is_required(fld: dataclasses.Field) -> bool:
     """判断 dataclass 字段是否必填（无默认值且非 Optional 包裹）。"""
 
@@ -369,6 +400,7 @@ def _is_required(fld: dataclasses.Field) -> bool:
 
     return True
 
+
 def _get_trace_context(value: Any) -> Any | None:
     """从数据对象中提取 trace_context 字段。"""
 
@@ -376,6 +408,7 @@ def _get_trace_context(value: Any) -> Any | None:
         return getattr(value, "trace_context", None)
     except Exception:
         return None
+
 
 def _check_deep_mutable_nesting(
     value: Any,
@@ -415,6 +448,7 @@ def _check_deep_mutable_nesting(
             "跨层传递时建议做 deep copy 防护，防止下游意外修改嵌套容器"
         )
 
+
 def _find_param_by_type(
     arguments: dict[str, Any],
     contract_type: type[Any],
@@ -439,8 +473,12 @@ def _find_param_by_type(
                 if isinstance(anno, str):
                     if contract_name in anno or anno.replace(" | None", "").strip() == contract_name:
                         return name
-                elif anno is contract_type:
-                    return name
+                elif inspect.isclass(anno) and inspect.isclass(contract_type):
+                    try:
+                        if issubclass(anno, contract_type):
+                            return name
+                    except TypeError:
+                        pass
                 else:
                     origin = get_origin(anno)
                     if origin is not None:
@@ -453,6 +491,7 @@ def _find_param_by_type(
                             return name
 
     return None
+
 
 def _format_violations(
     contract_name: str,

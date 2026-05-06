@@ -1,32 +1,19 @@
-"""
-check_registry_consistency.py — 跨登记表一致性校验脚本
+"""check_registry_consistency — 跨登记表一致性校验。
 
-__manifest__ = """
-args: []
-description: 跨登记表一致性校验（多注册表共享字段对账）
-dimensions:
-- D3
-- D5
-- D11
-priority: P1
-timeout_seconds: 60
-warn_only: false
-"""
-
-
-读取 registry-of-registries.yaml，按其中定义的 cross_registry_rules
-逐条比对多个登记表和物理文件中的共享字段。
-
-发现不一致时，生成标准化 Finding 输出到 findings.jsonl。
-
-Usage:
-    python scripts/governance/check_registry_consistency.py
-
-蓝图定义: MOD-INF-005 §12 维度审计矩阵
-规则定义: 01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+读取 registry-of-registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
+可将 Finding 写入 scripts/governance/reports/findings.jsonl。
 """
 
 from __future__ import annotations
+
+__manifest__ = {
+    "args": [],
+    "description": "跨登记表一致性校验（多注册表共享字段对账）",
+    "dimensions": ["D3", "D5", "D11"],
+    "priority": "P1",
+    "timeout_seconds": 60,
+    "warn_only": False,
+}
 
 import argparse
 import sys
@@ -55,7 +42,14 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
-ROR_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "meta" / "registry-of-registries.yaml"
+ROR_PATH = (
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "registry-of-registries.yaml"
+)
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.yaml_utils import load_yaml
 
@@ -227,7 +221,8 @@ def check_rule(ror: dict, rule: dict) -> FindingCollection:
                 marker = " ← SSoT" if ssoT_value and val == ssoT_value else ""
                 detail_lines.append(f"  {key} = {val}{marker}")
             evidence = "不一致的值:\n" + "\n".join(detail_lines)
-            description = f'[{rule_id}] {module_id} 的 {'/'.join(fields)} 字段跨表不一致'
+            fj = "/".join(fields)
+            description = f"[{rule_id}] {module_id} 的 {fj} 字段跨表不一致"
             severity = Severity.CRITICAL if rule.get("violation_action") == "block" else Severity.HIGH
             blast = BlastRadius.MODULE
             f = Finding(
@@ -266,7 +261,8 @@ def main() -> None:
         findings = check_rule(ror, rule)
         all_findings.extend(findings.findings)
         status = "PASS" if findings.total == 0 else f"FAIL ({findings.total} 项)"
-        print(f'  {rule_id}: {rule.get('title', '?')} ... {status}', file=sys.stderr)
+        rtitle = rule.get("title", "?")
+        print(f"  {rule_id}: {rtitle} ... {status}", file=sys.stderr)
     total = all_findings.total
     if total == 0:
         print("\n[OK] 所有跨登记表一致性规则通过", file=sys.stderr)

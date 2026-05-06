@@ -7,7 +7,13 @@
 ----
 ML 生命周期管理：模型训练调度、特征存储、模型注册、在线推理服务。
 与 L12（遥测）、L13（实验）共同构成 AI/ML Platform 三件套。
-[N/A — 骨架占位，尚未实现]
+
+Phase B 骨架就位 —— 2026-05-05
+------------------------------
+  - InferenceEngineBase : 推理引擎（ModelServingRequest → ModelServingResponse）
+  - ModelTrainerBase    : 模型训练器
+  - ModelRegistry       : 模型注册表（版本生命周期管理）
+  - ModelMetadata       : 模型元数据
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
@@ -32,3 +38,19 @@ L13 — 自动化实验
 
 SSoT: cross-layer-contracts.yaml v3.0
 """
+
+from __future__ import annotations
+
+from zephyr.l11_ml_platform.inference_base import (
+    InferenceEngineBase,
+    ModelMetadata,
+    ModelRegistry,
+    ModelTrainerBase,
+)
+
+__all__ = [
+    "InferenceEngineBase",
+    "ModelMetadata",
+    "ModelRegistry",
+    "ModelTrainerBase",
+]

@@ -3,14 +3,9 @@ module_id: REG-IDX-001
 title: 登记表体系目录索引
 doc_type: index
 status: active
-version: "2.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
-classification: confidential
-language: zh
-created_by: human_plus_agent
-date: "2026-05-04"
-summary: "_registry/ 目录的导航入口。登记表体系的物理根目录——包含 catalogs/ contracts/ vocabularies/ schemas/ 四个子目录共 35 个体系文件（不含 4 个 index.md）。详见 PS-REG-005 registry-master-index.yaml。v3.0.1：计数全面对账。"
+version: "3.0.2"
+date: "2026-05-06"
+summary: "_registry/ 目录导航。v3.0.2：子目录文件数与 **不含各子目录 index.md** 的体系文件合计 **34** 对账。"
 tags: [index, registry, navigation]
 rule_form: declarative
 scope: global
@@ -24,17 +19,16 @@ verifiability: manual
 
 本目录是 ZephyrAlpha 项目**登记表体系的物理根目录**。所有 YAML 格式的登记表/注册表/清单、验证契约、受控词表、JSON Schema 均在此目录或其子目录下集中管理。
 
-> **v3.0.1 更新（2026-05-04 审计修复）**：现包含 20 个 catalogs/ 登记表 + 2 个 contracts/ + 11 个 vocabularies/ + 2 个 schemas/
-> = 共 35 个体系文件（不含索引文件）。详见 PS-REG-005 registry-master-index.yaml。
+> **v3.0.2 更新（2026-05-06）**：各子目录文件数——`catalogs/` **20**、`contracts/` **3**、`vocabularies/` **12**、`schemas/` **3**（合计 **38**）；若**排除**四个子目录各自 `index.md` 后合计 **34** 个体系数据文件。
 
 ## 子目录结构
 
 | 子目录 | 用途 | 文件数 | 索引 |
 |--------|------|:---:|------|
 | [`catalogs/`](../_registry/catalogs/index.md) | 登记表集中存储——YAML/MD 格式的注册表/清单 | 20 | index.md |
-| [`contracts/`](../_registry/contracts/) | 验证契约——pre-commit/CI 消费的 YAML 契约规则 | 2 | index.md |
-| [`vocabularies/`](../_registry/vocabularies/) | 受控词表——doc_type/status/rule_form/ttl/layer 等 11 个词表 | 11 | index.md |
-| [`schemas/`](../_registry/schemas/) | Schema——JSON/YAML 结构校验定义 | 2 | index.md |
+| [`contracts/`](../_registry/contracts/) | 验证契约——pre-commit/CI 消费的 YAML 契约规则 | 3 | index.md |
+| [`vocabularies/`](../_registry/vocabularies/) | 受控词表——doc_type/status/rule_form/ttl/layer 等 **11** 个词表 + index | 12 | index.md |
+| [`schemas/`](../_registry/schemas/) | Schema——JSON/YAML 结构校验定义 | 3 | index.md |
 
 ## 快速入口
 

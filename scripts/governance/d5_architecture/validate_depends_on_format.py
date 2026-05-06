@@ -1,16 +1,6 @@
 """
 validate_depends_on_format.py — depends_on 条目结构化格式校验
 
-__manifest__ = """
-args: []
-description: depends_on 条目结构化格式校验（PS-STD-001 §3.1 — {target, at, why} 结构 / 旧式 string[]
-  检测 / --fix 自动转换）
-dimensions:
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-001 §3.1（depends_on 字段定义——structured {target, at, why}）
@@ -28,6 +18,17 @@ exit codes: 0=pass（全结构化）, 1=findings（存在旧式或不完整条�
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: depends_on 条目结构化格式校验（PS-STD-001 §3.1 — {target, at, why} 结构 / 旧式 string[]
+  检测 / --fix 自动转换）
+dimensions:
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import re
 import sys

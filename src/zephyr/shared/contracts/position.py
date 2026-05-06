@@ -1,16 +1,17 @@
-from __future__ import annotations
-
+# ==== BEGIN CODGEN:CTR-006 ====
 from dataclasses import dataclass, field
-from datetime import datetime
+
+from datetime import datetime, timezone
 from decimal import Decimal
+from typing import Dict
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -20,9 +21,9 @@ CTR-006: PositionSnapshot / 持仓快照
 
 持仓快照。不可变，代表某一时刻的完整持仓状态。
 
-SSoT: cross-layer-contracts.yaml → CTR-006
+SSoT: cross-layer-contracts.yaml -> CTR-006
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -33,11 +34,51 @@ AI Prompt
 @dataclass(frozen=True)
 class PositionSnapshot:
     as_of_timestamp: datetime
+    idempotency_key: str
     portfolio_id: str
-    total_market_value: Decimal = Decimal("0")
     cash: Decimal = Decimal("0")
     gross_leverage: float = 1.0
-    schema_version: str = "1.0"
     holdings: Dict[str, Decimal] = field(default_factory=dict)
     market_values: Dict[str, Decimal] = field(default_factory=dict)
+    schema_version: str = "1.0"
+    total_market_value: Decimal = Decimal("0")
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-006 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

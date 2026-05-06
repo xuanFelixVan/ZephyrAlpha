@@ -33,6 +33,7 @@ __all__ = [
 
 _UTC = UTC
 
+
 @dataclass
 class BatchIngestEntry:
     ke_id: str
@@ -42,6 +43,7 @@ class BatchIngestEntry:
     priority: str = "P2"
     status: str = "pending"
     error: str | None = None
+
 
 @dataclass
 class BatchIngestReport:
@@ -73,6 +75,7 @@ class BatchIngestReport:
             error = e.error or ""
             lines.append(f"| {e.ke_id} | {e.title} | {e.category} | {e.priority} | {e.status} | {error} |")
         return "\n".join(lines)
+
 
 class BatchIngestor:
     def __init__(

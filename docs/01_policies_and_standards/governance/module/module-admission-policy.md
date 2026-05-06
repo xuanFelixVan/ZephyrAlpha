@@ -3,16 +3,16 @@ module_id: GOV-MOD-001
 title: 模块准入门控策略
 doc_type: policy
 status: active
-version: "1.0.0"
-layer: l01_infrastructure
+version: "1.1.0"
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-02"
-valid_from: "2026-05-02"
+date: "2026-05-06"
+valid_from: "2026-05-06"
 ttl: permanent
-summary: "定义任何模块注入/变更 ZephyrAlpha 系统前必须通过的准入条件与评审流程——覆盖新增、变更、迁移三类操作。含消费者注册表、变更同步规则、修改条件、废弃流程等治理基础设施章节。v1.0.0 升格：被 57 处引用（11 个文件），实质已达 active 成熟度。draft→active 升格由 2026-05-02 审计驱动。"
+summary: "定义任何模块注入/变更 ZephyrAlpha 系统前必须通过的准入条件与评审流程——覆盖新增、变更、迁移三类操作。v1.1.0：§7 新增 #5 功能域重叠否决条件 + §7.1 四步判定流程——从'事后SSoT冲突裁决'升格为'事前功能域重叠预防'。根源：MOD-INF-003/004 与 006 功能域重叠未被现有规则拦截——MAD-001 只管层归属，§7 #1 只管 ID 不重复，唯独没有'功能域是否已被覆盖'这道闸门。"
 tags: [module, governance, admission, gate, update, change]
 rule_form: declarative
 scope: global
@@ -139,6 +139,39 @@ ai_autonomy: human_gated
 | 2 | depends_on 中包含不存在的模块 ID | INJ-002 |
 | 3 | status 字段不是合法值之一（planned/in_design/in_dev/testing/active/suspended/deprecated/archived） | INJ-004 |
 | 4 | P0 模块未分配 runtime_plane | INJ-005 |
+| 5 | 功能域与已存在模块重叠——新模块的 summary/title/tags 与已有模块的 `responsibility_domain` 或核心职责明显重叠（判定流程见 §7.1） | MTH-008, IRN-003 |
+
+### 7.1 功能域重叠判定流程（§7 #5 执行细则）
+
+> 本流程是 §7 #5 否决条件的操作化执行指南。
+
+**四步判定**：
+
+```
+Step 1：关键词交集扫描
+  └── 新模块 summary + title 中的核心名词 vs 所有现有模块 summary + title
+  └── 判定：交集 ≥ 60% → 🔴 标记"高风险重叠"，跳 Step 4
+         交集 30%~60% → 🟡 标记"疑似重叠"，跳 Step 2
+         交集 < 30% → ✅ 跳过 #5，进入后续筛选
+
+Step 2：responsibility_domain 精确匹配
+  └── 新模块声明的 responsibility_domain 是否已被任何现有模块的 responsibility_domain 完全覆盖？
+  └── 是 → 🔴 否决——创建新蓝图
+         否 → 🟡 跳 Step 3
+
+Step 3：covers[] 子域交叉
+  └── 新模块的 covers[] 是否与任何现有模块的 covers[] 存在交集？
+  └── 是 → 🔴 否决——子域被覆盖 → 应升级原蓝图（version bump + changelog）
+         否 → ✅ 通过 #5
+
+Step 4：输出否决建议
+  └── 不创建新模块。建议路径（优先级递减）：
+      ① 升级已有蓝图 {module_id}：version bump + changelog 记录新增节
+      ② 若新责任无法归入任何已有蓝图 → 提交 Owner 裁定
+      ③ 禁止：创建平行蓝图覆盖已有子域
+```
+
+**自动化潜力**：Step 1（关键词扫描）可脚本化；Step 2-3（responsibility_domain + covers[]）需该字段落地后自动化。当前阶段：AI 手动执行四步判定，每次创建新模块时记录判定过程于 Session Log。
 
 ## 8. 准入记录
 
@@ -304,6 +337,7 @@ ai_autonomy: human_gated
 
 | 日期 | 版本 | 变更说明 |
 |------|------|---------|
+| 2026-05-06 | 1.1.0 | **SSoT 操作化——§7 新增 #5 功能域重叠否决条件 + §7.1 四步判定流程**。根源：MOD-INF-003/004 与 006 功能域重叠未被拦截——MAD-001 只管层归属唯一，§7 #1 只挡 module_id 重复，缺少"功能域是否已被覆盖"这道闸门。修复：(1) §7 #5 否决条件：新模块 summary/title/tags 与现有模块 responsibility_domain/covers[] 重叠 → 否决；(2) §7.1 四步判定流程：关键词扫描→responsibility_domain匹配→covers[]交叉→输出升级建议。治根逻辑：从"事后 SSoT 冲突裁决"升格为"事前功能域重叠预防"。版本号 minor +1。 |
 | 2026-05-01 | 0.6.3 | P2 格式修正：§8 JSON 键名 p1_id→p1_arch（MAD-001 架构必要性）、p2_doc→p2_phase（MAD-002 Phase 相关性）——与 MAD 规则语义对齐 |
 | 2026-05-01 | 0.6.2 | 消费者通知机制交叉引用：§13 变更同步规则添加通知机制引用——消费者通知方式见 GOV-MOD-002 §10（Session Log/ADR/registry 三层体系） |
 | 2026-05-01 | 0.6.1 | 交叉引用漂移修复：消费者注册表 §5→§7 否决条件映射 INJ 编号——Round 10 插入 §3/§4 后未同步的 self-ref |

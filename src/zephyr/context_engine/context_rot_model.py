@@ -134,7 +134,9 @@ class ContextRotModel:
     def instance(cls, **kwargs: float) -> ContextRotModel:
         with cls._lock:
             if cls._instance is None:
-                cls._instance = cls(**{k: int(v) if k == "ref_tokens" else v for k, v in kwargs.items()} if kwargs else {})
+                cls._instance = cls(
+                    **{k: int(v) if k == "ref_tokens" else v for k, v in kwargs.items()} if kwargs else {}
+                )
         return cls._instance
 
     @classmethod
@@ -183,7 +185,7 @@ class ContextRotModel:
         if current_tokens <= self._ref_tokens:
             return 1.0
         ratio = self._ref_tokens / current_tokens
-        return ratio ** self._k
+        return ratio**self._k
 
     def evaluate(self, current_tokens: int) -> AttentionScore:
         """全面评估当前上下文的注意力质量。
@@ -213,7 +215,7 @@ class ContextRotModel:
 
     def recommended_max_tokens(self) -> int:
         """推荐的最大 Token 数（对应 warn 阈值）。
-        
+
         N_max = N_ref / (warn_attention)^(1/k)
         """
         if self._warn_attention <= 0.0:

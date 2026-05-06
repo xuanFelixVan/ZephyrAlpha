@@ -1,20 +1,57 @@
 """
-check_fe_acl_boundary.py — 前端 ACL 边界检查 (INV-006) [桩文件]
+check_fe_acl_boundary.py — INV-006 前端 ACL（仓库内有前端树则启用）
 
-INV-006: 前后端唯一接触点——前端只能通过 L08 api_gateway 访问后端。
-status: stub — 需 L08 API Gateway 完整实现后激活。
+  - 若存在 .tsx/.vue 等前端源文件：禁止直接 fetch 内网后端裸端口（须走 API Gateway，启发式）
+  - 当前仓库无前端：仅输出基线通过
 
-激活条件：
-  1. L08 API Gateway 有可检测的路由层代码
-  2. 前端代码（React/Next.js）有明确的 API 调用点
-  3. 可通过 import / API call 路径检测到绕过的直接调用
+exit: 0=pass, 1=violation
 """
+from __future__ import annotations
+
+import re
 import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+FE_EXTS = {".tsx", ".ts", ".jsx", ".js", ".vue"}
+_SKIP_DIRS = {"node_modules", ".git", "dist", "build", "coverage", "__pycache__"}
+
+# 绕过 API Gateway 直连内网服务（启发式；排除 localhost + 非标准 API 路径）
+_BAD_FETCH = re.compile(
+    r"fetch\s*\(\s*['\"](https?://(127\.0\.0\.1|localhost):\d{2,5}/[^'\"]*)['\"]",
+    re.IGNORECASE,
+)
 
 
 def main() -> int:
-    print("⏭ INV-006 前端 ACL 边界检查 —— [桩文件] 跳过")
-    print("   激活条件：L08 API Gateway 完整实现。")
+    fe_files: list[Path] = []
+    for p in REPO_ROOT.rglob("*"):
+        if not p.is_file() or p.suffix.lower() not in FE_EXTS:
+            continue
+        if any(s in p.parts for s in _SKIP_DIRS):
+            continue
+        fe_files.append(p)
+
+    if not fe_files:
+        print("OK: 仓库内无前端源树 — INV-006 基线通过（待 L08 FE 落地后自动收紧）")
+        return 0
+
+    bad: list[str] = []
+    for f in fe_files:
+        try:
+            text = f.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if _BAD_FETCH.search(text):
+            bad.append(str(f.relative_to(REPO_ROOT)))
+
+    if bad:
+        print("FAIL: 前端疑似直连内网端口（应经 L08 api_gateway）:")
+        for b in bad:
+            print(f"  - {b}")
+        return 1
+
+    print(f"OK: 已扫描 {len(fe_files)} 个前端文件，未发现典型内网裸连 fetch")
     return 0
 
 

@@ -50,6 +50,7 @@ from pydantic import BaseModel, Field, field_validator
 from zephyr.shared.schemas import BASE_CONFIG
 from zephyr.shared.time_utils import now_iso
 
+
 class KeStatus(str, Enum):
     DRAFT = "DRAFT"
     SUBMITTED = "SUBMITTED"
@@ -61,6 +62,7 @@ class KeStatus(str, Enum):
     DEPRECATED = "DEPRECATED"
     ARCHIVED = "ARCHIVED"
     SUPERSEDED = "SUPERSEDED"
+
 
 _VALID_TRANSITIONS: dict[KeStatus, set[KeStatus]] = {
     KeStatus.DRAFT: {KeStatus.SUBMITTED},
@@ -82,6 +84,7 @@ _VECTOR_VISIBLE_STATUSES = {
     KeStatus.SUPERSEDED,
 }
 
+
 class RetrievalHit(BaseModel):
     model_config = BASE_CONFIG
 
@@ -91,10 +94,11 @@ class RetrievalHit(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
     ke_id: str | None = None
 
+
 class KeRecord(BaseModel):
     model_config = BASE_CONFIG
 
-    ke_id: str = Field(pattern=r"^KE-\d{3,}")
+    ke_id: str = Field(pattern=r"^(KE-\d{3,}|ADR-\d{4,})$")
     title: str = Field(min_length=1, max_length=300)
     category: str = Field(min_length=1, max_length=100, default="general")
     source_file: str = Field(min_length=1)
@@ -113,6 +117,7 @@ class KeRecord(BaseModel):
             raise ValueError("fingerprint_sha256 must be 64 hex chars")
         return v
 
+
 class TransitionResult(BaseModel):
     model_config = BASE_CONFIG
 
@@ -122,8 +127,10 @@ class TransitionResult(BaseModel):
     event_id: str
     vector_action: str = ""
 
+
 def _compute_fingerprint(content: str) -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
 
 class KbRepo:
     def __init__(

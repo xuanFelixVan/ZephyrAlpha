@@ -3,15 +3,15 @@ module_id: PS-STD-005
 title: ZephyrAlpha 蓝图体系架构标准 — 三级金字塔与目录归属
 doc_type: standard
 status: active
-version: "1.0.0"
+version: "1.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-04"
-valid_from: "2026-05-04"
-summary: "ZephyrAlpha 蓝图体系的元标准——定义蓝图的**三级金字塔**（System 级总蓝图 / Domain 级域集成蓝图 / Module 级模块蓝图）、每级蓝图的**目录存放位置**、**蓝图 ID 命名约定**、**归属与引用关系**（每份蓝图 MUST 声明 belongs_to 上级蓝图）、**AI Agent 的蓝图定位规则**（新 session 冷启动如何逐级定位）。对标 Codified Context (arXiv 2602.20478) 三层记忆模型（热记忆宪法/领域触发 Agent/冷记忆按需文档）+ Microsoft Edge AI master-blueprint 体系 + HP Inc specification.md 与 blueprint.md 双层分离 + TOGAF Architecture Repository Structure + ITIL SACM CI Hierarchy。本标准与 PS-STD-002（标准文档模板）互补：PS-STD-002 管'单个标准怎么写'，PS-STD-005 管'整个蓝图体系怎么建'。"
+date: "2026-05-06"
+valid_from: "2026-05-06"
+summary: "ZephyrAlpha 蓝图体系的元标准——定义蓝图的**三级金字塔**（System 级总蓝图 / Domain 级域集成蓝图 / Module 级模块蓝图）、每级蓝图的**目录存放位置**、**蓝图 ID 命名约定**、**归属与引用关系**（每份蓝图 MUST 声明 belongs_to 上级蓝图）、**AI Agent 的蓝图定位规则**（新 session 冷启动如何逐级定位）。v1.1.0：§10 禁止行为新增 #7（禁止创建平行蓝图覆盖已有功能域）+ §3.3 升级为"创建条件+前置闸门"双列表——Level 2 创建前 MUST 通过 GOV-MOD-001 §7 #5 功能域重叠检查。对标 Codified Context (arXiv 2602.20478) 三层记忆模型 + Microsoft Edge AI master-blueprint 体系 + HP Inc specification.md 与 blueprint.md 双层分离 + TOGAF Architecture Repository Structure + ITIL SACM CI Hierarchy。"
 ttl: permanent
 tags: [blueprint-architecture, meta-standard, three-tier-pyramid, master-blueprint, domain-integration, module-blueprint, belongs-to, ssot, codified-context, three-tier-memory]
 rule_form: structural
@@ -75,7 +75,7 @@ ai_autonomy: immutable_core
 - 单个蓝图的章节结构 → 以 `blueprint-template.md` 为准（蓝图模板已在本标准 §5 中作为规范性引用）
 - 蓝图内的技术决策内容 → 各蓝图独立定义
 - 蓝图审批流程 → 以 MOD-INF-006 任务系统蓝图和 gate-engine 门禁规则为准
-- 模块生命周期（draft → approved → retired） → 以 `module-registry.yaml` 为准
+- 模块生命周期（planned → in_design → in_dev → testing → active → suspended → deprecated → archived） → 以 GOV-MOD-003（module-lifecycle-policy.md）为准
 - frontmatter 字段定义 → 以 PS-STD-001（metadata-registry.md）为准
 
 ---
@@ -184,15 +184,16 @@ ai_autonomy: immutable_core
 
 **当前已有**：19 份模块蓝图（INF-001~017 + KB-001 + MASTER-001）
 
-### 3.3 三级蓝图的存在条件（Creation Triggers）
+### 3.3 三级蓝图的存在条件与创建规则（Creation Triggers + Pre-Creation Gates）
 
 > 不是任何时候都需要立即创建所有三级蓝图。以下条件触发对应级别的蓝图创建。
+> **v1.1.0 新增**：Level 2 创建前必须执行功能域重叠检查（GOV-MOD-001 §7 #5）——禁止为已被覆盖的功能域创建平行蓝图。
 
-| 蓝图层级 | 创建条件 | 示例场景 | 1 当前 |
-|:----|---------|---------|:---:|
-| **Level 0** | 系统 ≥ 3 个功能域且出现跨域数据契约需求 | L02 因子开始产出 → L04 风控消费，需要 CTR 合同 | ⚠️ 仅有 MOD-MASTER-001（L01 域级），缺真正的全系统总蓝图 |
-| **Level 1** | 某一域内模块 ≥ 5 且出现 ≥ 3 组跨模块交互 | L02/L03 域内模块超过 5 个后，因子和信号的集成需要独立域蓝图 | ⚠️ 仅有 L01 域级（MOD-MASTER-001），缺 L02-L03、L04-L07、L11-L13 域蓝图 |
-| **Level 2** | 每创建一个新的功能模块 | 当前已满足——19 个模块蓝图均已创建 | ✅ 已完成 |
+| 蓝图层级 | 创建条件 | 前置闸门（MUST） | 示例场景 | 1 当前 |
+|:----|---------|---------|---------|:---:|
+| **Level 0** | 系统 ≥ 3 个功能域且出现跨域数据契约需求 | —（Level 0 有且仅有一份，无重叠风险）| L02 因子开始产出 → L04 风控消费，需要 CTR 合同 | ⚠️ 仅有 MOD-MASTER-001（L01 域级），缺真正的全系统总蓝图 |
+| **Level 1** | 某一域内模块 ≥ 5 且出现 ≥ 3 组跨模块交互 | 域蓝图声明的 `responsibility_domain` 必须不与任何已有域蓝图重叠 | L02/L03 域内模块超过 5 个后，因子和信号的集成需要独立域蓝图 | ⚠️ 仅有 L01 域级（MOD-MASTER-001），缺 L02-L03、L04-L07、L11-L13 域蓝图 |
+| **Level 2** | 每创建一个新的功能模块 | **GOV-MOD-001 §7 #5 功能域重叠检查通过**——新模块责任不被任何已有蓝图覆盖 | 当前已满足——各模块蓝图均已创建 | ✅ 已完成 |
 
 > **1 约束**：当前阶段，只创建 Level 0 `MOD-MASTER-001` + 已有的 19 个 Level 2 模块蓝图。
 > `SYS-MASTER-001`（真正的全系统总蓝图）留待 beta 创建——触发条件为任一 L02+ 模块蓝图开始创建时。
@@ -215,6 +216,17 @@ docs/03_modules/
 ├── _master-blueprint/                          ← Level 1(Domain): L01 基础设施层集成蓝图
 │   └── blueprint.md                            ← MOD-MASTER-001（已有）
 │      （beta 升级：→ _domain-l01/ → MOD-DOMAIN-L01-001）
+│
+├── _cross_layer/                                ← Level 2: cross_layer 模块蓝图（跨越多个业务层的基础设施模块）
+│   ├── index.md                                 ← cross_layer 索引
+│   ├── gate-engine/blueprint.md                 ← MOD-INF-007 Gate Engine
+│   ├── context-engine/blueprint.md              ← MOD-INF-008 Context Engine
+│   ├── pipeline/blueprint.md                    ← MOD-INF-009 Pipeline
+│   ├── feedback-loop/blueprint.md               ← MOD-INF-010 Feedback Loop
+│   ├── database/blueprint.md                    ← MOD-INF-012 Database（layer: cross_layer in frontmatter）
+│   ├── mcp-servers/blueprint.md                 ← MOD-INF-013 MCP Servers
+│   ├── llm-security/blueprint.md                ← MOD-INF-014 LLM Security Gateway
+│   └── shared-core/blueprint.md                 ← MOD-INF-016 Shared + Core Infrastructure
 │
 ├── _domain-l02-l03/                            ← Level 1: L02+L03 信号域集成蓝图（待创建）
 │   └── domain-integration-blueprint.md        ← MOD-DOMAIN-SIG-001
@@ -316,8 +328,8 @@ docs/03_modules/
 | `MOD-MASTER-001` | Level 1（当前）→ Level 0（beta 升级后）| 当前它承担 L01 域集成蓝图职责。beta 后升级为全系统总蓝图或降级为 DOMAIN-L01。兼容期内 ID 不动 |
 | `MOD-INF-001~017` | Level 2 MODULE | ✅ 不涉及不兼容 |
 | `MOD-KB-001` | Level 2 MODULE | ✅ 不涉及不兼容 |
-| `MOD-INF-003`（retired）| Level 2 MODULE | ✅ 已退役，兼容性不适用 |
-| `MOD-INF-004`（retired）| Level 2 MODULE | ✅ 已退役，兼容性不适用 |
+| `MOD-INF-003`（deprecated）| Level 2 MODULE | ✅ 已废弃，兼容性不适用 |
+| `MOD-INF-004`（deprecated）| Level 2 MODULE | ✅ 已废弃，兼容性不适用 |
 
 > **既存蓝图不强制改名**——新标准只要求新增蓝图遵循 ID 体系。
 > 既存蓝图在第一份该层的 experimental 升级**蓝图时，自然迁移**。
@@ -473,8 +485,8 @@ modules:
 | MOD-MASTER-001 | 集成闭环总蓝图 | —（域蓝图层）| domain |
 | MOD-INF-001 | 容量保障体系 | MOD-MASTER-001 | module |
 | MOD-INF-002 | 运行时集成 | MOD-MASTER-001 | module |
-| MOD-INF-003 | 任务卡+KMS（retired）| MOD-MASTER-001 | module |
-| MOD-INF-004 | Vibe Coding双管线（retired）| MOD-MASTER-001 | module |
+| MOD-INF-003 | 任务卡+KMS（deprecated）| MOD-MASTER-001 | module |
+| MOD-INF-004 | Vibe Coding双管线（deprecated）| MOD-MASTER-001 | module |
 | MOD-INF-005 | 脚本系统 | MOD-MASTER-001 | module |
 | MOD-INF-006 | 任务系统 | MOD-MASTER-001 | module |
 | MOD-KB-001 | 知识库 | MOD-MASTER-001 | module |
@@ -505,6 +517,7 @@ modules:
 | 在 Level 2 模块蓝图中定义跨系统的 CT-* 合同 | 合同应该在上级（域蓝图/总蓝图）——跨系统合同如果写在具体蓝图里，改一个模块会漏更新合同影响所有系统 | CT-* 合同的定义放 Level 1 域蓝图或 Level 0 总蓝图。Level 2 只引用 CT-* 编号 |
 | AI 新 session 跳过 Level 0 直接读 Level 2 | 缺跨系统上下文——"这个模块的上游是谁"不知道 | 按 §7.1 逐级下钻 |
 | 在既存蓝图 frontmatter 中加入 `belongs_to` 时，改 module_id 或 status | 仅新增 frontmatter 字段即可 | 不改其他 frontmatter 字段 |
+| 为已被覆盖的功能域创建平行蓝图——需要新范围时应升级原蓝图（版本号 + changelog），而非创建同级新蓝图 | MOD-INF-003/004→006 的反模式：创建"任务卡KMS"和"双管线"两个子域蓝图，后发现它们都属于"任务系统"更大的功能域，又创建 006 来合并——根源是跳过功能域重叠检查（GOV-MOD-001 §7 #5） | 升级优先级：① 升级原蓝图（version bump + changelog 在既存蓝图中新增节）→ ② 拆分原蓝图为父蓝图 + 子蓝图（须声明 `responsibility_domain` + `covers[]`）→ ❌ 禁止创建平行蓝图后"合并" |
 
 ---
 
@@ -593,4 +606,5 @@ modules:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|------|
+| 1.1.0 | 2026-05-06 | **SSoT 操作化——§10 新增禁止行为 #7 + §3.3 升级为创建条件+前置闸门双列表**。根源：MOD-INF-003/004→006 的"平行蓝图后合并"反模式——003 和 004 分别覆盖了 006 功能域的子范围，而现有规则只禁止结构性违规（缺 belongs_to、错目录、错命名），不禁止功能性重叠。修复：(1) §10 #7 明确禁止为已被覆盖的功能域创建平行蓝图，需要新范围时必须升级原蓝图；(2) §3.3 表新增"前置闸门"列——Level 2 创建前 MUST 通过 GOV-MOD-001 §7 #5 功能域重叠检查；(3) 定义替代方案优先级：① 升级原蓝图 → ② 拆分 + responsibility_domain → ❌ 禁止平行蓝图。对标：唯一真源原则的操作化落地。版本号 minor +1。 |
 | 1.0.0 | 2026-05-04 | 初始版本。建立蓝图三级金字塔体系：(1) Level 0 ⇒ 全系统总蓝图 `_system-master/`，(2) Level 1 ⇒ 域集成蓝图 `_domain-{layers}/`，(3) Level 2 ⇒ 模块蓝图 `l{NN}_{name}/{module}/blueprint.md`。定义 `belongs_to` frontmatter 字段、14 层 ID 前缀表、既有 19 份蓝图归属清单。AI 冷启动 6 步定位路径。对标 Codified Context 三层内存模型。禁止行为 6 条。1 瞬态豁免——既存蓝图不强制立即声明 `belongs_to`，experimental 结束时触发。关联决策线：`R85`（本决策在 architecture-rationale-log.md 中的记录）|

@@ -38,19 +38,28 @@ from zephyr.shared.schemas import Task, TaskStatus
 
 GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
 
+EXPECTED_GATE_IDS = frozenset({
+    "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G10", "G11", "G12",
+    "EN-001", "EN-002", "EN-003", "ZERO-RESIDUE",
+})
+
+
 @pytest.fixture()
 def tmp_dir(tmp_path: Path) -> Path:
     return tmp_path
 
+
 @pytest.fixture()
 def db_path(tmp_path: Path) -> Path:
     return tmp_path / "test_gate.db"
+
 
 @pytest.fixture()
 def engine(db_path: Path) -> Generator[GateEngine, None, None]:
     ge = GateEngine(gate_dir=GATES_DIR, db_path=db_path, project_root=Path("."))
     yield ge
     ge.close()
+
 
 def _make_task(
     task_id: str = "ADR-001",
@@ -66,7 +75,7 @@ def _make_task(
         phase=2,
         title="测试任务",
         status=TaskStatus(status),
-        execution_model="claude-sonnet",
+        execution_model="claude",
         safety_level="M",
         directive="325",
         deliverables=deliverables or [],
@@ -76,30 +85,39 @@ def _make_task(
         updated_at="2026-01-01T00:00:00+00:00",
     )
 
+
 # ---------------------------------------------------------------------------
 # 1. load_gates — 加载 5 个门禁配置
 # ---------------------------------------------------------------------------
 
-def test_load_gates_returns_five_gates(engine: GateEngine) -> None:
+
+def test_load_gates_returns_all_yaml_gates(engine: GateEngine) -> None:
     gates = engine.load_gates()
-    assert set(gates.keys()) == {"G1", "G2", "G3", "G4", "G5"}
+    assert set(gates.keys()) == EXPECTED_GATE_IDS
+
 
 def test_load_gates_cached(engine: GateEngine) -> None:
     g1 = engine.load_gates()
     g2 = engine.load_gates()
     assert g1 is g2
 
+
 def test_reload_gates_refreshes_cache(engine: GateEngine) -> None:
     engine.load_gates()
     g2 = engine.reload_gates()
-    assert set(g2.keys()) == {"G1", "G2", "G3", "G4", "G5"}
+    assert set(g2.keys()) == EXPECTED_GATE_IDS
 
-@pytest.mark.parametrize("gate_id", ["G1", "G2", "G3", "G4", "G5"])
+
+@pytest.mark.parametrize(
+    "gate_id",
+    sorted(EXPECTED_GATE_IDS),
+)
 def test_each_gate_has_checks(gate_id: str, engine: GateEngine) -> None:
     gates = engine.load_gates()
     cfg = gates[gate_id]
     assert len(cfg.checks) > 0
     assert cfg.gate_id == gate_id
+
 
 def test_gate_config_names(engine: GateEngine) -> None:
     gates = engine.load_gates()
@@ -109,9 +127,11 @@ def test_gate_config_names(engine: GateEngine) -> None:
     assert "Activate" in gates["G4"].name
     assert "Extract" in gates["G5"].name
 
+
 # ---------------------------------------------------------------------------
 # 2. GateResult 结构
 # ---------------------------------------------------------------------------
+
 
 def test_gate_result_passed_no_violations(engine: GateEngine) -> None:
     task = _make_task()
@@ -122,6 +142,7 @@ def test_gate_result_passed_no_violations(engine: GateEngine) -> None:
     assert result.passed is True
     assert isinstance(result.violations, list)
 
+
 def test_gate_result_details_structure(engine: GateEngine) -> None:
     task = _make_task()
     result = engine.evaluate(task, "G1")
@@ -129,14 +150,17 @@ def test_gate_result_details_structure(engine: GateEngine) -> None:
     assert "checks_run" in result.details
     assert result.details["checks_run"] > 0
 
+
 def test_gate_result_summary_pass(engine: GateEngine) -> None:
     task = _make_task()
     result = engine.evaluate(task, "G1")
     assert "[PASS]" in result.summary()
 
+
 # ---------------------------------------------------------------------------
 # 3. 核心拦截场景 A：废弃路径
 # ---------------------------------------------------------------------------
+
 
 def test_deprecated_path_blocked(engine: GateEngine) -> None:
     task = _make_task(deliverables=["_legacy/some_file.md"])
@@ -144,6 +168,7 @@ def test_deprecated_path_blocked(engine: GateEngine) -> None:
     assert result.passed is False
     assert result.has_p0
     assert any("废弃路径" in v.message for v in result.p0_violations)
+
 
 @pytest.mark.parametrize(
     "path",
@@ -161,15 +186,17 @@ def test_all_deprecated_patterns_blocked(path: str, engine: GateEngine) -> None:
     result = engine.evaluate(task, "G1")
     assert result.passed is False, f"应拦截废弃路径：{path}"
 
+
 def test_valid_path_not_blocked(engine: GateEngine) -> None:
-    # 不存在的文件路径：encoding/line_ending 检查跳过；路径不含废弃前缀
-    task = _make_task(deliverables=["src/zephyr/gates/nonexistent_module.md"])
+    task = _make_task(deliverables=["src/zephyr/gates/g1_ingest.yaml"])
     result = engine.evaluate(task, "G1")
     assert result.passed is True
+
 
 # ---------------------------------------------------------------------------
 # 4. 核心拦截场景 B：编码损坏
 # ---------------------------------------------------------------------------
+
 
 def test_encoding_utf8_bom_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     bad_file = tmp_dir / "bom_file.md"
@@ -180,6 +207,7 @@ def test_encoding_utf8_bom_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     assert result.passed is False
     assert any("BOM" in v.message for v in result.violations)
 
+
 def test_encoding_corrupted_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     bad_file = tmp_dir / "corrupt.md"
     bad_file.write_bytes(b"\xff\xfe# corrupted\n")
@@ -187,6 +215,7 @@ def test_encoding_corrupted_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     task = _make_task(deliverables=["corrupt.md"])
     result = engine.evaluate(task, "G1")
     assert result.passed is False
+
 
 def test_encoding_valid_utf8_passes(tmp_dir: Path, engine: GateEngine) -> None:
     good_file = tmp_dir / "good.md"
@@ -199,9 +228,11 @@ def test_encoding_valid_utf8_passes(tmp_dir: Path, engine: GateEngine) -> None:
     result = engine.evaluate(task, "G1")
     assert result.passed is True
 
+
 # ---------------------------------------------------------------------------
 # 5. 核心拦截场景 C：空壳文件
 # ---------------------------------------------------------------------------
+
 
 def test_empty_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查拦截空壳文件。"""
@@ -213,6 +244,7 @@ def test_empty_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     assert result.passed is False
     assert any("空文件" in v.message for v in result.violations)
 
+
 def test_placeholder_heavy_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查拦截充满占位符的空壳文件。"""
     stub_file = tmp_dir / "stub.md"
@@ -221,6 +253,7 @@ def test_placeholder_heavy_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine)
     task = _make_task(deliverables=["stub.md"])
     result = engine.evaluate(task, "G2")
     assert result.passed is False
+
 
 def test_g1_short_content_warning(tmp_dir: Path, engine: GateEngine) -> None:
     """G1 的 content_length 检查（P1）：内容过短产生警告但不阻断任务启动。"""
@@ -234,6 +267,7 @@ def test_g1_short_content_warning(tmp_dir: Path, engine: GateEngine) -> None:
     assert any("内容过短" in v.message for v in result.violations)
     assert all(v.severity == "P1" for v in result.violations if "内容过短" in v.message)
 
+
 def test_content_rich_file_passes_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查：内容丰富的文件通过。"""
     rich_file = tmp_dir / "rich.md"
@@ -243,9 +277,11 @@ def test_content_rich_file_passes_g2(tmp_dir: Path, engine: GateEngine) -> None:
     result = engine.evaluate(task, "G2")
     assert result.passed is True
 
+
 # ---------------------------------------------------------------------------
 # 6. G2-G5 evaluate 基本调用（任务层空操作，不阻断）
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize("gate_id", ["G2", "G3", "G4", "G5"])
 def test_g2_to_g5_no_block_for_plain_task(gate_id: str, engine: GateEngine) -> None:
@@ -254,6 +290,7 @@ def test_g2_to_g5_no_block_for_plain_task(gate_id: str, engine: GateEngine) -> N
     result = engine.evaluate(task, gate_id)
     assert isinstance(result, GateResult)
     assert result.gate_id == gate_id
+
 
 @pytest.mark.parametrize("gate_id", ["G2", "G3", "G4", "G5"])
 def test_g2_to_g5_deprecated_path_still_blocked(gate_id: str, engine: GateEngine) -> None:
@@ -264,9 +301,11 @@ def test_g2_to_g5_deprecated_path_still_blocked(gate_id: str, engine: GateEngine
     result = engine.evaluate(task, gate_id)
     assert result.gate_id == gate_id
 
+
 # ---------------------------------------------------------------------------
 # 7. gates 表持久化
 # ---------------------------------------------------------------------------
+
 
 def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
     task = _make_task()
@@ -278,6 +317,7 @@ def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
     assert len(rows) >= 1
     assert rows[0]["gate_id"].startswith("G1:")
 
+
 def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -> None:
     for i in range(3):
         task = _make_task(task_id=f"ADR-{100+i:03d}")
@@ -287,18 +327,22 @@ def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -
     conn.close()
     assert count == 3
 
+
 # ---------------------------------------------------------------------------
 # 8. 非法 gate_id
 # ---------------------------------------------------------------------------
+
 
 def test_unknown_gate_id_raises(engine: GateEngine) -> None:
     task = _make_task()
     with pytest.raises(GateEngineError, match="未知 gate_id"):
         engine.evaluate(task, "G99")
 
+
 # ---------------------------------------------------------------------------
 # 9. 缺失 YAML 文件时抛出 GateEngineError
 # ---------------------------------------------------------------------------
+
 
 def test_missing_yaml_raises(tmp_path: Path, db_path: Path) -> None:
     ge = GateEngine(gate_dir=tmp_path, db_path=db_path)
@@ -306,9 +350,11 @@ def test_missing_yaml_raises(tmp_path: Path, db_path: Path) -> None:
         ge.reload_gates()
     ge.close()
 
+
 # ---------------------------------------------------------------------------
 # 10. task_repo 集成：PENDING → IN_PROGRESS 触发 G1 门禁
 # ---------------------------------------------------------------------------
+
 
 def test_task_repo_blocks_deprecated_path(
     tmp_path: Path,
@@ -333,9 +379,14 @@ def test_task_repo_blocks_deprecated_path(
     assert exc_info.value.result.has_p0
     repo.close()
 
+
 def test_task_repo_allows_clean_task(tmp_path: Path) -> None:
     """PENDING→IN_PROGRESS 时，交付物路径合法，门禁通过，状态正常转换。"""
     db_path = tmp_path / "repo_clean.db"
+    deliverable_path = tmp_path / "src" / "zephyr"
+    deliverable_path.mkdir(parents=True, exist_ok=True)
+    deliverable_file = deliverable_path / "output.py"
+    deliverable_file.write_text("# clean output\nprint('ok')\n", encoding="utf-8")
     repo = TaskRepository(
         db_path=db_path,
         gate_dir=GATES_DIR,
@@ -351,6 +402,7 @@ def test_task_repo_allows_clean_task(tmp_path: Path) -> None:
     updated = repo.transition("ADR-078", TaskStatus.IN_PROGRESS)
     assert updated.status == TaskStatus.IN_PROGRESS
     repo.close()
+
 
 def test_task_repo_encoding_violation_blocked(tmp_path: Path) -> None:
     """PENDING→IN_PROGRESS 时，交付物文件含 BOM，门禁阻断。"""
@@ -374,6 +426,7 @@ def test_task_repo_encoding_violation_blocked(tmp_path: Path) -> None:
     assert exc_info.value.result.passed is False
     repo.close()
 
+
 def test_task_repo_gate_disabled_no_check(tmp_path: Path) -> None:
     """enable_gate=False 时，门禁完全跳过，废弃路径不阻断。"""
     db_path = tmp_path / "repo_nogata.db"
@@ -392,6 +445,7 @@ def test_task_repo_gate_disabled_no_check(tmp_path: Path) -> None:
     updated = repo.transition("ADR-080", TaskStatus.IN_PROGRESS)
     assert updated.status == TaskStatus.IN_PROGRESS
     repo.close()
+
 
 def test_task_repo_other_transitions_no_gate(tmp_path: Path) -> None:
     """非 PENDING→IN_PROGRESS 的转换（如 IN_PROGRESS→COMPLETED）不触发门禁。"""
@@ -419,13 +473,16 @@ def test_task_repo_other_transitions_no_gate(tmp_path: Path) -> None:
     assert updated.status == TaskStatus.COMPLETED
     repo.close()
 
+
 # ---------------------------------------------------------------------------
 # 11. 底层检查函数单元测试
 # ---------------------------------------------------------------------------
 
+
 def test_check_encoding_no_file(tmp_path: Path) -> None:
     result = _check_encoding(tmp_path / "nonexistent.md", {"disallow_bom": True})
     assert result is None
+
 
 def test_check_encoding_bom(tmp_path: Path) -> None:
     f = tmp_path / "bom.md"
@@ -434,11 +491,13 @@ def test_check_encoding_bom(tmp_path: Path) -> None:
     assert result is not None
     assert "BOM" in result
 
+
 def test_check_encoding_clean(tmp_path: Path) -> None:
     f = tmp_path / "clean.md"
     f.write_text("# hi", encoding="utf-8")
     result = _check_encoding(f, {"disallow_bom": True})
     assert result is None
+
 
 def test_check_line_ending_crlf(tmp_path: Path) -> None:
     f = tmp_path / "crlf.md"
@@ -447,19 +506,23 @@ def test_check_line_ending_crlf(tmp_path: Path) -> None:
     assert result is not None
     assert "CRLF" in result
 
+
 def test_check_line_ending_lf(tmp_path: Path) -> None:
     f = tmp_path / "lf.md"
     f.write_bytes(b"line1\nline2\n")
     result = _check_line_ending(f, {})
     assert result is None
 
+
 def test_check_path_blacklist_hit() -> None:
     violations = _check_path_blacklist(["docs/_legacy/old.md"], {})
     assert len(violations) > 0
 
+
 def test_check_path_blacklist_miss() -> None:
     violations = _check_path_blacklist(["src/zephyr/gates/engine.py"], {})
     assert len(violations) == 0
+
 
 def test_check_empty_shell_empty_file(tmp_path: Path) -> None:
     f = tmp_path / "empty.md"
@@ -468,11 +531,13 @@ def test_check_empty_shell_empty_file(tmp_path: Path) -> None:
     assert result is not None
     assert "空文件" in result
 
+
 def test_check_empty_shell_rich_file(tmp_path: Path) -> None:
     f = tmp_path / "rich.md"
     f.write_text("# 完整内容\n\n" + "很多内容。" * 20, encoding="utf-8")
     result = _check_empty_shell(f, {})
     assert result is None
+
 
 def test_check_empty_shell_no_file(tmp_path: Path) -> None:
     result = _check_empty_shell(tmp_path / "ghost.md", {})

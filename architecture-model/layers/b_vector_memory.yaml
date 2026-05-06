@@ -10,6 +10,7 @@ partition:
 
 modules:
   - id: vms-core
+    module_id: MOD-INF-011
     name: Vector Memory Service Core
     submodule_path: src/zephyr/vector_memory/
     status: skeleton
@@ -20,7 +21,16 @@ modules:
       5大 Collection: decisions / code_context / lessons / knowledge / runtime_logs。
       beta 整合 kb/ 能力入 InProcessVectorMemory 实现。
     files: []
-    interfaces: []
+    interfaces:
+      - contract_id: CT-ORC-VMS-001
+        role: producer
+        description: 承接 Orc 写入任务输出向量
+      - contract_id: CT-CE-VMS-001
+        role: producer
+        description: 向 CE 提供向量检索能力
+      - contract_id: CT-KB-VMS-001
+        role: consumer
+        description: 承接 KB 知识向量化持久化
     adr_ref:
       - ADR-0016
       - ADR-0022

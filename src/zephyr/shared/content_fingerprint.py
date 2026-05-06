@@ -12,22 +12,27 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
+
 class FingerprintError(Exception):
     """内容指纹系统异常基类（所有指纹相关异常由此派生）。"""
 
     pass
+
 
 class FingerprintNotFoundError(FingerprintError):
     """请求的指纹 key 在指纹库中不存在。"""
 
     pass
 
+
 class FingerprintPermissionError(FingerprintError):
     """无权读取或写入指定路径的指纹文件（文件系统权限不足）。"""
 
     pass
 
+
 _CHUNK_SIZE = 8192
+
 
 def compute_hash(path: str | Path) -> str:
     path = Path(path)
@@ -45,9 +50,11 @@ def compute_hash(path: str | Path) -> str:
         raise FingerprintPermissionError(f"Permission denied: {path}")
     return h.hexdigest()
 
+
 def verify_hash(path: str | Path, expected: str) -> bool:
     actual = compute_hash(path)
     return actual == expected.lower()
+
 
 def compute_bulk(paths: list[str | Path]) -> dict[str, str | None]:
     results: dict[str, str | None] = {}

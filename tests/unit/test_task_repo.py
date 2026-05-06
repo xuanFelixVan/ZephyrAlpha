@@ -42,6 +42,7 @@ from zephyr.shared.schemas import (
 
 _UTC = UTC
 
+
 def _make_task(
     task_id: str = "SRC-1",
     status: TaskStatus = TaskStatus.PENDING,
@@ -63,7 +64,7 @@ def _make_task(
         phase=phase,
         title=f"Task {task_id}",
         status=status,
-        execution_model="claude-sonnet",
+        execution_model="claude",
         safety_level=SafetyLevel.M,
         directive="313+999",
         idempotent=True,
@@ -75,12 +76,14 @@ def _make_task(
         updated_at=now,
     )
 
+
 @pytest.fixture()
 def repo(tmp_path: Path) -> TaskRepository:
     db = tmp_path / "test_tasks.db"
-    r = TaskRepository(db_path=db, auto_init=True)
+    r = TaskRepository(db_path=db, auto_init=True, enable_gate=False)
     yield r
     r.close()
+
 
 class TestSchemaInit:
     def test_tables_created(self, tmp_path: Path) -> None:
@@ -101,6 +104,7 @@ class TestSchemaInit:
         db = tmp_path / "meta2.db"
         init_db(db)
         init_db(db)
+
 
 class TestCreate:
     def test_create_returns_task(self, repo: TaskRepository) -> None:
@@ -156,6 +160,7 @@ class TestCreate:
         task_files = repo.get_files("SRC-7")
         assert len(task_files) == 2
 
+
 class TestGet:
     def test_get_existing(self, repo: TaskRepository) -> None:
         repo.create(_make_task("SRC-10"))
@@ -174,6 +179,7 @@ class TestGet:
     def test_get_or_raise_nonexistent(self, repo: TaskRepository) -> None:
         with pytest.raises(TaskNotFoundError):
             repo.get_or_raise("SRC-999")
+
 
 class TestUpdate:
     def test_update_name(self, repo: TaskRepository) -> None:
@@ -200,6 +206,7 @@ class TestUpdate:
         repo.create(_make_task("SRC-23"))
         updated = repo.update("SRC-23", deliverables=["file1.py", "file2.py"])
         assert updated.deliverables == ["file1.py", "file2.py"]
+
 
 class TestTransition:
     def test_pending_to_in_progress(self, repo: TaskRepository) -> None:
@@ -300,6 +307,7 @@ class TestTransition:
         with pytest.raises(TaskNotFoundError):
             repo.transition("SRC-999", TaskStatus.IN_PROGRESS)
 
+
 class TestDelete:
     def test_delete_existing(self, repo: TaskRepository) -> None:
         repo.create(_make_task("SRC-40"))
@@ -325,9 +333,10 @@ class TestDelete:
         repo.delete("SRC-42")
         conn = sqlite3.connect(str(repo._db_path))
         conn.row_factory = sqlite3.Row
-        rows = conn.execute("SELECT * FROM events WHERE task_id IS NULL").fetchall()
+        rows = conn.execute("SELECT * FROM events WHERE task_id = 'SRC-42' ORDER BY created_at DESC").fetchall()
         conn.close()
         assert len(rows) >= 1
+
 
 class TestTaskFiles:
     def test_add_file(self, repo: TaskRepository) -> None:
@@ -357,6 +366,7 @@ class TestTaskFiles:
         repo.create(_make_task("SRC-1"))
         repo.create(_make_task("SRC-2"))
         assert repo.next_seq() == 3
+
 
 class TestList:
     @pytest.fixture(autouse=True)
@@ -420,6 +430,7 @@ class TestList:
         completed = repo.list_by_status("COMPLETED")
         assert all(t.status == TaskStatus.COMPLETED for t in completed)
 
+
 class TestUpsert:
     def test_upsert_insert(self, repo: TaskRepository) -> None:
         t = _make_task("SRC-60")
@@ -436,7 +447,7 @@ class TestUpsert:
             phase=1,
             title="Updated Name",
             status=TaskStatus.VERIFIED,
-            execution_model="gpt4",
+            execution_model="claude",
             safety_level=SafetyLevel.H,
             directive="999",
             created_at=now,
@@ -445,6 +456,7 @@ class TestUpsert:
         result = repo.upsert(updated)
         assert result.title == "Updated Name"
         assert result.status == TaskStatus.VERIFIED
+
 
 class TestConcurrency:
     def test_concurrent_reads_safe(self, repo: TaskRepository) -> None:
@@ -488,6 +500,7 @@ class TestConcurrency:
 
         assert not errors, f"并发写出现异常：{errors}"
         assert len(created) == 5
+
 
 class TestHelpers:
     def test_allowed_transitions_pending(self) -> None:

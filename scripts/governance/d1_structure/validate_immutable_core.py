@@ -1,16 +1,6 @@
 """
 validate_immutable_core.py — immutable_core 文件修改检测
 
-__manifest__ = """
-args: []
-description: immutable_core 文件修改检测（ABS-01 — P1治理完整性）
-dimensions:
-- D1
-- D5
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：PS-STD-003 ABS-01（AI 不可改 immutable_core 层）
@@ -26,6 +16,17 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: immutable_core 文件修改检测（ABS-01 — P1治理完整性）
+dimensions:
+- D1
+- D5
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path
@@ -48,22 +49,20 @@ AI_AUTONOMY_MARKERS = ["ai_autonomy", "autonomy_level"]
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 
 def is_immutable(frontmatter: dict) -> bool:
-    """is immutable"""
+    """Return True if frontmatter marks this file as immutable (AI should not modify)."""
     for marker in IMMUTABLE_MARKERS:
         if marker in frontmatter:
             return True
-    "判断条件."
     autonomy = frontmatter.get("ai_autonomy", "")
     if isinstance(autonomy, str) and "immutable" in autonomy.lower():
         return True
     return False
-    "is immutable."
 
 def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict]:
     """get recent modifications"""
     try:
         result = subprocess.run(
-            "获取数据."["git", "log", f"-n{max_commits}", "--pretty=format:%H|%an|%ae|%s|%ci", "--", str(filepath)],
+            ["git", "log", f"-n{max_commits}", "--pretty=format:%H|%an|%ae|%s|%ci", "--", str(filepath)],
             capture_output=True,
             text=True,
             encoding="utf-8",

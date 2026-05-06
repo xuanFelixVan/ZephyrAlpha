@@ -3,13 +3,13 @@ module_id: META-TERM-001
 title: 术语映射表（大白话 ↔ 行业术语）
 doc_type: reference
 status: active
-version: 1.0.0
+version: "1.0.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: agent
-date: "2026-05-01"
+date: "2026-05-06"
 valid_from: "2026-04-17"
 ttl: permanent
 tags: [meta, terminology, mapping]
@@ -93,7 +93,7 @@ ai_autonomy: human_gated
 
 | 大白话 | 行业术语 | 解释 | 关联文档 |
 |-------|---------|------|---------|
-| 为什么这么定 / 理由记录 | Architecture Decision Record (ADR) | 一份决策的永久凭证，含背景、方案对比、最终选择、后果 | `docs/02_enterprise_architecture/adr/` |
+| 为什么这么定 / 理由记录 | Architecture Decision Record (ADR) | 一份决策的永久凭证，含背景、方案对比、最终选择、后果 | **`KB:decisions`**（Git-backed） |
 | 推导链 / 讨论记录 | Rationale Log / Design Rationale | 推导出当前结论的时间轴 | `architecture-rationale-log.md` |
 | 还没想清楚的事 | Open Question / Open Issue | 已识别但未拍板的问题 | ~~`open-questions-register.md`~~（待建立） |
 | 可能出坏事的事 | Risk | 已识别的威胁，需要缓解或接受 | `_registry/catalogs/ai-risk-register.yaml` |

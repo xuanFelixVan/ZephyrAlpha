@@ -19,9 +19,7 @@ scope: global
 stability: stable
 verifiability: manual
 depends_on:
-  - target: PS-STD-001
-    at: "§7"
-    why: "metadata-registry.md §7 定义的任务卡字段 schema 为 deliverables/acceptance/status 等字段的 SSoT"
+  - {target: PS-STD-001, at: "§7", why: "metadata-registry.md §7 定义的任务卡字段 schema 为 deliverables/acceptance/status 等字段的 SSoT"}
 supersedes:
   - path: docs/01_policies_and_standards/governance/task/task-card-standard.md
     version: 2.0.0
@@ -37,7 +35,7 @@ ai_autonomy: immutable_core
 > **module_id**: GOV-TASK-005 | **version**: 1.1.0 | **status**: active
 >
 > 本标准定义任务从"执行中"到"关闭"的完整流程。
-> `03_modules/l01_infrastructure/task-card-kms/blueprint.md` §5.2-§5.3 定义状态机和门禁映射，
+> `03_modules/l01_infrastructure/task-system/blueprint.md` §5.2-§5.3 定义状态机和门禁映射，
 > `task-lifecycle-standard.md` 定义治理规则（取消权限、优先级裁决、升级治理），
 > 本标准定义关闭流程中每个步骤的具体检查内容和操作方法。
 >
@@ -54,7 +52,7 @@ ai_autonomy: immutable_core
 3. **验收通过**——所有验收指标达标
 4. **审计可追溯**——关闭决策有据可查
 
-> **负向责任**：本标准**不涉及**任务卡字段定义（→ [GOV-TASK-001](../../governance/task/task-card-standard.md)）、不涉及任务生命周期治理规则（→ [GOV-TASK-004](../../governance/task/task-lifecycle-standard.md)）、不涉及状态机实现和门禁检查逻辑（→ [MOD-INF-003](../../../03_modules/l01_infrastructure/task-card-kms/blueprint.md) §5.2-§5.3）。
+> **负向责任**：本标准**不涉及**任务卡字段定义（→ [GOV-TASK-001](../../governance/task/task-card-standard.md)）、不涉及任务生命周期治理规则（→ [GOV-TASK-004](../../governance/task/task-lifecycle-standard.md)）、不涉及状态机实现和门禁检查逻辑（→ [MOD-INF-006](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.3）。
 
 ### 1.2 适用范围
 
@@ -271,7 +269,7 @@ acceptance:
 
 | 规则 | 与本标准的关系 |
 |------|-------------|
-| task-card-kms/blueprint.md §5.2-§5.3 | 状态机实现和 G4/G5 门禁的触发时机与检查逻辑 |
+| task-system/blueprint.md §5.2-§5.3 | 状态机实现和 G4/G5 门禁的触发时机与检查逻辑 |
 | task-lifecycle-standard.md | 治理规则：取消权限 + 优先级裁决 + 升级治理 |
 | task-card-standard.md | 该文件定义 deliverables/acceptance 字段格式，本标准定义如何检查这些字段 |
 | file-operation-safety-policy.md | 安全门禁管"删除前"，本标准管"完成后" |

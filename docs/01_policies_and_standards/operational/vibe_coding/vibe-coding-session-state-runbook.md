@@ -88,7 +88,7 @@ depends_on:
 
 ## 七、与 YAML 规则的对应
 
-本 Markdown 文档是 `D:\ZephyrAlpha\src\zephyr\rules\session_state_machine.yaml` 的人类可读版本。
+本 Markdown 文档是 `D:\ZephyrAlpha\config\session_state_machine.yaml` 的人类可读版本。
 YAML 文件是机器可执行的权威来源，本文档是解释性参考。
 
 差异说明：
@@ -98,7 +98,7 @@ YAML 文件是机器可执行的权威来源，本文档是解释性参考。
 ## 八、修改条件
 
 修改本文档需要同时更新以下文件：
-1. `D:\ZephyrAlpha\src\zephyr\rules\session_state_machine.yaml`（机器可读版本）
+1. `D:\ZephyrAlpha\config\session_state_machine.yaml`（机器可读版本）
 2. `../../_registry/catalogs/document-metadata-index.yaml`（注册表）
 3. 任何引用状态机的 ADR 文档
 

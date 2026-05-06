@@ -1,15 +1,16 @@
-from __future__ import annotations
-
+# ==== BEGIN CODGEN:CTR-003 ====
 from dataclasses import dataclass, field
-from datetime import datetime
+
+from datetime import datetime, timezone
+from typing import Dict
+from typing import Optional
 
 from zephyr.shared.contracts.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-04"
+# created: "2026-05-05"
 # generated_by: codegen from cross-layer-contracts.yaml
 # ---
 """
@@ -19,9 +20,9 @@ CTR-003: RiskLimits / 风险限额
 
 L04 → L05 核心数据契约。风险限额约束集合，由 L05 组合优化器强制执行。
 
-SSoT: cross-layer-contracts.yaml → CTR-003
+SSoT: cross-layer-contracts.yaml -> CTR-003
 Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
 
 AI Prompt
@@ -32,12 +33,51 @@ AI Prompt
 @dataclass(frozen=True)
 class RiskLimits:
     as_of_date: datetime
+    idempotency_key: str
+    max_drawdown_limit: Optional[float] = None
+    max_gross_leverage: float = 1.0
+    max_portfolio_var_1d: Optional[float] = None
+    max_sector_concentration: float = 0.3
     max_single_position: float = 0.1
     min_single_position: float = 0.0
-    max_gross_leverage: float = 1.0
-    max_sector_concentration: float = 0.3
     schema_version: str = "1.0"
-    max_portfolio_var_1d: Optional[float] = None
-    max_drawdown_limit: Optional[float] = None
     symbol_overrides: Dict[str, float] = field(default_factory=dict)
     trace_context: Optional[TraceContext] = None
+
+# ==== END CODGEN:CTR-003 ====
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

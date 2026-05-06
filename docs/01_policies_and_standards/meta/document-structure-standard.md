@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PS-STD-002
 title: ZephyrAlpha 标准文档模板
 doc_type: standard

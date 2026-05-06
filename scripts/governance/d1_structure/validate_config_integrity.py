@@ -1,20 +1,6 @@
 """
 validate_config_integrity.py — 运行时配置完整性十一层纵深审计 + 自动同步检测
 
-__manifest__ = """
-args: []
-description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
-dimensions:
-- D1
-- D4
-- D5
-- D6
-- D8
-- D9
-priority: P0
-timeout_seconds: 60
-warn_only: false
-"""
 
 
 对标：ITIL SACM §4.5（Configuration Audit — 配置项定期对账）
@@ -42,6 +28,21 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
+dimensions:
+- D1
+- D4
+- D5
+- D6
+- D8
+- D9
+priority: P0
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import os
 import re

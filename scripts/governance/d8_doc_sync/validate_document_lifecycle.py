@@ -1,15 +1,6 @@
 """
 validate_document_lifecycle.py — 文档生命周期校验
 
-__manifest__ = """
-args: []
-description: 文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六 — superseded_by+双向链接+AI产物）
-dimensions:
-- D8
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-DOC-006 §二/§四/§五/§六/§七
@@ -25,6 +16,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六 — superseded_by+双向链接+AI产物）
+dimensions:
+- D8
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path

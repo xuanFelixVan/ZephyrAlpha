@@ -1,9 +1,15 @@
+"""validate_blueprint_registry.py — Blueprint registry self-check.
+
+对标：PS-STD-003 D11（登记表与实际文件对账）
+检测：file_path 存在性、total_blueprints、孤儿 blueprint.md、scope 目录。
+exit codes: 0=pass, 1=findings, 2=error
 """
-validate_blueprint_registry.py — 蓝图登记表自校验
+
+from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 蓝图登记表自校验——登记状态与实际文件对账
+description: Blueprint registry self-check (declared rows vs files on disk)
 dimensions:
 - D3
 - D11
@@ -11,20 +17,6 @@ priority: P1
 timeout_seconds: 30
 warn_only: false
 """
-
-
-对标：PS-STD-003 D11（合规完整性 — 登记表与实际文件对账）
-
-检测内容：
-- blueprint-registry.yaml 中登记的蓝图是否都有对应的 blueprint.md 文件
-- 登记表 total_blueprints 计数与实际登记条目是否一致
-- 目录下是否有未登记的 blueprint.md 文件（孤儿蓝图）
-- registry scope 声明的目录是否存在
-
-exit codes: 0=pass, 1=findings, 2=error
-"""
-
-from __future__ import annotations
 
 import argparse
 import sys
@@ -45,23 +37,22 @@ except ImportError:
     print("ERROR: PyYAML 未安装，请运行 pip install pyyaml", file=sys.stderr)
     sys.exit(2)
 
+
 def load_registry() -> dict | None:
     """加载注册表"""
     if not BLUEPRINT_REGISTRY_PATH.exists():
         return None
-    "load registry."
     try:
         with open(BLUEPRINT_REGISTRY_PATH, encoding="utf-8") as f:
             return yaml.safe_load(f)
     except (OSError, yaml.YAMLError) as e:
         print(f"ERROR: 无法解析蓝图登记表: {e}", file=sys.stderr)
         return None
-    "load registry."
+
 
 def check_registry(registry: dict) -> list[dict]:
     """检查注册表"""
     findings = []
-    "check registry."
     reg_meta = registry.get("registry", {})
     if not reg_meta:
         findings.append(
@@ -77,7 +68,8 @@ def check_registry(registry: dict) -> list[dict]:
     decl_total = reg_meta.get("total_blueprints", 0)
     declared_scope = reg_meta.get("scope", "")
     if declared_scope:
-        scope_dir = REPO_ROOT / declared_scope
+        scope_suffix = declared_scope.strip().strip("/").replace("\\", "/")
+        scope_dir = REPO_ROOT / "docs" / scope_suffix if scope_suffix else REPO_ROOT / "docs" / "03_modules"
         if not scope_dir.exists():
             findings.append(
                 {
@@ -105,16 +97,16 @@ def check_registry(registry: dict) -> list[dict]:
             }
         )
     for bp in blueprints:
-        bp_file = bp.get("blueprint_file", "")
-        if bp_file:
-            full_path = REPO_ROOT / bp_file
+        fp = bp.get("file_path") or bp.get("blueprint_file", "")
+        if fp:
+            full_path = REPO_ROOT / "docs" / fp if not str(fp).startswith("docs/") else REPO_ROOT / fp
             if not full_path.exists():
                 findings.append(
                     {
                         "file": str(BLUEPRINT_REGISTRY_PATH.relative_to(REPO_ROOT)),
                         "line": 0,
                         "pattern": f'蓝图文件缺失: {bp.get('module_id', '?')}',
-                        "matched": f"blueprint_file={bp_file}",
+                        "matched": f"file_path={fp}",
                     }
                 )
     module_ids_seen = set()
@@ -131,13 +123,15 @@ def check_registry(registry: dict) -> list[dict]:
             )
         module_ids_seen.add(mid)
     if scope:
-        scope_dir = REPO_ROOT / scope
+        scope_suffix = scope.strip().strip("/").replace("\\", "/")
+        scope_dir = REPO_ROOT / "docs" / scope_suffix
         if scope_dir.exists():
             registered_files = set()
             for bp in blueprints:
-                bf = bp.get("blueprint_file", "")
-                if bf:
-                    registered_files.add(bf)
+                fp = bp.get("file_path") or bp.get("blueprint_file", "")
+                if fp:
+                    rel = fp if str(fp).startswith("docs/") else f"docs/{fp}"
+                    registered_files.add(rel.replace("\\", "/"))
             for md_file in scope_dir.rglob("blueprint.md"):
                 rel = str(md_file.relative_to(REPO_ROOT)).replace("\\", "/")
                 if rel not in registered_files:
@@ -150,7 +144,7 @@ def check_registry(registry: dict) -> list[dict]:
                         }
                     )
     return findings
-    "check registry."
+
 
 def main() -> None:
     """入口函数."""
@@ -174,7 +168,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(0)
     sys.exit(1 if findings else 0)
-    "入口函数."
+
 
 if __name__ == "__main__":
     main()

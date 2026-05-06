@@ -11,6 +11,10 @@ token_utils.py — Token 估算工具 SSoT
 
 from __future__ import annotations
 
+# 会话 / 装配层默认 token 预算（CT-PIPE、G3、ContextBudgetTracker 对齐用 SSoT）
+DEFAULT_CONTEXT_TOKEN_BUDGET: int = 8000
+
+
 def estimate_tokens(text: str) -> int:
     """估算文本的 token 数量。
 
@@ -27,6 +31,8 @@ def estimate_tokens(text: str) -> int:
         return 0
     return max(len(text) // 4, 1)
 
+
 __all__ = [
+    "DEFAULT_CONTEXT_TOKEN_BUDGET",
     "estimate_tokens",
 ]

@@ -1,15 +1,6 @@
 """
 detect_ai_products_in_docs.py — AI 产物位置检测
 
-__manifest__ = """
-args: []
-description: AI 产物位置检测（GOV-DOC-006 §六 — created_by:agent不应在docs/主目录）
-dimensions:
-- D8
-priority: P2
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：GOV-DOC-006 §六（AI 生成产物必须写入 .audit_cache/，禁止写入 docs/）
@@ -22,6 +13,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: AI 产物位置检测（GOV-DOC-006 §六 — created_by:agent不应在docs/主目录）
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import sys
 from pathlib import Path

@@ -1,15 +1,6 @@
 """
 detect_direct_llm_calls.py — 直接 LLM 调用检测
 
-__manifest__ = """
-args: []
-description: 直接 LLM 调用检测（COND-30 — L02-L07禁止直接import LLM SDK）
-dimensions:
-- D7
-priority: P1
-timeout_seconds: 30
-warn_only: false
-"""
 
 
 对标：COND-30（L02-L07 直接调用 LLM Providers 为条件禁止）
@@ -23,6 +14,16 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+__manifest__ = """
+args: []
+description: 直接 LLM 调用检测（COND-30 — L02-L07禁止直接import LLM SDK）
+dimensions:
+- D7
+priority: P1
+timeout_seconds: 30
+warn_only: false
+"""
+
 
 import ast
 import re

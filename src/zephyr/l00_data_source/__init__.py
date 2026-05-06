@@ -6,7 +6,11 @@
 职责
 ----
 外部数据源适配接入：行情、基本面、另类数据等原始数据摄取与标准化。
-[N/A — 骨架占位，尚未实现]
+
+子模块
+------
+- provider_base.py : 数据源适配基类 (DataSourceBase) + 自动注册 (OCP 扩展点)
+- quality_gate.py  : 数据质量门禁 (DataQualityGate) — Phase B 骨架已生成
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
@@ -28,3 +32,14 @@ SSoT: cross-layer-contracts.yaml v3.0
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
+
+from __future__ import annotations
+
+from zephyr.l00_data_source.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.l00_data_source.quality_gate import DataQualityGate
+
+__all__ = [
+    "DataSourceBase",
+    "DataSourceMeta",
+    "DataQualityGate",
+]

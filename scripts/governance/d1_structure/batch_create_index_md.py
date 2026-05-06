@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Batch create index.md for all directories under docs/ that lack one."""
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 批量创建 index.md（扫描缺失 index.md 的目录并生成）
@@ -11,9 +13,6 @@ priority: P2
 timeout_seconds: 30
 warn_only: true
 """
-
-
-from __future__ import annotations
 
 import argparse
 import os
@@ -123,7 +122,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "02_enterprise_architecture/target-architecture": (
-        "目标架构视图（TOGAF）— 00-overview 到 12-dimension-audit-matrix + architecture-model/ + diagrams/ + by-domain/",
+        "目标架构视图（TOGAF）— 00-overview 到 12-dimension-audit-matrix + architecture-model/ + diagrams/（正文已收口，已无 by-domain/）",
         [
             ("治理规范", "01_policies_and_standards/"),
             ("ADR", "02_enterprise_architecture/adr/"),
@@ -133,13 +132,22 @@ RESPONSIBILITY_MAP = {
         "审计报告 — 架构合规性审计、SSoT 验证扫描报告",
         [
             ("治理规范", "01_policies_and_standards/"),
-            ("审计状态数据", "09_audit/state/"),
+            ("Finding / 事件初稿", "09_audit/findings/"),
+            ("审计状态目录（遗留）", "09_audit/state/"),
+        ],
+    ),
+    "09_audit/findings": (
+        "安全与合规 Finding、事件响应初稿 Markdown（对齐 target-architecture/06-security-architecture.md）",
+        [
+            ("审计总控", "09_audit/INDEX.md"),
+            ("审计报告", "09_audit/reports/"),
         ],
     ),
     "09_audit/state": (
-        "审计状态数据 — SQLite DB 等运行时状态",
+        "审计状态数据 — 目录 legacy；运行时状态见 data/（ADR-0030）",
         [
             ("审计报告", "09_audit/reports/"),
+            ("Finding 落盘", "09_audit/findings/"),
             ("治理规范", "01_policies_and_standards/"),
         ],
     ),
@@ -205,12 +213,6 @@ RESPONSIBILITY_MAP = {
             (".md 架构视图文档", "02_enterprise_architecture/target-architecture/（上层）"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/by-domain": (
-        "按技术领域划分的架构文档 — docs-domain/ frontend-domain/ scripts-domain/ src-domain/",
-        [
-            ("架构视图（TOGAF）", "02_enterprise_architecture/target-architecture/（上层）"),
-        ],
-    ),
     "02_enterprise_architecture/target-architecture/diagrams": (
         "架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图",
         [
@@ -265,22 +267,6 @@ RESPONSIBILITY_MAP = {
         [
             ("前端技术栈", "02_enterprise_architecture/target-architecture/architecture-model/frontend/"),
         ],
-    ),
-    "02_enterprise_architecture/target-architecture/by-domain/docs-domain": (
-        "文档域架构文档",
-        [],
-    ),
-    "02_enterprise_architecture/target-architecture/by-domain/frontend-domain": (
-        "前端域架构文档",
-        [],
-    ),
-    "02_enterprise_architecture/target-architecture/by-domain/scripts-domain": (
-        "脚本域架构文档",
-        [],
-    ),
-    "02_enterprise_architecture/target-architecture/by-domain/src-domain": (
-        "源码域架构文档",
-        [],
     ),
 }
 
