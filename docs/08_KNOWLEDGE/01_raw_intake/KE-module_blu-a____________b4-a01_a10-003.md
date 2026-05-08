@@ -1,0 +1,24 @@
+---
+module_id: KE-module_blu-a____________b4-a01_a10-003
+title: A. 分布式系统与多节点（B4-A01~A10）
+category: module_blueprint
+---
+
+# A. 分布式系统与多节点（B4-A01~A10）
+
+A. 分布式系统与多节点（B4-A01~A10）
+
+> **当前薄弱点**：蓝图仅有 `distributed_lock.py` 引用和 "模块 > 300 切 Kafka" 的触发条件，但无分布式协调的具体设计。
+
+| 盲点 ID | 缺失内容 | 专业机构对标 | 效应（若无） |
+|---------|---------|------------|-----------|
+| B4-A01 | **Leader Election**——多节点部署时需要主节点选举（谁执行定时任务/健康检查仲裁？） | Google Chubby / etcd Raft | 双主→数据竞态；无主→定时任务停滞 |
+| B4-A02 | **Cluster Membership（Gossip Protocol）**——节点加入/离开/崩溃的感知机制 | HashiCorp Serf / Cassandra Gossip | 节点崩溃后无感知→请求继续路由到死节点 |
+| B4-A03 | **Split-Brain Protection**——网络分区时一致性的保护策略 | Pacemaker Fencing / K8s Lease | 分区→双主同时写→不可逆数据损坏 |
+| B4-A04 | **Consistent Hashing / Sharding**——"kubernetes > 500/事件"的Sharding算法 | Discord (Rust+Sharding) / Dynamo | 扩容→事件路由全量重构→生产中断 |
+| B4-A05 | **Quorum-Based Decision**——每次部署/FeatureFlag变更需要多少节点共识 | Raft R+W > N | 单节点作恶→全集群中毒 |
+| B4-A06 | **Hybrid Logical Clock (HLC)**——跨节点事件的偏序/全序关系 | CockroachDB HLC / TrueTime | 跨节点事件无因果顺序→溯源分析出现 "先果后因" |
+| B4-A07 | **CRDT（Conflict-Free Replicated Types）**——多节点并发写入的自动合并策略 | Figma / Linear / Redis CRDT | 并发修→手动解冲突→1人不具备此能力 |
+| B4-A08 | **Anti-Entropy（Read Repair + Hinted Handoff）**——节点间状态同步与修复 | Dynamo / Cassandra | 节点间状态漂移→单节点缓存*3→雪崩 |
+| B4-A09 | **Multi-Raft / Raft Group Segmented Consensus**——按模块域分建共识组，降低全局共识负载 | TiKV Multi-Raft | 全局共识→N模块均参与→延迟O(N²) |
+| B4-A10 | **Graceful Partition Healing**——分区恢复后的渐进重建策略（Limiter→Backoff→RateLimit→Full）| CockroachDB Range Lease | 分区恢复→瞬间全量同步→网络+CPU双爆 |

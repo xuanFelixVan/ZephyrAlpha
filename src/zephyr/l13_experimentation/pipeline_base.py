@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, ClassVar
 
-from zephyr.shared.contracts.experiment_result import ExperimentResult
+from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
 
 
 @dataclass(frozen=True)

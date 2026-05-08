@@ -1,0 +1,38 @@
+---
+module_id: KE-module_blu-9_2_p0-002
+title: 9.2 P0 级降级条款
+category: module_blueprint
+---
+
+# 9.2 P0 级降级条款
+
+9.2 P0 级降级条款
+
+> **核心原则**：VMS 是"增强层"，不是核心依赖。挂了不能拖垮 AI Session，宁可上下文不完整，也不能卡死。
+
+**DEGRADE-001：向量检索不可用时的降级路径**
+
+触发场景：
+- ChromaDB 持久化文件损坏
+- 磁盘满 / 权限错误
+- 首次启动未 bootstrap（collection 为空）
+- BGE-M3 模型加载失败（运行时被删除）
+
+降级动作：
+
+```python
+try:
+    results = await vm.multi_search(query, collections)
+    if results.degraded:                       # 上游必须检查此标记
+        context_engine.fallback_to_filesystem_grep(query)
+except VMStorageError:
+    # search/multi_search 内部捕获并返回 degraded=True 空结果，通常不抛到调用方
+    # 若抛到这里说明基础设施已彻底失效
+    log.critical("VMS completely down, fallback to rg/grep")
+    results = filesystem_grep_fallback(query)
+```
+
+**调用方强制契约**：
+- `search()` / `multi_search()` / `sync_document()` 失败时**必须返回**空结果 + `degraded=True` 标记，**不抛异常**阻塞 AI Session
+- 调用方（Context Engine / MCP Server）**必须**检查 `degraded` 标记，选择性降级到文件系统检索（`rg`/`grep`）
+- 本次降级必须写入 `logs/vms_degrade.log`（结构化日志：触发原因 / 时间戳 / 调用方 / 查询文本 sha256）

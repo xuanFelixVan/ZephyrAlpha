@@ -1,5 +1,4 @@
-"""
-context.py —— 结构化上下文传播（Phase 8 新增 | 盲点 B16 修复）
+"""context.py — 结构化上下文传播（Phase 8 新增 | 盲点 B16 修复）
 
 痛点修复：logging.py 用 contextvars 传播 trace_id，但缺少统一 RequestContext 对象——
   1. 跨模块调用时上下文断裂——tenant_id / session_id / agent_id 需要手动传参
@@ -77,13 +76,11 @@ class RequestContext:
     extra: dict[str, Any] = field(default_factory=dict)
 
     def replace(self, **kwargs: Any) -> RequestContext:
-        """创建派生上下文——保留原字段，覆盖指定字段。"""
         current = {f.name: getattr(self, f.name) for f in self.__dataclass_fields__.values()}
         current.update(kwargs)
         return RequestContext(**current)
 
     def new_span(self, span_name: str = "") -> RequestContext:
-        """创建新的 span——生成新 span_id，保留 trace_id。"""
         return self.replace(
             span_id=f"{span_name}:{str(uuid.uuid4())[:8]}" if span_name else str(uuid.uuid4())[:8],
         )
@@ -102,37 +99,14 @@ class RequestContext:
 
 
 def current_context() -> RequestContext | None:
-    """获取当前请求上下文——跨 async 调用链自动传播。
-
-    Returns:
-        当前 RequestContext 或 None（如果未设置）。
-    """
     return _current_context.get()
 
 
 def set_context(ctx: RequestContext) -> contextvars.Token:
-    """设置当前请求上下文——返回用于恢复的 Token。
-
-    Usage::
-
-        ctx = RequestContext(tenant_id="tenant-001")
-        token = set_context(ctx)
-        try:
-            await do_work()
-        finally:
-            _current_context.reset(token)
-
-    Args:
-        ctx: 要设置的 RequestContext。
-
-    Returns:
-        contextvars.Token——用于后续恢复。
-    """
     return _current_context.set(ctx)
 
 
 def get_request_id() -> str:
-    """获取当前 request_id——如果未设置则自动生成（用于日志）。"""
     ctx = current_context()
     if ctx is not None and ctx.request_id:
         return ctx.request_id
@@ -140,7 +114,5 @@ def get_request_id() -> str:
 
 
 def set_request_id(request_id: str) -> None:
-    """设置当前 request_id——通常由 HTTP middleware 调用。"""
     token = set_context(RequestContext(request_id=request_id))
-    # 不在 stack 上保持 token——因为 middleware 生命周期覆盖整个请求
     logger.debug("request_id set: %s", request_id)

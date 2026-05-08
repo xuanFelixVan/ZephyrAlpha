@@ -1,0 +1,105 @@
+"""
+Circuit Breaker — MOD-INF-022
+
+Half-open/closed/open state machine with error budget gating, cooldown, and auto-recovery.
+Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2.3
+"""
+from __future__ import annotations
+
+import threading
+import time
+from dataclasses import dataclass
+from enum import Enum
+from typing import Optional
+
+
+class CircuitState(Enum):
+    CLOSED = "CLOSED"
+    OPEN = "OPEN"
+    HALF_OPEN = "HALF_OPEN"
+
+
+@dataclass
+class CircuitBreakerConfig:
+    failure_threshold: int = 5
+    success_threshold: int = 3
+    timeout_seconds: int = 60
+    half_open_max_requests: int = 1
+    cooldown_seconds: int = 300
+    error_budget_per_hour: int = 10
+
+
+class CircuitBreaker:
+    def __init__(self, name: str, config: Optional[CircuitBreakerConfig] = None):
+        self.name = name
+        self.config = config or CircuitBreakerConfig()
+        self._state = CircuitState.CLOSED
+        self._failure_count: int = 0
+        self._success_count: int = 0
+        self._last_failure_time: float = 0.0
+        self._error_budget_consumed: int = 0
+        self._error_budget_reset: float = time.time()
+        self._lock = threading.Lock()
+
+    @property
+    def state(self) -> CircuitState:
+        with self._lock:
+            self._maybe_transition()
+            return self._state
+
+    def call(self) -> bool:
+        with self._lock:
+            self._maybe_transition()
+            if self._state == CircuitState.OPEN:
+                return False
+            return True
+
+    def record_success(self) -> None:
+        with self._lock:
+            if self._state == CircuitState.HALF_OPEN:
+                self._success_count += 1
+                if self._success_count >= self.config.success_threshold:
+                    self._state = CircuitState.CLOSED
+                    self._failure_count = 0
+            self._failure_count = 0
+
+    def record_failure(self) -> None:
+        with self._lock:
+            self._failure_count += 1
+            self._last_failure_time = time.time()
+            self._consume_error_budget()
+            if self._failure_count >= self.config.failure_threshold:
+                self._state = CircuitState.OPEN
+            elif self._state == CircuitState.HALF_OPEN:
+                self._state = CircuitState.OPEN
+
+    def force_open(self) -> None:
+        with self._lock:
+            self._state = CircuitState.OPEN
+
+    def force_close(self) -> None:
+        with self._lock:
+            self._state = CircuitState.CLOSED
+            self._failure_count = 0
+            self._success_count = 0
+
+    def _maybe_transition(self) -> None:
+        if self._state != CircuitState.OPEN:
+            return
+        if self._last_failure_time == 0.0:
+            return
+        elapsed = time.time() - self._last_failure_time
+        if elapsed >= self.config.cooldown_seconds:
+            self._state = CircuitState.HALF_OPEN
+            self._success_count = 0
+
+    def _consume_error_budget(self) -> None:
+        now = time.time()
+        if now - self._error_budget_reset > 3600:
+            self._error_budget_consumed = 0
+            self._error_budget_reset = now
+        self._error_budget_consumed += 1
+
+    @property
+    def error_budget_remaining(self) -> int:
+        return max(0, self.config.error_budget_per_hour - self._error_budget_consumed)

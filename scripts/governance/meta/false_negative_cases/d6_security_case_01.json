@@ -1,0 +1,14 @@
+{
+  "case_id": "FN-006",
+  "dimension": "D6",
+  "description": "硬编码 API key — 已知缺陷：Python文件中包含明文API密钥",
+  "defect": {
+    "type": "file_create"
+  },
+  "target_path": "scripts/_test_api_key_leak.py",
+  "defect_content": "API_KEY = \"sk-1234567890abcdef1234567890abcdef\"\n\ndef main():\n    pass\n",
+  "verifier": "d6_security/detect_secret_leaks.py",
+  "expected_finding_id": "D6-SECRET-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

@@ -6,8 +6,8 @@ import uuid
 from datetime import datetime, timezone
 
 from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class _EqualWeightTestSynthesizer(SignalSynthesizerBase):

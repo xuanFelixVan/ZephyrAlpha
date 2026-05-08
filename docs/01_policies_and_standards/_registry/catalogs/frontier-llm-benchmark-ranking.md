@@ -37,7 +37,7 @@ depends_on: []
 
 ## 核心数据（精简版——完整版见场外草稿原件）
 
-> ⚠️ 本文件仅保留与目前活跃模型（DeepSeek V4 Pro / GLM / Claude Opus 4.7）直接相关的核心评分。完整版（含全部 14 款模型详细基准数据）保存在场外草稿原件 `D:\ZephyrAlpha\模块候选池\prompt库\DOS\intelligence\benchmark-ranking.md`。
+> ⚠️ 本文件仅保留与目前活跃模型（DeepSeek V4 Pro / GLM / Claude Opus 4.7）直接相关的核心评分。完整版（含全部 14 款模型详细基准数据）记录在场外草稿原件。
 
 ### 活跃模型核心评分（10 分制）
 

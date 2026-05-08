@@ -10,6 +10,4 @@ from zephyr.l13_experimentation.implementations.default_experiment_pipeline impo
     DefaultExperimentPipeline,
 )
 
-__all__ = [
-    "DefaultExperimentPipeline",
-]
+__all__ = ['DefaultExperimentPipeline', 'default_experiment_pipeline']

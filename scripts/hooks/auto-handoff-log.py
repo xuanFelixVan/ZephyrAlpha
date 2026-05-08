@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+import os
 import argparse
 import subprocess
 import sys
@@ -228,7 +229,15 @@ def main() -> None:
     # 4. 写入文件
     filename: str = f"handoff-{now.strftime('%Y%m%d-%H%M%S')}.md"
     output_path: Path = HANDOFF_DIR / filename
-    output_path.write_text(markdown, encoding="utf-8")
+    tmp_path = f"{output_path}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(markdown, encoding="utf-8")
+        os.replace(tmp_path, output_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
     # 5. 终端打印摘要
     print("=" * 60)

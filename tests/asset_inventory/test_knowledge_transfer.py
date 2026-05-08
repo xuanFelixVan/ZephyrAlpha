@@ -1,0 +1,24 @@
+"""Tests for MOD-INF-026 §30 Knowledge Transfer module."""
+
+from pathlib import Path
+
+from zephyr.asset_inventory.knowledge_transfer import KnowledgeTransferGate
+
+
+class TestKnowledgeTransferGate:
+    def test_constructor(self) -> None:
+        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        assert gate._root
+
+    def test_generate_summary(self) -> None:
+        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        summary = gate.generate_summary()
+        assert isinstance(summary, str)
+        assert len(summary) > 0
+
+    def test_write_handoff(self, tmp_path) -> None:
+        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        path = gate.write_handoff(tmp_path / "_asset_handoff.txt")
+        assert path.exists()
+        content = path.read_text(encoding="utf-8")
+        assert "ZephyrAlpha" in content

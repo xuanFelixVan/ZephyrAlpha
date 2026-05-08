@@ -9,8 +9,9 @@ DB = Path(r"D:\ZephyrAlpha\data\zalpha_metadata.db")
 from zephyr.db.task_repo import (
     TaskRepository, P0InflationFrozenError, P0InflationWarning,
 )
-from zephyr.shared.schemas import Task, TaskStatus, TaskNamespace
-from zephyr.shared.schemas import Priority as P
+from zephyr.core.models import TaskCard
+from zephyr.shared.schema.schemas import TaskStatus, TaskNamespace
+from zephyr.shared.schema.schemas import Priority as P
 
 repo = TaskRepository(enable_gate=False)
 now = datetime.now(timezone.utc)
@@ -18,7 +19,7 @@ now = datetime.now(timezone.utc)
 def mt(suffix, priority=P.P2, tags=None):
     """make test task"""
     seq = 99900 + suffix
-    return Task(
+    return TaskCard(
         task_id=f"CP-{seq:05d}",
         namespace=TaskNamespace.CP,
         seq=seq,
@@ -28,7 +29,9 @@ def mt(suffix, priority=P.P2, tags=None):
         phase=9,
         execution_model="deepseek",
         safety_level="M",
-        directive="test",
+        source_blueprint="test",
+        source_section="test",
+        description=f"Test task {suffix}",
         tags=tags or [],
         created_at=now,
         updated_at=now,
@@ -65,7 +68,7 @@ with warnings.catch_warnings(record=True) as w:
 # --- Test 2: block_sessions_count ---
 print("\n[Test 2] block_sessions_count increment...")
 t2 = mt(2)
-repo.create(t2)
+repo.upsert(t2)
 repo.transition(t2.task_id, TaskStatus.IN_PROGRESS)
 repo.transition(t2.task_id, TaskStatus.BLOCKED, waiting_for="test")
 after_b1 = repo.get(t2.task_id)

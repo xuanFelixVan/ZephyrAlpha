@@ -12,7 +12,7 @@ from zephyr.orchestrator.file_task_mapper import (
     FileTaskMapper,
     classify_file_to_namespace,
 )
-from zephyr.shared.schemas import TaskNamespace
+from zephyr.shared.schema.schemas import TaskNamespace
 
 
 @pytest.fixture

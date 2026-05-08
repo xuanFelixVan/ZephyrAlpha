@@ -6,6 +6,10 @@ validate_ssot_status.py —— SSoT frontmatter status 字段枚举白名单（�
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -37,6 +41,7 @@ _STATUS_RE = re.compile(r"^status:\s*(.+)$", re.MULTILINE)
 
 
 def check_file(filepath: Path) -> tuple[list[str], list[str]]:
+    """Check compliance and report findings."""
     content = filepath.read_text(encoding="utf-8")
     fm_match = _FRONTMATTER_RE.match(content)
     if not fm_match:
@@ -58,6 +63,7 @@ def check_file(filepath: Path) -> tuple[list[str], list[str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--ci", action="store_true")
     parser.add_argument("--warn-only", action="store_true")
@@ -82,7 +88,7 @@ def main() -> int:
 
     if not errors and not warns:
         print("OK: 所有 frontmatter status 字段合法")
-        return 0
+        return EXIT_PASS
 
     for e in errors:
         print(f"ERROR: {e}")
@@ -92,12 +98,12 @@ def main() -> int:
     if errors:
         if args.warn_only:
             print(f"WARN: {len(errors)} 个非法 status + {len(warns)} 个大小写告警")
-            return 0
+            return EXIT_PASS
         print(f"FAIL: {len(errors)} 个非法 status——禁止提交")
-        return 1
+        return EXIT_FINDINGS
 
     print(f"OK: 无非法 status（{len(warns)} 个大小写告警，不影响提交）")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

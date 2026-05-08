@@ -1,0 +1,76 @@
+# G9: 四蓝图跨模块集成合规门禁
+# 机械检查四大系统（knowledge-base / agent-rbac / agent-spec / audit-trail）
+# 与 Pipeline 核心引擎的 import 连线是否完整。
+#
+# 规则：施工完成的模块 MUST 在至少一个核心入口模块中被 import 和使用。
+
+gate_id: G9
+title: Four-Blueprint Cross-Module Integration Compliance
+category: governance
+version: "0.1.0"
+enforcement: hard
+runs_on: [build, deploy, audit]
+
+description: |
+  机械验证四个关键蓝图系统与 Pipeline 的跨模块集成链路。
+  不通过 = 存在孤立模块 = 不允许通过 CI。
+
+checks:
+  - check_id: G9-CHK-001
+    title: agent-rbac 已集成到 Pipeline
+    rule: >
+      src/zephyr/pipeline/pipeline_orchestrator.py MUST import from zephyr.agent_rbac
+      OR from zephyr.governance.escalation.rbac_bridge
+    grep_pattern: "(from zephyr\\.agent_rbac|from zephyr\\.governance\\.escalation\\.rbac_bridge)"
+    target_file: src/zephyr/pipeline/pipeline_orchestrator.py
+    severity: ERROR
+
+  - check_id: G9-CHK-002
+    title: audit-trail 已集成到 Pipeline
+    rule: >
+      src/zephyr/pipeline/pipeline_orchestrator.py MUST import from zephyr.audit_trail
+    grep_pattern: "from zephyr\\.audit_trail"
+    target_file: src/zephyr/pipeline/pipeline_orchestrator.py
+    severity: ERROR
+
+  - check_id: G9-CHK-003
+    title: knowledge-base 可被外部访问
+    rule: >
+      至少一个外部模块 import zephyr.kb (MCP 服务端或其他桥接)
+    grep_pattern: "from zephyr\\.kb"
+    target_dir: src/zephyr/pipeline/
+    severity: WARNING
+
+  - check_id: G9-CHK-004
+    title: agent-spec 有 CLI 入口
+    rule: >
+      src/zephyr/agent_spec/__main__.py MUST exist
+    target_file: src/zephyr/agent_spec/__main__.py
+    check_type: file_exists
+    severity: ERROR
+
+  - check_id: G9-CHK-005
+    title: agent-spec 可被导入
+    rule: >
+      zephyr.agent_spec package MUST be importable (no broken imports)
+    check_type: import_test
+    import_target: zephyr.agent_spec
+    severity: ERROR
+
+  - check_id: G9-CHK-006
+    title: AuditWriter.write() 有调用方
+    rule: >
+      At least one file outside audit_trail/ MUST call AuditWriter or _write_audit_event
+    grep_pattern: "(AuditWriter|_write_audit|_audit_writer)"
+    target_file: src/zephyr/pipeline/pipeline_orchestrator.py
+    severity: ERROR
+
+  - check_id: G9-CHK-007
+    title: blueprint status 与 construction_progress 一致
+    rule: >
+      construction_plan=phase_2_complete → blueprint.status=Active (全自动化，零人工介入)
+    check_type: script
+    script: python scripts/governance/sync_blueprint_status.py
+    expect_exit_code: 0
+    expect_output: "CLEAN"
+    severity: ERROR

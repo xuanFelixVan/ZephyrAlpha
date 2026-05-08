@@ -16,12 +16,12 @@ modules:
     priority: P2
     runtime_plane: cold
     description: 实验性策略与因子研究（沙盒）；批量实验，不接触真实资金，Cold batch
-    boundary_note: "l09 是探索性研究沙盒（假设生成、因子筛选），l13 是受控实验框架（shadow/C-C/A/B 验证）。l09 产出候选策略，l13 验证策略。两者不重叠。"
+    boundary_note: "l09 是探索性研究沙盒（假设生成、因子筛选），l13 是受控实验框架（shadow/C-C/A/B 验证）。l09 产出候选策略，l13 验证策略。两者不重叠�?
     interfaces:
       - contract_id: CTR-001
         role: consumer
         description: 消费 NormalizedMarketData 用于实验性因子与策略研究
-    adr_ref: []
+    kb_ref: []
 
   - id: l09-notebooks
     name: Research Notebooks
@@ -31,7 +31,7 @@ modules:
     runtime_plane: warm
     description: 研究 notebooks 与探索性分析入口；交互式研究工作台（Jupyter 等），Warm 交互
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
   - id: l09-prototypes
     name: Concept Prototypes
@@ -39,9 +39,9 @@ modules:
     status: planned
     priority: P2
     runtime_plane: warm
-    description: 升格到 L02–L07 前的概念验证原型；探索性功能孵化，Warm 实验运行
+    description: 升格�?L02–L07 前的概念验证原型；探索性功能孵化，Warm 实验运行
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
 summary:
   total: 3

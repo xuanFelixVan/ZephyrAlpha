@@ -1,0 +1,21 @@
+---
+module_id: KE-module_blu-10_3_ci-000
+title: 10.3 CI门禁集成测试触发条件
+category: module_blueprint
+---
+
+# 10.3 CI门禁集成测试触发条件
+
+10.3 CI门禁集成测试触发条件
+
+| GATE | 触发条件 | 覆盖的CT-* |
+|:---:|---------|----------|
+| GATE-IT-1 | 每次 push / PR | CT-ORC-*, CT-SCRIPT-*, CT-FLE-* |
+| GATE-IT-2 | Phase D 全链路完成后每日跑 | 全部54个CT-* |
+| GATE-IT-3 | LSG相关代码变更时触发 | CT-CE-LSG-001 |
+| GATE-IT-SMOKE | pre-commit快速冒烟 | CT-ORC-SCRIPT-001, CT-SCRIPT-GATE-001 |
+| GATE-IT-HEALTH | 启动/重启后 | CT-HEALTH-001, CT-STARTUP-001 |
+| GATE-IT-SEC | Capability/RBAC变更时 | CT-CBAC-001 |
+
+---
+---

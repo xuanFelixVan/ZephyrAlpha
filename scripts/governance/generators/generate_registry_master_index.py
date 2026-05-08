@@ -14,6 +14,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import argparse
 import sys
 from datetime import UTC, datetime
@@ -22,7 +23,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.registry_entry_count import count_primary_registry_entries
@@ -52,6 +53,7 @@ CATEGORY_FROM_DOC_TYPE = {
 
 
 def extract_registry_info(yaml_path: Path) -> dict | None:
+    """extract_registry_info implementation."""
     content = yaml_path.read_text(encoding="utf-8")
 
     # BOM 免疫：部分文件可能含 UTF-8 BOM — 导致注释解析器在首行就 break
@@ -123,6 +125,7 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
 
 
 def scan_catalogs() -> list[dict]:
+    """scan_catalogs implementation."""
     registries = []
     skipped = []
     for yf in sorted(CATALOGS_DIR.glob("*.yaml")):
@@ -147,6 +150,7 @@ def scan_catalogs() -> list[dict]:
 
 
 def generate() -> dict:
+    """generate implementation."""
     registries = scan_catalogs()
     return {
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -158,6 +162,7 @@ def generate() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
     parser = argparse.ArgumentParser(description="从 _registry/ YAML frontmatter 自动生成总索引")
     parser.add_argument("--check", action="store_true", help="检测漂移")
@@ -171,16 +176,24 @@ def main() -> None:
         ex_regs = existing.get("registries", [])
         if len(ex_regs) != result["total_registries"]:
             print(f"DRIFT: 磁盘 {len(ex_regs)} 张登记表 ≠ 生成 {result['total_registries']} 张")
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
         print("OK: 登记表总索引与实际一致")
         return
 
-    with open(args.output, "w", encoding="utf-8") as f:
-        f.write(f"# 自动生成于 {result['generated_at']}\n")
-        f.write("# 来源: _registry/catalogs/*.yaml frontmatter\n")
-        f.write("# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n")
-        yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+    tmp_path = f"{args.output}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            f.write(f"# 自动生成于 {result['generated_at']}\n")
+            f.write("# 来源: _registry/catalogs/*.yaml frontmatter\n")
+            f.write("# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n")
+            yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+        os.replace(tmp_path, args.output)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"已生成 {result['total_registries']} 张登记表索引 → {args.output}")
 
 

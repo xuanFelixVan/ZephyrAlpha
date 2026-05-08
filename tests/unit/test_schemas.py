@@ -19,7 +19,7 @@ from typing import Any
 
 import pytest
 from pydantic import ValidationError
-from zephyr.shared.schemas import (
+from zephyr.shared.schema.schemas import (
     BASE_CONFIG,
     AuditFinding,
     AuditReport,

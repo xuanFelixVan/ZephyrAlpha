@@ -31,11 +31,11 @@ from zephyr.db.task_repo import (
     allowed_transitions,
     is_terminal,
 )
-from zephyr.shared.schemas import (
+from zephyr.core.models import TaskCard
+from zephyr.shared.schema.schemas import (
     Classification,
     EvolutionPolicy,
     SafetyLevel,
-    Task,
     TaskNamespace,
     TaskStatus,
 )
@@ -50,14 +50,14 @@ def _make_task(
     namespace: TaskNamespace = TaskNamespace.SRC,
     seq: int | None = None,
     session_id: str | None = None,
-) -> Task:
+) -> TaskCard:
     now = datetime.now(_UTC)
     if seq is None:
         try:
             seq = int(task_id.split("-")[1])
         except (IndexError, ValueError):
             seq = 1
-    return Task(
+    return TaskCard(
         task_id=task_id,
         namespace=namespace,
         seq=seq,
@@ -66,11 +66,12 @@ def _make_task(
         status=status,
         execution_model="claude",
         safety_level=SafetyLevel.M,
-        directive="313+999",
-        idempotent=True,
         classification=Classification.INTERNAL,
         evolution_policy=EvolutionPolicy.EXTENDABLE,
         estimate_hours=1.0,
+        source_blueprint="test",
+        source_section="test",
+        description=f"Task {task_id}",
         session_id=session_id,
         created_at=now,
         updated_at=now,
@@ -133,7 +134,7 @@ class TestCreate:
 
     def test_create_with_dependencies(self, repo: TaskRepository) -> None:
         now = datetime.now(_UTC)
-        t = Task(
+        t = TaskCard(
             task_id="SRC-4",
             namespace=TaskNamespace.SRC,
             seq=4,
@@ -141,7 +142,9 @@ class TestCreate:
             title="Depends Task",
             execution_model="claude",
             safety_level=SafetyLevel.H,
-            directive="313",
+            source_blueprint="test",
+            source_section="test",
+            description="Depends Task",
             depends_on=["SRC-5", "SRC-6"],
             created_at=now,
             updated_at=now,
@@ -286,7 +289,7 @@ class TestTransition:
     def test_invalid_transition_raises(self, repo: TaskRepository, from_s: str, to_s: str) -> None:
         now = datetime.now(_UTC)
         tid = "SRC-900"
-        t = Task(
+        t = TaskCard(
             task_id=tid,
             namespace=TaskNamespace.SRC,
             seq=900,
@@ -295,7 +298,9 @@ class TestTransition:
             status=TaskStatus(from_s),
             execution_model="claude",
             safety_level=SafetyLevel.M,
-            directive="",
+            source_blueprint="test",
+            source_section="test",
+            description="Test task for transition",
             created_at=now,
             updated_at=now,
         )
@@ -381,7 +386,7 @@ class TestList:
             ]
         ):
             now = datetime.now(_UTC)
-            t = Task(
+            t = TaskCard(
                 task_id=f"SRC-{100 + i}",
                 namespace=TaskNamespace.SRC,
                 seq=100 + i,
@@ -390,7 +395,9 @@ class TestList:
                 status=status,
                 execution_model="claude",
                 safety_level=SafetyLevel.L,
-                directive="",
+                source_blueprint="test",
+                source_section="test",
+                description=f"Test task {i}",
                 session_id="sess-seed" if i < 3 else None,
                 created_at=now,
                 updated_at=now,
@@ -440,7 +447,7 @@ class TestUpsert:
     def test_upsert_update(self, repo: TaskRepository) -> None:
         repo.upsert(_make_task("SRC-61"))
         now = datetime.now(_UTC)
-        updated = Task(
+        updated = TaskCard(
             task_id="SRC-61",
             namespace=TaskNamespace.SRC,
             seq=61,
@@ -449,7 +456,9 @@ class TestUpsert:
             status=TaskStatus.VERIFIED,
             execution_model="claude",
             safety_level=SafetyLevel.H,
-            directive="999",
+            source_blueprint="test",
+            source_section="test",
+            description="Updated Name",
             created_at=now,
             updated_at=now,
         )

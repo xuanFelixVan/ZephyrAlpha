@@ -39,7 +39,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 SKIP_MODULES = {
     "l03_signal_generation",
@@ -55,14 +55,17 @@ SKIP_MODULES = {
 }
 
 def _is_public(name: str) -> bool:
+    """_is_public implementation."""
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
 
 def _has_return_annotation(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    """_has_return_annotation implementation."""
     return node.returns is not None
 
 def _missing_param_annotations(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
+    """_missing_param_annotations implementation."""
     missing = []
     for arg in node.args.args:
         if arg.arg == "self":
@@ -157,7 +160,7 @@ def main() -> None:
         print(f"\n[TYPE-ANNOT] 全部 {total_files} 文件类型注解完整 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

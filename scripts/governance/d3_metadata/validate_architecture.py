@@ -5,6 +5,10 @@ docs/01_policies_and_standards/ for directory compliance, frontmatter fields,
 and doc_type / rule_form consistency.
 """
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -35,7 +39,7 @@ def main() -> int:
 
     if not contract_path.exists():
         print("WARN: architecture-contract.yaml not found, baseline pass")
-        return 0
+        return EXIT_PASS
 
     with open(contract_path, encoding="utf-8") as f:
         contract = yaml.safe_load(f)
@@ -43,7 +47,7 @@ def main() -> int:
     scan_dir = _PROJ / "docs" / "01_policies_and_standards"
     if not scan_dir.exists():
         print("WARN: scan directory not found")
-        return 0
+        return EXIT_PASS
 
     for fpath in scan_dir.rglob("*.md"):
         try:
@@ -72,10 +76,10 @@ def main() -> int:
 
     if errors:
         print(f"\nFAIL: {errors} architecture compliance issue(s)")
-        return 1
+        return EXIT_FINDINGS
 
     print("OK: Architecture compliance validation passed")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

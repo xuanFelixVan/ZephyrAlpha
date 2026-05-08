@@ -32,7 +32,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 import yaml
-from _shared.constants import MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -123,7 +123,7 @@ def main() -> None:
             print(f"  [{name}] exit={rc}: {msg[:150]}", file=sys.stderr)
     print(file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings or errors or compile_errors else 0)
 
 if __name__ == "__main__":

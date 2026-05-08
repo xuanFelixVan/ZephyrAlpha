@@ -25,7 +25,7 @@ depends_on:
   - {target: ADR-0014, at: "$", why: "模块准入原则——HC-1/HC-2/HC-3 基于准入铁律"}
 supersedes: null
 source:
-  origin_doc: "模块候选池/开发流程/开发流程七合一方案.md"
+  origin_doc: "场外草稿原件（已归档）"
   origin_section: "§7.4 AI 幻觉检测启发式规则集"
   origin_version: "v2.2.0"
   extraction_date: "2026-05-04"

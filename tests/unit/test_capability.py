@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from zephyr.shared.capability import (
+from zephyr.shared.security.capability import (
     Capability,
     CapabilityDenied,
     CapabilityRegistry,
@@ -45,7 +45,7 @@ class TestCapabilityRegistry:
             """),
             encoding="utf-8",
         )
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             registry = CapabilityRegistry()
             assert len(registry.capabilities) == 1
             assert registry.capabilities[0].name == "write_src"
@@ -53,7 +53,7 @@ class TestCapabilityRegistry:
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_missing_yaml(self, tmp_path: Path):
         yaml_path = tmp_path / "nonexistent.yaml"
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             registry = CapabilityRegistry()
             assert len(registry.capabilities) == 0
 
@@ -64,7 +64,7 @@ class TestCapabilityRegistry:
             "rules:\n  - name: test\n    allow: []\n    deny: []\n",
             encoding="utf-8",
         )
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             r1 = CapabilityRegistry()
             r2 = CapabilityRegistry()
             assert r1 is r2
@@ -76,7 +76,7 @@ class TestCapabilityRegistry:
             "rules:\n  - name: test\n    allow: []\n    deny: []\n",
             encoding="utf-8",
         )
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             r1 = CapabilityRegistry()
             CapabilityRegistry.reset()
             r2 = CapabilityRegistry()
@@ -87,7 +87,8 @@ class TestCapabilityCheck:
     def _make_registry(self, tmp_path: Path, rules_yaml: str) -> CapabilityRegistry:
         yaml_path = tmp_path / "capabilities.yaml"
         yaml_path.write_text(rules_yaml, encoding="utf-8")
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        CapabilityRegistry.reset()
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             return CapabilityRegistry()
 
     def test_allow_match(self, tmp_path: Path):
@@ -148,7 +149,7 @@ class TestCapabilityCheck:
             """),
             encoding="utf-8",
         )
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", yaml_path):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             with pytest.raises(CapabilityDenied) as exc_info:
                 capability_check("write", "src/zephyr/l04_risk_management/stop_loss.py")
             assert "write_src" in str(exc_info.value)

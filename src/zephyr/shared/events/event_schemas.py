@@ -34,8 +34,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.shared.observer import EventType
-from zephyr.shared.schemas import BASE_CONFIG, TaskStatus
+from zephyr.shared.infra.observer import EventType
+from zephyr.shared.schema.schemas import BASE_CONFIG, TaskStatus
 
 __all__ = [
     "FileEventPayload",

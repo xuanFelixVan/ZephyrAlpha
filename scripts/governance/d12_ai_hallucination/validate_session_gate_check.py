@@ -32,7 +32,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -79,12 +79,12 @@ def main() -> None:
     log_path = find_latest_session_log()
     if not log_path:
         print("[GATE-CHECK] 未找到 Session Log，跳过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     try:
         content = log_path.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
         print("[GATE-CHECK] 无法读取 Session Log", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     findings = []
     gate_match = re.search("```yaml\\s*\\n(gate_check:.*?)```", content, re.DOTALL)
     if not gate_match:
@@ -111,7 +111,7 @@ def main() -> None:
     else:
         print(f"[GATE-CHECK] 门禁检查完整（{log_path.name}）", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
 

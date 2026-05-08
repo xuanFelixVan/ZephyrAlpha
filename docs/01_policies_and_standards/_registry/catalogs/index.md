@@ -31,7 +31,7 @@ ai_autonomy: human_gated
 |------|:---:|------|:---:|
 | `registry-master-index.yaml` | 总索引 | 登记表总索引——`total_registries` / `registries[]` 以本文件为准（**勿写死**） | manual |
 | `document-metadata-index.yaml` | 注册表 | 与 `rule-catalog.yaml` 同步的规则树元数据索引（**141** 条，以生成器为准） | auto |
-| `adr-status-registry.yaml` | 登记表 | ADR 状态登记表（**冻结壳**；活跃决策见 KB / rationale） | manual |
+| `adr-status-registry.yaml` | 登记表 | ~~ADR 状态登记表~~（**已删除**；真源迁移至 KB，见 KE-governance-adr_registry_migration-000） | ~~manual~~ |
 | `task-card-meta-registry.yaml` | 注册表 | 三套任务卡系统元层管理 | manual |
 | `infrastructure-registry.yaml` | 登记表 | **9** 个运行时基础设施组件（以 `total_registered` 为准） | manual |
 | `cross-module-dependency-registry.yaml` | 登记表 | 5条跨模块依赖——含正反向双图 | semi_auto |

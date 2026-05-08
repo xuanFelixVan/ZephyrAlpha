@@ -66,14 +66,14 @@ from zephyr.pipeline.backpressure_manager import BackpressureManager, emit_pause
 from zephyr.shared.contracts.backpressure.pause import BackpressurePause
 from zephyr.shared.contracts.backpressure.resume import BackpressureResume
 from zephyr.shared.contracts.backpressure.throttle import BackpressureThrottle
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.market_data import NormalizedMarketData
-from zephyr.shared.contracts.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.position import PositionSnapshot
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.market.market_data import NormalizedMarketData
+from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.core.trace_context import TraceContext
 
 ALL_SYMBOLS = [
     "600519", "000858", "601318", "600036", "000333",

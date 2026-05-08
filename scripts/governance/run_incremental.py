@@ -8,6 +8,10 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -45,7 +49,7 @@ if __name__ == "__main__":
     changed = _get_changed_files(args.diff_ref)
     if not changed:
         print(f"git diff {args.diff_ref} 无变更，跳过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     dims = _map_files_to_dimensions(changed)
     registry = _get_registry()

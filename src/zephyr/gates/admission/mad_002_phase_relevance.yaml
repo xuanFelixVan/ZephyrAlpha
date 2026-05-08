@@ -29,7 +29,7 @@ rules:
 
   - rule_id: MAD-002-R2
     name: load_bearing_dependency
-    description: "如果模块声称是承重墙依赖，MUST 提供被依赖模块清单和 ADR"
+    description: "如果模块声称是承重墙依赖，MUST 提供被依赖模块清单和 KB 决策记录"
     enforcement: REJECT
     check: >
       if is_load_bearing:
@@ -46,6 +46,6 @@ rules:
 
   - rule_id: MAD-002-R4
     name: current_phase_context
-    description: "当前活跃阶段上下文中，模块提案必须引用具体蓝图文档"
+    description: "当前活跃阶段上下文中，模块提案必须引用具体蓝图或 KB 决策记录文档"
     enforcement: WARN
-    check: proposal must reference at least one blueprint or ADR document
+    check: proposal must reference at least one blueprint or KB decision document

@@ -1,0 +1,196 @@
+{
+  "$schema": "./mcp.schema.json",
+  "version": "1.0.0",
+  "description": "MCP Gateway + 9 Server 集中式配置（MOD-INF-013 §12 SSoT）",
+
+  "gateway": {
+    "server_id": "mcp_gateway",
+    "version": "1.0.0",
+    "description": "MCP Gateway — 集中式治理节点（Auth/ACL + RateLimit + Route + Audit + Degrade）"
+  },
+
+  "servers": {
+    "task_manager": {
+      "module": "task_manager_server",
+      "server_id": "task_manager",
+      "transport": "FastMCP",
+      "tool_prefix": "task_manager.",
+      "tool_count": 6,
+      "safety_level": ["L", "M", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 }
+    },
+    "knowledge_base": {
+      "module": "knowledge_base_server",
+      "server_id": "knowledge_base",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "knowledge_base.",
+      "tool_count": 6,
+      "safety_level": ["L", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 }
+    },
+    "gate_engine": {
+      "module": "gate_engine_server",
+      "server_id": "gate_engine",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "gate_engine.",
+      "tool_count": 8,
+      "safety_level": ["L", "M", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 }
+    },
+    "session_handoff": {
+      "module": "doc_guard_server",
+      "server_id": "session_handoff",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "session_handoff.",
+      "tool_count": 5,
+      "safety_level": ["L", "M", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 },
+      "note": "module_name != server_id（doc_guard_server.py → session_handoff）"
+    },
+    "intent_router": {
+      "module": "sentinel_server",
+      "server_id": "intent_router",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "intent_router.",
+      "tool_count": 4,
+      "safety_level": ["L", "M"],
+      "rate_limit": { "default_qps": 10, "burst": 30 },
+      "note": "module_name != server_id（sentinel_server.py → intent_router）"
+    },
+    "blueprint_search": {
+      "module": "blueprint_search_server",
+      "server_id": "blueprint_search",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "blueprint_search.",
+      "tool_count": 2,
+      "safety_level": ["L"],
+      "rate_limit": { "default_qps": 30, "burst": 60 }
+    },
+    "sandbox": {
+      "module": "sandbox_server",
+      "server_id": "sandbox",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "sandbox.",
+      "tool_count": 2,
+      "safety_level": ["H"],
+      "rate_limit": { "default_qps": 2, "burst": 10 },
+      "status": "implemented",
+      "note": "安全代码执行沙箱——subprocess 隔离，2 工具(sandbox.execute + sandbox.health_check)"
+    },
+    "governance": {
+      "module": "governance_server",
+      "server_id": "governance",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "governance.",
+      "tool_count": 5,
+      "safety_level": ["L", "M", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 },
+      "status": "implemented",
+      "note": "治理域统一MCP入口——PhaseGate/Audit/Lock/Contract/Health 五工具"
+    },
+    "vector_memory": {
+      "module": "vector_memory_server",
+      "server_id": "vector_memory",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "vector_memory.",
+      "tool_count": 5,
+      "safety_level": ["L", "H"],
+      "rate_limit": { "default_qps": 10, "burst": 30 },
+      "status": "implemented",
+      "note": "VMS 向量记忆 MCP Server——search/write/recall/list_collections/health_check 五工具 (MOD-INF-011 v0.7.0)"
+    }
+  },
+
+  "rate_limit": {
+    "default_qps": 10,
+    "default_burst": 30,
+    "retry_after_header": true,
+    "per_tool_buckets": true
+  },
+
+  "circuit_breaker": {
+    "failure_threshold": 3,
+    "recovery_timeout_seconds": 30,
+    "half_open_probe_limit": 1
+  },
+
+  "audit": {
+    "enabled": true,
+    "log_all_tools_call": true,
+    "arguments_hash_sha256": true,
+    "log_dir": "logs/mcp_audit"
+  },
+
+  "auth": {
+    "enabled": true,
+    "rbac_source": "MOD-INF-018",
+    "default_role": "reader",
+    "acl_by_server": {
+      "task_manager": {
+        "reader": ["task_manager.list", "task_manager.get", "task_manager.health_check"],
+        "operator": ["task_manager.list", "task_manager.get", "task_manager.create", "task_manager.update", "task_manager.health_check"],
+        "admin": ["task_manager.list", "task_manager.get", "task_manager.create", "task_manager.update", "task_manager.delete", "task_manager.health_check"]
+      },
+      "knowledge_base": {
+        "reader": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.health_check"],
+        "operator": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.write", "knowledge_base.health_check"],
+        "admin": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.write", "knowledge_base.delete", "knowledge_base.reindex", "knowledge_base.health_check"]
+      },
+      "gate_engine": {
+        "reader": ["gate_engine.list_gates", "gate_engine.get_result", "gate_engine.health_check"],
+        "operator": ["gate_engine.list_gates", "gate_engine.get_result", "gate_engine.evaluate", "gate_engine.health_check"],
+        "admin": ["gate_engine.list_gates", "gate_engine.get_result", "gate_engine.evaluate", "gate_engine.override", "gate_engine.reload", "gate_engine.simulate", "gate_engine.health_check", "gate_engine.bypass"]
+      },
+      "session_handoff": {
+        "reader": ["session_handoff.load", "session_handoff.health_check"],
+        "operator": ["session_handoff.load", "session_handoff.save", "session_handoff.validate", "session_handoff.health_check"],
+        "admin": ["session_handoff.load", "session_handoff.save", "session_handoff.validate", "session_handoff.cleanup", "session_handoff.health_check"]
+      },
+      "intent_router": {
+        "reader": ["intent_router.classify", "intent_router.health_check"],
+        "operator": ["intent_router.classify", "intent_router.route", "intent_router.health_check"],
+        "admin": ["intent_router.classify", "intent_router.route", "intent_router.train", "intent_router.health_check"]
+      },
+      "blueprint_search": {
+        "reader": ["blueprint_search.find", "blueprint_search.health_check"],
+        "operator": ["blueprint_search.find", "blueprint_search.health_check"],
+        "admin": ["blueprint_search.find", "blueprint_search.index", "blueprint_search.health_check"]
+      },
+      "sandbox": {
+        "reader": [],
+        "operator": ["sandbox.health_check"],
+        "admin": ["sandbox.execute", "sandbox.health_check"]
+      },
+      "governance": {
+        "reader": ["governance.health_check", "governance.list_contracts"],
+        "operator": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock"],
+        "admin": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock", "governance.acquire_lock"]
+      },
+      "vector_memory": {
+        "reader": ["vector_memory.search", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"],
+        "operator": ["vector_memory.search", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"],
+        "admin": ["vector_memory.search", "vector_memory.write", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"]
+      }
+    },
+    "roles": {
+      "reader": {
+        "description": "Read-only access to L/M safety tools",
+        "inherits": []
+      },
+      "operator": {
+        "description": "Read + write for L/M safety tools, read for H tools",
+        "inherits": ["reader"]
+      },
+      "admin": {
+        "description": "Full access to all tools including H safety level",
+        "inherits": ["operator"]
+      }
+    },
+    "role_assignment": {
+      "ai_agent_default": "operator",
+      "human_owner": "admin",
+      "ci_pipeline": "operator",
+      "external_service": "reader"
+    }
+  }
+}

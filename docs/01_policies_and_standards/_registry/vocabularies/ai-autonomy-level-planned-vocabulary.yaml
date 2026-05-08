@@ -1,0 +1,52 @@
+# ai_autonomy_level_planned 受控词表
+# ZephyrAlpha 2.0 规划的 AI 自治等级唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 ai_autonomy_level_planned 字段的所有合法值（4 种）。
+# 用于规划模块未来期望的 AI 自治等级。
+#
+# 对标标准：
+#   - PS-STD-001 §10.7：规划的 AI 自治等级
+#   - ai-autonomy-authority-registry.md：全模块权限终表
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-021
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "ai_autonomy_level_planned 受控词表"
+status: active
+vocabulary_name: ai_autonomy_level_planned
+total_values: 4
+source: "PS-STD-001 §10.7"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.7"
+    why: "ai_autonomy_level_planned 受控词表定义真源"
+  - target: GOV-AI-001
+    at: "全表"
+    why: "模块级 AI 自治权限终表"
+
+values:
+  - value: l0
+    definition: "L0 无自治——AI 仅辅助建议，不执行任何操作"
+    ai_consumption: "AI 只能提供建议，所有操作必须由人类执行。适用于高度敏感模块。"
+    ai_keywords: ["L0", "无自治", "建议", "辅助", "人类执行"]
+
+  - value: l1
+    definition: "L1 低自治——AI 可执行读操作，写操作需审批"
+    ai_consumption: "AI 可以读取文件和生成报告，但任何写入操作都须经过人类审批。"
+    ai_keywords: ["L1", "低自治", "读操作", "写审批", "人类把关"]
+
+  - value: l2
+    definition: "L2 中自治——AI 可读写，关键操作需审批"
+    ai_consumption: "AI 可以执行常规读写操作，但关键操作（如删除、权限变更）仍须审批。"
+    ai_keywords: ["L2", "中自治", "读写", "关键审批", "半自主"]
+
+  - value: l3
+    definition: "L3 高自治——AI 全权自主操作"
+    ai_consumption: "AI 可以完全自主地执行所有操作，无需人类干预。适用于成熟稳定的模块。"
+    ai_keywords: ["L3", "高自治", "全权", "自主", "无需审批"]

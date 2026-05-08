@@ -1,0 +1,42 @@
+"""主题聚类器 — 噪声信号比·告警疲劳缓解."""
+
+from __future__ import annotations
+
+from collections import defaultdict
+
+
+class ThematicClusterer:
+    """重复组主题聚类——将50组重复归约到3-5个主题."""
+
+    def cluster(self, duplicate_groups: list[dict], max_clusters: int = 5) -> dict:
+        """元组→主题"""
+        themes: dict[str, list[dict]] = defaultdict(list)
+        for group in duplicate_groups:
+            members = group.get("members", [])
+            paths = [m[0] for m in members]
+            theme = self._classify(paths)
+            themes[theme].append(group)
+
+        top_themes = sorted(themes.items(), key=lambda x: len(x[1]), reverse=True)[:max_clusters]
+        total = sum(len(g) for _, g in top_themes)
+        noise_ratio = (len(duplicate_groups) - total) / max(len(duplicate_groups), 1)
+
+        return {
+            "themes": {t: len(g) for t, g in top_themes},
+            "total_clustered": total,
+            "noise_ratio": round(noise_ratio, 3),
+            "recommendation": f"Top {len(top_themes)} themes cover {total}/{len(duplicate_groups)} groups",
+        }
+
+    @staticmethod
+    def _classify(paths: list[str]) -> str:
+        combined = "/".join(paths).lower()
+        if "test" in combined:
+            return "Test Patterns"
+        if "shared" in combined:
+            return "Shared Library"
+        if any(kw in combined for kw in ("infrastructure", "l01_")):
+            return "Infrastructure"
+        if any(kw in combined for kw in ("pipeline", "workflow")):
+            return "Pipeline"
+        return "General"

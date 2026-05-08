@@ -14,6 +14,7 @@ CI 集成:
         run: python scripts/generate_pathway_registry.py --check
 """
 
+import os
 import argparse
 import re
 import sys
@@ -211,7 +212,15 @@ def cmd_write() -> None:
     """覆写 registry 文件。"""
     entries = scan_blueprints()
     content = generate_yaml(entries)
-    REGISTRY_FILE.write_text(content, encoding="utf-8")
+    tmp_path = f"{REGISTRY_FILE}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(content, encoding="utf-8")
+        os.replace(tmp_path, REGISTRY_FILE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"[OK] Written {len(entries)} modules to {REGISTRY_FILE}")
 
 

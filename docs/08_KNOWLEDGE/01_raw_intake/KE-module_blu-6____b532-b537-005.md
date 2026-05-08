@@ -1,0 +1,18 @@
+---
+module_id: KE-module_blu-6____b532-b537-005
+title: 6项盲点 B532-B537
+category: module_blueprint
+---
+
+# 6项盲点 B532-B537
+
+6项盲点 B532-B537
+
+| 盲点 | 问题 | 缓解 |
+|------|------|------|
+| B532 | Portfolio Risk——组合整体风险≠各策略独立风险之和 | Cov矩阵+VaR/CVaR |
+| B533 | Cross-Market——不同交易所不同API/规则 | Per-Market Adapter+Circuit Breaker |
+| B534 | Strategy Correlation——所有策略同一方向→伪多样化 | 相关性矩阵检测+强制多样化 |
+| B535 | Time-Zone Amplification——亚洲vs欧美开盘重叠 | 24h监控+时区感知调度 |
+| B536 | Regulatory Arbitrage——不能利用监管差异套利 | 合规检查→所有dispatch |
+| B537 | Market Making——AI加速做市→风险放大 | Rate Limiter+Position Limit |

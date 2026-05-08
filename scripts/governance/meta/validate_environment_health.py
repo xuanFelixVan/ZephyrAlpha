@@ -74,6 +74,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _check_python_version() -> dict:
+    """_check_python_version implementation."""
     current = sys.version_info[:2]
     ok = current >= MIN_PYTHON
     return {
@@ -85,6 +86,7 @@ def _check_python_version() -> dict:
 
 
 def _check_disk() -> dict:
+    """_check_disk implementation."""
     try:
         usage = os.statvfs(str(_REPO_ROOT)) if hasattr(os, "statvfs") else None
         if usage:
@@ -102,6 +104,7 @@ def _check_disk() -> dict:
 
 
 def _check_packages(dimension: str | None = None) -> dict:
+    """_check_packages implementation."""
     missing: list[str] = []
     dims_to_check = [dimension] if dimension else list(DIM_PACKAGES.keys())
 
@@ -125,6 +128,7 @@ def _check_packages(dimension: str | None = None) -> dict:
 
 
 def _check_dimension_requirements(dimension: str) -> dict:
+    """_check_dimension_requirements implementation."""
     req_file = _REQUIREMENTS_DIR / f"requirements-{dimension.lower()}.txt"
     if not req_file.exists():
         return {"check": f"dim_{dimension}_requirements", "passed": True, "note": "无专属 requirements"}
@@ -149,6 +153,7 @@ def _check_dimension_requirements(dimension: str) -> dict:
 
 
 def _check_dim_pool(dimension: str) -> dict:
+    """_check_dim_pool implementation."""
     if dimension in LIGHTWEIGHT_DIMS:
         pool = "lightweight"
     elif dimension in MEDIUM_DIMS:
@@ -159,6 +164,7 @@ def _check_dim_pool(dimension: str) -> dict:
 
 
 def install_dimension(dimension: str) -> dict:
+    """install_dimension implementation."""
     req_file = _REQUIREMENTS_DIR / f"requirements-{dimension.lower()}.txt"
     if not req_file.exists():
         return {"installed": False, "error": f"requirements 文件不存在: {req_file}"}
@@ -177,6 +183,7 @@ def install_dimension(dimension: str) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="脚本运行环境健康检查")
     parser.add_argument("--dimension", "-d", type=str, help="指定维度")
     parser.add_argument("--install", type=str, help="安装指定维度的 requirements")

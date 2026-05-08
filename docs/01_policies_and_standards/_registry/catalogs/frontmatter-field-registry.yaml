@@ -191,9 +191,10 @@ fields:
     stage: null
     enum_values:
       - {value: "public", description: "公开——可对外分享"}
+      - {value: "internal", description: "内部——仅项目成员可见"}
       - {value: "confidential", description: "保密——仅团队内部使用"}
     applicable_docs: []
-    description: "机密等级——二分法"
+    description: "机密等级——三分法"
     source: "PS-STD-001 §4.6"
     derived_from: "_registry/vocabularies/classification-vocabulary.yaml"
     note: ""
@@ -371,19 +372,23 @@ fields:
     type: array
     required: optional
     stage: null
-    enum_values: []
+    enum_values:
+      - {value: "synthesized", description: "综合——多来源知识综合而成"}
+      - {value: "referenced", description: "引用——直接引用外部知识"}
+      - {value: "transformed", description: "转化——从外部知识转化适配"}
     applicable_docs: []
     description: "横向知识来源——[{path, relationship, sections}]"
     source: "PS-STD-001 §10.17"
-    note: "relationship 枚举: synthesized / referenced / transformed"
+    derived_from: "_registry/vocabularies/derived-from-relationship-vocabulary.yaml"
+    note: ""
 
-  - field_name: related_adr
+  - field_name: related_kb_ref
     type: array
     required: optional
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "关联的 ADR 编号（如 [ADR-0011, ADR-0030]）"
+    description: "关联的 KB 决策记录编号（如 [ADR-0011, ADR-0030]）"
     source: "PS-STD-001 §10.9"
     note: ""
 
@@ -399,6 +404,7 @@ fields:
     applicable_docs: [policy, standard, operational_rule, register, protocol]
     description: "AI 自治权限——3 值（全小写）"
     source: "PS-STD-001 §4.5"
+    derived_from: "_registry/vocabularies/ai-autonomy-vocabulary.yaml"
     note: ""
 
   - field_name: safety_level
@@ -412,6 +418,7 @@ fields:
     applicable_docs: []
     description: "安全风险等级"
     source: "PS-STD-001 §10.10"
+    derived_from: "_registry/vocabularies/safety-level-vocabulary.yaml"
     note: ""
 
   - field_name: author_agent
@@ -427,7 +434,7 @@ fields:
   - field_name: governance_family
     type: enum
     required: optional
-    stage: null
+    stage: planned
     enum_values:
       - {value: "A", description: "家族 A——策略/标准类规则"}
       - {value: "B", description: "家族 B——操作性流程类规则"}
@@ -436,12 +443,13 @@ fields:
     applicable_docs: [policy, standard, operational_rule, template]
     description: "治理系统家族"
     source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/governance-family-vocabulary.yaml"
     note: ""
 
   - field_name: ai_capability_slot
     type: enum
     required: optional
-    stage: null
+    stage: planned
     enum_values:
       - {value: "planned", description: "已规划——尚未实现"}
       - {value: "reserved", description: "已预留——架构中留位"}
@@ -450,12 +458,13 @@ fields:
     applicable_docs: []
     description: "AI 能力槽位状态"
     source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/ai-capability-slot-vocabulary.yaml"
     note: ""
 
   - field_name: ai_autonomy_level_planned
     type: enum
     required: optional
-    stage: null
+    stage: planned
     enum_values:
       - {value: "l0", description: "L0 无自治"}
       - {value: "l1", description: "L1 低自治——写操作需审批"}
@@ -464,12 +473,13 @@ fields:
     applicable_docs: []
     description: "规划的 AI 自治等级"
     source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/ai-autonomy-level-planned-vocabulary.yaml"
     note: ""
 
   - field_name: ai_employee_count_planned
     type: integer
     required: optional
-    stage: null
+    stage: planned
     enum_values: []
     applicable_docs: []
     description: "规划的 AI 员工数量（0-10）"
@@ -482,7 +492,7 @@ fields:
   - field_name: review_status
     type: enum
     required: optional
-    stage: null
+    stage: planned
     enum_values:
       - {value: "unreviewed", description: "未审核"}
       - {value: "reviewed", description: "已审核"}
@@ -491,12 +501,13 @@ fields:
     applicable_docs: []
     description: "审核状态"
     source: "PS-STD-001 §10.16"
+    derived_from: "_registry/vocabularies/review-status-vocabulary.yaml"
     note: ""
 
   - field_name: last_reviewed_by
     type: object
     required: optional
-    stage: null
+    stage: planned
     enum_values: []
     applicable_docs: []
     description: "最后审核人/模型——{reviewer, date, model_used}"
@@ -507,17 +518,21 @@ fields:
   - field_name: blueprint_refs
     type: array
     required: optional
-    stage: null
-    enum_values: []
+    stage: planned
+    enum_values:
+      - {value: "active", description: "当前有效——蓝图正在使用中"}
+      - {value: "draft", description: "草稿——蓝图尚未批准"}
+      - {value: "deprecated", description: "已废弃——蓝图已被替代"}
     applicable_docs: []
     description: "施工图引用的蓝图列表——[{path, status, decisions_used}]"
     source: "PS-STD-001 §10.12"
+    derived_from: "_registry/vocabularies/blueprint-refs-status-vocabulary.yaml"
     note: ""
 
   - field_name: compliance_tags
     type: array
     required: optional
-    stage: null
+    stage: planned
     enum_values:
       - {value: "SR-11-7", description: "中国证监会《证券期货业数据安全管理与保护指引》"}
       - {value: "EU-AI-Act-Art12", description: "欧盟 AI 法案第 12 条——记录保存"}
@@ -528,17 +543,22 @@ fields:
     applicable_docs: []
     description: "合规标签——金融监管法规映射（6 值）"
     source: "PS-STD-001 §10.13"
+    derived_from: "_registry/vocabularies/compliance-tags-vocabulary.yaml"
     note: ""
 
   # ── 溯源/进化字段──
   - field_name: provenance
     type: object
     required: optional
-    stage: null
-    enum_values: []
+    stage: planned
+    enum_values:
+      - {value: "pass", description: "通过——审计链验证通过"}
+      - {value: "fail", description: "失败——审计链验证失败"}
+      - {value: "conditional", description: "有条件——审计链部分通过"}
     applicable_docs: []
     description: "溯源信息——{origin_drafts[], audit_chain[], arbitration}"
     source: "PS-STD-001 §10.3"
+    derived_from: "_registry/vocabularies/provenance-audit-chain-verdict-vocabulary.yaml"
     note: ""
 
   - field_name: evolution_policy
@@ -552,12 +572,13 @@ fields:
     applicable_docs: []
     description: "文件演进策略"
     source: "PS-STD-001 §10.11"
+    derived_from: "_registry/vocabularies/evolution-policy-vocabulary.yaml"
     note: ""
 
   - field_name: human_override
     type: object
     required: optional
-    stage: null
+    stage: planned
     enum_values: []
     applicable_docs: []
     description: "人工干预记录——{operator_id, date, reason, original_action}"
@@ -619,6 +640,7 @@ fields:
     applicable_docs: []
     description: "知识条目内容类型——10 值"
     source: "PS-STD-001 §9.1"
+    derived_from: "_registry/vocabularies/category-vocabulary.yaml"
     note: "KMS 知识条目专用，beta 落地"
 
   - field_name: domain
@@ -639,6 +661,7 @@ fields:
     applicable_docs: []
     description: "知识条目业务领域——10 值"
     source: "PS-STD-001 §9.2"
+    derived_from: "_registry/vocabularies/domain-vocabulary.yaml"
     note: "KMS 知识条目专用，beta 落地"
 
 # ============================================================================

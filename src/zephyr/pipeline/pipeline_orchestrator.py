@@ -40,9 +40,15 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
 
 from __future__ import annotations
 
+import logging
+logger = logging.getLogger(__name__)
+
 import hashlib
+import json
 import time
 from datetime import datetime
+import os
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from zephyr.core.models import TaskCard
@@ -62,12 +68,14 @@ from zephyr.pipeline.models import (
     CostRecord,
     DeadLetterEntry,
     EmergencyFallbackPlan,
+    ExecutionMode,
     ExperimentVariant,
     ModelCollapseAlert,
     ModelConfidence,
     ModelVersionInfo,
     ModuleResult,
     ModuleStatus,
+    NightShiftAmbiguityLogEntry,
     PipelineArtifact,
     PipelineArtifactManifest,
     PipelineLineageChain,
@@ -80,7 +88,47 @@ from zephyr.pipeline.models import (
 )
 from zephyr.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.pipeline.routing_plugins import PipelineRouter
-from zephyr.shared.schemas import TaskStatus
+from zephyr.shared.schema.schemas import TaskStatus
+
+_RBAC_AVAILABLE = False
+try:
+    from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge, RBACCheckResult
+    _RBAC_AVAILABLE = True
+except ImportError:
+    EscalationRBACBridge = None  # type: ignore[misc,assignment]
+    RBACCheckResult = None       # type: ignore[misc,assignment]
+
+_AUDIT_AVAILABLE = False
+try:
+    from zephyr.audit_trail.writer import AuditWriter
+    _AUDIT_AVAILABLE = True
+except ImportError:
+    AuditWriter = None  # type: ignore[misc,assignment]
+
+_SKILL_BRIDGE_AVAILABLE = False
+try:
+    from zephyr.agent_spec.integration.pipeline_bridge import (
+        PipelineSkillBridge,
+        SkillInjectionResult,
+    )
+    _SKILL_BRIDGE_AVAILABLE = True
+except ImportError:
+    PipelineSkillBridge = None  # type: ignore[misc,assignment]
+    SkillInjectionResult = None   # type: ignore[misc,assignment]
+
+_LOCAL_SCHEDULER_AVAILABLE = False
+try:
+    from zephyr.vector_memory.local_model_scheduler import LocalModelScheduler
+    _LOCAL_SCHEDULER_AVAILABLE = True
+except ImportError:
+    LocalModelScheduler = None  # type: ignore[assignment,misc]
+
+_PROFILER_AVAILABLE = False
+try:
+    from zephyr.pipeline.model_profiler.profiler import ModelProfiler
+    _PROFILER_AVAILABLE = True
+except ImportError:
+    ModelProfiler = None  # type: ignore[assignment,misc]
 
 if TYPE_CHECKING:
     from zephyr.db.task_repo import TaskRepository
@@ -100,6 +148,8 @@ class PipelineOrchestrator:
         SQLite 任务仓库——为 None 时跳过状态流转（测试兼容模式）
     """
 
+    _lsg_gateway = None
+
     def __init__(
         self,
         config: PipelineOrchestratorConfig | None = None,
@@ -107,12 +157,14 @@ class PipelineOrchestrator:
         router: PipelineRouter | None = None,
         pipeline_lock: PipelineLock | None = None,
         agent_orchestrator: object | None = None,
+        telemetry: object | None = None,
     ) -> None:
         self._cfg = config or PipelineOrchestratorConfig()
         self._task_repo = task_repo
         self._router = router
         self._pipeline_lock = pipeline_lock
         self._agent_orchestrator = agent_orchestrator
+        self._telemetry = telemetry
         self._failure_log: dict[str, int] = {}
         self._glm_reject_log: dict[str, int] = {}
         self._preempt_log: dict[str, PreemptionRecord] = {}
@@ -138,10 +190,148 @@ class PipelineOrchestrator:
         self._dead_letters: list[DeadLetterEntry] = []
         self._accuracy_data: dict[str, list[float]] = {}
         self._active_experiments: dict[str, ABExperimentRoute] = {}
+        self._rbac_bridge = EscalationRBACBridge() if _RBAC_AVAILABLE else None
+        self._audit_writer = AuditWriter() if _AUDIT_AVAILABLE else None
+        self._skill_bridge = PipelineSkillBridge() if _SKILL_BRIDGE_AVAILABLE else None
+        self._night_shift_counter: int = 0
+        self._local_scheduler: Any = LocalModelScheduler() if _LOCAL_SCHEDULER_AVAILABLE else None
+        self._model_profiler: Any = ModelProfiler() if _PROFILER_AVAILABLE else None
+        self._periodic_profile_interval_s: float = self._cfg.periodic_profile_interval_s
+        self._auto_profile_on_startup: bool = self._cfg.auto_profile_on_startup
+        self._profile_thread: Any = None
+        self._profile_results: list[dict[str, object]] = []
+
+        if self._auto_profile_on_startup and self._model_profiler is not None:
+            self._start_auto_profile()
+
+    # ------------------------------------------------------------------
+    # 模型性能检测 — 触发策略
+    # ------------------------------------------------------------------
+
+    def _start_auto_profile(self) -> None:
+        """启动时自动运行一次 benchmark（后台线程，不阻塞初始化）。"""
+        import threading
+
+        def _run():
+            self._log("INFO", "ModelProfiler: auto-startup benchmark initiated")
+            try:
+                results = self.run_model_benchmark()
+                self._feed_results_to_router(results)
+                self._log("INFO", f"ModelProfiler: auto-startup complete ({len(results)} models)")
+            except Exception as exc:
+                self._log("WARN", f"ModelProfiler: auto-startup failed: {exc}")
+
+        t = threading.Thread(target=_run, daemon=True, name="model-profiler-startup")
+        t.start()
+        self._profile_thread = t
+
+    def start_periodic_profile(self) -> None:
+        """启动定时 benchmark（每隔 periodic_profile_interval_s 秒运行一次）。"""
+        import threading
+
+        if self._periodic_profile_interval_s <= 0:
+            self._log("INFO", "ModelProfiler: periodic profiling disabled (interval <= 0)")
+            return
+
+        def _loop():
+            import time
+            while True:
+                time.sleep(self._periodic_profile_interval_s)
+                try:
+                    self._log("INFO", "ModelProfiler: periodic benchmark triggered")
+                    results = self.run_model_benchmark()
+                    self._feed_results_to_router(results)
+                    for r in results:
+                        name = r.get("model_name", "")
+                        if name:
+                            drift = self.detect_model_drift(str(name))
+                            if drift and drift.get("drift_detected"):
+                                self._log("WARN", f"ModelDrift: {name} drift detected — {drift.get('details', {})}")
+                except Exception as exc:
+                    self._log("WARN", f"ModelProfiler: periodic failed: {exc}")
+
+        t = threading.Thread(target=_loop, daemon=True, name="model-profiler-periodic")
+        t.start()
+        self._log("INFO", f"ModelProfiler: periodic profiling every {self._periodic_profile_interval_s}s")
+
+    def _feed_results_to_router(self, results: list[dict[str, object]]) -> None:
+        """将 benchmark 结果注入 ModelRouter。"""
+        if self._router is None:
+            return
+        try:
+            count = self._router.load_benchmark_profiles(results)  # type: ignore[union-attr]
+            self._log("INFO", f"ModelProfiler: fed {count} profiles to ModelRouter")
+        except Exception as exc:
+            self._log("WARN", f"ModelProfiler: failed to feed router: {exc}")
+
+    def run_model_benchmark(self) -> list[dict[str, object]]:
+        """运行全量模型性能 benchmark，返回排名结果列表。"""
+        if self._model_profiler is None:
+            self._log("WARN", "ModelProfiler not available")
+            return []
+
+        profiles = self._model_profiler.profile_ollama_only()
+        from zephyr.pipeline.model_profiler.results_writer import (
+            to_model_benchmark_result,
+            write_benchmark_results,
+        )
+
+        write_benchmark_results(profiles)
+        results = [to_model_benchmark_result(p) for p in profiles if p.available]
+        self._profile_results = results
+        return results
+
+    def get_best_model(self) -> dict[str, object] | None:
+        """获取当前 benchmark 排名第一的模型信息。"""
+        if self._model_profiler is None:
+            return None
+
+        profiles = self._model_profiler.profile_ollama_only()
+        best = next((p for p in profiles if p.rank == 1 and p.available), None)
+        if best is None:
+            return None
+
+        from zephyr.pipeline.model_profiler.results_writer import (
+            to_model_benchmark_result,
+        )
+        return to_model_benchmark_result(best)
+
+    def detect_model_drift(self, model_name: str) -> dict[str, object] | None:
+        """检测指定模型是否发生性能漂移。"""
+        try:
+            from zephyr.pipeline.model_profiler.results_writer import (
+                detect_drift,
+                load_benchmark_history,
+            )
+        except ImportError:
+            return None
+
+        history = load_benchmark_history(model_name)
+        if len(history) < 2:
+            return {"drift_detected": False, "reason": "insufficient_history", "model_name": model_name}
+        return detect_drift(history)
+
+    @property
+    def profile_results(self) -> list[dict[str, object]]:
+        return self._profile_results
+
+    @property
+    def has_profiles(self) -> bool:
+        return len(self._profile_results) > 0
 
     # ------------------------------------------------------------------
     # 公共 API
     # ------------------------------------------------------------------
+
+    def start_local_scheduler(self) -> None:
+        if self._local_scheduler is not None and not self._local_scheduler.running:
+            self._local_scheduler.start()
+            self._log("INFO", "LocalModelScheduler started (L2 24/7)")
+
+    def stop_local_scheduler(self) -> None:
+        if self._local_scheduler is not None and self._local_scheduler.running:
+            self._local_scheduler.stop()
+            self._log("INFO", "LocalModelScheduler stopped")
 
     def dispatch(self, task_card: TaskCard, *, dry_run: bool = False) -> PipelineResult:
         """接收 TaskCard → 执行管线（含状态机集成）
@@ -182,6 +372,54 @@ class PipelineOrchestrator:
                 ct_pipe_warnings=["IDEMPOTENCY: duplicate dispatch rejected——同一TaskCard已执行过"],
             )
         self._dispatched_ids.add(task_card.task_id)
+
+        tags = set(task_card.tags or ())
+        if "rollback_exit" in tags:
+            exit_code_tag = [t for t in tags if t.startswith("rollback_exit:")]
+            exit_code = int(exit_code_tag[0].split(":")[1]) if exit_code_tag else -1
+            try:
+                from zephyr.rollback.contract import get_pipeline_action, get_gate_action
+                gate_action, desc = get_gate_action(exit_code)
+                pipeline_action = get_pipeline_action(gate_action)
+                if gate_action in ("BLOCK", "BLOCK_AUTO", "FAIL", "L3_KILL", "L2_KILL"):
+                    self._active_dispatches.discard(task_card.task_id)
+                    _exit_detail = f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
+                    self._log("WARN", f"dispatch[{task_card.task_id}] {_exit_detail}")
+                    return PipelineResult(
+                        task_id=task_card.task_id,
+                        pipeline=task_card.assigned_pipeline,
+                        overall_status=PipelineStatus.FAILURE,
+                        modules_executed=[],
+                        finished_at=datetime.now().isoformat(),
+                        is_dry_run=dry_run,
+                        ct_pipe_warnings=[_exit_detail],
+                    )
+                elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
+                    ct_warnings.append(
+                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} "
+                        f"pipeline={pipeline_action}"
+                    )
+            except Exception:
+                pass
+
+        rbac_result = self._rbac_check(task_card)
+        if rbac_result is not None and not rbac_result.passed:
+            self._active_dispatches.discard(task_card.task_id)
+            self._write_audit_event(task_card.task_id, f"pipeline.{task_card.assigned_pipeline}", "RBAC_BLOCKED", {"layer": rbac_result.layer, "rule": rbac_result.rule_id, "reason": rbac_result.reason})
+            self._log("WARN", f"dispatch[{task_card.task_id}] RBAC blocked: {rbac_result.reason} layer={rbac_result.layer} rule={rbac_result.rule_id}")
+            _tags = task_card.tags or ()
+            _needs_rescue = "security" in _tags or "experimental" in _tags
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.FAILURE,
+                modules_executed=[],
+                finished_at=datetime.now().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_warnings=[f"RBAC BLOCKED [{rbac_result.layer}/{rbac_result.rule_id}]: {rbac_result.reason}"],
+                needs_claude_rescue=_needs_rescue,
+                rescue_reason="Security/Experimental tag detected — RBAC blocked but Claude review required" if _needs_rescue else "",
+            )
 
         impact = self._assess_impact(task_card)
         if impact.human_review_required:
@@ -244,6 +482,8 @@ class PipelineOrchestrator:
 
         try:
             route = self._route_model(task_card)
+            execution_mode = self._resolve_execution_mode(task_card)
+            night_shift_log: list[NightShiftAmbiguityLogEntry] = []
 
             task_type = (
                 getattr(task_card, "pipeline_task_type", None)
@@ -288,6 +528,47 @@ class PipelineOrchestrator:
             prev_module: str | None = None
             executed_module_ids: list[str] = []
 
+            g6_violation = self._check_g6_blueprint_compliance(task_card, modules)
+            if g6_violation is not None:
+                self._active_dispatches.discard(task_card.task_id)
+                self._release_pipeline_lock(task_card.task_id)
+                return PipelineResult(
+                    task_id=task_card.task_id,
+                    pipeline=task_card.assigned_pipeline,
+                    overall_status=PipelineStatus.G6_BLOCKED,
+                    modules_executed=[],
+                    finished_at=datetime.now().isoformat(),
+                    is_dry_run=dry_run,
+                    ct_pipe_route=ct_decision,
+                    ct_pipe_warnings=ct_warnings + [g6_violation],
+                )
+
+            skill_injection: SkillInjectionResult | None = None
+            if self._skill_bridge is not None:
+                stage_hint = (
+                    hints.stage if hints else None
+                ) or "construction"
+                task_desc = (
+                    (getattr(task_card, "description", "") or "")
+                    + " "
+                    + (getattr(task_card, "title", "") or "")
+                    + " "
+                    + (", ".join(getattr(task_card, "tags", []) or []))
+                )
+                try:
+                    skill_injection = self._skill_bridge.inject_for_task(
+                        task_description=task_desc,
+                        stage=stage_hint,
+                    )
+                    if skill_injection.loaded:
+                        ct_warnings.append(
+                            f"SKILL-LOADED: domain={skill_injection.domain_skill_id} "
+                            f"role={skill_injection.role_skill_id} "
+                            f"tokens={skill_injection.token_budget.get('total_tokens', '?')}"
+                        )
+                except Exception:
+                    pass
+
             for mod_id in modules:
                 if prev_module is not None:
                     zone_warnings = self._validate_zone_crossing(task_card, prev_module, mod_id)
@@ -316,8 +597,19 @@ class PipelineOrchestrator:
                     token_divisor=len(modules),
                     prior_artifacts=prior_artifacts,
                     dry_run=dry_run,
+                    skill_injection=skill_injection,
                 )
                 results.append(mr)
+
+                if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
+                    try:
+                        from zephyr.agent_spec.skill_feedback import SkillFeedback
+                        fb = SkillFeedback()
+                        for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
+                            if skid:
+                                fb.record_module_result(skid, mr, task_card.task_id)
+                    except Exception:
+                        pass
 
                 consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
                 produced_keys: list[str] = []
@@ -413,9 +705,16 @@ class PipelineOrchestrator:
                 except Exception:
                     self._log("WARN", f"dispatch[{task_card.task_id}] bridge failed")
 
+            self._write_audit_event(
+                task_card.task_id,
+                f"pipeline.{pipeline}",
+                status.value,
+                {"modules_executed": len(results), "cost_total_usd": sum(c.cost_usd for c in cost_records)},
+            )
             return PipelineResult(
                 task_id=task_card.task_id,
                 pipeline=pipeline,
+                execution_mode=execution_mode,
                 modules_executed=results,
                 overall_status=status,
                 needs_claude_rescue=rescue.triggered,
@@ -435,6 +734,18 @@ class PipelineOrchestrator:
                 dead_letter=dead_letter,
                 circuit_breaker_state=cb_state,
                 bridge_result=bridge_result,
+                skill_injection=(
+                    {
+                        "loaded": skill_injection.loaded,
+                        "domain_skill_id": skill_injection.domain_skill_id,
+                        "role_skill_id": skill_injection.role_skill_id,
+                        "total_tokens": skill_injection.token_budget.get("total_tokens"),
+                        "context": skill_injection.injection_context[:500],
+                    }
+                    if skill_injection is not None
+                    else None
+                ),
+                night_shift_log=night_shift_log,
             )
         except Exception:
             self._log("ERROR", f"dispatch[{task_card.task_id}] failed with exception")
@@ -505,6 +816,65 @@ class PipelineOrchestrator:
             return "claude"
 
         return model
+
+    # ------------------------------------------------------------------
+    # 三层执行模式解析 —— 根据人类在场 + 任务类型路由
+    # ------------------------------------------------------------------
+
+    _LOCAL_ONLY_CAPABILITIES: frozenset[str] = frozenset({
+        "vector_embedding", "semantic_search", "reranking",
+    })
+
+    def _is_human_present(self) -> bool:
+        method = self._cfg.human_detection_method
+        if method == "manual_switch":
+            return getattr(self._cfg, "_manual_override_human_present", True)
+        if method == "time_window":
+            now_hour = datetime.now().hour
+            return self._cfg.working_hours_start <= now_hour < self._cfg.working_hours_end
+        return True
+
+    def _resolve_execution_mode(self, task_card: TaskCard) -> ExecutionMode:
+        if self._is_human_present():
+            return ExecutionMode.TRAE
+
+        task_type = getattr(task_card, "execution_model", "")
+        capabilities = getattr(task_card, "capabilities", []) or []
+        tags = getattr(task_card, "tags", []) or []
+
+        for cap in capabilities:
+            if cap in self._LOCAL_ONLY_CAPABILITIES:
+                return ExecutionMode.LOCAL
+
+        creative_tags = {"codegen", "architecture", "design", "creative", "generate"}
+        if any(t in creative_tags for t in tags):
+            return ExecutionMode.API
+
+        deterministic_types = {"audit", "compliance", "cleanup", "repair", "format", "lint"}
+        if task_type in deterministic_types or any(t in deterministic_types for t in tags):
+            return ExecutionMode.API
+
+        return ExecutionMode.API
+
+    def _record_night_shift_ambiguity(
+        self,
+        task_id: str,
+        module: str,
+        context: str,
+        options: list[dict[str, str]] | None = None,
+    ) -> NightShiftAmbiguityLogEntry:
+        self._night_shift_counter += 1
+        entry = NightShiftAmbiguityLogEntry(
+            id=f"NSL-{self._night_shift_counter:04d}",
+            task_id=task_id,
+            module=module,
+            context=context,
+            options=options or [],
+            auto_decision="C",
+            requires_human=True,
+        )
+        self._log("WARN", f"NightShiftAmbiguity: {entry.id} task={task_id} module={module}: {context[:80]}")
+        return entry
 
     # ------------------------------------------------------------------
     # CT-PIPE 路由解析
@@ -848,6 +1218,7 @@ class PipelineOrchestrator:
         token_divisor: int | None = None,
         prior_artifacts: list | None = None,
         dry_run: bool = False,
+        skill_injection: Any | None = None,
     ) -> ModuleResult:
         started = datetime.now().isoformat()
         last_error: str | None = None
@@ -879,6 +1250,7 @@ class PipelineOrchestrator:
                     token_divisor=divisor,
                     prior_artifacts=prior_artifacts,
                     dry_run=dry_run,
+                    skill_injection=skill_injection,
                 )
                 output = validate_module_output(module_id, output)
 
@@ -926,6 +1298,48 @@ class PipelineOrchestrator:
             started_at=started,
             finished_at=datetime.now().isoformat(),
         )
+
+    # ------------------------------------------------------------------
+    # 本地模型集成 —— 24/7常驻 EmbeddingRouter + Reranker
+    # ------------------------------------------------------------------
+
+    _embedding_router: object | None = None
+    _reranker_instance: object | None = None
+
+    def _ensure_local_models(self) -> None:
+        if self._cfg.local_model_always_on and self._embedding_router is None:
+            try:
+                from zephyr.vector_memory.embedding_router import EmbeddingRouter
+                self._embedding_router = EmbeddingRouter()
+                self._embedding_router.warmup()
+                self._log("INFO", "Local models warmed up: EmbeddingRouter + Reranker ready")
+            except Exception as exc:
+                self._log("WARN", f"Local model warmup failed: {exc}")
+
+    def embed_text(self, text: str, collection_name: str) -> Any:
+        self._ensure_local_models()
+        if self._embedding_router is None:
+            self._log("ERROR", "EmbeddingRouter not available, returning zero vector")
+            return self._zero_vector(512)
+        return self._embedding_router.embed(text, collection_name)
+
+    def rerank_documents(self, query: str, documents: list[str]) -> list:
+        self._ensure_local_models()
+        if self._reranker_instance is None:
+            try:
+                from zephyr.kb.reranker import Reranker
+                self._reranker_instance = Reranker()
+            except Exception as exc:
+                self._log("WARN", f"Reranker init failed: {exc}")
+                self._reranker_instance = False
+        if self._reranker_instance is False or self._reranker_instance is None:
+            return documents
+        return self._reranker_instance.rerank(query, documents)
+
+    @staticmethod
+    def _zero_vector(dim: int) -> Any:
+        import numpy as np
+        return np.zeros(dim, dtype=np.float32)
 
     # ------------------------------------------------------------------
     # Claude 特种救援 — GOV-AI-002 §三
@@ -1015,6 +1429,7 @@ class PipelineOrchestrator:
         token_divisor: int,
         prior_artifacts: list | None = None,
         dry_run: bool = False,
+        skill_injection: Any | None = None,
     ) -> dict:
         """调用 AI 模型执行模块
 
@@ -1025,8 +1440,21 @@ class PipelineOrchestrator:
           - B150 模型版本锁定——返回 model_version 字段
           - B154 响应缓存——相同 task_id module_id 返回缓存
           - B161 $成本追踪——返回 cost_usd 字段
-          - B170 上下文窗口校验——estimated_tokens vs model context_limit
+        v0.10.0 新增：
+          - skill_injection: PipelineSkillBridge 注入的 Domain+Role Skill 上下文
         """
+        skill_context = ""
+        if skill_injection is not None:
+            if hasattr(skill_injection, "injection_context") and skill_injection.injection_context:
+                skill_context = skill_injection.injection_context
+            elif hasattr(skill_injection, "l2_domain_body"):
+                parts = []
+                if skill_injection.l2_domain_body:
+                    parts.append(f"[Domain Skill: {skill_injection.domain_skill_id}]\n{skill_injection.l2_domain_body}")
+                if hasattr(skill_injection, "l2_role_body") and skill_injection.l2_role_body:
+                    parts.append(f"[Role Skill: {skill_injection.role_skill_id}]\n{skill_injection.l2_role_body}")
+                skill_context = "\n\n".join(parts)
+
         model_version = PipelineOrchestrator._MODEL_VERSION_MAP.get(model, model)
         context_limit = PipelineOrchestrator._MODEL_CONTEXT_LIMITS.get(model, 128_000)
 
@@ -1046,6 +1474,7 @@ class PipelineOrchestrator:
                     f"> model context_limit={context_limit} ——B170告警"
                 ),
                 "context_overflow": True,
+                "skill_context": skill_context,
             }
 
         if dry_run:
@@ -1060,6 +1489,7 @@ class PipelineOrchestrator:
                 "tokens_used": 0,
                 "cost_usd": 0.0,
                 "summary": f"[DRY-RUN {pipeline}区] {model}({model_version}) → {module_id}: {task.title[:60]}",
+                "skill_context": skill_context,
             }
 
         cache_key = f"{task.task_id}:{module_id}:{model}"
@@ -1071,10 +1501,46 @@ class PipelineOrchestrator:
         sanitized_title = PipelineOrchestrator._lsg_sanitize_input(task.title)
         sanitized_desc = PipelineOrchestrator._lsg_sanitize_input(task.description)
 
-        tokens_used = task.estimated_tokens // max(token_divisor, 1)
-        cost_input = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_INPUT.get(model, 0.0)
-        cost_output = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
-        cost_usd = round(cost_input + cost_output, 6)
+        system_msg = (
+            f"You are an expert agent in the [{pipeline}] zone of ZephyrAlpha. "
+            f"Execute module [{module_id}] for task [{task.task_id}]. "
+            f"Follow the constraints below precisely."
+        )
+        user_msg = f"Task: {sanitized_title}\n\nDescription: {sanitized_desc}"
+
+        if skill_context:
+            system_msg += f"\n\n--- AGENT SKILL CONTEXT ---\n{skill_context}\n--- END SKILL CONTEXT ---"
+
+        messages = [
+            {"role": "system", "content": system_msg},
+            {"role": "user", "content": user_msg},
+        ]
+
+        try:
+            from zephyr.agent_spec.llm_gateway import LLMGateway, LLMResponse
+            llm_resp: LLMResponse = LLMGateway.call(
+                messages,
+                provider=model if model in LLMGateway.list_providers() else "deepseek",
+                max_tokens=4096,
+                temperature=0.3,
+            )
+        except ImportError:
+            llm_resp = None
+
+        if llm_resp is not None and not llm_resp.simulated:
+            tokens_used = llm_resp.tokens_input + llm_resp.tokens_output
+            cost_usd = llm_resp.cost_usd
+            summary_content = llm_resp.content
+            simulated = False
+            provider_used = llm_resp.provider
+        else:
+            tokens_used = task.estimated_tokens // max(token_divisor, 1)
+            cost_input = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_INPUT.get(model, 0.0)
+            cost_output = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
+            cost_usd = round(cost_input + cost_output, 6)
+            summary_content = f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}"
+            simulated = True
+            provider_used = model
 
         artifact_keys = [a.artifact_key for a in (prior_artifacts or [])]
         raw_output = {
@@ -1083,11 +1549,13 @@ class PipelineOrchestrator:
             "model": model,
             "model_version": model_version,
             "task_id": task.task_id,
-            "simulated": True,
+            "simulated": simulated,
+            "provider": provider_used,
             "tokens_used": tokens_used,
             "cost_usd": cost_usd,
-            "summary": f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}",
+            "summary": summary_content,
             "prior_artifact_keys": artifact_keys,
+            "skill_context": skill_context if skill_context else "",
         }
 
         PipelineOrchestrator._response_cache[cache_key] = (time.time(), dict(raw_output))
@@ -1114,7 +1582,7 @@ class PipelineOrchestrator:
         """LifecycleManager 回调：初始化后注册 Pipeline 组件。"""
         self._lifecycle_mgr = lifecycle_mgr
         try:
-            from zephyr.shared.observer import Observer
+            from zephyr.shared.infra.observer import Observer
 
             self._observer = lifecycle_mgr.resolve("observer", Observer)
         except Exception:
@@ -1189,11 +1657,27 @@ class PipelineOrchestrator:
 
     def _record_telemetry_decision(self, task_type: str, node_id: str) -> None:
         """记录单次路由决策（pipe_routing_decision_count）。"""
+        if self._telemetry is not None and hasattr(self._telemetry, "ai_behavior"):
+            try:
+                self._telemetry.ai_behavior.record(
+                    decision="pipe_route",
+                    model=node_id,
+                    reason=task_type,
+                )
+            except Exception:
+                pass
         label = f"decision_{task_type}_{node_id}"
         self._metrics[label] = self._metrics.get(label, 0) + 1
 
     def _record_telemetry_latency(self, task_type: str, latency_ms: float) -> None:
         """记录路由延迟（pipe_routing_latency_ms histogram 采样）。"""
+        if self._telemetry is not None and hasattr(self._telemetry, "metrics"):
+            try:
+                self._telemetry.metrics.histogram(
+                    f"pipe_routing_latency_{task_type}", latency_ms,
+                )
+            except Exception:
+                pass
         key = f"latency_{task_type}"
         if key not in self._latency_samples:
             self._latency_samples[key] = []
@@ -1201,6 +1685,14 @@ class PipelineOrchestrator:
 
     def _record_zone_crossing(self, from_zone: str, to_zone: str) -> None:
         """记录跨区事件（pipe_zone_crossing_count）。"""
+        if self._telemetry is not None and hasattr(self._telemetry, "metrics"):
+            try:
+                self._telemetry.metrics.counter(
+                    "pipe_zone_crossing",
+                    tags={"from": from_zone, "to": to_zone},
+                )
+            except Exception:
+                pass
         label = f"zone_{from_zone}→{to_zone}"
         self._metrics[label] = self._metrics.get(label, 0) + 1
 
@@ -1279,53 +1771,134 @@ class PipelineOrchestrator:
 
     @staticmethod
     def _lsg_sanitize_input(text: str) -> str:
-        """L1 输入检测：sanitize prompt 内容。
+        """L0-L2+L5 输入检测：sanitize prompt 内容.
 
-        懒加载 LSG——模块不存在时优雅降级为透传。
+        懒加载 LSG——模块不存在时优雅降级为透传.
         层防御：
-          - L1.1: Prompt injection 检测（DAN/角色扮演/ignore instructions）
-          - L1.2: 敏感数据泄露检测（API key/password/token 模式）
-          - L1.3: SQL/XSS injection 模式过滤
+          - L0: 供应链安全（模型验证/依赖扫描）
+          - L1: Prompt injection 检测（DAN/角色扮演/ignore instructions）
+          - L2: Prompt 保护（防泄露/话题边界）
+          - L5: 资源保护（Token预算/速率限制）
+
+        fail-closed: LSG 运行时异常 → 返回 [LSG-BLOCKED] 标记，不静默透传.
         """
         try:
-            from zephyr.security.llm_security import LSGSecurityGateway
+            import asyncio
+            from zephyr.llm_security.gateway import LSGSecurityGateway, SecurityDecision
 
-            gw = LSGSecurityGateway()
-            result = gw.scan_input(text, source="PipelineOrchestrator")
-            if result.blocked:
-                return f"[LSG-BLOCKED] {result.sanitized[:200]}"
-            return result.sanitized or text
+            if PipelineOrchestrator._lsg_gateway is None:
+                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+            gw = PipelineOrchestrator._lsg_gateway
+            try:
+                loop = asyncio.get_running_loop()
+                future = asyncio.run_coroutine_threadsafe(
+                    gw.scan_input(text, source="PipelineOrchestrator"), loop
+                )
+                result = future.result()
+            except RuntimeError:
+                result = asyncio.run(gw.scan_input(text, source="PipelineOrchestrator"))
+            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                return f"[LSG-BLOCKED] {text[:200]}"
+            return text
         except ImportError:
             return text
         except Exception:
-            return text
+            return f"[LSG-BLOCKED] {text[:200]}"
 
     @staticmethod
     def _lsg_sanitize_output(module_id: str, output: dict) -> dict:
-        """L3 输出检测：sanitize 模型输出。
+        """L3+L6 输出检测：sanitize 模型输出.
 
-        懒加载 LSG——模块不存在时优雅降级为透传。
+        懒加载 LSG——模块不存在时优雅降级为透传.
         层防御：
-          - L3.1: 敏感信息脱敏（PII/credential 模式匹配）
-          - L3.2: 有害内容过滤（hate/violence/self-harm classifiers）
-          - L3.3: 对抗性输出检测（jailbreak 响应模式）
+          - L3: 敏感信息脱敏（PII/credential 模式匹配）+ 有害内容过滤
+          - L6: 可观测性（安全日志/异常告警）
+
+        fail-closed: LSG 运行时异常 → 输出字段替换为 [LSG-BLOCKED]，不静默透传.
         """
         try:
-            from zephyr.security.llm_security import LSGSecurityGateway
+            import asyncio
+            from zephyr.llm_security.gateway import LSGSecurityGateway
+            from zephyr.llm_security.protocol import SecurityDecision
 
-            gw = LSGSecurityGateway()
+            if PipelineOrchestrator._lsg_gateway is None:
+                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+            gw = PipelineOrchestrator._lsg_gateway
             for key in ("summary", "verdict", "detail", "minority_report"):
                 if key in output and isinstance(output[key], str):
-                    scan = gw.scan_output(output[key], source=f"Pipeline.{module_id}")
-                    if scan.blocked:
-                        output[key] = f"[LSG-BLOCKED] {scan.sanitized[:200]}"
-                    elif scan.sanitized:
-                        output[key] = scan.sanitized
+                    try:
+                        loop = asyncio.get_running_loop()
+                        future = asyncio.run_coroutine_threadsafe(
+                            gw.scan_output(
+                                output[key], source=f"Pipeline.{module_id}",
+                            ),
+                            loop,
+                        )
+                        result = future.result()
+                    except RuntimeError:
+                        result = asyncio.run(gw.scan_output(
+                            output[key], source=f"Pipeline.{module_id}",
+                        ))
+                    if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                        output[key] = f"[LSG-BLOCKED] {output[key][:200]}"
             return output
         except ImportError:
+            import logging
+            logging.getLogger("pipeline.lsg").warning(
+                "LSG Security Gateway (MOD-INF-014) not available — output sanitization skipped (fail-open). "
+                "Install: pip install -e . or verify src/zephyr/llm_security/ exists."
+            )
             return output
         except Exception:
+            for key in ("summary", "verdict", "detail", "minority_report"):
+                if key in output and isinstance(output[key], str):
+                    output[key] = f"[LSG-BLOCKED] {output[key][:200]}"
             return output
+
+    @staticmethod
+    def _lsg_scan_agent_action(tool_name: str, tool_params: dict) -> str | None:
+        """L4+L5+L8 Agent动作安全扫描.
+
+        懒加载 LSG——模块不存在时优雅降级为放行.
+        层防御：
+          - L4: Agent安全（权限/HITL/金融合规）
+          - L5: 资源保护（Token预算/速率限制）
+          - L8: 多Agent安全（跨Agent权限/信任链）
+
+        Returns: blocked_by layer name if blocked, None if allowed.
+        """
+        try:
+            import asyncio
+            import json
+            from zephyr.llm_security.gateway import LSGSecurityGateway
+            from zephyr.llm_security.protocol import SecurityDecision
+
+            if PipelineOrchestrator._lsg_gateway is None:
+                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+            gw = PipelineOrchestrator._lsg_gateway
+            text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
+            try:
+                loop = asyncio.get_running_loop()
+                future = asyncio.run_coroutine_threadsafe(
+                    gw.scan_agent_action(
+                        text=text, tool_name=tool_name, tool_params=tool_params,
+                        metadata={"source": "PipelineOrchestrator"},
+                    ),
+                    loop,
+                )
+                result = future.result()
+            except RuntimeError:
+                result = asyncio.run(gw.scan_agent_action(
+                    text=text, tool_name=tool_name, tool_params=tool_params,
+                    metadata={"source": "PipelineOrchestrator"},
+                ))
+            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                return result.blocked_by or "lsg_agent_scan"
+            return None
+        except ImportError:
+            return None
+        except Exception:
+            return "lsg_exception_fail_closed"
 
     # ------------------------------------------------------------------
     # 模型崩塌检测 —— B132（三模同质化预警 + 少数派报告）
@@ -1502,6 +2075,39 @@ class PipelineOrchestrator:
         if level:
             entries = [(ts, lv, msg) for ts, lv, msg in entries if lv == level]
         return entries
+
+    def _rbac_check(self, task_card: TaskCard) -> RBACCheckResult | None:
+        """G-CT-005：管线前置 RBAC 权限检查.
+
+        RBAC 不可用时返回 None（通过），不阻塞管线.
+        """
+        if self._rbac_bridge is None:
+            return None
+        return self._rbac_bridge.pre_execute_check(
+            session_id=task_card.task_id,
+            operation=f"pipeline.{task_card.assigned_pipeline}",
+            target_path=task_card.source_blueprint or "",
+        )
+
+    def _write_audit_event(
+        self,
+        task_id: str,
+        operation: str,
+        status: str,
+        details: dict | None = None,
+    ) -> None:
+        """G-CT-001：写入不可变审计日志."""
+        if self._audit_writer is None:
+            return
+        try:
+            self._audit_writer.write({
+                "task_id": task_id,
+                "operation": operation,
+                "status": status,
+                "details": details or {},
+            })
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # Circuit Breaker —— B151（对标 Netflix Hystrix）
@@ -1763,6 +2369,87 @@ class PipelineOrchestrator:
                 "max": max(scores),
             }
         return summary
+
+    # ------------------------------------------------------------------
+    # G6 蓝图合规检查 —— Phase 2 硬合规 (T-V2-011 G6)
+    # ------------------------------------------------------------------
+
+    def _check_g6_blueprint_compliance(self, task_card: TaskCard, modules: list[str]) -> str | None:
+        """G6 Phase 2 硬合规——AI 在修改代码前 MUST 已读对应蓝图。
+
+        检查逻辑：
+        1. 从 TaskCard 提取目标文件路径
+        2. 通过 BlueprintSearchServer 定位相关的蓝图
+        3. 查询 blueprint_reads.jsonl 确认蓝图已被读取
+        4. 若 hard_compliance=true 且未读 → 返回 violation 消息（阻断 dispatch）
+        5. 若已读 → 返回 None（PASS）
+
+        返回 None 表示通过，返回 str 表示 G6-BLOCKED 原因。
+        """
+        try:
+            from zephyr.mcp import BlueprintSearchServer
+        except ImportError:
+            return None
+
+        if not self._cfg.g6_enabled:
+            return None
+
+        # pytest 环境自动跳过 G6（测试不需要蓝图合规）
+        if os.environ.get("PYTEST_CURRENT_TEST"):
+            return None
+
+        task_desc = getattr(task_card, "description", "") or task_card.title or ""
+        all_files: list[str] = []
+        for sf in getattr(task_card, "source_files", []) or []:
+            all_files.append(str(sf))
+
+        server = BlueprintSearchServer()
+        search_result = server._find_relevant_blueprint(task_desc, num_results=3)
+
+        candidates = search_result.get("results", [])
+        if not candidates:
+            return None
+
+        metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
+        if not metrics_path.exists():
+            return (
+                f"G6-BLOCKED: No blueprint_reads.jsonl found ({metrics_path}). "
+                f"AI MUST call blueprint_search.find_relevant_blueprint() BEFORE code change. "
+                f"Top blueprint: {candidates[0].get('blueprint_id', 'N/A')}"
+            )
+
+        try:
+            read_blueprints: set[str] = set()
+            with open(metrics_path, encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        record = json.loads(line)
+                    except Exception:
+                        continue
+                    if record.get("event") == "blueprint_read":
+                        read_blueprints.add(record.get("blueprint_id", ""))
+        except OSError:
+            return f"G6-BLOCKED: Cannot read {metrics_path}. Confirm blueprint_read instrumentation is active."
+
+        missing: list[str] = []
+        for c in candidates[:3]:
+            bpid = c.get("blueprint_id", "")
+            if bpid and bpid not in read_blueprints:
+                missing.append(bpid)
+
+        if missing:
+            hint = candidates[0].get("hint", "")
+            return (
+                f"G6 Phase 2 硬合规阻断: AI 未读取以下蓝图即尝试执行 Pipeline"
+                f"——{'·'.join(missing)}。"
+                f"Phase 2 hard_compliance=true → dispatch REJECTED。"
+                f"Action: invoke find_relevant_blueprint('{task_desc[:60]}') → read §1-§5 → record_blueprint_read() → retry。"
+                + (f" Hint: {hint}" if hint else "")
+            )
+        return None
 
     # ------------------------------------------------------------------
     # 成本统计公开 API

@@ -39,13 +39,15 @@ Registered Tools
 from __future__ import annotations
 
 import logging
+import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 from zephyr.mcp._base_server import BaseMCPServer
-from zephyr.shared.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = ["BlueprintSearchServer", "main"]
 
@@ -71,11 +73,27 @@ BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registr
 # ---------------------------------------------------------------------------
 
 class BlueprintSearchServer(BaseMCPServer):
-    """MCP server for discovering relevant blueprint documents."""
+    """MCP server for discovering relevant blueprint documents.
+
+    Phase 4 升级：LRU 缓存 + 索引增量更新（关闭 B13）。
+    """
 
     def __init__(self) -> None:
         super().__init__(SERVER_ID, SERVER_VERSION, SERVER_DESCRIPTION)
+        self._cache: dict[str, tuple[float, dict[str, Any]]] = {}
+        self._cache_ttl: float = 30.0
+        self._index_version: int = 0
 
+        self.register_tool(
+            name="blueprint_search.refresh_index",
+            description="增量刷新索引——重载 blueprint_routing.yaml + 清空缓存",
+            input_schema={
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {},
+            },
+            handler=self._refresh_index,
+        )
         self.register_tool(
             name="blueprint_search.find_relevant_blueprint",
             description=(
@@ -119,14 +137,17 @@ class BlueprintSearchServer(BaseMCPServer):
     ) -> dict[str, Any]:
         """Find blueprints relevant to the given task description.
 
-        Two-phase matching:
-        1. Load keyword routes from config/blueprint_routing.yaml
-        2. Score each route by keyword overlap with task_description
-        3. Return top-N ranked results
-
-        beta hard compliance: AI MUST read ALL top-N blueprints before code changes.
-        G6 gate enforces this — unread blueprint → REJECT.
+        Phase 4：LRU 缓存（TTL=30s）。cache_key = (task_description[:80], num_results, include_retired)。
         """
+        cache_key = task_description[:80] + str(num_results) + str(include_retired)
+        now = time.monotonic()
+        cached = self._cache.get(cache_key)
+        if cached and (now - cached[0]) < self._cache_ttl:
+            result = dict(cached[1])
+            result["_cached"] = True
+            result["_cache_age_s"] = round(now - cached[0], 2)
+            return result
+
         routes = self._load_routes()
         if not routes:
             _logger.warning("No routes loaded from %s", ROUTING_YAML_PATH)
@@ -174,7 +195,7 @@ class BlueprintSearchServer(BaseMCPServer):
             if cross_hint:
                 cross_read_hints.append(cross_hint)
 
-        return {
+        result = {
             "results": results,
             "count": len(results),
             "source": "config/blueprint_routing.yaml",
@@ -186,6 +207,23 @@ class BlueprintSearchServer(BaseMCPServer):
                 "Use record_blueprint_read() to register blueprint consumption."
             ),
             "cross_read_hints": cross_read_hints if cross_read_hints else None,
+        }
+
+        self._cache[cache_key] = (now, result)
+        result["_cached"] = False
+        return result
+
+    def _refresh_index(self) -> dict[str, Any]:
+        """增量刷新索引——重载路由配置 + 清空缓存。"""
+        cache_size = len(self._cache)
+        self._cache.clear()
+        self._index_version += 1
+        routes = self._load_routes()
+        return {
+            "index_version": self._index_version,
+            "routes_count": len(routes),
+            "cache_cleared": cache_size,
+            "refreshed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
 
     # ------------------------------------------------------------------

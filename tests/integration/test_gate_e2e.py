@@ -33,7 +33,8 @@ from zephyr.gates.gate_engine import (
     GateEngineError,
     GateResult,
 )
-from zephyr.shared.schemas import Task, TaskStatus
+from zephyr.core.models import TaskCard
+from zephyr.shared.schema.schemas import TaskStatus
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -50,10 +51,10 @@ def _make_task(
     task_id: str = "ADR-001",
     deliverables: list[str] | None = None,
     status: str = "PENDING",
-) -> Task:
+) -> TaskCard:
     namespace = task_id.split("-")[0]
     seq = int(task_id.split("-")[-1])
-    return Task(
+    return TaskCard(
         task_id=task_id,
         namespace=namespace,
         seq=seq,
@@ -62,7 +63,10 @@ def _make_task(
         status=TaskStatus(status),
         execution_model="claude",
         safety_level="M",
-        directive="325",
+        source_blueprint="test",
+        source_section="test",
+        description="E2E 测试任务：门禁端到端验证",
+        verification_status="verified",
         deliverables=deliverables or [],
         acceptance=[],
         depends_on=[],

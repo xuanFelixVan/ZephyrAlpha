@@ -27,6 +27,7 @@ timeout_seconds: 30
 warn_only: false
 """
 
+import os
 import argparse
 import hashlib
 import json
@@ -45,6 +46,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_findings(path: str | Path) -> list[dict]:
+    """_load_findings implementation."""
     findings: list[dict] = []
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -59,15 +61,18 @@ def _load_findings(path: str | Path) -> list[dict]:
 
 
 def _finding_key(f: dict) -> str:
+    """_finding_key implementation."""
     raw = f"{f.get('dimension', '')}|{f.get('target', {}).get('file_path', '')}|{f.get('description', '')}"
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
 
 def _build_index(findings: list[dict]) -> dict[str, dict]:
+    """_build_index implementation."""
     return {_finding_key(f): f for f in findings}
 
 
 def save_baseline(source: str | Path, label: str = "") -> dict:
+    """save_baseline implementation."""
     _BASELINE_DIR.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(UTC)
     ts_str = timestamp.strftime("%Y%m%dT%H%M%SZ")
@@ -75,14 +80,30 @@ def save_baseline(source: str | Path, label: str = "") -> dict:
     findings = _load_findings(source)
     output_path = _BASELINE_DIR / f"baseline-{ts_str}.jsonl"
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        for finding in findings:
-            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-
-    with open(_CURRENT_BASELINE, "w", encoding="utf-8") as f:
-        for finding in findings:
-            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-
+    tmp_path = f"{output_path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            for finding in findings:
+                f.write(json.dumps(finding, ensure_ascii=False) + "\n")
+    
+        os.replace(tmp_path, output_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+    tmp_path = f"{_CURRENT_BASELINE}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            for finding in findings:
+                f.write(json.dumps(finding, ensure_ascii=False) + "\n")
+    
+        os.replace(tmp_path, _CURRENT_BASELINE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     meta = {
         "saved_at": timestamp.isoformat(),
         "finding_count": len(findings),
@@ -90,9 +111,17 @@ def save_baseline(source: str | Path, label: str = "") -> dict:
         "label": label or f"baseline-{ts_str}",
         "file": str(output_path.relative_to(_REPO_ROOT)),
     }
-    with open(_BASELINE_META, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-
+    tmp_path = f"{_BASELINE_META}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json.dump(meta, f, ensure_ascii=False, indent=2)
+    
+        os.replace(tmp_path, _BASELINE_META)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return meta
 
 
@@ -100,6 +129,7 @@ def compare_with_baseline(
     current_path: str | Path,
     baseline_path: str | Path | None = None,
 ) -> dict:
+    """compare_with_baseline implementation."""
     baseline_path = Path(baseline_path) if baseline_path else _CURRENT_BASELINE
     if not Path(baseline_path).exists():
         return {"error": "baseline_not_found", "path": str(baseline_path)}
@@ -140,10 +170,12 @@ def compare_with_baseline(
 
 
 def approve_baseline(source: str | Path) -> dict:
+    """approve_baseline implementation."""
     return save_baseline(source, label="approved")
 
 
 def baseline_status() -> dict:
+    """baseline_status implementation."""
     if not _BASELINE_META.exists():
         return {"has_baseline": False}
     with open(_BASELINE_META, encoding="utf-8") as f:
@@ -152,6 +184,7 @@ def baseline_status() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Finding 基线快照管理")
     parser.add_argument("--save", type=str, help="保存当前 Findings 为基线")
     parser.add_argument("--compare", type=str, help="对比当前 Findings 与基线")

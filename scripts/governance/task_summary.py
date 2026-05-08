@@ -16,6 +16,8 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_ERROR, EXIT_PASS
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -68,19 +70,23 @@ _PHASE_LABELS: dict[int, str] = {
 
 
 def _sv(card) -> str:
+    """_sv implementation."""
     return card.status.value.lower()
 
 
 def _bar(ratio: float, width: int = 20) -> str:
+    """_bar implementation."""
     filled = max(0, min(width, int(ratio * width)))
     return "█" * filled + "░" * (width - filled)
 
 
 def _icon(s: str) -> str:
+    """_icon implementation."""
     return _STATUS_ICON.get(s, "❓")
 
 
 def render_all(cards: list) -> None:
+    """render_all implementation."""
     out = sys.stdout
     now_utc = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
     total = len(cards)
@@ -168,6 +174,7 @@ def render_all(cards: list) -> None:
 
 
 def render_json(cards: list) -> None:
+    """render_json implementation."""
     status_counts: dict[str, int] = defaultdict(int)
     for c in cards:
         status_counts[_sv(c)] += 1
@@ -186,6 +193,7 @@ def render_json(cards: list) -> None:
 
 
 def render_quiet(cards: list) -> None:
+    """render_quiet implementation."""
     total = len(cards)
     status_counts: dict[str, int] = defaultdict(int)
     for c in cards:
@@ -198,6 +206,7 @@ def render_quiet(cards: list) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="任务系统全局进度摘要")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
     parser.add_argument("--quiet", "-q", action="store_true", help="安静模式")
@@ -220,10 +229,10 @@ def main() -> int:
         render_all(cards)
 
     if args.warn_only:
-        return 0
+        return EXIT_PASS
     if has_issues:
-        return 2
-    return 0
+        return EXIT_ERROR
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

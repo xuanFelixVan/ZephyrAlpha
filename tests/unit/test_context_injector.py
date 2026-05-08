@@ -17,7 +17,7 @@ from zephyr.context_engine.context_injector import (
 from zephyr.db.sqlite_schema import init_db
 from zephyr.kb.chromadb_init import init_chromadb
 from zephyr.kb.kb_repo import KbRepo
-from zephyr.shared.token_utils import estimate_tokens
+from zephyr.shared.observability.token_utils import estimate_tokens
 
 
 @pytest.fixture

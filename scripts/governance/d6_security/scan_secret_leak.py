@@ -1,0 +1,221 @@
+"""
+对标 06-security-architecture.md §6.3 L3-Audit：
+  周扫描全库 secret 泄漏，Finding 写 docs/09_audit/findings/。
+
+与 detect_secrets.py 的区别：
+  - detect_secrets.py = CI pre-commit 级轻量扫描（单文件/增量）
+  - scan_secret_leak.py = 全库深度扫描 + 历史对比 + Finding 持久化
+
+用法:
+  python scripts/governance/d6_security/scan_secret_leak.py [--full] [--baseline BASELINE_JSON]
+                                                            [--output FINDINGS_DIR]
+
+exit: 0=pass, 1=findings, 2=error
+"""
+
+from __future__ import annotations
+
+import os
+
+__manifest__ = """
+args:
+- --full
+- --baseline
+- --output
+description: 全库 secret 泄漏周扫描 + 历史快照对比（06-SEC §6.3 L3-Audit — P1安全深度扫描）
+dimensions:
+- D6
+priority: P1
+timeout_seconds: 120
+warn_only: false
+"""
+
+import argparse
+import json
+import re
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_CODE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.encoding import ensure_utf8_stdout
+from _shared.walk import iter_files
+
+ensure_utf8_stdout()
+
+BASELINE_DIR = REPO_ROOT / "data" / "security_baselines"
+FINDINGS_DIR = REPO_ROOT / "docs" / "09_audit" / "findings"
+
+SECRET_PATTERNS_DEEP = [
+    (re.compile(r"(?:api[_-]?key|apikey|API_KEY)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "API Key 硬编码", "P0"),
+    (re.compile(r"(?:secret|SECRET)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Secret 硬编码", "P0"),
+    (re.compile(r"(?:token|TOKEN)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Token 硬编码", "P0"),
+    (re.compile(r"(?:password|PASSWORD|passwd)\s*[:=]\s*['\"][^'\"]{3,}['\"]", re.IGNORECASE), "Password 硬编码", "P0"),
+    (re.compile(r"sk-[a-zA-Z0-9]{32,}", re.IGNORECASE), "OpenAI API Key", "P0"),
+    (re.compile(r"AKIA[0-9A-Z]{16}", re.IGNORECASE), "AWS Access Key ID", "P0"),
+    (re.compile(r"(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}", re.IGNORECASE), "GitHub Token", "P0"),
+    (re.compile(r"(?:private[_-]?key|PRIVATE_KEY)['\"]?\s*[:=]\s*['\"][^'\"]{16,}['\"]", re.IGNORECASE), "Private Key", "P1"),
+    (re.compile(r"(?:access[_-]?key|ACCESS_KEY)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Access Key", "P1"),
+    (re.compile(r"(?:database[_-]?url|DATABASE_URL|DB_URL)\s*[:=]\s*['\"][^'\"]*:[^'\"]*@[^'\"]*['\"]", re.IGNORECASE), "数据库连接串含密码", "P1"),
+]
+
+EXCLUDE_FILES = frozenset({
+    "scan_secret_leak.py",
+    "detect_secrets.py",
+    "scan_runtime_log_secrets.py",
+    ".env.example",
+})
+
+
+def scan_file(filepath: Path) -> list[dict]:
+    """scan_file implementation."""
+    findings = []
+    try:
+        content = filepath.read_text(encoding="utf-8", errors="replace")
+    except (OSError, UnicodeDecodeError):
+        return findings
+    for pattern, label, severity in SECRET_PATTERNS_DEEP:
+        for match in pattern.finditer(content):
+            line_num = content[: match.start()].count("\n") + 1
+            findings.append({
+                "file": str(filepath.relative_to(REPO_ROOT)),
+                "line": line_num,
+                "pattern": label,
+                "severity": severity,
+                "matched": match.group(0)[:80],
+            })
+    return findings
+
+
+def scan_full(scan_dir: Path | None = None) -> list[dict]:
+    """scan_full implementation."""
+    target = scan_dir or REPO_ROOT
+    all_findings = []
+    for filepath in iter_files(target, extensions=SCAN_EXTENSIONS_CODE, exclude_files=EXCLUDE_FILES):
+        try:
+            rel = filepath.relative_to(REPO_ROOT)
+        except (ValueError, OSError):
+            continue
+        if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
+            continue
+        findings = scan_file(filepath)
+        all_findings.extend(findings)
+    return all_findings
+
+
+def save_baseline(findings: list[dict]) -> Path:
+    """save_baseline implementation."""
+    BASELINE_DIR.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    baseline_path = BASELINE_DIR / f"secret_baseline_{ts}.json"
+    tmp_path = f"{baseline_path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump({"timestamp": datetime.now(timezone.utc).isoformat(), "findings": findings, "total": len(findings)}, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, baseline_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+    return baseline_path
+
+
+def compare_with_baseline(findings: list[dict], baseline_path: Path) -> list[dict]:
+    """compare_with_baseline implementation."""
+    try:
+        with open(baseline_path, encoding="utf-8") as f:
+            prev = json.load(f)
+    except Exception:
+        return []
+    prev_set = {(f["file"], f["line"], f["pattern"]) for f in prev.get("findings", [])}
+    new_findings = []
+    for f in findings:
+        key = (f["file"], f["line"], f["pattern"])
+        if key not in prev_set:
+            f["status"] = "NEW"
+            new_findings.append(f)
+    return new_findings
+
+
+def write_findings_report(findings: list[dict], new_findings: list[dict]) -> Path | None:
+    """write_findings_report implementation."""
+    if not findings:
+        return None
+    FINDINGS_DIR.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    report_path = FINDINGS_DIR / f"SEC-LEAK-{ts}.json"
+    report = {
+        "id": f"SEC-LEAK-{ts}",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "total_findings": len(findings),
+        "new_findings": len(new_findings),
+        "p0_count": sum(1 for f in findings if f.get("severity") == "P0"),
+        "p1_count": sum(1 for f in findings if f.get("severity") == "P1"),
+        "findings": findings,
+        "new": new_findings,
+    }
+    tmp_path = f"{report_path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, report_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+    return report_path
+
+
+def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
+    parser = argparse.ArgumentParser(description="全库 secret 泄漏周扫描")
+    parser.add_argument("--full", action="store_true", help="全库扫描（默认）")
+    parser.add_argument("--baseline", type=str, help="对比基线 JSON 文件")
+    parser.add_argument("--output", type=str, help="Finding 输出目录")
+    args = parser.parse_args()
+
+    findings = scan_full()
+    new_findings = []
+
+    if args.baseline:
+        baseline_path = Path(args.baseline)
+        new_findings = compare_with_baseline(findings, baseline_path)
+
+    baseline_path = save_baseline(findings)
+
+    p0 = [f for f in findings if f.get("severity") == "P0"]
+    p1 = [f for f in findings if f.get("severity") == "P1"]
+
+    print(f"\n[SECRET-SCAN] 全库扫描完成")
+    print(f"  总发现: {len(findings)} (P0: {len(p0)}, P1: {len(p1)})")
+    print(f"  新增发现: {len(new_findings)}")
+    print(f"  基线已保存: {baseline_path.relative_to(REPO_ROOT)}")
+
+    if findings:
+        print(f"\n  P0 发现 ({len(p0)}):")
+        for f in p0[:20]:
+            print(f"    {f['file']}:{f['line']} [{f['pattern']}]")
+        if len(p0) > 20:
+            print(f"    ... 还有 {len(p0) - 20} 项")
+        if p1:
+            print(f"\n  P1 发现 ({len(p1)}):")
+            for f in p1[:10]:
+                print(f"    {f['file']}:{f['line']} [{f['pattern']}]")
+            if len(p1) > 10:
+                print(f"    ... 还有 {len(p1) - 10} 项")
+
+    report_path = write_findings_report(findings, new_findings)
+    if report_path:
+        print(f"  Finding 报告: {report_path.relative_to(REPO_ROOT)}")
+
+    if p0:
+        return EXIT_FINDINGS
+    return EXIT_PASS
+if __name__ == "__main__":
+    sys.exit(main())

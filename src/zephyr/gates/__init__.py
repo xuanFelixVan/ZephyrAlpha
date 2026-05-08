@@ -19,3 +19,48 @@ ZephyrAlpha 门禁子包
 的 Gate 操作均通过本子包接口调用，禁止跨层直接操作门禁逻辑。
 统一决策入口：任何涉及风险控制的 AI 决策在此汇总评估。
 """
+from __future__ import annotations
+
+import importlib
+import logging
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+_LAZY_IMPORTS: dict[str, dict[str, str]] = {
+    "GateContext": {"module": "zephyr.gates.gate_context", "attr": "GateContext"},
+    "GatePipeline": {"module": "zephyr.gates.gate_pipeline", "attr": "GatePipeline"},
+    "GateSimulator": {"module": "zephyr.gates.gate_simulator", "attr": "GateSimulator"},
+    "GateIntegrityGuard": {"module": "zephyr.gates.gate_integrity_guard", "attr": "GateIntegrityGuard"},
+    "AdaptiveThreshold": {"module": "zephyr.gates.adaptive_threshold", "attr": "AdaptiveThreshold"},
+    "AuditChainVerifier": {"module": "zephyr.gates.audit_chain_verifier", "attr": "AuditChainVerifier"},
+    "GateHealth": {"module": "zephyr.gates.gate_health", "attr": "GateHealth"},
+    "GateOverride": {"module": "zephyr.gates.gate_override", "attr": "GateOverride"},
+    "SysMasterCompliance": {"module": "zephyr.gates.sys_master_compliance", "attr": "SysMasterCompliance"},
+    "trigger_recovery": {"module": "zephyr.gates.drift_detector", "attr": "trigger_recovery"},
+}
+
+__all__ = [
+    'ai_capability_guard', 'anti_pattern_guard', 'breaking_change_detector',
+    'can_i_deploy', 'capability_checker', 'cbac_matrix', 'cdc_broker',
+    'circuit_breaker', 'contract_template_manager', 'drift_detector',
+    'end_to_end_walkthrough', 'gate_engine', 'integration_test_runner',
+    'kiss_enforcer', 'risk_ssot', 'secrets_guard', 'task_completion_gate',
+    'truth_source_validator',
+    'GateContext', 'GatePipeline', 'GateSimulator', 'GateIntegrityGuard',
+    'AdaptiveThreshold', 'AuditChainVerifier', 'GateHealth', 'GateOverride',
+    'SysMasterCompliance', 'trigger_recovery',
+]
+
+
+def __getattr__(name: str) -> Any:
+    if name in _LAZY_IMPORTS:
+        info = _LAZY_IMPORTS[name]
+        try:
+            mod = importlib.import_module(info["module"])
+            attr = getattr(mod, info["attr"])
+            return attr
+        except (ImportError, AttributeError) as e:
+            logger.debug("Lazy import failed for %s: %s", name, e)
+            raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

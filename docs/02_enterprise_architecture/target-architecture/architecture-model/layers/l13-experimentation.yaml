@@ -1,0 +1,72 @@
+schema_version: "2.0"
+partition:
+  id: l13
+  name: Experiment Pipeline
+  layer_position: 13
+  runtime_plane: warm
+  view_file: 03-application-architecture.md
+  view_section: "��4.1 l13_experimentation/"
+
+modules:
+
+  - id: l13-shadow
+    module_id: MOD-EXP-001
+    name: Shadow Trading Runtime
+    submodule_path: src/zephyr/l13_experimentation/shadow/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: Ӱ�ӽ���ִ�У�����ʵ�ʽ�Ĳ������У���Cold �� Warm �����뾭 shadow ��֤��INV-011��cross_plane_rules COLD_TO_WARM_SHADOW_REQUIRED��
+    boundary_note: "l13 ���ܿ�ʵ���ܣ�shadow/C-C/A/B ��֤����l09 ��̽�����о�ɳ�У��������ɣ���l09 ������ѡ���ԣ�l13 ��֤���ԡ����߲��ص���"
+    interfaces: []
+    kb_ref: [ADR-0011]
+
+  - id: l13-champion-challenger
+    module_id: MOD-L13-002
+    name: Champion-Challenger Framework
+    submodule_path: src/zephyr/l13_experimentation/champion_challenger/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: �ھ���ս��������ܣ����ֶԱȣ�����ģ��/���Խ�������
+    interfaces: []
+    kb_ref: [ADR-0011]
+
+  - id: l13-promotion-gate
+    module_id: MOD-L13-003
+    name: Auto-Promotion Gate
+    submodule_path: src/zephyr/l13_experimentation/promotion_gate/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: �Զ������ţ����������Ž�����Fitness Function ����ͨ���󷽿ɽ�������ס Cold �� Warm �߽�
+    interfaces: []
+    kb_ref: [ADR-0011]
+
+  - id: l13-ab-testing
+    module_id: MOD-L13-004
+    name: A/B Experiment Management
+    submodule_path: src/zephyr/l13_experimentation/ab_testing/
+    status: planned
+    priority: P2
+    runtime_plane: cold
+    description: A/B ʵ����������洢��ʵ����ơ�����ۺ���ͳ�������Է�����Cold batch
+    interfaces: []
+    kb_ref: []
+
+summary:
+  total: 4
+  by_status:
+    planned: 4
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 0
+    P1: 3
+    P2: 1
+    P3: 0
+  by_runtime_plane:
+    hot: 0
+    warm: 3
+    cold: 1

@@ -1,0 +1,69 @@
+version: "0.9.0"
+module_id: MOD-INF-015
+last_updated: "2026-05-08"
+
+flags:
+  metrics:
+    enabled: true
+    description: "指标采集主开关"
+    subsystems:
+      system: true
+      pipeline: true
+      db: true
+      ai: true
+      telemetry: true
+
+  logs:
+    enabled: true
+    description: "结构化日志主开关"
+    structured_logging: true
+    jsonl_export: false
+    trace_id_injection: true
+
+  traces:
+    enabled: true
+    description: "分布式追踪 (span_stub 基础追踪可用)"
+    sampling_rate: 0.10
+    propagation: "w3c"
+    implementation_status: "beta"
+
+  ai_behavior:
+    enabled: true
+    description: "AI行为监控 (event_sink 已接通)"
+    implementation_status: "beta"
+
+  archive:
+    enabled: false
+    description: "遥测数据归档 (未实现，保留flag)"
+    retention_days: 30
+    compression: "gzip"
+    implementation_status: "not_started"
+
+  health:
+    enabled: true
+    description: "健康检查 (module_health 可用)"
+    implementation_status: "beta"
+
+  alerts:
+    enabled: true
+    description: "告警规则评估 (基础条件解析可用，Multi-Window 未实现)"
+    auto_escalation: false
+
+  schema_validation:
+    enabled: true
+    description: "Schema校验 (YAML 加载可用，runtime drift 检测未实现)"
+    strict_mode: false
+    dlq_enabled: false
+
+  auto_bootstrap:
+    enabled: true
+    description: "自动注入遥测hooks到所有模块 (monkey-patch 已实现)"
+
+  red_blue_validator:
+    enabled: true
+    description: "红白对抗验证器主开关"
+    auto_game_day: true
+    ai_attack_generation: true
+    tier_6_advanced: true
+    blind_test_mode: false
+    constitution_auto_approve: false

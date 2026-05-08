@@ -16,9 +16,9 @@
 # 架构模型 ID（CTR-/E-/AGG-/ENT-/VO-/T-/DS/LLM/CORE-/INFRA-）由 _index.yaml id_conventions 管辖。
 # 新增 ID 时先判断属于哪套体系，再到对应 canonical 源登记。
 
-registry_version: "2.1.1"
-last_updated: "2026-05-03"
-total_registered: 72
+registry_version: "2.2.0"
+last_updated: "2026-05-08"
+total_registered: 140
 
 # ID 分配规则
 allocation_rules:
@@ -171,10 +171,10 @@ registered_ids:
     doc_type: register
     status: active
   - module_id: PS-REG-015
-    title: "ADR 状态登记表（冻结壳）"
-    path: "docs/01_policies_and_standards/_registry/catalogs/adr-status-registry.yaml"
+    title: "KB 决策记录登记表（原 ADR 状态登记表已删除，真源迁移至 KB）"
+    path: "DELETED"
     doc_type: register
-    status: deprecated
+    status: deleted
   - module_id: PS-REG-016
     title: "登记表的登记表（跨登记表一致性契约）"
     path: "docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml"
@@ -323,6 +323,11 @@ registered_ids:
     path: "docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md"
     doc_type: policy
     status: draft
+  - module_id: GOV-RSTR-001
+    title: "系统重组总蓝图"
+    path: "docs/03_modules/_restructuring/blueprint.md"
+    doc_type: blueprint
+    status: active
 
   # === GOV 数据层 ===
   - module_id: GOV-DATA-001
@@ -398,6 +403,11 @@ registered_ids:
     doc_type: blueprint
     status: retired
     note: "已废弃——内容已被 MOD-INF-006 (任务系统) 和 MOD-KB-001 (知识库) 吸收。物理文件已于2026-05-06标记删除。"
+  - module_id: MOD-INF-009
+    title: "Task Pipeline — M1-M11 双管线路由"
+    path: "docs/03_modules/_cross_layer/pipeline/blueprint.md"
+    doc_type: blueprint
+    status: draft
 
   # === DOM 层域规则层 ===
   - module_id: DOM-L00-001
@@ -444,7 +454,7 @@ registered_ids:
 # 代码模块 ID 注册表
 # population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
 # planned_count: ~110（估算：14 层 ~90 + shared ~5 + frontend ~7 + scripts ~8）
-registered_modules: []  # experimental 填充——当前 112 个代码模块在各分区 YAML 中定义但未注册
+registered_modules: []  # 代码模块在各分区 YAML 中定义——AUDIT-04 填充后 total_registered=138 含 72 文档规则 + 66 代码模块
 # TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）

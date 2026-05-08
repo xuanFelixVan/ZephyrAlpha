@@ -189,6 +189,38 @@ class ArtifactScanner:
         },
     ]
 
+    _CONFIG_RULES: ClassVar[list[dict]] = [
+        {
+            "rule_id": "S-07-CONFIG-SECRET",
+            "category": "config_secret",
+            "severity": "error",
+            "pattern": re.compile(
+                r"""(?:password|passwd|pwd|secret|token)\s*[:=]\s*["']?[^\s"']{6,}""",
+                re.IGNORECASE,
+            ),
+            "message": "Hardcoded secret in configuration file",
+        },
+    ]
+
+    _NOTEBOOK_RULES: ClassVar[list[dict]] = [
+        {
+            "rule_id": "S-08-NB-SYSTEM",
+            "category": "notebook_risk",
+            "severity": "error",
+            "pattern": re.compile(
+                r"os\.system|subprocess\.(?:run|Popen|call|check_output)",
+            ),
+            "message": "Dangerous system call in notebook cell",
+        },
+        {
+            "rule_id": "S-08-NB-PIP",
+            "category": "notebook_risk",
+            "severity": "warning",
+            "pattern": re.compile(r"!\s*pip\s+install"),
+            "message": "Inline pip install in notebook — should use requirements.txt",
+        },
+    ]
+
     def scan_content(self, content: str, label: str = "<content>") -> ScanReport:
         findings: list[ArtifactFinding] = []
         lines = content.split("\n")
@@ -219,6 +251,32 @@ class ArtifactScanner:
 
         return ScanReport(target=label, findings=findings, summary=summary)
 
+    def _scan_with_rules(self, content: str, label: str, rules: list[dict]) -> ScanReport:
+        findings: list[ArtifactFinding] = []
+        lines = content.split("\n")
+        for rule in rules:
+            for i, line in enumerate(lines, start=1):
+                for m in rule["pattern"].finditer(line):
+                    findings.append(
+                        ArtifactFinding(
+                            rule_id=rule["rule_id"],
+                            category=rule["category"],
+                            severity=rule["severity"],
+                            message=rule["message"],
+                            file_path=label,
+                            line_number=i,
+                            snippet=m.group(0)[:150],
+                        )
+                    )
+        error_count = sum(1 for f in findings if f.severity == "error")
+        warn_count = sum(1 for f in findings if f.severity == "warning")
+        summary = (
+            f"[CLEAN] {label}"
+            if not findings
+            else f"[FOUND] {label}: {error_count} errors, {warn_count} warnings"
+        )
+        return ScanReport(target=label, findings=findings, summary=summary)
+
     def scan_file(self, file_path: Path) -> ScanReport:
         if not file_path.exists():
             return ScanReport(target=str(file_path), summary=f"[MISSING] {file_path}")
@@ -226,7 +284,32 @@ class ArtifactScanner:
             content = file_path.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             return ScanReport(target=str(file_path), summary=f"[BINARY] {file_path}")
-        return self.scan_content(content, label=str(file_path))
+        base_report = self.scan_content(content, label=str(file_path))
+        suffix = file_path.suffix.lower()
+        extra_rules: list[dict] = []
+        if suffix in (".yaml", ".yml"):
+            extra_rules = self._CONFIG_RULES
+        elif suffix == ".ipynb":
+            extra_rules = self._NOTEBOOK_RULES
+        if extra_rules:
+            extra_report = self._scan_with_rules(content, str(file_path), extra_rules)
+            combined_findings = base_report.findings + extra_report.findings
+            error_count = sum(1 for f in combined_findings if f.severity == "error")
+            warn_count = sum(1 for f in combined_findings if f.severity == "warning")
+            summary = (
+                f"[CLEAN] {file_path}"
+                if not combined_findings
+                else f"[FOUND] {file_path}: {error_count} errors, {warn_count} warnings"
+            )
+            return ScanReport(target=str(file_path), findings=combined_findings, summary=summary)
+        return base_report
+
+    def scan_directory(self, directory: Path) -> list[ScanReport]:
+        reports: list[ScanReport] = []
+        for file_path in sorted(directory.rglob("*")):
+            if file_path.is_file():
+                reports.append(self.scan_file(file_path))
+        return reports
 
     def scan_files(self, paths: list[Path]) -> list[ScanReport]:
         return [self.scan_file(p) for p in paths]

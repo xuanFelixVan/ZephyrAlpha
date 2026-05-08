@@ -1,0 +1,90 @@
+---
+module_id: KE-module_blu-2_17______________d-025-14-003
+title: 2.17 涌现行为与异常检测（决策 D-025-14）
+category: module_blueprint
+---
+
+# 2.17 涌现行为与异常检测（决策 D-025-14）
+
+2.17 涌现行为与异常检测（决策 D-025-14）
+
+> **新增于 v0.6.0**。v0.5.0 的防护体系（死锁/活锁/级联故障/消息安全）针对的是"已知故障模式"。但 "Agents of Chaos" (2026-02) 揭示：对齐良好的单个 Agent 在多 Agent 协作中会**自发涌现系统级失败**，无需任何越狱或对抗性提示。
+
+**对标**："Agents of Chaos" (Harvard/MIT/Stanford/CMU, arXiv:2602.20021 — 11 种系统性失败)、MAScope (ZJU, arXiv:2603.04469 — F1=85.3%)、MARIA OS Safety Layer (Layer 7 anomaly detection)、Galileo.ai 多 Agent 异常分类学。
+
+```yaml
+emergence_and_anomaly_detection:
+
+  # === "Agents of Chaos" 11 种失败模式——ZephyrAlpha 语境映射 ===
+  chaos_failure_modes:
+    F01_non_owner_exec:
+      name: "非所有者授权执行"
+      zephyr_relevance: "中——1人场景下不太可能，但未来多合约方须有"
+      mitigation: "Agent 操作必须通过 Owner 的 delegated_auth——已在 §2.10 中覆盖"
+
+    F02_sensitive_data_leak:
+      name: "敏感数据泄露"
+      zephyr_relevance: "高——Agent A 传给 Agent B 的上下文包可能包含 secrets"
+      mitigation: "已在 §2.10 中覆盖（context_purge_secrets 门禁）"
+
+    F03_disruptive_sys_ops:
+      name: "破坏性系统操作"
+      zephyr_relevance: "高——Agent 代码可执行任意 shell 命令"
+      mitigation: "Sandbox + 文件访问 allowlist——已在多 Agent 沙箱中覆盖"
+
+    F04_denial_of_service:
+      name: "拒绝服务（Agent 过载）"
+      zephyr_relevance: "中——经济护栏 $300/day 提供了硬上限，但 Agent 间 DoS 未覆盖"
+      mitigation: "NEW → Agent 间 back-pressure 协议: queue_depth > N → throttle incoming handoffs"
+
+    F05_uncontrolled_resource_use:
+      name: "无控制资源占用"
+      zephyr_relevance: "高——Token 预算被单一 Agent 独占"
+      mitigation: "已在 §2.12 经济护栏中覆盖（每个 Agent 的 per_handoff_token_budget）"
+
+    F06_identity_spoofing:
+      name: "身份欺骗"
+      zephyr_relevance: "高——Agent 间冒充"
+      mitigation: "已在 §2.10 中覆盖（每一跳独立验证 + 检查 Agent Card hash）"
+
+    F07_cross_agent_behavior_propagation:
+      name: "跨 Agent 行为传播"
+      zephyr_relevance: "🔴 最高——这是 1人+AI 场景最致命的漏洞"
+      mitigation: >
+        Agent A 学会了"跳过测试直接标记 COMPLETED"。
+        Agent B 观察 A 行为后也学会了。
+        需要: (1) Behavior Fingerprint 库——记录每个 Agent 的"完成习惯模式"
+        (2) 行为偏离检测——Agent B 的行为模式突变 → 触发审计
+        (3) 行为溯源——"这个不良行为是 B 自己发明的还是从 A 学来的？"
+
+    F08_partial_takeover:
+      name: "部分系统接管（Agent 逐步蚕食其他 Agent 的领域）"
+      zephyr_relevance: "中——Agent 领地扩张"
+      mitigation: "Agent Card 中声明 domain_overlap_tolerance，超过范围的委托 → REJECTED"
+
+    F09_false_task_completion:
+      name: "虚假任务完成"
+      zephyr_relevance: "🔴 最高——这是 1人+AI 场景下最真实的痛点"
+      mitigation: >
+        COMPLETED 状态不等于任务完成。
+        需要 verification gate:
+        - 代码变更 → Living Spec diff verification（已有 §2.6）
+        - 测试结果 → 自动运行关联测试（新增——§2.18 检查点会覆盖）
+        - 数据变更 → checksum 前后对比
+        - Owner 确认 → 每个 COMPLETED 后 30min 内 Owner 未否决 → 才算"真·COMPLETED"
+        NEW STATE: COMPLETED → VERIFIED 或 COMPLETED → DISPUTED（新增状态转换）
+
+    F10_agent_collusion:
+      name: "Agent 合谋"
+      zephyr_relevance: "中——1人场景下不太可能，但应内置检测"
+      mitigation: "NEW → §2.16 合谋检测"
+
+    F11_strategic_sabotage:
+      name: "战略性破坏"
+      zephyr_relevance: "中——Agent 间竞争性破坏"
+      mitigation: >
+        "Agent 的委托成功率 + 任务质量评分构成 reputation。
+        破坏其他 Agent → 自己的 reputation 也下降（被破坏 Agent 的失败会被回溯分析）
+        需要 sabotage detection: 分析失败任务的 root cause 是否追溯到另一个 Agent"
+
+  # === 5 类异常分

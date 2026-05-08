@@ -13,29 +13,29 @@ modules:
   status: planned
   priority: P0
   runtime_plane: warm
-  description: Anti-Corruption Layer，外部 Vendor 数据格式隔离与内部 canonical schema 转换；akshare/tushare/wind 默认接入，每 Vendor 独立文件，OCP 扩展
+  description: Anti-Corruption Layer，外�?Vendor 数据格式隔离与内�?canonical schema 转换；akshare/tushare/wind 默认接入，每 Vendor 独立文件，OCP 扩展
   interfaces:
   - contract_id: CTR-001
     role: producer
-    description: 生产原始市场数据，供下游Normalizers模块进行标准化处理
+    description: 生产原始市场数据，供下游Normalizers模块进行标准化处�?
   - contract_id: EXT-002
     role: consumer
     description: 消费外部行情数据提供商的API接口
-  adr_ref:
+  kb_ref:
   - ADR-0009
-  plane_note: 当前默认 Warm；T1 后扩展 connectors_hot.py 走 Hot（l00-connectors-hot）
+  plane_note: 当前默认 Warm；T1 后扩�?connectors_hot.py �?Hot（l00-connectors-hot�?
 - id: l00-normalizers
   name: Data Normalizers
   submodule_path: src/zephyr/l00_data_source/normalizers/
   status: planned
   priority: P0
   runtime_plane: warm
-  description: 原始数据标准化与 schema 映射；将 Vendor 原始格式转换为 NormalizedMarketData canonical 对象
+  description: 原始数据标准化与 schema 映射；将 Vendor 原始格式转换�?NormalizedMarketData canonical 对象
   interfaces:
   - contract_id: CTR-001
     role: producer
-    description: 生产 NormalizedMarketData 供下游因子计算（l02, l03, l09）
-  adr_ref:
+    description: 生产 NormalizedMarketData 供下游因子计算（l02, l03, l09�?
+  kb_ref:
   - ADR-0009
 - id: l00-storage
   name: Data Storage
@@ -43,33 +43,33 @@ modules:
   status: planned
   priority: P0
   runtime_plane: cold
-  description: 数据持久化与检索；行情数据落库（PostgreSQL / DuckDB / Parquet）
+  description: 数据持久化与检索；行情数据落库（PostgreSQL / DuckDB / Parquet�?
   interfaces:
   - contract_id: CTR-001
     role: both
-    description: 消费标准化市场数据进行持久化存储；提供历史数据检索接口，支持同步/异步、批量/流式查询
-  adr_ref: []
+    description: 消费标准化市场数据进行持久化存储；提供历史数据检索接口，支持同步/异步、批�?流式查询
+  kb_ref: []
 - id: l00-cache
   name: Data Cache
   submodule_path: src/zephyr/l00_data_source/cache/
   status: planned
   priority: P1
   runtime_plane: warm
-  description: 内存与磁盘缓存层；减少重复外部 API 调用，加速因子计算热路径
+  description: 内存与磁盘缓存层；减少重复外�?API 调用，加速因子计算热路径
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 - id: l00-quality
   name: Data Quality Gate
   submodule_path: src/zephyr/l00_data_source/quality/
   status: planned
   priority: P0
   runtime_plane: cold
-  description: 数据质量检查与门禁规则；含 survivorship bias 检测、PIT 合规门禁、异常值过滤
+  description: 数据质量检查与门禁规则；含 survivorship bias 检测、PIT 合规门禁、异常值过�?
   interfaces:
   - contract_id: CTR-001
     role: both
-    description: 消费原始市场数据进行质量检查；生产经过质量门禁的标准化市场数据，包含质量评分字段
-  adr_ref:
+    description: 消费原始市场数据进行质量检查；生产经过质量门禁的标准化市场数据，包含质量评分字�?
+  kb_ref:
   - ADR-0005
 summary:
   total: 5

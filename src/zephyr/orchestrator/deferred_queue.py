@@ -16,7 +16,7 @@ from enum import Enum, unique
 from threading import RLock
 from typing import Any
 
-from zephyr.shared.observer import EventType, Observer
+from zephyr.shared.infra.observer import EventType, Observer
 
 
 @unique

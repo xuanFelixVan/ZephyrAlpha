@@ -56,7 +56,7 @@ try:
     import yaml
 except ImportError:
     yaml = None
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.frontmatter import extract_module_id
 
 _PS_ROOT = REPO_ROOT / "docs" / "01_policies_and_standards"
@@ -92,6 +92,7 @@ class Finding:
     __slots__ = ("dimension", "severity", "file", "detail")
 
     def __init__(self, dimension: str, severity: str, file: str, detail: str):
+        """__init__ implementation."""
         self.dimension = dimension
         self.severity = severity
         self.file = file
@@ -102,6 +103,7 @@ class Finding:
         return {"dimension": self.dimension, "severity": self.severity, "file": self.file, "detail": self.detail}
 
     def __repr__(self) -> str:
+        """__repr__ implementation."""
         return f"Finding({self.dimension}, {self.severity}, {self.file!r}, {self.detail!r})"
 
 def _rel(path: Path) -> str:
@@ -112,6 +114,7 @@ def _rel(path: Path) -> str:
         return str(path).replace("\\", "/")
 
 def _read_frontmatter(filepath: Path) -> dict[str, Any]:
+    """_read_frontmatter implementation."""
     try:
         raw = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
@@ -138,6 +141,7 @@ def _read_frontmatter(filepath: Path) -> dict[str, Any]:
     return {"module_id": mid.group(1).strip().strip("\"'")} if mid else {}
 
 def _list_md_files_recursive(root: Path) -> list[Path]:
+    """_list_md_files_recursive implementation."""
     result = []
     for entry in root.rglob("*"):
         if not entry.is_file():
@@ -231,6 +235,7 @@ def _parse_index_table(index_path: Path) -> dict[str, str]:
     return result
 
 def _find_index_for_dir(dir_path: Path) -> Path | None:
+    """_find_index_for_dir implementation."""
     candidate = dir_path / "index.md"
     if candidate.exists():
         return candidate
@@ -422,6 +427,7 @@ def check_d5_missing_entries() -> list[Finding]:
     "check d5 missing entries."
 
 def _print_report(findings: list[Finding]) -> None:
+    """_print_report implementation."""
     if not findings:
         print("=" * 60, file=sys.stderr)
         print("  01_policies_and_standards/ 结构完整性审计", file=sys.stderr)
@@ -474,7 +480,7 @@ def main() -> None:
         _PS_ROOT = REPO_ROOT / "docs" / "01_policies_and_standards"
     if not _PS_ROOT.exists():
         print(f"[ERROR] 找不到目录: {_PS_ROOT}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     findings: list[Finding] = []
     findings.extend(check_d1_ghost_files())
     findings.extend(check_d2_id_conflicts())
@@ -486,8 +492,8 @@ def main() -> None:
     else:
         _print_report(findings)
     if args.warn_only or not findings:
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
     "入口函数."
 
 if __name__ == "__main__":

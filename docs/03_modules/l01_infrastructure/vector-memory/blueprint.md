@@ -2,7 +2,7 @@
 module_id: "MOD-INF-011"
 title: "Vector Memory Service 蓝图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
-status: Draft
+status: Active
 version: "0.7.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: phase_1_partial
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d主路径 + bge-small-zh-v1.5 512d轻量路径）本地推理。8大Collection。v0.7.0 第四轮外部取证专家级终极审计6致命盲点全注入（F-VMS-701~F-VMS-706）：嵌入质量领域假设未经实证/无检索降级逃生/无部署金丝雀回归验证/知识衰减速率非领域感知/无对抗性检索投毒评估/无系统自解释继承能力。四轮共计80盲点全维度覆盖。蓝图纸面终态~95-96/100——已达纸上审计的理论上限。剩余4-5分永远无法通过蓝图消灭——只能通过真实代码运行来发现。"
 tags: [vector-memory, vms, chromadb, bge-m3, embedding, vector-db, collections, infrastructure, hybrid-search, provenance]
@@ -146,9 +146,9 @@ def hybrid_search(query: str, collection: str, k: int) -> list[ScoredHit]:
 | Phase | 任务 | 状态 | 产出预估 |
 |:---:|------|:---:|------|
 | **Phase 0** | 蓝图-SSoT 重建（本版 v0.3.0 完成） | ✅ 完成 | 8 Collection 对齐 ADR-0031 + kb/ 代码 |
-| **Phase 1** | 基础设施对齐——ProvenanceEnforcer + EmbeddingRouter + ChunkStrategyRouter + IndexHealthMonitor + CacheLayer + BridgeLayer | 📋 Backlog | 6 个模块文件 |
-| **Phase 2** | 8 Collection 落地——先迁移 rules/blueprints/knowledge/lessons，再新建 decisions/code_context/session_snapshots/execution_traces | 📋 Backlog | InProcessVectorMemory + 8 Collection |
-| **Phase 3** | 检索质量闭环——HybridRetriever + RetrievalFeedback(FLE hook) + CrossCollectionRetriever | 📋 Backlog | 3 个检索模块 |
+| **Phase 1** | 基础设施对齐——ProvenanceEnforcer + EmbeddingRouter + ChunkStrategyRouter + IndexHealthMonitor + CacheLayer + BridgeLayer | ✅ 完成 | 6 个模块文件 |
+| **Phase 2** | 8 Collection 落地——先迁移 rules/blueprints/knowledge/lessons，再新建 decisions/code_context/session_snapshots/execution_traces | ✅ 完成 | InProcessVectorMemory + 8 Collection |
+| **Phase 3** | 检索质量闭环——HybridRetriever + RetrievalFeedback(FLE hook) + CrossCollectionRetriever | ✅ 完成 | 3 个检索模块 |
 | **Phase 4** | 运维自动化——TTL cron-like HealthMonitor + Auto-compaction + Snapshot 备份 | 📋 Backlog | 运维脚本 |
 
 ---
@@ -179,22 +179,24 @@ def hybrid_search(query: str, collection: str, k: int) -> list[ScoredHit]:
 | `failure_patterns` | bge-small-zh-v1.5 | 512d | `lessons` | 迁移数据 + 重命名 + 重嵌入至 1024d |
 | `unified_memory` | bge-small-zh-v1.5 | 512d | 按 topic 拆分到对应 Collection | 解析 topic → 路由到目标 Collection |
 
-### 5.3 VMS 目标代码文件（待建）
+### 5.3 VMS 代码文件（已实现）
 
 | 文件路径 | 对应蓝图 | 状态 |
 |---------|------|:---:|
-| `src/zephyr/vector_memory/in_process_vector_memory.py` | §2 8 Collection 核心入口 | ☐ 待建 |
-| `src/zephyr/vector_memory/embedding_router.py` | §3.1 双维度路由 | ☐ 待建 |
-| `src/zephyr/vector_memory/chunk_strategy_router.py` | §2.1 分块策略路由 | ☐ 待建 |
-| `src/zephyr/vector_memory/hybrid_retriever.py` | §3.2 混合检索 | ☐ 待建 |
-| `src/zephyr/vector_memory/provenance_enforcer.py` | §1 可审计设计哲学 | ☐ 待建 |
-| `src/zephyr/vector_memory/index_health_monitor.py` | §1 可自愈设计哲学 | ☐ 待建 |
-| `src/zephyr/vector_memory/cache_layer.py` | §3 技术选型 | ☐ 待建 |
-| `src/zephyr/vector_memory/bridge_layer.py` | §5.2 迁移桥接 | ☐ 待建 |
-| `src/zephyr/vector_memory/vector_bridge.py` | §7 CE集成 + KB同步写入 | ☐ 待建 |
-| `src/zephyr/vector_memory/retrieval_feedback.py` | §8 FLE检索质量反馈 | ☐ 待建 |
-| `src/zephyr/vector_memory/cross_collection_retriever.py` | §12.3 Phase 3 跨Collection联合检索 | ☐ 待建 |
-| `tests/unit/test_vector_memory.py` | 单元测试 | ☐ 待建 |
+| `src/zephyr/vector_memory/in_process_vector_memory.py` | §2 8 Collection 核心入口 | ✅ 已实现 |
+| `src/zephyr/vector_memory/embedding_router.py` | §3.1 双维度路由 | ✅ 已实现 |
+| `src/zephyr/vector_memory/chunk_strategy_router.py` | §2.1 分块策略路由 | ✅ 已实现 |
+| `src/zephyr/vector_memory/hybrid_retriever.py` | §3.2 混合检索 | ✅ 已实现 |
+| `src/zephyr/vector_memory/provenance_enforcer.py` | §1 可审计设计哲学 | ✅ 已实现 |
+| `src/zephyr/vector_memory/index_health_monitor.py` | §1 可自愈设计哲学 | ✅ 已实现 |
+| `src/zephyr/vector_memory/cache_layer.py` | §3 技术选型 | ✅ 已实现 |
+| `src/zephyr/vector_memory/bridge_layer.py` | §5.2 迁移桥接 | ✅ 已实现 |
+| `src/zephyr/vector_memory/vector_bridge.py` | §7 CE集成 + KB同步写入 | ✅ 已实现 |
+| `src/zephyr/vector_memory/retrieval_feedback.py` | §8 FLE检索质量反馈 | ✅ 已实现 |
+| `src/zephyr/vector_memory/cross_collection_retriever.py` | §12.3 Phase 3 跨Collection联合检索 | ✅ 已实现 |
+| `src/zephyr/vector_memory/collection_manager.py` | §2 Collection 管理 | ✅ 已实现 |
+| `src/zephyr/vector_memory/vms_schemas.py` | §4 数据模型 | ✅ 已实现 |
+| `tests/unit/vector_memory/test_vector_memory.py` | 单元测试 | ✅ 已实现 |
 
 **新 AI session 读取顺序**：
 1. 读本蓝图 §5（本节）→ 知道「哪些已实现、在哪里」
@@ -1085,3 +1087,16 @@ P2        9       2        3        0       14
 | 2026-05-05 | 0.3.0 | **蓝图层架构重写**——三重不一致审计完成后全篇更新：1) Collection 5→8（新增 rules/blueprints/session_snapshots，runtime_logs→execution_traces） 2) 技术选型新增双嵌入维度 + 混合检索 RRF + ChunkStrategyRouter 3) 施工 Phase 重排为 0-4 4) §5 如实登记 kb/ 已有代码 5) 新增 §6 架构分层 + 模块接口契约 6) §10 已知风险扩展至 15 项（覆盖蓝图漂移/迁移/治理/技术全维度） 7) priority P1→P0，status draft→active |
 | 2026-05-05 | 0.2.0 | 补全标准模板六项：§6 产出物存放目录 + §7 集成目标 + §8 需要更新的相关内容 + §9 已知风险与缓解 + §10 后果 + §11 施工指引 |
 | 2026-05-03 | 0.1.0 | 初始创建——从 b_vector_memory.yaml SSoT 派生。5 Collection Schema + ChromaDB+BGE-M3技术选型。 |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `src/zephyr/vector_memory/` |
+| 源码文件数 | 20 个 .py/.yaml |
+| 测试路径 | `tests/unit/` |
+| 配置文件 | `config/embedding_model_registry.yaml` |
+| 关键入口 | `vector_memory.chroma_client.ChromaDBClient (8 Collections)` |

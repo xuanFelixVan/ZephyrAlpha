@@ -64,6 +64,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_findings(path: str | Path) -> list[dict]:
+    """_load_findings implementation."""
     findings: list[dict] = []
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -78,6 +79,7 @@ def _load_findings(path: str | Path) -> list[dict]:
 
 
 def _group_by_file(findings: list[dict]) -> dict[str, list[dict]]:
+    """_group_by_file implementation."""
     groups: dict[str, list[dict]] = {}
     for f in findings:
         target = f.get("target", {})
@@ -87,6 +89,7 @@ def _group_by_file(findings: list[dict]) -> dict[str, list[dict]]:
 
 
 def _resolve_conflict(findings: list[dict]) -> dict:
+    """_resolve_conflict implementation."""
     if len(findings) == 1:
         return {"status": "sole", "finding": findings[0]}
 
@@ -119,6 +122,7 @@ def _resolve_conflict(findings: list[dict]) -> dict:
 
 
 def arbitrate(findings_source: str | Path) -> dict:
+    """arbitrate implementation."""
     findings = _load_findings(findings_source)
     groups = _group_by_file(findings)
     arbitrated: list[dict] = []
@@ -139,6 +143,7 @@ def arbitrate(findings_source: str | Path) -> dict:
 
 
 def show_rules() -> None:
+    """show_rules implementation."""
     print("\n[ARBITRATOR] Finding 仲裁规则:", file=sys.stderr)
     print("  1. T3信任级 > T2 > T1", file=sys.stderr)
     print("  2. CRITICAL > HIGH > MEDIUM > LOW > INFO", file=sys.stderr)
@@ -150,6 +155,7 @@ def show_rules() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--rules" in sys.argv:
         show_rules()
         return

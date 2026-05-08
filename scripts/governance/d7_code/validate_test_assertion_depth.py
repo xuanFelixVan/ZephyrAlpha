@@ -44,11 +44,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 TESTS_DIR = REPO_ROOT / "tests"
 
 def _has_raises_without_match(tree: ast.AST) -> list[int]:
+    """_has_raises_without_match implementation."""
     lines = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Call):
@@ -64,6 +65,7 @@ def _has_raises_without_match(tree: ast.AST) -> list[int]:
     return lines
 
 def _has_bare_assert_boolean(tree: ast.AST) -> list[int]:
+    """_has_bare_assert_boolean implementation."""
     lines = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Assert):
@@ -73,6 +75,7 @@ def _has_bare_assert_boolean(tree: ast.AST) -> list[int]:
     return lines
 
 def _has_swallowed_exceptions(tree: ast.AST) -> list[int]:
+    """_has_swallowed_exceptions implementation."""
     lines = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Try):
@@ -142,7 +145,7 @@ def main() -> None:
         print(f"\n[ASSERT-DEPTH] 全部 {total_tests} 测试文件断言深度合格 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

@@ -1,0 +1,39 @@
+---
+module_id: KE-module_blu-5_5____roi__________d-023-14-003
+title: 5.5 修复 ROI 优先级引擎（决策 D-023-14）
+category: module_blueprint
+---
+
+# 5.5 修复 ROI 优先级引擎（决策 D-023-14）
+
+5.5 修复 ROI 优先级引擎（决策 D-023-14）
+
+> **决策 D-023-14**：当同时存在多个漂移时，按 ROI（投入产出比）排序——不是"先检测到的先修"，而是"修了收益最大的先修"。ROI = impact × frequency / estimated_effort。
+>
+> **决策依据**：1人+AI 维护下，修复资源有限。盲目按时间或严重度排序会导致"修了一堆 P2，P0 还在漂"。
+
+```yaml
+roi_priority:
+  formula: "ROI = (impact_weight × frequency_score) / effort_score"
+
+  impact_weight:
+    P0_module: 10
+    P1_module: 5
+    P2_module: 2
+    # 基础权重 × 漂移严重度系数（HIGH=3, MEDIUM=2, LOW=1）
+
+  frequency_score:
+    description: "该漂移在近 30 天内被检测到的次数"
+    scale: "1 + log2(frequency)  # 出现 1 次=1, 出现 4 次=3, 出现 16 次=5"
+
+  effort_score:
+    auto_fixable: 1
+    needs_suggestion_simple: 3
+    needs_suggestion_complex: 8
+    needs_human: 20
+
+  sort: "ROI 降序 → Top N 推送给 Owner / AI 修复队列"
+
+  feedback:
+    description: "实际修复耗时 vs effort_score —— 持续校准 effort 估算"
+```

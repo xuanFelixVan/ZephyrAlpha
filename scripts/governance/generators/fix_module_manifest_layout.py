@@ -13,6 +13,10 @@ fix_module_manifest_layout.py — 校正治理脚本模块 docstring 与 ``__man
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_PASS
+
 
 __manifest__ = {
     "args": [],
@@ -23,6 +27,7 @@ __manifest__ = {
     "warn_only": False,
 }
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -175,6 +180,7 @@ def fix_content(text: str) -> tuple[str, bool]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     generators_dir = Path(__file__).resolve().parent
     gov = generators_dir.parent
     self_name = Path(__file__).name
@@ -188,10 +194,18 @@ def main() -> int:
         clean = raw.removeprefix("\ufeff")
         new_body, changed = fix_content(clean)
         if changed:
-            path.write_text(new_body, encoding="utf-8", newline="\n")
+            tmp_path = f"{path}.{os.getpid()}.tmp"
+            try:
+                Path(tmp_path).write_text(new_body, encoding="utf-8", newline="\n")
+                os.replace(tmp_path, path)
+            except PermissionError:
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
             changed_n += 1
     print(f"[fix_module_manifest_layout] 已更新 {changed_n} 个文件")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

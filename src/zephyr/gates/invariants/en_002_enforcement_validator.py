@@ -9,6 +9,8 @@ SSoT: cross-layer-contracts.yaml v3.0
 """
 from __future__ import annotations
 
+from zephyr.shared.schema.schemas import Priority
+
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -62,14 +64,14 @@ def run_check() -> EnforcementResult:
         cid = ctr.get("id", "?")
         priority = ctr.get("priority", "")
 
-        if priority == "P0":
+        if priority == Priority.P0.value:
             p0_count += 1
 
         enforcement_mode = ctr.get("enforcement_mode")
         enforcement_action = ctr.get("enforcement_action")
 
         if enforcement_mode is None and enforcement_action is None:
-            if priority == "P0":
+            if priority == Priority.P0.value:
                 warnings.append(
                     f"{cid}: P0 contract missing enforcement_mode "
                     f"(defaulting to 'block')"

@@ -14,6 +14,10 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_PASS
+
 
 import argparse
 import json
@@ -41,6 +45,7 @@ EXCLUDE_DIRS = {".git", ".ailocks", "node_modules", "__pycache__", ".venv", "ven
 
 
 def scan_for_bom(root: Path) -> list[str]:
+    """scan_for_bom implementation."""
     bom_files = []
     for f in root.rglob("*"):
         if any(part in EXCLUDE_DIRS for part in f.parts):
@@ -57,6 +62,7 @@ def scan_for_bom(root: Path) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Detect UTF-8 BOM in .yaml/.md/.py under repo root.")
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="扫描根目录")
     parser.add_argument("--ci", action="store_true", help="CI 模式（等价于强阻断）")
@@ -87,11 +93,11 @@ def main() -> int:
             "open(FILE,'wb').write(d[3:] if d[:3]==b'\\\\xef\\\\xbb\\\\xbf' else d)\""
         )
         if args.warn_only:
-            return 0
+            return EXIT_PASS
         return exit_code
 
     print("OK: 所有 .yaml/.md/.py 文件均为纯 UTF-8（无 BOM）")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

@@ -53,6 +53,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import re
 import sys
@@ -70,7 +71,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.frontmatter import parse_frontmatter_from_file
 
 RATIONALE_LOG_PATH: Path = (
@@ -445,7 +446,15 @@ def generate_report(
     ]
 
     report_text = "\n".join(lines)
-    candidate.write_text(report_text, encoding="utf-8", newline="\n")
+    tmp_path = f"{candidate}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(report_text, encoding="utf-8", newline="\n")
+        os.replace(tmp_path, candidate)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return candidate
 
 # ---------------------------------------------------------------------------
@@ -514,10 +523,10 @@ def main() -> None:
 
     result = run()
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if result.warnings:
-        sys.exit(1)
-    sys.exit(0)
+        sys.exit(EXIT_FINDINGS)
+    sys.exit(EXIT_PASS)
 
 if __name__ == "__main__":
     main()

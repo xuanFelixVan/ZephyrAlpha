@@ -1,0 +1,14 @@
+---
+module_id: KE-module_blu-2_3_r2-000
+title: 2.3 R2 缓解：跨模块死锁检测
+category: module_blueprint
+---
+
+# 2.3 R2 缓解：跨模块死锁检测
+
+2.3 R2 缓解：跨模块死锁检测
+
+在 `risk_mitigation.py` 中实现 `DeadlockDetector`：
+- `acquire_with_timeout(lock, timeout=30)`: 超时锁获取
+- `retry_with_backoff(func, max_retries=3, base_delay=1.0)`: 指数退避重试
+- `ordered_lock_acquisition(locks)`: 按模块 ID 排序获取锁

@@ -30,8 +30,8 @@ matrix:
 
     - scope: "docs/02_enterprise_architecture/adr/**/*.md"
       level: IMMUTABLE
-      description: "已冻结的 ADR 文档"
-      rationale: "ADR 体系已冻结，不再新增"
+      description: "已冻结的 KB 决策记录文档"
+      rationale: "ADR 体系已冻结并迁移至 KB，不再新增独立 ADR 文件"
       enforcement: "CI build-block"
 
     - scope: "docs/01_policies_and_standards/governance/ai/**/*.md"

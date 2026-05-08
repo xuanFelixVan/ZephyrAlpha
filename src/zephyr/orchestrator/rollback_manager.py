@@ -1,20 +1,27 @@
 """
-RollbackManager — 实现状态回滚：记录操作日志、支持 undo（T-2-05）
+RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚。
 ================================================================
-依据：ADR-0038 §4.5（回滚策略）
 
-功能
-----
-1. checkpoint — 创建检查点（快照 tasks + events 表状态）
-2. rollback_to — 回滚到指定检查点
-3. list_checkpoints — 列出所有检查点
-4. undo_last — 撤销最近一次操作
+⚠️ 降级声明（MOD-INF-021 D-021-04）：
+    本模块已被双轨回滚体系（git-native + SQLite dump JSONL）取代。
+    checkpoint() / rollback_to() / list_checkpoints() / undo_last()
+    仅保留用于手动调试场景的 DB 状态快照，不再参与自动回滚链路。
 
-回滚策略（ADR-0038 §4.5）
-----------------------------
-- 检查点存储在 events 表（event_type = 'checkpoint'）
-- 回滚时：恢复 tasks 表状态到检查点时刻
-- 不碰磁盘文件（只恢复数据库状态）
+自动回滚路径：
+    → src/zephyr/rollback/rollback_executor.py（文件+DB 双轨联动）
+    → src/zephyr/rollback/sqlite_dumper.py（SQLite dump/restore/verify）
+
+原设计（已废弃）：
+    依据：ADR-0038 §4.5（回滚策略）
+    功能：
+    1. checkpoint — 创建检查点（快照 tasks + events 表状态）
+    2. rollback_to — 回滚到指定检查点
+    3. list_checkpoints — 列出所有检查点
+    4. undo_last — 撤销最近一次操作
+    回滚策略：
+    - 检查点存储在 events 表（event_type = 'checkpoint'）
+    - 回滚时：恢复 tasks 表状态到检查点时刻
+    - 不碰磁盘文件（只恢复数据库状态）
 """
 
 from __future__ import annotations
@@ -24,7 +31,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "RollbackManager",

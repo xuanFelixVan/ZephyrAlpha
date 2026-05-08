@@ -1,11 +1,8 @@
-"""
-detect_ruins_references.py — 残骸/废弃路径引用检测
+"""detect_ruins_references.py — 残骸/废弃路径引用检测
 
 
-
-对标：PS-STD-003 ABS-44（禁止使用 _DO_NOT_USE_old_tree/ 作为规则来源）
+对标：PS-STD-003 ABS-44（禁止使用废弃路径作为规则来源）
      GOV-DOC-004 §3（废弃路径清单）
-     AGENTS.md §2（旧树已归档——禁止使用）
 
 检测内容：
 - 任何文件中引用 _DO_NOT_USE_old_tree/ 路径
@@ -37,7 +34,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 import yaml
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_CODE
+from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -58,6 +55,7 @@ _RUINS_PATTERNS: list[tuple[str, str]] | None = None
 _OBSOLETE_PATH_MARKERS: list[str] | None = None
 
 def _get_ruins_patterns() -> list[tuple[str, str]]:
+    """_get_ruins_patterns implementation."""
     global _RUINS_PATTERNS
     if _RUINS_PATTERNS is None:
         with open(_DEPRECATED_PATHS_YAML, encoding="utf-8") as f:
@@ -66,6 +64,7 @@ def _get_ruins_patterns() -> list[tuple[str, str]]:
     return _RUINS_PATTERNS
 
 def _get_obsolete_markers() -> list[str]:
+    """_get_obsolete_markers implementation."""
     global _OBSOLETE_PATH_MARKERS
     if _OBSOLETE_PATH_MARKERS is None:
         with open(_DEPRECATED_PATHS_YAML, encoding="utf-8") as f:
@@ -147,7 +146,7 @@ def main() -> None:
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

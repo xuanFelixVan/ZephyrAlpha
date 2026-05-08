@@ -33,7 +33,7 @@ from enum import Enum, unique
 from threading import RLock
 from typing import Any
 
-from zephyr.shared.errors import ZephyrBaseError
+from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "CircuitState",

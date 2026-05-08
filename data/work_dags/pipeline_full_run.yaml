@@ -1,0 +1,43 @@
+dag_id: pipeline_full_run
+default_layer: local
+default_priority: P0
+description: M1-M2-M3-M8
+edges:
+- condition: success
+  from_node: m1
+  to_node: m2
+- condition: success
+  from_node: m2
+  to_node: m3
+- condition: success
+  from_node: m3
+  to_node: m8
+max_parallelism: 3
+name: Full Pipeline Run
+nodes:
+- capability_id: pipeline-orchestrator
+  layer_override: null
+  node_id: m1
+  params: {}
+  priority_override: null
+  work_type: m1_ingest
+- capability_id: pipeline-orchestrator
+  layer_override: null
+  node_id: m2
+  params: {}
+  priority_override: null
+  work_type: m2_parse
+- capability_id: embedding-router
+  layer_override: null
+  node_id: m3
+  params: {}
+  priority_override: null
+  work_type: vector_embedding
+- capability_id: pipeline-orchestrator
+  layer_override: api
+  node_id: m8
+  params: {}
+  priority_override: null
+  work_type: m8_rule_audit
+retry_on_failure: 2
+timeout_minutes: 60

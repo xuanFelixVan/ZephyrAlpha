@@ -1,0 +1,73 @@
+---
+module_id: KE-module_blu-2_23_a2a_______________d-025-2-005
+title: 2.23 A2A 协议层安全攻击面防护（决策 D-025-20）
+category: module_blueprint
+---
+
+# 2.23 A2A 协议层安全攻击面防护（决策 D-025-20）
+
+2.23 A2A 协议层安全攻击面防护（决策 D-025-20）
+
+> **新增于 v0.8.0**。v0.7.0 覆盖了 OWASP ASI07（消息安全）、JWT 签名、防重放，但这些都是"消息级"安全。**协议级**安全——Agent Card 供应链完整性、Task 流操纵、Artifact 投毒——一直未被专门建模。A2ASECBENCH (ICLR 2026) 首次揭示了这层攻击面。
+
+**对标**：A2ASECBENCH (ICLR 2026 — 首个 A2A 协议安全基准，六大攻击跨越 A2A 全阶段）、Google A2A Security Enhancement (arXiv:2505.12490 — Token 生命周期 + SCA + 同意编排）、SentinelAgent (TLA+ — 委托链形式化安全）、ACP v1.27 (arXiv:2603.18829 — 时间感知准入控制）。
+
+```yaml
+a2a_protocol_security_surface:
+
+  design_principle: "消息安全 (v0.7.0) 是'每一封邮件加了签名'。协议安全 (v0.8.0) 是'整个邮件系统没有被劫持'。"
+  benchmark: "A2ASECBENCH (ICLR 2026) — 六大攻击向量 × 三大领域 (travel/healthcare/finance)"
+
+  # === 攻击面 1：Agent Card 供应链操纵 ===
+  agent_card_supply_chain:
+    threat_1_card_cloning:
+      desc: "恶意 Agent 复制合法 Agent 的 Agent Card，修改 endpoint URL 后重新注册到 AGENTS.md"
+      a2asecbench_finding: "Agent Card 不具备原生完整性保护——签名是可选的，不是强制性的"
+      defense:
+        mandatory_signing: "所有 Agent Card 必须带 JWS 签名，Coordinator 在注册时强制校验"
+        card_fingerprint: "SHA-256(agent_card_json) 注册到 Agent Card Registry，每次发现时对比"
+        clone_detection: "同一 identity 来源的两个不同 endpoint → 触发 CLONE_DETECTED 告警"
+
+    threat_2_capability_misrepresentation:
+      desc: "Agent 声明的能力远超实际——'我是全栈专家' 实际只能写 CSS"
+      defense:
+        - "capability_verification_gate: 新 Agent 注册后自动分配 3 个 benchmark task → 实际表现 vs 声明能力对比"
+        - "capability_drift_monitor: 持续追踪声明的每个 skill 的实际完成率"
+        - "deviation > 2σ → 降级 Agent Card 中的 skill 等级 → 降低委托优先级"
+
+    threat_3_cloaked_functions:
+      desc: "Agent 声明了 10 个公开 skill，但隐藏了 3 个'隐藏功能'（如读取 .env）"
+      defense:
+        - "Declared-Skill-Only Gate: Agent 只能执行其 Agent Card 中声明的 skill"
+        - "运行时 skill 调用追踪 → 任何未声明的操作 → 标记 rogue_operation"
+
+  # === 攻击面 2：Task 流操纵 ===
+  task_flow_manipulation:
+    threat_4_task_hijack:
+      desc: "恶意 Agent B 截获 Agent A 的 task_id，伪造响应包声称 task 已完成"
+      defense:
+        - "task_id → 非可预测 UUIDv7（含时间戳+随机数+Agent 签名）"
+        - "Task 的 claimed_result → 必须被 Living Spec diff verification 验证（§2.6）"
+        - "任何对已有 task 的结果覆盖 → 需要 A2A_Version 递增 + 前一版本 hash 校验"
+
+    threat_5_task_replay:
+      desc: "恶意 Agent 重放一个 2 小时前已完成的 task（利用 stale 但有效的 task_id）"
+      defense:
+        - "Task TTL: 每个 task_id 有内置过期时间，默认 = task_start_time + 30min"
+        - "过期后的 task_id → 自动转换到 EXPIRED 状态，不可重新激活"
+        - "Coordinator 维护已处理 task_id 的 Bloom Filter，快速拒绝重放"
+
+    threat_6_task_flooding:
+      desc: "恶意 Agent 向所有 Agent 同时提交 1000 个 task，DoS 攻击系统"
+      defense:
+        - "per-agent rate limiter: 每个 Agent 的 task_submission_rate ≤ 10/min(medium), ≤ 30/min(critical)"
+        - "超过速率 → 432 TOO_MANY_REQUESTS + 降低该 Agent 的 trust_score"
+        - "Coordinator 全局 throttle: system_wide_pending_tasks > 100 → 拒绝新的 low priority task"
+
+  # === 攻击面 3：Artifact 投毒 ===
+  artifact_poisoning:
+    threat_7_malicious_artifact:
+      desc: "Agent 在返回的 artifact 中嵌入后门代码 / 泄露数据的 payload"
+      defense:
+        - "Artifact Sanitizer: 所有 Agent 间传递的 code artifact → 自动扫描 (AST 分析 + Semgrep 规则 + 已知恶意模式)"
+        - "Artifact 溯源: 每个 artifact 标记 source_agent_id 

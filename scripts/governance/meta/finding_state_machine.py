@@ -20,6 +20,8 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -33,6 +35,7 @@ priority: P1
 timeout_seconds: 30
 warn_only: false
 """
+import os
 import argparse
 import hashlib
 import json as json_mod
@@ -108,6 +111,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_states() -> dict:
+    """_load_states implementation."""
     if not _STATE_DB_PATH.exists():
         return {"findings": {}, "audit_log": []}
     with open(_STATE_DB_PATH, encoding="utf-8") as f:
@@ -115,18 +119,27 @@ def _load_states() -> dict:
 
 
 def _save_states(data: dict) -> None:
+    """_save_states implementation."""
     _STATE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_STATE_DB_PATH, "w", encoding="utf-8") as f:
-        json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-
+    tmp_path = f"{_STATE_DB_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json_mod.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, _STATE_DB_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def _finding_id(finding: dict) -> str:
+    """_finding_id implementation."""
     raw = f"{finding.get('dimension', '')}|{finding.get('check_id', '')}|"
     raw += f"{finding.get('target', {}).get('file_path', '')}|{finding.get('description', '')}"
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
 
 def _audit_log(data: dict, finding_id: str, from_status: str, to_status: str, reason: str = "") -> None:
+    """_audit_log implementation."""
     entry = {
         "timestamp": datetime.now(UTC).isoformat(),
         "finding_id": finding_id,
@@ -140,6 +153,7 @@ def _audit_log(data: dict, finding_id: str, from_status: str, to_status: str, re
 
 
 def load_findings(findings_file: str | Path) -> dict:
+    """load_findings implementation."""
     data = _load_states()
     findings_db = data.setdefault("findings", {})
 
@@ -182,6 +196,7 @@ def load_findings(findings_file: str | Path) -> dict:
 
 
 def _calc_sla_deadline(severity: str) -> str | None:
+    """_calc_sla_deadline implementation."""
     hours = SLA_DEADLINES.get(severity)
     if hours is None:
         return None
@@ -189,14 +204,16 @@ def _calc_sla_deadline(severity: str) -> str | None:
 
 
 def _calc_persistent_days(finding_state: dict) -> float:
+    """_calc_persistent_days implementation."""
     try:
         first_seen = datetime.fromisoformat(finding_state["first_seen_at"])
         return (datetime.now(UTC) - first_seen).total_seconds() / 86400
     except (ValueError, KeyError):
-        return 0
+        return EXIT_PASS
 
 
 def _check_persistent_upgrade(data: dict, finding_id: str) -> None:
+    """_check_persistent_upgrade implementation."""
     finding = data["findings"].get(finding_id)
     if not finding:
         return
@@ -213,6 +230,7 @@ def _check_persistent_upgrade(data: dict, finding_id: str) -> None:
 
 
 def transition(finding_id: str, to_status: str, reason: str = "") -> dict:
+    """transition implementation."""
     data = _load_states()
     finding = data["findings"].get(finding_id)
     if not finding:
@@ -237,6 +255,7 @@ def transition(finding_id: str, to_status: str, reason: str = "") -> dict:
 
 
 def check_sla() -> dict:
+    """Check compliance and report findings."""
     data = _load_states()
     now = datetime.now(UTC)
     overdue: list[dict] = []
@@ -271,6 +290,7 @@ def check_sla() -> dict:
 
 
 def stats() -> dict:
+    """stats implementation."""
     data = _load_states()
     counts: dict[str, int] = {}
     severity_counts: dict[str, int] = {}
@@ -289,6 +309,7 @@ def stats() -> dict:
 
 
 def list_by_status(status_filter: str) -> list[dict]:
+    """list_by_status implementation."""
     data = _load_states()
     result = []
     for fid, finding in data["findings"].items():
@@ -298,6 +319,7 @@ def list_by_status(status_filter: str) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Finding 生命周期状态机")
     parser.add_argument("--load", type=str, help="加载 findings.jsonl 并初始化状态追踪")
     parser.add_argument("--transition", type=str, help="转换指定 Finding 的状态")

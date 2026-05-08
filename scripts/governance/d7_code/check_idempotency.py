@@ -1,0 +1,130 @@
+"""check_idempotency.py — 幂等性缺失检查（HC-9）
+
+对标：GOV-AI-009 HC-9（幂等性缺失——L06 执行层代码缺少幂等 Key）
+
+检测内容：
+- L06 执行层模块的公共方法是否声明了幂等 Key（idempotency_key 参数或装饰器）
+- 检查 @idempotent 装饰器或 idempotency_key 参数的存在性
+
+exit codes: 0=pass, 1=findings, 2=error
+"""
+
+from __future__ import annotations
+
+__manifest__ = """
+args:
+- {flag: --module, type: str, description: "检查指定模块路径的幂等性"}
+- {flag: --scan-all, action: store_true, description: "扫描所有 L06 执行层代码"}
+description: >
+  幂等性缺失检查（HC-9）——L06 执行层代码缺少幂等 Key 检测。
+  对标 GOV-AI-009 ai-hallucination-detection-rules.md。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 30
+warn_only: true
+"""
+
+import argparse
+import ast
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.encoding import ensure_utf8_stdout
+
+ensure_utf8_stdout()
+
+SRC_ROOT = REPO_ROOT / "src" / "zephyr"
+L06_DIRS = ["l06_trade_execution"]
+
+IDEMPOTENCY_MARKERS = ["idempotency_key", "idempotent", "idempotency", "Idempotency-Key"]
+
+
+def check_file_idempotency(filepath: Path) -> list[str]:
+    """Check compliance and report findings."""
+    findings = []
+    try:
+        source = filepath.read_text(encoding="utf-8")
+        tree = ast.parse(source, filename=str(filepath))
+    except (SyntaxError, UnicodeDecodeError):
+        return findings
+
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name.startswith("_"):
+            continue
+        has_idempotency = False
+        for deco in node.decorator_list:
+            deco_str = ast.dump(deco)
+            for marker in IDEMPOTENCY_MARKERS:
+                if marker in deco_str:
+                    has_idempotency = True
+                    break
+        for arg in node.args.args:
+            if any(marker in arg.arg for marker in IDEMPOTENCY_MARKERS):
+                has_idempotency = True
+                break
+        if not has_idempotency:
+            docstring = ast.get_docstring(node) or ""
+            if any(marker in docstring for marker in IDEMPOTENCY_MARKERS):
+                has_idempotency = True
+        if not has_idempotency:
+            rel = filepath.relative_to(REPO_ROOT)
+            findings.append(f"HC-9 WARNING: {rel}::{node.name}() — L06 execution layer method missing idempotency_key")
+    return findings
+
+
+def scan_l06_directory() -> list[str]:
+    """scan_l06_directory implementation."""
+    findings = []
+    for l06_name in L06_DIRS:
+        l06_dir = SRC_ROOT / l06_name
+        if not l06_dir.exists():
+            continue
+        for py_file in l06_dir.rglob("*.py"):
+            if py_file.name.startswith("_"):
+                continue
+            findings.extend(check_file_idempotency(py_file))
+    return findings
+
+
+def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
+    parser = argparse.ArgumentParser(description="Idempotency check (HC-9)")
+    parser.add_argument("--module", type=str, help="Check specific module path")
+    parser.add_argument("--scan-all", action="store_true", help="Scan all L06 execution layer code")
+    parser.add_argument("--warn-only", action="store_true", default=True, help="Only warn (default)")
+    args = parser.parse_args()
+
+    all_findings: list[str] = []
+
+    if args.module:
+        p = Path(args.module)
+        if p.is_dir():
+            for py_file in p.rglob("*.py"):
+                all_findings.extend(check_file_idempotency(py_file))
+        elif p.suffix == ".py":
+            all_findings.extend(check_file_idempotency(p))
+
+    if args.scan_all:
+        all_findings.extend(scan_l06_directory())
+
+    if not any([args.module, args.scan_all]):
+        all_findings.extend(scan_l06_directory())
+
+    for finding in all_findings:
+        print(finding)
+
+    if all_findings and not args.warn_only:
+        sys.exit(EXIT_FINDINGS)
+    sys.exit(EXIT_PASS)
+
+
+if __name__ == "__main__":
+    main()

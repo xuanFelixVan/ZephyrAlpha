@@ -31,7 +31,7 @@ def fetch_fitness_data(
         inputs = FitnessInputs()
     report = fw.run_all(inputs)
     data = FitnessDashboardData(
-        overall_status=report.overall_status,
+        overall_status=report.overall_status.value,
         metrics=[
             {
                 "metric_name": m.metric_name,

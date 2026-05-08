@@ -49,7 +49,7 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
-from zephyr.shared.capability import capability_check
+from zephyr.shared.security.capability import capability_check
 
 __all__ = [
     "CircuitBreakerState",

@@ -1,0 +1,18 @@
+---
+module_id: KE-module_blu-n________________b5-n01_n06-000
+title: N. 长期演进与模块生命周期管理（B5-N01~N06）
+category: module_blueprint
+---
+
+# N. 长期演进与模块生命周期管理（B5-N01~N06）
+
+N. 长期演进与模块生命周期管理（B5-N01~N06）
+
+| 盲点 ID | 缺失内容 | 专业机构对标 |
+|---------|---------|------------|
+| B5-N01 | **Module Deprecation Lifecycle（模块废弃生命周期）**——标记→警告→隔离→归档→删除的5阶段过程 | K8s API Deprecation / Stripe API Versioning |
+| B5-N02 | **Breaking Change Management（破坏性变更管理）**——2版本共存+路由→旧版本N个月后移除的标准流程 | Google API Improvement Proposals (AIP) |
+| B5-N03 | **Backward Compatibility Window（后向兼容窗口）**——每个模块声明支持多少个历史版本 | Android API Levels / Node.js LTS |
+| B5-N04 | **Module Migration Path Documentation（模块迁移文档）**——废弃模块→替代模块的映射表+迁移guide | AWS Service Migration Guides |
+| B5-N05 | **Dead Code Detection within Modules（模块内死代码检测）**——vulture/coverage分析→标记未使用代码→通知Owner | Vulture / Coverage.py |
+| B5-N06 | **Cyclomatic Complexity Guard（圈复杂度防护）**——模块复杂度>15→AI必须简化；>25→CI拒绝merge | McCabe / SonarQube |

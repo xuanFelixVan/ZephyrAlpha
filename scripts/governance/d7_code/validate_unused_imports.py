@@ -37,11 +37,12 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 SKIP_NAMES = {"__future__.annotations", "__future__.division", "__future__.print_function"}
 
 def _collect_used_names(tree: ast.AST) -> set[str]:
+    """_collect_used_names implementation."""
     used = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Name):
@@ -58,6 +59,7 @@ def _collect_used_names(tree: ast.AST) -> set[str]:
     return used
 
 def _get_imported_names(tree: ast.AST) -> list[tuple[int, str, str]]:
+    """_get_imported_names implementation."""
     imports = []
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.Import):
@@ -121,7 +123,7 @@ def main() -> None:
         print(f"\n[UNUSED-IMPORTS] 全部 {total_files} 文件无未使用导入 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

@@ -3,6 +3,10 @@ GATE-15: Frontmatter metadata validation
 Validates doc_type, status, required fields against schema vocabulary files
 """
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -57,10 +61,10 @@ def main() -> int:
 
     if errors:
         print(f"\nFAIL: {errors} frontmatter metadata issue(s)")
-        return 1
+        return EXIT_FINDINGS
 
     print("OK: Frontmatter metadata validation passed")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

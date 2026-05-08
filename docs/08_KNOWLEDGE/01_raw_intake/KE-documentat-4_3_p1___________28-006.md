@@ -1,0 +1,48 @@
+---
+module_id: KE-documentat-4_3_p1___________28-006
+title: 4.3 P1 级：关闭分隔符粘连（28 个文件）
+category: documentation
+---
+
+# 4.3 P1 级：关闭分隔符粘连（28 个文件）
+
+4.3 P1 级：关闭分隔符粘连（28 个文件）
+
+所有文件均表现为 `ttl: permanent---`（值与分隔符粘连在同一行），导致 YAML 解析器将 `---` 视为字段值的一部分，frontmatter 无法正确关闭。
+
+**集中目录**：`docs/19_development_workspace/` 下 22 个文件 + 其他 6 个文件
+
+**完整清单**：
+
+| # | 文件路径 | 问题行 |
+|---|---------|--------|
+| 1 | `19_development_workspace/structure-and-mapping/handoff-log.md` | `ttl: 30d---` |
+| 2 | `19_development_workspace/structure-and-mapping/memory-and-context-directory-guide.md` | `ttl: permanent---` |
+| 3 | `19_development_workspace/index.md` | `ttl: permanent---` |
+| 4 | `19_development_workspace/structure-and-mapping/discussion-document-standard.md` | `ttl: permanent---` |
+| 5 | `19_development_workspace/structure-and-mapping/document-triage-guide.md` | `ttl: permanent---` |
+| 6 | `19_development_workspace/taskbooks/serial-execution-plan.md` | `ttl: permanent---` |
+| 7 | `19_development_workspace/taskbooks/professional-alignment-taskbook.md` | `ttl: permanent---` |
+| 8 | `19_development_workspace/taskbooks/architecture-finalization-taskbook.md` | `ttl: permanent---` |
+| 9 | `19_development_workspace/structure-and-mapping/old-tree-blueprint-classification.md` | `ttl: permanent---` |
+| 10 | `19_development_workspace/structure-and-mapping/blueprint-classification-taxonomy.md` | `ttl: permanent---` |
+| 11 | `19_development_workspace/roadmaps/p2-blueprint-roadmap.md` | `ttl: permanent---` |
+| 12 | `19_development_workspace/taskbooks/memory-system-landing-task-draft.md` | `ttl: permanent---` |
+| 13 | `19_development_workspace/taskbooks/taskbook.md` | `ttl: permanent---` |
+| 14 | `19_development_workspace/session-logs/README.md` | `ttl: permanent---` |
+| 15 | `19_development_workspace/roadmaps/_template.md` | `ttl: permanent---` |
+| 16 | `19_development_workspace/roadmaps/README.md` | `ttl: permanent---` |
+| 17 | `19_development_workspace/risk-registers/README.md` | `ttl: permanent---` |
+| 18 | `19_development_workspace/risk-registers/_template.md` | `ttl: permanent---` |
+| 19 | `19_development_workspace/archive/README.md` | `ttl: permanent---` |
+| 20 | `19_development_workspace/adr-drafts/README.md` | `ttl: permanent---` |
+| 21 | `19_development_workspace/structure-and-mapping/terminology-mapping.md` | `ttl: permanent---` |
+| 22 | `19_development_workspace/archive/old-tree-migration-input/old-tree-asset-triage.md` | `ttl: permanent---` |
+| 23 | `19_development_workspace/archive/old-tree-migration-input/old-tree-asset-triage-matrix.md` | `ttl: permanent---` |
+| 24 | `19_development_workspace/archive/old-tree-migration-input/keep-asset-migration-plan.md` | `ttl: permanent---` |
+| 25 | `99_archive/retired-blueprints/p4-blueprint-archive.md` | `ttl: permanent---` |
+| 26 | `19_development_workspace/taskbooks/sprint0-fix-taskbook.md` | `ttl: permanent---` |
+| 27 | `08_knowledge/kms-entry-schema.md` | `ttl: permanent---` |
+| 28 | `01_policies_and_standards/governance/document/unified-numbering-standard.md` | `ttl: permanent---` |
+
+**修复方式**：将 `ttl: permanent---` 改为 `ttl: permanent\n---`（换行分隔）

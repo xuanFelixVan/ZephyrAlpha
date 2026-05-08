@@ -1,0 +1,17 @@
+---
+module_id: KE-module_blu-h___________b4-h01_h05-000
+title: H. 可观测性深度强化（B4-H01~H05）
+category: module_blueprint
+---
+
+# H. 可观测性深度强化（B4-H01~H05）
+
+H. 可观测性深度强化（B4-H01~H05）
+
+| 盲点 ID | 缺失内容 | 专业机构对标 |
+|---------|---------|------------|
+| B4-H01 | **Distributed Trace Visualization**——跨5层的trace→时序火焰图 | Jaeger / Tempo / Honeycomb |
+| B4-H02 | **Error Budget Burn Rate Alerting**——不只是实时告警，Error Budget < 1%/1h → CRITICAL | Google SRE Workbook |
+| B4-H03 | **Capacity Forecasting**——基于历史趋势预测：何时需扩展 500→1500模块 | Datadog Watchdog / Netflix Atlas |
+| B4-H04 | **Latency Heat Maps**——per-module P50/P95/P99 latency→自动识别退化的模块 | Discord / Uber |
+| B4-H05 | **Slow Query Detection**——SQLite查询 > 100ms→自动标记+建议索引 | PostgreSQL pg_stat_statements |

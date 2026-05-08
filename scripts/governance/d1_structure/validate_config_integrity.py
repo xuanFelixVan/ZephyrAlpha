@@ -55,7 +55,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import CONFIG_DIR
+from _shared.constants import CONFIG_DIR, EXIT_PASS
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -64,7 +64,7 @@ import tomllib
 from collections import Counter
 
 import yaml
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import CONFIG_DIR, EXIT_PASS
 
 EXCLUDE_DIRS: tuple[str, ...] = ()
 
@@ -92,6 +92,7 @@ IMMUTABLE_SCHEMA = {
 RULE_REQUIRED_FIELDS = {"name", "description", "allow", "deny"}
 
 def _rel(path: Path) -> str:
+    """_rel implementation."""
     return "/" + str(path.relative_to(REPO_ROOT)).replace("\\", "/")
 
 def l1_file_integrity() -> tuple[list[str], list[str], dict]:
@@ -1131,7 +1132,15 @@ def main() -> None:
                     content = fpath.read_text(encoding="utf-8")
                     if old in content:
                         content = content.replace(old, new, 1)
-                        fpath.write_text(content, encoding="utf-8")
+                        tmp_path = f"{fpath}.{os.getpid()}.tmp"
+                        try:
+                            Path(tmp_path).write_text(content, encoding="utf-8")
+                            os.replace(tmp_path, fpath)
+                        except PermissionError:
+                            try:
+                                os.remove(tmp_path)
+                            except OSError:
+                                pass
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
@@ -1154,7 +1163,15 @@ def main() -> None:
     warn_only: true
     description: 自动注册脚本（v3.1 --fix）"""
                     if new_entry not in manifest:
-                        manifest_path.write_text(manifest + new_entry, encoding="utf-8")
+                        tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
+                        try:
+                            Path(tmp_path).write_text(manifest + new_entry, encoding="utf-8")
+                            os.replace(tmp_path, manifest_path)
+                        except PermissionError:
+                            try:
+                                os.remove(tmp_path)
+                            except OSError:
+                                pass
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
@@ -1171,7 +1188,15 @@ def main() -> None:
                     new_name = "name: " + fix["new_name"]
                     if old_name in manifest:
                         manifest = manifest.replace(old_name, new_name, 1)
-                        manifest_path.write_text(manifest, encoding="utf-8")
+                        tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
+                        try:
+                            Path(tmp_path).write_text(manifest, encoding="utf-8")
+                            os.replace(tmp_path, manifest_path)
+                        except PermissionError:
+                            try:
+                                os.remove(tmp_path)
+                            except OSError:
+                                pass
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
@@ -1207,7 +1232,7 @@ def main() -> None:
     print(f"{'=' * 60}\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if all_errors else 0)
 
 if __name__ == "__main__":

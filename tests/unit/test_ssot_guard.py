@@ -34,7 +34,7 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-from zephyr.shared.ssot_guard import (
+from zephyr.shared.security.ssot_guard import (
     REGISTRY_REL_PATH,
     CheckResult,
     GuardReport,
@@ -90,7 +90,7 @@ def _make_guard_with_staged(
 ) -> tuple[SsotGuard, Any]:
     """构造绑定 repo 的 guard，并 patch _staged_files 返回指定 staged 字典。"""
     g = SsotGuard(repo_root=tmp_repo)
-    patcher = patch("zephyr.shared.ssot_guard._staged_files", return_value=staged)
+    patcher = patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged)
     mock = patcher.start()
     return g, (patcher, mock)
 
@@ -396,14 +396,14 @@ class TestSsotGuardRunIntegration:
     """Q2 集成测试：run() 完整流程（patch _staged_files）。"""
 
     def test_no_staged_files_all_pass(self, tmp_repo: Path) -> None:
-        with patch("zephyr.shared.ssot_guard._staged_files", return_value={}):
+        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value={}):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         assert report.passed is True
 
     def test_new_watched_file_without_registry_fails(self, tmp_repo: Path) -> None:
         staged = {"scripts/hooks/new_hook.py": "A"}
-        with patch("zephyr.shared.ssot_guard._staged_files", return_value=staged):
+        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         assert report.passed is False
@@ -415,7 +415,7 @@ class TestSsotGuardRunIntegration:
             "scripts/hooks/new_hook.py": "A",
             REGISTRY_REL_PATH: "M",
         }
-        with patch("zephyr.shared.ssot_guard._staged_files", return_value=staged):
+        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         # C-1 和 C-3 均应通过；C-2 和 C-4 在 tmp_repo 中注册表路径合法
@@ -424,7 +424,7 @@ class TestSsotGuardRunIntegration:
 
     def test_git_error_produces_failed_report(self, tmp_repo: Path) -> None:
         with patch(
-            "zephyr.shared.ssot_guard._staged_files",
+            "zephyr.shared.security.ssot_guard._staged_files",
             side_effect=subprocess.CalledProcessError(128, "git"),
         ):
             guard = SsotGuard(repo_root=tmp_repo)

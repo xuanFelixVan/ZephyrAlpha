@@ -15,7 +15,7 @@ ttl: evolving
 construction_progress: blocked_by_infrastructure
 belongs_to: "MOD-MASTER-001"
 ai_read_only_hint: DO_NOT_IMPLEMENT
-summary: "C 轨占位蓝图。当前阶段严禁AI agent实现本层业务代码。"
+summary: "C 轨占位蓝图。当前阶段严禁AI agent实现本层业务代码。开工触发条件同主蓝图MOD-MASTER-001 零所述基础设施就绪信号：(a) 主蓝图MOD-MASTER-001的construction_progress >= implementation_phase；(b) Gate Engine覆盖了本层相关的业务检查类型；(c) 至少一个CT-*契约从规划到部分实现，打通了本层的集成通路。在此条件满足前，本蓝图仅供AI阅读以了解架构意图，严禁生成业务代码。"
 tags: [trade-execution, l06, c-track-placeholder, do-not-implement, blocked-by-infrastructure]
 priority: P0
 ---

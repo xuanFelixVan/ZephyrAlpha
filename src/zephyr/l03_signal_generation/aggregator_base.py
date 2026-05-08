@@ -28,10 +28,10 @@ from __future__ import annotations
 import abc
 from typing import ClassVar
 
-from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
 from zephyr.shared.contracts.errors.signal_degradation_warning import SignalDegradationWarning
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class SignalAggregatorBase(abc.ABC):

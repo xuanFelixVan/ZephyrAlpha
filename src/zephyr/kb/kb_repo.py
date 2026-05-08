@@ -47,8 +47,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_iso
 
 
 class KeStatus(str, Enum):
@@ -142,6 +142,10 @@ class KbRepo:
 
         self._conn = get_db_connection(db_path)
         self._vector_dir = vector_dir
+
+    def validate_state_transition(self, from_status: KeStatus, to_status: KeStatus) -> bool:
+        allowed = _VALID_TRANSITIONS.get(from_status, set())
+        return to_status in allowed
 
     def create(
         self,

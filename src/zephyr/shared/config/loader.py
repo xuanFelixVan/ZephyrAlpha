@@ -31,7 +31,7 @@ from typing import Any, TypeVar
 
 import yaml
 
-from zephyr.shared.errors import ConfigError, ValidationError
+from zephyr.shared.foundation.errors import ConfigError, ValidationError
 
 __all__ = [
     "load_yaml_config",

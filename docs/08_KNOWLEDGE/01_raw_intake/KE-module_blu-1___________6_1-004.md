@@ -1,0 +1,32 @@
+---
+module_id: KE-module_blu-1___________6_1-004
+title: 1. 模块清单（蓝图 §6.1）
+category: module_blueprint
+---
+
+# 1. 模块清单（蓝图 §6.1）
+
+1. 模块清单（蓝图 §6.1）
+
+| 模块ID | 模块名称 | 职责 | 实际路径 | 实现状态 | AI自治权限 |
+|--------|---------|------|---------|:---:|-----------|
+| M-01 | CTR-001修复 | 修复 CTR-001 字段 | 已归档 | ✅ 已完成 | Immutable Core |
+| M-02 | 源码树统一 | 统一为单一 src/zephyr/ | `src/zephyr/` | ✅ 已完成 | Immutable Core |
+| M-03 | validate_ssot.py | SSoT 验证脚本 | `scripts/governance/d5_architecture/validate_ssot.py` | ✅ 已实现 | Immutable Core |
+| M-04 | lazy_loader.py | 模块懒加载 | `src/zephyr/__init__.py` | ❌ 未实现 | Human-Gated |
+| M-05 | pre-commit分层 | 分层 pre-commit | `.pre-commit-config.yaml` | ⚠️ 部分实现 | Immutable Core |
+| M-06 | dmypy配置 | 增量类型检查 | `mypy.ini` | ❌ 未实现 | AI-Modifiable |
+| M-07 | event_bus背压 | 事件总线背压 | `src/zephyr/shared/event_bus.py` | ❌ 未实现 | AI-Modifiable |
+| M-08 | import-linter | 层依赖规则 | `.importlinter` | ❌ 未实现 | Human-Gated |
+| M-09 | ContractBus接口 | 跨层通信抽象 | `src/zephyr/shared/contract_bus.py` | ❌ 未实现 | Human-Gated |
+| M-10 | ZephyrLogger+OTel | 结构化日志+Metrics | `src/zephyr/shared/zephyr_logger.py` | ❌ 未实现 | AI-Modifiable |
+| M-11 | contract_tester.py | 契约测试框架 | `src/zephyr/shared/contract_tester.py` | ❌ 未实现 | Human-Gated |
+| M-12 | config_validator.py | 配置参数验证 | `src/zephyr/shared/config_validator.py` | ❌ 未实现 | Human-Gated |
+| M-13 | fault_isolator.py | 故障域隔离 | `src/zephyr/shared/fault_isolator.py` | ❌ 未实现 | Human-Gated |
+| M-14 | warm_hot_gate.py | Warm→Hot 阻断门 | `src/zephyr/shared/warm_hot_gate.py` | ❌ 未实现 | Human-Gated |
+| M-15 | pydantic_v2_migrator.py | Pydantic v2 迁移 | `src/zephyr/shared/pydantic_v2_migrator.py` | ❌ 未实现 | Human-Gated |
+| M-16 | event_bus_upgrade.py | 事件总线升级 | `src/zephyr/shared/event_bus_upgrade.py` | ❌ 未实现 | Human-Gated |
+| M-17 | ai_audit_guard.py | AI修改审计守卫 | `src/zephyr/shared/ai_audit_guard.py`（规则引擎）| ⚠️ 部分实现 | Immutable Core |
+| M-18 | capacity_slo.yaml | 容量SLI/SLO标准 | `config/capacity/capacity_slo.yaml` | ⚠️ 首版已落地 | Human-Gated |
+| M-19 | capacity_governance_loop.py | 容量治理闭环 | `src/zephyr/shared/capacity_governance_loop.py` | ❌ 未实现 | AI-Modifiable |
+| M-20 | ttl_cleanup_engine.py | 派生文件TTL清理 | `src/zephyr/shared/ttl_cleanup_engine.py` | ❌ 未实现 | AI-Modifiable |

@@ -1,0 +1,14 @@
+---
+module_id: KE-governance-full-000
+title: 维度评分（FULL 类型填写）
+category: governance
+---
+
+# 维度评分（FULL 类型填写）
+
+维度评分（FULL 类型填写）
+
+| 维度 | 当前分 | 上次分 | 变化 | 状态 |
+|------|-------|-------|------|------|
+| D1-D12 | X.XX | X.XX | ±X.XX | ✅/⚠️/❌ |
+| **综合** | **X.XX** | **X.XX** | **±X.XX** | **L1/L2/L3** |

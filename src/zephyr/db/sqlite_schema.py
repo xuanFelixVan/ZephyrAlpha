@@ -510,6 +510,81 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "ALTER TABLE tasks ADD COLUMN block_sessions_count INTEGER NOT NULL DEFAULT 0",
         ],
     ),
+    (
+        14,
+        "AUDIT-07: 修复 CHECK 约束（P4 优先级 + 移除 SUSPENDED 状态）— no-op, DDL already correct",
+        [],
+    ),
+    (
+        15,
+        "AUDIT-09: 修复 v14 重建 tasks 后的 FK 悬空（events/gates/task_files + views + indexes）",
+        [
+            "PRAGMA foreign_keys = OFF",
+            "DROP VIEW IF EXISTS v_active_tasks",
+            "DROP VIEW IF EXISTS v_recent_sessions",
+            "DROP VIEW IF EXISTS event_log",
+            """CREATE TABLE events_v15 (
+                event_id TEXT PRIMARY KEY,
+                event_type TEXT NOT NULL CHECK(event_type IN ('file_event','time_event','task_event','manual_event','metric_event','state_transition','compensation')),
+                payload TEXT NOT NULL DEFAULT '{}',
+                task_id TEXT REFERENCES tasks(task_id) ON DELETE SET NULL,
+                session_id TEXT,
+                created_at TEXT NOT NULL,
+                processed_at TEXT
+            )""",
+            "INSERT OR IGNORE INTO events_v15 SELECT * FROM events",
+            "DROP TABLE IF EXISTS events",
+            "ALTER TABLE events_v15 RENAME TO events",
+            """CREATE TABLE gates_v15 (
+                gate_run_id TEXT PRIMARY KEY,
+                gate_id TEXT NOT NULL,
+                passed INTEGER NOT NULL CHECK(passed IN (0,1)),
+                details TEXT NOT NULL DEFAULT '{}',
+                artifact_path TEXT,
+                session_id TEXT,
+                task_id TEXT REFERENCES tasks(task_id) ON DELETE SET NULL,
+                created_at TEXT NOT NULL
+            )""",
+            "INSERT OR IGNORE INTO gates_v15 SELECT * FROM gates",
+            "DROP TABLE IF EXISTS gates",
+            "ALTER TABLE gates_v15 RENAME TO gates",
+            """CREATE TABLE task_files_v15 (
+                task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE,
+                file_path TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'in_scope' CHECK(role IN ('primary','in_scope','output')),
+                UNIQUE(task_id, file_path)
+            )""",
+            "INSERT OR IGNORE INTO task_files_v15 SELECT * FROM task_files",
+            "DROP TABLE IF EXISTS task_files",
+            "ALTER TABLE task_files_v15 RENAME TO task_files",
+            _DDL_VIEW_EVENT_LOG,
+            _DDL_VIEW_ACTIVE_TASKS,
+            _DDL_VIEW_RECENT_SESSIONS,
+            "CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type)",
+            "CREATE INDEX IF NOT EXISTS idx_events_task ON events(task_id)",
+            "CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at)",
+            "CREATE INDEX IF NOT EXISTS idx_gates_gate_id ON gates(gate_id)",
+            "CREATE INDEX IF NOT EXISTS idx_gates_session ON gates(session_id)",
+            "CREATE INDEX IF NOT EXISTS idx_tf_task ON task_files(task_id)",
+            "CREATE INDEX IF NOT EXISTS idx_tf_file ON task_files(file_path)",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_phase ON tasks(phase)",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_namespace ON tasks(namespace)",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id)",
+            "PRAGMA foreign_keys = ON",
+        ],
+    ),
+    (
+        16,
+        "Multi-Worker Batch Coordination: batch_id + claimed_by + claimed_at columns (MOD-INF-016)",
+        [
+            "ALTER TABLE tasks ADD COLUMN batch_id TEXT",
+            "ALTER TABLE tasks ADD COLUMN claimed_by TEXT",
+            "ALTER TABLE tasks ADD COLUMN claimed_at TEXT",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_batch ON tasks(batch_id)",
+            "CREATE INDEX IF NOT EXISTS idx_tasks_claimed ON tasks(claimed_by, status)",
+        ],
+    ),
 ]
 
 
@@ -562,6 +637,13 @@ def _run_migration(
         "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) " "VALUES (?, ?, ?)",
         (version, now, description),
     )
+
+    fk_violations = conn.execute("PRAGMA foreign_key_check").fetchall()
+    if fk_violations:
+        violations_str = "; ".join(str(v) for v in fk_violations[:5])
+        raise RuntimeError(
+            f"Migration v{version} FK integrity violation: {len(fk_violations)} row(s) — {violations_str}"
+        )
 
 
 def init_db(
@@ -675,6 +757,53 @@ def schema_version(db_path: Path | str | None = None) -> int:
         return _get_current_version(conn)
     finally:
         conn.close()
+
+
+def migration_dry_run(
+    db_path: Path | str | None = None,
+    *,
+    pending_only: bool = False,
+) -> dict:
+    """T-DB-008: 检查待执行迁移，返回迁移预览信息。
+
+    参数
+    ----
+    pending_only
+        True 时仅返回待执行的迁移；False 时返回全部注册迁移。
+    db_path
+        数据库文件路径，默认 DB_PATH。
+
+    返回 dict{current_version, pending_migrations=[{version, description, ddl_preview},...]}。
+    """
+    resolved = Path(db_path) if db_path is not None else DB_PATH
+    current_ver = schema_version(resolved)
+    if current_ver < 0:
+        current_ver = abs(current_ver)
+    pending = []
+    for version, description, statements in _MIGRATIONS:
+        if version <= current_ver:
+            if pending_only:
+                continue
+            status = "applied"
+        else:
+            status = "pending"
+        ddl_preview = [s[:120] + ("..." if len(s) > 120 else "") for s in statements[:3]]
+        pending.append({
+            "version": version,
+            "description": description,
+            "status": status,
+            "statement_count": len(statements),
+            "ddl_preview": ddl_preview,
+        })
+    result = {
+        "current_version": current_ver,
+        "registered_max_version": max((m[0] for m in _MIGRATIONS), default=0),
+        "total_registered": len(_MIGRATIONS),
+        "migrations": pending if pending_only else pending,
+    }
+    if pending_only:
+        result["pending_count"] = len([m for m in pending if m["status"] == "pending"])
+    return result
 
 
 # ---------------------------------------------------------------------------

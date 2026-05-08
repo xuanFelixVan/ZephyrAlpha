@@ -1,0 +1,19 @@
+---
+module_id: KE-module_blu-3_2__6__adaptivesampler-002
+title: 3.2 #6: AdaptiveSampler
+category: module_blueprint
+---
+
+# 3.2 #6: AdaptiveSampler
+
+3.2 #6: AdaptiveSampler
+
+文件：`D:\ZephyrAlpha\src\\zephyr\\shared\\adaptive_sampler.py`
+
+实现 `AdaptiveSampler` 类：
+- `compute_interval(system_load: float, error_budget_tier: str) -> int`：
+  - 高负载(>0.8) → 1800s（大幅降频）
+  - 中负载(>0.6) → 600s（降频50%）
+  - 预算健康(warning/healthy) → 再放宽 1.5×
+- `estimate_self_overhead() -> SelfOverheadReport`：自身 CPU/内存/IO 开销 < 2% 系统资源验证
+- 蓝图 L1334-1355 完整实现

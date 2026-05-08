@@ -33,9 +33,9 @@ from decimal import Decimal
 from typing import Callable, Optional
 
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order
-from zephyr.shared.contracts.position import PositionSnapshot
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
 
 _logger = logging.getLogger(__name__)
 

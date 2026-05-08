@@ -48,9 +48,4 @@ from zephyr.l11_ml_platform.inference_base import (
     ModelTrainerBase,
 )
 
-__all__ = [
-    "InferenceEngineBase",
-    "ModelMetadata",
-    "ModelRegistry",
-    "ModelTrainerBase",
-]
+__all__ = ['InferenceEngineBase', 'ModelMetadata', 'ModelRegistry', 'ModelTrainerBase', 'inference_base']

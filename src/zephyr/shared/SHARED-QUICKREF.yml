@@ -565,7 +565,7 @@ agent_rbac:
   description: Agent 身份与权限系统——静态权限注册表升级为七层运行时强制执行器
   blueprint: docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md
   code_root: src/zephyr/agent_rbac/
-  status: draft (0% 施工)
+  status: Active (phase_2_complete — 68 files / 519 class-def / 45 decisions)
   architecture: L0 Immutable Core → L1 RBAC → L2 ABAC → L3 Input Guard → L4 Sequence
     Guard → [执行] → L5 Output Guard → L6 Observability
   layers:
@@ -808,7 +808,7 @@ consumers:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - resilience.circuit_breaker.CircuitState
-  note: 'MOD-INF-010 v0.3.1——FLE主引擎: LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
+  note: 'MOD-INF-010 v0.33.0——FLE主引擎: 67层安全门+429盲点+11子系统全管线'
 - module: feedback_loop.detection_model_health
   depends_on:
   - time_utils.now_iso
@@ -1345,3 +1345,152 @@ audit_trail:
   - id: D-020-13
     summary: Cold Start——git log + session-logs 回溯生成历史基线
 consumer_count: 130
+cost_budget:
+  file: src/zephyr/shared/cost_budget.py
+  entry_point: from zephyr.shared.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
+  key_exports:
+  - symbol: CostBudget
+    note: AI成本预算管理器——provider定价+累计消费追踪+硬性熔断阈值
+  - symbol: CostBudgetExceededError
+    note: 超出hard_limit时抛出的异常
+  - symbol: PricingTier
+    note: 单模型定价档位（USD/1K tokens）
+  anti_patterns:
+  - LLM API调用前不check_budget——必须预检+超出熔断
+context_budget:
+  file: src/zephyr/shared/context_budget.py
+  entry_point: from zephyr.shared.context_budget import ContextBudget, TruncationStrategy, QuotaTracker
+  key_exports:
+  - symbol: ContextBudget
+    note: 上下文预算管理器——配额分配+追踪+超预算截断
+  - symbol: TruncationStrategy
+    note: 截断策略枚举——NEWEST_FIRST/OLDEST_FIRST/SUMMARY_FIRST/RELEVANCE_FIRST
+  - symbol: BudgetEntry
+    note: 上下文条目追踪记录（key+content+tokens+priority）
+  - symbol: QuotaTracker
+    note: 配额使用追踪器——按租户/会话维度追踪budget消耗
+  anti_patterns:
+  - 上下文装配前不allocate配额——必须先分配再使用
+  - 超预算后不截断——必须调用truncate截断到预算内
+evals:
+  file: src/zephyr/shared/evals.py
+  entry_point: from zephyr.shared.evals import EvalRunner, EvalCase, EvalRubric, EvalResult
+  key_exports:
+  - symbol: EvalCase
+    note: 评估用例——input+expected_output+阈值+标签
+  - symbol: EvalRubric
+    note: 评分标准——多维度权重+pass_threshold
+  - symbol: EvalResult
+    note: 单用例评估结果——passed/overall_score/dimension_scores
+  - symbol: EvalSuiteResult
+    note: 批量评估结果——pass_rate/mean_score
+  - symbol: EvalRunner
+    note: 批量评估执行器——run_all+regression检测
+  - symbol: EvalDimension
+    note: 评估维度枚举——RELEVANCE/ACCURACY/COMPLETENESS/SAFETY/EFFICIENCY
+  anti_patterns:
+  - Agent输出后不做EvalRunner评估——必须验证输出质量
+session_audit:
+  file: src/zephyr/shared/session_audit.py
+  entry_point: from zephyr.shared.session_audit import SessionAuditTrail, SessionRecord
+  key_exports:
+  - symbol: SessionRecord
+    note: Session审计记录——prompts/decisions/tool_calls/costs/errors/outcomes
+  - symbol: SessionAuditTrail
+    note: JSONL审计轨迹管理器——append_record+query+export_jsonl
+  - symbol: PromptRecord
+    note: Prompt记录——timestamp/role/content_preview/token_count
+  - symbol: DecisionRecord
+    note: 决策记录——decision_id/summary/rationale/alternatives
+  - symbol: ToolCallRecord
+    note: 工具调用记录——tool_name/duration_ms/success
+  - symbol: CostRecord
+    note: 成本记录——provider/model/input_tokens/output_tokens/cost_usd
+  - symbol: ErrorRecord
+    note: 错误记录——error_type/message/recovery_action/recovered
+  - symbol: OutcomeRecord
+    note: 产出记录——files_created/files_modified/tests_run/knowledge_extracted
+  anti_patterns:
+  - Session结束后不append_record——每次session必须记录审计轨迹
+durable_execution:
+  file: src/zephyr/shared/durable_execution.py
+  entry_point: from zephyr.shared.durable_execution import WorkflowManager, SimpleActivity, Activity
+  key_exports:
+  - symbol: Activity
+    note: Activity协议——execute()+checkpoint()+resume()——幂等操作单元
+  - symbol: WorkflowManager
+    note: 工作流编排器——管理多Activity+进度快照+断点恢复
+  - symbol: SimpleActivity
+    note: 简单Activity实现——包装同步可调用对象
+  - symbol: ProgressSnapshot
+    note: 进度快照——JSON序列化到磁盘用于resume
+  - symbol: ActivityResult
+    note: 单次Activity执行结果——status/output/error/timing
+  anti_patterns:
+  - 长流程不save_snapshot——进程崩溃后损失全部已消耗token
+post_process:
+  file: src/zephyr/shared/post_process.py
+  entry_point: from zephyr.shared.post_process import PostProcessPipeline, lint_hook, format_hook, typecheck_hook
+  key_exports:
+  - symbol: PostProcessPipeline
+    note: 后处理管道——注册hook+按序执行+策略决策(skip/warn/abort)
+  - symbol: PostProcessHook
+    note: 单个hook定义——name+fn+strategy+auto_fix_fn
+  - symbol: HookStrategy
+    note: 失败策略枚举——SKIP/WARN/ABORT
+  - symbol: lint_hook
+    note: 内置lint hook——调用ruff check
+  - symbol: format_hook
+    note: 内置format hook——调用ruff format --check
+  - symbol: typecheck_hook
+    note: 内置typecheck hook——调用pyright
+  - symbol: PipelineResult
+    note: 管道执行结果——passed/failed/aborted
+  anti_patterns:
+  - AI生成代码后不run后处理管道——lint/format/typecheck必须执行
+constitutional_update:
+  file: src/zephyr/shared/constitutional_update.py
+  entry_point: from zephyr.shared.constitutional_update import ConstitutionalAutoUpdate
+  key_exports:
+  - symbol: ConstitutionalAutoUpdate
+    note: 宪法自愈引擎——从SessionAuditTrail提取learnings→安全写回AGENTS.md
+  - symbol: Learning
+    note: 学习条目——pattern_id/category/summary/source_session/proposed_rule
+  - symbol: ProposedUpdate
+    note: 宪法更新提案——section/diff/rationale/learnings
+  anti_patterns:
+  - AGENTS.md写入前不备份——必须先backup_and_rollback
+multi_agent:
+  file: src/zephyr/shared/multi_agent.py
+  entry_point: from zephyr.shared.multi_agent import AgentCard, TaskDispatch, ResultMerge
+  key_exports:
+  - symbol: AgentCard
+    note: Agent能力卡片——A2A v1.0对齐（agent_id/role/capabilities/endpoint）
+  - symbol: TaskDispatch
+    note: 任务分派器——register_agent/assign/assign_to_capable
+  - symbol: ResultMerge
+    note: 结果合并器——vote/chain/consensus三策略
+  - symbol: AgentRole
+    note: Agent角色枚举——COORDINATOR/BUILDER/REVIEWER/TESTER/AUDITOR/RESEARCHER
+  - symbol: DispatchedTask
+    note: 已分派任务——含状态机追踪（PENDING→ASSIGNED→COMPLETED/FAILED）
+  anti_patterns:
+  - 多Agent不定义AgentCard——必须先声明能力再分派任务
+skill_registry:
+  file: src/zephyr/shared/skill_registry.py
+  entry_point: from zephyr.shared.skill_registry import SkillDefinition, PromptTemplate
+  key_exports:
+  - symbol: SkillDefinition
+    note: Skill定义——Pydantic跨层契约（skill_id/name/category/prompt_template/input_schema/output_schema）
+  - symbol: PromptTemplate
+    note: Prompt模板抽象——template_id/version/variables/token_budget+自动变量校验
+  - symbol: PromptVariable
+    note: Prompt变量声明——name/required/default
+  - symbol: SkillCategory
+    note: Skill分类枚举——CODE/WRITING/RESEARCH/AUTOMATION/ANALYSIS/DESIGN
+  - symbol: SkillParameter
+    note: Skill输入参数定义——name/param_type/required/default
+  - symbol: SkillOutput
+    note: Skill输出Schema定义——output_type/description/schema_example
+  anti_patterns:
+  - Skill定义不与PromptTemplate关联——每个Skill必须有prompt_template

@@ -85,7 +85,7 @@ class TestDetectGhosts:
 
     def test_no_ghosts_for_existing_files(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/09_audit/state/zalpha_metadata.db", "PENDING")
+        _insert_task(conn, "ADR-001", "data/zalpha_metadata.db", "PENDING")
         conn.close()
         ghosts = syncer.detect_ghosts()
         ghost_ids = [g.task_id for g in ghosts]

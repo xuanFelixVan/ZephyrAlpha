@@ -1,0 +1,18 @@
+---
+module_id: KE-module_blu-phase_1__________p1-000
+title: Phase 1 — 核心创新落地（P1）
+category: module_blueprint
+---
+
+# Phase 1 — 核心创新落地（P1）
+
+Phase 1 — 核心创新落地（P1）
+
+| 任务 | 产出 |
+|------|------|
+| 实现 SemanticAuditor + 三类触发条件 | `semantic_auditor.py` |
+| 实现 OrphanJudge 孤儿判定子系统 | `orphan_judge.py` |
+| 实现 FixDispatcher（L1 自动 + L2 LLM） | `fix_dispatcher.py` |
+| 实现 GitBackupManager（tag 级快照） | `git_backup.py` |
+| 实现 NonConvergenceHandler（不收敛处置） | `non_convergence.py` |
+| 集成 MOD-INF-020 Audit Trail | 全量记录 |

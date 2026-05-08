@@ -9,12 +9,12 @@ partition:
 modules:
 - id: l00-layer-ssot
   module_id: MOD-L00-001
-  name: Data Source（层登记占位）
+  name: Data Source（层登记占位�?
   submodule_path: src/zephyr/l00_data_source/
   status: phase_c_implemented
   priority: P0
   runtime_plane: warm
-  description: 外部数据源适配接入：行情、基本面、另类数据摄取与标准化
+  description: 外部数据源适配接入：行情、基本面、另类数据摄取与标准�?
   files:
   - akshare_provider.py
   - default_quality_gate.py
@@ -23,13 +23,13 @@ modules:
   interfaces:
   - contract_id: CTR-001
     role: producer
-    description: NormalizedMarketData → L02, L03, L09
+    description: NormalizedMarketData �?L02, L03, L09
   - contract_id: CTR-TRACE-001
     role: producer
     description: TraceContext 链头
-  adr_ref: []
+  kb_ref: []
 summary:
   total: 1
   by_status:
     implemented: 1
-  note: Phase B 骨架就位——DataSourceBase OCP 扩展点 + DataSourceMeta 已定义
+  note: Phase B 骨架就位——DataSourceBase OCP 扩展�?+ DataSourceMeta 已定�?

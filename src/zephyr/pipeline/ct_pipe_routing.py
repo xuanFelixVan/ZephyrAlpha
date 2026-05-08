@@ -23,8 +23,14 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from zephyr.core.models import TaskCard
-from zephyr.pipeline.models import PipelineRouteDecision
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.pipeline.models import (
+    PipelineRouteDecision,
+    PipelineAffinityConstraint,
+    AffinityWeight,
+    AFFINITY_CONSTRAINTS,
+    M_MODULE_SPECS,
+)
+from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
 
 __all__ = [
     "CtPipeRoutingHints",
@@ -32,6 +38,7 @@ __all__ = [
     "ct_pipe_hints_from_task_card",
     "modules_slice_from_node",
     "resolve_ct_pipe_orc001",
+    "enforce_affinity",
 ]
 
 _CT_PIPE_TAG_PREFIX = "ct_pipe."
@@ -163,7 +170,7 @@ def resolve_ct_pipe_orc001(hints: CtPipeRoutingHints) -> PipelineRouteDecision:
         )
 
     if tt == "AUDIT":
-        node = "M3" if pri == "P0" else "M4"
+        node = "M3" if pri == Priority.P0.value else "M4"
         return _make_decision(node, f"CT-PIPE: AUDIT + priority={pri} → {node}")
 
     if tt in ("DOC_WRITE", "REFACTOR"):
@@ -178,3 +185,47 @@ def resolve_ct_pipe_orc001(hints: CtPipeRoutingHints) -> PipelineRouteDecision:
         return _make_decision("M11", f"CT-PIPE: task_type={tt} → M11")
 
     raise PipelineRoutingInputsError(f"CT-PIPE: 未支持的 task_type={tt!r}")
+
+
+def enforce_affinity(
+    decision: PipelineRouteDecision,
+    active_nodes: dict[str, str] | None = None,
+) -> list[str]:
+    """校验 affinity 约束——违反 HARD 约束返回 ABORT 信息。
+
+    遍历 AFFINITY_CONSTRAINTS，对当前决策和已激活节点进行约束检查：
+      - model 约束：检查 node_a 和 node_b 的模型是否冲突
+      - sandbox 约束：检查沙箱要求
+      - pipeline 约束：检查管线流向
+
+    Returns:
+        警告/错误信息列表——HARD 违规以 "ABORT:" 前缀标记
+    """
+    warnings: list[str] = []
+    active = active_nodes or {}
+
+    for constraint in AFFINITY_CONSTRAINTS:
+        if constraint.constraint_type == "model":
+            node_a_model = active.get(constraint.node_a, M_MODULE_SPECS.get(constraint.node_a, {}).get("model", ""))
+            if constraint.node_b:
+                node_b_model = active.get(constraint.node_b, M_MODULE_SPECS.get(constraint.node_b, {}).get("model", ""))
+                if node_a_model and node_b_model and node_a_model == node_b_model:
+                    msg = f"ABORT: {constraint.description} ({constraint.node_a}={node_a_model}, {constraint.node_b}={node_b_model})"
+                    warnings.append(msg)
+                elif node_a_model and node_b_model and node_a_model != node_b_model:
+                    pass
+                elif constraint.weight == AffinityWeight.SOFT:
+                    warnings.append(f"WARN: {constraint.description} (insufficient model info)")
+            else:
+                if constraint.weight == AffinityWeight.SOFT:
+                    warnings.append(f"WARN: {constraint.description}")
+        elif constraint.constraint_type == "sandbox":
+            if constraint.node_a.startswith("M") and decision.node_id in ("M1", "M2", "M3", "M4"):
+                if decision.sandbox_profile not in ("full", "standard"):
+                    msg = f"ABORT: {constraint.description} (current={decision.sandbox_profile})"
+                    warnings.append(msg)
+        elif constraint.constraint_type == "pipeline":
+            if decision.node_id not in ("M5", "M6"):
+                warnings.append(f"WARN: {constraint.description} — A区→B区穿越需经M5/M6")
+
+    return warnings

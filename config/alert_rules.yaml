@@ -1,0 +1,62 @@
+# config/alert_rules.yaml — System Telemetry Alert Rules
+# module_id: MOD-INF-015
+# version: 0.1.0 (scaffold)
+# blueprint: docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md §9.1
+#
+# 本文件定义所有告警规则：触发条件、严重级别、通知目标、静默窗口。
+# 由 TelemetryFacade.alerting 子系统在每次指标采集后评估。
+
+version: "0.1.0"
+module_id: MOD-INF-015
+last_updated: "2026-05-08"
+
+rules:
+  - id: ALERT-SYS-001
+    name: "high_cpu_usage"
+    severity: warning
+    metric: "system.cpu_percent"
+    condition: "> 80"
+    duration: "5m"
+    description: "CPU使用率持续超过80%"
+    notify: ["fle", "dashboard"]
+    silence_window: "10m"
+
+  - id: ALERT-SYS-002
+    name: "oom_risk"
+    severity: critical
+    metric: "system.memory_rss_bytes"
+    condition: "> 8589934592"
+    duration: "1m"
+    description: "内存即将耗尽（>8GB RSS）"
+    notify: ["fle", "dashboard", "escalation"]
+    silence_window: "5m"
+
+  - id: ALERT-DB-001
+    name: "slow_queries"
+    severity: warning
+    metric: "db.query_latency_ms"
+    condition: "> 5000"
+    duration: "3m"
+    description: "数据库查询延迟超过5秒"
+    notify: ["dashboard"]
+    silence_window: "15m"
+
+  - id: ALERT-TELE-001
+    name: "telemetry_buffer_full"
+    severity: warning
+    metric: "telemetry.buffer_depth_percent"
+    condition: "> 80"
+    duration: "30s"
+    description: "遥测buffer接近满载，触发backpressure"
+    notify: ["dashboard"]
+    silence_window: "5m"
+
+  - id: ALERT-TELE-002
+    name: "schema_rejection_spike"
+    severity: warning
+    metric: "telemetry.schema_rejection_rate"
+    condition: "> 0.05"
+    duration: "1m"
+    description: "Schema校验拒绝率超过5%，可能有未注册指标"
+    notify: ["dashboard"]
+    silence_window: "10m"

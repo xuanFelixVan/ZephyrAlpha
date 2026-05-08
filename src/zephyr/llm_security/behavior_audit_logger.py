@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from zephyr.shared.time_utils import now_iso, parse_iso
+from zephyr.shared.utils.time_utils import now_iso, parse_iso
 
 """
 AI Behavior Audit Logger - structlog + JSONL
@@ -25,6 +25,8 @@ from pathlib import Path
 from typing import Any
 
 import structlog
+
+from zephyr.audit_trail.bridge import write_to_core
 
 __all__ = [
     "AuditAction",
@@ -238,6 +240,14 @@ class AuditLogger:
         log_file = self._current_log_file()
         with open(log_file, "a", encoding="utf-8") as fh:
             fh.write(line)
+
+        write_to_core("llm_behavior_audit", {
+            "action": action.value,
+            "target": target,
+            "result": result,
+            "session_id": sid,
+            "model": mdl,
+        })
 
     def log_model_call(
         self,

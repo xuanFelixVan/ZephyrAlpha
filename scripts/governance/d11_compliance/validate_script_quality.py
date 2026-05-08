@@ -37,6 +37,7 @@ timeout_seconds: 60
 warn_only: false
 """
 
+import os
 import ast
 import re
 import sys
@@ -46,7 +47,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_CODE
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -58,6 +59,7 @@ _SELF_REL = "scripts/governance/d11_compliance/validate_script_quality.py"
 
 class ClauseCheck:
     def __init__(self, clause_id: str, description: str, severity: str = "MUST"):
+        """__init__ implementation."""
         self.clause_id = clause_id
         self.description = description
         self.severity = severity
@@ -83,6 +85,7 @@ def check_bare_except(content: str, filepath: Path, result: ClauseCheck) -> None
             result.add_failure(filepath, f"L{i}: 裸 except")
 
 def _is_code_line(line: str, in_docstring: bool) -> bool:
+    """_is_code_line implementation."""
     stripped = line.strip()
     if not stripped or stripped.startswith("#"):
         return False
@@ -95,6 +98,7 @@ def _is_code_line(line: str, in_docstring: bool) -> bool:
     return True
 
 def _strip_string_literals(line: str) -> str:
+    """_strip_string_literals implementation."""
     result = []
     in_single = False
     in_double = False
@@ -353,6 +357,7 @@ CLAUSE_CHECKS: list[tuple[str, str, callable, bool]] = [
 ]
 
 def _is_library_module(content: str) -> bool:
+    """_is_library_module implementation."""
     return "def main" not in content and "if __name__" not in content
 
 def scan_scripts(scan_dir: Path, warn_only: bool = False) -> tuple[list[ClauseCheck], int]:
@@ -387,7 +392,7 @@ def _fix_dc02(scan_dir: Path) -> int:
         from _shared.libcst_docstring_adder import add_docstrings_lossless
     except ImportError:
         print("[FIX] 无法导入 libcst_docstring_adder，请确认 libcst 已安装", file=sys.stderr)
-        return 0
+        return EXIT_PASS
     targets = [
         f
         for f in iter_files(scan_dir, SCAN_EXTENSIONS_CODE, EXCLUDE_NAMES)
@@ -427,7 +432,7 @@ def main() -> None:
     scan_dir = Path(args.scripts_dir)
     if not scan_dir.exists():
         print(f"[ERROR] 脚本目录不存在: {scan_dir}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     if args.fix:
         print("[FIX] 使用 LibCST 无损修复 D-C-02 违规...\n")
         fixed = _fix_dc02(scan_dir)
@@ -445,7 +450,7 @@ def main() -> None:
             print(f"  [{result.clause_id}] {result.description} — ✅ 通过")
     print(f"\n  总计: {total} 脚本, {total_failures} 项违规\n")
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if total_failures > 0 else 0)
 
 if __name__ == "__main__":

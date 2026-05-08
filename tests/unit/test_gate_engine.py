@@ -30,7 +30,8 @@ from zephyr.gates.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.shared.schemas import Task, TaskStatus
+from zephyr.core.models import TaskCard
+from zephyr.shared.schema.schemas import TaskStatus
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -39,8 +40,9 @@ from zephyr.shared.schemas import Task, TaskStatus
 GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
 
 EXPECTED_GATE_IDS = frozenset({
-    "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G10", "G11", "G12",
+    "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G6_BP", "G7", "G10", "G11", "G12",
     "EN-001", "EN-002", "EN-003", "ZERO-RESIDUE",
+    "MAD-001", "MAD-002", "MAD-003", "MAD-004",
 })
 
 
@@ -65,10 +67,10 @@ def _make_task(
     task_id: str = "ADR-001",
     deliverables: list[str] | None = None,
     status: str = "PENDING",
-) -> Task:
+) -> TaskCard:
     namespace = task_id.split("-")[0]
     seq = int(task_id.split("-")[-1])
-    return Task(
+    return TaskCard(
         task_id=task_id,
         namespace=namespace,
         seq=seq,
@@ -77,7 +79,10 @@ def _make_task(
         status=TaskStatus(status),
         execution_model="claude",
         safety_level="M",
-        directive="325",
+        source_blueprint="test",
+        source_section="test",
+        description="测试任务：门禁引擎验证",
+        verification_status="verified",
         deliverables=deliverables or [],
         acceptance=[],
         depends_on=[],

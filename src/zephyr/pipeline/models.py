@@ -12,7 +12,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "M_MODULES",
@@ -20,6 +20,8 @@ __all__ = [
     "A_DAG",
     "B_DAG",
     "ABExperimentRoute",
+    "AFFINITY_CONSTRAINTS",
+    "AffinityWeight",
     "AIImpactAssessment",
     "ArtifactClassification",
     "ArtifactType",
@@ -28,6 +30,7 @@ __all__ = [
     "CostRecord",
     "DeadLetterEntry",
     "EmergencyFallbackPlan",
+    "ExecutionMode",
     "ExperimentVariant",
     "GenericModuleOutput",
     "M1ParseOutput",
@@ -43,6 +46,8 @@ __all__ = [
     "ModelVersionInfo",
     "ModuleInput",
     "ModuleResult",
+    "NightShiftAmbiguityLogEntry",
+    "PipelineAffinityConstraint",
     "PipelineArtifact",
     "PipelineArtifactManifest",
     "PipelineDAG",
@@ -68,6 +73,7 @@ class PipelineStatus(str, Enum):
     FAILURE = "failure"
     CLAUDE_RESCUE = "claude_rescue"
     LOCKED = "locked"
+    G6_BLOCKED = "g6_blocked"
 
 
 class ModuleStatus(str, Enum):
@@ -76,6 +82,13 @@ class ModuleStatus(str, Enum):
     SUCCESS = "success"
     FAILURE = "failure"
     SKIPPED = "skipped"
+
+
+class ExecutionMode(str, Enum):
+    """三层执行模式——L1(Trae)/L2(Local)/L3(API)"""
+    TRAE = "trae"
+    LOCAL = "local"
+    API = "api"
 
 
 class ModuleResult(BaseModel):
@@ -126,6 +139,7 @@ class PipelineResult(BaseModel):
 
     task_id: str
     pipeline: str
+    execution_mode: ExecutionMode = Field(default=ExecutionMode.TRAE, description="三层执行模式")
     modules_executed: list[ModuleResult] = Field(default_factory=list)
     overall_status: PipelineStatus = PipelineStatus.PENDING
     needs_claude_rescue: bool = False
@@ -170,6 +184,14 @@ class PipelineResult(BaseModel):
         default=None,
         description="Pipeline→AgentOrchestrator 桥接结果——B34+B36",
     )
+    skill_injection: dict | None = Field(
+        default=None,
+        description="Agent Spec Skill 注入结果——domain/role skill 上下文"
+    )
+    night_shift_log: list[NightShiftAmbiguityLogEntry] = Field(
+        default_factory=list,
+        description="夜班登记表——API 夜间不确定条目"
+    )
 
 
 class ClaudeRescueTrigger(BaseModel):
@@ -205,6 +227,31 @@ class ModelCollapseAlert(BaseModel):
         default=None,
         description="当两模一致(如M3+M7)但第三模不同时，此字段记录少数派模型的结论摘要",
     )
+
+
+class NightShiftAmbiguityLogEntry(BaseModel):
+    """夜班登记表条目——API 夜间执行遇到第三种选择时登记
+
+    API 遇到非黑非白的第三种选择时，不做强行判定，
+    登记上下文和可选方案，留待人类白天裁定。
+    """
+
+    model_config = BASE_CONFIG
+
+    id: str = Field(..., description="NSL-{sequence} 编号")
+    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat(), description="检测时间")
+    task_id: str = Field(..., description="关联任务ID")
+    module: str = Field(..., description="触发模块节点 Mx")
+    context: str = Field(..., description="不确定的上下文描述")
+    options: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="可选方案列表 [{label, description}]"
+    )
+    auto_decision: str = Field(default="C", description="API 自动选择的最保守方案")
+    requires_human: bool = Field(default=True, description="需要人类裁定")
+    human_decision: str | None = Field(default=None, description="人类裁定结果")
+    human_timestamp: str | None = Field(default=None, description="人类裁定时间")
+    human_notes: str | None = Field(default=None, description="人类备注")
 
 
 # ============================================================================
@@ -323,8 +370,11 @@ class PipelineOrchestratorConfig(BaseModel):
     enable_parallel_modules: bool = False
     health_degraded_threshold: int = 20
     health_critical_failure_ratio: float = 0.05
+    periodic_profile_interval_s: float = 3600.0
+    auto_profile_on_startup: bool = False
 
     circuit_breaker_enabled: bool = Field(default=True, description="B151 断路器")
+    g6_enabled: bool = Field(default=True, description="G6 蓝图合规门禁（测试模式可关闭）")
     cache_enabled: bool = Field(default=False, description="B154 响应缓存")
     cache_ttl_s: int = Field(default=3600, description="缓存 TTL（秒）")
     rate_limit_per_model: dict[str, float] = Field(
@@ -341,6 +391,16 @@ class PipelineOrchestratorConfig(BaseModel):
     )
     log_buffer_max: int = Field(default=2000, description="B148 日志缓冲区上限")
     latency_samples_max: int = Field(default=100, description="B148 延迟样本上限")
+    human_detection_method: str = Field(
+        default="heartbeat",
+        description="人类在场检测方式: heartbeat | manual_switch | time_window"
+    )
+    working_hours_start: int = Field(default=9, ge=0, le=23, description="工作时间开始（时）")
+    working_hours_end: int = Field(default=21, ge=0, le=23, description="工作时间结束（时）")
+    local_model_always_on: bool = Field(
+        default=True,
+        description="本地模型 24/7 常驻运行"
+    )
     accuracy_tracking_enabled: bool = Field(default=False, description="B155 准确率追踪")
 
 
@@ -356,7 +416,7 @@ M_MODULE_SPECS: dict[str, dict[str, str]] = {
     "M5": {"pipeline": "A", "model": "glm", "role": "产物打包"},
     "M6": {"pipeline": "B", "model": "deepseek", "role": "差异检测——产出 vs 期望"},
     "M7": {"pipeline": "B", "model": "glm", "role": "深度审查——逐个文件逻辑/合规"},
-    "M8": {"pipeline": "B", "model": "deepseek", "role": "标准合规——PS/GOV/ADR"},
+    "M8": {"pipeline": "B", "model": "deepseek", "role": "标准合规——PS/GOV/KB决策记录"},
     "M9": {"pipeline": "B", "model": "deepseek", "role": "风险评估——OWASP LLM Top 10"},
     "M10": {"pipeline": "B", "model": "deepseek", "role": "审计报告→Finding 格式"},
     "M11": {"pipeline": "B", "model": "deepseek", "role": "门禁裁决——G5/G6"},
@@ -574,6 +634,69 @@ B_DAG = PipelineDAG(
 )
 
 # ============================================================================
+# Affinity / Anti-Affinity 约束矩阵——对标 K8s podAffinity/podAntiAffinity
+# ============================================================================
+
+
+class AffinityWeight(str, Enum):
+    HARD = "hard"
+    SOFT = "soft"
+
+
+class PipelineAffinityConstraint(BaseModel):
+    """管线亲和性/反亲和性约束。
+
+    对标 K8s podAffinity/podAntiAffinity:
+      - HARD (requiredDuringSchedulingIgnoredDuringExecution): 违反→ABORT
+      - SOFT (preferredDuringSchedulingIgnoredDuringExecution): 违反→WARN
+
+    constraint_type:
+      - "model":      约束模型分配（防止同模审查）
+      - "sandbox":    约束沙箱分配
+      - "pipeline":   约束管线流向（A区→B区穿越）
+    """
+
+    constraint_type: str = Field(..., description="model | sandbox | pipeline")
+    node_a: str = Field(..., description="主约束节点")
+    node_b: str | None = Field(default=None, description="对标节点——None表示单节点约束")
+    weight: AffinityWeight
+    description: str = Field(default="")
+
+
+AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
+    PipelineAffinityConstraint(
+        constraint_type="model", node_a="M3", node_b="M7",
+        weight=AffinityWeight.HARD,
+        description="双盲审查必须用不同模型——M3/M7 hard antiAffinity",
+    ),
+    PipelineAffinityConstraint(
+        constraint_type="model", node_a="M8", node_b="M9",
+        weight=AffinityWeight.SOFT,
+        description="建议合规+风险用不同模型交叉审查",
+    ),
+    PipelineAffinityConstraint(
+        constraint_type="sandbox", node_a="M1",
+        weight=AffinityWeight.HARD,
+        description="M1-M4必须在full/standard沙箱执行",
+    ),
+    PipelineAffinityConstraint(
+        constraint_type="pipeline", node_a="A",
+        weight=AffinityWeight.HARD,
+        description="A区产出必须经M5打包→M6边界标记",
+    ),
+    PipelineAffinityConstraint(
+        constraint_type="model", node_a="M8",
+        weight=AffinityWeight.SOFT,
+        description="M8-M11优先DeepSeek降低成本",
+    ),
+]
+
+# M3↔M7 antiAffinity 硬约束影响链路文档
+# deepseek不可用 → M3降级到glm → M7被迫改用claude (不能同模)
+# → claude成本上升但保证双盲独立性——这是双盲审计体系的安全底线
+
+
+# ============================================================================
 # Artifact Passing——模块间结构化产出物传递（对标 CI/CD Artifacts）
 # ============================================================================
 
@@ -604,8 +727,14 @@ class PipelineArtifact(BaseModel):
     """
 
     artifact_key: str = Field(description="唯一引用键——如 'M3_generated_code'")
-    produced_by: str = Field(description="产出模块的 module_id——如 'M3'")
+    artifact_id: str = Field(default="", description="UUID格式唯一标识")
     artifact_type: ArtifactType
+    produced_by: str = Field(description="产出模块的 module_id——如 'M3'")
+    content: str = Field(default="", description="产出物内容或摘要")
+    path: str | None = Field(default=None, description="产出物文件路径")
+    size: int = Field(default=0, ge=0, description="产出物大小(字节)")
+    hash_value: str = Field(default="", description="SHA256 完整性哈希——B138")
+    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat(), description="产出时间戳")
     classification: ArtifactClassification = Field(
         default=ArtifactClassification.INTERNAL,
         description="数据分级标签——SOC2 CC7.2 数据生命周期管理",
@@ -626,10 +755,26 @@ class ModuleInput(BaseModel):
         default_factory=list,
         description="依赖的 artifact_key 列表",
     )
+    previous_artifacts: list[PipelineArtifact] = Field(
+        default_factory=list,
+        description="上级模块的产出物",
+    )
+    context: dict[str, object] = Field(
+        default_factory=dict,
+        description="额外上下文——opaque dict 可校验",
+    )
     task_override: dict[str, object] | None = Field(
         default=None,
         description="传递给模型的补充指令——如 '基于 M3 生成的代码做审查'",
     )
+
+    def validate(self) -> bool:
+        """校验所需 Artifact 是否齐全。"""
+        available_keys = {a.artifact_key for a in self.previous_artifacts}
+        for required in self.consumes:
+            if required not in available_keys:
+                return False
+        return True
 
 
 class PipelineArtifactManifest(BaseModel):
@@ -642,7 +787,11 @@ class PipelineArtifactManifest(BaseModel):
     """
 
     run_id: str
+    pipeline_id: str = Field(default="", description="管线标识 A_DAG/B_DAG")
+    task_id: str = Field(default="", description="关联的任务ID")
     artifacts: list[PipelineArtifact] = Field(default_factory=list)
+    meta: dict[str, object] = Field(default_factory=dict, description="扩展元数据")
+    created: str = Field(default_factory=lambda: datetime.now().isoformat(), description="创建时间")
 
     def get(self, artifact_key: str) -> PipelineArtifact | None:
         for a in self.artifacts:
@@ -762,7 +911,7 @@ class M7ReviewOutput(BaseModel):
 
 
 class M8ComplianceOutput(BaseModel):
-    """M8 输出：标准合规——PS/GOV/ADR"""
+    """M8 输出：标准合规——PS/GOV/KB决策记录"""
 
     model_config = BASE_CONFIG
     module_id: str = "M8"

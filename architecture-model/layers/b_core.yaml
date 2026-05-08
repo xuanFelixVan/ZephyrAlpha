@@ -19,7 +19,7 @@ modules:
       - blueprint_decomposer.py
       - models.py
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
 summary:
   total: 1

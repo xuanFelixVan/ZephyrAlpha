@@ -1,0 +1,15 @@
+---
+module_id: KE-governance-mad-005_p0-002
+title: MAD-005：P0 模块额外条件
+category: governance
+---
+
+# MAD-005：P0 模块额外条件
+
+MAD-005：P0 模块额外条件
+
+当模块优先级为 P0 时，除四级筛选外还必须满足：
+
+1. 接口契约在 `cross-layer-contracts.yaml` 中已定义且状态为 `frozen`
+2. 已关联至少一个 ADR
+3. 已分配 `runtime_plane`（hot/warm/cold）

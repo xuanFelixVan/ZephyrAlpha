@@ -11,6 +11,7 @@ status: active
 version: "1.2.0"
 last_updated: "2026-05-06"
 ai_autonomy: human_gated
+owner: ZephyrAlpha-Owner
 depends_on:
   - target: PS-STD-001
     at: "§1.5.3 Tier 3"
@@ -41,13 +42,13 @@ systems:
       - {task_id: T-V2-003, title: "登记表 pre-commit 自检", priority: P0, status: ready}
 
   sqlite_task_db:
-    location: ".runtime/db/tasks.db"
-    status: PENDING-CREATION
+    db_path: "data/zalpha_metadata.db"
+    status: ACTIVE
     target_phase: Phase-1b
-    schema_source: "docs/03_modules/l01_infrastructure/task-system/blueprint.md"
-    schema_section: "§2.1"
-    expected_creation_date: null
-    scheduling_note: "在 Phase-1a 完成后由 T-V2-002 等任务驱动落地；日期待规划确定后写入 ISO 日期。"
+    items: 20
+    created_at: "2026-05-07T12:00:00+08:00"
+    created_by: "session-20260507-011"
+    scheduling_note: "2026-05-07 由 session-20260507-011 通过 import_task_cards.py 导入 MOD-INF-001 容量保障模块全部 20 张任务卡。task_id 映射为 SRC-0001 ~ SRC-0020（原 TASK-MOD-INF-001-0001 ~ TASK-MOD-INF-001-0020）。后续任务卡通过同一脚本增量导入"
 
   development_workspace_taskbooks:
     location: "开发工作区高层规划任务书"

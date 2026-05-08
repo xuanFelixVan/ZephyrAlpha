@@ -36,6 +36,7 @@ warn_only: false
 """
 
 
+import os
 import json as json_mod
 import os
 import subprocess
@@ -63,25 +64,44 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def setup_benchmark() -> dict:
+    """setup_benchmark implementation."""
     _TEST_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
 
     bad_file = _TEST_FIXTURES_DIR / "bad_frontmatter.md"
-    bad_file.write_text("""# Test Document
+    tmp_path = f"{bad_file}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text("""# Test Document
 Some body text without frontmatter.
 This should trigger D3 metadata validation.
 """, encoding="utf-8")
+        os.replace(tmp_path, bad_file)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
     bad_imports = _TEST_FIXTURES_DIR / "bad_imports.py"
-    bad_imports.write_text("""import os
+    tmp_path = f"{bad_imports}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text("""import os
 import nonexistent_package_xyz
 from typing import List, Dict, Any
 
 def test_function():
     pass
 """, encoding="utf-8")
+        os.replace(tmp_path, bad_imports)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
     incomplete_doc = _TEST_FIXTURES_DIR / "incomplete_module.py"
-    incomplete_doc.write_text("""
+    tmp_path = f"{incomplete_doc}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text("""
 def calculate(x: int, y: int) -> int:
     return x + y
 
@@ -90,6 +110,12 @@ class DataProcessor:
     def process(self):
         pass
 """, encoding="utf-8")
+        os.replace(tmp_path, incomplete_doc)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
     bad_structure = _TEST_FIXTURES_DIR
     (bad_structure / "orphan_file_without_module_registration.py").write_text("""
@@ -97,13 +123,22 @@ def helper(x):
     return x * 2
 """, encoding="utf-8")
 
-    with open(_EXPECTED_RESULTS, "w", encoding="utf-8") as f:
-        json_mod.dump(DEFAULT_EXPECTED, f, ensure_ascii=False, indent=2)
-
+    tmp_path = f"{_EXPECTED_RESULTS}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(DEFAULT_EXPECTED, f, ensure_ascii=False, indent=2)
+    
+        os.replace(tmp_path, _EXPECTED_RESULTS)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return {"status": "setup_complete", "fixtures": 4, "path": str(_TEST_FIXTURES_DIR.relative_to(_REPO_ROOT))}
 
 
 def _load_expected() -> dict:
+    """_load_expected implementation."""
     if not _EXPECTED_RESULTS.exists():
         return DEFAULT_EXPECTED
     with open(_EXPECTED_RESULTS, encoding="utf-8") as f:
@@ -111,6 +146,7 @@ def _load_expected() -> dict:
 
 
 def run_benchmark(tolerance: float | None = None) -> dict:
+    """run_benchmark implementation."""
     if not _TEST_FIXTURES_DIR.exists():
         setup_benchmark()
 
@@ -195,6 +231,7 @@ def run_benchmark(tolerance: float | None = None) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(description="END-TO-END governance benchmark (Kayenta-style drift)")

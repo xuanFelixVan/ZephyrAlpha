@@ -12,15 +12,17 @@
 schema_version: "1.0"
 doc_type: registry
 ttl: permanent
-last_updated: "2026-05-05"
+last_updated: "2026-05-06"
 
 consumers:
   # ─── P0 数据契约消费者 ───
   - contract_id: CTR-001
     contract_name: NormalizedMarketData
     registered_consumers:
+      - {layer: l00, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l02, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {layer: l03, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l04, module: "metrics_warm", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l09, module: "research_innovation", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-002
@@ -33,23 +35,34 @@ consumers:
   - contract_id: CTR-003
     contract_name: RiskLimits
     registered_consumers:
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-004
     contract_name: Order
     registered_consumers:
+      - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l07, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {layer: l10, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {layer: l12, module: "system_telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-005
     contract_name: Fill
     registered_consumers:
       - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l10, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {layer: l12, module: "system_telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-006
     contract_name: PositionSnapshot
     registered_consumers:
       - {layer: l04, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l05, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l07, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {layer: l08, module: "orchestration", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {layer: l10, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {layer: l11, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   # ─── P0 全链路追踪消费者 ───
@@ -133,6 +146,7 @@ consumers:
       - {layer: l06, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {layer: l07, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {layer: l10, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {layer: l12, module: "system_telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-P1-014
     contract_name: ExperimentResult
@@ -142,7 +156,7 @@ consumers:
 
 summary:
   total_contracts_registered: 18
-  total_consumer_entries: 45
+  total_consumer_entries: 92
   tier_distribution:
     tier_1_critical: 35
     tier_2_secondary: 10
@@ -151,3 +165,4 @@ summary:
     任何 P0/P1 契约的 MAJOR 版本变更前，必须通过本表查询所有注册消费者并提前 30 天通知。
     Tier 1 = 阻塞式消费者（MAJOR 不兼容会导致其不可用）。
     Tier 2 = 非阻塞式消费者（可退化或延迟处理）。
+    EXT/OCP 契约由外部系统版本控制 / _b_track_interfaces/ 管理，不在此注册表中。

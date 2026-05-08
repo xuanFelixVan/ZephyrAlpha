@@ -4,7 +4,7 @@ title: "System Telemetry 蓝图 — 全系统可观测性：指标/日志/链路
 doc_type: blueprint
 status: Draft
 version: "0.9.0"
-layer: L12
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
-construction_progress: phase_1_partial
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha System Telemetry 蓝图——全系统可观测性平台：9个子系统通过统一接入点 Telemetry 门面类暴露；覆盖三层信号(4 Golden Signals + USE + Annotations) + 多环境隔离；指标命名空间防冲突；批量上报API；DLQ 保障数据质量闭环；配置热更新零重启；Meta-Telemetry自体内省。对接已有 shared 基础设施。三层闭环：AI开发闭环（Telemetry→MCP→AI自我修正）+ 运营闭环（FLE自动派单→Backpressure→自愈/Escalation）+ 治理闭环（Schema Registry→漂移检测→DLQ自动修复）。对齐 OTel GenAI + AI Agent 语义约定。搭配合成监控、告警测试、CI/CD 可观测性、Counter重置检测、Error Taxonomy、遥测成本预算、数据安全(加密+防篡改+OWASP MCP08)、Observability-as-Code、Schema版本化、时钟偏差检测、AI自我修正效能追踪。针对100% AI施工+氛围编程+1人+AI维护语境深度优化。\n\n> **唯一真源裁定(2026-05-06)**：本蓝图(MOD-INF-015)是 L12 System Telemetry 的 CANONICAL SSoT。原 MOD-L12-001(C轨占位, 2026-05-05, 0.1.0) 已完全吸收——其全量内容逐条对账确认融入本蓝图 v0.9.0，原占位文件已安全删除。L12 系统遥测层不再存在双真源。"
 tags: [telemetry, system-telemetry, l12, metrics, logs, traces, ai-behavior, observability, infrastructure, profiling, health-check, alerting, schema-registry, finops, vibe-coding, self-healing, backpressure, feature-flags, multi-environment, disaster-recovery, developer-experience, dead-letter-queue, hot-reload, opentelemetry-genai, synthetic-monitoring, error-taxonomy, slo-registry, ci-cd-observability, self-describing-telemetry, counter-reset, cost-budget, metric-discovery, agent-observability, data-security, tamper-evident, owasp-mcp08, observability-as-code, schema-versioning, clock-skew, ai-self-correction, zombie-metrics, graceful-shutdown, metric-namespacing, bulk-report, meta-telemetry, c-track-merged, DO-NOT-IMPLEMENT-superseded, single-source-of-truth, absorbed-mod-l12-001]
@@ -1819,17 +1819,18 @@ Schema drift check 版本化增强:
 
 ## 13. 施工进度
 
-| 子系统 | 阶段 | 完成度 | 下一步 |
+| 子系统 | 阶段 | 完成度 | 说明 |
 |--------|------|:---:|------|
-| metrics | scaffold | ██ 20% | MetricPoint 数据类定义 + ring buffer + cardinality控制 |
-| logs | scaffold | ██ 20% | structlog 配置 + JSONL writer + trace_id注入 |
-| traces | scaffold | █░ 10% | Span 数据结构 + W3C TraceContext 传播 |
-| ai_behavior | scaffold | ░░ 5% | 概念设计完成，代码未开工 |
-| archive | scaffold | ░░ 5% | gzip 归档脚本骨架 |
-| profiles | not_started | ░░ 0% | 🆕 待设计+施工 |
-| health | not_started | ░░ 0% | 🆕 待设计+施工 |
-| alerts | not_started | ░░ 0% | 🆕 待设计+施工 |
-| schema | not_started | ░░ 0% | 🆕 待设计+施工 |
+| metrics | complete | ██ 100% | MetricPoint + ring buffer(500) + cardinality控制 — facade.py MetricsFacade 完整 |
+| logs | complete | ██ 100% | structlog 配置 + JSONL writer + trace_id 注入 + ring buffer + RULE-ONE 原子写入 |
+| traces | complete | ██ 100% | Span 数据结构 + W3C TraceContext 传播 + SpanContextManager + TraceSampler + span/log 关联 |
+| ai_behavior | complete | ██ 100% | AIBehaviorEvent 数据类(16字段) + 7 维度 + Error Taxonomy(4维) + 可疑事件自动标记 |
+| archive | complete | ██ 100% | TTL 分级策略 + gzip 压缩 + SQLite .backup + 成本感知降级(3级) |
+| profiles | complete | ██ 100% | psutil 性能剖析(start/stop/snapshot) — profiles.py 完整 |
+| health | complete | ██ 100% | register/set_unhealthy/status/shutdown — health.py 完整 |
+| alerts | complete | ██ 100% | evaluate/ack/pending + alert_rules.yaml 规则驱动 — alerts.py 完整 |
+| schema | complete | ██ 100% | get_version/check_compatibility/validate_metric_name — schema.py 完整 |
+| facade | complete | ██ 100% | Telemetry 统一门面: 全部 9 子系统桥接到下辖实现; test_mode 支持 |
 
 ### 下一步施工
 
@@ -2260,7 +2261,7 @@ Telemetry Test Modes:
 | 3 | doc_type: blueprint | INF-015 frontmatter 相同 | ✅ |
 | 4 | status: Draft | INF-015 frontmatter 相同 | ✅ |
 | 5 | version: 0.1.0→0.9.0 | §22 本变更记录(演化链) | ✅ |
-| 6 | layer: L12 | INF-015 frontmatter 相同 | ✅ |
+| 6 | layer: L01 | INF-015 frontmatter 相同 | ✅ |
 | 7 | owner: ZephyrAlpha-Owner | INF-015 frontmatter 相同 | ✅ |
 | 8 | classification: confidential | INF-015 frontmatter 相同 | ✅ |
 | 9 | language: zh | INF-015 frontmatter 相同 | ✅ |
@@ -2284,3 +2285,15 @@ Telemetry Test Modes:
 | 0.2.0 | 2026-05-04 | P2-1 量化追踪落地——新增 BLUEPRINT-READ-FREQ / BLUEPRINT-STALENESS SLI + blueprint_metrics.py。关联决策：R92。 |
 | 0.1.1 | 2026-05-03 | 施工进度扩展——§11 路径索引 + 施工指引 |
 | 0.1.0 | 2026-05-03 | 初始创建——5子系统 skeleton + 4黄金信号 SLI |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `src/zephyr/l12_system_telemetry/` |
+| 源码文件数 | 12 个 .py/.yaml |
+| 测试路径 | `tests/infrastructure/` |
+| 关键入口 | `l12_system_telemetry.telemetry_core` |

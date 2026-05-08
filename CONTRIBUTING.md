@@ -5,7 +5,6 @@
 ## 代码与风格
 
 - Python **3.11+**（与 `pyproject.toml` 的 `requires-python` 一致）
-- 根目录 `demo_e2e_pipeline.py` 对应可选依赖：`pip install -r requirements-demo.txt` 或 `pip install -e ".[demo]"`
 - 格式化/Lint：`ruff`（替代 `black` + `isort`）
 - 类型检查：`mypy`
 - 提交前运行 `pytest`
@@ -14,4 +13,4 @@
 
 - **范围聚焦**：单 PR 解决一类问题
 - **文档登记**：新建受治理文档须在 `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml` 中登记（以 [AGENTS.md](AGENTS.md) 路径为准）
-- **SSoT 验证**：提交前运行 `python scripts/governance/d5_architecture/validate_ssot.py`
+- **SSoT 验证**：提交前运行 `python scripts/governance/d5_architecture/validators/validate_ssot.py`

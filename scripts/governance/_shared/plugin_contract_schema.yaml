@@ -1,0 +1,38 @@
+plugin_contract_version: "1.0"
+
+cli_interface:
+  required_args: []
+  optional_args:
+    - "--help"
+    - "--version"
+    - "--warn-only"
+    - "--json-output"
+
+exit_codes:
+  0: "PASS — 全部通过"
+  1: "FAIL — 检测到违规"
+  2: "ERROR — 脚本执行异常"
+  3: "BYPASS — 跳过执行"
+
+output_format:
+  default: "plaintext"
+  json: "structured"
+  schema:
+    status: "string"
+    violations: "list"
+    metadata:
+      script: "string"
+      version: "string"
+      run_at: "string"
+
+manifest_registration:
+  required_fields:
+    - "path"
+    - "name"
+    - "dimension"
+    - "exit_code_convention"
+    - "trigger"
+    - "prefix"
+    - "automation_level"
+    - "tags"
+    - "version"

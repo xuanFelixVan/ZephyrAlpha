@@ -1,6 +1,7 @@
 """从 cross-layer-contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
 from __future__ import annotations
 
+import os
 import hashlib
 import json
 import sys
@@ -46,7 +47,15 @@ def main() -> int:
 
     out_path = REPO_ROOT / MANIFEST_REL
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp_path = f"{out_path}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+        os.replace(tmp_path, out_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"OK: wrote {len(fingerprints)} fingerprints → {MANIFEST_REL}")
     return 0
 

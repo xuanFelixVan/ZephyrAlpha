@@ -10,6 +10,7 @@
 3. 状态不一致：knowledge 表 status 与 events 表最新状态不匹配
 4. 重复指纹：不同 ke_id 但 fingerprint_sha256 相同
 5. 向量状态违规：非 VECTOR_VISIBLE 状态的 KE 仍存在于向量索引中
+6. 近似重复：两篇KE在语义上高度相似但指纹不同（向量碰撞攻击检测）
 
 Safety  : L（只读校验，不修改任何数据）
 
@@ -34,7 +35,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 
 class ValidationSeverity(str, Enum):
@@ -100,6 +101,36 @@ class GraphValidator:
             issues=issues,
             passed=error_count == 0,
         )
+
+    def check_near_duplicate(
+        self,
+        path_a: str,
+        path_b: str,
+        threshold: float = 0.95,
+    ) -> dict[str, Any]:
+        content_a = Path(path_a).read_text(encoding="utf-8", errors="replace")
+        content_b = Path(path_b).read_text(encoding="utf-8", errors="replace")
+
+        words_a = set(_normalize(content_a).split())
+        words_b = set(_normalize(content_b).split())
+
+        if not words_a or not words_b:
+            return {"is_duplicate": False, "similarity": 0.0}
+
+        jaccard = len(words_a & words_b) / len(words_a | words_b)
+        len_ratio = min(len(content_a), len(content_b)) / max(len(content_a), len(content_b))
+        char_overlap = sum(1 for ca, cb in zip(content_a, content_b) if ca == cb) / max(len(content_a), len(content_b))
+
+        similarity = 0.4 * jaccard + 0.3 * len_ratio + 0.3 * char_overlap
+
+        return {
+            "is_duplicate": similarity >= threshold,
+            "similarity": round(similarity, 4),
+            "jaccard": round(jaccard, 4),
+            "len_ratio": round(len_ratio, 4),
+            "char_overlap": round(char_overlap, 4),
+            "threshold": threshold,
+        }
 
     def _check_orphan_nodes(self) -> list[ValidationIssue]:
         issues: list[ValidationIssue] = []
@@ -272,3 +303,11 @@ class GraphValidator:
                 )
 
         return issues
+
+
+def _normalize(text: str) -> str:
+    import re
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", " ", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()

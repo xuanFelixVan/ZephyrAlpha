@@ -19,6 +19,7 @@ module_id: PS-VOC-002
 version: "1.2.0"
 title: "rule_form 受控词表"
 status: active
+owner: ZephyrAlpha-Owner
 vocabulary_name: rule_form
 total_values: 4
 source: "PS-STD-001 §2.5（受控词表速查：4 值）+ §2.6（一致性约束：doc_type → rule_form 映射）"

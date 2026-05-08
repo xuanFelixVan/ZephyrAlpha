@@ -20,13 +20,22 @@ modules:
     description: 消费PositionSnapshot进行风险指标计算
   - contract_id: CTR-001
     role: consumer
-    description: 消费历史市场数据计算波动率和相关性
+    description: 消费历史市场数据计算波动率和相关�?
+  - contract_id: CTR-002
+    role: consumer
+    description: 消费 FactorSignal 进行风险因子监控
   - contract_id: CTR-P1-011
     role: producer
     description: 生产RiskMetricsReport包含VaR、CVaR、回撤等风险指标
-  adr_ref:
+  - contract_id: CTR-P1-012
+    role: consumer
+    description: 消费 ComplianceRule 执行合规检�?
+  - contract_id: CTR-P1-013
+    role: both
+    description: 消费 TelemetryEmitter 发送遥测数�?
+  kb_ref:
   - ADR-0009
-  plane_note: 默认 Warm；日终 + 月度批量走 Cold（l04-metrics-cold）
+  plane_note: 默认 Warm；日�?+ 月度批量�?Cold（l04-metrics-cold�?
 - id: l04-limits
   name: Position & Exposure Limits
   submodule_path: src/zephyr/l04_risk_management/limits/
@@ -37,37 +46,37 @@ modules:
   interfaces:
   - contract_id: CTR-003
     role: producer
-    description: 生产 RiskLimits 供组合构建与交易执行层消费
-  adr_ref:
+    description: 生产 RiskLimits 供组合构建与交易执行层消�?
+  kb_ref:
   - ADR-0009
-  plane_note: T1 激活后走 Hot（INV-002 single position ≤ 5% NAV）；T0 阶段 Warm 检查
+  plane_note: T1 激活后�?Hot（INV-002 single position �?5% NAV）；T0 阶段 Warm 检�?
 - id: l04-stop-loss
   name: Stop-Loss Rules & Kill Switch
   submodule_path: src/zephyr/l04_risk_management/stop_loss/
   status: planned
   priority: P0
   runtime_plane: hot
-  description: 止损规则与自动触发逻辑；毫秒级 kill switch 触发（INV-001 < 1ms），T1 激活后走 Hot
+  description: 止损规则与自动触发逻辑；毫秒级 kill switch 触发（INV-001 < 1ms），T1 激活后�?Hot
   interfaces:
   - contract_id: CTR-004
     role: both
-    description: 消费Order事件进行实时止损检查；生产止损触发指令（修改Order状态为CANCELLED）
+    description: 消费Order事件进行实时止损检查；生产止损触发指令（修改Order状态为CANCELLED�?
   - contract_id: CTR-006
     role: consumer
     description: 消费PositionSnapshot进行持仓止损评估
   - contract_id: CTR-003
     role: consumer
-    description: 消费RiskLimits获取止损阈值配置
-  adr_ref:
+    description: 消费RiskLimits获取止损阈值配�?
+  kb_ref:
   - ADR-0009
-  plane_note: T1 激活后走 Hot；T0 阶段 Warm 逻辑
+  plane_note: T1 激活后�?Hot；T0 阶段 Warm 逻辑
 - id: l04-monitor-hot
   name: Real-Time Risk Monitor
   submodule_path: src/zephyr/l04_risk_management/monitor/
   status: planned
   priority: P0
   runtime_plane: hot
-  description: 实时风险监控与告警；real-time hard monitor，T1 激活后走 Hot；T0 默认 Warm 监控
+  description: 实时风险监控与告警；real-time hard monitor，T1 激活后�?Hot；T0 默认 Warm 监控
   interfaces:
   - contract_id: CTR-004
     role: consumer
@@ -75,9 +84,9 @@ modules:
   - contract_id: CTR-006
     role: consumer
     description: 消费 PositionSnapshot 进行持仓风险实时评估
-  adr_ref:
+  kb_ref:
   - ADR-0009
-  plane_note: T1 激活后走 Hot（l04-monitor-hot）；T0 阶段 Warm（l04-monitor-warm）
+  plane_note: T1 激活后�?Hot（l04-monitor-hot）；T0 阶段 Warm（l04-monitor-warm�?
 summary:
   total: 4
   by_status:
@@ -94,5 +103,5 @@ summary:
     hot: 3
     warm: 1
     cold: 0
-  t1_activation_note: Hot 标注的 3 个模块当前 T0 阶段运行在 Warm，T1 真实资金接入后首激活 Hot
+  t1_activation_note: Hot 标注�?3 个模块当�?T0 阶段运行�?Warm，T1 真实资金接入后首激�?Hot
 invariants_ref: 'Canonical SSoT: cross-cutting/invariants.yaml (5 invariants moved)'

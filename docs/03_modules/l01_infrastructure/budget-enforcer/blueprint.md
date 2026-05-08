@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_1_partial
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha Token/Cost/Time 三维预算强制执行蓝图 v0.7.0——终极取证补丁。前6轮补齐68项功能性盲点，本轮补充3个结构面缺陷：①信任根——AI构建的Budget Enforcer谁来审计？引入Runtime Trust Rings（Ring 0-3）+ Tamper-Evident Audit Trail（append-only hash chain）+ Budget Policy Signing；②抗对抗——前6轮假设agents是合作的，Forcepoint X-Labs 2026披露10种IPI攻击载荷可在<300ms绕过guardrails。引入IPI-Aware Budget Defense + Cold Start Anti-Abuse + Adversarial Testing Mandate；③故障模式——Budget Enforcer崩溃时fail-open还是fail-closed？引入Formal Fail-Mode Specification + Bootstrapping Calibration Phase（Day 0→30渐进收紧）。对标补充：Forcepoint X-Labs IPI十大攻击载荷 (2026.4) + Oktsec Kill Chain (2026.3) + Okta Agent Bypass研究 (2026.5) + Microsoft Agent Governance Toolkit Runtime Rings + Gravitee AI Agent Security 2026。v0.3.0 20+v0.4.0 23+v0.5.0 13+v0.6.0 12+v0.7.0 10=78项盲点全量补齐。这并不是增加更多功能——而是补上'一个AI构建的系统如何可信地约束AI'这个根本性问题。"
 tags: [budget, token, cost, time, enforcement, degradation, infrastructure, pre-flight, in-flight, self-budget, model-router, cache, burn-rate, roi, chargeback, loop-detection, pricing-sync, stream-abort, quality-gate, env-profile, agent-sub-pool, policy-sandbox, waste-detection, batch-routing, model-discovery, timeout-guard, instruction-bloat, history-tax, provider-tier, cost-spiral, cross-provider, narrow-reroute, spiral-ews, poison-cascade, parent-child-attribution, workflow-budget, resume-cost, think-time, guard-efficiency, trust-ring, tamper-evident, fail-mode, bootstrapping, ipi-defense, anti-abuse, adversarial-testing, supply-chain-isolation]
@@ -22,9 +22,9 @@ depends_on:
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——预算超限事件写入审计 + v0.7.0 Tamper-Evident hash chain"}
   - {target: "MOD-INF-022", at: "§2", why: "Escalation——预算超限触发升级"}
   - {target: "MOD-INF-001", at: "§2", why: "Capacity Assurance——Token Budget 多级体系 + Kill Switch + Fail-Mode 联动"}
-  - {target: "MOD-INF-004", at: "§2", why: "Model Registry——模型定价元数据来源 + Provider Tier 感知"}
-  - {target: "MOD-INF-023", at: "§2", why: "Output Validator——Stream Abort Guard 和 Output Quality Gate 的质量信号来源"}
-  - {target: "MOD-SEC-001", at: "§2", why: "LLM Security——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
+  - {target: "MOD-INF-006", at: "§2", why: "Task System——任务预算字段 + 状态机预算联动"}
+  - {target: "MOD-INF-023", at: "§2", why: "Drift Detector——漂移预算信号 + 配置漂移对预算的影响"}
+  - {target: "MOD-INF-014", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 ---
 
 ## DOM-GOV-001 集成契约锚点
@@ -773,7 +773,7 @@ output_quality_gate:
   description: "输出前 N token 的快速质量校验——在浪费大量预算前发现问题"
   lifecycle_position: "in_flight"
 
-  # 与 MOD-INF-023 Output Validator 联动
+  # 与 MOD-INF-023 Drift Detector 联动
   validator: "output_validator.early_quality_check()"
 
   early_signals:
@@ -1664,10 +1664,10 @@ solo_maintainer_optimizations:
 |---------|------|------|------|
 | MOD-INF-001 Capacity Assurance | Kill Switch 联动 + Degradation 联动 | L6 kill_switch 触发 / 降级链执行 | 调用全局熔断 / 调用 degradation_chain |
 | MOD-INF-008 Context Engine | 上下文压缩 + 浪费检测联动 | L3 compress + waste_ratio > 60% | DocCompressor aggressive 模式 / 优化选择策略 |
-| MOD-INF-004 Model Registry | 模型元数据 | 模型路由 + 价格估算 | 读取模型定价 + 上下文窗口 |
+| MOD-INF-006 Task System | 任务预算字段 + 状态机预算联动 | 任务预算/状态变更 | 读取任务预算 + 状态联动 |
 | MOD-INF-020 Audit Trail | 审计写入 | 每次降级/熔断/Borrow/Abort | 写入审计事件 |
 | MOD-INF-022 Escalation | 升级 | 硬停止 + Kill Switch | 触发升级通知 Owner |
-| **MOD-INF-023 Output Validator**（🆕 v0.4.0） | 质量信号 | Stream Abort Guard / Output Quality Gate | 调用 `early_quality_check()` + 引用验证 |
+| **MOD-INF-023 Drift Detector**（🆕 v0.4.0） | 漂移预算信号 | 配置漂移对预算的影响 | 调用漂移检测 + 预算影响评估 |
 | **MOD-MASTER-001 任务系统**（🆕 v0.4.0） | Batch 路由 | task.urgency=low | 自动标记走 Batch API |
 | **Git Pre-commit Hook**（🆕 v0.4.0） | 策略快照 | git commit | 自动快照 budget_policy.yaml 到版本历史 |
 | **LiteLLM Registry**（🆕 v0.4.0） | 新模型发现 + 定价同步 | daily sync 发现新 model_id | 评估 + 写摘要 + 通知 Owner |
@@ -1676,7 +1676,7 @@ solo_maintainer_optimizations:
 | **SUPERVISORAGENT LLM-Free Filter**（🆕 v0.6.0） | LLM-free 触发——仅在必要时升级 LLM-dependent | budget_policy LLM-free 阶段提升 | guard 类型从 LLM-dependent → LLM-free |
 | **Provenance DAG**（🆕 v0.6.0） | 幻觉信息源链追踪——dependency graph | agent output 包含 claim 时 | 追加到 observation provenance DAG |
 | **Agent Delegation Registry**（🆕 v0.6.0） | 记录 parent-child 委托关系 | 每次 agent-to-agent call | 记录 delegation edge + 写入 attribution |
-| **MOD-SEC-001 LLM Security**（🆕 v0.7.0） | IPI 检测 + 策略文件签名验证 + Trust Ring 隔离 | IPI pattern detected / policy modification attempt | 签名验证网关 + Ring escalation |
+| **MOD-INF-014 LLM Security Gateway**（🆕 v0.7.0） | IPI 检测 + 策略文件签名验证 + Trust Ring 隔离 | IPI pattern detected / policy modification attempt | 签名验证网关 + Ring escalation |
 
 ---
 
@@ -1692,3 +1692,17 @@ solo_maintainer_optimizations:
 | 2026-05-05 | 0.3.0 | **全量重构**：三级→五级预算体系（新增 Request/Turn 级）；新增 Pre-flight Gate 事前拦截门；新增 Model Router（Tier 0→3 成本感知路由+厂商故障切换）；四级→六级降级链（新增模型切换+Kill Switch+成本感知回升+反螺旋）；新增循环检测器（工具调用指纹）；新增语义缓存（Prompt/Tool/Embedding 三层）；新增成本归因（Entity/Tool/Feature 三级+Weekly Showback）；新增 Token ROI 模型；新增 Burn Rate 多窗口监控；新增 Budget Pool 弹性共享；新增厂商价格自动同步；新增计划vs实际消耗偏差校准；Solo Maintainer 特异性优化（自学习阈值/自静默告警/周自动摘要）；Budget Policy as Code（独立 YAML）；软硬双轨阈值分离；20 项盲点全量补齐 |
 | 2026-05-05 | 0.2.0 | 决策写入：D-024-01 四级自动降级；成本审计改为 JSONL |
 | 2026-05-05 | 0.1.0 | 初始创建——三级预算体系 + 降级策略 + 预算执行器 |
+
+
+---
+
+## 施工落盘确认（2026-05-08 审计修正 · P0/P1 修复完成）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_1_partial→phase_1_加固中（Phase 0 Skeleton + Phase 1 治理桥接已通过，P1 核心模块 4/4 已落盘，Phase 1.5/2 待施工） |
+| 源码路径 | `src/zephyr/budget_enforcer/ (8 文件) + governance/budget_enforcer/ (3 文件)` |
+| 源码文件数 | **11 个 .py**（蓝图 §4 计划 31 文件，完成率 **35.5%** ← 修复前 22.6%） |
+| 新增 P1 模块 | `budget_tracker.py`, `degradation_manager.py`, `model_router.py`, `timeout_guard.py` |
+| 配置文件 | `config/capacity/token_budget.yaml`（Capacity Assurance SSoT）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
+| 门禁 | ✅ GCT-024 `gates/gct_024_budget_enforcer.yaml`（7 checks: 硬4 + 软2 + info1） |
+| 关键入口 | `governance/budget_enforcer/alerts.py` |

@@ -19,6 +19,8 @@ beta 硬合规（2026-05-04 激活）:
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
 
 __manifest__ = """
 args:
@@ -33,6 +35,7 @@ warn_only: false
 """
 
 
+import os
 import json
 import random
 import sys
@@ -44,7 +47,7 @@ _GOV_DIR = _FILE.parents[0]
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 _SRC = REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
@@ -352,8 +355,16 @@ def main() -> int:
         "summary": summary,
         "compliance": report,
     }
-    with open(report_path, "w", encoding="utf-8") as fh:
-        json.dump(full_report, fh, ensure_ascii=False, indent=2)
+    tmp_path = f"{report_path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as fh:
+            json.dump(full_report, fh, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, report_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"\nFull report → {report_path}")
 
     exit_code = 1 if report.get("rejects") else 0
@@ -374,7 +385,7 @@ def main() -> int:
         )
 
     if args.warn_only:
-        return 0
+        return EXIT_PASS
     return exit_code
 
 

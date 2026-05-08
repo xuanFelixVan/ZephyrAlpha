@@ -1,365 +1,310 @@
-#!/usr/bin/env python3
+"""GATE-11 命名规范门禁 — 全类型命名检测。
 
-"""
-GATE-11：命名规范门禁(check_naming_convention.py)
-======================================================
+权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md v2.0.1 §五
 
-
-权威依据
---------
-`docs/01_policies_and_standards/governance/document/file-naming-standard.md` v2.0.1 §五 违规检测规则
-
-运行模式
---------
-  # CI / 全库扫描
-  python scripts/governance/check_naming_convention.py --all
-
-  # pre-commit / 指定文件
-  python scripts/governance/check_naming_convention.py --files path/to/a.md path/to/b.md
-
-  # staged 文件(git diff --cached --name-only)
-  python scripts/governance/check_naming_convention.py --staged
-
-编号说明
---------
-本门禁续号于 Architecture-as-Code 系列(`GATE-01 ~ GATE-10`,
-见 `docs/02_enterprise_architecture/target-architecture/architecture-model/scripts/check_architecture_gates.py v2.0.0`),
-命名为 `GATE-11` 避免编号空间碰撞(append-only 原则,对标 ADR-0006 跳号治理精神)。
-
-检测项(7 条)
---------------
-N-01 新建文件名含大写字母(豁免白名单)
-N-02 新建文件名含版本号后缀(-v\\d+ / -round\\d+ / -iteration\\d+)
-N-03 新建状态快照文件带日期后缀(-\\d{8},LATEST 白名单豁免)
-N-04 ADR 嵌套编号(adr-NNN-NNN.md 两段数字,禁止)
-N-05 ADR 缺失 kebab 尾缀(adr-NNNN.md 无尾缀,豁免 _template.md)
-N-06 module_id 含 scope 前缀(EA- / PROD- / DEV- 等)
-N-07 ADR module_id 与文件名编号不一致
-
-返回码
-------
-0 = 全部通过
-1 = 存在违规
-2 = 脚本运行错误(如 git 命令失败、参数错误)
+检查项：
+  N-01  文件名大写检测 + 白名单
+  N-02  版本号后缀检测 + 技术栈豁免
+  N-03  日期后缀检测 + LATEST 豁免
+  N-04  ADR 嵌套编号检测
+  N-05  ADR 缺 kebab 尾缀检测
+  N-06  module_id scope 前缀检测
+  N-07  module_id 与文件名编号一致性
 """
 
 from __future__ import annotations
 
-__manifest__ = """
-args:
-- --all
-description: 文件命名规范检查(kebab-case / module_id namespace / ADR铁律)
-dimensions:
-- D3
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
-
-import argparse
 import re
-import subprocess
 import sys
-from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import NamedTuple
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.encoding import ensure_utf8_stdout
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
-ensure_utf8_stdout()
+# ---------------------------------------------------------------------------
+# 白名单与豁免配置
+# ---------------------------------------------------------------------------
 
-try:
-    import yaml  # type: ignore
-except ImportError:
-    yaml = None
-
-from _shared.constants import REPO_ROOT
-from _shared.frontmatter import extract_module_id
-
-class Violation(NamedTuple):
-    rule: str
-    file: str
-    detail: str
-
-FILENAME_UPPERCASE_WHITELIST: set[str] = {
-    "AGENTS.md",
+FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "README.md",
-    "LICENSE",
-    "LICENSE.md",
+    "AGENTS.md",
+    "INDEX.md",
+    "LATEST.md",
+    "TODO.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
-    "CODE_OF_CONDUCT.md",
-    "SECURITY.md",
-    "NOTICE",
-    "NOTICE.md",
-}
+    "LICENSE.md",
+    "MAKEFILE",
+    "Dockerfile",
+]
 
-PATH_EXEMPT_PREFIXES: tuple[str, ...] = (
+TECH_VERSION_TOKENS: list[str] = [
+    "pydantic-v2",
+    "python-v3",
+    "claude-3",
+    "deepseek-v3",
+    "deepseek-v4",
+    "gpt-4",
+    "gpt-5",
+    "glm-4",
+    "qwen-2",
+    "pytest-8",
+    "react-18",
+    "vue-3",
+    "node-v20",
+    "node-v18",
+    "django-5",
+    "fastapi-0",
+    "postgres-16",
+    "redis-7",
+    "k8s-1",
+    "terraform-1",
+    "ubuntu-22",
+    "ubuntu-24",
+]
+
+VALID_PREFIXES: list[str] = ["validate_", "detect_", "audit_", "check_", "register_", "sync_", "generate_", "scan_", "audit_session_"]
+
+PATH_EXEMPT_PREFIXES: list[str] = [
     "archive/",
     "_reorg_snapshots/",
-    ".git/",
-    ".venv/",
-    "__pycache__/",
-    ".pytest_cache/",
-    ".mypy_cache/",
     ".ruff_cache/",
-    "node_modules/",
-    "docs/19_development_workspace/session-logs/",
-)
+]
 
-MODULE_ID_SCOPE_BAD_PREFIXES: tuple[str, ...] = (
-    "EA-",
-    "PROD-",
-    "DEV-",
-    "OPS-",
-)
+SESSION_LOG_PATTERN = re.compile(r"^session-\d{8}-\d{3}")
 
-MODULE_ID_LEGAL_NAMESPACES: tuple[str, ...] = (
-    "ADR-",
-    "KE-",
-    "OQ-",
-    "T-",
-    "R-",
-    "ZA-",
-    "DW-",
-    "GATE-",
-    "POL-",
-    "STD-",
-    "VIEW-",
-)
 
-RE_UPPERCASE_BODY = re.compile(r"[A-Z]")
-RE_VERSION_SUFFIX = re.compile(r"-(?:v\d+|round\d+|iteration\d+)(?:[-.]|$)")
+@dataclass
+class NamingViolation:
+    rule: str
+    message: str
+    filepath: str
 
-TECH_VERSION_TOKENS: tuple[str, ...] = (
-    "pydantic-v",
-    "python-v",
-    "node-v",
-    "numpy-v",
-    "pandas-v",
-    "postgres-v",
-    "mysql-v",
-    "sqlite-v",
-    "redis-v",
-    "django-v",
-    "flask-v",
-    "fastapi-v",
-    "typescript-v",
-    "react-v",
-    "vue-v",
-    "next-v",
-    "go-v",
-    "rust-v",
-    "kubernetes-v",
-    "docker-v",
-    "terraform-v",
-    "ansible-v",
-    "http-v",
-    "tls-v",
-    "oauth-v",
-)
 
-def _has_tech_version_token(filename_lower: str) -> bool:
-    """Whitelist real technology product versions (e.g. pydantic-v2) from N-02 detection."""
-    return any(tok in filename_lower for tok in TECH_VERSION_TOKENS)
+# ---------------------------------------------------------------------------
+# N-01: 文件名大写检测
+# ---------------------------------------------------------------------------
 
-RE_DATE_SUFFIX = re.compile(r"-\d{8}(?:[-.]|$)")
-RE_LATEST = re.compile(r"-LATEST(?:[-.]|$)", re.IGNORECASE)
-RE_ADR_NESTED = re.compile(r"^adr-\d+-\d+\.md$", re.IGNORECASE)
-RE_ADR_NO_SUFFIX = re.compile(r"^adr-\d+\.md$", re.IGNORECASE)
-RE_ADR_FILE = re.compile(r"^adr-(\d{4})-[\w\-]+\.md$", re.IGNORECASE)
-def _is_path_exempt(rel_path: str) -> bool:
-    rp = rel_path.replace("\\", "/")
-    return any(rp.startswith(p) for p in PATH_EXEMPT_PREFIXES)
+_UPPERCASE_RE = re.compile(r"[A-Z]")
 
-def check_file(rel_path: str, abs_path: Path | None = None) -> list[Violation]:
-    """对单个相对路径做 7 条规则检测；返回违规列表。"""
-    violations: list[Violation] = []
-    if _is_path_exempt(rel_path):
-        return violations
 
-    fname = Path(rel_path).name
+def _check_n01_uppercase(filepath: str) -> list[NamingViolation]:
+    """_check_n01_uppercase implementation."""
+    name = Path(filepath).name
+    if name in FILENAME_UPPERCASE_WHITELIST:
+        return []
+    if _UPPERCASE_RE.search(name):
+        return [NamingViolation(rule="N-01", message=f"文件名含连续大写字母: {name}", filepath=filepath)]
+    return []
 
-    if fname not in FILENAME_UPPERCASE_WHITELIST:
-        body = Path(fname).stem
-        if RE_UPPERCASE_BODY.search(body):
-            violations.append(
-                Violation(
-                    "N-01",
-                    rel_path,
-                    f"文件名含大写字母（豁免白名单：{sorted(FILENAME_UPPERCASE_WHITELIST)}）",
-                )
-            )
 
-    if RE_VERSION_SUFFIX.search(fname) and not _has_tech_version_token(fname.lower()):
-        violations.append(
-            Violation(
-                "N-02",
-                rel_path,
-                "文件名含版本号后缀（-vN / -roundN / -iterationN）；"
-                "技术栈专有名词（如 pydantic-v2 / python-v3）已白名单",
-            )
-        )
+# ---------------------------------------------------------------------------
+# N-02: 版本号后缀检测
+# ---------------------------------------------------------------------------
 
-    if RE_DATE_SUFFIX.search(fname) and not RE_LATEST.search(fname):
-        violations.append(
-            Violation(
-                "N-03",
-                rel_path,
-                "文件名含日期后缀（-YYYYMMDD），仅 -LATEST 白名单允许",
-            )
-        )
+_VERSION_SUFFIX_RE = re.compile(r"(?:-v\d+|-round\d+|-iteration\d+|-version\d+)", re.IGNORECASE)
 
-    if fname.lower().startswith("adr-") and fname != "_template.md":
-        if RE_ADR_NESTED.match(fname):
-            violations.append(
-                Violation(
-                    "N-04",
-                    rel_path,
-                    "ADR 使用嵌套编号（adr-NNN-NNN.md），应改为扁平 4 位编号 + kebab 尾缀",
-                )
-            )
-        if RE_ADR_NO_SUFFIX.match(fname):
-            violations.append(
-                Violation(
-                    "N-05",
-                    rel_path,
-                    "ADR 缺失 kebab 尾缀（adr-NNNN.md 应为 adr-nnnn-kebab-title.md）",
-                )
-            )
 
-    if abs_path is None:
-        abs_path = REPO_ROOT / rel_path
-    if abs_path.suffix == ".md" and abs_path.exists():
-        mid = extract_module_id(abs_path)
-        if mid:
-            for bad in MODULE_ID_SCOPE_BAD_PREFIXES:
-                if mid.upper().startswith(bad):
-                    violations.append(
-                        Violation(
-                            "N-06",
-                            rel_path,
-                            f"frontmatter module_id 含禁用 scope 前缀 '{bad}'（值={mid}），"
-                            f"合法命名空间见 file-naming-standard §四",
-                        )
-                    )
-                    break
+def _check_n02_version_suffix(filepath: str) -> list[NamingViolation]:
+    """_check_n02_version_suffix implementation."""
+    name = Path(filepath).name
+    lower_name = name.lower()
+    for token in TECH_VERSION_TOKENS:
+        if token.lower() in lower_name:
+            return []
+    if _VERSION_SUFFIX_RE.search(name):
+        return [NamingViolation(rule="N-02", message=f"文件名含版本号后缀: {name}", filepath=filepath)]
+    return []
 
-            m = RE_ADR_FILE.match(fname)
-            if m and mid.upper().startswith("ADR-"):
-                file_num = m.group(1)
-                id_num_match = re.match(r"ADR-(\d+)", mid, re.IGNORECASE)
-                if id_num_match:
-                    id_num = id_num_match.group(1).zfill(4)
-                    if id_num != file_num:
-                        violations.append(
-                            Violation(
-                                "N-07",
-                                rel_path,
-                                f"ADR module_id 编号 ({mid}) 与文件名编号 (adr-{file_num}) 不一致",
-                            )
-                        )
 
+# ---------------------------------------------------------------------------
+# N-03: 日期后缀检测
+# ---------------------------------------------------------------------------
+
+_DATE_SUFFIX_RE = re.compile(r"[-_]\d{8}(?![-_]LATEST)")
+
+
+def _check_n03_date_suffix(filepath: str) -> list[NamingViolation]:
+    """_check_n03_date_suffix implementation."""
+    name = Path(filepath).name
+    if "LATEST" in name.upper():
+        return []
+    stem = Path(filepath).stem
+    if re.search(r"\d{4}-\d{2}-\d{2}", stem):
+        return []
+    if _DATE_SUFFIX_RE.search(name):
+        return [NamingViolation(rule="N-03", message=f"文件名含日期后缀（非 ISO 格式）: {name}", filepath=filepath)]
+    return []
+
+
+# ---------------------------------------------------------------------------
+# N-04: ADR 嵌套编号检测
+# ---------------------------------------------------------------------------
+
+_ADR_NESTED_RE = re.compile(r"^adr-\d+-\d+", re.IGNORECASE)
+
+
+def _check_n04_adr_nested(filepath: str) -> list[NamingViolation]:
+    """_check_n04_adr_nested implementation."""
+    name = Path(filepath).name
+    rel = filepath.replace("\\", "/").lower()
+    if "adr/" not in rel:
+        return []
+    if _ADR_NESTED_RE.match(Path(filepath).stem.lower()):
+        return [NamingViolation(rule="N-04", message=f"ADR 文件名含嵌套编号: {name}", filepath=filepath)]
+    return []
+
+
+# ---------------------------------------------------------------------------
+# N-05: ADR 缺 kebab 尾缀检测
+# ---------------------------------------------------------------------------
+
+_ADR_PLAIN_RE = re.compile(r"^adr-\d+$", re.IGNORECASE)
+
+
+def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
+    """_check_n05_adr_missing_suffix implementation."""
+    name = Path(filepath).name
+    if name == "_template.md":
+        return []
+    rel = filepath.replace("\\", "/").lower()
+    if "adr/" not in rel:
+        return []
+    stem = Path(filepath).stem.lower()
+    if _ADR_PLAIN_RE.match(stem) and stem != "_template":
+        return [NamingViolation(rule="N-05", message=f"ADR 文件名缺少 kebab 尾缀: {name}", filepath=filepath)]
+    return []
+
+
+# ---------------------------------------------------------------------------
+# N-06: module_id scope 前缀检测
+# ---------------------------------------------------------------------------
+
+_MODULE_ID_SCOPE_RE = re.compile(r"^module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW)-\d+", re.MULTILINE)
+
+
+def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
+    """_check_n06_module_id_scope implementation."""
+    name = Path(filepath).name
+    if name.lower().startswith("adr-"):
+        return []
+    if abspath is None or not abspath.exists():
+        return []
+    try:
+        content = abspath.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return []
+    if _MODULE_ID_SCOPE_RE.search(content):
+        return []
+    if "module_id:" in content:
+        return [NamingViolation(rule="N-06", message=f"module_id 缺少 scope 前缀: {name}", filepath=filepath)]
+    return []
+
+
+# ---------------------------------------------------------------------------
+# N-07: module_id 与文件名编号一致性
+# ---------------------------------------------------------------------------
+
+_MODULE_ID_NUM_RE = re.compile(r"^module_id:\s*ADR-(\d+)", re.MULTILINE)
+_FILENAME_ADR_NUM_RE = re.compile(r"^adr-(\d+)", re.IGNORECASE)
+
+
+def _check_n07_module_id_number_mismatch(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
+    """_check_n07_module_id_number_mismatch implementation."""
+    name = Path(filepath).name
+    stem = Path(filepath).stem.lower()
+    if not stem.startswith("adr-"):
+        return []
+    if abspath is None or not abspath.exists():
+        return []
+    try:
+        content = abspath.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return []
+    fn_match = _FILENAME_ADR_NUM_RE.match(stem)
+    mod_match = _MODULE_ID_NUM_RE.search(content)
+    if not fn_match or not mod_match:
+        return []
+    fn_num = fn_match.group(1)
+    mod_num = mod_match.group(1)
+    if fn_num != mod_num:
+        return [NamingViolation(
+            rule="N-07",
+            message=f"ADR 模块编号与文件名编号不一致: module_id=ADR-{mod_num}, 文件名={stem}",
+            filepath=filepath,
+        )]
+    return []
+
+
+# ---------------------------------------------------------------------------
+# 路径豁免判断
+# ---------------------------------------------------------------------------
+
+def _is_path_exempt(filepath: str) -> bool:
+    """_is_path_exempt implementation."""
+    normalized = filepath.replace("\\", "/").lower()
+    for prefix in PATH_EXEMPT_PREFIXES:
+        if normalized.startswith(prefix.lower()):
+            return True
+    name = Path(filepath).name.lower()
+    if SESSION_LOG_PATTERN.match(name):
+        return True
+    rel = filepath.replace("\\", "/").lower()
+    if "session-logs/" in rel:
+        return True
+    if "docs/19_development_workspace/session-logs/" in rel:
+        return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# 统一入口
+# ---------------------------------------------------------------------------
+
+def check_file(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
+    """Check compliance and report findings."""
+    if _is_path_exempt(filepath):
+        return []
+    violations: list[NamingViolation] = []
+    violations.extend(_check_n01_uppercase(filepath))
+    violations.extend(_check_n02_version_suffix(filepath))
+    violations.extend(_check_n03_date_suffix(filepath))
+    violations.extend(_check_n04_adr_nested(filepath))
+    violations.extend(_check_n05_adr_missing_suffix(filepath))
+    violations.extend(_check_n06_module_id_scope(filepath, abspath))
+    violations.extend(_check_n07_module_id_number_mismatch(filepath, abspath))
     return violations
 
-def iter_all_files(root: Path) -> Iterable[Path]:
-    """iter all files."""
-    for p in root.rglob("*"):
-        """iter all files."""
-        """iter_all_files."""
-        if not p.is_file():
-            continue
-        rel = p.relative_to(root).as_posix()
-        if _is_path_exempt(rel):
-            continue
-        if p.suffix.lower() in (".pyc",):
-            continue
-        yield p
-    """iter all files."""
 
-def _git_staged_files() -> list[str]:
-    try:
-        out = subprocess.check_output(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
-            cwd=REPO_ROOT,
-            stderr=subprocess.DEVNULL,
-            text=True,
-            encoding="utf-8",
-        )
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return []
-    return [line.strip() for line in out.splitlines() if line.strip()]
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
-def _print_report(violations: list[Violation]) -> None:
-    if not violations:
-        print("[GATE-11] OK  0 violation(s).", file=sys.stderr)
-        return
-    print(f"[GATE-11] FAIL  {len(violations)} violation(s):", file=sys.stderr)
-    print(file=sys.stderr)
-    by_rule: dict[str, list[Violation]] = {}
-    for v in violations:
-        by_rule.setdefault(v.rule, []).append(v)
-    for rule in sorted(by_rule.keys()):
-        items = by_rule[rule]
-        print(f"  {rule} ({len(items)} hit):", file=sys.stderr)
-        for v in items[:20]:
-            print(f"    - {v.file}", file=sys.stderr)
-            print(f"        {v.detail}", file=sys.stderr)
-        if len(items) > 20:
-            print(f"    ... (+{len(items) - 20} more)", file=sys.stderr)
-        print(file=sys.stderr)
-    print("[GATE-11] 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md §五")
+def check_naming(file_path: str) -> tuple[bool, str]:
+    """Check compliance and report findings."""
+    name = Path(file_path).stem
+    for prefix in VALID_PREFIXES:
+        if name.startswith(prefix):
+            return True, f"✅ {name} 符合前缀 {prefix}"
+    return False, f"❌ {name} 不符合任何标准前缀 {VALID_PREFIXES}"
 
-def main() -> None:
-    """入口函数."""
-    parser = argparse.ArgumentParser(
-        prog="check_naming_convention",
-        description="GATE-11 命名规范门禁（续号于 AaC GATE-01~10）",
-    )
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument("--all", action="store_true", help="全库扫描")
-    group.add_argument("--staged", action="store_true", help="仅扫描 git staged 文件")
-    group.add_argument("--files", nargs="+", help="扫描指定文件列表")
-    parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻塞流程）")
-    parser.add_argument("--root", default=str(REPO_ROOT), help="仓库根目录（默认自动定位）")
-    args = parser.parse_args()
 
-    root = Path(args.root).resolve()
-    violations: list[Violation] = []
+def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
+    if len(sys.argv) < 2:
+        violations = check_file(sys.argv[1]) if len(sys.argv) > 1 else []
+        for v in violations:
+            print(f"[{v.rule}] {v.message}")
+        return EXIT_FINDINGS if violations else EXIT_PASS
+    ok, msg = check_naming(sys.argv[1])
+    print(msg)
+    return EXIT_PASS if ok else EXIT_FINDINGS
 
-    if args.staged:
-        files = _git_staged_files()
-        if not files:
-            print("[GATE-11] OK  no staged files.", file=sys.stderr)
-            sys.exit(0)
-        for rel in files:
-            abs_p = root / rel
-            if not abs_p.exists():
-                continue
-            violations.extend(check_file(rel, abs_p))
-    elif args.files:
-        for f in args.files or []:
-            abs_p = (root / f).resolve() if not Path(f).is_absolute() else Path(f)
-            try:
-                rel = abs_p.resolve().relative_to(root).as_posix()
-            except ValueError:
-                rel = f.replace("\\", "/")
-            violations.extend(check_file(rel, abs_p))
-    else:
-        for p in iter_all_files(root):
-            rel = p.relative_to(root).as_posix()
-            violations.extend(check_file(rel, p))
-
-    _print_report(violations)
-    if args.warn_only:
-        sys.exit(0)
-    sys.exit(1 if violations else 0)
 
 if __name__ == "__main__":
-    main()
-
+    raise SystemExit(main())

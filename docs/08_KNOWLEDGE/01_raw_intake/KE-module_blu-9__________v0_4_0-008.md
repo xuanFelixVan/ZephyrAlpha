@@ -1,0 +1,36 @@
+---
+module_id: KE-module_blu-9__________v0_4_0-008
+title: 9. 已知风险与缓解（v0.4.0 扩展）
+category: module_blueprint
+---
+
+# 9. 已知风险与缓解（v0.4.0 扩展）
+
+9. 已知风险与缓解（v0.4.0 扩展）
+
+| # | 风险 | 概率 | 影响 | 缓解 | 盲点# |
+|---|------|:--:|:--:|------|:--:|
+| 1 | **任务卡 .md 与 SQLite 不同步** | 中 | 高 | transition() 前双轨一致性校验 | — |
+| 2 | **蓝图 §11 不完整→拆卡遗漏** | 高 | 高 | MTH-012 涌现式设计——§11 必须极度详细；unassigned_items >10%→拒绝拆解 | — |
+| 3 | **DeepSeek V4 Pro 幻觉**（幻觉率 94%） | 高 | 高 | GLM 审查纠错→Claude 关键兜底——三层防御 | — |
+| 4 | **DeepSeek V4 Pro API 不可用** | 低 | 高 | fallback_model 明确降级 + v0.4.0 断路器自动熔断→路由 fallback | #15 |
+| 5 | **路径漂移**——AI 自作主张建目录 | 中 | 高 | MTH-013 零自主创建权——强制索引查询 | — |
+| 6 | **Change Folder 爆炸** | 低 | 低 | 任务卡状态 CANCELLED/VERIFIED 后 Change Folder 可归档/删除 | — |
+| 7 | **TaskCard 基座切换破坏已有代码** | 高 | 高 | experimental 步骤3——同步重写 `core/models.py`/`blueprint_decomposer.py`/`task_manager_server.py`；不留两套模型 | — |
+| 8 | **不允许在 MOD-INF-006 上出现 MyMoney 风格全量代码重写投机重工**（改建比新建难——对老蓝图改造成本更高） | 中 | 极高 | **P0 铁壁（硬性约束）**：① 增量改造——只做 MOD-INF-006 未覆盖的新增字段/数据模型/约束/风险/门禁；② **零越界碰蓝图层——D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-system\blueprint.md** 就是 T-006-ADT-2（Session 743a63d7）的 diff 主体；其他文件一律不要碰，尤其是 shared/schemas.py 和 core/models.py。③ 不搞拆卡→不完→拆新卡的死循环，也不在未明确要求时将 30 个盲点全部转换为独立任务卡 | — |
+| 9 | **2 个 AI session 同时修改重叠文件**（并发冲突） | 中 | 高 | v0.4.0：dispatch() 前检查所有 IN_PROGRESS 任务的 allowed_touch 交集——有交集时拒绝执行 | #6 |
+| 10 | **上下文窗口溢出**（以为 AI 读了，实际被截断） | 高 | 极高 | v0.4.0：M2 装配前计算 estimated_context_tokens，超过窗口 80% 触发裁剪——优先保留规则引用 | #14 |
+| 11 | **同样的错误发生两次**（无失败模式学习） | 高 | 中 | v0.4.0：FailurePattern 自动匹配引擎 + mitigation 应用 + 匹配失败时创建新模式 | #20 |
+| 12 | **Owner 离线时系统卡死**（P0 任务 BLOCKED→无人知晓） | 高 | 极高 | v0.4.0：Owner 通知机制（飞书/桌面/日志）+ 断路器自动降级 + AI 自治边界五级 | #17/#25 |
+| 13 | **API 费用失控**（无预算控制） | 低 | 中 | v0.4.0：CostTracker 按 model/session 统计，超预算告警/熔断 | #18 |
+| 14 | **任务系统自身漂移**（蓝图-代码不一致） | 高 | 极高 | v0.4.0：`validate_blueprint_code_sync.py` + 自诊断健康检查——每个 session 启动时扫描 | #30 |
+| 15 | **M1-M11 管线硬编码**（扩展困难） | 中 | 中 | v0.4.0：M 模块声明式配置（YAML），新增 M 模块不修改 orchestrator 代码 | #29 |
+| 16 | **任务执行半完成状态**（超时后仍 IN_PROGRESS，文件半修改） | 中 | 高 | v0.4.0：超时→自动 FAILED + 从 checkpoint_path 恢复快照 + 通知 Owner | #12 |
+| 17 | **循环依赖导致任务链死锁** | 低 | 极高 | v0.4.0：BlueprintDecomposer 拆解时拓扑排序，检测到循环→拒绝拆解并报错 | #5 |
+| 18 | **Prompt 质量退化**（AI 修改 prompt 后质量下降，无法回退） | 高 | 极高 | v0.5.0：Prompt 版本化管理——SemVer + Git 存储 + `prompt_rollback` 一键回退 + CI 回归测试 | #31 |
+| 19 | **多步骤任务失败后代码库处于半修改态**（当前快照恢复过于粗暴） | 中 | 高 | v0.5.0：Saga 补偿事务——逆序执行 undo_command，失败写入 DeadLetter | #32 |
+| 20 | **模型质量静默退化**（API 正常但输出质量下降 20%+，3天后才发现） | 高 | 极高 | v0.5.0：QualityBaseline 基线对比 + M7 偏差检测 + 连续退化自动回退 model_snapshot | #33 |
+| 21 | **低优先级任务被永久遗忘**（P4 任务 90 天无人执行无告警） | 中 | 高 | v0.5.0：SLA 时限 + SLAWatchdog 自动升级 + 老化 bucket 摘要（`zalpha aging` CLI） | #34 |
+| 22 | **AI 受前序任务影响选错技术方案**（知识污染——前任务用了 Strategy→后任务最早该用 Observer 也选了 Strategy） | 中 | 高 | v0.5.0：跨任务知识隔离——每次 dispatch 新 context + neutralization prompt + 默认跨任务学习关 | #35 |
+| 23 | **P0 故障修复被门禁链卡住**（关键脚本 bug→修复等 15 分钟→业务受损） | 中 | 高 | v0.5.0：紧急热修复快速通道——跳过 G1-G5，24h 内补审 | #36 |
+| 24 | **模型供应商无声更新导致任务行为不一致**（5月1日通过≠5月15日通过） | 高 | 高 | v0.5.0：模型快照锁定——model_snapshot_pinned 记录 dated version，可复现 | #37 

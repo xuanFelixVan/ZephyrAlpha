@@ -21,6 +21,7 @@ timeout_seconds: 60
 warn_only: false
 """
 
+import os
 import argparse
 import re
 import sys
@@ -34,7 +35,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXCLUDE_DIRS, SCAN_EXTENSIONS_MD_YAML
+from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, SCAN_EXTENSIONS_MD_YAML
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter
 from _shared.walk import iter_files
@@ -166,9 +167,17 @@ def generate_catalog(
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output, "w", encoding="utf-8") as f:
-        yaml.dump(catalog, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+    tmp_path = f"{output}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(catalog, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+        os.replace(tmp_path, output)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
 
     if metadata_path:
@@ -186,8 +195,16 @@ def generate_catalog(
             "total_files": len(entries),
             "files": entries,
         }
-        with open(meta_out, "w", encoding="utf-8") as mf:
-            yaml.dump(document_metadata, mf, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        tmp_path = f"{meta_out}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, encoding="utf-8") as mf:
+                yaml.dump(document_metadata, mf, allow_unicode=True, default_flow_style=False, sort_keys=False)
+            os.replace(tmp_path, meta_out)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
         print(f"Generated document metadata index -> {metadata_path}", file=sys.stderr)
 
 
@@ -196,7 +213,7 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
     reg_path = Path(registry_path)
     if not reg_path.exists():
         print(f"WARNING: Registry file not found: {registry_path}", file=sys.stderr)
-        return 0
+        return EXIT_PASS
 
     with open(reg_path, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
@@ -207,7 +224,7 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
             "WARNING: Registry has no 'files' or 'rules' list (skipped compare)",
             file=sys.stderr,
         )
-        return 0
+        return EXIT_PASS
 
     reg_entries = {r.get("path", ""): r for r in reg_list}
     cat_entries = {e["path"]: e for e in catalog_entries}
@@ -311,9 +328,9 @@ def main() -> None:
     if args.compare:
         diff_count = compare_with_registry(entries, args.compare)
         if diff_count and diff_count > 0 and not args.warn_only:
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

@@ -539,8 +539,16 @@ def main() -> None:
         content = build_index_content(rel_dir, list_files)
 
         try:
-            with open(index_path, "w", encoding="utf-8") as f:
-                f.write(content)
+            tmp_path = f"{index_path}.{os.getpid()}.tmp"
+            try:
+                with open(tmp_path, encoding="utf-8") as f:
+                    f.write(content)
+                os.replace(tmp_path, index_path)
+            except PermissionError:
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
             print(f"  CREATED: {rel_dir or 'docs/'}/index.md")
             created += 1
         except OSError as e:

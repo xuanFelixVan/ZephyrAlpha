@@ -47,6 +47,9 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 
 from __future__ import annotations
 
+import logging
+logger = logging.getLogger(__name__)
+
 import fnmatch
 import json
 import sqlite3
@@ -65,8 +68,8 @@ from zephyr.gates.gate_engine import (
     GateResult,
     GateViolationError,
 )
-from zephyr.shared.schemas import Task, TaskNamespace, TaskStatus
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.schema.schemas import Priority, Task, TaskNamespace, TaskStatus
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "TaskRepository",
@@ -196,8 +199,10 @@ def _new_id(prefix: str = "") -> str:
 
 
 def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
-    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 52 字段）。"""
+    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 62 字段）。"""
     d = dict(row)
+    for _internal_col in ("batch_id", "claimed_by", "claimed_at"):
+        d.pop(_internal_col, None)
     _json_array_fields = (
         "files_in_scope",
         "deliverables",
@@ -390,7 +395,7 @@ class TaskRepository:
             插入后从 DB 重新读取的 TaskCard 对象（时间戳已规范化）。
         """
         with self._write_tx() as conn:
-            if task.priority.value == "P0":
+            if task.priority == Priority.P0:
                 p0_count = self._count_p0_tasks(conn)
                 if p0_count >= 5:
                     raise P0InflationFrozenError(
@@ -406,6 +411,10 @@ class TaskRepository:
                         UserWarning,
                         stacklevel=2,
                     )
+            if self._enable_gate and self._gate_engine is not None:
+                gate_result = self._gate_engine.evaluate(task, "G0", conn=conn)
+                if not gate_result.passed:
+                    raise GateViolationError(gate_result)
             conn.execute(
                 """
                 INSERT INTO tasks (
@@ -642,7 +651,7 @@ class TaskRepository:
         - 若已有拒绝且在 48h 冷却期内，抛出 RejectedUpgradeCoolingOffError
         - 降级（如 P1→P2）直接生效，不走审批
         """
-        from zephyr.shared.schemas import Priority as P
+        from zephyr.shared.schema.schemas import Priority as P
 
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
@@ -657,8 +666,8 @@ class TaskRepository:
             if current_p == proposed_p:
                 return _row_to_taskcard(row)
 
-            current_idx = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "P4": 4}.get(current_p, 9)
-            proposed_idx = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "P4": 4}.get(proposed_p, 9)
+            current_idx = {Priority.P0.value: 0, Priority.P1.value: 1, Priority.P2.value: 2, Priority.P3.value: 3, Priority.P4.value: 4}.get(current_p, 9)
+            proposed_idx = {Priority.P0.value: 0, Priority.P1.value: 1, Priority.P2.value: 2, Priority.P3.value: 3, Priority.P4.value: 4}.get(proposed_p, 9)
 
             if proposed_idx >= current_idx:
                 conn.execute(
@@ -716,11 +725,12 @@ class TaskRepository:
 
             conn.execute(
                 """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'priority_upgrade_proposed', ?, ?, ?)""",
+                   VALUES (?, 'task_event', ?, ?, ?)""",
                 (
                     f"ev-{task_id}-priority-{proposed_p}",
                     json.dumps(
                         {
+                            "event_subtype": "priority_upgrade_proposed",
                             "current": current_p,
                             "proposed": proposed_p,
                             "action": "awaiting_owner_approval",
@@ -754,10 +764,10 @@ class TaskRepository:
 
             conn.execute(
                 """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'priority_upgrade_approved', ?, ?, ?)""",
+                   VALUES (?, 'task_event', ?, ?, ?)""",
                 (
                     f"ev-{task_id}-approved-{approved_p}",
-                    json.dumps({"approved": approved_p, "action": "owner_approved"}, ensure_ascii=False),
+                    json.dumps({"event_subtype": "priority_upgrade_approved", "approved": approved_p, "action": "owner_approved"}, ensure_ascii=False),
                     task_id,
                     now_iso(),
                 ),
@@ -786,10 +796,10 @@ class TaskRepository:
 
             conn.execute(
                 """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'priority_upgrade_rejected', ?, ?, ?)""",
+                   VALUES (?, 'task_event', ?, ?, ?)""",
                 (
                     f"ev-{task_id}-rejected",
-                    json.dumps({"cooldown_until": cooldown, "action": "owner_rejected"}, ensure_ascii=False),
+                    json.dumps({"event_subtype": "priority_upgrade_rejected", "cooldown_until": cooldown, "action": "owner_rejected"}, ensure_ascii=False),
                     task_id,
                     now_iso(),
                 ),
@@ -848,6 +858,12 @@ class TaskRepository:
                 if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
                     task_obj = _row_to_taskcard(row)
                     gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
+                    if not gate_result.passed:
+                        raise GateViolationError(gate_result)
+
+                if to_status == TaskStatus.COMPLETED and self._enable_gate and self._gate_engine is not None:
+                    task_obj = _row_to_taskcard(row)
+                    gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
                     if not gate_result.passed:
                         raise GateViolationError(gate_result)
 
@@ -1022,7 +1038,7 @@ class TaskRepository:
             return None
 
         triggers = []
-        is_p0 = task.priority.value == "P0"
+        is_p0 = task.priority == Priority.P0
 
         if is_p0 and task.block_sessions_count >= 2:
             triggers.append(f"P0 任务已 BLOCKED {task.block_sessions_count} 次（≥2）")
@@ -1548,6 +1564,89 @@ class TaskRepository:
         assert row is not None
         return _row_to_taskcard(row)
 
+    # ------------------------------------------------------------------
+    # Multi-Worker Batch Coordination (MOD-INF-016)
+    # ------------------------------------------------------------------
+
+    def claim_next(self, batch_id: str, worker_id: str) -> TaskCard | None:
+        """原子认领批量中下一个依赖已满足的 READY 任务。
+
+        多个 AI 对话并发调用 → 各拿各的，不重复。
+        依赖检查：depends_on 为 NULL/空 或所有依赖均已 COMPLETED。
+
+        返回 None 表示当前无可认领任务。
+        """
+        now = datetime.now(UTC).isoformat()
+        with self._write_tx() as conn:
+            row = conn.execute(
+                """UPDATE tasks SET status = 'IN_PROGRESS',
+                                     claimed_by = :worker_id,
+                                     claimed_at = :now,
+                                     updated_at = :now
+                   WHERE task_id = (
+                       SELECT t.task_id FROM tasks t
+                       WHERE t.status = 'READY'
+                         AND t.batch_id = :batch_id
+                         AND t.is_deleted = 0
+                         AND (
+                             t.depends_on IS NULL
+                             OR t.depends_on = '[]'
+                             OR NOT EXISTS (
+                                 SELECT 1 FROM json_each(t.depends_on)
+                                 WHERE value != ''
+                                 AND (SELECT status FROM tasks WHERE task_id = value) != 'COMPLETED'
+                             )
+                         )
+                       ORDER BY t.priority ASC, t.created_at ASC
+                       LIMIT 1
+                   )
+                   RETURNING *""",
+                {"batch_id": batch_id, "worker_id": worker_id, "now": now},
+            ).fetchone()
+            if row is None:
+                return None
+            return _row_to_taskcard(row)
+
+    def recover_stale_claims(self, batch_id: str, timeout_minutes: int = 30) -> int:
+        """释放超时未完成的 IN_PROGRESS 任务 → 回到 READY。
+
+        每个 AI session 调用 claim_next() 前先调此方法，确保崩溃/超时的任务自动复活。
+        返回回收的任务数。
+        """
+        from datetime import timedelta as td
+
+        cutoff = (datetime.now(UTC) - td(minutes=timeout_minutes)).isoformat()
+        with self._write_tx() as conn:
+            cursor = conn.execute(
+                """UPDATE tasks SET status = 'READY',
+                                     claimed_by = NULL,
+                                     claimed_at = NULL,
+                                     updated_at = :now
+                   WHERE status = 'IN_PROGRESS'
+                     AND batch_id = :batch_id
+                     AND claimed_at < :cutoff""",
+                {"batch_id": batch_id, "cutoff": cutoff, "now": datetime.now(UTC).isoformat()},
+            )
+            return cursor.rowcount
+
+    def batch_progress(self, batch_id: str) -> dict[str, int]:
+        """返回批量进度聚合：READY / IN_PROGRESS / COMPLETED / FAILED 各多少。"""
+        with self._write_tx() as conn:
+            rows = conn.execute(
+                """SELECT status, COUNT(*) AS cnt
+                   FROM tasks
+                   WHERE batch_id = :batch_id AND is_deleted = 0
+                   GROUP BY status""",
+                {"batch_id": batch_id},
+            ).fetchall()
+        result = {"READY": 0, "IN_PROGRESS": 0, "COMPLETED": 0, "FAILED": 0, "TOTAL": 0}
+        for r in rows:
+            s = r["status"]
+            if s in result:
+                result[s] = r["cnt"]
+            result["TOTAL"] += r["cnt"]
+        return result
+
 
 # ---------------------------------------------------------------------------
 # 状态机查询助手（不依赖实例）
@@ -1566,3 +1665,79 @@ def is_terminal(status: TaskStatus | str) -> bool:
     if isinstance(status, str):
         status = TaskStatus(status)
     return not _ALLOWED_TRANSITIONS.get(status, frozenset())
+
+
+# ---------------------------------------------------------------------------
+# FTS5 全文搜索（T-DB-010）
+# ---------------------------------------------------------------------------
+
+def search(
+    db_path: Path | str,
+    query: str,
+    *,
+    limit: int = 50,
+    namespace: str | None = None,
+) -> list[dict[str, object]]:
+    """T-DB-010: 使用 FTS5 全文搜索任务。
+
+    query
+        搜索词（支持 FTS5 查询语法）。
+    namespace
+        可选命名空间过滤。
+    limit
+        返回结果上限（默认 50，最大 200）。
+
+    返回 list[dict{task_id, title, status, priority, phase, snippet}]
+    """
+    resolved = Path(db_path)
+    resolved.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(resolved))
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode = WAL")
+    try:
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='tasks_fts'"
+        )
+        has_fts = cursor.fetchone() is not None
+        if not has_fts:
+            conn.execute(
+                """CREATE VIRTUAL TABLE IF NOT EXISTS tasks_fts
+                   USING fts5(task_id, title, description, directive, content='tasks',
+                   content_rowid='rowid')"""
+            )
+            conn.execute(
+                """INSERT INTO tasks_fts(tasks_fts) VALUES('rebuild')"""
+            )
+
+        cols = "task_id, title, status, priority, phase"
+        params: list[object] = [query]
+        if namespace:
+            params.append(namespace)
+            limit_val = min(max(limit, 1), 200)
+            params.append(limit_val)
+            result = conn.execute(
+                f"""SELECT t.{cols},
+                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
+                    FROM tasks_fts
+                    JOIN tasks t ON tasks_fts.task_id = t.task_id
+                    WHERE tasks_fts MATCH ? AND t.namespace = ? AND t.is_deleted = 0
+                    ORDER BY rank
+                    LIMIT ?""",
+                tuple(params),
+            )
+        else:
+            limit_val = min(max(limit, 1), 200)
+            params.append(limit_val)
+            result = conn.execute(
+                f"""SELECT t.{cols},
+                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
+                    FROM tasks_fts
+                    JOIN tasks t ON tasks_fts.task_id = t.task_id
+                    WHERE tasks_fts MATCH ? AND t.is_deleted = 0
+                    ORDER BY rank
+                    LIMIT ?""",
+                tuple(params),
+            )
+        return [dict(r) for r in result.fetchall()]
+    finally:
+        conn.close()

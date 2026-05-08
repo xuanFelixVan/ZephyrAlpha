@@ -1,193 +1,186 @@
-version: "1.0.0"
-schema_version: "1.0.0"
+version: 1.5.0
+schema_version: 1.0.0
 doc_type: register
 module_id: PS-REG-019
-title: "声明式契约跟踪登记表"
+title: 声明式契约跟踪登记表
 status: active
 owner: system
-date: "2026-05-03"
+date: '2026-05-03'
 ttl: permanent
+description: "跟踪所有 config/ 目录下 YAML 文件中声明但尚未被代码兑现的承诺。 每一条契约都有一个明确的实现状态 + 目标 Phase，让 AI 新 session 来了一看就知道\"哪些 YAML 是说的比做的多\"。\n对标: ITIL SACM CMDB（所有 CI 的承诺与实现状态集中登记）\n      AGENTS.md §6.2 原子事务模式（YAML 承诺变更\
+  \ → 本登记表同步更新）\n      AGENTS.md §6.9 Architecture Data Canonical SSoT（契约状态以本 YAML 为准）\n"
+discovery_rule: '任何修改 config/ 下 YAML 的 implementation_status 字段时，必须在同一 atomic batch 内同步更新本登记表对应条目的 status / gap / last_reviewed。
 
-description: >
-  跟踪所有 config/ 目录下 YAML 文件中声明但尚未被代码兑现的承诺。
-  每一条契约都有一个明确的实现状态 + 目标 Phase，让 AI 新 session
-  来了一看就知道"哪些 YAML 是说的比做的多"。
-
-  对标: ITIL SACM CMDB（所有 CI 的承诺与实现状态集中登记）
-        AGENTS.md §6.2 原子事务模式（YAML 承诺变更 → 本登记表同步更新）
-        AGENTS.md §6.9 Architecture Data Canonical SSoT（契约状态以本 YAML 为准）
-
-discovery_rule: >
-  任何修改 config/ 下 YAML 的 implementation_status 字段时，必须在同一
-  atomic batch 内同步更新本登记表对应条目的 status / gap / last_reviewed。
-
+  '
 contracts:
-  - contract_id: "CT-001"
-    source: "config/context_rules_v1.yaml"
-    promise: "15 条上下文管理规则应作为 AI agent session 的运行约束"
-    actual_consumer: "context_budget_tracker.py（部分——使用自己的硬编码逻辑，不读此 YAML）"
-    gap: "YAML 规则不参与运行时决策；规则变更不会自动影响系统行为"
-    status: "unresolved"
-    target_phase: "beta"
-    risk: "YAML 规则与代码逻辑独立演进，可能产生矛盾（如 F-05 CR-009 P0/P1 冲突）"
-    last_reviewed: "2026-05-02"
-
-  - contract_id: "CT-002"
-    source: "config/embedding_model_registry.yaml"
-    promise: "从 YAML 加载嵌入模型配置，替代硬编码 KNOWN_MODELS 字典"
-    actual_consumer: "embedding_migrate.py（使用硬编码 KNOWN_MODELS 字典 + _active_version）"
-    gap: "YAML 不被运行时读取；模型数据有两份副本（YAML + Python KNOWN_MODELS），必须手动同步。已在 validate_config_integrity.py L8 层自动对账"
-    status: "unresolved"
-    target_phase: "beta"
-    risk: "修改 YAML 默认模型但忘记改 Python → SSoT 漂移（F-04 同类风险）"
-    last_reviewed: "2026-05-02"
-
-  - contract_id: "CT-003"
-    source: "config/session_state_machine.yaml"
-    promise: "SessionManager 将消费此状态机定义来管理 session 生命周期"
-    actual_consumer: "无——SessionManager 尚未实现"
-    gap: "状态机 YAML 是纯声明文档，无代码消费者"
-    status: "unresolved"
-    target_phase: "beta"
-    risk: "实际的 session 状态管理与 YAML 定义脱节（如果已有临时实现）"
-    last_reviewed: "2026-05-02"
-
-  - contract_id: "CT-004"
-    source: "config/capabilities.yaml"
-    promise: "{a,b} brace expansion glob 语法"
-    actual_consumer: "capability.py（fnmatch.fnmatch —— 不支持 brace expansion）"
-    gap: "特性明确标注为暂不支持；capability.py 已加入运行时检测 + warnings.warn（2026-05-02）"
-    status: "resolved_as_not_supported"
-    resolution: "2026-05-02: YAML 注释改为 ❌ 明确标注不支持；capability.py _load_from_yaml 新增花括号检测 → warn"
-    target_phase: "beta（替换 glob 引擎为 bracex 后重新评估）"
-    risk: "无——已加代码防护，含花括号的 pattern 会触发 warning"
-    last_reviewed: "2026-05-02"
-
-  - contract_id: "CT-005"
-    source: "src/zephyr/orchestrator/trigger_router.py + config/trigger_router.yaml"
-    promise: "5 个触发器全部接真实 handler（当前 4 stubs + 1 已兑现）"
-    actual_consumer: "trigger_router.py:dispatch()"
-    gap: "4 个 stub 函数返回固定值，不执行真正业务逻辑"
-    status: "unresolved"
-    target_phase: "beta"
-    risk: "触发分发返回成功但实际未执行——静默失败"
-    last_reviewed: "2026-05-02"
-    wiring:
-      - trigger: "compression_needed"
-        current: "handle_compression_needed（✅ 真实）"
-        goal: "(已兑现)"
-        phase: "experimental（T-V2-006）"
-      - trigger: "onboarding"
-        current: "handle_onboarding_stub（🔲 stub）"
-        goal: "zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context"
-        phase: "experimentalf（T-V2-009）"
-      - trigger: "drift_detected"
-        current: "handle_drift_stub（🔲 stub）"
-        goal: "zephyr.gates.drift_detector.DriftDetector.trigger_recovery"
-        phase: "experimentalf（T-V2-009）"
-      - trigger: "cleanup_due"
-        current: "handle_cleanup_stub（🔲 stub）"
-        goal: "scripts.governance.drafts_zone_archiver.archive_expired_drafts"
-        phase: "experimentalg+"
-      - trigger: "blueprint_published"
-        current: "handle_blueprint_stub（🔲 stub）"
-        goal: "zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint"
-        phase: "experimental（T-V2-008）"
-
-  - contract_id: "CT-006"
-    source: "config/compression/policy.yaml"
-    promise: "压缩策略 YAML 作为文档压缩的运行时约束（min_chars/max_chars/preserve_* 由 CompressionInvariantError 强制执行）"
-    actual_consumer: "src/zephyr/context_engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段）"
-    gap: "已兑现——YAML 被 doc_compressor.py 直接消费，Immutable Core 字段有运行时强制校验"
-    status: "resolved"
-    resolution: "2026-05-02: 确认 doc_compressor.py 已消费 policy.yaml；添加 implementation_status 字段"
-    target_phase: "已兑现（experimental active）"
-    risk: "无——Immutable Core 字段有 CompressionInvariantError 运行时防护"
-    last_reviewed: "2026-05-02"
-
-  - contract_id: "CT-007"
-    source: "MOD-INF-005 §13.1 (script-system/blueprint.md V3.0.0)"
-    promise: "脚本系统自我监控——Meta 维度脚本检查系统自身健康状态（6 项自检：run_all.py 可执行性、全脚本可运行性、manifest 一致性、输出格式合规、依赖完整性、磁盘空间）"
-    actual_consumer: "scripts/governance/meta/validate_script_system_health.py"
-    gap: "已兑现——脚本执行 `python scripts/governance/meta/validate_script_system_health.py` 运行自检项"
-    status: "resolved"
-    resolution: "2026-05-06: 仓库已存在 validate_script_system_health.py；本登记表与 module_id PS-REG-019 对齐"
-    target_phase: "experimental active"
-    risk: "持续维护 manifest 与 run_all 入口同步"
-    last_reviewed: "2026-05-06"
-
-  - contract_id: "CT-008"
-    source: "MOD-INF-005 §13.2 (script-system/blueprint.md V3.0.0)"
-    promise: "应急回退绕过审计——紧急情况下可绕过脚本系统提交代码，但每次绕过需 Session Log 记录 + 事后审计"
-    actual_consumer: "无——`scripts/governance/meta/validate_emergency_bypass_log.py` 尚未创建"
-    gap: "蓝图 V3 已定义三种绕过场景（脚本崩溃/紧急热修复/批量迁移）+ 安全阀规则，但缺少自动化审计脚本验证绕过是否合规"
-    status: "unresolved"
-    target_phase: "experimental"
-    risk: "P0——没有自动化审计 → 绕过可能被滥用 → --no-verify 变成默认操作 → pre-commit 门禁退化"
-    last_reviewed: "2026-05-03"
-
-  - contract_id: "CT-009"
-    source: "MOD-INF-005 §3.6 + §5.2 (script-system/blueprint.md V3.0.0)"
-    promise: "--tags 标签选择参数——允许按标签（Security/Quick/Disruptive/Critical/AI-Generated/Periodic）选择脚本执行"
-    actual_consumer: "无——run_all.py 尚未实现 --tags 参数"
-    gap: "蓝图 V3 已定义 6 个标签 + 使用方式，但 run_all.py 目前只支持 --dimensions 参数。对标 K8s Conformance [Disruptive]/[Conformance] 标签聚焦"
-    status: "unresolved"
-    target_phase: "experimental"
-    risk: "中——缺少标签选择 → 每次必须全量运行 → 本地开发反馈慢 → 开发者可能跳过 pre-commit"
-    last_reviewed: "2026-05-03"
-
-  - contract_id: "CT-010"
-    source: "MOD-INF-005 §5.2 (script-system/blueprint.md V3.0.0)"
-    promise: "--depth 验证深度参数——quick（快速扫描<5s）/ full（标准）/ deep（深度含知识分析）三级渐进验证"
-    actual_consumer: "无——run_all.py 尚未实现 --depth 参数"
-    gap: "蓝图 V3 已定义三级深度 + 默认值（full），但代码中无此概念。对标 OWASP ASVS v5 L1/L2/L3 三级验证深度"
-    status: "unresolved"
-    target_phase: "experimental"
-    risk: "中——缺少深度控制 → 所有扫描同一深度 → 小额修改也要等深扫 → 降低提交频率"
-    last_reviewed: "2026-05-03"
-
-  - contract_id: "CT-011"
-    source: "MOD-INF-005 §6.5 (script-system/blueprint.md V3.0.0)"
-    promise: "Finding Schema 新增 recommendation 字段——MEDIUM+ Finding 包含修复建议（recommendation + recommendation_type + recommended_action）"
-    actual_consumer: "无——Finding Schema 和 finding.py 均尚未添加 recommendation 字段"
-    gap: "蓝图 V3 已定义三个子字段 + 枚举值，但 Finding 数据模型未扩展。对标 ITIL Level 2 决策辅助自动化——脚本建议但不执行"
-    status: "unresolved"
-    target_phase: "experimental"
-    risk: "低——不影响门禁功能，但降低发现问题的可操作性——AI 知道'这里有问题'但不知道'怎么修'"
-    last_reviewed: "2026-05-03"
-
+- contract_id: CT-001
+  source: config/context_rules_v1.yaml
+  promise: 15 条上下文管理规则应作为 AI agent session 的运行约束
+  actual_consumer: src/zephyr/context_engine/context_budget_tracker.py (get_thresholds_from_yaml)
+  gap: 已兑现——context_budget_tracker.py 从 context_rules.yaml CTX-001 规则加载阈值，YAML 不存在时回退到 DEFAULT_THRESHOLDS
+  status: resolved
+  target_phase: beta
+  risk: YAML 规则与代码逻辑独立演进，可能产生矛盾（如 F-05 CR-009 P0/P1 冲突）
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-001 resolved by session-20260506-012'
+- contract_id: CT-002
+  source: config/embedding_model_registry.yaml
+  promise: 从 YAML 加载嵌入模型配置，替代硬编码 KNOWN_MODELS 字典
+  actual_consumer: src/zephyr/kb/embedding_migrate.py (load_model_registry)
+  gap: 已兑现——embedding_migrate.py 从 embedding_model_registry.yaml 加载模型登记表，KNOWN_MODELS 作为回退保留
+  status: resolved
+  target_phase: beta
+  risk: 修改 YAML 默认模型但忘记改 Python → SSoT 漂移（F-04 同类风险）
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-002 resolved by session-20260506-012'
+- contract_id: CT-003
+  source: config/session_state_machine.yaml
+  promise: SessionManager 将消费此状态机定义来管理 session 生命周期
+  actual_consumer: src/zephyr/orchestrator/session_manager.py (SessionManager v1.1)
+  gap: 已兑现——SessionManager 已创建，从 session_state_machine.yaml 加载状态定义和转换规则
+  status: resolved
+  target_phase: beta
+  risk: 实际的 session 状态管理与 YAML 定义脱节（如果已有临时实现）
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-003 resolved by session-20260506-012'
+- contract_id: CT-004
+  source: config/capabilities.yaml
+  promise: '{a,b} brace expansion glob 语法'
+  actual_consumer: capability.py（fnmatch.fnmatch —— 不支持 brace expansion）
+  gap: 特性明确标注为暂不支持；capability.py 已加入运行时检测 + warnings.warn（2026-05-02）
+  status: resolved_as_not_supported
+  resolution: '2026-05-02: YAML 注释改为 ❌ 明确标注不支持；capability.py _load_from_yaml 新增花括号检测 → warn'
+  target_phase: beta（替换 glob 引擎为 bracex 后重新评估）
+  risk: 无——已加代码防护，含花括号的 pattern 会触发 warning
+  last_reviewed: '2026-05-02'
+- contract_id: CT-005
+  source: src/zephyr/orchestrator/trigger_router.py + config/trigger_router.yaml
+  promise: 5 个触发器全部接真实 handler（当前 4 stubs + 1 已兑现）
+  actual_consumer: src/zephyr/orchestrator/trigger_router.py (4 real handlers with fallback)
+  gap: 已兑现——onboarding/drift/cleanup/blueprint_published 4 个 stub 已替换为真实 handler
+  status: resolved
+  target_phase: beta
+  risk: 触发分发返回成功但实际未执行——静默失败
+  last_reviewed: '2026-05-06'
+  wiring:
+  - trigger: compression_needed
+    current: handle_compression_needed（✅ 真实）
+    goal: (已兑现)
+    phase: experimental（T-V2-006）
+  - trigger: onboarding
+    current: handle_onboarding_stub（🔲 stub）
+    goal: zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context
+    phase: experimentalf（T-V2-009）
+  - trigger: drift_detected
+    current: handle_drift_stub（🔲 stub）
+    goal: zephyr.gates.drift_detector.DriftDetector.trigger_recovery
+    phase: experimentalf（T-V2-009）
+  - trigger: cleanup_due
+    current: handle_cleanup_stub（🔲 stub）
+    goal: scripts.governance.archive_drafts_zone.archive_expired_drafts
+    phase: experimentalg+
+  - trigger: blueprint_published
+    current: handle_blueprint_stub（🔲 stub）
+    goal: zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint
+    phase: experimental（T-V2-008）
+  resolution: '2026-05-06: CT-005 resolved by session-20260506-012'
+- contract_id: CT-006
+  source: config/compression/policy.yaml
+  promise: 压缩策略 YAML 作为文档压缩的运行时约束（min_chars/max_chars/preserve_* 由 CompressionInvariantError 强制执行）
+  actual_consumer: src/zephyr/context_engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段）
+  gap: 已兑现——YAML 被 doc_compressor.py 直接消费，Immutable Core 字段有运行时强制校验
+  status: resolved
+  resolution: '2026-05-02: 确认 doc_compressor.py 已消费 policy.yaml；添加 implementation_status 字段'
+  target_phase: 已兑现（experimental active）
+  risk: 无——Immutable Core 字段有 CompressionInvariantError 运行时防护
+  last_reviewed: '2026-05-02'
+- contract_id: CT-007
+  source: MOD-INF-005 §13.1 (script-system/blueprint.md V3.0.0)
+  promise: 脚本系统自我监控——Meta 维度脚本检查系统自身健康状态（6 项自检：run_all.py 可执行性、全脚本可运行性、manifest 一致性、输出格式合规、依赖完整性、磁盘空间）
+  actual_consumer: scripts/governance/meta/validate_script_system_health.py
+  gap: 已兑现——脚本执行 `python scripts/governance/meta/validate_script_system_health.py` 运行自检项
+  status: resolved
+  resolution: '2026-05-06: 仓库已存在 validate_script_system_health.py；本登记表与 module_id PS-REG-019 对齐'
+  target_phase: experimental active
+  risk: 持续维护 manifest 与 run_all 入口同步
+  last_reviewed: '2026-05-06'
+- contract_id: CT-008
+  source: MOD-INF-005 §13.2 (script-system/blueprint.md V3.0.0)
+  promise: 应急回退绕过审计——紧急情况下可绕过脚本系统提交代码，但每次绕过需 Session Log 记录 + 事后审计
+  actual_consumer: scripts/governance/meta/validate_emergency_bypass_log.py
+  gap: 已兑现——审计脚本已创建，检查 Session Log 中的绕过记录
+  status: resolved
+  target_phase: experimental active
+  risk: P0——没有自动化审计 → 绕过可能被滥用 → --no-verify 变成默认操作 → pre-commit 门禁退化
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-008 resolved by session-20260506-012'
+- contract_id: CT-009
+  source: MOD-INF-005 §3.6 + §5.2 (script-system/blueprint.md V3.0.0)
+  promise: --tags 标签选择参数——允许按标签（Security/Quick/Disruptive/Critical/AI-Generated/Periodic）选择脚本执行
+  actual_consumer: scripts/governance/run_all.py --tags
+  gap: 已兑现——run_all.py 添加 --tags 参数（6 个标签过滤）
+  status: resolved
+  target_phase: experimental active
+  risk: 中——缺少标签选择 → 每次必须全量运行 → 本地开发反馈慢 → 开发者可能跳过 pre-commit
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-009 resolved by session-20260506-012'
+- contract_id: CT-010
+  source: MOD-INF-005 §5.2 (script-system/blueprint.md V3.0.0)
+  promise: --depth 验证深度参数——quick（快速扫描<5s）/ full（标准）/ deep（深度含知识分析）三级渐进验证
+  actual_consumer: scripts/governance/run_all.py --depth
+  gap: 已兑现——run_all.py 添加 --depth 参数（quick/full/deep）
+  status: resolved
+  target_phase: experimental active
+  risk: 中——缺少深度控制 → 所有扫描同一深度 → 小额修改也要等深扫 → 降低提交频率
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-010 resolved by session-20260506-012'
+- contract_id: CT-011
+  source: MOD-INF-005 §6.5 (script-system/blueprint.md V3.0.0)
+  promise: Finding Schema 新增 recommendation 字段——MEDIUM+ Finding 包含修复建议（recommendation + recommendation_type + recommended_action）
+  actual_consumer: src/zephyr/l01_infrastructure/script_system/finding.py
+  gap: 已兑现——finding.py 已包含 recommendation/recommendation_type/recommended_action 字段
+  status: resolved
+  target_phase: experimental active
+  risk: 低——不影响门禁功能，但降低发现问题的可操作性——AI 知道'这里有问题'但不知道'怎么修'
+  last_reviewed: '2026-05-06'
+  resolution: '2026-05-06: CT-011 resolved by session-20260506-012'
 summary:
   total_contracts: 11
-  unresolved: 8
-  resolved: 3
-  oldest_unresolved: "experimental"
-  next_review: "每次 Module Blueprint 变更时同步更新本登记表"
-
+  unresolved: 0
+  resolved: 11
+  oldest_unresolved: experimental
+  next_review: 每次 Module Blueprint 变更时同步更新本登记表
 changelog:
-  - version: "1.2.0"
-    date: "2026-05-06"
-    author: "governance-audit"
-    changes:
-      - "module_id 纠正为 PS-REG-019（与 gate-registry 的 PS-REG-014 区分）"
-      - "CT-007 标为 resolved：validate_script_system_health.py 已存在并消费承诺"
-      - "summary unresolved/resolved 计数更新"
-  - version: "1.1.0"
-    date: "2026-05-03"
-    author: "AI-Trae-2026"
-    changes:
-      - "新增 CT-007~CT-011——登记 MOD-INF-005 V3.0.0 蓝图的 5 项模块级未兑现承诺"
-      - "CT-007: validate_script_system_health.py（自我监控）"
-      - "CT-008: validate_emergency_bypass_log.py（应急绕过审计）"
-      - "CT-009: run_all.py --tags 参数（标签选择）"
-      - "CT-010: run_all.py --depth 参数（验证深度）"
-      - "CT-011: Finding Schema recommendation 字段（修复建议）"
-      - "作用域扩展：从 config/ YAML 契约 → 增加蓝图级模块承诺"
-  - version: "1.0.0"
-    date: "2026-05-02"
-    author: "AI-Trae-2026"
-    changes:
-      - "初始创建——登记 5 条声明式契约（CT-001~CT-005）"
-      - "CT-001~CT-003: config/ YAML 的 implementation_status = experimental declarative contract"
-      - "CT-004: capabilities.yaml {a,b} 语法——已解决（标注不支持 + 代码防护）"
-      - "CT-005: trigger_router.py stub 处理函数"
-      - "4 条未解决，1 条已解决"
+- version: 1.5.0
+  date: '2026-05-06'
+  author: session-20260506-012
+  changes:
+  - CT-001/002/003/005/008/009/010/011/012 全部 resolved
+  - 'summary 更新: unresolved 8→0, resolved 3→12'
+- version: 1.2.0
+  date: '2026-05-06'
+  author: governance-audit
+  changes:
+  - module_id 纠正为 PS-REG-019（与 gate-registry 的 PS-REG-014 区分）
+  - CT-007 标为 resolved：validate_script_system_health.py 已存在并消费承诺
+  - summary unresolved/resolved 计数更新
+- version: 1.1.0
+  date: '2026-05-03'
+  author: AI-Trae-2026
+  changes:
+  - 新增 CT-007~CT-011——登记 MOD-INF-005 V3.0.0 蓝图的 5 项模块级未兑现承诺
+  - 'CT-007: validate_script_system_health.py（自我监控）'
+  - 'CT-008: validate_emergency_bypass_log.py（应急绕过审计）'
+  - 'CT-009: run_all.py --tags 参数（标签选择）'
+  - 'CT-010: run_all.py --depth 参数（验证深度）'
+  - 'CT-011: Finding Schema recommendation 字段（修复建议）'
+  - 作用域扩展：从 config/ YAML 契约 → 增加蓝图级模块承诺
+- version: 1.0.0
+  date: '2026-05-02'
+  author: AI-Trae-2026
+  changes:
+  - 初始创建——登记 5 条声明式契约（CT-001~CT-005）
+  - 'CT-001~CT-003: config/ YAML 的 implementation_status = experimental declarative contract'
+  - 'CT-004: capabilities.yaml {a,b} 语法——已解决（标注不支持 + 代码防护）'
+  - 'CT-005: trigger_router.py stub 处理函数'
+  - 4 条未解决，1 条已解决

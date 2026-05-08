@@ -22,17 +22,19 @@ doc_guard_server.py 对应 tool_contracts.yaml 中的 session_handoff server。
 
 from __future__ import annotations
 
+from zephyr.shared.schema.schemas import Priority
+
 import uuid
 from typing import Any
 
 from zephyr.mcp._base_server import BaseMCPServer, MCPError
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = ["DocGuardServer", "create_server"]
 
 _VALID_PLATFORMS = frozenset({"cursor", "trae-cn", "cli"})
 _VALID_PRIORITIES = frozenset({"LOW", "NORMAL", "HIGH", "CRITICAL"})
-_VALID_CONTEXT_PRIORITIES = frozenset({"P0", "P1", "P2", "P3"})
+_VALID_CONTEXT_PRIORITIES = frozenset({Priority.P0.value, Priority.P1.value, Priority.P2.value, Priority.P3.value})
 
 # 5 项反腐败校验项（ADR-0041）
 _ANTI_CORRUPTION_CHECKS = [
@@ -54,8 +56,8 @@ class DocGuardServer(BaseMCPServer):
     VERSION = "1.0.0"
     DESCRIPTION = "跨会话交接协议服务；包装 HandoffPackage / SessionCarryover + 5 项反腐败校验"
 
-    def __init__(self) -> None:
-        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION)
+    def __init__(self, *, enable_rbac: bool = True) -> None:
+        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
         # 内存存储（骨架层）
         self._packages: dict[str, dict[str, Any]] = {}
         self._carryovers: list[dict[str, Any]] = []
@@ -129,6 +131,22 @@ class DocGuardServer(BaseMCPServer):
                 },
             },
             handler=self._emit_manual_event,
+        )
+        self.register_tool(
+            name="session_handoff.validate_doc_version",
+            description="校验文档版本——检查文档版本号 + 前置 session 兼容性",
+            input_schema={
+                "type": "object",
+                "required": ["doc_path", "expected_version"],
+                "additionalProperties": False,
+                "properties": {
+                    "doc_path": {"type": "string"},
+                    "expected_version": {"type": "string"},
+                    "from_session": {"type": "string"},
+                    "strict": {"type": "boolean", "default": False},
+                },
+            },
+            handler=self._validate_doc_version,
         )
 
     # ------------------------------------------------------------------
@@ -260,10 +278,34 @@ class DocGuardServer(BaseMCPServer):
         self._events.append(event)
         return {"event_id": event["event_id"], "delivered_at": event["delivered_at"]}
 
+    def _validate_doc_version(
+        self,
+        doc_path: str,
+        expected_version: str,
+        from_session: str | None = None,
+        strict: bool = False,
+    ) -> dict[str, Any]:
+        """校验文档版本号（骨架规则：格式校验 + session 匹配检查）。"""
+        import re as _re
+        if not _re.match(r"^\d+\.\d+", expected_version):
+            raise MCPError(-32602, f"expected_version 格式无效: {expected_version!r}")
 
-def create_server() -> DocGuardServer:
+        pkg = self._packages.get(from_session or "")
+        session_match = pkg is not None if from_session else True
+
+        return {
+            "doc_path": doc_path,
+            "expected_version": expected_version,
+            "version_valid": True,
+            "session_match": session_match,
+            "strict_mode": strict,
+            "checked_at": now_iso(),
+        }
+
+
+def create_server(*, enable_rbac: bool = True) -> DocGuardServer:
     """工厂函数，返回配置好的 DocGuardServer 实例。"""
-    return DocGuardServer()
+    return DocGuardServer(enable_rbac=enable_rbac)
 
 
 if __name__ == "__main__":

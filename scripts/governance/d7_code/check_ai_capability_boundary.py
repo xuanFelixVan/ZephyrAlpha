@@ -34,7 +34,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -45,6 +45,7 @@ MATRIX_PATH = REPO_ROOT / "config/ai_capability_matrix.yaml"
 
 
 def _run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
+    """_run_git implementation."""
     try:
         r = subprocess.run(
             ["git", *args],
@@ -61,12 +62,14 @@ def _run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
 
 
 def load_matrix() -> dict | None:
+    """load_matrix implementation."""
     if not MATRIX_PATH.exists():
         return None
     return yaml.safe_load(MATRIX_PATH.read_text(encoding="utf-8"))
 
 
 def get_immutable_scopes() -> list[str]:
+    """get_immutable_scopes implementation."""
     matrix = load_matrix()
     if matrix is None:
         return [
@@ -83,6 +86,7 @@ def get_immutable_scopes() -> list[str]:
 
 
 def _matches_scope(file_rel: str, scope: str) -> bool:
+    """_matches_scope implementation."""
     import fnmatch
 
     f = file_rel.replace("\\", "/").strip()
@@ -119,6 +123,7 @@ def _matches_scope(file_rel: str, scope: str) -> bool:
 
 
 def _default_merge_base() -> str | None:
+    """_default_merge_base implementation."""
     for remote_base in ("origin/main", "origin/master"):
         rc, _, _ = _run_git("rev-parse", "--verify", remote_base)
         if rc != 0:
@@ -155,6 +160,7 @@ def get_changed_paths(merge_base: str | None) -> list[str]:
 
 
 def find_capability_violations(merge_base: str | None) -> list[dict]:
+    """find_capability_violations implementation."""
     immutable = get_immutable_scopes()
     changed = get_changed_paths(merge_base)
     if not changed:
@@ -175,6 +181,7 @@ def find_capability_violations(merge_base: str | None) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="AI 能力边界（git diff vs IMMUTABLE 矩阵）")
     parser.add_argument("--warn-only", action="store_true")
     parser.add_argument("--show-scopes", action="store_true", help="只打印 IMMUTABLE 作用域")
@@ -193,7 +200,7 @@ def main() -> None:
     matrix = load_matrix()
     if matrix is None:
         print("[CapabilityGuard] ai_capability_matrix.yaml 未找到 — 跳过")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     merge_base = args.merge_base if args.merge_base else _default_merge_base()
     if merge_base:
@@ -211,7 +218,7 @@ def main() -> None:
     else:
         print("[CapabilityGuard] 无 IMMUTABLE 路径变更 — 通过")
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if violations else 0)
 
 

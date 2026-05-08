@@ -28,7 +28,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
-from zephyr.shared.errors import ZephyrBaseError
+from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "RetryConfig",

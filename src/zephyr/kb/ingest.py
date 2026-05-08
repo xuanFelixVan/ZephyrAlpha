@@ -117,6 +117,11 @@ class IngestGate:
             violations.append(inject_err)
             return IngestResult(passed=False, violations=violations)
 
+        lsg_err = self._lsg_scan_content(text)
+        if lsg_err:
+            violations.append(lsg_err)
+            return IngestResult(passed=False, violations=violations)
+
         fm_err = self._check_frontmatter(text, ext)
         if fm_err:
             violations.append(fm_err)
@@ -197,18 +202,34 @@ class IngestGate:
                 return f"输入清洗拦截：检测到黑名单模式 '{m.group()}'"
         return None
 
+    def _lsg_scan_content(self, text: str) -> str | None:
+        try:
+            from zephyr.llm_security.gateway import LSGSecurityGateway
+            import asyncio
+
+            gateway = LSGSecurityGateway()
+            result = asyncio.run(gateway.scan_input(text))
+            if result.decision.value not in ("allow", "ALLOW"):
+                reasons = ", ".join(r.reason for r in result.details if hasattr(r, "reason"))
+                return f"LSG 安全扫描拦截：{reasons or result.decision.value}"
+        except ImportError:
+            pass
+        except Exception:
+            pass
+        return None
+
     def _check_frontmatter(self, text: str, ext: str) -> str | None:
         if ext in {".yaml", ".yml"}:
             return None
         if not text.startswith("---"):
             return "Markdown 文件缺少 frontmatter（必须以 --- 开头）"
-        m = re.match(r"^---\n.*?\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n.*?\r?\n---", text, re.DOTALL)
         if not m:
             return "Markdown 文件 frontmatter 格式不正确（缺少闭合 ---）"
         return None
 
     def _parse_frontmatter(self, text: str, ext: str = ".md") -> dict[str, Any] | None:
-        m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
         if m:
             try:
                 return yaml.safe_load(m.group(1)) or {}

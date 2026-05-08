@@ -16,6 +16,8 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_PASS
+
 __manifest__ = """
 args:
   - --policy-status
@@ -48,11 +50,13 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_policy() -> dict:
+    """_load_policy implementation."""
     with open(_POLICY_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def _get_changed_files() -> list[str]:
+    """_get_changed_files implementation."""
     result = subprocess.run(
         ["git", "diff", "--cached", "--name-only"],
         capture_output=True, text=True, timeout=10,
@@ -68,6 +72,7 @@ def _get_changed_files() -> list[str]:
 
 
 def _match_path(file_path: str, glob_patterns: list[str]) -> bool:
+    """_match_path implementation."""
     normalized = file_path.replace("\\", "/")
     for pattern in glob_patterns:
         if fnmatch.fnmatch(normalized, pattern):
@@ -76,6 +81,7 @@ def _match_path(file_path: str, glob_patterns: list[str]) -> bool:
 
 
 def check_changed_files() -> dict:
+    """Check compliance and report findings."""
     policy = _load_policy()
     changed = _get_changed_files()
     violations: list[dict] = []
@@ -102,6 +108,7 @@ def check_changed_files() -> dict:
 
 
 def policy_status() -> None:
+    """policy_status implementation."""
     policy = _load_policy()
     tiers = policy.get("tiers", {})
     print(f"\n[TRUST-TIER] 当前策略:", file=sys.stderr)
@@ -117,6 +124,7 @@ def policy_status() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     import json
 
     parser = argparse.ArgumentParser(description="Trust-Tier policy gate against changed files")
@@ -147,7 +155,7 @@ def main() -> None:
                     ensure_ascii=False,
                 )
             )
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     print(f"[TRUST-TIER] ⚠ {result['violation_count']} 个文件涉及 Trust-Tier 限制", file=sys.stderr)
     for v in result["violations"]:
@@ -167,7 +175,7 @@ def main() -> None:
             )
         )
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

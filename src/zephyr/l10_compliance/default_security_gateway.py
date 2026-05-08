@@ -29,6 +29,20 @@ from zephyr.l10_compliance.security_gateway_base import (
 from zephyr.llm_security.input_sanitizer import InputSanitizer
 from zephyr.l10_compliance.aisg_sandbox import AISGSandbox
 
+_lsg_gateway = None
+
+
+def _get_lsg():
+    global _lsg_gateway
+    if _lsg_gateway is not None:
+        return _lsg_gateway
+    try:
+        from zephyr.llm_security.gateway import LSGSecurityGateway
+        _lsg_gateway = LSGSecurityGateway()
+        return _lsg_gateway
+    except Exception:
+        return None
+
 
 @dataclass(frozen=True)
 class ScanFinding:
@@ -201,11 +215,13 @@ class DefaultSecurityGateway(SecurityGateway):
     # ─── Layer 3: Decide ───
 
     def decide(self, content: str, metadata: dict[str, Any] | None = None) -> AuditDecision:
-        """L3 — 决策：基于 L1+L2 发现生成审计决策"""
+        """L3 — 决策：基于 L1+L2+LSG 发现生成审计决策"""
         errors = [f for f in self._findings if f.severity == "error"]
         warnings_list = [f for f in self._findings if f.severity == "warning"]
 
-        if errors:
+        lsg_blocked_by = self._lsg_full_scan(content, metadata)
+
+        if errors or lsg_blocked_by:
             action = AuditAction.BLOCK
         elif warnings_list:
             action = AuditAction.FLAG
@@ -214,11 +230,12 @@ class DefaultSecurityGateway(SecurityGateway):
         else:
             action = AuditAction.ALLOW
 
+        lsg_info = {"lsg_blocked_by": lsg_blocked_by} if lsg_blocked_by else {}
         return AuditDecision(
             decision_id=f"sgw-{uuid4().hex[:12]}",
             action=action,
             rule_id="L10-SGW-001",
-            reason=f"L1+L2 scan: {len(errors)} errors, {len(warnings_list)} warnings, l1_clean={self._l1_clean}",
+            reason=f"L1+L2+LSG scan: {len(errors)} errors, {len(warnings_list)} warnings, l1_clean={self._l1_clean}, lsg_blocked={bool(lsg_blocked_by)}",
             timestamp=datetime.now(timezone.utc),
             metadata={
                 "findings": [
@@ -226,9 +243,39 @@ class DefaultSecurityGateway(SecurityGateway):
                     for f in self._findings
                 ],
                 "content_safe": action != AuditAction.BLOCK,
-                "sanction_enabled": len(errors) > 0,
+                "sanction_enabled": len(errors) > 0 or bool(lsg_blocked_by),
+                **lsg_info,
             },
         )
+
+    def _lsg_full_scan(self, content: str, metadata: dict[str, Any] | None = None) -> str | None:
+        gw = _get_lsg()
+        if gw is None:
+            return None
+        try:
+            import asyncio
+            from zephyr.llm_security.protocol import SecurityDecision
+            result = asyncio.run(
+                gw.scan_input(content, source="l10_compliance", metadata=metadata or {})
+            )
+            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                return result.blocked_by or "lsg_input_scan"
+        except RuntimeError:
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    return None
+                result = loop.run_until_complete(
+                    gw.scan_input(content, source="l10_compliance", metadata=metadata or {})
+                )
+                from zephyr.llm_security.protocol import SecurityDecision
+                if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                    return result.blocked_by or "lsg_input_scan"
+            except Exception:
+                pass
+        except Exception:
+            pass
+        return None
 
     def reset(self) -> None:
         self._findings.clear()

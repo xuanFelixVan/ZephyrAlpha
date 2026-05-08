@@ -15,10 +15,10 @@ modules:
     status: planned
     priority: P1
     runtime_plane: warm
-    description: 模型版本管理、元数据与血缘（只读路径）；Warm 在线推理查询模型元数据
+    description: 模型版本管理、元数据与血缘（只读路径）；Warm 在线推理查询模型元数�?
     interfaces: []
-    adr_ref: []
-    plane_note: 只读查询 Warm；写入操作走 Cold（l11-model-registry-write）
+    kb_ref: []
+    plane_note: 只读查询 Warm；写入操作走 Cold（l11-model-registry-write�?
 
   - id: l11-model-registry-write
     name: Model Registry (Write)
@@ -28,7 +28,7 @@ modules:
     runtime_plane: cold
     description: 模型版本管理、元数据与血缘（写入路径）；训练后模型注册、版本锁定，Cold batch
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
   - id: l11-training
     name: Training Orchestration
@@ -38,7 +38,7 @@ modules:
     runtime_plane: cold
     description: 训练编排（分布式训练 / 基础模型微调 / 超参搜索）；Cold batch，大计算负载
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
   - id: l11-serving-default
     name: Model Serving & Inference (Default)
@@ -46,10 +46,16 @@ modules:
     status: planned
     priority: P1
     runtime_plane: warm
-    description: 模型服务化与推理封装（默认 Python Warm）；为 L03 predictions/ 提供推理接口
-    interfaces: []
-    adr_ref: []
-    plane_note: 默认 Warm Python；T3 阶段高频推理路径扩展 serving_hot.py 走 Hot（l11-serving-hot）
+    description: 模型服务化与推理封装（默�?Python Warm）；�?L03 predictions/ 提供推理接口
+    interfaces:
+      - contract_id: CTR-006
+        role: consumer
+        description: 消费 PositionSnapshot 进行模型推理特征提取
+      - contract_id: CTR-P1-013
+        role: both
+        description: 消费 TelemetryEmitter 发�?ML 平台遥测
+    kb_ref: []
+    plane_note: 默认 Warm Python；T3 阶段高频推理路径扩展 serving_hot.py �?Hot（l11-serving-hot�?
 
   - id: l11-evaluation
     name: Offline Model Evaluation
@@ -57,9 +63,9 @@ modules:
     status: planned
     priority: P1
     runtime_plane: cold
-    description: 离线模型评估与冠军挑战者评分；Cold batch，评估后结果推送 L13 champion_challenger
+    description: 离线模型评估与冠军挑战者评分；Cold batch，评估后结果推�?L13 champion_challenger
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
   - id: l11-scout
     name: Scout Agent (AI Information Scout)
@@ -68,12 +74,12 @@ modules:
     priority: P2
     runtime_plane: cold
     description: >
-      Scout Agent（AI 情报员）：自动抓取外部资讯（arXiv/SSRN/GitHub Trending/业界博客）+ 内部 repo diff，喂养 KMS L1 事实层；
+      Scout Agent（AI 情报员）：自动抓取外部资讯（arXiv/SSRN/GitHub Trending/业界博客�? 内部 repo diff，喂�?KMS L1 事实层；
       预留依据：OQ-079 closed / J0-d / archive/reorg-2026-04-24/draft-abandoned/working-designs/ai-autonomy-architecture-design.md v1.3.0 §12.3（ARC-20260424-007）；
-      T3 commodity 模型 + 每日 1 次 cron；所有抓取必须走 AISG（network jail + 防外泄）。
+      T3 commodity 模型 + 每日 1 �?cron；所有抓取必须走 AISG（network jail + 防外泄）�?
     interfaces: []
-    adr_ref: [ADR-0009, ADR-0010]
-    plane_note: Cold batch（每日 cron），D-02 Scout Agent 定义
+    kb_ref: [ADR-0009, ADR-0010]
+    plane_note: Cold batch（每�?cron），D-02 Scout Agent 定义
 
 summary:
   total: 6

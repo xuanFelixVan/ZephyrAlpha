@@ -1,0 +1,11 @@
+---
+module_id: KE-documentat-5_1-003
+title: 5.1 锚点声明
+category: documentation
+---
+
+# 5.1 锚点声明
+
+5.1 锚点声明
+
+**本节是架构锚点**，实现细节见 [`03_modules/_b_track_interfaces/agent-orchestrator-interface.md §7 Sandbox`](../../03_modules/_b_track_interfaces/agent-orchestrator-interface.md)，技术选型见 ADR-0018。

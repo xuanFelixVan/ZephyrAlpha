@@ -70,9 +70,9 @@ from typing import (
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.time_utils import default_now
-from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import default_now
+from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
     "AgentRole",
@@ -830,6 +830,17 @@ class AgentOrchestrator:
                 latency_ms=0,
                 error="no tool_invoker injected",
             )
+        lsg_blocked = self._lsg_scan_agent_action(tool_name, arguments)
+        if lsg_blocked:
+            elapsed = int((time.perf_counter() - started) * 1000)
+            return ToolCallRecord(
+                directive=directive,
+                tool_name=tool_name,
+                arguments=arguments,
+                success=False,
+                latency_ms=elapsed,
+                error=f"LSG security blocked: {lsg_blocked}",
+            )
         try:
             result = self._invoker(tool_name, arguments)
             elapsed = int((time.perf_counter() - started) * 1000)
@@ -852,6 +863,52 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 error=f"{type(exc).__name__}: {exc}",
             )
+
+    _lsg_gateway_instance = None
+
+    def _lsg_scan_agent_action(self, tool_name: str, tool_params: dict[str, Any]) -> str | None:
+        if AgentOrchestrator._lsg_gateway_instance is None:
+            try:
+                from zephyr.llm_security.gateway import LSGSecurityGateway
+                AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
+            except Exception:
+                return None
+        gw = AgentOrchestrator._lsg_gateway_instance
+        try:
+            import asyncio
+            from zephyr.llm_security.protocol import SecurityDecision
+            text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
+            result = asyncio.run(
+                gw.scan_agent_action(
+                    text=text,
+                    tool_name=tool_name,
+                    tool_params=tool_params,
+                    metadata={"source": "agent_orchestrator"},
+                )
+            )
+            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                return result.blocked_by or "lsg_agent_scan"
+        except RuntimeError:
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    return None
+                result = loop.run_until_complete(
+                    gw.scan_agent_action(
+                        text=json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name,
+                        tool_name=tool_name,
+                        tool_params=tool_params,
+                        metadata={"source": "agent_orchestrator"},
+                    )
+                )
+                from zephyr.llm_security.protocol import SecurityDecision
+                if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                    return result.blocked_by or "lsg_agent_scan"
+            except Exception:
+                pass
+        except Exception:
+            pass
+        return None
 
 
 # ---------------------------------------------------------------------------

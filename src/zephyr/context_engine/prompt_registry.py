@@ -45,8 +45,8 @@ import structlog
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.token_utils import estimate_tokens
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.observability.token_utils import estimate_tokens
 
 if TYPE_CHECKING:
     from zephyr.context_engine.context_injector import ContextInjector, InjectedContext

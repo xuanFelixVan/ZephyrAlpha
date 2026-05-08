@@ -1,0 +1,16 @@
+---
+module_id: KE-module_blu-10_4______b4-000
+title: 10.4 迁移风险（B4）
+category: module_blueprint
+---
+
+# 10.4 迁移风险（B4）
+
+10.4 迁移风险（B4）
+
+| # | 风险 | 概率 | 影响 | 缓解策略 |
+|---|------|:---:|:---:|---------|
+| R14 | 迁移期间数据不一致——部分数据在 kb/ 旧 Collection，部分在 VMS 新 Collection（B4） | 高 | 高 | BridgeLayer 双读阶段（Phase 1-2 过渡期：同时检索 kb/ 和 VMS Collection）；迁移完成后 kb/ 标记 deprecated |
+| R15 | unified_memory 单 Collection 数据按 topic 拆分错误 | 中 | 中 | 拆分脚本先 dry-run 输出 topic→Collection 映射表；Owner 审核后执行 |
+
+---

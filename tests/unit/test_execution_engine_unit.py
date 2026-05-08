@@ -10,7 +10,7 @@ from zephyr.l04_risk_management.implementations.default_risk_validator import De
 from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
 from zephyr.l06_trade_execution.execution_engine import AlgoType, ExecutionEngine
 from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.shared.contracts.order import OrderSide, OrderType
+from zephyr.shared.contracts.execution.order import OrderSide, OrderType
 
 
 def _make_engine(*, kill_switch: bool = False) -> tuple[ExecutionEngine, OrderManager]:

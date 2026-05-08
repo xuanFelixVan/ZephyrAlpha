@@ -14,6 +14,8 @@ exit codes: 0=合法, 1=不合法
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 __manifest__ = """
 args:
 - --warn-only
@@ -61,21 +63,21 @@ def main() -> None:
 
     if not args.msg_file:
         print("[ERROR] commit-msg hook: 缺少 commit message 文件路径", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     try:
         with open(args.msg_file, encoding="utf-8") as f:
             msg = f.readline().strip()
     except (OSError, FileNotFoundError):
         print(f"[ERROR] 无法读取 commit message: {args.msg_file}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     if not msg:
         print("[ERROR] commit message 为空", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     if msg.startswith("Merge "):
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if not PATTERN.match(msg):
         print(f"\n[COMMIT-MSG] 不合法的 commit message 格式: {msg}", file=sys.stderr)
@@ -83,10 +85,10 @@ def main() -> None:
         print("合法 type: feat, fix, docs, style, refactor, perf, test, chore, ci, build, revert\n", file=sys.stderr)
         if args.warn_only:
             print("⚠ --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
-            sys.exit(0)
-        sys.exit(1)
+            sys.exit(EXIT_PASS)
+        sys.exit(EXIT_FINDINGS)
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 if __name__ == "__main__":
     main()

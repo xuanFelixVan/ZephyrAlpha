@@ -8,7 +8,7 @@ ZephyrAlpha — shared/contracts/
 全公司共享的数据契约（Data Contracts）。
 
 **核心原则**：
-  - 🔒 **本目录所有文件为 Immutable Core 级别**，任何修改必须先建 ADR 并经人工批准
+  - 🔒 **本目录所有文件为 Immutable Core 级别**，任何修改必须先建 KB 决策记录并经人工批准
   - ✅ 所有 L00-L11 业务层均可 import，但不可修改
   - ❌ 禁止在本目录放业务逻辑，只放数据结构定义（dataclass / Protocol / Enum / Literal / TypedDict）
 
@@ -54,7 +54,7 @@ from zephyr.shared.contracts.backpressure import (
     BackpressureResume,
     BackpressureThrottle,
 )
-from zephyr.shared.contracts.enforcer import (
+from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
     enforce,
@@ -69,9 +69,9 @@ from zephyr.shared.contracts.errors import (
     RiskLimitViolationError,
     SignalDegradationWarning,
 )
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.instrument import (
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.market.instrument import (
     ETF,
     FX,
     AssetClass,
@@ -89,15 +89,15 @@ from zephyr.shared.contracts.instrument import (
     Stock,
     TradingCalendarName,
 )
-from zephyr.shared.contracts.market_data import NormalizedMarketData
-from zephyr.shared.contracts.money import (
+from zephyr.shared.contracts.market.market_data import NormalizedMarketData
+from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
 )
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.position import PositionSnapshot
-from zephyr.shared.contracts.registry import (
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+from zephyr.shared.contracts.core.registry import (
     ContractMeta,
     ContractRegistry,
     VersionMismatchError,
@@ -105,8 +105,8 @@ from zephyr.shared.contracts.registry import (
     get_registry,
     reset_registry,
 )
-from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.shared.contracts.runtime_plane_tag import (
+from zephyr.shared.contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
     HOT_PATH_ACTIVATED,
@@ -114,27 +114,27 @@ from zephyr.shared.contracts.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
-from zephyr.shared.contracts.timestamp import (
+from zephyr.shared.contracts.core.timestamp import (
     NaiveDatetimeError,
     Timestamp,
     ensure_utc,
     utcnow,
 )
-from zephyr.shared.contracts.trace_context import TraceContext
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
-from zephyr.shared.contracts.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.shared.contracts.risk_metrics import RiskMetricsReport
-from zephyr.shared.contracts.experiment_result import ExperimentResult
-from zephyr.shared.contracts.compliance_rule import ComplianceRule
-from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.model_serving_response import ModelServingResponse
-from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
-from zephyr.shared.contracts.factories import (
+from zephyr.shared.contracts.core.trace_context import TraceContext
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
+from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
+from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
+from zephyr.shared.contracts.risk.compliance_rule import ComplianceRule
+from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.core.factories import (
     make_factor_signal,
     make_order,
     make_risk_dashboard_snapshot,

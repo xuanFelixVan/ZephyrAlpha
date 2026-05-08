@@ -1,0 +1,3 @@
+# 已知缺陷测试用例索引
+# 格式：dimension / 预期检测出的脚本 / 预期 Finding 描述
+cases: {}

@@ -1,0 +1,46 @@
+"""Dependency CVE Correlator — v0.14.0 R196
+
+Blindspot: Dependency CVEs accumulate; FLE unaware of known exploited vulnerabilities.
+Risk: R196 — Log4Shell-level vulnerability in dependency; FLE operates normally.
+
+Mitigation: NVD API 2.0 integration with CVE correlation and auto-fix prioritization.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
+
+
+class CVESeverity(str, Enum):
+    NONE = "NONE"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+@dataclass
+class CVEAlert:
+    cve_id: str
+    dependency: str
+    severity: CVESeverity
+    cvss_score: float
+    description: str
+    affected_version: str
+    fixed_version: str = ""
+
+
+@dataclass
+class DepCVECorrelator:
+    nvd_api_url: str = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    alerts: list[CVEAlert] = field(default_factory=list)
+    dependencies: list[tuple[str, str]] = field(default_factory=list)
+
+    def register_dependency(self, name: str, version: str) -> None:
+        self.dependencies.append((name, version))
+
+    def check_critical(self) -> list[CVEAlert]:
+        return [a for a in self.alerts if a.severity == CVESeverity.CRITICAL]
+
+    def auto_fix_available(self) -> dict[str, str]:
+        return {a.cve_id: a.fixed_version for a in self.alerts if a.fixed_version}

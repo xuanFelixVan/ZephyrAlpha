@@ -1,0 +1,26 @@
+---
+module_id: KE-module_blu-22____________b67-b76-001
+title: 22. 第六轮补全盲点汇总（B67-B76）
+category: module_blueprint
+---
+
+# 22. 第六轮补全盲点汇总（B67-B76）
+
+22. 第六轮补全盲点汇总（B67-B76）
+
+> 方法：构建系统完整性 + 人因工程 + 运维自动化三维交叉审计——检查"代码存在"到"真正可用"之间的完整依赖链路。
+
+| # | 盲点 | 严重度 |
+|---|------|:---:|
+| B67 | **mcp>=1.0.0 不在任何依赖文件中**——pyproject.toml/requirements.txt/requirements-dev.txt 三处均缺。pip install 后 MCP Server 无法启动 | 🔴 |
+| B68 | **AGENTS.md 零 MCP 内容**——v4.18.0（52KB+）完全没有 MOD-INF-013/tool_contracts.yaml/MCP 施工约束。AI 冷启动时对 MCP 零认知 | 🔴 |
+| B69 | **全工程无 IDE MCP 配置文件**——项目根/.trae/.cursor/.roo 均无 mcp.json。蓝图跨 IDE 能力矩阵无落地产物 | 🔴 |
+| B70 | **scripts/mcp/ 目录不存在**——蓝图将 start_all.py 列为产出物但目录和文件均不存在。MCP 全生命周期无标准化脚本入口 | 🔴 |
+| B71 | 缺少 MCP 专项共享测试基础设施——全局 conftest.py 无 MCP 专用 fixture | 🟡 |
+| B72 | ChromaDB/SQLite 多进程写入安全风险——7 个 MCP Server 共享同一持久化目录和数据库 | 🟡 |
+| B73 | 无 Makefile/Taskfile 标准化任务运行器——≥15 个高频 MCP 运维操作无标准化入口 | 🟡 |
+| B74 | .env.example 无 MCP 环境变量——蓝图引用 ZEPHYR_DEBUG_MCP=1 但 .env.example 无 | 🟡 |
+| B75 | docker-compose.yml 无 MCP 服务编排——蓝图 Gateway 拓扑定义了完整部署架构但容器编排无 | 🟡 |
+| B76 | MCP SDK 版本无锁定策略——依赖为开放范围（甚至未声明），MCP 协议快速迭代中 | 📋 |
+
+---

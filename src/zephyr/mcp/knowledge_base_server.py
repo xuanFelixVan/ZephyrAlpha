@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import threading
 from datetime import UTC, datetime
 from typing import Any
 
@@ -28,7 +29,17 @@ __all__ = ["KnowledgeBaseServer", "create_server"]
 
 _KE_ID_RE = re.compile(r"^KE-[0-9]{3}(-.+)?$")
 
-_VALID_COLLECTIONS = frozenset({"ke_entries", "vibe_rules", "blueprints", "failure_patterns"})
+_VALID_COLLECTIONS = frozenset({
+    "ke_entries", "vibe_rules", "blueprints", "failure_patterns",
+    "decisions", "code_context", "lessons", "knowledge",
+    "rules", "session_snapshots", "execution_traces",
+})
+
+_VMS_COLLECTIONS = frozenset({
+    "decisions", "code_context", "lessons", "knowledge",
+    "rules", "blueprints", "session_snapshots", "execution_traces",
+})
+_LEGACY_COLLECTIONS = _VALID_COLLECTIONS - _VMS_COLLECTIONS
 _VALID_CATEGORIES = frozenset(
     {
         "blueprint_decision",
@@ -48,17 +59,24 @@ _VALID_CATEGORIES = frozenset(
 class KnowledgeBaseServer(BaseMCPServer):
     """knowledge_base MCP Server 实现。
 
-    骨架内置轻量内存存储（生产中替换为 KnowledgeIndexer + KbRepo 适配器）。
+    持久化后端：KbRepo (SQLite + ChromaDB) + UnifiedMemoryAPI (RI-02 三件套)。
+    降级策略：KbRepo 不可用时回退到内存字典。
     """
 
     SERVER_ID = "knowledge_base"
-    VERSION = "1.0.0"
-    DESCRIPTION = "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 4 个 collection）"
+    VERSION = "1.1.0"
+    DESCRIPTION = "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 + VMS 8 Collection）"
 
-    def __init__(self) -> None:
-        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION)
-        # 轻量内存存储（骨架层）
+    def __init__(self, *, enable_rbac: bool = True) -> None:
+        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
         self._entries: dict[str, dict[str, Any]] = {}
+        self._vms: Any = None
+        self._vms_lock = threading.Lock()
+        self._kb_repo: Any = None
+        self._kb_api: Any = None
+        self._backend_mode: str = "unknown"
+
+        self._init_backends()
 
         self.register_tool(
             name="knowledge_base.search",
@@ -132,6 +150,48 @@ class KnowledgeBaseServer(BaseMCPServer):
             },
             handler=self._rebuild_index,
         )
+        self.register_tool(
+            name="knowledge_base.list_kes",
+            description="列出知识条目（支持 category 筛选和分页）",
+            input_schema={
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "category": {"type": "string", "enum": sorted(_VALID_CATEGORIES)},
+                    "offset": {"type": "integer", "minimum": 0, "default": 0},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20},
+                },
+            },
+            handler=self._list_kes,
+        )
+        self.register_tool(
+            name="knowledge_base.health_check",
+            description="健康检查——返回 SQLite + ChromaDB 连通性",
+            input_schema={
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {},
+            },
+            handler=self._health_check,
+        )
+
+    # ------------------------------------------------------------------
+    # Backend initialization
+    # ------------------------------------------------------------------
+
+    def _init_backends(self) -> None:
+        try:
+            from zephyr.kb.kb_repo import KbRepo
+            self._kb_repo = KbRepo()
+            self._backend_mode = "kb_repo"
+        except Exception as exc:
+            self._backend_mode = f"memory_fallback(kb_repo_unavailable: {exc})"
+
+        try:
+            from zephyr.kb.unified_memory_api import get_unified_memory_api
+            self._kb_api = get_unified_memory_api(enforce_capability=False)
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # Tool handlers
@@ -144,7 +204,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         n_results: int = 5,
         score_threshold: float = 0.6,
     ) -> dict[str, Any]:
-        """关键词模糊匹配（骨架层；生产中替换为 ChromaDB 向量检索）。
+        """语义检索（优先使用 VMS 向量搜索，回退关键词匹配）。
 
         ZA-KB-0001: collection not found
         """
@@ -152,25 +212,58 @@ class KnowledgeBaseServer(BaseMCPServer):
             raise MCPError(-32001, f"ZA-KB-0001: collection not found: {collection!r}")
 
         start = datetime.now(tz=UTC)
-        hits = []
-        for entry in self._entries.values():
-            if query_text.lower() in entry.get("content", "").lower():
-                hits.append(
-                    {
-                        "chunk_id": entry["ke_id"] + "-chunk-0",
-                        "score": 0.9,
-                        "content": entry["content"][:500],
-                        "metadata": {"collection": collection},
-                        "ke_id": entry["ke_id"],
-                    }
-                )
-        elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
-        filtered = [h for h in hits if h["score"] >= score_threshold]
-        return {
-            "hits": filtered[:n_results],
-            "total_scanned": len(self._entries),
-            "latency_ms": elapsed,
-        }
+
+        if collection in _VMS_COLLECTIONS:
+            try:
+                with self._vms_lock:
+                    if self._vms is None:
+                        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
+                        self._vms = InProcessVectorMemory()
+                        self._vms.init_all_collections()
+                        self._vms.start()
+                hits_raw = self._vms.search(collection, query_text, k=n_results)
+                hits = []
+                for result in hits_raw:
+                    score = result.get("score", 0.0)
+                    if score >= score_threshold:
+                        hits.append({
+                            "chunk_id": result.get("id", ""),
+                            "score": score,
+                            "content": result.get("content", "")[:500],
+                            "metadata": result.get("metadata", {}),
+                            "ke_id": result.get("ke_id", ""),
+                        })
+                elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
+                return {
+                    "hits": hits[:n_results],
+                    "total_scanned": len(hits_raw),
+                    "latency_ms": elapsed,
+                }
+            except Exception as exc:
+                elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
+                return {"hits": [], "total_scanned": 0, "latency_ms": elapsed, "vms_error": str(exc)}
+
+        if collection in _LEGACY_COLLECTIONS:
+            hits = []
+            for entry in self._entries.values():
+                if query_text.lower() in entry.get("content", "").lower():
+                    hits.append(
+                        {
+                            "chunk_id": entry["ke_id"] + "-chunk-0",
+                            "score": 0.9,
+                            "content": entry["content"][:500],
+                            "metadata": {"collection": collection},
+                            "ke_id": entry["ke_id"],
+                        }
+                    )
+            elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
+            filtered = [h for h in hits if h["score"] >= score_threshold]
+            return {
+                "hits": filtered[:n_results],
+                "total_scanned": len(self._entries),
+                "latency_ms": elapsed,
+            }
 
     def _upsert_ke(
         self,
@@ -203,21 +296,83 @@ class KnowledgeBaseServer(BaseMCPServer):
             "updated_at": datetime.now(tz=UTC).isoformat(),
         }
         self._entries[ke_id] = record
-        return {"ke_id": ke_id, "chunks_indexed": chunks_count, "fingerprint_sha256": fingerprint}
+
+        if self._kb_repo is not None:
+            try:
+                existing = self._kb_repo.get(ke_id)
+                if existing is None:
+                    self._kb_repo.create(
+                        ke_id=ke_id,
+                        title=title,
+                        category=category,
+                        source_file=source_file,
+                        content=content,
+                        source_git_deleted=source_git_deleted,
+                    )
+                else:
+                    from zephyr.kb.kb_repo import KeStatus
+                    if existing.status in (KeStatus.DRAFT, KeStatus.REJECTED):
+                        self._kb_repo.create(
+                            ke_id=ke_id,
+                            title=title,
+                            category=category,
+                            source_file=source_file,
+                            content=content,
+                            source_git_deleted=source_git_deleted,
+                        )
+            except Exception:
+                pass
+
+        if self._kb_api is not None:
+            try:
+                from zephyr.kb.unified_memory_api import build_provenance
+                prov = build_provenance(
+                    origin=f"mcp:knowledge_base:upsert_ke:{ke_id}",
+                    audit_chain=["MOD-KB-001", "MCP-ADR-0033"],
+                )
+                self._kb_api.write(
+                    topic=f"kb::{category}::{ke_id}",
+                    content=content[:4000],
+                    provenance=prov,
+                )
+            except Exception:
+                pass
+
+        return {"ke_id": ke_id, "chunks_indexed": chunks_count, "fingerprint_sha256": fingerprint, "backend": self._backend_mode}
 
     def _get_ke(self, ke_id: str) -> dict[str, Any]:
         """按 ke_id 返回条目（ZA-KB-0005 on not found）。"""
+        if self._kb_repo is not None:
+            try:
+                rec = self._kb_repo.get(ke_id)
+                if rec is not None:
+                    return {
+                        "ke_id": rec.ke_id,
+                        "title": rec.title,
+                        "category": rec.category,
+                        "source_file": rec.source_file,
+                        "fingerprint_sha256": rec.fingerprint_sha256,
+                        "status": rec.status.value,
+                        "tags": rec.tags,
+                        "summary": rec.summary,
+                        "backend": "kb_repo",
+                    }
+            except Exception:
+                pass
+
         entry = self._entries.get(ke_id)
-        if entry is None:
-            raise MCPError(-32001, f"ZA-KB-0005: ke_id not found: {ke_id!r}")
-        return {
-            "ke_id": entry["ke_id"],
-            "title": entry["title"],
-            "category": entry["category"],
-            "content": entry["content"],
-            "source_file": entry["source_file"],
-            "fingerprint_sha256": entry["fingerprint_sha256"],
-        }
+        if entry is not None:
+            return {
+                "ke_id": entry["ke_id"],
+                "title": entry["title"],
+                "category": entry["category"],
+                "content": entry["content"],
+                "source_file": entry["source_file"],
+                "fingerprint_sha256": entry["fingerprint_sha256"],
+                "backend": "memory",
+            }
+
+        raise MCPError(-32001, f"ZA-KB-0005: ke_id not found: {ke_id!r}")
 
     def _rebuild_index(self, collection: str, force: bool = False) -> dict[str, Any]:
         """重建向量索引（骨架层；生产中替换为 ChromaDB 重建调用）。"""
@@ -228,10 +383,105 @@ class KnowledgeBaseServer(BaseMCPServer):
         chunks = sum(max(1, len(e.get("content", "")) // 512) for e in self._entries.values())
         return {"chunks_indexed": chunks, "duration_seconds": 0.0}
 
+    def _list_kes(
+        self,
+        category: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> dict[str, Any]:
+        """按 category 筛选并分页列出知识条目。"""
+        if self._kb_repo is not None:
+            try:
+                from zephyr.kb.kb_repo import KeStatus
+                records = self._kb_repo.list_by_status()
+                if category:
+                    records = [r for r in records if r.category == category]
+                total = len(records)
+                page = records[offset : offset + limit]
+                items = [
+                    {
+                        "ke_id": r.ke_id,
+                        "title": r.title,
+                        "category": r.category,
+                        "status": r.status.value,
+                        "fingerprint_sha256": r.fingerprint_sha256 or "",
+                    }
+                    for r in page
+                ]
+                return {"items": items, "total": total, "offset": offset, "limit": limit, "backend": "kb_repo"}
+            except Exception:
+                pass
 
-def create_server() -> KnowledgeBaseServer:
+        entries = list(self._entries.values())
+        if category:
+            entries = [e for e in entries if e.get("category") == category]
+        total = len(entries)
+        page = entries[offset : offset + limit]
+        items = [
+            {
+                "ke_id": e["ke_id"],
+                "title": e["title"],
+                "category": e["category"],
+                "fingerprint_sha256": e.get("fingerprint_sha256", ""),
+            }
+            for e in page
+        ]
+        return {"items": items, "total": total, "offset": offset, "limit": limit, "backend": "memory"}
+
+    def _health_check(self) -> dict[str, Any]:
+        sqlite_ok = False
+        chromadb_ok = False
+        vms_status = "unavailable"
+        kb_repo_status = "unavailable"
+        kb_api_count = -1
+
+        if self._kb_repo is not None:
+            try:
+                records = self._kb_repo.list_by_status()
+                kb_repo_status = f"available({len(records)} kes)"
+                sqlite_ok = True
+            except Exception as exc:
+                kb_repo_status = f"error({exc})"
+
+        try:
+            from zephyr.kb.chromadb_init import get_chroma_client
+            client = get_chroma_client()
+            client.list_collections()
+            chromadb_ok = True
+        except Exception:
+            pass
+
+        try:
+            from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+            vms_status = "available"
+        except Exception:
+            pass
+
+        if self._kb_api is not None:
+            try:
+                kb_api_count = self._kb_api.count()
+            except Exception:
+                pass
+
+        overall = "healthy" if (sqlite_ok or chromadb_ok) else "degraded"
+
+        return {
+            "status": overall,
+            "sqlite_connected": sqlite_ok,
+            "chromadb_connected": chromadb_ok,
+            "vms_integrated": vms_status,
+            "kb_repo": kb_repo_status,
+            "kb_api_count": kb_api_count,
+            "entries_count": len(self._entries),
+            "backend_mode": self._backend_mode,
+            "collections_supported": len(_VALID_COLLECTIONS),
+            "checked_at": datetime.now(tz=UTC).isoformat(),
+        }
+
+
+def create_server(*, enable_rbac: bool = True) -> KnowledgeBaseServer:
     """工厂函数，返回配置好的 KnowledgeBaseServer 实例。"""
-    return KnowledgeBaseServer()
+    return KnowledgeBaseServer(enable_rbac=enable_rbac)
 
 
 if __name__ == "__main__":

@@ -9,22 +9,22 @@ partition:
 modules:
 - id: l13-layer-ssot
   module_id: MOD-L13-001
-  name: Experimentation（层登记占位）
+  name: Experimentation（层登记占位�?
   submodule_path: src/zephyr/l13_experimentation/
   status: implemented
   priority: P2
   runtime_plane: cold
-  description: 实验层。ExperimentPipelineBase + ScoutAgentBase 双 OCP 扩展点 + ExperimentConfig/ExperimentMetric。
+  description: 实验层。ExperimentPipelineBase + ScoutAgentBase �?OCP 扩展�?+ ExperimentConfig/ExperimentMetric�?
   files:
   - default_experiment_pipeline.py
   - pipeline_base.py
   interfaces:
   - contract_id: CTR-P1-014
     role: producer
-    description: ExperimentResult → L09, L11
-  adr_ref: []
+    description: ExperimentResult �?L09, L11
+  kb_ref: []
 summary:
   total: 1
   by_status:
     implemented: 1
-  note: Phase B 骨架就位——ExperimentPipelineBase + ScoutAgentBase (CTR-P1-014) 已定义
+  note: Phase B 骨架就位——ExperimentPipelineBase + ScoutAgentBase (CTR-P1-014) 已定�?

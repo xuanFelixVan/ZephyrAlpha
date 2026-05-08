@@ -42,8 +42,4 @@ from zephyr.l07_post_trade_analytics.analytics_base import (
     TCAEngineBase,
 )
 
-__all__ = [
-    "AttributionEngineBase",
-    "PerformanceAttributionReport",
-    "TCAEngineBase",
-]
+__all__ = ['AttributionEngineBase', 'PerformanceAttributionReport', 'TCAEngineBase', 'analytics_base']

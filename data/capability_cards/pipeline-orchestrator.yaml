@@ -1,0 +1,26 @@
+capability_id: pipeline-orchestrator
+category: orchestration
+description: M1-M11 pipeline stage orchestration with three-layer routing
+examples: []
+input_schema:
+  properties:
+    task:
+      type: object
+  type: object
+name: Pipeline Orchestrator
+output_schema:
+  properties:
+    execution_mode:
+      type: string
+    result:
+      type: object
+  type: object
+priority: P0
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: true
+runtime_plane: hot
+status: ACTIVE
+tags:
+- pipeline
+- orchestration
+- M1-M11

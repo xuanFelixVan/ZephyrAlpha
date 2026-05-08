@@ -48,6 +48,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def evaluate_finding(finding: dict) -> dict:
+    """evaluate_finding implementation."""
     primary_agrees = True
     reviewer_a_agrees = True
     reviewer_b_agrees = True
@@ -74,6 +75,7 @@ def evaluate_finding(finding: dict) -> dict:
 
 
 def run_demo() -> dict:
+    """run_demo implementation."""
     demo_findings = [
         {"finding_id": "F-101", "severity": "HIGH", "confidence": 0.75, "description": "test"},
         {"finding_id": "F-102", "severity": "MEDIUM", "confidence": 0.35, "description": "test"},
@@ -100,6 +102,7 @@ def run_demo() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--demo" in sys.argv:
         result = run_demo()
         if "--json" in sys.argv:

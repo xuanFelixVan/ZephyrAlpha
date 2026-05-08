@@ -1,0 +1,113 @@
+import pytest
+from pathlib import Path
+
+from zephyr.llm_security.process_sandbox import (
+    CWD_WHITELIST_SUFFIXES,
+    ENV_WHITELIST,
+    L2aSandbox,
+    SandboxResult,
+    SandboxTimeout,
+    SandboxViolation,
+)
+
+
+class TestL2aSandboxInit:
+    def test_default_init(self):
+        sandbox = L2aSandbox()
+        assert sandbox._repo_root is not None
+
+    def test_custom_repo_root(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        assert str(sandbox._repo_root) == "D:\\ZephyrAlpha"
+
+    def test_repo_root_is_path(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        assert isinstance(sandbox._repo_root, Path)
+
+
+class TestCWDValidation:
+    def test_src_zephyr_cwd_allowed(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox._validate_cwd(sandbox._repo_root / "src" / "zephyr")
+
+    def test_scripts_cwd_allowed(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox._validate_cwd(sandbox._repo_root / "scripts")
+
+    def test_docs_cwd_allowed(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox._validate_cwd(sandbox._repo_root / "docs")
+
+    def test_random_cwd_blocked(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        with pytest.raises(SandboxViolation):
+            sandbox._validate_cwd(sandbox._repo_root / "etc" / "shadow")
+
+    def test_repo_root_allowed(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox._validate_cwd(sandbox._repo_root)
+
+
+class TestEnvBuilding:
+    def test_whitelist_env_included(self):
+        sandbox = L2aSandbox()
+        env = sandbox._build_env(None, False)
+        for key in ENV_WHITELIST:
+            if key in __import__("os").environ:
+                assert key in env
+
+    def test_extra_env_non_whitelist_blocked(self):
+        sandbox = L2aSandbox()
+        with pytest.raises(SandboxViolation):
+            sandbox._build_env({"EVIL_VAR": "value"}, False)
+
+    def test_extra_env_whitelist_allowed(self):
+        sandbox = L2aSandbox()
+        env = sandbox._build_env({"PATH": "/usr/bin"}, False)
+        assert env["PATH"] == "/usr/bin"
+
+    def test_extra_env_with_allow_flag(self):
+        sandbox = L2aSandbox()
+        env = sandbox._build_env({"CUSTOM_VAR": "value"}, True)
+        assert env["CUSTOM_VAR"] == "value"
+
+
+class TestSandboxRun:
+    def test_run_python_version(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        result = sandbox.run(
+            cmd=["python", "--version"],
+            cwd="src/zephyr",
+            timeout=10,
+        )
+        assert isinstance(result, SandboxResult)
+        assert result.returncode == 0
+
+    def test_run_with_timeout_raises(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        with pytest.raises(SandboxTimeout):
+            sandbox.run(
+                cmd=["python", "-c", "import time; time.sleep(60)"],
+                cwd="src/zephyr",
+                timeout=1,
+            )
+
+    def test_run_invalid_cwd_raises(self):
+        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        with pytest.raises(SandboxViolation):
+            sandbox.run(
+                cmd=["python", "--version"],
+                cwd="/etc/shadow",
+                timeout=5,
+            )
+
+
+class TestConstants:
+    def test_cwd_whitelist_not_empty(self):
+        assert len(CWD_WHITELIST_SUFFIXES) > 0
+
+    def test_env_whitelist_has_path(self):
+        assert "PATH" in ENV_WHITELIST
+
+    def test_env_whitelist_has_systemroot(self):
+        assert "SYSTEMROOT" in ENV_WHITELIST

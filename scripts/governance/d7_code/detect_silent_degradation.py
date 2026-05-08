@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -105,7 +105,7 @@ def main() -> None:
     src_dir = REPO_ROOT / "src" / "zephyr"
     if not src_dir.exists():
         print("[SILENT-DEGRADATION] src/zephyr/ 不存在，跳过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     all_findings = []
     for filepath in iter_files(src_dir, extensions=SCAN_EXTENSIONS_PY):
         findings = check_silent_degradation(filepath)
@@ -118,7 +118,7 @@ def main() -> None:
     else:
         print("[SILENT-DEGRADATION] 无静默降级", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
     "入口函数."
 

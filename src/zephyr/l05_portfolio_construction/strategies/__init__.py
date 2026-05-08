@@ -11,7 +11,4 @@ from zephyr.l05_portfolio_construction.strategies.default_equity_strategy import
     RebalanceMode,
 )
 
-__all__ = [
-    "DefaultEquityStrategy",
-    "RebalanceMode",
-]
+__all__ = ['DefaultEquityStrategy', 'RebalanceMode', 'default_equity_strategy']

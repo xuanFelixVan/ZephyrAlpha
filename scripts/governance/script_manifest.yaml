@@ -1,15 +1,131 @@
-# 自动生成于 2026-05-06T08:16:39Z
+# 自动生成于 2026-05-07T18:52:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-05-06T08:16:39Z'
+generated_at: '2026-05-07T18:52:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 177
-with_manifest: 177
-missing_manifest: 0
+total_scripts: 268
+with_manifest: 220
+missing_manifest: 48
 scripts:
+- name: adversarial_log.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: adversarial_sys_master_test.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: audit_blueprint_alignment.py
+  owner: governance
+  dimensions:
+  - D5
+  - D1
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --warn-only
+    type: bool
+    description: 仅报告不退出非零码
+  - flag: --json
+    type: bool
+    description: JSON输出（AI消费）
+  - flag: --module
+    type: str
+    description: 限定审计单个模块
+  warn_only: false
+  description: '蓝图↔任务卡↔代码三维对齐审计——扫描downstream_outputs、检查文件存在性、 AST内容质量校验、GCT桥接验证、蓝图符号落地检测。
+
+    '
+  tags:
+  - Critical
+  - Periodic
+  - Quick
+- name: audit_registration.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: audit_session_07.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: auto_sync_all_registries.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: blind_spot_registry.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: changelog.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: check_audit_rbac_isolation.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: check_handoff_manifests.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: check_registry_consistency.py
+  owner: governance
   dimensions:
   - D3
   - D5
@@ -19,7 +135,32 @@ scripts:
   args: []
   warn_only: false
   description: 兼容入口：转发执行 d3_metadata/check_registry_consistency.py
+  tags:
+  - Critical
+  - Quick
+  - Security
+- name: construction_gate.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: crosscheck_sys_master_deps.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d11_compliance/fix_shared_bypass.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   - D7
@@ -32,7 +173,12 @@ scripts:
   warn_only: true
   description: D-D-07 auto-fix - detect and repair local redefinitions of _shared
     API violations
+  tags:
+  - Critical
+  - Disruptive
+  - Security
 - name: d11_compliance/validate_blueprint_overlap.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   priority: P2
@@ -41,7 +187,10 @@ scripts:
   warn_only: false
   description: Blueprint overlap detection (warn when same component_id appears in
     multiple drafts)
+  tags:
+  - Security
 - name: d11_compliance/validate_commit_message.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   priority: P1
@@ -50,15 +199,44 @@ scripts:
   - --warn-only
   warn_only: false
   description: Conventional Commits 格式校验（commit-msg hook）— type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
-- name: d11_compliance/validate_manifest_admission.py
+  tags:
+  - Security
+- name: d11_compliance/validate_exit_codes.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
-  priority: P0
+  - D5
+  priority: P1
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: Manifest 准入控制器（SCRIPT-QUALITY-001 — git diff 提取新增脚本 → 8 项 MUST 硬阻断）
+  description: 审计脚本退出码规范门禁——检测裸 sys.exit(0/1/2) 和 return 0/1/2
+  tags:
+  - Critical
+  - Security
+- name: d11_compliance/validate_frozen_requirements.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D11
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 依赖版本锁定验证 — 对比环境版本与 frozen-versions.txt
+  tags:
+  - Security
+- name: d11_compliance/validate_manifest_admission.py
+  owner: governance:d11_compliance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d11_compliance/validate_no_utf8_bom.py
+  owner: governance:d11_compliance
   dimensions:
   - D1
   - D11
@@ -74,7 +252,25 @@ scripts:
     禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py BOM 免疫的编码层预防防线。
 
     '
+  tags:
+  - Critical
+  - Quick
+  - Security
+- name: d11_compliance/validate_script_naming.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D11
+  - D1
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: 审计脚本命名规范门禁——检测不符合合法前缀模式的脚本文件名
+  tags:
+  - Quick
+  - Security
 - name: d11_compliance/validate_script_quality.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   priority: P1
@@ -82,7 +278,10 @@ scripts:
   args: []
   warn_only: false
   description: 治理脚本质量合规检查（SCRIPT-QUALITY-001 §10 — 10项可自动化MUST条款扫描）
+  tags:
+  - Security
 - name: d11_compliance/validate_task_decomposition_bypass.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   priority: P0
@@ -96,7 +295,11 @@ scripts:
     chains vs shared risk stems).
 
     '
+  tags:
+  - Critical
+  - Security
 - name: d11_compliance/validate_truth_source_cascade.py
+  owner: governance:d11_compliance
   dimensions:
   - D11
   priority: P2
@@ -104,7 +307,42 @@ scripts:
   args: []
   warn_only: false
   description: 真源级联验证器（上下游引用一致性）
+  tags:
+  - Security
+- name: d11_compliance/validate_vocabulary_coverage.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D11
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: '验证 frontmatter-schema.json 枚举字段与 vocabularies/ 目录的覆盖度。 确保每个枚举字段都有独立词汇表文件（SSoT
+    原则）。
+
+    '
+  tags:
+  - Security
+- name: d12_ai_hallucination/check_logger_kwargs.py
+  owner: governance:d12_ai_hallucination
+  dimensions:
+  - D12
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --ci
+    type: bool
+    description: 硬阻断模式（exit 1）
+  - flag: --warn-only
+    type: bool
+    description: 仅警告模式
+  warn_only: false
+  description: 日志完整性检查——检测 structlog-style 关键字参数混用标准 logging
+  tags:
+  - AI-Generated
+  - Periodic
 - name: d12_ai_hallucination/validate_gate_prompt_conflict.py
+  owner: governance:d12_ai_hallucination
   dimensions:
   - D12
   priority: P0
@@ -115,7 +353,12 @@ scripts:
     X 但 Prompt 鼓励 X，门禁要求检查但 Prompt 允许跳过等）。
 
     '
+  tags:
+  - AI-Generated
+  - Critical
+  - Periodic
 - name: d12_ai_hallucination/validate_session_budget.py
+  owner: governance:d12_ai_hallucination
   dimensions:
   - D12
   priority: P2
@@ -123,7 +366,11 @@ scripts:
   args: []
   warn_only: false
   description: Session 操作预算校验（已废弃——GOV-AI-005 已删除）
+  tags:
+  - AI-Generated
+  - Periodic
 - name: d12_ai_hallucination/validate_session_gate_check.py
+  owner: governance:d12_ai_hallucination
   dimensions:
   - D12
   priority: P2
@@ -131,7 +378,23 @@ scripts:
   args: []
   warn_only: false
   description: Session 门禁检查完整性校验（OPS-VC-005 §3 — 12项gate_check）
+  tags:
+  - AI-Generated
+  - Periodic
+- name: d1_structure/archive_drafts_zone.py
+  owner: governance:d1_structure
+  dimensions:
+  - D1
+  - D4
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 草稿区归档检查
+  tags:
+  - Quick
 - name: d1_structure/audit_config_format.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D4
@@ -140,7 +403,11 @@ scripts:
   args: []
   warn_only: true
   description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
+  tags:
+  - Periodic
+  - Quick
 - name: d1_structure/audit_directory_integrity.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D2
@@ -152,7 +419,12 @@ scripts:
   args: []
   warn_only: false
   description: 目录结构完整性审计（D1幽灵文件+D2 ID冲突+D3索引对账+D4命名规范+D5登记缺漏）
+  tags:
+  - Critical
+  - Periodic
+  - Quick
 - name: d1_structure/audit_directory_scalability.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P1
@@ -160,7 +432,11 @@ scripts:
   args: []
   warn_only: true
   description: 物理结构可扩展性审计 [目录文件数上限/模块隔离/文件数阈值检查]
+  tags:
+  - Periodic
+  - Quick
 - name: d1_structure/audit_findings_by_scope.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P2
@@ -168,7 +444,11 @@ scripts:
   args: []
   warn_only: true
   description: 按目录范围筛选 Finding 报告（分析 run_all.py 输出，支持 scope 筛选 + 汇总统计）
+  tags:
+  - Periodic
+  - Quick
 - name: d1_structure/batch_create_index_md.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D3
@@ -177,7 +457,10 @@ scripts:
   args: []
   warn_only: true
   description: 批量创建 index.md（扫描缺失 index.md 的目录并生成）
+  tags:
+  - Quick
 - name: d1_structure/cbg_reset.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P2
@@ -185,7 +468,10 @@ scripts:
   args: []
   warn_only: true
   description: CBG熔断器重置工具（Owner-Gated——仅 Owner 可执行）
+  tags:
+  - Quick
 - name: d1_structure/check_index_integrity.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P1
@@ -193,7 +479,10 @@ scripts:
   args: []
   warn_only: false
   description: 索引完整性校验（PS-STD-012 §7.3 — index.md清单vs磁盘双向差集）
+  tags:
+  - Quick
 - name: d1_structure/detect_orphan_py.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P0
@@ -203,7 +492,11 @@ scripts:
   warn_only: false
   description: 项目根目录孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/governance/ / src/zephyr/
     / tests/）
+  tags:
+  - Critical
+  - Quick
 - name: d1_structure/detect_residual_files.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P0
@@ -211,7 +504,11 @@ scripts:
   args: []
   warn_only: false
   description: 残留物检测（GOV-TASK-005 §4.3 — 空壳/不可达import/重复/遗留测试）
+  tags:
+  - Critical
+  - Quick
 - name: d1_structure/detect_temp_files.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P0
@@ -219,7 +516,11 @@ scripts:
   args: []
   warn_only: false
   description: 临时文件检测（GOV-TASK-005 §4.2 — temp_*/tmp_*/*.backup/__pycache__）
+  tags:
+  - Critical
+  - Quick
 - name: d1_structure/drafts_zone_archiver.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D4
@@ -228,7 +529,10 @@ scripts:
   args: []
   warn_only: false
   description: 草稿区归档检查
+  tags:
+  - Quick
 - name: d1_structure/generate_missing_index_md.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P2
@@ -238,7 +542,22 @@ scripts:
   - docs/
   warn_only: true
   description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（AGENTS.md §6.11 索引-实际同步强制约定）
+  tags:
+  - Disruptive
+  - Quick
+- name: d1_structure/reset_cbg.py
+  owner: governance:d1_structure
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: true
+  description: CBG熔断器重置工具（Owner-Gated——仅 Owner 可执行）
+  tags:
+  - Quick
 - name: d1_structure/run_script_smoke_test.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P1
@@ -246,7 +565,10 @@ scripts:
   args: []
   warn_only: false
   description: 治理脚本冒烟测试 [SCRIPT-QUALITY-001 D-H-01 - subprocess + --warn-only 全量运行]
+  tags:
+  - Quick
 - name: d1_structure/sync_index_from_manifest.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P2
@@ -256,7 +578,10 @@ scripts:
   warn_only: true
   description: 从 manifest SSoT 自动同步 index.md 脚本数量（AGENTS.md §6.10 stable — index.md
     数字不再手动维护）
+  tags:
+  - Quick
 - name: d1_structure/sync_policies_index.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   priority: P2
@@ -265,7 +590,10 @@ scripts:
   - --check
   warn_only: true
   description: 从磁盘扫描同步 PS-IDX-001 §二 文件数量表格（AGENTS.md §6.11——防止手动维护数字漂移）
+  tags:
+  - Quick
 - name: d1_structure/validate_config_integrity.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D4
@@ -278,7 +606,27 @@ scripts:
   args: []
   warn_only: false
   description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
+  tags:
+  - AI-Generated
+  - Critical
+  - Periodic
+  - Quick
+  - Security
+- name: d1_structure/validate_d1_output_sanity.py
+  owner: governance:d1_structure
+  dimensions:
+  - D1
+  - D3
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: D1产出物合理性校验 — 依赖链A第一步的数据逻辑自洽检查
+  tags:
+  - Critical
+  - Quick
 - name: d1_structure/validate_immutable_core.py
+  owner: governance:d1_structure
   dimensions:
   - D1
   - D5
@@ -287,25 +635,51 @@ scripts:
   args: []
   warn_only: false
   description: immutable_core 文件修改检测（ABS-01 — P1治理完整性）
+  tags:
+  - Critical
+  - Quick
 - name: d1_structure/validate_index_reality.py
-  dimensions:
-  - D1
-  priority: P0
-  timeout_seconds: 15
-  args:
-  - --warn-only
-  warn_only: false
-  description: Index-reality sync check (AGENTS.md section 6.11 - index.md claimed
-    script count vs disk actual .py file count)
-- name: d2_links/audit_broken_links.py
-  dimensions:
-  - D2
-  priority: P0
+  owner: governance:d1_structure
+  dimensions: []
+  priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 内部链接与交叉引用有效性检查
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d1_structure/validate_read_before_write.py
+  owner: governance:d1_structure
+  dimensions:
+  - D1
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --session-log
+    type: str
+    description: 检查指定 Session Log 的先读后写合规性
+  - flag: --file
+    type: str
+    description: 检查指定文件在 session log 中是否先 Read 后 Write
+  warn_only: false
+  description: '先读后写校验（IRN-008）——检查 Session Log 中每个 Write 前是否有对应 Read。 对标 GOV-MOD-002
+    ai-behavior-iron-policy.md IRN-008。
+
+    '
+  tags:
+  - Quick
+- name: d2_links/audit_broken_links.py
+  owner: governance:d2_links
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d2_links/detect_relative_references.py
+  owner: governance:d2_links
   dimensions:
   - D2
   priority: P2
@@ -313,7 +687,39 @@ scripts:
   args: []
   warn_only: false
   description: 相对路径引用检测（DOC-004 — 应使用绝对路径）
+  tags:
+  - Quick
+- name: d2_links/validate_depends_on_format.py
+  owner: governance:d2_links
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d3_metadata/assign_module_id.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --check
+    type: str
+    description: 检查指定 module_id 的唯一性
+  - flag: --assign
+    type: str
+    description: '为新文件建议下一个可用 module_id（格式: DOMAIN-TYPE）'
+  warn_only: false
+  description: '模块 ID 唯一性校验（INJ-001）——检查 module_id 全局唯一性。 对标 GOV-MOD-001 module-injection-rules.yaml。
+
+    '
+  tags:
+  - Quick
 - name: d3_metadata/check_frontmatter_metadata.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P0
@@ -322,16 +728,21 @@ scripts:
   warn_only: false
   description: Frontmatter metadata compliance scan (doc_type valid values / status
     / required fields)
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/check_naming_convention.py
-  dimensions:
-  - D3
-  priority: P0
-  timeout_seconds: 30
-  args:
-  - --all
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
   warn_only: false
-  description: 文件命名规范检查(kebab-case / module_id namespace / ADR铁律)
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/check_registry_consistency.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D5
@@ -341,7 +752,12 @@ scripts:
   args: []
   warn_only: false
   description: 跨登记表一致性校验（多注册表共享字段对账）
+  tags:
+  - Critical
+  - Quick
+  - Security
 - name: d3_metadata/deep_content_scanner.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P2
@@ -349,7 +765,10 @@ scripts:
   args: []
   warn_only: false
   description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
+  tags:
+  - Quick
 - name: d3_metadata/detect_deprecated_overdue.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P1
@@ -357,7 +776,10 @@ scripts:
   args: []
   warn_only: false
   description: 废弃超期检测（PS-STD-009 §7 — deprecated>=180天应归档）
+  tags:
+  - Quick
 - name: d3_metadata/detect_skip_active_status.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P1
@@ -365,7 +787,10 @@ scripts:
   args: []
   warn_only: false
   description: 跨级降格检测（ABS-22 / COND-15 — draft→deprecated跳过active）
+  tags:
+  - Quick
 - name: d3_metadata/detect_stale_version.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P1
@@ -373,7 +798,10 @@ scripts:
   args: []
   warn_only: false
   description: 版本号未更新检测（PS-STD-009 §9 — 内容变更但version/date未同步）
+  tags:
+  - Quick
 - name: d3_metadata/generate_derived_files.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P2
@@ -382,7 +810,11 @@ scripts:
   - --check
   warn_only: true
   description: GATE-GENERATE — 枚举自动派生生成器（§6.14 Level 3 — vocabulary YAML → 派生文件枚举列表自动同步，--check/--apply/--diff）
+  tags:
+  - Disruptive
+  - Quick
 - name: d3_metadata/generate_rule_catalog.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P2
@@ -393,7 +825,22 @@ scripts:
     with static-manifest SSOT for governance scripts (section 6.16-style workflow).
 
     '
+  tags:
+  - Disruptive
+  - Quick
+- name: d3_metadata/scan_deep_content.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
+  tags:
+  - Quick
 - name: d3_metadata/validate_architecture.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D4
@@ -404,7 +851,11 @@ scripts:
   warn_only: false
   description: Architecture compliance check (frontmatter + directory placement +
     doc_type consistency)
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_blueprint_provenance.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D4
@@ -414,7 +865,11 @@ scripts:
   warn_only: false
   description: Blueprint provenance triple validation (origin_drafts + audit_chain
     + arbitration)
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_blueprint_registry.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D11
@@ -423,7 +878,11 @@ scripts:
   args: []
   warn_only: false
   description: Blueprint registry self-check (declared rows vs files on disk)
+  tags:
+  - Quick
+  - Security
 - name: d3_metadata/validate_cross_module_dependencies.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D5
@@ -432,7 +891,11 @@ scripts:
   args: []
   warn_only: false
   description: 跨模块依赖登记表与 module-registry 的 module_id 对账
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_derived_from.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D5
@@ -442,7 +905,11 @@ scripts:
   warn_only: false
   description: GATE-DERIVED — derived_from 标注完整性闸门（§6.14 Level 2 门禁 4/4 — 派生文件 derived_from
     标注检测，5维检查）
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_enum_consistency.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D5
@@ -451,7 +918,11 @@ scripts:
   args: []
   warn_only: false
   description: GATE-ENUM — 枚举自动派生一致性闸门（§6.14 Level 2 门禁 1/4 — vocabulary YAML ↔ 派生文件枚举列表交叉比对，5维检查）
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_frontmatter_values.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D5
@@ -460,7 +931,11 @@ scripts:
   args: []
   warn_only: false
   description: GATE-FRONTMATTER — frontmatter 枚举值 vs vocabulary YAML 校验（防止非法值如 layer=L1）
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_module_id.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P2
@@ -477,7 +952,10 @@ scripts:
     + 连续编号无意外缺口）。对标 §6.13 枚举同步 + §6.11 索引-实际同步。
 
     '
+  tags:
+  - Quick
 - name: d3_metadata/validate_no_duplicate_files.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D4
@@ -486,7 +964,10 @@ scripts:
   args: []
   warn_only: true
   description: GATE-DUP — 迁移后重复文件检测（防止迁移后原文件未删除）
+  tags:
+  - Quick
 - name: d3_metadata/validate_registry_master_index.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D11
@@ -495,7 +976,12 @@ scripts:
   args: []
   warn_only: false
   description: 登记表总索引自校验：登记表文件存在性、条目数、depends_on 交叉验证
+  tags:
+  - Critical
+  - Quick
+  - Security
 - name: d3_metadata/validate_ssot_status.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P0
@@ -503,7 +989,11 @@ scripts:
   args: []
   warn_only: false
   description: SSoT frontmatter status 字段枚举白名单——阻止 draft/active/review 等非法拼写
+  tags:
+  - Critical
+  - Quick
 - name: d3_metadata/validate_superseded_by.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   priority: P1
@@ -511,7 +1001,10 @@ scripts:
   args: []
   warn_only: false
   description: 废弃文件 superseded_by 检测（LFC-002 / PS-STD-009 §2.2）
+  tags:
+  - Quick
 - name: d4_paths/detect_deprecated_path_writes.py
+  owner: governance:d4_paths
   dimensions:
   - D1
   - D4
@@ -520,7 +1013,11 @@ scripts:
   args: []
   warn_only: false
   description: 废弃路径写入检测（ABS-18 — 禁止在废弃路径下新建文件）
+  tags:
+  - Critical
+  - Quick
 - name: d4_paths/detect_excessive_file_moves.py
+  owner: governance:d4_paths
   dimensions:
   - D4
   priority: P2
@@ -528,7 +1025,10 @@ scripts:
   args: []
   warn_only: false
   description: 文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三 — 搬迁>=2次告警）
+  tags:
+  - Quick
 - name: d4_paths/detect_ruins_references.py
+  owner: governance:d4_paths
   dimensions:
   - D1
   - D4
@@ -537,7 +1037,11 @@ scripts:
   args: []
   warn_only: false
   description: 残骸/废弃路径引用检测（ABS-44 — 禁止引用废墟目录）
+  tags:
+  - Critical
+  - Quick
 - name: d4_paths/detect_split_delete_ref_commit.py
+  owner: governance:d4_paths
   dimensions:
   - D4
   priority: P2
@@ -545,7 +1049,10 @@ scripts:
   args: []
   warn_only: false
   description: 删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）
-- name: d5_architecture/analyze_contract_impact.py
+  tags:
+  - Quick
+- name: d5_architecture/analyzers/analyze_contract_impact.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
@@ -556,7 +1063,10 @@ scripts:
     §6.9 YAML canonical + §6.2 原子事务。
 
     '
-- name: d5_architecture/audit_depends_on_chain_depth.py
+  tags:
+  - Critical
+- name: d5_architecture/analyzers/audit_depends_on_chain_depth.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -564,17 +1074,22 @@ scripts:
   args: []
   warn_only: false
   description: depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）
-- name: d5_architecture/auto-generate-index.py
+  tags:
+  - Critical
+  - Periodic
+- name: d5_architecture/analyzers/measure_deprecation_cascade.py
+  owner: governance:d5_architecture
   dimensions:
-  - D3
-  - D4
+  - D5
   priority: P1
   timeout_seconds: 30
-  args:
-  - --check
+  args: []
   warn_only: false
-  description: GATE-INDEX — 索引文件自动校验/修复（消除手动索引维护，--check/--apply）
-- name: d5_architecture/check_architecture_gates.py
+  description: 废弃级联影响度量（LFC-003 — 级联>=5文件需Owner批准）
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_architecture_gates.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -585,7 +1100,26 @@ scripts:
   warn_only: false
   description: Architecture GATE checker (GATE-01~08 + GATE-A + GATE-B + GATE-SC +
     EXTRA-01~03)
-- name: d5_architecture/check_contract_code_drift.py
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_bvb_compliance.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  - D11
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --warn-only
+    type: bool
+    description: 仅警告模式
+  warn_only: false
+  description: BvB 五维评分法自动化校验——OSS 依赖准入合规
+  tags:
+  - Critical
+  - Security
+- name: d5_architecture/checkers/check_contract_code_drift.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -593,14 +1127,56 @@ scripts:
   args: []
   warn_only: false
   description: 契约-代码双写漂移阻断——YAML修改后强制codegen一致，CI硬阻断
-- name: d5_architecture/check_g6_ctr_compliance.py
-  dimensions: []
-  priority: P2
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_dependency_direction.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --module
+    type: str
+    description: 检查指定 module_id 的依赖可解析性
+  - flag: --check-cross-layer
+    type: str
+    description: 检查指定 module_id 的跨层依赖方向
+  warn_only: false
+  description: '依赖方向校验（INJ-002/008）——依赖可解析性 + 跨层依赖方向。 对标 GOV-MOD-001 module-injection-rules.yaml。
+
+    '
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_dual_tree_sync.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --warn-only
+  - --ci
+  warn_only: false
+  description: GATE-DTS — 双树同步检查闸门（architecture-model/ 施工树 vs docs/EA/architecture-model/
+    企业架构树）
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_g6_ctr_compliance.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  - D11
+  priority: P1
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-- name: d5_architecture/check_trace_context_propagation.py
+  description: G6 CTR 契约合规门禁——层自建数据类型冲突/货币字段float误用/跨层直连导入检测
+  tags:
+  - Critical
+  - Security
+- name: d5_architecture/checkers/check_trace_context_propagation.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
@@ -611,7 +1187,10 @@ scripts:
     上下文传播链完整。对标 GOV-MOD-004 接口契约 §可观测性。
 
     '
-- name: d5_architecture/detect_depends_on_cycles.py
+  tags:
+  - Critical
+- name: d5_architecture/detectors/detect_depends_on_cycles.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -619,15 +1198,21 @@ scripts:
   args: []
   warn_only: false
   description: depends_on 环检测 (DOC-009#1 - 循环依赖检测)
-- name: d5_architecture/detect_deprecated_adr_references.py
+  tags:
+  - Critical
+- name: d5_architecture/detectors/detect_deprecated_adr_references.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 废弃 ADR 引用检测（COND-38 — 禁止引用deprecated ADR）
-- name: d5_architecture/detect_duplicate_module_names.py
+  description: 废弃 KB 决策记录引用检测（COND-38 — 禁止引用deprecated ADR）
+  tags:
+  - Critical
+- name: d5_architecture/detectors/detect_duplicate_module_names.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -635,7 +1220,23 @@ scripts:
   args: []
   warn_only: false
   description: 同名模块语义关系分析——AST级导入链+符号重叠检测，区分适配器/Facade vs 真正重复
-- name: d5_architecture/generate_contracts.py
+  tags:
+  - Critical
+- name: d5_architecture/generators/auto_generate_index.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D3
+  - D4
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --check
+  warn_only: false
+  description: GATE-INDEX — 索引文件自动校验/修复（消除手动索引维护，--check/--apply）
+  tags:
+  - Quick
+- name: d5_architecture/generators/generate_contracts.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
@@ -643,7 +1244,11 @@ scripts:
   args: []
   warn_only: false
   description: generate_contracts.py -- SSoT to Codegen pipeline
-- name: d5_architecture/generate_trigger_wiring_view.py
+  tags:
+  - Critical
+  - Disruptive
+- name: d5_architecture/generators/generate_trigger_wiring_view.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
@@ -652,15 +1257,28 @@ scripts:
   warn_only: false
   description: CT-005 → trigger_router.yaml 接线状态自动派生（OpenAPI/Terraform模式——YAML canonical
     → MD视图自动生成）
-- name: d5_architecture/measure_deprecation_cascade.py
+  tags:
+  - Critical
+  - Disruptive
+- name: d5_architecture/syncers/archive_rationale_log.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
-  priority: P1
+  priority: P2
   timeout_seconds: 30
-  args: []
+  args:
+  - flag: --dry-run
+    type: bool
+    description: 仅预览，不修改文件
+  - flag: --warn-only
+    type: bool
+    description: 仅警告模式
   warn_only: false
-  description: 废弃级联影响度量（LFC-003 — 级联>=5文件需Owner批准）
-- name: d5_architecture/merge_readme_to_index.py
+  description: architecture-rationale-log.md 按 Stage 归档拆分——控制单文件体积
+  tags:
+  - Critical
+- name: d5_architecture/syncers/merge_readme_to_index.py
+  owner: governance:d5_architecture
   dimensions:
   - D1
   - D5
@@ -671,7 +1289,11 @@ scripts:
   - --jsonl
   warn_only: true
   description: 合并 README 到 index.md（目录文档整合工具）
-- name: d5_architecture/sync_blueprint_code_index.py
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/syncers/sync_blueprint_code_index.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   - D8
@@ -681,7 +1303,11 @@ scripts:
   warn_only: false
   description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
     patch+1，--check模式仅检测漂移）
-- name: d5_architecture/sync_registry_from_blueprints.py
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/syncers/sync_registry_from_blueprints.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -691,67 +1317,10 @@ scripts:
   - --no-changelog
   warn_only: false
   description: 同步 blueprint-registry.yaml [从 blueprint.md frontmatter 驱动]
-- name: d5_architecture/validate_adr_frontmatter_consistency.py
-  dimensions:
-  - D3
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: ADR frontmatter 一致性校验（ADR 文档 frontmatter 字段与规范对齐）
-- name: d5_architecture/validate_arch_review_gate.py
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 架构评审门控校验（GOV-ARCH-002 — 5类触发变更需ADR）
-- name: d5_architecture/validate_architecture_contract_internal.py
-  dimensions:
-  - D3
-  - D5
-  priority: P0
-  timeout_seconds: 15
-  args: []
-  warn_only: false
-  description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
-- name: d5_architecture/validate_authority_registry.py
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: AI autonomy authority registry validator (3-tier auth / required fields
-    / duplicate detection)
-- name: d5_architecture/validate_autonomy_gate.py
-  dimensions:
-  - D5
-  - D11
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: AI 自治权限门禁校验（ABS-05~10 — 越权检测）
-- name: d5_architecture/validate_b_track_packages.py
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
-- name: d5_architecture/validate_blind_spot_status.py
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Blind Spot Reality Check - open blinds vs actual code status
-- name: d5_architecture/validate_blueprint_code_sync.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   - D8
@@ -762,7 +1331,11 @@ scripts:
   - --jsonl
   warn_only: false
   description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
-- name: d5_architecture/validate_blueprint_implementation_docs.py
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/blueprint/validate_blueprint_implementation_docs.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -772,7 +1345,25 @@ scripts:
   - --jsonl
   warn_only: false
   description: validate that blueprint-claimed file paths actually exist on disk
-- name: d5_architecture/validate_blueprint_placement.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/blueprint/validate_blueprint_path_consistency.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  - D8
+  priority: P0
+  timeout_seconds: 60
+  args:
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: 蓝图路径一致性校验（frontmatter submodule_path vs 正文代码落位 vs 白名单）
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/blueprint/validate_blueprint_placement.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -780,7 +1371,10 @@ scripts:
   args: []
   warn_only: false
   description: 蓝图物理位置与归属链完整性校验（belongs_to + 物理目录 vs layer 一致性 + 金字塔链可达性）
-- name: d5_architecture/validate_blueprint_tag_uniqueness.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/blueprint/validate_blueprint_tag_uniqueness.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -789,7 +1383,156 @@ scripts:
   warn_only: true
   description: 'GATE-TAG-UNIQUE: same tag must not appear in >=2 approved blueprints
     (single source of truth enforcement)'
-- name: d5_architecture/validate_code_yaml_alignment.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
+  tags:
+  - Critical
+- name: d5_architecture/validators/lifecycle/validate_module_lifecycle.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
+  tags:
+  - Critical
+- name: d5_architecture/validators/lifecycle/validate_phase_transition.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 60
+  args:
+  - --from
+  - --to
+  warn_only: false
+  description: Phase 过渡双门协议合规率校验（12-dimension-audit-matrix §4.12 — Phase transition
+    gates）
+  tags:
+  - Critical
+- name: d5_architecture/validators/session/validate_session_log_index_integrity.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  - D11
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --generate
+  - --warn-only
+  warn_only: false
+  description: session-logs/index.yaml 与磁盘对账 + 自动生成盲点时间线
+  tags:
+  - Critical
+  - Security
+- name: d5_architecture/validators/session/validate_session_log_updated.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: Session Log 更新状态校验（COND-16~17 — 三段论结构 + 时效性）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_adr_frontmatter_consistency.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D3
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: KB 决策记录 frontmatter 一致性校验（KB 决策记录文档 frontmatter 字段与规范对齐）
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/validate_arch_review_gate.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 架构评审门控校验（GOV-ARCH-002 — 5类触发变更需ADR）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_architecture_contract_internal.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D3
+  - D5
+  priority: P0
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/validate_authority_registry.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: AI autonomy authority registry validator (3-tier auth / required fields
+    / duplicate detection)
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_autonomy_gate.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  - D11
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: AI 自治权限门禁校验（ABS-05~10 — 越权检测）
+  tags:
+  - Critical
+  - Security
+- name: d5_architecture/validators/validate_b_track_packages.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_blind_spot_status.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: Blind Spot Reality Check - open blinds vs actual code status
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_code_yaml_alignment.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -797,7 +1540,10 @@ scripts:
   args: []
   warn_only: false
   description: GATE-A — 实际代码目录↔architecture-model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
-- name: d5_architecture/validate_cross_references.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_cross_references.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -806,7 +1552,21 @@ scripts:
   warn_only: false
   description: GATE-XREF — 架构模型 YAML 跨引用完整性闸门（8 维检查：contract_id/invariant_id/adr_ref/owner/source_layer/events_published/孤儿合同/module_id
     注册链，根治引用漂移）
-- name: d5_architecture/validate_depends_on_format.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_dag.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 代码级 import 依赖 DAG 无循环校验（12-dimension-audit-matrix §4.3 — D5依赖方向）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_depends_on_format.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -815,7 +1575,10 @@ scripts:
   warn_only: false
   description: depends_on 条目结构化格式校验（PS-STD-001 §3.1 — {target, at, why} 结构 / 旧式 string[]
     检测 / --fix 自动转换）
-- name: d5_architecture/validate_deprecated_dependents.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_deprecated_dependents.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -823,7 +1586,10 @@ scripts:
   args: []
   warn_only: false
   description: 废弃文件活跃引用检测（LFC-001 / PS-STD-009 §5）
-- name: d5_architecture/validate_directory_structure.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_directory_structure.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -833,7 +1599,10 @@ scripts:
   - --jsonl
   warn_only: false
   description: LPC双轨目录结构合规性扫描 [src/zephyr/ + docs/ 一级目录白名单校验]
-- name: d5_architecture/validate_field_ownership.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_field_ownership.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -841,14 +1610,21 @@ scripts:
   args: []
   warn_only: false
   description: frontmatter 字段归属校验（ABS-19/20 — SSoT原则）
-- name: d5_architecture/validate_gate_yaml.py
-  dimensions: []
-  priority: P2
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_gate_yaml.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-- name: d5_architecture/validate_handoff_package.py
+  description: 门禁 YAML 配置漂移检测——YAML 与 gate_engine.py 代码交叉校验
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_handoff_package.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P2
@@ -856,7 +1632,10 @@ scripts:
   args: []
   warn_only: false
   description: HandoffPackage 完整性校验（COND-47 — 8必填字段）
-- name: d5_architecture/validate_interface_contracts.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_interface_contracts.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -864,7 +1643,22 @@ scripts:
   args: []
   warn_only: false
   description: 接口契约校验（GOV-MOD-004 IFC-001~007 — 7必填字段+semver+契约状态）
-- name: d5_architecture/validate_layer_deps.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_layer_consistency.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --warn-only
+  warn_only: false
+  description: 蓝图 layer 声明 vs 物理目录一致性校验（预防 layer 不匹配 — 三层防线 Layer 1+2）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_layer_deps.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -872,15 +1666,10 @@ scripts:
   args: []
   warn_only: false
   description: 跨层依赖违规检测（COND-30~32 — 层纪律）
-- name: d5_architecture/validate_lifecycle_refs.py
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
-- name: d5_architecture/validate_load_path_integrity.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_load_path_integrity.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -893,51 +1682,61 @@ scripts:
   warn_only: false
   description: parse AGENTS.md section 8.2 task menu, verify every referenced file
     exists on disk. Anchored to section 6.18
-- name: d5_architecture/validate_md_yaml_number_drift.py
-  dimensions:
-  - D3
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: MD/YAML 编号漂移检测（防止同一概念在 MD 和 YAML 中编号不一致）
-- name: d5_architecture/validate_module_lifecycle.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_module_schema.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
-- name: d5_architecture/validate_p0_module_contracts.py
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: P0 模块契约校验（MAD-005 — frozen契约+ADR+runtime_plane）
-- name: d5_architecture/validate_session_log_index_integrity.py
-  dimensions:
-  - D5
-  - D11
-  priority: P0
   timeout_seconds: 30
   args:
-  - --generate
-  - --warn-only
+  - flag: --check-contracts
+    type: str
+    description: 检查指定 module_id 的契约定义
+  - flag: --check-field
+    type: str
+    description: 检查指定字段名
+  - flag: --valid-values
+    type: str
+    description: 合法值列表（逗号分隔）
+  - flag: --check-adr
+    type: str
+    description: 检查指定 module_id 的 KB 决策记录关联
   warn_only: false
-  description: session-logs/index.yaml 与磁盘对账 + 自动生成盲点时间线
-- name: d5_architecture/validate_session_log_updated.py
+  description: '模块 Schema 校验（INJ-003/004/005/006）——契约定义、字段枚举、KB 决策记录关联。 对标 GOV-MOD-001
+    module-injection-rules.yaml。
+
+    '
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_nested_flat_dirs.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
-  priority: P2
+  priority: P0
+  timeout_seconds: 60
+  args:
+  - --warn-only
+  - --jsonl
+  - --max-depth
+  warn_only: false
+  description: 递归嵌套目录平铺检测（不限层级，阈值对标 Google/K8s ≤30）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_p0_module_contracts.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: Session Log 更新状态校验（COND-16~17 — 三段论结构 + 时效性）
-- name: d5_architecture/validate_ssot.py
+  description: P0 模块契约校验（MAD-005 — frozen契约+KB决策记录+runtime_plane）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_ssot.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -945,7 +1744,21 @@ scripts:
   args: []
   warn_only: false
   description: SSoT单一真源一致性校验
-- name: d5_architecture/validate_static_manifest_drift.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_ssot_construction_progress.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: G8 SSoT一致性门禁——frontmatter↔registry construction_progress三向校验
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_static_manifest_drift.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -957,7 +1770,23 @@ scripts:
   warn_only: false
   description: run all generators --check, hard-block any drift between auto-generated
     vs disk. Anchored to AGENTS.md section 6.16
-- name: d5_architecture/validate_three_way_consistency.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_test_directory_structure.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --warn-only
+  - --jsonl
+  warn_only: false
+  description: 测试目录结构校验（tests/unit/ 模块分组 + 平铺检测）
+  tags:
+  - Critical
+- name: d5_architecture/validators/validate_three_way_consistency.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P1
@@ -966,7 +1795,23 @@ scripts:
   warn_only: false
   description: 三方一致性检查（frontmatter vs 正文blockquote vs document-metadata-index.yaml
     的 status/version 对账）
-- name: d5_architecture/validate_yaml_interface_uniqueness.py
+  tags:
+  - Critical
+- name: d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D3
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: MD/YAML 编号漂移检测（防止同一概念在 MD 和 YAML 中编号不一致）
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/yaml_md/validate_yaml_interface_uniqueness.py
+  owner: governance:d5_architecture
   dimensions:
   - D3
   - D5
@@ -975,7 +1820,11 @@ scripts:
   args: []
   warn_only: false
   description: YAML 接口唯一性校验（防止同一接口在多处重复定义）
-- name: d5_architecture/validate_yaml_summaries.py
+  tags:
+  - Critical
+  - Quick
+- name: d5_architecture/validators/yaml_md/validate_yaml_summaries.py
+  owner: governance:d5_architecture
   dimensions:
   - D5
   priority: P0
@@ -984,7 +1833,31 @@ scripts:
   warn_only: false
   description: GATE-SUM - YAML Summary auto-reconciliation gate (scans all arch YAMLs,
     computes aggregation from actual data, compares with declared summary)
+  tags:
+  - Critical
+- name: d6_security/check_protected_paths.py
+  owner: governance:d6_security
+  dimensions:
+  - D6
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --path
+    type: str
+    description: 检查指定路径是否受保护
+  - flag: --session-log
+    type: str
+    description: 检查 Session Log 中的写入记录是否违反受保护路径
+  warn_only: false
+  description: '受保护路径写入检查（IRN-010）——检查目标路径是否在受保护清单中。 对标 GOV-MOD-002 ai-behavior-iron-policy.md
+    IRN-010。
+
+    '
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_anchor_file_deletion.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -992,7 +1865,11 @@ scripts:
   args: []
   warn_only: false
   description: 锚点文件删除检测（ABS-14 / GOV-DOC-007 §一 — 7个不可触碰锚点文件）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_git_dangerous.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1000,7 +1877,11 @@ scripts:
   args: []
   warn_only: false
   description: 危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_keywords_in_logs.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1008,7 +1889,11 @@ scripts:
   args: []
   warn_only: false
   description: 日志输出敏感关键词检测（ABS-31 — 禁止 print/log 密钥密码）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_permanent_file_deletion.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1016,7 +1901,11 @@ scripts:
   args: []
   warn_only: false
   description: 永久文件删除检测（PS-STD-012 V1 / PS-STD-009 §7 — ttl:permanent禁止删除）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_secrets.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1024,7 +1913,11 @@ scripts:
   args: []
   warn_only: false
   description: 密钥/Token/凭证硬编码检测（ABS-29/32 — P0安全红线）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_shell_dangerous.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1032,7 +1925,11 @@ scripts:
   args: []
   warn_only: false
   description: 危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_shell_true.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1040,7 +1937,11 @@ scripts:
   args: []
   warn_only: false
   description: shell=True / os.system() 调用检测（ABS-43 — P0安全红线）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_threading_lock.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P0
@@ -1048,7 +1949,11 @@ scripts:
   args: []
   warn_only: false
   description: threading.Lock 导入检测（ABS-40 — 全局异步架构违规）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/detect_vague_terms.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P2
@@ -1056,7 +1961,39 @@ scripts:
   args: []
   warn_only: false
   description: 模糊术语检测（ABS-49 — 禁止规则文件使用「等等」「类似」等模糊词）
+  tags:
+  - Critical
+  - Security
+- name: d6_security/scan_runtime_log_secrets.py
+  owner: governance:d6_security
+  dimensions:
+  - D6
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --warn-only
+  warn_only: false
+  description: R2 日志不写 secret 运行时扫描（architecture-principles §1bis R2 — P0安全红线）
+  tags:
+  - Critical
+  - Security
+- name: d6_security/scan_secret_leak.py
+  owner: governance:d6_security
+  dimensions:
+  - D6
+  priority: P1
+  timeout_seconds: 120
+  args:
+  - --full
+  - --baseline
+  - --output
+  warn_only: false
+  description: 全库 secret 泄漏周扫描 + 历史快照对比（06-SEC §6.3 L3-Audit — P1安全深度扫描）
+  tags:
+  - Critical
+  - Security
 - name: d6_security/validate_gate_discipline.py
+  owner: governance:d6_security
   dimensions:
   - D6
   priority: P2
@@ -1064,7 +2001,11 @@ scripts:
   args: []
   warn_only: false
   description: 门禁纪律校验（COND-33~37 — enable_gate=False+Pydantic静默吞错）
+  tags:
+  - Critical
+  - Security
 - name: d7_code/check_ai_capability_boundary.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1075,7 +2016,79 @@ scripts:
     路径， 变更路径落入 IMMUTABLE scope 则判违规。
 
     '
+  tags:
+  - Critical
+- name: d7_code/check_encoding.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --file
+    type: str
+    description: 检查指定文件的编码合规性
+  - flag: --dir
+    type: str
+    description: 检查指定目录下所有文件的编码合规性
+  warn_only: false
+  description: '编码合规校验（INJ-007）——UTF-8 编码、无 CRLF、无 autoGuessEncoding。 对标 GOV-MOD-001
+    module-injection-rules.yaml。
+
+    '
+  tags:
+  - Critical
+- name: d7_code/check_idempotency.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P2
+  timeout_seconds: 30
+  args:
+  - flag: --module
+    type: str
+    description: 检查指定模块路径的幂等性
+  - flag: --scan-all
+    action: store_true
+    description: 扫描所有 L06 执行层代码
+  warn_only: true
+  description: '幂等性缺失检查（HC-9）——L06 执行层代码缺少幂等 Key 检测。 对标 GOV-AI-009 ai-hallucination-detection-rules.md。
+
+    '
+  tags:
+  - Critical
+- name: d7_code/check_pit_compliance.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --module
+    type: str
+    description: 检查指定模块路径的 PIT 合规性
+  - flag: --scan-all
+    action: store_true
+    description: 扫描所有回测/因子代码
+  warn_only: false
+  description: 'PIT 合规检查（HC-10）——回测代码访问未来数据检测。 对标 GOV-AI-009 ai-hallucination-detection-rules.md。
+
+    '
+  tags:
+  - Critical
+- name: d7_code/detect_absolute_path_hardcoding.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 绝对路径硬编码检测 — 扫描governance/Python 中 D:\\ZephyrAlpha 硬编码
+  tags:
+  - Critical
 - name: d7_code/detect_direct_llm_calls.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1083,7 +2096,10 @@ scripts:
   args: []
   warn_only: false
   description: 直接 LLM 调用检测（COND-30 — L02-L07禁止直接import LLM SDK）
+  tags:
+  - Critical
 - name: d7_code/detect_missing_encoding.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P0
@@ -1091,7 +2107,10 @@ scripts:
   args: []
   warn_only: false
   description: open() 缺 encoding 检测（ABS-24 — Python写文件必须指定encoding='utf-8'）
+  tags:
+  - Critical
 - name: d7_code/detect_pydantic_any_fields.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1099,7 +2118,10 @@ scripts:
   args: []
   warn_only: false
   description: Pydantic Any 类型字段检测（REC-11 — 禁止Any类型字段）
+  tags:
+  - Critical
 - name: d7_code/detect_silent_degradation.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1107,7 +2129,10 @@ scripts:
   args: []
   warn_only: false
   description: 静默降级检测（COND-45 — 降级路径必须有日志）
+  tags:
+  - Critical
 - name: d7_code/validate_contracts_purity.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1115,7 +2140,10 @@ scripts:
   args: []
   warn_only: false
   description: 契约纯度校验（COND-32 — contracts/仅允许数据结构定义）
+  tags:
+  - Critical
 - name: d7_code/validate_docstring_coverage.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1123,7 +2151,10 @@ scripts:
   args: []
   warn_only: false
   description: Docstring 覆盖率校验——模块/类/公共函数必须有 docstring
+  tags:
+  - Critical
 - name: d7_code/validate_fle_action_metadata.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1131,7 +2162,10 @@ scripts:
   args: []
   warn_only: false
   description: FLE Action 元数据校验（COND-44 — effective_from+ttl必填）
+  tags:
+  - Critical
 - name: d7_code/validate_fle_imports.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1139,7 +2173,10 @@ scripts:
   args: []
   warn_only: false
   description: FLE import 接口合规检测（COND-43 — import纪律）
+  tags:
+  - Critical
 - name: d7_code/validate_import_style.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1147,7 +2184,10 @@ scripts:
   args: []
   warn_only: false
   description: 导入风格一致性校验——相对导入 vs 绝对导入，项目主风格为绝对导入
+  tags:
+  - Critical
 - name: d7_code/validate_init_all.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1155,7 +2195,10 @@ scripts:
   args: []
   warn_only: false
   description: __init__.py __all__ 完整性校验——有 import 的包必须定义 __all__
+  tags:
+  - Critical
 - name: d7_code/validate_kb_write_provenance.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1163,7 +2206,24 @@ scripts:
   args: []
   warn_only: false
   description: 知识库写入 provenance 校验（COND-46 — kb.write()必须传provenance）
+  tags:
+  - Critical
+- name: d7_code/validate_python_syntax.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'Python 语法完整性校验 —— 扫描 src/zephyr/ + tests/ 全部 .py 文件， 使用 py_compile
+    编译验证。预防连字符损坏、批量替换副作用等语法破坏。
+
+    '
+  tags:
+  - Critical
 - name: d7_code/validate_test_assertion_depth.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1171,7 +2231,10 @@ scripts:
   args: []
   warn_only: false
   description: 测试断言深度校验——raises 有没有 match、有没有 assert True/False、try/except是否静默吞异常
+  tags:
+  - Critical
 - name: d7_code/validate_test_coverage.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1179,7 +2242,10 @@ scripts:
   args: []
   warn_only: false
   description: 测试覆盖率校验——每个 src/zephyr/ 下 .py 文件必须有对应 test_*.py
+  tags:
+  - Critical
 - name: d7_code/validate_type_annotation_coverage.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P2
@@ -1187,7 +2253,10 @@ scripts:
   args: []
   warn_only: false
   description: 类型注解覆盖率校验——公共函数参数和返回值必须有类型注解
+  tags:
+  - Critical
 - name: d7_code/validate_unused_imports.py
+  owner: governance:d7_code
   dimensions:
   - D7
   priority: P1
@@ -1195,7 +2264,10 @@ scripts:
   args: []
   warn_only: false
   description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
+  tags:
+  - Critical
 - name: d8_doc_sync/detect_ai_products_in_docs.py
+  owner: governance:d8_doc_sync
   dimensions:
   - D8
   priority: P2
@@ -1203,7 +2275,10 @@ scripts:
   args: []
   warn_only: false
   description: AI 产物位置检测（GOV-DOC-006 §六 — created_by:agent不应在docs/主目录）
+  tags:
+  - Quick
 - name: d8_doc_sync/detect_dated_snapshots.py
+  owner: governance:d8_doc_sync
   dimensions:
   - D8
   priority: P2
@@ -1211,7 +2286,10 @@ scripts:
   args: []
   warn_only: false
   description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
+  tags:
+  - Quick
 - name: d8_doc_sync/validate_document_lifecycle.py
+  owner: governance:d8_doc_sync
   dimensions:
   - D8
   priority: P1
@@ -1219,7 +2297,10 @@ scripts:
   args: []
   warn_only: false
   description: 文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六 — superseded_by+双向链接+AI产物）
+  tags:
+  - Quick
 - name: d8_doc_sync/validate_document_ttl.py
+  owner: governance:d8_doc_sync
   dimensions:
   - D8
   priority: P1
@@ -1227,7 +2308,10 @@ scripts:
   args: []
   warn_only: false
   description: 文档 TTL 过期检测（GOV-DOC-006 §一/§三 — TTL合法值+过期文件+LATEST命名）
+  tags:
+  - Quick
 - name: d9_knowledge/detect_duplicated_normative_language.py
+  owner: governance:d9_knowledge
   dimensions:
   - D9
   priority: P2
@@ -1235,7 +2319,11 @@ scripts:
   args: []
   warn_only: false
   description: 规范用语重复定义检测（DOC-007 — 引用不复制）
+  tags:
+  - AI-Generated
+  - Periodic
 - name: d9_knowledge/detect_orphan_documents.py
+  owner: governance:d9_knowledge
   dimensions:
   - D9
   priority: P1
@@ -1243,7 +2331,21 @@ scripts:
   args: []
   warn_only: false
   description: 孤立文档检测（DOC-008#4 — 无入边引用的文件）
+  tags:
+  - AI-Generated
+  - Periodic
+- name: dependency_graph.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: env_check.py
+  owner: governance
   dimensions:
   - D1
   priority: P0
@@ -1252,7 +2354,31 @@ scripts:
   - --install
   warn_only: false
   description: 环境就绪检查门禁（Python版本 + requirements.txt三方依赖验证 + 自动安装）
+  tags:
+  - Critical
+  - Quick
+- name: fix_orphan_exports.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: g9_compliance_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: gate_engine_selfcheck.py
+  owner: governance
   dimensions:
   - D1
   - D5
@@ -1264,7 +2390,21 @@ scripts:
     可用性、CheckType 覆盖率及熔断器验证。
 
     '
+  tags:
+  - Critical
+  - Quick
+- name: generate_asset_index.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generate_nav_table.py
+  owner: governance
   dimensions:
   - D1
   priority: P2
@@ -1275,7 +2415,11 @@ scripts:
     §5.2 七阶段导航表。对标 §6.16 静态清单自动生成铁律。
 
     '
+  tags:
+  - Disruptive
+  - Quick
 - name: generators/fix_module_manifest_layout.py
+  owner: governance:generators
   dimensions:
   - D1
   priority: P2
@@ -1283,7 +2427,21 @@ scripts:
   args: []
   warn_only: false
   description: 修复治理脚本模块 docstring 与 __manifest__ / from __future__ 顺序
+  tags:
+  - Disruptive
+  - Quick
+- name: generators/generate_contracts.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_gate_registry.py
+  owner: governance:generators
   dimensions:
   - D1
   - D5
@@ -1300,7 +2458,12 @@ scripts:
   description: '从 .pre-commit-config.yaml 自动派生 gate-registry.yaml。 对标 §6.16 静态清单自动生成铁律。
 
     '
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
 - name: generators/generate_registry_master_index.py
+  owner: governance:generators
   dimensions:
   - D1
   - D5
@@ -1318,7 +2481,12 @@ scripts:
     对标 §6.16 静态清单自动生成铁律。
 
     '
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
 - name: generators/generate_script_manifest.py
+  owner: governance:generators
   dimensions:
   - D1
   - D5
@@ -1336,7 +2504,12 @@ scripts:
     对标 §6.16 静态清单自动生成铁律。
 
     '
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
 - name: generators/inject_manifests.py
+  owner: governance:generators
   dimensions:
   - D1
   - D5
@@ -1351,7 +2524,66 @@ scripts:
     §6.16 静态清单自动生成铁律。一次性迁移工具。
 
     '
+  tags:
+  - Critical
+  - Quick
+- name: generators/refresh_master_entries.py
+  owner: governance:generators
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --check
+    type: bool
+    description: 仅检测漂移（不写盘）
+  - flag: --fix
+    type: bool
+    description: 自动刷新 entries（写盘）
+  warn_only: false
+  description: '读取 registry-master-index.yaml，对各行 entries 字段与实际文件条目数比对，漂移时刷新。
+
+    '
+  tags:
+  - Critical
+  - Quick
+- name: generators/sync_audit_protocol_numbers.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: import_task_cards.py
+  owner: governance
+  dimensions:
+  - D5
+  - D3
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: <source_dir>
+    type: str
+    description: 任务卡 .md 文件所在目录
+  - flag: --dry-run
+    type: flag
+    description: 仅解析校验，不写入数据库
+  - flag: --force
+    type: flag
+    description: 强制覆盖已存在任务
+  warn_only: false
+  description: 批量导入 .md 任务卡到 SQLite 任务数据库（data/zalpha_metadata.db）。支持 --dry-run（预览）和
+    --force（强制覆盖）。默认增量模式：跳过数据库中已存在的任务。基于 ADR-0030（SQLite 元数据层）+ ADR-0040（Pydantic
+    V2 契约）。
+  tags:
+  - Critical
+  - Quick
 - name: meta/arbitrate_findings.py
+  owner: governance:meta
   dimensions:
   - D1
   priority: P2
@@ -1359,21 +2591,104 @@ scripts:
   args: []
   warn_only: false
   description: arbitrate_findings.py — Finding 仲裁器（跨脚本冲突解决引擎）
+  tags:
+  - Quick
+- name: meta/backup_runtime_state.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  priority: P1
+  timeout_seconds: 60
+  args: []
+  warn_only: true
+  description: 运行时状态备份 — SQLite导出JSON+YAML快照→commit（灾备 §33）
+  tags:
+  - Quick
+- name: meta/compute_sla_metrics.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  - D10
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: SLA/SLO 指标计算引擎（蓝图 §8.4 — 6 项指标从 sla_metrics.jsonl 计算）
+  tags:
+  - Periodic
+  - Quick
+- name: meta/create_task_from_finding.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: Finding→任务卡自动创建引擎（CRITICAL→P0/HIGH→P1 自动 / MEDIUM→建议）
+  tags:
+  - Critical
+  - Quick
+- name: meta/detect_config_deviation.py
+  owner: governance:meta
+  dimensions:
+  - D3
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 配置文件与蓝图规范偏差检测 — thresholds/manifest 一致性
+  tags:
+  - Critical
+  - Quick
+- name: meta/detect_fix_oscillation.py
+  owner: governance:meta
+  dimensions:
+  - D7
+  - D10
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 自修复振荡检测 — 同一文件同一维度连续 ≥3 次 Finding → OSCILLATION
+  tags:
+  - Critical
+  - Periodic
 - name: meta/detect_hallucinated_packages.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: meta/detect_script_divergence.py
+  owner: governance:meta
+  dimensions:
+  - D5
+  - D8
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 脚本实现与蓝图规范分歧检测 — 调度策略偏移/维度盲区/timeout偏差
+  tags:
+  - Critical
+  - Quick
 - name: meta/detect_script_rot.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: meta/finding_state_machine.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1385,7 +2700,11 @@ scripts:
     定时器、状态转换审计日志、跨 run 持久化。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/manage_baseline.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1397,7 +2716,11 @@ scripts:
     / PERSISTENT。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/manage_error_budget.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1409,14 +2732,20 @@ scripts:
     的消耗/监控/冻结， Burn Rate 超过阈值 → Alert，Error Budget 耗尽 → Feature Freeze。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/manage_finding_timeseries.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: meta/manage_kill_switch.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1427,21 +2756,29 @@ scripts:
   description: 'Kill Switch 管理工具——提供 CLI 命令禁用/启用脚本、查看状态、设置全局冻结。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/manage_script_ab_test.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: meta/manage_script_retirement.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: meta/manage_shadow_mode.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1453,14 +2790,30 @@ scripts:
     生命周期， Phase1 期间假阳性率超阈值则自动回退。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/phase_e_context_check.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: meta/score_script_effectiveness.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/trace_finding_lifecycle.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1471,21 +2824,66 @@ scripts:
   description: 'Finding C1→C5 全链路追踪引擎——追踪每个 Finding 从 C1 扫描到 C5 知识沉淀的完整生命周期， 包括链路健康总览和瓶颈检测。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/track_script_costs.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: meta/validate_automation_boundary.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/validate_cross_model_consensus.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: meta/validate_dependency_chain.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 依赖链拓扑顺序验证（蓝图 §5.3 — 三条链 A/B/C 定义一致性检查）
+  tags:
+  - Critical
+  - Quick
+- name: meta/validate_emergency_bypass_log.py
+  owner: governance:meta
+  dimensions:
+  - D11
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: '验证应急绕过（--no-verify）的合规性——检查 Session Log 中的绕过记录 是否有合法原因、是否在 72h 内补回审计、绕过频率是否超标。
+
+    '
+  tags:
+  - Critical
+  - Security
 - name: meta/validate_end_to_end_benchmark.py
+  owner: governance:meta
   dimensions:
   - D1
   - D7
@@ -1502,7 +2900,11 @@ scripts:
     → 脚本系统退化告警，可发现脚本静默失效。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/validate_environment_health.py
+  owner: governance:meta
   dimensions:
   - D1
   priority: P1
@@ -1513,7 +2915,10 @@ scripts:
     启动时和 CI 中运行。
 
     '
+  tags:
+  - Quick
 - name: meta/validate_false_negatives.py
+  owner: governance:meta
   dimensions:
   - D1
   - D7
@@ -1525,7 +2930,11 @@ scripts:
     → Error Budget 消耗。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/validate_gate_engine_external.py
+  owner: governance:meta
   dimensions:
   - D6
   - D11
@@ -1537,7 +2946,34 @@ scripts:
     Gate Engine 未被篡改。
 
     '
+  tags:
+  - Critical
+  - Security
+- name: meta/validate_mutation_testing.py
+  owner: governance:meta
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: 变异测试引擎 — 注入已知缺陷→验证检测能力（false negative detection）
+  tags:
+  - Critical
+- name: meta/validate_rule_freshness.py
+  owner: governance:meta
+  dimensions:
+  - D3
+  - D8
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: true
+  description: AI Session 注入文件新鲜度检查 — valid_from > max_age_days → 标记 STALE
+  tags:
+  - Quick
 - name: meta/validate_rules_file_backdoor.py
+  owner: governance:meta
   dimensions:
   - D1
   - D6
@@ -1548,21 +2984,40 @@ scripts:
   description: 'Rules File Backdoor 检测器——检测关键规则文件中不可见控制字符（零宽符、双向文本标记等）， 防御 AI 规则文件隐形投毒攻击。
 
     '
+  tags:
+  - Critical
+  - Quick
+  - Security
 - name: meta/validate_rules_integrity.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: meta/validate_script_onboarding.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/validate_script_provenance.py
+  owner: governance:meta
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: meta/validate_script_system_health.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1577,7 +3032,11 @@ scripts:
     run_all.py 启动时自动运行。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/validate_threshold_changes.py
+  owner: governance:meta
   dimensions:
   - D1
   - D5
@@ -1589,7 +3048,11 @@ scripts:
     钩子自动触发。
 
     '
+  tags:
+  - Critical
+  - Quick
 - name: meta/validate_trust_tier.py
+  owner: governance:meta
   dimensions:
   - D1
   - D11
@@ -1601,7 +3064,73 @@ scripts:
   - --jsonl
   warn_only: false
   description: Trust-Tier 门禁（变更文件路径与策略 YAML 对账）
+  tags:
+  - Quick
+  - Security
+- name: pre_op_check.py
+  owner: governance
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --check-write
+  - --check-delete
+  - --check-create
+  - --check-all
+  - --session-id
+  - --json
+  warn_only: false
+  description: 'AI操作前准入控制器——在任何 Write/SearchReplace/DeleteFile 操作前执行机械门禁检查。 对标 K8s
+    Admission Webhook：不放行就不创建。
+
+    '
+  tags:
+  - Critical
+  - Quick
+- name: pre_write_gate.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: rebuild_audit_index.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: ri_boundary_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: ri_build_completion_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: run_all.py
+  owner: governance
   dimensions:
   - D1
   priority: P2
@@ -1611,7 +3140,10 @@ scripts:
   description: '治理脚本系统统一入口——按维度/文件过滤执行全量治理脚本； CT-SCRIPT-GATE-001 退出码语义（0/1/2/3）。
 
     '
+  tags:
+  - Quick
 - name: run_incremental.py
+  owner: governance
   dimensions:
   - D1
   priority: P2
@@ -1619,7 +3151,25 @@ scripts:
   args: []
   warn_only: false
   description: 增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
+  tags:
+  - Quick
+- name: score_architecture.py
+  owner: governance
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 60
+  args:
+  - --quarterly
+  - --dimension
+  - --compare
+  - --dashboard
+  warn_only: false
+  description: 12 维架构评分自动化（12-dimension-audit-matrix §6.1 — D1~D12 加权评分）
+  tags:
+  - Critical
 - name: session_simulator.py
+  owner: governance
   dimensions:
   - D1
   priority: P2
@@ -1629,7 +3179,20 @@ scripts:
   - --jsonl
   warn_only: false
   description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
+  tags:
+  - Quick
+- name: session_startup_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: status.py
+  owner: governance
   dimensions:
   - D1
   priority: P2
@@ -1637,17 +3200,219 @@ scripts:
   args: []
   warn_only: false
   description: status.py — 审计系统状态仪表盘
+  tags:
+  - Quick
+- name: sync_blueprint_status.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: sync_progress.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: sync_rule_registry.py
+  owner: governance
+  dimensions:
+  - D3
+  - D8
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: 'TRAE 规则登记同步校验 —— 扫描 .trae/rules/project_rules.md 中所有 RULE-* 条目， 检查是否已在
+    rule-registry.md 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 =
+    DRIFT（缺失/孤儿登记）。
+
+    '
+  tags:
+  - Quick
 - name: task_self_check.py
+  owner: governance
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: task_summary.py
+  owner: governance
   dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+- name: test_lock_scenarios.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: update_progress.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: validate_tool_contracts_consistency.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: verify_audit_integrity.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: verify_downstream_anchors.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: verify_file_paths.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_blindspot_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_build_completion_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_cron_monitor.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_cross_file_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_health_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_migrate.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_migration_dry_run.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_phase_rollback.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_snapshot_backup.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: vms_version_sync_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true

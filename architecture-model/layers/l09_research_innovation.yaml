@@ -9,17 +9,17 @@ partition:
 modules:
 - id: l09-layer-ssot
   module_id: MOD-L09-001
-  name: Research & Innovation（层登记占位）
+  name: Research & Innovation（层登记占位�?
   submodule_path: src/zephyr/l09_research_innovation/
   status: implemented
   priority: P1
   runtime_plane: cold
-  description: 研究创新层。BacktestEngineBase OCP 扩展点 + BacktestResult/FactorDiscovery 数据类。
+  description: 研究创新层。BacktestEngineBase OCP 扩展�?+ BacktestResult/FactorDiscovery 数据类�?
   files:
   - backtest_base.py
   - default_backtest_engine.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 summary:
   total: 1
   by_status:

@@ -32,7 +32,7 @@ ai_autonomy: human_gated
 本策略定义 ZephyrAlpha 系统中架构文档的版本化规则。适用于：
 
 - 架构视图文档
-- 架构决策记录（ADR）
+- 架构决策记录（KB 决策记录）
 - 系统设计文档
 
 ---

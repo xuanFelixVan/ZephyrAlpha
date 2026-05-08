@@ -1,5 +1,5 @@
 module_id: GOV-MOD-005
-title: 模块注入检查规则
+title: 模块注入检查规�?
 doc_type: policy
 status: draft
 version: "0.7.2"
@@ -12,7 +12,7 @@ date: "2026-05-01"
 valid_from: "2026-05-01"
 schema_version: "1.0.0"
 ttl: permanent
-summary: "定义将模块注入 architecture-model/ 前必须通过的 8 条检查规则，包含可执行的验证命令与失败动作。含完整注入流程编排（§context.injection_flow）。"
+summary: "定义将模块注�?architecture-model/ 前必须通过�?8 条检查规则，包含可执行的验证命令与失败动作。含完整注入流程编排（§context.injection_flow）�?
 tags: [module, governance, injection, yaml, structured]
 rule_form: declarative
 scope: global
@@ -20,45 +20,45 @@ stability: evolving
 verifiability: automated
 depends_on:
   - {target: PS-STD-001, at: "§2.5", why: "frontmatter字段唯一真源——policy文件的doc_type/rule_form/verifiability约束"}
-  - {target: PS-STD-003, at: "§3", why: "行为边界标准ABS——注入拒绝动作的宪法级边界基准"}
+  - {target: PS-STD-003, at: "§3", why: "行为边界标准ABS——注入拒绝动作的宪法级边界基�?}
 ai_autonomy: human_gated
 
 context:
-  purpose: "定义将模块注入 architecture-model/ 前必须通过的检查规则。每条规则包含可执行的验证命令和明确的失败动作。"
-  scope: "所有向 architecture-model/ 注入模块的操作（新增 + 变更）。"
-  background: "老树中模块写入无前置检查，导致 ID 重复、依赖错误、接口幻觉。"
+  purpose: "定义将模块注�?architecture-model/ 前必须通过的检查规则。每条规则包含可执行的验证命令和明确的失败动作�?
+  scope: "所有向 architecture-model/ 注入模块的操作（新增 + 变更）�?
+  background: "老树中模块写入无前置检查，导致 ID 重复、依赖错误、接口幻觉�?
   relation_to_admission: >
     本规范的检查规则与 GOV-MOD-001 的四级准入筛选（MOD-P1~P4）互补：
-    INJ-001~008 是技术性检查（可自动化验证），MOD-P1~P4 是业务性筛选（需人工/AI判断）。
-    注入检查在准入筛选通过之后执行。INJ 检查全部通过 = 最终注入完成。
+    INJ-001~008 是技术性检查（可自动化验证），MOD-P1~P4 是业务性筛选（需人工/AI判断）�?
+    注入检查在准入筛选通过之后执行。INJ 检查全部通过 = 最终注入完成�?
   injection_flow: >
-    完整的模块注入端到端流程（覆盖 GOV-MOD-001 + GOV-MOD-005）：
-    1. 提交注入请求（module_id + 文件路径）
-    2. GOV-MOD-001 §7 准入否决条件：快速检查 INJ-001（ID重复）/INJ-002（依赖不存在）/INJ-004（状态非法）/INJ-005（无运行平面）→ 任一命中即立即否决
-    3. GOV-MOD-001 §5 准入四级筛选：MOD-P1（ID合法）→ MOD-P2（文档完整）→ MOD-P3（依赖合规含跨层方向）→ MOD-P4（接口可定义性）
+    完整的模块注入端到端流程（覆�?GOV-MOD-001 + GOV-MOD-005）：
+    1. 提交注入请求（module_id + 文件路径�?
+    2. GOV-MOD-001 §7 准入否决条件：快速检�?INJ-001（ID重复�?INJ-002（依赖不存在�?INJ-004（状态非法）/INJ-005（无运行平面）→ 任一命中即立即否�?
+    3. GOV-MOD-001 §5 准入四级筛选：MOD-P1（ID合法）→ MOD-P2（文档完整）�?MOD-P3（依赖合规含跨层方向）→ MOD-P4（接口可定义性）
     4. 四级筛选通过 = 准入临时通过（GOV-MOD-001 §8 准入记录·临届状态声明）
-    5. 本规范 execution.sequence 顺序执行 INJ-001~008 全部检查
-    6. INJ 全部通过 → 最终注入完成 → 更新 module-id-registry.json（admission_records + status）
-    7. INJ 任一失败 → 准入回退 → 模块回到"未准入"状态，修正后重新提交至步骤 1
+    5. 本规�?execution.sequence 顺序执行 INJ-001~008 全部检�?
+    6. INJ 全部通过 �?最终注入完�?�?更新 module-id-registry.json（admission_records + status�?
+    7. INJ 任一失败 �?准入回退 �?模块回到"未准�?状态，修正后重新提交至步骤 1
   module_path_resolution: >
-    {module_path} 变量解析规则：从 module_id 在 module-id-registry.json 中查找对应条目的 path 字段。
-    示例：module_id="GOV-MOD-005" → path="docs/01_policies_and_standards/governance/module/module-injection-rules.yaml"
+    {module_path} 变量解析规则：从 module_id �?module-id-registry.json 中查找对应条目的 path 字段�?
+    示例：module_id="GOV-MOD-005" �?path="docs/01_policies_and_standards/governance/module/module-injection-rules.yaml"
   path_convention: >
-    所有 check_command 使用相对路径 scripts/...（基于项目根）。
-    脚本路径变更时需同步更新本文件。建议后续引入 {project_root} 变量化配置。
+    所�?check_command 使用相对路径 scripts/...（基于项目根）�?
+    脚本路径变更时需同步更新本文件。建议后续引�?{project_root} 变量化配置�?
 
 ssoT_declaration:
-  authority: "本文档是 ZephyrAlpha 系统中模块注入技术检查规则及完整注入流程编排的唯一真源（SSoT）。"
+  authority: "本文档是 ZephyrAlpha 系统中模块注入技术检查规则及完整注入流程编排的唯一真源（SSoT）�?
   defines:
     - "8 条注入检查规则（INJ-001~008）——含可执行验证命令、失败动作、优先级、作用域"
-    - "完整注入流程编排（injection_flow）——7 步端到端流程"
-    - "模块路径解析规则（module_path_resolution）"
-    - "路径约定（path_convention）"
-    - "豁免条件（exemptions）"
+    - "完整注入流程编排（injection_flow）—�? 步端到端流程"
+    - "模块路径解析规则（module_path_resolution�?
+    - "路径约定（path_convention�?
+    - "豁免条件（exemptions�?
   complements:
-    - {file: GOV-MOD-001, role: "模块准入门控——注入检查在准入四级筛选通过后执行"}
-    - {file: GOV-MOD-002, role: "AI行为铁律——INJ-007 从 IRN-001 派生为注入级检查"}
-  ssoT_rule: "若其他文件中出现与本规范冲突的注入检查规则或流程，以本文档为准。"
+    - {file: GOV-MOD-001, role: "模块准入门控——注入检查在准入四级筛选通过后执�?}
+    - {file: GOV-MOD-002, role: "AI行为铁律——INJ-007 �?IRN-001 派生为注入级检�?}
+  ssoT_rule: "若其他文件中出现与本规范冲突的注入检查规则或流程，以本文档为准�?
 
 execution:
   order: sequential
@@ -67,29 +67,29 @@ execution:
 
 rules:
   - id: INJ-001
-    name: ID唯一性
-    description: "模块 ID 必须在 module-id-registry.json 中唯一注册。"
+    name: ID唯一�?
+    description: "模块 ID 必须�?module-id-registry.json 中唯一注册�?
     check_command: "python scripts/governance/assign_module_id.py --check {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，要求重新分配 ID"
+    failure_action: "拒绝注入，要求重新分�?ID"
     priority: P0
     scope: all
     implementation_status: spec_placeholder
 
   - id: INJ-002
-    name: 依赖可解析
-    description: "depends_on 中的所有依赖必须存在且可以被解析到具体文件（验证依赖关系的完整性）。"
+    name: 依赖可解�?
+    description: "depends_on 中的所有依赖必须存在且可以被解析到具体文件（验证依赖关系的完整性）�?
     check_command: "python scripts/governance/check_dependency_direction.py --module {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，必须修正 depends_on——不存在或无法解析的依赖视为非法"
+    failure_action: "拒绝注入，必须修�?depends_on——不存在或无法解析的依赖视为非法"
     priority: P0
     scope: all
     implementation_status: spec_placeholder
-    design_note: "check_command 当前复用 check_dependency_direction.py 的方向检查逻辑——语义上需要独立的依赖存在性检查脚本 check_dependency_existence.py（不同于方向检查）以实现正交关注点分离。在 dedicated script 完成前，方向检查脚本的 failure 同时覆盖方向错误和依赖不存在两种场景。"
+    design_note: "check_command 当前复用 check_dependency_direction.py 的方向检查逻辑——语义上需要独立的依赖存在性检查脚�?check_dependency_existence.py（不同于方向检查）以实现正交关注点分离。在 dedicated script 完成前，方向检查脚本的 failure 同时覆盖方向错误和依赖不存在两种场景�?
 
   - id: INJ-003
-    name: 契约已定义
-    description: "P0 模块的接口契约必须在 cross-layer-contracts.yaml 中已定义且状态为 frozen。"
+    name: 契约已定�?
+    description: "P0 模块的接口契约必须在 cross-layer-contracts.yaml 中已定义且状态为 frozen�?
     check_command: "python scripts/governance/validate_module_schema.py --check-contracts {module_id}"
     on_failure: REJECT
     failure_action: "拒绝注入，要求先定义接口契约"
@@ -98,40 +98,40 @@ rules:
     implementation_status: spec_placeholder
 
   - id: INJ-004
-    name: 生命周期状态合法
-    description: "模块的 status 字段必须是合法值之一。"
+    name: 生命周期状态合�?
+    description: "模块�?status 字段必须是合法值之一�?
     valid_values: [planned, in_design, in_dev, testing, active, suspended, deprecated, archived]
     check_command: "python scripts/governance/validate_module_schema.py --check-field status --valid-values planned,in_design,in_dev,testing,active,suspended,deprecated,archived {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，要求修正 status 字段"
+    failure_action: "拒绝注入，要求修�?status 字段"
     priority: P0
     scope: all
     implementation_status: spec_placeholder
 
   - id: INJ-005
-    name: 运行平面已分配
-    description: "模块必须有 runtime_plane 归属。"
+    name: 运行平面已分�?
+    description: "模块必须�?runtime_plane 归属�?
     valid_values: [hot, warm, cold]
     check_command: "python scripts/governance/validate_module_schema.py --check-field runtime_plane --valid-values hot,warm,cold {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，要求分配运行平面"
+    failure_action: "拒绝注入，要求分配运行平�?
     priority: P0
     scope: all
     implementation_status: spec_placeholder
 
   - id: INJ-006
-    name: ADR已关联
-    description: "P0 模块必须关联至少一个 ADR。"
+    name: ADR已关�?
+    description: "P0 模块必须关联至少一�?ADR�?
     check_command: "python scripts/governance/validate_module_schema.py --check-adr {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，要求先创建或关联 ADR"
+    failure_action: "拒绝注入，要求先创建或关�?ADR"
     priority: P0
     scope: P0
     implementation_status: spec_placeholder
 
   - id: INJ-007
     name: 编码合规
-    description: "模块文件必须是 UTF-8 编码（无 BOM）。从 GOV-MOD-002 IRN-001 派生为注入级技术检查。"
+    description: "模块文件必须�?UTF-8 编码（无 BOM）。从 GOV-MOD-002 IRN-001 派生为注入级技术检查�?
     check_command: "python scripts/hooks/check_encoding.py --file {module_path}"
     on_failure: REJECT
     failure_action: "拒绝注入，要求以 UTF-8 编码重新保存文件"
@@ -141,44 +141,44 @@ rules:
 
   - id: INJ-008
     name: 依赖方向合法
-    description: "depends_on 中的依赖方向必须符合 GOV-ARCH-001 的跨层规则（cold 层禁止依赖 hot 层）。"
+    description: "depends_on 中的依赖方向必须符合 GOV-ARCH-001 的跨层规则（cold 层禁止依�?hot 层）�?
     check_command: "python scripts/governance/check_dependency_direction.py --check-cross-layer {module_id}"
     on_failure: REJECT
-    failure_action: "拒绝注入，要求调整依赖关系或创建 ADR 记录豁免理由"
+    failure_action: "拒绝注入，要求调整依赖关系或创建 KB 决策记录记录豁免理由"
     priority: P0
     scope: all
     implementation_status: spec_placeholder
 
 controlled_enums:
-  ssoT: "本文档是以下枚举值的唯一真源——不可在其他文件中重新定义"
+  ssoT: "本文档是以下枚举值的唯一真源——不可在其他文件中重新定�?
   values:
     - enum: status
       valid_values: [planned, in_design, in_dev, testing, active, suspended, deprecated, archived]
       defined_in_rule: INJ-004
       source: GOV-MOD-003
-      note: "本文档消费 GOV-MOD-003 §3 枚举表的定义——若 GOV-MOD-003 新增阶段，本文档的 INJ-004 valid_values 必须同步更新"
+      note: "本文档消�?GOV-MOD-003 §3 枚举表的定义——若 GOV-MOD-003 新增阶段，本文档�?INJ-004 valid_values 必须同步更新"
     - enum: runtime_plane
       valid_values: [hot, warm, cold]
       defined_in_rule: INJ-005
-      source: "本文档（SSoT）"
+      source: "本文档（SSoT�?
       note: "hot=每次 Session 加载（AGENTS.md 级）；warm=按需加载（领域规则）；cold=仅搜索时加载"
 
 reference_specification:
   normative:
-    - {target: PS-STD-001, at: "§2.5", role: "frontmatter字段合法性定义——本文件所有frontmatter字段格式遵循其约束"}
-    - {target: PS-STD-003, at: "§3", role: "行为边界标准ABS——REJECT动作的宪法级边界基准——被ABS明确禁止的行为，INJ规则不能以'本规范另有规定'为由突破"}
+    - {target: PS-STD-001, at: "§2.5", role: "frontmatter字段合法性定义——本文件所有frontmatter字段格式遵循其约�?}
+    - {target: PS-STD-003, at: "§3", role: "行为边界标准ABS——REJECT动作的宪法级边界基准——被ABS明确禁止的行为，INJ规则不能�?本规范另有规�?为由突破"}
   informative:
-    - {target: GOV-MOD-001, at: "§5~§8", role: "模块准入门控——本规范的INJ检查在准入四级筛选通过后执行"}
-    - {target: GOV-MOD-002, at: "§5", role: "AI行为铁律——INJ-007从IRN-001派生为注入级检查"}
-    - {target: GOV-MOD-003, at: "§3~§6", role: "模块生命周期——INJ-004的valid_values对焦其8阶段生命周期"}
-    - {target: GOV-MOD-004, at: "§3~§10", role: "模块接口契约——INJ-003的契约检查依据其frozen状态约束"}
-    - {target: GOV-ARCH-001, at: "全文", role: "架构分层模型——INJ-008跨层依赖方向检查的建筑学基准"}
+    - {target: GOV-MOD-001, at: "§5~§8", role: "模块准入门控——本规范的INJ检查在准入四级筛选通过后执�?}
+    - {target: GOV-MOD-002, at: "§5", role: "AI行为铁律——INJ-007从IRN-001派生为注入级检�?}
+    - {target: GOV-MOD-003, at: "§3~§6", role: "模块生命周期——INJ-004的valid_values对焦�?阶段生命周期"}
+    - {target: GOV-MOD-004, at: "§3~§10", role: "模块接口契约——INJ-003的契约检查依据其frozen状态约�?}
+    - {target: GOV-ARCH-001, at: "全文", role: "架构分层模型——INJ-008跨层依赖方向检查的建筑学基�?}
 
 ai_consumability:
   intended_audience: Vibe Coding AI
   minimum_reading_path_10sec:
-    - "rules[*].id + rules[*].on_failure: 了解8条检查规则的ID、名称、失败动作"
-    - "execution.sequence: 了解检查执行顺序（fail_fast模式）"
+    - "rules[*].id + rules[*].on_failure: 了解8条检查规则的ID、名称、失败动�?
+    - "execution.sequence: 了解检查执行顺序（fail_fast模式�?
     - "context.injection_flow: 了解7步端到端流程编排"
   token_budget:
     loaded_on_demand: true
@@ -191,98 +191,98 @@ ai_consumability:
 
 consumer_registry:
   - {consumer: GOV-MOD-001, file: module-admission-policy.md, tier: 1, dependency: "§7 准入否决条件表——INJ 编号（INJ-001/002/004/005）映射准入前置否决项"}
-  - {consumer: GOV-MOD-002, file: ai-behavior-iron-policy.md, tier: 1, dependency: "INJ-007 从 IRN-001 派生（先读后写验证）——若 INJ-007 编号变更需同步铁律引用"}
+  - {consumer: GOV-MOD-002, file: ai-behavior-iron-policy.md, tier: 1, dependency: "INJ-007 �?IRN-001 派生（先读后写验证）——若 INJ-007 编号变更需同步铁律引用"}
   - {consumer: GOV-MOD-003, file: module-lifecycle-policy.md, tier: 1, dependency: "INJ-004 valid_values——若本文档修改了 status 枚举值需同步 MLC 规则"}
-  - {consumer: GOV-MOD-004, file: module-interface-contract-policy.md, tier: 1, dependency: "INJ-003 检查 cross-layer-contracts.yaml 存在性——消费契约注册表格式"}
-  - {consumer: module-id-registry.json, file: data/, tier: 1, dependency: "INJ 检查结果写入 registry——若本文档修改了检查失败输出格式需同步 registry schema"}
+  - {consumer: GOV-MOD-004, file: module-interface-contract-policy.md, tier: 1, dependency: "INJ-003 检�?cross-layer-contracts.yaml 存在性——消费契约注册表格式"}
+  - {consumer: module-id-registry.json, file: data/, tier: 1, dependency: "INJ 检查结果写�?registry——若本文档修改了检查失败输出格式需同步 registry schema"}
 
 change_sync_rules:
-  - {change: "新增/删除 INJ 规则（修改 INJ 编号 001~008 列表）", sync_to: "GOV-MOD-001 + GOV-MOD-002", action: "更新 INJ 编号映射表（§7 否决条件 + 铁律派生引用）", timing: same_commit}
-  - {change: "修改 INJ 规则的 on_failure 动作（如 REJECT→WARN）", sync_to: "GOV-MOD-001 + module-id-registry.json", action: "评估准入否决条件映射是否受影响", timing: same_commit_or_24h}
-  - {change: "修改 valid_values 枚举列表", sync_to: "GOV-MOD-003 + module-id-registry.json", action: "同步枚举值——所有依赖此枚举的文件", timing: same_commit}
-  - {change: "修改 injection_flow 流程编排（步骤/顺序）", sync_to: "所有 Tier 1 消费者", action: "通知流程变更 + 更新交叉引用", timing: same_commit}
-  - {change: "frontmatter 仅变更（summary/tags/version）", sync_to: "无", action: "不需同步", timing: "-"}
+  - {change: "新增/删除 INJ 规则（修�?INJ 编号 001~008 列表�?, sync_to: "GOV-MOD-001 + GOV-MOD-002", action: "更新 INJ 编号映射表（§7 否决条件 + 铁律派生引用�?, timing: same_commit}
+  - {change: "修改 INJ 规则�?on_failure 动作（如 REJECT→WARN�?, sync_to: "GOV-MOD-001 + module-id-registry.json", action: "评估准入否决条件映射是否受影�?, timing: same_commit_or_24h}
+  - {change: "修改 valid_values 枚举列表", sync_to: "GOV-MOD-003 + module-id-registry.json", action: "同步枚举值——所有依赖此枚举的文�?, timing: same_commit}
+  - {change: "修改 injection_flow 流程编排（步�?顺序�?, sync_to: "所�?Tier 1 消费�?, action: "通知流程变更 + 更新交叉引用", timing: same_commit}
+  - {change: "frontmatter 仅变更（summary/tags/version�?, sync_to: "�?, action: "不需同步", timing: "-"}
 
 notification_mechanism_ref: "GOV-MOD-002 §10 消费者通知机制——notify/通知 actions in this table follow the 3-tier system: Session Log entries (mandatory for ALL changes), ADR (L2+ / semantic changes), module-id-registry.json update (field-level changes). See GOV-MOD-002 §10 for execution order and format templates."
 
 modification_conditions:
   by_level:
     - {level: L0, scope: "错别字、description/note 措辞优化、YAML 格式调整", approver: AI, requirement: "Session Log 记录"}
-    - {level: L1, scope: "新增 INJ 规则的 design_note / 补充 description", approver: "AI 建议 + Owner 确认", requirement: "Session Log 提案 → Owner 24h 内确认"}
-    - {level: L2, scope: "新增/删除 INJ 规则 / 修改 on_failure 动作 / 修改 priority", approver: Owner, requirement: "ADR"}
-    - {level: L3, scope: "修改 execution.sequence（检查顺序）/ 修改 check_command", approver: Owner, requirement: "ADR + 全部 Tier 1 消费者同步"}
+    - {level: L1, scope: "新增 INJ 规则�?design_note / 补充 description", approver: "AI 建议 + Owner 确认", requirement: "Session Log 提案 �?Owner 24h 内确�?}
+    - {level: L2, scope: "新增/删除 INJ 规则 / 修改 on_failure 动作 / 修改 priority", approver: Owner, requirement: "KB ���߼�¼"}
+    - {level: L3, scope: "修改 execution.sequence（检查顺序）/ 修改 check_command", approver: Owner, requirement: "ADR + 全部 Tier 1 消费者同�?}
   by_runtime_plane:
     hot:
-      note: "本文档属于 hot 层（AGENTS.md load + Session load）——修改 UX 影响最大，每次修改必须附带 change_sync_rules 中标注的同 commit 同步动作"
+      note: "本文档属�?hot 层（AGENTS.md load + Session load）——修�?UX 影响最大，每次修改必须附带 change_sync_rules 中标注的�?commit 同步动作"
     warm_fields:
       note: "以下字段按需加载（仅在执行注入检查时）：rules[*].check_command、execution.sequence.flags"
 
 deprecation_flow:
-  trigger: "本文档被更完整、更自动化的注入检查框架取代"
+  trigger: "本文档被更完整、更自动化的注入检查框架取�?
   steps:
-    - search: "对全部 Tier 1 消费者执行跨文件搜索 INJ-001|INJ-002|...|INJ-008"
-    - notify: "30 天提前通知全部消费者（Session Log + ADR）"
+    - search: "对全�?Tier 1 消费者执行跨文件搜索 INJ-001|INJ-002|...|INJ-008"
+    - notify: "30 天提前通知全部消费者（Session Log + ADR�?
     - deprecate: "status: deprecated + superseded_by 指向替代文件"
     - transition: "至少 90 天过渡期（新旧注入规则并轨运行）"
-    - archive: "过渡期满、全部引用已迁移 → status: archived"
+    - archive: "过渡期满、全部引用已迁移 �?status: archived"
 
 review_cycle:
   iso_11179_aligned: true
   triggers:
-    - {when: "每次 Phase 边界", review: "8 条 INJ 规则是否仍覆盖当前架构的全部注入风险面"}
-    - {when: "新模块类型引入", review: "是否需要新增 INJ 检查规则（如 INJ-009 安全审查）"}
-    - {when: "GOV-MOD-002 铁律变更", review: "INJ-007/INJ-008 的 derived_from 映射是否需要更新"}
-    - {when: "GOV-MOD-003 状态枚举变更", review: "INJ-004 valid_values 是否需要同步"}
-    - {when: "每 6 个月（最低）", review: "全量审查——即使无触发事件"}
+    - {when: "每次 Phase 边界", review: "8 �?INJ 规则是否仍覆盖当前架构的全部注入风险�?}
+    - {when: "新模块类型引�?, review: "是否需要新�?INJ 检查规则（�?INJ-009 安全审查�?}
+    - {when: "GOV-MOD-002 铁律变更", review: "INJ-007/INJ-008 �?derived_from 映射是否需要更�?}
+    - {when: "GOV-MOD-003 状态枚举变�?, review: "INJ-004 valid_values 是否需要同�?}
+    - {when: "�?6 个月（最低）", review: "全量审查——即使无触发事件"}
 
 completeness_checklist:
-  - "context.purpose: 明确管辖模块注入前/中/后的全部检查"
+  - "context.purpose: 明确管辖模块注入�?�?后的全部检�?
   - "ssoT_declaration: 互补关系覆盖 GOV-MOD-001/002/003/004/ARCH-001"
-  - "controlled_enums: status + runtime_plane 枚举完整——对焦 GOV-MOD-003"
+  - "controlled_enums: status + runtime_plane 枚举完整——对�?GOV-MOD-003"
   - "consumer_registry: 全部 Tier 1 消费者已列出"
   - "rules[*]: 8 条规则——每条含 check_command + on_failure + failure_action + priority + scope"
   - "execution: sequence 顺序合理——fail_fast 模式无误"
-  - "reference_specification: normative 和 informative 分类正确"
-  - "change_sync_rules: 每种变更类型有明确的同步动作和 timing"
+  - "reference_specification: normative �?informative 分类正确"
+  - "change_sync_rules: 每种变更类型有明确的同步动作�?timing"
   - "deprecation_flow: 覆盖通知→过渡→归档全流程——含 superseded_by 字段"
-  - "review_cycle: 触发条件覆盖 Phase 边界 + 铁律变更 + 状态枚举变更 + 最低周期"
-  - "exemptions: 豁免场景含约束——过期不续"
+  - "review_cycle: 触发条件覆盖 Phase 边界 + 铁律变更 + 状态枚举变�?+ 最低周�?
+  - "exemptions: 豁免场景含约束——过期不�?
 
 exemptions:
   - rule_ids: [INJ-003, INJ-006]
     condition: "module_priority != 'P0'"
     action: SKIP
-    reason: "非 P0 模块豁免接口契约和 ADR 检查"
-    record_requirement: "必须在 module-id-registry.json 中标注豁免原因"
+    reason: "�?P0 模块豁免接口契约�?ADR 检�?
+    record_requirement: "必须�?module-id-registry.json 中标注豁免原�?
 
 change_log:
   - date: "2026-05-01"
     version: "0.7.2"
-    description: "消费者通知机制交叉引用：change_sync_rules 添加 notification_mechanism_ref 字段——引用 GOV-MOD-002 §10 三层通知体系（Session Log 条目/ADR/registry 更新）+ 格式模板+执行顺序。所有 action 中含'通知'的条目均可追溯到具体的通知方式。"
+    description: "消费者通知机制交叉引用：change_sync_rules 添加 notification_mechanism_ref 字段——引�?GOV-MOD-002 §10 三层通知体系（Session Log 条目/ADR/registry 更新�? 格式模板+执行顺序。所�?action 中含'通知'的条目均可追溯到具体的通知方式�?
   - date: "2026-05-01"
     version: "0.7.1"
-    description: "交叉引用漂移修复：injection_flow 中 3 处 GOV-MOD-001 stale ref（§5→§7·§3→§5·§6→§8）+ reference_specification 中 GOV-MOD-001 §3~§8→§5~§8 / GOV-MOD-002 §3~§5→§5——Round 10 插入 §3/§4 后未同步"
+    description: "交叉引用漂移修复：injection_flow �?3 �?GOV-MOD-001 stale ref（�?→�?·§3→�?·§6→�?�? reference_specification �?GOV-MOD-001 §3~§8→�?~§8 / GOV-MOD-002 §3~§5→�?——Round 10 插入 §3/§4 后未同步"
   - date: "2026-05-01"
     version: "0.7.0"
-    description: "对齐 PS-STD-002 §3.2.4（行为规则型条件性章节）：新增 controlled_enums（status+runtime_plane 集中声明含 SSoT 溯源）+ consumer_registry（Tier 1 含 GOV-MOD-001/002/003/004 + module-id-registry.json）+ change_sync_rules（5 变更类型矩阵）+ modification_conditions（L0~L3 by_level + by_runtime_plane hot/warm 声明）+ deprecation_flow（5 步流程）+ review_cycle（ISO 11179 5 触发器）+ completeness_checklist（11 项）。修正 C11（分散 valid_values→controlled_enums 集中）+ C12（INJ-002 check_command 语义标注 design_note——正交关注点分离待 dedicated script）。"
+    description: "对齐 PS-STD-002 §3.2.4（行为规则型条件性章节）：新�?controlled_enums（status+runtime_plane 集中声明�?SSoT 溯源�? consumer_registry（Tier 1 �?GOV-MOD-001/002/003/004 + module-id-registry.json�? change_sync_rules�? 变更类型矩阵�? modification_conditions（L0~L3 by_level + by_runtime_plane hot/warm 声明�? deprecation_flow�? 步流程）+ review_cycle（ISO 11179 5 触发器）+ completeness_checklist�?1 项）。修�?C11（分�?valid_values→controlled_enums 集中�? C12（INJ-002 check_command 语义标注 design_note——正交关注点分离�?dedicated script）�?
   - date: "2026-05-01"
     version: "0.6.1"
-    description: "Common Core 对齐 PS-STD-002 §3.2.1：新增 ssoT_declaration + reference_specification（normative/informative）+ ai_consumability（minimum_reading_path + lookup_index）"
+    description: "Common Core 对齐 PS-STD-002 §3.2.1：新�?ssoT_declaration + reference_specification（normative/informative�? ai_consumability（minimum_reading_path + lookup_index�?
   - date: "2026-05-01"
     version: "0.6.0"
-    description: "元规则对齐审计：frontmatter 添加 valid_from + 字段排序对齐 PS-STD-001 §2.3 + layer cross_layer→L1 + depends_on 移除 GOV-ARCH-001/GOV-MOD-002 同级引用对齐链深=1层死规则（PS-STD-001 §2.1）"
+    description: "元规则对齐审计：frontmatter 添加 valid_from + 字段排序对齐 PS-STD-001 §2.3 + layer cross_layer→L1 + depends_on 移除 GOV-ARCH-001/GOV-MOD-002 同级引用对齐链深=1层死规则（PS-STD-001 §2.1�?
   - date: "2026-05-01"
     version: "0.5.0"
-    description: "第三轮补缺：新增 INJ-008（跨层依赖方向检查）+ context 添加完整注入流程编排（injection_flow）+ module_path_resolution 变量解析规则 + 所有规则添加 implementation_status 字段 + depends_on 补齐 GOV-ARCH-001"
+    description: "第三轮补缺：新增 INJ-008（跨层依赖方向检查）+ context 添加完整注入流程编排（injection_flow�? module_path_resolution 变量解析规则 + 所有规则添�?implementation_status 字段 + depends_on 补齐 GOV-ARCH-001"
   - date: "2026-05-01"
     version: "0.4.0"
-    description: "补齐 G7/G8/G19/G20 细颗粒审查缺漏：新增 INJ-007（编码合规检查）+ INJ-004/005 check_command 补全 + depends_on 补齐 GOV-MOD-001 + 路径约定文档化 + valid_values 同步 GOV-MOD-003 8阶段"
+    description: "补齐 G7/G8/G19/G20 细颗粒审查缺漏：新增 INJ-007（编码合规检查）+ INJ-004/005 check_command 补全 + depends_on 补齐 GOV-MOD-001 + 路径约定文档�?+ valid_values 同步 GOV-MOD-003 8阶段"
   - date: "2026-05-01"
     version: "0.3.0"
-    description: "YAML结构化重写：将散文式规则转为机器可解析的结构化YAML，对标K8s Kyverno policy格式。新增 context/execution/rules/exemptions 结构化字段。"
+    description: "YAML结构化重写：将散文式规则转为机器可解析的结构化YAML，对标K8s Kyverno policy格式。新�?context/execution/rules/exemptions 结构化字段�?
   - date: "2026-05-01"
     version: "0.2.0"
-    description: "#24 审批修复：frontmatter 补齐 depends_on 结构化 + ai_autonomy: human_gated + schema_version"
+    description: "#24 审批修复：frontmatter 补齐 depends_on 结构�?+ ai_autonomy: human_gated + schema_version"
   - date: "2026-04-30"
     version: "0.1.0"
     description: "初始版本"

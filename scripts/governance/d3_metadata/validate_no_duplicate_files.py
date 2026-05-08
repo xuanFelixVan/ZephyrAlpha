@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import GOV_DOCS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -44,6 +44,7 @@ _errors: list[str] = []
 _warnings: list[str] = []
 
 def _file_hash(path: Path) -> str:
+    """_file_hash implementation."""
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
     except Exception:
@@ -121,10 +122,10 @@ def main() -> None:
             print(f"   {w}")
         print()
     if _errors:
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     else:
         print("ALL files pass duplicate detection")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
 if __name__ == "__main__":
     main()

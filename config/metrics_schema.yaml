@@ -1,0 +1,86 @@
+# config/metrics_schema.yaml — System Telemetry Metrics Schema Registry
+# module_id: MOD-INF-015
+# version: 0.1.0 (scaffold)
+# blueprint: docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md §5.1
+#
+# 本文件定义所有遥测指标的命名空间、字段schema、基数限制。
+# 所有指标写入前必须通过此schema校验（TelemetryFacade.collector → schema validator → write）。
+
+version: "0.1.0"
+module_id: MOD-INF-015
+last_updated: "2026-05-08"
+
+namespaces:
+  system:
+    description: "系统级指标：进程资源、运行时健康、吞吐量"
+    fields:
+      - name: cpu_percent
+        type: float
+        unit: "percent"
+        cardinality_limit: 100
+        description: "进程CPU使用率%"
+      - name: memory_rss_bytes
+        type: int
+        unit: "bytes"
+        cardinality_limit: 100
+      - name: open_fds
+        type: int
+        unit: "count"
+        cardinality_limit: 50
+
+  pipeline:
+    description: "Pipeline执行指标：阶段耗时、成功率、重试次数"
+    fields:
+      - name: phase_duration_ms
+        type: float
+        unit: "milliseconds"
+        labels: ["phase_name", "status"]
+        cardinality_limit: 1000
+      - name: phase_success_rate
+        type: float
+        unit: "ratio"
+        labels: ["phase_name"]
+        cardinality_limit: 500
+
+  db:
+    description: "数据库指标：连接池、查询延迟、行数"
+    fields:
+      - name: query_latency_ms
+        type: float
+        unit: "milliseconds"
+        labels: ["query_type", "table_name"]
+        cardinality_limit: 2000
+      - name: pool_size
+        type: int
+        unit: "count"
+        cardinality_limit: 50
+
+  ai:
+    description: "AI agent行为指标：session数、token消耗、成功率"
+    fields:
+      - name: tokens_total
+        type: int
+        unit: "tokens"
+        labels: ["model", "direction"]
+        cardinality_limit: 300
+      - name: session_count
+        type: int
+        unit: "count"
+        labels: ["status"]
+        cardinality_limit: 100
+
+  telemetry:
+    description: "Meta-Telemetry：遥测系统自身的指标"
+    fields:
+      - name: buffer_depth_percent
+        type: float
+        unit: "percent"
+        cardinality_limit: 50
+      - name: spans_collected_rate
+        type: float
+        unit: "count/sec"
+        cardinality_limit: 50
+      - name: schema_rejection_rate
+        type: float
+        unit: "ratio"
+        cardinality_limit: 50

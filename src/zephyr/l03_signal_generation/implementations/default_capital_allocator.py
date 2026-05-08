@@ -24,8 +24,8 @@ from enum import Enum
 from typing import Optional
 
 from zephyr.l03_signal_generation.aggregator_base import CapitalAllocatorBase
-from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
 _logger = logging.getLogger(__name__)
 

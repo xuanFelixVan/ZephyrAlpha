@@ -51,7 +51,7 @@ depends_on:
   - "TASK-INF-0005"
 blocked_by: []
 
-status: "created"
+status: "done"
 
 tags_fn: ["infra"]
 tags_ly: "l01_infrastructure"

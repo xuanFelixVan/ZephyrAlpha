@@ -25,7 +25,7 @@ partition:
   source_views:
     - 03-application-architecture.md
     - 04-technology-architecture.md
-  related_adrs:
+  related_kb_refs:
     - ADR-0004
     - ADR-0009
 
@@ -36,7 +36,7 @@ versioning_strategy:
   schema_version_format: "{major}.{minor}"
   rules:
     - "已发布的 P0 接口签名字段不允许删除或修改类型，只允许追加新的可选字段"
-    - "任何签名变更必须先建立 ADR，评审通过后方可执行"
+    - "任何签名变更必须先建立 KB 决策记录，评审通过后方可执行"
     - "新版本必须能处理旧版本对象（缺省字段使用默认值）"
   cross_layer_version_negotiation:
     id: CTR-VER-001
@@ -103,6 +103,8 @@ contracts:
       - {name: is_suspended, type: bool, required: false, default: false, description: "停牌标记"}
       - {name: ingested_at, type: "Optional[datetime]", required: false, description: "入库时间"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: timeout_ms, type: int, required: false, default: 5000, description: "操作超时时间（毫秒）"}
       - {name: retry_policy, type: str, required: false, default: "exponential_backoff", description: "重试策略：none | linear | exponential_backoff"}
@@ -149,6 +151,8 @@ contracts:
       - {name: factor_version, type: str, required: false, default: "1.0", description: "因子版本"}
       - {name: extra, type: "Dict[str, Any]", required: false, description: "扩展字段"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: timeout_ms, type: int, required: false, default: 3000, description: "因子计算超时时间（毫秒）"}
       - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
@@ -189,6 +193,8 @@ contracts:
       - {name: max_portfolio_var_1d, type: "Optional[float]", required: false, description: "日度 VaR 上限（绝对值）"}
       - {name: max_drawdown_limit, type: "Optional[float]", required: false, description: "最大回撤触发线"}
       - {name: symbol_overrides, type: "Dict[str, float]", required: false, description: "个股特殊限制 {symbol: max_weight}"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
@@ -233,6 +239,8 @@ contracts:
       - {name: updated_at, type: "Optional[datetime]", required: false, description: "更新时间"}
       - {name: broker_order_id, type: "Optional[str]", required: false, description: "券商侧委托号（回填）"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -273,6 +281,8 @@ contracts:
       - {name: slippage, type: "Optional[Decimal]", required: false, description: "滑点（实际 vs 预期）"}
       - {name: broker_fill_id, type: "Optional[str]", required: false, description: "券商侧成交 ID"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -311,6 +321,8 @@ contracts:
       - {name: cash, type: Decimal, required: false, default: "0", description: "现金"}
       - {name: gross_leverage, type: float, required: false, default: 1.0, description: "总杠杆"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文（CTR-TRACE-001）"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -346,6 +358,8 @@ contracts:
       - {name: created_at, type: datetime, required: true, description: "本 span 创建时间（UTC 纳秒精度）"}
       - {name: parent_span_id, type: "Optional[str]", required: false, description: "上游 span_id，NULL 表示这是链头"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================
@@ -377,6 +391,8 @@ contracts:
       - {name: failed_field, type: "Optional[str]", required: false, description: "触发的具体字段名"}
       - {name: failed_value, type: "Optional[str]", required: false, description: "触发时的实际值（字符串表示）"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -405,6 +421,8 @@ contracts:
       - {name: recovery_hint, type: str, required: true, description: "RETRY | SKIP_FACTOR | DEGRADE_TO_DEFAULT | ESCALATE"}
       - {name: detail, type: "Optional[str]", required: false, description: "详细错误堆栈摘要"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -432,6 +450,8 @@ contracts:
       - {name: affected_factor_ids, type: "List[str]", required: false, description: "受影响的因子 ID 列表"}
       - {name: degradation_level, type: str, required: true, description: "MILD | MODERATE | SEVERE"}
       - {name: suggested_action, type: str, required: true, description: "REDUCE_POSITION | PAUSE_SIGNAL | CONTINUE_WITH_FLAG"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
@@ -462,6 +482,8 @@ contracts:
       - {name: actual_value, type: float, required: true, description: "实际值"}
       - {name: recovery_hint, type: str, required: true, description: "REDUCE_AND_RETRY | HALT_AND_ESCALATE | MANUAL_OVERRIDE_REQUIRED"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -491,6 +513,8 @@ contracts:
       - {name: broker_message, type: "Optional[str]", required: false, description: "券商原始错误信息（保留原文）"}
       - {name: recovery_hint, type: str, required: true, description: "RETRY | RETRY_WITH_REDUCED_QTY | CANCEL_AND_REPORT | WAIT_NEXT_CYCLE"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -518,6 +542,8 @@ contracts:
       - {name: expected_type, type: "Optional[str]", required: false, description: "契约期望的类型"}
       - {name: actual_type, type: "Optional[str]", required: false, description: "实际收到的类型"}
       - {name: detail, type: str, required: true, description: "详细校验失败描述"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
@@ -549,6 +575,8 @@ contracts:
       - {name: duration_ms, type: int, required: true, description: "暂停时长（毫秒），到期自动恢复"}
       - {name: reason, type: str, required: true, description: "暂停原因：buffer_full | processing_overload | gc_pause | downstream_unavailable"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -574,6 +602,8 @@ contracts:
       - {name: max_rate_per_sec, type: int, required: true, description: "降速后的最大速率（条/秒）"}
       - {name: reason, type: str, required: true, description: "降速原因"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -597,6 +627,8 @@ contracts:
       - {name: symbol, type: str, required: true, description: "恢复的标的"}
       - {name: action, type: str, required: false, default: "RESUME", description: "固定值 RESUME"}
       - {name: reason, type: str, required: true, description: "恢复原因：buffer_cleared | capacity_restored | gc_complete | upstream_recovered"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
@@ -626,6 +658,8 @@ contracts:
       - {name: decay_alert, type: bool, required: true, description: "True = 因子衰减告警"}
       - {name: evaluation_window, type: int, required: false, default: 63, description: "评估窗口（交易日数）"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-002
@@ -649,6 +683,8 @@ contracts:
       - {name: release_lag_days, type: int, required: true, description: "数据发布滞后天数"}
       - {name: confidence, type: float, required: false, default: 1.0, description: "置信度"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-003
@@ -669,6 +705,8 @@ contracts:
       - {name: total_allocated_weight, type: float, required: true, description: "总权重（通常 = 1.0）"}
       - {name: allocation_method, type: str, required: true, description: "equal_weight | sharpe_weight | risk_parity"}
       - {name: rebalance_threshold, type: float, required: false, default: 0.05, description: "触发再平衡的权重漂移阈值"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -711,6 +749,8 @@ contracts:
       - {name: confidence, type: float, required: true, description: "预测置信度 0.0-1.0"}
       - {name: inference_ms, type: int, required: true, description: "推理耗时（毫秒）"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-006
@@ -734,6 +774,8 @@ contracts:
       - {name: previous_status, type: str, required: true, description: "变更前状态"}
       - {name: new_status, type: str, required: true, description: "变更后状态"}
       - {name: performance_snapshot, type: "Optional[Dict[str, float]]", required: false, description: "事件时的关键绩效指标"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -764,6 +806,8 @@ contracts:
       - {name: broker_id, type: str, required: true, description: "执行券商"}
       - {name: algo_type, type: str, required: false, default: "NONE", description: "算法类型 TWAP | VWAP | NONE"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-008
@@ -789,6 +833,8 @@ contracts:
       - {name: active_alerts, type: "List[str]", required: true, description: "当前激活的风险告警 rule_id 列表"}
       - {name: overall_risk_score, type: float, required: true, description: "综合风险分 0-10"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: CTR-P1-009
@@ -813,6 +859,8 @@ contracts:
       - {name: interaction_effect, type: float, required: true, description: "交互效应"}
       - {name: factor_contributions, type: "Dict[str, float]", required: true, description: "{factor_id: contribution}"}
       - {name: transaction_cost_drag, type: float, required: true, description: "交易成本拖累（bps）"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -841,6 +889,8 @@ contracts:
       - {name: retry_policy, type: str, required: false, default: "linear", description: "重试策略：none | linear | exponential_backoff"}
       - {name: max_retries, type: int, required: false, default: 3, description: "最大重试次数"}
       - {name: exceptions, type: "List[str]", required: false, description: "预期异常类型列表"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -874,6 +924,8 @@ contracts:
       - {name: confidence_level, type: float, required: true, description: "置信水平"}
       - {name: lookback_period, type: int, required: true, description: "回看期（交易日）"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================
@@ -906,6 +958,8 @@ contracts:
       - {name: created_at, type: datetime, required: true, description: "创建时间"}
       - {name: updated_at, type: datetime, required: true, description: "更新时间"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   - id: OCP-002
@@ -915,7 +969,7 @@ contracts:
     autodiscover: null
     physical_path: src/zephyr/l05_portfolio_construction/strategy_base.py
     registry_path: src/zephyr/l05_portfolio_construction/strategy_registry.py
-    related_adr: ADR-0004
+    related_kb_ref: ADR-0004
     description: "L05 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
@@ -939,7 +993,7 @@ contracts:
     registry: null
     autodiscover: null
     physical_path: src/zephyr/l06_trade_execution/broker_interface.py
-    related_adr: ADR-0004
+    related_kb_ref: ADR-0004
     description: "L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: broker_id, type: property, returns: str, description: "券商唯一标识（如 ib, futu, longport, simulation）"}
@@ -980,6 +1034,8 @@ contracts:
       - {name: trace_id, type: str, required: false, description: "追踪Trace ID"}
       - {name: parent_span_id, type: str, required: false, description: "父Span ID"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
   # --- CTR-P1-014: ExperimentResult ---
@@ -1019,6 +1075,8 @@ contracts:
       - {name: affected_strategy_ids, type: "List[str]", required: false, description: "受影响的策略 ID"}
       - {name: archived_to_kms, type: bool, required: false, default: false, description: "已归档到 KMS"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
@@ -1053,6 +1111,8 @@ contracts:
       - {name: suggested_position_pct, type: float, required: false, description: "建议仓位百分比"}
       - {name: generation_latency_ms, type: int, required: true, description: "信号合成耗时（毫秒）"}
       - {name: is_degraded, type: bool, required: false, default: false, description: "是否降级信号"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
+      - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
@@ -1102,7 +1162,7 @@ ocp_extension_points:
     physical_path: src/zephyr/l02_alpha_factor/base.py
     registry_path: src/zephyr/l02_alpha_factor/registry.py
     loader_path: src/zephyr/l02_alpha_factor/loader.py
-    related_adr: ADR-0004
+    related_kb_ref: ADR-0004
     description: "L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}

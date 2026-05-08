@@ -74,9 +74,10 @@
       "default": "ZephyrAlpha-Owner"
     },
     "classification": {
-      "description": "机密等级——二分法（internal 已废弃）。PS-STD-001 §4.6",
+      "description": "机密等级——三分法（public / internal / confidential）。PS-STD-001 §4.6",
       "oneOf": [
         { "const": "public", "description": "公开——可对外分享，无敏感信息" },
+        { "const": "internal", "description": "内部——仅项目成员可见" },
         { "const": "confidential", "description": "保密——仅团队内部使用" }
       ]
     },
@@ -227,9 +228,9 @@
         "required": ["path", "relationship"]
       }
     },
-    "related_adr": {
+    "related_kb_ref": {
       "type": "array",
-      "description": "关联的 ADR 编号",
+      "description": "关联的 KB 决策记录编号",
       "items": { "type": "string" }
     },
     "safety_level": {
@@ -589,6 +590,16 @@
       },
       "then": {
         "properties": { "ai_autonomy": { "const": "immutable_core" } }
+      }
+    },
+    {
+      "description": "stability=frozen 时 evolution_policy 必须为 frozen（语义一致性约束）",
+      "if": {
+        "properties": { "stability": { "const": "frozen" } },
+        "required": ["stability"]
+      },
+      "then": {
+        "properties": { "evolution_policy": { "const": "frozen" } }
       }
     },
     {

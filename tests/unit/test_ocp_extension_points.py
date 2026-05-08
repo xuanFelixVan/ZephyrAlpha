@@ -15,8 +15,8 @@ import pytest
 from zephyr.l02_alpha_factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 from zephyr.l05_portfolio_construction.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.position import PositionSnapshot
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
 
 
 @pytest.fixture(autouse=True)

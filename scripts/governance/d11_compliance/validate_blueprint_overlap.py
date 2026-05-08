@@ -54,12 +54,12 @@ try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装，请运行 `pip install pyyaml`", file=sys.stderr)
-    sys.exit(2)
+    sys.exit(EXIT_ERROR)
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -158,11 +158,11 @@ def main() -> None:
             print(f"      {path}", file=sys.stderr)
     if not overlaps:
         print("[validate_blueprint_overlap] PASS — 无重叠", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if args.warn_only:
         print("[validate_blueprint_overlap] WARN-ONLY 模式：发现重叠但不阻塞", file=sys.stderr)
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
 
 if __name__ == "__main__":
     main()

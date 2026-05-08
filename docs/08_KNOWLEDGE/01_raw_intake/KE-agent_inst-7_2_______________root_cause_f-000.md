@@ -1,0 +1,23 @@
+---
+module_id: KE-agent_inst-7_2_______________root_cause_f-000
+title: 7.2 根源分析优先——治根不治标（Root Cause First）
+category: agent_instruction
+---
+
+# 7.2 根源分析优先——治根不治标（Root Cause First）
+
+7.2 根源分析优先——治根不治标（Root Cause First）
+
+遇到任何问题时，默认执行 **5 Whys 根源分析**，不满足于修补表面现象。
+
+- **执行流程**：
+  1. **症状识别**：问题的直接表现是什么？
+  2. **5 Whys 深挖**：连续追问 5 次"为什么"，直到找到不可再分的根源
+  3. **根因验证**：用专业机构实践验证——如果这个根因在专业机构中也有同样的应对模式，则根因正确
+  4. **治根修复**：从根源解决，而非在症状层面打补丁
+  5. **举一反三**：检查项目中是否还有同根因的其他病灶，一并修复
+
+- **治标 vs 治根判定**：
+  - 治标：修复一个具体实例（如更新一个路径引用）——问题会在另一处重现
+  - 治根：修复导致问题产生的系统设计（如"为什么依赖路径？→ 改为属性推导"）——同类问题不再产生
+- **专业参考**：Toyota Production System → 5 Whys / ITIL Problem Management → Root Cause Analysis / Six Sigma DMAIC → Analyze Phase

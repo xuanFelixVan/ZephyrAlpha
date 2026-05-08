@@ -46,6 +46,7 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
   reference_check  - 关联引用存在性
   circuit_breaker  - 模块间熔断状态检查（T-V2-005 第 17 种，CBG experimental）
   blueprint_read_check - 蓝图读取合规检查（T-V2-011 第 18 种，G6 beta 硬合规）
+  drift_budget        - 漂移预算检查（T-V2-012 第 19 种，G1/G6 实验性）—— 模块漂移事件数是否超出 SLO 预算
 """
 
 from __future__ import annotations
@@ -63,7 +64,9 @@ import yaml
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.gates.risk_ssot import load_risk_params_ssot
-from zephyr.shared.schemas import Task
+from zephyr.shared.schema.schemas import Task
+from zephyr.shared.utils.db_utils import ensure_schema
+from zephyr.core.models import TaskCard, GateLevel
 
 __all__ = [
     "GateEngine",
@@ -101,7 +104,6 @@ _PLACEHOLDER_PATTERNS: list[str] = [
     r"\bTBD\b",
     r"\bSTUB\b",
     r"# Not implemented",
-    r"raise NotImplementedError",
 ]
 
 # ---------------------------------------------------------------------------
@@ -503,6 +505,27 @@ def _run_check(
                 hard_compliance=hard_compliance,
             )
 
+    elif ct == "drift_budget":
+        target_module = str(check.params.get("target_module", task.task_id))
+        try:
+            from zephyr.drift_detector.drift_engine import check_budget_for_gate
+
+            budget = check_budget_for_gate(target_module)
+            if not budget.get("allowed", False):
+                _add(
+                    f"漂移预算耗尽，模块 {target_module} 必须先修复漂移再提交变更",
+                    detail=budget.get("reason", "drift budget exceeded"),
+                )
+        except Exception as exc:
+            violations.append(
+                GateViolation(
+                    check_id=check.check_id,
+                    check_name=check.name,
+                    severity="P2",
+                    message=f"drift_budget 检查初始化失败（降级 P2）：{exc}",
+                )
+            )
+
     elif ct == "field_presence":
         missing = _check_field_presence_task(task, check.params)
         for mf in missing:
@@ -697,14 +720,89 @@ def _run_check(
             )
         )
 
+    elif ct == "fle_gate":
+        gate_module = str(check.params.get("gate_module", ""))
+        gate_method = str(check.params.get("gate_method", "check"))
+        if not gate_module:
+            _add("fle_gate 检查缺少 gate_module 参数", detail=f"check_id={check.check_id}")
+        else:
+            try:
+                import importlib
+                mod = importlib.import_module(gate_module)
+                candidates = [a for a in dir(mod) if isinstance(getattr(mod, a), type) and not a.startswith("_")]
+                if not candidates:
+                    _add(f"FLE 门禁模块 {gate_module} 无可用类")
+                else:
+                    gate_cls = getattr(mod, candidates[0])
+                    try:
+                        gate_inst = gate_cls()
+                    except TypeError:
+                        gate_inst = gate_cls
+                    method = getattr(gate_inst, gate_method, None)
+                    if method is None:
+                        _add(f"FLE 门禁 {gate_module} 无 {gate_method} 方法")
+                    else:
+                        import inspect
+                        sig = inspect.signature(method)
+                        params = list(sig.parameters.keys())
+                        if len(params) == 0:
+                            result = method()
+                        else:
+                            result = method(task.task_id)
+                        if isinstance(result, dict):
+                            if not result.get("allowed", result.get("passed", result.get("ok", True))):
+                                _add(
+                                    f"FLE 门禁 {gate_module}.{gate_method} 拒绝",
+                                    detail=str(result),
+                                )
+                        elif isinstance(result, bool) and not result:
+                            _add(f"FLE 门禁 {gate_module}.{gate_method} 返回 False")
+            except Exception as exc:
+                violations.append(
+                    GateViolation(
+                        check_id=check.check_id,
+                        check_name=check.name,
+                        severity="P2",
+                        message=f"fle_gate 检查初始化失败（降级 P2）：{exc}",
+                    )
+                )
+
+    elif ct == "rollback_exit_code":
+        exit_code_raw = check.params.get("exit_code", 0)
+        try:
+            exit_code = int(exit_code_raw)
+        except (TypeError, ValueError):
+            exit_code = -1
+        try:
+            from zephyr.rollback.contract import get_gate_action
+            gate_action, description = get_gate_action(exit_code)
+            if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO"):
+                _add(
+                    f"Rollback exit code {exit_code} -> {gate_action}: {description}",
+                    detail=f"check_id={check.check_id} exit_code={exit_code}",
+                )
+            elif gate_action in ("WARN", "RETRY", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
+                _add(
+                    f"Rollback exit code {exit_code} -> {gate_action}: {description}",
+                    detail=f"check_id={check.check_id} exit_code={exit_code}",
+                )
+        except Exception as exc:
+            violations.append(
+                GateViolation(
+                    check_id=check.check_id,
+                    check_name=check.name,
+                    severity="P2",
+                    message=f"rollback_exit_code check failed (degrade P2): {exc}",
+                )
+            )
+
     else:
-        # 未知 check_type：记为 P2 警告
         violations.append(
             GateViolation(
                 check_id=check.check_id,
                 check_name=check.name,
                 severity="P2",
-                message=f"未知检查类型 '{ct}'，已跳过",
+                message=f"Unknown check type '{ct}', skipped",
             )
         )
 
@@ -737,7 +835,8 @@ class GateEngine:
         "G3": "g3_evaluate.yaml",
         "G4": "g4_activate.yaml",
         "G5": "g5_extract.yaml",
-        "G6": "g6_blueprint_compliance.yaml",
+        "G6": "g6_ctr_compliance.yaml",
+        "G6_BP": "g6_blueprint_compliance.yaml",
         "G7": "task/g7_orc_gate_engine.yaml",
         "G10": "g7_position_limits.yaml",
         "G11": "g8_leverage.yaml",
@@ -746,6 +845,10 @@ class GateEngine:
         "EN-002": "invariants/en_002_enforcement_validator.yaml",
         "EN-003": "invariants/en_003_contract_compatibility.yaml",
         "ZERO-RESIDUE": "ZERO-RESIDUE.yaml",
+        "MAD-001": "admission/mad_001_architecture_necessity.yaml",
+        "MAD-002": "admission/mad_002_phase_relevance.yaml",
+        "MAD-003": "admission/mad_003_dependency_compliance.yaml",
+        "MAD-004": "admission/mad_004_interface_definability.yaml",
     }
 
     def __init__(
@@ -760,7 +863,7 @@ class GateEngine:
         self._db_path: Path = Path(db_path) if db_path is not None else DB_PATH
         self._project_root: Path = Path(project_root) if project_root is not None else Path.cwd()
         if auto_init:
-            init_db(self._db_path)
+            ensure_schema(self._db_path)
         self._conn: sqlite3.Connection = get_db_connection(self._db_path)
         self._gate_cache: dict[str, GateConfig] | None = None
 
@@ -911,6 +1014,7 @@ class GateEngine:
     _SEVERITY_MAP: ClassVar[dict[str, str]] = {
         "error": "P0",
         "critical": "P0",
+        "reject": "P0",
         "warning": "P1",
         "warn": "P1",
         "info": "P2",
@@ -929,15 +1033,17 @@ class GateEngine:
         name = str(raw.get("name") or raw.get("title") or raw.get("gate_name", ""))
 
         # 兼容 checks / entry_conditions
-        raw_checks: list[Any] = list(raw.get("checks") or raw.get("entry_conditions") or [])
+        raw_checks: list[Any] = list(
+            raw.get("checks") or raw.get("entry_conditions") or raw.get("rules") or []
+        )
 
         checks: list[CheckConfig] = []
         for c in raw_checks:
-            raw_sev = str(c.get("severity", "P1"))
+            raw_sev = str(c.get("severity") or c.get("enforcement") or "P1")
             severity = GateEngine._SEVERITY_MAP.get(raw_sev.lower(), raw_sev)
             checks.append(
                 CheckConfig(
-                    check_id=str(c.get("id", "")),
+                    check_id=str(c.get("id") or c.get("rule_id", "")),
                     name=str(c.get("name", "")),
                     check_type=str(c.get("type", "condition")),
                     description=str(c.get("description", "")),

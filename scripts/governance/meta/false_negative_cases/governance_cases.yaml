@@ -1,0 +1,24 @@
+cases:
+  - case_id: "FN-GOV-001"
+    description: "RULE-* 条目未在 rule-registry.md 登记"
+    expected_detection: "governance"
+    severity: "high"
+    input_file: "test_fixtures/fn_gov_001.py"
+    expected_finding_count: 1
+    false_negative_if: "治理脚本未检测出规则未登记"
+
+  - case_id: "FN-GOV-002"
+    description: "session结束时未释放文件锁"
+    expected_detection: "governance"
+    severity: "medium"
+    input_file: "test_fixtures/fn_gov_002.py"
+    expected_finding_count: 1
+    false_negative_if: "治理脚本未检测出锁泄漏"
+
+  - case_id: "FN-GOV-003"
+    description: "临时文件残留超过TTL"
+    expected_detection: "governance"
+    severity: "medium"
+    input_file: "test_fixtures/fn_gov_003.py"
+    expected_finding_count: 1
+    false_negative_if: "治理脚本未检测出临时文件残留"

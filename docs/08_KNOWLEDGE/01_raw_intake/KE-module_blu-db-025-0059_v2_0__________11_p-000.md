@@ -1,0 +1,11 @@
+---
+module_id: KE-module_blu-db-025-0059_v2_0__________11_p-000
+title: DB-025-0059：v2.0 迁移指南落地——§11 Python 代码块
+category: module_blueprint
+---
+
+# DB-025-0059：v2.0 迁移指南落地——§11 Python 代码块
+
+DB-025-0059：v2.0 迁移指南落地——§11 Python 代码块
+
+§11: 调用链升级路径: init_db + backup + get_connection。

@@ -26,9 +26,9 @@ from decimal import Decimal
 from typing import ClassVar, Dict, List, Optional
 
 from zephyr.shared.contracts.errors import RiskLimitViolationError
-from zephyr.shared.contracts.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.shared.contracts.risk_metrics import RiskMetricsReport
+from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.shared.contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
 
 
 class RiskManagerBase(abc.ABC):

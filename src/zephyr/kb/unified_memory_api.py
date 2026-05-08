@@ -48,7 +48,7 @@ from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.shared.capability import capability_check
+from zephyr.shared.security.capability import capability_check
 
 __all__ = [
     "WriteTrace",
@@ -663,23 +663,35 @@ def get_unified_memory_api(
     backend: MemoryBackend | None = None,
     enforce_capability: bool = True,
     reset: bool = False,
+    prefer_vms: bool = True,
 ) -> UnifiedMemoryAPI:
     """返回 UnifiedMemoryAPI 模块级单例（线程安全）。
 
     参数
     ----
     backend
-        指定后端；None 时延迟构建 ChromaMemoryBackend。
+        指定后端；None 时按 prefer_vms 策略自动选择。
     enforce_capability
         是否启用 CBAC 校验；默认 True。
     reset
         强制重建单例（仅测试使用）。
+    prefer_vms
+        当 backend=None 时是否优先使用 VMS 后端；默认 True。
+        VMS 不可用时自动降级到 ChromaMemoryBackend。
     """
     global _singleton_api
     with _singleton_lock:
         if reset or _singleton_api is None:
+            resolved_backend = backend
+            if resolved_backend is None and prefer_vms:
+                try:
+                    from zephyr.kb.vms_memory_backend import create_vms_backend
+                    resolved_backend = create_vms_backend()
+                    _logger.info("get_unified_memory_api: using VMSMemoryBackend")
+                except Exception as exc:
+                    _logger.info("get_unified_memory_api: VMS unavailable, falling back to ChromaDB: %s", exc)
             _singleton_api = UnifiedMemoryAPI(
-                backend=backend,
+                backend=resolved_backend,
                 enforce_capability=enforce_capability,
             )
         return _singleton_api

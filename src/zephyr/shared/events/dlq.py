@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from zephyr.shared.observer import EventType, Observer
+from zephyr.shared.infra.observer import EventType, Observer
 
 __all__ = [
     "DeadLetter",
@@ -98,7 +98,7 @@ class DeadLetterQueue:
     """死信队列——拦截 observer 失败事件并持久化。
 
     Usage:
-        from zephyr.shared.observer import global_observer
+        from zephyr.shared.infra.observer import global_observer
         dlq = DeadLetterQueue(db_path="data/zalpha_metadata.db")
         dlq.attach(global_observer)
 
@@ -388,7 +388,7 @@ def attach_dlq_to_observer(
     """将死信队列挂载到事件总线的辅助函数。
 
     用法:
-        from zephyr.shared.observer import global_observer
+        from zephyr.shared.infra.observer import global_observer
         from zephyr.shared.events.dlq import attach_dlq_to_observer
 
         dlq = attach_dlq_to_observer(global_observer, "data/zalpha_metadata.db")

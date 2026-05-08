@@ -1,0 +1,58 @@
+# resource_optimization.yaml — 资源优化引擎配置
+# SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §18
+# 热加载：文件 mtime 变化后下一个监控周期生效（≤5 秒）
+
+pressure_thresholds:
+  memory_warning_percent: 75.0
+  memory_critical_percent: 85.0
+  memory_emergency_percent: 95.0
+  cpu_warning_percent: 80.0
+  cpu_critical_percent: 90.0
+  cpu_emergency_percent: 98.0
+  process_warning_count: 50
+  process_critical_count: 100
+  process_emergency_count: 250
+
+hysteresis:
+  confirmation_count: 2
+  cooldown_seconds: 60.0
+  hysteresis_percent: 10.0
+  oscillation_threshold_per_hour: 3
+
+monitor:
+  interval_normal_s: 30.0
+  interval_warning_s: 60.0
+  interval_critical_s: 120.0
+  interval_emergency_s: 0.0
+
+cache:
+  max_entries: 1000
+  ttl_seconds: 300.0
+
+process_pool:
+  max_processes: 30
+  zombie_check_interval_s: 60.0
+
+circuit_breaker:
+  failure_threshold: 3
+  recovery_timeout_s: 30.0
+  half_open_max_calls: 1
+
+self_healing:
+  enabled: true
+  max_recovery_time_s: 60.0
+  verification_delay_s: 5.0
+  max_retries: 3
+
+audit:
+  enabled: true
+  event_type: "resource_optimization"
+
+eventbus:
+  enabled: true
+  topic: "resource.pressure.changed"
+
+history:
+  max_in_memory: 10000
+  sqlite_path: "data/resource_optimization_history.db"
+  sqlite_enabled: false

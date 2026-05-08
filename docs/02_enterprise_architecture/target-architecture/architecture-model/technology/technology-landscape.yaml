@@ -11,7 +11,7 @@ partition:
     来源：technology-landscape.md v1.0.0 迁移。
   source_views:
     - 04-technology-architecture.md
-  related_adrs:
+  related_kb_refs:
     - ADR-0009
   refresh_cadence: quarterly
 

@@ -1,0 +1,43 @@
+dag_id: security_scan
+default_layer: local
+default_priority: P0
+description: Injection-RedTeam-Sandbox-Report
+edges:
+- condition: success
+  from_node: injection
+  to_node: redteam
+- condition: success
+  from_node: redteam
+  to_node: sandbox
+- condition: success
+  from_node: sandbox
+  to_node: report
+max_parallelism: 3
+name: Security Scan
+nodes:
+- capability_id: llm-security
+  layer_override: null
+  node_id: injection
+  params: {}
+  priority_override: null
+  work_type: injection_check
+- capability_id: llm-security
+  layer_override: api
+  node_id: redteam
+  params: {}
+  priority_override: null
+  work_type: red_team
+- capability_id: llm-security
+  layer_override: null
+  node_id: sandbox
+  params: {}
+  priority_override: null
+  work_type: sandbox
+- capability_id: ollama-chat
+  layer_override: null
+  node_id: report
+  params: {}
+  priority_override: null
+  work_type: summary_extraction
+retry_on_failure: 2
+timeout_minutes: 60

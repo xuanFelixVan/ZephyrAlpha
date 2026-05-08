@@ -259,3 +259,23 @@ class TaskCompletionGate:
             for r in report.residuals:
                 lines.append(f"{r.residual_type.value:<15} {r.disposition.value:<12} {r.rel_path}")
         return "\n".join(lines)
+
+
+def g7_check_delegate(task_card: dict) -> G7CheckResult:
+    """G7 委托层 — 桥接 TaskLifecycleManager.gate_g7_output()。
+    TASK-INF-0131: 确保两个 G7 实现路径一致且互补。
+    """
+    try:
+        from zephyr.core.lifecycle.task_lifecycle_manager import TaskLifecycleManager
+        manager = TaskLifecycleManager()
+        result = manager.gate_g7_output(task_card)
+        return G7CheckResult(
+            gate_id="G7",
+            passed=result.passed,
+            violations=[result.details] if not result.passed else [],
+            checked_fields=["upstream_files", "downstream_outputs", "rollback_instructions",
+                          "context_assembly_manifest", "allowed_touch", "forbidden_touch"],
+        )
+    except ImportError:
+        gate = G7CompletenessGate()
+        return gate.check(task_card)

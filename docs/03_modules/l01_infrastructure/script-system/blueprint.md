@@ -13,7 +13,7 @@ language: zh
 created_by: human_plus_agent
 valid_from: 2026-05-03
 ttl: permanent
-construction_progress: phase_1_partial
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
 dependencies:
   - MOD-INF-001
@@ -41,7 +41,7 @@ summary: 脚本系统是 ZephyrAlpha 第三条独立生产线——横切全局�
 
 > **module_id**: MOD-INF-005 | **version**: 5.2.1 | **status**: Active | **layer**: L01 infrastructure
 
-> **真源声明**：本蓝图升格自 `D:\ZephyrAlpha\模块候选池\开发流程\氛围编程基础设施\vibe-coding-script-system-design.md`（原名"氛围编程基础设施——脚本系统设计"，version 0.2.0，147KB）。本蓝图为该设计的 canonical 正式版本，任何冲突以本蓝图为准。
+> **真源声明**：本蓝图升格自场外草稿原件（vibe-coding-script-system-design.md，原名"氛围编程基础设施——脚本系统设计"）。本蓝图为该设计的 canonical 正式版本，任何冲突以本蓝图为准。
 
 ---
 
@@ -249,9 +249,17 @@ Gen              生成器                   4个脚本
 | `[AI-Generated]` | 针对 AI 产出的专项检查 | 幻觉检测、AI生成代码质量 |
 | `[Periodic]` | 周期性运行（非每次提交触发） | 周度审计报告、覆盖率趋势分析 |
 
-> **使用方式**：`python scripts/governance/run_all.py --tags Security,Quick` → 只运行打有 Security 或 Quick 标签的脚本。
-
-> **待办**：`script_manifest.yaml` 中为每个脚本新增 `version` 字段——对标 OWASP ASVS 每个需求有唯一标识符+版本追溯。当前由 git history 隐式追踪，显式版本号利于 AI 判断脚本是否过期。
+> **使用方式**：`python scripts/governance/run_all.py --tags Security,Quick` → 只运行**同时**打有 Security **和** Quick 标签的脚本（AND 语义）。
+>
+> **自动推导规则**（`generate_script_manifest.py` 生成时自动计算，存入 `script_manifest.yaml`）：
+>
+> | 来源 | 规则 |
+> |------|------|
+> | 维度 | D1-D4,D8 → `Quick` / D5,D7 → `Critical` / D6,D11 → `Security`, `Critical` / D9,D12 → `AI-Generated`, `Periodic` / D10 → `Periodic` |
+> | 前缀 | `fix_*`, `generate_*` → `Disruptive`（追加） / `audit_*` → `Periodic`（追加） |
+> | 优先级 | P0 → `Critical`（追加，若未因维度获得） |
+>
+> **AI 公约**：新脚本**无需在 `__manifest__` 块中显式声明 tags**——生成器自动从维度+前缀+优先级推导。标签总会出现在 `script_manifest.yaml` 中，run_all.py 从 manifest 读取标签执行过滤。
 
 ---
 
@@ -599,28 +607,6 @@ OPS-002: D3 维度 frontmatter 合规修复任务
 
 ---
 
-## 9. 迁移与废弃方案
-
-### 9.1 旧树脚本处理
-
-| 对象 | 位置 | 处理方式 |
-|------|------|---------|
-| `_DO_NOT_USE_old_tree/` 下脚本 | `D:\ZephyrAlpha\_DO_NOT_USE_old_tree\scripts\` | **不做迁移**。旧树已归档——禁止使用 |
-| 旧版 AGENTS.md | `D:\ZephyrAlpha\_DO_NOT_USE_old_tree\AGENTS.md` | 含 18 章完整版，92 处路径已失效。不作为规则来源 |
-
-### 9.2 候选池设计文档处理
-
-| 文件 | 路径 | 处理方式 |
-|------|------|---------|
-| vibe-coding-script-system-design.md | `D:\ZephyrAlpha\模块候选池\开发流程\氛围编程基础设施\` | **保留作为历史参考**。包含 Kimi K2.6 + GLM-5.1 完整调研数据。不做物理删除。冲突以本蓝图为准 |
-| 01-脚本系统架构.md | `D:\ZephyrAlpha\模块候选池\开发流程\脚本任务知识库架构\` | 该文件是任务系统选型+路线文档——脚本系统专属内容已提取至本蓝图。候选池内保留原始链接 |
-
-### 9.3 废弃的脚本路径（已在代码中更新）
-
-原 `audit_factory/` → 现 `script_system/`（2026-05-02 重命名）：所有引用已同步更新。
-
----
-
 ## 10. 施工 Phase 规划
 
 ### 最小闭环 MVP ✅ 已完成
@@ -868,7 +854,7 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 | `scripts/governance/d3_metadata/detect_skip_active_status.py` | ✅ 已实现 | |
 | `scripts/governance/d3_metadata/detect_stale_version.py` | ✅ 已实现 | |
 | `scripts/governance/d3_metadata/validate_superseded_by.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/deep_content_scanner.py` | ✅ 已实现 | |
+| `scripts/governance/d3_metadata/scan_deep_content.py` | ✅ 已实现 | |
 | `scripts/governance/d6_security/detect_vague_terms.py` | ✅ 已实现 | |
 | `scripts/governance/d6_security/detect_shell_dangerous.py` | ✅ 已实现 | |
 | `scripts/governance/d6_security/detect_secrets.py` | ✅ 已实现 | |
@@ -888,12 +874,12 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 | `scripts/governance/d1_structure/generate_missing_index_md.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/validate_index_reality.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/sync_index_from_manifest.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/drafts_zone_archiver.py` | ✅ 已实现 | |
+| `scripts/governance/d1_structure/archive_drafts_zone.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/detect_orphan_py.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/check_index_integrity.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/detect_residual_files.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/detect_temp_files.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/cbg_reset.py` | ✅ 已实现 | |
+| `scripts/governance/d1_structure/reset_cbg.py` | ✅ 已实现 | |
 | `scripts/governance/d1_structure/audit_findings_by_scope.py` | ✅ 已实现 | |
 | `scripts/governance/d7_code/validate_test_coverage.py` | ✅ 已实现 | |
 | `scripts/governance/d7_code/validate_import_style.py` | ✅ 已实现 | |
@@ -1848,3 +1834,16 @@ pip freeze > scripts/governance/meta/requirements/frozen-versions.txt
 | 2026-05-03 | 3.0.0 | **蓝图 V3 升级——全面对标专业机构**。(1) 新增 §1.7 自动化不可逾越的边界（6 条红线，对标 ITIL 4 自动化治理）。(2) 新增 §3.5 按自动化层级分类（L1/L2/L3，对标 ITIL 分层自动化策略）。(3) 新增 §3.6 按标签分类（6 个标签 + `--tags` 参数，对标 K8s Conformance 标签聚焦）。(4) §4.4 升级为 13 项入库验证矩阵（对标 K8s/CNCF 15 项自动验证）。(5) 新增 §4.5 插件接口契约 Plugin Contract（对标 Sonobuoy Plugin Skeleton）。(6) §5.2 新增 `--tags` 和 `--depth` 参数（quick/full/deep，对标 OWASP ASVS L1/L2/L3）。(7) 新增 §6.5 Finding Schema recommendation 字段（对标 ITIL Level 2 决策辅助）。(8) 新增 §8.4 SLA/SLO 度量指标（6 项，对标 ITIL 服务级别管理）。(9) §10 新增 C5→C1 反馈闭环 + 里程碑门禁（对标 ITIL SVS + NASA SRR→PDR→CDR→TRR→SAR）。(10) §12.4 新增盲点 B13（里程碑门禁缺失）。(11) **新增 §13 脚本系统运维与自我监控**——系统健康自检 + 应急回退 + 版本兼容 + 定期演练（对标 ITIL 应急管理）。(12) 个体脚本版本化注记（§3.6 待办，对标 OWASP ASVS 需求标识符）。Frontmatter 对标列表扩展至 ITIL 4 / OWASP ASVS v5 / K8s Conformance / NASA-STD-8739.8B / Terraform pre-commit / Cursor Rules / Windsurf Rules / Anthropic CLAUDE.md |
 | 2026-05-02 | 2.0.0 | **蓝图 V2 升级**。(1) 全局重构——12章→10章，新增 §6 与任务系统集成接口、§3 脚本分类体系。(2) 过时数据修正——17个脚本→73个、覆盖率 92%→100%、D10"缺失"→"已有"。(3) 依赖声明新增 MOD-INF-006 G0-G7+G3.2.1+M1-M11 三个靶点。(4) 版本号 1.0.0→2.0.0 |
 | 2026-05-02 | 1.0.0 | 初始创建——从候选池设计文档 v0.2.0 升格为正式蓝图 MOD-INF-005 |
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `scripts/governance/` + `src/zephyr/script_system/` |
+| 源码文件数 | 120 个 .py/.yaml |
+| 测试路径 | `tests/governance/` |
+| 配置文件 | `config/runtime/script_retirement_state.yaml` |
+| 关键入口 | `scripts/governance/` 下 D1-D12 子目录全覆盖 |

@@ -3,6 +3,10 @@ Blueprint Provenance Gate - V-12: validate provenance triples in blueprint front
 Task: T-V2-001 (Wave 0 final review R73)
 """
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -71,10 +75,10 @@ def main() -> int:
 
     if errors:
         print(f"\nFAIL: {errors} blueprint provenance issue(s)")
-        return 1
+        return EXIT_FINDINGS
 
     print("OK: Blueprint provenance validation passed")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

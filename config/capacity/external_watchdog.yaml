@@ -1,0 +1,29 @@
+# ZephyrAlpha — 外部看门狗配置
+# 真源：盲点 #55 外部取证审计
+# 版本：v2.6.0
+
+watchdog_version: "2.6.0"
+
+heartbeat:
+  interval_seconds: 300
+  max_missed_before_alert: 3
+  max_missed_before_critical: 6
+  endpoint: "http://localhost:9123/health"
+  alert_channel: "飞书"
+
+checks:
+  - name: process_alive
+    type: basic
+    interval_seconds: 60
+  - name: capacity_metrics_ingestion
+    type: data_freshness
+    interval_seconds: 300
+    max_staleness_seconds: 600
+  - name: error_budget_update
+    type: data_freshness
+    interval_seconds: 300
+    max_staleness_seconds: 600
+
+retry:
+  max_retries: 3
+  retry_interval_seconds: 10

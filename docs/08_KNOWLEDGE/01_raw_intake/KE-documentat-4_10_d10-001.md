@@ -1,0 +1,15 @@
+---
+module_id: KE-documentat-4_10_d10-001
+title: 4.10 D10 运维架构
+category: documentation
+---
+
+# 4.10 D10 运维架构
+
+4.10 D10 运维架构
+
+| 指标 | 采集方式 | 评分贡献 |
+|------|---------|---------|
+| 5 项 SLI/SLO 定义完整性 | `08-operations-architecture.md` 内容 | 0.3 |
+| OpenTelemetry 覆盖率 | traces/metrics/logs 三支柱 | 0.4 |
+| 结构化日志规范合规率 | JSON lines 格式校验 | 0.3 |

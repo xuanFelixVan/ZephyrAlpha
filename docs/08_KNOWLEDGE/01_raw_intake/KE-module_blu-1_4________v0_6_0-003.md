@@ -1,0 +1,57 @@
+---
+module_id: KE-module_blu-1_4________v0_6_0-003
+title: 1.4 触发条件监控（v0.6.0 扩展）
+category: module_blueprint
+---
+
+# 1.4 触发条件监控（v0.6.0 扩展）
+
+1.4 触发条件监控（v0.6.0 扩展）
+
+```yaml
+trigger_monitoring:
+  metric_1:
+    name: "active_agent_count"
+    current: 1
+    threshold: 3
+    source: "AgentIdentity 注册表"
+    note: "多 IDE 开的对话也算 Agent——TRAE/Cursor/RooCode 同时并行就已达阈值的 1/3"
+
+  metric_2:
+    name: "inter_agent_handoff_per_day"
+    current: 0
+    threshold: 5
+    source: "Audit Trail 任务交接记录"
+
+  metric_3:
+    name: "conflict_count_per_day"
+    current: 0
+    threshold: 2
+    source: "git merge conflict 统计"
+
+  metric_4:
+    name: "concurrent_ide_sessions"
+    current: 10
+    threshold: 15
+    source: "IDE Session Tracker"
+    warning: "TRAE + Cursor + RooCode 各开 5+ 对话 = 准多 Agent 场景"
+
+  metric_5:  # v0.6.0 新增——False Task Completion 信号
+    name: "ineffective_task_completions"
+    current: 0
+    threshold: 1
+    source: "Living Spec diff verification"
+    note: "\"Agents of Chaos\" 失败模式 #9——Agent COMPLETED ≠ 任务真完成了"
+
+  metric_6:  # v0.6.0 新增——涌现行为信号
+    name: "cross_agent_behavioral_anomalies"
+    current: 0
+    threshold: 1
+    source: "MAScope Cross-Agent Semantic Flow + Isolation Forest anomaly score > 0.7"
+    note: "单个 Agent 行为正常但跨 Agent 轨迹异常"
+
+  activation_rule: "metric_1 >= 3 AND (metric_2 >= 5 OR metric_3 >= 2)"
+  early_warning_rule: "(metric_4 >= 15 AND metric_1 >= 2) OR metric_5 >= 1 OR metric_6 >= 1 → 开始预热 A2A scaffold"
+```
+
+---

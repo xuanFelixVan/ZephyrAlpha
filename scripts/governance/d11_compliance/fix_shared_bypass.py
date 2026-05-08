@@ -4,6 +4,10 @@ Aligns with AGENTS.md section 6.5 (script self-creation repository mandatory con
 and SCRIPT-QUALITY-001 D-D-07 (prohibits bypassing _shared utilities).
 """
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args:
@@ -58,10 +62,10 @@ def main() -> int:
 
     if violations:
         print(f"\nFAIL: {violations} shared API bypass(es)")
-        return 1
+        return EXIT_FINDINGS
 
     print("OK: No _shared API bypass detected")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

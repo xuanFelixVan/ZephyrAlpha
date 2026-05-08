@@ -152,7 +152,7 @@ values:
     allowed_directories: ["03_blueprints/"]
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from"]
-    ai_keywords: ["决策", "架构", "ADR", "decision", "取舍", "已废弃"]
+    ai_keywords: ["决策", "架构", "KB决策记录", "decision", "取舍", "已废弃"]
     examples: ["ADR-0005-frontmatter-versioning.md"]
     status: deprecated
     deprecated_since: "2026-04-27"
@@ -380,11 +380,6 @@ deprecated_values:
     reason: "与 register 语义重叠"
     migrated_to: ["register"]
     date: "2026-04-30"
-
-  - value: reference
-    reason: "（已恢复）reference 仍在使用（terminology-mapping.md、frontier-llm-benchmark-ranking.md），语义明确——提供结构化参考数据。2026-05-03 从 deprecated_values 移回 values"
-    migrated_to: null
-    date: "2026-05-03"
 
   - value: registry
     reason: "拼写统一为 register（与 PS-STD-001 一致）"

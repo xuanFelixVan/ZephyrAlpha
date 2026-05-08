@@ -17,8 +17,7 @@ seven_stages:
     rule_module_ids:
       - PS-STD-011
       - GOV-DOC-010
-    manual_files:
-      - "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
+    manual_files: []
 
   - id: "②"
     name: "草稿"
@@ -30,11 +29,10 @@ seven_stages:
       - "是否引用而非复制（DOC-008）？"
     scripts:
       - "人工"
-      - "d3_metadata/deep_content_scanner.py"
+      - "d3_metadata/scan_deep_content.py"
     rule_module_ids:
       - GOV-DOC-009
-    manual_files:
-      - "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
+    manual_files: []
 
   - id: "③"
     name: "审计裁定"
@@ -51,13 +49,11 @@ seven_stages:
     rule_module_ids:
       - PS-STD-004
       - GOV-AI-002
-    manual_files:
-      - "模块候选池/审计流程/升级版指令集-v4.md"
-      - "模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md"
+    manual_files: []
 
   - id: "④"
     name: "蓝图"
-    actions: "将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 ADR（GOV-ARCH-001）"
+    actions: "将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 KB 决策记录（GOV-ARCH-001）"
     check_items:
       - "蓝图是否自包含（AI读完蓝图≈读完整个项目）？"
       - "§6.9 YAML优先——架构事实是否先在 architecture-model/layers/ YAML 中登记？"
@@ -330,10 +326,6 @@ methodology_files:
     path: "docs/01_policies_and_standards/meta/meta-standard-constitution.md"
     stage: "全局前提"
     description: "规则体系最高元规则——什么进宪法（ABS）、什么进登记表（COND/REC）"
-  - name: "从想法到粗稿-起草流水线指令集-v1"
-    path: "模块候选池/审计流程/从想法到粗稿-起草流水线指令集-v1.md"
-    stage: "①~③"
-    description: "从碎片想法到结构化草稿的起草流程"
   - name: "GOV-DOC-010 文档可发现性策略"
     path: "docs/01_policies_and_standards/governance/document/document-discovery-policy.md"
     stage: "①~⑦"
@@ -346,10 +338,6 @@ methodology_files:
     path: "docs/01_policies_and_standards/governance/document/document-control-policy.md"
     stage: "②~⑤"
     description: "文档控制8原则——SSoT唯一、责任二选一、安全删除、完整路径引用、创建前必查、先读后改、引用不复制、上下文预算意识"
-  - name: "升级版指令集-v4"
-    path: "模块候选池/审计流程/升级版指令集-v4.md"
-    stage: "③"
-    description: "四步串行多模型审计流水线（GLM→Kimi→Qwen→Claude）+ Step 0 动态项目扫描"
   - name: "GOV-AI-002 模型路由策略"
     path: "docs/01_policies_and_standards/governance/ai/model-routing-policy.md"
     stage: "③"
@@ -358,14 +346,7 @@ methodology_files:
     path: "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md"
     stage: "③"
     description: "规则冲突裁决——五维分类+推导链（stability→layer→scope→Owner）"
-  - name: "蓝图与施工图流程断裂问题分析"
-    path: "模块候选池/文档管理体系/蓝图与施工图流程断裂问题分析.md"
-    stage: "③"
-    description: "全流程逐环节审查——从\"为什么蓝图、草稿、施工图之间有断裂\"出发分析15+个问题"
-  - name: "开发流程七合一方案"
-    path: "模块候选池/开发流程/开发流程七合一方案.md"
-    stage: "②~⑦"
-    description: "7份方案融合的Vibe Coding工业级开发流程（v2.2.0，五大核心原则+整体路线图+scaffold~5）"
+  - name: "PS-STD-000 元标准宪法"
   - name: "Gate Strategy Standard"
     path: "docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md"
     stage: "④~⑤"

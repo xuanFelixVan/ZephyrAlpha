@@ -39,7 +39,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 SKELETON_PACKAGES = {
     "l03_signal_generation",
@@ -60,12 +60,14 @@ SKELETON_PACKAGES = {
 EXEMPT_PACKAGES = {"shared", "l00_data_source"}
 
 def _has_imports(tree: ast.AST) -> bool:
+    """_has_imports implementation."""
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             return True
     return False
 
 def _has_all_definition(tree: ast.AST) -> bool:
+    """_has_all_definition implementation."""
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
@@ -125,7 +127,7 @@ def main() -> None:
         print(f"\n[INIT-ALL] 全部 {ok_count}/{total_inits} 个 __init__.py 符合规范 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

@@ -815,6 +815,205 @@ blueprint_search:
           error: { type: string }
 
 # ──────────────────────────────────────────────────────────────────────
+# Server 7 · governance（DOM-GOV-001 · session-20260508-001）
+# ──────────────────────────────────────────────────────────────────────
+
+governance:
+  server_id: governance
+  version: "1.0.0"
+  description: "治理域八件套统一MCP入口 — PhaseGate/Audit/Lock/Contract/Health 五工具（DOM-GOV-001 治理域集成蓝图）"
+  status: beta
+  backend:
+    - "src/zephyr/mcp/governance_server.py"
+    - "src/zephyr/governance/"  # 八件套桥接层
+    - "src/zephyr/escalation/"  # EscalationEngine v0.14.0
+    - "src/zephyr/budget_enforcer/"  # BudgetEngine v0.7.0
+    - "src/zephyr/a2a/"  # A2A Protocol v0.10.0
+  error_namespace: "ZA-GOV"
+  error_codes:
+    - code: "ZA-GOV-0001"
+      message: "phase gate check failed — modules not importable"
+      http_status: 503
+    - code: "ZA-GOV-0002"
+      message: "audit script not found or timed out"
+      http_status: 503
+    - code: "ZA-GOV-0003"
+      message: "contract test file not found"
+      http_status: 404
+    - code: "ZA-GOV-0004"
+      message: "governance health DEGRADED"
+      http_status: 503
+
+  tools:
+
+    - name: governance.check_phase_gates
+      description: "运行指定 Phase 门禁检查（phase_0/phase_1/phase_2）"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [phase]
+        additionalProperties: false
+        properties:
+          phase:
+            type: string
+            enum: [phase_0, phase_1, phase_2]
+      output_schema:
+        type: object
+        properties:
+          phase: { type: string }
+          modules_checked: { type: integer }
+          all_importable: { type: boolean }
+      errors: ["ZA-GOV-0001"]
+
+    - name: governance.audit_registration
+      description: "扫描项目孤儿文件/未注册资产，返回孤儿清单"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 3
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          json_output: { type: boolean, default: true }
+      output_schema:
+        type: object
+        properties:
+          has_orphans: { type: boolean }
+          exit_code: { type: integer }
+      errors: ["ZA-GOV-0002"]
+
+    - name: governance.lock_status
+      description: "查询文件锁状态（可指定文件或查看全部）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          file_path:
+            type: string
+            description: "可选：要查询的具体文件路径"
+      output_schema:
+        type: object
+        properties:
+          query: { type: string }
+
+    - name: governance.validate_contract
+      description: "校验指定的治理契约（G-CT-001~G-CT-010）合规性"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [contract_id]
+        additionalProperties: false
+        properties:
+          contract_id:
+            type: string
+            description: "契约ID，如 G-CT-001"
+      output_schema:
+        type: object
+        properties:
+          contract_id: { type: string }
+          valid: { type: boolean }
+      errors: ["ZA-GOV-0003"]
+
+    - name: governance.get_governance_health
+      description: "治理域全景健康检查 — 锁状态/注册完整性/契约合规/模块导入 四维诊断"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          health: { type: string, enum: [HEALTHY, DEGRADED, UNHEALTHY] }
+          modules_importable: { type: string }
+          has_orphans: { type: boolean }
+          locks_active: { type: boolean }
+      errors: ["ZA-GOV-0004"]
+
+    - name: governance.drift_scan
+      description: "运行漂移检测扫描 — 对比基线快照检测文件/配置/契约漂移"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          scope:
+            type: string
+            enum: [full, incremental, contract_only]
+            default: incremental
+          severity_threshold:
+            type: string
+            enum: [LOW, MEDIUM, HIGH, CRITICAL]
+            default: MEDIUM
+      output_schema:
+        type: object
+        properties:
+          scan_id: { type: string }
+          total_drifts: { type: integer }
+          critical_count: { type: integer }
+          scan_duration_ms: { type: number }
+      errors: ["ZA-GOV-0005"]
+
+    - name: governance.drift_report
+      description: "获取漂移检测报告 — 趋势分析/分类统计/修复建议"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          report_type:
+            type: string
+            enum: [summary, detailed, trend]
+            default: summary
+          days:
+            type: integer
+            default: 7
+            minimum: 1
+            maximum: 90
+      output_schema:
+        type: object
+        properties:
+          report_id: { type: string }
+          total_events: { type: integer }
+          by_severity: { type: object }
+          trend_direction: { type: string, enum: [improving, stable, degrading] }
+      errors: ["ZA-GOV-0006"]
+
+    - name: governance.drift_budget
+      description: "检查漂移预算 — 剩余额度/消耗速率/是否阻断"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          gate_id:
+            type: string
+            description: "检查特定 gate 的漂移预算"
+      output_schema:
+        type: object
+        properties:
+          passed: { type: boolean }
+          remaining_budget: { type: number }
+          total_budget: { type: number }
+          consumption_rate: { type: number }
+      errors: ["ZA-GOV-0007"]
+
+# ──────────────────────────────────────────────────────────────────────
 # 共享 Pydantic Schema 定义
 # ──────────────────────────────────────────────────────────────────────
 
@@ -971,3 +1170,422 @@ changelog:
       - "全部工具标注 stability / safety_level / rate_limit"
       - "共享 5 类 Schema（Task / RetrievalHit / GateRunReport / HandoffPackage / IntentResult）与 ADR-0040 Pydantic 模型对齐"
       - "依赖 ADR-0030/002/010/013/019/020 + gate-strategy-standard.md 全部锁定"
+  - version: "1.1.0"
+    date: "2026-05-08"
+    author: "DeepSeek V4"
+    changes:
+      - "新增 Server 8 · telemetry（MOD-INF-015），5 tools（health / metrics_snapshot / alerts_status / system_profile / schema_info）"
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 8 · telemetry
+# ──────────────────────────────────────────────────────────────────────
+
+telemetry:
+  server_id: telemetry
+  version: "1.0.0"
+  description: "系统遥测可观测性服务；包装 MOD-INF-015 Telemetry facade（9子系统）"
+  status: beta
+  backend:
+    - "src/zephyr/l12_system_telemetry/facade.py (Telemetry)"
+    - "src/zephyr/l12_system_telemetry/auto_bootstrap.py"
+    - "config/metrics_schema.yaml"
+    - "config/alert_rules.yaml"
+    - "config/sli_registry.yaml"
+    - "config/flags.yaml"
+  error_namespace: "ZA-TELE"
+  transports:
+    telemetry: "FastMCP（mcp.server.FastMCP）— JSON tool 名与下列 name 字段一致"
+  safety_levels:
+    L: 可追回退级（不可逆 = False）
+    M: 需临时确认
+    H: 熔断后 5 分钟冷却
+
+  tools:
+    - name: telemetry.health
+      description: "全系统健康聚合视图：子系统状态 + 资源使用"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+
+    - name: telemetry.metrics_snapshot
+      description: "当前指标快照（最近 N 个采集点，默认10）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input:
+        count:
+          type: integer
+          default: 10
+
+    - name: telemetry.alerts_status
+      description: "活跃告警状态（待处理数 + 已配置规则简报）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+
+    - name: telemetry.system_profile
+      description: "系统资源画像：CPU/内存/磁盘/线程数"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+
+    - name: telemetry.schema_info
+      description: "Schema 版本信息 + 兼容性矩阵 + config 文件存在性"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 9 · vector_memory（MOD-INF-011 · VMS v0.7.0）
+# ──────────────────────────────────────────────────────────────────────
+
+vector_memory:
+  server_id: vector_memory
+  version: "1.0.0"
+  description: "全系统统一向量记忆体 — InProcessVectorMemory 8 Collection（decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces）+ HybridRetriever(Vector+BM25+RRF)"
+  status: beta
+  backend:
+    - "src/zephyr/vector_memory/in_process_vector_memory.py (InProcessVectorMemory)"
+    - "src/zephyr/vector_memory/collection_manager.py (CollectionManager 8 Collection)"
+    - "src/zephyr/vector_memory/hybrid_retriever.py (HybridRetriever Vector+BM25+RRF)"
+    - "src/zephyr/vector_memory/embedding_router.py (EmbeddingRouter BGE-M3 1024d / bge-small 512d)"
+    - "src/zephyr/vector_memory/vector_bridge.py (VectorBridge CE/KB/Orc集成)"
+    - "src/zephyr/vector_memory/index_health_monitor.py (IndexHealthMonitor)"
+  error_namespace: "ZA-VMS"
+  error_codes:
+    - code: "ZA-VMS-0001"
+      message: "collection not found (8 canonical names only)"
+      http_status: 404
+    - code: "ZA-VMS-0002"
+      message: "provenance validation failed (origin/audit_chain/arbitration required)"
+      http_status: 400
+    - code: "ZA-VMS-0003"
+      message: "embedding model unavailable"
+      http_status: 503
+    - code: "ZA-VMS-0004"
+      message: "index health degraded"
+      http_status: 503
+    - code: "ZA-VMS-0005"
+      message: "human-gated collection write denied"
+      http_status: 403
+
+  resources:
+    - id: "zephyr://vector_memory/collections"
+      description: "8 个 Collection 元信息与健康状态"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 30
+    - id: "zephyr://vector_memory/health"
+      description: "VMS 全景健康检查——Collections/Embedding/Index 三维诊断"
+      mime_type: application/json
+      cacheable: true
+      cache_ttl_seconds: 15
+
+  tools:
+
+    - name: vector_memory.search
+      description: "语义检索——HybridRetriever(Vector+BM25+RRF) → EmbeddingRouter 双模型降级，跨8 Collection"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        required: [collection_name, query]
+        additionalProperties: false
+        properties:
+          collection_name:
+            type: string
+            enum: [decisions, code_context, lessons, knowledge, rules, blueprints, session_snapshots, execution_traces]
+          query:
+            type: string
+            minLength: 1
+            maxLength: 10000
+          k:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
+      output_schema:
+        type: object
+        properties:
+          hits:
+            type: array
+            items:
+              type: object
+              properties:
+                id: { type: string }
+                content: { type: string }
+                score: { type: number }
+                score_breakdown: { type: object }
+                metadata: { type: object }
+                provenance: { type: object }
+          collection: { type: string }
+          query: { type: string }
+      errors: ["ZA-VMS-0001", "ZA-VMS-0003"]
+
+    - name: vector_memory.write
+      description: "写入向量记忆——强制 provenance（origin/audit_chain/arbitration），human-gated collection 拒绝AI写入"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        required: [collection_name, content]
+        additionalProperties: false
+        properties:
+          collection_name:
+            type: string
+            enum: [decisions, code_context, lessons, knowledge, rules, blueprints, session_snapshots, execution_traces]
+          content:
+            type: string
+            minLength: 1
+          metadata:
+            type: object
+            description: "必须包含 origin + audit_chain + arbitration 三字段"
+            properties:
+              origin: { type: string }
+              audit_chain: { type: array, items: { type: string } }
+              arbitration: { type: string }
+      output_schema:
+        type: object
+        properties:
+          doc_id: { type: string }
+          collection: { type: string }
+          written: { type: boolean }
+      errors: ["ZA-VMS-0001", "ZA-VMS-0002", "ZA-VMS-0005"]
+
+    - name: vector_memory.recall
+      description: "按时间倒序召回最近K条记录（不做语义相似度）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 30
+      input_schema:
+        type: object
+        required: [collection_name]
+        additionalProperties: false
+        properties:
+          collection_name:
+            type: string
+            enum: [decisions, code_context, lessons, knowledge, rules, blueprints, session_snapshots, execution_traces]
+          k:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 5
+      output_schema:
+        type: object
+        properties:
+          records:
+            type: array
+            items:
+              type: object
+              properties:
+                id: { type: string }
+                content: { type: string }
+                metadata: { type: object }
+      errors: ["ZA-VMS-0001"]
+
+    - name: vector_memory.list_collections
+      description: "列出全部8个 Collection 的元信息（维度/分块策略/AI自治级别/是否存在）"
+      safety_level: L
+      stability: stable
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          collections:
+            type: array
+            items:
+              type: object
+              properties:
+                name: { type: string }
+                dimension: { type: integer }
+                chunk_strategy: { type: string }
+                ttl_days: { type: integer }
+                ai_autonomy_level: { type: string }
+                embedding_model: { type: string }
+                exists: { type: boolean }
+
+    - name: vector_memory.health_check
+      description: "VMS 全景健康检查——Collections/Embedding/Index 三维诊断 + 漂移检测"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          status: { type: string, enum: [healthy, unhealthy] }
+          started: { type: boolean }
+          persist_dir: { type: string }
+          embedding: { type: object }
+          collections: { type: object }
+      errors: ["ZA-VMS-0003", "ZA-VMS-0004"]
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 10 · resource_optimization（MOD-INF-032 · ROE v1.0.0）
+# ──────────────────────────────────────────────────────────────────────
+
+resource_optimization:
+  server_id: resource_optimization
+  version: "1.0.0"
+  description: "资源优化引擎 MCP 接口 — MAPE-K 循环驱动的资源监控/分析/优化/自愈（MOD-INF-032）"
+  status: experimental
+  backend:
+    - "src/zephyr/shared/lifecycle/resource_optimization_engine.py (ResourceOptimizationEngine)"
+    - "src/zephyr/shared/lifecycle/daemon_registry.py (DaemonRegistry)"
+    - "config/resource_optimization.yaml"
+  error_namespace: "ZA-ROE"
+  error_codes:
+    - code: "ZA-ROE-0001"
+      message: "invalid strategy name"
+      http_status: 400
+    - code: "ZA-ROE-0002"
+      message: "permission denied (force_pressure requires Owner)"
+      http_status: 403
+    - code: "ZA-ROE-0003"
+      message: "daemon not found"
+      http_status: 404
+    - code: "ZA-ROE-0004"
+      message: "daemon name conflict"
+      http_status: 409
+    - code: "ZA-ROE-0005"
+      message: "engine not running"
+      http_status: 503
+
+  tools:
+
+    - name: resource_optimization.snapshot
+      description: "采集当前资源快照——CPU/内存/磁盘/进程/线程指标"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          timestamp: { type: number }
+          cpu_percent: { type: number }
+          memory_percent: { type: number }
+          memory_used_gb: { type: number }
+          memory_total_gb: { type: number }
+          process_count: { type: integer }
+          thread_count: { type: integer }
+          disk_io_read_mb_s: { type: number }
+          disk_io_write_mb_s: { type: number }
+          disk_free_gb: { type: number }
+          pressure: { type: string, enum: [normal, warning, critical, emergency] }
+
+    - name: resource_optimization.optimize
+      description: "执行指定优化策略——CACHE_WARM/IO_BATCH/PROCESS_POOL/LAZY_INIT/STREAMING_READ/SCHEDULE_ADAPT/MEMORY_COMPACT"
+      safety_level: M
+      stability: experimental
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        required: [strategy]
+        additionalProperties: false
+        properties:
+          strategy:
+            type: string
+            enum: [cache_warm, io_batch, process_pool, lazy_init, streaming_read, schedule_adapt, memory_compact]
+          context:
+            type: object
+            description: "可选上下文信息"
+      output_schema:
+        type: object
+        properties:
+          strategy: { type: string }
+          success: { type: boolean }
+          actions_taken: { type: array, items: { type: string } }
+          quality_preserved: { type: boolean }
+          error_message: { type: ["string", "null"] }
+      errors: ["ZA-ROE-0001", "ZA-ROE-0005"]
+
+    - name: resource_optimization.health
+      description: "资源优化引擎健康检查——引擎运行状态+各子系统状态"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          engine_running: { type: boolean }
+          monitor_loop_alive: { type: boolean }
+          last_snapshot_age_s: { type: number }
+          pressure_level: { type: string }
+          daemon_count: { type: integer }
+          cache_healthy: { type: boolean }
+          process_pool_healthy: { type: boolean }
+
+    - name: resource_optimization.pressure
+      description: "获取当前压力状态机状态——当前级别+转换历史+冷却期"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          current_level: { type: string, enum: [normal, warning, critical, emergency] }
+          previous_level: { type: ["string", "null"] }
+          entered_at: { type: string }
+          transition_count: { type: integer }
+          cooldown_remaining_s: { type: number }
+
+    - name: resource_optimization.daemon_list
+      description: "列出所有注册的守护线程及其运行状态"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          daemons:
+            type: array
+            items:
+              type: object
+              properties:
+                name: { type: string }
+                priority: { type: integer }
+                running: { type: boolean }
+
+    - name: resource_optimization.cache_stats
+      description: "获取 I/O 缓存统计——命中率/内存占用/淘汰次数"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          total_entries: { type: integer }
+          hit_count: { type: integer }
+          miss_count: { type: integer }
+          hit_rate: { type: number }
+          memory_usage_mb: { type: number }
+          evictions: { type: integer }

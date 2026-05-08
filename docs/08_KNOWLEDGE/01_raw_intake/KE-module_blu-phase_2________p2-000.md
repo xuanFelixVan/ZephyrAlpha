@@ -1,0 +1,19 @@
+---
+module_id: KE-module_blu-phase_2________p2-000
+title: Phase 2 — 验证闭环（P2）
+category: module_blueprint
+---
+
+# Phase 2 — 验证闭环（P2）
+
+Phase 2 — 验证闭环（P2）
+
+| 任务 | 产出 |
+|------|------|
+| 实现 RedBlueDriver + 内置攻击场景库 | `red_blue.py` |
+| Trae IDE 对话驱动模式 | 用户指令联动 |
+| JSON API 模式（Roo Code） | `--json` CLI |
+| 全自主 Loop 模式 | `--auto` CLI |
+| 交叉覆盖矩阵生成器 | 覆盖率报告 |
+
+---

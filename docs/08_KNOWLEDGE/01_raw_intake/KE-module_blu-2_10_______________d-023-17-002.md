@@ -1,0 +1,42 @@
+---
+module_id: KE-module_blu-2_10_______________d-023-17-002
+title: 2.10 崩溃恢复与检查点机制（决策 D-023-17）
+category: module_blueprint
+---
+
+# 2.10 崩溃恢复与检查点机制（决策 D-023-17）
+
+2.10 崩溃恢复与检查点机制（决策 D-023-17）
+
+> **决策 D-023-17**：Drift detector 在长扫描（DEEP 模式）中可能因 OOM、进程被杀、Python 异常等原因中途崩溃。引入检查点机制——每个检测器完成后写 checkpoint，崩溃后从最后一个 checkpoint 恢复，不重复执行已完成的检测器。
+>
+> **决策依据**：DEEP 扫描耗时 < 5min × 80+ 检测器，崩溃后从头重跑是不可接受的。1人维护下，崩溃不应导致数据丢失或结果不一致。
+
+```yaml
+crash_recovery:
+  checkpoint:
+    granularity: "per detector"
+    content:
+      - "scan_id: 当前 scan 的唯一 ID"
+      - "completed_detectors: [已完成检测器 ID 列表]"
+      - "last_checkpoint_time: 写入时间戳"
+      - "scan_start_time: scan 开始时间"
+    storage: "data/drift_checkpoints/<scan_id>.json"
+    write_policy: "每个检测器完成后立即 fsync——不依赖 Python 进程正常退出"
+
+  recovery:
+    on_startup: "扫描 data/drift_checkpoints/ 寻找未完成的 scan_id"
+    action: "若存在 → 加载已完成列表 → 从剩余检测器继续执行 → scan 完成后删除 checkpoint"
+    staleness: "若 checkpoint 超过 24h 仍未被恢复 → 标记为 ORPHANED → 通知 Owner → 手动清理"
+
+  transaction_safety:
+    principle: "drift_events 写入使用 SQLite 事务"
+    detail: |
+      每个检测器的结果在单个事务中写入 drift_events。
+      若进程在事务中崩溃 → SQLite WAL 自动回滚 → 不产生半截数据。
+      checkpoint 只记录"已完成"的检测器 → 与 drift_events 中已提交的数据一致性由事务保证。
+
+  graceful_shutdown:
+    signal_handling: "SIGTERM / SIGINT → 完成当前检测器 → 写 checkpoint → 退出"
+    max_wait: "30s（超时则强制退出，checkpoint 标记为 INCOMPLETE）"
+```

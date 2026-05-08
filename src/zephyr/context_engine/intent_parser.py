@@ -45,6 +45,7 @@ safety_level: M
 from __future__ import annotations
 
 import time
+from enum import Enum
 from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
@@ -54,7 +55,7 @@ from zephyr.context_engine.intent_keyword_mapper import (
     IntentResult,
     StageLiteral,
 )
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "EmbeddingHit",
@@ -63,6 +64,9 @@ __all__ = [
     "LLMIntentCaller",
     "IntentParseTrace",
     "IntentParser",
+    "IntentType",
+    "IntentClassifyFailure",
+    "classify",
     "plan_directive_chain",
     "inject_context_for",
     "DEFAULT_STAGE_THRESHOLDS",
@@ -438,3 +442,132 @@ def inject_context_for(
         "injector 缺少 inject_by_module_id / inject_by_keyword 方法；"
         "请传入 zephyr.context_engine.context_injector.ContextInjector 实例"
     )
+
+
+class IntentType(str, Enum):
+    """任务意图类型——10 分类，覆盖 task_type 枚举 + QUERY/DEBUG 辅助模式。
+
+    DD4 决策：10 分类覆盖 task_type 枚举 + QUERY/DEBUG 辅助模式。
+    否决方案: "30+ 细粒度" — 分类过多→keyword 精度下降。
+    重评条件: 混淆率 > 10%。
+    """
+
+    CODE_GEN = "CODE_GEN"
+    CODE_REVIEW = "CODE_REVIEW"
+    ANALYSIS = "ANALYSIS"
+    OPS_FIX = "OPS_FIX"
+    DOC = "DOC"
+    REFACTOR = "REFACTOR"
+    TEST = "TEST"
+    AUDIT = "AUDIT"
+    QUERY = "QUERY"
+    DEBUG = "DEBUG"
+
+
+class IntentClassifyFailure(Exception):
+    """意图分类失败异常——BUILD-C00 flag 模式（不阻断，仅标记）。"""
+
+    def __init__(self, message: str, user_prompt: str = "") -> None:
+        super().__init__(message)
+        self.user_prompt = user_prompt
+
+
+_INTENT_KEYWORD_MAP: dict[str, IntentType] = {
+    "生成": IntentType.CODE_GEN,
+    "创建": IntentType.CODE_GEN,
+    "实现": IntentType.CODE_GEN,
+    "编写": IntentType.CODE_GEN,
+    "新建": IntentType.CODE_GEN,
+    "generate": IntentType.CODE_GEN,
+    "create": IntentType.CODE_GEN,
+    "implement": IntentType.CODE_GEN,
+    "build": IntentType.CODE_GEN,
+    "code gen": IntentType.CODE_GEN,
+    "审查": IntentType.CODE_REVIEW,
+    "检查": IntentType.CODE_REVIEW,
+    "review": IntentType.CODE_REVIEW,
+    "inspect": IntentType.CODE_REVIEW,
+    "code review": IntentType.CODE_REVIEW,
+    "分析": IntentType.ANALYSIS,
+    "评估": IntentType.ANALYSIS,
+    "analysis": IntentType.ANALYSIS,
+    "analyze": IntentType.ANALYSIS,
+    "report": IntentType.ANALYSIS,
+    "修复": IntentType.OPS_FIX,
+    "漏洞": IntentType.OPS_FIX,
+    "fix": IntentType.OPS_FIX,
+    "bug": IntentType.OPS_FIX,
+    "hotfix": IntentType.OPS_FIX,
+    "patch": IntentType.OPS_FIX,
+    "安全事故": IntentType.OPS_FIX,
+    "安全漏洞": IntentType.OPS_FIX,
+    "文档": IntentType.DOC,
+    "doc": IntentType.DOC,
+    "documentation": IntentType.DOC,
+    "readme": IntentType.DOC,
+    "重构": IntentType.REFACTOR,
+    "refactor": IntentType.REFACTOR,
+    "restructure": IntentType.REFACTOR,
+    "重写": IntentType.REFACTOR,
+    "测试": IntentType.TEST,
+    "test": IntentType.TEST,
+    "pytest": IntentType.TEST,
+    "单元测试": IntentType.TEST,
+    "审计": IntentType.AUDIT,
+    "audit": IntentType.AUDIT,
+    "合规": IntentType.AUDIT,
+    "compliance": IntentType.AUDIT,
+    "查询": IntentType.QUERY,
+    "问题": IntentType.QUERY,
+    "question": IntentType.QUERY,
+    "query": IntentType.QUERY,
+    "调试": IntentType.DEBUG,
+    "debug": IntentType.DEBUG,
+    "排查": IntentType.DEBUG,
+    "troubleshoot": IntentType.DEBUG,
+    "diagnose": IntentType.DEBUG,
+}
+
+
+def classify(user_prompt: str) -> IntentType:
+    """BUILD-C00 入口——将用户提示词分类为 IntentType。
+
+    使用关键词匹配进行分类。BUILD-C00 要求 on_failure=flag（仅标记，不阻断后续流程）。
+
+    Parameters
+    ----------
+    user_prompt : str
+        用户输入的任务提示词
+
+    Returns
+    -------
+    IntentType
+        识别的意图类型；无法识别时返回 CODE_GEN（默认兜底）
+
+    Raises
+    ------
+    IntentClassifyFailure
+        仅当 user_prompt 为空字符串时抛出（flag 模式——调用方自行处理）
+
+    Examples
+    --------
+    >>> classify("帮我修复安全漏洞")
+    <IntentType.OPS_FIX: 'OPS_FIX'>
+    >>> classify("审查这段代码")
+    <IntentType.CODE_REVIEW: 'CODE_REVIEW'>
+    """
+    if not user_prompt or not user_prompt.strip():
+        raise IntentClassifyFailure("BUILD-C00: user_prompt 为空，无法分类", user_prompt=user_prompt)
+
+    prompt_lower = user_prompt.strip().lower()
+
+    scored: dict[IntentType, int] = {}
+    for keyword, intent in _INTENT_KEYWORD_MAP.items():
+        if keyword in prompt_lower:
+            scored[intent] = scored.get(intent, 0) + 1
+
+    if not scored:
+        return IntentType.CODE_GEN
+
+    best = max(scored, key=lambda k: scored[k])
+    return best

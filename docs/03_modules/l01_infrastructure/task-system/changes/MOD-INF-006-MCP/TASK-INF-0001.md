@@ -61,7 +61,7 @@ depends_on: []
 blocked_by: []
 
 # ===== 状态 =====
-status: "created"
+status: "done"
 
 # ===== 五轴标签 =====
 tags_fn: ["infra"]

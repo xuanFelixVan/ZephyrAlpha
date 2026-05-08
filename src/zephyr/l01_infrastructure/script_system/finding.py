@@ -38,9 +38,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Literal
+from zephyr.shared.schema.schemas import Priority
 
 
 class Dimension(str, Enum):
@@ -159,7 +160,7 @@ class Finding:
         target_line_range: str = "",
         blast_radius: BlastRadius = BlastRadius.FILE,
         remediation_action: RemediationAction = RemediationAction.FIX,
-        remediation_priority: Literal["P0", "P1", "P2", "P3"] = "P2",
+        remediation_priority: Priority = Priority.P2,
         lifecycle_status: LifecycleStatus = LifecycleStatus.OPEN,
         related_adr: list[str] | None = None,
         related_ke: list[str] | None = None,
@@ -278,8 +279,16 @@ class FindingCollection:
         return "".join(f.to_jsonl_line() for f in self.findings)
 
     def write_jsonl(self, path: str):
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(self.to_jsonl())
+        tmp_path = f"{path}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(self.to_jsonl())
+            os.replace(tmp_path, path)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
     def append_jsonl(self, path: str):
         with open(path, "a", encoding="utf-8") as f:

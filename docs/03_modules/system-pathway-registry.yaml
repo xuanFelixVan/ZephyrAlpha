@@ -28,7 +28,7 @@ registry:
   generation: "manual_seed_phase_b"
   auto_generated_by: "scripts/generate_pathway_registry.py"
   last_updated: "2026-05-07"
-  total_modules: 31
+  total_modules: 32
   note: "Phase B 全层路径补全——覆盖全部 C 轨（L00-L13）和 B 轨核心模块"
 
 pathways:
@@ -303,3 +303,14 @@ pathways:
     test_dir: ""
     config: "docs/03_modules/_master-blueprint/blueprint.md"
     note: "集成契约 SSoT——非代码模块，无源码目录"
+
+  - module_id: "MOD-INF-032"
+    name: "resource-optimization-engine"
+    layer: "cross_layer"
+    blueprint: "docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md"
+    source_dir: "src/zephyr/shared/lifecycle/"
+    interface_file: "src/zephyr/shared/lifecycle/resource_optimization_engine.py"
+    test_dir: "tests/unit/resource_optimization/"
+    config: "config/resource_optimization.yaml"
+    status: "not_started"
+    note: "MAPE-K 循环驱动的资源监控/分析/优化/自愈系统"

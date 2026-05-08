@@ -6,7 +6,7 @@ partition:
   bounded_context: false
   status: implemented
   note: >
-    MOD-MASTER-001 §0.2：MCP 无独占 CT-*；能力由各宿主系统契约暴露。传输与工具规范见 ADR-0033。
+    MOD-MASTER-001 §0.2：MCP 无独立CT-*；能力由各宿主系统契约暴露。传输与工具规范见ADR-0033。
 
 modules:
   - id: mcp-servers
@@ -16,17 +16,19 @@ modules:
     status: implemented
     priority: P1
     runtime_plane: warm
-    description: MCP 协议服务端集合 — task_manager (已实现 decompose_blueprint) + knowledge_base / gate_engine / doc_guard / sentinel (stub/规划中)
+    description: MCP 协议服务端集合——task_manager (已实现decompose_blueprint) + knowledge_base / gate_engine / doc_guard / sentinel (skeleton) + blueprint_search (已实现find_relevant_blueprint) + sandbox (规划中)
     files:
       - _base_server.py
+      - blueprint_search_server.py
       - doc_guard_server.py
       - gate_engine_server.py
       - knowledge_base_server.py
+      - sandbox_server.py
       - sentinel_server.py
       - task_manager_server.py
       - tool_contracts.yaml
     interfaces: []
-    adr_ref:
+    kb_ref:
       - ADR-0033
       - ADR-0040
 

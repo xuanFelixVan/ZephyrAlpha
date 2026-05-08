@@ -1,0 +1,26 @@
+capability_id: reranker
+category: rerank
+description: Local reranking model for search result reordering
+examples: []
+input_schema:
+  properties:
+    documents:
+      type: array
+    query:
+      type: string
+  type: object
+name: Reranker
+output_schema:
+  properties:
+    ranked_documents:
+      type: array
+  type: object
+priority: P1
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- rerank
+- search
+- reorder

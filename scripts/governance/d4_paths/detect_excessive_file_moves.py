@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -74,7 +74,7 @@ def count_file_moves(filepath: str) -> int:
             return len([l for l in result.stdout.strip().split("\n") if l.strip()])
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         pass
-    return 0
+    return EXIT_PASS
     "count file moves."
 
 def main() -> None:
@@ -95,7 +95,7 @@ def main() -> None:
     else:
         print("[EXCESSIVE-MOVES] 无过度搬迁文件", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

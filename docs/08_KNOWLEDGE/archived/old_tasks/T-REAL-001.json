@@ -1,0 +1,7 @@
+{
+  "task_id": "T-REAL-001",
+  "capability": "task_classification",
+  "payload": {
+    "text": "数据库连接池耗尽导致服务不可用，需要紧急修复"
+  }
+}

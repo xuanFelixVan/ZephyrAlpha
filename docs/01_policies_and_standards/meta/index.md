@@ -3,7 +3,7 @@ module_id: META-IDX-001
 title: 元规则目录索引
 doc_type: index
 status: active
-version: "1.3.0"
+version: "1.3.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -21,7 +21,7 @@ verifiability: manual
 
 # 元规则目录索引
 
-> **module_id**: META-IDX-001 | **version**: 1.3.0 | **status**: active
+> **module_id**: META-IDX-001 | **version**: 1.3.1 | **status**: active
 
 本文件是 `meta/` 目录的导航入口。**新 AI session 的第一站**——读完此文件即了解整个元规则体系的全貌。
 
@@ -39,6 +39,7 @@ verifiability: manual
 | PS-STD-002 | document-structure-standard.md | active | 标准文档模板——L1/L2/L3 三层模板，L1 含 4 种标准子类型（v3.1.0） |
 | PS-STD-003 | behavior-boundaries-standard.md | active | 行为边界标准——绝对禁止（ABS）、条件禁止（COND）、推荐做法（REC） |
 | PS-STD-004 | rule-classification-and-arbitration-standard.md | active | 规则分类与冲突裁决标准——五维分类体系 + stability→layer→scope 推导链 |
+| PS-STD-005 | blueprint-architecture-standard.md | active | 蓝图架构标准——三级金字塔定义、belongs_to 归属链、AI 冷启动定位路径 |
 | PS-STD-006 | governance-metrics-standard.md | active | 治理度量标准——6 项 KPI 定义规则体系健康度 |
 | PS-STD-009 | rule-lifecycle-and-change-standard.md | active | 规则治理标准——生命周期状态机 + P0~P3 变更门控审批流程 |
 | PS-STD-011 | governance-methodology-standard.md | active | 治理方法论——MTH-001~011 十一条决策原则 + 决策流程总图 |
@@ -82,7 +83,7 @@ verifiability: manual
 
 ## 三、文件总数
 
-META 目录共有 **13 个文件**（9 个 PS-STD 标准 + 1 个 META-GLS 术语表 + 1 个 META-IDX 索引入口 + 1 个 META-TERM 术语映射表 + 1 个 PS-STD 元数据注册表），注册在 [metadata-registry.md](metadata-registry.md)。PS-REG-001 和 PS-REG-002 已迁移至 [_registry/catalogs/](../_registry/catalogs/)。
+META 目录共有 **14 个文件**（10 个 PS-STD 标准 + 1 个 META-GLS 术语表 + 1 个 META-IDX 索引入口 + 1 个 META-TERM 术语映射表 + 1 个 PS-STD 元数据注册表），注册在 [metadata-registry.md](metadata-registry.md)。PS-REG-001 和 PS-REG-002 已迁移至 [_registry/catalogs/](../_registry/catalogs/)。
 
 ## 四、推荐阅读顺序
 
@@ -104,7 +105,7 @@ META 目录共有 **13 个文件**（9 个 PS-STD 标准 + 1 个 META-GLS 术语
 | 编号 | 状态 | 说明 |
 |------|:----:|------|
 | PS-STD-000 ~ PS-STD-004 | ✅ 已分配 | 核心元标准 |
-| PS-STD-005 | 📋 可用 | 待分配 |
+| PS-STD-005 | ✅ 已分配 | 蓝图架构标准 |
 | PS-STD-006 | ✅ 已分配 | 治理度量标准（draft） |
 | PS-STD-007 ~ PS-STD-008 | 📋 可用 | 待分配（PS-STD-007 保留给持续改进标准，PS-STD-008 合并释放） |
 | PS-STD-009 ~ PS-STD-012 | ✅ 已分配 | 扩展元标准（PS-STD-010 已合并至 PS-STD-009，编号释放） |
@@ -133,6 +134,7 @@ META 目录共有 **13 个文件**（9 个 PS-STD 标准 + 1 个 META-GLS 术语
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 1.3.1 | 2026-05-08 | 补齐遗漏——PS-STD-005（蓝图架构标准）已存在但未在文件清单/编号池中登记。(1) §一 文件清单新增 PS-STD-005 行；(2) §五 编号池 PS-STD-005 从"📋 可用（待分配）"改为"✅ 已分配（蓝图架构标准）"；(3) §三 文件总数 13→14（10 PS-STD + 4 其他）。版本号 patch +1。 |
 | 1.3.0 | 2026-05-02 | 审计修复。(1) §三 文件总数 12→13——补齐遗漏的 META-TERM-001（terminology-mapping.md），分解更新为 9 PS-STD + 1 PS-REG + 1 META-GLS + 1 META-IDX + 1 META-TERM = 13。(2) Context Tax 余量从 3 更新为 2（13/15）。版本号 minor +1。 |
 | 1.2.3 | 2026-05-01 | meta/ 最终审查。(1) 3 个文件正文版本号对账：META-GLS-001 body 1.1.0→1.2.0、PS-STD-006 body 1.1.0→1.1.1、PS-STD-003 body 1.5.2→1.5.3。(2) 文件总数确认：12 个（Context Tax 余量 3），无幽灵条目。版本号 patch +1。 |
 | 1.2.2 | 2026-05-01 | 状态同步修复。(1) §一 PS-STD-006/011/012 状态从 draft→active（对齐实际 frontmatter）。(2) PS-STD-011 说明从"九条/MTH-001~009"→"十条/MTH-001~010"，META-GLS-001 从"19个"→"21个"（对齐实际术语表）。版本号 patch +1。 |

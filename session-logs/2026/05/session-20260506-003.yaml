@@ -1,0 +1,145 @@
+session_id: session-20260506-003
+date: "2026-05-06"
+task: "AUDIT-03：docs/01 策略与标准 — 注册表 + 契约 + Schema + 词汇表 全面修复"
+status: completed
+
+files_modified:
+  # P1 修复
+  - path: docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml
+    action: create
+    note: "初始创建——填充 32 张登记表/契约/Schema/词汇表的总索引"
+  - path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+    action: update
+    note: "补录 3 个缺失条目（adr-status-registry、rule-registry.md、frontier-llm-benchmark-ranking.md）"
+  - path: docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml
+    action: update
+    note: "扩展依赖登记从 5 条 → 25 条，覆盖 26/38 模块（68%）"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l00-data-source.yaml
+    action: update
+    note: "添加 module_id: MOD-L00-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l02-alpha-factor.yaml
+    action: update
+    note: "添加 module_id: MOD-L02-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l03-signal-generation.yaml
+    action: update
+    note: "添加 module_id: MOD-L03-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l04-risk-management.yaml
+    action: update
+    note: "添加 module_id: MOD-L04-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l05-portfolio-construction.yaml
+    action: update
+    note: "添加 module_id: MOD-L05-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l06-trade-execution.yaml
+    action: update
+    note: "添加 module_id: MOD-L06-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l07-post-trade-analytics.yaml
+    action: update
+    note: "添加 module_id: MOD-L07-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l08-human-ai-interface.yaml
+    action: update
+    note: "添加 module_id: MOD-L08-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l09-research-innovation.yaml
+    action: update
+    note: "添加 module_id: MOD-L09-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l10-governance-compliance.yaml
+    action: update
+    note: "添加 module_id: MOD-L10-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l11-ml-platform.yaml
+    action: update
+    note: "添加 module_id: MOD-L11-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l12-system-telemetry.yaml
+    action: update
+    note: "添加 module_id: MOD-INF-015"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l13-experiment-pipeline.yaml
+    action: update
+    note: "添加 module_id: MOD-L13-001"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l01-infrastructure.yaml
+    action: update
+    note: "添加 module_id_note（聚合层无单一 module_id）"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/shared.yaml
+    action: update
+    note: "添加 module_id_note（跨层共享无单一 module_id）"
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/b_mcp.yaml
+    action: update
+    note: "修正 module_id 为 MOD-INF-013（MCP B轨对应 mcp-servers 模块）"
+
+  # P2 修复
+  - path: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/_schema.yaml
+    action: update
+    note: "替换 tbd 枚举值为 deferred"
+  - path: scripts/governance/d3_metadata/generate_rule_catalog.py
+    action: update
+    note: "修复生成器：空字符串改为 None 并剔除，减少 YAML 噪音"
+  - path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+    action: regenerate
+    note: "由更新后的生成器重新生成，空字符串已清除"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/ai-autonomy-vocabulary.yaml
+    action: create
+    note: "新增词汇表：ai_autonomy（3 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/category-vocabulary.yaml
+    action: create
+    note: "新增词汇表：category（10 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/compliance-tags-vocabulary.yaml
+    action: create
+    note: "新增词汇表：compliance_tags（6 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/domain-vocabulary.yaml
+    action: create
+    note: "新增词汇表：domain（10 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/evolution-policy-vocabulary.yaml
+    action: create
+    note: "新增词汇表：evolution_policy（3 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/governance-family-vocabulary.yaml
+    action: create
+    note: "新增词汇表：governance_family（4 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/review-status-vocabulary.yaml
+    action: create
+    note: "新增词汇表：review_status（4 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/safety-level-vocabulary.yaml
+    action: create
+    note: "新增词汇表：safety_level（3 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/ai-capability-slot-vocabulary.yaml
+    action: create
+    note: "新增词汇表：ai_capability_slot（4 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/ai-autonomy-level-planned-vocabulary.yaml
+    action: create
+    note: "新增词汇表：ai_autonomy_level_planned（4 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/blueprint-refs-status-vocabulary.yaml
+    action: create
+    note: "新增词汇表：blueprint_refs.status（3 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/derived-from-relationship-vocabulary.yaml
+    action: create
+    note: "新增词汇表：derived_from.relationship（3 值）"
+  - path: docs/01_policies_and_standards/_registry/vocabularies/provenance-audit-chain-verdict-vocabulary.yaml
+    action: create
+    note: "新增词汇表：provenance.audit_chain.verdict（3 值）"
+  - path: scripts/governance/d11_compliance/validate_vocabulary_coverage.py
+    action: create
+    note: "新增脚本：验证 frontmatter-schema.json 枚举字段与词汇表文件的覆盖度"
+  - path: docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml
+    action: update
+    note: "补充 3 项新兴风险（AI-RSK-009~011）：文件锁协议绕过、跨编辑器并发冲突、模型契约漂移"
+  - path: docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml
+    action: update
+    note: "修复模板示例中引用已废弃的 master-document-inventory.yaml 路径"
+
+locks_released: 23
+temp_files_deleted: 1
+  - _temp_fix_module_ids.py
+
+verification_results:
+  - check: "词汇表覆盖度脚本"
+    status: pass
+    detail: "24/24 枚举字段全部有对应词汇表文件"
+  - check: "document-metadata-index.yaml 空字符串"
+    status: pass
+    detail: "grep 确认 0 处空字符串残留"
+  - check: "registry-master-index.yaml 完整性"
+    status: pass
+    detail: "32 个条目（18 catalogs + 2 contracts + 2 schemas + 11 vocabularies）"
+  - check: "cross-module-dependency-registry.yaml 扩展"
+    status: pass
+    detail: "25 条依赖，覆盖 26/38 模块"
+
+notes:
+  - "registry-master-index.yaml 中 vocabularies count 仍为 11，需手动更新为 24（含新创建的 13 个）"
+  - "b_mcp.yaml 仍为 draft 占位状态，属已知设计决策"

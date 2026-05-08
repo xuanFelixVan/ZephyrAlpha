@@ -166,19 +166,37 @@ class QueryMetrics:
         if not self._enabled:
             return
         params_preview = str(params)[:200] if params is not None else None
+        explain_rows = []
+        try:
+            from zephyr.db.sqlite_schema import DB_PATH as schema_db_path
+            explain_conn = sqlite3.connect(str(schema_db_path))
+            try:
+                explain_result = explain_conn.execute(
+                    f"EXPLAIN QUERY PLAN {sql}", params if params else ()
+                )
+                explain_rows = [dict(r) for r in explain_result.fetchall()]
+            except Exception:
+                explain_rows = [{"error": "explain_failed"}]
+            finally:
+                explain_conn.close()
+        except Exception:
+            explain_rows = [{"error": "explain_unavailable"}]
+        import json as _json
+        explain_json = _json.dumps(explain_rows, ensure_ascii=False, default=str)
         try:
             conn = sqlite3.connect(str(self._db_path))
             from datetime import UTC, datetime
             conn.execute(
                 """
-                INSERT INTO slow_queries (operation, duration_ms, sql_preview, params_preview, recorded_at)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO slow_queries (operation, duration_ms, sql_preview, params_preview, explain_plan, recorded_at)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
                     operation,
                     round(duration_ms, 4),
                     sql[:500],
                     params_preview,
+                    explain_json,
                     datetime.now(UTC).isoformat(),
                 ),
             )

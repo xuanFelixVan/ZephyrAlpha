@@ -4,6 +4,7 @@ module_id: PS-VOC-008
 version: "1.0.0"
 title: "created_by 受控词表"
 status: active
+owner: ZephyrAlpha-Owner
 vocabulary_name: created_by
 total_values: 3
 source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
@@ -23,3 +24,11 @@ values:
     definition: "AI 独立创建"
   - value: human
     definition: "人类独立创建"
+
+ai_consumption:
+  when_to_use: "AI session 需要设置或验证 created_by 字段值时，必须从本词表选取合法值"
+  how_to_use: "读取 values[] 列表获取合法枚举值；读取 deprecated_values[] 获取已废弃值（禁止新使用）"
+  ai_keywords:
+    - "created_by"
+    - "创建者"
+    - "created_by枚举"

@@ -7,10 +7,10 @@ partition:
   runtime_plane: all
   status: planned
   description: >
-    Vibe Coding 2.0 6 大核心服务（代码位于 src/zephyr/ 根层级，架构归属 L12 跨层支撑层）。
-    包含 llm_security（LSG）、vector_memory（VMS）、context_engine（CE）、orchestrator（Orc）、feedback_loop（FLE）+ kb（知识库）。
-    详细接口规范见 docs/03_modules/_b_track_interfaces/ 下的各服务接口文档。
-    技术选型见 technology/vibe-coding-infrastructure-tech-stack.yaml。
+    Vibe Coding 2.0 6 大核心服务（代码位于 src/zephyr/ 根层级，架构归属 L12 跨层支撑层）�?
+    包含 llm_security（LSG）、vector_memory（VMS）、context_engine（CE）、orchestrator（Orc）、feedback_loop（FLE�? kb（知识库）�?
+    详细接口规范�?docs/03_modules/_b_track_interfaces/ 下的各服务接口文档�?
+    技术选型�?technology/vibe-coding-infrastructure-tech-stack.yaml�?
 
 modules:
   - id: core-llm-security
@@ -19,8 +19,8 @@ modules:
     status: planned
     priority: P0
     runtime_plane: all
-    description: LLM 交互安全网关——四层防御 + fail-closed + OWASP LLM Top 10 覆盖
-    adr_ref: [ADR-0020]
+    description: LLM 交互安全网关——四层防�?+ fail-closed + OWASP LLM Top 10 覆盖
+    kb_ref: [ADR-0020]
   - id: core-vector-memory
     name: Vector Memory Service (VMS)
     submodule_path: src/zephyr/vector_memory/
@@ -28,7 +28,7 @@ modules:
     priority: P0
     runtime_plane: all
     description: 向量记忆库——ChromaDB 0.6 + BGE-M3 ONNX + 递归分块 + 5 Collection
-    adr_ref: [ADR-0016]
+    kb_ref: [ADR-0016]
   - id: core-context-engine
     name: Context Engine (CE)
     submodule_path: src/zephyr/context_engine/
@@ -36,7 +36,7 @@ modules:
     priority: P0
     runtime_plane: all
     description: 上下文引擎——NetworkX + Qwen2.5-3B ONNX + MCP 能力协商
-    adr_ref: [ADR-0015]
+    kb_ref: [ADR-0015]
   - id: core-orchestrator
     name: Agent Orchestrator (Orc)
     submodule_path: src/zephyr/orchestrator/
@@ -44,29 +44,29 @@ modules:
     priority: P0
     runtime_plane: all
     description: Agent 编排器——SQLite + asyncio.Queue + enum 状态机
-    adr_ref: [ADR-0017]
+    kb_ref: [ADR-0017]
   - id: core-feedback-loop
     name: Feedback Loop Engine (FLE)
     submodule_path: src/zephyr/feedback_loop/
     status: planned
     priority: P1
     runtime_plane: all
-    description: 反馈闭环引擎——SQLite 时序 + EMA 异常检测 + Protocol 单向依赖
+    description: 反馈闭环引擎——SQLite 时序 + EMA 异常检�?+ Protocol 单向依赖
     note: >
-      P1 而非 P0：FLE 依赖其他 4 个核心服务（LSG/VMS/CE/Orc）的接口输出作为输入，
-      在依赖就绪前无法独立验证。experimental 完成接口契约定义（Protocol），beta 依赖就绪后升 P0。
-    adr_ref: [ADR-0019]
+      P1 而非 P0：FLE 依赖其他 4 个核心服务（LSG/VMS/CE/Orc）的接口输出作为输入�?
+      在依赖就绪前无法独立验证。experimental 完成接口契约定义（Protocol），beta 依赖就绪后升 P0�?
+    kb_ref: [ADR-0019]
   - id: core-kb
     name: Knowledge Base (KB)
     submodule_path: src/zephyr/kb/
     status: planned
     priority: P1
     runtime_plane: all
-    description: 知识库——ChromaDB 持久化 + 递归分块 + unified_memory_api + 批量入库管线
+    description: 知识库——ChromaDB 持久�?+ 递归分块 + unified_memory_api + 批量入库管线
     note: >
-      P1 而非 P0：KB 依赖 VMS（向量存储）和 CE（配置引擎）的接口输出，
-      且 ChromaDB 嵌入模型选型待 ADR 确认。experimental 完成接口契约定义，beta 依赖就绪后升 P0。
-    adr_ref: [ADR-0016]
+      P1 而非 P0：KB 依赖 VMS（向量存储）�?CE（配置引擎）的接口输出，
+      �?ChromaDB 嵌入模型选型�?ADR 确认。experimental 完成接口契约定义，beta 依赖就绪后升 P0�?
+    kb_ref: [ADR-0016]
 
 summary:
   total: 6

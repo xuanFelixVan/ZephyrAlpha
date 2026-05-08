@@ -25,7 +25,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -48,8 +48,9 @@ THRESHOLD_DIR_CHILDREN_ERROR = 500
 
 
 def count_direct_items(path: Path, suffix: str | None = None) -> int:
+    """count_direct_items implementation."""
     if not path.exists() or not path.is_dir():
-        return 0
+        return EXIT_PASS
     items = list(path.iterdir())
     if suffix:
         return sum(1 for i in items if i.is_file() and i.suffix == suffix)
@@ -57,10 +58,12 @@ def count_direct_items(path: Path, suffix: str | None = None) -> int:
 
 
 def has_direct_file(path: Path, filename: str) -> bool:
+    """has_direct_file implementation."""
     return (path / filename).exists()
 
 
 def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
+    """Check compliance and report findings."""
     docs_modules = REPO_ROOT / "docs" / "03_modules"
     for layer_name in C_TRACK_LAYERS:
         layer_dir = docs_modules / layer_name
@@ -106,6 +109,7 @@ def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
 
 
 def check_src_zephyr_scalability(findings: list[dict[str, Any]]) -> None:
+    """Check compliance and report findings."""
     src_zephyr = REPO_ROOT / "src" / "zephyr"
     for layer_name in C_TRACK_LAYERS:
         layer_dir = src_zephyr / layer_name
@@ -145,6 +149,7 @@ def check_src_zephyr_scalability(findings: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="物理结构可扩展性审计")
     parser.add_argument("--warn-only", action="store_true", help="警告模式: 失败不阻塞 (exit 0)")
     args = parser.parse_args()
@@ -168,7 +173,7 @@ def main() -> None:
 
     has_errors = len(errors) > 0
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if has_errors else 0)
 
 

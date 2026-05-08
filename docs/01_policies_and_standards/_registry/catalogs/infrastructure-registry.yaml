@@ -29,7 +29,7 @@ created: "2026-05-02"
 last_updated: "2026-05-06"
 ai_autonomy: human_gated
 ttl: permanent
-total_registered: 9
+total_registered: 11
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -141,7 +141,6 @@ infrastructure:
     health_check: http
     dependency_of:
       - "MOD-INF-006"
-      - "MOD-INF-006"
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
     status: planned
     provisioned_at: null
@@ -225,28 +224,58 @@ infrastructure:
     provisioned_at: "2026-05-06"
     note: "paths 含 workflows/infra/config/architecture-model/tests/data/src/docs/scripts、requirements*、demo_e2e、docker-compose、门面文档、.editorconfig/.env.example/.gitignore/LICENSE、.trae、_patches；安装：pip+setuptools/wheel → requirements-dev → pip install -e .；pyproject 为 setuptools.build_meta + src"
 
+  # --- 资源优化引擎进程池（MOD-INF-032）---
+  - infra_id: "INFRA-PROC-001"
+    name: "zephyr-shared-process-pool"
+    type: cache
+    description: "共享进程池——ResourceOptimizationEngine 管理的常驻工作进程池，避免子进程频繁创建销毁"
+    runtime_plane: warm
+    host: "in-process"
+    health_check: ping
+    dependency_of:
+      - "MOD-INF-032"
+    sla: "进程复用率 ≥ 80%，启动延迟 < 500ms"
+    status: planned
+    provisioned_at: null
+    note: "MOD-INF-032 资源优化引擎——MAPE-K 循环驱动，进程池共享架构"
+
+  # --- 资源优化引擎 I/O 缓存（MOD-INF-032）---
+  - infra_id: "INFRA-CACHE-002"
+    name: "zephyr-io-cache"
+    type: cache
+    description: "I/O 缓存——ResourceOptimizationEngine 管理的文件读取缓存层，LRU 淘汰策略"
+    runtime_plane: warm
+    host: "in-process"
+    health_check: ping
+    dependency_of:
+      - "MOD-INF-032"
+    sla: "缓存命中率 ≥ 90%，内存占用 < 512MB"
+    status: planned
+    provisioned_at: null
+    note: "MOD-INF-032 资源优化引擎——I/O 缓存 + 流式读取 + 懒加载"
+
 # ============================================================================
 # 汇总统计
 # ============================================================================
 summary:
-  total: 9
+  total: 11
   by_type:
     event_bus: 1
     message_queue: 1
     relational_db: 1
     vector_db: 1
-    cache: 1
+    cache: 3
     object_storage: 1
     config_center: 1
     service_registry: 1
     ci_pipeline: 1
   by_plane:
-    hot: 4    # 事件总线 / 配置中心 / 服务注册 / CI
-    warm: 1   # Redis 缓存
-    cold: 4   # 任务队列 / SQLite / ChromaDB / S3
+    hot: 4
+    warm: 3
+    cold: 4
   by_status:
-    planned: 8  # scaffold 全部为 planned
-    connected: 1  # INFRA-CI-001
+    planned: 10
+    connected: 1
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
@@ -259,6 +288,9 @@ summary:
       - INFRA-CACHE-001
       - INFRA-CFG-001
       - INFRA-CI-001
+    MOD-INF-032:
+      - INFRA-PROC-001
+      - INFRA-CACHE-002
 
 # ============================================================================
 # 变更记录

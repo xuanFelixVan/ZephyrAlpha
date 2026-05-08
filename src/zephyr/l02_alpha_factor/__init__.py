@@ -32,12 +32,7 @@ from .factor_base import (
     autodiscover_factors,
 )
 
-__all__ = [
-    "FactorBase",
-    "FactorMeta",
-    "FactorRegistry",
-    "autodiscover_factors",
-]
+__all__ = ['FactorBase', 'FactorMeta', 'FactorRegistry', 'autodiscover_factors', 'base']
 
 # CODEGEN-GUARD: __init__-manual-exports
 # 包级导出以 factor_base 为 SSoT（base.py 为 codegen 占位；禁止混用两套 FactorBase）

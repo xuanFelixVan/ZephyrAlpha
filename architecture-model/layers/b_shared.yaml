@@ -14,14 +14,14 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: 跨层共享数据契约 — Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
+    description: 跨层共享数据契约 �?Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
     files:
       - instrument.py
       - money.py
       - runtime_plane_tag.py
       - timestamp.py
     interfaces: []
-    adr_ref:
+    kb_ref:
       - ADR-0040
 
   - id: shared-infra
@@ -31,7 +31,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: 跨层共享基础设施 — SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动器
+    description: 跨层共享基础设施 �?SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动�?
     files:
       - capability.py
       - content_fingerprint.py
@@ -40,7 +40,7 @@ modules:
       - schemas.py
       - ssot_guard.py
     interfaces: []
-    adr_ref:
+    kb_ref:
       - ADR-0021
       - ADR-0037
 

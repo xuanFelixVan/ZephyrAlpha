@@ -1,0 +1,16 @@
+---
+module_id: KE-module_blu-1_1-003
+title: 1.1 模块身份
+category: module_blueprint
+---
+
+# 1.1 模块身份
+
+1.1 模块身份
+
+| 属性 | 值 |
+|------|-----|
+| module_id | MOD-INF-022 |
+| 代码落位 | `src/zephyr/escalation/` |
+| 运行时平面 | Warm memory（任务执行中实时判定） |
+| 核心职责 | 规则驱动的自动升级 + 按能力自动委托 + 经济护栏 + 死锁防护 + 心理说服防御 + Sandbox隔离——能自动绝不人工 |

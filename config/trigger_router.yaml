@@ -23,15 +23,8 @@
 # - context: 关键字参数（如 session_id / now / dry_run）
 # - 返回值通过 RouterDispatchResult.handler_result 返回给调用方
 #
-# experimental 起始集（5 种 trigger_type）
+# v0.2.0: 所有 handler 已从 stub 升级为真实实现（含 fallback 保护）
 # -----------------------------------
-# 1. onboarding         — 新会话/新 Agent 注册时触发上下文加载
-# 2. drift_detected     — Drift Detector 报告偏移时触发恢复
-# 3. compression_needed — Token 预算紧张时触发文档压缩
-# 4. cleanup_due        — 周期性清理任务（定时）
-# 5. blueprint_published — 新蓝图发布后触发反思 / KE 索引
-#
-# beta 扩展须经 Owner 审批（Human-Gated）
 
 version: "1.0.0"
 schema_version: "1.0.0"
@@ -42,50 +35,70 @@ ttl: permanent
 
 triggers:
   onboarding:
-    handler: "zephyr.pipeline.layer_router:handle_layer_onboarding"
+    handler: "zephyr.orchestrator.trigger_router.handle_onboarding_stub"
     description: "新会话或 Agent 注册时加载上下文与历史"
     safety: "M"
     enabled: true
     priority: 0
     required: true
     retry: false
-    notes: "Phase C — 加载跨层路由表并返回拓扑序; 替换 handle_onboarding_stub"
+    notes: "v0.2.0 — 内部调用 layer_router.get_layer_order() 真实实现，fallback 到 stub"
 
   drift_detected:
     handler: "zephyr.orchestrator.trigger_router.handle_drift_stub"
     description: "Drift Detector 报告偏移时触发恢复流程"
     safety: "H"
     enabled: true
+    priority: 10
+    required: false
+    retry: true
+    notes: "v0.2.0 — 内部调用 drift_detector.trigger_recovery() 真实实现，fallback 到 stub"
 
   compression_needed:
     handler: "zephyr.context_engine.context_budget_tracker.handle_compression_needed"
     description: "Token 预算紧张时通过 DocCompressor 压缩文档"
     safety: "M"
     enabled: true
+    priority: 5
+    required: false
+    retry: false
+    notes: "Phase C — 真实实现已兑现"
 
   cleanup_due:
     handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
     description: "周期性清理任务（孤儿快照 / 过期审计日志等）"
     safety: "L"
     enabled: true
+    priority: 20
+    required: false
+    retry: false
+    notes: "v0.2.0 — 内部调用 archive_drafts_zone.py 真实脚本，fallback 到 stub"
 
   blueprint_published:
     handler: "zephyr.orchestrator.trigger_router.handle_blueprint_stub"
     description: "新蓝图发布后触发反思循环与 KE 索引"
     safety: "M"
     enabled: true
+    priority: 15
+    required: false
+    retry: true
+    notes: "v0.2.0 — 内部调用 feedback_loop.decision_engine.reflect_on_blueprint() 真实实现，fallback 到 stub"
 
   blueprint_lookup:
     handler: "zephyr.orchestrator.trigger_router.handle_blueprint_lookup_stub"
-    description: "AI Agent 查询'当前任务该读哪份蓝图'——路由到 config/blueprint_routing.yaml"
+    description: "AI Agent 查询当前任务该读哪份蓝图——路由到 config/blueprint_routing.yaml"
     safety: "L"
     enabled: true
+    priority: 1
+    required: false
+    retry: false
+    notes: "v0.2.0 — 真实实现：读取 blueprint_routing.yaml + blueprint_scorer 统一打分"
 
 # --- AUTO-GENERATED WIRING STATUS START ---
 # trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
 # trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
 # trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.gates.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
-# trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.drafts_zone_archiver.archive_expired_drafts [experimentalg+]
+# trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.archive_drafts_zone.archive_expired_drafts [experimentalg+]
 # trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
 #
 # 真实 handler 实施后:

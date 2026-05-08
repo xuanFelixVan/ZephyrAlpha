@@ -39,7 +39,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 SKIP_MODULES = {
     "l03_signal_generation",
@@ -55,6 +55,7 @@ SKIP_MODULES = {
 }
 
 def _has_docstring(node: ast.AST) -> bool:
+    """_has_docstring implementation."""
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
         body = node.body
         if (
@@ -67,6 +68,7 @@ def _has_docstring(node: ast.AST) -> bool:
     return False
 
 def _is_public(name: str) -> bool:
+    """_is_public implementation."""
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
@@ -145,7 +147,7 @@ def main() -> None:
         print(f"\n[DOCSTRING] 全部 {total_files} 文件 docstring 完整 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

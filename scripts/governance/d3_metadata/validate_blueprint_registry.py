@@ -26,7 +26,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -35,7 +35,7 @@ try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装，请运行 pip install pyyaml", file=sys.stderr)
-    sys.exit(2)
+    sys.exit(EXIT_ERROR)
 
 
 def load_registry() -> dict | None:
@@ -155,8 +155,8 @@ def main() -> None:
     if registry is None:
         print("ERROR: 蓝图登记表不存在或无法解析", file=sys.stderr)
         if args.warn_only:
-            sys.exit(0)
-        sys.exit(2)
+            sys.exit(EXIT_PASS)
+        sys.exit(EXIT_ERROR)
     findings = check_registry(registry)
     if findings:
         print(f"\n[BLUEPRINT-REGISTRY] {len(findings)} 蓝图登记表问题:\n", file=sys.stderr)
@@ -166,7 +166,7 @@ def main() -> None:
     total = len(findings)
     print(f"Scanned blueprint registry, {total} findings", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 

@@ -1,0 +1,293 @@
+---
+module_id: GOV-ARCH-010
+title: Infrastructure Layer Dependency Rules
+doc_type: policy
+status: active
+version: "1.0.0"
+layer: cross_layer
+owner: ZephyrAlpha-Owner
+classification: confidential
+language: zh
+ai_autonomy: human_gated
+created_by: human_plus_agent
+date: "2026-05-06"
+valid_from: "2026-05-06"
+ttl: permanent
+summary: >
+  ZephyrAlpha 基础设施层（cross_layer + l01_infrastructure）的 depends_on 依赖规则。
+  定义 DEPTH_0（基础设施必须依赖，不可断）、DEPTH_1（需架构评审方可成立）、
+  EventBus 松耦合替代模式。本规则由 detect_depends_on_cycles.py 消费。
+tags: [dependency, architecture, cross_layer, infrastructure, cycle-detection]
+depends_on:
+  - target: GOV-ARCH-000
+    at: "§1"
+    why: 架构治理目录下的正式策略文档
+  - target: GOV-ARCH-001
+    at: "§4"
+    why: 架构评审中依赖合理性判断需引用本规则
+belongs_to: GOV-ARCH-000
+  ---
+
+# Infrastructure Layer Dependency Rules
+
+> module_id: GOV-ARCH-010 | version: 1.0.0 | status: active
+
+---
+
+## §1 术语定义
+
+| 术语 | 定义 |
+|------|------|
+| DEPTH_0 边 | 物理部署必须同时存在的依赖关系。断则系统无法运行时初始化。 |
+| DEPTH_1 边 | 运行时通过接口/EventBus/Shared 实现的调用关系，可重构。 |
+| 合法循环 | 两个模块互为 DEPTH_0 依赖（如 database ↔ telemetry：db 记录遥测，遥测监控 db）。必须收敛、有限步长、可证明无分歧。 |
+| EventBus 松耦合 | 替代直接 depends_on 的模式：生产者发事件到 Topic，消费者订阅，双方互不感知 module_id。 |
+| shared-core | MOD-INF-019，位于 _cross_layer/，提供所有基础设施模块共用的类型、常量、异常、协议定义。 |
+
+---
+
+## §2 DEPTH_0 规则（不可断依赖）
+
+以下 depends_on 边被视为 DEPTH_0——断掉则系统运行时初始化失败。这些边允许存在，不触发循环告警。
+
+### §2.1 shared-core 依赖（所有模块均可单向依赖 shared-core）
+
+```yaml
+depth_0_shared_core:
+  rule: "所有 infra/cross_layer 模块允许单向 depends_on MOD-INF-019 (shared-core)"
+  justification: "shared-core 仅提供类型定义和常量，无运行时副作用，不产生循环"
+  allowed_edges:
+    - from: "MOD-INF-*"
+      to: "MOD-INF-019"
+      direction: unidirectional
+```
+
+### §2.2 基础运行时三元组（database + pipeline + telemetry）
+
+```yaml
+depth_0_runtime_triad:
+  rule: "database ↔ system-telemetry 允许双向依赖（telemetry 记录到 db，db 健康受 telemetry 监控）"
+  justification: "两个模块在系统启动时互为 bootstrap 依赖，有限步长收敛"
+  allowed_edges:
+    - from: "MOD-INF-012"
+      to: "MOD-INF-015"
+      bidirectional: true
+      max_step: 2
+      constraint: "telemetry 写 db 走 connection-pool 直写，不走 ORM"
+```
+
+### §2.3 合法循环白名单
+
+```yaml
+depth_0_legal_cycles:
+  cycles:
+    - id: "LEGAL-001"
+      path: ["MOD-INF-012", "MOD-INF-015", "MOD-INF-012"]
+      justification: "database ↔ system-telemetry 运行时 bootstrap 对"
+      status: approved
+      approved_by: owner
+      approved_date: "2026-05-06"
+```
+
+---
+
+## §3 DEPTH_1 规则（需架构评审）
+
+以下 depends_on 边本质上是运行时调用关系，应通过 EventBus 或 Shared/Contract 接口实现松耦合。
+
+### §3.1 应迁至 EventBus 的边
+
+```yaml
+depth_1_eventbus_candidates:
+  edges:
+    - from: "MOD-INF-010"
+      to: "MOD-INF-009"
+      current: "feedback-loop depends_on pipeline"
+      recommendation: "FLE 向 pipeline 提交 Action 走 EventBus Topic: action.execute"
+      status: pending_refactor
+
+    - from: "MOD-INF-014"
+      to: "MOD-INF-010"
+      current: "llm-security depends_on feedback-loop"
+      recommendation: "LSG 异常上送走 EventBus Topic: alert.security"
+      status: resolved
+      resolution: "depends_on 已移除，改用 EventBus 松耦合"
+
+    - from: "MOD-INF-009"
+      to: "MOD-INF-014"
+      current: "pipeline depends_on llm-security"
+      recommendation: "pipeline 执行前安全检查走 EventBus Topic: action.security_check"
+      status: pending_refactor
+
+    - from: "MOD-INF-020"
+      to: "MOD-INF-012"
+      current: "audit-trail depends_on database"
+      recommendation: "审计记录写入走 database 提供的 Contract 接口，不直接 depends_on module_id"
+      status: pending_refactor
+      note: "可降级为 DEPTH_0（audit 必须持久化）；仍需收敛为有限步长"
+
+    - from: "MOD-INF-010"
+      to: "MOD-INF-015"
+      current: "feedback-loop depends_on system-telemetry"
+      recommendation: "FLE 消费遥测走 Shared/EventBus 松耦合"
+      status: resolved
+      resolution: "depends_on 已移除，改用 EventBus 松耦合"
+
+    - from: "MOD-INF-015"
+      to: "MOD-INF-015"
+      current: "system-telemetry depends_on 自身（自引用）"
+      resolution: "已移除—自体监控不进入 depends_on 图"
+
+    - from: "MOD-INF-018"
+      to: "MOD-INF-020"
+      current: "agent-rbac depends_on audit-trail"
+      recommendation: "RBAC 决策审计走 EventBus Topic: audit.record"
+      status: pending_refactor
+
+    - from: "MOD-INF-021"
+      to: "MOD-INF-020"
+      current: "rollback-system depends_on audit-trail"
+      recommendation: "回滚审计走 EventBus Topic: audit.record"
+      status: pending_refactor
+
+    - from: "MOD-INF-023"
+      to: "MOD-INF-020"
+      current: "drift-detector depends_on audit-trail"
+      recommendation: "漂移检测记录走 EventBus Topic: audit.record"
+      status: pending_refactor
+
+    - from: "MOD-INF-024"
+      to: "MOD-INF-020"
+      current: "budget-enforcer depends_on audit-trail"
+      recommendation: "预算执行记录走 EventBus Topic: audit.record"
+      status: pending_refactor
+
+    - from: "MOD-INF-022"
+      to: "MOD-INF-020"
+      current: "escalation-protocol depends_on audit-trail"
+      recommendation: "升级记录走 EventBus Topic: audit.record"
+      status: pending_refactor
+
+    - from: "MOD-INF-011"
+      to: "MOD-INF-014"
+      current: "vector-memory depends_on llm-security"
+      recommendation: "向量检索安全检查走 EventBus Topic: query.security_check"
+      status: pending_refactor
+```
+
+### §3.2 跨层依赖边界
+
+```yaml
+cross_layer_boundary:
+  rules:
+    - "cross_layer 模块之间允许单向 depends_on shared-core(MOD-INF-019)"
+    - "cross_layer 模块之间禁止直接双向 depends_on（除白名单 LEGAL-001）"
+    - "l01_infrastructure 模块 → cross_layer 模块：仅允许 depends_on shared-core/pipeline/database（需架构评审）"
+    - "cross_layer 模块 → l01_infrastructure 模块：仅允许 depends_on 具体 l01 模块（需架构评审，优先 EventBus）"
+  enforcement: "detect_depends_on_cycles.py 检测到违规时报告违反的具体规则 ID"
+```
+
+---
+
+## §4 已解决边（Phase 6 回顾）
+
+```yaml
+phase_6_resolved_edges:
+  broken_edges:
+    - id: "BREAK-001"
+      edge: "REG-LLM-001 → GOV-AI-002"
+      resolution: "数据目录不应依赖策略文档。移除 REG-LLM-001 的 depends_on: GOV-AI-002。"
+      status: resolved
+
+    - id: "BREAK-002"
+      edge: "MOD-INF-014 → MOD-INF-010"
+      resolution: "LSG 异常通过 EventBus 松耦合上送，不依赖 FLE 直接调用。移除 depends_on。"
+      status: resolved
+
+    - id: "BREAK-003"
+      edge: "MOD-INF-010 → MOD-INF-015"
+      resolution: "FLE 消费遥测通过 Shared/EventBus 松耦合。移除 depends_on。"
+      status: resolved
+
+    - id: "BREAK-004"
+      edge: "MOD-INF-015 → MOD-INF-015"
+      resolution: "自体监控不进入 depends_on 图。移除自引用。"
+      status: resolved
+
+  result:
+    before: 25
+    after: 21
+    delta: "-4 cycles"
+```
+
+---
+
+## §5 剩余21循环分析
+
+```yaml
+remaining_cycles_analysis:
+  category_1_document_level:
+    count: 2
+    cycles:
+      - id: "REMAIN-DOC-001"
+        path: ["MOD-INF-006", "TEMPLATE-TASK-001", "MOD-INF-006"]
+        rationale: "task-system 引用 task-card-template 作为文档模板，template 引用 task-system 的字段定义"
+        recommendation: "模板文件移入 docs/01_policies_and_standards/templates/，对 task-system 的引用改为方案性单向依赖"
+        status: pending_refactor
+
+      - id: "REMAIN-DOC-002"
+        path: ["GOV-AI-002", "MOD-INF-006", "GOV-AI-002"]
+        rationale: "model-routing-policy 引用 task-system 的任务路由字段定义，task-system 引用策略作为配置源"
+        recommendation: "策略引用改为 depends_on 单向（policy → module），module 通过配置注入读取策略，不直接 depends_on"
+        status: pending_refactor
+
+  category_2_cross_layer_mesh:
+    count: 19
+    core_cluster: [feedback-loop(MOD-INF-010), pipeline(MOD-INF-009), llm-security(MOD-INF-014)]
+    peripheral_cluster: [database(MOD-INF-012), vector-memory(MOD-INF-011), audit-trail(MOD-INF-020),
+                         agent-rbac(MOD-INF-018), rollback-system(MOD-INF-021),
+                         drift-detector(MOD-INF-023), budget-enforcer(MOD-INF-024),
+                         escalation-protocol(MOD-INF-022), system-telemetry(MOD-INF-015)]
+    root_cause: >
+      feedback_loop ↔ pipeline ↔ llm-security 形成致密三角，所有外围模块通过
+      audit-trail ↔ database 接入该三角，外加 system-telemetry 的 db ↔ telemetry 回路，
+      构成 23-节点全连通网格。
+    recommendation: >
+      分两步解网：
+      Step A: 将外围模块对 audit-trail 的依赖全部迁至 EventBus（§3.1 已列出 5 条边），
+      此步骤立即消除大量小循环。
+      Step B: 对核心三角 (FLE ↔ pipeline ↔ llm-security) 实施架构重新设计——
+      定义明确的 EventBus Topic 契约，将三角中的调用关系全部转为 subscribe/publish。
+      此步骤为架构级决策，需 owner + 架构评审。
+    estimated_after_step_a: "~10 cycles remaining"
+    estimated_after_step_b: "0-3 cycles (含 LEGAL-001)"
+```
+
+---
+
+## §6 自动化消费规则
+
+```yaml
+automation:
+  consumer: "scripts/governance/d5_architecture/detect_depends_on_cycles.py"
+  expected_load_path: "docs/01_policies_and_standards/governance/architecture/infra-layer-dependency-rules.yaml"
+
+  integration:
+    - "detect_depends_on_cycles.py 在启动时加载本文件"
+    - "若加载失败，使用内置默认规则并输出 warn_only 警告"
+    - "DEPTH_0 白名单边不触发循环告警（即使形成环）"
+    - "DEPTH_1 边仍触发告警，但附带本文件中对应的 recommendation"
+    - "已解决边（resolved）不触发告警"
+
+  default_rules:
+    shared_core_immune: "所有 MOD-INF-* → MOD-INF-019 的边不参与环检测"
+    document_immune: "TEMPLATE-* 和 GOV-* 之间的小环（≤3步）降级为 WARNING"
+```
+
+---
+
+## §7 版本历史
+
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| 1.0.0 | 2026-05-06 | 初始版本。定义 DEPTH_0/DEPTH_1 规则、EventBus 松耦合模式、已解决 4 条边记录、剩余 21 循环分析。 |

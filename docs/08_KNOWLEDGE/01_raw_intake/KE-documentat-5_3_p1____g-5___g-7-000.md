@@ -1,0 +1,14 @@
+---
+module_id: KE-documentat-5_3_p1____g-5___g-7-000
+title: 5.3 P1 短板（G-5 ~ G-7）
+category: documentation
+---
+
+# 5.3 P1 短板（G-5 ~ G-7）
+
+5.3 P1 短板（G-5 ~ G-7）
+
+相对非阻塞但需在 Sprint 12 前完成：
+- G-5 人机：CLI 是当前唯一 UI，必须 L3 否则体验差
+- G-6 可观测：无监控不能上生产
+- G-7 ML 平台：模型 registry 是 AI 员工上岗前置

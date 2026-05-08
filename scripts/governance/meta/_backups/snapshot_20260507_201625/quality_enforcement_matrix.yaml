@@ -1,0 +1,280 @@
+# MOD-INF-005 §7.2 脚本质量标准 → 验证脚本映射矩阵
+# 自动生成于 2026-05-07
+# 来源: quality-standard.md 38 条款 (22 MUST + 16 SHOULD) × scripts/governance/
+
+generated_at: "2026-05-07T00:00:00Z"
+source: "scripts/governance/quality-standard.md"
+total_clauses: 38
+must_clauses: 22
+should_clauses: 16
+
+matrix:
+  D-A-01:
+    clause: "UTF-8 输出强制声明"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-A-01"
+    auto_detectable: true
+  D-A-02:
+    clause: "精确捕获具体异常类型，禁止裸 except"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-A-02"
+    auto_detectable: true
+  D-A-03:
+    clause: "禁止 shell=True"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-A-03"
+    auto_detectable: true
+  D-A-04:
+    clause: "I/O 操作显式指定 encoding='utf-8'"
+    level: SHOULD
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-A-04"
+    auto_detectable: true
+  D-A-05:
+    clause: "禁止重复 import"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-A-05"
+    auto_detectable: true
+  D-B-01:
+    clause: "所有公共函数含完整类型注解"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-B-01"
+    auto_detectable: true
+  D-B-02:
+    clause: "main() 声明 ->None"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-B-02"
+    auto_detectable: true
+  D-B-03:
+    clause: "永不返回函数声明 ->NoReturn"
+    level: SHOULD
+    verifier: "d7_code/validate_type_annotation_coverage.py"
+    check_id: ""
+    auto_detectable: false
+  D-B-04:
+    clause: "通过基础 mypy 检查"
+    level: SHOULD
+    verifier: "external: mypy CLI"
+    check_id: ""
+    auto_detectable: false
+  D-C-01:
+    clause: "模块级 docstring"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-C-01"
+    auto_detectable: true
+  D-C-02:
+    clause: "公共函数 Google Style docstring"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-C-02"
+    auto_detectable: true
+  D-C-03:
+    clause: "简单函数至少一行 docstring"
+    level: SHOULD
+    verifier: "d7_code/validate_docstring_coverage.py"
+    check_id: ""
+    auto_detectable: true
+  D-C-04:
+    clause: "imports 按 stdlib→third-party→local 分组"
+    level: SHOULD
+    verifier: "d7_code/validate_import_style.py"
+    check_id: ""
+    auto_detectable: true
+  D-D-01:
+    clause: "每个函数只做一件事"
+    level: MUST
+    verifier: "manual: McCabe cyclomatic complexity ≤ 10"
+    check_id: ""
+    auto_detectable: false
+  D-D-01a:
+    clause: "单函数 ≤ 50 行"
+    level: SHOULD
+    verifier: "manual: line count audit"
+    check_id: ""
+    auto_detectable: true
+  D-D-02:
+    clause: "禁止模块级有副作用初始化"
+    level: MUST
+    verifier: "d7_code/detect_ai_capability_boundary.py"
+    check_id: ""
+    auto_detectable: false
+  D-D-03:
+    clause: "魔法数字提取为命名常量"
+    level: MUST
+    verifier: "manual: code review"
+    check_id: ""
+    auto_detectable: false
+  D-D-04:
+    clause: "同一概念只在一处定义"
+    level: MUST
+    verifier: "d5_architecture/validate_cross_references.py"
+    check_id: ""
+    auto_detectable: false
+  D-D-05:
+    clause: "禁止跨文件复制粘贴逻辑"
+    level: MUST
+    verifier: "meta/arbitrate_findings.py"
+    check_id: ""
+    auto_detectable: false
+  D-D-06:
+    clause: "if __name__ 守卫"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-D-06"
+    auto_detectable: true
+  D-D-07:
+    clause: "禁止本地重定义 _shared API"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-D-07"
+    auto_detectable: true
+  D-D-08:
+    clause: "禁止 os.walk + EXCLUDE_DIRS 手动过滤"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-D-08"
+    auto_detectable: true
+  D-E-01:
+    clause: "异常分级处理"
+    level: MUST
+    verifier: "manual: code review — 对照 severity classification"
+    check_id: ""
+    auto_detectable: false
+  D-E-02:
+    clause: "异常捕获后有日志/stderr输出"
+    level: MUST
+    verifier: "d7_code/detect_silent_degradation.py"
+    check_id: ""
+    auto_detectable: false
+  D-E-03:
+    clause: "外部输入已校验合法性"
+    level: MUST
+    verifier: "d11_compliance/validate_task_decomposition_bypass.py"
+    check_id: ""
+    auto_detectable: false
+  D-E-04:
+    clause: "子任务失败 → 优雅降级 → PARTIAL report"
+    level: SHOULD
+    verifier: "run_all.py: per-script timeout → exit 2 ≠ global crash"
+    check_id: ""
+    auto_detectable: true
+  D-F-01:
+    clause: "支持 --warn-only"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-F-01"
+    auto_detectable: true
+  D-F-02:
+    clause: "POSIX exit codes (0/1/2)"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-F-02"
+    auto_detectable: true
+  D-F-03:
+    clause: "结构化输出"
+    level: MUST
+    verifier: "run_all.py: JSONL Finding Schema"
+    check_id: ""
+    auto_detectable: true
+  D-F-04:
+    clause: "已注册到 script_manifest.yaml"
+    level: MUST
+    verifier: "d1_structure/validate_index_reality.py"
+    check_id: ""
+    auto_detectable: true
+  D-F-05:
+    clause: "stdout (数据) vs stderr (诊断) 分离"
+    level: MUST
+    verifier: "run_all.py: subprocess capture_output + stderr routing"
+    check_id: ""
+    auto_detectable: true
+  D-G-01:
+    clause: "路径/阈值未硬编码"
+    level: SHOULD
+    verifier: "run_all.py: thresholds.yaml SSoT loading"
+    check_id: ""
+    auto_detectable: false
+  D-G-01a:
+    clause: "路径从项目根推导"
+    level: SHOULD
+    verifier: "d4_paths/detect_deprecated_path_writes.py"
+    check_id: ""
+    auto_detectable: false
+  D-G-02:
+    clause: "公共功能提取到 _shared/"
+    level: SHOULD
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-D-07"
+    auto_detectable: true
+  D-G-03:
+    clause: "依赖通过参数注入"
+    level: SHOULD
+    verifier: "manual: code review"
+    check_id: ""
+    auto_detectable: false
+  D-G-04:
+    clause: "循环内无重复计算"
+    level: SHOULD
+    verifier: "manual: code review"
+    check_id: ""
+    auto_detectable: false
+  D-G-05:
+    clause: "使用 argparse"
+    level: SHOULD
+    verifier: "manual: code review"
+    check_id: ""
+    auto_detectable: true
+  D-G-06:
+    clause: "禁止 ast.unparse 重写文件"
+    level: MUST
+    verifier: "d11_compliance/validate_script_quality.py"
+    check_id: "D-G-06"
+    auto_detectable: true
+  D-H-01:
+    clause: "至少一个 smoke test"
+    level: MUST
+    verifier: "d1_structure/run_script_smoke_test.py"
+    check_id: ""
+    auto_detectable: true
+  D-H-02:
+    clause: "核心逻辑有单元测试"
+    level: SHOULD
+    verifier: "d7_code/validate_test_coverage.py"
+    check_id: ""
+    auto_detectable: true
+  D-H-03:
+    clause: "测试验证具体行为"
+    level: SHOULD
+    verifier: "d7_code/validate_test_assertion_depth.py"
+    check_id: ""
+    auto_detectable: true
+  D-H-04:
+    clause: "测试彼此隔离"
+    level: SHOULD
+    verifier: "manual: test isolation audit"
+    check_id: ""
+    auto_detectable: false
+
+coverage_summary:
+  total_clauses: 38
+  auto_verifiable: 23
+  manual_only: 15
+  scripts_used:
+    - "d11_compliance/validate_script_quality.py"
+    - "d7_code/validate_type_annotation_coverage.py"
+    - "d7_code/validate_docstring_coverage.py"
+    - "d7_code/validate_import_style.py"
+    - "d7_code/detect_silent_degradation.py"
+    - "d5_architecture/validate_cross_references.py"
+    - "meta/arbitrate_findings.py"
+    - "d1_structure/validate_index_reality.py"
+    - "d1_structure/run_script_smoke_test.py"
+    - "d7_code/validate_test_coverage.py"
+    - "d7_code/validate_test_assertion_depth.py"

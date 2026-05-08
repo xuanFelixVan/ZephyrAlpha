@@ -14,7 +14,7 @@ modules:
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势图
+  description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势�?
   files:
   - app.py
   - fitness_functions.py
@@ -32,8 +32,8 @@ modules:
   interfaces:
   - contract_id: EXT-DASHBOARD-FLE-001
     role: consumer
-    description: 消费 FLE fitness Facade（与 EXT-FLE-DASHBOARD-001 成对）
-  adr_ref: []
+    description: 消费 FLE fitness Facade（与 EXT-FLE-DASHBOARD-001 成对�?
+  kb_ref: []
 summary:
   total: 1
   by_status:

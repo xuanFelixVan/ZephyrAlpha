@@ -48,9 +48,9 @@ depends_on:
 
 | # | 检查项 | 通过条件 | 未通过处理 | 自动化 |
 |---|--------|---------|-----------|:---:|
-| B1 | 行为边界已确认 | 已读取 PS-STD-003，知道哪些操作绝对禁止 | 读取 behavior-boundaries-standard.md | ✅ GATE-14 + GATE-16 |
+| B1 | 行为边界已确认 | 已读取 PS-STD-003，知道哪些操作绝对禁止 | 读取 meta/behavior-boundaries-standard.md | ✅ GATE-14 + GATE-16 |
 | B2 | 幻觉自检已通过 | 按幻觉自检流程执行 | 读取 ai-hallucination-self-check-policy.md | ✅ GATE-15 |
-| B3 | 双编辑器规则已确认 | 知道当前使用哪个编辑器、哪些文件可编辑 | 读取 dual-editor-collaboration-policy.md | ⚠️ GATE-16（结构合规） |
+| B3 | 双编辑器规则已确认 | 知道当前使用哪个编辑器、哪些文件可编辑 | 读取 governance/ai/dual-editor-collaboration-policy.md | ❌ 人工 |
 
 ### C. 安全检查（3 项）| 自动化：3/3
 

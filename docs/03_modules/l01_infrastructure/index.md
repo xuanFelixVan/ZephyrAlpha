@@ -34,6 +34,7 @@ status: active
 | MOD-INF-015 | system-telemetry | draft | P2 |
 | MOD-INF-016 | shared-core | draft | P2 |
 | MOD-INF-017 | code-dedup-engine | draft | P2 |
+| MOD-INF-020 | audit-trail | draft | P0 |
 
 **妯″潡鐧昏**锛氳 `../module-registry.yaml`锛屾寜 `layer: "L01"` 鎴?`layer: "cross_layer"` 杩囨护銆?
 

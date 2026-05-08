@@ -1,16 +1,16 @@
-# ZephyrAlpha 根目录 architecture-model/layers/*.yaml 字段约束
-# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/module-registry.yaml 对齐校验。
-# 注意：与企业架构树 docs/02_enterprise_architecture/.../layers/_schema.yaml 并存时，
-# 以本文件约束**仓库根** architecture-model；跨树复制时请同步字段语义。
+# ZephyrAlpha 根目�?architecture-model/layers/*.yaml 字段约束
+# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/module-registry.yaml 对齐校验�?
+# 注意：与企业架构�?docs/02_enterprise_architecture/.../layers/_schema.yaml 并存时，
+# 以本文件约束**仓库�?* architecture-model；跨树复制时请同步字段语义�?
 
 schema_version: "1.1.0"
-description: "根目录 architecture-model 分区与模块条目的运营 Schema"
+description: "根目�?architecture-model 分区与模块条目的运营 Schema"
 
 id_namespace_note: >
-  施工树中模块条目的 id（小写 slug，如 l02-*）与 docs/03_modules/module-registry.yaml
-  的 module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图与
+  施工树中模块条目�?id（小�?slug，如 l02-*）与 docs/03_modules/module-registry.yaml
+  �?module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图�?
   跨登记对账。企业架构镜像树 docs/02_enterprise_architecture/.../layers/_schema.yaml
-  应与本文档语义保持一致。
+  应与本文档语义保持一致�?
 
 operational_schema:
   partition:
@@ -26,11 +26,11 @@ operational_schema:
     status:
       type: enum
       values: [implemented, skeleton]
-      description: "分区整体成熟度；子模块可有更细粒度 status"
+      description: "分区整体成熟度；子模块可有更细粒�?status"
     optional_fields:
       description: >
         下列字段可出现于 partition：version, note, bounded_context, umbrella_layer,
-        layer_position, runtime_plane, db_file_path — 均为可选，供分区说明与闸门对齐。
+        layer_position, runtime_plane, db_file_path �?均为可选，供分区说明与闸门对齐�?
 
   modules:
     id:
@@ -47,13 +47,13 @@ operational_schema:
       type: string
       required: false
       pattern: "^MOD-[A-Z0-9-]+$"
-      description: "可选，对应 module-registry.yaml 顶层 modules[] 的 module_id"
+      description: "可选，对应 module-registry.yaml 顶层 modules[] �?module_id"
     status:
       type: enum
       required: true
       values: [implemented, skeleton, phase_1_partial]
       description: >
-        implemented/skeleton 为常规分层状态；phase_1_partial 用于长周期演进模块（如 FLE）的施工中态登记。
+        implemented/skeleton 为常规分层状态；phase_1_partial 用于长周期演进模块（�?FLE）的施工中态登记�?
     priority:
       type: enum
       values: [P0, P1, P2, P3]
@@ -64,7 +64,7 @@ operational_schema:
     optional_fields:
       description: >
         下列字段可出现于单模块：files, components, blueprint_ref, construction_phases（字符串或结构化列表由实现约定）,
-        version, file_count 等 — 均可选。
+        version, file_count �?�?均可选�?
 
     interfaces:
       type: array
@@ -80,20 +80,21 @@ operational_schema:
           type: enum
           values: [producer, consumer, both, internal]
           description: >
-            internal = 系统内部子域耦合，不对外跨系统 API 承诺；仍以 CT 编号作施工索引。
+            internal = 系统内部子域耦合，不对外跨系�?API 承诺；仍�?CT 编号作施工索引�?
         description:
           type: string
           required: false
 
-    adr_ref:
+    kb_ref:
       type: array
       items: { type: string }
+      description: "KB 知识条目引用（替代原 adr_ref；ADR 物理文件已废弃，决策记录 SSoT �?KB�?
 
   summary:
     required: false
     description: >
       建议包含 total、by_status。by_status 的键可与 modules[].status 枚举一致，
-      亦可包含 phase_1_partial 等扩展键以与模块清单对齐。
+      亦可包含 phase_1_partial 等扩展键以与模块清单对齐�?
 
 # 可与 partition / modules / summary 并列出现的根级键（大分区运营元数据）
 file_root_optional:
@@ -113,9 +114,9 @@ changelog:
     date: "2026-05-05"
     changes:
       - "interfaces.role 增加 internal"
-      - "modules.status 增加 phase_1_partial；summary.by_status 允许对齐扩展键"
-      - "partition / modules / file_root 记录可选字段白名单（FLE 等大分区）"
+      - "modules.status 增加 phase_1_partial；summary.by_status 允许对齐扩展�?
+      - "partition / modules / file_root 记录可选字段白名单（FLE 等大分区�?
   - version: "1.0.0"
     date: "2026-05-05"
     changes:
-      - "初始：根目录 architecture-model 专用 schema（implemented/skeleton + CT/EXT/CTR 契约 ID）"
+      - "初始：根目录 architecture-model 专用 schema（implemented/skeleton + CT/EXT/CTR 契约 ID�?

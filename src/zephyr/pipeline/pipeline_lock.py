@@ -214,11 +214,19 @@ class FileLockBackend(LockBackend):
 
         os.makedirs(lock_dir, exist_ok=True)
         owner_file = os.path.join(lock_dir, "owner.json")
-        with open(owner_file, "w", encoding="utf-8") as fh:
-            json.dump(
-                {"task_id": task_id, "pid": os.getpid(), "timestamp": time.time()},
-                fh,
-            )
+        tmp_path = f"{owner_file}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as fh:
+                json.dump(
+                    {"task_id": task_id, "pid": os.getpid(), "timestamp": time.time()},
+                    fh,
+                )
+            os.replace(tmp_path, owner_file)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
     def _read_owner(self, lock_dir: str) -> dict | None:
         import json

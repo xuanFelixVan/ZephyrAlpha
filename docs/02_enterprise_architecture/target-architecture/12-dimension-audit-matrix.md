@@ -364,7 +364,7 @@ python scripts/governance/score_architecture.py --dashboard > docs/19_developmen
    - 新增红线
 
 3. 若存在 P0 红线（分数 < 3.0），立即进入"整改计划"：
-   - 新建 ADR 分析根因
+   - 新建 KB 决策记录 分析根因
    - 排入下 Phase 任务卡
    - 下次评审检查是否恢复
 

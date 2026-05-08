@@ -51,7 +51,7 @@ ensure_utf8_stdout()
 import argparse
 
 import yaml
-from _shared.constants import CONFIG_DIR, REPO_ROOT
+from _shared.constants import CONFIG_DIR, EXIT_PASS, REPO_ROOT
 
 def report(issues, level, code, msg) -> None:
     """记录并打印一条格式化问题行。"""
@@ -271,7 +271,7 @@ def main() -> None:
     if args.warn_only:
         if issues:
             print(f"\n⚠️  --warn-only 模式: 发现 {len(issues)} 个问题，不阻断", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if issues else 0)
 
 if __name__ == "__main__":

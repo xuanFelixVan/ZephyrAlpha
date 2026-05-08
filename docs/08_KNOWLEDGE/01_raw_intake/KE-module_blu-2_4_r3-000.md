@@ -1,0 +1,13 @@
+---
+module_id: KE-module_blu-2_4_r3-000
+title: 2.4 R3 缓解：告警链路隔离
+category: module_blueprint
+---
+
+# 2.4 R3 缓解：告警链路隔离
+
+2.4 R3 缓解：告警链路隔离
+
+在 `risk_mitigation.py` 中实现 `AlertLinkIsolator`：
+- `fire_and_forget(alert_func, *args, **kwargs)`: 异步告警发送
+- `ThreadPoolExecutor(max_workers=2)` + `queue.Queue(maxsize=100)`

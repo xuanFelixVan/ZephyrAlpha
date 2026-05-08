@@ -45,7 +45,7 @@ _DEFAULT_KEYWORD_DICT: dict[str, list[str]] = {
     "D5": ["组合", "portfolio", "仓位", "position", "l05", "权重"],
     "D6": ["执行", "execution", "order", "委托", "l06", "交易"],
     "D7": ["归因", "attribution", "绩效", "performance", "l07", "pnl"],
-    "D8": ["知识", "knowledge", "ke", "向量", "chromadb", "检索"],
+    "D8": ["知识", "knowledge", "ke", "向量", "chromadb", "vms", "vector_memory", "向量记忆", "embedding", "检索"],
     "D9": ["交接", "handoff", "mcp", "server", "session", "context", "prompt"],
 }
 
@@ -81,13 +81,13 @@ class SentinelServer(BaseMCPServer):
     VERSION = "1.0.0"
     DESCRIPTION = "自然语言 → 10 域 + directive 链路由；Stage 1 关键词已激活，Stage 2/3 待 beta/stable"
 
-    def __init__(self) -> None:
-        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION)
+    def __init__(self, *, enable_rbac: bool = True) -> None:
+        super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
         self._keyword_dict: dict[str, list[str]] = dict(_DEFAULT_KEYWORD_DICT)
         # 黄金评测集（骨架：内置 3 条最小样本）
         self._golden_set: list[dict[str, Any]] = [
             {"query": "帮我获取 A 股日线行情", "expected_domain": "D0"},
-            {"query": "查看 ADR-011 治理规则", "expected_domain": "D2"},
+            {"query": "查看 KB 决策记录 ADR-011 治理规则", "expected_domain": "D2"},
             {"query": "计算因子暴露度", "expected_domain": "D1"},
         ]
 
@@ -140,6 +140,16 @@ class SentinelServer(BaseMCPServer):
             },
             handler=self._evaluate_golden_set,
         )
+        self.register_tool(
+            name="intent_router.health_status",
+            description="哨兵健康状态——返回路由器状态 + 路由表版本 + 词典信息",
+            input_schema={
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {},
+            },
+            handler=self._health_status,
+        )
 
     # ------------------------------------------------------------------
     # Tool handlers
@@ -168,12 +178,12 @@ class SentinelServer(BaseMCPServer):
         # Stage 2 占位（beta 引入 embedding）
         if domain == "UNKNOWN" and max_stage >= 2:
             source_stage = "embedding"
-            # TODO: 调用 intent_embedding_mapper.py
+            pass  # PHASE-GATE: intent_embedding_mapper.py (Stage 2, beta)
 
         # Stage 3 占位（stable 引入 LLM）
         if domain == "UNKNOWN" and max_stage >= 3:
             source_stage = "llm"
-            # TODO(Phase4): 调用 intent_llm_router.py
+            pass  # PHASE-GATE: intent_llm_router.py (Stage 3, Phase4)
 
         latency_ms = int((time.perf_counter() - t0) * 1000)
 
@@ -262,10 +272,22 @@ class SentinelServer(BaseMCPServer):
             "duration_seconds": round(duration, 4),
         }
 
+    def _health_status(self) -> dict[str, Any]:
+        """返回路由器健康状态。"""
+        total_kws = sum(len(v) for v in self._keyword_dict.values())
+        return {
+            "status": "operational",
+            "domains_loaded": len(self._keyword_dict),
+            "total_keywords": total_kws,
+            "golden_set_size": len(self._golden_set),
+            "active_stage": 1,
+            "checked_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
 
-def create_server() -> SentinelServer:
+
+def create_server(*, enable_rbac: bool = True) -> SentinelServer:
     """工厂函数，返回配置好的 SentinelServer 实例。"""
-    return SentinelServer()
+    return SentinelServer(enable_rbac=enable_rbac)
 
 
 if __name__ == "__main__":

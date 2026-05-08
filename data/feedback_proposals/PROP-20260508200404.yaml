@@ -1,0 +1,6 @@
+confidence: 0.6
+pattern: Recurring ambiguity in M8
+proposal_id: PROP-20260508200404
+source: NSL-NSL-0001
+status: DRAFT
+suggested_rule_change: 'Add deterministic rule for M8: uncertain'

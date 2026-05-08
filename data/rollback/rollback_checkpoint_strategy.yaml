@@ -1,0 +1,102 @@
+# =============================================================================
+# MOD-INF-021 Rollback Checkpoint Strategy — 双轨协作协议
+# =============================================================================
+# 依据：蓝图 MOD-INF-021 §2.1 + 决策 D-021-01 (git-native) + D-021-04 (SQLite dual-track)
+# 版本：0.10.0
+# 最后更新：2026-05-06
+# =============================================================================
+
+strategy:
+  name: "git-native + SQLite dump dual-track"
+  version: "0.10.0"
+  decisions:
+    - id: "D-021-01"
+      title: "git-native file checkpoint"
+      description: "git commit 作为文件层天然 checkpoint——不额外创建文件快照"
+    - id: "D-021-04"
+      title: "SQLite dump dual-track"
+      description: "每次 git commit 前自动 dump SQLite schema+data 到 JSONL 纳入 git track"
+
+file_layer:
+  description: "文件层 checkpoint——git 原生版本管理"
+  mechanism: "git commit"
+  checkpoint_unit: "每个 git commit = 一个 checkpoint"
+  target: "工作区中所有 git-tracked 文件"
+  rollback_action: "git revert {commit_sha}"
+  preflight_checks:
+    - "git status --porcelain 检查工作区是否干净"
+    - "git rev-parse --abbrev-ref HEAD 检查不在 detached HEAD"
+    - "git merge-base HEAD origin/main 检查 remote 是否领先"
+
+db_layer:
+  description: "数据库层 checkpoint——SQLite dump + JSONL 签名"
+  mechanism: "pre-commit hook → sqlite_dumper.dump() → JSONL 提交"
+  checkpoint_unit: "每个 git commit 对应一份 JSONL dump"
+  target: "所有 SQLite 表（tasks / gates / events / telemetry / audit_log）"
+  dump_pipeline:
+    - step: 1
+      action: "PRAGMA wal_checkpoint(TRUNCATE)"
+      reason: "将 WAL 刷入主文件，获得一致性快照（B32）"
+    - step: 2
+      action: "sqlite_dumper.dump(commit_sha)"
+      reason: "schema + data → JSONL，含 Merkle 树根哈希 + HMAC-SHA256 签名"
+    - step: 3
+      action: "git add data/rollback/db_snapshots/{commit_sha}.jsonl"
+      reason: "JSONL 纳入 git track"
+  rollback_action: "sqlite_dumper.restore(data/rollback/db_snapshots/{commit_sha}.jsonl)"
+  integrity_verification:
+    before_restore:
+      - "Merkle 树根哈希比对——确认 JSONL 内容未被篡改（B49）"
+      - "HMAC-SHA256 文件级签名验证——确认 JSONL 文件完整"
+    after_restore:
+      - "PRAGMA integrity_check——确认重建后 SQLite 数据库完整"
+      - "Differential 验证——回滚前后 tasks/gates/events 表逐行比较（B53）"
+
+collaboration_protocol:
+  description: "文件层和 DB 层的同步回滚协议"
+  atomic_rollback:
+    description: "双轨回滚必须在同一事务中完成"
+    steps:
+      - id: "dual_1"
+        action: "file_layer: git revert {commit_sha} --no-commit"
+        description: "先 revert 文件变更，暂不提交"
+      - id: "dual_2"
+        action: "db_layer: sqlite_dumper.restore({commit_sha}.jsonl)"
+        description: "再恢复 SQLite 到对应状态"
+      - id: "dual_3"
+        action: "git commit -m 'Rollback: dual-track restore to {commit_sha}'"
+        description: "文件+DB 状态一致后提交"
+  consistency_guarantee:
+    after_dual_rollback:
+      - "G0 门禁：rollback_verifier 检查文件 → .py 语法 + 必含 docstring"
+      - "DB 一致性自愈：比对 tasks 表与文件状态，不一致自动修正（B3）"
+      - "__pycache__ 清理：find . -name __pycache__ -type d -exec rm -rf {} + （B16）"
+
+deprecated_path:
+  description: "rollback_manager.py DB-only checkpoint 已被双轨替代"
+  original: "src/zephyr/orchestrator/rollback_manager.py"
+  new: "src/zephyr/rollback/rollback_executor.py (文件+DB 联动)"
+  status: "降级为仅调试用途——不参与自动回滚链路"
+
+jsonl_format:
+  encoding: "utf-8"
+  ensure_ascii: false
+  header_format: "# ZephyrAlpha SQLite Dump | encoding: utf-8 | timestamp: {ISO8601} | commit: {sha}"
+  line_structure:
+    - line: 1
+      content: "元数据头（注释行）"
+    - line: 2
+      content: "Schema 摘要 JSON（schema_version + table_count + tables[]）"
+    - line: "3..N"
+      content: "各表数据 JSON（table + schema + data + row_count）"
+    - line: "N+1"
+      content: "Merkle 根哈希 JSON（merkle_root）"
+
+governance:
+  dual_track_enforcement:
+    description: "pre-commit hook 强制执行双轨协议"
+    rule: "若 SQLite dump 失败，拒绝 commit——不允许产生无 DB 快照的 commit"
+    failure_action: "block commit + alert owner"
+  drift_monitoring:
+    description: "监控 JSONL 与 git commit 的版本一致性"
+    mechanism: "每次 push 前比对 commit_sha 与 JSONL 文件名"

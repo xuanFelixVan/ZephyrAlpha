@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.audit_cache/
+.runtime/
+.ailocks/
+.zephyr/
+.git/
+.github/
+logs/
+models/
+data/
+*.egg-info/

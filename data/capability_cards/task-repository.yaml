@@ -1,0 +1,26 @@
+capability_id: task-repository
+category: data
+description: 10-state task state machine with SQLite persistence
+examples: []
+input_schema:
+  properties:
+    action:
+      type: string
+    task_id:
+      type: string
+  type: object
+name: Task Repository
+output_schema:
+  properties:
+    status:
+      type: string
+  type: object
+priority: P0
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- task
+- state-machine
+- sqlite

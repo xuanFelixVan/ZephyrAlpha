@@ -24,7 +24,7 @@ depends_on:
   - target: PS-STD-001
     at: "§7.2"
     why: "metadata-registry.md 定义的 task_id 格式（{NAMESPACE}-{SEQ}）为本协议的 task_id 引用格式基准"
-related_adr: [ADR-0041]
+related_kb_ref: [ADR-0041]
 ---
 
 # Session Handoff Protocol（会话交接协议）

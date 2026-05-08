@@ -1,0 +1,32 @@
+# ZephyrAlpha — AI 上下文策略
+# 真源：盲点 #62 蓝图访问过滤
+# 版本：v2.6.0
+
+policy_version: "2.6.0"
+
+access_levels:
+  public:
+    description: "AI 自由访问"
+    include:
+      - "docs/03_modules/**"
+      - "src/zephyr/**"
+      - "config/capacity/capacity_slo.yaml"
+  internal:
+    description: "受控访问 (Owner + 指定 AI)"
+    include:
+      - "docs/01_policies_and_standards/**"
+      - "config/**/risk_register.yaml"
+      - ".trae/rules/project_rules.md"
+  forensic:
+    description: "仅事后取证访问"
+    include:
+      - ".audit_cache/**"
+      - "data/**/error_budget*"
+
+sensitive_patterns:
+  - pattern: "kill_switch_threshold"
+    action: "remove_value"
+  - pattern: "daily_cost_limit"
+    action: "aggregate"
+  - pattern: "api_key"
+    action: "redact"

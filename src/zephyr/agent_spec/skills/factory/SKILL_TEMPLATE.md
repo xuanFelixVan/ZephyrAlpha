@@ -1,0 +1,45 @@
+---
+skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
+name: "{{MODULE_NAME}}"
+description: ""
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash]
+model_hint: DeepSeek
+freshness_score: 100.0
+last_validated: 2026-05-06
+version: "0.1.0"
+token_budget_l1: 50
+token_budget_l2: 500
+author: factory-agent
+---
+
+# Domain Skill: {{MODULE_NAME}}
+
+## CRITICAL Rules
+
+### Core Operations
+{{CORE_OPERATIONS}}
+
+### Unique Constraints
+{{UNIQUE_CONSTRAINTS}}
+
+### Common Error Patterns
+{{COMMON_ERRORS}}
+
+## Checklist
+
+- [ ] Verify blueprint before implementation
+- [ ] Check upstream dependencies
+- [ ] Validate against acceptance criteria
+- [ ] Run gate engine checks (G0-G9)
+
+## Key Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| DEFAULT_TIMEOUT | 30 | Default operation timeout (seconds) |
+
+## References (L3, on-demand)
+
+- module_blueprint.md
+- integration_guide.md
+- troubleshooting.md

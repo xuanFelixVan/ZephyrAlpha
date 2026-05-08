@@ -1,0 +1,9 @@
+version: "1.0.0"
+generated_at: ""
+baseline:
+  ngram_size: 3
+  min_frequency: 2
+clusters: []
+summary:
+  total_micro_clones: 0
+  unique_patterns: 0

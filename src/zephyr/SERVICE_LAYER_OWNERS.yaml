@@ -1,46 +1,43 @@
-# AUDIT-08 / MOD-INF-013 服务层 Owner 登记（与 tool_contracts.yaml owner 互补）
-# 说明：模块级技术 Owner；发布责任以蓝图 MOD-xx 为准。
-schema_version: "1.0.0"
-updated: "2026-05-06"
+# SERVICE_LAYER_OWNERS.yaml — 服务层模块技术 Owner 登记
+# schema_version: "1.0.0"  |  updated: "2026-05-06"
+#
+# 当前阶段：单人全栈项目，primary owner 统一为 ZephyrAlpha。
+# 团队扩容后按模块责任拆分为具体自然人。
 
-owners:
-  org: ZephyrAlpha-Owner
+org: ZephyrAlpha
+primary_owner: ZephyrAlpha
 
-  mcp_servers:
-    task_manager: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/task_manager_server.py, transport: FastMCP }
-    knowledge_base: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/knowledge_base_server.py }
-    gate_engine: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/gate_engine_server.py }
-    session_handoff: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/doc_guard_server.py }
-    intent_router: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/sentinel_server.py }
-    blueprint_search: { primary: ZephyrAlpha-Owner, code: src/zephyr/mcp/blueprint_search_server.py }
+modules:
+  mcp:
+    - task_manager:       src/zephyr/mcp/task_manager_server.py
+    - knowledge_base:     src/zephyr/mcp/knowledge_base_server.py
+    - gate_engine:        src/zephyr/mcp/gate_engine_server.py
+    - session_handoff:    src/zephyr/mcp/doc_guard_server.py
+    - intent_router:      src/zephyr/mcp/sentinel_server.py
+    - blueprint_search:   src/zephyr/mcp/blueprint_search_server.py
 
   pipeline:
-    orchestrator: { primary: ZephyrAlpha-Owner, code: src/zephyr/pipeline/pipeline_orchestrator.py }
-    zone_A: { modules: [M1, M2, M3, M4, M5], owner: ZephyrAlpha-Owner, note: production path }
-    zone_B: { modules: [M6, M7, M8, M9, M10, M11], owner: ZephyrAlpha-Owner, note: audit path }
-    ct_pipe_routing: { primary: ZephyrAlpha-Owner, code: src/zephyr/pipeline/ct_pipe_routing.py }
+    - orchestrator:       src/zephyr/pipeline/pipeline_orchestrator.py
+    - ct_pipe_routing:    src/zephyr/pipeline/ct_pipe_routing.py
 
-  knowledge_base_pipeline:
-    G1_ingest: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/ingest.py }
-    G2_triage: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/triage.py }
-    G3_analyze: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/analyze.py }
-    # G4 = activate 阶段（gate_engine.evaluate …, "G4"）
-    G4_activate: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/activate.py }
-    G5_extract: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/extract.py }
-    gate_eval_task_helper: { primary: ZephyrAlpha-Owner, code: src/zephyr/kb/kb_gate_task.py, note: "五阶段 _run_gate 共用合法 Task 构造" }
+  knowledge_gates:
+    - G1_ingest:          src/zephyr/kb/ingest.py
+    - G2_triage:          src/zephyr/kb/triage.py
+    - G3_analyze:         src/zephyr/kb/analyze.py
+    - G4_activate:        src/zephyr/kb/activate.py
+    - G5_extract:         src/zephyr/kb/extract.py
 
   feedback_loop:
-    engine: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/evolution_engine.py }
-    backpressure_bridge: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/backpressure_bridge.py }
-    metrics_collector: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/metrics_collector.py }
-    eval_harness: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/eval_harness.py }
-    fitness_functions: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/fitness_functions.py }
-    feedback_collector: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/feedback_collector.py }
-    auto_evolution: { primary: ZephyrAlpha-Owner, code: src/zephyr/feedback_loop/auto_evolution.py }
+    - evolution:          src/zephyr/feedback_loop/evolution_engine.py
+    - backpressure:       src/zephyr/feedback_loop/backpressure_bridge.py
+    - metrics:            src/zephyr/feedback_loop/metrics_collector.py
+    - eval_harness:       src/zephyr/feedback_loop/eval_harness.py
+    - fitness:            src/zephyr/feedback_loop/fitness_functions.py
+    - collector:          src/zephyr/feedback_loop/feedback_collector.py
+    - auto_evolution:     src/zephyr/feedback_loop/auto_evolution.py
 
   vector_memory:
-    facade: { primary: ZephyrAlpha-Owner, code: src/zephyr/vector_memory/ }
-    implementation_delegate: { primary: ZephyrAlpha-Owner, note: "过渡期正式实现路径：UnifiedMemoryAPI + UnifiedVectorMemoryAdapter（kb.unified_memory_api）；独立 Chroma VMS 进程为后续演进" }
+    - adapter:            src/zephyr/vector_memory/
 
-  l12_telemetry:
-    contract_metrics: { primary: ZephyrAlpha-Owner, code: src/zephyr/l12_system_telemetry/contract_metrics.py }
+  telemetry:
+    - contract_metrics:   src/zephyr/l12_system_telemetry/contract_metrics.py

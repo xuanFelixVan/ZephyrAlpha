@@ -39,10 +39,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.shared.paths import (
+from zephyr.shared.io.paths import (
     DB_PATH as DB_PATH_DEFAULT,
 )
-from zephyr.shared.paths import (
+from zephyr.shared.io.paths import (
     GATES_DIR,
     REPO_ROOT,
     SNAPSHOTS_DIR,
@@ -334,3 +334,94 @@ class SystemSnapshotter:
             db_path=db_path,
         )
         return snapshotter.capture()
+
+
+class CESnapshot(BaseModel):
+    """CE 系统状态快照——轻量级运行时状态采集。
+
+    用于 Inject 阶段参考系统当前状况。
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    active_sessions: int = Field(default=0, ge=0, description="当前活跃 Agent session 数")
+    vms_connected: bool = Field(default=False, description="VMS 连接状态")
+    ce_pipeline_stats: dict[str, float] = Field(
+        default_factory=dict,
+        description="CE pipeline 各阶段耗时 (ms): build/compress/validate/inject",
+    )
+    memory_usage_mb: float = Field(default=0.0, ge=0.0, description="内存使用 (MB)")
+    timestamp: str = Field(default="", description="快照时间戳 (ISO 8601)")
+
+
+def take_snapshot() -> CESnapshot:
+    """采集系统运行状态快照。
+
+    零外部依赖——可独立调用。
+
+    Returns
+    -------
+    CESnapshot
+        不可变快照对象
+    """
+    memory_mb = _get_memory_usage_mb()
+    timestamp = datetime.now(UTC).isoformat()
+
+    return CESnapshot(
+        active_sessions=_count_active_sessions(),
+        vms_connected=_check_vms_connection(),
+        ce_pipeline_stats=_get_pipeline_stats(),
+        memory_usage_mb=memory_mb,
+        timestamp=timestamp,
+    )
+
+
+def _get_memory_usage_mb() -> float:
+    try:
+        import psutil
+        return round(psutil.Process().memory_info().rss / (1024 * 1024), 2)
+    except ImportError:
+        pass
+    try:
+        import os
+        import struct
+        if hasattr(os, "sysconf") and hasattr(os, "confstr"):
+            return 0.0
+    except Exception:
+        pass
+    return 0.0
+
+
+def _count_active_sessions() -> int:
+    try:
+        from pathlib import Path
+        runtime_dir = Path(".runtime/sessions")
+        if runtime_dir.exists():
+            return len(list(runtime_dir.glob("*.json")))
+    except Exception:
+        pass
+    return 0
+
+
+def _check_vms_connection() -> bool:
+    try:
+        from pathlib import Path
+        vms_dir = Path(".runtime/vms")
+        return vms_dir.exists()
+    except Exception:
+        pass
+    return False
+
+
+def _get_pipeline_stats() -> dict[str, float]:
+    try:
+        from pathlib import Path
+        stats_file = Path(".runtime/ce_pipeline_stats.json")
+        if stats_file.exists():
+            import json
+            data = json.loads(stats_file.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                return {k: float(v) for k, v in data.items()}
+    except Exception:
+        pass
+    return {"build_ms": 0.0, "compress_ms": 0.0, "validate_ms": 0.0, "inject_ms": 0.0}

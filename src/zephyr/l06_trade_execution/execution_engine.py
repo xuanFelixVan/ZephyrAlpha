@@ -35,7 +35,7 @@ from zephyr.l06_trade_execution.order_manager import OrderManager
 from zephyr.l04_risk_management.implementations.default_risk_validator import (
     DefaultRiskValidator,
 )
-from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.execution.order import Order
 
 _logger = logging.getLogger(__name__)
 

@@ -1,0 +1,43 @@
+"""script_system.finding Finding Schema — MOD-INF-005 §6.5 recommendation 对齐。"""
+
+from zephyr.script_system.finding import (
+    Dimension,
+    Finding,
+    RecommendationType,
+    RecommendedAction,
+    RemediationAction,
+    Severity,
+)
+
+
+def test_to_dict_backward_compatible_without_recommendation() -> None:
+    f = Finding(
+        dimension=Dimension.D3,
+        severity=Severity.MEDIUM,
+        category="test",
+        target_file="docs/x.md",
+        description="missing field",
+        remediation_action=RemediationAction.FIX,
+    )
+    d = f.to_dict()
+    assert "recommendation_block" not in d
+    assert d["severity"] == "MEDIUM"
+
+
+def test_to_dict_with_recommendation_block() -> None:
+    f = Finding(
+        dimension=Dimension.D3,
+        severity=Severity.MEDIUM,
+        category="test",
+        target_file="docs/x.md",
+        description="needs fix suggestion",
+        recommendation="在 frontmatter 增加 version",
+        recommendation_type=RecommendationType.MANUAL_ONLY,
+        recommended_action=RecommendedAction.MODIFY_FILE,
+    )
+    d = f.to_dict()
+    assert "recommendation_block" in d
+    rb = d["recommendation_block"]
+    assert rb["recommendation"] == "在 frontmatter 增加 version"
+    assert rb["recommendation_type"] == "manual_only"
+    assert rb["recommended_action"] == "modify_file"

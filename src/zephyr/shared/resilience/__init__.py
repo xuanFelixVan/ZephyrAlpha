@@ -21,6 +21,9 @@ __all__ = [
     "CircuitOpenError",
     "FallbackChain",
     "fallback",
+    "retry",
+    "circuit_breaker",
+    "fallback",
 ]
 
 from .circuit_breaker import (  # noqa: E402

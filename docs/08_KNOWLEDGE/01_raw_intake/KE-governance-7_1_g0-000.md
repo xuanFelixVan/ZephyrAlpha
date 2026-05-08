@@ -1,0 +1,15 @@
+---
+module_id: KE-governance-7_1_g0-000
+title: 7.1 G0 创建门禁（创建任务卡前检查）
+category: governance
+---
+
+# 7.1 G0 创建门禁（创建任务卡前检查）
+
+7.1 G0 创建门禁（创建任务卡前检查）
+
+1. 必填字段完整性——对照 [metadata-registry.md §7 字段总表](../../meta/metadata-registry.md) 中标记为"必填"的字段
+2. task_id 格式符合 `{NAMESPACE}-{SEQ}`
+3. files_in_scope 中的路径必须物理存在
+4. execution_model 必须是合法枚举值
+5. depends_on 中的 task_id 必须在系统中已存在（若引用外部任务）

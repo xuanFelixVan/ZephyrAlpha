@@ -1,0 +1,93 @@
+{
+  "test_type": "adversarial_red_blue",
+  "version": 4,
+  "target": "drift-detector MOD-INF-023 v1.0.1",
+  "date": "2026-05-08",
+  "executor": "factory-agent",
+  "summary": {
+    "total_injections": 4,
+    "detected": 4,
+    "missed": 0,
+    "detection_rate": "4/4",
+    "detection_pct": 100.0,
+    "false_negative_rate": 0.0,
+    "self_test": "8/8 checks passed"
+  },
+  "injections": [
+    {
+      "name": "path_rename",
+      "target": "worker.py",
+      "injection_type": "PATH_RENAME",
+      "detector": "ai_dead_code",
+      "detected": true
+    },
+    {
+      "name": "yaml_field_flip",
+      "target": "config.yaml",
+      "injection_type": "YAML_FIELD_FLIP",
+      "detector": "ai_broken_logic",
+      "detected": true
+    },
+    {
+      "name": "fake_todo_bomb",
+      "target": "handler.py",
+      "injection_type": "FAKE_TODO_BOMB",
+      "detector": "ai_broken_logic",
+      "detected": true
+    },
+    {
+      "name": "import_hallucination",
+      "target": "utils.py",
+      "injection_type": "IMPORT_HALLUCINATION",
+      "detector": "ai_hallucination_import",
+      "detected": true
+    }
+  ],
+  "e2e_pipeline": {
+    "test_file": "tests/infrastructure/test_drift_e2e_pipeline.py",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "tests": [
+      "test_e2e_drift_scan_persist",
+      "test_e2e_drift_budget_check",
+      "test_e2e_drift_budget_exhaustion",
+      "test_e2e_gate_engine_drift_budget",
+      "test_e2e_self_test_verifier",
+      "test_e2e_registry_consistency"
+    ]
+  },
+  "self_check": "PASS",
+  "trigger_recovery_chain": {
+    "status": "OPERATIONAL",
+    "module": "zephyr.gates.drift_detector",
+    "function": "trigger_recovery",
+    "test_file": "tests/infrastructure/test_drift_trigger_recovery.py",
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "scenarios": [
+      "import via zephyr.gates.drift_detector",
+      "import via zephyr.gates __init__",
+      "handle_drift_stub calls trigger_recovery (not fallback stub)",
+      "handle_drift_stub fallback on import error",
+      "hotfix bypass [HOTFIX] commit",
+      "no drift found",
+      "cascade lockout",
+      "auto_fix success → FULLY_RECOVERED",
+      "auto_fix failure → fallback MANUAL_REQUIRED"
+    ]
+  },
+  "fixes_applied": [
+    "reconciler.py: 4 hollow stubs → real fix implementations (_fix_path_index, _fix_yaml_append, _fix_recount, _fix_dep_sync)",
+    "self_test_verifier.py: 5 hardcoded PASS → real verification checks",
+    "CI governance.yml: added Tier 8 — drift E2E + adversarial + self-check",
+    "governance/drift_detector/__init__.py: v0.1.0 → v1.0.0 compat bridge with deprecation warning",
+    "cold_start.py: added STEP 4.9 session_entry_activate() + bootstrap auto-scan",
+    "shared/context.py: fixed SyntaxError blocking Gate Engine import",
+    "gates/drift_detector.py: created trigger_recovery() — drift_detected event → scan → cascade check → auto_fix → fallback rollback",
+    "gates/__init__.py: registered trigger_recovery in _LAZY_IMPORTS + __all__",
+    "gates/_registry.yaml: GCT-023 file field updated to drift_detector.py",
+    "test_drift_trigger_recovery.py: 9 integration tests covering full trigger recovery chain"
+  ]
+}

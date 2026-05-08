@@ -4,7 +4,7 @@ doc_type: register
 title: "Embedding Model Registry"
 status: active
 ttl: permanent
-implementation_status: "experimental declarative contract — EmbeddingMigrator uses KNOWN_MODELS hardcoded dict (must stay in sync). Future: load from this YAML."
+implementation_status: "operational — embedding_migrate.py loads model registry from this YAML via load_model_registry(). KNOWN_MODELS dict retained as fallback."
 
 models:
   # constraint: exactly one model must have default: true (SSoT for default model selection)

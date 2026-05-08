@@ -1,0 +1,14 @@
+{
+  "case_id": "FN-004",
+  "dimension": "D3",
+  "description": "invalid YAML frontmatter — 已知缺陷：非法YAML语法导致解析失败",
+  "defect": {
+    "type": "content_inject"
+  },
+  "target_path": "docs/_test_invalid_yaml.md",
+  "defect_content": "---\ntitle: \"Broken YAML\"\nstatus: [draft,\nversion: 1.0\n---\n\n# Test\n",
+  "verifier": "d3_metadata/check_naming_convention.py",
+  "expected_finding_id": "D3-YAML-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

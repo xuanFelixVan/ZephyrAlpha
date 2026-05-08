@@ -10,6 +10,4 @@ from zephyr.l11_ml_platform.implementations.default_inference_engine import (
     DefaultInferenceEngine,
 )
 
-__all__ = [
-    "DefaultInferenceEngine",
-]
+__all__ = ['DefaultInferenceEngine', 'default_inference_engine']

@@ -1,0 +1,53 @@
+schema_version: "1.0"
+doc_type: contradiction_tracker
+last_updated: "2026-05-06"
+source: ssot-authority-map.md §八
+
+active_contradictions:
+  - id: SSoT-001
+    description: 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13）
+    authority: 当前项目 L00-L13 编号系统
+    fix_plan: beta 统一迁移，老树编号标记 deprecated alias
+    status: open
+    phase: beta
+    owner: Owner
+
+  - id: SSoT-002
+    description: 模块数量不一致（MODULE_INVENTORY vs 候选池清单）
+    authority: module-id-registry.yaml
+    fix_plan: experimental 填充时统一注册
+    status: open
+    phase: experimental
+    owner: Owner
+
+demoted_to_backlog:
+  - id: SSoT-004
+    original_class: pre-commit hooks 冗余（12→5）
+    reason: 施工任务，非跨文件矛盾
+    progress: P0C5 执行中
+    location: scaffold sprint backlog
+
+  - id: SSoT-006
+    original_class: 依赖关系未声明
+    reason: 施工任务（F8 已修复 P0 分区，R4 批次补剩余 20 分区）
+    progress: partial
+    location: architecture-model/layers/l0{2..7}_*.yaml
+
+  - id: SSoT-007
+    original_class: OSS 候选信息分散
+    reason: 施工任务（依赖 _schema.yaml oss_candidate 扩展落地）
+    progress: not_started
+    location: experimental sprint backlog
+
+resolved_archive:
+  - id: SSoT-003
+    description: 架构层定义分散
+    fix: v1.0 已归档到 archive/reorg-2026-04-24/；当前统一在 _index.yaml v2.0 + layers/*.yaml
+    resolved_date: "2026-04-25"
+    phase: Stage D-d
+
+  - id: SSoT-005
+    description: 文档命名大小写混用
+    fix: 新文件强制小写 kebab-case，老文件搬迁时重命名；由 scripts/governance/naming/ 自动检查
+    resolved_date: "2026-04-25+"
+    phase: ongoing

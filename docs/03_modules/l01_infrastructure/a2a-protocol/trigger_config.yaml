@@ -1,0 +1,15 @@
+# MOD-INF-025 触发配置
+version: "0.10.0"
+triggers:
+  - id: TASK_SUBMIT
+    on: task_created
+    action: route_to_supervisor
+  - id: GATE_FAIL
+    on: gate_not_passed
+    action: escalate
+  - id: TIMEOUT
+    on: deadline_exceeded
+    action: escalate_timeout
+  - id: DRIFT_DETECTED
+    on: freshness_below_30
+    action: trigger_review

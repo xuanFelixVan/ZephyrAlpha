@@ -24,7 +24,7 @@ language: zh
 created_by: human_plus_agent
 depends_on:
   - {target: PS-STD-001, at: "§7", why: "metadata-registry.md §7 定义了任务卡全部 28 个字段和 task_id 格式的权威规则"}
-summary: "任务卡的操作指南——正文结构规范、路径与依赖速查、门禁快速参考。字段定义以 metadata-registry.md §7 为准。v3.0.0：拆分——§3 字段定义全部归入 registry，本文件降格为操作指南。"
+summary: "任务卡的操作指南——正文结构规范、路径与依赖速查、门禁快速参考。字段定义以 metadata-registry.md §7 为准。v3.0.0：拆分——§3 字段定义全部归入 registry，本文件降格为操作指南。所有新建任务卡必须使用 TaskCard（zephyr.core.models.TaskCard）模型。"
 related:
   - GOV-AI-008
   - GOV-TASK-004

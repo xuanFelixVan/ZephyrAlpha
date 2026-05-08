@@ -95,12 +95,12 @@ class DataQualityGate(abc.ABC):
         ...
 
     @staticmethod
-    def is_within_normal_range(price: Decimal, prev_close: Decimal) -> bool:
+    def is_within_normal_range(price: Decimal, prev_close: Decimal, limit_pct: Decimal = Decimal("0.10")) -> bool:
         """涨跌停范围校验（A 股 ±10%，科创板/创业板 ±20%）"""
         if prev_close <= Decimal("0"):
             return False
         change_pct = abs(price - prev_close) / prev_close
-        return change_pct <= Decimal("0.20")
+        return change_pct <= limit_pct
 
 
 __all__ = [

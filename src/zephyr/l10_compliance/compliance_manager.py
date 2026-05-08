@@ -23,7 +23,7 @@ from __future__ import annotations
 import abc
 from typing import ClassVar, Dict, List, Optional
 
-from zephyr.shared.contracts.compliance_rule import ComplianceRule
+from zephyr.shared.contracts.risk.compliance_rule import ComplianceRule
 
 
 class ComplianceManagerBase(abc.ABC):

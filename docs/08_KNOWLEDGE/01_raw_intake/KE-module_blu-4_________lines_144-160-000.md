@@ -1,0 +1,16 @@
+---
+module_id: KE-module_blu-4_________lines_144-160-000
+title: §4 域内施工顺序 (lines 144-160)
+category: module_blueprint
+---
+
+# §4 域内施工顺序 (lines 144-160)
+
+§4 域内施工顺序 (lines 144-160)
+
+| Phase | 模块 | 依赖描述 | 覆盖 task_id |
+|-------|------|----------|------|
+| Phase 1 | Audit + RBAC | 审计是基础设施 + RBAC 是核心门禁 | TASK-GOV-0010 |
+| Phase 2 | Rollback + Escalation | Rollback 依赖 Audit + Escalation 依赖 RBAC+Audit | TASK-GOV-0011 |
+| Phase 3 | Drift + Budget | Drift 依赖 Rollback + Budget 依赖 Escalation | TASK-GOV-0012 |
+| Phase 4 | Agent Spec + A2A | Spec 依赖全部 / A2A Phase 4 激活 | TASK-GOV-0013 |

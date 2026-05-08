@@ -25,13 +25,15 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "IntentDomain",
     "IntentResult",
     "IntentKeywordMapper",
     "StageLiteral",
+    "MAP",
+    "map_intent_to_keywords",
 ]
 
 StageLiteral = Literal["keyword", "semantic", "llm"]
@@ -458,3 +460,164 @@ class IntentKeywordMapper:
 
     def get_keywords_for_domain(self, domain: str) -> list[str]:
         return list(self._keywords.get(domain, []))
+
+
+MAP: dict[str, list[str]] = {
+    "CODE_GEN": [
+        "generate",
+        "create",
+        "implement",
+        "build",
+        "write",
+        "code",
+        "scaffold",
+        "skeleton",
+        "module",
+        "class",
+        "function",
+        "生成",
+        "创建",
+        "实现",
+        "编写",
+        "新建",
+    ],
+    "CODE_REVIEW": [
+        "review",
+        "inspect",
+        "code review",
+        "audit",
+        "check",
+        "validate",
+        "verify",
+        "quality",
+        "审查",
+        "检查",
+        "校验",
+    ],
+    "ANALYSIS": [
+        "analysis",
+        "analyze",
+        "report",
+        "evaluate",
+        "assess",
+        "metric",
+        "benchmark",
+        "profile",
+        "分析",
+        "评估",
+        "报告",
+    ],
+    "OPS_FIX": [
+        "fix",
+        "bug",
+        "hotfix",
+        "patch",
+        "repair",
+        "security",
+        "vulnerability",
+        "incident",
+        "修复",
+        "漏洞",
+        "安全事故",
+    ],
+    "DOC": [
+        "documentation",
+        "doc",
+        "readme",
+        "changelog",
+        "manual",
+        "guide",
+        "spec",
+        "文档",
+        "手册",
+    ],
+    "REFACTOR": [
+        "refactor",
+        "restructure",
+        "rewrite",
+        "cleanup",
+        "optimize",
+        "simplify",
+        "重构",
+        "重写",
+    ],
+    "TEST": [
+        "test",
+        "pytest",
+        "unittest",
+        "coverage",
+        "mock",
+        "fixture",
+        "assert",
+        "测试",
+        "单元测试",
+    ],
+    "AUDIT": [
+        "audit",
+        "compliance",
+        "governance",
+        "policy",
+        "standard",
+        "regulation",
+        "审计",
+        "合规",
+    ],
+    "QUERY": [
+        "query",
+        "question",
+        "search",
+        "find",
+        "lookup",
+        "retrieve",
+        "查询",
+        "问题",
+        "搜索",
+    ],
+    "DEBUG": [
+        "debug",
+        "troubleshoot",
+        "diagnose",
+        "trace",
+        "log",
+        "breakpoint",
+        "stack trace",
+        "调试",
+        "排查",
+    ],
+}
+
+
+def map_intent_to_keywords(intent: str) -> list[str]:
+    """BUILD-C01 入口——将意图类型映射为检索关键词列表。
+
+    Parameters
+    ----------
+    intent : str
+        意图类型字符串，应为 IntentType 枚举值之一
+
+    Returns
+    -------
+    list[str]
+        关键词列表
+
+    Raises
+    ------
+    ValueError
+        若 intent 无效或映射结果为空（BUILD-C01 reject 模式）
+
+    Examples
+    --------
+    >>> map_intent_to_keywords("CODE_GEN")
+    ['generate', 'create', 'implement', ...]
+    >>> map_intent_to_keywords("UNKNOWN")
+    Traceback (most recent call last):
+    ...
+    ValueError: BUILD-C01: 未知意图类型 'UNKNOWN'，请补充 intent→keyword 映射到 intent_keyword_mapper.py
+    """
+    keywords = MAP.get(intent)
+    if not keywords:
+        raise ValueError(
+            f"BUILD-C01: 未知意图类型 '{intent}'，"
+            f"请补充 intent→keyword 映射到 intent_keyword_mapper.py"
+        )
+    return keywords

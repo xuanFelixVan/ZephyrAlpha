@@ -1,0 +1,20 @@
+---
+module_id: KE-module_blu-4_2_mcp______p0-2_r90-000
+title: 4.2 MCP 蓝图检索（P0-2，R90）
+category: module_blueprint
+---
+
+# 4.2 MCP 蓝图检索（P0-2，R90）
+
+4.2 MCP 蓝图检索（P0-2，R90）
+
+| 日期 | 动作 | 效果 |
+|------|------|------|
+| 2026-05-04 | 创建 `src/zephyr/mcp/blueprint_search_server.py` | AI 可通过 MCP JSON-RPC 调用 `find_relevant_blueprint(task_description)` |
+| 2026-05-04 | MOD-INF-013 MCP Servers 蓝图注册新的第 7 个 Server | 工具契约已登记 |
+
+**验证结果**：
+- `"rate limit QPS"` → MOD-INF-001 ✅
+- `"门禁校验 gate check"` → MOD-INF-007 ✅
+
+---

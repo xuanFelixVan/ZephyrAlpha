@@ -1,0 +1,61 @@
+"""
+MOD-INF-019: Agent Spec — Skill Contract
+Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
+Author: factory-agent
+Version: 0.3.0
+
+Skill 契约验证 —— I/O Schema + 副作用 + 依赖
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any, Dict, Optional
+
+
+class SkillContract:
+    _CONTRACT_TYPES = ["input_schema", "output_schema", "side_effects", "dependencies"]
+
+    @classmethod
+    def _parse_contracts(cls, body: str) -> Dict[str, Any]:
+        contracts = {}
+        for key, pattern in [
+            ("input_schema", r"(?:输入|input|parameters|args?)[：:]\s*\n(.+?)(?:\n\n|\n#|\Z)"),
+            ("output_schema", r"(?:输出|output|return|returns?|回应)[：:]\s*\n(.+?)(?:\n\n|\n#|\Z)"),
+            ("side_effects", r"(?:副作用|side_?effects?)[：:]\s*\n(.+?)(?:\n\n|\n#|\Z)"),
+            ("dependencies", r"(?:依赖|dependenc(?:y|ies))[：:]\s*\n(.+?)(?:\n\n|\n#|\Z)"),
+        ]:
+            m = re.search(pattern, body, re.IGNORECASE | re.DOTALL)
+            if m:
+                contracts[key] = m.group(1).strip()[:500]
+        return contracts
+
+    @classmethod
+    def validate_contracts(cls, skill_id: str, body: Optional[str] = None) -> Dict[str, Any]:
+        if body is None:
+            try:
+                from zephyr.agent_spec.skill_loader import SkillLoader
+                body = SkillLoader().progressive_load(skill_id).get("l2", "")
+            except Exception:
+                return {"skill_id": skill_id, "contracts_valid": False, "error": "load_failed",
+                        "violations": ["skill_load_failed"], "contracts_found": []}
+
+        contracts = cls._parse_contracts(body)
+        violations = []
+        for ct in ("input_schema", "output_schema"):
+            if ct not in contracts:
+                violations.append({"type": "missing_contract", "contract": ct,
+                                   "severity": "high" if ct == "output_schema" else "warning"})
+        for ct, content in contracts.items():
+            if len(content) < 10:
+                violations.append({"type": "contract_too_short", "contract": ct, "severity": "warning"})
+
+        block = any(v.get("severity") == "critical" for v in violations)
+        return {
+            "skill_id": skill_id,
+            "contracts_valid": not block and len(violations) == 0,
+            "contracts_found": list(contracts.keys()),
+            "contracts_missing": [c for c in cls._CONTRACT_TYPES if c not in contracts],
+            "violations": violations,
+            "contract_details": contracts,
+        }

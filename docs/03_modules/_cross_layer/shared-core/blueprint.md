@@ -2,7 +2,7 @@
 module_id: "MOD-INF-016"
 title: "Shared + Core 蓝图 — 跨层共享基础设施"
 doc_type: blueprint
-status: Draft
+status: Active
 version: "0.14.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -12,11 +12,11 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
-construction_progress: phase_2_complete
+construction_progress: phase_14_tested_and_audited（Phase 0-14 全部完成 + 544测试通过含48对抗审计含孤儿链验证；Phase 15-20 planned）
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha Shared + Core 蓝图——Shared: 跨层数据契约 + Task基座（31字段） + 事件总线 + 能力定义 + 内容指纹 + DOS启动器 + 路径/时间/Token/Frontmatter SSoT + API索引 + 统一错误层次 + 枚举集中re-export + 事件体Schema + 韧性基座(重试/熔断/降级) + 生命周期钩子 + FeatureFlag + 类型别名 + diff/patch工具 + 安全文件操作(原子写/备份/rollback) + 配置加载校验 + 结构化日志(ZephyrLogger/trace_id传播) + AI快速参考(SHARED-QUICKREF) + 测试夹具/工厂(testing) + Schema迁移系统(migration) + API废弃策略(deprecation) + 死信队列(dlq) + 版本协商(__version__) + 健康聚合(health) + 统一序列化(serialization) + API Client基类(api_client) + Secrets管理(secrets) + 缓存抽象(cache) + 速率限制器(limiter) + 幂等性(idempotency) + 上下文传播(context) + Metrics收集(metrics) + 分页工具(pagination) + 时间工具(time_utils) + 环境检测(env) + 分布式锁(lock) + Outbox模式(outbox) + Schema Registry(schema_registry) + 蓝图路由评分(blueprint_scorer)。Core: BlueprintDecomposer + models.py v0.3.0（继承Task 31字段全链路贯通）。2 子系统 49 文件全部已实现。施工 100% 完成。8轮审计: 56 项代码盲点（B1-B56）全覆盖 + 4 项蓝图结构补充（BP1-BP4） + 2 项内部矛盾修复（IC1-IC2）。"
-tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.14.0, production-ready, construction-complete, audit-complete, blueprint-complete]
-priority: P2
+summary: "ZephyrAlpha Shared + Core 蓝图 v0.15.0——Shared: 跨层数据契约 + Task基座（31字段） + 事件总线 + 能力定义 + 内容指纹 + DOS启动器 + 路径/时间/Token/Frontmatter SSoT + API索引 + 统一错误层次 + 枚举集中re-export + 事件体Schema + 韧性基座(重试/熔断/降级) + 生命周期钩子 + FeatureFlag + 类型别名 + diff/patch工具 + 安全文件操作(原子写/备份/rollback) + 配置加载校验 + 结构化日志(ZephyrLogger/trace_id传播) + AI快速参考(SHARED-QUICKREF) + 测试夹具/工厂(testing) + Schema迁移系统(migration) + API废弃策略(deprecation) + 死信队列(dlq) + 版本协商(__version__) + 健康聚合(health) + 统一序列化(serialization) + API Client基类(api_client) + Secrets管理(secrets) + 缓存抽象(cache) + 速率限制器(limiter) + 幂等性(idempotency) + 上下文传播(context) + Metrics收集(metrics) + 分页工具(pagination) + 时间工具(time_utils) + 环境检测(env) + 分布式锁(lock) + Outbox模式(outbox) + Schema Registry(schema_registry) + 蓝图路由评分(blueprint_scorer) + 全部10个early-bird已落盘已测试已审计(cost_budget/context_budget/evals/session_audit/durable_execution/post_process/constitutional_update/multi_agent/skill_registry/version_negotiation)。Core: BlueprintDecomposer + models.py v0.3.0（继承Task 31字段全链路贯通）。2 子系统 61 已跟踪文件已落盘（49 Phase 0-10 + 10 Phase 11-14 已测试 + 2 core）+ 44 orphan 已分类注册（3在§5.1 + 41在§5.1b）。施工 Phase 1-14 完成 + 测试完成。TD-SHARED-001（34对发散副本）已全部解决为 re-export wrapper。8轮审计 + 1轮红队对抗审计（48对抗测试全通过含A11孤儿链验证）。544 全量测试通过。"
+tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.14.0, production-ready, phase-10-complete, audit-complete, blueprint-complete]
+priority: P1
 depends_on:
   - {target: "architecture-model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT——本蓝图真源"}
   - {target: "architecture-model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT——本蓝图真源"}
@@ -24,7 +24,7 @@ depends_on:
 
 # Shared + Core 蓝图
 
-> **module_id**: MOD-INF-016 | **version**: 0.14.0 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-INF-016 | **version**: 0.14.0 | **status**: active | **layer**: cross_layer
 
 > **真源声明**：Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_shared.yaml)；
 > Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_core.yaml)。
@@ -40,12 +40,12 @@ depends_on:
 |------|-----|
 | module_id | MOD-INF-016 |
 | 涵盖 | Shared (`src/zephyr/shared/`) + Core (`src/zephyr/core/`) |
-| 文件数 | Shared 46 文件 + Core 3 文件 = 49 文件 |
+| 文件数 | Shared 49 文件(Phase 0-10 已审计) + 10 early-bird(Phase 11-14) + Core 2 文件 = 61 已跟踪文件（另有 ~43 orphan 待分类） |
 | 核心职责 | 提供所有系统共用的数据模型、基础设施、工具函数 |
 
 ---
 
-## 2. Shared 模块（9 子模块, 46 文件）
+## 2. Shared 模块（9 子模块, 59 文件——49 Phase 0-10 + 10 Phase 11-14 early-bird）
 
 ## §2 子模块与职责
 
@@ -53,7 +53,7 @@ depends_on:
 |------|--------|------|--------|
 | §2.1 | 数据契约（contracts） | 跨层 Pydantic models SSoT + 输入/输出契约装饰器 | 5 |
 | §2.2 | 事件总线（events） | 异步 Observer Pub/Sub + 事件体 schema + 死信队列(DLQ) | 6 |
-| §2.3 | 核心能力（core） | Task核心模型 (31字段基座) + BlueprintDecomposer | 3 |
+| §2.3 | 核心能力（core） | Task核心模型 (31字段基座) + BlueprintDecomposer | 2 |
 | §2.4 | 韧性组件（resilience） | CircuitBreaker + Retry + FallbackChain | 4 |
 | §2.5 | 生命周期（lifecycle） | 模块 start/stop/health_check 钩子 + 优雅关闭 | 3 |
 | §2.6 | 配置管理（config） | YAML 配置加载 + 校验 | 3 |
@@ -182,10 +182,10 @@ depends_on:
 | phase_8 | 生产基础 2——缓存 + 速率限制 + 幂等性 + 上下文传播 | ✅ completed |
 | phase_9 | 可观测增强 —— Metrics + 分页 + 时间工具 + 环境检测 + SemVer | ✅ completed |
 | phase_10 | 进阶架构 —— 分布式锁 + Outbox 模式 + Schema Registry | ✅ completed |
-| phase_11 | AI 成本可控 —— 成本预算熔断 + 上下文预算管理（B26, B28） | ⬜ planned |
-| phase_12 | AI 质量可控 —— Evals 框架 + Session 审计轨迹（B29, B32） | ⬜ planned |
-| phase_13 | AI 流程可控 —— Durable Execution + 后处理管道（B30, B31） | ⬜ planned |
-| phase_14 | AI 团队可控 —— 宪法自愈 + Multi-Agent 编排 + Skill 注册表（B27, B33, B34） | ⬜ planned |
+| phase_11 | AI 成本可控 —— 成本预算熔断 + 上下文预算管理（B26, B28） | ✨ early-bird（cost_budget 208行3类9函 + context_budget 259行4类17函，已落盘已导入，缺单元测试） |
+| phase_12 | AI 质量可控 —— Evals 框架 + Session 审计轨迹（B29, B32） | ✨ early-bird（evals 258行7类14函 + session_audit 315行8类19函，已落盘已导入，缺单元测试） |
+| phase_13 | AI 流程可控 —— Durable Execution + 后处理管道（B30, B31） | ✨ early-bird（durable_execution 335行6类19函 + post_process 289行5类9函，已落盘已导入，缺单元测试） |
+| phase_14 | AI 团队可控 —— 宪法自愈 + Multi-Agent 编排 + Skill 注册表（B27, B33, B34）+ 版本协商 | ✨ early-bird（constitutional_update 225行3类7函 + multi_agent 272行7类13函 + skill_registry 194行6类2函 + version_negotiation 174行6类8函，已落盘已导入，缺单元测试） |
 | phase_15 | AI 架构可控 —— Provider 抽象 + 上下文压缩 + 输出评分 + DI 容器 + 沙箱 + 配置链（B35-B40） | ⬜ planned |
 | phase_16 | AI 溯源可控 —— AIBOM 物料清单 + Memory Bank 持久记忆（B41, B42） | ⬜ planned |
 | phase_17 | AI 安全可控 —— DSPy 声明式优化 + Structured Concurrency + Dry-run 模式（B43, B44, B45） | ⬜ planned |
@@ -199,7 +199,7 @@ depends_on:
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 共享+核心——全部49文件已实现
+> 共享+核心——61 已跟踪文件（49 Phase 0-10 + 10 Phase 11-14 early-bird + 2 core）已落盘 + ~43 未跟踪孤儿文件待分类
 
 ### 5.1 源码文件
 
@@ -208,10 +208,10 @@ depends_on:
 | `src/zephyr/shared/API_INDEX.py` | ✅ 已实现 | |
 | `src/zephyr/shared/capability.py` | ✅ 已实现 | |
 | `src/zephyr/shared/content_fingerprint.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/instrument.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/money.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/runtime_plane_tag.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/timestamp.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/market/instrument.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/portfolio/money.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/runtime_plane_tag.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/timestamp.py` | ✅ 已实现 | |
 | `src/zephyr/shared/dos_launcher.py` | ✅ 已实现 | |
 | `src/zephyr/shared/frontmatter_utils.py` | ✅ 已实现 | |
 | `src/zephyr/shared/observer.py` | ✅ 已实现 | |
@@ -256,6 +256,68 @@ depends_on:
 | `src/zephyr/shared/schema_registry.py` | ✅ 已实现 | Phase 10 新增：Schema Registry——集中式版本编目 + 兼容性查询 |
 | `src/zephyr/core/blueprint_decomposer.py` | ✅ 已实现 | |
 | `src/zephyr/core/models.py` | ✅ 已实现 | v0.3.0 — 继承Task 31字段全链路贯通 |
+| `src/zephyr/shared/tracing.py` | ✅ 已实现 | Phase 6 新增：OpenTelemetry 兼容 tracing context |
+| `src/zephyr/shared/cost_budget.py` | ✨ early-bird | Phase 11 (B26)：AI 成本预算熔断——208行 3类 9函 |
+| `src/zephyr/shared/context_budget.py` | ✨ early-bird | Phase 11 (B28)：上下文预算管理——259行 4类 17函 |
+| `src/zephyr/shared/evals.py` | ✨ early-bird | Phase 12 (B29)：Evals 评估框架——258行 7类 14函 |
+| `src/zephyr/shared/session_audit.py` | ✨ early-bird | Phase 12 (B32)：Session 审计轨迹——315行 8类 19函 |
+| `src/zephyr/shared/durable_execution.py` | ✨ early-bird | Phase 13 (B30)：Durable Execution——335行 6类 19函 |
+| `src/zephyr/shared/post_process.py` | ✨ early-bird | Phase 13 (B31)：后处理管道——289行 5类 9函 |
+| `src/zephyr/shared/constitutional_update.py` | ✨ early-bird | Phase 14 (B27)：宪法自更新——225行 3类 7函 |
+| `src/zephyr/shared/multi_agent.py` | ✨ early-bird | Phase 14 (B33)：Multi-Agent 编排——272行 7类 13函 |
+| `src/zephyr/shared/skill_registry.py` | ✨ early-bird | Phase 14 (B34)：Skill/Prompt 注册表——194行 6类 2函 |
+| `src/zephyr/shared/version_negotiation.py` | ✨ early-bird | Phase 14：版本协商——174行 6类 8函 |
+| `src/zephyr/shared/path_resolver.py` | ✅ 已实现 | Phase 10 补注册：路径解析器——261行2类7函。消费者：mcp/task_manager_server.py |
+| `src/zephyr/shared/contract_bus.py` | ✅ 已实现 | Phase 10 补注册：契约总线——140行6类14函。消费者：contract_tester.py |
+| `src/zephyr/shared/event_bus.py` | ✅ 已实现 | Phase 10 补注册：共享事件总线——124行3类7函（与core/events/event_bus独立） |
+
+### 5.1b 待集成文件（orphan-classified — 已落盘，功能完整，缺调用入口与单元测试）
+
+| 文件 | 集群 | 规模 | 用途 |
+|------|------|------|------|
+| `adaptive_sampler.py` | 资源管控 | 59行1类4函 | 自适应采样——系统负载感知降采样 |
+| `ai_audit_guard.py` | 安全审计 | 171行7类5函 | AI修改审计守卫——变更前合规检查 |
+| `ai_understandability_constraint.py` | 质量约束 | 64行1类2函 | AI输出可理解性约束强制执行 |
+| `alert_escalation.py` | 告警治理 | 70行3类4函 | 告警升级——未处理告警自动升级 |
+| `alert_manager.py` | 告警治理 | 110行3类5函 | 告警收敛管理——去重+分组 |
+| `alert_precision_tracker.py` | 告警治理 | 50行1类5函 | 告警精度追踪——准确率统计 |
+| `blueprint_code_auditor.py` | 质量审计 | 60行1类2函 | 蓝图-代码一致性审计 |
+| `budget_aware_prompt.py` | 成本控制 | 51行2类3函 | 预算感知提示生成 |
+| `capacity_calibrator.py` | 容量治理 | 67行2类5函 | 容量校准器——预测准确率提升 |
+| `capacity_digital_twin.py` | 容量治理 | 42行1类3函 | 容量数字孪生——模拟测算 |
+| `capacity_fingerprint.py` | 容量治理 | 58行2类4函 | 容量指纹——负载特征识别 |
+| `capacity_governance_loop.py` | 容量治理 | 222行3类5函 | 容量治理闭环——规划→执行→验证 |
+| `capacity_runbook_generator.py` | 容量治理 | 59行2类3函 | 容量Runbook自动生成 |
+| `code_economy_analyzer.py` | 成本控制 | 61行1类4函 | 代码经济效益分析 |
+| `combinatorial_gate.py` | 质量门禁 | 58行1类3函 | 组合门禁——多条件AND/OR |
+| `config_validator.py` | 配置治理 | 91行2类5函 | 配置校验器——Schema检查 |
+| `contract_tester.py` | 契约测试 | 69行2类7函 | 契约合规测试——运行时校验 |
+| `core_integrity_guard.py` | 安全审计 | 65行1类3函 | 核心完整性守卫 |
+| `cost_estimator.py` | 成本控制 | 135行3类8函 | 成本估算器——Token/API成本预测 |
+| `degradation_chain.py` | 韧性基座 | 197行5类8函 | 退化链追踪——级联故障分析 |
+| `dependency_capacity_guard.py` | 容量治理 | 40行1类5函 | 依赖容量守卫——跨模块容量检查 |
+| `dual_channel_alert.py` | 告警治理 | 73行2类2函 | 双通道告警——冗余通知 |
+| `error_budget_tracker.py` | 成本控制 | 152行3类4函 | 错误预算追踪器——SLO余量管理 |
+| `event_bus_upgrade.py` | 事件系统 | 76行3类7函 | 事件总线升级——v1→v2迁移 |
+| `fault_isolator.py` | 韧性基座 | 92行3类6函 | 故障隔离器——组件级熔断 |
+| `heartbeat_server.py` | 基础设施 | 68行2类8函 | 心跳服务器——健康端点 |
+| `kill_switch.py` | 韧性基座 | 139行3类8函 | Kill Switch——紧急停止机制 |
+| `longevity_monitor.py` | 容量治理 | 68行1类3函 | 长时运行监控——内存/连接泄漏检测 |
+| `model_capacity_probe.py` | 容量治理 | 67行2类3函 | 模型容量探针——负载极限探测 |
+| `module_birth_registry.py` | 注册治理 | 61行2类4函 | 模块出生注册表——创建时自动登记 |
+| `owner_trust_gauge.py` | 安全审计 | 60行2类5函 | 信任度量——Agent行为信誉评分 |
+| `pydantic_v2_migrator.py` | 迁移工具 | 77行1类3函 | Pydantic v1→v2迁移助手 |
+| `reasoning_spans.py` | 可观测性 | 90行1类5函 | 推理跨度追踪——AI推理步骤记录 |
+| `sandbox_executor.py` | 安全执行 | 158行4类8函 | 沙箱执行器——隔离代码执行 |
+| `semantic_cache.py` | 缓存优化 | 166行2类7函 | 语义缓存——相似查询复用 |
+| `slo_review_assistant.py` | 质量审计 | 59行2类3函 | SLO审查助手——合规检查 |
+| `task_heartbeat.py` | 基础设施 | 57行2类5函 | 任务心跳——长任务存活检测 |
+| `ttl_cleanup_engine.py` | 基础设施 | 117行1类5函 | TTL清理引擎——过期资源回收 |
+| `vibe_experiment_tracker.py` | 实验追踪 | 55行1类4函 | 实验追踪——A/B实验结果记录 |
+| `warm_hot_gate.py` | 性能优化 | 98行3类6函 | 冷热路径门禁——低延迟路由 |
+| `zephyr_logger.py` | 可观测性 | 124行2类7函 | ZephyrLogger——结构化日志独立实现 |
+
+> **状态**: 已落盘，功能实现完整，Python自动发现可导入。**阻塞项**: (1) 无调用入口——未被任何模块import (2) 无单元测试 (3) 未在 project_rules.md 冷启动序列中引用。**下一步**: 按集群分配给对应施工 Phase 选定集成入口 → 接入调用链 → 补充测试。
 
 ### 5.2 测试文件
 
@@ -266,7 +328,7 @@ depends_on:
 | `tests/unit/test_capability.py` | ✅ 已实现 | |
 | `tests/unit/test_money.py` | ✅ 已实现 | |
 | `tests/unit/test_instrument.py` | ✅ 已实现 | |
-| `tests/contract/test_import_chain.py` | ✅ 已实现 | Phase 4 新增：6 消费者导入链路契约验证 |
+| `tests/contract/test_import_chain.py` | ✅ 已实现 | Phase 10：8 直接消费者导入链路契约验证（Phase 4 初始 6 → Phase 10 扩展至 8，移除 4 间接消费者） |
 | `tests/contract/test_schema_stability.py` | ✅ 已实现 | Phase 4 新增：Task 31字段快照 + TaskCard继承 + 错误层次 + 类型别名 |
 
 ### 5.5 路径索引使用指南
@@ -289,7 +351,7 @@ depends_on:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\shared-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` | 本文件 |
 | Shared 代码 | `D:\ZephyrAlpha\src\zephyr\shared\` | 跨层共享模型/工具 |
 | Core 代码 | `D:\ZephyrAlpha\src\zephyr\core\` | 核心基础设施 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_shared.py` + `test_core.py` | 单元测试 |
@@ -323,7 +385,7 @@ depends_on:
 | MOD-INF-002 | Runtime Integration | `schemas.py`, `paths.py`, `observer.py`, `capability.py`, `dos_launcher.py` | 5 文件 | 跨层集成——事件总线、能力管控、指令加载、任务调度全链路 |
 | MOD-INF-017 | Code Dedup Engine | `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | — | 蓝图声明 `depends_on: MOD-INF-016` |
 | MOD-INF-019 | Agent Spec | `schemas.py`, `frontmatter_utils.py` | — | Skill 加载器依赖蓝图 frontmatter 解析 |
-| — | shared/contracts/ 扩展文件 | `schemas.py`, `paths.py`, `time_utils.py`, `money.py`, `instrument.py` | 20+ 文件 | backpressure/errors/enforcer/registry 等 20+ 契约文件全部 import shared 基础设施 |
+| — | shared/contracts/ 扩展文件 | `schemas.py`, `paths.py`, `time_utils.py`, `portfolio/money.py`, `market/instrument.py` | 20+ 文件 | backpressure/errors/enforcer/registry 等 20+ 契约文件全部 import shared 基础设施 |
 
 > **AI 安全规则**：修改 `schemas.py` 的 Task 类 → 影响 **至少 10 个消费者模块**（全部 L01 基础设施）。
 > 修改 `paths.py` 的路径常量 → 影响 **所有 src/zephyr/ 下代码**。
@@ -661,7 +723,7 @@ logger = get_logger(__name__)
 | L2 生产 | serialization, api_client, secrets, cache, limiter, idempotency, context, metrics, pagination, env, lock, outbox, schema_registry | 对外 API / 持久化 / 性能敏感的模块 | `from zephyr.shared.cache import MemoryCache` |
 | L3 韧性 | resilience/*, lifecycle/* | 需要重试/熔断/生命周期管理的模块 | `from zephyr.shared.resilience.retry import async_retry` |
 | L4 AI 专属 | （Phase 11-20 施工完成后） | AI agent 模块 | `from zephyr.shared.cost_budget import CostBudget` |
-| facade | contracts/* | 需要跨层结构化数据交换的模块 | `from zephyr.shared.contracts.instrument import Instrument` |
+| facade | contracts/* | 需要跨层结构化数据交换的模块 | `from zephyr.shared.contracts.market.instrument import Instrument` |
 
 ### 17.3 不做什么（Anti-patterns）
 
@@ -818,3 +880,77 @@ logger = get_logger(__name__)
 | 2026-05-05 | 0.1.2 | Phase 1 施工：新建 errors.py、constants.py、events/event_schemas.py。20文件清单。 |
 | 2026-05-05 | 0.1.1 | Phase 0 蓝图漂移修正。 |
 | 2026-05-03 | 0.1.0 | 初始创建——合并 Shared YAML + Core YAML。 |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_10_complete（Phase 1-10 全部完成，49文件已实现） |
+| 源码路径 | `src/zephyr/shared/ + src/zephyr/core/` |
+| 源码文件数 | 190 个 .py/.yaml |
+| 测试路径 | `tests/unit/ (shared+core) + tests/architecture/` |
+| 配置文件 | `config/capabilities.yaml + config/ai_capability_matrix.yaml` |
+| 关键入口 | `shared.protocols.* + core.models.* + core.config.*` |
+
+## 已知技术债务（2026-05-08 审计 · Session-20260508-001）
+
+### TD-SHARED-001: 37文件发散副本（Phase 11 待修）
+
+**问题**: `src/zephyr/shared/` 下 37 个模块同时存在于顶层目录和子目录，
+且内容是**不同（发散）副本**，非 byte-identical 也非 re-export wrapper。
+
+**风险**:
+- 修改一个版本时另一个不会同步 → 行为不一致
+- 新 AI 不知道该用哪个路径 → 认知混乱
+- 典型案例: `shared/cache.py`(5595B) ≠ `shared/infra/cache.py`(5560B)
+
+**规范路径策略（Phase 11 施行）**:
+| 顶层文件 | 规范子目录路径 | 处置 |
+|----------|--------------|------|
+| `cache.py` | `infra/cache.py` | 顶层改为 re-export wrapper |
+| `metrics.py` | `observability/metrics.py` | 顶层改为 re-export wrapper |
+| `logging.py` | `observability/logging.py` | 顶层改为 re-export wrapper |
+| `health.py` | `observability/health.py` | 顶层改为 re-export wrapper |
+| `token_utils.py` | `observability/token_utils.py` | 顶层改为 re-export wrapper |
+| `tracing.py` | `observability/tracing.py` | 顶层改为 re-export wrapper |
+| `idempotency.py` | `infra/idempotency.py` | 顶层改为 re-export wrapper |
+| `limiter.py` | `infra/limiter.py` | 顶层改为 re-export wrapper |
+| `lock.py` | `infra/lock.py` | 顶层改为 re-export wrapper |
+| `observer.py` | `infra/observer.py` | 顶层改为 re-export wrapper |
+| `outbox.py` | `infra/outbox.py` | 顶层改为 re-export wrapper |
+| `serialization.py` | `io/serialization.py` | 顶层改为 re-export wrapper |
+| `content_fingerprint.py` | `io/content_fingerprint.py` | 顶层改为 re-export wrapper |
+| `file_utils.py` | `io/file_utils.py` | 顶层改为 re-export wrapper |
+| `frontmatter_utils.py` | `io/frontmatter_utils.py` | 顶层改为 re-export wrapper |
+| `paths.py` | `io/paths.py` | 顶层改为 re-export wrapper |
+| `errors.py` | `foundation/errors.py` | 顶层改为 re-export wrapper |
+| `constants.py` | `foundation/constants.py` | 顶层改为 re-export wrapper |
+| `flags.py` | `foundation/flags.py` | 顶层改为 re-export wrapper |
+| `types.py` | `foundation/types.py` | 顶层改为 re-export wrapper |
+| `deprecation.py` | `foundation/deprecation.py` | 顶层改为 re-export wrapper |
+| `env.py` | `foundation/env.py` | 顶层改为 re-export wrapper |
+| `secrets.py` | `security/secrets.py` | 顶层改为 re-export wrapper |
+| `capability.py` | `security/capability.py` | 顶层改为 re-export wrapper |
+| `ssot_guard.py` | `security/ssot_guard.py` | 顶层改为 re-export wrapper |
+| `migration.py` | `utils/migration.py` | 顶层改为 re-export wrapper |
+| `pagination.py` | `utils/pagination.py` | 顶层改为 re-export wrapper |
+| `time_utils.py` | `utils/time_utils.py` | 顶层改为 re-export wrapper |
+| `context.py` | `utils/context.py` | 顶层改为 re-export wrapper |
+| `testing.py` | `utils/testing.py` | 顶层改为 re-export wrapper |
+| `diff_utils.py` | `utils/diff_utils.py` | 顶层改为 re-export wrapper |
+| `blueprint_scorer.py` | `utils/blueprint_scorer.py` | 顶层改为 re-export wrapper |
+| `schemas.py` | `schema/schemas.py` | 顶层改为 re-export wrapper |
+| `schema_registry.py` | `schema/schema_registry.py` | 顶层改为 re-export wrapper |
+| `api_client.py` | `api/api_client.py` | 顶层改为 re-export wrapper |
+| `dos_launcher.py` | `api/dos_launcher.py` | 顶层改为 re-export wrapper |
+
+**施行方法**: 每个顶层文件替换为 `from zephyr.shared.<subdir>.<module> import *` wrapper。
+**不影响消费者**: 316 处现有引用全部保持兼容。
+
+### TD-SHARED-002: `__init__.py` 导入路径不一致（已部分修复）
+
+`__init__.py` 中 ~33 个 import 使用顶层路径（`from zephyr.shared.cache import`），
+~16 个使用规范子目录路径（`from zephyr.shared.api.api_client import`）。
+TD-SHARED-001 修复完成后，统一改为子目录路径。

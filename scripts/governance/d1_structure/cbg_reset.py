@@ -28,6 +28,8 @@ failure_count 归零、opened_at/reason 清空。
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -101,7 +103,7 @@ def main() -> None:
             open_circuits = mgr.list_open_circuits()
         if not open_circuits:
             print("[cbg_reset] 无 OPEN 状态的熔断器", file=sys.stderr)
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         print(f"[cbg_reset] 发现 {len(open_circuits)} 个 OPEN 熔断器:", file=sys.stderr)
         for rec in open_circuits:
             print(
@@ -111,14 +113,14 @@ def main() -> None:
                 f"reason={rec.reason}",
                 file=sys.stderr,
             )
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if args.reset_all:
         with CBGManager() as mgr:
             open_circuits = mgr.list_open_circuits()
         if not open_circuits:
             print("[cbg_reset] 无 OPEN 状态的熔断器，无需重置", file=sys.stderr)
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         reset_count = 0
         for rec in open_circuits:
             with CBGManager() as mgr:
@@ -127,38 +129,38 @@ def main() -> None:
                 print(f"  RESET: {rec.caller_module} → {rec.target_module}", file=sys.stderr)
                 reset_count += 1
         print(f"[cbg_reset] 已重置 {reset_count}/{len(open_circuits)} 个熔断器", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if not args.caller or not args.target:
         if args.warn_only:
             print("[cbg_reset] --warn-only 模式：无操作指定，正常退出", file=sys.stderr)
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         print(
             "[cbg_reset] 无操作指定——请使用 --list 查看、--reset-all 批量重置，或 --caller/--target 指定单个熔断器",
             file=sys.stderr,
         )
         print("  当前状态: 无 OPEN 熔断器（系统正常）", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     with CBGManager() as mgr:
         record = mgr.get_state(args.caller, args.target)
         if record is None:
             print(f"[cbg_reset] 无记录: {args.caller} → {args.target}（无需重置）", file=sys.stderr)
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         if record.state != CircuitBreakerState.OPEN:
             print(
                 f"[cbg_reset] {args.caller} → {args.target} " f"当前状态={record.state.value}，非 OPEN 无需重置",
                 file=sys.stderr,
             )
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         ok = mgr.reset(args.caller, args.target)
 
     if ok:
         print(f"[cbg_reset] RESET OK: {args.caller} → {args.target}", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     else:
         print(f"[cbg_reset] RESET FAIL: {args.caller} → {args.target}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
 if __name__ == "__main__":
     main()

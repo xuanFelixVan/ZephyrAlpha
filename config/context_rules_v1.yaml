@@ -1,130 +1,94 @@
+# ZephyrAlpha 2.0 — Context Engine 上下文管理规则（experimental 最小版）
+# ============================================================
+# 任务编号 : T-V2-006（experimental CL-018 配套）
+# 权限层级 : Human-Gated（上下文规则修改 = 关键架构变更）
+# 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）
+# 关联蓝图 : MOD-INF-008（Context Engine, §5 Core Flow + §6 DD1-DD10）
+# 关联决策 : DD2（三级 token 预算 80%/90%/95%）, DD6（默认 8000 token）
+# CBAC 注册 : capabilities.yaml deny: config/context_rules_v1.yaml
+# 创建日期 : 2026-05-06
+#
+# 校验脚本 : scripts/governance/d1_structure/validate_config_integrity.py L9
+
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
-title: "Context Rules v1"
+title: "Context Management Rules"
 status: active
 ttl: permanent
-implementation_status: "experimental declarative contract — no runtime consumer yet. See context_budget_tracker.py for the active implementation."
-
-description: "15 context management rules for AI agent sessions covering token budget allocation, priority decay, and window sliding strategies"
+belongs_to: MOD-INF-008
+description: "6 context management rules — token budget tiers, injection layers, eviction strategy, freshness decay, incremental injection, and LSG validation gate"
+implementation_status: "experimental active — consumed by context_budget_tracker.py and context_injector.py at runtime"
 
 rules:
-  - id: CR-001
-    name: token_budget_allocation
-    condition: "Session starts with a defined token budget"
-    action: "Allocate 40% to system prompt, 30% to working context, 20% to output buffer, 10% to reserve"
-    priority: P0
-    verifiable: true
-    verification_method: "Verify token allocation ratios at session start"
+  - id: CTX-001
+    name: token_budget_tiers
+    description: "Token 预算三级阈值（DD2/DD6）"
+    parameters:
+      default_budget: 8000
+      l1_warning_ratio: 0.80
+      l2_compress_ratio: 0.90
+      l3_hard_cutoff_ratio: 0.95
+    enforcement: "ContextBudgetTracker.check_budget()"
+    rationale: "80% 预警有余量做最后 compress；90% 触发 DocCompressor；95% 硬截断"
 
-  - id: CR-002
-    name: context_window_sliding
-    condition: "Working context exceeds 80% of allocated token budget"
-    action: "Slide window: evict lowest-priority items first, preserve P0 items always"
-    priority: P0
-    verifiable: true
-    verification_method: "Trigger context >80% and verify eviction order"
+  - id: CTX-002
+    name: four_layer_injection
+    description: "上下文四层注入策略（INJECT-C00）"
+    parameters:
+      layer1_system:
+        source: "AGENTS.md core rules"
+        scope: "always-on, 不受 token 预算"
+      layer2_rules:
+        source: "CT-* 相关合同 + blueprints"
+        scope: "按 task_type 注入"
+      layer3_knowledge:
+        source: "KE + failure_patterns"
+        scope: "priority 排序"
+      layer4_examples:
+        source: "类似任务成功案例"
+        scope: "仅相似度 > 0.7 注入"
+    enforcement: "context_injector.py"
+    rationale: "分层注入允许逐层降级——高层不可省略，低层可按预算裁剪"
 
-  - id: CR-003
-    name: priority_decay_with_time
-    condition: "Context item has not been referenced for N turns"
-    action: "Decay priority by 0.1 per turn; items below 0.2 are eviction candidates"
-    priority: P1
-    verifiable: true
-    verification_method: "Track reference count and verify decay calculation"
+  - id: CTX-003
+    name: eviction_three_dimension
+    description: "Token 超预算时三维排序逐出策略（DD9）"
+    parameters:
+      dimensions:
+        - priority
+        - freshness
+        - relevance_score
+      eviction_order: "lowest priority → oldest freshness → lowest relevance"
+    enforcement: "context_budget_tracker.py"
+    rationale: "FIFO/LRU 语义盲——三维排序保留最高价值上下文"
 
-  - id: CR-004
-    name: p0_item_pin
-    condition: "Item is classified as P0 (safety invariants, active task spec)"
-    action: "Pin item in context; never evict regardless of recency or token pressure"
-    priority: P0
-    verifiable: true
-    verification_method: "Attempt to evict P0 item and verify it remains"
+  - id: CTX-004
+    name: freshness_decay
+    description: "KE 新鲜度衰减曲线（AP6）"
+    parameters:
+      default_halflife_days: 90
+      decay_formula: "weight = base_weight * 2^(-age_days / halflife_days)"
+    enforcement: "context_injector.py"
+    rationale: "越新的知识权重越高——统一衰减曲线，beta 扩展为领域差异化（B28）"
 
-  - id: CR-005
-    name: task_context_preload
-    condition: "New task is assigned to session"
-    action: "Preload task-related documents (blueprint, ADR, relevant KEs) into working context"
-    priority: P1
-    verifiable: true
-    verification_method: "Verify task documents loaded within 2 turns of assignment"
+  - id: CTX-005
+    name: incremental_injection
+    description: "Per-Turn 增量注入（DD10）"
+    parameters:
+      mode: "incremental"
+      full_rebuild_trigger: "session_start or context_reset"
+    enforcement: "context_injector.py"
+    rationale: "每轮全量 build = n×5 token 浪费——增量注入仅补充差量"
 
-  - id: CR-006
-    name: cross_reference_resolution
-    condition: "Document references another document not in context"
-    action: "Load referenced document summary (not full content) into context if token budget allows"
-    priority: P2
-    verifiable: true
-    verification_method: "Verify referenced document summary appears in context"
-
-  - id: CR-007
-    name: session_log_checkpoint
-    condition: "Every 10 turns or on state transition"
-    action: "Write checkpoint to session log with current context summary and progress"
-    priority: P1
-    verifiable: true
-    verification_method: "Verify checkpoint entries in session log at correct intervals"
-
-  - id: CR-008
-    name: duplicate_context_dedup
-    condition: "New context item has >0.95 similarity to existing item"
-    action: "Merge items, keep the more recent version, add delta from older version"
-    priority: P1
-    verifiable: true
-    verification_method: "Insert near-duplicate and verify merge behavior"
-
-  - id: CR-009
-    name: error_context_preservation
-    condition: "An error occurs during task processing"
-    action: "Preserve error context (error message, stack trace, state at failure) in context with P0 priority"
-    priority: P0
-    verifiable: true
-    verification_method: "Trigger error and verify error context preserved"
-
-  - id: CR-010
-    name: governance_rules_always_loaded
-    condition: "Session is in any active state"
-    action: "Ensure AGENTS.md core constraints and relevant gate rules are always in system prompt"
-    priority: P0
-    verifiable: true
-    verification_method: "Verify governance rules present in system prompt"
-
-  - id: CR-011
-    name: layer_context_isolation
-    condition: "Task involves multiple architecture layers"
-    action: "Load only the relevant layer context; avoid loading all layers simultaneously"
-    priority: P2
-    verifiable: true
-    verification_method: "Verify only task-relevant layer YAML is loaded"
-
-  - id: CR-012
-    name: output_buffer_flush
-    condition: "Output buffer reaches 80% capacity"
-    action: "Flush buffer: write accumulated output to target file, clear buffer"
-    priority: P1
-    verifiable: true
-    verification_method: "Fill output buffer and verify flush triggers"
-
-  - id: CR-013
-    name: reserve_token_guard
-    condition: "Available tokens (including reserve) drop below 15% of total budget"
-    action: "Pause processing, checkpoint progress, request user guidance"
-    priority: P0
-    verifiable: true
-    verification_method: "Consume tokens to threshold and verify pause behavior"
-
-  - id: CR-014
-    name: context_version_tracking
-    condition: "A context item is updated or modified"
-    action: "Track version number; keep only latest version in working context, archive previous versions"
-    priority: P2
-    verifiable: true
-    verification_method: "Update context item and verify version increment"
-
-  - id: CR-015
-    name: session_handoff_context
-    condition: "Session is being handed off to another session or model"
-    action: "Serialize full context state including priorities, versions, and pending actions to handoff document"
-    priority: P0
-    verifiable: true
-    verification_method: "Verify handoff document contains all required fields"
+  - id: CTX-006
+    name: lsg_validation_gate
+    description: "注入前 LSG 安全审查门禁（AP1/CT-CE-LSG-001）"
+    parameters:
+      required_stages:
+        - "input_classification"
+        - "schema_validation"
+        - "content_audit"
+      on_failure: "block_injection"
+    enforcement: "llm_security_gateway.py"
+    rationale: "无 LSG 审查直接注入 = 恶意 prompt 进入 LLM 上下文——不可逆"

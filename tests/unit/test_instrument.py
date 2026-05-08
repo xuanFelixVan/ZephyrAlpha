@@ -42,7 +42,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-from zephyr.shared.contracts.instrument import (
+from zephyr.shared.contracts.market.instrument import (
     ETF,
     FX,
     AssetClass,

@@ -1,0 +1,65 @@
+# MOD-INF-005 §29 模型兼容性矩阵
+# 不同 AI 模型需要不同提示工程调整
+
+generated_at: "2026-05-07T00:00:00Z"
+source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §29 + §30"
+
+models:
+  claude_opus_4:
+    provider: Anthropic
+    context_window: 200000
+    strengths:
+      - "复杂推理 + 架构设计"
+      - "代码审查精确度高"
+      - "长上下文理解能力强"
+    tuning_notes:
+      prompt_style: "结构化 + 分层指令"
+      temperature: 0.3
+      top_p: 0.9
+    script_system_role: "architect + code_reviewer"
+
+  claude_sonnet_4:
+    provider: Anthropic
+    context_window: 200000
+    strengths:
+      - "快速代码生成"
+      - "常规修复任务"
+    tuning_notes:
+      prompt_style: "简洁指令 + 明确边界"
+      temperature: 0.5
+    script_system_role: "builder"
+
+  deepseek_v3:
+    provider: DeepSeek
+    context_window: 128000
+    strengths:
+      - "性价比高"
+      - "大规模批量任务"
+    tuning_notes:
+      prompt_style: "中文友好 + 详细上下文"
+      temperature: 0.3
+    script_system_role: "scanner + generator"
+
+  glm_4_7:
+    provider: ZhipuAI
+    context_window: 128000
+    strengths:
+      - "中文语义理解"
+      - "合规审查"
+    tuning_notes:
+      prompt_style: "显式决策树 + 零歧义"
+      temperature: 0.2
+    script_system_role: "compliance_validator"
+
+cross_model_consensus:
+  required_for:
+    - "ADR 重大决策"
+    - "CRITICAL Finding 处置"
+    - "蓝图架构变更"
+  method: "多模型并行评审 → 投票 → 分歧升级 Owner"
+  validation_script: "meta/validate_cross_model_consensus.py"
+
+improvement_capture:
+  mechanism: "AI session 结束 → 输出 IMPROVEMENT_OPPORTUNITIES → 汇总 → Phase backlog"
+  instruction_location: "AGENTS.md §上下文注入指令"
+  cadence: "每周汇总一次"

@@ -1,7 +1,7 @@
 # 废弃路径共享清单（SSoT）
 # 本文件是 src/zephyr/gates/gate_engine.py 和 detect_ruins_references.py 的共享真源。
 # 新增废弃路径只需在此注册，两个消费者自动同步。
-# 对标：AGENTS.md §2（旧树已归档）+ PS-STD-003 ABS-44（禁止引用废墟目录）
+# 对标：PS-STD-003 ABS-44（禁止引用废墟目录）
 
 # src/zephyr/gates/gate_engine.py 用（简单子串匹配，用于 PENDING→IN_PROGRESS 门禁阻断）
 blacklist_patterns:

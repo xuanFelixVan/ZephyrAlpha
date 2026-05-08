@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.shared.dos_launcher import (
+from zephyr.shared.api.dos_launcher import (
     DOSLauncher,
     DOSResult,
     _parse_body,

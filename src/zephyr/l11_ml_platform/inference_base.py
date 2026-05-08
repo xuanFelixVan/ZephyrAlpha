@@ -23,8 +23,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, ClassVar
 
-from zephyr.shared.contracts.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 
 
 @dataclass(frozen=True)

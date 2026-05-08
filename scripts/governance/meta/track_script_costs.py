@@ -31,6 +31,7 @@ warn_only: false
 """
 
 
+import os
 import json as json_mod
 import sys
 from datetime import UTC, datetime, timedelta
@@ -57,6 +58,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_state() -> dict:
+    """_load_state implementation."""
     if not _COST_STATE.exists():
         return {"total_cost": 0.0, "total_tokens": 0, "total_calls": 0, "monthly": {}}
     with open(_COST_STATE, encoding="utf-8") as f:
@@ -64,12 +66,22 @@ def _load_state() -> dict:
 
 
 def _save_state(data: dict) -> None:
+    """_save_state implementation."""
     _COST_STATE.parent.mkdir(parents=True, exist_ok=True)
-    with open(_COST_STATE, "w", encoding="utf-8") as f:
-        json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-
+    tmp_path = f"{_COST_STATE}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(data, f, ensure_ascii=False, indent=2)
+    
+    
+        os.replace(tmp_path, _COST_STATE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def record_cost(script: str, model: str, tokens: int, cost: float, detail: str = "") -> dict:
+    """record_cost implementation."""
     now = datetime.now(UTC)
     entry = {
         "timestamp": now.isoformat(),
@@ -97,6 +109,7 @@ def record_cost(script: str, model: str, tokens: int, cost: float, detail: str =
 
 
 def report() -> dict:
+    """report implementation."""
     state = _load_state()
     now = datetime.now(UTC)
     month_key = now.strftime("%Y-%m")
@@ -114,16 +127,19 @@ def report() -> dict:
 
 
 def monthly_breakdown() -> dict:
+    """monthly_breakdown implementation."""
     state = _load_state()
     return dict(sorted(state.get("monthly", {}).items()))
 
 
 def estimate_cost(prompt_tokens: int, completion_tokens: int, model: str) -> float:
+    """estimate_cost implementation."""
     pricing = MODEL_PRICING.get(model, {"prompt": 0.002, "completion": 0.005})
     return round(prompt_tokens * pricing["prompt"] / 1000 + completion_tokens * pricing["completion"] / 1000, 6)
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--record" in sys.argv:
         script = model = ""
         tokens = cost = 0

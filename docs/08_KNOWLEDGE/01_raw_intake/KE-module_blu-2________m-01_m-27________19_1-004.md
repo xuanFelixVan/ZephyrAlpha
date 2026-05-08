@@ -1,0 +1,39 @@
+---
+module_id: KE-module_blu-2________m-01_m-27________19_1-004
+title: 2. 蓝图内模块（M-01~M-27）已实现文件（§19.1）
+category: module_blueprint
+---
+
+# 2. 蓝图内模块（M-01~M-27）已实现文件（§19.1）
+
+2. 蓝图内模块（M-01~M-27）已实现文件（§19.1）
+
+| 模块ID | 模块名称 | 实现状态 | 实际路径 |
+|--------|---------|:---:|------|
+| M-01 | CTR-001修复 | ✅ 已完成 | 已归档 |
+| M-02 | 源码树统一 | ✅ 已完成 | `src/zephyr/` |
+| M-03 | validate_ssot.py | ✅ 已实现 | `scripts/governance/d5_architecture/validate_ssot.py` |
+| M-04 | lazy_loader.py | ❌ 未实现 | `src/zephyr/__init__.py` |
+| M-05 | pre-commit分层 | ⚠️ 部分实现 | `.pre-commit-config.yaml` |
+| M-06 | dmypy配置 | ❌ 未实现 | `mypy.ini` |
+| M-07 | event_bus背压 | ❌ 未实现 | `src/zephyr/shared/event_bus_backpressure.py` |
+| M-08 | import-linter | ❌ 未实现 | `.importlinter` |
+| M-09 | ContractBus接口 | ❌ 未实现 | `src/zephyr/shared/contract_bus.py` |
+| M-10 | ZephyrLogger+OTel | ❌ 未实现 | `src/zephyr/shared/zephyr_logger.py` |
+| M-11 | contract_tester.py | ❌ 未实现 | `src/zephyr/shared/contract_tester.py` |
+| M-12 | config_validator.py | ❌ 未实现 | `src/zephyr/shared/config_validator.py` |
+| M-13 | fault_isolator.py | ❌ 未实现 | `src/zephyr/shared/fault_isolator.py` |
+| M-14 | warm_hot_gate.py | ❌ 未实现 | `src/zephyr/shared/warm_hot_gate.py` |
+| M-15 | pydantic_v2_migrator.py | ❌ 未实现 | `src/zephyr/shared/pydantic_v2_migrator.py` |
+| M-16 | event_bus_upgrade.py | ❌ 未实现 | `src/zephyr/shared/event_bus_upgrade.py` |
+| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/shared/ai_audit_guard.py`（规则引擎，日志已有，守卫待实现） |
+| M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity/capacity_slo.yaml`（≥8 SLI，插桩点TBD） |
+| M-19 | capacity_governance_loop.py | ❌ 未实现 | `src/zephyr/shared/capacity_governance_loop.py` |
+| M-20 | ttl_cleanup_engine.py | ❌ 未实现 | `src/zephyr/shared/ttl_cleanup_engine.py` |
+| M-21 | error_budget_tracker.py | ❌ 未实现 | `src/zephyr/shared/error_budget_tracker.py` |
+| M-22 | kill_switch.py | ❌ 未实现 | `src/zephyr/shared/kill_switch.py` |
+| M-23 | sandbox_executor.py | ❌ 未实现 | `src/zephyr/shared/sandbox_executor.py` |
+| M-24 | degradation_chain.py | ❌ 未实现 | `src/zephyr/shared/degradation_chain.py` |
+| M-25 | reasoning_spans.py | ❌ 未实现 | `src/zephyr/shared/reasoning_spans.py` |
+| M-26 | cost_estimator.py | ❌ 未实现 | `src/zephyr/shared/cost_estimator.py` |
+| M-27 | semantic_cache.py | ❌ 未实现 | `src/zephyr/shared/semantic_cache.py` |

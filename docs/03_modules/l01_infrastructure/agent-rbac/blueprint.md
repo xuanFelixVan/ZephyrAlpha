@@ -2,7 +2,7 @@
 module_id: "MOD-INF-018"
 title: "Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 Runtime RBAC 11.3"
 doc_type: blueprint
-status: Draft
+status: Active
 version: "0.14.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha Agent 身份与权限系统蓝图——七层纵深防御+六横切面运行时强制执行器 RBAC 11.3。垂直层L0-L7不变。横切面A权限钩子 + B权限拓扑 + C自动维护 + D意图绑定与连续验证(IBAC) + E对抗韧性&激励对齐 + F取证级安全保障(含MCP Tool Definition Integrity 加密工具证明/Slopsquatting幻构依赖/CSWSH信道劫持/动态信任预算等) ——氛围编程与1人+AI维护语境下的终极审视第十二轮)。208→209项盲点全覆盖。对标 Grantex 30框架 + Google Antigravity P0 + VibeGuard + SecureVibes + Sherlock + SUSVIBES + STRIDE + OWASP Agentic Top 10 + OWASP MCP Top 10 + NVIDIA Morpheus + MCPSHIELD + CSA/COSAiS + NIST CAISI + HexagonalRodent + ETDI + CVE-2026-26268 + LiteLLM TeamPCP + PocketOS全链路 + Claude Code预执行CVE + Unit 42 MCP Sampling + SymbioticSec 80% + OX Security MCP STDIO 200K + Azure Agent Identity + AWS Agent IAM + PraisonAI CVE-2026-39890 + Awesome AI Agent Attacks全时间线(2024-2026)。"
 tags: [agent-rbac, rbac, abac, ibac, tbac, permission-guard, identity, access-control, governance, infrastructure, defense-in-depth, sequence-guard, kill-switch, permission-hooks, permission-topology, auto-maintenance, cold-start-lock, emergency-override, horizontal-escalation, context-drift, intent-binding, micro-verification, continuous-verification, cascading-failure, inference-detection, adversarial-resilience, incentive-alignment, collusion-detection, sandbox-self-disable, false-completion, prompt-injection-defense, memory-provenance, owasp-agentic-top10, maetro-threat-model, forensic-assurance, genesis-bootstrap, non-repudiation, path-parsing-safety, cross-platform-shell, artifact-hygiene]
@@ -40,7 +40,7 @@ references:
 
 # Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
 
-> **module_id**: MOD-INF-018 | **version**: 0.14.0 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-INF-018 | **version**: 0.14.0 | **status**: Active | **layer**: cross_layer
 
 > **对标**：Grantex State of Agent Security 2026（30框架零Agent身份审计——本蓝图在设计上已100%超过所有被审计框架） + Google Antigravity P0路径解析事故（系统级空格→rm -rf全盘删除——本蓝图新增D-018-37/38路径解析+跨平台Shell防护） + VibeGuard盲点分类（artifact hygiene/packaging drift/source-map exposure——本蓝图新增D-018-40构建产物安全卫生） + SecureVibes非对称审计算法（"when the same AI writes and reviews code, who watches the watcher"——本蓝图新增D-018-35非对称安全审查） + Sherlock自我审计14漏洞清单（IDOR/SQL注入/MD5哈希/文件上传RCE/.env泄露——不同程度覆盖） + SUSVIBES 10.5%安全率基准（61%功能正确但仅10.5%安全——本蓝图L7自动化安全测试体系针对性应对） + CSA ATF + D2四层护栏 + NIST AI Agent + Claude Code 5模式+hooks+CVE-2026-21852 + OPA Rego + K8s RBAC + Terraform auto-apply + Cursor globs+alwaysApply + Windsurf Cascade micro-verification + Google SAIF + OWASP LLM Top 10 + OWASP Agentic Top 10 ASI02-ASI06 + Perplexity NHI/confused-deputy + Cisco TBAC/IBAC + NVIDIA多Agent全生命周期+AI Red Team + Codex CLI profiles+sandbox_mode+mid-session + GroupGuard多Agent合谋检测(清华/港大) + "Agents of Chaos"11类激励失败模式(Harvard/MIT/Stanford) + Grith 7-Agent安全审计 + CyberArk MCP Tool Poisoning + TRAE Sandbox + MAESTRO五层威胁建模 + Oxford多Agent挑战 + STRIDE Repudiation + Talan 500+扫描实践。
 
@@ -5986,3 +5986,15 @@ tool_definition_integrity_guard:
 | 207 | **IDE-RBAC通信信道劫持（CSWSH/WebSocket Hijacking）——CVE-2026-30615(CVSS 8.8): 用户访问恶意网站→浏览器WebSocket连接localhost:IDE端口→利用WebSocket不携带自定义Header特性→绕过Origin检查→劫持IDE通信通道→窃取Session Token→以受害者身份执行任意命令→完全主机控制。现有B25/B146仅保护Token完整性+防重放——但若通信信道被劫持→攻击者无损转发合法Token→RBAC无法分辨请求来源真实性** | 🔴 P0 | D-018-92 §3.0.59 CommunicationChannelIntegrityGuard——Session Token签发时嵌入信道指纹(Token Binding: IDE PID+启动时间+进程哈希+信道类型)+Origin白名单(file:///vscode-app/chrome-extension://→禁止外部http/https域名)+IDE进程密码学心跳(5秒/HMAC/3次丢失→Token失效)+异常连接检测(多TCP连接/Origin缺失/WebSocket帧间隔异常)+本地mTLS双证书双向认证 | ✅ 已补 |
 | 208 | **Agent动态信任预算模型缺失——Agent Maturity是静态批次评估(每日/每周)→PocketOS事故显示Agent行为可在9分钟内从"正常"进入"疯狂"→Maturity评估间隙Agent享有全权。现有机制: B53(TLB)仅控频率/B162(Kill Switch)全或无/B201(Hard Stop)仅终极边界——所有机制缺乏"逐渐降级"而非"全或无"的中间层** | 🟡 P1 | D-018-93 §3.0.60 AdaptiveTrustBudget——每Agent动态信任预算账户(初始按Maturity: L1=100/L4=1000)→操作按风险等级消耗预算(读1-3/写3-10/执行20-50/云API=100-200,上下文加权)→预算低于阈值→自动权限降级(5级漏斗:全权→标准→受限→最低→冻结)→被动+主动补充→行为漂移(KL散度)检测→预算消耗/恢复/降级全链审计 | ✅ 已补 |
 | 209 | **MCP工具定义运行时完整性缺失（Rug Pull/版本回滚/能力升级三种攻击的共有根因）——MCPSHIELD论文(2026.4)分析177,000+MCP注册工具后识别出TV5(批准后变异:服务器端静默修改工具描述/参数→将已批准访问转化为未授权)、TV6(版本回滚:回滚到已知有漏洞的旧版本)、TV7(能力升级:跨会话逐步扩大工具能力→每步微小)三类攻击→Claude+Cursor上Rug Pull成功率>60%→MDPI论文(2026.5)100次Rug Pull模拟若缺JWS签名验证→全部成功。现有B5/B180/B192/B207/L3均不覆盖工具定义元数据本身的运行时密码学完整性——仅验证内容/构建产物/模型权重/信道——不验证工具定义未被篡改** | 🔴 P0 | D-018-94 §3.0.61 ToolDefinitionIntegrityGuard——每个批准的工具→生成JCS(RFC 8785)规范化JSON manifest→Sigstore Keyless签名+JWS封装→运行时listTools→L3拦截每个工具定义→SHA-256验证当前定义vs TrustStore批准版本+HASH不匹配→语义diff(描述变更/参数扩展/权限增加/版本降级)→工具降权至SUSPICIOUS→Owner审查→不可变版本链(prev_version_hash链接各版本→回滚自动检测)→Cedar策略引擎确定性裁决(不依赖LLM判断) | ✅ 已补 |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `src/zephyr/agent_rbac/` |
+| 源码文件数 | 69 个 .py + 1 .yaml |
+| 测试路径 | `tests/agent_rbac/` |
+| 关键入口 | `agent_rbac.engine.RBACEngine (七层纵深+六横切面)` |

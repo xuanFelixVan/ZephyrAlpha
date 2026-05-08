@@ -1,0 +1,33 @@
+"""A2A Registry — Agent Card 注册与发现"""
+
+from typing import Dict, List, Optional
+from pathlib import Path
+import yaml
+
+from .agent_card import AgentCard
+
+
+class A2ARegistry:
+    """Agent Card 注册中心"""
+
+    def __init__(self, registry_path: Optional[Path] = None):
+        self._cards: Dict[str, AgentCard] = {}
+        self._path = registry_path
+
+    def register(self, card: AgentCard) -> AgentCard:
+        self._cards[card.agent_id] = card
+        return card
+
+    def discover(self, capability: Optional[str] = None) -> List[AgentCard]:
+        if capability:
+            return [c for c in self._cards.values() if capability in c.capabilities]
+        return list(self._cards.values())
+
+    def get(self, agent_id: str) -> Optional[AgentCard]:
+        return self._cards.get(agent_id)
+
+    def unregister(self, agent_id: str) -> bool:
+        if agent_id in self._cards:
+            del self._cards[agent_id]
+            return True
+        return False

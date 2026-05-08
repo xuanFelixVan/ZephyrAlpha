@@ -56,6 +56,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _get_conn() -> sqlite3.Connection:
+    """_get_conn implementation."""
     _TRACE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(_TRACE_DB_PATH))
     conn.row_factory = sqlite3.Row
@@ -77,6 +78,7 @@ def _get_conn() -> sqlite3.Connection:
 
 
 def record_trace(finding_id: str, phase: str, duration_ms: float, status: str = "completed") -> None:
+    """record_trace implementation."""
     conn = _get_conn()
     now = datetime.now(UTC).isoformat()
     trace_id = f"trace-{finding_id}-{phase}-{now[:19]}"
@@ -89,6 +91,7 @@ def record_trace(finding_id: str, phase: str, duration_ms: float, status: str = 
 
 
 def trace_finding(finding_id: str) -> dict:
+    """trace_finding implementation."""
     conn = _get_conn()
     rows = conn.execute(
         "SELECT * FROM traces WHERE finding_id = ? ORDER BY completed_at",
@@ -118,6 +121,7 @@ def trace_finding(finding_id: str) -> dict:
 
 
 def overview() -> dict:
+    """overview implementation."""
     conn = _get_conn()
     total_traces = conn.execute("SELECT COUNT(*) FROM traces").fetchone()[0]
     completed = conn.execute("SELECT COUNT(*) FROM traces WHERE status='completed'").fetchone()[0]
@@ -140,6 +144,7 @@ def overview() -> dict:
 
 
 def bottleneck_analysis() -> dict:
+    """bottleneck_analysis implementation."""
     conn = _get_conn()
     bottlenecks = []
     for phase in PHASES:
@@ -167,6 +172,7 @@ def bottleneck_analysis() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--trace" in sys.argv:
         idx = sys.argv.index("--trace")
         fid = sys.argv[idx + 1] if idx + 1 < len(sys.argv) else ""

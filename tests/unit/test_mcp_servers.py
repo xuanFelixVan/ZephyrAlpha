@@ -87,6 +87,7 @@ class TestBaseMCPServer:
             },
             handler=_echo,
         )
+        server._rbac_guard = None
         return server
 
     def test_initialize(self) -> None:
@@ -150,14 +151,15 @@ class TestBaseMCPServer:
 
 class TestKnowledgeBaseServer:
     def setup_method(self) -> None:
-        self.server = make_kb_server()
+        self.server = make_kb_server(enable_rbac=False)
 
-    def test_tools_list_has_four_tools(self) -> None:
+    def test_tools_list_has_six_tools(self) -> None:
         result = _ok(_call(self.server, "tools/list"))
         names = [t["name"] for t in result["tools"]]
         assert "knowledge_base.search" in names
         assert "knowledge_base.upsert_ke" in names
         assert "knowledge_base.get_ke" in names
+        assert len(names) == 6
 
     def test_upsert_and_get_ke(self) -> None:
         upsert = _tool_result(
@@ -236,13 +238,14 @@ class TestKnowledgeBaseServer:
 
 class TestGateEngineServer:
     def setup_method(self) -> None:
-        self.server = make_gate_server()
+        self.server = make_gate_server(enable_rbac=False)
 
-    def test_tools_list_has_five_tools(self) -> None:
+    def test_tools_list_has_eight_tools(self) -> None:
         result = _ok(_call(self.server, "tools/list"))
         names = [t["name"] for t in result["tools"]]
         assert "gate_engine.run_g1_write" in names
         assert "gate_engine.run_g4_contract" in names
+        assert len(names) == 8
 
     def test_g1_write_clean_path_passes(self) -> None:
         result = _tool_result(
@@ -346,13 +349,14 @@ class TestGateEngineServer:
 
 class TestDocGuardServer:
     def setup_method(self) -> None:
-        self.server = make_doc_server()
+        self.server = make_doc_server(enable_rbac=False)
 
-    def test_tools_list_has_four_tools(self) -> None:
+    def test_tools_list_has_five_tools(self) -> None:
         result = _ok(_call(self.server, "tools/list"))
         names = [t["name"] for t in result["tools"]]
         assert "session_handoff.create_package" in names
         assert "session_handoff.validate_package" in names
+        assert len(names) == 5
 
     def test_create_package_basic(self) -> None:
         result = _tool_result(
@@ -465,14 +469,15 @@ class TestDocGuardServer:
 
 class TestSentinelServer:
     def setup_method(self) -> None:
-        self.server = make_sentinel_server()
+        self.server = make_sentinel_server(enable_rbac=False)
 
-    def test_tools_list_has_three_tools(self) -> None:
+    def test_tools_list_has_four_tools(self) -> None:
         result = _ok(_call(self.server, "tools/list"))
         names = [t["name"] for t in result["tools"]]
         assert "intent_router.map_intent" in names
         assert "intent_router.reload_keywords" in names
         assert "intent_router.evaluate_golden_set" in names
+        assert len(names) == 4
 
     def test_map_intent_data_domain(self) -> None:
         result = _tool_result(
@@ -491,7 +496,7 @@ class TestSentinelServer:
             self.server,
             "intent_router.map_intent",
             {
-                "query": "查看 ADR 治理规则和审计蓝图",
+                "query": "查看 KB 决策记录治理规则和审计蓝图",
             },
         )
         assert result["primary_domain"] == "D2"

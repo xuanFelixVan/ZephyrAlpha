@@ -48,7 +48,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import yaml
+
+_MAX_WORKERS = 8
 
 # AGENTS.md §6.7: UTF-8 输出强制声明（防止 Windows GBK 编码 crash）
 
@@ -61,9 +65,65 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
 
 DEFAULT_OUTPUT = SCRIPTS_DIR / "reports" / "findings.jsonl"
+
+DEPENDENCY_CHAINS: dict[str, tuple[str, ...]] = {
+    "chain_a": ("D1", "D3", "D5", "D8"),
+    "chain_b": ("D2", "D4", "D11", "D9", "D12"),
+    "chain_c": ("D6", "D7", "D10"),
+}
+
+DIMENSION_TIMEOUT_CATEGORIES: dict[str, str] = {
+    "D1": "file_scan",
+    "D2": "file_scan",
+    "D3": "content_analysis",
+    "D4": "file_scan",
+    "D5": "content_analysis",
+    "D6": "content_analysis",
+    "D7": "content_analysis",
+    "D8": "content_analysis",
+    "D9": "knowledge_ai",
+    "D10": "content_analysis",
+    "D11": "content_analysis",
+    "D12": "knowledge_ai",
+}
+
+# ---------------------------------------------------------------------------
+# 蓝图 §3.6 标签体系（对标 K8s Conformance 标签聚焦机制）
+# ---------------------------------------------------------------------------
+
+_DIMENSION_TAGS: dict[str, list[str]] = {
+    "D1": ["Quick"],
+    "D2": ["Quick"],
+    "D3": ["Quick"],
+    "D4": ["Quick"],
+    "D5": ["Critical"],
+    "D6": ["Security", "Critical"],
+    "D7": ["Critical"],
+    "D8": ["Quick"],
+    "D9": ["AI-Generated", "Periodic"],
+    "D10": ["Periodic"],
+    "D11": ["Security"],
+    "D12": ["AI-Generated", "Periodic"],
+}
+
+_PREFIX_TAGS: tuple[tuple[str, list[str]], ...] = (
+    ("fix_", ["Disruptive"]),
+    ("generate_", ["Disruptive"]),
+    ("audit_", ["Periodic"]),
+)
+
+_VALID_TAGS = frozenset({"Quick", "Security", "Disruptive", "Critical", "AI-Generated", "Periodic"})
+
+_SMOKE_TEST_SCRIPT = "d1_structure/run_script_smoke_test.py"
+_SELF_SCRIPT = "run_all.py"
+_SKIP_INTERNAL: frozenset[str] = frozenset({_SMOKE_TEST_SCRIPT, _SELF_SCRIPT})
+
+GLOBAL_HARD_TIMEOUT_SECONDS = 600
+
+SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
@@ -79,6 +139,16 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
+
+try:
+    from zephyr.l01_infrastructure.finding_task_bridge import (
+        AuditFinding,
+        FindingTaskBridge,
+        bridge_findings_to_tasks,
+    )
+    BRIDGE_AVAILABLE = True
+except ImportError:
+    BRIDGE_AVAILABLE = False
 
     from enum import Enum
 
@@ -122,6 +192,29 @@ if FINDING_AVAILABLE:
         "P2": Severity.MEDIUM,
         "P3": Severity.LOW,
     }
+
+    _SEVERITY_TO_AUDIT: dict[Severity, str] = {
+        Severity.CRITICAL: "critical",
+        Severity.HIGH: "high",
+        Severity.MEDIUM: "medium",
+        Severity.LOW: "low",
+        Severity.INFO: "info",
+    }
+
+_DIMENSION_TO_AUDIT_LABEL: dict[str, str] = {
+    "D1": "governance",
+    "D2": "integration",
+    "D3": "architecture",
+    "D4": "architecture",
+    "D5": "architecture",
+    "D6": "security",
+    "D7": "data_quality",
+    "D8": "documentation",
+    "D9": "data_quality",
+    "D10": "performance",
+    "D11": "compliance",
+    "D12": "data_quality",
+}
 
 SKIP_PATTERNS = [
     re.compile(r"^Scanned\s+\d+\s+files?,?\s+\d+\s+findings?,?\s+\d+\s+errors?$", re.IGNORECASE),
@@ -170,6 +263,7 @@ def _load_script_registry() -> dict[str, Any]:
             "priority": entry["priority"],
             "timeout_seconds": entry["timeout_seconds"],
             "args": entry.get("args", []),
+            "tags": entry.get("tags", []),
             "exit_code_mapping": {
                 0: "pass",
                 1: "findings",
@@ -446,6 +540,7 @@ def parse_script_output_to_findings(
     return findings
 
 def _run_env_check() -> None:
+    """_run_env_check implementation."""
     env_check_path = SCRIPTS_DIR / "env_check.py"
     if not env_check_path.exists():
         return
@@ -477,7 +572,98 @@ def _run_env_check() -> None:
         print(result2.stdout[-500:] if result2.stdout else "", file=sys.stderr)
         print(result2.stderr[-500:] if result2.stderr else "", file=sys.stderr)
         print("请手动运行: python scripts/governance/env_check.py --install", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
+
+def _topological_sort_dimensions(dimensions: list[Dimension]) -> list[Dimension]:
+    """按 §5.3 三条依赖链对维度进行拓扑排序。
+
+    链 A: D1 → D3 → D5 → D8（串行）
+    链 B: D2 → D4 → D11 → D9 → D12（串行）
+    链 C: D6 → D7 → D10（串行）
+    三条链之间可并行（交错排列）。
+
+    Args:
+        dimensions: 要排序的维度列表
+
+    Returns:
+        list[Dimension]: 拓扑排序后的维度列表
+    """
+    dim_values = {d.value for d in dimensions}
+    chain_order: list[str] = []
+
+    for chain_name in ("chain_a", "chain_b", "chain_c"):
+        chain = DEPENDENCY_CHAINS[chain_name]
+        chain_dims = [d for d in chain if d in dim_values]
+        if chain_dims:
+            chain_order.extend(chain_dims)
+
+    remaining = sorted(dim_values - set(chain_order))
+    chain_order.extend(remaining)
+
+    result: list[Dimension] = []
+    for dv in chain_order:
+        for d in dimensions:
+            if d.value == dv:
+                result.append(d)
+                break
+    return result
+
+def _check_script_encoding(script_name: str) -> bool:
+    """检查脚本是否符合 §5.5 编码铁律。
+
+    验证脚本包含 UTF-8 stdout 强制声明。
+
+    Args:
+        script_name: 脚本文件名
+
+    Returns:
+        bool: True 表示编码铁律符合
+    """
+    script_path = SCRIPTS_DIR / script_name
+    if not script_path.exists():
+        return False
+    try:
+        content = script_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    if "ensure_utf8_stdout" in content:
+        return True
+    if "sys.stdout.reconfigure(encoding='utf-8')" in content:
+        return True
+    if "sys.stdout.reconfigure(encoding=\"utf-8\")" in content:
+        return True
+    return False
+
+def _append_sla_metrics(
+    scan_type: str,
+    total_findings: int,
+    critical_count: int,
+    high_count: int,
+    scan_duration_s: float,
+    exit_code: int,
+) -> None:
+    """追加 SLA 指标行到 sla_metrics.jsonl（§8.4）。
+
+    Args:
+        scan_type: 扫描类型（full / incremental / dimension）
+        total_findings: Finding 总数
+        critical_count: CRITICAL 数
+        high_count: HIGH 数
+        scan_duration_s: 扫描耗时（秒）
+        exit_code: run_all.py 退出码
+    """
+    entry = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "scan_type": scan_type,
+        "total_findings": total_findings,
+        "critical_count": critical_count,
+        "high_count": high_count,
+        "scan_duration_s": round(scan_duration_s, 1),
+        "exit_code": exit_code,
+    }
+    SLA_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(SLA_METRICS_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> list[Finding] | None:
     """尝试以 --jsonl 模式运行脚本，返回 Finding 列表。
@@ -509,93 +695,107 @@ def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> lis
 
     return _parse_jsonl_to_findings(result.stdout, meta["dimensions"], script_name)
 
+
+def _execute_one_script(
+    script_name: str,
+    meta: dict,
+    warn_only: bool = False,
+) -> dict:
+    """Run a single script and return results dict (thread-safe for ThreadPoolExecutor)."""
+    enc_violation = None
+    if not _check_script_encoding(script_name):
+        enc_violation = script_name
+
+    exit_code, stdout, stderr = run_script(script_name, meta, warn_only=warn_only)
+
+    findings: list[Finding] = []
+    if FINDING_AVAILABLE:
+        jl_result = _try_jsonl_run(script_name, meta, warn_only)
+        if jl_result is not None:
+            findings = jl_result
+        else:
+            findings = parse_script_output_to_findings(
+                script_name, meta["dimensions"], stdout, exit_code, warn_only,
+            )
+
+    return {
+        "script_name": script_name,
+        "exit_code": exit_code,
+        "findings": findings,
+        "is_failed": exit_code == 2,
+        "enc_violation": enc_violation,
+    }
+
+
 def run_all_dimensions(
     dimensions_to_run: list[Dimension],
     output_path: str,
     verbose: bool = False,
     warn_only: bool = False,
+    registry_override: dict[str, Any] | None = None,
 ) -> tuple[FindingCollection, dict]:
-    """运行所有指定维度的审计扫描（每个脚本仅执行一次，去重）。
-
-    按维度组织显示，但相同脚本只跑一次——多维度映射的脚本
-    不重复执行，结果分发给各维度的 Finding 统计。
-
-    Args:
-        dimensions_to_run: 要扫描的维度列表
-        output_path: JSONL 输出路径
-        verbose: True 时打印详细输出
-        warn_only: True 时传递 --warn-only 给所有子脚本
-
-    Returns:
-        tuple: (FindingCollection, 统计 dict)
-    """
-    registry = _get_registry()
+    """Run all dimension scans in parallel via ThreadPoolExecutor (each script once, dedup)."""
+    registry = registry_override if registry_override is not None else _get_registry()
     if FINDING_AVAILABLE:
         collection = FindingCollection()
     else:
         collection = None
 
     seen_scripts: set[str] = set()
-
-    total_scripts = 0
-    total_failed = 0
+    script_tasks: list[tuple[str, dict]] = []
 
     for dim in dimensions_to_run:
-        print(f"[{dim.value}] {dim.label} ...", end=" ", flush=True, file=sys.stderr)
+        for name, meta in registry.items():
+            if dim in meta["dimensions"] and name not in seen_scripts and name not in _SKIP_INTERNAL:
+                seen_scripts.add(name)
+                script_tasks.append((name, meta))
 
-        scripts_for_dim = {name: meta for name, meta in registry.items() if dim in meta["dimensions"]}
+    if not script_tasks:
+        return collection, {"total_scripts": 0, "total_failed": 0, "total_unique_scripts": 0, "encoding_violations": []}
 
-        dim_scripts_run = 0
-        dim_scripts_failed = 0
-        dim_findings = 0
+    print(f"\n  并行执行 {len(script_tasks)} 个唯一脚本 (workers={_MAX_WORKERS}) ...", file=sys.stderr)
 
-        for script_name, meta in scripts_for_dim.items():
-            if script_name in seen_scripts:
-                continue
-            seen_scripts.add(script_name)
-            dim_scripts_run += 1
-            total_scripts += 1
+    encoding_violations: list[str] = []
+    total_failed = 0
+    completed = 0
 
-            exit_code, stdout, stderr = run_script(script_name, meta, warn_only=warn_only)
+    with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(_execute_one_script, name, meta, warn_only): name
+            for name, meta in script_tasks
+        }
+        for future in as_completed(futures):
+            result = future.result()
+            completed += 1
 
-            if exit_code == 2:
-                dim_scripts_failed += 1
+            if result["enc_violation"]:
+                encoding_violations.append(result["enc_violation"])
+                print(f"\n    [ENC] {result['enc_violation']}: 编码铁律违规 — 缺少 UTF-8 stdout 声明", file=sys.stderr)
+
+            if result["is_failed"]:
                 total_failed += 1
 
-            if verbose and stdout:
-                print(f"\n    [{script_name}]: {stdout[:200]}", file=sys.stderr)
+            if FINDING_AVAILABLE and collection is not None and result["findings"]:
+                collection.extend(result["findings"])
 
-            if FINDING_AVAILABLE and collection is not None:
-                jl_result = _try_jsonl_run(script_name, meta, warn_only)
-                if jl_result is not None:
-                    collection.extend(jl_result)
-                    dim_findings += len(jl_result)
-                else:
-                    parsed = parse_script_output_to_findings(
-                        script_name,
-                        meta["dimensions"],
-                        stdout,
-                        exit_code,
-                        warn_only,
-                    )
-                    collection.extend(parsed)
-                    dim_findings += len(parsed)
-            else:
-                if exit_code not in (0, 2):
-                    dim_findings += 1
+            if completed % 20 == 0 or completed == len(script_tasks):
+                print(f"    {completed}/{len(script_tasks)} 完成", file=sys.stderr)
 
-        failed_note = f" ({dim_scripts_failed} 异常)" if dim_scripts_failed else ""
-        print(f"{dim_scripts_run} 脚本{failed_note}, {dim_findings} Finding", file=sys.stderr)
+    for dim in dimensions_to_run:
+        dim_count = sum(1 for name, meta in script_tasks if dim in meta["dimensions"])
+        print(f"  [{dim.value}] {dim.label}: {dim_count} 脚本", file=sys.stderr)
 
     overall = {
-        "total_scripts": total_scripts,
+        "total_scripts": len(script_tasks),
         "total_failed": total_failed,
-        "total_unique_scripts": len(seen_scripts),
+        "total_unique_scripts": len(script_tasks),
+        "encoding_violations": encoding_violations,
     }
     return collection, overall
 
 
 def _get_changed_files(diff_ref: str = "HEAD~1") -> frozenset[str]:
+    """_get_changed_files implementation."""
     result = subprocess.run(
         ["git", "diff", "--name-only", diff_ref],
         capture_output=True, text=True, timeout=30,
@@ -640,6 +840,7 @@ _FILE_DIMENSION_MAP: tuple[tuple[str, str], ...] = (
 
 
 def _map_files_to_dimensions(changed_files: frozenset[str]) -> frozenset[str]:
+    """_map_files_to_dimensions implementation."""
     dims: set[str] = set()
     for f in changed_files:
         f = f.replace("\\", "/")
@@ -650,6 +851,44 @@ def _map_files_to_dimensions(changed_files: frozenset[str]) -> frozenset[str]:
         else:
             dims.add("D12")
     return frozenset(dims)
+
+
+def _derive_tags(script_name: str, dimensions: list[Dimension], priority: str) -> frozenset[str]:
+    """_derive_tags implementation."""
+    tags: set[str] = set()
+    for dim in dimensions:
+        tags.update(_DIMENSION_TAGS.get(dim.value, []))
+    for prefix, prefix_tags in _PREFIX_TAGS:
+        sn_lower = script_name.lower()
+        if sn_lower.startswith(prefix) or f"/{prefix}" in sn_lower:
+            tags.update(prefix_tags)
+    if priority == "P0":
+        tags.add("Critical")
+    return frozenset(tags)
+
+
+def _filter_registry(
+    registry: dict[str, Any],
+    required_tags: frozenset[str] | None = None,
+    depth: str | None = None,
+) -> dict[str, Any]:
+    """_filter_registry implementation."""
+    filtered: dict[str, Any] = {}
+    for name, meta in registry.items():
+        if name in _SKIP_INTERNAL:
+            continue
+        manifest_tags = meta.get("tags") or []
+        if manifest_tags:
+            script_tags = frozenset(manifest_tags)
+        else:
+            script_tags = _derive_tags(name, meta["dimensions"], meta["priority"])
+        if required_tags and not (required_tags <= script_tags):
+            continue
+        if depth == "quick":
+            if "Quick" not in script_tags or meta["timeout_seconds"] > 30:
+                continue
+        filtered[name] = meta
+    return filtered
 
 
 def main() -> None:
@@ -699,6 +938,19 @@ def main() -> None:
         default="",
         help="增量模式：仅扫描与 git diff <ref> 变更相关的脚本（如 HEAD~1 或 origin/main...HEAD）",
     )
+    parser.add_argument(
+        "--tags",
+        "-t",
+        nargs="*",
+        help="按标签过滤脚本（如 'Security Quick' 或 'Security,Quick'），AND 语义",
+    )
+    parser.add_argument(
+        "--depth",
+        "-dp",
+        choices=["quick", "full", "deep"],
+        default="full",
+        help="扫描深度: quick（快速<30s）/ full（标准，默认）/ deep（含LLM分析占位）",
+    )
     args = parser.parse_args()
 
     if args.list:
@@ -711,6 +963,22 @@ def main() -> None:
 
     dimensions_to_run = [Dimension(d) for d in args.dimensions] if args.dimensions else list(Dimension)
 
+    required_tags: frozenset[str] = frozenset()
+    if args.tags is not None:
+        resolved: set[str] = set()
+        for raw_group in args.tags:
+            for tag in raw_group.split(","):
+                tag = tag.strip()
+                if tag not in _VALID_TAGS:
+                    print(f"错误: 非法标签 '{tag}'。合法值: {sorted(_VALID_TAGS)}", file=sys.stderr)
+                    sys.exit(3)
+                resolved.add(tag)
+        required_tags = frozenset(resolved)
+
+    filtered_registry = _filter_registry(
+        _get_registry(), required_tags=required_tags, depth=args.depth
+    )
+
     if args.diff_ref:
         changed = _get_changed_files(args.diff_ref)
         if not changed:
@@ -722,51 +990,124 @@ def main() -> None:
               f"{', '.join(sorted(relevant_dims))}", file=sys.stderr)
 
     if args.dry_run:
-        registry = _get_registry()
+        registry = filtered_registry
         unique_scripts: set[str] = set()
-        print(f"\n[DRY RUN] 将扫描 {len(dimensions_to_run)} 个维度：", file=sys.stderr)
-        for dim in dimensions_to_run:
+        dimensions_sorted = _topological_sort_dimensions(dimensions_to_run)
+        print(f"\n[DRY RUN] 将扫描 {len(dimensions_sorted)} 个维度（拓扑排序后）：", file=sys.stderr)
+        print(f"  链A (D1→D3→D5→D8): {[d for d in ('D1','D3','D5','D8') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
+        print(f"  链B (D2→D4→D11→D9→D12): {[d for d in ('D2','D4','D11','D9','D12') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
+        print(f"  链C (D6→D7→D10): {[d for d in ('D6','D7','D10') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
+        for dim in dimensions_sorted:
             scripts = [name for name, meta in registry.items() if dim in meta["dimensions"]]
             unique_scripts.update(scripts)
             print(f"  {dim.value} ({dim.label}): {len(scripts)} 个脚本 → {', '.join(scripts)}", file=sys.stderr)
         print(f"\n  去重后实际执行: {len(unique_scripts)} 个唯一脚本", file=sys.stderr)
+
+        encoding_ok = 0
+        encoding_bad = 0
+        for sn in sorted(unique_scripts):
+            if _check_script_encoding(sn):
+                encoding_ok += 1
+            else:
+                encoding_bad += 1
+                print(f"  ⚠ {sn}: 编码铁律违规（缺少 UTF-8 stdout 声明）", file=sys.stderr)
+        print(f"\n  编码铁律: {encoding_ok} ✅ / {encoding_bad} ❌ (共 {len(unique_scripts)} 脚本)", file=sys.stderr)
         return
+
+    dimensions_sorted = _topological_sort_dimensions(dimensions_to_run)
+    date_str = datetime.now(UTC).strftime("%Y%m%d")
+
+    scan_type = "full" if len(dimensions_sorted) >= 12 else "dimension"
+
+    output_path = Path(args.output)
+    if args.output == str(DEFAULT_OUTPUT):
+        output_path = Path(args.output).parent / f"findings-full-{date_str}.jsonl"
 
     print(f"\n{'=' * 60}", file=sys.stderr)
     print("  ZephyrAlpha 脚本系统 — 全维度扫描", file=sys.stderr)
     mode_tag = " [warn-only]" if args.warn_only else ""
     print(f"  时间: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}{mode_tag}", file=sys.stderr)
-    print(f"  维度: {len(dimensions_to_run)} 个", file=sys.stderr)
-    print(f"  输出: {args.output}", file=sys.stderr)
+    print(f"  维度: {len(dimensions_sorted)} 个（拓扑排序: "
+          f"A={[d for d in ('D1','D3','D5','D8') if any(dv.value==d for dv in dimensions_sorted)]}, "
+          f"B={[d for d in ('D2','D4','D11','D9','D12') if any(dv.value==d for dv in dimensions_sorted)]}, "
+          f"C={[d for d in ('D6','D7','D10') if any(dv.value==d for dv in dimensions_sorted)]})"
+          , file=sys.stderr)
+    print(f"  输出: {output_path}", file=sys.stderr)
+    print(f"  全局硬超时: {GLOBAL_HARD_TIMEOUT_SECONDS}s", file=sys.stderr)
     print(f"{'=' * 60}\n", file=sys.stderr)
 
     start_time = time.time()
+    global_timeout_reached = False
+    checkpoint_path = Path(args.output).parent / f"_scan_checkpoint_{date_str}.json"
+
     collection, overall = run_all_dimensions(
-        dimensions_to_run,
-        args.output,
+        dimensions_sorted,
+        str(output_path),
         verbose=args.verbose,
         warn_only=args.warn_only,
+        registry_override=filtered_registry,
     )
 
     elapsed = time.time() - start_time
+    if elapsed >= GLOBAL_HARD_TIMEOUT_SECONDS:
+        global_timeout_reached = True
+        checkpoint_data = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "global_timeout_reached": True,
+            "elapsed_s": round(elapsed, 1),
+            "completed_dimensions": [d.value for d in dimensions_sorted],
+            "total_unique_scripts": overall["total_unique_scripts"],
+        }
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(checkpoint_path, "w", encoding="utf-8") as cf:
+            json.dump(checkpoint_data, cf, ensure_ascii=False, indent=2)
+        print(f"\n⚠ 全局硬超时 ({GLOBAL_HARD_TIMEOUT_SECONDS}s) — checkpoint: {checkpoint_path}", file=sys.stderr)
+
     total_findings = collection.total if (FINDING_AVAILABLE and collection is not None) else 0
+
+    if FINDING_AVAILABLE and collection is not None:
+        severity_summary = collection.summary()
+        sev_counts = severity_summary.get("by_severity", {})
+    else:
+        sev_counts = {}
+
+    critical_count = sev_counts.get("CRITICAL", 0)
+    high_count = sev_counts.get("HIGH", 0)
+
+    final_exit_code = 0
+    if overall["total_failed"] > 0:
+        final_exit_code = 2 if global_timeout_reached else 2
+    elif total_findings > 0:
+        final_exit_code = 1 if not args.warn_only else 0
+
+    _append_sla_metrics(
+        scan_type=scan_type,
+        total_findings=total_findings,
+        critical_count=critical_count,
+        high_count=high_count,
+        scan_duration_s=elapsed,
+        exit_code=final_exit_code,
+    )
 
     print(f"\n{'─' * 60}", file=sys.stderr)
     print(f"  总耗时: {elapsed:.1f}s", file=sys.stderr)
-    print(f"  维度完成: {len(dimensions_to_run)}/{len(dimensions_to_run)}", file=sys.stderr)
+    print(f"  维度完成: {len(dimensions_sorted)}/{len(dimensions_sorted)}", file=sys.stderr)
     print(f"  唯一脚本: {overall['total_unique_scripts']}（{overall['total_failed']} 异常）", file=sys.stderr)
+    enc_violations = overall.get("encoding_violations", [])
+    if enc_violations:
+        print(f"  编码铁律违规: {len(enc_violations)} 脚本 → {', '.join(enc_violations)}", file=sys.stderr)
     print(f"  Finding 总计: {total_findings}", file=sys.stderr)
+    if global_timeout_reached:
+        print(f"  ⚠ 全局硬超时触发", file=sys.stderr)
     print(f"{'─' * 60}", file=sys.stderr)
 
     if FINDING_AVAILABLE and collection is not None and total_findings > 0:
-        output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         collection.write_jsonl(str(output_path))
         print(f"\n  结构化输出已写入: {output_path}", file=sys.stderr)
 
-        severity_summary = collection.summary()["by_severity"]
         if severity_summary:
-            print(f"  严重度分布: {json.dumps(severity_summary, ensure_ascii=False)}", file=sys.stderr)
+            print(f"  严重度分布: {json.dumps(sev_counts, ensure_ascii=False)}", file=sys.stderr)
 
         criticals = collection.critical_only()
         if criticals.total > 0:
@@ -777,9 +1118,31 @@ def main() -> None:
     if overall["total_failed"] > 0:
         print(f"\n⚠ {overall['total_failed']} 个脚本执行异常，请检查上方输出", file=sys.stderr)
 
+    if BRIDGE_AVAILABLE and FINDING_AVAILABLE and collection is not None and total_findings > 0:
+        audit_findings: list[AuditFinding] = []
+        for f in collection:
+            audit_findings.append(AuditFinding(
+                finding_id=f.finding_id,
+                dimension=_DIMENSION_TO_AUDIT_LABEL.get(f.dimension.value, "governance"),
+                severity=_SEVERITY_TO_AUDIT.get(f.severity, "medium"),
+                description=f.description,
+                source_script="run_all.py",
+                source_file=f.target_file,
+                suggested_fix=f.recommendation,
+            ))
+        bridge_result = bridge_findings_to_tasks(
+            audit_findings,
+            db_path=REPO_ROOT / "data" / "zalpha_metadata.db",
+            dry_run=args.dry_run,
+        )
+        print(f"\n  [CT-ORC-SCRIPT-001] 桥接完成: {bridge_result.tasks_created}/{len(audit_findings)} tasks创建",
+              file=sys.stderr)
+        if bridge_result.errors:
+            print(f"    ⚠ 失败: {len(bridge_result.errors)}", file=sys.stderr)
+
     if args.warn_only:
-        sys.exit(0)
-    sys.exit(1 if total_findings > 0 else 0)
+        sys.exit(EXIT_PASS)
+    sys.exit(final_exit_code)
 
 if __name__ == "__main__":
     main()

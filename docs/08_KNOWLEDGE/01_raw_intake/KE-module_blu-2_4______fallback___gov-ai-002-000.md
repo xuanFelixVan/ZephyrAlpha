@@ -1,0 +1,15 @@
+---
+module_id: KE-module_blu-2_4______fallback___gov-ai-002-000
+title: 2.4 模型降级 Fallback 链（GOV-AI-002 §三）
+category: module_blueprint
+---
+
+# 2.4 模型降级 Fallback 链（GOV-AI-002 §三）
+
+2.4 模型降级 Fallback 链（GOV-AI-002 §三）
+
+```
+DeepSeek 失败 → GLM → Claude
+GLM 失败      → DeepSeek → Claude
+Claude 失败   → 无降级（终点）
+```

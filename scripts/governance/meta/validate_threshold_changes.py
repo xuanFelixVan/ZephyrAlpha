@@ -10,6 +10,8 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -41,6 +43,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _get_git_diff() -> str:
+    """_get_git_diff implementation."""
     result = subprocess.run(
         ["git", "diff", "--cached", "--", str(_THRESHOLDS_PATH)],
         capture_output=True, text=True, timeout=10,
@@ -56,18 +59,20 @@ def _get_git_diff() -> str:
 
 
 def _hash_content(content: str) -> str:
+    """_hash_content implementation."""
     return hashlib.sha256(content.encode()).hexdigest()[:16]
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     warn_only = "--warn-only" in sys.argv
 
     diff = _get_git_diff()
     if not diff:
         if warn_only:
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         print("[THRESHOLD-AUDIT] 阈值文件无变更", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     timestamp = datetime.now(UTC).isoformat()
     diff_hash = _hash_content(diff)
@@ -96,8 +101,8 @@ def main() -> None:
     print(f"  变更摘要:\n{diff[:500]}", file=sys.stderr)
 
     if warn_only:
-        sys.exit(0)
-    sys.exit(0)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

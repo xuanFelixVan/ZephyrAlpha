@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from typing import List
 from typing import Optional
 
-from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 # ---
 # layer: cross_cutting
 # category: data_contract

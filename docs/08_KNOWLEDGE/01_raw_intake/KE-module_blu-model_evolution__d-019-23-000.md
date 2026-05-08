@@ -1,0 +1,13 @@
+---
+module_id: KE-module_blu-model_evolution__d-019-23-000
+title: Model Evolution (D-019-23)
+category: module_blueprint
+---
+
+# Model Evolution (D-019-23)
+
+Model Evolution (D-019-23)
+- Model Fingerprint 采集: provider/name/version/quantization/context_window
+- Output Signature 对比: 旧模型 vs 新模型同一prompt输出 → Diff Score
+- Compatibility Gate: Compatibility Score ≥ 0.95 → PASS, < 0.80 → BLOCK
+- Safety Regression: injection resistance 基线 ≥ 旧模型的 90%

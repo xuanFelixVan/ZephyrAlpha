@@ -38,8 +38,8 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 from zephyr.orchestrator.agent_orchestrator import OrchestrationResult
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.time_utils import default_now
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
     "HealthState",

@@ -9,12 +9,12 @@ partition:
 modules:
 - id: l07-layer-ssot
   module_id: MOD-L07-001
-  name: Post-Trade Analytics（层登记占位）
+  name: Post-Trade Analytics（层登记占位�?
   submodule_path: src/zephyr/l07_post_trade_analytics/
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 盘后分析层。TCAEngineBase + AttributionEngineBase 双 OCP 扩展点。
+  description: 盘后分析层。TCAEngineBase + AttributionEngineBase �?OCP 扩展点�?
   files:
   - analytics_base.py
   - default_attribution_engine.py
@@ -22,10 +22,10 @@ modules:
   interfaces:
   - contract_id: CTR-P1-009
     role: producer
-    description: PerformanceAttributionReport → L08, L10
-  adr_ref: []
+    description: PerformanceAttributionReport �?L08, L10
+  kb_ref: []
 summary:
   total: 1
   by_status:
     implemented: 1
-  note: Phase B 骨架就位——TCA + Attribution 双 OCP 扩展点已定义
+  note: Phase B 骨架就位——TCA + Attribution �?OCP 扩展点已定义

@@ -1,0 +1,18 @@
+---
+module_id: KE-governance-2_4_d4________3___p0___2___p2_-003
+title: 2.4 D4 — 路径纪律（3 个 P0 + 2 个 P2 = 5 个脚本）
+category: governance
+---
+
+# 2.4 D4 — 路径纪律（3 个 P0 + 2 个 P2 = 5 个脚本）
+
+2.4 D4 — 路径纪律（3 个 P0 + 2 个 P2 = 5 个脚本）
+
+| 属性 | 值 |
+|------|-----|
+| **审计规则** | ABS-18（禁止在废弃路径下新建文件）、ABS-44（禁止引用废墟目录）、ABS-17（搬迁 ≥ 2 次告警）、ABS-15（删除引用分离提交） |
+| **审计文件范围** | `docs/` + `src/zephyr/` 的文件路径 + git log 中的文件移动记录 |
+| **审计脚本** | **P0**: `d4_paths/detect_deprecated_path_writes.py`（废弃路径写入）、`d4_paths/detect_ruins_references.py`（废墟引用）。**P2**: `d4_paths/detect_excessive_file_moves.py`（文件过度搬迁）、`d4_paths/detect_split_delete_ref_commit.py`（删除引用分离提交） |
+| **门禁** | 无独立门禁（由 GATE-16 间接覆盖） |
+| **期望效果** | 零废弃路径写入；零废墟引用；文件搬迁 ≤ 1 次 |
+| **快速扫描命令** | `python scripts/governance/run_all.py --dimensions D4 --warn-only` |

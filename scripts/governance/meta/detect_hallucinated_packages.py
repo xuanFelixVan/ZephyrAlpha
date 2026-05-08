@@ -28,6 +28,7 @@ warn_only: false
 """
 
 
+import os
 import ast
 import json as json_mod
 import sys
@@ -82,6 +83,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_cache() -> dict:
+    """_load_cache implementation."""
     if not _PYPI_CACHE.exists():
         return {"verified": {}, "hallucinated": {}}
     with open(_PYPI_CACHE, encoding="utf-8") as f:
@@ -89,12 +91,22 @@ def _load_cache() -> dict:
 
 
 def _save_cache(data: dict) -> None:
+    """_save_cache implementation."""
     _PYPI_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    with open(_PYPI_CACHE, "w", encoding="utf-8") as f:
-        json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-
+    tmp_path = f"{_PYPI_CACHE}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(data, f, ensure_ascii=False, indent=2)
+    
+    
+        os.replace(tmp_path, _PYPI_CACHE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def _extract_imports(file_path: Path) -> list[str]:
+    """_extract_imports implementation."""
     try:
         tree = ast.parse(file_path.read_text(encoding="utf-8"))
     except (SyntaxError, UnicodeDecodeError):
@@ -112,6 +124,7 @@ def _extract_imports(file_path: Path) -> list[str]:
 
 
 def _is_real_package(pkg_name: str, cache: dict) -> bool:
+    """_is_real_package implementation."""
     if pkg_name in _STDLIB_WHITELIST:
         return True
     if pkg_name in cache.get("verified", {}):
@@ -143,6 +156,7 @@ def _is_real_package(pkg_name: str, cache: dict) -> bool:
 
 
 def check_file(file_path: str | Path) -> dict:
+    """Check compliance and report findings."""
     fp = _REPO_ROOT / file_path if not str(file_path).startswith(str(_REPO_ROOT)) else Path(file_path)
     if not fp.exists():
         return {"error": f"File not found: {fp}"}
@@ -174,6 +188,7 @@ def check_file(file_path: str | Path) -> dict:
 
 
 def check_all() -> dict:
+    """Check compliance and report findings."""
     all_results: list[dict] = []
     for py_file in _SCRIPTS_DIR.rglob("*.py"):
         if "__pycache__" in str(py_file):
@@ -191,6 +206,7 @@ def check_all() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--check-all" in sys.argv:
         result = check_all()
         if result["clean"]:

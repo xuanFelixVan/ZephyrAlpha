@@ -26,7 +26,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
@@ -246,15 +246,15 @@ def main() -> None:
     args = parser.parse_args()
     if not ROR_PATH.exists():
         print(f"[SKIP] registry-of-registries.yaml 不存在: {ROR_PATH}", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     ror = load_yaml(ROR_PATH)
     rules = ror.get("cross_registry_rules", [])
     if not rules:
         print("[OK] 无跨表一致性规则定义", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if not FINDING_AVAILABLE:
         print("[SKIP] Finding 模块不可用，跳过结构化输出", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     all_findings = FindingCollection()
     for rule in rules:
         rule_id = rule.get("rule_id", "?")
@@ -266,7 +266,7 @@ def main() -> None:
     total = all_findings.total
     if total == 0:
         print("\n[OK] 所有跨登记表一致性规则通过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     else:
         print(f"\n[FAIL] {total} 项跨表不一致", file=sys.stderr)
         for f in all_findings.critical_only().findings:
@@ -276,8 +276,8 @@ def main() -> None:
         all_findings.append_jsonl(str(output_path))
         print(f"\n报告已追加: {output_path}", file=sys.stderr)
         if args.warn_only:
-            sys.exit(0)
-        sys.exit(1)
+            sys.exit(EXIT_PASS)
+        sys.exit(EXIT_FINDINGS)
 
 if __name__ == "__main__":
     main()

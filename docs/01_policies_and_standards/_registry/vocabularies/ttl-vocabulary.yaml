@@ -18,6 +18,7 @@ module_id: PS-VOC-004
 version: "1.0.0"
 title: "ttl 受控词表"
 status: active
+owner: ZephyrAlpha-Owner
 vocabulary_name: ttl
 total_values: 5
 source: "PS-STD-001 §2.1 + §4.7（TTL 保留期定义真源）"

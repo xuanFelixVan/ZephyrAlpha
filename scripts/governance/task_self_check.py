@@ -19,6 +19,8 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -51,6 +53,7 @@ _CHECKS: list[dict] = []
 def check(name: str, desc: str):
     """装饰器风格注册检查项。"""
     def deco(fn):
+        """deco implementation."""
         _CHECKS.append({"name": name, "desc": desc, "fn": fn})
         return fn
     return deco
@@ -58,6 +61,7 @@ def check(name: str, desc: str):
 
 class CheckResult:
     def __init__(self):
+        """__init__ implementation."""
         self.passed = 0
         self.warned = 0
         self.failed = 0
@@ -65,18 +69,22 @@ class CheckResult:
         self.messages: list[str] = []
 
     def ok(self, msg: str):
+        """ok implementation."""
         self.passed += 1
         self.messages.append(f"  {_CHECK_ICON['PASS']} {msg}")
 
     def warn(self, msg: str):
+        """warn implementation."""
         self.warned += 1
         self.messages.append(f"  {_CHECK_ICON['WARN']} {msg}")
 
     def fail(self, msg: str):
+        """fail implementation."""
         self.failed += 1
         self.messages.append(f"  {_CHECK_ICON['FAIL']} {msg}")
 
     def fixed(self, msg: str):
+        """fixed implementation."""
         self.fixed += 1
         self.messages.append(f"  {_CHECK_ICON['FIXED']} {msg}")
 
@@ -85,6 +93,7 @@ class CheckResult:
 
 @check("sqlite_integrity", "SQLite 数据库文件完整性")
 def check_sqlite_integrity(repo: TaskRepository) -> CheckResult:
+    """Check compliance and report findings."""
     cr = CheckResult()
     if not Path(DB_PATH).exists():
         cr.fail(f"数据库文件不存在: {DB_PATH}")
@@ -104,6 +113,7 @@ def check_sqlite_integrity(repo: TaskRepository) -> CheckResult:
 
 @check("schema_version", "数据库 Schema 版本一致性")
 def check_schema_version(repo: TaskRepository) -> CheckResult:
+    """Check compliance and report findings."""
     cr = CheckResult()
     try:
         conn = sqlite3.connect(str(DB_PATH))
@@ -120,6 +130,7 @@ def check_schema_version(repo: TaskRepository) -> CheckResult:
 
 @check("orphan_dependencies", "任务依赖孤儿引用检查")
 def check_orphan_deps(repo: TaskRepository) -> CheckResult:
+    """Check compliance and report findings."""
     cr = CheckResult()
     try:
         all_cards = repo.list_by_namespace("OPS")
@@ -140,6 +151,7 @@ def check_orphan_deps(repo: TaskRepository) -> CheckResult:
 
 @check("status_consistency", "任务状态一致性检查")
 def check_status_consistency(repo: TaskRepository) -> CheckResult:
+    """Check compliance and report findings."""
     cr = CheckResult()
     try:
         cards = repo.list_by_namespace("OPS")
@@ -161,6 +173,7 @@ def check_status_consistency(repo: TaskRepository) -> CheckResult:
 
 @check("hook_registry", "EventHook 注册表检查")
 def check_hook_registry(repo: TaskRepository) -> CheckResult:
+    """Check compliance and report findings."""
     cr = CheckResult()
     try:
         from zephyr.hooks.event_hook import hook_registry
@@ -179,6 +192,7 @@ def check_hook_registry(repo: TaskRepository) -> CheckResult:
 # ── Main ─────────────────────────────────────────────────────────────
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="任务系统自身健康检查")
     parser.add_argument("--repair", action="store_true", help="尝试自动修复（实验性）")
     parser.add_argument("--quiet", "-q", action="store_true", help="仅输出摘要")
@@ -187,7 +201,7 @@ def main() -> int:
     if not Path(DB_PATH).exists():
         print(f"❌ 数据库不存在: {DB_PATH}", file=sys.stderr)
         print("   请先初始化: python scripts/construction/d_init_task_system.py", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
 
     from zephyr.db.sqlite_schema import init_db
     init_db()
@@ -218,10 +232,10 @@ def main() -> int:
     print(f"{'─' * 60}\n")
 
     if total_fail > 0:
-        return 2
+        return EXIT_ERROR
     if total_warn > 0:
-        return 0
-    return 0
+        return EXIT_PASS
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

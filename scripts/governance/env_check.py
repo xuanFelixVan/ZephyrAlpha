@@ -42,7 +42,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -89,6 +89,7 @@ class EnvReport:
 
 
 def _parse_requirements() -> list[tuple[str, str]]:
+    """_parse_requirements implementation."""
     entries: list[tuple[str, str]] = []
     if not REQUIREMENTS_FILE.exists():
         return entries
@@ -104,12 +105,14 @@ def _parse_requirements() -> list[tuple[str, str]]:
 
 
 def _check_python() -> tuple[bool, str]:
+    """_check_python implementation."""
     current = sys.version_info[:2]
     version_str = f"{current[0]}.{current[1]}.{sys.version_info[2]}"
     return (current >= MIN_PYTHON, version_str)
 
 
 def _check_package(pip_name: str, import_name: str) -> tuple[bool, str | None]:
+    """_check_package implementation."""
     try:
         importlib.import_module(import_name)
         return (True, None)
@@ -139,6 +142,7 @@ def run_check() -> EnvReport:
 
 
 def _install_missing(missing: list[DependencyStatus]) -> bool:
+    """_install_missing implementation."""
     install_targets = [f"{d.pip_name}{d.version_spec}" if d.version_spec else d.pip_name for d in missing]
     if not install_targets:
         return True
@@ -157,6 +161,7 @@ def _install_missing(missing: list[DependencyStatus]) -> bool:
 
 
 def _print_report(report: EnvReport) -> None:
+    """_print_report implementation."""
     print(f'\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}', file=sys.stderr)
     print(f"依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n", file=sys.stderr)
     if report.missing:
@@ -172,6 +177,7 @@ def _print_report(report: EnvReport) -> None:
 
 
 def _print_json(report: EnvReport) -> None:
+    """_print_json implementation."""
     data = {
         "ready": report.all_ok,
         "python": {
@@ -213,23 +219,23 @@ def main() -> None:
                     _print_report(report2)
                 if report2.all_ok:
                     print("✅ 安装完成，环境就绪", file=sys.stderr)
-                    sys.exit(0)
+                    sys.exit(EXIT_PASS)
                 else:
                     print("❌ 安装后仍有依赖缺失，请手动排查", file=sys.stderr)
                     if args.warn_only:
-                        sys.exit(0)
-                    sys.exit(1)
+                        sys.exit(EXIT_PASS)
+                    sys.exit(EXIT_FINDINGS)
             else:
                 if args.warn_only:
-                    sys.exit(0)
-                sys.exit(1)
+                    sys.exit(EXIT_PASS)
+                sys.exit(EXIT_FINDINGS)
         else:
             if not args.json:
                 print("💡 提示: 运行 `python scripts/governance/env_check.py --install` 自动安装", file=sys.stderr)
             if args.warn_only:
-                sys.exit(0)
-            sys.exit(1)
-    sys.exit(0)
+                sys.exit(EXIT_PASS)
+            sys.exit(EXIT_FINDINGS)
+    sys.exit(EXIT_PASS)
     "入口函数."
 
 

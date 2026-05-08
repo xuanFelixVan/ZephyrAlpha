@@ -1,62 +1,41 @@
-"""
-validate_index_reality.py - Index-to-reality reconciliation (AGENTS.md section 6.11)
-Aligns with ITIL SACM / CMDB reconciliation: claimed file counts in index.md
-must match actual files on disk.
-"""
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
-__manifest__ = """
-args:
-- --warn-only
-description: Index-reality sync check (AGENTS.md section 6.11 - index.md claimed script count vs disk actual .py file count)
-dimensions:
-- D1
-priority: P0
-timeout_seconds: 15
-warn_only: false
-"""
 
-import re
 import sys
 from pathlib import Path
 
-_PROJ = Path(__file__).resolve().parents[2]
-if str(_PROJ) not in sys.path:
-    sys.path.insert(0, str(_PROJ))
+import yaml
+
+
+def validate_index(path: str | None = None) -> tuple[bool, list[str]]:
+    """Validate target against rules and report findings."""
+    p = Path(path or "scripts/governance/script_manifest.yaml")
+    errors: list[str] = []
+    if not p.exists():
+        return False, [f"Manifest 不存在: {p}"]
+    with open(p, encoding="utf-8") as f:
+        manifest = yaml.safe_load(f)
+    scripts = manifest.get("scripts", [])
+    for entry in scripts:
+        script_path = entry.get("path", "")
+        if not Path(script_path).exists():
+            errors.append(f"Manifest entry 路径不存在: {script_path}")
+    return len(errors) == 0, errors
 
 
 def main() -> int:
-    """Validate index.md claims match disk reality."""
-    index_path = _PROJ / "scripts" / "governance" / "index.md"
-    errors = 0
-
-    if not index_path.exists():
-        print("OK: No index.md to validate (baseline pass)")
-        return 0
-
-    index_text = index_path.read_text(encoding="utf-8")
-
-    matches = re.findall(r"(\d+)\s*(?:scripts?|\.py files?)", index_text, re.IGNORECASE)
-    if not matches:
-        print("OK: No numeric script claims found in index.md (baseline pass)")
-        return 0
-
-    gov_dir = _PROJ / "scripts" / "governance"
-    actual_py = len(list(gov_dir.rglob("*.py")))
-
-    for match in matches:
-        claimed = int(match)
-        if claimed != actual_py:
-            print(f"WARN: index.md claims {claimed} scripts, but disk has {actual_py}")
-            errors += 1
-
-    if errors:
-        print(f"\nFAIL: {errors} index-reality mismatch(es)")
-        return 1
-
-    print(f"OK: Index-reality sync passed ({actual_py} scripts)")
-    return 0
+    """Entry point: parse args, run logic, return exit code."""
+    ok, errors = validate_index()
+    if ok:
+        print("✅ Index reality check PASSED")
+        return EXIT_PASS
+    print("❌ Index reality check FAILED")
+    for e in errors:
+        print(f"  → {e}")
+    return EXIT_FINDINGS
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

@@ -1,0 +1,41 @@
+---
+module_id: KE-module_blu-17____________b1-b25-002
+title: 17. 第一轮补全盲点汇总（B1-B25）
+category: module_blueprint
+---
+
+# 17. 第一轮补全盲点汇总（B1-B25）
+
+17. 第一轮补全盲点汇总（B1-B25）
+
+> 方法：蓝图结构完整性审计 + 五大行业对标（IBM ContextForge/Kaman Research/MintMCP/Vibe Coder MCP/Anthropic Tool Use）交叉验证。
+
+| # | 盲点 | 严重度 |
+|---|------|:---:|
+| B1 | 缺 Gateway 集中式安全层——7 Server 直连无治理 | 🔴 |
+| B2 | 缺 Resource 原语——MCP spec 核心三原语之一 | 🔴 |
+| B3 | 缺 Prompt 原语——MCP spec 核心三原语之一 | 🔴 |
+| B4 | 缺沙箱执行环境——AI 生成代码无法安全验证 | 🔴 |
+| B5 | 缺跨 Server 编排器——Agent 手动串联 Server 效率低 | 🟡 |
+| B6 | server_id 命名不统一——doc_guard≠session_handoff, sentinel≠intent_router | 🟡 |
+| B7 | 缺 tools/list 聚合——Agent 逐个连接获取工具目录 | 🟡 |
+| B8 | 缺熔断/降级——单 Server 慢/死整个链路不可用 | 🔴 |
+| B9 | 缺审计日志——无 trace/无 accountability | 🔴 |
+| B10 | 缺限流——无 DoS 防护 | 🟡 |
+| B11 | 缺异步 long-running tool 模式——当前纯同步 | 🟡 |
+| B12 | 缺 tool 渐进式加载——AI 新人上来就全部工具可见 | 📋 |
+| B13 | 缺 blueprint_search 索引增量更新——新蓝图上线下次 AI session 才知道 | 🟡 |
+| B14 | 缺 Kaman Research 式语义签名——前置条件/后置条件/副作用声明 | 🟡 |
+| B15 | 缺 MintMCP 式运维四件套——启动脚本+健康检查+日志聚合+指标导出 | 🟡 |
+| B16 | 缺 IBM ContextForge 式 Gateway 路由表——没有集中式路由配置 | 🟡 |
+| B17 | 缺 IDE 配置自动生成——mcp.json 靠手写 | 🟡 |
+| B18 | 缺 Vibe Coder 式混合匹配工具——无 tool 组合推荐 | 📋 |
+| B19 | 缺 Gate 硬合规触发时机具体化——G6 触发时不知道具体"第几步" | 🟡 |
+| B20 | 缺 blueprint_routing.yaml 完整性——存在但覆盖不全 | 🟡 |
+| B21 | 缺 1人+AI 维护场景的简并协议——当前设计假设多人维护 | 🟡 |
+| B22 | 缺 token 预算强制执行代码——蓝图定义了但没写 | 🟡 |
+| B23 | 缺 session 状态持久化——Server 重启 session 状态丢失 | 🟡 |
+| B24 | 缺 CLAUDE.md 等 AI 上下文文件对 MCP 的引用 | 🟡 |
+| B25 | 缺 cross-server tool chaining hint——tools/call 返回不含 next_suggested_tools | 📋 |
+
+---

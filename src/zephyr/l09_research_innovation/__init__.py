@@ -31,8 +31,4 @@ from __future__ import annotations
 
 from zephyr.l09_research_innovation.backtest_base import BacktestEngineBase, BacktestResult, FactorDiscovery
 
-__all__ = [
-    "BacktestEngineBase",
-    "BacktestResult",
-    "FactorDiscovery",
-]
+__all__ = ['BacktestEngineBase', 'BacktestResult', 'FactorDiscovery', 'backtest_base']

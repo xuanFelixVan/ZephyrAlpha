@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 
 
 class RiskLimitViolationError(Exception):

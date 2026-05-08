@@ -37,7 +37,7 @@ ensure_utf8_stdout()
 import argparse
 import ast
 
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.walk import iter_files
 
 INTERFACE_PATTERNS = {"zephyr\\.shared\\.contracts\\.(abstract|protocol|interface)": "import 来自 contracts（接口）✅"}
@@ -90,6 +90,7 @@ def scan_file(filepath: Path) -> list[dict]:
     "扫描单个文件并返回发现列表."
 
 def _is_impl_import(module: str) -> bool:
+    """_is_impl_import implementation."""
     if not module.startswith("zephyr"):
         return False
     for allowed in ALLOW_LIST:
@@ -130,7 +131,7 @@ def main() -> None:
     for f in findings:
         print(f'[P2] {f['file']}:{f['line']}  {f['import']} – {f['reason']}', file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

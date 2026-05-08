@@ -3,7 +3,7 @@ module_id: PS-REG-001
 title: ZephyrAlpha 规则登记表
 doc_type: register
 status: active
-version: "1.4.1"
+version: "1.4.6"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -68,6 +68,7 @@ ai_autonomy: immutable_core
 | `OPS` | 运维/DevOps 规则 | `01_policies_and_standards/operational/devops/` |
 | `COMPL` | 合规规则 | 待建立 |
 | `TRADE` | 交易规则 | 待建立 |
+| `TRAE` | AI Session 注入规则 | `.trae/rules/project_rules.md` |
 
 ### 1.3 强制方式分类
 
@@ -156,7 +157,7 @@ ai_autonomy: immutable_core
 
 ## 4. ARCH 域（架构规则）
 
-> 来源：`02_enterprise_architecture/` 下的 ADR 和架构文档。
+> 来源：`02_enterprise_architecture/` 下的架构文档与 KB 决策记录。
 
 | 登记号 | 规则内容 | 对应 COND | 强制方式 | 来源路径 |
 |--------|---------|----------|---------|---------|
@@ -167,9 +168,9 @@ ai_autonomy: immutable_core
 | ARCH-005 | 门禁 disable 开关生产禁止关闭 | COND-35 | doc | `02_enterprise_architecture/gate-strategy-standard.md` L361 |
 | ARCH-006 | AI 禁止自行签发门禁豁免 | COND-36 | doc | `02_enterprise_architecture/gate-strategy-standard.md` L497 |
 | ARCH-007 | Pydantic 校验失败不得静默吞掉 | COND-37 | doc | `02_enterprise_architecture/adr/adr-0040-pydantic-v2-structured-contracts.md` L58 |
-| ARCH-008 | 禁止引用 Deprecated ADR 作为当前决策依据 | COND-38 | doc | `02_enterprise_architecture/ssot-authority-map.md` L150-151 |
+| ARCH-008 | 禁止引用 Deprecated KB 决策记录作为当前决策依据 | COND-38 | doc | `02_enterprise_architecture/ssot-authority-map.md` L150-151 |
 | ARCH-009 | 同一 module_id 不得在两个 Active 文件中出现 | COND-39 | ci | `scripts/governance/validate_authority_registry.py` L14 |
-| ARCH-010 | Schema 三处（ADR / DDL / Pydantic Model）必须同步更新 | COND-40 | doc | `02_enterprise_architecture/adr/adr-0040-pydantic-v2-structured-contracts.md` L187 |
+| ARCH-010 | Schema 三处（KB 决策记录 / DDL / Pydantic Model）必须同步更新 | COND-40 | doc | `02_enterprise_architecture/adr/adr-0040-pydantic-v2-structured-contracts.md` L187 |
 | ARCH-011 | SSoT 注册表与实际文件必须同步 | COND-41 | hook | `src/zephyr/hooks/ssot_guard.py` L27-30 |
 | ARCH-012 | CoVe Step 2 必须使用与 Step 1 异构的模型 | COND-42 | doc | `02_enterprise_architecture/adr/adr-0039-cove-hallucination-detection.md` L187-189 |
 | ARCH-013 | FLE 禁止直接 import 实现类，必须定义本地 Protocol | COND-43 | doc | `03_modules/_b_track_interfaces/feedback-loop-engine-interface.md` L383 |
@@ -177,7 +178,7 @@ ai_autonomy: immutable_core
 | ARCH-015 | 服务降级必须写入日志 | COND-45 | doc | `03_modules/_b_track_interfaces/context-engine-interface.md` L712 |
 | ARCH-016 | 知识库写入必须传 provenance | COND-46 | code | `src/zephyr/kb/unified_memory_api.py` L17 |
 | ARCH-017 | HandoffPackage 8 必填字段不得删减 | COND-47 | doc | `02_enterprise_architecture/adr/adr-0041-session-handoff-protocol.md` L83 |
-| ARCH-018 | 未经 ADR 审批禁止创建新正交视图 | COND-48 | doc | `02_enterprise_architecture/target-architecture/README.md` L120 |
+| ARCH-018 | 未经 KB 决策记录审批禁止创建新正交视图 | COND-48 | doc | `02_enterprise_architecture/target-architecture/README.md` L120 |
 | ARCH-019 | beta 接入真实资金前必须升级容器隔离 | COND-49 | doc | `02_enterprise_architecture/adr/adr-0018-agent-sandbox-windows-acl.md` L49 |
 | ARCH-020 | KMS G4 强制人工最终拍板，AI 不得自主激活知识 | — | doc | `02_enterprise_architecture/adr/adr-0005-kms-architecture.md` L172 |
 | ARCH-021 | YAML 门禁文件严禁直接写 P0/P1/P2，必须使用 error/warning/info | — | doc | `02_enterprise_architecture/gate-strategy-standard.md` L111 |
@@ -260,6 +261,27 @@ ai_autonomy: immutable_core
 
 ---
 
+## 6.2 TRAE 域（AI Session 强制注入规则）
+
+> 来源：`.trae/rules/project_rules.md`（Trae IDE 自动注入每个 AI 对话上下文）
+> 这些规则不是文档声明——它们由 Trae IDE 在每次对话启动时自动注入为 hard context。
+> 但依据 RULE-FOUR（创建即注册协议），它们 MUST 在此登记表中登记。
+
+| 登记号 | 规则内容 | 强制方式 | 来源路径 |
+|--------|---------|---------|---------|
+| TRAE-001 | RULE-ZERO：AI 对话文件锁协议——写前必须 check→acquire→release | doc | `.trae/rules/project_rules.md` RULE-ZERO |
+| TRAE-002 | RULE-ONE：Python 脚本并发写入安全——temp+rename 原子模式 | doc | `.trae/rules/project_rules.md` RULE-ONE |
+| TRAE-003 | RULE-TWO：反孤儿功能——新产出必须可被发现和调用（五问+集成清单） | doc | `.trae/rules/project_rules.md` RULE-TWO |
+| TRAE-004 | RULE-THREE：删除前置确认协议——不经过三步审判不删任何文件 | doc | `.trae/rules/project_rules.md` RULE-THREE |
+| TRAE-005 | RULE-FOUR：创建即注册协议——文件落盘同时注册表必须更新 | doc | `.trae/rules/project_rules.md` RULE-FOUR |
+| TRAE-006 | RULE-FIVE：临时文件零残留铁律——session 结束时根目录不得有临时文件 | doc | `.trae/rules/project_rules.md` RULE-FIVE |
+| TRAE-007 | RULE-SIX：任务粒度边界——二元四指标机械门判定是否创建 TaskCard | doc | `.trae/rules/project_rules.md` RULE-SIX |
+| TRAE-008 | RULE-SEVEN：脚本多线程强制——独立子进程/I/O 必须 ThreadPoolExecutor 并行 + 创建即自测自修 | doc | `.trae/rules/project_rules.md` RULE-SEVEN |
+| TRAE-009 | RULE-EIGHT：强制功能发现协议——不搜索已有功能证明没有同功能代码，不新建 | doc | `.trae/rules/project_rules.md` RULE-EIGHT |
+| TRAE-010 | RULE-NINE：强制资产认知——进入项目 MUST 了解全盘资产规模与健康状态（读 `unified_asset_index.yaml` + 项目资产全景卡），对标 K8s `kubectl api-resources` + Linux `man hier` | doc | `.trae/rules/project_rules.md` RULE-NINE + 项目资产全景 |
+
+----
+
 ## 7. 统计
 
 | 域 | 登记数 | ABS 对应 | COND 对应 | 独立规则 |
@@ -270,22 +292,34 @@ ai_autonomy: immutable_core
 | DOC | 25 | 0 | 25 | 0 |
 | AI | 5 | 0 | 5 | 0 |
 | SCRIPT | 13 | 0 | 1 | 12 |
-| **合计** | **124** | **44** | **51** | **29** |
+| TRAE | 10 | 0 | 0 | 10 |
+| **合计** | **134** | **44** | **51** | **41** |
 
 ---
 
 ## 8. 新增规则登记流程
 
-1. 发现新规则时，确定其所属域（META/CODE/ARCH/DOC/AI/...）
+1. 发现新规则时，确定其所属域（META/CODE/ARCH/DOC/AI/SCRIPT/TRAE/...）
 2. 在对应域的表格中新增一行，登记号按序递增
 3. 如果规则同时对应 ABS/COND/REC，填写对应编号
 4. 如果规则是代码级强制，强制方式填 `code`，代码路径填完整路径 + 行号
 5. 更新 §7 统计表
 
+**特别条款：TRAE 域自动同步**
+
+当 `.trae/rules/project_rules.md` 中新增任何 `RULE-*` 条目时：
+- （A）MUST 在本登记表中新增对应的 TRAE-* 条目
+- （B）可选运行自动同步脚本：`python scripts/governance/sync_rule_registry.py`（从 project_rules.md 提取所有 RULE-* 并对比登记表，报告差异）
+
 ---
 
 ## 9. 变更记录
 
+| 1.4.6 | 2026-05-07 | 新增 TRAE-011。(1) 登记 AI Session 快速参考卡规则：每个 AI 入项目后 MUST 能引用附录 C 中的资产摘要卡。(2) 统计更新：134→135 条（+1 TRAE → 11）。版本号 patch +1。 |
+| 1.4.5 | 2026-05-07 | 新增 TRAE-010。(1) 登记冷启动 STEP 4.5：AI MUST 读 unified_asset_index.yaml 了解全项目资产规模与健康状态。(2) 统计更新：133→134 条（+1 TRAE → 10）。版本号 patch +1。 |
+| 1.4.4 | 2026-05-07 | 新增 TRAE-009。(1) 登记 RULE-EIGHT：强制功能发现协议——不搜索已有，不新建。复用四选一决策（完全覆盖→直接用 / 80%→扩展 / 50%→重构+扩展 / 0%→可新建）。(2) 统计更新：132→133 条（+1 TRAE → 9）。版本号 patch +1。 |
+| 1.4.3 | 2026-05-07 | 新增 TRAE-008。(1) 登记 RULE-SEVEN：脚本多线程强制——独立子进程/I/O 必须 ThreadPoolExecutor 并行 + 创建即自测自修。(2) 统计更新：131→132 条（+1 TRAE）。版本号 patch +1。 |
+| 1.4.2 | 2026-05-07 | 新增 TRAE 域。(1) 登记 TRAE-001~007：RULE-ZERO（锁协议）到 RULE-SIX（任务粒度二元四指标机械门）七条 AI Session 强制注入规则。(2) 统计更新：124→131 条（+7 TRAE）。版本号 patch +1。 |
 | 1.3.0 | 2026-05-02 | 新增 SCRIPT 域。(1) 登记 SCRIPT-QUALITY-001（审计脚本质量标准）13 条 MUST 规则。(2) 统计更新：111→124 条（44 ABS + 51 COND + 29 独立）。(3) SCRIPT-003 映射 ABS-43（shell=True 禁止）。版本号 minor +1。 |
 | 1.2.2 | 2026-05-06 | AUDIT-02：`PS-STD-012 §2.1` 的索引失真阻断已注册 **META-V21**（PS-STD-001 §14.1）；修正 §9 变更记录 1.2.1 行表述。 |
 | 1.2.1 | 2026-05-01 | meta/ 最终审查。(1) depends_on 格式 V2 确认（结构化行级）。(2) META-V17 违规 ID 冲突已解决：PS-STD-012 §2.1 不再错误复用 META-V17（该 ID 在 PS-STD-001 §14.1 中定义为 blueprint_refs 废弃蓝图检查），改为待分配占位（**META-V21** 已于 2026-05-06 正式分配——见本文件 1.2.2）。版本号 patch +1。 |

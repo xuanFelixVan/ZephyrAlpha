@@ -23,6 +23,7 @@ warn_only: true
 """
 
 
+import os
 import re
 import sys
 from argparse import ArgumentParser
@@ -33,7 +34,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import GOV_DOCS_DIR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -79,6 +80,7 @@ _SUBDIRS = [
 ]
 
 def _count_files(root: Path) -> int:
+    """_count_files implementation."""
     count = 0
     for entry in sorted(root.iterdir()):
         if entry.name in EXCLUDE_NAMES:
@@ -95,6 +97,7 @@ def _count_files(root: Path) -> int:
     return count
 
 def _count_recursive(root: Path) -> int:
+    """_count_recursive implementation."""
     total = 0
     for entry in sorted(root.rglob("*")):
         if entry.name in EXCLUDE_NAMES:
@@ -106,6 +109,7 @@ def _count_recursive(root: Path) -> int:
     return total
 
 def _generate_table() -> list[str]:
+    """_generate_table implementation."""
     lines = [TABLE_START_MARKER]
     lines.append("| 子目录 | 职责 | 管辖文件数 | 索引入口 | 注册表 |")
     lines.append("|--------|------|:---------:|---------|--------|")
@@ -169,24 +173,32 @@ def sync(check_only: bool = False) -> int:
         range_tuple = _find_table_range(original)
         if not range_tuple:
             print("ERROR: 找不到 PS-IDX-001 中的文件数表格", file=sys.stderr)
-            return 2
+            return EXIT_ERROR
         start, end = range_tuple
         updated = original[:start] + table_block + original[end:]
 
     if updated == original:
         print("OK: PS-IDX-001 文件数表格与磁盘实际一致，无漂移")
-        return 0
+        return EXIT_PASS
 
     if check_only:
         print("DRIFT: PS-IDX-001 §二 文件数表格与磁盘实际不一致！")
         print("       请运行 sync_policies_index.py 修复")
-        return 1
+        return EXIT_FINDINGS
 
-    with open(PS_IDX_PATH, "w", encoding="utf-8") as f:
-        f.write(updated)
-
+    tmp_path = f"{PS_IDX_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            f.write(updated)
+    
+        os.replace(tmp_path, PS_IDX_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print("OK: PS-IDX-001 §二 文件数表格已从磁盘实际同步更新")
-    return 0
+    return EXIT_PASS
     """sync."""
 
 def main() -> None:

@@ -1,0 +1,66 @@
+"""Tests for MOD-INF-026 §26 Trust Anchor module."""
+
+from pathlib import Path
+from datetime import datetime, timezone
+
+from zephyr.asset_inventory.trust_anchor import (
+    TripleTrustAnchorGate,
+    TrustAnchorResult,
+    TrustLevel,
+)
+
+
+class TestTrustLevel:
+    def test_values(self) -> None:
+        assert TrustLevel.FULL == "FULL"
+        assert TrustLevel.PARTIAL == "PARTIAL"
+        assert TrustLevel.BROKEN == "BROKEN"
+
+    def test_comparison(self) -> None:
+        assert TrustLevel.FULL != TrustLevel.BROKEN
+
+
+class TestTrustAnchorResult:
+    def test_defaults(self) -> None:
+        r = TrustAnchorResult()
+        assert not r.git_ok
+        assert r.trust_level == TrustLevel.BROKEN
+
+    def test_checked_at_auto(self) -> None:
+        r = TrustAnchorResult()
+        assert isinstance(r.checked_at, datetime)
+
+
+class TestTripleTrustAnchorGate:
+    def test_constructor(self) -> None:
+        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        assert gate._root
+
+    def test_calculate_trust_full(self) -> None:
+        assert TripleTrustAnchorGate._calculate_trust(True, True, True) == TrustLevel.FULL
+
+    def test_calculate_trust_partial(self) -> None:
+        assert TripleTrustAnchorGate._calculate_trust(True, True, False) == TrustLevel.PARTIAL
+
+    def test_calculate_trust_broken(self) -> None:
+        assert TripleTrustAnchorGate._calculate_trust(False, False, True) == TrustLevel.BROKEN
+
+    def test_recommend_full(self) -> None:
+        msg = TripleTrustAnchorGate._recommend(TrustLevel.FULL)
+        assert "完全可信" in msg
+
+    def test_recommend_broken(self) -> None:
+        msg = TripleTrustAnchorGate._recommend(TrustLevel.BROKEN)
+        assert "不可信" in msg
+
+    def test_verify_returns_result(self) -> None:
+        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        result = gate.verify()
+        assert isinstance(result, TrustAnchorResult)
+        assert result.trust_level in (TrustLevel.FULL, TrustLevel.PARTIAL, TrustLevel.BROKEN)
+
+    def test_cache_returns_same(self) -> None:
+        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        r1 = gate.verify()
+        r2 = gate.verify()
+        assert r1.checked_at == r2.checked_at

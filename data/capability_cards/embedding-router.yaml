@@ -1,0 +1,37 @@
+capability_id: embedding-router
+category: embedding
+description: BGE-M3 + bge-small dual-model embedding router with Ollama backend
+examples:
+- input:
+    model: bge-m3
+    text: hello world
+  output:
+    dim: 1024
+input_schema:
+  properties:
+    model:
+      enum:
+      - bge-m3
+      - bge-small
+      type: string
+    text:
+      type: string
+  type: object
+name: Embedding Router
+output_schema:
+  properties:
+    dim:
+      type: integer
+    vector:
+      type: array
+  type: object
+priority: P0
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- embedding
+- vector
+- search
+- ollama

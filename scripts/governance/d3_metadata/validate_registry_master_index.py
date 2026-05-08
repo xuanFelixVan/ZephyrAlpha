@@ -24,7 +24,7 @@ try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装", file=sys.stderr)
-    sys.exit(2)
+    sys.exit(EXIT_ERROR)
 _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
@@ -32,7 +32,7 @@ from _shared.encoding import ensure_utf8_stdout
 from _shared.registry_entry_count import count_primary_registry_entries, primary_count_entry_key
 
 ensure_utf8_stdout()
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 
 MASTER_INDEX_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
@@ -178,11 +178,11 @@ def main() -> None:
     args = parser.parse_args()
     if not MASTER_INDEX_PATH.exists():
         print(f"[CRIT] 总索引不存在: {MASTER_INDEX_PATH}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     data, load_err = read_yaml(MASTER_INDEX_PATH)
     if load_err:
         print(f"[CRIT] {load_err}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     errors, findings = validate_master_index(data, verbose=args.verbose)
     errs = sum(1 for f in findings if f["type"] == "error")
     warns = sum(1 for f in findings if f["type"] == "warn")
@@ -206,13 +206,13 @@ def main() -> None:
         print(f"  [{tag}] {rid}: {issue}", file=sys.stderr)
     if not findings and (not errors):
         print("[validate_registry_master_index] PASS — 总索引自校验通过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if args.warn_only:
         print("[validate_registry_master_index] WARN-ONLY 模式", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if errs > 0:
-        sys.exit(2)
-    sys.exit(0)
+        sys.exit(EXIT_ERROR)
+    sys.exit(EXIT_PASS)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,63 @@
+generated_at: '2026-05-08T12:49:27.419315+00:00'
+generated_by: scripts/governance/generate_asset_index.py
+total_assets: 37626
+by_category:
+  python_source: 0
+  python_test: 2661
+  yaml_config: 727
+  markdown_doc: 32564
+  json_data: 83
+  sql: 1
+  toml: 1
+  other: 1589
+by_directory:
+  config/config:
+    other: 2
+    total: 41
+    yaml_config: 38
+    json_data: 1
+  data/data:
+    other: 92
+    total: 144
+    json_data: 23
+    yaml_config: 26
+    markdown_doc: 3
+  tests/tests:
+    python_test: 534
+    total: 971
+    other: 436
+    yaml_config: 1
+  scripts/scripts:
+    python_test: 371
+    total: 1098
+    yaml_config: 493
+    markdown_doc: 38
+    other: 149
+    json_data: 47
+  src/src/zephyr:
+    yaml_config: 57
+    total: 2741
+    python_test: 1756
+    other: 879
+    toml: 1
+    markdown_doc: 44
+    json_data: 3
+    sql: 1
+  docs/docs:
+    markdown_doc: 32479
+    total: 32631
+    yaml_config: 112
+    json_data: 9
+    other: 31
+modules:
+  total_modules: 45
+health:
+  health_score: 90.0
+  health_grade: A
+  test_ratio: 2661.0
+  doc_ratio: 0.865
+orphan_risk:
+  orphan_estimate: 1128
+  orphan_rate: 0.03
+summary: Health A (90.0), 37626 total assets, 45 modules, test/ds ratio 2661.00, orphan
+  rate ~3.0%

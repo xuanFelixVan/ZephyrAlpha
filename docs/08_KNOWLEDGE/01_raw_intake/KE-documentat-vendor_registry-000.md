@@ -1,0 +1,27 @@
+---
+module_id: KE-documentat-vendor_registry-000
+title: Vendor Registry 配置片段
+category: documentation
+---
+
+# Vendor Registry 配置片段
+
+Vendor Registry 配置片段
+brokers:
+  - id: XXXX-securities
+    name: "XXXX 证券"
+    jurisdiction: cn_a_share
+    asset_class: equity
+    provider_rank: primary
+    acquisition_method: sdk
+    status: active
+    fallback_brokers: [YYYY-securities]
+  - id: YYYY-securities
+    name: "YYYY 证券"
+    jurisdiction: cn_a_share
+    asset_class: equity
+    provider_rank: secondary
+    status: active
+```
+
+---

@@ -83,7 +83,7 @@ scripts:
     exit_code_mapping: {0: pass, 1: findings, 2: error}
     auto_gate: null
 
-  - script_id: "d1_structure/cbg_reset.py"
+  - script_id: "d1_structure/reset_cbg.py"
     dimensions: ["D1"]
     description: "CBG上下文预算重置工具"
     priority: P2
@@ -91,7 +91,7 @@ scripts:
     exit_code_mapping: {0: pass, 1: findings, 2: error}
     auto_gate: null
 
-  - script_id: "d1_structure/drafts_zone_archiver.py"
+  - script_id: "d1_structure/archive_drafts_zone.py"
     dimensions: ["D1", "D4"]
     description: "草稿区归档检查"
     priority: P2
@@ -382,10 +382,10 @@ scripts:
 # 维度覆盖矩阵
 # ============================================================================
 dimension_coverage:
-  D1:  {covered: true, scripts: ["validate_immutable_core", "validate_config_integrity", "audit_directory_integrity", "cbg_reset", "drafts_zone_archiver", "detect_ruins_references"], count: 6}
+  D1:  {covered: true, scripts: ["validate_immutable_core", "validate_config_integrity", "audit_directory_integrity", "reset_cbg", "archive_drafts_zone", "detect_ruins_references"], count: 6}
   D2:  {covered: true, scripts: ["audit_broken_links"], count: 1}
   D3:  {covered: true, scripts: ["validate_architecture", "check_frontmatter_metadata", "check_naming_convention", "validate_blueprint_provenance", "generate_rule_catalog"], count: 5}
-  D4:  {covered: true, scripts: ["validate_architecture", "validate_config_integrity", "audit_directory_integrity", "validate_blueprint_provenance", "detect_ruins_references", "drafts_zone_archiver"], count: 6}
+  D4:  {covered: true, scripts: ["validate_architecture", "validate_config_integrity", "audit_directory_integrity", "validate_blueprint_provenance", "detect_ruins_references", "archive_drafts_zone"], count: 6}
   D5:  {covered: true, scripts: ["validate_architecture", "validate_immutable_core", "validate_config_integrity", "validate_ssot", "validate_authority_registry", "validate_field_ownership", "validate_autonomy_gate", "validate_layer_deps", "audit_depends_on_chain_depth", "validate_depends_on_format", "validate_session_log_updated"], count: 11}
   D6:  {covered: true, scripts: ["validate_config_integrity", "detect_secrets", "detect_shell_true", "detect_threading_lock", "detect_git_dangerous", "detect_keywords_in_logs", "detect_shell_dangerous", "detect_vague_terms"], count: 8}
   D7:  {covered: true, scripts: ["validate_fle_imports", "validate_test_coverage", "validate_unused_imports", "validate_import_style", "validate_init_all", "validate_test_assertion_depth", "validate_docstring_coverage", "validate_type_annotation_coverage"], count: 8}

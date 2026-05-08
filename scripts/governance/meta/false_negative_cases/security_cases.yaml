@@ -1,0 +1,32 @@
+cases:
+  - case_id: "FN-SEC-001"
+    description: "硬编码密钥未使用 SecretsManager"
+    expected_detection: "security"
+    severity: "critical"
+    input_file: "test_fixtures/fn_sec_001.py"
+    expected_finding_count: 1
+    false_negative_if: "安全扫描脚本未检出硬编码密钥"
+
+  - case_id: "FN-SEC-002"
+    description: "open() 未显式声明 encoding='utf-8'"
+    expected_detection: "security"
+    severity: "high"
+    input_file: "test_fixtures/fn_sec_002.py"
+    expected_finding_count: 1
+    false_negative_if: "安全扫描脚本未检出缺失编码声明"
+
+  - case_id: "FN-SEC-003"
+    description: "SQL 拼接存在注入风险"
+    expected_detection: "security"
+    severity: "critical"
+    input_file: "test_fixtures/fn_sec_003.py"
+    expected_finding_count: 1
+    false_negative_if: "安全扫描脚本未检出SQL注入风险"
+
+  - case_id: "FN-SEC-004"
+    description: "异常捕获过于宽泛(except Exception 无具体处理)"
+    expected_detection: "security"
+    severity: "medium"
+    input_file: "test_fixtures/fn_sec_004.py"
+    expected_finding_count: 1
+    false_negative_if: "安全扫描脚本未检出宽泛异常捕获"

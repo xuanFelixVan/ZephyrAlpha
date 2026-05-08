@@ -15,6 +15,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import argparse
 import re
 import sys
@@ -62,6 +63,7 @@ DIM_FROM_DIR = {
 
 
 def extract_first_docstring_line(source: str) -> str:
+    """extract_first_docstring_line implementation."""
     m = re.search(r'"""(.*?)"""', source, re.DOTALL)
     if not m:
         return ""
@@ -74,6 +76,7 @@ def extract_first_docstring_line(source: str) -> str:
 
 
 def infer_dimensions(rel_path: str) -> list[str]:
+    """infer_dimensions implementation."""
     for dir_name, dims in DIM_FROM_DIR.items():
         if rel_path.startswith(dir_name + "/") or rel_path == dir_name:
             return dims
@@ -81,10 +84,12 @@ def infer_dimensions(rel_path: str) -> list[str]:
 
 
 def has_manifest(content: str) -> bool:
+    """has_manifest implementation."""
     return "__manifest__" in content
 
 
 def inject_manifest(content: str, manifest_data: dict) -> str:
+    """inject_manifest implementation."""
     yaml_block = yaml.dump(manifest_data, allow_unicode=True, default_flow_style=False).strip()
     block = f'__manifest__ = """\n{yaml_block}\n"""\n'
     pos = content.find("\n\n", content.find('"""'))
@@ -98,6 +103,7 @@ def inject_manifest(content: str, manifest_data: dict) -> str:
 
 
 def build_manifest_entry(entry: dict) -> dict:
+    """build_manifest_entry implementation."""
     return {
         "dimensions": entry.get("dimensions", []),
         "priority": entry.get("priority", "P2"),
@@ -109,6 +115,7 @@ def build_manifest_entry(entry: dict) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
     parser = argparse.ArgumentParser(description="批量注入 __manifest__ 块到治理脚本")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不修改文件")
@@ -155,7 +162,15 @@ def main() -> None:
         if args.dry_run:
             print(f"[DRY-RUN] 将注入: {rel_path}")
         else:
-            py_file.write_text(new_content, encoding="utf-8")
+            tmp_path = f"{py_file}.{os.getpid()}.tmp"
+            try:
+                Path(tmp_path).write_text(new_content, encoding="utf-8")
+                os.replace(tmp_path, py_file)
+            except PermissionError:
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
 
         injected += 1
 

@@ -1,0 +1,34 @@
+dag_id: model_drift_check
+default_layer: local
+default_priority: P1
+description: Collect-Compare-Alert
+edges:
+- condition: success
+  from_node: collect
+  to_node: compare
+- condition: failure
+  from_node: compare
+  to_node: alert
+max_parallelism: 3
+name: Model Drift Check
+nodes:
+- capability_id: health-monitor
+  layer_override: null
+  node_id: collect
+  params: {}
+  priority_override: null
+  work_type: collect_metrics
+- capability_id: ollama-chat
+  layer_override: null
+  node_id: compare
+  params: {}
+  priority_override: null
+  work_type: anomaly_triage
+- capability_id: status-dashboard
+  layer_override: null
+  node_id: alert
+  params: {}
+  priority_override: null
+  work_type: alert
+retry_on_failure: 2
+timeout_minutes: 60

@@ -1,0 +1,24 @@
+cases:
+  - case_id: "FN-DQ-001"
+    description: "蓝图-代码字段数不一致"
+    expected_detection: "data_quality"
+    severity: "high"
+    input_file: "test_fixtures/fn_dq_001.py"
+    expected_finding_count: 1
+    false_negative_if: "数据质量脚本未检测出字段数漂移"
+
+  - case_id: "FN-DQ-002"
+    description: "注册表滞后——文件存在但未注册"
+    expected_detection: "data_quality"
+    severity: "medium"
+    input_file: "test_fixtures/fn_dq_002.py"
+    expected_finding_count: 1
+    false_negative_if: "数据质量脚本未检测出注册表滞后"
+
+  - case_id: "FN-DQ-003"
+    description: "YAML版本号与内容版本号不一致"
+    expected_detection: "data_quality"
+    severity: "medium"
+    input_file: "test_fixtures/fn_dq_003.py"
+    expected_finding_count: 1
+    false_negative_if: "数据质量脚本未检测出版本号不一致"

@@ -1,0 +1,48 @@
+"""Cryptographic Bootstrap — v0.15.0 R204
+
+Blindspot: FLE action log tamperable; no cryptographic chain of trust from genesis.
+Risk: R204 — Attacker rewrites FLE audit trail; first recorded state is fiction.
+
+Mitigation: Genesis→Current hash chain; every state transition cryptographically linked to predecessor.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import time
+from dataclasses import dataclass, field
+
+
+@dataclass
+class HashLink:
+    index: int
+    timestamp: float
+    action_hash: str
+    prev_hash: str
+    state_hash: str
+
+
+@dataclass
+class CryptoBootstrap:
+    genesis_hash: str = ""
+    chain: list[HashLink] = field(default_factory=list)
+
+    def genesis(self, initial_state: dict) -> str:
+        state_json = json.dumps(initial_state, sort_keys=True)
+        self.genesis_hash = hashlib.sha256(f"GENESIS:{state_json}".encode()).hexdigest()
+        self.chain.append(HashLink(index=0, timestamp=time.time(), action_hash="GENESIS", prev_hash="0" * 64, state_hash=self.genesis_hash))
+        return self.genesis_hash
+
+    def append(self, action: str, state: dict) -> HashLink:
+        action_hash = hashlib.sha256(action.encode()).hexdigest()
+        state_hash = hashlib.sha256(json.dumps(state, sort_keys=True).encode()).hexdigest()
+        prev_hash = self.chain[-1].state_hash if self.chain else self.genesis_hash
+        link = HashLink(index=len(self.chain), timestamp=time.time(), action_hash=action_hash, prev_hash=prev_hash, state_hash=state_hash)
+        self.chain.append(link)
+        return link
+
+    def verify_chain(self) -> bool:
+        for i in range(1, len(self.chain)):
+            if self.chain[i].prev_hash != self.chain[i - 1].state_hash:
+                return False
+        return True

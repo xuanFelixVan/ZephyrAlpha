@@ -23,7 +23,7 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schemas import Priority, SafetyLevel, TaskNamespace, normalize_execution_model
+from zephyr.shared.schema.schemas import Priority, SafetyLevel, TaskNamespace, normalize_execution_model
 
 logger = logging.getLogger(__name__)
 
@@ -68,11 +68,27 @@ class TaskManagerMCP:
         self.mcp = FastMCP("task-manager")
         self._register_tools()
         self._global_seq = 0
+        self._idempotency_cache: dict[str, dict] = {}
 
     @property
     def server(self) -> object:
         """向后兼容：指向 FastMCP 内部 lowlevel ``Server``（tests/ 与红队脚本读 ``.name``）。"""
         return self.mcp._mcp_server  # type: ignore[attr-defined]
+
+    @property
+    def tool_names(self) -> list[str]:
+        """已注册工具名称列表（与 BaseMCPServer API 保持一致）。"""
+        try:
+            return list(self.mcp._tool_manager._tools.keys())
+        except Exception:
+            return [
+                "task_manager.create_task",
+                "task_manager.get_task",
+                "task_manager.list_tasks",
+                "task_manager.update_task_status",
+                "task_manager.decompose_blueprint",
+                "task_manager.register_from_triage",
+            ]
 
     def _rbac_guard(self, action: str, task_id: str = "") -> None:
         """权限守卫——调用注入的 auth_check 钩子。
@@ -108,10 +124,23 @@ class TaskManagerMCP:
             phase: int = 1,
             execution_model: str = "deepseek",
             safety_level: str = "L",
+            downstream_outputs: list = [],
         ) -> dict:
-            """创建 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 1"""
+            """创建 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 1（idempotent）"""
+            import hashlib
+
             mgr._rbac_guard("create_task")
-            from zephyr.shared.schemas import Priority
+            from zephyr.shared.schema.schemas import Priority
+
+            raw = json.dumps({
+                "title": title, "source_blueprint": source_blueprint,
+                "source_section": source_section, "description": description,
+                "namespace": namespace, "priority": priority, "phase": phase,
+            }, sort_keys=True, ensure_ascii=False)
+            arg_hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+            cached = mgr._idempotency_cache.get(arg_hash)
+            if cached is not None:
+                return cached
 
             ns = getattr(TaskNamespace, namespace.upper(), TaskNamespace.CP)
             seq = mgr._next_seq(ns)
@@ -164,7 +193,29 @@ class TaskManagerMCP:
             )
 
             mgr._persist(tc)
-            return mgr._to_response(tc)
+            resp = mgr._to_response(tc)
+
+            if downstream_outputs:
+                try:
+                    from zephyr.shared.path_resolver import PathResolver
+                    resolver = PathResolver(str(Path(__file__).resolve().parents[3]))
+                    warnings = []
+                    for item in downstream_outputs:
+                        if isinstance(item, dict) and 'path' in item:
+                            resolution = resolver.validate_path(item['path'])
+                            if resolution.status != "OK" and resolution.suggested_path:
+                                warnings.append({
+                                    "expected": item['path'],
+                                    "suggested": resolution.suggested_path,
+                                    "status": resolution.status,
+                                })
+                    if warnings:
+                        resp["g8_warnings"] = warnings
+                except ImportError:
+                    pass
+
+            mgr._idempotency_cache[arg_hash] = resp
+            return resp
 
         @mcp.tool(name="task_manager.get_task")
         async def get_task(task_id: str) -> dict:
@@ -386,21 +437,230 @@ def _extract_triage_profile(content: str, task_id: str) -> dict:
     return profile
 
 
-def _parse_md_status(content: str) -> str | None:
-    for line in content.split("\n"):
-        if line.startswith("**状态**："):
-            return line.split("：", 1)[1].strip()
-    return None
-
-
 _MD_KV_PATTERN = re.compile(r"^\*\*(.+?)\*\*[：:]\s*(.+)$")
 _MD_LIST_ITEM = re.compile(r"^-\s+(.+)$")
-_MD_GATE_PASSED = re.compile(r"已通过:\s*\[(.*?)\]")
-_MD_GATE_BLOCKED = re.compile(r"阻塞:\s*(.+)$")
-_MD_TIME_ITEM = re.compile(r"^-\s*(创建|更新)[：:]\s*(.+)$")
 
 
 def _parse_md_to_taskcard(content: str) -> TaskCard | None:
+    yaml_fm = _extract_yaml_frontmatter(content)
+    if yaml_fm:
+        return _parse_yaml_frontmatter_to_taskcard(yaml_fm)
+
+    return _parse_legacy_md_to_taskcard(content)
+
+
+_YAML_FM_PATTERN = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
+
+
+def _extract_yaml_frontmatter(content: str) -> dict | None:
+    m = _YAML_FM_PATTERN.match(content)
+    if not m:
+        return None
+    raw_yaml = m.group(1).strip()
+    if not raw_yaml:
+        return None
+    try:
+        import yaml as _yaml
+        fm = _yaml.safe_load(raw_yaml)
+        if isinstance(fm, dict):
+            return fm
+    except Exception:
+        pass
+    return None
+
+
+def _parse_yaml_frontmatter_to_taskcard(fm: dict) -> TaskCard:
+    now = datetime.now(UTC)
+    task_id = str(fm.get("task_id", ""))
+    ns_str = str(fm.get("namespace", "CP"))
+    ns = getattr(TaskNamespace, ns_str, TaskNamespace.CP) if ns_str else TaskNamespace.CP
+
+    status_str = str(fm.get("status", "PENDING"))
+    status = getattr(TaskStatus, status_str.upper(), TaskStatus.PENDING)
+
+    priority_str = str(fm.get("priority", "P2"))
+    priority = getattr(Priority, priority_str, Priority.P2)
+
+    safety_str = str(fm.get("safety_level", "L"))
+    safety_level = getattr(SafetyLevel, safety_str, SafetyLevel.L)
+
+    classification_str = str(fm.get("classification", "internal"))
+    classification = getattr(
+        __import__("zephyr.shared.schemas", fromlist=["Classification"]).Classification,
+        classification_str.upper(),
+        __import__("zephyr.shared.schemas", fromlist=["Classification"]).Classification.INTERNAL,
+    )
+
+    evolution_str = str(fm.get("evolution_policy", "extendable"))
+    evolution_policy = getattr(
+        __import__("zephyr.shared.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy,
+        evolution_str.upper(),
+        __import__("zephyr.shared.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy.EXTENDABLE,
+    )
+
+    upstream_files = _normalize_str_list(fm.get("upstream_files", []))
+    downstream_outputs = _normalize_downstream_outputs(fm.get("downstream_outputs", []))
+    allowed_touch = _normalize_str_list(fm.get("allowed_touch", []))
+    forbidden_touch = _normalize_str_list(fm.get("forbidden_touch", []))
+    applicable_rules = _normalize_dict_list(fm.get("applicable_rules", []), {"module_id", "section", "reason"})
+    context_assembly = _normalize_dict_list(fm.get("context_assembly_manifest", []), {"file_path", "reason"})
+
+    execution_model_raw = fm.get("execution_model") or fm.get("assigned_model", "deepseek")
+
+    phase = int(fm.get("phase", 1))
+    estimated_tokens = int(fm.get("estimated_tokens", 8000))
+    timeout_minutes = int(fm.get("timeout_minutes", 30))
+    estimate_hours = float(fm.get("estimate_hours", 0.0))
+    seq = int(fm.get("seq", 0) or 0) or 1
+
+    acceptance = _normalize_str_list(fm.get("acceptance_criteria") or fm.get("acceptance", []))
+    depends_on = _normalize_str_list(fm.get("depends_on", []))
+    blocked_by = _normalize_str_list(fm.get("blocked_by", []))
+    deliverables = [item.get("path", item.get("description", str(item))) if isinstance(item, dict) else str(item) for item in downstream_outputs]
+    files_in_scope = _normalize_str_list(fm.get("files_in_scope", []))
+
+    tags = _merge_tags(
+        fn=_normalize_str_list(fm.get("tags_fn", [])),
+        ly=fm.get("tags_ly", ""),
+        md=fm.get("tags_md", ""),
+        st=fm.get("tags_st", ""),
+        mo=_normalize_str_list(fm.get("tags_mo", [])),
+        extra=_normalize_str_list(fm.get("tags", [])),
+    )
+
+    source_blueprint = str(fm.get("source_blueprint", "unknown"))
+    source_section = str(fm.get("source_section", "unknown"))
+    title_text = str(fm.get("title", task_id or "Untitled"))
+    description = str(fm.get("description", title_text))
+
+    created_at_str = fm.get("created_at")
+    created_at = _parse_time(str(created_at_str)) if created_at_str else now
+    updated_at_str = fm.get("updated_at")
+    updated_at = _parse_time(str(updated_at_str)) if updated_at_str else now
+
+    completed_gates_raw = fm.get("completed_gates", [])
+    gates_list = [GateLevel(g) for g in completed_gates_raw if isinstance(g, str) and g in GateLevel.__members__]
+    blocked_gates_raw = fm.get("blocked_gates", {})
+    blocked_gates = blocked_gates_raw if isinstance(blocked_gates_raw, dict) else {}
+
+    return TaskCard(
+        task_id=task_id,
+        namespace=ns,
+        seq=seq,
+        title=title_text,
+        status=status,
+        priority=priority,
+        phase=phase,
+        execution_model=normalize_execution_model(str(execution_model_raw)),
+        safety_level=safety_level,
+        classification=classification,
+        evolution_policy=evolution_policy,
+        estimate_hours=estimate_hours,
+        source_blueprint=source_blueprint,
+        source_section=source_section,
+        description=description,
+        files_in_scope=files_in_scope,
+        deliverables=deliverables,
+        acceptance=acceptance,
+        depends_on=depends_on,
+        tags=tags,
+        upstream_files=upstream_files,
+        downstream_outputs=downstream_outputs,
+        allowed_touch=allowed_touch,
+        forbidden_touch=forbidden_touch,
+        applicable_rules=applicable_rules,
+        context_assembly_manifest=context_assembly,
+        rollback_instructions=str(fm.get("rollback_instructions", "")),
+        estimated_tokens=estimated_tokens,
+        timeout_minutes=timeout_minutes,
+        completed_gates=gates_list,
+        blocked_gates=blocked_gates,
+        assigned_pipeline=str(fm.get("assigned_pipeline", "A")),
+        pipeline_modules=_normalize_str_list(fm.get("pipeline_modules", [])),
+        blocked_by=blocked_by,
+        artifact_paths=_normalize_str_list(fm.get("artifact_paths", [])),
+        ai_autonomy_level=str(fm.get("ai_autonomy_level", "supervised")),
+        created_at=created_at,
+        updated_at=updated_at,
+    )
+
+
+def _normalize_str_list(value: object) -> list[str]:
+    if isinstance(value, list):
+        return [str(v) for v in value]
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
+
+
+def _normalize_dict_list(value: object, known_keys: set[str]) -> list[dict]:
+    if not isinstance(value, list):
+        return []
+    result: list[dict] = []
+    for item in value:
+        if isinstance(item, dict):
+            result.append(item)
+        elif isinstance(item, str) and item.strip():
+            result.append({"source": item.strip()})
+    return result
+
+
+def _normalize_downstream_outputs(value: object) -> list[dict]:
+    if not isinstance(value, list):
+        return []
+    result: list[dict] = []
+    for item in value:
+        if isinstance(item, dict):
+            result.append(item)
+        elif isinstance(item, str):
+            if " — " in item:
+                path_part, desc_part = item.split(" — ", 1)
+                result.append({"path": path_part.strip(), "description": desc_part.strip()})
+            else:
+                result.append({"path": item.strip(), "description": ""})
+    return result
+
+
+def _merge_tags(*, fn: list[str], ly: str, md: str, st: str, mo: list[str], extra: list[str]) -> list[str]:
+    merged: list[str] = list(extra)
+    merged.extend(f"fn:{t}" for t in fn if t)
+    if ly:
+        merged.append(f"ly:{ly}")
+    if md:
+        merged.append(f"md:{md}")
+    if st:
+        merged.append(f"st:{st}")
+    merged.extend(f"mo:{t}" for t in mo if t)
+    return merged
+
+
+def _split_tags(tags: list[str]) -> dict[str, object]:
+    fn: list[str] = []
+    ly = ""
+    md_tag = ""
+    st = ""
+    mo: list[str] = []
+    extra: list[str] = []
+    for tag in tags:
+        tag_str = str(tag)
+        if tag_str.startswith("fn:"):
+            fn.append(tag_str[3:])
+        elif tag_str.startswith("ly:"):
+            ly = tag_str[3:]
+        elif tag_str.startswith("md:"):
+            md_tag = tag_str[3:]
+        elif tag_str.startswith("st:"):
+            st = tag_str[3:]
+        elif tag_str.startswith("mo:"):
+            mo.append(tag_str[3:])
+        elif tag_str.startswith("orig:") or tag_str.startswith("module:"):
+            extra.append(tag_str)
+        else:
+            extra.append(tag_str)
+    return {"tags_fn": fn, "tags_ly": ly, "tags_md": md_tag, "tags_st": st, "tags_mo": mo, "tags": extra}
+
+
+def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
     lines = content.split("\n")
     title = ""
     kv: dict[str, str] = {}
@@ -422,7 +682,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
             section = line[3:].strip()
             continue
 
-        if section == "描述":
+        if section in ("描述", "目标"):
             stripped = line.strip()
             if stripped and not stripped.startswith("**"):
                 description_lines.append(stripped)
@@ -445,13 +705,13 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
                     downstream_outputs.append({"path": item, "description": ""})
             continue
 
-        if section == "门禁状态":
-            gm = _MD_GATE_PASSED.search(line)
+        if section in ("门禁", "门禁状态"):
+            gm = re.search(r"已通过:\s*\[(.*?)\]", line)
             if gm:
                 gates_str = gm.group(1).strip()
                 if gates_str:
                     completed_gates = [g.strip().strip("'\"") for g in gates_str.split(",") if g.strip()]
-            bm = _MD_GATE_BLOCKED.search(line)
+            bm = re.search(r"阻塞:\s*(.+)$", line)
             if bm:
                 try:
                     blocked_gates = json.loads(bm.group(1).strip().replace("'", '"'))
@@ -460,7 +720,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
             continue
 
         if section == "时间":
-            tm = _MD_TIME_ITEM.match(line)
+            tm = re.match(r"^-\s*(创建|更新)[：:]\s*(.+)$", line)
             if tm:
                 key = tm.group(1).strip()
                 val = tm.group(2).strip()
@@ -470,7 +730,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
                     updated_at_str = val
             continue
 
-        if not section or section == "描述":
+        if not section or section in ("描述", "目标"):
             m = _MD_KV_PATTERN.match(line)
             if m:
                 kv[m.group(1).strip()] = m.group(2).strip()
@@ -490,7 +750,7 @@ def _parse_md_to_taskcard(content: str) -> TaskCard | None:
     status_str = kv.get("状态", "PENDING")
     status = getattr(TaskStatus, status_str, TaskStatus.PENDING) if status_str else TaskStatus.PENDING
 
-    priority_str = kv.get("优先级", "P2")
+    priority_str = kv.get("优先级", Priority.P2.value)
     priority = getattr(Priority, priority_str, Priority.P2) if priority_str else Priority.P2
 
     phase = int(kv.get("Phase", "1"))
@@ -541,69 +801,123 @@ def _parse_time(s: str) -> datetime:
 
 
 def _taskcard_to_md(tc: TaskCard) -> str:
-    dt_fmt = "%Y-%m-%d %H:%M"
-    created = tc.created_at.strftime(dt_fmt) if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
-    updated = tc.updated_at.strftime(dt_fmt) if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
+    created = tc.created_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
+    updated = tc.updated_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
 
-    lines = [
-        f"# {tc.title}",
-        "",
-        f"**task_id**：{tc.task_id}",
-        f"**命名空间**：{tc.namespace.value}",
-        f"**状态**：{tc.status.name}",
-        f"**优先级**：{tc.priority.name}",
-        f"**Phase**：{tc.phase}",
-        f"**源蓝图**：{tc.source_blueprint} §{tc.source_section}",
-        f"**执行模型**：{tc.execution_model}",
-        f"**预估 Token**：{tc.estimated_tokens}",
-        "",
-        "## 描述",
-        "",
-        tc.description,
-        "",
-        "## 上游文件",
-        "",
-    ]
+    tag_parts = _split_tags(tc.tags)
 
-    for f in tc.upstream_files:
-        lines.append(f"- {f}")
+    def _yaml_list(items: list, indent: int = 2) -> str:
+        if not items:
+            return " []"
+        prefix = " " * indent
+        lines = []
+        for item in items:
+            if isinstance(item, dict):
+                lines.append(f"{prefix}- path: \"{item.get('path', '')}\"")
+                if item.get("description"):
+                    lines.append(f"{prefix}  description: \"{item.get('description', '')}\"")
+            else:
+                lines.append(f"{prefix}- \"{item}\"")
+        return "\n" + "\n".join(lines)
 
-    lines.extend(
-        [
-            "",
-            "## 下游产出",
-            "",
-        ]
-    )
+    def _yaml_rule_list(items: list[dict], indent: int = 2) -> str:
+        if not items:
+            return " []"
+        prefix = " " * indent
+        lines = []
+        for item in items:
+            if isinstance(item, dict):
+                lines.append(f"{prefix}- module_id: \"{item.get('module_id', '')}\"")
+                lines.append(f"{prefix}  section: \"{item.get('section', '')}\"")
+                lines.append(f"{prefix}  reason: \"{item.get('reason', '')}\"")
+        return "\n" + "\n".join(lines)
 
-    for d in tc.downstream_outputs:
-        if isinstance(d, dict):
-            lines.append(f"- {d.get('path', '?')} — {d.get('description', '')}")
-        else:
-            lines.append(f"- {d}")
+    def _yaml_context_list(items: list[dict], indent: int = 2) -> str:
+        if not items:
+            return " []"
+        prefix = " " * indent
+        lines = []
+        for item in items:
+            if isinstance(item, dict):
+                lines.append(f"{prefix}- file_path: \"{item.get('file_path', '')}\"")
+                lines.append(f"{prefix}  reason: \"{item.get('reason', '')}\"")
+        return "\n" + "\n".join(lines)
 
-    lines.extend(
-        [
-            "",
-            "## 门禁状态",
-            "",
-            f"已通过: {[g.value for g in tc.completed_gates]}",
-        ]
-    )
+    gates_str = ", ".join(f"'{g.value}'" for g in tc.completed_gates) if tc.completed_gates else ""
 
-    if tc.blocked_gates:
-        lines.append(f"阻塞: {tc.blocked_gates}")
+    yaml_block = f"""---
+task_id: "{tc.task_id}"
+source_blueprint: "{tc.source_blueprint}"
+source_section: "{tc.source_section}"
+title: "{tc.title}"
+description: "{tc.description[:800]}"
+priority: "{tc.priority.value}"
+upstream_files:{_yaml_list(tc.upstream_files)}
+downstream_outputs:{_yaml_list(tc.downstream_outputs)}
+allowed_touch:{_yaml_list(tc.allowed_touch)}
+forbidden_touch:{_yaml_list(tc.forbidden_touch)}
+applicable_rules:{_yaml_rule_list(tc.applicable_rules)}
+context_assembly_manifest:{_yaml_context_list(tc.context_assembly_manifest)}
+assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, 'value') else tc.execution_model}"
+assigned_pipeline: "{tc.assigned_pipeline}"
+pipeline_modules:{_yaml_list(tc.pipeline_modules)}
+estimated_tokens: {tc.estimated_tokens}
+timeout_minutes: {tc.timeout_minutes}
+acceptance_criteria:{_yaml_list(tc.acceptance)}
+rollback_instructions: "{tc.rollback_instructions}"
+depends_on:{_yaml_list(tc.depends_on)}
+blocked_by:{_yaml_list(tc.blocked_by)}
+status: "{tc.status.value if hasattr(tc.status, 'value') else tc.status}"
+tags_fn:{_yaml_list(tag_parts.get('tags_fn', []))}
+tags_ly: "{tag_parts.get('tags_ly', '')}"
+tags_md: "{tag_parts.get('tags_md', '')}"
+tags_st: "{tag_parts.get('tags_st', '')}"
+tags_mo:{_yaml_list(tag_parts.get('tags_mo', []))}
+completed_gates: [{gates_str}]
+blocked_gates: {json.dumps(tc.blocked_gates, ensure_ascii=False)}
+artifact_paths:{_yaml_list(tc.artifact_paths)}
+audit_findings:{_yaml_list(
+    [{"finding_id": f.finding_id, "dimension": f.dimension, "severity": f.severity, "description": f.description} for f in tc.audit_findings]
+    if tc.audit_findings else []
+)}
+ke_entries:{_yaml_list(tc.ke_entries)}
+ai_autonomy_level: "{tc.ai_autonomy_level}"
+autonomy_checklist:{_yaml_list(tc.autonomy_checklist)}
+---
 
-    lines.extend(
-        [
-            "",
-            "## 时间",
-            "",
-            f"- 创建：{created}",
-            f"- 更新：{updated}",
-            "",
-            "> 本文件由 MOD-INF-006 task_manager_server 自动同步生成。",
-        ]
-    )
+# {tc.title}
 
-    return "\n".join(lines)
+## 目标
+{tc.description}
+
+## 触发条件
+{chr(10).join(f'- {dep}' for dep in tc.depends_on) if tc.depends_on else '- 无前置依赖'}
+
+## 执行步骤
+
+### 读
+{chr(10).join(f'- {f}' for f in tc.upstream_files) if tc.upstream_files else '-（见 upstream_files）'}
+
+### 做
+{chr(10).join(f'- {m}' for m in tc.pipeline_modules) if tc.pipeline_modules else '- 按管线模块执行'}
+
+### 产
+{chr(10).join(f'- {d.get("path", str(d))} — {d.get("description", "")}' if isinstance(d, dict) else f'- {d}' for d in tc.downstream_outputs) if tc.downstream_outputs else '-（见 downstream_outputs）'}
+
+### 检
+- 运行对应测试套件
+- 门禁 G5 完成验证
+
+## 验收标准
+{chr(10).join(f'- {a}' for a in tc.acceptance) if tc.acceptance else '- 见 acceptance_criteria'}
+
+## 风险与缓解
+| 风险 | 缓解 |
+|------|------|
+| 回滚 | {tc.rollback_instructions if tc.rollback_instructions else '无特定回滚方案'} |
+
+---
+*创建: {created} | 更新: {updated}*
+*本文件由 MOD-INF-006 task_manager_server 自动同步生成。*"""
+
+    return yaml_block

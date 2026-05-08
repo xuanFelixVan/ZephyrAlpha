@@ -32,6 +32,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import json as json_mod
 import os
@@ -53,6 +54,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _run_script(script_path: str, target_scope: str | None = None) -> dict:
+    """_run_script implementation."""
     cmd = [sys.executable, script_path, "--warn-only"]
     if target_scope:
         cmd.extend(["--target-scope", target_scope])
@@ -83,6 +85,7 @@ def _run_script(script_path: str, target_scope: str | None = None) -> dict:
 
 
 def _classify_by_severity(findings: list[dict]) -> dict[str, int]:
+    """_classify_by_severity implementation."""
     counts: dict[str, int] = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
     for f in findings:
         sev = f.get("severity", "LOW")
@@ -93,6 +96,7 @@ def _classify_by_severity(findings: list[dict]) -> dict[str, int]:
 
 def _compute_judgement(baseline_count: int, canary_count: int,
                        baseline_sev: dict, canary_sev: dict) -> dict:
+    """_compute_judgement implementation."""
     if baseline_count == 0 and canary_count == 0:
         score = 1.0
         verdict = "PASS"
@@ -136,6 +140,7 @@ def _compute_judgement(baseline_count: int, canary_count: int,
 
 
 def run_ab_test(baseline: str, canary: str, target_scope: str | None = None) -> dict:
+    """run_ab_test implementation."""
     _AB_LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     baseline_path = str(_SCRIPTS_DIR / baseline) if not baseline.startswith(str(_REPO_ROOT)) else baseline
@@ -175,13 +180,22 @@ def run_ab_test(baseline: str, canary: str, target_scope: str | None = None) -> 
 
     ts_str = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     report_path = _AB_LOG_DIR / f"ab-{baseline.replace('/', '-')}-{ts_str}.json"
-    with open(report_path, "w", encoding="utf-8") as f:
-        json_mod.dump(report, f, ensure_ascii=False, indent=2)
-
+    tmp_path = f"{report_path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(report, f, ensure_ascii=False, indent=2)
+    
+        os.replace(tmp_path, report_path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return report
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="脚本 A/B 对照模式")
     parser.add_argument("--baseline", type=str, help="Baseline 脚本路径（相对于 scripts/governance/）")
     parser.add_argument("--canary", type=str, help="Canary 脚本路径（相对于 scripts/governance/）")

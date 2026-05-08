@@ -1,14 +1,14 @@
-schema_version: "2.1.0"
+schema_version: "2.3.0"
 partition:
   id: db
   name: Database
   track: b_track
   bounded_context: false
   status: implemented
-  db_file_path: docs/09_audit/state/zalpha_metadata.db
+  db_file_path: data/zalpha_metadata.db
   backup_dir: data/backups/
   warehouse_dir: data/warehouse/
-  blueprint_ref: docs/03_modules/l01_infrastructure/database/blueprint.md
+  blueprint_ref: docs/03_modules/_cross_layer/database/blueprint.md
 
 modules:
   - id: db-persistence
@@ -18,7 +18,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: SQLite + DuckDB 双引擎元数据持久化——ATM v2.0 跨 SQLite/文件系统两阶段提交 + tx_idempotency 幂等去重 + compensating_transaction 补偿 + 事务超时控制
+    description: SQLite + DuckDB 双引擎元数据持久化——ATM v2.0 �?SQLite/文件系统两阶段提�?+ tx_idempotency 幂等去重 + compensating_transaction 补偿 + 事务超时控制
     files:
       - atomic_transaction_manager.py
       - olap_engine.py
@@ -40,7 +40,7 @@ modules:
       - contract_id: CT-DB-004
         role: producer
         description: 运维管理契约——DatabaseManager(health_check/backup/maintenance/stats)
-    adr_ref:
+    kb_ref:
       - ADR-0030
       - ADR-0041
     test_coverage:
@@ -49,16 +49,16 @@ modules:
         - olap_engine.py (tests/unit/test_olap_engine.py)
         - sqlite_schema.py (tests/unit/test_sqlite_schema.py)
         - task_repo.py (tests/unit/test_task_repo.py)
-      untested_p1:
-        - database_manager.py
-        - audit_schema.py
-      untested_p2:
-        - query_metrics.py
+        - database_manager.py (tests/unit/test_database_manager.py)
+        - audit_schema.py (tests/unit/test_audit_schema.py)
+        - query_metrics.py (tests/unit/test_query_metrics.py)
+      untested_p1: []
+      untested_p2: []
 
 summary:
   total: 1
   by_status:
     implemented: 1
   total_files: 7
-  tested_files: 4
-  untested_files: 3
+  tested_files: 7
+  untested_files: 0

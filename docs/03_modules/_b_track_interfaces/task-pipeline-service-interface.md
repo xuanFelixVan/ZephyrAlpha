@@ -60,6 +60,61 @@ mod_master_contracts:
 
 ## 3. 对外抽象（实现无关）
 
+### 3.1 Protocol 签名
+
+```python
+class PipelineServiceProtocol:
+    async def route(self, task_id: str, task_type: str, priority: str,
+                    model_affinity: dict | None = None) -> PipelineRouteDecision:
+        """路由决策——根据task_type/priority/model_affinity选择A区/B区管线"""
+
+    async def dispatch(self, task_id: str, route: PipelineRouteDecision) -> DispatchResult:
+        """调度执行——按路由决策分配模块和模型"""
+
+    async def execute(self, dispatch_id: str) -> PipelineResult:
+        """执行管线——按M1-M11模块序列执行"""
+
+    async def cancel(self, dispatch_id: str, reason: str) -> CancelResult:
+        """取消执行——安全中断正在运行的管线"""
+
+    async def get_status(self, dispatch_id: str) -> DispatchStatus:
+        """查询状态——获取当前管线执行进度"""
+
+    async def list_active(self, filters: dict | None = None) -> list[DispatchSummary]:
+        """活跃调度列表——监控面板用"""
+```
+
+### 3.2 核心数据模型
+
+| 模型 | 字段数 | 说明 |
+|------|--------|------|
+| `PipelineRouteDecision` | 8 | task_type, priority, zone(A/B), modules[], model, affinity_score, circuit_breaker_state, metadata |
+| `DispatchResult` | 5 | dispatch_id, pipeline_id, assigned_model, status, created_at |
+| `PipelineResult` | 6 | dispatch_id, modules_executed[], status, artifacts[], metrics, duration_ms |
+| `CircuitBreakerState` | 4 | state(open/half_open/closed), failure_count, last_failure_at, cooldown_ms |
+| `CancelResult` | 3 | dispatch_id, cancelled, reason |
+| `DispatchStatus` | 5 | dispatch_id, current_module, progress_pct, elapsed_ms, estimated_remaining_ms |
+| `DispatchSummary` | 4 | dispatch_id, task_id, status, started_at |
+
+### 3.3 错误码
+
+| 错误码 | 含义 | 降级策略 |
+|--------|------|----------|
+| `-32050` | PIPELINE_ROUTE_FAILED | 降级到默认A区管线 |
+| `-32051` | PIPELINE_DISPATCH_TIMEOUT | 重试1次后标记FAILED |
+| `-32052` | PIPELINE_MODULE_ERROR | 跳过当前模块继续执行 |
+| `-32053` | PIPELINE_CIRCUIT_OPEN | 等待断路器半开状态 |
+| `-32054` | PIPELINE_CANCELLED | 正常取消，无降级 |
+
+### 3.4 性能 SLO
+
+| 指标 | 目标 | 测量方式 |
+|------|------|----------|
+| route() 延迟 | p99 < 50ms | Telemetry metrics |
+| dispatch() 延迟 | p99 < 200ms | Telemetry metrics |
+| execute() 吞吐 | >= 10 concurrent | 压测 |
+| 断路器恢复 | < 30s | 故障注入测试 |
+
 - **输入**：已通过 `MOD-INF-006` / Gate 的 `TaskCard`（或等价 task 句柄）+ 组织策略（`GOV-AI-002` 路由树）。
 - **输出**：**路由决策**（目标模型 profile、管线区段、门禁集合、预算钩子）供 Orchestrator / Runtime 执行。
 - **失败语义**：对齐 **fail-closed / degraded mode** 由 `MOD-INF-014`、`MOD-INF-001` 在链路下游执行；本层只产出**结构化决策或阻断原因码**。

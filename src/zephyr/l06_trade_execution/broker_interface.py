@@ -19,9 +19,9 @@ from __future__ import annotations
 import abc
 from typing import Callable, Optional
 
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order
-from zephyr.shared.contracts.position import PositionSnapshot
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
 
 FillCallback = Callable[[Fill], None]
 

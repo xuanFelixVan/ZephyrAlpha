@@ -39,7 +39,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 SKIP_MODULES = {
     "l03_signal_generation",
@@ -57,6 +57,7 @@ SKIP_MODULES = {
 ALLOWED_RELATIVE = {"test_schemas.py"}
 
 def _has_relative_import(tree: ast.AST) -> list[int]:
+    """_has_relative_import implementation."""
     lines = []
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.ImportFrom):
@@ -115,7 +116,7 @@ def main() -> None:
         print(f"\n[IMPORT-STYLE] 全部 {total_files} 文件使用绝对导入 ✅\n", file=sys.stderr)
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

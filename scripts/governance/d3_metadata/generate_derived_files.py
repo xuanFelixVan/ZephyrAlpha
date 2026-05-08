@@ -39,6 +39,7 @@ warn_only: true
 """
 
 
+import os
 import json
 import sys
 from pathlib import Path
@@ -48,7 +49,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import GOV_DOCS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -78,6 +79,7 @@ VOCAB_FIELD_MAP = {
 _drifts: list[str] = []
 
 def _drift(msg: str) -> None:
+    """_drift implementation."""
     _drifts.append(msg)
 
 def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
@@ -158,9 +160,17 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
                 changed = True
 
     if changed and apply:
-        with open(FIELD_REGISTRY_PATH, "w", encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+        tmp_path = f"{FIELD_REGISTRY_PATH}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, encoding="utf-8") as f:
+                yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+            os.replace(tmp_path, FIELD_REGISTRY_PATH)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
     return changed
 
 def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -> bool:
@@ -194,9 +204,17 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
                 changed = True
 
     if changed and apply:
-        with open(ARCH_CONTRACT_PATH, "w", encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+        tmp_path = f"{ARCH_CONTRACT_PATH}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, encoding="utf-8") as f:
+                yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+            os.replace(tmp_path, ARCH_CONTRACT_PATH)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
     return changed
 
 def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> bool:
@@ -244,10 +262,18 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
             changed = True
 
     if changed and apply:
-        with open(SCHEMA_JSON_PATH, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-            f.write("\n")
-
+        tmp_path = f"{SCHEMA_JSON_PATH}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+    
+            os.replace(tmp_path, SCHEMA_JSON_PATH)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
     return changed
 
 def main() -> None:
@@ -322,17 +348,17 @@ def main() -> None:
 
     if total_changes > 0:
         print(f"✅ 已应用 {total_changes} 处变更")
-        return 0
+        return EXIT_PASS
 
     if _drifts:
         print(f"🔴 发现 {len(_drifts)} 处漂移（使用 --apply 同步）")
         if args.warn_only:
             print("   (--warn-only 模式，exit 0)")
-            return 0
-        return 1
+            return EXIT_PASS
+        return EXIT_FINDINGS
 
     print("✅ 所有派生文件与 vocabulary YAML 一致")
-    return 0
+    return EXIT_PASS
 
 if __name__ == "__main__":
     sys.exit(main())

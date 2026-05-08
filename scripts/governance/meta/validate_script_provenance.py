@@ -33,6 +33,7 @@ warn_only: false
 """
 
 
+import os
 import hashlib
 import json as json_mod
 import os
@@ -51,6 +52,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_db() -> dict:
+    """_load_db implementation."""
     if not _PROVENANCE_DB.exists():
         return {"scripts": {}, "created_at": ""}
     with open(_PROVENANCE_DB, encoding="utf-8") as f:
@@ -58,16 +60,27 @@ def _load_db() -> dict:
 
 
 def _save_db(data: dict) -> None:
+    """_save_db implementation."""
     _PROVENANCE_DB.parent.mkdir(parents=True, exist_ok=True)
-    with open(_PROVENANCE_DB, "w", encoding="utf-8") as f:
-        json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-
+    tmp_path = f"{_PROVENANCE_DB}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(data, f, ensure_ascii=False, indent=2)
+    
+    
+        os.replace(tmp_path, _PROVENANCE_DB)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def _hash_content(content: str) -> str:
+    """_hash_content implementation."""
     return hashlib.sha256(content.encode()).hexdigest()[:16]
 
 
 def _get_git_author(file_path: str) -> str:
+    """_get_git_author implementation."""
     result = subprocess.run(
         ["git", "log", "-1", "--format=%an", "--", file_path],
         capture_output=True, text=True, timeout=5,
@@ -77,6 +90,7 @@ def _get_git_author(file_path: str) -> str:
 
 
 def _get_git_commit(file_path: str) -> str:
+    """_get_git_commit implementation."""
     result = subprocess.run(
         ["git", "log", "-1", "--format=%H", "--", file_path],
         capture_output=True, text=True, timeout=5,
@@ -86,11 +100,13 @@ def _get_git_commit(file_path: str) -> str:
 
 
 def _is_ai_author(author: str) -> bool:
+    """_is_ai_author implementation."""
     ai_names = {"claude", "cursor", "copilot", "windsurf", "glm", "deepseek", "roocode", "trae"}
     return any(name in author.lower() for name in ai_names)
 
 
 def register_all() -> dict:
+    """register_all implementation."""
     db = _load_db()
     scripts_db = db.setdefault("scripts", {})
     now = datetime.now(UTC).isoformat()
@@ -146,6 +162,7 @@ def register_all() -> dict:
 
 
 def check_script(script_path: str) -> dict:
+    """Check compliance and report findings."""
     db = _load_db()
     entry = db.get("scripts", {}).get(script_path)
     if not entry:
@@ -154,6 +171,7 @@ def check_script(script_path: str) -> dict:
 
 
 def list_provenance(json_output: bool = False) -> list[dict]:
+    """list_provenance implementation."""
     db = _load_db()
     result = []
     for path, entry in db.get("scripts", {}).items():
@@ -173,6 +191,7 @@ def list_provenance(json_output: bool = False) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--register-all" in sys.argv:
         result = register_all()
         print(f"[PROVENANCE] ✅ 已注册 {result['total_scripts']} 个脚本", file=sys.stderr)

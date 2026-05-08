@@ -278,6 +278,13 @@ def render_dashboard(
     print(f"  仪表盘刷新: {datetime.now(UTC).strftime('%H:%M:%S UTC')}", file=sys.stderr)
     print(f"{'─' * 65}\n", file=sys.stderr)
 
+CAPACITY_LIMITS = {
+    "per_dimension_max": 50,
+    "global_max": 300,
+    "scan_duration_warning_s": 300,
+    "global_hard_timeout_s": 600,
+}
+
 def render_json(health: dict, coverage: dict) -> None:
     """渲染 JSON 格式健康状态到 stdout。
 
@@ -285,6 +292,29 @@ def render_json(health: dict, coverage: dict) -> None:
         health: 脚本名 -> 健康状态字典
         coverage: 维度代码 -> 覆盖脚本列表
     """
+    dim_labels = {
+        "D1": "结构完整性", "D2": "链接完整性", "D3": "元数据合规",
+        "D4": "路径有效性", "D5": "架构合规", "D6": "安全漏洞",
+        "D7": "代码质量", "D8": "文档代码同步", "D9": "知识覆盖",
+        "D10": "性能容量", "D11": "合规完整性", "D12": "AI幻觉检测",
+    }
+
+    unhealthy_scripts = sum(1 for h in health.values() if h["status"] != "OK")
+    global_script_count = len(health)
+
+    capacity_warnings: list[str] = []
+    for dim, scripts in coverage.items():
+        count = len(scripts)
+        if count >= 8:
+            capacity_warnings.append(f"WARNING: {dim} ({dim_labels.get(dim, dim)}) 有 {count} 脚本（接近上限 {CAPACITY_LIMITS['per_dimension_max']}）")
+    if global_script_count >= 150:
+        capacity_warnings.append(f"WARNING: 全局脚本数 {global_script_count}（接近上限 {CAPACITY_LIMITS['global_max']}）")
+
+    dimension_vacant: list[str] = []
+    for d in _get_all_dimensions():
+        if not coverage.get(d):
+            dimension_vacant.append(d)
+
     output = {
         "timestamp": datetime.now(UTC).isoformat(),
         "scripts": {
@@ -293,7 +323,14 @@ def render_json(health: dict, coverage: dict) -> None:
         },
         "coverage": {dim: len(scripts) for dim, scripts in coverage.items()},
         "uncovered": [d for d in _get_all_dimensions() if d not in coverage or not coverage[d]],
-        "healthy": all(h["status"] == "OK" for h in health.values()),
+        "dimension_vacant": dimension_vacant,
+        "healthy": unhealthy_scripts == 0,
+        "capacity": {
+            "global_script_count": global_script_count,
+            "global_max": CAPACITY_LIMITS["global_max"],
+            "per_dimension": {dim: len(scripts) for dim, scripts in coverage.items()},
+            "warnings": capacity_warnings,
+        },
     }
     print(json.dumps(output, ensure_ascii=False, indent=2), file=sys.stderr)
 

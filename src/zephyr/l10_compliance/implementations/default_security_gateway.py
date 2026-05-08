@@ -10,6 +10,7 @@ SSoT: cross-layer-contracts.yaml → CTR-P1-012
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 import uuid
@@ -22,6 +23,50 @@ from zephyr.l10_compliance.security_gateway_base import (
 )
 
 _logger = logging.getLogger(__name__)
+
+_lsg_gateway = None
+
+
+def _get_lsg():
+    global _lsg_gateway
+    if _lsg_gateway is not None:
+        return _lsg_gateway
+    try:
+        from zephyr.llm_security.gateway import LSGSecurityGateway
+        _lsg_gateway = LSGSecurityGateway()
+        return _lsg_gateway
+    except Exception:
+        _logger.debug("LSG not available for L10 implementations gateway")
+        return None
+
+
+def _lsg_scan_content_sync(content: str) -> str | None:
+    gw = _get_lsg()
+    if gw is None:
+        return None
+    try:
+        from zephyr.llm_security.protocol import SecurityDecision
+        result = asyncio.run(
+            gw.scan_input(content, source="l10_implementations_gateway", metadata={})
+        )
+        if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+            return result.blocked_by or "lsg_input_scan"
+    except RuntimeError:
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                return None
+            result = loop.run_until_complete(
+                gw.scan_input(content, source="l10_implementations_gateway", metadata={})
+            )
+            from zephyr.llm_security.protocol import SecurityDecision
+            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
+                return result.blocked_by or "lsg_input_scan"
+        except Exception:
+            pass
+    except Exception:
+        pass
+    return None
 
 
 class DefaultSecurityGateway(SecurityGateway):
@@ -68,6 +113,10 @@ class DefaultSecurityGateway(SecurityGateway):
         blocked = [r for r in risks if r.startswith("BLOCK:")]
         warned = [r for r in risks if r.startswith("WARN:")]
 
+        lsg_blocked_by = _lsg_scan_content_sync(context.get("content", ""))
+        if lsg_blocked_by:
+            blocked.append(f"BLOCK:LSG-{lsg_blocked_by}")
+
         decision_id = f"audit-{uuid.uuid4().hex[:8]}"
 
         if blocked:
@@ -80,6 +129,7 @@ class DefaultSecurityGateway(SecurityGateway):
                     "blocked_risks": blocked,
                     "warned_risks": warned,
                     "source": context.get("source", "unknown"),
+                    "lsg_blocked_by": lsg_blocked_by,
                 },
             )
 

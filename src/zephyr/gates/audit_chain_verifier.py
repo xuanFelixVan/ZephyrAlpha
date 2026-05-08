@@ -1,0 +1,158 @@
+"""审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta）
+同时将门禁审计事件写入核心 zephyr.audit_trail.writer.AuditWriter 不可变审计链
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import logging
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+
+from zephyr.gates.gate_context import GateContext, GateResult, GateStatus
+
+_CORE_AUDIT_AVAILABLE = False
+try:
+    from zephyr.audit_trail.writer import AuditWriter as _CoreAuditWriter
+    _CORE_AUDIT_AVAILABLE = True
+except ImportError:
+    _CoreAuditWriter = None
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class AuditEntry:
+    gate_id: str
+    status: GateStatus
+    reasons: list[str]
+    previous_hash: str
+    hash: str
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+@dataclass
+class AuditReport:
+    entries: list[AuditEntry]
+    chain_valid: bool
+    reproduced: bool
+    verified_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def summary(self) -> str:
+        return (
+            f"AuditReport: {len(self.entries)} entries, "
+            f"chain={'OK' if self.chain_valid else 'BROKEN'}, "
+            f"reproduced={'OK' if self.reproduced else 'MISMATCH'}"
+        )
+
+
+class AuditChainVerifier:
+    def __init__(self) -> None:
+        self._chain: list[AuditEntry] = []
+        self._last_hash = "0" * 64
+        self._core_writer: _CoreAuditWriter | None = None
+        if _CORE_AUDIT_AVAILABLE:
+            try:
+                self._core_writer = _CoreAuditWriter()
+            except Exception:
+                pass
+
+    def append(self, gate_id: str, result: GateResult) -> AuditEntry:
+        payload = {
+            "gate_id": gate_id,
+            "status": result.status.name,
+            "reasons": result.reasons,
+            "timestamp": result.timestamp.isoformat(),
+            "previous_hash": self._last_hash,
+        }
+        entry_hash = self._compute_hash(payload)
+        entry = AuditEntry(
+            gate_id=gate_id,
+            status=result.status,
+            reasons=list(result.reasons),
+            previous_hash=self._last_hash,
+            hash=entry_hash,
+        )
+        self._chain.append(entry)
+        self._last_hash = entry_hash
+        logger.debug("audit entry #%d: %s -> %s", len(self._chain), gate_id, entry_hash[:16])
+
+        if self._core_writer is not None:
+            try:
+                core_event = {
+                    "event_type": "gate_audit",
+                    "agent_id": "gate_engine",
+                    "session_id": gate_id,
+                    "target_path": gate_id,
+                    "operation": "gate_check",
+                    "status": result.status.name,
+                    "reasons": list(result.reasons),
+                    "entry_hash": entry_hash,
+                }
+                self._core_writer.write(core_event)
+            except Exception:
+                pass
+
+        return entry
+
+    def verify_chain(self) -> AuditReport:
+        prev = "0" * 64
+        valid = True
+        for entry in self._chain:
+            if entry.previous_hash != prev:
+                logger.error("chain break at %s: expected=%s got=%s", entry.gate_id, prev[:16], entry.previous_hash[:16])
+                valid = False
+                break
+            payload = {
+                "gate_id": entry.gate_id,
+                "status": entry.status.name,
+                "reasons": entry.reasons,
+                "timestamp": entry.timestamp.isoformat(),
+                "previous_hash": prev,
+            }
+            computed = self._compute_hash(payload)
+            if computed != entry.hash:
+                logger.error("hash mismatch at %s", entry.gate_id)
+                valid = False
+                break
+            prev = entry.hash
+        return AuditReport(entries=list(self._chain), chain_valid=valid, reproduced=valid)
+
+    def replay(self, ctx: GateContext, checkers: dict[str, callable]) -> AuditReport:
+        results: list[GateResult] = []
+        for gate_id, checker in checkers.items():
+            results.append(checker(ctx))
+
+        reproduced = True
+        for result in results:
+            matching = [e for e in self._chain if e.gate_id == result.gate_id]
+            if not matching or matching[-1].status != result.status:
+                reproduced = False
+                break
+
+        return AuditReport(entries=list(self._chain), chain_valid=self.verify_chain().chain_valid, reproduced=reproduced)
+
+    @staticmethod
+    def _compute_hash(payload: dict) -> str:
+        payload_str = json.dumps(payload, sort_keys=True, default=str)
+        return hashlib.sha256(payload_str.encode()).hexdigest()
+
+    @property
+    def length(self) -> int:
+        return len(self._chain)
+
+    def clear(self) -> None:
+        self._chain.clear()
+        self._last_hash = "0" * 64
+
+
+__all__ = ["AuditChainVerifier", "AuditEntry", "AuditReport"]
+
+
+def main() -> None:
+    pass
+
+
+if __name__ == "__main__":
+    main()

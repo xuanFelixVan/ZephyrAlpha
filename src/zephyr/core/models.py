@@ -15,7 +15,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schemas import (
+from zephyr.shared.schema.schemas import (
     BASE_CONFIG,
     Task,
     TaskNamespace,

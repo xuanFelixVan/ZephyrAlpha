@@ -12,11 +12,12 @@ created_by: human_plus_agent
 date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_2_complete
 belongs_to: "SYS-MASTER-001"
 summary: "ZephyrAlpha 治理域 Level 1 集成蓝图——覆盖 Agent 治理八件套（MOD-INF-018~025）之间的跨模块集成契约。定义 RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec 之间的数据流、事件流、集成顺序。本蓝图是金字塔 Level 1 体系中的第二个域蓝图（继 MOD-MASTER-001 基建域之后）。触发条件：PS-STD-005 §3.3（域内模块≥5且≥3组跨模块交互——治理域满足：8模块，13+组交互）。"
 tags: [domain-blueprint, governance, level-1, agent-rbac, audit-trail, rollback, escalation, drift-detector, budget-enforcer, a2a-protocol, agent-spec, integration-contracts, pyramid-structure]
 priority: P0
+submodule_path: src/zephyr/governance/
 depends_on:
   - {target: "SYS-MASTER-001", at: "全篇", why: "Level 0 系统总蓝图——治理域是金字塔 Level 1 节点"}
   - {target: "MOD-MASTER-001", at: "全篇", why: "基础设施域集成蓝图——治理域依赖基建域的基础能力（Database/Task System/Gate Engine/Context Engine）"}
@@ -54,14 +55,14 @@ depends_on:
 
 | module_id | 名称 | 优先级 | 施工进度 | 核心职责 |
 |-----------|------|:---:|:---:|------|
-| MOD-INF-018 | Agent RBAC | P0 | 0% | 七层纵深防御+六横切面运行时权限执行 |
-| MOD-INF-019 | Agent Spec | P0 | 0% | 蓝图→可加载 Skill 升级引擎 |
-| MOD-INF-020 | Audit Trail | P0 | 0% | 不可变审计追踪+密码学Provenance+Agent签名 |
-| MOD-INF-021 | Rollback System | P1 | 0% | Git-native + SQLite Checkpoint 智能回滚 |
-| MOD-INF-022 | Escalation Protocol | P1 | 0% | 规则驱动升级+自动委托+五层防御架构 |
-| MOD-INF-023 | Drift Detector | P1 | 0% | Git-native 运行时漂移检测+自动对账 |
-| MOD-INF-024 | Budget Enforcer | P2 | 0% | Token/Cost/Time 三维预算强制执行 |
-| MOD-INF-025 | A2A Protocol | P2 | Hold | 多Agent通信协议+冲突仲裁（Phase 4 激活） |
+| MOD-INF-018 | Agent RBAC | P0 | phase_2_complete | 七层纵深防御+六横切面运行时权限执行 |
+| MOD-INF-019 | Agent Spec | P0 | phase_2_complete | 蓝图→可加载 Skill 升级引擎 |
+| MOD-INF-020 | Audit Trail | P0 | phase_2_complete | 不可变审计追踪+密码学Provenance+Agent签名 |
+| MOD-INF-021 | Rollback System | P1 | phase_2_complete | Git-native + SQLite Checkpoint 智能回滚 |
+| MOD-INF-022 | Escalation Protocol | P1 | phase_2_complete | 规则驱动升级+自动委托+五层防御架构（引擎: v0.14.0） |
+| MOD-INF-023 | Drift Detector | P1 | completed | Git-native 运行时漂移检测+自动对账 |
+| MOD-INF-024 | Budget Enforcer | P2 | phase_2_complete | Token/Cost/Time 三维预算强制执行（引擎: v0.7.0） |
+| MOD-INF-025 | A2A Protocol | P2 | phase_2_complete (Phase 4 Hold) | 多Agent通信协议+冲突仲裁（引擎: v0.10.0，Phase 4 激活） |
 
 ## 3. 域内集成契约（G-CT-*）
 
@@ -171,12 +172,43 @@ depends_on:
 
 | 风险 | 影响 | 缓解 |
 |------|------|------|
-| 八件套全部 0% 施工 | 治理域空有蓝图无法运行 | 按 Phase 1→2→3 顺序逐步激活 |
+| 八件套施工进度不统一 | agent_rbac 100%, 其余 7 模块 50%——集成契约已定义但施工未完成 | Phase 2 完成后→Phase 3 推进 |
 | RBAC/Audit 循环依赖误回 | 两个模块互相阻塞 | 本裁定永久解决——Audit 单向接收 RBAC 写入 |
 | A2A 依赖所有其他模块 | Phase 4 才可能激活 | 明确 Hold 状态，不阻塞 Phase 1/2/3 |
 
 ## 7. 变更记录
 
 | 版本 | 日期 | 变更内容 |
-|------|------|------|
-| 0.1.0 | 2026-05-06 | 初始创建——治理域 Level 1 蓝图，定义八件套集成契约和施工顺序。打破 RBAC↔Audit 循环依赖。 | 
+|------|------|----------|
+| 0.1.0 | 2026-05-06 | 初始创建——治理域 Level 1 蓝图，定义八件套集成契约和施工顺序。打破 RBAC↔Audit 循环依赖。 |
+
+## 8. 测试用例 P0
+
+> 状态：待施工——本节为测试需求声明，非已实现测试
+
+### P0-U1: 模块核心功能冒烟测试
+- G-CT-001~008 每条契约的端到端数据流通断言
+- RBAC→Audit 写入验证、Audit→Rollback 回滚触发验证
+
+### P0-U2: 输入校验
+- 非法 module_id 引用拒绝
+- 循环依赖检测（G-CT-004 Escalation→RBAC 反向引用）
+
+### P0-I1: 与 depends_on 模块集成
+- SYS-MASTER-001 金字塔层级约束验证
+- MOD-MASTER-001 CT-* 契约与 G-CT-* 契约不冲突验证
+
+### P0-I2: 域内施工顺序验证
+- §4 施工顺序的拓扑排序正确性
+- 前置模块 not_started 时后续模块禁止开工 
+
+
+---
+
+## 施工落盘确认（2026-05-08 审计修正）
+
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（蓝图文档完成，8/8模块有代码落地，G-CT-001~010契约实现+57测试，MCP GovernanceServer就绪，红白对抗通过。Escalation/Budget/A2A引擎完整，仅A2A标记Phase 4 Hold） |
+| 文档路径 | docs/03_modules/_domain-governance/blueprint.md (域集成文档) |
+| 说明 | 架构/集成文档——定义跨模块契约与集成标准。实际引擎代码位于 src/zephyr/escalation/ / src/zephyr/budget_enforcer/ / src/zephyr/a2a/ 等处；governance/ 子包提供跨模块桥接层 |

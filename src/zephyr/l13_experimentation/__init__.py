@@ -44,9 +44,4 @@ from zephyr.l13_experimentation.pipeline_base import (
     ScoutAgentBase,
 )
 
-__all__ = [
-    "ExperimentConfig",
-    "ExperimentMetric",
-    "ExperimentPipelineBase",
-    "ScoutAgentBase",
-]
+__all__ = ['ExperimentConfig', 'ExperimentMetric', 'ExperimentPipelineBase', 'ScoutAgentBase', 'pipeline_base']

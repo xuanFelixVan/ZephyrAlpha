@@ -13,9 +13,12 @@ language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 ttl: permanent
-construction_progress: phase_1_partial
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
-dependencies: []
+dependencies:
+  - MOD-INF-016
+  - MOD-INF-015
+  - MOD-INF-001
 priority: P0
 tags:
   - capacity-assurance
@@ -203,14 +206,14 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 
 | 模块ID | 模块名称 | 职责 | 实际路径 | 实现状态 | AI自治权限 |
 |--------|---------|------|---------|---------|-----------|
-| M-01 | CTR-001修复 | 修复 CTR-001 字段 | 已归档至旧树 | ✅ 已完成 | Immutable Core |
+| M-01 | CTR-001修复 | 修复 CTR-001 字段 | 已归档 | ✅ 已完成 | Immutable Core |
 | M-02 | 源码树统一 | 统一为单一 src/zephyr/ | `src/zephyr/` | ✅ 已完成 | Immutable Core |
 | M-03 | validate_ssot.py | SSoT 验证脚本 | `scripts/governance/d5_architecture/validate_ssot.py` | ✅ 已实现 | Immutable Core |
 | M-04 | lazy_loader.py | 模块懒加载 | `src/zephyr/__init__.py` | ❌ 未实现 | Human-Gated |
 | M-05 | pre-commit分层 | 分层 pre-commit | `.pre-commit-config.yaml` | ⚠️ 部分实现 | Immutable Core |
 | M-06 | dmypy配置 | 增量类型检查 | `mypy.ini` | ❌ 未实现 | AI-Modifiable |
 | M-07 | event_bus背压 | 事件总线背压 | `src/zephyr/shared/event_bus.py` | ❌ 未实现 | AI-Modifiable |
-| M-08 | import-linter | 层依赖规则 | `.importlinter` | ❌ 未实现 | Human-Gated |
+| M-08 | import-linter | 层依赖规则 | `.importlinter` | ✅ 已实现 | Human-Gated |
 | M-09 | ContractBus接口 | 跨层通信抽象 | `src/zephyr/shared/contract_bus.py` | ❌ 未实现 | Human-Gated |
 | M-10 | ZephyrLogger+OTel | 结构化日志+Metrics | `src/zephyr/shared/zephyr_logger.py` | ❌ 未实现 | AI-Modifiable |
 | M-11 | contract_tester.py | 契约测试框架 | `src/zephyr/shared/contract_tester.py` | ❌ 未实现 | Human-Gated |
@@ -224,17 +227,17 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | M-19 | capacity_governance_loop.py | 容量治理闭环 | `src/zephyr/shared/capacity_governance_loop.py` | ❌ 未实现 | AI-Modifiable |
 | M-20 | ttl_cleanup_engine.py | 派生文件TTL清理 | `src/zephyr/shared/ttl_cleanup_engine.py` | ❌ 未实现 | AI-Modifiable |
 
-### 6.2 v2.0.0 新增模块（M-21~M-27）📋 全部规划中
+### 6.2 v2.0.0 新增模块（M-21~M-27）✅ 全部已落地
 
-| 模块ID | 模块名称 | 职责 | 预期路径 | 对标来源 | AI自治权限 | 📋 |
-|--------|---------|------|---------|---------|-----------|----|
-| M-21 | error_budget_tracker.py | Error Budget 五级响应追踪 + Burn Rate 多窗口监控 | `src/zephyr/shared/error_budget_tracker.py` | Google SRE Workbook | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） | 规划中 |
-| M-22 | kill_switch.py | 全局一键熔断 | `src/zephyr/shared/kill_switch.py` | AI Agent Observability Best Practices | Human-Gated | 规划中 |
-| M-23 | sandbox_executor.py | 高风险操作沙箱隔离 | `src/zephyr/shared/sandbox_executor.py` | AI Agent Observability Best Practices | Human-Gated | 规划中 |
-| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/capacity/degradation_chain.yaml` | AI Agent Cost Crisis Report | Human-Gated（链定义）/ AI-Modifiable（链选择） | 规划中 |
-| M-25 | reasoning_spans.py | Agent 推理步骤追踪（OTel 语义规范） | `src/zephyr/shared/reasoning_spans.py` | OpenTelemetry GenAI Semantic Conventions | AI-Modifiable | 规划中 |
-| M-26 | cost_estimator.py | 执行前成本预估（Pre-flight Estimation） | `src/zephyr/shared/cost_estimator.py` | AI Agent Rate Limiting | AI-Modifiable | 规划中 |
-| M-27 | semantic_cache.py | 语义缓存（复用 ChromaDB） | `src/zephyr/shared/semantic_cache.py` | Agent 成本控制实战 | AI-Modifiable | 规划中 |
+| 模块ID | 模块名称 | 职责 | 预期路径 | 对标来源 | AI自治权限 | 状态 |
+|--------|---------|------|---------|---------|-----------|------|
+| M-21 | error_budget_tracker.py | Error Budget 五级响应追踪 + Burn Rate 多窗口监控 | `src/zephyr/shared/error_budget_tracker.py` | Google SRE Workbook | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） | ✅ 已实现 |
+| M-22 | kill_switch.py | 全局一键熔断 | `src/zephyr/shared/kill_switch.py` | AI Agent Observability Best Practices | Human-Gated | ✅ 已实现 |
+| M-23 | sandbox_executor.py | 高风险操作沙箱隔离 | `src/zephyr/shared/sandbox_executor.py` | AI Agent Observability Best Practices | Human-Gated | ✅ 已实现 |
+| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/capacity/degradation_chain.yaml` | AI Agent Cost Crisis Report | Human-Gated（链定义）/ AI-Modifiable（链选择） | ✅ 已实现 |
+| M-25 | reasoning_spans.py | Agent 推理步骤追踪（OTel 语义规范） | `src/zephyr/shared/reasoning_spans.py` | OpenTelemetry GenAI Semantic Conventions | AI-Modifiable | ✅ 已实现 |
+| M-26 | cost_estimator.py | 执行前成本预估（Pre-flight Estimation） | `src/zephyr/shared/cost_estimator.py` | AI Agent Rate Limiting | AI-Modifiable | ✅ 已实现 |
+| M-27 | semantic_cache.py | 语义缓存（复用 ChromaDB） | `src/zephyr/shared/semantic_cache.py` | Agent 成本控制实战 | AI-Modifiable | ✅ 已实现 |
 
 ### 6.3 蓝图外已有实现（纳入蓝图管理）
 
@@ -1003,14 +1006,14 @@ def on_agent_health_changed(event: AgentHealthEvent):
 
 | 模块ID | 模块名称 | 实现状态 | 源码路径 | 测试路径 | 配置/数据路径 |
 |--------|---------|:-------:|---------|---------|-------------|
-| M-01 | CTR-001修复 | ✅ 已完成 | 已归档至旧树 | — | — |
+| M-01 | CTR-001修复 | ✅ 已完成 | 已归档 | — | — |
 | M-02 | 源码树统一 | ✅ 已完成 | `src/zephyr/` | — | — |
 | M-03 | validate_ssot.py | ✅ 已实现 | `scripts/governance/d5_architecture/validate_ssot.py` | — | — |
 | M-04 | lazy_loader.py | ❌ 未实现 | — | — | — |
 | M-05 | pre-commit分层 | ⚠️ 部分实现 | `.pre-commit-config.yaml` | — | — |
 | M-06 | dmypy配置 | ❌ 未实现 | — | — | — |
 | M-07 | event_bus背压 | ❌ 未实现 | — | — | — |
-| M-08 | import-linter | ❌ 未实现 | — | — | — |
+| M-08 | import-linter | ✅ 已实现 | — | — | — |
 | M-09 | ContractBus接口 | ❌ 未实现 | — | — | — |
 | M-10 | ZephyrLogger+OTel | ❌ 未实现 | — | — | — |
 | M-11 | contract_tester.py | ❌ 未实现 | — | — | — |
@@ -6119,3 +6122,16 @@ v2.6.0 — 第五轮外部取证审计 (2026-05-05)
 ├── 文件行数: 5041 → ~9400
 └── ★ 最终判词: 设计穷尽。Could not find a 68th blind spot. Begin construction. ★
 ```
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `src/zephyr/capacity_assurance/` |
+| 源码文件数 | 25 个 .py/.yaml |
+| 测试路径 | `tests/infrastructure/` + `tests/architecture/` (capacity相关) |
+| 配置文件 | `config/capacity/*.yaml` (10个文件) |
+| 关键入口 | `capacity_assurance.pipeline.CapacityAssurancePipeline` |

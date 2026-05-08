@@ -22,8 +22,7 @@ valid_from: 2026-04-24
 ai_autonomy: human_gated
 superseded_by: null
 supersedes: null
-truth_sources:
-  - "模块候选池/系统终局全貌审计/vibe-coding-audit-merged.md §Opus 五 M-02 双门协议"
+truth_sources: []
 related_rationale: R72
 related_open_questions: []
 tags: [architecture, governance, phase-transition, dod, gate-protocol, vibe-coding-2.0]
@@ -48,8 +47,6 @@ ttl: permanent
 
 ### 0.2 本文档不是
 
-- ❌ 任务卡的总规划文档 → 见 `模块候选池/开发流程/任务卡/README.md`
-- ❌ 具体 stability stage 任务清单 → 见 `-taskbook.md` / `-taskbook.md` 等
 - ❌ SSoT Validator 的实现 → 见 `scripts/governance/validate_ssot.py`（scaffold 产出）
 - ❌ 架构总览 → 见 `vibe-coding-infrastructure-architecture.md`
 
@@ -202,7 +199,7 @@ next_phase_entry_criteria:
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-1-01 | scaffold 全部 EXIT 通过 | EXIT-0-01~05 |
-| ENTRY-1-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
+| ENTRY-1-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建（目录已物理删除，2026-05-06 AUDIT-10 确认） | - |
 | ENTRY-1-03 | experimental 骨架任务卡 T-1-01 ~ T-1-20 已创建且 status=queued | - |
 | ENTRY-1-04 | 5 份服务接口规范的 ADR-0015~0020 全部 status=accepted | - |
 
@@ -223,7 +220,7 @@ next_phase_entry_criteria:
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-2-01 | experimental 全部 EXIT 通过 | EXIT-1-01~05 |
-| ENTRY-2-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
+| ENTRY-2-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建（目录已物理删除，2026-05-06 AUDIT-10 确认） | - |
 | ENTRY-2-03 | beta 骨架完善任务卡已创建 | - |
 
 ### 3.3 beta → beta
@@ -245,7 +242,7 @@ next_phase_entry_criteria:
 |----|------|----------|
 | ENTRY-3-01 | beta 全部 EXIT 通过 | EXIT-2-01~06 |
 | ENTRY-3-02 | 升级触发条件至少一项达成 | 看板 `technology-landscape.yaml::upgrade_watchboard` |
-| ENTRY-3-03 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
+| ENTRY-3-03 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建（目录已物理删除，2026-05-06 AUDIT-10 确认） | - |
 | ENTRY-3-04 | 服务化迁移任务卡 T-3-XX 已创建 | - |
 
 ### 3.4 beta → stable
@@ -263,7 +260,7 @@ next_phase_entry_criteria:
 | ID | 描述 | 前置 EXIT |
 |----|------|----------|
 | ENTRY-4-01 | beta 全部 EXIT 通过 | EXIT-3-01~03 |
-| ENTRY-4-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建 | - |
+| ENTRY-4-02 | 影子快照 `_reorg_snapshots/snapshot--post/` 已创建（目录已物理删除，2026-05-06 AUDIT-10 确认） | - |
 | ENTRY-4-03 | stable 实盘生产任务卡已创建 | - |
 
 ### 3.5 stable（无下一 Phase）
@@ -306,7 +303,7 @@ next_phase_entry_criteria:
     blocking: true
   # ... （见 §3 具体内容）
 
-rollback_snapshot_path: "_reorg_snapshots/snapshot--post/"
+rollback_snapshot_path: "_reorg_snapshots/snapshot--post/"  # 目录已物理删除，2026-05-06 AUDIT-10 确认
 phase_acceptance_doc: "docs/09_audit/-acceptance.md"
 ---
 ```

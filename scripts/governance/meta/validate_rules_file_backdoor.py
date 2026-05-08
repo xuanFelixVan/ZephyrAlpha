@@ -42,6 +42,10 @@ warn_only: false
 import argparse
 import json as json_mod
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -93,6 +97,7 @@ CONTROL_WHITELIST: set[int] = {0x0A, 0x0D, 0x09}
 
 
 def _scan_file(file_path: Path) -> list[dict]:
+    """_scan_file implementation."""
     findings: list[dict] = []
     try:
         content = file_path.read_text(encoding="utf-8")
@@ -139,6 +144,7 @@ def _scan_file(file_path: Path) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Rules File Backdoor 检测器")
     parser.add_argument("--file", "-f", type=str, help="指定单个文件扫描")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")

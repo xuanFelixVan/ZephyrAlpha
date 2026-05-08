@@ -31,6 +31,10 @@ exit codes: 0=验证通过, 1=发现问题, 2=执行错误
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_PASS
+
 
 __manifest__ = """
 args: []
@@ -45,6 +49,7 @@ timeout_seconds: 30
 warn_only: false
 """
 
+import os
 import argparse
 import hashlib
 import json
@@ -70,12 +75,14 @@ _CORE_FILES: list[Path] = [
 
 
 def _compute_hash(filepath: Path) -> str:
+    """_compute_hash implementation."""
     if not filepath.exists():
         return "MISSING"
     return hashlib.sha256(filepath.read_bytes()).hexdigest()[:16]
 
 
 def verify_core_file_hashes(verbose: bool = False) -> dict[str, Any]:
+    """verify_core_file_hashes implementation."""
     current: dict[str, str] = {}
     for fp in _CORE_FILES:
         rel = str(fp.relative_to(_PROJECT_ROOT)).replace("\\", "/")
@@ -119,19 +126,29 @@ def verify_core_file_hashes(verbose: bool = False) -> dict[str, Any]:
 
 
 def update_hash_snapshot() -> dict[str, str]:
+    """update_hash_snapshot implementation."""
     snapshot: dict[str, str] = {}
     for fp in _CORE_FILES:
         rel = str(fp.relative_to(_PROJECT_ROOT)).replace("\\", "/")
         snapshot[rel] = _compute_hash(fp)
     _SNAPSHOT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    _SNAPSHOT_PATH.write_text(
+    tmp_path = f"{_SNAPSHOT_PATH}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+        os.replace(tmp_path, _SNAPSHOT_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return snapshot
 
 
 def verify_yaml_file_count() -> dict[str, Any]:
+    """verify_yaml_file_count implementation."""
     yaml_files = sorted(_GATES_DIR.glob("g*.yaml"))
     count = len(yaml_files)
     expected_min = 8
@@ -151,6 +168,7 @@ def verify_yaml_file_count() -> dict[str, Any]:
 
 
 def verify_sqlite_external() -> dict[str, Any]:
+    """verify_sqlite_external implementation."""
     issues: list[str] = []
     if not _DB_PATH.exists():
         return {
@@ -193,6 +211,7 @@ def verify_sqlite_external() -> dict[str, Any]:
 
 
 def run_canary_injection_test() -> dict[str, Any]:
+    """run_canary_injection_test implementation."""
     import yaml
 
     issues: list[str] = []
@@ -259,6 +278,7 @@ def run_canary_injection_test() -> dict[str, Any]:
 
 
 def verify_registry_filesystem_consistency() -> dict[str, Any]:
+    """verify_registry_filesystem_consistency implementation."""
     import yaml
 
     issues: list[str] = []
@@ -329,6 +349,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
 
 
 def verify_import_integrity() -> dict[str, Any]:
+    """verify_import_integrity implementation."""
     issues: list[str] = []
     importable = False
 
@@ -353,6 +374,7 @@ def verify_import_integrity() -> dict[str, Any]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Gate Engine 外部完整性验证")
     parser.add_argument("--json", action="store_true", help="输出 JSON 格式")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
@@ -365,7 +387,7 @@ def main() -> None:
         print(f"[GATE-EXT] 哈希快照已更新: {len(snapshot)} 个文件")
         for path, h in snapshot.items():
             print(f"  {h}  {path}")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     print(f"=== Gate Engine 外部完整性验证 ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")

@@ -1,0 +1,13 @@
+---
+module_id: KE-module_blu-2_6_dr-000
+title: 2.6 DR 跨模块一致性校验
+category: module_blueprint
+---
+
+# 2.6 DR 跨模块一致性校验
+
+2.6 DR 跨模块一致性校验
+
+在 DR 恢复流程中（M-21），增加：
+- `validate_cross_module_state()`: 检查跨模块状态一致性
+- 各集成下游模块的状态快照对比

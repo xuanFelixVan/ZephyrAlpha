@@ -1,0 +1,28 @@
+---
+module_id: KE-module_blu-5_1_______v2_0_0-003
+title: 5.1 终选技术栈（v2.0.0 更新）
+category: module_blueprint
+---
+
+# 5.1 终选技术栈（v2.0.0 更新）
+
+5.1 终选技术栈（v2.0.0 更新）
+
+| # | 组件 | 终选 | 理由 | v2.0.0 变更 |
+|---|------|------|------|------------|
+| 1 | SLO 配置 | YAML + Pydantic v2 | 零依赖运行时校验，Schema 即文档 | — |
+| 2 | 审计 Provenance 存储 | SQLite + hash 链 | 只追加 + 完整性校验，零运维 | — |
+| 3 | 容量指标采样 | structlog + OpenTelemetry SDK | 业界标准，experimental 即接入避免 stable 重构 | — |
+| 4 | AI 审计守卫规则 | YAML 规则集 + Pydantic 校验 | 规则可演化，骨架 scaffold 即上线 | — |
+| 5 | 治理闭环 | 自研 EMA + 阈值 + 持续时间 | 零依赖；stable 升级 InfluxDB | — |
+| 6 | 类型校验 | mypy + import-linter | 本地 + CI 双保险 | — |
+| 7 | 单元测试 | pytest + pytest-cov | 行业标准 | — |
+| 8 | 静态扫描 | ruff + bandit | 取代 pylint，速度快 100× | — |
+| 9 | 契约总线迁移 | 分三批 15+15+14 | 控制回归风险 | — |
+| 10 | Error Budget 追踪 | SQLite + Pydantic v2 | 复用已有基础设施，零新依赖 | **v2.0.0 新增** |
+| 11 | Token Budget | Token Bucket + 滑动窗口 | 社区标准算法，支持 burst + 平滑 | **v2.0.0 新增** |
+| 12 | Kill Switch | 环境变量 + 文件信号 | 零依赖，进程内+跨进程双通道 | **v2.0.0 新增** |
+| 13 | Sandbox | 子进程 + 资源限制 | Python stdlib，零新依赖 | **v2.0.0 新增** |
+| 14 | Graceful Degradation | YAML 降级链 + 模型路由 | 声明式配置，AI 零推理消费 | **v2.0.0 新增** |
+| 15 | OTel 语义规范 | OpenTelemetry GenAI Semantic Conventions | 2025 行业标准，避免厂商锁定 | **v2.0.0 新增** |
+| 16 | 语义缓存 | ChromaDB 向量相似度 | 复用已有 VMS 基础设施 | **v2.0.0 新增** |

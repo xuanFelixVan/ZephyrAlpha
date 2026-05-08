@@ -18,12 +18,4 @@
 
 from __future__ import annotations
 
-__all__ = [
-    "atomic_transaction_manager",
-    "audit_schema",
-    "database_manager",
-    "olap_engine",
-    "query_metrics",
-    "sqlite_schema",
-    "task_repo",
-]
+__all__ = ['atomic_transaction_manager', 'audit_schema', 'circuit_breaker_repo', 'database_manager', 'gate_repo', 'olap_engine', 'query_metrics', 'sqlite_schema', 'task_repo']

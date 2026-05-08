@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: phase_1_complete
+construction_progress: phase_1_partial
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha Gate Engine 终极蓝图——G0-G7 任务门禁 + G1-G5 KMS 决策门 + GATE-16 蓝图读取合规检查（P1-2强制合规，experimental软合规WARNING + beta硬阻断P0）+ 熔断器 circuit_breaker + 门禁评估管线（排序/组合/上下文传播）+ 影子模式/渐进式激活 + Owner紧急旁路 + 可观测性/审计完整性 + 模拟/幂等/性能自保 + 版本化/生命周期 + 人机协同审批 + 自适应/状态记忆 + 健康仪表板 + **法证审计完整性（SHA-256哈希链+决策快照）+ 自我指涉硬化（GateEngineIntegrityGuard+信任根）+ 威胁模型（STRIDE+TOCTOU+AI博弈）+ 深度合规（G7D形式vs实质）**。GATE-18 pre-commit 硬阻断 + 自指防护。脚本exit code→Gate判定映射（CT-SCRIPT-GATE-001）。九重对标：ITIL Change Enablement + K8s Admission Controller + LaunchDarkly四支柱 + OpenFeature(CNCF) + Unleash/Flagsmith + Certificate Transparency(RFC 6962) + TPM measured boot + STRIDE威胁建模 + SOC 2/DORA。"
 tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure, shadow-mode, emergency-override, observability, gate-pipeline, gate-context, gate-simulation, hash-chain, forensic-audit, integrity-guard, threat-model, stride, deep-compliance]
@@ -408,7 +408,7 @@ entry_conditions:
 
 ## 十、施工/演进指南
 
-> 门控引擎已有15个文件实现(construction_progress=phase_1_complete)——本章是**修改和演进指南**，非新建指南。
+> 门控引擎核心8个文件已实现,8个Beta/Experimental文件规划中(construction_progress=phase_1_partial)——本章是**修改和演进指南**，非新建指南。
 
 ### 10.1 添加新门禁的标准流程
 
@@ -1818,3 +1818,16 @@ gate_engine_self_upgrade:
 | 2026-05-05 | 0.4.0 | **第一轮盲点审查**：20盲点补齐。新增§十七-§二十六：评估管线/影子模式/紧急旁路/可观测性/性能预算+幂等/版本化+生命周期+继承/人机协同审批/自适应+有状态+反馈+时间域/健康仪表板。新增DD7-DD12。 |
 | 2026-05-05 | 0.5.0 | **第二轮终极审查**——外部取证专家视角。12盲点补齐（7T0致命+5T1）。新增§二十七-§三十一：(1)法证审计完整性——SHA-256哈希链审计+决策快照+独立验证工具+3-2-1备份；(2)自我指涉硬化——GateEngineIntegrityGuard+信任根层次（Git+OwnerPGP）+GATE-18联动；(3)威胁模型——攻击面映射+STRIDE 8威胁分类+TOCTOU硬化+AI博弈对抗+YAML解析强化；(4)深度合规——形式vs实质断裂→G7D深度门禁+质量反馈回灌。新增DD13-DD18。全蓝图最终结构：31章 + 18条设计决策 + 32盲点全追踪（含7T0致命）。对标：LaunchDarkly→OpenFeature→K8s→Unleash→Certificate Transparency→TPM measured boot→STRIDE→SOC 2→DORA——九重对标。 |
 
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_1_partial（Phase 1 核心门禁 8/16 文件已实现, Phase 2 Beta/Experimental 8个文件规划中） |
+| 源码路径 | `src/zephyr/gates/` |
+| 源码文件数 | 55 个 .py/.yaml |
+| 测试路径 | `tests/integration/ + tests/architecture/` |
+| 配置文件 | `architecture-model/layers/b_gates.yaml` |
+| 关键入口 | `gates.registry.GateRegistry + gates.evaluator.GateEvaluator` |

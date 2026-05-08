@@ -1,0 +1,73 @@
+---
+module_id: KE-documentat-stage_15_src_14_________2026-0-006
+title: Stage 15：src 14 层最终命名收口（2026-04-18 会话 12，Opus 4.7）
+category: documentation
+---
+
+# Stage 15：src 14 层最终命名收口（2026-04-18 会话 12，Opus 4.7）
+
+Stage 15：src 14 层最终命名收口（2026-04-18 会话 12，Opus 4.7）
+
+**触发**：
+
+- 物理 `src/zephyr/` 现状是 12 层（l00-l11），与"14 层终态"差 2 层
+- 现存物理层中有 3 个层名（`l09_research_innovation` / `l10_governance_compliance` / `l11_strategic_decision`）与对标矩阵速记（`l09_sandbox` / `l10_governance` / `l11_ml_platform`）和 ADR-DRAFT-0009（保持 `l10_governance_compliance` / `l11_strategic_decision`，但已规划 l12/l13/l14/l15）三方互相不一致
+- 必须以"专业机构怎么做 + AI 找得最快"为标尺，对 `l11_strategic_decision` 整层处置 + `l10` 命名两件事一次性收口
+- 用户原则：架构终局期不动物理代码，但**命名决议必须先在决策记忆里固化**，未来 ADR-DRAFT-0009 修订时同步搬入
+
+**Q1：l11_strategic_decision 整层怎么处理？**
+
+业界 4 种主流模式扫描：
+
+| 模式 | 谁 | 物理形态 |
+|---|---|---|
+| P1 作为 L05 子模块 | **BlackRock Aladdin** | `l05/asset_allocation/strategic/` + `l05/asset_allocation/tactical/` |
+| P2 纯流程不进代码 | Goldman / JPM / Citadel | Investment Committee 流程，进 docs/ |
+| P3 完全不存在 | Two Sigma / 大部分纯量化 | 决策都在算法里 |
+| P4 前端工具 | BlackRock Aladdin Studio / MSCI Barra | Investment Committee Workspace 是前端 |
+
+业界**没有任何机构**把 `strategic_decision` 列为独立顶层。我们的 14 层对标矩阵 L11 直接就是 ml_platform，根本没有 strategic_decision 这一层。
+
+**决策（R31）**：采纳 **P1 BlackRock 模式**，将 strategic_decision 移入 `l05_portfolio_construction/strategic/` 子模块。
+
+理由：
+
+1. **业界最专业的对位**：BlackRock Aladdin（管理 $10T+ 资产）就是这么做的
+2. **语义最准确**：strategic asset allocation 本来就是 portfolio construction 的长周期版本
+3. **未来扩展自然**：以后真有 IC（投资委员会）流程，可以加 `l05/ic_workflow/` 子模块
+4. **与 OQ-070 的全球扩展契合**：portfolio construction 未来按 jurisdiction 分片（cn / us / eu），strategic 自然也按 jurisdiction 分
+5. **AI 找得到**：AI 看到 `l05_portfolio_construction/strategic/` 立刻明白这是"战略组合构建"，不需要查文档
+6. **不选 P2 / P3 的原因**：用户已规划 AI Operator 在 strategic 决策中介入（OQ-063 C-1 的 `l05/_ai_operator/`），需要代码承载，不能纯流程或完全删除
+
+**Q2：l10 命名 `l10_governance` vs `l10_governance_compliance` vs `l10_compliance`？**
+
+业界 governance vs compliance 的本质区别：
+
+| 词 | 含义 | 谁负责 | 进代码层吗 |
+|---|---|---|---|
+| **Governance（治理）** | "谁能做什么决定，怎么做" | Board / Risk Committee / IC | ❌ 通常不进，在 docs/ 和配置 |
+| **Compliance（合规）** | "做出来的事是否符合外部法规" | CCO / Compliance Officer | ✅ 进代码，运行时硬约束 |
+
+业界扫描：
+
+| 机构 | L10 层名 | 涵盖 |
+|---|---|---|
+| Goldman SecDB | `compliance/` | 仅外部合规 |
+| JPM Athena | `regulatory/` + `governance/` 分两块 | 监管单独，治理单独 |
+| Citadel | `compliance_lab/` | 偏合规 |
+| Two Sigma | `compliance/` | 偏合规 |
+| BlackRock Aladdin | `compliance/` + risk_governance（属 L04） | 合规独立层 |
+| Bloomberg AIM | `compliance_engine/` | 偏合规 |
+
+**关键观察**：业界绝大多数顶级机构的 L10 这一层叫 `compliance`，不是 `governance`。原因：代码层承载的是**硬约束的运行时检查**（如订单送出前查 MiFID II best execution），所以叫 compliance 最准；governance 内容（IPS、IC 决策、Risk Committee 决议）通常进 docs/ 或配置文件。
+
+**与 OQ-070 的契合度验证**：OQ-070 已规划 L10 按 jurisdiction 分片为 `policies/cn_a_share/` / `us_share/` / `eu_mifid2/`——这些**全部是 compliance 政策**（MiFID II 是欧盟合规法规），不是 governance。
+
+**决策（R32）**：采纳 **B3：`l10_compliance`** 命名。
+
+理由：
+
+1. **业界绝对主流**：Goldman / Citadel / Two Sigma / BlackRock / JPM 都叫 compliance
+2. **语义最准**：代码层承载的就是硬合规约束（OPA 政策、订单合规检查、报告生成等）
+3. **与 OQ-070 完美对齐**：`policies/cn_a_share/` / `eu_mifid2/` 就是 compliance 政策
+4. **Governance 概念另放，不冲突**：内部治理（IPS、IC 决策、AI 自治公司组织规则、39 治理系统、文件治理 7 层）属于 `docs

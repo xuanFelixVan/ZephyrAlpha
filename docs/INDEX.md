@@ -13,7 +13,7 @@ depends_on:
     why: "防幻觉路径映射表——确定文件归属"
   - target: GOV-DOC-002
     at: "§7"
-    why: "新建目录的 ADR 审批流程"
+    why: "新建目录的 KB 决策记录审批流程"
 ---
 
 # ZephyrAlpha 文档体系 — 根目录索引
@@ -54,7 +54,7 @@ depends_on:
 
 1. **找文件**：查上表中对应抽屉 → 进入其 `index.md` → 继续下钻
 2. **放文件**：查 GOV-DOC-002 §5 防幻觉路径映射表 → 确定唯一目标目录 → 放进去
-3. **新建目录**：必须走 ADR 审批流程（GOV-DOC-002 §7）
+3. **新建目录**：必须走 KB 决策记录审批流程（GOV-DOC-002 §7）
 4. **不确定**：在 `open-questions-register.md`（`02_enterprise_architecture/`）登记，不实施
 
 ---

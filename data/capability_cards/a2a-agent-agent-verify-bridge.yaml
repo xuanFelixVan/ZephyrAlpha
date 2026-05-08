@@ -1,0 +1,18 @@
+capability_id: a2a-agent-agent-verify-bridge
+category: search
+description: test
+examples: []
+input_schema:
+  type: object
+name: 'A2A Agent: Bridge Verify'
+output_schema:
+  type: object
+priority: P2
+registered_at: '2026-05-08T21:05:47.959437'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- a2a-agent
+- agent-verify-bridge
+- write

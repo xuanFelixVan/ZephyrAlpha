@@ -1,0 +1,23 @@
+name: Dedup Test
+
+on:
+  push:
+    paths:
+      - "src/zephyr/l01_infrastructure/code_dedup_engine/**"
+      - "tests/test_code_dedup_engine/**"
+  pull_request:
+    paths:
+      - "src/zephyr/l01_infrastructure/code_dedup_engine/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install pydantic pytest pyyaml
+      - name: Run dedup tests
+        run: python -m pytest tests/test_code_dedup_engine/ -q

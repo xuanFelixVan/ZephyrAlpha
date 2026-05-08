@@ -15,7 +15,7 @@ from zephyr.feedback_loop.evolution_engine import (
 )
 from zephyr.kb.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
 from zephyr.pipeline.backpressure_manager import BackpressureManager
-from zephyr.shared.time_utils import default_now
+from zephyr.shared.utils.time_utils import default_now
 from zephyr.vector_memory import MemoryEntry, UnifiedVectorMemoryAdapter
 
 

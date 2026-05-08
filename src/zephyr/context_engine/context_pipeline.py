@@ -34,8 +34,8 @@ from zephyr.context_engine.architecture_context_loader import (
 )
 from zephyr.context_engine.context_assembler import AssembledContext, AssemblyError, ContextAssembler
 from zephyr.context_engine.context_injector import ContextInjector, InjectedContext
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]
 

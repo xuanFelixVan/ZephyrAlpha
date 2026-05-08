@@ -191,6 +191,15 @@ class SessionContinuity:
 
         self._write_yaml_handoff(handoff)
 
+        write_to_core("session_handoff", {
+            "session_id": session_id,
+            "completed": len(completed),
+            "in_progress": len(in_progress),
+            "blocked": len(blocked_items),
+        })
+
+        self._auto_sync_registries()
+
         return handoff
 
     def _extract_decisions(self, session_id: str) -> list[dict]:
@@ -220,6 +229,20 @@ class SessionContinuity:
         except Exception:
             conn.close()
             return []
+
+    @staticmethod
+    def _auto_sync_registries() -> None:
+        try:
+            import subprocess
+            script = Path(__file__).resolve().parents[2].parent.parent / "scripts" / "governance" / "auto_sync_all_registries.py"
+            if script.exists():
+                subprocess.run(
+                    [sys.executable, str(script), "--all", "--warn-only"],
+                    timeout=30,
+                    capture_output=True,
+                )
+        except Exception:
+            pass
 
     def _auto_generate_questions(
         self,
@@ -312,15 +335,88 @@ class SessionContinuity:
             "phase": row["phase"],
         }
 
+    def _detect_agent_context(self) -> dict:
+        """检测当前 Agent 的 IDE 来源与可能的身份信息。
+
+        通过环境变量检测 IDE 来源，尝试读取 rbac_roles.yaml 获取身份推断。
+        所有检测均为 best-effort——检测不到时返回保守默认值。
+        """
+        import os
+
+        ide_source = "unknown"
+        if os.environ.get("TRAE_BRAND_NAME") or os.environ.get("TRAE_AI_SHELL_ID"):
+            ide_source = "trae"
+        elif os.environ.get("CURSOR") or os.environ.get("CURSOR_TRACE_ID"):
+            ide_source = "cursor"
+        elif os.environ.get("VSCODE_PID") or os.environ.get("VSCODE_IPC_HOOK_CLI"):
+            ide_source = "vscode"
+
+        rbac_info = self._try_load_rbac_config(ide_source)
+
+        return {
+            "ide_source": ide_source,
+            "maturity": rbac_info.get("maturity", "unknown"),
+            "role": rbac_info.get("role", "unknown"),
+            "auto_guard_eligible": rbac_info.get("auto_guard_eligible", False),
+            "owner_approved": rbac_info.get("owner_approved", False),
+        }
+
+    @staticmethod
+    def _try_load_rbac_config(ide_source: str) -> dict:
+        """尝试从 rbac_roles.yaml 加载当前 IDE 对应的 Agent 配置。"""
+        try:
+            import yaml
+
+            rbac_path = Path("D:/ZephyrAlpha/config/rbac_roles.yaml")
+            if not rbac_path.exists():
+                return {}
+
+            with open(rbac_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+
+            if not config or "agents" not in config:
+                return {}
+
+            agent_map = {
+                "trae": "agent_architect",
+                "cursor": "agent_writer",
+                "vscode": "agent_writer",
+            }
+            agent_name = agent_map.get(ide_source)
+
+            if agent_name and agent_name in config["agents"]:
+                agent_cfg = config["agents"][agent_name]
+                return {
+                    "maturity": agent_cfg.get("maturity", "unknown"),
+                    "role": agent_name,
+                    "auto_guard_eligible": agent_cfg.get("auto_guard_eligible", False),
+                    "owner_approved": agent_cfg.get("owner_approved", False),
+                }
+
+            return {}
+        except Exception:
+            return {}
+
     def print_restore_summary(self) -> None:
         """输出人类可读的 session 恢复摘要
 
-        在 session 开始时调用——让 AI 和人看到"上次做到哪了"。
+        在 session 开始时调用——让 AI 和人看到"上次做到哪了"以及当前 Agent 身份。
         """
+        agent_ctx = self._detect_agent_context()
+
+        if agent_ctx["ide_source"] != "unknown":
+            owner_flag = " ✓Owner已审批" if agent_ctx["owner_approved"] else ""
+            auto_flag = " [auto_guard]" if agent_ctx["auto_guard_eligible"] else ""
+            print(f"\n{'=' * 60}")
+            print(f"  [Agent Identity] IDE={agent_ctx['ide_source']}"
+                  f" | Maturity={agent_ctx['maturity']}"
+                  f" | Role={agent_ctx['role']}{auto_flag}{owner_flag}")
+            print(f"{'=' * 60}")
+
         handoff = self.get_latest_handoff()
 
         if handoff is None:
-            print("\n" + "=" * 60)
+            print(f"\n{'=' * 60}")
             print("  [Session Continuity] 这是第一次 session——没有历史交接包。")
             print("  开始新的工作吧！")
             print("=" * 60 + "\n")
@@ -346,6 +442,27 @@ class SessionContinuity:
             print(f"       [{a.get('priority', '?')}] {a.get('action', '')[:80]}")
         print(f"  📝 上下文摘要: {handoff['context_summary'][:120]}")
         print("=" * 60 + "\n")
+
+    @staticmethod
+    def _print_asset_summary() -> None:
+        try:
+            import yaml as _yaml
+            index_path = Path("D:/ZephyrAlpha/data/asset_index/unified_asset_index.yaml")
+            if not index_path.exists():
+                return
+            with open(index_path, "r", encoding="utf-8") as f:
+                data = _yaml.safe_load(f) or {}
+            health_data = data.get("health", {})
+            health = health_data.get("health_grade", health_data.get("health_score", "?"))
+            total = data.get("total_assets", "?")
+            orphan_data = data.get("orphan_risk", {})
+            orphan_rate = orphan_data.get("orphan_rate", "?")
+            if orphan_rate != "?" and isinstance(orphan_rate, (int, float)):
+                orphan_rate = f"{orphan_rate * 100:.1f}"
+            gen = str(data.get("generated_at", "?"))[:19]
+            print(f"  [Asset Inventory] 资产: {total} | 健康: {health} | 孤儿率: {orphan_rate}% | 生成: {gen}")
+        except Exception:
+            pass
 
     def restore_session(self) -> dict | None:
         """恢复上次 session 状态（程序化接口）

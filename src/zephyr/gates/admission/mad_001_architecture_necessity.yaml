@@ -13,7 +13,7 @@ version: "1.0"
 created: "2026-05-04"
 
 description: >
-  对标：Architecture Decision Records (ADR) + YAGNI principle。
+  对标：Architecture Decision Records (KB 决策记录) + YAGNI principle。
   任何新模块在创建前 MUST 通过此门禁证明其架构必要性。
   防止过度工程化和模块蔓延 (module sprawl)。
 

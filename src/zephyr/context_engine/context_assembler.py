@@ -16,16 +16,21 @@ import hashlib
 from datetime import UTC, datetime
 from pathlib import Path
 
+import logging
+from typing import Any
+
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 __all__ = [
     "AssembledContext",
     "AssemblyError",
     "ContextAssembler",
     "FileEntry",
+    "RawContext",
+    "build_context",
 ]
 
 
@@ -345,3 +350,271 @@ class ContextAssembler:
         ctx.budget_remaining = max(token_budget - ctx.token_estimate, 0)
 
         return ctx
+
+
+class RawContext(BaseModel):
+    """BUILD 阶段产物——从 4 个 VMS Collection 检索的原始上下文。
+
+    §2.1 检索参数表：
+      ke_entries       ×5  — 历史经验（task_type + target_layer 语义相似）
+      vibe_rules       ×3  — 合规约束（task_type 相关治理规则）
+      blueprints       ×2  — 架构参考（target_layer 相关蓝图）
+      failure_patterns ×3  — 避坑指南（task_type 历史失败模式）
+    """
+
+    model_config = BASE_CONFIG
+
+    ke_entries: list[str] = Field(default_factory=list, description="知识条目——历史经验")
+    vibe_rules: list[str] = Field(default_factory=list, description="Vibe 规则——合规约束")
+    blueprints: list[str] = Field(default_factory=list, description="蓝图——架构参考")
+    failure_patterns: list[str] = Field(default_factory=list, description="失败模式——避坑指南")
+
+    degraded: bool = Field(default=False, description="VMS 不可用降级标记：session.degraded=true")
+    embedded_defaults: list[str] = Field(
+        default_factory=list,
+        description="降级默认上下文 (AGENTS.md rules + 模块蓝图)",
+    )
+
+    @property
+    def total_items(self) -> int:
+        return len(self.ke_entries) + len(self.vibe_rules) + len(self.blueprints) + len(self.failure_patterns)
+
+    @property
+    def is_empty(self) -> bool:
+        return self.total_items == 0 and not self.embedded_defaults
+
+
+def build_context(
+    task: "TaskCard | None" = None,
+    *,
+    task_type: str | None = None,
+    target_layer: str | None = None,
+    session_id: str = "",
+    vms: "Any | None" = None,
+) -> RawContext:
+    """BUILD 阶段入口——从 VMS 四 Collection 检索组装原始上下文。
+
+    AP4 防护：同 session_id + 同 query 缓存，TTL=5min。
+
+    Parameters
+    ----------
+    task : TaskCard | None
+    task_type : str | None
+    target_layer : str | None
+    session_id : str
+    vms : Any | None
+        VMS 客户端；None 时触发 VMS 不可用降级
+
+    Returns
+    -------
+    RawContext
+    """
+    if task is not None:
+        _task_type = task_type or _infer_task_type(task)
+        _layer = target_layer or task.target_layer or ""
+    else:
+        _task_type = task_type or ""
+        _layer = target_layer or ""
+
+    cache_key = f"{session_id}:{_task_type}:{_layer}"
+    cached = _BUILD_CACHE.get(cache_key)
+    if cached is not None:
+        cached_at, ctx = cached
+        if (datetime.now(UTC) - cached_at).total_seconds() < 300:
+            return ctx
+
+    if vms is None:
+        ctx = RawContext(degraded=True, embedded_defaults=_get_embedded_defaults(_task_type, _layer))
+        _BUILD_CACHE[cache_key] = (datetime.now(UTC), ctx)
+        return ctx
+
+    ctx = RawContext()
+
+    try:
+        ctx.ke_entries = _safe_search(vms, "ke_entries", _task_type, top_k=5)
+    except Exception:
+        pass
+    try:
+        ctx.vibe_rules = _safe_search(vms, "vibe_rules", _task_type, top_k=3)
+    except Exception:
+        pass
+    try:
+        ctx.blueprints = _safe_search(vms, "blueprints", _layer, top_k=2)
+    except Exception:
+        pass
+    try:
+        ctx.failure_patterns = _safe_search(vms, "failure_patterns", _task_type, top_k=3)
+    except Exception:
+        pass
+
+    if ctx.is_empty:
+        ctx.degraded = True
+        ctx.embedded_defaults = _get_embedded_defaults(_task_type, _layer)
+
+    _BUILD_CACHE[cache_key] = (datetime.now(UTC), ctx)
+    return ctx
+
+
+def _infer_task_type(task: "TaskCard") -> str:
+    pipeline_type = getattr(task, "pipeline_task_type", None)
+    if pipeline_type:
+        return pipeline_type
+
+    tags = getattr(task, "tags", []) or []
+    for tag in tags:
+        tag_lower = tag.lower()
+        if tag_lower in {"code_gen", "code_review", "analysis", "ops_fix", "doc", "refactor", "test", "audit", "query", "debug"}:
+            return tag_lower
+
+    title = getattr(task, "title", "") or ""
+    title_lower = title.lower()
+    type_keywords = {
+        "code_gen": ["生成", "创建", "实现", "编写", "generate", "create", "implement", "build"],
+        "code_review": ["审查", "检查", "review", "inspect", "audit"],
+        "analysis": ["分析", "分析报告", "analysis", "report", "评估"],
+        "ops_fix": ["修复", "故障", "修复漏洞", "fix", "bug", "hotfix", "patch"],
+        "doc": ["文档", "doc", "documentation", "readme"],
+        "refactor": ["重构", "refactor", "restructure"],
+        "test": ["测试", "test", "单元测试", "pytest"],
+        "audit": ["审计", "audit", "合规", "compliance"],
+        "query": ["查询", "问题", "question", "query"],
+        "debug": ["调试", "debug", "排查"],
+    }
+    for intent, kws in type_keywords.items():
+        for kw in kws:
+            if kw in title_lower:
+                return intent
+
+    return "code_gen"
+
+
+def _safe_search(vms: "Any", collection: str, query: str, top_k: int) -> list[str]:
+    if not query:
+        return []
+    results = vms.search(collection, query, top_k=top_k)
+    if isinstance(results, list):
+        return [str(r) for r in results]
+    return []
+
+
+_BUILD_CACHE: dict[str, tuple[datetime, RawContext]] = {}
+
+_logger = logging.getLogger(__name__)
+
+EMBEDDED_DEFAULTS_BASE: list[str] = [
+    "R-ONLY-CREATE: Never delete files, only Write and SearchReplace",
+    "R-NO-ASK: Never ask questions, work autonomously",
+    "R-LOG-EVERY: Log every completed card",
+    "R-STRICT-SCOPE: Only execute assigned layer, do not cross boundaries",
+    "R-FIRST-READ: Always read journal and checkpoints before starting",
+    "R-UTF8: Always use encoding='utf-8' for file operations",
+    "R-ATOMIC: Related changes in same commit, never partial",
+    "R-AUDIT: Post-task ten-dimension audit is mandatory",
+]
+
+
+def _get_embedded_defaults(task_type: str, layer: str) -> list[str]:
+    defaults = list(EMBEDDED_DEFAULTS_BASE)
+    if task_type:
+        defaults.append(f"Task type: {task_type} — follow associated compliance rules")
+    if layer:
+        defaults.append(f"Layer: {layer} — consult blueprint §{layer} for architecture context")
+    _logger.debug("VMS unavailable — using embedded defaults (%d rules)", len(defaults))
+    return defaults
+
+
+def _build_context_from_kb(task_type: str, layer: str) -> RawContext:
+    ctx = RawContext(embedded_defaults=_get_embedded_defaults(task_type, layer))
+
+    try:
+        from zephyr.kb.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
+        from zephyr.kb.reranker import Reranker
+
+        kb = _get_or_init_kb()
+        if kb is None:
+            ctx.degraded = True
+            return ctx
+
+        rk = Reranker(top_k=5)
+
+        if task_type:
+            hits = kb.search(query=task_type, k=5)
+            if hits:
+                docs = [h.content for h in hits]
+                metas = [h.metadata for h in hits]
+                ranked = rk.rerank(task_type, docs, metadatas=metas)
+                ctx.ke_entries = [h.text for h in ranked[:5]]
+
+        if layer:
+            blueprint_hits = kb.search(query=f"blueprint {layer} architecture", k=3, topic=None)
+            if blueprint_hits:
+                ctx.blueprints = [h.content for h in blueprint_hits[:2]]
+    except Exception:
+        _logger.debug("KB search failed, using embedded defaults only")
+
+    ctx.degraded = not ctx.ke_entries and not ctx.blueprints
+    return ctx
+
+
+_KBS_CACHE: UnifiedMemoryAPI | None = None
+
+
+def _get_or_init_kb() -> UnifiedMemoryAPI | None:
+    global _KBS_CACHE
+    if _KBS_CACHE is not None:
+        return _KBS_CACHE
+    try:
+        from zephyr.kb.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
+        from zephyr.kb.bootstrap import Bootstrap, BootstrapConfig
+        from pathlib import Path
+
+        kb = UnifiedMemoryAPI(backend=InMemoryMemoryBackend(), enforce_capability=False)
+        config = BootstrapConfig(min_ke_count=1, min_categories=1, max_chunks_per_file=10)
+        engine = Bootstrap(project_root=Path.cwd(), config=config, kb_api=kb)
+        result = engine.run()
+        _KBS_CACHE = kb
+        _logger.info("KB context bridge initialized: %d KEs in %d categories", result.total_activated, len(result.categories_found))
+        return kb
+    except Exception as exc:
+        _logger.warning("KB context bridge initialization failed: %s", exc)
+        return None
+
+
+AUTHORITY_MIN_SCORE: float = 0.7
+
+
+def validate_authority_chain(
+    sources: list[str],
+    *,
+    min_trusted_count: int = 2,
+) -> tuple[bool, float, str]:
+    """TASK-018: 验证上下文来源的权威链。
+
+    至少 min_trusted_count 个来源需来自已知权威路径。
+
+    Returns
+    -------
+    tuple[bool, float, str]
+        (passed, computed_score, detail_message)
+    """
+    trusted_prefixes = {
+        "AGENTS.md",
+        "root:AGENTS.md",
+        "CT-",
+        "blueprint:",
+        "architecture_context.json",
+        "contracts",
+    }
+    trusted_count = 0
+    for source in sources:
+        s = source.strip()
+        if any(s.startswith(prefix) for prefix in trusted_prefixes):
+            trusted_count += 1
+
+    passed = trusted_count >= min_trusted_count
+    score = min(1.0, trusted_count / max(1, len(sources)) * 1.2) if sources else 0.7
+    msg = (
+        f"Authority chain: {trusted_count}/{len(sources)} trusted sources "
+        f"(min {min_trusted_count}) — {'PASSED' if passed else 'FAILED'}"
+    )
+    return passed, round(score, 2), msg

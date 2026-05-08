@@ -25,9 +25,9 @@ from decimal import Decimal
 from typing import Optional
 
 from zephyr.l07_post_trade_analytics.analytics_base import TCAEngineBase
-from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order
 
 _logger = logging.getLogger(__name__)
 

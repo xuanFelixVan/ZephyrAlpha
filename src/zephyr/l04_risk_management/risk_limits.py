@@ -30,7 +30,7 @@ import abc
 from decimal import Decimal
 from typing import ClassVar, Dict, Optional
 
-from zephyr.shared.contracts.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk.risk_limits import RiskLimits
 
 
 class RiskLimitsCalculator(abc.ABC):

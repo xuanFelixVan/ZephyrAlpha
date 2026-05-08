@@ -6,7 +6,8 @@ VMS — Vector Memory Service 接口基类
 核心职责：
   - 向量存储与检索（ChromaDB 0.6 后端）
   - 嵌入生成（BGE-M3 ONNX 模型）
-  - 5 大 Collection 管理：decisions / code_context / lessons / knowledge / runtime_logs
+  - 8 大 Collection 管理：decisions / code_context / lessons / knowledge
+    rules / blueprints / session_snapshots / execution_traces
   - 递归分块 + 上下文窗口管理
 
 扩展点：
@@ -37,7 +38,8 @@ class MemoryEntry:
     ttl_seconds: int | None = None
 
     COLLECTIONS: ClassVar[tuple[str, ...]] = (
-        "decisions", "code_context", "lessons", "knowledge", "runtime_logs",
+        "decisions", "code_context", "lessons", "knowledge",
+        "rules", "blueprints", "session_snapshots", "execution_traces",
     )
 
 

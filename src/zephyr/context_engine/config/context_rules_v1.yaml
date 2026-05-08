@@ -1,0 +1,40 @@
+context_rules:
+  version: "1.0.0"
+  module_id: "MOD-INF-008"
+  description: "Context Engine 上下文组装规则 — 定义四阶段流水线中每阶段的输入/输出/约束"
+  last_updated: "2026-05-07"
+  stages:
+    build:
+      description: "从 VMS 拉取原始上下文"
+      sources:
+        - vector_memory
+        - knowledge_base
+        - system_snapshot
+      max_documents: 50
+      timeout_ms: 5000
+      fallback: "DEGRADE-001: VMS 不可用 → 文件系统 grep"
+    compress:
+      description: "Token 预算管理 + 三级压缩回退"
+      levels:
+        - name: "LLM压缩"
+          priority: 1
+          model: "Qwen2.5-3B-Instruct ONNX int8"
+        - name: "规则基摘要"
+          priority: 2
+        - name: "截断"
+          priority: 3
+      preserve_raw_text: true
+      fallback: "DEGRADE-002: LLM 压缩失败 → 规则基"
+    validate:
+      description: "LSG 安全校验 + 已知危险模式匹配"
+      checks:
+        - prompt_injection
+        - data_leakage
+        - adversarial_pattern
+      gate: "fail-closed"
+      fallback: "DEGRADE-003: LSG 不可用 → 保守拒绝"
+    inject:
+      description: "格式化上下文并注入 Agent session"
+      max_token_budget: 64000
+      provenance_tracking: true
+      retry_on_failure: 3

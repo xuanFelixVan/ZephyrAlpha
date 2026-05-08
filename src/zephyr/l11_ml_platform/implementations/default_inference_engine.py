@@ -21,8 +21,8 @@ from zephyr.l11_ml_platform.inference_base import (
     InferenceEngineBase,
     ModelMetadata,
 )
-from zephyr.shared.contracts.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 
 _logger = logging.getLogger(__name__)
 

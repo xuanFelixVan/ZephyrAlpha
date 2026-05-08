@@ -1,0 +1,26 @@
+capability_id: agent-orchestrator
+category: orchestration
+description: Agent lifecycle state machine management
+examples: []
+input_schema:
+  properties:
+    action:
+      type: string
+    agent_id:
+      type: string
+  type: object
+name: Agent Orchestrator
+output_schema:
+  properties:
+    status:
+      type: string
+  type: object
+priority: P1
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- agent
+- lifecycle
+- state-machine

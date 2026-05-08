@@ -1,0 +1,12 @@
+---
+module_id: KE-documentat-3_2_l1-000
+title: 3.2 L1 标准子类型与章节适用性
+category: documentation
+---
+
+# 3.2 L1 标准子类型与章节适用性
+
+3.2 L1 标准子类型与章节适用性
+
+> v3.1.0 新增。对标 ISO/IEC Directives Part 2：IS/TS/TR 有不同章节要求——ISO 不搞一套模板管所有。
+> 同样，L1 治理标准下存在不同性质的标准，一刀切要求所有 19 章会造成空壳章节和 Token 浪费。

@@ -1,0 +1,14 @@
+{
+  "case_id": "FN-001",
+  "dimension": "D1",
+  "description": "目录结构但缺少 index.md — 已知缺陷：根目录存在子目录但无index入口",
+  "defect": {
+    "type": "file_create",
+    "path": "docs/_test_golden_case_01/"
+  },
+  "target_path": "docs/_test_golden_case_01/",
+  "verifier": "d1_structure/validate_index_reality.py",
+  "expected_finding_id": "D1-STRUCTURE-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

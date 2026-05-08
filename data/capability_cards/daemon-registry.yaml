@@ -1,0 +1,26 @@
+capability_id: daemon-registry
+category: infra
+description: MAPE-K autonomous loop daemon registration and resource monitoring
+examples: []
+input_schema:
+  properties:
+    daemon_id:
+      type: string
+  type: object
+name: Daemon Registry
+output_schema:
+  properties:
+    resources:
+      type: object
+    status:
+      type: string
+  type: object
+priority: P1
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- daemon
+- monitoring
+- mape-k

@@ -1,0 +1,15 @@
+{
+  "case_id": "FN-003",
+  "dimension": "D3",
+  "description": "frontmatter 缺少 version 字段 — 已知缺陷：MD文件无version元数据",
+  "defect": {
+    "type": "content_inject",
+    "field": "version"
+  },
+  "target_path": "docs/_test_missing_version.md",
+  "defect_content": "---\ntitle: \"Test Missing Version\"\nstatus: draft\n---\n\n# Test\n",
+  "verifier": "d3_metadata/check_naming_convention.py",
+  "expected_finding_id": "D3-META-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

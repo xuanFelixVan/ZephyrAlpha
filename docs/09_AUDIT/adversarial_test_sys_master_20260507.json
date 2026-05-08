@@ -1,0 +1,54 @@
+{
+  "test_type": "adversarial",
+  "version": 3,
+  "target": [
+    "SYS-MASTER-001",
+    "MOD-MASTER-001"
+  ],
+  "defense_gate": "SYS-MASTER-CMP",
+  "date": "2026-05-07",
+  "executor": "session-20260507-999",
+  "summary": {
+    "total_attacks": 7,
+    "detected": 7,
+    "missed": 0,
+    "detection_rate": "7/7"
+  },
+  "attacks": [
+    {
+      "name": "M01-frontmatter_corruption",
+      "detected": true,
+      "detail": "frontmatter=phase_9_broken (INVALID), blueprint-registry=completed, module-registry=completed"
+    },
+    {
+      "name": "M02-registry_drift",
+      "detected": true,
+      "detail": "frontmatter=completed, blueprint-registry=DRIFTED_not_started, module-registry=completed"
+    },
+    {
+      "name": "M03-depends_on_broken",
+      "detected": true,
+      "detail": "MOD-MASTER-001 NOT in depends_on"
+    },
+    {
+      "name": "M04-cold_start_removal",
+      "detected": true,
+      "detail": "SYS-MASTER-001 not referenced anywhere in project_rules.md"
+    },
+    {
+      "name": "M05-crosscheck_broken",
+      "detected": true,
+      "detail": "exit=99 | "
+    },
+    {
+      "name": "M06-missing_blueprint",
+      "detected": true,
+      "detail": "MOD-MASTER-001 MISSING"
+    },
+    {
+      "name": "M07-ai_rules_regression",
+      "detected": true,
+      "detail": "74 numbered rules found (minimum required: 76)"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ title: "G6 Blueprint Compliance Gate"
 status: active
 ttl: permanent
 
-gate_id: G6
+gate_id: G6_BP
 gate_name: blueprint_compliance
 description: "beta hard compliance gate — AI agent MUST read the relevant blueprint BEFORE modifying code. Blocks any code change where the blueprint was not consulted first."
 

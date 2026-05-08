@@ -89,7 +89,7 @@ ZephyrAlpha 2.0 架构在当前阶段处于**"物理架构冻结 + 模块边界�
 | **17 项技术选型** | ✅ **已定稿** | 见 `technology-landscape.yaml`（SSoT）|
 | **4 路线图** | ✅ **已定稿** | 见 `phase-transition-protocol.md` |
 | **模块内部边界（具体文件/函数级）** | ⏳ **讨论中** | experimental 落地时细化，不在本阶段冻结 |
-| **任务卡路径（旧树→当前项目迁移）** | 🔧 **重组中** | 当前重组阶段 A-F，预计 scaffold 内完成 |
+| **任务卡路径（迁移重组）** | 🔧 **重组中** | 重组方案已定稿：`docs/03_modules/_restructuring/blueprint.md`（GOV-RSTR-001）——7 Phase 施工 |
 
 **架构消费者须知**：
 

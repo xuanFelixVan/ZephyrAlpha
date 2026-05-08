@@ -1,9 +1,11 @@
+# 本词表是 ZephyrAlpha 2.0 机密等级唯一真源（SSoT）。任何地方的 classification 枚举值定义如果与本词表不一致，以本词表为准。
 schema_version: "1.0.1"
 doc_type: vocabulary
 module_id: PS-VOC-006
 version: "1.0.1"
 title: "classification 受控词表"
 status: active
+owner: ZephyrAlpha-Owner
 vocabulary_name: classification
 total_values: 3
 source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema；任务域三值对齐 metadata-registry §7.6"
@@ -30,3 +32,11 @@ values:
   - value: confidential
     definition: "机密——严格成员范围，按治理策略降级分发"
     forbidden_for: []
+
+ai_consumption:
+  when_to_use: "AI session 需要设置或验证 classification 字段值时，必须从本词表选取合法值"
+  how_to_use: "读取 values[] 列表获取合法枚举值；读取 deprecated_values[] 获取已废弃值（禁止新使用）"
+  ai_keywords:
+    - "classification"
+    - "机密等级"
+    - "classification枚举"

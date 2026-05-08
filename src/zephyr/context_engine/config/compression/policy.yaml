@@ -1,0 +1,42 @@
+compression_policy:
+  version: "1.0.0"
+  module_id: "MOD-INF-008"
+  description: "上下文压缩策略 — 三级降级回退 + Token 预算约束"
+  last_updated: "2026-05-07"
+  token_budgets:
+    L1_operational:
+      threshold_pct: 80
+      action: "warn"
+    L2_tactical:
+      threshold_pct: 90
+      action: "compress_aggressive"
+    L3_critical:
+      threshold_pct: 95
+      action: "truncate"
+  compression_methods:
+    llm_summarization:
+      enabled: true
+      model: "Qwen2.5-3B-Instruct"
+      max_input_tokens: 8192
+      target_compression_ratio: 0.3
+    rule_based:
+      enabled: true
+      strategies:
+        - "remove_boilerplate"
+        - "extract_key_sections"
+        - "dedup_similar_chunks"
+    truncation:
+      enabled: true
+      strategy: "priority_aware_head_tail"
+      preserve_sections:
+        - "task_description"
+        - "error_context"
+        - "critical_decisions"
+  cache_policy:
+    enabled: true
+    ttl_seconds: 300
+    max_cache_entries: 100
+  invariants:
+    - "永不丢弃 raw_text — LSG 安全检测需要"
+    - "compress 阶段保留 provenance 溯源链"
+    - "同一 session 内缓存重复上下文查询"

@@ -12,7 +12,7 @@ partition:
   source_views:
     - 03-application-architecture.md
     - 05-data-architecture.md
-  related_adrs:
+  related_kb_refs:
     - ADR-0009
 
 # =============================================================================

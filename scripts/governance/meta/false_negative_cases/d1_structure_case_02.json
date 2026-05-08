@@ -1,0 +1,14 @@
+{
+  "case_id": "FN-002",
+  "dimension": "D1",
+  "description": ".py 在根目录孤立 — 已知缺陷：Python文件未放在src/或scripts/下",
+  "defect": {
+    "type": "file_create",
+    "path": "_test_orphan_script.py"
+  },
+  "target_path": "_test_orphan_script.py",
+  "verifier": "d1_structure/validate_index_reality.py",
+  "expected_finding_id": "D1-ORPHAN-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

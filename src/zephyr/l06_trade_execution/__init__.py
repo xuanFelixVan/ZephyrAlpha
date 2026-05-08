@@ -42,6 +42,9 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策：ADR-0022 目录双轨治理
 """
 
+__all__ = ['execution_engine', 'order_manager', 'broker_interface']
+
+
 # CODEGEN-GUARD: CTR-declarations-manual
 # DO NOT regenerate: CTR declarations are manually curated SSoT annotations
 

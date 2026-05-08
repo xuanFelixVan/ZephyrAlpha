@@ -1,0 +1,37 @@
+---
+module_id: KE-module_blu-3_14__________________v0_7_0__-000
+title: 3.14 原子性修复——中断操作的崩溃恢复（v0.7.0 终极审视 #3）
+category: module_blueprint
+---
+
+# 3.14 原子性修复——中断操作的崩溃恢复（v0.7.0 终极审视 #3）
+
+3.14 原子性修复——中断操作的崩溃恢复（v0.7.0 终极审视 #3）
+
+**发现**：当前 auto_fixer 的描述是"提取→替换→验证→回滚失败"。外部审计师立刻发现一个致命漏洞：**如果进程在"提取"和"替换"之间崩溃了（断电/OOM/crash），代码库会处于不一致状态**——shared 中有新函数但 caller 没更新，或 caller 更新了 import 但 shared 没创建函数。
+
+**WAL 式 fix_plan + 原子性提交**：
+
+```
+1. PREFLIGHT（干运行）：
+   → 生成 fix_plan.yaml（所有要创建/修改/删除的文件及 diff）
+   → 验证 fix_plan 语义完整性（所有 import 可解析 + 无循环依赖 + 所有引用可追溯）
+   → 计算 plan_hash = SHA256(fix_plan)
+
+2. CHECKPOINT（快照）：
+   → 备份所有被影响的文件的原始内容到 fix_checkpoint_{plan_hash}.tar.gz
+   → 备份所有被影响的文件的 SHA256 列表到 fix_manifest_{plan_hash}.json
+
+3. APPLY（顺序执行）：
+   → 按 fix_plan 中的依赖顺序依次执行文件修改
+   → 每个文件修改后立即验证其 SHA256 与 plan 中的 expected_sha256 一致
+   → 任何步骤 SHA256 不匹配 → ABORT → 跳转到 RECOVER
+
+4. RECOVER（崩溃恢复）：
+   → 引擎下次启动时扫描 fix_checkpoint_*.tar.gz 残留文件
+   → 发现未完成的 fix_plan（checkpoint 存在但 completion_marker 不存在）
+   → 自动从 checkpoint tar.gz 恢复所有原始文件
+   → 写入 Session Log："检测到未完成的修复操作 DUP-xxx，已自动恢复代码库到修复前状态"
+```
+
+```yaml

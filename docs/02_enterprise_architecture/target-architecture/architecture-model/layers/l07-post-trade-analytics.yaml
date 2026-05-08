@@ -15,7 +15,7 @@ modules:
     status: planned
     priority: P1
     runtime_plane: cold
-    description: 收益分解与绩效归因；日终归因批任务，回报拆解（因子/行业/风格）
+    description: 收益分解与绩效归因；日终归因批任务，回报拆解（因�?行业/风格�?
     interfaces:
       - contract_id: CTR-004
         role: consumer
@@ -26,7 +26,10 @@ modules:
       - contract_id: CTR-006
         role: consumer
         description: 消费 PositionSnapshot 用于绩效归因计算
-    adr_ref: []
+      - contract_id: CTR-P1-013
+        role: both
+        description: 消费 TelemetryEmitter 发送交易后遥测
+    kb_ref: []
 
   - id: l07-review-realtime
     name: Trade Review & TCA
@@ -34,7 +37,7 @@ modules:
     status: planned
     priority: P1
     runtime_plane: warm
-    description: 交易复盘与执行质量分析（滑点、TCA）；实时 Warm 模式复盘，历史批量分析 Cold
+    description: 交易复盘与执行质量分析（滑点、TCA）；实时 Warm 模式复盘，历史批量分�?Cold
     interfaces:
       - contract_id: CTR-004
         role: consumer
@@ -42,8 +45,8 @@ modules:
       - contract_id: CTR-005
         role: consumer
         description: 消费 Fill 成交事件用于 TCA 滑点分析
-    adr_ref: []
-    plane_note: 实时 TCA 走 Warm（l07-review-realtime）；历史批量归因走 Cold（l07-attribution）
+    kb_ref: []
+    plane_note: 实时 TCA �?Warm（l07-review-realtime）；历史批量归因�?Cold（l07-attribution�?
 
   - id: l07-reports
     name: Report Generation
@@ -53,7 +56,7 @@ modules:
     runtime_plane: cold
     description: 报告生成与结构化输出；月度报表、绩效分析报告，Cold batch
     interfaces: []
-    adr_ref: []
+    kb_ref: []
 
 summary:
   total: 3

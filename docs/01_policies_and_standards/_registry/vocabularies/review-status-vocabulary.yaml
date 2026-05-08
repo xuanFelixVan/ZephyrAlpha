@@ -1,0 +1,78 @@
+# review_status 受控词表
+# ZephyrAlpha 2.0 审核状态唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 review_status 字段的所有合法值（4 种）。
+# 用于跟踪文件的审核进度和审批结果，与 status 字段互补。
+#
+# 对标标准：
+#   - PS-STD-001 §10.16：审核状态
+#   - 与 status 字段的区别：status 是文档生命周期状态；review_status 是审核流程状态
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-018
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "review_status 受控词表"
+status: active
+vocabulary_name: review_status
+total_values: 4
+source: "PS-STD-001 §10.16"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.16"
+    why: "review_status 受控词表定义真源"
+
+values:
+  - value: unreviewed
+    definition: "未审核——文件尚未经过任何审核"
+    ai_consumption: "AI 在引用 unreviewed 文件时应提示风险，并建议优先引用已审核文件。"
+    ai_keywords: ["未审核", "unreviewed", "待审", "新文件"]
+    allowed_operations: ["读取", "编辑", "提交审核"]
+    frontmatter_color: "⚪"
+
+  - value: reviewed
+    definition: "已审核——文件已审核但未最终批准"
+    ai_consumption: "AI 可以引用 reviewed 文件，但须注明'已审核待批准'状态。"
+    ai_keywords: ["已审核", "reviewed", "待批准", "审核中"]
+    allowed_operations: ["读取", "引用", "修改（走变更门控）"]
+    frontmatter_color: "🟡"
+
+  - value: approved
+    definition: "已批准——文件已通过审核并获得正式批准"
+    ai_consumption: "AI 可以放心引用 approved 文件，并将其作为权威来源。"
+    ai_keywords: ["已批准", "approved", "通过", "正式"]
+    allowed_operations: ["读取", "引用", "变更（走变更门控）"]
+    frontmatter_color: "🟢"
+
+  - value: rejected
+    definition: "已驳回——文件审核未通过，需返工"
+    ai_consumption: "AI 不得引用 rejected 文件。发现引用时应建议替换为 approved 文件。"
+    ai_keywords: ["已驳回", "rejected", "未通过", "返工"]
+    allowed_operations: ["读取（仅用于了解驳回原因）", "编辑（返工）", "重新提交审核"]
+    frontmatter_color: "🔴"
+
+transition_rules:
+  - from: unreviewed
+    to: reviewed
+    condition: "审核人完成审核并给出意见"
+    approval: "审核人"
+
+  - from: reviewed
+    to: approved
+    condition: "审核意见已解决，审核人确认通过"
+    approval: "审核人"
+
+  - from: reviewed
+    to: rejected
+    condition: "审核发现重大问题，无法通过"
+    approval: "审核人"
+
+  - from: rejected
+    to: unreviewed
+    condition: "返工完成，重新提交审核"
+    approval: "无（自动状态迁移）"

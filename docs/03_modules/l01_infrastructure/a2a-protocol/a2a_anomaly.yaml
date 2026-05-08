@@ -1,0 +1,14 @@
+# MOD-INF-025 A2A异常规则
+anomaly_rules:
+  - id: ANM-001
+    metric: "response_time"
+    threshold_high: 30
+    action: alert
+  - id: ANM-002
+    metric: "retry_rate"
+    threshold_high: 0.5
+    action: quarantine
+  - id: ANM-003
+    metric: "message_flood"
+    threshold_high: 100
+    action: rate_limit

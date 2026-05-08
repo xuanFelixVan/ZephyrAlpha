@@ -1,0 +1,17 @@
+# MOD-INF-025 仲裁规则
+rules:
+  - id: ARB-001
+    description: "同层Task优先级"
+    strategy: higher_priority_wins
+  - id: ARB-002
+    description: "架构 vs 实施冲突"
+    strategy: architect_over_implementer
+  - id: ARB-003
+    description: "审计优先"
+    strategy: governor_overrides
+  - id: ARB-004
+    description: "冲突升级超时3分钟"
+    strategy: escalate_on_timeout
+  - id: ARB-005
+    description: "多数投票≥60%通过"
+    strategy: supermajority

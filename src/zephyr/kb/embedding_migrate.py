@@ -28,7 +28,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.kb.chromadb_init import COLLECTION_NAMES
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "MigrationStatus",

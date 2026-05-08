@@ -12,6 +12,35 @@ Spec     : MCP/0.3
 - 提供 tools/list 和 tools/call 标准方法
 - initialize / ping 握手支持
 - 子类通过 register_tool() 注册工具处理函数
+- Content-Length 帧格式支持（MCP 2024-11-05 规范）
+
+MCP 原语覆盖表
+--------------
+| 原语 | 实现状态 | 备注 |
+|------|:---:|------|
+| ``initialize`` | ✅ | 返回 capabilities + serverInfo |
+| ``ping`` | ✅ | 返回 {"pong": true} |
+| ``tools/list`` | ✅ | 返回所有注册工具定义 |
+| ``tools/call`` | ✅ | 执行工具 handler，返回 MCP content |
+| ``resources/list`` | ✅ | resource_provider.py 已实现 |
+| ``resources/read`` | ✅ | resource_provider.py read() 已实现 |
+| ``prompts/list`` | ✅ | prompt_provider.py 已实现 |
+| ``prompts/get`` | ✅ | prompt_provider.py get() 已实现 |
+| ``notifications/message`` | ❌ | 未实现（Server→Client 通知） |
+
+错误码体系
+----------
+错误码集中定义于 ``zephyr.mcp.error_codes``（MOD-INF-013 §3.4）。
+标准 JSON-RPC 码：-32700 ~ -32603。
+MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
+           -32003(ERR_GATE_FAILED) / -32004(ERR_RBAC_DENIED)。
+
+双栈 MCP 说明
+-------------
+- BaseMCPServer（本类）：自研 JSON-RPC 2.0，供 knowledge_base / gate_engine /
+  doc_guard(session_handoff) / sentinel(intent_router) / blueprint_search 使用。
+- FastMCP（task_manager_server.py）：官方 mcp SDK，task_manager MCP 使用。
+- 两条路径均 speak MCP over stdio——属有意的渐进迁移，而非实现漏做。
 """
 
 from __future__ import annotations
@@ -35,24 +64,26 @@ __all__ = [
     "ERR_INTERNAL_ERROR",
     "ERR_TOOL_NOT_FOUND",
     "ERR_TOOL_EXECUTION",
+    "ERR_GATE_FAILED",
+    "ERR_RBAC_DENIED",
 ]
 
 JSONRPC_VERSION = "2.0"
 MCP_PROTOCOL_VERSION = "2024-11-05"
 
-# ---------------------------------------------------------------------------
-# 标准 JSON-RPC 错误码
-# ---------------------------------------------------------------------------
+from zephyr.mcp.error_codes import (
+    ERR_GATE_FAILED,
+    ERR_INTERNAL_ERROR,
+    ERR_INVALID_PARAMS,
+    ERR_INVALID_REQUEST,
+    ERR_METHOD_NOT_FOUND,
+    ERR_PARSE_ERROR,
+    ERR_RBAC_DENIED,
+    ERR_TOOL_EXECUTION,
+    ERR_TOOL_NOT_FOUND,
+)
 
-ERR_PARSE_ERROR = -32700
-ERR_INVALID_REQUEST = -32600
-ERR_METHOD_NOT_FOUND = -32601
-ERR_INVALID_PARAMS = -32602
-ERR_INTERNAL_ERROR = -32603
-
-# MCP 扩展错误码
-ERR_TOOL_NOT_FOUND = -32001
-ERR_TOOL_EXECUTION = -32002
+import asyncio
 
 
 class MCPError(Exception):
@@ -78,6 +109,7 @@ class ToolDefinition:
     description: str
     input_schema: dict[str, Any]
     handler: Callable[..., Any]
+    safety_level: str = "L"
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +145,8 @@ class BaseMCPServer:
         server_id: str,
         version: str,
         description: str,
+        *,
+        enable_rbac: bool = True,
     ) -> None:
         self.server_id = server_id
         self.version = version
@@ -123,6 +157,33 @@ class BaseMCPServer:
             module=server_id,
             operation="server",
         )
+        self._rbac_guard = None
+        self._agent_session_id: str = ""
+        if enable_rbac:
+            self._try_auto_enable_rbac()
+
+    def _try_auto_enable_rbac(self) -> None:
+        if not getattr(self, "_AUTO_ENABLE_RBAC", False):
+            return
+        try:
+            from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge
+            self._rbac_guard = EscalationRBACBridge()
+            self._agent_session_id = self.server_id
+        except ImportError:
+            pass
+
+    def enable_rbac(self, session_id: str = "") -> None:
+        self._agent_session_id = session_id
+        try:
+            from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge
+            self._rbac_guard = EscalationRBACBridge()
+            self._log.info("rbac_enabled", session_id=session_id or "auto-detect")
+        except ImportError:
+            self._log.warning("rbac_unavailable", reason="rbac_bridge import failed")
+
+    def disable_rbac(self) -> None:
+        self._rbac_guard = None
+        self._log.info("rbac_disabled")
 
     # ------------------------------------------------------------------
     # 工具注册
@@ -134,6 +195,8 @@ class BaseMCPServer:
         description: str,
         input_schema: dict[str, Any],
         handler: Callable[..., Any],
+        *,
+        safety_level: str = "L",
     ) -> None:
         """注册一个 MCP Tool。
 
@@ -147,18 +210,71 @@ class BaseMCPServer:
             JSON Schema（type: object），描述工具参数。
         handler:
             Python 可调用对象，接收参数后返回可序列化结果。
+        safety_level:
+            L = Low（直接执行）
+            M = Medium（返回确认提示）
+            H = High（返回 Owner approval required）
+            与 MOD-INF-018 RBAC 对齐。
         """
         self._tools[name] = ToolDefinition(
             name=name,
             description=description,
             input_schema=input_schema,
             handler=handler,
+            safety_level=safety_level,
         )
 
     @property
     def tool_names(self) -> list[str]:
         """已注册工具名称列表。"""
         return list(self._tools.keys())
+
+    @classmethod
+    def register_tool_decorator(
+        cls,
+        name: str,
+        description: str,
+        input_schema: dict[str, Any],
+    ):
+        """类级别工具注册装饰器（解决 R7 copy-paste 问题）。
+
+        用法::
+
+            class MyServer(BaseMCPServer):
+                SERVER_ID = "my_server"
+
+                @BaseMCPServer.register_tool_decorator(
+                    name="my_server.hello",
+                    description="Say hello",
+                    input_schema={"type": "object", "properties": {}},
+                )
+                def hello(self):
+                    return {"message": "hello"}
+
+        在 ``__init_subclass__`` 或 ``__init__`` 中调用 ``_install_decorated_tools()``
+        自动注册所有被装饰的方法。
+        """
+        def decorator(handler: Callable[..., Any]) -> Callable[..., Any]:
+            handler._mcp_tool_meta = {
+                "name": name,
+                "description": description,
+                "input_schema": input_schema,
+            }
+            return handler
+        return decorator
+
+    def _install_decorated_tools(self) -> None:
+        """扫描自身方法，自动注册被 ``@register_tool_decorator`` 装饰的工具。"""
+        for attr_name in dir(self):
+            attr = getattr(self, attr_name, None)
+            if callable(attr) and hasattr(attr, "_mcp_tool_meta"):
+                meta = attr._mcp_tool_meta
+                self.register_tool(
+                    name=meta["name"],
+                    description=meta["description"],
+                    input_schema=meta["input_schema"],
+                    handler=attr,
+                )
 
     # ------------------------------------------------------------------
     # JSON-RPC 响应构造
@@ -234,6 +350,36 @@ class BaseMCPServer:
         if tool is None:
             return self._err(req_id, ERR_TOOL_NOT_FOUND, f"Tool not found: {tool_name!r}")
 
+        level = getattr(tool, "safety_level", "L")
+        if level == "H":
+            return self._err(
+                req_id, ERR_RBAC_DENIED,
+                f"Tool {tool_name!r} requires Owner approval (safety_level=H). "
+                f"Submit exemption in MOD-INF-018 before retry.",
+            )
+        if level == "M":
+            return self._ok(req_id, {
+                "content": [{
+                    "type": "text",
+                    "text": json.dumps({
+                        "confirmation_required": True,
+                        "tool": tool_name,
+                        "message": f"Confirm execution of {tool_name!r} (safety_level=M)",
+                    }, ensure_ascii=False),
+                }],
+                "isError": False,
+            })
+
+        if self._rbac_guard is not None:
+            sid = self._agent_session_id or self.server_id
+            rbac_result = self._rbac_guard.pre_execute_check(sid, f"mcp:{tool_name}", "")
+            if not rbac_result.passed:
+                return self._err(
+                    req_id, ERR_RBAC_DENIED,
+                    f"RBAC blocked {tool_name!r}: {rbac_result.reason} "
+                    f"(layer={rbac_result.layer}, rule={rbac_result.rule_id})",
+                )
+
         try:
             result = tool.handler(**arguments)
             content = [{"type": "text", "text": json.dumps(result, ensure_ascii=False)}]
@@ -250,13 +396,49 @@ class BaseMCPServer:
     # 主循环（stdio）
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _read_message(inp: TextIO) -> tuple[str | None, bool]:
+        """从输入流读取一条 JSON-RPC 消息。
+
+        支持两种格式：
+        1. Content-Length 帧（MCP 2024-11-05 规范）：
+           先读 ``Content-Length: N\\r\\n\\r\\n`` 头，再读 N 字节 body。
+        2. Legacy 逐行模式（向后兼容）：
+           如果首行不是 Content-Length 头，回退到 ``readline()``。
+
+        Returns
+        -------
+        (body_str, used_cl):
+            body_str 为消息体字符串，EOF 时返回 None。
+            used_cl 为 True 表示使用了 Content-Length 帧格式。
+        """
+        first_line = inp.readline()
+        if not first_line:
+            return None, False
+
+        stripped = first_line.strip()
+        if stripped.startswith("Content-Length:"):
+            try:
+                content_length = int(stripped.split(":", 1)[1].strip())
+            except (ValueError, IndexError):
+                return first_line.strip(), False
+
+            inp.readline()
+
+            body = inp.read(content_length)
+            return body.strip(), True
+
+        return stripped, False
+
     def run(
         self,
         *,
         input_stream: TextIO | None = None,
         output_stream: TextIO | None = None,
     ) -> None:
-        """启动 stdio 主循环，逐行读取 JSON-RPC 请求并写出响应。
+        """启动 stdio 主循环，读取 JSON-RPC 请求并写出响应。
+
+        支持 Content-Length 帧格式（MCP 2024-11-05）和 legacy 逐行格式。
 
         Parameters
         ----------
@@ -270,8 +452,10 @@ class BaseMCPServer:
 
         self._log.info("server_started", server_id=self.server_id, version=self.version)
 
-        for raw_line in inp:
-            line = raw_line.strip()
+        while True:
+            line, _used_cl = self._read_message(inp)
+            if line is None:
+                break
             if not line:
                 continue
 
@@ -294,3 +478,63 @@ class BaseMCPServer:
             out.flush()
 
         self._log.info("server_stopped", server_id=self.server_id)
+
+    async def run_async(
+        self,
+        *,
+        input_stream: TextIO | None = None,
+        output_stream: TextIO | None = None,
+    ) -> None:
+        """启动 asyncio stdio 主循环（非阻塞 I/O），解决 R1 stdio 单线程阻塞风险。
+
+        使用 ``loop.run_in_executor`` 将阻塞的 ``readline()`` 委托到线程池，
+        使事件循环在等待 stdin 时可调度其他协程。
+
+        用法::
+
+            import asyncio
+            asyncio.run(server.run_async())
+
+        Parameters
+        ----------
+        input_stream:
+            默认 sys.stdin（测试时可传入 StringIO）。
+        output_stream:
+            默认 sys.stdout（测试时可传入 StringIO）。
+        """
+        loop = asyncio.get_running_loop()
+        inp: TextIO = input_stream or sys.stdin
+        out: TextIO = output_stream or sys.stdout
+
+        self._log.info(
+            "server_started", server_id=self.server_id, version=self.version, mode="async"
+        )
+
+        while True:
+            line = await loop.run_in_executor(None, inp.readline)
+            if not line:
+                break
+
+            decoded = line.strip()
+            if not decoded:
+                continue
+
+            try:
+                request: Any = json.loads(decoded)
+            except json.JSONDecodeError as exc:
+                resp = self._err(None, ERR_PARSE_ERROR, f"Parse error: {exc}")
+                out.write(json.dumps(resp, ensure_ascii=False) + "\n")
+                out.flush()
+                continue
+
+            if not isinstance(request, dict):
+                resp = self._err(None, ERR_INVALID_REQUEST, "Request must be a JSON object")
+                out.write(json.dumps(resp, ensure_ascii=False) + "\n")
+                out.flush()
+                continue
+
+            response = self.handle_request(request)
+            out.write(json.dumps(response, ensure_ascii=False) + "\n")
+            out.flush()
+
+        self._log.info("server_stopped", server_id=self.server_id, mode="async")

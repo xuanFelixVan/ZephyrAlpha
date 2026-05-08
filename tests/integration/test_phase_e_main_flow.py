@@ -49,14 +49,14 @@ from zephyr.pipeline.layer_router import (
     reset_layer_router,
     handle_layer_onboarding,
 )
-from zephyr.shared.contracts.market_data import NormalizedMarketData
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.position import PositionSnapshot
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.market.market_data import NormalizedMarketData
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.shared.contracts.core.trace_context import TraceContext
 
 
 TEST_SYMBOLS = ["600519", "000858", "601318", "600036", "000333"]

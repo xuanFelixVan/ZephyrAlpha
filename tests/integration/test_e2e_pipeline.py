@@ -85,13 +85,13 @@ from zephyr.l11_ml_platform.implementations.default_inference_engine import (
 from zephyr.l13_experimentation.implementations.default_experiment_pipeline import (
     DefaultExperimentPipeline,
 )
-from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
 
 UNIVERSE_CSI300 = [
@@ -389,7 +389,7 @@ class TestOrderManagerLifecycle:
 
     def test_full_lifecycle(self):
         """订单 PENDING → SUBMITTED → FILLED 全生命周期"""
-        from zephyr.shared.contracts.position import PositionSnapshot
+        from zephyr.shared.contracts.portfolio.position import PositionSnapshot
 
         broker = SimulationBroker()
         broker.connect()

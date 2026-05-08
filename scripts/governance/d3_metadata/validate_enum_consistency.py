@@ -48,7 +48,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import GOV_DOCS_DIR, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -85,9 +85,11 @@ _errors: list[str] = []
 _warnings: list[str] = []
 
 def _err(msg: str) -> None:
+    """_err implementation."""
     _errors.append(msg)
 
 def _warn(msg: str) -> None:
+    """_warn implementation."""
     _warnings.append(msg)
 
 def _load_vocabularies() -> dict[str, dict]:
@@ -396,7 +398,7 @@ def main() -> None:
     vocabs = _load_vocabularies()
     if not vocabs:
         print("[ERROR] 未找到任何 vocabulary YAML 文件", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     print(f"  已加载 {len(vocabs)} 个 vocabulary YAML:")
     for name, info in vocabs.items():
@@ -443,17 +445,17 @@ def main() -> None:
 
     if not _errors and not _warnings:
         print("✅ GATE-ENUM 全部通过 — 所有枚举值从 vocabulary YAML 一致派生")
-        return 0
+        return EXIT_PASS
 
     if _errors:
         print(f"🔴 GATE-ENUM 发现 {len(_errors)} 个枚举漂移")
         if args.warn_only:
             print("   (--warn-only 模式，exit 0)")
-            return 0
-        return 1
+            return EXIT_PASS
+        return EXIT_FINDINGS
     else:
         print(f"🟡 GATE-ENUM 通过（有 {len(_warnings)} 个标注性警告）")
-        return 0
+        return EXIT_PASS
 
 if __name__ == "__main__":
     sys.exit(main())

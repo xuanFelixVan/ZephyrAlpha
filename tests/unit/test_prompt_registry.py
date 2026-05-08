@@ -29,7 +29,7 @@ from zephyr.context_engine.prompt_registry import (
     _compare_semver,
     _semver_tuple,
 )
-from zephyr.shared.token_utils import estimate_tokens
+from zephyr.shared.observability.token_utils import estimate_tokens
 
 # ---------------------------------------------------------------------------
 # 工具函数测试

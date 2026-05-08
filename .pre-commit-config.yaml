@@ -454,6 +454,20 @@ repos:
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
+
+      # ── GATE-MCP: MCP Tool Contract 一致性校验（MOD-INF-013 §9 R3）──
+      # 检测 tool_contracts.yaml ↔ 代码 register_tool 声明不一致
+      - id: gate-mcp-contract-consistency
+        name: "GATE-MCP: Tool Contract 一致性（R3）"
+        entry: python scripts/governance/validate_tool_contracts_consistency.py
+        args: ["--ci"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/mcp/tool_contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
+        description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（MOD-INF-013 §9 R3 契约漂移缓解）"
+
+      # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 检测范围：cross-layer-contracts.yaml 或 contracts/*.py 变更时触发
       # 检测内容：SHA256 快照对比 → YAML 变更但 .py 未同步 → exit 1
       # 模式：--ci 硬块，首次运行 --freeze 建立基线
@@ -475,6 +489,15 @@ repos:
         always_run: true
         files: "\\.(yaml|md|py)$"
         description: "检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全"
+
+      - id: sync-audit-protocol-numbers
+        name: "AUTO-SYNC: 审计协议数字同步"
+        entry: python scripts/governance/generators/sync_audit_protocol_numbers.py
+        language: python
+        pass_filenames: false
+        always_run: true
+        files: "(script_manifest\\.yaml|gate-registry\\.yaml|registry-master-index\\.yaml|\\.pre-commit-config\\.yaml)$"
+        description: "SSoT 变更时自动同步 audit-protocol.md 中的硬编码数字"
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage

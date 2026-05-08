@@ -1,0 +1,7 @@
+# MOD-INF-005 §34.2 依赖版本锁定
+# 生成于 2026-05-07
+# 蓝图中声明依赖的具体版本快照——用于 validate_frozen_requirements.py 对账
+
+python>=3.11
+pyyaml>=6.0
+pydantic>=2.0

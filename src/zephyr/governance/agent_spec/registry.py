@@ -1,0 +1,77 @@
+"""G-CT-003 契约：Agent Spec → RBAC 能力检查.
+
+双向桥接：
+  1. 读取 agent_spec/skill_registry.yaml 中注册的 13 个技能
+  2. 提供统一的查询接口给 governance gate 使用
+"""
+
+from __future__ import annotations
+
+import yaml
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel
+
+_SKILL_REGISTRY_PATH = Path(__file__).resolve().parent.parent.parent / "agent_spec" / "skill_registry.yaml"
+
+GOVERNANCE_SKILL_TYPES = {
+    "domain": ["governor-specialist", "gate-specialist", "contract-enforcer", "script-writer", "audit-specialist",
+               "rollback-specialist", "drift-detector", "escalation-specialist", "budget-enforcer", "security-specialist"],
+    "role": ["architect", "implementer", "governor"],
+}
+
+
+class AgentCapability(BaseModel):
+    agent_id: str
+    capabilities: list[str] = []
+    version: str = "1.0.0"
+    spec_hash: str = ""
+
+
+class SpecRegistry:
+    """Agent Spec 注册表 — 对接真实 skill_registry.yaml."""
+
+    def __init__(self, registry_path: Optional[Path] = None) -> None:
+        self._entries: dict[str, AgentCapability] = {}
+        self._registry_path = registry_path or _SKILL_REGISTRY_PATH
+        self._raw_cache: Optional[Dict[str, Any]] = None
+        self._load_from_skill_registry()
+
+    def _load_from_skill_registry(self) -> None:
+        if not self._registry_path.exists():
+            return
+        with self._registry_path.open(encoding="utf-8") as f:
+            raw = yaml.safe_load(f)
+        self._raw_cache = raw
+        skills = raw.get("skills", {}) if raw else {}
+        for category in ("domain", "role"):
+            for sid, info in skills.get(category, {}).items():
+                name = info.get("name", sid)
+                self._entries[sid] = AgentCapability(
+                    agent_id=sid,
+                    capabilities=[name, category, info.get("description", "")[:80]],
+                    version=info.get("version", "0.1.0"),
+                    spec_hash=info.get("spec_hash", ""),
+                )
+
+    def register(self, capability: AgentCapability) -> None:
+        self._entries[capability.agent_id] = capability
+
+    def get(self, agent_id: str) -> AgentCapability | None:
+        return self._entries.get(agent_id)
+
+    def list_all(self) -> List[Dict[str, Any]]:
+        result: List[Dict[str, Any]] = []
+        for sid, cap in self._entries.items():
+            result.append({"skill_id": sid, "name": cap.capabilities[0] if cap.capabilities else sid,
+                           "category": cap.capabilities[1] if len(cap.capabilities) > 1 else "unknown",
+                           "version": cap.version})
+        return result
+
+    def list_by_category(self, category: str) -> List[Dict[str, Any]]:
+        return [e for e in self.list_all() if e["category"] == category]
+
+    def reload(self) -> None:
+        self._entries.clear()
+        self._raw_cache = None
+        self._load_from_skill_registry()

@@ -1,0 +1,46 @@
+"""测试 TOCTOU Guard — 竞态防护"""
+import pytest
+from pathlib import Path
+from zephyr.agent_rbac.toctou_guard import TOCTOUGuard, FileIntegrityCheck
+
+
+class TestTOCTOUGuard:
+    def test_snapshot_and_verify(self, tmp_path: Path):
+        guard = TOCTOUGuard()
+        test_file = tmp_path / "test.txt"
+        test_file.write_text("original", encoding="utf-8")
+        str_path = str(test_file)
+        guard.snapshot(str_path)
+        ok, msg = guard.verify(str_path)
+        assert ok
+
+    def test_tamper_detected(self, tmp_path: Path):
+        guard = TOCTOUGuard()
+        test_file = tmp_path / "tamper.txt"
+        test_file.write_text("original", encoding="utf-8")
+        str_path = str(test_file)
+        guard.snapshot(str_path)
+        test_file.write_text("tampered!", encoding="utf-8")
+        ok, msg = guard.verify(str_path)
+        assert not ok
+
+    def test_file_gone_detected(self, tmp_path: Path):
+        guard = TOCTOUGuard()
+        test_file = tmp_path / "gone.txt"
+        test_file.write_text("original", encoding="utf-8")
+        str_path = str(test_file)
+        guard.snapshot(str_path)
+        test_file.unlink()
+        ok, msg = guard.verify(str_path)
+        assert not ok
+
+    def test_no_snapshot_fails(self):
+        guard = TOCTOUGuard()
+        ok, msg = guard.verify("/nonexistent/path")
+        assert not ok
+
+    def test_clear(self):
+        guard = TOCTOUGuard()
+        guard._pre_state["test"] = None
+        guard.clear()
+        assert len(guard._pre_state) == 0

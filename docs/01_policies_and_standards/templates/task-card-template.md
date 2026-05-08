@@ -37,6 +37,8 @@ references:
 | 5 | `acceptance_criteria` 每条必须客观可验证——"代码质量好"不合法，"Pydantic V2 模型含 field_validator"合法 | AI 不知道"好"是什么意思 |
 | 6 | 禁止出现"待定"/"视情况而定"/"可"——所有字段必须有明确值 | AI 自行推断 → 推断错误 |
 | 7 | `rollback_instructions` 不能为空——每次施工均有不可逆失败的风险 | 不可逆破坏——AI 不知道如何撤回 |
+| 8 | **施工前运行 `construction_gate.py check`**——校验 downstream_outputs 路径是否匹配当前项目结构 | 路径漂移——蓝图路径已过时但任务卡未感知 |
+| 9 | **施工后执行 G9 反孤儿五问**——新功能必须有调用入口 + 被发现机制 + 注册清单 | 孤儿功能——写了没人知道，下一个 AI 重新发明轮子 |
 
 ---
 
@@ -46,7 +48,7 @@ references:
 
 ```markdown
 ---
-task_id: "TASK-INF-0042"
+task_id: "CP-0042"
 source_blueprint: "MOD-INF-006"
 source_section: "蓝图 §11.3 步骤4"
 
@@ -85,7 +87,7 @@ forbidden_touch:
 applicable_rules:
   - module_id: "PS-STD-001"
     section: "§5"
-    reason: "任务卡编号格式 TASK-{DOMAIN}-{NNNN}"
+    reason: "任务卡编号格式 {NAMESPACE}-{SEQ}（如 CP-0042）"
   - module_id: "ADR-0040"
     section: "全篇"
     reason: "强制 Pydantic V2——禁止 dataclass"
@@ -117,6 +119,9 @@ acceptance_criteria:
   - "每张任务卡含完整 upstream_files / downstream_outputs 绝对路径"
   - "Pydantic V2 BaseModel——导入路径 from pydantic import BaseModel"
   - "回滚方案：删除新创建的文件即可恢复"
+  - "[G9] 新文件已注册到 script_manifest.yaml"
+  - "[G9] BlueprintDecomposer 在 pipeline 中有调用入口（pipeline_modules 含 M1/M3）"
+  - "[G9] 下一个 AI session 可通过 `scripts/governance/` 扫描发现此功能"
 
 # ===== 回滚 =====
 rollback_instructions: |
@@ -225,6 +230,50 @@ autonomy_checklist: []
 | `applicable_rules` 每条的 module_id | 在注册表中存在（`document-metadata-index.yaml`） | 告警（不拒绝）——但规则可能不存在 |
 | `acceptance_criteria` 每条 | 含至少 1 个可验证关键词（路径/格式/数字/文件存在） | 告警（不拒绝）——但标准可能无法验证 |
 | `rollback_instructions` | 不为空 + 不少于 20 字 | 拒绝创建——无回滚方案 |
+
+---
+## G8 门禁：路径校验（施工前）
+
+**触发时机**：施工前（打开任务卡后、写任何文件前）。
+
+**工具**：`python scripts/governance/construction_gate.py check <task_card.md>`
+
+**原理**：PathResolver 扫描 `src/zephyr/` 当前目录树，对比任务卡的 `downstream_outputs` 路径：
+
+| 状态 | 含义 | 处置 |
+|------|------|------|
+| `OK` | 路径匹配当前项目结构 | 放行 |
+| `PATH_DRIFT` | 同名文件在其他位置找到 | **自动更正**任务卡路径 → 放行 |
+| `NAME_VARIANT` | 相似文件名（≥90%）找到 | **自动更正**任务卡路径 → 放行 |
+| `MISSING` | 项目内无匹配 | **人工确认**——可能需创建新目录 |
+
+> **铁律**：G8 状态不是 OK 时，AI 必须先更正路径再施工，禁止按原任务卡路径盲目创建文件。
+
+---
+## G9 门禁：反孤儿集成校验（施工后）
+
+**触发时机**：施工完成、文件落地后、关闭任务卡前。
+
+**依据**：`RULE-TWO`（反孤儿功能规则）
+
+**强制五问**：
+
+| # | 问题 | 检查方式 |
+|---|------|---------|
+| 1 | **谁调用它？** | 新文件在 `__init__.py` 中有导出？或在 `script_manifest.yaml` 中有注册？或在 pipeline 中有引用？ |
+| 2 | **谁发现它？** | 下一个 AI session 通过什么路径知道这个文件存在？（搜索 `src/zephyr/` / grep 脚本名 / 查 manifest） |
+| 3 | **谁维护它？** | 文件在合法三目录（`scripts/governance/` / `src/zephyr/` / `tests/`）中？不在根目录？ |
+| 4 | **谁校验它？** | 是否有 gate 会检查它？如果没有，是否需要新增 gate？ |
+| 5 | **谁更新它？** | 相关模板/清单/注册表是否已更新？（`script_manifest.yaml` / `phase_manager` / 本文档） |
+
+> **铁律**：G9 五问中任一项回答为"没有人"或"没办法"→ 任务卡不能标记为 done。AI 必须先补齐集成再关闭。
+
+| 产出类型 | 必须集成到 | G9 验证方式 |
+|----------|-----------|------------|
+| 新 `.py` 脚本（`scripts/` 下） | `script_manifest.yaml` + `phase_manager` gate | `python scripts/lock_files.py` 类注册 |
+| 新 `.py` 模块 | `__init__.py` 导出 + 至少一个 import 引用 | `grep` 模块名在项目中 ≥ 1 次跨文件引用 |
+| 新门禁/gate | `phase_manager.py` PHASE_SEQUENCE + 本文档 | gate 名在 `phase_manager.py` 中可查 |
+| 新配置/数据文件 | 代码中显式路径引用 | `grep` 文件名在 `.py` 文件中 ≥ 1 次 |
 
 ---
 

@@ -51,6 +51,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _check_run_all() -> dict:
+    """_check_run_all implementation."""
     start = datetime.now(UTC)
     result = subprocess.run(
         [sys.executable, str(_SCRIPTS_DIR / "run_all.py"), "--list"],
@@ -68,6 +69,7 @@ def _check_run_all() -> dict:
 
 
 def _check_disk_space() -> dict:
+    """_check_disk_space implementation."""
     try:
         usage = os.statvfs(str(_REPO_ROOT)) if hasattr(os, "statvfs") else None
         if usage:
@@ -87,6 +89,7 @@ def _check_disk_space() -> dict:
 
 
 def _check_manifest_consistency() -> dict:
+    """_check_manifest_consistency implementation."""
     checker = _SCRIPTS_DIR / "check_registry_consistency.py"
     if not checker.exists():
         return {"check": "manifest_consistency", "passed": False, "detail": "check_registry_consistency.py 不存在"}
@@ -104,6 +107,7 @@ def _check_manifest_consistency() -> dict:
 
 
 def _check_import_integrity() -> dict:
+    """_check_import_integrity implementation."""
     result = subprocess.run(
         [sys.executable, "-c", "import sys; sys.path.insert(0, 'scripts/governance'); "
          "from _shared.constants import REPO_ROOT; print('OK')"],
@@ -119,6 +123,7 @@ def _check_import_integrity() -> dict:
 
 
 def _load_kill_switches() -> dict[str, Any]:
+    """_load_kill_switches implementation."""
     if not _KILL_SWITCH_PATH.exists():
         return {"scripts": {}, "global_freeze": False}
     with open(_KILL_SWITCH_PATH, encoding="utf-8") as f:
@@ -126,6 +131,7 @@ def _load_kill_switches() -> dict[str, Any]:
 
 
 def _check_kill_switches() -> dict:
+    """_check_kill_switches implementation."""
     ks = _load_kill_switches()
     disabled_scripts = {
         name: info for name, info in ks.get("scripts", {}).items()
@@ -142,6 +148,7 @@ def _check_kill_switches() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(description="脚本系统健康自检（run_all/manifest/import/disk/kill-switch）")
@@ -188,8 +195,8 @@ def main() -> None:
             print(f"  {icon} {c['check']}: {c.get('detail', 'OK')}", file=sys.stderr)
 
     if warn_only or all_passed:
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
 
 
 if __name__ == "__main__":

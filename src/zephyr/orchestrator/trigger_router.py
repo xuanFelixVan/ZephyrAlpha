@@ -597,23 +597,85 @@ def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``onboarding`` trigger_type 的 experimental 占位处理器。"""
-    return _stub_response("onboarding", payload)
+    """``onboarding`` — 加载跨层路由表并返回拓扑序。
+
+    读取 pipeline/layer_router.py 的路由配置，为新会话注入上下文。
+    对标 Codified Context §3.1.1 Orchestration Protocols。
+    """
+    try:
+        from zephyr.pipeline.layer_router import get_layer_order
+        layers = get_layer_order()
+        return {
+            "handler": "onboarding",
+            "phase": "operational",
+            "layer_order": layers,
+            "session_context_loaded": True,
+        }
+    except Exception as exc:
+        _logger.warning("onboarding handler fallback to stub: %s", exc)
+        return _stub_response("onboarding", payload)
 
 
 def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``drift_detected`` trigger_type 的 experimental 占位处理器。"""
-    return _stub_response("drift_detected", payload)
+    """``drift_detected`` — 触发 DriftDetector 恢复流程。
+
+    调用 zephyr.gates.drift_detector 模块执行偏移恢复。
+    对标 MOD-INF-023 (drift-detector)。
+    """
+    try:
+        from zephyr.gates.drift_detector import trigger_recovery
+        result = trigger_recovery(payload)
+        return {
+            "handler": "drift_detected",
+            "phase": "operational",
+            "recovery_result": result,
+        }
+    except Exception as exc:
+        _logger.warning("drift handler fallback to stub: %s", exc)
+        return _stub_response("drift_detected", payload)
 
 
 def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``cleanup_due`` trigger_type 的 experimental 占位处理器。"""
-    return _stub_response("cleanup_due", payload)
+    """``cleanup_due`` — 周期性清理孤儿快照和过期审计日志。
+
+    调用 scripts/governance/archive_drafts_zone 执行归档。
+    对标 MOD-INF-006 (task-system) §9。
+    """
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["python", "scripts/governance/archive_drafts_zone.py", "--auto"],
+            capture_output=True, text=True, timeout=30,
+            cwd=str(REPO_ROOT),
+        )
+        return {
+            "handler": "cleanup_due",
+            "phase": "operational",
+            "exit_code": result.returncode,
+            "stdout_preview": result.stdout[:200] if result.stdout else "",
+        }
+    except Exception as exc:
+        _logger.warning("cleanup handler fallback to stub: %s", exc)
+        return _stub_response("cleanup_due", payload)
 
 
 def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``blueprint_published`` trigger_type 的 experimental 占位处理器。"""
-    return _stub_response("blueprint_published", payload)
+    """``blueprint_published`` — 新蓝图发布后触发反思循环与 KE 索引。
+
+    调用 zephyr.feedback_loop.decision_engine 触发蓝图反思。
+    对标 MOD-INF-008 (feedback-loop) §4。
+    """
+    try:
+        from zephyr.feedback_loop.decision_engine import reflect_on_blueprint
+        result = reflect_on_blueprint(payload)
+        return {
+            "handler": "blueprint_published",
+            "phase": "operational",
+            "reflection_result": result,
+        }
+    except Exception as exc:
+        _logger.warning("blueprint_published handler fallback to stub: %s", exc)
+        return _stub_response("blueprint_published", payload)
 
 
 def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
@@ -628,7 +690,7 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
 
     统一打分逻辑：shared/blueprint_scorer.py（与 MCP blueprint_search_server 共用）。
     """
-    from zephyr.shared.blueprint_scorer import score_and_rank_routes
+    from zephyr.shared.utils.blueprint_scorer import score_and_rank_routes
 
     routing_yaml_path = REPO_ROOT / "config" / "blueprint_routing.yaml"
     if not routing_yaml_path.exists():

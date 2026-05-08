@@ -15,8 +15,4 @@ from zephyr.l03_signal_generation.implementations.default_capital_allocator impo
     AllocationMethod,
 )
 
-__all__ = [
-    "DefaultSignalAggregator",
-    "DefaultCapitalAllocator",
-    "AllocationMethod",
-]
+__all__ = ['AllocationMethod', 'DefaultCapitalAllocator', 'DefaultSignalAggregator', 'default_capital_allocator', 'default_signal_aggregator']

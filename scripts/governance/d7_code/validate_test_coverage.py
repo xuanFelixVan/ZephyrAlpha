@@ -43,7 +43,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SRC_DIR
+from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 TESTS_DIR = REPO_ROOT / "tests"
 
@@ -65,6 +65,7 @@ SKIP_MODULES = {
 }
 
 def _is_skeleton_module(filepath: Path) -> bool:
+    """_is_skeleton_module implementation."""
     parts = filepath.parts
     if "__init__.py" in parts:
         return False
@@ -74,6 +75,7 @@ def _is_skeleton_module(filepath: Path) -> bool:
     return False
 
 def _find_test_file(source_file: Path) -> Path | None:
+    """_find_test_file implementation."""
     stem = source_file.stem
     try:
         rel = source_file.relative_to(SRC_DIR)
@@ -157,7 +159,7 @@ def main() -> None:
     )
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if untested else 0)
 
 if __name__ == "__main__":

@@ -1,0 +1,56 @@
+{
+  "domain": "ALPHA-SIGNAL-DOMAIN-001",
+  "total_attacks": 6,
+  "detected": 6,
+  "missed": 0,
+  "score": "6/6",
+  "results": [
+    {
+      "attack_id": "A1",
+      "description": "因子信号注入: 伪造恶意因子注入合成管线",
+      "detected": true,
+      "status": "no_factors",
+      "errors": 1,
+      "detail": "Signal injection blocked or degraded"
+    },
+    {
+      "attack_id": "A2",
+      "description": "加权策略绕过: 绕过归一化注入极端权重",
+      "detected": true,
+      "confidence": 1.0,
+      "status": "completed_with_errors"
+    },
+    {
+      "attack_id": "A3",
+      "description": "Look-Ahead Bias: 因子计算中偷用未来数据",
+      "detected": true,
+      "status": "FUTURE DATA DETECTED",
+      "signal_count": 1
+    },
+    {
+      "attack_id": "A4",
+      "description": "幂等键重放: 复用idempotency_key绕过审计",
+      "detected": true,
+      "key_reused": true,
+      "different_pipelines": true,
+      "status": "REPLAY DETECTED: same key, different pipeline"
+    },
+    {
+      "attack_id": "A5",
+      "description": "信号降级抑制: 压制degradation warning",
+      "detected": true,
+      "confidence": 0.001,
+      "degraded": true,
+      "status": "DEGRADATION CORRECTLY FLAGGED"
+    },
+    {
+      "attack_id": "A6",
+      "description": "因子注册表投毒: 注入恶意因子类污染registry",
+      "detected": true,
+      "attack_succeeded": false,
+      "defense_prevented": true,
+      "status": "DEFENSE HELD: builtins restored"
+    }
+  ],
+  "missed_attacks": []
+}

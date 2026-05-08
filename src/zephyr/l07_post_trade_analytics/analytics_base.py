@@ -28,10 +28,10 @@ import abc
 from decimal import Decimal
 from typing import ClassVar
 
-from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order
-from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order
+from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
 
 
 class TCAEngineBase(abc.ABC):

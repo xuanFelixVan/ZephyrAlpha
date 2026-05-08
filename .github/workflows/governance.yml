@@ -3,10 +3,16 @@
 #        GitHub Actions — push/PR trigger → full regression sweep
 #        ITIL SACM — 每次变更后自动对账 CMDB
 #
+# 五层强制集成架构 — Layer 5（最后防线）:
+#   所有 pre-commit GATE 遗漏的违规 → CI 全量回归扫描拦截
+#   对标: AGENTS.md §5.2.2 十维审计清单 + RULE-SEVEN Enforcement Matrix
+#
 # 与 pre-commit 的关系:
 #   pre-commit: 客户端侧，只检查用户本次变更的文件（快，~5s）
 #   CI pipeline: 服务端侧，全量回归扫描所有脚本（全，~60s）
 #   pre-commit 漏过的不合规代码 → CI 作为最后一道防线拦截
+#
+# 2026-05-07: Session-010 — 全量加固：接入 Enforcement Matrix 五层级检查
 
 name: Governance Audit
 
@@ -75,7 +81,7 @@ jobs:
   governance-sweep:
     name: Full Governance Regression
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -92,6 +98,9 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -e .
 
+      # ============================================================
+      # Tier 1: 准入层 — 脚本质量 + Manifest + 孤儿检测
+      # ============================================================
       - name: Script Quality Gate (GATE-SQ)
         run: python scripts/governance/d11_compliance/validate_script_quality.py --scripts-dir scripts/governance
         continue-on-error: false
@@ -100,55 +109,133 @@ jobs:
         run: python scripts/governance/d11_compliance/validate_manifest_admission.py
         continue-on-error: false
 
-      - name: Index-Reality Sync (GATE-IDX)
-        run: python scripts/governance/d1_structure/validate_index_reality.py
+      - name: Orphan .py Detection (GATE-17)
+        run: python scripts/governance/d1_structure/detect_orphan_py.py
         continue-on-error: false
 
+      # ============================================================
+      # Tier 2: 结构层 — 索引同步 + 目录完整性
+      # ============================================================
+      - name: Index-Reality Sync (GATE-IDX)
+        run: python scripts/governance/d1_structure/validate_index_reality.py --ci
+        continue-on-error: false
+
+      - name: Registry Consistency Cross-Check
+        run: python scripts/governance/check_registry_consistency.py
+        continue-on-error: false
+
+      # ============================================================
+      # Tier 3: 架构层 — SSoT + Gate + Contract + Manifest Drift
+      # ============================================================
       - name: Architecture Gates (GATE-01~08+A+B+SC)
-        run: python scripts/governance/d5_architecture/check_architecture_gates.py
+        run: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
 
       - name: SSoT Validator (ADR-0001/0021 enforced)
-        run: python scripts/governance/d5_architecture/validate_ssot.py --ci
+        run: python scripts/governance/d5_architecture/validators/validate_ssot.py --ci
         continue-on-error: false
-
-      - name: Test Collection Gate (GATE-18)
-        run: python -m pytest tests/ --collect-only -q --tb=line
-
-      - name: Full Regression Sweep
-        run: python scripts/governance/run_all.py --warn-only
 
       - name: G6 CTR Compliance Gate
-        run: python scripts/governance/d5_architecture/check_g6_ctr_compliance.py
-        continue-on-error: false
-
-      - name: TraceContext Propagation Check
-        run: python scripts/governance/d5_architecture/check_trace_context_propagation.py
-        continue-on-error: false
-
-      - name: AI Capability Boundary Guard
-        run: python scripts/governance/d7_code/check_ai_capability_boundary.py
+        run: python scripts/governance/d5_architecture/checkers/check_g6_ctr_compliance.py
         continue-on-error: false
 
       - name: GATE-19 Static Manifest Drift Check
-        run: python scripts/governance/d5_architecture/validate_static_manifest_drift.py --check
+        run: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py --check
         continue-on-error: false
 
       - name: GATE-22 Load Path Integrity
-        run: python scripts/governance/d5_architecture/validate_load_path_integrity.py --check
+        run: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check
+        continue-on-error: false
+
+      - name: SSoT→Codegen Consistency Check
+        run: python scripts/governance/d5_architecture/generators/generate_contracts.py --dry-run
+        continue-on-error: false
+
+      - name: Arch Guard — Invariant Enforcement
+        run: python scripts/arch_guard/run_all.py
+        continue-on-error: false
+
+      - name: Contract Impact Analysis
+        run: python scripts/governance/d5_architecture/analyzers/analyze_contract_impact.py --all
         continue-on-error: true
+
+      # ============================================================
+      # Tier 4: 安全层 — D6 全量安全红线扫描（硬阻断）
+      # ============================================================
+      - name: Secret Leak Detection (D6)
+        run: python scripts/governance/d6_security/scan_secret_leak.py
+        continue-on-error: false
+
+      - name: Shell Injection Detection (D6)
+        run: python scripts/governance/d6_security/detect_shell_dangerous.py
+        continue-on-error: false
+
+      - name: Git Dangerous Command Detection (D6)
+        run: python scripts/governance/d6_security/detect_git_dangerous.py
+        continue-on-error: false
+
+      - name: Threading Lock Violation (D6)
+        run: python scripts/governance/d6_security/detect_threading_lock.py
+        continue-on-error: false
+
+      - name: Vague Terms Detection (D6)
+        run: python scripts/governance/d6_security/detect_vague_terms.py
+        continue-on-error: false
+
+      # ============================================================
+      # Tier 5: 代码质量层 — D7 + 测试收集 + TraceContext
+      # ============================================================
+      - name: Test Collection Gate (GATE-18)
+        run: python -m pytest tests/ --collect-only -q --tb=line
+
+      - name: TraceContext Propagation Check
+        run: python scripts/governance/d5_architecture/checkers/check_trace_context_propagation.py
+        continue-on-error: false
+
+      - name: AI Capability Boundary Guard (D7)
+        run: python scripts/governance/d7_code/check_ai_capability_boundary.py
+        continue-on-error: false
+
+      - name: Missing Encoding Detection (D7)
+        run: python scripts/governance/d7_code/detect_missing_encoding.py
+        continue-on-error: false
+
+      - name: Direct LLM Call Detection (D7)
+        run: python scripts/governance/d7_code/detect_direct_llm_calls.py
+        continue-on-error: false
+
+      # ============================================================
+      # Tier 6: 集成层 — Phase Manager + MCP + Architecture Context
+      # ============================================================
+      - name: Phase Manager State Check
+        run: |
+          python -c "
+          from zephyr.governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+          p0 = PHASE_SEQUENCE[ConstructionPhase.PHASE_0_SKELETON]
+          p1 = PHASE_SEQUENCE[ConstructionPhase.PHASE_1_FUNCTIONAL]
+          p2 = PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E]
+          total = p0.check_count + p1.check_count + p2.check_count
+          print(f'Phase 0: {p0.check_count} checks')
+          print(f'Phase 1: {p1.check_count} checks')
+          print(f'Phase 2: {p2.check_count} checks')
+          print(f'Total: {total} checks')
+          "
+        continue-on-error: false
+
+      - name: MCP Tool Contract Consistency
+        run: python scripts/governance/validate_tool_contracts_consistency.py --ci
+        continue-on-error: false
 
       - name: Pre-compile Architecture Context
         run: python scripts/context/generate_architecture_context.py
 
-      - name: SSoT→Codegen Consistency Check
-        run: python scripts/governance/d5_architecture/generate_contracts.py --dry-run
-        continue-on-error: false
-
       - name: Architectural Fitness Functions
         run: python -m pytest tests/architecture/ -v --tb=short
 
-      - name: Arch Guard — Invariant Enforcement
-        run: python scripts/arch_guard/run_all.py
+      # ============================================================
+      # Tier 7: 全量回归 — 12 维度审计扫描（最后防线）
+      # ============================================================
+      - name: Full Governance Regression (D1-D12, --ci hard-block)
+        run: python scripts/governance/run_all.py --ci
         continue-on-error: false
 
       - name: Dependency Vulnerability Scan (pip-audit)
@@ -157,9 +244,17 @@ jobs:
           pip-audit
         continue-on-error: false
 
-      - name: Contract Impact Analysis
-        run: python scripts/governance/d5_architecture/analyze_contract_impact.py --all
-        continue-on-error: true
+      - name: Drift E2E Check
+        run: python scripts/governance/d5_architecture/check_drift_e2e.py
+        continue-on-error: false
+
+      - name: Adversarial Validation Check
+        run: python scripts/governance/d6_security/run_adversarial_checks.py
+        continue-on-error: false
+
+      - name: Self-Check
+        run: python scripts/governance/ci_self_check.py
+        continue-on-error: false
 
       - name: Upload Audit Report
         if: always()

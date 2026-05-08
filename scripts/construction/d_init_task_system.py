@@ -15,7 +15,7 @@ sys.path.insert(0, r"d:\ZephyrAlpha\src")
 from zephyr.db.sqlite_schema import init_db
 from zephyr.db.task_repo import TaskRepository
 from zephyr.core.models import TaskCard
-from zephyr.shared.schemas import Task, TaskNamespace, TaskStatus
+from zephyr.shared.schemas import TaskNamespace, TaskStatus
 
 init_db()
 repo = TaskRepository()

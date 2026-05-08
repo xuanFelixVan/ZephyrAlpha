@@ -9,13 +9,13 @@ partition:
 modules:
 - id: l03-layer-ssot
   module_id: MOD-L03-001
-  name: Signal Generation（层登记占位）
+  name: Signal Generation（层登记占位�?
   submodule_path: src/zephyr/l03_signal_generation/
   status: implemented
   priority: P0
   runtime_plane: hot
   description: 信号生成层。SignalAggregatorBase + CapitalAllocatorBase + DegradationMonitorBase +
-    SignalSynthesizerBase 四 OCP 扩展点。
+    SignalSynthesizerBase �?OCP 扩展点�?
   files:
   - aggregator_base.py
   - capital_allocator.py
@@ -25,18 +25,18 @@ modules:
   interfaces:
   - contract_id: CTR-P1-015
     role: producer
-    description: SynthesizedSignal → L04, L05
+    description: SynthesizedSignal �?L04, L05
   - contract_id: CTR-P1-003
     role: producer
-    description: CapitalAllocationResult → L05
+    description: CapitalAllocationResult �?L05
   - contract_id: CTR-ERR-003
     role: producer
-    description: SignalDegradationWarning → L04, L05
-  adr_ref: []
+    description: SignalDegradationWarning �?L04, L05
+  kb_ref: []
 summary:
   total: 1
   by_status:
     implemented: 1
-  note: SignalAggregatorBase、CapitalAllocatorBase、DegradationMonitorBase 均在 aggregator_base.py；
-    SignalSynthesizerBase 在 signal_synthesizer.py；capital_allocator.py 仅为 CTR-P1-003 / ABC 兼容导出；
-    默认实现在 implementations/
+  note: SignalAggregatorBase、CapitalAllocatorBase、DegradationMonitorBase 均在 aggregator_base.py�?
+    SignalSynthesizerBase �?signal_synthesizer.py；capital_allocator.py 仅为 CTR-P1-003 / ABC 兼容导出�?
+    默认实现�?implementations/

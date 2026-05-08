@@ -14,6 +14,8 @@ exit codes: 0=无绕过, 1=发现绕过, 2=执行错误
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
 
 __manifest__ = """
 args:
@@ -41,7 +43,7 @@ _GOV_DIR = Path(__file__).resolve().parents[1]
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
-from _shared.constants import DB_PATH
+from _shared.constants import DB_PATH, EXIT_ERROR, EXIT_PASS
 
 _RISKY_KEYWORDS: list[tuple[str, str]] = [
     ("strategy", "策略——可能涉及 G10/G11/G12 交易门禁"),
@@ -63,6 +65,7 @@ _RISKY_KEYWORDS: list[tuple[str, str]] = [
 
 
 def _parse_json_list(raw: object) -> list[Any]:
+    """_parse_json_list implementation."""
     if raw is None:
         return []
     if isinstance(raw, list):
@@ -77,6 +80,7 @@ def _parse_json_list(raw: object) -> list[Any]:
 
 
 def _parse_iso_ts(value: object) -> datetime | None:
+    """_parse_iso_ts implementation."""
     if not isinstance(value, str) or not value.strip():
         return None
     try:
@@ -90,6 +94,7 @@ def _parse_iso_ts(value: object) -> datetime | None:
 
 
 def _aggregate_text(row: dict[str, Any]) -> str:
+    """_aggregate_text implementation."""
     parts = [
         str(row.get("title") or ""),
         str(row.get("directive") or ""),
@@ -101,21 +106,24 @@ def _aggregate_text(row: dict[str, Any]) -> str:
 
 
 def _risky_stems(text: str) -> set[str]:
+    """_risky_stems implementation."""
     return {kw for kw, _ in _RISKY_KEYWORDS if kw.lower() in text}
 
 
 def _get_connection(warn_only: bool) -> sqlite3.Connection | None:
+    """_get_connection implementation."""
     if not DB_PATH.exists():
         print(f"[TASK-DECOMP] 数据库不存在: {DB_PATH}", file=sys.stderr)
         if warn_only:
             return None
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     return conn
 
 
 def _load_active_tasks(conn: sqlite3.Connection) -> list[dict[str, Any]]:
+    """_load_active_tasks implementation."""
     active_status = (
         "PENDING",
         "IN_PROGRESS",
@@ -148,6 +156,7 @@ def _load_active_tasks(conn: sqlite3.Connection) -> list[dict[str, Any]]:
 
 
 def analyze_bypasses(rows: list[dict[str, Any]], hours: int) -> list[str]:
+    """Analyze target and report insights."""
     flags: list[str] = []
     cutoff = datetime.now(UTC) - timedelta(hours=hours)
 
@@ -231,6 +240,7 @@ def analyze_bypasses(rows: list[dict[str, Any]], hours: int) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Task decomposition bypass heuristic scan")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--jsonl", action="store_true", help="输出单行 JSON（含 severity，供冒烟链使用）")
@@ -261,7 +271,7 @@ def main() -> int:
             print(json.dumps(stub, ensure_ascii=False))
         elif args.json:
             print(json.dumps({**stub, "hours": args.hours}, ensure_ascii=False))
-        return 0
+        return EXIT_PASS
 
     rows = _load_active_tasks(conn)
     conn.close()
@@ -293,7 +303,7 @@ def main() -> int:
 
     if flags:
         return 0 if args.warn_only else 1
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

@@ -101,3 +101,7 @@ MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 
 # 与 src/zephyr/shared/paths.DB_PATH 对齐（治理脚本不得各自硬编码库文件名）
 DB_PATH: Path = REPO_ROOT / "data" / "zalpha_metadata.db"
+
+EXIT_PASS: int = 0
+EXIT_FINDINGS: int = 1
+EXIT_ERROR: int = 2

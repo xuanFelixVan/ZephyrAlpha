@@ -36,7 +36,7 @@ from zephyr.kb.unified_memory_api import (
     get_unified_memory_api,
     reset_unified_memory_api,
 )
-from zephyr.shared.capability import CapabilityDenied, CapabilityRegistry
+from zephyr.shared.security.capability import CapabilityDenied, CapabilityRegistry
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -366,7 +366,7 @@ class TestSearch:
 
 class TestCbacIntegration:
     def test_cbac_allow_passes(self, memory_backend, cbac_yaml, sample_provenance):
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", cbac_yaml):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", cbac_yaml):
             CapabilityRegistry.reset()
             api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=True)
             chunk_id = api.write(topic="kb_topic", content="x", provenance=sample_provenance)

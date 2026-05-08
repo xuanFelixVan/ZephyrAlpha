@@ -26,6 +26,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import sys
 from datetime import UTC, datetime
@@ -41,6 +42,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load() -> dict:
+    """_load implementation."""
     if not _KILL_SWITCH_PATH.exists():
         return {"scripts": {}, "global_freeze": False, "freeze_reason": "", "freeze_set_at": ""}
     with open(_KILL_SWITCH_PATH, encoding="utf-8") as f:
@@ -48,12 +50,22 @@ def _load() -> dict:
 
 
 def _save(data: dict) -> None:
+    """_save implementation."""
     _KILL_SWITCH_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_KILL_SWITCH_PATH, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-
+    tmp_path = f"{_KILL_SWITCH_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+    
+        os.replace(tmp_path, _KILL_SWITCH_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def cmd_list() -> None:
+    """cmd_list implementation."""
     data = _load()
     if data.get("global_freeze"):
         print(f"\n🔴 全局冻结已激活: {data.get('freeze_reason', '无说明')}", file=sys.stderr)
@@ -75,6 +87,7 @@ def cmd_list() -> None:
 
 
 def cmd_disable(script_name: str, reason: str) -> None:
+    """cmd_disable implementation."""
     data = _load()
     scripts = data.setdefault("scripts", {})
     scripts[script_name] = {
@@ -89,6 +102,7 @@ def cmd_disable(script_name: str, reason: str) -> None:
 
 
 def cmd_enable(script_name: str) -> None:
+    """cmd_enable implementation."""
     data = _load()
     if script_name in data.get("scripts", {}):
         data["scripts"][script_name]["disabled"] = False
@@ -98,6 +112,7 @@ def cmd_enable(script_name: str) -> None:
 
 
 def cmd_global_freeze(reason: str) -> None:
+    """cmd_global_freeze implementation."""
     data = _load()
     data["global_freeze"] = True
     data["freeze_reason"] = reason
@@ -109,6 +124,7 @@ def cmd_global_freeze(reason: str) -> None:
 
 
 def cmd_global_thaw() -> None:
+    """cmd_global_thaw implementation."""
     data = _load()
     data["global_freeze"] = False
     data["freeze_reason"] = ""
@@ -118,6 +134,7 @@ def cmd_global_thaw() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="脚本 Kill Switch 管理工具")
     parser.add_argument("--list", action="store_true", help="列出所有禁用脚本")
     parser.add_argument("--disable", type=str, help="禁用指定脚本")

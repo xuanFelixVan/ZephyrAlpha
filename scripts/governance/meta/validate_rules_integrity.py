@@ -31,6 +31,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import hashlib
 import json as json_mod
@@ -61,10 +62,12 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _hash_file(file_path: Path) -> str:
+    """_hash_file implementation."""
     return hashlib.sha256(file_path.read_bytes()).hexdigest()[:16]
 
 
 def _load_db() -> dict:
+    """_load_db implementation."""
     if not _INTEGRITY_DB.exists():
         return {"files": {}, "registered_at": "", "last_check_at": ""}
     with open(_INTEGRITY_DB, encoding="utf-8") as f:
@@ -72,12 +75,22 @@ def _load_db() -> dict:
 
 
 def _save_db(data: dict) -> None:
+    """_save_db implementation."""
     _INTEGRITY_DB.parent.mkdir(parents=True, exist_ok=True)
-    with open(_INTEGRITY_DB, "w", encoding="utf-8") as f:
-        json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-
+    tmp_path = f"{_INTEGRITY_DB}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            json_mod.dump(data, f, ensure_ascii=False, indent=2)
+    
+    
+        os.replace(tmp_path, _INTEGRITY_DB)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def register() -> dict:
+    """register implementation."""
     now = datetime.now(UTC).isoformat()
     data = {"files": {}, "registered_at": now, "last_check_at": now}
     for entry in RULES_MANIFEST:
@@ -93,6 +106,7 @@ def register() -> dict:
 
 
 def check() -> dict:
+    """check implementation."""
     db = _load_db()
     now = datetime.now(UTC)
     results: list[dict] = []
@@ -146,6 +160,7 @@ def check() -> dict:
 
 
 def show_diff() -> str:
+    """show_diff implementation."""
     result = subprocess.run(
         ["git", "diff", "--", "AGENTS.md", "scripts/governance/", "docs/03_modules/l01_infrastructure/script-system/"],
         capture_output=True, text=True, timeout=10,
@@ -155,6 +170,7 @@ def show_diff() -> str:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="规则文件完整性保护")
     parser.add_argument("--register", action="store_true", help="注册当前文件状态为可信基线")
     parser.add_argument("--check", action="store_true", help="验证文件未被篡改")

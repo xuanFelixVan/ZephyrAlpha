@@ -13,9 +13,7 @@ ZephyrAlpha/
 ├── scripts/                  # 治理与工具脚本
 ├── config/                   # 配置文件
 ├── tests/                    # 测试代码
-├── 模块候选池/                # 本地专题讨论（默认在 .gitignore 中，不落库；需时自行创建）
 ├── AGENTS.md                 # AI 基准文件
-└── _DO_NOT_USE_old_tree/     # 旧树归档（禁止使用）
 ```
 
 ## 快速开始
@@ -45,7 +43,7 @@ python demo_e2e_pipeline.py
 | 文档与规则元数据（SSoT） | [document-metadata-index.yaml](docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml) |
 | 登记表总索引 | [registry-master-index.yaml](docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml) |
 | 架构概览 | [00-overview.md](docs/02_enterprise_architecture/target-architecture/00-overview.md) |
-| ADR 索引 | [adr/index.md](docs/02_enterprise_architecture/adr/index.md) |
+| ADR 索引 | 已迁入 KB decisions namespace（SQLite knowledge 表） |
 | 知识库 | [08_knowledge/](docs/08_knowledge/) |
 
 ## 技术栈

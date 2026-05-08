@@ -29,8 +29,8 @@ import uuid
 from datetime import datetime
 from typing import ClassVar, Dict, List, Optional
 
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class SignalSynthesizerBase(abc.ABC):

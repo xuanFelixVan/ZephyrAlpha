@@ -35,7 +35,6 @@ models:
       - "src/**"
       - "scripts/**"
       - "tests/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -63,7 +62,6 @@ models:
     allowed_paths:
       - "docs/**"
       - "scripts/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -94,7 +92,6 @@ models:
     context_window: "1M+"
     allowed_paths:
       - "docs/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -118,7 +115,6 @@ models:
     max_new_files_per_session: 5
     allowed_paths:
       - "docs/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -141,7 +137,6 @@ models:
     allowed_paths:
       - "docs/**"
       - "scripts/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -172,7 +167,6 @@ models:
       - "src/**"
       - "scripts/**"
       - "tests/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -199,7 +193,6 @@ models:
       - "docs/**"
       - "scripts/**"
       - "src/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -225,7 +218,6 @@ models:
     context_window: "1M+"
     allowed_paths:
       - "docs/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"
@@ -251,7 +243,6 @@ models:
     max_blueprints_per_session: 5
     allowed_paths:
       - "docs/**"
-      - "模块候选池/**"
     forbidden_paths:
       - ".cursor/rules/**"
       - "AGENTS.md"

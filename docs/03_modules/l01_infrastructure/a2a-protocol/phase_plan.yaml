@@ -1,0 +1,19 @@
+# MOD-INF-025 Phase计划 (v0.10.0)
+
+phases:
+  - id: A2A-PHASE-1
+    name: "骨架搭建"
+    tasks: [TASK-INF-025-0001]
+    status: done
+  - id: A2A-PHASE-2
+    name: "Layer1发现+身份"
+    tasks: [TASK-INF-025-0002]
+    status: done
+  - id: A2A-PHASE-3
+    name: "Layer2通信+任务"
+    tasks: [TASK-INF-025-0003, TASK-INF-025-0004]
+    status: done
+  - id: A2A-PHASE-4
+    name: "Layer3协调+仲裁"
+    tasks: [TASK-INF-025-0005, TASK-INF-025-0006, TASK-INF-025-0007, TASK-INF-025-0008]
+    status: in_progress

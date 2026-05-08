@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_1_scaffold_partial
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha 审计追踪链蓝图 v1.1.0——每个 AI 动作的不可变、密码学完整性保证的审计记录。JSONL 为唯一真源 + 哈希链防篡改 + HMAC 系统级签名 + Agent 级 Ed25519 数字签名（non-repudiation）+ CoT 推理链审计 + Lamport 逻辑时钟 + 分级 Provenance + 蓝图漂移检测 + 异常行为签名 + 元审计自监控 + 三角闭环反馈（Policy→Factory→Runtime→反馈回写 Policy）+ 渐进信任分数 + 委托链审计 + 跨 IDE 一致性交叉验证 + 外部独立验证端点 + 监管证据包导出 + 合规框架条款映射。三层存储（热/温/冷）+ 隐私脱敏策略 + 供应链审计 + 间接操作检测 + Dry-Run 预审计 + Cold Start 历史回溯 + Git 隔离审计日志。对标 Goldman SecDB immutable audit log + ISACA 2025 Agentic AI 三要素 + OWASP ASI-09/10 2026 + Microsoft AGT Merkle-chain integrity + Agent DID/Ed25519 + IATP 握手 + W3C PROV 三元组模型 + NIST 2026 AI Agent Standards + FCA 监管文件审查格式。"
 tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrastructure, cryptographic-integrity, hash-chain, hmac-signing, ed25519, agent-signing, non-repudiation, cot-audit, reasoning-chain, lamport-clock, drift-detection, anomaly-detection, meta-audit, tiered-storage, privacy-redaction, feedback-loop, policy-factory-runtime, w3c-prov, owasp-asi09, owasp-asi10, self-monitoring, trust-score, delegation-chain, cross-ide-consistency, external-verifier, evidence-pack, compliance-map, supply-chain-audit, indirect-operation, git-isolation, kb-poisoning-prevention, nist-2026, fca]
@@ -1169,7 +1169,7 @@ class KBAuditGate:
 
 | Phase | 名称 | 任务 | 验收标准 | 状态 |
 |:---:|------|------|---------|:---:|
-| **scaffold** | 法医账本 | `AuditEntryV1` 完整模型 + JSONL append-only 写入 + 哈希链 + Lamport 时钟 + 基础查询 + 元审计 + 完整性自检 + heartbeat 自监控 + Git 隔离审计日志 + Agent Ed25519 签名（不含密钥管理全部功能）+ 外部独立验证脚本 | 1. 7+12 个事件类型全量通过 Pydantic V2 校验 2. 哈希链 1000 条连续无断裂 3. 写入延迟 < 5ms P99 4. `zephyr audit health` CLI 可用 5. 外部 verifier 零依赖 self-check 6. 5/5 单元测试通过 | 📋 Backlog |
+| **scaffold** | 法医账本 | `AuditEntryV1` 完整模型 + JSONL append-only 写入 + 哈希链 + Lamport 时钟 + 基础查询 + 元审计 + 完整性自检 + heartbeat 自监控 + Git 隔离审计日志 + Agent Ed25519 签名（不含密钥管理全部功能）+ 外部独立验证脚本 | 1. 7+12 个事件类型全量通过 Pydantic V2 校验 2. 哈希链 1000 条连续无断裂 3. 写入延迟 < 5ms P99 4. `zephyr audit health` CLI 可用 5. 外部 verifier 零依赖 self-check 6. 5/5 单元测试通过 | 🔨 In Progress (42%) |
 | **experimental** | 免疫系统 | 分级 Provenance 全量落地 + HMAC 签名 + Merkle 树聚合 + 异常检测（13 签名全量）+ 蓝图漂移检测 + Gate Engine/RBAC/Feedback Loop 全集成 + Dry-Run 预审计 + 间接操作检测 + 外部调用链审计 + 委托链验证 + 渐进信任分数 + 跨 IDE 一致性交叉验证 | 1. 13 种异常签名全部触发过真实/模拟事件 2. 漂移检测覆盖 10 份蓝图 3. Gate Engine 联动阻断验证通过 4. HMAC + Ed25519 签名 100% 验证 5. trust_score 趋势可见 | 📋 Backlog |
 | **beta** | 闭环进化 | 三角闭环反馈（aggregator → feedback_to_policy.py → Policy PR）+ 反馈自审计 + 审计仪表盘 + 冷启动历史回溯 + 三层存储迁移自动化 + 保留期自动执行 + CI 一致性校验全量 + 隐私 PII 检测 + 监管证据包导出 + 合规框架映射 + KB 投毒防护 + 供应链审计 | 1. Policy PR 生成脚本可用 2. 仪表盘覆盖 8+ 种查询维度 3. 三层迁移零数据丢失 4. PII 检测 0 漏报 5. 证据包可离线验证 6. CI 门禁全通过 | 📋 Backlog |
 | **production** | 公证处 | Agent DID 全量密钥管理基础设施 + Ed25519 密钥旋转自动化 + IATP 握手协议 + 分布式信誉证明 + WORM 兼容备份 + 损益（P&L）关联审计 | Phase 3 需求——不纳入 v1.1 施工范围 | 📋 Backlog |
@@ -1418,3 +1418,15 @@ class KBAuditGate:
 | 2026-05-05 | 1.0.0 | **🎉 blueprint v1.0.0——法医实验室 + 免疫系统。** 全文重构。 |
 | 2026-05-05 | 0.2.0 | D-020-01~03——两层粒度 + JSONL SSoT + 分级 Provenance |
 | 2026-05-05 | 0.1.0 | 初始创建 |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_1_scaffold_partial（核心写入+完整性验证可用，异常检测/漂移对账/Merkle树待施工） |
+| 源码路径 | `src/zephyr/audit_trail/` |
+| 源码文件数 | 9 个 .py/.yaml |
+| 测试路径 | `tests/unit/ + tests/infrastructure/` |
+| 关键入口 | `audit_trail.trail.AuditTrail (不可变审计+密码学Provenance)` |

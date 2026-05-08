@@ -71,8 +71,8 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.time_utils import default_now
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
     "TriggerLevel",

@@ -17,7 +17,7 @@ from zephyr.pipeline import (
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
-    from zephyr.shared.schemas import Priority, TaskNamespace
+    from zephyr.shared.schema.schemas import Priority, TaskNamespace
 
     parts = task_id.split("-", 2)
     ns_name = parts[0] if len(parts) >= 2 else "TASK"
@@ -131,7 +131,7 @@ class TestPipelineDispatch:
         assert mids == ["M2", "M3", "M4", "M5"]
 
     def test_ct_pipe_audit_p0_vs_assigned_pipeline_b_warns(self) -> None:
-        from zephyr.shared.schemas import Priority
+        from zephyr.shared.schema.schemas import Priority
 
         task = _make_task(
             "CP-0102",

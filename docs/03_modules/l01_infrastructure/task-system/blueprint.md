@@ -4,14 +4,14 @@ title: "任务系统蓝图 — 全链路：草稿→蓝图真源→任务卡→�
 doc_type: blueprint
 status: Active
 version: "0.6.0"
-layer: cross_layer
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-06"
 ttl: permanent
-construction_progress: phase_1_complete
+construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha 任务系统全链路蓝图 v0.6.0。覆盖从意图→草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的闭环工作流。v0.6.0 在 v0.5.0 基础上完成第三轮深度盲点审计（30→41→48个盲点八大类），新增大类 H「数据持久化与运行时演化」：SQLite Schema 版本化迁移框架、任务取消安全协议。原七大类补充：中执行自适应重规划、执行时前置漂移校验、AI代码向后兼容性冲击分析、输出范围蔓延检测、跨Session上下文Token复用。TaskCard 模型：62字段（31基座 + 31执行层）。"
 tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, emergent-design, path-compliance, anti-drift, blind-spot-audit, dogfooding, ai-autonomy, circuit-breaker, diff-plan, trace, observability, plugin-architecture, self-diagnosis, prompt-versioning, saga-compensation, quality-regression-detection, model-snapshot-pinning, sla-auto-escalation, knowledge-isolation, emergency-hotfix, atomic-write, graceful-degradation, schema-migration, cancel-safety, preflight-check, backward-compat-impact, adaptive-replanning, scope-creep-detection, context-cache-reuse]
@@ -34,7 +34,7 @@ depends_on:
 
 # 任务系统蓝图 + 施工指引 + 盲点审计
 
-> module_id: MOD-INF-006 | version: 0.6.0 | status: approved | layer: cross_layer
+> module_id: MOD-INF-006 | version: 0.6.0 | status: approved | layer: L01
 
 ---
 
@@ -61,8 +61,7 @@ depends_on:
 |---|---------------|------------|---------|---------|------------|
 | 1 | MOD-INF-003 任务卡KMS蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-card-kms\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→stable 物理删除 |
 | 2 | MOD-INF-004 双管线蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\vibe-coding-pipelines\blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→stable 物理删除 |
-| 3 | 场外草稿（双管线+任务卡知识库） | `D:\ZephyrAlpha\模块候选池\开发流程\氛围编程基础设施\vibe-coding-two-pipelines-design.md` / `vibe-coding-task-card-and-knowledge-base-design.md` | 迁入完毕 | 本蓝图 | 内容已全部通过 MTH-012 Step 3 纳入——完成历史使命→Owner 决定删除或归档 |
-| 4 | v0.2.0 TaskCard 模型（core/models.py） | `D:\ZephyrAlpha\src\zephyr\core\models.py` | 覆盖型 | v0.3.0 TaskCard（继承 shared/schemas.py Task） | experimental 步骤3——重写 core/models.py 对齐新契约 |
+| 3 | v0.2.0 TaskCard 模型（core/models.py） | `D:\ZephyrAlpha\src\zephyr\core\models.py` | 覆盖型 | v0.3.0 TaskCard（继承 shared/schemas.py Task） | experimental 步骤3——重写 core/models.py 对齐新契约 |
 
 ### 删除铁律
 
@@ -136,8 +135,6 @@ ZephyrAlpha 项目当前面临三个核心问题，任务系统是解药：
 
 3. **管线未贯通**：蓝图→任务卡拆解→双管线执行→脚本系统 这条完整链路只存在于讨论中。
 
-4. **历史裁定遗留**：`D:\ZephyrAlpha\模块候选池\文档管理体系\任务系统专题讨论文档.md` 记录 23 个任务系统裁定（#1-#23），其中核心结论（task_id格式/字段集/状态机/存储）已在当前规则升级中吸收——但前期 experimental 施工代码（core/models.py / blueprint_decomposer.py）未对齐。
-
 > **对标**：SDD 论文——spec.md 应是自包含的。ITIL SACM——配置项关系图必须端到端可追踪。
 
 ### 1.2 目标
@@ -205,6 +202,12 @@ ZephyrAlpha 项目当前面临三个核心问题，任务系统是解药：
 │               ⑧ 下一个循环开始                                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+> ⛔ **强制规则（RULE-ZERO-TASK）**：上图第④步是生成任务卡的**唯一合法路径**。
+> 任何 AI / 工具 / 脚本 **禁止** 绕过 BlueprintDecomposer 直接生成 `.md` 任务卡文件。
+> `Blueprint → Decomposer → SQLite（真源）→ .md（伴读）` ——没有其他入口。
+> **历史例外**：MOD-INF-001 的 20 张卡（AI-GLM-5.1 直接产出），通过 `scripts/governance/import_task_cards.py`
+> 做过一次性回填。此后全部强制走 Decomposer。
 
 ### 2.2 职责范围
 
@@ -809,7 +812,6 @@ class AuditFinding(BaseModel):
 | 1 | MOD-INF-003 | `task-card-kms/blueprint.md` | deprecated | 内容已合并→stable 物理删除 |
 | 2 | MOD-INF-004 | `vibe-coding-pipelines/blueprint.md` | deprecated | 内容已合并→stable 物理删除 |
 | 3 | v0.2.0 TaskCard 模型 | `src/zephyr/core/models.py` | deprecated | v0.3.0 TaskCard 继承 shared/schemas.py Task——重写 |
-| 4 | 场外草稿 2 份 | `模块候选池/...` | 内容已纳完 | 待 Owner 决定删除/归档 |
 
 ---
 
@@ -828,7 +830,7 @@ class AuditFinding(BaseModel):
 | REG-LLM-001 | 必须 | 模型基准排名 | ≥1.1.0 |
 | GOV-AI-002 | 必须 | 模型路由策略 | ≥2.0.0 |
 | shared/schemas.py | 必须 | `Task` 31 字段（语义28+追踪3）TaskCard 基座 | 现有代码 |
-| task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N task_files | 现有代码 |
+| task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N task_files + BatchCoordination (v16) | 现有代码 |
 | task-completion-gate.py | 必须 | G7 门禁逻辑——需同步 | 现有代码 |
 | task-card-meta-registry.yaml | scaffold | 任务卡系统迁移追踪 | V-13 |
 
@@ -1798,3 +1800,115 @@ class AuditFinding(BaseModel):
 | 2026-05-02 | 0.3.0 | **融合最优——取各家之长**：① TaskCard 模型基座从独立 BaseModel → 继承 src/zephyr/shared/schemas.py Task（当时口径语义28；现行 PS-STD-001 §7.1~§7.1.1 共31字段）——消除两套并行模型；② task_id 格式 TASK-INF-XXXX → {NAMESPACE}-{SEQ}（ADR-001/SRC-042）——对标 Jira 行业标准；③ TaskStatus 从 created/queued/.../closed → PENDING/IN_PROGRESS/.../CANCELLED——对齐 task_repo.py 10状态机（WAITING≠BLOCKED，有 FAILED→RETRY）；④ 标签从五轴强制字段 → 扁平 tags[]（五轴降格为推荐前缀约定）；⑤ **保留** 防漂移六维字段（upstream_files/downstream_outputs/allowed_touch/forbidden_touch/applicable_rules/context_assembly_manifest/rollback_instructions）——v0.2.0 的创新保留；⑥ **保留** G0-G7 全周期门禁 + M1-M11 管线 + Claude 救援；⑦ MCP Server 6 Tool（原有4+新增2）——强制对接 SQLite 真源(task_repo)；⑧ BlueprintDecomposer 输出改为 task_repo.create()为主 + .md同步为辅；⑨ 必备链接从8项扩展到14项（增加 task_repo/schemas/governance-tasks/task-card-meta-registry 等）；⑩ 施工指引 §11.3 重写——反映破坏性变更；⑪ **设计原则**：旧系统在任务管理基础上更专业→取其形；新系统在 Vibe Coding 执行层上更创新→取其神。融合而非取舍。 |
 | 2026-05-02 | 0.2.0 | **重大重写**：① 删除 §2 架构决策——蓝图只呈现最终设计结果；② 新建 TEMPLATE-TASK-001（34字段防漂移任务卡模板）；③ 新增 G7 完整度门禁（G0→G7→G1）；④ 新增 MTH-013 路径架构合规创建——写入 §4.1 约束 #9；⑤ 模型分工重分配：DeepSeek V4 Pro 主力 + GLM M7 深度审查 + Claude 特种救援（GOV-AI-002 v2.0.0）；⑥ KMS 排除 beta+；⑦ 蓝图 12节→11节；⑧ 必备链接 +6（REG-LLM-001/GOV-AI-002/TEMPLATE-TASK-001 等）。遵循 MTH-012 涌现式设计——先填模板，后纳血肉。 |
 | 2026-05-02 | 0.1.0 | 初始版本——合并 MOD-INF-003+004 + 两份场外草稿为 12 节蓝图。 |
+## 14. 附录：Multi-Worker Batch Coordination (v0.6.1 · MOD-INF-016)
+
+> **设计目标**：10+ TRAE AI 对话同时从同一批 TaskCard 中认领任务施工，支持依赖感知的串行/并行调度。
+
+### 14.1 核心设计
+
+| 维度 | 决策 |
+|------|------|
+| **Broker** | SQLite（零外部依赖，`busy_timeout=5000` 处理并发写入） |
+| **原子认领** | `UPDATE ... RETURNING`（SQLite 3.35+），单 SQL 完成 claim |
+| **依赖解析** | `json_each(depends_on)` — 只认领依赖已 COMPLETED 的任务 |
+| **优先级** | `ORDER BY priority ASC, created_at ASC` — 低数字高优先 |
+| **超时回收** | 30 分钟 TTL → `claimed_at < cutoff` → 自动回 READY |
+| **进度聚合** | `GROUP BY status` 三字段实时统计 |
+
+### 14.2 数据模型变更（Schema v16）
+
+```sql
+ALTER TABLE tasks ADD COLUMN batch_id   TEXT;    -- 批量标识
+ALTER TABLE tasks ADD COLUMN claimed_by TEXT;    -- 认领者 worker_id
+ALTER TABLE tasks ADD COLUMN claimed_at TEXT;    -- 认领时间 ISO8601
+
+CREATE INDEX idx_tasks_batch   ON tasks(batch_id);
+CREATE INDEX idx_tasks_claimed ON tasks(claimed_by, status);
+```
+
+### 14.3 核心 SQL
+
+```sql
+-- 原子认领：单条 UPDATE ... RETURNING（不可分割）
+UPDATE tasks SET status = 'IN_PROGRESS',
+                 claimed_by = :worker_id,
+                 claimed_at = :now,
+                 updated_at = :now
+WHERE task_id = (
+    SELECT t.task_id FROM tasks t
+    WHERE t.status = 'READY'
+      AND t.batch_id = :batch_id
+      AND t.is_deleted = 0
+      AND (
+          t.depends_on IS NULL
+          OR t.depends_on = '[]'
+          OR NOT EXISTS (
+              SELECT 1 FROM json_each(t.depends_on)
+              WHERE value != ''
+              AND (SELECT status FROM tasks WHERE task_id = value) != 'COMPLETED'
+          )
+      )
+    ORDER BY t.priority ASC, t.created_at ASC
+    LIMIT 1
+)
+RETURNING *;
+```
+
+### 14.4 API（TaskRepository 新增方法）
+
+| 方法 | 签名 | 说明 |
+|------|------|------|
+| `claim_next` | `(batch_id, worker_id) -> TaskCard \| None` | 原子认领下一个可施工任务 |
+| `recover_stale_claims` | `(batch_id, timeout_minutes=30) -> int` | 释放超时任务 |
+| `batch_progress` | `(batch_id) -> dict[str, int]` | 批量进度聚合 |
+
+### 14.5 BatchOrchestrator（AI Session 侧高层封装）
+
+```python
+from zephyr.orchestrator.batch_orchestrator import BatchOrchestrator
+
+bo = BatchOrchestrator(repo, batch_id="construction-20260507",
+                       worker_id="session-20260507-001")
+
+bo.recover_stale_claims()          # 回收死任务
+while (card := bo.claim_next()):
+    try:
+        # ... 施工逻辑 ...
+        bo.mark_done(card.task_id)
+    except Exception as e:
+        bo.mark_failed(card.task_id, str(e))
+
+print(bo.progress())  # [construction-20260507] 943/945 (99.8%) | 0 IN_PROGRESS | 2 FAILED
+```
+
+### 14.6 与旧 `_construction_checkpoint.json` 对比
+
+| | 旧方案（checkpoint.json） | 新方案（BatchOrchestrator） |
+|---|---|---|
+| **认领方式** | 手动改 JSON 指针 | SQLite 原子 `UPDATE RETURNING` |
+| **并发安全** | ❌ 竞态条件（两个 AI 同时读→同时改→覆盖） | ✅ 原子操作，13 对话不重复 |
+| **依赖感知** | ❌ 无 | ✅ `json_each(depends_on)` |
+| **超时回收** | ❌ 无 | ✅ 30 分钟 TTL 自动回收 |
+| **进度查询** | 需手动数 | `batch_progress()` 一键 |
+
+### 14.7 架构对标
+
+| 工业方案 | 核心机制 | Zephyr 对应 |
+|----------|---------|------------|
+| **Celery** | Redis `blpop` 原子出队 | SQLite `UPDATE RETURNING` |
+| **Temporal.io** | Server-side heartbeat + sticky queues | `claimed_at` TTL + stale recovery |
+| **K8s Controller** | Optimistic concurrency (resourceVersion) | SQLite WAL + `busy_timeout` |
+| **GitHub Actions** | Job queue with `needs` DAG | `json_each(depends_on)` |
+
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+| 维度 | 状态 |
+|------|------|
+| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
+| 源码路径 | `src/zephyr/core/ (models.py, decomposer.py) + src/zephyr/orchestrator/` |
+| 源码文件数 | 15 个 .py/.yaml |
+| 测试路径 | `tests/unit/ + tests/integration/` |
+| 配置文件 | `data/zalpha_metadata.db (SQLite)` |
+| 关键入口 | `core.models.Task + orchestrator.TaskOrchestrator` |

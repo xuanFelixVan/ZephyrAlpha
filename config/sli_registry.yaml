@@ -1,0 +1,90 @@
+# config/sli_registry.yaml — Service Level Indicators Registry
+# module_id: MOD-INF-015
+# version: 0.1.0 (scaffold)
+# blueprint: docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md §7.3
+#
+# 本文件定义所有系统组件的SLI（服务水平指标）。
+# 用于SLO计算、健康评分、dashboard展示。
+
+version: "0.1.0"
+module_id: MOD-INF-015
+last_updated: "2026-05-08"
+
+slis:
+  task_system:
+    name: "Task System Availability"
+    description: "任务系统可用性：任务创建/分配/完成成功率"
+    indicators:
+      - name: "task_creation_success_rate"
+        target: 0.999
+        window: "1h"
+      - name: "task_completion_rate"
+        target: 0.95
+        window: "1h"
+      - name: "task_queue_depth"
+        target: 100
+        window: "instant"
+
+  pipeline:
+    name: "Pipeline Health"
+    description: "Pipeline执行健康度：阶段成功率、端到端延迟"
+    indicators:
+      - name: "pipeline_e2e_latency_p99_ms"
+        target: 300000
+        window: "5m"
+      - name: "pipeline_phase_success_rate"
+        target: 0.99
+        window: "15m"
+
+  database:
+    name: "Database Performance"
+    description: "数据库性能：查询延迟、连接池、复制延迟"
+    indicators:
+      - name: "query_p99_latency_ms"
+        target: 100
+        window: "5m"
+      - name: "connection_pool_utilization"
+        target: 0.80
+        window: "instant"
+
+  ai_agents:
+    name: "AI Agent Reliability"
+    description: "AI agent可靠性：session成功率、响应时间"
+    indicators:
+      - name: "session_success_rate"
+        target: 0.90
+        window: "1h"
+      - name: "session_p99_latency_ms"
+        target: 60000
+        window: "5m"
+
+  telemetry:
+    name: "Telemetry Self-Health"
+    description: "遥测系统自身的健康指标"
+    indicators:
+      - name: "data_loss_rate"
+        target: 0.001
+        window: "1h"
+      - name: "collector_uptime"
+        target: 0.9999
+        window: "24h"
+
+  resource_optimization:
+    name: "Resource Optimization Engine"
+    description: "资源优化引擎健康指标——MOD-INF-032"
+    indicators:
+      - name: "resource_optimization_success_rate"
+        target: 0.95
+        window: "1h"
+      - name: "resource_pressure_recovery_time_s"
+        target: 60
+        window: "instant"
+      - name: "resource_cache_hit_rate"
+        target: 0.90
+        window: "5m"
+      - name: "resource_process_pool_reuse_rate"
+        target: 0.80
+        window: "5m"
+      - name: "resource_monitor_cpu_overhead_percent"
+        target: 0.01
+        window: "5m"

@@ -4,7 +4,7 @@ partition:
   name: Runtime Planes
   description: Hot/Warm/Cold 运行平面标注（来源：04bis-runtime-planes.md v1.0.0，ADR-0011 accepted）
   source_view: 04bis-runtime-planes.md
-  related_adr: [ADR-0011]
+  related_kb_ref: [ADR-0011]
   activation_note: >
     当前（2026-04-21）处于 Warm-only 阶段（T0）。
     Hot Path 未激活（T1 真实资金接入后首激活）。
@@ -41,7 +41,7 @@ planes:
         layer: l06
         submodule: adapters/*_hot.py
         note: 券商直连（T1 激活）
-      - id: l10-security-gateway
+      - id: l10-security-gateway  # hot_adjacent
         layer: l10
         submodule: ai_security/security_gateway
         note: AISG security_gateway，< 50ms 目标（Hot-adjacent）

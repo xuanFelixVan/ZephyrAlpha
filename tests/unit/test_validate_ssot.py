@@ -26,9 +26,9 @@ from pathlib import Path
 import pytest
 
 from scripts.governance._shared.frontmatter import parse_frontmatter as _parse_frontmatter
-from scripts.governance.d5_architecture.validate_ssot import (
+from scripts.governance.d5_architecture.validators.validate_ssot import (
+    VALID_DOCUMENT_STATUSES,
     VALID_PRIORITIES,
-    VALID_STATUSES,
     Contradiction,
     FileMeta,
     ScanReport,
@@ -226,7 +226,7 @@ class TestCheckP0DuplicateActiveModuleId:
 class TestCheckP1StatusInvalid:
     """P1：status 字段有效性。"""
 
-    @pytest.mark.parametrize("status", list(VALID_STATUSES))
+    @pytest.mark.parametrize("status", list(VALID_DOCUMENT_STATUSES))
     def test_valid_statuses_pass(self, status: str) -> None:
         assert check_p1_status_invalid([_meta(status=status)]) == []
 

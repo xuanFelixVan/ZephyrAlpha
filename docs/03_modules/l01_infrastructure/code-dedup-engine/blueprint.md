@@ -1,7 +1,7 @@
 ---
 module_id: MOD-INF-017
 doc_type: blueprint
-status: Draft
+status: Active
 layer: L01
 version: 0.10.0
 owner: ZephyrAlpha-Owner
@@ -11,7 +11,7 @@ created_by: AI
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: not_started
+construction_progress: phase_2_complete
 belongs_to: MOD-MASTER-001
 depends_on:
   - MOD-INF-005
@@ -2797,6 +2797,16 @@ KNOWN_DUPLICATES = {
 | 2026-05-05 | 0.3.0 | **重大升级**——从事后检测工具升级为全生命周期去重系统：<br>①新增六阶段全生命周期模型（Prevent→Block→Audit→Fix→Register→Evolve）<br>②新增 Stage 0 缓存预热 + 增量扫描设计（`function_cache.json` + `diff_detector.py`）<br>③新增 10 维检测矩阵（部分重复 + 重排序容忍 + 参数化模板 + 非函数结构 + 配置文件去重）<br>④新增自动修复引擎 + 去重后验证 + 分批安全机制<br>⑤新增 SSoT 注册闭环（去重→提取→注册 b_shared.yaml）<br>⑥新增退出码标准化（0/1/2/3 对齐 MOD-INF-005）<br>⑦新增优先排序算法 + 置信度评分<br>⑧新增与 6 大系统的深度集成契约（Context/Gate/Shared/FLE/Task/SessionLog）<br>⑨新增 @intentional-duplicate 标记机制<br>⑩新增共享 API 影子清单——生成时预防的核心数据<br>⑪模块数从 6→14，新增 `cache_manager` / `diff_detector` / `auto_fixer` / `ssot_registrar` / `prioritizer` / `annotations` / `verifier` / `config`<br>⑫实施路线从单轨→三波递进（Wave 1 5天 / Wave 2 7天 / Wave 3 5天）<br>⑬新增 evolve() 进化信号 + Session Log 跨 session 记忆传递<br>⑭新增路径感知阈值（shared 0.3 / core 0.6 / * 0.7 / tests 0.9）<br>⑮新增 idempotency 保证 + 性能降级策略 |
 | 2026-05-05 | 0.2.0 | 补全标准模板四项：产出物存放目录 + 集成目标 + 需要更新的相关内容 + 后果 |
 | 2026-05-02 | 0.1.0 | 初始创建——事后检测三阶段流水线（Token → AST → LLM）|
+
+---
+
+## 施工落盘确认（2026-05-07 审计）
+
+| 维度 | 状态 |
+|------|------|
+| construction_progress | not_started |
+| 源码路径 | `src/zephyr/code_dedup_engine/` (仅 `__init__.py` 骨架) |
+| 说明 | 蓝图 v0.10.0 设计完成（40模块+全生命周期模型），代码尚未施工 |
 
 ---
 

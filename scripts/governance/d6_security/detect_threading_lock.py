@@ -36,7 +36,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
 from _shared.walk import iter_files
 
 THREADING_LOCK_PATTERNS = [
@@ -111,7 +111,7 @@ def main() -> None:
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} Python files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

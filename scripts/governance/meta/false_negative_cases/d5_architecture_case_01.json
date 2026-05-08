@@ -1,0 +1,14 @@
+{
+  "case_id": "FN-005",
+  "dimension": "D5",
+  "description": "循环 depends_on — 已知缺陷：TaskCard A→B→A 循环依赖",
+  "defect": {
+    "type": "file_create"
+  },
+  "target_path": "docs/_test_cycle_depends.md",
+  "defect_content": "---\ntask_id: TEST-CYCLE\ndepends_on_task: [\"TEST-CYCLE\"]\n---\n",
+  "verifier": "d5_architecture/validate_dependency_format.py",
+  "expected_finding_id": "D5-CYCLE-001",
+  "expected_detection": true,
+  "timeout_seconds": 30
+}

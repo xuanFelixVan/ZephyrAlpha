@@ -1,0 +1,55 @@
+---
+module_id: KE-module_blu-2_28_api________________d-022--005
+title: 2.28 API密钥/凭证泄露的升级处理（决策 D-022-20）
+category: module_blueprint
+---
+
+# 2.28 API密钥/凭证泄露的升级处理（决策 D-022-20）
+
+2.28 API密钥/凭证泄露的升级处理（决策 D-022-20）
+
+> **决策 D-022-20**：API密钥泄露是量化交易系统的致命威胁——NOFXAI零认证漏洞导致千个实例暴露密钥、65M+美元被盗。升级协议必须内置密钥泄露的专属升级路径。
+> **对标**：慢雾NOFXAI事件 + MEXC API Key Hijack供应链攻击 + HashiCorp Vault自动轮换 + Secret Zero Problem。
+
+```yaml
+credential_compromise_escalation:
+
+  detection_triggers:
+    - id: "CRED-UNUSUAL-IP"
+      trigger: "API调用来自非白名单IP→P0升级"
+    - id: "CRED-UNUSUAL-PATTERN"
+      trigger: "异常交易模式(频率/金额/时间窗口异常)→P0升级"
+    - id: "CRED-STATIC-KEY-DETECTED"
+      trigger: "检测到默认/硬编码密钥→P0升级(参照NOFXAI default jwt_secret)"
+    - id: "CRED-SUPPLY-CHAIN"
+      trigger: "依赖包版本异常/新增未验证依赖→P1升级"
+    - id: "CRED-RUNTIME-EXPOSURE"
+      trigger: "密钥在日志/错误信息/env输出中出现→P0升级"
+
+  automatic_response:
+    tier1_containment: # 检测后<5s
+      actions:
+        - "立即吊销被泄露密钥"
+        - "自动生成新密钥+轮换"
+        - "审计最近30天该密钥的所有操作"
+        - "创建P0升级事件+P0通知Owner"
+    
+    tier2_investigation: # 检测后<5min
+      actions:
+        - "回滚受影响的交易(如果可能)"
+        - "检查所有关联账户余额/持仓"
+        - "生成安全事件报告"
+
+  key_rotation_automation:
+    schedule: "每90天自动轮换(with工具: secrets_manager)"
+    emergency_rotation: "检测到泄露→立即轮换(不等schedule)"
+    verification: "轮换后验证新密钥可用性→失败=升级P0"
+    secret_zero_problem: "初始密钥的安全分发——不在代码/配置/环境变量中硬编码"
+
+  nofxai_lessons:
+    rule: "生产环境强制启用认证——零认证模式不存在的化"
+    jwt_guard: "默认jwt_secret禁止——启动时检测→强制设置→否则拒绝启动"
+    audit: "定期扫描公开暴露的部署实例配置"
+```
+
+---

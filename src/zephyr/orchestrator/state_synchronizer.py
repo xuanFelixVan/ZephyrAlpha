@@ -32,8 +32,8 @@ from typing import Any
 import yaml
 
 from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
-from zephyr.shared.paths import REPO_ROOT
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "StateSynchronizer",

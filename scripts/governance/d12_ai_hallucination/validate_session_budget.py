@@ -34,7 +34,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -90,7 +90,7 @@ def main() -> None:
     log_path = find_latest_session_log()
     if not log_path:
         print("[SESSION-BUDGET] 未找到 Session Log，跳过", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     stats = parse_session_log(log_path)
     findings = []
     for key, limit in BUDGET_LIMITS.items():
@@ -106,7 +106,7 @@ def main() -> None:
     else:
         print(f"[SESSION-BUDGET] Session 预算合规（{log_path.name}）", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
 

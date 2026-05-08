@@ -44,6 +44,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _get_conn() -> sqlite3.Connection:
+    """_get_conn implementation."""
     _DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(_DB_PATH))
     conn.row_factory = sqlite3.Row
@@ -86,6 +87,7 @@ def _get_conn() -> sqlite3.Connection:
 
 
 def import_findings(source: str | Path) -> dict:
+    """import_findings implementation."""
     conn = _get_conn()
     now = datetime.now(UTC).isoformat()
     run_id = f"run-{now[:19]}"
@@ -133,6 +135,7 @@ def import_findings(source: str | Path) -> dict:
 
 
 def trend(days: int = 30) -> dict:
+    """trend implementation."""
     conn = _get_conn()
     cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
 
@@ -173,6 +176,7 @@ def trend(days: int = 30) -> dict:
 
 
 def top_files(limit: int = 10, days: int = 90) -> list[dict]:
+    """top_files implementation."""
     conn = _get_conn()
     cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
     rows = conn.execute(
@@ -184,6 +188,7 @@ def top_files(limit: int = 10, days: int = 90) -> list[dict]:
 
 
 def severity_distribution(days: int = 90) -> dict:
+    """severity_distribution implementation."""
     conn = _get_conn()
     cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
     rows = conn.execute(
@@ -195,6 +200,7 @@ def severity_distribution(days: int = 90) -> dict:
 
 
 def raw_query(sql: str) -> list[dict]:
+    """raw_query implementation."""
     conn = _get_conn()
     rows = conn.execute(sql).fetchall()
     conn.close()
@@ -202,6 +208,7 @@ def raw_query(sql: str) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     if "--import" in sys.argv:
         idx = sys.argv.index("--import")
         src = sys.argv[idx + 1] if idx + 1 < len(sys.argv) else ""

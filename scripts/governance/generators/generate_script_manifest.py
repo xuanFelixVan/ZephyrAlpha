@@ -31,6 +31,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import argparse
 import ast
 import re
@@ -41,7 +42,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
@@ -62,6 +63,45 @@ SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
 DEFAULT_OUTPUT = SCRIPTS_DIR / "script_manifest.yaml"
 
 EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures"})
+
+# ---------------------------------------------------------------------------
+# 蓝图 §3.6 标签自动推导（与 run_all.py 同源）
+# ---------------------------------------------------------------------------
+
+_DIMENSION_TAGS: dict[str, list[str]] = {
+    "D1": ["Quick"],
+    "D2": ["Quick"],
+    "D3": ["Quick"],
+    "D4": ["Quick"],
+    "D5": ["Critical"],
+    "D6": ["Security", "Critical"],
+    "D7": ["Critical"],
+    "D8": ["Quick"],
+    "D9": ["AI-Generated", "Periodic"],
+    "D10": ["Periodic"],
+    "D11": ["Security"],
+    "D12": ["AI-Generated", "Periodic"],
+}
+
+_PREFIX_TAGS: tuple[tuple[str, list[str]], ...] = (
+    ("fix_", ["Disruptive"]),
+    ("generate_", ["Disruptive"]),
+    ("audit_", ["Periodic"]),
+)
+
+
+def _derive_tags(script_name: str, dimensions: list[str], priority: str) -> list[str]:
+    """_derive_tags implementation."""
+    tags: set[str] = set()
+    for dim in dimensions:
+        tags.update(_DIMENSION_TAGS.get(str(dim), []))
+    for prefix, prefix_tags in _PREFIX_TAGS:
+        sn_lower = script_name.lower()
+        if sn_lower.startswith(prefix) or f"/{prefix}" in sn_lower:
+            tags.update(prefix_tags)
+    if priority == "P0":
+        tags.add("Critical")
+    return sorted(tags)
 
 
 def _extract_triple_quoted_yaml(source: str, delim: str) -> dict | None:
@@ -97,6 +137,7 @@ def _manifest_literal_from_ast(node: ast.expr) -> object:
 
 
 def _extract_module_level_manifest_dict_safe(source: str) -> dict | None:
+    """_extract_module_level_manifest_dict_safe implementation."""
     try:
         tree = ast.parse(source)
     except SyntaxError:
@@ -136,7 +177,16 @@ def extract_manifest_from_source(source: str) -> dict | None:
     return None
 
 
+def _derive_owner(rel_path: str) -> str:
+    """_derive_owner implementation."""
+    parts = rel_path.split("/")
+    if len(parts) >= 2:
+        return f"governance:{parts[0]}"
+    return "governance"
+
+
 def scan_scripts() -> list[dict]:
+    """scan_scripts implementation."""
     scripts = []
     for py_file in sorted(SCRIPTS_DIR.rglob("*.py")):
         parts = py_file.relative_to(SCRIPTS_DIR).parts
@@ -148,31 +198,38 @@ def scan_scripts() -> list[dict]:
         rel_path = str(py_file.relative_to(SCRIPTS_DIR)).replace("\\", "/")
         source = py_file.read_text(encoding="utf-8")
         manifest = extract_manifest_from_source(source)
+        owner = _derive_owner(rel_path)
 
         if manifest is None:
             scripts.append(
                 {
                     "name": rel_path,
+                    "owner": owner,
                     "dimensions": [],
                     "priority": "P2",
                     "timeout_seconds": 60,
                     "args": [],
                     "warn_only": False,
                     "description": "⚠ __manifest__ 缺失——请添加元数据块",
+                    "tags": [],
                     "_manifest_missing": True,
                 }
             )
             continue
 
+        dims = manifest.get("dimensions", [])
+        pri = manifest.get("priority", "P2")
         scripts.append(
             {
                 "name": rel_path,
-                "dimensions": manifest.get("dimensions", []),
-                "priority": manifest.get("priority", "P2"),
+                "owner": manifest.get("owner", owner),
+                "dimensions": dims,
+                "priority": pri,
                 "timeout_seconds": manifest.get("timeout_seconds", 60),
                 "args": manifest.get("args", []),
                 "warn_only": manifest.get("warn_only", False),
                 "description": manifest.get("description", ""),
+                "tags": _derive_tags(rel_path, dims, pri),
             }
         )
 
@@ -180,6 +237,7 @@ def scan_scripts() -> list[dict]:
 
 
 def generate() -> dict:
+    """generate implementation."""
     scripts = scan_scripts()
     missing = sum(1 for s in scripts if s.get("_manifest_missing"))
     total = len(scripts)
@@ -195,6 +253,7 @@ def generate() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
     parser = argparse.ArgumentParser(description="从 __manifest__ 块自动生成 script_manifest.yaml")
     parser.add_argument("--check", action="store_true", help="检测漂移 + 报告 missing manifest")
@@ -211,16 +270,24 @@ def main() -> None:
         ex_scripts = existing.get("scripts", [])
         if len(ex_scripts) != result["total_scripts"]:
             print(f"DRIFT: 磁盘 {len(ex_scripts)} 脚本 ≠ 实际 {result['total_scripts']} 脚本")
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
         print(f"OK: 脚本清单与实际一致（{result['total_scripts']} 个脚本）")
         return
 
-    with open(args.output, "w", encoding="utf-8") as f:
-        f.write(f"# 自动生成于 {result['generated_at']}\n")
-        f.write("# 来源: scripts/governance/**/*.py __manifest__ 块\n")
-        f.write("# 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块\n\n")
-        yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+    tmp_path = f"{args.output}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(f"# 自动生成于 {result['generated_at']}\n")
+            f.write("# 来源: scripts/governance/**/*.py __manifest__ 块\n")
+            f.write("# 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块\n\n")
+            yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+        os.replace(tmp_path, args.output)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"已生成 {result['total_scripts']} 个脚本清单 → {args.output}")
     if result["missing_manifest"]:
         print(f"⚠ {result['missing_manifest']} 个脚本缺少 __manifest__ 块")

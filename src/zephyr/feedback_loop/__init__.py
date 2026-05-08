@@ -25,3 +25,9 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 架构真源：docs/02_enterprise_architecture/target-architecture/
          vibe-coding-infrastructure-architecture.md §3.5
 """
+
+__all__ = ['_gen_inherited', 'auto_evolution', 'backpressure_bridge', 'config', 'decision_engine', 'error_budget', 'eval_harness', 'evolution_engine', 'exceptions', 'feedback_collector', 'fitness_functions', 'metrics_collector', 'protocols', 'scheduler', 'slo_manager']
+
+
+MODULE_ID = "MOD-INF-010"
+VERSION = "0.1.0"

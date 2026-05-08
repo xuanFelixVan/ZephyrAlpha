@@ -1,21 +1,28 @@
 ---
 module_id: "MOD-MASTER-001"
-title: "集成闭环总蓝图 v0.9.1 — 任务系统·脚本系统·知识库及全部基础设施系统的集成契约与数据流 + 35+32新盲点全注入"
+title: "集成闭环总蓝图 v0.9.2 — 任务系统·脚本系统·知识库及全部基础设施系统的集成契约与数据流 + 已施工修补"
 doc_type: blueprint
-status: Draft
-version: "0.9.1"
+status: active
+version: "0.9.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-03"
-valid_from: "2026-05-03"
+last_updated: "2026-05-08"
+valid_from: "2026-05-08"
 ttl: permanent
 summary: "ZephyrAlpha 集成闭环总蓝图——定义12个基础设施系统之间的集成契约、数据流向、共享Schema、触发器路由、全局状态传播链、容量预算、故障传播约定、标准化HealthCheck探针协议、CBAC能力矩阵、CDC消费者驱动契约测试体系、Can-I-Deploy预部署门禁、死信队列(DLQ)统一契约、性能基准与回归预防(Benchmark)、零停机滚动升级(Deploy)、数据库Schema演化(SchemaMigrate)、全局降级级联预防(DegradeCascade)、Owner缺位自治运行(Autonomy)、AI施工质量闭环(AgentQuality)、Prompt版本演化(PromptVersion)、并行Session冲突预防(SessionConflict)、死代码与孤儿清理(Lean)、蓝图自健康诊断(BlueprintHealth)、系统移交/迁移(Transfer)、知识质量评分(KEQuality)。v0.9.0 Round 5——深度交叉审计35新盲点全注入：测试与质量/可观测性/安全纵深/运维自动化/氛围编程特有/金融业务/蓝图自身体系7大维度。本蓝图是集成关系的 canonical SSoT：每个系统对的接口契约在此定义（YAML结构化），各模块蓝图仅引用本蓝图的契约编号。对标 K8s Cluster Architecture + TOGAF Architecture Vision + OpenAPI Root Spec + Terraform Root Module + Cursor Rules + Windsurf Rules + Anthropic Agent Architecture + Pact CDC + Istio Service Mesh Health Probes + Google SRE Performance Regression Tests。"
-construction_progress: not_started
+construction_progress: completed
 belongs_to: "SYS-MASTER-001"
+blueprint_level: domain
 ai_role_instruction: >
+  ⚠️【全蓝图诚实声明】(更新 v0.9.2)——本蓝图共登记63条集成契约(CT-*)。
+  当前真实施工状态：3条(CT-ORC-DB/CT-PIPE-ORC-001/CT-CE-VMS-001)完全落地=SAFE，16条部分实现=CAUTION_STUB(CT-ORC-SCRIPT/CT-ORC-GATE/CT-SCRIPT-GATE/CT-KB-VMS/CT-FLE-ORC/CT-RBK-GATE/CT-FLE-DB/CT-HEALTH/CT-DLQ/CT-CBAC/CT-CDC/CT-SESSION-HANDOFF/CT-EVT-BUS/CT-FLE-EVT/CT-LLM-GW/CT-VMS-BRIDGE)，
+  2条蓝图已定义待实现=IMPL_REQUIRED(CT-SCRIPT-KB/CT-RB-001)，剩余42条为规划阶段=DO_NOT_CALL(不可调用)。
+  新AI session MUST意识到：本蓝图定义了"应该怎么连"，但大部分连接尚未施工。
+  遇到 DO_NOT_CALL 的契约时，不要尝试绕过或"想办法让它工作"——它确实不存在。
   你是集成总蓝图(MOD-MASTER-001)，是ZephyrAlpha全部12个基础设施系统之间集成关系的canonical SSoT。
   当子系统A的AI agent需要调用子系统B时，你必须提供 CT-{A}-{B} 编号的契约定义。
   核心规则：(0)【最高优先】任何跨系统调用前必须先检查§二契约总表中的ai_read_only_hint字段——
@@ -57,7 +64,7 @@ depends_on:
 
 # 集成闭环总蓝图 — 任务系统·脚本系统·知识库及全部基础设施系统
 
-> **module_id**: MOD-MASTER-001 | **version**: 0.8.0 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-MASTER-001 | **version**: 0.9.2 | **status**: active | **layer**: cross_layer
 
 > **真源声明**：本蓝图是 ZephyrAlpha 全部基础设施系统之间集成关系的 canonical SSoT。
 > 各模块蓝图（MOD-INF-005/006、MOD-KB-001、以及即将创建的 Gates/CE/Pipeline/FLE/VMS/db/MCP/LSG/Telemetry 蓝图）引用本蓝图中的集成契约编号——
@@ -149,7 +156,7 @@ Google SRE（SLO/SLI+Error Budget+Performance Regression Tests）。
 | **Context Engine (CE)** | `src/zephyr/context_engine/` | MOD-INF-008 context-engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
 | **Feedback Loop Engine (FLE)** | `src/zephyr/feedback_loop/` | MOD-INF-010 feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
-| **Vector Memory Service (VMS)** | `src/zephyr/vector_memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 5 Collection 统一向量持久化 |
+| **Vector Memory Service (VMS)** | `src/zephyr/vector_memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
 | **Database (db)** | `src/zephyr/db/` | MOD-INF-012 database蓝图 | SQLite元数据 + ATM原子事务管理器 |
 | **MCP Servers** | `src/zephyr/mcp/` | MOD-INF-013 mcp-servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
 | **LLM Security Gateway (LSG)** | `src/zephyr/llm_security/` | MOD-INF-014 llm-security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
@@ -229,21 +236,22 @@ Google SRE（SLO/SLI+Error Budget+Performance Regression Tests）。
 | CT-ORC-SCRIPT-001 | Orc ↔ Script System | 部分实现 | CAUTION_STUB |
 | CT-ORC-CE-001 | Orc → CE | 骨架 | DO_NOT_CALL |
 | CT-ORC-VMS-001 | Orc → VMS | 骨架 | DO_NOT_CALL |
-| CT-ORC-GATE-001 | Orc → Gates | 部分实现 | CAUTION_STUB |
-| CT-ORC-DB | Orc → db | 部分实现 | CAUTION_STUB |
+| CT-ORC-GATE-001 | Orc → Gates | G0/G1/G7全生命周期已集成(create/transition/complete三级门禁) | SAFE |
+| CT-ORC-DB | Orc → db | 18处import确认已实现 | SAFE |
 | CT-SCRIPT-KB-001 | Script System → KB | 蓝图已定义 | IMPL_REQUIRED |
 | CT-SCRIPT-GATE-001 | Script System → Gates | 部分实现 | CAUTION_STUB |
-| CT-CE-VMS-001 | CE → VMS | 规划 | DO_NOT_CALL |
+| CT-CE-VMS-001 | CE → VMS | 部分实现:VectorBridge已建桥接 | CAUTION_STUB |
 | CT-CE-LSG-001 | CE → LSG | 规划 | DO_NOT_CALL |
 | CT-KB-VMS-001 | KB → VMS | beta | CAUTION_STUB |
-| CT-FLE-ORC-001 | FLE → Orc | 规划 | DO_NOT_CALL |
-| CT-FLE-DB-001 | FLE → db | 规划 | DO_NOT_CALL |
+| CT-FLE-ORC-001 | FLE → Orc | decision_engine已创建(Orc→FLE已通,FLE→Orc待接通) | CAUTION_STUB |
+| CT-FLE-DB-001 | FLE → db | metrics_collector已sqlite3持久化 | CAUTION_STUB |
 | CT-TELE-FLE-001 | Telemetry → FLE | 规划 | DO_NOT_CALL |
-| CT-PIPE-ORC-001 | Pipeline → Orc | 部分实现 | CAUTION_STUB |
-| CT-HEALTH-001 | 全系统 | 规划 | DO_NOT_CALL |
+| CT-PIPE-ORC-001 | Pipeline → Orc | task_queue直接import PipelineOrchestrator | SAFE |
+| **CT-RBK-GATE-001** | **Rollback → Gate + Orc + Pipeline** | **GateEngine/Pipeline/Executor全链路已接通** | **CAUTION_STUB** |
+| CT-HEALTH-001 | 全系统 | AggregateHealth已实现+gate_health仪表板 | CAUTION_STUB |
 | CT-CBAC-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-CDC-001 | 全系统 | 规划 | DO_NOT_CALL |
-| CT-DLQ-001 | 全系统 | 规划 | DO_NOT_CALL |
+| CT-DLQ-001 | 全系统 | DeadLetterQueue已完整实现(438行) | CAUTION_STUB |
 | CT-RECONCILE-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-STARTUP-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-TEARDOWN-001 | 全系统 | 规划 | DO_NOT_CALL |

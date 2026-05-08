@@ -79,8 +79,29 @@ slo_registry:
     relates_invariant: INV-015
     instrumentation: { hook_point: "l10 security_gateway", sampling_sample_rate: "TBD" }
 
+  - id: CAP-011-disk-io-saturation
+    description: "磁盘 I/O 饱和度"
+    target: 0.7
+    measurement: "psutil disk_io_counters"
+    golden_signal: saturation
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+
+  - id: CAP-012-network-saturation
+    description: "网络带宽饱和度"
+    target: 0.6
+    measurement: "psutil net_io_counters"
+    golden_signal: saturation
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+
+  - id: CAP-013-goroutine-thread-saturation
+    description: "线程/协程并发饱和度"
+    target: 0.8
+    measurement: "threading.active_count / psutil"
+    golden_signal: saturation
+    instrumentation: { hook_point: "event_bus.queue", sampling_sample_rate: "TBD" }
+
 arch_guard:
-  min_slo_entries: 8
+  min_slo_entries: 10
   invariant_numeric_alignment:
     INV-001:
       slo_id: CAP-009-kill-switch-trigger-latency

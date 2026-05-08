@@ -12,6 +12,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import argparse
 import re
 import sys
@@ -21,7 +22,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
@@ -70,6 +71,7 @@ CATEGORY_MAP = {
 
 
 def extract_gates(config: dict) -> list[dict]:
+    """extract_gates implementation."""
     gates = []
     local_hooks = config.get("repos", [])
     for repo in local_hooks:
@@ -104,6 +106,7 @@ def extract_gates(config: dict) -> list[dict]:
 
 
 def generate(entry_count: int | None = None) -> dict:
+    """generate implementation."""
     pcc = load_yaml(PRE_COMMIT_PATH)
     gates = extract_gates(pcc)
     if entry_count is not None:
@@ -123,6 +126,7 @@ def generate(entry_count: int | None = None) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
     parser = argparse.ArgumentParser(description="自动生成 gate-registry.yaml")
     parser.add_argument("--check", action="store_true", help="仅检测漂移，不写文件")
@@ -135,18 +139,26 @@ def main() -> None:
         existing = load_yaml(args.output)
         if existing.get("total_gates") != output["total_gates"]:
             print(f"DRIFT: 磁盘 {existing.get('total_gates', 0)} 门禁 ≠ 生成 {output['total_gates']} 门禁")
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
         print("OK: 门禁登记表与 .pre-commit-config.yaml 一致")
         return
 
-    with open(args.output, "w", encoding="utf-8") as f:
-        f.write("# module_id: PS-REG-014\n")
-        f.write("# doc_type: register\n")
-        f.write(f"# 自动生成于 {output['generated_at']}\n")
-        f.write(f"# 来源: {PRE_COMMIT_PATH}\n")
-        f.write("# 手工编辑无效——修改请通过 .pre-commit-config.yaml\n\n")
-        yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+    tmp_path = f"{args.output}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            f.write("# module_id: PS-REG-014\n")
+            f.write("# doc_type: register\n")
+            f.write(f"# 自动生成于 {output['generated_at']}\n")
+            f.write(f"# 来源: {PRE_COMMIT_PATH}\n")
+            f.write("# 手工编辑无效——修改请通过 .pre-commit-config.yaml\n\n")
+            yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+        os.replace(tmp_path, args.output)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"已生成 {output['total_gates']} 条门禁 → {args.output}")
 
 

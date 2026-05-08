@@ -1,55 +1,37 @@
-"""
-SessionManager — AI 代理会话生命周期管理器
+"""SessionManager — AI Agent 会话生命周期管理（CT-003 契约兑现）
 
-消费 config/session_state_machine.yaml 定义的状态机，提供运行时会话状态追踪。
-此前 session_state_machine.yaml line 7 声明 "no runtime consumer yet"——本模块补全该缺口。
+消费 config/session_state_machine.yaml 定义的 5 状态 + 7 转换 + 超时规则，
+提供运行时会话状态机。对标 ITIL Service Transition + NASA-STD-8739.8。
 
-SSoT: config/session_state_machine.yaml
-ADR: ADR-0032（Agent 路由 / Orchestration）
+Task: CT-003 | experimental | session-20260506-012
 """
 
 from __future__ import annotations
 
 import logging
-import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from enum import Enum
+import time
+from enum import Enum, unique
 from pathlib import Path
-from typing import Any, ClassVar
+from threading import RLock
+from typing import Any
 
 import yaml
 
-__all__ = ["SessionManager", "SessionState", "Session", "SessionError"]
+__all__ = [
+    "SessionState",
+    "SessionTransitionError",
+    "SessionManager",
+    "load_state_machine_config",
+]
 
 _logger = logging.getLogger(__name__)
 
-_UTC = timezone.utc
-
-_STATE_MACHINE_YAML = Path(__file__).parents[3] / "config" / "session_state_machine.yaml"
-
-_TRANSITION_MAP: dict[str, set[str]] = {
-    "idle": {"active", "completed"},
-    "active": {"paused", "completed"},
-    "paused": {"active", "completed"},
-    "completed": {"archived"},
-    "archived": set(),
-}
-
-_TIMEOUT_RULES: dict[str, tuple[int, str]] = {
-    "active": (4, "transition_to_paused"),
-    "paused": (72, "transition_to_completed"),
-}
-
-_INVARIANT_CHECKS: ClassVar[list[str]] = [
-    "Session must have exactly one state at any time",
-    "Transition from completed to active is forbidden (start new session instead)",
-    "Transition from archived to any other state is forbidden",
-    "Each session must have a unique session_id",
-    "Session log must be written within 5 minutes of state change",
-]
+_FILE = Path(__file__).resolve()
+REPO_ROOT = _FILE.parents[3]
+DEFAULT_STATE_MACHINE_PATH = REPO_ROOT / "config" / "session_state_machine.yaml"
 
 
+@unique
 class SessionState(str, Enum):
     IDLE = "idle"
     ACTIVE = "active"
@@ -58,195 +40,119 @@ class SessionState(str, Enum):
     ARCHIVED = "archived"
 
 
-@dataclass
-class Session:
-    session_id: str = field(default_factory=lambda: f"session-{uuid.uuid4().hex[:12]}")
-    state: SessionState = SessionState.IDLE
-    task_id: str | None = None
-    created_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
-    state_changed_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
-    paused_at: str | None = None
-    completed_at: str | None = None
-    archived_at: str | None = None
-    state_log: list[dict[str, Any]] = field(default_factory=list)
-    token_budget_remaining: int = 8000
-    error_info: dict[str, Any] | None = None
+class SessionTransitionError(RuntimeError):
+    """非法状态转换。"""
 
 
-class SessionError(RuntimeError):
-    pass
+def load_state_machine_config(path: Path | None = None) -> dict[str, Any]:
+    """从 session_state_machine.yaml 加载状态机定义。"""
+    resolved = path or DEFAULT_STATE_MACHINE_PATH
+    if not resolved.exists():
+        raise FileNotFoundError(f"session_state_machine.yaml not found: {resolved}")
+    with resolved.open(encoding="utf-8") as fh:
+        return yaml.safe_load(fh) or {}
 
 
 class SessionManager:
-    """会话状态管理器——运行时消费 session_state_machine.yaml。"""
+    """AI Agent 会话生命周期管理器。
 
-    def __init__(self, db_path: Path | str | None = None) -> None:
-        self._sessions: dict[str, Session] = {}
-        self._config = self._load_config()
-        self._db_path = Path(db_path) if db_path else (Path(__file__).parents[3] / "data" / "sessions.db")
+    从 config/session_state_machine.yaml 加载状态定义和转换规则，
+    在运行时强制执行合法转换和超时规则。
 
-    def _load_config(self) -> dict[str, Any]:
-        if not _STATE_MACHINE_YAML.exists():
-            _logger.warning("session_state_machine.yaml not found at %s", _STATE_MACHINE_YAML)
-            return {}
-        with open(_STATE_MACHINE_YAML, encoding="utf-8") as fh:
-            return yaml.safe_load(fh) or {}
+    Usage::
 
-    def create_session(self, task_id: str | None = None) -> Session:
-        session = Session(task_id=task_id)
-        session.state_log.append({
-            "from_state": None,
-            "to_state": SessionState.IDLE.value,
-            "timestamp": session.state_changed_at,
-            "reason": "session_created",
-        })
-        self._sessions[session.session_id] = session
-        _logger.info("Session %s created (task=%s)", session.session_id, task_id)
-        return session
+        sm = SessionManager()
+        sid = sm.create_session()
+        sm.transition(sid, "active")
+        sm.transition(sid, "completed")
+        sm.archive_session(sid)
+    """
 
-    def get_session(self, session_id: str) -> Session:
-        s = self._sessions.get(session_id)
-        if s is None:
-            raise SessionError(f"Session {session_id} not found")
-        return s
+    def __init__(self, config_path: Path | None = None) -> None:
+        self._config_path = config_path or DEFAULT_STATE_MACHINE_PATH
+        self._lock = RLock()
+        self._sessions: dict[str, dict[str, Any]] = {}
+        self._transitions: list[dict[str, Any]] = []
+        self._timeout_rules: list[dict[str, Any]] = []
+        self._exception_handling: list[dict[str, Any]] = []
+        self._load_config()
 
-    def check_timeout(self, session_id: str) -> None:
-        session = self.get_session(session_id)
-        if session.state.value not in _TIMEOUT_RULES:
-            return
-
-        max_hours, _ = _TIMEOUT_RULES[session.state.value]
-
+    def _load_config(self) -> None:
         try:
-            changed = datetime.fromisoformat(session.state_changed_at)
-            if changed.tzinfo is None:
-                changed = changed.replace(tzinfo=_UTC)
-        except ValueError:
+            config = load_state_machine_config(self._config_path)
+        except FileNotFoundError:
+            _logger.warning("session_state_machine.yaml not found, using defaults")
             return
+        self._transitions = config.get("transitions", [])
+        self._timeout_rules = config.get("timeout_rules", [])
+        self._exception_handling = config.get("exception_handling", [])
 
-        elapsed = (datetime.now(_UTC) - changed).total_seconds() / 3600
-        if elapsed > max_hours:
-            if session.state == SessionState.ACTIVE:
-                self.transition(session_id, SessionState.PAUSED, reason="timeout_4h_active")
-            elif session.state == SessionState.PAUSED:
-                self.transition(session_id, SessionState.COMPLETED, reason="timeout_72h_paused")
+    def create_session(self, session_id: str | None = None) -> str:
+        import uuid
+        sid = session_id or str(uuid.uuid4())[:8]
+        with self._lock:
+            if sid in self._sessions:
+                raise ValueError(f"Session {sid} already exists")
+            self._sessions[sid] = {
+                "state": SessionState.IDLE,
+                "created_at": time.time(),
+                "last_transition_at": time.time(),
+                "history": [{"from": None, "to": "idle", "at": time.time()}],
+            }
+        return sid
 
-    def transition(
-        self,
-        session_id: str,
-        target: SessionState,
-        *,
-        reason: str = "manual",
-        force: bool = False,
-    ) -> session:  # type: ignore  # noqa: F821
-        session = self.get_session(session_id)
-        current = session.state
-
-        self._validate_transition(current, target, force)
-
-        session.state = target
-        now = datetime.now(_UTC).isoformat()
-        session.state_changed_at = now
-
-        session.state_log.append({
-            "from_state": current.value,
-            "to_state": target.value,
-            "timestamp": now,
-            "reason": reason,
-        })
-
-        if target == SessionState.PAUSED:
-            session.paused_at = now
-        elif target == SessionState.COMPLETED:
-            session.completed_at = now
-        elif target == SessionState.ARCHIVED:
-            session.archived_at = now
-
-        _logger.info("Session %s: %s → %s (reason=%s)", session_id, current.value, target.value, reason)
-        return session
-
-    def handle_exception(self, session_id: str, exception_type: str) -> Session:
-        session = self.get_session(session_id)
-        session.error_info = {
-            "type": exception_type,
-            "timestamp": datetime.now(_UTC).isoformat(),
-        }
-
-        if exception_type == "unrecoverable_error":
-            if session.state in {SessionState.IDLE, SessionState.ACTIVE, SessionState.PAUSED}:
-                self.transition(session_id, SessionState.COMPLETED, reason="unrecoverable_error")
-            session.error_info["resolution"] = "manual_intervention_required"
-        elif exception_type in {"encoding_error", "dependency_not_found", "token_budget_exceeded"}:
-            if session.state == SessionState.ACTIVE:
-                self.transition(session_id, SessionState.PAUSED, reason=exception_type)
-            session.error_info["recovery"] = "user_intervention_required"
-        else:
-            _logger.warning("Unknown exception type: %s", exception_type)
-
-        return session
-
-    def _validate_transition(
-        self,
-        current: SessionState,
-        target: SessionState,
-        force: bool,
-    ) -> None:
-        if force:
-            return
-
-        allowed = _TRANSITION_MAP.get(current.value, set())
-        if target.value not in allowed:
-            raise SessionError(
-                f"Invalid transition: {current.value} → {target.value}. "
-                f"Allowed from {current.value}: {sorted(allowed)}"
+    def transition(self, session_id: str, target_state: str) -> SessionState:
+        with self._lock:
+            session = self._sessions.get(session_id)
+            if session is None:
+                raise KeyError(f"Session {session_id} not found")
+            current = session["state"]
+            target = SessionState(target_state)
+            allowed = any(
+                t.get("from") == current.value and t.get("to") == target.value
+                for t in self._transitions
             )
+            if not allowed:
+                raise SessionTransitionError(
+                    f"Transition {current.value} -> {target.value} not allowed"
+                )
+            session["state"] = target
+            session["last_transition_at"] = time.time()
+            session["history"].append({
+                "from": current.value,
+                "to": target.value,
+                "at": time.time(),
+            })
+        _logger.info("Session %s: %s -> %s", session_id, current.value, target.value)
+        return target
 
-        if target == SessionState.ACTIVE and current == SessionState.COMPLETED:
-            raise SessionError(
-                "Transition from completed to active is forbidden. Start a new session instead."
-            )
+    def get_state(self, session_id: str) -> SessionState:
+        with self._lock:
+            session = self._sessions.get(session_id)
+            if session is None:
+                raise KeyError(f"Session {session_id} not found")
+            return session["state"]
 
-    def validate_invariants(self, session_id: str) -> list[str]:
-        violations: list[str] = []
-        session = self.get_session(session_id)
+    def check_timeouts(self) -> list[str]:
+        now = time.time()
+        timed_out = []
+        with self._lock:
+            for sid, session in self._sessions.items():
+                if session["state"] == SessionState.ACTIVE:
+                    elapsed_h = (now - session["last_transition_at"]) / 3600
+                    for rule in self._timeout_rules:
+                        if rule.get("state") == "active" and elapsed_h >= rule.get("max_duration", 4):
+                            timed_out.append(sid)
+                            break
+        return timed_out
 
-        duplicate_ids = sum(1 for s in self._sessions.values() if s.session_id == session.session_id)
-        if duplicate_ids > 1:
-            violations.append("Each session must have a unique session_id")
+    def archive_session(self, session_id: str) -> None:
+        self.transition(session_id, "archived")
 
-        if session.state == SessionState.ARCHIVED:
-            violations.append("Transition from archived to any other state is forbidden")
-
-        if session.state_log:
-            last_log = session.state_log[-1]
-            try:
-                log_time = datetime.fromisoformat(last_log["timestamp"])
-                if log_time.tzinfo is None:
-                    log_time = log_time.replace(tzinfo=_UTC)
-                delta = datetime.now(_UTC) - log_time
-                if delta > timedelta(minutes=5):
-                    violations.append(
-                        f"Session log was written {delta.total_seconds() / 60:.1f}m ago "
-                        f"(> 5 min since last state change)"
-                    )
-            except (ValueError, KeyError):
-                pass
-
-        return violations
-
-    def list_sessions(self, state: SessionState | None = None) -> list[Session]:
-        sessions = list(self._sessions.values())
-        if state:
-            sessions = [s for s in sessions if s.state == state]
-        return sessions
-
-    def close_session(self, session_id: str) -> Session:
-        session = self.get_session(session_id)
-        if session.state not in {SessionState.COMPLETED, SessionState.ARCHIVED}:
-            self.transition(session_id, SessionState.COMPLETED, reason="session_closed")
-        return session
-
-    def remove_session(self, session_id: str) -> None:
-        if session_id in self._sessions:
-            del self._sessions[session_id]
-            _logger.info("Session %s removed from manager", session_id)
+    @property
+    def active_sessions(self) -> list[str]:
+        with self._lock:
+            return [
+                sid for sid, s in self._sessions.items()
+                if s["state"] == SessionState.ACTIVE
+            ]

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from scripts.governance._shared.frontmatter import parse_frontmatter_from_file
 
-from scripts.governance.d1_structure.drafts_zone_archiver import (
+from scripts.governance.d1_structure.archive_drafts_zone import (
     STATUS_ARBITRATED,
     compute_archive_target,
     execute_archive,
@@ -125,7 +125,7 @@ class TestExecuteArchive:
                 "action": "warn",
             }
         ]
-        with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"):
+        with patch("scripts.governance.d1_structure.archive_drafts_zone.write_audit_log"):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 1
         assert "WARN" in actions[0]
@@ -144,9 +144,9 @@ class TestExecuteArchive:
             }
         ]
         with (
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"),
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path),
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", tmp_path / "archive"),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.write_audit_log"),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.REPO_ROOT", tmp_path),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.ARCHIVE_ROOT", tmp_path / "archive"),
         ):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 1
@@ -167,9 +167,9 @@ class TestExecuteArchive:
             }
         ]
         with (
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"),
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.REPO_ROOT", tmp_path),
-            patch("scripts.governance.d1_structure.drafts_zone_archiver.ARCHIVE_ROOT", archive_root),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.write_audit_log"),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.REPO_ROOT", tmp_path),
+            patch("scripts.governance.d1_structure.archive_drafts_zone.ARCHIVE_ROOT", archive_root),
         ):
             actions = execute_archive(drafts, confirm=True)
         assert len(actions) == 1
@@ -186,6 +186,6 @@ class TestExecuteArchive:
                 "action": "skip",
             }
         ]
-        with patch("scripts.governance.d1_structure.drafts_zone_archiver.write_audit_log"):
+        with patch("scripts.governance.d1_structure.archive_drafts_zone.write_audit_log"):
             actions = execute_archive(drafts, confirm=False)
         assert len(actions) == 0

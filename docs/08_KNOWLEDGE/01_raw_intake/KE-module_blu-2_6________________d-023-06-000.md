@@ -1,0 +1,55 @@
+---
+module_id: KE-module_blu-2_6________________d-023-06-000
+title: 2.6 检测触发策略与维护窗口（决策 D-023-06）
+category: module_blueprint
+---
+
+# 2.6 检测触发策略与维护窗口（决策 D-023-06）
+
+2.6 检测触发策略与维护窗口（决策 D-023-06）
+
+> **决策 D-023-06**：扩展触发策略——增加维护窗口/冻结期概念。生产事故期间、大版本升级期间，漂移检测可降级为 shadow mode（仅记录不阻断）。
+>
+> **决策依据**：无维护窗口概念时，升级期间的大量预期漂移会导致告警风暴，掩盖真正的异常漂移。
+
+```yaml
+triggers:
+  post_commit:
+    description: "git commit 后自动触发——增量扫描（LIGHT）"
+    scope: "受影响模块 + 依赖模块"
+    latency: "< 5s"
+
+  periodic_light:
+    description: "每 30 分钟——HIGH severity 检测器（STANDARD）"
+    scope: "global"
+    latency: "< 30s"
+
+  periodic_deep:
+    description: "每 6 小时——全局 DEEP 扫描"
+    scope: "global"
+    latency: "< 5min"
+
+  on_demand:
+    description: "MCP Tool call / Owner 手动触发"
+    scope: "指定范围"
+    latency: "取决于 scan level 参数"
+
+  phase_gate:
+    description: "construction_progress 变更为 complete 时触发"
+    scope: "目标模块"
+    latency: "DEEP——拍摄基线 + 全量对账"
+    action: "通过 → 拍摄新基线 / 不通过 → 拒绝 phase 变更"
+
+maintenance_window:
+  freeze_policy:
+    - trigger: "Owner 声明维护窗口（start_time ~ end_time）"
+      action: "drif_detector 进入 shadow mode——检测但不阻断，不触发告警"
+    - trigger: "自动检测大规模 git diff（> 50 files changed）"
+      action: "自动进入 shadow mode 2 小时——避免大版本升级告警风暴"
+
+  suppression:
+    - mechanism: "per-detector per-module 漂移抑制"
+      detail: "Owner 可将已知漂移标记为 SUPPRESSED（含过期时间）"
+    - mechanism: "抑制期结束自动恢复检测"
+      detail: "expires_at 到达 → 漂移状态从 SUPPRESSED → DETECTED"
+```

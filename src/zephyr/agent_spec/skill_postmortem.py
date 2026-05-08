@@ -1,0 +1,233 @@
+"""
+MOD-INF-019: Agent Spec — Skill Postmortem (5 Whys)
+Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
+Author: factory-agent
+Version: 0.2.0
+
+5 Whys 根因分析引擎
+===================
+机制:
+  1. 接收故障报告（skill_id + 症状描述）
+  2. 逐层追问 5 次 "为什么"
+  3. 每层推导基于 Skill 已知约束和依赖
+  4. 输出根因 + 纠正措施 + 预防措施
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+
+_WHY_PROBES = [
+    {
+        "layer": 1,
+        "question": "What immediately caused the failure?",
+        "checks": ["execution_error", "missing_checkpoint", "gate_rejection", "budget_exceeded"],
+    },
+    {
+        "layer": 2,
+        "question": "Why was the error not caught earlier?",
+        "checks": ["no_pre_validation", "missing_guardrail", "silent_failure", "assumed_success"],
+    },
+    {
+        "layer": 3,
+        "question": "Why was the guard/pre-check missing?",
+        "checks": ["constraint_not_documented", "skill_not_loaded", "wrong_role_skill", "stale_skill"],
+    },
+    {
+        "layer": 4,
+        "question": "Why was the skill stale or wrong?",
+        "checks": ["freshness_decayed", "blueprint_diverged", "no_update_trigger", "manual_override"],
+    },
+    {
+        "layer": 5,
+        "question": "Why was the process not catching this systematically?",
+        "checks": ["no_feedback_loop", "no_baseline", "no_regression_detection", "process_gap"],
+    },
+]
+
+
+class SkillPostmortem:
+    """5 Whys 根因分析器"""
+
+    @classmethod
+    def _infer_symptom_category(cls, error_message: str) -> str:
+        error_lower = error_message.lower()
+        if any(w in error_lower for w in ["keyerror", "not found", "missing", "unregistered"]):
+            return "registration"
+        if any(w in error_lower for w in ["token", "budget", "overflow", "exceeded"]):
+            return "budget"
+        if any(w in error_lower for w in ["gate", "reject", "blocked", "denied"]):
+            return "gate"
+        if any(w in error_lower for w in ["timeout", "latency", "slow"]):
+            return "performance"
+        if any(w in error_lower for w in ["injection", "security", "sandbox", "unsafe"]):
+            return "security"
+        if any(w in error_lower for w in ["drift", "stale", "outdated", "version"]):
+            return "drift"
+        return "unknown"
+
+    @classmethod
+    def _unwind_why(
+        cls,
+        skill_id: str,
+        symptom_category: str,
+        error_message: str,
+    ) -> List[Dict[str, Any]]:
+        responses: List[Dict[str, Any]] = []
+
+        layer_registry_cache = None
+        try:
+            from zephyr.agent_spec.skill_loader import SkillLoader
+            loader = SkillLoader()
+            layer_registry_cache = loader._load_registry()
+        except Exception:
+            pass
+
+        skill_data = None
+        if layer_registry_cache:
+            for cat in ("domain", "role"):
+                for sid, data in (layer_registry_cache.get("skills", {}).get(cat, {})).items():
+                    if sid == skill_id or skill_id in sid:
+                        skill_data = {"skill_id": sid, **data}
+                        break
+
+        for probe in _WHY_PROBES:
+            layer_num = probe["layer"]
+            reason = ""
+            evidence: List[str] = []
+
+            if layer_num == 1:
+                if symptom_category == "registration":
+                    reason = f"Skill '{skill_id}' was not registered or could not be loaded"
+                    evidence.append(f"Error: {error_message[:200]}")
+                elif symptom_category == "budget":
+                    reason = f"Skill '{skill_id}' exceeded token budget during loading"
+                elif symptom_category == "gate":
+                    reason = f"Gate rejected execution for skill '{skill_id}'"
+                elif symptom_category == "drift":
+                    reason = f"Skill '{skill_id}' content diverged from blueprint"
+                elif symptom_category == "performance":
+                    reason = f"Skill '{skill_id}' loading exceeded latency threshold"
+                else:
+                    reason = f"Unexpected failure in skill '{skill_id}': {error_message[:150]}"
+
+            elif layer_num == 2:
+                if symptom_category == "registration":
+                    reason = "Skill was expected to be auto-discovered but no discovery mechanism caught its absence"
+                else:
+                    reason = "Pre-execution validation did not exist or was misconfigured"
+                if skill_data and not skill_data.get("references"):
+                    evidence.append("No dependency references found in registry")
+
+            elif layer_num == 3:
+                reason = "The skill's constraint documentation was incomplete or absent"
+                if skill_data and not skill_data.get("description"):
+                    evidence.append("Skill has no description in registry")
+
+            elif layer_num == 4:
+                reason = "The skill was not refresh-triggered after its upstream dependency changed"
+                evidence.append("No freshness boost was triggered")
+
+            elif layer_num == 5:
+                reason = "No feedback loop existed to capture this failure pattern and prevent recurrence"
+                evidence.append("Postmortem engine was not invoked on first occurrence")
+
+            responses.append({
+                "layer": layer_num,
+                "question": probe["question"],
+                "reason": reason,
+                "evidence": evidence,
+            })
+
+        return responses
+
+    @classmethod
+    def _generate_actions(
+        cls,
+        skill_id: str,
+        symptom_category: str,
+        root_causes: List[str],
+    ) -> Dict[str, List[Dict[str, str]]]:
+        corrective: List[Dict[str, str]] = []
+        preventive: List[Dict[str, str]] = []
+
+        if symptom_category == "registration":
+            corrective.append({
+                "action": f"Register skill '{skill_id}' in skill_registry.yaml",
+                "assignee": "system-admin",
+                "priority": "P0",
+            })
+            preventive.append({
+                "action": "Add auto-registration check to G9 gate",
+                "assignee": "infrastructure-team",
+                "priority": "P1",
+            })
+
+        if symptom_category in ("budget", "drift"):
+            corrective.append({
+                "action": f"Compact skill '{skill_id}' body to fit token budget",
+                "assignee": "skill-author",
+                "priority": "P0",
+            })
+            preventive.append({
+                "action": "Add token-budget pre-check to SkillLoader",
+                "assignee": "infrastructure-team",
+                "priority": "P1",
+            })
+
+        if symptom_category == "gate":
+            corrective.append({
+                "action": f"Review gate configuration for skill '{skill_id}'",
+                "assignee": "governance-team",
+                "priority": "P0",
+            })
+            preventive.append({
+                "action": "Create gate override/waiver process",
+                "assignee": "governance-team",
+                "priority": "P2",
+            })
+
+        preventive.append({
+            "action": f"Add '{skill_id}' to regression test suite",
+            "assignee": "qa-team",
+            "priority": "P1",
+        })
+        preventive.append({
+            "action": "Enable SkillsBench baseline for this skill",
+            "assignee": "infrastructure-team",
+            "priority": "P2",
+        })
+
+        return {
+            "corrective": corrective,
+            "preventive": preventive,
+        }
+
+    @classmethod
+    def analyze(
+        cls,
+        skill_id: str,
+        error_message: str,
+        failed_operation: str = "",
+    ) -> Dict[str, Any]:
+        symptom = cls._infer_symptom_category(error_message)
+        root_causes = cls._unwind_why(skill_id, symptom, error_message)
+
+        primary_root_cause = root_causes[-1]["reason"] if root_causes else error_message
+        actions = cls._generate_actions(skill_id, symptom, [rc["reason"] for rc in root_causes])
+
+        return {
+            "incident_id": f"PM-{skill_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M')}",
+            "skill_id": skill_id,
+            "symptom_category": symptom,
+            "failed_operation": failed_operation,
+            "original_error": error_message[:500],
+            "root_cause": primary_root_cause,
+            "five_whys": root_causes,
+            "corrective_actions": actions["corrective"],
+            "preventive_actions": actions["preventive"],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "closed": False,
+        }

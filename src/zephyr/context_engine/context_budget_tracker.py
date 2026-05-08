@@ -18,11 +18,12 @@ from __future__ import annotations
 
 import time
 from enum import Enum, unique
+from pathlib import Path
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
-from zephyr.shared.observer import EventType, Observer
-from zephyr.shared.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.infra.observer import EventType, Observer
+from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 if TYPE_CHECKING:
     from zephyr.context_engine.doc_compressor import DocCompressor
@@ -40,6 +41,55 @@ DEFAULT_THRESHOLDS = {
     BudgetLevel.L2_THROTTLE: 0.90,
     BudgetLevel.L3_HARD_STOP: 0.95,
 }
+
+_FILE = Path(__file__).resolve()
+REPO_ROOT: Path = _FILE.parents[3]
+
+_CONTEXT_RULES_PATH = REPO_ROOT / "config" / "context_rules.yaml"
+_context_rules_cache: dict | None = None
+
+
+def _load_context_rules_yaml() -> dict:
+    """从 config/context_rules.yaml 加载上下文管理规则（CT-001 契约兑现）。
+
+    首次调用时加载并缓存；后续调用返回缓存。YAML 不存在时返回空字典，
+    ContextBudgetTracker 回退到 DEFAULT_THRESHOLDS。
+    """
+    global _context_rules_cache
+    if _context_rules_cache is not None:
+        return _context_rules_cache
+    try:
+        import yaml as _yaml
+        if _CONTEXT_RULES_PATH.exists():
+            with _CONTEXT_RULES_PATH.open(encoding="utf-8") as fh:
+                data = _yaml.safe_load(fh) or {}
+            _context_rules_cache = data
+            return data
+    except Exception:
+        pass
+    _context_rules_cache = {}
+    return _context_rules_cache
+
+
+def get_thresholds_from_yaml() -> dict[BudgetLevel, float] | None:
+    """从 context_rules.yaml CTX-001 规则提取阈值。
+
+    Returns
+    -------
+    dict[BudgetLevel, float] | None
+        YAML 中定义的阈值；YAML 不存在或规则缺失时返回 None。
+    """
+    data = _load_context_rules_yaml()
+    for rule in data.get("rules", []):
+        if rule.get("id") == "CTX-001" and rule.get("name") == "token_budget_tiers":
+            params = rule.get("parameters", {})
+            return {
+                BudgetLevel.L1_WARNING: params.get("l1_warning_ratio", 0.80),
+                BudgetLevel.L2_THROTTLE: params.get("l2_compress_ratio", 0.90),
+                BudgetLevel.L3_HARD_STOP: params.get("l3_hard_cutoff_ratio", 0.95),
+            }
+    return None
+
 
 
 class ContextBudgetTracker:
@@ -67,12 +117,13 @@ class ContextBudgetTracker:
     ) -> None:
         self._observer = observer
         self._session_limit = session_limit
-        self._thresholds = thresholds or DEFAULT_THRESHOLDS
+        self._thresholds = thresholds or get_thresholds_from_yaml() or DEFAULT_THRESHOLDS
         self._lock = RLock()
         self._sessions: dict[str, dict[str, Any]] = {}
         self._doc_compressor: Any | None = None  # DocCompressor（TYPE_CHECKING 避免循环导入）
 
     def _get_session(self, session_id: str) -> dict[str, Any]:
+        self._cleanup_expired_sessions()
         if session_id not in self._sessions:
             self._sessions[session_id] = {
                 "token_count": 0,
@@ -81,6 +132,16 @@ class ContextBudgetTracker:
                 "created_at": time.time(),
             }
         return self._sessions[session_id]
+
+    def _cleanup_expired_sessions(self, max_age_seconds: float = 86400.0) -> int:
+        now = time.time()
+        expired = [
+            sid for sid, s in self._sessions.items()
+            if now - s.get("created_at", 0) > max_age_seconds
+        ]
+        for sid in expired:
+            del self._sessions[sid]
+        return len(expired)
 
     def count_tokens(self, text: str, session_id: str = "default") -> int:
         try:

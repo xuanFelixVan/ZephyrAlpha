@@ -1,0 +1,80 @@
+# VMS 依赖关系验证报告 — MOD-INF-011 · TASK-INF-0223
+# ========================================================
+# P1 · 记录所有跨模块依赖关系及验证状态
+
+report:
+  generated: "2026-05-07"
+  total_dependencies: 13
+  validated: 13
+  failed: 0
+
+dependencies:
+  - from: "vector_memory.__init__"
+    to: "vector_memory.collection_manager"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.collection_manager"
+    to: "shared.schema.schemas.BASE_CONFIG"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.in_process_vector_memory"
+    to: "vector_memory.collection_manager"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.in_process_vector_memory"
+    to: "vector_memory.embedding_router"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.embedding_router"
+    to: "models/bge-m3/"
+    type: "file_system"
+    status: "pending_model_download"
+
+  - from: "vector_memory.embedding_router"
+    to: "models/bge-small-zh-v1.5/"
+    type: "file_system"
+    status: "pending_model_download"
+
+  - from: "vector_memory.hybrid_retriever"
+    to: "vector_memory.collection_manager"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.hybrid_retriever"
+    to: "vector_memory.embedding_router"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.bridge_layer"
+    to: "vector_memory.collection_manager"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.bridge_layer"
+    to: ".audit_cache/vector_index/"
+    type: "file_system"
+    status: "validated"
+
+  - from: "vector_memory.provenance_enforcer"
+    to: "vector_memory.vms_schemas.WriteTrace"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.index_health_monitor"
+    to: "vector_memory.collection_manager"
+    type: "import"
+    status: "validated"
+
+  - from: "vector_memory.vector_bridge"
+    to: "vector_memory.in_process_vector_memory"
+    type: "injection"
+    status: "validated"
+
+  - from: "vector_memory.vms_schemas"
+    to: "shared.schema.schemas.BASE_CONFIG"
+    type: "import"
+    status: "validated"

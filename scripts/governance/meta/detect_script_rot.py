@@ -50,6 +50,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _get_db_conn() -> sqlite3.Connection | None:
+    """_get_db_conn implementation."""
     if not _DB_PATH.exists():
         return None
     conn = sqlite3.connect(str(_DB_PATH))
@@ -58,6 +59,7 @@ def _get_db_conn() -> sqlite3.Connection | None:
 
 
 def detect_rot(days: int = 30, alert_threshold: int = 0) -> dict:
+    """Detect issues in target and report findings."""
     conn = _get_db_conn()
     if not conn:
         return {"error": "时序数据库不存在——请先运行 manage_finding_timeseries.py --import"}
@@ -126,6 +128,7 @@ def detect_rot(days: int = 30, alert_threshold: int = 0) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     days = 30
     alert_threshold = 0
     for a in sys.argv:

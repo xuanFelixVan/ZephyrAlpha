@@ -1,14 +1,18 @@
 """
-ChromaDB 向量层初始化（T-2-10）
-================================
+ChromaDB 向量层初始化（T-2-10 · KB-legacy）
+=============================================
 依据：ADR-0031（ChromaDB persistent client）
+
+⚠️ 此模块为 KB 模块旧版独立 ChromaDB 层 — 已被 VMS (MOD-INF-011) 取代为全系统主向量后端。
+⚠️ VMS: src/zephyr/vector_memory/ — 8 Collection (decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces)
+⚠️ 本模块保留于 KB 包内保证向后兼容 — KB 可通过 vector_bridge.VectorBridge 同步数据到 VMS。
 
 物理路径
 --------
-- .audit_cache/vector_index/  ChromaDB 持久化根
+- .audit_cache/vector_index/  ChromaDB 持久化根 (KB module only)
 - .audit_cache/models/        embedding backbone 缓存
 
-4 Collection（ADR-0031 §4.2）
+4 Collection (KB-module scope)
 --------------------------------
 1. ke_entries       KE 知识条目 chunks
 2. vibe_rules       42 条治理规则 chunks
@@ -33,8 +37,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 COLLECTION_NAMES = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")
 

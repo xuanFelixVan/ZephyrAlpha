@@ -1,0 +1,15 @@
+---
+module_id: KE-governance-8__ai-003
+title: 8. AI 可消费性声明
+category: governance
+---
+
+# 8. AI 可消费性声明
+
+8. AI 可消费性声明
+
+- 本文件所有规则以 `### ABS-NNN：` 和 `### COND-NNN：` 格式声明，AI 可通过正则自动提取
+- 所有时限和质量标准以 Markdown 表格形式定义，AI 可解析为自动化管线配置
+- 本文件的 `ai_autonomy: human_gated`——AI 可提议修改报告策略，需 Owner 审批后执行
+- 本文件的 `stability: evolving`——内容可能频繁变更，AI 每次 session 应重新读取
+- 本文件的 `verifiability: manual`——报告质量的最终验收由 Owner 人工完成

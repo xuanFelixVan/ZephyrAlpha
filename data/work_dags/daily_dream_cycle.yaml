@@ -1,0 +1,52 @@
+dag_id: daily_dream_cycle
+default_layer: local
+default_priority: P1
+description: Archive-Extract-Forget-Index-Commit
+edges:
+- condition: success
+  from_node: archive
+  to_node: extract
+- condition: success
+  from_node: extract
+  to_node: forget
+- condition: success
+  from_node: forget
+  to_node: index
+- condition: success
+  from_node: index
+  to_node: commit
+max_parallelism: 3
+name: Daily Dream Cycle
+nodes:
+- capability_id: ai-audit-logger
+  layer_override: null
+  node_id: archive
+  params: {}
+  priority_override: null
+  work_type: archive
+- capability_id: ollama-chat
+  layer_override: null
+  node_id: extract
+  params: {}
+  priority_override: null
+  work_type: summary_extraction
+- capability_id: dream-cycle
+  layer_override: null
+  node_id: forget
+  params: {}
+  priority_override: null
+  work_type: forget
+- capability_id: embedding-router
+  layer_override: null
+  node_id: index
+  params: {}
+  priority_override: null
+  work_type: vector_embedding
+- capability_id: git
+  layer_override: null
+  node_id: commit
+  params: {}
+  priority_override: null
+  work_type: auto_commit
+retry_on_failure: 2
+timeout_minutes: 60

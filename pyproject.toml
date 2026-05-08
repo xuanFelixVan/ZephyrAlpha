@@ -16,6 +16,8 @@ dependencies = [
     "pandas>=2.0.0",
     "chromadb>=0.4.24",
     "mcp>=1.0.0",
+    "openai>=1.0.0",
+    "sentence-transformers>=3.0.0",
 ]
 
 [project.optional-dependencies]

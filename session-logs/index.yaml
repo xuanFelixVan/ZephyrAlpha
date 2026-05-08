@@ -21,13 +21,13 @@
 # =====
 # index_version: 1.0  — 初始建立，覆盖 2026-05-04 的五轮架构审计 session
 
-index_version: '1.3'
+index_version: '1.4'
 created: '2026-05-04'
-last_updated: '2026-05-06'
-total_sessions: 20
+last_updated: '2026-05-08'
+total_sessions: 30
 stats:
-  total_files_created: 57
-  total_files_modified: 212
+  total_files_created: 104
+  total_files_modified: 223
   total_files_deleted: 40
   total_decisions: 74
   total_ke_extracted: 0
@@ -51,6 +51,7 @@ by_module:
   - session-20260505-010
   - session-20260505-012
   - session-20260505-014
+  - session-20260507-004
   l02_alpha_factor:
   - session-20260504-004
   - session-20260504-005
@@ -164,9 +165,12 @@ by_contract:
   - session-20260505-009
   CTR-004:
   - session-20260504-004
-  CTR-005: []
+  - session-20260507-004
+  CTR-005:
+  - session-20260507-004
   CTR-006:
   - session-20260505-009
+  - session-20260507-004
   CTR-TRACE-001:
   - session-20260504-003
   - session-20260504-004
@@ -235,6 +239,19 @@ by_date:
   - session-20260505-014
   - session-20260505-015
   - session-20260505-016
+  '2026-05-06':
+  - session-20260506-001
+  - session-20260506-002
+  - session-20260506-003
+  - session-20260506-008
+  - session-20260506-010
+  '2026-05-07':
+  - session-20260507-001
+  - session-20260507-002
+  - session-20260507-004
+  - session-20260507-010
+  '2026-05-08':
+  - session-20260508-001
 
 # 盲点发现时间线
 # → 已迁移至 session-logs/_auto/blind_spot_timeline.yaml（自动生成，由 session log YAML 派生）

@@ -49,7 +49,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from zephyr.shared.capability import capability_check
+from zephyr.shared.security.capability import capability_check
 
 __all__ = [
     "CompressionOutcome",

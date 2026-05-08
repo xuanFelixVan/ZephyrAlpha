@@ -1,0 +1,22 @@
+schema_version: "1.0.0"
+module_id: PS-REG-020
+doc_type: register
+title: "主文档清单（Master Document Inventory）"
+status: draft
+version: "1.0.0"
+date: "2026-05-06"
+owner: ZephyrAlpha-Owner
+ai_autonomy: human_gated
+ttl: permanent
+summary: "跨目录主文档清单——索引 docs/ 下所有一级目录的入口文档和关键产出物。01_policies_and_standards/ 细粒度文档索引见 document-metadata-index.yaml（PS-REG-002）。"
+depends_on:
+  - target: PS-REG-002
+    at: document-metadata-index.yaml
+    why: "01_policies_and_standards/ 细粒度文档元数据索引"
+  - target: PS-REG-016
+    at: registry-of-registries.yaml
+    why: "登记表一致性契约"
+total_documents: 0
+last_updated: "2026-05-06"
+note: "beta 阶段——跨目录文档清单自动化工具未就绪，当前为空表。01_policies_and_standards/ 文档请查阅 document-metadata-index.yaml"
+documents: []

@@ -30,7 +30,7 @@ from zephyr.l05_portfolio_construction.strategy_base import (
     StrategyMeta,
     StrategyRegistry,
 )
-from zephyr.shared.contracts.order import Order, OrderSide, OrderType
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderType
 
 _logger = logging.getLogger(__name__)
 

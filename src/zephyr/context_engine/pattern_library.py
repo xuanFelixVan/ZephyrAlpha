@@ -21,20 +21,26 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime
 from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
-from zephyr.shared.time_utils import now_iso
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "PatternType",
     "PatternEntry",
     "PatternQuery",
     "PatternLibrary",
+    "DangerousPatternType",
+    "DangerousPattern",
+    "DangerousPatternMatch",
+    "DangerousPatternLibrary",
+    "validate_context",
 ]
 
 
@@ -284,3 +290,311 @@ class PatternLibrary:
                 }
             )
         return hits
+
+
+class DangerousPatternType(str, Enum):
+    """VALIDATE 阶段已知危险模式分类。
+
+    三类恶意内容：
+      - PROMPT_INJECTION    : 恶意指令注入
+      - SENSITIVE_INFO_LEAK : 项目敏感信息泄露
+      - DANGEROUS_TOOL_CALL : 危险工具调用建议
+    """
+
+    PROMPT_INJECTION = "prompt_injection"
+    SENSITIVE_INFO_LEAK = "sensitive_info_leak"
+    DANGEROUS_TOOL_CALL = "dangerous_tool_call"
+
+
+class DangerousPattern(BaseModel):
+    """已知危险模式条目。"""
+
+    model_config = BASE_CONFIG
+
+    pattern_id: str = Field(min_length=1, description="模式 ID，如 DNG-001")
+    pattern_type: DangerousPatternType
+    name: str = Field(min_length=1, max_length=200, description="模式名称")
+    detection: str = Field(min_length=1, description="检测规则（正则表达式或关键词）")
+    severity: str = Field(default="error", description="严重级别：error/warn/flag")
+    description: str = Field(default="", description="模式说明")
+    fix_hint: str = Field(default="", description="修复建议")
+
+
+class DangerousPatternMatch(BaseModel):
+    """危险模式匹配结果。"""
+
+    model_config = BASE_CONFIG
+
+    pattern: DangerousPattern
+    matched_text: str = Field(default="", description="匹配到的文本片段")
+    position_start: int = Field(default=0, ge=0, description="匹配起始位置")
+    position_end: int = Field(default=0, ge=0, description="匹配结束位置")
+
+
+KNOWN_DANGEROUS_PATTERNS: list[DangerousPattern] = [
+    DangerousPattern(
+        pattern_id="DNG-001",
+        pattern_type=DangerousPatternType.PROMPT_INJECTION,
+        name="Ignore Previous Instructions",
+        detection=r"(?i)ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|directions?|prompts?)",
+        severity="error",
+        description="提示词注入——要求忽略之前的指令",
+        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-002",
+        pattern_type=DangerousPatternType.PROMPT_INJECTION,
+        name="You Are Now DAN",
+        detection=r"(?i)(you\s+are\s+now\s+(dan|developer\s+mode)|jailbreak|bypass\s+safety)",
+        severity="error",
+        description="提示词注入——DAN/Jailbreak 攻击",
+        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-003",
+        pattern_type=DangerousPatternType.PROMPT_INJECTION,
+        name="System Prompt Override",
+        detection=r"(?i)(new\s+system\s+(prompt|instruction|role)|override\s+system|act\s+as\s+a\s+different)",
+        severity="error",
+        description="提示词注入——覆盖系统提示词",
+        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-004",
+        pattern_type=DangerousPatternType.SENSITIVE_INFO_LEAK,
+        name="API Key Exposure",
+        detection=r"(?i)(api[_-]?key\s*[=:]\s*[\"']?[a-zA-Z0-9_\-]{20,}|sk-[a-zA-Z0-9]{32,}|ghp_[a-zA-Z0-9]{36,})",
+        severity="error",
+        description="敏感信息泄露——API Key / Token",
+        fix_hint="LSG 拒绝 → 移除包含凭据的文本块；检查 git history 是否已泄露",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-005",
+        pattern_type=DangerousPatternType.SENSITIVE_INFO_LEAK,
+        name="Private Key Exposure",
+        detection=r"-----BEGIN\s+(RSA|EC|DSA|OPENSSH|PGP)\s+PRIVATE\s+KEY-----",
+        severity="error",
+        description="敏感信息泄露——私钥",
+        fix_hint="LSG 拒绝 → 移除包含私钥的文本块",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-006",
+        pattern_type=DangerousPatternType.SENSITIVE_INFO_LEAK,
+        name="Database Credential Exposure",
+        detection=r"(?i)(connection[_-]?string|database[_-]?url|db[_-]?password)\s*[=:]\s*[\"']?[^\"'\s]{8,}",
+        severity="error",
+        description="敏感信息泄露——数据库连接凭据",
+        fix_hint="LSG 拒绝 → 移除包含凭据的文本块",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-007",
+        pattern_type=DangerousPatternType.DANGEROUS_TOOL_CALL,
+        name="Delete All Files",
+        detection=r"(?i)(rm\s+-rf\s+/|del\s+/[fsq]|format\s+[cdef]:|drop\s+table\s+\w+\s*(cascade)?)",
+        severity="error",
+        description="危险工具调用——删除/格式化操作",
+        fix_hint="LSG 拒绝 → 移除危险工具调用建议；标记 session.degraded=true",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-008",
+        pattern_type=DangerousPatternType.DANGEROUS_TOOL_CALL,
+        name="Execute Arbitrary Code",
+        detection=r"(?i)(exec\s*\(|eval\s*\(|subprocess\.(call|popen|run)\s*\()",
+        severity="warn",
+        description="危险工具调用——执行任意代码",
+        fix_hint="LSG 警告 → 人工审核该工具调用",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-009",
+        pattern_type=DangerousPatternType.DANGEROUS_TOOL_CALL,
+        name="Network Penetration Tool",
+        detection=r"(?i)(nmap|metasploit|wireshark|tcpdump|hydra|john\s+the\s+ripper)",
+        severity="warn",
+        description="危险工具调用——网络渗透工具",
+        fix_hint="LSG 警告 → 人工审核该工具调用",
+    ),
+    DangerousPattern(
+        pattern_id="DNG-010",
+        pattern_type=DangerousPatternType.PROMPT_INJECTION,
+        name="Token Smuggling",
+        detection=r"(?i)(concatenate|join.*answer|split.*across|hidden.*instruction|steganography)",
+        severity="warn",
+        description="提示词注入——Token 走私/隐藏指令",
+        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+    ),
+]
+
+
+class DangerousPatternLibrary:
+    """VALIDATE 阶段已知危险模式扫描器。
+
+    通过正则表达式检测三类恶意内容：
+      1. Prompt injection——恶意指令注入
+      2. 项目敏感信息泄露
+      3. 危险工具调用建议
+
+    Using::
+
+        lib = DangerousPatternLibrary()
+        matches = lib.scan(context_text)
+        if matches:
+            for m in matches:
+                print(f"[{m.pattern.severity}] {m.pattern.name}: {m.matched_text[:50]}")
+    """
+
+    def __init__(
+        self,
+        patterns: list[DangerousPattern] | None = None,
+    ) -> None:
+        self._patterns = patterns or KNOWN_DANGEROUS_PATTERNS
+        self._compiled: dict[str, re.Pattern[str]] = {}
+        for p in self._patterns:
+            try:
+                self._compiled[p.pattern_id] = re.compile(p.detection)
+            except re.error:
+                pass
+
+    @property
+    def pattern_count(self) -> int:
+        return len(self._patterns)
+
+    def scan(self, text: str) -> list[DangerousPatternMatch]:
+        """扫描文本，返回所有匹配的危险模式。
+
+        Parameters
+        ----------
+        text : str
+            待扫描的上下文文本
+
+        Returns
+        -------
+        list[DangerousPatternMatch]
+            按位置排序的匹配结果列表
+        """
+        matches: list[DangerousPatternMatch] = []
+        seen_patterns: set[str] = set()
+
+        for pattern in self._patterns:
+            compiled = self._compiled.get(pattern.pattern_id)
+            if compiled is None:
+                continue
+            for m in compiled.finditer(text):
+                if pattern.pattern_id not in seen_patterns:
+                    seen_patterns.add(pattern.pattern_id)
+                matches.append(
+                    DangerousPatternMatch(
+                        pattern=pattern,
+                        matched_text=m.group(0),
+                        position_start=m.start(),
+                        position_end=m.end(),
+                    )
+                )
+
+        matches.sort(key=lambda x: x.position_start)
+        return matches
+
+    def scan_by_type(
+        self,
+        text: str,
+        pattern_type: DangerousPatternType,
+    ) -> list[DangerousPatternMatch]:
+        """按特定类型扫描文本。
+
+        Parameters
+        ----------
+        text : str
+            待扫描文本
+        pattern_type : DangerousPatternType
+            要检测的危险模式类型
+        """
+        all_matches = self.scan(text)
+        return [m for m in all_matches if m.pattern.pattern_type == pattern_type]
+
+    def has_dangerous_patterns(self, text: str) -> bool:
+        """快速检查文本是否包含任何危险模式。"""
+        for pattern in self._patterns:
+            compiled = self._compiled.get(pattern.pattern_id)
+            if compiled is not None and compiled.search(text):
+                return True
+        return False
+
+    def get_patterns_by_type(
+        self,
+        pattern_type: DangerousPatternType,
+    ) -> list[DangerousPattern]:
+        """返回指定类型的所有危险模式。"""
+        return [p for p in self._patterns if p.pattern_type == pattern_type]
+
+
+_default_dangerous_library: DangerousPatternLibrary | None = None
+
+
+def validate_context(
+    text: str,
+    *,
+    library: DangerousPatternLibrary | None = None,
+    max_retries: int = 3,
+) -> tuple[str, list[DangerousPatternMatch]]:
+    """VALIDATE 阶段入口——扫描上下文并移除危险内容。
+
+    处理流程：
+      1. 扫描危险模式
+      2. 移除匹配的文本块
+      3. 最多 max_retries 次循环
+      4. 第 3 次仍被拒绝 → 丢弃该块并标记
+
+    Parameters
+    ----------
+    text : str
+        待验证的上下文文本
+    library : DangerousPatternLibrary | None
+        模式扫描器；None 时使用默认实例
+    max_retries : int
+        最多重试次数（默认 3）
+
+    Returns
+    -------
+    tuple[str, list[DangerousPatternMatch]]
+        (清理后文本, 被移除的匹配列表)
+    """
+    lib = library or _get_default_library()
+    removed: list[DangerousPatternMatch] = []
+    cleaned = text
+
+    for _attempt in range(max_retries):
+        matches = lib.scan(cleaned)
+        if not matches:
+            break
+
+        error_matches = [m for m in matches if m.pattern.severity == "error"]
+        if not error_matches and _attempt > 0:
+            break
+
+        to_remove = [m for m in matches if m.pattern.severity == "error"]
+        if not to_remove:
+            to_remove = matches[:1]
+
+        for m in to_remove:
+            removed.append(m)
+            cleaned = _remove_match(cleaned, m)
+
+    return cleaned, removed
+
+
+def _get_default_library() -> DangerousPatternLibrary:
+    global _default_dangerous_library
+    if _default_dangerous_library is None:
+        _default_dangerous_library = DangerousPatternLibrary()
+    return _default_dangerous_library
+
+
+def _remove_match(text: str, match: DangerousPatternMatch) -> str:
+    lines = text.split("\n")
+    start_line = text[: match.position_start].count("\n")
+    end_line = text[: match.position_end].count("\n")
+
+    block_start = max(0, start_line - 1)
+    block_end = min(len(lines), end_line + 2)
+
+    kept = lines[:block_start] + lines[block_end:]
+    return "\n".join(kept)

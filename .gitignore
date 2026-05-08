@@ -134,3 +134,36 @@ _migration_conflict_backup/
 # Governance JSONL reports
 scripts/reports/*.jsonl
 
+# Drift detector runtime data (only .gitkeep is tracked)
+data/drift_baselines/*
+!data/drift_baselines/.gitkeep
+data/drift_checkpoints/*
+!data/drift_checkpoints/.gitkeep
+data/drift_audit/*
+!data/drift_audit/.gitkeep
+data/drift_runbooks/*
+!data/drift_runbooks/.gitkeep
+data/drift_handoffs/*
+!data/drift_handoffs/.gitkeep
+
+# Audit trail — Git isolation (D-020-27)
+# Audit logs must NOT be tracked by git — git reset/rebase must not delete audit history
+data/audit/
+data/audit_trail/
+
+# Runtime cache and state
+.audit_cache/
+.zephyr/
+.zephyr_secure/
+.trae/session_state/
+logs/
+
+# Session and journal artifacts
+_journals/
+_prompts/
+
+# Root-level temporary scripts
+/_fix_*.py
+/_debug_*.py
+/_final_*.py
+/_tmp_*.py

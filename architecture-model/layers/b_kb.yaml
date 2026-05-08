@@ -5,7 +5,7 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
-  note: "experimental 核心引擎已完成(12模块/3600行)；beta 全自动五轨提取管道+检索升级+反馈闭环+KO→KE→KB漏斗+四层哨兵+三层存储同步+三轨18类+Track D预留+Chat-to-KE+数据库物理布局+决策一致性检查+Human-Gated权限模型+KE Schema稳定性分级+灾备+知识检索与演化回路17子节(检索质量度量/混合检索BM25+RRF/查询改写HyDE/上下文动态分配/KB执行引擎/知识溯源PROV/KE版本semver/依赖级联/去重聚类HDBSCAN/Token预算背压/多模态预留/三级记忆HotWarmCold/Self-RAG自反思/效果A/B测试/合并冲突/安全分级/偏好vs证据裁决)+时间窗口有效性valid_from/valid_until+多语言标注，Owner月均≤12min审批LLM≤¥0.40。蓝图 MOD-KB-001 v0.6.5。"
+  note: "experimental 核心引擎已完�?12模块/3600�?；beta 全自动五轨提取管�?检索升�?反馈闭环+KO→KE→KB漏斗+四层哨兵+三层存储同步+三轨18�?Track D预留+Chat-to-KE+数据库物理布局+决策一致性检�?Human-Gated权限模型+KE Schema稳定性分�?灾备+知识检索与演化回路17子节(检索质量度�?混合检索BM25+RRF/查询改写HyDE/上下文动态分�?KB执行引擎/知识溯源PROV/KE版本semver/依赖级联/去重聚类HDBSCAN/Token预算背压/多模态预�?三级记忆HotWarmCold/Self-RAG自反�?效果A/B测试/合并冲突/安全分级/偏好vs证据裁决)+时间窗口有效性valid_from/valid_until+多语言标注，Owner月均�?2min审批LLM≤�?.40。蓝�?MOD-KB-001 v0.6.5�?
 
 modules:
   - id: kb-lifecycle
@@ -15,7 +15,7 @@ modules:
     status: implemented
     priority: P1
     runtime_plane: warm
-    description: 知识全生命周期管理——G1(摄取)→G2(分拣)→G3(分析)→G4(激活)→G5(提取) 五门禁 + 10状态KE状态机 + RI-02统一内存API。蓝图：knowledge-base/blueprint.md §5
+    description: 知识全生命周期管理——G1(摄取)→G2(分拣)→G3(分析)→G4(激�?→G5(提取) 五门�?+ 10状态KE状态机 + RI-02统一内存API。蓝图：knowledge-base/blueprint.md §5
     blueprint_ref: "D:/ZephyrAlpha/docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"
     files:
       - activate.py
@@ -32,11 +32,11 @@ modules:
     interfaces:
       - contract_id: CT-SCRIPT-KB-001
         role: consumer
-        description: MEDIUM Finding → KE 入库
+        description: MEDIUM Finding �?KE 入库
       - contract_id: CT-KB-VMS-001
         role: producer
         description: 知识条目向量化存储至 VMS
-    adr_ref:
+    kb_ref:
       - ADR-0005
 
 summary:

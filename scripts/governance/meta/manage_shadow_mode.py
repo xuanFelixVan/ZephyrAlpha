@@ -27,6 +27,7 @@ timeout_seconds: 30
 warn_only: false
 """
 
+import os
 import argparse
 import sys
 from datetime import UTC, datetime, timedelta
@@ -47,6 +48,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load() -> dict:
+    """_load implementation."""
     if not _SHADOW_STATE_PATH.exists():
         return {"scripts": {}}
     with open(_SHADOW_STATE_PATH, encoding="utf-8") as f:
@@ -55,23 +57,35 @@ def _load() -> dict:
 
 
 def _save(data: dict) -> None:
+    """_save implementation."""
     _SHADOW_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_SHADOW_STATE_PATH, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-
+    tmp_path = f"{_SHADOW_STATE_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+    
+        os.replace(tmp_path, _SHADOW_STATE_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def get_activation_phase(script_name: str) -> str:
+    """get_activation_phase implementation."""
     data = _load()
     info = data.get("scripts", {}).get(script_name, {})
     return info.get("phase", "phase3")
 
 
 def should_run_warn_only(script_name: str) -> bool:
+    """should_run_warn_only implementation."""
     phase = get_activation_phase(script_name)
     return phase in ("phase1", "phase2")
 
 
 def register_shadow(script_name: str) -> dict:
+    """register_shadow implementation."""
     data = _load()
     now = datetime.now(UTC)
     scripts = data.setdefault("scripts", {})
@@ -87,6 +101,7 @@ def register_shadow(script_name: str) -> dict:
 
 
 def promote_script(script_name: str) -> dict:
+    """promote_script implementation."""
     data = _load()
     info = data.get("scripts", {}).get(script_name)
     if not info:
@@ -102,6 +117,7 @@ def promote_script(script_name: str) -> dict:
 
 
 def rollback_script(script_name: str, reason: str = "") -> dict:
+    """rollback_script implementation."""
     data = _load()
     info = data.get("scripts", {}).get(script_name)
     if not info:
@@ -115,6 +131,7 @@ def rollback_script(script_name: str, reason: str = "") -> dict:
 
 
 def check_health() -> dict:
+    """Check compliance and report findings."""
     data = _load()
     now = datetime.now(UTC)
     results: list[dict] = []
@@ -150,6 +167,7 @@ def check_health() -> dict:
 
 
 def list_shadow_scripts() -> None:
+    """list_shadow_scripts implementation."""
     data = _load()
     scripts = data.get("scripts", {})
     if not scripts:
@@ -168,6 +186,7 @@ def list_shadow_scripts() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Shadow Mode 渐进激活管理")
     parser.add_argument("--list", action="store_true", help="列出 Shadow Mode 脚本")
     parser.add_argument("--register", type=str, help="注册新脚本进入 Shadow Mode (Phase1)")

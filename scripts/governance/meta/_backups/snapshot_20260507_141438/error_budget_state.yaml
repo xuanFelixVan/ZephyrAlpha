@@ -1,0 +1,65 @@
+# ---
+# module_id: ERROR_BUDGET-001
+# title: Error Budget 状态
+# doc_type: config
+# status: active
+# version: "1.0.0"
+# layer: l01_infrastructure
+# owner: ZephyrAlpha-Owner
+# classification: confidential
+# language: zh
+# created_by: human_plus_agent
+# date: "2026-05-05"
+# valid_from: "2026-05-05"
+# ttl: permanent
+# summary: >
+#   Error Budget 运行时状态。对标 B14（Error Budget + Burn Rate）+ Google SRE。
+#   tracking_window_start_end 定义当前预算窗口。
+#   consumption_log 记录每次消耗事件。
+#   run_all.py 每次扫描后更新此文件。
+# ai_autonomy: human_gated
+# tags: [error-budget, sre, burn-rate, b14]
+# ---
+
+tracking_window:
+  start: ""
+  end: ""
+  duration_days: 30
+
+budget:
+  # Error Budget = 100% - SLO，以分钟计
+  # 99% SLO = 432 分钟/月 (30天)
+  total_minutes: 432.0
+  consumed_minutes: 0.0
+  remaining_minutes: 432.0
+  remaining_percent: 100.0
+
+  # 准确率 Error Budget
+  # 95% SLO = 5% 允许误报
+  accuracy_total_percent: 5.0
+  accuracy_consumed_percent: 0.0
+  accuracy_remaining_percent: 5.0
+
+burn_rate:
+  # 过去 1 小时的消耗速率（% / hour）
+  last_1h_percent: 0.0
+  # 过去 6 小时的消耗速率（% / hour）
+  last_6h_percent: 0.0
+  # 是否触发 Critical Alert (1h > 2%)
+  critical_alert: false
+  # 是否触发 Warning (6h > 5%)
+  warning_alert: false
+
+feature_freeze:
+  active: false
+  activated_at: ""
+  reason: ""
+  auto_lift_at: ""
+
+consumption_log: []
+# 条目格式:
+#   - timestamp: "2026-05-05T12:00:00Z"
+#     event: "false_positive_detected"
+#     consumed_percent: 0.1
+#     detail: "validate_frontmatter.py 误报 3 个 Finding"
+#     source: "run_all.py"

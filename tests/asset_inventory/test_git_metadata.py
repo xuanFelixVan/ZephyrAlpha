@@ -1,0 +1,70 @@
+"""Tests for MOD-INF-026 §25 Git Metadata module."""
+
+from datetime import datetime, timezone
+from pathlib import Path
+
+from zephyr.asset_inventory.git_metadata import (
+    GitAssetMetadata,
+    GitCommitInfo,
+    GitMetadataExtractor,
+)
+
+
+class TestGitCommitInfo:
+    def test_model_creation(self) -> None:
+        c = GitCommitInfo(
+            sha="abc123",
+            author="test",
+            date=datetime.now(timezone.utc),
+            message="fix: test",
+        )
+        assert c.sha == "abc123"
+        assert c.author == "test"
+
+    def test_model_defaults(self) -> None:
+        c = GitCommitInfo(
+            sha="abc",
+            author="a",
+            date=datetime.now(timezone.utc),
+            message="m",
+        )
+        assert c.lines_added == 0
+        assert c.lines_deleted == 0
+
+
+class TestGitAssetMetadata:
+    def test_model_creation(self) -> None:
+        m = GitAssetMetadata(file_path="src/test.py")
+        assert m.file_path == "src/test.py"
+        assert m.authors == []
+        assert m.co_changed_files == []
+
+    def test_defaults(self) -> None:
+        m = GitAssetMetadata(file_path="x.py")
+        assert m.total_commits == 0
+        assert m.ai_commits_ratio == 0.0
+        assert m.churn_rate == 0.0
+
+
+class TestGitMetadataExtractor:
+    def test_constructor(self) -> None:
+        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        assert ex._root
+
+    def test_current_lines_real_file(self) -> None:
+        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        lines = ex._current_lines("README.md")
+        assert lines > 0
+
+    def test_current_lines_nonexistent(self) -> None:
+        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        assert ex._current_lines("_nonexistent_xyz.txt") == 0
+
+    def test_parse_date(self) -> None:
+        dt = GitMetadataExtractor._parse_date("2024-06-15 12:30:45 +0000")
+        assert dt.year == 2024
+        assert dt.month == 6
+
+    def test_is_ai_commit(self) -> None:
+        assert GitMetadataExtractor._is_ai_commit("[AI] auto generated")
+        assert not GitMetadataExtractor._is_ai_commit("normal commit")

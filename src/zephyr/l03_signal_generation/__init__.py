@@ -51,13 +51,6 @@ from zephyr.l03_signal_generation.capital_allocator import (
     CapitalAllocatorBase,
 )
 from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
 
-__all__ = [
-    "CapitalAllocationResult",
-    "CapitalAllocatorBase",
-    "DegradationMonitorBase",
-    "SignalAggregatorBase",
-    "SignalSynthesizerBase",
-    "SynthesizedSignal",
-]
+__all__ = ['CapitalAllocationResult', 'CapitalAllocatorBase', 'DegradationMonitorBase', 'SignalAggregatorBase', 'SignalSynthesizerBase', 'SynthesizedSignal', 'aggregator_base', 'capital_allocator', 'signal_synthesizer']

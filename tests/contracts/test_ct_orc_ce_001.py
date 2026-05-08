@@ -1,0 +1,19 @@
+"""CT-ORC-CE-001 集成测试——Session Context请求。"""
+
+from __future__ import annotations
+
+import pytest
+
+from zephyr.orchestrator.contract_registry import ContractRegistry
+
+
+def test_ct_orc_ce_registered():
+    contract = ContractRegistry().get("CT-ORC-CE-001")
+    assert contract is not None
+    assert contract.producer == "Orchestrator"
+    assert contract.consumer == "Context Engine"
+
+
+def test_ct_orc_ce_do_not_call():
+    result = ContractRegistry().check_ai_read_only("CT-ORC-CE-001")
+    assert result.allowed is False

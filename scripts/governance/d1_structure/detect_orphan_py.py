@@ -42,7 +42,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 LEGAL_DIRS: tuple[str, ...] = ("scripts/governance", "src/zephyr", "tests")
 
@@ -90,10 +90,10 @@ def main() -> None:
     try:
         orphans = find_orphan_py_files()
     except OSError:
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     if not orphans:
         print("OK: 项目根目录零孤儿 .py 文件")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     print(f"FOUND {len(orphans)} orphan .py file(s) in project root:")
     for f in orphans:
         print(f"  {f.relative_to(REPO_ROOT)}")
@@ -109,8 +109,8 @@ def main() -> None:
     print("提示: 使用 --fix 自动删除。")
     if args.warn_only:
         print("WARN-ONLY: 不阻断，exit 0")
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
 
 if __name__ == "__main__":
     main()

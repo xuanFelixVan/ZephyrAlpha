@@ -1,21 +1,22 @@
 ---
 doc_type: index
-status: Draft
+status: Active
 title: "Agent RBAC — 七层纵深防御 + 六横切面 权限系统"
-version: "5.0.0"
+version: "0.14.0"
 created: "2026-05-05"
-updated: "2026-05-06"
+updated: "2026-05-08"
 ---
 
 # Agent RBAC — 七层纵深防御 + 六横切面
 
-> MOD-INF-018 | blueprint v0.7.0 | status: Draft
+> MOD-INF-018 | blueprint v0.14.0 | status: Active
 
 ## 核心文件
 
 | 文件 | 说明 |
 |------|------|
-| [blueprint.md](blueprint.md) | **Agent 身份与权限系统蓝图 v0.7.0** — 七层纵深防御 + 六横切面 Runtime RBAC 7.0 |
+| [blueprint.md](blueprint.md) | **Agent 身份与权限系统蓝图 v0.14.0** — 七层纵深防御 + 六横切面 Runtime RBAC |
+| [adversarial-test-report.yaml](adversarial-test-report.yaml) | **红白对抗测试报告 2026-05-08** — 8 攻击向量 + 5 根因分析 + 5 Whys |
 
 ## 蓝图概览
 

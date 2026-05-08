@@ -15,6 +15,6 @@
 from __future__ import annotations
 
 from zephyr.l03_signal_generation.aggregator_base import CapitalAllocatorBase
-from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
 
 __all__ = ["CapitalAllocationResult", "CapitalAllocatorBase"]

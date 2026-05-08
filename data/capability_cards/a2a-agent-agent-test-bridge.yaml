@@ -1,0 +1,18 @@
+capability_id: a2a-agent-agent-test-bridge
+category: search
+description: test
+examples: []
+input_schema:
+  type: object
+name: 'A2A Agent: Bridge Test'
+output_schema:
+  type: object
+priority: P2
+registered_at: '2026-05-08T21:04:18.460705'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- a2a-agent
+- agent-test-bridge
+- write

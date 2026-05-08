@@ -1,0 +1,11 @@
+---
+module_id: KE-module_blu-db-025-0079_ssot___________17_-003
+title: DB-025-0079：SSoT 一致性自愈策略——§17.2
+category: module_blueprint
+---
+
+# DB-025-0079：SSoT 一致性自愈策略——§17.2
+
+DB-025-0079：SSoT 一致性自愈策略——§17.2
+
+§17.2: drift_prevention(3规则)+self_healing(2规则)双机制CI门禁。

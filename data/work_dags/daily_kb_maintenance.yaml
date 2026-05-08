@@ -1,0 +1,43 @@
+dag_id: daily_kb_maintenance
+default_layer: local
+default_priority: P1
+description: Integrity-Verify-Freeze-Dedup
+edges:
+- condition: success
+  from_node: integrity
+  to_node: verify
+- condition: success
+  from_node: verify
+  to_node: freeze
+- condition: success
+  from_node: freeze
+  to_node: dedup
+max_parallelism: 3
+name: Daily KB Maintenance
+nodes:
+- capability_id: kb-integrity
+  layer_override: null
+  node_id: integrity
+  params: {}
+  priority_override: null
+  work_type: check
+- capability_id: kb-verify
+  layer_override: null
+  node_id: verify
+  params: {}
+  priority_override: null
+  work_type: verify
+- capability_id: kb-freeze
+  layer_override: null
+  node_id: freeze
+  params: {}
+  priority_override: null
+  work_type: freeze
+- capability_id: embedding-router
+  layer_override: null
+  node_id: dedup
+  params: {}
+  priority_override: null
+  work_type: dedup
+retry_on_failure: 2
+timeout_minutes: 60

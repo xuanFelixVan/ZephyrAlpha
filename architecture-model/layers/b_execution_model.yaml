@@ -1,0 +1,229 @@
+schema_version: "1.1.0"
+partition:
+  id: execution_model
+  name: Three-Layer Execution Model
+  track: b_track
+  bounded_context: true
+  umbrella_layer: l01
+  status: implemented
+  description: >
+    三层执行模型——根据人类在场状态和任务复杂度动态切换执行层。
+    L1(Trae): 人在场，human-in-the-loop，覆盖全部M1-M11节点，零成本。
+    L2(Local): 24/7常驻运行，不依赖人类在场，执行确定性基础设施任务。
+    L3(API): 人不在场时的夜班自动执行，处理规则内黑白判定任务，
+        遇到第三种情况登记到夜班登记表(NightShiftAmbiguityLog)留给人裁定。
+
+modules:
+  - id: exec-trae
+    module_id: MOD-EXEC-001
+    name: Trae Execution Layer
+    submodule_path: N/A
+    status: implemented
+    priority: P0
+    runtime_plane: hot
+    description: >
+      人在旁边时的 AI 执行层。Trae IDE 内置 AI 直接执行 M1-M11 全流程，
+      无需外部 API 调用。人类在环（human-in-the-loop），成本为零。
+      适用场景：日常开发、代码生成、深度审查、文档编写、系统改进建议。
+      覆盖模块：M1(任务解析)、M3(代码生成)、M6(差异检查)、M7(深度审查)、
+      M8(合规检查)、M9(风险评估)、M10(报告生成)、Feedback Loop 进化提案。
+    files: []
+    interfaces:
+      - contract_id: CT-EXEC-TRAE-001
+        role: producer
+        description: Trae 模式下 AI 直接执行管线节点的承诺
+    kb_ref:
+      - KE-governance-adr_registry_migration-000
+
+  - id: exec-local
+    module_id: MOD-EXEC-002
+    name: Local Model Layer
+    submodule_path: src/zephyr/vector_memory/embedding_router.py
+    status: implemented
+    priority: P0
+    runtime_plane: hot
+    runtime_schedule: 24/7
+    description: >
+      本地常驻模型层，24/7 全天候运行，不依赖人类在场。
+      运行 BGE-M3 ONNX 嵌入模型 + bge-reranker-v2-m3 重排序模型，
+      CPU 即可运行，无网络延迟，无 API 费用。
+      必须场景：Vector Memory 向量嵌入（ChromaDB 写入/查询）、KB 语义搜索、
+      Context Engine 语义检索、Reranker 搜索结果重排序。
+      可选场景：Qwen2.5-7B 本地推理（简单分析/提取，需 8GB VRAM）。
+      硬件最低：CPU + 2GB RAM（仅嵌入模型）。
+      硬件推荐：CPU + 8GB RAM + 可选 GPU 8GB VRAM（嵌入+本地推理）。
+    files:
+      - vector_memory/embedding_router.py
+      - vector_memory/in_process_vector_memory.py
+      - vector_memory/cache_layer.py
+      - kb/reranker.py
+      - kb/chromadb_init.py
+    interfaces:
+      - contract_id: CT-EXEC-LOCAL-001
+        role: producer
+        description: 本地嵌入/重排/可选推理的提供承诺
+    kb_ref:
+      - KE-governance-adr_registry_migration-000
+
+  - id: exec-api
+    module_id: MOD-EXEC-003
+    name: API Execution Layer
+    submodule_path: src/zephyr/pipeline/pipeline_orchestrator.py
+    status: partial
+    priority: P1
+    runtime_plane: warm
+    runtime_schedule: night_shift
+    description: >
+      夜班 API 执行层——人不在时自动执行确定性任务。
+      全部使用 DeepSeek V4 Pro API（经济最优选）。
+      Claude API 仅在极端救援场景触发。
+      适用场景：夜间自动构建、批量任务处理、CI/CD 集成、无人工干预的自动化流程。
+      任务范围：规则内黑白判定——审计规则匹配、合规检查（已有规则覆盖）、格式化清理。
+      不执行：创造性工作（代码生成、架构建议）、需要人类判断的任务。
+      不确定处理：遇到规则未覆盖的第三种选择 → 登记 NightShiftAmbiguityLog，
+      留待人类白天裁定。不做强行判定。
+      模型路由策略（GOV-AI-002 v2）：
+        主力模型：DeepSeek V4 Pro（$1.74/M token）——所有 M1-M11 节点
+        救援模型：Claude API（$5-25/M token）——仅极端情况
+      Claude 触发条件（严格递进，不可跳级）：
+        1. DeepSeek 连续失败 >= 3 次（同一 TaskCard 同一 Mx 节点）
+        2. ai_autonomy_level == "unsafe" 且 DeepSeek 已尝试失败
+        注意：security/experimental 标签不再直接路由 Claude，一律先走 DeepSeek。
+      当前状态：_call_model() 返回 simulated: True，尚未接入真实 API。
+    files:
+      - pipeline/pipeline_orchestrator.py
+      - pipeline/models.py
+    interfaces:
+      - contract_id: CT-EXEC-API-001
+        role: producer
+        description: API 模式下 DeepSeek/Claude 的调用承诺
+      - contract_id: CT-PIPE-ORC-001
+        role: producer
+        description: 任务到M1-M11管线节点路由
+    kb_ref:
+      - KE-governance-adr_registry_migration-000
+
+execution_mode_routing:
+  default_mode: trae
+  resolution_flow:
+    - step: 1
+      check: is_human_present
+      description: 检测人类是否在场（IDE心跳/显式开关/时间窗口）
+    - step: 2
+      if: human_present
+      route_to: trae
+      description: 人类在场 → Trae AI 执行，human-in-the-loop
+    - step: 3
+      if: human_absent
+      check: task_type
+      routes:
+        - condition: task in LOCAL_ONLY_CAPABILITIES
+          route_to: local
+          description: 基础设施任务 → Local 24/7（嵌入/搜索/重排）
+        - condition: task is deterministic and rule_covered
+          route_to: api
+          description: 规则内黑白判定 → API 夜班自动执行
+        - condition: task is creative or needs_judgment
+          route_to: api_with_ambiguity_log
+          description: >
+            不确定/创造性任务 → API 尝试 + 登记 NightShiftAmbiguityLog，
+            留待人类白天裁定
+  modes:
+    trae:
+      description: 人在旁边时，Trae AI 直接执行
+      cost: zero
+      latency: interactive
+      covers:
+        - M1
+        - M3
+        - M6
+        - M7
+        - M8
+        - M9
+        - M10
+      requires_human: true
+    local:
+      description: 本地嵌入模型 24/7 常驻运行，不依赖人类在场
+      cost: zero
+      latency: sub_second
+      covers:
+        - vector_embedding
+        - semantic_search
+        - reranking
+      requires_human: false
+      always_on: true
+    api:
+      description: 夜班 DeepSeek API 自动执行，确定性黑白判定任务
+      cost: low
+      latency: seconds
+      covers:
+        - M1
+        - M3
+        - M6
+        - M7
+        - M8
+        - M9
+        - M10
+      requires_human: false
+      human_absent_only: true
+      fallback_chain:
+        - deepseek_v4_pro
+        - claude_api_rescue
+      ambiguity_handling: >
+        遇到非黑非白的第三种选择时，不做强行判定，
+        登记 NightShiftAmbiguityLog，留待人类白天裁定。
+
+night_shift_ambiguity_log:
+  description: >
+    夜班登记表——API 夜间执行时遇到规则未覆盖的第三种选择，
+    不做强行判定，登记上下文和可选方案，留待人类白天裁定。
+  fields:
+    - id: NSL-{sequence}
+      description: 登记编号，自增
+    - timestamp: ISO8601
+      description: 检测时间
+    - task_id: string
+      description: 关联任务ID
+    - module: Mx
+      description: 触发模块节点
+    - context: string
+      description: 不确定的上下文描述
+    - options: list[{label, description}]
+      description: 可选方案列表（A/B/C），API 自动选最保守的(C)
+    - auto_decision: string
+      description: API 自动选择的最保守方案
+    - requires_human: true
+      description: 标记需要人类裁定
+    - human_decision: null
+      description: 留待人类白天填写
+    - human_timestamp: null
+      description: 人类裁定时间
+
+model_routing_v2:
+  decision_tree: GOV-AI-002-v2
+  primary_model: deepseek_v4_pro
+  primary_cost_per_mtok_usd: 1.74
+  rescue_model: claude_api
+  rescue_cost_per_mtok_usd: 5.0
+  rescue_triggers:
+    - condition: deepseek_consecutive_failures_gte_3
+      description: DeepSeek 连续失败 >= 3 次
+      action: escalate_to_claude
+    - condition: autonomy_level_unsafe_and_deepseek_failed
+      description: ai_autonomy_level == unsafe 且 DeepSeek 已失败
+      action: escalate_to_claude
+  removed_triggers:
+    - condition: security_tag
+      reason: 标签太容易误触发，一律先走 DeepSeek
+    - condition: experimental_tag
+      reason: 同上
+    - condition: title_contains_critical
+      reason: 关键词匹配太松，容易误触发
+    - condition: glm_rejection_gte_2
+      reason: GLM 已从管线中移除，条件不再适用
+
+summary:
+  total: 3
+  by_status:
+    implemented: 2
+    partial: 1

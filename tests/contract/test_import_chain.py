@@ -29,6 +29,7 @@ class Consumer(NamedTuple):
     module: str
     path: str
     description: str
+    is_package: bool = False
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -41,19 +42,36 @@ CONSUMERS: list[Consumer] = [
     Consumer("mcp.task_manager_server", "src/zephyr/mcp/task_manager_server.py", "MCP Task 管理服务端"),
     Consumer("mcp.blueprint_search_server", "src/zephyr/mcp/blueprint_search_server.py", "MCP 蓝图搜索服务端"),
     Consumer("orchestrator.trigger_router", "src/zephyr/orchestrator/trigger_router.py", "管线触发路由器"),
+    Consumer("feedback_loop", "src/zephyr/feedback_loop/__init__.py", "Feedback Loop MOD-INF-010", is_package=True),
+    Consumer("kb", "src/zephyr/kb/__init__.py", "Knowledge Base MOD-KB-001", is_package=True),
 ]
 
 
 def _extract_shared_imports(file_path: pathlib.Path) -> list[str]:
-    """从源文件中提取所有 zephyr.shared 导入语句。"""
-    if not file_path.exists():
-        return []
+    """从源文件中提取所有 zephyr.shared / zephyr.core 导入语句。
 
-    content = file_path.read_text(encoding="utf-8")
+    如果是 package 消费者（is_package=True），递归扫描整个包目录。
+    """
     pattern = re.compile(
         r"^\s*(?:from\s+(zephyr\.(?:shared|core)[^\s]+)\s+import|import\s+(zephyr\.(?:shared|core)[^\s]+))",
         re.MULTILINE,
     )
+
+    if file_path.is_dir() or (file_path.name == "__init__.py" and file_path.parent.is_dir()):
+        pkg_dir = file_path if file_path.is_dir() else file_path.parent
+        all_imports: list[str] = []
+        for py_file in pkg_dir.rglob("*.py"):
+            if py_file.exists():
+                content = py_file.read_text(encoding="utf-8")
+                all_imports.extend(
+                    [m.group(1) or m.group(2) for m in pattern.finditer(content)]
+                )
+        return list(dict.fromkeys(all_imports))
+
+    if not file_path.exists():
+        return []
+
+    content = file_path.read_text(encoding="utf-8")
     return [m.group(1) or m.group(2) for m in pattern.finditer(content)]
 
 
@@ -118,7 +136,7 @@ class TestAllConsumerFilesExist:
 
 def test_consumer_list_not_empty() -> None:
     """消费者列表不能为空——否则契约测试失去意义。"""
-    assert len(CONSUMERS) >= 3, (
+    assert len(CONSUMERS) >= 8, (
         f"消费者列表只有 {len(CONSUMERS)} 个条目。\n"
         f"  契约测试需要足够多的消费者覆盖才能有效。"
     )

@@ -9,23 +9,23 @@ partition:
 modules:
 - id: l11-layer-ssot
   module_id: MOD-L11-001
-  name: ML Platform（层登记占位）
+  name: ML Platform（层登记占位�?
   submodule_path: src/zephyr/l11_ml_platform/
   status: implemented
   priority: P1
   runtime_plane: cold
-  description: ML平台层。InferenceEngineBase OCP 扩展点 + ModelMetadata/InferenceResult 数据类。
+  description: ML平台层。InferenceEngineBase OCP 扩展�?+ ModelMetadata/InferenceResult 数据类�?
   files:
   - default_inference_engine.py
   - inference_base.py
   interfaces:
   - contract_id: CTR-P1-004
     role: producer
-    description: ModelServingRequest → L03, L05
+    description: ModelServingRequest �?L03, L05
   - contract_id: CTR-P1-005
     role: producer
-    description: ModelServingResponse ← 推理响应
-  adr_ref: []
+    description: ModelServingResponse �?推理响应
+  kb_ref: []
 summary:
   total: 1
   by_status:

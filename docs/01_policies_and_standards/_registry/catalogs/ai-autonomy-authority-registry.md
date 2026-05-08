@@ -223,7 +223,7 @@ related_rationale:
 | CL-021 EditorConfigGate（同 RI-05）| 见 §2.9 | Immutable Core | 编码规则核心 |
 | **Wave 1 V-14 BlueprintOverlapMergeGate** | `scripts/governance/validate_blueprint_overlap.py` | Immutable Core（**Wave 1 兜底**）| 治理门禁，自身不可被绕过 |
 | **Wave 1 V-15 TruthSourceCascadeValidator** | `scripts/governance/validate_truth_source_cascade.py` | AI-Modifiable（**Wave 1 兜底**）| 追踪报告，需 Owner 审批同步 |
-| **Wave 1 V-16 DraftsZoneLifecycleArchiver** | `scripts/governance/drafts_zone_archiver.py` | Human-Gated（**Wave 1 兜底**）| 归档触发需 Owner 确认 |
+| **Wave 1 V-16 DraftsZoneLifecycleArchiver** | `scripts/governance/archive_drafts_zone.py` | Human-Gated（**Wave 1 兜底**）| 归档触发需 Owner 确认 |
 
 ### 2.8 元层（治理 / 文档 / 协议）
 
@@ -295,7 +295,7 @@ related_rationale:
 
 | 判定条件 | 环境 |
 |---------|------|
-| 文件路径包含 `模块候选池/` 或 `drafts-and-audits/` | dev |
+| 文件路径包含 `drafts-and-audits/` | dev |
 | 文件 status 为 `draft` | dev |
 | 文件路径在 `docs/` 且 status 为 `active` | prod |
 | 文件路径在 `src/zephyr/` 且已部署到生产服务器 | prod |

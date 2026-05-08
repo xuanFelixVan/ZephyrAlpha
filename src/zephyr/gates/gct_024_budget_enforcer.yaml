@@ -1,0 +1,47 @@
+schema_version: "1.0"
+gate_id: "gct_024_budget_enforcer"
+title: "GCT-024 Budget Enforcer — MOD-INF-024 · v0.7.0 · Token/Cost/Time 3D Seven-Level Budget"
+category: "governance"
+status: active
+scope: global
+execution_plane: warm
+module_id: "MOD-INF-024"
+blueprint: "docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md"
+construction_progress: "phase_1_complete"
+
+checks:
+  - check_id: "gct024_self_test"
+    description: "BudgetEngine 实例化 + pre_flight_check 基本通路自检"
+    severity: hard
+    runner: "python -c \"from zephyr.budget_enforcer import BudgetEngine; be=BudgetEngine(); r=be.pre_flight_check('gct024-check',1000,0.1); assert r.decision.name=='ALLOW'; print('GCT-024 PASS')\""
+
+  - check_id: "gct024_dimension_coverage"
+    description: "三维预算（Token/Cost/Time）全部已注册"
+    severity: hard
+    runner: "python -c \"from zephyr.budget_enforcer import BudgetEngine; be=BudgetEngine(); assert len(be._policies)==3; print('3D OK')\""
+
+  - check_id: "gct024_policy_file"
+    description: "config/budget_policy.yaml SSoT 配置文件存在且可解析"
+    severity: hard
+    path: "config/budget_policy.yaml"
+    parser: yaml
+
+  - check_id: "gct024_escalation_bridge"
+    description: "G-CT-006 Budget→Escalation 桥接通路"
+    severity: hard
+    runner: "python -c \"from zephyr.governance.escalation.budget_handler import on_budget_alert; from zephyr.governance.budget_enforcer.alerts import BudgetAlert; a=BudgetAlert(alert_id='B001'); r=on_budget_alert(a); assert r is not None; print('G-CT-006 OK')\""
+
+  - check_id: "gct024_rbac_bridge"
+    description: "G-CT-007 Budget→RBAC 桥接通路"
+    severity: hard
+    runner: "python -c \"from zephyr.governance.budget_enforcer.rbac_bridge import BudgetRBACBridge; b=BudgetRBACBridge(); r=b.check_budget('a1',500,1000); assert r['action']=='ALLOW'; print('G-CT-007 OK')\""
+
+  - check_id: "gct024_burn_rate"
+    description: "BurnRateMonitor 四窗口监控功能"
+    severity: soft
+    runner: "python -c \"from zephyr.budget_enforcer import BurnRateMonitor; bm=BurnRateMonitor(); bm.record_consumption(100); bm.compute_burn_rates(1000000); assert bm.get_severity().name=='NORMAL'; print('Burn OK')\""
+
+  - check_id: "gct024_missing_files"
+    description: "蓝图 §4 计划 31 文件，当前落盘 31 文件（100%）— Phase 1 核心模块全部完成"
+    severity: info
+    note: "缺失文件清单见 blueprint.md §4 对照表"

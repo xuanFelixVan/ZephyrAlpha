@@ -60,15 +60,17 @@ class ContractMetricsCollector:
     """
 
     def __init__(self) -> None:
+        self._enabled: bool = False
         self._sla_buffer: list[SlaRecord] = []
         self._drift_buffer: list[DriftAlert] = []
         self._violation_counts: dict[str, int] = defaultdict(int)
         self._field_baselines: dict[str, dict[str, float]] = defaultdict(dict)
-        self._enabled = False
 
     def enable(self) -> None:
         self._enabled = True
-        _logger.info("[ContractMetrics] SLA + 漂移检测已启用")
+
+    def disable(self) -> None:
+        self._enabled = False
 
     def measure_sla(
         self,
@@ -89,25 +91,24 @@ class ContractMetricsCollector:
             passed=passed,
         )
 
-        if self._enabled:
-            self._sla_buffer.append(record)
-            if not passed:
-                _logger.warning(
-                    "[SLA] %s 超限: %d us > %d us (trace=%s)",
-                    contract_id,
-                    latency_us,
-                    sla_p99_us,
-                    trace_id[:8],
-                )
+        self._sla_buffer.append(record)
+        if not passed:
+            _logger.warning(
+                "[SLA] %s 超限: %d us > %d us (trace=%s)",
+                contract_id,
+                latency_us,
+                sla_p99_us,
+                trace_id[:8],
+            )
 
-            if len(self._sla_buffer) >= 100:
-                pass_count = sum(1 for r in self._sla_buffer[-100:] if r.passed)
-                if pass_count < 95:
-                    _logger.warning(
-                        "[SLA] %s 最近 100 次中通过率=%d%% (<95%%)",
-                        contract_id,
-                        pass_count,
-                    )
+        if len(self._sla_buffer) >= 100:
+            pass_count = sum(1 for r in self._sla_buffer[-100:] if r.passed)
+            if pass_count < 95:
+                _logger.warning(
+                    "[SLA] %s 最近 100 次中通过率=%d%% (<95%%)",
+                    contract_id,
+                    pass_count,
+                )
 
         return record
 
@@ -142,14 +143,13 @@ class ContractMetricsCollector:
                 baseline_value=baseline_median,
                 deviation_pct=deviation_pct,
             )
-            if self._enabled:
-                self._drift_buffer.append(alert)
-                _logger.warning(
-                    "[Drift] %s.%s z-score=%.1f — 可能发生契约漂移",
-                    contract_id,
-                    field_name,
-                    deviation,
-                )
+            self._drift_buffer.append(alert)
+            _logger.warning(
+                "[Drift] %s.%s z-score=%.1f — 可能发生契约漂移",
+                contract_id,
+                field_name,
+                deviation,
+            )
             return alert
 
         return None

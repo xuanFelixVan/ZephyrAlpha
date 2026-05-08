@@ -7,7 +7,7 @@ partition:
 
     '
   source_view: 04ter-capability-heatmap.md
-  related_adr:
+  related_kb_ref:
   - ADR-0012
   baseline_date: '2026-05-03'
   review_cadence: quarterly

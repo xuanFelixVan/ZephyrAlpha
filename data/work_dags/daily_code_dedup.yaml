@@ -1,0 +1,43 @@
+dag_id: daily_code_dedup
+default_layer: local
+default_priority: P2
+description: Scan-Match-Prioritize-Merge
+edges:
+- condition: success
+  from_node: scan
+  to_node: match
+- condition: success
+  from_node: match
+  to_node: prioritize
+- condition: success
+  from_node: prioritize
+  to_node: merge
+max_parallelism: 3
+name: Daily Code Dedup
+nodes:
+- capability_id: code-dedup-scanner
+  layer_override: null
+  node_id: scan
+  params: {}
+  priority_override: null
+  work_type: scan
+- capability_id: code-dedup-scanner
+  layer_override: null
+  node_id: match
+  params: {}
+  priority_override: null
+  work_type: match
+- capability_id: ollama-chat
+  layer_override: null
+  node_id: prioritize
+  params: {}
+  priority_override: null
+  work_type: task_classification
+- capability_id: code-dedup-scanner
+  layer_override: null
+  node_id: merge
+  params: {}
+  priority_override: null
+  work_type: merge
+retry_on_failure: 2
+timeout_minutes: 60

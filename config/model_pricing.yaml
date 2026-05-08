@@ -1,0 +1,59 @@
+glm-4.5-free:
+  input_price: 0.0
+  output_price: 0.0
+  provider: zhipu
+  updated_at: 2026-05-08
+
+glm-4-plus:
+  input_price: 0.007
+  output_price: 0.007
+  provider: zhipu
+  updated_at: 2026-05-08
+
+glm-4-flash:
+  input_price: 0.001
+  output_price: 0.001
+  provider: zhipu
+  updated_at: 2026-05-08
+
+deepseek-chat-free:
+  input_price: 0.0
+  output_price: 0.0
+  provider: deepseek
+  updated_at: 2026-05-08
+
+deepseek-chat:
+  input_price: 0.001
+  output_price: 0.002
+  provider: deepseek
+  updated_at: 2026-05-08
+
+deepseek-reasoner:
+  input_price: 0.004
+  output_price: 0.012
+  provider: deepseek
+  updated_at: 2026-05-08
+
+gpt-4o-mini:
+  input_price: 0.003
+  output_price: 0.015
+  provider: openai_azure
+  updated_at: 2026-05-08
+
+gpt-4o:
+  input_price: 0.015
+  output_price: 0.060
+  provider: openai_azure
+  updated_at: 2026-05-08
+
+claude-3-5-haiku:
+  input_price: 0.004
+  output_price: 0.020
+  provider: anthropic
+  updated_at: 2026-05-08
+
+claude-3-5-sonnet:
+  input_price: 0.020
+  output_price: 0.080
+  provider: anthropic
+  updated_at: 2026-05-08

@@ -1,0 +1,84 @@
+# MOD-INF-022 Escalation Rules SSoT
+metadata:
+  version: "v0.1.0"
+  deny_by_default: true
+  conflict_resolution: "priority+highest-wins"
+  window_aggregation_sec: 300
+
+rules:
+  - rule_id: "ESC-001"
+    level: "blocked"
+    priority: 100
+    patterns: ["rm -rf", "format", "DROP TABLE", "destroy"]
+    description: "不可逆破坏性操作"
+    window_sec: 300
+
+  - rule_id: "ESC-002"
+    level: "blocked"
+    priority: 90
+    patterns: ["git push --force", "overwrite_production", "force_push"]
+    description: "强制覆盖生产数据"
+    window_sec: 300
+
+  - rule_id: "ESC-003"
+    level: "blocked"
+    priority: 85
+    patterns: ["delete_from_database", "purge_logs", "truncate"]
+    description: "大规模数据删除"
+    window_sec: 300
+
+  - rule_id: "ESC-004"
+    level: "blocked"
+    priority: 80
+    patterns: ["modify_blueprint", "modify_architecture_yaml", "rewrite_spec"]
+    description: "修改架构蓝图"
+    window_sec: 600
+
+  - rule_id: "ESC-005"
+    level: "blocked"
+    priority: 75
+    patterns: ["expose_secret", "print_env", "log_credential"]
+    description: "泄露敏感凭据"
+    window_sec: 300
+
+  - rule_id: "ESC-006"
+    level: "blocked"
+    priority: 70
+    patterns: ["kill_process", "shutdown_service", "terminate"]
+    description: "终止服务进程"
+    window_sec: 300
+
+  - rule_id: "ESC-007"
+    level: "blocked"
+    priority: 60
+    patterns: ["modify_shared_module", "modify_schemas", "change_contract"]
+    description: "修改共享模块/契约"
+    window_sec: 600
+
+  - rule_id: "ESC-008"
+    level: "blocked"
+    priority: 50
+    patterns: ["write_outside_project", "access_network_external", "outbound_connection"]
+    description: "项目外写入或外部网络"
+    window_sec: 600
+
+  - rule_id: "ESC-009"
+    level: "auto_guard"
+    priority: 40
+    patterns: ["run_expensive_query", "large_file_write", "bulk_operation"]
+    description: "高成本操作"
+    window_sec: 3600
+
+  - rule_id: "ESC-010"
+    level: "auto_guard"
+    priority: 30
+    patterns: ["unfamiliar_directory", "unknown_command", "experimental"]
+    description: "不熟悉的操作区域"
+    window_sec: 3600
+
+  - rule_id: "ESC-011"
+    level: "autonomous"
+    priority: 10
+    patterns: ["read_file", "search_code", "run_test", "list_directory"]
+    description: "只读查询操作"
+    window_sec: 60

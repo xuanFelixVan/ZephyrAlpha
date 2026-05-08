@@ -23,7 +23,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 from _shared.yaml_utils import load_yaml  # noqa: E402
 
@@ -41,6 +41,7 @@ MODULE_REG_PATH = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     cross = load_yaml(CROSS_PATH)
     mod_reg = load_yaml(MODULE_REG_PATH)
     known = {m["module_id"] for m in mod_reg.get("modules", []) if isinstance(m, dict) and "module_id" in m}
@@ -61,10 +62,10 @@ def main() -> int:
         print("FAIL: 以下 module_id 未在 module-registry.yaml 登记：", file=sys.stderr)
         for dep_id, field, mid in missing:
             print(f"  {dep_id} {field}={mid}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
 
     print(f"OK: {len(cross.get('dependencies', []))} 条跨模块依赖的 source/target 均已登记")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

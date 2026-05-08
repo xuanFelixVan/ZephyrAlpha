@@ -38,6 +38,8 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 """
 from __future__ import annotations
 
+bounded_context = True
+
 from zephyr.context_engine.architecture_context_loader import (
     DEFAULT_ARCH_CONTEXT_PATH,
     format_architecture_context_excerpt,
@@ -49,11 +51,4 @@ from zephyr.context_engine.context_pipeline import (
     run_context_four_stage_or_raise,
 )
 
-__all__ = [
-    "ContextFourStageResult",
-    "DEFAULT_ARCH_CONTEXT_PATH",
-    "format_architecture_context_excerpt",
-    "load_architecture_context_dict",
-    "run_context_four_stage",
-    "run_context_four_stage_or_raise",
-]
+__all__ = ['ContextFourStageResult', 'ContextHealthScore', 'DEFAULT_ARCH_CONTEXT_PATH', 'adversarial_robustness', 'alignment_scorer', 'architecture_context_loader', 'atomic_injector', 'bounded_context', 'budget_forecaster', 'cache_invalidation', 'ce_bootstrap', 'ce_explain_cli', 'ce_playground_v2', 'ce_vibe_shortcuts', 'checkpoint_manager', 'citation_walker', 'cold_start_booster', 'complexity_budget', 'config_safety_guard', 'context_assembler', 'context_budget_tracker', 'context_debt_score', 'context_evaluator', 'context_evictor', 'context_injector', 'context_model_strategy', 'context_outcome_tracker', 'context_pipeline', 'context_playground', 'context_rot_model', 'context_value_attribution', 'contextual_fetch_api', 'curation_loop', 'dependency_tracker', 'diff_injector', 'dispatch_table', 'diversity_constraint', 'doc_compressor', 'domain_decay_config', 'embedding_version_lock', 'fallback_staleness_gate', 'format_architecture_context_excerpt', 'fragmentation_index', 'host_resource_governor', 'integrity_check', 'intent_keyword_mapper', 'intent_parser', 'kill_switch', 'knowledge_distiller', 'list_ce_files', 'load_architecture_context_dict', 'lsg_pattern_tracker', 'mcp_adapter', 'memory_bank', 'mode_manager', 'otel_instrumentation', 'pattern_library', 'pipeline_orchestrator', 'poisoning_monitor', 'position_optimizer', 'progressive_disclosure_injector', 'prompt_registry', 'rational', 'run_context_four_stage', 'run_context_four_stage_or_raise', 'self_diagnosis', 'sensitivity_classifier', 'session_learner', 'shadow_canary', 'solo_dev_safety_net', 'staleness_manager', 'system_snapshot', 'token_budget', 'vector_bridge', 'verify_paths']

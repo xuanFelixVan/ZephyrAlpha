@@ -1,0 +1,11 @@
+---
+module_id: KE-module_blu-13________________vs-000
+title: 13. 深度对标分析 — 专业机构 vs 氛围编程社区
+category: module_blueprint
+---
+
+# 13. 深度对标分析 — 专业机构 vs 氛围编程社区
+
+13. 深度对标分析 — 专业机构 vs 氛围编程社区
+
+> 2026-05-05 全量对标。Context Engine 是 ZephyrAlpha 的"AI 大脑食物供应链"——质量直接决定 Agent 决策正确率。

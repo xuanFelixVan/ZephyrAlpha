@@ -11,7 +11,4 @@ from zephyr.l09_research_innovation.implementations.default_backtest_engine impo
     BacktestConfig,
 )
 
-__all__ = [
-    "DefaultBacktestEngine",
-    "BacktestConfig",
-]
+__all__ = ['BacktestConfig', 'DefaultBacktestEngine', 'default_backtest_engine']

@@ -43,12 +43,12 @@ from zephyr.db.sqlite_schema import (
     init_db,
     schema_version,
 )
-from zephyr.shared.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
     "DatabaseManager",
     "DatabaseManagerError",
-    "HealthStatus",
+    "DatabaseHealthStatus",
 ]
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ BACKUP_DIR: Path = REPO_ROOT / "data" / "backups"
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
 
-class HealthStatus:
+class DatabaseHealthStatus:
     """数据库健康状态快照。"""
 
     __slots__ = (
@@ -106,7 +106,7 @@ class HealthStatus:
 
     def __repr__(self) -> str:
         status = "HEALTHY" if self.healthy else f"UNHEALTHY: {self.error}"
-        return f"HealthStatus(v{self.schema_version}, {status})"
+        return f"DatabaseHealthStatus(v{self.schema_version}, {status})"
 
 class DatabaseManager:
     """
@@ -153,7 +153,7 @@ class DatabaseManager:
 
         self._conn_pool: list[sqlite3.Connection] = []
         self._closed = False
-        self._last_health: HealthStatus | None = None
+        self._last_health: DatabaseHealthStatus | None = None
 
         self._fill_pool()
 
@@ -231,7 +231,7 @@ class DatabaseManager:
     # 健康检查
     # ------------------------------------------------------------------
 
-    def health_check(self) -> HealthStatus:
+    def health_check(self) -> DatabaseHealthStatus:
         """
         执行数据库健康检查并缓存结果。
 
@@ -288,7 +288,7 @@ class DatabaseManager:
             conn.close()
 
             healthy = integrity_ok
-            status = HealthStatus(
+            status = DatabaseHealthStatus(
                 healthy=healthy,
                 schema_version=ver,
                 db_size_bytes=db_size,
@@ -312,7 +312,7 @@ class DatabaseManager:
             return status
 
         except Exception as exc:
-            status = HealthStatus(
+            status = DatabaseHealthStatus(
                 healthy=False,
                 schema_version=-1,
                 db_size_bytes=0,
@@ -327,7 +327,7 @@ class DatabaseManager:
             return status
 
     @property
-    def last_health(self) -> HealthStatus | None:
+    def last_health(self) -> DatabaseHealthStatus | None:
         """返回最近一次健康检查结果。"""
         return self._last_health
 
@@ -428,7 +428,7 @@ class DatabaseManager:
                         pass
 
         except Exception as exc:
-            logger.warning("db_backup_rotation_error", error=str(exc))
+            logger.warning("db_backup_rotation_error: %s", exc)
 
     # ------------------------------------------------------------------
     # WAL checkpoint
@@ -450,7 +450,7 @@ class DatabaseManager:
                     checkpointed=row[2],
                 )
         except sqlite3.Error as exc:
-            logger.warning("wal_checkpoint_failed", mode=mode, error=str(exc))
+            logger.warning("wal_checkpoint_failed: mode=%s error=%s", mode, exc)
 
     def wal_checkpoint_truncate(self) -> None:
         """强制 checkpoint 并截断 WAL 文件（shutdown 时调用）。"""
@@ -545,13 +545,14 @@ class DatabaseManager:
         with self._lock:
             if self._closed:
                 return
-            self._closed = True
 
             if backup_before_close:
                 try:
                     self.backup(label="pre_close")
                 except Exception as exc:
-                    logger.warning("pre_close_backup_failed", error=str(exc))
+                    logger.warning("pre_close_backup_failed: %s", exc)
+
+            self._closed = True
 
             self.wal_checkpoint_truncate()
 
@@ -563,6 +564,179 @@ class DatabaseManager:
             self._conn_pool.clear()
 
             logger.info("database_manager_closed")
+
+    # ------------------------------------------------------------------
+    # Phase 2 扩展方法（T-DB-005~T-DB-012）
+    # ------------------------------------------------------------------
+
+    def verify_backup(self, backup_path: Path | str) -> dict:
+        """T-DB-005: 验证备份文件完整性。
+
+        返回 dict{integrity_ok, table_count, row_counts, duration_ms}。
+        """
+        start = time.perf_counter()
+        backup = Path(backup_path)
+        if not backup.exists():
+            raise DatabaseManagerError(f"备份文件不存在: {backup}")
+        conn = sqlite3.connect(str(backup))
+        try:
+            conn.execute("PRAGMA journal_mode = WAL")
+            integrity = conn.execute("PRAGMA integrity_check").fetchone()
+            tables = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+            ).fetchall()
+            row_counts = {}
+            for t in tables:
+                cnt = conn.execute(f"SELECT COUNT(*) FROM [{t['name']}]").fetchone()
+                row_counts[t["name"]] = cnt[0] if cnt else 0
+            duration_ms = (time.perf_counter() - start) * 1000
+            return {
+                "integrity_ok": integrity is not None and integrity[0] == "ok",
+                "integrity_detail": integrity[0] if integrity else "unknown",
+                "table_count": len(tables),
+                "row_counts": row_counts,
+                "duration_ms": round(duration_ms, 2),
+            }
+        finally:
+            conn.close()
+
+    def dead_letter_queue(self, limit: int = 50) -> list[dict[str, object]]:
+        """T-DB-006: 查询未处理的补偿事件（死信队列）。
+
+        返回补偿失败且未重试超过 3 次的 events 列表。
+        """
+        conn = self.get_connection()
+        try:
+            cursor = conn.execute(
+                """
+                SELECT e.event_id, e.payload, e.created_at,
+                       COALESCE(e.payload->>'$.retry_count', '0') AS retry_count
+                FROM events e
+                WHERE e.event_type = 'compensation'
+                  AND COALESCE(CAST(json_extract(e.payload, '$.processed') AS INTEGER), 0) = 0
+                  AND COALESCE(CAST(json_extract(e.payload, '$.retry_count') AS INTEGER), 0) < 3
+                ORDER BY e.created_at ASC
+                LIMIT ?
+                """,
+                (limit,),
+            )
+            return [dict(r) for r in cursor.fetchall()]
+        finally:
+            self.return_connection(conn)
+
+    def retry_dlq(self) -> int:
+        """T-DB-006: 重试死信队列中的补偿事件。返回成功重试次数。"""
+        import json as _json
+
+        conn = self.get_connection()
+        success = 0
+        try:
+            dead_letters = self.dead_letter_queue()
+            for dl in dead_letters:
+                event_id = dl["event_id"]
+                try:
+                    conn.execute("BEGIN IMMEDIATE")
+                    payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
+                    payload["processed"] = 1
+                    payload["processed_at"] = now_iso()
+                    conn.execute(
+                        "UPDATE events SET payload = ?, processed_at = ? WHERE event_id = ?",
+                        (_json.dumps(payload, ensure_ascii=False), now_iso(), event_id),
+                    )
+                    conn.execute("COMMIT")
+                    success += 1
+                except Exception:
+                    try:
+                        conn.execute("ROLLBACK")
+                    except Exception:
+                        pass
+                    payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
+                    payload["retry_count"] = payload.get("retry_count", 0) + 1
+                    conn.execute(
+                        "UPDATE events SET payload = ? WHERE event_id = ?",
+                        (_json.dumps(payload, ensure_ascii=False), event_id),
+                    )
+                    conn.execute("COMMIT")
+            return success
+        finally:
+            self.return_connection(conn)
+
+    def prometheus_export(self) -> str:
+        """T-DB-009: 导出 Prometheus 格式的指标数据。
+
+        返回 Prometheus text exposition format 字符串。
+        """
+        stats = self.stats()
+        lines = [
+            "# HELP zalpha_db_task_count Total task count",
+            f"zalpha_db_task_count {stats.get('task_count', 0)}",
+            "# HELP zalpha_db_event_count Total event count",
+            f"zalpha_db_event_count {stats.get('event_count', 0)}",
+            "# HELP zalpha_db_gate_count Total gate count",
+            f"zalpha_db_gate_count {stats.get('gate_count', 0)}",
+            "# HELP zalpha_db_size_mb Database file size in MB",
+            f"zalpha_db_size_mb {stats.get('db_size_mb', 0)}",
+            "# HELP zalpha_db_wal_size_mb WAL file size in MB",
+            f"zalpha_db_wal_size_mb {stats.get('wal_size_mb', 0)}",
+            "# HELP zalpha_db_slow_query_count Slow query count",
+            f"zalpha_db_slow_query_count {stats.get('slow_query_count', 0)}",
+            "# HELP zalpha_db_schema_version Schema version",
+            f"zalpha_db_schema_version {stats.get('schema_version', 0)}",
+        ]
+        return "\n".join(lines) + "\n"
+
+    def connection_leak_detector(self, max_idle_seconds: float = 300.0) -> dict:
+        """T-DB-011: 检测连接泄漏（超过最大空闲时间的连接）。
+
+        返回 dict{leaked_count, actionable, detail}。
+        """
+        with self._lock:
+            leaked = []
+            now_ts = time.time()
+            for i, conn in enumerate(self._conn_pool):
+                if hasattr(conn, "_last_used_at"):
+                    idle_time = now_ts - conn._last_used_at
+                    if idle_time > max_idle_seconds:
+                        leaked.append({"conn_index": i, "idle_seconds": round(idle_time, 1)})
+            actionable = len(leaked) > 10
+            return {
+                "leaked_count": len(leaked),
+                "actionable": actionable,
+                "escalation": "escalation:owner" if actionable else "monitoring",
+                "detail": leaked,
+                "pool_size": len(self._conn_pool),
+            }
+
+    def ai_diagnostic_report(self) -> dict:
+        """AP3/T-DB-012: 生成 AI 可读的诊断报告。
+
+        聚合 health_check + stats + schema_drift + query_performance。
+        """
+        from zephyr.db.audit_schema import AuditQuery
+        from zephyr.db.query_metrics import query_metrics
+
+        health = self.health_check()
+        stats = self.stats()
+        try:
+            aq = AuditQuery(db_path=self._db_path, auto_init=False)
+            drift = aq.query_schema_drift()
+        except Exception:
+            drift = {"error": "audit_query_unavailable", "is_latest": None}
+        qm_stats = query_metrics.stats_all()
+
+        return {
+            "summary": {
+                "verdict": "HEALTHY" if health.healthy else "UNHEALTHY",
+                "action_required": not health.healthy,
+                "recommended_action": "maintenance()" if not health.healthy else "none",
+            },
+            "health": health.to_dict(),
+            "stats": stats,
+            "schema_drift": drift,
+            "query_performance": {
+                op: s for op, s in qm_stats.items()
+            },
+        }
 
     def __enter__(self) -> DatabaseManager:
         return self

@@ -3,6 +3,7 @@ CTR-P1-001~009 的 physical_path 均为 null，导致 generate_contracts.py 无�
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -55,7 +56,15 @@ def main() -> int:
         print("所有 P1 契约已有 physical_path——无需修改。")
         return 0
 
-    YAML_PATH.write_text("".join(lines), encoding="utf-8")
+    tmp_path = f"{YAML_PATH}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text("".join(lines), encoding="utf-8")
+        os.replace(tmp_path, YAML_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"✅ 已为 {replaced} 个 P1 契约补齐 physical_path。")
     return 0
 

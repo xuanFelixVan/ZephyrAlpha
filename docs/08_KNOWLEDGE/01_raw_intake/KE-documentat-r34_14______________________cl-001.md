@@ -1,0 +1,25 @@
+---
+module_id: KE-documentat-r34_14______________________cl-001
+title: 决策 R34：14 层架构对标业界顶级机构，足够，不新增顶层（Closes OQ-068）
+category: documentation
+---
+
+# 决策 R34：14 层架构对标业界顶级机构，足够，不新增顶层（Closes OQ-068）
+
+决策 R34：14 层架构对标业界顶级机构，足够，不新增顶层（Closes OQ-068）
+
+**决策**：14 层（l00–l13 + shared）对标业界顶级量化机构，覆盖度足够，**不需要新增任何顶层**。
+
+**对标证据摘要**（完整证据见 `03-AA.md` 附录 A）：
+
+| 机构 | 核心分层数 | L10 命名 | L11+ AI 层 | 结论 |
+|------|----------|---------|-----------|------|
+| Goldman Sachs SecDB | ~12–14 层 | compliance ✅ | 无独立 strategic 层 ✅ | 对位完全一致 |
+| JPMorgan Athena | ~10–13 层 | compliance（regulatory）✅ | 无独立 ML Platform（2024 补建中）| 我们先行 |
+| Two Sigma | ~12–14 层 | compliance ✅ | Telemetry + Experimentation 均独立 ✅ | 完全对齐 |
+| Citadel | ~8–12 层 | compliance_lab ✅ | 风控拆子层不增顶层（证明 submodule 优于增层）| 方法论对齐 |
+| BlackRock Aladdin | ~14 层 | compliance ✅ | ML Engine + Monitoring 均独立 ✅ | 最强对位 |
+
+**核心洞察**：专业机构通过"子模块扩展"而非"增加顶层"来处理细分需求（Citadel 案例），这验证了本项目"14 层 + submodule"的架构哲学正确性。
+
+**落盘位置**：`03-application-architecture.md` 新增附录 A（14 层架构对标证据，约 80 行）

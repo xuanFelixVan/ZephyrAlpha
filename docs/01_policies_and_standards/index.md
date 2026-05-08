@@ -114,13 +114,13 @@ verifiability: manual
 | 子目录 | 职责 | 管辖文件数 | 索引入口 | 注册表 |
 |--------|------|:---------:|---------|--------|
 | `meta/` | 元规则——定义"规则怎么写、怎么管" | 12 | [meta/index.md](meta/index.md) | [_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md) |
-| `governance/` | 声明式全局规则——8 个治理域 | 42 | [governance/index.md](governance/index.md) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
+| `governance/` | 声明式全局规则——8 个治理域 | 41 | [governance/index.md](governance/index.md) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
 | `operational/` | 过程式操作手册——3 个操作域 | 4 | [operational/index.md](operational/index.md) | 同上 |
 | `domains/` | 层域特定规则——4 个架构层 | 8 | [domains/index.md](domains/index.md) | 同上 |
-| `_registry/` | 注册表+契约——4 个子目录 | 34 | [不需要（机器可读）](不需要（机器可读）) | 自身即注册表 |
+| `_registry/` | 注册表+契约——4 个子目录 | 48 | [不需要（机器可读）](不需要（机器可读）) | 自身即注册表 |
 | `templates/` | 文档模板 | 10 | [不需要（文件名自描述）](不需要（文件名自描述）) | [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml) |
 
-> **合计**：6 个子目录，110 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。
+> **合计**：6 个子目录，123 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。
 <!-- TABLE-AUTO-END -->
 
 ---

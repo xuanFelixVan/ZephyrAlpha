@@ -19,25 +19,25 @@ SSoT 模块（所有路径/时间/解析/token 常量和函数的唯一真源）
   - errors.py          → [STABLE] ZephyrBaseError + 12 子类
   - constants.py       → [STABLE] 共享枚举集中 re-export
   - events/            → [BETA]  Observer 事件体 Pydantic V2 Schema
-  - resilience/        → [STUB] 重试/熔断/降级韧性基类（CircuitBreaker等仅类型定义）
-  - lifecycle/         → [STUB] 模块生命周期钩子 + 健康检查
-  - flags.py           → [STUB] Feature Flag 功能开关系统
+  - resilience/        → [STABLE] 重试/熔断/降级韧性基类（async_retry/CircuitBreaker/FallbackChain）
+  - lifecycle/         → [STABLE] 模块生命周期钩子 + 健康检查（LifecycleAware/ModuleHealth）
+  - flags.py           → [STABLE] Feature Flag 功能开关系统（FlagRegistry/global_flag_registry）
   - types.py           → [STABLE] 共享类型别名 NewType/Annotated
   - diff_utils.py      → [BETA] 统一 diff/patch 工具
   - file_utils.py      → [BETA] 安全文件操作——原子写/备份/rollback
   - config/            → [BETA] YAML 配置加载与 Pydantic 校验
   - health.py          → [BETA] 聚合健康检查
-  - idempotency.py     → [STUB] 幂等性记录与存储
-  - limiter.py         → [STUB] 速率限制（TokenBucketLimiter仅占位）
-  - lock.py            → [STUB] 内存锁（仅测试用）
-  - metrics.py         → [STUB] 指标注册表
-  - outbox.py          → [STUB] 发件箱模式
-  - schema_registry.py → [STUB] Schema版本注册表
+  - idempotency.py     → [STABLE] 幂等性记录与存储（IdempotencyStore/IdempotencyRecord）
+  - limiter.py         → [STABLE] 速率限制（TokenBucketLimiter/async_limited）
+  - lock.py            → [STABLE] 内存锁（MemoryLock/LockHandle）
+  - metrics.py         → [STABLE] 指标注册表（MetricsRegistry/MetricSnapshot）
+  - outbox.py          → [STABLE] 发件箱模式（OutboxStore/OutboxPublisher）
+  - schema_registry.py → [STABLE] Schema版本注册表（SchemaRegistry/SchemaEntry）
   - secrets.py         → [BETA] 密钥管理（支持dotenv/env两种provider）
-  - api_client.py      → [STUB] HTTP客户端（AioHttpProvider仅占位）
-  - cache.py           → [STUB] 缓存（MemoryCache仅占位）
-  - migration.py       → [STUB] 任务迁移框架
-  - pagination.py      → [STUB] 分页工具
+  - api_client.py      → [STABLE] HTTP客户端（AioHttpProvider/ApiClient/ApiCallMetrics）
+  - cache.py           → [STABLE] 缓存（MemoryCache/CacheProvider/CacheStats）
+  - migration.py       → [STABLE] 任务迁移框架（migrate_task/downgrade_task）
+  - pagination.py      → [STABLE] 分页工具（OffsetPagination/CursorPagination）
   - serialization.py   → [BETA] 序列化/反序列化
   - testing.py         → [STABLE] 测试工厂函数
   - context.py         → [STABLE] 请求上下文
@@ -63,6 +63,8 @@ SSoT 模块（所有路径/时间/解析/token 常量和函数的唯一真源）
   - cross-layer-contracts.yaml（CTR SSoT）
 """
 
+MODULE_ID = "MOD-SHARED-001"
+
 from zephyr.shared.__version__ import (
     MIN_COMPATIBLE_SHARED_VERSION,
     VersionMismatchError,
@@ -79,7 +81,7 @@ from zephyr.shared.__version__ import (
     version_minor,
     version_patch,
 )
-from zephyr.shared.api_client import (
+from zephyr.shared.api.api_client import (
     AioHttpProvider,
     ApiCallError,
     ApiCallMetrics,
@@ -96,21 +98,26 @@ from zephyr.shared.cache import (
     MemoryCache,
     cache_key,
 )
+from zephyr.shared.constitutional_update import (
+    ConstitutionalAutoUpdate,
+    Learning,
+    ProposedUpdate,
+)
 from zephyr.shared.config import (
     ConfigLoadError,
     load_yaml_config,
     load_yaml_config_validated,
 )
-from zephyr.shared.contracts.enforcer import (
+from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
     enforce,
     enforce_input,
     enforce_output,
 )
-from zephyr.shared.contracts.factor_signal import FactorSignal
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.instrument import (
+from zephyr.shared.contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.market.instrument import (
     ETF,
     FX,
     Bond,
@@ -120,12 +127,12 @@ from zephyr.shared.contracts.instrument import (
     Option,
     Stock,
 )
-from zephyr.shared.contracts.market_data import NormalizedMarketData
-from zephyr.shared.contracts.money import Money, get_currency_precision
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.position import PositionSnapshot
-from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.shared.contracts.runtime_plane_tag import (
+from zephyr.shared.contracts.market.market_data import NormalizedMarketData
+from zephyr.shared.contracts.portfolio.money import Money, get_currency_precision
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+from zephyr.shared.contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
     HOT_PATH_ACTIVATED,
@@ -133,7 +140,7 @@ from zephyr.shared.contracts.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
-from zephyr.shared.contracts.timestamp import Timestamp, ensure_utc, utcnow
+from zephyr.shared.contracts.core.timestamp import Timestamp, ensure_utc, utcnow
 from zephyr.shared.context import (
     RequestContext,
     current_context,
@@ -257,6 +264,14 @@ from zephyr.shared.metrics import (
     MetricsRegistry,
     get_registry,
 )
+from zephyr.shared.multi_agent import (
+    AgentCard,
+    AgentRole,
+    DispatchedTask,
+    MergeStrategy,
+    ResultMerge,
+    TaskDispatch,
+)
 from zephyr.shared.outbox import (
     MemoryOutboxStore,
     OutboxEntry,
@@ -272,6 +287,16 @@ from zephyr.shared.pagination import (
     Page,
     paginate,
     paginate_cursor,
+)
+from zephyr.shared.post_process import (
+    HookResult,
+    HookStrategy,
+    PipelineResult,
+    PostProcessHook,
+    PostProcessPipeline,
+    format_hook,
+    lint_hook,
+    typecheck_hook,
 )
 from zephyr.shared.resilience import (
     CircuitBreaker,
@@ -298,6 +323,16 @@ from zephyr.shared.secrets import (
     SecretsError,
     sanitize_secret,
 )
+from zephyr.shared.session_audit import (
+    CostRecord,
+    DecisionRecord,
+    ErrorRecord,
+    OutcomeRecord,
+    PromptRecord,
+    SessionAuditTrail,
+    SessionRecord,
+    ToolCallRecord,
+)
 from zephyr.shared.serialization import (
     ENCODING_RULES,
     SerializationError,
@@ -310,6 +345,29 @@ from zephyr.shared.serialization import (
     serialize_decimal,
     to_dict,
     to_json,
+)
+from zephyr.shared.skill_registry import (
+    PromptTemplate,
+    PromptVariable,
+    SkillCategory,
+    SkillDefinition,
+    SkillOutput,
+    SkillParameter,
+)
+from zephyr.shared.cost_budget import (
+    CostBudget,
+    CostBudgetExceededError,
+    PricingTier,
+)
+from zephyr.shared.context_budget import (
+    BudgetEntry,
+    ContextBudget,
+    QuotaTracker,
+    TruncationStrategy,
+)
+from zephyr.shared.observability.token_utils import (
+    DEFAULT_CONTEXT_TOKEN_BUDGET,
+    estimate_tokens,
 )
 from zephyr.shared.testing import (
     make_completed_task,
@@ -344,229 +402,17 @@ from zephyr.shared.time_utils import (
     seconds_since,
     seconds_until,
 )
+from zephyr.shared.io.paths import (
+    DB_PATH,
+    REPO_ROOT,
+)
+from zephyr.shared.schema.schemas import (
+    Priority,
+    SafetyLevel,
+    Task,
+    TaskNamespace,
+    TaskStatus,
+    normalize_execution_model,
+)
 
-__all__ = [
-    "NormalizedMarketData",
-    "FactorSignal",
-    "RiskLimits",
-    "Order",
-    "OrderSide",
-    "OrderType",
-    "OrderStatus",
-    "Fill",
-    "PositionSnapshot",
-    "Instrument",
-    "Stock",
-    "ETF",
-    "Future",
-    "Option",
-    "Bond",
-    "FX",
-    "Crypto",
-    "Money",
-    "get_currency_precision",
-    "Timestamp",
-    "utcnow",
-    "ensure_utc",
-    "RuntimePlane",
-    "HOT_PATH_LATENCY_BUDGET_MS",
-    "WARM_PATH_LATENCY_BUDGET_MS",
-    "COLD_PATH_LATENCY_BUDGET_MS",
-    "HOT_PATH_ACTIVATED",
-    "COLD_PATH_PARTIAL_ACTIVATED",
-    "enforce_output",
-    "enforce_input",
-    "enforce",
-    "ContractViolationError",
-    "EnforcementMode",
-    "ZephyrBaseError",
-    "ConfigError",
-    "ContextError",
-    "ContractError",
-    "DataError",
-    "FeedbackError",
-    "GateError",
-    "IOError",
-    "PipelineError",
-    "SecurityError",
-    "TaskError",
-    "UnimplementedError",
-    "ValidationError",
-    "EVENT_PAYLOAD_MAP",
-    "FileEventPayload",
-    "ManualEventPayload",
-    "MetricEventPayload",
-    "TaskEventPayload",
-    "TimeEventPayload",
-    "FeatureFlag",
-    "FlagNotFoundError",
-    "FlagRegistry",
-    "FlagState",
-    "global_flag_registry",
-    "LifecycleAware",
-    "LifecycleManager",
-    "LifecycleState",
-    "ModuleHealth",
-    "CircuitBreaker",
-    "CircuitOpenError",
-    "CircuitState",
-    "FallbackChain",
-    "RetryConfig",
-    "RetryExhaustedError",
-    "async_retry",
-    "fallback",
-    "ConfigLoadError",
-    "load_yaml_config",
-    "load_yaml_config_validated",
-    "PatchConflictError",
-    "apply_patch",
-    "compute_diff",
-    "compute_file_diff",
-    "similarity_ratio",
-    "try_apply_patch",
-    "AtomicWriteError",
-    "atomic_write",
-    "backup_and_rollback",
-    "backup_file",
-    "restore_backup",
-    "safe_read",
-    "AbsPath",
-    "AgentId",
-    "BlueprintVersion",
-    "ContractId",
-    "DocumentId",
-    "FilePath",
-    "FingerprintHash",
-    "MetricName",
-    "ModuleId",
-    "SessionId",
-    "SSoT_Key",
-    "TaskId",
-    "TokenCount",
-    "TraceContext",
-    "ZephyrLogger",
-    "configure_root_logger",
-    "get_logger",
-    "trace_id_var",
-    "DeprecatedAPIError",
-    "DeprecationMode",
-    "deprecated",
-    "get_deprecation_mode",
-    "set_deprecation_mode",
-    "MIGRATIONS",
-    "MigrationError",
-    "downgrade_task",
-    "latest_schema_version",
-    "migrate_task",
-    "make_completed_task",
-    "make_p0_task",
-    "make_valid_audit_report",
-    "make_valid_failure_pattern",
-    "make_valid_handoff_package",
-    "make_valid_knowledge_entry",
-    "make_valid_task",
-    "AggregateHealth",
-    "HealthStatus",
-    "HealthSummary",
-    "collect_health",
-    "MIN_COMPATIBLE_SHARED_VERSION",
-    "VersionMismatchError",
-    "__version__",
-    "__version_info__",
-    "check_shared_version",
-    "DeadLetter",
-    "DeadLetterQueue",
-    "attach_dlq_to_observer",
-    "Env",
-    "current_env",
-    "is_debug",
-    "is_dev",
-    "is_prod",
-    "is_staging",
-    "is_test",
-    "IdempotencyError",
-    "IdempotencyRecord",
-    "IdempotencyStatus",
-    "IdempotencyStore",
-    "RateLimitError",
-    "RateLimiterStats",
-    "TokenBucketLimiter",
-    "async_limited",
-    "LockError",
-    "LockHandle",
-    "MemoryLock",
-    "MetricType",
-    "MetricSnapshot",
-    "MetricsRegistry",
-    "get_registry",
-    "MemoryOutboxStore",
-    "OutboxEntry",
-    "OutboxError",
-    "OutboxPublisher",
-    "OutboxStatus",
-    "OutboxStore",
-    "CursorPage",
-    "CursorPagination",
-    "OffsetPagination",
-    "Page",
-    "paginate",
-    "paginate_cursor",
-    "SchemaEntry",
-    "SchemaRegistry",
-    "SchemaRegistryError",
-    "SchemaVersion",
-    "get_schema_registry",
-    "DotEnvSecretProvider",
-    "EnvSecretProvider",
-    "SECRET_INDICATOR_PATTERNS",
-    "SecretProvider",
-    "SecretsError",
-    "sanitize_secret",
-    "ENCODING_RULES",
-    "SerializationError",
-    "SerializationFormat",
-    "deserialize_datetime",
-    "deserialize_decimal",
-    "from_dict",
-    "from_json",
-    "serialize_datetime",
-    "serialize_decimal",
-    "to_dict",
-    "to_json",
-    "version_compatible",
-    "version_eq",
-    "version_gte",
-    "version_gt",
-    "version_lt",
-    "version_lte",
-    "version_major",
-    "version_minor",
-    "version_patch",
-    "AioHttpProvider",
-    "ApiCallError",
-    "ApiCallMetrics",
-    "ApiClient",
-    "ApiClientConfig",
-    "ApiResponse",
-    "HttpMethod",
-    "HttpProvider",
-    "CacheError",
-    "CacheProvider",
-    "CacheStats",
-    "MemoryCache",
-    "cache_key",
-    "MOCKED_TIME",
-    "format_iso",
-    "freeze_time",
-    "now_utc",
-    "parse_iso",
-    "seconds_since",
-    "seconds_until",
-    "score_blueprint_route",
-    "score_and_rank_routes",
-    "RequestContext",
-    "current_context",
-    "get_request_id",
-    "set_context",
-    "set_request_id",
-]
+__all__ = ['API_INDEX', 'AbsPath', 'AgentCard', 'AgentId', 'AgentRole', 'AggregateHealth', 'AioHttpProvider', 'ApiCallError', 'ApiCallMetrics', 'ApiClient', 'ApiClientConfig', 'ApiResponse', 'AtomicWriteError', 'BlueprintVersion', 'Bond', 'BudgetEntry', 'COLD_PATH_LATENCY_BUDGET_MS', 'COLD_PATH_PARTIAL_ACTIVATED', 'CacheError', 'CacheProvider', 'CacheStats', 'CircuitBreaker', 'CircuitOpenError', 'CircuitState', 'ConfigError', 'ConfigLoadError', 'ConstitutionalAutoUpdate', 'ContextBudget', 'ContextError', 'ContractError', 'ContractId', 'ContractViolationError', 'CostBudget', 'CostBudgetExceededError', 'CostRecord', 'Crypto', 'CursorPage', 'CursorPagination', 'DB_PATH', 'DEFAULT_CONTEXT_TOKEN_BUDGET', 'DataError', 'DeadLetter', 'DeadLetterQueue', 'DecisionRecord', 'DeprecatedAPIError', 'DeprecationMode', 'DispatchedTask', 'DocumentId', 'DotEnvSecretProvider', 'ENCODING_RULES', 'ETF', 'EVENT_PAYLOAD_MAP', 'EnforcementMode', 'Env', 'EnvSecretProvider', 'ErrorRecord', 'FX', 'FactorSignal', 'FallbackChain', 'FeatureFlag', 'FeedbackError', 'FileEventPayload', 'FilePath', 'Fill', 'FingerprintHash', 'FlagNotFoundError', 'FlagRegistry', 'FlagState', 'Future', 'GateError', 'HOT_PATH_ACTIVATED', 'HOT_PATH_LATENCY_BUDGET_MS', 'HealthStatus', 'HealthSummary', 'HookResult', 'HookStrategy', 'HttpMethod', 'HttpProvider', 'IOError', 'IdempotencyError', 'IdempotencyRecord', 'IdempotencyStatus', 'IdempotencyStore', 'Instrument', 'Learning', 'LifecycleAware', 'LifecycleManager', 'LifecycleState', 'LockError', 'LockHandle', 'MIGRATIONS', 'MIN_COMPATIBLE_SHARED_VERSION', 'MOCKED_TIME', 'ManualEventPayload', 'MemoryCache', 'MemoryLock', 'MemoryOutboxStore', 'MergeStrategy', 'MetricEventPayload', 'MetricName', 'MetricSnapshot', 'MetricType', 'MetricsRegistry', 'MigrationError', 'ModuleHealth', 'ModuleId', 'Money', 'NormalizedMarketData', 'OffsetPagination', 'Option', 'Order', 'OrderSide', 'OrderStatus', 'OrderType', 'OutboxEntry', 'OutboxError', 'OutboxPublisher', 'OutboxStatus', 'OutboxStore', 'OutcomeRecord', 'Page', 'PatchConflictError', 'PipelineError', 'PipelineResult', 'PositionSnapshot', 'PostProcessHook', 'PostProcessPipeline', 'PricingTier', 'Priority', 'PromptRecord', 'PromptVariable', 'ProposedUpdate', 'QuotaTracker', 'REPO_ROOT', 'RateLimitError', 'RateLimiterStats', 'RequestContext', 'ResultMerge', 'RetryConfig', 'RetryExhaustedError', 'RiskLimits', 'RuntimePlane', 'SECRET_INDICATOR_PATTERNS', 'SSoT_Key', 'SafetyLevel', 'SchemaEntry', 'SchemaRegistry', 'SchemaRegistryError', 'SchemaVersion', 'SecretProvider', 'SecretsError', 'SecurityError', 'SerializationError', 'SerializationFormat', 'SessionAuditTrail', 'SessionId', 'SessionRecord', 'SkillCategory', 'SkillDefinition', 'SkillOutput', 'SkillParameter', 'Stock', 'Task', 'TaskDispatch', 'TaskError', 'TaskEventPayload', 'TaskId', 'TaskNamespace', 'TaskStatus', 'TimeEventPayload', 'Timestamp', 'TokenBucketLimiter', 'TokenCount', 'ToolCallRecord', 'TraceContext', 'TruncationStrategy', 'UnimplementedError', 'ValidationError', 'VersionMismatchError', 'WARM_PATH_LATENCY_BUDGET_MS', 'ZephyrBaseError', 'ZephyrLogger', '__version__', '__version_info__', 'adaptive_sampler', 'ai_audit_guard', 'ai_understandability_constraint', 'alert_escalation', 'alert_manager', 'alert_precision_tracker', 'apply_patch', 'async_limited', 'async_retry', 'atomic_write', 'attach_dlq_to_observer', 'backup_and_rollback', 'backup_file', 'blueprint_code_auditor', 'blueprint_scorer', 'budget_aware_prompt', 'cache', 'cache_key', 'capability', 'capacity_calibrator', 'capacity_digital_twin', 'capacity_fingerprint', 'capacity_governance_loop', 'capacity_runbook_generator', 'check_shared_version', 'code_economy_analyzer', 'collect_health', 'combinatorial_gate', 'compute_diff', 'compute_file_diff', 'config_validator', 'configure_root_logger', 'constants', 'constitutional_update', 'content_fingerprint', 'context', 'context_budget', 'contract_bus', 'contract_tester', 'core_integrity_guard', 'cost_budget', 'cost_estimator', 'current_context', 'current_env', 'degradation_chain', 'dependency_capacity_guard', 'deprecated', 'deprecation', 'deserialize_datetime', 'deserialize_decimal', 'diff_utils', 'dos_launcher', 'downgrade_task', 'dual_channel_alert', 'durable_execution', 'enforce', 'enforce_input', 'enforce_output', 'ensure_utc', 'error_budget_tracker', 'errors', 'estimate_tokens', 'evals', 'event_bus', 'event_bus_upgrade', 'fallback', 'fault_isolator', 'file_utils', 'flags', 'format_hook', 'format_iso', 'freeze_time', 'from_dict', 'from_json', 'frontmatter_utils', 'get_currency_precision', 'get_deprecation_mode', 'get_logger', 'get_registry', 'get_request_id', 'get_schema_registry', 'global_flag_registry', 'health', 'heartbeat_server', 'idempotency', 'is_debug', 'is_dev', 'is_prod', 'is_staging', 'is_test', 'kill_switch', 'latest_schema_version', 'limiter', 'lint_hook', 'load_yaml_config', 'load_yaml_config_validated', 'lock', 'logging', 'longevity_monitor', 'make_completed_task', 'make_p0_task', 'make_valid_audit_report', 'make_valid_failure_pattern', 'make_valid_handoff_package', 'make_valid_knowledge_entry', 'make_valid_task', 'metrics', 'migrate_task', 'migration', 'model_capacity_probe', 'module_birth_registry', 'multi_agent', 'normalize_execution_model', 'now_utc', 'observer', 'outbox', 'owner_trust_gauge', 'paginate', 'paginate_cursor', 'pagination', 'parse_iso', 'path_resolver', 'paths', 'post_process', 'pydantic_v2_migrator', 'reasoning_spans', 'restore_backup', 'safe_read', 'sandbox_executor', 'sanitize_secret', 'schemas', 'seconds_since', 'seconds_until', 'secrets', 'semantic_cache', 'serialization', 'serialize_datetime', 'serialize_decimal', 'session_audit', 'set_context', 'set_deprecation_mode', 'set_request_id', 'similarity_ratio', 'skill_registry', 'slo_review_assistant', 'ssot_guard', 'task_heartbeat', 'testing', 'time_utils', 'to_dict', 'to_json', 'token_utils', 'trace_id_var', 'tracing', 'try_apply_patch', 'ttl_cleanup_engine', 'typecheck_hook', 'types', 'utcnow', 'version_compatible', 'version_eq', 'version_gt', 'version_gte', 'version_lt', 'version_lte', 'version_major', 'version_minor', 'version_negotiation', 'version_patch', 'vibe_experiment_tracker', 'warm_hot_gate']

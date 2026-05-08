@@ -1,0 +1,33 @@
+{
+  "dashboard_id": "DASH-20260507-464",
+  "generated_at": "2026-05-07T20:09:10.746400",
+  "health_score": "A",
+  "total_assets": 29612,
+  "orphan_rate_pct": 2.3,
+  "ghost_rate_pct": 0.0,
+  "drift_rate_pct": 0.0,
+  "by_type": {
+    "module": 1711,
+    "unknown": 688,
+    "registry": 15,
+    "gate": 28,
+    "script": 366,
+    "doc": 26195,
+    "config": 36,
+    "test": 501,
+    "data": 72
+  },
+  "by_layer": {
+    "cross_layer": 1833,
+    "L01": 1087,
+    "L02": 98,
+    "L03": 22809,
+    "L04": 3785
+  },
+  "alerts": [
+    "孤儿率 2.3% 超过 2% 阈值"
+  ],
+  "trend_orphan": [],
+  "trend_health": [],
+  "last_reconciliation": null
+}

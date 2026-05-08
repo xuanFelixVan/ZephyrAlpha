@@ -87,7 +87,7 @@ ai_autonomy: human_gated
 | 章节 | 内容 | 主要读者 |
 |------|------|----------|
 | §1 | 审计类型与等级 | 所有读者 |
-| §2 | 12 维度审计清单（核心——91个脚本全覆盖） | 审计执行者 |
+| §2 | 12 维度审计清单（核心——177个脚本全覆盖） | 审计执行者 |
 | §3 | 审计工具矩阵 | 开发者 |
 | §4 | 审计频率调度 | 项目经理 |
 | §5 | 审计执行流程（5 步法） | 审计执行者 |
@@ -102,7 +102,7 @@ ai_autonomy: human_gated
 - ✅ 每次审计的**执行入口**——打开本文件即知如何审计
 - ✅ 审计规则、工具、范围、频率的**唯一真源**
 - ✅ 审计结果处置的**决策树**
-- ✅ **91个治理脚本的全覆盖索引**（v1.1.0 与 script_manifest.yaml 交叉验证）
+- ✅ **177个治理脚本的全覆盖索引**（v1.1.0 与 script_manifest.yaml 交叉验证）
 
 ### 0.2 本文档不是
 
@@ -145,7 +145,7 @@ ai_autonomy: human_gated
 ## 2. 12 维度审计清单
 
 > 本节是审计协议的核心。每个维度列出：审计什么规则、审哪些文件、用什么工具、期望什么效果。
-> **v1.1.0: 已与 script_manifest.yaml 中的 91 个脚本完全交叉验证——零遗漏。**
+> **v1.1.0: 已与 script_manifest.yaml 中的 177 个脚本完全交叉验证——零遗漏。**
 >
 > 维度定义与权重见 `12-dimension-audit-matrix.md` §1。
 
@@ -158,8 +158,8 @@ ai_autonomy: human_gated
 | **审计脚本** | |
 | **P0 (6个)** | `d1_structure/audit_directory_integrity.py`（D1-D5 五维）、`d1_structure/detect_orphan_py.py`（孤儿 .py）、`d1_structure/detect_temp_files.py`（临时文件）、`d1_structure/detect_residual_files.py`（残留文件）、`d1_structure/validate_index_reality.py`（index vs 磁盘）、`d1_structure/validate_config_integrity.py`（运行时配置 11 层纵深审计 + 自动修复） |
 | **P1 (4个)** | `d1_structure/validate_immutable_core.py`（ABS-01 不可变核心文件）、`d1_structure/check_index_integrity.py`（PS-STD-012 §7.3 索引完整性）、`d1_structure/run_script_smoke_test.py`（SCRIPT-QUALITY-001 D-H-01 冒烟测试）、`env_check.py`（环境就绪门禁） |
-| **P2 (6个)** | `d1_structure/audit_config_format.py`（config/ 格式扫描）、`d1_structure/audit_findings_by_scope.py`（按目录范围筛选 Finding）、`d1_structure/sync_index_from_manifest.py`（manifest SSoT → index.md 自动同步）、`d1_structure/generate_missing_index_md.py`（缺失 index.md 生成）、`d1_structure/sync_policies_index.py`（PS-IDX-001 文件数量同步）、`d1_structure/drafts_zone_archiver.py`（草稿区归档检查） |
-| **P2 (warn_only)** | `d1_structure/cbg_reset.py`（CBG 熔断器重置——仅 Owner 可执行） |
+| **P2 (6个)** | `d1_structure/audit_config_format.py`（config/ 格式扫描）、`d1_structure/audit_findings_by_scope.py`（按目录范围筛选 Finding）、`d1_structure/sync_index_from_manifest.py`（manifest SSoT → index.md 自动同步）、`d1_structure/generate_missing_index_md.py`（缺失 index.md 生成）、`d1_structure/sync_policies_index.py`（PS-IDX-001 文件数量同步）、`d1_structure/archive_drafts_zone.py`（草稿区归档检查） |
+| **P2 (warn_only)** | `d1_structure/reset_cbg.py`（CBG 熔断器重置——仅 Owner 可执行） |
 | **门禁** | GATE-17（孤儿 .py）、GATE-IDX（索引同步）、GATE-SQ（脚本质量）、GATE-ADM（manifest 准入） |
 | **期望效果** | 零孤儿 .py；零临时/残留文件；所有 index.md 与磁盘一致；immutable_core 零修改；pre-commit/CI 配置完整 |
 | **快速扫描命令** | `python scripts/governance/run_all.py --dimensions D1 --warn-only` |
@@ -186,7 +186,7 @@ ai_autonomy: human_gated
 | **P0 (跨维)** | `d3_metadata/validate_architecture.py`（架构合规校验——frontmatter + 目录放置 + doc_type 一致性，跨 D3/D4/D5）、`d3_metadata/validate_frontmatter_values.py`（GATE-FRONTMATTER——frontmatter 枚举值 vs vocabulary YAML 校验） |
 | **P1 (6个)** | `d3_metadata/validate_blueprint_registry.py`（蓝图登记表自校验）、`d3_metadata/validate_superseded_by.py`（废弃文件 superseded_by 检测 LFC-002）、`d3_metadata/detect_skip_active_status.py`（跨级降格检测 ABS-22/COND-15）、`d3_metadata/detect_stale_version.py`（版本号未更新 PS-STD-009 §9）、`d3_metadata/detect_deprecated_overdue.py`（废弃超期 ≥180 天）、`d3_metadata/validate_derived_from.py`（GATE-DERIVED 派生文件标注完整性） |
 | **P1 (跨维)** | `d3_metadata/validate_no_duplicate_files.py`（迁移后重复文件检测 GATE-DUP） |
-| **P2 (2个)** | `d3_metadata/deep_content_scanner.py`（doc_type 与内容启发式匹配 PS-STD-012 §7.3）、`d3_metadata/generate_rule_catalog.py`（规则目录自动生成工具） |
+| **P2 (2个)** | `d3_metadata/scan_deep_content.py`（doc_type 与内容启发式匹配 PS-STD-012 §7.3）、`d3_metadata/generate_rule_catalog.py`（规则目录自动生成工具） |
 | **P2 (warn_only)** | `d3_metadata/generate_derived_files.py`（GATE-GENERATE 枚举自动派生生成器） |
 | **门禁** | GATE-11（命名规范）、GATE-12（蓝图真源准入）、GATE-15（frontmatter 校验）、GATE-16（架构合规）、GATE-ENUM（枚举一致性）、GATE-FRONTMATTER（frontmatter 枚举值校验）、GATE-DERIVED（派生标注）、GATE-DUP（重复文件检测） |
 | **期望效果** | 所有 frontmatter 字段合法且一致；零跨级降格；零过期未归档文件；枚举派生零漂移；登记表总索引自校验通过 |
@@ -207,13 +207,13 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | AGENTS.md §6.2（depends_on ≤ 3 层）、§6.4（单一责任）、§6.9（YAML 为 canonical SSoT）、§6.10（代码↔YAML 双层对账）、§6.14（漂移免疫架构原则 Level 1-3）、§6.15（三层 AI 自治权限）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-05~10（AI 自治权限）、ABS-19/20（字段归属 SSoT）、COND-30~32（层纪律）、COND-33~37（门禁纪律）、COND-38（废弃 ADR 引用）、COND-47（HandoffPackage 完整性）、LRC-001~005（生命周期引用）、LFC-001~003（废弃级联）、MAD-005（P0 模块契约）、[GOV-MOD-004](../../governance/module/module-interface-contract-policy.md) IFC-001~007（接口契约）、[GOV-MOD-003](../../governance/module/module-lifecycle-policy.md) MLC-001~003（模块生命周期）、[GOV-ARCH-001]KB:decisions namespace（33 ADRs，原 adr-protocol.md 已删除）、[GOV-ARCH-002](../../governance/architecture/architecture-review-policy.md)（架构评审门禁）、[GOV-ARCH-003](../../governance/architecture/architecture-versioning-policy.md)（架构版本化）、[GOV-ARCH-005](../../governance/architecture/phase-transition-protocol.md)（Phase 过渡协议）、[GOV-MOD-001](../../governance/module/module-admission-policy.md)（模块准入 MOD-ADMIT）、[GOV-ARCH-006](../../governance/architecture/gate-strategy-standard.md)（KMS 管道门禁 G1-G5）、[GOV-DOC-002](../../governance/document/directory-structure-standard.md)（目录结构规范） |
+| **审计规则** | AGENTS.md §6.2（depends_on ≤ 3 层）、§6.4（单一责任）、§6.9（YAML 为 canonical SSoT）、§6.10（代码↔YAML 双层对账）、§6.14（漂移免疫架构原则 Level 1-3）、§6.15（三层 AI 自治权限）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-05~10（AI 自治权限）、ABS-19/20（字段归属 SSoT）、COND-30~32（层纪律）、COND-33~37（门禁纪律）、COND-38（废弃 KB 决策记录引用）、COND-47（HandoffPackage 完整性）、LRC-001~005（生命周期引用）、LFC-001~003（废弃级联）、MAD-005（P0 模块契约）、[GOV-MOD-004](../../governance/module/module-interface-contract-policy.md) IFC-001~007（接口契约）、[GOV-MOD-003](../../governance/module/module-lifecycle-policy.md) MLC-001~003（模块生命周期）、[GOV-ARCH-001]KB:decisions namespace（33 ADRs，原 adr-protocol.md 已删除）、[GOV-ARCH-002](../../governance/architecture/architecture-review-policy.md)（架构评审门禁）、[GOV-ARCH-003](../../governance/architecture/architecture-versioning-policy.md)（架构版本化）、[GOV-ARCH-005](../../governance/architecture/phase-transition-protocol.md)（Phase 过渡协议）、[GOV-MOD-001](../../governance/module/module-admission-policy.md)（模块准入 MOD-ADMIT）、[GOV-ARCH-006](../../governance/architecture/gate-strategy-standard.md)（KMS 管道门禁 G1-G5）、[GOV-DOC-002](../../governance/document/directory-structure-standard.md)（目录结构规范） |
 | **审计文件范围** | `architecture-model/*.yaml` + `architecture-model/layers/*.yaml`（25+ YAML）+ `docs/03_modules/*/blueprint.md` + `src/zephyr/` 目录结构 + `docs/01_policies_and_standards/_registry/contracts/*.yaml` + `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` |
 | **审计脚本** | |
 | **P0 (9个)** | `d5_architecture/check_architecture_gates.py`（GATE-01~08+A+B+SC+EXTRA-01~03）、`d5_architecture/validate_code_yaml_alignment.py`（GATE-A 代码↔YAML 对账）、`d5_architecture/validate_yaml_summaries.py`（GATE-SUM 自动对账）、`d5_architecture/validate_cross_references.py`（GATE-XREF 8维跨引用检查）、`d5_architecture/validate_blueprint_code_sync.py`（GATE-BLUEPRINT-CODE 蓝图-代码同步）、`d5_architecture/validate_blueprint_implementation_docs.py`（铁律五——completed 蓝图实现文档）、`d5_architecture/validate_directory_structure.py`（LPC 双轨目录合规）、`d5_architecture/detect_depends_on_cycles.py`（DOC-009#1 循环依赖检测）、`d5_architecture/validate_architecture_contract_internal.py`（GATE-CONTRACT 7维契约内部一致性） |
 | **P1 (14个)** | `d5_architecture/validate_ssot.py`（SSoT 一致性）、`d5_architecture/validate_authority_registry.py`（AI 自治权限注册表自校验 GATE-14）、`d5_architecture/validate_field_ownership.py`（字段归属 SSoT）、`d5_architecture/validate_autonomy_gate.py`（AI 自治权限门禁 ABS-05~10）、`d5_architecture/validate_layer_deps.py`（跨层依赖 COND-30~32）、`d5_architecture/audit_depends_on_chain_depth.py`（depends_on 链深度 AGENTS.md §6.2）、`d5_architecture/validate_depends_on_format.py`（depends_on 格式校验 PS-STD-001 §3.1 + --fix 自动转换）、`d5_architecture/validate_lifecycle_refs.py`（生命周期引用约束 LRC-001~005）、`d5_architecture/validate_three_way_consistency.py`（三方一致性——frontmatter vs 正文 vs document-metadata-index.yaml）、`d5_architecture/validate_module_lifecycle.py`（模块生命周期 MLC-001/002/003）、`d5_architecture/validate_interface_contracts.py`（接口契约 IFC-001~007）、`d5_architecture/validate_p0_module_contracts.py`（P0 模块契约 MAD-005）、`d5_architecture/validate_deprecated_dependents.py`（废弃文件活跃引用 LFC-001）、`d5_architecture/measure_deprecation_cascade.py`（废弃级联影响 LFC-003） |
 | **P1 (跨维)** | `d5_architecture/sync_blueprint_code_index.py`（蓝图 §19 代码路径索引自动同步 D5+D8）、`d5_architecture/detect_duplicate_module_names.py`（同名模块语义分析）、`auto-generate-index.py`（GATE-INDEX 索引自动校验/修复 D3+D4） |
-| **P2 (6个)** | `d5_architecture/validate_session_log_updated.py`（Session Log 更新状态 COND-16~17）、`d5_architecture/detect_deprecated_adr_references.py`（废弃 ADR 引用 COND-38）、`d5_architecture/validate_handoff_package.py`（HandoffPackage 完整性 COND-47）、`d5_architecture/validate_arch_review_gate.py`（架构评审门控 GOV-ARCH-002）、`d5_architecture/validate_b_track_packages.py`（B 轨包完整性 GOV-DOC-002 §四）、`d5_architecture/generate_trigger_wiring_view.py`（CT-005 → trigger_router.yaml 接线视图自动派生） |
+| **P2 (6个)** | `d5_architecture/validate_session_log_updated.py`（Session Log 更新状态 COND-16~17）、`d5_architecture/detect_deprecated_adr_references.py`（废弃 KB 决策记录引用 COND-38）、`d5_architecture/validate_handoff_package.py`（HandoffPackage 完整性 COND-47）、`d5_architecture/validate_arch_review_gate.py`（架构评审门控 GOV-ARCH-002）、`d5_architecture/validate_b_track_packages.py`（B 轨包完整性 GOV-DOC-002 §四）、`d5_architecture/generate_trigger_wiring_view.py`（CT-005 → trigger_router.yaml 接线视图自动派生） |
 | **门禁** | GATE-01~03、GATE-06~07、GATE-14、GATE-16、GATE-A、GATE-B、GATE-SUM、GATE-XREF、GATE-BLUEPRINT-CODE、GATE-CONTRACT、GATE-INDEX、GATE-13（蓝图重叠）、GATE-AUTHORITY（AI 自治权限） |
 | **期望效果** | YAML ↔ 代码 ↔ 文档三方一致；零循环依赖；零未登记模块；蓝图与代码同步；AI 自治权限注册表自洽 |
 | **快速扫描命令** | `python scripts/governance/run_all.py --dimensions D5 --warn-only` |
@@ -235,13 +235,13 @@ ai_autonomy: human_gated
 
 | 属性 | 值 |
 |------|-----|
-| **审计规则** | COND-43（FLE import 纪律）、COND-30（L02-L07 禁止直接 import LLM SDK）、COND-32（contracts/ 仅允许数据结构定义）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-24（open() 必须指定 encoding）、COND-44~46（FLE Action 元数据/静默降级/KB 写入 provenance）、REC-11（禁止 Pydantic Any 类型）、[GOV-DOC-005](../../governance/document/encoding-safety-standard.md)（编码安全规范——UTF-8 强制） |
+| **审计规则** | COND-43（FLE import 纪律）、COND-30（L02-L07 禁止直接 import LLM SDK）、COND-32（contracts/ 仅允许数据结构定义）、[GOV-MOD-002](../../governance/module/ai-behavior-iron-policy.md) ABS-24（open() 必须指定 encoding）、COND-44~15（FLE Action 元数据/静默降级/KB 写入 provenance）、REC-11（禁止 Pydantic Any 类型）、[GOV-DOC-005](../../governance/document/encoding-safety-standard.md)（编码安全规范——UTF-8 强制） |
 | **审计文件范围** | `src/zephyr/**/*.py` + `tests/**/*.py` |
 | **审计脚本** | |
 | **P0 (1个)** | `d7_code/detect_missing_encoding.py`（open() 缺 encoding ABS-24） |
 | **P1 (5个)** | `d7_code/validate_fle_imports.py`（FLE import 接口合规 COND-43）、`d7_code/validate_test_coverage.py`（测试覆盖率 ≥70%）、`d7_code/validate_unused_imports.py`（未使用导入）、`d7_code/validate_test_assertion_depth.py`（测试断言深度——raises match/assert True/静默吞异常）、`d7_code/detect_direct_llm_calls.py`（直接 LLM 调用 COND-30）、`d7_code/validate_contracts_purity.py`（契约纯度 COND-32） |
 | **P2 (6个)** | `d7_code/validate_import_style.py`（导入风格一致性）、`d7_code/validate_init_all.py`（__init__.py __all__ 完整性）、`d7_code/validate_docstring_coverage.py`（Docstring 覆盖率）、`d7_code/validate_type_annotation_coverage.py`（类型注解覆盖率）、`d7_code/detect_pydantic_any_fields.py`（Pydantic Any 类型）、`d7_code/validate_fle_action_metadata.py`（FLE Action 元数据 COND-44） |
-| **P2 (其他)** | `d7_code/detect_silent_degradation.py`（静默降级 COND-45）、`d7_code/validate_kb_write_provenance.py`（KB 写入 provenance COND-46） |
+| **P2 (其他)** | `d7_code/detect_silent_degradation.py`（静默降级 COND-45）、`d7_code/validate_kb_write_provenance.py`（KB 写入 provenance COND-15） |
 | **门禁** | GATE-18（测试收集门禁） |
 | **期望效果** | 测试覆盖率 ≥ 70%；零未使用导入；零缺失 encoding；公共 API 有 docstring + 类型注解；L02-L07 零直接 LLM SDK 调用 |
 | **快速扫描命令** | `python scripts/governance/run_all.py --dimensions D7 --warn-only` |
@@ -322,9 +322,14 @@ ai_autonomy: human_gated
 | D10 运维架构 | 0 | 0 | 0 | 0 | 0 |
 | D11 合规运营 | 3 | 5 | 5 | 4 | 13 |
 | D12 AI 幻觉 | 0 | 0 | 2 | 4 | 2 |
-| **总计（去重）** | **29** | **38** | **32** | **32** | **~91** |
+| **总计（去重）** | **29** | **38** | **32** | **32** | **~177** |
 
-> 注：部分脚本跨多维度（如 `validate_directory_structure.py` 同时属于 D5），各维度数字之和略大于唯一脚本总数 ~91。
+<!-- AUTO_SYNC:total_scripts:177 -->
+<!-- AUTO_SYNC:total_gates:25 -->
+<!-- AUTO_SYNC:total_registries:15 -->
+<!-- AUTO_SYNC:precommit_hooks:37 -->
+
+> 注：部分脚本跨多维度（如 `validate_directory_structure.py` 同时属于 D5），各维度数字之和略大于唯一脚本总数 ~177。
 
 ---
 
@@ -334,7 +339,7 @@ ai_autonomy: human_gated
 
 | 工具 | 用途 | 调用方式 | 覆盖维度 |
 |------|------|---------|---------|
-| `run_all.py` | 统一调度 91 个审计脚本 | `python scripts/governance/run_all.py` | D1-D12 |
+| `run_all.py` | 统一调度 177 个审计脚本 | `python scripts/governance/run_all.py` | D1-D12 |
 | `run_all.py --dimensions D3 D5` | 按维度选择性执行 | `--dimensions` 参数 | 指定 |
 | `run_all.py --warn-only` | 警告模式（不阻断） | `--warn-only` 参数 | D1-D12 |
 | `status.py` | 审计脚本健康状态查询 | `python scripts/governance/status.py` | D1-D12 |
@@ -377,7 +382,7 @@ ai_autonomy: human_gated
 | **每周** | TARGETED | 上周变更涉及的维度 + script_manifest 新增脚本验证 | L1 | AI |
 | **每两周** | FULL（轻量） | D1-D12（仅 P0 脚本 ~29个）| L1 | AI |
 | **每月** | FULL | D1-D12（P0+P1 脚本 ~67个）| L2 | Owner + AI |
-| **每季度** | FULL + 评分 | D1-D12 全量 91 脚本 + score_architecture.py | L2-L3 | Owner |
+| **每季度** | FULL + 评分 | D1-D12 全量 177 脚本 + score_architecture.py | L2-L3 | Owner |
 | **Phase 过渡时** | FULL + 评分 | D1-D12 全量 + Phase 退出门检查 | L2+ | Owner |
 
 ### 4.2 触发式审计
@@ -490,7 +495,7 @@ ai_autonomy: human_gated
   │              ├─ P0=0? ──→ PASS → 记录结果 → 结束
   │              └─ P0>0? ──→ FAIL → 进入步骤5闭环
   │
-  ├─ FULL? ──→ env_check.py → run_all.py（全量91脚本）
+  ├─ FULL? ──→ env_check.py → run_all.py（全量177脚本）
   │            │
   │            ├─ L2通过? ──→ score_architecture.py → 生成报告 → 结束
   │            └─ L2未通过? ──→ 进入步骤5闭环 → 修复后重跑
@@ -636,7 +641,7 @@ audit_record:
 | V3 会话 | D12 AI 幻觉（Session 预算）| ✅ |
 | V4 访问控制 | D5 AI 自治权限 ABS-05~10 | ✅ |
 | V5 输入验证 | D6 shell=True/危险命令 | ✅ |
-| V7 错误处理 | D7 静默降级 COND-44~46 | ✅ |
+| V7 错误处理 | D7 静默降级 COND-44~15 | ✅ |
 | V8 数据保护 | D6 日志敏感词 | ✅ |
 | V10 恶意代码 | D6 全部 9 个 P0 安全脚本 | ✅ |
 | V13 配置 | D1 配置完整性（11 层纵深）+ pre-commit | ✅ |
@@ -647,7 +652,7 @@ audit_record:
 |-------------|-----------|------|
 | 基础设施安全 | D6 11 个安全脚本 + pre-commit detect-secrets | ✅ |
 | 代码质量 | D7 14 个质量脚本 + ruff | ✅ |
-| 安全审计 | 本协议全文 + 91 脚本 + 34 门禁 | ✅ |
+| 安全审计 | 本协议全文 + 177 脚本 + 34 门禁 | ✅ |
 | 漏洞响应 | GOV-CMP-002 审计追踪 + D6 | ✅ |
 | 文档完整性 | D8 4 个文档同步脚本 + D9 2 个知识脚本 | ✅ |
 
@@ -655,7 +660,7 @@ audit_record:
 
 | Kaiaulu 方法 | 本协议对应 | 覆盖 |
 |-------------|-----------|------|
-| Git 挖掘合规证据 | run_all.py 91脚本 + git diff 准入 | ✅ |
+| Git 挖掘合规证据 | run_all.py 177脚本 + git diff 准入 | ✅ |
 | 量化合规指标 | 12 维评分 + score_architecture.py | ✅ |
 | 可视化项目合规 | --dashboard 输出 + 报告模板 §6 | ✅ |
 | 最小化审计工作量 | 4 类审计类型 + 7 级频率调度 §4 | ✅ |
@@ -686,7 +691,7 @@ P2 → 记 backlog → 择机修 → 不遗忘
 ```
 L1 = P0 全过（每日底线，29 个 P0 脚本）
 L2 = P0+P1 全过 + 综合分 ≥ 6.0（Phase 过渡门槛，~67 个脚本）
-L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
+L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~177 个脚本）
 ```
 
 ---
@@ -695,11 +700,11 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 
 ### A.1 脚本覆盖交叉验证
 
-本协议 v1.1.0 与 `scripts/governance/script_manifest.yaml`（91 条脚本记录）进行了完整交叉验证：
+本协议 v1.1.0 与 `scripts/governance/script_manifest.yaml`（177 条脚本记录）进行了完整交叉验证：
 
 | 验证项 | 结果 |
 |--------|------|
-| manifest 中每条脚本是否在 §2 中有引用 | ✅ 91/91 全覆盖 |
+| manifest 中每条脚本是否在 §2 中有引用 | ✅ 177/177 全覆盖 |
 | 协议中引用的脚本路径是否在 manifest 中存在 | ✅ 全部验证通过 |
 | P0/P1/P2 优先级是否与 manifest 一致 | ✅ 一致 |
 | 跨维度脚本是否在多个维度中重复列出 | ✅ 正确标注"跨维" |
@@ -872,8 +877,8 @@ L3 = P0+P1+P2 全过 + 综合分 ≥ 8.0（生产级标准，~91 个脚本）
 
 | 文件 | 用途 | 完整路径 |
 |------|------|---------|
-| run_all.py | 统一调度 91 个审计脚本 | [run_all.py](file:///d:/ZephyrAlpha/scripts/governance/run_all.py) |
-| script_manifest.yaml | 91 个脚本注册表 | [script_manifest.yaml](file:///d:/ZephyrAlpha/scripts/governance/script_manifest.yaml) |
+| run_all.py | 统一调度 177 个审计脚本 | [run_all.py](file:///d:/ZephyrAlpha/scripts/governance/run_all.py) |
+| script_manifest.yaml | 177 个脚本注册表 | [script_manifest.yaml](file:///d:/ZephyrAlpha/scripts/governance/script_manifest.yaml) |
 | env_check.py | 环境就绪检查 | [env_check.py](file:///d:/ZephyrAlpha/scripts/governance/env_check.py) |
 | status.py | 脚本健康状态查询 | [status.py](file:///d:/ZephyrAlpha/scripts/governance/status.py) |
 

@@ -1,0 +1,799 @@
+# Module ID Registry v2.0
+# 权威来源：此文件是模块 ID 分配的唯一真源
+# 新增模块 ID 必须先在此注册，再写入 layers/*.yaml
+#
+# v2.0 更新说明（2026-04-30）：
+# - 新增 GOV-/DOM-/OPS-/PS- 前缀编号体系
+# - 注册 experimental~3 产出的 54 个 module_id
+# - 保留 MOD-{LAYER_CODE}-{SEQ} 作为代码模块编号（architecture-model 层面）
+# - 文档规则模块使用 GOV-/DOM-/OPS-/PS- 前缀
+#
+# === ID 体系分工（v2.1.1，2026-05-03）===
+# 本项目存在两套 ID 体系，分工明确：
+# 1. 架构模型实体 ID（契约、事件、聚合、技术条目）→ canonical SSoT = _index.yaml → id_conventions
+# 2. 文档规则模块 ID（治理/域/操作/元标准）→ canonical SSoT = 本文件（module-id-registry.yaml）
+# 两套体系不重叠——本文件的 allocation_rules 仅管辖第 2 类（文档规则模块），
+# 架构模型 ID（CTR-/E-/AGG-/ENT-/VO-/T-/DS/LLM/CORE-/INFRA-）由 _index.yaml id_conventions 管辖。
+# 新增 ID 时先判断属于哪套体系，再到对应 canonical 源登记。
+
+registry_version: "2.2.0"
+last_updated: "2026-05-06"
+total_registered: 138
+
+# ID 分配规则
+allocation_rules:
+  format: "MOD-{LAYER_CODE}-{SEQ}"
+  doc_rule_format: "{DOMAIN}-{TYPE}-{NNN}"
+  numbering_gaps: |
+    以下编号已跳过（从未分配或已合并/废弃）：
+    - PS-STD-005: 从未分配（Stage F 归一化时跳过）
+    - PS-STD-007/008: 从未分配（Stage F 归一化时跳过）
+    - GOV-AI-002: 从未分配（B-e 批次跳号）
+    - GOV-TASK-002/003: 从未分配（B-e 批次跳号）
+    如需使用这些编号，应先确认无历史冲突再分配。
+  domain_prefixes:
+    GOV: "治理层规则（governance/）"
+    DOM: "层域规则（domains/）"
+    OPS: "操作规程（operational/）"
+    PS: "元标准（meta/）"
+  type_codes:
+    DOC: "文档治理"
+    AI: "AI 治理"
+    TASK: "任务治理"
+    SEC: "安全"
+    CMP: "合规"
+    ARCH: "架构"
+    DATA: "数据"
+    MOD: "模块"
+    STD: "元标准"
+    REG: "注册表"
+    VC: "Vibe Coding"
+    DEV: "DevOps"
+    MIG: "迁移"
+    L00: "数据源层"
+    L02: "因子层"
+    L04: "风控层"
+    L07: "盘后分析层"
+  seq_format: "三位数字，从 001 开始"
+
+# 已注册的文档规则模块 ID
+registered_ids:
+  # === PS 元标准层 ===
+  - module_id: PS-STD-000
+    title: "元标准宪法"
+    path: "docs/01_policies_and_standards/meta/meta-standard-constitution.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-001
+    title: "元数据注册表"
+    path: "docs/01_policies_and_standards/meta/metadata-registry.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-002
+    title: "标准文档模板"
+    path: "docs/01_policies_and_standards/meta/document-structure-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-003
+    title: "行为边界标准"
+    path: "docs/01_policies_and_standards/meta/behavior-boundaries-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-004
+    title: "规则分类与冲突裁决标准"
+    path: "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-006
+    title: "治理度量标准"
+    path: "docs/01_policies_and_standards/meta/governance-metrics-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-009
+    title: "规则治理标准"
+    path: "docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: PS-STD-010
+    title: "规则生命周期标准（已合并至 PS-STD-009）"
+    path: "docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md"
+    doc_type: standard
+    status: merged
+  - module_id: PS-REG-001
+    title: "规则登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-002
+    title: "规则文档主注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-003
+    title: "完整文档清单（SSoT: document-metadata-index.yaml）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+    doc_type: register
+    status: active
+    note: "2026-05-03 R5 审计：governance-rules-master-registry.yaml 同样已废弃（AGENTS.md §1），更新为 document-metadata-index.yaml（当前唯一 SSoT）"
+  - module_id: PS-REG-004
+    title: "Architecture Compliance Contract"
+    path: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-005
+    title: "登记表总索引（Registry Master Index）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-006
+    title: "运行时基础设施登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-007
+    title: "跨模块依赖登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-008
+    title: "脚本健康与清单登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-009
+    title: "AI 风险登记册"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-010
+    title: "知识条目登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml"
+    doc_type: register
+    status: planned
+  - module_id: PS-REG-011
+    title: "AI Session/Agent 登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml"
+    doc_type: register
+    status: planned
+  - module_id: PS-REG-012
+    title: "Frontmatter 字段定义登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-013
+    title: "项目目录登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-014
+    title: "GATE 门禁登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-015
+    title: "KB 决策记录登记表（原 ADR 状态登记表已删除，真源迁移至 KB）"
+    path: "DELETED"
+    doc_type: register
+    status: deleted
+  - module_id: PS-REG-016
+    title: "登记表的登记表（跨登记表一致性契约）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml"
+    doc_type: contract
+    status: active
+  - module_id: PS-REG-017
+    title: "任务卡元层登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-018
+    title: "规则路径目录"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-019
+    title: "声明式契约跟踪登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
+    doc_type: register
+    status: active
+
+  # === GOV 文档治理层 ===
+  - module_id: GOV-DOC-001
+    title: "全系统统一编号规范"
+    path: "docs/01_policies_and_standards/governance/document/unified-numbering-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: GOV-DOC-002
+    title: "目录结构规范"
+    path: "docs/01_policies_and_standards/governance/document/directory-structure-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-003
+    title: "文件命名规范"
+    path: "docs/01_policies_and_standards/governance/document/file-naming-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-004
+    title: "文件路径规范"
+    path: "docs/01_policies_and_standards/governance/document/file-path-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-005
+    title: "编码安全规范"
+    path: "docs/01_policies_and_standards/governance/document/encoding-safety-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-006
+    title: "文档生命周期管理规范"
+    path: "docs/01_policies_and_standards/governance/document/document-lifecycle-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-007
+    title: "文件操作安全门控"
+    path: "docs/01_policies_and_standards/governance/document/file-operation-safety-policy.md"
+    doc_type: standard
+    status: draft
+    note: "2026-05-03 R5 审计：原路径 file-safety-gate.md 不存在，更正为磁盘实际文件名 file-operation-safety-policy.md（与 AGENTS.md §6.8 引用一致）"
+
+  # === GOV AI 治理层 ===
+  - module_id: GOV-AI-001
+    title: "AI 自治权限注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
+    doc_type: register
+    status: active
+  - module_id: GOV-AI-003
+    title: "AI 幻觉自检清单"
+    path: "docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-AI-004
+    title: "双编辑器协作规则"
+    path: "docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-AI-006
+    title: "AI 模型能力矩阵契约"
+    path: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
+    doc_type: contract
+    status: active
+  - module_id: GOV-AI-007
+    title: "Session Log 标准 Schema"
+    path: "docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml"
+    doc_type: schema
+    status: active
+
+  # === GOV 任务治理层 ===
+  - module_id: GOV-TASK-001
+    title: "任务卡规范标准"
+    path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: GOV-TASK-004
+    title: "任务生命周期治理标准"
+    path: "docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md"
+    doc_type: standard
+    status: active
+  - module_id: GOV-TASK-005
+    title: "任务关闭标准"
+    path: "docs/01_policies_and_standards/governance/task/task-closure-standard.md"
+    doc_type: standard
+    status: active
+
+  # === GOV 安全层 ===
+  - module_id: GOV-SEC-001
+    title: "密钥管理策略"
+    path: "docs/01_policies_and_standards/governance/security/secret-management-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-SEC-002
+    title: "访问控制策略"
+    path: "docs/01_policies_and_standards/governance/security/access-control-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-SEC-003
+    title: "安全事件响应策略"
+    path: "docs/01_policies_and_standards/governance/security/security-incident-response-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 合规层 ===
+  - module_id: GOV-CMP-001
+    title: "监管分类法"
+    path: "docs/01_policies_and_standards/governance/compliance/regulatory-taxonomy-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-CMP-002
+    title: "审计追踪策略"
+    path: "docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 架构层 ===
+  - module_id: GOV-ARCH-001
+    title: "架构决策记录（已迁入 KB decisions namespace）"
+    path: "KB:namespace=decisions"
+    doc_type: kb_namespace
+    status: migrated_to_kb
+  - module_id: GOV-ARCH-002
+    title: "架构评审门控"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-ARCH-003
+    title: "架构版本化策略"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 数据层 ===
+  - module_id: GOV-DATA-001
+    title: "数据质量策略"
+    path: "docs/01_policies_and_standards/governance/data/data-quality-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-DATA-002
+    title: "数据血缘策略"
+    path: "docs/01_policies_and_standards/governance/data/data-lineage-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-DATA-003
+    title: "数据保留策略"
+    path: "docs/01_policies_and_standards/governance/data/data-retention-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 模块层 ===
+  - module_id: GOV-MOD-001
+    title: "模块准入门控策略"
+    path: "docs/01_policies_and_standards/governance/module/module-admission-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-002
+    title: "AI模型行为铁律"
+    path: "docs/01_policies_and_standards/governance/module/ai-behavior-iron-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-003
+    title: "模块生命周期策略"
+    path: "docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-004
+    title: "模块接口契约策略"
+    path: "docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-005
+    title: "模块注入6铁律规范"
+    path: "docs/01_policies_and_standards/governance/module/module-injection-rules.yaml"
+    doc_type: policy
+    status: draft
+
+  # === OPS 操作规程层 ===
+  - module_id: OPS-VC-002
+    title: "Vibe Coding Session 状态机规则"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-machine.md"
+    doc_type: operational_rule
+    status: deprecated
+    deprecated_reason: "文件从未创建（幽灵条目）——2026-05-02 审计发现。Session 状态机操作已合并到 vibe-coding-session-state-runbook.md（OPS-VC-004）"
+  - module_id: OPS-VC-004
+    title: "AI 与系统事故响应手册"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-playbook.md"
+    doc_type: operational_rule
+    status: draft
+    note: "合并 OPS-VC-004（emergency-playbook）+ OPS-VC-006（incident-playbook）"
+  - module_id: OPS-VC-005
+    title: "Vibe Coding 会话门禁检查清单"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: OPS-DEV-002
+    title: "架构变更操作手册"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-change-playbook.md"
+    doc_type: operational_rule
+    status: deprecated
+    note: "原 operational/architecture/ 于 2026-05-01 删除，内容待归入 governance/architecture/"
+  - module_id: MOD-INF-003
+    title: "任务卡系统 + 知识库（KMS）蓝图与施工"
+    path: "docs/03_modules/l01_infrastructure/task-card-kms/blueprint.md"
+    doc_type: blueprint
+    status: retired
+    note: "已废弃——内容已被 MOD-INF-006 (任务系统) 和 MOD-KB-001 (知识库) 吸收。物理文件已于2026-05-06标记删除。"
+
+  # === DOM 层域规则层 ===
+  - module_id: DOM-L00-001
+    title: "数据源连接策略"
+    path: "docs/01_policies_and_standards/domains/L00_data_source/governance/data-source-connection-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L00-002
+    title: "连接器入职操作手册"
+    path: "docs/01_policies_and_standards/domains/L00_data_source/operational/connector-onboarding-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L02-001
+    title: "因子质量门控"
+    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor-quality-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L02-002
+    title: "因子入职操作手册"
+    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/operational/factor-onboarding-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L04-001
+    title: "风控限额策略"
+    path: "docs/01_policies_and_standards/domains/L04_risk_management/governance/risk-limits-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L04-002
+    title: "止损配置操作手册"
+    path: "docs/01_policies_and_standards/domains/L04_risk_management/operational/stop-loss-config-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L07-001
+    title: "盘后报告策略"
+    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/post-trade-reporting-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L07-002
+    title: "分析管线操作手册"
+    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md"
+    doc_type: operational_rule
+    status: draft
+
+# 代码模块 ID 注册表
+# population_status: populated — 2026-05-06 AUDIT-04 P1-2 修复：从 EA 树 layers/*.yaml 批量提取 66 个代码模块
+# source: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/*.yaml
+registered_modules:
+  # ── L00 Data Source ──
+  - module_id: MOD-DS-001
+    title: "Data Connectors (ACL)"
+    path: "src/zephyr/l00_data_source/connectors/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L00-002
+    title: "Data Normalizers"
+    path: "src/zephyr/l00_data_source/normalizers/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L00-003
+    title: "Data Storage"
+    path: "src/zephyr/l00_data_source/storage/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L00-004
+    title: "Data Cache"
+    path: "src/zephyr/l00_data_source/cache/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L00-005
+    title: "Data Quality Gate"
+    path: "src/zephyr/l00_data_source/quality/"
+    status: planned
+    priority: P0
+  # ── L01 Infrastructure ──
+  - module_id: MOD-L01-001
+    title: "Configuration Management"
+    path: "src/zephyr/l01_infrastructure/config/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L01-002
+    title: "Structured Logging"
+    path: "src/zephyr/l01_infrastructure/logging/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L01-003
+    title: "Product Exception Definitions"
+    path: "src/zephyr/l01_infrastructure/exceptions/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L01-004
+    title: "Base Runtime Bootstrap"
+    path: "src/zephyr/l01_infrastructure/runtime/"
+    status: planned
+    priority: P1
+  # ── L02 Alpha Factor ──
+  - module_id: MOD-AF-001
+    title: "Factor Implementations (Online)"
+    path: "src/zephyr/l02_alpha_factor/factors/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L02-002
+    title: "Factor Evaluation (Real-time)"
+    path: "src/zephyr/l02_alpha_factor/evaluation/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L02-003
+    title: "Factor Calculation Pipeline"
+    path: "src/zephyr/l02_alpha_factor/pipeline/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L02-004
+    title: "Factor Registry"
+    path: "src/zephyr/l02_alpha_factor/registry/"
+    status: planned
+    priority: P1
+  # ── L03 Signal Generation ──
+  - module_id: MOD-SIG-001
+    title: "Sentiment Analysis"
+    path: "src/zephyr/l03_signal_generation/sentiment/"
+    status: planned
+    priority: P2
+  - module_id: MOD-L03-002
+    title: "Composite Signal Construction"
+    path: "src/zephyr/l03_signal_generation/signals/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L03-003
+    title: "Predictive Model Inference"
+    path: "src/zephyr/l03_signal_generation/predictions/"
+    status: planned
+    priority: P1
+  # ── L04 Risk Management ──
+  - module_id: MOD-L04-001
+    title: "Risk Metrics (Warm)"
+    path: "src/zephyr/l04_risk_management/metrics/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L04-002
+    title: "Position & Exposure Limits"
+    path: "src/zephyr/l04_risk_management/limits/"
+    status: planned
+    priority: P0
+  - module_id: MOD-RISK-001
+    title: "Stop-Loss Rules & Kill Switch"
+    path: "src/zephyr/l04_risk_management/stop_loss/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L04-004
+    title: "Real-Time Risk Monitor"
+    path: "src/zephyr/l04_risk_management/monitor/"
+    status: planned
+    priority: P0
+  # ── L05 Portfolio Construction ──
+  - module_id: MOD-PC-001
+    title: "Portfolio Optimizers"
+    path: "src/zephyr/l05_portfolio_construction/optimization/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L05-002
+    title: "Rebalancing Engine"
+    path: "src/zephyr/l05_portfolio_construction/rebalancing/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L05-003
+    title: "Backtesting Engine"
+    path: "src/zephyr/l05_portfolio_construction/backtest/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L05-004
+    title: "Backtest Performance Metrics"
+    path: "src/zephyr/l05_portfolio_construction/performance/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L05-005
+    title: "Strategic Asset Allocation"
+    path: "src/zephyr/l05_portfolio_construction/strategic/"
+    status: planned
+    priority: P2
+  - module_id: MOD-L05-006
+    title: "Meta-Strategy Router"
+    path: "src/zephyr/l05_portfolio_construction/meta_router/"
+    status: planned
+    priority: P2
+  # ── L06 Trade Execution ──
+  - module_id: MOD-EXE-001
+    title: "Order Management System"
+    path: "src/zephyr/l06_trade_execution/oms/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L06-002
+    title: "Smart Order Router"
+    path: "src/zephyr/l06_trade_execution/sor/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L06-003
+    title: "Pre-Trade Risk Checks"
+    path: "src/zephyr/l06_trade_execution/pre_trade/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L06-004
+    title: "Broker API Adapters (Default)"
+    path: "src/zephyr/l06_trade_execution/adapters/"
+    status: planned
+    priority: P0
+  # ── L07 Post-Trade Analytics ──
+  - module_id: MOD-PTA-001
+    title: "Performance Attribution"
+    path: "src/zephyr/l07_post_trade_analytics/attribution/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L07-002
+    title: "Trade Review & TCA"
+    path: "src/zephyr/l07_post_trade_analytics/review/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L07-003
+    title: "Report Generation"
+    path: "src/zephyr/l07_post_trade_analytics/reports/"
+    status: planned
+    priority: P2
+  # ── L08 Human-AI Interface ──
+  - module_id: MOD-UI-001
+    title: "Command-Line Interface"
+    path: "src/zephyr/l08_human_ai_interface/cli/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L08-002
+    title: "Human-AI Interaction Orchestration"
+    path: "src/zephyr/l08_human_ai_interface/orchestration/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L08-003
+    title: "Outbound Notification Dispatch"
+    path: "src/zephyr/l08_human_ai_interface/notifications/"
+    status: planned
+    priority: P2
+  # ── L09 Research & Innovation ──
+  - module_id: MOD-RES-001
+    title: "Experimental Research Sandbox"
+    path: "src/zephyr/l09_research_innovation/experiments/"
+    status: planned
+    priority: P2
+  - module_id: MOD-L09-002
+    title: "Research Notebooks"
+    path: "src/zephyr/l09_research_innovation/notebooks/"
+    status: planned
+    priority: P2
+  - module_id: MOD-L09-003
+    title: "Concept Prototypes"
+    path: "src/zephyr/l09_research_innovation/prototypes/"
+    status: planned
+    priority: P2
+  # ── L10 Governance & Compliance ──
+  - module_id: MOD-CMP-001
+    title: "Compliance Rule Definitions"
+    path: "src/zephyr/l10_compliance/rules/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L10-002
+    title: "Runtime Compliance Validators"
+    path: "src/zephyr/l10_compliance/validators/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L10-003
+    title: "Audit Trail"
+    path: "src/zephyr/l10_compliance/audit_trail/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L10-004
+    title: "Jurisdiction Policy Packs"
+    path: "src/zephyr/l10_compliance/policies/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L10-005
+    title: "Policy Engine"
+    path: "src/zephyr/l10_compliance/policy_engine/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L10-006
+    title: "AI Security Gateway (AISG)"
+    path: "src/zephyr/l10_compliance/ai_security/"
+    status: planned
+    priority: P0
+  - module_id: MOD-L10-007
+    title: "AISG Non-Gateway Modules"
+    path: "src/zephyr/l10_compliance/ai_security/"
+    status: planned
+    priority: P1
+  # ── L11 ML Platform ──
+  - module_id: MOD-ML-001
+    title: "Model Registry (Read)"
+    path: "src/zephyr/l11_ml_platform/model_registry/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L11-002
+    title: "Model Registry (Write)"
+    path: "src/zephyr/l11_ml_platform/model_registry/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L11-003
+    title: "Training Orchestration"
+    path: "src/zephyr/l11_ml_platform/training/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L11-004
+    title: "Model Serving & Inference (Default)"
+    path: "src/zephyr/l11_ml_platform/serving/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L11-005
+    title: "Offline Model Evaluation"
+    path: "src/zephyr/l11_ml_platform/evaluation/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L11-006
+    title: "Scout Agent (AI Information Scout)"
+    path: "src/zephyr/l11_ml_platform/scout/"
+    status: planned
+    priority: P2
+  # ── L12 System Telemetry ──
+  - module_id: MOD-L12-001
+    title: "Metrics Collection & Aggregation"
+    path: "src/zephyr/l12_system_telemetry/metrics/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L12-002
+    title: "Structured Log Pipeline"
+    path: "src/zephyr/l12_system_telemetry/logs/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L12-003
+    title: "Distributed Tracing"
+    path: "src/zephyr/l12_system_telemetry/traces/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L12-004
+    title: "AI Behavior Observability"
+    path: "src/zephyr/l12_system_telemetry/ai_behavior/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L12-005
+    title: "Telemetry Data Archive"
+    path: "src/zephyr/l12_system_telemetry/archive/"
+    status: planned
+    priority: P1
+  # ── L13 Experiment Pipeline ──
+  - module_id: MOD-EXP-001
+    title: "Shadow Trading Runtime"
+    path: "src/zephyr/l13_experimentation/shadow/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L13-002
+    title: "Champion-Challenger Framework"
+    path: "src/zephyr/l13_experimentation/champion_challenger/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L13-003
+    title: "Auto-Promotion Gate"
+    path: "src/zephyr/l13_experimentation/promotion_gate/"
+    status: planned
+    priority: P1
+  - module_id: MOD-L13-004
+    title: "A/B Experiment Management"
+    path: "src/zephyr/l13_experimentation/ab_testing/"
+    status: planned
+    priority: P2
+  # ── Shared Contracts & Foundations ──
+  - module_id: MOD-SHARED-001
+    title: "Inter-Layer Data Contracts"
+    path: "src/zephyr/shared/contracts/"
+    status: planned
+    priority: P0
+  - module_id: MOD-SHARED-002
+    title: "Runtime Plane Tag"
+    path: "src/zephyr/shared/contracts/runtime_plane_tag.py"
+    status: planned
+    priority: P1
+  - module_id: MOD-SHARED-003
+    title: "Pure Utility Functions"
+    path: "src/zephyr/shared/utils/"
+    status: planned
+    priority: P1
+  - module_id: MOD-SHARED-004
+    title: "Base Exception Hierarchy"
+    path: "src/zephyr/shared/exceptions/"
+    status: planned
+    priority: P1
+  - module_id: MOD-SHARED-005
+    title: "Shared Type Definitions"
+    path: "src/zephyr/shared/types/"
+    status: planned
+    priority: P1
+
+# 保留 ID 段（预留给特殊用途）
+reserved_ranges:
+  - range: "MOD-SYS-001 ~ MOD-SYS-099"
+    purpose: "系统级跨层模块"
+  - range: "MOD-EXT-001 ~ MOD-EXT-099"
+    purpose: "外部集成模块"

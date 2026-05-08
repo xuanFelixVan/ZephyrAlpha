@@ -37,7 +37,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_CODE
+from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -130,7 +130,7 @@ def main() -> None:
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
 
 if __name__ == "__main__":

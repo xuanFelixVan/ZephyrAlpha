@@ -8,7 +8,7 @@
 ZephyrAlpha — L02 Alpha Factor Layer
 OCP Extension Point: FactorBase + FactorRegistry
 
-锁定文件（🔒）：任何修改必须先建 ADR。
+锁定文件（🔒）：任何修改必须先建 KB 决策记录。
 参见：adr-0004-ocp-extension-points.md §4（决策范围）
 
 设计原则（Open-Closed Principle）：

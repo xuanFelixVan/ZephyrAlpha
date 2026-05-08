@@ -1,0 +1,13 @@
+"""依赖无环测试 — 验证 governance/ 下有向图无循环."""
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+
+
+def test_dependency_graph_acyclic():
+    from scripts.governance.dependency_graph import build_dependency_graph, has_cycle
+    graph = build_dependency_graph()
+    cyclic, path = has_cycle(graph)
+    assert not cyclic, f"循环依赖检测到: {path}"

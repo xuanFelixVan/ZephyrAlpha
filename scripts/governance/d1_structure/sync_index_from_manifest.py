@@ -26,6 +26,7 @@ warn_only: true
 """
 
 
+import os
 import re
 import sys
 from argparse import ArgumentParser
@@ -36,7 +37,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import SCRIPTS_DIR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, SCRIPTS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -88,6 +89,7 @@ _ROOT_SCRIPTS = [
 ]
 
 def _load_manifest() -> list[dict]:
+    """_load_manifest implementation."""
     import yaml
 
     with open(MANIFEST, encoding="utf-8") as f:
@@ -95,6 +97,7 @@ def _load_manifest() -> list[dict]:
     return list(data.get("scripts", []))
 
 def _counts_per_dir(manifest: list[dict]) -> dict[str, int]:
+    """_counts_per_dir implementation."""
     counts: dict[str, int] = {d: 0 for d in _DIR_ORDER}
     root_count = 0
     for entry in manifest:
@@ -107,6 +110,7 @@ def _counts_per_dir(manifest: list[dict]) -> dict[str, int]:
     return counts, root_count
 
 def _generate_tree_lines(manifest: list[dict]) -> list[str]:
+    """_generate_tree_lines implementation."""
     counts, _root_count = _counts_per_dir(manifest)
     total = sum(counts.values()) + _root_count
 
@@ -139,6 +143,7 @@ def _generate_tree_lines(manifest: list[dict]) -> list[str]:
     return lines
 
 def _replace_tree_section(current: str, tree_lines: list[str]) -> str:
+    """_replace_tree_section implementation."""
     tree_block = "\n".join(tree_lines) + "\n"
 
     if TREE_START_MARKER in current and TREE_END_MARKER in current:
@@ -157,9 +162,10 @@ def _replace_tree_section(current: str, tree_lines: list[str]) -> str:
             return current[: match.start()] + tree_block + current[match.end() :]
         else:
             print("ERROR: 找不到 index.md 中的树形代码块", file=sys.stderr)
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
 
 def _generate_coverage_lines(manifest: list[dict]) -> list[str]:
+    """_generate_coverage_lines implementation."""
     active_dims = set()
     for entry in manifest:
         for d in entry.get("dimensions", []):
@@ -194,6 +200,7 @@ def _generate_coverage_lines(manifest: list[dict]) -> list[str]:
     return lines
 
 def _replace_coverage_section(current: str, coverage_lines: list[str]) -> str:
+    """_replace_coverage_section implementation."""
     coverage_block = "\n".join(coverage_lines) + "\n"
 
     if COVERAGE_START_MARKER in current and COVERAGE_END_MARKER in current:
@@ -204,7 +211,7 @@ def _replace_coverage_section(current: str, coverage_lines: list[str]) -> str:
         return pattern.sub(coverage_block, current, count=1)
     else:
         print("ERROR: 找不到 index.md 中的 COVERAGE-AUTO 标记", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
 def sync(manifest: list[dict], check_only: bool = False) -> int:
     """同步索引."""
@@ -220,18 +227,26 @@ def sync(manifest: list[dict], check_only: bool = False) -> int:
 
     if updated == original:
         print("OK: index.md 已与 manifest 一致，无漂移")
-        return 0
+        return EXIT_PASS
 
     if check_only:
         print("DRIFT: index.md 与 manifest (SSoT) 不一致！")
         print("       请运行 sync_index_from_manifest.py 修复")
-        return 1
+        return EXIT_FINDINGS
 
-    with open(INDEX_MD, "w", encoding="utf-8") as f:
-        f.write(updated)
-
+    tmp_path = f"{INDEX_MD}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            f.write(updated)
+    
+        os.replace(tmp_path, INDEX_MD)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print("OK: index.md 已从 manifest SSoT 同步更新")
-    return 0
+    return EXIT_PASS
     """sync."""
 
 def main() -> None:
@@ -249,7 +264,7 @@ def main() -> None:
         manifest = _load_manifest()
     except Exception as e:
         print(f"ERROR: 无法加载 manifest: {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     code = sync(manifest, check_only=args.check)
     sys.exit(code)

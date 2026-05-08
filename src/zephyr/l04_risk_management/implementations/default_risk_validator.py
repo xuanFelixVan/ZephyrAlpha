@@ -80,7 +80,7 @@ class DefaultRiskValidator(RiskValidator):
                 severity="HALT",
             ))
 
-        post_trade_weight = current_holdings.get(symbol, 0.0) + target_weight
+        post_trade_weight = Decimal(str(current_holdings.get(symbol, 0.0))) + Decimal(str(target_weight))
         if abs(post_trade_weight) > effective_single * 1.05:
             violations.append(ViolationDetail(
                 constraint=ViolatedConstraint.POSITION_LIMIT,

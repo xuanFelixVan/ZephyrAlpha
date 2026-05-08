@@ -1,0 +1,32 @@
+---
+module_id: KE-module_blu-7_4_ai______v2_0_0-005
+title: 7.4 AI 自治权限（v2.0.0 完整版）
+category: module_blueprint
+---
+
+# 7.4 AI 自治权限（v2.0.0 完整版）
+
+7.4 AI 自治权限（v2.0.0 完整版）
+
+| 组件 | 权限 | Provenance | v2.0.0 变更 |
+|------|------|-----------|------------|
+| `ai_audit_guard.py` 自身 | Immutable Core | Owner 审批 + ADR | — |
+| `audit_rules.yaml` | Human-Gated | who/when/why | — |
+| `capacity_slo.yaml` | Human-Gated | who/when/why | — |
+| `governance_loop.py` | AI-Modifiable | 每次执行写指标 | — |
+| `ai_provenance` 表 | Immutable Core | 只追加 + hash 链 | — |
+| `capacity_metrics` 表 | AI-Modifiable | 7 天 TTL | — |
+| `error_budget_tracker.py` | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） | 阈值变更需 Owner 审批 | **v2.0.0 新增** |
+| `error_budget` 表 | AI-Modifiable | 7 天 TTL | **v2.0.0 新增** |
+| `kill_switch.py` | Human-Gated | 触发/恢复需 Owner 确认 | **v2.0.0 新增** |
+| `sandbox_executor.py` | Human-Gated | 沙箱策略变更需 Owner 审批 | **v2.0.0 新增** |
+| `degradation_chain.py` | Human-Gated（链定义）/ AI-Modifiable（链选择） | 链定义变更需 Owner 审批 | **v2.0.0 新增** |
+| `degradation_chain.yaml` | Human-Gated | who/when/why | **v2.0.0 新增** |
+| `reasoning_spans.py` | AI-Modifiable | 自动埋点 | **v2.0.0 新增** |
+| `cost_estimator.py` | AI-Modifiable | 预估结果记录 | **v2.0.0 新增** |
+| `semantic_cache.py` | AI-Modifiable | 缓存命中率记录 | **v2.0.0 新增** |
+| `token_budget_usage` 表 | AI-Modifiable | 7 天 TTL | **v2.0.0 新增** |
+
+> 完整权限以 `_registry/catalogs/ai-autonomy-authority-registry.md` 为唯一真源。
+
+---

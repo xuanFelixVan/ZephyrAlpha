@@ -1,0 +1,24 @@
+cases:
+  - case_id: "FN-ARCH-001"
+    description: "循环导入风险——模块A导入B且B导入A"
+    expected_detection: "architecture"
+    severity: "high"
+    input_file: "test_fixtures/fn_arch_001.py"
+    expected_finding_count: 1
+    false_negative_if: "架构扫描脚本未检测出循环导入"
+
+  - case_id: "FN-ARCH-002"
+    description: "孤儿文件——未被任何模块引用"
+    expected_detection: "architecture"
+    severity: "medium"
+    input_file: "test_fixtures/fn_arch_002.py"
+    expected_finding_count: 1
+    false_negative_if: "架构扫描脚本未检测出孤儿文件"
+
+  - case_id: "FN-ARCH-003"
+    description: "调用链断裂——引用不存在的模块路径"
+    expected_detection: "architecture"
+    severity: "high"
+    input_file: "test_fixtures/fn_arch_003.py"
+    expected_finding_count: 1
+    false_negative_if: "架构扫描脚本未检测出LoadPath断裂"

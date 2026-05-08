@@ -16,6 +16,7 @@ SSoT: cross-layer-contracts.yaml + invariants.yaml + architecture-model/layers/*
 
 from __future__ import annotations
 
+import os
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -90,10 +91,18 @@ def main() -> None:
     _extract_arch_guard_manifest(context)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(
+    tmp_path = f"{OUTPUT_PATH}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(
         json.dumps(context, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+        os.replace(tmp_path, OUTPUT_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
     print(f"[ArchContext] 预编译架构上下文已生成 → {OUTPUT_PATH.relative_to(REPO_ROOT)}")
     print(f"  - P0 契约: {len(context.get('contracts', {}).get('p0', []))} 条")

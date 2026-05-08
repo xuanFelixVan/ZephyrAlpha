@@ -28,6 +28,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import sys
 from datetime import UTC, datetime, timedelta
@@ -43,6 +44,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load() -> dict:
+    """_load implementation."""
     if not _STATE_PATH.exists():
         return {"scripts": {}}
     with open(_STATE_PATH, encoding="utf-8") as f:
@@ -51,18 +53,29 @@ def _load() -> dict:
 
 
 def _save(data: dict) -> None:
+    """_save implementation."""
     _STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_STATE_PATH, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-
+    tmp_path = f"{_STATE_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+    
+        os.replace(tmp_path, _STATE_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def get_retirement_status(script_name: str) -> str:
+    """get_retirement_status implementation."""
     data = _load()
     info = data.get("scripts", {}).get(script_name, {})
     return info.get("status", "active")
 
 
 def deprecate_script(script_name: str, reason: str, replaced_by: str = "") -> dict:
+    """deprecate_script implementation."""
     data = _load()
     now = datetime.now(UTC)
     data.setdefault("scripts", {})[script_name] = {
@@ -77,6 +90,7 @@ def deprecate_script(script_name: str, reason: str, replaced_by: str = "") -> di
 
 
 def retire_script(script_name: str) -> dict:
+    """retire_script implementation."""
     data = _load()
     scripts = data.setdefault("scripts", {})
     if script_name not in scripts:
@@ -88,6 +102,7 @@ def retire_script(script_name: str) -> dict:
 
 
 def unretire_script(script_name: str) -> dict:
+    """unretire_script implementation."""
     data = _load()
     data.setdefault("scripts", {}).pop(script_name, None)
     _save(data)
@@ -95,6 +110,7 @@ def unretire_script(script_name: str) -> dict:
 
 
 def list_retired() -> None:
+    """list_retired implementation."""
     data = _load()
     scripts = data.get("scripts", {})
     if not scripts:
@@ -110,6 +126,7 @@ def list_retired() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="脚本退役/废弃管理")
     parser.add_argument("--list", action="store_true", help="列出退役/废弃脚本")
     parser.add_argument("--deprecate", type=str, help="废弃脚本（30天过渡期后退役）")

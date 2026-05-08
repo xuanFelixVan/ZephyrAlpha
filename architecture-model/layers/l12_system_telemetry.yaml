@@ -6,8 +6,8 @@ partition:
   layer_position: 12
   runtime_plane: warm
   status: implemented
-  note: '全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档， 为 L00-L11 + L13 所有业务层提供可观测性数据底座。
-    归入 C 轨（业务脊柱层内子系统），与 5 大 AI 核心服务不同。
+  note: '全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档， �?L00-L11 + L13 所有业务层提供可观测性数据底座�?
+    归入 C 轨（业务脊柱层内子系统），与 5 �?AI 核心服务不同�?
 
     '
 modules:
@@ -18,14 +18,14 @@ modules:
   status: implemented
   priority: P0
   runtime_plane: warm
-  description: 根包级遥测工具（契约指标等），与子目录流式模块并列
+  description: 根包级遥测工具（契约指标等），与子目录流式模块并�?
   files:
   - contract_metrics.py
   interfaces:
   - contract_id: CT-TELE-FLE-001
     role: producer
-    description: 向 FLE 输出可消费遥测序列（MOD-MASTER-001 2.1 总表）
-  adr_ref: []
+    description: �?FLE 输出可消费遥测序列（MOD-MASTER-001 2.1 总表�?
+  kb_ref: []
 - id: l12-ai-behavior
   module_id: MOD-INF-015
   name: AI Behavior Telemetry
@@ -33,11 +33,11 @@ modules:
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: AI 行为遥测 Phase 1（event_sink）
+  description: AI 行为遥测 Phase 1（event_sink�?
   files:
   - event_sink.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 - id: l12-metrics
   module_id: MOD-INF-015
   name: Metrics Stream
@@ -45,11 +45,11 @@ modules:
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 指标流（blueprint_metrics instrumentation）
+  description: 指标流（blueprint_metrics instrumentation�?
   files:
   - blueprint_metrics.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 - id: l12-logs
   module_id: MOD-INF-015
   name: Logs Stream
@@ -57,11 +57,11 @@ modules:
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 结构化日志 JSONL（structured_sink）
+  description: 结构化日�?JSONL（structured_sink�?
   files:
   - structured_sink.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 - id: l12-traces
   module_id: MOD-INF-015
   name: Traces Stream
@@ -69,11 +69,11 @@ modules:
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 追踪占位（span_stub / 后续 OTEL）
+  description: 追踪占位（span_stub / 后续 OTEL�?
   files:
   - span_stub.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 - id: l12-archive
   module_id: MOD-INF-015
   name: Archive
@@ -81,11 +81,11 @@ modules:
   status: implemented
   priority: P2
   runtime_plane: cold
-  description: 冷归档占位（cold_stub）
+  description: 冷归档占位（cold_stub�?
   files:
   - cold_stub.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 summary:
   total: 6
   by_status:

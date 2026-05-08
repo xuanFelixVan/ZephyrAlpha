@@ -1,0 +1,45 @@
+"""LLM Provider Integrity — v0.15.0 R217
+
+Blindspot: LLM provider may return compromised/manipulated responses; FLE assumes honest provider.
+Risk: R217 — Man-in-the-middle poisons LLM API response; FLE executes poisoned diagnosis.
+
+Mitigation: Multi-provider cross-validation of critical LLM responses.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+import hashlib
+
+
+@dataclass
+class ProviderResponse:
+    provider: str
+    query_hash: str
+    response_hash: str
+    timestamp: float = 0.0
+
+
+@dataclass
+class LLMProviderIntegrity:
+    responses: dict[str, list[ProviderResponse]] = field(default_factory=dict)
+    min_providers: int = 2
+    hash_match_required: float = 0.5
+
+    def record(self, query: str, response: str, provider: str) -> ProviderResponse:
+        q_hash = hashlib.sha256(query.encode()).hexdigest()[:12]
+        r_hash = hashlib.sha256(response.encode()).hexdigest()[:12]
+        pr = ProviderResponse(provider=provider, query_hash=q_hash, response_hash=r_hash)
+        key = q_hash
+        if key not in self.responses:
+            self.responses[key] = []
+        self.responses[key].append(pr)
+        return pr
+
+    def consensus_ok(self, query: str) -> bool:
+        q_hash = hashlib.sha256(query.encode()).hexdigest()[:12]
+        records = self.responses.get(q_hash, [])
+        if len(records) < self.min_providers:
+            return False
+        hashes = [r.response_hash for r in records]
+        majority_count = max(hashes.count(h) for h in set(hashes))
+        return majority_count / len(hashes) >= self.hash_match_required

@@ -27,8 +27,8 @@ from enum import Enum
 from typing import Any, Callable, Optional
 
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.shared.contracts.fill import Fill
-from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.execution.fill import Fill
+from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 
 _logger = logging.getLogger(__name__)
 

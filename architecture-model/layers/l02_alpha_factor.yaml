@@ -19,7 +19,7 @@ modules:
   - base.py
   - factor_base.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 summary:
   total: 1
   by_status:

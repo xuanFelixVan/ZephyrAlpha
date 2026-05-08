@@ -1,0 +1,69 @@
+# evolution_policy 受控词表
+# ZephyrAlpha 2.0 文件演进策略唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 evolution_policy 字段的所有合法值（3 种）。
+# 用于指导文件的变更策略和版本演进规则。
+#
+# 对标标准：
+#   - PS-STD-001 §10.11：文件演进策略
+#   - 语义化版本控制 (SemVer)：major/minor/patch 与演进策略的映射
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-016
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "evolution_policy 受控词表"
+status: active
+vocabulary_name: evolution_policy
+total_values: 3
+source: "PS-STD-001 §10.11"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.11"
+    why: "evolution_policy 受控词表定义真源"
+
+values:
+  - value: frozen
+    definition: "冻结——不可演进，等效删除"
+    ai_consumption: "AI 不得修改 frozen 文件的任何内容。发现错误时须报告 Owner，由 Owner 决定是否解冻。"
+    ai_keywords: ["冻结", "frozen", "不可变", "禁止修改", "锁定"]
+    allowed_operations: ["读取", "引用"]
+    semver_mapping: "不允许任何版本变更"
+    frontmatter_color: "🔴"
+
+  - value: extendable
+    definition: "可扩展——可新增内容，不删改已有内容"
+    ai_consumption: "AI 可以向 extendable 文件追加新内容，但不得修改或删除已有内容。版本号按 minor 递增。"
+    ai_keywords: ["可扩展", "extendable", "追加", "新增", "兼容"]
+    allowed_operations: ["读取", "引用", "追加内容"]
+    semver_mapping: "minor +1（新增功能/内容，向后兼容）"
+    frontmatter_color: "🟡"
+
+  - value: rewritable
+    definition: "可重写——可增删改任意内容"
+    ai_consumption: "AI 可以自由修改 rewritable 文件的任何内容，但须记录变更原因。版本号按 major/minor/patch 规则递增。"
+    ai_keywords: ["可重写", "rewritable", "修改", "删除", "自由编辑"]
+    allowed_operations: ["读取", "引用", "编辑", "删除", "重写"]
+    semver_mapping: "major/minor/patch 按变更性质递增"
+    frontmatter_color: "🟢"
+
+transition_rules:
+  - from: rewritable
+    to: extendable
+    condition: "文件内容趋于稳定，进入维护期"
+    approval: "Owner 批准"
+
+  - from: extendable
+    to: frozen
+    condition: "文件成为系统基石，任何变更都有高风险"
+    approval: "Owner 批准 + KB 决策记录"
+
+  - from: frozen
+    to: extendable
+    condition: "发现重大错误必须修正（极少发生）"
+    approval: "Owner 批准 + KB 决策记录 + 双签"

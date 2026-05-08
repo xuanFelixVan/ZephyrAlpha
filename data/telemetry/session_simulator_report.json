@@ -25,23 +25,52 @@
       "MOD-KB-001": 1,
       "MOD-INF-016": 1
     },
-    "started_at": "2026-05-06T08:30:14.845163+00:00",
-    "finished_at": "2026-05-06T08:30:14.858235+00:00"
+    "started_at": "2026-05-08T12:49:35.073908+00:00",
+    "finished_at": "2026-05-08T12:49:35.088273+00:00"
   },
   "compliance": {
     "total_scenarios": 30,
-    "rejects": 18,
-    "passes": 12,
+    "rejects": 30,
+    "passes": 0,
     "violations": [
+      {
+        "session_id": "sim-001",
+        "task": "新增 G0 任务准入门禁——检查 TaskCard 必填字段",
+        "expected": [
+          "MOD-INF-007"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-002",
+        "task": "修改熔断器 threshold 从 5 改到 3",
+        "expected": [
+          "MOD-INF-007"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-003",
+        "task": "G4 Sandbox 门禁增加 sandbox_profile 校验逻辑",
+        "expected": [
+          "MOD-INF-005",
+          "MOD-INF-007"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
       {
         "session_id": "sim-004",
         "task": "修复 gate_engine 的 YAML 解析 bug——G1 ingest 返回空 checks",
         "expected": [
           "MOD-INF-007"
         ],
-        "actually_read": [
-          "MOD-INF-005"
-        ],
+        "actually_read": [],
         "level": "partial",
         "phase2_verdict": "REJECT"
       },
@@ -56,6 +85,48 @@
         "phase2_verdict": "REJECT"
       },
       {
+        "session_id": "sim-006",
+        "task": "优化 context 压缩策略——DocCompressor 丢太多 schema 字段了",
+        "expected": [
+          "MOD-INF-008"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-007",
+        "task": "Context Engine 的 validate 阶段加 Token 预算校验",
+        "expected": [
+          "MOD-INF-001",
+          "MOD-INF-008"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-008",
+        "task": "修复 context_hash 碰撞导致 inject 阶段跳过",
+        "expected": [
+          "MOD-INF-008"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-009",
+        "task": "Context Engine 的 build 阶段改用新的 embedding model",
+        "expected": [
+          "MOD-INF-008",
+          "MOD-INF-011"
+        ],
+        "actually_read": [],
+        "level": "partial",
+        "phase2_verdict": "REJECT"
+      },
+      {
         "session_id": "sim-010",
         "task": "Context Engine 初始化时读不到 config 文件",
         "expected": [
@@ -66,14 +137,45 @@
         "phase2_verdict": "REJECT"
       },
       {
+        "session_id": "sim-011",
+        "task": "M1-M5 A 区管线新增模型选择 fallback 链条",
+        "expected": [
+          "MOD-INF-009",
+          "MOD-MASTER-001"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-012",
+        "task": "Pipeline Router 增加 GLM-5.1 模型入口——任务类型→模型映射表更新",
+        "expected": [
+          "MOD-INF-009",
+          "MOD-INF-014"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-013",
+        "task": "trigger_router 的 blueprint_lookup 触发类型接入 MCP",
+        "expected": [
+          "MOD-INF-009",
+          "MOD-INF-013"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
         "session_id": "sim-014",
         "task": "Pipeline 的 dispatch 阶段超时后没有回退到 A 区",
         "expected": [
           "MOD-INF-009"
         ],
-        "actually_read": [
-          "MOD-INF-006"
-        ],
+        "actually_read": [],
         "level": "partial",
         "phase2_verdict": "REJECT"
       },
@@ -85,6 +187,27 @@
         ],
         "actually_read": [],
         "level": "none",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-016",
+        "task": "FLE EMA 异常检测阈值从 2σ 调整到 2.5σ",
+        "expected": [
+          "MOD-INF-010"
+        ],
+        "actually_read": [],
+        "level": "full",
+        "phase2_verdict": "REJECT"
+      },
+      {
+        "session_id": "sim-017",
+        "task": "FLE 的 detect→dispatch 链路增加 anomaly_id 去重",
+        "expected": [
+          "MOD-INF-010",
+          "MOD-INF-012"
+        ],
+        "actually_read": [],
+        "level": "full",
         "phase2_verdict": "REJECT"
       },
       {
@@ -228,6 +351,6 @@
         "phase2_verdict": "REJECT"
       }
     ],
-    "reject_rate": 60.0
+    "reject_rate": 100.0
   }
 }

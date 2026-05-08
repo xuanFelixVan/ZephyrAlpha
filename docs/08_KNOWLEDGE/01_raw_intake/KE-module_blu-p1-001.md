@@ -1,0 +1,18 @@
+---
+module_id: KE-module_blu-p1-001
+title: 🟡 追加 P1 高危级
+category: module_blueprint
+---
+
+# 🟡 追加 P1 高危级
+
+🟡 追加 P1 高危级
+
+| ID | 来源领域 | 盲点 | 问题描述 | 补充方案 |
+|:--:|------|------|---------|---------|
+| **B60** | LLM 经济学 — Token 会计 | **回滚消耗 LLM Token 未纳入预算——仅算 CPU/I/O 不理 Token 成本** | B55 回滚预算仅覆盖 CPU/I/O/Disk 资源。但在氛围编程下，最大的回滚成本是 Token：①context restoration prompt（~500 tokens）②AI 重新阅读文件（~2000 tokens）③重新理解上下文（~1500 tokens）。10 次回滚/天 = 40000 tokens = $0.60-$2。一年 token 浪费可能上千元。 | `rollback_budget` 增加 `token_cost_estimate` 字段。每次回滚记录实际消耗的 token 数（由 Agent 层的 token counter 反馈）。`rollback_dashboard.md` 展示"Token 成本"，`zephyr rollback stats` 显示 `total_tokens_wasted`。预算增加 `max_daily_tokens: 100000` |
+| **B61** | 高可用架构 — 温备热切 (Warm Standby) | **回滚需等 git revert 执行——无瞬时恢复能力，RTO > 5s** | 蓝图所有回滚都是"执行 git revert → 等待 → 验证"。即使是 full_revert，最快也需要 0.5-2 秒。但在某些场景下（如 Agent 正在运行任务中触发了回滚），这 2 秒内 Agent 可能已经产生了新的破坏。对标金融系统：热备系统可以在 <50ms 接管 | `warm_standby.py`：维护一个并行 `git worktree`（`/tmp/zephyr-warm-standby`），始终指向最近一个 G0 验证通过的 commit。开始回滚时：①立即将 Agent 切换为读 warm_standby 副本（<100ms）②后台执行实际回滚 + 全量验证③验证通过后更新 warm_standby → Agent 切回主仓库。RTO 从 2s 降至 <100ms |
+| **B62** | 版本控制 — 回滚目标语义化 | **Commit SHA 作为唯一回滚目标——缺乏"业务语义"层** | 蓝图所有回滚都是"回到 commit {sha}"。但 commit SHA 是技术标识符，不是业务标识符。1 人运维面对 `git log --oneline` 的 500 条记录，找到"回滚到 '重构前' 那个版本"几乎不可能。对标：K8s 有 `CHANGE-CAUSE` annotation，Terraform 有 workspace tag | 回滚系统中引入 **Rollback Tag**：①按 TASK 边界自动打 tag `rollback/task-{id}/start` + `rollback/task-{id}/end`②语义化 tag：`rollback/before-refactor` / `rollback/after-migration`。`git tag | grep rollback/` 列出所有可回滚目标。`zephyr rollback preview --tag before-refactor` 预览语义化回滚目标 |
+| **B63** | Git 拓扑 — 分支操作回滚 | **回滚仅能 revert commit——无法回滚分支创建/合并/删除操作** | 蓝图所有回滚命令都是 `git revert`（撤销 commit 的代码变更）。但如果 AI 的操作是：创建一个 feature 分支 → 合并到 main → 删除分支。此时 `git revert` 只能撤销 merge 的代码变更，无法还原被删除的分支。如果该分支上有重要的中间提交，这些提交随着分支删除而失去了引用 | `rollback_executor` 增加 `topology_rollback` 操作：①分支创建回滚 → `git branch -D {branch}`②分支合并回滚 → `git revert -m 1 {merge_commit}` 或 `git reset --hard HEAD~1`③分支删除回滚 → 从 `git reflog` 恢复 `git branch {branch} {last_commit_sha}`。每次拓扑变更时记录 `topology_change_log` |
+| **B64** | Git 基础设施 — 配置污染 | **AI 修改 `.git/config` / hooks / `.gitattributes`——回滚代码不回滚 git 基础设施** | `git revert` 只回滚 tracked 文件。`.git/config`、`.git/hooks/pre-commit`、`.git/info/attributes` 不在 working tree 中——它们在 `.git/` 目录内。AI（在氛围编程模式下）可能被要求"修改 pre-commit hook"并直接写到 `.git/hooks/`。回滚不来 | `git_infra_snapshot`：每次 commit 时，对 `.git/config` + `.git/hooks/` + `.git/info/` 做备份到 `data/rollback/git_infra/{sha}/`。回滚时比较当前 git infra 与备份 → 不一致则恢复。`git_infra_monitor.py` 用 `inotify` 监听 `.git/hooks/` 和 `.git/config` 变化 |
+| **B65** | 密码学 — GPG 签名链断裂 | **git revert 产生无签名 commit——破坏签名链的完整可验证性** | 如果项目启用了 `commit.gpgSign = true`（对所有 commit 做 GPG 签名），`git revert` 默认**不**产生签名 commit（除非显式 `--gpg-sign`）。这意味着回滚产生的 revert commit 是无签名的——破坏了整个 commit 历史中"每个 commit 都可验证"的签名链。在 SOX 合规或需外部审计的场景下不可接受 | `rollback_executor` 在 preflight 中检测 `git config commit.gpgSign` → true 时，`git revert` 自动传 `--gpg-sign`（如有 key，或 `--no-gpg-sign` 配合 `commit.gpgSign` 的 countermand 语义由蓝图配置决定）。底线：revert commit 的签名状态必须与项目签名策略一

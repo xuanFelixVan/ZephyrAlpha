@@ -1,0 +1,79 @@
+# category 受控词表
+# ZephyrAlpha 2.0 知识条目内容类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 category 字段的所有合法值（10 种）。
+# 用于 knowledge-article-registry.yaml 和 KMS 知识条目分类。
+#
+# 对标标准：
+#   - PS-STD-001 §9.1：知识条目内容类型
+#   - 量化金融行业标准：策略/因子/风控/组合/执行五域模型
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-013
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "category 受控词表"
+status: active
+vocabulary_name: category
+total_values: 10
+source: "PS-STD-001 §9.1"
+depends_on:
+  - target: PS-STD-001
+    at: "§9.1"
+    why: "category 受控词表定义真源"
+
+values:
+  - value: blueprint_decision
+    definition: "蓝图决策——架构级别的设计选择与论证"
+    ai_consumption: "AI 在引用蓝图决策时须同时引用关联的 KB 决策记录编号。"
+    ai_keywords: ["蓝图", "架构决策", "KB决策记录", "设计选择"]
+
+  - value: strategy
+    definition: "策略——交易/投资策略定义"
+    ai_consumption: "策略类知识条目须标注回测状态和实盘状态。"
+    ai_keywords: ["策略", "交易", "投资", "alpha"]
+
+  - value: factor
+    definition: "因子——Alpha 因子定义与回测"
+    ai_consumption: "因子类条目须关联因子质量报告和夏普比率。"
+    ai_keywords: ["因子", "alpha", "回测", "特征"]
+
+  - value: best_practice
+    definition: "最佳实践——经验总结与编码规范"
+    ai_consumption: "最佳实践应优先被 AI 在代码生成时引用。"
+    ai_keywords: ["最佳实践", "规范", "经验", "编码标准"]
+
+  - value: lesson_learned
+    definition: "经验教训——错误记录与改进措施"
+    ai_consumption: "经验教训条目须包含根本原因分析（5 Whys）。"
+    ai_keywords: ["教训", "错误", "改进", "复盘"]
+
+  - value: architecture
+    definition: "架构——系统设计文档"
+    ai_consumption: "架构条目须与 architecture-model/layers/ 中的模块定义对齐。"
+    ai_keywords: ["架构", "系统设计", "模块", "接口"]
+
+  - value: risk_control
+    definition: "风控——风险规则与熔断机制"
+    ai_consumption: "风控条目须标注风险等级（H/M/L）和触发条件。"
+    ai_keywords: ["风控", "风险", "熔断", "限额"]
+
+  - value: data_governance
+    definition: "数据治理——数据标准与质量规则"
+    ai_consumption: "数据治理条目须关联数据血缘和数据质量指标。"
+    ai_keywords: ["数据治理", "数据质量", "血缘", "标准"]
+
+  - value: operations
+    definition: "运维——部署/监控/告警"
+    ai_consumption: "运维条目须包含 runbook 链接和值班轮换表。"
+    ai_keywords: ["运维", "部署", "监控", "告警", "SRE"]
+
+  - value: compliance
+    definition: "合规——监管法律法规映射"
+    ai_consumption: "合规条目须标注适用的监管框架（如 SR-11-7、MiFID-II）。"
+    ai_keywords: ["合规", "监管", "法律", "SR-11-7", "MiFID-II"]

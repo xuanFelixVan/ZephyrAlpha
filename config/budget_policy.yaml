@@ -1,0 +1,106 @@
+# ZephyrAlpha — Budget Policy as Code SSoT
+# 模块：MOD-INF-024 Budget Enforcer v0.7.0
+# 蓝图：docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md §2.1
+# 维护：本文件是预算策略的唯一真源——任何 AI agent 修改本文件需 Ed25519 签名（v0.7.0 Trust Ring）
+
+schema_version: "1.0.0"
+policy_version: "0.1.0-seed"
+last_updated: "2026-05-08"
+maintainer: "ZephyrAlpha-Owner"
+
+budget_levels:
+  global_level:
+    description: "全局周预算"
+    soft_limit: 500000
+    hard_limit: 750000
+    action_on_soft_exceed: "全局通知 + 建议暂停非关键任务"
+    action_on_hard_exceed: "全局只读模式"
+    reset: "每周一 00:00 UTC"
+    borrow_pool: true
+
+  session_level:
+    description: "单次会话预算"
+    soft_limit: 8000
+    hard_limit: 12000
+    action_on_soft_exceed: "WARNING + 建议 /compact"
+    action_on_hard_exceed: "降级到最小上下文"
+    reset: "会话结束"
+
+  task_level:
+    description: "单任务预算"
+    soft_limit: 4000
+    hard_limit: 6000
+    action_on_soft_exceed: "暂停任务 + 建议拆分"
+    action_on_hard_exceed: "暂停任务 + 委托给新会话"
+    pool_share: true
+
+  turn_level:
+    description: "单轮 ReAct 迭代预算"
+    soft_limit: 1500
+    hard_limit: 2500
+    action_on_soft_exceed: "检查循环指纹 + 建议简化"
+    action_on_hard_exceed: "强制终止本轮 + 循环指纹记录"
+
+  request_level:
+    description: "单次 API 调用预算"
+    input_limit: 32000
+    output_limit: 4096
+    reasoning_limit: 8000
+    tool_calls_limit: 10
+    action_on_exceed: "截断输出 + 建议拆分请求"
+
+time_budget:
+  request_timeout: 120
+  turn_timeout: 300
+  task_timeout: 3600
+  session_timeout: 28800
+
+model_tiers:
+  tier_0_free:
+    description: "免费模型——默认首选"
+    models: ["glm-4.5-free", "deepseek-chat-free"]
+    max_complexity: "simple"
+  tier_1_cheap:
+    description: "低成本付费模型"
+    max_complexity: "moderate"
+  tier_2_standard:
+    description: "标准模型"
+    max_complexity: "complex"
+  tier_3_premium:
+    description: "高级模型——需 Owner 审批"
+    requires_owner_approval: true
+
+cost_limits:
+  daily_cost_usd: 10.0
+  session_cost_usd: 2.0
+  single_model_cost_usd: 0.50
+  per_task_cost_usd: 0.50
+
+degradation:
+  thresholds:
+    notify: 0.50
+    warning: 0.70
+    sunk_cost_warn: 0.80
+    model_switch: 0.80
+    compress: 0.85
+    minimal: 0.95
+    halt: 1.00
+    kill_switch_daily_usd: 100.0
+  anti_spiral:
+    max_degradation_per_minute: 1
+    recovery_cooldown: 180
+
+self_budget:
+  daily_cap: 50000
+  guard_efficiency_auto_disable: 0.5
+
+cold_start:
+  allowance_per_session: 5500
+  max_sessions_per_hour: 3
+  daily_cap: 27500
+
+bootstrapping:
+  enabled: true
+  duration_days: 30
+  min_data_points: 100
+  hard_limit_multiplier: 3.0

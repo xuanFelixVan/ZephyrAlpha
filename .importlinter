@@ -1,0 +1,45 @@
+[importlinter]
+root_package = zephyr
+
+[contracts]
+name = 基础设施层只能导入 infrastructure 和 shared
+type = forbidden
+source_modules =
+    zephyr.capacity_assurance
+    zephyr.capacity_assurance.modules
+forbidden_modules =
+    zephyr.market_data
+    zephyr.risk_engine
+    zephyr.order_execution
+    zephyr.ui
+    zephyr.analytics
+ignore_imports =
+
+[contracts]
+name = 共享层不能导入业务模块
+type = forbidden
+source_modules =
+    zephyr.shared
+forbidden_modules =
+    zephyr.market_data
+    zephyr.risk_engine
+    zephyr.order_execution
+    zephyr.portfolio
+    zephyr.capacity_assurance
+    zephyr.feedback_loop
+ignore_imports =
+    zephyr.shared.contract_bus
+
+[contracts]
+name = 模块只能导入同层或下层
+type = layers
+layers =
+    zephyr.shared
+    zephyr.capacity_assurance
+    zephyr.governance
+    zephyr.feedback_loop
+    zephyr.orchestrator
+    zephyr.market_data
+    zephyr.risk_engine
+ignore_imports =
+    zephyr.shared.contract_bus -> zephyr.capacity_assurance

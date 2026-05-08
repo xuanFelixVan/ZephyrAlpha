@@ -26,6 +26,7 @@ warn_only: true
 """
 
 
+import os
 import sys
 from argparse import ArgumentParser
 from datetime import date
@@ -35,7 +36,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter
 
@@ -69,6 +70,7 @@ EXCLUDE_NAMES = frozenset(
 
 
 def _safe_read_dir(parent: Path) -> list[Path]:
+    """_safe_read_dir implementation."""
     try:
         entries = [p for p in parent.iterdir() if p.name not in EXCLUDE_NAMES]
         entries.sort()
@@ -78,6 +80,7 @@ def _safe_read_dir(parent: Path) -> list[Path]:
 
 
 def _try_read_title(md_path: Path) -> str | None:
+    """_try_read_title implementation."""
     try:
         content = md_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
@@ -93,6 +96,7 @@ def _try_read_title(md_path: Path) -> str | None:
 
 
 def _build_file_rows(parent: Path) -> str:
+    """_build_file_rows implementation."""
     rows: list[str] = []
     for entry in _safe_read_dir(parent):
         name = entry.name
@@ -119,15 +123,17 @@ def _build_file_rows(parent: Path) -> str:
 
 
 def _is_tty() -> bool:
+    """_is_tty implementation."""
     try:
         return sys.stdin.isatty()
     except (AttributeError, OSError):
         return False
 
 
-def generate_index(parent: Path, dry_run: bool = False) -> bool:
+def generate_index(parent: Path, dry_run: bool = False, force_update: bool = False) -> bool:
+    """Generate output from input data."""
     index_path = parent / "index.md"
-    if index_path.exists():
+    if not force_update and index_path.exists():
         return False
     dir_name = parent.name or parent.resolve().name
     today = date.today().isoformat()
@@ -137,7 +143,15 @@ def generate_index(parent: Path, dry_run: bool = False) -> bool:
         print(f"  [DRY-RUN] 将创建: {index_path}")
         return True
     try:
-        index_path.write_text(content, encoding="utf-8")
+        tmp_path = f"{index_path}.{os.getpid()}.tmp"
+        try:
+            Path(tmp_path).write_text(content, encoding="utf-8")
+            os.replace(tmp_path, index_path)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
         print(f"  + 已创建: {index_path}")
         return True
     except OSError as e:
@@ -147,7 +161,9 @@ def generate_index(parent: Path, dry_run: bool = False) -> bool:
 
 def scan_and_generate(
     root_dir: Path, dry_run: bool = False, auto_yes: bool = False,
+    force_update: bool = False,
 ) -> tuple[int, int]:
+    """scan_and_generate implementation."""
     created = 0
     checked = 0
     missing_dirs: list[Path] = []
@@ -161,7 +177,7 @@ def scan_and_generate(
         if any(p.startswith(".") for p in dirpath.parts):
             continue
         checked += 1
-        if not (dirpath / "index.md").exists():
+        if force_update or not (dirpath / "index.md").exists():
             missing_dirs.append(dirpath)
 
     if not missing_dirs:
@@ -194,14 +210,16 @@ def scan_and_generate(
             return len(missing_dirs), checked
 
     for d in missing_dirs:
-        if generate_index(d, dry_run=False):
+        if generate_index(d, dry_run=False, force_update=force_update):
             created += 1
 
-    print(f"\n完成: 创建 {created}/{len(missing_dirs)} 个 index.md")
+    action = "更新" if force_update else "创建"
+    print(f"\n完成: {action} {created}/{len(missing_dirs)} 个 index.md")
     return created, checked
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = ArgumentParser(
         description="为缺失 index.md 的目录自动生成索引文件"
     )
@@ -213,21 +231,24 @@ def main() -> None:
     parser.add_argument("--yes", "-y", action="store_true", help="跳过确认，直接创建")
     parser.add_argument("--warn-only", action="store_true",
                         help="巡检模式：发现不阻塞（exit 0）")
+    parser.add_argument("--update", action="store_true",
+                        help="强制更新模式：重新生成所有 index.md（含已存在的）")
     args = parser.parse_args()
 
     root_dir = (REPO_ROOT / args.root).resolve()
     if not root_dir.is_dir():
         print(f"ERROR: 目录不存在: {root_dir}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     created, checked = scan_and_generate(
         root_dir,
         dry_run=args.dry_run,
         auto_yes=args.yes or args.warn_only,
+        force_update=args.update,
     )
 
     if args.warn_only:
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     sys.exit(1 if created > 0 else 0)
 
 

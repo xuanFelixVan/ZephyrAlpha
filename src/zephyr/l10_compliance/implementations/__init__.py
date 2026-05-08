@@ -10,6 +10,4 @@ from zephyr.l10_compliance.implementations.default_security_gateway import (
     DefaultSecurityGateway,
 )
 
-__all__ = [
-    "DefaultSecurityGateway",
-]
+__all__ = ['DefaultSecurityGateway', 'default_security_gateway']

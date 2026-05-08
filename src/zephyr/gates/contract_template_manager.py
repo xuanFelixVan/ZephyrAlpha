@@ -21,7 +21,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "ContractParameter",

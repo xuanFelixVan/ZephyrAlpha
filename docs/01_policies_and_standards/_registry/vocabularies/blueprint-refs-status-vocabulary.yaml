@@ -1,0 +1,43 @@
+# blueprint_refs.status 受控词表
+# ZephyrAlpha 2.0 蓝图引用状态唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 blueprint_refs 数组中 status 子字段的所有合法值（3 种）。
+# 用于标注引用的蓝图的当前状态。
+#
+# 对标标准：
+#   - PS-STD-001 §10.12：施工图引用的蓝图列表
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-022
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "blueprint_refs.status 受控词表"
+status: active
+vocabulary_name: blueprint_refs.status
+total_values: 3
+source: "PS-STD-001 §10.12"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.12"
+    why: "blueprint_refs.status 受控词表定义真源"
+
+values:
+  - value: active
+    definition: "当前有效——蓝图正在使用中"
+    ai_consumption: "AI 可以依赖 active 蓝图进行施工。引用 active 蓝图时须确保施工图与蓝图一致。"
+    ai_keywords: ["有效", "active", "使用中", "当前"]
+
+  - value: draft
+    definition: "草稿中——蓝图尚未最终确定"
+    ai_consumption: "AI 在引用 draft 蓝图时应提示风险，并建议等待蓝图 active 后再施工。"
+    ai_keywords: ["草稿", "draft", "未确定", "待批准"]
+
+  - value: deprecated
+    definition: "已废弃——蓝图已被替代"
+    ai_consumption: "AI 不得引用 deprecated 蓝图。发现引用时应建议替换为 active 蓝图。"
+    ai_keywords: ["废弃", "deprecated", "已替代", "旧版"]

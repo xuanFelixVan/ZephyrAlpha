@@ -30,6 +30,7 @@ warn_only: false
 """
 
 
+import os
 import argparse
 import json as json_mod
 import sys
@@ -51,6 +52,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 def _load_thresholds() -> dict:
+    """_load_thresholds implementation."""
     if not _THRESHOLDS_PATH.exists():
         return {}
     with open(_THRESHOLDS_PATH, encoding="utf-8") as f:
@@ -58,6 +60,7 @@ def _load_thresholds() -> dict:
 
 
 def _load_eb() -> dict:
+    """_load_eb implementation."""
     if not _EB_PATH.exists():
         return _init_eb()
     with open(_EB_PATH, encoding="utf-8") as f:
@@ -66,12 +69,22 @@ def _load_eb() -> dict:
 
 
 def _save_eb(data: dict) -> None:
+    """_save_eb implementation."""
     _EB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_EB_PATH, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-
+    tmp_path = f"{_EB_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+    
+        os.replace(tmp_path, _EB_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 def _init_eb() -> dict:
+    """_init_eb implementation."""
     t = _load_thresholds()
     now = datetime.now(UTC)
     window_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -111,6 +124,7 @@ def _init_eb() -> dict:
 
 
 def _ensure_window(data: dict) -> dict:
+    """_ensure_window implementation."""
     now = datetime.now(UTC)
     end_str = data.get("tracking_window", {}).get("end", "")
     if end_str:
@@ -123,6 +137,7 @@ def _ensure_window(data: dict) -> dict:
 
 
 def _update_burn_rate(data: dict) -> dict:
+    """_update_burn_rate implementation."""
     now = datetime.now(UTC)
     log = data.get("consumption_log", [])
     one_hour_ago = now - timedelta(hours=1)
@@ -154,6 +169,7 @@ def _update_burn_rate(data: dict) -> dict:
 
 
 def _activate_feature_freeze(data: dict, reason: str) -> dict:
+    """_activate_feature_freeze implementation."""
     t = _load_thresholds()
     freeze_hours = t.get("error_budget", {}).get("freeze_auto_lift_after_hours", 72)
     now = datetime.now(UTC)
@@ -167,13 +183,22 @@ def _activate_feature_freeze(data: dict, reason: str) -> dict:
 
     ks_data = {"scripts": {}, "global_freeze": True, "freeze_reason": reason, "freeze_set_at": now.isoformat()}
     _KILL_SWITCH_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_KILL_SWITCH_PATH, "w", encoding="utf-8") as f:
-        yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
+    tmp_path = f"{_KILL_SWITCH_PATH}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8") as f:
+            yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    
+        os.replace(tmp_path, _KILL_SWITCH_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     return data
 
 
 def record_consumption(consumption_type: str, percent: float, detail: str = "") -> dict:
+    """record_consumption implementation."""
     data = _load_eb()
     now = datetime.now(UTC)
 
@@ -208,6 +233,7 @@ def record_consumption(consumption_type: str, percent: float, detail: str = "") 
 
 
 def check_thresholds() -> dict:
+    """Check compliance and report findings."""
     data = _load_eb()
     data = _update_burn_rate(data)
     _save_eb(data)
@@ -219,8 +245,16 @@ def check_thresholds() -> dict:
                 if datetime.now(UTC) > datetime.fromisoformat(freeze_at):
                     data["feature_freeze"]["active"] = False
                     ks_data = {"scripts": {}, "global_freeze": False}
-                    with open(_KILL_SWITCH_PATH, "w", encoding="utf-8") as f:
-                        yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False)
+                    tmp_path = f"{_KILL_SWITCH_PATH}.{os.getpid()}.tmp"
+                    try:
+                        with open(tmp_path, encoding="utf-8") as f:
+                            yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False)
+                        os.replace(tmp_path, _KILL_SWITCH_PATH)
+                    except PermissionError:
+                        try:
+                            os.remove(tmp_path)
+                        except OSError:
+                            pass
                     data["feature_freeze"]["auto_lift_at"] = ""
                     _save_eb(data)
                     return {"status": "auto_lifted", "freeze": False}
@@ -237,6 +271,7 @@ def check_thresholds() -> dict:
 
 
 def status(json_output: bool = False) -> dict:
+    """status implementation."""
     data = _ensure_window(_load_eb())
     if json_output:
         print(json_mod.dumps(data, ensure_ascii=False, indent=2))
@@ -256,12 +291,14 @@ def status(json_output: bool = False) -> dict:
 
 
 def reset_window() -> dict:
+    """reset_window implementation."""
     data = _init_eb()
     _save_eb(data)
     return data
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Error Budget 管理引擎")
     parser.add_argument("--status", action="store_true", help="查看当前 Error Budget 状态")
     parser.add_argument("--record", action="store_true", help="记录一次消耗事件")

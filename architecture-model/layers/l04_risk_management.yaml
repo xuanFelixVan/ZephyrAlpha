@@ -27,7 +27,7 @@ modules:
   - risk_validator.py
   - stop_loss.py
   interfaces: []
-  adr_ref: []
+  kb_ref: []
 summary:
   total: 1
   by_status:

@@ -3,6 +3,8 @@ GATE-MODULEID: Validate module_id uniqueness and index/file consistency.
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
 
 __manifest__ = """
 args:
@@ -28,7 +30,7 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.frontmatter import extract_module_id
 
 POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
@@ -36,6 +38,7 @@ MODULE_ID_PATTERN = re.compile("^[A-Z]+(-[A-Z0-9]+)+$")
 
 
 def scan_all_module_ids() -> dict[str, list[Path]]:
+    """scan_all_module_ids implementation."""
     id_map: dict[str, list[Path]] = defaultdict(list)
     for f in POLICIES_ROOT.rglob("*"):
         if f.suffix not in (".md", ".yaml", ".yml"):
@@ -47,6 +50,7 @@ def scan_all_module_ids() -> dict[str, list[Path]]:
 
 
 def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
+    """Check compliance and report findings."""
     errors = []
     for mid, paths in sorted(id_map.items()):
         if len(paths) > 1:
@@ -56,6 +60,7 @@ def check_dim1(id_map: dict[str, list[Path]]) -> list[str]:
 
 
 def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
+    """Check compliance and report findings."""
     errors = []
     for mid, paths in sorted(id_map.items()):
         if mid.startswith("DEPRECATED-"):
@@ -68,6 +73,7 @@ def check_dim3(id_map: dict[str, list[Path]]) -> list[str]:
 
 
 def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
+    """Check compliance and report findings."""
     errors = []
     domain_nums: dict[str, list[int]] = defaultdict(list)
     for mid in id_map:
@@ -92,6 +98,7 @@ def check_dim4(id_map: dict[str, list[Path]]) -> list[str]:
 
 
 def check_dim2() -> list[str]:
+    """Check compliance and report findings."""
     errors = []
     for idx_file in POLICIES_ROOT.rglob("index.md"):
         try:
@@ -120,6 +127,7 @@ def check_dim2() -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="GATE-MODULEID: Validate module_id uniqueness and consistency")
     parser.add_argument("--dim", type=int, choices=[1, 2, 3, 4], help="Check only this dimension")
     parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
@@ -153,9 +161,9 @@ def main() -> int:
         print(f"\nGATE-MODULEID: FAIL — {len(all_errors)} errors found")
         for e in all_errors:
             print(f"  {e}")
-        return 1
+        return EXIT_FINDINGS
     print("\nGATE-MODULEID: ALL PASS")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

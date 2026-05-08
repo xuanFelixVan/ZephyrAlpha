@@ -48,7 +48,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import GOV_DOCS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -78,9 +78,11 @@ _errors: list[str] = []
 _warnings: list[str] = []
 
 def _err(msg: str) -> None:
+    """_err implementation."""
     _errors.append(msg)
 
 def _warn(msg: str) -> None:
+    """_warn implementation."""
     _warnings.append(msg)
 
 def check_dim1_field_registry() -> None:
@@ -247,17 +249,17 @@ def main() -> None:
 
     if not _errors and not _warnings:
         print("✅ GATE-DERIVED 全部通过 — 所有派生文件 derived_from 标注完整")
-        return 0
+        return EXIT_PASS
 
     if _errors:
         print(f"🔴 GATE-DERIVED 发现 {len(_errors)} 个标注缺失")
         if args.warn_only:
             print("   (--warn-only 模式，exit 0)")
-            return 0
-        return 1
+            return EXIT_PASS
+        return EXIT_FINDINGS
     else:
         print(f"🟡 GATE-DERIVED 通过（有 {len(_warnings)} 个标注性警告）")
-        return 0
+        return EXIT_PASS
 
 if __name__ == "__main__":
     sys.exit(main())

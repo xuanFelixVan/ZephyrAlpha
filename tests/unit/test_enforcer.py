@@ -29,7 +29,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 import pytest
-from zephyr.shared.contracts.enforcer import (
+from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
     enforce,

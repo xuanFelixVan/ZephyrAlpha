@@ -40,6 +40,7 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import os
 import json
 import os
 import shutil
@@ -142,10 +143,18 @@ def _load_registry() -> dict[str, Any]:
 def _save_registry(registry: dict[str, Any]) -> None:
     _ensure_lock_root()
     registry["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    REGISTRY_PATH.write_text(
+    tmp_path = f"{REGISTRY_PATH}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(
         json.dumps(registry, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+        os.replace(tmp_path, REGISTRY_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
 
 def _normalize_path(file_path: str) -> str:

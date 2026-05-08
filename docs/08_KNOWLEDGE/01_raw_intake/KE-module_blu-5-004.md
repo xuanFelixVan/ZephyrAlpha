@@ -1,0 +1,13 @@
+---
+module_id: KE-module_blu-5-004
+title: 5. 关键设计决策
+category: module_blueprint
+---
+
+# 5. 关键设计决策
+
+5. 关键设计决策
+
+- **ADR-0022**：B 轨平台能力归属——runtime-integration 在 B 轨无 l<NN>_ 前缀
+- **ADR-0040**：强制 Pydantic V2——禁止 dataclass
+- **FMEA 覆盖**：155+ 盲点全部注入蓝图 §5~§9

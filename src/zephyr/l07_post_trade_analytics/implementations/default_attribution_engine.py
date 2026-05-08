@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from zephyr.l07_post_trade_analytics.analytics_base import AttributionEngineBase
-from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
 
 _logger = logging.getLogger(__name__)
 

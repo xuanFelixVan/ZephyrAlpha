@@ -31,7 +31,7 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schemas import ExecutionModel, Priority, SafetyLevel, TaskNamespace
+from zephyr.shared.schema.schemas import ExecutionModel, Priority, SafetyLevel, TaskNamespace
 
 logger = logging.getLogger(__name__)
 

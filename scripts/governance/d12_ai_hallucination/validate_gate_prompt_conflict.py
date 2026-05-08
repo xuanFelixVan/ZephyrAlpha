@@ -22,6 +22,10 @@ exit codes: 0=无冲突, 1=发现冲突, 2=执行错误
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_ERROR
+
 
 __manifest__ = """
 args: []
@@ -49,12 +53,14 @@ _AGENTS_PATH = _PROJECT_ROOT / "AGENTS.md"
 
 
 def _load_agents_text() -> str:
+    """_load_agents_text implementation."""
     if not _AGENTS_PATH.exists():
         return ""
     return _AGENTS_PATH.read_text(encoding="utf-8", errors="replace")
 
 
 def _load_gate_rules() -> list[dict[str, Any]]:
+    """_load_gate_rules implementation."""
     import yaml
 
     rules: list[dict[str, Any]] = []
@@ -97,6 +103,7 @@ def _load_gate_rules() -> list[dict[str, Any]]:
 
 
 def _extract_agents_directives(text: str) -> dict[str, list[str]]:
+    """_extract_agents_directives implementation."""
     directives: dict[str, list[str]] = {
         "must_actions": [],
         "must_not_actions": [],
@@ -125,6 +132,7 @@ def _extract_agents_directives(text: str) -> dict[str, list[str]]:
 
 def detect_conflicts(gate_rules: list[dict[str, Any]],
                      directives: dict[str, list[str]]) -> list[dict[str, Any]]:
+    """Detect issues in target and report findings."""
     conflicts: list[dict[str, Any]] = []
 
     for rule in gate_rules:
@@ -201,6 +209,7 @@ def detect_conflicts(gate_rules: list[dict[str, Any]],
 
 
 def _shared_keywords(text_a: str, text_b: str) -> list[str]:
+    """_shared_keywords implementation."""
     stop_words = {"the", "a", "an", "is", "are", "of", "to", "in", "for", "on", "and",
                   "or", "not", "with", "be", "by", "as", "at", "from", "this", "that",
                   "必须", "禁止", "必须显式"}
@@ -214,6 +223,7 @@ def _shared_keywords(text_a: str, text_b: str) -> list[str]:
 
 def _semantic_contradiction(gate_text: str, agents_text: str,
                             gate_stance: str, agents_stance: str) -> bool:
+    """_semantic_contradiction implementation."""
     contradiction_pairs = [
         ({"必须", "must", "required"}, {"禁止", "never", "must not", "跳过"}),
         ({"reject", "阻断", "block"}, {"允许", "allow", "跳过", "skip", "豁免"}),
@@ -239,6 +249,7 @@ def _semantic_contradiction(gate_text: str, agents_text: str,
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Gate-Prompt 冲突检测")
     parser.add_argument("--json", action="store_true", help="输出 JSON 格式")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
@@ -247,7 +258,7 @@ def main() -> None:
     agents_text = _load_agents_text()
     if not agents_text:
         print("[GATE-PROMPT] AGENTS.md 不存在或为空，跳过", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     gate_rules = _load_gate_rules()
     directives = _extract_agents_directives(agents_text)

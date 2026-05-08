@@ -20,7 +20,7 @@ depends_on:
   - {target: architecture-contract.yaml, at: "$", why: "架构不变量——HC-6 的判定依据"}
 supercedes: null
 source:
-  origin_doc: "模块候选池/开发流程/项目目标/project-qualification-standard.md"
+  origin_doc: "场外草稿原件（已归档）"
   origin_version: "v0.2.0"
   extraction_date: "2026-05-04"
 ---

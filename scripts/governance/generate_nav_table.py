@@ -14,6 +14,10 @@ generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 """
 
 from __future__ import annotations
+from _shared.encoding import ensure_utf8_stdout
+ensure_utf8_stdout()
+from _shared.constants import EXIT_FINDINGS
+
 
 __manifest__ = """
 args: []
@@ -27,6 +31,7 @@ timeout_seconds: 60
 warn_only: false
 """
 
+import os
 import argparse
 import sys
 from pathlib import Path
@@ -247,10 +252,10 @@ def main() -> None:
     args = parser.parse_args()
     if not MAPPING_FILE.exists():
         print(f"❌ 映射文件不存在: {MAPPING_FILE}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     if not AGENTS_FILE.exists():
         print(f"❌ AGENTS.md 不存在: {AGENTS_FILE}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     mapping = load_yaml(MAPPING_FILE)
     registry_modules = load_registry_modules(DOC_META_INDEX)
     known_scripts = load_script_names(SCRIPT_MANIFEST)
@@ -271,15 +276,23 @@ def main() -> None:
     end_idx = content.find(SECTION_END)
     if start_idx == -1:
         print(f"❌ 在 AGENTS.md 中找不到: {SECTION_START}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     if end_idx == -1:
         print(f"❌ 在 AGENTS.md 中找不到: {SECTION_END}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     before = content[:start_idx]
     after = content[end_idx:]
     new_content = before + new_section + after
-    with open(AGENTS_FILE, "w", encoding="utf-8", newline="\n") as f:
-        f.write(new_content)
+    tmp_path = f"{AGENTS_FILE}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, encoding="utf-8", newline="\n") as f:
+            f.write(new_content)
+        os.replace(tmp_path, AGENTS_FILE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print("✅ AGENTS.md §5.2 已生成")
     if issues:
         print(f"⚠️ 出现 {len(issues)} 个交叉验证警告（见上方报告）")

@@ -1,0 +1,45 @@
+agents:
+  agent_architect:
+    auto_guard_eligible: true
+    maturity: L3_SENIOR
+    owner_approved: true
+    permissions:
+    - read:docs
+    - read:src
+    - read:tests
+    - write:src
+    - write:tests
+    - execute:scripts
+    - execute:tests
+    - read:config
+    - read:logs
+    - read:data
+    - modify:blueprint
+    - modify:document
+  agent_reviewer:
+    auto_guard_eligible: false
+    maturity: L1_JUNIOR
+    owner_approved: false
+    permissions:
+    - read:docs
+    - read:src
+    - read:tests
+    - read:config
+    - read:logs
+    - read:data
+    - audit:full
+  agent_writer:
+    auto_guard_eligible: true
+    maturity: L0_INTERN
+    owner_approved: false
+    permissions:
+    - read:docs
+    - read:src
+    - read:tests
+    - write:src
+    - write:tests
+    - execute:scripts
+    - execute:tests
+auto_generated: true
+source: GOV-AI-001
+version: 0.14.0

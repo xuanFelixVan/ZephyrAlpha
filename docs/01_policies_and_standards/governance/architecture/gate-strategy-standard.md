@@ -21,7 +21,7 @@ rule_form: declarative
 scope: global
 stability: stable
 verifiability: automated
-related_adrs:
+related_kb_refs:
   - ADR-0030
   - ADR-0038
   - ADR-0040

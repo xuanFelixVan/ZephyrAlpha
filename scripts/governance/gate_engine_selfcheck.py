@@ -37,6 +37,10 @@ warn_only: false
 import json
 import os
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -47,11 +51,13 @@ _DB_PATH = _PROJECT_ROOT / "data" / "zephyr.db"
 
 
 def _fmt_status(ok: bool, label: str, detail: str = "") -> str:
+    """_fmt_status implementation."""
     icon = "PASS" if ok else "FAIL"
     return f"  [{icon}] {label}" + (f" — {detail}" if detail else "")
 
 
 def check_core_files() -> dict[str, Any]:
+    """Check compliance and report findings."""
     core_files = [
         _GATES_DIR / "gate_engine.py",
         _GATES_DIR / "circuit_breaker.py",
@@ -68,6 +74,7 @@ def check_core_files() -> dict[str, Any]:
 
 
 def check_yaml_parsability() -> dict[str, Any]:
+    """Check compliance and report findings."""
     import yaml
 
     yaml_files = sorted(_GATES_DIR.glob("g[1-5]_*.yaml"))
@@ -91,6 +98,7 @@ def check_yaml_parsability() -> dict[str, Any]:
 
 
 def check_registry_integrity() -> dict[str, Any]:
+    """Check compliance and report findings."""
     import yaml
 
     registry = _GATES_DIR / "_registry.yaml"
@@ -125,6 +133,7 @@ def check_registry_integrity() -> dict[str, Any]:
 
 
 def check_sqlite_schema() -> dict[str, Any]:
+    """Check compliance and report findings."""
     import sqlite3
 
     issues: list[str] = []
@@ -161,6 +170,7 @@ def check_sqlite_schema() -> dict[str, Any]:
 
 
 def check_gate_engine_import() -> dict[str, Any]:
+    """Check compliance and report findings."""
     issues: list[str] = []
     try:
         from zephyr.gates.gate_engine import GateEngine, GateResult, GateViolation, GateViolationError
@@ -183,6 +193,7 @@ def check_gate_engine_import() -> dict[str, Any]:
 
 
 def check_circuit_breaker_import() -> dict[str, Any]:
+    """Check compliance and report findings."""
     issues: list[str] = []
     try:
         from zephyr.gates.circuit_breaker import CircuitBreakerCheck
@@ -198,6 +209,7 @@ def check_circuit_breaker_import() -> dict[str, Any]:
 
 
 def check_gate_registry_consistency() -> dict[str, Any]:
+    """Check compliance and report findings."""
     import yaml
 
     issues: list[str] = []
@@ -254,6 +266,7 @@ def check_gate_registry_consistency() -> dict[str, Any]:
 
 
 def check_checktype_coverage() -> dict[str, Any]:
+    """Check compliance and report findings."""
     import yaml
 
     issues: list[str] = []
@@ -295,6 +308,7 @@ def check_checktype_coverage() -> dict[str, Any]:
 
 
 def run_self_check(verbose: bool = False) -> tuple[bool, list[dict[str, Any]]]:
+    """run_self_check implementation."""
     checks = [
         check_core_files(),
         check_yaml_parsability(),
@@ -321,6 +335,7 @@ def run_self_check(verbose: bool = False) -> tuple[bool, list[dict[str, Any]]]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(description="Gate Engine Bootstrap Self-Check")

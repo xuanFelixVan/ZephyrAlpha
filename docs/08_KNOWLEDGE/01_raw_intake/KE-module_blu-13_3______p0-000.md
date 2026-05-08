@@ -1,0 +1,16 @@
+---
+module_id: KE-module_blu-13_3______p0-000
+title: 13.3 幻觉检测 P0
+category: module_blueprint
+---
+
+# 13.3 幻觉检测 P0
+
+13.3 幻觉检测 P0
+
+| # | 用例 | 预期 |
+|:-:|------|------|
+| P0-H1 | 连续 3 次相同 observation_hash | 状态转 HALLUCINATING，沙箱销毁，FLE 事件上报 |
+| P0-H2 | 5 分钟无 progress | 同上 |
+| P0-H3 | 同一文件 10 次编辑 | 同上 |
+| P0-H4 | token 预算超 3 倍 | 同上 |

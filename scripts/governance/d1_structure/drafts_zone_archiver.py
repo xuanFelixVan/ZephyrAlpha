@@ -67,8 +67,8 @@ try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装，请运行 `pip install pyyaml`", file=sys.stderr)
-    sys.exit(2)
-from _shared.constants import REPO_ROOT
+    sys.exit(EXIT_ERROR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 DRAFTS_ROOT = REPO_ROOT / "docs" / "19_development_workspace" / "drafts-and-audits"
 ARCHIVE_ROOT = REPO_ROOT / "docs" / "99_archive"
@@ -184,7 +184,7 @@ def main() -> None:
     archive_days = args.archive_days
     if not DRAFTS_ROOT.exists():
         print(f"[drafts_zone_archiver] 草稿区目录不存在: {DRAFTS_ROOT}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     drafts = scan_drafts(DRAFTS_ROOT, warn_days=warn_days, archive_days=archive_days)
     if args.warn_only:
         for draft in drafts:
@@ -200,11 +200,11 @@ def main() -> None:
         print(f"  - {action}", file=sys.stderr)
     if not actions:
         print("[drafts_zone_archiver] 无需操作", file=sys.stderr)
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     if args.warn_only:
         print("[drafts_zone_archiver] WARN-ONLY 模式：发现归档提议但不阻塞", file=sys.stderr)
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
 
 if __name__ == "__main__":
     main()

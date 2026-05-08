@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+_SMOKE_TEST = "governance/d1_structure/run_script_smoke_test.py"
+
 
 @pytest.fixture(scope="session")
 def repo_root() -> Path:
@@ -18,17 +20,21 @@ def gov_dir(repo_root: Path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def manifest(gov_dir: Path) -> dict:
+def manifest(repo_root: Path) -> dict:
     import sys
 
     import yaml
 
-    sys.path.insert(0, str(gov_dir))
-    manifest_path = gov_dir / "script_manifest.yaml"
+    manifest_path = repo_root / "scripts" / "script_manifest.yaml"
+    sys.path.insert(0, str(repo_root / "scripts"))
     with open(manifest_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 @pytest.fixture(scope="session")
 def script_entries(manifest: dict) -> list[dict]:
-    return [e for e in manifest.get("scripts", []) if e.get("name") != "d1_structure/run_script_smoke_test.py"]
+    return [
+        e for e in manifest.get("scripts", [])
+        if e.get("path", "").startswith("governance/")
+        and e.get("path") != _SMOKE_TEST
+    ]

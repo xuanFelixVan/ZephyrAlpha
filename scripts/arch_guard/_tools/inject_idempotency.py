@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -119,7 +120,15 @@ def main() -> int:
         print("所有契约已包含 idempotency_key——无需修改。")
         return 0
 
-    YAML_PATH.write_text(new_content, encoding="utf-8")
+    tmp_path = f"{YAML_PATH}.{os.getpid()}.tmp"
+    try:
+        Path(tmp_path).write_text(new_content, encoding="utf-8")
+        os.replace(tmp_path, YAML_PATH)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
     print(f"✅ 已为 {added} 条契约添加 idempotency_key 字段。")
     return 0
 

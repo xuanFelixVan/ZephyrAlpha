@@ -137,9 +137,9 @@ valid_values:
 violation_severity: P1  # 无效状态值
 
 adr_status_mapping: |
-  ADR 文件（doc_type: adr）使用独立生命周期：proposed → accepted → superseded → deprecated → skipped/reserved。
-  在 ADR frontmatter 中，status: active 语义等价于 accepted（已批准且为当前决策依据），允许混用。
-  推荐：新 ADR 使用 accepted，已存在的 active 声明无需批量迁移。
+  KB 决策记录（doc_type: adr）使用独立生命周期：proposed → accepted → superseded → deprecated → skipped/reserved。
+  在 KB 决策记录 frontmatter 中，status: active 语义等价于 accepted（已批准且为当前决策依据），允许混用。
+  推荐：新 KB 决策记录使用 accepted，已存在的 active 声明无需批量迁移。
 
 registry_status_mapping: |
   注册表文件（doc_type: register）允许小写状态值（active/deprecated/planned），
@@ -150,7 +150,7 @@ registry_status_mapping: |
 
 ## 三、优先级字段权威 (Priority Authority)
 
-**权威来源**：本文件 §七 优先级严重性定义（P0/P1/P2/P3 四级）。原 `docs/09_audit/` 蓝图评估矩阵已随旧树归档至 `_DO_NOT_USE_old_tree/`，不再作为权威来源。
+**权威来源**：本文件 §七 优先级严重性定义（P0/P1/P2/P3 四级）。
 
 | 值  | 含义                     |
 |-----|--------------------------|
@@ -169,7 +169,7 @@ violation_severity: P1
 
 ---
 
-## 四、技术决策权威 (ADR Authority)
+## 四、技术决策权威 (KB 决策记录 Authority)
 
 **权威来源**：KB:decisions namespace（SQLite `knowledge` 表，category="architecture_decision"）
 - **编号空间**：ADR-0001 ~ ADR-0041（33 个 VERIFIED entries，已从物理 adr/ 目录迁入）
@@ -178,11 +178,11 @@ violation_severity: P1
 ### 受保护字段
 
 ```yaml
-protected_field: adr_reference
-authority_file: KB:namespace=decisions（原 docs/02_enterprise_architecture/adr/index.md 已删除）
+protected_field: kb_reference
+authority_file: KB:namespace=decisions
 check_rule: >
-  任何文件引用 ADR-XXX 时，该 ADR 的 status 必须与权威来源一致。
-  不得引用 Deprecated ADR 作为当前决策依据。
+  任何文件引用 ADR-XXX 时，该 KB 决策记录的 status 必须与权威来源一致。
+  不得引用 Deprecated KB 决策记录作为当前决策依据。
 violation_severity: P1
 ```
 

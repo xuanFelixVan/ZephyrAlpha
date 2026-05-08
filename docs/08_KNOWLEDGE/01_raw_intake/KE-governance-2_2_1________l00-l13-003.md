@@ -1,0 +1,26 @@
+---
+module_id: KE-governance-2_2_1________l00-l13-003
+title: 2.2.1 业务/技术层（L00-L13）
+category: governance
+---
+
+# 2.2.1 业务/技术层（L00-L13）
+
+2.2.1 业务/技术层（L00-L13）
+
+| 层编号 | 层名称 | 职责描述 | src 目录 | 实施状态 |
+|--------|--------|---------|----------|---------|
+| **L00** | Data Source | 数据接入、标准化、落库、缓存与质量门禁 | `src/zephyr/l00_data_source/` | ✅ 已创建 |
+| **L01** | Infrastructure | 配置、日志、异常与基础运行能力 | `src/zephyr/l01_infrastructure/` | ✅ 已创建 |
+| **L02** | Alpha Factor | Alpha 因子计算引擎、PIT 合规与因子库管理 | `src/zephyr/l02_alpha_factor/` | ✅ 已创建 |
+| **L03** | Signal Generation | 交易信号生成、策略调度与信号合成 | `src/zephyr/l03_signal_generation/` | ✅ 已创建 |
+| **L04** | Risk Management | 实时风控、Kill Switch、压力测试与合规检查 | `src/zephyr/l04_risk_management/` | ✅ 已创建 |
+| **L05** | Portfolio Construction | 组合构建、权重优化与再平衡决策 | `src/zephyr/l05_portfolio_construction/` | ✅ 已创建 |
+| **L06** | Trade Execution | 订单路由、执行引擎、Broker ACL 边界与成交管理 | `src/zephyr/l06_trade_execution/` | ✅ 已创建 |
+| **L07** | Post-Trade Analytics | 交易后分析、绩效归因与报告生成 | `src/zephyr/l07_post_trade_analytics/` | ✅ 已创建 |
+| **L08** | Human-AI Interface | 人机交互、API 网关、监控面板与告警通知 | `src/zephyr/l08_human_ai_interface/` | ✅ 已创建 |
+| **L09** | Research Innovation | 研究工作台、回测框架与策略实验室 | `src/zephyr/l09_research_innovation/` | ✅ 已创建 |
+| **L10** | Governance Compliance | 合规治理、审计追踪与监管报告 | `src/zephyr/l10_compliance/` | ✅ 已创建 |
+| **L11** | ML Platform | ML 平台、Scout Agent、战略决策与 AI 引擎 | `src/zephyr/l11_ml_platform/` | ✅ 已创建 |
+| **L12** | System Telemetry | 系统遥测、可观测性、健康检查与 SLA 监控 | `src/zephyr/l12_system_telemetry/` | 📋 已规划 |
+| **L13** | Experiment Pipeline | 实验管线与 A/B 测试框架 | `src/zephyr/l13_experiment_pipeline/` | 📋 已规划 |

@@ -1,0 +1,43 @@
+---
+module_id: KE-module_blu-2_29____________________d-022--003
+title: 2.29 系统冷启动/自举阶段的升级策略（决策 D-022-21）
+category: module_blueprint
+---
+
+# 2.29 系统冷启动/自举阶段的升级策略（决策 D-022-21）
+
+2.29 系统冷启动/自举阶段的升级策略（决策 D-022-21）
+
+> **决策 D-022-21**：系统从零开始运行时，所有模块都未校准，所有规则都未验证——这是升级协议最脆弱也最危险的时刻。引入"Imprint Window"（印花窗口）概念。
+> **对标**：LegionIO lex-coldstart (7天Imprint Window+三倍记忆固化+保守consent) + SuperU AI Trainer Cold Start Problem。
+
+```yaml
+cold_start_bootstrap:
+
+  imprint_window:
+    duration: "首次启动后7天"
+    characteristics:
+      consent_tier: "consult (保守)——升级倾向最大化"
+      memory_consolidation: "3x正常速率——快速建立操作基线"
+      escalation_threshold: "降低50%——更易触发升级,建立信任基线"
+      auto_guard_scope: "扩展到所有非查询操作"
+      owner_override: "Owner可在Imprint Window期间随时调整保守度"
+    
+    transition:
+      trigger: "Imprint Window到期 + 假阳性率<40% + Owner确认"
+      action: "从Imprint模式→Learning模式(AutonomyLevel_2)"
+
+  calibration_phases:
+    phase1_baseline: # Day 0-3
+      goal: "建立操作基线——哪些操作是安全的,哪些需要升级"
+      method: "所有操作人工审核→AI学习审核模式"
+    
+    phase2_confidence: # Day 4-7
+      goal: "校准置信度模型——SLI数据开始积累"
+      method: "SLO engine开始采集SLI→生成初始Error Budget基线"
+    
+    phase3_graduation: # Day 8+
+      goal: "退出Imprint→进入渐进自治(L1→L2)"
+```
+
+---
