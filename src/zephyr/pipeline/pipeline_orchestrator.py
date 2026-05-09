@@ -87,10 +87,10 @@ from zephyr.pipeline.models import (
     PipelineOrchestratorConfig,
     PipelineResult,
     PipelineStatus,
-    PreemptionRecord,
     validate_module_output,
 )
 from zephyr.pipeline.pipeline_lock import LockResult, PipelineLock
+from zephyr.pipeline.preemption_manager import PreemptionManager
 from zephyr.pipeline.routing_plugins import PipelineRouter
 from zephyr.shared.schema.schemas import TaskStatus
 
@@ -175,8 +175,7 @@ class PipelineOrchestrator:
         self._telemetry = telemetry
         self._failure_log: dict[str, int] = {}
         self._glm_reject_log: dict[str, int] = {}
-        self._preempt_log: dict[str, PreemptionRecord] = {}
-        self._priority_cutoff: str = "P2"
+        # PENDING: ref to make _dispatched_ids / _active_dispatches exist before _preempt_mgr
 
         self._metrics: dict[str, int] = {}
         self._latency_samples: dict[str, list[float]] = {}
@@ -190,6 +189,13 @@ class PipelineOrchestrator:
         self._log_buffer: list[tuple[str, str, str]] = []
 
         self._dispatched_ids: set[str] = set()
+        self._preempt_mgr = PreemptionManager(
+            task_repo=self._task_repo,
+            dispatched_ids=self._dispatched_ids,
+            active_dispatches=self._active_dispatches,
+            re_dispatch_callback=self.dispatch,
+            priority_cutoff="P2",
+        )
         self._cb_manager = CircuitBreakerManager(log_fn=self._log)
         self._rate_limit_timestamps: dict[str, list[float]] = {}
         self._cost_tracker = CostTracker()
@@ -525,7 +531,7 @@ class PipelineOrchestrator:
             if not token_budget_ok:
                 ct_warnings.append(budget_warning)
 
-            preemptions = self._preempt_check(task_card)
+            preemptions = self._preempt_mgr.preempt(task_card)
             for pr in preemptions:
                 ct_warnings.append(
                     f"PREEMPT: {pr.preempted_task_id} (P={pr.preempted_priority}) "
@@ -896,103 +902,18 @@ class PipelineOrchestrator:
         return resolve_ct_pipe_orc001(hints)
 
     # ------------------------------------------------------------------
-    # 优先级抢占——对标 K8s Priority Preemption
+    # 优先级抢占——已提取至 PreemptionManager（SRC-0027）
     # ------------------------------------------------------------------
-
-    _PREEMPTIBLE_PRIORITIES = frozenset({"P3", "P2"})
-
-    def _preempt_check(self, task_card: TaskCard) -> list[PreemptionRecord]:
-        """检查是否需要抢占低优先级任务。
-
-        P0/P1 可抢占仍为 IN_PROGRESS 的 P2/P3。被抢占任务迁移到 **WAITING**
-        （ADR-0030 十态之一），waiting_for 记录抢占方 task_id；
-        并允许后续重新 ``dispatch``（从内存幂等集合中摘除该 tid）。
-        """
-        if self._task_repo is None:
-            return []
-
-        pri_raw = getattr(task_card.priority, "value", task_card.priority)
-        pri = str(pri_raw or "").upper().strip()
-        if pri not in ("P0", "P1"):
-            return []
-
-        records: list[PreemptionRecord] = []
-        try:
-            preemptible = self._task_repo.list(
-                status=TaskStatus.IN_PROGRESS,
-                limit=50,
-            )
-        except (TypeError, AttributeError):
-            return []
-
-        for t in preemptible:
-            tp_raw = getattr(getattr(t, "priority", None), "value", getattr(t, "priority", ""))
-            tp = str(tp_raw or "").upper().strip()
-            if tp in self._PREEMPTIBLE_PRIORITIES:
-                try:
-                    self._task_repo.transition(
-                        t.task_id,
-                        TaskStatus.WAITING,
-                        waiting_for=f"pipeline_preempted:{task_card.task_id}",
-                    )
-                except Exception:
-                    continue
-
-                self._dispatched_ids.discard(t.task_id)
-                self._active_dispatches.discard(t.task_id)
-
-                record = PreemptionRecord(
-                    preempted_task_id=t.task_id,
-                    preempted_by_task_id=task_card.task_id,
-                    preempted_priority=tp,
-                )
-                self._preempt_log[t.task_id] = record
-                records.append(record)
-
-        return records
 
     def resume_preempted(
         self,
         completed_task_id: str,
     ) -> list[PipelineResult]:
-        """完成高优先级任务后，恢复被其抢占的低优先级任务并重新 dispatch。"""
-        resumed: list[PipelineResult] = []
-        if self._task_repo is None:
-            return resumed
+        """完成高优先级任务后，恢复被其抢占的低优先级任务并重新 dispatch。
 
-        for tid, record in list(self._preempt_log.items()):
-            if record.preempted_by_task_id != completed_task_id:
-                continue
-            if record.resumed_at is not None:
-                continue
-
-            task = self._task_repo.get(tid)
-            if task is None:
-                continue
-            try:
-                if task.status == TaskStatus.WAITING:
-                    self._task_repo.transition(tid, TaskStatus.READY)
-                elif task.status == TaskStatus.READY:
-                    pass
-                else:
-                    continue
-                task = self._task_repo.get(tid)
-            except Exception:
-                continue
-            if task is None:
-                continue
-
-            self._dispatched_ids.discard(tid)
-            self._active_dispatches.discard(tid)
-
-            try:
-                result = self.dispatch(task)
-            except Exception:
-                raise
-            record.resumed_at = datetime.now().isoformat()
-            resumed.append(result)
-
-        return resumed
+        委托至 ``PreemptionManager.resume_preempted()``。
+        """
+        return self._preempt_mgr.resume_preempted(completed_task_id)
 
     # ------------------------------------------------------------------
     # Pipeline 并发锁
@@ -1057,8 +978,7 @@ class PipelineOrchestrator:
             "config": self._cfg.model_dump(),
             "failure_log": dict(self._failure_log),
             "glm_reject_log": dict(self._glm_reject_log),
-            "preempt_log": {k: v.model_dump() for k, v in self._preempt_log.items()},
-            "priority_cutoff": self._priority_cutoff,
+            "preempt_mgr": self._preempt_mgr.save_state(),
             "metrics": dict(self._metrics),
             "latency_samples": {k: v[:] for k, v in self._latency_samples.items()},
             "cost_tracker": self._cost_tracker.save_state(),
@@ -1071,9 +991,7 @@ class PipelineOrchestrator:
             self._cfg = PipelineOrchestratorConfig(**state["config"])
         self._failure_log = dict(state.get("failure_log", {}))
         self._glm_reject_log = dict(state.get("glm_reject_log", {}))
-        self._priority_cutoff = state.get("priority_cutoff", "P2")
-        preempt_raw = state.get("preempt_log", {})
-        self._preempt_log = {tid: PreemptionRecord(**data) for tid, data in preempt_raw.items()}
+        self._preempt_mgr.load_state(state.get("preempt_mgr", {}))
         self._cost_tracker.load_state(state.get("cost_tracker", {}))
         self._dlq.load_state(state.get("dead_letters", []))
 
@@ -1596,7 +1514,7 @@ class PipelineOrchestrator:
         deepseek_fail = sum(v for k, v in self._failure_log.items() if "deepseek" in k.lower())
         glm_fail = sum(v for k, v in self._failure_log.items() if "glm" in k.lower())
         claude_fail = sum(v for k, v in self._failure_log.items() if "claude" in k.lower())
-        active_preemptions = sum(1 for r in self._preempt_log.values() if r.resumed_at is None)
+        active_preemptions = self._preempt_mgr.active_count
         cb_open = self._cb_manager.open_count
 
         health: dict[str, Any] = {

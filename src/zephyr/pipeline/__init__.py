@@ -193,6 +193,9 @@ from zephyr.pipeline.pipeline_roadmap import (
     TOCTOUGuardResult,
     select_profile,
 )
+from zephyr.pipeline.preemption_manager import (
+    PreemptionManager,
+)
 from zephyr.pipeline.routing_plugins import (
     DEFAULT_PLUGINS,
     NoEligibleNodeError,
@@ -281,6 +284,7 @@ __all__ = [
     "PipelineStage",
     "PipelineStatus",
     "PolicyDiffReport",
+    "PreemptionManager",
     "PreemptionRecord",
     "ROICalculator",
     "RouteEntry",
