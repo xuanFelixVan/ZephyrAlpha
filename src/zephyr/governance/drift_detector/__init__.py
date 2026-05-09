@@ -22,14 +22,15 @@ warnings.warn(
 )
 
 try:
-    from zephyr.drift_detector.drift_engine import AIConstructionDetectors, scan
+    from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
+    from zephyr.drift_detector.drift_engine import scan
+    from zephyr.drift_detector.drift_models import DriftEvent, DriftState
     from zephyr.drift_detector.reconciler import AutoFixer
     from zephyr.drift_detector.state_machine import DriftStateMachine
-    from zephyr.drift_detector.drift_models import DriftEvent, DriftState
 except ImportError:
     pass
 
-__all__ = ['events', 'rollback_bridge']
+__all__ = ["events", "rollback_bridge"]
 
 __version__ = "1.0.0"
 __module_id__ = "MOD-INF-023"
