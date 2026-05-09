@@ -22,6 +22,18 @@ from .drift_models import DriftEvent, DriftState
 
 class AIConstructionDetectors:
     def detect_ai_hallucination_import(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 幻觉导入 — 导入不存在或无法解析的模块。
+
+        扫描目录下所有 .py 文件，对每个 import / from-import 使用
+        ``importlib.util.find_spec`` 验证模块是否真实存在。跳过
+        标准库、相对导入和 ``__future__``/``builtins`` 等安全前缀。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每个幻觉导入对应一个 DETECTED 状态的事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -81,6 +93,17 @@ class AIConstructionDetectors:
         return events
 
     def detect_ai_dead_code(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 死代码 — 函数体或类体仅含 ``pass``/``...``。
+
+        遍历目录下所有 .py 文件，收集顶层函数/类定义，将正文只有
+        ``pass`` 或 ``Ellipsis`` 的函数和类标记为死代码。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每个死代码定义对应一个 DETECTED 状态的事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -141,6 +164,18 @@ class AIConstructionDetectors:
         return events
 
     def detect_ai_broken_logic(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 损坏逻辑 — 高 TODO 密度或上下文截断信号。
+
+        两个检测维度：
+        1. 单文件中 TODO 注释占比 >5% → 未完成逻辑过多。
+        2. 函数参数 >5 但函数体行数 <3 → AI 生成时的上下文截断痕迹。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每个检测到的损坏逻辑信号对应一个事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -190,6 +225,17 @@ class AIConstructionDetectors:
         return events
 
     def detect_ai_duplicate_functionality(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 重复功能 — 跨文件存在 AST 完全相同的函数体。
+
+        对每个函数体的 AST dump 计算 SHA-256 哈希，不同文件中相同
+        函数名且相同哈希视为 AI 重复生成（排除 dunder 方法）。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每对重复函数定义对应一个 DETECTED 状态的事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -231,6 +277,18 @@ class AIConstructionDetectors:
         return events
 
     def detect_ai_session_style_drift(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 会话间风格漂移 — 同一模块混用不兼容的编码风格。
+
+        检测两种典型模式：
+        1. ``@dataclass`` 装饰器与显式 ``__init__`` 并存 → 风格冲突。
+        2. ``async def`` 与 ``def`` 混用 → 异步/同步风格不一致。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每种风格漂移模式对应一个事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -289,6 +347,19 @@ class AIConstructionDetectors:
         return events
 
     def detect_ai_knowledge_pollution(self, module_dir: str) -> list[DriftEvent]:
+        """检测 AI 知识污染 — 命名冲突与命名约定不一致。
+
+        两种检测：
+        1. 同一文件中类名与函数名重名 → 命名空间污染。
+        2. 同一文件同时出现 snake_case 和 CamelCase 函数命名 →
+           AI 在不同会话中使用了冲突的命名约定。
+
+        Args:
+            module_dir: 待扫描的 Python 模块目录路径。
+
+        Returns:
+            list[DriftEvent]: 每个命名污染或约定冲突对应一个事件。
+        """
         events: list[DriftEvent] = []
         if not os.path.isdir(module_dir):
             return events
@@ -351,6 +422,17 @@ class AIConstructionDetectors:
         return events
 
     def detect_cross_session_repair_conflict(self, active_events: list[DriftEvent]) -> list[DriftEvent]:
+        """检测跨会话修复冲突 — 多个会话对同一 DriftEvent 重复修复。
+
+        对活跃事件按 ``detector_id:drift_dimension:resolved_by`` 分组，
+        同一 key 出现超过 1 次表示多个 AI 会话"修复"了同一问题。
+
+        Args:
+            active_events: 当前活跃的 DriftEvent 列表。
+
+        Returns:
+            list[DriftEvent]: 每个冲突的 key 对应一个 DETECTED 状态的事件。
+        """
         events: list[DriftEvent] = []
         seen: dict[str, int] = {}
         for evt in active_events:
