@@ -199,7 +199,7 @@ depends_on:
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 共享+核心——108 已跟踪文件（67 Phase 0-14 + 41 原 orphan 归类）已落盘 + 109 子目录文件（§5.1a）= 215 shared/ .py 文件全覆盖 + 2 core/ 文件
+> 共享+核心——115 已跟踪文件（67 Phase 0-14 + 41 原 orphan 归类 + 7 core 根目录）已落盘 + 109 shared 子目录文件（§5.1a）+ 53 core 子目录文件（§5.1a-core）= 215 shared/ + 60 core/ .py 文件全覆盖
 
 ### 5.1 源码文件
 
@@ -256,6 +256,11 @@ depends_on:
 | `src/zephyr/shared/schema_registry.py` | ✅ 已实现 | Phase 10 新增：Schema Registry——集中式版本编目 + 兼容性查询 |
 | `src/zephyr/core/blueprint_decomposer.py` | ✅ 已实现 | |
 | `src/zephyr/core/models.py` | ✅ 已实现 | v0.3.0 — 继承Task 31字段全链路贯通 |
+| `src/zephyr/core/__init__.py` | ✅ 已实现 | 包初始化 |
+| `src/zephyr/core/blueprint_code_sync.py` | ✅ 已实现 | 蓝图-代码同步 |
+| `src/zephyr/core/context_engine.py` | ✅ 已实现 | 上下文引擎 |
+| `src/zephyr/core/healthcheck_service.py` | ✅ 已实现 | 健康检查服务 |
+| `src/zephyr/core/session_continuity.py` | ✅ 已实现 | 会话连续性（根目录副本） |
 | `src/zephyr/shared/tracing.py` | ✅ 已实现 | Phase 6 新增：OpenTelemetry 兼容 tracing context |
 | `src/zephyr/shared/cost_budget.py` | ✨ early-bird | Phase 11 (B26)：AI 成本预算熔断——208行 3类 9函 |
 | `src/zephyr/shared/context_budget.py` | ✨ early-bird | Phase 11 (B28)：上下文预算管理——259行 4类 17函 |
@@ -343,6 +348,29 @@ depends_on:
 | schema/ | 3 | `__init__`, `schema_registry`, `schemas` |
 | security/ | 4 | `__init__`, `capability`, `secrets`, `ssot_guard` |
 | utils/ | 9 | `__init__`, `blueprint_scorer`★, `context`, `db_utils`★, `diff_utils`, `migration`, `pagination`, `testing`, `time_utils` |
+
+### 5.1a-core Core 子目录文件索引（53 文件）
+
+> core/ 目录共 60 个 .py 文件。§5.1 已跟踪 7 个根目录文件。本节列出子目录文件。
+
+| 子目录 | 文件数 | 文件列表 |
+|--------|--------|---------|
+| adaptation/ | 3 | `__init__`, `execution_tuner`★, `prompt_version_manager`★ |
+| compensation/ | 2 | `__init__`, `saga_compensator`★ |
+| dependency/ | 2 | `__init__`, `dependency_graph`★ |
+| draft/ | 2 | `__init__`, `draft_assistant`★ |
+| events/ | 5 | `__init__`, `event_bus`★, `event_reactor`★, `event_store`★, `hook_dispatcher`★ |
+| impact/ | 3 | `__init__`, `impact_propagator`★, `llm_impact_analyzer`★ |
+| knowledge/ | 4 | `__init__`, `ke_linker`★, `ke_structurer`★, `kms_interface`★ |
+| lifecycle/ | 3 | `__init__`, `scope_guard`★, `task_lifecycle_manager`★ |
+| maintenance/ | 5 | `__init__`, `autonomy_monitor`★, `dogfooding`★, `handbook`★, `zero_config`★ |
+| observability/ | 6 | `__init__`, `cli_summary`★, `cost_tracker`★, `failure_matcher`★, `notifier`★, `trace_decorator`★ |
+| quality/ | 2 | `__init__`, `quality_monitor`★ |
+| queue/ | 3 | `__init__`, `task_queue`★, `task_scheduler`★ |
+| reliability/ | 5 | `__init__`, `circuit_breaker`★, `context_guard`★, `diff_planner`★, `retry_handler`★ |
+| session/ | 3 | `__init__`, `session_boundary`★, `session_continuity`★ |
+| sla/ | 2 | `__init__`, `sla_monitor`★ |
+| sync/ | 2 | `__init__`, `blueprint_code_sync`★ |
 
 ### 5.1b 待集成文件
 
