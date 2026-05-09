@@ -16,6 +16,9 @@ from zephyr.pipeline.backpressure_manager import (
 from zephyr.pipeline.circuit_breaker_manager import (
     CircuitBreakerManager,
 )
+from zephyr.pipeline.cost_tracker import (
+    CostTracker,
+)
 from zephyr.pipeline.ct_pipe_routing import (
     CtPipeRoutingHints,
     PipelineRoutingInputsError,
@@ -214,6 +217,7 @@ __all__ = [
     "CircuitBreakerState",
     "ClaudeRescueTrigger",
     "CostRecord",
+    "CostTracker",
     "CtPipeRoutingHints",
     "DEFAULT_PLUGINS",
     "DeadLetterEntry",

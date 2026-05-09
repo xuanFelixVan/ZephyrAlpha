@@ -56,6 +56,7 @@ from typing import TYPE_CHECKING, Any
 
 from zephyr.core.models import TaskCard
 from zephyr.pipeline.circuit_breaker_manager import CircuitBreakerManager
+from zephyr.pipeline.cost_tracker import CostTracker
 from zephyr.pipeline.ct_pipe_routing import (
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
@@ -68,9 +69,7 @@ from zephyr.pipeline.models import (
     M_MODULES,
     ABExperimentRoute,
     AIImpactAssessment,
-    CircuitBreakerState,
     ClaudeRescueTrigger,
-    CostRecord,
     DeadLetterEntry,
     EmergencyFallbackPlan,
     ExecutionMode,
@@ -192,8 +191,7 @@ class PipelineOrchestrator:
         self._dispatched_ids: set[str] = set()
         self._cb_manager = CircuitBreakerManager(log_fn=self._log)
         self._rate_limit_timestamps: dict[str, list[float]] = {}
-        self._cost_total: float = 0.0
-        self._cost_records: list[CostRecord] = []
+        self._cost_tracker = CostTracker()
         self._dead_letters: list[DeadLetterEntry] = []
         self._accuracy_data: dict[str, list[float]] = {}
         self._active_experiments: dict[str, ABExperimentRoute] = {}
@@ -705,7 +703,7 @@ class PipelineOrchestrator:
             _latency_ms = (datetime.now() - _dispatch_start).total_seconds() * 1000
             self._record_telemetry_latency(task_type, _latency_ms)
 
-            cost_records = self._compute_module_costs(results)
+            cost_records = self._cost_tracker.records
 
             emergency_fallback = self._emergency_fallback(results, task_card)
             dead_letter = self._maybe_dead_letter(task_card, results, status)
@@ -1062,8 +1060,7 @@ class PipelineOrchestrator:
             "priority_cutoff": self._priority_cutoff,
             "metrics": dict(self._metrics),
             "latency_samples": {k: v[:] for k, v in self._latency_samples.items()},
-            "cost_total": self._cost_total,
-            "cost_records": [c.model_dump() for c in self._cost_records[-100:]],
+            "cost_tracker": self._cost_tracker.save_state(),
             "dead_letters": [d.model_dump() for d in self._dead_letters],
         }
 
@@ -1076,8 +1073,7 @@ class PipelineOrchestrator:
         self._priority_cutoff = state.get("priority_cutoff", "P2")
         preempt_raw = state.get("preempt_log", {})
         self._preempt_log = {tid: PreemptionRecord(**data) for tid, data in preempt_raw.items()}
-        self._cost_total = float(state.get("cost_total", 0.0))
-        self._cost_records = [CostRecord(**c) for c in state.get("cost_records", [])]
+        self._cost_tracker.load_state(state.get("cost_tracker", {}))
         self._dead_letters = [DeadLetterEntry(**d) for d in state.get("dead_letters", [])]
 
     def _release_pipeline_lock(self, task_id: str) -> None:
@@ -1264,13 +1260,10 @@ class PipelineOrchestrator:
                 confidence = self._generate_confidence(model, output)
 
                 cost_usd = output.get("cost_usd", 0.0)
-                self._cost_total += cost_usd
-                self._cost_records.append(
-                    CostRecord(
-                        model=model,
-                        tokens_input=output.get("tokens_used", 0),
-                        cost_usd=cost_usd,
-                    )
+                self._cost_tracker.record_call(
+                    model=model,
+                    tokens_input=output.get("tokens_used", 0),
+                    cost_usd=cost_usd,
                 )
 
                 if self._cfg.circuit_breaker_enabled:
@@ -1524,9 +1517,7 @@ class PipelineOrchestrator:
             provider_used = llm_resp.provider
         else:
             tokens_used = task.estimated_tokens // max(token_divisor, 1)
-            cost_input = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
-            cost_output = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
-            cost_usd = round(cost_input + cost_output, 6)
+            cost_usd = self._cost_tracker.estimate_cost(model, tokens_used)
             summary_content = f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}"
             simulated = True
             provider_used = model
@@ -2149,24 +2140,6 @@ class PipelineOrchestrator:
         )
 
     # ------------------------------------------------------------------
-    # $ 成本计算 —— B161
-    # ------------------------------------------------------------------
-
-    def _compute_module_costs(self, results: list[ModuleResult]) -> list[CostRecord]:
-        """从 ModuleResult 汇总逐模块成本。"""
-        records: list[CostRecord] = []
-        for r in results:
-            cost_val = r.output.get("cost_usd", 0.0) if isinstance(r.output, dict) else 0.0
-            records.append(
-                CostRecord(
-                    model=r.model,
-                    tokens_input=r.tokens_used,
-                    cost_usd=float(cost_val),
-                )
-            )
-        return records
-
-    # ------------------------------------------------------------------
     # 死信队列 —— B169
     # ------------------------------------------------------------------
 
@@ -2423,12 +2396,4 @@ class PipelineOrchestrator:
     # ------------------------------------------------------------------
 
     def get_cost_summary(self) -> dict[str, Any]:
-        return {
-            "total_usd": round(self._cost_total, 4),
-            "by_model": {
-                m: round(sum(c.cost_usd for c in self._cost_records if c.model == m), 4)
-                for m in ("deepseek", "glm", "claude")
-                if any(c.model == m for c in self._cost_records)
-            },
-            "record_count": len(self._cost_records),
-        }
+        return self._cost_tracker.summary()
