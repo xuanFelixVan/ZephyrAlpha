@@ -31,17 +31,25 @@ summary: >
    audit-dimension-triage]
 priority: P1
 depends_on:
-  - {target: "MOD-INF-020", at: "writer.py + models.py", why: "AuditTrail——语义审计每一项判�?MUST 通过 AuditTrail.writer 记录不可变审计事件（复用密码学完整性基础设施：哈希链+HMAC+Ed25519�?}
-  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——LLM 桥接的输入输出安全校�?}
-  - {target: "MOD-INF-026", at: "§1", why: "Asset Inventory——文件存在性验证的数据�?}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——审计发现回写规则演�?}
-  - {target: "MOD-INF-021", at: "§3", why: "Rollback——修复回滚：如果语义审计的错误修复引入了新问�?}
-  - {target: "MOD-INF-024", at: "§2", why: "Budget Enforcer——LLM 桥接�?Token 配额管理"}
-references:
-  - {id: "MOD-INF-007", at: "§1", why: "Gate Engine——门�?ID 存在性校�?}
-  - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator — peer-level master controller. SemanticAuditor is an independent peer service coordinated by (not owned by) the Orchestrator. See Orchestrator v4.0.0 three-subsystem architecture."}
-  - {id: "MOD-INF-023", at: "§2", why: "Drift Detector——漂移信号作为语义审计触发线�?}
-  - {id: "MOD-INF-005", at: "§2", why: "Script System——脚本清单双向对齐的数据�?}
+  - target: "MOD-INF-020"
+    at: "writer.py + models.py"
+    why: "AuditTrail"
+  - target: "MOD-INF-014"
+    at: "section 3"
+    why: "LLM Security"
+  - target: "MOD-INF-026"
+    at: "section 1"
+    why: "Asset Inventory"
+  - target: "MOD-INF-010"
+    at: "section 2"
+    why: "Feedback Loop"
+  - target: "MOD-INF-021"
+    at: "section 3"
+    why: "Rollback"
+  - target: "MOD-INF-024"
+    at: "section 2"
+    why: "Budget Enforcer"
+references: []
 ---
 
 ## DOM-GOV-001 集成契约锚点
@@ -1738,7 +1746,7 @@ class ImpactBlastRadius:
         return BlastReport(
             target=target_rule,
             directly_referenced_by=direct_references,
-            indirectly_affected=list(indirect_affected - {target_rule}),
+            indirectly_affected=list(indirect_affected   - ),
             blast_radius=len(direct_references) + len(indirect_affected),
             recommendation=self._recommend(direct_references, indirect_affected)
         )

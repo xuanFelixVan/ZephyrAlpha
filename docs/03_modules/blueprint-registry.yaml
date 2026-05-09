@@ -172,20 +172,20 @@ blueprints:
   construction_progress: phase_2_complete
 - module_id: MOD-INF-005
   name: script-system
-  title: Audit Foundry 审计引擎蓝图 — 代码库实时审计编译引擎 v6.0.0
+  title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
   layer: L01
   functional_domain: infra
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 6.0.0
+  version: 5.2.1
   generation: ''
-  last_updated: '2026-05-09'
+  last_updated: '2026-05-10'
   file_path: 03_modules/l01_infrastructure/script-system/blueprint.md
-  construction_progress: completed
+  construction_progress: phase_2_complete
 - module_id: MOD-INF-006
   name: task-system
-  title: 任务系统蓝图 — 全链路：草稿→蓝图真源→任务卡→双管线执行→Audit Foundry审计
+  title: 任务系统蓝图 — 全链路：草稿→蓝图真源→任务卡→双管线执行→脚本系统
   layer: L01
   functional_domain: ''
   blueprint_status: Active
@@ -208,7 +208,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/_cross_layer/gate-engine/blueprint.md
-  construction_progress: phase_2_complete
+  construction_progress: phase_1_partial
 - module_id: MOD-INF-008
   name: context-engine
   title: Context Engine 蓝图 — build→compress→validate→inject 四阶段上下文注入
@@ -244,9 +244,9 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.32.0
+  version: 0.32.1
   generation: ''
-  last_updated: '2026-05-06'
+  last_updated: '2026-05-10'
   file_path: 03_modules/_cross_layer/feedback-loop/blueprint.md
   construction_progress: phase_2_complete
 - module_id: MOD-INF-011
@@ -257,22 +257,22 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.7.0
+  version: 0.7.1
   generation: ''
-  last_updated: '2026-05-09'
+  last_updated: '2026-05-10'
   file_path: 03_modules/l01_infrastructure/vector-memory/blueprint.md
   construction_progress: phase_2_complete
 - module_id: MOD-INF-012
   name: database
-  title: Database 蓝图 — SQLite + DuckDB 双引擎元数据层 v2.5
+  title: Database 蓝图 — SQLite + DuckDB 双引擎元数据层 v2.2
   layer: cross_layer
   functional_domain: ''
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 2.5.0
+  version: 2.3.0
   generation: ''
-  last_updated: '2026-05-09'
+  last_updated: '2026-05-10'
   file_path: 03_modules/_cross_layer/database/blueprint.md
   construction_progress: phase_2_complete
 - module_id: MOD-INF-013
@@ -283,9 +283,9 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.3.36
+  version: 0.3.37
   generation: ''
-  last_updated: '2026-05-06'
+  last_updated: '2026-05-10'
   file_path: 03_modules/_cross_layer/mcp-servers/blueprint.md
   construction_progress: phase_2_complete
 - module_id: MOD-INF-014
@@ -300,7 +300,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-08'
   file_path: 03_modules/_cross_layer/llm-security/blueprint.md
-  construction_progress: phase_2_complete
+  construction_progress: phase_1_complete
 - module_id: MOD-INF-015
   name: system-telemetry
   title: System Telemetry 蓝图 — 全系统可观测性：指标/日志/链路/AI行为/存档/剖析/健康/告警/Schema
@@ -322,9 +322,9 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.14.0
+  version: 0.15.0
   generation: ''
-  last_updated: '2026-05-03'
+  last_updated: '2026-05-10'
   file_path: 03_modules/_cross_layer/shared-core/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-017
@@ -432,7 +432,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l01_infrastructure/budget-enforcer/blueprint.md
-  construction_progress: phase_2_complete
+  construction_progress: phase_1_partial
 - module_id: MOD-INF-025
   name: a2a-protocol
   title: A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决：Agent发现+任务交接+冲突检测+仲裁+死锁防护+消息安全+Living
@@ -447,7 +447,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l01_infrastructure/a2a-protocol/blueprint.md
-  construction_progress: phase_2_complete
+  construction_progress: phase_1_partial
 - module_id: MOD-INF-026
   name: asset-inventory
   title: 资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -508,7 +508,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 4.5.0
+  version: 4.3.0
   generation: 4
   last_updated: '2026-05-08'
   file_path: 03_modules/_cross_layer/auto-fix-engine/blueprint.md
@@ -577,7 +577,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l00_data_source/datasource-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L02-001
   name: alpha-factor-core
   title: Alpha 因子层蓝图（C 轨占位 — 禁止施工）
@@ -603,7 +603,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l03_signal_generation/signal-generation-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L04-001
   name: risk-management-core
   title: 风险管理层蓝图（C 轨占位 — 禁止施工）
@@ -616,7 +616,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l04_risk_management/risk-management-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L05-001
   name: portfolio-core
   title: 组合构建层蓝图（C 轨占位 — 禁止施工）
@@ -629,7 +629,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l05_portfolio_construction/portfolio-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L06-001
   name: execution-core
   title: 交易执行层蓝图（C 轨占位 — 禁止施工）
@@ -642,7 +642,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l06_trade_execution/execution-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L07-001
   name: analytics-core
   title: 交易后分析层蓝图（C 轨占位 — 禁止施工）
@@ -655,7 +655,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l07_post_trade_analytics/analytics-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L08-001
   name: hmi-core
   title: 人机交互层蓝图（C 轨占位 — 禁止施工）
@@ -668,7 +668,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l08_human_ai_interface/hmi-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L09-001
   name: research-core
   title: 研究创新层蓝图（C 轨占位 — 禁止施工）
@@ -681,7 +681,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l09_research_innovation/research-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L10-001
   name: compliance-core
   title: 合规层蓝图（C 轨占位 — 禁止施工）
@@ -694,7 +694,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l10_compliance/compliance-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L11-001
   name: ml-core
   title: ML 平台层蓝图（C 轨占位 — 禁止施工）
@@ -707,7 +707,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l11_ml_platform/ml-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-L13-001
   name: experiment-core
   title: 实验管线层蓝图（C 轨占位 — 禁止施工）
@@ -720,7 +720,7 @@ blueprints:
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/l13_experimentation/experiment-core/blueprint.md
-  construction_progress: phase_1_partial
+  construction_progress: blocked_by_infrastructure
 - module_id: MOD-MASTER-001
   name: _master-blueprint
   title: 集成闭环总蓝图 v0.9.2 — 任务系统·脚本系统·知识库及全部基础设施系统的集成契约与数据流 + 已施工修补

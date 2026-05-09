@@ -15,29 +15,65 @@ valid_from: "2026-05-08"
 ttl: permanent
 construction_progress: not_started
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha 全量审计编排器蓝�?v1.0.0——多维度迭代审计引擎（MDIAE）。MAPE-K 五层架构（Monitor-Analyze-Plan-Execute-Knowledge），32章完整设计：发现（增量Hash指纹）→ 审计（结�?0�?shell_detection+语义审计）→ 修复（OrphanJudge判定→AutoFixEngine执行）→ Git快照（回滚审计验证）�?红白对抗（攻击自生长）→ 循环收敛（熵速追�?不收敛处置）�?Knowledge积累（模式学�?规则自演�?修复模板库）。含增量审计/缓存策略、cron调度/Webhook触发、Meta-Audit自审计、Prometheus遥测/SLO定义、JSON/HTML/趋势报告、DimensionProvider插件接口、CircuitBreaker/Hystrix熔断、CLI+MCP双入口、Agent Skill自发现协议、跨模块依赖审计、DORA四指标对标、灾难恢复演练、合规框架映�?ISO27001/SOC2)、成熟度32�?00%模型。Orchestrator仅做编排调度——不做审计判定、不做修复执行、不做对抗验证。一人开�?AI维护+100%氛围编程全自动化语境�?
+summary: "ZephyrAlpha audit orchestrator blueprint v4.0.0 - MAPE-K five-layer architecture for multi-dimensional iterative audit"
 tags: [audit, orchestrator, multi-dimensional, iterative, convergence, governance, self-healing, ai-driven, cross-cutting, orphan-judgment, semantic-audit, red-blue-adversarial, git-backup, chaos-engineering, mape-k, trae, roo-code, api-automation, incremental-audit, meta-audit, observability, telemetry, cron-scheduler, circuit-breaker, plugin-architecture, agent-skill, dora-metrics, compliance-mapping, disaster-recovery]
 priority: P1
 depends_on:
-  - {target: "MOD-INF-007", at: "full", why: "Gate Engine——所有门禁检查的执行引擎"}
-  - {target: "MOD-INF-017", at: "full", why: "Code Dedup Engine——代码去重检�?}
-  - {target: "MOD-INF-020", at: "full", why: "Audit Trail——审计编排过�?MUST 记录不可变审计日�?}
-  - {target: "MOD-INF-023", at: "§2", why: "Drift Detector——漂移检�?}
-  - {target: "MOD-INF-026", at: "full", why: "Asset Inventory——资产索引作为全量扫描目标清�?}
-  - {target: "MOD-INF-028", at: "full", why: "SemanticAuditor — independent peer service. Orchestrator dispatches via Phase 2 triage (v4.0.0 peer dispatch architecture)"}
-  - {target: "MOD-INF-033", at: "full", why: "BehavioralAuditor — AI behavior boundary audit. Orchestrator dispatches via AuditTrail event stream (v4.0.0 three-subsystem architecture)"}
-  - {target: "MOD-INF-029", at: "full", why: "Orphan Judge——孤儿判定独立子系统"}
-  - {target: "MOD-INF-030", at: "full", why: "RedBlue Validator——红白对抗独立子系统"}
-  - {target: "MOD-INF-031", at: "full", why: "AutoFix Engine——自动修复执行独立子系统"}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——审计发现回�?FLE 驱动规则演进"}
-  - {target: "MOD-INF-018", at: "§3", why: "Agent RBAC——审计操作权限校�?}
-  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——AI 驱动修复的安全性约�?}
-  - {target: "MOD-INF-015", at: "§2", why: "System Telemetry——收敛状态推送遥测面�?}
+  - target: "MOD-INF-007"
+    at: "full"
+    why: "Gate Engine"
+  - target: "MOD-INF-017"
+    at: "full"
+    why: "Code Dedup Engine"
+  - target: "MOD-INF-020"
+    at: "full"
+    why: "Audit Trail"
+  - target: "MOD-INF-023"
+    at: "section 2"
+    why: "Drift Detector"
+  - target: "MOD-INF-026"
+    at: "full"
+    why: "Asset Inventory"
+  - target: "MOD-INF-028"
+    at: "full"
+    why: "SemanticAuditor peer service"
+  - target: "MOD-INF-033"
+    at: "full"
+    why: "BehavioralAuditor peer service"
+  - target: "MOD-INF-029"
+    at: "full"
+    why: "Orphan Judge"
+  - target: "MOD-INF-030"
+    at: "full"
+    why: "RedBlue Validator"
+  - target: "MOD-INF-031"
+    at: "full"
+    why: "AutoFix Engine"
+  - target: "MOD-INF-010"
+    at: "section 2"
+    why: "Feedback Loop"
+  - target: "MOD-INF-018"
+    at: "section 3"
+    why: "Agent RBAC"
+  - target: "MOD-INF-014"
+    at: "section 3"
+    why: "LLM Security"
+  - target: "MOD-INF-015"
+    at: "section 2"
+    why: "System Telemetry"
 references:
-  - {id: "MOD-INF-005", at: "full", why: "Script System—�?88 个脚本的注册与发�?}
-  - {id: "MOD-INF-006", at: "§1", why: "Task System——审计过�?TaskCard 关联"}
-  - {id: "MOD-INF-009", at: "§2", why: "Pipeline——审计可作为 Pipeline 阶段集成"}
-  - {id: "MOD-INF-019", at: "§3", why: "Agent Spec——Agent Skill 注册与渐进式加载"}
+  - id: "MOD-INF-005"
+    at: "full"
+    why: "Script System"
+  - id: "MOD-INF-006"
+    at: "section 1"
+    why: "Task System"
+  - id: "MOD-INF-009"
+    at: "section 2"
+    why: "Pipeline"
+  - id: "MOD-INF-019"
+    at: "section 3"
+    why: "Agent Spec"
 ---
 
 ## DOM-GOV-001 集成契约锚点
