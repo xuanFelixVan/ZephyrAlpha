@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: phase_1_scaffold_partial
+construction_progress: phase_1_partial
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha 审计追踪链蓝图 v1.1.0——每个 AI 动作的不可变、密码学完整性保证的审计记录。JSONL 为唯一真源 + 哈希链防篡改 + HMAC 系统级签名 + Agent 级 Ed25519 数字签名（non-repudiation）+ CoT 推理链审计 + Lamport 逻辑时钟 + 分级 Provenance + 蓝图漂移检测 + 异常行为签名 + 元审计自监控 + 三角闭环反馈（Policy→Factory→Runtime→反馈回写 Policy）+ 渐进信任分数 + 委托链审计 + 跨 IDE 一致性交叉验证 + 外部独立验证端点 + 监管证据包导出 + 合规框架条款映射。三层存储（热/温/冷）+ 隐私脱敏策略 + 供应链审计 + 间接操作检测 + Dry-Run 预审计 + Cold Start 历史回溯 + Git 隔离审计日志。对标 Goldman SecDB immutable audit log + ISACA 2025 Agentic AI 三要素 + OWASP ASI-09/10 2026 + Microsoft AGT Merkle-chain integrity + Agent DID/Ed25519 + IATP 握手 + W3C PROV 三元组模型 + NIST 2026 AI Agent Standards + FCA 监管文件审查格式。"
 tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrastructure, cryptographic-integrity, hash-chain, hmac-signing, ed25519, agent-signing, non-repudiation, cot-audit, reasoning-chain, lamport-clock, drift-detection, anomaly-detection, meta-audit, tiered-storage, privacy-redaction, feedback-loop, policy-factory-runtime, w3c-prov, owasp-asi09, owasp-asi10, self-monitoring, trust-score, delegation-chain, cross-ide-consistency, external-verifier, evidence-pack, compliance-map, supply-chain-audit, indirect-operation, git-isolation, kb-poisoning-prevention, nist-2026, fca]

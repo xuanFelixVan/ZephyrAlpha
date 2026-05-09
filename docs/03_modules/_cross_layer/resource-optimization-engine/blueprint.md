@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: phase_1_5_complete
+construction_progress: phase_1_complete
 summary: "桌面级自主计算引擎——MAPE-K 循环驱动的资源监控、分析、优化与自愈系统。一个系统包含两个策略引擎：防御引擎（应急保护）和优化引擎（主动提效），共享感知层、执行层和知识层。在保证服务质量的前提下，主动优化 CPU/内存/磁盘 I/O/进程资源使用。"
 tags: [autonomic-computing, mape-k, resource-optimization, aiops, process-supervision, observability, circuit-breaker, backpressure, graceful-degradation, self-healing]
 priority: P1

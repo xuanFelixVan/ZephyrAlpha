@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-08"
 valid_from: "2026-05-08"
 ttl: permanent
-construction_progress: design_frozen
+construction_progress: not_started
 belongs_to: "MOD-INF-027"
 maturity:
   overall: 100
