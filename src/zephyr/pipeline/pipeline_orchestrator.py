@@ -43,23 +43,26 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
 from __future__ import annotations
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 import hashlib
 import json
+import os
 import time
 from datetime import datetime
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from zephyr.core.models import TaskCard
+from zephyr.pipeline.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.pipeline.ct_pipe_routing import (
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
 )
+from zephyr.pipeline.model_router import ModelRouter
 from zephyr.pipeline.models import (
     M_MODULE_SPECS,
     M_MODULES,
@@ -74,7 +77,6 @@ from zephyr.pipeline.models import (
     ExperimentVariant,
     ModelCollapseAlert,
     ModelConfidence,
-    ModelVersionInfo,
     ModuleResult,
     ModuleStatus,
     NightShiftAmbiguityLogEntry,
@@ -91,19 +93,20 @@ from zephyr.pipeline.models import (
 from zephyr.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.pipeline.routing_plugins import PipelineRouter
 from zephyr.shared.schema.schemas import TaskStatus
-from zephyr.pipeline.model_router import ModelRouter
 
 _RBAC_AVAILABLE = False
 try:
     from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge, RBACCheckResult
+
     _RBAC_AVAILABLE = True
 except ImportError:
     EscalationRBACBridge = None  # type: ignore[misc,assignment]
-    RBACCheckResult = None       # type: ignore[misc,assignment]
+    RBACCheckResult = None  # type: ignore[misc,assignment]
 
 _AUDIT_AVAILABLE = False
 try:
     from zephyr.audit_trail.writer import AuditWriter
+
     _AUDIT_AVAILABLE = True
 except ImportError:
     AuditWriter = None  # type: ignore[misc,assignment]
@@ -114,14 +117,16 @@ try:
         PipelineSkillBridge,
         SkillInjectionResult,
     )
+
     _SKILL_BRIDGE_AVAILABLE = True
 except ImportError:
     PipelineSkillBridge = None  # type: ignore[misc,assignment]
-    SkillInjectionResult = None   # type: ignore[misc,assignment]
+    SkillInjectionResult = None  # type: ignore[misc,assignment]
 
 _LOCAL_SCHEDULER_AVAILABLE = False
 try:
     from zephyr.vector_memory.local_model_scheduler import LocalModelScheduler
+
     _LOCAL_SCHEDULER_AVAILABLE = True
 except ImportError:
     LocalModelScheduler = None  # type: ignore[assignment,misc]
@@ -129,13 +134,13 @@ except ImportError:
 _PROFILER_AVAILABLE = False
 try:
     from zephyr.pipeline.model_profiler.profiler import ModelProfiler
+
     _PROFILER_AVAILABLE = True
 except ImportError:
     ModelProfiler = None  # type: ignore[assignment,misc]
 
 if TYPE_CHECKING:
     from zephyr.db.task_repo import TaskRepository
-    from zephyr.shared.events.event_schemas import TaskEventPayload
 
 __all__ = ["PipelineOrchestrator"]
 
@@ -185,8 +190,7 @@ class PipelineOrchestrator:
         self._log_buffer: list[tuple[str, str, str]] = []
 
         self._dispatched_ids: set[str] = set()
-        self._circuit_breaker_states: dict[str, CircuitBreakerState] = {}
-        self._circuit_breaker_failures: dict[str, list[float]] = {}
+        self._cb_manager = CircuitBreakerManager(log_fn=self._log)
         self._rate_limit_timestamps: dict[str, list[float]] = {}
         self._cost_total: float = 0.0
         self._cost_records: list[CostRecord] = []
@@ -238,6 +242,7 @@ class PipelineOrchestrator:
 
         def _loop():
             import time
+
             while True:
                 time.sleep(self._periodic_profile_interval_s)
                 try:
@@ -297,6 +302,7 @@ class PipelineOrchestrator:
         from zephyr.pipeline.model_profiler.results_writer import (
             to_model_benchmark_result,
         )
+
         return to_model_benchmark_result(best)
 
     def detect_model_drift(self, model_name: str) -> dict[str, object] | None:
@@ -360,11 +366,15 @@ class PipelineOrchestrator:
         _dispatch_start = datetime.now()
 
         self._active_dispatches.add(task_card.task_id)
-        self._log("INFO", f"dispatch[{task_card.task_id}] started pipeline={task_card.assigned_pipeline} dry_run={dry_run}")
+        self._log(
+            "INFO", f"dispatch[{task_card.task_id}] started pipeline={task_card.assigned_pipeline} dry_run={dry_run}"
+        )
 
         if task_card.task_id in self._dispatched_ids:
             self._active_dispatches.discard(task_card.task_id)
-            self._log("WARN", f"dispatch[{task_card.task_id}] idempotency guard: already dispatched, rejecting duplicate")
+            self._log(
+                "WARN", f"dispatch[{task_card.task_id}] idempotency guard: already dispatched, rejecting duplicate"
+            )
             return PipelineResult(
                 task_id=task_card.task_id,
                 pipeline=task_card.assigned_pipeline,
@@ -381,12 +391,15 @@ class PipelineOrchestrator:
             exit_code_tag = [t for t in tags if t.startswith("rollback_exit:")]
             exit_code = int(exit_code_tag[0].split(":")[1]) if exit_code_tag else -1
             try:
-                from zephyr.rollback.contract import get_pipeline_action, get_gate_action
+                from zephyr.rollback.contract import get_gate_action, get_pipeline_action
+
                 gate_action, desc = get_gate_action(exit_code)
                 pipeline_action = get_pipeline_action(gate_action)
                 if gate_action in ("BLOCK", "BLOCK_AUTO", "FAIL", "L3_KILL", "L2_KILL"):
                     self._active_dispatches.discard(task_card.task_id)
-                    _exit_detail = f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
+                    _exit_detail = (
+                        f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
+                    )
                     self._log("WARN", f"dispatch[{task_card.task_id}] {_exit_detail}")
                     return PipelineResult(
                         task_id=task_card.task_id,
@@ -399,8 +412,7 @@ class PipelineOrchestrator:
                     )
                 elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
                     ct_warnings.append(
-                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} "
-                        f"pipeline={pipeline_action}"
+                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} " f"pipeline={pipeline_action}"
                     )
             except Exception:
                 pass
@@ -408,8 +420,16 @@ class PipelineOrchestrator:
         rbac_result = self._rbac_check(task_card)
         if rbac_result is not None and not rbac_result.passed:
             self._active_dispatches.discard(task_card.task_id)
-            self._write_audit_event(task_card.task_id, f"pipeline.{task_card.assigned_pipeline}", "RBAC_BLOCKED", {"layer": rbac_result.layer, "rule": rbac_result.rule_id, "reason": rbac_result.reason})
-            self._log("WARN", f"dispatch[{task_card.task_id}] RBAC blocked: {rbac_result.reason} layer={rbac_result.layer} rule={rbac_result.rule_id}")
+            self._write_audit_event(
+                task_card.task_id,
+                f"pipeline.{task_card.assigned_pipeline}",
+                "RBAC_BLOCKED",
+                {"layer": rbac_result.layer, "rule": rbac_result.rule_id, "reason": rbac_result.reason},
+            )
+            self._log(
+                "WARN",
+                f"dispatch[{task_card.task_id}] RBAC blocked: {rbac_result.reason} layer={rbac_result.layer} rule={rbac_result.rule_id}",
+            )
             _tags = task_card.tags or ()
             _needs_rescue = "security" in _tags or "experimental" in _tags
             return PipelineResult(
@@ -421,7 +441,9 @@ class PipelineOrchestrator:
                 is_dry_run=dry_run,
                 ct_pipe_warnings=[f"RBAC BLOCKED [{rbac_result.layer}/{rbac_result.rule_id}]: {rbac_result.reason}"],
                 needs_claude_rescue=_needs_rescue,
-                rescue_reason="Security/Experimental tag detected — RBAC blocked but Claude review required" if _needs_rescue else "",
+                rescue_reason="Security/Experimental tag detected — RBAC blocked but Claude review required"
+                if _needs_rescue
+                else "",
             )
 
         impact = self._assess_impact(task_card)
@@ -548,9 +570,7 @@ class PipelineOrchestrator:
 
             skill_injection: SkillInjectionResult | None = None
             if self._skill_bridge is not None:
-                stage_hint = (
-                    hints.stage if hints else None
-                ) or "construction"
+                stage_hint = (hints.stage if hints else None) or "construction"
                 task_desc = (
                     (getattr(task_card, "description", "") or "")
                     + " "
@@ -607,6 +627,7 @@ class PipelineOrchestrator:
                 if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
                     try:
                         from zephyr.agent_spec.skill_feedback import SkillFeedback
+
                         fb = SkillFeedback()
                         for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
                             if skid:
@@ -688,7 +709,7 @@ class PipelineOrchestrator:
 
             emergency_fallback = self._emergency_fallback(results, task_card)
             dead_letter = self._maybe_dead_letter(task_card, results, status)
-            cb_state = self._circuit_breaker_states.get(task_card.task_id)
+            cb_state = self._cb_manager.status(task_card.task_id).get(task_card.task_id)
 
             bridge_result = None
             if self._agent_orchestrator is not None:
@@ -807,9 +828,13 @@ class PipelineOrchestrator:
     # 三层执行模式解析 —— 根据人类在场 + 任务类型路由
     # ------------------------------------------------------------------
 
-    _LOCAL_ONLY_CAPABILITIES: frozenset[str] = frozenset({
-        "vector_embedding", "semantic_search", "reranking",
-    })
+    _LOCAL_ONLY_CAPABILITIES: frozenset[str] = frozenset(
+        {
+            "vector_embedding",
+            "semantic_search",
+            "reranking",
+        }
+    )
 
     def _is_human_present(self) -> bool:
         method = self._cfg.human_detection_method
@@ -1206,8 +1231,7 @@ class PipelineOrchestrator:
 
         cb_key = f"{task.task_id}:{module_id}:{model}"
         if self._cfg.circuit_breaker_enabled:
-            cb_state = self._check_circuit_breaker(cb_key, model)
-            if cb_state == CircuitBreakerState.OPEN:
+            if not self._cb_manager.allow_request(cb_key, model):
                 return ModuleResult(
                     module_id=module_id,
                     pipeline=pipeline,
@@ -1226,7 +1250,10 @@ class PipelineOrchestrator:
         for attempt in range(1, self._cfg.max_retries + 1):
             try:
                 output = self._call_model(
-                    module_id, pipeline, model, task,
+                    module_id,
+                    pipeline,
+                    model,
+                    task,
                     token_divisor=divisor,
                     prior_artifacts=prior_artifacts,
                     dry_run=dry_run,
@@ -1238,14 +1265,16 @@ class PipelineOrchestrator:
 
                 cost_usd = output.get("cost_usd", 0.0)
                 self._cost_total += cost_usd
-                self._cost_records.append(CostRecord(
-                    model=model,
-                    tokens_input=output.get("tokens_used", 0),
-                    cost_usd=cost_usd,
-                ))
+                self._cost_records.append(
+                    CostRecord(
+                        model=model,
+                        tokens_input=output.get("tokens_used", 0),
+                        cost_usd=cost_usd,
+                    )
+                )
 
                 if self._cfg.circuit_breaker_enabled:
-                    self._circuit_breaker_failures.pop(cb_key, None)
+                    self._cb_manager.record_result(cb_key, success=True)
 
                 return ModuleResult(
                     module_id=module_id,
@@ -1262,9 +1291,9 @@ class PipelineOrchestrator:
             except Exception as exc:
                 last_error = f"[{attempt}/{self._cfg.max_retries}] {type(exc).__name__}: {exc}"
                 if self._cfg.circuit_breaker_enabled:
-                    self._circuit_breaker_failures.setdefault(cb_key, []).append(time.time())
+                    self._cb_manager.record_result(cb_key, success=False)
                 if attempt < self._cfg.max_retries:
-                    time.sleep(min(2 ** attempt, 30))
+                    time.sleep(min(2**attempt, 30))
 
         self._failure_log[module_id] = self._failure_log.get(module_id, 0) + 1
         self._failure_log["_task_" + task.task_id] = self._failure_log.get("_task_" + task.task_id, 0) + 1
@@ -1290,6 +1319,7 @@ class PipelineOrchestrator:
         if self._cfg.local_model_always_on and self._embedding_router is None:
             try:
                 from zephyr.vector_memory.embedding_router import EmbeddingRouter
+
                 self._embedding_router = EmbeddingRouter()
                 self._embedding_router.warmup()
                 self._log("INFO", "Local models warmed up: EmbeddingRouter + Reranker ready")
@@ -1308,6 +1338,7 @@ class PipelineOrchestrator:
         if self._reranker_instance is None:
             try:
                 from zephyr.kb.reranker import Reranker
+
                 self._reranker_instance = Reranker()
             except Exception as exc:
                 self._log("WARN", f"Reranker init failed: {exc}")
@@ -1319,6 +1350,7 @@ class PipelineOrchestrator:
     @staticmethod
     def _zero_vector(dim: int) -> Any:
         import numpy as np
+
         return np.zeros(dim, dtype=np.float32)
 
     # ------------------------------------------------------------------
@@ -1474,6 +1506,7 @@ class PipelineOrchestrator:
 
         try:
             from zephyr.agent_spec.llm_gateway import LLMGateway, LLMResponse
+
             llm_resp: LLMResponse = LLMGateway.call(
                 messages,
                 provider=model if model in LLMGateway.list_providers() else "deepseek",
@@ -1557,7 +1590,9 @@ class PipelineOrchestrator:
             while self._active_dispatches and time.time() < deadline:
                 time.sleep(0.2)
             if self._active_dispatches:
-                self._log("WARN", f"on_shutdown: {len(self._active_dispatches)} dispatches still active after 30s, forcing")
+                self._log(
+                    "WARN", f"on_shutdown: {len(self._active_dispatches)} dispatches still active after 30s, forcing"
+                )
         self.save_state()
         if self._pipeline_lock is not None:
             active_locks = self._pipeline_lock.list_all() if hasattr(self._pipeline_lock, "list_all") else {}
@@ -1570,7 +1605,7 @@ class PipelineOrchestrator:
         glm_fail = sum(v for k, v in self._failure_log.items() if "glm" in k.lower())
         claude_fail = sum(v for k, v in self._failure_log.items() if "claude" in k.lower())
         active_preemptions = sum(1 for r in self._preempt_log.values() if r.resumed_at is None)
-        cb_open = sum(1 for s in self._circuit_breaker_states.values() if s == CircuitBreakerState.OPEN)
+        cb_open = self._cb_manager.open_count
 
         health: dict[str, Any] = {
             "module": "PipelineOrchestrator",
@@ -1598,7 +1633,9 @@ class PipelineOrchestrator:
             failure_ratio = total_fail / self._task_repo.total_tasks
             if failure_ratio > self._cfg.health_critical_failure_ratio:
                 health["status"] = "critical"
-                health["warning"] = f"Failure ratio {failure_ratio:.2%} exceeds threshold {self._cfg.health_critical_failure_ratio:.2%}"
+                health["warning"] = (
+                    f"Failure ratio {failure_ratio:.2%} exceeds threshold {self._cfg.health_critical_failure_ratio:.2%}"
+                )
 
         if cb_open > 0:
             health.setdefault("self_healing_suggestions", []).append(
@@ -1630,7 +1667,8 @@ class PipelineOrchestrator:
         if self._telemetry is not None and hasattr(self._telemetry, "metrics"):
             try:
                 self._telemetry.metrics.histogram(
-                    f"pipe_routing_latency_{task_type}", latency_ms,
+                    f"pipe_routing_latency_{task_type}",
+                    latency_ms,
                 )
             except Exception:
                 pass
@@ -1740,6 +1778,7 @@ class PipelineOrchestrator:
         """
         try:
             import asyncio
+
             from zephyr.llm_security.gateway import LSGSecurityGateway, SecurityDecision
 
             if PipelineOrchestrator._lsg_gateway is None:
@@ -1747,9 +1786,7 @@ class PipelineOrchestrator:
             gw = PipelineOrchestrator._lsg_gateway
             try:
                 loop = asyncio.get_running_loop()
-                future = asyncio.run_coroutine_threadsafe(
-                    gw.scan_input(text, source="PipelineOrchestrator"), loop
-                )
+                future = asyncio.run_coroutine_threadsafe(gw.scan_input(text, source="PipelineOrchestrator"), loop)
                 result = future.result()
             except RuntimeError:
                 result = asyncio.run(gw.scan_input(text, source="PipelineOrchestrator"))
@@ -1774,6 +1811,7 @@ class PipelineOrchestrator:
         """
         try:
             import asyncio
+
             from zephyr.llm_security.gateway import LSGSecurityGateway
             from zephyr.llm_security.protocol import SecurityDecision
 
@@ -1786,20 +1824,25 @@ class PipelineOrchestrator:
                         loop = asyncio.get_running_loop()
                         future = asyncio.run_coroutine_threadsafe(
                             gw.scan_output(
-                                output[key], source=f"Pipeline.{module_id}",
+                                output[key],
+                                source=f"Pipeline.{module_id}",
                             ),
                             loop,
                         )
                         result = future.result()
                     except RuntimeError:
-                        result = asyncio.run(gw.scan_output(
-                            output[key], source=f"Pipeline.{module_id}",
-                        ))
+                        result = asyncio.run(
+                            gw.scan_output(
+                                output[key],
+                                source=f"Pipeline.{module_id}",
+                            )
+                        )
                     if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                         output[key] = f"[LSG-BLOCKED] {output[key][:200]}"
             return output
         except ImportError:
             import logging
+
             logging.getLogger("pipeline.lsg").warning(
                 "LSG Security Gateway (MOD-INF-014) not available — output sanitization skipped (fail-open). "
                 "Install: pip install -e . or verify src/zephyr/llm_security/ exists."
@@ -1826,6 +1869,7 @@ class PipelineOrchestrator:
         try:
             import asyncio
             import json
+
             from zephyr.llm_security.gateway import LSGSecurityGateway
             from zephyr.llm_security.protocol import SecurityDecision
 
@@ -1837,17 +1881,23 @@ class PipelineOrchestrator:
                 loop = asyncio.get_running_loop()
                 future = asyncio.run_coroutine_threadsafe(
                     gw.scan_agent_action(
-                        text=text, tool_name=tool_name, tool_params=tool_params,
+                        text=text,
+                        tool_name=tool_name,
+                        tool_params=tool_params,
                         metadata={"source": "PipelineOrchestrator"},
                     ),
                     loop,
                 )
                 result = future.result()
             except RuntimeError:
-                result = asyncio.run(gw.scan_agent_action(
-                    text=text, tool_name=tool_name, tool_params=tool_params,
-                    metadata={"source": "PipelineOrchestrator"},
-                ))
+                result = asyncio.run(
+                    gw.scan_agent_action(
+                        text=text,
+                        tool_name=tool_name,
+                        tool_params=tool_params,
+                        metadata={"source": "PipelineOrchestrator"},
+                    )
+                )
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
             return None
@@ -1903,12 +1953,8 @@ class PipelineOrchestrator:
             if sim > 0.8:
                 detail_parts.append(f"M3(DeepSeek)与M7(GLM)输出高度趋同(相似度={sim:.1%})")
                 detail_parts.append(f"共同verdict: {m3_verdict!r}")
-                detail_parts.append(
-                    f"任务标题: {task_card.title[:80]}"
-                )
-                detail_parts.append(
-                    "建议: 引入 Cross-Encoder reranker 或 adversarial prompt 打破同质化"
-                )
+                detail_parts.append(f"任务标题: {task_card.title[:80]}")
+                detail_parts.append("建议: 引入 Cross-Encoder reranker 或 adversarial prompt 打破同质化")
 
                 severity = "warn" if sim < 0.95 else "critical"
                 self._log("WARN", f"ModelCollapse: M3+M7 similarity={sim:.1%} verdict={m3_verdict!r}")
@@ -2056,61 +2102,24 @@ class PipelineOrchestrator:
         if self._audit_writer is None:
             return
         try:
-            self._audit_writer.write({
-                "task_id": task_id,
-                "operation": operation,
-                "status": status,
-                "details": details or {},
-            })
+            self._audit_writer.write(
+                {
+                    "task_id": task_id,
+                    "operation": operation,
+                    "status": status,
+                    "details": details or {},
+                }
+            )
         except Exception:
             pass
 
     # ------------------------------------------------------------------
-    # Circuit Breaker —— B151（对标 Netflix Hystrix）
+    # Circuit Breaker —— B151（对标 Netflix Hystrix），委托至 CircuitBreakerManager（SRC-0024）
     # ------------------------------------------------------------------
-
-    _CB_FAILURE_WINDOW_S = 60.0
-    _CB_FAILURE_THRESHOLD = 3
-    _CB_COOLDOWN_S = 30.0
-
-    def _check_circuit_breaker(self, cb_key: str, model: str) -> CircuitBreakerState:
-        """检查断路器状态。
-
-        CLOSED → OPEN：窗口内失败 >= _CB_FAILURE_THRESHOLD
-        OPEN → HALF_OPEN：超过 _CB_COOLDOWN_S
-        HALF_OPEN → CLOSED/OPEN：下一次调用结果决定
-        """
-        now = time.time()
-        state = self._circuit_breaker_states.get(cb_key, CircuitBreakerState.CLOSED)
-
-        if state == CircuitBreakerState.OPEN:
-            failures = self._circuit_breaker_failures.get(cb_key, [])
-            if failures:
-                last_fail = max(failures)
-                if now - last_fail >= self._CB_COOLDOWN_S:
-                    self._circuit_breaker_states[cb_key] = CircuitBreakerState.HALF_OPEN
-                    self._log("INFO", f"CircuitBreaker[{model}] OPEN→HALF_OPEN (冷却{self._CB_COOLDOWN_S}s后尝试恢复)")
-                    return CircuitBreakerState.HALF_OPEN
-            return CircuitBreakerState.OPEN
-
-        if state == CircuitBreakerState.CLOSED:
-            failures = self._circuit_breaker_failures.get(cb_key, [])
-            recent = [t for t in failures if now - t <= self._CB_FAILURE_WINDOW_S]
-            if len(recent) >= self._CB_FAILURE_THRESHOLD:
-                self._circuit_breaker_states[cb_key] = CircuitBreakerState.OPEN
-                self._log("WARN", f"CircuitBreaker[{model}] CLOSED→OPEN ({len(recent)} failures in {self._CB_FAILURE_WINDOW_S}s)")
-                return CircuitBreakerState.OPEN
-            return CircuitBreakerState.CLOSED
-
-        return state
 
     def reset_circuit_breakers(self) -> int:
         """重置所有断路器到 CLOSED 状态。返回重置数量。"""
-        count = len(self._circuit_breaker_states)
-        self._circuit_breaker_states.clear()
-        self._circuit_breaker_failures.clear()
-        self._log("INFO", f"reset_circuit_breakers: {count} breaker(s) reset to CLOSED")
-        return count
+        return self._cb_manager.reset_all()
 
     # ------------------------------------------------------------------
     # 三模全失败降级 —— B147
@@ -2148,11 +2157,13 @@ class PipelineOrchestrator:
         records: list[CostRecord] = []
         for r in results:
             cost_val = r.output.get("cost_usd", 0.0) if isinstance(r.output, dict) else 0.0
-            records.append(CostRecord(
-                model=r.model,
-                tokens_input=r.tokens_used,
-                cost_usd=float(cost_val),
-            ))
+            records.append(
+                CostRecord(
+                    model=r.model,
+                    tokens_input=r.tokens_used,
+                    cost_usd=float(cost_val),
+                )
+            )
         return records
 
     # ------------------------------------------------------------------
