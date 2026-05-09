@@ -3,7 +3,7 @@ module_id: "MOD-INF-011"
 title: "Vector Memory Service 蓝图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.7.0"
+version: "0.7.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,7 +14,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d主路径 + bge-small-zh-v1.5 512d轻量路径）本地推理。8大Collection。v0.7.0 第四轮外部取证专家级终极审计6致命盲点全注入（F-VMS-701~F-VMS-706）：嵌入质量领域假设未经实证/无检索降级逃生/无部署金丝雀回归验证/知识衰减速率非领域感知/无对抗性检索投毒评估/无系统自解释继承能力。四轮共计80盲点全维度覆盖。蓝图纸面终态~95-96/100——已达纸上审计的理论上限。剩余4-5分永远无法通过蓝图消灭——只能通过真实代码运行来发现。"
+summary: "ZephyrAlpha VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d主路径 + bge-small-zh-v1.5 512d轻量路径）本地推理。8大Collection。v0.7.1 蓝图-代码盲点消除——§5.3 补入10个已实现但未追踪的.py文件+1个.yaml配置+__init__.py skeleton→已实现。四轮共计80盲点全维度覆盖。蓝图纸面终态~95-96/100——已达纸上审计的理论上限。剩余4-5分永远无法通过蓝图消灭——只能通过真实代码运行来发现。"
 tags: [vector-memory, vms, chromadb, bge-m3, embedding, vector-db, collections, infrastructure, hybrid-search, provenance]
 priority: P0
 depends_on:
@@ -30,11 +30,11 @@ references:
 
 # Vector Memory Service 蓝图
 
-> **module_id**: MOD-INF-011 | **version**: 0.7.0 | **status**: active | **layer**: cross_layer
+> **module_id**: MOD-INF-011 | **version**: 0.7.1 | **status**: active | **layer**: cross_layer
 
 > **真源声明**：本蓝图的 canonical SSoT 为 [b_vector_memory.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_vector_memory.yaml)。
 > 代码落位：`src/zephyr/vector_memory/`。当前 skeleton 过渡期——`src/zephyr/kb/` 已有完整 ChromaDB 实现（4 Collection + unified_memory API），VMS 将继承并整合这些能力。
-> **⚠️ 蓝图漂移审计 (2026-05-05 v0.7.0)**：已识别四重不一致（本蓝图 + kb/chromadb_init.py + kb/unified_memory_api.py + ADR-0031 + `vector_memory/__init__.py`），本版已全部对齐。施工前必须阅读 §5 代码索引——了解"哪些已存在、在哪里"。
+> **⚠️ 蓝图漂移审计 (2026-05-10 v0.7.1)**：已识别四重不一致（本蓝图 + kb/chromadb_init.py + kb/unified_memory_api.py + ADR-0031 + `vector_memory/__init__.py`），本版已全部对齐。施工前必须阅读 §5 代码索引——了解"哪些已存在、在哪里"。
 
 > **对标**：ChromaDB 0.6 官方最佳实践 + BGE-M3 ONNX 1024d + bge-small-zh-v1.5 512d 双路径 + Anthropic/Shopify/Pinecone/Qdrant 生产级 RAG/VectorDB 架构 + Stripe API设计规范 + Vibe Coding 社区治理优先惯例 + Google SRE SLI/SLO 体系 + 外部取证专家四象限终审。四轮审计共计80盲点（R1:33 + R2:22 + R3:19 + R4:6）——已达纸上审计理论极限。
 
@@ -165,7 +165,7 @@ def hybrid_search(query: str, collection: str, k: int) -> list[ScoredHit]:
 |---------|:---:|------|
 | `src/zephyr/kb/chromadb_init.py` | ✅ 已实现 | ChromaDB PersistentClient + 4 Collection 创建/重置/状态查询（幂等） |
 | `src/zephyr/kb/unified_memory_api.py` | ✅ 已实现 | UnifiedMemoryAPI 三件套（recall/write/search）+ WriteTrace provenance + CBAC + 前后端协议 |
-| `src/zephyr/vector_memory/__init__.py` | ✅ skeleton | docstring 存在——定义了 VMS 架构归属 |
+| `src/zephyr/vector_memory/__init__.py` | ✅ 已实现 | VMS 架构归属 + 8 Collection docstring + 双嵌入维度声明 |
 
 ### 5.2 过渡期 Collection 映射（现有 → VMS 终态）
 
@@ -196,6 +196,17 @@ def hybrid_search(query: str, collection: str, k: int) -> list[ScoredHit]:
 | `src/zephyr/vector_memory/cross_collection_retriever.py` | §12.3 Phase 3 跨Collection联合检索 | ✅ 已实现 |
 | `src/zephyr/vector_memory/collection_manager.py` | §2 Collection 管理 | ✅ 已实现 |
 | `src/zephyr/vector_memory/vms_schemas.py` | §4 数据模型 | ✅ 已实现 |
+| `src/zephyr/vector_memory/interface.py` | §6 VMS 接口基类（VectorMemoryBase + MemoryEntry + EmbeddingEngineBase） | ✅ 已实现 |
+| `src/zephyr/vector_memory/delegated_vector_memory.py` | §6 RI-02 落地适配器（VectorMemoryBase → UnifiedMemoryAPI 映射） | ✅ 已实现 |
+| `src/zephyr/vector_memory/in_memory_memory_backend.py` | §6 降级兜底（V-VMS-505/507，ChromaDB+双模型不可用时最后防线） | ✅ 已实现 |
+| `src/zephyr/vector_memory/in_memory_fake_vms.py` | §7 测试替身 FakeVMS（V-VMS-612，零依赖单元测试隔离） | ✅ 已实现 |
+| `src/zephyr/vector_memory/faiss_collection_manager.py` | §2 FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理（替代 ChromaDB） | ✅ 已实现 |
+| `src/zephyr/vector_memory/sqlite_metadata_store.py` | §12.3 SQLite WAL + FTS5 BM25 元数据持久化 + 全文检索 | ✅ 已实现 |
+| `src/zephyr/vector_memory/ollama_embedding.py` | §3.1 Ollama 嵌入生成（BGE-M3 via Ollama HTTP API，复用 Ollama 基础设施） | ✅ 已实现 |
+| `src/zephyr/vector_memory/ollama_chat.py` | §12 Ollama 本地 LLM 推理（qwen3:8b，query_rewrite/tag_completion 等） | ✅ 已实现 |
+| `src/zephyr/vector_memory/local_model_scheduler.py` | §12 L2 本地模型 24/7 调度循环（EmbeddingRouter + OllamaChat 统一调度） | ✅ 已实现 |
+| `src/zephyr/vector_memory/migrate_chroma_to_faiss.py` | §12 ChromaDB → FAISS + SQLite WAL 数据迁移脚本 | ✅ 已实现 |
+| `src/zephyr/vector_memory/vms_config.yaml` | §15.6 VMS 环境配置 Schema（V-VMS-615） | ✅ 已实现 |
 | `tests/unit/vector_memory/test_vector_memory.py` | 单元测试 | ✅ 已实现 |
 
 **新 AI session 读取顺序**：
@@ -256,7 +267,7 @@ InProcessVectorMemory (统一入口)
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\vector-memory\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\vector_memory\` | VMS 源码（11 个模块） |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\vector_memory\` | VMS 源码（24 个 .py 模块 + 1 个 .yaml 配置） |
 | 过渡期代码 | `D:\ZephyrAlpha\src\zephyr\kb\chromadb_init.py` + `unified_memory_api.py` | 现有实现——Phase 2 后冻结 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_vector_memory.py` | 单元测试 |
 | ChromaDB 数据 | `D:\ZephyrAlpha\data\vector_db\` | ChromaDB 持久化目录 |
@@ -1080,6 +1091,7 @@ P2        9       2        3        0       14
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 0.7.1 | **蓝图-代码盲点消除——§5.3 文件追踪与磁盘实际代码全面对齐**。发现磁盘实际 24 个 .py + 1 个 .yaml = 25 个文件，蓝图 §5.3 仅追踪 13 个 .py。补入 10 个已实现但未追踪的 .py 文件：interface.py(VMS接口基类)/delegated_vector_memory.py(RI-02适配器)/in_memory_memory_backend.py(降级兜底)/in_memory_fake_vms.py(FakeVMS测试替身)/faiss_collection_manager.py(FAISS Collection管理)/sqlite_metadata_store.py(SQLite元数据+FTS5)/ollama_embedding.py(Ollama嵌入)/ollama_chat.py(Ollama LLM推理)/local_model_scheduler.py(本地模型调度)/migrate_chroma_to_faiss.py(迁移脚本)。补入 1 个 .yaml 配置：vms_config.yaml。§5.1 __init__.py 状态 skeleton→已实现。§7 模块计数 11→24+1。施工落盘确认文件计数 20→25。 |
 | 2026-05-05 | 0.7.0 | **第四轮外部取证专家级终极审计——6项致命漏洞全注入**——§16 新增(F-VMS-701~F-VMS-706)。切换审计视角：从"设计师审视作品"→"外部取证专家审视金融量化系统"。方法论：独立列出取证清单→交叉对照前三轮→未覆盖的才是真正致命漏洞。**F1(**致命)**: BGE-M3金融量化中文混合语料嵌入质量完全未经实证——这是74盲点的"元假设"，不成立则全部空中楼阁。**F2(**致命)**: VMS是AI的唯一记忆通道但无检索质量降级逃生——AI在VMS低质量时只能用错误结果。**F3(**严重)**: 无部署/迁移前后金丝雀回归验证——迁移后检索质量下降30%也无人知晓。**F4(**严重)**: 知识衰减非领域感知——market data TTL=小时 vs governance rules TTL=年被统一衰减破坏。**F5(**致命)**: 无对抗性检索投毒评估——VMS的完整排序系统无防御机制。**F6(**严重)**: 无系统自解释与继承能力——bus factor=1终极继承问题未解决。四轮合计80盲点(P0×36/P1×30/P2×14)。终态评分~95-96/100——**已达纸上审计的理论上限。剩余4-5分永远无法通过蓝图消灭——只能通过真实代码运行来发现。本蓝图使命已完成。** |
 | 2026-05-05 | 0.6.0 | **第三轮深度交叉审计 19 新盲点全注入**——§15 新增 6大维度盲点审计(V-VMS-601~V-VMS-619)：R.API设计DX(4)/S.向量可调试性(3)/T.多模态嵌入质量(4)/U.测试替身隔离(3)/V.环境一致性(3)/W.错误恢复粒度(2)。方法论再升级：从"缺什么/怎么坏"到"用起来爽不爽+嵌入真不准"。核心发现：V601(API版本化—无承诺则消费方撕裂)/V605(向量检视器—1人+AI调试底线工具)/V608(中英混合嵌入未经验证—ZephyrAlpha核心语料)/V615(环境配置Schema缺失—静默灾难)/V618(无异常分层→AI无法判断重试策略)。新发现2处漂移(D3:kb/硬编码路径 / D4:cross_collection_retriever未入§5.3)。三轮合计74盲点(P0×33/P1×27/P2×14)。终态评分：~90-92/100——蓝图设计审计覆盖结构+韧性+体验+质量四象限全维度。 |
 | 2026-05-05 | 0.5.0 | **第二轮深度交叉审计 22 新盲点全注入**——§14 新增 8大维度盲点审计(V-VMS-501~V-VMS-522)：K.ChromaDB运维纵深(4)/L.嵌入模型工程化(3)/M.Collection生命周期(3)/N.查询基础设施(3)/O.AI信任校准(3)/P.故障级联逃生(3)/Q.氛围编程二阶效应(3)。方法论升级：从"缺什么零件"到"零件在真实世界怎么坏"。核心发现：V501(双重Client冲突—ChromaDB社区#1事故根因)/V517(紧急只读模式)/V519(灾难恢复优先级矩阵)/V520(自我实现预言)/V521(上下文污染半径RPN=64——本轮最严重盲点)。两轮合计55盲点(P0×25/P1×19/P2×11)。终态评分：~80/100(蓝图纸上设计鸿沟基本填平，剩余全部为代码实现鸿沟)。 |
@@ -1096,7 +1108,7 @@ P2        9       2        3        0       14
 |------|------|
 | construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
 | 源码路径 | `src/zephyr/vector_memory/` |
-| 源码文件数 | 20 个 .py/.yaml |
+| 源码文件数 | 25 个 .py/.yaml |
 | 测试路径 | `tests/unit/` |
 | 配置文件 | `config/embedding_model_registry.yaml` |
 | 关键入口 | `vector_memory.chroma_client.ChromaDBClient (8 Collections)` |
