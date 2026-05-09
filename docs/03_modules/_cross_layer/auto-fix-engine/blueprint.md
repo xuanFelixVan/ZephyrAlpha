@@ -2,7 +2,7 @@
 module_id: "MOD-INF-031"
 title: "自动修复引擎蓝图 — 全链路自愈执行系统"
 doc_type: blueprint
-status: Approved
+status: Active
 version: "4.3.0"
 generation: 4
 layer: cross_layer

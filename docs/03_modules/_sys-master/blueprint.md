@@ -2,7 +2,7 @@
 module_id: "SYS-MASTER-001"
 title: "ZephyrAlpha 系统总蓝图 — 三级金字塔架构与全部子系统拓扑"
 doc_type: blueprint
-status: active
+status: Active
 version: "0.13.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner

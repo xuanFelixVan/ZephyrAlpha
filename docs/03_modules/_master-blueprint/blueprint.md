@@ -2,7 +2,7 @@
 module_id: "MOD-MASTER-001"
 title: "集成闭环总蓝图 v0.9.2 — 任务系统·脚本系统·知识库及全部基础设施系统的集成契约与数据流 + 已施工修补"
 doc_type: blueprint
-status: active
+status: Active
 version: "0.9.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
