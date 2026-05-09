@@ -1,9 +1,9 @@
 ---
 module_id: "GOV-RSTR-001"
-title: "系统重组总蓝图 v1.4 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计"
+title: "系统重组总蓝图 v3.0 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "1.5.0"
+version: "3.0.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
 construction_progress: not_started
-summary: "ZephyrAlpha 系统重组总蓝图 v1.4 —— 将已达成共识的重组动作文档化为蓝图真源。核心策略：(1)大文件拆分为可维护组件；(2)重复模块合并为单一真源——含跨目录重复(5类15+副本)及目录内部版本分叉(shared context.py×1 / orchestrator 9对版本分叉+2对相同副本+1个re-export / core 2对版本分叉)；(3)昂贵/高耦合子系统改为按需激活；(4)接入真实LLM API替代simulated占位；(5)未完工占位模块标记phase:future。本蓝图是重组方案的canonical SSoT——所有子蓝图应与本蓝图对齐，冲突时以本蓝图为准。"
+summary: "ZephyrAlpha 系统重组总蓝图 v3.0 —— 将已达成共识的重组动作文档化为蓝图真源。核心策略：(1)大文件拆分为可维护组件（含PipelineOrchestrator 2541行→7组件+drift_engine 2134行→5组件+10个>650行文件拆分评估）；(2)重复模块合并为单一真源——含75个跨目录同名文件（kill_switch×5/circuit_breaker×4/models×4等）+15对目录内部版本分叉+4对context_engine模块内部同名文件；(3)昂贵/高耦合子系统改为按需激活；(4)接入真实LLM API替代simulated占位；(5)未完工占位模块标记phase:future；(6)安全搬家铁律9条+价值分析方法论5步+强制安全协议(Pre-flight/执行中/Post-merge)。本蓝图是重组方案的canonical SSoT——所有子蓝图应与本蓝图对齐，冲突时以本蓝图为准。"
 tags: [restructuring, refactoring, consolidation, on-demand-activation, llm-integration, capabilities, split, merge, master-plan]
 priority: P0
 belongs_to: "SYS-MASTER-001"
@@ -29,7 +29,7 @@ depends_on:
 
 # 系统重组总蓝图
 
-> module_id: GOV-RSTR-001 | version: 1.5.0 | status: active | layer: cross_layer
+> module_id: GOV-RSTR-001 | version: 3.0.0 | status: active | layer: cross_layer
 
 ---
 
@@ -67,6 +67,13 @@ depends_on:
 | 7 | escalation_protocol drift_detector | `D:\ZephyrAlpha\src\zephyr\infrastructure\escalation_protocol\drift_detector.py` | 迁移型 | `D:\ZephyrAlpha\src\zephyr\drift_detector\drift_engine.py` | 迁移→交叉验证→标记deprecated→Phase 4 物理删除 |
 | 8 | 旧 escalation 系统 | `D:\ZephyrAlpha\src\zephyr\escalation\` | 迁移型 | `D:\ZephyrAlpha\src\zephyr\infrastructure\escalation_protocol\` | 逐模块对比→保留功能完整的那套→合并→废弃旧目录 |
 | 9 | Feedback Loop 独立 safety_gate 文件 | `D:\ZephyrAlpha\src\zephyr\feedback_loop\gates\safety_gate_L*.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\feedback_loop\gates\parameterized_safety_gate.py`（新建） | 逐文件提取规则→写入YAML配置→新参数化类替换→旧文件标记deprecated→Phase 4 物理删除 |
+| 10 | kill_switch×4副本 | `agent_rbac/kill_switch.py`, `context_engine/kill_switch.py`, `governance/kill_switch.py`, `rollback/kill_switch.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\shared\kill_switch.py`（真源） | 引用重定向→标记deprecated→Phase 4 物理删除 |
+| 11 | kb/unified_memory_api.py 顶层副本 | `D:\ZephyrAlpha\src\zephyr\kb\unified_memory_api.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\kb\storage\unified_memory_api.py`（真源） | 确认为相同副本→标记deprecated→Phase 4 物理删除 |
+| 12 | context_engine/pipeline_orchestrator.py 轻量版 | `D:\ZephyrAlpha\src\zephyr\context_engine\pipeline_orchestrator.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\pipeline\pipeline_orchestrator.py`（完整版真源） | 版本分叉→默认保留 pipeline/ 版→context_engine 版标记deprecated→Phase 4 物理删除 |
+| 13 | context_engine/doc_compressor.py 顶层版 | `D:\ZephyrAlpha\src\zephyr\context_engine\doc_compressor.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\context_engine\support\doc_compressor.py`（真源） | 版本分叉→默认保留子目录版→顶层版标记deprecated→Phase 4 物理删除 |
+| 14 | context_engine/prompt_registry.py 顶层版 | `D:\ZephyrAlpha\src\zephyr\context_engine\prompt_registry.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\context_engine\support\prompt_registry.py`（真源） | 版本分叉→默认保留子目录版→顶层版标记deprecated→Phase 4 物理删除 |
+| 15 | context_engine/intent_keyword_mapper.py 顶层版 | `D:\ZephyrAlpha\src\zephyr\context_engine\intent_keyword_mapper.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\context_engine\parsing\intent_keyword_mapper.py`（真源） | 版本分叉→默认保留子目录版→顶层版标记deprecated→Phase 4 物理删除 |
+| 16 | context_engine/intent_parser.py 顶层版 | `D:\ZephyrAlpha\src\zephyr\context_engine\intent_parser.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\context_engine\parsing\intent_parser.py`（真源） | 版本分叉→默认保留子目录版→顶层版标记deprecated→Phase 4 物理删除 |
 
 ### 删除铁律
 
@@ -150,18 +157,21 @@ depends_on:
 |------|:---:|------|
 | 系统未接入真实LLM | 🔴 致命 | `PipelineOrchestrator._call_model()` 返回 `simulated: True`，M1-M11 全线空转 |
 | 蓝图严重滞后于代码 | 🔴 严重 | core蓝图2文件→实际59文件；shared蓝图10文件→实际208文件 |
-| PipelineOrchestrator 单一巨型类 | 🟠 高 | 2335行一个类承载路由+断路器+成本+死信+抢占+LSG+锁+遥测等20+职责 |
+| PipelineOrchestrator 单一巨型类 | 🟠 高 | 2541行一个类承载路由+断路器+成本+死信+抢占+LSG+锁+遥测等20+职责 |
 | 多套重复模块真源分裂 | 🟡 中 | event_bus×2(1真源+1副本) + event_bus_upgrade×2(版本分叉), drift相关文件17个(含同名重复5处+语义相关12处), telemetry×2(15+23), escalation×2(10+83, ⚠️ 功能不同不能简单合并)——同名概念多处定义 |
 | Feedback Loop Gates 文件爆炸 | 🟡 中 | 18个 safety_gate_L*.py（覆盖L1-L67共67个gate level），内容高度同质，可通过参数化压缩 |
 | 高成本子系统全部常驻运行 | 🟡 中 | A2A(64文件)、CodeDedup(67文件)、Chaos/Canary等无论是否需要都在加载 |
 | orchestrator/ 版本分叉 | 🟡 中 | 部分文件在 `orchestrator/` 顶层和 `core/`/`state/`/`resilience/` 子目录存在不同版本的实现（非完全重复，是版本分叉） |
 | 未完工模块状态不明确 | 🟢 低 | L07/L09/L11有完整接口契约但被误判为"空壳"，需明确标记 |
 | 蓝图vs代码差距递增 | 🔴 严重 | 音频中提到"三天内建立了164K行"——增长速度远超蓝图更新速度，需先立蓝图再改代码 |
+| 75个跨目录同名文件真源分裂 | 🟡 中 | kill_switch×5/circuit_breaker×4/models×4等75个同名文件跨目录存在 |
+| drift_engine.py 2134行巨型文件 | 🟠 高 | 仅次于PO的第二大文件，16个class需拆分 |
+| 19个>650行大文件未评估拆分 | 🟡 中 | 除PO和drift外还有10个>650行文件待拆分评估 |
 
 ### 1.2 目标
 
 | # | 目标 | 可衡量标准 |
-|---|------|-----------| 
+|---|------|-----------|
 | 1 | 接入真实 LLM API，让 `_call_model()` 产出真实 AI 输出 | `PipelineResult` 中 `simulated: False`，M3 成功生成真实代码 |
 | 2 | PipelineOrchestrator 从1个2335行类拆为7个独立组件 | 每个组件 ≤400行，单一职责 |
 | 3 | GateEngine 24种 CheckType 注册表化 | 每种检查独立文件，registry.py 统一管理 |
@@ -170,6 +180,8 @@ depends_on:
 | 6 | 引入 capabilities.yaml 按需加载机制 | 所有昂贵/实验性子系统通过配置控制激活 |
 | 7 | 未完工模块明确标记 phase:future | 搜索 "phase:future" 可列出所有延迟模块 |
 | 8 | 蓝图与实际状态完全一致 | 蓝图文件数 ≈ 实际模块数（偏差<20%） |
+| 9 | >1000行文件全部有拆分方案 | pipeline/models.py(1001行)等6个>1000行文件均有拆分方案或不拆分理由 |
+| 10 | 75个跨目录同名文件全面审计 | 每个同名文件分类为re-export/相同副本/版本分叉/同名不同功能 |
 
 ### 1.3 不包含的目标
 
@@ -293,6 +305,46 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | PreemptionManager | `D:\ZephyrAlpha\src\zephyr\pipeline\preemption_manager.py` |
 | PipelineLock | `D:\ZephyrAlpha\src\zephyr\pipeline\pipeline_lock.py`（已存在——验证接口对齐） |
 
+### 3.3b 拆分后 drift_engine.py 组件接口
+
+> drift_engine.py（2,134行，16个class）按职责域拆为5个组件。
+
+```
+DriftEngine (编排器, ~200行)
+  └── run_full_scan(scope, config) -> DriftReport
+  └── get_detector(detector_type) -> BaseDetector
+
+DriftInfrastructure (基础设施, ~400行)
+  └── MaintenanceWindow, CheckpointWriter, RecoveryManager
+  └── EnvDiffReport, PartialDeploymentRecord
+  └── save_checkpoint() / restore_checkpoint()
+
+AIConstructionDetectors (AI施工检测, ~400行)
+  └── AIConstructionDetectors
+  └── detect_construction_anomalies() -> list[Anomaly]
+
+DriftResultTypes (漂移结果类型, ~600行)
+  └── SemanticDriftResult, DBSchemaDriftResult, DepVersionDriftResult
+  └── SecurityPolicyDriftResult, DocCodeCoevolutionResult
+  └── TestCoverageDriftResult, KnowledgeGraphSyncResult
+  └── to_report() -> DriftReport
+
+DriftTraining (训练/学习, ~300行)
+  └── DriftTrainingPattern, AITrainingLoopResult
+  └── CrossLanguageConfig
+  └── train_from_history() -> TrainingResult
+```
+
+### 3.4b 拆分后 drift_engine 文件映射
+
+| 组件 | 完整绝对路径 |
+|------|------------|
+| DriftEngine | `D:\ZephyrAlpha\src\zephyr\drift_detector\drift_engine.py`（精简后） |
+| DriftInfrastructure | `D:\ZephyrAlpha\src\zephyr\drift_detector\drift_infrastructure.py`（新建） |
+| AIConstructionDetectors | `D:\ZephyrAlpha\src\zephyr\drift_detector\ai_construction_detectors.py`（新建） |
+| DriftResultTypes | `D:\ZephyrAlpha\src\zephyr\drift_detector\drift_result_types.py`（新建） |
+| DriftTraining | `D:\ZephyrAlpha\src\zephyr\drift_detector\drift_training.py`（新建） |
+
 ### 3.5 合并后真源声明
 
 | 概念 | 唯一真源路径 | 被废弃的副本路径 | 版本分叉（默认保留子目录版，Owner 可覆盖） |
@@ -303,6 +355,13 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | Telemetry | `D:\ZephyrAlpha\src\zephyr\l12_system_telemetry\` | `telemetry/` | — |
 | Escalation | `D:\ZephyrAlpha\src\zephyr\infrastructure\escalation_protocol\` | `escalation/`（⚠️ 功能不同——escalation/ 是运行时升级引擎，escalation_protocol/ 是安全策略集，不能简单合并；默认方案：escalation/ 重命名为 escalation_engine/ 独立保留） | — |
 | SafetyGate | `D:\ZephyrAlpha\src\zephyr\feedback_loop\gates\parameterized_safety_gate.py`（新建） | 所有 `safety_gate_L*.py` | — |
+| KillSwitch | `D:\ZephyrAlpha\src\zephyr\shared\kill_switch.py` | `agent_rbac/kill_switch.py`, `context_engine/kill_switch.py`, `governance/kill_switch.py`, `rollback/kill_switch.py` | 默认保留 shared/ 版，其余4个副本标记 deprecated→Phase 4 物理删除 |
+| UnifiedMemoryAPI | `D:\ZephyrAlpha\src\zephyr\kb\storage\unified_memory_api.py` | `kb/unified_memory_api.py`（完全相同副本） | 顶层版为 re-export wrapper→标记 deprecated→Phase 4 物理删除 |
+| ContextEngine PipelineOrchestrator | `D:\ZephyrAlpha\src\zephyr\pipeline\pipeline_orchestrator.py`（2541行真源） | `context_engine/pipeline_orchestrator.py`（69行轻量版——版本分叉） | 版本分叉：默认保留 pipeline/ 版，context_engine 版标记 deprecated |
+| ContextEngine DocCompressor | 默认保留 `context_engine/support/doc_compressor.py` | `context_engine/doc_compressor.py`（顶层584行 vs support/584行——版本分叉） | 版本分叉：默认保留子目录版（support/），顶层版标记 deprecated |
+| ContextEngine PromptRegistry | 默认保留 `context_engine/support/prompt_registry.py` | `context_engine/prompt_registry.py`（顶层483行 vs support/482行——版本分叉） | 版本分叉：默认保留子目录版（support/），顶层版标记 deprecated |
+| ContextEngine IntentKeywordMapper | 默认保留 `context_engine/parsing/intent_keyword_mapper.py` | `context_engine/intent_keyword_mapper.py`（顶层623行 vs parsing/460行——版本分叉） | 版本分叉：默认保留子目录版（parsing/），顶层版标记 deprecated |
+| ContextEngine IntentParser | 默认保留 `context_engine/parsing/intent_parser.py` | `context_engine/intent_parser.py`（顶层573行 vs parsing/439行——版本分叉） | 版本分叉：默认保留子目录版（parsing/），顶层版标记 deprecated |
 
 ### 3.6 MCP 接口
 
@@ -331,17 +390,57 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | 4 | 每次修改不超过5个文件（Phase 2 拆分除外，允许单次创建≤7个新文件+修改≤3个现有文件） | 降低单次故障影响范围；Phase 2 因拆分性质需放宽 |
 | 5 | 每步必须有回滚方案 | 见 §11.4 |
 
+### 4.1b 安全搬家铁律
+
+> ⚠️ 以下铁律是重组施工的**强制约束**，违反任何一条即停止施工。
+
+| # | 铁律 | 说明 | 验证方式 |
+|---|------|------|---------|
+| 1 | 执行前必须重新扫描目标文件的所有 import 引用 | 蓝图记录可能过时，必须现场确认 | `grep -rn "from zephyr.目标模块" src/` 输出完整引用清单 |
+| 2 | 重复文件合并必须逐条做价值分析 | 禁止"看起来一样就直接删"——必须用diff确认 | 每个副本的独有 class/function 已列出 |
+| 3 | 合并后必须验证内容完整性 | 对比合并前后的 class/function 列表，确认无遗漏 | `diff <(合并前grep class) <(合并后grep class)` 返回零差异 |
+| 4 | import 更新必须全量验证 | 每次合并/迁移后，全项目搜索旧 import 路径，确认零残留 | `grep -r "from zephyr.旧路径" src/` 返回零结果 |
+| 5 | 一次只搬一个文件 | 禁止批量合并多个重复文件；每个文件的合并/迁移是独立原子操作 | 每个任务卡仅涉及1个重复文件的合并 |
+| 6 | 搬完一个验证一个 | 每完成一个文件的合并，立即运行相关测试验证 | `pytest tests/相关目录/` 返回 0 failed |
+| 7 | git commit 每步必做 | 每完成一个原子操作（合并+验证），立即 git commit | `git log --oneline -1` 显示该步提交 |
+| 8 | 安全优先，速度第二 | 宁可慢，不可漏；宁可多拆100个任务卡，不可一次合并10个文件 | 任务卡数量无上限 |
+| 9 | 做完一个，更新一个蓝图 | 重组+蓝图更新是原子操作，不可拆分；禁止批量延迟更新蓝图——AI上下文有限，延迟更新必出幻觉 | 每个任务卡 = 一次重组 + 一次蓝图更新 + 一次验证 + 一次提交 |
+
+### 4.1c 重复文件价值分析方法论
+
+> 对每个跨目录同名文件，必须按以下步骤做价值分析后才能决定处理方案。
+
+**步骤**：
+
+1. **内容对比**：用 `diff` 对比两个同名文件，标记差异
+2. **分类判定**：
+   - **完全相同**（0 diff）→ 确认后保留1份，其余标记 deprecated
+   - **re-export wrapper**（顶行含 "Backward-compatible alias"）→ 保留真源，wrapper 标记 deprecated
+   - **版本分叉**（有实质差异）→ 进入步骤3
+   - **同名不同功能**（类名/函数名完全不同）→ 两个都保留，重命名消除歧义
+3. **价值提取**（仅版本分叉）：
+   - 列出副本A的独有 class/function（B中没有的）
+   - 列出副本B的独有 class/function（A中没有的）
+   - 列出两者共有但实现不同的 class/function
+4. **归并决策**：
+   - 独有功能 → 迁移到真源文件
+   - 共有功能 → 保留更完整的版本，删除冗余版本
+   - 全部独有 → 两个文件都保留，重命名
+5. **验证**：归并后对比 class/function 列表，确认无遗漏
+
 ### 4.2 容量估算
 
 | 维度 | 当前规模 | 重组后目标 | 1500模块峰值 | 是否够用 |
 |------|:------:|:------:|:------:|:---:|
-| Python 文件总数 | 1,725 | ~1,570 | ~3,000 | ✅ |
-| 总代码行数 | ~164,000 | ~148,000 | ~300,000 | ✅ |
+| Python 文件总数 | 1,791 | ~1,570 | ~3,000 | ✅ |
+| 总代码行数 | ~218,000 | ~148,000 | ~300,000 | ✅ |
 | capabilities.yaml 条目 | 0 | 7 | ~50 | ✅ |
 | GateEngine CheckType | 24 | 24（注册表化） | ~100 | ✅ |
-| 最大单文件行数 | ~2,335 | ≤400 | ≤500 | ✅ |
-| 跨目录重复概念数 | 5类15+副本 | 0（每类1真源） | — | ✅ |
-| 目录内部版本分叉 | 15对（9+1+2+2相同+1 re-export） | ≤3对保留双版本（人类决策后） | — | ✅ |
+| 最大单文件行数 | ~2,541 | ≤400 | ≤500 | ✅ |
+| 跨目录重复概念数 | 75个（含5副本×1、4副本×2、3副本×8、2副本×50+） | 0（每类1真源） | — | ✅ |
+| 目录内部版本分叉 | 15对（9+1+2相同+1 re-export） | ≤3对保留双版本（人类决策后） | — | ✅ |
+| >400行文件数 | 82 | ≤20 | ≤50 | ✅ |
+| >1000行文件数 | 6 | 0 | ≤5 | ✅ |
 
 ### 4.3 迁移/废弃方案
 
@@ -453,11 +552,215 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | 4 | 已确认安全删除协议理解 | 能列出删除步骤顺序 | ☐ |
 | 5 | 已有 DeepSeek API Key 或 GLM API Key | 确认环境变量 | ☐ |
 
+### 11.0b 强制安全协议
+
+> 以下协议是 §4.1b 安全搬家铁律的**执行层细化**，每个任务卡必须遵守。
+
+**Pre-flight Scan（执行前）**：
+
+| # | 扫描项 | 命令 | 通过条件 |
+|---|--------|------|---------|
+| 1 | 扫描目标文件的所有 import 引用 | `grep -rn "from zephyr.目标模块" src/` | 输出完整引用清单，无遗漏 |
+| 2 | 确认目标文件与蓝图记录一致 | `wc -l 目标文件` | 行数与蓝图记录偏差<5% |
+| 3 | 确认无未提交变更 | `git status` | working tree clean |
+
+**执行中**：
+
+| # | 约束 | 说明 |
+|---|------|------|
+| 1 | 一次只操作1个文件 | 禁止批量操作 |
+| 2 | 每步操作后立即验证 | 运行相关测试 |
+| 3 | 验证通过后立即 git commit | 提交信息包含任务卡编号 |
+
+**Post-merge Verify（合并后）**：
+
+| # | 验证项 | 命令 | 通过条件 |
+|---|--------|------|---------|
+| 1 | 旧 import 路径零残留 | `grep -r "from zephyr.旧路径" src/` | 返回零结果 |
+| 2 | class/function 列表完整性 | `diff <(旧grep class) <(新grep class)` | 仅新增项，无删除项 |
+| 3 | 相关测试全部通过 | `pytest tests/相关目录/` | 0 failed |
+
+### 11.0c 任务卡安全条款模板
+
+> 每个任务卡必须包含以下安全条款。
+
+```yaml
+acceptance_criteria:
+  - "旧 import 路径零残留: grep -r 'from zephyr.旧路径' src/ 返回零结果"
+  - "class/function 列表完整性: 合并后对比无遗漏"
+  - "相关测试通过: pytest tests/相关目录/ 返回 0 failed"
+
+applicable_rules:
+  - "§4.1b 安全搬家铁律 #1-#9"
+  - "§4.1c 价值分析方法论 步骤1-5"
+  - "§11.0b 强制安全协议 Pre-flight + 执行中 + Post-merge"
+```
+
+### 11.0d 细化任务卡完整清单（51个卡）
+
+> 所有重组任务卡按 Phase 分组，每个卡包含：编号、名称、是否依赖前置卡、前置卡编号。
+
+**Phase 1（2卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0021 | 修复resource_optimization测试失败 | false | 无 |
+| SRC-0022 | 接入真实LLM API | false | SRC-0021 |
+
+**Phase 2（12卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0023 | PO拆分：PipelineOrchestrator编排器 | true | SRC-0022 |
+| SRC-0024 | PO拆分：ModelRouter | true | SRC-0023 |
+| SRC-0025 | PO拆分：CircuitBreakerManager | true | SRC-0023 |
+| SRC-0026 | PO拆分：CostTracker | true | SRC-0023 |
+| SRC-0027 | PO拆分：DeadLetterQueue | true | SRC-0023 |
+| SRC-0028 | PO拆分：PreemptionManager | true | SRC-0023 |
+| SRC-0029 | PO拆分：PipelineLock验证对齐 | true | SRC-0023 |
+| SRC-0030 | drift拆分：DriftEngine编排器 | true | SRC-0021 |
+| SRC-0031 | drift拆分：DriftInfrastructure | true | SRC-0030 |
+| SRC-0032 | drift拆分：AIConstructionDetectors | true | SRC-0030 |
+| SRC-0033 | drift拆分：DriftResultTypes | true | SRC-0030 |
+| SRC-0034 | drift拆分：DriftTraining | true | SRC-0030 |
+
+**Phase 2b（1卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0068 | 10个>650行大文件拆分评估 | false | SRC-0021 |
+
+**Phase 3a（9卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0035 | 合并：telemetry→l12 | true | SRC-0021 |
+| SRC-0036 | 合并：event_bus副本→shared | true | SRC-0035 |
+| SRC-0037 | 合并：event_bus_upgrade版本分叉→独立命名 | true | SRC-0036 |
+| SRC-0038 | 合并：drift_detector副本→真源 | true | SRC-0035 |
+| SRC-0039 | 合并：escalation→escalation_engine独立保留 | true | SRC-0035 |
+| SRC-0040 | 合并：asset_inventory同类合并 | true | SRC-0035 |
+| SRC-0041 | 合并：kill_switch×4副本→shared真源 | true | SRC-0035 |
+| SRC-0042 | 合并：unified_memory_api顶层副本→storage真源 | true | SRC-0035 |
+| SRC-0043 | 合并：context_engine/pipeline_orchestrator轻量版→pipeline真源 | true | SRC-0035 |
+
+**Phase 3b（1卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0044 | 75个同名文件审计 | false | SRC-0021 |
+
+**Phase 3c（12卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0045 | 版本分叉归一：orchestrator/trigger_router | true | SRC-0035 |
+| SRC-0046 | 版本分叉归一：orchestrator/agent_orchestrator | true | SRC-0035 |
+| SRC-0047 | 版本分叉归一：orchestrator/agent_health_monitor | true | SRC-0035 |
+| SRC-0048 | 版本分叉归一：orchestrator/rollback_manager | true | SRC-0035 |
+| SRC-0049 | 版本分叉归一：orchestrator/failure_matcher | true | SRC-0035 |
+| SRC-0050 | 版本分叉归一：orchestrator/hallucination_detector | true | SRC-0035 |
+| SRC-0051 | 版本分叉归一：orchestrator/session_manager | true | SRC-0035 |
+| SRC-0052 | 版本分叉归一：orchestrator/state_synchronizer | true | SRC-0035 |
+| SRC-0053 | 版本分叉归一：orchestrator/file_task_mapper | true | SRC-0035 |
+| SRC-0054 | 版本分叉归一：shared/context.py | true | SRC-0035 |
+| SRC-0055 | 版本分叉归一：core/blueprint_code_sync.py | true | SRC-0035 |
+| SRC-0056 | 版本分叉归一：core/session_continuity.py | true | SRC-0035 |
+
+**Phase 3d（4卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0069 | context_engine归一：doc_compressor | true | SRC-0035 |
+| SRC-0070 | context_engine归一：prompt_registry | true | SRC-0035 |
+| SRC-0071 | context_engine归一：intent_keyword_mapper | true | SRC-0035 |
+| SRC-0072 | context_engine归一：intent_parser | true | SRC-0035 |
+
+**Phase 4（1卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0057 | CheckType注册表化 | true | SRC-0021 |
+
+**Phase 5（6卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0058 | SafetyGate参数化：框架搭建 | true | SRC-0021 |
+| SRC-0059 | SafetyGate参数化：L1-L10规则提取 | true | SRC-0058 |
+| SRC-0060 | SafetyGate参数化：L11-L20规则提取 | true | SRC-0058 |
+| SRC-0061 | SafetyGate参数化：L21-L40规则提取 | true | SRC-0058 |
+| SRC-0062 | SafetyGate参数化：L41-L67规则提取 | true | SRC-0058 |
+| SRC-0063 | SafetyGate参数化：旧文件deprecated标记 | true | SRC-0059 |
+
+**Phase 6-7（2卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0064 | capabilities.yaml | false | SRC-0035 |
+| SRC-0065 | phase:future标记 | false | SRC-0064 |
+
+**评估类（2卡）**：
+
+| 卡号 | 名称 | 依赖前置 | 前置卡号 |
+|------|------|:---:|---------|
+| SRC-0066 | task_repo评估 | false | SRC-0021 |
+| SRC-0067 | _gen_inherited评估 | false | SRC-0021 |
+
+### 11.0e 重组-蓝图同步工作流
+
+> 每个任务卡执行时，必须按以下工作流同步更新蓝图。
+
+```
+任务卡执行 → 代码变更 → 验证通过 → git commit → 蓝图更新 → git commit → 下一个任务卡
+     ↑                                                              |
+     └──────────── 验证失败则回滚，不更新蓝图 ─────────────────────────┘
+```
+
+**关键约束**：
+- 代码变更和蓝图更新是**两个独立 commit**，不可合并
+- 蓝图更新必须包含：变更记录条目、受影响章节的数值更新、安全删除协议状态更新
+- 禁止"先做5个任务卡再统一更新蓝图"——AI上下文有限，延迟更新必出幻觉
+
+### 11.0f GOV-RSTR-001 生命周期与归档
+
+| 阶段 | 状态 | 触发条件 | 产出 |
+|------|------|---------|------|
+| 规划 | active | Owner审批 | 本蓝图 |
+| 施工中 | active | 第一个任务卡开始执行 | 任务卡执行记录 |
+| 施工完成 | completed | 所有任务卡执行完毕+全量测试通过 | 施工完成报告 |
+| 归档 | archived | 重组后稳定运行≥2周 | 归档至 `docs/09_audit/` |
+
+**归档条件**：
+1. 所有任务卡状态为 completed 或 cancelled
+2. 全量测试连续通过≥3次
+3. 蓝图与代码状态一致（偏差<5%）
+4. Owner确认归档
+
+### 11.0g GOV-RSTR-001 范围边界
+
+**GOV-RSTR-001负责**：
+- 大文件拆分（PipelineOrchestrator 2541行→7组件、drift_engine 2134行→5组件）
+- 跨目录重复合并（75个同名文件→每类1真源）
+- 版本分叉归一（15对目录内部版本分叉+4对context_engine内部同名文件）
+- 参数化替代膨胀（18个safety_gate_L*.py→2-3个参数化类）
+- 注册表替代if-elif（GateEngine 24种CheckType注册表化）
+- 按需激活（capabilities.yaml）
+- 占位标记（phase:future）
+
+**GOV-RSTR-001不负责**：
+- 蓝图-代码脱节（其他蓝图需自行与本蓝图对齐）
+- 盲点膨胀（新增模块的蓝图缺失由GOV-DOC-002管辖）
+- 新模块蓝图缺失（由模块ID注册表管辖）
+- 功能性bug（由各模块蓝图管辖）
+- 性能优化（非重组范畴）
+- 代码质量（lint/type hint等非重组范畴）
+
 ### 11.1 施工策略
 
 | 项目 | 内容 |
 |------|------|
-| 施工阶段数 | 7 个 Phase |
+| 施工阶段数 | 9 个 Phase（含Phase 2b大文件评估+Phase 3d context_engine归一） |
 | 施工模式 | 重构迁移 |
 | 核心风险 | 合并重复模块时 import 链断裂 |
 
@@ -466,11 +769,13 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | # | 依赖项 | 依赖类型 | 说明 |
 |---|--------|---------|------|
 | 1 | Python 3.12+ 环境 | hard | `python --version` 返回 3.12+ |
-| 2 | 现有测试全部通过 | hard | `pytest tests/` 返回 0 failed（⚠️ 当前有2个 CircuitBreaker 测试失败，需先修复） |
+| 2 | 现有测试全部通过 | hard | `pytest tests/` 返回 0 failed（⚠️ 当前有1个测试失败：test_self_heal_succeeds_on_first_try StopIteration，需先修复） |
 | 3 | git 仓库可用 | hard | `git status` 正常返回（分支 `trae-redteam-deadly-5`） |
 | 4 | DeepSeek API Key 已就绪 | hard | 环境变量 `DEEPSEEK_API_KEY` |
 | 5 | GLM API Key 已就绪 | soft | Phase 5 后需要，可后置 |
 | 6 | 本蓝图已被 Owner 审批 | hard | status: active |
+| 7 | 已确认 §4.1b 安全搬家铁律全部理解 | hard | 能列出9条铁律 |
+| 8 | 已确认 §4.1c 价值分析方法论理解 | hard | 能列出5个步骤 |
 
 ---
 
@@ -486,7 +791,7 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 | G7 检查项 | M3输出是否为真实AI生成的代码？token计数是否正确？成本是否在预算内？ |
 
 **变更内容**：
-- `_call_model()` 方法，在第 ~1293 行，`simulated: True` 之前插入真实 API 调用
+- `_call_model()` 方法，在第 ~1502 行，`simulated: True` 之前插入真实 API 调用
 - 模型映射：`DeepSeek-V4-Pro` → `deepseek-chat`，`GLM-5.1` → `glm-4-flash`
 - 新增依赖：`openai>=1.0.0`
 
@@ -646,7 +951,7 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 
 ### 11.5 施工完成标准
 
-| # | 产出物 | 存放完整绝对路径 | 
+| # | 产出物 | 存放完整绝对路径 |
 |---|--------|---------------|
 | 1 | 真实 LLM 调用 | `_call_model()` 返回 non-simulated 结果 |
 | 2 | 6个Pipeline组件 | `D:\ZephyrAlpha\src\zephyr\pipeline\model_router.py` 等5新建 + `pipeline_lock.py` 对齐 |
@@ -712,10 +1017,58 @@ PipelineLock (双管线并发锁, 已存在——仅需验证接口对齐)
 
 ---
 
+## 附录 A：75个跨目录同名文件完整清单
+
+> 扫描范围：`D:\ZephyrAlpha\src\zephyr\` 下所有 `.py` 文件（不含 `__init__.py`）
+> 定义：同名文件出现在 2+ 个不同顶层模块目录中
+> 详细清单见数据库任务卡 SRC-0044 的审计结果
+
+### A.1 高副本数（≥3副本）：kill_switch×5, circuit_breaker×4, models×4, cli×3, config×3, failure_matcher×3, health×3, phase_executor×3, secrets×3, task_queue×3, trigger_router×3
+
+### A.2 2副本（50+个）：alert_router, alerts, anomaly, anomaly_detector, anti_pattern_guard, app, blind_spot_tracker, blueprint_metrics, budget_tracker, cache_invalidation, canary_manager, checkpoint_manager, cold_start, cold_stub, complexity_budget, config_validator, construction_verifier, context_package, contract_bus, contract_metrics, contract_tester, cost_tracker, cross_module_integration, dashboard, data_lifecycle, drift_detector(✅已声明), escalation_engine, event_bus(✅已声明), event_bus_upgrade(✅已声明), event_sink, event_store, exceptions, finding, fitness_functions, handoff_manager, health_monitor, identity_verifier, integration_test_runner, integrity, knowledge_freshness, llm_impact_analyzer, pipeline_orchestrator(✅已声明), protocol, pydantic_v2_migrator, reconciler, regime_detector, registry, risk_limits, risk_mitigation, runbook_generator, saga_compensator, scanner, schema, schema_evolution, schema_migration, self_test, semantic_cache, span_stub, structured_sink, toctou_guard, token_budget, vector_bridge, warm_hot_gate
+
+---
+
+## 附录 B：82个>400行文件完整清单
+
+> 扫描范围：`D:\ZephyrAlpha\src\zephyr\` 下所有 `.py` 文件
+
+### B.1 >1000行（6个——必须有拆分方案或明确不拆分理由）
+
+| 行数 | 文件 | 蓝图处理状态 |
+|:----:|------|:----------:|
+| 2541 | pipeline/pipeline_orchestrator.py | ✅ §3.3拆分为7组件 |
+| 2134 | drift_detector/drift_engine.py | ✅ §3.3b拆分为5组件 |
+| 1786 | db/task_repo.py | ⚠️ SRC-0066评估中 |
+| 1494 | feedback_loop/_gen_inherited.py | ⚠️ SRC-0067评估中 |
+| 1164 | gates/gate_engine.py | ✅ §Phase 4注册表化 |
+| 1001 | pipeline/models.py | ⚠️ SRC-0068评估中 |
+
+### B.2 650-1000行（13个——需评估是否拆分）
+
+| 行数 | 文件 | 蓝图处理状态 |
+|:----:|------|:----------:|
+| 995 | pipeline/pipeline_roadmap.py | ⚠️ SRC-0068评估中 |
+| 995 | orchestrator/contract_registry.py | ⚠️ SRC-0068评估中 |
+| 923 | mcp/task_manager_server.py | ⚠️ SRC-0068评估中 |
+| 918 | orchestrator/agent_orchestrator.py | ✅ 已知版本分叉 |
+| 877 | orchestrator/resilience/hallucination_detector.py | ✅ 已知版本分叉 |
+| 877 | orchestrator/hallucination_detector.py | ✅ 已知版本分叉 |
+| 861 | governance/phase_check_registry.py | ⚠️ SRC-0068评估中 |
+| 858 | orchestrator/core/agent_orchestrator.py | ✅ 已知版本分叉 |
+| 851 | feedback_loop/scheduler.py | ⚠️ SRC-0068评估中 |
+| 843 | rollback/rollback_executor.py | ⚠️ SRC-0068评估中 |
+| 835 | shared/lifecycle/resource_optimization_engine.py | ✅ SRC-0021相关 |
+| 872 | db/sqlite_schema.py | ⚠️ SRC-0068评估中 |
+| 777 | mcp/governance_server.py | ⚠️ SRC-0068评估中 |
+
+---
+
 ## 变更记录
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.0.0 | **v1.5→v3.0全面重建**（major：整合v2.0/v2.1所有内容+脱节修复后数据更新）：(1)§4.1b安全搬家铁律9条+§4.1c价值分析方法论5步；(2)§3.3b drift_engine拆分5组件接口+§3.4b文件映射；(3)§3.5新增7条真源声明（KillSwitch/UnifiedMemoryAPI/ContextEngine PO/DocCompressor/PromptRegistry/IntentKeywordMapper/IntentParser）；(4)安全删除协议新增7条(#10-#16)；(5)§11.0b强制安全协议+§11.0c任务卡安全条款模板+§11.0d 51个任务卡(SRC-0021~0072)+§11.0e蓝图同步工作流+§11.0f生命周期归档+§11.0g范围边界；(6)容量估算更新：1791文件/218K行/82个>400行/6个>1000行/75个同名文件；(7)施工阶段9个Phase；(8)附录A 75同名文件+附录B 82大文件；(9)PO行数2335→2541/_call_model 1293→1502 |
 | 2026-05-08 | 1.5.0 | **操作安全审查修正**（minor→major：含策略级变更）：(1)蓝图声称"没有 git 备份仓库"——实际有 git（分支 trae-redteam-deadly-5，有完整提交历史），安全删除协议重写为"删除前必须 git commit"；(2)escalation/ 和 escalation_protocol/ 功能不同不能简单合并——escalation/ 是运行时升级引擎，escalation_protocol/ 是安全策略集，默认方案改为 escalation/ 重命名为 escalation_engine/ 独立保留；(3)铁律#4 "5文件约束"与 Phase 2 冲突（拆分需10+文件），放宽为"Phase 2 允许≤7新文件+≤3修改文件"；(4)前置条件新增"现有测试全部通过"和"git仓库可用"——当前有2个 CircuitBreaker 测试失败需先修复；(5)铁律#5 说明从"删了就没了"更新为"git revert 可回滚" |
 | 2026-05-08 | 1.4.3 | **铁律#8合规性修正**：(1)全文消除"需人类决策""待决策"等模糊词——版本分叉统一给出默认建议"保留子目录版，顶层版标记 deprecated"；(2)EventBusUpgrade 给出明确默认方案"l01版重命名为 shared/upgrade_strategy.py 独立保留"；(3)§3.4 文件映射补充 PipelineLock 行（7个组件此前只映射6个）；(4)§8 #8 Feedback Loop 蓝图路径修正为 MOD-INF-010 精确路径；(5)Phase 2 新增依赖说明——Phase 1 LLM代码需在 Phase 2 拆分时迁移到 ModelRouter |
 | 2026-05-08 | 1.4.2 | **方案逻辑审查修正**：(1)§3.3 补充 PipelineLock 接口定义（7个组件此前只定义6个）；(2)§3.5 拆分"被废弃的副本路径"和"版本分叉"为独立列——EventBusUpgrade 不再被错误归类为"被废弃副本"；(3)§1.2 目标#4 "需决策"改为可衡量标准"→1个合并文件或2个独立命名文件（人类决策后确定）"——消除违反铁律#8的模糊词；(4)§11.5 补充 Phase 3b 完成标准（此前遗漏）；(5)§4.2 新增"目录内部版本分叉"容量估算行；(6)§11.4 Phase 3b 回滚方案更新过时条件；(7)§8 #7 Gates 蓝图路径从模糊的"如有"修正为实际存在的 MOD-INF-007 精确路径 |

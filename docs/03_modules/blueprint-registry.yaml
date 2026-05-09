@@ -120,13 +120,13 @@ blueprints:
   construction_progress: phase_2_complete
 - module_id: GOV-RSTR-001
   name: _restructuring
-  title: 系统重组总蓝图 v2.1 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家
+  title: 系统重组总蓝图 v3.0 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家
   layer: cross_layer
   functional_domain: ''
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.0
+  version: 3.0.0
   generation: ''
   last_updated: '2026-05-10'
   file_path: 03_modules/_restructuring/blueprint.md
