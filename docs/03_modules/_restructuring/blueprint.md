@@ -3,7 +3,7 @@ module_id: "GOV-RSTR-001"
 title: "系统重组总蓝图 v3.0 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "3.0.0"
+version: "3.0.4"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -616,7 +616,7 @@ applicable_rules:
 | SRC-0025 | PO拆分：CostTracker | true | SRC-0023 |
 | SRC-0026 | PO拆分：DeadLetterQueue | true | SRC-0023 |
 | SRC-0027 | PO拆分：PreemptionManager | true | SRC-0023 |
-| SRC-0028 | PO拆分：PipelineLock验证对齐 | true | SRC-0023 |
+| SRC-0028 | PO拆分：PipelineLock验证对齐 ✅ | true | SRC-0023 |
 | SRC-0029 | PO拆分：精简PO为dispatch-only编排器 | true | SRC-0023 |
 | SRC-0030 | drift拆分：DriftEngine编排器 | true | SRC-0021 |
 | SRC-0031 | drift拆分：DriftInfrastructure | true | SRC-0030 |
@@ -1068,6 +1068,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| | 2026-05-10 | 3.0.4 | **SRC-0028: PipelineLock 验证通过**——已是独立组件（`src/zephyr/pipeline/pipeline_lock.py`, 490行），无需提取。蓝图 §3.3 将其列为"已存在——仅需验证接口对齐"完全正确。 |
 | 2026-05-10 | 3.0.3 | **Phase 2 SRC-0026 完成**：DeadLetterQueue 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/dead_letter_queue.py`, ~80行）。接口：`enqueue(task_card, results, status, max_retries)` / `drain()` / `entries`（只读属性）/ `count`（只读属性）/ `save_state()` / `load_state()`。PipelineOrchestrator 内部 `_dead_letters` 替换为 `_dlq`，`_maybe_dead_letter()` 委托至 `_dlq.enqueue()`，`get_dead_letters()` 委托至 `_dlq.entries`，`save_state()`/`load_state()`/`health_check()` 中死信相关逻辑全部委托至 DLQ。`__init__.py` 新增 DeadLetterQueue 导出。 |
 | 2026-05-10 | 3.0.2 | **Phase 2 SRC-0025 完成**：CostTracker 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/cost_tracker.py`, ~135行）。接口：`record_call(model, tokens_input, cost_usd)` / `estimate_cost(model, tokens)` / `total_cost()` / `summary()` / `save_state()` / `load_state()` + `records` 只读属性。PipelineOrchestrator 内部 `_cost_total`/`_cost_records` 替换为 `_cost_tracker`，`get_cost_summary()` 委托至 `_cost_tracker.summary()`，`_compute_module_costs()` 方法删除（dispatch() 改用 `_cost_tracker.records`）。`__init__.py` 新增 CostTracker 导出。同时修正蓝图任务表中 SRC-0023~SRC-0029 编号以对齐 TaskRepository 权威数据。 |
 | 2026-05-10 | 3.0.1 | **Phase 2 SRC-0023 完成**：ModelRouter 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/model_router.py`, ~175行）。包含 5 个公共类属性（FALLBACK_CHAIN / MODEL_VERSION_MAP / MODEL_CONTEXT_LIMITS / MODEL_COST_PER_1K_INPUT / MODEL_COST_PER_1K_OUTPUT）和 5 个静态方法（resolve_model / fallback_chain_for / estimate_cost / model_version_for / context_limit_for）。PipelineOrchestrator._route_model() 委托至 ModelRouter.resolve_model()，_FALLBACK_CHAIN / _MODEL_* 属性全部移除。 |
