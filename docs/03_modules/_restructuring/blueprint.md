@@ -611,13 +611,13 @@ applicable_rules:
 
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
-| SRC-0023 | PO拆分：PipelineOrchestrator编排器 | true | SRC-0022 |
-| SRC-0024 | PO拆分：ModelRouter | true | SRC-0023 |
-| SRC-0025 | PO拆分：CircuitBreakerManager | true | SRC-0023 |
-| SRC-0026 | PO拆分：CostTracker | true | SRC-0023 |
-| SRC-0027 | PO拆分：DeadLetterQueue | true | SRC-0023 |
-| SRC-0028 | PO拆分：PreemptionManager | true | SRC-0023 |
-| SRC-0029 | PO拆分：PipelineLock验证对齐 | true | SRC-0023 |
+| SRC-0023 | PO拆分：ModelRouter | true | SRC-0022 |
+| SRC-0024 | PO拆分：CircuitBreakerManager | true | SRC-0023 |
+| SRC-0025 | PO拆分：CostTracker | true | SRC-0023 |
+| SRC-0026 | PO拆分：DeadLetterQueue | true | SRC-0023 |
+| SRC-0027 | PO拆分：PreemptionManager | true | SRC-0023 |
+| SRC-0028 | PO拆分：PipelineLock验证对齐 | true | SRC-0023 |
+| SRC-0029 | PO拆分：精简PO为dispatch-only编排器 | true | SRC-0023 |
 | SRC-0030 | drift拆分：DriftEngine编排器 | true | SRC-0021 |
 | SRC-0031 | drift拆分：DriftInfrastructure | true | SRC-0030 |
 | SRC-0032 | drift拆分：AIConstructionDetectors | true | SRC-0030 |
@@ -1068,6 +1068,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.0.2 | **Phase 2 SRC-0025 完成**：CostTracker 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/cost_tracker.py`, ~135行）。接口：`record_call(model, tokens_input, cost_usd)` / `estimate_cost(model, tokens)` / `total_cost()` / `summary()` / `save_state()` / `load_state()` + `records` 只读属性。PipelineOrchestrator 内部 `_cost_total`/`_cost_records` 替换为 `_cost_tracker`，`get_cost_summary()` 委托至 `_cost_tracker.summary()`，`_compute_module_costs()` 方法删除（dispatch() 改用 `_cost_tracker.records`）。`__init__.py` 新增 CostTracker 导出。同时修正蓝图任务表中 SRC-0023~SRC-0029 编号以对齐 TaskRepository 权威数据。 |
 | 2026-05-10 | 3.0.1 | **Phase 2 SRC-0023 完成**：ModelRouter 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/model_router.py`, ~175行）。包含 5 个公共类属性（FALLBACK_CHAIN / MODEL_VERSION_MAP / MODEL_CONTEXT_LIMITS / MODEL_COST_PER_1K_INPUT / MODEL_COST_PER_1K_OUTPUT）和 5 个静态方法（resolve_model / fallback_chain_for / estimate_cost / model_version_for / context_limit_for）。PipelineOrchestrator._route_model() 委托至 ModelRouter.resolve_model()，_FALLBACK_CHAIN / _MODEL_* 属性全部移除。 |
 | 2026-05-10 | 3.0.0 | **v1.5→v3.0全面重建**（major：整合v2.0/v2.1所有内容+脱节修复后数据更新）：(1)§4.1b安全搬家铁律9条+§4.1c价值分析方法论5步；(2)§3.3b drift_engine拆分5组件接口+§3.4b文件映射；(3)§3.5新增7条真源声明（KillSwitch/UnifiedMemoryAPI/ContextEngine PO/DocCompressor/PromptRegistry/IntentKeywordMapper/IntentParser）；(4)安全删除协议新增7条(#10-#16)；(5)§11.0b强制安全协议+§11.0c任务卡安全条款模板+§11.0d 51个任务卡(SRC-0021~0072)+§11.0e蓝图同步工作流+§11.0f生命周期归档+§11.0g范围边界；(6)容量估算更新：1791文件/218K行/82个>400行/6个>1000行/75个同名文件；(7)施工阶段9个Phase；(8)附录A 75同名文件+附录B 82大文件；(9)PO行数2335→2541/_call_model 1293→1502 |
 | 2026-05-08 | 1.5.0 | **操作安全审查修正**（minor→major：含策略级变更）：(1)蓝图声称"没有 git 备份仓库"——实际有 git（分支 trae-redteam-deadly-5，有完整提交历史），安全删除协议重写为"删除前必须 git commit"；(2)escalation/ 和 escalation_protocol/ 功能不同不能简单合并——escalation/ 是运行时升级引擎，escalation_protocol/ 是安全策略集，默认方案改为 escalation/ 重命名为 escalation_engine/ 独立保留；(3)铁律#4 "5文件约束"与 Phase 2 冲突（拆分需10+文件），放宽为"Phase 2 允许≤7新文件+≤3修改文件"；(4)前置条件新增"现有测试全部通过"和"git仓库可用"——当前有2个 CircuitBreaker 测试失败需先修复；(5)铁律#5 说明从"删了就没了"更新为"git revert 可回滚" |
