@@ -91,6 +91,7 @@ from zephyr.pipeline.models import (
 from zephyr.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.pipeline.routing_plugins import PipelineRouter
 from zephyr.shared.schema.schemas import TaskStatus
+from zephyr.pipeline.model_router import ModelRouter
 
 _RBAC_AVAILABLE = False
 try:
@@ -800,24 +801,7 @@ class PipelineOrchestrator:
     # ------------------------------------------------------------------
 
     def _route_model(self, task_card: TaskCard) -> str:
-        model = task_card.execution_model
-
-        if task_card.assigned_pipeline == "C":
-            return "none"
-
-        critical_keywords = ["关键", "critical", "rescue"]
-        if any(kw in task_card.title.lower() for kw in critical_keywords):
-            return "claude"
-
-        if "security" in task_card.tags:
-            return "claude"
-        if "experimental" in task_card.tags:
-            return "claude"
-
-        if task_card.ai_autonomy_level == "unsafe":
-            return "claude"
-
-        return model
+        return ModelRouter.resolve_model(task_card)
 
     # ------------------------------------------------------------------
     # 三层执行模式解析 —— 根据人类在场 + 任务类型路由
@@ -1079,12 +1063,6 @@ class PipelineOrchestrator:
     # 模型降级 Fallback 链 —— GOV-AI-002 §三 补充
     # ------------------------------------------------------------------
 
-    _FALLBACK_CHAIN: dict[str, list[str]] = {
-        "deepseek": ["glm", "claude"],
-        "glm": ["deepseek", "claude"],
-        "claude": [],
-    }
-
     def _run_with_fallback(
         self,
         module_id: str,
@@ -1096,7 +1074,7 @@ class PipelineOrchestrator:
         prior_artifacts: list | None = None,
         dry_run: bool = False,
     ) -> tuple[ModuleResult, str]:
-        chain = [primary_model] + self._FALLBACK_CHAIN.get(primary_model, [])
+        chain = [primary_model] + ModelRouter.FALLBACK_CHAIN.get(primary_model, [])
         last_error: str | None = None
 
         for model in chain:
@@ -1393,30 +1371,6 @@ class PipelineOrchestrator:
     # 内部工具方法
     # ------------------------------------------------------------------
 
-    _MODEL_VERSION_MAP: dict[str, str] = {
-        "deepseek": "deepseek-v4-pro",
-        "glm": "glm-5.1",
-        "claude": "claude-opus-4.7",
-    }
-
-    _MODEL_CONTEXT_LIMITS: dict[str, int] = {
-        "deepseek": 128_000,
-        "glm": 128_000,
-        "claude": 200_000,
-    }
-
-    _MODEL_COST_PER_1K_INPUT: dict[str, float] = {
-        "deepseek": 0.00174,
-        "glm": 0.0,
-        "claude": 0.005,
-    }
-
-    _MODEL_COST_PER_1K_OUTPUT: dict[str, float] = {
-        "deepseek": 0.00348,
-        "glm": 0.0,
-        "claude": 0.025,
-    }
-
     # B154 响应缓存——静态方法 _call_model 需要类属性访问
     _response_cache: dict[str, tuple[float, dict]] = {}
     _response_cache_ttl_s: float = 3600.0
@@ -1457,8 +1411,8 @@ class PipelineOrchestrator:
                     parts.append(f"[Role Skill: {skill_injection.role_skill_id}]\n{skill_injection.l2_role_body}")
                 skill_context = "\n\n".join(parts)
 
-        model_version = PipelineOrchestrator._MODEL_VERSION_MAP.get(model, model)
-        context_limit = PipelineOrchestrator._MODEL_CONTEXT_LIMITS.get(model, 128_000)
+        model_version = ModelRouter.MODEL_VERSION_MAP.get(model, model)
+        context_limit = ModelRouter.MODEL_CONTEXT_LIMITS.get(model, 128_000)
 
         if task.estimated_tokens > context_limit:
             return {
@@ -1537,8 +1491,8 @@ class PipelineOrchestrator:
             provider_used = llm_resp.provider
         else:
             tokens_used = task.estimated_tokens // max(token_divisor, 1)
-            cost_input = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_INPUT.get(model, 0.0)
-            cost_output = (tokens_used / 1000.0) * PipelineOrchestrator._MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
+            cost_input = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
+            cost_output = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
             cost_usd = round(cost_input + cost_output, 6)
             summary_content = f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}"
             simulated = True

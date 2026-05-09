@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: not_started
+construction_progress: in_progress
 summary: "ZephyrAlpha 系统重组总蓝图 v3.0 —— 将已达成共识的重组动作文档化为蓝图真源。核心策略：(1)大文件拆分为可维护组件（含PipelineOrchestrator 2541行→7组件+drift_engine 2134行→5组件+10个>650行文件拆分评估）；(2)重复模块合并为单一真源——含75个跨目录同名文件（kill_switch×5/circuit_breaker×4/models×4等）+15对目录内部版本分叉+4对context_engine模块内部同名文件；(3)昂贵/高耦合子系统改为按需激活；(4)接入真实LLM API替代simulated占位；(5)未完工占位模块标记phase:future；(6)安全搬家铁律9条+价值分析方法论5步+强制安全协议(Pre-flight/执行中/Post-merge)。本蓝图是重组方案的canonical SSoT——所有子蓝图应与本蓝图对齐，冲突时以本蓝图为准。"
 tags: [restructuring, refactoring, consolidation, on-demand-activation, llm-integration, capabilities, split, merge, master-plan]
 priority: P0
@@ -967,7 +967,7 @@ applicable_rules:
 
 | 字段 | 值 | 填写者 |
 |------|-----|-------|
-| construction_status | not_started | — |
+| construction_status | in_progress | — |
 | verification_status | unverified | — |
 
 ---
@@ -1068,6 +1068,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.0.1 | **Phase 2 SRC-0023 完成**：ModelRouter 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/model_router.py`, ~175行）。包含 5 个公共类属性（FALLBACK_CHAIN / MODEL_VERSION_MAP / MODEL_CONTEXT_LIMITS / MODEL_COST_PER_1K_INPUT / MODEL_COST_PER_1K_OUTPUT）和 5 个静态方法（resolve_model / fallback_chain_for / estimate_cost / model_version_for / context_limit_for）。PipelineOrchestrator._route_model() 委托至 ModelRouter.resolve_model()，_FALLBACK_CHAIN / _MODEL_* 属性全部移除。 |
 | 2026-05-10 | 3.0.0 | **v1.5→v3.0全面重建**（major：整合v2.0/v2.1所有内容+脱节修复后数据更新）：(1)§4.1b安全搬家铁律9条+§4.1c价值分析方法论5步；(2)§3.3b drift_engine拆分5组件接口+§3.4b文件映射；(3)§3.5新增7条真源声明（KillSwitch/UnifiedMemoryAPI/ContextEngine PO/DocCompressor/PromptRegistry/IntentKeywordMapper/IntentParser）；(4)安全删除协议新增7条(#10-#16)；(5)§11.0b强制安全协议+§11.0c任务卡安全条款模板+§11.0d 51个任务卡(SRC-0021~0072)+§11.0e蓝图同步工作流+§11.0f生命周期归档+§11.0g范围边界；(6)容量估算更新：1791文件/218K行/82个>400行/6个>1000行/75个同名文件；(7)施工阶段9个Phase；(8)附录A 75同名文件+附录B 82大文件；(9)PO行数2335→2541/_call_model 1293→1502 |
 | 2026-05-08 | 1.5.0 | **操作安全审查修正**（minor→major：含策略级变更）：(1)蓝图声称"没有 git 备份仓库"——实际有 git（分支 trae-redteam-deadly-5，有完整提交历史），安全删除协议重写为"删除前必须 git commit"；(2)escalation/ 和 escalation_protocol/ 功能不同不能简单合并——escalation/ 是运行时升级引擎，escalation_protocol/ 是安全策略集，默认方案改为 escalation/ 重命名为 escalation_engine/ 独立保留；(3)铁律#4 "5文件约束"与 Phase 2 冲突（拆分需10+文件），放宽为"Phase 2 允许≤7新文件+≤3修改文件"；(4)前置条件新增"现有测试全部通过"和"git仓库可用"——当前有2个 CircuitBreaker 测试失败需先修复；(5)铁律#5 说明从"删了就没了"更新为"git revert 可回滚" |
 | 2026-05-08 | 1.4.3 | **铁律#8合规性修正**：(1)全文消除"需人类决策""待决策"等模糊词——版本分叉统一给出默认建议"保留子目录版，顶层版标记 deprecated"；(2)EventBusUpgrade 给出明确默认方案"l01版重命名为 shared/upgrade_strategy.py 独立保留"；(3)§3.4 文件映射补充 PipelineLock 行（7个组件此前只映射6个）；(4)§8 #8 Feedback Loop 蓝图路径修正为 MOD-INF-010 精确路径；(5)Phase 2 新增依赖说明——Phase 1 LLM代码需在 Phase 2 拆分时迁移到 ModelRouter |
