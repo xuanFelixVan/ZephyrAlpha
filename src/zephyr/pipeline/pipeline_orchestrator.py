@@ -63,6 +63,7 @@ from zephyr.pipeline.ct_pipe_routing import (
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
 )
+from zephyr.pipeline.dead_letter_queue import DeadLetterQueue
 from zephyr.pipeline.model_router import ModelRouter
 from zephyr.pipeline.models import (
     M_MODULE_SPECS,
@@ -192,7 +193,7 @@ class PipelineOrchestrator:
         self._cb_manager = CircuitBreakerManager(log_fn=self._log)
         self._rate_limit_timestamps: dict[str, list[float]] = {}
         self._cost_tracker = CostTracker()
-        self._dead_letters: list[DeadLetterEntry] = []
+        self._dlq = DeadLetterQueue()
         self._accuracy_data: dict[str, list[float]] = {}
         self._active_experiments: dict[str, ABExperimentRoute] = {}
         self._rbac_bridge = EscalationRBACBridge() if _RBAC_AVAILABLE else None
@@ -706,7 +707,7 @@ class PipelineOrchestrator:
             cost_records = self._cost_tracker.records
 
             emergency_fallback = self._emergency_fallback(results, task_card)
-            dead_letter = self._maybe_dead_letter(task_card, results, status)
+            dead_letter = self._dlq.enqueue(task_card, results, status, self._cfg.max_retries)
             cb_state = self._cb_manager.status(task_card.task_id).get(task_card.task_id)
 
             bridge_result = None
@@ -1061,7 +1062,7 @@ class PipelineOrchestrator:
             "metrics": dict(self._metrics),
             "latency_samples": {k: v[:] for k, v in self._latency_samples.items()},
             "cost_tracker": self._cost_tracker.save_state(),
-            "dead_letters": [d.model_dump() for d in self._dead_letters],
+            "dead_letters": self._dlq.save_state(),
         }
 
     def load_state(self, state: dict) -> None:
@@ -1074,7 +1075,7 @@ class PipelineOrchestrator:
         preempt_raw = state.get("preempt_log", {})
         self._preempt_log = {tid: PreemptionRecord(**data) for tid, data in preempt_raw.items()}
         self._cost_tracker.load_state(state.get("cost_tracker", {}))
-        self._dead_letters = [DeadLetterEntry(**d) for d in state.get("dead_letters", [])]
+        self._dlq.load_state(state.get("dead_letters", []))
 
     def _release_pipeline_lock(self, task_id: str) -> None:
         if self._pipeline_lock is not None:
@@ -1611,7 +1612,7 @@ class PipelineOrchestrator:
             "active_preemptions": active_preemptions,
             "circuit_breakers_open": cb_open,
             "active_dispatches": len(self._active_dispatches),
-            "dead_letters": len(self._dead_letters),
+            "dead_letters": self._dlq.count,
             "cost_total_usd": round(self._cost_total, 4),
             "metrics": dict(self._metrics),
         }
@@ -2140,7 +2141,7 @@ class PipelineOrchestrator:
         )
 
     # ------------------------------------------------------------------
-    # 死信队列 —— B169
+    # 死信队列 —— B169（委托到 DeadLetterQueue）
     # ------------------------------------------------------------------
 
     def _maybe_dead_letter(
@@ -2150,22 +2151,10 @@ class PipelineOrchestrator:
         status: PipelineStatus,
     ) -> DeadLetterEntry | None:
         """永久失败任务写入死信队列。"""
-        if status not in (PipelineStatus.FAILURE, PipelineStatus.CLAUDE_RESCUE):
-            return None
-        all_failed = all(r.status == ModuleStatus.FAILURE for r in results)
-        if not all_failed:
-            return None
-        entry = DeadLetterEntry(
-            task_id=task_card.task_id,
-            failure_reason=f"All {len(results)} modules failed",
-            retry_count=self._cfg.max_retries,
-            last_error=results[0].errors[0] if results and results[0].errors else "unknown",
-        )
-        self._dead_letters.append(entry)
-        return entry
+        return self._dlq.enqueue(task_card, results, status, self._cfg.max_retries)
 
     def get_dead_letters(self) -> list[DeadLetterEntry]:
-        return list(self._dead_letters)
+        return self._dlq.entries
 
     # ------------------------------------------------------------------
     # 速率限制感知 —— B162

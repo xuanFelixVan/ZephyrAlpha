@@ -27,6 +27,9 @@ from zephyr.pipeline.ct_pipe_routing import (
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
 )
+from zephyr.pipeline.dead_letter_queue import (
+    DeadLetterQueue,
+)
 from zephyr.pipeline.layer_consumer_registry import (
     get_registry_summary,
     register_all_consumers,
@@ -221,6 +224,7 @@ __all__ = [
     "CtPipeRoutingHints",
     "DEFAULT_PLUGINS",
     "DeadLetterEntry",
+    "DeadLetterQueue",
     "DegradationLevel",
     "DriftReport",
     "EmergencyFallbackPlan",
