@@ -22,6 +22,7 @@ Backend  : zephyr.governance.* 八件套治理模块
 - governance.escalate            — 触发升级评估
 - governance.check_budget        — 检查预算状态
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -29,7 +30,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from zephyr.mcp._base_server import BaseMCPServer, MCPError
+from zephyr.mcp._base_server import BaseMCPServer
 
 __all__ = ["GovernanceServer", "create_server"]
 
@@ -61,6 +62,7 @@ def _run_script(script_rel: str, *args: str) -> dict[str, Any]:
 
 def _import_check(module_path: str) -> dict[str, Any]:
     import importlib
+
     try:
         mod = importlib.import_module(module_path)
         return {"importable": True, "has_all": bool(getattr(mod, "__all__", None)), "module": module_path}
@@ -223,9 +225,20 @@ class GovernanceServer(BaseMCPServer):
                 "additionalProperties": False,
                 "properties": {
                     "session_id": {"type": "string", "description": "Agent session ID"},
-                    "operation": {"type": "string", "description": "操作权限，如 read:docs / write:src / execute:scripts"},
-                    "maturity": {"type": "string", "enum": ["L0_INTERN", "L1_JUNIOR", "L2_REGULAR", "L3_SENIOR", "L4_PRINCIPAL"], "default": "L2_REGULAR"},
-                    "role": {"type": "string", "enum": ["reader", "writer", "executor", "admin", "auditor"], "default": "executor"},
+                    "operation": {
+                        "type": "string",
+                        "description": "操作权限，如 read:docs / write:src / execute:scripts",
+                    },
+                    "maturity": {
+                        "type": "string",
+                        "enum": ["L0_INTERN", "L1_JUNIOR", "L2_REGULAR", "L3_SENIOR", "L4_PRINCIPAL"],
+                        "default": "L2_REGULAR",
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": ["reader", "writer", "executor", "admin", "auditor"],
+                        "default": "executor",
+                    },
                 },
             },
             handler=self._rbac_check,
@@ -267,7 +280,10 @@ class GovernanceServer(BaseMCPServer):
                 "required": ["event_type", "description"],
                 "additionalProperties": False,
                 "properties": {
-                    "event_type": {"type": "string", "description": "事件类型，如 file_write / gate_check / permission_deny"},
+                    "event_type": {
+                        "type": "string",
+                        "description": "事件类型，如 file_write / gate_check / permission_deny",
+                    },
                     "description": {"type": "string", "description": "事件描述"},
                     "agent_id": {"type": "string", "description": "可选：Agent session ID"},
                     "target_path": {"type": "string", "description": "可选：操作目标路径"},
@@ -285,7 +301,12 @@ class GovernanceServer(BaseMCPServer):
                 "additionalProperties": False,
                 "properties": {
                     "checkpoint_id": {"type": "string", "description": "可选：回退到指定 checkpoint ID"},
-                    "scope": {"type": "string", "enum": ["last_change", "session", "full"], "default": "last_change", "description": "回滚范围"},
+                    "scope": {
+                        "type": "string",
+                        "enum": ["last_change", "session", "full"],
+                        "default": "last_change",
+                        "description": "回滚范围",
+                    },
                     "dry_run": {"type": "boolean", "default": True, "description": "是否仅模拟回滚（默认安全模式）"},
                     "files": {"type": "array", "items": {"type": "string"}, "description": "可选：仅回滚指定文件列表"},
                 },
@@ -301,7 +322,18 @@ class GovernanceServer(BaseMCPServer):
                 "required": ["category", "description"],
                 "additionalProperties": False,
                 "properties": {
-                    "category": {"type": "string", "enum": ["SECURITY_VIOLATION", "DEADLOCK", "BUDGET_EXCEEDED", "CASCADE_FAILURE", "AUTO_GUARD_FAILURE", "CUSTOM"], "description": "事件类别"},
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "SECURITY_VIOLATION",
+                            "DEADLOCK",
+                            "BUDGET_EXCEEDED",
+                            "CASCADE_FAILURE",
+                            "AUTO_GUARD_FAILURE",
+                            "CUSTOM",
+                        ],
+                        "description": "事件类别",
+                    },
                     "description": {"type": "string", "description": "事件描述"},
                     "owner_id": {"type": "string", "description": "可选：事件发起者 ID"},
                 },
@@ -317,7 +349,12 @@ class GovernanceServer(BaseMCPServer):
                 "required": [],
                 "additionalProperties": False,
                 "properties": {
-                    "dimension": {"type": "string", "enum": ["TOKEN", "COST", "TIME", "ALL"], "default": "ALL", "description": "预算维度"},
+                    "dimension": {
+                        "type": "string",
+                        "enum": ["TOKEN", "COST", "TIME", "ALL"],
+                        "default": "ALL",
+                        "description": "预算维度",
+                    },
                 },
             },
             handler=self._check_budget,
@@ -395,7 +432,12 @@ class GovernanceServer(BaseMCPServer):
             return {"contract_id": contract_id, "error": f"Test file not found: {test_file}", "valid": False}
 
         result = _run_script(
-            "-m", "pytest", str(test_path), "-q", "--tb=short", "--no-header",
+            "-m",
+            "pytest",
+            str(test_path),
+            "-q",
+            "--tb=short",
+            "--no-header",
         )
         return {
             "contract_id": contract_id,
@@ -444,17 +486,24 @@ class GovernanceServer(BaseMCPServer):
             "audit_stderr": audit.get("stderr", "")[:500],
         }
 
-
     def _drift_scan(self, module_dir: str | None = None, level: str = "STANDARD") -> dict[str, Any]:
         import asyncio
+
         try:
-            from zephyr.drift_detector.drift_engine import scan, ScanLevel
-            from zephyr.drift_detector.cold_start import init_directories, init_database
+            from zephyr.drift_detector.cold_start import init_database, init_directories
+            from zephyr.drift_detector.drift_engine import ScanLevel, scan
+
             project_root = str(_PROJECT_ROOT)
             init_directories(project_root)
             init_database(project_root)
-            scan_level = {"LIGHT": ScanLevel.LIGHT, "STANDARD": ScanLevel.STANDARD, "DEEP": ScanLevel.DEEP}.get(level, ScanLevel.STANDARD)
-            target_dir = str(_PROJECT_ROOT / module_dir) if module_dir else str(_PROJECT_ROOT / "src" / "zephyr" / "drift_detector")
+            scan_level = {"LIGHT": ScanLevel.LIGHT, "STANDARD": ScanLevel.STANDARD, "DEEP": ScanLevel.DEEP}.get(
+                level, ScanLevel.STANDARD
+            )
+            target_dir = (
+                str(_PROJECT_ROOT / module_dir)
+                if module_dir
+                else str(_PROJECT_ROOT / "src" / "zephyr" / "drift_detector")
+            )
             result = asyncio.run(scan(level=scan_level, scope=[target_dir] if module_dir else None))
             return {
                 "scan_id": str(result.scan_id),
@@ -462,8 +511,13 @@ class GovernanceServer(BaseMCPServer):
                 "total_drift_events": result.total_drift_events,
                 "storm_mode_triggered": result.storm_mode_triggered,
                 "events": [
-                    {"detector_id": e.detector_id, "drift_dimension": e.drift_dimension, "state": e.state.value,
-                     "resolution_detail": e.resolution_detail, "auto_fixed": e.auto_fixed}
+                    {
+                        "detector_id": e.detector_id,
+                        "drift_dimension": e.drift_dimension,
+                        "state": e.state.value,
+                        "resolution_detail": e.resolution_detail,
+                        "auto_fixed": e.auto_fixed,
+                    }
                     for e in result.events[:50]
                 ],
             }
@@ -476,6 +530,7 @@ class GovernanceServer(BaseMCPServer):
         try:
             from zephyr.drift_detector.drift_engine import build_report, load_detector_registry
             from zephyr.drift_detector.drift_models import DriftReport
+
             detectors = load_detector_registry()
             active_count = sum(1 for d in detectors if d.status == "active")
             categories: dict[str, int] = {}
@@ -496,7 +551,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
-            from zephyr.drift_detector.drift_engine import check_budget_for_gate
+            from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
+
             result = check_budget_for_gate(module_id)
             return {
                 "module_id": module_id,
@@ -507,13 +563,18 @@ class GovernanceServer(BaseMCPServer):
         except Exception as e:
             return {"error": f"budget check failed: {e}", "module_id": module_id, "allowed": False}
 
-    def _rbac_check(self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor") -> dict[str, Any]:
+    def _rbac_check(
+        self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
+    ) -> dict[str, Any]:
         try:
+            from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
             from zephyr.agent_rbac.permission_guard import PermissionGuard
-            from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel, AgentRole, IDESource
+
             ml = MaturityLevel(maturity)
             ar = AgentRole(role)
-            identity = AgentIdentity(session_id=session_id, maturity=ml, role=ar, ide_source=IDESource.TRAE, owner_approved=True)
+            identity = AgentIdentity(
+                session_id=session_id, maturity=ml, role=ar, ide_source=IDESource.TRAE, owner_approved=True
+            )
             guard = PermissionGuard()
             result = guard.check(identity, operation)
             return {
@@ -531,6 +592,7 @@ class GovernanceServer(BaseMCPServer):
     def _list_skills(self, keyword: str | None = None) -> dict[str, Any]:
         try:
             from zephyr.agent_spec.skill_loader import SkillLoader
+
             loader = SkillLoader()
             skills = loader.list_skills()
             if keyword:
@@ -538,7 +600,14 @@ class GovernanceServer(BaseMCPServer):
             return {
                 "total_skills": len(skills),
                 "keyword_filter": keyword,
-                "skills": [{"id": getattr(s, "skill_id", str(s)), "name": getattr(s, "name", str(s)), "triggers": getattr(s, "trigger_keywords", [])} for s in skills[:50]],
+                "skills": [
+                    {
+                        "id": getattr(s, "skill_id", str(s)),
+                        "name": getattr(s, "name", str(s)),
+                        "triggers": getattr(s, "trigger_keywords", []),
+                    }
+                    for s in skills[:50]
+                ],
             }
         except ImportError as e:
             return {"error": f"Agent Spec import failed: {e}", "total_skills": 0, "skills": []}
@@ -548,6 +617,7 @@ class GovernanceServer(BaseMCPServer):
     def _load_skill(self, skill_id: str) -> dict[str, Any]:
         try:
             from zephyr.agent_spec.skill_loader import SkillLoader
+
             loader = SkillLoader()
             skill = loader.load(skill_id)
             if skill is None:
@@ -564,9 +634,12 @@ class GovernanceServer(BaseMCPServer):
         except Exception as e:
             return {"skill_id": skill_id, "loaded": False, "error": f"load failed: {e}"}
 
-    def _write_audit(self, event_type: str, description: str, agent_id: str | None = None, target_path: str | None = None) -> dict[str, Any]:
+    def _write_audit(
+        self, event_type: str, description: str, agent_id: str | None = None, target_path: str | None = None
+    ) -> dict[str, Any]:
         try:
             from zephyr.audit_trail.writer import AuditWriter
+
             writer = AuditWriter()
             entry_id = writer.write(
                 event_type=event_type,
@@ -580,10 +653,16 @@ class GovernanceServer(BaseMCPServer):
         except Exception as e:
             return {"written": False, "error": f"write_audit failed: {e}"}
 
-    def _execute_rollback(self, checkpoint_id: str | None = None, scope: str = "last_change",
-                          dry_run: bool = True, files: list[str] | None = None) -> dict[str, Any]:
+    def _execute_rollback(
+        self,
+        checkpoint_id: str | None = None,
+        scope: str = "last_change",
+        dry_run: bool = True,
+        files: list[str] | None = None,
+    ) -> dict[str, Any]:
         try:
             from zephyr.rollback.rollback_executor import RollbackExecutor
+
             executor = RollbackExecutor()
 
             if dry_run:
@@ -608,9 +687,14 @@ class GovernanceServer(BaseMCPServer):
             if files:
                 if not checkpoint_id:
                     import subprocess as _sp
-                    head = _sp.run(["git", "rev-parse", "--short", "HEAD"],
-                                   capture_output=True, text=True, timeout=10,
-                                   cwd=str(executor._project_root))
+
+                    head = _sp.run(
+                        ["git", "rev-parse", "--short", "HEAD"],
+                        capture_output=True,
+                        text=True,
+                        timeout=10,
+                        cwd=str(executor._project_root),
+                    )
                     checkpoint_id = head.stdout.strip() if head.returncode == 0 else ""
 
                 rollback_result = executor.rollback_or_discard(
@@ -628,9 +712,14 @@ class GovernanceServer(BaseMCPServer):
 
             if not checkpoint_id:
                 import subprocess as _sp
-                head = _sp.run(["git", "rev-parse", "--short", "HEAD"],
-                               capture_output=True, text=True, timeout=10,
-                               cwd=str(executor._project_root))
+
+                head = _sp.run(
+                    ["git", "rev-parse", "--short", "HEAD"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    cwd=str(executor._project_root),
+                )
                 checkpoint_id = head.stdout.strip() if head.returncode == 0 else ""
                 if not checkpoint_id:
                     return {"error": "Cannot determine HEAD commit SHA", "success": False}
@@ -657,6 +746,7 @@ class GovernanceServer(BaseMCPServer):
     def _escalate(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
             from zephyr.escalation import EscalationEngine, RuleCategory
+
             engine = EscalationEngine("mcp-governance")
             cat = RuleCategory(category)
             event = engine.evaluate(cat, description, owner_id=owner_id)
@@ -674,9 +764,14 @@ class GovernanceServer(BaseMCPServer):
 
     def _check_budget(self, dimension: str = "ALL") -> dict[str, Any]:
         try:
-            from zephyr.budget_enforcer import BudgetEngine, BudgetDimension
+            from zephyr.budget_enforcer import BudgetDimension, BudgetEngine
+
             engine = BudgetEngine()
-            dims = [BudgetDimension.TOKEN, BudgetDimension.COST, BudgetDimension.TIME] if dimension == "ALL" else [BudgetDimension(dimension)]
+            dims = (
+                [BudgetDimension.TOKEN, BudgetDimension.COST, BudgetDimension.TIME]
+                if dimension == "ALL"
+                else [BudgetDimension(dimension)]
+            )
             result = {}
             for dim in dims:
                 policy = engine.get_active_policy(dim)
@@ -687,7 +782,11 @@ class GovernanceServer(BaseMCPServer):
                         "per_request_limit": policy.per_request_limit,
                     }
             consumption = engine.get_consumption_summary()
-            return {"policies": result, "consumption": consumption, "degradation_level": engine._current_degradation_level.value}
+            return {
+                "policies": result,
+                "consumption": consumption,
+                "degradation_level": engine._current_degradation_level.value,
+            }
         except ImportError as e:
             return {"error": f"Budget Enforcer import failed: {e}"}
         except Exception as e:

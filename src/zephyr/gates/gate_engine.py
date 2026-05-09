@@ -62,11 +62,10 @@ from typing import Any, ClassVar
 
 import yaml
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
 from zephyr.gates.risk_ssot import load_risk_params_ssot
 from zephyr.shared.schema.schemas import Task
 from zephyr.shared.utils.db_utils import ensure_schema
-from zephyr.core.models import TaskCard, GateLevel
 
 __all__ = [
     "GateEngine",
@@ -90,10 +89,12 @@ _DEPRECATED_PATHS_YAML = (
     Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
 )
 
+
 def _load_deprecated_patterns() -> list[str]:
     with open(_DEPRECATED_PATHS_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return list(data.get("blacklist_patterns", []))
+
 
 _BUILTIN_DEPRECATED_PATTERNS: list[str] = _load_deprecated_patterns()
 
@@ -110,6 +111,7 @@ _PLACEHOLDER_PATTERNS: list[str] = [
 # 数据模型
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class GateViolation:
     """单条门禁违规记录。"""
@@ -119,6 +121,7 @@ class GateViolation:
     severity: str  # P0 / P1 / P2
     message: str
     detail: str | None = None
+
 
 @dataclass
 class GateResult:
@@ -147,9 +150,11 @@ class GateResult:
         total = len(self.violations)
         return f"[FAIL] Gate {self.gate_id} task={self.task_id} " f"violations={total} (P0={p0})"
 
+
 # ---------------------------------------------------------------------------
 # 配置模型（轻量 dataclass，不用 Pydantic 避免循环依赖）
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class CheckConfig:
@@ -159,6 +164,7 @@ class CheckConfig:
     description: str
     severity: str
     params: dict[str, Any]
+
 
 @dataclass
 class GateConfig:
@@ -171,12 +177,15 @@ class GateConfig:
     on_failure: str
     on_pass: str
 
+
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class GateEngineError(RuntimeError):
     """GateEngine 基础异常。"""
+
 
 class GateViolationError(GateEngineError):
     """任务被门禁阻断时抛出（含 GateResult）。"""
@@ -185,9 +194,11 @@ class GateViolationError(GateEngineError):
         self.result = result
         super().__init__(result.summary())
 
+
 # ---------------------------------------------------------------------------
 # 内部：检查实现
 # ---------------------------------------------------------------------------
+
 
 def _check_encoding(
     file_path: Path,
@@ -205,6 +216,7 @@ def _check_encoding(
         return f"编码损坏（非 UTF-8）：{file_path} — {exc}"
     return None
 
+
 def _check_line_ending(
     file_path: Path,
     params: dict[str, Any],
@@ -217,6 +229,7 @@ def _check_line_ending(
         count = raw.count(b"\r\n")
         return f"文件含 CRLF 换行（{count} 处）：{file_path}"
     return None
+
 
 def _check_path_blacklist(
     paths: list[str],
@@ -232,6 +245,7 @@ def _check_path_blacklist(
                 violations.append(f"废弃路径命中 '{pattern}'：{p}")
                 break
     return violations
+
 
 def _check_empty_shell(
     file_path: Path,
@@ -262,6 +276,7 @@ def _check_empty_shell(
             return f"空壳文件（占位符比例 {ratio:.1%} > {max_ratio:.0%}）：{file_path}"
     return None
 
+
 def _check_content_length(
     file_path: Path,
     params: dict[str, Any],
@@ -280,6 +295,7 @@ def _check_content_length(
     if body_len < min_chars:
         return f"内容过短（{body_len} 字符 < {min_chars}）：{file_path}"
     return None
+
 
 def _check_frontmatter(
     file_path: Path,
@@ -318,11 +334,13 @@ def _check_field_presence_task(task: Task, params: dict[str, Any]) -> list[str]:
     missing: list[str] = []
     for fname in params.get("required_fields", []):
         val = getattr(task, fname, None)
-        if val is None:
-            missing.append(fname)
-        elif isinstance(val, str) and len(val.strip()) == 0:
-            missing.append(fname)
-        elif isinstance(val, (list, dict)) and len(val) == 0:
+        if (
+            val is None
+            or isinstance(val, str)
+            and len(val.strip()) == 0
+            or isinstance(val, (list, dict))
+            and len(val) == 0
+        ):
             missing.append(fname)
     return missing
 
@@ -374,7 +392,7 @@ def _check_audit_findings_messages(task: Task) -> list[str]:
     """TaskCard.audit_findings 全部 resolved；无该字段则跳过。"""
     if not hasattr(task, "audit_findings"):
         return []
-    findings_raw = getattr(task, "audit_findings") or []
+    findings_raw = task.audit_findings or []
     msgs: list[str] = []
     for af in findings_raw:
         if getattr(af, "resolved", False):
@@ -387,6 +405,7 @@ def _check_audit_findings_messages(task: Task) -> list[str]:
 # ---------------------------------------------------------------------------
 # 统一调度函数
 # ---------------------------------------------------------------------------
+
 
 def _run_check(
     check: CheckConfig,
@@ -501,14 +520,17 @@ def _run_check(
             )
         else:
             _check_blueprint_read_compliance(
-                target_blueprint, target_files, check, _add,
+                target_blueprint,
+                target_files,
+                check,
+                _add,
                 hard_compliance=hard_compliance,
             )
 
     elif ct == "drift_budget":
         target_module = str(check.params.get("target_module", task.task_id))
         try:
-            from zephyr.drift_detector.drift_engine import check_budget_for_gate
+            from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
 
             budget = check_budget_for_gate(target_module)
             if not budget.get("allowed", False):
@@ -548,6 +570,7 @@ def _run_check(
     elif ct == "circular_dependency_scan":
         try:
             from zephyr.gates.invariants.en_001_circular_dependency import run_scan
+
             result = run_scan()
             if not result.passed:
                 for cycle in result.cycles:
@@ -561,6 +584,7 @@ def _run_check(
     elif ct == "enforcement_mode_check":
         try:
             from zephyr.gates.invariants.en_002_enforcement_validator import run_check as en2_check
+
             result = en2_check()
             if not result.passed:
                 for v in result.violations:
@@ -571,6 +595,7 @@ def _run_check(
     elif ct == "contract_compatibility_check":
         try:
             from zephyr.gates.invariants.en_003_contract_compatibility import run_check as en3_check
+
             result = en3_check()
             if not result.passed:
                 for m in result.mismatches:
@@ -581,6 +606,7 @@ def _run_check(
     elif ct == "security_artifact_scan":
         try:
             from zephyr.l10_compliance.artifact_scanner import ArtifactScanner
+
             scanner = ArtifactScanner()
             scanner._RULES = []
 
@@ -688,6 +714,7 @@ def _run_check(
     elif ct == "zero_residue_check":
         try:
             from zephyr.gates.invariants.zero_residue_check import ZeroResidueScanner
+
             scanner = ZeroResidueScanner(project_root=project_root)
             report = scanner.scan()
             if not report.is_clean:
@@ -728,6 +755,7 @@ def _run_check(
         else:
             try:
                 import importlib
+
                 mod = importlib.import_module(gate_module)
                 candidates = [a for a in dir(mod) if isinstance(getattr(mod, a), type) and not a.startswith("_")]
                 if not candidates:
@@ -743,6 +771,7 @@ def _run_check(
                         _add(f"FLE 门禁 {gate_module} 无 {gate_method} 方法")
                     else:
                         import inspect
+
                         sig = inspect.signature(method)
                         params = list(sig.parameters.keys())
                         if len(params) == 0:
@@ -775,13 +804,15 @@ def _run_check(
             exit_code = -1
         try:
             from zephyr.rollback.contract import get_gate_action
+
             gate_action, description = get_gate_action(exit_code)
-            if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO"):
-                _add(
-                    f"Rollback exit code {exit_code} -> {gate_action}: {description}",
-                    detail=f"check_id={check.check_id} exit_code={exit_code}",
-                )
-            elif gate_action in ("WARN", "RETRY", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
+            if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO") or gate_action in (
+                "WARN",
+                "RETRY",
+                "PAUSE_AGENT",
+                "PAUSE_AUTO",
+                "REDUCE_TIER",
+            ):
                 _add(
                     f"Rollback exit code {exit_code} -> {gate_action}: {description}",
                     detail=f"check_id={check.check_id} exit_code={exit_code}",
@@ -808,9 +839,11 @@ def _run_check(
 
     return violations
 
+
 # ---------------------------------------------------------------------------
 # GateEngine
 # ---------------------------------------------------------------------------
+
 
 class GateEngine:
     """
@@ -1033,9 +1066,7 @@ class GateEngine:
         name = str(raw.get("name") or raw.get("title") or raw.get("gate_name", ""))
 
         # 兼容 checks / entry_conditions
-        raw_checks: list[Any] = list(
-            raw.get("checks") or raw.get("entry_conditions") or raw.get("rules") or []
-        )
+        raw_checks: list[Any] = list(raw.get("checks") or raw.get("entry_conditions") or raw.get("rules") or [])
 
         checks: list[CheckConfig] = []
         for c in raw_checks:
@@ -1061,6 +1092,7 @@ class GateEngine:
             on_failure=str(raw.get("on_failure", "reject")),
             on_pass=str(raw.get("on_pass", "pass")),
         )
+
 
 def _check_blueprint_read_compliance(
     target_blueprint: str,
@@ -1126,7 +1158,7 @@ def _check_blueprint_read_compliance(
                 f"G6 硬合规阻断: AI 未读取 {target_blueprint} 蓝图即尝试修改 {' + '.join(target_files[:3])}。"
                 f"beta 硬合规生效——此 task 被 REJECT。",
                 detail=f"Action required: invoke blueprint_search.find_relevant_blueprint(task_description) "
-                       f"→ read {target_blueprint} blueprint §1-§5 → retry task",
+                f"→ read {target_blueprint} blueprint §1-§5 → retry task",
             )
         else:
             _add(

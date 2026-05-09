@@ -7,30 +7,27 @@ Drift Detector 扩展 E2E 测试 — 覆盖剩余 5% 差距
 4. 维护窗口 E2E（冻结期 + 自动恢复）
 5. _fallback_to_rollback_handler 无 DeprecationWarning 验证
 """
+
 from __future__ import annotations
 
-import asyncio
-import os
 import shutil
 import tempfile
 import uuid
 import warnings
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
+from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
 from zephyr.drift_detector.drift_engine import (
-    AIConstructionDetectors,
-    ScanLevel,
     _create_bulk_event,
     _detect_expected_storm,
+    load_detector_registry,
+)
+from zephyr.drift_detector.drift_infrastructure import (
     check_budget_for_gate,
     declare_maintenance_window,
     get_maintenance_window,
-    load_detector_registry,
-    scan,
 )
 from zephyr.drift_detector.drift_models import DriftEvent, DriftState
 
@@ -47,8 +44,8 @@ def _make_event(
         drift_dimension=dimension,
         baseline_version="0.1.0",
         state=DriftState.DETECTED,
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
     )
 
 
@@ -118,8 +115,7 @@ class TestAIConstructionDetectorsExtended:
 
     def test_ai_knowledge_pollution_name_collision(self):
         (Path(self.tmp) / "polluted.py").write_text(
-            "class Processor:\n    pass\n\n"
-            "def Processor():\n    pass\n",
+            "class Processor:\n    pass\n\n" "def Processor():\n    pass\n",
             encoding="utf-8",
         )
         ai = AIConstructionDetectors()
@@ -129,8 +125,7 @@ class TestAIConstructionDetectorsExtended:
 
     def test_ai_hallucination_import_nonexistent(self):
         (Path(self.tmp) / "bad_import.py").write_text(
-            "from nonexistent_module_xyz import Something\n"
-            "import also_does_not_exist_abc\n",
+            "from nonexistent_module_xyz import Something\n" "import also_does_not_exist_abc\n",
             encoding="utf-8",
         )
         ai = AIConstructionDetectors()
@@ -248,12 +243,10 @@ class TestNoDeprecationWarning:
             ) as mock_mod:
                 mock_mod.DriftFixHandler.side_effect = ImportError("test")
                 result = _fallback_to_rollback_handler(mock_event)
-                deprecation_warnings = [
-                    x for x in w if issubclass(x.category, DeprecationWarning)
-                ]
-                assert len(deprecation_warnings) == 0, (
-                    f"DeprecationWarning triggered: {[str(x.message) for x in deprecation_warnings]}"
-                )
+                deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+                assert (
+                    len(deprecation_warnings) == 0
+                ), f"DeprecationWarning triggered: {[str(x.message) for x in deprecation_warnings]}"
                 assert result["action"] == "MANUAL_REQUIRED"
 
 
@@ -264,7 +257,7 @@ class TestDeepDetectorInterfaces:
     """验证深度检测器可正常调用并返回结果。"""
 
     def test_semantic_drift_concept_cardinality(self):
-        from zephyr.drift_detector.drift_engine import detect_concept_cardinality
+        from zephyr.drift_detector.drift_result_types import detect_concept_cardinality
 
         tmp = tempfile.mkdtemp(prefix="drift_semantic_")
         try:
@@ -278,7 +271,7 @@ class TestDeepDetectorInterfaces:
             shutil.rmtree(tmp, ignore_errors=True)
 
     def test_semantic_drift_enum_value_sync(self):
-        from zephyr.drift_detector.drift_engine import detect_enum_value_sync
+        from zephyr.drift_detector.drift_result_types import detect_enum_value_sync
 
         tmp = tempfile.mkdtemp(prefix="drift_enum_")
         try:

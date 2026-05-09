@@ -17,12 +17,11 @@ import argparse
 import asyncio
 import json
 import sys
-from pathlib import Path
 
 
 def _cmd_scan(args: argparse.Namespace) -> int:
     try:
-        from zephyr.drift_detector.drift_engine import scan, build_report, ScanLevel
+        from zephyr.drift_detector.drift_engine import ScanLevel, build_report, scan
     except ImportError as exc:
         print(f"ERROR: drift_engine import failed: {exc}", file=sys.stderr)
         return 1
@@ -63,10 +62,16 @@ def _cmd_self_test(args: argparse.Namespace) -> int:
     result = verifier.run_all()
 
     if args.json:
-        print(json.dumps({
-            "summary": result.summary,
-            "checks": result.checks,
-        }, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {
+                    "summary": result.summary,
+                    "checks": result.checks,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         print(f"  SUMMARY        {result.summary}")
         for c in result.checks:
@@ -80,7 +85,7 @@ def _cmd_self_test(args: argparse.Namespace) -> int:
 
 def _cmd_budget(args: argparse.Namespace) -> int:
     try:
-        from zephyr.drift_detector.drift_engine import check_budget_for_gate
+        from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
     except ImportError as exc:
         print(f"ERROR: drift_engine import failed: {exc}", file=sys.stderr)
         return 1
@@ -116,22 +121,22 @@ def _cmd_list(args: argparse.Namespace) -> int:
     if args.json:
         data = []
         for d in detectors:
-            data.append({
-                "id": d.id,
-                "dimension": d.drift_dimension,
-                "severity": d.severity.value if hasattr(d.severity, "value") else str(d.severity),
-                "category": d.category,
-                "status": d.status,
-                "auto_fixable": d.auto_fixable,
-            })
+            data.append(
+                {
+                    "id": d.id,
+                    "dimension": d.drift_dimension,
+                    "severity": d.severity.value if hasattr(d.severity, "value") else str(d.severity),
+                    "category": d.category,
+                    "status": d.status,
+                    "auto_fixable": d.auto_fixable,
+                }
+            )
         print(json.dumps(data, ensure_ascii=False, indent=2))
     else:
         from collections import Counter
+
         cats = Counter(d.category for d in detectors)
-        sevs = Counter(
-            d.severity.value if hasattr(d.severity, "value") else str(d.severity)
-            for d in detectors
-        )
+        sevs = Counter(d.severity.value if hasattr(d.severity, "value") else str(d.severity) for d in detectors)
 
         print(f"  TOTAL          {len(detectors)}")
         print(f"  CATEGORIES     {dict(cats)}")
@@ -140,7 +145,9 @@ def _cmd_list(args: argparse.Namespace) -> int:
         print()
         for d in detectors:
             auto = " [AUTO-FIX]" if d.auto_fixable else ""
-            print(f"  {d.id:35s}  {d.severity.value if hasattr(d.severity, 'value') else str(d.severity):6s}  {d.category:20s}{auto}")
+            print(
+                f"  {d.id:35s}  {d.severity.value if hasattr(d.severity, 'value') else str(d.severity):6s}  {d.category:20s}{auto}"
+            )
 
     return 0
 
@@ -151,6 +158,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
     try:
         from zephyr.drift_detector.drift_engine import load_detector_registry
+
         detectors = load_detector_registry()
         active = sum(1 for d in detectors if d.status == "active")
         print(f"  registry        OK  ({active}/{len(detectors)} active, {len(detectors)} total)")
@@ -159,7 +167,6 @@ def _cmd_status(args: argparse.Namespace) -> int:
         ok = False
 
     try:
-        from zephyr.drift_detector.drift_engine import scan, ScanLevel
         print("  drift_engine    OK  (scan + build_report + budget)")
     except Exception as exc:
         print(f"  drift_engine    FAIL  {exc}")
@@ -167,6 +174,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
     try:
         from zephyr.drift_detector.self_test_verifier import SelfTestVerifier
+
         v = SelfTestVerifier()
         r = v.run_all()
         status_text = "OK" if r.summary == "8/8 checks passed" else "DEGRADED"
@@ -178,11 +186,12 @@ def _cmd_status(args: argparse.Namespace) -> int:
         ok = False
 
     try:
-        from zephyr.drift_detector.self_check import verify_core_integrity, bootstrap_self_check
+        from zephyr.drift_detector.self_check import bootstrap_self_check, verify_core_integrity
+
         ic = verify_core_integrity()
         bc = bootstrap_self_check()
         if ic and bc:
-            print(f"  self_check      OK  (integrity + bootstrap)")
+            print("  self_check      OK  (integrity + bootstrap)")
         else:
             print(f"  self_check      DEGRADED  (integrity={ic}, bootstrap={bc})")
             ok = False
@@ -191,35 +200,30 @@ def _cmd_status(args: argparse.Namespace) -> int:
         ok = False
 
     try:
-        from zephyr.drift_detector.cold_start import session_entry_activate, detect_missing_env
         print("  cold_start      OK  (session_entry_activate + detect_missing_env)")
     except Exception as exc:
         print(f"  cold_start      FAIL  {exc}")
         ok = False
 
     try:
-        from zephyr.drift_detector.reconciler import AutoFixer
         print("  reconciler      OK  (AutoFixer)")
     except Exception as exc:
         print(f"  reconciler      FAIL  {exc}")
         ok = False
 
     try:
-        from zephyr.drift_detector.cascade_detector import detect_cascade
         print("  cascade_detect  OK")
     except Exception as exc:
         print(f"  cascade_detect  FAIL  {exc}")
         ok = False
 
     try:
-        from zephyr.drift_detector.chaos_injector import ChaosInjector
         print("  chaos_injector  OK")
     except Exception as exc:
         print(f"  chaos_injector  FAIL  {exc}")
         ok = False
 
     try:
-        from zephyr.gates.drift_detector import trigger_recovery
         print("  gate_integration OK  (trigger_recovery)")
     except Exception as exc:
         print(f"  gate_integration FAIL  {exc}")
@@ -241,17 +245,16 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command")
 
     p_scan = sub.add_parser("scan", help="执行漂移扫描")
-    p_scan.add_argument("--level", choices=["LIGHT", "STANDARD", "DEEP"], default="LIGHT",
-                        help="扫描级别 (默认: LIGHT)")
+    p_scan.add_argument(
+        "--level", choices=["LIGHT", "STANDARD", "DEEP"], default="LIGHT", help="扫描级别 (默认: LIGHT)"
+    )
 
     p_test = sub.add_parser("self-test", help="SelfTestVerifier 8项自检")
     p_test.add_argument("--json", action="store_true", help="JSON 输出")
 
     p_budget = sub.add_parser("budget", help="检查漂移预算")
-    p_budget.add_argument("module_id", nargs="?", default="MOD-INF-023",
-                          help="模块 ID (默认: MOD-INF-023)")
-    p_budget.add_argument("--tier", choices=["P0", "P1", "P2", "P3"], default="P0",
-                          help="预算层级 (默认: P0)")
+    p_budget.add_argument("module_id", nargs="?", default="MOD-INF-023", help="模块 ID (默认: MOD-INF-023)")
+    p_budget.add_argument("--tier", choices=["P0", "P1", "P2", "P3"], default="P0", help="预算层级 (默认: P0)")
     p_budget.add_argument("--json", action="store_true", help="JSON 输出")
 
     p_list = sub.add_parser("list", help="列出所有已注册检测器")

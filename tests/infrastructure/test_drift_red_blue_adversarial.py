@@ -5,33 +5,25 @@ Red-Blue Adversarial Test — drift-detector v1.0.1
 蓝队(Red):  AIConstructionDetectors + scan() 检测
 裁判:       对比注入清单 vs 检出清单
 """
+
 from __future__ import annotations
 
-import asyncio
-import os
 import shutil
 import tempfile
-import time
-from datetime import datetime, timezone
 from pathlib import Path
 
+from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
 from zephyr.drift_detector.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
-    ChaosResult,
     ChaosMetrics,
+    ChaosResult,
+    import_hallucination,
+    inject_fake_todo_bomb,
     inject_path_rename,
     inject_yaml_field_flip,
-    inject_fake_todo_bomb,
-    import_hallucination,
 )
-from zephyr.drift_detector.drift_engine import (
-    AIConstructionDetectors,
-    load_detector_registry,
-    _write_drift_events,
-    check_budget_for_gate,
-)
-from zephyr.drift_detector.drift_models import DriftEvent, DriftState
+from zephyr.drift_detector.drift_models import DriftEvent
 from zephyr.drift_detector.self_test_verifier import SelfTestVerifier
 
 
@@ -39,7 +31,8 @@ def setup_target_files(tmp_dir: str) -> list[Path]:
     """创建 4 个有真实内容的测试文件，用于注入。"""
     files = []
     py_file = Path(tmp_dir) / "worker.py"
-    py_file.write_text("""from __future__ import annotations
+    py_file.write_text(
+        """from __future__ import annotations
 import os
 from typing import Optional
 
@@ -48,21 +41,27 @@ def process(data: dict) -> Optional[str]:
     if os.path.exists(path):
         return path
     return None
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     files.append(py_file)
 
     yaml_file = Path(tmp_dir) / "config.yaml"
-    yaml_file.write_text("""features:
+    yaml_file.write_text(
+        """features:
   auto_fix: true
   auto_fixable: true
   enabled: true
   required: true
   timeout: 30
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     files.append(yaml_file)
 
     py2_file = Path(tmp_dir) / "handler.py"
-    py2_file.write_text("""from __future__ import annotations
+    py2_file.write_text(
+        """from __future__ import annotations
 from uuid import uuid4
 
 def handle_event(event_id: str) -> str:
@@ -71,17 +70,22 @@ def handle_event(event_id: str) -> str:
 class EventBus:
     def publish(self, msg: str) -> None:
         pass
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     files.append(py2_file)
 
     py3_file = Path(tmp_dir) / "utils.py"
-    py3_file.write_text("""from __future__ import annotations
+    py3_file.write_text(
+        """from __future__ import annotations
 import json
 
 def parse_config(path: str) -> dict:
     with open(path) as f:
         return json.load(f)
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     files.append(py3_file)
 
     return files
@@ -218,7 +222,9 @@ def run_adversarial_test():
     print(f"  Injections:    {metrics.total_injections}")
     print(f"  Detected:      {metrics.detected}")
     print(f"  Missed:        {metrics.missed}")
-    print(f"  Detection Rate: {metrics.detected}/{metrics.total_injections} = {metrics.detected/max(metrics.total_injections,1)*100:.1f}%")
+    print(
+        f"  Detection Rate: {metrics.detected}/{metrics.total_injections} = {metrics.detected/max(metrics.total_injections,1)*100:.1f}%"
+    )
     print(f"  FN Rate:       {metrics.false_negative_rate*100:.1f}%")
     print(f"  Self-Test:     {result.summary}")
 

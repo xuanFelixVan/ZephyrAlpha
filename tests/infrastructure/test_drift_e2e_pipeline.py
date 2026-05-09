@@ -8,24 +8,17 @@ RULE-ZERO: 仅在临时目录中操作，不影响项目源码。
 
 from __future__ import annotations
 
-import asyncio
 import sqlite3
 import tempfile
-import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
 from zephyr.drift_detector.drift_engine import (
-    AIConstructionDetectors,
     _write_drift_events,
-    check_budget_for_gate,
     load_detector_registry,
-    scan,
-    ScanLevel,
-    build_report,
 )
-from zephyr.drift_detector.drift_models import DriftEvent, DriftState
-from zephyr.drift_detector.cold_start import init_database, init_directories
+from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
 from zephyr.drift_detector.self_test_verifier import SelfTestVerifier
 
 
@@ -35,7 +28,8 @@ def _setup_project(tmp: str) -> list[Path]:
     src.mkdir(parents=True, exist_ok=True)
     (src / "__init__.py").write_text("", encoding="utf-8")
 
-    (src / "service.py").write_text("""from __future__ import annotations
+    (src / "service.py").write_text(
+        """from __future__ import annotations
 import os
 from typing import Optional
 
@@ -47,15 +41,20 @@ def load_config(path: str) -> dict:
 class ConfigLoader:
     def load(self, path: str) -> Optional[dict]:
         return load_config(path)
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
-    (src / "utils.py").write_text("""from __future__ import annotations
+    (src / "utils.py").write_text(
+        """from __future__ import annotations
 import json
 
 def parse_json(path: str) -> dict:
     with open(path) as f:
         return json.load(f)
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     return [src / "service.py", src / "utils.py"]
 
@@ -94,6 +93,7 @@ def test_e2e_drift_scan_persist():
         conn.close()
     finally:
         import shutil
+
         shutil.rmtree(tmp, ignore_errors=True)
 
 
@@ -103,7 +103,7 @@ def test_e2e_drift_budget_check():
     """
     budget = check_budget_for_gate("MOD-INF-023")
     assert "allowed" in budget, f"Missing 'allowed' in budget: {budget}"
-    assert budget["allowed"] is True, f"Budget should be allowed at start"
+    assert budget["allowed"] is True, "Budget should be allowed at start"
 
 
 def test_e2e_drift_budget_exhaustion():
@@ -128,6 +128,7 @@ def test_e2e_drift_budget_exhaustion():
         target.write_text(original, encoding="utf-8")
     finally:
         import shutil
+
         shutil.rmtree(tmp, ignore_errors=True)
 
 
@@ -135,13 +136,11 @@ def test_e2e_gate_engine_drift_budget():
     """
     E2E STEP 4: Gate Engine 执行 drift_budget check
     """
-    from zephyr.gates.gate_engine import (
-        GateEngine,
-        GateEngineError,
-        _run_check,
-        CheckConfig,
-    )
     from zephyr.core.models import TaskCard
+    from zephyr.gates.gate_engine import (
+        CheckConfig,
+        _run_check,
+    )
 
     task = TaskCard(
         task_id="ADR-9999",
@@ -155,8 +154,8 @@ def test_e2e_gate_engine_drift_budget():
         source_blueprint="test",
         source_section="test",
         description="E2E drift budget test",
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
         deliverables=["src/zephyr/drift_detector/drift_engine.py"],
     )
     check = CheckConfig(
