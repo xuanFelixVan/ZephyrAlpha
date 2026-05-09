@@ -1,9 +1,9 @@
 ---
 module_id: "GOV-RSTR-001"
-title: "系统重组总蓝图 v3.0 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
+title: "系统重组总蓝图 v3.1 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "3.0.4"
+version: "3.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -617,7 +617,7 @@ applicable_rules:
 | SRC-0026 | PO拆分：DeadLetterQueue | true | SRC-0023 |
 | SRC-0027 | PO拆分：PreemptionManager | true | SRC-0023 |
 | SRC-0028 | PO拆分：PipelineLock验证对齐 ✅ | true | SRC-0023 |
-| SRC-0029 | PO拆分：精简PO为dispatch-only编排器 | true | SRC-0023 |
+| SRC-0029 | PO拆分：精简PO为dispatch-only编排器 ✅ | true | SRC-0023 |
 | SRC-0030 | drift拆分：DriftEngine编排器 | true | SRC-0021 |
 | SRC-0031 | drift拆分：DriftInfrastructure | true | SRC-0030 |
 | SRC-0032 | drift拆分：AIConstructionDetectors | true | SRC-0030 |
@@ -1068,6 +1068,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.1.0 | **Phase 2 全部完成！SRC-0029: 精简 PO 为 dispatch-only**——修复 2 处 Phase 2 拆分残留致命 Bug：(1) `health_check()` L1534 `self._cost_total`→`self._cost_tracker.total_cost()`（SRC-0025 残留引用）；(2) `_run_with_fallback()` L1048 `self._FALLBACK_CHAIN`→`ModelRouter.FALLBACK_CHAIN`（SRC-0023 漏改）。清理死代码 `_glm_reject_log`（仅在 `save_state()`/`load_state()` 中引用，从未写入）。PO 行数 2307→2303。Phase 2 总成果：7 组件全部提取完成（ModelRouter + CircuitBreakerManager + CostTracker + DeadLetterQueue + PreemptionManager + PipelineLock + 本次精简），PO 从原始 ~2541 行降至 ~2303 行。 |
 | | 2026-05-10 | 3.0.4 | **SRC-0028: PipelineLock 验证通过**——已是独立组件（`src/zephyr/pipeline/pipeline_lock.py`, 490行），无需提取。蓝图 §3.3 将其列为"已存在——仅需验证接口对齐"完全正确。 |
 | 2026-05-10 | 3.0.3 | **Phase 2 SRC-0026 完成**：DeadLetterQueue 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/dead_letter_queue.py`, ~80行）。接口：`enqueue(task_card, results, status, max_retries)` / `drain()` / `entries`（只读属性）/ `count`（只读属性）/ `save_state()` / `load_state()`。PipelineOrchestrator 内部 `_dead_letters` 替换为 `_dlq`，`_maybe_dead_letter()` 委托至 `_dlq.enqueue()`，`get_dead_letters()` 委托至 `_dlq.entries`，`save_state()`/`load_state()`/`health_check()` 中死信相关逻辑全部委托至 DLQ。`__init__.py` 新增 DeadLetterQueue 导出。 |
 | 2026-05-10 | 3.0.2 | **Phase 2 SRC-0025 完成**：CostTracker 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/cost_tracker.py`, ~135行）。接口：`record_call(model, tokens_input, cost_usd)` / `estimate_cost(model, tokens)` / `total_cost()` / `summary()` / `save_state()` / `load_state()` + `records` 只读属性。PipelineOrchestrator 内部 `_cost_total`/`_cost_records` 替换为 `_cost_tracker`，`get_cost_summary()` 委托至 `_cost_tracker.summary()`，`_compute_module_costs()` 方法删除（dispatch() 改用 `_cost_tracker.records`）。`__init__.py` 新增 CostTracker 导出。同时修正蓝图任务表中 SRC-0023~SRC-0029 编号以对齐 TaskRepository 权威数据。 |

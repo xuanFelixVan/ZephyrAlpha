@@ -174,7 +174,6 @@ class PipelineOrchestrator:
         self._agent_orchestrator = agent_orchestrator
         self._telemetry = telemetry
         self._failure_log: dict[str, int] = {}
-        self._glm_reject_log: dict[str, int] = {}
         # PENDING: ref to make _dispatched_ids / _active_dispatches exist before _preempt_mgr
 
         self._metrics: dict[str, int] = {}
@@ -977,7 +976,6 @@ class PipelineOrchestrator:
         return {
             "config": self._cfg.model_dump(),
             "failure_log": dict(self._failure_log),
-            "glm_reject_log": dict(self._glm_reject_log),
             "preempt_mgr": self._preempt_mgr.save_state(),
             "metrics": dict(self._metrics),
             "latency_samples": {k: v[:] for k, v in self._latency_samples.items()},
@@ -990,7 +988,6 @@ class PipelineOrchestrator:
         if "config" in state:
             self._cfg = PipelineOrchestratorConfig(**state["config"])
         self._failure_log = dict(state.get("failure_log", {}))
-        self._glm_reject_log = dict(state.get("glm_reject_log", {}))
         self._preempt_mgr.load_state(state.get("preempt_mgr", {}))
         self._cost_tracker.load_state(state.get("cost_tracker", {}))
         self._dlq.load_state(state.get("dead_letters", []))
@@ -1045,7 +1042,7 @@ class PipelineOrchestrator:
                 )
             except Exception as exc:
                 last_error = f"[{model}] {type(exc).__name__}: {exc}"
-                if model in self._FALLBACK_CHAIN:
+                if model in ModelRouter.FALLBACK_CHAIN:
                     self._failure_log[f"fallback_{module_id}_{model}"] = (
                         self._failure_log.get(f"fallback_{module_id}_{model}", 0) + 1
                     )
@@ -1531,7 +1528,7 @@ class PipelineOrchestrator:
             "circuit_breakers_open": cb_open,
             "active_dispatches": len(self._active_dispatches),
             "dead_letters": self._dlq.count,
-            "cost_total_usd": round(self._cost_total, 4),
+            "cost_total_usd": round(self._cost_tracker.total_cost(), 4),
             "metrics": dict(self._metrics),
         }
 
