@@ -3,7 +3,7 @@ module_id: "MOD-INF-016"
 title: "Shared + Core 蓝图 — 跨层共享基础设施"
 doc_type: blueprint
 status: Active
-version: "0.14.0"
+version: "0.15.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -199,7 +199,7 @@ depends_on:
 
 > **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 共享+核心——61 已跟踪文件（49 Phase 0-10 + 10 Phase 11-14 early-bird + 2 core）已落盘 + ~43 未跟踪孤儿文件待分类
+> 共享+核心——108 已跟踪文件（67 Phase 0-14 + 41 原 orphan 归类）已落盘 + 109 子目录文件（§5.1a）= 215 shared/ .py 文件全覆盖 + 2 core/ 文件
 
 ### 5.1 源码文件
 
@@ -270,54 +270,87 @@ depends_on:
 | `src/zephyr/shared/path_resolver.py` | ✅ 已实现 | Phase 10 补注册：路径解析器——261行2类7函。消费者：mcp/task_manager_server.py |
 | `src/zephyr/shared/contract_bus.py` | ✅ 已实现 | Phase 10 补注册：契约总线——140行6类14函。消费者：contract_tester.py |
 | `src/zephyr/shared/event_bus.py` | ✅ 已实现 | Phase 10 补注册：共享事件总线——124行3类7函（与core/events/event_bus独立） |
+| `src/zephyr/shared/__init__.py` | ✅ 已实现 | 包初始化 |
+| `src/zephyr/shared/blueprint_scorer.py` | ✅ 已实现 | 蓝图路由评分 |
+| `src/zephyr/shared/kg_interface.py` | ✅ 已实现 | 知识图谱接口 |
+| `src/zephyr/shared/adaptive_sampler.py` | ✅ 已实现 | 原 orphan 归类：自适应采样 |
+| `src/zephyr/shared/ai_audit_guard.py` | ✅ 已实现 | 原 orphan 归类：AI修改审计守卫 |
+| `src/zephyr/shared/ai_understandability_constraint.py` | ✅ 已实现 | 原 orphan 归类：AI可理解性约束 |
+| `src/zephyr/shared/alert_escalation.py` | ✅ 已实现 | 原 orphan 归类：告警升级 |
+| `src/zephyr/shared/alert_manager.py` | ✅ 已实现 | 原 orphan 归类：告警收敛管理 |
+| `src/zephyr/shared/alert_precision_tracker.py` | ✅ 已实现 | 原 orphan 归类：告警精度追踪 |
+| `src/zephyr/shared/blueprint_code_auditor.py` | ✅ 已实现 | 原 orphan 归类：蓝图-代码一致性审计 |
+| `src/zephyr/shared/budget_aware_prompt.py` | ✅ 已实现 | 原 orphan 归类：预算感知提示 |
+| `src/zephyr/shared/capacity_calibrator.py` | ✅ 已实现 | 原 orphan 归类：容量校准器 |
+| `src/zephyr/shared/capacity_digital_twin.py` | ✅ 已实现 | 原 orphan 归类：容量数字孪生 |
+| `src/zephyr/shared/capacity_fingerprint.py` | ✅ 已实现 | 原 orphan 归类：容量指纹 |
+| `src/zephyr/shared/capacity_governance_loop.py` | ✅ 已实现 | 原 orphan 归类：容量治理闭环 |
+| `src/zephyr/shared/capacity_runbook_generator.py` | ✅ 已实现 | 原 orphan 归类：容量Runbook生成 |
+| `src/zephyr/shared/code_economy_analyzer.py` | ✅ 已实现 | 原 orphan 归类：代码经济效益分析 |
+| `src/zephyr/shared/combinatorial_gate.py` | ✅ 已实现 | 原 orphan 归类：组合门禁 |
+| `src/zephyr/shared/config_validator.py` | ✅ 已实现 | 原 orphan 归类：配置校验器 |
+| `src/zephyr/shared/contract_tester.py` | ✅ 已实现 | 原 orphan 归类：契约合规测试 |
+| `src/zephyr/shared/core_integrity_guard.py` | ✅ 已实现 | 原 orphan 归类：核心完整性守卫 |
+| `src/zephyr/shared/cost_estimator.py` | ✅ 已实现 | 原 orphan 归类：成本估算器 |
+| `src/zephyr/shared/degradation_chain.py` | ✅ 已实现 | 原 orphan 归类：退化链追踪 |
+| `src/zephyr/shared/dependency_capacity_guard.py` | ✅ 已实现 | 原 orphan 归类：依赖容量守卫 |
+| `src/zephyr/shared/dual_channel_alert.py` | ✅ 已实现 | 原 orphan 归类：双通道告警 |
+| `src/zephyr/shared/error_budget_tracker.py` | ✅ 已实现 | 原 orphan 归类：错误预算追踪器 |
+| `src/zephyr/shared/event_bus_upgrade.py` | ✅ 已实现 | 原 orphan 归类：事件总线升级 |
+| `src/zephyr/shared/fault_isolator.py` | ✅ 已实现 | 原 orphan 归类：故障隔离器 |
+| `src/zephyr/shared/heartbeat_server.py` | ✅ 已实现 | 原 orphan 归类：心跳服务器 |
+| `src/zephyr/shared/kill_switch.py` | ✅ 已实现 | 原 orphan 归类：Kill Switch |
+| `src/zephyr/shared/longevity_monitor.py` | ✅ 已实现 | 原 orphan 归类：长时运行监控 |
+| `src/zephyr/shared/model_capacity_probe.py` | ✅ 已实现 | 原 orphan 归类：模型容量探针 |
+| `src/zephyr/shared/module_birth_registry.py` | ✅ 已实现 | 原 orphan 归类：模块出生注册表 |
+| `src/zephyr/shared/owner_trust_gauge.py` | ✅ 已实现 | 原 orphan 归类：信任度量 |
+| `src/zephyr/shared/pydantic_v2_migrator.py` | ✅ 已实现 | 原 orphan 归类：Pydantic迁移助手 |
+| `src/zephyr/shared/reasoning_spans.py` | ✅ 已实现 | 原 orphan 归类：推理跨度追踪 |
+| `src/zephyr/shared/sandbox_executor.py` | ✅ 已实现 | 原 orphan 归类：沙箱执行器 |
+| `src/zephyr/shared/semantic_cache.py` | ✅ 已实现 | 原 orphan 归类：语义缓存 |
+| `src/zephyr/shared/slo_review_assistant.py` | ✅ 已实现 | 原 orphan 归类：SLO审查助手 |
+| `src/zephyr/shared/task_heartbeat.py` | ✅ 已实现 | 原 orphan 归类：任务心跳 |
+| `src/zephyr/shared/ttl_cleanup_engine.py` | ✅ 已实现 | 原 orphan 归类：TTL清理引擎 |
+| `src/zephyr/shared/vibe_experiment_tracker.py` | ✅ 已实现 | 原 orphan 归类：实验追踪 |
+| `src/zephyr/shared/warm_hot_gate.py` | ✅ 已实现 | 原 orphan 归类：冷热路径门禁 |
+| `src/zephyr/shared/zephyr_logger.py` | ✅ 已实现 | 原 orphan 归类：ZephyrLogger日志 |
 
-### 5.1b 待集成文件（orphan-classified — 已落盘，功能完整，缺调用入口与单元测试）
+### 5.1a 子目录文件索引（109 文件）
+
+> TD-SHARED-001 重组：34对发散副本已全部解决为 re-export wrapper。★=独立实现，其余为 re-export wrapper。
+> 已在 §5.1 跟踪的文件标注(§5.1)，不重复计入。
+
+| 子目录 | 文件数 | 文件列表 |
+|--------|--------|---------|
+| api/ | 4 | `__init__`, `api_client`★, `api_index`★, `dos_launcher`★ |
+| config/ | 2 | `__init__`, `loader`(§5.1) |
+| contracts/backpressure/ | 4 | `__init__`, `pause`★, `resume`★, `throttle`★ |
+| contracts/core/ | 11 | `__init__`, `base_event`★, `enforcer`★, `factories`★, `gate_types`★, `registry`★, `runtime_plane_tag`(§5.1), `system_configuration`★, `telemetry_emitter`★, `timestamp`(§5.1), `trace_context`★ |
+| contracts/errors/ | 7 | `__init__`, `contract_violation_error`★, `data_quality_error`★, `execution_rejection_error`★, `factor_computation_error`★, `risk_limit_violation_error`★, `signal_degradation_warning`★ |
+| contracts/execution/ | 6 | `__init__`, `capital_allocation_result`★, `execution_report`★, `fill`★, `model_serving_request`★, `order`★ |
+| contracts/experiment/ | 3 | `__init__`, `experiment_result`★, `model_serving_response`★ |
+| contracts/external/ | 5 | `__init__`, `ext_001`★, `ext_002`★, `ext_003`★, `ext_004`★ |
+| contracts/market/ | 7 | `__init__`, `factor_monitor_report`★, `factor_signal`★, `instrument`(§5.1), `macro_factor_signal`★, `market_data`★, `synthesized_signal`★ |
+| contracts/portfolio/ | 5 | `__init__`, `money`(§5.1), `performance_attribution_report`★, `position`★, `strategy_lifecycle_event`★ |
+| contracts/risk/ | 5 | `__init__`, `compliance_rule`★, `risk_dashboard_snapshot`★, `risk_limits`★, `risk_metrics`★ |
+| events/ | 3 | `__init__`, `dlq`(§5.1), `dlq_bridge`★ |
+| foundation/ | 7 | `__init__`, `constants`, `deprecation`, `env`, `errors`, `flags`, `types` |
+| infra/ | 8 | `__init__`, `cache`, `idempotency`, `limiter`, `lock`, `observer`, `outbox`, `process_pool`★ |
+| io/ | 8 | `__init__`, `content_fingerprint`, `file_utils`, `frontmatter_utils`, `io_cache`★, `paths`, `serialization`, `streaming_reader`★ |
+| lifecycle/ | 6 | `__init__`, `daemon_registry`★, `hooks`(§5.1), `lazy_loader`★, `resource_optimization_engine`★, `resource_optimization_models`★ |
+| observability/ | 7 | `__init__`, `health`★, `health_discovery`★, `logging`, `metrics`, `token_utils`, `tracing` |
+| resilience/ | 4 | `__init__`, `circuit_breaker`(§5.1), `fallback`(§5.1), `retry`(§5.1) |
+| schema/ | 3 | `__init__`, `schema_registry`, `schemas` |
+| security/ | 4 | `__init__`, `capability`, `secrets`, `ssot_guard` |
+| utils/ | 9 | `__init__`, `blueprint_scorer`★, `context`, `db_utils`★, `diff_utils`, `migration`, `pagination`, `testing`, `time_utils` |
+
+### 5.1b 待集成文件
+
+> **状态更新（2026-05-10）**：原 41 项 orphan 已全部归类至 §5.1（根目录文件）或 §5.1a（子目录文件）。本节保留空表作为未来新 orphan 的登记位置。
 
 | 文件 | 集群 | 规模 | 用途 |
 |------|------|------|------|
-| `adaptive_sampler.py` | 资源管控 | 59行1类4函 | 自适应采样——系统负载感知降采样 |
-| `ai_audit_guard.py` | 安全审计 | 171行7类5函 | AI修改审计守卫——变更前合规检查 |
-| `ai_understandability_constraint.py` | 质量约束 | 64行1类2函 | AI输出可理解性约束强制执行 |
-| `alert_escalation.py` | 告警治理 | 70行3类4函 | 告警升级——未处理告警自动升级 |
-| `alert_manager.py` | 告警治理 | 110行3类5函 | 告警收敛管理——去重+分组 |
-| `alert_precision_tracker.py` | 告警治理 | 50行1类5函 | 告警精度追踪——准确率统计 |
-| `blueprint_code_auditor.py` | 质量审计 | 60行1类2函 | 蓝图-代码一致性审计 |
-| `budget_aware_prompt.py` | 成本控制 | 51行2类3函 | 预算感知提示生成 |
-| `capacity_calibrator.py` | 容量治理 | 67行2类5函 | 容量校准器——预测准确率提升 |
-| `capacity_digital_twin.py` | 容量治理 | 42行1类3函 | 容量数字孪生——模拟测算 |
-| `capacity_fingerprint.py` | 容量治理 | 58行2类4函 | 容量指纹——负载特征识别 |
-| `capacity_governance_loop.py` | 容量治理 | 222行3类5函 | 容量治理闭环——规划→执行→验证 |
-| `capacity_runbook_generator.py` | 容量治理 | 59行2类3函 | 容量Runbook自动生成 |
-| `code_economy_analyzer.py` | 成本控制 | 61行1类4函 | 代码经济效益分析 |
-| `combinatorial_gate.py` | 质量门禁 | 58行1类3函 | 组合门禁——多条件AND/OR |
-| `config_validator.py` | 配置治理 | 91行2类5函 | 配置校验器——Schema检查 |
-| `contract_tester.py` | 契约测试 | 69行2类7函 | 契约合规测试——运行时校验 |
-| `core_integrity_guard.py` | 安全审计 | 65行1类3函 | 核心完整性守卫 |
-| `cost_estimator.py` | 成本控制 | 135行3类8函 | 成本估算器——Token/API成本预测 |
-| `degradation_chain.py` | 韧性基座 | 197行5类8函 | 退化链追踪——级联故障分析 |
-| `dependency_capacity_guard.py` | 容量治理 | 40行1类5函 | 依赖容量守卫——跨模块容量检查 |
-| `dual_channel_alert.py` | 告警治理 | 73行2类2函 | 双通道告警——冗余通知 |
-| `error_budget_tracker.py` | 成本控制 | 152行3类4函 | 错误预算追踪器——SLO余量管理 |
-| `event_bus_upgrade.py` | 事件系统 | 76行3类7函 | 事件总线升级——v1→v2迁移 |
-| `fault_isolator.py` | 韧性基座 | 92行3类6函 | 故障隔离器——组件级熔断 |
-| `heartbeat_server.py` | 基础设施 | 68行2类8函 | 心跳服务器——健康端点 |
-| `kill_switch.py` | 韧性基座 | 139行3类8函 | Kill Switch——紧急停止机制 |
-| `longevity_monitor.py` | 容量治理 | 68行1类3函 | 长时运行监控——内存/连接泄漏检测 |
-| `model_capacity_probe.py` | 容量治理 | 67行2类3函 | 模型容量探针——负载极限探测 |
-| `module_birth_registry.py` | 注册治理 | 61行2类4函 | 模块出生注册表——创建时自动登记 |
-| `owner_trust_gauge.py` | 安全审计 | 60行2类5函 | 信任度量——Agent行为信誉评分 |
-| `pydantic_v2_migrator.py` | 迁移工具 | 77行1类3函 | Pydantic v1→v2迁移助手 |
-| `reasoning_spans.py` | 可观测性 | 90行1类5函 | 推理跨度追踪——AI推理步骤记录 |
-| `sandbox_executor.py` | 安全执行 | 158行4类8函 | 沙箱执行器——隔离代码执行 |
-| `semantic_cache.py` | 缓存优化 | 166行2类7函 | 语义缓存——相似查询复用 |
-| `slo_review_assistant.py` | 质量审计 | 59行2类3函 | SLO审查助手——合规检查 |
-| `task_heartbeat.py` | 基础设施 | 57行2类5函 | 任务心跳——长任务存活检测 |
-| `ttl_cleanup_engine.py` | 基础设施 | 117行1类5函 | TTL清理引擎——过期资源回收 |
-| `vibe_experiment_tracker.py` | 实验追踪 | 55行1类4函 | 实验追踪——A/B实验结果记录 |
-| `warm_hot_gate.py` | 性能优化 | 98行3类6函 | 冷热路径门禁——低延迟路由 |
-| `zephyr_logger.py` | 可观测性 | 124行2类7函 | ZephyrLogger——结构化日志独立实现 |
-
-> **状态**: 已落盘，功能实现完整，Python自动发现可导入。**阻塞项**: (1) 无调用入口——未被任何模块import (2) 无单元测试 (3) 未在 project_rules.md 冷启动序列中引用。**下一步**: 按集群分配给对应施工 Phase 选定集成入口 → 接入调用链 → 补充测试。
+| *(空——所有 orphan 已归类)* | | | |
 
 ### 5.2 测试文件
 
