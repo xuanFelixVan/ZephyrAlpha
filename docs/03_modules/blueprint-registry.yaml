@@ -172,17 +172,17 @@ blueprints:
   construction_progress: phase_2_complete
 - module_id: MOD-INF-005
   name: script-system
-  title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
+  title: Audit Foundry 审计引擎蓝图 — 代码库实时审计编译引擎 v6.0.0
   layer: L01
   functional_domain: infra
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 5.5.0
+  version: 6.0.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-05-09'
   file_path: 03_modules/l01_infrastructure/script-system/blueprint.md
-  construction_progress: phase_4_stable
+  construction_progress: completed
 - module_id: MOD-INF-006
   name: task-system
   title: 任务系统蓝图 — 全链路：草稿→蓝图真源→任务卡→双管线执行→Audit Foundry审计
@@ -264,13 +264,13 @@ blueprints:
   construction_progress: phase_2_retrofit
 - module_id: MOD-INF-012
   name: database
-  title: Database 蓝图 — SQLite + DuckDB 双引擎元数据层 v2.4
+  title: Database 蓝图 — SQLite + DuckDB 双引擎元数据层 v2.5
   layer: cross_layer
   functional_domain: ''
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 2.4.0
+  version: 2.5.0
   generation: ''
   last_updated: '2026-05-09'
   file_path: 03_modules/_cross_layer/database/blueprint.md
