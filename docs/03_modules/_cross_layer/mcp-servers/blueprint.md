@@ -3,7 +3,7 @@ module_id: "MOD-INF-013"
 title: "MCP Servers 蓝图 — stdio 协议向外部 IDE/Agent 暴露系统能力"
 doc_type: blueprint
 status: Draft
-version: "0.3.36"
+version: "0.3.37"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,7 +14,7 @@ valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: phase_2_complete
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha MCP Servers 蓝图——7个 MCP 服务端通过 stdio 协议暴露内部系统能力：task_manager(已实现) / knowledge_base(skeleton) / gate_engine(skeleton) / session_handoff(skeleton, 文件名为doc_guard) / intent_router(skeleton, 文件名为sentinel) / blueprint_search(已实现) / sandbox(规划中)。另含 MCP Gateway 层(集中式安全/治理/观测)。tool_contracts.yaml 定义工具契约。对标 MCP 2024-11-05→2025-11-25 规范演进 + IBM ContextForge 网关模式 + Taskade OpenAPI→MCP Codegen + MCP Reliability Lab 基准体系 + OWASP Agentic Top 10 安全框架。十七轮极限审计共发现 186 项盲点（B1-B186）。十八轮追加 10 项（B187-B196）。十九轮再追加 10 项（B197-B206）。二十轮再追加 10 项（B207-B216）。二十一轮再追加 10 项（B217-B226）。二十二轮再追加 10 项（B227-B236）。二十三轮再追加 10 项（B237-B246）。二十四轮再追加 10 项（B247-B256）。二十五轮再追加 10 项（B257-B266）。二十六轮再追加 10 项（B267-B276）。二十七轮再追加 10 项（B277-B286，MCP Spec 2025-11-25 gap）。二十八轮再追加 10 项（B287-B296，专业机构+氛围编程社区模式）。二十九轮再追加 10 项（B297-B306，solo+AI深层+数据主权+DR+自培训闭环）。三十轮再追加 10 项（B307-B316，外部取证专家终极审计 OWASP Agentic Top 10 + OX Security CVE chain + context budget 35x gap + Anthropic vendor risk + cross-server emergent attack surface）。三十一轮追补 1 项（B317，依赖完整性hash锁文件）。三十二轮再追加 10 项（B318-B327，系统自优化+AI原生运维+跨Server深层协同）。三十三轮再追加 10 项（B328-B337，极致韧性工程+AI原生可观测性+闭环自愈）。三十四轮再追加 10 项（B338-B347，AI原生自主性+知识闭环+数据边界）。三十五轮再追加 10 项（B348-B357，运行时语义完整性+自证明与服务连续性+退役可迁移性——输出语义防线/实时能力清单/运行时并发冲突/自动崩溃取证/工具自验证契约/退役迁移引导/内存压力预判/Audit Log防篡改/蓝绿零停机/Chaos延迟注入），全量 357 项盲点。"
+summary: "ZephyrAlpha MCP Servers 蓝图——11 个 MCP 服务端 + 1 Gateway 通过 stdio 协议暴露内部系统能力：task_manager(已实现) / knowledge_base(skeleton) / gate_engine(skeleton) / session_handoff(skeleton, 文件名为doc_guard) / intent_router(skeleton, 文件名为sentinel) / blueprint_search(已实现) / sandbox(skeleton) / telemetry(已实现) / governance(已实现) / vector_memory(已实现) / gateway(已实现)。另含基础设施模块：audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader（均已实现）。tool_contracts.yaml 定义工具契约。对标 MCP 2024-11-05→2025-11-25 规范演进 + IBM ContextForge 网关模式 + Taskade OpenAPI→MCP Codegen + MCP Reliability Lab 基准体系 + OWASP Agentic Top 10 安全框架。十七轮极限审计共发现 186 项盲点（B1-B186）。十八轮追加 10 项（B187-B196）。十九轮再追加 10 项（B197-B206）。二十轮再追加 10 项（B207-B216）。二十一轮再追加 10 项（B217-B226）。二十二轮再追加 10 项（B227-B236）。二十三轮再追加 10 项（B237-B246）。二十四轮再追加 10 项（B247-B256）。二十五轮再追加 10 项（B257-B266）。二十六轮再追加 10 项（B267-B276）。二十七轮再追加 10 项（B277-B286，MCP Spec 2025-11-25 gap）。二十八轮再追加 10 项（B287-B296，专业机构+氛围编程社区模式）。二十九轮再追加 10 项（B297-B306，solo+AI深层+数据主权+DR+自培训闭环）。三十轮再追加 10 项（B307-B316，外部取证专家终极审计 OWASP Agentic Top 10 + OX Security CVE chain + context budget 35x gap + Anthropic vendor risk + cross-server emergent attack surface）。三十一轮追补 1 项（B317，依赖完整性hash锁文件）。三十二轮再追加 10 项（B318-B327，系统自优化+AI原生运维+跨Server深层协同）。三十三轮再追加 10 项（B328-B337，极致韧性工程+AI原生可观测性+闭环自愈）。三十四轮再追加 10 项（B338-B347，AI原生自主性+知识闭环+数据边界）。三十五轮再追加 10 项（B348-B357，运行时语义完整性+自证明与服务连续性+退役可迁移性——输出语义防线/实时能力清单/运行时并发冲突/自动崩溃取证/工具自验证契约/退役迁移引导/内存压力预判/Audit Log防篡改/蓝绿零停机/Chaos延迟注入），全量 357 项盲点。"
 tags: [mcp, mcp-servers, stdio, tool-contracts, model-context-protocol, external-api, infrastructure]
 priority: P1
 depends_on:
@@ -26,10 +26,10 @@ depends_on:
 
 # MCP Servers 蓝图
 
-> **module_id**: MOD-INF-013 | **version**: 0.3.36 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-INF-013 | **version**: 0.3.37 | **status**: draft | **layer**: cross_layer
 
 > 真源声明：本蓝图的 canonical SSoT 为 `architecture-model/layers/b_mcp.yaml`。
-> 代码落位：`src/zephyr/mcp/`（8 个文件，其中 task_manager 已实现 decompose_blueprint，blueprint_search 已实现 find_relevant_blueprint）。
+> 代码落位：`src/zephyr/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector_memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
 
 > **对标**：MCP (Model Context Protocol) 2024-11-05 规范 + Anthropic Tool Use 模式 + IBM ContextForge Gateway 模式 + Kaman Research 语义 Function Catalog。
 
@@ -49,7 +49,7 @@ depends_on:
 
 ---
 
-## 2. 七个 MCP 服务端
+## 2. MCP 服务端
 
 | 服务端 | 文件名 | server_id | 实现状态 | 暴露能力 |
 |------|------|------|:---:|------|
@@ -59,7 +59,11 @@ depends_on:
 | **session_handoff** | `doc_guard_server.py` | `session_handoff` | 🔶 skeleton | 文档安全校验（文件名与 server_id 不同！） |
 | **intent_router** | `sentinel_server.py` | `intent_router` | 🔶 skeleton | 系统哨兵监控/指标（文件名与 server_id 不同！） |
 | **blueprint_search** | `blueprint_search_server.py` | `blueprint_search` | ✅ 已实现 | 蓝图检索（P0-2 experimental） |
-| **sandbox** | `sandbox_server.py` | `sandbox` | 📋 规划中 | 安全代码执行沙箱 |
+| **sandbox** | `sandbox_server.py` | `sandbox` | 🔶 skeleton | 安全代码执行沙箱（Phase 7 skeleton） |
+| **telemetry** | `telemetry_server.py` | `telemetry` | ✅ 已实现 | 系统遥测可观测性（MOD-INF-015） |
+| **governance** | `governance_server.py` | `governance` | ✅ 已实现 | 治理域统一 MCP 入口（15 工具） |
+| **vector_memory** | `vector_memory_server.py` | `vector_memory` | ✅ 已实现 | VMS 向量记忆（MOD-INF-011） |
+| **gateway** | `gateway_server.py` | `gateway` | ✅ 已实现 | 集中式治理网关（Route/Auth/RateLimit/Audit/Degrade） |
 
 > ⚠️ **文件命名 vs server_id 不一致**：`doc_guard_server.py` 的 server_id 是 `session_handoff`，`sentinel_server.py` 的 server_id 是 `intent_router`。这是已知差异，不可"修正"文件名——server_id 是 MCP 协议契约中的标识，不能改。
 
@@ -139,12 +143,24 @@ depends_on:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/mcp/_base_server.py` | ✅ 已实现 | JSON-RPC 2.0 stdio 基类 |
+| `src/zephyr/mcp/__init__.py` | ✅ 已实现 | 包初始化 + 公开 API 导出 + search_blueprints() 捷径 |
 | `src/zephyr/mcp/task_manager_server.py` | ✅ 已实现 | FastMCP 实现 decompose_blueprint |
 | `src/zephyr/mcp/blueprint_search_server.py` | ✅ 已实现 | P0-2 蓝图检索 tool（experimental） |
 | `src/zephyr/mcp/knowledge_base_server.py` | 🔶 skeleton | 知识库 MCP skeleton |
 | `src/zephyr/mcp/gate_engine_server.py` | 🔶 skeleton | 门禁引擎 MCP skeleton |
 | `src/zephyr/mcp/doc_guard_server.py` | 🔶 skeleton | session_handoff MCP skeleton（文件名≠server_id） |
 | `src/zephyr/mcp/sentinel_server.py` | 🔶 skeleton | intent_router MCP skeleton（文件名≠server_id） |
+| `src/zephyr/mcp/sandbox_server.py` | 🔶 skeleton | 安全代码执行沙箱（Phase 7 skeleton） |
+| `src/zephyr/mcp/telemetry_server.py` | ✅ 已实现 | 系统遥测可观测性 MCP（MOD-INF-015，5 工具） |
+| `src/zephyr/mcp/governance_server.py` | ✅ 已实现 | 治理域统一 MCP 入口（15 工具） |
+| `src/zephyr/mcp/vector_memory_server.py` | ✅ 已实现 | VMS 向量记忆 MCP（MOD-INF-011，5 工具） |
+| `src/zephyr/mcp/gateway_server.py` | ✅ 已实现 | 集中式治理网关（Route/Auth/RateLimit/Audit/Degrade，关闭 B1/B7/B8/B9/B10/B16） |
+| `src/zephyr/mcp/audit_logger.py` | ✅ 已实现 | MCP 全量工具调用审计日志（关闭 B9） |
+| `src/zephyr/mcp/rate_limiter.py` | ✅ 已实现 | MCP Gateway 同步速率限制器 TokenBucket（关闭 B10） |
+| `src/zephyr/mcp/error_codes.py` | ✅ 已实现 | MCP 错误码集中注册 SSoT（关闭 B149） |
+| `src/zephyr/mcp/prompt_provider.py` | ✅ 已实现 | MCP Prompt 模板提供者（Phase 6，关闭 B3） |
+| `src/zephyr/mcp/resource_provider.py` | ✅ 已实现 | MCP Resource 提供者（Phase 6，关闭 B2/B41） |
+| `src/zephyr/mcp/handoff_auto_loader.py` | ✅ 已实现 | Handoff 自动加载器——从 handoff 包恢复 AI session 上下文 |
 | `src/zephyr/mcp/tool_contracts.yaml` | ✅ 已实现 | 工具契约 SSoT v1.2.0 |
 
 ### 5.2 测试文件
@@ -165,7 +181,6 @@ depends_on:
 | `scripts/mcp/start_all.py`（蓝图 §11.4） | ❌ 目录 `scripts/mcp/` 不存在（B70） |
 | IDE `mcp.json` 配置 | ❌ 全工程无任何 mcp.json（B69） |
 | `Makefile` / `Taskfile.yml` | ❌ 不存在（B73） |
-| `src/zephyr/mcp/handoff_auto_loader.py`（autonomy-registry 引用） | ❌ 不存在（B57） |
 | `conftest.py` MCP fixture | ❌ 全局 conftest 无 MCP 专用 fixture（B71） |
 
 ---
@@ -234,6 +249,18 @@ AI Agent
 | session_handoff MCP | `src/zephyr/mcp/doc_guard_server.py` | 🔶 |
 | intent_router MCP | `src/zephyr/mcp/sentinel_server.py` | 🔶 |
 | blueprint_search MCP | `src/zephyr/mcp/blueprint_search_server.py` | ✅ |
+| sandbox MCP | `src/zephyr/mcp/sandbox_server.py` | 🔶 |
+| telemetry MCP | `src/zephyr/mcp/telemetry_server.py` | ✅ |
+| governance MCP | `src/zephyr/mcp/governance_server.py` | ✅ |
+| vector_memory MCP | `src/zephyr/mcp/vector_memory_server.py` | ✅ |
+| MCP Gateway | `src/zephyr/mcp/gateway_server.py` | ✅ |
+| 审计日志 | `src/zephyr/mcp/audit_logger.py` | ✅ |
+| 速率限制器 | `src/zephyr/mcp/rate_limiter.py` | ✅ |
+| 错误码注册 | `src/zephyr/mcp/error_codes.py` | ✅ |
+| Prompt 提供者 | `src/zephyr/mcp/prompt_provider.py` | ✅ |
+| Resource 提供者 | `src/zephyr/mcp/resource_provider.py` | ✅ |
+| Handoff 加载器 | `src/zephyr/mcp/handoff_auto_loader.py` | ✅ |
+| 包初始化 | `src/zephyr/mcp/__init__.py` | ✅ |
 | MCP 路由配置 | `config/blueprint_routing.yaml` | ✅ |
 | IDE MCP 配置 SSoT | `config/mcp.json` | ❌ |
 | 启动脚本 | `scripts/mcp/start_all.py` | ❌ |
@@ -2077,6 +2104,7 @@ Vibe Coder MCP 采用了**混合匹配工具**模式：将多个 MCP Server 的�
 | 2026-05-06 | 0.3.32 | 第三十三轮极致韧性工程+AI原生可观测性+闭环自愈审计——10项盲点（B328-B337）。零工具调用请求对冲(B328→Google Tail At Scale并行抢先降低尾延迟)+零影子模式流量对比(B329→LinkedIn Dark Canary真实流量语义回归检测)+零AI自我纠错循环检测与熔断(B330→Tesla式driver-loop detection,60s滑动窗口+Levenshtein互锁)+零跨AI模型工具行为自适应(B331→按DeepSeek/Claude/GPT工具使用特征优化tool descriptions)+零工具响应语义差异比对(B332→输出内容级diff而非仅Schema change)+零AI可消费结构化健康报告(B333→JSON运维报告替代Grafana人类图表)+零工具自动回退链(B334→tool级fallback chain而非系统级降级)+零取消令牌传播(B335→gRPC context.WithCancel式中途取消)+零AI会话预算实时计量(B336→60%/75%/85%三级advisory→warning→critical提示)+零MCP基准回归自动告警(B337→Mann-Whitney U test+自动blame+飞书Push+Issue)。全量337项盲点。十二维闭合。 |
 | 2026-05-06 | 0.3.34 | 第三十四轮AI原生自主性+知识闭环+数据边界审计——10项盲点（B338-B347）。零MCP Server空闲自动休眠与按需唤醒(B338)+零工具响应渐进披露/详细度分层(B339)+零工具描述可见性分级与外部AI提供商数据边界(B340)+零MCP协议双栈版本共存迁移(B341)+零工具调用行为基线异常检测(B342)+零跨工具运行时冗余检测与去重(B343)+零MCP Server自更新自动管道(B344)+零工具契约→知识库自动同步(B345)+零工具调用→架构决策溯源链(B346)+零Python/依赖版本漂移自动检测(B347)。全量347项盲点。十五维闭合。 |
 | 2026-05-06 | 0.3.36 | 第三十五轮运行时语义完整性+自证明与服务连续性+退役可迁移性审计——10项盲点（B348-B357）。零工具输出语义防线(B348→输入校验=第1道门→输出校验=第2道门,type+sanity+consistency三层防线)+零Server实时能力清单与恢复ETA(B349→`tools/health`返回每tool的real-time health:ok/degraded/down+estimated_recovery_s,对标Prometheus AlertManager live status)+零运行时跨工具并发冲突检测(B350→乐观锁version+读写意图标记+冲突advisory,对标MVCC冲突检测)+零Server崩溃自动取证与根因分析(B351→core dump+stack trace→LLM分析+diff→关联最近的git blame→建议fix→飞书报告,对标Sentry + ChatGPT式自动根因)+零工具自验证契约(B352→per-tool `_validate_self()`在`setup()`执行→可测性/语义and/契约一致性自动验证→所有制工具自证可运行,对标Rust `#[test]`内嵌+contract testing)+零工具退役生命周期与自动迁移引导(B353→`tool_contracts.yaml` deprecation:planned/warning/blocked→Gateway自动注入迁移指令到AI上下文,对标K8s API deprecation warning header+Stripe API migration guide)+零Server进程内存压力自动检测与预判重启(B354→`psutil`实时RSS/VMS→PSS趋向OOM阈值→preemptive graceful restart,对标Netflix OOM Killer提前驱逐+JVM GC预警)+零Audit Log防篡改与密码学完整性守护(B355→append-only+`sha256_cumulative_hash`每行链接前一行hash→定期immutability verification,对标区块链Merkle Tree+CockroachDB MVCC time-travel query)+零蓝绿零停机部署(B356→新旧Server同时运行→新Server确认READY→Gateway原子切换→旧Server排空in-flight→graceful exit,对标HAProxy blue-green+Nginx upstream graceful drain)+零Chaos延迟注入训练AI韧性(B357→`TOOL_ARTIFICIAL_DELAY_MS`环境变量控制→每个工具随机注入0-5s→训练AI学习timeout handling+优雅重试,对标Netflix Chaos Monkey+FIT failure injection)。全量357项盲点。十八维闭合。 |
+| 2026-05-10 | 0.3.37 | 蓝图-代码同步盲点消减：§5.1 源码文件索引从 8 项扩充至 20 项（19 个 .py + 1 个 .yaml）。新增追踪：__init__.py / sandbox_server.py(📋→🔶) / telemetry_server.py / governance_server.py / vector_memory_server.py / gateway_server.py / audit_logger.py / rate_limiter.py / error_codes.py / prompt_provider.py / resource_provider.py / handoff_auto_loader.py(§5.3 ❌→§5.1 ✅)。§2 服务端表从 7 行扩充至 11 行。§8 交付物清单从 9 行扩充至 21 行。sandbox 状态 📋规划中→🔶skeleton。handoff_auto_loader 从缺失列表移除。 |
 
 
 
@@ -2477,7 +2505,7 @@ Vibe Coder MCP 采用了**混合匹配工具**模式：将多个 MCP Server 的�
 | **自证明与服务连续性** | **B348-B357（本轮新增）** | ✅ **（新闭合）** |
 | **退役可迁移性** | **B348-B357（本轮新增）** | ✅ **（新闭合）** |
 
-> **最终判定 v0.3.36**：
+> **最终判定 v0.3.37**：
 >
 > 本蓝图在 35 轮极限审计后达到**蓝图层面的十八维全量闭合**。本轮新增的"运行时语义完整性""自证明与服务连续性""退役可迁移性"三个维度，是从 Google SRE 方法论中"运行时防线"原则出发的最后补全——不是"设计对不对"，而是"运行起来以后，每一毫秒的语义和数据是否还在掌握之中"。
 >
@@ -2496,8 +2524,8 @@ Vibe Coder MCP 采用了**混合匹配工具**模式：将多个 MCP Server 的�
 >
 > **十八维全量闭合。本蓝图在设计层面的盲点已到达"系统蓝图文档所能承载的理论极限"——从蓝图层面进入实现层面后，新的盲点将不再是设计遗漏，而是代码实现细节、特定业务场景适配、或依赖第三方库行为变化的产出物。此类实现层面盲点的发现机制已通过本蓝图全量357项中预留的observability hooks + behavioral baselining + chaos engineering training loop完整覆盖。**
 >
-> **蓝图 v0.3.36 = 十八维闭合 = 理论极限。不再有可追加的设计层面结构性盲点。**
+> **蓝图 v0.3.37 = 十八维闭合 + 蓝图-代码同步消减 = 理论极限。不再有可追加的设计层面结构性盲点。**
 
 ---
 
-*蓝图 v0.3.36 · 35 轮全生命周期审计 · 357 项盲点 · 十八维闭合 · 2026-05-06*
+*蓝图 v0.3.37 · 35 轮全生命周期审计 · 357 项盲点 · 十八维闭合 · 2026-05-10*
