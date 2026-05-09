@@ -1,0 +1,14 @@
+# SLA Metrics — 每次 run_all.py 扫描后自动追加
+# 格式: 每行一个 JSON 对象 (JSONL)
+# 字段: timestamp / scan_type / total_findings / critical_count / high_count / scan_duration_s / exit_code
+{"timestamp": "2026-05-09T05:54:19.218642+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 64.9, "exit_code": 2}
+{"timestamp": "2026-05-09T06:12:26.586253+00:00", "scan_type": "dimension", "total_findings": 7, "critical_count": 5, "high_count": 1, "scan_duration_s": 61.2, "exit_code": 2}
+{"timestamp": "2026-05-09T06:17:20.489102+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 120.1, "exit_code": 2}
+{"timestamp": "2026-05-09T06:28:48.390487+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 120.1, "exit_code": 2}
+{"timestamp": "2026-05-09T06:32:19.721774+00:00", "scan_type": "dimension", "total_findings": 7, "critical_count": 5, "high_count": 1, "scan_duration_s": 65.9, "exit_code": 2}
+{"timestamp": "2026-05-09T07:43:18.135118+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 65.8, "exit_code": 2}
+{"timestamp": "2026-05-09T07:48:55.630556+00:00", "scan_type": "dimension", "total_findings": 7, "critical_count": 5, "high_count": 1, "scan_duration_s": 64.7, "exit_code": 2}
+{"timestamp": "2026-05-09T08:11:54.501502+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 66.2, "exit_code": 2}
+{"timestamp": "2026-05-09T08:39:11.665060+00:00", "scan_type": "dimension", "total_findings": 5, "critical_count": 2, "high_count": 2, "scan_duration_s": 121.1, "exit_code": 2}
+{"timestamp": "2026-05-09T08:41:58.561627+00:00", "scan_type": "dimension", "total_findings": 42402, "critical_count": 32, "high_count": 52, "scan_duration_s": 133.7, "exit_code": 2}
+{"timestamp": "2026-05-09T09:13:47.635600+00:00", "scan_type": "dimension", "total_findings": 43054, "critical_count": 32, "high_count": 52, "scan_duration_s": 135.6, "exit_code": 2}

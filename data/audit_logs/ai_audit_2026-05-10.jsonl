@@ -1,0 +1,7 @@
+{"log_type":"registration","timestamp":"2026-05-10T03:52:21.874088","session_id":"","detail":{"capability_id":"ollama-chat","event":"VERIFY_OK"}}
+{"log_type":"registration","timestamp":"2026-05-10T03:52:39.774146","session_id":"","detail":{"capability_id":"embedding-router","event":"WARMUP_OK"}}
+{"log_type":"registration","timestamp":"2026-05-10T03:52:39.777729","session_id":"","detail":{"capability_id":"local-model-scheduler","event":"STARTED"}}
+{"log_type":"registration","timestamp":"2026-05-10T03:53:12.228082","session_id":"","detail":{"capability_id":"ollama-chat","event":"VERIFY_OK"}}
+{"log_type":"registration","timestamp":"2026-05-10T03:53:26.665457","session_id":"","detail":{"capability_id":"embedding-router","event":"WARMUP_OK"}}
+{"log_type":"registration","timestamp":"2026-05-10T03:53:26.667506","session_id":"","detail":{"capability_id":"local-model-scheduler","event":"STARTED"}}
+{"log_type":"registration","timestamp":"2026-05-10T04:12:49.192521","session_id":"","detail":{"capability_id":"model-benchmark","event":"2_models_profiled"}}

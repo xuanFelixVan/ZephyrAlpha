@@ -1,0 +1,35 @@
+# ---
+# module_id: KILL_SWITCH-001
+# title: 脚本 Kill Switch 状态
+# doc_type: config
+# status: active
+# version: "1.0.0"
+# layer: l01_infrastructure
+# owner: ZephyrAlpha-Owner
+# classification: confidential
+# language: zh
+# created_by: human_plus_agent
+# date: "2026-05-05"
+# valid_from: "2026-05-05"
+# ttl: permanent
+# summary: >
+#   脚本 Kill Switch 集中管理。对标 B25（Kill Switch）。
+#   global_freeze=true → 冻结所有新脚本开发，只修复现有脚本。
+#   单个脚本 disabled=true + reason → 不运行该脚本。
+#   run_all.py 启动时检查此文件。
+# ai_autonomy: human_gated
+# tags: [kill-switch, safety, governance, b25]
+# ---
+
+# 全局冻结——Error Budget 耗尽时自动设为 true
+global_freeze: false
+freeze_reason: ""
+freeze_set_at: ""
+
+scripts: {}
+# 示例条目（实际使用时取消注释）：
+#   d7_code/validate_test_coverage.py:
+#     disabled: true
+#     reason: "误报率 45%，等待修复规则"
+#     disabled_at: "2026-05-05T12:00:00Z"
+#     disabled_by: "owner"

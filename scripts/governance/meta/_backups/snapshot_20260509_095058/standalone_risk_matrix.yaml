@@ -1,0 +1,71 @@
+# MOD-INF-005 独立风险矩阵
+# 蓝图尾部独立风险节 — 与 §12.1 主风险矩阵互补（不同维度）
+
+generated_at: "2026-05-07T00:00:00Z"
+source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md"
+
+standalone_risks:
+  R1:
+    risk: "脚本数量爆炸"
+    description: "治理脚本数量增长过快导致 run_all.py 扫描超时"
+    severity: MEDIUM
+    likelihood: MEDIUM
+    mitigation_scripts:
+      - "run_all.py: 全局硬超时 600s + 拓扑排序并行链"
+      - "meta/create_task_from_finding.py: CRITICAL→P0/HIGH→P1 自动分流"
+    defense_sections: ["§5.3", "§6.2"]
+  R2:
+    risk: "Finding 噪音"
+    description: "假阳性 Finding 过多浪费 Owner 时间"
+    severity: MEDIUM
+    likelihood: HIGH
+    mitigation_scripts:
+      - "meta/validate_false_negatives.py: 已知缺陷库 ≥90% 检出率"
+      - "manage_shadow_mode.py: Phase1-3 渐进激活 + 假阳性>20%→自动回退"
+    defense_sections: ["§17", "§19"]
+  R3:
+    risk: "版本漂移"
+    description: "蓝图与代码/注册表版本不一致导致 AI session 认知偏差"
+    severity: HIGH
+    likelihood: LOW
+    mitigation_scripts:
+      - "d5_architecture/validate_blueprint_code_sync.py"
+      - "d5_architecture/validate_three_way_consistency.py"
+      - "meta/validate_dependency_chain.py"
+    defense_sections: ["§14"]
+  R4:
+    risk: "AI 越权修改"
+    description: "AI agent 自动修改 governance 源码或注册表"
+    severity: CRITICAL
+    likelihood: LOW
+    mitigation_scripts:
+      - "meta/validate_automation_boundary.py: 6 红线"
+      - "meta/validate_rules_integrity.py"
+      - "scripts/lock_files.py: RULE-ZERO 对话文件锁"
+    defense_sections: ["§2", "§23"]
+  R5:
+    risk: "单点依赖"
+    description: "关键脚本因依赖变更或文件删除静默失效"
+    severity: HIGH
+    likelihood: MEDIUM
+    mitigation_scripts:
+      - "d1_structure/run_script_smoke_test.py"
+      - "meta/detect_script_rot.py"
+      - "d2_links/audit_broken_links.py"
+    defense_sections: ["§9", "§11"]
+  R6:
+    risk: "评估漂移"
+    description: "同一代码不同时间扫描结果不一致（环境差异）"
+    severity: MEDIUM
+    likelihood: MEDIUM
+    mitigation_scripts:
+      - "meta/validate_end_to_end_benchmark.py: 已知测试项目产出偏差 ≤5%"
+      - "meta/validate_environment_health.py"
+    defense_sections: ["§25"]
+
+summary:
+  total_standalone_risks: 6
+  critical_count: 1
+  high_count: 2
+  medium_count: 3
+  all_mitigated: true

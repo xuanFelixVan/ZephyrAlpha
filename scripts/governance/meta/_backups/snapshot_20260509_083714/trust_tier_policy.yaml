@@ -1,0 +1,128 @@
+# ---
+# module_id: TRUST_TIER-001
+# title: AI Trust-Tier 决策权限分级策略
+# doc_type: policy_config
+# status: active
+# version: "1.0.0"
+# layer: l01_infrastructure
+# owner: ZephyrAlpha-Owner
+# classification: confidential
+# language: zh
+# created_by: human_plus_agent
+# date: "2026-05-05"
+# valid_from: "2026-05-05"
+# ttl: permanent
+# summary: >
+#   AI Agent 信任分级模型——对标 B46 + AI-Augmented CI/CD 论文 (Baqar et al. 2025)。
+#   定义 T1/T2/T3 三级信任——哪些操作 AI 可以自主执行、哪些需要 Owner 审批。
+#   所有 AI session 启动时加载此策略。
+# ai_autonomy: human_gated
+# tags: [trust-tier, ai-governance, decision-model, b46]
+# ---
+
+# ═══════════════════════════════════════════════════════════════════
+# 信任层级定义
+# ═══════════════════════════════════════════════════════════════════
+
+tiers:
+  T1:
+    label: "只读分析"
+    description: "AI 可以读取、分析、报告，但不得修改任何文件"
+    allowed_operations:
+      - read_files
+      - analyze_code
+      - run_warn_only_scripts
+      - generate_reports
+      - list_manifest
+      - check_sla
+    forbidden_operations:
+      - write_files
+      - modify_configs
+      - run_destructive_scripts
+      - commit_changes
+    review_required: false
+    audit_level: "自动记录"
+
+  T2:
+    label: "建议+确认"
+    description: "AI 可以提出修改建议并展示 diff，但需 Owner 确认后才执行"
+    allowed_operations:
+      - propose_edits
+      - show_diff
+      - suggest_threshold_changes
+      - recommend_script_retirement
+      - run_non_destructive_fixes
+    forbidden_operations:
+      - autonomous_commit
+      - modify_critical_thresholds
+      - bypass_kill_switch
+      - modify_manifest_without_review
+    review_required: true
+    audit_level: "人工确认+记录"
+
+  T3:
+    label: "自主决策"
+    description: "AI 可以在预定义安全范围内自主执行操作——仅限低风险场景"
+    allowed_operations:
+      - fix_encoding_issues
+      - add_missing_docstrings
+      - update_status_labels
+      - regenerate_derived_files
+      - auto_promote_shadow_scripts  # Phase1→Phase2 when conditions met
+    forbidden_operations:
+      - modify_blueprint
+      - modify_quality_standard
+      - modify_thresholds
+      - modify_rules_files
+      - global_kill_switch
+      - baseline_snapshot_override
+    review_required: false
+    audit_level: "自动记录+每周汇总审查"
+
+# ═══════════════════════════════════════════════════════════════════
+# 按文件/目录分类的信任级
+# ═══════════════════════════════════════════════════════════════════
+
+file_permissions:
+  - paths: ["AGENTS.md", "docs/**", "scripts/governance/QUICKSTART.md",
+            "scripts/governance/quality-standard.md",
+            "scripts/governance/_shared/thresholds.yaml",
+            "scripts/governance/meta/trust_tier_policy.yaml",
+            "scripts/governance/meta/kill_switch_state.yaml"]
+    tier: T2
+    reason: "核心规则文件——AI 可通过 T2 建议修改，需 Owner 审批"
+
+  - paths: ["scripts/governance/meta/error_budget_state.yaml",
+            "scripts/governance/meta/shadow_mode_state.yaml"]
+    tier: T3
+    reason: "运行时状态文件——AI 可自主更新（如 Error Budget 消耗记录）"
+
+  - paths: ["scripts/governance/**/*.py"]
+    tier: T2
+    reason: "治理脚本——AI 可通过 T2 建议修改，需人工审查"
+
+  - paths: ["src/zephyr/**/*.py"]
+    tier: T2
+    reason: "核心业务代码——AI 可通过 T2 建议修改，需人工审查"
+
+  - paths: ["scripts/governance/reports/**"]
+    tier: T3
+    reason: "审计报告——AI 可自主生成和更新"
+
+  - paths: ["scripts/governance/meta/baselines/**"]
+    tier: T2
+    reason: "基线快照——AI 可通过 T2 建议保存，Approval 由 Owner 执行"
+
+# ═══════════════════════════════════════════════════════════════════
+# 覆盖规则——紧急场景
+# ═══════════════════════════════════════════════════════════════════
+
+overrides:
+  - condition: "脚本系统自身崩溃（run_all.py ImportError/SyntaxError）"
+    action: "允许 T3 级修复——add_missing_import / revert_syntax_error"
+    requires_owner_ack: false
+    post_incident_audit: true
+
+  - condition: "Error Budget Critical Alert 触发"
+    action: "允许 T1 级只读 + 向 Owner 告警"
+    requires_owner_ack: false

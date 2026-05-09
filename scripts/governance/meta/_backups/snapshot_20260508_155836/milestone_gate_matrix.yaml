@@ -1,0 +1,125 @@
+# MOD-INF-005 §10 施工里程碑门禁矩阵
+# 对齐 NASA-STD-8739.8B: SRR → PDR → CDR → TRR → SAR
+# 每个门禁定义：触发时机、需通过的脚本清单、不通过后果
+
+generated_at: "2026-05-07T00:00:00Z"
+source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §10"
+standard: "NASA-STD-8739.8B"
+version: "1.0.0"
+
+milestones:
+  SRR:
+    name: "System Requirements Review"
+    description: "需求冻结——12 维度概念验证完成，最少覆盖脚本可运行"
+    trigger_condition: "phase_0_setup 全部完成"
+    gate_level_scripts:
+      - "d1_structure/validate_index_reality.py"
+      - "d2_links/audit_broken_links.py"
+      - "d3_metadata/check_naming_convention.py"
+      - "run_all.py"
+    mandatory_scripts_count: 4
+    entry_criteria:
+      - "script_manifest.yaml 存在且包含 ≥ 4 个已注册脚本"
+      - "run_all.py --dry-run 可执行（无 Python 语法错误）"
+      - "Finding Schema finding.py 可 import"
+    exit_criteria:
+      - "run_all.py --dry-run 列出 4+ 维度覆盖"
+      - "每个已注册脚本 --warn-only exit 0"
+    fail_consequence: "禁止进入 phase_1_core — 停留于 phase_0_setup"
+
+  PDR:
+    name: "Preliminary Design Review"
+    description: "架构冻结——核心 7 层 + 17 MUST 条款的可自动化检查全部上线"
+    trigger_condition: "phase_1_core §3-§7 施工完成"
+    gate_level_scripts:
+      - "meta/validate_dependency_chain.py"
+      - "meta/validate_automation_boundary.py"
+      - "d11_compliance/validate_script_quality.py"
+      - "d7_code/detect_missing_encoding.py"
+      - "meta/validate_script_onboarding.py"
+      - "meta/create_task_from_finding.py"
+    mandatory_scripts_count: 6
+    entry_criteria:
+      - "173+ 脚本在 manifest 中已注册"
+      - "validate_script_quality.py exit 0 对所有 governance 脚本"
+      - "run_all.py --dry-run 显示三条并行依赖链"
+    exit_criteria:
+      - "全 12 维度至少 1 个验证脚本"
+      - "编码铁律违规 ≤ 5 个脚本"
+      - "validate_dependency_chain.py exit 0"
+    fail_consequence: "禁止进入 phase_2_extend——核心机制硬阻断"
+
+  CDR:
+    name: "Critical Design Review"
+    description: "设计冻结——200+ Red Team 载荷 + 全 SLA/SLO 指标可测量"
+    trigger_condition: "phase_2_extend §8-§15 施工完成"
+    gate_level_scripts:
+      - "meta/compute_sla_metrics.py"
+      - "meta/milestone_gate_matrix.yaml"
+      - "meta/risk_mitigation_matrix.yaml"
+      - "payloads/red_team_payloads.yaml"
+      - "dashboard/app.py"
+    mandatory_scripts_count: 5
+    entry_criteria:
+      - "sla_metrics.jsonl 存在且有 ≥ 1 条记录"
+      - "compute_sla_metrics.py 可计算全部 6 项 SLA/SLO"
+      - "red_team_payloads.yaml 包含 ≥ 200+ OWASP LLM01-10 载荷"
+      - "dashboard/app.py 可启动 Streamlit (import pass)"
+    exit_criteria:
+      - "全部 6 项 SLA/SLO 从「待测量」→「已测量」"
+      - "status.py --json 输出容量告警维度"
+      - "risk_mitigation_matrix.yaml 中 R1-R12 全部有缓解脚本映射"
+    fail_consequence: "禁止进入 TRR——扩展覆盖任一项 ❌ = 回退 phase_2_extend"
+
+  TRR:
+    name: "Test Readiness Review"
+    description: "测试就绪——smoke test + e2e benchmark + 假阴性检测全部通过"
+    trigger_condition: "phase_2_extend 全部验收标准 ✅"
+    gate_level_scripts:
+      - "d1_structure/run_script_smoke_test.py"
+      - "meta/validate_end_to_end_benchmark.py"
+      - "meta/validate_false_negatives.py"
+      - "meta/validate_cross_model_consensus.py"
+    mandatory_scripts_count: 4
+    entry_criteria:
+      - "run_script_smoke_test.py: 全部 173+ 脚本 --warn-only exit 0"
+      - "validate_end_to_end_benchmark.py: E2E 基准 产出偏差 ≤ 5%"
+      - "validate_false_negatives.py: 已知缺陷库检出率 ≥ 90%"
+    exit_criteria:
+      - "全 173+ 脚本 smoke test 无一崩溃"
+      - "假阳性率 ≤ 5%（Error Budget 未耗尽）"
+      - "假阴性 检出率 ≥ 90%"
+    fail_consequence: "System Acceptance Review 条件不满足——任一 ❌ = 回退对应维度"
+
+  SAR:
+    name: "System Acceptance Review"
+    description: "系统验收——生产级可运维性的终极验证"
+    trigger_condition: "TRR 全部通过"
+    gate_level_scripts:
+      - "run_all.py"
+      - "status.py"
+      - "meta/compute_sla_metrics.py"
+      - "d11_compliance/validate_script_quality.py"
+      - "meta/validate_end_to_end_benchmark.py"
+    mandatory_scripts_count: 5
+    entry_criteria:
+      - "TRR 全部 ✅"
+      - "Error Budget 未被耗尽"
+      - "无 CRITICAL / HIGH Finding 处于 OPEN 状态"
+    exit_criteria:
+      - "run_all.py 全 12 维度 exit 0 (--warn-only)"
+      - "validate_script_quality.py exit 0（0 违规）"
+      - "6 项 SLA/SLO 指标全部达标"
+      - "E2E benchmark 偏差 ≤ 1%"
+    fail_consequence: "本模块被判不合格——退回故障源维度，直到全部 ✅"
+
+phase_mapping:
+  phase_0_setup:
+    milestone: SRR
+    task_cards: ["TASK-OPS-0001", "TASK-OPS-0002", "TASK-OPS-0003"]
+  phase_1_core:
+    milestone: PDR
+    task_cards: ["TASK-OPS-0004", "TASK-OPS-0005", "TASK-OPS-0006", "TASK-OPS-0007", "TASK-OPS-0008"]
+  phase_2_extend:
+    milestone: CDR
+    task_cards: ["TASK-OPS-0009", "TASK-OPS-0010", "TASK-OPS-0011"]

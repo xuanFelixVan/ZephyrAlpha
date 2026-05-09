@@ -10,9 +10,11 @@ PipelineOrchestrator — M1-M11 管线协调器
   - **blueprint_routing.yaml**：关键词 / 路径模式 → 蓝图文献与人类检索（含 ``blueprint_search`` MCP），
     属 **MOD-INF-009 路由表**，与 **CT-PIPE** 编排正交。
 
-**模拟边界**：在默认实现中，非 dry_run 的 ``_call_model`` 仍产出 ``simulated: True``
-的占位结果（用于 token/成本估算与 LSG 净化链），**不调用外部 LLM API**，
-亦不代表各 Mx 阶段已完成真实语义上的代码生成/审查。生产级多模型接入需在集成层替换该路径。
+**真实 LLM API 集成**：
+  - ``_call_model`` 通过 ``LLMGateway`` 调用真实 LLM API（DeepSeek / GLM / Claude / OpenAI）
+  - 成功时返回 ``simulated=False``，使用 LLM 实际输出
+  - fallback 路径仅在 API 不可用时返回 ``simulated=True`` 占位（防御性降级）
+  - 见 ``specs/GOV-RSTR-001`` §11.3 Phase 1（SRC-0022）
 
 双管线架构：
   A区 M1-M5 → 生产（代码生成/校验/打包）

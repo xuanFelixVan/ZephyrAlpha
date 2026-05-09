@@ -1,0 +1,53 @@
+# ZephyrAlpha .gitattributes
+# Enforce UTF-8 encoding and LF line endings at the git level
+# This prevents encoding corruption caused by core.autocrlf=true on Windows
+
+# Default: auto-detect text files, normalize to LF in repo
+* text=auto eol=lf
+
+# Python source
+*.py text eol=lf
+*.pyi text eol=lf
+
+# Documentation and configuration
+*.md text eol=lf
+*.rst text eol=lf
+*.txt text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+*.csv text eol=lf
+
+# Web and shell
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Git and editor config
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.editorconfig text eol=lf
+
+# Binary files - prevent any conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.whl binary
+*.egg binary
+*.pyc binary
+*.pyd binary
+*.so binary
+*.dll binary
+*.exe binary

@@ -1,0 +1,35 @@
+# ---
+# module_id: SCRIPT_RETIREMENT-001
+# title: 脚本退役状态
+# doc_type: config
+# status: active
+# version: "1.0.0"
+# layer: l01_infrastructure
+# owner: ZephyrAlpha-Owner
+# classification: confidential
+# language: zh
+# created_by: human_plus_agent
+# date: "2026-05-05"
+# valid_from: "2026-05-05"
+# ttl: permanent
+# summary: >
+#   脚本退役生命周期管理——对标 B52。
+#   retired: 脚本已正式退役（记录原因+替代脚本）。
+#   deprecated: 脚本标记废弃但仍在运行（过渡期 30 天）。
+#   run_all.py 会对 deprecated 脚本输出警告、retired 脚本跳过并记录。
+# ai_autonomy: human_gated
+# tags: [retirement, deprecation, lifecycle, b52]
+# ---
+
+scripts: {}
+# 示例:
+#   d7_code/old_coverage_checker.py:
+#     status: deprecated
+#     deprecated_at: "2026-05-05T12:00:00Z"
+#     sunset_at: "2026-06-04T12:00:00Z"
+#     replaced_by: d7_code/validate_test_coverage.py
+#     reason: "功能已被新脚本替代——AST分析更准"
+#   d5_architecture/legacy_arch_check.py:
+#     status: retired
+#     retired_at: "2026-05-05T12:00:00Z"
+#     reason: "D5维度重构，所有检查已迁移至新脚本"

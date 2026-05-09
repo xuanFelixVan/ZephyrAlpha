@@ -230,7 +230,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.36.0
+  version: 0.37.0
   generation: ''
   last_updated: '2026-05-05'
   file_path: 03_modules/_cross_layer/pipeline/blueprint.md
