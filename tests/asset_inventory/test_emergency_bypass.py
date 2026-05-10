@@ -1,9 +1,8 @@
 """Tests for MOD-INF-026 §28 Emergency Bypass module."""
 
 from pathlib import Path
-from datetime import datetime, timedelta, timezone
 
-from zephyr.asset_inventory.emergency_bypass import BypassManager, BypassState
+from zephyr.asset_inventory.trust_anchor import BypassManager, BypassState
 
 
 class TestBypassState:

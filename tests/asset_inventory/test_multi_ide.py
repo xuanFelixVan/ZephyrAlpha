@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.multi_ide import MultiIDERuleGenerator
+from zephyr.asset_inventory.metadata import MultiIDERuleGenerator
 
 
 class TestMultiIDERuleGenerator:

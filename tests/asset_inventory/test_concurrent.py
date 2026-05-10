@@ -1,10 +1,10 @@
 """Tests for MOD-INF-026 §16 Concurrent Scanner module."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.asset_inventory.concurrent import ConcurrentScanner, merge_scans
 from zephyr.asset_inventory.models import RawFileEntry, ScanResult
+from zephyr.asset_inventory.scanner import ConcurrentScanner, merge_scans
 
 
 class TestConcurrentScanner:
@@ -66,7 +66,7 @@ class TestConcurrentScanner:
 
 class TestMergeScans:
     def _entry(self, path: str, sha: str, mtime_offset: int = 0) -> RawFileEntry:
-        t = datetime.now(timezone.utc)
+        t = datetime.now(UTC)
         p = Path(path)
         return RawFileEntry(
             relative_path=path,
@@ -80,17 +80,25 @@ class TestMergeScans:
         )
 
     def test_merge_disjoint(self) -> None:
-        from datetime import datetime, timezone
+        from datetime import datetime
+
         from zephyr.asset_inventory.models import ScanResult
-        now = datetime.now(timezone.utc)
+
+        now = datetime.now(UTC)
         a = ScanResult(
-            scan_id="S-A", scanned_at=now, completed_at=now,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-A",
+            scanned_at=now,
+            completed_at=now,
+            total_files=1,
+            total_size_bytes=100,
             entries=[self._entry("a.py", "aaa")],
         )
         b = ScanResult(
-            scan_id="S-B", scanned_at=now, completed_at=now,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-B",
+            scanned_at=now,
+            completed_at=now,
+            total_files=1,
+            total_size_bytes=100,
             entries=[self._entry("b.py", "bbb")],
         )
         merged = merge_scans(a, b)
@@ -98,17 +106,25 @@ class TestMergeScans:
         assert {e.relative_path for e in merged.entries} == {"a.py", "b.py"}
 
     def test_merge_overlap_same_sha(self) -> None:
-        from datetime import datetime, timezone
+        from datetime import datetime
+
         from zephyr.asset_inventory.models import ScanResult
-        now = datetime.now(timezone.utc)
+
+        now = datetime.now(UTC)
         a = ScanResult(
-            scan_id="S-A", scanned_at=now, completed_at=now,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-A",
+            scanned_at=now,
+            completed_at=now,
+            total_files=1,
+            total_size_bytes=100,
             entries=[self._entry("x.py", "sha1")],
         )
         b = ScanResult(
-            scan_id="S-B", scanned_at=now, completed_at=now,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-B",
+            scanned_at=now,
+            completed_at=now,
+            total_files=1,
+            total_size_bytes=100,
             entries=[self._entry("x.py", "sha1")],
         )
         merged = merge_scans(a, b)
@@ -116,32 +132,42 @@ class TestMergeScans:
 
     def test_merge_overlap_different_sha_newer_wins(self) -> None:
         from datetime import timedelta
-        from zephyr.asset_inventory.models import ScanResult
-        t = datetime.now(timezone.utc)
+
+        t = datetime.now(UTC)
         e1 = RawFileEntry(
-            relative_path="x.py", absolute_path="x.py",
-            file_name="x.py", extension=".py",
+            relative_path="x.py",
+            absolute_path="x.py",
+            file_name="x.py",
+            extension=".py",
             size_bytes=100,
             mtime_utc=t - timedelta(days=1),
             ctime_utc=t,
             sha256="old_sha".ljust(64, "0"),
         )
         e2 = RawFileEntry(
-            relative_path="x.py", absolute_path="x.py",
-            file_name="x.py", extension=".py",
+            relative_path="x.py",
+            absolute_path="x.py",
+            file_name="x.py",
+            extension=".py",
             size_bytes=100,
             mtime_utc=t,
             ctime_utc=t,
             sha256="new_sha".ljust(64, "0"),
         )
         a = ScanResult(
-            scan_id="S-A", scanned_at=t, completed_at=t,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-A",
+            scanned_at=t,
+            completed_at=t,
+            total_files=1,
+            total_size_bytes=100,
             entries=[e1],
         )
         b = ScanResult(
-            scan_id="S-B", scanned_at=t, completed_at=t,
-            total_files=1, total_size_bytes=100,
+            scan_id="S-B",
+            scanned_at=t,
+            completed_at=t,
+            total_files=1,
+            total_size_bytes=100,
             entries=[e2],
         )
         merged = merge_scans(a, b)

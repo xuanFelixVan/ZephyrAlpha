@@ -1,8 +1,8 @@
 """Tests for MOD-INF-026 §36 Notifications module."""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from zephyr.asset_inventory.notifications import (
+from zephyr.asset_inventory.telemetry import (
     ConsoleChannel,
     FeishuWebhook,
     NotificationManager,
@@ -34,7 +34,7 @@ class TestFeishuWebhook:
         record = ch.send("semi_active", "test")
         assert not record.delivered
 
-    @patch("zephyr.asset_inventory.notifications.urlopen")
+    @patch("zephyr.asset_inventory.telemetry._urlopen")
     def test_send_with_url_success(self, mock_urlopen) -> None:
         mock_resp = MagicMock()
         mock_resp.status = 200
@@ -46,9 +46,10 @@ class TestFeishuWebhook:
         record = ch.send("semi_active", "test alert")
         assert record.delivered
 
-    @patch("zephyr.asset_inventory.notifications.urlopen")
+    @patch("zephyr.asset_inventory.telemetry._urlopen")
     def test_send_with_url_failure(self, mock_urlopen) -> None:
         from urllib.error import URLError
+
         mock_urlopen.side_effect = URLError("connection refused")
 
         ch = FeishuWebhook(webhook_url="https://example.com/webhook")
@@ -66,7 +67,7 @@ class TestSmtpEmailChannel:
         record = ch.send("semi_active", "test")
         assert not record.delivered
 
-    @patch("zephyr.asset_inventory.notifications.smtplib.SMTP")
+    @patch("zephyr.asset_inventory.telemetry._smtplib.SMTP")
     def test_send_with_config_success(self, mock_smtp_cls) -> None:
         mock_server = MagicMock()
         mock_smtp_cls.return_value = mock_server
@@ -87,7 +88,7 @@ class TestSmtpEmailChannel:
         mock_server.sendmail.assert_called_once()
         mock_server.quit.assert_called_once()
 
-    @patch("zephyr.asset_inventory.notifications.smtplib.SMTP")
+    @patch("zephyr.asset_inventory.telemetry._smtplib.SMTP")
     def test_send_smtp_exception_returns_not_delivered(self, mock_smtp_cls) -> None:
         mock_smtp_cls.side_effect = Exception("SMTP error")
 

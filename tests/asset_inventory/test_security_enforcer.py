@@ -2,10 +2,10 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.security_enforcer import (
-    SecurityFilter,
+from zephyr.asset_inventory.scanner import (
     SecurityAccessLogger,
     SecurityAccessRecord,
+    SecurityFilter,
     _match_pattern,
 )
 

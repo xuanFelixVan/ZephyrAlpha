@@ -1,9 +1,9 @@
 """Tests for MOD-INF-026 §25 Git Metadata module."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.asset_inventory.git_metadata import (
+from zephyr.asset_inventory.metadata import (
     GitAssetMetadata,
     GitCommitInfo,
     GitMetadataExtractor,
@@ -15,7 +15,7 @@ class TestGitCommitInfo:
         c = GitCommitInfo(
             sha="abc123",
             author="test",
-            date=datetime.now(timezone.utc),
+            date=datetime.now(UTC),
             message="fix: test",
         )
         assert c.sha == "abc123"
@@ -25,7 +25,7 @@ class TestGitCommitInfo:
         c = GitCommitInfo(
             sha="abc",
             author="a",
-            date=datetime.now(timezone.utc),
+            date=datetime.now(UTC),
             message="m",
         )
         assert c.lines_added == 0

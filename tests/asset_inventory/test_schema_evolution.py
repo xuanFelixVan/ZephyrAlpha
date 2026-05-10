@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.schema_evolution import (
+from zephyr.asset_inventory.index_generator import (
     MigrationPlan,
     MigrationStep,
     SchemaEvolutionManager,

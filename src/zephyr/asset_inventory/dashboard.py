@@ -2,16 +2,16 @@
 
 蓝图 §5 + §27：读取 unified_asset_index.yaml → 生成 dashboard.json
 含健康评分、分类统计、趋势数据、告警。"""
+
 from __future__ import annotations
 
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
-from zephyr.asset_inventory.models import DashboardData, UnifiedAssetIndex, HealthScore
+from zephyr.asset_inventory.models import DashboardData, UnifiedAssetIndex
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ DASHBOARD_PATH = REPORTS_DIR / "dashboard.json"
 class Dashboard:
     """资产健康仪表盘生成器——Phase 1 实现（蓝图 §5）。"""
 
-    def __init__(self, root: Optional[Path] = None) -> None:
+    def __init__(self, root: Path | None = None) -> None:
         self.root = root or Path(__file__).resolve().parents[3]
 
     def generate(self, index: UnifiedAssetIndex) -> DashboardData:
@@ -49,7 +49,7 @@ class Dashboard:
             last_reconciliation=index.last_reconciliation_at.isoformat() if index.last_reconciliation_at else None,
         )
 
-    def save(self, dashboard: DashboardData, output_path: Optional[Path] = None) -> Path:
+    def save(self, dashboard: DashboardData, output_path: Path | None = None) -> Path:
         target = output_path or DASHBOARD_PATH
         REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -73,7 +73,7 @@ class Dashboard:
 
     def print_summary(self, dashboard: DashboardData) -> None:
         print(f"\n{'='*50}")
-        print(f"  ZephyrAlpha 资产仪表盘")
+        print("  ZephyrAlpha 资产仪表盘")
         print(f"{'='*50}")
         print(f"  健康评分: {dashboard.health_score}")
         print(f"  总资产:   {dashboard.total_assets}")
@@ -81,7 +81,7 @@ class Dashboard:
         print(f"  幽灵率:   {dashboard.ghost_rate_pct:.1f}%")
         print(f"  漂移率:   {dashboard.drift_rate_pct:.1f}%")
         if dashboard.alerts:
-            print(f"  ⚠️  告警:")
+            print("  ⚠️  告警:")
             for a in dashboard.alerts:
                 print(f"    - {a}")
         print(f"{'='*50}")
@@ -93,6 +93,7 @@ class Dashboard:
             return
 
         import yaml
+
         raw = yaml.safe_load(index_path.read_text(encoding="utf-8"))
         index = UnifiedAssetIndex(**raw)
 
@@ -103,7 +104,7 @@ class Dashboard:
 
 
 def _generate_dashboard_id() -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-3:]
     return f"DASH-{now.strftime('%Y%m%d')}-{seq}"
 
@@ -114,3 +115,81 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# ============================================================================
+# SRC-0040: 从 knowledge_transfer.py 合并 — KnowledgeTransferGate
+# ============================================================================
+
+from pydantic import BaseModel as _PydanticBaseModel
+
+
+class KnowledgeTransferRecord(_PydanticBaseModel):
+    transferred_at: datetime
+    health_score: str = "A"
+    orphan_rate: float = 0.0
+    total_assets: int = 0
+    top_orphans: list[str] = []
+    top_ghosts: list[str] = []
+    top_depended_upon: list[str] = []
+    recommendation: str = ""
+
+
+class KnowledgeTransferGate:
+    """Session 手交时的资产摘要注入——下一个 AI session 从 unified_asset_index 快速定位。"""
+
+    def __init__(self, project_root: Path) -> None:
+        self._root = project_root
+
+    def generate_summary(self) -> str:
+        index_path = self._root / "data" / "asset_index" / "unified_asset_index.yaml"
+        dep_path = self._root / "data" / "asset_index" / "dependency_graph.json"
+
+        lines: list[str] = []
+        lines.append("")
+        lines.append("=" * 40)
+        lines.append("  ZephyrAlpha 资产状态快照")
+        lines.append(f"  生成时间: {datetime.now(UTC).isoformat()}")
+        lines.append("=" * 40)
+
+        if index_path.exists():
+            import yaml
+
+            try:
+                data = yaml.safe_load(index_path.read_text(encoding="utf-8"))
+                if data:
+                    lines.append(f"  总资产:    {data.get('total_assets', '?')}")
+                    lines.append(f"  健康等级:  {data.get('health_score', '?')}")
+                    lines.append(f"  孤儿率:    {data.get('orphan_rate_pct', 0):.1f}%")
+                    lines.append(f"  幽灵率:    {data.get('ghost_rate_pct', 0):.1f}%")
+                    lines.append(f"  漂移率:    {data.get('drift_rate_pct', 0):.1f}%")
+            except Exception:
+                lines.append("  (索引解析失败)")
+
+        if dep_path.exists():
+            import json
+
+            try:
+                dep = json.loads(dep_path.read_text(encoding="utf-8"))
+                if dep:
+                    top = dep.get("most_depended_upon", [])[:5]
+                    if top:
+                        lines.append(f"  最高依赖:  {', '.join(top)}")
+                    cycles = dep.get("circular_dependencies", [])
+                    if cycles:
+                        lines.append(f"  环路警告:  {len(cycles)} 个循环依赖!")
+            except Exception:
+                pass
+
+        lines.append("=" * 40)
+        lines.append("")
+        return "\n".join(lines)
+
+    def write_handoff(self, output_path: Path | None = None) -> Path:
+        target = output_path or (self._root / "session-logs" / "_asset_handoff.txt")
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        tmp = f"{target}.{os.getpid()}.tmp"
+        Path(tmp).write_text(self.generate_summary(), encoding="utf-8")
+        os.replace(tmp, str(target))
+        return target

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.knowledge_transfer import KnowledgeTransferGate
+from zephyr.asset_inventory.dashboard import KnowledgeTransferGate
 
 
 class TestKnowledgeTransferGate:

@@ -29,30 +29,52 @@ asset_inventory — MOD-INF-026 · 资产盘点系统：发现→分类→登记
   - RULE-ZERO~EIGHT 全合规
 """
 
-from zephyr.asset_inventory.scanner import Scanner
+from zephyr.asset_inventory import mcp_server, models, telemetry
 from zephyr.asset_inventory.classifier import Classifier
-from zephyr.asset_inventory.reconciler import Reconciler
-from zephyr.asset_inventory.dashboard import Dashboard
-from zephyr.asset_inventory.index_generator import IndexGenerator
-from zephyr.asset_inventory.lifecycle import Lifecycle
-from zephyr.asset_inventory.telemetry import TELEMETRY, get_telemetry
-from zephyr.asset_inventory.concurrent import ConcurrentScanner, merge_scans
-from zephyr.asset_inventory.registry_adapter import RegistryManager, RegistryAdapter, RegistryParseError
+from zephyr.asset_inventory.dashboard import Dashboard, KnowledgeTransferGate  # SRC-0040: + knowledge_transfer
 from zephyr.asset_inventory.dependency import (
-    DependencyExtractor, DependencyGraph, DependencyNode, DependencyEdge,
-    build_dependency_graph, priority_from_dependency,
+    DependencyEdge,
+    DependencyExtractor,
+    DependencyGraph,
+    DependencyNode,
+    build_dependency_graph,
+    priority_from_dependency,
 )
-from zephyr.asset_inventory import mcp_server
-from zephyr.asset_inventory import models
-from zephyr.asset_inventory import telemetry
-from zephyr.asset_inventory.git_metadata import GitCommitInfo, GitAssetMetadata, GitMetadataExtractor
-from zephyr.asset_inventory.trust_anchor import TripleTrustAnchorGate, TrustAnchorResult, TrustLevel
-from zephyr.asset_inventory.security_enforcer import SecurityFilter, SecurityAccessLogger
-from zephyr.asset_inventory.emergency_bypass import BypassManager, BypassState
-from zephyr.asset_inventory.schema_evolution import SchemaEvolutionManager, MigrationPlan
-from zephyr.asset_inventory.notifications import NotificationManager, NotificationChannel, ConsoleChannel
-from zephyr.asset_inventory.multi_ide import MultiIDERuleGenerator
-from zephyr.asset_inventory.knowledge_transfer import KnowledgeTransferGate
+from zephyr.asset_inventory.index_generator import (  # SRC-0040: + schema_evolution
+    IndexGenerator,
+    MigrationPlan,
+    SchemaEvolutionManager,
+)
+from zephyr.asset_inventory.lifecycle import Lifecycle
+from zephyr.asset_inventory.metadata import (  # SRC-0040: git_metadata + multi_ide
+    GitAssetMetadata,
+    GitCommitInfo,
+    GitMetadataExtractor,
+    MultiIDERuleGenerator,
+)
+from zephyr.asset_inventory.reconciler import Reconciler
+from zephyr.asset_inventory.registry_adapter import RegistryAdapter, RegistryManager, RegistryParseError
+from zephyr.asset_inventory.scanner import (  # SRC-0040: + concurrent, security_enforcer
+    ConcurrentScanner,
+    Scanner,
+    SecurityAccessLogger,
+    SecurityFilter,
+    merge_scans,
+)
+from zephyr.asset_inventory.telemetry import (  # SRC-0040: + notifications
+    TELEMETRY,
+    ConsoleChannel,
+    NotificationChannel,
+    NotificationManager,
+    get_telemetry,
+)
+from zephyr.asset_inventory.trust_anchor import (  # SRC-0040: + emergency_bypass
+    BypassManager,
+    BypassState,
+    TripleTrustAnchorGate,
+    TrustAnchorResult,
+    TrustLevel,
+)
 
 __all__ = [
     "Scanner",
@@ -94,15 +116,8 @@ __all__ = [
     "mcp_server",
     "models",
     "telemetry",
-    "concurrent",
     "dependency",
     "registry_adapter",
-    "git_metadata",
+    "metadata",
     "trust_anchor",
-    "security_enforcer",
-    "emergency_bypass",
-    "schema_evolution",
-    "notifications",
-    "multi_ide",
-    "knowledge_transfer",
 ]
