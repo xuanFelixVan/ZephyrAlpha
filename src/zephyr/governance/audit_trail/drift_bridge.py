@@ -3,6 +3,11 @@ G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-INF-023
 =============================================================
 蓝图 §2.6 · 审计异常 ↔ 漂移检测双向联动
 
+SRC-0038: 副本文件 — 保持独立实现，待后续审核。
+  此文件是 drift_detector 真源 (src/zephyr/drift_detector/) 的**桥接层消费者**，
+  包含专属的 DriftBridge.sync() 审计↔漂移交叉对账逻辑，不可简化为纯 shim。
+  已从真源导入: drift_engine.DriftEngine, drift_models.DriftEvent.
+
 桥接功能
 --------
   DriftBridge.sync():
@@ -17,11 +22,11 @@ G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-INF-023
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
@@ -69,16 +74,16 @@ class DriftBridge:
                 matched += 1
 
         result = BridgeResult(
-            synced_at=datetime.now(timezone.utc).isoformat(),
+            synced_at=datetime.now(UTC).isoformat(),
             audit_anomalies=len(audit_anomalies),
             drift_events=len(drift_events),
             matched=matched,
             unmatched_audit=len(audit_anomalies) - matched,
             unmatched_drift=len(drift_events) - matched,
             critical_gaps=sum(
-                1 for a in audit_anomalies
-                if a.get("severity", "") in ("HIGH", "CRITICAL")
-                and a.get("target_path", "") not in drift_targets
+                1
+                for a in audit_anomalies
+                if a.get("severity", "") in ("HIGH", "CRITICAL") and a.get("target_path", "") not in drift_targets
             ),
         )
 
@@ -146,7 +151,7 @@ class DriftBridge:
             return []
 
         events: list[dict[str, Any]] = []
-        with open(self._audit_events_path, "r", encoding="utf-8") as f:
+        with open(self._audit_events_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:

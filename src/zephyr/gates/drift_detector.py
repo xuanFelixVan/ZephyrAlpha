@@ -4,6 +4,11 @@ Gate-side Drift Detector Recovery — zephyr.gates.drift_detector
 module_id: GCT-023 (gate integration)
 trigger_router 消费端：drift_detected 事件 → 扫描确认 → 自动修复 → 回滚兜底。
 
+SRC-0038: 副本文件 — 保持独立实现，待后续审核。
+  此文件是 drift_detector 真源 (src/zephyr/drift_detector/) 的**消费者/编排层**，
+  包含专属的 trigger_recovery() 恢复流程编排逻辑，不可简化为纯 shim。
+  已从真源导入: drift_engine, drift_hotfix_bypass, cascade_detector, reconciler.
+
 完整恢复流程：
   1. 从 payload 提取漂移上下文（module_id / changed_files / commit_message）
   2. 调用 drift_engine.scan() 确认漂移
@@ -15,20 +20,19 @@ trigger_router 消费端：drift_detected 事件 → 扫描确认 → 自动修�
 
 对标: MOD-INF-023 blueprint.md §2.5（自动对账策略）+ trigger_router.yaml drift_detected
 """
+
 from __future__ import annotations
 
 import asyncio
 import logging
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_PROJECT_ROOT = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
 def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
@@ -56,7 +60,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
     result: dict[str, Any] = {
         "recovery_id": str(uuid.uuid4()),
         "module_id": module_id,
-        "triggered_at": datetime.now(timezone.utc).isoformat(),
+        "triggered_at": datetime.now(UTC).isoformat(),
         "recovery_status": "INITIATED",
         "scan_result": None,
         "fix_results": [],
@@ -67,6 +71,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 
     try:
         from zephyr.drift_detector.drift_hotfix_bypass import HotfixBypass
+
         bypass = HotfixBypass(project_root=_PROJECT_ROOT)
         if commit_message and bypass.is_hotfix_commit(commit_message):
             result["hotfix_bypass"] = True
@@ -79,8 +84,8 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
     try:
         from zephyr.drift_detector.drift_engine import (
             ScanLevel,
-            scan,
             build_report,
+            scan,
         )
 
         level = ScanLevel[scan_level_str]
@@ -92,15 +97,11 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
             return result
 
     try:
-        scan_result = asyncio.get_event_loop().run_until_complete(
-            scan(level=level, scope=changed_files or None)
-        )
+        scan_result = asyncio.get_event_loop().run_until_complete(scan(level=level, scope=changed_files or None))
     except RuntimeError:
         loop = asyncio.new_event_loop()
         try:
-            scan_result = loop.run_until_complete(
-                scan(level=level, scope=changed_files or None)
-            )
+            scan_result = loop.run_until_complete(scan(level=level, scope=changed_files or None))
         finally:
             loop.close()
     except Exception as exc:
@@ -124,11 +125,13 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 
         event_dicts = []
         for evt in scan_result.events:
-            event_dicts.append({
-                "event_id": str(evt.event_id),
-                "source_file": evt.drift_dimension,
-                "timestamp": evt.created_at.isoformat() if evt.created_at else "",
-            })
+            event_dicts.append(
+                {
+                    "event_id": str(evt.event_id),
+                    "source_file": evt.drift_dimension,
+                    "timestamp": evt.created_at.isoformat() if evt.created_at else "",
+                }
+            )
 
         cascade_alerts = detect_cascade(event_dicts)
         result["cascade_alerts"] = [
@@ -145,9 +148,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 
         if is_auto_fix_paused(module_id):
             result["recovery_status"] = "CASCADE_LOCKOUT"
-            logger.warning(
-                "Auto-fix paused for %s due to cascade detection", module_id
-            )
+            logger.warning("Auto-fix paused for %s due to cascade detection", module_id)
             return result
     except Exception as exc:
         logger.debug("Cascade detection failed (non-fatal): %s", exc)
@@ -172,28 +173,34 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 
             if success:
                 fixed_count += 1
-                fix_results.append({
-                    "event_id": str(event.event_id),
-                    "dimension": event.drift_dimension,
-                    "status": "AUTO_FIXED",
-                })
+                fix_results.append(
+                    {
+                        "event_id": str(event.event_id),
+                        "dimension": event.drift_dimension,
+                        "status": "AUTO_FIXED",
+                    }
+                )
             else:
                 failed_count += 1
                 fallback = _fallback_to_rollback_handler(event)
-                fix_results.append({
-                    "event_id": str(event.event_id),
-                    "dimension": event.drift_dimension,
-                    "status": fallback["action"],
-                    "detail": fallback.get("reason", "auto_fix returned False"),
-                })
+                fix_results.append(
+                    {
+                        "event_id": str(event.event_id),
+                        "dimension": event.drift_dimension,
+                        "status": fallback["action"],
+                        "detail": fallback.get("reason", "auto_fix returned False"),
+                    }
+                )
         except Exception as exc:
             failed_count += 1
-            fix_results.append({
-                "event_id": str(event.event_id),
-                "dimension": event.drift_dimension,
-                "status": "FIX_ERROR",
-                "detail": str(exc),
-            })
+            fix_results.append(
+                {
+                    "event_id": str(event.event_id),
+                    "dimension": event.drift_dimension,
+                    "status": "FIX_ERROR",
+                    "detail": str(exc),
+                }
+            )
 
     result["fix_results"] = fix_results
 
@@ -206,7 +213,10 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 
     logger.info(
         "Drift recovery completed for %s: %d fixed, %d failed, status=%s",
-        module_id, fixed_count, failed_count, result["recovery_status"],
+        module_id,
+        fixed_count,
+        failed_count,
+        result["recovery_status"],
     )
     return result
 
@@ -222,8 +232,12 @@ def _fallback_to_rollback_handler(event: Any) -> dict[str, Any]:
         try:
             from zephyr.governance.drift_detector.events import (
                 DriftEvent as GovDriftEvent,
-                DriftType,
+            )
+            from zephyr.governance.drift_detector.events import (
                 DriftState as GovDriftState,
+            )
+            from zephyr.governance.drift_detector.events import (
+                DriftType,
             )
 
             gov_event = GovDriftEvent(
