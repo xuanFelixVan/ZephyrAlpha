@@ -605,7 +605,7 @@ applicable_rules:
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
 | SRC-0021 | 修复resource_optimization测试失败 ✅ | false | 无 |
-| SRC-0022 | 接入真实LLM API | false | SRC-0021 |
+| SRC-0022 | 接入真实LLM API ✅ | false | SRC-0021 |
 
 **Phase 2（12卡）**：
 
@@ -1100,6 +1100,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.5.2 | **SRC-0022: PipelineOrchestrator._call_model() 接入真实 DeepSeek/GLM API，simulated fallback 保留 ✅**：`_call_model()` 已通过 `LLMGateway` 集成真实 LLM API（DeepSeek `deepseek-chat` / GLM `glm-4-flash` / Claude / OpenAI），成功时返回 `simulated=False`。修复 fallback 路径中 `staticmethod` 使用 `self._cost_tracker` 的致命 bug——改用 `ModelRouter` 常量直接计算成本。API 不可用时（无 API_KEY、openai 包丢失、网络失败）自动降级到 `simulated=True` 占位。Git commit: `645be5a87`。 |
 | 2026-05-10 | 3.5.1 | **SRC-0021 完成！修复 resource_optimization 测试失败**：修复 6 个测试失败——(1) `config/resource_optimization.yaml` 进程阈值 150/300/500 对齐代码默认值 50/100/250（修复 3 个 process threshold 断言测试）；(2) `test_brain_integration.py` 中 2 个 AutoRuntimeCoreLifecycle 测试增加 `patch.object(core, "_start_local_models")` 防止 Ollama HTTP 超时挂起 25s+；(3) `ai_audit_logger.py` `_write()` 增加 `with` 语句关闭文件句柄（修复 ResourceWarning→ExceptionGroup）；(4) `night_shift_queue.py` `_count_existing()` 增加 `with` 语句关闭文件句柄。**零 breaking change**：所有 122 个 resource_optimization 测试全部通过。Git commit: `2efc24b41`。 |
 | 2026-05-10 | 3.5.0 | **SRC-0066 完成！task_repo.py 拆分 1743→3模块**：原单体 1744 行拆分为 `base_repo.py`（314行，异常类+状态机表+工具函数+search）、`transition.py`（258行，TransitionMixin：transition()+依赖重算）、`query.py`（208行，QueryMixin：全部list_by_*/query_tasks/JSON1查询）。`task_repo.py` 缩减为 1106 行（-37%），继承 `TaskRepository(TransitionMixin, QueryMixin)`，保留 create/update/upsert/delete/治理/批量调度。**零 breaking change**：所有 9 个下游 consumer 的 `from zephyr.db.task_repo import` 路径无需修改。311 个 task_repo+gate_engine+red_team+import_chain 测试全部通过。 |
 | 2026-05-10 | 3.4.1 | **SRC-0036 完成！event_bus 副本→shared 真源合并**：`shared/event_bus.py` 从 181 行扩展为 261 行（v0.3.0），合并 `core/events/event_bus.py` 的 `EventType`（11 个任务事件枚举）、`DomainEvent`（领域事件 dataclass）、`EventBus`（单例任务事件总线）。`core/events/event_bus.py` 从 91 行改为 17 行向后兼容 shim（re-export from shared）。3 个下游模块（`event_reactor.py`、`event_store.py`、`hook_dispatcher.py`）通过 shim 透明导入，无需修改 import 路径。 |
