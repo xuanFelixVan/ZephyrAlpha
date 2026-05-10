@@ -1,9 +1,13 @@
+# SRC-0041: Copy file -- keep independent implementation, pending future review
+#   shared/kill_switch.py is now the unified export SSoT; this file exported
+#   as GovernanceKillSwitch alias from shared.
+#
 from __future__ import annotations
 
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class KillSwitchLevel(str, Enum):
@@ -29,7 +33,7 @@ KILL_SWITCHES: dict[KillSwitchLevel, KillSwitch] = {
         level=KillSwitchLevel.POSITION_LIMIT,
         label="位置超限 → reduce_only",
         trigger_condition="position > max_position_limit",
-        action="REDUCE_ONLY: 禁止开仓，允许平仓",
+        action="REDUCE_ONLY: 禁止开仓, 允许平仓",
         cooldown_seconds=300,
         auto_reenable=True,
     ),
@@ -68,7 +72,7 @@ KILL_SWITCHES: dict[KillSwitchLevel, KillSwitch] = {
 }
 
 
-def get_switch(level: KillSwitchLevel) -> Optional[KillSwitch]:
+def get_switch(level: KillSwitchLevel) -> KillSwitch | None:
     return KILL_SWITCHES.get(level)
 
 
@@ -97,7 +101,7 @@ def evaluate(
     evaluator: Callable[[str], bool],
 ) -> list[KillSwitch]:
     triggered: list[KillSwitch] = []
-    for level, ks in KILL_SWITCHES.items():
+    for _level, ks in KILL_SWITCHES.items():
         if not ks.active:
             try:
                 if evaluator(ks.trigger_condition):

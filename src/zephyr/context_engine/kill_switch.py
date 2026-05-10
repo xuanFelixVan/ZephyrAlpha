@@ -1,5 +1,11 @@
-"""kill_switch.py — 安全熔断 (DD110, TASK-019)"""
+# SRC-0041: Copy file -- keep independent implementation, pending future review
+#   shared/kill_switch.py is now the unified export SSoT; this file exported
+#   as ContextKillSwitch alias from shared.
+#
+"""kill_switch.py -- safety circuit breaker (DD110, TASK-019)"""
+
 from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -12,6 +18,7 @@ class FuseState:
 
 class KillSwitch:
     """per-session_err>threshold → fuse off. needs manual reset (DD110)."""
+
     def __init__(self, threshold: int = 5) -> None:
         self._threshold = threshold
         self._error_count = 0

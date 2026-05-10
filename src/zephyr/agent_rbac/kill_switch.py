@@ -1,27 +1,30 @@
 """
-L0 Kill Switch — 全局熔断机制
+# SRC-0041: Copy file -- keep independent implementation, pending future review
+#   shared/kill_switch.py is now the unified export SSoT; this file exported
+#   as AgentKillSwitch alias from shared.
+#
+L0 Kill Switch -- global circuit breaker
 
-MOD-INF-018 §2.2  D-018-05
+MOD-INF-018 S2.2  D-018-05
 
-对标 K8s Circuit Breaker + 交易系统熔断 + CSA ATF Incident Response。
-全局熔断：当 Agent 行为触发危险阈值时自动熔断 Agent 操作。
+Aligned with K8s Circuit Breaker + trading system breaker + CSA ATF Incident Response.
+Global circuit breaker: auto-trips Agent operations when behavior crosses danger thresholds.
 
-触发机制：
-  - >= 13 种自动触发器
-  - 熔断源隔离策略：单 Agent 触发仅阻断该 Agent
-  - 多 Agent (>=2) 同时触发才全局熔断
-  - 支持手动熔断/解除
+Trigger mechanisms:
+  - >= 13 auto triggers
+  - Breaker source isolation: single Agent triggers only block that Agent
+  - Multi-Agent (>=2) simultaneous triggers cause global circuit break
+  - Manual trip/release supported
 
-设计原则：
-  - 最先执行（L0 级别检查）
-  - 不可覆盖、不可绕过
-  - cooldown 机制防止过度阻断
+Design principles:
+  - Executes first (L0 level check)
+  - Cannot be overridden or bypassed
+  - Cooldown mechanism prevents excessive blocking
 """
 
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class KillSwitchState(Enum):
@@ -178,12 +181,12 @@ DEFAULT_TRIGGERS: list[TriggerDefinition] = [
 class KillSwitch:
     """L0 全局熔断器"""
 
-    def __init__(self, triggers: Optional[list[TriggerDefinition]] = None) -> None:
+    def __init__(self, triggers: list[TriggerDefinition] | None = None) -> None:
         self._triggers = triggers or [TriggerDefinition(**td.__dict__) for td in DEFAULT_TRIGGERS]
         self._status = KillSwitchStatus()
         self._event_log: list[TriggerEvent] = []
         self._per_agent_counters: dict[str, dict[str, list[float]]] = {}
-        self._pre_override_state: Optional[KillSwitchStatus] = None
+        self._pre_override_state: KillSwitchStatus | None = None
 
     @property
     def triggers(self) -> list[TriggerDefinition]:
@@ -275,7 +278,7 @@ class KillSwitch:
         self._per_agent_counters.clear()
         self._pre_override_state = None
 
-    def _find_trigger(self, trigger_name: str) -> Optional[TriggerDefinition]:
+    def _find_trigger(self, trigger_name: str) -> TriggerDefinition | None:
         for td in self._triggers:
             if td.trigger == trigger_name:
                 return td
@@ -285,8 +288,10 @@ class KillSwitch:
         self._status.tripped_triggers.append(trigger_def.trigger)
 
         other_agents = [
-            e.agent_id for e in self._event_log
-            if e.trigger == trigger_def.trigger and e.agent_id != event.agent_id
+            e.agent_id
+            for e in self._event_log
+            if e.trigger == trigger_def.trigger
+            and e.agent_id != event.agent_id
             and time.time() - e.timestamp <= trigger_def.window_seconds * 2
         ]
 
@@ -314,7 +319,7 @@ class KillSwitch:
         self._event_log = [e for e in self._event_log if e.timestamp > cutoff]
 
 
-_kill_switch_instance: Optional[KillSwitch] = None
+_kill_switch_instance: KillSwitch | None = None
 
 
 def get_kill_switch() -> KillSwitch:
