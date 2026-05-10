@@ -3,9 +3,10 @@
 Atomic self-check that validates the escalation engine's own health.
 Used by: cold start STEP 4.8, Phase Manager gate_escalation_protocol, CI/CD.
 
-Run: python -m zephyr.escalation.self_test [--warn-only] [--json]
+Run: python -m zephyr.escalation_engine.self_test [--warn-only] [--json]
 Returns: 0 if fully healthy, 1 if degraded, 2 if critical failure.
 """
+
 from __future__ import annotations
 
 import json
@@ -48,8 +49,18 @@ def run_self_test() -> SelfTestReport:
     # Check 1: Import chain
     t1 = time.perf_counter()
     try:
-        from zephyr.escalation import EscalationEngine, DelegationEngine, CircuitBreaker, EconomicGuard
-        from zephyr.escalation import EscalationLevel, EscalationState, RuleCategory, DelegationStrategy, CircuitState
+        from zephyr.escalation_engine import (
+            CircuitBreaker,
+            CircuitState,
+            DelegationEngine,
+            DelegationStrategy,
+            EconomicGuard,
+            EscalationEngine,
+            EscalationLevel,
+            EscalationState,
+            RuleCategory,
+        )
+
         check_results.append(CheckResult("import_chain", True, detail="All core symbols importable"))
     except ImportError as e:
         check_results.append(CheckResult("import_chain", False, HealthLevel.CRITICAL, str(e)))
@@ -61,8 +72,9 @@ def run_self_test() -> SelfTestReport:
         engine = EscalationEngine("self-test", hooks_enabled=False)
         rule_count = len(engine._rules)
         if rule_count < 5:
-            check_results.append(CheckResult("engine_init", False, HealthLevel.DEGRADED,
-                                             f"Only {rule_count} rules loaded"))
+            check_results.append(
+                CheckResult("engine_init", False, HealthLevel.DEGRADED, f"Only {rule_count} rules loaded")
+            )
         else:
             check_results.append(CheckResult("engine_init", True, detail=f"{rule_count} rules loaded"))
     except Exception as e:
@@ -96,8 +108,11 @@ def run_self_test() -> SelfTestReport:
         if status.get("hard_limit_reached"):
             check_results.append(CheckResult("economic_guard", False, HealthLevel.DEGRADED, "Hard limit reached"))
         else:
-            check_results.append(CheckResult("economic_guard", True,
-                                             detail=f"consumed={status['consumed_today']}/{status['daily_budget']}"))
+            check_results.append(
+                CheckResult(
+                    "economic_guard", True, detail=f"consumed={status['consumed_today']}/{status['daily_budget']}"
+                )
+            )
     except Exception as e:
         check_results.append(CheckResult("economic_guard", False, HealthLevel.CRITICAL, str(e)))
 
@@ -124,12 +139,14 @@ def run_self_test() -> SelfTestReport:
 
     # Check 8: Extension detectors (optional — degraded if missing)
     try:
-        from zephyr.escalation.escalation_engine import EscalationEngine as EE
+        from zephyr.escalation_engine.escalation_engine import EscalationEngine as EE
+
         engine_with_hooks = EE("self-test-hooks", hooks_enabled=True)
         detector_count = len(engine_with_hooks._extension_detectors)
         if detector_count == 0:
-            check_results.append(CheckResult("extensions", False, HealthLevel.DEGRADED,
-                                             "No extension detectors loaded"))
+            check_results.append(
+                CheckResult("extensions", False, HealthLevel.DEGRADED, "No extension detectors loaded")
+            )
         else:
             check_results.append(CheckResult("extensions", True, detail=f"{detector_count} detectors"))
     except Exception as e:
@@ -165,13 +182,12 @@ def main():
             "total_failed": report.total_failed,
             "duration_ms": round(report.duration_ms, 2),
             "checks": [
-                {"name": c.name, "passed": c.passed, "level": c.level.value, "detail": c.detail}
-                for c in report.checks
+                {"name": c.name, "passed": c.passed, "level": c.level.value, "detail": c.detail} for c in report.checks
             ],
         }
         print(json.dumps(output, indent=2, ensure_ascii=False))
     else:
-        print(f"Escalation Protocol Self-Test — MOD-INF-022")
+        print("Escalation Protocol Self-Test — MOD-INF-022")
         print(f"  Result: {report.overall.value.upper()}")
         print(f"  Passed: {report.total_passed}/{len(report.checks)} ({report.duration_ms:.1f}ms)")
         print()

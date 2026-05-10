@@ -19,17 +19,11 @@
 from __future__ import annotations
 
 import logging
-import os
 import subprocess
 import sys
-from pathlib import Path
-from typing import Callable
-
-import logging
-import os
-import subprocess
-import sys
+from collections.abc import Callable
 from enum import Enum
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +32,11 @@ __all__ = ["PhaseCheckRegistry", "run_check", "GateResult"]
 
 class GateResult(str, Enum):
     """Gate 检查结果枚举。与 phase_manager.GateResult 定义相同，在此独立定义以打破循环导入。"""
+
     GREEN = "GREEN"
     YELLOW = "YELLOW"
     RED = "RED"
+
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
@@ -55,7 +51,10 @@ def _run_script(script_rel: str, *args: str, timeout: int = 30) -> tuple[int, st
     try:
         result = subprocess.run(
             [sys.executable, str(script_path), *args],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
             cwd=str(_PROJECT_ROOT),
         )
@@ -84,6 +83,7 @@ def _check_dir_exists(path: str, label: str) -> GateResult:
 # Phase 0 检查实现（14 个 —— 全部有实际实现）
 # ============================================================================
 
+
 def check_session_manager() -> GateResult:
     """验证 session-logs/ 目录和 index.yaml 存在."""
     log_dir = _PROJECT_ROOT / "session-logs"
@@ -97,6 +97,7 @@ def check_session_continuity() -> GateResult:
     """验证 SessionContinuity 模块可用."""
     try:
         from zephyr.core.session_continuity import SessionContinuity
+
         sc = SessionContinuity()
         return GateResult.GREEN
     except Exception:
@@ -236,6 +237,7 @@ def check_sys_master_compliance() -> GateResult:
     """验证 SYS-MASTER-001 合规——调用 sys_master_compliance gate."""
     try:
         from zephyr.gates.sys_master_compliance import SysMasterCompliance
+
         checker = SysMasterCompliance()
         if checker.passed:
             return GateResult.GREEN
@@ -248,21 +250,26 @@ def check_sys_master_compliance() -> GateResult:
 # Phase 1 检查实现（15 个 —— 对接已有脚本或返回 YELLOW 待实现）
 # ============================================================================
 
+
 def check_data_vendor_integration() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/l00_data_source/provider_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+
 
 def check_factor_factory() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/l02_alpha_factor/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
+
 def check_alpha_validator() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/l02_alpha_factor/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
+
 def check_backtest_minimal() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/l09_research_innovation/backtest_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+
 
 def check_context_engine_health() -> GateResult:
     exit_code, output = _run_script("gate_engine_selfcheck.py", timeout=20)
@@ -270,9 +277,11 @@ def check_context_engine_health() -> GateResult:
         return GateResult.GREEN
     return GateResult.YELLOW
 
+
 def check_kb_pipeline() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/kb/__init__.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+
 
 def check_vms_health() -> GateResult:
     try:
@@ -285,9 +294,7 @@ def check_vms_health() -> GateResult:
 
         if report.status == "healthy":
             return GateResult.GREEN
-        elif report.collections_unhealthy > 0:
-            return GateResult.YELLOW
-        elif report.drift_detected:
+        elif report.collections_unhealthy > 0 or report.drift_detected:
             return GateResult.YELLOW
         else:
             return GateResult.YELLOW
@@ -296,16 +303,18 @@ def check_vms_health() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_gate_engine_judge() -> GateResult:
     try:
-        from zephyr.gates.gate_engine import GateEngine
         return GateResult.GREEN
     except Exception:
         return GateResult.YELLOW
 
+
 def check_feedback_loop() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/feedback_loop"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
+
 
 def check_db_integrity() -> GateResult:
     exit_code, output = _run_script("d3_metadata/check_db_integrity.py", timeout=15)
@@ -313,8 +322,10 @@ def check_db_integrity() -> GateResult:
         return GateResult.GREEN
     return GateResult.YELLOW
 
+
 def check_query_metrics() -> GateResult:
     return GateResult.YELLOW  # 待实现
+
 
 def check_ssot_validator() -> GateResult:
     exit_code, output = _run_script("d5_architecture/validate_ssot.py", timeout=20)
@@ -322,20 +333,19 @@ def check_ssot_validator() -> GateResult:
         return GateResult.GREEN
     return GateResult.YELLOW
 
+
 def check_contract_compliance() -> GateResult:
     exit_code, output = _run_script("d5_architecture/checkers/check_contract_code_drift.py", timeout=20)
     if exit_code != 0:
         return GateResult.YELLOW
 
     try:
-        from zephyr.orchestrator.contract_registry import ContractRegistry, AIReadOnlyHint
+        from zephyr.orchestrator.contract_registry import AIReadOnlyHint, ContractRegistry
+
         cr = ContractRegistry()
         contracts = cr.list_all()
         min_expected = 15
-        active_contracts = [
-            c for c in contracts
-            if c.ai_read_only_hint not in (AIReadOnlyHint.DO_NOT_CALL,)
-        ]
+        active_contracts = [c for c in contracts if c.ai_read_only_hint not in (AIReadOnlyHint.DO_NOT_CALL,)]
         if len(contracts) < min_expected:
             return GateResult.YELLOW
         if not active_contracts:
@@ -346,17 +356,19 @@ def check_contract_compliance() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_blueprint_compliance() -> GateResult:
     exit_code, output = _run_script("d5_architecture/check_g6_ctr_compliance.py", timeout=20)
     if exit_code == 0:
         return GateResult.GREEN
     return GateResult.YELLOW
 
+
 def check_agent_rbac() -> GateResult:
     try:
-        from zephyr.agent_rbac.permission_guard import PermissionGuard
-        from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel, AgentRole, IDESource
+        from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
         from zephyr.agent_rbac.immutable_core import get_immutable_core
+        from zephyr.agent_rbac.permission_guard import PermissionGuard
 
         ic = get_immutable_core()
         if ic.should_cold_start_lock():
@@ -384,6 +396,7 @@ def check_agent_rbac() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_audit_trail() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/audit_trail"
     if not mod.is_dir():
@@ -391,6 +404,7 @@ def check_audit_trail() -> GateResult:
 
     try:
         from zephyr.audit_trail.integrity import IntegrityVerifier
+
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()
 
@@ -429,7 +443,9 @@ def check_audit_trail_context() -> GateResult:
 
         logger.info(
             "[audit-trail] 审计上下文已注入: total=%d, recent=%d, within_budget=%s",
-            total, recent, context.get("within_budget", False),
+            total,
+            recent,
+            context.get("within_budget", False),
         )
 
         return GateResult.GREEN
@@ -438,6 +454,7 @@ def check_audit_trail_context() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_asset_inventory() -> GateResult:
     mod = _PROJECT_ROOT / "data/asset_index/unified_asset_index.yaml"
     if not mod.exists():
@@ -445,6 +462,7 @@ def check_asset_inventory() -> GateResult:
 
     try:
         import yaml
+
         index = yaml.safe_load(mod.read_text(encoding="utf-8"))
         health = index.get("health_score", "N/A")
         orphan = index.get("orphan_rate_pct", 0.0)
@@ -462,17 +480,21 @@ def check_asset_inventory() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_observability_baseline() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/l12_system_telemetry"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
+
 
 def check_mcp_servers_health() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/mcp/gateway_server.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
+
 def check_escalation_protocol() -> GateResult:
     try:
-        from zephyr.escalation.self_test import run_self_test, HealthLevel
+        from zephyr.escalation_engine.self_test import HealthLevel, run_self_test
+
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:
             return GateResult.RED
@@ -487,7 +509,8 @@ def check_escalation_protocol() -> GateResult:
 
 def check_budget_enforcer() -> GateResult:
     try:
-        from zephyr.budget_enforcer import BudgetEngine, BudgetDimension
+        from zephyr.budget_enforcer import BudgetDimension, BudgetEngine
+
         engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
         cost_policy = engine.get_active_policy(BudgetDimension.COST)
@@ -511,17 +534,21 @@ def check_budget_enforcer() -> GateResult:
 # Phase 2 检查实现 — 全链路集成（16 个，全部真实实现）
 # ============================================================================
 
+
 def check_strategy_pipeline() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/pipeline/pipeline_orchestrator.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+
 
 def check_execution_pipeline() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/pipeline/route_manifest.yaml"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
+
 def check_full_audit_regression() -> GateResult:
     try:
         from zephyr.audit_trail.integrity import IntegrityVerifier
+
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()
         if report.get("status") == "compromised":
@@ -532,6 +559,7 @@ def check_full_audit_regression() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_architecture_guard() -> GateResult:
     exit_code, output = _run_script("d5_architecture/check_g6_ctr_compliance.py", timeout=30)
     if exit_code == 0:
@@ -540,9 +568,11 @@ def check_architecture_guard() -> GateResult:
             return GateResult.GREEN
     return GateResult.YELLOW
 
+
 def check_full_backtest() -> GateResult:
     try:
         from zephyr.governance.backtest_engine import BacktestEngine
+
         return GateResult.GREEN
     except ImportError:
         mod = _PROJECT_ROOT / "src/zephyr/l09_research_innovation/implementations/default_backtest_engine.py"
@@ -550,10 +580,12 @@ def check_full_backtest() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_chaos_test() -> GateResult:
     try:
         from zephyr.drift_detector.chaos_injector import ChaosInjector
         from zephyr.orchestrator.chaos_engine import ChaosEngine
+
         return GateResult.GREEN
     except ImportError:
         mod = _PROJECT_ROOT / "src/zephyr/feedback_loop/detectors/chaos_engineering.py"
@@ -561,12 +593,14 @@ def check_chaos_test() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_kill_switch() -> GateResult:
     ks_dir = _PROJECT_ROOT / "src/zephyr/rollback/kill_switch.py"
     if not ks_dir.exists():
         return GateResult.RED
     try:
         from zephyr.rollback.kill_switch import KillSwitch
+
         ks = KillSwitch()
         if not ks.l1_ok:
             return GateResult.YELLOW
@@ -576,9 +610,11 @@ def check_kill_switch() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_shadow_mode() -> GateResult:
     try:
         from zephyr.context_engine.shadow_canary import ShadowCanary
+
         return GateResult.GREEN
     except ImportError:
         shadow_files = [
@@ -589,10 +625,12 @@ def check_shadow_mode() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_rollback_drill() -> GateResult:
     try:
-        from zephyr.rollback.rollback_executor import RollbackExecutor
         from zephyr.rollback.kill_switch import KillSwitch
+        from zephyr.rollback.rollback_executor import RollbackExecutor
+
         executor = RollbackExecutor()
         pf = executor.preflight_check()
         if not pf.passed:
@@ -606,11 +644,13 @@ def check_rollback_drill() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_drift_detection() -> GateResult:
     exit_code, output = _run_script("d5_architecture/check_contract_code_drift.py", timeout=20)
     if exit_code == 0:
         return GateResult.GREEN
     return GateResult.YELLOW
+
 
 def check_e2e_integration_test() -> GateResult:
     test_dir = _PROJECT_ROOT / "tests/governance/test_gct_integration.py"
@@ -619,12 +659,15 @@ def check_e2e_integration_test() -> GateResult:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", str(test_dir), "-q", "--tb=no", "--timeout=30"],
-            capture_output=True, text=True, timeout=35,
+            capture_output=True,
+            text=True,
+            timeout=35,
             cwd=str(_PROJECT_ROOT),
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
+
 
 def check_mcp_e2e() -> GateResult:
     test_dir = _PROJECT_ROOT / "tests/adversarial/test_mcp_red_team.py"
@@ -633,12 +676,15 @@ def check_mcp_e2e() -> GateResult:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", str(test_dir), "-q", "--tb=no", "--timeout=60"],
-            capture_output=True, text=True, timeout=65,
+            capture_output=True,
+            text=True,
+            timeout=65,
             cwd=str(_PROJECT_ROOT),
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
+
 
 def check_pipeline_e2e() -> GateResult:
     test_files = [
@@ -650,15 +696,19 @@ def check_pipeline_e2e() -> GateResult:
         return GateResult.YELLOW
     try:
         from concurrent.futures import ThreadPoolExecutor, as_completed
+
         paths = [str(f) for f in test_files if f.exists()]
         with ThreadPoolExecutor(max_workers=4) as executor:
             futures = {
                 executor.submit(
                     subprocess.run,
                     [sys.executable, "-m", "pytest", p, "-q", "--tb=no", "--timeout=30"],
-                    capture_output=True, text=True, timeout=35,
+                    capture_output=True,
+                    text=True,
+                    timeout=35,
                     cwd=str(_PROJECT_ROOT),
-                ): p for p in paths
+                ): p
+                for p in paths
             }
             for future in as_completed(futures):
                 if future.result().returncode != 0:
@@ -667,10 +717,12 @@ def check_pipeline_e2e() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_skill_canary() -> GateResult:
     try:
         from zephyr.agent_spec.skill_loader import SkillLoader
         from zephyr.agent_spec.skill_model import SkillSpec
+
         loader = SkillLoader()
         skills = loader.list_skills()
         if len(skills) < 3:
@@ -681,9 +733,11 @@ def check_skill_canary() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_dependency_audit() -> GateResult:
     try:
         from zephyr.agent_rbac.dependency_auditor import DependencyAuditor
+
         auditor = DependencyAuditor()
         result = auditor.audit()
         if result.get("cyclic", 0) > 0:
@@ -695,9 +749,11 @@ def check_dependency_audit() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_a2a_hold() -> GateResult:
     try:
         from zephyr.a2a import A2AProtocol
+
         proto = A2AProtocol()
         if proto.is_hold_active():
             return GateResult.GREEN
@@ -716,6 +772,7 @@ def check_a2a_hold() -> GateResult:
 #   但在 _CHECK_MAP 中没有对应实现。此处补全。
 # ============================================================================
 
+
 def check_code_dedup() -> GateResult:
     dedup_dir = _PROJECT_ROOT / "src/zephyr/l01_infrastructure/code_dedup_engine"
     if not dedup_dir.is_dir():
@@ -725,10 +782,12 @@ def check_code_dedup() -> GateResult:
         return GateResult.YELLOW
     return GateResult.GREEN
 
+
 def check_task_system() -> GateResult:
     try:
         from zephyr.db.task_repo import TaskRepository
         from zephyr.orchestrator.batch_orchestrator import BatchOrchestrator
+
         return GateResult.GREEN
     except ImportError:
         tr = _PROJECT_ROOT / "src/zephyr/db/task_repo.py"
@@ -737,14 +796,16 @@ def check_task_system() -> GateResult:
     except Exception:
         return GateResult.YELLOW
 
+
 def check_lsg_security() -> GateResult:
     try:
         from zephyr.llm_security.gateway import LSGSecurityGateway
         from zephyr.llm_security.self_protection.red_team_scanner import RedTeamScanner, ScanMode
+
         gw = LSGSecurityGateway()
         if gw is None:
             return GateResult.RED
-        layers = getattr(gw, '_layers', {})
+        layers = getattr(gw, "_layers", {})
         if len(layers) < 8:
             return GateResult.YELLOW
         return GateResult.GREEN
@@ -760,6 +821,7 @@ def check_lsg_security() -> GateResult:
         return GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
+
 
 # ============================================================================
 # 检查注册表 —— 字符串 → 函数映射
@@ -781,33 +843,33 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_temp_file_scan": check_temp_file_scan,
     "gate_registry_consistency": check_registry_consistency,
     "gate_precommit_config": check_precommit_config,
-        "gate_sys_master_compliance": check_sys_master_compliance,
-        "gate_code_dedup": check_code_dedup,
-        # Phase 1
-        "gate_data_vendor_integration": check_data_vendor_integration,
-        "gate_factor_factory": check_factor_factory,
-        "gate_alpha_validator": check_alpha_validator,
-        "gate_backtest_minimal": check_backtest_minimal,
-        "gate_context_engine_health": check_context_engine_health,
-        "gate_kb_pipeline": check_kb_pipeline,
-        "gate_vms_health": check_vms_health,
-        "gate_gate_engine_judge": check_gate_engine_judge,
-        "gate_feedback_loop": check_feedback_loop,
-        "gate_db_integrity": check_db_integrity,
-        "gate_query_metrics": check_query_metrics,
-        "gate_task_system": check_task_system,
-        "gate_ssot_validator": check_ssot_validator,
-        "gate_contract_compliance": check_contract_compliance,
-        "gate_blueprint_compliance": check_blueprint_compliance,
-        "gate_agent_rbac": check_agent_rbac,
-        "gate_audit_trail": check_audit_trail,
-        "gate_audit_trail_context": check_audit_trail_context,
-        "gate_asset_inventory": check_asset_inventory,
-        "gate_observability_baseline": check_observability_baseline,
-        "gate_mcp_servers_health": check_mcp_servers_health,
-        "gate_escalation_protocol": check_escalation_protocol,
-        "gate_lsg_security": check_lsg_security,
-        "gate_budget_enforcer": check_budget_enforcer,
+    "gate_sys_master_compliance": check_sys_master_compliance,
+    "gate_code_dedup": check_code_dedup,
+    # Phase 1
+    "gate_data_vendor_integration": check_data_vendor_integration,
+    "gate_factor_factory": check_factor_factory,
+    "gate_alpha_validator": check_alpha_validator,
+    "gate_backtest_minimal": check_backtest_minimal,
+    "gate_context_engine_health": check_context_engine_health,
+    "gate_kb_pipeline": check_kb_pipeline,
+    "gate_vms_health": check_vms_health,
+    "gate_gate_engine_judge": check_gate_engine_judge,
+    "gate_feedback_loop": check_feedback_loop,
+    "gate_db_integrity": check_db_integrity,
+    "gate_query_metrics": check_query_metrics,
+    "gate_task_system": check_task_system,
+    "gate_ssot_validator": check_ssot_validator,
+    "gate_contract_compliance": check_contract_compliance,
+    "gate_blueprint_compliance": check_blueprint_compliance,
+    "gate_agent_rbac": check_agent_rbac,
+    "gate_audit_trail": check_audit_trail,
+    "gate_audit_trail_context": check_audit_trail_context,
+    "gate_asset_inventory": check_asset_inventory,
+    "gate_observability_baseline": check_observability_baseline,
+    "gate_mcp_servers_health": check_mcp_servers_health,
+    "gate_escalation_protocol": check_escalation_protocol,
+    "gate_lsg_security": check_lsg_security,
+    "gate_budget_enforcer": check_budget_enforcer,
     # Phase 2
     "gate_strategy_pipeline": check_strategy_pipeline,
     "gate_execution_pipeline": check_execution_pipeline,
@@ -856,6 +918,6 @@ def run_check(check_name: str) -> GateResult:
         return GateResult.YELLOW
     try:
         return func()
-    except Exception as exc:
+    except Exception:
         logger.exception("Check '%s' failed with exception", check_name)
         return GateResult.RED

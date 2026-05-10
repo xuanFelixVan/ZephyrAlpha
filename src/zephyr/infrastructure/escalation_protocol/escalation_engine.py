@@ -12,11 +12,11 @@ L0-L4 escalation model with CircuitBreaker + EconomicGuard + DelegationEngine.
 
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2
 """
+
 from __future__ import annotations
 
 import warnings
 from enum import Enum
-from typing import Any
 
 import yaml
 
@@ -60,8 +60,9 @@ class EscalationEngine:
         self._load_rules()
 
         try:
-            from zephyr.escalation.escalation_engine import EscalationEngine as _NewEngine
-            from zephyr.escalation.escalation_models import RuleCategory as _RC
+            from zephyr.escalation_engine.escalation_engine import EscalationEngine as _NewEngine
+            from zephyr.escalation_engine.escalation_models import RuleCategory as _RC
+
             self._new_engine = _NewEngine("legacy-shim")
             self._new_available = True
         except ImportError:
@@ -69,7 +70,6 @@ class EscalationEngine:
             self._new_available = False
 
     def _load_rules(self):
-        import time
         try:
             with open(self._rules_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
@@ -90,18 +90,21 @@ class EscalationEngine:
         rules_data = data.get("rules", new_default_rules)
         for entry in rules_data:
             if isinstance(entry, dict):
-                self._rules.append(Rule(
-                    rule_id=entry["rule_id"],
-                    level=entry["level"],
-                    priority=entry["priority"],
-                    patterns=entry["patterns"],
-                    window_sec=entry.get("window_sec", 300),
-                ))
+                self._rules.append(
+                    Rule(
+                        rule_id=entry["rule_id"],
+                        level=entry["level"],
+                        priority=entry["priority"],
+                        patterns=entry["patterns"],
+                        window_sec=entry.get("window_sec", 300),
+                    )
+                )
             else:
                 self._rules.append(Rule(*entry))
 
     def evaluate(self, operation: str) -> EscalationLevel:
         import time
+
         now = time.time()
         matched_rules = []
         for rule in self._rules:
@@ -123,7 +126,8 @@ class EscalationEngine:
 
         if self._new_available and result == EscalationLevel.BLOCKED:
             try:
-                from zephyr.escalation.escalation_models import RuleCategory
+                from zephyr.escalation_engine.escalation_models import RuleCategory
+
                 ev = self._new_engine.evaluate(RuleCategory.SECURITY_VIOLATION, operation)
                 if ev.circuit_breaker_triggered:
                     return EscalationLevel.BLOCKED
@@ -137,6 +141,13 @@ class EscalationEngine:
         for rule in self._rules:
             for pattern in rule.patterns:
                 if pattern.lower() in operation.lower():
-                    matched.append({"rule_id": rule.rule_id, "level": rule.level.value, "priority": rule.priority, "pattern": pattern})
+                    matched.append(
+                        {
+                            "rule_id": rule.rule_id,
+                            "level": rule.level.value,
+                            "priority": rule.priority,
+                            "pattern": pattern,
+                        }
+                    )
                     break
         return {"operation": operation, "matched_rules": matched, "count": len(matched)}

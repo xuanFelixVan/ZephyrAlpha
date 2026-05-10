@@ -6,7 +6,7 @@ Handles: level determination, circuit breaker, economic guard, delegation, audit
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2
 
 Usage:
-    from zephyr.escalation.adapter import escalate_if_needed, check_operation
+    from zephyr.escalation_engine.adapter import escalate_if_needed, check_operation
 
     result = escalate_if_needed(
         operation_type="security_violation",
@@ -16,12 +16,13 @@ Usage:
     if result.should_block:
         raise EscalationBlocked(result.reason)
 """
+
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 _logger = logging.getLogger(__name__)
 
@@ -78,8 +79,10 @@ def _get_engine(name: str = "adapter") -> Any:
         return _engine_cache[name]
 
     try:
-        from zephyr.escalation import EscalationEngine
         from threading import Lock
+
+        from zephyr.escalation_engine import EscalationEngine
+
         if _cache_lock is None:
             _cache_lock = Lock()
         with _cache_lock:
@@ -105,7 +108,8 @@ def escalate_if_needed(
         )
 
     try:
-        from zephyr.escalation import RuleCategory
+        from zephyr.escalation_engine import RuleCategory
+
         cat_name = _OPERATION_TO_CATEGORY.get(OperationType(operation_type), "CUSTOM")
         category = getattr(RuleCategory, cat_name, RuleCategory.CUSTOM)
 

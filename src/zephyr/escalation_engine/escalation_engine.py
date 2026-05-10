@@ -5,18 +5,20 @@ Core escalation engine: rule matching, level determination, auto-escalation with
 and economic guard integration.
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2
 """
+
 from __future__ import annotations
 
 import importlib
 import logging
 import threading
-from datetime import datetime, timedelta, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
-from zephyr.escalation.escalation_models import (
-    DelegationRecord,
+from zephyr.escalation_engine.circuit_breaker import CircuitBreaker, CircuitState
+from zephyr.escalation_engine.escalation_models import (
+    DEFAULT_ESCALATION_RULES,
     DelegationStrategy,
     EconomicGuard,
     EscalationEvent,
@@ -25,9 +27,7 @@ from zephyr.escalation.escalation_models import (
     EscalationRule,
     EscalationState,
     RuleCategory,
-    DEFAULT_ESCALATION_RULES,
 )
-from zephyr.escalation.circuit_breaker import CircuitBreaker, CircuitState
 
 
 class EscalationEngine:
@@ -72,7 +72,13 @@ class EscalationEngine:
         with self._lock:
             self._rules.pop(rule_id, None)
 
-    def evaluate(self, category: RuleCategory, description: str = "", owner_id: Optional[str] = None, source_event_id: Optional[str] = None) -> EscalationEvent:
+    def evaluate(
+        self,
+        category: RuleCategory,
+        description: str = "",
+        owner_id: str | None = None,
+        source_event_id: str | None = None,
+    ) -> EscalationEvent:
         self._lsg_scan_input(description)
         event = EscalationEvent(
             category=category,
@@ -88,7 +94,8 @@ class EscalationEngine:
             ab = self._extension_detectors.get("AntiAutomationBias")
             if ab and hasattr(ab, "evaluate"):
                 result = ab.evaluate(
-                    event.event_id, is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
+                    event.event_id,
+                    is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
                     actor_identity=getattr(event, "actor", ""),
                     operation_content=event.description,
                 )
@@ -103,8 +110,9 @@ class EscalationEngine:
                 scaling = slo.get_recommended_scaling()
                 event.description += f" | slo_tier={scaling['current_tier']}"
                 if scaling["escalation_level_offset"] > 0:
-                    new_level = min(EscalationLevel.L4_EMERGENCY.value,
-                                    event.level.value + scaling["escalation_level_offset"])
+                    new_level = min(
+                        EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
+                    )
                     event.level = EscalationLevel(new_level)
         except Exception:
             pass
@@ -129,16 +137,10 @@ class EscalationEngine:
 
     def escalate(self, event: EscalationEvent) -> EscalationResult:
         if event.state == EscalationState.REJECTED:
-            return EscalationResult(
-                event=event, escalated=False, new_level=event.level,
-                message="Rejected by gate"
-            )
+            return EscalationResult(event=event, escalated=False, new_level=event.level, message="Rejected by gate")
         rule = self._find_best_rule(event.category)
         if rule is None:
-            return EscalationResult(
-                event=event, escalated=False, new_level=event.level,
-                message="No matching rule"
-            )
+            return EscalationResult(event=event, escalated=False, new_level=event.level, message="No matching rule")
         escalated = rule.auto_escalate
         new_level = event.level
         if escalated and event.retry_count < event.max_retries:
@@ -146,11 +148,11 @@ class EscalationEngine:
                 new_level = EscalationLevel(min(event.level.value + 1, EscalationLevel.L4_EMERGENCY.value))
         event.level = new_level
         event.state = EscalationState.ESCALATED if escalated else event.state
-        event.updated_at = datetime.now(timezone.utc)
+        event.updated_at = datetime.now(UTC)
         cost = self.CATEGORY_COST.get(event.category, 1.0)
         self._economic_guard.consume(cost)
         self._circuit_breaker.record_success()
-        delegated_to: Optional[str] = None
+        delegated_to: str | None = None
         if rule.delegate_strategy != DelegationStrategy.NONE:
             result_msg = f"Escalated to {new_level.name} — delegation needed"
             delegated_to = rule.delegate_strategy.name
@@ -159,16 +161,19 @@ class EscalationEngine:
         else:
             result_msg = f"Escalated to {new_level.name}"
         return EscalationResult(
-            event=event, escalated=escalated, new_level=new_level,
-            delegated_to=delegated_to, circuit_broken=False,
+            event=event,
+            escalated=escalated,
+            new_level=new_level,
+            delegated_to=delegated_to,
+            circuit_broken=False,
             message=result_msg,
             suggestion=self._generate_suggestion(event, rule),
         )
 
     def record_resolution(self, event: EscalationEvent) -> None:
         event.state = EscalationState.RESOLVED
-        event.resolved_at = datetime.now(timezone.utc)
-        event.updated_at = datetime.now(timezone.utc)
+        event.resolved_at = datetime.now(UTC)
+        event.updated_at = datetime.now(UTC)
         self._circuit_breaker.record_success()
 
     def record_failure(self, event: EscalationEvent) -> None:
@@ -189,15 +194,19 @@ class EscalationEngine:
         with self._lock:
             self._prune_old_escalations()
             active = [
-                e for e in self._recent_escalations
-                if e.state in (
-                    EscalationState.DETECTED, EscalationState.EVALUATING,
-                    EscalationState.ESCALATED, EscalationState.DELEGATED,
+                e
+                for e in self._recent_escalations
+                if e.state
+                in (
+                    EscalationState.DETECTED,
+                    EscalationState.EVALUATING,
+                    EscalationState.ESCALATED,
+                    EscalationState.DELEGATED,
                 )
             ]
             return len(active)
 
-    def _find_best_rule(self, category: RuleCategory) -> Optional[EscalationRule]:
+    def _find_best_rule(self, category: RuleCategory) -> EscalationRule | None:
         candidates = [r for r in self._rules.values() if r.category == category and r.enabled]
         if not candidates:
             candidates = [r for r in self._rules.values() if r.category == RuleCategory.CUSTOM and r.enabled]
@@ -207,18 +216,13 @@ class EscalationEngine:
         return candidates[0]
 
     def _check_cooldown(self, rule: EscalationRule) -> bool:
-        cutoff = datetime.now(timezone.utc) - timedelta(seconds=rule.cooldown_seconds)
-        recent_same = [
-            e for e in self._recent_escalations
-            if e.category == rule.category and e.created_at > cutoff
-        ]
+        cutoff = datetime.now(UTC) - timedelta(seconds=rule.cooldown_seconds)
+        recent_same = [e for e in self._recent_escalations if e.category == rule.category and e.created_at > cutoff]
         return len(recent_same) < rule.max_escalations_per_hour
 
     def _prune_old_escalations(self) -> None:
-        cutoff = datetime.now(timezone.utc) - timedelta(hours=1)
-        self._recent_escalations = [
-            e for e in self._recent_escalations if e.created_at > cutoff
-        ]
+        cutoff = datetime.now(UTC) - timedelta(hours=1)
+        self._recent_escalations = [e for e in self._recent_escalations if e.created_at > cutoff]
 
     @staticmethod
     def _generate_suggestion(event: EscalationEvent, rule: EscalationRule) -> str:
@@ -248,8 +252,8 @@ class EscalationEngine:
             ("zephyr.infrastructure.escalation_protocol.clock_guard", "ClockGuard"),
             ("zephyr.infrastructure.escalation_protocol.command_chain_length_gate", "CommandChainGate"),
             ("zephyr.infrastructure.escalation_protocol.compositional_safety_tester", "CompositionalSafetyTester"),
-            ("zephyr.escalation.anti_automation_bias", "AntiAutomationBias"),
-            ("zephyr.escalation.slo_contract", "SLOContractEngine"),
+            ("zephyr.escalation_engine.anti_automation_bias", "AntiAutomationBias"),
+            ("zephyr.escalation_engine.slo_contract", "SLOContractEngine"),
             ("zephyr.infrastructure.escalation_protocol.reward_hacking_rebound_detector", "ReboundDetector"),
         ]
         for module_path, class_name in detector_modules:
@@ -341,7 +345,8 @@ class EscalationEngine:
             ab = self._extension_detectors.get("AntiAutomationBias")
             if ab and hasattr(ab, "evaluate"):
                 result = ab.evaluate(
-                    event.event_id, is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
+                    event.event_id,
+                    is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
                     actor_identity=getattr(event, "actor", ""),
                     operation_content=event.description,
                 )
@@ -356,8 +361,9 @@ class EscalationEngine:
                 scaling = slo.get_recommended_scaling()
                 event.description += f" | slo_tier={scaling['current_tier']}"
                 if scaling["escalation_level_offset"] > 0:
-                    new_level = min(EscalationLevel.L4_EMERGENCY.value,
-                                    event.level.value + scaling["escalation_level_offset"])
+                    new_level = min(
+                        EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
+                    )
                     event.level = EscalationLevel(new_level)
         except Exception:
             pass
@@ -367,9 +373,13 @@ class EscalationEngine:
             if rd and event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
                 owner = event.owner_id or "unknown"
                 if event.category == RuleCategory.SECURITY_VIOLATION:
-                    rd.record(owner, "violation", severity="high", description=event.description, event_id=event.event_id)
+                    rd.record(
+                        owner, "violation", severity="high", description=event.description, event_id=event.event_id
+                    )
                 elif event.category == RuleCategory.REWARD_HACKING_REBOUND:
-                    rd.record(owner, "rebound", severity="critical", description=event.description, event_id=event.event_id)
+                    rd.record(
+                        owner, "rebound", severity="critical", description=event.description, event_id=event.event_id
+                    )
                 if rd.detect_rebound(owner):
                     event.description += " | reward_hacking_rebound=True"
                     event.level = EscalationLevel.L4_EMERGENCY
@@ -391,8 +401,9 @@ class EscalationEngine:
         if not description:
             return
         try:
-            from zephyr.llm_security.gateway import LSGSecurityGateway
             import asyncio
+
+            from zephyr.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             result = asyncio.run(gateway.scan_input(description))

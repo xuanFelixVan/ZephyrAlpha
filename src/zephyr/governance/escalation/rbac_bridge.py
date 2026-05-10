@@ -10,8 +10,9 @@ _logger = logging.getLogger(__name__)
 
 _AGENT_RBAC_AVAILABLE = False
 try:
-    from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource  # noqa: F401
-    from zephyr.agent_rbac.permission_guard import PermissionGuard, GuardDecision  # noqa: F401
+    from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+    from zephyr.agent_rbac.permission_guard import GuardDecision, PermissionGuard
+
     _AGENT_RBAC_AVAILABLE = True
 except ImportError:
     pass
@@ -33,9 +34,7 @@ class EscalationRBACBridge:
     def __init__(self) -> None:
         self._guard = PermissionGuard() if _AGENT_RBAC_AVAILABLE else None
 
-    def request_escalation(
-        self, agent_id: str, target_permission: str, reason: str
-    ) -> dict:
+    def request_escalation(self, agent_id: str, target_permission: str, reason: str) -> dict:
         return {
             "agent_id": agent_id,
             "target_permission": target_permission,
@@ -43,18 +42,20 @@ class EscalationRBACBridge:
             "status": "PENDING_OWNER_APPROVAL",
         }
 
-    def pre_execute_check(
-        self, session_id: str, operation: str, target_path: str = ""
-    ) -> RBACCheckResult:
+    def pre_execute_check(self, session_id: str, operation: str, target_path: str = "") -> RBACCheckResult:
         try:
-            from zephyr.escalation.adapter import check_operation
+            from zephyr.escalation_engine.adapter import check_operation
+
             esc_decision = check_operation(operation, target_path, session_id)
             if esc_decision.should_block:
                 return RBACCheckResult(
                     passed=False,
                     decision="BLOCKED",
                     reason=f"Escalation blocked: {esc_decision.reason}",
-                    audit_context={"escalation": esc_decision.escalation_level, "circuit_state": esc_decision.circuit_state},
+                    audit_context={
+                        "escalation": esc_decision.escalation_level,
+                        "circuit_state": esc_decision.circuit_state,
+                    },
                 )
         except ImportError:
             pass

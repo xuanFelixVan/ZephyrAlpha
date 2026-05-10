@@ -26,8 +26,8 @@
 # ═══════════════════════════════════════════════════════════════════
 
 scanning:
-  # 全局硬超时（秒）
-  global_hard_timeout_seconds: 600
+  # 全局硬超时（秒）——L 级（10000 脚本）下全量扫描可能需要 60 分钟
+  global_hard_timeout_seconds: 3600
 
   # 各维度类型超时
   timeout:
@@ -44,6 +44,9 @@ scanning:
   # 增量扫描触发阈值（变更文件数超过此值 → 建议全量扫描）
   incremental_threshold_files: 50
 
+  # ScanCache LRU 缓存容量——1500 模块下文件数可能超过 50,000
+  scan_cache_max_entries: 10000
+
 # ═══════════════════════════════════════════════════════════════════
 # 二、Finding 质量相关阈值
 # ═══════════════════════════════════════════════════════════════════
@@ -59,7 +62,8 @@ finding_quality:
   min_confidence_threshold: 0.5
 
   # 单次扫描最大 Finding 数（超过 → 降级为 FULL → WARN-ONLY）
-  max_findings_per_scan: 500
+  # 1500 模块 × 5.25 脚本/蓝图 × 平均 0.5 Finding/脚本 ≈ 3,937 → 取 5000
+  max_findings_per_scan: 5000
 
 # ═══════════════════════════════════════════════════════════════════
 # 三、Error Budget 相关阈值（对标 Google SRE）
@@ -165,3 +169,63 @@ blueprint_sync:
 
   # 蓝图 §14 路径索引与磁盘一致性检查——不一致 = 阻断
   strict_path_index_check: true
+
+# ═══════════════════════════════════════════════════════════════════
+# 九、并发与分布式执行阈值（对标 §35 分布式执行架构）
+# ═══════════════════════════════════════════════════════════════════
+
+concurrency:
+  # ── 规模-架构映射（对齐蓝图 §8.4）──
+  # S: ≤500 脚本 / ≤8 Worker   → 单机单进程
+  # M: 500~2000 脚本 / 8~20 Worker → 单机多进程
+  # L: 2000~10000 脚本 / 20~100 Worker → 分布式
+
+  # ── Bulkhead 四池配置 ──
+  pool:
+    quick:
+      max_workers: 12
+      description: "快速文件扫描——D1/D2/D4"
+    content_analysis:
+      max_workers: 8
+      description: "内容分析——D3/D7/D8"
+    ai_generated:
+      max_workers: 16
+      description: "AI 生成检测——D5/D6/D9/D12"
+    disruptive:
+      max_workers: 4
+      description: "破坏性操作——D10/D11/Meta"
+
+  # ── 令牌桶限流 ──
+  token_bucket:
+    refill_rate_per_second: 100.0
+    burst_size: 200
+
+  # ── 准入控制 ──
+  admission:
+    p0_concurrency_limit: 50
+    p1_concurrency_limit: 30
+    p2_concurrency_limit: 20
+
+  # ── 锁超时 ──
+  lock:
+    l0_global_timeout_seconds: 300
+    l1_dimension_timeout_seconds: 60
+    l2_file_timeout_seconds: 30
+
+  # ── ShardRouter ──
+  shard:
+    count: 16
+    description: "1500 模块 / 16 分片 ≈ 94 模块/分片"
+
+  # ── Worker 生命周期（§35.2）──
+  worker:
+    heartbeat_interval_seconds: 10
+    heartbeat_timeout_count: 3
+    graceful_shutdown_timeout_seconds: 30
+    max_concurrent_per_worker: 8
+
+  # ── 进程压力阈值 ──
+  pressure:
+    process_warning_count: 150
+    process_critical_count: 300
+    process_emergency_count: 500

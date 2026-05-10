@@ -3,7 +3,7 @@ module_id: MOD-INF-005
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.2.1
+version: 5.3.0
 layer: L01
 layer_name: infrastructure
 functional_domain: infra
@@ -569,30 +569,56 @@ OPS-002: D3 维度 frontmatter 合规修复任务
 
 | 维度 | 当前值 | 说明 |
 |------|:---:|------|
-| 脚本总数 | **177**（以生成器为准） | script_manifest.yaml 的 `total_scripts` |
+| 蓝图数 | **51** | docs/03_modules/ 下 blueprint.md 文件数 |
+| 脚本总数 | **268**（manifest 注册口径）/ **292**（磁盘 .py 文件数） | script_manifest.yaml 的 `total_scripts` |
+| 脚本/蓝图比 | **5.25** | 268 ÷ 51 — 每个蓝图平均对应 5.25 个治理脚本 |
 | 维度数 | 12 | D1-D12 |
 | 单维度最大脚本数 | **45**（D5） | 架构合规最密集 |
 | 单维度最小脚本数（已登记维） | **0**（D10 占位） | 性能治理待施工；非空维最小为 2（D2/D9） |
 
 ### 8.2 容量上限设计
 
+> **换算依据**：当前 51 蓝图 → 268 脚本（5.25 脚本/蓝图）。1500 模块 × 5.25 ≈ **7,875 脚本**。
+> 考虑到模块成熟后脚本密度可能下降（基础设施层脚本复用度高），取保守系数 0.8 → **6,300 脚本**；
+> 考虑到 AI 并发场景下新增的专项检测脚本（D12 幻觉检测等），取扩张系数 1.3 → **10,200 脚本**。
+> **设计上限取 10,000**，留 2x 安全裕度。
+
 | 维度 | 当前规模 | 设计上限 | 超限策略 |
 |------|:---:|:---:|---------|
-| 单维度脚本数 | **0**~45 | **50** | 超过 50 考虑拆分为子维度（如 D5 → D5a/D5b） |
-| 全局脚本总数 | ~177（manifest 登记口径） | **300** | 超过 300 考虑脚本分组 + 层级化 manifest |
-| 每周 Finding 数 | ~200 | ~500 | 降低扫描频率 或 提高阈值 |
-| SQLite 单文件 | <10MB | 140TB（SQLite上限） | 不会触及——SQLite 对百万行以内无压力 |
+| 全局蓝图/模块数 | 51 | **1,500** | 超过 1500 考虑子项目拆分 + 独立脚本系统实例 |
+| 全局脚本总数 | 268（manifest 注册口径） | **10,000** | 超过 10000 考虑脚本分组 + 层级化 manifest + 分布式执行（§35） |
+| 单维度脚本数 | 0~45 | **200** | 超过 200 拆分为子维度（如 D5 → D5a/D5b/D5c） |
+| 每周 Finding 数 | ~200 | **5,000** | 超过 5000 触发 C2 根因聚类 + 降级扫描频率 |
+| 并发 AI Worker | 1（当前） | **100** | 超过 100 需要分布式锁后端（Redis/etcd）+ Worker 生命周期管理（§35） |
+| SQLite 单文件 | <10MB | 140TB（SQLite上限） | 不会触及——但超过 10,000 脚本后建议分片（ShardRouter 4→16 分片） |
 | pre-commit 钩子数 | 5 核心 | 10 | 过 10 分组并行——避免阻塞提交时间过长 |
-| 扫描总耗时 | ~50s | 600s（全局硬超时） | 超时部分维度标记为 skip + WARNING |
+| 扫描总耗时（全量） | ~50s | **3,600s**（60 分钟） | 超时部分维度标记为 skip + WARNING；增量扫描作为默认模式 |
+| ScanCache 条目数 | 500 | **10,000** | 1500 模块下文件数可能超过 50,000，LRU 缓存需相应扩容 |
 
 ### 8.3 扩展触发条件
 
 触发维度扩容的阈值：
 - 单维度脚本数 ≥ 8 → 结构审查——是否需要拆子维度
-- 全局脚本数 ≥ 150 → 架构审查——manifest 是否需要分层
+- 全局脚本数 ≥ 500 → 架构审查——manifest 是否需要分层 + 是否需要接入 BulkheadExecutor
+- 全局脚本数 ≥ 2,000 → 架构审查——是否需要分布式执行（§35）
+- 全局脚本数 ≥ 5,000 → 架构审查——ShardRouter 分片数是否需要从 4 扩展到 16+
 - 扫描耗时 ≥ 300s → 性能审查——是否需要增量扫描/缓存
+- 并发 AI Worker ≥ 10 → 并发审查——是否需要接入分布式锁后端
 
-### 8.4 SLA/SLO 度量指标
+### 8.4 规模-架构映射模型
+
+> 对标 K8s Cluster Autoscaler + Google SRE 容量规划——不同规模对应不同架构层级，避免小规模过度工程、大规模架构不足。
+
+| 规模区间 | 脚本数 | AI Worker | 架构层级 | 关键组件 |
+|---------|:---:|:---:|---------|---------|
+| **S** (当前) | ≤500 | ≤8 | 单机单进程 | ThreadPoolExecutor + ProcessLock + SQLite 单文件 |
+| **M** (过渡) | 500~2,000 | 8~20 | 单机多进程 | BulkheadExecutorV2 + ShardRouter(4) + SQLite WAL + 增量扫描默认 |
+| **L** (目标) | 2,000~10,000 | 20~100 | 分布式 | 分布式任务队列(§35) + Redis/etcd 锁 + ShardRouter(16) + Worker 注册/心跳 |
+| **XL** (远期) | >10,000 | >100 | 多集群 | 多实例脚本系统 + 跨实例 Finding 聚合 + 全局 Error Budget 协调 |
+
+> **当前状态**：S 规模（268 脚本），但已预建 M/L 层级的核心组件（BulkheadExecutorV2、ShardRouter、DistributedLock Protocol）——只差接入和参数化。
+
+### 8.5 SLA/SLO 度量指标
 
 > 对标 ITIL 服务级别管理——量化脚本系统的服务水平目标，让"系统是否健康"有数字可查。
 
@@ -1819,10 +1845,157 @@ pip freeze > scripts/governance/meta/requirements/frozen-versions.txt
 
 ---
 
+## 35. 分布式执行架构
+
+> **对标 Celery + Ray + K8s Job Controller + Google SRE Distributed Systems**。
+> 本章节定义 1500 模块 / 10,000 脚本 / 100 AI Worker 并发场景下的执行架构。
+> 对齐 §8.4 规模-架构映射模型中的 L 级（2,000~10,000 脚本 / 20~100 Worker）。
+
+### 35.1 设计原则
+
+| # | 原则 | 说明 |
+|---|------|------|
+| 1 | **渐进式升级** | S→M→L 逐级演进，不跳级。当前 S 级组件（ThreadPoolExecutor、ProcessLock）在 M 级仍可用，L 级才需替换 |
+| 2 | **接口不变** | `run_all.py` 的 CLI 接口（`--dimensions`、`--tags`、`--diff-ref` 等）在任何规模下保持一致——用户无感知切换 |
+| 3 | **单机兼容** | 分布式组件在单机模式下可降级为本地实现——无 Redis 时自动 fallback 到 MemoryLock，无 Worker 注册时自动 fallback 到 ThreadPoolExecutor |
+| 4 | **Finding Schema 不变** | 无论单机还是分布式，输出格式始终是 Finding Schema JSONL——下游消费者无需改动 |
+
+### 35.2 Worker 生命周期管理
+
+```
+                    ┌──────────────┐
+                    │  REGISTERED  │ ← Worker 启动时向 Coordinator 注册
+                    └──────┬───────┘
+                           │ heartbeat 通过
+                    ┌──────▼───────┐
+                    │    READY     │ ← 可接收任务
+                    └──────┬───────┘
+                           │ 接收任务
+                    ┌──────▼───────┐
+                    │   RUNNING    │ ← 执行脚本
+                    └──────┬───────┘
+                           │ 任务完成
+                    ┌──────▼───────┐
+                    │    READY     │ ← 回到可接收状态
+                    └──────────────┘
+                    
+           heartbeat 超时 / 主动退出
+                    ┌──────────────┐
+                    │  DEREGISTERED │ ← 从可用池移除
+                    └──────────────┘
+```
+
+| 机制 | 说明 | 默认值 |
+|------|------|--------|
+| **注册** | Worker 启动时向 Coordinator 发送 `{worker_id, capabilities, max_concurrent}` | — |
+| **心跳** | Worker 每 N 秒发送心跳；连续 M 次未收到 → 标记 DEREGISTERED | 间隔 10s / 超时 3 次 |
+| **能力声明** | Worker 声明可执行的维度/标签/优先级——Coordinator 据此分发任务 | `capabilities: {dimensions: [D1,D3], tags: [Quick], max_concurrent: 8}` |
+| **优雅退出** | Worker 收到 SIGTERM → 完成当前任务 → DEREGISTERED → 退出 | 超时 30s 后强制 kill |
+| **负载均衡** | Coordinator 按最少正在执行任务数分配——避免热点 Worker | — |
+
+### 35.3 任务分发与调度
+
+```
+AI Worker 1 ──┐                    ┌── Worker A (D1,D2,D3,D4,D8 Quick)
+AI Worker 2 ──┤                    ├── Worker B (D5,D6,D7,D11 Content)
+AI Worker 3 ──┼──► Coordinator ────┼── Worker C (D9,D10,D12 AI-Generated)
+  ...         │    (任务调度器)     ├── Worker D (Disruptive)
+AI Worker N ──┘                    └── Worker E (Meta/Gen)
+```
+
+**调度语义**：
+
+| 调度模式 | 触发条件 | 行为 |
+|---------|---------|------|
+| **维度亲和** | 默认 | 脚本按维度路由到声明了该维度能力的 Worker 池——对标 K8s Node Affinity |
+| **优先级抢占** | P0 脚本到达 | P0 可抢占 P2 Worker 的执行槽——对标 K8s PriorityClass |
+| **分片调度** | 单维度脚本数 > 200 | 按模块 ID 哈希分片到多个 Worker——ShardRouter 从 DB 路由升级为执行路由 |
+| **增量调度** | `--diff-ref` 模式 | 只调度与变更文件相关的维度——减少无效执行 |
+
+**任务包（Task Pack）**：
+
+```json
+{
+  "task_id": "TP-D5-20260510-abc123",
+  "dimension": "D5",
+  "scripts": ["validate_ssot.py", "check_dependency_direction.py"],
+  "timeout_seconds": 300,
+  "priority": "P0",
+  "diff_ref": "HEAD~1",
+  "target_modules": ["MOD-INF-005", "MOD-INF-006"]
+}
+```
+
+### 35.4 分布式锁
+
+> 对标 Redis Distributed Lock (Redlock) / etcd Concurrency Primitives。
+> 已有 `DistributedLock` Protocol 接口（`src/zephyr/shared/infra/lock.py`），需补充生产级后端实现。
+
+| 锁层级 | 单机实现 | 分布式实现 | 适用场景 |
+|--------|---------|-----------|---------|
+| **L0 全局** | ProcessLock (PID 文件) | Redis SETNX + TTL | 防止同一维度被多个 Worker 同时扫描 |
+| **L1 维度** | DimensionLock (threading.Lock) | Redis Hash + Field Lock | 同维度串行、不同维度并行 |
+| **L2 文件** | FileLock (fcntl/msvcrt) | Redis Key-per-file | 同文件读写互斥 |
+
+**降级策略**：Redis/etcd 不可用时 → 自动 fallback 到本地锁 → 功能降级为单机模式 → 告警通知 Owner。
+
+### 35.5 故障恢复
+
+| 故障场景 | 检测方式 | 恢复策略 |
+|---------|---------|---------|
+| **Worker 崩溃** | 心跳超时（3 次未收到） | 正在执行的任务标记为 FAILED → 重新入队 → 分配给其他 Worker |
+| **Coordinator 崩溃** | Worker 心跳回复超时 | Worker 进入自治模式（本地执行已分配任务）→ 新 Coordinator 启动后重新注册 |
+| **Redis/etcd 不可用** | 连接超时 + 重试 3 次 | 降级为单机锁 → 告警 → 人工介入 |
+| **任务超时** | TieredTimeout（S0=10s, S1=60s, S2=180s, S3=120s） | kill 超时任务 → 标记 exit 3 → CircuitBreaker 计数 |
+| **CircuitBreaker OPEN** | 连续失败 ≥ 阈值 | 该池暂停接收新任务 → 等待恢复窗口 → HALF_OPEN 探测 |
+
+### 35.6 Finding 聚合
+
+100 Worker 并发产出 Finding → 需要聚合为统一视图：
+
+```
+Worker A ──→ findings_D5_20260510_workerA.jsonl ──┐
+Worker B ──→ findings_D5_20260510_workerB.jsonl ──┼──► Aggregator ──► findings_20260510.jsonl
+Worker C ──→ findings_D3_20260510_workerC.jsonl ──┘     (去重+排序)
+```
+
+| 步骤 | 说明 |
+|------|------|
+| **1. 分片写入** | 每个 Worker 写入独立 JSONL 文件（按 `worker_id` 命名）——无文件锁竞争 |
+| **2. 聚合** | Coordinator 在所有 Worker 完成后，按 `finding_id` 去重（同一内容哈希的 Finding 只保留一条） |
+| **3. 排序** | 按 severity(CRITICAL→INFO) + dimension 排序——人类可读 |
+| **4. 入库** | 写入 `findings_YYYYMMDD.jsonl` + SQLite 时序表 |
+
+### 35.7 技术选型约束
+
+> 不在蓝图中锁定具体技术栈——但定义选型标准和候选方案。
+
+| 组件 | 选型标准 | 候选方案 |
+|------|---------|---------|
+| **任务队列** | Python 原生支持 + 轻量级 + 支持 priority + 支持 result backend | Celery + Redis / Ray / Python multiprocessing.Queue（单机降级） |
+| **分布式锁** | TTL 自动续期 + 防死锁 + Python async 兼容 | Redis (Redlock) / etcd / ZooKeeper / SQLite WAL（单机降级） |
+| **Worker 通信** | 低延迟 + 支持广播 + 支持 request-reply | Redis Pub/Sub / ZeroMQ / HTTP long-polling |
+| **状态存储** | ACID + JSONL 导出 + 支持 10,000 脚本规模 | SQLite WAL（单机/分片） / PostgreSQL（L 级远期） |
+
+### 35.8 与现有组件的关系
+
+| 现有组件 | §35 中的角色 | 变更 |
+|---------|-------------|------|
+| `_concurrency.py` BulkheadExecutorV2 | M 级核心执行器，L 级降级为 Worker 内部调度 | 参数化 Pool 配置（从 thresholds.yaml 读取） |
+| `_concurrency.py` ShardRouter | L 级分片调度的基础——从 DB 路由升级为执行路由 | 分片数从 4 → 16+，路由目标从 SQLite 路径扩展为 Worker ID |
+| `_concurrency.py` CircuitBreaker | Worker 级熔断——保护单个 Worker 不被故障脚本拖垮 | 不变 |
+| `_concurrency.py` TokenBucket | Coordinator 级限流——保护全局资源 | refill_rate 和 burst_size 参数化（从 thresholds.yaml 读取） |
+| `_concurrency.py` AdmissionController | Coordinator 级准入——P0 优先调度 | concurrency_limit 参数化 |
+| `lock.py` DistributedLock Protocol | L 级分布式锁接口——已有 Protocol 定义 | 补充 Redis/etcd 实现 |
+| `run_all.py` | 调度入口——CLI 接口不变 | 内部从 ThreadPoolExecutor 切换到 Coordinator 调度 |
+
+---
+
 ## 变更记录
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 5.3.0 | **容量模型升级 + 分布式执行架构**。(1) §8 容量估算全面重写：蓝图/模块数上限 51→1,500；脚本总数上限 300→10,000（换算依据：51 蓝图→268 脚本 = 5.25 脚本/蓝图，1500×5.25≈7,875，取 10,000 留 2x 裕度）；单维度上限 50→200；新增 §8.4 规模-架构映射模型（S/M/L/XL 四级）(2) 新增 §35 分布式执行架构——Worker 生命周期管理（注册/心跳/优雅退出）、任务分发与调度（维度亲和/优先级抢占/分片调度/增量调度）、分布式锁（L0/L1/L2 三级 + Redis/etcd 后端 + 降级策略）、故障恢复（Worker 崩溃/Coordinator 崩溃/Redis 不可用/任务超时/CircuitBreaker OPEN）、Finding 聚合（分片写入→去重→排序→入库）、技术选型约束（不锁定技术栈但定义选型标准）(3) thresholds.yaml 新增第九组「并发与分布式执行阈值」——四池 Worker 配置、令牌桶限流、准入控制、锁超时、ShardRouter 分片数(4→16)、Worker 生命周期参数、进程压力阈值(100→300) |
 | 2026-05-05 | 5.2.1 | **操作陷阱备忘录**。新增 §34「操作陷阱备忘录」——7 项实操工程陷阱（不新增盲点编号）：(1) 绝对路径硬编码陷阱 (2) 依赖版本锁定缺口 (3) 同进程 import 污染 (4) SLA 指标待测量风险 (5) 部分扫描虚假安全感 (6) 脚本-蓝图版本漂移隐蔽性 (7) AI Session 间任务修复交接损耗。每一项包含后果说明 + 具体预防方案。 |
 | 2026-05-05 | 5.2.0 | **第五层盲点：外部取证专家终极穿透审查**。(1) 新增 §31 第五层盲点 B92-B107（16 项致命漏洞——信任根悖论 / D1单点灾难性失效 / 僵尸脚本 / Manifest语义欺诈 / 时间涂抹窗口 / Error Budget 可预测重置 / Shadow Mode 定时炸弹 / AI决策溯源链缺失 / 人因绕过疲劳 / 自述证据不可独立验证 / 检查器传递完整性断裂 / 二进制工件盲区 / 分类器静默降级 / 双形态Manifest解析器分化 / 覆盖率与风险比例失衡 / 运行态数据单机脆性）。(2) 新增 §32 跨五层穷尽声明——B1-B107 共 90 盲点覆盖从基础设施到证据法理学的全纵深，并给出致命度 Top 3 与穷尽判定依据。(3) 新增 §33 物理韧性与灾备补全——运行态数据灾备分级 + 自动灾备策略。(4) 确认 `test_fixtures/` 应创建于 `meta/benchmark/test_fixtures/` 和 `meta/false_negative_cases/` 两处。 |
 | 2026-05-05 | 5.1.0 | **第四层盲点审查 + 1人+AI维护 + Vibe Coding 对标**。(1) 新增 §27 第四层盲点清单 B60-B91（32 个盲点——AI 会话管理 / 反馈回路安全 / 1人维护专属 / 性能规模 / 测试深度 / 运维韧性 / AI 安全 / 生态适配 / 演进废弃 / 文档追溯 / Vibe Coding 特有 / 度量反馈）。(2) 新增 §28 1人+AI 维护专属优化方案（10 行动项 A1-A10，P0/P1/P2 三级优先级）。(3) 新增 §29 Vibe Coding 社区对标补充（Cursor Rules / Windsurf Cascade / 氛围编程特有模式 4 项）。(4) 新增 §30 顶尖设计蓝图全景（自适应阈值 / 脚本智能优先级 / 跨脚本知识共享 / AI 协作成熟度 / 完整性自评矩阵 L3.6→L4.5）。对标 Cursor Rules 分层 / Windsurf Cascade Memory / 氛围编程「规则即 Prompt」/ 自适应 SRE 阈值。 |

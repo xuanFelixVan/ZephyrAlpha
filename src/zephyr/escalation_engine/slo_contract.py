@@ -5,6 +5,7 @@ tightly coupled to escalation level selection.
 
 Reference: Google SRE (SLI/SLO/Error Budget/Burn Rate), Nasdaq Pre-Trade Risk.
 """
+
 from __future__ import annotations
 
 import time
@@ -74,61 +75,72 @@ DEFAULT_SLIS: dict[SLIName, SLIDefinition] = {
     SLIName.CODE_REJECTION: SLIDefinition(
         name=SLIName.CODE_REJECTION,
         description="AI代码被Gate/GLM拒绝率",
-        target=0.95, error_budget_ratio=0.05,
+        target=0.95,
+        error_budget_ratio=0.05,
     ),
     SLIName.CONSENSUS_CONFLICT: SLIDefinition(
         name=SLIName.CONSENSUS_CONFLICT,
         description="Pipeline多模型共识破裂率",
-        target=0.98, error_budget_ratio=0.02,
+        target=0.98,
+        error_budget_ratio=0.02,
     ),
     SLIName.RETRY_FATIGUE: SLIDefinition(
         name=SLIName.RETRY_FATIGUE,
         description="操作达最大重试比例",
-        target=0.90, error_budget_ratio=0.10,
+        target=0.90,
+        error_budget_ratio=0.10,
     ),
     SLIName.HUMAN_OVERRIDE: SLIDefinition(
         name=SLIName.HUMAN_OVERRIDE,
         description="AI决策被人推翻比例",
-        target=0.85, error_budget_ratio=0.15,
+        target=0.85,
+        error_budget_ratio=0.15,
     ),
     SLIName.DEADLOCK: SLIDefinition(
         name=SLIName.DEADLOCK,
         description="多Agent死锁发生率",
-        target=0.999, error_budget_ratio=0.001,
+        target=0.999,
+        error_budget_ratio=0.001,
     ),
     SLIName.BUDGET_CONSUMPTION: SLIDefinition(
         name=SLIName.BUDGET_CONSUMPTION,
         description="Token/API预算消耗速度",
-        target=0.90, error_budget_ratio=0.10,
+        target=0.90,
+        error_budget_ratio=0.10,
     ),
     SLIName.RESPONSE_LATENCY: SLIDefinition(
         name=SLIName.RESPONSE_LATENCY,
         description="升级引擎判定延迟",
-        target=0.99, error_budget_ratio=0.01,
+        target=0.99,
+        error_budget_ratio=0.01,
     ),
 }
 
 DEFAULT_CONTRACTS: dict[ContractPriority, SLOContractTerms] = {
     ContractPriority.P0: SLOContractTerms(
         priority=ContractPriority.P0,
-        ack_timeout_s=900, resolve_timeout_s=14400,
+        ack_timeout_s=900,
+        resolve_timeout_s=14400,
         penalty="超时→安全模式",
     ),
     ContractPriority.P1: SLOContractTerms(
         priority=ContractPriority.P1,
-        ack_timeout_s=14400, resolve_timeout_s=86400,
+        ack_timeout_s=14400,
+        resolve_timeout_s=86400,
         penalty="升级P0",
     ),
     ContractPriority.P2: SLOContractTerms(
         priority=ContractPriority.P2,
-        ack_timeout_s=86400, resolve_timeout_s=259200,
+        ack_timeout_s=86400,
+        resolve_timeout_s=259200,
         penalty="auto_close",
     ),
 }
 
 TRADING_OVERRIDE: SLOContractTerms = SLOContractTerms(
     priority=ContractPriority.P0,
-    ack_timeout_s=300, resolve_timeout_s=900,
+    ack_timeout_s=300,
+    resolve_timeout_s=900,
     penalty="超时清仓",
 )
 
@@ -206,19 +218,26 @@ class SLOContractEngine:
         if sli_name not in self._budget_snapshot:
             self._recompute_budget(sli_name)
         return self._budget_snapshot.get(sli_name) or BudgetSnapshot(
-            tier=BudgetTier.HEALTHY, error_budget_remaining_pct=100.0, burn_rate_per_hour=0.0,
+            tier=BudgetTier.HEALTHY,
+            error_budget_remaining_pct=100.0,
+            burn_rate_per_hour=0.0,
         )
 
     def get_worst_budget_tier(self) -> BudgetSnapshot:
         worst: BudgetSnapshot | None = None
         for sli_name in self._slis:
             snap = self.get_budget(sli_name)
-            if worst is None or BudgetTier_ordering(snap.tier) > BudgetTier_ordering(worst.tier):
-                worst = snap
-            elif snap.tier == worst.tier and snap.error_budget_remaining_pct < worst.error_budget_remaining_pct:
+            if (
+                worst is None
+                or BudgetTier_ordering(snap.tier) > BudgetTier_ordering(worst.tier)
+                or snap.tier == worst.tier
+                and snap.error_budget_remaining_pct < worst.error_budget_remaining_pct
+            ):
                 worst = snap
         return worst or BudgetSnapshot(
-            tier=BudgetTier.HEALTHY, error_budget_remaining_pct=100.0, burn_rate_per_hour=0.0,
+            tier=BudgetTier.HEALTHY,
+            error_budget_remaining_pct=100.0,
+            burn_rate_per_hour=0.0,
         )
 
     def get_contract(self, priority: ContractPriority) -> SLOContractTerms:
@@ -232,9 +251,7 @@ class SLOContractEngine:
         tier = worst.tier
         policy = TIER_POLICY[tier]
 
-        if tier == BudgetTier.HEALTHY:
-            level_offset = 0
-        elif tier == BudgetTier.WARNING:
+        if tier == BudgetTier.HEALTHY or tier == BudgetTier.WARNING:
             level_offset = 0
         elif tier == BudgetTier.CRITICAL:
             level_offset = 1
@@ -302,10 +319,13 @@ class SLOContractEngine:
         return {
             "scaling_recommendation": scaling,
             "budgets": budgets,
-            "contract_slo": {p.value: {
-                "ack_s": self._contracts[p].ack_timeout_s,
-                "resolve_s": self._contracts[p].resolve_timeout_s,
-            } for p in ContractPriority},
+            "contract_slo": {
+                p.value: {
+                    "ack_s": self._contracts[p].ack_timeout_s,
+                    "resolve_s": self._contracts[p].resolve_timeout_s,
+                }
+                for p in ContractPriority
+            },
         }
 
     def _recompute_budget(self, sli_name: SLIName) -> None:
@@ -323,14 +343,20 @@ class SLOContractEngine:
         violation_rate = violations / total
         error_budget_consumed = violation_rate
         error_budget_remaining = max(0.0, sla.error_budget_ratio - error_budget_consumed)
-        remaining_pct = (error_budget_remaining / sla.error_budget_ratio) * 100.0 if sla.error_budget_ratio > 0 else 100.0
+        remaining_pct = (
+            (error_budget_remaining / sla.error_budget_ratio) * 100.0 if sla.error_budget_ratio > 0 else 100.0
+        )
         remaining_pct = max(0.0, min(100.0, remaining_pct))
 
         if readings:
             first_ts = readings[0].timestamp
             last_ts = readings[-1].timestamp
             duration_h = max(0.0001, (last_ts - first_ts) / 3600.0)
-            burn_rate_per_hour = (error_budget_consumed / sla.error_budget_ratio * 100.0) / duration_h if sla.error_budget_ratio > 0 else 0.0
+            burn_rate_per_hour = (
+                (error_budget_consumed / sla.error_budget_ratio * 100.0) / duration_h
+                if sla.error_budget_ratio > 0
+                else 0.0
+            )
         else:
             burn_rate_per_hour = 0.0
 

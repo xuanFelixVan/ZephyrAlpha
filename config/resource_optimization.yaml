@@ -9,9 +9,9 @@ pressure_thresholds:
   cpu_warning_percent: 80.0
   cpu_critical_percent: 90.0
   cpu_emergency_percent: 98.0
-  process_warning_count: 50
-  process_critical_count: 100
-  process_emergency_count: 250
+  process_warning_count: 150
+  process_critical_count: 300
+  process_emergency_count: 500
 
 hysteresis:
   confirmation_count: 2
@@ -30,7 +30,7 @@ cache:
   ttl_seconds: 300.0
 
 process_pool:
-  max_processes: 30
+  max_processes: 120
   zombie_check_interval_s: 60.0
 
 circuit_breaker:

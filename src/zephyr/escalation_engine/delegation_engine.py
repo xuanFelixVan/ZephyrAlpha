@@ -5,19 +5,17 @@ Auto-delegation when owner absent, overloaded, or escalation rules demand it.
 Supports load-balanced, expertise-match, round-robin, and priority-queue strategies.
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §4
 """
+
 from __future__ import annotations
 
 import threading
 from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from .escalation_models import (
     DelegationRecord,
     DelegationStrategy,
     EscalationEvent,
-    EscalationLevel,
     EscalationState,
 )
 
@@ -34,7 +32,7 @@ class DelegationEngine:
         self._round_robin_index: int = 0
         self._lock = threading.Lock()
 
-    def register_delegate(self, delegate_id: str, expertise: Optional[list[str]] = None) -> None:
+    def register_delegate(self, delegate_id: str, expertise: list[str] | None = None) -> None:
         with self._lock:
             self._delegate_load.setdefault(delegate_id, 0)
             if expertise:
@@ -48,7 +46,12 @@ class DelegationEngine:
             for k in expired:
                 self._active_delegations.pop(k, None)
 
-    def delegate(self, event: EscalationEvent, strategy: DelegationStrategy = DelegationStrategy.LOAD_BALANCED, task_id: Optional[str] = None) -> DelegationRecord:
+    def delegate(
+        self,
+        event: EscalationEvent,
+        strategy: DelegationStrategy = DelegationStrategy.LOAD_BALANCED,
+        task_id: str | None = None,
+    ) -> DelegationRecord:
         self._lsg_verify_delegation(event)
         delegate_id = self._select_delegate(event, strategy)
         if delegate_id is None or delegate_id == event.owner_id:
@@ -56,7 +59,7 @@ class DelegationEngine:
                 from_owner=event.owner_id or "",
                 task_id=task_id,
                 strategy=strategy,
-                expires_at=datetime.now(timezone.utc) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
+                expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
             )
             if delegate_id is not None and delegate_id == event.owner_id:
                 record.to_delegate = ""
@@ -67,7 +70,7 @@ class DelegationEngine:
             to_delegate=delegate_id,
             task_id=task_id,
             strategy=strategy,
-            expires_at=datetime.now(timezone.utc) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
+            expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
         )
 
         with self._lock:
@@ -84,7 +87,7 @@ class DelegationEngine:
             record = self._active_delegations.get(delegation_id)
             if record is None:
                 return False
-            if record.expires_at and datetime.now(timezone.utc) > record.expires_at:
+            if record.expires_at and datetime.now(UTC) > record.expires_at:
                 self._active_delegations.pop(delegation_id, None)
                 return False
             record.accepted = True
@@ -112,26 +115,23 @@ class DelegationEngine:
 
     def get_available_delegates(self) -> list[str]:
         with self._lock:
-            return [
-                d for d, load in self._delegate_load.items()
-                if load < self.MAX_LOAD_PER_DELEGATE
-            ]
+            return [d for d, load in self._delegate_load.items() if load < self.MAX_LOAD_PER_DELEGATE]
 
     def get_pending_delegations(self) -> list[DelegationRecord]:
         with self._lock:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             return [
-                r for r in self._active_delegations.values()
+                r
+                for r in self._active_delegations.values()
                 if not r.accepted and (r.expires_at is None or now <= r.expires_at)
             ]
 
     def cleanup_expired(self) -> int:
         count = 0
         with self._lock:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             expired_ids = [
-                k for k, v in self._active_delegations.items()
-                if v.expires_at is not None and now > v.expires_at
+                k for k, v in self._active_delegations.items() if v.expires_at is not None and now > v.expires_at
             ]
             for k in expired_ids:
                 record = self._active_delegations.pop(k)
@@ -139,7 +139,7 @@ class DelegationEngine:
                 count += 1
         return count
 
-    def _select_delegate(self, event: EscalationEvent, strategy: DelegationStrategy) -> Optional[str]:
+    def _select_delegate(self, event: EscalationEvent, strategy: DelegationStrategy) -> str | None:
         available = self.get_available_delegates()
         if not available:
             return None
@@ -158,12 +158,12 @@ class DelegationEngine:
         else:
             return self._select_least_loaded(available)
 
-    def _select_least_loaded(self, available: list[str]) -> Optional[str]:
+    def _select_least_loaded(self, available: list[str]) -> str | None:
         if not available:
             return None
         return min(available, key=lambda d: self._delegate_load.get(d, 0))
 
-    def _select_round_robin(self, available: list[str]) -> Optional[str]:
+    def _select_round_robin(self, available: list[str]) -> str | None:
         if not available:
             return None
         with self._lock:
@@ -171,8 +171,8 @@ class DelegationEngine:
             self._round_robin_index += 1
             return available[idx]
 
-    def _select_expertise(self, event: EscalationEvent, available: list[str]) -> Optional[str]:
-        category_key = event.category.value if hasattr(event.category, 'value') else str(event.category)
+    def _select_expertise(self, event: EscalationEvent, available: list[str]) -> str | None:
+        category_key = event.category.value if hasattr(event.category, "value") else str(event.category)
         experts = [d for d in available if category_key in self._delegate_expertise.get(d, set())]
         if experts:
             return min(experts, key=lambda d: self._delegate_load.get(d, 0))
@@ -180,8 +180,9 @@ class DelegationEngine:
 
     def _lsg_verify_delegation(self, event: EscalationEvent) -> None:
         try:
-            from zephyr.llm_security.gateway import LSGSecurityGateway
             import asyncio
+
+            from zephyr.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             content = f"delegation:{event.description} from:{event.owner_id}"

@@ -1,4 +1,5 @@
 """G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理."""
+
 from __future__ import annotations
 
 import logging
@@ -15,7 +16,8 @@ def on_budget_alert(alert: BudgetAlert) -> dict[str, Any]:
     result = _escalation.on_budget_alert(alert)
 
     try:
-        from zephyr.escalation.adapter import escalate_if_needed
+        from zephyr.escalation_engine.adapter import escalate_if_needed
+
         decision = escalate_if_needed("budget_exceeded", str(alert), owner_id="budget-handler")
         result["escalation_level"] = decision.escalation_level
         result["should_block"] = decision.should_block

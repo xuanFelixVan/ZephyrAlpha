@@ -4,13 +4,13 @@ Escalation Protocol data models — MOD-INF-022
 Defines escalation events, levels (L0-L4), rules, delegation decisions, and economic guards.
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md
 """
+
 from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 
 class EscalationLevel(Enum):
@@ -57,18 +57,18 @@ class DelegationStrategy(Enum):
 class EscalationEvent:
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     module_id: str = "MOD-INF-022"
-    source_event_id: Optional[str] = None
+    source_event_id: str | None = None
     category: RuleCategory = RuleCategory.CUSTOM
     level: EscalationLevel = EscalationLevel.L0_SELF_HEAL
     state: EscalationState = EscalationState.DETECTED
     description: str = ""
-    owner_id: Optional[str] = None
-    delegate_id: Optional[str] = None
+    owner_id: str | None = None
+    delegate_id: str | None = None
     retry_count: int = 0
     max_retries: int = 3
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    resolved_at: Optional[datetime] = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    resolved_at: datetime | None = None
     circuit_breaker_triggered: bool = False
     economic_guard_passed: bool = True
     metadata: dict[str, object] = field(default_factory=dict)
@@ -95,7 +95,7 @@ class EconomicGuard:
     max_cost_per_escalation: float = 5.0
     daily_budget: float = 100.0
     consumed_today: float = 0.0
-    last_reset: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_reset: datetime = field(default_factory=lambda: datetime.now(UTC))
     hard_limit_reached: bool = False
 
     def can_proceed(self, estimated_cost: float = 1.0) -> bool:
@@ -112,7 +112,7 @@ class EconomicGuard:
         self.consumed_today += cost
 
     def _maybe_reset(self) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if (now - self.last_reset).days >= 1:
             self.consumed_today = 0.0
             self.hard_limit_reached = False
@@ -124,7 +124,7 @@ class EscalationResult:
     event: EscalationEvent
     escalated: bool
     new_level: EscalationLevel
-    delegated_to: Optional[str] = None
+    delegated_to: str | None = None
     circuit_broken: bool = False
     message: str = ""
     suggestion: str = ""
@@ -135,23 +135,66 @@ class DelegationRecord:
     delegation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     from_owner: str = ""
     to_delegate: str = ""
-    task_id: Optional[str] = None
+    task_id: str | None = None
     strategy: DelegationStrategy = DelegationStrategy.LOAD_BALANCED
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    expires_at: Optional[datetime] = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    expires_at: datetime | None = None
     accepted: bool = False
     completed: bool = False
 
 
 DEFAULT_ESCALATION_RULES: list[EscalationRule] = [
-    EscalationRule("R001", RuleCategory.AUTO_GUARD_FAILURE, EscalationLevel.L1_AUTO_FIX, priority=10, cooldown_seconds=60, delegate_strategy=DelegationStrategy.NONE),
-    EscalationRule("R002", RuleCategory.BUDGET_EXCEEDED, EscalationLevel.L2_HUMAN_REVIEW, priority=20, cooldown_seconds=300),
-    EscalationRule("R003", RuleCategory.DRIFT_DETECTED, EscalationLevel.L1_AUTO_FIX, priority=15, cooldown_seconds=120, delegate_strategy=DelegationStrategy.EXPERTISE_MATCH),
-    EscalationRule("R004", RuleCategory.DEADLOCK, EscalationLevel.L3_CRITICAL, priority=50, cooldown_seconds=60, delegate_strategy=DelegationStrategy.LOAD_BALANCED),
+    EscalationRule(
+        "R001",
+        RuleCategory.AUTO_GUARD_FAILURE,
+        EscalationLevel.L1_AUTO_FIX,
+        priority=10,
+        cooldown_seconds=60,
+        delegate_strategy=DelegationStrategy.NONE,
+    ),
+    EscalationRule(
+        "R002", RuleCategory.BUDGET_EXCEEDED, EscalationLevel.L2_HUMAN_REVIEW, priority=20, cooldown_seconds=300
+    ),
+    EscalationRule(
+        "R003",
+        RuleCategory.DRIFT_DETECTED,
+        EscalationLevel.L1_AUTO_FIX,
+        priority=15,
+        cooldown_seconds=120,
+        delegate_strategy=DelegationStrategy.EXPERTISE_MATCH,
+    ),
+    EscalationRule(
+        "R004",
+        RuleCategory.DEADLOCK,
+        EscalationLevel.L3_CRITICAL,
+        priority=50,
+        cooldown_seconds=60,
+        delegate_strategy=DelegationStrategy.LOAD_BALANCED,
+    ),
     EscalationRule("R005", RuleCategory.TIMEOUT, EscalationLevel.L1_AUTO_FIX, priority=8, cooldown_seconds=60),
-    EscalationRule("R006", RuleCategory.QUALITY_DEGRADATION, EscalationLevel.L2_HUMAN_REVIEW, priority=12, cooldown_seconds=600),
-    EscalationRule("R007", RuleCategory.SECURITY_VIOLATION, EscalationLevel.L4_EMERGENCY, priority=100, cooldown_seconds=30),
-    EscalationRule("R008", RuleCategory.OWNER_ABSENT, EscalationLevel.L2_HUMAN_REVIEW, priority=25, cooldown_seconds=300, delegate_strategy=DelegationStrategy.LOAD_BALANCED),
-    EscalationRule("R009", RuleCategory.CASCADE_FAILURE, EscalationLevel.L3_CRITICAL, priority=60, cooldown_seconds=120),
-    EscalationRule("R010", RuleCategory.REWARD_HACKING_REBOUND, EscalationLevel.L4_EMERGENCY, priority=200, cooldown_seconds=0, delegate_strategy=DelegationStrategy.NONE),
+    EscalationRule(
+        "R006", RuleCategory.QUALITY_DEGRADATION, EscalationLevel.L2_HUMAN_REVIEW, priority=12, cooldown_seconds=600
+    ),
+    EscalationRule(
+        "R007", RuleCategory.SECURITY_VIOLATION, EscalationLevel.L4_EMERGENCY, priority=100, cooldown_seconds=30
+    ),
+    EscalationRule(
+        "R008",
+        RuleCategory.OWNER_ABSENT,
+        EscalationLevel.L2_HUMAN_REVIEW,
+        priority=25,
+        cooldown_seconds=300,
+        delegate_strategy=DelegationStrategy.LOAD_BALANCED,
+    ),
+    EscalationRule(
+        "R009", RuleCategory.CASCADE_FAILURE, EscalationLevel.L3_CRITICAL, priority=60, cooldown_seconds=120
+    ),
+    EscalationRule(
+        "R010",
+        RuleCategory.REWARD_HACKING_REBOUND,
+        EscalationLevel.L4_EMERGENCY,
+        priority=200,
+        cooldown_seconds=0,
+        delegate_strategy=DelegationStrategy.NONE,
+    ),
 ]

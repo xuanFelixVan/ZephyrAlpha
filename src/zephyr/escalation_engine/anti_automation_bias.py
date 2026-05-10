@@ -9,14 +9,16 @@ Actively counters Owner automation bias through:
 Reference: Georgetown CSET automation bias report, EU AI Act Art.14,
 Anthropic Sycophancy 58.19%, UPenn Cialdini six principles.
 """
+
 from __future__ import annotations
 
 import hashlib
 import random
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Sequence
+from typing import Any
 
 
 class OversightAction(str, Enum):
@@ -103,8 +105,11 @@ class AntiAutomationBias:
         return self._fatigue_level
 
     def evaluate(
-        self, operation_id: str, is_autonomous: bool = False,
-        actor_identity: str = "", operation_content: str = "",
+        self,
+        operation_id: str,
+        is_autonomous: bool = False,
+        actor_identity: str = "",
+        operation_content: str = "",
     ) -> OversightResult:
         """Evaluate whether an operation needs forced human review.
 
@@ -127,28 +132,36 @@ class AntiAutomationBias:
             return OversightResult(
                 OversightAction.FORCE_REVIEW,
                 "Owner fatigue elevated — forcing additional review",
-                forced_review=True, timeout_s=self._review_timeout_s,
+                forced_review=True,
+                timeout_s=self._review_timeout_s,
             )
         if self._consecutive_confirms >= 10:
             return OversightResult(
                 OversightAction.FORCE_REVIEW,
                 f"Mechanical confirmation pattern detected ({self._consecutive_confirms} consecutive) — forcing review",
-                forced_review=True, timeout_s=self._review_timeout_s,
+                forced_review=True,
+                timeout_s=self._review_timeout_s,
             )
 
         if self._should_force_review():
             return OversightResult(
                 OversightAction.FORCE_REVIEW,
                 f"Random sampling hit (1/{int(1/self._forced_review_ratio)} autonomous ops)",
-                forced_review=True, timeout_s=self._review_timeout_s,
+                forced_review=True,
+                timeout_s=self._review_timeout_s,
             )
         return OversightResult(OversightAction.PASS, "Passed sampling gate")
 
     def record_review(
-        self, operation_id: str, decision: ReviewDecision, response_time_s: float = 0.0,
+        self,
+        operation_id: str,
+        decision: ReviewDecision,
+        response_time_s: float = 0.0,
     ) -> None:
         record = ReviewRecord(
-            operation_id=operation_id, decision=decision, response_time_s=response_time_s,
+            operation_id=operation_id,
+            decision=decision,
+            response_time_s=response_time_s,
         )
         self._review_records.append(record)
         if decision == ReviewDecision.TIMED_OUT:
@@ -171,8 +184,11 @@ class AntiAutomationBias:
                 rec.was_safe_in_audit = not actually_unsafe
 
     def evaluate_review_quality(self) -> dict[str, Any]:
-        reviewed = [r for r in self._review_records if r.decision == ReviewDecision.CONFIRMED_SAFE
-                    and r.was_safe_in_audit is not None]
+        reviewed = [
+            r
+            for r in self._review_records
+            if r.decision == ReviewDecision.CONFIRMED_SAFE and r.was_safe_in_audit is not None
+        ]
         if not reviewed:
             return {"miss_rate": None, "total_reviewed": 0, "target": "≤ 1%"}
         misses = sum(1 for r in reviewed if r.was_safe_in_audit is False)
@@ -184,15 +200,21 @@ class AntiAutomationBias:
         }
 
     def probe_sycophancy(
-        self, operation_content: str, framing_a: str, framing_b: str,
-        decision_a: str, decision_b: str,
+        self,
+        operation_content: str,
+        framing_a: str,
+        framing_b: str,
+        decision_a: str,
+        decision_b: str,
     ) -> SycophancyProbe:
         content_hash = hashlib.sha256(operation_content.encode()).hexdigest()[:16]
         consistent = decision_a == decision_b
         probe = SycophancyProbe(
             content_hash=content_hash,
-            original_framing=framing_a, alternate_framing=framing_b,
-            original_decision=decision_a, alternate_decision=decision_b,
+            original_framing=framing_a,
+            alternate_framing=framing_b,
+            original_decision=decision_a,
+            alternate_decision=decision_b,
             consistent=consistent,
         )
         self._sycophancy_probes.append(probe)
@@ -211,7 +233,8 @@ class AntiAutomationBias:
 
         avg_response = (
             sum(self._last_response_times) / max(1, len(self._last_response_times))
-            if self._last_response_times else 0.0
+            if self._last_response_times
+            else 0.0
         )
         trend = self._compute_response_trend()
         quality = self.evaluate_review_quality()
@@ -262,8 +285,7 @@ class AntiAutomationBias:
         elif older_avg > 0 and recent_avg / older_avg > 1.25:
             self._fatigue_level = FatigueLevel.ELEVATED
         else:
-            confirmed = [r for r in self._review_records[-20:]
-                        if r.decision != ReviewDecision.TIMED_OUT]
+            confirmed = [r for r in self._review_records[-20:] if r.decision != ReviewDecision.TIMED_OUT]
             if confirmed:
                 block_rate = sum(1 for r in confirmed if r.decision == ReviewDecision.OVERRIDDEN) / len(confirmed)
                 if block_rate < 0.3:
@@ -280,15 +302,35 @@ class AntiSycophancyFilter:
     sycophantic bias where the engine "agrees" with a confident/authoritative tone.
     """
 
-    IDENTITY_KEYS = frozenset({
-        "actor_name", "actor_role", "actor_level", "actor_tenure",
-        "owner_id", "agent_version", "session_id",
-    })
-    EMOTIONAL_MARKERS = frozenset({
-        "urgent", "critical", "please", "kindly", "important",
-        "asap", "immediately", "trust me", "i promise", "you must",
-        "don't worry", "it's fine", "nothing to see", "harmless",
-    })
+    IDENTITY_KEYS = frozenset(
+        {
+            "actor_name",
+            "actor_role",
+            "actor_level",
+            "actor_tenure",
+            "owner_id",
+            "agent_version",
+            "session_id",
+        }
+    )
+    EMOTIONAL_MARKERS = frozenset(
+        {
+            "urgent",
+            "critical",
+            "please",
+            "kindly",
+            "important",
+            "asap",
+            "immediately",
+            "trust me",
+            "i promise",
+            "you must",
+            "don't worry",
+            "it's fine",
+            "nothing to see",
+            "harmless",
+        }
+    )
 
     @classmethod
     def strip_identity(cls, metadata: dict[str, Any]) -> dict[str, Any]:
@@ -302,6 +344,7 @@ class AntiSycophancyFilter:
     @classmethod
     def normalize_framing(cls, content: str) -> str:
         import re
+
         markers = cls.detect_emotional_markers(content)
         normalized = content
         for marker in markers:
@@ -310,7 +353,9 @@ class AntiSycophancyFilter:
 
     @classmethod
     def verify_consistency(
-        cls, operation_content: str, framing_variants: Sequence[str],
+        cls,
+        operation_content: str,
+        framing_variants: Sequence[str],
         decision_fn,  # Callable[[str], str]
     ) -> list[SycophancyProbe]:
         probes: list[SycophancyProbe] = []
@@ -318,12 +363,14 @@ class AntiSycophancyFilter:
         content_hash = hashlib.sha256(operation_content.encode()).hexdigest()[:16]
         for variant in framing_variants:
             variant_decision = decision_fn(variant)
-            probes.append(SycophancyProbe(
-                content_hash=content_hash,
-                original_framing=operation_content,
-                alternate_framing=variant,
-                original_decision=base_decision,
-                alternate_decision=variant_decision,
-                consistent=base_decision == variant_decision,
-            ))
+            probes.append(
+                SycophancyProbe(
+                    content_hash=content_hash,
+                    original_framing=operation_content,
+                    alternate_framing=variant,
+                    original_decision=base_decision,
+                    alternate_decision=variant_decision,
+                    consistent=base_decision == variant_decision,
+                )
+            )
         return probes
