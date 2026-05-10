@@ -1,9 +1,9 @@
 ---
 module_id: "GOV-RSTR-001"
-title: "系统重组总蓝图 v3.4.1 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
+title: "系统重组总蓝图 v3.5.0 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "3.4.1"
+version: "3.5.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -29,7 +29,7 @@ depends_on:
 
 # 系统重组总蓝图
 
-> module_id: GOV-RSTR-001 | version: 3.4.1 | status: active | layer: cross_layer
+> module_id: GOV-RSTR-001 | version: 3.5.0 | status: active | layer: cross_layer
 
 ---
 
@@ -604,7 +604,7 @@ applicable_rules:
 
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
-| SRC-0021 | 修复resource_optimization测试失败 | false | 无 |
+| SRC-0021 | 修复resource_optimization测试失败 ✅ | false | 无 |
 | SRC-0022 | 接入真实LLM API | false | SRC-0021 |
 
 **Phase 2（12卡）**：
@@ -704,8 +704,8 @@ applicable_rules:
 
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
-| SRC-0066 | task_repo评估 | false | SRC-0021 |
-| SRC-0067 | _gen_inherited评估 | false | SRC-0021 |
+| SRC-0066 | task_repo拆分 ✅ | true | SRC-0021 |
+| SRC-0067 | _gen_inherited拆分 ✅ | true | SRC-0021 |
 
 ### 11.0e 重组-蓝图同步工作流
 
@@ -1039,8 +1039,8 @@ applicable_rules:
 |:----:|------|:----------:|
 | 2303 | pipeline/pipeline_orchestrator.py | ✅ §3.3拆分为7组件（原2541行→2303行，-9%） |
 | 443 | drift_detector/drift_engine.py | ✅ §3.3b拆分为5组件（原2134行→443行，-79%） |
-| 1743 | db/task_repo.py | ⚠️ SRC-0066评估中 |
-| 1494 | feedback_loop/_gen_inherited.py | ⚠️ SRC-0067评估中 |
+| 1106 | db/task_repo.py | ✅ SRC-0066 拆分为3模块（原1743行→1106行 + 3新文件 -37%） |
+| 1494 | feedback_loop/_gen_inherited.py | ✅ SRC-0067 拆分为2模块（原1494行→_gen_inherited.py + _gen_utils.py） |
 | 1167 | gates/gate_engine.py | ✅ Phase 4 注册表化 |
 | 1001 | pipeline/models.py | ⚠️ 建议 SRC-0068a |
 
@@ -1100,6 +1100,8 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.5.1 | **SRC-0021 完成！修复 resource_optimization 测试失败**：修复 6 个测试失败——(1) `config/resource_optimization.yaml` 进程阈值 150/300/500 对齐代码默认值 50/100/250（修复 3 个 process threshold 断言测试）；(2) `test_brain_integration.py` 中 2 个 AutoRuntimeCoreLifecycle 测试增加 `patch.object(core, "_start_local_models")` 防止 Ollama HTTP 超时挂起 25s+；(3) `ai_audit_logger.py` `_write()` 增加 `with` 语句关闭文件句柄（修复 ResourceWarning→ExceptionGroup）；(4) `night_shift_queue.py` `_count_existing()` 增加 `with` 语句关闭文件句柄。**零 breaking change**：所有 122 个 resource_optimization 测试全部通过。Git commit: `2efc24b41`。 |
+| 2026-05-10 | 3.5.0 | **SRC-0066 完成！task_repo.py 拆分 1743→3模块**：原单体 1744 行拆分为 `base_repo.py`（314行，异常类+状态机表+工具函数+search）、`transition.py`（258行，TransitionMixin：transition()+依赖重算）、`query.py`（208行，QueryMixin：全部list_by_*/query_tasks/JSON1查询）。`task_repo.py` 缩减为 1106 行（-37%），继承 `TaskRepository(TransitionMixin, QueryMixin)`，保留 create/update/upsert/delete/治理/批量调度。**零 breaking change**：所有 9 个下游 consumer 的 `from zephyr.db.task_repo import` 路径无需修改。311 个 task_repo+gate_engine+red_team+import_chain 测试全部通过。 |
 | 2026-05-10 | 3.4.1 | **SRC-0036 完成！event_bus 副本→shared 真源合并**：`shared/event_bus.py` 从 181 行扩展为 261 行（v0.3.0），合并 `core/events/event_bus.py` 的 `EventType`（11 个任务事件枚举）、`DomainEvent`（领域事件 dataclass）、`EventBus`（单例任务事件总线）。`core/events/event_bus.py` 从 91 行改为 17 行向后兼容 shim（re-export from shared）。3 个下游模块（`event_reactor.py`、`event_store.py`、`hook_dispatcher.py`）通过 shim 透明导入，无需修改 import 路径。 |
 | 2026-05-10 | 3.4.0 | **SRC-0041 完成！kill_switch×4副本→shared真源**：`shared/kill_switch.py` 从10行re-export扩展为统一SSoT导出枢纽（39行），导入4个源文件的所有公开类/函数，使用别名解决类名冲突（AgentKillSwitch / ContextKillSwitch / GovernanceKillSwitch / KillSwitchManager）。`agent_rbac/kill_switch.py`、`context_engine/kill_switch.py`、`governance/kill_switch.py` 三份副本添加SRC-0041标记注释（保留独立实现，待后续审查合并）。外部引用路径无需修改（3个文件均直接导入各自源路径，无breaking change）。121个kill_switch+circuit_breaker测试全部通过，25个import链测试通过。Git commit: `6058fbed2`。 |
 | 2026-05-10 | 3.3.0 | **Phase 2c 完成！SRC-0068 10个大文件拆分评估**：附录B大文件行数更新为当前实际值（pipeline_orchestrator.py 2303行、drift_engine.py 443行、task_repo.py 1743行、gate_engine.py 1167行等）。新增 §3.4 评估报告——10个目标文件拆分优先级排序、策略建议、预估产出。B.1/B.2 状态全部刷新为"已评估（见 §3.4）"或当前实际处理状态。 |
