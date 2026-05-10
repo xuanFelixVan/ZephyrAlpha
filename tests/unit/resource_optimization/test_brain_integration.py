@@ -97,8 +97,11 @@ class TestAutoRuntimeCoreLifecycle:
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
-            with patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=True)):
-                core.boot()
+            # _start_local_models 会尝试连接本地 Ollama 服务（HTTP/localhost:11434），
+            # 在无 Ollama 的环境中挂起 25s+，必须 mock 掉。
+            with patch.object(core, "_start_local_models"):
+                with patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=True)):
+                    core.boot()
             mock_engine.start_monitor.assert_called_once_with(interval=30.0)
 
     def test_shutdown_stops_engine_monitor(self):
@@ -111,8 +114,10 @@ class TestAutoRuntimeCoreLifecycle:
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
-            with patch.object(core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()):
-                core.shutdown()
+            # _start_local_models 同上，boot() 中被调用时触发 Ollama 连接
+            with patch.object(core, "_start_local_models"):
+                with patch.object(core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()):
+                    core.shutdown()
             mock_engine.stop_monitor.assert_called_once()
 
     def test_boot_skips_engine_on_failure(self):

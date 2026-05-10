@@ -9,9 +9,9 @@ pressure_thresholds:
   cpu_warning_percent: 80.0
   cpu_critical_percent: 90.0
   cpu_emergency_percent: 98.0
-  process_warning_count: 150
-  process_critical_count: 300
-  process_emergency_count: 500
+  process_warning_count: 50
+  process_critical_count: 100
+  process_emergency_count: 250
 
 hysteresis:
   confirmation_count: 2

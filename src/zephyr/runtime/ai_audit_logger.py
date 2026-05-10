@@ -48,7 +48,8 @@ class AiAuditLogger:
     def _write(self, entry: _LogEntry) -> None:
         with self._lock:
             line = entry.model_dump_json() + "\n"
-            self._date_file().open("a", encoding="utf-8").write(line)
+            with self._date_file().open("a", encoding="utf-8") as f:
+                f.write(line)
             self._pending_count += 1
 
     def log_inference(

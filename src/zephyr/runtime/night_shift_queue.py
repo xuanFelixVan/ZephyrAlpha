@@ -45,8 +45,9 @@ class NightShiftQueue:
         if not self._path.exists():
             return 0
         count = 0
-        for _ in self._path.open(encoding="utf-8"):
-            count += 1
+        with self._path.open(encoding="utf-8") as f:
+            for _ in f:
+                count += 1
         return count
 
     def _next_id(self) -> str:
