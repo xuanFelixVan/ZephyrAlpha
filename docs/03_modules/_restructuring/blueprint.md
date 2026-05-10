@@ -638,7 +638,7 @@ applicable_rules:
 | SRC-0036 | 合并：event_bus副本→shared | true | SRC-0035 |
 | SRC-0037 | 合并：event_bus_upgrade版本分叉→独立命名 | true | SRC-0036 |
 | SRC-0038 | 合并：drift_detector副本→真源 ✅ | true | SRC-0035 |
-| SRC-0039 | 合并：escalation→escalation_engine独立保留 | true | SRC-0035 |
+| SRC-0039 | ✅ 合并：escalation→escalation_engine独立保留 | true | SRC-0035 |
 | SRC-0040 | 合并：asset_inventory同类合并 | true | SRC-0035 |
 | SRC-0041 | 合并：kill_switch×4副本→shared真源 ✅ | true | SRC-0035 |
 | SRC-0042 | ✅ 合并：unified_memory_api顶层副本→storage真源 | true | SRC-0035 |

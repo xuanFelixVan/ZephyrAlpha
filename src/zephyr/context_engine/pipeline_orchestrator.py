@@ -7,9 +7,16 @@ Depends    : MOD-INF-008-TASK-002~005 (四阶段流水线完成)
 
 职责
 ----
-编排 Build→Compress→Validate→Inject 四阶段流水线，作为 CE 的统一入口。
+编排 Build->Compress->Validate->Inject 四阶段流水线, 作为 CE 的统一入口.
 
 已有测试 Ghost: tests/test_pipeline_orchestrator.py
+
+SRC-0043: 版本分叉 -- 与 pipeline/pipeline_orchestrator.py 职责不同, 保留独立实现
+  - 本模块负责 Context Injection 四阶段流水线 (Build->Compress->Validate->Inject)
+  - pipeline/pipeline_orchestrator.py 负责 M1-M11 管线协调 (生产+审计双管线)
+  - 两个模块的类型系统 (PipelineMetrics/PipelineResult vs PipelineStatus/ModuleResult)
+    语义完全不同, 不需要共享类型导入
+  - 如未来需要统一上下文注入与 M 管线编排, 应通过组合而非合并
 """
 
 from __future__ import annotations
@@ -103,7 +110,7 @@ class PipelineOrchestrator:
         target_layer: str = "",
         session_id: str = "",
         user_prompt: str = "",
-        task: "Any | None" = None,
+        task: Any | None = None,
     ) -> PipelineResult:
         """运行完整四阶段流水线。
 
@@ -142,10 +149,7 @@ class PipelineOrchestrator:
             )
 
         combined_text = "\n\n".join(
-            raw_ctx.ke_entries
-            + raw_ctx.vibe_rules
-            + raw_ctx.blueprints
-            + raw_ctx.failure_patterns
+            raw_ctx.ke_entries + raw_ctx.vibe_rules + raw_ctx.blueprints + raw_ctx.failure_patterns
         )
 
         phase_start = time.monotonic()
