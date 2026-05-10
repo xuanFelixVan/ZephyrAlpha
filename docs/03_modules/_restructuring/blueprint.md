@@ -641,7 +641,7 @@ applicable_rules:
 | SRC-0039 | 合并：escalation→escalation_engine独立保留 | true | SRC-0035 |
 | SRC-0040 | 合并：asset_inventory同类合并 | true | SRC-0035 |
 | SRC-0041 | 合并：kill_switch×4副本→shared真源 ✅ | true | SRC-0035 |
-| SRC-0042 | 合并：unified_memory_api顶层副本→storage真源 | true | SRC-0035 |
+| SRC-0042 | ✅ 合并：unified_memory_api顶层副本→storage真源 | true | SRC-0035 |
 | SRC-0043 | 合并：context_engine/pipeline_orchestrator轻量版→pipeline真源 | true | SRC-0035 |
 
 **Phase 3b（1卡）**：

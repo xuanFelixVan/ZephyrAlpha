@@ -37,8 +37,8 @@ Collection: ``unified_memory``
 - 不直接 import M1 / M3 / M4 模块（避免循环依赖）
 - 通过 ``get_chroma_client()`` 复用 ChromaDB 单例（与 kb_repo 共享）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import logging
 import threading
@@ -482,7 +482,7 @@ class UnifiedMemoryAPI:
 
     生产用法
     --------
-        from zephyr.kb.storage.unified_memory_api import get_unified_memory_api, build_provenance
+        from zephyr.kb.unified_memory_api import get_unified_memory_api, build_provenance
 
         kb = get_unified_memory_api()
         prov = build_provenance(origin="M1:doc_compressor", audit_chain=["T-V2-006"])
@@ -510,7 +510,7 @@ class UnifiedMemoryAPI:
         self._enforce_cbac = enforce_capability
 
     @property
-    def backend(self) -> Self:
+    def backend(self) -> MemoryBackend:
         return self._backend
 
     # ------------------------------------------------------------------
@@ -663,23 +663,36 @@ def get_unified_memory_api(
     backend: MemoryBackend | None = None,
     enforce_capability: bool = True,
     reset: bool = False,
-) -> Self:
+    prefer_vms: bool = True,
+) -> UnifiedMemoryAPI:
     """返回 UnifiedMemoryAPI 模块级单例（线程安全）。
 
     参数
     ----
     backend
-        指定后端；None 时延迟构建 ChromaMemoryBackend。
+        指定后端；None 时按 prefer_vms 策略自动选择。
     enforce_capability
         是否启用 CBAC 校验；默认 True。
     reset
         强制重建单例（仅测试使用）。
+    prefer_vms
+        当 backend=None 时是否优先使用 VMS 后端；默认 True。
+        VMS 不可用时自动降级到 ChromaMemoryBackend。
     """
     global _singleton_api
     with _singleton_lock:
         if reset or _singleton_api is None:
+            resolved_backend = backend
+            if resolved_backend is None and prefer_vms:
+                try:
+                    from zephyr.kb.vms_memory_backend import create_vms_backend
+
+                    resolved_backend = create_vms_backend()
+                    _logger.info("get_unified_memory_api: using VMSMemoryBackend")
+                except Exception as exc:
+                    _logger.info("get_unified_memory_api: VMS unavailable, falling back to ChromaDB: %s", exc)
             _singleton_api = UnifiedMemoryAPI(
-                backend=backend,
+                backend=resolved_backend,
                 enforce_capability=enforce_capability,
             )
         return _singleton_api
@@ -697,7 +710,7 @@ def build_provenance(
     origin: str,
     audit_chain: list[str],
     arbitration: str | None = None,
-) -> Self:
+) -> WriteTrace:
     """便捷构造器：避免调用方重复 import WriteTrace。
 
     示例
