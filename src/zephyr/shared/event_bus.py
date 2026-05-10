@@ -2,6 +2,11 @@
 EventBus — 事件总线（带背压控制）(M-07)
 职责：模块间异步事件分发，队列深度超 CAP-006 阈值时背压减速。
 
+v0.3.0: SRC-0036 — 合并 core/events/event_bus.py 的 EventType/DomainEvent/EventBus
+  - EventType 枚举（任务生命周期 + Gate + Scope Drift）
+  - DomainEvent dataclass（领域事件）
+  - EventBus 单例（任务事件发布/订阅，兼容 event_reactor/hook_dispatcher）
+
 v0.2.0: EventBus + ContractBus 桥接
   - emit() 可选 contract_id 参数，指定后自动经 ContractBus Schema 校验
   - 校验失败的事件被拒绝（不进入队列），返回 False
@@ -18,10 +23,100 @@ import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Optional
 
 _logger = logging.getLogger(__name__)
+
+
+# ── SRC-0036: 从 core/events/event_bus.py 合并的符号 ──────────────────────
+
+class EventType(str, Enum):
+    """任务生命周期事件类型（MOD-INF-006 §6.13.1）"""
+    TASK_CREATED = "task.created"
+    TASK_LOCKED = "task.locked"
+    TASK_ASSIGNED = "task.assigned"
+    TASK_STARTED = "task.started"
+    TASK_COMPLETED = "task.completed"
+    TASK_FAILED = "task.failed"
+    TASK_ROLLBACK = "task.rollback"
+    GATE_PASSED = "gate.passed"
+    GATE_FAILED = "gate.failed"
+    SCOPE_DRIFT = "scope.drift"
+    DEPENDENCY_RESOLVED = "dependency.resolved"
+
+
+@dataclass
+class DomainEvent:
+    """领域事件（任务相关）"""
+    event_id: str
+    event_type: EventType
+    task_id: str
+    payload: dict[str, Any]
+    timestamp_utc: str
+
+
+EventHandler = Callable[[DomainEvent], None]
+
+
+class EventBus:
+    """
+    任务事件发布/订阅总线（单例模式）
+    与 EventBusBackpressure 互补：EventBus 面向领域事件，EventBusBackpressure 面向系统事件
+
+    v0.3.0: 从 core/events/event_bus.py 合并（SRC-0036）
+    """
+
+    _instance: "EventBus | None" = None
+
+    def __init__(self) -> None:
+        self._subscribers: dict[EventType, list[EventHandler]] = {
+            et: [] for et in EventType
+        }
+        self._event_log: list[DomainEvent] = []
+
+    @classmethod
+    def get_instance(cls) -> "EventBus":
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def subscribe(self, event_type: EventType, handler: EventHandler) -> None:
+        if event_type in self._subscribers:
+            self._subscribers[event_type].append(handler)
+
+    def publish(self, event_type: EventType, task_id: str,
+                payload: dict[str, Any] | None = None) -> DomainEvent:
+        event = DomainEvent(
+            event_id=f"EV-{task_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            event_type=event_type,
+            task_id=task_id,
+            payload=payload or {},
+            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+        )
+
+        self._event_log.append(event)
+
+        for handler in self._subscribers.get(event_type, []):
+            try:
+                handler(event)
+            except Exception:
+                pass
+
+        return event
+
+    def get_events_for_task(self, task_id: str) -> list[DomainEvent]:
+        return [e for e in self._event_log if e.task_id == task_id]
+
+    def get_recent_events(self, limit: int = 50) -> list[DomainEvent]:
+        return self._event_log[-limit:]
+
+    def clear(self) -> None:
+        self._event_log.clear()
+
+
+# ── 原有符号（v0.1.0–v0.2.0）──────────────────────────────────────────
 
 
 class EventPriority(Enum):

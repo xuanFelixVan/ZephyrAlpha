@@ -1,9 +1,9 @@
 ---
 module_id: "GOV-RSTR-001"
-title: "系统重组总蓝图 v3.3 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
+title: "系统重组总蓝图 v3.4.1 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "3.3.0"
+version: "3.4.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -29,7 +29,7 @@ depends_on:
 
 # 系统重组总蓝图
 
-> module_id: GOV-RSTR-001 | version: 3.3.0 | status: active | layer: cross_layer
+> module_id: GOV-RSTR-001 | version: 3.4.1 | status: active | layer: cross_layer
 
 ---
 
@@ -635,7 +635,7 @@ applicable_rules:
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
 | SRC-0035 | 合并：telemetry→l12 ✅ | true | SRC-0021 |
-| SRC-0036 | 合并：event_bus副本→shared | true | SRC-0035 |
+| SRC-0036 | ✅ 合并：event_bus副本→shared | true | SRC-0035 |
 | SRC-0037 | 合并：event_bus_upgrade版本分叉→独立命名 | true | SRC-0036 |
 | SRC-0038 | 合并：drift_detector副本→真源 ✅ | true | SRC-0035 |
 | SRC-0039 | ✅ 合并：escalation→escalation_engine独立保留 | true | SRC-0035 |
@@ -1100,6 +1100,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.4.1 | **SRC-0036 完成！event_bus 副本→shared 真源合并**：`shared/event_bus.py` 从 181 行扩展为 261 行（v0.3.0），合并 `core/events/event_bus.py` 的 `EventType`（11 个任务事件枚举）、`DomainEvent`（领域事件 dataclass）、`EventBus`（单例任务事件总线）。`core/events/event_bus.py` 从 91 行改为 17 行向后兼容 shim（re-export from shared）。3 个下游模块（`event_reactor.py`、`event_store.py`、`hook_dispatcher.py`）通过 shim 透明导入，无需修改 import 路径。 |
 | 2026-05-10 | 3.4.0 | **SRC-0041 完成！kill_switch×4副本→shared真源**：`shared/kill_switch.py` 从10行re-export扩展为统一SSoT导出枢纽（39行），导入4个源文件的所有公开类/函数，使用别名解决类名冲突（AgentKillSwitch / ContextKillSwitch / GovernanceKillSwitch / KillSwitchManager）。`agent_rbac/kill_switch.py`、`context_engine/kill_switch.py`、`governance/kill_switch.py` 三份副本添加SRC-0041标记注释（保留独立实现，待后续审查合并）。外部引用路径无需修改（3个文件均直接导入各自源路径，无breaking change）。121个kill_switch+circuit_breaker测试全部通过，25个import链测试通过。Git commit: `6058fbed2`。 |
 | 2026-05-10 | 3.3.0 | **Phase 2c 完成！SRC-0068 10个大文件拆分评估**：附录B大文件行数更新为当前实际值（pipeline_orchestrator.py 2303行、drift_engine.py 443行、task_repo.py 1743行、gate_engine.py 1167行等）。新增 §3.4 评估报告——10个目标文件拆分优先级排序、策略建议、预估产出。B.1/B.2 状态全部刷新为"已评估（见 §3.4）"或当前实际处理状态。 |
 | 2026-05-10 | 3.2.0 | **Phase 2b 完成！SRC-0030~0034 drift拆分5组件全部完成**：SRC-0030 DriftEngine编排器精简 + SRC-0031 DriftInfrastructure修复导入路径 + SRC-0032 AIConstructionDetectors（7个detect_*方法全部补充docstring，455行）+ SRC-0033 DriftResultTypes（7个*Result数据类+9个detect_*函数全部补充docstring，937行）+ SRC-0034 DriftTraining（3个数据类+8个函数全部补充docstring，407行）。修复 `a2a_red_team.py` 截断的 `_attack_session_smuggling` 方法并补充完整实现。更新 `test_trigger_router.py` 中 `handle_drift_stub` 测试以匹配 operational 阶段行为。28个 drift 相关测试全部通过。 |
