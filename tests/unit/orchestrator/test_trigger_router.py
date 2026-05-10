@@ -16,8 +16,8 @@ T-V2-007 单元测试 — TriggerRouter (RI-03)
   - 默认 stub 处理器签名正确 + 返回 dict
   - 审计日志通过 duck-typed audit_logger 注入
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import textwrap
 from pathlib import Path
@@ -516,7 +516,6 @@ class TestDefaultStubHandlers:
         "stub, expected",
         [
             (handle_onboarding_stub, "onboarding"),
-            (handle_drift_stub, "drift_detected"),
             (handle_cleanup_stub, "cleanup_due"),
             (handle_blueprint_stub, "blueprint_published"),
         ],
@@ -527,6 +526,14 @@ class TestDefaultStubHandlers:
         assert result["handler"] == expected
         assert result["phase"] == "1d-stub"
         assert "k" in result["received_keys"]
+
+    def test_drift_stub_operational(self):
+        """``handle_drift_stub`` 已升级为真实调用 trigger_recovery，返回 operational。"""
+        result = handle_drift_stub({"k": "v"})
+        assert isinstance(result, dict)
+        assert result["handler"] == "drift_detected"
+        assert result["phase"] == "operational"
+        assert "recovery_result" in result
 
     def test_stub_handles_kwargs(self):
         result = handle_onboarding_stub({"k": "v"}, session_id="s1", extra="x")

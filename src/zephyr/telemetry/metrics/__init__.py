@@ -1,3 +1,6 @@
-"""L12 · metrics — SLI/SLO 与业务指标流"""
+"""Backward-compatibility shim — still imports from local blueprint_metrics (SRC-0035).
 
-__all__ = ['blueprint_metrics']
+For new code, use: from zephyr.l12_system_telemetry.metrics import ...
+"""
+
+__all__ = ["blueprint_metrics"]

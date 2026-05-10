@@ -1,5 +1,8 @@
-"""L12 · ai_behavior — AI 行为遥测（幻觉率/token/规则触发）"""
+"""Backward-compatibility shim — still imports from local event_sink for legacy API (SRC-0035).
+
+For new code, use: from zephyr.l12_system_telemetry.ai_behavior import ...
+"""
 
 from zephyr.telemetry.ai_behavior.event_sink import emit_ai_behavior_event
 
-__all__ = ['emit_ai_behavior_event', 'event_sink']
+__all__ = ["emit_ai_behavior_event", "event_sink"]

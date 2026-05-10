@@ -634,7 +634,7 @@ applicable_rules:
 
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
-| SRC-0035 | 合并：telemetry→l12 | true | SRC-0021 |
+| SRC-0035 | 合并：telemetry→l12 ✅ | true | SRC-0021 |
 | SRC-0036 | 合并：event_bus副本→shared | true | SRC-0035 |
 | SRC-0037 | 合并：event_bus_upgrade版本分叉→独立命名 | true | SRC-0036 |
 | SRC-0038 | 合并：drift_detector副本→真源 | true | SRC-0035 |

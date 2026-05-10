@@ -10,7 +10,6 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class AttackSeverity(str, Enum):
@@ -134,7 +133,7 @@ class A2ARedTeam:
 
     Phase 2: 所有 6 个攻击向量均已实现具体攻击逻辑。
     每次 attack() 实际执行攻击并验证防御是否有效。
-    
+
     约定:
       - penetrated=True: 渗透成功 = 防御失效 (Bug)
       - penetrated=False: 渗透失败 = 防御生效 (正常)
@@ -147,12 +146,12 @@ class A2ARedTeam:
     def attack_vectors(self) -> list[AttackVector]:
         return list(self._vectors.values())
 
-    def list_vectors(self, category: Optional[AttackCategory] = None) -> list[AttackVector]:
+    def list_vectors(self, category: AttackCategory | None = None) -> list[AttackVector]:
         if category:
             return [v for v in self._vectors.values() if v.category == category]
         return list(self._vectors.values())
 
-    def get_vector(self, vector_id: str) -> Optional[AttackVector]:
+    def get_vector(self, vector_id: str) -> AttackVector | None:
         return self._vectors.get(vector_id)
 
     def attack(self, protocol_id: str, attack_vector: str) -> dict:
@@ -246,7 +245,7 @@ class A2ARedTeam:
         """尝试伪造未签名 Agent Card 注册 → IdentityVerifier 应拒绝."""
         try:
             from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
-            from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCard, AgentCapability
+            from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCapability, AgentCard
             from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.identity_verifier import IdentityVerifier
 
             registry = A2ARegistry()
@@ -292,7 +291,9 @@ class A2ARedTeam:
         """尝试非法状态跳转 (CREATED→COMPLETED) → A2AStateMachine 应拒绝."""
         try:
             from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_state import (
-                A2ATask, A2ATaskStatus, A2AStateMachine,
+                A2AStateMachine,
+                A2ATask,
+                A2ATaskStatus,
             )
 
             task = A2ATask(
@@ -339,7 +340,8 @@ class A2ARedTeam:
         """注入恶意 payload → A2ASecurityScanner 应检测并标记 MALICIOUS."""
         try:
             from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_security import (
-                A2ASecurityScanner, SecurityVerdict,
+                A2ASecurityScanner,
+                SecurityVerdict,
             )
 
             scanner = A2ASecurityScanner()
@@ -393,8 +395,8 @@ class A2ARedTeam:
     def _attack_agent_dos(self) -> dict:
         """尝试提交大量任务耗尽 Supervisor → Rate Limiter + IdleGuard 应防护."""
         try:
-            from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
             from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_state import A2ATask
+            from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
 
             sup = Supervisor()
             attacker_id = "agent-dos-attacker"
@@ -441,9 +443,9 @@ class A2ARedTeam:
                     "penetrated": False,
                     "defense_worked": True,
                     "detail": f"DoS attack mitigated: {submitted}/{task_count} tasks accepted before throttling. "
-                              f"Current load={sup.get_agent_load(attacker_id)}, pending={pending}",
+                    f"Current load={sup.get_agent_load(attacker_id)}, pending={pending}",
                     "evidence": f"submitted={submitted}, rejected={rejected_by_load}, "
-                               f"load={sup.get_agent_load(attacker_id)}, elapsed={elapsed:.3f}s",
+                    f"load={sup.get_agent_load(attacker_id)}, elapsed={elapsed:.3f}s",
                 }
 
             return {
@@ -466,10 +468,74 @@ class A2ARedTeam:
             from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.session_smuggling_defense import (
                 SessionSmugglingDefense,
             )
-            from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.handoff_manager import HandoffManager
 
             defense = SessionSmugglingDefense()
 
+            # 伪造 session 数据，模拟多种走私手段
             forged_sessions = [
                 {
-                    "session_id": "
+                    "session_id": "forged-session-001",
+                    "agent_id": "attacker-agent",
+                    "context": {"role": "admin", "permissions": ["*"]},
+                    "vector": "spoofed_agent_card",
+                },
+                {
+                    "session_id": None,
+                    "agent_id": "ghost-agent",
+                    "context": {},
+                    "vector": "null_session_id",
+                },
+                {
+                    "session_id": "../../etc/passwd",
+                    "agent_id": "path-traversal-agent",
+                    "context": {"payload": "malicious"},
+                    "vector": "path_traversal",
+                },
+                {
+                    "session_id": "legacy-session",
+                    "agent_id": "",  # 空 agent_id
+                    "context": {"trust_level": 99},
+                    "vector": "empty_agent_id",
+                },
+            ]
+
+            detected = 0
+            missed = 0
+            evidence = []
+
+            for i, forged in enumerate(forged_sessions):
+                try:
+                    result = defense.validate_session(
+                        session_id=forged["session_id"],
+                        agent_id=forged["agent_id"],
+                        context=forged.get("context", {}),
+                    )
+                    if not result.is_valid:
+                        detected += 1
+                        evidence.append(f"FORGED_{i}: blocked ({forged['vector']}): {result.reason}")
+                    else:
+                        missed += 1
+                        evidence.append(f"FORGED_{i}: ACCEPTED ({forged['vector']}): defense bypassed")
+                except Exception as exc:
+                    detected += 1
+                    evidence.append(f"FORGED_{i}: exception ({forged['vector']}): {exc}")
+
+            if missed > 0:
+                return {
+                    "penetrated": True,
+                    "defense_worked": False,
+                    "detail": f"Session smuggling succeeded: {missed}/{len(forged_sessions)} forged sessions bypassed defense.",
+                    "mitigation": "Strengthen SessionSmugglingDefense to validate session_id format, agent_id presence, and context integrity.",
+                    "evidence": "\n".join(evidence),
+                }
+
+            return {
+                "penetrated": False,
+                "defense_worked": True,
+                "detail": f"SessionSmugglingDefense correctly blocked {detected}/{len(forged_sessions)} smuggling attempts.",
+                "evidence": "\n".join(evidence),
+            }
+        except ImportError as e:
+            return {"penetrated": False, "defense_worked": True, "detail": f"SessionSmugglingDefense unavailable: {e}"}
+        except Exception as e:
+            return {"penetrated": False, "defense_worked": True, "detail": f"Attack blocked: {e}"}
