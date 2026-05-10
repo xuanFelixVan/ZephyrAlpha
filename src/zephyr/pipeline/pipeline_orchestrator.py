@@ -1413,6 +1413,10 @@ class PipelineOrchestrator:
             {"role": "user", "content": user_msg},
         ]
 
+        # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
+        #   Model → API ID: DeepSeek-V4-Pro/deepseek → deepseek-chat, GLM-5.1/glm → glm-4-flash
+        #   Provider config (base_url, api_key_env, default_model) defined in
+        #   zephyr.agent_spec.llm_gateway._PROVIDERS.
         try:
             from zephyr.agent_spec.llm_gateway import LLMGateway, LLMResponse
 
@@ -1433,7 +1437,13 @@ class PipelineOrchestrator:
             provider_used = llm_resp.provider
         else:
             tokens_used = task.estimated_tokens // max(token_divisor, 1)
-            cost_usd = self._cost_tracker.estimate_cost(model, tokens_used)
+            # SRC-0022 fix: use ModelRouter constants directly (was self._cost_tracker.estimate_cost
+            # which crashes in @staticmethod — self is not defined)
+            cost_usd = round(
+                (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
+                + (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0),
+                6,
+            )
             summary_content = f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}"
             simulated = True
             provider_used = model
