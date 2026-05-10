@@ -5,14 +5,13 @@
 capacity-assurance(MOD-INF-001) → runtime-integration(MOD-INF-002)
 → script-system(MOD-INF-005) → task-system(MOD-INF-006)
 """
+
 from __future__ import annotations
 
 import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
-
-import pytest
 
 _PROJECT_ROOT = Path("D:/ZephyrAlpha/")
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
@@ -195,7 +194,7 @@ def test_e2e_pydantic_v2_scanner():
 
 def test_e2e_event_bus_upgrade_plan():
     """E2E：EventBus 升级计划生成"""
-    from zephyr.l01_infrastructure.event_bus_upgrade import EventBusUpgrade
+    from zephyr.shared.upgrade_strategy import EventBusUpgrade
 
     upgrader = EventBusUpgrade()
     plan = upgrader.generate_upgrade_plan(version_from="v1.0.0", version_to="v2.0.0")

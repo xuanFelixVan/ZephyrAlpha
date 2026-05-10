@@ -17,23 +17,26 @@ v0.2.0: EventBus + ContractBus 桥接
   - 超过警戒水位 (CAP-006 = 500) → 生产者减速（sleep / 拒绝）
   - 严重水位 (> 2× threshold) → 丢弃低优先级事件
 """
-import asyncio
+
 import logging
 import threading
 import time
 from collections import deque
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any
 
 _logger = logging.getLogger(__name__)
 
 
 # ── SRC-0036: 从 core/events/event_bus.py 合并的符号 ──────────────────────
 
+
 class EventType(str, Enum):
     """任务生命周期事件类型（MOD-INF-006 §6.13.1）"""
+
     TASK_CREATED = "task.created"
     TASK_LOCKED = "task.locked"
     TASK_ASSIGNED = "task.assigned"
@@ -50,6 +53,7 @@ class EventType(str, Enum):
 @dataclass
 class DomainEvent:
     """领域事件（任务相关）"""
+
     event_id: str
     event_type: EventType
     task_id: str
@@ -71,9 +75,7 @@ class EventBus:
     _instance: "EventBus | None" = None
 
     def __init__(self) -> None:
-        self._subscribers: dict[EventType, list[EventHandler]] = {
-            et: [] for et in EventType
-        }
+        self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}
         self._event_log: list[DomainEvent] = []
 
     @classmethod
@@ -86,14 +88,13 @@ class EventBus:
         if event_type in self._subscribers:
             self._subscribers[event_type].append(handler)
 
-    def publish(self, event_type: EventType, task_id: str,
-                payload: dict[str, Any] | None = None) -> DomainEvent:
+    def publish(self, event_type: EventType, task_id: str, payload: dict[str, Any] | None = None) -> DomainEvent:
         event = DomainEvent(
-            event_id=f"EV-{task_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            event_id=f"EV-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             event_type=event_type,
             task_id=task_id,
             payload=payload or {},
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         self._event_log.append(event)
@@ -190,17 +191,32 @@ class EventBusBackpressure:
             self._handlers.clear()
             return total
 
-    def emit(self, topic: str, payload: Any, priority: EventPriority = EventPriority.NORMAL, *, contract_id: str | None = None) -> bool:
+    def emit(
+        self,
+        topic: str,
+        payload: Any,
+        priority: EventPriority = EventPriority.NORMAL,
+        *,
+        contract_id: str | None = None,
+    ) -> bool:
         if contract_id is not None and self._contract_bus is not None:
             try:
                 validated = self._contract_bus.validate(contract_id, payload)
                 payload = validated
             except Exception as exc:
                 self._contract_rejected_count += 1
-                _logger.warning("EventBus contract validation rejected: topic=%s contract=%s err=%s", topic, contract_id, exc)
+                _logger.warning(
+                    "EventBus contract validation rejected: topic=%s contract=%s err=%s", topic, contract_id, exc
+                )
                 return False
 
-        event = Event(topic=topic, payload=payload, priority=priority, contract_id=contract_id, contract_validated=contract_id is not None)
+        event = Event(
+            topic=topic,
+            payload=payload,
+            priority=priority,
+            contract_id=contract_id,
+            contract_validated=contract_id is not None,
+        )
         with self._lock:
             queue_depth = len(self._queue)
             self._emit_count += 1
@@ -266,6 +282,7 @@ class EventBusBackpressure:
 def _init_bridge() -> None:
     try:
         from zephyr.shared.contract_bus import get_bus
+
         bus.set_contract_bus(get_bus())
     except Exception:
         pass

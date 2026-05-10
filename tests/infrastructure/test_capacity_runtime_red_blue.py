@@ -4,16 +4,13 @@ Capacity & Runtime 红白对抗测试
 对 capacity-assurance 和 runtime-integration 模块进行对抗性验证。
 测试边界条件、异常输入、并发安全、资源耗尽等场景。
 """
+
 from __future__ import annotations
 
 import sys
 import tempfile
 import threading
-import time
-from datetime import UTC, datetime
 from pathlib import Path
-
-import pytest
 
 _PROJECT_ROOT = Path("D:/ZephyrAlpha/")
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
@@ -22,6 +19,7 @@ sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 # ============================================================================
 # capacity-assurance 红白对抗
 # ============================================================================
+
 
 class TestCapacityAssuranceAdversarial:
     """容量保障体系对抗测试"""
@@ -56,7 +54,9 @@ class TestCapacityAssuranceAdversarial:
         ]
         for msg, expected_sev in test_messages:
             report = engine.diagnose(msg, component="test")
-            assert report.severity.value == expected_sev, f"Expected {expected_sev} for '{msg[:30]}...', got {report.severity.value}"
+            assert (
+                report.severity.value == expected_sev
+            ), f"Expected {expected_sev} for '{msg[:30]}...', got {report.severity.value}"
 
     def test_contract_tester_non_existent(self):
         """对抗：不存在的文件"""
@@ -68,9 +68,11 @@ class TestCapacityAssuranceAdversarial:
 
     def test_contract_tester_empty_yaml(self):
         """对抗：空 YAML 文件"""
+        import os
+        import tempfile
+
         from zephyr.l01_infrastructure.contract_tester import ContractTester
 
-        import tempfile, os
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         tmp.write("")
         tmp.close()
@@ -84,9 +86,12 @@ class TestCapacityAssuranceAdversarial:
 
     def test_config_validator_none_fields(self):
         """对抗：null字段应报警告"""
+        import os
+        import tempfile
+
+        import yaml
         from zephyr.l01_infrastructure.config_validator import ConfigValidator
 
-        import tempfile, os, yaml
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         yaml.dump({"version": "1.0", "thresholds": None, "error_budget": 0.5}, tmp)
         tmp.close()
@@ -100,9 +105,12 @@ class TestCapacityAssuranceAdversarial:
 
     def test_config_validator_out_of_range(self):
         """对抗：超范围数值应报警告"""
+        import os
+        import tempfile
+
+        import yaml
         from zephyr.l01_infrastructure.config_validator import ConfigValidator
 
-        import tempfile, os, yaml
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         yaml.dump({"version": "1.0", "timeout": 99999, "max_workers": 999}, tmp)
         tmp.close()
@@ -165,6 +173,7 @@ class TestRuntimeIntegrationAdversarial:
     def test_event_store_integrity_tampering(self):
         """对抗：检测篡改事件"""
         import sqlite3
+
         from zephyr.l01_infrastructure.event_store import EventLevel, EventStore, StoredEvent
 
         db_path = tempfile.mktemp(suffix=".db")
@@ -235,7 +244,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_event_bus_dry_run_safety(self):
         """对抗：dry run 不修改任何状态"""
-        from zephyr.l01_infrastructure.event_bus_upgrade import EventBusUpgrade
+        from zephyr.shared.upgrade_strategy import EventBusUpgrade
 
         upgrader = EventBusUpgrade()
         plan = upgrader.generate_upgrade_plan()
