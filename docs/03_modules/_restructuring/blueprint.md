@@ -618,8 +618,8 @@ applicable_rules:
 | SRC-0027 | PO拆分：PreemptionManager | true | SRC-0023 |
 | SRC-0028 | PO拆分：PipelineLock验证对齐 ✅ | true | SRC-0023 |
 | SRC-0029 | PO拆分：精简PO为dispatch-only编排器 ✅ | true | SRC-0023 |
-| SRC-0030 | drift拆分：DriftEngine编排器 | true | SRC-0021 |
-| SRC-0031 | drift拆分：DriftInfrastructure | true | SRC-0030 |
+| SRC-0030 | drift拆分：DriftEngine编排器 ✅ | true | SRC-0021 |
+| SRC-0031 | drift拆分：DriftInfrastructure ✅ | true | SRC-0030 |
 | SRC-0032 | drift拆分：AIConstructionDetectors ✅ | true | SRC-0030 |
 | SRC-0033 | drift拆分：DriftResultTypes ✅ | true | SRC-0030 |
 | SRC-0034 | drift拆分：DriftTraining ✅ | true | SRC-0030 |
@@ -1068,7 +1068,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
-| 2026-05-10 | 3.2.0 | **Phase 2b 完成！SRC-0032~0034 drift拆分5组件全部完成**：AIConstructionDetectors（7个detect_*方法全部补充docstring，455行）、DriftResultTypes（7个*Result数据类+9个detect_*函数全部补充docstring，937行）、DriftTraining（3个数据类+8个函数全部补充docstring，407行）。修复 `a2a_red_team.py` 截断的 `_attack_session_smuggling` 方法并补充完整实现。更新 `test_trigger_router.py` 中 `handle_drift_stub` 测试以匹配 operational 阶段行为。28个 drift 相关测试全部通过。 |
+| 2026-05-10 | 3.2.0 | **Phase 2b 完成！SRC-0030~0034 drift拆分5组件全部完成**：SRC-0030 DriftEngine编排器精简 + SRC-0031 DriftInfrastructure修复导入路径 + SRC-0032 AIConstructionDetectors（7个detect_*方法全部补充docstring，455行）+ SRC-0033 DriftResultTypes（7个*Result数据类+9个detect_*函数全部补充docstring，937行）+ SRC-0034 DriftTraining（3个数据类+8个函数全部补充docstring，407行）。修复 `a2a_red_team.py` 截断的 `_attack_session_smuggling` 方法并补充完整实现。更新 `test_trigger_router.py` 中 `handle_drift_stub` 测试以匹配 operational 阶段行为。28个 drift 相关测试全部通过。 |
 | 2026-05-10 | 3.1.0 | **Phase 2 全部完成！SRC-0029: 精简 PO 为 dispatch-only**——修复 2 处 Phase 2 拆分残留致命 Bug：(1) `health_check()` L1534 `self._cost_total`→`self._cost_tracker.total_cost()`（SRC-0025 残留引用）；(2) `_run_with_fallback()` L1048 `self._FALLBACK_CHAIN`→`ModelRouter.FALLBACK_CHAIN`（SRC-0023 漏改）。清理死代码 `_glm_reject_log`（仅在 `save_state()`/`load_state()` 中引用，从未写入）。PO 行数 2307→2303。Phase 2 总成果：7 组件全部提取完成（ModelRouter + CircuitBreakerManager + CostTracker + DeadLetterQueue + PreemptionManager + PipelineLock + 本次精简），PO 从原始 ~2541 行降至 ~2303 行。 |
 | | 2026-05-10 | 3.0.4 | **SRC-0028: PipelineLock 验证通过**——已是独立组件（`src/zephyr/pipeline/pipeline_lock.py`, 490行），无需提取。蓝图 §3.3 将其列为"已存在——仅需验证接口对齐"完全正确。 |
 | 2026-05-10 | 3.0.3 | **Phase 2 SRC-0026 完成**：DeadLetterQueue 从 PipelineOrchestrator 提取为独立组件（`src/zephyr/pipeline/dead_letter_queue.py`, ~80行）。接口：`enqueue(task_card, results, status, max_retries)` / `drain()` / `entries`（只读属性）/ `count`（只读属性）/ `save_state()` / `load_state()`。PipelineOrchestrator 内部 `_dead_letters` 替换为 `_dlq`，`_maybe_dead_letter()` 委托至 `_dlq.enqueue()`，`get_dead_letters()` 委托至 `_dlq.entries`，`save_state()`/`load_state()`/`health_check()` 中死信相关逻辑全部委托至 DLQ。`__init__.py` 新增 DeadLetterQueue 导出。 |
