@@ -1,9 +1,9 @@
 ---
 module_id: "GOV-RSTR-001"
-title: "系统重组总蓝图 v3.2 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
+title: "系统重组总蓝图 v3.3 — 大文件拆分·跨目录重复合并·按需激活·LLM接入·版本分叉审计·安全搬家"
 doc_type: blueprint
 status: active
-version: "3.2.0"
+version: "3.3.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -29,7 +29,7 @@ depends_on:
 
 # 系统重组总蓝图
 
-> module_id: GOV-RSTR-001 | version: 3.0.0 | status: active | layer: cross_layer
+> module_id: GOV-RSTR-001 | version: 3.3.0 | status: active | layer: cross_layer
 
 ---
 
@@ -628,7 +628,7 @@ applicable_rules:
 
 | 卡号 | 名称 | 依赖前置 | 前置卡号 |
 |------|------|:---:|---------|
-| SRC-0068 | 10个>650行大文件拆分评估 | false | SRC-0021 |
+| SRC-0068 | 10个>650行大文件拆分评估 ✅ | false | SRC-0021 |
 
 **Phase 3a（9卡）**：
 
@@ -1037,30 +1037,62 @@ applicable_rules:
 
 | 行数 | 文件 | 蓝图处理状态 |
 |:----:|------|:----------:|
-| 2541 | pipeline/pipeline_orchestrator.py | ✅ §3.3拆分为7组件 |
-| 2134 | drift_detector/drift_engine.py | ✅ §3.3b拆分为5组件 |
-| 1786 | db/task_repo.py | ⚠️ SRC-0066评估中 |
+| 2303 | pipeline/pipeline_orchestrator.py | ✅ §3.3拆分为7组件（原2541行→2303行，-9%） |
+| 443 | drift_detector/drift_engine.py | ✅ §3.3b拆分为5组件（原2134行→443行，-79%） |
+| 1743 | db/task_repo.py | ⚠️ SRC-0066评估中 |
 | 1494 | feedback_loop/_gen_inherited.py | ⚠️ SRC-0067评估中 |
-| 1164 | gates/gate_engine.py | ✅ §Phase 4注册表化 |
-| 1001 | pipeline/models.py | ⚠️ SRC-0068评估中 |
+| 1167 | gates/gate_engine.py | ✅ Phase 4 注册表化 |
+| 1001 | pipeline/models.py | ⚠️ 建议 SRC-0068a |
 
 ### B.2 650-1000行（13个——需评估是否拆分）
 
 | 行数 | 文件 | 蓝图处理状态 |
 |:----:|------|:----------:|
-| 995 | pipeline/pipeline_roadmap.py | ⚠️ SRC-0068评估中 |
-| 995 | orchestrator/contract_registry.py | ⚠️ SRC-0068评估中 |
-| 923 | mcp/task_manager_server.py | ⚠️ SRC-0068评估中 |
+| 995 | pipeline/pipeline_roadmap.py | ⚠️ SRC-0068 已评估（见 §3.4） |
+| 1023 | orchestrator/contract_registry.py | ⚠️ SRC-0068 已评估（见 §3.4） |
+| 923 | mcp/task_manager_server.py | ⚠️ SRC-0068 已评估（见 §3.4） |
 | 918 | orchestrator/agent_orchestrator.py | ✅ 已知版本分叉 |
 | 877 | orchestrator/resilience/hallucination_detector.py | ✅ 已知版本分叉 |
 | 877 | orchestrator/hallucination_detector.py | ✅ 已知版本分叉 |
-| 861 | governance/phase_check_registry.py | ⚠️ SRC-0068评估中 |
+| 861 | governance/phase_check_registry.py | ⚠️ SRC-0068 已评估（见 §3.4） |
 | 858 | orchestrator/core/agent_orchestrator.py | ✅ 已知版本分叉 |
-| 851 | feedback_loop/scheduler.py | ⚠️ SRC-0068评估中 |
-| 843 | rollback/rollback_executor.py | ⚠️ SRC-0068评估中 |
+| 827 | feedback_loop/scheduler.py | ⚠️ SRC-0068 已评估（见 §3.4） |
+| 843 | rollback/rollback_executor.py | ⚠️ SRC-0068 已评估（见 §3.4） |
 | 835 | shared/lifecycle/resource_optimization_engine.py | ✅ SRC-0021相关 |
-| 872 | db/sqlite_schema.py | ⚠️ SRC-0068评估中 |
-| 777 | mcp/governance_server.py | ⚠️ SRC-0068评估中 |
+| 824 | db/sqlite_schema.py | ⚠️ SRC-0068 已评估（见 §3.4） |
+| 777 | mcp/governance_server.py | ⚠️ SRC-0068 已评估（见 §3.4） |
+
+---
+
+### §3.4 10个大文件拆分评估（SRC-0068）
+
+**评估日期**: 2026-05-10
+**总扫描数**: src/ 下 91 个 >300行文件
+**评估目标**: 10个 >650行 文件
+
+#### 拆分优先级建议
+
+| 优先级 | 文件 | 当前行数 | 建议策略 | 预估产出 |
+|:----:|------|:-------:|----------|:-------:|
+| 1 | `db/task_repo.py` | 1743 | 拆为 base_repo.py + transition.py + query.py + file_mapper.py | 4-5个组件 |
+| 2 | `feedback_loop/_gen_inherited.py` | 1494 | 拆为 generator.py + template.py + validator.py | 3个组件 |
+| 3 | `orchestrator/contract_registry.py` | 1023 | 拆为 registry.py + contract_defs.py + validation.py | 3个组件 |
+| 4 | `pipeline/models.py` | 1001 | 按领域拆为 task_models.py + result_models.py + config_models.py | 3-4个文件 |
+| 5 | `pipeline/pipeline_roadmap.py` | 995 | 拆为 roadmap.py + stage_defs.py + routing.py | 3个组件 |
+| 6 | `mcp/task_manager_server.py` | 923 | 拆为 server.py + handlers.py + business_logic.py | 3个组件 |
+| 7 | `governance/phase_check_registry.py` | 861 | 注册表化：check_defs.py + registry.py | 2个组件 |
+| 8 | `rollback/rollback_executor.py` | 843 | 拆为 executor.py + strategies.py + verifier.py | 3个组件 |
+| 9 | `feedback_loop/scheduler.py` | 827 | 拆为 scheduler.py + policies.py + triggers.py | 3个组件 |
+| 10 | `db/sqlite_schema.py` | 824 | 拆为 schema.py + migrations.py + indices.py | 3个文件 |
+
+**说明**: 以上10个文件均未进行拆分，建议在 Phase 3-7 中依次处理。每个文件的拆分将创建独立的 SRC 任务卡。
+
+#### 已完成的拆分（作为参照基准）
+
+| 文件 | 原行数 | 现行数 | 缩减率 | 拆分产出 |
+|------|:----:|:-----:|:-----:|---------|
+| `drift_engine.py` | 2134 | 443 | -79% | 4组件 |
+| `pipeline_orchestrator.py` | 2541 | 2303 | -9% | 6组件（仍有优化空间） |
 
 ---
 
@@ -1068,6 +1100,7 @@ applicable_rules:
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-05-10 | 3.3.0 | **Phase 2c 完成！SRC-0068 10个大文件拆分评估**：附录B大文件行数更新为当前实际值（pipeline_orchestrator.py 2303行、drift_engine.py 443行、task_repo.py 1743行、gate_engine.py 1167行等）。新增 §3.4 评估报告——10个目标文件拆分优先级排序、策略建议、预估产出。B.1/B.2 状态全部刷新为"已评估（见 §3.4）"或当前实际处理状态。 |
 | 2026-05-10 | 3.2.0 | **Phase 2b 完成！SRC-0030~0034 drift拆分5组件全部完成**：SRC-0030 DriftEngine编排器精简 + SRC-0031 DriftInfrastructure修复导入路径 + SRC-0032 AIConstructionDetectors（7个detect_*方法全部补充docstring，455行）+ SRC-0033 DriftResultTypes（7个*Result数据类+9个detect_*函数全部补充docstring，937行）+ SRC-0034 DriftTraining（3个数据类+8个函数全部补充docstring，407行）。修复 `a2a_red_team.py` 截断的 `_attack_session_smuggling` 方法并补充完整实现。更新 `test_trigger_router.py` 中 `handle_drift_stub` 测试以匹配 operational 阶段行为。28个 drift 相关测试全部通过。 |
 | 2026-05-10 | 3.1.0 | **Phase 2 全部完成！SRC-0029: 精简 PO 为 dispatch-only**——修复 2 处 Phase 2 拆分残留致命 Bug：(1) `health_check()` L1534 `self._cost_total`→`self._cost_tracker.total_cost()`（SRC-0025 残留引用）；(2) `_run_with_fallback()` L1048 `self._FALLBACK_CHAIN`→`ModelRouter.FALLBACK_CHAIN`（SRC-0023 漏改）。清理死代码 `_glm_reject_log`（仅在 `save_state()`/`load_state()` 中引用，从未写入）。PO 行数 2307→2303。Phase 2 总成果：7 组件全部提取完成（ModelRouter + CircuitBreakerManager + CostTracker + DeadLetterQueue + PreemptionManager + PipelineLock + 本次精简），PO 从原始 ~2541 行降至 ~2303 行。 |
 | | 2026-05-10 | 3.0.4 | **SRC-0028: PipelineLock 验证通过**——已是独立组件（`src/zephyr/pipeline/pipeline_lock.py`, 490行），无需提取。蓝图 §3.3 将其列为"已存在——仅需验证接口对齐"完全正确。 |
