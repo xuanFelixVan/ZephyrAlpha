@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_capacity_runtime_red_blue
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Capacity & Runtime 红白对抗测试
 ===============================
@@ -244,7 +250,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_event_bus_dry_run_safety(self):
         """对抗：dry run 不修改任何状态"""
-        from zephyr.shared.upgrade_strategy import EventBusUpgrade
+        from zephyr.shared.events.upgrade_strategy import EventBusUpgrade
 
         upgrader = EventBusUpgrade()
         plan = upgrader.generate_upgrade_plan()

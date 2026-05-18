@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.conftest
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 pytest fixtures for agent-rbac tests.
 

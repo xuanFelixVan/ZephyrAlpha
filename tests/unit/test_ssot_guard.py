@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_ssot_guard
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/hooks/ssot_guard.py
 任务 ID : T-1-26（B07）

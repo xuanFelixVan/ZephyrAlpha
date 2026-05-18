@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_delegation_safety
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """DelegationEngine Safety Constraint Tests — D-022-02 四级安全约束.
 
 Tests each of the four safety constraints independently:
@@ -12,7 +18,7 @@ import time
 
 import pytest
 
-from zephyr.escalation import (
+from zephyr.escalation_engine import (
     DelegationEngine,
     DelegationStrategy,
     EscalationLevel,

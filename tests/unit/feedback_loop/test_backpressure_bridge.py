@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.feedback_loop.test_backpressure_bridge
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 backpressure_bridge 模块单元测试 — AUDIT-08 M6
 ================================================

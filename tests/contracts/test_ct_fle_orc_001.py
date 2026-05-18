@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.contracts.test_ct_fle_orc_001
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """CT-FLE-ORC-001 集成测试——异常检测→调度调整。"""
 
 from __future__ import annotations

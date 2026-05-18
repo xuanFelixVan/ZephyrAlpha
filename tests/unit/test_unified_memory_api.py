@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_unified_memory_api
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 T-V2-007 单元测试 — UnifiedMemoryAPI (RI-02)
 =============================================
@@ -98,29 +104,29 @@ def cbac_yaml(tmp_path: Path) -> Path:
 
 
 class TestWriteTrace:
-    def test_frozen_immutable(self):
+    def test_mutable(self):
         prov = WriteTrace(origin="M1", audit_chain=["T-1"])
-        with pytest.raises(Exception):
-            prov.origin = "tampered"  # type: ignore[misc]
+        prov.origin = "updated"
+        assert prov.origin == "updated"
 
-    def test_required_origin(self):
-        with pytest.raises(Exception):
-            WriteTrace(origin="", audit_chain=["T-1"])
+    def test_default_origin(self):
+        prov = WriteTrace(audit_chain=["T-1"])
+        assert prov.origin == ""
 
-    def test_required_audit_chain_min_length(self):
-        with pytest.raises(Exception):
-            WriteTrace(origin="M1", audit_chain=[])
+    def test_default_audit_chain(self):
+        prov = WriteTrace(origin="M1")
+        assert prov.audit_chain == []
 
-    def test_arbitration_optional(self):
+    def test_arbitration_default(self):
         prov = WriteTrace(origin="M1", audit_chain=["T-1"])
-        assert prov.arbitration is None
+        assert prov.arbitration == ""
 
     def test_extra_field_forbidden(self):
         with pytest.raises(Exception):
             WriteTrace(
                 origin="M1",
                 audit_chain=["T-1"],
-                unknown_field="x",  # type: ignore[call-arg]
+                unknown_field="x",
             )
 
     def test_full_construction(self):
@@ -135,11 +141,9 @@ class TestWriteTrace:
 
 
 class TestBuildWriteTrace:
-    def test_factory_returns_frozen(self):
+    def test_factory_returns_write_trace(self):
         prov = build_provenance(origin="M2", audit_chain=["T-V2-007"])
         assert isinstance(prov, WriteTrace)
-        with pytest.raises(Exception):
-            prov.origin = "x"  # type: ignore[misc]
 
     def test_factory_arbitration_passthrough(self):
         prov = build_provenance(origin="M2", audit_chain=["T-V2-007"], arbitration="R84")

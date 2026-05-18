@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_permissions
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """权限自动化测试——120+攻击向量/跨模型一致性/对抗性测试/边缘用例."""
 from __future__ import annotations
 

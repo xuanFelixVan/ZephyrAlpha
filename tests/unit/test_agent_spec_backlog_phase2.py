@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_agent_spec_backlog_phase2
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Backlog Phase 2 测试: cross-model, ontology, prompt-eng, model-evolution, xai."""
 from __future__ import annotations
 

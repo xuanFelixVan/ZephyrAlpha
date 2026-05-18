@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_sequence_guard
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 测试 L4 SequenceGuard — 操作序列追踪与危险序列阻断
 """

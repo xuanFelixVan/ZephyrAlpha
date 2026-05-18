@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_phase_e_layers
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Phase E — Remaining Layer Integration Tests
 
 L01/L02/L08/L12 四层集成测试——补齐 Phase D 未覆盖的层。
@@ -242,7 +248,7 @@ class TestL12SystemTelemetry:
     """L12 System Telemetry — contract metrics collector"""
 
     def test_sla_record_creation(self):
-        from zephyr.l12_system_telemetry.contract_metrics import SlaRecord
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import SlaRecord
         record = SlaRecord(
             contract_id="CTR-001",
             trace_id="trace-abc123",
@@ -257,7 +263,7 @@ class TestL12SystemTelemetry:
         assert record.recorded_at is not None
 
     def test_drift_alert_creation(self):
-        from zephyr.l12_system_telemetry.contract_metrics import DriftAlert
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import DriftAlert
         alert = DriftAlert(
             contract_id="CTR-002",
             field_name="signal_value",
@@ -272,7 +278,7 @@ class TestL12SystemTelemetry:
         assert alert.detected_at is not None
 
     def test_collector_measure_sla_passed(self):
-        from zephyr.l12_system_telemetry.contract_metrics import (
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -287,7 +293,7 @@ class TestL12SystemTelemetry:
         assert record.contract_id == "CTR-004"
 
     def test_collector_measure_sla_failed(self):
-        from zephyr.l12_system_telemetry.contract_metrics import (
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -301,7 +307,7 @@ class TestL12SystemTelemetry:
         assert record.passed is False
 
     def test_collector_record_violation(self):
-        from zephyr.l12_system_telemetry.contract_metrics import (
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -311,7 +317,7 @@ class TestL12SystemTelemetry:
         assert stats["total_violations"] == 2
 
     def test_collector_detect_drift_with_explicit_baseline(self):
-        from zephyr.l12_system_telemetry.contract_metrics import (
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -328,7 +334,7 @@ class TestL12SystemTelemetry:
         assert alert.deviation_pct > 100
 
     def test_collector_get_stats_defaults(self):
-        from zephyr.l12_system_telemetry.contract_metrics import get_contract_metrics
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import get_contract_metrics
         collector = get_contract_metrics()
         stats = collector.get_stats()
         assert "sla_p99_pass_rate_100" in stats
@@ -337,7 +343,7 @@ class TestL12SystemTelemetry:
         assert "tracked_contracts" in stats
 
     def test_get_contract_metrics_singleton(self):
-        from zephyr.l12_system_telemetry.contract_metrics import get_contract_metrics
+        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import get_contract_metrics
         c1 = get_contract_metrics()
         c2 = get_contract_metrics()
         assert c1 is c2

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_demo_e2e_pipeline_smoke
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """demo_e2e_pipeline.py 语法自检（不执行全链路——需网络与 akshare）。"""
 
 from __future__ import annotations

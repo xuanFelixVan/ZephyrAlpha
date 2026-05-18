@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.context_engine.test_context_evictor
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Tests for context_evictor.py (TASK-014 beta a — migrated to ContextBlock model)."""
 
 from __future__ import annotations

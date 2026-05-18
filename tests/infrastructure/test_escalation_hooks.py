@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_escalation_hooks
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Extension Hook Integration Tests — Escalation Engine (MOD-INF-022).
 
 Validates that all 15 extension detector modules are correctly loaded and integrated
@@ -5,14 +11,22 @@ into the EscalationEngine's hook system.
 
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md D-022-07~D-022-30
 """
+from unittest.mock import patch
+
 import pytest
 
-from zephyr.escalation import (
+from zephyr.escalation_engine import (
     EscalationEngine,
     RuleCategory,
     EscalationLevel,
     EscalationState,
 )
+
+
+@pytest.fixture(autouse=True)
+def _disable_lsg():
+    with patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None):
+        yield
 
 
 class TestExtensionHookLoading:

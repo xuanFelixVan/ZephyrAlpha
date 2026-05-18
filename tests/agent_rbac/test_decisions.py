@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_decisions
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """决策注册表测试."""
 from __future__ import annotations
 

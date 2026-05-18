@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_auto_evolution
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 # AI-generated: T-4-01 (A28) · AutoEvolutionEngine 单元测试
 """
 test_auto_evolution · stable 全自动进化引擎单元测试

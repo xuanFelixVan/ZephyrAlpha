@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_beta_e2e
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 # AI-generated: T-3-19 (A25) beta 端到端验收测试
 """
 test_phase3_e2e · beta 端到端联调验收测试集

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_constitutional_update
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/constitutional_update.py
 ======================================================
@@ -24,7 +30,7 @@ Safety: HIGH（宪法自愈直接修改 AGENTS.md 工程宪法）
 """
 
 import pytest
-from zephyr.shared.constitutional_update import (
+from zephyr.governance.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
     ProposedUpdate,

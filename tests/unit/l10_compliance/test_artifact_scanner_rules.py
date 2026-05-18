@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l10_compliance.test_artifact_scanner_rules
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/l10_compliance/artifact_scanner.py — S-02~S-08 规则
 =========================================================================

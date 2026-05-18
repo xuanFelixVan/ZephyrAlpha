@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_skill_registry
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for skill_registry.py
 """
@@ -5,7 +11,7 @@ Unit tests for skill_registry.py
 import pytest
 from pydantic import ValidationError
 
-from zephyr.shared.skill_registry import (
+from zephyr.agent_spec.skill_registry import (
     PromptTemplate,
     PromptVariable,
     SkillCategory,

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_mcp_e2e
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 # AI-generated: MCP E2E lifecycle + protocol compliance tests (T-3-05, B16)
 """
 MCP 端到端测试 — T-3-05 (B16)

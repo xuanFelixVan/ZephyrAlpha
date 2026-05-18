@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_crosscutD
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """跨切面 D 异常检测 + 蓝图保真 + 原生API守卫 + 内存守卫 测试."""
 from __future__ import annotations
 

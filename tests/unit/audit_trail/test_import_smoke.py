@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.audit_trail.test_import_smoke
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """audit-trail MOD-INF-020 import 冒烟测试 — 验证核心模块可被导入."""
 from __future__ import annotations
 

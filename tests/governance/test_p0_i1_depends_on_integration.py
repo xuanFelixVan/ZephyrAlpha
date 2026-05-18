@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_p0_i1_depends_on_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """P0-I1 depends_on 集成测试 — DOM-GOV-001 §8.3."""
 from __future__ import annotations
 

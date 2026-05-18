@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_doc_compressor
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 T-V2-006 单元测试 — DocCompressor + CompressionPolicy
 =======================================================
@@ -21,7 +27,7 @@ import textwrap
 from pathlib import Path
 
 import pytest
-from zephyr.context_engine.doc_compressor import (
+from zephyr.context_engine.support.doc_compressor import (
     DEFAULT_POLICY,
     CompressionInvariantError,
     CompressionPolicy,

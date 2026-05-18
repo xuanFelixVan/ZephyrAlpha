@@ -1,3 +1,4 @@
+# [BLUEPRINT] DOM-GOV-001 | tests/contract/__init__.py | §
 """
 contract/ —— ZephyrAlpha 消费者驱动契约测试
 

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l04_risk_management.test_risk_manager
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/l04_risk_management/risk_manager.py + risk_manager_base.py + implementations/default_risk_manager_orchestrator.py
 ==================================================================================================================================================
@@ -25,7 +31,7 @@ from zephyr.l04_risk_management.implementations.default_risk_manager_orchestrato
 )
 from zephyr.l04_risk_management.risk_manager import RiskLimits, RiskManagerBase
 from zephyr.l04_risk_management.risk_manager_base import RiskReport
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderType
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderType
 
 
 def _make_risk_limits(**kwargs) -> RiskLimits:

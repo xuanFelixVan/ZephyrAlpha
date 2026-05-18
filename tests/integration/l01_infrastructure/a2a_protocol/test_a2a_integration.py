@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.l01_infrastructure.a2a_protocol.test_a2a_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """MOD-INF-025 A2A Protocol 集成测试 — Phase 1 核心链路验证
 
 验证: 发现→注册→通信→任务调度→状态机→死锁检测→升级 全链路打通
@@ -19,7 +25,7 @@ from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination import (
     A2ATemporalAdmission, A2AIdleGuard,
     A2ARedTeam,
 )
-from zephyr.a2a import GovernanceAdapter, A2AGovernanceRecord
+from zephyr.l01_infrastructure.a2a_protocol import GovernanceAdapter, A2AGovernanceRecord
 
 AGENT_A = "agent-alpha"
 AGENT_B = "agent-beta"

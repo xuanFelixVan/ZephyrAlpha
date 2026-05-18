@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.adversarial.test_cross_layer_systems_red_team
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Cross-Layer Systems 红白对抗诊断测试（Pytest 兼容版）
 =====================================================
@@ -172,7 +178,7 @@ class TestVectorMemoryAdversarial:
 
     def test_provenance_bypass_write_rejected(self, tmp_path):
         from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.collection_manager import ProvenanceMissingError
+        from zephyr.vector_memory.vms_errors import ProvenanceMissingError
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_prov")
         vms.init_all_collections()
         with pytest.raises(ProvenanceMissingError):
@@ -180,7 +186,7 @@ class TestVectorMemoryAdversarial:
 
     def test_human_gated_collection_write_behavior(self, tmp_path):
         from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.collection_manager import COLLECTION_SCHEMAS
+        from zephyr.vector_memory.collection_schemas import COLLECTION_SCHEMAS
         human_gated_collections = [
             name for name, schema in COLLECTION_SCHEMAS.items()
             if schema.get("ai_autonomy_level") == "human-gated"
@@ -241,7 +247,7 @@ class TestVectorMemoryAdversarial:
     def test_vector_bridge_all_collections_access(self, tmp_path):
         from zephyr.vector_memory.vector_bridge import VectorBridge
         from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.collection_manager import COLLECTION_NAMES
+        from zephyr.vector_memory.collection_schemas import COLLECTION_NAMES
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_test")
         vms.init_all_collections()

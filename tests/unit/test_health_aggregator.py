@@ -1,9 +1,15 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_health_aggregator
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """健康聚合器单元测试。"""
 
 from __future__ import annotations
 
 import pytest
-from zephyr.telemetry.health_aggregator import HealthAggregator, HealthProbeManager
+from zephyr.l01_infrastructure.system_telemetry.health_aggregator import HealthAggregator, HealthProbeManager
 
 
 @pytest.fixture

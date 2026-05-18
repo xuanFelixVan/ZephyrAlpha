@@ -1,9 +1,15 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_cross_blueprint_e2e
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 全链路端到端集成测试
 ===================
 验证四大蓝图协同工作：
 capacity-assurance(MOD-INF-001) → runtime-integration(MOD-INF-002)
-→ script-system(MOD-INF-005) → task-system(MOD-INF-006)
+→ governance-automation(MOD-INF-005) → task-system(MOD-INF-006)
 """
 
 from __future__ import annotations
@@ -194,7 +200,7 @@ def test_e2e_pydantic_v2_scanner():
 
 def test_e2e_event_bus_upgrade_plan():
     """E2E：EventBus 升级计划生成"""
-    from zephyr.shared.upgrade_strategy import EventBusUpgrade
+    from zephyr.shared.events.upgrade_strategy import EventBusUpgrade
 
     upgrader = EventBusUpgrade()
     plan = upgrader.generate_upgrade_plan(version_from="v1.0.0", version_to="v2.0.0")

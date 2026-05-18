@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_auto_telemetry_bootstrap
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """端到端验证：auto_bootstrap 自动遥测全链路集成测试
 
 验证 auto_bootstrap 对三大系统的 monkey-patch 注入是否正确：
@@ -18,7 +24,7 @@ def test_import_triggers_bootstrap():
 
 
 def test_global_telemetry_singleton():
-    from zephyr.l12_system_telemetry.auto_bootstrap import get_global_telemetry
+    from zephyr.l01_infrastructure.system_telemetry.auto_bootstrap import get_global_telemetry
     t1 = get_global_telemetry()
     t2 = get_global_telemetry()
     assert t1 is t2
@@ -35,14 +41,14 @@ def test_session_continuity_auto_emits():
 
 
 def test_phase_manager_auto_emits():
-    from zephyr.governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+    from zephyr.rollback.phase_manager import PHASE_SEQUENCE, ConstructionPhase
     p0 = PHASE_SEQUENCE[ConstructionPhase.PHASE_0_SKELETON]
     result = p0.run_checks()
     assert result is not None
 
 
 def test_blueprint_metrics_auto_emits():
-    from zephyr.l12_system_telemetry.metrics import blueprint_metrics as bm
+    from zephyr.l01_infrastructure.system_telemetry.metrics import blueprint_metrics as bm
     result = bm.record_blueprint_read(
         blueprint_id="MOD-INF-015",
         session_id="test-session",
@@ -52,7 +58,7 @@ def test_blueprint_metrics_auto_emits():
 
 
 def test_telemetry_direct_usage_still_works():
-    from zephyr.l12_system_telemetry import Telemetry
+    from zephyr.l01_infrastructure.system_telemetry import Telemetry
     t = Telemetry("manual_module", test_mode=True)
     r = t.metrics.gauge("test", 1.0)
     assert r["value"] == 1.0

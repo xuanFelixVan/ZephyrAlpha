@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.verify_b54_b56_b59_deep
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Deeper integration test: P0 inflation guard + block_sessions_count + timeout exemption"""
 import sys, json, sqlite3
 sys.path.insert(0, r"D:\ZephyrAlpha\src")
@@ -10,8 +16,8 @@ from zephyr.db.task_repo import (
     TaskRepository, P0InflationFrozenError, P0InflationWarning,
 )
 from zephyr.core.models import TaskCard
-from zephyr.shared.schema.schemas import TaskStatus, TaskNamespace
-from zephyr.shared.schema.schemas import Priority as P
+from zephyr.gates.task_types import TaskStatus, TaskNamespace
+from zephyr.shared.schema.severity_types import Priority as P
 
 repo = TaskRepository(enable_gate=False)
 now = datetime.now(timezone.utc)

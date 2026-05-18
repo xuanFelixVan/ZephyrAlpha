@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_execution_engine_unit
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """ExecutionEngine — 风控拒绝与 TWAP 主路径单元测试。"""
 
 from __future__ import annotations
@@ -10,7 +16,7 @@ from zephyr.l04_risk_management.implementations.default_risk_validator import De
 from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
 from zephyr.l06_trade_execution.execution_engine import AlgoType, ExecutionEngine
 from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.shared.contracts.execution.order import OrderSide, OrderType
+from zephyr.trading_contracts.execution.order import OrderSide, OrderType
 
 
 def _make_engine(*, kill_switch: bool = False) -> tuple[ExecutionEngine, OrderManager]:

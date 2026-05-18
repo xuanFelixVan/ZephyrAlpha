@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.agent_spec.test_import_smoke
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """agent-spec MOD-INF-019 import 冒烟测试 — 验证核心模块可被导入."""
 from __future__ import annotations
 
@@ -51,11 +57,10 @@ class TestAgentSpecImportSmoke:
         from zephyr.agent_spec.skill_factory import SkillFactory
         assert SkillFactory is not None
 
-    def test_import_trigger_router(self) -> None:
-        """测试导入 TriggerRouter."""
+    def test_import_skill_router(self) -> None:
         _ensure_path()
-        from zephyr.agent_spec.trigger_router import TriggerRouter
-        assert TriggerRouter is not None
+        from zephyr.agent_spec.skill_router import SkillRouter
+        assert SkillRouter is not None
 
     def test_import_skill_constructor(self) -> None:
         """测试导入 SkillConstructor — 蓝图→Skill 构建器."""

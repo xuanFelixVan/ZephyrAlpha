@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l06_trade_execution.test_order_manager_and_simulation_broker
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/l06_trade_execution/order_manager.py + adapters/simulation_broker.py
 ========================================================================================
@@ -24,7 +30,7 @@ import pytest
 from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
 from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 
 
 def _make_order(symbol="600519", side=OrderSide.BUY, qty=Decimal("100")) -> Order:

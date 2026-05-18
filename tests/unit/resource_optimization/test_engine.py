@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.resource_optimization.test_engine
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 test_engine.py - ResourceOptimizationEngine unit tests
 ======================================================
@@ -23,7 +29,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.shared.lifecycle.resource_optimization_engine import (
+from zephyr.core.lifecycle.resource_optimization_engine import (
     CacheStats,
     CircuitBreaker,
     CircuitBreakerState,
@@ -275,7 +281,7 @@ class TestResourceOptimizationEngine:
         e2 = ResourceOptimizationEngine()
         assert e1 is not e2
 
-    @patch("zephyr.shared.lifecycle.resource_optimization_engine.psutil", create=True)
+    @patch("zephyr.core.lifecycle.resource_optimization_engine.psutil", create=True)
     def test_snapshot_with_psutil(self, mock_psutil):
         mock_mem = MagicMock()
         mock_mem.percent = 65.0

@@ -1,10 +1,16 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_context_budget
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for context_budget.py
 """
 
 import pytest
 
-from zephyr.shared.context_budget import (
+from zephyr.context_engine.context_budget import (
     BudgetEntry,
     ContextBudget,
     QuotaTracker,

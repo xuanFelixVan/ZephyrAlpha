@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.context_engine.test_context_rot_model
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Tests for context_rot_model.py (TASK-014 beta a — 18 tests)."""
 import pytest
 from zephyr.context_engine.context_rot_model import ContextDecayResult, ContextRotModel

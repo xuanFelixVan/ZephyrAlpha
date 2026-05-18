@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.db.test_task_repo
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/db/task_repo.py（T-{SEQ}）
 ==================================================
@@ -32,13 +38,9 @@ from zephyr.db.task_repo import (
     is_terminal,
 )
 from zephyr.core.models import TaskCard
-from zephyr.shared.schema.schemas import (
-    Classification,
-    EvolutionPolicy,
-    SafetyLevel,
-    TaskNamespace,
-    TaskStatus,
-)
+from zephyr.gates.task_types import TaskNamespace, TaskStatus
+from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
+from zephyr.shared.schema.severity_types import SafetyLevel
 
 _UTC = UTC
 

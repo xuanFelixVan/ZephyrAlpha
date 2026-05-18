@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.asset_inventory.test_lifecycle
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Tests for MOD-INF-026 Lifecycle module — 蓝图 §2.6 + §22 附录 H 要求 >85% 覆盖."""
 
 from datetime import datetime, timedelta, timezone

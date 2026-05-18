@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_rollback_executor
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for RollbackExecutor — rollback core executor (MOD-INF-021 §7).
 
@@ -204,7 +210,8 @@ class TestHardReset:
 
     def test_hard_reset_with_token(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_execute") as mock_exec:
+        with patch.object(exec, "_lsg_verify_critical_operation"), \
+             patch.object(exec, "_execute") as mock_exec:
             mock_exec.return_value = RollbackResult(
                 success=True, operation=RollbackOp.HARD_RESET, commit_sha="abc123",
                 files_reverted=0, db_tables_restored=0, db_rows_restored=0,

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.architecture.test_cross_module_contracts
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """跨模块契约一致性测试（MOD-INF-013 §7）。
 
 验证 MCP 模块的 depends_on 依赖可达性 + 契约三方一致性。

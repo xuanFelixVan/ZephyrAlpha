@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_all_scripts
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """治理脚本分层冒烟测试 — ThreadPoolExecutor 并行执行 + 标签/维度分层
 
 覆盖 D-B-01a~D-B-02（exit code 语义、--help 可用、--warn-only 不崩溃）。

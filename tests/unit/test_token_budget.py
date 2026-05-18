@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_token_budget
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Token 预算管理器单元测试——验证三级预算控制与 degraded 标记。"""
 
 from __future__ import annotations
@@ -6,7 +12,7 @@ import pytest
 
 from zephyr.context_engine.token_budget import (
     BUDGET_CAPS,
-    BudgetLevel,
+    TokenBudgetTier,
     BudgetState,
     DEGRADED_THRESHOLD,
     TokenBudgetManager,
@@ -20,18 +26,18 @@ def manager():
 
 class TestBudgetLevels:
     def test_l1_cap_is_500(self):
-        assert BUDGET_CAPS[BudgetLevel.L1] == 500
+        assert BUDGET_CAPS[TokenBudgetTier.L1] == 500
 
     def test_l2_cap_is_1500(self):
-        assert BUDGET_CAPS[BudgetLevel.L2] == 1500
+        assert BUDGET_CAPS[TokenBudgetTier.L2] == 1500
 
     def test_l3_cap_is_8000(self):
-        assert BUDGET_CAPS[BudgetLevel.L3] == 8000
+        assert BUDGET_CAPS[TokenBudgetTier.L3] == 8000
 
 
 class TestInitialState:
     def test_default_level_is_l1(self, manager):
-        assert manager.level == BudgetLevel.L1
+        assert manager.level == TokenBudgetTier.L1
 
     def test_default_cap_is_500(self, manager):
         assert manager.cap == 500
@@ -45,18 +51,18 @@ class TestInitialState:
 
 class TestSetLevel:
     def test_switch_to_l2(self, manager):
-        manager.set_level(BudgetLevel.L2)
-        assert manager.level == BudgetLevel.L2
+        manager.set_level(TokenBudgetTier.L2)
+        assert manager.level == TokenBudgetTier.L2
         assert manager.cap == 1500
 
     def test_switch_to_l3(self, manager):
-        manager.set_level(BudgetLevel.L3)
-        assert manager.level == BudgetLevel.L3
+        manager.set_level(TokenBudgetTier.L3)
+        assert manager.level == TokenBudgetTier.L3
         assert manager.cap == 8000
 
     def test_switch_preserves_consumed(self, manager):
         manager.consume(100)
-        manager.set_level(BudgetLevel.L2)
+        manager.set_level(TokenBudgetTier.L2)
         assert manager.consumed == 100
 
 
@@ -99,12 +105,12 @@ class TestDegradedFlag:
         assert manager.degraded is False
 
     def test_degraded_at_threshold_l3(self, manager):
-        manager.set_level(BudgetLevel.L3)
+        manager.set_level(TokenBudgetTier.L3)
         manager.consume(DEGRADED_THRESHOLD)
         assert manager.degraded is True
 
     def test_degraded_above_threshold_l3(self, manager):
-        manager.set_level(BudgetLevel.L3)
+        manager.set_level(TokenBudgetTier.L3)
         manager.consume(7500)
         assert manager.degraded is True
 
@@ -143,7 +149,7 @@ class TestToDict:
 class TestBudgetState:
     def test_budget_state_default(self):
         state = BudgetState()
-        assert state.level == BudgetLevel.L1
+        assert state.level == TokenBudgetTier.L1
         assert state.cap == 500
         assert state.consumed == 0
         assert state.degraded is False

@@ -1,10 +1,16 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_cost_budget
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for cost_budget.py
 """
 
 import pytest
 
-from zephyr.shared.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
+from zephyr.budget_enforcer.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
 
 
 class TestPricingTier:

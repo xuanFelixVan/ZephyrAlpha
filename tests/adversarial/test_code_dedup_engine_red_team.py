@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.adversarial.test_code_dedup_engine_red_team
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """code-dedup-engine 红队对抗测试 — MOD-INF-017.
 
 覆盖率：导入链路验证 / Scanner 对抗样本 / Monoculture 免疫 / 自我扫描
@@ -17,16 +23,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 class TestStage00_ImportChain:
     def test_l01_import(self):
         from zephyr.l01_infrastructure import code_dedup_engine
-        assert code_dedup_engine.__version__ == "0.10.0"
+        assert code_dedup_engine.__version__ == "0.15.0"
         assert code_dedup_engine.__module_id__ == "MOD-INF-017"
 
     def test_root_proxy_import(self):
-        from zephyr.code_dedup_engine import __version__ as v, __module_id__ as m
-        assert v == "0.10.0"
+        from zephyr.l01_infrastructure.code_dedup_engine import __version__ as v, __module_id__ as m
+        assert v == "0.15.0"
         assert m == "MOD-INF-017"
 
     def test_scanner_via_proxy(self):
-        from zephyr.code_dedup_engine import scanner
+        from zephyr.l01_infrastructure.code_dedup_engine import scanner
         assert hasattr(scanner, "Scanner")
 
     def test_scanner_direct(self):

@@ -1,3 +1,4 @@
+# [BLUEPRINT] DOM-GOV-001 | tests/architecture/__init__.py | §
 """
 tests/architecture/ — 架构适应度函数（Architectural Fitness Functions）
 

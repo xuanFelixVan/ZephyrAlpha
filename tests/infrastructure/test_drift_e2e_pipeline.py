@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_drift_e2e_pipeline
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 E2E 全链路测试 — Drift Detector v1.0.1b
 =========================================
@@ -13,13 +19,13 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
-from zephyr.drift_detector.drift_engine import (
+from zephyr.behavioral_auditor.ai_construction_detectors import AIConstructionDetectors
+from zephyr.behavioral_auditor.drift_engine import (
     _write_drift_events,
     load_detector_registry,
 )
-from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
-from zephyr.drift_detector.self_test_verifier import SelfTestVerifier
+from zephyr.behavioral_auditor.drift_infrastructure import check_budget_for_gate
+from zephyr.behavioral_auditor.self_test_verifier import SelfTestVerifier
 
 
 def _setup_project(tmp: str) -> list[Path]:

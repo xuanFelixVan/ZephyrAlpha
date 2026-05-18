@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_phase_f_layers
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Phase F — L08–L13 非主线层集成测试 + 背压契约
 
 测试范围：
@@ -54,7 +60,7 @@ from zephyr.l11_ml_platform.inference_base import (
     ModelTrainerBase,
 )
 from zephyr.l11_ml_platform.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.l12_system_telemetry.contract_metrics import (
+from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
     ContractMetricsCollector,
     DriftAlert,
     SlaRecord,
@@ -77,20 +83,20 @@ from zephyr.pipeline.backpressure_manager import (
     emit_throttle,
     emit_resume,
 )
-from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.risk.compliance_rule import ComplianceRule
-from zephyr.shared.contracts.market.factor_monitor_report import FactorMonitorReport
-from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.trading_contracts.risk.compliance_rule import ComplianceRule
+from zephyr.trading_contracts.market.factor_monitor_report import FactorMonitorReport
+from zephyr.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading_contracts.execution.fill import Fill
+from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
-from zephyr.shared.contracts.market.macro_factor_signal import MacroFactorSignal
+from zephyr.trading_contracts.market.macro_factor_signal import MacroFactorSignal
 from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
-from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
+from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
 from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
 from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 

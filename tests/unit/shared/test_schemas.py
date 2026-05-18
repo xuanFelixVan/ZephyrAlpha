@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_schemas
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/schemas.py（T-1）
 ==========================================
@@ -19,23 +25,18 @@ from typing import Any
 
 import pytest
 from pydantic import ValidationError
+from zephyr.gates.task_types import Task, TaskNamespace, TaskStatus
+from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.shared.schema.severity_types import AuditSeverity, SafetyLevel
 from zephyr.shared.schema.schemas import (
-    BASE_CONFIG,
     AuditFinding,
     AuditReport,
-    AuditSeverity,
     BlockedItem,
-    Classification,
-    EvolutionPolicy,
     FailurePattern,
     FailureType,
     HandoffPackage,
     KnowledgeEntry,
     NextAction,
-    SafetyLevel,
-    Task,
-    TaskNamespace,
-    TaskStatus,
 )
 
 _UTC = UTC

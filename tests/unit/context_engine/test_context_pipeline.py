@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.context_engine.test_context_pipeline
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """context_pipeline 组合根单测（对齐 build→compress→validate→inject 顺序）。"""
 
 from pathlib import Path

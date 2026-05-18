@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.adversarial.test_kb_redteam
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """9项红队完整测试 — KB纵深防御对抗性验证
 =============================================
 蓝图: MOD-KB-001 §7.10.6

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_gct_024_hard_checks
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 import yaml
 import pytest
 from pathlib import Path
@@ -25,14 +31,14 @@ class TestGCT024HardChecks:
         assert p["budget_levels"]["session_level"]["hard_limit"] == 12000
 
     def test_escalation_bridge_importable(self):
-        from zephyr.governance.escalation.budget_handler import on_budget_alert
-        from zephyr.governance.budget_enforcer.alerts import BudgetAlert
+        from zephyr.escalation_engine.budget_handler import on_budget_alert
+        from zephyr.budget_enforcer.alerts import BudgetAlert
         a = BudgetAlert(alert_id="B001")
         r = on_budget_alert(a)
         assert r is not None
 
     def test_rbac_bridge_importable(self):
-        from zephyr.governance.budget_enforcer.rbac_bridge import BudgetRBACBridge
+        from zephyr.budget_enforcer.rbac_bridge import BudgetRBACBridge
         b = BudgetRBACBridge()
         r = b.check_budget("a1", 500, 1000)
         assert r["action"] == "ALLOW"

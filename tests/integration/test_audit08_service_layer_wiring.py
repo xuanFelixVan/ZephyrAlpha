@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_audit08_service_layer_wiring
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """AUDIT-08：FLE 背压桥与 KB 门禁链接、VMS 委托适配器 集成测试。"""
 
 from __future__ import annotations

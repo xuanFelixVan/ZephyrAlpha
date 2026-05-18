@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_output_guard
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """测试 L5 OutputGuard — 输出护栏"""
 import pytest
 from zephyr.agent_rbac.output_guard import OutputGuard, OutputDecision, PII_PATTERNS, CREDENTIAL_PATTERNS

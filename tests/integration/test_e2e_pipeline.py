@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_e2e_pipeline
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 E2E 集成测试：全流水线贯通测试
 =================================
@@ -427,7 +433,7 @@ class TestOrderManagerLifecycle:
             twap_window_minutes=30,
             twap_slices=4,
         )
-        engine = ExecutionEngine(order_manager=order_mgr, config=config)
+        engine = ExecutionEngine(order_manager=order_mgr, risk_validator=DefaultRiskValidator(), config=config)
 
         order = order_mgr.create_order(
             symbol="600519",

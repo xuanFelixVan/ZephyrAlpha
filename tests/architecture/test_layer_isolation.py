@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.architecture.test_layer_isolation
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 架构适应度函数：层隔离性 + 依赖方向
 ========================================
@@ -33,7 +39,7 @@ LAYER_ORDER = [
     "l09_research_innovation",
     "l10_compliance",
     "l11_ml_platform",
-    "l12_system_telemetry",
+    "system_telemetry",
     "l13_experimentation",
 ]
 

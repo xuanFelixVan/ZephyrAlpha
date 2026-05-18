@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_task_manager_mcp
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """TaskManagerMCP（FastMCP）协议与 BlueprintDecomposer 绑定单测。"""
 
 from __future__ import annotations

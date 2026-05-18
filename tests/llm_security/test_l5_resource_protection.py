@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [MODULE] tests.llm_security.test_l5_resource_protection
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 import time
 
 import pytest
@@ -7,14 +13,14 @@ from zephyr.llm_security.layers.l5_resource_protection import (
     AgentExecutionProtector,
     CircuitState,
     CostAsymmetryDefender,
-    CostBudget,
+    _L5CostBudget as CostBudget,
     LLMCostCircuitBreaker,
     LSGPerformanceBudget,
     ModelExtractionDefender,
     ResourceProtectionLayer,
     SemanticCacheCollisionDefender,
     SlidingWindowRateLimiter,
-    TokenBudget,
+    _L5TokenBudget as TokenBudget,
 )
 from zephyr.llm_security.protocol import (
     SecurityContext,

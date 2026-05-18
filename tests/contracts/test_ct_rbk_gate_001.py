@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.contracts.test_ct_rbk_gate_001
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """CT-RBK-GATE-001 集成测试——Rollback System Exit Code → Gate 判定 → Pipeline 行为。"""
 
 from __future__ import annotations

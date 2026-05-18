@@ -1,3 +1,4 @@
+# [BLUEPRINT] DOM-GOV-001 | tests/e2e/__init__.py | §
 """E2E 测试共享夹具 — knowledge-base 全链路测试"""
 from __future__ import annotations
 

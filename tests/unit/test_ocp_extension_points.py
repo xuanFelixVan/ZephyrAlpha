@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_ocp_extension_points
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """OCP-002 / OCP-003 / OCP-001 扩展点冒烟测试。
 
 病根：SSoT codegen 曾将 OCP 误判为 dataclass，导致 L05/L06 空壳抽象；本文件锁定
@@ -15,8 +21,8 @@ import pytest
 from zephyr.l02_alpha_factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 from zephyr.l05_portfolio_construction.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading_contracts.execution.position import PositionSnapshot
 
 
 @pytest.fixture(autouse=True)

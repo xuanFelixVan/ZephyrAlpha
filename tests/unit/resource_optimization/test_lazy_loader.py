@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.resource_optimization.test_lazy_loader
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 test_lazy_loader.py - LazyModuleRegistry unit tests
 ====================================================
@@ -9,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.shared.lifecycle.lazy_loader import LazyModuleRegistry
+from zephyr.core.lifecycle.lazy_loader import LazyModuleRegistry
 
 
 class TestLazyModuleRegistryBasic:

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_phase_c_import_chain
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Phase C — Import Chain Validation
 
 验证所有 Phase C concrete class 的 import 路径在工作。
@@ -45,7 +51,7 @@ PHASE_E_MODULES: list[ConcreteClass] = [
     ConcreteClass("zephyr.l01_infrastructure.script_system.finding", "Finding", "L01"),
     ConcreteClass("zephyr.l02_alpha_factor.factor_base", "FactorBase/FactorRegistry/FactorMeta", "L02"),
     ConcreteClass("zephyr.l08_human_ai_interface.interface_base", "DashboardBase/NotificationManagerBase", "L08"),
-    ConcreteClass("zephyr.l12_system_telemetry.contract_metrics", "ContractMetricsCollector", "L12"),
+    ConcreteClass("zephyr.l01_infrastructure.system_telemetry.contract_metrics", "ContractMetricsCollector", "L12"),
 ]
 
 

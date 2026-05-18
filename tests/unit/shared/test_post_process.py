@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_post_process
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/post_process.py
 =============================================
@@ -27,7 +33,7 @@ Safety: HIGH（后处理管道是代码质量的最后防线）
 """
 
 import pytest
-from zephyr.shared.post_process import (
+from zephyr.governance.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,

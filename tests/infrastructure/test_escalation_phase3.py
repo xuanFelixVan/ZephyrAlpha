@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_escalation_phase3
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Tests for D-022-08 EngineSandbox, D-022-09 AntiAutomationBias, D-022-12 SLOContract."""
 
 from __future__ import annotations
@@ -7,62 +13,62 @@ import time
 
 class TestEngineSandbox:
     def test_init_in_running_state(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import EngineSandbox, SandboxState
+        from zephyr.escalation_engine.engine_sandbox import EngineSandbox, SandboxState
 
         sb = EngineSandbox()
         assert sb.state == SandboxState.RUNNING
 
     def test_file_read_allowed(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read("docs/test.md", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_file_read_denied_src(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read("src/main.py", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_file_read_denied_env(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read(".env", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_file_write_allowed(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_write("docs/09_audit/log.jsonl", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_file_write_denied_src(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_write("src/main.py", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_network_allowed_localhost(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_network_access("localhost:8080", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_network_denied_openai(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_network_access("api.openai.com", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_boundary_violation_detected(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.detect_boundary_violation("evil-agent", 9001)
@@ -74,7 +80,7 @@ class TestEngineSandbox:
         import os
         import tempfile
 
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import EngineSandbox
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w")
         try:
@@ -91,7 +97,7 @@ class TestEngineSandbox:
         import os
         import tempfile
 
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import EngineSandbox
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w")
         try:
@@ -107,7 +113,7 @@ class TestEngineSandbox:
             os.unlink(tmp.name)
 
     def test_lock_sandbox(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import EngineSandbox, SandboxState
+        from zephyr.escalation_engine.engine_sandbox import EngineSandbox, SandboxState
 
         sb = EngineSandbox()
         sb.lock_sandbox("test lock")
@@ -115,7 +121,7 @@ class TestEngineSandbox:
         assert not sb.grant_temporary_access("docs/test.md", 1)
 
     def test_temporary_access_grant_and_revoke(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         assert sb.check_file_read("custom/path.txt").decision == AccessDecision.DENY
@@ -125,7 +131,7 @@ class TestEngineSandbox:
         assert sb.check_file_read("custom/path.txt").decision == AccessDecision.DENY
 
     def test_resource_guard_limits(self):
-        from zephyr.infrastructure.escalation_protocol.engine_sandbox import _ResourceGuard
+        from zephyr.escalation_engine.engine_sandbox import _ResourceGuard
 
         rg = _ResourceGuard(max_memory_mb=128, max_cpu_seconds=0.15)
         rg.start_operation()

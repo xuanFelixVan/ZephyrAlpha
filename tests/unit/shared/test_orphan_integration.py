@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_orphan_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Orphan Integration Tests — 验证 shared/ 下35个孤儿模块的导入与核心功能
 按集群组织，每个模块测试：导入、实例化、核心方法
@@ -522,10 +528,10 @@ class TestFaultIsolator:
 
 class TestEventBusUpgrade:
     def test_import(self):
-        from zephyr.shared.event_bus_upgrade import EventBusUpgrader, EventSchema
+        from zephyr.shared.events.event_bus_upgrade import EventBusUpgrader, EventSchema
 
     def test_register_and_upgrade(self):
-        from zephyr.shared.event_bus_upgrade import EventBusUpgrader, EventSchema
+        from zephyr.shared.events.event_bus_upgrade import EventBusUpgrader, EventSchema
         upgrader = EventBusUpgrader()
         upgrader.register(EventSchema(
             event_type="task.created", version=1, fields=["id", "name"]
@@ -540,7 +546,7 @@ class TestEventBusUpgrade:
         assert result["priority"] == "normal"
 
     def test_check_compatibility(self):
-        from zephyr.shared.event_bus_upgrade import EventBusUpgrader, EventSchema
+        from zephyr.shared.events.event_bus_upgrade import EventBusUpgrader, EventSchema
         upgrader = EventBusUpgrader()
         upgrader.register(EventSchema(event_type="test", version=1, fields=["a"]))
         assert upgrader.check_compatibility("test", 1) is True

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_gov_5system_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 G-CT-009: Five-System Governance Discovery Integration Test — MOD-INF-021~025
 
@@ -62,7 +68,7 @@ class TestFiveSystemDiscovery:
             f"{mod_name}: expected {expected_version}, got {mods[mod_name].__version__}"
 
     def test_escalation_engine_functional(self):
-        from zephyr.escalation import EscalationEngine, RuleCategory
+        from zephyr.escalation_engine import EscalationEngine, RuleCategory
         e = EscalationEngine("gct009-test")
         ev = e.evaluate(RuleCategory.AUTO_GUARD_FAILURE, "test guard failure")
         assert ev.level.value <= 4
@@ -77,7 +83,7 @@ class TestFiveSystemDiscovery:
         assert r.budget_level.name == "L0_NORMAL"
 
     def test_cross_system_escalation_chain(self):
-        from zephyr.escalation import EscalationEngine, RuleCategory
+        from zephyr.escalation_engine import EscalationEngine, RuleCategory
         from zephyr.budget_enforcer import BudgetEngine
         e = EscalationEngine("chain-test")
         be = BudgetEngine()

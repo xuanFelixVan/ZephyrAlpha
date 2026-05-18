@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_p0_i2_construction_order
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """P0-I2 施工顺序验证 — DOM-GOV-001 §8.4."""
 from __future__ import annotations
 
@@ -15,10 +21,10 @@ class TestP0I2ConstructionOrder:
             assert phases[i] > phases[i - 1], f"Phase {phases[i]} should come after Phase {phases[i-1]}"
 
     def test_all_modules_have_contracts_interface(self):
-        from zephyr.governance.agent_rbac.contracts import RBACAuditBridge
-        from zephyr.governance.audit_trail.contracts import AuditWriter
-        from zephyr.governance.rollback.contracts import RollbackHandler
-        from zephyr.governance.escalation.contracts import EscalationContracts
+        from zephyr.agent_rbac.contracts import RBACAuditBridge
+        from zephyr.audit_trail.contracts import AuditWriter
+        from zephyr.rollback.contracts import RollbackHandler
+        from zephyr.escalation_engine.contracts import EscalationContracts
         assert hasattr(RBACAuditBridge(), "check_and_log")
         assert hasattr(AuditWriter(), "write")
         assert hasattr(RollbackHandler(), "on_audit_anomaly")

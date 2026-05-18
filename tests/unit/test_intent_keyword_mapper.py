@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_intent_keyword_mapper
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for intent_keyword_mapper.py (T-2-21)
 =================================================
@@ -8,7 +14,7 @@ Minimum: 10 tests
 from __future__ import annotations
 
 import pytest
-from zephyr.context_engine.intent_keyword_mapper import (
+from zephyr.context_engine.parsing.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,
     _tokenize,

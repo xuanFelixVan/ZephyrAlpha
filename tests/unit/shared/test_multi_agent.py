@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_multi_agent
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/multi_agent.py
 ============================================
@@ -26,7 +32,7 @@ Safety: LOW（编排基座，不直接影响安全）
 """
 
 import pytest
-from zephyr.shared.multi_agent import (
+from zephyr.l01_infrastructure.a2a_protocol.multi_agent import (
     AgentCard,
     AgentRole,
     DispatchedTask,

@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [MODULE] tests.llm_security.test_l7_validation
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 import pytest
 
 from zephyr.llm_security.self_protection.l7_validation import (
@@ -90,7 +96,9 @@ class TestValidationLayer:
 
     def test_trigger_security_regression(self):
         layer = ValidationLayer()
-        result = layer.trigger_security_regression(RegressionType.WEEKLY)
+        from unittest.mock import MagicMock
+        gateway = MagicMock()
+        result = layer.trigger_security_regression(RegressionType.WEEKLY, gateway=gateway)
         assert result.total_scenarios == 10
         assert result.passed == 10
         assert result.failed == 0
@@ -98,8 +106,10 @@ class TestValidationLayer:
 
     def test_auto_trigger_initial(self):
         layer = ValidationLayer()
-        results = layer.auto_trigger_if_due()
-        assert len(results) >= 2  # both weekly and monthly trigger on first call
+        from unittest.mock import MagicMock
+        gateway = MagicMock()
+        results = layer.auto_trigger_if_due(gateway=gateway)
+        assert len(results) >= 2
 
     @pytest.mark.asyncio
     async def test_evaluate_with_low_coverage(self):

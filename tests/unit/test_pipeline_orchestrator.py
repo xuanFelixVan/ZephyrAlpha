@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_pipeline_orchestrator
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """M1-M11 Pipeline Orchestrator 单元测试"""
 
 from __future__ import annotations
@@ -17,7 +23,8 @@ from zephyr.pipeline import (
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
-    from zephyr.shared.schema.schemas import Priority, TaskNamespace
+    from zephyr.gates.task_types import TaskNamespace
+    from zephyr.shared.schema.severity_types import Priority
 
     parts = task_id.split("-", 2)
     ns_name = parts[0] if len(parts) >= 2 else "TASK"
@@ -131,7 +138,7 @@ class TestPipelineDispatch:
         assert mids == ["M2", "M3", "M4", "M5"]
 
     def test_ct_pipe_audit_p0_vs_assigned_pipeline_b_warns(self) -> None:
-        from zephyr.shared.schema.schemas import Priority
+        from zephyr.shared.schema.severity_types import Priority
 
         task = _make_task(
             "CP-0102",
@@ -192,7 +199,7 @@ class TestCircuitBreaker:
 
     def test_initial_closed(self) -> None:
         o = PipelineOrchestrator()
-        assert not o._circuit_breaker_states
+        assert o._cb_manager.open_count == 0
 
     def test_reset_returns_zero_if_no_breaker(self) -> None:
         o = PipelineOrchestrator()

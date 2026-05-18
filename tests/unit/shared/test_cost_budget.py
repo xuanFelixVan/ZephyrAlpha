@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_cost_budget
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/cost_budget.py
 ============================================
@@ -42,7 +48,7 @@ Safety: HIGH（成本熔断是经济安全边界）
 import threading
 
 import pytest
-from zephyr.shared.cost_budget import (
+from zephyr.budget_enforcer.cost_budget import (
     CostBudget,
     CostBudgetExceededError,
     PricingTier,

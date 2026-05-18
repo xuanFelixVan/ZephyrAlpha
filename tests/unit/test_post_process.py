@@ -1,10 +1,16 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_post_process
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for post_process.py
 """
 
 import pytest
 
-from zephyr.shared.post_process import (
+from zephyr.governance.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,

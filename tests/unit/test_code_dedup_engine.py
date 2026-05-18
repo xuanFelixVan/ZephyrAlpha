@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_code_dedup_engine
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """code-dedup-engine 核心模块单元测试 — Scanner, MonocultureGuard, AutoFixer."""
 
 from __future__ import annotations

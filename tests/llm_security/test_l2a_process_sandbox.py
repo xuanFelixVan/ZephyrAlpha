@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [MODULE] tests.llm_security.test_l2a_process_sandbox
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 import os
 import tempfile
 

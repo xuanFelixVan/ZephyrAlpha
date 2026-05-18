@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_adversarial_contract_attacks
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """test_adversarial_contract_attacks.py — 治理域八件套红白对抗测试
 
 攻击面覆盖：
@@ -11,17 +17,17 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.agent_rbac.contracts import RBACAuditBridge
-from zephyr.governance.agent_rbac.approver_check import verify_approver
-from zephyr.governance.agent_rbac.capability_check import verify_capability_scope
-from zephyr.governance.agent_rbac.a2a_check import verify_a2a_pair
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-from zephyr.governance.audit_trail.contracts import AuditWriter
-from zephyr.governance.agent_spec.registry import AgentCapability, SpecRegistry
-from zephyr.governance.drift_detector.events import DriftEvent, DriftType
-from zephyr.governance.rollback.drift_fix import DriftFixHandler
-from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge
-from zephyr.governance.budget_enforcer.rbac_bridge import BudgetRBACBridge
+from zephyr.agent_rbac.contracts import RBACAuditBridge
+from zephyr.agent_rbac.approver_check import verify_approver
+from zephyr.agent_rbac.capability_check import verify_capability_scope
+from zephyr.agent_rbac.a2a_check import verify_a2a_pair
+from zephyr.audit_trail.anomaly import AnomalyDetector
+from zephyr.audit_trail.contracts import AuditWriter
+from zephyr.agent_spec.registry import AgentCapability, SpecRegistry
+from zephyr.behavioral_auditor.events import DriftEvent, DriftType
+from zephyr.rollback.drift_fix import DriftFixHandler
+from zephyr.escalation_engine.rbac_bridge import EscalationRBACBridge
+from zephyr.budget_enforcer.rbac_bridge import BudgetRBACBridge
 
 
 # ===== 红方攻击 1: G-CT-001 — RBAC→Audit 契约旁路攻击 =====

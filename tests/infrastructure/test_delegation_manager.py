@@ -1,5 +1,11 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_delegation_manager
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Test Delegation Manager."""
-from zephyr.infrastructure.escalation_protocol.delegation_manager import DelegationManager,DelegateResult
+from zephyr.escalation_engine.delegation_manager import DelegationManager,DelegateResult
 
 def test_self_delegation_blocked():
     mgr=DelegationManager()

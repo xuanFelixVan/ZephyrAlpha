@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.orchestrator.test_file_task_mapper
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for file_task_mapper.py (T-2-02)
 """
@@ -10,7 +16,7 @@ from zephyr.orchestrator.state.file_task_mapper import (
     FileTaskMapper,
     classify_file_to_namespace,
 )
-from zephyr.shared.schema.schemas import TaskNamespace
+from zephyr.gates.task_types import TaskNamespace
 
 
 @pytest.fixture

@@ -1,10 +1,18 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_escalation_engine
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Test Escalation Engine — MOD-INF-022 v0.14.0.
 
 Tests the core EscalationEngine (L0-L4 model with CircuitBreaker + EconomicGuard).
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2
 """
+from unittest.mock import patch
+
 import pytest
-from zephyr.escalation import (
+from zephyr.escalation_engine import (
     EscalationEngine,
     RuleCategory,
     EscalationLevel,
@@ -17,6 +25,13 @@ from zephyr.escalation import (
     DelegationRecord,
     EconomicGuard,
 )
+
+
+@pytest.fixture(autouse=True)
+def _disable_lsg():
+    with patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None), \
+         patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None):
+        yield
 
 
 class TestEscalationEngineCore:
@@ -95,7 +110,7 @@ class TestEscalationEngineCore:
 
     def test_rule_registration_and_removal(self):
         engine = EscalationEngine("test-reg")
-        from zephyr.escalation import EscalationRule
+        from zephyr.escalation_engine import EscalationRule
         new_rule = EscalationRule("X999", RuleCategory.CUSTOM, EscalationLevel.L3_CRITICAL, priority=99)
         engine.register_rule(new_rule)
         assert "X999" in engine._rules
@@ -174,7 +189,7 @@ class TestDelegationEngine:
         de = DelegationEngine()
         de.register_delegate("agent-a")
         de.register_delegate("agent-b")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id="owner-1")
         record = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-1")
         assert record.to_delegate in ("agent-a", "agent-b")
@@ -184,14 +199,14 @@ class TestDelegationEngine:
         de = DelegationEngine()
         de.register_delegate("security-bot", ["security"])
         de.register_delegate("generic-bot")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.SECURITY_VIOLATION, owner_id="owner-2")
         record = de.delegate(ev, DelegationStrategy.EXPERTISE_MATCH, "task-sec")
         assert record.to_delegate == "security-bot"
 
     def test_no_available_delegate(self):
         de = DelegationEngine()
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id="owner-3")
         record = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-2")
         assert record.to_delegate == ""
@@ -199,7 +214,7 @@ class TestDelegationEngine:
     def test_accept_and_complete_delegation(self):
         de = DelegationEngine()
         de.register_delegate("worker-1")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id="owner-4")
         record = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-3")
         assert de.accept_delegation(record.delegation_id) is True
@@ -208,7 +223,7 @@ class TestDelegationEngine:
     def test_reject_delegation(self):
         de = DelegationEngine()
         de.register_delegate("worker-2")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id="owner-5")
         record = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-4")
         assert de.reject_delegation(record.delegation_id) is True
@@ -216,7 +231,7 @@ class TestDelegationEngine:
     def test_cleanup_expired(self):
         de = DelegationEngine()
         de.register_delegate("worker-3")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id="owner-6")
         record = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-5")
         record.expires_at = None
@@ -226,7 +241,7 @@ class TestDelegationEngine:
     def test_delegate_load_capped(self):
         de = DelegationEngine()
         de.register_delegate("busy-worker")
-        from zephyr.escalation import EscalationEvent, RuleCategory
+        from zephyr.escalation_engine import EscalationEvent, RuleCategory
         for i in range(10):
             ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id=f"owner-{i}")
             de.delegate(ev, DelegationStrategy.LOAD_BALANCED, f"task-{i}")

@@ -1,8 +1,14 @@
-"""l12_system_telemetry.contract_metrics 框架单测。"""
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_contract_metrics
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
+"""system_telemetry.contract_metrics 框架单测。"""
 
 from __future__ import annotations
 
-from zephyr.l12_system_telemetry.contract_metrics import (
+from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
     ContractMetricsCollector,
     get_contract_metrics,
 )

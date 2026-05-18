@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_gate_e2e
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 门禁引擎端到端测试（T-2-19）/ B14
 ====================================
@@ -34,7 +40,7 @@ from zephyr.gates.gate_engine import (
     GateResult,
 )
 from zephyr.core.models import TaskCard
-from zephyr.shared.schema.schemas import TaskStatus
+from zephyr.gates.task_types import TaskStatus
 
 # ---------------------------------------------------------------------------
 # 常量

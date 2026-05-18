@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.context_engine.test_curation_loop
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Tests for curation_loop.py (TASK-014 beta b)."""
 import pytest
 from zephyr.context_engine.curation_loop import CurationLoop, CurationRecord

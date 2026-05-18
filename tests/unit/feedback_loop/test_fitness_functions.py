@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.feedback_loop.test_fitness_functions
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 # AI-generated: 适应度函数框架单元测试（T-4-04, B17）
 """
 FitnessFunctionFramework 单元测试

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_cycle_dependency_audit_isolation
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 + 无 RBAC import 扫描.
 
@@ -49,7 +55,7 @@ class TestAuditRBACIsolation:
 
     def test_audit_can_run_independently(self):
         try:
-            from zephyr.governance.audit_trail.contracts import AuditContract
+            from zephyr.audit_trail.contracts import AuditContract
             assert AuditContract is not None
         except ImportError as e:
             assert "rbac" not in str(e).lower(), (

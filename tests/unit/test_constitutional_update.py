@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_constitutional_update
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for constitutional_update.py
 """
@@ -8,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.shared.constitutional_update import ConstitutionalAutoUpdate, Learning, ProposedUpdate
+from zephyr.governance.constitutional_update import ConstitutionalAutoUpdate, Learning, ProposedUpdate
 
 
 class TestLearning:

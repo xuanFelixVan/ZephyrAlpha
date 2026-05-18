@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.governance.test_gct_007_spec_to_rbac_audit
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """G-CT-007 — Agent Spec → Audit 集成测试."""
 from __future__ import annotations
 
@@ -8,20 +14,20 @@ class TestGCT007SpecToAudit:
     """验证 agent_spec/registry.py 的 AgentCapability 可被 audit_trail/spec_auditor.py 记录."""
 
     def test_capability_creatable(self):
-        from zephyr.governance.agent_spec.registry import AgentCapability
+        from zephyr.agent_spec.registry import AgentCapability
         cap = AgentCapability(agent_id="test", capabilities=["read:docs", "write:tests"])
         assert cap.agent_id == "test"
 
     def test_spec_auditor_records_capability(self):
-        from zephyr.governance.agent_spec.registry import AgentCapability
-        from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+        from zephyr.agent_spec.registry import AgentCapability
+        from zephyr.audit_trail.spec_auditor import record_agent_spec
         cap = AgentCapability(agent_id="test", capabilities=["read:docs"])
         result = record_agent_spec(cap)
         assert "agent_id" in result
         assert result["event_type"] == "AGENT_SPEC_REGISTERED"
 
     def test_spec_registry_register(self):
-        from zephyr.governance.agent_spec.registry import SpecRegistry, AgentCapability
+        from zephyr.agent_spec.registry import SpecRegistry, AgentCapability
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="test", capabilities=["cap"])
         registry.register(cap)

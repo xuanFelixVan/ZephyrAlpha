@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.resource_optimization.test_brain_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 test_brain_integration.py - Brain system + ResourceOptimizationEngine integration
 ==================================================================================
@@ -13,23 +19,23 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.runtime.health_monitor import HealthMonitor, PressureLevel
 
 
 class TestHealthMonitorDelegation:
     def setup_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         ResourceOptimizationEngine.reset()
 
     def teardown_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         ResourceOptimizationEngine.reset()
 
     def test_pressure_level_delegates_to_roe(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-        from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
         engine._pressure_sm._current = ROELevel.WARNING
@@ -39,8 +45,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.ELEVATED
 
     def test_pressure_level_mapping_critical(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-        from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
         engine._pressure_sm._current = ROELevel.CRITICAL
@@ -50,8 +56,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.HIGH
 
     def test_pressure_level_mapping_emergency(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-        from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
         engine._pressure_sm._current = ROELevel.EMERGENCY
@@ -61,8 +67,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.CRITICAL
 
     def test_pressure_level_mapping_normal(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-        from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
         engine._pressure_sm._current = ROELevel.NORMAL
@@ -73,18 +79,20 @@ class TestHealthMonitorDelegation:
 
     def test_pressure_level_fallback_on_import_error(self):
         monitor = HealthMonitor()
-        with patch.dict("sys.modules", {"zephyr.shared.lifecycle.resource_optimization_engine": None}):
+        with patch.dict("sys.modules", {"zephyr.core.lifecycle.resource_optimization_engine": None}):
             level = monitor.pressure_level()
             assert isinstance(level, PressureLevel)
 
 
 class TestAutoRuntimeCoreLifecycle:
     def setup_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         ResourceOptimizationEngine.reset()
 
     def teardown_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.core.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         ResourceOptimizationEngine.reset()
 
     def test_boot_starts_engine_monitor(self):
@@ -93,15 +101,16 @@ class TestAutoRuntimeCoreLifecycle:
 
         mock_engine = MagicMock()
         with patch(
-            "zephyr.shared.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
+            "zephyr.core.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
-            # _start_local_models 会尝试连接本地 Ollama 服务（HTTP/localhost:11434），
-            # 在无 Ollama 的环境中挂起 25s+，必须 mock 掉。
-            with patch.object(core, "_start_local_models"):
-                with patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=True)):
-                    core.boot()
+            # _start_local_models connects to local Ollama (HTTP/localhost:11434).
+            # Without Ollama it hangs 25s+, must mock.
+            with patch.object(core, "_start_local_models"), patch.object(
+                core._lifecycle, "boot_sequence", return_value=BootReport(success=True)
+            ):
+                core.boot()
             mock_engine.start_monitor.assert_called_once_with(interval=30.0)
 
     def test_shutdown_stops_engine_monitor(self):
@@ -110,14 +119,14 @@ class TestAutoRuntimeCoreLifecycle:
 
         mock_engine = MagicMock()
         with patch(
-            "zephyr.shared.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
+            "zephyr.core.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
-            # _start_local_models 同上，boot() 中被调用时触发 Ollama 连接
-            with patch.object(core, "_start_local_models"):
-                with patch.object(core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()):
-                    core.shutdown()
+            with patch.object(core, "_start_local_models"), patch.object(
+                core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()
+            ):
+                core.shutdown()
             mock_engine.stop_monitor.assert_called_once()
 
     def test_boot_skips_engine_on_failure(self):

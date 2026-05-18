@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.alpha_signal.test_adversarial
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Alpha-Signal Domain 红白对抗测试
 ====================================
 Domain   : ALPHA-SIGNAL-DOMAIN-001

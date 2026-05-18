@@ -1,8 +1,14 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_multi_agent
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for multi_agent.py
 """
 
-from zephyr.shared.multi_agent import (
+from zephyr.l01_infrastructure.a2a_protocol.multi_agent import (
     AgentCard,
     AgentRole,
     DispatchedTask,

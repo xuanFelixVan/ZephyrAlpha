@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_phase_e_main_flow
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Phase E — Main Data Flow End-to-End Test
 
 主数据流端到端测试。验证 L00→L02→L03→L04→L05→L06→L07 完整 P0 链路。
@@ -49,13 +55,13 @@ from zephyr.pipeline.layer_router import (
     reset_layer_router,
     handle_layer_onboarding,
 )
-from zephyr.shared.contracts.market.market_data import NormalizedMarketData
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.portfolio.position import PositionSnapshot
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.execution.execution_report import ExecutionReport
+from zephyr.trading_contracts.market.market_data import NormalizedMarketData
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.execution.fill import Fill
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.shared.contracts.core.trace_context import TraceContext
 
 

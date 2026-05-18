@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_kb_pipeline_gate_order
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """KB 知识流水线：五阶段各调用 GateEngine.evaluate 的预期 gate_id（Mock 引擎）。"""
 
 from __future__ import annotations

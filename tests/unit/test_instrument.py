@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_instrument
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/contracts/instrument.py
 ====================================================
@@ -42,7 +48,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-from zephyr.shared.contracts.market.instrument import (
+from zephyr.trading_contracts.market.instrument import (
     ETF,
     FX,
     AssetClass,

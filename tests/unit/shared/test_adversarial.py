@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_adversarial
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 红队对抗审计：shared-core 模块（MOD-INF-016）
 ==============================================
@@ -22,8 +28,8 @@ import threading
 from pathlib import Path
 
 import pytest
-from zephyr.shared.cost_budget import CostBudget, CostBudgetExceededError
-from zephyr.shared.context_budget import ContextBudget, TruncationStrategy
+from zephyr.budget_enforcer.cost_budget import CostBudget, CostBudgetExceededError
+from zephyr.context_engine.context_budget import ContextBudget, TruncationStrategy
 from zephyr.shared.session_audit import SessionAuditTrail, SessionRecord
 from zephyr.shared.durable_execution import (
     ActivityStatus,
@@ -31,11 +37,11 @@ from zephyr.shared.durable_execution import (
     SimpleActivity,
     WorkflowManager,
 )
-from zephyr.shared.post_process import (
+from zephyr.governance.post_process import (
     HookStrategy,
     PostProcessPipeline,
 )
-from zephyr.shared.constitutional_update import (
+from zephyr.governance.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
     ProposedUpdate,
@@ -45,7 +51,7 @@ from zephyr.shared.version_negotiation import (
     VersionNegotiator,
     VersionSegment,
 )
-from zephyr.shared.skill_registry import (
+from zephyr.agent_spec.skill_registry import (
     PromptTemplate,
     PromptVariable,
     SkillDefinition,
@@ -57,7 +63,7 @@ from zephyr.shared.evals import (
     EvalRubric,
     EvalRunner,
 )
-from zephyr.shared.multi_agent import (
+from zephyr.l01_infrastructure.a2a_protocol.multi_agent import (
     AgentCard,
     AgentRole,
     TaskDispatch,

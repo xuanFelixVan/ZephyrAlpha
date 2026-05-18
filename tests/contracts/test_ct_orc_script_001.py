@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.contracts.test_ct_orc_script_001
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """CT-ORC-SCRIPT-001 集成测试——Task Blocking→Task创建。"""
 
 from __future__ import annotations

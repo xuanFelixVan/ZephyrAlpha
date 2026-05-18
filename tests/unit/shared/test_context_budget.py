@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_context_budget
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/context_budget.py
 ===============================================
@@ -43,7 +49,7 @@ Safety: HIGH（上下文预算管防控是 token 过载防线）
 """
 
 import pytest
-from zephyr.shared.context_budget import (
+from zephyr.context_engine.context_budget import (
     BudgetEntry,
     ContextBudget,
     QuotaTracker,
@@ -134,7 +140,7 @@ class TestBudgetProperties:
 
     def test_entries_total(self):
         b = ContextBudget(total_budget=16000)
-        from zephyr.shared.context_budget import BudgetEntry
+        from zephyr.context_engine.context_budget import BudgetEntry
         b.entries = [BudgetEntry(key="a", content="hello world", tokens=5),
                       BudgetEntry(key="b", content="hi", tokens=2)]
         assert b.entries_total == 7
@@ -142,7 +148,7 @@ class TestBudgetProperties:
     def test_consumed(self):
         b = ContextBudget(total_budget=16000)
         b.allocate(100)
-        from zephyr.shared.context_budget import BudgetEntry
+        from zephyr.context_engine.context_budget import BudgetEntry
         b.entries = [BudgetEntry(key="x", content="test", tokens=50)]
         assert b.consumed == 150
 

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.adversarial.test_audit_integration_fracture
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """审计链集成断裂面红白对抗测试 — MOD-INF-020 v1.4.0
 
 验证所有审计流已统一接入核心 AuditWriter 不可变审计链，
@@ -39,13 +45,13 @@ class TestGovernanceContractsIntegration:
 
     def test_contracts_writes_to_core_chain(self, audit_env):
         from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.governance.audit_trail.contracts import AuditWriter as GovAuditWriter
+        from zephyr.audit_trail.contracts import AuditWriter as GovAuditWriter
+        import zephyr.audit_trail.writer as writer_mod
 
         tmp_path, data_dir = audit_env
         writer = AuditWriter(data_dir=data_dir)
 
-        import zephyr.governance.audit_trail.contracts as contracts_mod
-        contracts_mod._MODULE_WRITER = writer
+        writer_mod._GLOBAL_WRITER = writer
 
         record = GovAuditWriter.write(
             agent_id="test_agent",
@@ -71,6 +77,8 @@ class TestGovernanceContractsIntegration:
         assert "prev_hash" in event, "event must have prev_hash (hash chain)"
         assert "entry_hash" in event, "event must have entry_hash"
         assert "hmac_signature" in event, "event must have hmac_signature"
+
+        writer_mod._GLOBAL_WRITER = None
 
 
 class TestRollbackExecutorIntegration:
@@ -147,7 +155,7 @@ class TestDriftHotfixBypassIntegration:
     def test_hotfix_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.drift_detector.drift_hotfix_bypass import HotfixBypass
+        from zephyr.behavioral_auditor.drift_hotfix_bypass import HotfixBypass
 
         writer = AuditWriter(data_dir=data_dir)
         bypass = HotfixBypass(project_root=str(tmp_path))

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.context_engine.test_doc_compressor
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 T-V2-006 单元测试 — DocCompressor + CompressionPolicy
 =======================================================
@@ -416,7 +422,7 @@ class TestBudgetTrackerDocCompressorIntegration:
         from unittest.mock import MagicMock
 
         from zephyr.context_engine.management.context_budget_tracker import (
-            BudgetLevel,
+            ContextBudgetLevel,
             ContextBudgetTracker,
         )
 
@@ -428,9 +434,9 @@ class TestBudgetTrackerDocCompressorIntegration:
             observer,
             session_limit=100,
             thresholds={
-                BudgetLevel.L1_WARNING: 0.80,
-                BudgetLevel.L2_THROTTLE: 0.85,
-                BudgetLevel.L3_HARD_STOP: 0.95,
+                ContextBudgetLevel.L1_WARNING: 0.80,
+                ContextBudgetLevel.L2_THROTTLE: 0.85,
+                ContextBudgetLevel.L3_HARD_STOP: 0.95,
             },
         )
         # 向 session 直接写入超过 L2 阈值的 token 数
@@ -442,7 +448,7 @@ class TestBudgetTrackerDocCompressorIntegration:
         }
         tracker.check_budget("s1")
 
-        l2_payloads = [p for p in captured_payloads if p.get("budget_level") == BudgetLevel.L2_THROTTLE.value]
+        l2_payloads = [p for p in captured_payloads if p.get("budget_level") == ContextBudgetLevel.L2_THROTTLE.value]
         assert len(l2_payloads) == 1
         assert l2_payloads[0]["compression_suggested"] is True
 

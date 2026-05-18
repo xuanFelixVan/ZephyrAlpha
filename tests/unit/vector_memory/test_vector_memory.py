@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.vector_memory.test_vector_memory
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 vector_memory 模块单元测试 — MOD-INF-011
 ===========================================
@@ -22,13 +28,13 @@ class TestCollectionManager:
         assert "execution_traces" in cm.VMS_COLLECTION_NAMES
 
     def test_collection_names_tuple(self):
-        from zephyr.vector_memory.collection_manager import COLLECTION_NAMES
+        from zephyr.vector_memory.collection_schemas import COLLECTION_NAMES
 
         assert isinstance(COLLECTION_NAMES, tuple)
         assert len(COLLECTION_NAMES) == 8
 
     def test_schemas_have_required_fields(self):
-        from zephyr.vector_memory.collection_manager import COLLECTION_SCHEMAS
+        from zephyr.vector_memory.collection_schemas import COLLECTION_SCHEMAS
 
         for name, schema in COLLECTION_SCHEMAS.items():
             assert "dimension" in schema, f"{name} missing dimension"
@@ -42,7 +48,8 @@ class TestCollectionManager:
 
 class TestDesignPrinciplesEnforcer:
     def test_validate_dimension_whitelist(self):
-        from zephyr.vector_memory.collection_manager import DesignPrinciplesEnforcer, DimensionError
+        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
+        from zephyr.vector_memory.vms_errors import DimensionError
 
         DesignPrinciplesEnforcer.validate_dimension(512)
         DesignPrinciplesEnforcer.validate_dimension(1024)
@@ -50,7 +57,8 @@ class TestDesignPrinciplesEnforcer:
             DesignPrinciplesEnforcer.validate_dimension(768)
 
     def test_validate_provenance_missing(self):
-        from zephyr.vector_memory.collection_manager import DesignPrinciplesEnforcer, ProvenanceMissingError
+        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
+        from zephyr.vector_memory.vms_errors import ProvenanceMissingError
 
         with pytest.raises(ProvenanceMissingError):
             DesignPrinciplesEnforcer.validate_provenance(None)
@@ -59,15 +67,15 @@ class TestDesignPrinciplesEnforcer:
             DesignPrinciplesEnforcer.validate_provenance({"other": "field"})
 
     def test_validate_provenance_ok(self):
-        from zephyr.vector_memory.collection_manager import DesignPrinciplesEnforcer
+        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
 
-        DesignPrinciplesEnforcer.validate_provenance({"origin": "test"})
-        DesignPrinciplesEnforcer.validate_provenance({"provenance": "test"})
+        DesignPrinciplesEnforcer.validate_provenance({"origin": "test", "audit_chain": ["test"], "arbitration": "owner"})
+        DesignPrinciplesEnforcer.validate_provenance({"provenance": {"origin": "test", "audit_chain": ["test"], "arbitration": "owner"}})
 
 
 class TestEmbeddingRouter:
     def test_router_collections(self):
-        from zephyr.vector_memory.embedding_router import BGE_M3_COLLECTIONS, BGE_SMALL_COLLECTIONS
+        from zephyr.local_model.embedding_router import BGE_M3_COLLECTIONS, BGE_SMALL_COLLECTIONS
 
         assert "decisions" in BGE_M3_COLLECTIONS
         assert "rules" in BGE_M3_COLLECTIONS
@@ -77,14 +85,14 @@ class TestEmbeddingRouter:
         assert len(BGE_SMALL_COLLECTIONS) == 3
 
     def test_l2_normalize(self):
-        from zephyr.vector_memory.embedding_router import l2_normalize
+        from zephyr.local_model.embedding_router import l2_normalize
 
         v = np.array([3.0, 4.0], dtype=np.float32)
         normed = l2_normalize(v)
         np.testing.assert_almost_equal(np.linalg.norm(normed), 1.0)
 
     def test_l2_normalize_zero_vector(self):
-        from zephyr.vector_memory.embedding_router import l2_normalize
+        from zephyr.local_model.embedding_router import l2_normalize
 
         v = np.zeros(10, dtype=np.float32)
         normed = l2_normalize(v)
@@ -102,7 +110,7 @@ class TestEmbeddingRouter:
 
 class TestHybridRetriever:
     def test_bm25_tokenize(self):
-        from zephyr.vector_memory.hybrid_retriever import BM25Index
+        from zephyr.vector_memory.bm25_index import BM25Index
 
         tokens = BM25Index._tokenize("Hello World 你好世界 test_123")
         assert "hello" in tokens
@@ -110,7 +118,7 @@ class TestHybridRetriever:
         assert "test_123" in tokens
 
     def test_bm25_index_and_search(self):
-        from zephyr.vector_memory.hybrid_retriever import BM25Index
+        from zephyr.vector_memory.bm25_index import BM25Index
 
         bm25 = BM25Index()
         docs = [
@@ -161,6 +169,23 @@ class TestCacheLayer:
 
         cache = CacheLayer()
         assert cache.get_embedding("nonexistent") is None
+
+    def test_invalidate_collection_only_affects_target(self):
+        from zephyr.vector_memory.cache_layer import CacheLayer
+
+        cache = CacheLayer(max_size=100)
+        vec = np.array([0.1, 0.2], dtype=np.float32)
+        cache.put_embedding("hello", vec, collection="decisions")
+        cache.put_embedding("world", vec, collection="rules")
+        cache.put_query_result("q1", "decisions", [{"id": "1"}])
+        cache.put_query_result("q2", "rules", [{"id": "2"}])
+
+        cache.invalidate_collection("decisions")
+
+        assert cache.get_embedding("hello", collection="decisions") is None
+        assert cache.get_embedding("world", collection="rules") is not None
+        assert cache.get_query_result("q1", "decisions") is None
+        assert cache.get_query_result("q2", "rules") is not None
 
 
 class TestChunkStrategyRouter:

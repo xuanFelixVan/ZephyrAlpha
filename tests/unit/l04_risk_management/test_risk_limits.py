@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l04_risk_management.test_risk_limits
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/l04_risk_management/risk_limits.py + implementations/default_risk_limits_calculator.py
 =============================================================================================================
@@ -21,7 +27,7 @@ from zephyr.l04_risk_management.implementations.default_risk_limits_calculator i
     DefaultRiskLimitsCalculator,
 )
 from zephyr.l04_risk_management.risk_limits import RiskLimitsCalculator
-from zephyr.shared.contracts.risk.risk_limits import RiskLimits
+from zephyr.trading_contracts.risk.risk_limits import RiskLimits
 
 
 def _make_risk_limits(**kwargs) -> RiskLimits:

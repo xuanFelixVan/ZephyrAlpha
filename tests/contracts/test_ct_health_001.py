@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.contracts.test_ct_health_001
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """CT-HEALTH-001 集成测试——三态健康探针：liveness / readiness / healthz。"""
 
 from __future__ import annotations
@@ -6,7 +12,7 @@ import pytest
 
 from zephyr.orchestrator.contract_registry import ContractRegistry
 from zephyr.orchestrator.contract_router import ContractRouter
-from zephyr.telemetry.health_probes import (
+from zephyr.l01_infrastructure.system_telemetry.health_probes import (
     SYSTEMS,
     HealthProbeManager,
     ProbeStatus,

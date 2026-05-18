@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_agent_spec_backlog_phase1
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Unit tests for agent_spec backlog Phase 1 modules.
 
@@ -76,7 +82,7 @@ class TestSkillExecutor:
 
     def test_execute_nonexistent_skill(self):
         executor = SkillExecutor(loader=MagicMock())
-        executor.loader.progressive_load.side_effect = FileNotFoundError(
+        executor.loader._load_l1_frontmatter.side_effect = FileNotFoundError(
             "not found"
         )
         result = executor.execute("NONEXISTENT-SKILL")

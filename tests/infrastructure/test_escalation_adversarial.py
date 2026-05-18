@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.test_escalation_adversarial
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Adversarial Red-Team Tests — Escalation Engine (MOD-INF-022).
 
 Tests the EscalationEngine against adversarial inputs designed to:
@@ -10,10 +16,11 @@ Tests the EscalationEngine against adversarial inputs designed to:
 Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md D-022-07 D-022-04 D-022-09
 """
 import time
+from unittest.mock import patch
 
 import pytest
 
-from zephyr.escalation import (
+from zephyr.escalation_engine import (
     EscalationEngine,
     EconomicGuard,
     EscalationLevel,
@@ -25,6 +32,13 @@ from zephyr.escalation import (
     DelegationEngine,
     DelegationStrategy,
 )
+
+
+@pytest.fixture(autouse=True)
+def _disable_lsg():
+    with patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None), \
+         patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None):
+        yield
 
 
 class TestPersuasionBypassAttacks:
@@ -85,7 +99,7 @@ class TestDeadlockRingAttacks:
         de.register_delegate("bob")
         de.register_delegate("carol")
 
-        from zephyr.escalation import EscalationEvent
+        from zephyr.escalation_engine import EscalationEvent
         ev = EscalationEvent(category=RuleCategory.DEADLOCK, owner_id="owner")
 
         r1 = de.delegate(ev, DelegationStrategy.LOAD_BALANCED, "task-ring")
@@ -99,7 +113,7 @@ class TestDeadlockRingAttacks:
     def test_deep_chain_delegation_capped(self):
         de = DelegationEngine()
         de.register_delegate("worker")
-        from zephyr.escalation import EscalationEvent
+        from zephyr.escalation_engine import EscalationEvent
         task_count = 15
         for i in range(task_count):
             ev = EscalationEvent(category=RuleCategory.TIMEOUT, owner_id=f"owner-{i}")

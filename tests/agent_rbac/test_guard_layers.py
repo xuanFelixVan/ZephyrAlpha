@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_guard_layers
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """测试防护层模块 — ColdStartLock, AutoGuard, EscalationHandler"""
 import pytest
 from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.gates.test_gate_engine
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 测试套件：GateEngine + TaskRepository 门禁集成（T-2-19）
 =========================================================
@@ -31,7 +37,7 @@ from zephyr.gates.gate_engine import (
     _check_path_blacklist,
 )
 from zephyr.core.models import TaskCard
-from zephyr.shared.schema.schemas import TaskStatus
+from zephyr.gates.task_types import TaskStatus
 
 # ---------------------------------------------------------------------------
 # Fixtures

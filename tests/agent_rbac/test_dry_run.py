@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_dry_run
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """测试 L7 DryRun — 权限模拟与影响分析"""
 import pytest
 from zephyr.agent_rbac.dry_run import DryRunSimulator, DryRunResult, ImpactAnalysis

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.integration.test_phase_g_perf
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """Phase G — Performance Benchmarks & SLA Validation
 
 性能基准与 SLA 验证。测量 14 层全链路延迟、吞吐量与内存占用，
@@ -60,19 +66,19 @@ from zephyr.l09_research_innovation.implementations.default_backtest_engine impo
 )
 from zephyr.l10_compliance.implementations.default_security_gateway import DefaultSecurityGateway
 from zephyr.l11_ml_platform.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.l12_system_telemetry.contract_metrics import ContractMetricsCollector, get_contract_metrics
+from zephyr.l01_infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector, get_contract_metrics
 from zephyr.l13_experimentation.implementations.default_experiment_pipeline import DefaultExperimentPipeline
 from zephyr.pipeline.backpressure_manager import BackpressureManager, emit_pause, emit_resume
 from zephyr.shared.contracts.backpressure.pause import BackpressurePause
 from zephyr.shared.contracts.backpressure.resume import BackpressureResume
 from zephyr.shared.contracts.backpressure.throttle import BackpressureThrottle
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.market.market_data import NormalizedMarketData
-from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.portfolio.position import PositionSnapshot
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.execution.fill import Fill
+from zephyr.trading_contracts.market.market_data import NormalizedMarketData
+from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 from zephyr.shared.contracts.core.trace_context import TraceContext
 
 ALL_SYMBOLS = [

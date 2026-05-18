@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.feedback_loop.test_auto_evolution
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 from __future__ import annotations
 # AI-generated: T-4-01 (A28) · AutoEvolutionEngine 单元测试
 """

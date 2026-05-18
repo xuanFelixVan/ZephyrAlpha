@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.db.test_circuit_breaker_repo
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 =============================================
 覆盖矩阵：
@@ -24,7 +30,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.db.circuit_breaker_repo import CircuitBreakerRecord, CircuitBreakerRepo
-from zephyr.shared.schema.schemas import CircuitBreakerState
+from zephyr.shared.schema.severity_types import CircuitBreakerState
 from zephyr.shared.utils.db_utils import ensure_schema
 
 

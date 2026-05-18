@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [MODULE] tests.llm_security.test_cross_module_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 import asyncio
 import pytest
 
@@ -137,17 +143,17 @@ class TestL10ComplianceLSGIntegration:
 
 class TestA2ALSGIntegration:
     def test_a2a_lsg_scan_function_exists(self):
-        from zephyr.a2a.governance_adapter import _lsg_scan_a2a_sync
+        from zephyr.l01_infrastructure.a2a_protocol.legacy_governance_adapter import _lsg_scan_a2a_sync
         assert callable(_lsg_scan_a2a_sync)
 
     def test_a2a_verify_pair_without_content(self):
-        from zephyr.a2a.governance_adapter import GovernanceAdapter
+        from zephyr.l01_infrastructure.a2a_protocol import GovernanceAdapter
         adapter = GovernanceAdapter()
         record = adapter.verify_pair("orchestrator", "worker")
         assert record.granted is True
 
     def test_a2a_verify_pair_with_lsg_attack(self):
-        from zephyr.a2a.governance_adapter import GovernanceAdapter
+        from zephyr.l01_infrastructure.a2a_protocol import GovernanceAdapter
         adapter = GovernanceAdapter()
         record = adapter.verify_pair(
             "orchestrator", "worker",
@@ -157,7 +163,7 @@ class TestA2ALSGIntegration:
         assert record.metadata.get("lsg_blocked_by") is not None
 
     def test_a2a_verify_unauthorized_pair_blocked(self):
-        from zephyr.a2a.governance_adapter import GovernanceAdapter
+        from zephyr.l01_infrastructure.a2a_protocol import GovernanceAdapter
         adapter = GovernanceAdapter()
         record = adapter.verify_pair("unknown_agent", "worker")
         assert record.granted is False

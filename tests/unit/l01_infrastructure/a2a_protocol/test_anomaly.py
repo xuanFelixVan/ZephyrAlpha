@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l01_infrastructure.a2a_protocol.test_anomaly
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """测试: AnomalyDetector"""
 
 from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_anomaly_detector import (

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.shared.test_skill_registry
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 单元测试：src/zephyr/shared/skill_registry.py
 ===============================================
@@ -29,7 +35,7 @@ Safety: MEDIUM（Pydantic 模型契约验证）
 
 import pytest
 from pydantic import ValidationError
-from zephyr.shared.skill_registry import (
+from zephyr.agent_spec.skill_registry import (
     PromptTemplate,
     PromptVariable,
     SkillCategory,

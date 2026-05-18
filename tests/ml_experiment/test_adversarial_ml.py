@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.ml_experiment.test_adversarial_ml
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """ML-Experiment Domain 红白对抗测试
 ====================================
 Domain   : ML-EXPERIMENT-DOMAIN-001

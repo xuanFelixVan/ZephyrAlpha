@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.l10_compliance.test_artifact_scanner
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """ArtifactScanner — SSRF / 凭据等规则冒烟测试。"""
 
 from zephyr.l10_compliance.artifact_scanner import ArtifactScanner

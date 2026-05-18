@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.unit.test_truth_source_validator
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """单元测试——真源优先级裁决器（Truth Source Validator）
 
 验证 5 级优先级链裁决正确性：Tier 0 > Tier 1 > Tier 2 > Tier 3 > Tier 4。

@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.test_code_dedup_engine.test_self_scan_integrity
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """引擎自扫描完整性测试 — Engine Dogfooding 基础验证."""
 
 import sys

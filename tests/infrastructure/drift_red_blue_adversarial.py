@@ -1,3 +1,9 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [MODULE] tests.infrastructure.drift_red_blue_adversarial
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """
 Red-Blue Adversarial Test — drift-detector v1.0.1
 ==================================================
@@ -12,8 +18,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from zephyr.drift_detector.ai_construction_detectors import AIConstructionDetectors
-from zephyr.drift_detector.chaos_injector import (
+from zephyr.behavioral_auditor.ai_construction_detectors import AIConstructionDetectors
+from zephyr.behavioral_auditor.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
@@ -23,8 +29,8 @@ from zephyr.drift_detector.chaos_injector import (
     inject_path_rename,
     inject_yaml_field_flip,
 )
-from zephyr.drift_detector.drift_models import DriftEvent
-from zephyr.drift_detector.self_test_verifier import SelfTestVerifier
+from zephyr.behavioral_auditor.drift_models import DriftEvent
+from zephyr.behavioral_auditor.self_test_verifier import SelfTestVerifier
 
 
 def setup_target_files(tmp_dir: str) -> list[Path]:

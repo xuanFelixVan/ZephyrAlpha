@@ -1,3 +1,9 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [MODULE] tests.agent_rbac.test_forensic_c
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 """跨切面 B 取证审计 C 层——audit_log/replay/legal_chain/rollback_sandbox/monotonic_clock 测试."""
 from __future__ import annotations
 
