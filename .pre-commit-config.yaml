@@ -214,6 +214,19 @@ repos:
         files: "^docs/19_development_workspace/drafts-and-audits/.*\\.md$"
         description: "蓝图重叠检测（同一 component_id 出现在多个草稿时 warn），骨架阶段 warn-only"
 
+      # ── G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁（防漂移强制执行层）──
+      # 权威依据：RULE-TWO 反孤儿 + 防幻觉 #6 漂移检测 + 用户需求"三方必须对齐"
+      # 检测范围：蓝图变更或代码变更时触发
+      # 检测内容：module_id/属性(stability/safety/ai_autonomy)/文件存在/进度/依赖图条目
+      # 模式：硬阻断（ERROR 时 exit(1) 拒绝提交）
+      - id: gate-triple-align
+        name: "G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁"
+        entry: python src/zephyr/gates/triple_alignment.py
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
+
       # ── GATE-15: Frontmatter 元数据校验（metadata-registry.md v3.0.0）──
       # 权威依据：docs/01_policies_and_standards/meta/metadata-registry.md v3.0.0
       # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter-schema.json R4
@@ -275,6 +288,20 @@ repos:
         pass_filenames: false
         always_run: true
         description: "全量零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库"
+
+      # ── GATE-DEDUP: 代码去重门禁（MOD-INF-017 §12 集成目标）──
+      # 权威依据：MOD-INF-017 蓝图 §12 集成目标 + §16.6 CLI 参数规格
+      # 检测范围：src/zephyr/**/*.py 变更时触发
+      # 检测内容：增量去重扫描——exit 0=PASS, exit 1=WARN, exit 2=BLOCK(high/critical)
+      # 模式：--warn-only（骨架阶段，验证稳定后转 --fail-on-duplicates 硬阻断）
+      - id: gate-dedup-code-deduplication
+        name: "GATE-DEDUP: 代码去重门禁（MOD-INF-017）"
+        entry: python -m zephyr.l01_infrastructure.code_dedup_engine.cli scan --incremental --warn-only
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        description: "增量代码去重扫描——发现 high/critical 重复时 WARN（骨架阶段），稳定后转硬阻断"
 
       # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
       # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
@@ -489,6 +516,20 @@ repos:
         always_run: true
         files: "\\.(yaml|md|py)$"
         description: "检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全"
+
+      # ── GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023 §1.7 post-commit 自动化）──
+      # 权威依据：MOD-INF-023 蓝图 §1.7 典型场景 + §10.4 自动化规格
+      # 检测范围：src/zephyr/**/*.py 或 docs/03_modules/**/*.md 变更时触发
+      # 检测内容：python -m zephyr.behavioral_auditor scan --level LIGHT
+      # 模式：warn-only（骨架阶段，验证稳定后转硬阻断）
+      - id: gate-drift-light-scan
+        name: "GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023）"
+        entry: python -m zephyr.behavioral_auditor scan --level LIGHT
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        description: "漂移检测 LIGHT scan——src/zephyr/ 下 .py 变更时触发，warn-only 骨架阶段"
 
       - id: sync-audit-protocol-numbers
         name: "AUTO-SYNC: 审计协议数字同步"

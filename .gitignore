@@ -167,3 +167,35 @@ _prompts/
 /_debug_*.py
 /_final_*.py
 /_tmp_*.py
+/_temp*.txt
+/_temp*.md
+
+# AI tool directories
+.roo/
+
+# Knowledge graph runtime
+memory_graph.json
+
+# Vector DB data (runtime)
+data/vector_db/
+
+# Governance watchdog snapshots
+scripts/governance/meta/_backups/
+
+# Script warn-only results
+*_warn_result.json
+
+# Data test artifacts
+data/test_audit_bridge/
+
+# Watchdog heartbeat files
+data/telemetry/.watchdog_*
+
+# Demo directory
+demos/
+
+# Temp directories
+temp/
+
+# Code dedup benchmark
+data/code_dedup_benchmark_history.json
