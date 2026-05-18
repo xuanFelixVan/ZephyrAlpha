@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.gates.config_complexity_budget
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Config Complexity Budget — v0.16.0 R227
 
 Blindspot: Config items grow unbounded; 1-person operator cannot maintain N config params.

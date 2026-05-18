@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-DRF-001
 name: drift-detector
 description: "Drift detection, budget enforcement, auto-reconciliation, and trend analysis"
@@ -10,7 +11,9 @@ version: "1.0.1"
 token_budget_l1: 80
 token_budget_l2: 600
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Drift Detector (MOD-INF-023) — v1.0.1 battle_tested
 

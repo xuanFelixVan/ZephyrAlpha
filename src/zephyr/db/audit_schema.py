@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.audit_schema
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_schema — 审计视图与查询入口（MOD-INF-012 v2.0）
 ======================================================

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-021 | 03_modules/l01_infrastructure/rollback-system/blueprint.md | §
+
+# [MODULE] zephyr.rollback.external_merkle_proof
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 External Merkle Proof — 外部可验证回滚完整性证明。
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.writer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """audit_trail.writer — MOD-INF-020 · 不可变写入器
 ==================================================
 蓝图 §3 · Append-only 审计日志写入
@@ -330,3 +350,16 @@ class AuditWriter:
     def merge_lamport(self, remote_lamport: int) -> int:
         self._lamport_counter = max(self._lamport_counter, remote_lamport) + 1
         return self._lamport_counter
+
+
+_global_writer: AuditWriter | None = None
+_global_writer_lock = threading.Lock()
+
+
+def get_audit_writer() -> AuditWriter:
+    global _global_writer
+    if _global_writer is None:
+        with _global_writer_lock:
+            if _global_writer is None:
+                _global_writer = AuditWriter()
+    return _global_writer

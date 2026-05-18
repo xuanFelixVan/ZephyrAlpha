@@ -1,0 +1,59 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [MODULE] zephyr.shared.contracts.escalation.budget_alert
+# [INVARIANTS] 告警阈值不可被静默;告警事件必须可审计
+# [MODIFY-GUARD] none
+# [CONSUMERS] zephyr.budget_enforcer.alerts;zephyr.budget_enforcer.bridges.alerts;zephyr.escalation_engine
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
+# [TESTS] tests/test_budget_enforcer.py
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from enum import Enum
+
+from pydantic import BaseModel, Field
+
+
+class BudgetSeverity(str, Enum):
+    WARNING = "WARNING"
+    CRITICAL = "CRITICAL"
+
+
+class BudgetType(str, Enum):
+    TOKEN = "TOKEN"
+    TIME = "TIME"
+    MEMORY = "MEMORY"
+    API_CALLS = "API_CALLS"
+
+
+class BudgetAlert(BaseModel):
+    alert_id: str
+    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    session_id: str = ""
+    budget_type: BudgetType = BudgetType.TOKEN
+    burn_rate: float = 0.0
+    burn_rate_threshold: float = 0.8
+    remaining_budget: float = 0.0
+    severity: BudgetSeverity = BudgetSeverity.WARNING
+
+    @classmethod
+    def from_burn_rate(cls, alert_id: str, burn_rate: float, threshold: float, remaining: float, session_id: str = "", budget_type: BudgetType = BudgetType.TOKEN) -> BudgetAlert:
+        if remaining <= 0:
+            severity = BudgetSeverity.CRITICAL
+        elif burn_rate > threshold:
+            severity = BudgetSeverity.WARNING
+        else:
+            severity = BudgetSeverity.WARNING
+
+        return cls(
+            alert_id=alert_id,
+            session_id=session_id,
+            budget_type=budget_type,
+            burn_rate=burn_rate,
+            burn_rate_threshold=threshold,
+            remaining_budget=remaining,
+            severity=severity,
+        )

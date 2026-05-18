@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.gates.action_reversibility
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Action Reversibility — v0.15.0 R208
 
 Blindspot: Some repairs irreversible; FLE executes without reversible-path verification.

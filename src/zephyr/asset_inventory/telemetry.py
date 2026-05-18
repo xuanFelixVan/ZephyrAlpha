@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-026 | 03_modules/l01_infrastructure/asset-inventory/blueprint.md | §
+
+# [MODULE] zephyr.asset_inventory.telemetry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """AssetInventoryTelemetry — MOD-INF-026 自监控指标
 
 蓝图 §27：OpenTelemetry 三支柱（Metrics/Traces/Logs）风格的盘点器自监控。
@@ -23,7 +43,7 @@ def _get_sys_telemetry():
     global _sys_telemetry
     if _sys_telemetry is None:
         try:
-            from zephyr.l12_system_telemetry.facade import Telemetry
+            from zephyr.l01_infrastructure.system_telemetry.facade import Telemetry
 
             _sys_telemetry = Telemetry("asset_inventory", test_mode=os.environ.get("ZALPHA_TEST_MODE", "") == "1")
         except Exception:

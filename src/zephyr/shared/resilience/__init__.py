@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
 """
 resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 

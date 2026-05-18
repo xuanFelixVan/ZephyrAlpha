@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_red_team
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 红队测试 — 攻击向量定义与执行框架
 
 R81-C04 Phase 2: 实现具体攻击逻辑，集成 CI 红白对抗 pipeline.

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
 """LSG Red Team 攻击载荷库。
 
 收录供自动 Red Team 模拟使用的攻击载荷：

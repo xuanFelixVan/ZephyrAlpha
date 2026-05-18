@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.diagnosers.regime_gain_scheduling
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Regime Gain Scheduling — v0.37.0 R453
 
 Blindspot: FLE uses uniform sensitivity across all market regimes;

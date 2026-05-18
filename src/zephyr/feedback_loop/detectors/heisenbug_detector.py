@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.detectors.heisenbug_detector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Heisenbug Detector — v0.38.0 R470
 
 Blindspot: Bugs that change behavior or disappear when observed; observation act

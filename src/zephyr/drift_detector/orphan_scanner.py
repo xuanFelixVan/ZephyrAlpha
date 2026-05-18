@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-023 | 03_modules/l01_infrastructure/drift-detector/blueprint.md | §
+
+# [MODULE] zephyr.drift_detector.orphan_scanner
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Orphan Resource Scanner — 孤儿资源检测 §6.28。
 
 module_id: MOD-INF-023

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.detectors.external_validation_checkpoint
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 R524: ExternalValidationCheckpoint
 Godel边界人工升级触发条件 — 连续失败/共识低于阈值/未知状态空间

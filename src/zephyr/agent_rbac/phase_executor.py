@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.phase_executor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """相位执行器——Phase 1-4分段部署+gate检查+rollback-if-fail."""
 from __future__ import annotations
 

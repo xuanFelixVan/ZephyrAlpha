@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.session_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """SessionManager — AI Agent 会话生命周期管理（CT-003 契约兑现）
 
 消费 config/session_state_machine.yaml 定义的 5 状态 + 7 转换 + 超时规则，

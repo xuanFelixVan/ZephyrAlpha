@@ -6,6 +6,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from .budget_models import ModelTier
+from .model_provider_data import DEFAULT_PROVIDERS, TIER_MODEL_MAP
 
 _log = logging.getLogger(__name__)
 
@@ -16,49 +17,10 @@ class TaskComplexity(Enum):
     COMPLEX = "complex"
 
 
-DEFAULT_PROVIDERS: dict[str, dict[str, str | float | list[str]]] = {
-    "zhipu": {
-        "char_glm": "glm-4.5-free",
-        "glm_plus": "glm-4-plus",
-        "glm_flash": "glm-4-flash",
-        "cc": "cn",
-        "price_per_1k_input": 0.0,
-        "price_per_1k_output": 0.0,
-    },
-    "deepseek": {
-        "free": "deepseek-chat-free",
-        "pro": "deepseek-chat",
-        "reasoner": "deepseek-reasoner",
-        "cc": "cn",
-        "price_per_1k_input": 0.001,
-        "price_per_1k_output": 0.002,
-    },
-    "openai_azure": {
-        "gpt4o_mini": "gpt-4o-mini",
-        "gpt4o": "gpt-4o",
-        "cc": "us",
-        "price_per_1k_input": 0.003,
-        "price_per_1k_output": 0.015,
-    },
-    "anthropic": {
-        "haiku": "claude-3-5-haiku",
-        "sonnet": "claude-3-5-sonnet",
-        "cc": "us",
-        "price_per_1k_input": 0.004,
-        "price_per_1k_output": 0.020,
-    },
-}
-
-
 TIER_COMPLEXITY_MAP: dict[ModelTier, set[TaskComplexity]] = {
     ModelTier.ECONOMY: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE},
     ModelTier.STANDARD: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE, TaskComplexity.COMPLEX},
     ModelTier.PREMIUM: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE, TaskComplexity.COMPLEX},
-}
-TIER_MODEL_MAP: dict[ModelTier, list[str]] = {
-    ModelTier.ECONOMY: ["zhipu:char_glm", "zhipu:glm_flash", "deepseek:free"],
-    ModelTier.STANDARD: ["zhipu:glm_plus", "deepseek:pro", "openai_azure:gpt4o_mini"],
-    ModelTier.PREMIUM: ["openai_azure:gpt4o", "anthropic:sonnet", "deepseek:reasoner"],
 }
 
 
@@ -117,7 +79,7 @@ class ModelRouter:
     def load_benchmark_from_disk(self, results_dir: str = "data/model_profiles") -> int:
         """从磁盘加载最近的 benchmark 结果。"""
         try:
-            from zephyr.pipeline.model_profiler.results_writer import load_benchmark_history
+            from zephyr.model_profiler.results_writer import load_benchmark_history
         except ImportError:
             _log.debug("ModelRouter: model_profiler not available for disk loading")
             return 0

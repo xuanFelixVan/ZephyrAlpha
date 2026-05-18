@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # Budget Enforcer Specialist (SKILL-DOM-BGT-001)
 
 > **模块**: MOD-INF-024 (三维预算强制执行)

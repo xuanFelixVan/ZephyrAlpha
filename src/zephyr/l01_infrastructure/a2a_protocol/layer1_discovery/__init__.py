@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
 """Layer 1: 发现+身份 — Agent Card 模型, AGENTS.md 注册, JWT 身份验证"""
 
 from .agent_card import AgentCard, AgentCapability

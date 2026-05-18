@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.contract_tester
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Re-export wrapper — canonical implementation at zephyr.l01_infrastructure.contract_tester.
 

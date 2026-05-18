@@ -1,90 +1,154 @@
-policy_tree:
-  version: "0.12.0"
-  description: "Code Dedup Engine策略树——13个策略域的条件→动作映射"
+# --- 治理锚定 ---
+# blueprint: MOD-INF-001 | docs/03_modules/_cross_layer/l01_infrastructure/blueprint.md | §
+# module_id: MOD-INF-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+version: "0.12.0"
 
-  signature_match:
-    - condition: "similarity >= 0.95"
-      action: "auto_fix"
-      params: {merge: true, preserve_comments: true}
-    - condition: "similarity >= 0.85"
-      action: "warn"
-      params: {review_required: true}
-    - condition: "similarity < 0.85"
-      action: "suppress"
+rules:
+  - id: R001
+    name: high_confidence_block
+    condition: "similarity >= 0.95"
+    action: BLOCK_DEDUP
+    exit_code: 2
+    severity: critical
 
-  token_level:
-    - condition: "token_preservation >= 0.90"
-      action: "derive_threshold"
-      params: {base: 0.85, token_bonus: 0.05}
+  - id: R002
+    name: medium_confidence_warn
+    condition: "similarity >= 0.85"
+    action: WARN
+    exit_code: 1
+    severity: warning
 
-  ast_level:
-    - condition: "ast_depth >= 3 AND node_count >= 10"
-      action: "deep_compare"
-      params: {max_depth: 8}
-    - condition: "ast_depth < 3"
-      action: "shallow_compare"
-      params: {signature_only: true}
+  - id: R003
+    name: low_confidence_skip
+    condition: "similarity >= 0.70"
+    action: SKIP
+    exit_code: 1
+    severity: info
 
-  code_block_level:
-    - condition: "block_size >= 50 lines"
-      action: "extract_candidate"
-      params: {min_lines: 20, max_lines: 200}
-    - condition: "block_size < 20 lines"
-      action: "suppress"
+  - id: R004
+    name: blast_radius_warning
+    condition: "brs >= 60"
+    action: WARN
+    exit_code: 1
+    severity: warning
 
-  intentional_markers:
-    - pattern: "@Generated|@NO-DEDUP|@INTENTIONAL-DUPLICATE"
-      action: "exempt"
-    - pattern: "@SHARED-UTILITY|@CROSS-CUTTING"
-      action: "derive_behavior"
+  - id: R005
+    name: blast_radius_critical
+    condition: "brs >= 80"
+    action: BLOCK_FIX
+    exit_code: 2
+    severity: critical
 
-  auto_fix:
-    constraints:
-      safety_tier: "ALWAYS"
-      max_single_fix_lines: 100
-      require_backup: true
-      forbid_cross_module: true
-      max_daily_auto_fixes: 50
+cloning_detection:
+  type1_exact_match: true
+  type2_rename_match: true
+  type3_structure_variant: true
+  type4_semantic_equivalent: true
+  micro_clone_ngram_size: 3
+  micro_clone_min_frequency: 2
 
-  post_fix_validation:
-    - check: "test_suite_pass"
-      action: "commit"
-    - check: "clone_count_reduced"
-      action: "commit"
-    - check: "any_test_fail"
-      action: "rollback"
+thresholds:
+  high_confidence: 0.95
+  medium_confidence: 0.85
+  low_confidence: 0.70
+  min_block_size: 5
 
-  degradation:
-    - condition: "scan_duration > 300s"
-      action: "degrade_to_token"
-    - condition: "failure_rate > 0.10"
-      action: "block_all"
+auto_fix:
+  enabled: true
+  max_batch_size: 5
+  max_daily_fixes: 20
+  doom_loop_max_attempts: 3
+  observation_window_days: 14
 
-  audit:
-    - condition: "decision == BLOCKED"
-      action: "log_full_context"
-      params: {include_diff: true, include_agent: true}
+monoculture_immunity:
+  blast_radius_warning_threshold: 60
+  blast_radius_critical_threshold: 80
+  grandfather_age_days: 30
 
-  monoculture:
-    - condition: "same_pattern_count >= 3"
-      action: "flag_monoculture"
-      params: {risk_level: "WARNING", suggest_refactor: true}
+simplicity_audit:
+  enabled: true
+  frequency: monthly
+  net_negative_threshold: 50
 
-  grandfather:
-    - condition: "clone_age > 90 days AND fix_attempts >= 3"
-      action: "grandfather"
-      params: {reason: "legacy_acceptable", review_date: "+90d"}
+signature_match:
+  - condition: "similarity >= 0.95"
+    action: "auto_fix"
+    params: {merge: true, preserve_comments: true}
+  - condition: "similarity >= 0.85"
+    action: "warn"
+    params: {review_required: true}
+  - condition: "similarity < 0.85"
+    action: "suppress"
 
-  lifecycle:
-    phases:
-      scan: {frequency: "on_change", max_duration: 120}
-      compare: {frequency: "on_scan", max_duration: 60}
-      report: {frequency: "daily", max_duration: 30}
-      auto_fix: {frequency: "on_approval", max_duration: 300}
-      cleanup: {frequency: "weekly", max_duration: 600}
+token_level:
+  - condition: "token_preservation >= 0.90"
+    action: "derive_threshold"
+    params: {base: 0.85, token_bonus: 0.05}
 
-  self_protection:
-    - path: "src/zephyr/l01_infrastructure/code_dedup_engine/**"
-      action: "self_scan_exempt"
-    - path: "tests/l01_infrastructure/code_dedup_engine/test_self_scanner.py"
-      action: "self_scan_exempt"
+ast_level:
+  - condition: "ast_depth >= 3 AND node_count >= 10"
+    action: "deep_compare"
+    params: {max_depth: 8}
+  - condition: "ast_depth < 3"
+    action: "shallow_compare"
+    params: {signature_only: true}
+
+code_block_level:
+  - condition: "block_size >= 50 lines"
+    action: "extract_candidate"
+    params: {min_lines: 20, max_lines: 200}
+  - condition: "block_size < 20 lines"
+    action: "suppress"
+
+intentional_markers:
+  - pattern: "@Generated|@NO-DEDUP|@INTENTIONAL-DUPLICATE"
+    action: "exempt"
+  - pattern: "@SHARED-UTILITY|@CROSS-CUTTING"
+    action: "derive_behavior"
+
+post_fix_validation:
+  - check: "test_suite_pass"
+    action: "commit"
+  - check: "clone_count_reduced"
+    action: "commit"
+  - check: "any_test_fail"
+    action: "rollback"
+
+degradation:
+  - condition: "scan_duration > 300s"
+    action: "degrade_to_token"
+  - condition: "failure_rate > 0.10"
+    action: "block_all"
+
+audit:
+  - condition: "decision == BLOCKED"
+    action: "log_full_context"
+    params: {include_diff: true, include_agent: true}
+
+monoculture:
+  - condition: "same_pattern_count >= 3"
+    action: "flag_monoculture"
+    params: {risk_level: "WARNING", suggest_refactor: true}
+
+grandfather:
+  - condition: "clone_age > 90 days AND fix_attempts >= 3"
+    action: "grandfather"
+    params: {reason: "legacy_acceptable", review_date: "+90d"}
+
+lifecycle:
+  phases:
+    scan: {frequency: "on_change", max_duration: 120}
+    compare: {frequency: "on_scan", max_duration: 60}
+    report: {frequency: "daily", max_duration: 30}
+    auto_fix: {frequency: "on_approval", max_duration: 300}
+    cleanup: {frequency: "weekly", max_duration: 600}
+
+self_protection:
+  - path: "src/zephyr/l01_infrastructure/code_dedup_engine/**"
+    action: "self_scan_exempt"
+  - path: "tests/l01_infrastructure/code_dedup_engine/test_self_scanner.py"
+    action: "self_scan_exempt"

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.shared.contracts.core.telemetry_emitter
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 # ==== BEGIN CODGEN:CTR-P1-013 ====
 from dataclasses import dataclass, field

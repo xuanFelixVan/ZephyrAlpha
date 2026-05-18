@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.forensic.serialization_format_tracker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Serialization Format Tracker — v0.39.0 R488
 
 Blindspot: Pickle protocol versions, JSON schema evolution, and YAML tag

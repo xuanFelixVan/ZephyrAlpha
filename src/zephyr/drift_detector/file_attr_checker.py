@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-023 | 03_modules/l01_infrastructure/drift-detector/blueprint.md | §
+
+# [MODULE] zephyr.drift_detector.file_attr_checker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """File Attribute Integrity — 文件底层属性完整性 §6.30。
 
 module_id: MOD-INF-023

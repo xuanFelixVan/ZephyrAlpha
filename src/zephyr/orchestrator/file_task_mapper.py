@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.file_task_mapper
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 ============================================================
@@ -27,9 +47,9 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.schema.schemas import TaskNamespace
+from zephyr.gates.task_types import TaskNamespace
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [

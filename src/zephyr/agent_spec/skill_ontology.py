@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.agent_spec.skill_ontology
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 MOD-INF-019: Agent Spec — Skill Ontology
 Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
@@ -23,9 +43,9 @@ class SkillOntology:
     """Skill 本体对齐器"""
 
     ENTITY_PATTERNS = [
-        (r"MOD-INF-(\d{3})", "module"),
-        (r"GATE-(\d+)", "gate"),
-        (r"SKILL-[A-Z]+-\d+", "skill"),
+        (r"(MOD-INF-\d{3})", "module"),
+        (r"\b(G\d+)\b", "gate"),
+        (r"(SKILL-[A-Z]+-[A-Z]+-\d+)", "skill"),
         (r"(?:MODULE|模块):?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)", "module_name"),
         (r"Phase\s*[:#]?\s*(\w+)", "phase"),
         (r"(?:Table|表|table):?\s*`?(\w+)`?", "database_table"),

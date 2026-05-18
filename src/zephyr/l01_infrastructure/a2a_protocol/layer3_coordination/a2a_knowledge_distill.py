@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_knowledge_distill
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 知识蒸馏 — 跨 Agent 经验提炼与共享
 
 当一个 Agent 完成任务后, 提取其经验/教训/决策模式:

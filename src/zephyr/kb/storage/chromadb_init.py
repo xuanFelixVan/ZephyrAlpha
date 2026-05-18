@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.storage.chromadb_init
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ChromaDB 向量层初始化（T-2-10）
 ================================

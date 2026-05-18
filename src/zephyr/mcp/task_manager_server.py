@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.task_manager_server
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ZephyrAlpha MCP Task Manager Server
 ===================================
@@ -23,7 +43,8 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schema.schemas import Priority, SafetyLevel, TaskNamespace, normalize_execution_model
+from zephyr.gates.task_types import TaskNamespace, normalize_execution_model
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +218,7 @@ class TaskManagerMCP:
 
             if downstream_outputs:
                 try:
-                    from zephyr.shared.path_resolver import PathResolver
+                    from zephyr.governance.path_resolver import PathResolver
                     resolver = PathResolver(str(Path(__file__).resolve().parents[3]))
                     warnings = []
                     for item in downstream_outputs:

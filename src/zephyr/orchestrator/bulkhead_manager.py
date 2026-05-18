@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.bulkhead_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Bulkhead 资源池隔舱管理器（CT-BULKHEAD-001）——12系统独立资源池。"""
 
 from __future__ import annotations

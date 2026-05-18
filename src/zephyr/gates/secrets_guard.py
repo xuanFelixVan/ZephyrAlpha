@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.secrets_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Secrets 守护（CT-SECRETS-001）——.env校验+git log扫描+日志脱敏。"""
 
 from __future__ import annotations

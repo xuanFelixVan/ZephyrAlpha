@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-024 | src/zephyr/budget_enforcer/trust_ring_manager.py | §
 from __future__ import annotations
 
 import hashlib
@@ -33,9 +34,9 @@ class TrustSignature:
 
 
 PREMISSION_MAP: dict[int, set[str]] = {
-    RingLevel.R0_OWNER: {"modify_budget", "add_model", "disable_gate", "grant_trust", "revoke_trust", "view_all", "audit_all"},
-    RingLevel.R1_ADMIN: {"modify_budget", "add_model", "view_all", "audit_all"},
-    RingLevel.R2_AGENT: {"view_own", "use_model"},
+    RingLevel.R0_OWNER: {"modify_budget", "add_model", "disable_gate", "grant_trust", "revoke_trust", "view_all", "audit_all", "execute"},
+    RingLevel.R1_ADMIN: {"modify_budget", "add_model", "view_all", "audit_all", "execute"},
+    RingLevel.R2_AGENT: {"view_own", "use_model", "execute"},
     RingLevel.R3_OBSERVER: {"view_summary"},
 }
 

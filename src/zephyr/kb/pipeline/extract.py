@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-009 | 03_modules/_cross_layer/pipeline/blueprint.md | §
+
+# [MODULE] zephyr.kb.pipeline.extract
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 G5 Extract 门禁 — 知识升格（T-2-13-E）
 =======================================
@@ -27,7 +47,7 @@ from typing import Any
 import yaml
 
 from zephyr.gates.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.core.gate_types import GateResult
+from zephyr.shared.contracts.gate import GateResult
 from zephyr.kb.migration.kb_gate_task import build_kb_gate_eval_task
 from zephyr.kb.storage.kb_repo import KbRepo, KeStatus
 

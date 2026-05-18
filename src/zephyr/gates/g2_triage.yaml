@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: "1.0"
 doc_type: gate
 title: "G2 Triage Gate"
@@ -108,7 +115,7 @@ valid_layers:
   - l09_research_innovation
   - l10_compliance
   - l11_ml_platform
-  - l12_system_telemetry
+  - system_telemetry
   - l13_experiment_pipeline
   - shared
   - cross_layer

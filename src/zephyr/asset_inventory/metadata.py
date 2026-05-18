@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-026 | 03_modules/l01_infrastructure/asset-inventory/blueprint.md | §
+
+# [MODULE] zephyr.asset_inventory.metadata
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """MOD-INF-026 §24-25 — Git 历史元数据提取 + 多 IDE 规则生成器。
 
 SRC-0040: 从 git_metadata.py + multi_ide.py 合并。

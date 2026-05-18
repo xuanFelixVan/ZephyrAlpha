@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.vibe_coding_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Vibe Coding攻击面——检测AI辅助生成代码中隐藏的权限后门/注入/逻辑绕过."""
 from __future__ import annotations
 

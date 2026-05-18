@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.novel_attack_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """未知攻击检测——签名未知的新型攻击行为基线偏离检测."""
 from __future__ import annotations
 

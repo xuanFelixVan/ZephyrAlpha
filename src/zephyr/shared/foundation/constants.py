@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.foundation.constants
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth）
 
@@ -23,7 +43,7 @@ SSoT: MOD-INF-016 §2.4 shared-constants
 Version: 0.1.0
 """
 
-from zephyr.shared.contracts.market.instrument import (
+from zephyr.trading_contracts.market.instrument import (
     ETF,
     FX,
     AssetClass,
@@ -37,7 +57,7 @@ from zephyr.shared.contracts.market.instrument import (
     Stock,
     TradingCalendarName,
 )
-from zephyr.shared.contracts.execution.order import (
+from zephyr.trading_contracts.execution.order import (
     OrderSide,
     OrderStatus,
     OrderType,
@@ -62,6 +82,7 @@ from zephyr.shared.schema.schemas import (
     TaskNamespace,
     TaskStatus,
 )
+from zephyr.escalation_engine.escalation_models import EscalationLevel
 
 __all__ = [
     "AssetClass",
@@ -95,4 +116,5 @@ __all__ = [
     "AuditSeverity",
     "Priority",
     "KeCategory",
+    "EscalationLevel",
 ]

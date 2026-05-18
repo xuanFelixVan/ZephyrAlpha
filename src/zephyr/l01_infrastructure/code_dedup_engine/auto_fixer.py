@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.auto_fixer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """安全自动修复引擎——五直接开关+五间接约束."""
 from __future__ import annotations
 

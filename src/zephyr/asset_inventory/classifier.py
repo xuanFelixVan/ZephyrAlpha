@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-026 | 03_modules/l01_infrastructure/asset-inventory/blueprint.md | §
+
+# [MODULE] zephyr.asset_inventory.classifier
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """AssetClassifier — MOD-INF-026 L2 资产自动分类器
 
 蓝图 §3.2：读取扫描结果，按 config/capacity/asset_inventory.yaml 中

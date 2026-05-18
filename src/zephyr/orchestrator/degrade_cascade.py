@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.degrade_cascade
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """全局降级级联预防（CT-DEGRADE-CASCADE）——降级传播链检测+熔断。"""
 
 from __future__ import annotations

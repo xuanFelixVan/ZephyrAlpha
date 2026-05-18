@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.gates.safety_gate_L44_L45
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Safety Gates L44-L45 — Operational Excellence + Causal Interrogability
 
 L44: self_SLO_compliance OK + API contracts intact + chain amplification controlled

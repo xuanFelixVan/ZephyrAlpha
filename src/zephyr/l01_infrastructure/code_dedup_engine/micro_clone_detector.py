@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.micro_clone_detector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """微型克隆检测器 — n-gram频率计数, 1-2行高频模式聚合."""
 
 from __future__ import annotations

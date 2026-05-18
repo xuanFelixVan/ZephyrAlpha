@@ -1,0 +1,89 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-026 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §
+# module_id: MOD-INF-026
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# Auto Fix Engine 配置 — MOD-INF-031
+# [BLUEPRINT] MOD-INF-031 | 03_modules/_cross_layer/auto-fix-engine/blueprint.md | §5
+
+engine:
+  max_concurrent_fixes: 8
+  default_dry_run: false
+  log_level: INFO
+  wal_enabled: true
+  wal_dir: "data/auto_fix/wal"
+
+safety:
+  safety_gate_enabled: true
+  lock_guard_enabled: true
+  write_safety_enabled: true
+  cascade_breaker_enabled: true
+  sandbox_enabled: true
+  secret_leak_guard_enabled: true
+  protected_paths:
+    - "src/zephyr/shared/foundation/"
+    - "src/zephyr/shared/errors.py"
+    - "src/zephyr/shared/schemas.py"
+    - "src/zephyr/shared/ssot_guard.py"
+  protected_patterns:
+    - "**/kill_switch.py"
+    - "**/credential_guard.py"
+    - "**/merkle_audit.py"
+
+cascade_breaker:
+  module_threshold: 10
+  module_window_sec: 300
+  module_cooldown_sec: 900
+  global_threshold: 150
+  global_window_sec: 60
+  global_cooldown_sec: 900
+
+budget:
+  daily_limit: 50
+  monthly_limit: 500
+  llm_token_limit: 500000
+  l1_cost_per_fix: 1
+  l2_cost_per_fix: 5
+  l3_cost_per_fix: 10
+
+reliability:
+  max_retries: 3
+  idempotency_ttl_hours: 24
+  canary_ratios:
+    - 0.1
+    - 0.3
+    - 0.5
+    - 1.0
+  canary_delay_sec: 60
+
+storm_guard:
+  short_window_sec: 60
+  short_threshold: 30
+  long_window_sec: 300
+  long_threshold: 100
+  cooldown_sec: 900
+
+shadow_workspace:
+  enabled: true
+  base_dir: "data/auto_fix/shadow"
+  run_pytest: true
+  run_mypy: true
+  run_ruff: true
+  pytest_timeout: 120
+
+scheduler:
+  mode: continuous
+  batch_interval_sec: 300
+  event_driven: true
+
+compliance:
+  audit_all_fixes: true
+  tamper_proof: true
+  retention_days: 90
+
+escalation:
+  bridge_enabled: true
+  auto_escalate_dead_letter: true
+  max_escalation_level: L2_HUMAN_REVIEW

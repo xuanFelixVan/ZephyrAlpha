@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.capacity_budget
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 全局容量预算控制器（Capacity Budget Controller）
 
-依据：MOD-MASTER-001 蓝图 §五 全局容量预算
+依据：MOD-MASTER-002 蓝图 §五 全局容量预算
 实现并发任务上限 + WIP Limit + 线程池配额。
 
 规则：

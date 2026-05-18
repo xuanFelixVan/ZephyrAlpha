@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-026 | 03_modules/l01_infrastructure/asset-inventory/blueprint.md | §
+
+# [MODULE] zephyr.asset_inventory.__main__
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Asset Inventory CLI — MOD-INF-026 蓝图 §31
 
 用法:

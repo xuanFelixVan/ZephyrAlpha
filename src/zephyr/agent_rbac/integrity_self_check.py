@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.integrity_self_check
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """完整性自检——启动后定期自检所有21个模块导入+API访问+权限判定一致性."""
 from __future__ import annotations
 

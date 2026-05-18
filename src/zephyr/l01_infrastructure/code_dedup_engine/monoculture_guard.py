@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.monoculture_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Monoculture 免疫 — BRS 0-100 + 去重悖论检测.
 
 职责：

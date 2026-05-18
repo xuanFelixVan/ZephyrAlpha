@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
 """L03 Signal Generation
 =====================================
 
@@ -51,6 +52,6 @@ from zephyr.l03_signal_generation.capital_allocator import (
     CapitalAllocatorBase,
 )
 from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 __all__ = ['CapitalAllocationResult', 'CapitalAllocatorBase', 'DegradationMonitorBase', 'SignalAggregatorBase', 'SignalSynthesizerBase', 'SynthesizedSignal', 'aggregator_base', 'capital_allocator', 'signal_synthesizer']

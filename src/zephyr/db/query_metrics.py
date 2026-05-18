@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.query_metrics
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 QueryMetrics — SQL 查询性能监控装饰器（MOD-INF-012 v2.0）
 ==========================================================

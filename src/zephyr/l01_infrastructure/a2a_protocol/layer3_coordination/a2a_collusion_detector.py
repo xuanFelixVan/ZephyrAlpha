@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_collusion_detector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 合谋检测器 — Agent 间串通模式识别
 
 检测两个或多个 Agent 是否合谋绕过安全机制:

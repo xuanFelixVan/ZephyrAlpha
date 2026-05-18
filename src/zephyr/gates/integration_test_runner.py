@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.integration_test_runner
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 集成测试运行器（Integration Test Runner）
 
-依据：MOD-MASTER-001 蓝图 §十 集成测试契约
+依据：MOD-MASTER-002 蓝图 §十 集成测试契约
 加载契约定义 + 运行断言 + CI 门禁集成。
 
 四级 CI 门禁：

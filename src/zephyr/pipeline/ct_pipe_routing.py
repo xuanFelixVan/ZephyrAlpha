@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-009 | 03_modules/_cross_layer/pipeline/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.ct_pipe_routing
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CT-PIPE-ORC-001 — TaskCard → 管线入口节点路由
 ============================================

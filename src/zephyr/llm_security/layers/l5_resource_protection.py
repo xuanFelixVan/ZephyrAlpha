@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
+
+# [MODULE] zephyr.llm_security.layers.l5_resource_protection
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 import hashlib
 import hmac
 import math
@@ -24,7 +44,7 @@ class CircuitState(str, Enum):
     HALF_OPEN = "half_open"
 
 
-class CostBudget(BaseModel):
+class _L5CostBudget(BaseModel):
     session_id: str
     max_tokens: int = 100000
     max_cost_cents: float = 500.0
@@ -42,7 +62,10 @@ class CostBudget(BaseModel):
         return self.current_tokens >= self.max_tokens or self.current_cost_cents >= self.max_cost_cents
 
 
-class TokenBudget(BaseModel):
+CostBudget = _L5CostBudget
+
+
+class _L5TokenBudget(BaseModel):
     session_id: str
     max_tokens: int = 100000
     current_usage: int = 0
@@ -53,6 +76,9 @@ class TokenBudget(BaseModel):
 
     def exhausted(self) -> bool:
         return self.current_usage >= self.max_tokens
+
+
+TokenBudget = _L5TokenBudget
 
 
 class SlidingWindowRateLimiter:
@@ -418,7 +444,12 @@ class SemanticCacheCollisionDefender:
 
 
 class ResourceProtectionLayer(LLMSecurityProtocol):
-    """L5 资源保护层 —— Token+速率+成本+递归+Agent保护+性能+模型提取+成本不对称+缓存."""
+    """L5 资源保护层 —— Token+速率+成本+递归+Agent保护+性能+模型提取+成本不对称+缓存.
+
+    SSoT: MOD-INF-024 (budget_enforcer) 为预算执行真源。
+    本层保留本地简化追踪作为 fail-closed 安全网。
+    当 budget_engine 可用时，委托其 pre_flight_check 做预算决策。
+    """
 
     def __init__(
         self,
@@ -430,9 +461,10 @@ class ResourceProtectionLayer(LLMSecurityProtocol):
         agent_max_steps: int = 100,
         agent_max_wall_time: float = 600.0,
         agent_max_memory_mb: float = 512.0,
+        budget_engine: Any = None,
     ):
-        self._token_budgets: Dict[str, TokenBudget] = {}
-        self._cost_budgets: Dict[str, CostBudget] = {}
+        self._token_budgets: Dict[str, _L5TokenBudget] = {}
+        self._cost_budgets: Dict[str, _L5CostBudget] = {}
         self._rate_limiter = SlidingWindowRateLimiter(
             max_requests=rate_max, window_seconds=rate_window
         )
@@ -453,6 +485,7 @@ class ResourceProtectionLayer(LLMSecurityProtocol):
         self._cache_defender = SemanticCacheCollisionDefender()
         self._default_max_tokens = max_tokens
         self._default_max_cost = max_cost_cents
+        self._budget_engine = budget_engine
 
     def layer_name(self) -> str:
         return "l5_resource_protection"
@@ -533,7 +566,7 @@ class ResourceProtectionLayer(LLMSecurityProtocol):
         self, session_id: str, estimated_tokens: int
     ) -> Tuple[bool, str]:
         if session_id not in self._token_budgets:
-            self._token_budgets[session_id] = TokenBudget(
+            self._token_budgets[session_id] = _L5TokenBudget(
                 session_id=session_id,
                 max_tokens=self._default_max_tokens,
             )
@@ -552,8 +585,19 @@ class ResourceProtectionLayer(LLMSecurityProtocol):
     def check_cost_budget(
         self, session_id: str, estimated_cost_cents: float
     ) -> Tuple[bool, str]:
+        if self._budget_engine is not None:
+            try:
+                estimated_cost_usd = estimated_cost_cents / 100.0
+                gate_result = self._budget_engine.pre_flight_check(
+                    f"l5:{session_id}", 0, estimated_cost_usd
+                )
+                if gate_result.decision.name not in ("ALLOW", "NARROW"):
+                    return False, f"BudgetEngine denied: {gate_result.reason}"
+            except Exception:
+                pass
+
         if session_id not in self._cost_budgets:
-            self._cost_budgets[session_id] = CostBudget(
+            self._cost_budgets[session_id] = _L5CostBudget(
                 session_id=session_id,
                 max_cost_cents=self._default_max_cost,
             )
@@ -615,16 +659,16 @@ class ResourceProtectionLayer(LLMSecurityProtocol):
     def cache_defender(self) -> SemanticCacheCollisionDefender:
         return self._cache_defender
 
-    def get_token_budget(self, session_id: str) -> TokenBudget:
+    def get_token_budget(self, session_id: str) -> _L5TokenBudget:
         if session_id not in self._token_budgets:
-            self._token_budgets[session_id] = TokenBudget(
+            self._token_budgets[session_id] = _L5TokenBudget(
                 session_id=session_id, max_tokens=self._default_max_tokens
             )
         return self._token_budgets[session_id]
 
-    def get_cost_budget(self, session_id: str) -> CostBudget:
+    def get_cost_budget(self, session_id: str) -> _L5CostBudget:
         if session_id not in self._cost_budgets:
-            self._cost_budgets[session_id] = CostBudget(
+            self._cost_budgets[session_id] = _L5CostBudget(
                 session_id=session_id, max_cost_cents=self._default_max_cost
             )
         return self._cost_budgets[session_id]

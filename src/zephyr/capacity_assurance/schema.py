@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.schema
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 SchemaManager — 容量保障体系数据库 Schema 管理器
 依据：蓝图 MOD-INF-001 §5.2 数据库 Schema

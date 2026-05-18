@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-026 | 03_modules/l01_infrastructure/asset-inventory/blueprint.md | §
+
+# [MODULE] zephyr.asset_inventory.dashboard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """AssetDashboard — MOD-INF-026 资产健康仪表盘生成器
 
 蓝图 §5 + §27：读取 unified_asset_index.yaml → 生成 dashboard.json

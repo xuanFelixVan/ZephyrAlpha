@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L06-001 | 03_modules/l06_trade_execution/execution-core/blueprint.md | §
 """L06 Trade Execution
 =====================================
 

@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared/blueprint.md | §
+# module_id: MOD-INF-016
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 模型冻结清单 (Freeze Manifest)
 # ============================================================================

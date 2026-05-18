@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L04-001 | 03_modules/l04_risk_management/risk-management-core/blueprint.md | §
 """L04 Risk Management
 =====================================
 

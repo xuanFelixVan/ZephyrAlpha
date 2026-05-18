@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L07-001 | 03_modules/l07_post_trade_analytics/analytics-core/blueprint.md | §
+
+# [MODULE] zephyr.l07_post_trade_analytics.implementations.default_attribution_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l07_post_trade_analytics
 # category: analytics_implementation

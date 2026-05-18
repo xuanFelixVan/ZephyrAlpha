@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_work_steal
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 工作窃取调度器 — 跨 Agent 负载均衡
 
 当某 Agent 空闲而其他 Agent 队列有排队任务时，触发工作窃取:

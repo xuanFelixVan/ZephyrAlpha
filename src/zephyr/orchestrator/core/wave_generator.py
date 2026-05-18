@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.core.wave_generator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03）
 ======================================================
@@ -21,7 +41,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
     "WaveGenerator",

@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.cdc_broker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CDC 契约经纪人（Consumer-Driven Contract Broker — CT-CDC-001）
 
-依据：MOD-MASTER-001 蓝图 §十六
+依据：MOD-MASTER-002 蓝图 §十六
 Pact Broker 本地 SQLite 简化版 + 3步生命周期。
 """
 

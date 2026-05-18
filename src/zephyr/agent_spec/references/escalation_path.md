@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # L3 Reference: Escalation Path Protocol
 
 > Belongs to: architect (SKILL-ROL-ARC-001), governor (SKILL-ROL-GOV-001)

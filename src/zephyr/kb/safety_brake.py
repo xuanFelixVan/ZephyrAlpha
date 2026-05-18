@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.safety_brake
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """冷静期引擎 + 魔鬼代言人 + 影响评估
 ======================================
 蓝图: MOD-KB-001 §7.10.5

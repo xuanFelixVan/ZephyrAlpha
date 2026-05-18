@@ -1,3 +1,23 @@
+# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+
+# [MODULE] zephyr.governance.architecture_principles
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 
 from enum import Enum
@@ -31,22 +51,22 @@ PRINCIPLE_DEFS: dict[ArchPrinciple, dict[str, str]] = {
     },
     ArchPrinciple.P2_YAML_SCHEMA: {
         "label": "P2-YAML Schema (ADR-0002)",
-        "statement": "单Schema，Phased Required Fields（Phase 0→Phase 5�?,
+        "statement": "单Schema，Phased Required Fields（Phase 0→Phase 5）",
         "kb_ref": "ADR-0002",
     },
     ArchPrinciple.P3_DUAL_AI: {
         "label": "P3-DeepSeek Pipeline (ADR-0003)",
-        "statement": "DeepSeek V4 Pro 全管�?+ Claude 极端救援",
+        "statement": "DeepSeek V4 Pro 全管线 + Claude 极端救援",
         "kb_ref": "ADR-0003",
     },
     ArchPrinciple.P4_OCP: {
         "label": "P4-OCP (ADR-0004)",
-        "statement": "Open-Closed Principle——对扩展开放，对修改封�?,
+        "statement": "Open-Closed Principle——对扩展开放，对修改封闭",
         "kb_ref": "ADR-0004",
     },
     ArchPrinciple.P5_BLUEPRINT_FIRST: {
         "label": "P5-Blueprint First (G6)",
-        "statement": "先读蓝图→后写代�?,
+        "statement": "先读蓝图→后写代码",
         "kb_ref": "G6",
     },
 }
@@ -54,14 +74,14 @@ PRINCIPLE_DEFS: dict[ArchPrinciple, dict[str, str]] = {
 IRON_LAW_DEFS: dict[BlueprintIronLaw, str] = {
     BlueprintIronLaw.IL1_FLAT_TOP: "单层目录不允许嵌套子目录",
     BlueprintIronLaw.IL2_BOOTSTRAP_LINK: "自举链接——所有MD必须可通过YAML重建",
-    BlueprintIronLaw.IL3_AUDITABLE_CHANGE: "变更记录必须可审计追�?,
+    BlueprintIronLaw.IL3_AUDITABLE_CHANGE: "变更记录必须可审计追踪",
     BlueprintIronLaw.IL4_EQUIVALENCE: "YAML和MD视图语义完全等价",
     BlueprintIronLaw.IL5_SOURCE_OF_TRUTH: "YAML为唯一真源，其他格式均派生",
 }
 
 
 def princpled_check(*principles: ArchPrinciple) -> Callable[[F], F]:
-    """装饰器：为函数标记适用的架构原则�?""
+    """装饰器：为函数标记适用的架构原则。"""
 
     def decorator(func: F) -> F:
         setattr(func, "_zephyr_principles", list(principles))
@@ -83,7 +103,7 @@ def get_principle_by_kb_ref(kb_ref: str) -> ArchPrinciple | None:
 
 
 def validate_against_principles(violations: list[str]) -> bool:
-    """�?violations 非空 �?违反某原�?�?记录并返�?False�?""
+    """若 violations 非空，则违反某原则，记录并返回 False。"""
     if violations:
         import logging
 

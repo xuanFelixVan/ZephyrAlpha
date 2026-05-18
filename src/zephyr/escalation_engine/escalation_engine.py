@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-022 | 03_modules/l01_infrastructure/escalation-protocol/blueprint.md | §
+
+# [MODULE] zephyr.escalation_engine.escalation_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Escalation Engine — MOD-INF-022
 
@@ -17,6 +37,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 from zephyr.escalation_engine.circuit_breaker import CircuitBreaker, CircuitState
+from zephyr.escalation_engine.escalation_metrics import EscalationMetrics
 from zephyr.escalation_engine.escalation_models import (
     DEFAULT_ESCALATION_RULES,
     DelegationStrategy,
@@ -52,6 +73,7 @@ class EscalationEngine:
         self._rules: dict[str, EscalationRule] = {}
         self._circuit_breaker = CircuitBreaker(f"escalation:{name}")
         self._economic_guard = EconomicGuard(f"econ:{name}")
+        self._metrics = EscalationMetrics()
         self._recent_escalations: list[EscalationEvent] = []
         self._lock = threading.Lock()
         self._hooks_enabled = hooks_enabled
@@ -79,6 +101,7 @@ class EscalationEngine:
         owner_id: str | None = None,
         source_event_id: str | None = None,
     ) -> EscalationEvent:
+        start_time = __import__("time").monotonic()
         self._lsg_scan_input(description)
         event = EscalationEvent(
             category=category,
@@ -90,6 +113,8 @@ class EscalationEngine:
         if not self._circuit_breaker.call():
             event.circuit_breaker_triggered = True
             event.state = EscalationState.REJECTED
+            self._metrics.record("blocked", __import__("time").monotonic() - start_time)
+            return event
         try:
             ab = self._extension_detectors.get("AntiAutomationBias")
             if ab and hasattr(ab, "evaluate"):
@@ -120,19 +145,24 @@ class EscalationEngine:
         if not self._economic_guard.can_proceed():
             event.economic_guard_passed = False
             event.state = EscalationState.REJECTED
+            self._metrics.record("blocked", __import__("time").monotonic() - start_time)
             return event
         matching_rule = self._find_best_rule(category)
         if matching_rule is None:
             event.state = EscalationState.REJECTED
+            self._metrics.record("blocked", __import__("time").monotonic() - start_time)
             return event
         if not self._check_cooldown(matching_rule):
             event.state = EscalationState.REJECTED
+            self._metrics.record("blocked", __import__("time").monotonic() - start_time)
             return event
         event.level = matching_rule.target_level
         event.state = EscalationState.EVALUATING
         with self._lock:
             self._recent_escalations.append(event)
             self._prune_old_escalations()
+        latency = __import__("time").monotonic() - start_time
+        self._metrics.record(event.level.name.lower(), latency)
         return event
 
     def escalate(self, event: EscalationEvent) -> EscalationResult:
@@ -190,6 +220,17 @@ class EscalationEngine:
             "hard_limit_reached": self._economic_guard.hard_limit_reached,
         }
 
+    def get_metrics(self) -> dict[str, object]:
+        return {
+            "total_evals": self._metrics._total_evals,
+            "blocks": self._metrics._blocks,
+            "auto_guards": self._metrics._auto_guards,
+            "autonomous": self._metrics._autonomous,
+            "escalation_rate": self._metrics.escalation_rate(),
+            "avg_latency": self._metrics.avg_latency(),
+            "false_positive_rate": self._metrics.false_positive_rate(),
+        }
+
     def get_active_count(self) -> int:
         with self._lock:
             self._prune_old_escalations()
@@ -237,24 +278,24 @@ class EscalationEngine:
 
     def _load_extension_detectors(self):
         detector_modules = [
-            ("zephyr.infrastructure.escalation_protocol.persuasion_detector", "PersuasionDetector"),
-            ("zephyr.infrastructure.escalation_protocol.deadlock_detector", "DeadlockDetector"),
-            ("zephyr.infrastructure.escalation_protocol.drift_detector", "DriftDetector"),
-            ("zephyr.infrastructure.escalation_protocol.escalation_loop_detector", "EscalationLoopDetector"),
-            ("zephyr.infrastructure.escalation_protocol.engine_sandbox", "EngineSandbox"),
-            ("zephyr.infrastructure.escalation_protocol.confidence_estimator", "ConfidenceEstimator"),
-            ("zephyr.infrastructure.escalation_protocol.vigil_runtime", "VigilRuntime"),
-            ("zephyr.infrastructure.escalation_protocol.formal_verifier", "FormalVerifier"),
-            ("zephyr.infrastructure.escalation_protocol.provider_failover", "ProviderFailover"),
-            ("zephyr.infrastructure.escalation_protocol.credential_guard", "CredentialGuard"),
-            ("zephyr.infrastructure.escalation_protocol.merkle_audit", "MerkleAudit"),
-            ("zephyr.infrastructure.escalation_protocol.sbom_guard", "SBOMGuard"),
-            ("zephyr.infrastructure.escalation_protocol.clock_guard", "ClockGuard"),
-            ("zephyr.infrastructure.escalation_protocol.command_chain_length_gate", "CommandChainGate"),
-            ("zephyr.infrastructure.escalation_protocol.compositional_safety_tester", "CompositionalSafetyTester"),
+            ("zephyr.escalation_engine.persuasion_detector", "PersuasionDetector"),
+            ("zephyr.escalation_engine.deadlock_detector", "DeadlockDetector"),
+            ("zephyr.escalation_engine.drift_detector", "DriftDetector"),
+            ("zephyr.escalation_engine.escalation_loop_detector", "EscalationLoopDetector"),
+            ("zephyr.escalation_engine.engine_sandbox", "EngineSandbox"),
+            ("zephyr.escalation_engine.confidence_estimator", "ConfidenceEstimator"),
+            ("zephyr.escalation_engine.vigil_runtime", "VigilRuntime"),
+            ("zephyr.escalation_engine.formal_verifier", "FormalVerifier"),
+            ("zephyr.escalation_engine.provider_failover", "ProviderFailover"),
+            ("zephyr.escalation_engine.credential_guard", "CredentialGuard"),
+            ("zephyr.escalation_engine.merkle_audit", "MerkleAudit"),
+            ("zephyr.escalation_engine.sbom_guard", "SBOMGuard"),
+            ("zephyr.escalation_engine.clock_guard", "ClockGuard"),
+            ("zephyr.escalation_engine.command_chain_length_gate", "CommandChainGate"),
+            ("zephyr.escalation_engine.compositional_safety_tester", "CompositionalSafetyTester"),
             ("zephyr.escalation_engine.anti_automation_bias", "AntiAutomationBias"),
             ("zephyr.escalation_engine.slo_contract", "SLOContractEngine"),
-            ("zephyr.infrastructure.escalation_protocol.reward_hacking_rebound_detector", "ReboundDetector"),
+            ("zephyr.escalation_engine.reward_hacking_rebound_detector", "ReboundDetector"),
         ]
         for module_path, class_name in detector_modules:
             try:
@@ -334,10 +375,22 @@ class EscalationEngine:
             pass
 
         try:
+            dd = self._extension_detectors.get("DriftDetector")
+            if dd and event.category == RuleCategory.DRIFT_DETECTED:
+                if hasattr(dd, "is_drifting"):
+                    metrics = {"event_rate": float(len(self._recent_escalations)), "category_code": float(event.category.value)}
+                    if dd.is_drifting(metrics):
+                        event.description += " | behavioral_drift=True"
+                        if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
+                            event.level = EscalationLevel.L2_HUMAN_REVIEW
+        except Exception:
+            pass
+
+        try:
             ma = self._extension_detectors.get("MerkleAudit")
-            if ma and hasattr(ma, "hash_event"):
-                audit_hash = ma.hash_event(event.description)
-                event.description += f" | audit_hash={audit_hash[:12]}"
+            if ma and hasattr(ma, "record"):
+                root_hash = ma.record({"event_id": event.event_id, "category": event.category.name, "level": event.level.name})
+                event.description += f" | merkle_root={root_hash[:12]}"
         except Exception:
             pass
 

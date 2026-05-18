@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.batch_orchestrator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
 
 SQLite 原子 claim（UPDATE ... RETURNING）+ DAG 依赖感知 + 超时回收。

@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
 name: "⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图"
 description: ""
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: ⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图
 

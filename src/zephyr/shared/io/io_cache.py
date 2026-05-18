@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.io.io_cache
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 io_cache.py - File-level I/O cache with LRU eviction
 =====================================================
@@ -25,7 +45,10 @@ from typing import Any
 
 import yaml
 
-from zephyr.shared.lifecycle.resource_optimization_models import CacheStats
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from zephyr.shared.lifecycle.resource_optimization_models import CacheStats
 
 __all__ = ["FileCache"]
 
@@ -116,11 +139,12 @@ class FileCache:
             self._evictions = 0
 
     def get_stats(self) -> CacheStats:
+        from zephyr.shared.lifecycle.resource_optimization_models import CacheStats as _CacheStats
         with self._lock:
             total = self._hit_count + self._miss_count
             hit_rate = self._hit_count / total if total > 0 else 0.0
             memory_mb = sum(e.size_bytes for e in self._entries.values()) / (1024 * 1024)
-            return CacheStats(
+            return _CacheStats(
                 total_entries=len(self._entries),
                 hit_count=self._hit_count,
                 miss_count=self._miss_count,

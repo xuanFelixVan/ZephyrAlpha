@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-017 | docs/03_modules/_cross_layer/vector_memory/blueprint.md | §
+# module_id: MOD-INF-017
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # VMS 配置 — MOD-INF-011
 # ========================
 # 用法: 加载为环境变量覆盖或 Python dict

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L05-001 | 03_modules/l05_portfolio_construction/portfolio-core/blueprint.md | §
 """L05 — Portfolio Construction Strategies
 
 Phase C 具体策略实现包。

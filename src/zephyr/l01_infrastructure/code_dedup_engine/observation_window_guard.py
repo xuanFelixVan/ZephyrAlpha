@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.observation_window_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """提取后稳定观察期守护 — 对标SDP 14天观察."""
 
 from __future__ import annotations

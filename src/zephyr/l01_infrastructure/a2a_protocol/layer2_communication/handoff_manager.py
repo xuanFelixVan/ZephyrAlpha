@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer2_communication.handoff_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Handoff Manager — Agent 间任务交接"""
 
 from typing import Dict, Any, Optional

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.shared_evolver
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定.
 
 职责：

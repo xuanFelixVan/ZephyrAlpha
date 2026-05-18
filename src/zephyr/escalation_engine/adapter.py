@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-022 | 03_modules/l01_infrastructure/escalation-protocol/blueprint.md | §
+
+# [MODULE] zephyr.escalation_engine.adapter
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Escalation Adapter — MOD-INF-022 统一集成入口.
 
 Provides a single import point for any module to integrate with the escalation protocol.
@@ -81,7 +101,7 @@ def _get_engine(name: str = "adapter") -> Any:
     try:
         from threading import Lock
 
-        from zephyr.escalation_engine import EscalationEngine
+        from zephyr.escalation_engine.escalation_engine import EscalationEngine
 
         if _cache_lock is None:
             _cache_lock = Lock()
@@ -108,7 +128,7 @@ def escalate_if_needed(
         )
 
     try:
-        from zephyr.escalation_engine import RuleCategory
+        from zephyr.escalation_engine.escalation_models import RuleCategory
 
         cat_name = _OPERATION_TO_CATEGORY.get(OperationType(operation_type), "CUSTOM")
         category = getattr(RuleCategory, cat_name, RuleCategory.CUSTOM)
@@ -178,3 +198,52 @@ def check_operation(
         description=f"{operation} | path={target_path}",
         owner_id=session_id,
     )
+
+
+_EVENT_TYPE_TO_OPERATION = {
+    "GATE_FAILED": OperationType.AUTO_GUARD_FAILURE,
+    "SCOPE_DRIFT": OperationType.DRIFT_DETECTED,
+    "TASK_FAILED": OperationType.CASCADE_FAILURE,
+}
+
+_auto_subscribed = False
+
+
+def auto_subscribe_eventbus() -> None:
+    global _auto_subscribed
+    if _auto_subscribed:
+        return
+
+    try:
+        from zephyr.shared.event_bus import EventBus, EventType
+
+        bus = EventBus.get_instance()
+
+        def _on_event(event: object) -> None:
+            try:
+                etype = getattr(event, "event_type", None)
+                if etype is None:
+                    return
+                op_type = _EVENT_TYPE_TO_OPERATION.get(etype.name if hasattr(etype, "name") else str(etype))
+                if op_type is None:
+                    return
+                task_id = getattr(event, "task_id", "unknown")
+                payload = getattr(event, "payload", {})
+                description = payload.get("description", f"EventBus auto: {etype}")
+                escalate_if_needed(
+                    operation_type=op_type.value,
+                    description=description,
+                    owner_id=task_id,
+                )
+            except Exception:
+                pass
+
+        for et in (EventType.GATE_FAILED, EventType.SCOPE_DRIFT, EventType.TASK_FAILED):
+            bus.subscribe(et, _on_event)
+
+        _auto_subscribed = True
+        _logger.info("EscalationEngine auto-subscribed to EventBus (GATE_FAILED, SCOPE_DRIFT, TASK_FAILED)")
+    except ImportError:
+        _logger.debug("EventBus not available — escalation auto-subscribe skipped")
+    except Exception:
+        _logger.debug("EventBus auto-subscribe failed — escalation remains manual")

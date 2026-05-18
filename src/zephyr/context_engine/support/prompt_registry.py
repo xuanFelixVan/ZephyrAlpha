@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.support.prompt_registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 # AI-generated: YAML-driven prompt template registry with version management and token budget
 """
@@ -45,7 +65,7 @@ import yaml
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.observability.token_utils import estimate_tokens
+from zephyr.context_engine.token_budget import estimate_tokens
 
 if TYPE_CHECKING:
     from zephyr.context_engine.assembly.context_injector import ContextInjector, InjectedContext

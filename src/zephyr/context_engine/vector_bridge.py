@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.vector_bridge
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001)
 ========================================================

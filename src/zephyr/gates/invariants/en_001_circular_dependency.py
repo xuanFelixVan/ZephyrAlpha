@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.invariants.en_001_circular_dependency
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ==== BEGIN CODEGEN:EN-001 ====
 """
 EN-001 — Circular Dependency Scanner
@@ -33,7 +53,7 @@ LAYER_MODULE_NAMES = [
     "zephyr.l09_research_innovation",
     "zephyr.l10_compliance",
     "zephyr.l11_ml_platform",
-    "zephyr.l12_system_telemetry",
+    "zephyr.l01_infrastructure.system_telemetry",
     "zephyr.l13_experimentation",
 ]
 

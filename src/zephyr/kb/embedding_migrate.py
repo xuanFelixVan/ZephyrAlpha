@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.embedding_migrate
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: T-4-06 Embedding Upgrade BGE-M3
 """
 EmbeddingMigrate · Embedding 版本管理 + 迁移管线

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.forensic.automated_rca_postmortem_generator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Automated RCA Postmortem Generator — v0.38.0 R486
 
 Blindspot: In 1-person+AI maintenance, postmortems are never written because
@@ -29,6 +49,7 @@ class IncidentSeverity(str, Enum):
 class AutomatedRCAPostmortemGenerator:
     max_timeline_events: int = 100
     five_whys_depth: int = 5
+    inversion_verification_enabled: bool = True
 
     incident_timelines: dict[str, list[dict]] = field(default_factory=dict)
     generated_postmortems: list[dict] = field(default_factory=list)

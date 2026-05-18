@@ -1,8 +1,25 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.modules.sunk_cost_intervention
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] deprecated
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+# [TESTS]
+
 """
 Sunk Cost Intervention — 沉没成本干预 (盲点 #37)
-特性：
-  - 检测某个基建占 Token 消耗>30% 超过 48 小时
-  - 触发精简替换决策建议
+
+DEPRECATED: Use zephyr.budget_enforcer.SelfBudgetTracker + zephyr.budget_enforcer.BurnRateMonitor.
+SSoT: MOD-INF-024 budget_enforcer. This module is retained for backward compatibility only.
 """
 import time
 from collections import defaultdict

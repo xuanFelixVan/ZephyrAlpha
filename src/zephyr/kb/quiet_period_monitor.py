@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.quiet_period_monitor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """每日静默期检测 + 管道健康自检
 ==================================
 蓝图: MOD-KB-001 §9.18.1

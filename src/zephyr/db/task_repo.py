@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.task_repo
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 TaskRepository — 任务登记表 CRUD + 状态机（T-1-04）
 ====================================================
@@ -65,10 +85,10 @@ from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.gates.gate_engine import (
     GATES_DIR,
     GateEngine,
-    GateResult,
-    GateViolationError,
 )
-from zephyr.shared.schema.schemas import Priority, Task, TaskNamespace, TaskStatus
+from zephyr.gates.task_types import Task, TaskNamespace, TaskStatus
+from zephyr.shared.contracts.gate import GateResult, GateViolationError
+from zephyr.shared.schema.severity_types import Priority
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
@@ -378,7 +398,7 @@ class TaskRepository:
     # CREATE
     # ------------------------------------------------------------------
 
-    def create(self, task: Task, *, files: list[dict[str, str]] | None = None) -> TaskCard:
+    def create(self, task: Task, *, files: list[dict[str, str]] | None = None, allow_direct_create: bool = False) -> TaskCard:
         """
         插入新任务。task_id 已存在时抛 sqlite3.IntegrityError。
 
@@ -388,12 +408,22 @@ class TaskRepository:
             Pydantic 模型实例（必须通过校验）。
         files : list[dict] | None
             任务-文件映射列表，每项含 file_path 和 role（primary/in_scope/output）。
+        allow_direct_create : bool
+            逃生门：仅 Owner 审批场景允许绕过 RULE-ZERO-TASK。默认 False。
 
         返回
         ----
         TaskCard
             插入后从 DB 重新读取的 TaskCard 对象（时间戳已规范化）。
         """
+        source_bp = getattr(task, "source_blueprint", "") or ""
+        if not allow_direct_create and (not source_bp.strip() or source_bp.strip().lower() == "unknown"):
+            raise ValueError(
+                f"RULE-ZERO-TASK 违规: 任务 {task.task_id!r} 的 source_blueprint 为空或 'unknown'。"
+                f"建卡唯一合法路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-INF-006）。"
+                f"直接 TaskRepository.create() 建卡违反 RULE-ZERO-TASK。"
+                f"如需 Owner 审批绕过，请传 allow_direct_create=True。"
+            )
         with self._write_tx() as conn:
             if task.priority == Priority.P0:
                 p0_count = self._count_p0_tasks(conn)
@@ -651,7 +681,7 @@ class TaskRepository:
         - 若已有拒绝且在 48h 冷却期内，抛出 RejectedUpgradeCoolingOffError
         - 降级（如 P1→P2）直接生效，不走审批
         """
-        from zephyr.shared.schema.schemas import Priority as P
+        from zephyr.shared.schema.severity_types import Priority as P
 
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)

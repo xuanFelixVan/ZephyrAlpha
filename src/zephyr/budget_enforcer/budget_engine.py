@@ -11,7 +11,7 @@ import hashlib
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, Callable
 
 from .budget_models import (
     BudgetAlert,
@@ -74,6 +74,7 @@ class BudgetEngine:
         self._lock = threading.Lock()
         self._consumption_version: dict[str, int] = {}
         self._provider_claims: dict[str, dict[str, float]] = {}
+        self._on_consumption_recorded: Optional[Callable[[str, int, float, float], None]] = None
         self._init_consumption()
 
     def _init_consumption(self) -> None:
@@ -193,6 +194,27 @@ class BudgetEngine:
             elif cost_result.decision == GateDecision.DEGRADE and worst.decision != GateDecision.DENY:
                 worst = cost_result
 
+        try:
+            from zephyr.behavioral_auditor.drift_infrastructure import check_budget_for_gate
+            drift_result = check_budget_for_gate("MOD-INF-024", tier="P1")
+            if not drift_result.get("allowed", True):
+                with self._lock:
+                    if worst.decision != GateDecision.DENY:
+                        worst = GateResult(
+                            request_id=request_id,
+                            decision=GateDecision.NARROW,
+                            reason=f"drift budget exhausted: {drift_result.get('reason', 'unknown')}",
+                            remaining_daily=worst.remaining_daily,
+                            remaining_hourly=worst.remaining_hourly,
+                            estimated_tokens=estimated_tokens,
+                            estimated_cost=estimated_cost,
+                        )
+        except ImportError:
+            pass
+        except Exception:
+            pass
+
+        with self._lock:
             worst.budget_level = self._compute_budget_level(worst)
             self._gate_history.append(worst)
             if len(self._gate_history) > 1000:
@@ -227,6 +249,18 @@ class BudgetEngine:
                 cons.consumed_per_request = time_minutes
 
             cons.request_count_daily += 1
+
+        if self._on_consumption_recorded is not None:
+            self._on_consumption_recorded(policy_id, tokens, cost, time_minutes)
+
+        try:
+            from zephyr.l01_infrastructure.system_telemetry._budget_telemetry_bridge import get_telemetry
+            gt = get_telemetry()
+            if gt is not None:
+                gt.metrics.gauge(f"budget.{policy_id}.tokens_consumed", float(tokens))
+                gt.metrics.gauge(f"budget.{policy_id}.cost_usd", cost)
+        except Exception:
+            pass
 
     def get_model_router_recommendation(self) -> tuple[ModelTier, int]:
         step = self._degradation_steps[self._active_step_idx]

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.intent_parser
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: T-3-20 (V-09) three-stage intent parser (ADR-0035)
 """
 IntentParser · 意图三阶段级联解析器（V-09）

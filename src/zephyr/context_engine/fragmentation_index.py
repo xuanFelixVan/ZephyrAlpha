@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.fragmentation_index
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """fragmentation_index.py — 知识碎片化指数 (DD108, TASK-019)"""
 from __future__ import annotations
 from dataclasses import dataclass

@@ -28,7 +28,7 @@ checks:
         - "zephyr.l09_research_innovation"
         - "zephyr.l10_compliance"
         - "zephyr.l11_ml_platform"
-        - "zephyr.l12_system_telemetry"
+        - "zephyr.l01_infrastructure.system_telemetry"
         - "zephyr.l13_experimentation"
         - "zephyr.shared.contracts"
       max_layers: 15

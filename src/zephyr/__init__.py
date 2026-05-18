@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
 """
 ZephyrAlpha 核心包索引 + 模块懒加载器 (M-04)
 
@@ -88,7 +89,7 @@ def __dir__():
 # import zephyr 时自动执行——SessionContinuity + PhaseManager + BlueprintMetrics
 # 全面 monkey-patch，零手动代码。try/except 保活——patch 失败不阻塞 import。
 try:
-    from zephyr.l12_system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
+    from zephyr.l01_infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
     _auto_bootstrap_result = _auto_bootstrap()
 except Exception:
     _auto_bootstrap_result = None

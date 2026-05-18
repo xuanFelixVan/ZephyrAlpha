@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.default_security_gateway
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ==== BEGIN CODEGEN:OCP-004 ====
 """
 DefaultSecurityGateway — SecurityGateway 三层防御 OCP-004 实现
@@ -254,7 +274,7 @@ class DefaultSecurityGateway(SecurityGateway):
             return None
         try:
             import asyncio
-            from zephyr.llm_security.protocol import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
             result = asyncio.run(
                 gw.scan_input(content, source="l10_compliance", metadata=metadata or {})
             )
@@ -268,7 +288,7 @@ class DefaultSecurityGateway(SecurityGateway):
                 result = loop.run_until_complete(
                     gw.scan_input(content, source="l10_compliance", metadata=metadata or {})
                 )
-                from zephyr.llm_security.protocol import SecurityDecision
+                from zephyr.shared.contracts.security.security_decision import SecurityDecision
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_input_scan"
             except Exception:

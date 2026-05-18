@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
 name: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门"
 description: ""
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
 

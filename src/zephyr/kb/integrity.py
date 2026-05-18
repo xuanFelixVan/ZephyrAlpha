@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.integrity
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """SHA256源码manifest + CI防篡改检测
 ==================================
 蓝图: MOD-KB-001 7.10.3

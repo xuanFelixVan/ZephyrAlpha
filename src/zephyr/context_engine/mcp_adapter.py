@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.mcp_adapter
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """mcp_adapter.py — 双轨 MCP 适配 (DD109, TASK-019)"""
 from __future__ import annotations
 from dataclasses import dataclass

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.resource_provider
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。
 
 为 BaseMCPServer 提供 resources/list + resources/read 原语支持。

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
 """L03 — Signal Generation Concrete Implementations
 
 Phase C 具体实现包。包含所有抽象基类的默认生产级实现。

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-023 | 03_modules/l01_infrastructure/drift-detector/blueprint.md | §
+
+# [MODULE] zephyr.drift_detector.absence_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Owner Absence Manager — Owner缺席模式 §6.32。
 
 module_id: MOD-INF-023

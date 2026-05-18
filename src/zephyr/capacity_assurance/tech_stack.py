@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.tech_stack
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 TechStackValidator — 技术栈可用性校验器
 对蓝图 MOD-INF-001 §5.1 中的 16 项架构决策进行启动时组件可用性检查。

@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.startup_sequencer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 冷启动序列器（Startup Sequencer — CT-STARTUP-001）
 
-依据：MOD-MASTER-001 蓝图 §十六
+依据：MOD-MASTER-002 蓝图 §十六
 5层启动顺序 + 120s全局超时。
 """
 

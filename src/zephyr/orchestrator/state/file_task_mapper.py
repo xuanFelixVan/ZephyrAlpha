@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.state.file_task_mapper
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 from typing import Self
 """
@@ -28,9 +48,9 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.schema.schemas import TaskNamespace
+from zephyr.gates.task_types import TaskNamespace
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [

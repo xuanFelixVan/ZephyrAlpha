@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
 """Configuration loader for Zephyr Alpha."""
 
 __all__ = [

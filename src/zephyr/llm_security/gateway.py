@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
+
+# [MODULE] zephyr.llm_security.gateway
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 import asyncio
 import time
 from dataclasses import dataclass, field
@@ -352,7 +372,7 @@ class LSGSecurityGateway:
             return {"regression": "unavailable"}
 
         from zephyr.llm_security.self_protection.l7_validation import RegressionType
-        weekly = l7.trigger_security_regression(RegressionType.WEEKLY)
+        weekly = l7.trigger_security_regression(RegressionType.WEEKLY, gateway=self)
         return {
             "regression": "completed",
             "total_scenarios": weekly.total_scenarios,

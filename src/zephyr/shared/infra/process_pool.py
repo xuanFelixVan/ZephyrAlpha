@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.infra.process_pool
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 process_pool.py - Shared process pool for MCP servers and subprocess tasks
 =============================================================================
@@ -46,9 +66,10 @@ class PooledProcess:
 
 
 class MCPProcessPool:
-    def __init__(self, max_processes: int = 30, zombie_check_interval: float = 60.0) -> None:
+    def __init__(self, max_processes: int = 30, zombie_check_interval: float = 60.0, idle_timeout_s: float = 600.0) -> None:
         self._max_processes = max_processes
         self._zombie_check_interval = zombie_check_interval
+        self._idle_timeout_s = idle_timeout_s
         self._pool: dict[str, PooledProcess] = {}
         self._lock = threading.Lock()
         self._zombie_thread: threading.Thread | None = None
@@ -119,11 +140,18 @@ class MCPProcessPool:
             active = sum(1 for e in self._pool.values() if e.is_alive)
             zombies = sum(1 for e in self._pool.values() if not e.is_alive)
             reuse = sum(e.reuse_count for e in self._pool.values())
+            now = time.monotonic()
+            idle = sum(
+                1 for e in self._pool.values()
+                if e.is_alive and self._idle_timeout_s > 0
+                and (now - e.last_used_at) > self._idle_timeout_s
+            )
             return ProcessPoolStats(
                 active_processes=active,
                 max_processes=self._max_processes,
                 reuse_count=reuse,
                 zombie_count=zombies,
+                idle_count=idle,
             )
 
     def start_zombie_scanner(self) -> None:
@@ -154,10 +182,22 @@ class MCPProcessPool:
                 name for name, entry in self._pool.items()
                 if not entry.is_alive
             ]
+            now = time.monotonic()
+            idle_names = [
+                name for name, entry in self._pool.items()
+                if entry.is_alive and self._idle_timeout_s > 0
+                and (now - entry.last_used_at) > self._idle_timeout_s
+            ]
             for name in zombie_names:
                 self._remove_entry(name)
                 logger.info("MCPProcessPool: reaped zombie process '%s'", name)
-            return len(zombie_names)
+            for name in idle_names:
+                self._remove_entry(name)
+                logger.info(
+                    "MCPProcessPool: reaped idle process '%s' (idle_timeout=%.0fs)",
+                    name, self._idle_timeout_s,
+                )
+            return len(zombie_names) + len(idle_names)
 
     def _remove_entry(self, name: str) -> None:
         entry = self._pool.pop(name, None)

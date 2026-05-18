@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
+
+# [MODULE] zephyr.l03_signal_generation.implementations.default_signal_aggregator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l03_signal_generation
 # category: signal_implementation
@@ -24,8 +44,8 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from zephyr.l03_signal_generation.aggregator_base import SignalAggregatorBase
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 _logger = logging.getLogger(__name__)
 

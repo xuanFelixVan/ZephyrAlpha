@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.capability_checker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 能力检查器（Capability Checker）
 
-依据：MOD-MASTER-001 蓝图 §十五 CT-CBAC-001
+依据：MOD-MASTER-004 蓝图 §十五 CT-CBAC-001
 Runtime capability_check() + checksum校验 + 离线更新流程 T。
 """
 

@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-KNW-001
 name: knowledge-specialist
 description: "Knowledge base and KE operations — VMS (MOD-INF-011) is the primary system-wide vector backend"
@@ -10,7 +11,9 @@ version: "0.2.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Knowledge Specialist
 

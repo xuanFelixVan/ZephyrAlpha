@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.agent_spec.skill_tokenomics
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 MOD-INF-019: Agent Spec — Skill Tokenomics
 Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
@@ -12,10 +32,13 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 
-class BudgetLevel(str, Enum):
+class SkillBudgetPreset(str, Enum):
     TIGHT = "tight"
     NORMAL = "normal"
     GENEROUS = "generous"
+
+
+BudgetLevel = SkillBudgetPreset
 
 
 @dataclass
@@ -69,10 +92,10 @@ class UsageRecord:
 
 class SkillTokenomics:
 
-    _PRESET_BUDGETS: Dict[BudgetLevel, int] = {
-        BudgetLevel.TIGHT: 4096,
-        BudgetLevel.NORMAL: 16384,
-        BudgetLevel.GENEROUS: 65536,
+    _PRESET_BUDGETS: Dict[SkillBudgetPreset, int] = {
+        SkillBudgetPreset.TIGHT: 4096,
+        SkillBudgetPreset.NORMAL: 16384,
+        SkillBudgetPreset.GENEROUS: 65536,
     }
 
     def __init__(self, daily_budget_tokens: int = 500_000):
@@ -106,7 +129,7 @@ class SkillTokenomics:
             "budget_set": True,
         }
 
-    def set_preset_budget(self, skill_id: str, level: BudgetLevel) -> Dict[str, Any]:
+    def set_preset_budget(self, skill_id: str, level: SkillBudgetPreset) -> Dict[str, Any]:
         max_tokens = self._PRESET_BUDGETS.get(level, 16384)
         return self.set_budget(skill_id, max_tokens)
 
@@ -274,4 +297,11 @@ class SkillTokenomics:
         result = {
             "skill_id": skill_id,
             "calls_per_hour": calls_per_hour,
-            "tokens_per_call": tokens_per_call
+            "tokens_per_call": tokens_per_call,
+            "hourly_burn": hourly_burn,
+            "budget_remaining": budget.remaining if budget else None,
+            "hours_until_exhausted": (
+                budget.remaining / hourly_burn if budget and hourly_burn > 0 else None
+            ),
+        }
+        return result

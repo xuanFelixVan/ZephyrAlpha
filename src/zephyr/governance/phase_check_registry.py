@@ -1,3 +1,23 @@
+# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+
+# [MODULE] zephyr.governance.phase_check_registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 
 本模块是 PhaseManager 与 GateEngine 之间的唯一桥梁：
@@ -153,6 +173,16 @@ def check_script_manifest() -> GateResult:
     return GateResult.GREEN
 
 
+def check_path_tree_freshness() -> GateResult:
+    """验证 project-path-tree.yaml 与磁盘一致——调用 generate_project_path_tree.py --check."""
+    exit_code, output = _run_script("generate_project_path_tree.py", "--check", timeout=60)
+    if exit_code == 0:
+        return GateResult.GREEN
+    if "OUT OF SYNC" in output:
+        return GateResult.RED
+    return GateResult.YELLOW
+
+
 def check_env_vars() -> GateResult:
     """验证关键环境变量可达."""
     # 不检查具体值，只检查 Python 环境基础
@@ -298,6 +328,32 @@ def check_vms_health() -> GateResult:
             return GateResult.YELLOW
         else:
             return GateResult.YELLOW
+    except ImportError:
+        return GateResult.YELLOW
+    except Exception:
+        return GateResult.YELLOW
+
+
+def check_vms_migration() -> GateResult:
+    try:
+        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.vector_memory.bridge_layer import MIGRATION_MAP
+
+        vms = InProcessVectorMemory()
+        vms.start()
+        cols = vms.list_collections()
+        vms.shutdown()
+
+        vms_col_names = {c.name for c in cols}
+        missing = []
+        for old_name, info in MIGRATION_MAP.items():
+            target = info["target"]
+            if target not in vms_col_names:
+                missing.append(f"{old_name}->{target}")
+
+        if not missing:
+            return GateResult.GREEN
+        return GateResult.YELLOW
     except ImportError:
         return GateResult.YELLOW
     except Exception:
@@ -482,7 +538,7 @@ def check_asset_inventory() -> GateResult:
 
 
 def check_observability_baseline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/l12_system_telemetry"
+    mod = _PROJECT_ROOT / "src/zephyr/system_telemetry"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 
@@ -571,7 +627,7 @@ def check_architecture_guard() -> GateResult:
 
 def check_full_backtest() -> GateResult:
     try:
-        from zephyr.governance.backtest_engine import BacktestEngine
+        from zephyr.rollback.backtest_engine import BacktestEngine
 
         return GateResult.GREEN
     except ImportError:
@@ -752,7 +808,7 @@ def check_dependency_audit() -> GateResult:
 
 def check_a2a_hold() -> GateResult:
     try:
-        from zephyr.a2a import A2AProtocol
+        from zephyr.l01_infrastructure.a2a_protocol.governance import A2AProtocol
 
         proto = A2AProtocol()
         if proto.is_hold_active():
@@ -834,6 +890,7 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_lock_protocol": check_lock_protocol,
     "gate_blueprint_mandatory": check_blueprint_mandatory,
     "gate_path_resolver": check_path_resolver,
+    "gate_path_tree_freshness": check_path_tree_freshness,
     "gate_script_manifest": check_script_manifest,
     "gate_env_vars": check_env_vars,
     "gate_encoding_safety": check_encoding_safety,
@@ -853,6 +910,7 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_context_engine_health": check_context_engine_health,
     "gate_kb_pipeline": check_kb_pipeline,
     "gate_vms_health": check_vms_health,
+    "gate_vms_migration": check_vms_migration,
     "gate_gate_engine_judge": check_gate_engine_judge,
     "gate_feedback_loop": check_feedback_loop,
     "gate_db_integrity": check_db_integrity,

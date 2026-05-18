@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.gate_repo
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 gate_repo.py — gates 表持久化仓库（AUDIT-07 P1-5: 从 gate_engine.py 提取）
 

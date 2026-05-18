@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.design_decisions
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 设计决策注册表（Design Decisions — DD-1~DD-14）
 
-依据：MOD-MASTER-001 蓝图 §九 设计决策集中表
+依据：MOD-MASTER-002 蓝图 §九 设计决策集中表
 记录 14 条关键设计决策，含替代方案、选择理由、重评条件。
 
 注：蓝图 §九 声明"当前10条"但实际列出14行，DD9/DD10出现两次（编号重复）。

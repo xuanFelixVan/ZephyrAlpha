@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.risk_registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 风险注册表与集成冲突裁决器（Risk Registry）
 
-依据：MOD-MASTER-001 蓝图 §十一 风险注册表
+依据：MOD-MASTER-002 蓝图 §十一 风险注册表
 实现集成冲突裁决 + R-MOD-1~34 风险缓解状态追踪。
 """
 

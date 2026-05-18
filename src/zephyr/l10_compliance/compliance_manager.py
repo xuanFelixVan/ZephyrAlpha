@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.compliance_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l10_compliance
 # category: compliance_interface
@@ -23,7 +43,7 @@ from __future__ import annotations
 import abc
 from typing import ClassVar, Dict, List, Optional
 
-from zephyr.shared.contracts.risk.compliance_rule import ComplianceRule
+from zephyr.trading_contracts.risk.compliance_rule import ComplianceRule
 
 
 class ComplianceManagerBase(abc.ABC):

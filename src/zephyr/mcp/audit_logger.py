@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.audit_logger
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。
 
 盲点关闭：B9（缺审计日志 → 无 trace/无 accountability）。

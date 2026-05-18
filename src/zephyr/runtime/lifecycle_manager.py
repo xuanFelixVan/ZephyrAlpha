@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.runtime.lifecycle_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 LifecycleManager — 启动/停止序列
 ==================================
@@ -68,6 +88,9 @@ class LifecycleManager:
             ("06_circadian_start", lambda: circadian_scheduler.start()),
             ("07_health_monitor_start", lambda: health_monitor.start()),
             ("08_integration_validate", lambda: integration_registry.validate_all()),
+            ("08a_audit_schedule_register", lambda: self._register_audit_tasks(circadian_scheduler)),
+            ("09_audit_self_monitor_start", lambda: self._start_self_monitor()),
+            ("09a_governance_watchdog_start", lambda: self._start_governance_watchdog()),
         ]
 
         for name, fn in steps:
@@ -85,6 +108,46 @@ class LifecycleManager:
         finalizer.register("circadian_scheduler", circadian_scheduler.save_state)
 
         return report
+
+    def _register_audit_tasks(self, circadian_scheduler: CircadianScheduler) -> None:
+        from zephyr.audit_trail.merkle_hourly import HourlyMerkleAggregator
+        from zephyr.audit_trail.log_rotation import LogRotationManager
+        from zephyr.audit_trail.retention import RetentionEnforcer
+        from zephyr.audit_trail.tiered_storage import TieredStorageManager
+
+        merkle = HourlyMerkleAggregator()
+        circadian_scheduler.register_task(hour=0, name="merkle_hourly_aggregate", layer="L1", callback=merkle.aggregate)
+
+        log_rot = LogRotationManager()
+        circadian_scheduler.register_task(hour=1, name="audit_log_rotation", layer="L1", callback=log_rot.rotate)
+
+        retention = RetentionEnforcer()
+        circadian_scheduler.register_task(hour=2, name="audit_retention_dry_run", layer="L1", callback=retention.dry_run)
+
+        tiered = TieredStorageManager()
+        circadian_scheduler.register_task(hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=tiered.auto_migrate)
+
+        def _finding_lifecycle_cleanup() -> None:
+            from scripts.governance._finding_lifecycle import FindingLifecycleManager
+            FindingLifecycleManager().run_cleanup(dry_run=False)
+
+        circadian_scheduler.register_task(hour=4, name="finding_lifecycle_cleanup", layer="L1", callback=_finding_lifecycle_cleanup)
+
+        def _gate_cache_daily_invalidate() -> None:
+            from scripts.governance.observability.gate_cache import GateCache
+            GateCache().invalidate_all("*")
+
+        circadian_scheduler.register_task(hour=0, name="gate_cache_daily_invalidate", layer="L1", callback=_gate_cache_daily_invalidate)
+
+    def _start_self_monitor(self) -> None:
+        from zephyr.audit_trail.self_monitor import SelfMonitor
+        self._audit_self_monitor = SelfMonitor()
+        self._audit_self_monitor.start_scheduler(daemon=True)
+
+    def _start_governance_watchdog(self) -> None:
+        from scripts.governance.governance_watchdog import GovernanceWatchdog
+        self._governance_watchdog = GovernanceWatchdog()
+        self._governance_watchdog.run(daemon=True)
 
     def shutdown_sequence(
         self,

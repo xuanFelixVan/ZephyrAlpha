@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.contracts.portfolio.money
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 from typing import Self
 """
@@ -31,7 +51,7 @@ ZephyrAlpha — shared/contracts/money.py
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
 
-from zephyr.shared.contracts.market.instrument import CurrencyCode
+from zephyr.trading_contracts.market.instrument import CurrencyCode
 
 # 全局 Decimal 精度（28 位有效数字，足够金融计算，含复利/开方等）
 getcontext().prec = 28

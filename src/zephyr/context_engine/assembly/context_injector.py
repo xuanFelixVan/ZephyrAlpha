@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.assembly.context_injector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ContextInjector: retrieve and inject relevant knowledge into prompt context
 ============================================================================
@@ -22,7 +42,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.context_engine.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 __all__ = [
     "InjectedContext",

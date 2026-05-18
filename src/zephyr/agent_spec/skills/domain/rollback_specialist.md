@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-RBK-001
 name: rollback-specialist
 description: "Rollback/undo/revert with Git-native + SQLite Checkpoint dual-track infrastructure. Covers four-level rollback (full_revert/partial_revert/discard/hard_reset), failure signal triage, forward-fix, kill switches, forensic audit, adversarial AI safety."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Rollback Specialist
 

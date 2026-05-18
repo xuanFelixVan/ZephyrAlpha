@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.phase_executor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Phase 执行引擎（Phase Executor）
 
-依据：MOD-MASTER-001 蓝图 §六 施工 Phase 规划
+依据：MOD-MASTER-002 蓝图 §六 施工 Phase 规划
 实现 Phase 0 → Phase A → Phase B → Phase C → Phase D 四级施工序列。
 
 Phase 定义：

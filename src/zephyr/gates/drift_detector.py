@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.drift_detector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Gate-side Drift Detector Recovery — zephyr.gates.drift_detector
 
@@ -224,19 +244,19 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
 def _fallback_to_rollback_handler(event: Any) -> dict[str, Any]:
     """AutoFixer 修复失败时，尝试通过 DriftFixHandler 兜底回滚。"""
     try:
-        from zephyr.governance.rollback.drift_fix import DriftFixHandler
+        from zephyr.rollback.governance.drift_fix import DriftFixHandler
 
         handler = DriftFixHandler()
         return handler.on_drift_fix(event)
     except ImportError:
         try:
-            from zephyr.governance.drift_detector.events import (
+            from zephyr.drift_detector.bridges.events import (
                 DriftEvent as GovDriftEvent,
             )
-            from zephyr.governance.drift_detector.events import (
+            from zephyr.drift_detector.bridges.events import (
                 DriftState as GovDriftState,
             )
-            from zephyr.governance.drift_detector.events import (
+            from zephyr.drift_detector.bridges.events import (
                 DriftType,
             )
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L13-001 | 03_modules/l13_experimentation/experiment-core/blueprint.md | §
 """L13 — Experimentation Concrete Implementations
 
 Phase C 具体实现包。

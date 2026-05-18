@@ -1,9 +1,25 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.modules.per_task_token_budget
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] deprecated
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+# [TESTS]
+
 """
 Per-Task Token Budget — 任务级 Token 预算 (盲点 #18)
-特性：
-  - 与 Per-request 预算正交：每 task 独立预算池
-  - 单任务限额：8K input / 4K output
-  - 超限后自动降级为精简模式
+
+DEPRECATED: Use zephyr.budget_enforcer.BudgetTracker (seven-level counters with task-level scope).
+SSoT: MOD-INF-024 budget_enforcer. This module is retained for backward compatibility only.
 """
 import time
 from dataclasses import dataclass

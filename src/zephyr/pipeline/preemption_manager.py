@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-009 | 03_modules/_cross_layer/pipeline/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.preemption_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 PreemptionManager -- 优先级抢占管理器
 ======================================
@@ -21,7 +41,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from zephyr.pipeline.models import PreemptionRecord
-from zephyr.shared.schema.schemas import TaskStatus
+from zephyr.gates.task_types import TaskStatus
 
 if TYPE_CHECKING:
     from zephyr.db.task_repo import TaskRepository

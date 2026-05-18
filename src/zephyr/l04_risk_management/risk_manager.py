@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L04-001 | 03_modules/l04_risk_management/risk-management-core/blueprint.md | §
+
+# [MODULE] zephyr.l04_risk_management.risk_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l04_risk_management
 # category: risk_interface
@@ -25,10 +45,10 @@ import abc
 from decimal import Decimal
 from typing import ClassVar, Dict, List, Optional
 
-from zephyr.shared.contracts.errors import RiskLimitViolationError
-from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.shared.contracts.risk.risk_limits import RiskLimits
-from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
+from zephyr.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
+from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
 
 class RiskManagerBase(abc.ABC):

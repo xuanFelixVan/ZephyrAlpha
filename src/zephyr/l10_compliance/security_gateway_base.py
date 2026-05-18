@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.security_gateway_base
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 L10 — Governance & Compliance Layer
 
@@ -25,7 +45,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, ClassVar
 
-from zephyr.shared.contracts.risk.compliance_rule import ComplianceRule
+from zephyr.trading_contracts.risk.compliance_rule import ComplianceRule
 
 
 class AuditAction(str, Enum):

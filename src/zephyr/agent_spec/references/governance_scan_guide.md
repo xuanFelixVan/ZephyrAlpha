@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # L3 Reference: Governance Scan Guide
 
 > Belongs to: governor (SKILL-ROL-GOV-001)

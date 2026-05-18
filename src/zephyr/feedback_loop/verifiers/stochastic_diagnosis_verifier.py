@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.verifiers.stochastic_diagnosis_verifier
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Stochastic Diagnosis Verifier — v0.38.0 R483
 
 Blindspot: FLE diagnoses are deterministic but fragile — a single diagnosis
@@ -27,6 +47,7 @@ class StochasticDiagnosisVerifier:
     diagnosis_runs: dict[str, list[dict]] = field(default_factory=dict)
     stability_scores: dict[str, float] = field(default_factory=dict)
     unstable_diagnoses: list[dict] = field(default_factory=list)
+    inversion_results: dict[str, dict] = field(default_factory=dict)
 
     def deterministic_seed(self, anomaly_id: str, run_index: int) -> int:
         key = f"{anomaly_id}:{run_index}"

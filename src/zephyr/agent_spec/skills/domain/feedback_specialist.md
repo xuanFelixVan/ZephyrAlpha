@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-FBL-001
 name: feedback-specialist
 description: "Feedback loop and evolution engine"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Feedback Specialist
 
@@ -52,6 +55,7 @@ author: factory-agent
 - [ ] Execute Act stage
 - [ ] Execute Verify stage
 - [ ] Write feedback summary to audit trail
+- [ ] Verify initial diagnosis against deep findings (diagnosis reversal)
 
 ## Key Constants
 

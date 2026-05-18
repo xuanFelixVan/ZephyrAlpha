@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-034 | 03_modules/_cross_layer/model-profiler/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.model_profiler.task_model_learner
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ModelTaskMatrix — 任务×模型性能学习引擎
 ==========================================

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.migrate_chroma_to_faiss
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ChromDB → FAISS + SQLite WAL 数据迁移脚本
 ==========================================

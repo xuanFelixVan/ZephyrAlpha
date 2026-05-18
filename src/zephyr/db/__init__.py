@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
 """zephyr.db — 元数据持久化层（SQLite + DuckDB 双引擎）与原子事务管理 v2.0。
 
 本包封装 experimental 元数据层（见 ADR-0030：SQLite 作为任务 / 事件 / 知识 / 门禁的
@@ -15,7 +16,29 @@
 - ``audit_schema``                —  审计视图与查询入口（CLI 审计面板 / compliance 报告）
 - ``query_metrics``               —  SQL 查询性能监控（P50/P95/P99 百分位 + slow_queries 表）
 """
-
 from __future__ import annotations
 
-__all__ = ['atomic_transaction_manager', 'audit_schema', 'circuit_breaker_repo', 'database_manager', 'gate_repo', 'olap_engine', 'query_metrics', 'sqlite_schema', 'task_repo']
+import importlib as _importlib
+
+def __getattr__(name):
+    if name == "query":
+        return _importlib.import_module(f"{__name__}.query")
+    if name == "transition":
+        return _importlib.import_module(f"{__name__}.transition")
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+__all__ = [
+    'atomic_transaction_manager',
+    'audit_schema',
+    'base_repo',
+    'circuit_breaker_repo',
+    'circuit_breaker_types',
+    'database_manager',
+    'gate_repo',
+    'olap_engine',
+    'query',
+    'query_metrics',
+    'sqlite_schema',
+    'task_repo',
+    'transition',
+]

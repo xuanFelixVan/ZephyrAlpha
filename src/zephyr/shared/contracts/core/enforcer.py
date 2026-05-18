@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.shared.contracts.core.enforcer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ZephyrAlpha — shared/contracts/enforcer.py
 
@@ -21,7 +41,7 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
 用法
 ----
     from zephyr.shared.contracts.core.enforcer import enforce_output, enforce_input
-    from zephyr.shared.contracts.market.market_data import NormalizedMarketData
+    from zephyr.trading_contracts.market.market_data import NormalizedMarketData
 
     @enforce_output(NormalizedMarketData, trace_required=True)
     def on_market_data(raw: dict) -> NormalizedMarketData:

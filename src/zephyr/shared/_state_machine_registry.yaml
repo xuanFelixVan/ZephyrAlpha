@@ -1,0 +1,61 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared/blueprint.md | §
+# module_id: MOD-INF-016
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+state_machines:
+- fsm_id: task-lifecycle
+  owner_module: MOD-INF-006
+  initial: PENDING
+  states:
+  - PENDING
+  - IN_PROGRESS
+  - COMPLETED
+  - VERIFIED
+  - FAILED
+  - BLOCKED
+  - WAITING
+  - READY
+  - RETRY
+  - CANCELLED
+  transitions:
+  - source: PENDING
+    target: IN_PROGRESS
+  - source: PENDING
+    target: BLOCKED
+  - source: PENDING
+    target: CANCELLED
+  - source: IN_PROGRESS
+    target: COMPLETED
+  - source: IN_PROGRESS
+    target: FAILED
+  - source: IN_PROGRESS
+    target: BLOCKED
+  - source: IN_PROGRESS
+    target: WAITING
+  - source: COMPLETED
+    target: VERIFIED
+  - source: COMPLETED
+    target: IN_PROGRESS
+  - source: FAILED
+    target: RETRY
+  - source: FAILED
+    target: CANCELLED
+  - source: BLOCKED
+    target: READY
+  - source: BLOCKED
+    target: CANCELLED
+  - source: WAITING
+    target: READY
+  - source: WAITING
+    target: CANCELLED
+  - source: READY
+    target: IN_PROGRESS
+  - source: READY
+    target: CANCELLED
+  - source: RETRY
+    target: IN_PROGRESS
+  - source: RETRY
+    target: FAILED

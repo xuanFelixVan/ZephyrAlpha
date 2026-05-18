@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.aisg_sandbox
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)
 

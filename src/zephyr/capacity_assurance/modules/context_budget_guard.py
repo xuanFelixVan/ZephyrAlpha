@@ -1,8 +1,25 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.modules.context_budget_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] deprecated
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+# [TESTS]
+
 """
 Context Budget Guard — Context 预算慢泄漏检测 (盲点 #17)
-特性：
-  - SLI CAP-CTX-001: Context 使用率 > 80% → WARNING, > 95% → CRITICAL
-  - 水位线告警 + 自动截断建议
+
+DEPRECATED: Use zephyr.budget_enforcer.ContextWasteDetector + zephyr.budget_enforcer.context_budget.ContextBudget.
+SSoT: MOD-INF-024 budget_enforcer. This module is retained for backward compatibility only.
 """
 import time
 from dataclasses import dataclass

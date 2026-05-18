@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.diagnosers.operational_seasonality
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Operational Seasonality — v0.16.0 R228
 
 Blindspot: FLE operates same way weekends/weekdays/EOQ/EOY; seasonal patterns invisible.
@@ -7,7 +27,7 @@ Mitigation: Time-based operational mode switching (weekend/month-end/quarter-end
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime
 
@@ -24,9 +44,9 @@ class OpMode(str, Enum):
 @dataclass
 class OperationalSeasonality:
     mode: OpMode = OpMode.WEEKDAY
-    threshold_multipliers: dict[str, float] = {
+    threshold_multipliers: dict[str, float] = field(default_factory=lambda: {
         "WEEKEND": 0.7, "MONTH_END": 0.5, "QUARTER_END": 0.3, "YEAR_END": 0.2,
-    }
+    })
 
     def auto_mode(self) -> OpMode:
         now = datetime.now()

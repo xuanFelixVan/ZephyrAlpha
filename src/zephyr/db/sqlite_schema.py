@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.sqlite_schema
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + MOD-INF-012 v2.0）
 ======================================================================
@@ -46,7 +66,15 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from zephyr.shared.paths import DB_PATH
+def _find_repo_root() -> Path:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "src" / "zephyr" / "__init__.py").exists():
+            return parent
+    raise FileNotFoundError(f"Cannot find project root from {current}")
+
+
+DB_PATH: Path = _find_repo_root() / "data" / "zalpha_metadata.db"
 
 # ---------------------------------------------------------------------------
 # DDL — tasks 表

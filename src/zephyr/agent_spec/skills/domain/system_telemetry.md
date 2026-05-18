@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-TEL-001
 name: system-telemetry
 description: "System-wide observability — 9 subsystems (metrics/logs/traces/ai_behavior/archive/profiles/health/alerts/schema) via unified Telemetry facade. Three closed loops (AI dev/ops/governance). Aligned with OTel GenAI semantic conventions."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: System Telemetry
 

@@ -1346,8 +1346,8 @@ audit_trail:
     summary: Cold Start——git log + session-logs 回溯生成历史基线
 consumer_count: 130
 cost_budget:
-  file: src/zephyr/shared/cost_budget.py
-  entry_point: from zephyr.shared.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
+  file: src/zephyr/budget_enforcer/cost_budget.py
+  entry_point: from zephyr.budget_enforcer.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
   key_exports:
   - symbol: CostBudget
     note: AI成本预算管理器——provider定价+累计消费追踪+硬性熔断阈值
@@ -1358,8 +1358,8 @@ cost_budget:
   anti_patterns:
   - LLM API调用前不check_budget——必须预检+超出熔断
 context_budget:
-  file: src/zephyr/shared/context_budget.py
-  entry_point: from zephyr.shared.context_budget import ContextBudget, TruncationStrategy, QuotaTracker
+  file: src/zephyr/budget_enforcer/context_budget.py
+  entry_point: from zephyr.budget_enforcer.context_budget import ContextBudget, TruncationStrategy, QuotaTracker
   key_exports:
   - symbol: ContextBudget
     note: 上下文预算管理器——配额分配+追踪+超预算截断
@@ -1449,8 +1449,8 @@ post_process:
   anti_patterns:
   - AI生成代码后不run后处理管道——lint/format/typecheck必须执行
 constitutional_update:
-  file: src/zephyr/shared/constitutional_update.py
-  entry_point: from zephyr.shared.constitutional_update import ConstitutionalAutoUpdate
+  file: src/zephyr/governance/constitutional_update.py
+  entry_point: from zephyr.governance.constitutional_update import ConstitutionalAutoUpdate
   key_exports:
   - symbol: ConstitutionalAutoUpdate
     note: 宪法自愈引擎——从SessionAuditTrail提取learnings→安全写回AGENTS.md
@@ -1461,8 +1461,8 @@ constitutional_update:
   anti_patterns:
   - AGENTS.md写入前不备份——必须先backup_and_rollback
 multi_agent:
-  file: src/zephyr/shared/multi_agent.py
-  entry_point: from zephyr.shared.multi_agent import AgentCard, TaskDispatch, ResultMerge
+  file: src/zephyr/l01_infrastructure/a2a_protocol/multi_agent.py
+  entry_point: from zephyr.l01_infrastructure.a2a_protocol.multi_agent import AgentCard, TaskDispatch, ResultMerge
   key_exports:
   - symbol: AgentCard
     note: Agent能力卡片——A2A v1.0对齐（agent_id/role/capabilities/endpoint）
@@ -1477,8 +1477,8 @@ multi_agent:
   anti_patterns:
   - 多Agent不定义AgentCard——必须先声明能力再分派任务
 skill_registry:
-  file: src/zephyr/shared/skill_registry.py
-  entry_point: from zephyr.shared.skill_registry import SkillDefinition, PromptTemplate
+  file: src/zephyr/agent_spec/skill_registry.py
+  entry_point: from zephyr.agent_spec.skill_registry import SkillDefinition, PromptTemplate
   key_exports:
   - symbol: SkillDefinition
     note: Skill定义——Pydantic跨层契约（skill_id/name/category/prompt_template/input_schema/output_schema）

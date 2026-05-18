@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.in_process_vector_memory
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 InProcessVectorMemory — MOD-INF-011 VMS 统一入口
 ===================================================
@@ -24,6 +44,7 @@ InProcessVectorMemory — MOD-INF-011 VMS 统一入口
 from __future__ import annotations
 
 import logging
+import threading
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -33,7 +54,7 @@ from zephyr.vector_memory.collection_manager import (
     COLLECTION_NAMES,
     VMS_PERSIST_DIR,
 )
-from zephyr.vector_memory.embedding_router import EmbeddingRouter
+from zephyr.local_model.embedding_router import EmbeddingRouter
 
 _logger = logging.getLogger(__name__)
 
@@ -44,8 +65,8 @@ class InProcessVectorMemory:
 
     def __init__(self, persist_dir: Path | str | None = None) -> None:
         self._started: bool = False
-        self._collection_manager = CollectionManager(persist_dir=persist_dir)
         self._embedding_router = EmbeddingRouter()
+        self._collection_manager = CollectionManager(persist_dir=persist_dir, embedding_router=self._embedding_router)
         self._chunk_strategy_router: Any = self._init_chunk_router()
         self._hybrid_retriever: Any = None
         self._provenance_enforcer = self._init_provenance_enforcer()
@@ -55,6 +76,8 @@ class InProcessVectorMemory:
         self._bridge_layer: Any | None = None
         self._vector_bridge: Any | None = None
         self._in_memory_backend: Any | None = None
+        self._stop_event = threading.Event()
+        self._maintenance_thread: threading.Thread | None = None
 
     @staticmethod
     def _init_chunk_router() -> Any:
@@ -76,7 +99,7 @@ class InProcessVectorMemory:
 
     @staticmethod
     def _init_cache_layer() -> Any:
-        from zephyr.vector_memory.cache_layer import CacheLayer
+        from zephyr.local_model.cache_layer import CacheLayer
 
         return CacheLayer()
 
@@ -141,9 +164,19 @@ class InProcessVectorMemory:
         except Exception as exc:
             _logger.warning("VMS: 健康基线检查失败: %s", exc)
 
+        self._stop_event.clear()
+        self._maintenance_thread = threading.Thread(
+            target=self._maintenance_loop, daemon=True, name="vms-maintenance"
+        )
+        self._maintenance_thread.start()
+        _logger.info("VMS: 维护线程已启动")
+
     def shutdown(self) -> None:
         if not self._started:
             return
+        self._stop_event.set()
+        if self._maintenance_thread is not None and self._maintenance_thread.is_alive():
+            self._maintenance_thread.join(timeout=5.0)
         self._embedding_router.shutdown()
         if self._collection_manager.client is not None:
             pass
@@ -181,8 +214,10 @@ class InProcessVectorMemory:
         content: str,
         metadata: dict[str, Any] | None = None,
     ) -> str:
+        from zephyr.vector_memory.bridge_layer import COLLECTION_ALIASES
         from zephyr.vector_memory.collection_manager import DesignPrinciplesEnforcer
 
+        collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
         meta = dict(metadata or {})
         DesignPrinciplesEnforcer.validate_provenance(meta)
         return self._collection_manager.write_with_provenance(
@@ -197,6 +232,8 @@ class InProcessVectorMemory:
         query: str,
         k: int = 5,
     ) -> list[dict[str, Any]]:
+        from zephyr.vector_memory.bridge_layer import COLLECTION_ALIASES
+        collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
         col = self._collection_manager.get_collection(collection_name)
         if col.count() == 0:
             return []
@@ -248,6 +285,8 @@ class InProcessVectorMemory:
         collection_name: str,
         k: int = 5,
     ) -> list[dict[str, Any]]:
+        from zephyr.vector_memory.bridge_layer import COLLECTION_ALIASES
+        collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
         col = self._collection_manager.get_collection(collection_name)
         all_data = col.get(include=["documents", "metadatas"])
         records: list[dict[str, Any]] = []
@@ -304,3 +343,40 @@ class InProcessVectorMemory:
                         col.delete(ids=all_ids)
             except Exception:
                 _logger.debug("clear_all: 无法清空 %s", name, exc_info=True)
+
+    def _maintenance_loop(self) -> None:
+        CHECK_INTERVAL = 60
+        DAILY_INTERVAL = 86400
+        last_daily_ts: float = 0.0
+
+        while not self._stop_event.is_set():
+            self._stop_event.wait(timeout=CHECK_INTERVAL)
+            if self._stop_event.is_set():
+                break
+
+            try:
+                report = self._index_health_monitor.check_all()
+                if report.collections_unhealthy > 0:
+                    for cn in self._collection_manager.list_collections():
+                        ci = cn.name if hasattr(cn, "name") else str(cn)
+                        try:
+                            self._index_health_monitor.auto_repair(ci)
+                            _logger.info("VMS maintenance: auto_repair(%s)", ci)
+                        except Exception:
+                            _logger.debug("VMS maintenance: auto_repair(%s) failed", ci, exc_info=True)
+            except Exception:
+                _logger.debug("VMS maintenance: check_all failed", exc_info=True)
+
+            now = datetime.now(UTC).timestamp()
+            if now - last_daily_ts >= DAILY_INTERVAL:
+                last_daily_ts = now
+                try:
+                    self._collection_manager.purge_expired()
+                    _logger.info("VMS maintenance: purge_expired done")
+                except Exception:
+                    _logger.debug("VMS maintenance: purge_expired failed", exc_info=True)
+                try:
+                    self._index_health_monitor.snapshot_backup()
+                    _logger.info("VMS maintenance: snapshot_backup done")
+                except Exception:
+                    _logger.debug("VMS maintenance: snapshot_backup failed", exc_info=True)

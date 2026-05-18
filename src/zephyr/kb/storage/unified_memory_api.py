@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.storage.unified_memory_api
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）
 ====================================================
@@ -44,10 +64,16 @@ import logging
 import threading
 import uuid
 from datetime import UTC, datetime
-from typing import Any, Protocol, runtime_checkable
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zephyr.kb.storage._backend_protocol import (
+    InMemoryMemoryBackend,
+    MemoryBackend,
+    MemoryBackendError,
+    MemoryRecord,
+)
 from zephyr.shared.security.capability import capability_check
 
 __all__ = [
@@ -103,10 +129,6 @@ class WriteTraceMissing(Exception):
         super().__init__(f"WriteTraceMissing: topic='{topic}' — {detail}")
 
 
-class MemoryBackendError(RuntimeError):
-    """记忆后端不可用 / 操作失败时抛出（包装底层异常）。"""
-
-
 # ---------------------------------------------------------------------------
 # Pydantic 数据模型
 # ---------------------------------------------------------------------------
@@ -131,147 +153,6 @@ class WriteTrace(BaseModel):
     origin: str = Field(min_length=1, max_length=200, description="来源模块/任务标识")
     audit_chain: list[str] = Field(min_length=1, description="审计链路（至少 1 项）")
     arbitration: str | None = Field(default=None, max_length=100, description="架构裁决标识")
-
-
-class MemoryRecord(BaseModel):
-    """记忆条目（kb.recall / kb.search 的统一返回类型）。"""
-
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
-
-    chunk_id: str = Field(min_length=1, description="后端唯一 ID")
-    topic: str = Field(min_length=1, description="所属主题")
-    content: str = Field(description="原文内容")
-    score: float = Field(default=1.0, ge=0.0, le=1.0, description="相似度得分（recall 默认 1.0）")
-    written_at: str = Field(default="", description="UTC ISO 8601 写入时间")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="附加元数据（含 provenance 字段）")
-
-
-# ---------------------------------------------------------------------------
-# 后端协议（依赖注入）
-# ---------------------------------------------------------------------------
-
-
-@runtime_checkable
-class MemoryBackend(Protocol):
-    """记忆后端协议；ChromaMemoryBackend / InMemoryMemoryBackend 均实现该接口。"""
-
-    def write(self, record: MemoryRecord) -> str:  # pragma: no cover - Protocol
-        ...
-
-    def list_by_topic(self, topic: str, k: int) -> list[MemoryRecord]:  # pragma: no cover
-        ...
-
-    def query(self, query_text: str, k: int, topic: str | None = None) -> list[MemoryRecord]:  # pragma: no cover
-        ...
-
-    def count(self) -> int:  # pragma: no cover
-        ...
-
-
-# ---------------------------------------------------------------------------
-# InMemoryMemoryBackend — 测试 / 兜底降级
-# ---------------------------------------------------------------------------
-
-
-class InMemoryMemoryBackend:
-    """纯 Python 字典实现的兜底后端（无 ChromaDB 依赖）。
-
-    用途
-    ----
-    1. 单元测试：避免 ChromaDB 启动开销与持久化副作用
-    2. ChromaDB 嵌入模型下载失败时的降级路径
-    3. CI 环境无网络时的离线运行
-    """
-
-    def __init__(self) -> None:
-        self._records: dict[str, MemoryRecord] = {}
-        self._order: dict[str, int] = {}
-        self._counter: int = 0
-        self._lock = threading.RLock()
-
-    def write(self, record: MemoryRecord) -> str:
-        with self._lock:
-            self._counter += 1
-            self._records[record.chunk_id] = record
-            self._order[record.chunk_id] = self._counter
-        return record.chunk_id
-
-    def list_by_topic(self, topic: str, k: int) -> list[MemoryRecord]:
-        with self._lock:
-            matched = [(self._order.get(r.chunk_id, 0), r) for r in self._records.values() if r.topic == topic]
-        # 主键 written_at 倒序，副键 insertion_seq 倒序（解决同 μs 时间戳并列）
-        matched.sort(key=lambda item: (item[1].written_at, item[0]), reverse=True)
-        return [r for _, r in matched[: max(0, k)]]
-
-    def query(self, query_text: str, k: int, topic: str | None = None) -> list[MemoryRecord]:
-        """简易"相似度"：词重合比例（仅用于 mock，不替代真实向量检索）。"""
-        if not query_text:
-            return []
-        q_tokens = set(_simple_tokens(query_text))
-        if not q_tokens:
-            return []
-
-        with self._lock:
-            candidates = list(self._records.values())
-        if topic is not None:
-            candidates = [r for r in candidates if r.topic == topic]
-
-        scored: list[tuple[float, MemoryRecord]] = []
-        for rec in candidates:
-            r_tokens = set(_simple_tokens(rec.content))
-            if not r_tokens:
-                continue
-            overlap = len(q_tokens & r_tokens)
-            score = overlap / max(len(q_tokens), 1)
-            if score <= 0.0:
-                continue
-            scored.append((min(score, 1.0), rec))
-
-        scored.sort(key=lambda item: item[0], reverse=True)
-        results: list[MemoryRecord] = []
-        for score, rec in scored[: max(0, k)]:
-            results.append(
-                MemoryRecord(
-                    chunk_id=rec.chunk_id,
-                    topic=rec.topic,
-                    content=rec.content,
-                    score=round(score, 4),
-                    written_at=rec.written_at,
-                    metadata=dict(rec.metadata),
-                )
-            )
-        return results
-
-    def count(self) -> int:
-        with self._lock:
-            return len(self._records)
-
-    def clear(self) -> None:
-        """仅供测试使用，清空内存。"""
-        with self._lock:
-            self._records.clear()
-            self._order.clear()
-            self._counter = 0
-
-
-def _simple_tokens(text: str) -> list[str]:
-    """非常简化的分词：按非中英数字字符切分 + 中文按字符切分。"""
-    if not text:
-        return []
-    tokens: list[str] = []
-    buf: list[str] = []
-    for ch in text.lower():
-        if ch.isascii() and (ch.isalnum() or ch == "_"):
-            buf.append(ch)
-        else:
-            if buf:
-                tokens.append("".join(buf))
-                buf = []
-            if "\u4e00" <= ch <= "\u9fff":
-                tokens.append(ch)
-    if buf:
-        tokens.append("".join(buf))
-    return [t for t in tokens if t]
 
 
 # ---------------------------------------------------------------------------

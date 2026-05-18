@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.rollback_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚。
 ================================================================
@@ -30,7 +50,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [

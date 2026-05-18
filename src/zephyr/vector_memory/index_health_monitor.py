@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.index_health_monitor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 =========================================================
@@ -141,9 +161,10 @@ class IndexHealthMonitor:
                     count = col.count()
                     if count > 0:
                         data = col.get(limit=10, include=["embeddings"])
-                        if data.get("embeddings"):
-                            for emb in data["embeddings"]:
-                                if emb and len(emb) != info.dimension:
+                        embeddings = data.get("embeddings")
+                        if embeddings is not None and len(embeddings) > 0:
+                            for emb in embeddings:
+                                if emb is not None and len(emb) != info.dimension:
                                     issues.append(f"{info.name}: 维度不匹配 (声明={info.dimension}, 实际={len(emb)})")
                                     break
                 except Exception as e:

@@ -1,3 +1,23 @@
+# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+
+# [MODULE] zephyr.governance.ai_self_diagnosis
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 from enum import Enum
 
@@ -7,7 +27,7 @@ class AutoFixLayer(str, Enum):
     L3_REPORT = "L3_Report"
 
 AUTO_KB_STEPS: list[str] = [
-    "发现→记录→解决→防御→文档化",
+    "发现→记录→解决→诊断反转验证(初始诊断是否正确？错了为什么？)→防御→文档化",
 ]
 
 def auto_fix_known_pattern(error: str) -> tuple[bool, str]:

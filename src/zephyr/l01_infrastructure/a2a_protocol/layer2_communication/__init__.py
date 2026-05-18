@@ -1,4 +1,6 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
 """Layer 2: 通信+任务 — Task 状态机, Message/Part Schema, 上下文包"""
+from . import streaming
 
 from .a2a_schemas import A2AMessage, A2AMessagePart, PartType
 from .a2a_state import A2ATask, A2ATaskStatus, A2AStateMachine

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L05-001 | 03_modules/l05_portfolio_construction/portfolio-core/blueprint.md | §
+
+# [MODULE] zephyr.l05_portfolio_construction.strategies.default_equity_strategy
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l05_portfolio_construction
 # category: strategy_implementation
@@ -30,7 +50,7 @@ from zephyr.l05_portfolio_construction.strategy_base import (
     StrategyMeta,
     StrategyRegistry,
 )
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderType
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderType
 
 _logger = logging.getLogger(__name__)
 

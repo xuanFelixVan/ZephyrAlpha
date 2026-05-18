@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L02-001 | 03_modules/l02_alpha_factor/alpha-factor-core/blueprint.md | §
+
+# [MODULE] zephyr.l02_alpha_factor.factors.momentum_factor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l02_alpha_factor
 # category: factor_implementation

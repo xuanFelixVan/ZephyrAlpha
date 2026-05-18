@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.reconciliation_loop
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 调和循环（Reconciliation Loop — CT-RECONCILE-001）
 
-依据：MOD-MASTER-001 蓝图 §十六
+依据：MOD-MASTER-002 蓝图 §十六
 K8s Controller Pattern——每30s调和5项 invariants。
 """
 

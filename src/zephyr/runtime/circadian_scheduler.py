@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.runtime.circadian_scheduler
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CircadianScheduler — 内置生物钟
 =================================
@@ -78,7 +98,7 @@ class CircadianScheduler:
         self._running = True
         self._thread = threading.Thread(target=self._loop, daemon=True, name="CircadianScheduler")
         self._thread.start()
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.runtime.resource_optimization import ResourceOptimizationEngine
         try:
             ResourceOptimizationEngine().register_daemon(
                 "circadian-scheduler", self.start, self.stop, priority=5,

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.gateway_server
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。
 
 架构对标 IBM ContextForge Gateway 模式。五模块：

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L11-001 | 03_modules/l11_ml_platform/ml-core/blueprint.md | §
+
+# [MODULE] zephyr.l11_ml_platform.inference_base
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 L11 — ML Platform Layer
 
@@ -23,7 +43,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, ClassVar
 
-from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 
 

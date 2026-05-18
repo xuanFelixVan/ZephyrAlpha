@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L11-001 | 03_modules/l11_ml_platform/ml-core/blueprint.md | §
+
+# [MODULE] zephyr.l11_ml_platform.implementations.default_inference_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """L11 — Default Inference Engine
 
 ML 推理引擎具体实现。实现 InferenceEngineBase。
@@ -21,7 +41,7 @@ from zephyr.l11_ml_platform.inference_base import (
     InferenceEngineBase,
     ModelMetadata,
 )
-from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 
 _logger = logging.getLogger(__name__)

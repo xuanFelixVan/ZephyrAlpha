@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
 """_cross_layer: Cross-layer integration pipelines for domain blueprints."""
 
 from zephyr._cross_layer.alpha_signal_pipeline import AlphaSignalPipeline

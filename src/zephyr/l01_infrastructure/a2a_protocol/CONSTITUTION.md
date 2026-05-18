@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-001
+---
+
 # MOD-INF-025 A2A Protocol 宪法
 
 > **版本**: 0.10.0

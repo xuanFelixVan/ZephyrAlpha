@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md | §2.3
+
+# [MODULE] zephyr.escalation_engine.circuit_breaker
+
+# [INVARIANTS] SSoT=shared/resilience/circuit_breaker(MOD-INF-016);error_budget是022特有扩展;接口保持call()->bool兼容
+
+# [MODIFY-GUARD] docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md;src/zephyr/shared/resilience/circuit_breaker.py
+
+# [CONSUMERS] zephyr.escalation_engine.escalation_engine;zephyr.escalation_engine.__init__
+
+# [STABILITY] stable
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT] 熔断拒绝→call()返回False;error_budget耗尽→降级
+
+# [TESTS] tests/infrastructure/test_escalation_engine.py
+
 """
 Circuit Breaker — MOD-INF-022
 

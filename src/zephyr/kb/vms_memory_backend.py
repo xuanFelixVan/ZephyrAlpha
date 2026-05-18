@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.vms_memory_backend
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器
 =====================================================
@@ -26,7 +46,7 @@ import logging
 import threading
 from typing import Any
 
-from zephyr.kb.unified_memory_api import (
+from zephyr.kb.storage._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryBackendError,

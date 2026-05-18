@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.core.blueprint_decomposer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ZephyrAlpha 蓝图拆解器
 =====================
@@ -31,7 +51,8 @@ from zephyr.core.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schema.schemas import ExecutionModel, Priority, SafetyLevel, TaskNamespace
+from zephyr.gates.task_types import ExecutionModel, TaskNamespace
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 logger = logging.getLogger(__name__)
 

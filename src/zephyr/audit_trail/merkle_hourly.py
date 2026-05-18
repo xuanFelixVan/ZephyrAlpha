@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.merkle_hourly
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 ==============================================================

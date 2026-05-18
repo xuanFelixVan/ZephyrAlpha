@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L08-001 | 03_modules/l08_human_ai_interface/hmi-core/blueprint.md | §
+
+# [MODULE] zephyr.l08_human_ai_interface.dashboard.app
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: T-4-07 Streamlit Dashboard
 """
 ZephyrAlpha Dashboard · Streamlit 仪表盘

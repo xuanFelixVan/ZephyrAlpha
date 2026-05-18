@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.artifact_scanner
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ==== BEGIN CODEGEN:ARTIFACT-SCAN ====
 """
 ArtifactScanner — SSRF / Path Traversal / Credential / Token 防御扫描器

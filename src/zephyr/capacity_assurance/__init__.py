@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
 """
 ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · L01 Infrastructure.
 
@@ -30,6 +31,7 @@ __all__ = [
     "tech_stack",
     "risk_mitigation",
     "cross_module_integration",
+    "contracts",
     "version",
     "module_id",
 ]

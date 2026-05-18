@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-023 | 03_modules/l01_infrastructure/drift-detector/blueprint.md | §
+
+# [MODULE] zephyr.drift_detector.chaos_injector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。
 
 module_id: MOD-INF-023

@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # MAD-004 Interface Definability Gate
 # 接口可定义性门禁 —— 模块接口必须清晰定义
 # SSoT: src/zephyr/gates/_registry.yaml → MAD-004

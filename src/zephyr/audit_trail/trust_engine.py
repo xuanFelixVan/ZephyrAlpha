@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.trust_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_trail.trust_engine — MOD-INF-020 · 渐进信任评分引擎
 ===========================================================

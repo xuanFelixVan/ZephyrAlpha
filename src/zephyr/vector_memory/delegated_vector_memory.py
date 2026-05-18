@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.delegated_vector_memory
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器
 ============================================================

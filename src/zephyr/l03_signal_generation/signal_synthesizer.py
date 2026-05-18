@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
+
+# [MODULE] zephyr.l03_signal_generation.signal_synthesizer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l03_signal_generation
 # category: signal_synthesis
@@ -29,8 +49,8 @@ import uuid
 from datetime import datetime
 from typing import ClassVar, Dict, List, Optional
 
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class SignalSynthesizerBase(abc.ABC):

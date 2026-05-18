@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.assembly.context_pipeline
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 context_pipeline — Context Engine **四段流水线组合根**
 ======================================================
@@ -35,7 +55,7 @@ from zephyr.context_engine.support.architecture_context_loader import (
 from zephyr.context_engine.assembly.context_assembler import AssembledContext, AssemblyError, ContextAssembler
 from zephyr.context_engine.assembly.context_injector import ContextInjector, InjectedContext
 from zephyr.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.context_engine.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]
 

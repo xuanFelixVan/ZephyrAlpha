@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-LSG-001
 name: lsg-security
 description: "LLM Security Gateway (LSG) — L0-L8 nine-layer defense-in-depth. Covers prompt injection detection, jailbreak defense, PII redaction, agent permission control, cost circuit breaker, observability, continuous validation, multi-agent trust."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: LSG Security
 

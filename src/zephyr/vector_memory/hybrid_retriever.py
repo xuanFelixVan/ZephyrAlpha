@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.hybrid_retriever
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 HybridRetriever — MOD-INF-011 混合检索架构
 ============================================

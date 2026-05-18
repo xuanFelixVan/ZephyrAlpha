@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # L3 Reference: Session Resume Protocol
 
 > Belongs to: architect (SKILL-ROL-ARC-001)

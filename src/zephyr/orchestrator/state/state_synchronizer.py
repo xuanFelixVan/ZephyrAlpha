@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.state.state_synchronizer
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04）
 ==============================================================
@@ -31,7 +51,7 @@ from typing import Any
 
 import yaml
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.utils.time_utils import now_iso
 

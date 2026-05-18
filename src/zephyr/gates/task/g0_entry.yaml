@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ─────────────────────────────────────────────────────────────────────────────
 # 可读叙述（rules）仍在本文件中保留。
 # GateEngine 可执行配置（checks）：task/g0_orc_gate_engine.yaml（CT-ORC-GATE-001 子集）。

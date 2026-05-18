@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.handoff_auto_loader
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。"""
 
 from __future__ import annotations

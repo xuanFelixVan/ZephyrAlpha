@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
 """
 ZephyrAlpha 知识库子包
 ======================

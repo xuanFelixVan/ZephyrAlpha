@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L07-001 | 03_modules/l07_post_trade_analytics/analytics-core/blueprint.md | §
 """L07 — Post-Trade Analytics Concrete Implementations
 
 Phase C 具体实现包。

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
+
+# [MODULE] zephyr.l03_signal_generation.implementations.default_capital_allocator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l03_signal_generation
 # category: allocation_implementation
@@ -24,8 +44,8 @@ from enum import Enum
 from typing import Optional
 
 from zephyr.l03_signal_generation.aggregator_base import CapitalAllocatorBase
-from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 _logger = logging.getLogger(__name__)
 

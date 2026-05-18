@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.anti_pattern_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Anti-Patterns 防护引擎（Anti-Pattern Guard）
 
-依据：MOD-MASTER-001 蓝图 §七 Anti-Patterns
+依据：MOD-MASTER-002 蓝图 §七 Anti-Patterns
 实现 AP1~AP8 八条 AI 集成行为禁止规则的运行时强制执行。
 
 每条 AP 实现为独立 check 方法，集成到 Gate Engine 调用链中。

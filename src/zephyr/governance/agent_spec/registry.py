@@ -1,24 +1,35 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.governance.agent_spec.registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """G-CT-003 契约：Agent Spec → RBAC 能力检查.
 
 双向桥接：
-  1. 读取 agent_spec/skill_registry.yaml 中注册的 13 个技能
+  1. 通过 SkillRouter API 查询 agent_spec/skill_registry.yaml 中注册的技能
   2. 提供统一的查询接口给 governance gate 使用
 """
 
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
-
-_SKILL_REGISTRY_PATH = Path(__file__).resolve().parent.parent.parent / "agent_spec" / "skill_registry.yaml"
-
-GOVERNANCE_SKILL_TYPES = {
-    "domain": ["governor-specialist", "gate-specialist", "contract-enforcer", "script-writer", "audit-specialist",
-               "rollback-specialist", "drift-detector", "escalation-specialist", "budget-enforcer", "security-specialist"],
-    "role": ["architect", "implementer", "governor"],
-}
 
 
 class AgentCapability(BaseModel):
@@ -29,20 +40,38 @@ class AgentCapability(BaseModel):
 
 
 class SpecRegistry:
-    """Agent Spec 注册表 — 对接真实 skill_registry.yaml."""
+    """Agent Spec 注册表 — 通过 SkillRouter API 查询."""
 
     def __init__(self, registry_path: Optional[Path] = None) -> None:
         self._entries: dict[str, AgentCapability] = {}
-        self._registry_path = registry_path or _SKILL_REGISTRY_PATH
-        self._raw_cache: Optional[Dict[str, Any]] = None
-        self._load_from_skill_registry()
+        self._registry_path = registry_path
+        self._load_via_skill_router()
 
-    def _load_from_skill_registry(self) -> None:
-        if not self._registry_path.exists():
-            return
-        with self._registry_path.open(encoding="utf-8") as f:
-            raw = yaml.safe_load(f)
-        self._raw_cache = raw
+    def _load_via_skill_router(self) -> None:
+        try:
+            from zephyr.agent_spec.skill_router import SkillRouter
+            router = SkillRouter(registry_path=self._registry_path)
+            for skill_id, info in router.list_registered_skills().items():
+                self._entries[skill_id] = AgentCapability(
+                    agent_id=skill_id,
+                    capabilities=[info.get("name", skill_id), info.get("category", "unknown"), info.get("description", "")[:80]],
+                    version=info.get("version", "0.1.0"),
+                    spec_hash=info.get("spec_hash", ""),
+                )
+        except Exception:
+            self._fallback_load()
+
+    def _fallback_load(self) -> None:
+        import yaml
+        if self._registry_path and self._registry_path.exists():
+            with self._registry_path.open(encoding="utf-8") as f:
+                raw = yaml.safe_load(f)
+        else:
+            _default_path = Path(__file__).resolve().parent.parent.parent / "agent_spec" / "skill_registry.yaml"
+            if not _default_path.exists():
+                return
+            with _default_path.open(encoding="utf-8") as f:
+                raw = yaml.safe_load(f)
         skills = raw.get("skills", {}) if raw else {}
         for category in ("domain", "role"):
             for sid, info in skills.get(category, {}).items():

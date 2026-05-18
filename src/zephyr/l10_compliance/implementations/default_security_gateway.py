@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
+
+# [MODULE] zephyr.l10_compliance.implementations.default_security_gateway
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """L10 — Default Security Gateway
 
 AI 安全网关具体实现。实现 SecurityGateway (OCP L10-AISG)。
@@ -45,7 +65,7 @@ def _lsg_scan_content_sync(content: str) -> str | None:
     if gw is None:
         return None
     try:
-        from zephyr.llm_security.protocol import SecurityDecision
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
         result = asyncio.run(
             gw.scan_input(content, source="l10_implementations_gateway", metadata={})
         )
@@ -59,7 +79,7 @@ def _lsg_scan_content_sync(content: str) -> str | None:
             result = loop.run_until_complete(
                 gw.scan_input(content, source="l10_implementations_gateway", metadata={})
             )
-            from zephyr.llm_security.protocol import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
         except Exception:

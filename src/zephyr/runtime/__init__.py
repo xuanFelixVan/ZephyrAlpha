@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
 """
 AutoRuntime Core — 三层运行时运营中心（系统大脑）
 ==================================================
@@ -9,4 +10,34 @@ AutoRuntime Core — 三层运行时运营中心（系统大脑）
 
 from __future__ import annotations
 
-__all__ = ["AutoRuntimeCore"]
+__all__ = [
+    'AutoRuntimeCore',
+    'action_dispatcher',
+    'ai_audit_logger',
+    'auto_integrator',
+    'auto_runtime_core',
+    'auto_task_generator',
+    'boot_cron_jobs',
+    'boot_hooks',
+    'capability_card',
+    'capability_registry',
+    'capability_sync',
+    'circadian_scheduler',
+    'dream_cycle',
+    'feedback_loop',
+    'finalizer',
+    'health_monitor',
+    'integration_registry',
+    'lifecycle_manager',
+    'module_onboarding_scanner',
+    'night_shift_queue',
+    'orphan_detector',
+    'resource_optimization',
+    'runtime_config',
+    'status_dashboard',
+    'stop_gate',
+    'task_gate',
+    'windows_service',
+    'work_dag',
+    'work_orchestrator',
+]

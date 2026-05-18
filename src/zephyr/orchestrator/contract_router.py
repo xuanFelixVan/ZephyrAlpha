@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.contract_router
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 契约路由（Contract Router）
 
-依据：MOD-MASTER-001 蓝图 §二 集成契约登记表
+依据：MOD-MASTER-002 蓝图 §二 集成契约登记表
 根据 CT-* 编号路由到对应的系统调用，集成 contract_registry 的 ai_read_only_hint 检查。
 
 路由映射：

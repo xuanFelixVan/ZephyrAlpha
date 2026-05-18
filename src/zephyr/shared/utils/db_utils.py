@@ -1,64 +1,43 @@
-"""
-db_utils.py — SQLite 连接工厂（AUDIT-07 P0-3: 消除 gates ↔ db 循环依赖）
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
 
-从 db/sqlite_schema.py 提取的公共连接工具，供 gates/ 等上层模块使用，
-避免 gates → db 的模块级 import 形成循环依赖。
+# [MODULE] zephyr.shared.utils.db_utils
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+db_utils.py — SQLite 连接公共 API（SSoT: zephyr.db.sqlite_schema）
 
 真源声明：
-  - DB_PATH 真源为 shared/paths.py
-  - get_db_connection / _apply_pragmas 原始实现来自 db/sqlite_schema.py
-  - sqlite_schema.py 现从本文件导入这两个函数，禁止重复定义
+  - DB_PATH / get_db_connection / init_db 真源为 zephyr.db.sqlite_schema
+  - 本文件是公共 API 层，供 gates/orchestrator/kb 等上层模块使用
+  - 禁止在本文件中重复定义 DB_PATH / get_db_connection / _PRAGMAS / _apply_pragmas
 """
 from __future__ import annotations
 
-
-import sqlite3
-from pathlib import Path
-
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
 
 __all__ = [
     "DB_PATH",
     "get_db_connection",
+    "init_db",
     "ensure_schema",
 ]
 
 
-_PRAGMAS = [
-    "PRAGMA journal_mode = WAL",
-    "PRAGMA synchronous = NORMAL",
-    "PRAGMA foreign_keys = ON",
-    "PRAGMA busy_timeout = 5000",
-    "PRAGMA temp_store = MEMORY",
-    "PRAGMA wal_autocheckpoint = 4096",
-]
-
-
-def _apply_pragmas(conn: sqlite3.Connection) -> None:
-    for pragma in _PRAGMAS:
-        conn.execute(pragma)
-
-
-def get_db_connection(
-    db_path: Path | str | None = None,
-    *,
-    check_same_thread: bool = False,
-    timeout: float = 30.0,
-) -> sqlite3.Connection:
-    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
-    conn = sqlite3.connect(
-        str(resolved),
-        isolation_level=None,
-        check_same_thread=check_same_thread,
-        timeout=timeout,
-    )
-    conn.row_factory = sqlite3.Row
-    _apply_pragmas(conn)
-    return conn
-
-
-def ensure_schema(db_path: Path | str | None = None) -> None:
+def ensure_schema(db_path=None) -> None:
     """确保数据库 schema 已初始化（委托给 sqlite_schema.init_db）。"""
-    from zephyr.db.sqlite_schema import init_db
-
     init_db(db_path)

@@ -1,13 +1,33 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.diagnosers.model_rotation
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Model Rotation — v0.9.0 R125
 
 Blindspot: Single model reliance creates SPOF in diagnosis pipeline.
 Risk: R125 — Model degradation without rotation causes systemic diagnosis failure.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class ModelRotation:
-    models: list[str] = []
+    models: list[str] = field(default_factory=list)
     active: str = ""
 
     def rotate(self) -> str:

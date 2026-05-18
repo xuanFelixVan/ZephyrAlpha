@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-024 | 03_modules/l01_infrastructure/budget-enforcer/blueprint.md | §
+
+# [MODULE] zephyr.budget_enforcer.action_history
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """ActionHistory — 操作历史持久化审计 + 去重 + 循环检测
 =====================================================
 蓝图 §2.5 · 环形缓冲区(50条) + 5级去重规则 + action_ttl=300s

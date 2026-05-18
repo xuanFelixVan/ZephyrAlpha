@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L02-001 | 03_modules/l02_alpha_factor/alpha-factor-core/blueprint.md | §
 """L02 — Factors Package
 
 L02 因子实现包。每个因子独立一个模块，@FactorRegistry.register 自动注册。

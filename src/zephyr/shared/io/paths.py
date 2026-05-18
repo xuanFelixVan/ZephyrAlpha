@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.io.paths
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 paths.py — 项目路径常量 SSoT（Single Source of Truth）
 
@@ -44,7 +64,8 @@ def find_repo_root() -> Path:
 REPO_ROOT: Path = find_repo_root()
 
 DB_DIR: Path = REPO_ROOT / "data"
-DB_PATH: Path = DB_DIR / "zalpha_metadata.db"
+
+from zephyr.db.sqlite_schema import DB_PATH  # noqa: E402
 
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"

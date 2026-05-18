@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.triage
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 G2 Triage 门禁 — 知识分类评分（T-2-13-B）
 ==========================================
@@ -25,7 +45,8 @@ from typing import Any
 
 import yaml
 
-from zephyr.gates.gate_engine import GATES_DIR, GateEngine, GateResult
+from zephyr.gates.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 from zephyr.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.kb.kb_repo import KbRepo, KeStatus
 

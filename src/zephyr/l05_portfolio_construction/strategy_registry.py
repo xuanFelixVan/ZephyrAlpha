@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L05-001 | 03_modules/l05_portfolio_construction/portfolio-core/blueprint.md | §
+
+# [MODULE] zephyr.l05_portfolio_construction.strategy_registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ==== BEGIN CODGEN:OCP-002-REGISTRY ====
 # ---
 # layer: l05_portfolio_construction

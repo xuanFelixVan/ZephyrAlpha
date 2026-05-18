@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp._base_server
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: JSON-RPC 2.0 over stdio MCP base server (ADR-0033)
 """
 BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类
@@ -166,7 +186,7 @@ class BaseMCPServer:
         if not getattr(self, "_AUTO_ENABLE_RBAC", False):
             return
         try:
-            from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge
+            from zephyr.escalation_engine.governance.rbac_bridge import EscalationRBACBridge
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
         except ImportError:
@@ -175,7 +195,7 @@ class BaseMCPServer:
     def enable_rbac(self, session_id: str = "") -> None:
         self._agent_session_id = session_id
         try:
-            from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge
+            from zephyr.escalation_engine.governance.rbac_bridge import EscalationRBACBridge
             self._rbac_guard = EscalationRBACBridge()
             self._log.info("rbac_enabled", session_id=session_id or "auto-detect")
         except ImportError:

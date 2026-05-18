@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L07-001 | 03_modules/l07_post_trade_analytics/analytics-core/blueprint.md | §
+
+# [MODULE] zephyr.l07_post_trade_analytics.analytics_base
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l07_post_trade_analytics
 # category: analytics_interface
@@ -28,9 +48,9 @@ import abc
 from decimal import Decimal
 from typing import ClassVar
 
-from zephyr.shared.contracts.execution.execution_report import ExecutionReport
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.execution.order import Order
+from zephyr.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.trading_contracts.execution.fill import Fill
+from zephyr.trading_contracts.execution.order import Order
 from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
 
 

@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-BGT-001
 name: budget-enforcer
 description: "Budget Enforcer (MOD-INF-024) — 三维预算强制执行 + 七级预算体系 + Trust Ring"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 60
 token_budget_l2: 600
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Budget Enforcer Specialist
 

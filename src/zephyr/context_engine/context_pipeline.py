@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.context_pipeline
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 context_pipeline — Context Engine **四段流水线组合根**
 ======================================================
@@ -34,8 +54,9 @@ from zephyr.context_engine.architecture_context_loader import (
 )
 from zephyr.context_engine.context_assembler import AssembledContext, AssemblyError, ContextAssembler
 from zephyr.context_engine.context_injector import ContextInjector, InjectedContext
+from zephyr.context_engine.context_rule_registry import ContextRuleRegistry
 from zephyr.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.context_engine.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]
 
@@ -74,6 +95,7 @@ def run_context_four_stage(
     injector: ContextInjector | None = None,
     include_architecture_context: bool = False,
     architecture_context_path: Path | None = None,
+    rule_registry: ContextRuleRegistry | None = None,
 ) -> ContextFourStageResult:
     """按蓝图顺序执行 build(含压缩)→validate→(可选)inject。
 
@@ -89,7 +111,10 @@ def run_context_four_stage(
         显式 JSON 路径；默认使用 ``context_engine/architecture_context.json``。
     """
     warnings: list[str] = []
-    asm = assembler or ContextAssembler(require_absolute_paths=require_absolute_manifest_paths)
+    asm = assembler or ContextAssembler(
+        require_absolute_paths=require_absolute_manifest_paths,
+        rule_registry=rule_registry,
+    )
     assembled = asm.assemble(manifest, token_budget=token_budget, compress=compress_manifest)
 
     arch_blob = ""

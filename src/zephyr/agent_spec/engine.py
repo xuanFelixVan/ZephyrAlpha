@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.agent_spec.engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 MOD-INF-019: Agent Spec — SpecEngine 蓝图→Skill 升级引擎
 ============================================================

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
+
+# [MODULE] zephyr.feedback_loop.security.agent_skill_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Agent Skill Guard — v0.14.0 R201
 
 Blindspot: Agent Skills downloaded from internet without security validation.
@@ -12,11 +32,14 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 
-class SkillStatus(str, Enum):
+class SkillSecurityStatus(str, Enum):
     UNKNOWN = "UNKNOWN"
     VERIFIED = "VERIFIED"
     BLOCKED = "BLOCKED"
     SANDBOX_ONLY = "SANDBOX_ONLY"
+
+
+SkillStatus = SkillSecurityStatus
 
 
 @dataclass
@@ -24,7 +47,7 @@ class SkillRecord:
     skill_name: str
     source_url: str
     sha256_hash: str
-    status: SkillStatus = SkillStatus.UNKNOWN
+    status: SkillSecurityStatus = SkillSecurityStatus.UNKNOWN
     verified_by: str = ""
 
 
@@ -34,24 +57,24 @@ class AgentSkillGuard:
     trusted_sources: set[str] = field(default_factory=lambda: {"github.com/zephyr"})
     blocked_patterns: set[str] = field(default_factory=lambda: {"eval(", "exec(", "subprocess", "os.system"})
 
-    def register(self, name: str, source: str, content: str) -> SkillStatus:
+    def register(self, name: str, source: str, content: str) -> SkillSecurityStatus:
         sha = hashlib.sha256(content.encode()).hexdigest()
         source_domain = source.split("/")[2] if "/" in source else ""
         if source_domain in self.trusted_sources:
-            status = SkillStatus.VERIFIED
+            status = SkillSecurityStatus.VERIFIED
         else:
-            status = SkillStatus.SANDBOX_ONLY
+            status = SkillSecurityStatus.SANDBOX_ONLY
         for pattern in self.blocked_patterns:
             if pattern in content:
-                status = SkillStatus.BLOCKED
+                status = SkillSecurityStatus.BLOCKED
                 break
         self.skills[name] = SkillRecord(skill_name=name, source_url=source, sha256_hash=sha, status=status)
         return status
 
-    def verify_existing(self, name: str, current_hash: str) -> SkillStatus:
+    def verify_existing(self, name: str, current_hash: str) -> SkillSecurityStatus:
         record = self.skills.get(name)
         if record is None:
-            return SkillStatus.UNKNOWN
+            return SkillSecurityStatus.UNKNOWN
         if record.sha256_hash != current_hash:
-            return SkillStatus.BLOCKED
+            return SkillSecurityStatus.BLOCKED
         return record.status

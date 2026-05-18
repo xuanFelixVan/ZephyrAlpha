@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-024 | 03_modules/l01_infrastructure/budget-enforcer/blueprint.md | §
+
+# [MODULE] zephyr.budget_enforcer.instruction_bloat_detector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """InstructionBloatDetector — 指令膨胀检测
 =============================================
 蓝图 §2.18 · 检测 AGENTS.md/system_prompt 等指令文件膨胀

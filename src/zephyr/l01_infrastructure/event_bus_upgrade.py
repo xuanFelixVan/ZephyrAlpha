@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.event_bus_upgrade
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 DEPRECATED: 此文件已废弃。
 请使用 zephyr.shared.upgrade_strategy 替代。
@@ -8,10 +28,10 @@ DEPRECATED: 此文件已废弃。
 
 import warnings
 
-from zephyr.shared.upgrade_strategy import *  # noqa: F403
+from zephyr.shared.events.upgrade_strategy import *  # noqa: F403
 
 warnings.warn(
-    "zephyr.l01_infrastructure.event_bus_upgrade is deprecated; " "use zephyr.shared.upgrade_strategy instead.",
+    "zephyr.l01_infrastructure.event_bus_upgrade is deprecated; " "use zephyr.shared.events.upgrade_strategy instead.",
     DeprecationWarning,
     stacklevel=2,
 )

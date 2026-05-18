@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-024 | src/zephyr/budget_enforcer/degradation_manager.py | §
 from __future__ import annotations
 
 import time
@@ -77,6 +78,11 @@ class DegradationManager:
         self._recovery_cooldown = recovery_cooldown
         self._anti_spiral_limit = anti_spiral_limit
         self._recent_advances: list[float] = []
+        self._circuit_breaker_failures: int = 0
+        self._circuit_breaker_open: bool = False
+        self._circuit_breaker_opened_at: float = 0.0
+        self._circuit_breaker_threshold: int = 3
+        self._circuit_breaker_reset_seconds: float = 300.0
 
     @property
     def state(self) -> DegradationState:
@@ -98,6 +104,13 @@ class DegradationManager:
         dimension: BudgetDimension,
         current_tier: ModelTier,
     ) -> DegradationAction | None:
+        if self._circuit_breaker_open:
+            if time.time() - self._circuit_breaker_opened_at > self._circuit_breaker_reset_seconds:
+                self._circuit_breaker_open = False
+                self._circuit_breaker_failures = 0
+            else:
+                return None
+
         if usage_ratio >= 1.0:
             return self._force_halt(dimension)
 
@@ -210,6 +223,18 @@ class DegradationManager:
             )
             self._state.history.append(action)
             return action
+
+    def record_dependency_failure(self, dependency_name: str) -> None:
+        with self._lock:
+            self._circuit_breaker_failures += 1
+            if self._circuit_breaker_failures >= self._circuit_breaker_threshold:
+                self._circuit_breaker_open = True
+                self._circuit_breaker_opened_at = time.time()
+
+    @property
+    def circuit_breaker_open(self) -> bool:
+        with self._lock:
+            return self._circuit_breaker_open
 
     def reset(self) -> None:
         with self._lock:

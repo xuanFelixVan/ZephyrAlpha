@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.circuit_breaker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 ===================================================
@@ -48,7 +68,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.shared.security.capability import capability_check
 
 __all__ = [

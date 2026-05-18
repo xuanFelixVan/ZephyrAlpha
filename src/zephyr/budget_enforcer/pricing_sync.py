@@ -1,10 +1,35 @@
+# [BLUEPRINT] MOD-INF-024 | 03_modules/l01_infrastructure/budget-enforcer/blueprint.md | §
+
+# [MODULE] zephyr.budget_enforcer.pricing_sync
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 
+import json
+import logging
+import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -44,8 +69,17 @@ class PricingSync:
             }
             for m, p in self._prices.items()
         }
-        with open(self._pricing_path, "w", encoding="utf-8") as f:
-            yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
+        tmp_path = f"{self._pricing_path}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
+            os.replace(tmp_path, str(self._pricing_path))
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+            raise
 
     def update_price(self, model: str, input_price: float, output_price: float, provider: str) -> PriceEntry:
         entry = PriceEntry(model=model, input_per_1k=input_price, output_per_1k=output_price, provider=provider)
@@ -67,3 +101,45 @@ class PricingSync:
 
     def providers(self) -> list[str]:
         return list({p.provider for p in self._prices.values()})
+
+    def sync_from_litellm(self, litellm_json_path: str = "") -> int:
+        if not litellm_json_path:
+            _candidates = [
+                Path.home() / ".cache" / "litellm" / "model_prices_and_context_window.json",
+                Path(__file__).resolve().parents[3] / "data" / "litellm_prices.json",
+            ]
+            for c in _candidates:
+                if c.exists():
+                    litellm_json_path = str(c)
+                    break
+        if not litellm_json_path or not Path(litellm_json_path).exists():
+            logger.warning("PricingSync: LiteLLM price file not found, skip sync")
+            return 0
+        try:
+            with open(litellm_json_path, "r", encoding="utf-8") as f:
+                litellm_data = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("PricingSync: failed to load LiteLLM prices: %s", e)
+            return 0
+        updated = 0
+        for model_key, info in litellm_data.items():
+            if not isinstance(info, dict):
+                continue
+            input_price = info.get("input_cost_per_token", 0.0)
+            output_price = info.get("output_cost_per_token", 0.0)
+            if input_price == 0.0 and output_price == 0.0:
+                continue
+            input_per_1k = input_price * 1000
+            output_per_1k = output_price * 1000
+            provider = info.get("litellm_provider", "unknown")
+            existing = self._prices.get(model_key)
+            if existing is None or abs(existing.input_per_1k - input_per_1k) > 1e-8 or abs(existing.output_per_1k - output_per_1k) > 1e-8:
+                self._prices[model_key] = PriceEntry(
+                    model=model_key, input_per_1k=input_per_1k,
+                    output_per_1k=output_per_1k, provider=provider,
+                )
+                updated += 1
+        if updated > 0:
+            self._save()
+            logger.info("PricingSync: synced %d model prices from LiteLLM", updated)
+        return updated

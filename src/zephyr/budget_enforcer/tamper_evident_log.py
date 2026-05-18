@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-024 | src/zephyr/budget_enforcer/tamper_evident_log.py | §
 from __future__ import annotations
 
 import hashlib
@@ -52,7 +53,8 @@ class TamperEvidentLog:
 
     def append(self, action: str, data: str) -> LogEntry:
         self._counter += 1
-        raw = f"{self._counter}:{action}:{data}:{time.time()}:{self._last_hash}"
+        now = time.time()
+        raw = f"{self._counter}:{action}:{data}:{now}:{self._last_hash}"
         h = hashlib.sha256(raw.encode()).hexdigest()
 
         entry = LogEntry(
@@ -60,6 +62,7 @@ class TamperEvidentLog:
             action=action,
             data=data,
             prev_hash=self._last_hash,
+            timestamp=now,
             hash=h,
         )
         self._chain.append(entry)
@@ -75,6 +78,18 @@ class TamperEvidentLog:
                 "hash": entry.hash,
             }, ensure_ascii=False) + "\n")
 
+        try:
+            from zephyr.audit_trail.writer import get_audit_writer
+            get_audit_writer().write({
+                "event_type": "budget_enforcement",
+                "action_type": action,
+                "agent_id": "budget_enforcer",
+                "target_path": str(self._log_path),
+                "operation": action,
+            })
+        except Exception:
+            pass
+
         return entry
 
     def verify(self) -> tuple[bool, int]:
@@ -85,7 +100,7 @@ class TamperEvidentLog:
             if expected != entry.hash:
                 return False, i
             prev = entry.hash
-        return True, -1
+        return True, len(self._chain)
 
     def recent(self, n: int = 20) -> list[LogEntry]:
         return self._chain[-n:]

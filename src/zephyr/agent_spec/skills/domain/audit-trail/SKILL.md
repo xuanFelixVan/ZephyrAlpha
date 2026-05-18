@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-AUD-001
 name: "audit-trail"
 description: "不可变审计写入器 — 每次AI操作自动记录不可篡改审计日志"
@@ -10,7 +11,9 @@ version: "1.4.0"
 token_budget_l1: 50
 token_budget_l2: 400
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: audit-trail — 不可变审计写入
 

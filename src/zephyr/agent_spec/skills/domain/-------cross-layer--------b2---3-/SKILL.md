@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
 name: "运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）"
 description: ""
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
 

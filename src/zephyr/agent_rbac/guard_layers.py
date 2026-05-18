@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.guard_layers
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 防护层模块集合 — ColdStartLock, EscalationHandler, AutoGuard
 
@@ -9,7 +29,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
-from zephyr.agent_rbac.identity import AgentIdentity
+from zephyr.shared.contracts.identity.agent_identity import AgentIdentity
 from zephyr.agent_rbac.immutable_core import ImmutableCore
 
 

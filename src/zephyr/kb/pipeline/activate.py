@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-009 | 03_modules/_cross_layer/pipeline/blueprint.md | §
+
+# [MODULE] zephyr.kb.pipeline.activate
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 G4 Activate 门禁 — 人工激活（T-2-13-D）
 ========================================
@@ -25,7 +45,7 @@ from typing import Any
 import yaml
 
 from zephyr.gates.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.core.gate_types import GateResult
+from zephyr.shared.contracts.gate import GateResult
 from zephyr.shared.schema.schemas import Priority
 from zephyr.kb.migration.kb_gate_task import build_kb_gate_eval_task
 from zephyr.kb.storage.kb_repo import KbRepo, KeStatus

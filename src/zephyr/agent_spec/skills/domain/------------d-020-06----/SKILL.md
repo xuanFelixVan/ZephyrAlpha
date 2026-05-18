@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
 name: "=== 蓝图漂移（决策 D-020-06）==="
 description: ""
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: === 蓝图漂移（决策 D-020-06）===
 

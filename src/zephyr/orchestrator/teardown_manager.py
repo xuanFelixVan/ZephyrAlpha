@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.teardown_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 资源清理管理器（Teardown Manager — CT-TEARDOWN-001）
 
-依据：MOD-MASTER-001 蓝图 §十六
+依据：MOD-MASTER-002 蓝图 §十六
 TaskCard CANCELLED/FAILED → 7系统资源清理。
 """
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+
+# [MODULE] zephyr.governance.phase_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 
 五层强制集成架构 — Layer 3（阶段门控）:
@@ -89,6 +109,7 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             # ── 蓝图与路径 ──
             "gate_blueprint_mandatory",
             "gate_path_resolver",
+            "gate_path_tree_freshness",
             "gate_script_manifest",
             # ── 环境与编码 ──
             "gate_env_vars",
@@ -125,6 +146,7 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             "gate_context_engine_health",
             "gate_kb_pipeline",
             "gate_vms_health",
+            "gate_vms_migration",
             "gate_gate_engine_judge",
             "gate_feedback_loop",
             # ── 数据库 ──
@@ -258,6 +280,7 @@ def session_startup(quick: bool = True) -> dict:
         check_registry_consistency, check_encoding_safety,
         check_secret_leak_scan, check_shell_dangerous,
         check_audit_trail_context,
+        check_budget_enforcer,
     )
 
     _FAST_CHECKS = [
@@ -270,6 +293,7 @@ def session_startup(quick: bool = True) -> dict:
         ("Python环境", check_env_vars),
         ("Pre-commit配置", check_precommit_config),
         ("审计上下文", check_audit_trail_context),
+        ("预算执行器", check_budget_enforcer),
     ]
 
     _SLOW_CHECKS = [

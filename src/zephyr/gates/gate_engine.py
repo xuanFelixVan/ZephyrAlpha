@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.gate_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS] zephyr.db.task_repo; zephyr.db.transition; zephyr.kb.pipeline.triage; zephyr.kb.pipeline.ingest; zephyr.kb.pipeline.extract; zephyr.kb.pipeline.activate; zephyr.kb.pipeline.analyze; zephyr.agent_spec.skill_executor
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁决引擎（T-2-17）
 ======================================================================
@@ -56,16 +76,20 @@ import re
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, ClassVar
 
 import yaml
 
-from zephyr.db.sqlite_schema import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, ensure_schema
+from zephyr.gates.gate_types import (
+    GateEngineError,
+    GateResult,
+    GateViolation,
+    GateViolationError,
+)
 from zephyr.gates.risk_ssot import load_risk_params_ssot
-from zephyr.shared.schema.schemas import Task
-from zephyr.shared.utils.db_utils import ensure_schema
+from zephyr.gates.task_types import Task
 
 __all__ = [
     "GateEngine",
@@ -81,9 +105,6 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 GATES_DIR = Path(__file__).parent
-"""门禁 YAML 文件所在目录（与本模块同级）。"""
-
-_UTC = UTC
 
 _DEPRECATED_PATHS_YAML = (
     Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
@@ -106,50 +127,6 @@ _PLACEHOLDER_PATTERNS: list[str] = [
     r"\bSTUB\b",
     r"# Not implemented",
 ]
-
-# ---------------------------------------------------------------------------
-# 数据模型
-# ---------------------------------------------------------------------------
-
-
-@dataclass
-class GateViolation:
-    """单条门禁违规记录。"""
-
-    check_id: str
-    check_name: str
-    severity: str  # P0 / P1 / P2
-    message: str
-    detail: str | None = None
-
-
-@dataclass
-class GateResult:
-    """门禁裁决结果。"""
-
-    gate_id: str
-    task_id: str
-    passed: bool
-    violations: list[GateViolation] = field(default_factory=list)
-    details: dict[str, Any] = field(default_factory=dict)
-    evaluated_at: str = field(default_factory=lambda: datetime.now(_UTC).isoformat())
-
-    @property
-    def p0_violations(self) -> list[GateViolation]:
-        """返回门禁评估结果中 severity=P0 的违规列表（P0 = 阻塞级红线）。"""
-        return [v for v in self.violations if v.severity == "P0"]
-
-    @property
-    def has_p0(self) -> bool:
-        return bool(self.p0_violations)
-
-    def summary(self) -> str:
-        if self.passed:
-            return f"[PASS] Gate {self.gate_id} task={self.task_id}"
-        p0 = len(self.p0_violations)
-        total = len(self.violations)
-        return f"[FAIL] Gate {self.gate_id} task={self.task_id} " f"violations={total} (P0={p0})"
-
 
 # ---------------------------------------------------------------------------
 # 配置模型（轻量 dataclass，不用 Pydantic 避免循环依赖）
@@ -176,23 +153,6 @@ class GateConfig:
     checks: list[CheckConfig]
     on_failure: str
     on_pass: str
-
-
-# ---------------------------------------------------------------------------
-# 异常
-# ---------------------------------------------------------------------------
-
-
-class GateEngineError(RuntimeError):
-    """GateEngine 基础异常。"""
-
-
-class GateViolationError(GateEngineError):
-    """任务被门禁阻断时抛出（含 GateResult）。"""
-
-    def __init__(self, result: GateResult) -> None:
-        self.result = result
-        super().__init__(result.summary())
 
 
 # ---------------------------------------------------------------------------
@@ -730,7 +690,6 @@ def _run_check(
 
     elif ct in {
         "score_threshold",
-        "deduplication",
         "manual_approval",
         "path_whitelist",
         "path_routing",
@@ -882,6 +841,7 @@ class GateEngine:
         "MAD-002": "admission/mad_002_phase_relevance.yaml",
         "MAD-003": "admission/mad_003_dependency_compliance.yaml",
         "MAD-004": "admission/mad_004_interface_definability.yaml",
+        "GATE-DEDUP": "GATE-DEDUP.yaml",
     }
 
     def __init__(

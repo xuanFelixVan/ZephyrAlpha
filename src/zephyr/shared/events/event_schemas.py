@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.events.event_schemas
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）
 
@@ -35,7 +55,8 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.infra.observer import EventType
-from zephyr.shared.schema.schemas import BASE_CONFIG, TaskStatus
+from zephyr.gates.task_types import TaskStatus
+from zephyr.shared.schema.base_config import BASE_CONFIG
 
 __all__ = [
     "FileEventPayload",

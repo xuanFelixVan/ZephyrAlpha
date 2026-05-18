@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.session_audit
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS] governance/constitutional_update.py
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B32）
 
@@ -266,6 +286,18 @@ class SessionAuditTrail:
         with self._lock:
             with open(filepath, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
+        try:
+            from zephyr.audit_trail.writer import get_audit_writer
+            get_audit_writer().write({
+                "event_type": "session_record",
+                "action_type": "session_record",
+                "agent_id": record_dict.get("session_id", "unknown"),
+                "session_id": record_dict.get("session_id", ""),
+                "target_path": str(filepath),
+                "operation": "append_record",
+            })
+        except Exception:
+            pass
         return filepath
 
     def query(self, session_id: str) -> list[dict[str, Any]]:

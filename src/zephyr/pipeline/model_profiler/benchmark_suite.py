@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-034 | 03_modules/_cross_layer/model-profiler/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.model_profiler.benchmark_suite
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 BenchmarkSuite — 多维度模型性能测试用例集
 ==========================================

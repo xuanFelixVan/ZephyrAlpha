@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_governance_adapter
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 治理适配器 — 连接 A2A 协议与 Governance 层
 
 桥接 A2A 协议层与 Governance(RBAC/Audit/Escalation) 层:
@@ -39,7 +59,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
     if gw is None:
         return None
     try:
-        from zephyr.llm_security.protocol import SecurityDecision
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
         result = asyncio.run(
             gw.scan_agent_action(
                 text=content,
@@ -63,7 +83,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
                     metadata={"source": "a2a_layer3_governance"},
                 )
             )
-            from zephyr.llm_security.protocol import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
         except Exception:

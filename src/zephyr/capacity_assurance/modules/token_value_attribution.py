@@ -1,9 +1,25 @@
+# [BLUEPRINT] MOD-INF-001 | 03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
+
+# [MODULE] zephyr.capacity_assurance.modules.token_value_attribution
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] deprecated
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+# [TESTS]
+
 """
 Token Value Attribution — Token 成本 vs 产出价值 ROI (盲点 #24, M-30)
-特性：
-  - ROI = value_score / total_cost_usd
-  - ROI < 0.1 → SUGGEST_REPLACE (建议替代方案)
-  - ROI >= 1.0 → HIGH_VALUE (高价值)
+
+DEPRECATED: Use zephyr.budget_enforcer.ROICalculator.
+SSoT: MOD-INF-024 budget_enforcer. This module is retained for backward compatibility only.
 """
 import time
 from dataclasses import dataclass

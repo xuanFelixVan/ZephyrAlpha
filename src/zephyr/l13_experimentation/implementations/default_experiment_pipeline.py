@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L13-001 | 03_modules/l13_experimentation/experiment-core/blueprint.md | §
+
+# [MODULE] zephyr.l13_experimentation.implementations.default_experiment_pipeline
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """L13 — Default Experiment Pipeline
 
 实验管线具体实现。实现 ExperimentPipelineBase (OCP L13-EXP)。

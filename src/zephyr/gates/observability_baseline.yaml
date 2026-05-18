@@ -17,7 +17,7 @@ entry_conditions:
     severity: error
     on_failure: reject
     verifiable: true
-    verification_method: "from zephyr.l12_system_telemetry import Telemetry; t = Telemetry('gate_test', test_mode=True)"
+    verification_method: "from zephyr.l01_infrastructure.system_telemetry import Telemetry; t = Telemetry('gate_test', test_mode=True)"
 
   - id: OBS-C02
     name: nine_subsystems_accessible

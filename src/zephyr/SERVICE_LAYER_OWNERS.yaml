@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/_cross_layer/SERVICE_LAYER_OWNERS.yaml/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # SERVICE_LAYER_OWNERS.yaml — 服务层模块技术 Owner 登记
 # schema_version: "1.0.0"  |  updated: "2026-05-06"
 #
@@ -40,4 +47,4 @@ modules:
     - adapter:            src/zephyr/vector_memory/
 
   telemetry:
-    - contract_metrics:   src/zephyr/l12_system_telemetry/contract_metrics.py
+    - contract_metrics:   src/zephyr/system_telemetry/contract_metrics.py

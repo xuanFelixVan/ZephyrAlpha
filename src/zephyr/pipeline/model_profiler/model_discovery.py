@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-034 | 03_modules/_cross_layer/model-profiler/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.model_profiler.model_discovery
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型
 =========================================================
@@ -94,7 +114,7 @@ class ModelDiscovery:
 
     def discover_remote(self) -> list[DiscoveredModel]:
         """列出 Budget Enforcer 中注册的远程 API 模型。"""
-        from zephyr.budget_enforcer.model_router import (
+        from zephyr.budget_enforcer.model_provider_data import (
             DEFAULT_PROVIDERS,
             TIER_MODEL_MAP,
         )

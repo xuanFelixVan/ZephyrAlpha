@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-034 | 03_modules/_cross_layer/model-profiler/blueprint.md | §
 """
 Model Profiler — 本地 + 远程模型性能基准测试
 ==============================================
@@ -27,6 +28,7 @@ Quickstart
     from zephyr.pipeline.model_profiler.results_writer import write_benchmark_results
     write_benchmark_results(results, "data/model_profiles/")
 """
+from . import cli
 
 from zephyr.pipeline.model_profiler.model_discovery import (
     DEFAULT_OLLAMA_URL,
@@ -52,18 +54,28 @@ from zephyr.pipeline.model_profiler.task_model_learner import (
 )
 
 __all__ = [
-    "ALL_BENCHMARK_CASES",
-    "BenchmarkCase",
-    "CaseResult",
-    "CATEGORY_MAP",
-    "DEFAULT_OLLAMA_URL",
-    "DiscoveredModel",
-    "MAX_OLLAMA_MODELS",
-    "ModelDiscovery",
-    "ModelProfile",
-    "ModelProfiler",
-    "ModelTaskEntry",
-    "ModelTaskMatrix",
-    "SKIP_MODEL_PATTERNS",
-    "TaskRecommendation",
+    'ALL_BENCHMARK_CASES',
+    'BenchmarkCase',
+    'CATEGORY_MAP',
+    'CaseResult',
+    'DEFAULT_OLLAMA_URL',
+    'DiscoveredModel',
+    'MAX_OLLAMA_MODELS',
+    'ModelDiscovery',
+    'ModelProfile',
+    'ModelProfiler',
+    'ModelTaskEntry',
+    'ModelTaskMatrix',
+    'SKIP_MODEL_PATTERNS',
+    'TaskRecommendation',
+    'benchmark_suite',
+    'capability_passport',
+    'cli',
+    'deepseek_v4_chat',
+    'exam_orchestrator',
+    'exam_test_cases',
+    'model_discovery',
+    'profiler',
+    'results_writer',
+    'task_model_learner',
 ]

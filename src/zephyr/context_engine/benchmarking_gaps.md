@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-008
+---
+
 # Benchmarking Gaps — 工业对标差距分析 (TASK-013)
 
 > Generated: 2026-05-07 | Module: MOD-INF-008 | Blueprint §13

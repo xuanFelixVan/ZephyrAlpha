@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-{{MODULE_ABBR}}-{{NUMBER}}
 name: "Task Pipeline 蓝图 — M1-M11 双管线路由"
 description: ""
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Task Pipeline 蓝图 — M1-M11 双管线路由
 

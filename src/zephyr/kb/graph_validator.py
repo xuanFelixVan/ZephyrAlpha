@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.graph_validator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 知识图谱完整性校验器（T-2-11-C）
 =================================
@@ -72,7 +92,7 @@ class GraphValidator:
         db_path: Path | str | None = None,
         vector_dir: Path | str | None = None,
     ) -> None:
-        from zephyr.db.sqlite_schema import get_db_connection
+        from zephyr.shared.utils.db_utils import get_db_connection
 
         self._conn = get_db_connection(db_path)
         self._vector_dir = vector_dir

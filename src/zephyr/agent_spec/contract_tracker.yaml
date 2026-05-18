@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-019 | docs/03_modules/_cross_layer/agent_spec/blueprint.md | §
+# module_id: MOD-INF-019
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # MOD-INF-019 集成契约追踪 (v0.1.0)
 # 契约总数: 11 (CT-001 ~ CT-011)
 

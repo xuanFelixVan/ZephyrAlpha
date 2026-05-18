@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.ai_capability_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ZephyrAlpha — gates/ai_capability_guard.py
 
@@ -98,8 +118,6 @@ def require_capability(
             )
 
             if enforce:
-                from zephyr.gates.ai_capability_guard import _check_file_level
-
                 actual_level = _check_file_level(caller_file)
                 if not _level_meets_min(actual_level, min_level):
                     raise PermissionError(

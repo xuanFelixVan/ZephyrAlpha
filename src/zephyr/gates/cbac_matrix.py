@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.cbac_matrix
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CBAC 能力矩阵（Capability-Based Access Control Matrix — CT-CBAC-001）
 
-依据：MOD-MASTER-001 蓝图 §十五
+依据：MOD-MASTER-004 蓝图 §十五
 12×12 系统授权矩阵——18条精确 capability 声明。
 """
 

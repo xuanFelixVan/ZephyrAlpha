@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.shared.contracts.core.factories
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """shared/contracts/factories.py — 跨层数据契约工厂方法
 
 Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float→Decimal 边界转换。
@@ -12,12 +32,12 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderType
-from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.shared.contracts.risk.risk_limits import RiskLimits
-from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderType
+from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 def _to_decimal(value: Any) -> Decimal:

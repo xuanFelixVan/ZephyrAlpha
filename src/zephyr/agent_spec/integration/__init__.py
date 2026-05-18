@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
 """
 Agent Spec → Pipeline 集成桥接层
 

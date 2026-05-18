@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.agent_spec.skill_postmortem
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 MOD-INF-019: Agent Spec — Skill Postmortem (5 Whys)
 Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
@@ -44,6 +64,11 @@ _WHY_PROBES = [
         "layer": 5,
         "question": "Why was the process not catching this systematically?",
         "checks": ["no_feedback_loop", "no_baseline", "no_regression_detection", "process_gap"],
+    },
+    {
+        "layer": 6,
+        "question": "Why was the initial diagnosis wrong (if it differed from deep findings)?",
+        "checks": ["confirmation_bias", "insufficient_context", "pattern_mismatch", "premature_conclusion"],
     },
 ]
 
@@ -226,6 +251,7 @@ class SkillPostmortem:
             "original_error": error_message[:500],
             "root_cause": primary_root_cause,
             "five_whys": root_causes,
+            "diagnosis_inversion_verified": root_causes[-1].get("answer", "") != error_message[:200] if root_causes else False,
             "corrective_actions": actions["corrective"],
             "preventive_actions": actions["preventive"],
             "timestamp": datetime.now(timezone.utc).isoformat(),

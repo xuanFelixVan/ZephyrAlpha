@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-035 | src/zephyr/runtime/task_gate.py | §
 """
 TaskGate --- 任务门控
 
@@ -19,7 +20,7 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.pipeline.model_profiler.capability_passport import CapabilityPassport
+from zephyr.model_profiler.capability_passport import CapabilityPassport
 
 _log = logging.getLogger(__name__)
 

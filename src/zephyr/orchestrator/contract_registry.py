@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.contract_registry
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 集成契约注册表（Contract Registry）
 
-依据：MOD-MASTER-001 蓝图 §二 集成契约登记表
+依据：MOD-MASTER-002 蓝图 §二 集成契约登记表
 注册全部 17 条核心 CT-* 集成契约，提供查询、ai_read_only_hint 检查功能。
 
 ai_read_only_hint 四级：

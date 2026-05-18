@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-013 | 03_modules/_cross_layer/mcp-servers/blueprint.md | §
+
+# [MODULE] zephyr.mcp.telemetry_server
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口
 
 依据：MOD-INF-015 v0.9.0 · system-telemetry blueprint
@@ -37,7 +57,7 @@ class TelemetryMCP:
         self,
         telemetry: object | None = None,
     ):
-        from zephyr.l12_system_telemetry import Telemetry
+        from zephyr.l01_infrastructure.system_telemetry import Telemetry
         if telemetry is not None:
             self._telemetry = telemetry
         else:

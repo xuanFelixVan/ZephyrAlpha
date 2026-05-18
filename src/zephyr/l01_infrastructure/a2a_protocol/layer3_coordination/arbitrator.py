@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-025 | 03_modules/l01_infrastructure/a2a-protocol/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """A2A 三级仲裁引擎 — priority → rule → escalation
 
 当 ConflictDetector 检测到冲突后，Arbitrator 按三级策略仲裁:
@@ -13,6 +33,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import IntEnum
+
+from zephyr.shared.foundation.constants import EscalationLevel
 
 
 class AgentRole(IntEnum):
@@ -180,4 +202,5 @@ class Arbitrator:
                    f"{b.agent_id}({b.role.name}) on {conflicted_files}",
             escalation_message=f"ESC-A2A: conflict on {conflicted_files} between {a.agent_id} and {b.agent_id}",
             compensation="Both agents: pause conflicting files → escalate → await human or superadmin",
+            escalation_level=EscalationLevel.L3_CRITICAL.name,
         )

@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.dispatch_table
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 AI Agent 冷启动分派表（Dispatch Table）
 
-依据：MOD-MASTER-001 蓝图 §零 AI Agent 分派与阅读指南
+依据：MOD-MASTER-002 蓝图 §零 AI Agent 分派与阅读指南
 为 13 个系统提供 CT-* 契约 × 关联 Schema × Token 预算的完整分派映射。
 
 功能：

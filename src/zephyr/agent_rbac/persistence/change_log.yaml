@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-018 | docs/03_modules/_cross_layer/agent_rbac/blueprint.md | §
+# module_id: MOD-INF-018
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 agent_rbac_change_log:
   version: "1.1.0"
   bootstrap_date: "2026-05-07"

@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-AFX-001
 name: auto-fix-engine
 description: "Auto-Fix Engine (MOD-CROSS-001) — 九层修复器(L1规则引擎+L2 LLM桥接+L3 Agent OODA自愈), 七道安全防线, WAL原子修复, 16类修复器(ZombieCleaner/AllCompleter/DedupExtractor/ScaffoldRegistrar/AlignmentSyncer/DriftFixer/DepVersionFixer/ImportFixer/ConfigFixer/LLM修复/Agent自愈), Shadow Workspace预演, 修复模式学习, 级联熔断, 灰度发布, 修复预算控制, 跨Session并发协调."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Auto-Fix Engine
 
@@ -52,6 +55,7 @@ author: factory-agent
 - Cascade circuit breaker false positive on unrelated failures
 - Gray-release fraction drift after session restart
 - Cross-session lock contention on hot files
+- Fix based on wrong initial diagnosis → diagnosis reversal not performed → fix addresses wrong root cause
 
 ## Key Constants
 

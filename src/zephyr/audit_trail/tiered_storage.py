@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.tiered_storage
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_trail.tiered_storage — MOD-INF-020 · 三层存储管理器
 ============================================================

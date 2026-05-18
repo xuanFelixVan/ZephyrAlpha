@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
 """
 代码去重引擎（Code Dedup Engine）— MOD-INF-017 · v0.10.0
 
@@ -139,11 +140,59 @@
          CodeAnt AI · ASE 2025 · ACL 2025 RPG · CCFinder · Deckard · Sourcegraph Cody ·
          Google Mozart · Microsoft SDP · Netflix Staged Rollout · ACM MSR 2024 · IEEE ICPC 2023
 """
+from . import annotations
+from . import atomic_fixer
+from . import auto_test_generator
+from . import behavioral_trust_checker
+from . import blind_spot_tracker
+from . import cache_manager
+from . import canary_manager
+from . import canary_register
+from . import cli
+from . import code_analyzer_runner
+from . import code_simulator
+from . import consequence_tracker
+from . import contract_consistency_checker
+from . import cross_boundary_detector
+from . import dead_module_detector
+from . import debt_projector
+from . import doom_loop_guard
+from . import extraction_safety
+from . import fifteen_dimension_auditor
+from . import file_creator
+from . import function_discovery
+from . import grandfather_manager
+from . import health_monitor
+from . import hotspot_tracker
+from . import import_surface_tracker
+from . import integrations
+from . import mock_duplicate_generator
+from . import observation_window_guard
+from . import path_index_validator
+from . import phase_executor
+from . import policy_tree_validator
+from . import pre_apply_integrity_gate
+from . import prioritizer
+from . import question_tracker
+from . import recovery_manifest_writer
+from . import risk_mitigation_tracker
+from . import risk_mitigator
+from . import shadow_trust_validator
+from . import shadow_verifier
+from . import shared_evolver
+from . import shared_lifecycle_manager
+from . import ssot_registrar
+from . import stale_shared_detector
+from . import success_validator
+from . import symbol_index
+from . import temporal_drift_tracker
+from . import thematic_clusterer
+from . import verifier
 
-__all__ = ['annotations', 'ast_comparator', 'atomic_fixer', 'auto_fixer', 'auto_test_generator', 'behavioral_sampler', 'behavioral_trust_checker', 'blind_spot_tracker', 'cache_manager', 'canary_manager', 'canary_register', 'cli', 'code_analyzer_runner', 'code_simulator', 'config', 'consequence_tracker', 'contract_consistency_checker', 'cross_boundary_detector', 'dead_module_detector', 'debt_projector', 'decision_auditor', 'degradation', 'diff_detector', 'doom_loop_guard', 'exit_codes', 'extraction_safety', 'false_negative_auditor', 'fifteen_dimension_auditor', 'file_creator', 'function_discovery', 'grandfather_manager', 'health_monitor', 'hotspot_tracker', 'import_surface_tracker', 'integration_hub', 'integrations', 'micro_clone_detector', 'mock_duplicate_generator', 'monoculture_guard', 'observation_window_guard', 'path_index_validator', 'phase_executor', 'policy_tree_validator', 'pre_apply_integrity_gate', 'prioritizer', 'question_tracker', 'recovery_manifest_writer', 'report', 'risk_mitigation_tracker', 'risk_mitigator', 'scanner', 'self_scanner', 'sensitivity_sweeper', 'shadow_trust_validator', 'shadow_verifier', 'shared_evolver', 'shared_lifecycle_manager', 'signature_matcher', 'simplicity_auditor', 'ssot_registrar', 'stale_shared_detector', 'success_validator', 'symbol_index', 'temporal_drift_tracker', 'thematic_clusterer', 'verifier']  # 66 模块（全生命周期治理）
+__all__ = ['annotations', 'ast_comparator', 'atomic_fixer', 'auto_fixer', 'auto_test_generator', 'behavioral_sampler', 'behavioral_trust_checker', 'blind_spot_tracker', 'cache_manager', 'canary_manager', 'canary_register', 'cli', 'code_analyzer_runner', 'code_simulator', 'config', 'consequence_tracker', 'contract_consistency_checker', 'cross_boundary_detector', 'dead_module_detector', 'debt_projector', 'decision_auditor', 'degradation', 'diff_detector', 'doom_loop_guard', 'exit_codes', 'extraction_safety', 'false_negative_auditor', 'fifteen_dimension_auditor', 'file_creator', 'function_discovery', 'grandfather_manager', 'health_monitor', 'hotspot_tracker', 'import_surface_tracker', 'integration_hub', 'integrations', 'micro_clone_detector', 'mock_duplicate_generator', 'monoculture_guard', 'observation_window_guard', 'path_index_validator', 'phase_executor', 'policy_tree_validator', 'pre_apply_integrity_gate', 'prioritizer', 'question_tracker', 'recovery_manifest_writer', 'report', 'risk_mitigation_tracker', 'risk_mitigator', 'scanner', 'self_benchmark', 'self_scanner', 'sensitivity_sweeper', 'shadow_trust_validator', 'shadow_verifier', 'shared_evolver', 'shared_lifecycle_manager', 'signature_matcher', 'simplicity_auditor', 'ssot_registrar', 'stale_shared_detector', 'success_validator', 'symbol_index', 'temporal_drift_tracker', 'thematic_clusterer', 'verifier']  # 66 模块（全生命周期治理）
 
 
-__version__ = "0.10.0"
+__version__ = "0.15.0"
 __module_id__ = "MOD-INF-017"
 __layer__ = "l01_infrastructure"
 __status__ = "construction"

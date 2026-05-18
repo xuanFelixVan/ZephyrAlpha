@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-013 | docs/03_modules/_cross_layer/mcp/blueprint.md | §
+# module_id: MOD-INF-013
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ZephyrAlpha MCP Tool Contracts
 #
 # 6 MCP Server（task_manager / knowledge_base / gate_engine / session_handoff / intent_router / blueprint_search）
@@ -1186,8 +1193,8 @@ telemetry:
   description: "系统遥测可观测性服务；包装 MOD-INF-015 Telemetry facade（9子系统）"
   status: beta
   backend:
-    - "src/zephyr/l12_system_telemetry/facade.py (Telemetry)"
-    - "src/zephyr/l12_system_telemetry/auto_bootstrap.py"
+    - "src/zephyr/system_telemetry/facade.py (Telemetry)"
+    - "src/zephyr/system_telemetry/auto_bootstrap.py"
     - "config/metrics_schema.yaml"
     - "config/alert_rules.yaml"
     - "config/sli_registry.yaml"

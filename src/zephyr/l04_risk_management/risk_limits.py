@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L04-001 | 03_modules/l04_risk_management/risk-management-core/blueprint.md | §
+
+# [MODULE] zephyr.l04_risk_management.risk_limits
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l04_risk_management
 # category: risk_interface
@@ -30,7 +50,7 @@ import abc
 from decimal import Decimal
 from typing import ClassVar, Dict, Optional
 
-from zephyr.shared.contracts.risk.risk_limits import RiskLimits
+from zephyr.trading_contracts.risk.risk_limits import RiskLimits
 
 
 class RiskLimitsCalculator(abc.ABC):

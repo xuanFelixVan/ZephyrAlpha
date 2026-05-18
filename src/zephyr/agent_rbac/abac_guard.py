@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.abac_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 L2 ABAC Guard — 五维属性权限 (Intent / Maturity / Temporal / Sensitivity / TLB)
 
@@ -16,7 +36,7 @@ from enum import Enum
 from collections import defaultdict
 from typing import Optional
 
-from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel, MATURITY_TLB_LIMITS
+from zephyr.shared.contracts.identity.agent_identity import AgentIdentity, MaturityLevel, MATURITY_TLB_LIMITS
 
 
 def _maturity_value(agent: AgentIdentity) -> str:

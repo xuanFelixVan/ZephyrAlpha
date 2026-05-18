@@ -1,0 +1,197 @@
+# [BLUEPRINT] MOD-INF-031 | 03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
+
+# [MODULE] zephyr.auto_fix_engine.import_fixer
+
+# [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
+
+# [MODIFY-GUARD] blueprint.md §3;_fixer_registry.yaml import_fixer段
+
+# [CONSUMERS] engine.py
+
+# [STABILITY] evolving
+
+# [SAFETY] H
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT] ImportFixError
+
+# [TESTS] tests/auto_fix_engine/test_import_fixer.py
+
+from __future__ import annotations
+
+import ast
+import logging
+import os
+import re
+from pathlib import Path
+from typing import Any
+
+from zephyr.auto_fix_engine.models import (
+    BaseFixer,
+    FixAction,
+    FixConfidence,
+    FixLevel,
+    FixStatus,
+    ValidationResult,
+)
+
+logger = logging.getLogger(__name__)
+
+
+class ImportFixer(BaseFixer):
+    model_config = {"arbitrary_types_allowed": True}
+
+    def __init__(self) -> None:
+        super().__init__(
+            fixer_id="import_fixer",
+            action_type="import_fix",
+            level=FixLevel.L1_RULE,
+            dimension="DIM-CODE-001",
+            description="修复损坏 import",
+        )
+
+    def scan(self) -> list[dict[str, Any]]:
+        findings: list[dict[str, Any]] = []
+        repo_root = Path(os.getcwd())
+        src_root = repo_root / "src"
+        for py_file in repo_root.rglob("*.py"):
+            if "site-packages" in str(py_file) or ".venv" in str(py_file):
+                continue
+            try:
+                content = py_file.read_text(encoding="utf-8")
+                tree = ast.parse(content)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.ImportFrom):
+                        if node.module and node.module.startswith("zephyr."):
+                            parts = node.module.split(".")
+                            if len(parts) >= 2:
+                                pkg_path = src_root / Path(*parts[:-1]) if len(parts) > 2 else src_root / parts[0]
+                                init_file = pkg_path / "__init__.py"
+                                if not init_file.exists() and not (src_root / Path(*parts)).exists():
+                                    findings.append({
+                                        "file": str(py_file),
+                                        "line": node.lineno,
+                                        "module": node.module,
+                                        "type": "broken_import",
+                                    })
+                    elif isinstance(node, ast.Import):
+                        for alias in node.names:
+                            if alias.name.startswith("zephyr."):
+                                parts = alias.name.split(".")
+                                mod_path = src_root / Path(*parts) / "__init__.py"
+                                if not mod_path.exists():
+                                    mod_path2 = src_root / Path(*parts[:-1]) / f"{parts[-1]}.py"
+                                    if not mod_path2.exists():
+                                        findings.append({
+                                            "file": str(py_file),
+                                            "line": node.lineno,
+                                            "module": alias.name,
+                                            "type": "broken_import",
+                                        })
+            except Exception:
+                continue
+        return findings
+
+    def fix(self, target: str, dry_run: bool = False) -> FixAction:
+        action = FixAction(
+            action_type=self.action_type,
+            level=self.level,
+            target=target,
+            confidence=FixConfidence.HIGH,
+        )
+        target_path = Path(target)
+        if not target_path.exists():
+            action.status = FixStatus.FAILED
+            return action
+        try:
+            content = target_path.read_text(encoding="utf-8")
+            original = content
+            repo_root = Path(os.getcwd())
+            src_root = repo_root / "src"
+            fixes: list[str] = []
+            lines = content.split("\n")
+            new_lines: list[str] = []
+            for line in lines:
+                stripped = line.strip()
+                fixed_line = line
+                from_match = re.match(r"^(\s*)from\s+(zephyr[\.\w]*)\s+import", stripped)
+                if from_match:
+                    indent = from_match.group(1)
+                    module = from_match.group(2)
+                    corrected = self._try_fix_module(module, src_root)
+                    if corrected and corrected != module:
+                        fixed_line = line.replace(f"from {module}", f"from {corrected}")
+                        fixes.append(f"{module} -> {corrected}")
+                import_match = re.match(r"^(\s*)import\s+(zephyr[\.\w]*)", stripped)
+                if import_match and not from_match:
+                    module = import_match.group(2)
+                    corrected = self._try_fix_module(module, src_root)
+                    if corrected and corrected != module:
+                        fixed_line = line.replace(f"import {module}", f"import {corrected}")
+                        fixes.append(f"{module} -> {corrected}")
+                new_lines.append(fixed_line)
+            content = "\n".join(new_lines)
+            if content != original:
+                action.before = original
+                action.after = content
+                action.metadata["fixes"] = fixes
+                if not dry_run:
+                    tmp_path = f"{target}.{os.getpid()}.tmp"
+                    try:
+                        with open(tmp_path, "w", encoding="utf-8") as f:
+                            f.write(content)
+                        os.replace(tmp_path, target)
+                    except PermissionError:
+                        try:
+                            os.remove(tmp_path)
+                        except OSError:
+                            pass
+                        action.status = FixStatus.FAILED
+                        return action
+                action.status = FixStatus.COMPLETED
+            else:
+                action.status = FixStatus.COMPLETED
+                action.metadata["note"] = "No broken imports found"
+        except Exception as exc:
+            action.status = FixStatus.FAILED
+            action.metadata["error"] = str(exc)
+        return action
+
+    def _try_fix_module(self, module: str, src_root: Path) -> str | None:
+        parts = module.split(".")
+        if len(parts) < 2:
+            return None
+        candidates: list[str] = []
+        for i in range(len(parts), 1, -1):
+            prefix = ".".join(parts[:i])
+            suffix = parts[i:] if i < len(parts) else []
+            pkg_path = src_root / Path(*parts[:i])
+            if (pkg_path / "__init__.py").exists() or (src_root / Path(*parts[:i-1]) / f"{parts[i-1]}.py").exists():
+                if not suffix:
+                    candidates.append(prefix)
+                else:
+                    candidates.append(prefix)
+                break
+        if not candidates:
+            for i in range(len(parts) - 1, 1, -1):
+                prefix = ".".join(parts[:i])
+                pkg_path = src_root / Path(*parts[:i])
+                if (pkg_path / "__init__.py").exists():
+                    candidates.append(prefix)
+                    break
+        return candidates[0] if candidates else None
+
+    def validate(self, target: str) -> ValidationResult:
+        target_path = Path(target)
+        if not target_path.exists():
+            return ValidationResult(valid=False, check_name="import_fix", evidence="", error="Target not found")
+        try:
+            content = target_path.read_text(encoding="utf-8")
+            compile(content, target, "exec")
+            return ValidationResult(valid=True, check_name="import_fix", evidence="Syntax check passed")
+        except SyntaxError as exc:
+            return ValidationResult(valid=False, check_name="import_fix", evidence="", error=f"Syntax error: {exc}")
+
+    def rollback(self, target: str) -> bool:
+        return False

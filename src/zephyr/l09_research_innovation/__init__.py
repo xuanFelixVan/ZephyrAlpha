@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L09-001 | 03_modules/l09_research_innovation/research-core/blueprint.md | §
 """L09 Research & Innovation
 =====================================
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.context_assembler
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 ContextAssembler — 上下文装配、校验、影子留档
 =============================================
@@ -22,7 +42,10 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.context_engine.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+
+if True:
+    from zephyr.context_engine.context_rule_registry import ContextRuleRegistry
 
 __all__ = [
     "AssembledContext",
@@ -110,9 +133,11 @@ class ContextAssembler:
         self,
         max_file_size_mb: int = 5,
         require_absolute_paths: bool = True,
+        rule_registry: ContextRuleRegistry | None = None,
     ) -> None:
         self._max_bytes = max_file_size_mb * 1024 * 1024
         self._require_absolute = require_absolute_paths
+        self._rule_registry = rule_registry
 
     # ------------------------------------------------------------------
     # 公共 API
@@ -144,6 +169,9 @@ class ContextAssembler:
         """
         entries, errors = self._collect_files(manifest)
         assembled = self._assemble(entries, errors, token_budget)
+
+        if self._rule_registry is not None:
+            assembled = self._inject_rules(assembled, token_budget)
 
         if compress and assembled.token_estimate > token_budget:
             assembled = self._compress_context(assembled, token_budget)
@@ -323,6 +351,30 @@ class ContextAssembler:
     # ------------------------------------------------------------------
     # 内部：压缩
     # ------------------------------------------------------------------
+
+    def _inject_rules(
+        self,
+        ctx: AssembledContext,
+        token_budget: int,
+    ) -> AssembledContext:
+        matched = self._rule_registry.lookup(
+            task_type="",
+            tags=[],
+        )
+        if not matched:
+            return ctx
+
+        rule_parts: list[str] = []
+        for rule in matched:
+            rule_parts.append(f"[CE_RULE:{rule.rule_id} ({rule.injection_level})]\n{rule.content}")
+
+        rule_text = "\n\n".join(rule_parts)
+        separator = "\n\n--- INJECTED_RULES ---\n\n"
+        ctx.context_text = ctx.context_text + separator + rule_text
+        ctx.total_chars = len(ctx.context_text)
+        ctx.token_estimate = estimate_tokens(ctx.context_text)
+        ctx.budget_remaining = max(token_budget - ctx.token_estimate, 0)
+        return ctx
 
     def _compress_context(
         self,

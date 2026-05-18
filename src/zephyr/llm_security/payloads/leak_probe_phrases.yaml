@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# module_id: MOD-INF-014
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 version: "1.0"
 category: "prompt_leak_probes"
 source: "OWASP LLM06 + Anthropic Research"

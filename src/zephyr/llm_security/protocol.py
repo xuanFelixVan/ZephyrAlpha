@@ -1,14 +1,28 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
+
+# [MODULE] zephyr.llm_security.protocol
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any, Dict, List, Optional
 
-
-class SecurityDecision(Enum):
-    BLOCK = "block"
-    ALLOW = "allow"
-    DENY = "deny"
-    FLAG = "flag"
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 @dataclass

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-012 | 03_modules/_cross_layer/database/blueprint.md | §
+
+# [MODULE] zephyr.db.circuit_breaker_repo
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 circuit_breaker_repo.py — circuit_breaker_state 表持久化仓库（AUDIT-07 P1-5）
 
@@ -13,7 +33,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
-from zephyr.shared.schema.schemas import CircuitBreakerState
+from zephyr.db.circuit_breaker_types import CircuitBreakerState
 
 __all__ = [
     "CircuitBreakerRecord",

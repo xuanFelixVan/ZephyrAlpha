@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # Rollback Protocol (L3 Cold Memory)
 
 ## Overview

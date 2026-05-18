@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.trigger_router
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 =====================================================
@@ -690,7 +710,7 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
 
     统一打分逻辑：shared/blueprint_scorer.py（与 MCP blueprint_search_server 共用）。
     """
-    from zephyr.shared.utils.blueprint_scorer import score_and_rank_routes
+    from zephyr.orchestrator.blueprint_scorer import score_and_rank_routes
 
     routing_yaml_path = REPO_ROOT / "config" / "blueprint_routing.yaml"
     if not routing_yaml_path.exists():

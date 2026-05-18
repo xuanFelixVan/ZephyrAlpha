@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.construction_guide
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 施工指南引擎（Construction Guide）
 
-依据：MOD-MASTER-001 蓝图 §八 施工指南
+依据：MOD-MASTER-002 蓝图 §八 施工指南
 实现 CT-* mock 策略 + Phase 0 context check 强制执行。
 
 策略：

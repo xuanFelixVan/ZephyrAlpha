@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# module_id: MOD-INF-014
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: "1.0"
 doc_type: red_team_corpus
 last_updated: "2026-05-06"

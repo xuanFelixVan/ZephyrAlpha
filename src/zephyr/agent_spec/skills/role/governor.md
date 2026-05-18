@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-ROL-GOV-001
 name: governor
 description: "Audit scanning, drift fixing, compliance enforcement"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 300
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Role Skill: Governor
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-008 | 03_modules/_cross_layer/context-engine/blueprint.md | §
+
+# [MODULE] zephyr.context_engine.context_budget_tracker
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """ContextBudgetTracker: token budget management with 3-level thresholds.
 
 Tracks token usage per session and emits Observer events when
@@ -23,23 +43,26 @@ from threading import RLock
 from typing import TYPE_CHECKING, Any
 
 from zephyr.shared.infra.observer import EventType, Observer
-from zephyr.shared.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.context_engine.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 if TYPE_CHECKING:
     from zephyr.context_engine.doc_compressor import DocCompressor
 
 
 @unique
-class BudgetLevel(str, Enum):
+class ContextBudgetLevel(str, Enum):
     L1_WARNING = "budget_l1_warning"
     L2_THROTTLE = "budget_l2_throttle"
     L3_HARD_STOP = "budget_l3_hard_stop"
 
 
+BudgetLevel = ContextBudgetLevel
+
+
 DEFAULT_THRESHOLDS = {
-    BudgetLevel.L1_WARNING: 0.80,
-    BudgetLevel.L2_THROTTLE: 0.90,
-    BudgetLevel.L3_HARD_STOP: 0.95,
+    ContextBudgetLevel.L1_WARNING: 0.80,
+    ContextBudgetLevel.L2_THROTTLE: 0.90,
+    ContextBudgetLevel.L3_HARD_STOP: 0.95,
 }
 
 _FILE = Path(__file__).resolve()
@@ -71,12 +94,12 @@ def _load_context_rules_yaml() -> dict:
     return _context_rules_cache
 
 
-def get_thresholds_from_yaml() -> dict[BudgetLevel, float] | None:
+def get_thresholds_from_yaml() -> dict[ContextBudgetLevel, float] | None:
     """从 context_rules.yaml CTX-001 规则提取阈值。
 
     Returns
     -------
-    dict[BudgetLevel, float] | None
+    dict[ContextBudgetLevel, float] | None
         YAML 中定义的阈值；YAML 不存在或规则缺失时返回 None。
     """
     data = _load_context_rules_yaml()
@@ -84,9 +107,9 @@ def get_thresholds_from_yaml() -> dict[BudgetLevel, float] | None:
         if rule.get("id") == "CTX-001" and rule.get("name") == "token_budget_tiers":
             params = rule.get("parameters", {})
             return {
-                BudgetLevel.L1_WARNING: params.get("l1_warning_ratio", 0.80),
-                BudgetLevel.L2_THROTTLE: params.get("l2_compress_ratio", 0.90),
-                BudgetLevel.L3_HARD_STOP: params.get("l3_hard_cutoff_ratio", 0.95),
+                ContextBudgetLevel.L1_WARNING: params.get("l1_warning_ratio", 0.80),
+                ContextBudgetLevel.L2_THROTTLE: params.get("l2_compress_ratio", 0.90),
+                ContextBudgetLevel.L3_HARD_STOP: params.get("l3_hard_cutoff_ratio", 0.95),
             }
     return None
 
@@ -113,7 +136,7 @@ class ContextBudgetTracker:
         self,
         observer: Observer,
         session_limit: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
-        thresholds: dict[BudgetLevel, float] | None = None,
+        thresholds: dict[ContextBudgetLevel, float] | None = None,
     ) -> None:
         self._observer = observer
         self._session_limit = session_limit
@@ -157,15 +180,15 @@ class ContextBudgetTracker:
             session["token_count"] += count
         return count
 
-    def check_budget(self, session_id: str = "default") -> BudgetLevel:
+    def check_budget(self, session_id: str = "default") -> ContextBudgetLevel:
         with self._lock:
             session = self._get_session(session_id)
             usage = session["token_count"]
             limit = session["limit"]
             ratio = usage / limit if limit > 0 else 0.0
 
-            triggered = BudgetLevel.L1_WARNING
-            for level in [BudgetLevel.L3_HARD_STOP, BudgetLevel.L2_THROTTLE, BudgetLevel.L1_WARNING]:
+            triggered = ContextBudgetLevel.L1_WARNING
+            for level in [ContextBudgetLevel.L3_HARD_STOP, ContextBudgetLevel.L2_THROTTLE, ContextBudgetLevel.L1_WARNING]:
                 threshold = self._thresholds.get(level, 0.0)
                 if ratio >= threshold:
                     triggered = level
@@ -179,7 +202,7 @@ class ContextBudgetTracker:
                             "ratio": round(ratio, 3),
                         }
                         # T-V2-006: L2_THROTTLE 时追加压缩建议标志
-                        if level == BudgetLevel.L2_THROTTLE:
+                        if level == ContextBudgetLevel.L2_THROTTLE:
                             payload["compression_suggested"] = True
                             payload["doc_compressor_available"] = self._doc_compressor is not None
                         self._observer.emit(EventType.METRIC_EVENT, payload)

@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-A2A-001
 name: a2a-protocol
 description: "A2A Agent-to-Agent Coordination Protocol (MOD-INF-025)"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: A2A Protocol Specialist
 
@@ -45,6 +48,7 @@ author: factory-agent
 - Livelock detected → check retry-loop without state change
 - Cascade guard tripped → investigate root agent failure (5 Whys)
 - Consent denied → cross-agent boundary without explicit grant
+- Initial diagnosis contradicted by deep investigation → ask "why was initial diagnosis wrong?" and update cascade pattern mapping
 
 ## Checklist
 

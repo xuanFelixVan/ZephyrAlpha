@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
 """LSG 九层防御层实现包（L0-L8）。
 
 每层对应 blueprint.md §3 一条防御策略，均实现 LLMSecurityProtocol。
@@ -13,4 +14,33 @@ L7 — 持续验证层：自动Red Team / 安全回归 / 防御度量
 L8 — 多Agent安全层：跨Agent权限继承 / 信任链验证
 """
 
-__all__ = ['l0_supply_chain', 'l1_input', 'l2_prompt_protection', 'l2a_process_sandbox', 'l3_output', 'l4_agent', 'l5_resource_protection', 'l6_observability', 'l8_multi_agent']
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    "l0_supply_chain": ("SupplyChainGuard",),
+    "l1_input": ("InputDefenseLayer",),
+    "l2_prompt_protection": ("PromptProtectionLayer",),
+    "l2a_process_sandbox": ("ProcessSandboxLayer",),
+    "l3_output": ("OutputSecurityLayer",),
+    "l4_agent": ("AgentSecurityLayer",),
+    "l5_resource_protection": ("ResourceProtectionLayer",),
+    "l6_observability": ("ObservabilityLayer",),
+    "l8_multi_agent": ("MultiAgentSecurityLayer",),
+}
+
+__all__ = [
+    'l0_supply_chain', 'l1_input', 'l2_prompt_protection', 'l2a_process_sandbox',
+    'l3_output', 'l4_agent', 'l5_resource_protection', 'l6_observability', 'l8_multi_agent',
+    'SupplyChainGuard', 'InputDefenseLayer', 'PromptProtectionLayer', 'ProcessSandboxLayer',
+    'OutputSecurityLayer', 'AgentSecurityLayer', 'ResourceProtectionLayer',
+    'ObservabilityLayer', 'MultiAgentSecurityLayer',
+]
+
+
+def __getattr__(name: str):
+    for mod_name, symbols in _LAZY_MODULES.items():
+        if name in symbols or name == mod_name:
+            mod = __import__(f"zephyr.llm_security.layers.{mod_name}", fromlist=[name])
+            try:
+                return getattr(mod, name)
+            except AttributeError:
+                pass
+    raise AttributeError(f"module 'zephyr.llm_security.layers' has no attribute '{name}'")

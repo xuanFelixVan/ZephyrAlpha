@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-014 | 03_modules/_cross_layer/llm-security/blueprint.md | §
 """LLM Security Gateway (LSG)
 =====================================
 
@@ -58,6 +59,20 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 蓝图 SSoT：docs/03_modules/_cross_layer/llm-security/blueprint.md
 """
 
+from zephyr.llm_security.gateway import LSGSecurityGateway, ScanMode, ScanResult
+from zephyr.llm_security.protocol import SecurityDecision, SecurityContext, SecurityResult, LLMSecurityProtocol
+from zephyr.llm_security.input_sanitizer import InputSanitizer
+from zephyr.llm_security.process_sandbox import L2aSandbox
+from zephyr.llm_security.behavior_audit_logger import AuditLogger, AuditEvent, AuditQuery
+
+_LAZY_IMPORTS: dict[str, tuple[str, ...]] = {
+    "layers": ("SupplyChainGuard", "InputDefenseLayer", "PromptProtectionLayer",
+               "ProcessSandboxLayer", "OutputSecurityLayer", "AgentSecurityLayer",
+               "ResourceProtectionLayer", "ObservabilityLayer", "MultiAgentSecurityLayer"),
+    "self_protection": ("ValidationLayer", "RedTeamScanner", "LSGIsolation",
+                        "AdversarialMutator", "CodeIntegrityGuard"),
+}
+
 __all__ = [
     'behavior_audit_logger',
     'gateway',
@@ -70,4 +85,41 @@ __all__ = [
     'payloads',
     'dashboard',
     'sandbox',
+    'LSGSecurityGateway',
+    'ScanMode',
+    'ScanResult',
+    'SecurityDecision',
+    'SecurityContext',
+    'SecurityResult',
+    'LLMSecurityProtocol',
+    'InputSanitizer',
+    'L2aSandbox',
+    'AuditLogger',
+    'AuditEvent',
+    'AuditQuery',
+    'SupplyChainGuard',
+    'InputDefenseLayer',
+    'PromptProtectionLayer',
+    'ProcessSandboxLayer',
+    'OutputSecurityLayer',
+    'AgentSecurityLayer',
+    'ResourceProtectionLayer',
+    'ObservabilityLayer',
+    'MultiAgentSecurityLayer',
+    'ValidationLayer',
+    'RedTeamScanner',
+    'LSGIsolation',
+    'AdversarialMutator',
+    'CodeIntegrityGuard',
 ]
+
+
+def __getattr__(name: str):
+    for subpkg, symbols in _LAZY_IMPORTS.items():
+        if name in symbols:
+            mod = __import__(f"zephyr.llm_security.{subpkg}", fromlist=[name])
+            try:
+                return getattr(mod, name)
+            except AttributeError:
+                pass
+    raise AttributeError(f"module 'zephyr.llm_security' has no attribute '{name}'")

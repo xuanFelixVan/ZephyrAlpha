@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
 """
 ZephyrAlpha 门禁子包
 ====================
@@ -21,6 +22,18 @@ ZephyrAlpha 门禁子包
 """
 from __future__ import annotations
 
+from . import adaptive_threshold
+from . import ai_capability_guard
+from . import breaking_change_detector
+from . import end_to_end_walkthrough
+from . import gate_health
+from . import gate_integrity_guard
+from . import gate_override
+from . import gate_simulator
+from . import integration_test_runner
+from . import kiss_enforcer
+from . import secrets_guard
+
 import importlib
 import logging
 from typing import Any
@@ -38,19 +51,58 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
     "GateOverride": {"module": "zephyr.gates.gate_override", "attr": "GateOverride"},
     "SysMasterCompliance": {"module": "zephyr.gates.sys_master_compliance", "attr": "SysMasterCompliance"},
     "trigger_recovery": {"module": "zephyr.gates.drift_detector", "attr": "trigger_recovery"},
+    "GateViolation": {"module": "zephyr.gates.gate_types", "attr": "GateViolation"},
+    "GateResult": {"module": "zephyr.gates.gate_types", "attr": "GateResult"},
+    "GateEngineError": {"module": "zephyr.gates.gate_types", "attr": "GateEngineError"},
+    "GateViolationError": {"module": "zephyr.gates.gate_types", "attr": "GateViolationError"},
 }
 
 __all__ = [
-    'ai_capability_guard', 'anti_pattern_guard', 'breaking_change_detector',
-    'can_i_deploy', 'capability_checker', 'cbac_matrix', 'cdc_broker',
-    'circuit_breaker', 'contract_template_manager', 'drift_detector',
-    'end_to_end_walkthrough', 'gate_engine', 'integration_test_runner',
-    'kiss_enforcer', 'risk_ssot', 'secrets_guard', 'task_completion_gate',
-    'truth_source_validator',
-    'GateContext', 'GatePipeline', 'GateSimulator', 'GateIntegrityGuard',
-    'AdaptiveThreshold', 'AuditChainVerifier', 'GateHealth', 'GateOverride',
-    'SysMasterCompliance', 'trigger_recovery',
+    'AdaptiveThreshold',
+    'AuditChainVerifier',
+    'GateContext',
+    'GateHealth',
+    'GateIntegrityGuard',
+    'GateOverride',
+    'GatePipeline',
+    'GateSimulator',
+    'SysMasterCompliance',
+    'adaptive_threshold',
+    'ai_capability_guard',
+    'anti_pattern_guard',
+    'audit_chain_verifier',
+    'breaking_change_detector',
+    'can_i_deploy',
+    'capability_checker',
+    'cbac_matrix',
+    'cdc_broker',
+    'circuit_breaker',
+    'contract_template_manager',
+    'drift_detector',
+    'end_to_end_walkthrough',
+    'gate_context',
+    'gate_engine',
+    'gate_types',
+    'gate_health',
+    'gate_integrity_guard',
+    'gate_override',
+    'gate_pipeline',
+    'gate_simulator',
+    'integration_test_runner',
+    'kiss_enforcer',
+    'risk_ssot',
+    'secrets_guard',
+    'sys_master_compliance',
+    'task_completion_gate',
+    'task_types',
+    "trigger_recovery",
+    "triple_alignment",
+    "TripleAlignmentResult",
+    "truth_source_validator",
 ]
+
+_LAZY_IMPORTS["TripleAlignmentResult"] = {"module": "zephyr.gates.triple_alignment", "attr": "TripleAlignmentResult"}
+_LAZY_IMPORTS["AlignmentViolation"] = {"module": "zephyr.gates.triple_alignment", "attr": "AlignmentViolation"}
 
 
 def __getattr__(name: str) -> Any:

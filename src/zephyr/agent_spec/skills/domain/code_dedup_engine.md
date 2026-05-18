@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-DED-001
 name: code-dedup-engine
 description: "Code deduplication engine — Monoculture immunity (BRS 0-100), atomic WAL-style fix, 25-dimension closed loop, 66 modules across 3 waves. Covers lexical/AST/semantic detection, auto-fix with safety gates, cross-boundary clone awareness, decision audit trail."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Code Dedup Engine
 

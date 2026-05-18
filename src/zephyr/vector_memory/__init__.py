@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
 """Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
 =============================================================
 
@@ -51,10 +52,47 @@ from zephyr.kb.unified_memory_api import UnifiedMemoryAPI, get_unified_memory_ap
 from zephyr.vector_memory.delegated_vector_memory import UnifiedVectorMemoryAdapter
 from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
 from zephyr.vector_memory.vector_bridge import VectorBridge
+from zephyr.vector_memory.ollama_embedding import OllamaEmbedder
 from zephyr.vector_memory.interface import (
     EmbeddingEngineBase,
     MemoryEntry,
     VectorMemoryBase,
 )
 
-__all__ = ['EmbeddingEngineBase', 'InProcessVectorMemory', 'MemoryEntry', 'UnifiedMemoryAPI', 'UnifiedVectorMemoryAdapter', 'VectorBridge', 'VectorMemoryBase', 'bridge_layer', 'cache_layer', 'chunk_strategy_router', 'collection_manager', 'cross_collection_retriever', 'delegated_vector_memory', 'embedding_router', 'get_unified_memory_api', 'hybrid_retriever', 'in_memory_fake_vms', 'in_memory_memory_backend', 'in_process_vector_memory', 'index_health_monitor', 'interface', 'provenance_enforcer', 'retrieval_feedback', 'vector_bridge', 'vms_schemas']
+__all__ = [
+    'EmbeddingEngineBase',
+    'InProcessVectorMemory',
+    'MemoryEntry',
+    'UnifiedMemoryAPI',
+    'UnifiedVectorMemoryAdapter',
+    'VectorBridge',
+    'VectorMemoryBase',
+    'bm25_index',
+    'bridge_layer',
+    'cache_layer',
+    'chunk_strategy_router',
+    'collection_manager',
+    'collection_schemas',
+    'cross_collection_retriever',
+    'delegated_vector_memory',
+    'design_principles',
+    'embedding_router',
+    'faiss_collection_manager',
+    'get_unified_memory_api',
+    'hybrid_retriever',
+    'in_memory_fake_vms',
+    'in_memory_memory_backend',
+    'in_process_vector_memory',
+    'index_health_monitor',
+    'interface',
+    'local_model_scheduler',
+    'migrate_chroma_to_faiss',
+    'ollama_chat',
+    'ollama_embedding',
+    'provenance_enforcer',
+    'retrieval_feedback',
+    'sqlite_metadata_store',
+    'vector_bridge',
+    'vms_errors',
+    'vms_schemas',
+]

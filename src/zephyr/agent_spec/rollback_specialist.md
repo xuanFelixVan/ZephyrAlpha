@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # Rollback Specialist (SKILL-DOM-RBK-001)
 
 > **模块**: MOD-INF-021 (Rollback System v0.10.0)

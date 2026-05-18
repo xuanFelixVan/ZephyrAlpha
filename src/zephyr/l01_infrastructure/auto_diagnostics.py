@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.auto_diagnostics
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 RI-12 AutoDiagnostics — 自动诊断引擎
 ====================================
@@ -51,6 +71,7 @@ class DiagnosisReport:
     evidence: list[dict[str, Any]] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
     confidence: float = 0.0
+    inversion_verified: bool = False
     diagnosed_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -65,6 +86,7 @@ class DiagnosisReport:
             "evidence": self.evidence,
             "recommendations": self.recommendations,
             "confidence": self.confidence,
+            "inversion_verified": self.inversion_verified,
             "diagnosed_at": self.diagnosed_at,
             "metadata": self.metadata,
         }

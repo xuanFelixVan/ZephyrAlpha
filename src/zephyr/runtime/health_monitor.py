@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.runtime.health_monitor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 HealthMonitor — 健康监控 + 自愈
 ================================
@@ -133,8 +153,8 @@ class HealthMonitor:
 
     def pressure_level(self) -> PressureLevel:
         try:
-            from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-            from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+            from zephyr.runtime.resource_optimization import ResourceOptimizationEngine
+            from zephyr.runtime.resource_optimization import PressureLevel as ROELevel
             engine = ResourceOptimizationEngine()
             roe_level = engine.get_pressure_state().current_level
             mapping = {

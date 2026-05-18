@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+
+# [MODULE] zephyr._cross_layer.alpha_signal_pipeline
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """AlphaSignalPipeline L02→L03跨层集成管道
 ============================================
 Domain   : _alpha-signal-domain (ALPHA-SIGNAL-DOMAIN-001)
@@ -43,8 +63,8 @@ __all__ = [
 try:
     from zephyr.l02_alpha_factor.base import FactorBase
     from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
-    from zephyr.shared.contracts.market.factor_signal import FactorSignal
-    from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+    from zephyr.trading_contracts.market.factor_signal import FactorSignal
+    from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
     _CONTRACTS_AVAILABLE = True
 except ImportError:
     _CONTRACTS_AVAILABLE = False

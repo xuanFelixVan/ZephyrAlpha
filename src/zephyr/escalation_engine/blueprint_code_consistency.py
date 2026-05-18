@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-022 | 03_modules/l01_infrastructure/escalation-protocol/blueprint.md | §
+
+# [MODULE] zephyr.escalation_engine.blueprint_code_consistency
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Blueprint-Code Consistency Gate — MOD-INF-022.
 
 Validates that each blueprint decision (D-022-01 through D-022-30) has at least
@@ -70,21 +90,21 @@ DECISION_MAP: list[DecisionMapping] = [
         "D-022-06",
         "多Agent死锁防护",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.deadlock_detector",
+        "zephyr.escalation_engine.deadlock_detector",
         "集成到 Engine hooks",
     ),
     DecisionMapping(
         "D-022-07",
         "心理说服防御 Crescendo检测",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.persuasion_detector",
+        "zephyr.escalation_engine.persuasion_detector",
         "集成到 Engine hooks",
     ),
     DecisionMapping(
         "D-022-08",
         "引擎 OS级 Sandboxing",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.engine_sandbox",
+        "zephyr.escalation_engine.engine_sandbox",
         "EngineSandbox 文件/网络/进程隔离 + 完整性快照 + 12 项测试覆盖",
     ),
     DecisionMapping(
@@ -98,7 +118,7 @@ DECISION_MAP: list[DecisionMapping] = [
         "D-022-10",
         "Meta-Confidence 自校准",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.confidence_estimator",
+        "zephyr.escalation_engine.confidence_estimator",
         "ConfidenceEstimator 已集成到 hooks",
     ),
     DecisionMapping(
@@ -119,35 +139,35 @@ DECISION_MAP: list[DecisionMapping] = [
         "D-022-16",
         "Agent行为漂移检测",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.drift_detector",
+        "zephyr.escalation_engine.drift_detector",
         "四维漂移检测已实现",
     ),
     DecisionMapping(
         "D-022-17",
         "VIGIL维护运行时",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.vigil_runtime",
+        "zephyr.escalation_engine.vigil_runtime",
         "VigilRuntime 已加载",
     ),
     DecisionMapping(
         "D-022-18",
         "形式验证 MCMAS",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.formal_verifier",
+        "zephyr.escalation_engine.formal_verifier",
         "FormalVerifier 已加载",
     ),
     DecisionMapping(
         "D-022-19",
         "多Provider API容灾",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.provider_failover",
+        "zephyr.escalation_engine.provider_failover",
         "ProviderFailover 已加载",
     ),
     DecisionMapping(
         "D-022-20",
         "API密钥泄露处理",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.credential_guard",
+        "zephyr.escalation_engine.credential_guard",
         "CredentialGuard 已集成到 hooks",
     ),
     DecisionMapping(
@@ -161,42 +181,42 @@ DECISION_MAP: list[DecisionMapping] = [
         "D-022-22",
         "Merkle Tree 密码学审计",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.merkle_audit",
+        "zephyr.escalation_engine.merkle_audit",
         "MerkleAudit 已集成到 hooks",
     ),
     DecisionMapping(
         "D-022-23",
         "SBOM + 代码签名",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.sbom_guard",
+        "zephyr.escalation_engine.sbom_guard",
         "SBOMGuard 已加载",
     ),
     DecisionMapping(
         "D-022-24",
         "时钟完整性防御",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.clock_guard",
+        "zephyr.escalation_engine.clock_guard",
         "ClockGuard 已集成到 hooks",
     ),
     DecisionMapping(
         "D-022-29",
         "命令体积退化防御",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.command_chain_length_gate",
+        "zephyr.escalation_engine.command_chain_length_gate",
         "CommandChainGate 已集成到 hooks",
     ),
     DecisionMapping(
         "D-022-30",
         "组合性不安全防御",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.compositional_safety_tester",
+        "zephyr.escalation_engine.compositional_safety_tester",
         "CompositionalSafetyTester 已加载",
     ),
     DecisionMapping(
         "D-022-37D",
         "奖励黑客三阶段反弹纵向检测 (盲点#161)",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.infrastructure.escalation_protocol.reward_hacking_rebound_detector",
+        "zephyr.escalation_engine.reward_hacking_rebound_detector",
         "ReboundDetector 90天滑动窗口+严重度比较+P0-FATAL升级+Engine Hook集成",
     ),
 ]

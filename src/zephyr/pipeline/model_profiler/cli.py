@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-034 | 03_modules/_cross_layer/model-profiler/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.model_profiler.cli
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 model_profiler.cli — 模型性能检测命令行入口
 ==============================================
@@ -19,7 +39,7 @@ from pathlib import Path
 
 
 def cmd_discover() -> None:
-    from zephyr.pipeline.model_profiler import ModelDiscovery
+    from zephyr.pipeline.model_profiler.model_discovery import ModelDiscovery
 
     d = ModelDiscovery()
     if not d.ollama_available():
@@ -39,7 +59,7 @@ def cmd_discover() -> None:
 
 
 def cmd_quick(model_name: str) -> None:
-    from zephyr.pipeline.model_profiler import ModelProfiler
+    from zephyr.pipeline.model_profiler.profiler import ModelProfiler
 
     profiler = ModelProfiler()
     profile = profiler.quick_profile(model_name)
@@ -62,7 +82,7 @@ def cmd_quick(model_name: str) -> None:
 
 
 def cmd_benchmark() -> None:
-    from zephyr.pipeline.model_profiler import ModelProfiler
+    from zephyr.pipeline.model_profiler.profiler import ModelProfiler
 
     profiler = ModelProfiler()
     print("\n正在运行全量 model benchmark...\n")
@@ -71,7 +91,7 @@ def cmd_benchmark() -> None:
 
 
 def cmd_best() -> None:
-    from zephyr.pipeline.model_profiler import ModelProfiler
+    from zephyr.pipeline.model_profiler.profiler import ModelProfiler
 
     profiler = ModelProfiler()
     results = profiler.profile_ollama_only()

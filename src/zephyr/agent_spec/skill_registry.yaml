@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-019 | docs/03_modules/_cross_layer/agent_spec/blueprint.md | §
+# module_id: MOD-INF-019
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 registry_version: 1.0.0
 last_updated: '2026-05-06T00:00:00Z'
 trigger_routing:
@@ -22,11 +29,42 @@ trigger_routing:
       domain_default: drift-detector
   task_keywords:
     database: database-specialist
+    数据库: database-specialist
+    迁移: database-specialist
+    migration: database-specialist
+    sql: database-specialist
+    表结构: database-specialist
+    schema: database-specialist
     mcp: mcp-specialist
+    MCP: mcp-specialist
+    工具注册: mcp-specialist
+    tool: mcp-specialist
+    协议: mcp-specialist
+    protocol: mcp-specialist
+    server: mcp-specialist
     context: context-specialist
+    上下文: context-specialist
+    上下文引擎: context-specialist
+    pipeline: context-specialist
+    管线: context-specialist
     feedback: feedback-specialist
+    反馈: feedback-specialist
+    反馈环: feedback-specialist
+    根因: feedback-specialist
+    5whys: feedback-specialist
+    追问: feedback-specialist
+    治根: feedback-specialist
     gate: gate-specialist
+    门禁: gate-specialist
+    规则: gate-specialist
+    policy: gate-specialist
+    检查: gate-specialist
+    验收: gate-specialist
     rbac: agent-specialist
+    权限: agent-specialist
+    权限检查: agent-specialist
+    RBAC: agent-specialist
+    许可: agent-specialist
     a2a: a2a-protocol
     agent-to-agent: a2a-protocol
     agent_coordination: a2a-protocol
@@ -36,41 +74,83 @@ trigger_routing:
     冲突: a2a-protocol
     conflict: a2a-protocol
     blueprint: master-blueprint
+    蓝图: master-blueprint
+    架构: master-blueprint
+    设计: master-blueprint
+    拆分: master-blueprint
     audit: drift-detector
+    审计: drift-detector
+    漂移: drift-detector
+    合规: drift-detector
+    治理: drift-detector
+    drift: drift-detector
+    compliance: drift-detector
     knowledge: knowledge-specialist
+    知识库: knowledge-specialist
+    知识: knowledge-specialist
+    KE: knowledge-specialist
     rollback: rollback-specialist
+    回滚: rollback-specialist
+    撤销: rollback-specialist
     undo: rollback-specialist
     revert: rollback-specialist
     checkpoint: rollback-specialist
+    检查点: rollback-specialist
     security: lsg-security
+    安全: lsg-security
     lsg: lsg-security
     llm_security: lsg-security
+    注入: lsg-security
     injection: lsg-security
     prompt_injection: lsg-security
+    提示注入: lsg-security
     jailbreak: lsg-security
+    越狱: lsg-security
     sanitize: lsg-security
     redact: lsg-security
+    脱敏: lsg-security
     vector: vector-memory
+    向量: vector-memory
+    向量内存: vector-memory
     memory: vector-memory
     vms: vector-memory
     vector_memory: vector-memory
     chroma: vector-memory
     chromadb: vector-memory
     embedding: vector-memory
+    嵌入: vector-memory
+    语义搜索: vector-memory
     task: task-system
+    任务: task-system
+    任务卡: task-system
     taskcard: task-system
     task-card: task-system
     task-system: task-system
     task_repo: task-system
     telemetry: system-telemetry
+    遥测: system-telemetry
+    可观测: system-telemetry
     observability: system-telemetry
+    指标: system-telemetry
     metrics: system-telemetry
     traces: system-telemetry
+    日志: system-telemetry
     logs: system-telemetry
+    健康检查: system-telemetry
     dedup: code-dedup-engine
+    去重: code-dedup-engine
+    重复: code-dedup-engine
     deduplication: code-dedup-engine
     duplicate: code-dedup-engine
     monoculture: code-dedup-engine
+    单物种: code-dedup-engine
+    behavioral: behavioral-auditor
+    越权: behavioral-auditor
+    behavior_audit: behavioral-auditor
+    行为边界: behavioral-auditor
+    AI安全审计: behavioral-auditor
+    操作越界: behavioral-auditor
+    未经授权: behavioral-auditor
     fix: auto-fix-engine
     repair: auto-fix-engine
     auto-fix: auto-fix-engine
@@ -88,8 +168,6 @@ trigger_routing:
     broken: auto-fix-engine
     故障: auto-fix-engine
     zombie: auto-fix-engine
-    drift: auto-fix-engine
-    漂移: auto-fix-engine
     orphan: auto-fix-engine
     import-error: auto-fix-engine
     lint-error: auto-fix-engine
@@ -284,17 +362,6 @@ skills:
       - MOD-INF-017
       - MOD-INF-007
       - MOD-INF-010
-    SKILL-DOM-A2A-001:
-      name: a2a-protocol
-      description: A2A Agent-to-Agent Coordination Protocol (MOD-INF-025) 三层架构(L1发现/L2通信/L3协调),
-        9-state task状态机, Supervisor调度+死锁检活锁检级联熔断, HMAC-SHA256身份验证, RBAC/Audit/Escalation三向桥接.
-        R81-C04 Hold状 Phase 2+自动激
-      skill_type: domain
-      tier: L1
-      path: a2a_specialist.md
-      references:
-      - MOD-INF-025
-      - G-CT-008
     SKILL-DOM-BGT-001:
       name: budget-enforcer
       description: Budget Enforcer (MOD-INF-024) Token/Cost/Time 三维预算强制执行，七级预算体+ 六级降级(NORMAL→NOTIFY→WARNING→MODEL_SWITCH→COMPRESS→MINIMAL→HALT)
@@ -328,349 +395,18 @@ skills:
       - MOD-INF-028
       - MOD-INF-029
       - MOD-INF-030
-    SKILL-DOM-AS0-019:
-      name: Alpha-Signal 因子域总蓝图
-      description: Domain skill for Alpha-Signal 因子域总蓝图
-      skill_type: domain
-      tier: L1
-      path: alpha-signal-------/SKILL.md
-      references: []
-    SKILL-DOM-治00-020:
-      name: 治理域集成蓝图 — Agent 治理八件套
-      description: Domain skill for 治理域集成蓝图 — Agent 治理八件套
-      skill_type: domain
-      tier: L1
-      path: '----------agent------/SKILL.md'
-      references: []
-    SKILL-DOM-集00-021:
-      name: 集成闭环总蓝图 — 任务系统·脚本系统·知识库及全部基础设施系统
-      description: Domain skill for 集成闭环总蓝图 — 任务系统·脚本系统·知识库及全部基础设施系统
-      skill_type: domain
-      tier: L1
-      path: '--------------------------------/SKILL.md'
-      references: []
-    SKILL-DOM-ME0-022:
-      name: ML-Experiment ML域总蓝图
-      description: Domain skill for ML-Experiment ML域总蓝图
-      skill_type: domain
-      tier: L1
-      path: ml-experiment-ml----/SKILL.md
-      references: []
-    SKILL-DOM-系00-023:
-      name: 系统重组总蓝图
-      description: Domain skill for 系统重组总蓝图
-      skill_type: domain
-      tier: L1
-      path: '-------/SKILL.md'
-      references: []
-    SKILL-DOM-MI0-024:
-      name: MOD-INF-005
-      description: Domain skill for MOD-INF-005
-      skill_type: domain
-      tier: L1
-      path: mod-inf-005/SKILL.md
-      references: []
-    SKILL-DOM-⛔00-025:
-      name: ⛔ 数据接入层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 数据接入层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-MI0-026:
-      name: MOD-INF-022
-      description: Domain skill for MOD-INF-022
-      skill_type: domain
-      tier: L1
-      path: mod-inf-022/SKILL.md
-      references: []
-    SKILL-DOM-A00-027:
-      name: Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
-      description: Domain skill for Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
-      skill_type: domain
-      tier: L1
-      path: agent---------------------------rbac-11-3/SKILL.md
-      references: []
-    SKILL-DOM-可00-028:
-      name: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
-      description: Domain skill for 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
-      skill_type: domain
-      tier: L1
-      path: '----agent-spec---------skill-----/SKILL.md'
-      references: []
-    SKILL-DOM-MI0-029:
-      name: MOD-INF-013
-      description: Domain skill for MOD-INF-013
-      skill_type: domain
-      tier: L1
-      path: mod-inf-013/SKILL.md
-      references: []
-    SKILL-DOM-=00-030:
-      name: === 蓝图漂移（决策 D-020-06）===
-      description: Domain skill for === 蓝图漂移（决策 D-020-06）===
-      skill_type: domain
-      tier: L1
-      path: '------------d-020-06----/SKILL.md'
-      references: []
-    SKILL-DOM-MI0-031:
-      name: MOD-INF-023
-      description: Domain skill for MOD-INF-023
-      skill_type: domain
-      tier: L1
-      path: mod-inf-023/SKILL.md
-      references: []
-    SKILL-DOM-容00-032:
-      name: 容量保障体系蓝图（B3 · 2）
-      description: Domain skill for 容量保障体系蓝图（B3 · 2）
-      skill_type: domain
-      tier: L1
-      path: '---------b3---2-/SKILL.md'
-      references: []
-    SKILL-DOM-CDE-033:
-      name: code-dedup-engine
-      description: Domain skill for code-dedup-engine
-      skill_type: domain
-      tier: L1
-      path: code-dedup-engine/SKILL.md
-      references: []
-    SKILL-DOM-漂N0-034:
-      name: 漂移运行时检测蓝图 — Git-native Drift Detection + AI 施工专项
-      description: Domain skill for 漂移运行时检测蓝图 — Git-native Drift Detection + AI 施工专项
-      skill_type: domain
-      tier: L1
-      path: '------------git-native-drift-detection---ai-----/SKILL.md'
-      references: []
-    SKILL-DOM-=00-035:
-      name: ===== I
-      description: Domain skill for ===== I
-      skill_type: domain
-      tier: L1
-      path: '------i/SKILL.md'
-      references: []
-    SKILL-DOM-知K0-036:
-      name: 知识库系统蓝图（MOD-KB-001）
-      description: Domain skill for 知识库系统蓝图（MOD-KB-001）
-      skill_type: domain
-      tier: L1
-      path: '--------mod-kb-001-/SKILL.md'
-      references: []
-    SKILL-DOM-RS0-037:
-      name: rollback-system
-      description: Domain skill for rollback-system
-      skill_type: domain
-      tier: L1
-      path: rollback-system/SKILL.md
-      references: []
-    SKILL-DOM-运L0-038:
-      name: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
-      description: Domain skill for 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
-      skill_type: domain
-      tier: L1
-      path: '-------cross-layer--------b2---3-/SKILL.md'
-      references: []
-    SKILL-DOM-脚00-039:
-      name: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
-      description: Domain skill for 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
-      skill_type: domain
-      tier: L1
-      path: '------------------------/SKILL.md'
-      references: []
-    SKILL-DOM-S00-040:
-      name: System Telemetry 蓝图
-      description: Domain skill for System Telemetry 蓝图
-      skill_type: domain
-      tier: L1
-      path: system-telemetry---/SKILL.md
-      references: []
-    SKILL-DOM-任00-041:
-      name: 任务系统蓝图 + 施工指引 + 盲点审计
-      description: Domain skill for 任务系统蓝图 + 施工指引 + 盲点审计
-      skill_type: domain
-      tier: L1
-      path: '--------------------/SKILL.md'
-      references: []
-    SKILL-DOM-V00-042:
-      name: Vector Memory Service 蓝图
-      description: Domain skill for Vector Memory Service 蓝图
-      skill_type: domain
-      tier: L1
-      path: vector-memory-service---/SKILL.md
-      references: []
-    SKILL-DOM-⛔00-043:
-      name: ⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: --alpha--------------c------/SKILL.md
-      references: []
-    SKILL-DOM-⛔00-044:
-      name: ⛔ 信号生成层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 信号生成层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-045:
-      name: ⛔ 风险管理层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 风险管理层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-046:
-      name: ⛔ 组合构建层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 组合构建层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-047:
-      name: ⛔ 交易执行层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 交易执行层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-048:
-      name: ⛔ 交易后分析层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 交易后分析层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '------------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-049:
-      name: ⛔ 人机交互层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 人机交互层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-050:
-      name: ⛔ 研究创新层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 研究创新层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-051:
-      name: ⛔ 合规层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 合规层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '---------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-⛔00-052:
-      name: ⛔ ML 平台层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ ML 平台层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: --ml--------------c------/SKILL.md
-      references: []
-    SKILL-DOM-⛔00-053:
-      name: ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图
-      description: Domain skill for ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图
-      skill_type: domain
-      tier: L1
-      path: '-----------------c------/SKILL.md'
-      references: []
-    SKILL-DOM-AO0-054:
-      name: audit-orchestrator
-      description: Domain skill for audit-orchestrator
-      skill_type: domain
-      tier: L1
-      path: audit-orchestrator/SKILL.md
-      references: []
-    SKILL-DOM-自00-055:
-      name: 自动修复引擎蓝图 — 全链路自愈执行系统
-      description: Domain skill for 自动修复引擎蓝图 — 全链路自愈执行系统
-      skill_type: domain
-      tier: L1
-      path: '--------------------/SKILL.md'
-      references: []
-    SKILL-DOM-BA0-056:
-      name: behavioral-auditor
-      description: Domain skill for behavioral-auditor
-      skill_type: domain
-      tier: L1
-      path: behavioral-auditor/SKILL.md
-      references: []
-    SKILL-DOM-C00-057:
-      name: Context Engine 蓝图 — 四阶段上下文注入
-      description: Domain skill for Context Engine 蓝图 — 四阶段上下文注入
-      skill_type: domain
-      tier: L1
-      path: context-engine--------------/SKILL.md
-      references: []
-    SKILL-DOM-D00-058:
-      name: Database 蓝图 v2.2
-      description: Domain skill for Database 蓝图 v2.2
-      skill_type: domain
-      tier: L1
-      path: database----v2-2/SKILL.md
-      references: []
-    SKILL-DOM-MI0-059:
-      name: MOD-INF-015；FLE
-      description: Domain skill for MOD-INF-015；FLE
-      skill_type: domain
-      tier: L1
-      path: mod-inf-015-fle/SKILL.md
-      references: []
-    SKILL-DOM-GGG-060:
-      name: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
-      description: Domain skill for Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
-      skill_type: domain
-      tier: L1
-      path: gate-engine------g0-g7-------g1-g5-kms---/SKILL.md
-      references: []
-    SKILL-DOM-MI0-061:
-      name: MOD-INF-010
-      description: Domain skill for MOD-INF-010
-      skill_type: domain
-      tier: L1
-      path: mod-inf-010/SKILL.md
-      references: []
-    SKILL-DOM-孤00-062:
-      name: 孤儿判定子系统蓝图 — 资产生死判决引擎
-      description: Domain skill for 孤儿判定子系统蓝图 — 资产生死判决引擎
-      skill_type: domain
-      tier: L1
-      path: '--------------------/SKILL.md'
-      references: []
-    SKILL-DOM-TM0-063:
-      name: Task Pipeline 蓝图 — M1-M11 双管线路由
-      description: Domain skill for Task Pipeline 蓝图 — M1-M11 双管线路由
-      skill_type: domain
-      tier: L1
-      path: task-pipeline------m1-m11------/SKILL.md
-      references: []
-    SKILL-DOM-红00-064:
-      name: 红白对抗验证器蓝图 — 治理规则混沌工程引擎
-      description: Domain skill for 红白对抗验证器蓝图 — 治理规则混沌工程引擎
-      skill_type: domain
-      tier: L1
-      path: '----------------------/SKILL.md'
-      references: []
-    SKILL-DOM-资00-065:
-      name: 资源优化引擎 蓝图 + 施工指引
-      description: Domain skill for 资源优化引擎 蓝图 + 施工指引
-      skill_type: domain
-      tier: L1
-      path: '----------------/SKILL.md'
-      references: []
-    SKILL-DOM-─00-066:
-      name: ── v2.0.0 新增 Tier 5
-      description: Domain skill for ── v2.0.0 新增 Tier 5
-      skill_type: domain
-      tier: L1
-      path: '---v2-0-0----tier-5/SKILL.md'
-      references: []
-    SKILL-DOM-S00-067:
-      name: Shared + Core 蓝图
-      description: Domain skill for Shared + Core 蓝图
-      skill_type: domain
-      tier: L1
-      path: shared---core---/SKILL.md
-      references: []
+    SKILL-DOM-A2A-001:
+      name: A2A-specialist
+      path: skills/domain/A2A-specialist/SKILL.md
+      status: active
+      tier: 2
+      description: Auto-restored SKILL-DOM-A2A-001
+    SKILL-DOM-BEH-001:
+      name: BEH-specialist
+      path: skills/domain/BEH-specialist/SKILL.md
+      status: active
+      tier: 2
+      description: Auto-restored SKILL-DOM-BEH-001
   role:
     SKILL-ROL-ARC-001:
       name: architect
@@ -694,6 +430,6 @@ skills:
       path: governor.md
       references: []
 metadata:
-  total_skills: 71
-  active_skills: 22
+  total_skills: 22
+  active_skills: 2
   deprecated_skills: 0

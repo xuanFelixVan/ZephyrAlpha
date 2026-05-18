@@ -7,6 +7,8 @@ AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 
 from __future__ import annotations
 
+import logging
+from pathlib import Path
 from typing import Any
 
 
@@ -28,6 +30,8 @@ from zephyr.runtime.status_dashboard import StatusDashboard
 from zephyr.runtime.stop_gate import StopGate
 from zephyr.runtime.work_dag import WorkItem
 from zephyr.runtime.work_orchestrator import WorkOrchestrator
+
+logger = logging.getLogger(__name__)
 
 
 class AutoRuntimeCore:
@@ -81,6 +85,7 @@ class AutoRuntimeCore:
         self._ollama_chat: Any = None
         self._task_learner: Any = None
         self._model_router: Any = None
+        self._vms: Any = None
 
     def boot(self) -> BootReport:
         report = self._lifecycle.boot_sequence(
@@ -106,10 +111,17 @@ class AutoRuntimeCore:
 
         if report.success:
             try:
-                from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+                from zephyr.runtime.resource_optimization import ResourceOptimizationEngine
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
             except Exception:
                 pass
+
+            self._register_task_system_cron_jobs()
+            self._register_task_system_hooks()
+            self._start_task_queue()
+            self._start_blueprint_watcher()
+            self._run_boot_triple_alignment()
+            self._init_escalation_protocol()
 
         self._booted = report.success
         return report
@@ -147,6 +159,86 @@ class AutoRuntimeCore:
                 return True
         return False
 
+    def _init_escalation_protocol(self) -> None:
+        try:
+            from zephyr.escalation_engine.coldstart_manager import ColdstartManager
+            cm = ColdstartManager()
+            cm.initialize()
+            logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
+        except Exception:
+            logger.debug("Escalation coldstart skipped")
+
+        try:
+            from zephyr.escalation_engine.adapter import auto_subscribe_eventbus
+            auto_subscribe_eventbus()
+        except Exception:
+            logger.debug("Escalation EventBus auto-subscribe skipped")
+
+    def _register_task_system_cron_jobs(self) -> None:
+        from zephyr.runtime.boot_cron_jobs import register_boot_cron_jobs
+        project_root = Path(__file__).resolve().parents[3]
+        register_boot_cron_jobs(self._circadian_scheduler, self._work_orchestrator, project_root)
+
+    def _register_task_system_hooks(self) -> None:
+        from zephyr.runtime.boot_hooks import register_boot_hooks
+        register_boot_hooks()
+
+    def _start_task_queue(self) -> None:
+        try:
+            from zephyr.core.queue.task_queue import TaskQueue
+            self._task_queue = TaskQueue()
+
+            def _dispatch_handler(item: object) -> bool:
+                try:
+                    from zephyr.db.task_repo import TaskRepository
+                    from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+                    tr = TaskRepository()
+                    po = PipelineOrchestrator()
+                    task_id = getattr(item, "task_id", "")
+                    task = tr.get(task_id)
+                    if task and task.get("status") in ("READY", "PENDING"):
+                        po.dispatch(task)
+                        return True
+                except Exception:
+                    pass
+                return False
+
+            self._task_queue.set_dispatch_handler(_dispatch_handler)
+            self._task_queue.start_polling()
+            logger.info("TaskQueue polling started (interval=300s)")
+        except Exception as e:
+            logger.warning("Failed to start TaskQueue: %s", e)
+
+    def _start_blueprint_watcher(self) -> None:
+        try:
+            from zephyr.l01_infrastructure.file_watcher import BlueprintWatcher
+            self._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
+            self._blueprint_watcher.start()
+            logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
+        except Exception as e:
+            logger.warning("Failed to start BlueprintWatcher: %s", e)
+
+    def _run_boot_triple_alignment(self) -> None:
+        try:
+            from zephyr.gates.triple_alignment import check_triple_alignment
+            result = check_triple_alignment(warn_only=True)
+            errors = [v for v in result.violations if v.severity.value == "ERROR"]
+            if errors:
+                logger.warning(
+                    "G-TRIPLE-ALIGN boot check: %d ERROR, %d WARN across %d modules",
+                    len(errors),
+                    len(result.violations) - len(errors),
+                    result.checked_modules,
+                )
+            else:
+                logger.info(
+                    "G-TRIPLE-ALIGN boot check: PASS (%d modules, %d WARN)",
+                    result.checked_modules,
+                    len(result.violations),
+                )
+        except Exception as e:
+            logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e)
+
     def _start_local_models(self, report: BootReport) -> None:
         if not self._ollama_alive():
             report.errors.append(
@@ -177,7 +269,7 @@ class AutoRuntimeCore:
             report.errors.append(f"ollama_chat_verify: {e}")
 
         try:
-            from zephyr.vector_memory.embedding_router import EmbeddingRouter
+            from zephyr.local_model.embedding_router import EmbeddingRouter
             self._embedding_router = EmbeddingRouter(backend="ollama")
             self._embedding_router.warmup()
             self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
@@ -199,9 +291,17 @@ class AutoRuntimeCore:
         except Exception as e:
             report.errors.append(f"local_scheduler_start: {e}")
 
+        try:
+            from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+            self._vms = InProcessVectorMemory()
+            self._vms.start()
+            logger.info("VMS started via AutoRuntimeCore.boot()")
+        except Exception as e:
+            logger.warning("VMS auto-start skipped: %s", e)
+
     def _init_task_learner(self, report: BootReport) -> None:
         try:
-            from zephyr.pipeline.model_profiler.task_model_learner import ModelTaskMatrix
+            from zephyr.model_profiler.task_model_learner import ModelTaskMatrix
             self._task_learner = ModelTaskMatrix()
             report.components_started.append("13_task_learner_init")
             report.steps_completed += 1
@@ -217,8 +317,8 @@ class AutoRuntimeCore:
 
     def _benchmark_and_learn(self, report: BootReport) -> None:
         try:
-            from zephyr.pipeline.model_profiler import ModelProfiler
-            from zephyr.pipeline.model_profiler.results_writer import to_model_benchmark_result
+            from zephyr.model_profiler import ModelProfiler
+            from zephyr.model_profiler.results_writer import to_model_benchmark_result
 
             profiler = ModelProfiler(max_ollama_models=5)
             profiles = profiler.profile_ollama_only()
@@ -282,6 +382,11 @@ class AutoRuntimeCore:
                 self._local_scheduler.stop()
             except Exception:
                 pass
+        if self._vms is not None:
+            try:
+                self._vms.shutdown()
+            except Exception:
+                pass
         try:
             from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
             ResourceOptimizationEngine().stop_monitor()
@@ -301,6 +406,8 @@ class AutoRuntimeCore:
         orphan_rate = self._orphan_detector.compute_orphan_rate()
         report = self._health_monitor.reconcile(orphan_rate=orphan_rate)
         self._learn_from_completed_tasks()
+        self.sync_a2a_to_capability_registry()
+        self.sync_skills_to_capability_registry()
         return report
 
     def _learn_from_completed_tasks(self) -> int:
@@ -424,32 +531,13 @@ class AutoRuntimeCore:
             ))
 
     def sync_a2a_to_capability_registry(self) -> int:
-        if self._a2a_registry is None:
-            return 0
-        synced = 0
-        try:
-            from zephyr.runtime.capability_card import CapabilityCard, CapabilityCategory
-            for card in self._a2a_registry._cards.values():
-                cap_id = f"a2a-agent-{card.agent_id}"
-                existing = self._registry.get(cap_id)
-                if existing is None:
-                    cap_card = CapabilityCard(
-                        capability_id=cap_id,
-                        name=f"A2A Agent: {card.name}",
-                        category=CapabilityCategory.SEARCH,
-                        description=card.description,
-                        input_schema={"type": "object"},
-                        output_schema={"type": "object"},
-                        tags=["a2a-agent", card.agent_id] + [c.value for c in card.capabilities],
-                        priority="P2",
-                        runtime_plane="warm",
-                        requires_human=False,
-                    )
-                    self._registry.register(cap_card)
-                    synced += 1
-        except Exception:
-            pass
-        return synced
+        from zephyr.runtime.capability_sync import CapabilitySync
+        return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
+
+    def sync_skills_to_capability_registry(self) -> int:
+        from zephyr.runtime.capability_sync import CapabilitySync
+        skill_registry_path = Path(__file__).resolve().parent.parent / "agent_spec" / "skill_registry.yaml"
+        return CapabilitySync(self._registry).sync_skills(skill_registry_path)
 
     @property
     def a2a_registry(self) -> Any:

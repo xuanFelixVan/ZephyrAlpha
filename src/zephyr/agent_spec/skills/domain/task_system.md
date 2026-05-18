@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-TSK-001
 name: task-system
 description: "Task system full chain — draft→blueprint→TaskCard→dual-pipeline→script-system. Covers 62-field TaskCard model, BlueprintDecomposer, TaskRepo CRUD+state machine, PipelineOrchestrator dispatch, G7 gate validation."
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Task System
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+
+# [MODULE] zephyr.agent_spec.skill_feedback
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 MOD-INF-019: Agent Spec — Skill Feedback Loop
 Blueprint: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
@@ -67,7 +87,7 @@ class SkillFeedback:
         latency_ms = 0
 
         if hasattr(module_result, "status"):
-            from zephyr.pipeline.pipeline_orchestrator import ModuleStatus
+            from zephyr.pipeline.models import ModuleStatus
             success = module_result.status == ModuleStatus.SUCCESS
         if hasattr(module_result, "errors"):
             error_count = len(getattr(module_result, "errors", []) or [])

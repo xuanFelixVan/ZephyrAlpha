@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-022 | 03_modules/l01_infrastructure/escalation-protocol/blueprint.md | §
+
+# [MODULE] zephyr.escalation_engine.self_test
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Escalation Protocol Self-Test — MOD-INF-022.
 
 Atomic self-check that validates the escalation engine's own health.
@@ -49,17 +69,10 @@ def run_self_test() -> SelfTestReport:
     # Check 1: Import chain
     t1 = time.perf_counter()
     try:
-        from zephyr.escalation_engine import (
-            CircuitBreaker,
-            CircuitState,
-            DelegationEngine,
-            DelegationStrategy,
-            EconomicGuard,
-            EscalationEngine,
-            EscalationLevel,
-            EscalationState,
-            RuleCategory,
-        )
+        from zephyr.escalation_engine.escalation_engine import EscalationEngine
+        from zephyr.escalation_engine.escalation_models import EscalationLevel, EscalationState, RuleCategory, EconomicGuard, DelegationStrategy
+        from zephyr.escalation_engine.circuit_breaker import CircuitBreaker, CircuitState
+        from zephyr.escalation_engine.delegation_engine import DelegationEngine
 
         check_results.append(CheckResult("import_chain", True, detail="All core symbols importable"))
     except ImportError as e:

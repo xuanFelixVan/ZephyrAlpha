@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-CTX-001
 name: context-specialist
 description: "Context engine and pipeline operations"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Context Specialist
 

@@ -1,9 +1,11 @@
+# [BLUEPRINT] MOD-INF-009 | src/zephyr/pipeline/__init__.py | §
 """ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由
 A区（M1-M5）生产管线 + B区（M6-M11）审计管线。
 GOV-AI-002 v2.0.0 决策树 + 插件化路由 + Agent 桥接 + Schema 校验。
 v0.7.0: Phase C — LayerDataRouter 模型冻结与路由串联
 v0.8.0: Phase D — LayerConsumerRegistry 全层消费者回调注册
 """
+from . import llm_gateway
 
 from zephyr.pipeline.backpressure_manager import (
     BackpressureManager,
@@ -47,7 +49,7 @@ from zephyr.pipeline.layer_router import (
     load_route_map,
     reset_layer_router,
 )
-from zephyr.pipeline.model_profiler import (
+from zephyr.model_profiler import (  # MOD-INF-034: promoted to top-level package
     ALL_BENCHMARK_CASES,
     CATEGORY_MAP,
     BenchmarkCase,
@@ -60,7 +62,7 @@ from zephyr.pipeline.model_profiler import (
     ModelTaskMatrix,
     TaskRecommendation,
 )
-from zephyr.pipeline.model_profiler.results_writer import (
+from zephyr.model_profiler.results_writer import (
     detect_drift,
     load_benchmark_history,
     to_model_benchmark_result,
@@ -296,6 +298,7 @@ __all__ = [
     "StageContext",
     "StageOnFailure",
     "backpressure_manager",
+    "backpressure_types",
     "ct_pipe_hints_from_task_card",
     "ct_pipe_routing",
     "domain_for_pipeline",
@@ -324,6 +327,7 @@ __all__ = [
     "routing_plugins",
     "validate_module_output",
     "layer_router",
+    "llm_gateway",
     "ALL_BENCHMARK_CASES",
     "BenchmarkCase",
     "CaseResult",

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L06-001 | 03_modules/l06_trade_execution/execution-core/blueprint.md | §
+
+# [MODULE] zephyr.l06_trade_execution.execution_engine
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l06_trade_execution
 # category: execution_implementation
@@ -32,10 +52,10 @@ from enum import Enum
 from typing import Optional
 
 from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.l04_risk_management.implementations.default_risk_validator import (
-    DefaultRiskValidator,
+from zephyr.trading_contracts.risk.risk_validator_protocol import (
+    RiskValidatorProtocol,
 )
-from zephyr.shared.contracts.execution.order import Order
+from zephyr.trading_contracts.execution.order import Order
 
 _logger = logging.getLogger(__name__)
 
@@ -89,12 +109,12 @@ class ExecutionEngine:
     def __init__(
         self,
         order_manager: OrderManager,
+        risk_validator: RiskValidatorProtocol,
         config: Optional[ExecutionConfig] = None,
-        risk_validator: Optional[DefaultRiskValidator] = None,
     ):
         self._order_manager = order_manager
         self._config = config or ExecutionConfig()
-        self._risk_validator = risk_validator or DefaultRiskValidator()
+        self._risk_validator = risk_validator
         self._algo_orders: dict[str, dict] = {}
         self._reports: dict[str, ExecutionEngineRunRecord] = {}
         self._broker_scores: dict[str, float] = defaultdict(lambda: 1.0)

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-024 | src/zephyr/budget_enforcer/stream_abort_guard.py | §
 """StreamAbortGuard — 流式中断守卫
 =====================================
 蓝图 §2.13 · 流式输出中途预算二次确认
@@ -67,6 +68,9 @@ _CHECKPOINT_INTERVAL = 500
 _QUALITY_THRESHOLD = 0.3
 _QUALITY_MIN_TOKENS = 200
 _VERBOSITY_MULTIPLIER = 3.0
+_SLIDING_WINDOW_SECONDS = 60.0
+_MICRO_TRANSACTION_THRESHOLD = 0.01
+_MICRO_TRANSACTION_ACCUMULATION_LIMIT = 1.0
 
 
 class StreamAbortGuard:
@@ -75,10 +79,17 @@ class StreamAbortGuard:
         checkpoint_interval: int = _CHECKPOINT_INTERVAL,
         quality_threshold: float = _QUALITY_THRESHOLD,
         verbosity_multiplier: float = _VERBOSITY_MULTIPLIER,
+        sliding_window_seconds: float = _SLIDING_WINDOW_SECONDS,
+        micro_transaction_threshold: float = _MICRO_TRANSACTION_THRESHOLD,
+        micro_transaction_accumulation_limit: float = _MICRO_TRANSACTION_ACCUMULATION_LIMIT,
     ) -> None:
         self._checkpoint_interval = checkpoint_interval
         self._quality_threshold = quality_threshold
         self._verbosity_multiplier = verbosity_multiplier
+        self._sliding_window_seconds = sliding_window_seconds
+        self._micro_transaction_threshold = micro_transaction_threshold
+        self._micro_transaction_accumulation_limit = micro_transaction_accumulation_limit
+        self._cost_events: list[tuple[float, float]] = []
         self._partial_output: str = ""
         self._tokens_emitted: int = 0
         self._aborted: bool = False

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-KB-001 | 03_modules/l01_infrastructure/knowledge-base/blueprint.md | §
+
+# [MODULE] zephyr.kb.migration.kb_gate_task
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ADR-0040 / tasks 表）。"""
 from __future__ import annotations
 
@@ -5,7 +25,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.schema.schemas import Task, TaskNamespace, TaskStatus, normalize_execution_model
+from zephyr.gates.task_types import Task, TaskNamespace, TaskStatus, normalize_execution_model
 
 # 与 KB 流水线文档任务链隔离的专用 seq，避免与真实 tasks 表主键碰撞概率
 _GATE_SEQ: dict[str, tuple[TaskNamespace, int]] = {

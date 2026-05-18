@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-010 | 03_modules/_cross_layer/feedback-loop/blueprint.md | §
 """Feedback Loop Engine (FLE)
 =====================================
 
@@ -26,7 +27,31 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
          vibe-coding-infrastructure-architecture.md §3.5
 """
 
-__all__ = ['_gen_inherited', 'auto_evolution', 'backpressure_bridge', 'config', 'decision_engine', 'error_budget', 'eval_harness', 'evolution_engine', 'exceptions', 'feedback_collector', 'fitness_functions', 'metrics_collector', 'protocols', 'scheduler', 'slo_manager']
+__all__ = [
+    '_gen_inherited',
+    'auto_evolution',
+    'backpressure_bridge',
+    'config',
+    'db_bridge',
+    'decision_engine',
+    'error_budget',
+    'eval_harness',
+    'evolution_engine',
+    'exceptions',
+    'feedback_collector',
+    'fitness_functions',
+    'generator',
+    'metrics_collector',
+    'protocols',
+    'scheduler',
+    'scheduler_act',
+    'scheduler_collect_detect',
+    'scheduler_health',
+    'scheduler_safety',
+    'slo_manager',
+    'template',
+    'validator',
+]
 
 
 MODULE_ID = "MOD-INF-010"

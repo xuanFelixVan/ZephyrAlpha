@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # L3 Reference: Test Patterns
 
 > Belongs to: implementer (SKILL-ROL-IMP-001)

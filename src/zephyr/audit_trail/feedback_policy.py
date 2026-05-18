@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.feedback_policy
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_trail.feedback_policy — MOD-INF-020 · 三角闭环反馈
 ==========================================================

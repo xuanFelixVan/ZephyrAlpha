@@ -20,6 +20,8 @@ Backend  : zephyr.governance.* 八件套治理模块
 - governance.write_audit         — 写入审计记录
 - governance.execute_rollback    — 执行回滚操作
 - governance.escalate            — 触发升级评估
+- governance.escalation_status   — 查询升级引擎状态（熔断器/经济护栏/活跃数）
+- governance.escalation_resolve  — 解决升级事件
 - governance.check_budget        — 检查预算状态
 """
 
@@ -77,7 +79,7 @@ class GovernanceServer(BaseMCPServer):
 
     SERVER_ID = "governance"
     VERSION = "1.1.0"
-    DESCRIPTION = "治理域八件套统一MCP入口 — PhaseGate/Audit/Lock/Contract/Health/Drift/RBAC/Skill/Rollback/Escalation/Budget 十五工具"
+    DESCRIPTION = "治理域八件套统一MCP入口 — PhaseGate/Audit/Lock/Contract/Health/Drift/RBAC/Skill/Rollback/Escalation/Budget 十七工具"
 
     def __init__(self, *, enable_rbac: bool = True) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
@@ -174,7 +176,7 @@ class GovernanceServer(BaseMCPServer):
                 "properties": {
                     "module_dir": {
                         "type": "string",
-                        "description": "要扫描的模块目录路径（相对于项目根），默认扫描 drift_detector 自身",
+                        "description": "要扫描的模块目录路径（相对于项目根），默认扫描 behavioral_auditor 自身",
                     },
                     "level": {
                         "type": "string",
@@ -325,12 +327,17 @@ class GovernanceServer(BaseMCPServer):
                     "category": {
                         "type": "string",
                         "enum": [
-                            "SECURITY_VIOLATION",
-                            "DEADLOCK",
-                            "BUDGET_EXCEEDED",
-                            "CASCADE_FAILURE",
-                            "AUTO_GUARD_FAILURE",
-                            "CUSTOM",
+                            "security_violation",
+                            "deadlock",
+                            "budget_exceeded",
+                            "cascade_failure",
+                            "auto_guard_failure",
+                            "drift_detected",
+                            "timeout",
+                            "quality_degradation",
+                            "owner_absent",
+                            "reward_hacking_rebound",
+                            "custom",
                         ],
                         "description": "事件类别",
                     },
@@ -360,6 +367,50 @@ class GovernanceServer(BaseMCPServer):
             handler=self._check_budget,
         )
 
+        self.register_tool(
+            name="governance.escalation_status",
+            description="查询升级引擎当前状态 — 熔断器/经济护栏/活跃升级数",
+            input_schema={
+                "type": "object",
+                "required": [],
+                "additionalProperties": False,
+                "properties": {},
+            },
+            handler=self._escalation_status,
+        )
+
+        self.register_tool(
+            name="governance.escalation_resolve",
+            description="解决升级事件 — 标记事件为已解决并更新熔断器",
+            input_schema={
+                "type": "object",
+                "required": ["category", "description"],
+                "additionalProperties": False,
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "security_violation",
+                            "deadlock",
+                            "budget_exceeded",
+                            "cascade_failure",
+                            "auto_guard_failure",
+                            "drift_detected",
+                            "timeout",
+                            "quality_degradation",
+                            "owner_absent",
+                            "reward_hacking_rebound",
+                            "custom",
+                        ],
+                        "description": "事件类别",
+                    },
+                    "description": {"type": "string", "description": "事件描述"},
+                    "owner_id": {"type": "string", "description": "可选：事件发起者 ID"},
+                },
+            },
+            handler=self._escalation_resolve,
+        )
+
     def _check_phase_gates(self, phase: str) -> dict[str, Any]:
         result = _run_script("scripts/lock_files.py", "status")
         gate_modules = {
@@ -371,10 +422,10 @@ class GovernanceServer(BaseMCPServer):
                 "zephyr.governance.audit_trail",
                 "zephyr.governance.rollback",
                 "zephyr.governance.escalation",
-                "zephyr.drift_detector",
+                "zephyr.behavioral_auditor",
             ],
             "phase_2": [
-                "zephyr.governance.budget_enforcer",
+                "zephyr.budget_enforcer",
                 "zephyr.governance.a2a",
             ],
         }
@@ -458,8 +509,8 @@ class GovernanceServer(BaseMCPServer):
             "zephyr.governance.audit_trail",
             "zephyr.governance.rollback",
             "zephyr.governance.escalation",
-            "zephyr.drift_detector",
-            "zephyr.governance.budget_enforcer",
+            "zephyr.behavioral_auditor",
+            "zephyr.budget_enforcer",
             "zephyr.governance.a2a",
         ]
         imports = {m: _import_check(m) for m in eight_modules}
@@ -490,8 +541,8 @@ class GovernanceServer(BaseMCPServer):
         import asyncio
 
         try:
-            from zephyr.drift_detector.cold_start import init_database, init_directories
-            from zephyr.drift_detector.drift_engine import ScanLevel, scan
+            from zephyr.behavioral_auditor.cold_start import init_database, init_directories
+            from zephyr.behavioral_auditor.drift_engine import ScanLevel, scan
 
             project_root = str(_PROJECT_ROOT)
             init_directories(project_root)
@@ -502,7 +553,7 @@ class GovernanceServer(BaseMCPServer):
             target_dir = (
                 str(_PROJECT_ROOT / module_dir)
                 if module_dir
-                else str(_PROJECT_ROOT / "src" / "zephyr" / "drift_detector")
+                else str(_PROJECT_ROOT / "src" / "zephyr" / "behavioral_auditor")
             )
             result = asyncio.run(scan(level=scan_level, scope=[target_dir] if module_dir else None))
             return {
@@ -522,14 +573,14 @@ class GovernanceServer(BaseMCPServer):
                 ],
             }
         except ImportError as e:
-            return {"error": f"drift_detector import failed: {e}", "events": []}
+            return {"error": f"behavioral_auditor import failed: {e}", "events": []}
         except Exception as e:
             return {"error": f"scan failed: {e}", "events": []}
 
     def _drift_report(self) -> dict[str, Any]:
         try:
-            from zephyr.drift_detector.drift_engine import build_report, load_detector_registry
-            from zephyr.drift_detector.drift_models import DriftReport
+            from zephyr.behavioral_auditor.drift_engine import build_report, load_detector_registry
+            from zephyr.behavioral_auditor.drift_models import DriftReport
 
             detectors = load_detector_registry()
             active_count = sum(1 for d in detectors if d.status == "active")
@@ -551,7 +602,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
-            from zephyr.drift_detector.drift_infrastructure import check_budget_for_gate
+            from zephyr.behavioral_auditor.drift_infrastructure import check_budget_for_gate
 
             result = check_budget_for_gate(module_id)
             return {
@@ -567,7 +618,7 @@ class GovernanceServer(BaseMCPServer):
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
     ) -> dict[str, Any]:
         try:
-            from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+            from zephyr.shared.contracts.identity.agent_identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
             from zephyr.agent_rbac.permission_guard import PermissionGuard
 
             ml = MaturityLevel(maturity)
@@ -745,7 +796,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _escalate(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
-            from zephyr.escalation import EscalationEngine, RuleCategory
+            from zephyr.escalation_engine import EscalationEngine, RuleCategory
 
             engine = EscalationEngine("mcp-governance")
             cat = RuleCategory(category)
@@ -791,6 +842,41 @@ class GovernanceServer(BaseMCPServer):
             return {"error": f"Budget Enforcer import failed: {e}"}
         except Exception as e:
             return {"error": f"check_budget failed: {e}"}
+
+    def _escalation_status(self) -> dict[str, Any]:
+        try:
+            from zephyr.escalation_engine import EscalationEngine
+
+            engine = EscalationEngine("mcp-status")
+            return {
+                "circuit_state": engine.get_circuit_state().name,
+                "economic_status": engine.get_economic_status(),
+                "active_count": engine.get_active_count(),
+            }
+        except ImportError as e:
+            return {"error": f"Escalation import failed: {e}"}
+        except Exception as e:
+            return {"error": f"escalation_status failed: {e}"}
+
+    def _escalation_resolve(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
+        try:
+            from zephyr.escalation_engine import EscalationEngine, RuleCategory
+
+            engine = EscalationEngine("mcp-resolve")
+            cat = RuleCategory(category)
+            event = engine.evaluate(cat, description, owner_id=owner_id)
+            engine.record_resolution(event)
+            return {
+                "category": category,
+                "level": event.level.value,
+                "state": event.state.value,
+                "event_id": event.event_id,
+                "resolved": True,
+            }
+        except ImportError as e:
+            return {"error": f"Escalation import failed: {e}", "resolved": False}
+        except Exception as e:
+            return {"error": f"escalation_resolve failed: {e}", "resolved": False}
 
 
 def create_server() -> GovernanceServer:

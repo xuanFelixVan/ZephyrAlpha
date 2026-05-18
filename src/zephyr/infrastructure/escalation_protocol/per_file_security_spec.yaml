@@ -1,9 +1,0 @@
-# MOD-INF-022 Per-File Security Minimum Spec
-files:
-  escalation_engine.py:
-    required_checks: [no_eval, no_exec, no_os_system]
-    max_class_count: 3
-    max_method_lines: 50
-  delegation_manager.py:
-    required_checks: [no_eval, no_exec]
-    max_class_count: 2

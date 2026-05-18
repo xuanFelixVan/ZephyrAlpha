@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L08-001 | 03_modules/l08_human_ai_interface/hmi-core/blueprint.md | §
+
+# [MODULE] zephyr.l08_human_ai_interface.dashboard.components.task_progress
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: T-4-07 Task Progress Component
 """
 TaskProgressComponent · 任务进度看板（4 进度）

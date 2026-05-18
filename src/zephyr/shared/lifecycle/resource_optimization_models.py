@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+
+# [MODULE] zephyr.shared.lifecycle.resource_optimization_models
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS] shared.io.io_cache; shared.infra.process_pool; runtime.resource_optimization; shared.lifecycle.resource_optimization_engine
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 models.py - Pydantic data models for resource optimization engine
 =================================================================
@@ -107,6 +127,7 @@ class ProcessPoolStats(BaseModel):
     max_processes: int = Field(default=30, ge=1)
     reuse_count: int = Field(default=0, ge=0)
     zombie_count: int = Field(default=0, ge=0)
+    idle_count: int = Field(default=0, ge=0)
 
 
 class PressureState(BaseModel):

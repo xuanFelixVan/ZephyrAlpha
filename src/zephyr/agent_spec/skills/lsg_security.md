@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # LSG Security Specialist — LLM Security Gateway (MOD-INF-014)
 
 ## 模块概览

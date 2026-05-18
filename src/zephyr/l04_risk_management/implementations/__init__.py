@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L04-001 | 03_modules/l04_risk_management/risk-management-core/blueprint.md | §
 """L04 — Risk Management Concrete Implementations
 
 Phase C 具体实现包。包含所有抽象基类的默认生产级实现。

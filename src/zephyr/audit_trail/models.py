@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-020 | 03_modules/l01_infrastructure/audit-trail/blueprint.md | §
+
+# [MODULE] zephyr.audit_trail.models
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 audit_trail.models — MOD-INF-020 · Pydantic V2 全量审计模型
 =============================================================
@@ -79,6 +99,8 @@ class AuditEventType(str, Enum):
     AI_AUDIT_GUARD = "ai_audit_guard"
     LLM_BEHAVIOR_AUDIT = "llm_behavior_audit"
     SESSION_HANDOFF = "session_handoff"
+    SESSION_RECORD = "session_record"
+    BUDGET_ENFORCEMENT = "budget_enforcement"
     ROLLBACK_DISCARD = "rollback_discard"
     ROLLBACK_NEXUS = "rollback_nexus"
     DRIFT_HOTFIX_BYPASS = "drift_hotfix_bypass"

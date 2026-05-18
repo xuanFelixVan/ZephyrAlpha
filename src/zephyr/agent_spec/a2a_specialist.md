@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-019
+---
+
 # A2A Protocol Specialist (SKILL-DOM-A2A-001)
 
 > **模块**: MOD-INF-025 (A2A 协调协议)

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L03-001 | 03_modules/l03_signal_generation/signal-generation-core/blueprint.md | §
+
+# [MODULE] zephyr.l03_signal_generation.aggregator_base
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l03_signal_generation
 # category: signal_interface
@@ -28,10 +48,10 @@ from __future__ import annotations
 import abc
 from typing import ClassVar
 
-from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.errors.signal_degradation_warning import SignalDegradationWarning
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
+from zephyr.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class SignalAggregatorBase(abc.ABC):

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-017 | 03_modules/l01_infrastructure/code-dedup-engine/blueprint.md | §
+
+# [MODULE] zephyr.l01_infrastructure.code_dedup_engine.config
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """配置管理 — 策略树 YAML 加载 + 项目规模感知四 Tier 自适应阈值.
 
 职责：
@@ -9,6 +29,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 # ── 项目规模感知四 Tier 自适应阈值 ──────────────────────────
@@ -139,3 +160,72 @@ def get_tier_name(total_lines: int) -> str:
     """返回 Tier 名称字符串."""
     tier = get_tier_for_project(total_lines)
     return tier["name"]
+
+
+_POLICY_TREE_YAML_PATH: Path = Path(__file__).parent / "config" / "policy_tree.yaml"
+
+
+def load_policy_tree() -> dict[str, Any]:
+    """从 YAML 加载策略树配置，YAML 不存在或无效时 fallback 到硬编码 POLICY_TREE."""
+    if _POLICY_TREE_YAML_PATH.exists():
+        try:
+            import yaml
+
+            with open(_POLICY_TREE_YAML_PATH, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+            if isinstance(data, dict) and "version" in data:
+                return data
+        except Exception:
+            pass
+    return POLICY_TREE
+
+
+def load_policy_rules() -> list[dict[str, Any]]:
+    """从 YAML 加载策略规则列表，YAML 不存在时从硬编码 POLICY_TREE 推导."""
+    tree = load_policy_tree()
+    if "rules" in tree and isinstance(tree["rules"], list):
+        return tree["rules"]
+    thresholds = tree.get("thresholds", {})
+    monoculture = tree.get("monoculture_immunity", {})
+    return [
+        {
+            "id": "R001",
+            "name": "high_confidence_block",
+            "condition": f"similarity >= {thresholds.get('high_confidence', 0.95)}",
+            "action": "BLOCK_DEDUP",
+            "exit_code": 2,
+            "severity": "critical",
+        },
+        {
+            "id": "R002",
+            "name": "medium_confidence_warn",
+            "condition": f"similarity >= {thresholds.get('medium_confidence', 0.85)}",
+            "action": "WARN",
+            "exit_code": 1,
+            "severity": "warning",
+        },
+        {
+            "id": "R003",
+            "name": "low_confidence_skip",
+            "condition": f"similarity >= {thresholds.get('low_confidence', 0.70)}",
+            "action": "SKIP",
+            "exit_code": 1,
+            "severity": "info",
+        },
+        {
+            "id": "R004",
+            "name": "blast_radius_warning",
+            "condition": f"brs >= {monoculture.get('blast_radius_warning_threshold', 60)}",
+            "action": "WARN",
+            "exit_code": 1,
+            "severity": "warning",
+        },
+        {
+            "id": "R005",
+            "name": "blast_radius_critical",
+            "condition": f"brs >= {monoculture.get('blast_radius_critical_threshold', 80)}",
+            "action": "BLOCK_FIX",
+            "exit_code": 2,
+            "severity": "critical",
+        },
+    ]

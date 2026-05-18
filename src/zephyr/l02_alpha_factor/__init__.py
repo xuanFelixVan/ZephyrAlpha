@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L02-001 | 03_modules/l02_alpha_factor/alpha-factor-core/blueprint.md | §
 """ZephyrAlpha — L02 Alpha Factor Layer
 
 SSoT: cross-layer-contracts.yaml v3.0
@@ -32,7 +33,7 @@ from .factor_base import (
     autodiscover_factors,
 )
 
-__all__ = ['FactorBase', 'FactorMeta', 'FactorRegistry', 'autodiscover_factors', 'base']
+__all__ = ['FactorBase', 'FactorMeta', 'FactorRegistry', 'autodiscover_factors', 'base', 'factor_base']
 
 # CODEGEN-GUARD: __init__-manual-exports
 # 包级导出以 factor_base 为 SSoT（base.py 为 codegen 占位；禁止混用两套 FactorBase）

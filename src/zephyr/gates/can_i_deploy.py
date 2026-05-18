@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
+
+# [MODULE] zephyr.gates.can_i_deploy
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Can-I-Deploy 预部署门禁（GATE-CDC-1）
 
-依据：MOD-MASTER-001 蓝图 §十六 CT-CDC-001
+依据：MOD-MASTER-002 蓝图 §十六 CT-CDC-001
 4项预部署检查：consumer_expectations/schema_version/contract_consistency/health。
 """
 

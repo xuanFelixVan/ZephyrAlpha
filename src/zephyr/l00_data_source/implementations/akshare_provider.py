@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L00-001 | 03_modules/l00_data_source/datasource-core/blueprint.md | §
+
+# [MODULE] zephyr.l00_data_source.implementations.akshare_provider
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l00_data_source
 # category: provider_implementation

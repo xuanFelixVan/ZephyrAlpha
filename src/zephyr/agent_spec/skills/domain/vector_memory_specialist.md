@@ -1,4 +1,5 @@
 ---
+
 skill_id: SKILL-DOM-VMS-001
 name: vector-memory
 description: "Vector Memory Service — ChromaDB 8-collection vector store with BGE-M3 ONNX embeddings"
@@ -10,7 +11,9 @@ version: "0.1.0"
 token_budget_l1: 50
 token_budget_l2: 500
 author: factory-agent
+blueprint_id: MOD-INF-019
 ---
+
 
 # Domain Skill: Vector Memory Specialist
 

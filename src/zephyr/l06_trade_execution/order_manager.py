@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L06-001 | 03_modules/l06_trade_execution/execution-core/blueprint.md | §
+
+# [MODULE] zephyr.l06_trade_execution.order_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # ---
 # layer: l06_trade_execution
 # category: order_implementation
@@ -27,8 +47,8 @@ from enum import Enum
 from typing import Any, Callable, Optional
 
 from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading_contracts.execution.fill import Fill
+from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 
 _logger = logging.getLogger(__name__)
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
 """
 Agent 身份与权限系统 — 七层纵深防御 + 六横切面 Runtime RBAC 11.3
 
@@ -79,8 +80,129 @@ DOM-GOV-001 集成契约:
   - 生产环境的实际部署 → CI/CD
   - Agent 会话管理 → Session Continuity
 """
+from . import anti_pattern_guard
+from . import bootstrap_verifier
+from . import build_sanitizer
+from . import cascading_failure_isolator
+from . import compliance_matrix
+from . import continuous_verifier
+from . import defense_depth
+from . import environment_manager
+from . import escalation_handler
+from . import key_hierarchy
+from . import micro_verifier
+from . import microstructure_defense
+from . import permission_mode_manager
+from . import phase_executor
+from . import post_action_verifier
+from . import secrets_lifecycle
+from . import session_concurrency
+from . import session_lifecycle
 
-__all__ = ['AdversarialResilience', 'AgentIdentity', 'AgentMaturity', 'AgentRbacError', 'AutoGuard', 'AutoMaintenance', 'ColdStartLock', 'ColdStartLockedError', 'EscalationHandler', 'ForensicAssurance', 'IntentBinder', 'KillSwitch', 'OverrideTokenExpiredError', 'PermissionDeniedError', 'PermissionGuard', 'PermissionHookRegistry', 'PermissionRequest', 'PermissionTopology', 'PermissionVerdict', 'RbacConfig', 'SequenceGuard', 'abac_guard', 'adversarial_resilience', 'agent_creation_policy', 'anomaly_detector', 'asymmetric_audit', 'audit_log_guard', 'auto_maintenance', 'blind_spot_tracker', 'blueprint_fidelity', 'bootstrap_verifier', 'build_sanitizer', 'cache_invalidation', 'canary_rollout_manager', 'cascading_failure_isolator', 'cold_start_lock', 'get_cold_start_lock', 'context_drift_detector', 'continuous_verifier', 'contract_verifier', 'cross_cutting', 'cross_session_detector', 'cybersec_2026_guard', 'decision_explainer', 'decision_registry', 'dependency_auditor', 'derive_rbac_roles', 'dry_run', 'emergency_override', 'engine_degradation', 'escalation_handler', 'exceptions', 'false_completion_detector', 'genesis_bootstrap', 'guard_layers', 'identity', 'immutable_core', 'input_guard', 'integration', 'integrity_self_check', 'intent_binder', 'key_hierarchy', 'kill_switch', 'legal_audit_chain', 'memory_guard', 'memory_provenance_guard', 'micro_verifier', 'monotonic_clock', 'multi_agent_collusion_detector', 'native_api_guard', 'non_repudiation', 'novel_attack_guard', 'observability', 'output_guard', 'path_guard', 'permission_guard', 'permission_hooks', 'permission_mode_manager', 'phase_executor', 'post_action_verifier', 'rbac_guard', 'replay_attack_guard', 'risk_mitigation', 'rollback_sandbox', 'rule_injection_guard', 'sequence_guard', 'shell_dialect_detector', 'toctou_guard', 'vibe_coding_guard']
+__all__ = [
+    'AdversarialResilience',
+    'AgentIdentity',
+    'AgentMaturity',
+    'AgentRbacError',
+    'AutoGuard',
+    'AutoMaintenance',
+    'ColdStartLock',
+    'ColdStartLockedError',
+    'EscalationHandler',
+    'ForensicAssurance',
+    'IntentBinder',
+    'KillSwitch',
+    'OverrideTokenExpiredError',
+    'PermissionDeniedError',
+    'PermissionGuard',
+    'PermissionHookRegistry',
+    'PermissionRequest',
+    'PermissionTopology',
+    'PermissionVerdict',
+    'RbacConfig',
+    'SequenceGuard',
+    'a2a_check',
+    'abac_guard',
+    'adversarial_resilience',
+    'agent_creation_policy',
+    'anomaly_detector',
+    'anti_pattern_guard',
+    'approver_check',
+    'asymmetric_audit',
+    'audit_log_guard',
+    'auto_maintenance',
+    'blind_spot_tracker',
+    'blueprint_fidelity',
+    'bootstrap_superadmin',
+    'bootstrap_verifier',
+    'build_sanitizer',
+    'cache_invalidation',
+    'canary_rollout_manager',
+    'capability_check',
+    'cascading_failure_isolator',
+    'cold_start_lock',
+    'compliance_matrix',
+    'context_drift_detector',
+    'continuous_verifier',
+    'contract_verifier',
+    'contracts',
+    'cross_cutting',
+    'cross_session_detector',
+    'cybersec_2026_guard',
+    'decision_explainer',
+    'decision_registry',
+    'defense_depth',
+    'dependency_auditor',
+    'derive_rbac_roles',
+    'dry_run',
+    'emergency_override',
+    'engine_degradation',
+    'environment_manager',
+    'escalation_handler',
+    'exceptions',
+    'false_completion_detector',
+    'genesis_bootstrap',
+    'get_cold_start_lock',
+    'guard_layers',
+    'identity',
+    'immutable_core',
+    'input_guard',
+    'integration',
+    'integrity_self_check',
+    'intent_binder',
+    'key_hierarchy',
+    'kill_switch',
+    'legal_audit_chain',
+    'memory_guard',
+    'memory_provenance_guard',
+    'micro_verifier',
+    'microstructure_defense',
+    'monotonic_clock',
+    'multi_agent_collusion_detector',
+    'native_api_guard',
+    'non_repudiation',
+    'novel_attack_guard',
+    'observability',
+    'output_guard',
+    'path_guard',
+    'permission_guard',
+    'permission_hooks',
+    'permission_mode_manager',
+    'phase_executor',
+    'post_action_verifier',
+    'rbac_guard',
+    'replay_attack_guard',
+    'risk_mitigation',
+    'rollback_sandbox',
+    'rule_injection_guard',
+    'secrets_lifecycle',
+    'sequence_guard',
+    'session_concurrency',
+    'session_lifecycle',
+    'shell_dialect_detector',
+    'toctou_guard',
+    'vibe_coding_guard',
+]
 
 _COREMODULES: dict[str, tuple[str, ...]] = {
     "permission_guard": ("PermissionGuard", "GuardDecision", "GuardResult"),

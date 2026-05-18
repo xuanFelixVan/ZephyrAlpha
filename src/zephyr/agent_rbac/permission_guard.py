@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.permission_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 Permission Guard — 七层+六横切面统一编排核心API
 
@@ -11,7 +31,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
-from zephyr.agent_rbac.identity import AgentIdentity
+from zephyr.shared.contracts.identity.agent_identity import AgentIdentity
+from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
 from zephyr.agent_rbac.immutable_core import ImmutableCore, get_immutable_core
 from zephyr.agent_rbac.kill_switch import KillSwitch, get_kill_switch, TriggerEvent
 from zephyr.agent_rbac.engine_degradation import EngineDegradationManager, DegradationLevel
@@ -33,22 +54,6 @@ L5_BUDGET_NS = 1_000_000
 L6_BUDGET_NS = 2_000_000
 L7_BUDGET_NS = 3_000_000
 TOTAL_BUDGET_NS = 18_000_000
-
-
-class GuardDecision(str, Enum):
-    ALLOW = "ALLOW"
-    AUTO_GUARD = "AUTO_GUARD"
-    BLOCKED = "BLOCKED"
-
-
-@dataclass
-class GuardResult:
-    decision: GuardDecision = GuardDecision.ALLOW
-    layer: str = ""
-    reason: str = ""
-    rule_id: str = ""
-    audit_context: dict = field(default_factory=dict)
-    timing_ns: int = 0
 
 
 class PermissionGuard:

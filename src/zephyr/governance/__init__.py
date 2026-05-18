@@ -1,3 +1,4 @@
+# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
@@ -32,44 +33,65 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 注意：phase_check_registry 和 phase_manager 由调用方直接导入，不从 __init__ 重导出（避免循环依赖）。
 """
 
-import zephyr.escalation as escalation_protocol
+import zephyr.escalation_engine as escalation_protocol
 import zephyr.budget_enforcer as budget_enforcer_mod
 import zephyr.drift_detector as drift_detector_mod
 import zephyr.rollback as rollback_mod
-import zephyr.a2a as a2a_protocol
+import zephyr.l01_infrastructure.a2a_protocol.governance as a2a_protocol
+
+from zephyr.governance.path_resolver import PathResolver, PathResolution
+
+from zephyr.governance.constitutional_update import (
+    Learning,
+    ProposedUpdate,
+    ConstitutionalAutoUpdate,
+)
+
+from zephyr.governance.mcp_result_push import ResultPushManager, PushStatus
+
+from zephyr.governance.admission_response import (
+    AdmissionResponse,
+    AdmissionResponseStatus,
+    AdmissionResponseBuilder,
+)
 
 __all__ = [
     'agent_debate', 'agent_dispatch', 'ai_code_standards',
-    'ai_self_diagnosis', 'anti_pattern_guard', 'api_lifecycle',
-    'architecture_contracts', 'architecture_principles', 'backtest_engine',
+    'ai_self_diagnosis', 'api_lifecycle',
+    'architecture_contracts', 'architecture_principles',
     'bandwidth_optimizer', 'benchmark_integrity', 'broker_resilience',
-    'bus_factor_defense', 'changelog_manager', 'code_archaeology',
-    'code_review_ai', 'compliance_matrix', 'consequence_manager',
-    'context_manager', 'context_recycling', 'corporate_actions', 'cost_router',
-    'cross_env_consistency', 'daily_ops', 'data_classification',
+    'bus_factor_defense', 'code_review_ai',
+    'consequence_manager',
+    'constitutional_update',
+    'mcp_result_push', 'ResultPushManager', 'PushStatus',
+    'admission_response', 'AdmissionResponse', 'AdmissionResponseStatus', 'AdmissionResponseBuilder',
+    'context_manager', 'context_recycling', 'cross_env_consistency',
+    'data_classification',
     'data_lifecycle', 'data_quality', 'data_source_reliability',
-    'decision_fatigue', 'decision_fatigue_cli', 'defense_depth',
-    'dependency_manager', 'dora_metrics', 'environment_manager',
+    'decision_fatigue', 'decision_fatigue_cli',
+    'dependency_manager', 'environment_manager',
     'fault_tolerance', 'financial_compliance', 'fsm_verifier',
-    'glossary_matrix', 'incident_response', 'incremental_review', 'kill_switch',
+    'incident_response', 'incremental_review',
     'knowledge_engine', 'local_first_arch', 'market_data_pipeline',
-    'microstructure_defense', 'migration_strategy', 'ml_engineering',
+    'microstructure_defense', 'migration_strategy',
     'model_drift_monitor', 'multi_model_consensus', 'observability_dashboard',
     'offline_autonomy', 'offline_resilience', 'oms_risk_engine',
-    'ops_foundation', 'paper_live_transition', 'performance_baseline',
-    'phase_manager', 'post_live_verification', 'prompt_lifecycle',
+    'ops_foundation', 'paper_live_transition', 'path_resolver', 'performance_baseline',
+    'phase_manager', 'PathResolution', 'PathResolver', 'ConstitutionalAutoUpdate', 'Learning', 'ProposedUpdate',
+    'HookResult', 'HookStrategy', 'PipelineResult', 'PostProcessHook', 'PostProcessPipeline',
+    'format_hook', 'lint_hook', 'typecheck_hook',
+    'post_live_verification', 'prompt_lifecycle',
     'provenance_tracker', 'realtime_streaming', 'regime_detector',
-    'risk_matrix', 'sbom_generator', 'secrets_lifecycle',
-    'session_concurrency', 'session_lifecycle', 'spof_checker',
+    'session_concurrency', 'spof_checker',
     'startup_shutdown', 'startup_shutdown_cli', 'strategy_portfolio',
-    'supply_chain_security', 'system_topology', 'tco_model', 'time_sync',
-    'token_budget', 'vibe_coding_enforcer', 'wqa_scorer',
+    'supply_chain_security', 'system_topology', 'vibe_coding_enforcer',
     'escalation_protocol',
     'budget_enforcer_mod',
     'drift_detector_mod',
     'rollback_mod',
     'a2a_protocol',
     'phase_check_registry',
+    'post_process',
 ]
 
 __version__ = "0.2.0"

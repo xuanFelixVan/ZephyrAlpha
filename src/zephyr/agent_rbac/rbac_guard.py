@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-018 | 03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+
+# [MODULE] zephyr.agent_rbac.rbac_guard
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 L1 RBAC Guard — 三层权限模型 (always_allow / auto_guard / blocked)
 
@@ -12,7 +32,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
-from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, MaturityLevel, MATURITY_AUTO_GUARD_TIMEOUT
+from zephyr.shared.contracts.identity.agent_identity import AgentIdentity, AgentRole, MaturityLevel, MATURITY_AUTO_GUARD_TIMEOUT
 from zephyr.agent_rbac.immutable_core import ImmutableCore
 
 
@@ -180,7 +200,7 @@ class RBACGuard:
         return None
 
     def _get_role_permissions(self, agent: AgentIdentity) -> list[str]:
-        from zephyr.agent_rbac.identity import ROLE_DEFAULT_PERMISSIONS
+        from zephyr.shared.contracts.identity.agent_identity import ROLE_DEFAULT_PERMISSIONS
         return ROLE_DEFAULT_PERMISSIONS.get(agent.role, [])
 
     def is_blocked(self, result: PermissionResult) -> bool:

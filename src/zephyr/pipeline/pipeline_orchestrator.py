@@ -14,7 +14,7 @@ PipelineOrchestrator — M1-M11 管线协调器
   - ``_call_model`` 通过 ``LLMGateway`` 调用真实 LLM API（DeepSeek / GLM / Claude / OpenAI）
   - 成功时返回 ``simulated=False``，使用 LLM 实际输出
   - fallback 路径仅在 API 不可用时返回 ``simulated=True`` 占位（防御性降级）
-  - 见 ``specs/GOV-RSTR-001`` §11.3 Phase 1（SRC-0022）
+  - 见 ``specs/GOV-FSTR-001`` §11.3 Phase 1（SRC-0022）
 
 双管线架构：
   A区 M1-M5 → 生产（代码生成/校验/打包）
@@ -92,11 +92,11 @@ from zephyr.pipeline.models import (
 from zephyr.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.pipeline.preemption_manager import PreemptionManager
 from zephyr.pipeline.routing_plugins import PipelineRouter
-from zephyr.shared.schema.schemas import TaskStatus
+from zephyr.gates.task_types import TaskStatus
 
 _RBAC_AVAILABLE = False
 try:
-    from zephyr.governance.escalation.rbac_bridge import EscalationRBACBridge, RBACCheckResult
+    from zephyr.escalation_engine.governance.rbac_bridge import EscalationRBACBridge, RBACCheckResult
 
     _RBAC_AVAILABLE = True
 except ImportError:
@@ -574,7 +574,7 @@ class PipelineOrchestrator:
 
             skill_injection: SkillInjectionResult | None = None
             if self._skill_bridge is not None:
-                stage_hint = (hints.stage if hints else None) or "construction"
+                stage_hint = (hints.target_layer if hints and hints.target_layer else None) or "construction"
                 task_desc = (
                     (getattr(task_card, "description", "") or "")
                     + " "
@@ -1920,9 +1920,32 @@ class PipelineOrchestrator:
     def _check_token_budget(self, task_card: TaskCard) -> tuple[bool, str]:
         """检查跨 dispatch token 预算是否充足。
 
-        当前活跃 dispatch 的已消耗 token 总计不应超过
-        _DEFAULT_TOKEN_BUDGET 的 80%。
+        优先使用 BudgetEngine.pre_flight_check()；若不可用则回退到本地简单检查。
         """
+        try:
+            from zephyr.budget_enforcer import BudgetEngine
+            engine = BudgetEngine()
+            result = engine.pre_flight_check(
+                operation_id=f"pipeline-{task_card.task_id}",
+                estimated_tokens=_DEFAULT_TOKEN_BUDGET // 10,
+                estimated_cost=0.01,
+            )
+            from zephyr.budget_enforcer.budget_models import GateDecision
+            if result.decision == GateDecision.DENY:
+                self._log(
+                    "WARN",
+                    f"BudgetEngine DENY: {result.reason} (remaining_daily={result.remaining_daily})",
+                )
+                return False, (
+                    f"BUDGET-DENY: {result.reason}; "
+                    f"remaining_daily={result.remaining_daily}. Task {task_card.task_id} blocked by BudgetEngine."
+                )
+            if result.decision in (GateDecision.DEGRADE, GateDecision.NARROW):
+                return True, f"BUDGET-WARN: {result.reason}; tier={result.model_tier}"
+            return True, ""
+        except Exception:
+            pass
+
         consumed_now = sum(self._token_budget_consumed.values())
         remaining = max(0, self._DEFAULT_TOKEN_BUDGET - consumed_now)
         usage_pct = consumed_now / self._DEFAULT_TOKEN_BUDGET if self._DEFAULT_TOKEN_BUDGET > 0 else 0

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-011 | 03_modules/l01_infrastructure/vector-memory/blueprint.md | §
+
+# [MODULE] zephyr.vector_memory.collection_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
 ================================================================
@@ -21,6 +41,7 @@ CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
 
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 from typing import Any, ClassVar
@@ -251,10 +272,11 @@ class CollectionManager:
     VMS_COLLECTION_NAMES: ClassVar[tuple[str, ...]] = COLLECTION_NAMES
     VMS_SCHEMAS: ClassVar[dict[str, dict[str, Any]]] = COLLECTION_SCHEMAS
 
-    def __init__(self, persist_dir: Path | str | None = None) -> None:
+    def __init__(self, persist_dir: Path | str | None = None, embedding_router: Any | None = None) -> None:
         self._persist_dir = Path(persist_dir) if persist_dir is not None else VMS_PERSIST_DIR
         self._persist_dir.mkdir(parents=True, exist_ok=True)
         self._client: Any | None = None
+        self._embedding_router = embedding_router
 
     @property
     def client(self) -> Any:
@@ -433,11 +455,27 @@ class CollectionManager:
         from datetime import UTC, datetime
 
         doc_id = f"{collection_name}::{datetime.now(UTC).strftime('%Y%m%dT%H%M%S')}::{uuid.uuid4().hex[:12]}"
-        meta = dict(metadata)
+        meta = self._flatten_metadata(metadata)
         meta["written_at"] = datetime.now(UTC).isoformat()
-        col.add(ids=[doc_id], documents=[content], metadatas=[meta])
+
+        if self._embedding_router is not None:
+            embedding = self._embedding_router.embed(content, collection_name)
+            col.add(ids=[doc_id], documents=[content], metadatas=[meta], embeddings=[embedding])
+        else:
+            col.add(ids=[doc_id], documents=[content], metadatas=[meta])
+
         _logger.debug("CollectionManager: 写入 '%s' → %s (provenance validated)", content[:40], collection_name)
         return doc_id
+
+    @staticmethod
+    def _flatten_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
+        flat: dict[str, Any] = {}
+        for key, value in metadata.items():
+            if isinstance(value, dict):
+                flat[key] = json.dumps(value, ensure_ascii=False, sort_keys=True)
+            else:
+                flat[key] = value
+        return flat
 
     def init_all_collections(self) -> list[CollectionInfo]:
         results: list[CollectionInfo] = []

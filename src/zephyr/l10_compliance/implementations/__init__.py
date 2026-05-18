@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L10-001 | 03_modules/l10_compliance/compliance-core/blueprint.md | §
 """L10 — Compliance Concrete Implementations
 
 Phase C 具体实现包。

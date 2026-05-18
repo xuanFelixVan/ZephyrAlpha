@@ -1,7 +1,27 @@
+# [BLUEPRINT] MOD-INF-035 | 03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+
+# [MODULE] zephyr.orchestrator.state_propagation
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """
 全局状态传播链（State Propagation Chain）
 
-依据：MOD-MASTER-001 蓝图 §四 全局状态传播链 (CT-ORC-DB)
+依据：MOD-MASTER-002 蓝图 §四 全局状态传播链 (CT-ORC-DB)
 TaskCard 状态变更 → 所有关联系统得到通知。
 
 传播规则：

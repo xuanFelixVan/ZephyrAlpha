@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-INF-009 | 03_modules/_cross_layer/pipeline/blueprint.md | §
+
+# [MODULE] zephyr.pipeline.backpressure_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 """Pipeline — Backpressure Manager
 
 跨层背压信号管理器。管理 L00→L02→L03 数据管道中的背压控制信号。
@@ -29,9 +49,9 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Optional
 
-from zephyr.shared.contracts.backpressure.pause import BackpressurePause
-from zephyr.shared.contracts.backpressure.resume import BackpressureResume
-from zephyr.shared.contracts.backpressure.throttle import BackpressureThrottle
+from zephyr.pipeline.backpressure_types import BackpressurePause
+from zephyr.pipeline.backpressure_types import BackpressureResume
+from zephyr.pipeline.backpressure_types import BackpressureThrottle
 
 _logger = logging.getLogger(__name__)
 

@@ -1,3 +1,23 @@
+# [BLUEPRINT] MOD-L08-001 | 03_modules/l08_human_ai_interface/hmi-core/blueprint.md | §
+
+# [MODULE] zephyr.l08_human_ai_interface.dashboard.components.knowledge_overview
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 # AI-generated: T-4-07 Knowledge Overview Component
 """
 KnowledgeOverviewComponent · 知识库概览（条目数/状态分布/激活率）
