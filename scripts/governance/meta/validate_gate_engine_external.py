@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_gate_engine_external.py | §
 """
 validate_gate_engine_external.py — Gate Engine 外部完整性验证
 =============================================================

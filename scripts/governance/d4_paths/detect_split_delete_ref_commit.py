@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_split_delete_ref_commit.py | §
 """
 detect_split_delete_ref_commit.py — 删除引用分离提交检测
 

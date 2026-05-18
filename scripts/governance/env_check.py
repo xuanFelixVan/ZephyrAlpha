@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/env_check.py | §
 """env_check.py — 环境就绪检查门禁 (Environment Readiness Gate)
 
 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）

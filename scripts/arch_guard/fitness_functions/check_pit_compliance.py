@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_pit_compliance.py | §
 """
 check_pit_compliance.py — PIT（Point-in-Time）铁律强制执行 (INV-004)
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/check_audit_rbac_isolation.py | §
 #!/usr/bin/env python
 """
 check_audit_rbac_isolation.py — 静态分析 audit_trail 是否直接 import agent_rbac.

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/audit_directory_scalability.py | §
 """audit_directory_scalability.py -- 物理结构可扩展性审计 [1500模块支撑能力检查]
 
 对标: Problem VII -- 新增物理容量/可扩展性审计维度
@@ -36,7 +37,7 @@ C_TRACK_LAYERS = [
     "l05_portfolio_construction", "l06_trade_execution",
     "l07_post_trade_analytics", "l08_human_ai_interface",
     "l09_research_innovation", "l10_compliance",
-    "l11_ml_platform", "l12_system_telemetry", "l13_experimentation",
+    "l11_ml_platform", "system_telemetry", "l13_experimentation",
 ]
 
 THRESHOLD_DOCS_MD_WARN = 5

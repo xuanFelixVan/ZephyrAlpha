@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/check_handoff_manifests.py | §
 #!/usr/bin/env python
 """
 check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.

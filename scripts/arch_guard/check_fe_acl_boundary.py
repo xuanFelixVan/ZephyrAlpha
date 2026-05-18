@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_fe_acl_boundary.py | §
 """
 check_fe_acl_boundary.py — INV-006 前端 ACL（仓库内有前端树则启用）
 

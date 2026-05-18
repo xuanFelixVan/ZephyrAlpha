@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_g6_ctr_compliance.py | §
 """check_g6_ctr_compliance.py - G6 CTR Contract Compliance Gate Engine
 
 

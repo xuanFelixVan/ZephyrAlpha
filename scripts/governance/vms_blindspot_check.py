@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_blindspot_check.py | §
 """
 VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
 =============================================================

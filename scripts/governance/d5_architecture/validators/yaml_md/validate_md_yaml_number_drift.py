@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py | §
 """validate_md_yaml_number_drift.py — MD 视图与 YAML SSoT 数字漂移检测闸门（GATE-NUM-DRIFT）
 v1.0.0 — 2026-05-03
 

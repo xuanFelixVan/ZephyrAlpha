@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/__init__.py | §
 """
 scripts/governance/ — 脚本系统治理校验脚本集。
 

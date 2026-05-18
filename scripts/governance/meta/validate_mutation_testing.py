@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_mutation_testing.py | §
 """
 validate_mutation_testing.py — 变异测试引擎（蓝图 §19.2 + B75）
 

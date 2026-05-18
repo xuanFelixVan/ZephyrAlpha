@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_permanent_file_deletion.py | §
 """
 detect_permanent_file_deletion.py — 永久文件删除检测
 

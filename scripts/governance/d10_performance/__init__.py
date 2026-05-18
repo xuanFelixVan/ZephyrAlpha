@@ -1,1 +1,2 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d10_performance/__init__.py | §
 # D10 性能容量 — 待建设

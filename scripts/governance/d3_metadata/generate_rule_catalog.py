@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_rule_catalog.py | §
 #!/usr/bin/env python3
 """Scan docs/01_policies_and_standards and emit _registry/catalogs/rule-catalog.yaml.
 

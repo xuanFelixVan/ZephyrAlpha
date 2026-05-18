@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_blueprint_provenance.py | §
 """
 Blueprint Provenance Gate - V-12: validate provenance triples in blueprint frontmatter
 Task: T-V2-001 (Wave 0 final review R73)

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/auto_sync_all_registries.py | §
 """全自动注册表同步器
 =====================================
 扫描变更→更新所有相关注册表→零孤儿

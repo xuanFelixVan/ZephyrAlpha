@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/rebuild_audit_index.py | §
 """
 scripts/governance/rebuild_audit_index.py — 重建 audit_trail SQLite 派生索引
 ==============================================================================

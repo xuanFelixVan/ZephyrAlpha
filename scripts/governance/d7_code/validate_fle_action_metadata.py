@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_fle_action_metadata.py | §
 """
 validate_fle_action_metadata.py — FLE Action 元数据校验
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/detect_ai_products_in_docs.py | §
 """
 detect_ai_products_in_docs.py — AI 产物位置检测
 

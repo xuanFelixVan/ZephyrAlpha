@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/hooks/auto-handoff-log.py | §
 #!/usr/bin/env python3
 """自动交接日志生成器 — Sprint 0 批次F (F-02)
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/run_adversarial_checks.py | §
 """
 CI Entry: Adversarial Validation — Red-Blue Drift Test
 =======================================================

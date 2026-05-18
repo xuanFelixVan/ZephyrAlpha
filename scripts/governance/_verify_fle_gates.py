@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_verify_fle_gates.py | §
 """Module docstring — see module-level docstring for details."""
 import yaml, importlib
 from pathlib import Path

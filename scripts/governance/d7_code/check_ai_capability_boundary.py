@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/check_ai_capability_boundary.py | §
 """
 行为说明
 --------

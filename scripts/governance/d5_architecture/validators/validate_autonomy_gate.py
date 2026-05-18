@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_autonomy_gate.py | §
 """validate_autonomy_gate.py — 变更级别 vs AI 自治权限交叉校验
 
 

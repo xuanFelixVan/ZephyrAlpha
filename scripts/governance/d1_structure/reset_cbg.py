@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/reset_cbg.py | §
 #!/usr/bin/env python3
 """
 CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command)

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_survivorship_bias.py | §
 """
 check_survivorship_bias.py — Survivorship 策略门禁 (INV-014)
 

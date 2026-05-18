@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/constants.py | §
 """
 constants.py — 审计脚本共享常量
 

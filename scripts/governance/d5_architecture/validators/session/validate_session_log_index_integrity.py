@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/session/validate_session_log_index_integrity.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 #!/usr/bin/env python3

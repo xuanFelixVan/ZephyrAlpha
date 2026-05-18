@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/update_progress.py | §
 #!/usr/bin/env python
 """
 update_progress.py — 从 domain_progress.json 批量更新施工进度.

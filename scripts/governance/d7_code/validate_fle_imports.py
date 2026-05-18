@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_fle_imports.py | §
 """
 validate_fle_imports.py — FLE import 接口合规检测
 

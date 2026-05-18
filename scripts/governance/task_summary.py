@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/task_summary.py | §
 """
 task_summary.py — 任务系统全局摘要 CLI
 =======================================

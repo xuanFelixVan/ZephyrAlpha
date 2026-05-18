@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_script_quality.py | §
 """
 validate_script_quality.py — 治理脚本质量合规检查
 

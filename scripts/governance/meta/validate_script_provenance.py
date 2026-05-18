@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_script_provenance.py | §
 """
 validate_script_provenance.py — 脚本 Provenance 溯源链
 

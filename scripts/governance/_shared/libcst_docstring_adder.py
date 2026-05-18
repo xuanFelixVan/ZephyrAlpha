@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/libcst_docstring_adder.py | §
 """libcst_docstring_adder.py — Lossless docstring addition using LibCST.
 
 Uses Concrete Syntax Tree (CST) instead of ast.unparse() to preserve

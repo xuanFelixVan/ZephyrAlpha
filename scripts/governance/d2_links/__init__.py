@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/__init__.py | §
 """D2 链接完整性 — 文档内/文档间交叉引用有效性审计。
 
 检查项：

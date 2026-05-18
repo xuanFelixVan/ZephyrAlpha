@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_unused_imports.py | §
 """
 validate_unused_imports.py — 未使用导入检测
 

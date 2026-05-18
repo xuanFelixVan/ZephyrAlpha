@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_contracts_purity.py | §
 """
 validate_contracts_purity.py — 契约纯度校验
 

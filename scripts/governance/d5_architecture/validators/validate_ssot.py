@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_ssot.py | §
 """SSoT 矛盾扫描器 (SSoT Contradiction Validator)
 任务 ID : T-2-33
 safety_level : M（治理脚本）

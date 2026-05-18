@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/refresh_master_entries.py | §
 """
 refresh_master_entries.py — 登记表总索引 entries 自动刷新器
 

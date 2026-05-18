@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_layer_consistency.py | §
 """
 对标：Problem — 12份 blueprint layer 声明 ≠ 物理目录（根因：缺外部一致性检查）
 职责：读取 03_modules/**/blueprint.md 的 frontmatter layer 字段，
@@ -60,7 +61,7 @@ LAYER_DIR_MAP = {
     "l09_research_innovation": "L09",
     "l10_compliance": "L10",
     "l11_ml_platform": "L11",
-    "l12_system_telemetry": "L12",
+    "system_telemetry": "L12",
     "l13_experimentation": "L13",
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",

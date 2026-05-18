@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_migration_dry_run.py | §
 """
 VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
 ======================================================

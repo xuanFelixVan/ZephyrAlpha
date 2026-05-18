@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/arbitrate_findings.py | §
 """
 arbitrate_findings.py — Finding 仲裁器（跨脚本冲突解决引擎）
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_blueprint_alignment.py | §
 """audit_blueprint_alignment.py — 蓝图↔任务卡↔代码 三维对齐审计工具
 
 扫描 blueprints → task cards → downstream_outputs → 磁盘文件，

@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # MOD-INF-005 §10 施工里程碑门禁矩阵
 # 对齐 NASA-STD-8739.8B: SRR → PDR → CDR → TRR → SAR
 # 每个门禁定义：触发时机、需通过的脚本清单、不通过后果

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/crosscheck_sys_master_deps.py | §
 #!/usr/bin/env python
 """
 crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致.

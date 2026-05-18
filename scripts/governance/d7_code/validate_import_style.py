@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_import_style.py | §
 """
 validate_import_style.py — 导入风格一致性校验
 

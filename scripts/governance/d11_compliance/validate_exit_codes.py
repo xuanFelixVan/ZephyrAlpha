@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_exit_codes.py | §
 """
 validate_exit_codes.py — 审计脚本退出码规范门禁
 

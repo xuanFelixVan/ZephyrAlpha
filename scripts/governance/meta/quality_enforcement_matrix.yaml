@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # MOD-INF-005 §7.2 脚本质量标准 → 验证脚本映射矩阵
 # 自动生成于 2026-05-07
 # 来源: quality-standard.md 38 条款 (22 MUST + 16 SHOULD) × scripts/governance/

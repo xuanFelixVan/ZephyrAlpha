@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/archive_drafts_zone.py | §
 """
 草稿区生命周期归档器 (Drafts Zone Lifecycle Archiver · V-16)
 

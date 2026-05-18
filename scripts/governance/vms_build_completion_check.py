@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_build_completion_check.py | §
 """
 VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
 ==========================================================

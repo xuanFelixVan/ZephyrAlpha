@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/yaml_md/validate_yaml_summaries.py | §
 """v1.0.0 -- 2026-05-03
 
 AGENTS.md §6.10 双层对齐闸门的根治层：

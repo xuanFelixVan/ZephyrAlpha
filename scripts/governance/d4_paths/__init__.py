@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/__init__.py | §
 """D4 路径有效性 — 文件系统中路径引用/落位合规性审计。
 
 检查项：

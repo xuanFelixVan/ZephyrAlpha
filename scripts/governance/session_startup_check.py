@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/session_startup_check.py | §
 """Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
 
 用法:

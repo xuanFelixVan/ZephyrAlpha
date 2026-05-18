@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/backup_runtime_state.py | §
 """
 backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）
 

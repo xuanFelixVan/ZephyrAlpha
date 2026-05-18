@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/run_incremental.py | §
 #!/usr/bin/env python3
 """增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
 
@@ -50,6 +51,23 @@ if __name__ == "__main__":
     if not changed:
         print(f"git diff {args.diff_ref} 无变更，跳过", file=sys.stderr)
         sys.exit(EXIT_PASS)
+
+    try:
+        from analyze_change_impact import ChangeImpactAnalyzer
+        analyzer = ChangeImpactAnalyzer()
+        impact = analyzer.analyze(changed_files=list(changed))
+        if impact.get("affected_modules"):
+            print(f"\n[变更影响分析]", file=sys.stderr)
+            for level in ("critical", "high", "medium"):
+                mods = impact["affected_modules"].get(level, [])
+                if mods:
+                    print(f"  {level.upper()}: {len(mods)} 模块受影响", file=sys.stderr)
+                    for m in mods[:5]:
+                        print(f"    {m}", file=sys.stderr)
+                    if len(mods) > 5:
+                        print(f"    ... 共 {len(mods)} 个", file=sys.stderr)
+    except Exception:
+        pass
 
     dims = _map_files_to_dimensions(changed)
     registry = _get_registry()

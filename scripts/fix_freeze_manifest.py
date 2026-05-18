@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/fix_freeze_manifest.py | §
 """Fix freeze_manifest.yaml - comprehensive repair of all corrupted desc fields."""
 from pathlib import Path
 import re

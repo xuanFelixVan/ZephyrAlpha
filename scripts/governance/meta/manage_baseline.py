@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_baseline.py | §
 """
 manage_baseline.py — Finding 基线快照管理
 

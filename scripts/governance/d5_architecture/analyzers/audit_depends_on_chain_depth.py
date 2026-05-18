@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/audit_depends_on_chain_depth.py | §
 """audit_depends_on_chain_depth.py — depends_on 依赖链路深度审计
 
 

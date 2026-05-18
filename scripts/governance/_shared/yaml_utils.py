@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/yaml_utils.py | §
 """
 _shared/yaml_utils.py — YAML 文件加载共享工具
 

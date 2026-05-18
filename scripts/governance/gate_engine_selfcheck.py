@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/gate_engine_selfcheck.py | §
 """
 Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
 ===================================================================

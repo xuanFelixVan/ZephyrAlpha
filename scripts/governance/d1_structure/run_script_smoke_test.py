@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/run_script_smoke_test.py | §
 """
 run_script_smoke_test.py — 治理脚本冒烟测试运行器
 """

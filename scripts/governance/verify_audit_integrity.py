@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/verify_audit_integrity.py | §
 #!/usr/bin/env python3
 """
 verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器

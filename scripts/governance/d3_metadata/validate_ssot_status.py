@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_ssot_status.py | §
 """
 validate_ssot_status.py —— SSoT frontmatter status 字段枚举白名单（盲点 C1 修复）
 

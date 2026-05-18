@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_test_assertion_depth.py | §
 """
 validate_test_assertion_depth.py — 测试断言深度校验
 

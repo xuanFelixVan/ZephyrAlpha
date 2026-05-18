@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_type_annotation_coverage.py | §
 """
 validate_type_annotation_coverage.py — 类型注解覆盖率校验
 

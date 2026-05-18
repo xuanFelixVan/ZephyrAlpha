@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_frozen_requirements.py | §
 """
 validate_frozen_requirements.py — 依赖版本锁定与验证（蓝图 §34.2）
 

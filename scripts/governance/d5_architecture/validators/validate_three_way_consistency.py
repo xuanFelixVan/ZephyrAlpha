@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_three_way_consistency.py | §
 """validate_three_way_consistency.py — 三方一致性检查
 
 

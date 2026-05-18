@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/task_self_check.py | §
 """
 task_self_check.py — 任务系统自身健康检查
 =============================================

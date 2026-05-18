@@ -1,0 +1,173 @@
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [MODULE] scripts.governance.observability.gate_cache
+# [INVARIANTS] 缓存key必须包含文件哈希;缓存失效必须及时
+# [MODIFY-GUARD] 缓存格式变更需同步gate_engine.py
+# [CONSUMERS] phase_manager.py;run_all.py
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] CacheCorruptionError
+# [TESTS] tests/test_gate_cache.py
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+
+_BUF_SIZE = 65536
+
+
+class CacheCorruptionError(RuntimeError):
+    pass
+
+
+class GateCache:
+
+    def __init__(self, cache_dir: Path | None = None) -> None:
+        if cache_dir is None:
+            project_root = Path(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                )
+            )
+            cache_dir = project_root / "data" / "gate_cache"
+        self._cache_dir = Path(cache_dir)
+        self._cache_dir.mkdir(parents=True, exist_ok=True)
+        self._stats: dict[str, int] = {"hits": 0, "misses": 0}
+
+    @staticmethod
+    def _file_hash(path: str) -> str:
+        file_path = Path(path)
+        if not file_path.exists():
+            return ""
+        h = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            while True:
+                chunk = f.read(_BUF_SIZE)
+                if not chunk:
+                    break
+                h.update(chunk)
+        return h.hexdigest()
+
+    def _cache_entry_path(self, gate_id: str, file_hash: str) -> Path:
+        safe_gate = gate_id.replace("/", "_").replace("\\", "_").replace(":", "_")
+        shard_dir = self._cache_dir / safe_gate
+        shard_dir.mkdir(parents=True, exist_ok=True)
+        return shard_dir / f"{file_hash}.json"
+
+    def get(self, gate_id: str, file_path: str) -> dict | None:
+        file_hash = self._file_hash(file_path)
+        if not file_hash:
+            self._stats["misses"] += 1
+            return None
+        entry_path = self._cache_entry_path(gate_id, file_hash)
+        if not entry_path.exists():
+            self._stats["misses"] += 1
+            return None
+        try:
+            with open(entry_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError) as exc:
+            raise CacheCorruptionError(
+                f"Cache entry corrupted: {entry_path} — {exc}"
+            ) from exc
+        stored_path = data.get("file_path", "")
+        if stored_path != file_path:
+            self._stats["misses"] += 1
+            return None
+        self._stats["hits"] += 1
+        return data.get("result")
+
+    def put(self, gate_id: str, file_path: str, result: dict) -> None:
+        file_hash = self._file_hash(file_path)
+        if not file_hash:
+            return
+        entry_path = self._cache_entry_path(gate_id, file_hash)
+        payload: dict[str, Any] = {
+            "gate_id": gate_id,
+            "file_path": file_path,
+            "file_hash": file_hash,
+            "result": result,
+        }
+        content = json.dumps(payload, ensure_ascii=False, indent=2)
+        tmp_path = f"{entry_path}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(content)
+            os.replace(tmp_path, str(entry_path))
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+
+    def invalidate(self, gate_id: str, file_path: str) -> None:
+        file_hash = self._file_hash(file_path)
+        if not file_hash:
+            return
+        entry_path = self._cache_entry_path(gate_id, file_hash)
+        if entry_path.exists():
+            try:
+                os.remove(entry_path)
+            except OSError:
+                pass
+
+    def invalidate_all(self, gate_id: str) -> None:
+        safe_gate = gate_id.replace("/", "_").replace("\\", "_").replace(":", "_")
+        shard_dir = self._cache_dir / safe_gate
+        if not shard_dir.exists():
+            return
+        for entry in shard_dir.glob("*.json"):
+            try:
+                os.remove(entry)
+            except OSError:
+                pass
+
+    def stats(self) -> dict[str, Any]:
+        total_entries = 0
+        total_size = 0
+        for shard_dir in self._cache_dir.iterdir():
+            if not shard_dir.is_dir():
+                continue
+            for entry in shard_dir.glob("*.json"):
+                total_entries += 1
+                try:
+                    total_size += entry.stat().st_size
+                except OSError:
+                    pass
+        return {
+            "hits": self._stats["hits"],
+            "misses": self._stats["misses"],
+            "total_entries": total_entries,
+            "total_size_bytes": total_size,
+            "cache_dir": str(self._cache_dir),
+        }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Phase Gate file hash cache")
+    parser.add_argument("--warn-only", action="store_true", help="Warn only mode")
+    args = parser.parse_args()
+
+    cache = GateCache()
+    st = cache.stats()
+    print(f"Gate Cache Stats:")
+    print(f"  cache_dir:     {st['cache_dir']}")
+    print(f"  hits:          {st['hits']}")
+    print(f"  misses:        {st['misses']}")
+    print(f"  total_entries: {st['total_entries']}")
+    print(f"  total_size:    {st['total_size_bytes']} bytes")
+
+    if args.warn_only:
+        sys.exit(0)
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

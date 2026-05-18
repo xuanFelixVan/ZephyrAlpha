@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/import_linter/__init__.py | §
 """Architecture Import Linter — 层依赖方向强制执行
 
 对标 Python import-linter，检查跨层 import 路径是否违反依赖方向约束。

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_enum_consistency.py | §
 """
 validate_enum_consistency.py — 枚举自动派生一致性闸门（GATE-ENUM）
 v1.0.0 — 2026-05-03

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_contracts.py | §
 """Contract Codegen（Contract→Codegen）——CT-* YAML→Python Protocol class+dataclass。"""
 
 from __future__ import annotations

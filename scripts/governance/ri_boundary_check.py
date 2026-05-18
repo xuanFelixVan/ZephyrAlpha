@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/ri_boundary_check.py | §
 """
 Runtime Integration 边界验证脚本 — MOD-INF-002
 ================================================

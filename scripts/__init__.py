@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/__init__.py | §
 """scripts/ — 项目自动化脚本与工具集。
 
 子包：

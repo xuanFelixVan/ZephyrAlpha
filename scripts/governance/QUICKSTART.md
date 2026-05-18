@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-005
+---
+
 # 脚本系统 Zero-Memory Quickstart Card
 
 > **用途**：新 AI session / 新人类维护者 冷启动时第一份必读材料。

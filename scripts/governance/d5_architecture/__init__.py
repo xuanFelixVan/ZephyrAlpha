@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/__init__.py | §
 """D5 架构合规 — 系统架构一致性、分层合规、SSoT 对齐审计。
 
 检查项（本维度最大，25 脚本）：

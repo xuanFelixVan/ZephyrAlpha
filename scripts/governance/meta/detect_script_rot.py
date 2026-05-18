@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/detect_script_rot.py | §
 """
 detect_script_rot.py — Script Rot（脚本静默失效）检测器
 

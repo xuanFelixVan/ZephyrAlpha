@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_registry_master_index.py | §
 """登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18).
 
 任务 T-V4-001：扫描 registry-master-index.yaml，校验登记表文件存在性、

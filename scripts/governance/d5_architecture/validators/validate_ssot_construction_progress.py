@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py | §
 """
 validate_ssot_construction_progress.py — G8 SSoT 一致性门禁强制执行脚本
 =========================================================================

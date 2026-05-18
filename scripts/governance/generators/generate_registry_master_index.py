@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_registry_master_index.py | §
 """
 generate_registry_master_index.py — 登记表总索引自动生成器
 

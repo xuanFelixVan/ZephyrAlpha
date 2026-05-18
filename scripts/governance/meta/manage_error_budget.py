@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_error_budget.py | §
 """manage_error_budget.py — Error Budget + Burn Rate 管理引擎
 
 对标 B14（Error Budget + Burn Rate）+ Google SRE Ch.5-6。

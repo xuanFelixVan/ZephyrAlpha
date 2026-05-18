@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/__init__.py | §
 """
 meta/ — 脚本系统自我审计维度（第 13 维度）
 

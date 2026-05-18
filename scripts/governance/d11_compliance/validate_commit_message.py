@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_commit_message.py | §
 """
 validate_commit_message.py — Conventional Commits 校验（commit-msg hook）
 

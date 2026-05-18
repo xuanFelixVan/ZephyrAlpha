@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/scaffold.py | §
 """scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执行器）
 
 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。
@@ -127,6 +128,8 @@ class ScaffoldEngine:
         package: str,
         name: str,
         description: str = "",
+        domain: str = "",
+        subdomain: str = "",
     ) -> Path:
         """在 src/zephyr/<package>/<name>.py 创建模块，注册到 __init__.py。"""
         package_dir = SRC_ZEPHYR / package
@@ -149,7 +152,7 @@ class ScaffoldEngine:
             )
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(name, description)
+        _check_duplicate_functionality(name, description, domain, subdomain)
 
         # ── 检查 4: __init__.py 中无重复 ──
         if init_py.exists():
@@ -170,16 +173,22 @@ class ScaffoldEngine:
         # ── 通知资产盘点系统（MOD-INF-026）──
         _notify_asset_inventory(str(file_path), "module", self.dry_run)
 
+        # ── 同步蓝图 §0.1 文件清单（防漂移）──
+        _sync_blueprint_file_list(package, name, self.dry_run)
+
         print(f"\n  CREATED  {file_path}")
         print(f"  REGISTERED  {init_py}  (export '{class_name}')")
         print(f"  ACTION:  from zephyr.{package} import {class_name}")
         _remind_sys_master_dispatch(package, name, description)
+        _remind_path_tree_refresh()
         return file_path
 
     def create_script(
         self,
         rel_path: str,
         description: str = "",
+        domain: str = "",
+        subdomain: str = "",
     ) -> Path:
         """在 scripts/<rel_path>.py 创建脚本并注册到 script_manifest.yaml。"""
         file_path = SCRIPTS_DIR / f"{rel_path}.py"
@@ -197,7 +206,7 @@ class ScaffoldEngine:
             )
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(rel_path, description)
+        _check_duplicate_functionality(rel_path, description, domain, subdomain)
 
         # ── 检查 4: manifest 中无重复 ──
         _check_manifest_duplicate(rel_path)
@@ -216,6 +225,7 @@ class ScaffoldEngine:
         print(f"  REGISTERED  {SCRIPT_MANIFEST}  (entry '{rel_path}')")
         print(f"  ACTION:  python scripts/{rel_path}.py")
         _remind_sys_master_dispatch("scripts", rel_path, description)
+        _remind_path_tree_refresh()
         return file_path
 
     def create_gate(
@@ -254,6 +264,7 @@ class ScaffoldEngine:
 
         print(f"\n  CREATED  {file_path}")
         print(f"  REGISTERED  {GATE_REGISTRY}  (gate_id '{gate_id}')")
+        _remind_path_tree_refresh()
         return file_path
 
 
@@ -400,8 +411,36 @@ def _register_to_gate_registry(
 # 重复检查
 # ===================================================================
 
-def _check_duplicate_functionality(name: str, description: str) -> None:
-    """用 BlueprintSearchServer 搜索是否已存在类似功能。"""
+def _check_duplicate_functionality(name: str, description: str, domain: str = "", subdomain: str = "") -> None:
+    """SSoT门禁：检查功能域重叠。硬阻断——重叠时禁止创建。"""
+    try:
+        from zephyr.l01_infrastructure.registry_governance import FunctionalDomainRegistry
+        registry = FunctionalDomainRegistry()
+        overlap = registry.check_overlap(
+            domain=domain,
+            subdomain=subdomain,
+            name=name,
+            description=description,
+        )
+        if overlap.has_overlap:
+            details = "; ".join(overlap.overlap_details)
+            raise ScaffoldError(
+                f"SSoT门禁阻断：功能域重叠检测到\n"
+                f"  {details}\n"
+                f"  复用决策（RULE-EIGHT）：\n"
+                f"    完全覆盖 → 直接用已有模块\n"
+                f"    80%覆盖 → 扩展已有模块\n"
+                f"    50%覆盖 → 重构已有+扩展\n"
+                f"    0%覆盖 → 确认domain/subdomain后重新创建\n"
+                f"  如确需新建，请指定 --domain 和 --subdomain 参数声明新功能域"
+            )
+    except ScaffoldError:
+        raise
+    except ImportError:
+        pass
+    except Exception as exc:
+        print(f"  WARNING: 功能域注册表检查失败: {exc}")
+
     try:
         from zephyr.mcp import BlueprintSearchServer
     except ImportError:
@@ -418,14 +457,19 @@ def _check_duplicate_functionality(name: str, description: str) -> None:
         for m in matches[:3]:
             score = m.get("relevance_score", 0)
             if score >= 20:
-                print(
-                    f"\n  WARNING: 类似功能模块已存在: "
-                    f"{m.get('blueprint_id', '?')} (score={score})"
+                raise ScaffoldError(
+                    f"SSoT门禁阻断：蓝图关键词匹配检测到类似功能\n"
+                    f"  已有蓝图: {m.get('blueprint_id', '?')} (score={score})\n"
+                    f"  description: {m.get('hint', 'N/A')}\n"
+                    f"  level={m.get('blueprint_level')} priority={m.get('priority')}\n"
+                    f"  复用决策（RULE-EIGHT）：\n"
+                    f"    完全覆盖 → 直接用已有蓝图\n"
+                    f"    80%覆盖 → 扩展已有蓝图\n"
+                    f"    50%覆盖 → 重构已有+扩展\n"
+                    f"    0%覆盖 → 确认后使用 --force-override 强制创建"
                 )
-                print(f"            description: {m.get('hint', 'N/A')}")
-                print(f"            level={m.get('blueprint_level')} priority={m.get('priority')}")
-                print(f"  Proceeding anyway — 确认不是重复后继续。\n")
-                return
+    except ScaffoldError:
+        raise
     except Exception:
         pass
 
@@ -508,6 +552,89 @@ def _remind_sys_master_dispatch(package: str, name: str, description: str) -> No
         pass
 
 
+def _sync_blueprint_file_list(package: str, name: str, dry_run: bool) -> None:
+    """post-creation hook: 自动更新蓝图 §0.1 代码文件清单。
+
+    RULE-TWO 反孤儿 + 防漂移——scaffold 创建新模块后，自动将新文件
+    添加到对应蓝图的 §0.1 文件清单中，防止蓝图-代码漂移。
+
+    查找逻辑：从 src/zephyr/<package>/ 定位到 docs/03_modules/ 下对应蓝图。
+    """
+    if dry_run:
+        return
+
+    code_dir = SRC_ZEPHYR / package
+    if not code_dir.exists():
+        return
+
+    blueprint_dir = PROJECT_ROOT / "docs" / "03_modules"
+    blueprint_candidates = list(blueprint_dir.rglob("blueprint.md"))
+    target_blueprint = None
+    for bp in blueprint_candidates:
+        try:
+            text = bp.read_text(encoding="utf-8")
+            if f"actual_disk_path: \"src/zephyr/{package}/\"" in text or f"actual_disk_path: 'src/zephyr/{package}/'" in text:
+                target_blueprint = bp
+                break
+        except Exception:
+            continue
+
+    if target_blueprint is None:
+        return
+
+    try:
+        content = target_blueprint.read_text(encoding="utf-8")
+        actual_files = sorted([f.name for f in code_dir.iterdir() if f.suffix == ".py"])
+        actual_count = len(actual_files)
+
+        import re
+        section_match = re.search(r'###\s*§0\.1\s+代码文件清单', content)
+        if not section_match:
+            return
+
+        listed_match = re.findall(r'^\|\s*\d+\s*\|\s*`([^`]+)`', content[section_match.start():], re.MULTILINE)
+        listed_files = set(listed_match)
+        actual_set = set(actual_files)
+        missing_in_blueprint = actual_set - listed_files
+
+        if not missing_in_blueprint:
+            return
+
+        last_row_match = None
+        for m in re.finditer(r'^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|', content[section_match.start():], re.MULTILINE):
+            last_row_match = m
+        if last_row_match is None:
+            return
+
+        last_num = int(last_row_match.group(1))
+        insert_pos = section_match.start() + last_row_match.end()
+
+        new_rows = ""
+        for i, fname in enumerate(sorted(missing_in_blueprint), last_num + 1):
+            new_rows += f"\n| {i} | `{fname}` | §3.1 | {fname.replace('.py', '').replace('_', ' ')} | 已实现 | — |"
+
+        content = content[:insert_pos] + new_rows + content[insert_pos:]
+
+        for old_count in range(1, 200):
+            for pattern in [
+                f"{old_count} .py files",
+                f"{old_count} 个 .py 文件",
+                f"{old_count} 个 .py",
+                f"{old_count}代码文件",
+            ]:
+                if pattern in content and old_count != actual_count:
+                    content = content.replace(pattern, pattern.replace(str(old_count), str(actual_count)))
+
+        tmp_path = str(target_blueprint) + f".{os.getpid()}.tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        os.replace(tmp_path, str(target_blueprint))
+
+        print(f"  📋 SYNCED: Added {len(missing_in_blueprint)} file(s) to blueprint §0.1: {sorted(missing_in_blueprint)}")
+    except Exception as e:
+        print(f"  ⚠️  SYNC-FAILED: Could not update blueprint §0.1: {e}")
+
+
 def _atomic_write(path: Path, content: str, dry_run: bool, actions: list[str]) -> None:
     """RULE-ONE 合规: temp-file + atomic rename。"""
     if dry_run:
@@ -559,12 +686,16 @@ def main() -> None:
     p_mod.add_argument("package", help="目标包名 (e.g. feedback_loop)")
     p_mod.add_argument("name", help="模块名 (e.g. scheduler)")
     p_mod.add_argument("--desc", default="", help="功能描述")
+    p_mod.add_argument("--domain", default="", help="功能域 (e.g. governance)")
+    p_mod.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_mod.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # script
     p_scr = sub.add_parser("script", help="创建 scripts/<path>/<name>.py")
     p_scr.add_argument("path", help="scripts 下的相对路径 (e.g. governance/my_tool)")
     p_scr.add_argument("--desc", default="", help="功能描述")
+    p_scr.add_argument("--domain", default="", help="功能域 (e.g. governance)")
+    p_scr.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_scr.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # gate
@@ -579,9 +710,9 @@ def main() -> None:
 
     try:
         if args.mode == "module":
-            engine.create_module(args.package, args.name, args.desc)
+            engine.create_module(args.package, args.name, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
         elif args.mode == "script":
-            engine.create_script(args.path, args.desc)
+            engine.create_script(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
         elif args.mode == "gate":
             engine.create_gate(args.gate_id, args.title, args.category)
         else:

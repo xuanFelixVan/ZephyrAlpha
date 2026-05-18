@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/generators/generate_trigger_wiring_view.py | §
 """generate_trigger_wiring_view.py — CT-005 → trigger_router.yaml 接线状态自动派生
 
 

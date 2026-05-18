@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/g9_compliance_check.py | §
 """G9 四蓝图跨模块集成合规门禁执行器.
 
 机械执行 7 项检查，零人工介入。

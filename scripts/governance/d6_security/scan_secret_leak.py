@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/scan_secret_leak.py | §
 """
 对标 06-security-architecture.md §6.3 L3-Audit：
   周扫描全库 secret 泄漏，Finding 写 docs/09_audit/findings/。

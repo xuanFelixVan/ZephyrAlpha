@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/import_linter/layer_boundary_check.py | §
 """
 layer_boundary_check.py — 层依赖方向强制执行 (INV-008)
 

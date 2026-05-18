@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/thresholds.py | §
 """
 thresholds.py — 阈值集中配置加载器
 

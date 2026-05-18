@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/ri_build_completion_check.py | §
 """
 Runtime Integration Phase 2 完工验证 — MOD-INF-002
 =====================================================

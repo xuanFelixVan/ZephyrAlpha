@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/deep_content_scanner.py | §
 """
 deep_content_scanner.py — 深度内容扫描器
 

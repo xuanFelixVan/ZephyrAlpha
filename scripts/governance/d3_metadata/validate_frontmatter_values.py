@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_frontmatter_values.py | §
 #!/usr/bin/env python3
 """
 GATE-FRONTMATTER: Validate frontmatter enum values against vocabulary YAMLs.

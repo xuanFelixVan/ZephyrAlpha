@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_script_ab_test.py | §
 """
 manage_script_ab_test.py — 脚本 A/B 对照模式 (Kayenta-style)
 

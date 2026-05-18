@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/lock_files.py | §
 """
 lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
 

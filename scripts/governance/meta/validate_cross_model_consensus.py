@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_cross_model_consensus.py | §
 """
 validate_cross_model_consensus.py — 多AI模型共识验证引擎
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_trace_context_propagation.py | §
 """check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查
 
 

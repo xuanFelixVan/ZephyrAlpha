@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/audit_directory_integrity.py | §
 """
 audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整性审计
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/session_simulator.py | §
 """
 session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 =================================================================
@@ -53,7 +54,7 @@ _SRC = REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.l12_system_telemetry.metrics.blueprint_metrics import record_blueprint_read  # noqa: E402
+from zephyr.l01_infrastructure.system_telemetry.metrics.blueprint_metrics import record_blueprint_read  # noqa: E402
 
 
 # ── 30 个模拟 Session 场景 ──────────────────────────────────────────

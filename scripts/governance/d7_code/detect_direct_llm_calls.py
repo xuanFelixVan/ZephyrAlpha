@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_direct_llm_calls.py | §
 """
 detect_direct_llm_calls.py — 直接 LLM 调用检测
 

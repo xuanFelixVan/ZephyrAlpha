@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_health_check.py | §
 """
 VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
 ===========================================================

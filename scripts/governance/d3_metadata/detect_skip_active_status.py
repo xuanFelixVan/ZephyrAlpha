@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/detect_skip_active_status.py | §
 """
 detect_skip_active_status.py — 跨级降格检测
 

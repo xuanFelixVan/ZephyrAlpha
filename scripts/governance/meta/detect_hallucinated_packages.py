@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/detect_hallucinated_packages.py | §
 """
 detect_hallucinated_packages.py — 幻觉包（Slopsquatting）防御引擎
 

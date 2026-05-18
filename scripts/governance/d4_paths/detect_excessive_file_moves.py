@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_excessive_file_moves.py | §
 """
 detect_excessive_file_moves.py — 文件过度搬迁检测
 

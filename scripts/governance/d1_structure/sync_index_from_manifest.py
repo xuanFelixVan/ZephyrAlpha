@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/sync_index_from_manifest.py | §
 """sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.md 的脚本数量。
 
 
@@ -236,9 +237,9 @@ def sync(manifest: list[dict], check_only: bool = False) -> int:
 
     tmp_path = f"{INDEX_MD}.{os.getpid()}.tmp"
     try:
-        with open(tmp_path, encoding="utf-8") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             f.write(updated)
-    
+
         os.replace(tmp_path, INDEX_MD)
     except PermissionError:
         try:

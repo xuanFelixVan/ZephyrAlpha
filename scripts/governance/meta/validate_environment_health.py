@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_environment_health.py | §
 """validate_environment_health.py — 脚本运行环境健康检查
 
 对标 B21（脚本依赖隔离）+ Google SRE Environment Readiness Probe。

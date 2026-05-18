@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/audit_config_format.py | §
 """
 audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 

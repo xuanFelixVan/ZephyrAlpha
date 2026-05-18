@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/adversarial_sys_master_test.py | §
 """
 Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001 Integration Hardening
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_missing_encoding.py | §
 """
 detect_missing_encoding.py — open() 缺 encoding 检测
 

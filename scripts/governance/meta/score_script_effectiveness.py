@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/score_script_effectiveness.py | §
 """
 score_script_effectiveness.py — 脚本有效性评分（蓝图 §27.12 B90）
 

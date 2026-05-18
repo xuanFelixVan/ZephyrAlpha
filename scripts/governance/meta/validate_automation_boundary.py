@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_automation_boundary.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 from _shared.constants import EXIT_FINDINGS

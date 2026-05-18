@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/base.py | §
 """
 base.py — 审计脚本基类
 

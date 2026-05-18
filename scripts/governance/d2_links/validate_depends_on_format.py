@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/validate_depends_on_format.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS

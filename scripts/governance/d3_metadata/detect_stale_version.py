@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/detect_stale_version.py | §
 """
 detect_stale_version.py — 版本号未更新检测
 

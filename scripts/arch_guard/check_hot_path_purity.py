@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_hot_path_purity.py | §
 """
 check_hot_path_purity.py — INV-012 Hot 路径 Python 禁 asyncio（配置驱动）
 

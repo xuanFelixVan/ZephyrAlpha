@@ -1,13 +1,17 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_concurrency.py | §
+from __future__ import annotations
+
 """
-_concurrency.py — ZCL 并发基础设施（Phase 3a → 3b → 3c）
+_concurrency.py - ZCL 并发基础设施（Phase 3a -> 3b -> 3c）
 ==========================================================
 真源：MOD-INF-005 §5.7-§5.10 + §35 ZCL 并发架构
 对标：Netflix Hystrix Bulkhead / K8s APF / SQLite WAL / MongoDB Sharding / Google SRE Throttling
 Phase: 3b+3c 完整版
+"""
 
 __manifest__ = """
 args: []
-description: ⚠ __manifest__ 缺失——请添加元数据块
+description: [WARNING] __manifest__ 缺失, 请添加元数据块
 dimensions: []
 priority: P2
 timeout_seconds: 60
@@ -15,24 +19,23 @@ warn_only: false
 """
 
 
+"""
 模块职责：
-  ProcessLock          — L0 全局进程锁
-  DimensionLock        — L1 维度级锁
-  FileLock             — L2 文件级锁
-  LockManager          — 统一 L0/L1/L2 锁管理
-  BulkheadExecutor     — 四池隔离执行器（完整路由 + Circuit Breaker）
-  ScanCache            — 文件级 LRU 扫描缓存
-  TieredTimeout        — S0-S3 分级超时
-  TokenBucket          — 令牌桶限流器
-  AdmissionController  — P0/P1/P2 优先级准入控制
-  ShardRouter          — 模块级分片路由 (hash(module_id) % N)
-  CircuitBreaker       — 完整三级状态机 (CLOSED→OPEN→HALF_OPEN)
+  ProcessLock          - L0 全局进程锁
+  DimensionLock        - L1 维度级锁
+  FileLock             - L2 文件级锁
+  LockManager          - 统一 L0/L1/L2 锁管理
+  BulkheadExecutor     - 四池隔离执行器（完整路由 + Circuit Breaker）
+  ScanCache            - 文件级 LRU 扫描缓存
+  TieredTimeout        - S0-S3 分级超时
+  TokenBucket          - 令牌桶限流器
+  AdmissionController  - P0/P1/P2 优先级准入控制
+  ShardRouter          - 模块级分片路由 (hash(module_id) % N)
+  CircuitBreaker       - 完整三级状态机 (CLOSED->OPEN->HALF_OPEN)
 
 使用：
   from _concurrency import BulkheadExecutor, ProcessLock, LockManager, ...
 """
-
-from __future__ import annotations
 
 import hashlib
 import json
@@ -41,6 +44,7 @@ import subprocess
 import sys
 import threading
 import time
+import yaml
 from collections import OrderedDict
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from copy import deepcopy
@@ -1007,17 +1011,18 @@ class ShardRouter:
     对标 MongoDB Sharding + Vitess Keyspace。
 
     使用：
-        router = ShardRouter(shard_count=4, db_dir=Path("data/shards"))
+        router = ShardRouter(shard_count=16, db_dir=Path("data/shards"))
         db_path = router.route(module_id="MOD-RISK-012.k8s")
     """
 
-    def __init__(self, shard_count: int = 4, db_dir: Path | None = None):
+    def __init__(self, shard_count: int = 16, db_dir: Path | None = None):
         self._shard_count = shard_count
         self._db_dir = db_dir or _DEFAULT_LOCK_DIR / "shards"
         self._db_dir.mkdir(parents=True, exist_ok=True)
 
     def route(self, module_id: str) -> Path:
-        shard_idx = hash(module_id) % self._shard_count
+        digest = hashlib.sha256(module_id.encode()).hexdigest()
+        shard_idx = int(digest, 16) % self._shard_count
         return self._db_dir / f"shard_{shard_idx}.db"
 
     def all_shards(self) -> list[Path]:
@@ -1222,3 +1227,270 @@ class BulkheadExecutorV2(BulkheadExecutor):
     @property
     def circuit_breaker_states(self) -> dict[str, dict]:
         return {name: cb.stats for name, cb in self._circuit_breakers.items()}
+
+
+class ScriptRegistry:
+    """10K manifest 快速加载——分层索引 + 预编译缓存。
+
+    数据模型对齐 MOD-INF-001 CAP-G01。
+    """
+
+    def __init__(self, manifest_path: Path | None = None):
+        self._manifest_path = manifest_path or Path("scripts/script_manifest.yaml")
+        self._by_dimension: dict[str, list[str]] = {}
+        self._by_tag: dict[str, list[str]] = {}
+        self._by_priority: dict[str, list[str]] = {}
+        self._entries: dict[str, dict] = {}
+        self._loaded = False
+
+    def load(self) -> None:
+        if self._loaded:
+            return
+        if not self._manifest_path.exists():
+            return
+        with open(self._manifest_path, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        for name, meta in data.items():
+            if not isinstance(meta, dict):
+                continue
+            self._entries[name] = meta
+            for dim in meta.get("dimensions", []):
+                d = dim.value if hasattr(dim, "value") else str(dim)
+                self._by_dimension.setdefault(d, []).append(name)
+            for tag in meta.get("tags", []):
+                self._by_tag.setdefault(str(tag), []).append(name)
+            pri = meta.get("priority", "normal")
+            self._by_priority.setdefault(str(pri), []).append(name)
+        self._loaded = True
+
+    def query_by_dimension(self, dimension: str) -> list[str]:
+        self.load()
+        return self._by_dimension.get(dimension, [])
+
+    def query_by_tag(self, tag: str) -> list[str]:
+        self.load()
+        return self._by_tag.get(tag, [])
+
+    def query_by_priority(self, priority: str) -> list[str]:
+        self.load()
+        return self._by_priority.get(priority, [])
+
+    def get_meta(self, script_name: str) -> dict | None:
+        self.load()
+        return self._entries.get(script_name)
+
+    @property
+    def total_entries(self) -> int:
+        self.load()
+        return len(self._entries)
+
+
+class ScanDeduplicator:
+    """跨 Agent 扫描去重——同一文件只扫描一次，结果广播。
+
+    与 code_dedup_engine 的代码去重不同，这是扫描请求级去重。
+    """
+
+    def __init__(self, ttl_seconds: float = 3600):
+        self._cache: dict[str, tuple[float, dict]] = {}
+        self._ttl = ttl_seconds
+        self._lock = threading.Lock()
+        self._hits = 0
+        self._misses = 0
+
+    def _make_key(self, script_name: str, file_path: str) -> str:
+        return f"{script_name}:{hashlib.sha256(file_path.encode()).hexdigest()[:16]}"
+
+    def check(self, script_name: str, file_path: str) -> dict | None:
+        key = self._make_key(script_name, file_path)
+        with self._lock:
+            if key in self._cache:
+                ts, result = self._cache[key]
+                if time.monotonic() - ts < self._ttl:
+                    self._hits += 1
+                    return result
+                del self._cache[key]
+            self._misses += 1
+            return None
+
+    def store(self, script_name: str, file_path: str, result: dict) -> None:
+        key = self._make_key(script_name, file_path)
+        with self._lock:
+            self._cache[key] = (time.monotonic(), result)
+
+    def invalidate(self, file_path: str) -> int:
+        removed = 0
+        suffix = hashlib.sha256(file_path.encode()).hexdigest()[:16]
+        with self._lock:
+            keys_to_remove = [k for k in self._cache if k.endswith(suffix)]
+            for k in keys_to_remove:
+                del self._cache[k]
+                removed += 1
+        return removed
+
+    def stats(self) -> dict:
+        with self._lock:
+            return {"hits": self._hits, "misses": self._misses, "cache_size": len(self._cache)}
+
+    def clear(self) -> None:
+        with self._lock:
+            self._cache.clear()
+            self._hits = 0
+            self._misses = 0
+
+
+class ShardAffinityScheduler:
+    """分片感知全量扫描调度——同分片脚本分配到同组 worker。
+
+    与 ShardRouter 配合，最大化 SQLite 页面缓存命中率。
+    """
+
+    def __init__(self, shard_router: ShardRouter | None = None, max_workers_per_shard: int = 2):
+        self._router = shard_router or ShardRouter()
+        self._max_workers = max_workers_per_shard
+
+    def group_by_shard(self, script_tasks: list[tuple[str, dict]]) -> dict[Path, list[tuple[str, dict]]]:
+        groups: dict[Path, list[tuple[str, dict]]] = {}
+        for name, meta in script_tasks:
+            affected = meta.get("affected_files", [])
+            shard = self._router.route(affected[0]) if affected else self._router.route(name)
+            groups.setdefault(shard, []).append((name, meta))
+        return groups
+
+    def schedule(self, script_tasks: list[tuple[str, dict]], execute_fn: Callable) -> dict:
+        groups = self.group_by_shard(script_tasks)
+        all_results: list[dict] = []
+        shard_stats: dict[str, int] = {}
+
+        with ThreadPoolExecutor(max_workers=max(len(groups) * self._max_workers, 1)) as pool:
+            futures = {}
+            for shard_path, tasks in groups.items():
+                shard_stats[str(shard_path)] = len(tasks)
+                for name, meta in tasks:
+                    fut = pool.submit(execute_fn, name, meta)
+                    futures[fut] = name
+            for fut in as_completed(futures):
+                try:
+                    result = fut.result()
+                    all_results.append(result)
+                except Exception:
+                    all_results.append({"script_name": futures[fut], "exit_code": 2, "findings": [], "is_failed": True})
+
+        return {"results": all_results, "shard_stats": shard_stats}
+
+
+class ScriptSandbox:
+    """脚本文件系统虚拟化沙箱——只读 repo + 输出白名单。
+
+    与 process_sandbox（LLM 代码执行）不同，这是治理脚本执行沙箱。
+    """
+
+    def __init__(self, repo_root: Path | None = None, output_dir: Path | None = None):
+        self._repo_root = repo_root or Path.cwd()
+        self._output_dir = output_dir or self._repo_root / "data" / "sandbox_output"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._allowed_write_patterns: list[str] = ["data/", "tmp/"]
+        self._violations: list[dict] = []
+
+    def check_write_allowed(self, target_path: str) -> bool:
+        rel = Path(target_path)
+        try:
+            rel = rel.relative_to(self._repo_root)
+        except ValueError:
+            pass
+        rel_str = str(rel).replace("\\", "/")
+        for pattern in self._allowed_write_patterns:
+            if rel_str.startswith(pattern):
+                return True
+        if str(self._output_dir) in target_path:
+            return True
+        self._violations.append({"path": target_path, "time": datetime.now(UTC).isoformat()})
+        return False
+
+    def virtual_read(self, file_path: str) -> str | None:
+        p = Path(file_path)
+        if not p.is_absolute():
+            p = self._repo_root / p
+        if not p.exists():
+            return None
+        with open(p, encoding="utf-8", errors="replace") as f:
+            return f.read()
+
+    def virtual_write(self, file_path: str, content: str) -> Path:
+        if not self.check_write_allowed(file_path):
+            target = self._output_dir / Path(file_path).name
+        else:
+            target = Path(file_path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        tmp = target.with_suffix(f".{os.getpid()}.tmp")
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(content)
+        os.replace(tmp, target)
+        return target
+
+    @property
+    def violations(self) -> list[dict]:
+        return list(self._violations)
+
+    def add_allowed_pattern(self, pattern: str) -> None:
+        self._allowed_write_patterns.append(pattern)
+
+
+class GovernanceMemoryGuard:
+    """治理进程内存碎片化检测 + 定期压缩。
+
+    重命名为 GovernanceMemoryGuard 避免与 MOD-INF-018 memory_guard.MemoryGuard 冲突。
+    """
+
+    def __init__(self, rss_limit_mb: int = 4096, compact_threshold_mb: int = 2048):
+        self._rss_limit = rss_limit_mb
+        self._compact_threshold = compact_threshold_mb
+        self._last_compact: float = 0
+        self._compact_interval: float = 3600
+        self._history: list[dict] = []
+
+    def current_rss_mb(self) -> float:
+        try:
+            import psutil
+            return psutil.Process().memory_info().rss / (1024 * 1024)
+        except ImportError:
+            return 0.0
+
+    def check(self) -> dict:
+        rss = self.current_rss_mb()
+        status = "healthy"
+        if rss > self._rss_limit:
+            status = "critical"
+        elif rss > self._compact_threshold:
+            status = "compact_needed"
+        entry = {"rss_mb": round(rss, 1), "status": status, "time": datetime.now(UTC).isoformat()}
+        self._history.append(entry)
+        if len(self._history) > 1000:
+            self._history = self._history[-500:]
+        return entry
+
+    def compact(self) -> dict:
+        import gc
+        before = self.current_rss_mb()
+        gc.collect(2)
+        try:
+            import ctypes
+            libc = ctypes.CDLL("libc.so.6")
+            libc.malloc_trim(0)
+        except (OSError, AttributeError):
+            pass
+        after = self.current_rss_mb()
+        self._last_compact = time.monotonic()
+        return {"before_mb": round(before, 1), "after_mb": round(after, 1), "freed_mb": round(before - after, 1)}
+
+    def auto_compact_if_needed(self) -> dict | None:
+        status = self.check()
+        if status["status"] == "compact_needed" and (time.monotonic() - self._last_compact > self._compact_interval):
+            return self.compact()
+        if status["status"] == "critical":
+            return self.compact()
+        return None
+
+    @property
+    def history(self) -> list[dict]:
+        return list(self._history)

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_aisg_gateway.py | §
 """
 check_aisg_gateway.py — AISG 拦截门禁 (INV-015) Phase B 升级
 

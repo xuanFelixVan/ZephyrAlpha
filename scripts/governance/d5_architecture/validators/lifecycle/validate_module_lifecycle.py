@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py | §
 """validate_module_lifecycle.py — 模块生命周期校验
 
 

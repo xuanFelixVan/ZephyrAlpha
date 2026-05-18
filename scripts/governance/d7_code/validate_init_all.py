@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_init_all.py | §
 """
 validate_init_all.py — __init__.py __all__ 完整性校验
 

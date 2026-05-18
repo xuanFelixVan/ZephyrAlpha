@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_duplicated_normative_language.py | §
 """
 detect_duplicated_normative_language.py — 规范用语重复定义检测
 

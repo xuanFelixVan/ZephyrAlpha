@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_naming_convention.py | §
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md v2.0.1 §五

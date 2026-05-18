@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_finding_timeseries.py | §
 """
 manage_finding_timeseries.py — Finding 时序数据库 + 趋势分析引擎
 

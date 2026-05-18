@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_architecture.py | §
 """
 validate_architecture.py - Validate rule files against architecture-contract.yaml
 Reads architecture-contract.yaml and validates all .md/.yaml files under

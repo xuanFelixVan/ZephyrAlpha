@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/check_drift_e2e.py | §
 """
 CI Entry: Drift Detector E2E Pipeline Check
 ============================================

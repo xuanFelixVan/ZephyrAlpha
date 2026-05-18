@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py | §
 """
 对标 12-dimension-audit-matrix.md §4.12：
   校验 Phase 过渡是否满足双门协议（技术门禁 + 治理门禁）。

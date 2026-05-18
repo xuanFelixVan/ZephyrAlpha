@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_idempotency_key.py | §
 """
 check_idempotency_key.py — 幂等 Key 字段存在性检查 (INV-007)
 

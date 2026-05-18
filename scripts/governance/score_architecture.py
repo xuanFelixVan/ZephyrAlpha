@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/score_architecture.py | §
 """
 对标 12-dimension-audit-matrix.md §6.1：
   自动化评分引擎，读取各维度采集指标 → 计算加权分数 → 输出报告。

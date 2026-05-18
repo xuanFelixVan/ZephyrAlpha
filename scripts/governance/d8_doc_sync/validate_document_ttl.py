@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/validate_document_ttl.py | §
 """
 validate_document_ttl.py — 文档 TTL 过期检测
 

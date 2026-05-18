@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_path_consistency.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 #!/usr/bin/env python3

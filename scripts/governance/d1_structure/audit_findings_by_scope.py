@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/audit_findings_by_scope.py | §
 #!/usr/bin/env python3
 """audit_findings_by_scope.py — 按目录范围筛选 Finding 报告
 

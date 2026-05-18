@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/create_task_from_finding.py | §
 """
 create_task_from_finding.py — Finding → 任务卡自动创建引擎
 
@@ -46,13 +47,8 @@ if REPO_ROOT_DIR not in sys.path:
     sys.path.insert(0, REPO_ROOT_DIR)
 
 from zephyr.shared.io.paths import DB_PATH
-from zephyr.shared.schema.schemas import (
-    TaskStatus,
-    Priority,
-    ExecutionModel,
-    SafetyLevel,
-    TaskNamespace,
-)
+from zephyr.gates.task_types import TaskStatus, ExecutionModel, TaskNamespace
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.core.models import TaskCard
 from zephyr.db.task_repo import TaskRepository
 from zephyr.db.sqlite_schema import init_db

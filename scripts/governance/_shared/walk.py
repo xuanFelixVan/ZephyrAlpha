@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/walk.py | §
 """
 walk.py — 目录遍历共享工具
 

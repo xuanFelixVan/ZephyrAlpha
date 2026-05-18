@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_bvb_compliance.py | §
 """check_bvb_compliance.py — BvB 五维评分合规检查（stub）
 
 对标 architecture-principles.md §2 "开源优先与 Build-vs-Buy"。

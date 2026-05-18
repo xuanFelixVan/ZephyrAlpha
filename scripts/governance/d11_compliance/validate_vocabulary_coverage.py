@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_vocabulary_coverage.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 #!/usr/bin/env python3

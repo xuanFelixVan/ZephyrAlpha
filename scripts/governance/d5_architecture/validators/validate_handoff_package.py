@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_handoff_package.py | §
 """validate_handoff_package.py — HandoffPackage 完整性校验
 
 

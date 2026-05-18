@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_test_coverage.py | §
 """
 validate_test_coverage.py — 测试覆盖率治理校验器
 
@@ -60,7 +61,7 @@ SKIP_MODULES = {
     "l09_research_innovation",
     "l10_compliance",
     "l11_ml_platform",
-    "l12_system_telemetry",
+    "system_telemetry",
     "l13_experimentation",
 }
 

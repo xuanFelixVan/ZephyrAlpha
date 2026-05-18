@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_migrate.py | §
 """
 VMS Phase 2 数据迁移脚本 — MOD-INF-011
 =========================================

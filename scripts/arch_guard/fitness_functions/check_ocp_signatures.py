@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_ocp_signatures.py | §
 """
 check_ocp_signatures.py — OCP 冻结契约指纹校验 (INV-009)
 

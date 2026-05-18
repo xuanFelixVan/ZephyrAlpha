@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/session/validate_session_log_updated.py | §
 """validate_session_log_updated.py — Session Log 更新状态校验
 
 

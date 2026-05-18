@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_nav_table.py | §
 """
 generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 

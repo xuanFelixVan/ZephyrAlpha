@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/frontmatter.py | §
 """
 frontmatter.py — 统一 frontmatter 解析
 

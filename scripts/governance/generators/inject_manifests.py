@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/inject_manifests.py | §
 """
 inject_manifests.py — __manifest__ 批量注入器
 

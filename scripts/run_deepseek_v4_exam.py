@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/run_deepseek_v4_exam.py | §
 """
 DeepSeek V4 入职考试运行脚本
 ============================

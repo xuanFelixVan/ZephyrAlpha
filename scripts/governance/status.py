@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/status.py | §
 """
 status.py — 审计系统状态仪表盘
 

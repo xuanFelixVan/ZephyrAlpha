@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py | §
 """
 check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数字对齐（SSoT 闭环）
 

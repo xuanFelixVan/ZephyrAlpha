@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/sync_progress.py | §
 #!/usr/bin/env python
 """
 sync_progress.py — 从 domain_progress.json 同步进度到 §2 模块清单表.

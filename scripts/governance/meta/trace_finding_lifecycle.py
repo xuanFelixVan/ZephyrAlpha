@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/trace_finding_lifecycle.py | §
 """trace_finding_lifecycle.py — Finding C1→C5 全链路追踪引擎
 
 对标 B56（C1→C5 全链路 Tracing）+ OpenTelemetry distributed tracing 概念。

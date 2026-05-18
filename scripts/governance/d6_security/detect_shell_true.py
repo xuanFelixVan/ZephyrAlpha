@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_shell_true.py | §
 """
 detect_shell_true.py — shell=True 调用检测
 

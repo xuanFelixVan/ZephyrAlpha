@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_emergency_bypass_log.py | §
 """validate_emergency_bypass_log.py — 应急绕过审计脚本
 
 MOD-INF-005 §13.2 — 验证应急绕过（--no-verify）是否合规：

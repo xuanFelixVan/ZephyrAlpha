@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_dependency_chain.py | §
 """
 validate_dependency_chain.py — 依赖链拓扑顺序验证
 

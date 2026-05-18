@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/sync_blueprint_code_index.py | §
 """
 
 
@@ -267,7 +268,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "system-telemetry": {
         "module_id": "MOD-INF-015",
-        "source_dirs": ["src/zephyr/l12_system_telemetry"],
+        "source_dirs": ["src/zephyr/system_telemetry"],
         "extra_source_files": [],
         "test_patterns": [],
         "config_files": [],

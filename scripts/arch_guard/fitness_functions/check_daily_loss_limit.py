@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_daily_loss_limit.py | §
 """
 check_daily_loss_limit.py — 日损失限额自动暂停 (INV-003)
 

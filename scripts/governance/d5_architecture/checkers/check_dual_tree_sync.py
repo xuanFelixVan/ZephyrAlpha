@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_dual_tree_sync.py | §
 """GATE-DTS — 双树同步检查闸门 (Dual Tree Sync)
 
 任务 ID : T-2-34

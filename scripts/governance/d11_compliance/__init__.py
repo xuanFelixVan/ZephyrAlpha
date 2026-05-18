@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/__init__.py | §
 """D11 合规完整性 — 治理脚本系统自身质量与合规审计。
 
 检查项（与 D3 的分工：D3 管"文档元数据合规"，D11 管"脚本自身合规"）：

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/mcp/generate_ide_config.py | §
 """从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 §5.3 Step 2）。"""
 
 from __future__ import annotations

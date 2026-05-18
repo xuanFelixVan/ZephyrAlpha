@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/build_ocp_manifest.py | §
 """从 cross-layer-contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
 from __future__ import annotations
 

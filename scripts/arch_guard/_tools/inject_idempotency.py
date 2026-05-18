@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/inject_idempotency.py | §
 """为所有 P0/P1 契约添加 idempotency_key 字段——状态感知版本。
 
 策略：

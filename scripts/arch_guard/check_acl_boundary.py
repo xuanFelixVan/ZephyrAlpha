@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_acl_boundary.py | §
 """
 check_acl_boundary.py — Broker ACL 边界强制执行 (INV-005)
 

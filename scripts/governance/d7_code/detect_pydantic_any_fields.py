@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_pydantic_any_fields.py | §
 """
 detect_pydantic_any_fields.py — Pydantic Any 类型字段检测
 

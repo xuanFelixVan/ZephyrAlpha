@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_code_yaml_alignment.py | §
 """validate_code_yaml_alignment.py — GATE-A: 实际代码 ↔ YAML SSoT 对账
 
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_architecture_gates.py | §
 #!/usr/bin/env python3
 """v2.4.0 — 2026-05-03
 
@@ -1005,6 +1006,15 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
                 f"WARNING: {log_name} 新建了 src/zephyr/ 目录 "
                 f"但未包含'变更对齐检查'节 "
                 f"（比对 §6.10 GATE-A——新建代码目录应同步更新 architecture-model YAML）"
+            )
+
+        # 检查 4: 文件变更 → path-tree 刷新
+        has_path_tree_refresh = "generate_project_path_tree" in content or "path-tree" in content.lower() or "path_tree" in content.lower()
+        if (changed_blueprints or changed_yamls or new_dirs) and not has_path_tree_refresh:
+            errors.append(
+                f"WARNING: {log_name} 有文件变更 "
+                f"但未执行 generate_project_path_tree.py --write "
+                f"（G6_PT——文件增删移后必须刷新物理路径树快照）"
             )
 
     if not errors:

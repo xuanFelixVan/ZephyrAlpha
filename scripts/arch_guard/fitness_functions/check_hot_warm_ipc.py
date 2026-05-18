@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py | §
 """check_hot_warm_ipc.py — INV-018 Hot↔Warm IPC 协议检查
 
 对标 runtime-planes.yaml HOT_WARM_IPC_ONLY + invariants.yaml INV-018。
@@ -16,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 HOT_MODULES = {"l04_risk_management", "l06_trade_execution"}
-WARM_MODULES = {"l02_alpha_factor", "l03_signal_generation", "l05_portfolio_construction", "l10_compliance", "l11_ml_platform", "l12_system_telemetry"}
+WARM_MODULES = {"l02_alpha_factor", "l03_signal_generation", "l05_portfolio_construction", "l10_compliance", "l11_ml_platform", "system_telemetry"}
 
 
 def main() -> int:

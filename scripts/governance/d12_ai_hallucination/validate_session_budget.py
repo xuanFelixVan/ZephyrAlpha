@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_session_budget.py | §
 """
 validate_session_budget.py — Session 操作预算校验（已废弃）
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/kb/self_test.py | §
 """KB 13项一键体检 + --self-test入口"""
 
 from __future__ import annotations

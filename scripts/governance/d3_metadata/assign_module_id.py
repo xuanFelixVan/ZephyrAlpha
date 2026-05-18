@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/assign_module_id.py | §
 """assign_module_id.py — 模块 ID 唯一性校验（INJ-001）
 
 对标：GOV-MOD-001 INJ-001（ID 唯一性）

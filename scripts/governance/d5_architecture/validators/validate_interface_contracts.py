@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_interface_contracts.py | §
 """validate_interface_contracts.py — 接口契约校验
 
 

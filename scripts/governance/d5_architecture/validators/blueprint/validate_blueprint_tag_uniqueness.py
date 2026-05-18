@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_tag_uniqueness.py | §
 """GATE-TAG-UNIQUE - Blueprint tag uniqueness validation gate."""
 from __future__ import annotations
 

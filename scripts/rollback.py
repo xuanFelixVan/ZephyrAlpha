@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/rollback.py | §
 """
 Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQLite Checkpoint 操作入口。
 

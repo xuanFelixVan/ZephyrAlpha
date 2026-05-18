@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_deprecated_path_writes.py | §
 """
 detect_deprecated_path_writes.py — 废弃路径写入检测
 

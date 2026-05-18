@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/construction/reset_test_task.py | §
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 import sqlite3

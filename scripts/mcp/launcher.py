@@ -1,13 +1,14 @@
-"""MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + §13.1 进程隔离）。
+# [BLUEPRINT] MOD-INF-005 | scripts/mcp/launcher.py | §
+"""MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。
 
 读取 b_mcp.yaml 构建依赖 DAG → 拓扑排序 → 按层并行启动 → 等待 healthz 就绪。
+所有进程通过 ProcessLifecycleGateway 管理，idle_timeout 空闲自动回收。
 """
 
 from __future__ import annotations
 
 import json
 import logging
-import multiprocessing
 import signal
 import sys
 import time
@@ -17,6 +18,7 @@ from typing import Any
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+SRC_ROOT = REPO_ROOT / "src"
 B_MCP = REPO_ROOT / "architecture-model" / "layers" / "b_mcp.yaml"
 
 _log = logging.getLogger(__name__)
@@ -57,57 +59,50 @@ def topological_order() -> list[list[str]]:
     return ordered
 
 
-def _server_target(script_path: Path):
-    """子进程入口——直接执行 server 的 __main__ 块。"""
-    sys.path.insert(0, str(REPO_ROOT))
-    g: dict[str, Any] = {}
-    with open(script_path, encoding="utf-8") as fh:
-        code = compile(fh.read(), str(script_path), "exec")
-    exec(code, g)
-
-
-def start_server(server_id: str) -> multiprocessing.Process | None:
+def start_server(server_id: str, gateway) -> bool:
     script = SERVER_SCRIPTS.get(server_id)
     if not script:
         _log.warning("unknown server_id: %s", server_id)
-        return None
+        return False
     script_path = REPO_ROOT / script
     if not script_path.exists():
         _log.warning("script not found: %s", script_path)
-        return None
+        return False
 
-    proc = multiprocessing.Process(
-        target=_server_target,
-        args=(script_path,),
-        name=f"mcp-{server_id}",
-        daemon=True,
+    entry = gateway.launch(
+        f"mcp-{server_id}",
+        [sys.executable, str(script_path)],
+        idle_timeout_s=600.0,
     )
-    proc.start()
+    if entry is None:
+        _log.error("failed to start: %s", server_id)
+        return False
+
     time.sleep(STARTUP_DELAY)
-    if proc.is_alive():
-        _log.info("started: %s pid=%d", server_id, proc.pid)
-        return proc
-    _log.error("failed to start: %s exit_code=%s", server_id, proc.exitcode)
-    return None
+    if entry.is_alive:
+        _log.info("started: %s pid=%d", server_id, entry.pid)
+        return True
+    _log.error("failed to start: %s", server_id)
+    return False
 
 
 def launch_all() -> dict[str, bool]:
-    print("MCP DAG Launcher — MOD-INF-013 §14")
+    from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
+
+    print("MCP DAG Launcher — MOD-INF-013 §14 (via ProcessLifecycleGateway)")
     print("=" * 50)
 
+    gateway = ProcessLifecycleGateway()
     order = topological_order()
-    processes: dict[str, multiprocessing.Process] = {}
     results: dict[str, bool] = {}
     running = True
 
     def _shutdown(sig, frame):
         nonlocal running
         running = False
-        print("\n[shutdown] stopping all servers...")
-        for sid, proc in processes.items():
-            if proc.is_alive():
-                proc.terminate()
-                proc.join(timeout=3)
+        print("\n[shutdown] stopping all servers via Gateway...")
+        gateway.terminate_all()
+        gateway.shutdown()
         print("[shutdown] done")
         sys.exit(0)
 
@@ -116,35 +111,31 @@ def launch_all() -> dict[str, bool]:
 
     for layer_idx, layer in enumerate(order):
         print(f"\n--- Layer {layer_idx+1}: {layer} ---")
-        layer_procs: dict[str, multiprocessing.Process] = {}
 
         for sid in layer:
-            proc = start_server(sid)
-            if proc is not None:
-                processes[sid] = proc
-                layer_procs[sid] = proc
-                results[sid] = True
-            else:
-                results[sid] = False
+            ok = start_server(sid, gateway)
+            results[sid] = ok
+            if not ok:
                 print(f"[FATAL] Layer {layer_idx+1} server {sid!r} failed to start — aborting")
-                # terminate already started
-                for p in processes.values():
-                    if p.is_alive():
-                        p.terminate()
-                        p.join(timeout=2)
+                gateway.terminate_all()
+                gateway.shutdown()
                 return results
 
         time.sleep(1.0)
 
-        alive = {sid: p for sid, p in layer_procs.items() if p.is_alive()}
-        if len(alive) < len(layer_procs):
-            dead = set(layer_procs) - set(alive)
-            print(f"[FATAL] Layer {layer_idx+1} servers died: {dead} — aborting")
-            for p in processes.values():
-                if p.is_alive():
-                    p.terminate()
-                    p.join(timeout=2)
-            return results
+        for sid in layer:
+            script = SERVER_SCRIPTS.get(sid, "")
+            script_path = str(REPO_ROOT / script) if script else ""
+            entry = gateway.launch(
+                f"mcp-{sid}",
+                [sys.executable, script_path] if script_path else [],
+                idle_timeout_s=600.0,
+            )
+            if entry is None or not entry.is_alive:
+                print(f"[FATAL] Layer {layer_idx+1} server {sid!r} died after start — aborting")
+                gateway.terminate_all()
+                gateway.shutdown()
+                return results
 
     print(f"\n{'='*50}")
     ok = sum(1 for v in results.values() if v)
@@ -153,20 +144,12 @@ def launch_all() -> dict[str, bool]:
 
     try:
         while running:
-            dead = {sid for sid, p in processes.items() if not p.is_alive()}
-            if dead:
-                print(f"[WARN] servers died: {dead}")
-                for sid in dead:
-                    results[sid] = False
-                break
             time.sleep(2)
     except KeyboardInterrupt:
         pass
     finally:
-        for p in processes.values():
-            if p.is_alive():
-                p.terminate()
-                p.join(timeout=3)
+        gateway.terminate_all()
+        gateway.shutdown()
 
     return results
 

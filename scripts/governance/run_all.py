@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/run_all.py | §
 """
 run_all.py — 脚本系统统一入口脚本
 
@@ -120,6 +121,8 @@ _VALID_TAGS = frozenset({"Quick", "Security", "Disruptive", "Critical", "AI-Gene
 _SMOKE_TEST_SCRIPT = "d1_structure/run_script_smoke_test.py"
 _SELF_SCRIPT = "run_all.py"
 _SKIP_INTERNAL: frozenset[str] = frozenset({_SMOKE_TEST_SCRIPT, _SELF_SCRIPT})
+
+_USE_BULKHEAD = True
 
 GLOBAL_HARD_TIMEOUT_SECONDS = 600
 
@@ -734,7 +737,7 @@ def run_all_dimensions(
     warn_only: bool = False,
     registry_override: dict[str, Any] | None = None,
 ) -> tuple[FindingCollection, dict]:
-    """Run all dimension scans in parallel via ThreadPoolExecutor (each script once, dedup)."""
+    """Run all dimension scans in parallel via BulkheadExecutorV2 (fallback: ThreadPoolExecutor)."""
     registry = registry_override if registry_override is not None else _get_registry()
     if FINDING_AVAILABLE:
         collection = FindingCollection()
@@ -753,9 +756,72 @@ def run_all_dimensions(
     if not script_tasks:
         return collection, {"total_scripts": 0, "total_failed": 0, "total_unique_scripts": 0, "encoding_violations": []}
 
-    print(f"\n  并行执行 {len(script_tasks)} 个唯一脚本 (workers={_MAX_WORKERS}) ...", file=sys.stderr)
-
     encoding_violations: list[str] = []
+    total_failed = 0
+
+    if _USE_BULKHEAD:
+        try:
+            from _concurrency import BulkheadExecutorV2
+
+            bulkhead = BulkheadExecutorV2()
+
+            def _make_executor(wo: bool):
+                def _exec(sn: str, m: dict) -> dict:
+                    return _execute_one_script(sn, m, wo)
+                return _exec
+
+            bulkhead_tasks = [
+                (name, meta, _make_executor(warn_only), None)
+                for name, meta in script_tasks
+            ]
+
+            print(f"\n  并行执行 {len(script_tasks)} 个唯一脚本 (BulkheadExecutorV2 四池隔离) ...", file=sys.stderr)
+
+            def _on_complete(result: dict) -> None:
+                if result.get("enc_violation"):
+                    encoding_violations.append(result["enc_violation"])
+                    print(f"\n    [ENC] {result['enc_violation']}: 编码铁律违规 — 缺少 UTF-8 stdout 声明", file=sys.stderr)
+
+            dispatch_result = bulkhead.dispatch_with_locks(bulkhead_tasks, on_complete=_on_complete)
+
+            for r in dispatch_result.get("results", []):
+                if r.get("is_failed"):
+                    total_failed += 1
+                if FINDING_AVAILABLE and collection is not None and r.get("findings"):
+                    collection.extend(r["findings"])
+
+            for s in dispatch_result.get("skipped", []):
+                total_failed += 1
+                print(f"    [SKIP] {s['script_name']}: {s['reason']}", file=sys.stderr)
+
+            print(f"    {len(script_tasks)}/{len(script_tasks)} 完成 (pools: {dispatch_result.get('pools', {})})", file=sys.stderr)
+
+        except ImportError:
+            print("  [WARN] BulkheadExecutorV2 不可用, 回退 ThreadPoolExecutor", file=sys.stderr)
+            total_failed = _run_with_threadpool(script_tasks, collection, encoding_violations, warn_only)
+    else:
+        total_failed = _run_with_threadpool(script_tasks, collection, encoding_violations, warn_only)
+
+    for dim in dimensions_to_run:
+        dim_count = sum(1 for name, meta in script_tasks if dim in meta["dimensions"])
+        print(f"  [{dim.value}] {dim.label}: {dim_count} 脚本", file=sys.stderr)
+
+    overall = {
+        "total_scripts": len(script_tasks),
+        "total_failed": total_failed,
+        "total_unique_scripts": len(script_tasks),
+        "encoding_violations": encoding_violations,
+    }
+    return collection, overall
+
+
+def _run_with_threadpool(
+    script_tasks: list[tuple[str, dict]],
+    collection: Any,
+    encoding_violations: list[str],
+    warn_only: bool,
+) -> int:
+    """Fallback: ThreadPoolExecutor 并行执行。"""
     total_failed = 0
     completed = 0
 
@@ -781,17 +847,7 @@ def run_all_dimensions(
             if completed % 20 == 0 or completed == len(script_tasks):
                 print(f"    {completed}/{len(script_tasks)} 完成", file=sys.stderr)
 
-    for dim in dimensions_to_run:
-        dim_count = sum(1 for name, meta in script_tasks if dim in meta["dimensions"])
-        print(f"  [{dim.value}] {dim.label}: {dim_count} 脚本", file=sys.stderr)
-
-    overall = {
-        "total_scripts": len(script_tasks),
-        "total_failed": total_failed,
-        "total_unique_scripts": len(script_tasks),
-        "encoding_violations": encoding_violations,
-    }
-    return collection, overall
+    return total_failed
 
 
 def _get_changed_files(diff_ref: str = "HEAD~1") -> frozenset[str]:

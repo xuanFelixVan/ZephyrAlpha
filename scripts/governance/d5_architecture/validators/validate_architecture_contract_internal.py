@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_architecture_contract_internal.py | §
 """GATE-CONTRACT: CI gate for architecture-contract.yaml internal consistency.
 Prevents internal inconsistencies (regex conflicts, doc_type gaps, VR skew)
 from reaching the codebase—closes the root cause of 3 CRITICAL issues in

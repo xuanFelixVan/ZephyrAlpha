@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/sync_blueprint_status.py | §
 """机械强制：construction_plan=phase_2_complete → blueprint.status=Active.
 
 规则

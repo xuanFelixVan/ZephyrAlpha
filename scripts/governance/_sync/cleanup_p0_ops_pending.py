@@ -1,9 +1,11 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/cleanup_p0_ops_pending.py | §
 """
-cleanup_p0_ops_pending.py — 一次性：将所有 OPS-* P0+PENDING 任务降级+完成
+cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成
+"""
 
 __manifest__ = """
 args: []
-description: ⚠ __manifest__ 缺失——请添加元数据块
+description: [WARNING] __manifest__ 缺失, 请添加元数据块
 dimensions: []
 priority: P2
 timeout_seconds: 60
@@ -11,6 +13,7 @@ warn_only: false
 """
 
 
+"""
 运行一次后删除，属于止血操作。
 """
 import sqlite3

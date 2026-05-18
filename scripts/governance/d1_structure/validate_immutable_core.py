@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_immutable_core.py | §
 """
 validate_immutable_core.py — immutable_core 文件修改检测
 

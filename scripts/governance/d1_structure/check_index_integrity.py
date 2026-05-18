@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/check_index_integrity.py | §
 """
 check_index_integrity.py — 索引完整性校验
 

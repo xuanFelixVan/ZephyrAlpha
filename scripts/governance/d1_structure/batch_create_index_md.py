@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/batch_create_index_md.py | §
 #!/usr/bin/env python3
 """Batch create index.md for all directories under docs/ that lack one."""
 
@@ -291,7 +292,7 @@ MODULE_LAYER_MAP = {
     "l09_research_innovation": "L09 研究创新层 — 策略回测 / 因子研究 / 研究管理",
     "l10_compliance": "L10 合规层 — 交易前合规 / 持仓合规 / 监管报送",
     "l11_ml_platform": "L11 ML 平台层 — 模型训练 / 推理服务 / 特征存储 / 模型注册",
-    "l12_system_telemetry": "L12 系统可观测层 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
+    "system_telemetry": "L12 系统可观测层 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
     "l13_experimentation": "L13 实验管线层 — A/B 测试 / 实验管理 / 参数优化",
 }
 

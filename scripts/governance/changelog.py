@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/changelog.py | §
 #!/usr/bin/env python
 """
 changelog.py — 治理域变更日志生成/追加工具.

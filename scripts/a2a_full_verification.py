@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/a2a_full_verification.py | §
 """A2A Protocol 全链路满分验证脚本"""
 import sys
 
@@ -127,9 +128,9 @@ check("Layer 3: DeadlockGuard 可用", True)
 check("Layer 3: A2AProtocolGateway 可用", True)
 
 # 治理桥接
-from zephyr.a2a.governance_adapter import GovernanceAdapter
-from zephyr.governance.a2a.auditor import A2AAuditor
-from zephyr.governance.agent_rbac.a2a_check import verify_a2a_pair
+from zephyr.l01_infrastructure.a2a_protocol.governance.governance_adapter import GovernanceAdapter
+from zephyr.l01_infrastructure.a2a_protocol.governance.auditor import A2AAuditor
+from zephyr.agent_rbac.governance_bridges.a2a_check import verify_a2a_pair
 check("Governance: GovernanceAdapter 可用", True)
 check("Governance: A2AAuditor 可用", True)
 check("Governance: verify_a2a_pair 可用", True)

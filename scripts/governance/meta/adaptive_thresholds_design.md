@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-005
+---
+
 # MOD-INF-005 自适应阈值设计
 
 > 蓝图 §30.1 — P2 期 Backlog

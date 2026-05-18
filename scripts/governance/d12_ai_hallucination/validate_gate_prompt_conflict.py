@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_gate_prompt_conflict.py | §
 """
 validate_gate_prompt_conflict.py — Gate-Prompt 冲突检测
 =====================================================

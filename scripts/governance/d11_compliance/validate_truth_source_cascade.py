@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_truth_source_cascade.py | §
 """
 V-15 TruthSourceCascadeValidator — 真源连锁回溯校验器
 ======================================================

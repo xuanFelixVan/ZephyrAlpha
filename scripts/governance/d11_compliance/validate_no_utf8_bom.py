@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_no_utf8_bom.py | §
 """
 validate_no_utf8_bom.py — UTF-8 BOM 检测门禁
 

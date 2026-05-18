@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_bvb_compliance.py | §
 """对标 architecture-principles.md §3 BvB 五维评分法：
   新引入的 OSS 依赖必须通过五维评估（License/Security/Maintenance/Community/Ecosystem）。
 

@@ -1,9 +1,11 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/cleanup_p0_auto_bridged.py | §
 """
 清理历史 P0 自动桥接任务
+"""
 
 __manifest__ = """
 args: []
-description: ⚠ __manifest__ 缺失——请添加元数据块
+description: [WARNING] __manifest__ 缺失, 请添加元数据块
 dimensions: []
 priority: P2
 timeout_seconds: 60
@@ -11,9 +13,10 @@ warn_only: false
 """
 
 
+"""
 将所有 tags 含 'auto-bridged' 的 PENDING 任务：
-1. 优先级 P0 → P1（自动桥接 Finding 不代表 P0 紧急度）
-2. 状态 PENDING → COMPLETED（系统已记录此发现，不阻塞人工队列）
+1. 优先级 P0 -> P1（自动桥接 Finding 不代表 P0 紧急度）
+2. 状态 PENDING -> COMPLETED（系统已记录此发现，不阻塞人工队列）
 """
 
 import sqlite3

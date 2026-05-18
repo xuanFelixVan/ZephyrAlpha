@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_e2e_verify.py | §
 """Module docstring — see module-level docstring for details."""
 import sys, time
 

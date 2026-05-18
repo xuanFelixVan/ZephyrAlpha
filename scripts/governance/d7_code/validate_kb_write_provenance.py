@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_kb_write_provenance.py | §
 """
 validate_kb_write_provenance.py — 知识库写入 provenance 校验
 

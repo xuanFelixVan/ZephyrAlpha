@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/detect_dated_snapshots.py | §
 """
 detect_dated_snapshots.py — 带日期快照文件检测
 

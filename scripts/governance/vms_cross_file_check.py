@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_cross_file_check.py | §
 """
 VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
 ============================================================

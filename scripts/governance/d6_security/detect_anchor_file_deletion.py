@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_anchor_file_deletion.py | §
 """
 detect_anchor_file_deletion.py — 锚点文件删除检测
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_trust_tier.py | §
 """
 validate_trust_tier.py — Trust-Tier 门禁执行器
 

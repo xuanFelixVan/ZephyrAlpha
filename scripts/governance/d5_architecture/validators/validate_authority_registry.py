@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_authority_registry.py | §
 """AI 自治权限注册表 pre-commit 自校验 (Authority Registry Validator · V-11)
 
 任务编号 : T-V2-003 (Wave 0 终审 R74 兜底)

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_derived_from.py | §
 """
 validate_derived_from.py — derived_from 标注完整性闸门（GATE-DERIVED）
 v1.0.0 — 2026-05-03

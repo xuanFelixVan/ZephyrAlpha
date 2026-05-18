@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_position_limit.py | §
 """
 check_position_limit.py — 单一持仓限制 ≤ 5% NAV (INV-002)
 

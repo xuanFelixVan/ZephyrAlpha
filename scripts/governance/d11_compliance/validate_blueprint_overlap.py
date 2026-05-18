@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_blueprint_overlap.py | §
 """
 蓝图重叠检测门禁 (Blueprint Overlap Merge Gate - V-14)
 

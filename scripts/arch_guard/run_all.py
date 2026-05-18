@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/run_all.py | §
 """Architecture Guard 编排器
 
 读取 _manifest.yaml，执行所有 status=active 的 fitness function。

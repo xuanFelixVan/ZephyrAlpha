@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_op_check.py | §
 """AI操作前准入控制器 — 写/删文件前的机械门禁检查.
 
 本脚本是 RULE-ZERO~EIGHT 的代码级强制执行层。

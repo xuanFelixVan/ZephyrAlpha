@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_schema_consistency.py | §
 """
 check_schema_consistency.py — INV-010 契约物理路径存在性（Schema canonical 基线）
 

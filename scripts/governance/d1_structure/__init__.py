@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/__init__.py | §
 """D1 结构完整性 — 项目目录/文件结构合规性审计。
 
 检查项：

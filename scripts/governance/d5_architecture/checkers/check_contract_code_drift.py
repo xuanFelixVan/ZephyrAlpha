@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_contract_code_drift.py | §
 """check_contract_code_drift.py —— 契约-代码双写漂移阻断（盲点 C2 修复）
 
 对标：AGENTS.md §6.5 契约-代码同步铁律

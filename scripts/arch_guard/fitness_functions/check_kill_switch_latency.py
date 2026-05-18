@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_kill_switch_latency.py | §
 """
 check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)
 

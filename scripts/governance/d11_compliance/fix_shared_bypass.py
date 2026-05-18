@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/fix_shared_bypass.py | §
 """
 fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix companion)
 Aligns with AGENTS.md section 6.5 (script self-creation repository mandatory convention)

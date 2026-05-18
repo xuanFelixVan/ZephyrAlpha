@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_keywords_in_logs.py | §
 """
 detect_keywords_in_logs.py — 日志输出敏感关键词检测
 

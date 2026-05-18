@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_asset_index.py | §
 """
 全项目资产索引生成器
 ===================

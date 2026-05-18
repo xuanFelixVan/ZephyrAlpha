@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_audit_log_immutability.py | §
 """
 check_audit_log_immutability.py — 审计日志不可篡改检查 (INV-016)
 

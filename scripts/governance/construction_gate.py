@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/construction_gate.py | §
 """
 Construction Gate — 施工前路径校验门禁
 调用 PathResolver 校验任务卡的 downstream_outputs 路径是否匹配当前项目结构。
@@ -32,7 +33,7 @@ from pathlib import Path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
 
-from zephyr.shared.path_resolver import PathResolver, PathResolution
+from zephyr.governance.path_resolver import PathResolver, PathResolution
 
 
 RESOLVER = None

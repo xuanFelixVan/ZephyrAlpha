@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_orphan_documents.py | §
 """
 detect_orphan_documents.py — 孤立文档检测
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/measure_deprecation_cascade.py | §
 """measure_deprecation_cascade.py — 废弃级联影响度量
 
 

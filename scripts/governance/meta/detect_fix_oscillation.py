@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/detect_fix_oscillation.py | §
 """
 detect_fix_oscillation.py — 自修复振荡检测（蓝图 §28 B64）
 

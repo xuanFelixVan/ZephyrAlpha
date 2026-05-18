@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/validate_gate_discipline.py | §
 """
 validate_gate_discipline.py — 门禁纪律校验
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/encoding.py | §
 """
 encoding.py — UTF-8 编码安全工具
 

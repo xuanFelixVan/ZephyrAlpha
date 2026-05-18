@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_cron_monitor.py | §
 """
 VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
 ===============================================

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/hooks/auto_handoff_log.py | §
 from __future__ import annotations
 #!/usr/bin/env python3
 import os

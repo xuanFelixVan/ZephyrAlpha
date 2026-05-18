@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_blueprint_registry.py | §
 """validate_blueprint_registry.py — Blueprint registry self-check.
 
 对标：PS-STD-003 D11（登记表与实际文件对账）

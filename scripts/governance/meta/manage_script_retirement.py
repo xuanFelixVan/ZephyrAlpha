@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_script_retirement.py | §
 """
 manage_script_retirement.py — 脚本退役/废弃生命周期管理
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/construction/check_transition_code.py | §
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 

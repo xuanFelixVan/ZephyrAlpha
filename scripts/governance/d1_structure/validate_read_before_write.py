@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_read_before_write.py | §
 """validate_read_before_write.py — 先读后写校验（IRN-008）
 
 对标：GOV-MOD-002 IRN-008（先读后写）

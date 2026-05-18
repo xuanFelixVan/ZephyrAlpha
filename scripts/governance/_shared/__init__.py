@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/__init__.py | §
 """
 _shared — 审计脚本共享基础设施
 

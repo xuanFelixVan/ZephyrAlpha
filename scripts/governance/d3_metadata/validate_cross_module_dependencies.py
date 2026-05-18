@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_cross_module_dependencies.py | §
 """validate_cross_module_dependencies.py
 
 校验 cross-module-dependency-registry.yaml 中每条依赖的 source/target

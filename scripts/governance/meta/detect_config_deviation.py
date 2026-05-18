@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/detect_config_deviation.py | §
 """
 detect_config_deviation.py — 配置文件与蓝图规范偏差检测（蓝图 §28 B65 + B87）
 

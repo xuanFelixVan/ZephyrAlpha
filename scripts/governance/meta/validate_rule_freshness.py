@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_rule_freshness.py | §
 """
 validate_rule_freshness.py — AI Session 注入文件新鲜度检查（蓝图 §22.3 + B62）
 

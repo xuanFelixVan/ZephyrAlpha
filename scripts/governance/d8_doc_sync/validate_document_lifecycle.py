@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/validate_document_lifecycle.py | §
 """
 validate_document_lifecycle.py — 文档生命周期校验
 

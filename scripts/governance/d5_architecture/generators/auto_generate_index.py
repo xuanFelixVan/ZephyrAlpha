@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/generators/auto_generate_index.py | §
 #!/usr/bin/env python3
 """GATE-INDEX: Validate and auto-fix index.md factual accuracy.
 Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.

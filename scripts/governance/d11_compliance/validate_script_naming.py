@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_script_naming.py | §
 """
 validate_script_naming.py — 审计脚本命名规范门禁
 
@@ -89,7 +90,6 @@ EXCEPTIONS = frozenset({
     "deep_content_scanner.py",
     "dependency_graph.py",
     "g9_compliance_check.py",
-    "import_task_cards.py",
     "backup_runtime_state.py",
     "compute_sla_metrics.py",
     "create_task_from_finding.py",

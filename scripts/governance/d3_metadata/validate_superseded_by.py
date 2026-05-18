@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_superseded_by.py | §
 """
 validate_superseded_by.py — 废弃文件 superseded_by 检测
 

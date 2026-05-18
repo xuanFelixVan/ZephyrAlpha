@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/check_encoding.py | §
 """check_encoding.py — 编码合规校验（INJ-007）
 
 对标：GOV-MOD-001 INJ-007（编码合规）

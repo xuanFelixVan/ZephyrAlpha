@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_threshold_changes.py | §
 """validate_threshold_changes.py — 阈值变更审计日志
 
 对标 B16（关键阈值变更审计）+ ITIL 4 Configuration Change Audit。

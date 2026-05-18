@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_git_dangerous.py | §
 """
 detect_git_dangerous.py — 危险 Git 命令检测
 

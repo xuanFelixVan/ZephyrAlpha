@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/benchmark/test_fixtures/incomplete_module.py | §
 
 """Module docstring — see module-level docstring for details."""
 def calculate(x: int, y: int) -> int:

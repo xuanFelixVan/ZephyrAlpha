@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/test_lock_scenarios.py | §
 """
 test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_write_gate.py | §
 """AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证
 
 RULE-ZERO 硬执行器——AI 在调用 Write/SearchReplace 之前 MUST 先通过此门禁。

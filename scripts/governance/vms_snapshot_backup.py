@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_snapshot_backup.py | §
 """
 VMS Snapshot 备份脚本 — MOD-INF-011 · mitigates R4
 ====================================================

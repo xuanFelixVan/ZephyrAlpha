@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/detect_residual_files.py | §
 """
 detect_residual_files.py — 残留物检测
 

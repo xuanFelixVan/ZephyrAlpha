@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/mcp/status_all.py | §
 """MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。"""
 
 from __future__ import annotations

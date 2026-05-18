@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/generate_missing_index_md.py | §
 """generate_missing_index_md.py — 扫描目录树，为缺失 index.md 的目录自动生成索引文件。
 
 

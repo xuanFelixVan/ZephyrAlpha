@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_vague_terms.py | §
 """
 detect_vague_terms.py — 模糊/不确定术语检测
 

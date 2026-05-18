@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/ci_self_check.py | §
 """
 CI Entry: Self-Check — Drift Detector 自身完整性验证
 =====================================================

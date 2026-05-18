@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_rules_integrity.py | §
 """
 validate_rules_integrity.py — 规则文件完整性保护
 

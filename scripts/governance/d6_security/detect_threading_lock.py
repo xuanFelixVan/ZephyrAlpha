@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_threading_lock.py | §
 """
 detect_threading_lock.py — threading.Lock 导入检测
 

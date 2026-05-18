@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_script_manifest.py | §
 """
 generate_script_manifest.py — 脚本清单自动生成器
 

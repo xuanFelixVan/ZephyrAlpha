@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/construction/finalize_tasks.py | §
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 from zephyr.db.task_repo import TaskRepository

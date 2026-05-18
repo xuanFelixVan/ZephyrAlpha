@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/finding_state_machine.py | §
 """
 finding_state_machine.py — Finding 全生命周期状态机
 

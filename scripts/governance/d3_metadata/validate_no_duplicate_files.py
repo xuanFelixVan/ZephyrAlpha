@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_no_duplicate_files.py | §
 """
 GATE-DUP: Detect duplicate files after migration.
 Prevents the root cause of C6 (5 files duplicated after migration to _registry/).

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/track_script_costs.py | §
 """
 track_script_costs.py — 脚本执行 AI 费用追踪
 

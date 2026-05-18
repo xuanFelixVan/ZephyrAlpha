@@ -1,6 +1,12 @@
-"""MCP 全 Server 启动脚本（MOD-INF-013 §14 DAG 顺序）。
+# [BLUEPRINT] MOD-INF-005 | scripts/mcp/start_all.py | §
+# DEPRECATED: 合并到 launcher.py (2026-05-17)
+# 进程生命周期由 ProcessLifecycleGateway 统一管理。
+# MCP Server 启动请使用: python scripts/mcp/launcher.py
+# 停止请使用: python scripts/mcp/stop_all.py
+"""MCP 全 Server 启动脚本 — DEPRECATED.
 
-启动顺序（遵守 §14 依赖图）：SQLite → ChromaDB → 7 Server → Gateway。
+启动顺序（遵守 MOD-INF-013 §14 DAG 顺序）：SQLite → ChromaDB → 7 Server → Gateway。
+⚠️ 此脚本已废弃。请使用 launcher.py（通过 ProcessLifecycleGateway 管理进程生命周期）。
 """
 
 from __future__ import annotations

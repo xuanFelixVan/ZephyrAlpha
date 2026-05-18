@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_session_gate_check.py | §
 """
 validate_session_gate_check.py — Session 门禁检查完整性校验
 

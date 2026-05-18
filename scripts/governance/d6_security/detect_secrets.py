@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_secrets.py | §
 """
 detect_secrets.py — 密钥/Token/凭证硬编码检测
 

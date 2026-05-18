@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/detectors/detect_duplicate_module_names.py | §
 """detect_duplicate_module_names.py --- 同名模块语义关系分析
 
 

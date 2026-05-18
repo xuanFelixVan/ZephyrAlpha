@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # 自动生成于 2026-05-07T18:52:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
@@ -2558,30 +2565,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: import_task_cards.py
-  owner: governance
-  dimensions:
-  - D5
-  - D3
-  priority: P1
-  timeout_seconds: 30
-  args:
-  - flag: <source_dir>
-    type: str
-    description: 任务卡 .md 文件所在目录
-  - flag: --dry-run
-    type: flag
-    description: 仅解析校验，不写入数据库
-  - flag: --force
-    type: flag
-    description: 强制覆盖已存在任务
-  warn_only: false
-  description: 批量导入 .md 任务卡到 SQLite 任务数据库（data/zalpha_metadata.db）。支持 --dry-run（预览）和
-    --force（强制覆盖）。默认增量模式：跳过数据库中已存在的任务。基于 ADR-0030（SQLite 元数据层）+ ADR-0040（Pydantic
-    V2 契约）。
-  tags:
-  - Critical
-  - Quick
 - name: meta/arbitrate_findings.py
   owner: governance:meta
   dimensions:

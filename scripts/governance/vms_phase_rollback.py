@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_phase_rollback.py | §
 """
 VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
 ===================================================

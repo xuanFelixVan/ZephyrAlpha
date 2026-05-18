@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/verify_file_paths.py | §
 """代码路径索引验证脚本（MOD-INF-013 §5 governance）。"""
 
 from __future__ import annotations

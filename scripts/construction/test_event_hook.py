@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/construction/test_event_hook.py | §
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 

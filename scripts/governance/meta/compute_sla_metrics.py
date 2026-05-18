@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/compute_sla_metrics.py | §
 """
 compute_sla_metrics.py — SLA/SLO 指标计算引擎（蓝图 §8.4）
 

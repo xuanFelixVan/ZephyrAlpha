@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_docstring_coverage.py | §
 """
 validate_docstring_coverage.py — Docstring 覆盖率校验
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py | §
 """sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint-registry.yaml
 
 对标: Problem IX -- blueprint-registry.yaml 大面积不同步
@@ -70,7 +71,7 @@ LAYER_DIR_MAP = {
     "l09_research_innovation": "L09",
     "l10_compliance": "L10",
     "l11_ml_platform": "L11",
-    "l12_system_telemetry": "L12",
+    "system_telemetry": "L12",
     "l13_experimentation": "L13",
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",

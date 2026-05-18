@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/phase_e_context_check.py | §
 """Phase E: AI context injection verification script"""
 import glob
 import yaml

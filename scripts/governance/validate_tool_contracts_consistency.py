@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/validate_tool_contracts_consistency.py | §
 """Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
 
 对比 tool_contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。

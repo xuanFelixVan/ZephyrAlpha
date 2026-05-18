@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/detectors/detect_deprecated_adr_references.py | §
 """detect_deprecated_adr_references.py — 废弃 ADR 引用检测
 
 

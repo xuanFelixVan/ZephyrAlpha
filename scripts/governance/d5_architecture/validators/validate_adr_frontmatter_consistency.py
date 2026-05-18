@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py | §
 #!/usr/bin/env python3
 """validate_adr_frontmatter_consistency.py — ADR frontmatter 一致性闸门（GATE-ADR-FM）
 v1.0.0 — 2026-05-03

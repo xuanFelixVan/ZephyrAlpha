@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/fix_orphan_deps.py | §
 """
 fix_orphan_deps.py — 一次性修复孤儿依赖引用
 =============================================

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/detectors/detect_depends_on_cycles.py | §
 """detect_depends_on_cycles.py - depends_on 环检测."""
 from __future__ import annotations
 

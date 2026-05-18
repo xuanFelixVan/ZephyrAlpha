@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_risk_params_consistency.py | §
 """
 check_risk_params_consistency.py — 风控参数真源 (INV-013) + 与 INV-002 声明对齐
 

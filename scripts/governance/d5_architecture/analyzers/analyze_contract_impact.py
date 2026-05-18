@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/analyze_contract_impact.py | §
 """analyze_contract_impact.py — 契约变更影响分析器
 
 

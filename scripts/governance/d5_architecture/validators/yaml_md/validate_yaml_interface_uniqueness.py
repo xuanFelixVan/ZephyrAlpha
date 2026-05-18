@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/yaml_md/validate_yaml_interface_uniqueness.py | §
 #!/usr/bin/env python3
 """validate_yaml_interface_uniqueness.py — YAML 模块接口唯一性闸门（GATE-IFACE-UNIQ）
 v1.0.0 — 2026-05-03

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_silent_degradation.py | §
 """
 detect_silent_degradation.py — 静默降级检测
 

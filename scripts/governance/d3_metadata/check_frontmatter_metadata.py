@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | §
 """
 GATE-15: Frontmatter metadata validation
 Validates doc_type, status, required fields against schema vocabulary files

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/detect_orphan_py.py | §
 """
 detect_orphan_py.py — 项目根目录孤儿 .py 文件检测
 

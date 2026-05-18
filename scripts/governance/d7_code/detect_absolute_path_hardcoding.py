@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_absolute_path_hardcoding.py | §
 """
 detect_absolute_path_hardcoding.py — 绝对路径硬编码检测（蓝图 §34.1 操作陷阱）
 

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dag.py | §
 """
 对标 12-dimension-audit-matrix.md §4.3：
   校验代码级 import 依赖图无循环，与 detect_depends_on_cycles.py（YAML 级）互补。

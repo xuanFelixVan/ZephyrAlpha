@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/adversarial_log.py | §
 """红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪
 
 用法:

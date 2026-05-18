@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/context/generate_architecture_context.py | §
 """
 generate_architecture_context.py — 预编译架构上下文包生成器
 

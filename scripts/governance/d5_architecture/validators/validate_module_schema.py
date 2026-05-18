@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_module_schema.py | §
 """validate_module_schema.py — 模块 Schema 校验（INJ-003/004/005/006）
 
 对标：GOV-MOD-001 INJ-003（契约已定义）、INJ-004（生命周期状态合法）、

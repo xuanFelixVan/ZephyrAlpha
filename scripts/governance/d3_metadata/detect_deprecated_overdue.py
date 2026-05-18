@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/detect_deprecated_overdue.py | §
 """
 detect_deprecated_overdue.py — 废弃超期检测
 

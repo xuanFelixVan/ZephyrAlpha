@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/sync_rule_registry.py | §
 """
 Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
 has a corresponding TRAE-* entry in the rule-registry.md TRAE domain.

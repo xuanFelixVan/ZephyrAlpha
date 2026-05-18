@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d10_performance/collect_system_threads.py | §
 """
 collect_system_threads.py — 全系统线程数快照采集器
 

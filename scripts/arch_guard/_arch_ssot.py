@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_arch_ssot.py | §
 """arch_guard 共享：仓库根路径、capacity_slo / invariants / contracts 装载。"""
 from __future__ import annotations
 

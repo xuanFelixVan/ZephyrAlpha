@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_verify_yaml.py | §
 """Module docstring — see module-level docstring for details."""
 import yaml
 with open('src/zephyr/gates/_registry.yaml', encoding='utf-8') as f:

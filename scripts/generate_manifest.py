@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/generate_manifest.py | §
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
 import os, sys, yaml
 from pathlib import Path

@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/check_p0_status.py | §
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块

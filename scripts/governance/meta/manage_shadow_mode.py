@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_shadow_mode.py | §
 """
 manage_shadow_mode.py — Shadow Mode 渐进激活管理
 
