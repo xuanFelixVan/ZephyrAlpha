@@ -124,6 +124,10 @@ jobs:
         run: python scripts/governance/check_registry_consistency.py
         continue-on-error: false
 
+      - name: Path Tree Freshness (G6_PT)
+        run: python scripts/governance/generate_project_path_tree.py --check
+        continue-on-error: false
+
       # ============================================================
       # Tier 3: 架构层 — SSoT + Gate + Contract + Manifest Drift
       # ============================================================

@@ -91,12 +91,12 @@ tiers:
 
       - registry_id: REG-DRIFT-001
         name: 漂移检测器注册表
-        physical_path: src/zephyr/drift_detector/_detector_registry.yaml
+        physical_path: src/zephyr/behavioral_auditor/_detector_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 2
+        entry_count: 31
         status: active
-        description: 漂移检测器配置（2 个检测器）
+        description: 漂移检测器配置（18 existing + 13 new = 31 个检测器）。detector_dispatcher.py 预期从此文件加载
 
       - registry_id: REG-SKILL-001
         name: Agent 技能注册表
@@ -146,6 +146,78 @@ tiers:
         entry_count: 16
         status: active
         description: Catalogs 下的 16 个治理登记表自动索引
+
+      - registry_id: REG-STD-001
+        name: 治理方法论标准
+        physical_path: docs/01_policies_and_standards/meta/governance-methodology-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 13
+        status: active
+        description: MTH-001~013 治理决策方法论——标准先行/架构自检/根源分析/SSoT裁决等13条原则
+
+      - registry_id: REG-STD-002
+        name: 代码构建标准
+        physical_path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 6
+        status: active
+        description: GOV-ENG-001 命名约定/文件组织/类型注解/导入/SSoT守卫
+
+      - registry_id: REG-STD-003
+        name: 审计脚本质量标准
+        physical_path: scripts/governance/quality-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 41
+        status: active
+        description: SCRIPT-QUALITY-001 8维度25MUST+16SHOULD+自检清单
+
+      - registry_id: REG-STD-004
+        name: AI产出物压缩工作流标准
+        physical_path: docs/01_policies_and_standards/governance/document/compression-workflow-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: GOV-DOC-011 转化优先/15不可删/6砍错模式/幻觉安全验证
+
+      - registry_id: REG-STD-005
+        name: Session状态机规则
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: OPS-VC-002 5状态/7转换/3禁止/超时/异常/不变量
+
+      - registry_id: REG-STD-006
+        name: 会话门禁检查清单
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 12
+        status: active
+        description: OPS-VC-005 12项门禁检查（A1-A3/B1-B3/C1-C3/D1-D2）
+
+      - registry_id: REG-STD-007
+        name: AI事故响应手册
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-playbook.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 13
+        status: active
+        description: OPS-VC-004 P0/P1/P2事故分级+隔离+响应+回滚+复盘
+
+      - registry_id: REG-STD-008
+        name: Vibe Coding操作入口
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/index.md
+        format: markdown
+        maintenance: manual
+        entry_count: 4
+        status: active
+        description: OPS-VC-001 Vibe Coding 4文件导航入口
 
       - registry_id: REG-CROSS-001
         name: 登记表的登记表（一致性契约）
@@ -246,6 +318,14 @@ tiers:
         status: draft
         description: 全项目统一资产索引 SSoT——自动发现六大目录下全部文件资产，四维分类（type/layer/status/priority）登记，与 24 个注册表持续对账。蓝图 MOD-INF-026
 
+      - registry_id: REG-FUNC-DOMAIN-001
+        name: 功能域注册表
+        description: 模块/脚本功能域声明的唯一真源。创建新模块/脚本时SSoT门禁检查功能域重叠。
+        owner: MOD-INF-037
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml
+        format: yaml
+        tier: tier_1_governance
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
@@ -282,9 +362,9 @@ tiers:
         physical_path: docs/03_modules/template-registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 4
+        entry_count: 13
         status: active
-        description: 4 个文档模板登记
+        description: 13 个文档模板登记
 
       - registry_id: REG-PATHWAY-001
         name: 系统路径注册表
@@ -349,6 +429,15 @@ tiers:
         status: active
         description: Constitution-Based Defense 条款的 canonical 登记——article_id/derived_from/defense_action/applicable_gates
 
+      - registry_id: REG-SM-001
+        name: 状态机实例注册表
+        physical_path: src/zephyr/shared/state_machine_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 1
+        status: active
+        description: 全项目状态机实例的 canonical 登记——fsm_id/states/transitions/owner_module。MOD-INF-038
+
 # ============================================================
 # AI 使用指南
 # ============================================================
@@ -385,11 +474,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 29
+  total_registries: 30
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
-    tier_0_core: 9
-    tier_1_governance: 12
+    tier_0_core: 10
+    tier_1_governance: 13
     tier_2_runtime: 9
