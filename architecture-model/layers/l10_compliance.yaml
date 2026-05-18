@@ -17,9 +17,10 @@ modules:
   description: 合规层。SecurityGateway + ComplianceEngine �?OCP 扩展�?+ AISG Sandbox 测试器�?
   files:
   - aisg_sandbox.py
+  - artifact_scanner.py
   - compliance_manager.py
-  - default_security_gateway.py
   - security_gateway_base.py
+  - implementations/default_security_gateway.py
   interfaces:
   - contract_id: CTR-P1-012
     role: both

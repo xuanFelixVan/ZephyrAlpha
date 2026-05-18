@@ -1,6 +1,15 @@
-# ZephyrAlpha — Token Budget 四级体系配置
-# 真源：蓝图 MOD-INF-001 §5.1 DD-11
-# 版本：v2.6.0
+# --- 治理锚定 ---
+# blueprint: MOD-INF-001 | docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §5.1
+# module_id: MOD-INF-001
+# stability: deprecated
+# safety_level: M
+# ai_autonomy: immutable_core
+# ssot_redirect: MOD-INF-024 config/budget_policy.yaml
+# --- 治理锚定结束 ---
+# DEPRECATED: Token Budget SSoT 已迁移至 MOD-INF-024 (config/budget_policy.yaml)
+# 本文件保留仅为 Capacity Assurance 内部容量规划参考
+# 预算执行策略以 config/budget_policy.yaml 为唯一真源
+# 版本：v2.6.0 (frozen)
 
 config_version: "2.6.0"
 

@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-005
+---
+
 # data/cache/ — ZephyrAlpha Runtime Artifact Cache
 #
 # 此目录存储代码去重引擎运行时生成的缓存/报告文件。

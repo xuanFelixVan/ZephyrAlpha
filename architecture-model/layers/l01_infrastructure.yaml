@@ -7,9 +7,9 @@ partition:
   runtime_plane: warm
   status: implemented
 modules:
-- id: l01-script-system
+- id: l01-governance-automation
   module_id: MOD-INF-005
-  name: Script System
+  name: Governance Automation
   submodule_path: src/zephyr/l01_infrastructure/script_system/
   status: implemented
   priority: P0

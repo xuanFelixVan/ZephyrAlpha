@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # AI 能力边界矩阵 — SSoT 定义文件
 #
 # 定义每个模块/目录的 AI 自治等级和操作边界。配合 @require_capability
@@ -82,7 +89,7 @@ matrix:
     - scope: "src/zephyr/l11_ml_platform/**/*.py"
       level: FULL
       description: "ML 平台 — CBAC allow"
-    - scope: "src/zephyr/l12_system_telemetry/**/*.py"
+    - scope: "src/zephyr/system_telemetry/**/*.py"
       level: FULL
       description: "系统遥测层 — CBAC allow"
     - scope: "src/zephyr/l13_experimentation/**/*.py"

@@ -1,24 +1,22 @@
 {
-  "timestamp": "2026-05-08T12:46:05.537982+00:00",
+  "timestamp": "2026-05-18T11:25:41.410166+00:00",
   "report": {
     "status": "healthy",
     "collections_healthy": 8,
     "collections_unhealthy": 0,
     "drift_detected": false,
     "issues": [],
-    "checked_at": "2026-05-08T12:46:05.515553+00:00"
+    "checked_at": "2026-05-18T11:25:41.402483+00:00"
   },
   "ttl": [],
   "integrity": {
-    "status": "corrupted",
-    "issues": [
-      "knowledge: integrity check 失败: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
-    ]
+    "status": "clean",
+    "issues": []
   },
   "drift": {
     "drift_detected": false,
     "extra_collections": [],
     "missing_collections": [],
-    "detail": "disk={'session_snapshots', 'rules', 'lessons', 'knowledge', 'blueprints', 'execution_traces', 'code_context', 'decisions'}, blueprint={'session_snapshots', 'rules', 'lessons', 'knowledge', 'blueprints', 'decisions', 'code_context', 'execution_traces'}"
+    "detail": "disk={'session_snapshots', 'rules', 'execution_traces', 'knowledge', 'code_context', 'lessons', 'blueprints', 'decisions'}, blueprint={'session_snapshots', 'rules', 'execution_traces', 'knowledge', 'code_context', 'lessons', 'blueprints', 'decisions'}"
   }
 }

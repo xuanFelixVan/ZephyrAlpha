@@ -18,6 +18,8 @@ modules:
   files:
   - base.py
   - factor_base.py
+  - factors/momentum_factor.py
+  - factors/value_factor.py
   interfaces: []
   kb_ref: []
 summary:

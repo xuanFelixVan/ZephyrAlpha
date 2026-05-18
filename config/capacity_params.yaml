@@ -1,0 +1,160 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 容量参数统一配置（SSoT — Single Source of Truth）
+# ============================================================================
+# 此文件是所有并发/容量/规模参数的唯一真源。
+# 所有模块蓝图引用此文件，代码启动时从此文件加载。
+# 变更此文件后执行: python scripts/governance/validate_capacity_params.py
+# ============================================================================
+# module_id: CFG-CAP-001
+# version: 1.0.0
+# belongs_to: MOD-MASTER-001
+# references:
+#   - MOD-INF-009 (Pipeline) §0.6
+#   - MOD-INF-001 (Capacity Assurance) §13
+#   - MOD-INF-005 (Script System) §36
+#   - MOD-INF-032 (Resource Optimization) §0.3
+#   - MOD-INF-014 (LLM Security) §0.3
+# ============================================================================
+
+design_capacity:
+  max_modules: 1500
+  max_scripts: 10000
+  max_ai_sessions: 100
+  scripts_per_module_avg: 6.7        # 10,000 / 1,500
+  incremental_scripts_per_scan: 30   # 单次增量扫描最多 30 脚本
+  incremental_scripts_per_scan_min: 15
+
+hardware_profile:
+  cpu_model: "i7-12700KF"
+  cpu_cores_physical: 12
+  cpu_threads_logical: 20
+  ram_gb: 64
+  disk_type: "NVMe SSD"
+  disk_size_gb: 1024
+  gpu_model: "RTX 3090"
+  gpu_vram_gb: 24
+  cores_reserved_for_os_ide: 8
+  cores_for_zephyr: 12
+  cores_for_scripts: 12              # ProcessPoolExecutor 可用核心数
+  cores_for_lsg: 4                   # LLM Security Gateway 专用
+  cores_for_resource_engine: 2       # Resource Optimization Engine 专用
+
+execution:
+  max_script_workers: 48             # 脚本并发执行上限 = 16 shard × 3 worker
+  max_concurrent_dispatches: 100     # TaskQueue 异步调度并发
+  pipeline_max_parallel_stages: 11   # PipelineDAG 并行阶段数
+  enable_parallel_modules: true      # PipelineOrchestrator 模块并行
+
+scan_modes:
+  incremental:
+    enabled: true
+    max_scripts_per_scan: 30
+    timeout_seconds: 180             # 30 脚本 × 3s × 2 倍余量
+    debounce_ms: 500                 # git diff 后去抖，避免重复触发
+  full:
+    enabled: true
+    schedule: "0 2 * * 0"           # cron: 每周日凌晨 2:00
+    timeout_seconds: 10800           # 3 小时
+  partial:
+    enabled: true                    # 增量失败时的回退模式
+    max_modules_per_batch: 5
+    timeout_seconds: 600
+  emergency:
+    enabled: true                    # SEV1 事件或 Kill Switch 触发
+    bypass_queue: true
+
+sharding:
+  shard_count: 16                    # ShardRouter 分片数
+  modules_per_shard_max: 94          # 1500 / 16
+  shard_worker_pool_size: 3          # 每片 ProcessPoolExecutor worker 数
+  shard_db_path_pattern: "data/shard_{id:02d}/governance.db"
+  migration_strategy: "consistent_hashing"
+
+budget:
+  SCRIPT_SYSTEM_wip_limit: 48        # = max_script_workers
+  global_max_concurrent: 150         # CapacityBudget 全局上限（100 调度 + 50 执行）
+  calibration_interval_modules: 50   # CapacityCalibrator 每 50 模块重新校准
+  per_session_memory_mb: 500         # 单 AI session 内存软限制
+  per_session_cpu_cores: 0.5         # 单 AI session CPU 软限制 (0.5 = 50% of 1 core)
+  per_session_gpu_vram_mb: 200       # 单 AI session GPU VRAM 软限制
+  zephyr_system_memory_gb: 8         # ZephyrAlpha 系统自身内存保留
+  zephyr_system_cpu_cores: 2         # ZephyrAlpha 系统自身 CPU 保留
+  zephyr_system_gpu_vram_gb: 4       # ZephyrAlpha 系统自身 GPU 保留（embedding/reranker）
+  os_ide_memory_gb: 8                # 操作系统 + IDE 内存保留（硬保留，永不动用）
+  os_ide_cpu_cores: 4                # 操作系统 + IDE CPU 保留
+  session_pool_memory_gb: 48         # AI Session 分区池内存上限
+  session_pool_cpu_cores: 6          # AI Session 分区池 CPU 上限
+  session_pool_gpu_vram_gb: 16       # AI Session 分区池 GPU VRAM 上限
+
+thresholds:
+  memory_warn_pct: 70                # 资源优化引擎警告线
+  memory_crit_pct: 85                # 资源优化引擎临界线
+  cpu_warn_pct: 75
+  cpu_crit_pct: 90
+  disk_warn_pct: 80
+  disk_crit_pct: 90
+  gpu_vram_warn_pct: 75
+  gpu_vram_crit_pct: 90
+  backpressure_queue_depth: 100      # 触发背压的队列深度
+
+lsg:
+  lsg_concurrent_max: 100            # LSG 自身最多同时处理 100 个扫描
+  lsg_scan_latency_p50_ms: 100       # LSG 扫描延迟 p50 SLO
+  lsg_scan_latency_p95_ms: 300       # LSG 扫描延迟 p95 SLO
+  lsg_scan_latency_p99_ms: 500       # LSG 扫描延迟 p99 SLO
+  lsg_availability_pct: 99.9         # LSG 可用率 SLO
+  token_budget_global_daily: 10000000
+  token_budget_per_session_daily: 100000
+  token_budget_per_session_hourly: 10000
+  token_budget_per_session_concurrent: 5
+
+fle:
+  detector_pool_quick_workers: 8     # Feedback Loop Engine: Quick 检测器池
+  detector_pool_deep_workers: 4      # FLE: Deep 检测器池
+  detector_pool_background_workers: 2 # FLE: Background 检测器池
+  ring_buffer_capacity: 4096         # FLE 事件环形缓冲区
+  findings_shard_count: 16           # FLE Findings 分片数
+  session_shard_count: 4             # FLE Session 分片数
+
+mcp:
+  max_concurrent_sessions: 100       # MCP Server 同时连接上限
+  per_tool_timeout_seconds: 30       # 单个 tool call 超时
+  rate_limit_per_session_rpm: 60     # 单 session 每分钟 tool call 上限
+  max_result_size_bytes: 10485760    # 单次 tool 结果最大 10MB
+  chromadb_max_vectors: 1000000      # ChromaDB 最大向量数
+
+timeouts:
+  global_hard_timeout_seconds: 900   # 全局硬超时（15 分钟，兜底）
+  incremental_scan_timeout: 180      # 增量扫描超时
+  full_scan_timeout: 10800           # 全量扫描超时（3 小时）
+  script_default_timeout: 120        # 脚本默认超时
+  gate_evaluation_timeout: 30        # 门禁评估超时
+  context_build_timeout: 15          # 上下文构建超时
+  api_request_timeout: 60            # API 请求超时
+
+cache:
+  scan_result_cache_max_entries: 5000 # 扫描结果 LRU 缓存
+  scan_result_cache_ttl_seconds: 300  # 缓存 TTL（5 分钟）
+  context_cache_max_entries: 1000
+  context_cache_ttl_seconds: 60
+  script_impact_map_cache_ttl: 600    # ScriptImpactMap 缓存 TTL（10 分钟）
+
+observability:
+  log_aggregation_window_seconds: 60  # 日志聚合窗口
+  metrics_scrape_interval_seconds: 15 # Prometheus metrics 采集间隔
+  audit_log_retention_days: 90        # 审计日志保留天数
+  audit_log_max_daily_entries: 100000 # 审计日志每日上限（LSG 100 AI 并发场景）
+
+migration:
+  version: "1.0.0"
+  last_calibration_modules: 51        # 最后一次 CapacityCalibrator 校准时模块数
+  next_calibration_modules: 100       # 下次校准时机
+  calibrated_params_sha256: ""        # 校准后参数的哈希
+  migration_notes: "Initial SSoT. Will be recalibrated at module_count=100, 200, 400, 800, 1500 via CapacityCalibrator."

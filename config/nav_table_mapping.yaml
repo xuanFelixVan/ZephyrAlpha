@@ -1,4 +1,11 @@
-# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+﻿# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
 # 本文件是 AGENTS.md §5.2 的 SSoT。
 # 新增规则/脚本时：更新本文件 → 运行 scripts/governance/generate_nav_table.py → §5.2 自动刷新。
 # 设计原则：本文件只定义"什么规则/脚本出现在导航表中、对应哪个阶段/维度"，
@@ -73,7 +80,7 @@ seven_stages:
       - GOV-MOD-003
       - GOV-MOD-004
     manual_files:
-      - "docs/01_policies_and_standards/templates/blueprint-template.md"
+      - "docs/01_policies_and_standards/templates/blueprint-construction-template.md"
 
   - id: "⑤"
     name: "施工"

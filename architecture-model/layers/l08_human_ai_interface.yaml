@@ -10,25 +10,19 @@ modules:
 - id: l08-dashboard
   module_id: MOD-L08-001
   name: Dashboard
-  submodule_path: src/zephyr/l08_human_ai_interface/dashboard/
+  submodule_path: src/zephyr/l08_human_ai_interface/
   status: implemented
   priority: P1
   runtime_plane: warm
-  description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势�?
+  description: 监控面板：任务进度、门禁统计、知识概览、OLAP 趋势
   files:
-  - app.py
-  - fitness_functions.py
-  - gate_statistics.py
   - interface_base.py
-  - knowledge_overview.py
-  - olap_trend.py
-  - task_progress.py
-  components:
-  - fitness_functions.py
-  - gate_statistics.py
-  - knowledge_overview.py
-  - olap_trend.py
-  - task_progress.py
+  - dashboard/app.py
+  - dashboard/components/fitness_functions.py
+  - dashboard/components/gate_statistics.py
+  - dashboard/components/knowledge_overview.py
+  - dashboard/components/olap_trend.py
+  - dashboard/components/task_progress.py
   interfaces:
   - contract_id: EXT-DASHBOARD-FLE-001
     role: consumer

@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 — 蓝图触发路由表（Blueprint Routing Table）
 #
 # 创建日期   : 2026-05-04
@@ -755,11 +762,11 @@ routes:
     blueprint_id: "MOD-INF-032"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/shared/lifecycle/resource_optimization_engine.py"
+      - "src/zephyr/lifecycle_manager/resource_optimization_engine.py"
       - "src/zephyr/shared/io/io_cache.py"
       - "src/zephyr/shared/io/streaming_reader.py"
       - "src/zephyr/shared/infra/process_pool.py"
-      - "src/zephyr/shared/lifecycle/lazy_loader.py"
+      - "src/zephyr/lifecycle_manager/lazy_loader.py"
       - "config/resource_optimization.yaml"
     task_keywords:
       - "资源优化"
@@ -792,6 +799,39 @@ routes:
     safety: "H"
     priority: 91
     description: "资源优化引擎 — MAPE-K 循环驱动的资源监控、分析、优化与自愈系统"
+
+  - route_id: "R031"
+    blueprint_id: "MOD-INF-037"
+    blueprint_level: module
+    path_patterns:
+      - "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml"
+      - "docs/03_modules/path-ownership-map.yaml"
+      - "scripts/governance/generate_project_path_tree.py"
+      - "scripts/governance/generate_path_ownership_map.py"
+      - "src/zephyr/l01_infrastructure/registry_governance.py"
+      - "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml"
+      - "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+    task_keywords:
+      - "路径树"
+      - "path tree"
+      - "路径归属"
+      - "path ownership"
+      - "注册表治理"
+      - "registry governance"
+      - "路径冲突"
+      - "path conflict"
+      - "物理路径"
+      - "physical path"
+      - "路径漂移"
+      - "path drift"
+      - "功能域注册表"
+      - "functional domain registry"
+      - "SSoT门禁"
+      - "SSoT gate"
+    scope: pre_change
+    safety: "M"
+    priority: 78
+    description: "注册表治理 — 物理路径树(REG-017)+路径归属图(REG-018)+功能域注册表+SSoT门禁+一致性校验"
 
 # =========================================================================
 # §2  关键字兜底映射（无文件模式匹配时）

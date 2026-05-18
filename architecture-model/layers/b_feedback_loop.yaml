@@ -123,6 +123,13 @@ new_blindspots_v0410:
       - R527: SystemEntropyMonitor �?FLE内部熵增趋势(配置/行为混乱�?
     forensic:
       - R529: FLEUpgradeSafetyValidator �?FLE自身代码升级兼容性校�?      - R531: InterruptCoherenceValidator �?崩溃/重启后状态一致性校�?
+interfaces:
+  - contract_id: CT-FLE-ORC-001
+    role: both
+    description: FLE 与 Orchestrator 的交互契约（异常检测→任务调度/动作派发）
+  - contract_id: CT-FLE-DB-001
+    role: both
+    description: FLE 与 DB 的交互契约（指标读写/诊断记录/动作日志持久化）
 dependencies:
   related_modules: []
   upstream: []

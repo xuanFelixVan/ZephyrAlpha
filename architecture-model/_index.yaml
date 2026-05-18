@@ -83,7 +83,7 @@ partitions:
       description: ML 生命周期：训练调度、特征存储、模型注册、推理服务
     - id: l12
       name: System Telemetry
-      path: layers/l12_system_telemetry.yaml
+      path: layers/system_telemetry.yaml
       status: phase_e_verified
       description: 全系统遥测：metrics/logs/traces/ai_behavior 采集归档
     - id: l13

@@ -1,0 +1,25 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: skill-rol-gov-001
+category: infra
+description: Audit scanning and drift fixing
+examples: []
+input_schema:
+  type: object
+name: 'Skill: governor'
+output_schema:
+  type: object
+priority: P2
+registered_at: '2026-05-16T00:43:32.871669'
+requires_human: false
+runtime_plane: cold
+status: ACTIVE
+tags:
+- skill-derived
+- role
+- governor

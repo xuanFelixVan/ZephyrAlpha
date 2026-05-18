@@ -1,0 +1,4116 @@
+{
+ "metadata": {
+  "graph_id": "GROUND-TRUTH-DEPGRAPH-001",
+  "version": "1.0.0",
+  "scope": "全项目文件级地面实况依赖图（AST精确解析）",
+  "generated_at": "2026-05-18T15:14:44.134903+00:00"
+ },
+ "adjacency": {
+  "scripts/a2a_full_verification.py": [
+   "src/zephyr/runtime/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "scripts/construction/check_statuses.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/construction/check_transition_code.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/construction/d_init_task_system.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "scripts/construction/demo_a2a_coordination.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/construction/demo_e2e_pipeline.py": [
+   "src/zephyr/l00_data_source/__init__.py",
+   "src/zephyr/l02_alpha_factor/__init__.py",
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/l04_risk_management/__init__.py",
+   "src/zephyr/l05_portfolio_construction/__init__.py",
+   "src/zephyr/l06_trade_execution/__init__.py",
+   "src/zephyr/l07_post_trade_analytics/__init__.py",
+   "src/zephyr/l09_research_innovation/__init__.py",
+   "src/zephyr/l10_compliance/__init__.py",
+   "src/zephyr/l11_ml_platform/__init__.py",
+   "src/zephyr/l13_experimentation/__init__.py"
+  ],
+  "scripts/construction/finalize_tasks.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "scripts/construction/local_layer_daemon.py": [
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "scripts/construction/reset_test_task.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "scripts/construction/start_brain.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "scripts/construction/test_event_hook.py": [
+   "src/zephyr/hooks/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/governance/_e2e_verify.py": [
+   "src/zephyr/_cross_layer/__init__.py",
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/feedback_loop/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "scripts/governance/_shared/base.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/adversarial_sys_master_test.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "scripts/governance/analyze_change_impact.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "scripts/governance/check_handoff_manifests.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "scripts/governance/construction_gate.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "scripts/governance/create_alignment_tasks.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/governance/d1_structure/cbg_reset.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "scripts/governance/d1_structure/reset_cbg.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "scripts/governance/d3_metadata/check_registry_consistency.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/d5_architecture/audit_agent_spec.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "scripts/governance/d5_architecture/check_blueprint_code_alignment.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "scripts/governance/d5_architecture/check_budget_health.py": [
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "scripts/governance/g9_compliance_check.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "scripts/governance/gate_engine_selfcheck.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "scripts/governance/meta/create_task_from_finding.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/governance/meta/finding_state_machine.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/meta/validate_emergency_bypass_log.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/meta/validate_gate_engine_external.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "scripts/governance/pre_write_gate.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "scripts/governance/rebuild_audit_index.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "scripts/governance/run_all.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/session_simulator.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "scripts/governance/session_startup_check.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "scripts/governance/task_self_check.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "scripts/governance/task_summary.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "scripts/governance/vms_cron_monitor.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "scripts/governance/vms_health_check.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "scripts/governance/vms_migrate.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "scripts/governance/vms_migration_dry_run.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "scripts/governance/vms_snapshot_backup.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "scripts/mcp/launcher.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "scripts/rollback.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "scripts/run_deepseek_v4_exam.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "scripts/scaffold.py": [
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/_cross_layer/__init__.py": [
+   "src/zephyr/_cross_layer/__init__.py"
+  ],
+  "src/zephyr/_cross_layer/alpha_signal_pipeline.py": [
+   "src/zephyr/l02_alpha_factor/__init__.py",
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/_cross_layer/ml_experiment_pipeline.py": [
+   "src/zephyr/l11_ml_platform/__init__.py",
+   "src/zephyr/l13_experimentation/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/__init__.py": [
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/a2a_check.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/abac_guard.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/approver_check.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/capability_check.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/cold_start_lock.py": [
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/engine_degradation.py": [
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/governance_bridges/__init__.py": [
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/governance_bridges/a2a_check.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/governance_bridges/approver_check.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/governance_bridges/capability_check.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/governance_bridges/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/guard_layers.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/identity.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/input_guard.py": [
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/permission_guard.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_rbac/rbac_guard.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py"
+  ],
+  "src/zephyr/agent_spec/__init__.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/__main__.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/engine.py": [
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/agent_spec/integration/__init__.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/integration/pipeline_bridge.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/llm_gateway.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_consensus.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_constructor.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_contract.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_discovery.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_efficacy_calibrator.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_evaluator.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_executor.py": [
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_explain.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_factory.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_feedback.py": [
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_freshness_ext.py": [
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_kill_switch.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_kya.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_lifecycle.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_postmortem.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_prompt_opt.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_registry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_router.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_sandbox.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_shadow.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_translator.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/agent_spec/skill_workflow.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/__init__.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/__main__.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/classifier.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/dashboard.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/index_generator.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/lifecycle.py": [
+   "src/zephyr/asset_inventory/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/reconciler.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/registry_adapter.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/scanner.py": [
+   "src/zephyr/asset_inventory/__init__.py"
+  ],
+  "src/zephyr/asset_inventory/telemetry.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/audit_trail/__init__.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/anomaly.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridge.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/__init__.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/delegation_bridge.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/drift_bridge.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/feedback_bridge.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/spec_auditor.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/audit_trail/bridges/trust_bridge.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/audit_trail/cli.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/cold_start.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/compliance_map.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/delegation_auditor.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/delegation_bridge.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/drift_bridge.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/audit_trail/evidence_pack.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/external_tool_audit.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/feedback_bridge.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/indexer.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/integrity.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/kb_gate.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/merkle_hourly.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/models.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/audit_trail/orchestrator.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/query.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/replay_engine.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/retention.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/self_monitor.py": [
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/audit_trail/spec_auditor.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/audit_trail/supply_chain.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/tiered_storage.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/audit_trail/trust_bridge.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/audit_trail/writer.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/__init__.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/__main__.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/alignment_syncer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/all_completer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/batch_fixer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/compliance_auditor.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/config_fixer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/dedup_extractor.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/dep_version_fixer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/drift_fixer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/engine.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/escalation_bridge.py": [
+   "src/zephyr/auto_fix_engine/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/event_hooks.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_budget.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_diff.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_health_check.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_pattern_miner.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_reliability.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_report.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_safety.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/fix_scheduler.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/import_fixer.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/llm_fix_adapter.py": [
+   "src/zephyr/auto_fix_engine/__init__.py",
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/scaffold_registrar.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/self_heal_agent.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/shadow_workspace.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/auto_fix_engine/zombie_cleaner.py": [
+   "src/zephyr/auto_fix_engine/__init__.py"
+  ],
+  "src/zephyr/behavioral_admission/__init__.py": [
+   "src/zephyr/behavioral_admission/__init__.py"
+  ],
+  "src/zephyr/behavioral_admission/gpu_consensus_scheduler.py": [
+   "src/zephyr/behavioral_admission/__init__.py"
+  ],
+  "src/zephyr/behavioral_admission/protection_index.py": [
+   "src/zephyr/behavioral_admission/__init__.py"
+  ],
+  "src/zephyr/behavioral_admission/verdict_engine.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/__init__.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/__main__.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/ai_construction_detectors.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/brain_integration.py": [
+   "src/zephyr/behavioral_auditor/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/chaos_injector.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/cold_start.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/detector_dispatcher.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_cron_scheduler.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_engine.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_hotfix_bypass.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_infrastructure.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_result_types.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/drift_training.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/headless_scanner.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/reconciler.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/runbook_generator.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/scan_mutex.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/state_machine.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/behavioral_auditor/tamper_proof_audit.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/__init__.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/adversarial_tester.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/alerts.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/bridges/__init__.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/bridges/alerts.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/budget_engine.py": [
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/budget_tracker.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/burn_rate_monitor.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/context_budget.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/cost_attributor.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/cost_budget.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/degradation_manager.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/model_provider_data.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/model_router.py": [
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/pre_flight_gate.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/budget_enforcer/tamper_evident_log.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/capacity_assurance/contracts/__init__.py": [
+   "src/zephyr/capacity_assurance/__init__.py"
+  ],
+  "src/zephyr/capacity_assurance/contracts/contract_bus.py": [
+   "src/zephyr/capacity_assurance/__init__.py"
+  ],
+  "src/zephyr/capacity_assurance/modules/__init__.py": [
+   "src/zephyr/capacity_assurance/__init__.py"
+  ],
+  "src/zephyr/context_engine/__init__.py": [
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/assembly/context_assembler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/assembly/context_injector.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/assembly/context_pipeline.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/context_assembler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/context_engine/context_budget.py": [
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/context_budget_tracker.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/context_injector.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/context_engine/context_pipeline.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/doc_compressor.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/intent_keyword_mapper.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/intent_parser.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/management/__init__.py": [
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/management/context_budget_tracker.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/management/context_evictor.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/parsing/intent_keyword_mapper.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/parsing/intent_parser.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/pattern_library.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/pipeline_orchestrator.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/prompt_registry.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/support/doc_compressor.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/support/prompt_registry.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/context_engine/support/system_snapshot.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/context_engine/system_snapshot.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/contracts/__init__.py": [
+   "src/zephyr/capacity_assurance/__init__.py"
+  ],
+  "src/zephyr/core/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/adaptation/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/blueprint_decomposer.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/core/compensation/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/dependency/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/draft/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/events/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/events/event_bus.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/core/events/event_reactor.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/events/event_store.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/events/hook_dispatcher.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/healthcheck_service.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/impact/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/knowledge/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/lifecycle/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/lifecycle/resource_optimization_engine.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/core/maintenance/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/models.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/core/observability/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/quality/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/queue/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/reliability/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/session/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/sla/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/core/sync/__init__.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/db/atomic_transaction_manager.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/db/audit_schema.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/db/base_repo.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/db/circuit_breaker_repo.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/db/database_manager.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/db/gate_repo.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/db/olap_engine.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/db/query.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/db/query_metrics.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/db/task_repo.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "src/zephyr/db/transition.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "src/zephyr/drift_detector/__init__.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/__main__.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/ai_construction_detectors.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/brain_integration.py": [
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/drift_detector/bridges/__init__.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/chaos_injector.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/cold_start.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/detector_dispatcher.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_cron_scheduler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_engine.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_hotfix_bypass.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_infrastructure.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_result_types.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/drift_training.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/headless_scanner.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/reconciler.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/runbook_generator.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/scan_mutex.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/state_machine.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/drift_detector/tamper_proof_audit.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/__init__.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/a2a_failure.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/adapter.py": [
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/audit_write_failure_protector.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/budget_handler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/contracts.py": [
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/decision_fatigue_cli.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/delegation_engine.py": [
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/escalation_engine.py": [
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/escalation_smoke_tests.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/governance/__init__.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/governance/a2a_failure.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/governance/budget_handler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/governance/contracts.py": [
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/governance/rbac_bridge.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/merkle_audit.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/rbac_bridge.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/escalation_engine/self_test.py": [
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/actors/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/actors/action_selector.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/auto_evolution.py": [
+   "src/zephyr/feedback_loop/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/backpressure_bridge.py": [
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/collectors/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/db_bridge.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/decision_engine.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/detectors/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/detectors/anomaly_detector.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/diagnosers/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/docs/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/evolution/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/evolution_engine.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/feedback_collector.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/forensic/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L28_L29.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L36_L37.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L38_L39.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L40_L41.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L42_L43.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L44_L45.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L46_L47.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L48_L49.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L50_L51.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L52_L53.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L54_L55.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L56_L57.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L58_L59.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L60_L61.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L62_L63.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L64_L65.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/gates/safety_gate_L66_L67.py": [
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/generator.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/resilience/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/scheduler.py": [
+   "src/zephyr/feedback_loop/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/scheduler_act.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/scheduler_collect_detect.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/scheduler_health.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/scheduler_safety.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/security/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/tests/e2e/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/tests/e2e/integration_test_pipeline.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/validator.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/feedback_loop/verifiers/__init__.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/gates/__init__.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/audit_chain_verifier.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/gates/capability_checker.py": [
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/__init__.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/check_type_registry.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_audit_findings_resolved.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_blueprint_read_check.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_circuit_breaker.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_circular_dependency_scan.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_classification.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_content_length.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_content_quality.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_contract_compatibility_check.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_deduplication.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_drift_budget.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_encoding.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_enforcement_mode_check.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_field_presence.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_file_extension.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_fle_gate.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_frontmatter.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_leverage_limit.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_line_ending.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_manual_approval.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_path_blacklist.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_path_routing.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_path_whitelist.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_position_limit.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_reference_check.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_regex_pattern.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_restructuring_safety.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_rollback_exit_code.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_score_threshold.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_security_artifact_scan.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/l10_compliance/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_strategy_correlation.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_temporal.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/check_types/ct_zero_residue_check.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/circuit_breaker.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/gates/contract_template_manager.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/gates/drift_detector.py": [
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/gates/gate_engine.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/l10_compliance/__init__.py",
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/gates/gate_override.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/gates/gate_pipeline.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/gate_simulator.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/gates/gate_types.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/gates/invariants/en_002_enforcement_validator.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/gates/task_completion_gate.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/gates/task_types.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/gates/truth_source_validator.py": [
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/governance/__init__.py": [
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/governance/admission_response.py": [
+   "src/zephyr/behavioral_admission/__init__.py"
+  ],
+  "src/zephyr/governance/agent_spec/__init__.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/governance/agent_spec/registry.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/governance/constitutional_update.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/governance/decision_fatigue_cli.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/governance/phase_check_registry.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/governance/phase_manager.py": [
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/hooks/__init__.py": [
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "src/zephyr/kb/__init__.py": [
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/activate.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/analyze.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/batch_ingest.py": [
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/bootstrap.py": [
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/chromadb_init.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/embedding_migrate.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/extract.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/graph_validator.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/ingest.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/kb/kb_gate_task.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/kb_repo.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/migration/embedding_migrate.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/migration/kb_gate_task.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/activate.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/analyze.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/batch_ingest.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/extract.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/ingest.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/pipeline/triage.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/self_test.py": [
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/storage/chromadb_init.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/storage/graph_validator.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/storage/kb_repo.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/storage/unified_memory_api.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/kb/triage.py": [
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/unified_memory_api.py": [
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/kb/vms_memory_backend.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/l00_data_source/__init__.py": [
+   "src/zephyr/l00_data_source/__init__.py"
+  ],
+  "src/zephyr/l00_data_source/implementations/__init__.py": [
+   "src/zephyr/l00_data_source/__init__.py"
+  ],
+  "src/zephyr/l00_data_source/implementations/akshare_provider.py": [
+   "src/zephyr/l00_data_source/__init__.py"
+  ],
+  "src/zephyr/l00_data_source/implementations/default_quality_gate.py": [
+   "src/zephyr/l00_data_source/__init__.py"
+  ],
+  "src/zephyr/l00_data_source/implementations/memory_provider.py": [
+   "src/zephyr/l00_data_source/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/a2a_card_registry.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/governance/auditor.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/governance/governance_adapter.py": [
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer1_discovery/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer1_discovery/a2a_registry.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer2_communication/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer2_communication/message_router.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py": [
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/a2a_red_team.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/arbitrator.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/supervisor.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/legacy_auditor.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/a2a_protocol/legacy_governance_adapter.py": [
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/code_dedup_engine/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/code_dedup_engine/cli.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/code_dedup_engine/integration_hub.py": [
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/code_dedup_engine/policy_tree_validator.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/code_dedup_engine/self_benchmark.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/event_bus_upgrade.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/file_watcher.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/finding_task_bridge.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/script_system/finding.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/ai_behavior/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/ai_behavior/event_sink.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/archive/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py": [
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/contract_metrics.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/facade.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/health_aggregator.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/logs/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/logs/structured_sink.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/traces/__init__.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/system_telemetry/traces/span_stub.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l01_infrastructure/warm_hot_gate.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/l02_alpha_factor/__init__.py": [
+   "src/zephyr/l02_alpha_factor/__init__.py"
+  ],
+  "src/zephyr/l02_alpha_factor/factors/momentum_factor.py": [
+   "src/zephyr/l02_alpha_factor/__init__.py"
+  ],
+  "src/zephyr/l02_alpha_factor/factors/value_factor.py": [
+   "src/zephyr/l02_alpha_factor/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/__init__.py": [
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/aggregator_base.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/capital_allocator.py": [
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/implementations/__init__.py": [
+   "src/zephyr/l03_signal_generation/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/implementations/default_capital_allocator.py": [
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/implementations/default_signal_aggregator.py": [
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l03_signal_generation/signal_synthesizer.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/__init__.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/__init__.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/default_position_limit_checker.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/default_risk_limits_calculator.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/default_risk_manager_orchestrator.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/default_risk_validator.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/implementations/default_stop_loss_engine.py": [
+   "src/zephyr/l04_risk_management/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/risk_limits.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l04_risk_management/risk_manager.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l05_portfolio_construction/__init__.py": [
+   "src/zephyr/l05_portfolio_construction/__init__.py"
+  ],
+  "src/zephyr/l05_portfolio_construction/strategies/__init__.py": [
+   "src/zephyr/l05_portfolio_construction/__init__.py"
+  ],
+  "src/zephyr/l05_portfolio_construction/strategies/default_equity_strategy.py": [
+   "src/zephyr/l05_portfolio_construction/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l05_portfolio_construction/strategy_registry.py": [
+   "src/zephyr/l05_portfolio_construction/__init__.py"
+  ],
+  "src/zephyr/l06_trade_execution/__init__.py": [
+   "src/zephyr/l06_trade_execution/__init__.py"
+  ],
+  "src/zephyr/l06_trade_execution/adapters/simulation_broker.py": [
+   "src/zephyr/l06_trade_execution/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l06_trade_execution/broker_interface.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l06_trade_execution/execution_engine.py": [
+   "src/zephyr/l06_trade_execution/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l06_trade_execution/order_manager.py": [
+   "src/zephyr/l06_trade_execution/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/__init__.py": [
+   "src/zephyr/l07_post_trade_analytics/__init__.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/analytics_base.py": [
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/implementations/__init__.py": [
+   "src/zephyr/l07_post_trade_analytics/__init__.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/implementations/default_attribution_engine.py": [
+   "src/zephyr/l07_post_trade_analytics/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/implementations/default_tca_engine.py": [
+   "src/zephyr/l07_post_trade_analytics/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l08_human_ai_interface/dashboard/app.py": [
+   "src/zephyr/l08_human_ai_interface/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/l08_human_ai_interface/dashboard/components/fitness_functions.py": [
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/l09_research_innovation/__init__.py": [
+   "src/zephyr/l09_research_innovation/__init__.py"
+  ],
+  "src/zephyr/l09_research_innovation/implementations/__init__.py": [
+   "src/zephyr/l09_research_innovation/__init__.py"
+  ],
+  "src/zephyr/l09_research_innovation/implementations/default_backtest_engine.py": [
+   "src/zephyr/l09_research_innovation/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/__init__.py": [
+   "src/zephyr/l10_compliance/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/compliance_manager.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/default_security_gateway.py": [
+   "src/zephyr/l10_compliance/__init__.py",
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/implementations/__init__.py": [
+   "src/zephyr/l10_compliance/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/implementations/default_security_gateway.py": [
+   "src/zephyr/l10_compliance/__init__.py",
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l10_compliance/security_gateway_base.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/l11_ml_platform/__init__.py": [
+   "src/zephyr/l11_ml_platform/__init__.py"
+  ],
+  "src/zephyr/l11_ml_platform/implementations/__init__.py": [
+   "src/zephyr/l11_ml_platform/__init__.py"
+  ],
+  "src/zephyr/l11_ml_platform/implementations/default_inference_engine.py": [
+   "src/zephyr/l11_ml_platform/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l11_ml_platform/inference_base.py": [
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/l13_experimentation/__init__.py": [
+   "src/zephyr/l13_experimentation/__init__.py"
+  ],
+  "src/zephyr/l13_experimentation/implementations/__init__.py": [
+   "src/zephyr/l13_experimentation/__init__.py"
+  ],
+  "src/zephyr/l13_experimentation/implementations/default_experiment_pipeline.py": [
+   "src/zephyr/l13_experimentation/__init__.py"
+  ],
+  "src/zephyr/l13_experimentation/pipeline_base.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/llm_security/__init__.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/behavior_audit_logger.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/llm_security/dashboard/__init__.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/dashboard/app.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/gateway.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l0_supply_chain.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l1_input.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l2_prompt_protection.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l2a_process_sandbox.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l3_output.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l4_agent.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l5_resource_protection.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l6_observability.py": [
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/layers/l8_multi_agent.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/patterns/__init__.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/protocol.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/llm_security/self_protection/adversarial_mutator.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/self_protection/isolation.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/llm_security/self_protection/l7_validation.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/llm_security/self_protection/red_team_scanner.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/local_model/__init__.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/local_model/embedding_router.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/local_model/local_model_scheduler.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/mcp/__init__.py": [
+   "src/zephyr/mcp/__init__.py"
+  ],
+  "src/zephyr/mcp/_base_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/mcp/audit_logger.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/mcp/blueprint_search_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/mcp/doc_guard_server.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/mcp/__init__.py"
+  ],
+  "src/zephyr/mcp/gate_engine_server.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/mcp/__init__.py"
+  ],
+  "src/zephyr/mcp/gateway_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/mcp/governance_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/mcp/knowledge_base_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/mcp/resource_provider.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/mcp/sandbox_server.py": [
+   "src/zephyr/mcp/__init__.py"
+  ],
+  "src/zephyr/mcp/sentinel_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/mcp/task_manager_server.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/governance/__init__.py"
+  ],
+  "src/zephyr/mcp/telemetry_server.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/mcp/vector_memory_server.py": [
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/model_capability_exam/__init__.py": [
+   "src/zephyr/model_capability_exam/__init__.py"
+  ],
+  "src/zephyr/model_capability_exam/exam_orchestrator.py": [
+   "src/zephyr/model_capability_exam/__init__.py"
+  ],
+  "src/zephyr/model_profiler/__init__.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/model_profiler/cli.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/model_profiler/exam_orchestrator.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/model_profiler/model_discovery.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/model_profiler/profiler.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/model_profiler/results_writer.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/model_profiler/task_model_learner.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/orchestrator/agent_health_monitor.py": [
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/agent_orchestrator.py": [
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/batch_orchestrator.py": [
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/orchestrator/contract_router.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/core/__init__.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/core/agent_orchestrator.py": [
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/core/task_queue.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/orchestrator/core/trigger_router.py": [
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/orchestrator/core/wave_generator.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/deferred_queue.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/failure_matcher.py": [
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "src/zephyr/orchestrator/file_task_mapper.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/orchestrator/finding_bridge.py": [
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/orchestrator/hallucination_detector.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/resilience/__init__.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/resilience/deferred_queue.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/resilience/failure_matcher.py": [
+   "src/zephyr/hooks/__init__.py"
+  ],
+  "src/zephyr/orchestrator/resilience/hallucination_detector.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/resilience/rollback_manager.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/rollback_manager.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/state/__init__.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/state/agent_health_monitor.py": [
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orchestrator/state/file_task_mapper.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/orchestrator/state/state_synchronizer.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/state_synchronizer.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/task_queue.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/orchestrator/trigger_router.py": [
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/feedback_loop/__init__.py"
+  ],
+  "src/zephyr/orchestrator/wave_generator.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/orphan_judge/__init__.py": [
+   "src/zephyr/orphan_judge/__init__.py"
+  ],
+  "src/zephyr/orphan_judge/orphan_detector.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/pipeline/__init__.py": [
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/pipeline/backpressure_manager.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/backpressure_types.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/pipeline/circuit_breaker_manager.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/cost_tracker.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/ct_pipe_routing.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/pipeline/dead_letter_queue.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/layer_consumer_registry.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/llm_gateway.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/__init__.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/cli.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/exam_orchestrator.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/model_discovery.py": [
+   "src/zephyr/budget_enforcer/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/profiler.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/results_writer.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_profiler/task_model_learner.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/pipeline/model_router.py": [
+   "src/zephyr/core/__init__.py"
+  ],
+  "src/zephyr/pipeline/models.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/pipeline/pipeline_agent_bridge.py": [
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/pipeline/pipeline_orchestrator.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/kb/__init__.py"
+  ],
+  "src/zephyr/pipeline/preemption_manager.py": [
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/pipeline/routing_plugins.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/red_blue_validator/__init__.py": [
+   "src/zephyr/red_blue_validator/__init__.py"
+  ],
+  "src/zephyr/rollback/__init__.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/rollback/auditor.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/drift_fix.py": [
+   "src/zephyr/behavioral_auditor/__init__.py"
+  ],
+  "src/zephyr/rollback/governance/__init__.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/rollback/governance/auditor.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/governance/contracts.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/governance/drift_fix.py": [
+   "src/zephyr/drift_detector/__init__.py"
+  ],
+  "src/zephyr/rollback/llm_impact_analyzer.py": [
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/rollback/phase_check_registry.py": [
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/orchestrator/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/behavioral_auditor/__init__.py",
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/rollback/phase_manager.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/rollback/rollback_abuse_detector.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/rollback_audit_nexus.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/rollback/rollback_executor.py": [
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/llm_security/__init__.py"
+  ],
+  "src/zephyr/rollback/rollback_integration.py": [
+   "src/zephyr/rollback/__init__.py"
+  ],
+  "src/zephyr/rollback/sqlite_dumper.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/runtime/__main__.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/ai_audit_logger.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/auto_integrator.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/auto_runtime_core.py": [
+   "src/zephyr/runtime/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/local_model/__init__.py",
+   "src/zephyr/model_profiler/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/runtime/boot_cron_jobs.py": [
+   "src/zephyr/runtime/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/runtime/boot_hooks.py": [
+   "src/zephyr/hooks/__init__.py",
+   "src/zephyr/db/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/runtime/capability_card.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/capability_registry.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/capability_sync.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/circadian_scheduler.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/dream_cycle.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/feedback_loop.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/health_monitor.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/integration_registry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/lifecycle_manager.py": [
+   "src/zephyr/runtime/__init__.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "scripts/governance/__init__.py"
+  ],
+  "src/zephyr/runtime/module_onboarding_scanner.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/night_shift_queue.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/orphan_detector.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/resource_optimization.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/runtime/runtime_config.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/status_dashboard.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/task_gate.py": [
+   "src/zephyr/model_profiler/__init__.py"
+  ],
+  "src/zephyr/runtime/windows_service.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/runtime/work_dag.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/runtime/work_orchestrator.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/semantic_auditor/__init__.py": [
+   "src/zephyr/semantic_auditor/__init__.py"
+  ],
+  "src/zephyr/semantic_auditor/compliance_map.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/semantic_auditor/kb_gate.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/semantic_auditor/spec_auditor.py": [
+   "src/zephyr/agent_spec/__init__.py"
+  ],
+  "src/zephyr/semantic_auditor/supply_chain.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/shared/API_INDEX.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/__init__.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/api/api_client.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/api/dos_launcher.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/api_client.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/blueprint_scorer.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/shared/cache.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/capability.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/config/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/config/loader.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/constants.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/content_fingerprint.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contract_tester.py": [
+   "src/zephyr/l01_infrastructure/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/__init__.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/backpressure/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/backpressure/pause.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/backpressure/resume.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/backpressure/throttle.py": [
+   "src/zephyr/pipeline/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/core/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/core/factories.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/core/gate_types.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/core/registry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/__init__.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/contract_violation_error.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/data_quality_error.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/execution_rejection_error.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/factor_computation_error.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/risk_limit_violation_error.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/errors/signal_degradation_warning.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/escalation/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/capital_allocation_result.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/execution_report.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/fill.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/model_serving_request.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/execution/order.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/experiment/experiment_result.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/external/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/gate/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/gate/gate_result.py": [
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/identity/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/factor_monitor_report.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/factor_signal.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/instrument.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/macro_factor_signal.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/market_data.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/market/synthesized_signal.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/portfolio/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/portfolio/money.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/portfolio/position.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/compliance_rule.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/risk_limits.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/risk_metrics.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/risk/risk_validator_protocol.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/shared/contracts/security/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/deprecation.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/diff_utils.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/env.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/errors.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/event_bus.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/events/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/events/dlq.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/events/dlq_bridge.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/events/event_schemas.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/shared/events/upgrade_strategy.py": [
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/file_utils.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/flags.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/foundation/constants.py": [
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/escalation_engine/__init__.py"
+  ],
+  "src/zephyr/shared/foundation/flags.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/frontmatter_utils.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/health.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/idempotency.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/cache.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/idempotency.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/limiter.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/lock.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/outbox.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/process_lifecycle_gateway.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/infra/process_pool.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/io/io_cache.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/io/paths.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/shared/io/serialization.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/lifecycle/__init__.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/shared/lifecycle/resource_optimization_engine.py": [
+   "src/zephyr/runtime/__init__.py"
+  ],
+  "src/zephyr/shared/limiter.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/lock.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/logging.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/metrics.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/migration.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/observability/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/observability/health.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/observability/session_audit.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/observability/token_utils.py": [
+   "src/zephyr/context_engine/__init__.py"
+  ],
+  "src/zephyr/shared/observability/tracing.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/observer.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/outbox.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/pagination.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/paths.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/resilience/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/resilience/circuit_breaker.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/resilience/fallback.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/resilience/retry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/schema/schema_registry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/schema/schemas.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/gates/__init__.py"
+  ],
+  "src/zephyr/shared/schema/severity_types.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/shared/schema_registry.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/schemas.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/secrets.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/security/capability.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/security/secrets.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/security/ssot_guard.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/serialization.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/session_audit.py": [
+   "src/zephyr/audit_trail/__init__.py"
+  ],
+  "src/zephyr/shared/ssot_guard.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/state_machine.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/testing.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/time_utils.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/token_utils.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/tracing.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/types.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/utils/__init__.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/shared/utils/blueprint_scorer.py": [
+   "src/zephyr/orchestrator/__init__.py"
+  ],
+  "src/zephyr/shared/utils/db_utils.py": [
+   "src/zephyr/db/__init__.py"
+  ],
+  "src/zephyr/shared/utils/testing.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/execution/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/execution/execution_rejection_error.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/execution/fill.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/execution/order.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/execution/position.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/market/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/market/factor_signal.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/market/market_data.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/market/signal_degradation_warning.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/market/synthesized_signal.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/risk/__init__.py": [
+   "src/zephyr/trading_contracts/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/risk/risk_limit_violation_error.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/trading_contracts/risk/risk_limits.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/__init__.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/bridge_layer.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/cache_layer.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/chunk_strategy_router.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/collection_manager.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/collection_schemas.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/delegated_vector_memory.py": [
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/design_principles.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/embedding_router.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/faiss_collection_manager.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/hybrid_retriever.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/in_memory_fake_vms.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/in_process_vector_memory.py": [
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/index_health_monitor.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/local_model_scheduler.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/migrate_chroma_to_faiss.py": [
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/ollama_chat.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/ollama_embedding.py": [
+   "src/zephyr/local_model/__init__.py"
+  ],
+  "src/zephyr/vector_memory/provenance_enforcer.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/retrieval_feedback.py": [
+   "src/zephyr/shared/__init__.py"
+  ],
+  "src/zephyr/vector_memory/sqlite_metadata_store.py": [
+   "src/zephyr/vector_memory/__init__.py"
+  ],
+  "src/zephyr/vector_memory/vms_schemas.py": [
+   "src/zephyr/shared/__init__.py"
+  ]
+ },
+ "reverse_adjacency": {
+  "src/zephyr/runtime/__init__.py": [
+   "scripts/a2a_full_verification.py",
+   "scripts/construction/local_layer_daemon.py",
+   "scripts/construction/start_brain.py",
+   "src/zephyr/orphan_judge/orphan_detector.py",
+   "src/zephyr/runtime/__main__.py",
+   "src/zephyr/runtime/auto_integrator.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/runtime/capability_registry.py",
+   "src/zephyr/runtime/capability_sync.py",
+   "src/zephyr/runtime/circadian_scheduler.py",
+   "src/zephyr/runtime/health_monitor.py",
+   "src/zephyr/runtime/lifecycle_manager.py",
+   "src/zephyr/runtime/module_onboarding_scanner.py",
+   "src/zephyr/runtime/orphan_detector.py",
+   "src/zephyr/runtime/status_dashboard.py",
+   "src/zephyr/runtime/windows_service.py",
+   "src/zephyr/runtime/work_orchestrator.py",
+   "src/zephyr/shared/lifecycle/__init__.py",
+   "src/zephyr/shared/lifecycle/resource_optimization_engine.py"
+  ],
+  "src/zephyr/l01_infrastructure/__init__.py": [
+   "scripts/a2a_full_verification.py",
+   "scripts/construction/demo_a2a_coordination.py",
+   "scripts/governance/_shared/base.py",
+   "scripts/governance/d3_metadata/check_registry_consistency.py",
+   "scripts/governance/meta/finding_state_machine.py",
+   "scripts/governance/meta/validate_emergency_bypass_log.py",
+   "scripts/governance/run_all.py",
+   "scripts/governance/session_simulator.py",
+   "scripts/scaffold.py",
+   "src/zephyr/__init__.py",
+   "src/zephyr/agent_rbac/a2a_check.py",
+   "src/zephyr/agent_rbac/governance_bridges/a2a_check.py",
+   "src/zephyr/asset_inventory/telemetry.py",
+   "src/zephyr/budget_enforcer/budget_engine.py",
+   "src/zephyr/gates/check_types/ct_deduplication.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/l01_infrastructure/__init__.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/__init__.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/a2a_card_registry.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer1_discovery/__init__.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer1_discovery/a2a_registry.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer2_communication/__init__.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer2_communication/message_router.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/__init__.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/a2a_red_team.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/supervisor.py",
+   "src/zephyr/l01_infrastructure/code_dedup_engine/__init__.py",
+   "src/zephyr/l01_infrastructure/code_dedup_engine/cli.py",
+   "src/zephyr/l01_infrastructure/code_dedup_engine/policy_tree_validator.py",
+   "src/zephyr/l01_infrastructure/code_dedup_engine/self_benchmark.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/__init__.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/ai_behavior/__init__.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/ai_behavior/event_sink.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/archive/__init__.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/facade.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/health_aggregator.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/logs/__init__.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/logs/structured_sink.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/traces/__init__.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/traces/span_stub.py",
+   "src/zephyr/l01_infrastructure/warm_hot_gate.py",
+   "src/zephyr/mcp/telemetry_server.py",
+   "src/zephyr/orchestrator/finding_bridge.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/shared/contract_tester.py",
+   "src/zephyr/shared/events/upgrade_strategy.py"
+  ],
+  "src/zephyr/agent_rbac/__init__.py": [
+   "scripts/a2a_full_verification.py",
+   "src/zephyr/agent_rbac/__init__.py",
+   "src/zephyr/agent_rbac/cold_start_lock.py",
+   "src/zephyr/agent_rbac/engine_degradation.py",
+   "src/zephyr/agent_rbac/governance_bridges/__init__.py",
+   "src/zephyr/agent_rbac/guard_layers.py",
+   "src/zephyr/agent_rbac/input_guard.py",
+   "src/zephyr/agent_rbac/permission_guard.py",
+   "src/zephyr/agent_rbac/rbac_guard.py",
+   "src/zephyr/escalation_engine/governance/rbac_bridge.py",
+   "src/zephyr/escalation_engine/rbac_bridge.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/rollback/phase_check_registry.py"
+  ],
+  "src/zephyr/db/__init__.py": [
+   "scripts/construction/check_statuses.py",
+   "scripts/construction/check_transition_code.py",
+   "scripts/construction/d_init_task_system.py",
+   "scripts/construction/finalize_tasks.py",
+   "scripts/construction/test_event_hook.py",
+   "scripts/governance/create_alignment_tasks.py",
+   "scripts/governance/meta/create_task_from_finding.py",
+   "scripts/governance/task_self_check.py",
+   "scripts/governance/task_summary.py",
+   "src/zephyr/db/audit_schema.py",
+   "src/zephyr/db/circuit_breaker_repo.py",
+   "src/zephyr/db/database_manager.py",
+   "src/zephyr/db/olap_engine.py",
+   "src/zephyr/db/query.py",
+   "src/zephyr/db/query_metrics.py",
+   "src/zephyr/db/task_repo.py",
+   "src/zephyr/db/transition.py",
+   "src/zephyr/feedback_loop/db_bridge.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/l01_infrastructure/file_watcher.py",
+   "src/zephyr/l01_infrastructure/finding_task_bridge.py",
+   "src/zephyr/l08_human_ai_interface/dashboard/app.py",
+   "src/zephyr/orchestrator/batch_orchestrator.py",
+   "src/zephyr/orchestrator/core/task_queue.py",
+   "src/zephyr/orchestrator/finding_bridge.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/pipeline/preemption_manager.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/rollback/sqlite_dumper.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/runtime/boot_hooks.py",
+   "src/zephyr/shared/io/paths.py",
+   "src/zephyr/shared/schema/severity_types.py",
+   "src/zephyr/shared/utils/db_utils.py"
+  ],
+  "src/zephyr/core/__init__.py": [
+   "scripts/construction/d_init_task_system.py",
+   "scripts/governance/meta/create_task_from_finding.py",
+   "src/zephyr/behavioral_auditor/drift_cron_scheduler.py",
+   "src/zephyr/core/__init__.py",
+   "src/zephyr/core/adaptation/__init__.py",
+   "src/zephyr/core/blueprint_decomposer.py",
+   "src/zephyr/core/compensation/__init__.py",
+   "src/zephyr/core/dependency/__init__.py",
+   "src/zephyr/core/draft/__init__.py",
+   "src/zephyr/core/events/__init__.py",
+   "src/zephyr/core/events/event_reactor.py",
+   "src/zephyr/core/events/event_store.py",
+   "src/zephyr/core/events/hook_dispatcher.py",
+   "src/zephyr/core/healthcheck_service.py",
+   "src/zephyr/core/impact/__init__.py",
+   "src/zephyr/core/knowledge/__init__.py",
+   "src/zephyr/core/lifecycle/__init__.py",
+   "src/zephyr/core/lifecycle/resource_optimization_engine.py",
+   "src/zephyr/core/maintenance/__init__.py",
+   "src/zephyr/core/observability/__init__.py",
+   "src/zephyr/core/quality/__init__.py",
+   "src/zephyr/core/queue/__init__.py",
+   "src/zephyr/core/reliability/__init__.py",
+   "src/zephyr/core/session/__init__.py",
+   "src/zephyr/core/sla/__init__.py",
+   "src/zephyr/core/sync/__init__.py",
+   "src/zephyr/db/base_repo.py",
+   "src/zephyr/db/task_repo.py",
+   "src/zephyr/gates/task_completion_gate.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/kb/kb_gate_task.py",
+   "src/zephyr/l01_infrastructure/file_watcher.py",
+   "src/zephyr/l01_infrastructure/finding_task_bridge.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py",
+   "src/zephyr/mcp/task_manager_server.py",
+   "src/zephyr/orchestrator/batch_orchestrator.py",
+   "src/zephyr/orchestrator/finding_bridge.py",
+   "src/zephyr/pipeline/ct_pipe_routing.py",
+   "src/zephyr/pipeline/model_router.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py"
+  ],
+  "src/zephyr/shared/__init__.py": [
+   "scripts/construction/d_init_task_system.py",
+   "scripts/construction/demo_e2e_pipeline.py",
+   "scripts/construction/finalize_tasks.py",
+   "scripts/construction/reset_test_task.py",
+   "scripts/governance/meta/create_task_from_finding.py",
+   "scripts/governance/meta/validate_gate_engine_external.py",
+   "scripts/governance/task_self_check.py",
+   "scripts/mcp/launcher.py",
+   "src/zephyr/agent_rbac/abac_guard.py",
+   "src/zephyr/agent_rbac/guard_layers.py",
+   "src/zephyr/agent_rbac/identity.py",
+   "src/zephyr/agent_rbac/permission_guard.py",
+   "src/zephyr/agent_rbac/rbac_guard.py",
+   "src/zephyr/agent_spec/skill_freshness_ext.py",
+   "src/zephyr/agent_spec/skill_registry.py",
+   "src/zephyr/audit_trail/bridges/drift_bridge.py",
+   "src/zephyr/audit_trail/drift_bridge.py",
+   "src/zephyr/audit_trail/indexer.py",
+   "src/zephyr/audit_trail/models.py",
+   "src/zephyr/audit_trail/self_monitor.py",
+   "src/zephyr/budget_enforcer/alerts.py",
+   "src/zephyr/budget_enforcer/bridges/alerts.py",
+   "src/zephyr/budget_enforcer/context_budget.py",
+   "src/zephyr/budget_enforcer/cost_budget.py",
+   "src/zephyr/context_engine/assembly/context_assembler.py",
+   "src/zephyr/context_engine/assembly/context_injector.py",
+   "src/zephyr/context_engine/assembly/context_pipeline.py",
+   "src/zephyr/context_engine/context_assembler.py",
+   "src/zephyr/context_engine/context_budget_tracker.py",
+   "src/zephyr/context_engine/context_injector.py",
+   "src/zephyr/context_engine/context_pipeline.py",
+   "src/zephyr/context_engine/doc_compressor.py",
+   "src/zephyr/context_engine/intent_keyword_mapper.py",
+   "src/zephyr/context_engine/intent_parser.py",
+   "src/zephyr/context_engine/management/context_budget_tracker.py",
+   "src/zephyr/context_engine/management/context_evictor.py",
+   "src/zephyr/context_engine/parsing/intent_keyword_mapper.py",
+   "src/zephyr/context_engine/parsing/intent_parser.py",
+   "src/zephyr/context_engine/pattern_library.py",
+   "src/zephyr/context_engine/pipeline_orchestrator.py",
+   "src/zephyr/context_engine/prompt_registry.py",
+   "src/zephyr/context_engine/support/doc_compressor.py",
+   "src/zephyr/context_engine/support/prompt_registry.py",
+   "src/zephyr/context_engine/support/system_snapshot.py",
+   "src/zephyr/context_engine/system_snapshot.py",
+   "src/zephyr/core/blueprint_decomposer.py",
+   "src/zephyr/core/events/event_bus.py",
+   "src/zephyr/core/lifecycle/resource_optimization_engine.py",
+   "src/zephyr/core/models.py",
+   "src/zephyr/db/base_repo.py",
+   "src/zephyr/db/circuit_breaker_repo.py",
+   "src/zephyr/db/database_manager.py",
+   "src/zephyr/db/gate_repo.py",
+   "src/zephyr/db/olap_engine.py",
+   "src/zephyr/db/task_repo.py",
+   "src/zephyr/db/transition.py",
+   "src/zephyr/drift_detector/drift_cron_scheduler.py",
+   "src/zephyr/escalation_engine/adapter.py",
+   "src/zephyr/escalation_engine/budget_handler.py",
+   "src/zephyr/escalation_engine/contracts.py",
+   "src/zephyr/escalation_engine/governance/budget_handler.py",
+   "src/zephyr/escalation_engine/governance/contracts.py",
+   "src/zephyr/escalation_engine/governance/rbac_bridge.py",
+   "src/zephyr/escalation_engine/rbac_bridge.py",
+   "src/zephyr/feedback_loop/auto_evolution.py",
+   "src/zephyr/feedback_loop/feedback_collector.py",
+   "src/zephyr/feedback_loop/scheduler.py",
+   "src/zephyr/gates/circuit_breaker.py",
+   "src/zephyr/gates/contract_template_manager.py",
+   "src/zephyr/gates/gate_engine.py",
+   "src/zephyr/gates/gate_types.py",
+   "src/zephyr/gates/invariants/en_002_enforcement_validator.py",
+   "src/zephyr/gates/task_types.py",
+   "src/zephyr/gates/truth_source_validator.py",
+   "src/zephyr/governance/constitutional_update.py",
+   "src/zephyr/kb/activate.py",
+   "src/zephyr/kb/analyze.py",
+   "src/zephyr/kb/chromadb_init.py",
+   "src/zephyr/kb/embedding_migrate.py",
+   "src/zephyr/kb/extract.py",
+   "src/zephyr/kb/graph_validator.py",
+   "src/zephyr/kb/ingest.py",
+   "src/zephyr/kb/kb_gate_task.py",
+   "src/zephyr/kb/kb_repo.py",
+   "src/zephyr/kb/migration/embedding_migrate.py",
+   "src/zephyr/kb/pipeline/activate.py",
+   "src/zephyr/kb/pipeline/analyze.py",
+   "src/zephyr/kb/pipeline/batch_ingest.py",
+   "src/zephyr/kb/pipeline/extract.py",
+   "src/zephyr/kb/pipeline/ingest.py",
+   "src/zephyr/kb/pipeline/triage.py",
+   "src/zephyr/kb/storage/chromadb_init.py",
+   "src/zephyr/kb/storage/graph_validator.py",
+   "src/zephyr/kb/storage/kb_repo.py",
+   "src/zephyr/kb/storage/unified_memory_api.py",
+   "src/zephyr/kb/triage.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/governance/governance_adapter.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/arbitrator.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/legacy_governance_adapter.py",
+   "src/zephyr/l01_infrastructure/event_bus_upgrade.py",
+   "src/zephyr/l01_infrastructure/finding_task_bridge.py",
+   "src/zephyr/l01_infrastructure/script_system/finding.py",
+   "src/zephyr/l07_post_trade_analytics/analytics_base.py",
+   "src/zephyr/l07_post_trade_analytics/implementations/default_attribution_engine.py",
+   "src/zephyr/l10_compliance/default_security_gateway.py",
+   "src/zephyr/l10_compliance/implementations/default_security_gateway.py",
+   "src/zephyr/l11_ml_platform/implementations/default_inference_engine.py",
+   "src/zephyr/l11_ml_platform/inference_base.py",
+   "src/zephyr/l13_experimentation/pipeline_base.py",
+   "src/zephyr/llm_security/behavior_audit_logger.py",
+   "src/zephyr/llm_security/protocol.py",
+   "src/zephyr/local_model/local_model_scheduler.py",
+   "src/zephyr/mcp/audit_logger.py",
+   "src/zephyr/mcp/blueprint_search_server.py",
+   "src/zephyr/mcp/doc_guard_server.py",
+   "src/zephyr/mcp/gate_engine_server.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/mcp/resource_provider.py",
+   "src/zephyr/mcp/task_manager_server.py",
+   "src/zephyr/orchestrator/agent_health_monitor.py",
+   "src/zephyr/orchestrator/agent_orchestrator.py",
+   "src/zephyr/orchestrator/core/agent_orchestrator.py",
+   "src/zephyr/orchestrator/core/wave_generator.py",
+   "src/zephyr/orchestrator/deferred_queue.py",
+   "src/zephyr/orchestrator/file_task_mapper.py",
+   "src/zephyr/orchestrator/hallucination_detector.py",
+   "src/zephyr/orchestrator/resilience/deferred_queue.py",
+   "src/zephyr/orchestrator/resilience/hallucination_detector.py",
+   "src/zephyr/orchestrator/resilience/rollback_manager.py",
+   "src/zephyr/orchestrator/rollback_manager.py",
+   "src/zephyr/orchestrator/state/agent_health_monitor.py",
+   "src/zephyr/orchestrator/state/file_task_mapper.py",
+   "src/zephyr/orchestrator/state/state_synchronizer.py",
+   "src/zephyr/orchestrator/state_synchronizer.py",
+   "src/zephyr/orchestrator/wave_generator.py",
+   "src/zephyr/pipeline/backpressure_types.py",
+   "src/zephyr/pipeline/ct_pipe_routing.py",
+   "src/zephyr/pipeline/models.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/rollback/sqlite_dumper.py",
+   "src/zephyr/runtime/ai_audit_logger.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/runtime/capability_card.py",
+   "src/zephyr/runtime/dream_cycle.py",
+   "src/zephyr/runtime/feedback_loop.py",
+   "src/zephyr/runtime/health_monitor.py",
+   "src/zephyr/runtime/integration_registry.py",
+   "src/zephyr/runtime/night_shift_queue.py",
+   "src/zephyr/runtime/resource_optimization.py",
+   "src/zephyr/runtime/runtime_config.py",
+   "src/zephyr/runtime/work_dag.py",
+   "src/zephyr/shared/API_INDEX.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/shared/api/api_client.py",
+   "src/zephyr/shared/api/dos_launcher.py",
+   "src/zephyr/shared/api_client.py",
+   "src/zephyr/shared/cache.py",
+   "src/zephyr/shared/capability.py",
+   "src/zephyr/shared/config/__init__.py",
+   "src/zephyr/shared/config/loader.py",
+   "src/zephyr/shared/constants.py",
+   "src/zephyr/shared/content_fingerprint.py",
+   "src/zephyr/shared/contracts/__init__.py",
+   "src/zephyr/shared/contracts/backpressure/__init__.py",
+   "src/zephyr/shared/contracts/core/__init__.py",
+   "src/zephyr/shared/contracts/core/registry.py",
+   "src/zephyr/shared/contracts/errors/__init__.py",
+   "src/zephyr/shared/contracts/errors/contract_violation_error.py",
+   "src/zephyr/shared/contracts/errors/data_quality_error.py",
+   "src/zephyr/shared/contracts/errors/factor_computation_error.py",
+   "src/zephyr/shared/contracts/escalation/__init__.py",
+   "src/zephyr/shared/contracts/experiment/experiment_result.py",
+   "src/zephyr/shared/contracts/external/__init__.py",
+   "src/zephyr/shared/contracts/gate/__init__.py",
+   "src/zephyr/shared/contracts/identity/__init__.py",
+   "src/zephyr/shared/contracts/market/__init__.py",
+   "src/zephyr/shared/contracts/portfolio/__init__.py",
+   "src/zephyr/shared/contracts/risk/__init__.py",
+   "src/zephyr/shared/contracts/security/__init__.py",
+   "src/zephyr/shared/deprecation.py",
+   "src/zephyr/shared/diff_utils.py",
+   "src/zephyr/shared/env.py",
+   "src/zephyr/shared/errors.py",
+   "src/zephyr/shared/event_bus.py",
+   "src/zephyr/shared/events/__init__.py",
+   "src/zephyr/shared/events/dlq.py",
+   "src/zephyr/shared/events/dlq_bridge.py",
+   "src/zephyr/shared/events/event_schemas.py",
+   "src/zephyr/shared/events/upgrade_strategy.py",
+   "src/zephyr/shared/file_utils.py",
+   "src/zephyr/shared/flags.py",
+   "src/zephyr/shared/foundation/constants.py",
+   "src/zephyr/shared/foundation/flags.py",
+   "src/zephyr/shared/frontmatter_utils.py",
+   "src/zephyr/shared/health.py",
+   "src/zephyr/shared/idempotency.py",
+   "src/zephyr/shared/infra/__init__.py",
+   "src/zephyr/shared/infra/cache.py",
+   "src/zephyr/shared/infra/idempotency.py",
+   "src/zephyr/shared/infra/limiter.py",
+   "src/zephyr/shared/infra/lock.py",
+   "src/zephyr/shared/infra/outbox.py",
+   "src/zephyr/shared/infra/process_lifecycle_gateway.py",
+   "src/zephyr/shared/infra/process_pool.py",
+   "src/zephyr/shared/io/io_cache.py",
+   "src/zephyr/shared/io/serialization.py",
+   "src/zephyr/shared/lifecycle/__init__.py",
+   "src/zephyr/shared/limiter.py",
+   "src/zephyr/shared/lock.py",
+   "src/zephyr/shared/logging.py",
+   "src/zephyr/shared/metrics.py",
+   "src/zephyr/shared/migration.py",
+   "src/zephyr/shared/observability/__init__.py",
+   "src/zephyr/shared/observability/health.py",
+   "src/zephyr/shared/observability/session_audit.py",
+   "src/zephyr/shared/observability/tracing.py",
+   "src/zephyr/shared/observer.py",
+   "src/zephyr/shared/outbox.py",
+   "src/zephyr/shared/pagination.py",
+   "src/zephyr/shared/paths.py",
+   "src/zephyr/shared/resilience/__init__.py",
+   "src/zephyr/shared/resilience/circuit_breaker.py",
+   "src/zephyr/shared/resilience/fallback.py",
+   "src/zephyr/shared/resilience/retry.py",
+   "src/zephyr/shared/schema/schema_registry.py",
+   "src/zephyr/shared/schema/schemas.py",
+   "src/zephyr/shared/schema_registry.py",
+   "src/zephyr/shared/schemas.py",
+   "src/zephyr/shared/secrets.py",
+   "src/zephyr/shared/security/capability.py",
+   "src/zephyr/shared/security/secrets.py",
+   "src/zephyr/shared/security/ssot_guard.py",
+   "src/zephyr/shared/serialization.py",
+   "src/zephyr/shared/ssot_guard.py",
+   "src/zephyr/shared/state_machine.py",
+   "src/zephyr/shared/testing.py",
+   "src/zephyr/shared/time_utils.py",
+   "src/zephyr/shared/token_utils.py",
+   "src/zephyr/shared/tracing.py",
+   "src/zephyr/shared/types.py",
+   "src/zephyr/shared/utils/__init__.py",
+   "src/zephyr/shared/utils/testing.py",
+   "src/zephyr/trading_contracts/execution/execution_rejection_error.py",
+   "src/zephyr/trading_contracts/execution/fill.py",
+   "src/zephyr/trading_contracts/execution/order.py",
+   "src/zephyr/trading_contracts/execution/position.py",
+   "src/zephyr/trading_contracts/market/factor_signal.py",
+   "src/zephyr/trading_contracts/market/market_data.py",
+   "src/zephyr/trading_contracts/market/signal_degradation_warning.py",
+   "src/zephyr/trading_contracts/market/synthesized_signal.py",
+   "src/zephyr/trading_contracts/risk/risk_limit_violation_error.py",
+   "src/zephyr/trading_contracts/risk/risk_limits.py",
+   "src/zephyr/vector_memory/chunk_strategy_router.py",
+   "src/zephyr/vector_memory/collection_manager.py",
+   "src/zephyr/vector_memory/collection_schemas.py",
+   "src/zephyr/vector_memory/faiss_collection_manager.py",
+   "src/zephyr/vector_memory/hybrid_retriever.py",
+   "src/zephyr/vector_memory/index_health_monitor.py",
+   "src/zephyr/vector_memory/migrate_chroma_to_faiss.py",
+   "src/zephyr/vector_memory/retrieval_feedback.py",
+   "src/zephyr/vector_memory/vms_schemas.py"
+  ],
+  "src/zephyr/l00_data_source/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l00_data_source/__init__.py",
+   "src/zephyr/l00_data_source/implementations/__init__.py",
+   "src/zephyr/l00_data_source/implementations/akshare_provider.py",
+   "src/zephyr/l00_data_source/implementations/default_quality_gate.py",
+   "src/zephyr/l00_data_source/implementations/memory_provider.py"
+  ],
+  "src/zephyr/l02_alpha_factor/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/_cross_layer/alpha_signal_pipeline.py",
+   "src/zephyr/l02_alpha_factor/__init__.py",
+   "src/zephyr/l02_alpha_factor/factors/momentum_factor.py",
+   "src/zephyr/l02_alpha_factor/factors/value_factor.py"
+  ],
+  "src/zephyr/l03_signal_generation/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/_cross_layer/alpha_signal_pipeline.py",
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/l03_signal_generation/capital_allocator.py",
+   "src/zephyr/l03_signal_generation/implementations/__init__.py",
+   "src/zephyr/l03_signal_generation/implementations/default_capital_allocator.py",
+   "src/zephyr/l03_signal_generation/implementations/default_signal_aggregator.py"
+  ],
+  "src/zephyr/l04_risk_management/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l04_risk_management/__init__.py",
+   "src/zephyr/l04_risk_management/implementations/__init__.py",
+   "src/zephyr/l04_risk_management/implementations/default_position_limit_checker.py",
+   "src/zephyr/l04_risk_management/implementations/default_risk_limits_calculator.py",
+   "src/zephyr/l04_risk_management/implementations/default_risk_manager_orchestrator.py",
+   "src/zephyr/l04_risk_management/implementations/default_risk_validator.py",
+   "src/zephyr/l04_risk_management/implementations/default_stop_loss_engine.py"
+  ],
+  "src/zephyr/l05_portfolio_construction/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l05_portfolio_construction/__init__.py",
+   "src/zephyr/l05_portfolio_construction/strategies/__init__.py",
+   "src/zephyr/l05_portfolio_construction/strategies/default_equity_strategy.py",
+   "src/zephyr/l05_portfolio_construction/strategy_registry.py"
+  ],
+  "src/zephyr/l06_trade_execution/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l06_trade_execution/__init__.py",
+   "src/zephyr/l06_trade_execution/adapters/simulation_broker.py",
+   "src/zephyr/l06_trade_execution/execution_engine.py",
+   "src/zephyr/l06_trade_execution/order_manager.py"
+  ],
+  "src/zephyr/l07_post_trade_analytics/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l07_post_trade_analytics/__init__.py",
+   "src/zephyr/l07_post_trade_analytics/implementations/__init__.py",
+   "src/zephyr/l07_post_trade_analytics/implementations/default_attribution_engine.py",
+   "src/zephyr/l07_post_trade_analytics/implementations/default_tca_engine.py"
+  ],
+  "src/zephyr/l09_research_innovation/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/l09_research_innovation/__init__.py",
+   "src/zephyr/l09_research_innovation/implementations/__init__.py",
+   "src/zephyr/l09_research_innovation/implementations/default_backtest_engine.py"
+  ],
+  "src/zephyr/l10_compliance/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/gates/check_types/ct_security_artifact_scan.py",
+   "src/zephyr/gates/gate_engine.py",
+   "src/zephyr/l10_compliance/__init__.py",
+   "src/zephyr/l10_compliance/default_security_gateway.py",
+   "src/zephyr/l10_compliance/implementations/__init__.py",
+   "src/zephyr/l10_compliance/implementations/default_security_gateway.py"
+  ],
+  "src/zephyr/l11_ml_platform/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/_cross_layer/ml_experiment_pipeline.py",
+   "src/zephyr/l11_ml_platform/__init__.py",
+   "src/zephyr/l11_ml_platform/implementations/__init__.py",
+   "src/zephyr/l11_ml_platform/implementations/default_inference_engine.py"
+  ],
+  "src/zephyr/l13_experimentation/__init__.py": [
+   "scripts/construction/demo_e2e_pipeline.py",
+   "src/zephyr/_cross_layer/ml_experiment_pipeline.py",
+   "src/zephyr/l13_experimentation/__init__.py",
+   "src/zephyr/l13_experimentation/implementations/__init__.py",
+   "src/zephyr/l13_experimentation/implementations/default_experiment_pipeline.py"
+  ],
+  "src/zephyr/vector_memory/__init__.py": [
+   "scripts/construction/local_layer_daemon.py",
+   "scripts/governance/vms_cron_monitor.py",
+   "scripts/governance/vms_health_check.py",
+   "scripts/governance/vms_migrate.py",
+   "scripts/governance/vms_migration_dry_run.py",
+   "scripts/governance/vms_snapshot_backup.py",
+   "src/zephyr/feedback_loop/scheduler.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/kb/vms_memory_backend.py",
+   "src/zephyr/mcp/knowledge_base_server.py",
+   "src/zephyr/mcp/vector_memory_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/vector_memory/bridge_layer.py",
+   "src/zephyr/vector_memory/delegated_vector_memory.py",
+   "src/zephyr/vector_memory/design_principles.py",
+   "src/zephyr/vector_memory/faiss_collection_manager.py",
+   "src/zephyr/vector_memory/in_memory_fake_vms.py",
+   "src/zephyr/vector_memory/in_process_vector_memory.py",
+   "src/zephyr/vector_memory/index_health_monitor.py",
+   "src/zephyr/vector_memory/migrate_chroma_to_faiss.py",
+   "src/zephyr/vector_memory/provenance_enforcer.py",
+   "src/zephyr/vector_memory/sqlite_metadata_store.py"
+  ],
+  "src/zephyr/hooks/__init__.py": [
+   "scripts/construction/test_event_hook.py",
+   "scripts/governance/task_self_check.py",
+   "src/zephyr/db/task_repo.py",
+   "src/zephyr/db/transition.py",
+   "src/zephyr/hooks/__init__.py",
+   "src/zephyr/orchestrator/failure_matcher.py",
+   "src/zephyr/orchestrator/resilience/failure_matcher.py",
+   "src/zephyr/runtime/boot_hooks.py"
+  ],
+  "src/zephyr/_cross_layer/__init__.py": [
+   "scripts/governance/_e2e_verify.py",
+   "src/zephyr/_cross_layer/__init__.py"
+  ],
+  "src/zephyr/mcp/__init__.py": [
+   "scripts/governance/_e2e_verify.py",
+   "scripts/scaffold.py",
+   "src/zephyr/mcp/__init__.py",
+   "src/zephyr/mcp/_base_server.py",
+   "src/zephyr/mcp/blueprint_search_server.py",
+   "src/zephyr/mcp/doc_guard_server.py",
+   "src/zephyr/mcp/gate_engine_server.py",
+   "src/zephyr/mcp/gateway_server.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/mcp/knowledge_base_server.py",
+   "src/zephyr/mcp/sandbox_server.py",
+   "src/zephyr/mcp/sentinel_server.py",
+   "src/zephyr/mcp/vector_memory_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py"
+  ],
+  "src/zephyr/feedback_loop/__init__.py": [
+   "scripts/governance/_e2e_verify.py",
+   "src/zephyr/feedback_loop/actors/__init__.py",
+   "src/zephyr/feedback_loop/actors/action_selector.py",
+   "src/zephyr/feedback_loop/auto_evolution.py",
+   "src/zephyr/feedback_loop/backpressure_bridge.py",
+   "src/zephyr/feedback_loop/collectors/__init__.py",
+   "src/zephyr/feedback_loop/decision_engine.py",
+   "src/zephyr/feedback_loop/detectors/__init__.py",
+   "src/zephyr/feedback_loop/detectors/anomaly_detector.py",
+   "src/zephyr/feedback_loop/diagnosers/__init__.py",
+   "src/zephyr/feedback_loop/docs/__init__.py",
+   "src/zephyr/feedback_loop/evolution/__init__.py",
+   "src/zephyr/feedback_loop/forensic/__init__.py",
+   "src/zephyr/feedback_loop/gates/__init__.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L28_L29.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L36_L37.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L38_L39.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L40_L41.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L42_L43.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L44_L45.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L46_L47.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L48_L49.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L50_L51.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L52_L53.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L54_L55.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L56_L57.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L58_L59.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L60_L61.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L62_L63.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L64_L65.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L66_L67.py",
+   "src/zephyr/feedback_loop/generator.py",
+   "src/zephyr/feedback_loop/resilience/__init__.py",
+   "src/zephyr/feedback_loop/scheduler.py",
+   "src/zephyr/feedback_loop/scheduler_act.py",
+   "src/zephyr/feedback_loop/scheduler_collect_detect.py",
+   "src/zephyr/feedback_loop/scheduler_health.py",
+   "src/zephyr/feedback_loop/scheduler_safety.py",
+   "src/zephyr/feedback_loop/security/__init__.py",
+   "src/zephyr/feedback_loop/tests/e2e/__init__.py",
+   "src/zephyr/feedback_loop/tests/e2e/integration_test_pipeline.py",
+   "src/zephyr/feedback_loop/validator.py",
+   "src/zephyr/feedback_loop/verifiers/__init__.py",
+   "src/zephyr/l08_human_ai_interface/dashboard/components/fitness_functions.py",
+   "src/zephyr/orchestrator/trigger_router.py"
+  ],
+  "src/zephyr/gates/__init__.py": [
+   "scripts/governance/_e2e_verify.py",
+   "scripts/governance/adversarial_sys_master_test.py",
+   "scripts/governance/d1_structure/cbg_reset.py",
+   "scripts/governance/d1_structure/reset_cbg.py",
+   "scripts/governance/gate_engine_selfcheck.py",
+   "scripts/governance/meta/create_task_from_finding.py",
+   "scripts/governance/meta/validate_gate_engine_external.py",
+   "src/zephyr/agent_spec/skill_executor.py",
+   "src/zephyr/behavioral_auditor/brain_integration.py",
+   "src/zephyr/core/blueprint_decomposer.py",
+   "src/zephyr/db/base_repo.py",
+   "src/zephyr/db/query.py",
+   "src/zephyr/db/task_repo.py",
+   "src/zephyr/db/transition.py",
+   "src/zephyr/drift_detector/brain_integration.py",
+   "src/zephyr/gates/__init__.py",
+   "src/zephyr/gates/audit_chain_verifier.py",
+   "src/zephyr/gates/capability_checker.py",
+   "src/zephyr/gates/check_types/__init__.py",
+   "src/zephyr/gates/check_types/check_type_registry.py",
+   "src/zephyr/gates/check_types/ct_audit_findings_resolved.py",
+   "src/zephyr/gates/check_types/ct_blueprint_read_check.py",
+   "src/zephyr/gates/check_types/ct_circuit_breaker.py",
+   "src/zephyr/gates/check_types/ct_circular_dependency_scan.py",
+   "src/zephyr/gates/check_types/ct_classification.py",
+   "src/zephyr/gates/check_types/ct_content_length.py",
+   "src/zephyr/gates/check_types/ct_content_quality.py",
+   "src/zephyr/gates/check_types/ct_contract_compatibility_check.py",
+   "src/zephyr/gates/check_types/ct_deduplication.py",
+   "src/zephyr/gates/check_types/ct_drift_budget.py",
+   "src/zephyr/gates/check_types/ct_encoding.py",
+   "src/zephyr/gates/check_types/ct_enforcement_mode_check.py",
+   "src/zephyr/gates/check_types/ct_field_presence.py",
+   "src/zephyr/gates/check_types/ct_file_extension.py",
+   "src/zephyr/gates/check_types/ct_fle_gate.py",
+   "src/zephyr/gates/check_types/ct_frontmatter.py",
+   "src/zephyr/gates/check_types/ct_leverage_limit.py",
+   "src/zephyr/gates/check_types/ct_line_ending.py",
+   "src/zephyr/gates/check_types/ct_manual_approval.py",
+   "src/zephyr/gates/check_types/ct_path_blacklist.py",
+   "src/zephyr/gates/check_types/ct_path_routing.py",
+   "src/zephyr/gates/check_types/ct_path_whitelist.py",
+   "src/zephyr/gates/check_types/ct_position_limit.py",
+   "src/zephyr/gates/check_types/ct_reference_check.py",
+   "src/zephyr/gates/check_types/ct_regex_pattern.py",
+   "src/zephyr/gates/check_types/ct_restructuring_safety.py",
+   "src/zephyr/gates/check_types/ct_rollback_exit_code.py",
+   "src/zephyr/gates/check_types/ct_score_threshold.py",
+   "src/zephyr/gates/check_types/ct_security_artifact_scan.py",
+   "src/zephyr/gates/check_types/ct_strategy_correlation.py",
+   "src/zephyr/gates/check_types/ct_temporal.py",
+   "src/zephyr/gates/check_types/ct_zero_residue_check.py",
+   "src/zephyr/gates/gate_engine.py",
+   "src/zephyr/gates/gate_pipeline.py",
+   "src/zephyr/gates/gate_simulator.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/kb/activate.py",
+   "src/zephyr/kb/analyze.py",
+   "src/zephyr/kb/extract.py",
+   "src/zephyr/kb/ingest.py",
+   "src/zephyr/kb/kb_gate_task.py",
+   "src/zephyr/kb/migration/kb_gate_task.py",
+   "src/zephyr/kb/pipeline/activate.py",
+   "src/zephyr/kb/pipeline/analyze.py",
+   "src/zephyr/kb/pipeline/extract.py",
+   "src/zephyr/kb/pipeline/ingest.py",
+   "src/zephyr/kb/pipeline/triage.py",
+   "src/zephyr/kb/triage.py",
+   "src/zephyr/l01_infrastructure/file_watcher.py",
+   "src/zephyr/mcp/task_manager_server.py",
+   "src/zephyr/orchestrator/core/trigger_router.py",
+   "src/zephyr/orchestrator/file_task_mapper.py",
+   "src/zephyr/orchestrator/state/file_task_mapper.py",
+   "src/zephyr/orchestrator/trigger_router.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/pipeline/preemption_manager.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/runtime/boot_hooks.py",
+   "src/zephyr/shared/contracts/core/gate_types.py",
+   "src/zephyr/shared/contracts/gate/gate_result.py",
+   "src/zephyr/shared/events/event_schemas.py",
+   "src/zephyr/shared/schema/schemas.py"
+  ],
+  "src/zephyr/rollback/__init__.py": [
+   "scripts/governance/analyze_change_impact.py",
+   "scripts/rollback.py",
+   "src/zephyr/audit_trail/bridges/trust_bridge.py",
+   "src/zephyr/audit_trail/trust_bridge.py",
+   "src/zephyr/escalation_engine/contracts.py",
+   "src/zephyr/escalation_engine/governance/contracts.py",
+   "src/zephyr/gates/check_types/ct_rollback_exit_code.py",
+   "src/zephyr/gates/drift_detector.py",
+   "src/zephyr/gates/gate_engine.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/__init__.py",
+   "src/zephyr/rollback/governance/__init__.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/rollback/phase_manager.py",
+   "src/zephyr/rollback/rollback_executor.py",
+   "src/zephyr/rollback/rollback_integration.py"
+  ],
+  "src/zephyr/orchestrator/__init__.py": [
+   "scripts/governance/check_handoff_manifests.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/orchestrator/agent_health_monitor.py",
+   "src/zephyr/orchestrator/contract_router.py",
+   "src/zephyr/orchestrator/core/__init__.py",
+   "src/zephyr/orchestrator/core/trigger_router.py",
+   "src/zephyr/orchestrator/resilience/__init__.py",
+   "src/zephyr/orchestrator/state/__init__.py",
+   "src/zephyr/orchestrator/state/agent_health_monitor.py",
+   "src/zephyr/orchestrator/state/state_synchronizer.py",
+   "src/zephyr/orchestrator/state_synchronizer.py",
+   "src/zephyr/orchestrator/task_queue.py",
+   "src/zephyr/orchestrator/trigger_router.py",
+   "src/zephyr/pipeline/pipeline_agent_bridge.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/shared/blueprint_scorer.py",
+   "src/zephyr/shared/utils/blueprint_scorer.py"
+  ],
+  "src/zephyr/governance/__init__.py": [
+   "scripts/governance/construction_gate.py",
+   "scripts/governance/pre_write_gate.py",
+   "scripts/governance/session_startup_check.py",
+   "src/zephyr/agent_rbac/governance_bridges/capability_check.py",
+   "src/zephyr/audit_trail/bridges/spec_auditor.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/agent_spec/__init__.py",
+   "src/zephyr/governance/decision_fatigue_cli.py",
+   "src/zephyr/governance/phase_manager.py",
+   "src/zephyr/mcp/task_manager_server.py"
+  ],
+  "src/zephyr/agent_spec/__init__.py": [
+   "scripts/governance/d5_architecture/audit_agent_spec.py",
+   "scripts/governance/g9_compliance_check.py",
+   "src/zephyr/agent_rbac/capability_check.py",
+   "src/zephyr/agent_spec/__init__.py",
+   "src/zephyr/agent_spec/__main__.py",
+   "src/zephyr/agent_spec/engine.py",
+   "src/zephyr/agent_spec/integration/__init__.py",
+   "src/zephyr/agent_spec/integration/pipeline_bridge.py",
+   "src/zephyr/agent_spec/skill_consensus.py",
+   "src/zephyr/agent_spec/skill_constructor.py",
+   "src/zephyr/agent_spec/skill_contract.py",
+   "src/zephyr/agent_spec/skill_discovery.py",
+   "src/zephyr/agent_spec/skill_efficacy_calibrator.py",
+   "src/zephyr/agent_spec/skill_evaluator.py",
+   "src/zephyr/agent_spec/skill_executor.py",
+   "src/zephyr/agent_spec/skill_explain.py",
+   "src/zephyr/agent_spec/skill_factory.py",
+   "src/zephyr/agent_spec/skill_feedback.py",
+   "src/zephyr/agent_spec/skill_freshness_ext.py",
+   "src/zephyr/agent_spec/skill_kill_switch.py",
+   "src/zephyr/agent_spec/skill_kya.py",
+   "src/zephyr/agent_spec/skill_lifecycle.py",
+   "src/zephyr/agent_spec/skill_postmortem.py",
+   "src/zephyr/agent_spec/skill_prompt_opt.py",
+   "src/zephyr/agent_spec/skill_shadow.py",
+   "src/zephyr/agent_spec/skill_translator.py",
+   "src/zephyr/agent_spec/skill_workflow.py",
+   "src/zephyr/audit_trail/spec_auditor.py",
+   "src/zephyr/auto_fix_engine/llm_fix_adapter.py",
+   "src/zephyr/governance/agent_spec/registry.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/semantic_auditor/spec_auditor.py"
+  ],
+  "src/zephyr/budget_enforcer/__init__.py": [
+   "scripts/governance/d5_architecture/check_blueprint_code_alignment.py",
+   "scripts/governance/d5_architecture/check_budget_health.py",
+   "src/zephyr/budget_enforcer/__init__.py",
+   "src/zephyr/budget_enforcer/adversarial_tester.py",
+   "src/zephyr/budget_enforcer/bridges/__init__.py",
+   "src/zephyr/budget_enforcer/budget_engine.py",
+   "src/zephyr/budget_enforcer/budget_tracker.py",
+   "src/zephyr/budget_enforcer/burn_rate_monitor.py",
+   "src/zephyr/budget_enforcer/cost_attributor.py",
+   "src/zephyr/budget_enforcer/degradation_manager.py",
+   "src/zephyr/budget_enforcer/model_provider_data.py",
+   "src/zephyr/budget_enforcer/model_router.py",
+   "src/zephyr/budget_enforcer/pre_flight_gate.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/model_profiler/model_discovery.py",
+   "src/zephyr/pipeline/model_profiler/model_discovery.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py"
+  ],
+  "src/zephyr/escalation_engine/__init__.py": [
+   "scripts/governance/d5_architecture/check_budget_health.py",
+   "src/zephyr/agent_rbac/approver_check.py",
+   "src/zephyr/agent_rbac/governance_bridges/approver_check.py",
+   "src/zephyr/auto_fix_engine/escalation_bridge.py",
+   "src/zephyr/escalation_engine/__init__.py",
+   "src/zephyr/escalation_engine/a2a_failure.py",
+   "src/zephyr/escalation_engine/adapter.py",
+   "src/zephyr/escalation_engine/budget_handler.py",
+   "src/zephyr/escalation_engine/decision_fatigue_cli.py",
+   "src/zephyr/escalation_engine/delegation_engine.py",
+   "src/zephyr/escalation_engine/escalation_engine.py",
+   "src/zephyr/escalation_engine/escalation_smoke_tests.py",
+   "src/zephyr/escalation_engine/governance/__init__.py",
+   "src/zephyr/escalation_engine/governance/a2a_failure.py",
+   "src/zephyr/escalation_engine/governance/budget_handler.py",
+   "src/zephyr/escalation_engine/governance/rbac_bridge.py",
+   "src/zephyr/escalation_engine/rbac_bridge.py",
+   "src/zephyr/escalation_engine/self_test.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/mcp/_base_server.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/boot_cron_jobs.py",
+   "src/zephyr/shared/foundation/constants.py"
+  ],
+  "src/zephyr/audit_trail/__init__.py": [
+   "scripts/governance/rebuild_audit_index.py",
+   "src/zephyr/agent_rbac/contracts.py",
+   "src/zephyr/agent_rbac/governance_bridges/contracts.py",
+   "src/zephyr/agent_spec/engine.py",
+   "src/zephyr/agent_spec/skill_executor.py",
+   "src/zephyr/agent_spec/skill_sandbox.py",
+   "src/zephyr/asset_inventory/lifecycle.py",
+   "src/zephyr/audit_trail/__init__.py",
+   "src/zephyr/audit_trail/anomaly.py",
+   "src/zephyr/audit_trail/bridge.py",
+   "src/zephyr/audit_trail/bridges/__init__.py",
+   "src/zephyr/audit_trail/bridges/contracts.py",
+   "src/zephyr/audit_trail/bridges/delegation_bridge.py",
+   "src/zephyr/audit_trail/bridges/drift_bridge.py",
+   "src/zephyr/audit_trail/bridges/feedback_bridge.py",
+   "src/zephyr/audit_trail/cli.py",
+   "src/zephyr/audit_trail/cold_start.py",
+   "src/zephyr/audit_trail/compliance_map.py",
+   "src/zephyr/audit_trail/contracts.py",
+   "src/zephyr/audit_trail/delegation_auditor.py",
+   "src/zephyr/audit_trail/delegation_bridge.py",
+   "src/zephyr/audit_trail/drift_bridge.py",
+   "src/zephyr/audit_trail/evidence_pack.py",
+   "src/zephyr/audit_trail/external_tool_audit.py",
+   "src/zephyr/audit_trail/feedback_bridge.py",
+   "src/zephyr/audit_trail/indexer.py",
+   "src/zephyr/audit_trail/integrity.py",
+   "src/zephyr/audit_trail/kb_gate.py",
+   "src/zephyr/audit_trail/merkle_hourly.py",
+   "src/zephyr/audit_trail/orchestrator.py",
+   "src/zephyr/audit_trail/query.py",
+   "src/zephyr/audit_trail/replay_engine.py",
+   "src/zephyr/audit_trail/retention.py",
+   "src/zephyr/audit_trail/self_monitor.py",
+   "src/zephyr/audit_trail/supply_chain.py",
+   "src/zephyr/audit_trail/tiered_storage.py",
+   "src/zephyr/audit_trail/writer.py",
+   "src/zephyr/behavioral_admission/verdict_engine.py",
+   "src/zephyr/behavioral_auditor/drift_hotfix_bypass.py",
+   "src/zephyr/behavioral_auditor/tamper_proof_audit.py",
+   "src/zephyr/budget_enforcer/tamper_evident_log.py",
+   "src/zephyr/core/lifecycle/resource_optimization_engine.py",
+   "src/zephyr/drift_detector/drift_hotfix_bypass.py",
+   "src/zephyr/drift_detector/tamper_proof_audit.py",
+   "src/zephyr/escalation_engine/audit_write_failure_protector.py",
+   "src/zephyr/escalation_engine/merkle_audit.py",
+   "src/zephyr/feedback_loop/gates/safety_gate_L66_L67.py",
+   "src/zephyr/gates/audit_chain_verifier.py",
+   "src/zephyr/gates/capability_checker.py",
+   "src/zephyr/gates/gate_override.py",
+   "src/zephyr/gates/truth_source_validator.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/governance/auditor.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/legacy_auditor.py",
+   "src/zephyr/llm_security/behavior_audit_logger.py",
+   "src/zephyr/llm_security/layers/l6_observability.py",
+   "src/zephyr/llm_security/self_protection/isolation.py",
+   "src/zephyr/mcp/audit_logger.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/auditor.py",
+   "src/zephyr/rollback/contracts.py",
+   "src/zephyr/rollback/governance/auditor.py",
+   "src/zephyr/rollback/governance/contracts.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/rollback/rollback_abuse_detector.py",
+   "src/zephyr/rollback/rollback_audit_nexus.py",
+   "src/zephyr/rollback/rollback_executor.py",
+   "src/zephyr/runtime/lifecycle_manager.py",
+   "src/zephyr/runtime/resource_optimization.py",
+   "src/zephyr/semantic_auditor/compliance_map.py",
+   "src/zephyr/semantic_auditor/kb_gate.py",
+   "src/zephyr/semantic_auditor/supply_chain.py",
+   "src/zephyr/shared/session_audit.py"
+  ],
+  "src/zephyr/pipeline/__init__.py": [
+   "scripts/run_deepseek_v4_exam.py",
+   "src/zephyr/agent_spec/skill_feedback.py",
+   "src/zephyr/feedback_loop/backpressure_bridge.py",
+   "src/zephyr/model_profiler/task_model_learner.py",
+   "src/zephyr/orchestrator/trigger_router.py",
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/pipeline/backpressure_manager.py",
+   "src/zephyr/pipeline/circuit_breaker_manager.py",
+   "src/zephyr/pipeline/cost_tracker.py",
+   "src/zephyr/pipeline/ct_pipe_routing.py",
+   "src/zephyr/pipeline/dead_letter_queue.py",
+   "src/zephyr/pipeline/layer_consumer_registry.py",
+   "src/zephyr/pipeline/model_profiler/__init__.py",
+   "src/zephyr/pipeline/model_profiler/cli.py",
+   "src/zephyr/pipeline/model_profiler/exam_orchestrator.py",
+   "src/zephyr/pipeline/model_profiler/profiler.py",
+   "src/zephyr/pipeline/model_profiler/results_writer.py",
+   "src/zephyr/pipeline/model_profiler/task_model_learner.py",
+   "src/zephyr/pipeline/pipeline_agent_bridge.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/pipeline/preemption_manager.py",
+   "src/zephyr/pipeline/routing_plugins.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/shared/contracts/backpressure/pause.py",
+   "src/zephyr/shared/contracts/backpressure/resume.py",
+   "src/zephyr/shared/contracts/backpressure/throttle.py"
+  ],
+  "src/zephyr/asset_inventory/__init__.py": [
+   "scripts/scaffold.py",
+   "src/zephyr/asset_inventory/__init__.py",
+   "src/zephyr/asset_inventory/__main__.py",
+   "src/zephyr/asset_inventory/classifier.py",
+   "src/zephyr/asset_inventory/dashboard.py",
+   "src/zephyr/asset_inventory/index_generator.py",
+   "src/zephyr/asset_inventory/lifecycle.py",
+   "src/zephyr/asset_inventory/reconciler.py",
+   "src/zephyr/asset_inventory/registry_adapter.py",
+   "src/zephyr/asset_inventory/scanner.py"
+  ],
+  "src/zephyr/trading_contracts/__init__.py": [
+   "src/zephyr/_cross_layer/alpha_signal_pipeline.py",
+   "src/zephyr/l03_signal_generation/__init__.py",
+   "src/zephyr/l03_signal_generation/aggregator_base.py",
+   "src/zephyr/l03_signal_generation/capital_allocator.py",
+   "src/zephyr/l03_signal_generation/implementations/default_capital_allocator.py",
+   "src/zephyr/l03_signal_generation/implementations/default_signal_aggregator.py",
+   "src/zephyr/l03_signal_generation/signal_synthesizer.py",
+   "src/zephyr/l04_risk_management/risk_limits.py",
+   "src/zephyr/l04_risk_management/risk_manager.py",
+   "src/zephyr/l05_portfolio_construction/strategies/default_equity_strategy.py",
+   "src/zephyr/l06_trade_execution/adapters/simulation_broker.py",
+   "src/zephyr/l06_trade_execution/broker_interface.py",
+   "src/zephyr/l06_trade_execution/execution_engine.py",
+   "src/zephyr/l06_trade_execution/order_manager.py",
+   "src/zephyr/l07_post_trade_analytics/analytics_base.py",
+   "src/zephyr/l07_post_trade_analytics/implementations/default_tca_engine.py",
+   "src/zephyr/l10_compliance/compliance_manager.py",
+   "src/zephyr/l10_compliance/security_gateway_base.py",
+   "src/zephyr/l11_ml_platform/implementations/default_inference_engine.py",
+   "src/zephyr/l11_ml_platform/inference_base.py",
+   "src/zephyr/shared/__init__.py",
+   "src/zephyr/shared/contracts/__init__.py",
+   "src/zephyr/shared/contracts/core/factories.py",
+   "src/zephyr/shared/contracts/errors/__init__.py",
+   "src/zephyr/shared/contracts/errors/execution_rejection_error.py",
+   "src/zephyr/shared/contracts/errors/risk_limit_violation_error.py",
+   "src/zephyr/shared/contracts/errors/signal_degradation_warning.py",
+   "src/zephyr/shared/contracts/execution/__init__.py",
+   "src/zephyr/shared/contracts/execution/capital_allocation_result.py",
+   "src/zephyr/shared/contracts/execution/execution_report.py",
+   "src/zephyr/shared/contracts/execution/fill.py",
+   "src/zephyr/shared/contracts/execution/model_serving_request.py",
+   "src/zephyr/shared/contracts/execution/order.py",
+   "src/zephyr/shared/contracts/market/__init__.py",
+   "src/zephyr/shared/contracts/market/factor_monitor_report.py",
+   "src/zephyr/shared/contracts/market/factor_signal.py",
+   "src/zephyr/shared/contracts/market/instrument.py",
+   "src/zephyr/shared/contracts/market/macro_factor_signal.py",
+   "src/zephyr/shared/contracts/market/market_data.py",
+   "src/zephyr/shared/contracts/market/synthesized_signal.py",
+   "src/zephyr/shared/contracts/portfolio/money.py",
+   "src/zephyr/shared/contracts/portfolio/position.py",
+   "src/zephyr/shared/contracts/risk/__init__.py",
+   "src/zephyr/shared/contracts/risk/compliance_rule.py",
+   "src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py",
+   "src/zephyr/shared/contracts/risk/risk_limits.py",
+   "src/zephyr/shared/contracts/risk/risk_metrics.py",
+   "src/zephyr/shared/contracts/risk/risk_validator_protocol.py",
+   "src/zephyr/shared/foundation/constants.py",
+   "src/zephyr/trading_contracts/__init__.py",
+   "src/zephyr/trading_contracts/execution/__init__.py",
+   "src/zephyr/trading_contracts/market/__init__.py",
+   "src/zephyr/trading_contracts/risk/__init__.py"
+  ],
+  "src/zephyr/llm_security/__init__.py": [
+   "src/zephyr/agent_spec/llm_gateway.py",
+   "src/zephyr/context_engine/context_injector.py",
+   "src/zephyr/db/atomic_transaction_manager.py",
+   "src/zephyr/escalation_engine/delegation_engine.py",
+   "src/zephyr/escalation_engine/escalation_engine.py",
+   "src/zephyr/feedback_loop/evolution_engine.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/kb/ingest.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/governance/governance_adapter.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py",
+   "src/zephyr/l01_infrastructure/a2a_protocol/legacy_governance_adapter.py",
+   "src/zephyr/l10_compliance/default_security_gateway.py",
+   "src/zephyr/l10_compliance/implementations/default_security_gateway.py",
+   "src/zephyr/llm_security/__init__.py",
+   "src/zephyr/llm_security/dashboard/__init__.py",
+   "src/zephyr/llm_security/dashboard/app.py",
+   "src/zephyr/llm_security/gateway.py",
+   "src/zephyr/llm_security/layers/l0_supply_chain.py",
+   "src/zephyr/llm_security/layers/l1_input.py",
+   "src/zephyr/llm_security/layers/l2_prompt_protection.py",
+   "src/zephyr/llm_security/layers/l2a_process_sandbox.py",
+   "src/zephyr/llm_security/layers/l3_output.py",
+   "src/zephyr/llm_security/layers/l4_agent.py",
+   "src/zephyr/llm_security/layers/l5_resource_protection.py",
+   "src/zephyr/llm_security/layers/l6_observability.py",
+   "src/zephyr/llm_security/layers/l8_multi_agent.py",
+   "src/zephyr/llm_security/patterns/__init__.py",
+   "src/zephyr/llm_security/self_protection/adversarial_mutator.py",
+   "src/zephyr/llm_security/self_protection/l7_validation.py",
+   "src/zephyr/llm_security/self_protection/red_team_scanner.py",
+   "src/zephyr/mcp/gateway_server.py",
+   "src/zephyr/orchestrator/agent_orchestrator.py",
+   "src/zephyr/orchestrator/core/agent_orchestrator.py",
+   "src/zephyr/pipeline/llm_gateway.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/rollback/llm_impact_analyzer.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/rollback/rollback_executor.py"
+  ],
+  "src/zephyr/local_model/__init__.py": [
+   "src/zephyr/agent_spec/skill_router.py",
+   "src/zephyr/local_model/__init__.py",
+   "src/zephyr/local_model/embedding_router.py",
+   "src/zephyr/local_model/local_model_scheduler.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/vector_memory/cache_layer.py",
+   "src/zephyr/vector_memory/embedding_router.py",
+   "src/zephyr/vector_memory/in_process_vector_memory.py",
+   "src/zephyr/vector_memory/local_model_scheduler.py",
+   "src/zephyr/vector_memory/ollama_chat.py",
+   "src/zephyr/vector_memory/ollama_embedding.py"
+  ],
+  "src/zephyr/drift_detector/__init__.py": [
+   "src/zephyr/audit_trail/bridges/drift_bridge.py",
+   "src/zephyr/drift_detector/__init__.py",
+   "src/zephyr/drift_detector/__main__.py",
+   "src/zephyr/drift_detector/ai_construction_detectors.py",
+   "src/zephyr/drift_detector/brain_integration.py",
+   "src/zephyr/drift_detector/bridges/__init__.py",
+   "src/zephyr/drift_detector/chaos_injector.py",
+   "src/zephyr/drift_detector/cold_start.py",
+   "src/zephyr/drift_detector/detector_dispatcher.py",
+   "src/zephyr/drift_detector/drift_cron_scheduler.py",
+   "src/zephyr/drift_detector/drift_engine.py",
+   "src/zephyr/drift_detector/drift_infrastructure.py",
+   "src/zephyr/drift_detector/drift_result_types.py",
+   "src/zephyr/drift_detector/drift_training.py",
+   "src/zephyr/drift_detector/headless_scanner.py",
+   "src/zephyr/drift_detector/reconciler.py",
+   "src/zephyr/drift_detector/runbook_generator.py",
+   "src/zephyr/drift_detector/scan_mutex.py",
+   "src/zephyr/drift_detector/state_machine.py",
+   "src/zephyr/gates/drift_detector.py",
+   "src/zephyr/gates/gate_engine.py",
+   "src/zephyr/governance/__init__.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/rollback/governance/drift_fix.py"
+  ],
+  "src/zephyr/behavioral_auditor/__init__.py": [
+   "src/zephyr/audit_trail/drift_bridge.py",
+   "src/zephyr/behavioral_auditor/__init__.py",
+   "src/zephyr/behavioral_auditor/__main__.py",
+   "src/zephyr/behavioral_auditor/ai_construction_detectors.py",
+   "src/zephyr/behavioral_auditor/brain_integration.py",
+   "src/zephyr/behavioral_auditor/chaos_injector.py",
+   "src/zephyr/behavioral_auditor/cold_start.py",
+   "src/zephyr/behavioral_auditor/detector_dispatcher.py",
+   "src/zephyr/behavioral_auditor/drift_cron_scheduler.py",
+   "src/zephyr/behavioral_auditor/drift_engine.py",
+   "src/zephyr/behavioral_auditor/drift_infrastructure.py",
+   "src/zephyr/behavioral_auditor/drift_result_types.py",
+   "src/zephyr/behavioral_auditor/drift_training.py",
+   "src/zephyr/behavioral_auditor/headless_scanner.py",
+   "src/zephyr/behavioral_auditor/reconciler.py",
+   "src/zephyr/behavioral_auditor/runbook_generator.py",
+   "src/zephyr/behavioral_auditor/scan_mutex.py",
+   "src/zephyr/behavioral_auditor/state_machine.py",
+   "src/zephyr/budget_enforcer/budget_engine.py",
+   "src/zephyr/gates/check_types/ct_drift_budget.py",
+   "src/zephyr/l01_infrastructure/system_telemetry/contract_metrics.py",
+   "src/zephyr/mcp/governance_server.py",
+   "src/zephyr/rollback/drift_fix.py",
+   "src/zephyr/rollback/phase_check_registry.py"
+  ],
+  "src/zephyr/auto_fix_engine/__init__.py": [
+   "src/zephyr/auto_fix_engine/__init__.py",
+   "src/zephyr/auto_fix_engine/__main__.py",
+   "src/zephyr/auto_fix_engine/alignment_syncer.py",
+   "src/zephyr/auto_fix_engine/all_completer.py",
+   "src/zephyr/auto_fix_engine/batch_fixer.py",
+   "src/zephyr/auto_fix_engine/compliance_auditor.py",
+   "src/zephyr/auto_fix_engine/config_fixer.py",
+   "src/zephyr/auto_fix_engine/dedup_extractor.py",
+   "src/zephyr/auto_fix_engine/dep_version_fixer.py",
+   "src/zephyr/auto_fix_engine/drift_fixer.py",
+   "src/zephyr/auto_fix_engine/engine.py",
+   "src/zephyr/auto_fix_engine/escalation_bridge.py",
+   "src/zephyr/auto_fix_engine/event_hooks.py",
+   "src/zephyr/auto_fix_engine/fix_budget.py",
+   "src/zephyr/auto_fix_engine/fix_diff.py",
+   "src/zephyr/auto_fix_engine/fix_health_check.py",
+   "src/zephyr/auto_fix_engine/fix_pattern_miner.py",
+   "src/zephyr/auto_fix_engine/fix_reliability.py",
+   "src/zephyr/auto_fix_engine/fix_report.py",
+   "src/zephyr/auto_fix_engine/fix_safety.py",
+   "src/zephyr/auto_fix_engine/fix_scheduler.py",
+   "src/zephyr/auto_fix_engine/import_fixer.py",
+   "src/zephyr/auto_fix_engine/llm_fix_adapter.py",
+   "src/zephyr/auto_fix_engine/scaffold_registrar.py",
+   "src/zephyr/auto_fix_engine/self_heal_agent.py",
+   "src/zephyr/auto_fix_engine/shadow_workspace.py",
+   "src/zephyr/auto_fix_engine/zombie_cleaner.py"
+  ],
+  "src/zephyr/behavioral_admission/__init__.py": [
+   "src/zephyr/behavioral_admission/__init__.py",
+   "src/zephyr/behavioral_admission/gpu_consensus_scheduler.py",
+   "src/zephyr/behavioral_admission/protection_index.py",
+   "src/zephyr/governance/admission_response.py"
+  ],
+  "src/zephyr/model_profiler/__init__.py": [
+   "src/zephyr/budget_enforcer/model_router.py",
+   "src/zephyr/model_profiler/__init__.py",
+   "src/zephyr/model_profiler/cli.py",
+   "src/zephyr/model_profiler/exam_orchestrator.py",
+   "src/zephyr/model_profiler/profiler.py",
+   "src/zephyr/model_profiler/results_writer.py",
+   "src/zephyr/pipeline/__init__.py",
+   "src/zephyr/runtime/auto_runtime_core.py",
+   "src/zephyr/runtime/task_gate.py"
+  ],
+  "src/zephyr/capacity_assurance/__init__.py": [
+   "src/zephyr/capacity_assurance/contracts/__init__.py",
+   "src/zephyr/capacity_assurance/contracts/contract_bus.py",
+   "src/zephyr/capacity_assurance/modules/__init__.py",
+   "src/zephyr/contracts/__init__.py"
+  ],
+  "src/zephyr/context_engine/__init__.py": [
+   "src/zephyr/context_engine/__init__.py",
+   "src/zephyr/context_engine/assembly/context_assembler.py",
+   "src/zephyr/context_engine/assembly/context_injector.py",
+   "src/zephyr/context_engine/assembly/context_pipeline.py",
+   "src/zephyr/context_engine/context_assembler.py",
+   "src/zephyr/context_engine/context_budget.py",
+   "src/zephyr/context_engine/context_budget_tracker.py",
+   "src/zephyr/context_engine/context_injector.py",
+   "src/zephyr/context_engine/context_pipeline.py",
+   "src/zephyr/context_engine/intent_parser.py",
+   "src/zephyr/context_engine/management/__init__.py",
+   "src/zephyr/context_engine/management/context_budget_tracker.py",
+   "src/zephyr/context_engine/parsing/intent_parser.py",
+   "src/zephyr/context_engine/pipeline_orchestrator.py",
+   "src/zephyr/context_engine/prompt_registry.py",
+   "src/zephyr/context_engine/support/prompt_registry.py",
+   "src/zephyr/governance/phase_check_registry.py",
+   "src/zephyr/l01_infrastructure/code_dedup_engine/integration_hub.py",
+   "src/zephyr/mcp/sentinel_server.py",
+   "src/zephyr/rollback/phase_check_registry.py",
+   "src/zephyr/shared/observability/token_utils.py"
+  ],
+  "src/zephyr/kb/__init__.py": [
+   "src/zephyr/context_engine/context_assembler.py",
+   "src/zephyr/kb/__init__.py",
+   "src/zephyr/kb/activate.py",
+   "src/zephyr/kb/analyze.py",
+   "src/zephyr/kb/batch_ingest.py",
+   "src/zephyr/kb/bootstrap.py",
+   "src/zephyr/kb/embedding_migrate.py",
+   "src/zephyr/kb/extract.py",
+   "src/zephyr/kb/graph_validator.py",
+   "src/zephyr/kb/ingest.py",
+   "src/zephyr/kb/kb_repo.py",
+   "src/zephyr/kb/migration/embedding_migrate.py",
+   "src/zephyr/kb/pipeline/activate.py",
+   "src/zephyr/kb/pipeline/analyze.py",
+   "src/zephyr/kb/pipeline/batch_ingest.py",
+   "src/zephyr/kb/pipeline/extract.py",
+   "src/zephyr/kb/pipeline/ingest.py",
+   "src/zephyr/kb/pipeline/triage.py",
+   "src/zephyr/kb/self_test.py",
+   "src/zephyr/kb/storage/graph_validator.py",
+   "src/zephyr/kb/storage/kb_repo.py",
+   "src/zephyr/kb/storage/unified_memory_api.py",
+   "src/zephyr/kb/triage.py",
+   "src/zephyr/kb/unified_memory_api.py",
+   "src/zephyr/kb/vms_memory_backend.py",
+   "src/zephyr/mcp/knowledge_base_server.py",
+   "src/zephyr/pipeline/pipeline_orchestrator.py",
+   "src/zephyr/vector_memory/__init__.py",
+   "src/zephyr/vector_memory/delegated_vector_memory.py"
+  ],
+  "src/zephyr/l08_human_ai_interface/__init__.py": [
+   "src/zephyr/l08_human_ai_interface/dashboard/app.py"
+  ],
+  "src/zephyr/model_capability_exam/__init__.py": [
+   "src/zephyr/model_capability_exam/__init__.py",
+   "src/zephyr/model_capability_exam/exam_orchestrator.py"
+  ],
+  "src/zephyr/orphan_judge/__init__.py": [
+   "src/zephyr/orphan_judge/__init__.py"
+  ],
+  "src/zephyr/red_blue_validator/__init__.py": [
+   "src/zephyr/red_blue_validator/__init__.py"
+  ],
+  "scripts/governance/__init__.py": [
+   "src/zephyr/runtime/lifecycle_manager.py"
+  ],
+  "src/zephyr/semantic_auditor/__init__.py": [
+   "src/zephyr/semantic_auditor/__init__.py"
+  ]
+ }
+}

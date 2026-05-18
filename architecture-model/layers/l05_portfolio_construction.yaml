@@ -16,9 +16,9 @@ modules:
   runtime_plane: hot
   description: 组合构建层。StrategyBase OCP-002 扩展�?+ StrategyRegistry�?
   files:
-  - default_equity_strategy.py
   - strategy_base.py
   - strategy_registry.py
+  - strategies/default_equity_strategy.py
   interfaces:
   - contract_id: CTR-004
     role: producer

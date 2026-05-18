@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 capability_id: ollama-chat
 category: inference
 description: qwen3:8b local inference via Ollama /api/chat, 6 work types

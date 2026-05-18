@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # KB 运营参数隔离配置文件
 # ==========================
 # 蓝图: MOD-KB-001 §7.10.4

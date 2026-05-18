@@ -1,4 +1,4 @@
-{
+﻿{
   "classification_id": "CLS-20260508-314",
   "classified_at": "2026-05-08T04:52:04.383752",
   "source_scan_id": "SCAN-20260508-209",
@@ -43135,7 +43135,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "docs/01_policies_and_standards/templates/blueprint-template.md",
+      "relative_path": "docs/01_policies_and_standards/templates/blueprint-construction-template.md",
       "asset_type": "doc",
       "layer": "L01",
       "status": "active",

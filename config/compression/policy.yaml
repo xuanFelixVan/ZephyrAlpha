@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: GOV-DOC-011 | docs/01_policies_and_standards/governance/document/compression-workflow-standard.md | §
+# module_id: GOV-DOC-011
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 — DocCompressor 压缩策略（experimental 最小版）
 # ============================================================
 # 任务编号 : T-V2-006（experimental CL-018）

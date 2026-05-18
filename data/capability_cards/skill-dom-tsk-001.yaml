@@ -1,0 +1,27 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: skill-dom-tsk-001
+category: orchestration
+description: Task system full chain draft→blueprint→TaskCard→dual-pipeline→script-system.
+  Covers 62-field TaskCard model, BlueprintDecomposer, TaskRepo CRUD+state machine,
+  PipelineOrchestrator dispatch, G7 gate validation.
+examples: []
+input_schema:
+  type: object
+name: 'Skill: task-system'
+output_schema:
+  type: object
+priority: P1
+registered_at: '2026-05-16T00:43:32.866098'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- skill-derived
+- domain
+- task-system

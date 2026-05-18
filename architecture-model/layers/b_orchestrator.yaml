@@ -41,7 +41,13 @@ modules:
         description: 任务执行�?后门禁判�?
       - contract_id: EXT-ORC-SANDBOX-001
         role: producer
-        description: 沙箱执行边界（Windows ACL 等）；未单列入总表，扩展登�?
+        description: 沙箱执行边界（Windows ACL 等）；未单列入总表，扩展登记
+      - contract_id: CT-ORC-DB
+        role: both
+        description: Orchestrator 与 DB 的交互契约（任务状态读写/事务一致性）
+      - contract_id: CT-RBK-GATE-001
+        role: both
+        description: Rollback 与 Gate 的交互契约（回滚前门禁校验/回滚后状态同步）
     kb_ref:
       - ADR-0017
       - ADR-0018

@@ -1,4 +1,4 @@
-{
+﻿{
   "scan_id": "SCAN-20260508-209",
   "scanned_at": "2026-05-08T04:51:49.071209Z",
   "completed_at": "2026-05-08T04:51:55.944006Z",
@@ -28747,9 +28747,9 @@
       "is_binary": false
     },
     {
-      "relative_path": "docs/01_policies_and_standards/templates/blueprint-template.md",
-      "absolute_path": "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md",
-      "file_name": "blueprint-template.md",
+      "relative_path": "docs/01_policies_and_standards/templates/blueprint-construction-template.md",
+      "absolute_path": "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-construction-template.md",
+      "file_name": "blueprint-construction-template.md",
       "extension": ".md",
       "size_bytes": 20075,
       "mtime_utc": "2026-05-06T04:44:50.721125Z",

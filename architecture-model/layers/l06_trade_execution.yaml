@@ -19,7 +19,7 @@ modules:
   - broker_interface.py
   - execution_engine.py
   - order_manager.py
-  - simulation_broker.py
+  - adapters/simulation_broker.py
   interfaces:
   - contract_id: CTR-005
     role: producer

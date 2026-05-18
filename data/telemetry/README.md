@@ -1,3 +1,7 @@
+---
+blueprint_id: MOD-INF-005
+---
+
 # 蓝图读取遥测（`blueprint_reads.jsonl`）
 
 本目录下的 `blueprint_reads.jsonl` 为 **G6 蓝图合规与遥测门禁**所用：每行一条 JSON，`event` 为 `blueprint_read` 时需含 `blueprint_id` 等字段。

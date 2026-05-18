@@ -82,11 +82,11 @@
       "server_id": "governance",
       "transport": "BaseMCPServer",
       "tool_prefix": "governance.",
-      "tool_count": 5,
+      "tool_count": 7,
       "safety_level": ["L", "M", "H"],
       "rate_limit": { "default_qps": 10, "burst": 30 },
       "status": "implemented",
-      "note": "治理域统一MCP入口——PhaseGate/Audit/Lock/Contract/Health 五工具"
+      "note": "治理域统一MCP入口——PhaseGate/Audit/Lock/Contract/Health/Skill 五+二工具"
     },
     "vector_memory": {
       "module": "vector_memory_server",
@@ -162,9 +162,9 @@
         "admin": ["sandbox.execute", "sandbox.health_check"]
       },
       "governance": {
-        "reader": ["governance.health_check", "governance.list_contracts"],
-        "operator": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock"],
-        "admin": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock", "governance.acquire_lock"]
+        "reader": ["governance.health_check", "governance.list_contracts", "governance.list_skills"],
+        "operator": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock", "governance.list_skills", "governance.load_skill"],
+        "admin": ["governance.health_check", "governance.list_contracts", "governance.run_gate", "governance.check_lock", "governance.acquire_lock", "governance.list_skills", "governance.load_skill"]
       },
       "vector_memory": {
         "reader": ["vector_memory.search", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"],

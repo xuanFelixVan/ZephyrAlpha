@@ -1,0 +1,852 @@
+metadata:
+  diagnosis_version: 2.1.0
+  total_nodes: 7993
+  total_edges: 10826
+  layer_distribution:
+    0: 27
+    1: 773
+    2: 18
+    3: 15
+    4: 27
+    5: 12
+    6: 15
+    7: 17
+    8: 18
+    9: 11
+    10: 20
+    11: 11
+    12: 2
+    13: 11
+descriptive_errors:
+  empty_blueprint_id:
+    count: 18
+    sample:
+    - path: src/zephyr/audit_trail/__init__.py
+      type: module
+    - path: src/zephyr/budget_enforcer/budget_engine.py
+      type: module
+    - path: src/zephyr/budget_enforcer/model_router.py
+      type: module
+    - path: src/zephyr/escalation_engine/governance/contracts.py
+      type: module
+    - path: src/zephyr/mcp/governance_server.py
+      type: module
+    - path: tests/unit/agent_rbac/__init__.py
+      type: test
+    - path: tests/unit/budget_enforcer/__init__.py
+      type: test
+    - path: tests/unit/auto_fix_engine/__init__.py
+      type: test
+    - path: tests/unit/escalation_engine/conftest.py
+      type: test
+    - path: tests/unit/escalation_engine/__init__.py
+      type: test
+    - path: tests/unit/drift_detector/__init__.py
+      type: test
+    - path: tests/unit/rollback/conftest.py
+      type: test
+    - path: tests/unit/rollback/__init__.py
+      type: test
+    - path: src/zephyr/gates/gct_024_budget_enforcer.yaml
+      type: gate
+    - path: src/zephyr/gates/observability_baseline.yaml
+      type: gate
+    - path: src/zephyr/gates/invariants/en_001_circular_dependency.yaml
+      type: gate
+    - path: scripts/script_manifest.yaml
+      type: registry
+    - path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+      type: registry
+  orphan_nodes:
+    count: 70
+    sample:
+    - path: tests/unit/agent_rbac/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/budget_enforcer/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/auto_fix_engine/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/escalation_engine/conftest.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/escalation_engine/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/drift_detector/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/rollback/conftest.py
+      type: test
+      blueprint_id: ''
+    - path: tests/unit/rollback/__init__.py
+      type: test
+      blueprint_id: ''
+    - path: src/zephyr/gates/invariants/en_001_circular_dependency.yaml
+      type: gate
+      blueprint_id: ''
+    - path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+      type: registry
+      blueprint_id: ''
+    - path: docs/03_modules/l00_data_source/datasource-core/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-L00-001
+    - path: docs/03_modules/l01_infrastructure/a2a-protocol/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-025
+    - path: docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-018
+    - path: docs/03_modules/l01_infrastructure/agent-spec/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-019
+    - path: docs/03_modules/l01_infrastructure/asset-inventory/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-026
+    - path: docs/03_modules/l01_infrastructure/audit-trail/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-020
+    - path: docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-024
+    - path: docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-001
+    - path: docs/03_modules/l01_infrastructure/code-dedup-engine/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-017
+    - path: docs/03_modules/l01_infrastructure/drift-detector/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-023
+    - path: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-022
+    - path: docs/03_modules/l01_infrastructure/governance-automation/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-005
+    - path: docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-KB-001
+    - path: docs/03_modules/l01_infrastructure/local-model/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-039
+    - path: docs/03_modules/l01_infrastructure/registry-governance/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-037
+    - path: docs/03_modules/l01_infrastructure/rollback-system/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-021
+    - path: docs/03_modules/l01_infrastructure/runtime-integration/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-002
+    - path: docs/03_modules/l01_infrastructure/state-machine-engine/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-038
+    - path: docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-015
+    - path: docs/03_modules/l01_infrastructure/task-system/blueprint.md
+      type: blueprint
+      blueprint_id: MOD-INF-006
+structural_issues:
+  circular_dependencies:
+    count: 0
+    verified:
+      true_cycles: 0
+      event_driven_not_cycle: 0
+      false_positives: 0
+      bidirectional_import: 0
+      needs_manual_review: 0
+    chains: []
+    verified_details: []
+  cross_layer_references:
+    count: 2
+    by_gap:
+      2: 2
+    sample:
+    - from: tests/unit/l06_trade_execution/test_execution_engine_deep.py
+      to: src/zephyr/l04_risk_management/implementations/default_risk_validator.py
+      from_layer: 6
+      to_layer: 4
+      gap: 2
+    - from: tests/unit/l06_trade_execution/test_execution_engine_unit.py
+      to: src/zephyr/l04_risk_management/implementations/default_risk_validator.py
+      from_layer: 6
+      to_layer: 4
+      gap: 2
+  deep_dependency_chains:
+    count: 30
+    chains:
+    - nodes:
+      - tests/unit/runtime/test_runtime_core.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/runtime/test_runtime_core.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/pipeline/test_pipeline_orchestrator.py
+      - src/zephyr/pipeline/__init__.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/pipeline/test_pipeline_orchestrator.py
+      - src/zephyr/pipeline/__init__.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/resource_optimization/test_brain_integration.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/resource_optimization/test_brain_integration.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/test_pipeline_orchestrator.py
+      - src/zephyr/pipeline/__init__.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - tests/unit/test_pipeline_orchestrator.py
+      - src/zephyr/pipeline/__init__.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/construction/start_brain.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/construction/start_brain.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/construction/local_layer_daemon.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/construction/local_layer_daemon.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/a2a_full_verification.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - scripts/a2a_full_verification.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/__main__.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/__main__.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/windows_service.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/delegation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/windows_service.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/escalation_engine/self_test.py
+      - src/zephyr/escalation_engine/escalation_engine.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/windows_service.py
+      - src/zephyr/runtime/__main__.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/llm_security/self_protection/red_team_scanner.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+    - nodes:
+      - src/zephyr/runtime/windows_service.py
+      - src/zephyr/runtime/__main__.py
+      - src/zephyr/runtime/auto_runtime_core.py
+      - src/zephyr/pipeline/pipeline_orchestrator.py
+      - src/zephyr/mcp/__init__.py
+      - src/zephyr/mcp/telemetry_server.py
+      - src/zephyr/l01_infrastructure/system_telemetry/__init__.py
+      - src/zephyr/l01_infrastructure/system_telemetry/auto_bootstrap.py
+      - src/zephyr/rollback/phase_manager.py
+      - src/zephyr/rollback/phase_check_registry.py
+      - src/zephyr/rollback/rollback_executor.py
+      - src/zephyr/llm_security/gateway.py
+      - src/zephyr/llm_security/layers/l6_observability.py
+      - src/zephyr/audit_trail/bridge.py
+      - src/zephyr/audit_trail/writer.py
+      - src/zephyr/audit_trail/models.py
+      - src/zephyr/shared/schema/schemas.py
+      - src/zephyr/gates/task_types.py
+      - src/zephyr/shared/schema/severity_types.py
+      - src/zephyr/db/circuit_breaker_types.py
+      length: 20
+  god_modules:
+    high_fan_out:
+    - path: src/zephyr/escalation_engine/__init__.py
+      type: module
+      fan_out: 92
+    - path: src/zephyr/behavioral_auditor/__init__.py
+      type: module
+      fan_out: 68
+    - path: src/zephyr/context_engine/__init__.py
+      type: module
+      fan_out: 54
+    - path: src/zephyr/rollback/__init__.py
+      type: module
+      fan_out: 50
+    - path: src/zephyr/l01_infrastructure/code_dedup_engine/__init__.py
+      type: module
+      fan_out: 48
+    - path: src/zephyr/feedback_loop/diagnosers/__init__.py
+      type: module
+      fan_out: 46
+    - path: src/zephyr/shared/__init__.py
+      type: module
+      fan_out: 45
+    - path: src/zephyr/feedback_loop/detectors/__init__.py
+      type: module
+      fan_out: 43
+    - path: src/zephyr/feedback_loop/gates/__init__.py
+      type: module
+      fan_out: 41
+    - path: src/zephyr/runtime/auto_runtime_core.py
+      type: module
+      fan_out: 40
+    - path: src/zephyr/l01_infrastructure/a2a_protocol/layer3_coordination/__init__.py
+      type: module
+      fan_out: 39
+    - path: src/zephyr/drift_detector/__init__.py
+      type: module
+      fan_out: 35
+    - path: src/zephyr/budget_enforcer/__init__.py
+      type: module
+      fan_out: 34
+    - path: src/zephyr/gates/check_types/__init__.py
+      type: module
+      fan_out: 33
+    - path: src/zephyr/shared/contracts/__init__.py
+      type: module
+      fan_out: 31
+    - path: tests/integration/test_e2e_pipeline.py
+      type: test
+      fan_out: 31
+    - path: src/zephyr/pipeline/pipeline_orchestrator.py
+      type: module
+      fan_out: 30
+    - path: tests/unit/agent_spec/test_filled_modules.py
+      type: test
+      fan_out: 29
+    - path: src/zephyr/governance/phase_check_registry.py
+      type: module
+      fan_out: 28
+    - path: src/zephyr/rollback/phase_check_registry.py
+      type: module
+      fan_out: 27
+    high_fan_in:
+    - path: src/zephyr/shared/schema/schemas.py
+      type: module
+      fan_in: 74
+    - path: src/zephyr/gates/task_types.py
+      type: module
+      fan_in: 65
+    - path: src/zephyr/db/sqlite_schema.py
+      type: module
+      fan_in: 45
+    - path: src/zephyr/gates/check_types/check_type_registry.py
+      type: module
+      fan_in: 34
+    - path: src/zephyr/llm_security/protocol.py
+      type: module
+      fan_in: 31
+    - path: src/zephyr/db/task_repo.py
+      type: module
+      fan_in: 31
+    - path: src/zephyr/core/models.py
+      type: module
+      fan_in: 28
+    - path: src/zephyr/auto_fix_engine/models.py
+      type: module
+      fan_in: 27
+    - path: src/zephyr/audit_trail/writer.py
+      type: module
+      fan_in: 26
+    - path: src/zephyr/llm_security/gateway.py
+      type: module
+      fan_in: 25
+    - path: src/zephyr/agent_spec/skill_loader.py
+      type: module
+      fan_in: 24
+    - path: src/zephyr/trading_contracts/execution/order.py
+      type: module
+      fan_in: 24
+    - path: src/zephyr/shared/utils/time_utils.py
+      type: module
+      fan_in: 23
+    - path: src/zephyr/orchestrator/contract_registry.py
+      type: module
+      fan_in: 22
+    - path: src/zephyr/gates/gate_engine.py
+      type: module
+      fan_in: 21
+    - path: src/zephyr/audit_trail/models.py
+      type: module
+      fan_in: 20
+    - path: src/zephyr/shared/io/paths.py
+      type: module
+      fan_in: 19
+    - path: src/zephyr/shared/schema/severity_types.py
+      type: module
+      fan_in: 19
+    - path: src/zephyr/shared/utils/db_utils.py
+      type: module
+      fan_in: 19
+    - path: src/zephyr/feedback_loop/gates/safety_gate_L1_L27.py
+      type: module
+      fan_in: 19
+  cross_package_violations:
+    total_imports: 642
+    package_pairs:
+      shared -> trading_contracts: 69
+      orchestrator -> shared: 34
+      context_engine -> shared: 22
+      kb -> shared: 21
+      runtime -> shared: 18
+      kb -> gates: 12
+      l03_signal_generation -> trading_contracts: 12
+      l06_trade_execution -> trading_contracts: 10
+      mcp -> shared: 10
+      trading_contracts -> shared: 10
+      escalation_engine -> shared: 9
+      gates -> shared: 9
+      rollback -> audit_trail: 9
+      vector_memory -> shared: 9
+      core -> shared: 7
+      db -> shared: 7
+      l01_infrastructure -> shared: 7
+      vector_memory -> local_model: 7
+      agent_rbac -> shared: 6
+      gates -> drift_detector: 6
+      l07_post_trade_analytics -> trading_contracts: 6
+      runtime -> audit_trail: 6
+      audit_trail -> shared: 5
+      budget_enforcer -> shared: 5
+      db -> gates: 5
+      l04_risk_management -> trading_contracts: 5
+      runtime -> l01_infrastructure: 5
+      gates -> audit_trail: 4
+      governance -> vector_memory: 4
+      governance -> agent_rbac: 4
+quality_gates:
+  test_coverage_gaps:
+    count: 1444
+    sample:
+    - path: src/zephyr/__init__.py
+      type: module
+    - path: src/zephyr/agent_rbac/anti_pattern_guard.py
+      type: module
+    - path: src/zephyr/agent_rbac/build_sanitizer.py
+      type: module
+    - path: src/zephyr/agent_rbac/bootstrap_verifier.py
+      type: module
+    - path: src/zephyr/agent_rbac/compliance_matrix.py
+      type: module
+    - path: src/zephyr/agent_rbac/continuous_verifier.py
+      type: module
+    - path: src/zephyr/agent_rbac/cascading_failure_isolator.py
+      type: module
+    - path: src/zephyr/agent_rbac/defense_depth.py
+      type: module
+    - path: src/zephyr/agent_rbac/dependency_auditor.py
+      type: module
+    - path: src/zephyr/agent_rbac/environment_manager.py
+      type: module
+    - path: src/zephyr/agent_rbac/escalation_handler.py
+      type: module
+    - path: src/zephyr/agent_rbac/key_hierarchy.py
+      type: module
+    - path: src/zephyr/agent_rbac/microstructure_defense.py
+      type: module
+    - path: src/zephyr/agent_rbac/micro_verifier.py
+      type: module
+    - path: src/zephyr/agent_rbac/permission_mode_manager.py
+      type: module
+    - path: src/zephyr/agent_rbac/post_action_verifier.py
+      type: module
+    - path: src/zephyr/agent_rbac/phase_executor.py
+      type: module
+    - path: src/zephyr/agent_rbac/secrets_lifecycle.py
+      type: module
+    - path: src/zephyr/agent_rbac/session_concurrency.py
+      type: module
+    - path: src/zephyr/agent_rbac/__init__.py
+      type: module
+    - path: src/zephyr/agent_rbac/session_lifecycle.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/a2a_check.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/approver_check.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/capability_check.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/bootstrap_superadmin.py
+      type: module
+    - path: src/zephyr/agent_spec/agent_observability.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/contracts.py
+      type: module
+    - path: src/zephyr/agent_rbac/governance_bridges/__init__.py
+      type: module
+    - path: src/zephyr/agent_spec/all_skill_modules.py
+      type: module
+    - path: src/zephyr/agent_spec/context_optimizer.py
+      type: module
+  stability_violations:
+    count: 0
+    sample: []
+  autonomy_violations:
+    count: 1
+    sample:
+    - from: src/zephyr/behavioral_auditor/chaos_injector.py
+      to: src/zephyr/behavioral_auditor/drift_engine.py
+      from_autonomy: human_gated
+      to_autonomy: ai_modifiable
+      violation: human_gated depends on ai_modifiable

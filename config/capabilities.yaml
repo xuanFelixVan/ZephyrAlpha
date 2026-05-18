@@ -1,142 +1,38 @@
-# ZephyrAlpha 2.0 — AI 能力注册表 (CBAC Capabilities Registry)
-#
-# 任务编号 : T-V2-004（experimental CBAC 最小版）
-# 权限层级 : Immutable Core（G1 §2.10 声明）
-# 真源声明 : ai-autonomy-authority-registry.md §2.10
-# 创建日期 : 2026-04-27
-#
-# ── 2026-05-02 结构对齐 registry v1.2.2 ──
-# write_src allow/deny 逐条对齐 ai-autonomy-authority-registry.md：
-#   - allow: 仅 AI-Modifiable 的业务层目录 + 精确的 kb 加工链文件路径
-#   - deny: Human-Gated 目录（l06/l07+横切6目录+kb基础设施4文件）从 allow 移除并显式 deny
-#   对比基线：registry §2.1（业务层14层） + §2.2（横切10模块） + §2.3 M2（kb 3行拆分）
-#
-# 规则说明
-# --------
-# allow: 允许 AI 自主执行的操作（AI-Modifiable 范围）
-# deny:  禁止 AI 执行的操作（Immutable Core / Human-Gated 范围）
-#
-# 匹配逻辑
-# --------
-# 1. 逐条规则检查：若 deny 命中且同规则 allow 未命中 → 拒绝
-# 2. 同规则内 allow 是 deny 的例外（allow 优先于同规则 deny）
-# 3. 遍历所有规则的 allow，命中则允许
-# 4. 未命中任何规则则拒绝（默认拒绝）
-#
-# glob 语法
-# ---------
-# * 匹配单层路径任意字符
-# ** 匹配多层路径
-# ❌ {a,b} 匹配 a 或 b — 暂不支持（fnmatch 限制，需展开为独立规则）
-#    目标：未来替换 glob 引擎（如 bracex）后启用。
-#    当前：含 {a,b} 的 pattern 会被 fnmatch 当作字面量匹配——路径中必须
-#    真的包含花括号才能命中（不可能发生），等于规则永远失效。
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# capabilities.yaml — SRC-0064: 功能开关与预算策略
+# 默认全部 OFF，按需激活
+# 环境变量 ZEPHYR_CAPABILITIES_PATH 可覆盖路径
 
-version: "1.0.0"
-schema_version: "1.0.0"
-doc_type: rule
-title: "CBAC Capabilities Registry"
-status: active
-ttl: permanent
+a2a:
+  enabled: false
+  description: "Agent-to-Agent 协作协议"
 
-rules:
-  - name: write_src
-    description: "AI 可修改业务代码实现（算法优化 / 性能改进 / 日志级别）"
-    allow:
-      # AI-Modifiable 业务层（对齐 registry §2.1）
-      - "src/zephyr/l02_alpha_factor/**/*.py"
-      - "src/zephyr/l03_signal_generation/**/*.py"
-      - "src/zephyr/l05_portfolio_construction/**/*.py"
-      - "src/zephyr/l08_human_ai_interface/**/*.py"
-      - "src/zephyr/l09_research_innovation/**/*.py"
-      - "src/zephyr/l11_ml_platform/**/*.py"
-      - "src/zephyr/l12_system_telemetry/**/*.py"
-      - "src/zephyr/l13_experimentation/**/*.py"
-      # kb 加工链（AI-Modifiable — 对齐 registry §2.3 M2）
-      - "src/zephyr/kb/activate.py"
-      - "src/zephyr/kb/analyze.py"
-      - "src/zephyr/kb/batch_ingest.py"
-      - "src/zephyr/kb/embedding_migrate.py"
-      - "src/zephyr/kb/extract.py"
-      - "src/zephyr/kb/graph_validator.py"
-      - "src/zephyr/kb/ingest.py"
-      - "src/zephyr/kb/triage.py"
-    deny:
-      # Immutable Core 业务层（对齐 registry §2.1）
-      - "src/zephyr/l00_data_source/**/*.py"
-      - "src/zephyr/l01_infrastructure/**/*.py"
-      - "src/zephyr/l04_risk_management/**/*.py"
-      - "src/zephyr/l10_compliance/**/*.py"
-      # Human-Gated 业务层（对齐 registry §2.1）
-      - "src/zephyr/l06_trade_execution/**/*.py"
-      - "src/zephyr/l07_post_trade_analytics/**/*.py"
-      # Immutable Core 横切层（对齐 registry §2.2）
-      - "src/zephyr/gates/**/*.py"
-      - "src/zephyr/llm_security/**/*.py"
-      - "src/zephyr/shared/**/*.py"
-      - "src/zephyr/core/**/*.py"
-      # Human-Gated 横切层（对齐 registry §2.2 + §2.3 M2 kb 基础设施 + §2.9 RI-02）
-      - "src/zephyr/context_engine/**/*.py"
-      - "src/zephyr/orchestrator/**/*.py"
-      - "src/zephyr/feedback_loop/**/*.py"
-      - "src/zephyr/mcp/**/*.py"
-      - "src/zephyr/db/**/*.py"
-      - "src/zephyr/vector_memory/**/*.py"
-      # kb 基础设施 + RI-02（Human-Gated — 对齐 registry §2.3 M2 + §2.9）
-      - "src/zephyr/kb/kb_repo.py"
-      - "src/zephyr/kb/chromadb_init.py"
-      - "src/zephyr/kb/unified_memory_api.py"
-      - "src/zephyr/kb/__init__.py"
+code_dedup:
+  enabled: false
+  description: "代码去重引擎"
 
-  - name: write_script
-    description: "治理脚本：全局默认拒绝 + 唯一例外 + 显式 deny 模式化保护"
-    scope_note: >
-      本规则为 RUNTIME 保护层——禁止运行时 Agent 直接修改 scripts/governance/。
-      开发阶段（Agents 通过 IDE 施工）不受本规则约束——由 pre-commit GATE-19 + §6.19 门禁-登记表原子同步铁律管理。
-      AGENTS.md §6.5（脚本入库强制约定）适用于开发阶段代码提交流程，与本运行时 deny 互补不冲突。
-    allow:
-      - "scripts/governance/d11_compliance/validate_truth_source_cascade.py"
-    deny:
-      - "scripts/governance/**/*.py"
-      # ↑ 全局 deny 模式化（运行时保护）
-      #   allow 为唯一例外。新增脚本自动受 deny 保护，无需逐条列出。
+chaos:
+  enabled: false
+  description: "混沌工程实验"
 
-  - name: write_rules
-    description: "规则文件（.cursor/rules / .trae/rules）禁止 AI 修改"
-    allow: []
-    deny:
-      - ".cursor/rules/**/*"
-      - ".trae/rules/**/*"
+canary:
+  enabled: false
+  description: "金丝雀发布"
 
-  - name: write_docs
-    description: "AI 可修改部分文档（AI-Modifiable 范围），禁止修改治理文档"
-    allow:
-      - "docs/08_knowledge/**/*.md"
-      - "docs/19_development_workspace/drafts-and-audits/**/*.md"
-    deny:
-      - "docs/01_policies_and_standards/**/*.md"
-      - "docs/02_enterprise_architecture/**/*.md"
-      - "docs/09_audit/standards/**/*.md"
+feature_flag:
+  enabled: false
+  description: "功能开关系统"
 
-  - name: write_config
-    description: "配置文件：AI 可修改部分配置，禁止修改风控和权限配置"
-    allow:
-      - "config/compression/policy.yaml"
-    deny:
-      - "config/capabilities.yaml"
-      # ↑ 自保：注册表不可改自身。Immutable Core（ai-autonomy-authority-registry.md §2.10）
-      - "config/trigger_router.yaml"
-      # ↑ 防深度缺口：虽然 YAML 默认拒绝兜底，但显式 deny 防止 allow 列表意外扩展
-      #   导致 Human-Gated 文件被覆盖。ai-autonomy-authority-registry.md §2.9
-      - "config/context_rules_v1.yaml"
-      # ↑ 上下文管理规则：控制 token 预算分配和滑动窗口策略。Human-Gated。
-      - "config/embedding_model_registry.yaml"
-      # ↑ Embedding 模型注册表：模型选择和约束配置。Human-Gated。
-      - "config/session_state_machine.yaml"
-      # ↑ 会话状态机：定义会话生命周期状态和转换。Human-Gated。
-      - "config/risk/**/*"
-      # ↑ 预埋路径（experimentalf/1g 创建）。对应 RI-07 DriftDetector 阈值配置。
-      #   ai-autonomy-authority-registry.md §2.9 → Human-Gated
-      - "config/drift_thresholds.yaml"
-      # ↑ 预埋路径（experimentalf/1g 创建）。对应 RI-07 DriftDetector 阈值配置。
-      #   ai-autonomy-authority-registry.md §2.9 → Human-Gated
+lsg_advanced:
+  enabled: false
+  description: "LSG 高级模式"
+
+budget:
+  mode: WARN_ONLY
+  description: "预算策略：WARN_ONLY 仅告警，ENFORCE 阻断超预算操作"

@@ -16,10 +16,11 @@ modules:
   runtime_plane: warm
   description: 外部数据源适配接入：行情、基本面、另类数据摄取与标准�?
   files:
-  - akshare_provider.py
-  - default_quality_gate.py
   - provider_base.py
   - quality_gate.py
+  - implementations/akshare_provider.py
+  - implementations/default_quality_gate.py
+  - implementations/memory_provider.py
   interfaces:
   - contract_id: CTR-001
     role: producer
